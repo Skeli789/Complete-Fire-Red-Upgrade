@@ -25,20 +25,22 @@ variables manually.
 place it the main (master) folder.
 
 5. To decide the offsets where you want to insert the code:
-  -In the 'insert.py' file in the folder 'scripts' change OFFSET_TO_PUT=YYY to the location 
-  you want to insert the data (let it be X). Do this as well in the file 'make.py'.
+
+a) In the 'insert.py' file in the folder 'scripts' change OFFSET_TO_PUT=YYY to the location 
+   you want to insert the data (let it be X). Do this as well in the file 'make.py'.
   
-  -In the 'linker.ld' file change ORIGIN = (0x08000000 +YYY) ORIGIN = (0x08000000 + X)
+b) In the 'linker.ld' file change ORIGIN = (0x08000000 +YYY) ORIGIN = (0x08000000 + X)
 
 6. Run cmd.exe in the main folder. You can do this by typing 'cmd' and hitting enter in the 
 url address or selecting 'run command prompt from here' from right clciking on empty space 
 while holding the shift key.
 
 7. In command prompt window, do one of the following:
-  -Type 'python scripts//build.py', press Enter and then 'python scripts//insert.py' (here we 
-  output a text file containing a list of all the offsets), press Enter.
-  
-  -Type 'python scripts//make.py'
+
+a) Type 'python scripts//build.py', press Enter and then 'python scripts//insert.py' (here we 
+   output a text file containing a list of all the offsets), press Enter.
+
+b) Type 'python scripts//make.py'
   
 A new gba file will appear named as test.gba and an offsets.ini file.
 That is your resultant file.
