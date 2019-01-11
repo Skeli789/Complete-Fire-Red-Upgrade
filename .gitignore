@@ -1,0 +1,13 @@
+Grit_Flags.docx
+offsets.ini
+*.gba
+build/*
+*/Images/*.h
+*.sgm
+*.dmp
+*.bak
+*.lnk
+*.sav
+*.ss1
+*.ss2
+*.ss3

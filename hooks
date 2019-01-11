@@ -1,0 +1,95 @@
+##
+EmitChooseMoveHook 800E524 3
+BuildTrainerPartyHook 800FF7E 0
+BattleBeginFirstTurn 801385C 0
+GetWhoStrikesFirst 8014CD8 3
+HandleEndTurn_BattleWon 8015670 0
+HandleEndTurn_BattleLost 801578C 0
+SetActionsAndBanksTurnOrder 80150A8 0
+RunTurnActionsFunctions 80155C8 0
+HandleEndTurn_RanFromBattle 8015850 0
+ChooseTargetFix 8015F48 0
+PrepareStringBattle 80173AC 3
+CheckMoveLimitations 801779C 3
+TurnBasedEffects 08018258 0
+KnockOutModification 08018FC0 0
+ClearEndTurnEndByte 080191FC 0
+HasNoMonsToSwitch 0x8019C10 3
+PlayerHandleExpBarUpdate 08032F4C 1
+AI_TrySwitchOrUseItem 8039C84 0
+EndBattleFlagClearHook 80804AC 0
+BufferStringBattle 080D7274 1
+BattleStringExpandPlaceholders 80D7868 2
+##
+##Multi Hooks
+MultiEnemyPokeballReadoutHook 8049088 0
+MultiInitPokemonOrderHook 800D8A0 0
+MultiBattleAddSecondOpponentHook 80132F8 0
+BattleIntroOpponent1SendsOutMonAnimation 801359C 0
+MultiMoneyCalcHook 8025904 2
+MultiTrainersSendOutHook2 8038DF4 1
+MultiTrainersSendOutHook4 8035EA0 0
+MultiTrainersSendOutGameCrashingFix 8035C30 0
+IsMultiBattle 811FA20 0
+PartnerSetupHook 800D458 0
+DisplayPartnerNameInPartyMenuHook 8127AE8 0
+TagTeamPartnerSendoutPokemonHook 8013758 0
+TagTeamThrowPokeballHook 80336A0 0
+TagTeamPokeballReadoutHook 8048FAC 1
+SetNewPartySelectTarget2 81200F8 2
+PlayerHandleDrawTrainerPic 803227C 0
+PlayerHandleTrainerSlide 8032428 0
+TagTeamBackspritePalHook 8033530 0
+##
+##Set Status Hooks
+SleepChecks 0802016C 1
+PoisoningChecks 08020198 1
+CorrosionPSN 080201E4 0
+BurnChecks 08020278 1
+FreezingChecks 080203BE 0
+ParalysisChecks 080203F0 2
+BadPoisoningChecks 0802044C 1
+CorrosionBadPSN 080204B0 0
+ConfusionChecks 080207C0 0
+##
+##AI Hooks
+AIHandleItemUseHook 800D2CC 0
+OpponentHandleDrawTrainerPic 08037CD0 0
+OpponentHandleTrainerSlide 08037EA4 0
+OpponentHandleChooseMove 80385B0 0
+OpponentHandleChoosePokemon 8038744 0
+ShouldSwitchIfWonderGuard 80391EC 0
+HasSuperEffectiveMoveAgainstOpponents 08039698 1
+FindMonWithFlagsAndSuperEffective 08039828 2
+GetMostSuitableMonToSwitchInto 8039E3C 0
+##
+##Mega Hooks
+MegaRetrieveDataHook 80148C0 0
+HandleInputChooseMove 802EA10 0
+##
+##atk01_accuracycheck 801DDC4 0
+atk04_critcalc 801E408 0
+atk05_damagecalc 801E59C 0
+atk06_typecalc 0801E848 0
+##atk07_adjustnormaldamage 801F104 0
+atk23_getexp 8021A68 0
+atk4D_switchindataupdate 08023F48 0
+atk52_switchineffects 08024E38 0
+atk53_trainerslidein 080250DC 0
+atk61_drawpartystatussummary 8025BA4 0
+atkE2_switchoutabilities 802CCC0 0
+##
+BatonPassEffects 08012850 0
+##
+GiveMonToPlayer 8040B14 1
+##
+ItemId_GetName 809A8BC 1
+##
+##Overworld Hooks
+BattleSetup_ConfigureTrainerBattle 8080228 1
+SetTrainerFlags 80803FC 0
+BattleSetup_StartTrainerBattle 8080464 0
+SetUpTrainerEncounterMusic 8080628 0
+GetIntroSpeechOfApproachingTrainer 80806D8 0
+GetTrainerCantBattleSpeech 8080734 0
+CheckForTrainersWantingBattle 8081B30 0

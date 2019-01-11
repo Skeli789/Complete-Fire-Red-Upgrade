@@ -1,0 +1,4 @@
+.thumb
+
+.include "D:\\Rom Hacking\\Roms\\Unbound\\Source_Code\\GBA Code\\FR-Overworld-Form-Change-master\\src\\defines\\asm_defines.s"
+.include "D:\\Rom Hacking\\Hacking Tools\\Battle Script Pro\\Battle Script Macros.asm"
