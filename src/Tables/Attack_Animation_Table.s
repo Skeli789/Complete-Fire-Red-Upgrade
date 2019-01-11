@@ -754,6 +754,7 @@ AttackAnimationTable:
 .word ANIM_LIGHT_THAT_BURNS_THE_SKY
 .word ANIM_SOUL_STEALING_7_STAR_STRIKE
 
+/*
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
 ANIM_SKILLSWAP:
@@ -14781,4 +14782,4 @@ SKILLSWAP: objtemplate 0x280B 0x27E3 0x83ACA30 0x8231CF0 0x0 0x83E7104 0x80B3A35
 POWERSWAP: objtemplate 0x280B 0x27E8 0x83ACA30 0x8231CF0 0x0 0x83E7104 0x80B3A35
 HEARTSWAP: objtemplate 0x280B 0x27E8 0x83ACA30 0x8231CF0 0x0 0x83E7104 0x80B3A35
 
-
+*/
