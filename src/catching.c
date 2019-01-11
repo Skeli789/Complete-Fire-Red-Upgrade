@@ -4,6 +4,7 @@
 
 //Put check for Wild Double Battle in Item Use code
 //Figure out how to check Surfing for Dive Ball
+//Make it so you can't catch Semi-Invulnerable targets
 
 void atkEF_handleballthrow(void);
 u8 GetCatchingBattler(void);

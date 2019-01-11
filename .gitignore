@@ -1,5 +1,6 @@
 Grit_Flags.docx
 offsets.ini
+*config.h
 *.gba
 build/*
 */Images/*.h

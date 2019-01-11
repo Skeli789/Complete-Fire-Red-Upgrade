@@ -2,6 +2,7 @@
 #include "helper_functions.h"
 
 //Change this to account for new base Exp
+//Test battle continuing after Wild Poke kills itself with Explosion
 
 #define SE_EXP 0x1B
 #define MUS_WILD_POKE_VICTORY 0x137
