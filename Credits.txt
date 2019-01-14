@@ -1,2 +1,6 @@
 Backsprites:
 -Solo993
+
+Code:
+Pret - PokeRuby, PokeFireRed, PokeEmerald
+Sagari - Trainer Class Poke Balls, Pickup Update

@@ -774,6 +774,10 @@ u8 GetExceptionMoveType(u8 bankAtk, u16 move) {
 						((gBattleMons[bankAtk].speedIV & 1) << 3) |
 						((gBattleMons[bankAtk].spAttackIV & 1) << 4) |
 						((gBattleMons[bankAtk].spDefenseIV & 1) << 5);
+						
+			move_type = udivsi((15 * move_type), 63) + 1;
+			if (move_type >= TYPE_MYSTERY)
+				move_type++;
 			break;
 		
 		case MOVE_WEATHERBALL:
@@ -865,6 +869,10 @@ u8 GetExceptionMoveTypeFromParty(pokemon_t* party_data, u16 move) {
 						((party_data->speedIV & 1) << 3) |
 						((party_data->spAttackIV & 1) << 4) |
 						((party_data->spDefenseIV & 1) << 5);
+			
+			move_type = udivsi((15 * move_type), 63) + 1;
+			if (move_type >= TYPE_MYSTERY)
+				move_type++;
 			break;
 		
 		case MOVE_WEATHERBALL:
@@ -2234,6 +2242,7 @@ u8 GetBasePower (u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 
 						((gBattleMons[bankAtk].spAttackIV & 2) << 3) |
 						((gBattleMons[bankAtk].spDefenseIV & 2) << 4);
 			}
+			power = udivsi((40 * power), 63) + 30;
 		#endif
 		break;
 	}

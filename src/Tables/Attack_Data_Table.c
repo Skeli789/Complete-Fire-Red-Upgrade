@@ -223,7 +223,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	1
 },
 
 {				//MOVE_CUT
@@ -1588,7 +1588,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED | FLAG_TRIAGE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	26
 },
 
 {				//MOVE_HARDEN
@@ -1693,7 +1693,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	1
 },
 
 {				//MOVE_LIGHTSCREEN
@@ -3943,7 +3943,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	7
 },
 
 {				//MOVE_FACADE

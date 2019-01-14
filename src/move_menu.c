@@ -5,6 +5,7 @@
 
 //Include Z-Power Effect under Status-Z name
 //Make The Z-Move Names change colour (look in SetPpNumbersPaletteInMoveSelection)
+//Send possible Mega Data over link cable
 
 #define SE_SELECT 0x5
 #define gText_BattleSwitchWhich (u8*) 0x83FE7A0
@@ -28,7 +29,7 @@ bool8 TriggerMegaEvolution(void);
 void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct ChooseMoveStruct *movePpData);
 void EmitMoveChosen(u8 bufferId, u8 chosenMoveIndex, u8 target, u8 megaState, u8 ultraState, u8 zMoveState);
 void MoveSelectionDisplayMoveType(void);
-void MoveSelectionDisplayZMove(void);
+bool8 MoveSelectionDisplayZMove(void);
 void ZMoveSelectionDisplayPpNumber(void);
 void ZMoveSelectionDisplayPower(void);
 void ReloadMoveNamesIfNecessary(void);
@@ -206,13 +207,13 @@ void HandleInputChooseMove(void)
     }
 	else if (gMain.newKeys & START_BUTTON)
 	{
-		if (!TriggerMegaEvolution()) //Only one is allowed at a time
-			MoveSelectionDisplayZMove();
+		if (!MoveSelectionDisplayZMove()) //Only one is allowed at a time
+			TriggerMegaEvolution();
 	}
 	else if (gMain.newKeys & R_BUTTON)
 	{
-		if (!TriggerMegaEvolution())
-			MoveSelectionDisplayZMove();
+		if (!MoveSelectionDisplayZMove()) //Only one is allowed at a time
+			TriggerMegaEvolution();
 	}
 }
 
@@ -264,23 +265,28 @@ bool8 TriggerMegaEvolution(void) {
 	return FALSE;
 }
 
+//This function sends useful data over Link Cable for the move menu to use
 void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct ChooseMoveStruct *movePpData)
 {
     u32 i;
+	
+	u8* moveTypes = Malloc(sizeof(u8) * MAX_MON_MOVES);
+	
+	for (i = 0; i < MAX_MON_MOVES; ++i)
+		moveTypes[i] = GetMoveTypeSpecial(gActiveBattler, gBattleMons[gActiveBattler].moves[i]);
 
     gBattleBuffersTransferData[0] = CONTROLLER_CHOOSEMOVE;
     gBattleBuffersTransferData[1] = isDoubleBattle;
     gBattleBuffersTransferData[2] = NoPpNumber;
     gBattleBuffersTransferData[3] = 0;
-    for (i = 0; i < sizeof(*movePpData) - 1; i++)
+    for (i = 0; i < sizeof(*movePpData) - 6; i++)
         gBattleBuffersTransferData[4 + i] = *((u8*)(movePpData) + i);
-	gBattleBuffersTransferData[4 + i] = gBattleMons[gActiveBattler].type3; //Because I was too lazy to rewrite the one function that called this to make this small change
-	gBattleBuffersTransferData[5 + i] = gBattleMons[gActiveBattler].ability; //The ability helps determine the type of move which is why it must be sent over
-	gBattleBuffersTransferData[5 + i] = gBattleMons[gActiveBattler].item; //Helps determine type of things like Natural Gift and Judgement
-	gBattleBuffersTransferData[6 + i] = gBattleMons[gActiveBattler].item >> 8;
-	gBattleBuffersTransferData[8 + i] = gBattleWeatherFlags; //Weather helps determine the type of Weather Ball
-	gBattleBuffersTransferData[9 + i] = gBattleWeatherFlags >> 8;
-    PrepareBufferDataTransfer(bufferId, gBattleBuffersTransferData, sizeof(*movePpData) + 10);
+	gBattleBuffersTransferData[4 + i] = moveTypes[0];
+	gBattleBuffersTransferData[5 + i] = moveTypes[1];
+	gBattleBuffersTransferData[6 + i] = moveTypes[2];
+	gBattleBuffersTransferData[7 + i] = moveTypes[3];
+	gBattleBuffersTransferData[8 + i] = gBattleMons[gActiveBattler].type3;
+    PrepareBufferDataTransfer(bufferId, gBattleBuffersTransferData, (sizeof(*movePpData) - 1) + 9);
 }
 
 void EmitMoveChosen(u8 bufferId, u8 chosenMoveIndex, u8 target, u8 megaState, u8 ultraState, u8 zMoveState)
@@ -310,16 +316,16 @@ void MoveSelectionDisplayMoveType(void)
 	txtPtr = StringCopy(txtPtr, gText_MoveInterfaceType);
 	
 	#ifdef DISPLAY_REAL_MOVE_TYPE_ON_MENU
-		StringCopy(txtPtr, gTypeNames[GetMoveTypeSpecial(gActiveBattler, moveInfo->moves[gMoveSelectionCursor[gActiveBattler]])]); //This isn't working
+		StringCopy(txtPtr, gTypeNames[moveInfo->moveTypes[gMoveSelectionCursor[gActiveBattler]]]); //This isn't working
 	#else
 		StringCopy(txtPtr, gTypeNames[gBattleMoves[moveInfo->moves[gMoveSelectionCursor[gActiveBattler]]].type]);
 	#endif
     BattlePutTextOnWindow(gDisplayedStringBattle, 8);
 }
 
-void MoveSelectionDisplayZMove(void) {
+bool8 MoveSelectionDisplayZMove(void) {
 	if (ZMoveData->used[gActiveBattler] || (MegaData->partyIndex[SIDE(gActiveBattler)] & gBitTable[gBattlerPartyIndexes[gActiveBattler]]))
-		return;
+		return FALSE;
 
 	struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct*)(&gBattleBufferA[gActiveBattler][4]);
 	u16 zmove = ShouldAIUseZMove(gActiveBattler, 0, moveInfo->moves[gMoveSelectionCursor[gActiveBattler]]);
@@ -328,7 +334,7 @@ void MoveSelectionDisplayZMove(void) {
 	if (ZMoveData->viewing) {
 		ReloadMoveNamesIfNecessary();
 		PlaySE(3); //Turn Off
-		return;
+		return TRUE;
 	}
 	
 	if (zmove) {
@@ -356,7 +362,10 @@ void MoveSelectionDisplayZMove(void) {
 		MoveSelectionCreateCursorAt(0, 0);
 		ZMoveData->viewing = TRUE;
 		PlaySE(2); //Turn On
+		return TRUE;
 	}
+	
+	return FALSE;
 }
 
 void ZMoveSelectionDisplayPpNumber(void)

@@ -293,7 +293,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
 				
             case ITEM_EFFECT_RANDOM_STAT_UP:
                 if ((PINCH_BERRY_CHECK(bank) || DoPluck)
-				&& !(StatsMaxed(bank))) {
+				&& !((StatsMaxed(bank) && ABILITY(bank) != ABILITY_CONTRARY) || (StatsMinned(bank) && ABILITY(bank) == ABILITY_CONTRARY))) {
                     do {
                         i = umodsi(Random(), 5);
                     } while (gBattleMons[bank].statStages[STAT_STAGE_ATK-1 + i] == 12);

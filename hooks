@@ -15,11 +15,13 @@ TurnBasedEffects 08018258 0
 KnockOutModification 08018FC0 0
 ClearEndTurnEndByte 080191FC 0
 HasNoMonsToSwitch 0x8019C10 3
+MoveSelectionDisplayMoveType 8030940 0
 PlayerHandleExpBarUpdate 08032F4C 1
 AI_TrySwitchOrUseItem 8039C84 0
 EndBattleFlagClearHook 80804AC 0
 BufferStringBattle 080D7274 1
 BattleStringExpandPlaceholders 80D7868 2
+DisplayStatStageMessage 80D8486 0
 ##
 ##Multi Hooks
 MultiEnemyPokeballReadoutHook 8049088 0
@@ -67,12 +69,15 @@ GetMostSuitableMonToSwitchInto 8039E3C 0
 MegaRetrieveDataHook 80148C0 0
 HandleInputChooseMove 802EA10 0
 ##
+atk00_attackcanceler 801D760 0
 ##atk01_accuracycheck 801DDC4 0
 atk04_critcalc 801E408 0
 atk05_damagecalc 801E59C 0
 atk06_typecalc 0801E848 0
 ##atk07_adjustnormaldamage 801F104 0
 atk23_getexp 8021A68 0
+atk45_playanimation 8022E34 0
+atk46_playanimation2 8022EF4 0
 atk4D_switchindataupdate 08023F48 0
 atk52_switchineffects 08024E38 0
 atk53_trainerslidein 080250DC 0

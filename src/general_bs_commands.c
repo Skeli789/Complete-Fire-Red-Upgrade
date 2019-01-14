@@ -18,6 +18,7 @@
 //Reciever ban list
 //Update gCurrMovePos in Instruct
 //Move Stomping Tantrum to end command based on TargetsHit
+//Update EmitMoveAnimation to include attacker's item
 
 #include "defines.h"
 #include "helper_functions.h"
@@ -35,6 +36,8 @@
 	BattleScriptPushCursor();									\
 	gBattlescriptCurrInstr = BattleScript_SideStatusWoreOffRet;	\
 }
+
+#define BattleScript_Pausex20 (u8*) 0x81D89F1
 
 bool8 UproarWakeUpCheck(bank_t);
 u8 CheckMoveLimitations(u8 bank, u8 unusableMoves, u8 check);
@@ -679,6 +682,111 @@ void atk42_jumpiftype2(void) //u8 bank, u8 type, *ptr
         gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
     else
         gBattlescriptCurrInstr += 7;
+}
+
+void atk45_playanimation(void)
+{
+    const u16* argumentPtr;
+
+    gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
+    argumentPtr = T2_READ_PTR(gBattlescriptCurrInstr + 3);
+
+    if (gBattlescriptCurrInstr[2] == B_ANIM_STATS_CHANGE
+    || 	gBattlescriptCurrInstr[2] == B_ANIM_SNATCH_MOVE
+    || 	gBattlescriptCurrInstr[2] == B_ANIM_SUBSTITUTE_FADE
+	|| 	gBattlescriptCurrInstr[2] == B_ANIM_TRANSFORM
+	|| 	gBattlescriptCurrInstr[2] == B_ANIM_WISHIWASHI_FISH
+	|| 	gBattlescriptCurrInstr[2] == B_ANIM_ZYGARDE_CELL_SWIRL
+	|| 	gBattlescriptCurrInstr[2] == B_ANIM_BLUE_PRIMAL_REVERSION
+	|| 	gBattlescriptCurrInstr[2] == B_ANIM_RED_PRIMAL_REVERSION
+	|| 	gBattlescriptCurrInstr[2] == B_ANIM_TRANSFORM
+	|| 	gBattlescriptCurrInstr[2] == B_ANIM_ZMOVE_ACTIVATE
+	|| 	gBattlescriptCurrInstr[2] == B_ANIM_MEGA_EVOLUTION
+	|| 	gBattlescriptCurrInstr[2] == B_ANIM_ULTRA_BURST)
+    {
+        EmitBattleAnimation(0, gBattlescriptCurrInstr[2], *argumentPtr);
+        MarkBufferBankForExecution(gActiveBattler);
+        gBattlescriptCurrInstr += 7;
+    }
+    else if (gHitMarker & HITMARKER_NO_ANIMATIONS)
+    {
+        BattleScriptPush(gBattlescriptCurrInstr + 7);
+        gBattlescriptCurrInstr = BattleScript_Pausex20;
+    }
+    else if (gBattlescriptCurrInstr[2] == B_ANIM_RAIN_CONTINUES
+          || gBattlescriptCurrInstr[2] == B_ANIM_SUN_CONTINUES
+          || gBattlescriptCurrInstr[2] == B_ANIM_SANDSTORM_CONTINUES
+          || gBattlescriptCurrInstr[2] == B_ANIM_HAIL_CONTINUES
+	      || gBattlescriptCurrInstr[2] == B_ANIM_DELTA_STREAM
+	      || gBattlescriptCurrInstr[2] == B_ANIM_FOG_CONTINUES)
+    {
+        EmitBattleAnimation(0, gBattlescriptCurrInstr[2], *argumentPtr);
+        MarkBufferBankForExecution(gActiveBattler);
+        gBattlescriptCurrInstr += 7;
+    }
+    else if (gStatuses3[gActiveBattler] & STATUS3_SEMI_INVULNERABLE)
+    {
+        gBattlescriptCurrInstr += 7;
+    }
+    else
+    {
+        EmitBattleAnimation(0, gBattlescriptCurrInstr[2], *argumentPtr);
+        MarkBufferBankForExecution(gActiveBattler);
+        gBattlescriptCurrInstr += 7;
+    }
+}
+
+void atk46_playanimation2(void) // animation Id is stored in the first pointer
+{
+    const u16* argumentPtr;
+    const u8* animationIdPtr;
+
+    gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
+    animationIdPtr = T2_READ_PTR(gBattlescriptCurrInstr + 2);
+    argumentPtr = T2_READ_PTR(gBattlescriptCurrInstr + 6);
+
+    if (*animationIdPtr == B_ANIM_STATS_CHANGE
+    || 	*animationIdPtr == B_ANIM_SNATCH_MOVE
+    || 	*animationIdPtr == B_ANIM_SUBSTITUTE_FADE
+	|| 	*animationIdPtr == B_ANIM_TRANSFORM
+	|| 	*animationIdPtr == B_ANIM_WISHIWASHI_FISH
+	|| 	*animationIdPtr == B_ANIM_ZYGARDE_CELL_SWIRL
+	|| 	*animationIdPtr == B_ANIM_BLUE_PRIMAL_REVERSION
+	|| 	*animationIdPtr == B_ANIM_RED_PRIMAL_REVERSION
+	|| 	*animationIdPtr == B_ANIM_TRANSFORM
+	|| 	*animationIdPtr == B_ANIM_ZMOVE_ACTIVATE
+	|| 	*animationIdPtr == B_ANIM_MEGA_EVOLUTION
+	|| 	*animationIdPtr == B_ANIM_ULTRA_BURST)
+    {
+        EmitBattleAnimation(0, *animationIdPtr, *argumentPtr);
+        MarkBufferBankForExecution(gActiveBattler);
+        gBattlescriptCurrInstr += 10;
+    }
+    else if (gHitMarker & HITMARKER_NO_ANIMATIONS)
+    {
+        gBattlescriptCurrInstr += 10;
+    }
+    else if (*animationIdPtr == B_ANIM_RAIN_CONTINUES
+             || *animationIdPtr == B_ANIM_SUN_CONTINUES
+             || *animationIdPtr == B_ANIM_SANDSTORM_CONTINUES
+             || *animationIdPtr == B_ANIM_HAIL_CONTINUES
+			 || *animationIdPtr == B_ANIM_DELTA_STREAM
+			 || *animationIdPtr == B_ANIM_FOG_CONTINUES)
+    {
+        EmitBattleAnimation(0, *animationIdPtr, *argumentPtr);
+        MarkBufferBankForExecution(gActiveBattler);
+        gBattlescriptCurrInstr += 10;
+    }
+    else if (gStatuses3[gActiveBattler] & STATUS3_SEMI_INVULNERABLE)
+    {
+        gBattlescriptCurrInstr += 10;
+    }
+    else
+    {
+        EmitBattleAnimation(0, *animationIdPtr, *argumentPtr);
+        MarkBufferBankForExecution(gActiveBattler);
+        gBattlescriptCurrInstr += 10;
+    }
 }
 
 void atk64_statusanimation(void) {

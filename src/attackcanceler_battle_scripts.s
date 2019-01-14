@@ -81,6 +81,9 @@ BattleScript_MoveUsedThroatChopPrevents:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_MoveUsedFailedPrimalWeather:
+	orbyte OUTCOME 0x20
+	attackstring
+	ppreduce
 	pause DELAY_HALFSECOND
 	jumpifhalfword ANDS WEATHER_FLAGS weather_harsh_sun HarshSunEvaportionBS
 	setword BATTLE_STRING_LOADER MoveFizzledInHeavyRainString
@@ -97,6 +100,9 @@ HarshSunEvaportionBS:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_MoveUsedPsychicTerrainPrevents:
+	orbyte OUTCOME 0x20
+	attackstring
+	ppreduce
 	pause DELAY_HALFSECOND
 	setword BATTLE_STRING_LOADER PsychicTerrainAttackCancelString
 	printstring 0x184
@@ -106,6 +112,7 @@ BattleScript_MoveUsedPsychicTerrainPrevents:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_MoveUsedPowderPrevents:
+	orbyte OUTCOME 0x1
 	attackstring
 	ppreduce
 	pause DELAY_HALFSECOND
@@ -146,25 +153,23 @@ BattleScript_StanceChangeToShield:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_ZMoveActivateStatus:
-	playanimation BANK_ATTACKER ANIM_ZMOVE_ACTIVATE 0x0
 	setword BATTLE_STRING_LOADER ZPowerSurroundsString
 	printstring 0x184
-	waitmessage DELAY_1SECOND
-	seteffectuser
+	playanimation BANK_ATTACKER ANIM_ZMOVE_ACTIVATE 0x0
+	callasm SetZEffect+1
 	setword BATTLE_STRING_LOADER ZMoveUnleashedString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	return
 
 BattleScript_ZMoveActivateDamaging:
-	playanimation BANK_ATTACKER ANIM_ZMOVE_ACTIVATE 0x0
 	setword BATTLE_STRING_LOADER ZPowerSurroundsString
 	printstring 0x184
-	waitmessage DELAY_1SECOND
+	playanimation BANK_ATTACKER ANIM_ZMOVE_ACTIVATE 0x0
 	setword BATTLE_STRING_LOADER ZMoveUnleashedString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
-	jumptoattack
+	return
 
 .align 2
 MagicBounceString: .byte 0xFD, 0x10, 0xB4, 0xE7, 0x00, 0xFD, 0x19, 0xFE, 0xEB, 0xD5, 0xE7, 0x00, 0xD6, 0xE3, 0xE9, 0xE2, 0xD7, 0xD9, 0xD8, 0x00, 0xD6, 0xD5, 0xD7, 0xDF, 0x00, 0xD6, 0xED, 0x00, 0xC7, 0xD5, 0xDB, 0xDD, 0xD7, 0x00, 0xBC, 0xE3, 0xE9, 0xE2, 0xD7, 0xD9, 0xAB, 0xFF

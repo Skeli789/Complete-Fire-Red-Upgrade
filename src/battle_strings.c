@@ -3,6 +3,10 @@
 #include "battle_strings.h"
 #include "frontier.h"
 
+//The link opponent needs the data from BattleStringLoader sent over
+//Change to "You have no more Pokemon that can fight!"
+//Change to "You blacked out!"
+
 #define EOS 0xFF
 
 //New Strings

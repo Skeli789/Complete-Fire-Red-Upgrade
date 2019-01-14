@@ -65,6 +65,7 @@
 .equ BG_MAGIC_ROOM, 0x33
 .equ BG_HYPERSPACE_FURY, 0x34
 .equ BG_BOLT_STRIKE, 0x35
+.equ BG_ZMOVE_ACTIVATE, 0x36
 
 @pals for pal fading tasks
 .equ PAL_BG, 0x1

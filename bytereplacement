@@ -39,3 +39,9 @@
 
 ##Temporary Obedience Fix
 0801D4FC 02 00 61 00
+
+##Unbound Give All Pokes Guy
+08740F45 16 C2 50 32 00 23
+08740F4F 02
+##Battle BG
+087803A5 1E

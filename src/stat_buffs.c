@@ -251,7 +251,7 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, u8* BS_ptr)
 
     if ((statValue << 0x18) < 0) // stat decrease
     {
-		if (ABILITY(gActiveBattler) == ABILITY_CONTRARY)
+		if (ABILITY(gActiveBattler) == ABILITY_CONTRARY && !ZMoveData->runningZEffect)
 			goto RAISE_STAT_BUFF;
 	
 	LOWER_STAT_BUFF:
@@ -354,7 +354,7 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, u8* BS_ptr)
         {
             statValue = -GET_STAT_BUFF_VALUE(statValue);
 			
-			if (ability == ABILITY_SIMPLE)
+			if (ability == ABILITY_SIMPLE && !ZMoveData->runningZEffect)
 				statValue *= 2;
 			
             gBattleTextBuff2[0] = B_BUFF_PLACEHOLDER_BEGIN;
@@ -368,18 +368,19 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, u8* BS_ptr)
             }
 			else if (statValue <= -3)
 			{
-                gBattleTextBuff2[1] = B_BUFF_STRING;
-                gBattleTextBuff2[2] = 0x84;
-                gBattleTextBuff2[3] = 0x1;
-				BattleStringLoader = SeverelyString;
-                index = 4;
+				gBattleTextBuff2[1] = B_BUFF_STRING;
+				gBattleTextBuff2[2] = 0x85;
+				gBattleTextBuff2[3] = 0x1;
+				index = 4;
             }
-            gBattleTextBuff2[index] = B_BUFF_STRING;
-            index++;
-            gBattleTextBuff2[index] = STRINGID_STATFELL;
-            index++;
-            gBattleTextBuff2[index] = STRINGID_STATFELL >> 8;
-            index++;
+			if (!ZMoveData->runningZEffect) {
+				gBattleTextBuff2[index] = B_BUFF_STRING;
+				index++;
+				gBattleTextBuff2[index] = STRINGID_STATFELL;
+				index++;
+				gBattleTextBuff2[index] = STRINGID_STATFELL >> 8;
+				index++;
+			}
             gBattleTextBuff2[index] = B_BUFF_EOS;
 
             if (gBattleMons[gActiveBattler].statStages[statId - 1] == 0)
@@ -393,11 +394,15 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, u8* BS_ptr)
 	//Stat Increase
     else
     {
-		if (ABILITY(gActiveBattler) == ABILITY_CONTRARY)
+		if (ABILITY(gActiveBattler) == ABILITY_CONTRARY && !ZMoveData->runningZEffect)
 			goto LOWER_STAT_BUFF;
 		
 	RAISE_STAT_BUFF:
         statValue = GET_STAT_BUFF_VALUE(statValue);
+		
+		if (ability == ABILITY_SIMPLE && !ZMoveData->runningZEffect)
+			statValue *= 2;
+				
         gBattleTextBuff2[0] = B_BUFF_PLACEHOLDER_BEGIN;
         index = 1;
         if (statValue == 2)
@@ -410,17 +415,18 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, u8* BS_ptr)
         if (statValue >= 3)
         {
             gBattleTextBuff2[1] = B_BUFF_STRING;
-            gBattleTextBuff2[2] = 0x84;
+            gBattleTextBuff2[2] = 0x86;
             gBattleTextBuff2[3] = 0x1;
-			BattleStringLoader = DrasticallyString;
             index = 4;
         }
-        gBattleTextBuff2[index] = B_BUFF_STRING;
-        index++;
-        gBattleTextBuff2[index] = STRINGID_STATROSE;
-        index++;
-        gBattleTextBuff2[index] = STRINGID_STATROSE >> 8;
-        index++;
+		if (!ZMoveData->runningZEffect) {
+			gBattleTextBuff2[index] = B_BUFF_STRING;
+			index++;
+			gBattleTextBuff2[index] = STRINGID_STATROSE;
+			index++;
+			gBattleTextBuff2[index] = STRINGID_STATROSE >> 8;
+			index++;
+		}
         gBattleTextBuff2[index] = B_BUFF_EOS;
 
         if (gBattleMons[gActiveBattler].statStages[statId - 1] == 12)

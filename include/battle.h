@@ -782,6 +782,20 @@ typedef struct fling FlingStruct;
 #define B_ANIM_INGRAIN_HEAL             0x15
 #define B_ANIM_WISH_HEAL                0x16
 
+#define B_ANIM_CALL_BACK_POKEMON		0x1D
+#define B_ANIM_CALL_BACK_POKEMON_2		0x1E
+#define B_ANIM_CAPTURE_POKEMON			0x1F
+#define B_ANIM_TRANSFORM				0x23
+#define B_ANIM_WISHIWASHI_FISH 			0x24
+#define B_ANIM_ZYGARDE_CELL_SWIRL 		0x25
+#define B_ANIM_DELTA_STREAM 			0x26
+#define B_ANIM_RED_PRIMAL_REVERSION 	0x2F
+#define B_ANIM_BLUE_PRIMAL_REVERSION 	0x30
+#define B_ANIM_FOG_CONTINUES			0x36
+#define B_ANIM_ZMOVE_ACTIVATE 			0x3E
+#define B_ANIM_MEGA_EVOLUTION 			0x3F
+#define B_ANIM_ULTRA_BURST 				0x40
+
 // special animations table
 #define B_ANIM_LVL_UP                   0x0
 #define B_ANIM_SWITCH_OUT_PLAYER_MON    0x1
@@ -1059,11 +1073,14 @@ struct ZMoveData
 	u8 toBeUsed[4];
 	u8 used[4]; 
 	u8 partyIndex[2]; //Index of party member who used Z-Move
-	u8* backupTilemap;
-	u8 active;
+	u8 effect;
 	u8 state;
-	u8 backupEffect;
-	u8 viewing;
+	u8* backupTilemap;
+	bool8 active : 1;
+	bool8 effectApplied : 1; //Used so moves like Sleep Talk don't give 2 z-effects, clear in CMD49
+	bool8 healReplacement : 1;
+	bool8 viewing : 1;
+	bool8 runningZEffect : 1;
 };
 
 struct SpecialZMoves

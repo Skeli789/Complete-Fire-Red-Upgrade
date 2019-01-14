@@ -28,6 +28,7 @@ u8* SwitchClearTableBits[] = {
 
 enum SwitchInStates {
 SwitchIn_HealingWish,
+SwitchIn_ZHealingWish,
 SwitchIn_Spikes,
 SwitchIn_StealthRock,
 SwitchIn_ToxicSpikes,
@@ -51,6 +52,7 @@ extern u8 BattleScript_StickyWebSpeedDrop[];
 extern u8 BattleScript_AirBalloonSub[];
 extern u8 BattleScript_PrimalWeatherEnd[];
 extern u8 BattleScript_SuccessForceOut[];
+extern u8 BattleScript_HealReplacementZMove[];
 
 extern u8 PrimalRainEndString[];
 extern u8 PrimalSunEndString[];
@@ -411,6 +413,21 @@ void atk52_switchineffects(void) {
 				++SwitchInEffectsTracker;
 				return;
 			}
+			++SwitchInEffectsTracker;
+		__attribute__ ((fallthrough));	
+		
+		case SwitchIn_ZHealingWish:
+			if (gBattleMons[gActiveBattler].hp != gBattleMons[gActiveBattler].maxHP && ZMoveData->healReplacement) {
+				ZMoveData->healReplacement = FALSE;
+				gBattleMoveDamage = -1 * (gBattleMons[gActiveBattler].maxHP);
+				gBattleScripting->bank = gActiveBattler;
+				BattleScriptPushCursor();
+				gBattlescriptCurrInstr = BattleScript_HealReplacementZMove;
+				return;
+			}
+			else
+				ZMoveData->healReplacement = FALSE;
+			
 			++SwitchInEffectsTracker;
 		__attribute__ ((fallthrough));	
 		
