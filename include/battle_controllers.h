@@ -100,23 +100,27 @@ struct MovePpInfo
     u8 ppBonuses;
 };
 
-/*
-struct ChooseMoveStruct
-{
-    u16 moves[4];				 //0x0
-    u8 currentPp[4];			 //0x8
-    u8 maxPp[4];				 //0xC
-    u16 species;				 //0x10
-    u8 monType1;				 //0x12
-    u8 monType2;				 //0x13
-	u8 moveTypes[4];			 //0x14
-	bool8 canMegaEvolveBanks[4]; //0x18
-	u8 megaVariance[4];			 //0x1C
-	u8 monType3;				 //0x20
-};
-*/
 
 struct ChooseMoveStruct
+{
+    u16 moves[4];
+    u8 currentPp[4];
+    u8 maxPp[4];
+	u8 moveTypes[4];
+	u16 movePowers[4];
+	u16 moveAcc[4];
+    u16 species;
+    u8 monType1;
+    u8 monType2;
+	u8 monType3;
+	bool8 canMegaEvolve;
+	u8 megaVariance;
+	bool8 canZMoveBanks;
+	u16 possibleZMoves[MAX_MON_MOVES];
+};
+
+
+struct ChooseMoveStructOld
 {
     u16 moves[4];		//0x0
     u8 currentPp[4];	//0x8
@@ -124,8 +128,6 @@ struct ChooseMoveStruct
     u16 species;		//0x10
     u8 monType1;		//0x12
     u8 monType2;		//0x13
-	u8 moveTypes[4];	//0x14
-	u8 monType3;		//0x18
 };
 
 enum
