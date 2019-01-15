@@ -5,7 +5,8 @@
 
 //Include Z-Power Effect under Status-Z name
 //Make The Z-Move Names change colour (look in SetPpNumbersPaletteInMoveSelection)
-//Send possible Mega Data over link cable
+//Add support for proper accuracies in doubles
+//Deal with Move Switching
 
 #define SE_SELECT 0x5
 #define gText_BattleSwitchWhich (u8*) 0x83FE7A0
@@ -18,11 +19,18 @@ extern u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
 
 extern u8 StringNull[];
 extern u8 gText_Power[];
+extern u8 gText_Acc[];
+extern u8 gText_NoMiss[];
+extern u8 gText_Physical[];
+extern u8 gText_Special[];
+extern u8 gText_Status[];
 
 extern const struct Evolution* CanMegaEvolve(u8 bank, bool8 CheckUBInstead);
 extern bool8 MegaEvolutionEnabled(u8 bank);
 extern bool8 BankMegaEvolved(u8 bank, bool8 checkUB);
 extern u8 GetMoveTypeSpecial(u8 bankAtk, move_t);
+extern u16 GetBasePower(bank_t bankAtk, bank_t bankDef, move_t, item_t, item_effect_t, ability_t, u32 atk_status1, u16 atk_hp, u16 atk_maxHP, u16 species, pokemon_t* party_data_atk, bool8 party);
+extern u32 AccuracyCalc(u16 move, u8 bankAtk, u8 bankDef);
 
 void HandleInputChooseMove(void);
 bool8 TriggerMegaEvolution(void);
@@ -32,6 +40,7 @@ void MoveSelectionDisplayMoveType(void);
 bool8 MoveSelectionDisplayZMove(void);
 void ZMoveSelectionDisplayPpNumber(void);
 void ZMoveSelectionDisplayPower(void);
+void MoveSelectionDisplayDetails(void);
 void ReloadMoveNamesIfNecessary(void);
 
 void HandleInputChooseMove(void)
@@ -54,6 +63,7 @@ void HandleInputChooseMove(void)
 			ZMoveData->backupTilemap = NULL;
 		}
 		
+		ZMoveData->viewingDetails = FALSE;
         PlaySE(SE_SELECT);
         if (moveInfo->moves[gMoveSelectionCursor[gActiveBattler]] == MOVE_CURSE)
         {
@@ -125,6 +135,7 @@ void HandleInputChooseMove(void)
 			gWindows[3].tileData = ZMoveData->backupTilemap;
 			ZMoveData->backupTilemap = NULL;
 		}
+		ZMoveData->viewingDetails = FALSE;
 		gMoveSelectionCursor[gActiveBattler] = 0;
         PlaySE(SE_SELECT);
         EmitTwoReturnValues(1, 10, 0xFFFF);
@@ -191,7 +202,7 @@ void HandleInputChooseMove(void)
     }
     else if (gMain.newKeys & SELECT_BUTTON)
     {
-        if (gNumberOfMovesToChoose > 1 && !(gBattleTypeFlags & BATTLE_TYPE_LINK) && !ZMoveData->viewing)
+        if (gNumberOfMovesToChoose > 1 && !(gBattleTypeFlags & BATTLE_TYPE_LINK) && !ZMoveData->viewing && !ZMoveData->viewingDetails)
         {
             MoveSelectionCreateCursorAt(gMoveSelectionCursor[gActiveBattler], 29);
 
@@ -215,40 +226,35 @@ void HandleInputChooseMove(void)
 		if (!MoveSelectionDisplayZMove()) //Only one is allowed at a time
 			TriggerMegaEvolution();
 	}
+	else if (gMain.newKeys & L_BUTTON)
+	{
+		if (!ZMoveData->viewing)
+			MoveSelectionDisplayDetails();
+	}
 }
 
 bool8 TriggerMegaEvolution(void) {
 	
-	const struct Evolution* evolutions = CanMegaEvolve(gActiveBattler, FALSE);
-	
-	if (evolutions == NULL)
-		evolutions = CanMegaEvolve(gActiveBattler, TRUE); //Check Ultra Burst
-	
-	if (evolutions == NULL)
+	struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct*)(&gBattleBufferA[gActiveBattler][4]);
+	if (!moveInfo->canMegaEvolve)
 		return FALSE;
-
-	if (evolutions->unknown == MEGA_VARIANT_ULTRA_BURST) { //Ultra Burst
-		if (!BankMegaEvolved(gActiveBattler, TRUE)) //Checking Ultra Burst
-		{
-			if (UltraData->chosen[gActiveBattler]) {
-				// Turn Off
-				PlaySE(3);
-				UltraData->chosen[gActiveBattler] = FALSE;
-				return TRUE;
-			} 
-			else {
-				// Turn On
-				PlaySE(2);
-				UltraData->chosen[gActiveBattler] = TRUE;
-				return TRUE;
-			}
+		
+	if (moveInfo->megaVariance == MEGA_VARIANT_ULTRA_BURST) { //Ultra Burst
+		if (UltraData->chosen[gActiveBattler]) {
+			// Turn Off
+			PlaySE(3);
+			UltraData->chosen[gActiveBattler] = FALSE;
+			return TRUE;
+		} 
+		else {
+			// Turn On
+			PlaySE(2);
+			UltraData->chosen[gActiveBattler] = TRUE;
+			return TRUE;
 		}
 	}
 	
-	else if (!BankMegaEvolved(gActiveBattler, FALSE) 
-		  && MegaEvolutionEnabled(gActiveBattler) 
-		  && !(ZMoveData->partyIndex[SIDE(gActiveBattler)] & gBitTable[gBattlerPartyIndexes[gActiveBattler]])) //No Mega Evolving if you've used a Z-Move (*cough* *cough* Rayquaza)
-	{ //Regular Megas
+	else { //Regular Megas
 		if (MegaData->chosen[gActiveBattler]) {
 			// Turn Off
 			PlaySE(3);
@@ -270,23 +276,68 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 {
     u32 i;
 	
-	u8* moveTypes = Malloc(sizeof(u8) * MAX_MON_MOVES);
+	struct ChooseMoveStruct* tempMoveStruct = Calloc(sizeof(struct ChooseMoveStruct)); //Make space for new expanded data
+	Memcpy(tempMoveStruct, movePpData, sizeof(struct ChooseMoveStructOld)); //Copy the old data
+	tempMoveStruct->monType3 = gBattleMons[gActiveBattler].type3;
 	
-	for (i = 0; i < MAX_MON_MOVES; ++i)
-		moveTypes[i] = GetMoveTypeSpecial(gActiveBattler, gBattleMons[gActiveBattler].moves[i]);
+	u8* moveTypes = Calloc(sizeof(u8) * MAX_MON_MOVES);
+	u16* movePowers = Calloc(sizeof(u16) * MAX_MON_MOVES);
+	u16* moveAcc = Calloc(sizeof(u16) * MAX_MON_MOVES);
+	
+	gBattleScripting->dmgMultiplier = 1;
+	for (i = 0; i < MAX_MON_MOVES; ++i) {
+		tempMoveStruct->moveTypes[i] = GetMoveTypeSpecial(gActiveBattler, gBattleMons[gActiveBattler].moves[i]);
+		tempMoveStruct->movePowers[i] = GetBasePower(gActiveBattler, FOE(gActiveBattler), gBattleMons[gActiveBattler].moves[i], 
+									 gBattleMons[gActiveBattler].item, ITEM_EFFECT(gActiveBattler), ABILITY(gActiveBattler), 
+									 gBattleMons[gActiveBattler].status1, gBattleMons[gActiveBattler].hp, gBattleMons[gActiveBattler].maxHP, 
+									 gBattleMons[gActiveBattler].species, GetBankPartyData(gActiveBattler), FALSE);
+		
+		if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE) //Because target can vary, display original accuracy
+			tempMoveStruct->moveAcc[i] = gBattleMoves[gBattleMons[gActiveBattler].moves[i]].accuracy;
+		else
+			tempMoveStruct->moveAcc[i] = AccuracyCalc(gBattleMons[gActiveBattler].moves[i], gActiveBattler, FOE(gActiveBattler));
+	}
 
+	if (!MegaData->done[gActiveBattler]) {
+		const struct Evolution* evolutions = CanMegaEvolve(gActiveBattler, FALSE);
+		if (evolutions == NULL)
+			evolutions = CanMegaEvolve(gActiveBattler, TRUE); //Check Ultra Burst
+				
+		if (evolutions != NULL) {
+			if (evolutions->unknown == MEGA_VARIANT_ULTRA_BURST) {
+				if (!BankMegaEvolved(gActiveBattler, TRUE)) {
+					tempMoveStruct->canMegaEvolve = TRUE;
+					tempMoveStruct->megaVariance = evolutions->unknown;
+				}
+			}
+			else {
+				if (!BankMegaEvolved(gActiveBattler, FALSE) && MegaEvolutionEnabled(gActiveBattler) && !(ZMoveData->partyIndex[SIDE(gActiveBattler)] & gBitTable[gBattlerPartyIndexes[gActiveBattler]]))  //No Mega Evolving if you've used a Z-Move (*cough* *cough* Rayquaza)
+				{ 
+					tempMoveStruct->canMegaEvolve = TRUE;
+					tempMoveStruct->megaVariance = evolutions->unknown;
+				}
+			}	
+		}
+	}
+	
+	if (!ZMoveData->used[gActiveBattler] && !(MegaData->partyIndex[SIDE(gActiveBattler)] & gBitTable[gBattlerPartyIndexes[i]])) 
+	{
+		for (i = 0; i < MAX_MON_MOVES; ++i)
+			tempMoveStruct->possibleZMoves[i] = ShouldAIUseZMove(gActiveBattler, i, 0);
+	}
+	
     gBattleBuffersTransferData[0] = CONTROLLER_CHOOSEMOVE;
     gBattleBuffersTransferData[1] = isDoubleBattle;
     gBattleBuffersTransferData[2] = NoPpNumber;
     gBattleBuffersTransferData[3] = 0;
-    for (i = 0; i < sizeof(*movePpData) - 6; i++)
-        gBattleBuffersTransferData[4 + i] = *((u8*)(movePpData) + i);
-	gBattleBuffersTransferData[4 + i] = moveTypes[0];
-	gBattleBuffersTransferData[5 + i] = moveTypes[1];
-	gBattleBuffersTransferData[6 + i] = moveTypes[2];
-	gBattleBuffersTransferData[7 + i] = moveTypes[3];
-	gBattleBuffersTransferData[8 + i] = gBattleMons[gActiveBattler].type3;
-    PrepareBufferDataTransfer(bufferId, gBattleBuffersTransferData, (sizeof(*movePpData) - 1) + 9);
+    for (i = 0; i < sizeof(*tempMoveStruct); ++i)
+        gBattleBuffersTransferData[4 + i] = ((u8*)(tempMoveStruct))[i];
+    PrepareBufferDataTransfer(bufferId, gBattleBuffersTransferData, sizeof(*tempMoveStruct) + 4);
+	
+	Free(tempMoveStruct);
+	Free(moveTypes);
+	Free(moveAcc);
+	Free(movePowers);
 }
 
 void EmitMoveChosen(u8 bufferId, u8 chosenMoveIndex, u8 target, u8 megaState, u8 ultraState, u8 zMoveState)
@@ -324,11 +375,8 @@ void MoveSelectionDisplayMoveType(void)
 }
 
 bool8 MoveSelectionDisplayZMove(void) {
-	if (ZMoveData->used[gActiveBattler] || (MegaData->partyIndex[SIDE(gActiveBattler)] & gBitTable[gBattlerPartyIndexes[gActiveBattler]]))
-		return FALSE;
-
 	struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct*)(&gBattleBufferA[gActiveBattler][4]);
-	u16 zmove = ShouldAIUseZMove(gActiveBattler, 0, moveInfo->moves[gMoveSelectionCursor[gActiveBattler]]);
+	u16 zmove = moveInfo->possibleZMoves[gMoveSelectionCursor[gActiveBattler]];
 	u8 i;
 	
 	if (ZMoveData->viewing) {
@@ -416,12 +464,71 @@ void ZMoveSelectionDisplayPower(void) {
 		txtPtr[0] = 1;
 		txtPtr++;
 		ConvertIntToDecimalStringN(txtPtr, power, STR_CONV_MODE_LEFT_ALIGN, 3);
-		BattlePutTextOnWindow(gDisplayedStringBattle, 8); //Slot of Move 3
+		BattlePutTextOnWindow(gDisplayedStringBattle, 8); //Where Move Type goes
 	}
 	else {
 	}
 }
 
+void MoveSelectionDisplayDetails(void) {
+	u8 *txtPtr;
+	struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct*)(&gBattleBufferA[gActiveBattler][4]);
+	
+	if (ZMoveData->viewingDetails) {
+		ReloadMoveNamesIfNecessary();
+		return;
+	}
+	
+	for (int i = 0; i < MAX_MON_MOVES; ++i) {
+		MoveSelectionDestroyCursorAt(i);
+		StringCopy(gDisplayedStringBattle, StringNull);
+		BattlePutTextOnWindow(gDisplayedStringBattle, i + 3);
+	}
+
+//Diaplay Move Name		
+	StringCopy(gDisplayedStringBattle, gMoveNames[moveInfo->moves[gMoveSelectionCursor[gActiveBattler]]]);	
+	BattlePutTextOnWindow(gDisplayedStringBattle, 3);
+
+//Display Move Accuracy
+	txtPtr = StringCopy(gDisplayedStringBattle, gText_Acc);
+	#ifdef DISPLAY_REAL_ACCURACY_ON_MENU
+		if (moveInfo->moveAcc[gMoveSelectionCursor[gActiveBattler]] == 0)
+			StringCopy(txtPtr, gText_NoMiss);
+		else
+			ConvertIntToDecimalStringN(txtPtr, moveInfo->moveAcc[gMoveSelectionCursor[gActiveBattler]], STR_CONV_MODE_LEFT_ALIGN, 3);
+	#else
+		if (gBattleMoves[moveInfo->moves[gMoveSelectionCursor[gActiveBattler]]].accuracy == 0)
+			StringCopy(txtPtr, gText_NoMiss);
+		else
+			ConvertIntToDecimalStringN(txtPtr, gBattleMoves[moveInfo->moves[gMoveSelectionCursor[gActiveBattler]]].accuracy, STR_CONV_MODE_LEFT_ALIGN, 3);
+	#endif
+	BattlePutTextOnWindow(gDisplayedStringBattle, 3 + 1); //Slot of Move 2
+
+//Display Move Power	
+	txtPtr = StringCopy(gDisplayedStringBattle, gText_Power);
+	#ifdef DISPLAY_REAL_POWER_ON_MENU
+		ConvertIntToDecimalStringN(txtPtr, moveInfo->movePowers[gMoveSelectionCursor[gActiveBattler]], STR_CONV_MODE_LEFT_ALIGN, 3);
+	#else
+		ConvertIntToDecimalStringN(txtPtr, gBattleMoves[moveInfo->moves[gMoveSelectionCursor[gActiveBattler]]].power, STR_CONV_MODE_LEFT_ALIGN, 3);
+	#endif
+	BattlePutTextOnWindow(gDisplayedStringBattle, 3 + 2); //Slot of Move 3
+
+//Display Move Split
+	switch(SPLIT(moveInfo->moves[gMoveSelectionCursor[gActiveBattler]])) {
+		case SPLIT_SPECIAL:
+			StringCopy(gDisplayedStringBattle, gText_Special);
+			break;
+		case SPLIT_STATUS:
+			StringCopy(gDisplayedStringBattle, gText_Status);
+			break;
+		default:
+			StringCopy(gDisplayedStringBattle, gText_Physical);
+	}
+	BattlePutTextOnWindow(gDisplayedStringBattle, 3 + 3); //Slot of Move 4
+	
+	MoveSelectionCreateCursorAt(0, 0);
+	ZMoveData->viewingDetails = TRUE;
+}
 
 void ReloadMoveNamesIfNecessary(void) {
 	if (ZMoveData->viewing) {
@@ -431,6 +538,14 @@ void ReloadMoveNamesIfNecessary(void) {
 		Free(gWindows[3].tileData);
 		gWindows[3].tileData = ZMoveData->backupTilemap;
 		ZMoveData->backupTilemap = NULL;
+		MoveSelectionDestroyCursorAt(0);
+		MoveSelectionDisplayMoveNames();
+		MoveSelectionCreateCursorAt(gMoveSelectionCursor[gActiveBattler], 0);
+		MoveSelectionDisplayPpNumber();
+		MoveSelectionDisplayMoveType();
+	}
+	else if (ZMoveData->viewingDetails) {
+		ZMoveData->viewingDetails = FALSE;
 		MoveSelectionDestroyCursorAt(0);
 		MoveSelectionDisplayMoveNames();
 		MoveSelectionCreateCursorAt(gMoveSelectionCursor[gActiveBattler], 0);
