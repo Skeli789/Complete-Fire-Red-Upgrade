@@ -1,5 +1,6 @@
 #include "defines.h"
 #include "helper_functions.h"
+#include "mega.h"
 #include "AI_Helper_Functions.h"
 
 #define AI_CHOICE_FLEE 4
@@ -59,11 +60,11 @@ void OpponentHandleChooseMove(void)
 							gBankTarget = GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT);
 					}
 				}
-				if (!MegaData->done[gActiveBattler] && CanMegaEvolve(gActiveBattler, FALSE) && !(ZMoveData->partyIndex[SIDE(gActiveBattler)] & gBitTable[gBattlerPartyIndexes[gActiveBattler]]))
+				if (moveInfo->canMegaEvolve && moveInfo->megaVariance != MEGA_VARIANT_ULTRA_BURST)
 					MegaData->chosen[gActiveBattler] = TRUE;
-				else if (!UltraData->done[gActiveBattler] && CanMegaEvolve(gActiveBattler, TRUE))
+				else if (moveInfo->canMegaEvolve && moveInfo->megaVariance == MEGA_VARIANT_ULTRA_BURST)
 					UltraData->chosen[gActiveBattler] = TRUE;
-				else if (!ZMoveData->used[gActiveBattler] && ShouldAIUseZMove(gActiveBattler, chosenMoveId, 0))
+				else if (moveInfo->possibleZMoves[chosenMoveId])
 					ZMoveData->toBeUsed[gActiveBattler] = TRUE;
 				EmitMoveChosen(1, chosenMoveId, gBankTarget, MegaData->chosen[gActiveBattler], UltraData->chosen[gActiveBattler], ZMoveData->toBeUsed[gActiveBattler]);
 				break;
