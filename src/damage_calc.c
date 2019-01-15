@@ -48,7 +48,8 @@ void atk4A_typecalc2(void);
 u32 AI_CalcDmg(u8 bankAtk, u8 bankDef, u16 move);
 u32 AI_CalcPartyDmg(u8 bankAtk, u8 bankDef, u16 move, pokemon_t* mon);
 s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* defender, u32 move, u16 sideStatus, u16 powerOverride, u8 effectivenessFlags, u8 typeOverride, u8 bankAtk, u8 bankDef, pokemon_t* party_data_atk, bool8 party, bool8 IgnoreAttacker, bool8 CheckingConfusion);
-u8 GetBasePower(bank_t bankAtk, bank_t bankDef, move_t, item_t, item_effect_t, ability_t, u32 atk_status1, u16 atk_hp, u16 atk_maxHP, u16 species, pokemon_t* party_data_atk, bool8 party);
+u16 GetBasePower(bank_t bankAtk, bank_t bankDef, move_t, item_t, item_effect_t, ability_t, u32 atk_status1, u16 atk_hp, u16 atk_maxHP, u16 species, pokemon_t* party_data_atk, bool8 party);
+u16 GetZMovePower(u8 bank, u16 move);
 u16 AdjustWeight(u32 weight, ability_t, item_effect_t, bank_t, bool8 check_nimble);
 u8 GetFlingPower(ability_t, item_t, pokemon_t*, bank_t, bool8 PartyCheck);
 void AdjustDamage(bool8 CheckFalseSwipe);
@@ -1052,8 +1053,10 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 		attacker_species = attacker->species;
 	}
 
-//Load Correct Power and Type	
-	if (!powerOverride)
+//Load Correct Power and Type
+	if (ZMoveData->active)
+		gBattleMovePower = GetZMovePower(bankAtk, move);
+	else if (!powerOverride)
         gBattleMovePower = GetBasePower(bankAtk, bankDef, move, attacker_item, attacker_effect, atkAbility, attacker_status1, attacker_hp, attacker_maxHP, attacker_species, party_data_atk, PartyCheck);
     else
         gBattleMovePower = powerOverride;
@@ -1898,7 +1901,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 }
 
 //Banks need to be accurate, even if just checking party data (for side checking)
-u8 GetBasePower (u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 ability, u32 atk_status1, u16 atk_hp, u16 atk_maxHP, u16 species, pokemon_t* party_data_atk, bool8 PartyCheck) {
+u16 GetBasePower (u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 ability, u32 atk_status1, u16 atk_hp, u16 atk_maxHP, u16 species, pokemon_t* party_data_atk, bool8 PartyCheck) {
 	u8 power = gBattleMoves[move].power;
 	int i;
 
@@ -2245,6 +2248,36 @@ u8 GetBasePower (u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 
 			power = udivsi((40 * power), 63) + 30;
 		#endif
 		break;
+	}
+	
+	return power;
+}
+
+u16 GetZMovePower(u8 bank, u16 move) {
+	u16 power = 1;
+	
+	switch (move) {
+		case MOVE_CATASTROPIKA:
+		case MOVE_10000000_VOLT_THUNDERBOLT:
+		case MOVE_STOKED_SPARKSURFER:
+		case MOVE_EXTREME_EVOBOOST:
+		case MOVE_PULVERIZING_PANCAKE:
+		case MOVE_GENESIS_SUPERNOVA:
+		case MOVE_SINISTER_ARROW_RAID:
+		case MOVE_MALICIOUS_MOONSAULT:
+		case MOVE_OCEANIC_OPERETTA:
+		case MOVE_SPLINTERED_STORMSHARDS:
+		case MOVE_LETS_SNUGGLE_FOREVER:
+		case MOVE_CLANGOROUS_SOULBLAZE:
+		case MOVE_GUARDIAN_OF_ALOLA:
+		case MOVE_SEARING_SUNRAZE_SMASH:
+		case MOVE_MENACING_MOONRAZE_MAELSTROM:
+		case MOVE_LIGHT_THAT_BURNS_THE_SKY:
+		case MOVE_SOUL_STEALING_7_STAR_STRIKE:
+			power = gBattleMoves[move].power;
+			break;
+		default:
+			power = gBattleMoves[gBattleMons[bank].moves[gBattleStruct->chosenMovePositions[bank]]].z_move_power;
 	}
 	
 	return power;
