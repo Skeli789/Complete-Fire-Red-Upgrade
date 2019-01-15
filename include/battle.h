@@ -499,6 +499,7 @@ struct StatFractions
 {
     u8 dividend;
     u8 divisor;
+	u16 _;
 };
 
 struct BattleResources
@@ -1081,6 +1082,7 @@ struct ZMoveData
 	bool8 healReplacement : 1;
 	bool8 viewing : 1;
 	bool8 runningZEffect : 1;
+	bool8 viewingDetails : 1; //Not actually related to Z-Moves, I just felt like putting it here
 };
 
 struct SpecialZMoves
