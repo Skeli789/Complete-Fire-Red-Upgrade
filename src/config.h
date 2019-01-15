@@ -22,7 +22,7 @@
 #define TWO_OPPONENT_FLAG 0x9F3 //This flag is set by the engine when trainerbattle 0x11 is used to activate a dual opponent battle
 #define ACTIVATE_TUTORIAL_FLAG 0x9F5 //Setting this flag will allow you to activate Oak's tutorial in any kind of battle (including doubles)
 #define WILD_CUSTOM_MOVES_FLAG 0x26B
-#define SMART_WILD_FLAG 0x9F6 //Set this flag is you want don't wild Pokemon to act randomly (useful for one time smarter wild battles)
+#define SMART_WILD_FLAG 0x9F6 //Set this flag is you don't want wild Pokemon to act randomly (useful for one time smarter wild battles). This is cleared at the end of the battle.
 
 #define SECOND_OPPONENT_VAR 0x50BE //Set this to the var used to store the Trainer Id of the second opponent in Multi Battles (can be any free var)
 #define PARTNER_VAR 0x50BF //Set this to the var used to store the Trainer Id of your partner in Multi Battles (can be any free var)
@@ -88,8 +88,10 @@ enum
 #define TRAINERS_WITH_EVS //Comment this line to disbale the Trainers with EVs hack, (only avaible with custom moveset)
 #define CONTINUE_LOST_BATTLES //Commenting this line will remove the feature of using trainerbattle 0x9 to continue lost battles if var 0x8000 is set to 0xFEFE
 #define CLASS_BASED_BALLS_MULTI_FIX //If this line is uncommented, In Multi Battles, to avoid graphical bugs, the 2nd opponent and your partner will use the same Poke Ball as the 1st opponent. If you don't mind the bugs, comment out this line.
-/*Needs Fixing if Undefined*/ #define REALLY_SMART_AI //Comment this line if you don't want the AI knowing everything about your pokemon (such as which moves it has, its ability, item, etc.) without having seen it first
+/*Needs Fixing if Undefined*/ #define REALLY_SMART_AI //Comment this line if you don't want the AI knowing everything about your pokemon (such as which moves it has, its ability, item, etc.) without having seen it first. This does not allow the AI to know what move you'll use before you use it.
 #define DISPLAY_REAL_MOVE_TYPE_ON_MENU //If this line remains uncommented, the "true" move type will be displayed (such as Hidden Power, Weather Ball in Weather, etc.)
+#define DISPLAY_REAL_ACCURACY_ON_MENU //If this line remains uncommented, the "true" move accuracy will be displayed (Eg. The move Psychic on a Pokemon with Compound Eyes will have its accuracy appear as 130)
+#define DISPLAY_REAL_POWER_ON_MENU //If this line remains uncommented, the "true" move power will be displayed (Eg. Moves like Fury Cutter will show their correct power)
 
 /* Misc Effect Options */
 //#define OLD_BURN_DAMAGE //Uncomment this line if you want burn damage to do 1/8 of max health instead of 1/16
@@ -133,3 +135,4 @@ enum
 #define GEN_4_PLAYER_RUNNING_FIX //Uncommmenting this line will increase the lag between frames as the player OW runs, to simulate a more accurate Gen 4 running effect
 #define GEN4_PLUS_SELECTION_SCREEN //Uncommenting this line does not give you the Gen 4+ selection screen, it only adds features that supports it
 //#define OBEDIENCE_CHECK_FOR_PLAYER_ORIGINAL_POKEMON //Uncommenting line line will open up the possibilty that the Player's Pokemon can disobey them (not just traded mons)
+//#define WILD_ALWAYS_SMART //Uncomment this line if you want all Wild Pokemon to act smartly
