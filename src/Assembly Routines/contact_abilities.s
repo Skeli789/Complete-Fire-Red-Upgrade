@@ -23,9 +23,7 @@ Contact Abilities:
 
 */
 
-.include "src/headers/asm_defines.s"
-.include "src/headers/bs_macros.s"
-.include "src/headers/help_funcs.s"
+.include "..\\defines"
 
 .global ContactAbilityLoadTable
 .global ContactAbilityTable
@@ -45,6 +43,7 @@ Contact Abilities:
 .global BerserkCheck
 .global InnardsOutCheck
 
+/*
 @ Contact Ability Table @
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -1470,7 +1469,7 @@ raise_speed_str:	@ weak armor
 
 emergency_exit_str:
 .byte 0
-
+*/
 	
 	
 	
