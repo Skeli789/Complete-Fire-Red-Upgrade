@@ -2,12 +2,12 @@
 #include "helper_functions.h"
 #include "mega.h"
 #include "AI_Helper_Functions.h"
+#include "z_move_effects.h"
 
-//Include Z-Power Effect under Status-Z name
 //Make The Z-Move Names change colour (look in SetPpNumbersPaletteInMoveSelection)
-//Add support for proper accuracies in doubles
 //Deal with Move Switching
 
+#define TXT_PLUS 0x2E
 #define SE_SELECT 0x5
 #define gText_BattleSwitchWhich (u8*) 0x83FE7A0
 #define gText_TypeWord (u8*) 0x83FE76A
@@ -24,6 +24,12 @@ extern u8 gText_NoMiss[];
 extern u8 gText_Physical[];
 extern u8 gText_Special[];
 extern u8 gText_Status[];
+extern u8 gText_ResetStats[];
+extern u8 gText_StatsPlus[];
+extern u8 gText_CritHitsPlus[];
+extern u8 gText_FollowMe[];
+extern u8 gText_RecoverHP[];
+extern u8 gText_HealAllyHP[];
 
 extern const struct Evolution* CanMegaEvolve(u8 bank, bool8 CheckUBInstead);
 extern bool8 MegaEvolutionEnabled(u8 bank);
@@ -31,6 +37,8 @@ extern bool8 BankMegaEvolved(u8 bank, bool8 checkUB);
 extern u8 GetMoveTypeSpecial(u8 bankAtk, move_t);
 extern u16 GetBasePower(bank_t bankAtk, bank_t bankDef, move_t, item_t, item_effect_t, ability_t, u32 atk_status1, u16 atk_hp, u16 atk_maxHP, u16 species, pokemon_t* party_data_atk, bool8 party);
 extern u32 AccuracyCalc(u16 move, u8 bankAtk, u8 bankDef);
+extern u32 AccuracyCalcNoTarget(u16 move, u8 bankAtk);
+extern u8 CheckMoveLimitations(u8 bank, u8 unusableMoves, u8 check);
 
 void HandleInputChooseMove(void);
 bool8 TriggerMegaEvolution(void);
@@ -58,9 +66,11 @@ void HandleInputChooseMove(void)
 			ZMoveData->viewing = FALSE;
 			gWindows[3].window.width = 8; //Restore Window Size from Z-Move mod
 			gWindows[3].window.height = 2;
-			Free(gWindows[3].tileData);
-			gWindows[3].tileData = ZMoveData->backupTilemap;
-			ZMoveData->backupTilemap = NULL;
+			if (ZMoveData->backupTilemap) {
+				Free(gWindows[3].tileData);
+				gWindows[3].tileData = ZMoveData->backupTilemap;
+				ZMoveData->backupTilemap = NULL;
+			}
 		}
 		
 		ZMoveData->viewingDetails = FALSE;
@@ -131,9 +141,11 @@ void HandleInputChooseMove(void)
 			ZMoveData->viewing = FALSE;
 			gWindows[3].window.width = 8; //Restore Window Size from Z-Move mod
 			gWindows[3].window.height = 2;
-			Free(gWindows[3].tileData);
-			gWindows[3].tileData = ZMoveData->backupTilemap;
-			ZMoveData->backupTilemap = NULL;
+			if (ZMoveData->backupTilemap) {
+				Free(gWindows[3].tileData);
+				gWindows[3].tileData = ZMoveData->backupTilemap;
+				ZMoveData->backupTilemap = NULL;
+			}
 		}
 		ZMoveData->viewingDetails = FALSE;
 		gMoveSelectionCursor[gActiveBattler] = 0;
@@ -278,6 +290,8 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 	
 	struct ChooseMoveStruct* tempMoveStruct = Calloc(sizeof(struct ChooseMoveStruct)); //Make space for new expanded data
 	Memcpy(tempMoveStruct, movePpData, sizeof(struct ChooseMoveStructOld)); //Copy the old data
+	tempMoveStruct->monType1 = gBattleMons[gActiveBattler].type1;
+	tempMoveStruct->monType2 = gBattleMons[gActiveBattler].type2;
 	tempMoveStruct->monType3 = gBattleMons[gActiveBattler].type3;
 	
 	u8* moveTypes = Calloc(sizeof(u8) * MAX_MON_MOVES);
@@ -292,8 +306,8 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 									 gBattleMons[gActiveBattler].status1, gBattleMons[gActiveBattler].hp, gBattleMons[gActiveBattler].maxHP, 
 									 gBattleMons[gActiveBattler].species, GetBankPartyData(gActiveBattler), FALSE);
 		
-		if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE) //Because target can vary, display original accuracy
-			tempMoveStruct->moveAcc[i] = gBattleMoves[gBattleMons[gActiveBattler].moves[i]].accuracy;
+		if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && CountAliveMons(1) + CountAliveMons(2) > 2) //Because target can vary, display only attacker's acc modifiers
+			tempMoveStruct->moveAcc[i] = AccuracyCalcNoTarget(gBattleMons[gActiveBattler].moves[i], gActiveBattler);
 		else
 			tempMoveStruct->moveAcc[i] = AccuracyCalc(gBattleMons[gActiveBattler].moves[i], gActiveBattler, FOE(gActiveBattler));
 	}
@@ -323,7 +337,8 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 	if (!ZMoveData->used[gActiveBattler] && !(MegaData->partyIndex[SIDE(gActiveBattler)] & gBitTable[gBattlerPartyIndexes[i]])) 
 	{
 		for (i = 0; i < MAX_MON_MOVES; ++i)
-			tempMoveStruct->possibleZMoves[i] = ShouldAIUseZMove(gActiveBattler, i, 0);
+			if (!(CheckMoveLimitations(gActiveBattler, 0, 0xFF) & gBitTable[i]))
+				tempMoveStruct->possibleZMoves[i] = ShouldAIUseZMove(gActiveBattler, i, 0);
 	}
 	
     gBattleBuffersTransferData[0] = CONTROLLER_CHOOSEMOVE;
@@ -392,21 +407,106 @@ bool8 MoveSelectionDisplayZMove(void) {
 			BattlePutTextOnWindow(gDisplayedStringBattle, i + 3);
 		}
 		
-		if (zmove == 0xFFFF) {
+		if (zmove == 0xFFFF) 
+		{	
+			u8 zEffect = gBattleMoves[moveInfo->moves[gMoveSelectionCursor[gActiveBattler]]].z_move_effect;
+			
+			if (zEffect == Z_EFFECT_CURSE) {
+				if (moveInfo->monType1 == TYPE_GHOST || moveInfo->monType2 == TYPE_GHOST || moveInfo->monType3 == TYPE_GHOST)
+					zEffect = Z_EFFECT_RECOVER_HP;
+				else
+					zEffect = Z_EFFECT_ATK_UP_1;
+			}
+			
+			gDisplayedStringBattle[0] = EOS;
+			switch (zEffect) {
+				case Z_EFFECT_RESET_STATS:
+					StringCopy(gDisplayedStringBattle, gText_ResetStats);
+					break;
+				case Z_EFFECT_ALL_STATS_UP_1:
+					StringCopy(gDisplayedStringBattle, gText_StatsPlus);
+					break;
+					
+				case Z_EFFECT_BOOST_CRITS:
+					StringCopy(gDisplayedStringBattle, gText_CritHitsPlus);
+					break;
+						
+				case Z_EFFECT_FOLLOW_ME:
+					StringCopy(gDisplayedStringBattle, gText_FollowMe);
+					break;
+						
+				case Z_EFFECT_RECOVER_HP:
+					StringCopy(gDisplayedStringBattle, gText_RecoverHP);
+					break;
+					
+				case Z_EFFECT_RESTORE_REPLACEMENT_HP:
+					StringCopy(gDisplayedStringBattle, gText_HealAllyHP);
+					break;
+					
+				case Z_EFFECT_ATK_UP_1:
+				case Z_EFFECT_DEF_UP_1:
+				case Z_EFFECT_SPD_UP_1:
+				case Z_EFFECT_SPATK_UP_1:
+				case Z_EFFECT_SPDEF_UP_1:
+				case Z_EFFECT_ACC_UP_1:
+				case Z_EFFECT_EVSN_UP_1:
+					gDisplayedStringBattle[0] = TXT_PLUS;
+					gDisplayedStringBattle[1] = 0;
+					gDisplayedStringBattle[2] = EOS;
+					PREPARE_STAT_BUFFER(gBattleTextBuff1, zEffect - Z_EFFECT_ATK_UP_1 + 1);
+					ExpandBattleTextBuffPlaceholders(gBattleTextBuff1, gDisplayedStringBattle + 2);
+					break;
+						
+				case Z_EFFECT_ATK_UP_2:
+				case Z_EFFECT_DEF_UP_2:
+				case Z_EFFECT_SPD_UP_2:
+				case Z_EFFECT_SPATK_UP_2:
+				case Z_EFFECT_SPDEF_UP_2:
+				case Z_EFFECT_ACC_UP_2:
+				case Z_EFFECT_EVSN_UP_2:
+					gDisplayedStringBattle[0] = TXT_PLUS;
+					gDisplayedStringBattle[1] = TXT_PLUS;
+					gDisplayedStringBattle[2] = 0;
+					gDisplayedStringBattle[3] = EOS;
+					PREPARE_STAT_BUFFER(gBattleTextBuff1, zEffect - Z_EFFECT_ATK_UP_2 + 1);
+					ExpandBattleTextBuffPlaceholders(gBattleTextBuff1, gDisplayedStringBattle + 3);
+					break;
+						
+				case Z_EFFECT_ATK_UP_3:
+				case Z_EFFECT_DEF_UP_3:
+				case Z_EFFECT_SPD_UP_3:
+				case Z_EFFECT_SPATK_UP_3:
+				case Z_EFFECT_SPDEF_UP_3:
+				case Z_EFFECT_ACC_UP_3:
+				case Z_EFFECT_EVSN_UP_3:
+					gDisplayedStringBattle[0] = TXT_PLUS;
+					gDisplayedStringBattle[1] = TXT_PLUS;
+					gDisplayedStringBattle[2] = TXT_PLUS;
+					gDisplayedStringBattle[3] = 0;
+					gDisplayedStringBattle[4] = EOS;
+					PREPARE_STAT_BUFFER(gBattleTextBuff1, zEffect - Z_EFFECT_ATK_UP_3 + 1);
+					ExpandBattleTextBuffPlaceholders(gBattleTextBuff1, gDisplayedStringBattle + 4);
+					break;
+			}
+			BattlePutTextOnWindow(gDisplayedStringBattle, 3 + 2); //Slot of Move 3
+			
 			gDisplayedStringBattle[0] = 0xD4;
 			gDisplayedStringBattle[1] = 0xAE; //Z-
 			StringCopy(gDisplayedStringBattle + 2, gMoveNames[moveInfo->moves[gMoveSelectionCursor[gActiveBattler]]]);
+			gWindows[3].window.width = 16;
 		}
 		else
+		{
 			StringCopy(gDisplayedStringBattle, ZMoveNames[zmove - MOVE_BREAKNECK_BLITZ_P]);
-		
-		gWindows[3].window.width = 17;
-		gWindows[3].window.height = 4; //Double the size to help super long Z-move names
+			gWindows[3].window.width = 17;
+			gWindows[3].window.height = 4; //Double the size to help super long Z-move names
+			ZMoveSelectionDisplayPower();
+		}
 		ZMoveData->backupTilemap = gWindows[3].tileData;
 		gWindows[3].tileData = Calloc(0x880); //Because of the size expansion of the tile map, new memory was necessary to display the Z-Move name
 		BattlePutTextOnWindow(gDisplayedStringBattle, 3);
+			
 		ZMoveSelectionDisplayPpNumber();
-		ZMoveSelectionDisplayPower();
 		MoveSelectionCreateCursorAt(0, 0);
 		ZMoveData->viewing = TRUE;
 		PlaySE(2); //Turn On
@@ -443,7 +543,7 @@ void ZMoveSelectionDisplayPower(void) {
 	u16 move = moveInfo->moves[gMoveSelectionCursor[gActiveBattler]];
 	u8 power = gBattleMoves[move].z_move_power;
 	
-	u16 zmove = ShouldAIUseZMove(gActiveBattler, 0, moveInfo->moves[gMoveSelectionCursor[gActiveBattler]]);
+	u16 zmove = moveInfo->possibleZMoves[gMoveSelectionCursor[gActiveBattler]];
 	
 	if (zmove >= MOVE_CATASTROPIKA)
 		power = gBattleMoves[zmove].power;
@@ -535,9 +635,13 @@ void ReloadMoveNamesIfNecessary(void) {
 		ZMoveData->viewing = FALSE;
 		gWindows[3].window.width = 8; //Restore Window Size from Z-Move mod
 		gWindows[3].window.height = 2;
-		Free(gWindows[3].tileData);
-		gWindows[3].tileData = ZMoveData->backupTilemap;
-		ZMoveData->backupTilemap = NULL;
+		
+		if (ZMoveData->backupTilemap) {
+			Free(gWindows[3].tileData);
+			gWindows[3].tileData = ZMoveData->backupTilemap;
+			ZMoveData->backupTilemap = NULL;
+		}
+		
 		MoveSelectionDestroyCursorAt(0);
 		MoveSelectionDisplayMoveNames();
 		MoveSelectionCreateCursorAt(gMoveSelectionCursor[gActiveBattler], 0);
