@@ -1645,7 +1645,7 @@ u8 CheckMoveLimitations(u8 bank, u8 unusableMoves, u8 check) {
             unusableMoves |= gBitTable[i];
         else if (move == gLastUsedMoves[bank] && check & MOVE_LIMITATION_TORMENTED && gBattleMons[bank].status2 & STATUS2_TORMENT)
             unusableMoves |= gBitTable[i];
-        else if (gDisableStructs[bank].tauntTimer1 && check & MOVE_LIMITATION_TAUNT && gBattleMoves[move].power == 0)
+        else if (gDisableStructs[bank].tauntTimer1 && check & MOVE_LIMITATION_TAUNT && SPLIT(move) == SPLIT_STATUS)
             unusableMoves |= gBitTable[i];
         else if (IsImprisoned(bank, move) && check & MOVE_LIMITATION_IMPRISION)
             unusableMoves |= gBitTable[i];
