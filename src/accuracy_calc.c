@@ -13,6 +13,7 @@ bool8 JumpIfMoveAffectedByProtect(move_t, bank_t, bank_t);
 bool8 ProtectAffects(move_t, bank_t, bank_t, u8 set);
 bool8 AccuracyCalcHelper(move_t);
 u32 AccuracyCalc(move_t, bank_t, bank_t);
+u32 AccuracyCalcNoTarget(u16 move, u8 bankAtk);
 
 /*Other Necessary Functions:
 JumpIfMoveFailed
@@ -196,7 +197,7 @@ u32 AccuracyCalc(u16 move, u8 bankAtk, u8 bankDef) {
         u8 defQuality = ITEM_QUALITY(gBattleMons[bankDef].item);
 		u8 atkAbility = ABILITY(bankAtk);
 		u8 defAbility = ABILITY(bankDef);
-		u8 move_split = SPLIT(move);
+		u8 moveSplit = SPLIT(move);
 		
 		u8 acc;
 		if (defAbility == ABILITY_UNAWARE)
@@ -225,7 +226,7 @@ u32 AccuracyCalc(u16 move, u8 bankAtk, u8 bankDef) {
 			moveAcc = 50;
 		
 		//Check Wonder Skin for Status moves
-		if (defAbility == ABILITY_WONDERSKIN && move_split == SPLIT_STATUS && moveAcc > 50)
+		if (defAbility == ABILITY_WONDERSKIN && moveSplit == SPLIT_STATUS && moveAcc > 50)
 			moveAcc = 50;
 		
         calc = gAccuracyStageRatios[buff].dividend * moveAcc;
@@ -237,7 +238,7 @@ u32 AccuracyCalc(u16 move, u8 bankAtk, u8 bankDef) {
 				break;
 			
 			case ABILITY_HUSTLE:
-				if (move_split == SPLIT_PHYSICAL)
+				if (moveSplit == SPLIT_PHYSICAL)
 					calc = udivsi((calc * 80), 100); // 0.8 Hustle loss;
 				break;
 			
@@ -245,7 +246,7 @@ u32 AccuracyCalc(u16 move, u8 bankAtk, u8 bankDef) {
 				calc = udivsi((calc * 110), 100); // 1.1 Victory Star boost
 		}
 		
-		if (ABILITY(PARTNER(bankAtk)) == ABILITY_VICTORYSTAR)
+		if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && ABILITY(PARTNER(bankAtk)) == ABILITY_VICTORYSTAR)
             calc = udivsi((calc * 110), 100); // 1.1 Victory Star partner boost
 	
 		if (WEATHER_HAS_EFFECT) {
@@ -283,6 +284,57 @@ u32 AccuracyCalc(u16 move, u8 bankAtk, u8 bankDef) {
         if (defEffect == ITEM_EFFECT_EVASION_UP)
             calc = udivsi((calc * (100 - defQuality)), 100); // 0.9 Bright Powder/Lax Incense loss
 			
+		if (MicleBerryBits & (1 << bankAtk))
+			calc = udivsi(calc * 120, 100); // 1.2 Micle Berry Boost
+			
+	return calc;
+}
+
+u32 AccuracyCalcNoTarget(u16 move, u8 bankAtk) {
+        u8 moveAcc;
+		u8 acc;
+        u32 calc;
+		u8 atkEffect  = ITEM_EFFECT(bankAtk);
+		u8 atkQuality = ITEM_QUALITY(gBattleMons[bankAtk].item);
+		u8 atkAbility = ABILITY(bankAtk);
+		u8 moveSplit = SPLIT(move);
+		
+		acc = gBattleMons[bankAtk].statStages[STAT_STAGE_ACC-1];			
+		moveAcc = gBattleMoves[move].accuracy;
+		
+        //Check Thunder + Hurricane in sunny weather
+        if (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_SUN_ANY) && (move == MOVE_THUNDER || move == MOVE_HURRICANE))
+			moveAcc = 50;
+		
+        calc = gAccuracyStageRatios[acc].dividend * moveAcc;
+        calc = udivsi(calc, gAccuracyStageRatios[acc].divisor);
+		
+		switch (atkAbility) {
+			case ABILITY_COMPOUNDEYES:
+				calc = udivsi((calc * 130), 100); // 1.3 Compound Eyes boost
+				break;
+			
+			case ABILITY_HUSTLE:
+				if (moveSplit == SPLIT_PHYSICAL)
+					calc = udivsi((calc * 80), 100); // 0.8 Hustle loss;
+				break;
+			
+			case ABILITY_VICTORYSTAR:
+				calc = udivsi((calc * 110), 100); // 1.1 Victory Star boost
+		}
+		
+		if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && ABILITY(PARTNER(bankAtk)) == ABILITY_VICTORYSTAR)
+            calc = udivsi((calc * 110), 100); // 1.1 Victory Star partner boost
+	
+		if (WEATHER_HAS_EFFECT &&  gBattleWeather & WEATHER_FOG_ANY)
+			calc = udivsi((calc * 60), 100); // 0.6 Fog loss
+		
+		if (atkEffect == ITEM_EFFECT_WIDE_LENS)
+			calc = udivsi((calc * (100 + atkQuality)), 100); // 1.1 Wide Lens boost
+		
+		if (GravityTimer)
+			calc = udivsi((calc * 5), 3); // 5/3 Gravity boost
+		
 		if (MicleBerryBits & (1 << bankAtk))
 			calc = udivsi(calc * 120, 100); // 1.2 Micle Berry Boost
 			
