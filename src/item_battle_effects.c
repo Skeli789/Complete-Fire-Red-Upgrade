@@ -729,9 +729,9 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
         }
 			
         break;
-    case 3:
+/*    case 3:
 			
-	/*
+	
         for (bank = 0; bank < gBattlersCount; bank++)
         {
             gLastUsedItem = gBattleMons[bank].item;
@@ -866,7 +866,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
 	*/
         break;
 	
-    case 4:
+    case ItemEffects_ContactAttacker:
         if (gBattleMoveDamage)
         {
             switch (atkHoldEffect)
