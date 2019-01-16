@@ -1,0 +1,2 @@
+-Certain Status Z-Moves (like Z-Destiny Bond) are displayed on the Move Menu will a small graphical oddity.
+-Curse doesn't work
