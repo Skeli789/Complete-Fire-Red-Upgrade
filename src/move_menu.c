@@ -6,6 +6,9 @@
 
 //Make The Z-Move Names change colour (look in SetPpNumbersPaletteInMoveSelection)
 //Deal with Move Switching
+//No recalc of priority if damaging Z-Move is chosen
+//Remove additional effects from Z Move (if not already done)
+//The Z-Move should be loaded in to gCurrentMove before the attack canceler (near Mega)
 
 #define TXT_PLUS 0x2E
 #define SE_SELECT 0x5
@@ -13,6 +16,7 @@
 #define gText_TypeWord (u8*) 0x83FE76A
 #define gText_MoveInterfaceType (u8*) 0x83FE770
 #define Pal_PPDisplay (u16*) 0x8D2FBB4
+#define MOVE_LIMITATION_PP          (1 << 1)
 
 extern u8* ZMoveNames[];
 extern u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
@@ -337,7 +341,7 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 	if (!ZMoveData->used[gActiveBattler] && !(MegaData->partyIndex[SIDE(gActiveBattler)] & gBitTable[gBattlerPartyIndexes[i]])) 
 	{
 		for (i = 0; i < MAX_MON_MOVES; ++i)
-			if (!(CheckMoveLimitations(gActiveBattler, 0, 0xFF) & gBitTable[i]))
+			if (!(CheckMoveLimitations(gActiveBattler, 0, MOVE_LIMITATION_PP) & gBitTable[i])) //Don't display a Z-Move if the base move has no PP
 				tempMoveStruct->possibleZMoves[i] = ShouldAIUseZMove(gActiveBattler, i, 0);
 	}
 	
@@ -423,6 +427,7 @@ bool8 MoveSelectionDisplayZMove(void) {
 				case Z_EFFECT_RESET_STATS:
 					StringCopy(gDisplayedStringBattle, gText_ResetStats);
 					break;
+					
 				case Z_EFFECT_ALL_STATS_UP_1:
 					StringCopy(gDisplayedStringBattle, gText_StatsPlus);
 					break;
