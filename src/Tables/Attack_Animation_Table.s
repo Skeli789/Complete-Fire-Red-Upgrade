@@ -17,7 +17,8 @@
 .global LIGHTOFRUIN_ASM		@ hook at 0xae5ec via r0
 .global SKILLSWAP_CHOOSER	@ hook at 0xb39b4 via r0 - choose btwn skill swap, power swap
 .global EMBARGO_ASM			@ hook at 0xb68e4 via r0 - grudge on target vs attacker side
-
+.global SLUDGE_WAVE_ASM		@ hook at 0xab43c via r0 - change sludge wave color
+.global ROLLOUT_TIMER_ASM	@ hook at 0xb4c40 via r0 - skip over rollout timer for tectonic rage
 
 /* attack animation table */
 .align 2
@@ -700,42 +701,42 @@ AttackAnimationTable:
 .word ANIM_SKYDROP
 .word ANIM_CELEBRATE
 .word ANIM_HOLDHANDS
-.word ANIM_BREAKNECK_BLITZ_P
-.word ANIM_BREAKNECK_BLITZ_S
-.word ANIM_ALL_OUT_PUMMELING_P
-.word ANIM_ALL_OUT_PUMMELING_S
-.word ANIM_SUPERSONIC_SKYSTRIKE_P
-.word ANIM_SUPERSONIC_SKYSTRIKE_S
-.word ANIM_ACID_DOWNPOUR_P
-.word ANIM_ACID_DOWNPOUR_S
-.word ANIM_TECTONIC_RAGE_P
-.word ANIM_TECTONIC_RAGE_S
-.word ANIM_CONTINENTAL_CRUSH_P
-.word ANIM_CONTINENTAL_CRUSH_S
-.word ANIM_SAVAGE_SPIN_OUT_P
-.word ANIM_SAVAGE_SPIN_OUT_S
-.word ANIM_NEVER_ENDANIMATIONING_NIGHTMARE_P
-.word ANIM_NEVER_ENDANIMATIONING_NIGHTMARE_S
-.word ANIM_CORKSCREW_CRASH_P
-.word ANIM_CORKSCREW_CRASH_S
-.word ANIM_INFERNO_OVERDRIVE_P
-.word ANIM_INFERNO_OVERDRIVE_S
-.word ANIM_HYDRO_VORTEX_P
-.word ANIM_HYDRO_VORTEX_S
-.word ANIM_BLOOM_DOOM_P
-.word ANIM_BLOOM_DOOM_S
-.word ANIM_GIGAVOLT_HAVOC_P
-.word ANIM_GIGAVOLT_HAVOC_S
-.word ANIM_SHATTERED_PSYCHE_P
-.word ANIM_SHATTERED_PSYCHE_S
-.word ANIM_SUBZERO_SLAMMER_P
-.word ANIM_SUBZERO_SLAMMER_S
-.word ANIM_DEVASTATING_DRAKE_P
-.word ANIM_DEVASTATING_DRAKE_S
-.word ANIM_BLACK_HOLE_ECLIPSE_P
-.word ANIM_BLACK_HOLE_ECLIPSE_S
-.word ANIM_TWINKLE_TACKLE_P
-.word ANIM_TWINKLE_TACKLE_S
+.word ANIM_BREAKNECK_BLITZ
+.word ANIM_BREAKNECK_BLITZ
+.word ANIM_ALL_OUT_PUMMELING
+.word ANIM_ALL_OUT_PUMMELING
+.word ANIM_SUPERSONIC_SKYSTRIKE
+.word ANIM_SUPERSONIC_SKYSTRIKE
+.word ANIM_ACID_DOWNPOUR
+.word ANIM_ACID_DOWNPOUR
+.word ANIM_TECTONIC_RAGE
+.word ANIM_TECTONIC_RAGE
+.word ANIM_CONTINENTAL_CRUSH
+.word ANIM_CONTINENTAL_CRUSH
+.word ANIM_SAVAGE_SPIN_OUT
+.word ANIM_SAVAGE_SPIN_OUT
+.word ANIM_NEVER_ENDANIMATIONING_NIGHTMARE
+.word ANIM_NEVER_ENDANIMATIONING_NIGHTMARE
+.word ANIM_CORKSCREW_CRASH
+.word ANIM_CORKSCREW_CRASH
+.word ANIM_INFERNO_OVERDRIVE
+.word ANIM_INFERNO_OVERDRIVE
+.word ANIM_HYDRO_VORTEX
+.word ANIM_HYDRO_VORTEX
+.word ANIM_BLOOM_DOOM
+.word ANIM_BLOOM_DOOM
+.word ANIM_GIGAVOLT_HAVOC
+.word ANIM_GIGAVOLT_HAVOC
+.word ANIM_SHATTERED_PSYCHE
+.word ANIM_SHATTERED_PSYCHE
+.word ANIM_SUBZERO_SLAMMER
+.word ANIM_SUBZERO_SLAMMER
+.word ANIM_DEVASTATING_DRAKE
+.word ANIM_DEVASTATING_DRAKE
+.word ANIM_BLACK_HOLE_ECLIPSE
+.word ANIM_BLACK_HOLE_ECLIPSE
+.word ANIM_TWINKLE_TACKLE
+.word ANIM_TWINKLE_TACKLE
 .word ANIM_CATASTROPIKA
 .word ANIM_10000000_VOLT_THUNDERBOLT
 .word ANIM_STOKED_SPARKSURFER
@@ -14454,202 +14455,738 @@ ANIM_DOUBLEIRONBASH:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
+@ credit to ghoulslash
 ANIM_LASTRESORT:
-endanimation
+	loadparticle 0x27db 
+	loadparticle 0x27ff
+	loadparticle 0x2741
+	loadparticle 0x2759
+	loadparticle 0x2797
+	pokespritetoBG side_target
+	playsound2 0xb1 0xc0 
+	launchtemplate LR_RING 0x3 0x4 0x0 0x0 0x100 0x0 
+	pause 0xa
+	call LASTRESORT_CALL
+	waitanimation
+	launchtemplate 0x83e40c8 0x28 0x4 0x0 0x0 bank_target 0x0
+	waitanimation 
+	launchtemplate Template_Hit 0x2 0x4 0x0 0x0 0x1 0x2
+	launchtemplate LASTRESORT_STARS 0x83 0x4 0xfff0 0xfff8 0xa0 0xffe0 
+	launchtemplate LASTRESORT_STARS 0x83 0x4 0xfff0 0xfff8 0xff00 0xffd8 
+	launchtemplate LASTRESORT_STARS 0x83 0x4 0xfff0 0xfff8 0x80 0xfff0 
+	launchtemplate LASTRESORT_STARS 0x83 0x4 0xfff0 0xfff8 0x1a0 0xffda 
+	launchtemplate LASTRESORT_STARS 0x83 0x4 0xfff0 0xfff8 0xff80 0xffea 
+	launchtemplate LASTRESORT_STARS 0x83 0x4 0xfff0 0xfff8 0xfe80 0xffe1 	
+	playsound2 0xdd 0x3f 	
+	pokespritefromBG side_target 
+	endanimation 
+	
+LASTRESORT_CALL:
+	launchtemplate LR_SPARKLES 0x2 0x6 0xfff1 0x0 bank_target 0x0 0x20 0x3c
+	pause 0x8
+	launchtemplate LR_SPARKLES 0x2 0x6 0xC 0xfffb bank_target 0x0 0x20 0x3c
+	pause 0x8
+	return
+	
+.align 2
+LR_RING: objtemplate 0x27DB 0x27db 0x83ACAA0 0x8231CF0 0x0 0x83E4088 0x8075D9D 
+LR_SPARKLES: objtemplate 0x2741 0x27ff 0x83ac9d8 0x83e33f0 0x0 0x8231cfc 0x80a4d0d
+LASTRESORT_STARS: objtemplate 0x27FF 0x2759 0x83AC9D0 0x8231CF0 0x0 0x8231CFC 0x80B0DF1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
 ANIM_SKYDROP:
-endanimation
+	loadparticle 0x27ac 
+	loadparticle 0x2797 
+	choosetwoturnanim SD_FIRST_TURN SD_SECOND_TURN
+	endanimation
+
+SD_FIRST_TURN:
+	makebankinvisible bank_attacker
+	loadparticle 0x27ab 
+	loadparticle 0x281e 
+	pause 0x0 
+	playsound2 0x7a 0xc0 
+	launchtemplate 0x83e64e8 0x80 0x6 0x0 0x0 0x0 0x0 0x1e 0x0 
+	waitanimation 
+	makebankinvisible bank_target
+	playsound2 0x97 0xc0 
+	launchtemplate 0x83e6bb8 0x2 0x4 0x0 0x0 0xd 0x150 
+	endanimation 	
+	
+SD_SECOND_TURN:
+	makebankvisible bank_target
+	pokespritetoBG side_target 
+	setblends 0x80c 
+	playsound2 0xba 0x3f 
+	launchtemplate 0x83e6cfc 0x83 0x0 
+	pause 0x7 
+	playsound2 0x86 0x3f 
+	launchtemplate Template_Hit 0x82 0x4 0x0 0x0 0x1 0x0 
+	launchtask AnimTask_move_bank 0x5 0x5 0x1 0x0 0x5 0xb 0x1 
+	waitanimation 
+	pokespritefromBG side_target 
+	resetblends 
+	goto 0x81cfc96 
+	loadparticle 0x279f 
+	loadparticle 0x2797 
+	pokespritetoBG side_target 
+	leftbankBG_over_partnerBG bank_target 
+	setblends 0x80c 
+	playsound2 0x80 0x3f 
+	launchtemplate 0x83e66e0 0x2 0x8 0xfff0 0x0 0x0 0x0 0xa 0x1 0x3 0x0 
+	waitanimation 
+	playsound2 0x84 0x3f 
+	launchtemplate Template_Hit 0x3 0x4 0x0 0x0 0x1 0x2 
+	launchtask AnimTask_move_bank 0x5 0x5 0x1 0x4 0x0 0x6 0x1 
+	waitanimation 
+	pokespritefromBG side_target 
+	resetblends 
+	endanimation 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
+@ credit to ghoulslash
 ANIM_CELEBRATE:
+	loadparticle 0x27f0 
+	launchtemplate CELEBRATE_TEMPLATE 0x2 0x1 0x0 
+	playsound2 0xa0 0xc0 
+	pause 0x12 
+	playsound2 0xdb 0xc0 
+	pause 0x47 
+	soundcomplex 0xa0 0xc0 0x16 0x3 
+	endanimation 
+	
+.align 2	
+CELEBRATE_TEMPLATE: objtemplate 0x27f0 0x27f0 0x83ACA38 0x8231CF0 0x0 0x83E3A2C 0x80A6C85 
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool     
+@ credit to ghoulslash
+ANIM_BREAKNECK_BLITZ:
+	loadparticle 0x2809 
+	loadparticle 0x2797
+	loadparticle 0x279f 
+	loadparticle 0x27e4 
+	loadparticle 0x2810 
+	loadparticle 0x2811
+	launchtask AnimTask_screen_shake 0x5 0x3 0x5 0x5 0x20 	@ shake screen
+	launchtask AnimTask_screen_shake 0x5 0x3 0x4 0x5 0x20 	@ shake banks
+	playsound2 0xe3 0x0 
+	pokespritetoBG bank_attacker 
+	leftbankBG_over_partnerBG bank_attacker 
+	pause 0x1 
+	launchtask 0x8076289 0x5 0x5 0x2809 0x4c00 0xe 0x0 0x3 
+	launchtemplate BLITZ_DANCE 0x2 0x1 0x0 
+	launchtemplate BLITZ_DANCE 0x2 0x1 0x2b 
+	launchtemplate BLITZ_DANCE 0x2 0x1 0x55 
+	launchtemplate BLITZ_DANCE 0x2 0x1 0x80 
+	launchtemplate BLITZ_DANCE 0x2 0x1 0xaa 
+	launchtemplate BLITZ_DANCE 0x2 0x1 0xd5 
+	pause 0xf
+	launchtemplate BLITZ_DANCE 0x2 0x1 0x0 
+	launchtemplate BLITZ_DANCE 0x2 0x1 0x2b 
+	launchtemplate BLITZ_DANCE 0x2 0x1 0x55 
+	launchtemplate BLITZ_DANCE 0x2 0x1 0x80 
+	launchtemplate BLITZ_DANCE 0x2 0x1 0xaa 
+	launchtemplate BLITZ_DANCE 0x2 0x1 0xd5 
+	waitanimation 
+	pokespritefromBG bank_attacker 
+	loadBG1 BG_DRILL_BATTLE
+	waitforBG
+	launchtask AnimTask_scroll_background 0x5 0x4 0xf700 0x300 0x1 0xffff 
+	waitfortransparentBG 
+	setblends 0x80c 
+	pause 0x10
+	launchtask 0x809949d 0x5 0x7 0x0 0xffe8 0x8 0x17 0xa 0x28 0xa 
+	pause 0x23 
+	makebankinvisible bank_attacker
+	launchtemplate 0x83e6894 0x83 0x1 0x0 
+	playsound2 0xba 0xc0 
+	pause 0x8
+	playsound2 0xba 0xc0
+	launchtemplate BLITZ_HIT 0x83 0x4 0x0 0x0 0x1 0x1		@ 0, 0
+	pause 0x1 
+	playsound2 0xba 0xc0
+	launchtemplate BLITZ_HIT 0x83 0x4 0xa 0xfff6 0x1 0x1		@  +10, -10
+	playsound2 0xba 0xc0
+	pause 0x1 
+	playsound2 0xba 0xc0
+	launchtemplate BLITZ_HIT 0x83 0x4 0xf 0xfff1 0x1 0x1		@ +15, -15
+	pause 0x1 
+	playsound2 0xba 0xc0 
+	launchtemplate BLITZ_HIT 0x83 0x4 0x14 0xffec 0x1 0x1		@ +20, -20
+	pause 0x1 
+	playsound2 0xba 0xc0 
+	launchtemplate BLITZ_HIT 0x83 0x4 0x19 0xffe7 0x1 0x1		@ +25, -25
+	launchtemplate 0x83d4e9c 0x2 0x5 0x1 0xffe6 0x10 0x1 0x4 
+	waitanimation
+	launchtask 0x8099981 0x2 0x4 0x8 0xfe00 0x1 0x0
+	launchtask 0x8098cd1 0x2 0x5 0x0 0x4 0x0 0xc 0x1 
+	launchtask 0x8098cd1 0x2 0x5 0x1 0x4 0x0 0xc 0x1 	
+	waitanimation 
+	pause 0x4
+	launchtask 0x8099981 0x2 0x4 0x8 0xfe00 0x1 0x1 
+	pause 0xa
+	pause 0x19
+	launchtemplate 0x83d4e84 0x2 0x3 0x1 0x0 0x6 
+	pause 0x2 
+	launchtemplate 0x83d4e84 0x2 0x3 0x0 0x0 0x5 
+	waitanimation
+	pause 0x10
+	makebankvisible bank_attacker
+	resetblends
+	pokespritefromBG side_target
+	call UNSET_SCROLLING_BG
+	endanimation
+	
+.align 2
+BLITZ_DANCE: objtemplate 0x2809 0x2811 0x83AC9D0 0x8231CF0 0x0 0x8231CFC 0x80B7449 
+BLITZ_HIT: objtemplate 0x2797 0x2811 0x83ACB58 0x8231CF0 0x0 0x83E7BF8 0x80BA561 
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool     
+@ credit to ghoulslash
+.equ OBJ_FIST, 0x0
+.equ OBJ_FOOT1, 0x1
+.equ OBJ_FOOT2, 0x2
+.equ OBJ_CHOP, 0x3
+ANIM_ALL_OUT_PUMMELING:
+	loadparticle 0x279f 
+	loadparticle 0x2797 
+	loadparticle 0x2810 
+	loadparticle 0x2811
+	loadparticle 0x27c8
+	call BUFF_EFFECT
+	soundcomplex 0x91 0xc0 0x9 0x2 
+	launchtask AnimTask_pal_fade_complex 0x2 0x6 0x2 0x2 0x2 0x0 0xb 0x1f 
+	launchtask AnimTask_move_bank_2 0x2 0x5 0x0 0x1 0x0 0x20 0x1 
+	call BUFF_EFFECT 
+	waitanimation
+	loadBG1 BG_ROCK_WRECKER
+	waitforBG
+	launchtask AnimTask_scroll_background 0x5 0x4 0x800 0x0 0x0 0xffff 
+	waitfortransparentBG 
+	setblends 0x80c
+	pokespritetoBG side_target
+	launchtask AnimTask_move_bank 0x5 0x5 0x1 0x0 0x2 0x3f 0x1 
+	launchtemplate PUMMEL_ONSLAUGHT 0x2 0x8 0xffd0 0x18 0x0 0x0 0xa 0x1 OBJ_FOOT 0x1
+	pause 0x2
+	launchtemplate Template_Hit 0x2 0x4 0x0 0x0 0x1 0x1
+	playsound2 0x88 0x3f 
+	pause 0x8  
+	launchtemplate PUMMEL_ONSLAUGHT 0x2 0x8 0xfffa 0x12 0x0 0x0 0xa 0x1 OBJ_CHOP 0x1
+	pause 0x2
+	launchtemplate Template_Hit 0x2 0x4 0x0 0x0 0x1 0x1
+	playsound2 0x88 0x3f 
+	pause 0x8 
+	launchtemplate PUMMEL_ONSLAUGHT 0x2 0x8 0xffc0 0x10 0x0 0x0 0xa 0x1 OBJ_FIST1 0x1
+	pause 0x2
+	launchtemplate Template_Hit 0x2 0x4 0x0 0x0 0x1 0x1
+	playsound2 0x88 0x3f 
+	pause 0x8
+	launchtemplate PUMMEL_ONSLAUGHT 0x2 0x8 0xffd0 0x15 0x0 0x0 0xa 0x1 OBJ_FOOT2 0x1
+	pause 0x2
+	launchtemplate Template_Hit 0x2 0x4 0x0 0x0 0x1 0x1
+	playsound2 0x88 0x3f 
+	pause 0x8 
+	launchtemplate PUMMEL_ONSLAUGHT 0x2 0x8 0xffd0 0x14 0x0 0x0 0xa 0x1 OBJ_FIST1 0x1
+	pause 0x2
+	launchtemplate Template_Hit 0x2 0x4 0x0 0x0 0x1 0x1
+	playsound2 0x88 0x3f 
+	pause 0x8 
+	launchtemplate PUMMEL_ONSLAUGHT 0x2 0x8 0xffe0 0x17 0x0 0x0 0xa 0x1 OBJ_CHOP 0x1
+	pause 0x2
+	launchtemplate Template_Hit 0x2 0x4 0x0 0x0 0x1 0x1
+	playsound2 0x88 0x3f 
+	pause 0x8 
+	launchtemplate PUMMEL_ONSLAUGHT 0x2 0x8 0xffc0 0x11 0x0 0x0 0xa 0x1 OBJ_FOOT 0x1
+	pause 0x2
+	launchtemplate Template_Hit 0x2 0x4 0x0 0x0 0x1 0x1
+	playsound2 0x88 0x3f 
+	pause 0x8 
+	launchtemplate PUMMEL_ONSLAUGHT 0x2 0x8 0xffb0 0x10 0x0 0x0 0xa 0x1 OBJ_FOOT2 0x1
+	pause 0x2
+	launchtemplate Template_Hit 0x2 0x4 0x0 0x0 0x1 0x1
+	playsound2 0x88 0x3f 
+	pause 0x8 
+	launchtemplate PUMMEL_ONSLAUGHT 0x2 0x8 0xffa0 0x15 0x0 0x0 0xa 0x1 OBJ_CHOP 0x1
+	pause 0x2
+	playsound2 0x88 0x3f 
+	launchtemplate Template_Hit 0x2 0x4 0x0 0x0 0x1 0x1 
+	playsound2 0x74 0x3f 	
+	pause 0x10
+	launchtask 0x809949d 0x5 0x7 0x0 0xffe8 0x8 0x17 0xa 0x28 0xa 
+	pause 0x23 
+	makebankinvisible bank_attacker
+	launchtemplate 0x83e6894 0x83 0x1 0x0 
+	playsound2 0xba 0xc0 
+	pause 0xc
+	playsound2 0xab 0xc0
+	launchtemplate 0x83d4e9c 0x2 0x5 0x1 0xffd0 0x0 0x0 0x4 
+	waitanimation 
+	pause 0x30
+	launchtemplate 0x83d4e84 0x2 0x3 0x1 0x0 0x7 
+	pause 0x2 
+	launchtemplate 0x83d4e84 0x2 0x3 0x0 0x0 0x5 
+	waitanimation
+	pause 0x10
+	makebankvisible bank_attacker
+	resetblends
+	pokespritefromBG side_target
+	call UNSET_SCROLLING_BG
+	endanimation	
+
+.align 2
+PUMMEL_ONSLAUGHT: objtemplate 0x279F 0x2797 0x83AC9D8 0x83E66CC 0x0 0x8231CFC 0x80B0929
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool     
+@ credit to ghoulslash
+ANIM_SUPERSONIC_SKYSTRIKE:
+	loadparticle 0x27ac	@ fly
+	loadparticle 0x275a @ dig
+	loadparticle 0x27c8 @ focus energy
+	loadparticle 0x282c @ sky attack bird
+	loadparticle 0x2797 @ hit
+	pokespritetoBG side_target 
+	launchtask AnimTask_pal_fade 0xa 0x5 0x2 0x1 0x8 0x0 0x0 
+	launchtask AnimTask_screen_shake 0x5 0x3 0x0 0x2 0x10 
+	playsound2 0xa4 0xc0
+	launchtask AnimTask_pal_fade 0xa 0x5 0x2 0x1 0xf 0x0 0x7fff 
+	pokespritefromBG side_target
+	call BUFF_EFFECT 
+	pause 0x8 
+	call BUFF_EFFECT 
+	pause 0x20
+	pause 0xA
+	playsound2 0x97 0xc0 
+	launchtemplate 0x83e6bb8 0x2 0x4 0x0 0x0 0xd 0x150 
+	pause 0x2
+	launchtemplate 0x83e7aac 0x2 0x6 0x0 0x0 0xc 0x4 0xfff0 0x12 
+	launchtemplate 0x83e7aac 0x2 0x6 0x0 0x0 0x10 0x4 0xfff6 0x12 
+	launchtemplate 0x83e7aac 0x2 0x6 0x0 0x1 0xe 0x4 0xffee 0x12 
+	launchtemplate 0x83e7aac 0x2 0x6 0x0 0x1 0xc 0x4 0xfff0 0x12 
+	pause 0x30
+	launchtask 0x80e017d 0x5 0x0 
+	pause 0x9 
+	playsound2 0xdd 0xc0 
+	pause 0x9 
+	playsound2 0xdd 0x0 
+	pause 0x9 
+	playsound2 0xdd 0x3f 
+	pause 0x19 	
+	loadBG1 BG_FLYING_BATTLE 
+	waitforBG
+	jumpifargmatches 0x7 0x1 BG_ON_PLAYER_SSSS
+BG_ON_OPPONENT_SSSS:
+	launchtask AnimTask_scroll_background 0x5 0x4 0xf800 0xf800 0x0 0xffff
+	goto finishBG_SSSS
+BG_ON_PLAYER_SSSS:
+	launchtask AnimTask_scroll_background 0x5 0x4 0x800 0x800 0x0 0xffff
+finishBG_SSSS:
+	waitfortransparentBG
+	waitanimation
+	pokespritetoBG side_target 
+	setblends 0x80c 
+	playsound2 0x80 0xc0 
+	launchtemplate FLY_STRIKE 0x2 0x1 0x14 
+	pause 0x10 
+	launchtemplate Template_Hit 0x2 0x4 0x0 0x0 0x1 0x0 
+	playsound2 0xab 0xc0
+	launchtemplate 0x83d4e9c 0x2 0x5 0x1 0xff00 0x15 0x0 0x4 
+	launchtemplate 0x83e7aac 0x82 0x6 bank_target 0x0 0xc 0xffe8 0xfff0 0x18 	@ 12, -48, -16, 24
+	launchtemplate 0x83e7aac 0x82 0x6 bank_target 0x0 0x10 0xffda 0xfff6 0x18 	@ 16, -16, -10, 24
+	launchtemplate 0x83e7aac 0x82 0x6 bank_target 0x1 0xe 0xffec 0xffee 0x18 	@ 14, -52, -18, 24
+	launchtemplate 0x83e7aac 0x82 0x6 bank_target 0x1 0xc 0xffdc 0xfff0 0x18 	@ 12, -32, -16, 24
+	launchtemplate 0x83e7aac 0x82 0x6 bank_target 0x0 0xc 0xffd0 0xfff0 0x18 		@ 12, -24, -16, 24
+	launchtemplate 0x83e7aac 0x82 0x6 bank_target 0x0 0x10 0xfff0 0xfff6 0x18 		@ 16, -38, -10, 24
+	launchtemplate 0x83e7aac 0x82 0x6 bank_target 0x1 0xe 0xffcc 0xffee 0x18 		@ 14, -20, -18, 24
+	launchtemplate 0x83e7aac 0x82 0x6 bank_target 0x1 0xc 0xffe0 0xfff0 0x18 		@ 12, -36, -16, 24
+	pause 0x30
+	pokespritefromBG side_target
+	resetblends	
+	launchtemplate 0x83d4e84 0x2 0x3 0x1 0x0 0x10 	
+	call UNSET_SCROLLING_BG
+	waitanimation 	
+	endanimation
+	
+.align 2
+FLY_STRIKE: objtemplate 0x282c 0x282c 0x83ACA40 0x8231CF0 0x0 ROTATIONS_SSSS 0x80B1C3D
+ROTATIONS_SSSS: .word PLAYER_ROT_SSSS, ENEMY_ROT_SSSS
+PLAYER_ROT_SSSS: .hword 0,0,0x01b9,0,0x7fff,0,0,0
+ENEMY_ROT_SSSS: .hword 0,0,0x0150,0,0x7fff,0,0,0
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool     
+@ credit to ghoulslash
+ANIM_ACID_DOWNPOUR:
+	loadparticle 0x27fc @ reversal
+	loadparticle 0x2833	@ poison jab
+	loadparticle 0x27A6	@ poison bubbles
+	loadBG1 BG_POISON
+	waitforBG
+	launchtask AnimTask_arg7_is_target_player 0x2 0x0
+	jumpifargmatches 0x7 0x1 BG_ON_PLAYER_DOWNPOUR
+BG_ON_OPPONENT_DOWNPOUR:
+	launchtask AnimTask_scroll_background 0x5 0x4 0x0 0xff10 0x1 0xffff
+	goto FINISH_BG_DOWNPOUR
+BG_ON_PLAYER_DOWNPOUR:
+	launchtask AnimTask_scroll_background 0x5 0x4 0x0 0xf0 0x1 0xffff	
+FINISH_BG_DOWNPOUR:	
+	makebankinvisible attacker_partner
+	makebankinvisible target_partner
+	setblends 0x80c
+	pokespritetoBG bank_attacker
+	playsound2 0xa4 0xc0 
+	launchtask AnimTask_move_bank 0x5 0x5 bank_attacker 0x0 0x2 0x32 0x1 
+	call PURPLE_FLARE_SELF
+	call PURPLE_FLARE_SELF
+	call PURPLE_FLARE_SELF
+	pause 0x5
+	pokespritefromBG bank_attacker
+	resetblends
+	pause 0x20
+	playsound2 0xd2 0xc0 
+	launchtemplate PURPLE_REVERSAL 0x2 0x2 0x1a 0x0 
+	launchtemplate PURPLE_REVERSAL 0x2 0x2 0x1a 0x2a 
+	launchtemplate PURPLE_REVERSAL 0x2 0x2 0x1a 0x54 
+	launchtemplate PURPLE_REVERSAL 0x2 0x2 0x1a 0x7e 
+	launchtemplate PURPLE_REVERSAL 0x2 0x2 0x1a 0xa8 
+	launchtemplate PURPLE_REVERSAL 0x2 0x2 0x1a 0xd2 
+	pause 0x20 				
+	playsoundpanchange 0x9E 0xc0 0x3f 0x2 0x0 
+	launchtask AnimTask_surf_wave 0x2 0x1 0x2
+	launchtemplate Template_Pal_Fade 0x0 0x5 0x4 0x2 0x0 0x7 0xd87c
+	launchtask AnimTask_move_bank 0x5 0x5 0x1 0x0 0x2 0x32 0x1 
+	call PURPLE_FLARE_TGT
+	call PURPLE_FLARE_TGT
+	pause 0x15
+	launchtemplate 0x83d4e9c 0x2 0x5 0x1 0xfd00 0x15 0x0 0x2a
+	pause 0x2c
+	launchtemplate Template_Pal_Fade 0x0 0x5 0x4 0x2 0x7 0x0 0xd87c
+	makebankinvisible bank_target
+	waitanimation
+	launchtemplate 0x83d4e84 0x2 0x3 0x1 0x0 0x10 	
+	loaddefaultBG
+	setarg 0x7 0xffff
+	pause 0x18
+	makebankvisible bank_target
+	makebankvisible attacker_partner
+	makebankvisible target_partner
+	waitfortransparentBG
+	pause 0x4	
+	waitanimation	
+	endanimation
+	
+PURPLE_FLARE_TGT:
+	launchtemplate PURPLE_Z_AURA 0x82 0x7 0x0 0x1c 0x180 0x32 0x8 0x32 bank_target 
+	pause 0x2 
+	launchtemplate PURPLE_Z_AURA 0x82 0x7 0x0 0x20 0xf0 0x28 0xb 0xffd2 bank_target 
+	pause 0x2 
+	launchtemplate PURPLE_Z_AURA 0x82 0x7 0x0 0x21 0x1a0 0x28 0x4 0x2a bank_target 
+	pause 0x2 
+	launchtemplate PURPLE_Z_AURA 0x82 0x7 0x0 0x1f 0x120 0x2d 0x6 0xffd6 bank_target 
+	pause 0x2 
+	launchtemplate PURPLE_Z_AURA 0x82 0x7 0x0 0x1c 0x1c0 0x2d 0xb 0x2e bank_target 
+	pause 0x2 
+	launchtemplate PURPLE_Z_AURA 0x82 0x7 0x0 0x21 0x1d0 0x32 0xa 0xffce bank_target 
+	pause 0x2 
+	return 
+	
+PURPLE_FLARE_SELF:
+	launchtemplate PURPLE_Z_AURA 0x82 0x7 0x0 0x1c 0x210 0x1e 0xd 0x32 bank_attacker 
+	pause 0x2 
+	launchtemplate PURPLE_Z_AURA 0x82 0x7 0x0 0x20 0x1e0 0x14 0x10 0xffd2 bank_attacker 
+	pause 0x2 
+	launchtemplate PURPLE_Z_AURA 0x82 0x7 0x0 0x21 0x240 0x14 0x8 0x2a bank_attacker 
+	pause 0x2 
+	launchtemplate PURPLE_Z_AURA 0x82 0x7 0x0 0x1f 0x190 0x19 0xb 0xffd6 bank_attacker 
+	pause 0x2 
+	launchtemplate PURPLE_Z_AURA 0x82 0x7 0x0 0x1c 0x200 0x19 0x10 0x2e bank_attacker 
+	pause 0x2 
+	launchtemplate PURPLE_Z_AURA 0x82 0x7 0x0 0x21 0x1d0 0x1e 0xf 0xffce bank_attacker 
+	pause 0x2 
+	return 
+	
+.align 2
+PURPLE_REVERSAL: objtemplate 0x27A6 0x27A6 0x83ACA30 0x8231CF0 0x0 0x8231CFC 0x80E0E95  
+PURPLE_Z_AURA: objtemplate 0x27A6 0x27A6 0x83ACA30 0x8231CF0 0x0 0x8231CFC 0x80B477D 
+
+@ hook at AB43C via r0
+.pool
+SLUDGE_WAVE_ASM:
+	ldr r0, .ma02_t0_02037f02
+	mov r1, #0x0
+	ldsh r0, [r0, r1]	@ task arg
+	cmp r0, #0x1
+	beq LoadMuddyWaterPal
+	cmp r0, #0x2
+	beq LoadSludgeWavePal
+LoadSurfPal:
+	ldr r0, .SurfReturn
+	bx r0
+LoadMuddyWaterPal:
+	ldr r0, .MuddyWaterReturn
+	bx r0
+LoadSludgeWavePal:
+	ldr r0, =SLUDGE_WAVE_PAL
+	ldr r2, .SludgeWaveReturn
+	bx r2
+	
+.align 2
+.ma02_t0_02037f02: .word 0x02037f02
+.SurfReturn: .word (0x080ab446 +1)
+.MuddyWaterReturn: .word (0x080ab468 +1)
+.SludgeWaveReturn: .word (0x080ab448 +1)
+
+SLUDGE_WAVE_PAL:
+.word 0x00002010
+.hword 0x7700,0x9645,0xd87c,0x3b7c,0x007d,0x7d9e,0x7dff,0x7e5f,0x7ebf,0x1f22,0x107f,0x3f0f,0xdf7e,0x0900,0x000a,0x0a00,0xff00,0xffff
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool     
+@ credit to ghoulslash
+ANIM_TECTONIC_RAGE:
+	loadparticle 0x2797 @ hit
+	loadparticle 0x275a @ rollout small rocks
+	loadparticle 0x274a @ rollout
+	loadparticle 0x27d9 @ eruption
+	loadparticle 0x2733 @ blast burn
+	loadparticle 0x27d6 @ explosion
+	loadparticle 0x2829 @ dig
+	launchtemplate 0x83e7ac4 0x1 0x3 0x0 0x0 0xb4 
+	launchtemplate 0x83e7ac4 0x1 0x3 0x0 0x1 0xb4 
+	anim22 bank_attacker 
+	pause 0x1 
+	launchtask 0x80b8e95 0x2 0x1 0x0 
+	pause 0x6 
+	call 0x81ca90a 
+	call 0x81ca90a 
+	call 0x81ca90a 
+	call 0x81ca90a 
+	launchtask 0x80b4bd1 0x2 0x0 	@ rollout
+	call 0x81ca90a 
+	setblends 0x80c 
+	pause 0x20
+	playsound2 0xab 0xc0 
+	pokespritetoBG bank_target
+	launchtemplate Template_Hit 0x4 0x4 0x0 0x0 0x1 0x2	
+	pause 0x1
+	launchtemplate 0x83d4e9c 0x2 0x5 0x1 0xff00 0x15 0x0 0x4 
+	pause 0xa
+	waitanimation
+	pokespritefromBG bank_target
+	makebankinvisible bank_target
+	pause 0x5
+	makebankinvisible bank_attacker	
+	makebankinvisible attacker_partner
+	makebankinvisible target_partner
+	waitanimation
+	pause 0xa
+	launchtemplate 0x83d4e84 0x2 0x3 0x1 0x0 0x10 	
+	loadBG1 BG_TECTONIC_RAGE	@ brown/yellow sky uppercut	
+	pause 0x18
+	makebankvisible bank_target
+	launchtask AnimTask_scroll_background 0x5 0x4 0x0 0xf800 0x0 0xffff
+	waitforBG
+	playsound3 0xab 0xc0 0x3c 
+	pause 0x1e 
+	launchtemplate 0x83e5e60 0x28 0x5 0xc8 0xffe0 0x0 0x64 0x0 
+	launchtemplate 0x83e5e60 0x28 0x5 0x1e 0xffe0 0x10 0x5a 0x1 
+	launchtemplate 0x83e5e60 0x28 0x5 0x96 0xffe0 0x20 0x3c 0x2 
+	launchtemplate 0x83e5e60 0x28 0x5 0x5a 0xffe0 0x30 0x50 0x3 
+	launchtemplate 0x83e5e60 0x28 0x5 0x6e 0xffe0 0x40 0x32 0x0 
+	launchtemplate 0x83e5e60 0x28 0x5 0x3c 0xffe0 0x50 0x46 0x1 
+	pause 0x16 
+	launchtask AnimTask_screen_shake 0x5 0x3 0x5 0x8 0x3c 
+	launchtask AnimTask_screen_shake 0x5 0x3 0x4 0x8 0x3c 
+	soundcomplex 0x7c 0x3f 0x10 0xc 
+	pause 0x30
+	call TEC_RAGE_EXPLOSION+romsize
+	playsound2 0x8e 0xc0   
+	launchtemplate TEC_RAGE_BLAST_BURN 0x2 0x6 0xffe0 0x0 0x18 0x0 0x0 0x0 
+	launchtemplate TEC_RAGE_BLAST_BURN 0x2 0x6 0xffec 0xfff6 0x18 0x0 0x0 0x0  
+	launchtemplate TEC_RAGE_BLAST_BURN 0x42 0x6 0x0 0xfff0 0x18 0x0 0x0 0x0 
+	launchtemplate TEC_RAGE_BLAST_BURN 0x42 0x6 0x14 0xfff6 0x18 0x0 0x0 0x0	
+	launchtemplate TEC_RAGE_BLAST_BURN 0x42 0x6 0x20 0x0 0x18 0x0 0x0 0x0 
+	launchtemplate TEC_RAGE_BLAST_BURN 0x42 0x6 0x14 0xa 0x18 0x0 0x0 0x0  
+	launchtemplate TEC_RAGE_BLAST_BURN 0x2 0x6 0x0 0x10 0x18 0x0 0x0 0x0 
+	launchtemplate TEC_RAGE_BLAST_BURN 0x2 0x6 0xffec 0xa 0x18 0x0 0x0 0x0 
+	call TEC_RAGE_EXPLOSION+romsize
+	playsound2 0x8a 0xc0 
+	launchtemplate TEC_RAGE_BLAST_BURN 0x2 0x6 0xffc0 0x0 0x18 0x0 0x0 0x0 
+	launchtemplate TEC_RAGE_BLAST_BURN 0x6 0x6 0xffd8 0xffec 0x18 0x0 0x0 0x0 
+	launchtemplate TEC_RAGE_BLAST_BURN 0x46 0x6 0x0 0xffe0 0x18 0x0 0x0 0x0 
+	launchtemplate TEC_RAGE_BLAST_BURN 0x46 0x6 0x28 0xffec 0x18 0x0 0x0 0x0  
+	launchtemplate TEC_RAGE_BLAST_BURN 0x42 0x6 0x40 0x0 0x18 0x0 0x0 0x0 
+	launchtemplate TEC_RAGE_BLAST_BURN 0x42 0x6 0x28 0x14 0x18 0x0 0x0 0x0 
+	launchtemplate TEC_RAGE_BLAST_BURN 0x2 0x6 0x0 0x20 0x18 0x0 0x0 0x0 
+	launchtemplate TEC_RAGE_BLAST_BURN 0x2 0x6 0xffd8 0x14 0x18 0x0 0x0 0x0
+	call TEC_RAGE_EXPLOSION+romsize
+	playsound2 0x8a 0xc0 
+	launchtemplate TEC_RAGE_BLAST_BURN 0x2 0x6 0xffa0 0x0 0x18 0x0 0x0 0x0 
+	launchtemplate TEC_RAGE_BLAST_BURN 0x6 0x6 0xffc4 0xffe2 0x18 0x0 0x0 0x0 
+	launchtemplate TEC_RAGE_BLAST_BURN 0x46 0x6 0x0 0xffd0 0x18 0x0 0x0 0x0 
+	launchtemplate TEC_RAGE_BLAST_BURN 0x46 0x6 0x3c 0xffe2 0x18 0x0 0x0 0x0 
+	launchtemplate TEC_RAGE_BLAST_BURN 0x42 0x6 0x60 0x0 0x18 0x0 0x0 0x0 
+	launchtemplate TEC_RAGE_BLAST_BURN 0x42 0x6 0x3c 0x1e 0x18 0x0 0x0 0x0 
+	launchtemplate TEC_RAGE_BLAST_BURN 0x2 0x6 0x0 0x30 0x18 0x0 0x0 0x0 
+	launchtemplate TEC_RAGE_BLAST_BURN 0x2 0x6 0xffc4 0x1e 0x18 0x0 0x0 0x0 
+	call TEC_RAGE_EXPLOSION+romsize
+	waitanimation
+	call UNSET_SCROLLING_BG
+	waitfortransparentBG	
+	waitanimation
+	makebankvisible bank_attacker
+	makebankvisible attacker_partner
+	makebankvisible target_partner
+	endanimation
+
+TEC_RAGE_EXPLOSION:
+	playsound2 0xab 0xc0 
+	launchtemplate 0x83e3f94 0x83 0x4 0x0 0x0 bank_target 0x1 
+	pause 0x6 
+	playsound2 0xab 0xc0 
+	launchtemplate 0x83e3f94 0x83 0x4 0x18 0xffe8 bank_target 0x1 
+	pause 0x6 
+	playsound2 0xab 0xc0 
+	launchtemplate 0x83e3f94 0x83 0x4 0xfff0 0x10 bank_target 0x1 
+	pause 0x6 
+	playsound2 0xab 0xc0 
+	launchtemplate 0x83e3f94 0x83 0x4 0xffe8 0xfff4 bank_target 0x1 
+	pause 0x6 
+	playsound2 0xab 0xc0 
+	launchtemplate 0x83e3f94 0x83 0x4 0x10 0x10 bank_target 0x1 
+	pause 0x6 
+	return 
+
+
+.align 2
+TEC_RAGE_BLAST_BURN: objtemplate 0x2733 0x2733 0x83AC9D8 0x83E5C50 0x0 0x8231CFC BLASTBURN_TARGET_ASM+1
+
+.align 2
+.pool
+BLASTBURN_TARGET_ASM:
+	push {r4,lr}
+	mov r4, r0
+	bl get_blastburn_bank_status
+	ldr r0, .AnimDefender
+	ldrb r0, [r0]
+	ldr r1, =(0x080AC99C +1)
+	bx r1
+
+get_blastburn_bank_status:
+	push {r4-r6,lr}
+	mov r5, r0
+	ldr r4, .AnimDefender
+	ldrb r0, [r4]
+	mov r1, #0x2
+	bl get_bank_presence
+	lsl r0, r0, #0x18
+	lsr r0, r0, #0x18
+	strh r0, [r5, #0x20]
+	ldrb r0, [r4]
+	mov r1, #0x3
+	bl get_bank_presence
+	lsl r0, r0, #0x18
+	lsr r0, r0, #0x18
+	strh r0, [r5, #0x22]
+	pop {r4-r6, pc}
+	
+get_bank_presence: 	@ sub_8074480	
+	ldr r6, =(0x8074480 +1)
+	bx r6
+	
+.align 2
+.pool	
+@ hook at B4C40 via r0
+ROLLOUT_TIMER_ASM:
+	ldr r0, =CURRENT_MOVE
+	ldrh r0, [r0]
+	ldr r1, =MOVE_TECTONIC_RAGE_P	@physical version
+	cmp r0, r1
+	beq SkipRolloutTimer
+	ldr r1, =MOVE_TECTONIC_RAGE_S	@special version
+	cmp r0, r1
+	beq SkipRolloutTimer
+	bl GetRolloutTimer
+	b ReturnRolloutTimer
+SkipRolloutTimer:
+	mov r0, #0x4	@ max timer
+	
+ReturnRolloutTimer:
+	lsl r0, r0, #0x18
+	lsr r5, r0, #0x18
+	ldr r0, =(0x080b4c48 +1)
+	bx r0
+	
+.align 2
+.AnimDefender: .word 0x02037f1b
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool     
+ANIM_CONTINENTAL_CRUSH:
 endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
-ANIM_HOLDHANDS:
+ANIM_SAVAGE_SPIN_OUT:
 endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
-ANIM_BREAKNECK_BLITZ_P:
+ANIM_NEVER_ENDANIMATIONING_NIGHTMARE:
 endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
-ANIM_BREAKNECK_BLITZ_S:
+ANIM_CORKSCREW_CRASH:
 endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
-ANIM_ALL_OUT_PUMMELING_P:
+ANIM_INFERNO_OVERDRIVE:
 endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
-ANIM_ALL_OUT_PUMMELING_S:
+ANIM_HYDRO_VORTEX:
 endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
-ANIM_SUPERSONIC_SKYSTRIKE_P:
+ANIM_BLOOM_DOOM:
 endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
-ANIM_SUPERSONIC_SKYSTRIKE_S:
+ANIM_GIGAVOLT_HAVOC:
 endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
-ANIM_ACID_DOWNPOUR_P:
+ANIM_SHATTERED_PSYCHE:
 endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
-ANIM_ACID_DOWNPOUR_S:
+ANIM_SUBZERO_SLAMMER:
 endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
-ANIM_TECTONIC_RAGE_P:
+ANIM_DEVASTATING_DRAKE:
 endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
-ANIM_TECTONIC_RAGE_S:
+ANIM_BLACK_HOLE_ECLIPSE:
 endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
-ANIM_CONTINENTAL_CRUSH_P:
-endanimation
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool     
-ANIM_CONTINENTAL_CRUSH_S:
-endanimation
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool     
-ANIM_SAVAGE_SPIN_OUT_P:
-endanimation
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool     
-ANIM_SAVAGE_SPIN_OUT_S:
-endanimation
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool     
-ANIM_NEVER_ENDANIMATIONING_NIGHTMARE_P:
-endanimation
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool     
-ANIM_NEVER_ENDANIMATIONING_NIGHTMARE_S:
-endanimation
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool     
-ANIM_CORKSCREW_CRASH_P:
-endanimation
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool     
-ANIM_CORKSCREW_CRASH_S:
-endanimation
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool     
-ANIM_INFERNO_OVERDRIVE_P:
-endanimation
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool     
-ANIM_INFERNO_OVERDRIVE_S:
-endanimation
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool     
-ANIM_HYDRO_VORTEX_P:
-endanimation
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool     
-ANIM_HYDRO_VORTEX_S:
-endanimation
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool     
-ANIM_BLOOM_DOOM_P:
-endanimation
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool     
-ANIM_BLOOM_DOOM_S:
-endanimation
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool     
-ANIM_GIGAVOLT_HAVOC_P:
-endanimation
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool     
-ANIM_GIGAVOLT_HAVOC_S:
-endanimation
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool     
-ANIM_SHATTERED_PSYCHE_P:
-endanimation
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool     
-ANIM_SHATTERED_PSYCHE_S:
-endanimation
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool     
-ANIM_SUBZERO_SLAMMER_P:
-endanimation
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool     
-ANIM_SUBZERO_SLAMMER_S:
-endanimation
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool     
-ANIM_DEVASTATING_DRAKE_P:
-endanimation
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool     
-ANIM_DEVASTATING_DRAKE_S:
-endanimation
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool     
-ANIM_BLACK_HOLE_ECLIPSE_P:
-endanimation
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool     
-ANIM_BLACK_HOLE_ECLIPSE_S:
-endanimation
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool     
-ANIM_TWINKLE_TACKLE_P:
-endanimation
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool     
-ANIM_TWINKLE_TACKLE_S:
+ANIM_TWINKLE_TACKLE:
 endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
