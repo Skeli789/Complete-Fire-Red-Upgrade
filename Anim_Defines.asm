@@ -65,6 +65,11 @@
 .equ BG_MAGIC_ROOM, 0x33
 .equ BG_HYPERSPACE_FURY, 0x34
 .equ BG_BOLT_STRIKE, 0x35
+.equ BG_ZMOVE_ACTIVATE, 0x36
+.equ BG_TECTONIC_RAGE, 0x37
+.equ BG_BLUE_SKY_DAY, 0x38
+.equ BG_BLUE_SKY_AFTERNOON, 0x39
+.equ BG_BLUE_SKY_NIGHT, 0x3A
 
 @pals for pal fading tasks
 .equ PAL_BG, 0x1

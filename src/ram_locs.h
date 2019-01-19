@@ -239,7 +239,7 @@ typedef u8 Buffer_t[0x200];
 #define SwitchInEffectsTracker (*((u8*) 0x203C03D))
 #define SentInBackup (*((u8*) 0x203C03E))
 #define PayDayByPartyIndices ((u8*) 0x203C040)
-#define ZMoveData ((struct ZMoveData*) 0x203C046)
+#define ZMoveData ((struct ZMoveData*) 0x203C048)
 #define MegaData ((struct MegaData*) 0x203C060)
 
 #define PledgeHelper *((u8*) 0x203D801)

@@ -639,7 +639,10 @@ s8 PriorityCalc(u8 bank, u8 action, u16 move) {
 		
 		priority = gBattleMoves[move].priority;
 		
-		ability_t ability = BanksAbility(bank);
+		if (move != MOVE_BIDE && gBattleMons[bank].status2 & STATUS2_BIDE)
+			priority = 1;
+		
+		ability_t ability = ABILITY(bank);
 		switch (ability) {
 			case ABILITY_PRANKSTER:
 				if (gBattleMoves[move].split == SPLIT_STATUS)

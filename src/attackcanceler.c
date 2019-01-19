@@ -4,6 +4,8 @@
 //Update Choose Target or whatever to allow Magic Bounce to reflect, and then moves that target multiple pokes can continue from the attacker's side
 //Make sure to restore the backup move effect post Status Z-move
 //Z-Move Illusion
+//De-activate Z-Move when used by Z-Instruct
+//Make sure Powder stops Inferno Overdrive
 
 #define BattleScript_MoveEnd (u8*) 0x81D694E
 #define BattleScript_NoPPForMove (u8*) 0x81D8EA8
@@ -51,6 +53,8 @@ extern u8 BattleScript_ZMoveActivateDamaging[];
 extern move_t GravityBanTable[];
 extern move_t ParentalBondBanList[];
 extern ability_t MoldBreakerIgnoreAbilities[];
+
+extern u8* const gBattleScriptsForMoveEffects[];
 
 extern bool8 ProtectAffects(u16 move, u8 bankAtk, u8 bankDef, bool8 set);
 extern s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* defender, u32 move, u16 sideStatus, u16 powerOverride, u8 effectivenessFlags, u8 typeOverride, u8 bankAtk, u8 bankDef, pokemon_t* party_data_atk, bool8 PartyCheck, bool8 IgnoreAttacker, bool8 CheckingConfusion);
@@ -127,6 +131,7 @@ enum
 	CANCELLER_BIDE,
 	CANCELLER_THAW,
 	CANCELLER_Z_MOVES,
+	CANCELLER_GRAVITY_Z_MOVES,
 	CANCELLER_POWDER,
 	CANCELLER_PRIMAL_WEATHER,
 	CANCELLER_PSYCHIC_TERRAIN,
@@ -180,13 +185,13 @@ void atk00_attackcanceler(void)
 		if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE) {
 			switch (gBattleMoves[gCurrentMove].target) {
 				case MOVE_TARGET_BOTH:
-					if (CountAliveMons(2) <= 1) {
+					if (CountAliveMons(2) <= 1) { //Check for single target
 						ParentalBondOn = 2;
 						gMultiHitCounter = 2;			
 					}
 					break;
 				case MOVE_TARGET_FOES_AND_ALLY:
-					if (CountAliveMons(1) +  CountAliveMons(2) <= 2) {
+					if (CountAliveMons(1) +  CountAliveMons(2) <= 2) { //Count mons on both sides; ignore attacker
 						ParentalBondOn = 2;
 						gMultiHitCounter = 2;			
 					}
@@ -490,9 +495,9 @@ u8 AtkCanceller_UnableToUseMove(void)
             gBattleStruct->atkCancellerTracker++;
             break;
 		
-		case CANCELLER_GRAVITY: //Fix Z Moves
-            if (GravityTimer && CheckTableForMove(gCurrentMove, GravityBanTable))
-            {
+		case CANCELLER_GRAVITY:
+            if (GravityTimer && CheckTableForMove(gCurrentMove, GravityBanTable) && !ZMoveData->active) //Gravity stops Z-Moves, so there will be
+            {																							//a second check later on
                 gBattleScripting->bank = gBankAttacker;
                 CancelMultiTurnMoves(gBankAttacker);
                 gBattlescriptCurrInstr = BattleScript_MoveUsedGravityPrevents;
@@ -691,7 +696,8 @@ u8 AtkCanceller_UnableToUseMove(void)
 				ZMoveData->toBeUsed[gBankAttacker] = 0;
 				ZMoveData->active = TRUE;
 				ZMoveData->state = 1;
-				if (SIDE(gBankAttacker) == B_SIDE_PLAYER && !(gBattleTypeFlags & (BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_MULTI)))
+				ZMoveData->partyIndex[gBankAttacker] |= gBitTable[gBattlerPartyIndexes[gBankAttacker]]; //Stops Rayquaza from Mega Evolving
+				if (SIDE(gBankAttacker) == B_SIDE_PLAYER && !(gBattleTypeFlags & (BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_MULTI))) //In team Battles, both players can use Z-moves
 				{
 					ZMoveData->used[PARTNER(gBankAttacker)] = TRUE;
 					ZMoveData->toBeUsed[PARTNER(gBankAttacker)] = 0;
@@ -706,52 +712,64 @@ u8 AtkCanceller_UnableToUseMove(void)
 			}
 			
 			if (ZMoveData->active) {
-				switch (ZMoveData->state) {
-					case 1:
-						if (SPLIT(gCurrentMove) == SPLIT_STATUS) 
-						{
-							ZMoveData->backupEffect = gBattleCommunication[MOVE_EFFECT_BYTE];
-							gBattleCommunication[MOVE_EFFECT_BYTE] = gBattleMoves[gCurrentMove].z_move_effect; 
-							BattleScriptPushCursor();
-							gBattlescriptCurrInstr = BattleScript_ZMoveActivateStatus;
-							ZMoveData->state = 2;
-							break;
-						}
-						else 
-						{
-							for (i = 0; SpecialZMoveTable[i].item != 0xFFFF; ++i) {
-								if (SpecialZMoveTable[i].item == ITEM(gBankAttacker)) //No need to check for correct species here as the check;
-									gRandomMove = SpecialZMoveTable[i].move;		  //it should already have been carried out during move selection.
-							}
-							
-							if (SpecialZMoveTable[i].item == 0xFFFF) { //No special Z-Move
-								u16 moveReplaced = gBattleMons[gBankAttacker].moves[gCurrMovePos];
-								u8 moveType = gBattleMoves[moveReplaced].type;
-								if (moveType < TYPE_FIRE)
-									gRandomMove = MOVE_BREAKNECK_BLITZ_P + (moveType * 2) + SPLIT(moveReplaced);
-								else
-									gRandomMove = MOVE_BREAKNECK_BLITZ_P + ((moveType - 1) * 2) + SPLIT(moveReplaced);
-							}
-							gBattlescriptCurrInstr = BattleScript_ZMoveActivateDamaging;
-							ZMoveData->state = 0;
-						}
-						effect = 1;
+				if (SPLIT(gCurrentMove) == SPLIT_STATUS) 
+				{
+					if (!ZMoveData->effectApplied) {
+						BattleScriptPushCursor();
+						gBattlescriptCurrInstr = BattleScript_ZMoveActivateStatus;
+						ZMoveData->effect = gBattleMoves[gCurrentMove].z_move_effect; 
+						ZMoveData->effectApplied = TRUE;
+					}
+					else {
+						gBattleStruct->atkCancellerTracker++;
 						break;
-					
-					case 2:
-						ZMoveData->state = 0;
-						gBattleCommunication[MOVE_EFFECT_BYTE] = ZMoveData->backupEffect;
-						ZMoveData->backupEffect = 0;
+					}
 				}
+				else 
+				{
+					for (i = 0; SpecialZMoveTable[i].item != 0xFFFF; ++i) {
+						if (SpecialZMoveTable[i].item == ITEM(gBankAttacker)) //No need to check for correct species here as the check;
+							gRandomMove = SpecialZMoveTable[i].move;		  //it should already have been carried out during move selection.
+					}
+							
+					if (SpecialZMoveTable[i].item == 0xFFFF) { //No special Z-Move
+						u16 moveReplaced = gBattleMons[gBankAttacker].moves[gCurrMovePos];
+						u8 moveType = gBattleMoves[moveReplaced].type;
+						if (moveType < TYPE_FIRE)
+							gRandomMove = MOVE_BREAKNECK_BLITZ_P + (moveType * 2) + SPLIT(moveReplaced);
+						else
+							gRandomMove = MOVE_BREAKNECK_BLITZ_P + ((moveType - 1) * 2) + SPLIT(moveReplaced);
+					}
+					gCurrentMove = gChosenMove = gRandomMove;
+					gBattleCommunication[MOVE_EFFECT_BYTE] = 0; //Remove secondary effects
+					gBattleStruct->dynamicMoveType = GetMoveTypeSpecial(gBankAttacker, gCurrentMove);
+					gBattlescriptCurrInstr = gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect];
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_ZMoveActivateDamaging;
+					ZMoveData->state = 0;
+				}
+				effect = 1;
 			}
 			gBattleStruct->atkCancellerTracker++;
 			break;
 		
+		case CANCELLER_GRAVITY_Z_MOVES:
+            if (GravityTimer && CheckTableForMove(gCurrentMove, GravityBanTable) && ZMoveData->active) //Gravity stops Z-Moves after they apply their effect
+            {																						
+                gBattleScripting->bank = gBankAttacker;
+                CancelMultiTurnMoves(gBankAttacker);
+                gBattlescriptCurrInstr = BattleScript_MoveUsedGravityPrevents;
+                gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
+                effect = 1;
+            }
+            gBattleStruct->atkCancellerTracker++;
+            break;
+			
 		case CANCELLER_POWDER:
             if ((PowderByte & gBitTable[gBankAttacker]) && (gBattleStruct->dynamicMoveType == TYPE_FIRE))
             {
                 gBattleMoveDamage = gBattleMons[gBankAttacker].maxHP / 4;
-                gBattlescriptCurrInstr = BattleScript_MoveUsedPowderPrevents;
+				gBattlescriptCurrInstr = BattleScript_MoveUsedPowderPrevents;
             }
             gBattleStruct->atkCancellerTracker++;
             break;
@@ -773,11 +791,12 @@ u8 AtkCanceller_UnableToUseMove(void)
 		case CANCELLER_PSYCHIC_TERRAIN:
 		    if (TerrainType == PSYCHIC_TERRAIN
             && CheckGrounding(gBankTarget)
+			&& gBankAttacker != gBankTarget
             && PriorityCalc(gBankAttacker, TRUE, gCurrentMove)
             && gBankAttacker != gBankTarget)
             {
                 CancelMultiTurnMoves(gBankAttacker);
-                gBattlescriptCurrInstr = BattleScript_MoveUsedPsychicTerrainPrevents;
+				gBattlescriptCurrInstr = BattleScript_MoveUsedPsychicTerrainPrevents;
                 gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
                 effect = 1;
             }
@@ -813,7 +832,7 @@ u8 IsMonDisobedient(void)
 		return 0;
     else if (SIDE(gBankAttacker) == B_SIDE_OPPONENT)
         return 0;
-	else if (InstructInProgress || DancerByte)
+	else if (InstructInProgress || DancerByte || ZMoveData->active)
 		return 0;
 
 	#ifndef OBEDIENCE_CHECK_FOR_PLAYER_ORIGINAL_POKEMON

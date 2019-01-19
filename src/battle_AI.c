@@ -956,10 +956,15 @@ u8 GetMostSuitableMonToSwitchInto(void)
 }
 
 u32 WildMonIsSmart(u8 bank) {
-	u16 species = gBattleMons[bank].species;
-	for (u32 i = 0; SmartWildAITable[i].species != 0xFFFF; ++i) {
-		if (SmartWildAITable[i].species == species)
-			return SmartWildAITable[i].aiFlags;
-	}
-	return FALSE;
+	#ifdef WILD_ALWAYS_SMART
+		bank++; //So no compiler errors
+		return TRUE;
+	#else
+		u16 species = gBattleMons[bank].species;
+		for (u32 i = 0; SmartWildAITable[i].species != 0xFFFF; ++i) {
+			if (SmartWildAITable[i].species == species)
+				return SmartWildAITable[i].aiFlags;
+		}
+		return FALSE;
+	#endif
 }

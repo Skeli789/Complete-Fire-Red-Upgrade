@@ -33,10 +33,8 @@ Switch In Abilities:
 	
 */
 
-
-.include "src/headers/asm_defines.s"
-.include "src/headers/bs_macros.s"
-.include "src/headers/help_funcs.s"
+/*
+.include "..\\defines"
 
 .global SwitchInTable
 .global SwitchInLoad
@@ -121,7 +119,7 @@ SwitchInTable:
 
 @ LOAD SWITCH IN TABLE @
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-/* hook at 1B4F0 via r0 */
+@ hook at 1B4F0 via r0
 .pool
 SwitchInLoad:
 	push {r0-r2}
@@ -748,7 +746,7 @@ teravolt_str:
 @ SURGE ABILITIES @
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@	
 .pool
-/*================*/
+@================
 .global ElectricSurgeBS
 	ElectricSurgeBS:
 	pause 0x20
@@ -770,7 +768,7 @@ surge_end:
 elec_surge_str:
 .byte 0
 
-/*================*/
+@================
 .global GrassySurgeBS
 GrassySurgeBS:
 	pause 0x20
@@ -790,7 +788,7 @@ GrassySurgeBS:
 grassy_surge_str:
 .byte 0
 
-/*================*/
+@================
 .global MistySurgeBS
 MistySurgeBS:
 	pause 0x20
@@ -810,7 +808,7 @@ MistySurgeBS:
 misty_surge_str:
 .byte 0
 
-/*================*/
+@================
 .global PsychicSurgeBS
 PsychicSurgeBS:
 	pause 0x20
@@ -831,7 +829,7 @@ psychic_surge_str:
 .byte 0
 
 
-/*===================*/
+@===================
 seed_check:
 	setbyte SEED_HELPER 0x0
 seed_loop:
@@ -1110,5 +1108,5 @@ orrmarker:
 contTrace: 
 	str r0, [r1]
 	pop {r4-r7,pc}
-
+*/
 	

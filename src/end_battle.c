@@ -304,6 +304,7 @@ void EndBattleFlagClear(void) {
 	FlagClear(WILD_CUSTOM_MOVES_FLAG);
 	FlagClear(TAG_BATTLE_FLAG);
 	FlagClear(TWO_OPPONENT_FLAG);
+	FlagClear(SMART_WILD_FLAG);
 	VarSet(BATTLE_TOWER_TRAINER_NAME, 0xFFFF);
 	Memset(&ExtensionState, 0x0, sizeof(struct BattleExtensionState));
 }

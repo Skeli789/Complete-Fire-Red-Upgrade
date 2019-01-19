@@ -293,7 +293,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
 				
             case ITEM_EFFECT_RANDOM_STAT_UP:
                 if ((PINCH_BERRY_CHECK(bank) || DoPluck)
-				&& !(StatsMaxed(bank))) {
+				&& !((StatsMaxed(bank) && ABILITY(bank) != ABILITY_CONTRARY) || (StatsMinned(bank) && ABILITY(bank) == ABILITY_CONTRARY))) {
                     do {
                         i = umodsi(Random(), 5);
                     } while (gBattleMons[bank].statStages[STAT_STAGE_ATK-1 + i] == 12);
@@ -729,9 +729,9 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
         }
 			
         break;
-    case 3:
+/*    case 3:
 			
-	/*
+	
         for (bank = 0; bank < gBattlersCount; bank++)
         {
             gLastUsedItem = gBattleMons[bank].item;
@@ -866,7 +866,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
 	*/
         break;
 	
-    case 4:
+    case ItemEffects_ContactAttacker:
         if (gBattleMoveDamage)
         {
             switch (atkHoldEffect)

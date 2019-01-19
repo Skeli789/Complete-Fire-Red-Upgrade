@@ -392,7 +392,7 @@ u16 ShouldAIUseZMove(u8 bank, u8 moveIndex, u16 move) {
 	if (gItems[SanitizeItemId(gBattleMons[bank].item)].holdEffect == ITEM_EFFECT_Z_CRYSTAL) {
 		for (i = 0; SpecialZMoveTable[i].species != 0xFFFF; ++i) {
 			if (SpecialZMoveTable[i].species == gBattleMons[bank].species
-			&&	SpecialZMoveTable[i].item == ITEM(bank)
+			&&	SpecialZMoveTable[i].item == gBattleMons[bank].item
 			&&  SpecialZMoveTable[i].move == move)
 				return SpecialZMoveTable[i].move;
 		}

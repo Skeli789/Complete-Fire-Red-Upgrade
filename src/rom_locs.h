@@ -2,7 +2,6 @@
 
 #include "defines.h"
 
-#define gAccuracyStageRatios ((struct StatFractions*) 0x82504FC)
 //#define gStatStageRatios ((u8**) 0x825DEAD)
 #define gBitTable ((u32*) 0x825E45C)
 

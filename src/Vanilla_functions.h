@@ -158,6 +158,7 @@ void __attribute__((long_call)) SetPpNumbersPaletteInMoveSelection(void);
 u8 __attribute__((long_call)) GetEreaderTrainerFrontSpriteId(void);
 u8 __attribute__((long_call)) GetEreaderTrainerClassId(void);
 void __attribute__((long_call)) GetEreaderTrainerName(u8* dst);
+bool8 __attribute__((long_call)) sub_80EB2E0(u32 a);
 //bool8 __attribute__((long_call)) IsLinkDoubleBattle(void);
 void __attribute__((long_call)) sub_8127EC4(u8 bank, u8 partyID, u8 r2);
 void __attribute__((long_call)) sub_8127FF4(u8 slot, u8 slot2);
@@ -317,4 +318,4 @@ u32 __attribute__((long_call)) udivsi(u32, u32);
 u32 __attribute__((long_call)) umodsi(u32, u32);
 
 //The Deal Breaker
-void __attribute__((long_call)) break_func(u32);
+void __attribute__((long_call)) break_func(u32, u32);

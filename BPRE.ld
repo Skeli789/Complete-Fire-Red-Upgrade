@@ -3,7 +3,9 @@ ExtensionState = 0x3000F28;
 
 /*Old Things*/
 gEvolutionTable = 0x08989D30; /*Change this*/
+gBattleScriptsForMoveEffects = 0x8903B70; /*Remove This*/
 
+gAccuracyStageRatios = 0x82504FC;
 sTurnActionsFuncsTable = 0x8250038;
 sEndTurnFuncsTable = 0x8250070;
 
@@ -481,6 +483,7 @@ SetPpNumbersPaletteInMoveSelection = 0x80D89DC | 1;
 GetEreaderTrainerFrontSpriteId = 0x80E7420 | 1;
 GetEreaderTrainerClassId = 0x80E7440 | 1;
 GetEreaderTrainerName = 0x80E7460 | 1;
+sub_80EB2E0 = 0x80EB2E0 | 1;
 /*IsLinkDoubleBattle = 0x811FA20 | 1;*/
 sub_8127EC4 = 0x8127EC4 | 1;
 sub_8127FF4 = 0x8127FF4 | 1;

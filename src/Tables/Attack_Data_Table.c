@@ -1,4 +1,5 @@
 #include "..\\defines.h"
+#include "..\\z_move_effects.h"
 
 struct BattleMove gBattleMoves[] = {
 {				//MOVE_NONE
@@ -191,7 +192,7 @@ struct BattleMove gBattleMoves[] = {
 /*target*/			MOVE_TARGET_SELECTED,
 /*priority*/		0,
 /*flags*/			FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
-/*z_move_power*/	0,
+/*z_move_power*/	180,
 /*split*/			SPLIT_PHYSICAL,
 /*z_move_effect*/	0
 },
@@ -223,7 +224,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESET_STATS
 },
 
 {				//MOVE_CUT
@@ -283,7 +284,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPDEF_UP_1
 },
 
 {				//MOVE_FLY
@@ -433,7 +434,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_EVSN_UP_1
 },
 
 {				//MOVE_HEADBUTT
@@ -468,7 +469,7 @@ struct BattleMove gBattleMoves[] = {
 
 {				//MOVE_FURYATTACK
 /*effect*/			EFFECT_MULTI_HIT,
-/*power*/			1,
+/*power*/			15,
 /*type*/			TYPE_NORMAL,
 /*accuracy*/		85,
 /*pp*/				20,
@@ -476,7 +477,7 @@ struct BattleMove gBattleMoves[] = {
 /*target*/			MOVE_TARGET_SELECTED,
 /*priority*/		0,
 /*flags*/			FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
-/*z_move_power*/	0,
+/*z_move_power*/	100,
 /*split*/			SPLIT_PHYSICAL,
 /*z_move_effect*/	0
 },
@@ -491,7 +492,7 @@ struct BattleMove gBattleMoves[] = {
 /*target*/			MOVE_TARGET_SELECTED,
 /*priority*/		0,
 /*flags*/			FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
-/*z_move_power*/	0,
+/*z_move_power*/	180,
 /*split*/			SPLIT_PHYSICAL,
 /*z_move_effect*/	0
 },
@@ -598,7 +599,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_ATK_UP_1
 },
 
 {				//MOVE_POISONSTING
@@ -658,7 +659,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_ATK_UP_1
 },
 
 {				//MOVE_BITE
@@ -688,7 +689,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_DEF_UP_1
 },
 
 {				//MOVE_ROAR
@@ -703,7 +704,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_DEF_UP_1
 },
 
 {				//MOVE_SING
@@ -718,7 +719,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPD_UP_1
 },
 
 {				//MOVE_SUPERSONIC
@@ -733,7 +734,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPD_UP_1
 },
 
 {				//MOVE_SONICBOOM
@@ -746,7 +747,7 @@ struct BattleMove gBattleMoves[] = {
 /*target*/			MOVE_TARGET_SELECTED,
 /*priority*/		0,
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
-/*z_move_power*/	0,
+/*z_move_power*/	100,
 /*split*/			SPLIT_SPECIAL,
 /*z_move_effect*/	0
 },
@@ -763,7 +764,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESET_STATS
 },
 
 {				//MOVE_ACID
@@ -823,7 +824,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RECOVER_HP
 },
 
 {				//MOVE_WATERGUN
@@ -1016,7 +1017,7 @@ struct BattleMove gBattleMoves[] = {
 /*target*/			MOVE_TARGET_SELECTED,
 /*priority*/		0,
 /*flags*/			FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
-/*z_move_power*/	0,
+/*z_move_power*/	160,
 /*split*/			SPLIT_PHYSICAL,
 /*z_move_effect*/	0
 },
@@ -1031,7 +1032,7 @@ struct BattleMove gBattleMoves[] = {
 /*target*/			MOVE_TARGET_DEPENDS,
 /*priority*/		251,
 /*flags*/			FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
-/*z_move_power*/	0,
+/*z_move_power*/	100,
 /*split*/			SPLIT_PHYSICAL,
 /*z_move_effect*/	0
 },
@@ -1046,7 +1047,7 @@ struct BattleMove gBattleMoves[] = {
 /*target*/			MOVE_TARGET_SELECTED,
 /*priority*/		0,
 /*flags*/			FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
-/*z_move_power*/	0,
+/*z_move_power*/	100,
 /*split*/			SPLIT_PHYSICAL,
 /*z_move_effect*/	0
 },
@@ -1108,7 +1109,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESET_STATS
 },
 
 {				//MOVE_GROWTH
@@ -1123,7 +1124,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPATK_UP_1
 },
 
 {				//MOVE_RAZORLEAF
@@ -1168,7 +1169,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_DEF_UP_1
 },
 
 {				//MOVE_STUNSPORE
@@ -1183,7 +1184,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPDEF_UP_1
 },
 
 {				//MOVE_SLEEPPOWDER
@@ -1198,7 +1199,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPD_UP_1
 },
 
 {				//MOVE_PETALDANCE
@@ -1228,7 +1229,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPD_UP_1
 },
 
 {				//MOVE_DRAGONRAGE
@@ -1241,7 +1242,7 @@ struct BattleMove gBattleMoves[] = {
 /*target*/			MOVE_TARGET_SELECTED,
 /*priority*/		0,
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
-/*z_move_power*/	0,
+/*z_move_power*/	100,
 /*split*/			SPLIT_SPECIAL,
 /*z_move_effect*/	0
 },
@@ -1303,7 +1304,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPDEF_UP_1
 },
 
 {				//MOVE_THUNDER
@@ -1361,7 +1362,7 @@ struct BattleMove gBattleMoves[] = {
 /*target*/			MOVE_TARGET_SELECTED,
 /*priority*/		0,
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
-/*z_move_power*/	0,
+/*z_move_power*/	180,
 /*split*/			SPLIT_PHYSICAL,
 /*z_move_effect*/	0
 },
@@ -1393,7 +1394,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_DEF_UP_1
 },
 
 {				//MOVE_CONFUSION
@@ -1438,7 +1439,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPD_UP_1
 },
 
 {				//MOVE_MEDITATE
@@ -1453,7 +1454,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_ATK_UP_1
 },
 
 {				//MOVE_AGILITY
@@ -1468,7 +1469,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESET_STATS
 },
 
 {				//MOVE_QUICKATTACK
@@ -1513,7 +1514,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			0,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RECOVER_HP
 },
 
 {				//MOVE_NIGHTSHADE
@@ -1526,7 +1527,7 @@ struct BattleMove gBattleMoves[] = {
 /*target*/			MOVE_TARGET_SELECTED,
 /*priority*/		0,
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
-/*z_move_power*/	0,
+/*z_move_power*/	100,
 /*split*/			SPLIT_SPECIAL,
 /*z_move_effect*/	0
 },
@@ -1543,7 +1544,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_ACC_UP_1
 },
 
 {				//MOVE_SCREECH
@@ -1558,7 +1559,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_ATK_UP_1
 },
 
 {				//MOVE_DOUBLETEAM
@@ -1573,7 +1574,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESET_STATS
 },
 
 {				//MOVE_RECOVER
@@ -1588,7 +1589,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED | FLAG_TRIAGE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESET_STATS
 },
 
 {				//MOVE_HARDEN
@@ -1603,7 +1604,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_DEF_UP_1
 },
 
 {				//MOVE_MINIMIZE
@@ -1618,7 +1619,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESET_STATS
 },
 
 {				//MOVE_SMOKESCREEN
@@ -1633,7 +1634,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_EVSN_UP_1
 },
 
 {				//MOVE_CONFUSERAY
@@ -1648,7 +1649,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPATK_UP_1
 },
 
 {				//MOVE_WITHDRAW
@@ -1663,7 +1664,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_DEF_UP_1
 },
 
 {				//MOVE_DEFENSECURL
@@ -1678,7 +1679,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_ACC_UP_1
 },
 
 {				//MOVE_BARRIER
@@ -1693,7 +1694,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESET_STATS
 },
 
 {				//MOVE_LIGHTSCREEN
@@ -1708,7 +1709,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPDEF_UP_1
 },
 
 {				//MOVE_HAZE
@@ -1723,7 +1724,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			0,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RECOVER_HP
 },
 
 {				//MOVE_REFLECT
@@ -1738,7 +1739,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_DEF_UP_1
 },
 
 {				//MOVE_FOCUSENERGY
@@ -1753,7 +1754,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_ACC_UP_1
 },
 
 {				//MOVE_BIDE
@@ -1766,7 +1767,7 @@ struct BattleMove gBattleMoves[] = {
 /*target*/			MOVE_TARGET_USER,
 /*priority*/		1,
 /*flags*/			FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
-/*z_move_power*/	0,
+/*z_move_power*/	100,
 /*split*/			SPLIT_PHYSICAL,
 /*z_move_effect*/	0
 },
@@ -1798,7 +1799,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			0,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_ATK_UP_2
 },
 
 {				//MOVE_SELFDESTRUCT
@@ -2008,7 +2009,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESET_STATS
 },
 
 {				//MOVE_KINESIS
@@ -2023,7 +2024,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_EVSN_UP_1
 },
 
 {				//MOVE_SOFTBOILED
@@ -2038,7 +2039,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_TRIAGE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESET_STATS
 },
 
 {				//MOVE_HIGHJUMPKICK
@@ -2068,7 +2069,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPDEF_UP_1
 },
 
 {				//MOVE_DREAMEATER
@@ -2098,7 +2099,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_DEF_UP_1
 },
 
 {				//MOVE_BARRAGE
@@ -2143,7 +2144,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPD_UP_1
 },
 
 {				//MOVE_SKYATTACK
@@ -2173,7 +2174,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			0,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RECOVER_HP
 },
 
 {				//MOVE_BUBBLE
@@ -2218,7 +2219,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESET_STATS
 },
 
 {				//MOVE_FLASH
@@ -2233,7 +2234,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_EVSN_UP_1
 },
 
 {				//MOVE_PSYWAVE
@@ -2246,7 +2247,7 @@ struct BattleMove gBattleMoves[] = {
 /*target*/			MOVE_TARGET_SELECTED,
 /*priority*/		0,
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
-/*z_move_power*/	0,
+/*z_move_power*/	100,
 /*split*/			SPLIT_SPECIAL,
 /*z_move_effect*/	0
 },
@@ -2263,7 +2264,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			0,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_ATK_UP_3
 },
 
 {				//MOVE_ACIDARMOR
@@ -2278,7 +2279,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESET_STATS
 },
 
 {				//MOVE_CRABHAMMER
@@ -2353,7 +2354,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED | FLAG_TRIAGE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESET_STATS
 },
 
 {				//MOVE_ROCKSLIDE
@@ -2398,7 +2399,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_ATK_UP_1
 },
 
 {				//MOVE_CONVERSION
@@ -2413,7 +2414,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_ALL_STATS_UP_1
 },
 
 {				//MOVE_TRIATTACK
@@ -2441,7 +2442,7 @@ struct BattleMove gBattleMoves[] = {
 /*target*/			MOVE_TARGET_SELECTED,
 /*priority*/		0,
 /*flags*/			FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
-/*z_move_power*/	0,
+/*z_move_power*/	100,
 /*split*/			SPLIT_PHYSICAL,
 /*z_move_effect*/	0
 },
@@ -2473,7 +2474,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESET_STATS
 },
 
 {				//MOVE_STRUGGLE
@@ -2503,7 +2504,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			0,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_ALL_STATS_UP_1
 },
 
 {				//MOVE_TRIPLEKICK
@@ -2548,7 +2549,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_DEF_UP_1
 },
 
 {				//MOVE_MINDREADER
@@ -2563,7 +2564,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPATK_UP_1
 },
 
 {				//MOVE_NIGHTMARE
@@ -2578,7 +2579,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPATK_UP_1
 },
 
 {				//MOVE_FLAMEWHEEL
@@ -2623,7 +2624,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			0,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_CURSE
 },
 
 {				//MOVE_FLAIL
@@ -2636,7 +2637,7 @@ struct BattleMove gBattleMoves[] = {
 /*target*/			MOVE_TARGET_SELECTED,
 /*priority*/		0,
 /*flags*/			FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
-/*z_move_power*/	0,
+/*z_move_power*/	160,
 /*split*/			SPLIT_PHYSICAL,
 /*z_move_effect*/	0
 },
@@ -2653,7 +2654,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			0,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RECOVER_HP
 },
 
 {				//MOVE_AEROBLAST
@@ -2683,7 +2684,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESET_STATS
 },
 
 {				//MOVE_REVERSAL
@@ -2696,7 +2697,7 @@ struct BattleMove gBattleMoves[] = {
 /*target*/			MOVE_TARGET_SELECTED,
 /*priority*/		0,
 /*flags*/			FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
-/*z_move_power*/	0,
+/*z_move_power*/	160,
 /*split*/			SPLIT_PHYSICAL,
 /*z_move_effect*/	0
 },
@@ -2713,7 +2714,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RECOVER_HP
 },
 
 {				//MOVE_POWDERSNOW
@@ -2743,7 +2744,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			0,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESET_STATS
 },
 
 {				//MOVE_MACHPUNCH
@@ -2773,7 +2774,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPD_UP_1
 },
 
 {				//MOVE_FEINTATTACK
@@ -2803,7 +2804,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPATK_UP_1
 },
 
 {				//MOVE_BELLYDRUM
@@ -2818,7 +2819,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RECOVER_HP
 },
 
 {				//MOVE_SLUDGEBOMB
@@ -2878,7 +2879,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_MAGIC_COAT_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_DEF_UP_1
 },
 
 {				//MOVE_ZAPCANNON
@@ -2908,7 +2909,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_BOOST_CRITS
 },
 
 {				//MOVE_DESTINYBOND
@@ -2923,7 +2924,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			0,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_FOLLOW_ME
 },
 
 {				//MOVE_PERISHSONG
@@ -2938,7 +2939,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			0,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESET_STATS
 },
 
 {				//MOVE_ICYWIND
@@ -2968,7 +2969,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			0,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_EVSN_UP_1
 },
 
 {				//MOVE_BONERUSH
@@ -2998,7 +2999,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPD_UP_1
 },
 
 {				//MOVE_OUTRAGE
@@ -3028,7 +3029,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			0,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPD_UP_1
 },
 
 {				//MOVE_GIGADRAIN
@@ -3058,7 +3059,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			0,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESET_STATS
 },
 
 {				//MOVE_CHARM
@@ -3073,7 +3074,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_DEF_UP_1
 },
 
 {				//MOVE_ROLLOUT
@@ -3118,7 +3119,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESET_STATS
 },
 
 {				//MOVE_MILKDRINK
@@ -3133,7 +3134,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_SNATCH_AFFECTED | FLAG_TRIAGE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESET_STATS
 },
 
 {				//MOVE_SPARK
@@ -3193,7 +3194,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPDEF_UP_1
 },
 
 {				//MOVE_ATTRACT
@@ -3208,7 +3209,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESET_STATS
 },
 
 {				//MOVE_SLEEPTALK
@@ -3223,7 +3224,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			0,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_BOOST_CRITS
 },
 
 {				//MOVE_HEALBELL
@@ -3238,7 +3239,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RECOVER_HP
 },
 
 {				//MOVE_RETURN
@@ -3251,7 +3252,7 @@ struct BattleMove gBattleMoves[] = {
 /*target*/			MOVE_TARGET_SELECTED,
 /*priority*/		0,
 /*flags*/			FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
-/*z_move_power*/	0,
+/*z_move_power*/	160,
 /*split*/			SPLIT_PHYSICAL,
 /*z_move_effect*/	0
 },
@@ -3266,7 +3267,7 @@ struct BattleMove gBattleMoves[] = {
 /*target*/			MOVE_TARGET_SELECTED,
 /*priority*/		0,
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
-/*z_move_power*/	0,
+/*z_move_power*/	100,
 /*split*/			SPLIT_PHYSICAL,
 /*z_move_effect*/	0
 },
@@ -3281,7 +3282,7 @@ struct BattleMove gBattleMoves[] = {
 /*target*/			MOVE_TARGET_SELECTED,
 /*priority*/		0,
 /*flags*/			FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
-/*z_move_power*/	0,
+/*z_move_power*/	160,
 /*split*/			SPLIT_PHYSICAL,
 /*z_move_effect*/	0
 },
@@ -3298,7 +3299,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPD_UP_1
 },
 
 {				//MOVE_PAINSPLIT
@@ -3313,7 +3314,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_DEF_UP_1
 },
 
 {				//MOVE_SACREDFIRE
@@ -3341,7 +3342,7 @@ struct BattleMove gBattleMoves[] = {
 /*target*/			MOVE_TARGET_FOES_AND_ALLY,
 /*priority*/		0,
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
-/*z_move_power*/	0,
+/*z_move_power*/	140,
 /*split*/			SPLIT_PHYSICAL,
 /*z_move_effect*/	0
 },
@@ -3403,7 +3404,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			0,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESET_STATS
 },
 
 {				//MOVE_ENCORE
@@ -3418,7 +3419,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPD_UP_1
 },
 
 {				//MOVE_PURSUIT
@@ -3463,7 +3464,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_ACC_UP_1
 },
 
 {				//MOVE_IRONTAIL
@@ -3523,7 +3524,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED | FLAG_TRIAGE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESET_STATS
 },
 
 {				//MOVE_SYNTHESIS
@@ -3538,7 +3539,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED | FLAG_TRIAGE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESET_STATS
 },
 
 {				//MOVE_MOONLIGHT
@@ -3553,7 +3554,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED | FLAG_TRIAGE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESET_STATS
 },
 
 {				//MOVE_HIDDENPOWER
@@ -3566,7 +3567,7 @@ struct BattleMove gBattleMoves[] = {
 /*target*/			MOVE_TARGET_SELECTED,
 /*priority*/		0,
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
-/*z_move_power*/	140,
+/*z_move_power*/	120,
 /*split*/			SPLIT_SPECIAL,
 /*z_move_effect*/	0
 },
@@ -3613,7 +3614,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			0,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPD_UP_1
 },
 
 {				//MOVE_SUNNYDAY
@@ -3628,7 +3629,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			0,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPD_UP_1
 },
 
 {				//MOVE_CRUNCH
@@ -3656,7 +3657,7 @@ struct BattleMove gBattleMoves[] = {
 /*target*/			MOVE_TARGET_DEPENDS,
 /*priority*/		251,
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
-/*z_move_power*/	0,
+/*z_move_power*/	100,
 /*split*/			SPLIT_SPECIAL,
 /*z_move_effect*/	0
 },
@@ -3673,7 +3674,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RECOVER_HP
 },
 
 {				//MOVE_EXTREMESPEED
@@ -3776,7 +3777,7 @@ struct BattleMove gBattleMoves[] = {
 /*target*/			MOVE_TARGET_SELECTED,
 /*priority*/		0,
 /*flags*/			FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
-/*z_move_power*/	0,
+/*z_move_power*/	100,
 /*split*/			SPLIT_PHYSICAL,
 /*z_move_effect*/	0
 },
@@ -3823,7 +3824,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RECOVER_HP
 },
 
 {				//MOVE_SPITUP
@@ -3836,7 +3837,7 @@ struct BattleMove gBattleMoves[] = {
 /*target*/			MOVE_TARGET_SELECTED,
 /*priority*/		0,
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
-/*z_move_power*/	180,
+/*z_move_power*/	100,
 /*split*/			SPLIT_STATUS,
 /*z_move_effect*/	0
 },
@@ -3853,7 +3854,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED | FLAG_TRIAGE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESET_STATS
 },
 
 {				//MOVE_HEATWAVE
@@ -3883,7 +3884,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPD_UP_1
 },
 
 {				//MOVE_TORMENT
@@ -3898,7 +3899,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_DEF_UP_1
 },
 
 {				//MOVE_FLATTER
@@ -3913,7 +3914,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPDEF_UP_1
 },
 
 {				//MOVE_WILLOWISP
@@ -3928,7 +3929,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_ATK_UP_1
 },
 
 {				//MOVE_MEMENTO
@@ -3943,7 +3944,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESTORE_REPLACEMENT_HP
 },
 
 {				//MOVE_FACADE
@@ -4003,7 +4004,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			0,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESET_STATS
 },
 
 {				//MOVE_NATUREPOWER
@@ -4033,7 +4034,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPDEF_UP_1
 },
 
 {				//MOVE_TAUNT
@@ -4048,7 +4049,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_ATK_UP_1
 },
 
 {				//MOVE_HELPINGHAND
@@ -4063,7 +4064,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			0,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESET_STATS
 },
 
 {				//MOVE_TRICK
@@ -4078,7 +4079,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPD_UP_2
 },
 
 {				//MOVE_ROLEPLAY
@@ -4093,7 +4094,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			0,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPD_UP_1
 },
 
 {				//MOVE_WISH
@@ -4108,7 +4109,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_SNATCH_AFFECTED | FLAG_TRIAGE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPDEF_UP_1
 },
 
 {				//MOVE_ASSIST
@@ -4138,7 +4139,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPDEF_UP_1
 },
 
 {				//MOVE_SUPERPOWER
@@ -4168,7 +4169,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			0,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPDEF_UP_2
 },
 
 {				//MOVE_RECYCLE
@@ -4183,7 +4184,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPD_UP_2
 },
 
 {				//MOVE_REVENGE
@@ -4228,7 +4229,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPD_UP_1
 },
 
 {				//MOVE_KNOCKOFF
@@ -4256,7 +4257,7 @@ struct BattleMove gBattleMoves[] = {
 /*target*/			MOVE_TARGET_SELECTED,
 /*priority*/		0,
 /*flags*/			FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
-/*z_move_power*/	0,
+/*z_move_power*/	160,
 /*split*/			SPLIT_PHYSICAL,
 /*z_move_effect*/	0
 },
@@ -4288,7 +4289,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPD_UP_1
 },
 
 {				//MOVE_IMPRISON
@@ -4303,7 +4304,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPDEF_UP_2
 },
 
 {				//MOVE_REFRESH
@@ -4318,7 +4319,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RECOVER_HP
 },
 
 {				//MOVE_GRUDGE
@@ -4333,7 +4334,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_FOLLOW_ME
 },
 
 {				//MOVE_SNATCH
@@ -4348,7 +4349,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			0,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPD_UP_2
 },
 
 {				//MOVE_SECRETPOWER
@@ -4408,7 +4409,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_EVSN_UP_1
 },
 
 {				//MOVE_TAILGLOW
@@ -4423,7 +4424,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESET_STATS
 },
 
 {				//MOVE_LUSTERPURGE
@@ -4468,7 +4469,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_DEF_UP_1
 },
 
 {				//MOVE_TEETERDANCE
@@ -4483,7 +4484,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPATK_UP_1
 },
 
 {				//MOVE_BLAZEKICK
@@ -4513,7 +4514,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			0,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPDEF_UP_1
 },
 
 {				//MOVE_ICEBALL
@@ -4558,7 +4559,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED | FLAG_TRIAGE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESET_STATS
 },
 
 {				//MOVE_HYPERVOICE
@@ -4693,7 +4694,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RECOVER_HP
 },
 
 {				//MOVE_FAKETEARS
@@ -4708,7 +4709,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPATK_UP_1
 },
 
 {				//MOVE_AIRCUTTER
@@ -4753,7 +4754,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_ATK_UP_1
 },
 
 {				//MOVE_ROCKTOMB
@@ -4798,7 +4799,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPATK_UP_1
 },
 
 {				//MOVE_GRASSWHISTLE
@@ -4813,7 +4814,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPD_UP_1
 },
 
 {				//MOVE_TICKLE
@@ -4828,7 +4829,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_DEF_UP_1
 },
 
 {				//MOVE_COSMICPOWER
@@ -4843,7 +4844,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPDEF_UP_1
 },
 
 {				//MOVE_WATERSPOUT
@@ -4946,7 +4947,7 @@ struct BattleMove gBattleMoves[] = {
 /*target*/			MOVE_TARGET_SELECTED,
 /*priority*/		0,
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
-/*z_move_power*/	0,
+/*z_move_power*/	180,
 /*split*/			SPLIT_SPECIAL,
 /*z_move_effect*/	0
 },
@@ -5023,7 +5024,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESET_STATS
 },
 
 {				//MOVE_BLOCK
@@ -5038,7 +5039,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_DEF_UP_1
 },
 
 {				//MOVE_HOWL
@@ -5053,7 +5054,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_ATK_UP_1
 },
 
 {				//MOVE_DRAGONCLAW
@@ -5098,7 +5099,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_ATK_UP_1
 },
 
 {				//MOVE_BOUNCE
@@ -5203,7 +5204,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			0,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPDEF_UP_1
 },
 
 {				//MOVE_CALMMIND
@@ -5218,7 +5219,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESET_STATS
 },
 
 {				//MOVE_LEAFBLADE
@@ -5248,7 +5249,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESET_STATS
 },
 
 {				//MOVE_ROCKBLAST
@@ -5666,7 +5667,7 @@ struct BattleMove gBattleMoves[] = {
 /*target*/			MOVE_TARGET_SELECTED,
 /*priority*/		0,
 /*flags*/			FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
-/*z_move_power*/	0,
+/*z_move_power*/	160,
 /*split*/			SPLIT_SPECIAL,
 /*z_move_effect*/	0
 },
@@ -5803,7 +5804,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESET_STATS
 },
 
 {				//MOVE_NIGHTSLASH
@@ -5908,7 +5909,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESET_STATS
 },
 
 {				//MOVE_ROCKWRECKER
@@ -5938,7 +5939,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED | FLAG_TRIAGE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESET_STATS
 },
 
 {				//MOVE_SEEDBOMB
@@ -6043,7 +6044,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPD_UP_2
 },
 
 {				//MOVE_DRILLRUN
@@ -6148,7 +6149,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_ATK_UP_1
 },
 
 {				//MOVE_HORNLEECH
@@ -6178,7 +6179,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESET_STATS
 },
 
 {				//MOVE_HURRICANE
@@ -6223,7 +6224,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_ATK_UP_1
 },
 
 {				//MOVE_QUIVERDANCE
@@ -6238,7 +6239,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESET_STATS
 },
 
 {				//MOVE_LEAFTORNADO
@@ -6598,7 +6599,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESET_STATS
 },
 
 {				//MOVE_ACROBATICS
@@ -6733,7 +6734,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_TRIAGE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_SPECIAL,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESET_STATS
 },
 
 {				//MOVE_FLASHCANNON
@@ -6793,7 +6794,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESET_STATS
 },
 
 {				//MOVE_RAGEPOWDER
@@ -6808,7 +6809,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			0,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESET_STATS
 },
 
 {				//MOVE_WAKEUPSLAP
@@ -6853,7 +6854,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			0,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_ACC_UP_1
 },
 
 {				//MOVE_MIRACLEEYE
@@ -6868,7 +6869,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPATK_UP_1
 },
 
 {				//MOVE_SUCKERPUNCH
@@ -6943,7 +6944,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_DEF_UP_1
 },
 
 {				//MOVE_PLAYROUGH
@@ -7033,7 +7034,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_MAGIC_COAT_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_DEF_UP_1
 },
 
 {				//MOVE_TOXICSPIKES
@@ -7048,7 +7049,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_MAGIC_COAT_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_DEF_UP_1
 },
 
 {				//MOVE_HEALINGWISH
@@ -7093,7 +7094,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_BOOST_CRITS
 },
 
 {				//MOVE_BOOMBURST
@@ -7138,7 +7139,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPD_UP_1
 },
 
 {				//MOVE_GASTROACID
@@ -7153,7 +7154,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPD_UP_1
 },
 
 {				//MOVE_GEOMANCY
@@ -7168,7 +7169,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_ALL_STATS_UP_1
 },
 
 {				//MOVE_FLOWERSHIELD
@@ -7183,7 +7184,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			0,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_DEF_UP_1
 },
 
 {				//MOVE_ROTOTILLER
@@ -7198,7 +7199,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			0,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_ATK_UP_1
 },
 
 {				//MOVE_SHIFTGEAR
@@ -7213,7 +7214,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESET_STATS
 },
 
 {				//MOVE_STICKYWEB
@@ -7228,7 +7229,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_MAGIC_COAT_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPD_UP_1
 },
 
 {				//MOVE_STOREDPOWER
@@ -7241,7 +7242,7 @@ struct BattleMove gBattleMoves[] = {
 /*target*/			MOVE_TARGET_SELECTED,
 /*priority*/		0,
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
-/*z_move_power*/	100,
+/*z_move_power*/	160,
 /*split*/			SPLIT_SPECIAL,
 /*z_move_effect*/	0
 },
@@ -7258,7 +7259,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_BOOST_CRITS
 },
 
 {				//MOVE_PUNISHMENT
@@ -7271,7 +7272,7 @@ struct BattleMove gBattleMoves[] = {
 /*target*/			MOVE_TARGET_SELECTED,
 /*priority*/		0,
 /*flags*/			FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
-/*z_move_power*/	0,
+/*z_move_power*/	160,
 /*split*/			SPLIT_PHYSICAL,
 /*z_move_effect*/	0
 },
@@ -7318,7 +7319,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESET_STATS
 },
 
 {				//MOVE_FEINT
@@ -7378,7 +7379,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_MAGIC_COAT_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_DEF_UP_1
 },
 
 {				//MOVE_ROAROFTIME
@@ -7436,7 +7437,7 @@ struct BattleMove gBattleMoves[] = {
 /*target*/			MOVE_TARGET_SELECTED,
 /*priority*/		0,
 /*flags*/			FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
-/*z_move_power*/	0,
+/*z_move_power*/	180,
 /*split*/			SPLIT_STATUS,
 /*z_move_effect*/	0
 },
@@ -7601,7 +7602,7 @@ struct BattleMove gBattleMoves[] = {
 /*target*/			MOVE_TARGET_SELECTED,
 /*priority*/		0,
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
-/*z_move_power*/	0,
+/*z_move_power*/	160,
 /*split*/			SPLIT_PHYSICAL,
 /*z_move_effect*/	0
 },
@@ -7661,7 +7662,7 @@ struct BattleMove gBattleMoves[] = {
 /*target*/			MOVE_TARGET_SELECTED,
 /*priority*/		0,
 /*flags*/			FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
-/*z_move_power*/	0,
+/*z_move_power*/	160,
 /*split*/			SPLIT_PHYSICAL,
 /*z_move_effect*/	0
 },
@@ -7708,7 +7709,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_DEF_UP_1
 },
 
 {				//MOVE_HEALORDER
@@ -7723,7 +7724,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED | FLAG_TRIAGE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESET_STATS
 },
 
 {				//MOVE_CAPTIVATE
@@ -7738,7 +7739,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPDEF_UP_2
 },
 
 {				//MOVE_DEFOG
@@ -7753,7 +7754,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_ACC_UP_1
 },
 
 {				//MOVE_ORIGINPULSE
@@ -7798,7 +7799,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPD_UP_1
 },
 
 {				//MOVE_STEAMERUPTION
@@ -7826,7 +7827,7 @@ struct BattleMove gBattleMoves[] = {
 /*target*/			MOVE_TARGET_SELECTED,
 /*priority*/		0,
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
-/*z_move_power*/	0,
+/*z_move_power*/	100,
 /*split*/			SPLIT_PHYSICAL,
 /*z_move_effect*/	0
 },
@@ -7843,7 +7844,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPD_UP_2
 },
 
 {				//MOVE_POWERSWAP
@@ -7858,7 +7859,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPD_UP_1
 },
 
 {				//MOVE_POWERTRICK
@@ -7873,7 +7874,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_ATK_UP_1
 },
 
 {				//MOVE_PSYCHOSHIFT
@@ -7888,7 +7889,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPATK_UP_2
 },
 
 {				//MOVE_WRINGOUT
@@ -7901,7 +7902,7 @@ struct BattleMove gBattleMoves[] = {
 /*target*/			MOVE_TARGET_SELECTED,
 /*priority*/		0,
 /*flags*/			FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
-/*z_move_power*/	0,
+/*z_move_power*/	190,
 /*split*/			SPLIT_SPECIAL,
 /*z_move_effect*/	0
 },
@@ -7948,7 +7949,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESET_STATS
 },
 
 {				//MOVE_DIAMONDSTORM
@@ -7958,7 +7959,7 @@ struct BattleMove gBattleMoves[] = {
 /*accuracy*/		95,
 /*pp*/				5,
 /*effectChance*/	50,
-/*target*/			MOVE_TARGET_SELECTED,
+/*target*/			MOVE_TARGET_BOTH,
 /*priority*/		0,
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
 /*z_move_power*/	180,
@@ -7991,7 +7992,7 @@ struct BattleMove gBattleMoves[] = {
 /*target*/			MOVE_TARGET_SELECTED,
 /*priority*/		0,
 /*flags*/			FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
-/*z_move_power*/	0,
+/*z_move_power*/	160,
 /*split*/			SPLIT_PHYSICAL,
 /*z_move_effect*/	0
 },
@@ -8021,7 +8022,7 @@ struct BattleMove gBattleMoves[] = {
 /*target*/			MOVE_TARGET_SELECTED,
 /*priority*/		0,
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
-/*z_move_power*/	0,
+/*z_move_power*/	160,
 /*split*/			SPLIT_SPECIAL,
 /*z_move_effect*/	0
 },
@@ -8053,7 +8054,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPDEF_UP_1
 },
 
 {				//MOVE_NIGHTDAZE
@@ -8128,7 +8129,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_BOOST_CRITS
 },
 
 {				//MOVE_CRUSHGRIP
@@ -8141,7 +8142,7 @@ struct BattleMove gBattleMoves[] = {
 /*target*/			MOVE_TARGET_SELECTED,
 /*priority*/		0,
 /*flags*/			FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
-/*z_move_power*/	0,
+/*z_move_power*/	190,
 /*split*/			SPLIT_PHYSICAL,
 /*z_move_effect*/	0
 },
@@ -8383,7 +8384,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_DEF_UP_1
 },
 
 {				//MOVE_DRAGONASCENT
@@ -8413,7 +8414,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESTORE_REPLACEMENT_HP
 },
 
 {				//MOVE_TOPSYTURVY
@@ -8428,7 +8429,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_ATK_UP_1
 },
 
 {				//MOVE_COREENFORCER
@@ -8473,7 +8474,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			0,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPDEF_UP_1
 },
 
 {				//MOVE_WATERSHURIKEN
@@ -8518,7 +8519,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			0,
 /*z_move_power*/	0,
 /*split*/			SPLIT_PHYSICAL,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_DEF_UP_1
 },
 
 {				//MOVE_EERIEIMPULSE
@@ -8533,7 +8534,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPDEF_UP_1
 },
 
 {				//MOVE_HOLDBACK
@@ -8698,7 +8699,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPD_UP_1
 },
 
 {				//MOVE_BANEFULBUNKER
@@ -8713,7 +8714,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			0,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_DEF_UP_1
 },
 
 {				//MOVE_BEAKBLAST
@@ -8863,7 +8864,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_TRIAGE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESET_STATS
 },
 
 {				//MOVE_GEARUP
@@ -8878,7 +8879,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPATK_UP_1
 },
 
 {				//MOVE_HIGHHORSEPOWER
@@ -8923,7 +8924,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_ATK_UP_1
 },
 
 {				//MOVE_LEAFAGE
@@ -9011,7 +9012,7 @@ struct BattleMove gBattleMoves[] = {
 /*target*/			MOVE_TARGET_SELECTED,
 /*priority*/		0,
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
-/*z_move_power*/	0,
+/*z_move_power*/	100,
 /*split*/			SPLIT_SPECIAL,
 /*z_move_effect*/	0
 },
@@ -9041,7 +9042,7 @@ struct BattleMove gBattleMoves[] = {
 /*target*/			MOVE_TARGET_SELECTED,
 /*priority*/		0,
 /*flags*/			FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
-/*z_move_power*/	100,
+/*z_move_power*/	160,
 /*split*/			SPLIT_PHYSICAL,
 /*z_move_effect*/	0
 },
@@ -9088,7 +9089,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_TRIAGE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_ALL_STATS_UP_1
 },
 
 {				//MOVE_REVELATIONDANCE
@@ -9148,7 +9149,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED | FLAG_TRIAGE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_RESET_STATS
 },
 
 {				//MOVE_SMARTSTRIKE
@@ -9223,7 +9224,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPD_UP_1
 },
 
 {				//MOVE_SPIRITSHACKLE
@@ -9253,7 +9254,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPDEF_UP_1
 },
 
 {				//MOVE_STOMPINGTANTRUM
@@ -9283,7 +9284,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_TRIAGE_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_DEF_UP_1
 },
 
 {				//MOVE_SUNSTEELSTRIKE
@@ -9313,7 +9314,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_MAGIC_COAT_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_DEF_UP_1
 },
 
 {				//MOVE_THROATCHOP
@@ -9343,7 +9344,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPD_UP_1
 },
 
 {				//MOVE_TROPKICK
@@ -9388,7 +9389,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			0,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPD_UP_1
 },
 
 {				//MOVE_GRASSYTERRAIN
@@ -9403,7 +9404,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			0,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_DEF_UP_1
 },
 
 {				//MOVE_MISTYTERRAIN
@@ -9418,7 +9419,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			0,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPDEF_UP_1
 },
 
 {				//MOVE_PSYCHICTERRAIN
@@ -9433,7 +9434,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			0,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPATK_UP_1
 },
 
 {				//MOVE_GRASSPLEDGE
@@ -9493,7 +9494,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			0,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_ACC_UP_1
 },
 
 {				//MOVE_MAGICROOM
@@ -9508,7 +9509,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			0,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPDEF_UP_1
 },
 
 {				//MOVE_WONDERROOM
@@ -9523,7 +9524,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			0,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPDEF_UP_1
 },
 
 {				//MOVE_CRAFTYSHIELD
@@ -9538,7 +9539,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			0,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPDEF_UP_1
 },
 
 {				//MOVE_MATBLOCK
@@ -9553,7 +9554,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_DEF_UP_1
 },
 
 {				//MOVE_QUICKGUARD
@@ -9568,7 +9569,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_DEF_UP_1
 },
 
 {				//MOVE_WIDEGUARD
@@ -9583,7 +9584,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_DEF_UP_1
 },
 
 {				//MOVE_AQUARING
@@ -9598,7 +9599,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_DEF_UP_1
 },
 
 {				//MOVE_AROMATICMIST
@@ -9613,7 +9614,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			0,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPDEF_UP_2
 },
 
 {				//MOVE_BELCH
@@ -9643,7 +9644,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			0,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPD_UP_2
 },
 
 {				//MOVE_FLING
@@ -9656,7 +9657,7 @@ struct BattleMove gBattleMoves[] = {
 /*target*/			MOVE_TARGET_SELECTED,
 /*priority*/		0,
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
-/*z_move_power*/	0,
+/*z_move_power*/	100,
 /*split*/			SPLIT_PHYSICAL,
 /*z_move_effect*/	0
 },
@@ -9688,7 +9689,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			0,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPATK_UP_1
 },
 
 {				//MOVE_GUARDSPLIT
@@ -9703,7 +9704,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPD_UP_1
 },
 
 {				//MOVE_HEALBLOCK
@@ -9718,7 +9719,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPATK_UP_2
 },
 
 {				//MOVE_IONDELUGE
@@ -9733,7 +9734,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			0,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPATK_UP_1
 },
 
 {				//MOVE_LUCKYCHANT
@@ -9748,7 +9749,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_EVSN_UP_1
 },
 
 {				//MOVE_MAGNETRISE
@@ -9763,7 +9764,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_EVSN_UP_1
 },
 
 {				//MOVE_MAGNETICFLUX
@@ -9778,7 +9779,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_SNATCH_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPDEF_UP_1
 },
 
 {				//MOVE_POWDER
@@ -9793,7 +9794,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPDEF_UP_2
 },
 
 {				//MOVE_POWERSPLIT
@@ -9808,7 +9809,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPD_UP_1
 },
 
 {				//MOVE_REFLECTTYPE
@@ -9823,7 +9824,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPATK_UP_1
 },
 
 {				//MOVE_SIMPLEBEAM
@@ -9838,7 +9839,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPATK_UP_1
 },
 
 {				//MOVE_SOAK
@@ -9853,7 +9854,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPATK_UP_1
 },
 
 {				//MOVE_TELEKINESIS
@@ -9868,7 +9869,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPATK_UP_1
 },
 
 {				//MOVE_TRICKORTREAT
@@ -9883,7 +9884,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_ALL_STATS_UP_1
 },
 
 {				//MOVE_VENOMDRENCH
@@ -9898,7 +9899,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_DEF_UP_1
 },
 
 {				//MOVE_FORESTSCURSE
@@ -9973,7 +9974,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPATK_UP_1
 },
 
 {				//MOVE_EMBARGO
@@ -9988,7 +9989,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPATK_UP_1
 },
 
 {				//MOVE_FAIRYLOCK
@@ -10003,7 +10004,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			0,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_DEF_UP_1
 },
 
 {				//MOVE_LIGHTOFRUIN
@@ -10031,7 +10032,7 @@ struct BattleMove gBattleMoves[] = {
 /*target*/			MOVE_TARGET_SELECTED,
 /*priority*/		0,
 /*flags*/			FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
-/*z_move_power*/	0,
+/*z_move_power*/	160,
 /*split*/			SPLIT_SPECIAL,
 /*z_move_effect*/	0
 },
@@ -10048,7 +10049,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			0,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPD_UP_1
 },
 
 {				//MOVE_INSTRUCT
@@ -10063,7 +10064,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPATK_UP_1
 },
 
 {				//MOVE_QUASH
@@ -10078,7 +10079,7 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			FLAG_PROTECT_AFFECTED,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_SPD_UP_1
 },
 
 {				//MOVE_HAPPYHOUR
@@ -10093,82 +10094,82 @@ struct BattleMove gBattleMoves[] = {
 /*flags*/			0,
 /*z_move_power*/	0,
 /*split*/			SPLIT_STATUS,
-/*z_move_effect*/	0
+/*z_move_effect*/	Z_EFFECT_ALL_STATS_UP_1
 },
 
 {				//MOVE_DOUBLEIRONBASH
-/*effect*/			EFFECT_FLINCH_HIT,
-/*power*/			0,
+/*effect*/			EFFECT_DOUBLE_HIT,
+/*power*/			60,
 /*type*/			TYPE_STEEL,
 /*accuracy*/		100,
-/*pp*/				0,
+/*pp*/				5,
 /*effectChance*/	0,
 /*target*/			MOVE_TARGET_SELECTED,
 /*priority*/		0,
-/*flags*/			FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
-/*z_move_power*/	0,
+/*flags*/			FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+/*z_move_power*/	120,
 /*split*/			SPLIT_PHYSICAL,
 /*z_move_effect*/	0
 },
 
 {				//MOVE_LASTRESORT
-/*effect*/			0,
-/*power*/			1,
-/*type*/			0,
-/*accuracy*/		0,
-/*pp*/				1,
+/*effect*/			EFFECT_HIT,
+/*power*/			140,
+/*type*/			TYPE_NORMAL,
+/*accuracy*/		100,
+/*pp*/				5,
 /*effectChance*/	0,
 /*target*/			MOVE_TARGET_SELECTED,
 /*priority*/		0,
-/*flags*/			FLAG_KINGS_ROCK_AFFECTED,
-/*z_move_power*/	0,
+/*flags*/			FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
+/*z_move_power*/	200,
 /*split*/			SPLIT_PHYSICAL,
 /*z_move_effect*/	0
 },
 
 {				//MOVE_SKYDROP
-/*effect*/			0,
-/*power*/			1,
-/*type*/			0,
-/*accuracy*/		0,
-/*pp*/				1,
+/*effect*/			EFFECT_HIT,
+/*power*/			60,
+/*type*/			TYPE_FLYING,
+/*accuracy*/		100,
+/*pp*/				10,
 /*effectChance*/	0,
 /*target*/			MOVE_TARGET_SELECTED,
 /*priority*/		0,
-/*flags*/			FLAG_KINGS_ROCK_AFFECTED,
-/*z_move_power*/	0,
+/*flags*/			FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
+/*z_move_power*/	120,
 /*split*/			SPLIT_PHYSICAL,
 /*z_move_effect*/	0
 },
 
 {				//MOVE_CELEBRATE
-/*effect*/			0,
-/*power*/			1,
-/*type*/			0,
+/*effect*/			EFFECT_SPLASH,
+/*power*/			0,
+/*type*/			TYPE_NORMAL,
 /*accuracy*/		0,
-/*pp*/				1,
+/*pp*/				40,
 /*effectChance*/	0,
-/*target*/			MOVE_TARGET_SELECTED,
+/*target*/			MOVE_TARGET_USER,
 /*priority*/		0,
-/*flags*/			FLAG_KINGS_ROCK_AFFECTED,
+/*flags*/			0,
 /*z_move_power*/	0,
-/*split*/			SPLIT_PHYSICAL,
-/*z_move_effect*/	0
+/*split*/			SPLIT_STATUS,
+/*z_move_effect*/	Z_EFFECT_ALL_STATS_UP_1
 },
 
 {				//MOVE_HOLDHANDS
-/*effect*/			0,
-/*power*/			1,
-/*type*/			0,
+/*effect*/			EFFECT_SPLASH,
+/*power*/			0,
+/*type*/			TYPE_NORMAL,
 /*accuracy*/		0,
-/*pp*/				1,
+/*pp*/				40,
 /*effectChance*/	0,
-/*target*/			MOVE_TARGET_SELECTED,
+/*target*/			MOVE_TARGET_USER,
 /*priority*/		0,
-/*flags*/			FLAG_KINGS_ROCK_AFFECTED,
+/*flags*/			0,
 /*z_move_power*/	0,
-/*split*/			SPLIT_PHYSICAL,
-/*z_move_effect*/	0
+/*split*/			SPLIT_STATUS,
+/*z_move_effect*/	Z_EFFECT_ALL_STATS_UP_1
 },
 
 {				//MOVE_BREAKNECK_BLITZ_P
@@ -10713,8 +10714,8 @@ struct BattleMove gBattleMoves[] = {
 
 {				//MOVE_CATASTROPIKA
 /*effect*/			0,
-/*power*/			1,
-/*type*/			0,
+/*power*/			210,
+/*type*/			TYPE_ELECTRIC,
 /*accuracy*/		0,
 /*pp*/				1,
 /*effectChance*/	0,
@@ -10727,9 +10728,9 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_10000000_VOLT_THUNDERBOLT
-/*effect*/			0,
-/*power*/			1,
-/*type*/			0,
+/*effect*/			EFFECT_HIGH_CRITICAL,
+/*power*/			195,
+/*type*/			TYPE_ELECTRIC,
 /*accuracy*/		0,
 /*pp*/				1,
 /*effectChance*/	0,
@@ -10737,29 +10738,29 @@ struct BattleMove gBattleMoves[] = {
 /*priority*/		0,
 /*flags*/			FLAG_KINGS_ROCK_AFFECTED,
 /*z_move_power*/	0,
-/*split*/			SPLIT_PHYSICAL,
+/*split*/			SPLIT_SPECIAL,
 /*z_move_effect*/	0
 },
 
 {				//MOVE_STOKED_SPARKSURFER
-/*effect*/			0,
-/*power*/			1,
-/*type*/			0,
+/*effect*/			EFFECT_PARALYZE_HIT,
+/*power*/			175,
+/*type*/			TYPE_ELECTRIC,
 /*accuracy*/		0,
 /*pp*/				1,
-/*effectChance*/	0,
+/*effectChance*/	100,
 /*target*/			MOVE_TARGET_SELECTED,
 /*priority*/		0,
 /*flags*/			FLAG_KINGS_ROCK_AFFECTED,
 /*z_move_power*/	0,
-/*split*/			SPLIT_PHYSICAL,
+/*split*/			SPLIT_SPECIAL,
 /*z_move_effect*/	0
 },
 
 {				//MOVE_EXTREME_EVOBOOST
 /*effect*/			0,
-/*power*/			1,
-/*type*/			0,
+/*power*/			0,
+/*type*/			TYPE_NORMAL,
 /*accuracy*/		0,
 /*pp*/				1,
 /*effectChance*/	0,
@@ -10767,14 +10768,14 @@ struct BattleMove gBattleMoves[] = {
 /*priority*/		0,
 /*flags*/			FLAG_KINGS_ROCK_AFFECTED,
 /*z_move_power*/	0,
-/*split*/			SPLIT_PHYSICAL,
+/*split*/			SPLIT_STATUS,
 /*z_move_effect*/	0
 },
 
 {				//MOVE_PULVERIZING_PANCAKE
 /*effect*/			0,
-/*power*/			1,
-/*type*/			0,
+/*power*/			210,
+/*type*/			TYPE_NORMAL,
 /*accuracy*/		0,
 /*pp*/				1,
 /*effectChance*/	0,
@@ -10788,8 +10789,8 @@ struct BattleMove gBattleMoves[] = {
 
 {				//MOVE_GENESIS_SUPERNOVA
 /*effect*/			0,
-/*power*/			1,
-/*type*/			0,
+/*power*/			185,
+/*type*/			TYPE_PSYCHIC,
 /*accuracy*/		0,
 /*pp*/				1,
 /*effectChance*/	0,
@@ -10797,14 +10798,14 @@ struct BattleMove gBattleMoves[] = {
 /*priority*/		0,
 /*flags*/			FLAG_KINGS_ROCK_AFFECTED,
 /*z_move_power*/	0,
-/*split*/			SPLIT_PHYSICAL,
+/*split*/			SPLIT_SPECIAL,
 /*z_move_effect*/	0
 },
 
 {				//MOVE_SINISTER_ARROW_RAID
 /*effect*/			0,
-/*power*/			1,
-/*type*/			0,
+/*power*/			180,
+/*type*/			TYPE_GHOST,
 /*accuracy*/		0,
 /*pp*/				1,
 /*effectChance*/	0,
@@ -10818,8 +10819,8 @@ struct BattleMove gBattleMoves[] = {
 
 {				//MOVE_MALICIOUS_MOONSAULT
 /*effect*/			0,
-/*power*/			1,
-/*type*/			0,
+/*power*/			180,
+/*type*/			TYPE_DARK,
 /*accuracy*/		0,
 /*pp*/				1,
 /*effectChance*/	0,
@@ -10833,8 +10834,8 @@ struct BattleMove gBattleMoves[] = {
 
 {				//MOVE_OCEANIC_OPERETTA
 /*effect*/			0,
-/*power*/			1,
-/*type*/			0,
+/*power*/			195,
+/*type*/			TYPE_WATER,
 /*accuracy*/		0,
 /*pp*/				1,
 /*effectChance*/	0,
@@ -10842,14 +10843,14 @@ struct BattleMove gBattleMoves[] = {
 /*priority*/		0,
 /*flags*/			FLAG_KINGS_ROCK_AFFECTED,
 /*z_move_power*/	0,
-/*split*/			SPLIT_PHYSICAL,
+/*split*/			SPLIT_SPECIAL,
 /*z_move_effect*/	0
 },
 
 {				//MOVE_SPLINTERED_STORMSHARDS
 /*effect*/			0,
-/*power*/			1,
-/*type*/			0,
+/*power*/			190,
+/*type*/			TYPE_ROCK,
 /*accuracy*/		0,
 /*pp*/				1,
 /*effectChance*/	0,
@@ -10863,8 +10864,8 @@ struct BattleMove gBattleMoves[] = {
 
 {				//MOVE_LETS_SNUGGLE_FOREVER
 /*effect*/			0,
-/*power*/			1,
-/*type*/			0,
+/*power*/			190,
+/*type*/			TYPE_FAIRY,
 /*accuracy*/		0,
 /*pp*/				1,
 /*effectChance*/	0,
@@ -10877,24 +10878,24 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_CLANGOROUS_SOULBLAZE
-/*effect*/			0,
-/*power*/			1,
-/*type*/			0,
+/*effect*/			EFFECT_ALL_STATS_UP_HIT,
+/*power*/			185,
+/*type*/			TYPE_DRAGON,
 /*accuracy*/		0,
 /*pp*/				1,
 /*effectChance*/	0,
-/*target*/			MOVE_TARGET_SELECTED,
+/*target*/			MOVE_TARGET_BOTH,
 /*priority*/		0,
 /*flags*/			FLAG_KINGS_ROCK_AFFECTED,
 /*z_move_power*/	0,
-/*split*/			SPLIT_PHYSICAL,
+/*split*/			SPLIT_SPECIAL,
 /*z_move_effect*/	0
 },
 
 {				//MOVE_GUARDIAN_OF_ALOLA
-/*effect*/			0,
+/*effect*/			EFFECT_SUPER_FANG,
 /*power*/			1,
-/*type*/			0,
+/*type*/			TYPE_FAIRY,
 /*accuracy*/		0,
 /*pp*/				1,
 /*effectChance*/	0,
@@ -10902,14 +10903,14 @@ struct BattleMove gBattleMoves[] = {
 /*priority*/		0,
 /*flags*/			FLAG_KINGS_ROCK_AFFECTED,
 /*z_move_power*/	0,
-/*split*/			SPLIT_PHYSICAL,
+/*split*/			SPLIT_SPECIAL,
 /*z_move_effect*/	0
 },
 
 {				//MOVE_SEARING_SUNRAZE_SMASH
 /*effect*/			0,
-/*power*/			1,
-/*type*/			0,
+/*power*/			200,
+/*type*/			TYPE_STEEL,
 /*accuracy*/		0,
 /*pp*/				1,
 /*effectChance*/	0,
@@ -10923,8 +10924,8 @@ struct BattleMove gBattleMoves[] = {
 
 {				//MOVE_MENACING_MOONRAZE_MAELSTROM
 /*effect*/			0,
-/*power*/			1,
-/*type*/			0,
+/*power*/			200,
+/*type*/			TYPE_GHOST,
 /*accuracy*/		0,
 /*pp*/				1,
 /*effectChance*/	0,
@@ -10932,14 +10933,14 @@ struct BattleMove gBattleMoves[] = {
 /*priority*/		0,
 /*flags*/			FLAG_KINGS_ROCK_AFFECTED,
 /*z_move_power*/	0,
-/*split*/			SPLIT_PHYSICAL,
+/*split*/			SPLIT_SPECIAL,
 /*z_move_effect*/	0
 },
 
 {				//MOVE_LIGHT_THAT_BURNS_THE_SKY
 /*effect*/			0,
-/*power*/			1,
-/*type*/			0,
+/*power*/			200,
+/*type*/			TYPE_PSYCHIC,
 /*accuracy*/		0,
 /*pp*/				1,
 /*effectChance*/	0,
@@ -10947,14 +10948,14 @@ struct BattleMove gBattleMoves[] = {
 /*priority*/		0,
 /*flags*/			FLAG_KINGS_ROCK_AFFECTED,
 /*z_move_power*/	0,
-/*split*/			SPLIT_PHYSICAL,
+/*split*/			SPLIT_SPECIAL,
 /*z_move_effect*/	0
 },
 
 {				//MOVE_SOUL_STEALING_7_STAR_STRIKE
 /*effect*/			0,
-/*power*/			1,
-/*type*/			0,
+/*power*/			195,
+/*type*/			TYPE_GHOST,
 /*accuracy*/		0,
 /*pp*/				1,
 /*effectChance*/	0,

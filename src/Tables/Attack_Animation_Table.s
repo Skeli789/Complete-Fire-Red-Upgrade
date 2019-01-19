@@ -3,9 +3,8 @@
 .align 2
 .global AttackAnimationTable
 
-.include "..\\..\\Anim_Defines.asm"
-.include "..\\..\\asm_defines.s"
-.include "..\\helper_functions.s"
+.include "..\\Anim_Defines.asm"
+.include "..\\asm_defines.s"
 
 .global AttackAnimationTable
 
@@ -22,6 +21,7 @@
 
 /* attack animation table */
 .align 2
+/*
 AttackAnimationTable:
 .word 0x81c6f34		@MOVE_NONE
 .word 0x81c6f34		@MOVE_POUND
@@ -755,7 +755,6 @@ AttackAnimationTable:
 .word ANIM_LIGHT_THAT_BURNS_THE_SKY
 .word ANIM_SOUL_STEALING_7_STAR_STRIKE
 
-/*
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
 ANIM_SKILLSWAP:
