@@ -44,7 +44,15 @@
 	.byte \bank
 	.byte 0xA
 	.endm
-	
+
+	.macro jumpifmove compare, rom_address
+	.byte 0x2a
+	.byte EQUALS
+	.4byte 0x2023D4A
+	.2byte \compare
+	.4byte \rom_address
+	.endm
+
 	.macro attackcanceler
 	.byte 0x00
 	.endm
