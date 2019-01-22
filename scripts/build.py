@@ -38,8 +38,6 @@ ASFLAGS = ['-mthumb', '-I', SRC]
 LDFLAGS = ['BPRE.ld', '-T', 'linker.ld']
 CFLAGS = ['-mthumb', '-mno-thumb-interwork', '-mcpu=arm7tdmi', '-mtune=arm7tdmi',
 '-mno-long-calls', '-march=armv4t', '-Wall', '-Wextra','-Os', '-fira-loop-pressure', '-fipa-pta']
-GRITFLAGS_UNCOMPRESSED = ['-gz!', '-gB', '4', '-ftc', '-fh', '-pe16', '-pzlz77!' '-pT4', '-gu8'] #Well...partially uncompressed
-GRITFLAGS_COMPRESSED = ['-gzl', '-gB', '4', '-ftc', '-fh', '-pe16', '-pzlz77' '-pT4', '-gu8']
 
 def run_command(cmd):
 	try:
@@ -92,10 +90,24 @@ def process_image(in_file):
 	'''Compile Image'''
 	if '.bmp' in in_file:
 		out_file = in_file.split('.bmp')[0] + '.c'
-		cmd = [GR, in_file] + GRITFLAGS_UNCOMPRESSED + ['-o', out_file]
 	else:
 		out_file = in_file.split('.png')[0] + '.c'
-		cmd = [GR, in_file] + GRITFLAGS_COMPRESSED + ['-o', out_file]
+	
+	namelist = in_file.split("\\") #Get path of grit flags
+	namelist.pop(len(namelist) - 1)
+	flags = ""
+	for i in namelist:
+		flags += i + "\\"
+	flags += "gritflags.txt"
+	
+	try:
+		with open(flags, 'r') as file:
+			for line in file:
+				cmd = [GR, in_file] + line.split() + ['-o', out_file]
+				break #only needs the first line
+	except FileNotFoundError:
+		print("No gritflags.txt found in directory with " + in_file)
+		return 0
 	
 	try:
 		if os.path.getmtime(make_output_file(out_file)[0]) > os.path.getmtime(in_file): #If the .o file was created after the image was last modified
