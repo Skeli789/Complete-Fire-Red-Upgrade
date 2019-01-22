@@ -563,8 +563,7 @@ void RunTurnActionsFunctions(void)
 			BattleScriptExecute(BattleScript_QuickClaw);
 			return;
 		}
-	}
-	
+	}	
 	
     gBattleStruct->savedTurnActionNumber = gCurrentTurnActionNumber;
     sTurnActionsFuncsTable[gCurrentActionFuncId]();
