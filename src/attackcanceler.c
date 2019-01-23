@@ -1,8 +1,7 @@
 #include "defines.h"
 #include "helper_functions.h"
 
-//Update Choose Target or whatever to allow Magic Bounce to reflect, and then moves that target multiple pokes can continue from the attacker's side
-//Make sure to restore the backup move effect post Status Z-move
+//Update Choose Target or whatever to allow Magic Bounce to reflect to both attacker and attacker partner, and then moves that target multiple pokes can continue from the attacker's side
 //Z-Move Illusion
 //De-activate Z-Move when used by Z-Instruct
 //Make sure Powder stops Inferno Overdrive
