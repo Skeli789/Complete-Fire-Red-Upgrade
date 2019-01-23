@@ -1370,8 +1370,8 @@ void atk94_damagetohalftargethp(void) { //Super Fang
 	switch (gCurrentMove) {
 		case MOVE_GUARDIAN_OF_ALOLA:
 			gBattleMoveDamage = udivsi(gBattleMons[gBankTarget].hp * 75, 100);
-			if (ProtectAffects(gCurrentMove, gBankAttacker, gBankTarget, FALSE))
-				gBattleMoveDamage = udivsi(gBattleMoveDamage  * 25, 100);
+			if (ProtectsAgainstZMoves(gCurrentMove, gBankAttacker, gBankTarget))
+				gBattleMoveDamage = udivsi(gBattleMoveDamage * 25, 100);
 			break;
 			
 		default:
