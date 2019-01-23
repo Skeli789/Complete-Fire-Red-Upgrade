@@ -22,6 +22,7 @@ extern bool8 CheckCurrentMoveSoundMove(void);
 extern bool8 SheerForceCheck(void);
 extern bool8 IsOfType(bank_t, u8 type);
 extern bool8 LiftProtect(bank_t);
+extern bool8 ProtectsAgainstZMoves(u16 move, u8 bankAtk, u8 bankDef);
 extern bool8 StatsMaxed(bank_t);
 extern bool8 StatsMinned(bank_t);
 extern u32 MathMax (u32, u32);

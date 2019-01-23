@@ -7,6 +7,7 @@ extern move_t MoldBreakerMoves[];
 extern struct BattleMove gBattleMoves[];
 
 extern u8 GetMoveTypeSpecial(bank_t, move_t);
+extern s8 PriorityCalc(u8 bank, u8 action, u16 move);
 
 bool8 CheckTableForMove (move_t move, const u16 table[]) {
 	for (u32 i = 0; table[i] != MOVE_TABLES_TERMIN; ++i) {
@@ -174,6 +175,29 @@ bool8 LiftProtect(bank_t bank) {
 		gSideAffecting[SIDE(bank)] &= ~(SIDE_STATUS_CRAFTY_SHIELD | SIDE_STATUS_MAT_BLOCK | SIDE_STATUS_QUICK_GUARD | SIDE_STATUS_WIDE_GUARD);
 		return TRUE;
 	}
+	return FALSE;
+}
+
+bool8 ProtectsAgainstZMoves(u16 move, u8 bankAtk, u8 bankDef) {
+	if (gProtectStructs[bankDef].protected
+	|| gProtectStructs[bankDef].SpikyShield
+	|| gProtectStructs[bankDef].BanefulBunker)
+		return TRUE;
+	
+	else if ((gProtectStructs[bankDef].KingsShield || (gSideAffecting[SIDE(bankDef)] & SIDE_STATUS_MAT_BLOCK)) 
+		 && SPLIT(move) != SPLIT_STATUS)
+			return TRUE;
+		
+	else if (gSideAffecting[SIDE(bankDef)] & SIDE_STATUS_CRAFTY_SHIELD && bankAtk != bankDef && SPLIT(move) == SPLIT_STATUS)
+		return TRUE;
+	
+	else if (gSideAffecting[SIDE(bankDef)] & (SIDE_STATUS_QUICK_GUARD) && PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > 0)
+		return TRUE;
+		
+	else if (gSideAffecting[SIDE(bankDef)] & (SIDE_STATUS_WIDE_GUARD) 
+		&& (gBattleMoves[move].target == MOVE_TARGET_BOTH || gBattleMoves[move].target == MOVE_TARGET_FOES_AND_ALLY))
+			return TRUE;
+	
 	return FALSE;
 }
 
