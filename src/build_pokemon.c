@@ -5,6 +5,8 @@
 #include "build_pokemon.h"
 #include "multi.h"
 
+//Fix EV Setting
+
 extern u8 ClassPokeBalls[NUM_TRAINER_CLASSES];
 
 extern void GetFrontierTrainerName(u8* dst, u16 trainerId, u8 battlerNum);
@@ -50,7 +52,7 @@ void BuildTrainerPartySetup(void) {
 				u8 mon2 = gSelectedOrderFromParty[1];
 				u8 mon3 = gSelectedOrderFromParty[2];
 				for (int i = 0; i < PARTY_SIZE; ++i) {
-					if (i + 1 != mon1 && i + 1 != mon2 && i + 1 != mon3)
+					if (i + 1 != mon1 && i + 1 != mon2 && i + 1 != mon3) //Don't backup selected mons
 						Memcpy(&((pokemon_t*) ExtensionState.partyBackup)[counter++], &gPlayerParty[i], sizeof(struct Pokemon));				
 				}
 				ReducePartyToThree(); //Well...sometimes can be less than 3
@@ -168,6 +170,9 @@ u8 CreateNPCTrainerParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer) {
 						GiveMonNatureAndAbility(&party[i], spread.nature, MathMin(1, spread.ability - 1));
 				}
 			#endif
+			
+			CalculateMonStats(&party[i]);
+			HealMon(&party[i]);
         }
 		if (trainer->partySize > 1 && ViableMonCount(gPlayerParty) >= 2) //Double battles will not happen if the player only has 1 mon that can fight or if the foe only has 1 poke
 		{
@@ -285,6 +290,9 @@ u8 BuildFrontierParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, bool
 		else
 			ballType = umodsi(Random(), NUM_BALLS + 1);
 		SetMonData(&party[i], REQ_POKEBALL, &ballType);
+		
+		CalculateMonStats(&party[i]);
+		HealMon(&party[i]);
     }
 	
 	Free(speciesArray);
