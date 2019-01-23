@@ -597,7 +597,7 @@ u8 GetWhoStrikesFirst(bank_t bank1, bank_t bank2, bool8 ignoreMovePriorities) {
 //Priority Calc
 	if(!ignoreMovePriorities) {
 		bank1_priority = PriorityCalc(bank1, gActionForBanks[bank1], gBattleMons[bank1].moves[gBattleStruct->chosenMovePositions[bank1]]);
-		bank2_priority = PriorityCalc(bank2, gActionForBanks[bank2], gBattleMons[bank1].moves[gBattleStruct->chosenMovePositions[bank2]]);
+		bank2_priority = PriorityCalc(bank2, gActionForBanks[bank2], gBattleMons[bank1].moves[gBattleStruct->chosenMovePositions[bank2]]);		
 		if (bank1_priority > bank2_priority)
 			return FirstMon;
 		else if (bank1_priority < bank2_priority)
@@ -632,7 +632,7 @@ u8 GetWhoStrikesFirst(bank_t bank1, bank_t bank2, bool8 ignoreMovePriorities) {
 
 s8 PriorityCalc(u8 bank, u8 action, u16 move) {
 	u8 priority = 0;
-	if (action) {
+	if (action == ACTION_USE_MOVE) {	
 		if (gProtectStructs[bank].onlyStruggle)
 			move = MOVE_STRUGGLE;
 		
