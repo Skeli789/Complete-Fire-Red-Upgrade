@@ -791,7 +791,7 @@ u8 AtkCanceller_UnableToUseMove(void)
 		    if (TerrainType == PSYCHIC_TERRAIN
             && CheckGrounding(gBankTarget)
 			&& gBankAttacker != gBankTarget
-            && PriorityCalc(gBankAttacker, TRUE, gCurrentMove)
+            && PriorityCalc(gBankAttacker, ACTION_USE_MOVE, gCurrentMove)
             && gBankAttacker != gBankTarget)
             {
                 CancelMultiTurnMoves(gBankAttacker);
