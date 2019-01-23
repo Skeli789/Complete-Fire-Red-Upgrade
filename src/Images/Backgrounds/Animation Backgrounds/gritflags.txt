@@ -1,1 +1,1 @@
--ftc -fh -m -mR4 -mzl -mu8 -mp2 -pzl -pe16 -g -gB4 -gzl -gu8 -ah112 -aw256
+-ftc -fh -m -mR4 -mzl -mu8 -mp2 -pzl -pe16 -g -gB4 -gzl -gu8 -aw256
