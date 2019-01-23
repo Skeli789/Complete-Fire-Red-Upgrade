@@ -950,7 +950,7 @@ void AdjustDamage(bool8 CheckFalseSwipe) {
 	u8 ability = BanksAbility(gBankTarget);
 	gStringBank = gBankTarget;
 	
-	if (ZMoveData->active && ProtectAffects(gCurrentMove, gBankAttacker, gBankTarget, FALSE))
+	if (ZMoveData->active && ProtectsAgainstZMoves(gCurrentMove, gBankAttacker, gBankTarget))
 		gBattleMoveDamage = udivsi(gBattleMoveDamage  * 25, 100);
 	
     if (gBattleMons[gBankTarget].status2 & STATUS2_SUBSTITUTE 
