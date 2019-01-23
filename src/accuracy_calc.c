@@ -135,7 +135,7 @@ bool8 ProtectAffects(u16 move, u8 bankAtk, u8 bankDef, bool8 set) {
     else if (gSideAffecting[defSide] & SIDE_STATUS_CRAFTY_SHIELD && target != MOVE_TARGET_USER && split == SPLIT_STATUS)
         effect = 1;
     
-	else if (gSideAffecting[defSide] & SIDE_STATUS_QUICK_GUARD && protect_flag && PriorityCalc(bankAtk, TRUE, move) > 0)
+	else if (gSideAffecting[defSide] & SIDE_STATUS_QUICK_GUARD && protect_flag && PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > 0)
         effect = 1;
     
 	else if (gSideAffecting[defSide] & SIDE_STATUS_MAT_BLOCK && protect_flag && split != SPLIT_STATUS)
