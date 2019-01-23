@@ -369,6 +369,8 @@ u8 GiveMonToPlayer(pokemon_t* mon) { //Hook in
 	
 	if (ItemId_GetType(gLastUsedItem) == BALL_TYPE_HEAL_BALL)
 		HealMon(mon);
+	else if (ItemId_GetType(gLastUsedItem) == BALL_TYPE_FRIEND_BALL)
+		mon->friendship = 200;
 	
     i = 0;
 
