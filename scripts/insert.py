@@ -8,7 +8,7 @@ import binascii
 import textwrap
 import sys
 
-OFFSET_TO_PUT = 0x8d1ba0
+OFFSET_TO_PUT = 0xc12ff0
 
 PathVar = os.environ.get('Path')
 Paths = PathVar.split(';')
