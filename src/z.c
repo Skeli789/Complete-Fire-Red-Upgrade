@@ -2,7 +2,6 @@
 #include "helper_functions.h"
 
 u32 break_helper(u32 a) {
-	break_func(a);
 	return a;
 }
 
