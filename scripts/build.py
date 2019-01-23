@@ -127,9 +127,10 @@ def process_string(filename):
             if line[:2] == "//":
                 continue
             
-            line = line.strip()
+            line = line.rstrip("\n\r")
             if readingState == 0:
                 if line[:6].upper() == "#ORG @" and line[6:] != "":
+                    line = line.strip()
                     title = line[6:]
                     output.write(".global " + title + "\n" + title + ":\n")
                     readingState = 1
@@ -138,13 +139,14 @@ def process_string(filename):
                     
             elif readingState == 1:
                 if line[:6].upper() == "#ORG @" and line[6:] != "":
+                    line = line.strip()
                     title = line[6:]
                     output.write(".global " + title + "\n" + title + ":\n")
                 else:
                     output.write(".byte ")
                     buffer = False
                     escapeChar = False
-                    for char in line.strip():        
+                    for char in line:        
                         if buffer == True:
                             if char == ']':
                                 buffer = False
