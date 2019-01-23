@@ -183,7 +183,7 @@ bool8 MoveWouldHitFirst(u16 move, u16 bankAtk, u16 bankDef) {
 	u32 bankAtkSpeed, bankDefSpeed;
 
 //Priority Calc
-	if (PriorityCalc(bankAtk, TRUE, move) > 0)
+	if (PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > 0)
 		return TRUE;
 	
 //BracketCalc
