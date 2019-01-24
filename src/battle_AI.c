@@ -968,3 +968,65 @@ u32 WildMonIsSmart(u8 bank) {
 		return FALSE;
 	#endif
 }
+
+/*
+u32 AIAnalyzeMoveset(u8 bank) {
+	u8* moveArray = gBattleMons[bank].moves;
+	u16 move;
+	u8 moveEffect;
+	u8 damagingMoves, statusyMoves, hazardMoves, healingMoves, statBoostingMoves, supportMoves;
+	u32 aiFlags;
+	int i;
+	
+	for (i = 0; i < MAX_MON_MOVES && moveArray[i] != 0 && moveArray[i] < MOVES_COUNT; ++i) 
+	{
+		move = moveArray[i];
+		moveEffect = gBattleMoves[move].effect;
+		
+		if (moveEffect == EFFECT_SPIKES)
+			aiFlags |= AI_SCRIPT_SET_HAZARDS;
+			
+		switch (moveEffect) {
+			case EFFECT_SLEEP:
+			case EFFECT_TOXIC:
+			case EFFECT_POISON:
+			case EFFECT_PARALYZE:
+			case EFFECT_LEECH_SEED:
+			case EFFECT_ATTRACT:
+			case EFFECT_WILL_O_WISP:
+				aiFlags |= AI_SCRIPT_SET_STATUS;
+		}
+		
+		switch (moveEffect) {
+			case EFFECT_ABSORB
+			case EFFECT_RESTORE_HP:
+			case EFFECT_REST:
+			case EFFECT_LEECH_SEED:
+			case EFFECT_MORNING_SUN:
+			case EFFECT_SOFTBOILED:
+			case EFFECT_WISH:
+			case EFFECT_INGRAIN:
+				aiFlags |= AI_SCRIPT_HEAL;
+		}
+		
+		if (gBattleMoveFlags & BATTLE_TYPE_DOUBLE) {
+			switch (moveEffect) {
+				case EFFECT_HELPING_HAND:
+				case EFFECT_HEAL_TARGET: //Includes Pollen Puff
+					aiFlags |= AI_SCRIPT_HELP_PARTNER;
+			}
+		}
+			case EFFECT_ATTACK_UP:
+			case EFFECT_DEFENSE_UP:
+			case EFFECT_SPEED_UP:
+			case EFFECT_SPECIAL_ATTACK_UP:
+			case EFFECT_SPECIAL_DEFENSE_UP:
+			case EFFECT_ACCURACY_UP:
+			case EFFECT_EVASION_UP:
+				
+
+			
+		}
+	}
+}
+*/
