@@ -298,8 +298,6 @@ void atk00_attackcanceler(void)
 			}
 		}
 	}
-	else
-		MoveBounceInProgress = FALSE;
 
     for (i = 0; i < gBattlersCount; i++)
     {
