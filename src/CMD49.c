@@ -379,25 +379,53 @@ static void atk49_moveend(void)
 			
         case ATK49_NEXT_TARGET: // For moves hitting two opposing Pokemon.
             if (!(gHitMarker & HITMARKER_UNABLE_TO_USE_MOVE) && gBattleTypeFlags & BATTLE_TYPE_DOUBLE
-                && !gProtectStructs[gBankAttacker].chargingTurn && gBattleMoves[gCurrentMove].target == MOVE_TARGET_BOTH
-                && !(gHitMarker & HITMARKER_NO_ATTACKSTRING))
+                && !gProtectStructs[gBankAttacker].chargingTurn && gBattleMoves[gCurrentMove].target == MOVE_TARGET_BOTH)
             {
-                u8 battlerId = GetBattlerAtPosition(BATTLE_PARTNER(GetBattlerPosition(gBankTarget)));
-                if (gBattleMons[battlerId].hp != 0)
-                {
-                    gBankTarget = battlerId;
-                    gHitMarker |= HITMARKER_NO_ATTACKSTRING;
-                    gBattleScripting.atk49_state = 0;
-                    MoveValuesCleanUp();
-                    BattleScriptPush(gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect]);
-                    gBattlescriptCurrInstr = BattleScript_FlushMessageBox;
-                    return;
-                }
-                else
-                {
-                    gHitMarker |= HITMARKER_NO_ATTACKSTRING;
-                }
-            }
+				if (!(gHitMarker & HITMARKER_NO_ATTACKSTRING)) 
+				{
+					u8 battlerId = GetBattlerAtPosition(BATTLE_PARTNER(GetBattlerPosition(gBankTarget)));
+					if (gBattleMons[battlerId].hp != 0)
+					{
+						gBankTarget = battlerId;
+						gHitMarker |= HITMARKER_NO_ATTACKSTRING;
+						gBattleScripting.atk49_state = 0;
+						MoveValuesCleanUp();
+						BattleScriptPush(gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect]);
+						gBattlescriptCurrInstr = BattleScript_FlushMessageBox;
+						return;
+					}
+					else
+					{
+						gHitMarker |= HITMARKER_NO_ATTACKSTRING;
+					}
+				}
+			}
+			
+			else if (MoveBounceInProgress) //Magic Bounce is in progress
+			{
+				MoveBounceInProgress = FALSE;
+				//Restore attack to original attacker
+				if (gBattleMoves[gCurrentMove].target == MOVE_TARGET_BOTH)
+				{
+					u8 battlerId = GetBattlerAtPosition(BATTLE_PARTNER(GetBattlerPosition(gBankAttacker)));
+					if (gBattleMons[battlerId].hp != 0)
+					{
+						gBankAttacker = gBanksByTurnOrder[gCurrentTurnActionNumber]; //Restore original attacker
+						gBankTarget = battlerId; //Attack Bouncer's partner
+						gHitMarker |= HITMARKER_NO_ATTACKSTRING;
+						gBattleScripting.atk49_state = 0;
+						MoveValuesCleanUp();
+						BattleScriptPush(gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect]);
+						gBattlescriptCurrInstr = BattleScript_FlushMessageBox;
+						return;
+					}
+					else
+					{
+						gHitMarker |= HITMARKER_NO_ATTACKSTRING;
+					}
+				}
+			}
+            
             gBattleScripting.atk49_state++;
             break;
 			
