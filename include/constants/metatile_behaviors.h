@@ -5,6 +5,7 @@
 #define MB_NORMAL 0x00
 #define MB_01 0x01
 #define MB_TALL_GRASS 0x02
+#define MB_VERY_TALL_GRASS 0x03
 #define MB_CAVE 0x08
 #define MB_0A 0x0A
 #define MB_0B 0x0B
