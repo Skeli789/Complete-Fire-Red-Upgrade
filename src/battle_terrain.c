@@ -2,6 +2,9 @@
 #include "helper_functions.h"
 #include "battle_terrain.h"
 
+extern const struct BattleBackground gAttackTerrainTable[];
+extern const struct TerrainTableStruct TerrainTable[];
+
 //This File's Functions
 u8 BattleSetup_GetTerrainId(void);
 u8 LoadBattleBG_TerrainID(void);
