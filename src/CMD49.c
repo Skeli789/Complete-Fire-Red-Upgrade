@@ -41,9 +41,10 @@ enum
 	ATK49_END_ZMOVES,
     ATK49_COUNT,
 };
-/*
-static void atk49_moveend(void)
+
+void atk49_moveend(void)
 {
+/*
     s32 i;
     bool32 effect = FALSE;
     u8 moveType = 0;
@@ -485,4 +486,5 @@ static void atk49_moveend(void)
 
     if (gBattleScripting.atk49_state == ATK49_COUNT && effect == FALSE)
         gBattlescriptCurrInstr += 3;
-}*/
+*/
+}
