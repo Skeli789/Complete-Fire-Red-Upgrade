@@ -575,7 +575,7 @@
 	.byte \int
 	.endm
 
-	.macro pokemonswitchanim bank_or_side
+	.macro drawpartystatussummary bank_or_side
 	.byte 0x61
 	.byte \bank_or_side
 	.endm
