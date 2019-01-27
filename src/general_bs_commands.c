@@ -19,6 +19,7 @@
 //Update gCurrMovePos in Instruct
 //Move Stomping Tantrum to end command based on TargetsHit
 //Update EmitMoveAnimation to include attacker's item
+//Fully create TerrainTable
 
 #include "defines.h"
 #include "helper_functions.h"
@@ -672,6 +673,18 @@ void atk22_jumpiftype(void) //u8 bank, u8 type, *ptr
         gBattlescriptCurrInstr = jump_loc;
     else
         gBattlescriptCurrInstr += 7;
+}
+
+void atk40_jumpifaffectedbyprotect(void)
+{
+    if (ProtectAffects(gCurrentMove, gBankAttacker, gBankTarget, FALSE))
+    {
+        gMoveResultFlags |= MOVE_RESULT_MISSED;
+        JumpIfMoveFailed(5, 0);
+        gBattleCommunication[6] = 1;
+    }
+    else
+        gBattlescriptCurrInstr += 5;
 }
 
 void atk42_jumpiftype2(void) //u8 bank, u8 type, *ptr
@@ -1436,6 +1449,14 @@ void atk96_weatherdamage(void) {
         gBattleMoveDamage = 0;
 
     gBattlescriptCurrInstr++;
+}
+
+void atkA0_psywavedamageeffect(void)
+{
+    s32 randDamage = umodsi(Random(), 100);
+	
+    gBattleMoveDamage = MathMax(1, udivsi(gBattleMons[gBankAttacker].level * (randDamage + 50), 100));
+    ++gBattlescriptCurrInstr;
 }
 
 void atkA1_counterdamagecalculator(void) {
@@ -2279,7 +2300,7 @@ void atkE4_getsecretpowereffect(void) {
     gBattlescriptCurrInstr++;
 }
 
-void atkE5_pickupitemcalculation (void) {
+void atkE5_pickupitemcalculation(void) {
 	u16 item = 0;
 	u8 chance = 0; 
 	
