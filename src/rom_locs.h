@@ -26,8 +26,6 @@ typedef u32 ExperienceTable_t[101];
 
 extern const u8 gAbilityNames[][ABILITY_NAME_LENGTH + 1];
 
-#define TerrainTable ((struct TerrainTableStruct*) 0x905D90)
-
 #define BattleScript_ButItFailed (u8*) 0x81D7DF0
 
 #define gGameVersion (*((u8*) 0x81E9F10))
