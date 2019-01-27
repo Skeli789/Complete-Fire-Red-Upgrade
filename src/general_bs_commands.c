@@ -19,7 +19,6 @@
 //Update gCurrMovePos in Instruct
 //Move Stomping Tantrum to end command based on TargetsHit
 //Update EmitMoveAnimation to include attacker's item
-//Fully create TerrainTable
 
 #include "defines.h"
 #include "helper_functions.h"
@@ -84,6 +83,7 @@ extern move_t GemBanTable[];
 extern ability_t RolePlayBanTable[];
 extern ability_t SkillSwapBanTable[];
 extern ability_t ReceiverBanTable[];
+extern const struct TerrainTableStruct TerrainTable[];
 
 extern u8* SwitchClearTableBytes[];
 extern u8* SwitchClearTableBits[];
