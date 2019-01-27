@@ -9,6 +9,7 @@
 //No recalc of priority if damaging Z-Move is chosen
 //Remove additional effects from Z Move (if not already done)
 //The Z-Move should be loaded in to gCurrentMove before the attack canceler (near Mega)
+//Do Double Battle target check
 
 #define TXT_PLUS 0x2E
 #define SE_SELECT 0x5
@@ -661,4 +662,110 @@ void ReloadMoveNamesIfNecessary(void) {
 		MoveSelectionDisplayPpNumber();
 		MoveSelectionDisplayMoveType();
 	}
+}
+
+void HandleMoveSwitchingUpdate(void) {
+    u8 perMovePPBonuses[4];
+    struct ChooseMoveStruct moveStruct;
+    u8 totalPPBonuses;
+	struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct*)(&gBattleBufferA[gActiveBattler][4]);
+    int i;
+
+    //Swap Moves
+    i = moveInfo->moves[gMoveSelectionCursor[gActiveBattler]];
+    moveInfo->moves[gMoveSelectionCursor[gActiveBattler]] = moveInfo->moves[gMultiUsePlayerCursor];
+    moveInfo->moves[gMultiUsePlayerCursor] = i;
+
+	//Swap PP
+    i = moveInfo->currentPp[gMoveSelectionCursor[gActiveBattler]];
+    moveInfo->currentPp[gMoveSelectionCursor[gActiveBattler]] = moveInfo->currentPp[gMultiUsePlayerCursor];
+    moveInfo->currentPp[gMultiUsePlayerCursor] = i;
+
+    i = moveInfo->maxPp[gMoveSelectionCursor[gActiveBattler]];
+    moveInfo->maxPp[gMoveSelectionCursor[gActiveBattler]] = moveInfo->maxPp[gMultiUsePlayerCursor];
+    moveInfo->maxPp[gMultiUsePlayerCursor] = i;
+
+	//Swap Move Types Details
+    i = moveInfo->moveTypes[gMoveSelectionCursor[gActiveBattler]];
+    moveInfo->moveTypes[gMoveSelectionCursor[gActiveBattler]] = moveInfo->moveTypes[gMultiUsePlayerCursor];
+    moveInfo->moveTypes[gMultiUsePlayerCursor] = i;
+
+	//Swap Move Powers Details
+    i = moveInfo->movePowers[gMoveSelectionCursor[gActiveBattler]];
+    moveInfo->movePowers[gMoveSelectionCursor[gActiveBattler]] = moveInfo->movePowers[gMultiUsePlayerCursor];
+    moveInfo->movePowers[gMultiUsePlayerCursor] = i;
+
+	//Swap Move Accuracies Details
+    i = moveInfo->moveAcc[gMoveSelectionCursor[gActiveBattler]];
+    moveInfo->moveAcc[gMoveSelectionCursor[gActiveBattler]] = moveInfo->moveAcc[gMultiUsePlayerCursor];
+    moveInfo->moveAcc[gMultiUsePlayerCursor] = i;
+
+	//Swap Possible Z-Moves
+    i = moveInfo->possibleZMoves[gMoveSelectionCursor[gActiveBattler]];
+    moveInfo->possibleZMoves[gMoveSelectionCursor[gActiveBattler]] = moveInfo->possibleZMoves[gMultiUsePlayerCursor];
+    moveInfo->possibleZMoves[gMultiUsePlayerCursor] = i;
+
+    if (gDisableStructs[gActiveBattler].unk18_b & gBitTable[gMoveSelectionCursor[gActiveBattler]])
+	{
+		gDisableStructs[gActiveBattler].unk18_b &= (~gBitTable[gMoveSelectionCursor[gActiveBattler]]);
+        gDisableStructs[gActiveBattler].unk18_b |= gBitTable[gMultiUsePlayerCursor];
+	}
+
+    MoveSelectionDisplayMoveNames();
+
+    for (i = 0; i < MAX_MON_MOVES; i++)
+        perMovePPBonuses[i] = (gBattleMons[gActiveBattler].ppBonuses & (3 << (i * 2))) >> (i * 2);
+
+    totalPPBonuses = perMovePPBonuses[gMoveSelectionCursor[gActiveBattler]];
+	perMovePPBonuses[gMoveSelectionCursor[gActiveBattler]] = perMovePPBonuses[gMultiUsePlayerCursor];
+    perMovePPBonuses[gMultiUsePlayerCursor] = totalPPBonuses;
+
+    totalPPBonuses = 0;
+    for (i = 0; i < MAX_MON_MOVES; i++)
+        totalPPBonuses |= perMovePPBonuses[i] << (i * 2);
+
+    gBattleMons[gActiveBattler].ppBonuses = totalPPBonuses;
+
+    for (i = 0; i < MAX_MON_MOVES; i++)
+    {
+        gBattleMons[gActiveBattler].moves[i] = moveInfo->moves[i];
+        gBattleMons[gActiveBattler].pp[i] = moveInfo->currentPp[i];
+    }
+	
+	if (!(gBattleMons[gActiveBattler].status2 & STATUS2_TRANSFORMED))
+    {
+        for (i = 0; i < MAX_MON_MOVES; i++)
+        {
+            moveStruct.moves[i] = GetMonData(&gPlayerParty[gBattlerPartyIndexes[gActiveBattler]], MON_DATA_MOVE1 + i, 0);
+            moveStruct.currentPp[i] = GetMonData(&gPlayerParty[gBattlerPartyIndexes[gActiveBattler]], MON_DATA_PP1 + i, 0);
+        }
+
+        totalPPBonuses = GetMonData(&gPlayerParty[gBattlerPartyIndexes[gActiveBattler]], MON_DATA_PP_BONUSES, 0);
+        for (i = 0; i < MAX_MON_MOVES; i++)
+            perMovePPBonuses[i] = (totalPPBonuses & (3 << (i * 2))) >> (i * 2);
+
+        i = moveStruct.moves[gMoveSelectionCursor[gActiveBattler]];
+        moveStruct.moves[gMoveSelectionCursor[gActiveBattler]] = moveStruct.moves[gMultiUsePlayerCursor];
+        moveStruct.moves[gMultiUsePlayerCursor] = i;
+
+        i = moveStruct.currentPp[gMoveSelectionCursor[gActiveBattler]];
+        moveStruct.currentPp[gMoveSelectionCursor[gActiveBattler]] = moveStruct.currentPp[gMultiUsePlayerCursor];
+        moveStruct.currentPp[gMultiUsePlayerCursor] = i;
+
+        totalPPBonuses = perMovePPBonuses[gMoveSelectionCursor[gActiveBattler]];
+        perMovePPBonuses[gMoveSelectionCursor[gActiveBattler]] = perMovePPBonuses[gMultiUsePlayerCursor];
+        perMovePPBonuses[gMultiUsePlayerCursor] = totalPPBonuses;
+
+        totalPPBonuses = 0;
+        for (i = 0; i < MAX_MON_MOVES; i++)
+            totalPPBonuses |= perMovePPBonuses[i] << (i * 2);
+
+        for (i = 0; i < MAX_MON_MOVES; i++)
+        {
+            SetMonData(&gPlayerParty[gBattlerPartyIndexes[gActiveBattler]], MON_DATA_MOVE1 + i, &moveStruct.moves[i]);
+            SetMonData(&gPlayerParty[gBattlerPartyIndexes[gActiveBattler]], MON_DATA_PP1 + i, &moveStruct.currentPp[i]);
+        }
+
+        SetMonData(&gPlayerParty[gBattlerPartyIndexes[gActiveBattler]], MON_DATA_PP_BONUSES, &totalPPBonuses);
+    }
 }
