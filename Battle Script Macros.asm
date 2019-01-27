@@ -1362,6 +1362,12 @@
 	.byte 0xFF, 0x11
 	.byte \bank
 	.endm
+	
+	.macro setdamagetobankhealthpercent bank percent
+	.byte 0xFF, 0x13
+	.byte \bank
+	.byte \percent
+	.endm
 
 	.macro sethalvermarker bank halver
 	.byte 0xFF, 0x17
