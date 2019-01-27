@@ -26,3 +26,9 @@ EmitChooseMoveHook:
 	mov r3, r5
 	bl EmitChooseMove
 	pop {r4-r6,pc}
+
+@0x802EF90 with r0
+SwitchMoveDataHook:
+	bl HandleMoveSwitchingUpdate
+	ldr r0, =0x802F2C8 | 1
+	bx r0
