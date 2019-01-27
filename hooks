@@ -18,6 +18,7 @@ TurnBasedEffects 08018258 0
 KnockOutModification 08018FC0 0
 ClearEndTurnEndByte 080191FC 0
 HasNoMonsToSwitch 0x8019C10 3
+SwitchMoveDataHook 0x802EF90 0
 MoveSelectionDisplayMoveType 8030940 0
 PlayerHandleExpBarUpdate 08032F4C 1
 AI_TrySwitchOrUseItem 8039C84 0
