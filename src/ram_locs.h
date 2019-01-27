@@ -52,13 +52,15 @@ struct Clock {
 /*u8*/  #define gLinkPlayers 			((struct LinkPlayer*) 0x202273C)
 /*u8*/  #define unk_2022744				((u8*) 0x2022744)
 /*u8*/  #define gBattleBuffersTransferData ((u8*) 0x2022874) //u8 gBattleBuffersTransferData[0x170];
+		#define gBattle_BG1_Y 			(*((u16*) 0x202297A))
+		#define gBattle_BG2_Y 			(*((u16*) 0x202297E))
 /*u8*/  #define gDisplayedStringBattle 	((u8*) 0x202298C)
 /*u8*/  #define gBattleTextBuff1 		((u8*) 0x2022AB8)
 /*u8*/  #define gBattleTextBuff2 		((u8*) 0x2022AC8)
 /*u8*/  #define gBattleTextBuff3 		((u8*) 0x2022AD8)
 		
 /*u32*/ #define gBattleTypeFlags 		*((u32*) 0x2022B4C)
-/*u8*/  #define gBattleTerrain			*((u32*) 0x2022B50)
+/*u8*/  #define gBattleTerrain			*((u8*) 0x2022B50)
 
 typedef u8 Buffer_t[0x200];
 /*u8*/  #define gBattleBufferA ((Buffer_t*) 0x2022BC4) //u8 gBattleBufferA[MAX_BATTLERS_COUNT][0x200];
@@ -179,8 +181,8 @@ typedef u8 Buffer_t[0x200];
 /*u8*/  #define gMultiuseSpriteTemplate ((struct SpriteTemplate*) 0x20244DC)
 		
 		//SaveBlock1ActualLocation 0x202552C
-//gMapHeader = 0x2036DFC
-
+		extern struct MapHeader gMapHeader;
+		
 /*u8*/	#define FishingByte *((u8*) 0x2036E38)
 		#define gEventObjects ((struct MapObject*) 0x2036E38)
 		
