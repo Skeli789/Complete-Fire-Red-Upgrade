@@ -210,6 +210,7 @@ void EndOfBattleThings(void) {
 	RecalcAllStats();
 	BringBackTheDead();
 	EndBattleFlagClear();
+	TerrainType = 0; //Reset now b/c normal reset is after BG is loaded
 }
 
 void RestoreNonConsumableItems(void) {
