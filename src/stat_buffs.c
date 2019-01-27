@@ -14,11 +14,6 @@
 #define BattleScript_AbilityNoStatLoss (u8*) 0x81D7DF2
 #define BattleScript_AbilityNoSpecificStatLoss (u8*) 0x81D9416
 
-void atk20_jumpifstat(void);
-void atk48_playstatchangeanimation(void);
-void atk89_statbuffchange(void);
-u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, u8* BS_ptr);
-
 extern void PrepareStringBattle(u16 stringId, u8 bank);
 extern bool8 JumpIfMoveAffectedByProtect(u16 move, u8 bankAtk, u8 bankDef);
 
@@ -26,6 +21,13 @@ extern u8 BattleScript_DefiantCompetitive[];
 
 extern u8 DrasticallyString[];
 extern u8 SeverelyString[];
+
+//This File's Functions
+void atk13_printfromtable(void);
+void atk20_jumpifstat(void);
+void atk48_playstatchangeanimation(void);
+void atk89_statbuffchange(void);
+u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, u8* BS_ptr);
 
 void atk13_printfromtable(void) {
     if (gBattleExecBuffer) return;
