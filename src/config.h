@@ -9,6 +9,7 @@
 #define NPC_FOLLOWING_VAR 0x5000 //This var should should be set to the NPC Id of the NPC following the player. If no NPC is following the player, it should be set to 0.
 #define OW_SPRITE_SWITCH_VAR 0x4054
 #define BACKSPRITE_SWITCH_VAR 0x4062 //This var can be set to a number to change the Player's backsprite
+#define BATTLE_BG_VAR 0x4039 //Set this var to a custom background id
 
 #define INVERSE_FLAG 0x23D
 #define SKY_BATTLE_FLAG 0x9AF
@@ -92,6 +93,9 @@ enum
 #define DISPLAY_REAL_MOVE_TYPE_ON_MENU //If this line remains uncommented, the "true" move type will be displayed (such as Hidden Power, Weather Ball in Weather, etc.)
 #define DISPLAY_REAL_ACCURACY_ON_MENU //If this line remains uncommented, the "true" move accuracy will be displayed (Eg. The move Psychic on a Pokemon with Compound Eyes will have its accuracy appear as 130)
 #define DISPLAY_REAL_POWER_ON_MENU //If this line remains uncommented, the "true" move power will be displayed (Eg. Moves like Fury Cutter will show their correct power)
+#define CUSTOM_BATTLE_BACKGROUNDS //If this line remains uncommented, setting BATTLE_BG_VAR will allow custom backgrounds to be loaded in battles
+//#define OVERWRITE_BG_FOR_LEADER_CHAMPION //If this remains uncommented, special Battle Background palettes will be loaded in for battles against Gym Leaders and the Champion
+#define BRIDGE_FIX //If this remains uncommented, the water battle background will only be loaded if the player's surfing sprite is shown
 
 /* Misc Effect Options */
 //#define OLD_BURN_DAMAGE //Uncomment this line if you want burn damage to do 1/8 of max health instead of 1/16
