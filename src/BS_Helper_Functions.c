@@ -27,6 +27,7 @@ void SetUnburdenBoostTarget(void);
 void MoldBreakerRemoveAbilitiesOnForceSwitchIn(void);
 void MoldBreakerRestoreAbilitiesOnForceSwitchIn(void);
 void TrainerSlideOut(void);
+void SetAuroraVeil(void);
 
 void SetTargetPartner(void) {
 	gBankTarget = PARTNER(gBankAttacker);
@@ -276,4 +277,20 @@ void TrainerSlideOut(void) {
     gActiveBattler = B_POSITION_OPPONENT_LEFT;
     EmitTrainerSlideBack(0);
     MarkBufferBankForExecution(gActiveBattler);
+}
+
+void SetAuroraVeil(void) {
+	FormCounter = FALSE;
+	
+    if (!AuroraVeilTimers[SIDE(gBankAttacker)] 
+	&& gBattleWeather & WEATHER_HAIL_ANY
+	&& WEATHER_HAS_EFFECT)
+	{
+		if (ITEM_EFFECT(gBankAttacker) == ITEM_EFFECT_LIGHT_CLAY)
+			AuroraVeilTimers[SIDE(gBankAttacker)] = 8;
+		else
+			AuroraVeilTimers[SIDE(gBankAttacker)] = 5;
+			
+		FormCounter = TRUE;
+    }
 }
