@@ -1156,9 +1156,15 @@ void atk8D_setmultihitcounter(void) {
     if (gBattlescriptCurrInstr[1])
         gMultiHitCounter = gBattlescriptCurrInstr[1];
 	
-    else if (ABILITY(gBankAttacker) == ABILITY_SKILLLINK)
+	if (ABILITY(gBankAttacker) == ABILITY_SKILLLINK)
 		gMultiHitCounter = 5;
-	
+		
+	else if (ABILITY(gBankAttacker) == ABILITY_BATTLEBOND
+	&& gCurrentMove == MOVE_WATERSHURIKEN
+	&& gBattleMons[gBankAttacker].species == PKMN_ASHGRENINJA)
+	{
+		gMultiHitCounter = 3;
+	}
 	else {
         gMultiHitCounter = Random() & 3;
         if (gMultiHitCounter > 1)
