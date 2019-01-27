@@ -1,5 +1,8 @@
 ##
 EmitChooseMoveHook 800E524 3
+LoadBattleBG_TerrainID 800FC2C 0
+LoadBattleBG_Background 800F260 1
+LoadBattleBG_EntryOverlay 800F2AC 1
 BuildTrainerPartyHook 800FF7E 0
 BattleBeginFirstTurn 801385C 0
 GetWhoStrikesFirst 8014CD8 3
@@ -18,7 +21,9 @@ HasNoMonsToSwitch 0x8019C10 3
 MoveSelectionDisplayMoveType 8030940 0
 PlayerHandleExpBarUpdate 08032F4C 1
 AI_TrySwitchOrUseItem 8039C84 0
+BattleSetup_GetTerrainId 807FC5C 0
 EndBattleFlagClearHook 80804AC 0
+HandleIntroSlide 80BC3A0 1
 BufferStringBattle 080D7274 1
 BattleStringExpandPlaceholders 80D7868 2
 DisplayStatStageMessage 80D8486 0
