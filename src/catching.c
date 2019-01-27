@@ -84,7 +84,7 @@ void atkEF_handleballthrow(void) {
 					
 				case BALL_TYPE_DIVE_BALL:
 					if (Overworld_GetMapTypeOfSaveblockLocation() == MAP_TYPE_UNDERWATER
-					|| FishingByte /*|| CheckBattleTerrain(CheckWater)*/)
+					|| FishingByte || TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
 						ball_multiplier = 35;
 					else
 						ball_multiplier = 10;
