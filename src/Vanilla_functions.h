@@ -257,7 +257,9 @@ void __attribute__((long_call)) QuestLogRemtachBattleStore(void);
 bool8 __attribute__((long_call)) IsQuestLogActive(void);
 
 //Party Menu Functions
+void __attribute__((long_call)) sub_811FA78(u8 taskId);
 s8 __attribute__((long_call)) sub_812029C(s8 a, s8 b);
+void __attribute__((long_call)) sub_8122D78(void);
 
 //Palette Functions
 void __attribute__((long_call)) LoadCompressedPalette(const void* src, u16 offset, u16 size);

@@ -581,7 +581,9 @@ QuestLogRemtachBattleStore = 0x811231C | 1;
 IsQuestLogActive = 0x8111C2C | 1;
 
 /*Party Menu Functions*/
+sub_811FA78 = 0x811FA78 | 1;
 sub_812029C = 0x812029C | 1;
+sub_8122D78 = 0x8122D78 | 1;
 
 /*Palette Functions*/
 LoadCompressedPalette = 0x80703A8 | 1;
