@@ -104,3 +104,6 @@ SetUpTrainerEncounterMusic 8080628 0
 GetIntroSpeechOfApproachingTrainer 80806D8 0
 GetTrainerCantBattleSpeech 8080734 0
 CheckForTrainersWantingBattle 8081B30 0
+##
+##Party Menu Hooks
+CursorCb_Summary 8122D4C 1
