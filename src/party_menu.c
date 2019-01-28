@@ -6,6 +6,10 @@
 #define MENU_LEFT -2
 #define MENU_RIGHT 2
 
+void SetNewPartySelectTarget2(s8* highlightedMon, s8 movementDir);
+void CursorCb_Summary(u8 taskId);
+void openSummary(u8 taskId);
+
 /*
 struct PartyMenuViewing
 {
@@ -311,4 +315,19 @@ void SetNewPartySelectTarget2(s8* highlightedMon, s8 movementDir)
         break;
     }
 #endif
+}
+
+void CursorCb_Summary(u8 taskId)
+{
+    PlaySE(SE_SELECT);
+    gPartyMenuView->exitCallback = sub_8122D78; //sub_81B3828 in Emerald
+
+	if (gMain.inBattle != 0)
+		openSummary(taskId);
+	else
+		sub_811FA78(taskId); //sub_81B12C0 in Emerald
+}
+
+void openSummary(u8 taskId)
+{
 }
