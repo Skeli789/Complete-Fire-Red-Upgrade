@@ -109,7 +109,7 @@ void atk49_moveend(void)
                 && gBattleMons[gBankTarget].hp != 0 && gBankAttacker != gBankTarget
                 && SIDE(gBankAttacker) != SIDE(gBankTarget)
                 && !(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && TOOK_DAMAGE(gBankTarget)
-                && gBattleMoves[gCurrentMove].split != SPLIT_STATUS && gBattleMons[gBankTarget].statStages[STAT_ATK] <= 11)
+                && SPLIT(gCurrentMove) != SPLIT_STATUS && gBattleMons[gBankTarget].statStages[STAT_ATK] <= 11)
             {
                 gBattleMons[gBankTarget].statStages[STAT_ATK-1]++;
                 BattleScriptPushCursor();
