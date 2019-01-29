@@ -95,7 +95,6 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
     u16 atkItem;
 	
 	if (DoPluck) {
-		gLastUsedItem = gBattleMons[gBankTarget].item;
 		bankHoldEffect = ItemId_GetHoldEffect(gLastUsedItem);
 		bankQuality = ItemId_GetHoldEffectParam(gLastUsedItem);
 	}
