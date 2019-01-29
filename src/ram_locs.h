@@ -211,6 +211,9 @@ typedef u8 Buffer_t[0x200];
 
 /*u8*/  #define gFieldEffectArguments ((u8*) 0x20386E0)
 
+/*u8*/  #define gSafariBallNumber 	(*((u8*) 0x02039994))
+/*u16*/ #define gSafariSteps	   (*((u16*) 0x02039996))
+
 /*u8*/  #define gAbilitiesPerBank ((u8*) 0x2039A30)
 		//#define gStringInfo ((struct StringInfoBattle*) *((u32*) 0x2039A34))
 
@@ -232,6 +235,9 @@ typedef u8 Buffer_t[0x200];
 		
 		#define gCurrentMapName *((u8*) 0x3005558)
 		
+		#define GBATimer ((u16*) 0x4000108)
+		#define gKeyReg (*((u16*) 0x4000130))
+		
 		extern struct MusicPlayerInfo gMPlay_BGM;
 
 /*Custom Ram Locs*/
@@ -240,6 +246,7 @@ typedef u8 Buffer_t[0x200];
 #define SuppressedAbilities ((u8*) 0x203C038)
 #define SwitchInEffectsTracker (*((u8*) 0x203C03D))
 #define SentInBackup (*((u8*) 0x203C03E))
+#define NoMoreMovingThisTurn (*((u8*) 0x203C03F))
 #define PayDayByPartyIndices ((u8*) 0x203C040)
 #define ZMoveData ((struct ZMoveData*) 0x203C048)
 #define MegaData ((struct MegaData*) 0x203C060)
