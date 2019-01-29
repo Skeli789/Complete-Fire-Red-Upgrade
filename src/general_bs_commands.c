@@ -11,14 +11,14 @@
 //Future sight damage BS
 //Update Semi-Invulnerable check in atk45_playanimation, atk46_playanimation2
 //Update MoveValuesCleanUp CritMultiplier
-//void atk23_getexp(void)
 //Hook parental bond into AttackAnimation
-//Type Resist Berries, Gems
+//Type Resist Berries
 //Metronome Item during Charging Turn
 //Reciever ban list
 //Update gCurrMovePos in Instruct
 //Move Stomping Tantrum to end command based on TargetsHit
 //Update EmitMoveAnimation to include attacker's item
+//Make removereflectlightscreen an anim task
 
 #include "defines.h"
 #include "helper_functions.h"
@@ -2509,11 +2509,12 @@ void atkEB_settypetoterrain(void) {
 void atkEE_removelightscreenreflect(void) { //Brick Break
     u8 side = SIDE(gBankTarget);
     if (gSideTimers[side].reflectTimer || gSideTimers[side].lightscreenTimer || AuroraVeilTimers[side]) {
-        gSideAffecting[side] &= ~(SIDE_STATUS_REFLECT);
+        //Now handled as a move effect
+		/*gSideAffecting[side] &= ~(SIDE_STATUS_REFLECT);
         gSideAffecting[side] &= ~(SIDE_STATUS_LIGHTSCREEN);
         gSideTimers[side].reflectTimer = 0;
         gSideTimers[side].lightscreenTimer = 0;
-		AuroraVeilTimers[side] = 0;
+		AuroraVeilTimers[side] = 0;*/
         gBattleScripting->animTurn = 1;
         gBattleScripting->animTargetsHit = 1;
     }
