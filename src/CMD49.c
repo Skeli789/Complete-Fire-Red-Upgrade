@@ -1,6 +1,8 @@
 #include "defines.h"
 #include "helper_functions.h"
 
+//Psycho Shift Healing after Synchronize
+
 #define BattleScript_RageIsBuilding (u8*) 0x0
 #define BattleScript_DefrostedViaFireMove (u8*) 0x0
 #define BattleScript_FlushMessageBox (u8*) 0x0
