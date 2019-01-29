@@ -477,6 +477,14 @@ bool8 UproarWakeUpCheck(u8 bank) {
         return TRUE;
 }
 
+bool8 IsUproarBeingMade(void) {
+	for (int i = 0; i < gBattlersCount; ++i) {
+		if (gBattleMons[i].status2 & STATUS2_UPROAR)
+			return TRUE;
+	}
+	return FALSE;
+}
+
 //Change to loop through battle modified party indexes
 pokemon_t* GetIllusionPartyData(u8 bank) {
 	int i;
@@ -747,6 +755,10 @@ bool8 CanBeFrozen(u8 bank) {
 		case ABILITY_MAGMAARMOR:
 			return FALSE;
 	}
+	
+	if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
+		return FALSE;
+	
 	return TRUE;
 }
 
