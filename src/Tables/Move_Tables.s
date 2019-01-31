@@ -29,6 +29,8 @@
 .global MoldBreakerMoves
 .global FlinchMoveTable
 .global ParentalBondBanList
+.global MovesCanUnfreezeTarget
+.global MovesThatChangePhysicality
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -599,4 +601,18 @@ ParentalBondBanList:
 .hword MOVE_EXPLOSION
 .hword MOVE_FINALGAMBIT
 .hword MOVE_ENDEAVOR
+.hword MOVE_TABLES_TERMIN
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+MovesCanUnfreezeTarget:
+.hword MOVE_SCALD
+.hword MOVE_STEAMERUPTION
+.hword MOVE_TABLES_TERMIN
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+MovesThatChangePhysicality:
+.hword MOVE_PHOTONGEYSER
+.hword MOVE_LIGHT_THAT_BURNS_THE_SKY
 .hword MOVE_TABLES_TERMIN
