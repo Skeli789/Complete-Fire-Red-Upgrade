@@ -61,6 +61,7 @@
 #define IS_BLANK_TYPE(type) (type == TYPE_MYSTERY || type == TYPE_ROOSTLESS || type == TYPE_BLANK)
 #define IS_TRANSFORMED(bank) (gBattleMons[bank].status2 & STATUS2_TRANSFORMED)
 #define TOOK_DAMAGE(bank) (gSpecialStatuses[bank].moveturnLostHP_physical || gSpecialStatuses[bank].moveturnLostHP_special)
+#define MOVE_HAD_EFFECT (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT))
 #define PINCH_BERRY_CHECK(bank) (gBattleMons[bank].hp <= gBattleMons[bank].maxHP / 4 || (ABILITY(bank) == ABILITY_GLUTTONY && gBattleMons[bank].hp <= gBattleMons[bank].maxHP / 2))
 #define STAT_CAN_RISE(bank, stat) ((gBattleMons[bank].statStages[stat-1] < 12 && ABILITY(bank) != ABILITY_CONTRARY) || (ABILITY(bank) == ABILITY_CONTRARY && gBattleMons[bank].statStages[stat-1] > 0))
 #define STAT_CAN_FALL(bank, stat) ((gBattleMons[bank].statStages[stat-1] > 0 && ABILITY(bank) != ABILITY_CONTRARY) || (ABILITY(bank) == ABILITY_CONTRARY && gBattleMons[bank].statStages[stat-1] < 12))
