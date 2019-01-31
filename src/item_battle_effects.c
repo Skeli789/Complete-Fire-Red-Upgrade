@@ -93,6 +93,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
     u8 bankHoldEffect, atkHoldEffect;
     u8 bankQuality, atkQuality;
     u16 atkItem;
+	u8 moveSplit = CalcMoveSplit(gBankAttacker, gCurrentMove);
 	
 	if (DoPluck) {
 		bankHoldEffect = ItemId_GetHoldEffect(gLastUsedItem);
@@ -567,10 +568,12 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
 		switch (bankHoldEffect) {
             case ITEM_EFFECT_ROCKY_HELMET:
 				if (TOOK_DAMAGE(bank)
+				&& MOVE_HAD_EFFECT
 				&& ABILITY(gBankAttacker) != ABILITY_MAGICGUARD
 				&& CheckContact(gCurrentMove, gBankAttacker)
 				&& !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bank)
-				&& gBattleMons[gBankAttacker].hp) {
+				&& gBattleMons[gBankAttacker].hp) 
+				{
                     gBattleMoveDamage = MathMax(1, udivsi(gBattleMons[gBankAttacker].maxHP, 6));
                     BattleScriptPushCursor();
                     gBattlescriptCurrInstr = BattleScript_RockyHelmetDamage;
@@ -584,7 +587,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
 				if (TOOK_DAMAGE(bank)
 				&& gMoveResultFlags == MOVE_RESULT_SUPER_EFFECTIVE
 				&& gBattleMons[bank].hp
-				&& (gBattleMons[bank].statStages[STAT_STAGE_ATK-1] < 12 || gBattleMons[bank].statStages[STAT_STAGE_SPATK-1] < 12)
+				&& (STAT_CAN_RISE(bank, STAT_STAGE_ATK) || STAT_CAN_RISE(bank, STAT_STAGE_SPATK))
 				&& !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bank)) 
 				{
 					gEffectBank = bank;
@@ -597,7 +600,8 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
 				
 			case ITEM_EFFECT_DESTINY_KNOT:
 				if (gBattleMons[bank].status2 & STATUS2_INFATUATION
-				&& (!AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, bank, ABILITY_AROMAVEIL, 0, 0) || !NO_MOLD_BREAKERS(gBankAttacker))) {
+				&& (!AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, bank, ABILITY_AROMAVEIL, 0, 0) || !NO_MOLD_BREAKERS(gBankAttacker))) 
+				{
 				//TO DO
 				}
 				break;
@@ -607,7 +611,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
 				break;
 				
 			case ITEM_EFFECT_AIR_BALLOON:
-				if (TOOK_DAMAGE(bank)) 
+				if (TOOK_DAMAGE(bank) && MOVE_HAD_EFFECT) 
 				{
 					gEffectBank = bank;
 					BattleScriptPushCursor();
@@ -615,7 +619,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
 					gActiveBattler = bank;
 					effect = ITEM_EFFECT_OTHER;
 				}
-					break;
+				break;
 			
 			case ITEM_EFFECT_CELL_BATTERY:
 				effect = RaiseStatsContactItem(bank, STAT_STAGE_ATK, TYPE_ELECTRIC);
@@ -666,9 +670,10 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
 				if (!DoPluck) 
 				{
 					if (TOOK_DAMAGE(bank)
+					&& MOVE_HAD_EFFECT
 					&& gBattleMons[gBankAttacker].hp
 					&& !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bank)
-					&& SPLIT(gCurrentMove) == bankQuality) 
+					&& moveSplit == bankQuality) 
 					{					
 						gBattleMoveDamage = MathMax(1, gBattleMons[gBankAttacker].maxHP / 8);
 						gEffectBank = gBankAttacker;
@@ -705,10 +710,12 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
 			
 			case ITEM_EFFECT_STICKY_BARB:
 				if (TOOK_DAMAGE(bank)
+				&& MOVE_HAD_EFFECT
 				&& CheckContact(gCurrentMove, gBankAttacker)
 				&& !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bank)
 				&& gBattleMons[gBankAttacker].hp
-				&& gBattleMons[gBankAttacker].item == 0) {
+				&& gBattleMons[gBankAttacker].item == 0) 
+				{
                     BattleScriptPushCursor();
                     gBattlescriptCurrInstr = BattleScript_StickyBarbTransfer;
 					gActiveBattler = gBankAttacker;
@@ -871,28 +878,26 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
             switch (atkHoldEffect)
             {
             case ITEM_EFFECT_FLINCH:
-				if (ABILITY(gBankAttacker) == ABILITY_SERENEGRACE || RainbowTimers[gBankAttacker & 1])
+				if (ABILITY(gBankAttacker) == ABILITY_SERENEGRACE || RainbowTimers[SIDE(gBankAttacker)])
 					bankQuality *= 2;
                 if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) 
 				&& ABILITY(gBankTarget) != ABILITY_STENCH
-                && (TOOK_DAMAGE(gBankTarget))
+                && TOOK_DAMAGE(gBankTarget)
+				&& MOVE_HAD_EFFECT
                 && (umodsi(Random(), 100)) < bankQuality
                 && !CheckTableForMove(gCurrentMove, FlinchMoveTable)
                 && gBattleMons[gBankTarget].hp)
                 {
-                    gBattleCommunication[MOVE_EFFECT_BYTE] = 8;
-                    BattleScriptPushCursor();
-                    SetMoveEffect(0, 0);
-                    BattleScriptPop();
+                    gBattleMons[gBankTarget].status2 |= STATUS2_FLINCHED;
                 }
                 break;
             case ITEM_EFFECT_SHELL_BELL:
-                if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT)
-                    && gSpecialStatuses[gBankTarget].moveturnLostHP != 0
-                    && gSpecialStatuses[gBankTarget].moveturnLostHP != 0xFFFF
-                    && gBankAttacker != gBankTarget
-                    && gBattleMons[gBankAttacker].hp != gBattleMons[gBankAttacker].maxHP
-                    && gBattleMons[gBankAttacker].hp != 0)
+                if (MOVE_HAD_EFFECT
+                && gSpecialStatuses[gBankTarget].moveturnLostHP != 0
+                && gSpecialStatuses[gBankTarget].moveturnLostHP != 0xFFFF
+                && gBankAttacker != gBankTarget
+                && gBattleMons[gBankAttacker].hp != gBattleMons[gBankAttacker].maxHP
+                && gBattleMons[gBankAttacker].hp)
                 {
                     gLastUsedItem = atkItem;
                     gStringBank = gBankAttacker;
@@ -1022,7 +1027,7 @@ u8 RaiseStatsContactItem(u8 bank, u8 stat, u8 moveType) {
 u8 KeeMaranagaBerryFunc(u8 bank, u8 stat, u8 split, bool8 DoPluck) {
 	u8 effect = 0;
 	
-	if (((TOOK_DAMAGE(bank) && SPLIT(gCurrentMove) == split && !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bank)) || DoPluck)
+	if (((TOOK_DAMAGE(bank) && CalcMoveSplit(gBankAttacker, gCurrentMove) == split && !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bank)) || DoPluck)
 	&& gBattleMons[bank].hp && STAT_CAN_RISE(bank, stat)) 
 	{			
         PREPARE_STAT_BUFFER(gBattleTextBuff1, stat);
