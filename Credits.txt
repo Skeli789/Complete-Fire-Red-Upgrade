@@ -1,6 +1,11 @@
-Backsprites:
--Solo993
+Graphics:
+Golche - Attack Particles, Battle Backgrounds, Other Graphics
+Bela - Poke Balls
+Solo993 - Backsprites
 
 Code:
+Skeli - A Bunch of Stuff
+Ghoulslash - Attack Animations, Various Code
+Lixdel - Attack Animations
 Pret - PokeRuby, PokeFireRed, PokeEmerald
 Sagari - Trainer Class Poke Balls, Pickup Update
