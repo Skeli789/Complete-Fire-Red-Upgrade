@@ -32,3 +32,19 @@ SwitchMoveDataHook:
 	bl HandleMoveSwitchingUpdate
 	ldr r0, =0x802F2C8 | 1
 	bx r0
+
+@0x800E3A4 with r0
+EmitPrintStringHook:
+	bl EmitPrintStringUpdate
+	pop {r3-r5}
+	mov r8, r3
+	mov r9, r4
+	mov r10, r5
+	pop {r4-r7, pc}
+
+@0x8032AFC with r0
+PlayerHandlePrintStringHook:
+	push {r4, lr}
+	bl PlayerHandlePrintStringUpdate
+	ldr r0, =0x8032B08 | 1
+	bx r0
