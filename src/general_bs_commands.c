@@ -288,13 +288,13 @@ void atk0C_datahpupdate(void) {
 				gSpecialStatuses[gActiveBattler].moveturnLostHP = 1;
 			gHpDealt = 1;
 			
-			if (SPLIT(gCurrentMove) == SPLIT_PHYSICAL) {
+			if (CalcMoveSplit(gCurrentMove, gActiveBattler) == SPLIT_PHYSICAL) {
 				gProtectStructs[gActiveBattler].physicalDmg = gHpDealt;
 				gSpecialStatuses[gActiveBattler].moveturnLostHP_physical = gHpDealt;
 				gProtectStructs[gActiveBattler].physicalBank = gBankAttacker;
 				gSpecialStatuses[gActiveBattler].moveturnPhysicalBank = gBankAttacker;
 			}
-			else if (SPLIT(gCurrentMove) == SPLIT_SPECIAL) {
+			else if (CalcMoveSplit(gCurrentMove, gActiveBattler) == SPLIT_SPECIAL) {
 				gProtectStructs[gActiveBattler].specialDmg = gHpDealt;
 				gSpecialStatuses[gActiveBattler].moveturnLostHP_special = gHpDealt;
 				gProtectStructs[gActiveBattler].specialBank = gBankAttacker;
@@ -343,7 +343,7 @@ void atk0C_datahpupdate(void) {
                 if (!gSpecialStatuses[gActiveBattler].moveturnLostHP && !(gHitMarker & HITMARKER_x100000))
                     gSpecialStatuses[gActiveBattler].moveturnLostHP = gHpDealt;
 
-                if (SPLIT(gCurrentMove) == SPLIT_PHYSICAL && !(gHitMarker & HITMARKER_x100000) && gCurrentMove != MOVE_PAINSPLIT) {
+                if (CalcMoveSplit(gCurrentMove, gActiveBattler) == SPLIT_PHYSICAL && !(gHitMarker & HITMARKER_x100000) && gCurrentMove != MOVE_PAINSPLIT) {
                     gProtectStructs[gActiveBattler].physicalDmg = gHpDealt;
                     gSpecialStatuses[gActiveBattler].moveturnLostHP_physical = gHpDealt;
 					
@@ -358,7 +358,7 @@ void atk0C_datahpupdate(void) {
                     }
                 }
 				
-                else if (SPLIT(gCurrentMove) == SPLIT_SPECIAL && !(gHitMarker & HITMARKER_x100000)) {
+                else if (CalcMoveSplit(gCurrentMove, gActiveBattler) == SPLIT_SPECIAL && !(gHitMarker & HITMARKER_x100000)) {
                     gProtectStructs[gActiveBattler].specialDmg = gHpDealt;
                     gSpecialStatuses[gActiveBattler].moveturnLostHP_special = gHpDealt;
 					

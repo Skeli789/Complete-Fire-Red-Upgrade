@@ -23,7 +23,7 @@ void atk01_accuracycheck(void) {
     u16 move = T2_READ_16(gBattlescriptCurrInstr + 5);
 
 	if (gBattleTypeFlags & BATTLE_TYPE_OAK_TUTORIAL) {
-		if (!sub_80EB2E0(1) && gBattleMoves[move].power != 0 && gBattleMoves[move].split != SPLIT_STATUS) 
+		if (!sub_80EB2E0(1) && gBattleMoves[move].power != 0 && SPLIT(move) != SPLIT_STATUS) 
 		{
 			if (SIDE(gBankAttacker) == B_SIDE_PLAYER) {
 				JumpIfMoveFailed(7, move);
@@ -31,7 +31,7 @@ void atk01_accuracycheck(void) {
 			}
 		}
 		
-		if (!sub_80EB2E0(2) && (gBattleMoves[move].power == 0 || gBattleMoves[move].split == SPLIT_STATUS))
+		if (!sub_80EB2E0(2) && (gBattleMoves[move].power == 0 || SPLIT(move) == SPLIT_STATUS))
 		{
 			if (SIDE(gBankAttacker) == B_SIDE_PLAYER) {
 				JumpIfMoveFailed(7, move);
@@ -197,7 +197,7 @@ u32 AccuracyCalc(u16 move, u8 bankAtk, u8 bankDef) {
         u8 defQuality = ITEM_QUALITY(gBattleMons[bankDef].item);
 		u8 atkAbility = ABILITY(bankAtk);
 		u8 defAbility = ABILITY(bankDef);
-		u8 moveSplit = SPLIT(move);
+		u8 moveSplit = CalcMoveSplit(move, gBankAttacker);
 		
 		u8 acc;
 		if (defAbility == ABILITY_UNAWARE)
