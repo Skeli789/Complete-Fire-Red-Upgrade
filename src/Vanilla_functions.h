@@ -55,6 +55,7 @@ void __attribute__((long_call)) EmitStatusAnimation(u8 a, u8 b, u32 c);
 void __attribute__((long_call)) EmitTwoReturnValues(u8 a, u8 b, u16 c);
 void __attribute__((long_call)) EmitChosenMonReturnValue(u8 a, u8 b, u8* c);
 void  __attribute__((long_call)) EmitTrainerBallThrow(u8 a);
+void __attribute__((long_call)) EmitSpriteInvisibility(u8 bufferId, bool8 isInvisible);
 void __attribute__((long_call)) EmitDrawPartyStatusSummary(u8 bufferId, struct HpAndStatus* hpAndStatus, u8 arg2);
 void __attribute__((long_call)) EmitBattleAnimation(u8 a, u8 b, u16 c);
 u8 __attribute__((long_call)) LoadBattleBG_SpecialTerrainID(u8 mapType);
@@ -87,6 +88,7 @@ void __attribute__((long_call)) BattleScriptPushCursorAndCallback(const u8* BS_p
 void __attribute__((long_call)) JumpIfMoveFailed(u8 advance_bytes, move_t move);
 void __attribute__((long_call)) CheckWonderGuardAndLevitate(void);
 void __attribute__((long_call)) SetMoveEffect(bool8 primary, u8 certain);
+void __attribute__((long_call)) MoveValuesCleanUp(void);
 bool8 __attribute__((long_call)) IsTwoTurnsMove(u16 move);
 u8  __attribute__((long_call)) AttacksThisTurn(u8 bank, u16 move);
 void __attribute__((long_call)) SetControllerToPlayer(void);
