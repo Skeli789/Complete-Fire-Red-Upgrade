@@ -828,3 +828,20 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 
     return dstID;
 }
+
+void EmitPrintStringUpdate(void)
+{
+    sBattleBuffersTransferData[0] = CONTROLLER_PRINTSTRING;
+    sBattleBuffersTransferData[1] = gBattleStringLoader;
+    sBattleBuffersTransferData[2] = gBattleStringLoader >> 0x8;
+    sBattleBuffersTransferData[3] = gBattleStringLoader >> 0x10;
+	sBattleBuffersTransferData[4] = gBattleStringLoader >> 0x18;
+    PrepareBufferDataTransfer(1, sBattleBuffersTransferData, 5);
+}
+
+void PlayerHandlePrintStringUpdate(void)
+{
+	BattleStringLoader = T1_READ_PTR(gBattleBufferB[gActiveBattler][1]);
+    gBattle_BG0_X = 0;
+    gBattle_BG0_Y = 0;
+}
