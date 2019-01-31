@@ -5,6 +5,7 @@
 //Pokemon Specials//
 ///////////////////////////////////////////////////////////////////////////////////
 
+/*
 enum EVStatChecker
 {
 	CheckEVs_HP,
@@ -510,25 +511,25 @@ void sp066_InflictPartyDamage(void) {
 //Key Specials//
 ///////////////////////////////////////////////////////////////////////////////////
 
-/*Special 0x2b checks for the A and B keys. Returns
-0x0 if none pressed
-0x1 if A pressed
-0x2 if B pressed
-0x3 if both are pressed*/
+//Special 0x2b checks for the A and B keys. Returns
+//0x0 if none pressed
+//0x1 if A pressed
+//0x2 if B pressed
+//0x3 if both are pressed
 u16 sp02B_CheckABButtons(void) {
 	return ~(gKeyReg) & 3;
 }
 
-/*Special 0x2c checks for the D-pad. Returns
-0x0 if no direction is pressed
-0x1 if up is pressed
-0x2 if left is pressed 
-0x3 if down is pressed
-0x4 if right is pressed
-0x5 if up-left is pressed
-0x6 if up-right is pressed
-0x7 if down-left is pressed
-0x8 if down-right is pressed*/
+//Special 0x2c checks for the D-pad. Returns
+//0x0 if no direction is pressed
+//0x1 if up is pressed
+//0x2 if left is pressed 
+//0x3 if down is pressed
+//0x4 if right is pressed
+//0x5 if up-left is pressed
+//0x6 if up-right is pressed
+//0x7 if down-left is pressed
+//0x8 if down-right is pressed
 u16 sp02C_CheckDPad(void) {
 	
 	switch(~(gKeyReg) & 0xFF) {
@@ -553,20 +554,20 @@ u16 sp02C_CheckDPad(void) {
 	}
 }
 
-/*Special 0x2d checks for the start select buttons
-0x0 if none is pressed
-0x1 if select is pressed
-0x2 if start is pressed
-0x3 if both are pressed*/
+//Special 0x2d checks for the start select buttons
+//0x0 if none is pressed
+//0x1 if select is pressed
+//0x2 if start is pressed
+//0x3 if both are pressed
 u16 sp02D_CheckStartSelect(void) {
 	return (~(gKeyReg) >> 2) & 3;
 }
 
-/*Special 0x2e checks for the L-R buttons
-0x0 if none is pressed
-0x1 if R is pressed
-0x2 if L is pressed
-0x3 if both are pressed*/
+//Special 0x2e checks for the L-R buttons
+//0x0 if none is pressed
+//0x1 if R is pressed
+//0x2 if L is pressed
+//0x3 if both are pressed
 u16 sp02E_CheckLRButtons(void) {
 	return (~(gKeyReg) >> 8) & 3;
 }
@@ -964,3 +965,4 @@ void sp098_StartWaterBattle(void) {
 void sp081_SetWalkingScript(void) {
 
 }
+*/

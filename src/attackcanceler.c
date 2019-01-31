@@ -48,6 +48,7 @@ extern u8 BattleScript_StanceChangeToBlade[];
 extern u8 BattleScript_StanceChangeToShield[];
 extern u8 BattleScript_ZMoveActivateStatus[];
 extern u8 BattleScript_ZMoveActivateDamaging[];
+extern u8 BattleScript_DarkTypePreventsPrankster[];
 
 extern move_t GravityBanTable[];
 extern move_t ParentalBondBanList[];
@@ -127,6 +128,7 @@ enum
 	CANCELLER_POWDER,
 	CANCELLER_PRIMAL_WEATHER,
 	CANCELLER_PSYCHIC_TERRAIN,
+	CANCELLER_PRANKSTER,
 	CANCELLER_END,
 };
 
@@ -207,7 +209,7 @@ void atk00_attackcanceler(void)
 	&& gCurrentMove != MOVE_STRUGGLE 
 	&& !(gHitMarker & (HITMARKER_x800000 | HITMARKER_NO_ATTACKSTRING))
     && !(gBattleMons[gBankAttacker].status2 & STATUS2_MULTIPLETURNS)
-	&& !DancerByte)
+	&& !DancerInProgress)
     {
         gBattlescriptCurrInstr = BattleScript_NoPPForMove;
         gMoveResultFlags |= MOVE_RESULT_MISSED;
@@ -231,6 +233,9 @@ void atk00_attackcanceler(void)
     }
 
     gHitMarker |= HITMARKER_OBEYS;
+
+	if (MoveBounceInProgress == 2) //Bounce just ended
+		MoveBounceInProgress = 0;
 
     if (!MoveBounceInProgress && gBattleMoves[gCurrentMove].flags & FLAG_MAGIC_COAT_AFFECTED)
 	{
@@ -733,7 +738,7 @@ u8 AtkCanceller_UnableToUseMove(void)
 						else
 							gRandomMove = MOVE_BREAKNECK_BLITZ_P + ((moveType - 1) * 2) + SPLIT(moveReplaced);
 					}
-					gCurrentMove = gChosenMove = gRandomMove;
+					gCurrentMove = gRandomMove; //Add in gChosenMove?
 					gBattleCommunication[MOVE_EFFECT_BYTE] = 0; //Remove secondary effects
 					gBattleStruct->dynamicMoveType = GetMoveTypeSpecial(gBankAttacker, gCurrentMove);
 					gBattlescriptCurrInstr = gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect];
@@ -796,6 +801,21 @@ u8 AtkCanceller_UnableToUseMove(void)
             gBattleStruct->atkCancellerTracker++;
             break;
 		
+		case CANCELLER_PRANKSTER:
+			#ifndef OLD_PRANKSTER
+			if (ABILITY(gBankAttacker) == ABILITY_PRANKSTER 
+			&& SPLIT(gCurrentMove) == SPLIT_STATUS
+			&& gBankAttacker != gBankTarget
+			&& IsOfType(gBankTarget, TYPE_DARK))
+			{
+				CancelMultiTurnMoves(gBankAttacker);
+				gBattlescriptCurrInstr = BattleScript_DarkTypePreventsPrankster;
+                gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
+                effect = 1;
+			}
+			#endif
+			break;
+		
         case CANCELLER_END:
             break;
         }
@@ -825,7 +845,7 @@ u8 IsMonDisobedient(void)
 		return 0;
     else if (SIDE(gBankAttacker) == B_SIDE_OPPONENT)
         return 0;
-	else if (InstructInProgress || DancerByte || ZMoveData->active)
+	else if (InstructInProgress || DancerInProgress || ZMoveData->active)
 		return 0;
 
 	#ifndef OBEDIENCE_CHECK_FOR_PLAYER_ORIGINAL_POKEMON

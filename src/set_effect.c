@@ -44,6 +44,7 @@ void atk15_seteffectwithchance(void) {
     gBattleScripting->multihitMoveEffect = 0;
 }
 
+/*
 void SetMoveEffect(bool8 primary, u8 certain)
 {
     bool8 statusChanged = FALSE;
@@ -60,7 +61,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
     else
     {
         gEffectBank = gBankTarget;
-        gBattleScripting.bank = gBankAttacker;
+        gBattleScripting->bank = gBankAttacker;
     }
 
     if (gBattleMons[gEffectBank].ability == ABILITY_SHIELD_DUST && !(gHitMarker & HITMARKER_IGNORE_SAFEGUARD)
@@ -827,4 +828,4 @@ void SetMoveEffect(bool8 primary, u8 certain)
     }
 
     gBattleCommunication[MOVE_EFFECT_BYTE] = 0;
-}
+}*/
