@@ -105,13 +105,13 @@ typedef u8 Buffer_t[0x200];
 //Padding 0x2023D78?
 /*u8*/  #define gActionForBanks ((u8*) 0x2023D7C)
 
-/*u8*/  #define gUnknown_2023D80 ((u8*) 2023D80)
-/*u8*/  #define gLastUsedMoves2 ((u16*) 2023D90)
+/*u8*/  #define gUnknown_2023D80 ((u8*) 0x2023D80)
+/*u8*/  #define gLastPrintedMoves ((u16*) 0x2023D90)
 
 /*u16*/ #define gLastUsedMoves ((u16*) 0x2023D98)
 /*u16*/ #define gLastLandedMoves ((u16*) 0x2023DA0)
 /*u16*/ #define gLastHitByType ((u16*) 0x2023DA8)
-/*u16*/ #define gLastUsedMoves3 ((u16*) 0x2023DB0)
+/*u16*/ #define gLastResultingMoves ((u16*) 0x2023DB0)
 /*u16*/ #define gLockedMoves ((u16*) 0x2023DB8)
 /*u8*/  #define gLastHitBy ((u8*) 0x2023DC0)
 /*u16*/ #define gChosenMovesByBanks ((u16*) 0x2023DC4)
@@ -321,6 +321,10 @@ typedef u8 Buffer_t[0x200];
 #define MagicianHelper *((u8*) 0x203D88A)
 #define PowderByte *((u8*) 0x0203D88C)
 
+#define DancerInProgress (*((u8*) 0x203D890))
+#define DancerBankCount (*((u8*) 0x203D891))
+#define CurrentTurnAttacker (*((u8*) 0x203D892))
+
 #define EmbargoTimers ((u8*) 0x203D894)
 #define ElectrifyTimers ((u8*) 0x203D898)
 #define BelchCounters ((u8*) 0x203D89C)
@@ -337,7 +341,7 @@ typedef u8 Buffer_t[0x200];
 
 #define MicleBerryBits (*((u8*) 0x203D8CA))
 
-#define DancerOrder ((u8*) 0x203D8D2)
+#define DancerTurnOrder ((u8*) 0x203D8D2)
 #define InstructInProgress *((u8*) 0x203D8D6)
 
 #define SavedConsumedItems ((u16*) 0x203D8E2)
