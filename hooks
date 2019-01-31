@@ -1,4 +1,5 @@
 ##
+EmitPrintStringHook 800E3A4 0
 EmitChooseMoveHook 800E524 3
 LoadBattleBG_TerrainID 800FC2C 0
 LoadBattleBG_Background 800F260 1
@@ -20,6 +21,7 @@ ClearEndTurnEndByte 080191FC 0
 HasNoMonsToSwitch 0x8019C10 3
 SwitchMoveDataHook 0x802EF90 0
 MoveSelectionDisplayMoveType 8030940 0
+PlayerHandlePrintStringHook 0x8032AFC 0
 PlayerHandleExpBarUpdate 08032F4C 1
 AI_TrySwitchOrUseItem 8039C84 0
 BattleSetup_GetTerrainId 807FC5C 0
