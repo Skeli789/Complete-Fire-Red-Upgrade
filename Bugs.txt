@@ -1,2 +1,4 @@
 -Certain Status Z-Moves (like Z-Destiny Bond) are displayed on the Move Menu will a small graphical oddity.
 -Bulk Up & Curse doesn't work
+-Photon Geyser and Light that Burns Split in general_bs_commands, acc_calc, damage_calc, AI_Helper_Functions,
+-Setword for strings needs to be fixed for link battles
