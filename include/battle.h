@@ -643,7 +643,7 @@ struct BattleStruct
     u8 wallyMovesState;
     u8 wallyWaitFrames;
     u8 wallyMoveFrames;
-    u8 mirrorMoves[8]; //Ask GF why they declared it that way
+    u16 lastTakenMove[4]; //Used by mirror move
     u8 field_A0;
     u8 field_A1;
     u8 field_A2;
@@ -675,7 +675,7 @@ struct BattleStruct
     u8 turnSideTracker;
     u8 fillerDC[0xDF-0xDC];
     u8 givenExpMons; //The party indices in the opponent's party that have fainted and been given exp for
-    u8 mirrorMoveArrays[32];
+    u16 lastTakenMoveFrom[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; // 4 sub-arrays containing the moves that bank was hit by, by each bank
     u16 castformPalette[BATTLE_BANKS_COUNT][16];
     u8 field_180;
     u8 field_181;
