@@ -4,6 +4,7 @@
 extern move_t SheerForceTable[];
 extern move_t SoundMoveTable[];
 extern move_t MoldBreakerMoves[];
+extern move_t MovesThatChangePhysicality[];
 extern struct BattleMove gBattleMoves[];
 
 extern u8 GetMoveTypeSpecial(bank_t, move_t);
@@ -651,6 +652,40 @@ bool8 IsMockBattle(void) {
 	if (gBattleTypeFlags & BATTLE_TYPE_MOCK_BATTLE)
 		return TRUE;
 	return FALSE;
+}
+
+u8 CalcMoveSplit(u8 bank, u16 move) {
+	if (CheckTableForMove(move, MovesThatChangePhysicality)
+	&&  SPLIT(move) != SPLIT_STATUS)
+	{
+		u32 attack = gBattleMons[bank].attack;
+		u32 spAttack = gBattleMons[bank].spAttack;
+
+		attack = attack * gStatStageRatios[gBattleMons[bank].statStages[STAT_STAGE_ATK-1]][0];
+		attack = udivsi(attack, gStatStageRatios[gBattleMons[bank].statStages[STAT_STAGE_ATK-1]][1]);
+		
+		spAttack = spAttack * gStatStageRatios[gBattleMons[bank].statStages[STAT_STAGE_SPATK-1]][0];
+		spAttack = udivsi(spAttack, gStatStageRatios[gBattleMons[bank].statStages[STAT_STAGE_SPATK-1]][1]);
+		
+		if (spAttack >= attack)
+			return SPLIT_SPECIAL;
+		else
+			return SPLIT_PHYSICAL;
+	}
+	
+	return SPLIT(move);
+}
+
+u8 CalcMoveSplitFromParty(pokemon_t* mon, u16 move) {
+	if (CheckTableForMove(move, MovesThatChangePhysicality))
+	{	
+		if (mon->spAttack >= mon->attack)
+			return SPLIT_SPECIAL;
+		else
+			return SPLIT_PHYSICAL;
+	}
+
+	return SPLIT(move);
 }
 
 bool8 CanBeGeneralStatused(u8 bank) {

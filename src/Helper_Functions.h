@@ -49,6 +49,8 @@ extern bool8 CouldHaveEvolvedViaLevelUp(pokemon_t* mon);
 extern u8 CountBoosts(bank_t);
 extern bool8 MoveBlockedBySubstitute(u16 move, u8 atkBank, u8 defBank);
 extern bool8 IsMockBattle(void);
+extern u8 CalcMoveSplit(u8 bank, u16 move);
+extern u8 CalcMoveSplitFromParty(pokemon_t* mon, u16 move);
 
 extern bool8 CanBeGeneralStatused(u8 bank);
 extern bool8 CanBePutToSleep(u8 bank);
