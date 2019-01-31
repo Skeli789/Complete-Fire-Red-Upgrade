@@ -101,12 +101,12 @@ void atk02_attackstring(void) {
 		gBattlescriptCurrInstr++;
 		gBattleCommunication[MSG_DISPLAY] = 0;
 		
-		if (!DancerByte && gCurrentMove != MOVE_COPYCAT) {
+		if (!DancerInProgress && gCurrentMove != MOVE_COPYCAT) {
 			LastUsedMove = gCurrentMove;
 			LastUsedTypes[gBankAttacker] = moveType;
 			
 			if (!CheckTableForMove(gCurrentMove, MovesThatCallOtherMovesTable)) {
-				if (gLastUsedMoves[gBankAttacker] == gCurrentMove)
+				if (gLastPrintedMoves[gBankAttacker] == gCurrentMove)
 					MetronomeCounter[gBankAttacker] = MathMin(100, MetronomeCounter[gBankAttacker] + 20);
 				else
 					MetronomeCounter[gBankAttacker] = 0;	
@@ -172,7 +172,7 @@ void atk03_ppreduce(void) {
         }
     }
 
-    if (!(gHitMarker & (HITMARKER_NO_PPDEDUCT | HITMARKER_NO_ATTACKSTRING)) && ParentalBondOn != 1 && !DancerByte && gBattleMons[gBankAttacker].pp[gCurrMovePos]) {
+    if (!(gHitMarker & (HITMARKER_NO_PPDEDUCT | HITMARKER_NO_ATTACKSTRING)) && ParentalBondOn != 1 && !DancerInProgress && gBattleMons[gBankAttacker].pp[gCurrMovePos]) {
         gProtectStructs[gBankAttacker].notFirstStrike = 1;
 
         if (gBattleMons[gBankAttacker].pp[gCurrMovePos] > ppToDeduct)
@@ -883,7 +883,7 @@ void atk70_recordlastability(void) {
 
 void atk77_setprotect(void) {
     bool8 not_last_turn = TRUE;
-    u16 last_move = gLastUsedMoves3[gBankAttacker];
+    u16 last_move = gLastResultingMoves[gBankAttacker];
 	u16 rate = 0xFFFF;
 	u16 divisor = 1;
 	int i;
