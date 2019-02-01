@@ -161,7 +161,7 @@ void HandleEndTurn_BattleLost(void)
 		else
 			gBattleCommunication[MULTISTRING_CHOOSER] = 2;
 		
-		gBankAttacker = GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT);
+		gBankAttacker = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
 		gBattlescriptCurrInstr = BattleScript_LocalBattleLost;
 	}	
     else 
