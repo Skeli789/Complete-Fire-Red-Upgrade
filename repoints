@@ -40,3 +40,9 @@ gTrainerBackPicPaletteTable 08034774
 gTrainerBackPicPaletteTable 080D6EA4
 gTrainerBackPicPaletteTable 080EAEC0
 gTrainerBackPicPaletteTable 08159458
+##
+##Battle Scripts
+ThiefStealBS 8020E74
+PoisonedByBS 08250634
+BurnedByBS 08250638
+BadPoisonedByBS 08250644
