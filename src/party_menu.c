@@ -320,7 +320,7 @@ void SetNewPartySelectTarget2(s8* highlightedMon, s8 movementDir)
 void CursorCb_Summary(u8 taskId)
 {
     PlaySE(SE_SELECT);
-    gPartyMenuView->exitCallback = sub_8122D78; //sub_81B3828 in Emerald
+    ((u32*) gPartyMenuView->summaryCallback)[1] = (u32) sub_8122D78; //sub_81B3828 in Emerald
 
 	if (gMain.inBattle != 0)
 		openSummary(taskId);
