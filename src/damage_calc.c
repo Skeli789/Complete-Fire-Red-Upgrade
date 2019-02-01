@@ -1014,11 +1014,11 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
     u32 attack, defense;
     u32 spAttack, spDefense;
 	ability_t atkAbility, atkPartner_ability, defAbility, defPartner_ability;
-	item_effect_t attacker_effect, target_effect;
+	item_effect_t atkEffect, target_effect;
 	u8 attacker_quality, target_quality;
 	u16 attacker_hp, attacker_maxHP;
-	u32 attacker_status1;
-	u16 attacker_species, target_species;
+	u32 attackerStatus1;
+	u16 atkSpecies, defSpecies;
 	u16 attacker_item;
 	u8 moveSplit;
 
@@ -1026,21 +1026,21 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 	defPartner_ability = ABILITY(PARTNER(bankDef));
     target_effect = ITEM_EFFECT(bankDef);
     target_quality = ITEM_QUALITY(bankDef);
-	target_species = defender->species;
+	defSpecies = defender->species;
 	
 	if (PartyCheck) { //Load data from elsewhere if we're calculating damage for a partied mon
 		atkAbility = GetPartyAbility(party_data_atk);
 		atkPartner_ability = 0;
 		attacker_hp = party_data_atk->hp;
 		attacker_maxHP = party_data_atk->maxHP;
-		attacker_status1 = party_data_atk->condition;
+		attackerStatus1 = party_data_atk->condition;
 		attacker_item = party_data_atk->item;
 		if (atkAbility != ABILITY_KLUTZ)
-			attacker_effect = ItemId_GetHoldEffect(party_data_atk->item);
+			atkEffect = ItemId_GetHoldEffect(party_data_atk->item);
 		else
-			attacker_effect = 0;
+			atkEffect = 0;
 		attacker_quality = ItemId_GetHoldEffectParam(party_data_atk->item);
-		attacker_species = party_data_atk->species;
+		atkSpecies = party_data_atk->species;
 		moveSplit = CalcMoveSplitFromParty(party_data_atk, move);
 	}
 	else {
@@ -1048,11 +1048,11 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 		atkPartner_ability = ABILITY(PARTNER(bankAtk));
 		attacker_hp = attacker->hp;
 		attacker_maxHP = attacker->maxHP;
-		attacker_status1 = attacker->status1;
+		attackerStatus1 = attacker->status1;
 		attacker_item = attacker->item;
-		attacker_effect = ITEM_EFFECT(bankAtk);
+		atkEffect = ITEM_EFFECT(bankAtk);
 		attacker_quality = ITEM_QUALITY(bankAtk);
-		attacker_species = attacker->species;
+		atkSpecies = attacker->species;
 		moveSplit = CalcMoveSplit(bankAtk, move);
 	}
 
@@ -1060,7 +1060,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 	if (ZMoveData->active)
 		gBattleMovePower = GetZMovePower(bankAtk, move);
 	else if (!powerOverride)
-        gBattleMovePower = GetBasePower(bankAtk, bankDef, move, attacker_item, attacker_effect, atkAbility, attacker_status1, attacker_hp, attacker_maxHP, attacker_species, party_data_atk, PartyCheck);
+        gBattleMovePower = GetBasePower(bankAtk, bankDef, move, attacker_item, atkEffect, atkAbility, attackerStatus1, attacker_hp, attacker_maxHP, atkSpecies, party_data_atk, PartyCheck);
     else
         gBattleMovePower = powerOverride;
 		
@@ -1119,7 +1119,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 				break;
 			
 			case ABILITY_GUTS:
-				if (attacker_status1 & STATUS_ANY)
+				if (attackerStatus1 & STATUS_ANY)
 					attack = udivsi((attack * 150), 100);
 				break;
 			
@@ -1180,16 +1180,16 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 				break;
 			
 			case ABILITY_RIVALRY:	;
-                u8 attacker_gender;
-                u8 target_gender = GetGenderFromSpeciesAndPersonality(target_species, defender->personality);
+                u8 attackerGender;
+                u8 targetGender = GetGenderFromSpeciesAndPersonality(defSpecies, defender->personality);
 				
 				if (PartyCheck)
-					attacker_gender = GetGenderFromSpeciesAndPersonality(attacker_species, party_data_atk->personality);
+					attackerGender = GetGenderFromSpeciesAndPersonality(atkSpecies, party_data_atk->personality);
 				else
-					attacker_gender = GetGenderFromSpeciesAndPersonality(attacker_species, attacker->personality);
+					attackerGender = GetGenderFromSpeciesAndPersonality(atkSpecies, attacker->personality);
 				
-                if (!CheckingConfusion && attacker_gender != 0xFF && target_gender != 0xFF) {
-                    if (attacker_gender == target_gender) {
+                if (!CheckingConfusion && attackerGender != 0xFF && targetGender != 0xFF) {
+                    if (attackerGender == targetGender) {
 						attack = udivsi((attack * 125), 100);
 						spAttack = udivsi((spAttack * 125), 100);
 					}
@@ -1215,12 +1215,12 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 				break;
 				
 			case ABILITY_TOXICBOOST:
-				if (attacker_status1 & STATUS_PSN_ANY)
+				if (attackerStatus1 & STATUS_PSN_ANY)
 					attack = udivsi((attack * 150), 100);
 				break;
 				
 			case ABILITY_FLAREBOOST:
-				if (attacker_status1 & STATUS_BURN)
+				if (attackerStatus1 & STATUS_BURN)
 					spAttack = udivsi((attack * 150), 100);
 				break;
 				
@@ -1270,7 +1270,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 				break;
 				
 			case ABILITY_TOUGHCLAWS:
-				if (gBattleMoves[move].flags & FLAG_MAKES_CONTACT && attacker_effect != ITEM_EFFECT_PROTECTIVE_PADS) {
+				if (gBattleMoves[move].flags & FLAG_MAKES_CONTACT && atkEffect != ITEM_EFFECT_PROTECTIVE_PADS) {
 					attack = udivsi((attack * 130), 100);
 					spAttack = udivsi((spAttack * 130), 100);
 				}
@@ -1359,8 +1359,8 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 
 //Attacker Item Checks
 	if (!IgnoreAttacker) {
-		mon = attacker_species;
-		switch (attacker_effect) {
+		mon = atkSpecies;
+		switch (atkEffect) {
 			case ITEM_EFFECT_CHOICE_BAND:
 				switch (attacker_quality) {
 					case QUALITY_CHOICE_BAND:
@@ -1486,7 +1486,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 	}
 
 //Target Item Checks	
-	mon = target_species;
+	mon = defSpecies;
 	switch (target_effect) {
 		case ITEM_EFFECT_SOUL_DEW:
 			#ifdef OLD_SOUL_DEW_EFFECT
@@ -1713,7 +1713,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 					damage /= 2;
 			}
 			
-			if ((attacker_status1 & STATUS_BURN) && atkAbility != ABILITY_GUTS && move != MOVE_FACADE)
+			if ((attackerStatus1 & STATUS_BURN) && atkAbility != ABILITY_GUTS && move != MOVE_FACADE)
 				damage /= 2;
 			break;
 		
@@ -1804,7 +1804,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 			if (type == TYPE_FIRE)
 				damage *= 2;
 			if (gBattleMoves[move].flags & FLAG_MAKES_CONTACT
-			&& attacker_effect != ITEM_EFFECT_PROTECTIVE_PADS
+			&& atkEffect != ITEM_EFFECT_PROTECTIVE_PADS
 			&& atkAbility != ABILITY_LONGREACH)
 				damage /= 2;
 	}
@@ -2261,6 +2261,161 @@ u16 GetZMovePower(u8 bank, u16 move) {
 	}
 	
 	return power;
+}
+
+u16 CalcVisualBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 power, u8 moveType, bool8 ignoreDef) {
+	if (power == 1)
+		return power; //Don't modify a variable base power move
+	
+	u16 attack = power;
+	u16 spAttack = power;
+	
+	struct BattlePokemon* attacker = &gBattleMons[bankAtk];
+	struct BattlePokemon* defender = &gBattleMons[bankDef];
+	
+	u32 effectivenessFlags = 0;
+	
+	if (!ignoreDef)
+		effectivenessFlags = TypeCalc(move, bankAtk, bankDef, 0, FALSE);
+	
+	u16 atkSpecies = attacker->species;
+	u16 defSpecies = defender->species;
+	u8 atkEffect = ITEM_EFFECT(bankAtk);
+	u32 attackerStatus1 = attacker->status1;
+
+	switch(ABILITY(bankAtk)) {
+		case ABILITY_TECHNICIAN:
+			if (power <= 60) {
+				attack = udivsi((attack * 150), 100);
+				spAttack = udivsi((spAttack * 150), 100);
+			}
+			break;
+			
+		case ABILITY_RIVALRY:	;
+			if (!ignoreDef) {
+                u8 attackerGender = GetGenderFromSpeciesAndPersonality(atkSpecies, attacker->personality);
+                u8 targetGender = GetGenderFromSpeciesAndPersonality(defSpecies, defender->personality);
+				
+                if (attackerGender != 0xFF && targetGender != 0xFF) {
+                    if (attackerGender == targetGender) {
+						attack = udivsi((attack * 125), 100);
+						spAttack = udivsi((spAttack * 125), 100);
+					}
+                    else {
+						attack = udivsi((attack * 75), 100);
+						spAttack = udivsi((spAttack * 75), 100);
+					}
+                }
+			}
+            break;
+			
+		case ABILITY_RECKLESS:
+			if (CheckTableForMove(move, RecklessTable)) {
+				attack = udivsi((attack * 120), 100);
+				spAttack = udivsi((spAttack * 120), 100);
+			}
+			break;
+		
+		case ABILITY_IRONFIST:
+			if (CheckTableForMove(move, IronFistTable)) {
+				attack = udivsi((attack * 120), 100);
+				spAttack = udivsi((spAttack * 120), 100);
+			}
+			break;
+				
+		case ABILITY_TOXICBOOST:
+			if (attackerStatus1 & STATUS_PSN_ANY)
+				attack = udivsi((attack * 150), 100);
+			break;
+				
+		case ABILITY_FLAREBOOST:
+			if (attackerStatus1 & STATUS_BURN)
+				spAttack = udivsi((attack * 150), 100);
+			break;
+				
+		case ABILITY_SANDFORCE:
+			if (gBattleWeather & WEATHER_SANDSTORM_ANY 
+			&& (moveType == TYPE_ROCK || moveType == TYPE_GROUND || moveType == TYPE_STEEL)) {
+					attack = udivsi((attack * 130), 100);
+					spAttack = udivsi((spAttack * 130), 100);
+			}
+			break;
+				
+		case ABILITY_SHEERFORCE:
+			if (CheckTableForMove(move, SheerForceTable)) {
+				attack = udivsi((attack * 130), 100);
+				spAttack = udivsi((spAttack * 130), 100);
+			}
+			break;
+				
+		case ABILITY_AERILATE:
+		case ABILITY_PIXILATE:
+		case ABILITY_REFRIGERATE:
+		case ABILITY_GALVANIZE:
+		case ABILITY_NORMALIZE:
+			if (moveType == TYPE_NORMAL) { //Fix this
+				#ifdef OLD_ATE_BOOST
+					attack = udivsi((attack * 130), 100);
+					spAttack = udivsi((spAttack * 130), 100);
+				#else
+					attack = udivsi((attack * 120), 100);
+					spAttack = udivsi((spAttack * 120), 100);
+				#endif
+			}
+			break;
+				
+		case ABILITY_MEGALAUNCHER:
+			if (CheckTableForMove(move, MegaLauncherTable)) {
+				attack = udivsi((attack * 150), 100);
+				spAttack = udivsi((spAttack * 150), 100);
+			}
+			break;
+				
+		case ABILITY_STRONGJAW:
+			if (CheckTableForMove(move, StrongJawTable)) {
+				attack = udivsi((attack * 150), 100);
+				spAttack = udivsi((spAttack * 150), 100);
+			}
+			break;
+				
+		case ABILITY_TOUGHCLAWS:
+			if (gBattleMoves[move].flags & FLAG_MAKES_CONTACT && atkEffect != ITEM_EFFECT_PROTECTIVE_PADS) {
+				attack = udivsi((attack * 130), 100);
+				spAttack = udivsi((spAttack * 130), 100);
+			}
+			break;
+			
+		case ABILITY_NEUROFORCE:
+			if (effectivenessFlags & MOVE_RESULT_SUPER_EFFECTIVE) {
+				attack = udivsi((attack * 125), 100);
+				spAttack = udivsi((spAttack * 125), 100);
+			}
+			break;
+				
+		case ABILITY_STEELWORKER:
+			if (moveType == TYPE_STEEL) {
+				attack = udivsi((attack * 150), 100);
+				spAttack = udivsi((spAttack * 150), 100);
+			}
+			break;
+				
+		case ABILITY_WATERBUBBLE:
+			if (moveType == TYPE_WATER) {
+				attack *= 2;
+				spAttack *= 2;
+			}
+			break;
+	}
+		
+	if (ABILITY(PARTNER(bankAtk)) == ABILITY_BATTERY)
+		spAttack = udivsi((spAttack * 130), 100);
+	
+	switch (CalcMoveSplit(bankAtk, move)) {
+		case SPLIT_SPECIAL:
+			return spAttack;
+		default:
+			return attack;
+	}
 }
 
 u16 AdjustWeight(u32 weight, u8 ability, u8 item_effect, u8 bank, bool8 check_nimble) {
