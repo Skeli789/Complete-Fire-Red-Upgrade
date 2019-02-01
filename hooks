@@ -23,6 +23,7 @@ SwitchMoveDataHook 0x802EF90 0
 MoveSelectionDisplayMoveType 8030940 0
 PlayerHandlePrintStringHook 0x8032AFC 0
 PlayerHandleExpBarUpdate 08032F4C 1
+OpponentHandlePrintStringHook 080384BC 0
 AI_TrySwitchOrUseItem 8039C84 0
 BattleSetup_GetTerrainId 807FC5C 0
 EndBattleFlagClearHook 80804AC 0
