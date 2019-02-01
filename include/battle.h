@@ -1048,7 +1048,7 @@ struct MonSpritesGfx
 typedef void (*TaskFunc)(u8 taskId);
 struct PartyMenuViewing
 {
-    TaskFunc unk0;
+    TaskFunc summaryCallback;
     MainCallback exitCallback;
     u32 unk8_0:1;
     u32 lastViewed:3; //The last mon you selected before going back to the left
