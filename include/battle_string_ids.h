@@ -3,7 +3,7 @@
 
 #include "global.h"
 
-#define BATTLESTRINGS_COUNT     369
+#define BATTLESTRINGS_COUNT     386
 
 #define BATTLESTRINGS_ID_ADDER  12 // all battlestrings have its ID + 12, because first 5 are reserved
 
