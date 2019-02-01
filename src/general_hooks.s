@@ -48,3 +48,10 @@ PlayerHandlePrintStringHook:
 	bl PlayerHandlePrintStringUpdate
 	ldr r0, =0x8032B08 | 1
 	bx r0
+
+@0x80384BC with r0
+OpponentHandlePrintStringHook:
+	push {r4, lr}
+	bl PlayerHandlePrintStringUpdate
+	ldr r0, =0x80384C8 | 1
+	bx r0
