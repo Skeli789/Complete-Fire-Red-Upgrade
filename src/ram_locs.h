@@ -52,8 +52,10 @@ struct Clock {
 /*u8*/  #define gLinkPlayers 			((struct LinkPlayer*) 0x202273C)
 /*u8*/  #define unk_2022744				((u8*) 0x2022744)
 /*u8*/  #define gBattleBuffersTransferData ((u8*) 0x2022874) //u8 gBattleBuffersTransferData[0x170];
-		#define gBattle_BG1_Y 			(*((u16*) 0x202297A))
-		#define gBattle_BG2_Y 			(*((u16*) 0x202297E))
+/*u16*/	#define gBattle_BG0_X 			(*((u16*) 0x2022974))
+/*u16*/	#define gBattle_BG0_Y 			(*((u16*) 0x2022976))
+/*u16*/	#define gBattle_BG1_Y 			(*((u16*) 0x202297A))
+/*u16*/	#define gBattle_BG2_Y 			(*((u16*) 0x202297E))
 /*u8*/  #define gDisplayedStringBattle 	((u8*) 0x202298C)
 /*u8*/  #define gBattleTextBuff1 		((u8*) 0x2022AB8)
 /*u8*/  #define gBattleTextBuff2 		((u8*) 0x2022AC8)
