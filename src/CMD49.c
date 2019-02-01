@@ -576,6 +576,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 				gBankTarget = GetMoveTarget(gCurrentMove, FALSE);
 				gBattleScripting->atk49_state = 0;
 				gRandomMove = gCurrentMove;
+				gBattleScripting->bank = gBankAttacker;
                 gBattlescriptCurrInstr = BattleScript_DancerActivated;
 				gHitMarker &= ~(HITMARKER_NO_ANIMATIONS | HITMARKER_NO_ATTACKSTRING | HITMARKER_ATTACKSTRING_PRINTED);
 				DancerInProgress = TRUE;
