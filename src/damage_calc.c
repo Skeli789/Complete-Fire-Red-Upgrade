@@ -40,6 +40,7 @@ void TypeDamageModification(u8 atkAbility, u8 bankDef, move_t, u8 moveType, u8* 
 void ModulateDmgByType(u8 multiplier, const u16 move, const u8 moveType, const u8 defType, const u8 defBank, u8* flags, pokemon_t* party_data_def, bool8 CheckPartyDef);
 u8 GetMoveTypeSpecial(u8 bankAtk, move_t);
 u8 GetMoveTypeSpecialFromParty(pokemon_t* party_data, u16 move);
+bool8 AbilityCanChangeTypeAndBoost(u8 bankAtk, u16 move);
 u8 GetExceptionMoveType(u8 bankAtk, move_t);
 u8 GetExceptionMoveTypeFromParty(pokemon_t*, move_t);
 
@@ -48,8 +49,9 @@ void atk4A_typecalc2(void);
 u32 AI_CalcDmg(u8 bankAtk, u8 bankDef, u16 move);
 u32 AI_CalcPartyDmg(u8 bankAtk, u8 bankDef, u16 move, pokemon_t* mon);
 s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* defender, u32 move, u16 sideStatus, u16 powerOverride, u8 effectivenessFlags, u8 typeOverride, u8 bankAtk, u8 bankDef, pokemon_t* party_data_atk, bool8 party, bool8 IgnoreAttacker, bool8 CheckingConfusion);
-u16 GetBasePower(bank_t bankAtk, bank_t bankDef, move_t, item_t, item_effect_t, ability_t, u32 atk_status1, u16 atk_hp, u16 atk_maxHP, u16 species, pokemon_t* party_data_atk, bool8 party);
+u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 ability, u32 atkStatus1, u16 atk_hp, u16 atk_maxHP, u16 species, pokemon_t* party_data_atk, bool8 PartyCheck, bool8 menuCheck, bool8 ignoreDef);
 u16 GetZMovePower(u8 bank, u16 move);
+u16 CalcVisualBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 power, u8 moveType, bool8 ignoreDef);
 u16 AdjustWeight(u32 weight, ability_t, item_effect_t, bank_t, bool8 check_nimble);
 u8 GetFlingPower(ability_t, item_t, pokemon_t*, bank_t, bool8 PartyCheck);
 void AdjustDamage(bool8 CheckFalseSwipe);
@@ -760,6 +762,37 @@ u8 GetMoveTypeSpecialFromParty(pokemon_t* party_data, u16 move) {
 	return moveType;
 }
 
+bool8 AbilityCanChangeTypeAndBoost(u8 bankAtk, u16 move) {
+	u8 atkAbility = ABILITY(bankAtk);
+	u8 moveType = gBattleMoves[move].type;
+
+	if (ElectrifyTimers[bankAtk]
+	|| CheckTableForMove(move, TypeChangeExceptionTable))
+		return FALSE;
+
+//Check Normal-type Moves		
+	if (moveType == TYPE_NORMAL) {
+		if (IonDelugeTimer)
+			return FALSE;
+		
+		if ((!ZMoveData->active && !ZMoveData->viewing) || SPLIT(move) == SPLIT_STATUS) {
+			switch (atkAbility) {
+				case ABILITY_REFRIGERATE:
+				case ABILITY_PIXILATE:
+				case ABILITY_AERILATE:
+				case ABILITY_GALVANIZE:
+					return TRUE;		
+			}
+		}
+	}
+
+//Check non-Normal-type moves
+	else if (atkAbility == ABILITY_NORMALIZE && ((!ZMoveData->active && !ZMoveData->viewing) || SPLIT(move) == SPLIT_STATUS))
+		return TRUE;
+	
+	return FALSE;
+}
+
 u8 GetExceptionMoveType(u8 bankAtk, u16 move) {
 	int i;
 	u8 moveType = gBattleMoves[move].type;
@@ -1015,7 +1048,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
     u32 spAttack, spDefense;
 	ability_t atkAbility, atkPartner_ability, defAbility, defPartner_ability;
 	item_effect_t atkEffect, target_effect;
-	u8 attacker_quality, target_quality;
+	u8 atkQuality, target_quality;
 	u16 attacker_hp, attacker_maxHP;
 	u32 attackerStatus1;
 	u16 atkSpecies, defSpecies;
@@ -1039,7 +1072,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 			atkEffect = ItemId_GetHoldEffect(party_data_atk->item);
 		else
 			atkEffect = 0;
-		attacker_quality = ItemId_GetHoldEffectParam(party_data_atk->item);
+		atkQuality = ItemId_GetHoldEffectParam(party_data_atk->item);
 		atkSpecies = party_data_atk->species;
 		moveSplit = CalcMoveSplitFromParty(party_data_atk, move);
 	}
@@ -1051,7 +1084,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 		attackerStatus1 = attacker->status1;
 		attacker_item = attacker->item;
 		atkEffect = ITEM_EFFECT(bankAtk);
-		attacker_quality = ITEM_QUALITY(bankAtk);
+		atkQuality = ITEM_QUALITY(bankAtk);
 		atkSpecies = attacker->species;
 		moveSplit = CalcMoveSplit(bankAtk, move);
 	}
@@ -1060,7 +1093,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 	if (ZMoveData->active)
 		gBattleMovePower = GetZMovePower(bankAtk, move);
 	else if (!powerOverride)
-        gBattleMovePower = GetBasePower(bankAtk, bankDef, move, attacker_item, atkEffect, atkAbility, attackerStatus1, attacker_hp, attacker_maxHP, atkSpecies, party_data_atk, PartyCheck);
+        gBattleMovePower = GetBasePower(bankAtk, bankDef, move, attacker_item, atkEffect, atkAbility, attackerStatus1, attacker_hp, attacker_maxHP, atkSpecies, party_data_atk, PartyCheck, FALSE, FALSE);
     else
         gBattleMovePower = powerOverride;
 		
@@ -1244,7 +1277,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 			case ABILITY_REFRIGERATE:
 			case ABILITY_GALVANIZE:
 			case ABILITY_NORMALIZE:
-				if (GalvanizeHelper) {
+				if (AbilityCanChangeTypeAndBoost(bankAtk, move)) {
 					#ifdef OLD_ATE_BOOST
 						attack = udivsi((attack * 130), 100);
 						spAttack = udivsi((spAttack * 130), 100);
@@ -1362,7 +1395,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 		mon = atkSpecies;
 		switch (atkEffect) {
 			case ITEM_EFFECT_CHOICE_BAND:
-				switch (attacker_quality) {
+				switch (atkQuality) {
 					case QUALITY_CHOICE_BAND:
 						attack = udivsi((attack * 150), 100);
 						break;
@@ -1399,7 +1432,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 			
 			case ITEM_EFFECT_PLATE:
 			case ITEM_EFFECT_TYPE_BOOSTERS:
-				if (type == attacker_quality) {
+				if (type == atkQuality) {
 					attack = udivsi((attack * 120), 100);
 					spAttack = udivsi((spAttack * 120), 100);
 				}
@@ -1441,7 +1474,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 				
 			case ITEM_EFFECT_GEM: //This check is specifically meant for the AI, as the Gem would usually be consumed by now
 								  //If the GemHelper is active and the user still has a gem, that means it received another through Symbiosis which is ignored
-				if (type == attacker_quality && !GemHelper) {
+				if (type == atkQuality && !GemHelper) {
 					#ifdef OLD_GEM_BOOST
 						attack = udivsi((attack * 150), 100);
 						spAttack = udivsi((spAttack * 150), 100);
@@ -1515,22 +1548,6 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 			spDefense = udivsi((spDefense * 150), 100);
 			break;
 	}
-	
-
-//Sport Checks
-	switch (type) {
-		case TYPE_FIRE:
-			if (WaterSportTimer) {
-				attack = udivsi(attack, 3);
-				spAttack = udivsi(spAttack, 3);
-			}
-			break;
-		case TYPE_ELECTRIC:
-			if (MudSportTimer) {
-				attack = udivsi(attack, 3);
-				spAttack = udivsi(spAttack, 3);
-			}
-	}
 
 //Terrain Checks
 	if (!IgnoreAttacker) {
@@ -1566,7 +1583,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 				if ((move == MOVE_MAGNITUDE || move == MOVE_EARTHQUAKE || move == MOVE_BULLDOZE) 
 				&& !(gStatuses3[bankDef] & STATUS3_SEMI_INVULNERABLE)) {
 						attack /= 2;
-						defense /= 2;
+						spAttack /= 2;
 				}
 				break;
 				
@@ -1593,12 +1610,6 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 		}
 	}
 
-//Old Exploding Check
-	#ifdef OLD_EXPLOSION_BOOST
-		if (move == MOVE_SELFDESTRUCT || move == MOVE_EXPLOSION)
-			defense /= 2;
-	#endif
-
 //Gym Badge Checks
 	#ifdef GYM_BADGE_BOOSTS
 		if (!PartyCheck
@@ -1623,7 +1634,35 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 //Sandstorm Sp. Def Increase
 	if (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_SANDSTORM_ANY) && IsOfType(bankDef, TYPE_ROCK))
 		spDefense = udivsi((150 * spDefense), 100);
-	
+
+//Charge Boost
+	if (!PartyCheck && (gStatuses3[bankAtk] & STATUS3_CHARGED_UP) && type == TYPE_ELECTRIC)
+	{
+		attack *= 2;
+		spAttack *= 2;
+	}
+
+//Sport Checks
+	switch (type) {
+		case TYPE_FIRE:
+			if (WaterSportTimer) {
+				attack = udivsi(attack, 3);
+				spAttack = udivsi(spAttack, 3);
+			}
+			break;
+		case TYPE_ELECTRIC:
+			if (MudSportTimer) {
+				attack = udivsi(attack, 3);
+				spAttack = udivsi(spAttack, 3);
+			}
+	}
+
+//Old Exploding Check
+	#ifdef OLD_EXPLOSION_BOOST
+		if (move == MOVE_SELFDESTRUCT || move == MOVE_EXPLOSION)
+			defense /= 2;
+	#endif
+
 //Stat Buffs
 	u32 buffedAttack = attack;
 	u32 buffedSpAttack = spAttack;
@@ -1749,9 +1788,6 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 		}
 	}
 	
-	if (!PartyCheck && (gStatuses3[bankAtk] & STATUS3_CHARGED_UP) && type == TYPE_ELECTRIC)
-		damage *= 2;
-	
 	if ((ABILITY_PRESENT(ABILITY_DARKAURA) && type == TYPE_DARK) || (ABILITY_PRESENT(ABILITY_FAIRYAURA) && type == TYPE_FAIRY)) {
 		if (ABILITY_PRESENT(ABILITY_AURABREAK))
 			damage = udivsi((damage * 75), 100);
@@ -1844,6 +1880,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 			break;
 		
 		case MOVE_SOLARBEAM:
+		case MOVE_SOLARBLADE:
 			if (WEATHER_HAS_EFFECT && gBattleWeather & (WEATHER_RAIN_ANY | WEATHER_SANDSTORM_ANY | WEATHER_HAIL_ANY | WEATHER_FOG_ANY))
 				damage /= 2; //Any weather except sun weakens Solar Beam
 	}
@@ -1881,7 +1918,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 }
 
 //Banks need to be accurate, even if just checking party data (for side checking)
-u16 GetBasePower (u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 ability, u32 atk_status1, u16 atk_hp, u16 atk_maxHP, u16 species, pokemon_t* party_data_atk, bool8 PartyCheck) {
+u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 ability, u32 atkStatus1, u16 atk_hp, u16 atk_maxHP, u16 species, pokemon_t* party_data_atk, bool8 PartyCheck, bool8 menuCheck, bool8 ignoreDef) {
 	u8 power = gBattleMoves[move].power;
 	int i;
 
@@ -1893,13 +1930,16 @@ u16 GetBasePower (u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8
 
 		case MOVE_AVALANCHE:
 		case MOVE_REVENGE:
-			if (!PartyCheck && ((gProtectStructs[bankAtk].physicalDmg && gProtectStructs[bankAtk].physicalBank == bankDef)
-							 || (gProtectStructs[bankAtk].specialDmg && gProtectStructs[bankAtk].specialBank == bankDef)))
+			if (!menuCheck 
+			&& !PartyCheck 
+			&& ((gProtectStructs[bankAtk].physicalDmg && gProtectStructs[bankAtk].physicalBank == bankDef)
+			 || (gProtectStructs[bankAtk].specialDmg && gProtectStructs[bankAtk].specialBank == bankDef)))
 				power *= 2;
 			break;
 			
 		case MOVE_BRINE:
-			if (gBattleMons[bankDef].hp < gBattleMons[bankDef].maxHP / 2)
+			if (!ignoreDef
+			&& gBattleMons[bankDef].hp < gBattleMons[bankDef].maxHP / 2)
 				power *= 2;
 			break;
 		
@@ -1908,7 +1948,7 @@ u16 GetBasePower (u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8
 			break;
 			
 		case MOVE_FACADE:
-			if (atk_status1 & STATUS_ANY)
+			if (atkStatus1 & STATUS_ANY)
 				power *= 2;
 			break;
 			
@@ -1920,22 +1960,31 @@ u16 GetBasePower (u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8
 			break;
 			
 		case MOVE_FUSIONBOLT:
-			if (!PartyCheck && LastUsedMove == MOVE_FUSIONFLARE && gBanksByTurnOrder[0] != bankAtk)
+			if (!menuCheck
+			&& !PartyCheck
+			&& LastUsedMove == MOVE_FUSIONFLARE 
+			&& gBanksByTurnOrder[0] != bankAtk)
 				power *= 2;
 			break;
 			
 		case MOVE_FUSIONFLARE:
-			if (!PartyCheck && LastUsedMove == MOVE_FUSIONBOLT && gBanksByTurnOrder[0] != bankAtk)
+			if (!menuCheck
+			&& !PartyCheck 
+			&& LastUsedMove == MOVE_FUSIONBOLT 
+			&& gBanksByTurnOrder[0] != bankAtk)
 				power *= 2;
 			break;
 			
 		case MOVE_HEX:
-			if (gBattleMons[bankDef].status1 & STATUS_ANY)
+			if (!ignoreDef
+			&& gBattleMons[bankDef].status1 & STATUS_ANY)
 				power *= 2;
 			break;
 			
 		case MOVE_PAYBACK:
-			if (!PartyCheck && BankMovedBefore(bankDef, bankAtk))
+			if (!menuCheck
+			&& !PartyCheck 
+			&& BankMovedBefore(bankDef, bankAtk))
 				power *= 2;
 			break;
 		
@@ -1945,12 +1994,16 @@ u16 GetBasePower (u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8
 			break;
 		
 		case MOVE_ROUND:
-			if (!PartyCheck && LastUsedMove == MOVE_ROUND && gBanksByTurnOrder[0] != bankAtk)
+			if (!menuCheck
+			&& !PartyCheck 
+			&& LastUsedMove == MOVE_ROUND 
+			&& gBanksByTurnOrder[0] != bankAtk)
 				power *= 2;
 			break;
 		
 		case MOVE_SMELLINGSALTS:
-			if (gBattleMons[bankDef].status1 & STATUS_PARALYSIS)
+			if (!ignoreDef
+			&& gBattleMons[bankDef].status1 & STATUS_PARALYSIS)
 				power *= 2;
 			break;
 		
@@ -1960,12 +2013,14 @@ u16 GetBasePower (u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8
 			break;
 		
 		case MOVE_VENOSHOCK:
-			if (gBattleMons[bankDef].status1 & STATUS_PSN_ANY)
+			if (!ignoreDef
+			&& gBattleMons[bankDef].status1 & STATUS_PSN_ANY)
 				power *= 2;
 			break;
 			
 		case MOVE_WAKEUPSLAP:
-			if (gBattleMons[bankDef].status1 & STATUS_SLEEP)
+			if (!ignoreDef
+			&& gBattleMons[bankDef].status1 & STATUS_SLEEP)
 				power *= 2;
 			break;
 			
@@ -1975,19 +2030,21 @@ u16 GetBasePower (u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8
 			break;
 			
 		case MOVE_WHIRLPOOL:
-			if (gStatuses3[bankDef] & STATUS3_UNDERWATER)
+			if (!ignoreDef
+			&& gStatuses3[bankDef] & STATUS3_UNDERWATER)
 				power *= 2;
 			break;
 			
 		case MOVE_GUST:
 		case MOVE_TWISTER:
-			if (gStatuses3[bankDef] & (STATUS3_IN_AIR | STATUS3_SKY_DROP_ATTACKER | STATUS3_SKY_DROP_TARGET))
+			if (!ignoreDef
+			&& gStatuses3[bankDef] & (STATUS3_IN_AIR | STATUS3_SKY_DROP_ATTACKER | STATUS3_SKY_DROP_TARGET))
 				power *= 2;
 			break;
 			
 		case MOVE_ROLLOUT:
 		case MOVE_ICEBALL:
-			if (!PartyCheck) {
+			if (!menuCheck && !PartyCheck) {
 				if (gBattleMons[bankAtk].status2 & STATUS2_DEFENSE_CURL)
 					power *= 2;
 				for (i = 1; i < (5 - gDisableStructs[bankAtk].rolloutTimer1); i++)
@@ -1998,35 +2055,41 @@ u16 GetBasePower (u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8
 		case MOVE_GRASSPLEDGE:
 		case MOVE_FIREPLEDGE:
 		case MOVE_WATERPLEDGE:
-			if (!PartyCheck && PledgeHelper)
+			if (!menuCheck && !PartyCheck && PledgeHelper)
 				power = 150;
 			break;
 
 		case MOVE_ELECTROBALL:	;
 			u32 ratio;
-			if (PartyCheck)
-				ratio = udivsi(SpeedCalcForParty(SIDE(bankAtk), party_data_atk), SpeedCalc(bankDef));
-			else
-				ratio = udivsi(SpeedCalc(bankAtk), SpeedCalc(bankDef));
-			
-			if (ratio >= 4)
-				power = 150;
-			else if (ratio >= 3)
-				power = 120;
-			else if (ratio >= 2)
-				power = 80;
-			else
-				power = 60;
+			if (!ignoreDef)
+			{
+				if (PartyCheck)
+					ratio = udivsi(SpeedCalcForParty(SIDE(bankAtk), party_data_atk), SpeedCalc(bankDef));
+				else
+					ratio = udivsi(SpeedCalc(bankAtk), SpeedCalc(bankDef));
+				
+				if (ratio >= 4)
+					power = 150;
+				else if (ratio >= 3)
+					power = 120;
+				else if (ratio >= 2)
+					power = 80;
+				else
+					power = 60;
+			}
 			break;
 
 		case MOVE_GYROBALL:	;
-			u32 def_spd = 25 * SpeedCalc(bankDef);
-			if (PartyCheck)
-				power = udivsi(def_spd, SpeedCalcForParty(SIDE(bankAtk), party_data_atk));
-			else
-				power = udivsi(def_spd, SpeedCalc(bankAtk));
-			
-			power = MathMin(150, power);
+			if (!ignoreDef)
+			{
+				u32 def_spd = 25 * SpeedCalc(bankDef);
+				if (PartyCheck)
+					power = udivsi(def_spd, SpeedCalcForParty(SIDE(bankAtk), party_data_atk));
+				else
+					power = udivsi(def_spd, SpeedCalc(bankAtk));
+				
+				power = MathMin(150, power);
+			}
 			break;
 		
 		case MOVE_PUNISHMENT:
@@ -2035,54 +2098,58 @@ u16 GetBasePower (u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8
 		
 		case MOVE_LOWKICK:
 		case MOVE_GRASSKNOT:	;
-			u32 weight = GetPokedexHeightWeight(SpeciesToNationalPokedexNum(gBattleMons[bankDef].species), 1);
-			
-			weight = udivsi(AdjustWeight(weight, ABILITY(bankDef), ITEM_EFFECT(bankDef), bankDef, TRUE), 10);
-
-			if (weight >= 200)
-				power = 120;
-			else if (weight >= 100)
-				power = 100;
-			else if (weight >= 50)
-				power = 80;
-			else if (weight >= 25)
-				power = 60;
-			else if (weight >= 10)
-				power = 40;
-			else
-				power = 20;
+			if (!ignoreDef)
+			{
+				u32 weight = GetPokedexHeightWeight(SpeciesToNationalPokedexNum(gBattleMons[bankDef].species), 1);
 				
+				weight = udivsi(AdjustWeight(weight, ABILITY(bankDef), ITEM_EFFECT(bankDef), bankDef, TRUE), 10);
+
+				if (weight >= 200)
+					power = 120;
+				else if (weight >= 100)
+					power = 100;
+				else if (weight >= 50)
+					power = 80;
+				else if (weight >= 25)
+					power = 60;
+				else if (weight >= 10)
+					power = 40;
+				else
+					power = 20;
+			}
 			break;
 			
 		case MOVE_HEAVYSLAM:
 		case MOVE_HEATCRASH:	;
-			u32 atk_weight, def_weight, weight_ratio;
-			
-			def_weight = GetPokedexHeightWeight(SpeciesToNationalPokedexNum(gBattleMons[bankDef].species), 1);
-			def_weight = AdjustWeight(def_weight, ABILITY(bankDef), ITEM_EFFECT(bankDef), bankDef, TRUE);
-			
-			atk_weight = GetPokedexHeightWeight(SpeciesToNationalPokedexNum(species), 1);
-			atk_weight = AdjustWeight(atk_weight, ability, item_effect, bankAtk, !PartyCheck);
-			
-			weight_ratio = udivsi(atk_weight, def_weight);
-			switch (weight_ratio) {
-				case 0:
-				case 1:
-					power = 40;
-					break;
-				case 2:
-					power = 60;
-					break;
-				case 3:
-					power = 80;
-					break;
-				case 4:
-					power = 100;
-					break;
-				default:
-					power = 120;
+			if (!ignoreDef)
+			{
+				u32 atk_weight, def_weight, weight_ratio;
+				
+				def_weight = GetPokedexHeightWeight(SpeciesToNationalPokedexNum(gBattleMons[bankDef].species), 1);
+				def_weight = AdjustWeight(def_weight, ABILITY(bankDef), ITEM_EFFECT(bankDef), bankDef, TRUE);
+				
+				atk_weight = GetPokedexHeightWeight(SpeciesToNationalPokedexNum(species), 1);
+				atk_weight = AdjustWeight(atk_weight, ability, item_effect, bankAtk, !PartyCheck);
+				
+				weight_ratio = udivsi(atk_weight, def_weight);
+				switch (weight_ratio) {
+					case 0:
+					case 1:
+						power = 40;
+						break;
+					case 2:
+						power = 60;
+						break;
+					case 3:
+						power = 80;
+						break;
+					case 4:
+						power = 100;
+						break;
+					default:
+						power = 120;
+				}
 			}
-			
 			break;
 
 		case MOVE_POWERTRIP:		
@@ -2125,7 +2192,8 @@ u16 GetBasePower (u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8
 		
 		case MOVE_CRUSHGRIP:
 		case MOVE_WRINGOUT:
-			power = MathMax(1, udivsi(gBattleMons[bankDef].hp * 120, gBattleMons[bankDef].maxHP));
+			if (!ignoreDef)
+				power = MathMax(1, udivsi(gBattleMons[bankDef].hp * 120, gBattleMons[bankDef].maxHP));
 			break;
 			
 		case MOVE_TRUMPCARD:	;
@@ -2179,7 +2247,8 @@ u16 GetBasePower (u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8
 			break;
 		
 		case MOVE_PURSUIT:
-			power *= gBattleScripting->dmgMultiplier;
+			if (!menuCheck)
+				power *= gBattleScripting->dmgMultiplier;
 			break;
 			
 		case MOVE_RETURN:
@@ -2201,8 +2270,8 @@ u16 GetBasePower (u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8
 			break;
 		
 		case MOVE_BEATUP:
-			if (PartyCheck)
-				power = gBaseStats[species].baseAttack;
+			if (PartyCheck || menuCheck)
+				power = udivsi(gBaseStats[species].baseAttack, 10) + 5;
 			else
 				power = gDynamicBasePower;
             break;
@@ -2281,6 +2350,7 @@ u16 CalcVisualBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 power, u8 moveType
 	u16 atkSpecies = attacker->species;
 	u16 defSpecies = defender->species;
 	u8 atkEffect = ITEM_EFFECT(bankAtk);
+	u8 atkQuality = ITEM_QUALITY(bankAtk);
 	u32 attackerStatus1 = attacker->status1;
 
 	switch(ABILITY(bankAtk)) {
@@ -2336,8 +2406,8 @@ u16 CalcVisualBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 power, u8 moveType
 		case ABILITY_SANDFORCE:
 			if (gBattleWeather & WEATHER_SANDSTORM_ANY 
 			&& (moveType == TYPE_ROCK || moveType == TYPE_GROUND || moveType == TYPE_STEEL)) {
-					attack = udivsi((attack * 130), 100);
-					spAttack = udivsi((spAttack * 130), 100);
+				attack = udivsi((attack * 130), 100);
+				spAttack = udivsi((spAttack * 130), 100);
 			}
 			break;
 				
@@ -2353,7 +2423,7 @@ u16 CalcVisualBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 power, u8 moveType
 		case ABILITY_REFRIGERATE:
 		case ABILITY_GALVANIZE:
 		case ABILITY_NORMALIZE:
-			if (moveType == TYPE_NORMAL) { //Fix this
+			if (AbilityCanChangeTypeAndBoost(bankAtk, move)) {
 				#ifdef OLD_ATE_BOOST
 					attack = udivsi((attack * 130), 100);
 					spAttack = udivsi((spAttack * 130), 100);
@@ -2407,8 +2477,162 @@ u16 CalcVisualBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 power, u8 moveType
 			break;
 	}
 		
-	if (ABILITY(PARTNER(bankAtk)) == ABILITY_BATTERY)
+	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE
+	&& ABILITY(PARTNER(bankAtk)) == ABILITY_BATTERY)
 		spAttack = udivsi((spAttack * 130), 100);
+
+	if (gStatuses3[bankAtk] & STATUS3_CHARGED_UP && moveType == TYPE_ELECTRIC) {
+		attack *= 2;
+		spAttack *= 2;
+	}
+
+//Attacker Item Checks
+	switch (atkEffect) {
+		case ITEM_EFFECT_MUSCLE_BAND:
+			attack = udivsi((attack * 110), 100);
+			break;
+				
+		case ITEM_EFFECT_WISE_GLASSES:
+			spAttack = udivsi((spAttack * 110), 100);
+			break;
+			
+		case ITEM_EFFECT_PLATE:
+		case ITEM_EFFECT_TYPE_BOOSTERS:
+			if (moveType == atkQuality) {
+				attack = udivsi((attack * 120), 100);
+				spAttack = udivsi((spAttack * 120), 100);
+			}
+			break;
+				
+		case ITEM_EFFECT_ADAMANT_ORB:
+			if (atkSpecies == PKMN_DIALGA 
+			&& (moveType == TYPE_STEEL || moveType == TYPE_DRAGON)) {
+				attack = udivsi((attack * 120), 100);
+				spAttack = udivsi((spAttack * 120), 100);
+			}
+			break;
+				
+		case ITEM_EFFECT_LUSTROUS_ORB:
+			if (atkSpecies == PKMN_PALKIA 
+			&& (moveType == TYPE_WATER || moveType == TYPE_DRAGON)) {
+				attack = udivsi((attack * 120), 100);
+				spAttack = udivsi((spAttack * 120), 100);
+			}
+			break;
+				
+		case ITEM_EFFECT_GRISEOUS_ORB:
+			if ((atkSpecies == PKMN_GIRATINA || atkSpecies == PKMN_GIRATINA_ORIGIN) 
+			&& (moveType == TYPE_GHOST || moveType == TYPE_DRAGON)) {
+				attack = udivsi((attack * 120), 100);
+				spAttack = udivsi((spAttack * 120), 100);
+			}
+			break;
+				
+		case ITEM_EFFECT_SOUL_DEW:
+			if (atkSpecies == PKMN_LATIOS || atkSpecies == PKMN_LATIAS) {
+				#ifndef OLD_SOUL_DEW_EFFECT
+					if (moveType == TYPE_PSYCHIC || moveType == TYPE_DRAGON) {
+						attack = udivsi((attack * 120), 100);
+						spAttack = udivsi((spAttack * 120), 100);
+					}	
+				#endif
+			}
+			break;
+				
+		case ITEM_EFFECT_GEM:
+			if (moveType == atkQuality) {
+				#ifdef OLD_GEM_BOOST
+					attack = udivsi((attack * 150), 100);
+					spAttack = udivsi((spAttack * 150), 100);
+				#else
+					attack = udivsi((attack * 130), 100);
+					spAttack = udivsi((spAttack * 130), 100);
+				#endif
+			}
+			break;
+				
+		case ITEM_EFFECT_METRONOME: ;
+			u16 boost = MathMin(200, 100 + MetronomeCounter[bankAtk]);
+			attack = udivsi((attack * boost), 100);
+			spAttack = udivsi((spAttack * boost), 100);
+			break;
+			
+		case ITEM_EFFECT_EXPERT_BELT:
+			if (effectivenessFlags & MOVE_RESULT_SUPER_EFFECTIVE) {
+				attack = udivsi((attack * 120), 100);
+				spAttack = udivsi((spAttack * 120), 100);
+			}
+			break;
+				
+		case ITEM_EFFECT_LIFE_ORB:
+			attack = udivsi((attack * 130), 100);
+			spAttack = udivsi((spAttack * 130), 100);
+	}
+
+//Terrain Checks
+	switch (TerrainType) {
+		case ELECTRIC_TERRAIN:
+			if (CheckGrounding(bankAtk) && moveType == TYPE_ELECTRIC) {
+				attack = udivsi(attack * 150, 100);
+				spAttack = udivsi(spAttack * 150, 100);
+			}
+			break;
+				
+			case GRASSY_TERRAIN:
+				if (CheckGrounding(bankAtk) && moveType == TYPE_GRASS) {
+					attack = udivsi(attack * 150, 100);
+					spAttack = udivsi(spAttack * 150, 100);
+				}
+				
+				if (!ignoreDef
+				&& (move == MOVE_MAGNITUDE || move == MOVE_EARTHQUAKE || move == MOVE_BULLDOZE) 
+				&& !(gStatuses3[bankDef] & STATUS3_SEMI_INVULNERABLE)) {
+					attack /= 2;
+					spAttack /= 2;
+				}
+				break;
+				
+			case MISTY_TERRAIN:
+				if (!ignoreDef 
+				&& CheckGrounding(bankDef) 
+				&& moveType == TYPE_DRAGON) {
+					attack /= 2;
+					spAttack /= 2;
+				}
+				break;	
+				
+			case PSYCHIC_TERRAIN:
+				if (CheckGrounding(bankAtk) && moveType == TYPE_PSYCHIC) {
+					attack = udivsi(attack * 150, 100);
+					spAttack = udivsi(spAttack * 150, 100);
+				}
+	}
+
+//Sport Checks
+	switch (moveType) {
+		case TYPE_FIRE:
+			if (WaterSportTimer) {
+				attack = udivsi(attack, 3);
+				spAttack = udivsi(spAttack, 3);
+			}
+			break;
+		case TYPE_ELECTRIC:
+			if (MudSportTimer) {
+				attack = udivsi(attack, 3);
+				spAttack = udivsi(spAttack, 3);
+			}
+	}
+	
+	switch (move) {
+		case MOVE_SOLARBEAM:
+		case MOVE_SOLARBLADE:
+			if (WEATHER_HAS_EFFECT 
+			&& gBattleWeather & (WEATHER_RAIN_ANY | WEATHER_SANDSTORM_ANY | WEATHER_HAIL_ANY | WEATHER_FOG_ANY))
+			{
+				attack /= 2; //Any weather except sun weakens Solar Beam
+				spAttack /= 2;
+			}
+	}
 	
 	switch (CalcMoveSplit(bankAtk, move)) {
 		case SPLIT_SPECIAL:
