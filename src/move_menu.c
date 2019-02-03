@@ -40,7 +40,8 @@ extern const struct Evolution* CanMegaEvolve(u8 bank, bool8 CheckUBInstead);
 extern bool8 MegaEvolutionEnabled(u8 bank);
 extern bool8 BankMegaEvolved(u8 bank, bool8 checkUB);
 extern u8 GetMoveTypeSpecial(u8 bankAtk, move_t);
-extern u16 GetBasePower(bank_t bankAtk, bank_t bankDef, move_t, item_t, item_effect_t, ability_t, u32 atk_status1, u16 atk_hp, u16 atk_maxHP, u16 species, pokemon_t* party_data_atk, bool8 party);
+extern u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 ability, u32 atkStatus1, u16 atk_hp, u16 atk_maxHP, u16 species, pokemon_t* party_data_atk, bool8 PartyCheck, bool8 menuCheck, bool8 ignoreDef);
+extern u16 CalcVisualBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 power, u8 moveType, bool8 ignoreDef);
 extern u32 AccuracyCalc(u16 move, u8 bankAtk, u8 bankDef);
 extern u32 AccuracyCalcNoTarget(u16 move, u8 bankAtk);
 extern u8 CheckMoveLimitations(u8 bank, u8 unusableMoves, u8 check);
@@ -306,15 +307,29 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 	gBattleScripting->dmgMultiplier = 1;
 	for (i = 0; i < MAX_MON_MOVES; ++i) {
 		tempMoveStruct->moveTypes[i] = GetMoveTypeSpecial(gActiveBattler, gBattleMons[gActiveBattler].moves[i]);
-		tempMoveStruct->movePowers[i] = GetBasePower(gActiveBattler, FOE(gActiveBattler), gBattleMons[gActiveBattler].moves[i], 
+
+		if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && CountAliveMons(1) + CountAliveMons(2) > 2) //Because target can vary, display only attacker's modifiers
+		{
+			tempMoveStruct->movePowers[i] = GetBasePower(gActiveBattler, FOE(gActiveBattler), gBattleMons[gActiveBattler].moves[i], 
 									 gBattleMons[gActiveBattler].item, ITEM_EFFECT(gActiveBattler), ABILITY(gActiveBattler), 
 									 gBattleMons[gActiveBattler].status1, gBattleMons[gActiveBattler].hp, gBattleMons[gActiveBattler].maxHP, 
-									 gBattleMons[gActiveBattler].species, GetBankPartyData(gActiveBattler), FALSE);
-		
-		if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && CountAliveMons(1) + CountAliveMons(2) > 2) //Because target can vary, display only attacker's acc modifiers
+									 gBattleMons[gActiveBattler].species, GetBankPartyData(gActiveBattler), FALSE, TRUE, TRUE);
+			tempMoveStruct->movePowers[i] = CalcVisualBasePower(gActiveBattler, gActiveBattler, 
+																gBattleMons[gActiveBattler].moves[i], tempMoveStruct->movePowers[i], 
+																tempMoveStruct->moveTypes[i], TRUE);
 			tempMoveStruct->moveAcc[i] = AccuracyCalcNoTarget(gBattleMons[gActiveBattler].moves[i], gActiveBattler);
+		}
 		else
+		{
+			tempMoveStruct->movePowers[i] = GetBasePower(gActiveBattler, FOE(gActiveBattler), gBattleMons[gActiveBattler].moves[i], 
+									 gBattleMons[gActiveBattler].item, ITEM_EFFECT(gActiveBattler), ABILITY(gActiveBattler), 
+									 gBattleMons[gActiveBattler].status1, gBattleMons[gActiveBattler].hp, gBattleMons[gActiveBattler].maxHP, 
+									 gBattleMons[gActiveBattler].species, GetBankPartyData(gActiveBattler), FALSE, TRUE, FALSE);
+			tempMoveStruct->movePowers[i] = CalcVisualBasePower(gActiveBattler, FOE(gActiveBattler), 
+																gBattleMons[gActiveBattler].moves[i], tempMoveStruct->movePowers[i], 
+																tempMoveStruct->moveTypes[i], FALSE);
 			tempMoveStruct->moveAcc[i] = AccuracyCalc(gBattleMons[gActiveBattler].moves[i], gActiveBattler, FOE(gActiveBattler));
+		}
 	}
 
 	if (!MegaData->done[gActiveBattler]) {
