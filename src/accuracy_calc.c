@@ -193,8 +193,8 @@ u32 AccuracyCalc(u16 move, u8 bankAtk, u8 bankDef) {
         u32 calc;
 		u8 atkEffect  = ITEM_EFFECT(bankAtk);
 		u8 defEffect  = ITEM_EFFECT(bankDef);
-		u8 atkQuality = ITEM_QUALITY(gBattleMons[bankAtk].item);
-        u8 defQuality = ITEM_QUALITY(gBattleMons[bankDef].item);
+		u8 atkQuality = ITEM_QUALITY(bankAtk);
+        u8 defQuality = ITEM_QUALITY(bankDef);
 		u8 atkAbility = ABILITY(bankAtk);
 		u8 defAbility = ABILITY(bankDef);
 		u8 moveSplit = CalcMoveSplit(move, gBankAttacker);
