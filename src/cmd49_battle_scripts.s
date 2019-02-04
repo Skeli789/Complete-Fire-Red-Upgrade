@@ -10,6 +10,7 @@
 .global BattleScript_LifeOrbDamage
 .global BattleScript_Pickpocket
 .global BattleScript_DancerActivated
+.global BattleScript_MultiHitPrintStrings
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -22,6 +23,7 @@ BattleScript_PoisonTouch:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_BeakBlastBurn:
+	orword HIT_MARKER 0x2100
 	copyarray SEED_HELPER USER_BANK 0x1
 	copyarray USER_BANK TARGET_BANK 0x1
 	copyarray TARGET_BANK SEED_HELPER 0x1
@@ -49,7 +51,7 @@ BattleScript_LifeOrbDamage:
 	setword BATTLE_STRING_LOADER LifeOrbString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
-	faintpokemon 0x1 0x0 0x0
+	faintpokemon BANK_ATTACKER 0x0 0x0
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -178,6 +180,12 @@ BattleScript_DancerActivated:
 	jumptoattack
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_MultiHitPrintStrings:
+	copyarray 0x2022AB8 MULTIHIT_STRING 0x6
+	printstring 0x22
+	waitmessage DELAY_1SECOND
+	return
 
 .align 2
 PoisonTouchString: .byte 0xFD, 0x0F, 0xB4, 0xE7, 0x00, 0xFD, 0x18, 0xFE, 0xE4, 0xE3, 0xDD, 0xE7, 0xE3, 0xE2, 0xD9, 0xD8, 0x00, 0xFD, 0x11, 0xAB, 0xFF
