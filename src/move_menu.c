@@ -5,11 +5,9 @@
 #include "z_move_effects.h"
 
 //Make The Z-Move Names change colour (look in SetPpNumbersPaletteInMoveSelection)
-//Deal with Move Switching
 //No recalc of priority if damaging Z-Move is chosen
 //Remove additional effects from Z Move (if not already done)
 //The Z-Move should be loaded in to gCurrentMove before the attack canceler (near Mega)
-//Do Double Battle target check
 
 #define TXT_PLUS 0x2E
 #define SE_SELECT 0x5
@@ -21,6 +19,7 @@
 
 extern u8* ZMoveNames[];
 extern u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
+extern const u8 sTargetIdentities[];
 
 extern u8 StringNull[];
 extern u8 gText_Power[];
@@ -56,6 +55,7 @@ void ZMoveSelectionDisplayPpNumber(void);
 void ZMoveSelectionDisplayPower(void);
 void MoveSelectionDisplayDetails(void);
 void ReloadMoveNamesIfNecessary(void);
+void HandleInputChooseTarget(void);
 
 void HandleInputChooseMove(void)
 {
@@ -92,7 +92,7 @@ void HandleInputChooseMove(void)
 			moveTarget = MOVE_TARGET_USER; //Only can target yourself in singles
         else
             moveTarget = gBattleMoves[moveInfo->moves[gMoveSelectionCursor[gActiveBattler]]].target;
-
+		
         if (moveTarget & MOVE_TARGET_USER)
             gMultiUsePlayerCursor = gActiveBattler;
         else
@@ -517,11 +517,11 @@ bool8 MoveSelectionDisplayZMove(void) {
 			gWindows[3].window.width = 16;
 		}
 		else
-		{
-			StringCopy(gDisplayedStringBattle, ZMoveNames[zmove - MOVE_BREAKNECK_BLITZ_P]);
+		{	
 			gWindows[3].window.width = 17;
 			gWindows[3].window.height = 4; //Double the size to help super long Z-move names
 			ZMoveSelectionDisplayPower();
+			StringCopy(gDisplayedStringBattle, ZMoveNames[zmove - MOVE_BREAKNECK_BLITZ_P]);
 		}
 		ZMoveData->backupTilemap = gWindows[3].tileData;
 		gWindows[3].tileData = Calloc(0x880); //Because of the size expansion of the tile map, new memory was necessary to display the Z-Move name
@@ -782,5 +782,148 @@ void HandleMoveSwitchingUpdate(void) {
         }
 
         SetMonData(&gPlayerParty[gBattlerPartyIndexes[gActiveBattler]], MON_DATA_PP_BONUSES, &totalPPBonuses);
+    }
+}
+
+void HandleInputChooseTarget(void)
+{
+    int i;
+    u8 identities[4];
+    memcpy(identities, sTargetIdentities, 4 /*ARRAY_COUNT(sTargetIdentities)*/); //sTargetIdentities = 0x8250980
+
+    DoBounceEffect(gMultiUsePlayerCursor, BOUNCE_HEALTHBOX, 15, 1); //0x8012138
+
+    if (gBattlersCount != 0)
+    {
+		for (i = 0; i < gBattlersCount; ++i) {
+            if (i != gMultiUsePlayerCursor)
+                EndBounceEffect(i, BOUNCE_HEALTHBOX); //0x8012258
+		}
+    }
+
+    if (gMain.newKeys & A_BUTTON)
+    {
+        PlaySE(SE_SELECT);
+        gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = sub_8012098; //sub_8039B2C in Emerald
+		EmitMoveChosen(1, gMoveSelectionCursor[gActiveBattler], gMultiUsePlayerCursor, MegaData->chosen[gActiveBattler], UltraData->chosen[gActiveBattler], ZMoveData->toBeUsed[gActiveBattler]);
+        EndBounceEffect(gMultiUsePlayerCursor, BOUNCE_HEALTHBOX);
+        PlayerBufferExecCompleted();
+    }
+    else if (gMain.newKeys & B_BUTTON)
+    {
+        PlaySE(SE_SELECT);
+        gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = sub_8012098; //sub_8039B2C in Emerald
+        gBattleBankFunc[gActiveBattler] = (u32) HandleInputChooseMove;
+        DoBounceEffect(gActiveBattler, BOUNCE_HEALTHBOX, 7, 1);
+        DoBounceEffect(gActiveBattler, BOUNCE_MON, 7, 1);
+        EndBounceEffect(gMultiUsePlayerCursor, BOUNCE_HEALTHBOX);
+    }
+    else if (gMain.newKeys & (DPAD_LEFT | DPAD_UP))
+    {
+        PlaySE(SE_SELECT);
+        gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = sub_8012098; //sub_8039B2C in Emerald
+
+        do
+        {
+            u8 currSelIdentity = GetBattlerPosition(gMultiUsePlayerCursor);
+			
+			u16 move = gPlayerParty[gBattlerPartyIndexes[gActiveBattler]].moves[gMoveSelectionCursor[gActiveBattler]];
+			if (move == MOVE_ACUPRESSURE)
+			{
+				if (!(gAbsentBattlerFlags & gBitTable[gMultiUsePlayerCursor ^ 2]))
+				{
+					gMultiUsePlayerCursor ^= BIT_FLANK;
+				}
+				gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = sub_8012044; //sub_8039AD8 in Emerald
+				return;				
+			}
+
+            for (i = 0; i < MAX_BATTLERS_COUNT; i++)
+            {
+                if (currSelIdentity == identities[i])
+                    break;
+            }
+            do
+            {
+                if (--i < 0)
+                    i = MAX_BATTLERS_COUNT - 1; // UB: array out of range
+                gMultiUsePlayerCursor = GetBattlerAtPosition(identities[i]);
+            } while (gMultiUsePlayerCursor == gBattlersCount);
+	
+            i = 0;
+			move = gPlayerParty[gBattlerPartyIndexes[gActiveBattler]].moves[gMoveSelectionCursor[gActiveBattler]];
+            switch (GetBattlerPosition(gMultiUsePlayerCursor)) {
+				case B_POSITION_PLAYER_LEFT:
+				case B_POSITION_PLAYER_RIGHT:
+					if (gActiveBattler != gMultiUsePlayerCursor)
+						i++;
+					else if (gBattleMoves[move].target & MOVE_TARGET_USER_OR_SELECTED)
+						i++;
+					break;
+				case B_POSITION_OPPONENT_LEFT:
+				case B_POSITION_OPPONENT_RIGHT:
+					i++;
+					break;
+            }
+
+            if (gAbsentBattlerFlags & gBitTable[gMultiUsePlayerCursor])
+                i = 0;
+		
+        } while (i == 0);
+        gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = sub_8012044; //sub_8039AD8 in Emerald
+    }
+    else if (gMain.newKeys & (DPAD_RIGHT | DPAD_DOWN))
+    {
+        PlaySE(SE_SELECT);
+        gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = sub_8012098; //sub_8039B2C in Emerald
+
+        do
+        {
+            u8 currSelIdentity = GetBattlerPosition(gMultiUsePlayerCursor);
+
+			u16 move = gPlayerParty[gBattlerPartyIndexes[gActiveBattler]].moves[gMoveSelectionCursor[gActiveBattler]];
+			if (move == MOVE_ACUPRESSURE)
+			{
+				if (!(gAbsentBattlerFlags & gBitTable[gMultiUsePlayerCursor ^ 2]))
+				{
+					gMultiUsePlayerCursor ^= BIT_FLANK;
+				}
+				gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = sub_8012044; //sub_8039AD8 in Emerald
+				return;				
+			}
+			
+            for (i = 0; i < MAX_BATTLERS_COUNT; i++)
+            {
+                if (currSelIdentity == identities[i])
+                    break;
+            }
+            do
+            {
+                if (++i > 3)
+                    i = 0;
+                gMultiUsePlayerCursor = GetBattlerAtPosition(identities[i]);
+            } while (gMultiUsePlayerCursor == gBattlersCount);
+
+            i = 0;
+			move = gPlayerParty[gBattlerPartyIndexes[gActiveBattler]].moves[gMoveSelectionCursor[gActiveBattler]];
+            switch (GetBattlerPosition(gMultiUsePlayerCursor)) {
+				case B_POSITION_PLAYER_LEFT:
+				case B_POSITION_PLAYER_RIGHT:
+					if (gActiveBattler != gMultiUsePlayerCursor)
+						i++;
+					else if (gBattleMoves[move].target & MOVE_TARGET_USER_OR_SELECTED)
+						i++;
+					break;
+				case B_POSITION_OPPONENT_LEFT:
+				case B_POSITION_OPPONENT_RIGHT:
+					i++;
+					break;
+            }
+
+            if (gAbsentBattlerFlags & gBitTable[gMultiUsePlayerCursor])
+                i = 0;
+			
+        } while (i == 0);
+        gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = sub_8012044; //sub_8039AD8 in Emerald
     }
 }
