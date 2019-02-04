@@ -3,7 +3,8 @@
 .equ FAILED, 0x81D7DF2
 .equ NOEFFECT, 0x81D7E04
 .equ ABSORB_REBRANCHER, 0x81D694E
-.equ STANDARD_DAMAGE, 0x8960EE0
+.equ BS_MOVE_END, 0x81D694E
+.equ BS_MOVE_MISSED, 0x81D695E
 
 @Banks
 .equ BANK_TARGET, 0x0
@@ -48,9 +49,31 @@
 	.macro jumpifmove compare, rom_address
 	.byte 0x2a
 	.byte EQUALS
-	.4byte 0x2023D4A
+	.4byte CURRENT_MOVE
 	.2byte \compare
 	.4byte \rom_address
+	.endm
+	
+	.macro jumpifnotmove compare, rom_address
+	.byte 0x2a
+	.byte NOTEQUALS
+	.4byte CURRENT_MOVE
+	.2byte \compare
+	.4byte \rom_address
+	.endm
+	
+	.macro setmoveeffect effect
+	.byte 0x2E
+	.word EFFECT_BYTE
+	.byte \effect
+	.endm
+	
+	.macro jumpifmovehadnoeffect rom_address
+	.byte 0x29
+	.byte ANDS
+	.word OUTCOME
+	.byte OUTCOME_NO_EFFECT
+	.word /rom_address
 	.endm
 
 	.macro attackcanceler
@@ -458,7 +481,7 @@
 	.byte \int
 	.endm
 
-	.macro damagecalc2
+	.macro typecalc2
 	.byte 0x4a
 	.endm
 
