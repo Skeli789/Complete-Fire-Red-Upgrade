@@ -12,6 +12,8 @@
 
 extern move_t MovesCanUnfreezeTarget[];
 extern move_t DanceMoveTable[];
+extern move_t TwoToFiveStrikesMoves[];
+extern move_t TwoStrikesMoves[];
 
 extern u8 BattleScript_PoisonTouch[];
 extern u8 BattleScript_BeakBlastBurn[];
@@ -19,6 +21,7 @@ extern u8 BattleScript_Magician[];
 extern u8 BattleScript_LifeOrbDamage[];
 extern u8 BattleScript_Pickpocket[];
 extern u8 BattleScript_DancerActivated[];
+extern u8 BattleScript_MultiHitPrintStrings[];
 
 extern u32 SpeedCalc(u8 bank);
 
@@ -26,6 +29,7 @@ extern u8* gBattleScriptsForMoveEffects[];
 
 enum
 {
+	//Add in Thief Effect call
 	ATK49_ATTACKER_ABILITIES,
     ATK49_RAGE,
     ATK49_DEFROST,
@@ -48,13 +52,14 @@ enum
     ATK49_UPDATE_LAST_MOVES,
     ATK49_MIRROR_MOVE,
 	ATK49_MAGICIAN,
+	ATK49_MULTI_HIT_MOVES,
     ATK49_NEXT_TARGET,
 	ATK49_LIFE_ORB_RECOIL,
 	ATK49_RESTORE_ABILITIES,
 	ATK49_PICKPOCKET,
 	ATK49_DANCER,
 	ATK49_END_ZMOVES,
-    ATK49_COUNT
+    ATK49_COUNT //27 or 0x1B
 };
 
 void atk49_moveend(void) //All the effects that happen after a move is used
@@ -419,65 +424,161 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			}
             gBattleScripting->atk49_state++;
             break;
-			
-        case ATK49_NEXT_TARGET: // For moves hitting two opposing Pokemon.
-            if (!(gHitMarker & HITMARKER_UNABLE_TO_USE_MOVE) 
-			&& gBattleTypeFlags & BATTLE_TYPE_DOUBLE
-            && !gProtectStructs[bankAtk].chargingTurn 
-			&& gBattleMoves[gCurrentMove].target == MOVE_TARGET_BOTH)
-            {
-				if (!(gHitMarker & HITMARKER_NO_ATTACKSTRING)) 
-				{
-					u8 battlerId = PARTNER(bankDef);
-					if (gBattleMons[battlerId].hp)
-					{
-						gBankTarget = battlerId;
-						gHitMarker |= HITMARKER_NO_ATTACKSTRING;
-						gBattleScripting->atk49_state = 0;
-						MoveValuesCleanUp();
-						BattleScriptPush(gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect]);
-						gBattlescriptCurrInstr = BattleScript_FlushMessageBox;
-						return;
-					}
-					else
-					{
-						gHitMarker |= HITMARKER_NO_ATTACKSTRING;
-					}
-				}
-			}
-			
-			else if (MoveBounceInProgress == TRUE) //Magic Bounce is in progress
+		
+		case ATK49_MULTI_HIT_MOVES:
+			if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && gMultiHitCounter)
 			{
-				MoveBounceInProgress = 2; //Bounce just finished
-				//Restore attack to original attacker
-				if (gBattleMoves[gCurrentMove].target == MOVE_TARGET_BOTH)
+				++gBattleScripting->multihitString[4];
+				if (--gMultiHitCounter == 0)
 				{
-					u8 battlerId = PARTNER(bankAtk);
-					if (gBattleMons[battlerId].hp)
+					if (!ParentalBondOn) 
 					{
-						gBankAttacker = gBanksByTurnOrder[gCurrentTurnActionNumber]; //Restore original attacker
-						gBankTarget = battlerId; //Attack Bouncer's partner
-						gHitMarker |= HITMARKER_NO_ATTACKSTRING;
+						BattleScriptPushCursor();
+						gBattlescriptCurrInstr = BattleScript_MultiHitPrintStrings;
+						effect = 1;
+					}
+				}
+				else
+				{
+					if (gBattleMons[gBankAttacker].hp
+					&& gBattleMons[gBankTarget].hp
+					&& (gChosenMove == MOVE_SLEEPTALK || !(gBattleMons[gBankAttacker].status1 & STATUS1_SLEEP))
+					&& !(gBattleMons[gBankAttacker].status1 & STATUS1_FREEZE))
+					{
+						if (ParentalBondOn)
+							--ParentalBondOn;
+						
+						gHitMarker |= (HITMARKER_NO_PPDEDUCT | HITMARKER_NO_ATTACKSTRING);
+						gBattleScripting->animTargetsHit = 0;
 						gBattleScripting->atk49_state = 0;
 						MoveValuesCleanUp();
 						BattleScriptPush(gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect]);
 						gBattlescriptCurrInstr = BattleScript_FlushMessageBox;
 						return;
 					}
-					else
+					else if (!ParentalBondOn)
 					{
-						gHitMarker |= HITMARKER_NO_ATTACKSTRING;
+						BattleScriptPushCursor();
+						gBattlescriptCurrInstr = BattleScript_MultiHitPrintStrings;
+						effect = 1;
 					}
 				}
 			}
-            
+			
+            gBattleScripting->atk49_state++;
+			gMultiHitCounter = 0;
+			ParentalBondOn = 0;
+            break;
+		
+        case ATK49_NEXT_TARGET: // For moves hitting two opposing Pokemon.
+			gHitMarker |= HITMARKER_NO_ATTACKSTRING;
+			if (MoveBounceInProgress)
+				++MoveBounceTargetCount;
+			else
+				++OriginalAttackerTargetCount;
+
+			if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+			{
+				if (!(gHitMarker & HITMARKER_UNABLE_TO_USE_MOVE)
+				&& !gProtectStructs[bankAtk].chargingTurn)
+				{
+					if (gBattleMoves[gCurrentMove].target == MOVE_TARGET_BOTH)
+					{
+						if ((OriginalAttackerTargetCount < 2 && !MoveBounceInProgress)
+						|| (MoveBounceTargetCount < 2 && MoveBounceInProgress))
+						{ //Get Next Target
+							u8 battlerId = PARTNER(bankDef);
+							if (gBattleMons[battlerId].hp)
+							{
+								gBankTarget = battlerId;
+								gBattleScripting->atk49_state = 0;
+								MoveValuesCleanUp();
+								BattleScriptPush(gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect]);
+								gBattlescriptCurrInstr = BattleScript_FlushMessageBox;
+								return;
+							}
+							else if (MoveBounceInProgress)
+								goto RESTORE_BOUNCE_ATTACKER;
+						}
+						else if (MoveBounceInProgress)
+						{
+						RESTORE_BOUNCE_ATTACKER:
+							++OriginalAttackerTargetCount;
+							MoveBounceInProgress = 2; //Bounce just finished
+							MoveBounceTargetCount = 0;
+							u8 battlerId = PARTNER(bankAtk);
+							if (gBattleMons[battlerId].hp && OriginalAttackerTargetCount < 2)
+							{
+								gBankAttacker = gBanksByTurnOrder[gCurrentTurnActionNumber]; //Restore original attacker
+								gBankTarget = battlerId; //Attack Bouncer's partner
+								gBattleScripting->animTargetsHit = 0;
+								gBattleScripting->atk49_state = 0;
+								MoveValuesCleanUp();
+								BattleScriptPush(gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect]);
+								gBattlescriptCurrInstr = BattleScript_FlushMessageBox;
+								return;
+							}
+						}
+					}
+					/*else if (gBattleMoves[gCurrentMove].target == MOVE_TARGET_ALL) //TO DO
+					{
+						if ((OriginalAttackerTargetCount < 3 && !MoveBounceInProgress)
+						|| (MoveBounceTargetCount < 2 && MoveBounceInProgress))
+						{ //Get Next Target
+							u8 battlerId = GetNextMultiTarget();
+							if (battlerId != -1)
+							{
+								while (GetNextMultiTarget() != -1)
+								{
+									gBankTarget = battlerId;
+									if (gBattleMons[battlerId].hp)
+									{
+										gBattleScripting->atk49_state = 0;
+										MoveValuesCleanUp();
+										BattleScriptPush(gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect]);
+										gBattlescriptCurrInstr = BattleScript_FlushMessageBox;
+										return;
+									}
+								}
+							}
+							else if (MoveBounceInProgress)
+								goto RESTORE_BOUNCE_ATTACKER;
+						}
+						else if (MoveBounceInProgress)
+						{
+						RESTORE_BOUNCE_ATTACKER:
+							++OriginalAttackerTargetCount;
+							MoveBounceInProgress = 2; //Bounce just finished
+							MoveBounceTargetCount = 0;
+							u8 battlerId = GetNextMultiTarget();
+							if (gBattleMons[battlerId].hp && OriginalAttackerTargetCount < 3)
+							{
+								gBankAttacker = gBanksByTurnOrder[gCurrentTurnActionNumber]; //Restore original attacker
+								gBankTarget = battlerId; //Attack Bouncer's partner
+								gBattleScripting->animTargetsHit = 0;
+								gBattleScripting->atk49_state = 0;
+								MoveValuesCleanUp();
+								BattleScriptPush(gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect]);
+								gBattlescriptCurrInstr = BattleScript_FlushMessageBox;
+								return;
+							}
+						}
+					}*/
+				}
+			}
+			
+			if (MoveBounceInProgress)
+				MoveBounceInProgress = 2; //Bounce just finished
+			
+			MoveBounceTargetCount = 0;			
+			OriginalAttackerTargetCount = 0;
             gBattleScripting->atk49_state++;
             break;
 			
 		case ATK49_LIFE_ORB_RECOIL:
 			if (ITEM_EFFECT(bankAtk) == ITEM_EFFECT_LIFE_ORB
 			&& gMultiHitCounter <= 1
-			&& TOOK_DAMAGE(bankDef) //Replace with new Life Orb checking mechanism
+			&& AttackerDidDamageAtLeastOnce
 			&& ABILITY(bankAtk) != ABILITY_MAGICGUARD
 			&& gBattleMons[bankAtk].hp
 			&& !SheerForceCheck())
@@ -502,7 +603,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			gBattleScripting->atk49_state++;
 			break;
 		
-		case ATK49_PICKPOCKET:
+		case ATK49_PICKPOCKET: //Move to before choose new target?
 			if (ABILITY(bankDef) == ABILITY_PICKPOCKET
 			&& CheckContact(gCurrentMove, bankAtk)
 			&& gBattleMons[bankDef].hp
@@ -524,6 +625,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 		case ATK49_END_ZMOVES:
 			ZMoveData->active = FALSE;
 			ZMoveData->effectApplied = FALSE;
+			AttackerDidDamageAtLeastOnce = FALSE;
 			gBattleScripting->atk49_state++;
 			break;
 		
@@ -537,7 +639,8 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 				break;
 			}
 		
-			if (ABILITY_PRESENT(ABILITY_DANCER)
+			if (!DancerInProgress
+			&& ABILITY_PRESENT(ABILITY_DANCER)
 			&& gHitMarker & HITMARKER_ATTACKSTRING_PRINTED //Should it be (!HITMARKER_NO_ANIMATIONS)?
 			&& MOVE_HAD_EFFECT
 			&& !MoveBounceInProgress
@@ -579,6 +682,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 				gBattleScripting->bank = gBankAttacker;
                 gBattlescriptCurrInstr = BattleScript_DancerActivated;
 				gHitMarker &= ~(HITMARKER_NO_ANIMATIONS | HITMARKER_NO_ATTACKSTRING | HITMARKER_ATTACKSTRING_PRINTED);
+				AttackerDidDamageAtLeastOnce = FALSE;
 				DancerInProgress = TRUE;
 				effect = TRUE;
 			}
