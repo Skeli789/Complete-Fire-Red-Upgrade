@@ -2,11 +2,112 @@
 #include "helper_functions.h"
 
 //Update synchronize effect
+//Add Contact Protect effects
 
 extern void DoFormChange(u8 bank, u16 species, u8 ReloadType);
 
 void SetMoveEffect(bool8 primary, u8 certainArg);
 
+/*
+u8 MoveEffectsThatIgnoreSubstitute[] = {
+MOVE_EFFECT_PAYDAY,
+MOVE_EFFECT_RELIC_SONG,
+MOVE_EFFECT_ION_DELUGE,
+MOVE_EFFECT_FLAME_BURST,
+MOVE_EFFECT_LIFT_PROTECT,
+MOVE_EFFECT_BREAK_SCREENS,
+MOVE_EFFECT_SET_PSYCHIC_TERRAIN,
+MOVE_EFFECT_REMOVE_TERRAIN,
+MOVE_EFFECT_BURN_UP,
+-1
+};
+
+u8 ShieldDustIgnoredEffects[] = {
+ MOVE_EFFECT_SLEEP,
+ MOVE_EFFECT_POISON,
+ MOVE_EFFECT_BURN,
+ MOVE_EFFECT_FREEZE,
+ MOVE_EFFECT_PARALYSIS,
+ MOVE_EFFECT_TOXIC,
+ MOVE_EFFECT_CONFUSION,
+ MOVE_EFFECT_FLINCH,
+ MOVE_EFFECT_TRI_ATTACK,
+ MOVE_EFFECT_ATK_MINUS_1,
+ MOVE_EFFECT_DEF_MINUS_1,
+ MOVE_EFFECT_SPD_MINUS_1,
+ MOVE_EFFECT_SP_ATK_MINUS_1,
+ MOVE_EFFECT_SP_DEF_MINUS_1,
+ MOVE_EFFECT_ACC_MINUS_1,
+ MOVE_EFFECT_EVS_MINUS_1,
+ MOVE_EFFECT_THROAT_CHOP,
+ MOVE_EFFECT_PREVENT_ESCAPE,
+ -1
+};
+
+const u32 sStatusFlagsForMoveEffects[] =
+{
+    0x00000000,
+    STATUS1_SLEEP,
+    STATUS1_POISON,
+    STATUS1_BURN,
+    STATUS1_FREEZE,
+    STATUS1_PARALYSIS,
+    STATUS1_TOXIC_POISON,
+    STATUS2_CONFUSION,
+    STATUS2_FLINCHED,
+    0x00000000,
+    STATUS2_UPROAR,
+    0x00000000,
+    STATUS2_MULTIPLETURNS,
+    STATUS2_WRAPPED,
+    0x00000000,
+    0x00000000,
+    0x00000000,
+    0x00000000,
+    0x00000000,
+    0x00000000,
+    0x00000000,
+    0x00000000,
+    0x00000000,
+    0x00000000,
+    0x00000000,
+    0x00000000,
+    0x00000000,
+    0x00000000,
+    0x00000000,
+    STATUS2_RECHARGE,
+    0x00000000,
+    0x00000000,
+    STATUS2_ESCAPE_PREVENTION,
+    STATUS2_NIGHTMARE,
+    0x00000000,
+    0x00000000,
+    0x00000000,
+    0x00000000,
+    0x00000000,
+    0x00000000,
+    0x00000000,
+    0x00000000,
+    0x00000000,
+    0x00000000,
+    0x00000000,
+    0x00000000,
+    0x00000000,
+    0x00000000,
+    0x00000000,
+    0x00000000,
+    0x00000000,
+    0x00000000,
+    0x00000000,
+    STATUS2_LOCK_CONFUSE,
+    0x00000000,
+    0x00000000,
+    0x00000000,
+    0x00000000,
+    0x00000000,
+    0x00000000
+};
+*/
 void atk15_seteffectwithchance(void) {
     u32 PercentChance;
 
@@ -29,9 +130,9 @@ void atk15_seteffectwithchance(void) {
 		else if (umodsi(Random(), 100) <= PercentChance && gBattleCommunication[MOVE_EFFECT_BYTE] != 0 && !(gMoveResultFlags & MOVE_RESULT_NO_EFFECT))
 		{
 			if (PercentChance >= 100)
-				SetMoveEffect(0, 0x80);
+				SetMoveEffect(FALSE, 0x80);
 			else
-				SetMoveEffect(0, 0);
+				SetMoveEffect(FALSE, 0);
 		}
 		
 		else
@@ -56,7 +157,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
         gEffectBank = gBankAttacker; // battlerId that effects get applied on
         gBattleCommunication[MOVE_EFFECT_BYTE] &= ~(MOVE_EFFECT_AFFECTS_USER);
         affectsUser = MOVE_EFFECT_AFFECTS_USER;
-        gBattleScripting->bank = gBankTarget; // theoretically the attacker
+        gBattleScripting->bank = gBankTarget; //Technically the attacker
     }
     else
     {
@@ -64,26 +165,36 @@ void SetMoveEffect(bool8 primary, u8 certain)
         gBattleScripting->bank = gBankAttacker;
     }
 
-    if (gBattleMons[gEffectBank].ability == ABILITY_SHIELD_DUST && !(gHitMarker & HITMARKER_IGNORE_SAFEGUARD)
-        && !primary && gBattleCommunication[MOVE_EFFECT_BYTE] <= 9)
+    if (gBattleMons[gEffectBank].ability == ABILITY_SHIELD_DUST 
+	&& !(gHitMarker & HITMARKER_IGNORE_SAFEGUARD) //Used by contact abilities and synchronize
+    && !primary 
+	&& CheckTableForSpecialMoveEffect(gBattleCommunication[MOVE_EFFECT_BYTE], ShieldDustIgnoredEffects))
         INCREMENT_RESET_RETURN
 
     if (gSideStatuses[SIDE(gEffectBank)] & SIDE_STATUS_SAFEGUARD 
 	&& !(gHitMarker & HITMARKER_IGNORE_SAFEGUARD)
-	&& !(ABILITY(gBankAttacker) == ABILITY_INFILTRATOR && gEffectBank != gBankAttacker)
+	&& !(ABILITY(gBankAttacker) == ABILITY_INFILTRATOR)
+	&& gEffectBank != gBankAttacker
     && !primary
 	&& certain != MOVE_EFFECT_CERTAIN
-	&& gBattleCommunication[MOVE_EFFECT_BYTE] <= 7)
+	&& gBattleCommunication[MOVE_EFFECT_BYTE] <= MOVE_EFFECT_CONFUSION)
         INCREMENT_RESET_RETURN
 
+	for (i = 0; MoveEffectsThatIgnoreSubstitute[i] != -1; ++i) {
+		if (MoveEffectsThatIgnoreSubstitute[i] == gBattleCommunication[MOVE_EFFECT_BYTE])
+			goto SKIP_SUBSTITUTE_CHECK
+	}
+	
     if (gBattleMons[gEffectBank].hp == 0
-        && gBattleCommunication[MOVE_EFFECT_BYTE] != MOVE_EFFECT_PAYDAY
-        && gBattleCommunication[MOVE_EFFECT_BYTE] != MOVE_EFFECT_STEAL_ITEM)
+    && gBattleCommunication[MOVE_EFFECT_BYTE] != MOVE_EFFECT_STEAL_ITEM)
         INCREMENT_RESET_RETURN
 
-    if (gBattleMons[gEffectBank].status2 & STATUS2_SUBSTITUTE && affectsUser != MOVE_EFFECT_AFFECTS_USER)
+    if (gBattleMons[gEffectBank].status2 & STATUS2_SUBSTITUTE 
+	&& affectsUser != MOVE_EFFECT_AFFECTS_USER
+	&& ABILITY(gBankAttacker) != ABILITY_INFILTRATOR)
         INCREMENT_RESET_RETURN
-
+		
+	SKIP_SUBSTITUTE_CHECK:
     if (gBattleCommunication[MOVE_EFFECT_BYTE] <= 6) // status change
     {
         switch (sStatusFlagsForMoveEffects[gBattleCommunication[MOVE_EFFECT_BYTE]]) {
@@ -98,7 +209,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 			
 			case STATUS1_POISON:
 			case STATUS1_TOXIC_POISON:
-				if (CanBePoisoned(gEffectBank, gBankAttacker)
+				if (CanBePoisoned(gEffectBank, gBankAttacker))
 					statusChanged = TRUE;
 				break;
 				
@@ -171,7 +282,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
             case MOVE_EFFECT_CONFUSION:
                 if (gBattleMons[gEffectBank].ability == ABILITY_OWN_TEMPO
                 ||  gBattleMons[gEffectBank].status2 & STATUS2_CONFUSION
-				||	CheckGrounding(gEffectBank) && TerrainType == MISTY_TERRAIN)
+				||	(CheckGrounding(gEffectBank) && TerrainType == MISTY_TERRAIN))
                 {
                     gBattlescriptCurrInstr++;
                 }
@@ -213,7 +324,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
             case MOVE_EFFECT_PAYDAY:
                 if (SIDE(gBankAttacker) == B_SIDE_PLAYER)
                 {
-                    PayDayByPartyIndices[gBattlerPartyIndexes(gEffectBank)];
+                    PayDayByPartyIndices[gBattlerPartyIndexes[gEffectBank]];
                 }
                 BattleScriptPush(gBattlescriptCurrInstr + 1);
                 gBattlescriptCurrInstr = sMoveEffectBS_Ptrs[gBattleCommunication[MOVE_EFFECT_BYTE]];
@@ -825,6 +936,9 @@ void SetMoveEffect(bool8 primary, u8 certain)
 				}
 				else
 					gBattlescriptCurrInstr++;
+				
+			case MOVE_EFFECT_BURN_UP:
+				break;
     }
 
     gBattleCommunication[MOVE_EFFECT_BYTE] = 0;
