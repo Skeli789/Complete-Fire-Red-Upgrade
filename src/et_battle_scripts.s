@@ -373,12 +373,16 @@ BadDreams_end:
 
 
 BattleScript_ToxicOrb:
+	setbyte POISONED_BY 0x3
+	orword HIT_MARKER 0x2100 @Ignore Safeguard and Substitute
 	setbyte EFFECT_BYTE 0x6
 	seteffecttarget
 	end2
 
 
 BattleScript_FlameOrb:
+	setbyte POISONED_BY 0x3
+	orword HIT_MARKER 0x2100 @Ignore Safeguard and Substitute
 	setbyte EFFECT_BYTE 0x3
 	seteffecttarget
 	end2
