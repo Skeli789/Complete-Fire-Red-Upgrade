@@ -47,6 +47,7 @@ SkipSwitch:
 	orr r0, r1
 	strb r0, [r3]
 ActuallySkip:
+	ldrb r3, [r4]	
 	ldr r0, =0x8019198 | 1
 	bx r0
 
