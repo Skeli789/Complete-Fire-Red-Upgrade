@@ -253,6 +253,10 @@ typedef u8 Buffer_t[0x200];
 #define ZMoveData ((struct ZMoveData*) 0x203C048)
 #define MegaData ((struct MegaData*) 0x203C060)
 
+#define OriginalAttackerTargetCount (*((u8*) 0x203C080))
+#define MoveBounceTargetCount (*((u8*) 0x203C081))
+#define AttackerDidDamageAtLeastOnce (*((u8*) 0x203C082)) //For life orb
+
 #define PledgeHelper *((u8*) 0x203D801)
 #define GravityTimer *((u8*) 0x203D802)
 #define WonderRoomTimer *((u8*) 0x203D803)
