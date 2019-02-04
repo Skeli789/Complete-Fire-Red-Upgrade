@@ -2,6 +2,7 @@ Graphics:
 Golche - Attack Particles, Battle Backgrounds, Other Graphics
 Bela - Poke Balls
 Solo993 - Backsprites
+canstockphoto.ca - Battle Backgrounds
 
 Code:
 Skeli - A Bunch of Stuff
