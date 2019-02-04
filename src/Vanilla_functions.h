@@ -59,6 +59,9 @@ void __attribute__((long_call)) EmitSpriteInvisibility(u8 bufferId, bool8 isInvi
 void __attribute__((long_call)) EmitDrawPartyStatusSummary(u8 bufferId, struct HpAndStatus* hpAndStatus, u8 arg2);
 void __attribute__((long_call)) EmitBattleAnimation(u8 a, u8 b, u16 c);
 u8 __attribute__((long_call)) LoadBattleBG_SpecialTerrainID(u8 mapType);
+void __attribute__((long_call)) sub_8012098(struct Sprite *sprite);
+void __attribute__((long_call)) DoBounceEffect(u8 battlerId, u8 b, s8 c, s8 d);
+void __attribute__((long_call)) EndBounceEffect(u8 battlerId, bool8 b);
 void __attribute__((long_call)) sub_8012044(struct Sprite *sprite);
 void __attribute__((long_call)) SwitchInClearSetData(void);
 void __attribute__((long_call)) UndoEffectsAfterFainting(void);
@@ -93,7 +96,7 @@ bool8 __attribute__((long_call)) IsTwoTurnsMove(u16 move);
 u8  __attribute__((long_call)) AttacksThisTurn(u8 bank, u16 move);
 void __attribute__((long_call)) SetControllerToPlayer(void);
 void __attribute__((long_call)) PlayerBufferExecCompleted(void);
-void __attribute__((long_call)) HandleInputChooseTarget(void);
+//void __attribute__((long_call)) HandleInputChooseTarget(void);
 void __attribute__((long_call)) HandleMoveSwitching(void);
 void __attribute__((long_call)) sub_802F730(void);
 void __attribute__((long_call)) sub_802F768(void);
