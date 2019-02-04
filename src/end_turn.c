@@ -887,12 +887,18 @@ u8 TurnBasedEffects(void) {
 						
 					case(ET_Orbz):
 						if (gBattleMons[gActiveBattler].hp && !(gBattleMons[gActiveBattler].status1)) {
-							item_effect_t item_effect = GetBankItemEffect(gActiveBattler);
-							if (item_effect == ITEM_EFFECT_TOXIC_ORB) {
+							u8 item_effect = ITEM_EFFECT(gActiveBattler);
+							if (item_effect == ITEM_EFFECT_TOXIC_ORB
+							&& CanBePoisoned(gActiveBattler, gActiveBattler)) {
+								gLastUsedItem = ITEM(gActiveBattler);
+								RecordItemBattle(gActiveBattler, item_effect);
 								BattleScriptExecute(BattleScript_ToxicOrb);
 								++effect;
 							}
-							else if (item_effect == ITEM_EFFECT_FLAME_ORB) {
+							else if (item_effect == ITEM_EFFECT_FLAME_ORB
+							&& CanBeBurned(gActiveBattler)) {
+								gLastUsedItem = ITEM(gActiveBattler);
+								RecordItemBattle(gActiveBattler, item_effect);
 								BattleScriptExecute(BattleScript_FlameOrb);
 								++effect;
 							}
