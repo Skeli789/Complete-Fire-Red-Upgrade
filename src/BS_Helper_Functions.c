@@ -1,6 +1,8 @@
 #include "defines.h"
 #include "helper_functions.h"
 
+extern u8 BattleScript_SapSipperAromatherapy[];
+
 extern u8 PowerTrickString[];
 extern u8 PowerSwapString[];
 extern u8 GuardSwapString[];
@@ -28,6 +30,8 @@ void MoldBreakerRemoveAbilitiesOnForceSwitchIn(void);
 void MoldBreakerRestoreAbilitiesOnForceSwitchIn(void);
 void TrainerSlideOut(void);
 void SetAuroraVeil(void);
+void MetalBurstDamageCalculator(void);
+void TryActivatePartnerSapSipper(void);
 
 void SetTargetPartner(void) {
 	gBankTarget = PARTNER(gBankAttacker);
@@ -86,18 +90,18 @@ void AcupressureFunc(void) {
 	if (gBankAttacker != gBankTarget) {
 		if ((gBattleMons[gBankTarget].status2 & STATUS2_SUBSTITUTE && ABILITY(gBankAttacker) != ABILITY_INFILTRATOR)
 		|| CheckCraftyShield()) {
-			gBattlescriptCurrInstr = BattleScript_ButItFailed;
+			gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
 			return;
 		}
 	}
 	
 	if (StatsMaxed(gBankTarget) && ABILITY(gBankTarget) != ABILITY_CONTRARY) {
-		gBattlescriptCurrInstr = BattleScript_ButItFailed;
+		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
 		return;
 	}
 	
 	else if (StatsMinned(gBankTarget) && ABILITY(gBankTarget) == ABILITY_CONTRARY) {
-		gBattlescriptCurrInstr = BattleScript_ButItFailed;
+		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
 		return;
 	}
 	
@@ -294,3 +298,64 @@ void SetAuroraVeil(void) {
 		FormCounter = TRUE;
     }
 }
+
+void MetalBurstDamageCalculator(void) {
+	if (BankMovedBefore(gBankAttacker, gBankTarget))
+		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+
+    u8 atkSide = SIDE(gBankAttacker);
+    u8 defSide = SIDE(gProtectStructs[gBankAttacker].physicalBank);
+	u8 defSide2 = SIDE(gProtectStructs[gBankAttacker].specialBank);
+	
+    if (gProtectStructs[gBankAttacker].physicalDmg && atkSide != defSide && gBattleMons[gProtectStructs[gBankAttacker].physicalBank].hp) 
+	{
+		if (!gSpecialStatuses[gBankAttacker].moveturnLostHP)
+			gBattleMoveDamage = 1; //Suffered physical damage, but negated damage
+		else
+			gBattleMoveDamage = udivsi(gProtectStructs[gBankAttacker].physicalDmg * 15, 10);
+		
+        if (gSideTimers[defSide].followmeTimer && gBattleMons[gSideTimers[defSide].followmeTarget].hp)
+            gBankTarget = gSideTimers[defSide].followmeTarget;
+        else
+            gBankTarget = gProtectStructs[gBankAttacker].physicalBank;
+    }
+	
+	else if (gProtectStructs[gBankAttacker].specialDmg && atkSide != defSide2 && gBattleMons[gProtectStructs[gBankAttacker].specialBank].hp) 
+	{
+		if (!gSpecialStatuses[gBankAttacker].moveturnLostHP)
+			gBattleMoveDamage = 1; //Suffered special damage, but negated damage
+		else
+			gBattleMoveDamage = udivsi(gProtectStructs[gBankAttacker].specialDmg * 15, 10);
+		
+        if (gSideTimers[defSide2].followmeTimer && gBattleMons[gSideTimers[defSide2].followmeTarget].hp)
+            gBankTarget = gSideTimers[defSide2].followmeTarget;
+        else
+            gBankTarget = gProtectStructs[gBankAttacker].specialBank;
+    }
+	
+    else {
+        gSpecialStatuses[gBankAttacker].flag20 = 1;
+        gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+    }
+}
+
+/*
+void TryActivatePartnerSapSipper(void) {
+	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE
+	&& !(gAbsentBattlerFlags & gBitTable[PARTNER(gBankAttacker)])
+	&& ABILITY(PARTNER(gBankAttacker)) == ABILITY_SAPSIPPER
+	&& gBattleStruct->dynamicMoveType == TYPE_GRASS
+	&& STAT_CAN_RISE(PARTNER(gBankAttacker), STAT_STAGE_ATK))
+	{
+		gBankTarget = PARTNER(gBankAttacker);
+		gBattleScripting->bank = gBankTarget;
+        gBattleScripting->statChanger = INCREASE_1 | STAT_STAGE_ATK;
+        gBattleScripting->animArg1 = 0xE + STAT_STAGE_ATK;
+        gBattleScripting->animArg2 = 0;
+		gLastUsedAbility = ABILITY(gBankTarget);
+		RecordAbilityBattle(gBankTarget, gLastUsedAbility);
+		gBattlescriptCurrInstr += 5;
+		BattleScriptPushCursor();
+        gBattlescriptCurrInstr = BattleScript_SapSipperAromatherapy - 5;
+	}
+}*/
