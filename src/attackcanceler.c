@@ -52,6 +52,8 @@ extern u8 BattleScript_DarkTypePreventsPrankster[];
 
 extern move_t GravityBanTable[];
 extern move_t ParentalBondBanList[];
+extern move_t TwoToFiveStrikesMoves[];
+extern move_t TwoStrikesMoves[];
 extern ability_t MoldBreakerIgnoreAbilities[];
 
 extern u8* const gBattleScriptsForMoveEffects[];
@@ -129,6 +131,7 @@ enum
 	CANCELLER_PRIMAL_WEATHER,
 	CANCELLER_PSYCHIC_TERRAIN,
 	CANCELLER_PRANKSTER,
+	CANCELLER_MULTIHIT_MOVES,
 	CANCELLER_END,
 };
 
@@ -257,6 +260,7 @@ void atk00_attackcanceler(void)
 				MoveBounceInProgress = TRUE;
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_MagicCoatBounce;
+				return;
 			}
 			else if (ABILITY(SIDE(gBankAttacker) ^ BIT_SIDE) == ABILITY_MAGICBOUNCE && !(gStatuses3[SIDE(gBankAttacker) ^ BIT_SIDE] & STATUS3_SEMI_INVULNERABLE))
 			{
@@ -266,6 +270,7 @@ void atk00_attackcanceler(void)
 				gBattleScripting->bank = SIDE(gBankAttacker) ^ BIT_SIDE;
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_MagicBounce;
+				return;
 			}
 			else if (ABILITY(PARTNER(SIDE(gBankAttacker)) ^ BIT_SIDE) == ABILITY_MAGICBOUNCE && !(gStatuses3[PARTNER(SIDE(gBankAttacker)) ^ BIT_SIDE] & STATUS3_SEMI_INVULNERABLE))
 			{
@@ -275,6 +280,7 @@ void atk00_attackcanceler(void)
 				gBattleScripting->bank = SIDE(gBankAttacker) ^ BIT_SIDE;
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_MagicBounce;
+				return;
 			}
 		}
 		else
@@ -296,6 +302,7 @@ void atk00_attackcanceler(void)
 				gBattleScripting->bank = gBankTarget;
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_MagicBounce;
+				return;
 			}
 		}
 	}
@@ -814,6 +821,38 @@ u8 AtkCanceller_UnableToUseMove(void)
                 effect = 1;
 			}
 			#endif
+			gBattleStruct->atkCancellerTracker++;
+			break;
+			
+		case CANCELLER_MULTIHIT_MOVES:
+			if (CheckTableForMove(gCurrentMove, TwoToFiveStrikesMoves))
+			{
+				if (ABILITY(gBankAttacker) == ABILITY_SKILLLINK)
+					gMultiHitCounter = 5;
+				
+				else if (ABILITY(gBankAttacker) == ABILITY_BATTLEBOND
+				&& gCurrentMove == MOVE_WATERSHURIKEN
+				&& gBattleMons[gBankAttacker].species == PKMN_ASHGRENINJA)
+				{
+					gMultiHitCounter = 3;
+				}
+				else 
+				{
+					gMultiHitCounter = Random() & 3;
+					if (gMultiHitCounter > 1)
+						gMultiHitCounter = (Random() & 3) + 2;
+					else
+						gMultiHitCounter += 2;
+				}
+				
+				PREPARE_BYTE_NUMBER_BUFFER(gBattleScripting->multihitString, 1, 0)
+			}
+			else if (CheckTableForMove(gCurrentMove, TwoStrikesMoves))
+			{
+				gMultiHitCounter = 2;
+				PREPARE_BYTE_NUMBER_BUFFER(gBattleScripting->multihitString, 1, 0)
+			}
+
 			gBattleStruct->atkCancellerTracker++;
 			break;
 		
