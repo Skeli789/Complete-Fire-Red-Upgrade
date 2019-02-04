@@ -31,6 +31,8 @@
 .global ParentalBondBanList
 .global MovesCanUnfreezeTarget
 .global MovesThatChangePhysicality
+.global TwoToFiveStrikesMoves
+.global TwoStrikesMoves
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -616,3 +618,36 @@ MovesThatChangePhysicality:
 .hword MOVE_PHOTONGEYSER
 .hword MOVE_LIGHT_THAT_BURNS_THE_SKY
 .hword MOVE_TABLES_TERMIN
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+TwoToFiveStrikesMoves:
+.hword MOVE_ARMTHRUST
+.hword MOVE_BARRAGE
+.hword MOVE_BONERUSH
+.hword MOVE_BULLETSEED
+.hword MOVE_COMETPUNCH
+.hword MOVE_DOUBLESLAP
+.hword MOVE_FURYATTACK
+.hword MOVE_FURYSWIPES
+.hword MOVE_ICICLESPEAR
+.hword MOVE_PINMISSILE
+.hword MOVE_ROCKBLAST
+.hword MOVE_SPIKECANNON
+.hword MOVE_TAILSLAP
+.hword MOVE_WATERSHURIKEN
+.hword MOVE_TABLES_TERMIN
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+TwoStrikesMoves:
+.hword MOVE_BONEMERANG
+.hword MOVE_DOUBLEHIT
+.hword MOVE_DOUBLEKICK
+.hword MOVE_DUALCHOP
+.hword MOVE_GEARGRIND
+.hword MOVE_TWINEEDLE
+.hword MOVE_DOUBLEIRONBASH
+.hword MOVE_TABLES_TERMIN
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
