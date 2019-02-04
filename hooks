@@ -78,16 +78,20 @@ GetMostSuitableMonToSwitchInto 8039E3C 0
 MegaRetrieveDataHook 80148C0 0
 HandleInputChooseMove 802EA10 0
 ##
+##To Be Removed After Testing
 atk00_attackcanceler 801D760 0
 ##atk01_accuracycheck 801DDC4 0
 atk04_critcalc 801E408 0
 atk05_damagecalc 801E59C 0
 atk06_typecalc 0801E848 0
 ##atk07_adjustnormaldamage 801F104 0
+atk0B_healthbarupdate 801F5A8 0
+atk0C_datahpupdate 801F684 0
 atk23_getexp 8021A68 0
 atk45_playanimation 8022E34 0
 atk46_playanimation2 8022EF4 0
 atk4D_switchindataupdate 08023F48 0
+atk49_moveend 08023210 0
 atk52_switchineffects 08024E38 0
 atk53_trainerslidein 080250DC 0
 atk61_drawpartystatussummary 8025BA4 0
