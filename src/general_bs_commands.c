@@ -172,7 +172,10 @@ void atk03_ppreduce(void) {
         }
     }
 
-    if (!(gHitMarker & (HITMARKER_NO_PPDEDUCT | HITMARKER_NO_ATTACKSTRING)) && ParentalBondOn != 1 && !DancerInProgress && gBattleMons[gBankAttacker].pp[gCurrMovePos]) {
+    if (!(gHitMarker & (HITMARKER_NO_PPDEDUCT | HITMARKER_NO_ATTACKSTRING)) 
+	&& ParentalBondOn != 1 
+	&& !DancerInProgress 
+	&& gBattleMons[gBankAttacker].pp[gCurrMovePos]) {
         gProtectStructs[gBankAttacker].notFirstStrike = 1;
 
         if (gBattleMons[gBankAttacker].pp[gCurrMovePos] > ppToDeduct)
@@ -208,19 +211,20 @@ void atk0B_healthbarupdate(void) {
         if (gBattleMons[gActiveBattler].status2 & STATUS2_SUBSTITUTE 
 		&& gDisableStructs[gActiveBattler].substituteHP 
 		&& !(gHitMarker & HITMARKER_IGNORE_SUBSTITUTE)
-		&& atkAbility != ABILITY_INFILTRATOR) {
+		&& atkAbility != ABILITY_INFILTRATOR)
             PrepareStringBattle(STRINGID_SUBSTITUTEDAMAGED, gActiveBattler);
-		}
 		
 		else if (ABILITY(gActiveBattler) == ABILITY_DISGUISE 
 		&& gBattleMons[gActiveBattler].species == PKMN_MIMIKYU
 		&& !(gHitMarker & HITMARKER_IGNORE_SUBSTITUTE)
-		&& !(gBattleMons[gActiveBattler].status2 & STATUS2_TRANSFORMED)) {
+		&& !(gBattleMons[gActiveBattler].status2 & STATUS2_TRANSFORMED)) 
+		{
 			BattleStringLoader = MimikyuDisguisedTookDamageString;
 			PrepareStringBattle(0x184, gActiveBattler);
 		}
 			
-        else {
+        else 
+		{
             s16 healthValue;
             s32 currDmg = gBattleMoveDamage;
             s32 maxPossibleDmgValue = 0xFFFF; //Ensures that huge damage values don't change sign
@@ -232,7 +236,7 @@ void atk0B_healthbarupdate(void) {
             EmitHealthBarUpdate(0, healthValue);
             MarkBufferBankForExecution(gActiveBattler);
 
-            if (GetBattlerSide(gActiveBattler) == B_SIDE_PLAYER && gBattleMoveDamage > 0)
+            if (SIDE(gActiveBattler) == B_SIDE_PLAYER && gBattleMoveDamage > 0)
                 gBattleResults->unk5_0 = 1;
         }
     }
@@ -270,6 +274,7 @@ void atk0C_datahpupdate(void) {
                 gDisableStructs[gActiveBattler].substituteHP = 0;
             }
 			
+			AttackerDidDamageAtLeastOnce = TRUE;
             //Check Substitute Fading
             if (gDisableStructs[gActiveBattler].substituteHP == 0) {
                 gBattlescriptCurrInstr += 2;
@@ -287,6 +292,8 @@ void atk0C_datahpupdate(void) {
 			if (gSpecialStatuses[gActiveBattler].moveturnLostHP == 0)
 				gSpecialStatuses[gActiveBattler].moveturnLostHP = 1;
 			gHpDealt = 1;
+			AttackerDidDamageAtLeastOnce = TRUE;
+			gMoveResultFlags = 0;
 			
 			if (CalcMoveSplit(gCurrentMove, gActiveBattler) == SPLIT_PHYSICAL) {
 				gProtectStructs[gActiveBattler].physicalDmg = gHpDealt;
@@ -340,16 +347,19 @@ void atk0C_datahpupdate(void) {
                 }
 
 
-                if (!gSpecialStatuses[gActiveBattler].moveturnLostHP && !(gHitMarker & HITMARKER_x100000))
+                if (!gSpecialStatuses[gActiveBattler].moveturnLostHP && !(gHitMarker & HITMARKER_NON_ATTACK_DMG))
                     gSpecialStatuses[gActiveBattler].moveturnLostHP = gHpDealt;
 
-                if (CalcMoveSplit(gCurrentMove, gActiveBattler) == SPLIT_PHYSICAL && !(gHitMarker & HITMARKER_x100000) && gCurrentMove != MOVE_PAINSPLIT) {
+                if (CalcMoveSplit(gCurrentMove, gActiveBattler) == SPLIT_PHYSICAL 
+				&& !(gHitMarker & HITMARKER_NON_ATTACK_DMG)) 
+				{
                     gProtectStructs[gActiveBattler].physicalDmg = gHpDealt;
                     gSpecialStatuses[gActiveBattler].moveturnLostHP_physical = gHpDealt;
 					
                     if (gBattlescriptCurrInstr[1] == BS_GET_TARGET) {
                         gProtectStructs[gActiveBattler].physicalBank = gBankAttacker;
                         gSpecialStatuses[gActiveBattler].moveturnPhysicalBank = gBankAttacker;
+						AttackerDidDamageAtLeastOnce = TRUE;
                     }
 					
                     else {
@@ -358,13 +368,16 @@ void atk0C_datahpupdate(void) {
                     }
                 }
 				
-                else if (CalcMoveSplit(gCurrentMove, gActiveBattler) == SPLIT_SPECIAL && !(gHitMarker & HITMARKER_x100000)) {
+                else if (CalcMoveSplit(gCurrentMove, gActiveBattler) == SPLIT_SPECIAL 
+				&& !(gHitMarker & HITMARKER_NON_ATTACK_DMG)) 
+				{
                     gProtectStructs[gActiveBattler].specialDmg = gHpDealt;
                     gSpecialStatuses[gActiveBattler].moveturnLostHP_special = gHpDealt;
 					
                     if (gBattlescriptCurrInstr[1] == BS_GET_TARGET) {
                         gProtectStructs[gActiveBattler].specialBank = gBankAttacker;
                         gSpecialStatuses[gActiveBattler].moveturnSpecialBank = gBankAttacker;
+						AttackerDidDamageAtLeastOnce = TRUE;
                     }
 					
                     else {
@@ -373,7 +386,7 @@ void atk0C_datahpupdate(void) {
                     }
                 }
             }
-            gHitMarker &= ~(HITMARKER_x100000);
+            gHitMarker &= ~(HITMARKER_NON_ATTACK_DMG);
             EmitSetMonData(0, REQUEST_HP_BATTLE, 0, 2, &gBattleMons[gActiveBattler].hp);
             MarkBufferBankForExecution(gActiveBattler);
         }
