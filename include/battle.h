@@ -675,7 +675,7 @@ struct BattleStruct
     u8 turnSideTracker;
     u8 fillerDC[0xDF-0xDC];
     u8 givenExpMons; //The party indices in the opponent's party that have fainted and been given exp for
-    u16 lastTakenMoveFrom[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; // 4 sub-arrays containing the moves that bank was hit by, by each bank
+    u16 lastTakenMoveFrom[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; // 4 sub-arrays containing the moves that bank was hit by, by each bank //used by Mirror Move
     u16 castformPalette[BATTLE_BANKS_COUNT][16];
     u8 field_180;
     u8 field_181;
@@ -882,6 +882,10 @@ typedef struct fling FlingStruct;
         dest[var] = src[var];    \
 }    \
 
+// defines for the 'DoBounceEffect' function
+#define BOUNCE_MON          0x0
+#define BOUNCE_HEALTHBOX    0x1
+
 struct BattleScripting
 {
     s32 painSplitHp;
@@ -1087,9 +1091,9 @@ struct MegaData
   u8 chosen[4];
   u8 done[4];
   u8 partyIndex[2]; //Index of party member who Mega Evolved
-  u8* script;
   u8 state;
   u8 activeBank;
+  u8* script;
   bool8 megaEvoInProgress; //Used to tell the game whether or not the turn order should be recalculated
 };
 
