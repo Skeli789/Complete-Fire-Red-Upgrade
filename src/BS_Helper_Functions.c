@@ -359,3 +359,49 @@ void TryActivatePartnerSapSipper(void) {
         gBattlescriptCurrInstr = BattleScript_SapSipperAromatherapy - 5;
 	}
 }*/
+
+void RoundBSFunction(void) {
+	int i;
+	u8 j = 0;
+	u8 k = 0;
+	u8 index = 0;
+	u8 rounders[3] = {0xFF, 0xFF, 0xFF};
+	u8 nonRounders[3] = {0xFF, 0xFF, 0xFF};
+	
+	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE) {
+		for (i = 0; i < gBattlersCount; ++i) {
+			if (gBanksByTurnOrder[i] == gBankAttacker) {
+				index = i + 1;
+				break;
+			}
+		}
+		
+		for (i = index; i < gBattlersCount; ++i) {
+			if (gChosenMovesByBanks[i] == MOVE_ROUND)
+				rounders[j++] = gChosenMovesByBanks[i];
+			else
+				nonRounders[k++] = gChosenMovesByBanks[i];
+		}
+		
+		for (i = 0; rounders[i] != 0xFF && i < 3; ++i)
+			gBanksByTurnOrder[index++] = rounders[i];
+
+		for (i = 0; nonRounders[i] != 0xFF && i < 3; ++i)
+			gBanksByTurnOrder[index++] = nonRounders[i];
+		
+	}
+}
+
+void EchoedVoiceFunc(void) {
+	switch (EchoedVoiceCounter) {
+		case 0:
+			EchoedVoiceCounter = 2;
+			EchoedVoiceDamageScale = 0;
+			break;
+		case 2:
+			break;
+		default:
+			EchoedVoiceCounter = 2;
+			EchoedVoiceDamageScale = MathMin(10, EchoedVoiceDamageScale + 1);
+	}
+}
