@@ -40,6 +40,7 @@ extern bool8 IsUproarBeingMade(void);
 extern void DoFormChange(u8 bank, u16 species, u8 ReloadType);
 extern pokemon_t* GetIllusionPartyData(u8 bank);
 extern bool8 BankMovedBefore(u8 bank1, u8 bank2);
+extern bool8 IsFirstAttacker(u8 bank);
 extern bool8 CanFling(ability_t, item_t, pokemon_t*, bank_t, bool8 PartyCheck);
 extern bool8 SymbiosisCanActivate(u8 bank_to_give, u8 bank_to_receive);
 extern bool8 CanTransferItem(species_t, item_t, pokemon_t*);

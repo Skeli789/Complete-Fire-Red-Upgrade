@@ -387,7 +387,7 @@ pokemon_t* LoadPartyRange(u8 bank, u8* FirstMonId, u8* lastMonId) {
         party = gPlayerParty;
 	}
 
-	if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER) {
+	if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER && SIDE(bank) == B_SIDE_PLAYER) {
 
         if (bank & BIT_FLANK) 
 			*FirstMonId = 3;
@@ -427,7 +427,7 @@ pokemon_t* LoadPartyRange(u8 bank, u8* FirstMonId, u8* lastMonId) {
 		*lastMonId = *FirstMonId + 3;
     }
 	
-    else if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS && GetBattlerSide(bank) == B_SIDE_OPPONENT)
+    else if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS && SIDE(bank) == B_SIDE_OPPONENT)
     {
         *FirstMonId = 0;
         if (GetBattlerPosition(bank) == B_POSITION_OPPONENT_RIGHT)
@@ -524,6 +524,16 @@ bool8 BankMovedBefore(u8 bank1, u8 bank2) {
 	return FALSE; //Should never be reached
 }
 
+bool8 IsFirstAttacker(u8 bank) {
+	for (u8 i = 0; i < gBattlersCount; ++i) {
+		if (gActionsByTurnOrder[i] == ACTION_USE_ITEM
+		||  gActionsByTurnOrder[i] == ACTION_SWITCH)
+			continue;
+	
+		return gBanksByTurnOrder[i] == bank;
+	}
+	return FALSE; //Should never be reached
+}
 
 bool8 CanTransferItem(u16 species, u16 item, pokemon_t* party_data) {
 	item_effect_t effect = gItems[SanitizeItemId(item)].holdEffect;
