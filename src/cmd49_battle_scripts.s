@@ -47,6 +47,7 @@ BattleScript_Magician:
 
 BattleScript_Moxie:
 	statbuffchange STAT_ATTACKER | STAT_BS_PTR MoxieReturnPostBuff
+	playanimation BANK_ATTACKER 0x1 0x2023FD4
 	setword BATTLE_STRING_LOADER AbilityRaisedStatString
 	printstring 0x184
 	waitmessage DELAY_1SECOND

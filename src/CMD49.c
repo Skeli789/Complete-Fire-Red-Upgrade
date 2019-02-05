@@ -5,6 +5,7 @@
 //Make sure there's no choice lock glitch
 //Add check to see if AI move prediction was successful. If not, then if the same move is predicted, don't predict that same move again.
 //Remove the lines at the bottom?
+//Put Soul-Heart somewhere
 
 #define BattleScript_RageIsBuilding (u8*) 0x81D8C48
 #define BattleScript_DefrostedViaFireMove (u8*) 0x81D9098
@@ -18,6 +19,7 @@ extern move_t TwoStrikesMoves[];
 extern u8 BattleScript_PoisonTouch[];
 extern u8 BattleScript_BeakBlastBurn[];
 extern u8 BattleScript_Magician[];
+extern u8 BattleScript_Moxie[];
 extern u8 BattleScript_LifeOrbDamage[];
 extern u8 BattleScript_Pickpocket[];
 extern u8 BattleScript_DancerActivated[];
@@ -51,7 +53,7 @@ enum
     ATK49_SUBSTITUTE,
     ATK49_UPDATE_LAST_MOVES,
     ATK49_MIRROR_MOVE,
-	ATK49_MAGICIAN,
+	ATK49_MAGICIAN_MOXIE,
 	ATK49_MULTI_HIT_MOVES,
     ATK49_NEXT_TARGET,
 	ATK49_LIFE_ORB_RECOIL,
@@ -59,7 +61,7 @@ enum
 	ATK49_PICKPOCKET,
 	ATK49_DANCER,
 	ATK49_END_ZMOVES,
-    ATK49_COUNT //27 or 0x1B
+    ATK49_COUNT //28 or 0x1C
 };
 
 void atk49_moveend(void) //All the effects that happen after a move is used
@@ -404,23 +406,113 @@ void atk49_moveend(void) //All the effects that happen after a move is used
             }
 			
             gBattleScripting->atk49_state++;
+			SeedHelper[0] = 0; //Reset Seed Helper for Soul Heart
             break;
 		
-		case ATK49_MAGICIAN:
-			if (ABILITY(bankAtk) == ABILITY_MAGICIAN
-			&& ITEM(bankAtk) == 0
-			&& ITEM(bankDef)
-			&& gBattleMons[bankAtk].hp
-			&& !MoveBlockedBySubstitute(gCurrentMove, bankAtk, bankDef)
-			&& gMultiHitCounter <= 1
-			&& TOOK_DAMAGE(bankDef)
-			&& CanTransferItem(gBattleMons[bankDef].species, ITEM(bankDef), GetBankPartyData(bankDef))
-			&& CanTransferItem(gBattleMons[bankAtk].species, ITEM(bankDef), GetBankPartyData(bankAtk))
-			&& (ABILITY(bankDef) != ABILITY_STICKYHOLD || gBattleMons[bankDef].hp == 0))
-			{
-				BattleScriptPushCursor();
-                gBattlescriptCurrInstr = BattleScript_Magician;
-				effect = 1;
+		case ATK49_MAGICIAN_MOXIE:
+			switch (ABILITY(bankAtk)) {
+				case ABILITY_MAGICIAN:
+					if (ITEM(bankAtk) == 0
+					&& ITEM(bankDef)
+					&& gBattleMons[bankAtk].hp
+					&& !MoveBlockedBySubstitute(gCurrentMove, bankAtk, bankDef)
+					&& gMultiHitCounter <= 1
+					&& TOOK_DAMAGE(bankDef)
+					&& MOVE_HAD_EFFECT
+					&& CanTransferItem(gBattleMons[bankDef].species, ITEM(bankDef), GetBankPartyData(bankDef))
+					&& CanTransferItem(gBattleMons[bankAtk].species, ITEM(bankDef), GetBankPartyData(bankAtk))
+					&& (ABILITY(bankDef) != ABILITY_STICKYHOLD || gBattleMons[bankDef].hp == 0))
+					{
+						BattleScriptPushCursor();
+						gBattlescriptCurrInstr = BattleScript_Magician;
+						effect = 1;
+					}
+					break;
+					
+				case ABILITY_MOXIE:
+					if (gBattleMons[bankDef].hp == 0
+					&& gBattleMons[bankAtk].hp
+					&& TOOK_DAMAGE(bankDef)
+					&& MOVE_HAD_EFFECT
+					&& STAT_CAN_RISE(gBankAttacker, STAT_STAGE_ATK)
+					&& PartyAlive(bankDef))
+					{
+						PREPARE_STAT_BUFFER(gBattleTextBuff1, STAT_STAGE_ATK);
+						
+						gEffectBank = gBankAttacker;
+						gBattleScripting->bank = gBankAttacker;
+						gBattleScripting->statChanger = INCREASE_1 | STAT_STAGE_ATK;
+						gBattleScripting->animArg1 = 0xE + STAT_STAGE_ATK;
+						gBattleScripting->animArg2 = 0;
+						gLastUsedAbility = ABILITY_MOXIE;
+						RecordAbilityBattle(gBankAttacker, gLastUsedAbility);
+						
+						BattleScriptPushCursor();
+						gBattlescriptCurrInstr = BattleScript_Moxie;
+						effect = 1;
+					}
+					break;
+					
+				case ABILITY_BEASTBOOST: ;
+					if (gBattleMons[bankDef].hp == 0
+					&& gBattleMons[bankAtk].hp
+					&& TOOK_DAMAGE(bankDef)
+					&& MOVE_HAD_EFFECT
+					&& PartyAlive(bankDef))
+					{
+						u16 temp;
+						u16 max;
+						u16 stats[STAT_STAGE_SPDEF]; //Create new array to avoid modifying original stats
+						
+						stats[STAT_STAGE_ATK-1] = gBattleMons[bankAtk].attack;
+						stats[STAT_STAGE_DEF-1] = gBattleMons[bankAtk].defense;
+						stats[STAT_STAGE_SPATK-2] = gBattleMons[bankAtk].spAttack;
+						stats[STAT_STAGE_SPDEF-2] = gBattleMons[bankAtk].spDefense;
+						stats[STAT_STAGE_SPEED+1] = gBattleMons[bankAtk].speed;
+						
+						if (WonderRoomTimer) {
+							temp = stats[STAT_STAGE_DEF-1];
+							stats[STAT_STAGE_DEF-1] = stats[STAT_STAGE_SPDEF-2]; //-2 b/c shifted left due to speed
+							stats[STAT_STAGE_SPDEF-2] = temp;
+						}
+						
+						max = 0;
+						for (int i = 1; i < STAT_STAGE_SPDEF; ++i) {
+							if (stats[i] > stats[max])
+								max = i;
+						}
+						
+						//Get the proper stat stage value
+						switch(max) {
+							case 0: //Attack
+							case 1: //Defense
+								max += 1;
+								break;
+							case 2: //Special Attack
+							case 3: //Special Defense
+								max += 2;
+								break;
+							case 4:
+								max = STAT_STAGE_SPEED;
+						}
+						
+						if (STAT_CAN_RISE(gBankAttacker, max))
+						{
+							PREPARE_STAT_BUFFER(gBattleTextBuff1, max);
+							
+							gEffectBank = gBankAttacker;
+							gBattleScripting->bank = gBankAttacker;
+							gBattleScripting->statChanger = INCREASE_1 | max;
+							gBattleScripting->animArg1 = 0xE + max;
+							gBattleScripting->animArg2 = 0;
+							gLastUsedAbility = ABILITY_BEASTBOOST;
+							RecordAbilityBattle(gBankAttacker, gLastUsedAbility);
+							
+							BattleScriptPushCursor();
+							gBattlescriptCurrInstr = BattleScript_Moxie;
+							effect = 1;
+						}
+					}
 			}
             gBattleScripting->atk49_state++;
             break;
