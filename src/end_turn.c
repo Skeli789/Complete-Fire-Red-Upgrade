@@ -74,6 +74,9 @@ u8 TurnBasedEffects(void) {
 
 				for (u8 i = 0; BitsCounterTable[i] != (u8*) 0xFEFEFEFE; ++i)
 					BitsCounterTable[i] = 0;
+					
+				if (EchoedVoiceCounter == 0)
+					EchoedVoiceDamageScale = 0;
 				
 				break;
 				
