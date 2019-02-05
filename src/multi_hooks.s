@@ -114,14 +114,17 @@ MultiTrainersSendOutGameCrashingFix:
 	push {r4-r7, lr}
 	ldr r0, =BATTLE_TYPE
 	ldr r0, [r0]
-	mov r1, #0x60
+	mov r1, #0x40
 	lsl r1, #0x10	@BATTLE_TWO_OPPONENTS
 	and r0, r1
 	cmp r0, #0x0
 	bne NewFixForMultiSendIn
 
 	mov r6, #0x0
-	bl IsDoubleBattle
+	ldr r0, =BATTLE_TYPE
+	ldr r0, [r0]
+	mov r1, #BATTLE_DOUBLE
+	and r0, r1
 	ldr r1, =0x8035C38 | 1
 	bx r1
 
