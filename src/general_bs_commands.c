@@ -19,6 +19,7 @@
 //Move Stomping Tantrum to end command based on TargetsHit
 //Update EmitMoveAnimation to include attacker's item
 //Make removereflectlightscreen an anim task
+//Update all of the battle script offsets
 
 #include "defines.h"
 #include "helper_functions.h"

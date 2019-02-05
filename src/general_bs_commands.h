@@ -55,7 +55,7 @@ RemovedEntryHazardsFoeSideString
 };
 
 #define BattleScript_SturdyPreventsOHKO (u8*) 0x0
-#define BattleScript_SubstituteFade (u8*)  0x0
+#define BattleScript_SubstituteFade (u8*)  0x81D9526
 #define BattleScript_HangedOnMsg (u8*) 0x0
 #define BattleScript_OneHitKOMsg (u8*) 0x0
 #define BattleScript_EnduredMsg (u8*) 0x0
