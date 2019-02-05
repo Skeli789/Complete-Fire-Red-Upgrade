@@ -570,7 +570,7 @@ void RunTurnActionsFunctions(void)
 
     if (gCurrentTurnActionNumber >= gBattlersCount) // everyone did their actions, turn finished
     {
-        gHitMarker &= ~(HITMARKER_x100000);
+        gHitMarker &= ~(HITMARKER_NON_ATTACK_DMG);
         gBattleMainFunc = (u32) sEndTurnFuncsTable[gBattleOutcome & 0x7F];
     }
     else
@@ -588,7 +588,6 @@ void RunTurnActionsFunctions(void)
 // 0 = first mon moves first
 // 1 = second mon moves first
 // 2 = second mon moves first because it won a 50/50 roll
-
 u8 GetWhoStrikesFirst(bank_t bank1, bank_t bank2, bool8 ignoreMovePriorities) {
     s8 bank1_priority, bank2_priority;
 	s32 bank1_bracket, bank2_bracket;
@@ -597,7 +596,7 @@ u8 GetWhoStrikesFirst(bank_t bank1, bank_t bank2, bool8 ignoreMovePriorities) {
 //Priority Calc
 	if(!ignoreMovePriorities) {
 		bank1_priority = PriorityCalc(bank1, gActionForBanks[bank1], gBattleMons[bank1].moves[gBattleStruct->chosenMovePositions[bank1]]);
-		bank2_priority = PriorityCalc(bank2, gActionForBanks[bank2], gBattleMons[bank1].moves[gBattleStruct->chosenMovePositions[bank2]]);		
+		bank2_priority = PriorityCalc(bank2, gActionForBanks[bank2], gBattleMons[bank2].moves[gBattleStruct->chosenMovePositions[bank2]]);		
 		if (bank1_priority > bank2_priority)
 			return FirstMon;
 		else if (bank1_priority < bank2_priority)
@@ -662,6 +661,7 @@ s8 PriorityCalc(u8 bank, u8 action, u16 move) {
 					priority += 3;
 		}
 	}
+	
 	return priority;
 }
 
@@ -766,7 +766,7 @@ u32 SpeedCalc(bank_t bank) {
 		if (!(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_TRAINER_TOWER | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_EREADER_TRAINER)) 
 		&& FlagGet(FLAG_BADGE03_GET)
 		&& gBattleTypeFlags & BATTLE_TYPE_TRAINER
-		&& GetBattlerSide(bank) == B_SIDE_PLAYER
+		&& SIDE(bank) == B_SIDE_PLAYER
 		&& gTrainerBattleOpponent != 0x400)
 			speed = udivsi((speed * 110), 100);
 	#endif
@@ -780,6 +780,7 @@ u32 SpeedCalc(bank_t bank) {
 			speed /= 4;
 		#endif
 	}
+	
     return speed;
 }
 
