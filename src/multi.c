@@ -84,9 +84,9 @@ void MultiInitPokemonOrder(void)
      * to send out their first Pokemon, which corresponds to slot 0
      * and 3.
      */
-    if (gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_TWO_OPPONENTS)) {
-        gBattlerPartyIndexes[1] = 0;
-        gBattlerPartyIndexes[3] = 3;
+    if (gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_TWO_OPPONENTS)) {
+        gBattlerPartyIndexes[B_POSITION_OPPONENT_LEFT] = 0;
+        gBattlerPartyIndexes[B_POSITION_OPPONENT_RIGHT] = 3;
     }
 
     if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)

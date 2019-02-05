@@ -12,8 +12,8 @@ extern u8 ClassPokeBalls[NUM_TRAINER_CLASSES];
 extern void GetFrontierTrainerName(u8* dst, u16 trainerId, u8 battlerNum);
 extern void MultiInitPokemonOrder(void);
 
-u8 CreateNPCTrainerParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer);
-u8 BuildFrontierParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, bool8 ForPlayer);
+u8 CreateNPCTrainerParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, u8 side);
+u8 BuildFrontierParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, bool8 ForPlayer, u8 side);
 void BuildRandomPlayerTeam(void);
 void SetWildMonHeldItem(void);
 void GiveMonNatureAndAbility(pokemon_t* mon, u8 nature, u8 abilityNum);
@@ -26,53 +26,59 @@ bool8 PokemonTierBan(u16 species, u16 item, struct BattleTowerSpreads* spread, p
 void BuildTrainerPartySetup(void) {
 	if (gBattleTypeFlags & (BATTLE_TYPE_TOWER_LINK_MULTI)) 
 	{
-		BuildFrontierParty(&gEnemyParty[0], gTrainerBattleOpponent_A, TRUE, FALSE);
-		BuildFrontierParty(&gEnemyParty[3], VarGet(SECOND_OPPONENT_VAR), FALSE, FALSE);
+		BuildFrontierParty(&gEnemyParty[0], gTrainerBattleOpponent_A, TRUE, FALSE, B_SIDE_OPPONENT);
+		BuildFrontierParty(&gEnemyParty[3], VarGet(SECOND_OPPONENT_VAR), FALSE, FALSE, B_SIDE_OPPONENT);
 	}
 	else if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
 	{
-		BuildFrontierParty(&gEnemyParty[0], gTrainerBattleOpponent_A, TRUE, FALSE);
-	}
-	else if (gBattleTypeFlags & (BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_TWO_OPPONENTS)) 
-	{
-		CreateNPCTrainerParty(&gEnemyParty[0], gTrainerBattleOpponent_A, TRUE);
-		CreateNPCTrainerParty(&gEnemyParty[3], VarGet(SECOND_OPPONENT_VAR), FALSE);
-		
-		if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER) {
-			ExtensionState.partyBackup = Calloc(sizeof(struct Pokemon) * 5); //Space of 5 because you can choose to only use 1 mon
-			if (!ExtensionState.partyBackup)
-				return;
-				
-			if (gSelectedOrderFromParty[0] == 0)
-				Memcpy(ExtensionState.partyBackup, &gPlayerParty[3], sizeof(struct Pokemon) * 3); //Special 0x2F was not used
-			else //Special 0x2F was used
-			{ 
-				u8 counter = 0;
-				u8 mon1 = gSelectedOrderFromParty[0];
-				u8 mon2 = gSelectedOrderFromParty[1];
-				u8 mon3 = gSelectedOrderFromParty[2];
-				for (int i = 0; i < PARTY_SIZE; ++i) {
-					if (i + 1 != mon1 && i + 1 != mon2 && i + 1 != mon3) //Don't backup selected mons
-						Memcpy(&((pokemon_t*) ExtensionState.partyBackup)[counter++], &gPlayerParty[i], sizeof(struct Pokemon));				
-				}
-				ReducePartyToThree(); //Well...sometimes can be less than 3
-			}
-			Memset(&gPlayerParty[3], 0x0, sizeof(struct Pokemon) * 3);
-			CreateNPCTrainerParty(&gPlayerParty[3], VarGet(PARTNER_VAR), FALSE);
+		if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS) 
+		{
+			BuildFrontierParty(&gEnemyParty[0], gTrainerBattleOpponent_A, TRUE, FALSE, B_SIDE_OPPONENT);
+			BuildFrontierParty(&gEnemyParty[3], VarGet(SECOND_OPPONENT_VAR), FALSE, FALSE, B_SIDE_OPPONENT);
 		}
+		else
+			BuildFrontierParty(&gEnemyParty[0], gTrainerBattleOpponent_A, TRUE, FALSE, B_SIDE_OPPONENT);
+	}
+	else if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
+	{
+		CreateNPCTrainerParty(&gEnemyParty[0], gTrainerBattleOpponent_A, TRUE, B_SIDE_OPPONENT);
+		CreateNPCTrainerParty(&gEnemyParty[3], VarGet(SECOND_OPPONENT_VAR), FALSE, B_SIDE_OPPONENT);
 	}
 	else if (!(gBattleTypeFlags & BATTLE_TYPE_LINK)) 
 	{
 		if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
-			CreateNPCTrainerParty(&gEnemyParty[0], gTrainerBattleOpponent_A, TRUE);
+			CreateNPCTrainerParty(&gEnemyParty[0], gTrainerBattleOpponent_A, TRUE, B_SIDE_OPPONENT);
 		
 		else if (!(gBattleTypeFlags & (BATTLE_TYPE_POKE_DUDE | BATTLE_TYPE_SCRIPTED_WILD_1)))
 			SetWildMonHeldItem();
 	}
+	
+	if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER) {
+		ExtensionState.partyBackup = Calloc(sizeof(struct Pokemon) * 5); //Space of 5 because you can choose to only use 1 mon
+		if (!ExtensionState.partyBackup)
+			return;
+				
+		if (gSelectedOrderFromParty[0] == 0)
+			Memcpy(ExtensionState.partyBackup, &gPlayerParty[3], sizeof(struct Pokemon) * 3); //Special 0x2F was not used
+		else //Special 0x2F was used
+		{ 
+			u8 counter = 0;
+			u8 mon1 = gSelectedOrderFromParty[0];
+			u8 mon2 = gSelectedOrderFromParty[1];
+			u8 mon3 = gSelectedOrderFromParty[2];
+			for (int i = 0; i < PARTY_SIZE; ++i) {
+				if (i + 1 != mon1 && i + 1 != mon2 && i + 1 != mon3) //Don't backup selected mons
+					Memcpy(&((pokemon_t*) ExtensionState.partyBackup)[counter++], &gPlayerParty[i], sizeof(struct Pokemon));				
+			}
+			ReducePartyToThree(); //Well...sometimes can be less than 3
+		}
+		Memset(&gPlayerParty[3], 0x0, sizeof(struct Pokemon) * 3);
+		CreateNPCTrainerParty(&gPlayerParty[3], VarGet(PARTNER_VAR), FALSE, B_SIDE_PLAYER);
+	}
 }
 
 //Returns the number of Pokemon
-u8 CreateNPCTrainerParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer) {
+u8 CreateNPCTrainerParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, bool8 side) {
     u32 nameHash = 0;
     u32 personalityValue;
     int i, j;
@@ -88,15 +94,23 @@ u8 CreateNPCTrainerParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer) {
 		if (firstTrainer)
 			ZeroEnemyPartyMons(); //party_opponent_purge();
 			
-		if (gBattleTypeFlags & (BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_TWO_OPPONENTS))
+		if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS && side == B_SIDE_OPPONENT)
         {
             if (trainer->partySize > 3)
                 monsCount = 3;
             else
                 monsCount = trainer->partySize;
         }
-        else
+        else if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER && side == B_SIDE_PLAYER)
+        {
+            if (trainer->partySize > 3)
+                monsCount = 3;
+            else
+                monsCount = trainer->partySize;
+        }
+		else
             monsCount = trainer->partySize;
+		
         
         for (i = 0; i < monsCount; ++i) {
 		
@@ -189,7 +203,7 @@ u8 CreateNPCTrainerParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer) {
 }
 
 //Returns the number of Pokemon
-u8 BuildFrontierParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, bool8 ForPlayer) {
+u8 BuildFrontierParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, bool8 ForPlayer, u8 side) {
     int i, j;
     u8 monsCount;
 	u32 otid = (Random() << 8) | Random(); 
@@ -198,7 +212,7 @@ u8 BuildFrontierParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, bool
 		if (trainerNum == 0x400) 
 			return 0;
 		else if (trainerNum != BATTLE_TOWER_TID) 
-			return (CreateNPCTrainerParty(party, trainerNum, firstTrainer));
+			return (CreateNPCTrainerParty(party, trainerNum, firstTrainer, side));
 	}
 	
 	struct BattleTowerTrainer trainer = gTowerTrainers[VarGet(TOWER_TRAINER_ID_VAR + (firstTrainer ^ 1))];
@@ -210,7 +224,9 @@ u8 BuildFrontierParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, bool
 	
 	if (ForPlayer)
 		monsCount = PARTY_SIZE;
-	else if (gBattleTypeFlags & (BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_TWO_OPPONENTS) && VarGet(BATTLE_TOWER_POKE_NUM) > 3)
+	else if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS && VarGet(BATTLE_TOWER_POKE_NUM) > 3 && side == B_SIDE_OPPONENT)
+        monsCount = 3;
+	else if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER && VarGet(BATTLE_TOWER_POKE_NUM) > 3 && side == B_SIDE_PLAYER)
         monsCount = 3;
     else {
         monsCount = VarGet(BATTLE_TOWER_POKE_NUM);
@@ -307,7 +323,7 @@ u8 BuildFrontierParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, bool
 }
 
 void BuildRandomPlayerTeam(void) {
-	BuildFrontierParty(gPlayerParty, 0, TRUE, TRUE);
+	BuildFrontierParty(gPlayerParty, 0, TRUE, TRUE, B_SIDE_PLAYER);
 }
 
 void SetWildMonHeldItem(void)

@@ -97,10 +97,7 @@ void BufferStringBattle(u16 stringID) {
 			
             else //Not Link Battle
             {
-                if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
-                    stringPtr = BattleText_TwoTrainersWantToBattle; //NEED DATA
-				
-                else if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
+				if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
                     stringPtr = BattleText_TwoTrainersWantToBattle; //NEED DATA
 				
                 else
@@ -349,7 +346,7 @@ void BufferStringBattle(u16 stringID) {
                     break;
                 }
             }
-			else if (gBattleTypeFlags & (BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_INGAME_PARTNER))
+			else if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
 			{
                 switch (gBattleTextBuff1[0])
                 {

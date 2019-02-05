@@ -69,7 +69,7 @@ MultiMoneyCalcHook:
 
 MultiTrainerSendOutHook:
 	ldr r0, [r0] @Battle Type Flags
-	ldr r1, =BATTLE_MULTI | BATTLE_TWO_OPPONENTS | BATTLE_INGAME_PARTNER
+	ldr r1, =BATTLE_MULTI | BATTLE_TWO_OPPONENTS
 	and r0, r1
 	cmp r0, #0x0
 	beq NoSecondOpponentSendOut
@@ -85,7 +85,7 @@ NoSecondOpponentSendOut:
 @0x8038DF4
 MultiTrainersSendOutHook2:
 	ldr r0, [r0] @Battle Type Flags
-	ldr r1, =BATTLE_MULTI | BATTLE_TWO_OPPONENTS | BATTLE_INGAME_PARTNER
+	ldr r1, =BATTLE_MULTI | BATTLE_TWO_OPPONENTS
 	and r0, r1
 	cmp r0, #0x0
 	beq NoSecondOpponentSendOut2
@@ -115,7 +115,7 @@ MultiTrainersSendOutGameCrashingFix:
 	ldr r0, =BATTLE_TYPE
 	ldr r0, [r0]
 	mov r1, #0x60
-	lsl r1, #0x10	@BATTLE_TWO_OPPONENTS | BATTLE_INGAME_PARTNER
+	lsl r1, #0x10	@BATTLE_TWO_OPPONENTS
 	and r0, r1
 	cmp r0, #0x0
 	bne NewFixForMultiSendIn
