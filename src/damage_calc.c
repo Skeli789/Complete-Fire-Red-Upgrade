@@ -1997,7 +1997,7 @@ u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 
 			if (!menuCheck
 			&& !PartyCheck 
 			&& LastUsedMove == MOVE_ROUND 
-			&& gBanksByTurnOrder[0] != bankAtk)
+			&& !IsFirstAttacker(bankAtk))
 				power *= 2;
 			break;
 		
