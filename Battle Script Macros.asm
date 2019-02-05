@@ -255,7 +255,7 @@
 	.4byte \rom_address
 	.endm
 
-	.macro battleendingfunction bank
+	.macro getexp bank
 	.byte 0x23
 	.byte \bank
 	.endm
