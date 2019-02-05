@@ -7,7 +7,6 @@
 .global BattleScript_PoisonTouch
 .global BattleScript_BeakBlastBurn
 .global BattleScript_Magician
-.global BattleScript_Moxie
 .global BattleScript_LifeOrbDamage
 .global BattleScript_Pickpocket
 .global BattleScript_DancerActivated
@@ -41,16 +40,6 @@ BattleScript_Magician:
 	setbyte MAGICIAN_HELPER 0x1
 	setbyte EFFECT_BYTE 0x1F
 	seteffecttarget
-	return
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-BattleScript_Moxie:
-	statbuffchange STAT_ATTACKER | STAT_BS_PTR MoxieReturnPostBuff
-	setword BATTLE_STRING_LOADER AbilityRaisedStatString
-	printstring 0x184
-	waitmessage DELAY_1SECOND
-MoxieReturnPostBuff:
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

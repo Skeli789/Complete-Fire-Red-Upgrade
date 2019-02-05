@@ -4,15 +4,15 @@
 
 .include "..\\defines"
 
-.global STANDARD_DAMAGE
-STANDARD_DAMAGE:
+.global StandardDamage
+StandardDamage:
 attackstring
 ppreduce
 calculatedamage
 attackanimation
 waitanimation
 missmessage
-flash BANK_TARGET
+flash 0x0
 waitstateatk
 graphicalhpupdate BANK_TARGET
 datahpupdate BANK_TARGET
