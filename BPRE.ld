@@ -3,7 +3,7 @@ ExtensionState = 0x3000F28;
 
 /*Old Things*/
 gEvolutionTable = 0x08989D30; /*Change this*/
-gBattleScriptsForMoveEffects = 0x8903B70; /*Remove This*/
+/*gBattleScriptsForMoveEffects = 0x8903B70; Remove This*/
 
 gAccuracyStageRatios = 0x82504FC;
 sTurnActionsFuncsTable = 0x8250038;
@@ -467,10 +467,14 @@ SetHealthboxSpriteVisible = 0x80481D4 | 1;
 MoveBattleBar = 0x8049FD8 | 1;
 SpriteCB_ReleaseMonFromBall = 0x804B268 | 1;
 IsCryPlayingOrClearCrySongs = 0x80721F0;
+DestroyAnimSprite = 0x8072740 | 1;
+StoreSpriteCallbackInData6 = 0x8074A68 | 1;
+sub_8074E14 = 0x8074E14 | 1;
 GetBattlerSide = 0x80751C4 | 1;
 GetBattlerPosition = 0x80751D8 | 1;
 GetBattlerAtPosition = 0x80751E8 | 1;
 IsDoubleBattle = 0x8075290 | 1;
+InitSpriteDataForLinearTranslation = 0x80754B8 | 1;
 GetBattlerSpriteSubpriority = 0x807685C | 1;
 StartTheBattle = 0x807F868 | 1;
 GetTrainerALoseText = 0x80806EC | 1;

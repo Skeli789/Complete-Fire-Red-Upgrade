@@ -3,6 +3,7 @@
 .equ FAILED, 0x81D7DF2
 .equ NOEFFECT, 0x81D7E04
 .equ ABSORB_REBRANCHER, 0x81D694E
+.equ BS_MOVE_FAINT, 0x81D6947
 .equ BS_MOVE_END, 0x81D694E
 .equ BS_MOVE_MISSED, 0x81D695E
 
@@ -74,6 +75,21 @@
 	.word OUTCOME
 	.byte OUTCOME_NO_EFFECT
 	.word /rom_address
+	.endm
+	
+	.macro jumpifbehindsubstitute bank rom_address
+	.byte 0x1D
+	.byte \bank
+	.word STATUS2_SUBSTITUTE
+	.word \rom_address
+	.endm
+	
+	.macro jumpifweather weather rom_address
+	.byte 0x2a
+	.byte ANDS
+	.word WEATHER_FLAGS
+	.hword \weather
+	.word \rom_address
 	.endm
 
 	.macro attackcanceler

@@ -692,7 +692,7 @@ SteelWingBS:
 	jumpifhalfword NOTEQUALS CURRENT_MOVE MOVE_DIAMONDSTORM 0x81D7A31
 
 DiamondStormBS:
-	setbyte EFFECT_BYTE 0x28 | 0x40
+	setbyte EFFECT_BYTE 0x28 | MOVE_EFFECT_AFFECTS_USER
 	goto 0x81D6926
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

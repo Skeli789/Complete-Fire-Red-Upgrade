@@ -720,10 +720,10 @@ void HandleMoveSwitchingUpdate(void) {
     moveInfo->possibleZMoves[gMoveSelectionCursor[gActiveBattler]] = moveInfo->possibleZMoves[gMultiUsePlayerCursor];
     moveInfo->possibleZMoves[gMultiUsePlayerCursor] = i;
 
-    if (gDisableStructs[gActiveBattler].unk18_b & gBitTable[gMoveSelectionCursor[gActiveBattler]])
+    if (gDisableStructs[gActiveBattler].mimickedMoves & gBitTable[gMoveSelectionCursor[gActiveBattler]])
 	{
-		gDisableStructs[gActiveBattler].unk18_b &= (~gBitTable[gMoveSelectionCursor[gActiveBattler]]);
-        gDisableStructs[gActiveBattler].unk18_b |= gBitTable[gMultiUsePlayerCursor];
+		gDisableStructs[gActiveBattler].mimickedMoves &= (~gBitTable[gMoveSelectionCursor[gActiveBattler]]);
+        gDisableStructs[gActiveBattler].mimickedMoves |= gBitTable[gMultiUsePlayerCursor];
 	}
 
     MoveSelectionDisplayMoveNames();

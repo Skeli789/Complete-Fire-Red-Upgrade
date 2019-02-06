@@ -163,7 +163,8 @@ u8 CreateNPCTrainerParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, b
 			
 			#ifdef TRAINERS_WITH_EVS
 				u8 spreadNum = trainer->party.NoItemCustomMoves[i].iv;
-				if (trainer->aiFlags > 1 && spreadNum
+				if (trainer->aiFlags > 1 
+				&& spreadNum != 0
 				&& spreadNum < TRAINERS_WITH_EVS_TABLE_SIZE)
 				{
 					struct TrainersWithEvs spread = TrainersWithEvsTable[spreadNum];

@@ -55,3 +55,19 @@ OpponentHandlePrintStringHook:
 	bl PlayerHandlePrintStringUpdate
 	ldr r0, =0x80384C8 | 1
 	bx r0
+
+@0x80992E4 with r0
+SlideMonToOffsetHook:
+	mov r0, #0x0
+	bl LoadBattleAnimTarget
+	mov r2, r0
+	ldr r0, =0x8099300 | 1
+	bx r0
+
+@0x80991BA with r0
+SlideMonToOriginalPosHook:
+	mov r0, #0x0
+	bl LoadBattleAnimTarget
+	ldr r1, =0x2023D44 @BattlerSpriteIds
+	ldr r2, =0x80991DE | 1
+	bx r2

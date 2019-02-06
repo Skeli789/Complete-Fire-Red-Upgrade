@@ -428,21 +428,21 @@ u8 TurnBasedEffects(void) {
                 break;
 				
 			case(ET_Taunt_Timer):
-                if (gDisableStructs[gActiveBattler].tauntTimer1)
-                    gDisableStructs[gActiveBattler].tauntTimer1--;
+                if (gDisableStructs[gActiveBattler].tauntTimer)
+                    gDisableStructs[gActiveBattler].tauntTimer--;
 					//Display message?
                 break;
 				
 			case(ET_Encore_Timer):
-                if (gDisableStructs[gActiveBattler].encoreTimer1) {
+                if (gDisableStructs[gActiveBattler].encoreTimer) {
                     if (gBattleMons[gActiveBattler].moves[gDisableStructs[gActiveBattler].encoredMovePos] != gDisableStructs[gActiveBattler].encoredMove) {  // pokemon does not have the encored move anymore
                         gDisableStructs[gActiveBattler].encoredMove = 0;
-                        gDisableStructs[gActiveBattler].encoreTimer1 = 0;
+                        gDisableStructs[gActiveBattler].encoreTimer = 0;
                     }
-                    else if (--gDisableStructs[gActiveBattler].encoreTimer1 == 0 ||
+                    else if (--gDisableStructs[gActiveBattler].encoreTimer == 0 ||
 							   gBattleMons[gActiveBattler].pp[gDisableStructs[gActiveBattler].encoredMovePos] == 0) {
 									gDisableStructs[gActiveBattler].encoredMove = 0;
-									gDisableStructs[gActiveBattler].encoreTimer1 = 0;
+									gDisableStructs[gActiveBattler].encoreTimer = 0;
 									BattleScriptExecute(BattleScript_EncoredNoMore);
 									effect++;
                     }
@@ -476,7 +476,7 @@ u8 TurnBasedEffects(void) {
                 break;
 				
 			case(ET_Charge_Timer):
-                if (gDisableStructs[gActiveBattler].chargeTimer1 && --gDisableStructs[gActiveBattler].chargeTimer1 == 0)
+                if (gDisableStructs[gActiveBattler].chargeTimer && --gDisableStructs[gActiveBattler].chargeTimer == 0)
                     gStatuses3[gActiveBattler] &= ~STATUS3_CHARGED_UP;
                 break;
 				
@@ -541,16 +541,16 @@ u8 TurnBasedEffects(void) {
                     gBattleTextBuff1[1] = 1;
                     gBattleTextBuff1[2] = 1;
                     gBattleTextBuff1[3] = 1;
-                    gBattleTextBuff1[4] = gDisableStructs[gActiveBattler].perishSongTimer1;
+                    gBattleTextBuff1[4] = gDisableStructs[gActiveBattler].perishSongTimer;
                     gBattleTextBuff1[5] = 0xFF;
 					
-                    if (gDisableStructs[gActiveBattler].perishSongTimer1 == 0) {
+                    if (gDisableStructs[gActiveBattler].perishSongTimer == 0) {
                         gStatuses3[gActiveBattler] &= ~(STATUS3_PERISH_SONG);
                         gBattleMoveDamage = gBattleMons[gActiveBattler].hp;
                         gBattlescriptCurrInstr = BattleScript_PerishSongHits;
                     }
                     else {
-                        gDisableStructs[gActiveBattler].perishSongTimer1--;
+                        gDisableStructs[gActiveBattler].perishSongTimer--;
                         gBattlescriptCurrInstr = BattleScript_PerishSongTimerGoesDown;
                     }
 					

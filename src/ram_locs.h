@@ -199,6 +199,9 @@ typedef u8 Buffer_t[0x200];
 /*u8*/  #define gPlttBufferUnfaded ((u16*) 0x20371F8)
 /*u8*/  #define gPlttBufferFaded ((u16*) 0x20375F8)
 /*u8*/  #define gPaletteFade ((u8*) 0x2037AB8)
+/*s16*/ #define gBattleAnimArgs ((s16*) 0x2037F02)
+/*u8*/  #define gBattleAnimAttacker (*((u8*) 0x2037F1A))
+/*u8*/  #define gBattleAnimTarget (*((u8*) 0x2037F1B))
 
 /*u16*/ #define sTrainerBattleMode (*((u16*) 0x20386AC))
 /*u16*/ #define gTrainerBattleOpponent_A (*((u16*) 0x20386AE))

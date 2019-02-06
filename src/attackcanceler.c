@@ -5,6 +5,7 @@
 //Z-Move Illusion
 //De-activate Z-Move when used by Z-Instruct
 //Make sure Powder stops Inferno Overdrive
+//Set gBattleStruct->field_91 in Smack Down
 
 #define BattleScript_MoveEnd (u8*) 0x81D694E
 #define BattleScript_NoPPForMove (u8*) 0x81D8EA8
@@ -60,49 +61,12 @@ extern u8* const gBattleScriptsForMoveEffects[];
 
 extern bool8 ProtectAffects(u16 move, u8 bankAtk, u8 bankDef, bool8 set);
 extern s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* defender, u32 move, u16 sideStatus, u16 powerOverride, u8 effectivenessFlags, u8 typeOverride, u8 bankAtk, u8 bankDef, pokemon_t* party_data_atk, bool8 PartyCheck, bool8 IgnoreAttacker, bool8 CheckingConfusion);
-extern u8 GetMoveTypeSpecial(u8 bankAtk, move_t);
 extern s8 PriorityCalc(u8 bank, u8 action, u16 move);
 extern u8 CheckMoveLimitations(u8 bank, u8 unusableMoves, u8 check);
 
 void atk00_attackcanceler(void);
 u8 AtkCanceller_UnableToUseMove(void);
 u8 IsMonDisobedient(void);
-
-const struct SpecialZMoves SpecialZMoveTable[] = 
-{
-	{PKMN_RAICHU_A,					ITEM_ALORAICHUIUM_Z, 	MOVE_STOKED_SPARKSURFER},
-	{PKMN_DECIDUEYE,				ITEM_DECIDIUM_Z, 		MOVE_SINISTER_ARROW_RAID},
-	{PKMN_EEVEE,					ITEM_EEVIUM_Z, 			MOVE_EXTREME_EVOBOOST},
-	{PKMN_INCINEROAR,				ITEM_INCINIUM_Z, 		MOVE_MALICIOUS_MOONSAULT},
-	{PKMN_KOMMO_O,					ITEM_KOMMONIUM_Z,		MOVE_CLANGOROUS_SOULBLAZE},
-	{PKMN_LUNALA,					ITEM_LUNALIUM_Z,		MOVE_MENACING_MOONRAZE_MAELSTROM},
-	{PKMN_NECROZMA_WINGS,			ITEM_LUNALIUM_Z,		MOVE_MENACING_MOONRAZE_MAELSTROM},
-	{PKMN_LYCANROC,					ITEM_LYCANIUM_Z,		MOVE_SPLINTERED_STORMSHARDS},
-	{PKMN_LYCANROC_N,				ITEM_LYCANIUM_Z,		MOVE_SPLINTERED_STORMSHARDS},
-	{PKMN_LYCANROC_DUSK,			ITEM_LYCANIUM_Z,		MOVE_SPLINTERED_STORMSHARDS},
-	{PKMN_MARSHADOW,				ITEM_MARSHADIUM_Z, 		MOVE_SOUL_STEALING_7_STAR_STRIKE},
-	{PKMN_MEW,						ITEM_MEWNIUM_Z, 		MOVE_GENESIS_SUPERNOVA},
-	{PKMN_MIMIKYU,					ITEM_MIMIKIUM_Z, 		MOVE_LETS_SNUGGLE_FOREVER},
-	{PKMN_MIMIKYU_BUSTED,			ITEM_MIMIKIUM_Z, 		MOVE_LETS_SNUGGLE_FOREVER},
-	{PKMN_PIKACHU,					ITEM_PIKANIUM_Z, 		MOVE_CATASTROPIKA},
-	{PKMN_PIKACHU_CAP_ORIGINAL,		ITEM_PIKASHUNIUM_Z, 	MOVE_10000000_VOLT_THUNDERBOLT},
-	{PKMN_PIKACHU_CAP_HOENN,		ITEM_PIKASHUNIUM_Z, 	MOVE_10000000_VOLT_THUNDERBOLT},
-	{PKMN_PIKACHU_CAP_SINNOH,		ITEM_PIKASHUNIUM_Z, 	MOVE_10000000_VOLT_THUNDERBOLT},
-	{PKMN_PIKACHU_CAP_UNOVA,		ITEM_PIKASHUNIUM_Z, 	MOVE_10000000_VOLT_THUNDERBOLT},
-	{PKMN_PIKACHU_CAP_KALOS,		ITEM_PIKASHUNIUM_Z, 	MOVE_10000000_VOLT_THUNDERBOLT},
-	{PKMN_PIKACHU_CAP_ALOLA,		ITEM_PIKASHUNIUM_Z, 	MOVE_10000000_VOLT_THUNDERBOLT},
-	{PKMN_PIKACHU_CAP_PARTNER,		ITEM_PIKASHUNIUM_Z, 	MOVE_10000000_VOLT_THUNDERBOLT},
-	{PKMN_PRIMARINA,				ITEM_PRIMARIUM_Z, 		MOVE_OCEANIC_OPERETTA},
-	{PKMN_SNORLAX,					ITEM_SNORLIUM_Z, 		MOVE_PULVERIZING_PANCAKE},
-	{PKMN_SOLGALEO,					ITEM_SOLGANIUM_Z, 		MOVE_SEARING_SUNRAZE_SMASH},
-	{PKMN_NECROZMA_MANE,			ITEM_SOLGANIUM_Z, 		MOVE_SEARING_SUNRAZE_SMASH},
-	{PKMN_TAPU_KOKO,				ITEM_TAPUNIUM_Z, 		MOVE_GUARDIAN_OF_ALOLA},
-	{PKMN_TAPU_BULU,				ITEM_TAPUNIUM_Z, 		MOVE_GUARDIAN_OF_ALOLA},
-	{PKMN_TAPU_LELE,				ITEM_TAPUNIUM_Z, 		MOVE_GUARDIAN_OF_ALOLA},
-	{PKMN_TAPU_FINI,				ITEM_TAPUNIUM_Z, 		MOVE_GUARDIAN_OF_ALOLA},
-	{PKMN_NECROZMA_ULTRA,			ITEM_ULTRANECROZIUM_Z, 	MOVE_LIGHT_THAT_BURNS_THE_SKY},
-	{0xFFFF,						0xFFFF, 				0xFFFF}
-};
 
 enum
 {
@@ -167,7 +131,6 @@ void atk00_attackcanceler(void)
 		}
 	}
 	
-	gBattleStruct->dynamicMoveType = GetMoveTypeSpecial(gBankAttacker, gCurrentMove);
     if (AtkCanceller_UnableToUseMove())
         return;
     else if (AbilityBattleEffects(ABILITYEFFECT_MOVES_BLOCK, gBankTarget, 0, 0, 0))
@@ -240,7 +203,9 @@ void atk00_attackcanceler(void)
 	if (MoveBounceInProgress == 2) //Bounce just ended
 		MoveBounceInProgress = 0;
 
-    if (!MoveBounceInProgress && gBattleMoves[gCurrentMove].flags & FLAG_MAGIC_COAT_AFFECTED)
+    if (!MoveBounceInProgress 
+	&& gBattleMoves[gCurrentMove].flags & FLAG_MAGIC_COAT_AFFECTED 
+	&& !(gBattleMoves[gCurrentMove].target & MOVE_TARGET_ALL)) //Safety measure; no default moves allow this
 	{
 		if (gBattleMoves[gCurrentMove].target == MOVE_TARGET_OPPONENTS_FIELD)
 		{
@@ -347,7 +312,6 @@ void atk00_attackcanceler(void)
 
 u8 AtkCanceller_UnableToUseMove(void)
 {
-	int i;
     u8 effect = 0;
 	
     do
@@ -404,7 +368,7 @@ u8 AtkCanceller_UnableToUseMove(void)
                     if (gBattleMoves[gCurrentMove].effect != EFFECT_THAW_HIT) // unfreezing via a move effect happens in case 13
                     {
                         gBattlescriptCurrInstr = BattleScript_MoveUsedIsFrozen;
-                        gHitMarker |= HITMARKER_NO_ATTACKSTRING;
+                        gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
                     }
                     else
                     {
@@ -513,7 +477,7 @@ u8 AtkCanceller_UnableToUseMove(void)
             break;
 		
         case CANCELLER_TAUNTED: // taunt
-            if (gDisableStructs[gBankAttacker].tauntTimer1 && SPLIT(gCurrentMove) == SPLIT_STATUS && !ZMoveData->active)
+            if (gDisableStructs[gBankAttacker].tauntTimer && SPLIT(gCurrentMove) == SPLIT_STATUS && !ZMoveData->active)
             {
                 gProtectStructs[gBankAttacker].usedTauntedMove = 1;
                 CancelMultiTurnMoves(gBankAttacker);
@@ -600,6 +564,7 @@ u8 AtkCanceller_UnableToUseMove(void)
 				else
 					gBattlescriptCurrInstr = BattleScript_GhostGetOut;
 				gBattleCommunication[MULTISTRING_CHOOSER] = 0;
+				gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
 				effect = 1;
 			}
 			gBattleStruct->atkCancellerTracker++;
@@ -696,11 +661,10 @@ u8 AtkCanceller_UnableToUseMove(void)
             break;
 		
 		case CANCELLER_Z_MOVES:
-			if (ZMoveData->toBeUsed[gBankAttacker]) {
+			if (ZMoveData->active) 
+			{
 				ZMoveData->used[gBankAttacker] = TRUE;
 				ZMoveData->toBeUsed[gBankAttacker] = 0;
-				ZMoveData->active = TRUE;
-				ZMoveData->state = 1;
 				ZMoveData->partyIndex[gBankAttacker] |= gBitTable[gBattlerPartyIndexes[gBankAttacker]]; //Stops Rayquaza from Mega Evolving
 				if (SIDE(gBankAttacker) == B_SIDE_PLAYER && !(gBattleTypeFlags & (BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_MULTI))) //In team Battles, both players can use Z-moves
 				{
@@ -714,9 +678,7 @@ u8 AtkCanceller_UnableToUseMove(void)
 					ZMoveData->toBeUsed[PARTNER(gBankAttacker)] = 0;
 					ZMoveData->partyIndex[SIDE(gBankAttacker)] |= gBitTable[gBattlerPartyIndexes[PARTNER(gBankAttacker)]]; //Stops Rayquaza from Mega Evolving
 				}
-			}
-			
-			if (ZMoveData->active) {
+				
 				if (SPLIT(gCurrentMove) == SPLIT_STATUS) 
 				{
 					if (!ZMoveData->effectApplied) {
@@ -732,26 +694,8 @@ u8 AtkCanceller_UnableToUseMove(void)
 				}
 				else 
 				{
-					for (i = 0; SpecialZMoveTable[i].item != 0xFFFF; ++i) {
-						if (SpecialZMoveTable[i].item == ITEM(gBankAttacker)) //No need to check for correct species here as the check;
-							gRandomMove = SpecialZMoveTable[i].move;		  //it should already have been carried out during move selection.
-					}
-							
-					if (SpecialZMoveTable[i].item == 0xFFFF) { //No special Z-Move
-						u16 moveReplaced = gBattleMons[gBankAttacker].moves[gCurrMovePos];
-						u8 moveType = gBattleMoves[moveReplaced].type;
-						if (moveType < TYPE_FIRE)
-							gRandomMove = MOVE_BREAKNECK_BLITZ_P + (moveType * 2) + SPLIT(moveReplaced);
-						else
-							gRandomMove = MOVE_BREAKNECK_BLITZ_P + ((moveType - 1) * 2) + SPLIT(moveReplaced);
-					}
-					gCurrentMove = gRandomMove; //Add in gChosenMove?
-					gBattleCommunication[MOVE_EFFECT_BYTE] = 0; //Remove secondary effects
-					gBattleStruct->dynamicMoveType = GetMoveTypeSpecial(gBankAttacker, gCurrentMove);
-					gBattlescriptCurrInstr = gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect];
 					BattleScriptPushCursor();
 					gBattlescriptCurrInstr = BattleScript_ZMoveActivateDamaging;
-					ZMoveData->state = 0;
 				}
 				effect = 1;
 			}

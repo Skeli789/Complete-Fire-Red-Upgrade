@@ -2047,7 +2047,7 @@ u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 
 			if (!menuCheck && !PartyCheck) {
 				if (gBattleMons[bankAtk].status2 & STATUS2_DEFENSE_CURL)
 					power *= 2;
-				for (i = 1; i < (5 - gDisableStructs[bankAtk].rolloutTimer1); i++)
+				for (i = 1; i < (5 - gDisableStructs[bankAtk].rolloutTimer); i++)
 					power *= 2;
 			}
 			break;

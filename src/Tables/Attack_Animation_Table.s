@@ -2233,7 +2233,7 @@ SHADOW_DARKCLAW: objtemplate 0x2737 0x279F 0x83AC9D8 0x83E79E0 0x0 0x8231CFC 0x8
 ANIM_SHADOWSNEAK:
 	loadparticle 0x2797
 	loadparticle 0x27CC @Destiny Bond
-	loadparticle 0x285C @Black Colour
+	loadparticle 0x2858 @Black Colour
 	loadparticle 0x27A6 @Poison
 	loadparticle 0x279F
 	pokespritetoBG bank_attacker
@@ -5011,7 +5011,7 @@ DRAGONRUSH_BOUNCEDOWN:	objtemplate 0x27AC 0x27C0 0x83ACAA0 0x8231CF0 0x0 0x83E6C
 .pool     
 ANIM_DARKVOID:
 	loadparticle 0x27CC @Destiny Bond
-	loadparticle 0x285C @Black Colour
+	loadparticle 0x2858 @Black Colour
 	loadparticle 0x2741 @Healing Stars
 	loadparticle 0x27A6 @Poison
 	loadBG1 BG_DARK_VOID
@@ -5020,21 +5020,23 @@ ANIM_DARKVOID:
 	launchtask 0x80B6021 0x5 0x2 0x0 0x30  
 	soundcomplex 0xBD 0xc0 0x5 0x2
 	pause 0x30
-	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0003 0x0000 0x0006 0x0001
-	launchtask AnimTask_move_bank 0x2 0x5 target_partner 0x0003 0x0000 0x0006 0x0001  
-	pause 0x10
+	launchtemplate Template_SlideMonToOffset 0x2 0x5 bank_target 0xfd00 0x15 0x0 0x70 @Last is speed
+	launchtemplate Template_SlideMonToOffset 0x2 0x5 target_partner 0xfd00 0x15 0x0 0x70 @Last is speed 
+	pause 0x40
 	makebankinvisible bank_target
 	makebankinvisible target_partner
-	launchtemplate PURPLESTARS 0x2 0x6 0x0 0x0 0x1 0x0 0x20 0x3c  
+	launchtemplate PURPLESTARS+rom 0x2 0x6 0x0 0x0 0x1 0x0 0x20 0x3c  
 	waitanimation
+	launchtemplate Template_SlideMonToOriginalPos 0x2 0x3 bank_target 0x0 0x10 
+	launchtemplate Template_SlideMonToOriginalPos 0x2 0x3 target_partner 0x0 0x10 
 	pause 0x20
 	unsetscrollingBG
 	makebankvisible bank_target
 	makebankvisible target_partner
 	endanimation
-	
+
 .align 2
-BLACKHOLE: objtemplate 0x27CC 0x285C 0x83ACB20 0x8231CF0 0x0 0x8231CFC 0x80B5EC1
+BLACKHOLE: objtemplate 0x27CC 0x2858 0x83ACB20 0x8231CF0 0x0 0x8231CFC 0x80B5EC1
 PURPLESTARS: objtemplate 0x2741 0x27A6 0x83AC9D8 0x83E33F0 0x0 0x8231CFC 0x80A4D0D
 
 @ hook at 0xB60BC via r0
@@ -5820,7 +5822,7 @@ ANIM_SMACKDOWN:
 ANIM_HYPERSPACEHOLE:
 	loadparticle 0x2797 @Hits
 	loadparticle 0x27CC @Destiny Bond
-	loadparticle 0x285C @Black Colour
+	loadparticle 0x2858 @Black Colour
 	loadparticle 0x27A6 @Poison Colour
 	launchtemplate 0x83E7B24 0x2 0x5 0x1 0x3 0x0 0x10 0x7FFF
 	waitanimation
@@ -17440,6 +17442,7 @@ ANIM_PULVERIZING_PANCAKE:
 	loadparticle 0x2851 @red
 	loadparticle 0x275a @dig
 	loadparticle 0x2797 @hit
+	loadparticle 0x2858 @black colour
 	makebankinvisible attacker_partner
 	makebankinvisible target_partner
 	launchtask AnimTask_arg7_is_target_player 0x2 0x0

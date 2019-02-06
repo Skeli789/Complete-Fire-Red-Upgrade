@@ -2,6 +2,7 @@
 #include "helper_functions.h"
 
 extern u8 BattleScript_SapSipperAromatherapy[];
+extern u8 BattleScript_DefogAdditionalEffects[];
 
 extern u8 PowerTrickString[];
 extern u8 PowerSwapString[];
@@ -32,6 +33,10 @@ void TrainerSlideOut(void);
 void SetAuroraVeil(void);
 void MetalBurstDamageCalculator(void);
 void TryActivatePartnerSapSipper(void);
+void RoundBSFunction(void);
+void EchoedVoiceFunc(void);
+void TryPartingShotStatDrop(void);
+void DefogHelperFunc(void);
 
 void SetTargetPartner(void) {
 	gBankTarget = PARTNER(gBankAttacker);
@@ -405,3 +410,20 @@ void EchoedVoiceFunc(void) {
 			EchoedVoiceDamageScale = MathMin(10, EchoedVoiceDamageScale + 1);
 	}
 }
+void TryPartingShotStatDrop(void) {
+
+}
+
+/*
+void DefogHelperFunc(void) {
+	if (AuroraVeilTimers[SIDE(gBankTarget)]
+	|| gSideAffecting[SIDE(gBankAttacker)] & SIDE_STATUS_SPIKES
+	|| gSideAffecting[SIDE(gBankTarget)] & (SIDE_STATUS_SPIKES 
+										  | SIDE_STATUS_REFLECT
+										  | SIDE_STATUS_LIGHTSCREEN
+										  | SIDE_STATUS_SAFEGUARD
+										  | SIDE_STATUS_MIST))
+	{
+		gBattlescriptCurrInstr = BattleScript_DefogAdditionalEffects - 5;
+	}
+}*/

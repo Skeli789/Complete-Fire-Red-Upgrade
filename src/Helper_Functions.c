@@ -268,18 +268,56 @@ u8 GetMoveTarget(u16 move, u8 useMoveTarget) {
 				} while (bankDef == bankAtk || atkSide == SIDE(bankDef) || gAbsentBattlerFlags & gBitTable[bankDef]);
 			}
 			
-			if(NO_MOLD_BREAKERS(ABILITY(gBankAttacker)) && !CheckTableForMove(move, MoldBreakerMoves)) {
+			if(NO_MOLD_BREAKERS(ABILITY(bankAtk)) && !CheckTableForMove(move, MoldBreakerMoves)) 
+			{
 				u8 moveType = GetMoveTypeSpecial(bankAtk, move);
-				if ((moveType == TYPE_ELECTRIC
-				&& AbilityBattleEffects(ABILITYEFFECT_COUNT_OTHER_SIDE, bankAtk, ABILITY_LIGHTNINGROD, 0, 0)
-				&& gBattleMons[bankDef].ability != ABILITY_LIGHTNINGROD)
-				||
-					(moveType == TYPE_WATER
-				&& AbilityBattleEffects(ABILITYEFFECT_COUNT_OTHER_SIDE, bankAtk, ABILITY_STORMDRAIN, 0, 0)
-				&& gBattleMons[bankDef].ability != ABILITY_STORMDRAIN)) {
-					bankDef ^= BIT_FLANK;
-					RecordAbilityBattle(bankDef, gBattleMons[bankDef].ability);
-					gSpecialStatuses[bankDef].lightningRodRedirected = 1;
+				switch (moveType) {
+					case TYPE_WATER:
+						if (ABILITY(bankDef) != ABILITY_STORMDRAIN) 
+						{
+							if (ABILITY(SIDE(bankAtk) ^ BIT_SIDE) == ABILITY_STORMDRAIN)
+							{
+								bankDef = SIDE(bankAtk) ^ BIT_SIDE;
+								RecordAbilityBattle(bankDef, ABILITY_STORMDRAIN);
+								gSpecialStatuses[bankDef].lightningRodRedirected = 1;
+							}
+							else if (ABILITY(PARTNER(SIDE(bankAtk) ^ BIT_SIDE)) == ABILITY_STORMDRAIN)
+							{
+								bankDef = PARTNER(SIDE(bankAtk) ^ BIT_SIDE);
+								RecordAbilityBattle(bankDef, ABILITY_STORMDRAIN);
+								gSpecialStatuses[bankDef].lightningRodRedirected = 1;
+							}
+							else if (ABILITY(PARTNER(bankAtk)) == ABILITY_STORMDRAIN)
+							{
+								bankDef = PARTNER(bankAtk);
+								RecordAbilityBattle(bankDef, ABILITY_STORMDRAIN);
+								gSpecialStatuses[bankDef].lightningRodRedirected = 1;
+							}
+						}
+						break;
+						
+					case TYPE_ELECTRIC:
+						if (ABILITY(bankDef) != ABILITY_LIGHTNINGROD) 
+						{
+							if (ABILITY(SIDE(bankAtk) ^ BIT_SIDE) == ABILITY_LIGHTNINGROD)
+							{
+								bankDef = SIDE(bankAtk) ^ BIT_SIDE;
+								RecordAbilityBattle(bankDef, ABILITY_LIGHTNINGROD);
+								gSpecialStatuses[bankDef].lightningRodRedirected = 1;
+							}
+							else if (ABILITY(PARTNER(SIDE(bankAtk) ^ BIT_SIDE)) == ABILITY_LIGHTNINGROD)
+							{
+								bankDef = PARTNER(SIDE(bankAtk) ^ BIT_SIDE);
+								RecordAbilityBattle(bankDef, ABILITY_LIGHTNINGROD);
+								gSpecialStatuses[bankDef].lightningRodRedirected = 1;
+							}
+							else if (ABILITY(PARTNER(bankAtk)) == ABILITY_LIGHTNINGROD)
+							{
+								bankDef = PARTNER(bankAtk);
+								RecordAbilityBattle(bankDef, ABILITY_LIGHTNINGROD);
+								gSpecialStatuses[bankDef].lightningRodRedirected = 1;
+							}
+						}
 				}
 			}
         }
