@@ -17,6 +17,7 @@
 .global BattleScript_FocusPunchSetUp
 .global BattleScript_BeakBlastSetUp
 .global BattleScript_ShellTrapSetUp
+.global BattleScript_NoTargetMoveFailed
 
 .global StringNull
 
@@ -146,6 +147,13 @@ BattleScript_ShellTrapSetUp:
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	end3
+
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_NoTargetMoveFailed:
+	attackcanceler
+	goto FAILED - 2
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
