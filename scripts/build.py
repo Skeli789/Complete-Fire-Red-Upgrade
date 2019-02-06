@@ -7,6 +7,7 @@ import itertools
 import hashlib
 import subprocess
 import sys
+from datetime import datetime
 
 PathVar = os.environ.get('Path')
 Paths = PathVar.split(';')
@@ -259,6 +260,7 @@ def run_glob(globstr, fn):
 		return map(fn, map(str, files))
 
 def main():
+	starttime = datetime.now()
 	globs = {
 			'**/*.s': process_assembly,
 			'**/*.c': process_c,
@@ -281,6 +283,7 @@ def main():
 	# Link and extract raw binary
 	linked = link(itertools.chain.from_iterable(objects))
 	objcopy(linked)
+	print('Built in ' + str(datetime.now() - starttime) + '.')
 	
 if __name__ == '__main__':
 	main()
