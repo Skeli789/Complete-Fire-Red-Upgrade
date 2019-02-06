@@ -20,11 +20,11 @@ DragonTailBS:
 	accuracycheck BS_MOVE_MISSED 0x0
 	jumpifsecondarystatus BANK_TARGET STATUS2_SUBSTITUTE 0x81D692E
 	call StandardDamage
-	jumpiffainted BANK_TARGET 0x81D6947
-	jumpifmovehadnoeffect 0x81D6947
+	jumpiffainted BANK_TARGET BS_MOVE_FAINT
+	jumpifmovehadnoeffect BS_MOVE_FAINT
 	jumpifspecialstatusflag BANK_TARGET STATUS3_ROOTED 0x0 0x81D8F27
 	jumpifability BANK_TARGET ABILITY_SUCTIONCUPS 0x81D9408
-	setbyte 0x2023FD8 0x0
+	setbyte CMD49_STATE 0x0
 	cmd49 BANK_TARGET 0x0
 	playanimation BANK_TARGET DRAGON_TAIL_BLOW_AWAY_ANIM 0x0
 	forcerandomswitch 0x81D6957
@@ -196,9 +196,9 @@ BS_081_Rage:
 	accuracycheck 0x81D7367 0x0
 	setmoveeffect 0x1E
 	call StandardDamage
-	jumpifbyte ANDS OUTCOME OUTCOME_NO_EFFECT 0x81D6947
+	jumpifbyte ANDS OUTCOME OUTCOME_NO_EFFECT BS_MOVE_FAINT
 	seteffecttarget
-	goto 0x81D6947
+	goto BS_MOVE_FAINT
 	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -329,12 +329,12 @@ DamageAndTrapBS:
 	attackcanceler
 	accuracycheck BS_MOVE_MISSED 0x0
 	call STANDARD_DAMAGE
-	jumpiffainted BANK_TARGET 0x81D6947
+	jumpiffainted BANK_TARGET BS_MOVE_FAINT
 	seteffecttarget
-	jumpifmovehadnoeffect 0x81D6947
+	jumpifmovehadnoeffect BS_MOVE_FAINT
 	printstring 0x8F
 	waitmessage DELAY_1SECOND
-	goto 0x81D6947
+	goto BS_MOVE_FAINT
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -418,7 +418,7 @@ BS_120_Attract:
 .global BS_125_FlameWheel
 BS_125_FlameWheel:
 	attackcanceler
-	accuracycheck 0x81D695E 0x0
+	accuracycheck BS_MOVE_MISSED 0x0
 	jumpifmove MOVE_BURNUP BurnUpBS
 	setmoveeffect MOVE_EFFECT_BURN
 	jumpifmove MOVE_FLAREBLITZ FlareBlitzBS
@@ -435,14 +435,14 @@ DoBurnUp:
 	setword BATTLE_STRING_LOADER BurnUpString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
-	goto 0x81D6947
+	goto BS_MOVE_FAINT
 	
 FlareBlitzBS:
 	call STANDARD_DAMAGE
 	seteffectwithchancetarget
 	setmoveeffect MOVE_EFFECT_RECOIL_33 | MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN
 	seteffectuser
-	goto 0x81D6947
+	goto BS_MOVE_FAINT
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -450,13 +450,13 @@ FlareBlitzBS:
 BS_127_BatonPass:
 	jumpifmove MOVE_BATONPASS 0x81D7995
 	attackcanceler
-	accuracycheck 0x81D695E 0x0
+	accuracycheck BS_MOVE_MISSED 0x0
 	jumpifmove MOVE_PARTINGSHOT PartingShotBS
 	call STANDARD_DAMAGE
-	jumpifmovehadnoeffect 0x81D6947
+	jumpifmovehadnoeffect BS_MOVE_FAINT
 	seteffectwithchancetarget
 	faintpokemon BANK_TARGET 0x0 0x0
-	setbyte 0x2023FD8 0x0
+	setbyte CMD49_STATE 0x0
 	cmd49 BANK_TARGET 0x0
 	jumpifcannotswitch BANK_ATTACKER 0x81D6957
 	callasm VoltSwitchFix + 1
@@ -475,7 +475,7 @@ UTurnSwitchBS:
 	returntoball BANK_ATTACKER
 	switch1 BANK_ATTACKER
 	switch2 BANK_ATTACKER
-	hpthresholds 0x1
+	hpthresholds BANK_ATTACKER
 	printstring 0x3
 	switch3 BANK_ATTACKER 0x1
 	waitstateatk
@@ -483,15 +483,76 @@ UTurnSwitchBS:
 	goto 0x81D6957
 	
 UTurnGiveEXPBS:
-	setbyte 0x2023FE0 0x0
+	setbyte EXP_STATE 0x0
 	getexp 0x0
 	goto UTurnSwitchBS
 	
 PartingShotBS:
 	attackstring
 	ppreduce
+	callasm TryPartingShotStatDrop
+	attackanimation
+	waitanimation
+	goto UTurnSwitchBS
 	
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global BS_129_RapidSpin
+.global BattleScript_DefogAdditionalEffects
+BS_129_RapidSpin:
+	jumpifnotmove MOVE_DEFOG 0x1D79C2
+	attackcanceler
+	jumpifbehindsubstitute BANK_TARGET SecondDefogCheck
+	accuracycheck SecondDefogCheck 0x0
+	attackstring
+	ppreduce
+	setbyte STAT_CHANGE_BYTE STAT_EVSN | DECREASE_1
+	statbuffchange STAT_TARGET | STAT_BS_PTR SecondDefogCheck
+	jumpifbyte LESSTHAN MULTISTRING_CHOOSER 0x2 DefogLoweredStat
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x3 SecondDefogCheck
+	pause DELAY_HALFSECOND
+	printfromtable 0x83FE588
+	waitmessage DELAY_1SECOND
+	goto SecondDefogCheck
 	
+DefogLoweredStat:
+	attackanimation
+	waitanimation
+	setgraphicalstatchangevalues
+	playanimation BANK_ATTACKER 0x1 0x2023FD4
+	printfromtable 0x83FE588
+	waitmessage DELAY_1SECOND
+	
+BattleScript_DefogAdditionalEffects:
+	attackanimation @;Should only play after the Second Defog Check
+	waitanimation
+	jumpifweather weather_fog | weather_permament_fog RemoveFogBS
+	breakfree
+	goto BS_MOVE_END
+
+RemoveFogBS:
+	sethalfword WEATHER_FLAGS 0x0
+	setword BATTLE_STRING_LOADER RemoveFogString
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	breakfree
+	goto BS_MOVE_END
+	
+SecondDefogCheck:
+	callasm DefogHelperFunc + 1 @;Automatically redirects to BattleScript_DefogAdditionalEffects if applicable
+	goto BS_MOVE_END
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global BS_142_BellyDrum
+BS_142_BellyDrum:
+	jumpifnotmove MOVE_MINDBLOWN 0x1D7A52
+	jumpifability BANK_ATTACKER ABILITY_MAGICGUARD 0x1D6926
+	attackcanceler
+	accuracycheck 0x81D695E 0x0
+	call STANDARD_DAMAGE
+	@;TODO
+
 .align 2
 ReflectTypeString: .byte 0xFD, 0x0F, 0xB4, 0xE7, 0x00, 0xE8, 0xED, 0xE4, 0xD9, 0x00, 0xD6, 0xD9, 0xD7, 0xD5, 0xE1, 0xD9, 0xFE, 0xE8, 0xDC, 0xD9, 0x00, 0xE7, 0xD5, 0xE1, 0xD9, 0x00, 0xD5, 0xE7, 0x00, 0xFD, 0x10, 0xB4, 0xE7, 0xAB, 0xFF
 AuroraVeilSetString: .byte 0xFD, 0x14, 0x00, 0xE4, 0xE6, 0xE3, 0xE8, 0xD9, 0xD7, 0xE8, 0xE7, 0x00, 0xD5, 0xDB, 0xD5, 0xDD, 0xE2, 0xE7, 0xE8, 0x00, 0xE4, 0xDC, 0xED, 0xE7, 0xDD, 0xD7, 0xD5, 0xE0, 0xFE, 0xD5, 0xE2, 0xD8, 0x00, 0xE7, 0xE4, 0xD9, 0xD7, 0xDD, 0xD5, 0xE0, 0x00, 0xE1, 0xE3, 0xEA, 0xD9, 0xE7, 0xAB, 0xFF
@@ -500,4 +561,6 @@ FreezeShockChargingString: .byte 0xFD, 0x0F, 0x00, 0xD6, 0xD9, 0xD7, 0xD5, 0xE1,
 IceBurnChargingString: .byte 0xFD, 0x0F, 0x00, 0xD6, 0xD9, 0xD7, 0xD5, 0xE1, 0xD9, 0xFE, 0xD7, 0xE0, 0xE3, 0xD5, 0xDF, 0xD9, 0xD8, 0x00, 0xDD, 0xE2, 0x00, 0xDA, 0xE6, 0xD9, 0xD9, 0xEE, 0xDD, 0xE2, 0xDB, 0x00, 0xD5, 0xDD, 0xE6, 0xAB, 0xFF
 LaserFocusString: .byte 0xFD, 0x0F, 0x00, 0xD7, 0xE3, 0xE2, 0xD7, 0xD9, 0xE2, 0xE8, 0xE6, 0xD5, 0xE8, 0xD9, 0xD8, 0x00, 0xDD, 0xE2, 0xE8, 0xD9, 0xE2, 0xE7, 0xD9, 0xE0, 0xED, 0xAB, 0xFF
 BurnUpString: .byte 0xFD, 0x0F, 0x00, 0xD6, 0xE9, 0xE6, 0xE2, 0xD9, 0xD8, 0x00, 0xDD, 0xE8, 0xE7, 0xD9, 0xE0, 0xDA, 0x00, 0xE3, 0xE9, 0xE8, 0xAB, 0xFF
+UTurnString: .byte 0x
+RemoveFogString: .byte 0xFD, 0x0F, 0x00, 0xD6, 0xE0, 0xD9, 0xEB, 0x00, 0xD5, 0xEB, 0xD5, 0xED, 0xFE, 0xE8, 0xDC, 0xD9, 0x00, 0xD8, 0xD9, 0xD9, 0xE4, 0x00, 0xDA, 0xE3, 0xDB, 0x00, 0xEB, 0xDD, 0xE8, 0xDC, 0x00, 0xFD, 0x14, 0xAB, 0xFF
 */
