@@ -64,6 +64,9 @@ enum
     ATK49_COUNT //28 or 0x1C
 };
 
+void atk49_moveend(void);
+bank_t GetNextMultiTarget(void);
+
 void atk49_moveend(void) //All the effects that happen after a move is used
 {
     int i, j;
@@ -90,6 +93,12 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 
     choicedMoveAtk = &gBattleStruct->choicedMove[bankAtk];
     moveType = gBattleStruct->dynamicMoveType;
+	
+	if (gHitMarker & HITMARKER_UNABLE_TO_USE_MOVE)
+	{ 	//Cancel the Z-Moves
+		ZMoveData->active = FALSE;
+		ZMoveData->toBeUsed[gBankAttacker] = 0;
+	}
 
     do
     {
@@ -518,7 +527,9 @@ void atk49_moveend(void) //All the effects that happen after a move is used
             break;
 		
 		case ATK49_MULTI_HIT_MOVES:
-			if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) && gMultiHitCounter)
+			if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT)
+			&& !(gHitMarker & HITMARKER_UNABLE_TO_USE_MOVE)
+			&& gMultiHitCounter)
 			{
 				++gBattleScripting->multihitString[4];
 				if (--gMultiHitCounter == 0)
@@ -562,7 +573,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			ParentalBondOn = 0;
             break;
 		
-        case ATK49_NEXT_TARGET: // For moves hitting two opposing Pokemon.
+        case ATK49_NEXT_TARGET: // For moves hitting two opposing Pokemon or whole field.
 			gHitMarker |= HITMARKER_NO_ATTACKSTRING;
 			if (MoveBounceInProgress)
 				++MoveBounceTargetCount;
@@ -612,15 +623,14 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 							}
 						}
 					}
-					/*else if (gBattleMoves[gCurrentMove].target == MOVE_TARGET_ALL) //TO DO
+					else if (gBattleMoves[gCurrentMove].target == MOVE_TARGET_ALL)
 					{
-						if ((OriginalAttackerTargetCount < 3 && !MoveBounceInProgress)
-						|| (MoveBounceTargetCount < 2 && MoveBounceInProgress))
+						if (OriginalAttackerTargetCount < 3)
 						{ //Get Next Target
 							u8 battlerId = GetNextMultiTarget();
-							if (battlerId != -1)
+							if (battlerId != 0xFF)
 							{
-								while (GetNextMultiTarget() != -1)
+								while (GetNextMultiTarget() != 0xFF)
 								{
 									gBankTarget = battlerId;
 									if (gBattleMons[battlerId].hp)
@@ -631,31 +641,11 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 										gBattlescriptCurrInstr = BattleScript_FlushMessageBox;
 										return;
 									}
+									++OriginalAttackerTargetCount;
 								}
 							}
-							else if (MoveBounceInProgress)
-								goto RESTORE_BOUNCE_ATTACKER;
 						}
-						else if (MoveBounceInProgress)
-						{
-						RESTORE_BOUNCE_ATTACKER:
-							++OriginalAttackerTargetCount;
-							MoveBounceInProgress = 2; //Bounce just finished
-							MoveBounceTargetCount = 0;
-							u8 battlerId = GetNextMultiTarget();
-							if (gBattleMons[battlerId].hp && OriginalAttackerTargetCount < 3)
-							{
-								gBankAttacker = gBanksByTurnOrder[gCurrentTurnActionNumber]; //Restore original attacker
-								gBankTarget = battlerId; //Attack Bouncer's partner
-								gBattleScripting->animTargetsHit = 0;
-								gBattleScripting->atk49_state = 0;
-								MoveValuesCleanUp();
-								BattleScriptPush(gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect]);
-								gBattlescriptCurrInstr = BattleScript_FlushMessageBox;
-								return;
-							}
-						}
-					}*/
+					}
 				}
 			}
 			
@@ -797,4 +787,17 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 
     if (gBattleScripting->atk49_state == ATK49_COUNT && effect == FALSE)
         gBattlescriptCurrInstr += 3;
+}
+
+const bank_t gTargetsByBank[4][4] = 
+{
+	{B_POSITION_OPPONENT_LEFT, B_POSITION_OPPONENT_RIGHT, B_POSITION_PLAYER_RIGHT, 0xFF},	//Bank 0 - Player Left 
+	{B_POSITION_PLAYER_LEFT, B_POSITION_PLAYER_RIGHT, B_POSITION_OPPONENT_RIGHT, 0xFF}, 	//Bank 1 - Opponent Left
+	{B_POSITION_OPPONENT_LEFT, B_POSITION_OPPONENT_RIGHT, B_POSITION_PLAYER_LEFT, 0xFF}, 	//Bank 2 - Player Right
+	{B_POSITION_PLAYER_LEFT, B_POSITION_PLAYER_RIGHT, B_POSITION_OPPONENT_LEFT, 0xFF}  		//Bank 3 - Opponent Right
+};
+
+bank_t GetNextMultiTarget(void) 
+{
+	return gTargetsByBank[gBankAttacker][OriginalAttackerTargetCount];
 }
