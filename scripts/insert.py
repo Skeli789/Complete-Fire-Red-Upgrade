@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-	
+
 import os
 import subprocess
 import sys
@@ -9,6 +9,8 @@ import textwrap
 import sys
 
 OFFSET_TO_PUT = 0xc12ff0
+
+from datetime import datetime
 
 PathVar = os.environ.get('Path')
 Paths = PathVar.split(';')
@@ -32,6 +34,12 @@ NM = os.path.join(PATH, PREFIX + 'nm')
 AS = os.path.join(PATH, PREFIX + 'as')
 CC = os.path.join(PATH, PREFIX + 'gcc')
 CXX = os.path.join(PATH, PREFIX + 'g++')
+
+def ExtractPointer(listy):
+	pointer = 0
+	for a in range(len(listy)):
+		pointer += (int(listy[a])) << (8 * a)
+	return pointer
 
 def get_text_section():
 		# Dump sections
@@ -118,6 +126,42 @@ def repoint(rom, space, repoint_at, slidefactor=0):
 		data = (space.to_bytes(4, 'little'))
 		rom.write(bytes(data))
 
+ignored_offsets = [0x3986C0, 0x3986EC, 0xDABDF0] #These offsets contain the word 0x8900000 - the attack data from
+												 #Mr. DS's rombase. In order to maintain as much compatability as
+												 #possible, the data at these offsets is never modified.
+	
+def real_repoint(rom, offset_tuples):
+	pointer_list = []
+	pointer_dict = {}
+	for tuple in offset_tuples: #Format is (Double Pointer, New Pointer, Symbol)
+		offset = tuple[0]
+		rom.seek(offset)
+		pointer = ExtractPointer(rom.read(4))
+		pointer_list.append(pointer)
+		pointer_dict[pointer] = (tuple[1] + 0x08000000, tuple[2])
+
+	offset = 0
+	offset_list = []
+	
+	while (offset < 0xFFFFFD):
+		if offset in ignored_offsets:
+			offset += 4
+			continue
+		
+		rom.seek(offset)
+		word = ExtractPointer(rom.read(4))
+		rom.seek(offset)
+		
+		for pointer in pointer_list:
+			if word == pointer:
+				offset_list.append((offset, pointer_dict[pointer][1]))
+				rom.write(bytes(pointer_dict[pointer][0].to_bytes(4, 'little')))
+				break
+		
+		offset += 4
+	
+	return offset_list
+
 def bytereplace(rom, offset, data):
 
 		ar=offset
@@ -127,7 +171,8 @@ def bytereplace(rom, offset, data):
 				intbyte=int(words[i],16)
 				rom.write(bytes(intbyte.to_bytes(1, 'big')))
 				ar += 1
-		
+
+starttime = datetime.now()
 shutil.copyfile("Pokemon Unbound.gba", ROM_NAME)
 with open(ROM_NAME, 'rb+') as rom:
 		print("Inserting code.")
@@ -144,7 +189,7 @@ with open(ROM_NAME, 'rb+') as rom:
 		# Read hooks from a file
 		with open('hooks', 'r') as hooklist:
 				for line in hooklist:
-						if line.strip().startswith('#'): continue
+						if line.strip().startswith('#') or line.strip() == '': continue
 						
 						symbol, address, register = line.split()
 						offset = int(address, 16) - 0x08000000
@@ -155,11 +200,11 @@ with open(ROM_NAME, 'rb+') as rom:
 								continue
 
 						hook(rom, code, offset, int(register))
-
+		
 		# Read repoints from a file 
 		with open('repoints', 'r') as repointlist:
 				for line in repointlist:
-						if line.strip().startswith('#'): continue
+						if line.strip().startswith('#') or line.strip() == '': continue
 						if len(line.split()) is 2:
 								symbol, address = line.split()
 								offset = int(address, 16) - 0x08000000
@@ -168,8 +213,8 @@ with open(ROM_NAME, 'rb+') as rom:
 								except KeyError:
 										print('Symbol missing:', symbol)
 										continue
-
 								repoint(rom, code, offset)
+						
 						if len(line.split()) is 3:
 								symbol, address, slide = line.split()
 								offset = int(address, 16) - 0x08000000
@@ -178,12 +223,59 @@ with open(ROM_NAME, 'rb+') as rom:
 								except KeyError:
 										print('Symbol missing:', symbol)
 										continue
-								repoint(rom, code, offset, int(slide))						
+								repoint(rom, code, offset, int(slide))
+
+		symbols_repointed = set()
+
+		try:
+			with open('generatedrepoints', 'r') as repointlist:
+				for line in repointlist:
+					if line.strip().startswith('#') or line.strip() == '': continue
+					
+					symbol, address = line.split()
+					offset = int(address)
+					try:
+						code = table[symbol]
+					except KeyError:
+						print('Symbol missing:', symbol)
+						continue
+					symbols_repointed.add(symbol)
+					repoint(rom, code, offset)
+				
+		except FileNotFoundError:
+			with open('generatedrepoints', 'w') as repointlist:
+				repointlist.write('##This is a generated file at runtime. Do not modify it!\n')
+		
+		offsets_to_repoint_together = []
+		
+		with open('repointall', 'r') as repointlist:
+			for line in repointlist:
+				if line.strip().startswith('#') or line.strip() == '': continue
+				
+				symbol, address = line.split()
+				offset = int(address, 16) - 0x08000000
+				
+				if symbol in symbols_repointed: continue
+				
+				try:
+					code = table[symbol]
+				except KeyError:
+					print('Symbol missing:', symbol)
+					continue
+				offsets_to_repoint_together.append((offset, code, symbol))
+		
+			if offsets_to_repoint_together != []:
+				offsets = real_repoint(rom, offsets_to_repoint_together) #Format is [(offset, symbol), ...]
+				
+				output = open('generatedrepoints', 'a')
+				for tuple in offsets:
+					output.write(tuple[1] + ' ' + str(tuple[0]) + '\n')
+					#output.close() #Purposely left open so the user can't modify it
 
 		# Read routine repoints from a file 
 		with open('routinepointers', 'r') as pointerlist:
 				for line in pointerlist:
-						if line.strip().startswith('#'): continue
+						if line.strip().startswith('#') or line.strip() == '': continue
 						
 						symbol, address = line.split()
 						offset = int(address, 16) - 0x08000000
@@ -198,7 +290,7 @@ with open(ROM_NAME, 'rb+') as rom:
 		# Read routine rewrite wrapper from a file
 		with open('functionrewrites', 'r') as frwlist:
 				for line in frwlist:
-						if line.strip().startswith('#'): continue
+						if line.strip().startswith('#') or line.strip() == '': continue
 						
 						symbol, address, nparam, isreturning = line.split()
 						offset = int(address, 16) - 0x08000000
@@ -227,5 +319,5 @@ with open(ROM_NAME, 'rb+') as rom:
 					fstr = ('{:' + str(width) + '} {:08X}')
 					offset_file.write(fstr.format(key + ':', table[key] + 0x08000000) + '\n')
 		offset_file.close()
-						
+		print('Inserted in ' + str(datetime.now() - starttime) + '.')
 
