@@ -185,7 +185,7 @@ void atk03_ppreduce(void) {
             gBattleMons[gBankAttacker].pp[gCurrMovePos] = 0;
 
         if (!(gBattleMons[gBankAttacker].status2 & STATUS2_TRANSFORMED)
-            && !((gDisableStructs[gBankAttacker].unk18_b) & gBitTable[gCurrMovePos]))
+            && !((gDisableStructs[gBankAttacker].mimickedMoves) & gBitTable[gCurrMovePos]))
         {
             gActiveBattler = gBankAttacker;
             EmitSetMonData(0, REQUEST_PPMOVE1_BATTLE + gCurrMovePos, 0, 1, &gBattleMons[gBankAttacker].pp[gCurrMovePos]);
@@ -1686,11 +1686,11 @@ u8 CheckMoveLimitations(u8 bank, u8 unusableMoves, u8 check) {
             unusableMoves |= gBitTable[i];
         else if (move == gLastUsedMoves[bank] && check & MOVE_LIMITATION_TORMENTED && gBattleMons[bank].status2 & STATUS2_TORMENT)
             unusableMoves |= gBitTable[i];
-        else if (gDisableStructs[bank].tauntTimer1 && check & MOVE_LIMITATION_TAUNT && SPLIT(move) == SPLIT_STATUS)
+        else if (gDisableStructs[bank].tauntTimer && check & MOVE_LIMITATION_TAUNT && SPLIT(move) == SPLIT_STATUS)
             unusableMoves |= gBitTable[i];
         else if (IsImprisoned(bank, move) && check & MOVE_LIMITATION_IMPRISION)
             unusableMoves |= gBitTable[i];
-        else if (gDisableStructs[bank].encoreTimer1 && gDisableStructs[bank].encoredMove != move)
+        else if (gDisableStructs[bank].encoreTimer && gDisableStructs[bank].encoredMove != move)
             unusableMoves |= gBitTable[i];
         else if (holdEffect == ITEM_EFFECT_CHOICE_BAND && choicedMove != 0 && choicedMove != 0xFFFF && choicedMove != move && check & MOVE_LIMITATION_CHOICE)
             unusableMoves |= gBitTable[i];
@@ -1749,7 +1749,7 @@ void atkAD_tryspiteppreduce(void) {
 
             gBattleMons[gBankTarget].pp[i] -= lost_pp;
             gActiveBattler = gBankTarget;
-            if (!(gDisableStructs[gActiveBattler].unk18_b & gBitTable[i])
+            if (!(gDisableStructs[gActiveBattler].mimickedMoves & gBitTable[i])
                 && !(gBattleMons[gActiveBattler].status2 & STATUS2_TRANSFORMED))
             {
                 EmitSetMonData(0, REQUEST_PPMOVE1_BATTLE + i, 0, 1, &gBattleMons[gActiveBattler].pp[i]);

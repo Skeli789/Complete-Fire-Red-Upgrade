@@ -478,12 +478,12 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
                 }
 				if (gDisableStructs[bank].encoredMove) {
 					gDisableStructs[bank].encoredMove = 0; //Same as end turn clear
-					gDisableStructs[bank].encoreTimer1 = 0;
+					gDisableStructs[bank].encoreTimer = 0;
 					StringCopy(gBattleTextBuff1, gStatusConditionString_DisableProblem);
 					++i;
                 }
-				if (gDisableStructs[gActiveBattler].tauntTimer1) {
-					gDisableStructs[gActiveBattler].tauntTimer1 = 0;
+				if (gDisableStructs[gActiveBattler].tauntTimer) {
+					gDisableStructs[gActiveBattler].tauntTimer = 0;
 					StringCopy(gBattleTextBuff1, gStatusConditionString_TauntProblem);
 					++i;
 				}
@@ -547,7 +547,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
 						MarkBufferBankForExecution(gActiveBattler);
 						break;
 					case ITEM_PP_CHANGE:
-						if (!(gBattleMons[bank].status2 & STATUS2_TRANSFORMED) && !(gDisableStructs[bank].unk18_b & gBitTable[i]))
+						if (!(gBattleMons[bank].status2 & STATUS2_TRANSFORMED) && !(gDisableStructs[bank].mimickedMoves & gBitTable[i]))
 							gBattleMons[bank].pp[i] = changedPP;
 						break;
 					case ITEM_HP_CHANGE:
