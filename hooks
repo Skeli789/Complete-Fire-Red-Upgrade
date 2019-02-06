@@ -80,7 +80,7 @@ HandleInputChooseMove 802EA10 0
 ##
 ##To Be Removed After Testing
 atk00_attackcanceler 801D760 0
-##atk01_accuracycheck 801DDC4 0
+atk01_accuracycheck 801DDC4 0
 atk04_critcalc 801E408 0
 atk05_damagecalc 801E59C 0
 atk06_typecalc 0801E848 0
@@ -114,3 +114,7 @@ CheckForTrainersWantingBattle 8081B30 0
 ##
 ##Party Menu Hooks
 CursorCb_Summary 8122D4C 1
+##
+##Battle Animation Hooks
+SlideMonToOriginalPosHook 080991BA 0
+SlideMonToOffsetHook 080992E4 0

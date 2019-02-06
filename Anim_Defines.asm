@@ -403,6 +403,8 @@
 .equ Template_Healing_Circle, 0x83E37A4
 .equ Template_Pal_Fade, 0x83E7B24
 .equ Template_Ring, 0x83E4094
+.equ Template_SlideMonToOffset, 0x83d4e9c
+.equ Template_SlideMonToOriginalPos, 0x83d4e84
 
 @calls
 
