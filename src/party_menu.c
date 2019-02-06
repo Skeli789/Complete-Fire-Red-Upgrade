@@ -330,4 +330,5 @@ void CursorCb_Summary(u8 taskId)
 
 void openSummary(u8 taskId)
 {
+	sub_811FA78(taskId); //Replace this
 }
