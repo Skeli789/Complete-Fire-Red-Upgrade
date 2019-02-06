@@ -3,7 +3,7 @@ ExtensionState = 0x3000F28;
 
 /*Old Things*/
 gEvolutionTable = 0x08989D30; /*Change this*/
-gBattleScriptsForMoveEffects = 0x8903B70; /*Remove This*/
+/*gBattleScriptsForMoveEffects = 0x8903B70; Remove This*/
 
 gAccuracyStageRatios = 0x82504FC;
 sTurnActionsFuncsTable = 0x8250038;
