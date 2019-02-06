@@ -7,12 +7,12 @@ LoadBattleBG_EntryOverlay 800F2AC 1
 BuildTrainerPartyHook 800FF7E 0
 BattleBeginFirstTurn 801385C 0
 GetWhoStrikesFirst 8014CD8 3
-HandleEndTurn_BattleWon 8015670 0
-HandleEndTurn_BattleLost 801578C 0
 SetActionsAndBanksTurnOrder 80150A8 0
 RunTurnActionsFunctions 80155C8 0
+HandleEndTurn_BattleWon 8015670 0
+HandleEndTurn_BattleLost 801578C 0
 HandleEndTurn_RanFromBattle 8015850 0
-ChooseTargetFix 8015F48 0
+HandleAction_UseMove 8015CA0 0
 PrepareStringBattle 80173AC 3
 CheckMoveLimitations 801779C 3
 TurnBasedEffects 08018258 0
