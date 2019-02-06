@@ -20,6 +20,8 @@
 .global ROLLOUT_TIMER_ASM	@ hook at 0xb4c40 via r0 - skip over rollout timer for tectonic rage
 .global HEX_SIDE_ASM		@ hook at 0xb8d74 via r0 - hexes on target side instead of attacker
 .global ENCORE_USER_ASM		@ hook at 0xe0da8 via r1 - encore spotlight on attacker
+.global DESTINY_BOND_ASM	@ hook at 0xb60ac via r0 - only one shadow in double battle
+
 
 /* attack animation table */
 .align 2
@@ -17431,9 +17433,184 @@ ANIM_EXTREME_EVOBOOST:
 endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool     
+.pool   
+@ credit to ghoulslash  
 ANIM_PULVERIZING_PANCAKE:
-endanimation
+	loadparticle 0x2757 @detect
+	loadparticle 0x2851 @red
+	loadparticle 0x275a @dig
+	loadparticle 0x2797 @hit
+	makebankinvisible attacker_partner
+	makebankinvisible target_partner
+	launchtask AnimTask_arg7_is_target_player 0x2 0x0
+	jumpifargmatches 0x7 bank_target PULVERIZE_ON_PLAYER
+PULVERIZE_ON_OPPONENT:
+	launchtemplate PANCAKE_RED_DETECT 0xd 0x2 0x14 0xffec
+	goto CONTINUE_PULVERIZE
+PULVERIZE_ON_PLAYER:
+	launchtemplate PANCAKE_RED_DETECT 0xd 0x2 0xa 0xfff2
+	launchtemplate PANCAKE_RED_DETECT 0xd 0x2 0xfff6 0xfff2
+CONTINUE_PULVERIZE:	
+	playsound2 0xca 0xc0 
+	waitanimation
+	loadBG1 BG_SOLARBEAM_ON_OPPONENT
+	waitforBG
+	launchtask AnimTask_move_bank 0x5 0x5 bank_attacker 0x0 0x2 0x32 0x1
+	call PANCAKE_RUN_DIG 
+	call PANCAKE_RUN_DIG  
+	call PANCAKE_RUN_DIG  
+	call PANCAKE_RUN_DIG 
+	call PANCAKE_RUN_DIG  
+	call PANCAKE_RUN_DIG  
+	call PANCAKE_RUN_DIG  
+	call PANCAKE_RUN_DIG  
+	call PANCAKE_RUN_DIG  
+	loadparticle 0x27ac @fly
+	playsound2 0x88 0x3f 
+	launchtemplate 0x83e6bb8 0x2 0x4 0x0 0x0 0xd 0x150 	
+	pause 0x2
+	launchtemplate 0x83e7aac 0x2 0x6 0x0 0x0 0xc 0x4 0xfff0 0x22 
+	launchtemplate 0x83e7aac 0x2 0x6 0x0 0x0 0x10 0x4 0xfff6 0x22 
+	launchtemplate 0x83e7aac 0x2 0x6 0x0 0x1 0xe 0x4 0xffee 0x22 
+	launchtemplate 0x83e7aac 0x2 0x6 0x0 0x1 0xc 0x4 0xfff0 0x22 
+	unloadparticle 0x2757
+	unloadparticle 0x2851
+	loadBG1 BG_SEISMICTOSS_SKUUPPERCUT
+	waitforBG
+	launchtask AnimTask_scroll_background 0x5 0x4 0x0 0x1000 0x0 0xffff	
+	waitfortransparentBG
+	loadparticle 0x27cc
+	launchtask 0x80b6021 0x5 0x2 0x33 0x33 	@first arg is duration, last arg is move speed		
+	pause 0x10
+	call PANCAKE_BG_SLOWDOWN
+	call PANCAKE_BG_SLOWDOWN
+	call PANCAKE_BG_SLOWDOWN
+	call PANCAKE_BG_SLOWDOWN
+	call PANCAKE_BG_SLOWDOWN
+	launchtemplate Template_Pal_Fade 0x0 0x5 0x4 0x2 0x0 0xb 0x0000		@ target darkens 
+	call PANCAKE_BG_SLOWDOWN	@0
+	call PANCAKE_BG_SLOWDOWN
+	call PANCAKE_BG_SLOWDOWN
+	call PANCAKE_BG_SLOWDOWN
+	call PANCAKE_BG_SLOWDOWN
+	call PANCAKE_BG_SLOWDOWN
+	call PANCAKE_BG_SLOWDOWN	@-0x1000
+	pause 0x1	
+	waitfortransparentBG
+	loadparticle 0x27db @ring
+	unloadparticle 0x275a @dig
+	loadparticle 0x27e3 @yellow
+	launchtemplate 0x83e6cfc 0x83 0x0 
+	pause 0x7
+	playsound2 0xab 0xc0
+	launchtemplate Template_Hit 0x82 0x4 0x0 0x0 0x1 0x0		@big hit marker
+	pause 0x0
+	launchtask AnimTask_screen_shake 0x5 0x3 bank_target 0x4 0x2c
+	launchtemplate PANCAKE_YELLOW_RING 0x83 0x4 0x0 0x0 0x100 0x0
+	pause 0x5
+	loadparticle 0x27d6 @explosion
+	call PANCAKE_EXPLODE
+	launchtemplate Template_Pal_Fade 0x0 0x5 0x1f 0x2 0x0 0x10 0x7fff	@ everything goes white
+	call PANCAKE_EXPLODE
+	waitanimation
+	launchtemplate Template_Pal_Fade 0x0 0x5 0x1f 0x0 0x0 0x10 0x7fff
+	pause 0x0
+	loaddefaultBG
+	waitforBG
+	setarg 0x7 0xffff
+	waitfortransparentBG
+	makebankvisible attacker_partner
+	makebankvisible target_partner	
+	waitanimation
+	endanimation
+	
+PANCAKE_RUN_DIG:
+	launchtemplate 0x83e7aac 0x2 0x6 0x0 0x0 0xc 0x4 0xfff0 0x12 
+	launchtemplate 0x83e7aac 0x2 0x6 0x0 0x0 0x10 0x4 0xfff6 0x12 
+	launchtemplate 0x83e7aac 0x2 0x6 0x0 0x1 0xe 0x4 0xffee 0x12 
+	launchtemplate 0x83e7aac 0x2 0x6 0x0 0x1 0xc 0x4 0xfff0 0x12 
+	playsound2 0xa8 0xc0 
+	pause 0x5
+	return
+	
+PANCAKE_BG_SLOWDOWN:
+	launchtask AnimTask_scroll_background 0x5 0x4 0x0 0xfd56 0x0 0xffff	@-0x2aa
+	pause 0x1
+	return
+	
+PANCAKE_EXPLODE:
+	playsound2 0xab 0xc0
+	launchtemplate PANCAKE_YELLOW_EXPLODE 0x83 0x4 0x0 0x0 bank_target 0x1  
+	pause 0x6
+	playsound2 0xab 0xc0
+	launchtemplate PANCAKE_YELLOW_RING 0x83 0x4 0x0 0x0 0x100 0x0
+	launchtemplate PANCAKE_YELLOW_EXPLODE 0x83 0x4 0x18 0xffe8 bank_target 0x1  
+	pause 0x6 
+	playsound2 0xab 0xc0
+	launchtemplate PANCAKE_YELLOW_EXPLODE 0x83 0x4 0xfff0 0x10 bank_target 0x1  
+	pause 0x6 
+	playsound2 0xab 0xc0  
+	launchtemplate PANCAKE_YELLOW_EXPLODE 0x83 0x4 0xffe8 0xfff4 bank_target 0x1  
+	pause 0x6 
+	playsound2 0xab 0xc0 
+	launchtemplate PANCAKE_YELLOW_RING 0x83 0x4 0x0 0x0 0x100 0x0
+	launchtemplate PANCAKE_YELLOW_EXPLODE 0x83 0x4 0x10 0x10 bank_target 0x1  
+	pause 0x6 
+	return
+	
+.align 2
+PANCAKE_RED_DETECT: objtemplate 0x2757 0x2851 0x83AC9D8 0x83BF47C 0x0 0x8231CFC 0x8076FD1 
+PANCAKE_YELLOW_EXPLODE: objtemplate 0x27D6 0x27e3 0x83AC9D8 0x83E3F90 0x0 0x8231CFC 0x8075D9D 
+PANCAKE_YELLOW_RING: objtemplate 0x27DB 0x27e3 0x83ACAA0 0x8231CF0 0x0 0x83E4088 0x8075D9D 
+
+
+@ hook at 0xb60ac via r0
+.pool
+.align 2
+DESTINY_BOND_ASM:
+	push {r1}
+	ldr r0, =CurrentMove
+	ldrh r0, [r0]
+	ldr r1, =MOVE_PULVERIZING_PANCAKE
+	cmp r1, r0
+	beq CheckDefender
+	ldr r1, =MOVE_SHADOWSNEAK
+	cmp r1, r0
+	beq CheckDefender
+	ldr r1, =MOVE_HYPERSPACEHOLE
+	cmp r1, r0
+	bne CheckAllBanks
+CheckDefender:
+	mov r0, r4
+	ldr r1, .AnimDefender
+	ldrb r1, [r1]
+	cmp r1, r0
+	beq CheckBank
+	pop {r1}
+SkipBank:
+	ldr r0, .ReturnSkip
+	bx r0
+	
+CheckBank:	
+	mov r0, r4	
+	bl b_side_obj_P__get_some_boolean
+	pop {r1}
+	lsl r0, r0, #0x18
+	cmp r0, #0x0
+	beq SkipBank
+ReturnNormal:
+	ldr r0, .Return
+	bx r0
+
+b_side_obj_P__get_some_boolean:
+	ldr r1, =(0x08072df0 +1)
+	bx r1
+
+.align 2
+.ReturnSkip: .word 0x080b615f
+.CheckBankAlive: .word 
+.Return: .word 0x080b60b9
+.AnimDefender: .word 0x02037f1b
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
