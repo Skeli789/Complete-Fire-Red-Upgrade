@@ -173,6 +173,7 @@ PSYCHIC_TERRAIN
 #define MOVE_TARGET_BOTH            0x8
 #define MOVE_TARGET_USER            0x10
 #define MOVE_TARGET_FOES_AND_ALLY   0x20
+#define MOVE_TARGET_ALL   			0x20
 #define MOVE_TARGET_OPPONENTS_FIELD 0x40
 
 // defines for the u8 array gTypeEffectiveness
@@ -329,31 +330,31 @@ struct DisableStruct
     /*0x0B*/ u8 disableTimer2 : 4;
     /*0x0C*/ u8 encoredMovePos;
     /*0x0D*/ u8 unkD;
-    /*0x0E*/ u8 encoreTimer1 : 4;
-    /*0x0E*/ u8 encoreTimer2 : 4;
-    /*0x0F*/ u8 perishSongTimer1 : 4;
-    /*0x0F*/ u8 perishSongTimer2 : 4;
+    /*0x0E*/ u8 encoreTimer:4;
+    /*0x0E*/ u8 encoreTimerStartValue:4;
+    /*0x0F*/ u8 perishSongTimer:4;
+    /*0x0F*/ u8 perishSongTimerStartValue:4;
     /*0x10*/ u8 furyCutterCounter;
-    /*0x11*/ u8 rolloutTimer1 : 4;
-    /*0x11*/ u8 rolloutTimer2 : 4;
-    /*0x12*/ u8 chargeTimer1 : 4;
-    /*0x12*/ u8 chargeTimer2 : 4;
-    /*0x13*/ u8 tauntTimer1:4;
+    /*0x11*/ u8 rolloutTimer:4;
+    /*0x11*/ u8 rolloutTimerStartValue:4;
+    /*0x12*/ u8 chargeTimer:4;
+    /*0x12*/ u8 chargeTimerStartValue:4;
+    /*0x13*/ u8 tauntTimer:4;
     /*0x13*/ u8 tauntTimer2:4;
     /*0x14*/ u8 bankPreventingEscape;
     /*0x15*/ u8 bankWithSureHit;
     /*0x16*/ u8 isFirstTurn;
     /*0x17*/ u8 unk17;
     /*0x18*/ u8 truantCounter : 1;
-    /*0x18*/ u8 truantUnknownBit : 1;
+    /*0x18*/ u8 truantSwitchInHack:1;
     /*0x18*/ u8 unk18_a_2 : 2;
-    /*0x18*/ u8 unk18_b : 4;
+    /*0x18*/ u8 mimickedMoves : 4;
     /*0x19*/ u8 rechargeCounter;
     /*0x1A*/ u8 unk1A[2];
 };
-
+	
 extern struct DisableStruct gDisableStructs[BATTLE_BANKS_COUNT];
-
+	
 struct ProtectStruct
 {
     /* field_0 */
@@ -374,14 +375,14 @@ struct ProtectStruct
     u32 loveImmobility:1;
     u32 usedDisabledMove:1;
     /* field_2 */
-    u32 usedTauntedMove:1;      // 0x1
-    u32 flag2Unknown:1;         // 0x2
-    u32 flinchImmobility:1;     // 0x4
-    u32 notFirstStrike:1;       // 0x8
-    u32 flag_x10 : 1;           // 0x10
-    u32 flag_x20 : 1;           // 0x20
-    u32 flag_x40 : 1;           // 0x40
-    u32 flag_x80 : 1;           // 0x80
+    u32 usedTauntedMove:1;      	// 0x1
+    u32 flag2Unknown:1;         	// 0x2
+    u32 flinchImmobility:1;     	// 0x4
+    u32 notFirstStrike:1;       	// 0x8
+    u32 palaceUnableToUseMove : 1;	// 0x10 //May be implemented...
+    u32 flag_x20 : 1;           	// 0x20
+    u32 flag_x40 : 1;           	// 0x40
+    u32 flag_x80 : 1;           	// 0x80
     /* field_3 */
     u32 KingsShield : 1;
     u32 SpikyShield : 1;
