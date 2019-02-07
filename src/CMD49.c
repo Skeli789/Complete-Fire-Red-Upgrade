@@ -6,6 +6,7 @@
 //Add check to see if AI move prediction was successful. If not, then if the same move is predicted, don't predict that same move again.
 //Remove the lines at the bottom?
 //Put Soul-Heart somewhere
+//Make Red Card its own thing
 
 #define BattleScript_RageIsBuilding (u8*) 0x81D8C48
 #define BattleScript_DefrostedViaFireMove (u8*) 0x81D9098
@@ -20,6 +21,7 @@ extern u8 BattleScript_PoisonTouch[];
 extern u8 BattleScript_BeakBlastBurn[];
 extern u8 BattleScript_Magician[];
 extern u8 BattleScript_Moxie[];
+extern u8 BattleScript_MindBlownDamage[];
 extern u8 BattleScript_LifeOrbDamage[];
 extern u8 BattleScript_Pickpocket[];
 extern u8 BattleScript_DancerActivated[];
@@ -37,7 +39,6 @@ enum
     ATK49_DEFROST,
     ATK49_SYNCHRONIZE_TARGET,
     ATK49_MOVE_END_ABILITIES,
-    ATK49_STATUS_IMMUNITY_ABILITIES,
 	ATK49_BEAK_BLAST_BURN,
     ATK49_SYNCHRONIZE_ATTACKER,
     ATK49_CHOICE_MOVE,
@@ -50,12 +51,14 @@ enum
 	ATK49_ITEM_EFFECTS_END_TURN_ATTACKER,
 	ATK49_ITEM_EFFECTS_CONTACT_ATTACKER,
 	ATK49_ITEM_EFFECTS_CONTACT_TARGET,
+	ATK49_STATUS_IMMUNITY_ABILITIES,
     ATK49_SUBSTITUTE,
     ATK49_UPDATE_LAST_MOVES,
     ATK49_MIRROR_MOVE,
 	ATK49_MAGICIAN_MOXIE,
 	ATK49_MULTI_HIT_MOVES,
     ATK49_NEXT_TARGET,
+	ATK49_MIND_BLOWN_RECOIL,
 	ATK49_LIFE_ORB_RECOIL,
 	ATK49_RESTORE_ABILITIES,
 	ATK49_PICKPOCKET,
@@ -185,13 +188,6 @@ void atk49_moveend(void) //All the effects that happen after a move is used
                 effect = TRUE;
             gBattleScripting->atk49_state++;
             break;
-			
-        case ATK49_STATUS_IMMUNITY_ABILITIES: // status immunities
-            if (AbilityBattleEffects(ABILITYEFFECT_IMMUNITY, 0, 0, 0, 0))
-                effect = TRUE; // it loops through all battlers, so we increment after its done with all battlers
-            else
-                gBattleScripting->atk49_state++;
-            break;
 		
 		case ATK49_BEAK_BLAST_BURN:
 			if (CheckContact(gCurrentMove, bankAtk)
@@ -243,30 +239,6 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 
             gBattleScripting->atk49_state++;
             break;
-
-		case ATK49_ITEM_EFFECTS_END_TURN_TARGET:
-			if (ItemBattleEffects(ItemEffects_EndTurn, bankDef, TRUE, FALSE))
-                effect = TRUE;
-			gBattleScripting->atk49_state++;
-			break;
-		
-		case ATK49_ITEM_EFFECTS_END_TURN_ATTACKER:
-			if (ItemBattleEffects(ItemEffects_EndTurn, bankAtk, TRUE, FALSE))
-                effect = TRUE;
-			gBattleScripting->atk49_state++;
-			break;
-
-        case ATK49_ITEM_EFFECTS_CONTACT_ATTACKER:
-            if (ItemBattleEffects(ItemEffects_ContactAttacker, bankAtk, TRUE, FALSE)) //Attacker comes first because it can be switched
-				effect = TRUE;														  //out with Red Card
-			gBattleScripting->atk49_state++;
-			break;
-			
-        case ATK49_ITEM_EFFECTS_CONTACT_TARGET:
-            if (ItemBattleEffects(ItemEffects_ContactTarget, bankDef, TRUE, FALSE))
-				effect = TRUE;
-			gBattleScripting->atk49_state++;
-			break;
 			
         case ATK49_ATTACKER_INVISIBLE: // make attacker sprite invisible
             if (gStatuses3[bankAtk] & (STATUS3_SEMI_INVULNERABLE)
@@ -323,6 +295,37 @@ void atk49_moveend(void) //All the effects that happen after a move is used
                 return;
             }
             gBattleScripting->atk49_state++;
+            break;
+
+		case ATK49_ITEM_EFFECTS_END_TURN_TARGET:
+			if (ItemBattleEffects(ItemEffects_EndTurn, bankDef, TRUE, FALSE))
+                effect = TRUE;
+			gBattleScripting->atk49_state++;
+			break;
+		
+		case ATK49_ITEM_EFFECTS_END_TURN_ATTACKER:
+			if (ItemBattleEffects(ItemEffects_EndTurn, bankAtk, TRUE, FALSE))
+                effect = TRUE;
+			gBattleScripting->atk49_state++;
+			break;
+
+        case ATK49_ITEM_EFFECTS_CONTACT_ATTACKER:
+            if (ItemBattleEffects(ItemEffects_ContactAttacker, bankAtk, TRUE, FALSE)) //Attacker comes first because it can be switched
+				effect = TRUE;														  //out with Red Card
+			gBattleScripting->atk49_state++;
+			break;
+			
+        case ATK49_ITEM_EFFECTS_CONTACT_TARGET:
+            if (ItemBattleEffects(ItemEffects_ContactTarget, bankDef, TRUE, FALSE))
+				effect = TRUE;
+			gBattleScripting->atk49_state++;
+			break;
+			
+        case ATK49_STATUS_IMMUNITY_ABILITIES: // status immunities
+            if (AbilityBattleEffects(ABILITYEFFECT_IMMUNITY, 0, 0, 0, 0))
+                effect = TRUE; // it loops through all battlers, so we increment after its done with all battlers
+            else
+                gBattleScripting->atk49_state++;
             break;
 		
         case ATK49_SUBSTITUTE: // update substitute
@@ -656,10 +659,28 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			OriginalAttackerTargetCount = 0;
             gBattleScripting->atk49_state++;
             break;
+		
+		case ATK49_MIND_BLOWN_RECOIL:
+			if (gCurrentMove == MOVE_MINDBLOWN
+			&& ABILITY(bankAtk) != ABILITY_MAGICGUARD
+			&& gBattleMons[bankAtk].hp
+			&& !(gHitMarker & HITMARKER_UNABLE_TO_USE_MOVE))
+			{
+				gBattleMoveDamage = MathMax(1, gBattleMons[bankAtk].maxHP / 2);
+				
+				if (IS_ODD(gBattleMons[bankAtk].maxHP)
+				&& gBattleMons[bankAtk].maxHP >= 3)
+					++gBattleMoveDamage; //Round up Damage
+					
+				BattleScriptPushCursor();
+				gBattlescriptCurrInstr = BattleScript_MindBlownDamage;
+				effect = 1;
+			}
+			gBattleScripting->atk49_state++;
+			break;
 			
 		case ATK49_LIFE_ORB_RECOIL:
 			if (ITEM_EFFECT(bankAtk) == ITEM_EFFECT_LIFE_ORB
-			&& gMultiHitCounter <= 1
 			&& AttackerDidDamageAtLeastOnce
 			&& ABILITY(bankAtk) != ABILITY_MAGICGUARD
 			&& gBattleMons[bankAtk].hp
