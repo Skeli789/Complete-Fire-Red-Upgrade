@@ -22,9 +22,9 @@ const struct BattleTowerTrainer gTowerTrainers[] =
 	.trainerClass = 	CLASS_YOUNGSTER,
 	.trainerSprite = 	TRAINER_SPRITE_YOUNGSTER,
 	.gender = 			MALE,
-	.preBattleText = 	(u8*) 0x8AAAAAA,
-	.playerWinText = 	(u8*) 0x8AAAAAA,
-	.playerLoseText = 	(u8*) 0x8AAAAAA,
+	.preBattleText = 	FrontierText_Youngster_PreBattle_1,
+	.playerWinText = 	FrontierText_Youngster_PlayerWin_1,
+	.playerLoseText = 	FrontierText_Youngster_PlayerLose_1,
 	},
   
 	{ 
@@ -35,7 +35,27 @@ const struct BattleTowerTrainer gTowerTrainers[] =
 	.preBattleText = 	(u8*) 0x8AAAAAA,
 	.playerWinText = 	(u8*) 0x8AAAAAA,
 	.playerLoseText = 	(u8*) 0x8AAAAAA,
-	}
+	},
+	
+	{ 
+	.owNum = 			OW_YOUNGSTER,
+	.trainerClass =		CLASS_YOUNGSTER,
+	.trainerSprite = 	TRAINER_SPRITE_YOUNGSTER,
+	.gender = 			MALE,
+	.preBattleText = 	(u8*) 0x8AAAAAA,
+	.playerWinText = 	(u8*) 0x8AAAAAA,
+	.playerLoseText = 	(u8*) 0x8AAAAAA,
+	},
+	
+	{ 
+	.owNum = 			OW_LASS,
+	.trainerClass =		CLASS_LASS,
+	.trainerSprite = 	TRAINER_SPRITE_LASS,
+	.gender = 			FEMALE,
+	.preBattleText = 	(u8*) 0x8AAAAAA,
+	.playerWinText = 	(u8*) 0x8AAAAAA,
+	.playerLoseText = 	(u8*) 0x8AAAAAA,
+	},
 };
 
 /*Male Names*/
