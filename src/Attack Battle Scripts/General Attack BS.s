@@ -544,14 +544,125 @@ SecondDefogCheck:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-.global BS_142_BellyDrum
-BS_142_BellyDrum:
-	jumpifnotmove MOVE_MINDBLOWN 0x1D7A52
-	jumpifability BANK_ATTACKER ABILITY_MAGICGUARD 0x1D6926
-	attackcanceler
-	accuracycheck 0x81D695E 0x0
-	call STANDARD_DAMAGE
+.global BS_152_Thunder
+BS_152_Thunder:
+	jumpifnotmove MOVE_HURRICANE 0x1D7C39
+	setmoveefffect MOVE_EFFECT_PARALYSIS
+	orword HITMARKER HITMARKER_IGNORE_IN_AIR
+	goto 0x81D6926	
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global BS_154_BeatUp
+BS_154_BeatUp:
 	@;TODO
+	
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global BS_155_Fly
+BS_155_Fly:
+	@;TODO
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global BS_158_FakeOut
+BS_158_FakeOut:
+	jumpifnotmove MOVE_FIRSTIMPRESSION 0x1D7DDF
+	attackcanceler
+	jumpifnotfirstturn FAILED - 2
+	goto 0x81D6926
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global BS_160_Stockpile
+BS_160_Stockpile:
+	@;TODO
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global BS_161_SpitUp
+BS_161_SpitUp:
+	@;TODO
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global BS_165_Torment
+BS_165_Torment:
+	attackcanceler
+	accuracycheck FAILED - 2 0x0
+	attackstring
+	ppreduce
+	jumpifabilitypresenttargetfield ABILITY_AROMAVEIL ProtectedByAromaVeil
+	goto 0x81D7EBB
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global BS_170_FocusPunch
+BS_170_FocusPunch:
+	jumpifmove MOVE_BEAKBLAST BeakBlastDoBS
+	jumpifmove MOVE_SHELLTRAP ShellTrapDoBS
+	goto 0x1D805C
+	
+BeakBlastDoBS:
+	callasm ClearBeakBlastBit + 1
+	goto 0x1D6926
+
+ShellTrapDoBS: @;Do Powder fix
+	attackcanceler
+	counterdamagecalculator FAILED - 2
+	goto 0x81D6927
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global BS_175_Taunt
+BS_175_Taunt:
+	attackcanceler
+	accuracycheck FAILED - 2 0x0
+	attackstring
+	ppreduce
+	jumpifability BANK_TARGET ABILITY_OBLIVIOUS ProtectedByOblivious
+	jumpifabilitypresenttargetfield ABILITY_AROMAVEIL ProtectedByAromaVeil
+	goto 0x81D80D1
+	
+ProtectedByOblivious:
+	pause DELAY_HALFSECOND
+	setword BATTLE_STRING_LOADER ProtectedByObliviousString
+	printstring 0x184
+	waitmessage DELAY_1SECPMD
+	goto BS_MOVE_END
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global BS_177_Trick
+BS_177_Trick:
+	jumpifnotmove MOVE_BESTOW 0x1D80F8
+	attackcanceler
+	jumpifsecondarystatus BANK_TARGET STATUS2_SUBSTITUTE FAILED - 2
+	accuracycheck FAILED - 2 0x0
+	attackstring
+	ppreduce
+	callasm BestowItem
+	attackanimation
+	waitanimation
+	setword BATTLE_STRING_LOADER BestowString
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
+	
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global BS_184_Recycle
+BS_184_Recycle:
+	attackcanceler
+	jumpifnotmove MOVE_BELCH RecycleBS
+	callasm BelchFunction + 1
+	goto 0x1D6927
+	
+RecycleBS:
+	jumpifcounter BANK_ATTACKER INCINERATE_COUNTER NOTEQUALS 0x0 FAILED - 2
+	goto 0x81D81A1
+	
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 .align 2
 ReflectTypeString: .byte 0xFD, 0x0F, 0xB4, 0xE7, 0x00, 0xE8, 0xED, 0xE4, 0xD9, 0x00, 0xD6, 0xD9, 0xD7, 0xD5, 0xE1, 0xD9, 0xFE, 0xE8, 0xDC, 0xD9, 0x00, 0xE7, 0xD5, 0xE1, 0xD9, 0x00, 0xD5, 0xE7, 0x00, 0xFD, 0x10, 0xB4, 0xE7, 0xAB, 0xFF
@@ -563,4 +674,6 @@ LaserFocusString: .byte 0xFD, 0x0F, 0x00, 0xD7, 0xE3, 0xE2, 0xD7, 0xD9, 0xE2, 0x
 BurnUpString: .byte 0xFD, 0x0F, 0x00, 0xD6, 0xE9, 0xE6, 0xE2, 0xD9, 0xD8, 0x00, 0xDD, 0xE8, 0xE7, 0xD9, 0xE0, 0xDA, 0x00, 0xE3, 0xE9, 0xE8, 0xAB, 0xFF
 UTurnString: .byte 0x
 RemoveFogString: .byte 0xFD, 0x0F, 0x00, 0xD6, 0xE0, 0xD9, 0xEB, 0x00, 0xD5, 0xEB, 0xD5, 0xED, 0xFE, 0xE8, 0xDC, 0xD9, 0x00, 0xD8, 0xD9, 0xD9, 0xE4, 0x00, 0xDA, 0xE3, 0xDB, 0x00, 0xEB, 0xDD, 0xE8, 0xDC, 0x00, 0xFD, 0x14, 0xAB, 0xFF
+ProtectedByObliviousString: .byte 0xFD, 0x10, 0x0, 0xEB, 0xD5, 0xE7, 0x00, 0xE4, 0xE6, 0xE3, 0xE8, 0xD9, 0xD7, 0xE8, 0xD9, 0xD8, 0xFE, 0xD6, 0xED, 0x00, 0xFD, 0x19, 0xAB, 0xFF
+BestowString: .byte 0xFD, 0x10, 0x00, 0xE6, 0xD9, 0xD7, 0xD9, 0xDD, 0xEA, 0xD9, 0xD8, 0x00, 0xE8, 0xDC, 0xD9, 0xFE, 0xFD, 0x16, 0x00, 0xDA, 0xE6, 0xE3, 0xE1, 0x00, 0xFD, 0x0F, 0xAB, 0xFF
 */

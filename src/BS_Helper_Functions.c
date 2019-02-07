@@ -427,3 +427,16 @@ void DefogHelperFunc(void) {
 		gBattlescriptCurrInstr = BattleScript_DefogAdditionalEffects - 5;
 	}
 }*/
+
+void ClearBeakBlastBit(void) {
+	BeakBlastByte &= ~(gBitTable[gBankAttacker]);
+}
+
+void BestowItem(void) {
+
+}
+
+void BelchFunction(void) {
+	if (!(BelchCounters & gBitTable[gBattlerPartyIndexes[gBankAttacker]]))
+		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;	
+}
