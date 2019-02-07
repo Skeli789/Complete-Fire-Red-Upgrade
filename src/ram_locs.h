@@ -336,7 +336,7 @@ typedef u8 Buffer_t[0x200];
 
 #define EmbargoTimers ((u8*) 0x203D894)
 #define ElectrifyTimers ((u8*) 0x203D898)
-#define BelchCounters ((u8*) 0x203D89C)
+#define BelchCounters (*((u8*) 0x203D89C)) //Bit field
 #define IllusionBrokenBytes ((u8*) 0x203D8A8)
 
 #define MoodyLowerStat *((u8*) 0x203D8B4)
