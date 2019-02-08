@@ -1,6 +1,6 @@
 ##
 BattleScript_RainDishActivates 0801A4A0
-##
+
 ##Wild -> The Wild
 TheWildString 080D7B78
 TheWildString 080D7CA0
@@ -19,7 +19,7 @@ TheOpposingString 080D7E00
 TheOpposingString 080D7E74
 TheOpposingString 080D82C0
 TheOpposingString 080D8554
-##
+
 ##Gen 4 Player OW Running Fix
 gEventObjectImageAnim_RunSouth 083A3460
 gEventObjectImageAnim_RunNorth 083A3464
@@ -29,20 +29,23 @@ gEventObjectImageAnim_RunSouth 083A34C0
 gEventObjectImageAnim_RunNorth 083A34C4
 gEventObjectImageAnim_RunWest 083A34C8
 gEventObjectImageAnim_RunEast 083A34CC
-##
+
 TestScript 08B7AD70
 TestScript 08B7ADA0
 TestScript 087D67B0
-##
+
 TrainerBackspritesTable 0803F8A0
 gTrainerBackAnimsPtrTable 0803F8A4
 gTrainerBackPicPaletteTable 08034774
 gTrainerBackPicPaletteTable 080D6EA4
 gTrainerBackPicPaletteTable 080EAEC0
 gTrainerBackPicPaletteTable 08159458
-##
+
 ##Battle Scripts
 ThiefStealBS 8020E74
 PoisonedByBS 08250634
 BurnedByBS 08250638
 BadPoisonedByBS 08250644
+
+##Poke Ball Expansion
+GetMonPokeBallHook 0803FE70

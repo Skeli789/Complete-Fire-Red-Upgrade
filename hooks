@@ -118,3 +118,7 @@ CursorCb_Summary 8122D4C 1
 ##Battle Animation Hooks
 SlideMonToOriginalPosHook 080991BA 0
 SlideMonToOffsetHook 080992E4 0
+
+##Poke Ball Hooks
+SetMonPokeBallHook 8040858 0
+ItemIdToBallId 80EF52C 1

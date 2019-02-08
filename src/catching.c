@@ -384,3 +384,26 @@ u8 GiveMonToPlayer(pokemon_t* mon) { //Hook in
     gPlayerPartyCount = i + 1;
     return 0;
 }
+
+//The original function took in an item id.
+//I modified it so it takes it the Ball Type instead.
+u8 ItemIdToBallId(u8 ballItem)
+{
+	if (ballItem < 6)
+	{
+		switch (ballItem) {
+			case BALL_TYPE_MASTER_BALL:
+				return 4;
+			case BALL_TYPE_ULTRA_BALL:
+				return 3;
+			case BALL_TYPE_GREAT_BALL:
+				return 1;
+			case BALL_TYPE_SAFARI_BALL:
+				return 2;
+			default:
+				return 0;
+		}
+	}
+
+	return ballItem - 1;
+}

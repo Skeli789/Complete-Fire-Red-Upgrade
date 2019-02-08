@@ -535,3 +535,18 @@ bool8 PokemonTierBan(u16 species, u16 item, struct BattleTowerSpreads* spread, p
 	}
 	return FALSE; //Not banned
 }
+
+u8 GetMonPokeBall(struct PokemonSubstruct0* data)
+{
+	u8 ball = data->pokeball;
+	
+	if (ball == 0) //Bug prevention
+		return BALL_TYPE_POKE_BALL;
+	
+	return ball;
+}
+
+void SetMonPokeBall(struct PokemonSubstruct0* data, u8 ballId)
+{
+	data->pokeball = ballId;
+}

@@ -194,6 +194,8 @@ struct PokemonSubstruct0
     u32 experience;
     u8 ppBonuses;
     u8 friendship;
+	u8 pokeball;
+	u8 unknown;
 };
 
 struct PokemonSubstruct1
@@ -220,12 +222,14 @@ struct PokemonSubstruct2
 
 struct PokemonSubstruct3
 {
- /* 0x00 */ u8 pokerus;
- /* 0x01 */ u8 metLocation;
+ /* 0x00 */ u8 pokerusDays : 4;
+ /* 0x00 */ u8 pokerusStrain : 4;
+
+ /* 0x01 */	u8 metLocation;
 
  /* 0x02 */ u16 metLevel:7;
  /* 0x02 */ u16 metGame:4;
- /* 0x03 */ u16 pokeball:4;
+ /* 0x03 */ u16 blank:4;
  /* 0x03 */ u16 otGender:1;
 
  /* 0x04 */ u32 hpIV:5;
@@ -235,7 +239,7 @@ struct PokemonSubstruct3
  /* 0x05 */ u32 spAttackIV:5;
  /* 0x06 */ u32 spDefenseIV:5;
  /* 0x07 */ u32 isEgg:1;
- /* 0x07 */ u32 altAbility:1;
+ /* 0x07 */ u32 hiddenAbility:1;
 
  /* 0x08 */ u32 coolRibbon:3;
  /* 0x08 */ u32 beautyRibbon:3;
@@ -307,7 +311,8 @@ typedef struct Pokemon
     u32 experience;
     u8 pp_bonuses;
     u8 friendship;
-    u16 unknown;
+	u8 pokeball; //This is new
+    u8 unknown;
 	
 //Substructure Attacks
     u16 moves[4];
@@ -334,8 +339,8 @@ typedef struct Pokemon
 /* 0x01 */	u8 metLocation;
 
  /* 0x02 */ u16 metLevel:7;
- /* 0x02 */ u16 metGame:3;
- /* 0x03 */ u16 pokeball:5;
+ /* 0x02 */ u16 metGame:4;
+ /* 0x03 */ u16 blank:4;
  /* 0x03 */ u16 otGender:1;
 
  /* 0x04 */ u32 hpIV:5;
