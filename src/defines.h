@@ -25,6 +25,7 @@
 #include "../include/link.h"
 #include "../include/text.h"
 #include "../include/task.h"
+#include "../include/sprite.h"
 #include "../include/battle_interface.h"
 #include "../include/data2.h"
 #include "../include/global.fieldmap.h"
