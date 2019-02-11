@@ -508,7 +508,19 @@ GetTrainerTowerTrainerName = 0x815DA28 | 1;
 GetTrainerTowerTrainerPicIndex = 0x815DA3C | 1;
 CopyTrainerTowerPlayerLostText = 0x815DBF4 | 1;
 CopyTrainerTowerPlayerWonText = 0x815DC40 | 1;
-				
+
+/*Poke Ball Functions*/
+SpriteCB_TestBallThrow = 0x804ABD4 | 1;
+PokeBallOpenParticleAnimation = 0x80F06A4 | 1;
+GreatBallOpenParticleAnimation = 0x80F0C28 | 1;
+SafariBallOpenParticleAnimation = 0x80F0A20 | 1;
+UltraBallOpenParticleAnimation = 0x80F0B20 | 1;
+MasterBallOpenParticleAnimation = 0x80F0F10 | 1;
+DiveBallOpenParticleAnimation = 0x80F091C | 1;
+RepeatBallOpenParticleAnimation = 0x80F0DB4 | 1;
+TimerBallOpenParticleAnimation = 0x80F0818 | 1;
+PremierBallOpenParticleAnimation = 0x80F103C | 1;
+
 /*Pokemon Functions*/
 EmitSetMonData = 0x800DFF0 | 1;
 ZeroPlayerPartyMons = 0x0803DA14 |1;
@@ -640,6 +652,8 @@ IndexOfSpritePaletteTag = 0x80089E8 | 1;
 StringCopy = 0x8008D84 | 1;
 ConvertIntToDecimalStringN = 0x8008E78 | 1;
 LZDecompressVram = 0x800EBC0 | 1;
+LoadCompressedSpriteSheetUsingHeap = 0x800F034 | 1;
+LoadCompressedSpritePaletteUsingHeap = 0x800F078 | 1;
 nullsub_8 = 0x802E310 | 1;
 CountTrailingZeroBits = 0x8045190 | 1;
 GetEventObjectIdByLocalIdAndMapInternal = 0x805DFF4 | 1;

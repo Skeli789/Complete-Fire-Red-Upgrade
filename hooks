@@ -121,4 +121,9 @@ SlideMonToOffsetHook 080992E4 0
 
 ##Poke Ball Hooks
 SetMonPokeBallHook 8040858 0
+LoadBallGfx 804BEF4 1
+GetBattlerPokeballItemId 0804BF90 1
+GetProperBallIdHook1 0804AA1E 1
+GetProperBallIdHook2 080EF3A8 1
+GetProperBallIdHook3 08139CDA 1
 ItemIdToBallId 80EF52C 1

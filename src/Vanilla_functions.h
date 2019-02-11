@@ -181,6 +181,18 @@ u8 __attribute__((long_call)) GetTrainerTowerTrainerPicIndex(void);
 void __attribute__((long_call)) CopyTrainerTowerPlayerLostText(u8* dst, u8 varset);
 void __attribute__((long_call)) CopyTrainerTowerPlayerWonText(u8* dst, u8 varset);
 
+//Poke Ball Functions
+void __attribute__((long_call)) SpriteCB_TestBallThrow(struct Sprite *sprite);
+void __attribute__((long_call)) PokeBallOpenParticleAnimation(u8 taskId);
+void __attribute__((long_call)) GreatBallOpenParticleAnimation(u8 taskId);
+void __attribute__((long_call)) SafariBallOpenParticleAnimation(u8 taskId);
+void __attribute__((long_call)) UltraBallOpenParticleAnimation(u8 taskId);
+void __attribute__((long_call)) MasterBallOpenParticleAnimation(u8 taskId);
+void __attribute__((long_call)) DiveBallOpenParticleAnimation(u8 taskId);
+void __attribute__((long_call)) RepeatBallOpenParticleAnimation(u8 taskId);
+void __attribute__((long_call)) TimerBallOpenParticleAnimation(u8 taskId);
+void __attribute__((long_call)) PremierBallOpenParticleAnimation(u8 taskId);
+
 //Pokemon Functions
 void __attribute__((long_call)) EmitSetMonData(u8 a, u8 request, u8 c, u8 bytes, void *data);
 void __attribute__((long_call)) ZeroPlayerPartyMons(void);
@@ -314,6 +326,8 @@ u8 __attribute__((long_call)) IndexOfSpritePaletteTag(u16 tag);
 u8* __attribute__((long_call)) StringCopy(u8* dest, u8* src);
 u8* __attribute__((long_call)) ConvertIntToDecimalStringN(u8 *dest, s32 value, enum StringConvertMode mode, u8 n);
 void __attribute__((long_call)) LZDecompressVram(const void *src, void *dest);
+bool8 __attribute__((long_call)) LoadCompressedSpriteSheetUsingHeap(const struct CompressedSpriteSheet* src);
+bool8 __attribute__((long_call)) LoadCompressedSpritePaletteUsingHeap(const struct CompressedSpritePalette *src);
 int __attribute__((long_call)) CountTrailingZeroBits(u32 value);
 void __attribute__((long_call)) nullsub_8(void);
 u8 __attribute__((long_call)) GetEventObjectIdByLocalIdAndMapInternal(u8 localId, u8 mapNum, u8 mapGroupId);

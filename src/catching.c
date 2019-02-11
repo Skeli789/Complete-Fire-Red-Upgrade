@@ -6,10 +6,19 @@
 //Figure out how to check Surfing for Dive Ball
 //Make it so you can't catch Semi-Invulnerable targets
 
+#define gOpenPokeballGfx (u8*) 0x8D022E8
+
+extern const struct BallIdItemIdRelation BallIdItemIdRelations[];
+extern const struct CompressedSpriteSheet gBallSpriteSheets[];
+extern const struct CompressedSpritePalette gBallSpritePalettes[];
+
 void atkEF_handleballthrow(void);
 u8 GetCatchingBattler(void);
 bool8 CriticalCapture(u32 odds);
 u8 GiveMonToPlayer(pokemon_t* mon);
+u8 ItemIdToBallId(u16 ballItem);
+item_t BallIdToItemId(u8 ballId);
+u16 GetBattlerPokeballItemId(u8 bank);
 
 void atkEF_handleballthrow(void) {
 	if (gBattleExecBuffer) return;
@@ -385,25 +394,75 @@ u8 GiveMonToPlayer(pokemon_t* mon) { //Hook in
     return 0;
 }
 
-//The original function took in an item id.
-//I modified it so it takes it the Ball Type instead.
-u8 ItemIdToBallId(u8 ballItem)
+u8 ItemIdToBallId(u16 ballItem)
 {
-	if (ballItem < 6)
-	{
-		switch (ballItem) {
-			case BALL_TYPE_MASTER_BALL:
-				return 4;
-			case BALL_TYPE_ULTRA_BALL:
-				return 3;
-			case BALL_TYPE_GREAT_BALL:
-				return 1;
-			case BALL_TYPE_SAFARI_BALL:
-				return 2;
-			default:
+	switch (ballItem) {
+		case ITEM_POKE_BALL:
+			return 0;
+		case ITEM_GREAT_BALL:
+			return 1;
+		case ITEM_SAFARI_BALL:
+			return 2;
+		case ITEM_ULTRA_BALL:
+			return 3;
+		case ITEM_MASTER_BALL:
+			return 4;
+		default:
+			if (ItemId_GetType(ballItem) > 0)
+				return ItemId_GetType(ballItem) - 1;
+			else
 				return 0;
-		}
 	}
+}
 
-	return ballItem - 1;
+void LoadBallGfx(u8 ballId)
+{
+    u16 var;
+
+    if (GetSpriteTileStartByTag(gBallSpriteSheets[ballId].tag) == 0xFFFF)
+    {
+        LoadCompressedSpriteSheetUsingHeap(&gBallSpriteSheets[ballId]);
+        LoadCompressedSpritePaletteUsingHeap(&gBallSpritePalettes[ballId]);
+    }
+    switch (ballId) {
+		case BALL_TYPE_MASTER_BALL:
+		case BALL_TYPE_ULTRA_BALL:
+		case BALL_TYPE_GREAT_BALL:
+		case BALL_TYPE_POKE_BALL:
+		case BALL_TYPE_SAFARI_BALL:
+		case BALL_TYPE_NET_BALL:
+		case BALL_TYPE_NEST_BALL:
+		case BALL_TYPE_REPEAT_BALL:
+		case BALL_TYPE_TIMER_BALL:
+			var = GetSpriteTileStartByTag(gBallSpriteSheets[ballId].tag);
+			LZDecompressVram(gOpenPokeballGfx, (void*)(VRAM + 0x10100 + var * 32));
+			break;
+    }
+}
+
+item_t BallIdToItemId(u8 ballId)
+{
+	for (int i = 0; i < NUM_BALLS; ++i)
+	{
+		if (BallIdItemIdRelations[i].ballId == ballId)
+			return BallIdItemIdRelations[i].itemId;
+	}
+	
+	return ITEM_NONE;
+}
+
+u16 GetBattlerPokeballItemId(u8 bank)
+{
+	u8 ballId;
+
+    if (SIDE(bank) == B_SIDE_PLAYER)
+	{
+        ballId = GetMonData(&gPlayerParty[gBattlerPartyIndexes[bank]], MON_DATA_POKEBALL, 0);
+	}
+    else
+	{
+        ballId = GetMonData(&gEnemyParty[gBattlerPartyIndexes[bank]], MON_DATA_POKEBALL, 0);
+	}
+		
+	return BallIdToItemId(ballId);
 }
