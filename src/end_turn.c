@@ -1,7 +1,8 @@
 #include "defines.h"
 #include "end_turn.h"
-#include "et_battle_scripts.h"
 #include "helper_functions.h"
+
+//Slow start
 
 extern u8 BattleScript_RainDishActivates[];
 extern u8 BattleScript_DrySkinDamage[];
@@ -55,87 +56,118 @@ u8 TurnBasedEffects(void) {
     {
 		u8 sideBank;
         gActiveBattler = gBankAttacker = gBankTarget = gBanksByTurnOrder[gBattleStruct->turnEffectsBank];
-		NotEndTurnByte = FALSE;
-        if (!(gAbsentBattlerFlags & (1 << gActiveBattler))) {
+        if (!(gAbsentBattlerFlags & gBitTable[gActiveBattler])) {
             switch (gBattleStruct->turnEffectsTracker) { 
 			
 			case(ET_General_Counter_Decrement):
-				for (u8 i = 0; ByBankCounterTable[i] != (u8*) 0xFEFEFEFE; ++i) {
-					for (u8 j = 0; j < 4; ++j) {
-						if (ByBankCounterTable[i][j])
-							--ByBankCounterTable[i][j];
-					}
-				}
-				
-				for (u8 i = 0; BytesCounterTable[i] != (u8*) 0xFEFEFEFE; ++i) {
-					if (*BytesCounterTable[i])
-						--*BytesCounterTable[i];
+				for (u8 i = 0; i < 4; ++i) 
+				{
+					if(gNewBS->LaserFocusTimers[i])
+						--gNewBS->LaserFocusTimers[i];
+					
+					if(gNewBS->ThroatChopTimers[i])
+						--gNewBS->ThroatChopTimers[i];
+						
+					if(gNewBS->StompingTantrumTimers[i])
+						--gNewBS->StompingTantrumTimers[i];
+						
+					if (gNewBS->StakeoutCounters[i])
+						--gNewBS->StakeoutCounters[i];
+						
+					if (gNewBS->DestinyBondCounters[i])
+						--gNewBS->DestinyBondCounters[i];
+						
+					if(gNewBS->ElectrifyTimers[i])
+						--gNewBS->ElectrifyTimers[i];
 				}
 
-				for (u8 i = 0; BitsCounterTable[i] != (u8*) 0xFEFEFEFE; ++i)
-					BitsCounterTable[i] = 0;
+				for (u8 i = 0; i < 4; ++i)
+				{ //These should be cleared earlier on, but just in case they aren't
+					gNewBS->PowderByte = 0;
+					gNewBS->BeakBlastByte = 0;
+					gNewBS->CustapQuickClawIndicator = 0;
+				}
+				
+				if (gNewBS->RetaliateCounters[0])
+					--gNewBS->RetaliateCounters[0];
 					
-				if (EchoedVoiceCounter == 0)
-					EchoedVoiceDamageScale = 0;
+				if (gNewBS->RetaliateCounters[1])
+					--gNewBS->RetaliateCounters[1];
+					
+				if (gNewBS->IonDelugeTimer)
+					--gNewBS->IonDelugeTimer;
+					
+				if (gNewBS->FairyLockTimer)
+					--gNewBS->FairyLockTimer;
+
+				if (gNewBS->EchoedVoiceCounter)
+					--gNewBS->EchoedVoiceCounter;
+					
+				if (gNewBS->EchoedVoiceCounter == 0)
+					gNewBS->EchoedVoiceDamageScale = 0;
 				
 				break;
 				
 			case(ET_Weather_Health_Abilities):
-				if (gBattleMons[gActiveBattler].hp) {
+				if (gBattleMons[gActiveBattler].hp) 
+				{
 					gLastUsedAbility = gBattleMons[gActiveBattler].ability;
 					switch(gLastUsedAbility) {
-					case ABILITY_RAINDISH:
-						if (AbilityBattleEffects(ABILITYEFFECT_ENDTURN, gActiveBattler, 0, 0, 0))
-							effect++;
-						break;
-					case ABILITY_DRYSKIN:
-						if (WEATHER_HAS_EFFECT) {
-							if ((gBattleWeather & WEATHER_RAIN_ANY) && gBattleMons[gActiveBattler].hp < gBattleMons[gActiveBattler].maxHP) {
-								gBattleMoveDamage = gBattleMons[gActiveBattler].maxHP / 8;
-								if (gBattleMoveDamage == 0)
-									gBattleMoveDamage = 1;
+						case ABILITY_RAINDISH:
+							if (AbilityBattleEffects(ABILITYEFFECT_ENDTURN, gActiveBattler, 0, 0, 0))
+								effect++;
+							break;
+						case ABILITY_DRYSKIN:
+							if (WEATHER_HAS_EFFECT) {
+								if ((gBattleWeather & WEATHER_RAIN_ANY) 
+								&& gBattleMons[gActiveBattler].hp < gBattleMons[gActiveBattler].maxHP) 
+								{
+									gBattleMoveDamage = MathMax(1, gBattleMons[gActiveBattler].maxHP / 8);
+									gBattleMoveDamage *= -1;
+									BattleScriptExecute(BattleScript_RainDishActivates);
+									effect++;
+								}
+								else if (gBattleWeather & WEATHER_SUN_ANY) 
+								{
+									gBattleMoveDamage = MathMax(1, gBattleMons[gActiveBattler].maxHP / 8);
+									BattleScriptExecute(BattleScript_DrySkinDamage);
+									effect++;			
+								}
+							}
+							break;
+						case ABILITY_ICEBODY:
+							if (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_HAIL_ANY)
+							&& gBattleMons[gActiveBattler].hp < gBattleMons[gActiveBattler].maxHP) 
+							{
+								gBattleMoveDamage = MathMax(1, gBattleMons[gActiveBattler].maxHP / 16);
 								gBattleMoveDamage *= -1;
 								BattleScriptExecute(BattleScript_RainDishActivates);
 								effect++;
 							}
-							else if (gBattleWeather & WEATHER_SUN_ANY) {
-								gBattleMoveDamage = gBattleMons[gActiveBattler].maxHP / 8;
-								if (gBattleMoveDamage == 0)
-									gBattleMoveDamage = 1;
-								BattleScriptExecute(BattleScript_DrySkinDamage);
-								effect++;			
+							break;
+						case ABILITY_SOLARPOWER:
+							if (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_SUN_ANY) 
+							&& gBattleMons[gActiveBattler].hp) 
+							{
+								gBattleMoveDamage = MathMax(1, gBattleMons[gActiveBattler].maxHP / 8);
+								BattleScriptExecute(BattleScript_SolarPowerDamage);
+								effect++;
 							}
 						}
-						break;
-					case ABILITY_ICEBODY:
-						if (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_HAIL_ANY) && 
-							gBattleMons[gActiveBattler].hp < gBattleMons[gActiveBattler].maxHP) {
-								gBattleMoveDamage = gBattleMons[gActiveBattler].maxHP / 16;
-								if (gBattleMoveDamage == 0)
-									gBattleMoveDamage = 1;
-								gBattleMoveDamage *= -1;
-								BattleScriptExecute(BattleScript_RainDishActivates);
-								effect++;
-						}
-						break;
-					case ABILITY_SOLARPOWER:
-						if (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_SUN_ANY) && gBattleMons[gActiveBattler].hp) {
-							gBattleMoveDamage = gBattleMons[gActiveBattler].maxHP / 8;
-							if (gBattleMoveDamage == 0)
-								gBattleMoveDamage = 1;
-							BattleScriptExecute(BattleScript_SolarPowerDamage);
-							effect++;
-						}
-					}
 				}
 				break;
 			
 			case(ET_Future_Sight):
-                if (gWishFutureKnock->futureSightCounter[gActiveBattler] && --gWishFutureKnock->futureSightCounter[gActiveBattler] == 0 && gBattleMons[gActiveBattler].hp) {
+                if (gWishFutureKnock->futureSightCounter[gActiveBattler] 
+				&& --gWishFutureKnock->futureSightCounter[gActiveBattler] == 0 
+				&& gBattleMons[gActiveBattler].hp) 
+				{
                     if (gWishFutureKnock->futureSightMove[gActiveBattler] == MOVE_FUTURESIGHT)
                         gBattleCommunication[MULTISTRING_CHOOSER] = 0;
                     else //Doom Desire
                         gBattleCommunication[MULTISTRING_CHOOSER] = 1;
+						
+					gCurrentMove = gWishFutureKnock->futureSightMove[gActiveBattler];
 					
                     gBattleTextBuff1[0] = 0xFD;
                     gBattleTextBuff1[1] = 2;
@@ -154,7 +186,7 @@ u8 TurnBasedEffects(void) {
                     BattleScriptExecute(BattleScript_WishComesTrue);
                     effect++;
                 }
-				blockTracker = 0; //For later
+				gNewBS->blockTracker = 0; //For later
                 break;
 				
 			case(ET_Thrash):
@@ -180,9 +212,9 @@ u8 TurnBasedEffects(void) {
 				break;
 				
 			case(ET_Block_A):
-				switch(blockTracker) {
+				switch(gNewBS->blockTracker) {
 					case(ET_Sea_Of_Fire):
-						if (SeaOfFireTimers[gActiveBattler] && 
+						if (gNewBS->SeaOfFireTimers[gActiveBattler] && 
 						    gBattleMons[gActiveBattler].ability != ABILITY_MAGICGUARD &&
 							gBattleMons[gActiveBattler].hp &&
 							gBattleMons[gActiveBattler].type1 != TYPE_FIRE &&
@@ -196,7 +228,7 @@ u8 TurnBasedEffects(void) {
 					case(ET_Grassy_Terrain):
 						if (TerrainType == GRASSY_TERRAIN && CheckGrounding(gActiveBattler) &&
 							gBattleMons[gActiveBattler].hp < gBattleMons[gActiveBattler].maxHP &&
-						    gBattleMons[gActiveBattler].hp && !HealBlockTimers[gActiveBattler]) {
+						    gBattleMons[gActiveBattler].hp && !gNewBS->HealBlockTimers[gActiveBattler]) {
 								BattleScriptExecute(BattleScript_GrassyTerrainHeal);
 								effect++;
 							}
@@ -238,18 +270,18 @@ u8 TurnBasedEffects(void) {
 							}
 				}
 				
-				++blockTracker;
-				if (blockTracker < MAX_CASES_BLOCK_A)
+				++gNewBS->blockTracker;
+				if (gNewBS->blockTracker < MAX_CASES_BLOCK_A)
 					goto SkipBankIncrement;
 				else {
-					blockTracker = 0;
+					gNewBS->blockTracker = 0;
 					break;
 				}
 					
 			case(ET_Aqua_Ring):
 				if ((gStatuses3[gActiveBattler] & STATUS3_AQUA_RING) &&
 					 gBattleMons[gActiveBattler].hp < gBattleMons[gActiveBattler].maxHP &&
-					 gBattleMons[gActiveBattler].hp && !HealBlockTimers[gActiveBattler]) {
+					 gBattleMons[gActiveBattler].hp && !gNewBS->HealBlockTimers[gActiveBattler]) {
 					 
 						gBattleMoveDamage = gBattleMons[gActiveBattler].maxHP / 16;
 						if (GetBankItemEffect(gActiveBattler) == ITEM_EFFECT_BIGROOT)
@@ -265,7 +297,7 @@ u8 TurnBasedEffects(void) {
 			case(ET_Ingrain):
                 if ((gStatuses3[gActiveBattler] & STATUS3_ROOTED) &&
                      gBattleMons[gActiveBattler].hp < gBattleMons[gActiveBattler].maxHP &&
-                     gBattleMons[gActiveBattler].hp && !HealBlockTimers[gActiveBattler]) {
+                     gBattleMons[gActiveBattler].hp && !gNewBS->HealBlockTimers[gActiveBattler]) {
 					 
 						gBattleMoveDamage = gBattleMons[gActiveBattler].maxHP / 16;
 						if (GetBankItemEffect(gActiveBattler) == ITEM_EFFECT_BIGROOT)
@@ -481,28 +513,28 @@ u8 TurnBasedEffects(void) {
                 break;
 				
 			case(ET_Magnet_Rise_Timer):
-				if (MagnetRiseTimers[gActiveBattler] && --MagnetRiseTimers[gActiveBattler] == 0) {
+				if (gNewBS->MagnetRiseTimers[gActiveBattler] && --gNewBS->MagnetRiseTimers[gActiveBattler] == 0) {
 					BattleScriptExecute(BattleScript_MagnetRiseEnd);
 					effect++;
 				}
 				break;
 					
 			case(ET_Telekinesis_Timer):
-				if (TelekinesisTimers[gActiveBattler] && --TelekinesisTimers[gActiveBattler] == 0) {
+				if (gNewBS->TelekinesisTimers[gActiveBattler] && --gNewBS->TelekinesisTimers[gActiveBattler] == 0) {
 					BattleScriptExecute(BattleScript_TelekinesisEnd);
 					effect++;
 				}
 				break;
 					
 			case(ET_Heal_Block_Timer):
-				if (HealBlockTimers[gActiveBattler] && --HealBlockTimers[gActiveBattler] == 0) {
+				if (gNewBS->HealBlockTimers[gActiveBattler] && --gNewBS->HealBlockTimers[gActiveBattler] == 0) {
 					BattleScriptExecute(BattleScript_HealBlockEnd);
 					effect++;
 				}
 				break;
 					
 			case(ET_Embargo_Timer):
-				if (EmbargoTimers[gActiveBattler] && --EmbargoTimers[gActiveBattler] == 0) {
+				if (gNewBS->EmbargoTimers[gActiveBattler] && --gNewBS->EmbargoTimers[gActiveBattler] == 0) {
 					BattleScriptExecute(BattleScript_EmbargoEnd);
 					effect++;
 				}
@@ -560,13 +592,13 @@ u8 TurnBasedEffects(void) {
 				break;
 			
 			case(ET_Roost):
-				if (RoostCounter & (1 << gActiveBattler)) {
-					RoostCounter &= ~(1 << gActiveBattler);
+				if (gNewBS->RoostCounter & (1 << gActiveBattler)) {
+					gNewBS->RoostCounter &= ~(1 << gActiveBattler);
 					if (gBattleMons[gActiveBattler].type1 == TYPE_NORMAL)
 						gBattleMons[gActiveBattler].type1 = TYPE_FLYING;
 					if (gBattleMons[gActiveBattler].type2 == TYPE_NORMAL)
 						gBattleMons[gActiveBattler].type2 = TYPE_FLYING;
-					if (gBattleMons[gActiveBattler].type3 == TYPE_NORMAL)
+					if (gBattleMons[gActiveBattler].type3 == TYPE_ROOSTLESS)
 						gBattleMons[gActiveBattler].type3 = TYPE_FLYING;
 				}
 				else {
@@ -624,7 +656,7 @@ u8 TurnBasedEffects(void) {
 				__attribute__ ((fallthrough));
 			case(ET_Aurora_Veil):
 				if (gBattleStruct->turnEffectsBank < 2) {
-					if (AuroraVeilTimers[gBattleStruct->turnEffectsBank] && --AuroraVeilTimers[gBattleStruct->turnEffectsBank] == 0) {
+					if (gNewBS->AuroraVeilTimers[gBattleStruct->turnEffectsBank] && --gNewBS->AuroraVeilTimers[gBattleStruct->turnEffectsBank] == 0) {
 						gBankAttacker = gBankTarget = gActiveBattler = gBattleStruct->turnEffectsBank;
 						BattleScriptExecute(BattleScript_AuroraVeilEnd);
 						effect++;
@@ -675,7 +707,7 @@ u8 TurnBasedEffects(void) {
 				__attribute__ ((fallthrough));
 			case(ET_Tailwind_Timer):
 				if (gBattleStruct->turnEffectsBank < 2) {
-					if (TailwindTimers[gBattleStruct->turnEffectsBank] && --TailwindTimers[gBattleStruct->turnEffectsBank] == 0) {
+					if (gNewBS->TailwindTimers[gBattleStruct->turnEffectsBank] && --gNewBS->TailwindTimers[gBattleStruct->turnEffectsBank] == 0) {
 						gBankAttacker = gBankTarget = gActiveBattler = gBattleStruct->turnEffectsBank;
 						BattleScriptExecute(BattleScript_TailwindEnd);
 						effect++;
@@ -689,7 +721,7 @@ u8 TurnBasedEffects(void) {
 				__attribute__ ((fallthrough));
 			case(ET_Lucky_Chant_Timer):
 				if (gBattleStruct->turnEffectsBank < 2) {
-					if (LuckyChantTimers[gBattleStruct->turnEffectsBank] && --LuckyChantTimers[gBattleStruct->turnEffectsBank] == 0) {
+					if (gNewBS->LuckyChantTimers[gBattleStruct->turnEffectsBank] && --gNewBS->LuckyChantTimers[gBattleStruct->turnEffectsBank] == 0) {
 						gBankAttacker = gBankTarget = gActiveBattler = gBattleStruct->turnEffectsBank;
 						BattleScriptExecute(BattleScript_LuckyChantEnd);
 						effect++;
@@ -703,7 +735,7 @@ u8 TurnBasedEffects(void) {
 				__attribute__ ((fallthrough));
 			case(ET_Rainbow_Timer):
 				if (gBattleStruct->turnEffectsBank < 2) {
-					if (RainbowTimers[gBattleStruct->turnEffectsBank] && --RainbowTimers[gBattleStruct->turnEffectsBank] == 0) {
+					if (gNewBS->RainbowTimers[gBattleStruct->turnEffectsBank] && --gNewBS->RainbowTimers[gBattleStruct->turnEffectsBank] == 0) {
 						gBankAttacker = gBankTarget = gActiveBattler = gBattleStruct->turnEffectsBank;
 						BattleScriptExecute(BattleScript_RainbowEnd);
 						effect++;
@@ -717,7 +749,7 @@ u8 TurnBasedEffects(void) {
 				__attribute__ ((fallthrough));
 			case(ET_Sea_Of_Fire_Timer):
 				if (gBattleStruct->turnEffectsBank < 2) {
-					if (SeaOfFireTimers[gBattleStruct->turnEffectsBank] && --SeaOfFireTimers[gBattleStruct->turnEffectsBank] == 0) {
+					if (gNewBS->SeaOfFireTimers[gBattleStruct->turnEffectsBank] && --gNewBS->SeaOfFireTimers[gBattleStruct->turnEffectsBank] == 0) {
 						gBankAttacker = gBankTarget = gActiveBattler = gBattleStruct->turnEffectsBank;
 						BattleScriptExecute(BattleScript_SeaOfFireEnd);
 						effect++;
@@ -731,7 +763,7 @@ u8 TurnBasedEffects(void) {
 				__attribute__ ((fallthrough));
 			case(ET_Swamp_Timer):
 				if (gBattleStruct->turnEffectsBank < 2) {
-					if (SwampTimers[gBattleStruct->turnEffectsBank] && --SwampTimers[gBattleStruct->turnEffectsBank] == 0) {
+					if (gNewBS->SwampTimers[gBattleStruct->turnEffectsBank] && --gNewBS->SwampTimers[gBattleStruct->turnEffectsBank] == 0) {
 						gBankAttacker = gBankTarget = gActiveBattler = gBattleStruct->turnEffectsBank;
 						BattleScriptExecute(BattleScript_SwampEnd);
 						effect++;
@@ -746,7 +778,7 @@ u8 TurnBasedEffects(void) {
 			case(ET_Trick_Room_Timer):
 				++gBattleStruct->turnEffectsTracker;
 				gBattleStruct->turnEffectsBank = 0;
-				if (TrickRoomTimer && --TrickRoomTimer == 0) {
+				if (gNewBS->TrickRoomTimer && --gNewBS->TrickRoomTimer == 0) {
 					BattleScriptExecute(BattleScript_TrickRoomEnd);
 					return ++effect;
 				}
@@ -754,7 +786,7 @@ u8 TurnBasedEffects(void) {
 			case(ET_Water_Sport_Timer):
 				++gBattleStruct->turnEffectsTracker;
 				gBattleStruct->turnEffectsBank = 0;
-				if (WaterSportTimer && --WaterSportTimer == 0) {
+				if (gNewBS->WaterSportTimer && --gNewBS->WaterSportTimer == 0) {
 					BattleScriptExecute(BattleScript_WaterSportEnd);
 					return ++effect;
 				}
@@ -762,7 +794,7 @@ u8 TurnBasedEffects(void) {
 			case(ET_Mud_Sport_Timer):
 				++gBattleStruct->turnEffectsTracker;
 				gBattleStruct->turnEffectsBank = 0;
-				if (MudSportTimer && --MudSportTimer == 0) {
+				if (gNewBS->MudSportTimer && --gNewBS->MudSportTimer == 0) {
 					BattleScriptExecute(BattleScript_MudSportEnd);
 					return ++effect;
 				}
@@ -770,7 +802,7 @@ u8 TurnBasedEffects(void) {
 			case(ET_Wonder_Room_Timer):
 				++gBattleStruct->turnEffectsTracker;
 				gBattleStruct->turnEffectsBank = 0;
-				if (WonderRoomTimer && --WonderRoomTimer == 0) {
+				if (gNewBS->WonderRoomTimer && --gNewBS->WonderRoomTimer == 0) {
 					BattleScriptExecute(BattleScript_WonderRoomEnd);
 					return ++effect;
 				}
@@ -778,7 +810,7 @@ u8 TurnBasedEffects(void) {
 			case(ET_Magic_Room_Timer):
 				++gBattleStruct->turnEffectsTracker;
 				gBattleStruct->turnEffectsBank = 0;
-				if (MagicRoomTimer && --MagicRoomTimer == 0) {
+				if (gNewBS->MagicRoomTimer && --gNewBS->MagicRoomTimer == 0) {
 					BattleScriptExecute(BattleScript_MagicRoomEnd);
 					return ++effect;
 				}
@@ -786,22 +818,22 @@ u8 TurnBasedEffects(void) {
 			case(ET_Gravity_Timer):
 				++gBattleStruct->turnEffectsTracker;
 				gBattleStruct->turnEffectsBank = 0;
-				if (GravityTimer && --GravityTimer == 0) {
+				if (gNewBS->GravityTimer && --gNewBS->GravityTimer == 0) {
 					BattleScriptExecute(BattleScript_GravityEnd);
 					return ++effect;
 				}
 				__attribute__ ((fallthrough));
 			case(ET_Terrain_Timer):
-				blockTracker = 0; //For later
+				gNewBS->blockTracker = 0; //For later
 				++gBattleStruct->turnEffectsTracker;
 				gBattleStruct->turnEffectsBank = 0;
-				if (TerrainTimer && --TerrainTimer == 0) {
+				if (gNewBS->TerrainTimer && --gNewBS->TerrainTimer == 0) {
 					BattleScriptExecute(BattleScript_TerrainEnd);
 					return ++effect;
 				}
 				__attribute__ ((fallthrough));
 			case(ET_Block_B):
-				switch(blockTracker) {
+				switch(gNewBS->blockTracker) {
 				
 					case(ET_Uproar):
 						if (gBattleMons[gActiveBattler].status2 & STATUS2_UPROAR) {
@@ -869,7 +901,7 @@ u8 TurnBasedEffects(void) {
 											 gBattleMons[gActiveBattler].statStages[stat_to_lower - 1] == 0);
 									
 									gStatChangeByte = stat_to_raise | INCREASE_2;	
-									MoodyLowerStat = stat_to_lower;
+									gNewBS->MoodyLowerStat = stat_to_lower;
 									scriptPtr = BattleScript_MoodyRegular;
 								}
 								BattleScriptExecute(scriptPtr);
@@ -912,7 +944,7 @@ u8 TurnBasedEffects(void) {
 						if (gBattleMons[gActiveBattler].hp && !(gBattleMons[gActiveBattler].item)) {
 							switch(gBattleMons[gActiveBattler].ability) {
 							case ABILITY_HARVEST:
-								if (GetPocketByItemId(SavedConsumedItems[gBattlerPartyIndexes[gActiveBattler]]) == POCKET_BERRY_POUCH) {
+								if (GetPocketByItemId(gNewBS->SavedConsumedItems[gBattlerPartyIndexes[gActiveBattler]]) == POCKET_BERRY_POUCH) {
 									if (!(WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_SUN_ANY))) { //No Sun
 										if (umodsi(Random(), 100) < 50)
 											break;
@@ -923,7 +955,7 @@ u8 TurnBasedEffects(void) {
 								break;
 							case ABILITY_PICKUP:
 								for (u8 bank = 0; bank < 4; ++bank) {
-									if (bank != gActiveBattler && !(IncinerateCounters[bank]) && CONSUMED_ITEMS(bank)) {
+									if (bank != gActiveBattler && !(gNewBS->IncinerateCounters[bank]) && CONSUMED_ITEMS(bank)) {
 										gBattleMons[gActiveBattler].item = CONSUMED_ITEMS(bank);
 										(GetBankPartyData(gActiveBattler))->item = CONSUMED_ITEMS(bank);
 										gLastUsedItem = CONSUMED_ITEMS(bank);
@@ -939,11 +971,11 @@ u8 TurnBasedEffects(void) {
 					
 				}
 				
-				++blockTracker;
-				if (blockTracker < MAX_CASES_BLOCK_B)
+				++gNewBS->blockTracker;
+				if (gNewBS->blockTracker < MAX_CASES_BLOCK_B)
 					goto SkipBankIncrement;
 				else {
-					blockTracker = 0;
+					gNewBS->blockTracker = 0;
 					break;
 				}
 					
@@ -1041,10 +1073,9 @@ u8 TurnBasedEffects(void) {
 						
 			case(ET_End):
 			    gBattleStruct->turnEffectsBank = gBattlersCount;
-				EndTurnDoneByte = 1;
-				gAbsentBattlerFlags &= ~(AbsentBattlerHelper);
-				NotEndTurnByte = TRUE;
-				MegaData->state = 0;
+				gNewBS->EndTurnDone = 1;
+				gAbsentBattlerFlags &= ~(gNewBS->AbsentBattlerHelper);
+				gNewBS->MegaData->state = 0;
 			}
 		}
 		gBattleStruct->turnEffectsBank++;

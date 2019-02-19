@@ -72,32 +72,24 @@ ET_Harvest_Pickup,
 
 #define TURNBASED_MAX_CASE ET_End
 
-u8* ByBankCounterTable[] = {
-DisabledMoldBreakerAbilities,
-LaserFocusTimers,
-ThroatChopTimers,
-StompingTantrumTimers,
-StakeoutCounters,
-DestinyBondCounters,
-ElectrifyTimers,
-(u8*) 0xFEFEFEFE //End
-};
+#define BattleScript_MonTookFutureAttack ((u8*) 0x81D8E12)
+#define BattleScript_WishComesTrue ((u8*) 0x81D8ED5)
+#define BattleScript_ShedSkinActivates ((u8*) 0x81D92D3) 
+#define BattleScript_ThrashConfuses ((u8*) 0x81D90C5)
+#define BattleScript_IngrainTurnHeal ((u8*) 0x81D8F0C)
+#define BattleScript_LeechSeedTurnDrain ((u8*) 0x81D8B4D)
+#define BattleScript_PoisonTurnDmg ((u8*) 0x81D9053)
+#define BattleScript_BurnTurnDmg ((u8*) 0x81D9075)
+#define BattleScript_NightmareTurnDmg ((u8*) 0x81D9155)
+#define BattleScript_CurseTurnDmg ((u8*) 0x81D9166)
+#define BattleScript_WrapTurnDmg ((u8*) 0x81D9124)
+#define BattleScript_WrapEnds ((u8*) 0x81D9136)
+#define BattleScript_EncoredNoMore ((u8*) 0x81D8C65)
+#define BattleScript_DisabledNoMore ((u8*) 0x81D8C5E)
+#define BattleScript_YawnMakesAsleep ((u8*) 0x81D91C7)
+#define BattleScript_PerishSongHits ((u8*) 0x81D8D33)
+#define BattleScript_PerishSongTimerGoesDown ((u8*) 0x81D8D4E)
+#define BattleScript_SideStatusWoreOff ((u8*) 0x81D8B32)
+#define BattleScript_SafeguardEnds ((u8*) 0x81D8B43)
+#define BattleScript_PrintUproarOverTurns ((u8*) 0x81D90BC)
 
-u8* BytesCounterTable[] = {
-RetaliateCounters,
-RetaliateCounters + 1, 
-&EchoedVoiceCounter,
-(u8*) 0x203D87E, //Fusion Flare
-(u8*) 0x203D87F, //Fusion Bolt
-//&EnduranceHelper, //Endurance
-&IonDelugeTimer, //Ion Deluge
-&FairyLockTimer, //Fairy Lock
-(u8*) 0xFEFEFEFE //End
-};
-
-u8* BitsCounterTable[] = {
-&PowderByte,
-&BeakBlastByte,
-&CustapQuickClawIndicator,
-(u8*) 0xFEFEFEFE
-};
