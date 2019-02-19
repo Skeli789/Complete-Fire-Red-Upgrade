@@ -543,9 +543,9 @@ BS_016_RaiseUserEvsn1:
 
 AcupressureBS:
 	attackcanceler
-	callasm AcupressureFunc+1
 	attackstring
 	ppreduce
+	callasm AcupressureFunc+1
 	attackanimation
 	waitanimation
 	statbuffchange STAT_TARGET | STAT_BS_PTR | STAT_CERTAIN BS_MOVE_END

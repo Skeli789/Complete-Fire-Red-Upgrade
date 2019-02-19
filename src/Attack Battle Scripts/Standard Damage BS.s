@@ -23,10 +23,12 @@ STANDARD_DAMAGE:
 	return
 
 .global FAILED
+.global BattleScript_ButItFailed
 FailedPreBS:
 	attackstring
 	ppreduce
 FAILED:
+BattleScript_ButItFailed:
 	pause DELAY_HALFSECOND
 	orbyte OUTCOME OUTCOME_FAILED
 	resultmessage
