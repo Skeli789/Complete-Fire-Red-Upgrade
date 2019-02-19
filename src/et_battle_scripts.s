@@ -48,6 +48,11 @@
 .global BattleScript_FlowerGift
 .global BattleScript_MonTookFutureAttack
 
+.global TrickRoomEndString
+.global WonderRoomEndString
+.global MagicRoomEndString
+.global GravityEndString
+
 .global BattleScript_Victory @More of an "End Battle" BS but whatever
 .global BattleScript_PrintPlayerForfeited
 .global BattleScript_PrintPlayerForfeitedLinkBattle
