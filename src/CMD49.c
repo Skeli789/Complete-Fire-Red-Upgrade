@@ -121,9 +121,9 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 		case ATK49_ATTACKER_ABILITIES:			
 			if (arg1 != ARG_IN_FUTURE_ATTACK
 			&& TOOK_DAMAGE(bankDef)
-			&&	MOVE_HAD_EFFECT
-			&&  gBattleMons[bankDef].hp
-			&&  !MoveBlockedBySubstitute(gCurrentMove, bankAtk, bankDef))
+			&& MOVE_HAD_EFFECT
+			&& gBattleMons[bankDef].hp
+			&& !MoveBlockedBySubstitute(gCurrentMove, bankAtk, bankDef))
 			{
 				switch (ABILITY(bankAtk)) {
 					case ABILITY_STENCH: //Check for Stench is taken care of in King's Rock check
@@ -151,13 +151,13 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 		
         case ATK49_RAGE: // rage check
             if (gBattleMons[bankDef].status2 & STATUS2_RAGE
-                && gBattleMons[bankDef].hp 
-				&& bankAtk != bankDef
-                && SIDE(bankAtk) != SIDE(bankDef)
-                && MOVE_HAD_EFFECT 
-				&& TOOK_DAMAGE(bankDef)
-                && SPLIT(gCurrentMove) != SPLIT_STATUS 
-				&& gBattleMons[bankDef].statStages[STAT_ATK-1] < 12)
+            && gBattleMons[bankDef].hp 
+			&& bankAtk != bankDef
+            && SIDE(bankAtk) != SIDE(bankDef)
+            && MOVE_HAD_EFFECT 
+			&& TOOK_DAMAGE(bankDef)
+            && SPLIT(gCurrentMove) != SPLIT_STATUS 
+			&& gBattleMons[bankDef].statStages[STAT_ATK-1] < 12)
             {
                 gBattleMons[bankDef].statStages[STAT_ATK-1]++;
                 BattleScriptPushCursor();
@@ -372,6 +372,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
             if (gHitMarker & HITMARKER_ATTACKSTRING_PRINTED)
             {
                 gLastPrintedMoves[bankAtk] = gChosenMove;
+				gNewBS->lastTargeted[gBankAttacker] = gBankTarget;
             }
 			
             if (!(gAbsentBattlerFlags & gBitTable[bankAtk])
