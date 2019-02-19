@@ -295,14 +295,14 @@
 .word \jumpifargmatchesPtr
 .endm
 
-.macro anim22 anim22bank
+.macro pokespritetoBG2 animABank
 .byte 0x22
-.byte \anim22bank
+.byte \animABank
 .endm
 
-.macro anim23 anim23bank
+.macro pokespritefromBG2 animBBank
 .byte 0x23
-.byte \anim23bank
+.byte \animBBank
 .endm
 
 .macro jumpifnotinbattle jumpifnotinbattlePTR
