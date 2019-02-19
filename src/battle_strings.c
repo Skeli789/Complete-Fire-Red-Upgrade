@@ -32,6 +32,8 @@ extern u8 BattleText_WildPkmnAppeared[];
 extern u8 sText_FoePkmnPrefix2[];
 extern u8 sText_FoePkmnPrefix3[];
 extern u8 sText_FoePkmnPrefix4[];
+extern u8 sText_TheOpposingNoCaps[];
+extern u8 sText_Your[];
 
 extern u8* ZMoveNames[];
 extern u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
@@ -796,6 +798,18 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
                 GetFrontierTrainerName(text, VarGet(PARTNER_VAR), 2);
                 toCpy = text;
                 break;
+			case B_TXT_AFFECTS_TARGET_SIDE:
+                if (SIDE(gBattlerAttacker) == B_SIDE_PLAYER)
+                    toCpy = sText_TheOpposingNoCaps;
+                else
+                    toCpy = sText_Your;
+				break;
+			case B_TXT_AFFECTS_ATTACKER_SIDE:
+                if (SIDE(gBattlerAttacker) == B_SIDE_OPPONENT)
+                    toCpy = sText_TheOpposingNoCaps;
+                else
+                    toCpy = sText_Your;
+				break;		
             }
 
             if (toCpy != NULL) {
