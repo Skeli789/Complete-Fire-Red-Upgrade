@@ -123,7 +123,8 @@ void atk02_attackstring(void) {
 			&&  SPLIT(gCurrentMove) != SPLIT_STATUS
 			&& !(gMoveResultFlags & (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE | MOVE_RESULT_FAILED))
 			&& !CheckTableForMove(gCurrentMove, GemBanTable)
-			&& !(TypeCalc(gCurrentMove, gBankAttacker, gBankTarget, GetBankPartyData(gBankAttacker), 0) & (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE | MOVE_RESULT_FAILED))) 
+			&& !(TypeCalc(gCurrentMove, gBankAttacker, gBankTarget, GetBankPartyData(gBankAttacker), 0) & (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE | MOVE_RESULT_FAILED))
+			&& gBattleMoves[gCurrentMove].effect != EFFECT_PLEDGE) 
 			{
 				gLastUsedItem = ITEM(gBankAttacker);
 				gNewBS->GemHelper = TRUE;
@@ -1104,6 +1105,17 @@ void atk81_trysetrest(void) {
     }
 }
 
+void atk82_jumpifnotfirstturn(void)
+{
+    u8* failJump = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+
+    if (gDisableStructs[gBankAttacker].isFirstTurn
+	&& !gNewBS->InstructInProgress)
+        gBattlescriptCurrInstr += 5;
+    else
+        gBattlescriptCurrInstr = failJump;
+}
+
 void atk84_jumpifcantmakeasleep(void) {
 	u8 bankDef = gBankTarget;
 	u8 defPartner = PARTNER(bankDef);
@@ -1847,7 +1859,7 @@ void atkB0_trysetspikes(void) {
 		BattleStringLoader = EntryHazardsStrings[stringcase + atkSide];
 }
 
-//Actual calc has been move to GetBasePower function
+//Actual calc has been moved to GetBasePower function
 void atkB3_rolloutdamagecalculation(void)
 {
     if (gMoveResultFlags & MOVE_RESULT_NO_EFFECT)

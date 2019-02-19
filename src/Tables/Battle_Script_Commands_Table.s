@@ -4,8 +4,12 @@
 .global BattleScriptCommandsTable
 
 .include "..\\defines"
+.equ NULL, 0x00000000
 
-BattleScriptCommandsTable:
+.global gBattleScriptingCommandsTable
+.global gBattleScriptingCommandsTable2
+
+gBattleScriptingCommandsTable:
 .word atk00_attackcanceler
 .word atk01_accuracycheck
 .word atk02_attackstring
@@ -136,7 +140,7 @@ BattleScriptCommandsTable:
 .word atk7F_setseeded			@setleechseed
 .word 0x8027689				@manipulatedamage
 .word atk81_trysetrest			@setrest
-.word 0x80277d9				@jumpifnotfirstturn
+.word atk82_jumpifnotfirstturn
 .word 0x8027821				@nop3
 .word atk84_jumpifcantmakeasleep	@jumpifcannotsleep
 .word 0x8027949				@stockpile
@@ -185,11 +189,11 @@ BattleScriptCommandsTable:
 .word atkB0_trysetspikes
 .word 0x802aaa5				@setforesight
 .word 0x802aad5				@setperishsong
-.word 0x802ab8d				@rolloutdamagecalculation
+.word atkB3_rolloutdamagecalculation
 .word 0x802ad09				@jumpifconfusedandattackmaxed
-.word 0x802ad71				@furycutterdamagecalculation
+.word atkB5_furycuttercalc		@furycutterdamagecalculation
 .word 0x802ae25				@happinesstodamagecalculation
-.word 0x802aea9				@presentdamagecalculation
+.word atkB7_presentdamagecalculation
 .word 0x802af75				@setsafeguard
 .word 0x802b01d				@magnitudedamagecalculation
 .word atkBA_jumpifnopursuitswitchdmg
@@ -254,3 +258,39 @@ BattleScriptCommandsTable:
 .word 0x802dfed				@removeattackerstatus1
 .word 0x802e015				@finishaction
 .word 0x802e021				@finishturn
+.word atkF8_callasm
+.word atkF9_sethalfword
+.word atkFA_setword
+.word atkFB_setspecialstatusbit
+.word atkFC_clearspecialstatusbit
+.word atkFD_jumpifabilitypresenttargetfield
+.word atkFE_jumpifspecies
+.word atkFF_callsecondarytable
+
+gBattleScriptingCommandsTable2:
+.word NULL
+.word NULL
+.word atkFF02_cureprimarystatus
+.word atkFF03_jumpifpartnerattack
+.word NULL
+.word NULL
+.word atkFF06_setterrain
+.word atkFF07_jumpifhelditemeffect
+.word atkFF08_counterclear
+.word atkFF09_jumpifcounter
+.word atkFF0A_setability
+.word NULL
+.word atkFF0C_jumpiftargetpartner
+.word NULL
+.word atkFF0E_setcounter
+.word atkFF0F_jumpifgrounded
+.word atkFF10_jumpifhelditem
+.word atkFF11_reloadhealthbar
+.word atkFF12_jumpifhealthcomparestomax
+.word atkFF13_setdamagetobankhealthpercent
+.word atkFF14_jumpiftypepresent
+.word atkFF15_jumpifstatcanbemodified
+.word atkFF16_jumpifnoviablemonsleft
+.word atkFF17_setsidestatus
+.word atkFF18_clearsidestatus
+.word atkFF19_formchange

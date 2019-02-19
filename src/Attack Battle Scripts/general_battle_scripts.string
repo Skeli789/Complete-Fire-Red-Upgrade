@@ -1,0 +1,56 @@
+#org @TrickRoomSetString
+[FD][0F] twisted\nthe dimensions!
+
+#org @WonderRoomSetString
+It created a bizarre area in which\nthe Def and Sp. Def stats are swapped!
+
+#org @MagicRoomSetString
+It created a bizarre are in which\nheld items lose their effects!
+
+#org @GravitySetString
+Gravity intensified!
+
+#org @IonDelugeShowerString
+A deluge of ions showers the\nbattlefield!
+
+#org @NoMoreAirborneFromGravityString
+[FD][13] couldn't\nstay airborne due to Gravity!
+
+#org @Bank0AWasBroughtDownString
+[FD][13] was\nbrought down!
+
+#org @ElectricTerrainSetString
+An electric current runs across\nthe battlefield!
+
+#org @GrassyTerrainSetString
+Grass grew to cover the\nbattlefield!
+
+#org @MistyTerrainSetString
+Mist swirls around the\nbattlefield!
+
+#org @PsychicTerrainSetString
+The battlefield got weird!
+
+#org @TargetTransformedIntoType
+[FD][10] transformed\ninto the [FD][00] type!
+
+#org @ThirdTypeAddedString
+[FD][00] type was added to\n[FD][13]!
+
+#org @FairyLockString
+[FD][0F] locked down the battlefield!
+
+#org @HappyHourString
+Everyone is caught up in the\nhappy atmosphere!
+
+#org @CelebrateString
+Congratulations [FD][23]!
+
+#org @HoldHandsString
+[FD][0F] and [FD][10]\nheld hands!
+
+#org @TailwindSetString
+The tailwind blew from behind\n[FD][36] team!
+
+#org @LuckyChantSetString
+The Lucky Chant shielded\n[FD][36] team from critical hits!
