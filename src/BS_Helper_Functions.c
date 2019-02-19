@@ -13,6 +13,7 @@ extern u8 PowerSplitString[];
 extern u8 GuardSplitString[];
 
 extern ability_t MoldBreakerIgnoreAbilities[];
+extern move_t CopycatBanTable[];
 
 void SetTargetPartner(void);
 bool8 CheckCraftyShield(void);
@@ -20,7 +21,6 @@ void LiftProtectTarget(void);
 void IncreaseNimbleCounter(void);
 void FlowerShieldLooper(void);
 void CheckIfTypePresent(void);
-void AcupressureFixTarget(void);
 void AcupressureFunc(void);
 void SetStatSwapSplit(void);
 void ResetTargetStats(void);
@@ -37,6 +37,9 @@ void RoundBSFunction(void);
 void EchoedVoiceFunc(void);
 void TryPartingShotStatDrop(void);
 void DefogHelperFunc(void);
+void StrengthSapFunc(void);
+void PlayAttackAnimationForExplosion(void);
+void CopycatFunc(void);
 
 void SetTargetPartner(void) {
 	gBankTarget = PARTNER(gBankAttacker);
@@ -57,8 +60,8 @@ void LiftProtectTarget(void) {
 }
 
 void IncreaseNimbleCounter(void) {
-	if (NimbleCounters[gBankAttacker] != 0xFF)
-		NimbleCounters[gBankAttacker] += 1;
+	if (gNewBS->NimbleCounters[gBankAttacker] != 0xFF)
+		gNewBS->NimbleCounters[gBankAttacker] += 1;
 }
 
 void FlowerShieldLooper(void) {
@@ -84,11 +87,6 @@ void CheckIfTypePresent(void) {
 		if (IsOfType(i, type))
 			FormCounter = TRUE;
 	}
-}
-
-void AcupressureFixTarget(void) {
-	if (SIDE(gBankTarget) != SIDE(gBankAttacker))
-		gBankTarget = gBankAttacker;
 }
 
 void AcupressureFunc(void) {
@@ -243,7 +241,7 @@ void SpectralThiefFunc(void) {
 
 void CheeckPouchFunc(void) {
 	u8 bank = gBattleScripting->bank;
-	if (ABILITY(bank) == ABILITY_CHEEKPOUCH && !HealBlockTimers[bank]) { //Berry check should already be done
+	if (ABILITY(bank) == ABILITY_CHEEKPOUCH && !gNewBS->HealBlockTimers[bank]) { //Berry check should already be done
 		gBattleMoveDamage = MathMax(1, udivsi(gBattleMons[bank].maxHP, 3));
 		gBattleMoveDamage *= -1;
 		FormCounter = TRUE;
@@ -253,12 +251,12 @@ void CheeckPouchFunc(void) {
 }
 
 void SetUnburdenBoostTarget(void) {
-	UnburdenBoosts |= 1 << gBankTarget;
+	gNewBS->UnburdenBoosts |= 1 << gBankTarget;
 }
 
 void MoldBreakerRemoveAbilitiesOnForceSwitchIn(void) {
 	u8 bank;
-	if (ForceSwitchHelper == 2)
+	if (gNewBS->ForceSwitchHelper == 2)
 		bank = gBattleScripting->bank;
 	else
 		bank = gBankAttacker;
@@ -268,7 +266,7 @@ void MoldBreakerRemoveAbilitiesOnForceSwitchIn(void) {
 	||  ABILITY(bank) == ABILITY_TERAVOLT)
 	{
 		if (CheckTableForAbility(ABILITY(gBankTarget), MoldBreakerIgnoreAbilities)) {
-			DisabledMoldBreakerAbilities[gBankTarget] = ABILITY(gBankTarget);
+			gNewBS->DisabledMoldBreakerAbilities[gBankTarget] = ABILITY(gBankTarget);
 			gBattleMons[gBankTarget].ability = 0;
 		}
 	}
@@ -276,9 +274,9 @@ void MoldBreakerRemoveAbilitiesOnForceSwitchIn(void) {
 
 
 void MoldBreakerRestoreAbilitiesOnForceSwitchIn(void) {
-	if (DisabledMoldBreakerAbilities[gBankTarget]) {
-		gBattleMons[gBankTarget].ability = DisabledMoldBreakerAbilities[gBankTarget];
-		DisabledMoldBreakerAbilities[gBankTarget] = 0;
+	if (gNewBS->DisabledMoldBreakerAbilities[gBankTarget]) {
+		gBattleMons[gBankTarget].ability = gNewBS->DisabledMoldBreakerAbilities[gBankTarget];
+		gNewBS->DisabledMoldBreakerAbilities[gBankTarget] = 0;
 	}
 }
 
@@ -289,19 +287,17 @@ void TrainerSlideOut(void) {
 }
 
 void SetAuroraVeil(void) {
-	FormCounter = FALSE;
-	
-    if (!AuroraVeilTimers[SIDE(gBankAttacker)] 
+    if (!gNewBS->AuroraVeilTimers[SIDE(gBankAttacker)] 
 	&& gBattleWeather & WEATHER_HAIL_ANY
 	&& WEATHER_HAS_EFFECT)
 	{
 		if (ITEM_EFFECT(gBankAttacker) == ITEM_EFFECT_LIGHT_CLAY)
-			AuroraVeilTimers[SIDE(gBankAttacker)] = 8;
+			gNewBS->AuroraVeilTimers[SIDE(gBankAttacker)] = 8;
 		else
-			AuroraVeilTimers[SIDE(gBankAttacker)] = 5;
-			
-		FormCounter = TRUE;
+			gNewBS->AuroraVeilTimers[SIDE(gBankAttacker)] = 5;
     }
+	else
+		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
 }
 
 void MetalBurstDamageCalculator(void) {
@@ -398,16 +394,16 @@ void RoundBSFunction(void) {
 }
 
 void EchoedVoiceFunc(void) {
-	switch (EchoedVoiceCounter) {
+	switch (gNewBS->EchoedVoiceCounter) {
 		case 0:
-			EchoedVoiceCounter = 2;
-			EchoedVoiceDamageScale = 0;
+			gNewBS->EchoedVoiceCounter = 2;
+			gNewBS->EchoedVoiceDamageScale = 0;
 			break;
 		case 2:
 			break;
 		default:
-			EchoedVoiceCounter = 2;
-			EchoedVoiceDamageScale = MathMin(10, EchoedVoiceDamageScale + 1);
+			gNewBS->EchoedVoiceCounter = 2;
+			gNewBS->EchoedVoiceDamageScale = MathMin(10, gNewBS->EchoedVoiceDamageScale + 1);
 	}
 }
 void TryPartingShotStatDrop(void) {
@@ -416,7 +412,7 @@ void TryPartingShotStatDrop(void) {
 
 /*
 void DefogHelperFunc(void) {
-	if (AuroraVeilTimers[SIDE(gBankTarget)]
+	if (gNewBS->AuroraVeilTimers[SIDE(gBankTarget)]
 	|| gSideAffecting[SIDE(gBankAttacker)] & SIDE_STATUS_SPIKES
 	|| gSideAffecting[SIDE(gBankTarget)] & (SIDE_STATUS_SPIKES 
 										  | SIDE_STATUS_REFLECT
@@ -429,7 +425,7 @@ void DefogHelperFunc(void) {
 }*/
 
 void ClearBeakBlastBit(void) {
-	BeakBlastByte &= ~(gBitTable[gBankAttacker]);
+	gNewBS->BeakBlastByte &= ~(gBitTable[gBankAttacker]);
 }
 
 void BestowItem(void) {
@@ -437,6 +433,100 @@ void BestowItem(void) {
 }
 
 void BelchFunction(void) {
-	if (!(BelchCounters & gBitTable[gBattlerPartyIndexes[gBankAttacker]]))
+	if (!(gNewBS->BelchCounters & gBitTable[gBattlerPartyIndexes[gBankAttacker]]))
 		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;	
+}
+
+void StrengthSapFunc(void) {
+	u16 atk = gBattleMons[gBankTarget].attack;
+	APPLY_STAT_MOD(atk, &gBattleMons[gBankTarget], atk, STAT_STAGE_ATK);
+	atk = MathMax(1, atk);
+	
+	if (ITEM_EFFECT(gBankAttacker) == ITEM_EFFECT_BIGROOT)
+		atk = udivsi(130 * atk, 100);
+	
+	gBattleMoveDamage = atk * -1;
+}
+
+void PlayAttackAnimationForExplosion(void) {
+    if (gBattleExecBuffer)
+	{
+		gBattlescriptCurrInstr -= 5;
+        return;
+	}
+
+    if ((gHitMarker & HITMARKER_NO_ANIMATIONS))
+        return;
+
+    u8 multihit;
+	gActiveBattler = gBankAttacker;
+	multihit = gMultiHitCounter;
+
+    EmitMoveAnimation(0, gCurrentMove, gBattleScripting->animTurn, gBattleMovePower, gBattleMoveDamage, gBattleMons[gBankAttacker].friendship, &gDisableStructs[gBankAttacker], multihit);
+    MarkBufferBankForExecution(gBankAttacker);
+}
+
+void CopycatFunc(void) {
+	if (gNewBS->LastUsedMove == 0 
+	|| gNewBS->LastUsedMove == 0xFFFF
+	|| CheckTableForMove(gNewBS->LastUsedMove, CopycatBanTable))
+	{
+		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;	
+	}
+	else
+		gRandomMove = gNewBS->LastUsedMove;
+}
+
+void SetRoostFunc(void) {
+	if (gBattleMons[gBankAttacker].type1 == TYPE_FLYING
+	&&  gBattleMons[gBankAttacker].type2 == TYPE_FLYING)
+	{
+		gNewBS->RoostCounter |= gBitTable[gBankAttacker];
+		gBattleMons[gBankAttacker].type1 = TYPE_NORMAL;
+		gBattleMons[gBankAttacker].type2 = TYPE_NORMAL;
+	}
+	else
+	{
+		if (gBattleMons[gBankAttacker].type1 == TYPE_FLYING)
+			gBattleMons[gBankAttacker].type1 = TYPE_ROOSTLESS;
+
+		if (gBattleMons[gBankAttacker].type2 == TYPE_FLYING)
+			gBattleMons[gBankAttacker].type2 = TYPE_ROOSTLESS;
+	}
+	
+	if (gBattleMons[gBankAttacker].type3 == TYPE_FLYING)
+		gBattleMons[gBankAttacker].type3 = TYPE_ROOSTLESS;
+}
+
+void CaptivateFunc(void) {
+    struct Pokemon *monAttacker, *monTarget;
+    u16 speciesAtk, speciesDef;
+    u32 personalityAtk, personalityDef;
+
+    if (SIDE(gBankAttacker) == B_SIDE_PLAYER)
+        monAttacker = &gPlayerParty[gBattlerPartyIndexes[gBankAttacker]];
+    else
+        monAttacker = &gEnemyParty[gBattlerPartyIndexes[gBankAttacker]];
+
+    if (SIDE(gBankTarget) == B_SIDE_PLAYER)
+        monTarget = &gPlayerParty[gBattlerPartyIndexes[gBankTarget]];
+    else
+        monTarget = &gEnemyParty[gBattlerPartyIndexes[gBankTarget]];
+
+    speciesAtk = GetMonData(monAttacker, MON_DATA_SPECIES, 0);
+    personalityAtk = GetMonData(monAttacker, MON_DATA_PERSONALITY, 0);
+
+    speciesDef = GetMonData(monTarget, MON_DATA_SPECIES, 0);
+    personalityDef = GetMonData(monTarget, MON_DATA_PERSONALITY, 0);
+
+    if (GetGenderFromSpeciesAndPersonality(speciesAtk, personalityAtk) == GetGenderFromSpeciesAndPersonality(speciesDef, personalityDef)
+    || GetGenderFromSpeciesAndPersonality(speciesAtk, personalityAtk) == MON_GENDERLESS
+    || GetGenderFromSpeciesAndPersonality(speciesDef, personalityDef) == MON_GENDERLESS)
+    {
+        gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+    }
+    else
+    {
+        gBattlescriptCurrInstr += 5;
+    }
 }
