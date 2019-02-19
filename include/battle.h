@@ -725,7 +725,7 @@ struct NewBattleStruct
 	//Personal Counters
 	u8 TelekinesisTimers[4];
 	u8 MagnetRiseTimers[4];
-	u8 HealBlockTimers[4];
+	u8 HealBlockTimers[4]; 					//0x20175D4
 	u8 LaserFocusTimers[4];
 	u8 ThroatChopTimers[4];
 	u8 EmbargoTimers[4];
@@ -738,6 +738,7 @@ struct NewBattleStruct
 	u8 MetronomeCounter[4];
 	u8 IncinerateCounters[4];
 	u8 LastUsedTypes[4];
+	u8 lastTargeted[4];
 	u8 DisabledMoldBreakerAbilities[4];
 	u8 SuppressedAbilities[4];
 	
@@ -768,6 +769,7 @@ struct NewBattleStruct
 	u8 DancerBankCount;
 	u8 CurrentTurnAttacker;
 	u8 TargetsHit;
+	u8 targetsToBringDown;
 	u8 FaintEffectsTracker;
 	u8 blockTracker;
 	
@@ -775,7 +777,7 @@ struct NewBattleStruct
 	bool8 NoMoreMovingThisTurn : 1;
 	bool8 MoveBounceInProgress : 2;
 	bool8 AttackerDidDamageAtLeastOnce : 1;
-	bool8 PledgeHelper : 1;
+	bool8 PledgeHelper : 3;
 	bool8 ParentalBondOn : 2;
 	bool8 MeFirstByte : 1;
 	bool8 ReceiverActivated : 1;
