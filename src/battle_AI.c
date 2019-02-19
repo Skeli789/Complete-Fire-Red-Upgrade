@@ -234,7 +234,7 @@ bool8 ShouldSwitch(void)
 			return FALSE;
 		if (ABILITY_ON_FIELD2(ABILITY_MAGNETPULL) && IsOfType(gActiveBattler, TYPE_STEEL))
 			return FALSE;
-		if (FairyLockTimer)
+		if (gNewBS->FairyLockTimer)
 			return FALSE;
 	}
 	if (gStatuses3[gActiveBattler] & STATUS3_SKY_DROP_TARGET)
@@ -328,7 +328,7 @@ bool8 FindMonThatAbsorbsOpponentsMove(void)
         battlerIn2 = gActiveBattler;
     }
 
-	switch (LastUsedTypes[gLastHitBy[gActiveBattler]]) {
+	switch (gNewBS->LastUsedTypes[gLastHitBy[gActiveBattler]]) {
 		case TYPE_FIRE:
 			absorbingTypeAbility1 = ABILITY_FLASHFIRE;
 			absorbingTypeAbility2 = ABILITY_FLASHFIRE;
