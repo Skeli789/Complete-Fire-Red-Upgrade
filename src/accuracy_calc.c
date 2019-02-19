@@ -10,6 +10,7 @@ extern move_t IgnoreAirTable[];
 extern move_t IgnoreUndergoundTable[];
 extern move_t IgnoreUnderwaterTable[];
 extern move_t AlwaysHitRainTable[];
+extern move_t StatChangeIgnoreTable[];
 extern const struct StatFractions gAccuracyStageRatios[];
 
 void atk01_accuracycheck(void);
@@ -232,7 +233,7 @@ u32 AccuracyCalc(u16 move, u8 bankAtk, u8 bankDef) {
 		||  (gBattleMons[bankDef].status2 & STATUS3_MIRACLE_EYED) 
 		||   atkAbility == ABILITY_UNAWARE 
 		||   atkAbility == ABILITY_KEENEYE 
-		||   gBattleMoves[move].effect == EFFECT_IGNORE_STAT_CHANGES)
+		||   CheckTableForMove(move, StatChangeIgnoreTable))
 		{
 			buff = acc;
 		}

@@ -8,6 +8,7 @@ extern u32 SpeedCalcForParty(u8 side, pokemon_t*);
 extern bool8 ProtectAffects(u16 move, u8 bankAtk, u8 bankDef, bool8 set);
 
 extern move_t HighCritTable[];
+extern move_t AlwaysCritTable[];
 extern NaturalGiftStruct NaturalGiftTable[];
 extern FlingStruct FlingTable[];
 extern move_t RecklessTable[];
@@ -22,6 +23,8 @@ extern move_t MinimizeHitTable[];
 extern move_t TwoToFiveStrikesMoves[];
 extern move_t TwoStrikesMoves[];
 extern move_t ThreeStrikesMoves[];
+extern move_t StatChangeIgnoreTable[];
+extern move_t SpecialAttackPhysicalDamageMoves[];
 
 const u16 Gen2_5CriticalHitChance[] = {16, 8, 4, 3, 2};
 const u16 Gen6CriticalHitChance[] = {16, 8, 2, 1, 1};
@@ -74,7 +77,7 @@ void atk04_critcalc(void) {
 	
 	else if ((atkAbility == ABILITY_MERCILESS && (gBattleMons[gBankTarget].status1 & STATUS_PSN_ANY)) 
 	|| gNewBS->LaserFocusTimers[gBankAttacker]
-	|| gBattleMoves[gCurrentMove].effect == EFFECT_ALWAYS_CRIT)
+	|| CheckTableForMove(gCurrentMove, AlwaysCritTable))
 		ConfirmedCrit = TRUE;
 		
 	else {
@@ -150,7 +153,7 @@ u8 CalcPossibleCritChance(u8 bankAtk, u8 bankDef, u16 move, pokemon_t* atkMon, b
 	
 	else if ((atkAbility == ABILITY_MERCILESS && (gBattleMons[bankDef].status1 & STATUS_PSN_ANY)) 
 	|| (gNewBS->LaserFocusTimers[bankAtk] && !CheckParty)
-	|| gBattleMoves[move].effect == EFFECT_ALWAYS_CRIT)
+	|| CheckTableForMove(move, AlwaysCritTable))
 		return TRUE;
 		
 	else {
@@ -208,31 +211,31 @@ void FutureSightDamageCalc(void) {
 }
 
 u32 AI_CalcDmg(u8 bankAtk, u8 bankDef, u16 move) {
-	u8 critChance;
 	u32 damage = 0;
 	gDynamicBasePower = 0;
 	gBattleScripting->dmgMultiplier = 1;
 	gBattleStruct->dynamicMoveType = GetMoveTypeSpecial(bankAtk, move);
+	gCritMultiplier = CalcPossibleCritChance(bankAtk, bankDef, move, 0, FALSE); //Return 0 if none, 1 if always, 2 if 50%
     u16 side_hword = gSideAffecting[SIDE(bankDef)];
     damage = CalculateBaseDamage(&gBattleMons[bankAtk], &gBattleMons[bankDef], move,
                                             side_hword, gDynamicBasePower,
 											TypeCalc(move, bankAtk, bankDef, 0, FALSE),
                                             gBattleStruct->dynamicMoveType, bankAtk, bankDef,
 											GetBankPartyData(bankAtk), FALSE, FALSE, FALSE);
-    
-	critChance = CalcPossibleCritChance(bankAtk, bankDef, move, 0, FALSE); //Return 0 if none, 1 if always, 2 if 50%
-	
+
 	gBattleMoveDamage = damage;
 	TypeCalc(move, bankAtk, bankDef, 0, FALSE);
 	damage = gBattleMoveDamage;
 	
-	if (critChance && umodsi(Random(), critChance) == 0) {
+	if (gCritMultiplier && umodsi(Random(), gCritMultiplier) == 0) {
 		#ifdef OLD_CRIT_DAMAGE
 			damage *= 2;
 		#else //Gen 6+ crit damage
 			damage = udivsi(damage * 15, 10);	
 		#endif
 	}
+	
+	gCritMultiplier = 100; //Reset
 	
 	if (CheckTableForMove(move, TwoToFiveStrikesMoves) && ABILITY(bankAtk) == ABILITY_SKILLLINK)
 		damage *= 5;
@@ -245,12 +248,12 @@ u32 AI_CalcDmg(u8 bankAtk, u8 bankDef, u16 move) {
 }
 
 u32 AI_CalcPartyDmg(u8 bankAtk, u8 bankDef, u16 move, pokemon_t* mon) {
-	u8 critChance;
 	u32 damage = 0;
 	gDynamicBasePower = 0;
 	gBattleScripting->dmgMultiplier = 1;
 	gBattleStruct->dynamicMoveType = GetMoveTypeSpecialFromParty(mon, move);
     u16 side_hword = gSideAffecting[SIDE(bankDef)];
+	gCritMultiplier = CalcPossibleCritChance(bankAtk, bankDef, move, mon, TRUE); //Return 0 if none, 1 if always, 2 if 50%
     damage = CalculateBaseDamage(&gBattleMons[0], &gBattleMons[bankDef], move,
                                             side_hword, gDynamicBasePower,
 											TypeCalc(move, bankAtk, bankDef, mon, TRUE),
@@ -261,14 +264,15 @@ u32 AI_CalcPartyDmg(u8 bankAtk, u8 bankDef, u16 move, pokemon_t* mon) {
 	TypeCalc(move, bankAtk, bankDef, mon, TRUE);
 	damage = gBattleMoveDamage;
     
-	critChance = CalcPossibleCritChance(bankAtk, bankDef, move, mon, TRUE); //Return 0 if none, 1 if always, 2 if 50%
-	if (critChance && umodsi(Random(), critChance) == 0) {
+	if (gCritMultiplier && umodsi(Random(), gCritMultiplier) == 0) {
 		#ifdef OLD_CRIT_DAMAGE
 			damage *= 2;
 		#else //Gen 6+ crit damage
 			damage = udivsi(damage * 15, 10);	
 		#endif
 	}
+	
+	gCritMultiplier = 100; //Reset
 	
 	if (CheckTableForMove(move, TwoToFiveStrikesMoves) && GetPartyAbility(mon) == ABILITY_SKILLLINK)
 		damage *= 5;
@@ -1716,7 +1720,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 	}
 	
 	if (atkAbility == ABILITY_UNAWARE
-	|| gBattleMoves[move].effect == EFFECT_IGNORE_STAT_CHANGES) {
+	|| CheckTableForMove(move, StatChangeIgnoreTable)) {
 		buffedDefense = defense;
 		buffedSpDefense = spDefense;
 	}
@@ -1742,7 +1746,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 	damage = udivsi(2 * attacker->level, 5) + 2;
 	damage *= gBattleMovePower;
     
-	if (gBattleMoves[move].effect == EFFECT_SPATK_PHYSICAL_DAMAGE) {
+	if (CheckTableForMove(move, SpecialAttackPhysicalDamageMoves)) {
 		damage *= buffedSpAttack;
 		damage = udivsi(damage, buffedDefense);
 	}
