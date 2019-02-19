@@ -204,7 +204,7 @@
 	.2byte \string
 	.endm
 
-	.macro printstring2 string
+	.macro printselectionstring string
 	.byte 0x11
 	.2byte \string
 	.endm
