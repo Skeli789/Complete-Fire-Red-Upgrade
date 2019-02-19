@@ -4,6 +4,7 @@
 
 .include "..\\defines"
 
+.global BattleScript_PrintCustomString
 .global BattleScript_QuickClaw
 .global BattleScript_MagicBounce
 .global BattleScript_MoveUsedFlinched
@@ -20,6 +21,13 @@
 .global BattleScript_DarkTypePreventsPrankster
 
 .global AbilityRaisedStatString
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_PrintCustomString:
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
