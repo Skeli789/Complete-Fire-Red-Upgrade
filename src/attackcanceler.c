@@ -62,6 +62,7 @@ enum
 	CANCELLER_THAW,
 	CANCELLER_Z_MOVES,
 	CANCELLER_GRAVITY_Z_MOVES,
+	CANCELLER_NATURAL_GIFT,
 	CANCELLER_POWDER,
 	CANCELLER_PRIMAL_WEATHER,
 	CANCELLER_PSYCHIC_TERRAIN,
@@ -687,7 +688,21 @@ u8 AtkCanceller_UnableToUseMove(void)
             }
             gBattleStruct->atkCancellerTracker++;
             break;
-			
+		
+		//Natural Gift fails before it can take Powder damage
+		case CANCELLER_NATURAL_GIFT:
+			if (gCurrentMove == MOVE_NATURALGIFT &&
+			  (ABILITY(gBankAttacker) == ABILITY_KLUTZ
+			|| GetPocketByItemId(ITEM(gBankAttacker)) != POCKET_BERRY_POUCH 
+			|| AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, gBankAttacker, ABILITY_UNNERVE, 0, 0)
+			|| gNewBS->MagicRoomTimer
+			|| gNewBS->EmbargoTimers[gBankAttacker]))
+			{
+				gBattlescriptCurrInstr = BattleScript_ButItFailed - 2;
+			}
+			gBattleStruct->atkCancellerTracker++;
+			break;
+		
 		case CANCELLER_POWDER:
             if ((gNewBS->PowderByte & gBitTable[gBankAttacker]) && (gBattleStruct->dynamicMoveType == TYPE_FIRE))
             {
