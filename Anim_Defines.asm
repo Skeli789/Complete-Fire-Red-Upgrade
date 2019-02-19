@@ -295,12 +295,12 @@
 .word \jumpifargmatchesPtr
 .endm
 
-.macro anim22 anim22bank
+.macro pokespritetoBG2 anim22bank
 .byte 0x22
 .byte \anim22bank
 .endm
 
-.macro anim23 anim23bank
+.macro pokespritefromBG2 anim23bank
 .byte 0x23
 .byte \anim23bank
 .endm
