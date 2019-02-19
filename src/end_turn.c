@@ -128,6 +128,8 @@ u8 TurnBasedEffects(void) {
 					
 				if (gNewBS->EchoedVoiceCounter == 0)
 					gNewBS->EchoedVoiceDamageScale = 0;
+					
+				gNewBS->NoMoreMovingThisTurn = 0;
 			
 				++gBattleStruct->turnEffectsTracker;
 			__attribute__ ((fallthrough));
@@ -1241,24 +1243,6 @@ u8 TurnBasedEffects(void) {
     return 0;
 }
 
-void ClearBankStatus(bank_t bank) {
-	if (gBattleMons[bank].status1 & (STATUS_POISON | STATUS_TOXIC_POISON))
-		StringCopy(gBattleTextBuff1, gStatusConditionString_Poison);
-	else if (gBattleMons[bank].status1 & STATUS_SLEEP)
-		StringCopy(gBattleTextBuff1, gStatusConditionString_Sleep);
-	else if (gBattleMons[bank].status1 & STATUS_PARALYSIS)
-		StringCopy(gBattleTextBuff1, gStatusConditionString_Paralysis);
-	else if (gBattleMons[bank].status1 & STATUS_BURN)
-		StringCopy(gBattleTextBuff1, gStatusConditionString_Burn);
-	else if (gBattleMons[bank].status1 & STATUS_FREEZE)
-		StringCopy(gBattleTextBuff1, gStatusConditionString_Ice);
-	gBattleMons[bank].status1 = 0;
-	gBattleMons[bank].status2 &= ~(STATUS2_NIGHTMARE);
-	gActiveBattler = bank;
-	EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[bank].status1);
-	MarkBufferBankForExecution(gActiveBattler);
-}
-
 bool8 AllStatsButOneAreMinned(bank_t bank) {
 	u8 counter = 0;
 	for (u8 i = 0; i < BATTLE_STATS_NO-1; ++i) {
@@ -1330,7 +1314,7 @@ bool8 HandleFaintedMonActions(void)
 					&& !(gAbsentBattlerFlags & gBitTable[gBattleStruct->faintedActionsBank]))
 					{
 						if (gNewBS->EndTurnDone 
-						||  ViableMonCount(GetBankPartyData(gBattleStruct->faintedActionsBank)) == 0)
+						||  ViableMonCountFromBank(gBattleStruct->faintedActionsBank) == 0)
 						{
 							BattleScriptExecute(BattleScript_HandleFaintedMon);
 							gBattleStruct->faintedActionsState = 5;
