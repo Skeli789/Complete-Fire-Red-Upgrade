@@ -123,6 +123,13 @@ u8 ViableMonCount(pokemon_t* party) {
 	return count;
 }
 
+u8 ViableMonCountFromBank(u8 bank) {
+	if (SIDE(bank) == B_SIDE_PLAYER)
+		return ViableMonCount(gPlayerParty);
+	else
+		return ViableMonCount(gEnemyParty);
+}
+
 bool8 CheckContact(u16 move, u8 bank) {
 	if (!(gBattleMoves[move].flags & FLAG_MAKES_CONTACT) ||
 		ITEM_EFFECT(bank) == ITEM_EFFECT_PROTECTIVE_PADS ||
@@ -493,6 +500,15 @@ ability_t CopyAbility(u8 bank) {
 		return gBattleMons[bank].ability;
 }
 
+ability_t* GetAbilityLocation(u8 bank) {
+	if (gStatuses3[bank] & STATUS3_ABILITY_SUPPRESS)
+		return &gNewBS->SuppressedAbilities[bank];
+	else if (gNewBS->DisabledMoldBreakerAbilities[bank])
+		return &gNewBS->DisabledMoldBreakerAbilities[bank];
+	else
+		return &gBattleMons[bank].ability;
+}
+
 
 //Check Function
 bool8 UproarWakeUpCheck(u8 bank) {
@@ -736,6 +752,24 @@ u8 CalcMoveSplitFromParty(pokemon_t* mon, u16 move) {
 	}
 
 	return SPLIT(move);
+}
+
+void ClearBankStatus(bank_t bank) {
+	if (gBattleMons[bank].status1 & (STATUS_POISON | STATUS_TOXIC_POISON))
+		StringCopy(gBattleTextBuff1, gStatusConditionString_Poison);
+	else if (gBattleMons[bank].status1 & STATUS_SLEEP)
+		StringCopy(gBattleTextBuff1, gStatusConditionString_Sleep);
+	else if (gBattleMons[bank].status1 & STATUS_PARALYSIS)
+		StringCopy(gBattleTextBuff1, gStatusConditionString_Paralysis);
+	else if (gBattleMons[bank].status1 & STATUS_BURN)
+		StringCopy(gBattleTextBuff1, gStatusConditionString_Burn);
+	else if (gBattleMons[bank].status1 & STATUS_FREEZE)
+		StringCopy(gBattleTextBuff1, gStatusConditionString_Ice);
+	gBattleMons[bank].status1 = 0;
+	gBattleMons[bank].status2 &= ~(STATUS2_NIGHTMARE);
+	gActiveBattler = bank;
+	EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[bank].status1);
+	MarkBufferBankForExecution(gActiveBattler);
 }
 
 bool8 CanBeGeneralStatused(u8 bank) {
