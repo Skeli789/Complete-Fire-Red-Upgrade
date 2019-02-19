@@ -16,6 +16,7 @@
 .global GravityBanTable
 .global MeFirstBanTable
 .global CopycatBanTable
+.global InstructBanList
 .global PowderTable
 .global SoundMoveTable
 .global SubstituteBypassTable
@@ -23,9 +24,11 @@
 .global SkyBattleBanTable
 .global StatChangeIgnoreTable
 .global HighCritTable
+.global AlwaysCritTable
 .global SleepTalkBanTable
 .global GemBanTable
 .global MovesThatCallOtherMovesTable
+.global MovesThatRequireRecharging
 .global MinimizeHitTable
 .global MoldBreakerMoves
 .global FlinchMoveTable
@@ -46,6 +49,7 @@
 .global IgnoreUndergoundTable
 .global IgnoreUnderwaterTable
 .global AlwaysHitRainTable
+.global SpecialAttackPhysicalDamageMoves
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -267,7 +271,6 @@ MeFirstBanTable:
 .hword MOVE_COUNTER
 .hword MOVE_MIRRORCOAT
 .hword MOVE_METALBURST
-.hword MOVE_MEFIRST
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -314,6 +317,36 @@ CopycatBanTable:
 .hword MOVE_TRANSFORM
 .hword MOVE_TRICK
 .hword MOVE_WHIRLWIND
+.hword MOVE_TABLES_TERMIN
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+InstructBanList:
+.hword MOVE_INSTRUCT
+.hword MOVE_BIDE
+.hword MOVE_FOCUSPUNCH
+.hword MOVE_BEAKBLAST
+.hword MOVE_SHELLTRAP
+.hword MOVE_SKETCH
+.hword MOVE_TRANSFORM
+.hword MOVE_MIMIC
+.hword MOVE_KINGSSHIELD
+.hword MOVE_STRUGGLE
+.hword MOVE_BOUNCE
+.hword MOVE_DIG
+.hword MOVE_DIVE
+.hword MOVE_FLY
+.hword MOVE_FREEZESHOCK
+.hword MOVE_GEOMANCY
+.hword MOVE_ICEBURN
+.hword MOVE_PHANTOMFORCE
+.hword MOVE_RAZORWIND
+.hword MOVE_SHADOWFORCE
+.hword MOVE_SKULLBASH
+.hword MOVE_SKYATTACK
+.hword MOVE_SKYDROP
+.hword MOVE_SOLARBEAM
+.hword MOVE_SOLARBLADE
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -490,6 +523,13 @@ HighCritTable:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+AlwaysCritTable:
+.hword MOVE_CIRCLETHROW
+.hword MOVE_FROSTBREATH
+.hword MOVE_TABLES_TERMIN
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 SleepTalkBanTable:
 .hword MOVE_ASSIST
 .hword MOVE_BIDE
@@ -596,6 +636,19 @@ MovesThatCallOtherMovesTable:
 .hword MOVE_MIRRORMOVE
 .hword MOVE_NATUREPOWER
 .hword MOVE_SLEEPTALK
+.hword MOVE_TABLES_TERMIN
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+MovesThatRequireRecharging:
+.hword MOVE_BLASTBURN
+.hword MOVE_FRENZYPLANT
+.hword MOVE_GIGAIMPACT
+.hword MOVE_HYDROCANNON
+.hword MOVE_HYPERBEAM
+.hword MOVE_PRISMATICLASER
+.hword MOVE_ROAROFTIME
+.hword MOVE_ROCKWRECKER
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -785,6 +838,14 @@ IgnoreUnderwaterTable:
 AlwaysHitRainTable:
 .hword MOVE_THUNDER
 .hword MOVE_HURRICANE
+.hword MOVE_TABLES_TERMIN
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+SpecialAttackPhysicalDamageMoves:
+.hword MOVE_PSYSHOCK
+.hword MOVE_PSYSTRIKE
+.hword MOVE_SECRETSWORD
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
