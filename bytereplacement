@@ -4,6 +4,8 @@
 08013BEC 00 00 00 00 00 00 00 00 00 00 00 00
 ##Nop Out PerishSong_FutureSight
 08013C1A 00 24 00 00 00 00 00 00 00 00 00 00
+##Restore Old Sun Continues BS
+081D8B10 45 01 0B 00 00 00 00
 ##Nop Out Incorrect Focus Punch Activation
 080154AE 56 E0
 ##Free Up Old Turn Order

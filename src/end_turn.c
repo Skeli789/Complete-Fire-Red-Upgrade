@@ -4,6 +4,9 @@
 
 //Slow start
 
+extern u8 BattleScript_MysteriousAirCurrentContinues[];
+extern u8 BattleScript_FogEnded[];
+extern u8 BattleScript_FogContinues[];
 extern u8 BattleScript_RainDishActivates[];
 extern u8 BattleScript_DrySkinDamage[];
 extern u8 BattleScript_SolarPowerDamage[];
@@ -44,6 +47,7 @@ extern u8 BattleScript_ShieldsDownToCore[];
 extern u8 BattleScript_ShieldsDownToMeteor[];
 extern u8 BattleScript_FlowerGift[];
 
+extern u8 GetWhoStrikesFirst(bank_t, bank_t, bool8 ignoreMovePriorities);
 extern bool8 HasNoMonsToSwitch(u8 battler);
 
 u8 TurnBasedEffects(void);
@@ -51,6 +55,7 @@ void ClearBankStatus(bank_t);
 bool8 AllStatsButOneAreMinned(bank_t);
 
 u8 TurnBasedEffects(void) {
+	int i, j;
     u8 effect = 0;
 
     gHitMarker |= (HITMARKER_GRUDGE | HITMARKER_x20);
@@ -59,10 +64,26 @@ u8 TurnBasedEffects(void) {
 		u8 sideBank;
         gActiveBattler = gBankAttacker = gBankTarget = gBanksByTurnOrder[gBattleStruct->turnEffectsBank];
         if (!(gAbsentBattlerFlags & gBitTable[gActiveBattler])) {
-            switch (gBattleStruct->turnEffectsTracker) { 
+            switch (gBattleStruct->turnEffectsTracker) 
+			{
+			case(ET_Order):
+				for (i = 0; i < gBattlersCount; ++i)
+				{
+					gBanksByTurnOrder[i] = i;
+				}
+				for (i = 0; i < gBattlersCount - 1; ++i)
+				{
+					for (j = i + 1; j < gBattlersCount; ++j)
+					{
+						if (GetWhoStrikesFirst(gBanksByTurnOrder[i], gBanksByTurnOrder[j], 0))
+							SwapTurnOrder(i, j);
+					}
+				}
+				++gBattleStruct->turnEffectsTracker;
+			__attribute__ ((fallthrough));
 			
 			case(ET_General_Counter_Decrement):
-				for (u8 i = 0; i < 4; ++i) 
+				for (i = 0; i < 4; ++i) 
 				{
 					if(gNewBS->LaserFocusTimers[i])
 						--gNewBS->LaserFocusTimers[i];
@@ -83,7 +104,7 @@ u8 TurnBasedEffects(void) {
 						--gNewBS->ElectrifyTimers[i];
 				}
 
-				for (u8 i = 0; i < 4; ++i)
+				for (i = 0; i < 4; ++i)
 				{ //These should be cleared earlier on, but just in case they aren't
 					gNewBS->PowderByte = 0;
 					gNewBS->BeakBlastByte = 0;
@@ -107,9 +128,131 @@ u8 TurnBasedEffects(void) {
 					
 				if (gNewBS->EchoedVoiceCounter == 0)
 					gNewBS->EchoedVoiceDamageScale = 0;
-				
+			
+				++gBattleStruct->turnEffectsTracker;
+			__attribute__ ((fallthrough));
+
+			case(ET_Rain):
+				if (gBattleWeather & WEATHER_RAIN_ANY)
+				{
+					if (!(gBattleWeather & WEATHER_RAIN_PERMANENT)
+					&& --gWishFutureKnock->weatherDuration == 0)
+					{
+						gBattleWeather &= ~WEATHER_RAIN_ANY;
+						gBattleCommunication[MULTISTRING_CHOOSER] = 2;
+					}
+					else if (gBattleWeather & WEATHER_RAIN_DOWNPOUR)
+					{
+						gBattleCommunication[MULTISTRING_CHOOSER] = 1;
+					}
+					else
+					{
+						gBattleCommunication[MULTISTRING_CHOOSER] = 0;
+					}
+
+					BattleScriptExecute(BattleScript_RainContinuesOrEnds);
+					effect++;
+				}
+				++gBattleStruct->turnEffectsTracker;
+				gBattleStruct->turnEffectsBank = 0;
 				break;
-				
+			
+			case(ET_Sun):
+				if (gBattleWeather & WEATHER_SUN_ANY)
+				{
+					if (!(gBattleWeather & WEATHER_SUN_PERMANENT) 
+					&& --gWishFutureKnock->weatherDuration == 0)
+					{
+						gBattleWeather &= ~WEATHER_SUN_ANY;
+						gBattlescriptCurrInstr = BattleScript_SunlightFaded;
+					}
+					else
+					{
+						gBattlescriptCurrInstr = BattleScript_SunlightContinues;
+					}
+					BattleScriptExecute(gBattlescriptCurrInstr);
+					effect++;
+				}
+				++gBattleStruct->turnEffectsTracker;
+				gBattleStruct->turnEffectsBank = 0;
+				break;
+			
+			case(ET_Sandstorm):
+				if (gBattleWeather & WEATHER_SANDSTORM_ANY)
+				{
+					if (!(gBattleWeather & WEATHER_SANDSTORM_PERMANENT) 
+					&& --gWishFutureKnock->weatherDuration == 0)
+					{
+						gBattleWeather &= ~WEATHER_SANDSTORM_ANY;
+						gBattlescriptCurrInstr = BattleScript_SandStormHailEnds;
+					}
+					else
+					{
+						gBattlescriptCurrInstr = BattleScript_DamagingWeatherContinues;
+					}
+
+					gBattleScripting->animArg1 = B_ANIM_SANDSTORM_CONTINUES;
+					gBattleCommunication[MULTISTRING_CHOOSER] = 0;
+					BattleScriptExecute(gBattlescriptCurrInstr);
+					effect++;
+				}
+				++gBattleStruct->turnEffectsTracker;
+				gBattleStruct->turnEffectsBank = 0;
+				break;
+			
+			case(ET_Hail):
+				if (gBattleWeather & WEATHER_HAIL_ANY)
+				{
+					if (!(gBattleWeather & WEATHER_HAIL_PERMANENT)
+					&& --gWishFutureKnock->weatherDuration == 0)
+					{
+						gBattleWeather &= ~WEATHER_HAIL_ANY;
+						gBattlescriptCurrInstr = BattleScript_SandStormHailEnds;
+					}
+					else
+					{
+						gBattlescriptCurrInstr = BattleScript_DamagingWeatherContinues;
+					}
+
+					gBattleScripting->animArg1 = B_ANIM_HAIL_CONTINUES;
+					gBattleCommunication[MULTISTRING_CHOOSER] = 1;
+					BattleScriptExecute(gBattlescriptCurrInstr);
+					effect++;
+				}
+				++gBattleStruct->turnEffectsTracker;
+				gBattleStruct->turnEffectsBank = 0;
+				break;
+			
+			case(ET_Air_Current):
+				if (gBattleWeather & WEATHER_AIR_CURRENT_PRIMAL)
+				{
+					BattleScriptExecute(BattleScript_MysteriousAirCurrentContinues);
+					effect++;
+				}
+				++gBattleStruct->turnEffectsTracker;
+				gBattleStruct->turnEffectsBank = 0;
+				break;
+			
+			case(ET_Fog):
+				if (gBattleWeather & WEATHER_FOG_ANY)
+				{
+					if (!(gBattleWeather & WEATHER_FOG_PERMANENT) 
+					&& --gWishFutureKnock->weatherDuration == 0)
+					{
+						gBattleWeather &= ~WEATHER_FOG_ANY;
+						gBattlescriptCurrInstr = BattleScript_FogEnded;
+					}
+					else
+					{
+						gBattlescriptCurrInstr = BattleScript_FogContinues;
+					}
+					BattleScriptExecute(gBattlescriptCurrInstr);
+					effect++;
+				}
+				++gBattleStruct->turnEffectsTracker;
+				gBattleStruct->turnEffectsBank = 0;
+				break;
+
 			case(ET_Weather_Health_Abilities):
 				if (gBattleMons[gActiveBattler].hp) 
 				{
@@ -1030,21 +1173,24 @@ u8 TurnBasedEffects(void) {
 							break;
 							
 						case ABILITY_SHIELDSDOWN:
-							if (species == PKMN_MINIORSHIELD && gBattleMons[gActiveBattler].hp <= (gBattleMons[gActiveBattler].maxHP / 2)) {
-									newspecies = umodsi(partydata->personality, 7); //Get Minior Colour
-									changedform = TRUE;
-									battle_script = BattleScript_ShieldsDownToCore;
-								}
-							else if ((species == PKMN_MINIOR_RED ||
-									 species == PKMN_MINIOR_BLUE ||
-									 species == PKMN_MINIOR_ORANGE ||
-									 species == PKMN_MINIOR_YELLOW ||
-									 species == PKMN_MINIOR_INDIGO ||
-									 species == PKMN_MINIOR_GREEN ||
-									 species == PKMN_MINIOR_VIOLET) && gBattleMons[gActiveBattler].hp > (gBattleMons[gActiveBattler].maxHP / 2)) {
-											newspecies = PKMN_MINIORSHIELD;
-											changedform = TRUE;
-											battle_script = BattleScript_ShieldsDownToMeteor;
+							if (species == PKMN_MINIORSHIELD 
+							&& gBattleMons[gActiveBattler].hp <= (gBattleMons[gActiveBattler].maxHP / 2)) 
+							{
+								newspecies = umodsi(partydata->personality, 7); //Get Minior Colour
+								changedform = TRUE;
+								battle_script = BattleScript_ShieldsDownToCore;
+							}
+							else if ((species == PKMN_MINIOR_RED
+								  || species == PKMN_MINIOR_BLUE
+								  || species == PKMN_MINIOR_ORANGE
+								  || species == PKMN_MINIOR_YELLOW
+								  || species == PKMN_MINIOR_INDIGO
+								  || species == PKMN_MINIOR_GREEN
+								  || species == PKMN_MINIOR_VIOLET) && gBattleMons[gActiveBattler].hp > (gBattleMons[gActiveBattler].maxHP / 2)) 
+							{
+								newspecies = PKMN_MINIORSHIELD;
+								changedform = TRUE;
+								battle_script = BattleScript_ShieldsDownToMeteor;
 							}
 							break;
 							
@@ -1108,7 +1254,9 @@ void ClearBankStatus(bank_t bank) {
 		StringCopy(gBattleTextBuff1, gStatusConditionString_Ice);
 	gBattleMons[bank].status1 = 0;
 	gBattleMons[bank].status2 &= ~(STATUS2_NIGHTMARE);
+	gActiveBattler = bank;
 	EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[bank].status1);
+	MarkBufferBankForExecution(gActiveBattler);
 }
 
 bool8 AllStatsButOneAreMinned(bank_t bank) {

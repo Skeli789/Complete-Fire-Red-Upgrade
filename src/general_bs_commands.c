@@ -1438,9 +1438,17 @@ void atk96_weatherdamage(void) {
 	u8 ability = ABILITY(bank);
 	u8 effect = ITEM_EFFECT(bank);
 	
+	gBattleMoveDamage = 0;
+	
 	if (gAbsentBattlerFlags & gBitTable[bank])
         gBattleMoveDamage = 0;
-		
+
+	#ifndef NO_GHOST_BATTLES //Ghosts can't take damage from Sand Stream or Snow Warning
+	else if ((gBattleTypeFlags & (BATTLE_TYPE_SCRIPTED_WILD_1 | BATTLE_TYPE_GHOST)) == BATTLE_TYPE_GHOST
+	&&  SIDE(gBankAttacker) == B_SIDE_OPPONENT)
+		gBattleMoveDamage = 0;
+	#endif
+	
 	else if (WEATHER_HAS_EFFECT
 		&& 	ability != ABILITY_MAGICGUARD
 		&&	ability != ABILITY_OVERCOAT
@@ -1450,10 +1458,12 @@ void atk96_weatherdamage(void) {
 	
         if (gBattleWeather & WEATHER_SANDSTORM_ANY) {
             if (!IsOfType(bank, TYPE_ROCK) && !IsOfType(bank, TYPE_GROUND) && !IsOfType(bank, TYPE_STEEL)
-             && ability != ABILITY_SANDVEIL && ability != ABILITY_SANDRUSH && ability != ABILITY_SANDFORCE)
+            && ability != ABILITY_SANDVEIL && ability != ABILITY_SANDRUSH && ability != ABILITY_SANDFORCE)
                 gBattleMoveDamage = MathMax(1, gBattleMons[bank].maxHP / 16);
             else
+			{
                 gBattleMoveDamage = 0;
+			}
         }
 		
         if (gBattleWeather & WEATHER_HAIL_ANY) {

@@ -4,7 +4,14 @@
 #define EOS 0xFF
 
 enum EndTurnEffects {
+ET_Order,
 ET_General_Counter_Decrement,	//Works
+ET_Rain,
+ET_Sun,
+ET_Sandstorm,
+ET_Hail,
+ET_Air_Current,
+ET_Fog,
 ET_Weather_Health_Abilities,
 ET_Future_Sight,
 ET_Wish,
@@ -72,6 +79,11 @@ ET_Harvest_Pickup,
 
 #define TURNBASED_MAX_CASE ET_End
 
+#define BattleScript_RainContinuesOrEnds (u8*) 0x81D8A64
+#define BattleScript_SunlightFaded (u8*) 0x81D8B18
+#define BattleScript_SunlightContinues (u8*) 0x81D8B0A
+#define BattleScript_SandStormHailEnds (u8*) 0x81D8B01
+#define BattleScript_DamagingWeatherContinues (u8*) 0x81D8A7F
 #define BattleScript_MonTookFutureAttack ((u8*) 0x81D8E12)
 #define BattleScript_WishComesTrue ((u8*) 0x81D8ED5)
 #define BattleScript_ShedSkinActivates ((u8*) 0x81D92D3) 
