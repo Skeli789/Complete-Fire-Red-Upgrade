@@ -107,7 +107,7 @@ typedef u8 Buffer_t[0x200];
 //Padding 0x2023D78?
 /*u8*/  #define gActionForBanks ((u8*) 0x2023D7C)
 
-/*u8*/  #define gUnknown_2023D80 ((u8*) 0x2023D80)
+/*u8*/  #define gSelectionBattleScripts ((const u8**) 0x2023D80)
 /*u8*/  #define gLastPrintedMoves ((u16*) 0x2023D90)
 
 /*u16*/ #define gLastUsedMoves ((u16*) 0x2023D98)
@@ -220,7 +220,7 @@ typedef u8 Buffer_t[0x200];
 /*u16*/ #define gSafariSteps	   (*((u16*) 0x02039996))
 
 /*u8*/  #define gAbilitiesPerBank ((u8*) 0x2039A30)
-		//#define gStringInfo ((struct StringInfoBattle*) *((u32*) 0x2039A34))
+		//#define gStringInfo ((struct BattleMsgData*) *((u32*) 0x2039A34))
 
 /*u8*/	#define QuestLogMode (*((u8*) 0x203ADFA))
 		#define gPartyMenuView ((struct PartyMenuViewing*) 0x203B09C)
