@@ -41,6 +41,7 @@ const struct TerrainTableStruct TerrainTable[] =
 		.secretPowerEffect = MOVE_EFFECT_SLEEP,
 		.secretPowerAnim = MOVE_VINEWHIP,
 		.naturePowerMove = MOVE_ENERGYBALL,
+		.burmyForm = PKMN_BURMY,
 	},
 	
 	{
@@ -49,6 +50,7 @@ const struct TerrainTableStruct TerrainTable[] =
 		.secretPowerEffect = MOVE_EFFECT_SLEEP,
 		.secretPowerAnim = MOVE_VINEWHIP,
 		.naturePowerMove = MOVE_ENERGYBALL,
+		.burmyForm = PKMN_BURMY,
 	},
 	
 	{
@@ -57,6 +59,7 @@ const struct TerrainTableStruct TerrainTable[] =
 		.secretPowerEffect = MOVE_EFFECT_ACC_MINUS_1,
 		.secretPowerAnim = MOVE_MUDSLAP,
 		.naturePowerMove = MOVE_EARTHPOWER,
+		.burmyForm = PKMN_BURMY_SANDY,
 	},
 	
 	{
@@ -65,6 +68,7 @@ const struct TerrainTableStruct TerrainTable[] =
 		.secretPowerEffect = MOVE_EFFECT_ATK_MINUS_1,
 		.secretPowerAnim = MOVE_WATERPULSE,
 		.naturePowerMove = MOVE_HYDROPUMP,
+		.burmyForm = PKMN_NONE,
 	},
 	
 	{
@@ -73,6 +77,7 @@ const struct TerrainTableStruct TerrainTable[] =
 		.secretPowerEffect = MOVE_EFFECT_ATK_MINUS_1,
 		.secretPowerAnim = MOVE_WATERPULSE,
 		.naturePowerMove = MOVE_HYDROPUMP,
+		.burmyForm = PKMN_NONE,
 	},
 	
 	{
@@ -81,6 +86,7 @@ const struct TerrainTableStruct TerrainTable[] =
 		.secretPowerEffect = MOVE_EFFECT_ATK_MINUS_1,
 		.secretPowerAnim = MOVE_WATERPULSE,
 		.naturePowerMove = MOVE_HYDROPUMP,
+		.burmyForm = PKMN_NONE,
 	},
 	
 	{
@@ -89,6 +95,7 @@ const struct TerrainTableStruct TerrainTable[] =
 		.secretPowerEffect = MOVE_EFFECT_ACC_MINUS_1,
 		.secretPowerAnim = MOVE_MUDSLAP,
 		.naturePowerMove = MOVE_EARTHPOWER,
+		.burmyForm = PKMN_BURMY_SANDY,
 	},
 	
 	{
@@ -97,6 +104,7 @@ const struct TerrainTableStruct TerrainTable[] =
 		.secretPowerEffect = MOVE_EFFECT_FLINCH,
 		.secretPowerAnim = MOVE_ROCKTHROW,
 		.naturePowerMove = MOVE_POWERGEM,
+		.burmyForm = PKMN_BURMY_SANDY,
 	},
 	
 	{
@@ -105,6 +113,7 @@ const struct TerrainTableStruct TerrainTable[] =
 		.secretPowerEffect = MOVE_EFFECT_PARALYSIS,
 		.secretPowerAnim = MOVE_BODYSLAM,
 		.naturePowerMove = MOVE_TRIATTACK,
+		.burmyForm = PKMN_BURMY_TRASH,
 	},
 	
 	{
@@ -113,6 +122,7 @@ const struct TerrainTableStruct TerrainTable[] =
 		.secretPowerEffect = MOVE_EFFECT_PARALYSIS,
 		.secretPowerAnim = MOVE_SLAM,
 		.naturePowerMove = MOVE_TRIATTACK,
+		.burmyForm = PKMN_BURMY,
 	},
 	
 	{
@@ -121,6 +131,7 @@ const struct TerrainTableStruct TerrainTable[] =
 		.secretPowerEffect = MOVE_EFFECT_PARALYSIS,
 		.secretPowerAnim = MOVE_BODYSLAM,
 		.naturePowerMove = MOVE_TRIATTACK,
+		.burmyForm = PKMN_BURMY_TRASH,
 	},
 	
 	{
@@ -129,6 +140,7 @@ const struct TerrainTableStruct TerrainTable[] =
 		.secretPowerEffect = MOVE_EFFECT_PARALYSIS,
 		.secretPowerAnim = MOVE_BODYSLAM,
 		.naturePowerMove = MOVE_TRIATTACK,
+		.burmyForm = PKMN_BURMY_TRASH,
 	},
 	
 	{
@@ -137,6 +149,7 @@ const struct TerrainTableStruct TerrainTable[] =
 		.secretPowerEffect = MOVE_EFFECT_PARALYSIS,
 		.secretPowerAnim = MOVE_BODYSLAM,
 		.naturePowerMove = MOVE_TRIATTACK,
+		.burmyForm = PKMN_BURMY_TRASH,
 	},
 	
 	{
@@ -145,6 +158,7 @@ const struct TerrainTableStruct TerrainTable[] =
 		.secretPowerEffect = MOVE_EFFECT_PARALYSIS,
 		.secretPowerAnim = MOVE_BODYSLAM,
 		.naturePowerMove = MOVE_TRIATTACK,
+		.burmyForm = PKMN_BURMY_TRASH,
 	},
 	
 	{
@@ -153,6 +167,7 @@ const struct TerrainTableStruct TerrainTable[] =
 		.secretPowerEffect = MOVE_EFFECT_PARALYSIS,
 		.secretPowerAnim = MOVE_BODYSLAM,
 		.naturePowerMove = MOVE_TRIATTACK,
+		.burmyForm = PKMN_BURMY_TRASH,
 	},
 	
 	{
@@ -161,6 +176,7 @@ const struct TerrainTableStruct TerrainTable[] =
 		.secretPowerEffect = MOVE_EFFECT_FREEZE,
 		.secretPowerAnim = MOVE_ICESHARD,
 		.naturePowerMove = MOVE_ICEBEAM,
+		.burmyForm = PKMN_BURMY_TRASH,
 	},
 	
 	{
@@ -169,6 +185,7 @@ const struct TerrainTableStruct TerrainTable[] =
 		.secretPowerEffect = MOVE_EFFECT_FLINCH,
 		.secretPowerAnim = MOVE_KARATECHOP,
 		.naturePowerMove = MOVE_FOCUSBLAST,
+		.burmyForm = PKMN_BURMY_TRASH,
 	},
 	
 	{
@@ -177,6 +194,7 @@ const struct TerrainTableStruct TerrainTable[] =
 		.secretPowerEffect = MOVE_EFFECT_EVS_MINUS_1,
 		.secretPowerAnim = MOVE_SHADOWSNEAK,
 		.naturePowerMove = MOVE_SHADOWBALL,
+		.burmyForm = PKMN_BURMY_TRASH,
 	},
 	
 	{
@@ -185,6 +203,7 @@ const struct TerrainTableStruct TerrainTable[] =
 		.secretPowerEffect = MOVE_EFFECT_ATK_MINUS_1,
 		.secretPowerAnim = MOVE_DRAGONRAGE,
 		.naturePowerMove = MOVE_DRAGONPULSE,
+		.burmyForm = PKMN_BURMY_TRASH,
 	},
 	
 	{
@@ -193,6 +212,7 @@ const struct TerrainTableStruct TerrainTable[] =
 		.secretPowerEffect = MOVE_EFFECT_PARALYSIS,
 		.secretPowerAnim = MOVE_BODYSLAM,
 		.naturePowerMove = MOVE_TRIATTACK,
+		.burmyForm = PKMN_BURMY_TRASH,
 	}
 	
 	#ifdef UNBOUND
@@ -203,6 +223,7 @@ const struct TerrainTableStruct TerrainTable[] =
 		.secretPowerEffect = MOVE_EFFECT_FREEZE,
 		.secretPowerAnim = MOVE_AVALANCHE,
 		.naturePowerMove = MOVE_FROSTBREATH,
+		.burmyForm = PKMN_NONE,
 	},
 
 	{
@@ -211,6 +232,7 @@ const struct TerrainTableStruct TerrainTable[] =
 		.secretPowerEffect = MOVE_EFFECT_BURN,
 		.secretPowerAnim = MOVE_INCINERATE,
 		.naturePowerMove = MOVE_LAVAPLUME,
+		.burmyForm = PKMN_BURMY_SANDY,
 	},
 	
 	{
@@ -219,6 +241,7 @@ const struct TerrainTableStruct TerrainTable[] =
 		.secretPowerEffect = MOVE_EFFECT_ATK_MINUS_1,
 		.secretPowerAnim = MOVE_WATERPULSE,
 		.naturePowerMove = MOVE_HYDROPUMP,
+		.burmyForm = PKMN_NONE,
 	},
 	
 	{
@@ -227,6 +250,7 @@ const struct TerrainTableStruct TerrainTable[] =
 		.secretPowerEffect = MOVE_EFFECT_FLINCH,
 		.secretPowerAnim = MOVE_ROCKTHROW,
 		.naturePowerMove = MOVE_POWERGEM,
+		.burmyForm = PKMN_BURMY_SANDY,
 	},
 	
 	{
@@ -235,6 +259,7 @@ const struct TerrainTableStruct TerrainTable[] =
 		.secretPowerEffect = MOVE_EFFECT_FREEZE,
 		.secretPowerAnim = MOVE_AVALANCHE,
 		.naturePowerMove = MOVE_FROSTBREATH,
+		.burmyForm = PKMN_BURMY_SANDY,
 	},
 	
 	{
@@ -243,6 +268,7 @@ const struct TerrainTableStruct TerrainTable[] =
 		.secretPowerEffect = MOVE_EFFECT_POISON,
 		.secretPowerAnim = MOVE_TWINEEDLE,
 		.naturePowerMove = MOVE_BUGBUZZ,
+		.burmyForm = PKMN_BURMY,
 	},
 	
 	{
@@ -251,6 +277,7 @@ const struct TerrainTableStruct TerrainTable[] =
 		.secretPowerEffect = MOVE_EFFECT_FREEZE,
 		.secretPowerAnim = MOVE_ICESHARD,
 		.naturePowerMove = MOVE_ICEBEAM,
+		.burmyForm = PKMN_NONE,
 	},
 	
 	{
@@ -259,6 +286,7 @@ const struct TerrainTableStruct TerrainTable[] =
 		.secretPowerEffect = MOVE_EFFECT_FLINCH,
 		.secretPowerAnim = MOVE_ROCKTHROW,
 		.naturePowerMove = MOVE_POWERGEM,
+		.burmyForm = PKMN_BURMY_SANDY,
 	},
 	
 	{
@@ -267,6 +295,7 @@ const struct TerrainTableStruct TerrainTable[] =
 		.secretPowerEffect = MOVE_EFFECT_DEF_MINUS_1,
 		.secretPowerAnim = MOVE_SHADOWSNEAK,
 		.naturePowerMove = MOVE_SHADOWBALL,
+		.burmyForm = PKMN_BURMY_SANDY,
 	},
 	
 	{
@@ -275,6 +304,7 @@ const struct TerrainTableStruct TerrainTable[] =
 		.secretPowerEffect = MOVE_EFFECT_SLEEP,
 		.secretPowerAnim = MOVE_VINEWHIP,
 		.naturePowerMove = MOVE_ENERGYBALL,
+		.burmyForm = PKMN_BURMY,
 	},
 	
 	{
@@ -283,6 +313,7 @@ const struct TerrainTableStruct TerrainTable[] =
 		.secretPowerEffect = MOVE_EFFECT_ACC_MINUS_1,
 		.secretPowerAnim = MOVE_MUDSLAP,
 		.naturePowerMove = MOVE_EARTHPOWER,
+		.burmyForm = PKMN_BURMY_SANDY,
 	},
 	
 	{
@@ -291,6 +322,7 @@ const struct TerrainTableStruct TerrainTable[] =
 		.secretPowerEffect = MOVE_EFFECT_ATK_MINUS_1,
 		.secretPowerAnim = MOVE_WATERPULSE,
 		.naturePowerMove = MOVE_HYDROPUMP,
+		.burmyForm = PKMN_NONE,
 	},
 	
 	{
@@ -299,6 +331,7 @@ const struct TerrainTableStruct TerrainTable[] =
 		.secretPowerEffect = MOVE_EFFECT_ATK_MINUS_1,
 		.secretPowerAnim = MOVE_WATERPULSE,
 		.naturePowerMove = MOVE_HYDROPUMP,
+		.burmyForm = PKMN_NONE,
 	},
 	
 	{
@@ -307,6 +340,7 @@ const struct TerrainTableStruct TerrainTable[] =
 		.secretPowerEffect = MOVE_EFFECT_BURN,
 		.secretPowerAnim = MOVE_INCINERATE,
 		.naturePowerMove = MOVE_LAVAPLUME,
+		.burmyForm = PKMN_NONE,
 	},
 	
 	{
@@ -315,6 +349,7 @@ const struct TerrainTableStruct TerrainTable[] =
 		.secretPowerEffect = MOVE_EFFECT_ATK_MINUS_1,
 		.secretPowerAnim = MOVE_WATERPULSE,
 		.naturePowerMove = MOVE_HYDROPUMP,
+		.burmyForm = PKMN_NONE,
 	},
 	
 	{
@@ -323,6 +358,7 @@ const struct TerrainTableStruct TerrainTable[] =
 		.secretPowerEffect = MOVE_EFFECT_SLEEP,
 		.secretPowerAnim = MOVE_VINEWHIP,
 		.naturePowerMove = MOVE_ENERGYBALL,
+		.burmyForm = PKMN_BURMY,
 	},
 	
 	{
@@ -331,6 +367,7 @@ const struct TerrainTableStruct TerrainTable[] =
 		.secretPowerEffect = MOVE_EFFECT_PARALYSIS,
 		.secretPowerAnim = MOVE_BODYSLAM,
 		.naturePowerMove = MOVE_TRIATTACK,
+		.burmyForm = PKMN_BURMY,
 	},
 	
 	{
@@ -339,6 +376,7 @@ const struct TerrainTableStruct TerrainTable[] =
 		.secretPowerEffect = MOVE_EFFECT_FREEZE,
 		.secretPowerAnim = MOVE_AVALANCHE,
 		.naturePowerMove = MOVE_FROSTBREATH,
+		.burmyForm = PKMN_BURMY,
 	}
 	#endif
 };
