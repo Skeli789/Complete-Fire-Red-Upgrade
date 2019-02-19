@@ -44,6 +44,8 @@ extern u8 BattleScript_ShieldsDownToCore[];
 extern u8 BattleScript_ShieldsDownToMeteor[];
 extern u8 BattleScript_FlowerGift[];
 
+extern bool8 HasNoMonsToSwitch(u8 battler);
+
 u8 TurnBasedEffects(void);
 void ClearBankStatus(bank_t);
 bool8 AllStatsButOneAreMinned(bank_t);
@@ -1073,7 +1075,7 @@ u8 TurnBasedEffects(void) {
 						
 			case(ET_End):
 			    gBattleStruct->turnEffectsBank = gBattlersCount;
-				gNewBS->EndTurnDone = 1;
+				gNewBS->EndTurnDone = TRUE;
 				gAbsentBattlerFlags &= ~(gNewBS->AbsentBattlerHelper);
 				gNewBS->MegaData->state = 0;
 			}
@@ -1119,5 +1121,105 @@ bool8 AllStatsButOneAreMinned(bank_t bank) {
 		}
 	}
 	return TRUE;
+}
+
+#define FAINTED_ACTIONS_MAX_CASE 7
+
+bool8 HandleFaintedMonActions(void)
+{
+    if (gBattleTypeFlags & BATTLE_TYPE_SAFARI)
+        return FALSE;
+	
+    do
+    {
+        int i;
+        switch (gBattleStruct->faintedActionsState) {
+			case 0:
+				gBattleStruct->faintedActionsBank = 0;
+				gBattleStruct->faintedActionsState++;
+				for (i = 0; i < gBattlersCount; i++)
+				{
+					if (gAbsentBattlerFlags & gBitTable[i] && !HasNoMonsToSwitch(i))
+						gAbsentBattlerFlags &= ~(gBitTable[i]);
+				}
+				__attribute__ ((fallthrough));
+			
+			case 1:
+				do
+				{
+					gBankFainted = gBankTarget = gBattleStruct->faintedActionsBank;
+					if (gBattleMons[gBattleStruct->faintedActionsBank].hp == 0
+					&& !(gBattleStruct->givenExpMons & gBitTable[gBattlerPartyIndexes[gBattleStruct->faintedActionsBank]])
+					&& !(gAbsentBattlerFlags & gBitTable[gBattleStruct->faintedActionsBank]))
+					{
+						BattleScriptExecute(BattleScript_GiveExp);
+						gBattleStruct->faintedActionsState = 2;
+						return TRUE;
+					}
+				} while (++gBattleStruct->faintedActionsBank != gBattlersCount);
+				
+				gBattleStruct->faintedActionsState = 3;
+				break;
+			
+			case 2:
+				sub_8017434(gBankFainted);
+				if (++gBattleStruct->faintedActionsBank == gBattlersCount)
+					gBattleStruct->faintedActionsState = 3;
+				else
+					gBattleStruct->faintedActionsState = 1;
+				break;
+			
+			case 3:
+				gBattleStruct->faintedActionsBank = 0;
+				gBattleStruct->faintedActionsState++;
+				__attribute__ ((fallthrough));
+			
+			case 4:
+				do
+				{
+					gBankFainted = gBankTarget = gBattleStruct->faintedActionsBank;
+					if (gBattleMons[gBattleStruct->faintedActionsBank].hp == 0
+					&& !(gAbsentBattlerFlags & gBitTable[gBattleStruct->faintedActionsBank]))
+					{
+						if (gNewBS->EndTurnDone 
+						||  ViableMonCount(GetBankPartyData(gBattleStruct->faintedActionsBank)) == 0)
+						{
+							BattleScriptExecute(BattleScript_HandleFaintedMon);
+							gBattleStruct->faintedActionsState = 5;
+							return TRUE;
+						}
+						else
+						{
+							gAbsentBattlerFlags |= gBitTable[gBattleStruct->faintedActionsBank]; //Makes the game realize the target is dead for now, so no attacking it
+							gNewBS->AbsentBattlerHelper |= gBitTable[gBattleStruct->faintedActionsBank]; //Record which Pokemon need replacements
+						}
+					}
+				} while (++gBattleStruct->faintedActionsBank != gBattlersCount);
+				gBattleStruct->faintedActionsState = 6;
+				break;
+			
+			case 5:
+				if (++gBattleStruct->faintedActionsBank == gBattlersCount)
+					gBattleStruct->faintedActionsState = 6;
+				else
+					gBattleStruct->faintedActionsState = 4;
+				break;
+			
+			case 6:
+				gNewBS->EndTurnDone = FALSE;
+				/*if (AbilityBattleEffects(ABILITYEFFECT_INTIMIDATE1, 0, 0, 0, 0) //I don't think this is necessary, but I'm not sure
+				|| AbilityBattleEffects(ABILITYEFFECT_TRACE, 0, 0, 0, 0) 
+				|| ItemBattleEffects(ItemEffects_EndTurn, gBankAttacker, TRUE, FALSE) 
+				|| AbilityBattleEffects(ABILITYEFFECT_FORECAST, 0, 0, 0, 0))
+					return TRUE;*/
+				gBattleStruct->faintedActionsState++;
+				break;
+			
+			case FAINTED_ACTIONS_MAX_CASE:
+				break;
+        }
+    } while (gBattleStruct->faintedActionsState != FAINTED_ACTIONS_MAX_CASE);
+	
+    return FALSE;
 }
 

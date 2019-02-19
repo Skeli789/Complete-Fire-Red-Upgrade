@@ -92,4 +92,6 @@ ET_Harvest_Pickup,
 #define BattleScript_SideStatusWoreOff ((u8*) 0x81D8B32)
 #define BattleScript_SafeguardEnds ((u8*) 0x81D8B43)
 #define BattleScript_PrintUproarOverTurns ((u8*) 0x81D90BC)
+#define BattleScript_GiveExp ((u8*) 0x81D8694)
+#define BattleScript_HandleFaintedMon ((u8*) 0x81D869D)
 
