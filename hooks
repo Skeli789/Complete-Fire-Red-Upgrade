@@ -1,9 +1,14 @@
-##
-EmitPrintStringHook 800E3A4 0
+##Emit Functions
+EmitPrintString 800E2D4 2
+EmitPrintSelectionString 800E3EC 2
 EmitChooseMoveHook 800E524 3
+
+##Battle Terrain Functions
 LoadBattleBG_TerrainID 800FC2C 0
 LoadBattleBG_Background 800F260 1
 LoadBattleBG_EntryOverlay 800F2AC 1
+
+##Other Battle Stuff
 BuildTrainerPartyHook 800FF7E 0
 BattleBeginFirstTurn 801385C 0
 GetWhoStrikesFirst 8014CD8 3
@@ -14,15 +19,14 @@ HandleEndTurn_BattleLost 801578C 0
 HandleEndTurn_RanFromBattle 8015850 0
 HandleAction_UseMove 8015CA0 0
 PrepareStringBattle 80173AC 3
+TrySetCantSelectMoveBattleScript 8017594 0
 CheckMoveLimitations 801779C 3
 TurnBasedEffects 08018258 0
 HandleFaintedMonActions 08018F90 0
 HasNoMonsToSwitch 0x8019C10 3
 SwitchMoveDataHook 0x802EF90 0
 MoveSelectionDisplayMoveType 8030940 0
-PlayerHandlePrintStringHook 0x8032AFC 0
 PlayerHandleExpBarUpdate 08032F4C 1
-OpponentHandlePrintStringHook 080384BC 0
 AI_TrySwitchOrUseItem 8039C84 0
 BattleSetup_GetTerrainId 807FC5C 0
 EndBattleFlagClearHook 80804AC 0
@@ -94,6 +98,7 @@ atk49_moveend 08023210 0
 atk52_switchineffects 08024E38 0
 atk53_trainerslidein 080250DC 0
 atk61_drawpartystatussummary 8025BA4 0
+atk96_weatherdamage 8028CF0 0
 atkE2_switchoutabilities 802CCC0 0
 ##
 BatonPassEffects 08012850 0
