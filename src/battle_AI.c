@@ -538,7 +538,7 @@ bool8 SemiInvulnerableTroll(void) {
 		if (!(gStatuses3[opposingBattler1] & STATUS3_SEMI_INVULNERABLE) && !(gStatuses3[opposingBattler2] & STATUS3_SEMI_INVULNERABLE))
 			return FALSE;
 		#ifndef REALLY_SMART_AI
-			if (ViableMonCount(GetBankPartyData(gActiveBattler)) > 1)
+			if (ViableMonCountFromBank(gActiveBattler) > 1)
 				return FALSE; //AI doesn't know which mon is being targeted if there's more than one on the field
 		#endif
 	}
