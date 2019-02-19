@@ -117,6 +117,22 @@
 	.word \rom_address
 	.endm
 	
+	.macro jumpifstatcanbelowered bank stat rom_address
+	.byte 0xFF, 0x15
+	.byte \bank
+	.byte \stat
+	.byte 0x1 @ATK48_STAT_NEGATIVE
+	.4byte \rom_address
+	.endm
+
+	.macro jumpifstatcanberaised bank stat rom_address
+	.byte 0xFF, 0x15
+	.byte \bank
+	.byte \stat
+	.byte 0x0
+	.4byte \rom_address
+	.endm
+	
 	.macro jumpifbattletype battle_type rom_address
 	.byte 0x2B
 	.byte ANDS
@@ -1396,8 +1412,9 @@
 	.4byte \rom_address
 	.endm
 
-	.macro setterrain
+	.macro setterrain rom_address
 	.byte 0xFF, 0x06
+	.4byte \rom_address
 	.endm
 
 	.macro jumpifhelditemeffect bank effect rom_address
@@ -1407,27 +1424,38 @@
 	.4byte \rom_address
 	.endm
 
-	.macro counterclear bank counter_address rom_address
+	.macro counterclear bank counter_id rom_address
 	.byte 0xFF, 0x08
 	.byte \bank
-	.4byte \counter_address
+	.byte \counter_id
 	.4byte \rom_address
 	.endm
 
-	.macro jumpifcounter bank counter_address predicate compare_byte rom_address
+	.macro jumpifcounter bank counter_id predicate compare_byte rom_address
 	.byte 0xFF, 0x09
 	.byte \bank
-	.4byte \counter_address
+	.byte \counter_id
 	.byte \predicate
 	.byte \compare_byte
 	.4byte \rom_address
 	.endm
 	
-	.macro setcounter bank counter_address num
+	.macro setability bank ability
+	.byte 0xFF, 0x0A
+	.byte \bank
+	.byte \ability
+	.endm
+	
+	.macro jumpiftargetpartner rom_address
+	.byte 0xFF, 0x0C
+	.word \rom_address
+	.endm
+	
+	.macro setcounter bank counter_id amount
 	.byte 0xFF, 0x0E
 	.byte \bank
-	.4byte \counter_address
-	.byte \num
+	.byte \counter_id
+	.byte \amount
 	.endm
 	
 	.macro jumpifgrounded bank rom_address
@@ -1435,26 +1463,68 @@
 	.byte \bank
 	.4byte \rom_address
 	.endm
-
+	
+	.macro jumpifhelditem bank item rom_address
+	.byte 0xFF, 0x10
+	.byte \bank
+	.2byte \item
+	.4byte \rom_address
+	.endm
+	
 	.macro reloadhealthbar bank
 	.byte 0xFF, 0x11
 	.byte \bank
 	.endm
 	
+	.macro jumpifhealthcomparestomax bank predicate rom_address
+	.byte 0xFF, 0x12
+	.byte bank
+	.byte predicate
+	.4byte \rom_address
+	.endm
+
 	.macro setdamagetobankhealthpercent bank percent
 	.byte 0xFF, 0x13
 	.byte \bank
 	.byte \percent
 	.endm
-
-	.macro sethalvermarker bank halver
+	
+	.macro jumpiftypepresent type rom_address
+	.byte 0xFF, 0x14
+	.byte \type
+	.4byte \rom_address
+	.endm
+	
+	.macro jumpifstatcanbemodified bank stat direction rom_address
+	.byte 0xFF, 0x15
+	.byte \bank
+	.byte \stat
+	.byte \direction
+	.4byte \rom_address
+	.endm
+	
+	.macro jumpifnoviablemonsleft bank rom_address
+	.byte 0xFF, 0x16
+	.4byte \rom_address
+	.endm
+	
+	.macro setsidestatus bank halver
 	.byte 0xFF, 0x17
 	.byte \bank
 	.2byte \halver
 	.endm
 
-	.macro clearhalvermarker bank halver
-	.byte 0xFF, 0x1A
+	.macro clearsidestatus bank halver
+	.byte 0xFF, 0x18
 	.byte \bank
 	.2byte \halver
 	.endm
+	
+	.macro formchange bank original_species target_species reload_type rom_address
+	.byte 0xFF, 0x19
+	.byte \bank
+	.2byte \original_species
+	.2byte \target_species
+	.byte \reload_type
+	.4byte \rom_address
+	.endm	
