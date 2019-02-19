@@ -477,7 +477,6 @@ RaiseUserEvsn1BS:
 	jumpifhalfword NOTEQUALS CURRENT_MOVE MOVE_ACUPRESSURE 0x81D6B98
 
 AcupressureBS:
-	callasm AcupressureFixTarget+1
 	attackcanceler
 	callasm AcupressureFunc+1
 	attackstring
