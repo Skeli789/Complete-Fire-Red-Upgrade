@@ -3,29 +3,6 @@
 
 //Do Illusion hooks
 
-u8* SwitchClearTableBytes[] = {
-TelekinesisTimers,
-HealBlockTimers,
-LaserFocusTimers,
-ThroatChopTimers,
-StompingTantrumTimers,
-MetronomeCounter,
-DestinyBondCounters,
-SlowStartTimers,
-IncinerateCounters,
-EmbargoTimers,
-IllusionBrokenBytes,
-SuppressedAbilities,
-(u8*) 0xFEFEFEFE
-};
-
-u8* SwitchClearTableBits[] = {
-&PowderByte,
-&BeakBlastByte,
-&UnburdenBoosts,
-(u8*) 0xFEFEFEFE
-};
-
 enum SwitchInStates {
 SwitchIn_HealingWish,
 SwitchIn_ZHealingWish,
@@ -69,6 +46,8 @@ bool8 TryDoForceSwitchOut(void);
 void sub_80571DC(u8 battlerId, u8 arg1);
 void SwitchTimerClear(void);
 bool8 PPIsMaxed(bank_t);
+void ClearSwitchBytes(u8 bank);
+void ClearSwitchBits(u8 bank);
 
 void atkE2_switchoutabilities(void) {
     gActiveBattler = GetBattleBank(T2_READ_8(gBattlescriptCurrInstr + 1));
@@ -130,7 +109,6 @@ void atk61_drawpartystatussummary(void) {
 		if (i == gBattlersCount) {
 			gBattleWeather = 0;
 			gWeatherCounter = 0;
-			PrimalWeatherLoc = 0; //Remove this line Eventually
 			BattleScriptPushCursor();
 			gBattlescriptCurrInstr = BattleScript_PrimalWeatherEnd;
 			return;
@@ -176,16 +154,13 @@ void atk4D_switchindataupdate(void) {
     gBattleMons[gActiveBattler].ability = GetPartyAbility(GetBankPartyData(gActiveBattler));
 	
 	CONSUMED_ITEMS(gActiveBattler) = 0;
-	StakeoutCounters[gActiveBattler] = 1;
+	gNewBS->StakeoutCounters[gActiveBattler] = 1;
 	
-	for (u8 i = 0; SwitchClearTableBytes[i] != (u8*) 0xFEFEFEFE; ++i)
-		SwitchClearTableBytes[i][gActiveBattler] = 0;
-		
-	for (u8 i = 0; SwitchClearTableBits[i] != (u8*) 0xFEFEFEFE; ++i)
-		*(SwitchClearTableBits[i]) &= ~(1 << gActiveBattler);
+	ClearSwitchBytes(gActiveBattler);
+	ClearSwitchBits(gActiveBattler);
 	
 	//LastUsedMoves[gActiveBattler] = 0;
-	//LastUsedTypes[gActiveBattler] = TYPE_BLANK;
+	//gNewBS->LastUsedTypes[gActiveBattler] = TYPE_BLANK;
 	
     //Former Knock Off Check was here
 
@@ -199,7 +174,7 @@ void atk4D_switchindataupdate(void) {
 		//Gastro Acid Passing
 		if (gStatuses3[gActiveBattler] & STATUS3_ABILITY_SUPPRESS) 
 		{
-			SuppressedAbilities[gActiveBattler] = gBattleMons[gActiveBattler].ability;
+			gNewBS->SuppressedAbilities[gActiveBattler] = gBattleMons[gActiveBattler].ability;
 			gBattleMons[gActiveBattler].ability = 0;
 		}
 		
@@ -213,7 +188,7 @@ void atk4D_switchindataupdate(void) {
 		}
 		
 		if (!(gStatuses3[gActiveBattler] & STATUS3_LEVITATING))
-			MagnetRiseTimers[gActiveBattler] = 0;
+			gNewBS->MagnetRiseTimers[gActiveBattler] = 0;
     }
 	
 	if (ABILITY(gActiveBattler) == ABILITY_ILLUSION && GetIllusionPartyData(gActiveBattler) != GetBankPartyData(gActiveBattler))
@@ -240,7 +215,7 @@ void atk4F_jumpifcantswitch(void) {
     if (!(T2_READ_8(gBattlescriptCurrInstr + 1) & ATK4F_DONT_CHECK_STATUSES)
 	&& !IsOfType(gActiveBattler, TYPE_GHOST)
 	&& ITEM_EFFECT(gActiveBattler) != ITEM_EFFECT_SHED_SHELL
-    && ((gBattleMons[gActiveBattler].status2 & (STATUS2_WRAPPED | STATUS2_ESCAPE_PREVENTION)) || (gStatuses3[gActiveBattler] & STATUS3_ROOTED) || FairyLockTimer))
+    && ((gBattleMons[gActiveBattler].status2 & (STATUS2_WRAPPED | STATUS2_ESCAPE_PREVENTION)) || (gStatuses3[gActiveBattler] & STATUS3_ROOTED) || gNewBS->FairyLockTimer))
         gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
 		
     else if (gBattleTypeFlags & (BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_MULTI)
@@ -365,16 +340,16 @@ void atk52_switchineffects(void) {
 		goto SWITCH_IN_END;
 	
 	if (!(gSideAffecting[GetBattlerSide(gActiveBattler)] & SIDE_STATUS_SPIKES) 
-	&& SwitchInEffectsTracker >= SwitchIn_Spikes 
-	&& SwitchInEffectsTracker <= SwitchIn_StickyWeb)
-		SwitchInEffectsTracker = SwitchIn_PrimalReversion;
+	&& gNewBS->SwitchInEffectsTracker >= SwitchIn_Spikes 
+	&& gNewBS->SwitchInEffectsTracker <= SwitchIn_StickyWeb)
+		gNewBS->SwitchInEffectsTracker = SwitchIn_PrimalReversion;
 	
-	switch (SwitchInEffectsTracker) {
+	switch (gNewBS->SwitchInEffectsTracker) {
 		case SwitchIn_HealingWish:
 			if (gBattleMons[gActiveBattler].hp != gBattleMons[gActiveBattler].maxHP
 			|| gBattleMons[gActiveBattler].status1) {
-				if (HealingWishLoc & (1 << gActiveBattler)) {
-					HealingWishLoc &= ~(1 << gActiveBattler);
+				if (gNewBS->HealingWishLoc & (1 << gActiveBattler)) {
+					gNewBS->HealingWishLoc &= ~(1 << gActiveBattler);
 					BattleScriptPushCursor();
 					gBattlescriptCurrInstr = BattleScript_HealingWishHeal;
 					gBattleMoveDamage = -1 * (gBattleMons[gActiveBattler].maxHP);
@@ -382,16 +357,16 @@ void atk52_switchineffects(void) {
 					EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[gActiveBattler].status1);
 					gBattleScripting->bank = gActiveBattler;
 					gBankAttacker = gActiveBattler;
-					++SwitchInEffectsTracker;
+					++gNewBS->SwitchInEffectsTracker;
 					return;
 				}
-				else if (HealingWishLoc & (1 << gActiveBattler << 4)) {
+				else if (gNewBS->HealingWishLoc & (1 << gActiveBattler << 4)) {
 					goto LUNAR_DANCE_ACTIVATE;
 				}
 			}
-			else if (HealingWishLoc & (1 << gActiveBattler << 4) && !PPIsMaxed(gActiveBattler)) {
+			else if (gNewBS->HealingWishLoc & (1 << gActiveBattler << 4) && !PPIsMaxed(gActiveBattler)) {
 			LUNAR_DANCE_ACTIVATE:
-				HealingWishLoc &= ~(1 << gActiveBattler << 4);
+				gNewBS->HealingWishLoc &= ~(1 << gActiveBattler << 4);
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_LunarDanceHeal;
 				
@@ -410,15 +385,15 @@ void atk52_switchineffects(void) {
 				
 				gBattleScripting->bank = gActiveBattler;
 				gBankAttacker = gActiveBattler;
-				++SwitchInEffectsTracker;
+				++gNewBS->SwitchInEffectsTracker;
 				return;
 			}
-			++SwitchInEffectsTracker;
+			++gNewBS->SwitchInEffectsTracker;
 		__attribute__ ((fallthrough));	
 		
 		case SwitchIn_ZHealingWish:
-			if (gBattleMons[gActiveBattler].hp != gBattleMons[gActiveBattler].maxHP && ZMoveData->healReplacement) {
-				ZMoveData->healReplacement = FALSE;
+			if (gBattleMons[gActiveBattler].hp != gBattleMons[gActiveBattler].maxHP && gNewBS->ZMoveData->healReplacement) {
+				gNewBS->ZMoveData->healReplacement = FALSE;
 				gBattleMoveDamage = -1 * (gBattleMons[gActiveBattler].maxHP);
 				gBattleScripting->bank = gActiveBattler;
 				BattleScriptPushCursor();
@@ -426,9 +401,9 @@ void atk52_switchineffects(void) {
 				return;
 			}
 			else
-				ZMoveData->healReplacement = FALSE;
+				gNewBS->ZMoveData->healReplacement = FALSE;
 			
-			++SwitchInEffectsTracker;
+			++gNewBS->SwitchInEffectsTracker;
 		__attribute__ ((fallthrough));	
 		
 		case SwitchIn_Spikes:
@@ -442,10 +417,10 @@ void atk52_switchineffects(void) {
 				gSideAffecting[GetBattlerSide(gActiveBattler)] |= SIDE_STATUS_SPIKES_DAMAGED;
 				gBattleScripting->bank = gActiveBattler;
 				gBankTarget = gActiveBattler;
-				++SwitchInEffectsTracker;
+				++gNewBS->SwitchInEffectsTracker;
 				return;
 			}
-			++SwitchInEffectsTracker;
+			++gNewBS->SwitchInEffectsTracker;
 		__attribute__ ((fallthrough));	
 		
 		case SwitchIn_StealthRock:
@@ -483,10 +458,10 @@ void atk52_switchineffects(void) {
 				gSideAffecting[GetBattlerSide(gActiveBattler)] |= SIDE_STATUS_SPIKES_DAMAGED;
 				gBattleScripting->bank = gActiveBattler;
 				gBankTarget = gActiveBattler;
-				++SwitchInEffectsTracker;
+				++gNewBS->SwitchInEffectsTracker;
 				return;
 			}
-			++SwitchInEffectsTracker;
+			++gNewBS->SwitchInEffectsTracker;
 		__attribute__ ((fallthrough));	
 		
 		case SwitchIn_ToxicSpikes:
@@ -510,10 +485,10 @@ void atk52_switchineffects(void) {
 				gSideAffecting[GetBattlerSide(gActiveBattler)] |= SIDE_STATUS_SPIKES_DAMAGED;
 				gBattleScripting->bank = gActiveBattler;
 				gBankTarget = gActiveBattler;
-				++SwitchInEffectsTracker;
+				++gNewBS->SwitchInEffectsTracker;
 				return;
 			}
-			++SwitchInEffectsTracker;
+			++gNewBS->SwitchInEffectsTracker;
 		__attribute__ ((fallthrough));	
 		
 		case SwitchIn_StickyWeb:
@@ -524,10 +499,10 @@ void atk52_switchineffects(void) {
 					gSideAffecting[GetBattlerSide(gActiveBattler)] |= SIDE_STATUS_SPIKES_DAMAGED;
 					gBattleScripting->bank = gActiveBattler;
 					gBankTarget = gActiveBattler;
-					++SwitchInEffectsTracker;
+					++gNewBS->SwitchInEffectsTracker;
 					return;
 			}
-			++SwitchInEffectsTracker;
+			++gNewBS->SwitchInEffectsTracker;
 		__attribute__ ((fallthrough));	
 		
 		case SwitchIn_PrimalReversion:	;
@@ -537,28 +512,28 @@ void atk52_switchineffects(void) {
 				gBattlescriptCurrInstr = script;
 				gBattleScripting->bank = gActiveBattler;
 				gBattlerAttacker = gActiveBattler;
-				++SwitchInEffectsTracker;
+				++gNewBS->SwitchInEffectsTracker;
 				return;
 			}
-			++SwitchInEffectsTracker;
+			++gNewBS->SwitchInEffectsTracker;
 		__attribute__ ((fallthrough));	
 		
 		case SwitchIn_Truant:
 			if (ABILITY(gActiveBattler) == ABILITY_TRUANT)
 				gDisableStructs[gActiveBattler].truantCounter = 1;
-			++SwitchInEffectsTracker;
+			++gNewBS->SwitchInEffectsTracker;
 		__attribute__ ((fallthrough));	
 		
 		case SwitchIn_Abilities:
 			if (AbilityBattleEffects(0, gActiveBattler, 0, 0, 0))
 				return;
-			++SwitchInEffectsTracker;
+			++gNewBS->SwitchInEffectsTracker;
 		__attribute__ ((fallthrough));
 		
 		case SwitchIn_Items:
 			if (ItemBattleEffects(ItemEffects_SwitchIn, gActiveBattler, FALSE, FALSE))
 				return;
-			++SwitchInEffectsTracker;
+			++gNewBS->SwitchInEffectsTracker;
 		__attribute__ ((fallthrough));
 		
 		case SwitchIn_AirBalloon:
@@ -567,10 +542,10 @@ void atk52_switchineffects(void) {
 				gBattlescriptCurrInstr = BattleScript_AirBalloonSub;
 				gBattleScripting->bank = gActiveBattler;
 				gBattlerAttacker = gActiveBattler;
-				++SwitchInEffectsTracker;
+				++gNewBS->SwitchInEffectsTracker;
 				return;
 			}
-			++SwitchInEffectsTracker;
+			++gNewBS->SwitchInEffectsTracker;
 		__attribute__ ((fallthrough));
 	
 		case SwitchIn_End:
@@ -599,7 +574,7 @@ void atk52_switchineffects(void) {
                 }
             }
 			
-			SwitchInEffectsTracker = 0;
+			gNewBS->SwitchInEffectsTracker = 0;
             gBattlescriptCurrInstr += 2;
     }
 }
@@ -788,4 +763,25 @@ bool8 HasNoMonsToSwitch(u8 battler)
             break;
     }
     return (i == lastMonId);	
+}
+
+void ClearSwitchBytes(u8 bank) {
+	gNewBS->TelekinesisTimers[bank] = 0;
+	gNewBS->HealBlockTimers[bank] = 0;
+	gNewBS->LaserFocusTimers[bank] = 0;
+	gNewBS->ThroatChopTimers[bank] = 0;
+	gNewBS->StompingTantrumTimers[bank] = 0;
+	gNewBS->MetronomeCounter[bank] = 0;
+	gNewBS->DestinyBondCounters[bank] = 0;
+	gNewBS->SlowStartTimers[bank] = 0;
+	gNewBS->IncinerateCounters[bank] = 0;
+	gNewBS->EmbargoTimers[bank] = 0;
+	gNewBS->SuppressedAbilities[bank] = 0;
+}
+
+void ClearSwitchBits(u8 bank) {
+	gNewBS->PowderByte &= ~(gBitTable[bank]);
+	gNewBS->BeakBlastByte &= ~(gBitTable[bank]);
+	gNewBS->UnburdenBoosts &= ~(gBitTable[bank]);
+	gNewBS->IllusionBroken &= ~(gBitTable[bank]);
 }
