@@ -467,6 +467,7 @@ GetLinkTrainerFlankId = 0x8043620 | 1;
 GetBattlerMultiplayerId = 0x8043658 | 1;
 SetBattleBarStruct = 0x8048150 | 1;
 SetHealthboxSpriteVisible = 0x80481D4 | 1;
+UpdateHealthboxAttribute = 0x8049D98 | 1;
 MoveBattleBar = 0x8049FD8 | 1;
 SpriteCB_ReleaseMonFromBall = 0x804B268 | 1;
 IsCryPlayingOrClearCrySongs = 0x80721F0;

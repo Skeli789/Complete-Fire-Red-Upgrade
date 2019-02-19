@@ -139,6 +139,7 @@ u8 __attribute__((long_call)) GetLinkTrainerFlankId(u8 a);
 u8 __attribute__((long_call)) GetBattlerMultiplayerId(u8 bank);
 void __attribute__((long_call)) SetBattleBarStruct(u8, u8, u32, u32, u32);
 void __attribute__((long_call)) SetHealthboxSpriteVisible(u8 healthboxSpriteId);
+void __attribute__((long_call)) UpdateHealthboxAttribute(u8 healthboxSpriteId, struct Pokemon* mon, u8 elementId);
 s32 __attribute__((long_call)) MoveBattleBar(u8 battler, u8 healthboxSpriteId, u8 whichBar, u8 arg3);
 void __attribute__((long_call)) SpriteCB_ReleaseMonFromBall(struct Sprite* sprite);
 bool8 __attribute__((long_call)) IsCryPlayingOrClearCrySongs(void);
