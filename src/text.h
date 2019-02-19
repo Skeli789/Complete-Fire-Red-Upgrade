@@ -1,5 +1,4 @@
-#ifndef TEXT_H_
-#define TEXT_H_
+#pragma once
 
 #define MSGBOX_LEN 35
 
@@ -68,4 +67,3 @@
 #define PC_y 0xED
 #define PC_z 0xEE
 
-#endif
