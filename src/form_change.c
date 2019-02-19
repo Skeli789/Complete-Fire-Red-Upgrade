@@ -1,6 +1,8 @@
 #include "defines.h"
 #include "helper_functions.h"
 
+extern const struct TerrainTableStruct TerrainTable[];
+
 void DoFormChange(u8 bank, u16 species, u8 ReloadType);
 void SwitchOutFormsRevert(u8 bank);
 void FormsRevert(pokemon_t* party);
@@ -63,30 +65,22 @@ void FormsRevert(pokemon_t* party) {
 }
 
 void UpdateBurmy(void) {
-/*	int i;
-	u16 form = PKMN_BURMY_PLANT;
+	int i;
+	u16 form = TerrainTable[gBattleTerrain].burmyForm;
 	
-	switch (BattleTerrain) {
-		case GRASS:
-			form = PKMN_BURMY_PLANT;
-			break;
-		case DIRT:
-			form = PKMN_BURMY_SANDY;
-			break;
-		case INSIDE:
-			form = PKMN_BURMY_TRASH;
-	}
-	
-	for (i = 0; i < MAX_PARTY_SIZE; ++i) {
-		u16 species = gPlayerParty[i].species;
-		if (species == PKMN_BURMY_PLANT
-		||  species == PKMN_BURMY_SANDY
-		||  species == PKMN_BURMY_TRASH)
+	if (form != PKMN_NONE)
+	{	
+		for (i = 0; i < PARTY_SIZE; ++i) 
 		{
-			gPlayerParty[i].species = form;
-			CalculateMonStats(partydata);
+			u16 species = gPlayerParty[i].species;
+			if (species == PKMN_BURMY
+			||  species == PKMN_BURMY_SANDY
+			||  species == PKMN_BURMY_TRASH)
+			{
+				gPlayerParty[i].species = form;
+				CalculateMonStats(&gPlayerParty[i]);
+			}
 		}
 	}
-	*/
 }
 
