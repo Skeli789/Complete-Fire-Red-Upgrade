@@ -11,8 +11,8 @@
 #define STAT_ANIM_MULTIPLE_MINUS2 58
 
 #define BattleScript_MistProtected (u8*) 0x81D8C3E
-#define BattleScript_AbilityNoStatLoss (u8*) 0x81D7DF2
-#define BattleScript_AbilityNoSpecificStatLoss (u8*) 0x81D9416
+#define BattleScript_AbilityNoStatLoss (u8*) 0x81D9416
+#define BattleScript_AbilityNoSpecificStatLoss (u8*) 0x81D947E
 
 extern void PrepareStringBattle(u16 stringId, u8 bank);
 extern bool8 JumpIfMoveAffectedByProtect(u16 move, u8 bankAtk, u8 bankDef);
@@ -196,7 +196,7 @@ void atk48_playstatchangeanimation(void)
         }
     }
 
-	if (SpectralThiefActive) {
+	if (gNewBS->SpectralThiefActive) {
 		statAnimId = STAT_ANIM_MULTIPLE_MINUS1;
 		changeableStatsCount = 0xFF;
 	}
@@ -253,7 +253,7 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, u8* BS_ptr)
 
     if ((statValue << 0x18) < 0) // stat decrease
     {
-		if (ABILITY(gActiveBattler) == ABILITY_CONTRARY && !ZMoveData->runningZEffect)
+		if (ABILITY(gActiveBattler) == ABILITY_CONTRARY && !gNewBS->ZMoveData->runningZEffect)
 			goto RAISE_STAT_BUFF;
 	
 	LOWER_STAT_BUFF:
@@ -324,7 +324,7 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, u8* BS_ptr)
                 {
                     BattleScriptPush(BS_ptr);
                     gBattleScripting->bank = PARTNER(gActiveBattler);
-                    gBattlescriptCurrInstr = BattleScript_AbilityNoSpecificStatLoss;
+                    gBattlescriptCurrInstr = BattleScript_AbilityNoStatLoss;
                     gLastUsedAbility = ABILITY(PARTNER(gActiveBattler));
                     RecordAbilityBattle(PARTNER(gActiveBattler), gLastUsedAbility);
                     gSpecialStatuses[gActiveBattler].statLowered = 1;
@@ -356,7 +356,7 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, u8* BS_ptr)
         {
             statValue = -GET_STAT_BUFF_VALUE(statValue);
 			
-			if (ability == ABILITY_SIMPLE && !ZMoveData->runningZEffect)
+			if (ability == ABILITY_SIMPLE && !gNewBS->ZMoveData->runningZEffect)
 				statValue *= 2;
 			
             gBattleTextBuff2[0] = B_BUFF_PLACEHOLDER_BEGIN;
@@ -375,7 +375,7 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, u8* BS_ptr)
 				gBattleTextBuff2[3] = 0x1;
 				index = 4;
             }
-			if (!ZMoveData->runningZEffect) {
+			if (!gNewBS->ZMoveData->runningZEffect) {
 				gBattleTextBuff2[index] = B_BUFF_STRING;
 				index++;
 				gBattleTextBuff2[index] = STRINGID_STATFELL;
@@ -396,13 +396,13 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, u8* BS_ptr)
 	//Stat Increase
     else
     {
-		if (ABILITY(gActiveBattler) == ABILITY_CONTRARY && !ZMoveData->runningZEffect)
+		if (ABILITY(gActiveBattler) == ABILITY_CONTRARY && !gNewBS->ZMoveData->runningZEffect)
 			goto LOWER_STAT_BUFF;
 		
 	RAISE_STAT_BUFF:
         statValue = GET_STAT_BUFF_VALUE(statValue);
 		
-		if (ability == ABILITY_SIMPLE && !ZMoveData->runningZEffect)
+		if (ability == ABILITY_SIMPLE && !gNewBS->ZMoveData->runningZEffect)
 			statValue *= 2;
 				
         gBattleTextBuff2[0] = B_BUFF_PLACEHOLDER_BEGIN;
@@ -421,7 +421,7 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, u8* BS_ptr)
             gBattleTextBuff2[3] = 0x1;
             index = 4;
         }
-		if (!ZMoveData->runningZEffect) {
+		if (!gNewBS->ZMoveData->runningZEffect) {
 			gBattleTextBuff2[index] = B_BUFF_STRING;
 			index++;
 			gBattleTextBuff2[index] = STRINGID_STATROSE;
@@ -450,4 +450,57 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, u8* BS_ptr)
         return STAT_CHANGE_DIDNT_WORK;
 
     return STAT_CHANGE_WORKED;
+}
+
+void atk_jumpifstatcanbelowered(void)
+{
+    u32 currStat = 0;
+	FormCounter = 0;
+
+    gActiveBattler = GetBattleBank(T2_READ_8(gBattlescriptCurrInstr + 1));
+    currStat = T2_READ_8(gBattlescriptCurrInstr + 2);
+
+    if (T2_READ_8(gBattlescriptCurrInstr + 3) & ATK48_STAT_NEGATIVE) // goes down
+    {
+		if (ABILITY(gActiveBattler) == ABILITY_CONTRARY)
+			goto STAT_ANIM_UP;
+	
+	STAT_ANIM_DOWN:	;
+		u8 ability = ABILITY(gActiveBattler);
+		
+        if (StatsMinned(gActiveBattler))
+			FormCounter = 1;
+		
+		else if (gSideTimers[SIDE(gActiveBattler)].mistTimer && ABILITY(gBankAttacker) != ABILITY_INFILTRATOR)
+			FormCounter = 2;
+			
+		else if (ability == ABILITY_CLEARBODY
+        || ability == ABILITY_WHITESMOKE
+		|| ability == ABILITY_FULLMETALBODY)
+			FormCounter = 3;
+			
+		else if ((ability == ABILITY_KEENEYE && currStat == STAT_STAGE_ACC)
+        || (ability == ABILITY_HYPERCUTTER && currStat == STAT_STAGE_ATK)
+		|| (ability == ABILITY_BIGPECKS && currStat == STAT_STAGE_DEF))
+			FormCounter = 4;
+        
+		PREPARE_STAT_BUFFER(gBattleTextBuff1, currStat)
+		
+		if (FormCounter)
+			gBattlescriptCurrInstr += 7;
+		else
+			gBattlescriptCurrInstr = T2_READ_PTR(gBattlescriptCurrInstr + 3);
+    }
+	
+    else // goes up
+    {
+		if (ABILITY(gActiveBattler) == ABILITY_CONTRARY)
+			goto STAT_ANIM_DOWN;
+	
+	STAT_ANIM_UP:	;
+		if (StatsMaxed(gActiveBattler))
+			gBattlescriptCurrInstr += 7;
+		else
+			gBattlescriptCurrInstr = T2_READ_PTR(gBattlescriptCurrInstr + 3);
+    }
 }
