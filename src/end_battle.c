@@ -307,11 +307,11 @@ void EndBattleFlagClear(void) {
 	FlagClear(TWO_OPPONENT_FLAG);
 	FlagClear(SMART_WILD_FLAG);
 	VarSet(BATTLE_TOWER_TRAINER_NAME, 0xFFFF);
-	Memset(&ExtensionState, 0x0, sizeof(struct BattleExtensionState));
 	Free(gNewBS->MegaData);
 	Free(gNewBS->UltraData);
 	Free(gNewBS->ZMoveData);
 	Free(gNewBS);
+	Memset(&ExtensionState, 0x0, sizeof(struct BattleExtensionState));
 }
 
 bool8 IsConsumable(u16 item) {
