@@ -5,11 +5,15 @@
 .equ ABSORB_REBRANCHER, 0x81D694E
 .equ BS_MOVE_FAINT, 0x81D6947
 .equ BS_MOVE_END, 0x81D694E
+.equ BS_MAKE_MOVE_MISS, 0x81D6958
 .equ BS_MOVE_MISSED, 0x81D695E
+.equ BS_BUFF_ATK_STATS, 0x81D6B9E
+.equ BS_MOVE_WEATHER_CHANGE, 0x81D7A14
 
 @Banks
 .equ BANK_TARGET, 0x0
 .equ BANK_ATTACKER, 0x1
+.equ BANK_SCRIPTING, 0xA 
 
 @Comparisons
 .equ EQUALS, 0x0
@@ -69,6 +73,12 @@
 	.byte \effect
 	.endm
 	
+	.macro setstatchanger stat
+	.byte 0x2E
+	.word STAT_CHANGE_BYTE
+	.byte \stat
+	.endm
+	
 	.macro jumpifmovehadnoeffect rom_address
 	.byte 0x29
 	.byte ANDS
@@ -90,6 +100,35 @@
 	.word WEATHER_FLAGS
 	.hword \weather
 	.word \rom_address
+	.endm
+	
+	.macro jumpifabilitypreventsstatloss bank rom_address
+	.byte 0x1E
+	.byte \bank
+	.byte ABILITY_CLEARBODY
+	.word \rom_address
+	.byte 0x1E
+	.byte \bank
+	.byte ABILITY_WHITESMOKE
+	.word \rom_address
+	.byte 0x1E
+	.byte \bank
+	.byte ABILITY_FULLMETALBODY 
+	.word \rom_address
+	.endm
+	
+	.macro jumpifbattletype battle_type rom_address
+	.byte 0x2B
+	.byte ANDS
+	.word BATTLE_TYPE
+	.word \battle_type
+	.word \rom_address
+	.endm
+	
+	.macro getifcantrunfrombattle bank
+	.byte 0x76
+	.byte \bank
+	.byte 0x2
 	.endm
 
 	.macro attackcanceler
@@ -152,7 +191,7 @@
 	.byte 0x0d
 	.endm
 
-	.macro missmessage
+	.macro effectivenesssound
 	.byte 0x0e
 	.endm
 
@@ -240,7 +279,7 @@
 	.4byte \rom_address
 	.endm
 
-	.macro jumpifhalverset bank, status, rom_address
+	.macro jumpifsideaffecting bank, status, rom_address
 	.byte 0x1f
 	.byte \bank
 	.2byte \status
@@ -993,9 +1032,9 @@
 	.byte 0xb3
 	.endm
 
-	.macro jumpifconfusedandattackmaxed bank, rom_address
+	.macro jumpifconfusedandstatmaxed stat, rom_address
 	.byte 0xb4
-	.byte \bank
+	.byte \stat
 	.4byte \rom_address
 	.endm
 
