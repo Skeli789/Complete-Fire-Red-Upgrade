@@ -48,6 +48,7 @@ void __attribute__((long_call)) EmitTrainerThrow(u8);
 void __attribute__((long_call)) EmitTrainerSlide(u8 a);
 void __attribute__((long_call)) EmitTrainerSlideBack(u8 a);
 void __attribute__((long_call)) EmitBallThrow(u8 a, u8 shakes);
+void __attribute__((long_call)) EmitMoveAnimation(u8 bufferId, u16 move, u8 turnOfMove, u16 movePower, s32 dmg, u8 friendship, struct DisableStruct *disableStructPtr, u8 multihit);
 void __attribute__((long_call)) EmitPrintString(u8 a, u16 stringID);
 void __attribute__((long_call)) EmitHealthBarUpdate(u8 a, u16 b);
 //void __attribute__((long_call)) EmitExpBarUpdate(u8 a, u8 b, u16 c);
