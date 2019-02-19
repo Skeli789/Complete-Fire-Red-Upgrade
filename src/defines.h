@@ -49,7 +49,7 @@
 #define ITEM_QUALITY(bank) ItemId_GetHoldEffectParam(gBattleMons[bank].item)
 #define SPLIT(move) gBattleMoves[move].split
 #define CONSUMED_ITEMS(bank) gBattleStruct->usedHeldItems[bank]
-#define SAVED_CONSUMED_ITEMS(bank) SavedConsumedItems[gBattlerPartyIndexes[bank]]
+#define SAVED_CONSUMED_ITEMS(bank) gNewBS->SavedConsumedItems[gBattlerPartyIndexes[bank]]
 #define CHOICED_MOVE(bank) gBattleStruct->choicedMove[bank]
 #define SECOND_OPPONENT (VarGet(SECOND_OPPONENT_VAR))
 #define SPECIES_TABLES_TERMIN 0xFEFE
@@ -80,8 +80,14 @@
 
 #define RELOAD_BATTLE_STATS(bank, partydata)				\
 {															\
-	gBattleMons[bank].attack = partydata->attack;			\
-	gBattleMons[bank].defense = partydata->defense;			\
+	if (gStatuses3[bank] & STATUS3_POWER_TRICK) {			\
+		gBattleMons[bank].defense = partydata->attack;		\
+		gBattleMons[bank].attack = partydata->defense;		\
+	}														\
+	else {													\
+		gBattleMons[bank].attack = partydata->attack;		\
+		gBattleMons[bank].defense = partydata->defense;		\
+	}														\
 	gBattleMons[bank].speed = partydata->speed;				\
 	gBattleMons[bank].spAttack = partydata->spAttack;		\
 	gBattleMons[bank].spDefense = partydata->spDefense;		\
@@ -94,4 +100,10 @@
     gBattleMons[battlerId].type1 = type;            \
     gBattleMons[battlerId].type2 = type;            \
     gBattleMons[battlerId].type3 = TYPE_BLANK;    	\
+}
+
+#define APPLY_STAT_MOD(var, mon, stat, statIndex)                                   	\
+{                                                                                   	\
+    (var) = (stat) * (gStatStageRatios)[(mon)->statStages[(statIndex)-1]][0];         	\
+    (var) = udivsi((var), (gStatStageRatios)[(mon)->statStages[(statIndex)-1]][1]);     \
 }

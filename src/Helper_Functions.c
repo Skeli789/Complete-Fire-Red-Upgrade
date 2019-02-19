@@ -49,7 +49,7 @@ bank_t GetFoeBank(bank_t bank) {
 }
 
 item_effect_t GetBankItemEffect(bank_t bank) {
-	if (gBattleMons[bank].ability != ABILITY_KLUTZ && !(EmbargoTimers[bank]) && !MagicRoomTimer)
+	if (gBattleMons[bank].ability != ABILITY_KLUTZ && !(gNewBS->EmbargoTimers[bank]) && !gNewBS->MagicRoomTimer)
 		return ItemId_GetHoldEffect(gBattleMons[bank].item);
 	return 0;
 }
@@ -67,7 +67,7 @@ pokemon_t* GetBankPartyData(bank_t bank) {
 
 enum {IN_AIR, GROUNDED};
 bool8 CheckGrounding(bank_t bank) {
-	if (GravityTimer || GetBankItemEffect(bank) == ITEM_EFFECT_IRON_BALL ||
+	if (gNewBS->GravityTimer || GetBankItemEffect(bank) == ITEM_EFFECT_IRON_BALL ||
 		(gStatuses3[bank] & (STATUS3_SMACKED_DOWN | STATUS3_ROOTED)))
 			return GROUNDED;
 			
@@ -81,7 +81,7 @@ bool8 CheckGrounding(bank_t bank) {
 }
 
 bool8 CheckGroundingFromPartyData(pokemon_t* party) {
-	if (GravityTimer 
+	if (gNewBS->GravityTimer 
 	|| (ItemId_GetHoldEffect(party->item) == ITEM_EFFECT_IRON_BALL && GetPartyAbility(party) != ABILITY_KLUTZ))
 		return GROUNDED;
 			
@@ -418,7 +418,7 @@ bool8 CheckBattleTerrain(u8 caseID) {
 pokemon_t* LoadPartyRange(u8 bank, u8* FirstMonId, u8* lastMonId) {
 	pokemon_t* party;
 	
-	if (GetBattlerSide(bank) == B_SIDE_OPPONENT) {
+	if (SIDE(bank) == B_SIDE_OPPONENT) {
         party = gEnemyParty;
 	}
     else {
@@ -440,7 +440,7 @@ pokemon_t* LoadPartyRange(u8 bank, u8* FirstMonId, u8* lastMonId) {
 		//Two Human Trainers vs Two AI Trainers
         if (gBattleTypeFlags & BATTLE_TYPE_TOWER_LINK_MULTI)
 		{
-            if (GetBattlerSide(bank) == B_SIDE_PLAYER) {
+            if (SIDE(bank) == B_SIDE_PLAYER) {
                 *FirstMonId = 0;
                 if (GetLinkTrainerFlankId(GetBattlerMultiplayerId(bank)) == TRUE)
                     *FirstMonId = 3;
@@ -486,7 +486,9 @@ pokemon_t* LoadPartyRange(u8 bank, u8* FirstMonId, u8* lastMonId) {
 
 ability_t CopyAbility(u8 bank) {
 	if (gStatuses3[bank] & STATUS3_ABILITY_SUPPRESS)
-		return SuppressedAbilities[bank];
+		return gNewBS->SuppressedAbilities[bank];
+	else if (gNewBS->DisabledMoldBreakerAbilities[bank])
+		return gNewBS->DisabledMoldBreakerAbilities[bank];
 	else
 		return gBattleMons[bank].ability;
 }
@@ -539,7 +541,7 @@ pokemon_t* GetIllusionPartyData(u8 bank) {
 	pokemon_t* party = LoadPartyRange(bank, &firstMonId, &lastMonId);
 	
 	for (i = lastMonId; i > firstMonId; --i) { //Loop through party in reverse order
-		if (i == gBattlerPartyIndexes[bank])
+		if (i == gBattlerPartyIndexes[bank]) //Finsihed checking mons after
 			return GetBankPartyData(bank);
 	
 		if (GetMonData(&party[i], MON_DATA_SPECIES, 0) == PKMN_NONE
@@ -622,8 +624,8 @@ bool8 CanTransferItem(u16 species, u16 item, pokemon_t* party_data) {
 //Make sure the input bank is any bank on the specific mon's side
 bool8 CanFling(u8 ability, u16 item, pokemon_t* party_data, u8 bank, bool8 PartyCheck) {
 	if (ability == ABILITY_KLUTZ
-	|| MagicRoomTimer
-	|| (!PartyCheck && EmbargoTimers[bank])
+	|| gNewBS->MagicRoomTimer
+	|| (!PartyCheck && gNewBS->EmbargoTimers[bank])
 	|| !CanTransferItem(party_data->species, item, party_data)
 	|| gItems[SanitizeItemId(item)].holdEffect == ITEM_EFFECT_PRIMAL_ORB
 	|| IsMail(item)

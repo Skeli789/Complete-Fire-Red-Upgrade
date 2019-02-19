@@ -506,7 +506,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
 			
 			case ITEM_EFFECT_MICLE_BERRY:
 				if (PINCH_BERRY_CHECK(bank) || DoPluck) {
-					MicleBerryBits |= (1 << bank);
+					gNewBS->MicleBerryBits |= (1 << bank);
 				
 					if (moveTurn || DoPluck) {
 						BattleScriptPushCursor();
@@ -631,7 +631,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
 				&& gBattleMons[bank].hp
 				&& !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bank))
 				{
-					NoSymbiosisByte = TRUE;
+					gNewBS->NoSymbiosisByte = TRUE;
 					gEffectBank = bank;
 					BattleScriptPushCursor();
 					gBattlescriptCurrInstr = BattleScript_EjectButton;
@@ -652,8 +652,8 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
 				&& ((gBattleTypeFlags & BATTLE_TYPE_TRAINER) || SIDE(gBankAttacker) == B_SIDE_PLAYER)
 				&& gCurrentMove != MOVE_DRAGONTAIL && gCurrentMove != MOVE_CIRCLETHROW)
 				{
-					NoSymbiosisByte = TRUE;
-					ForceSwitchHelper = Force_Switch_Red_Card;
+					gNewBS->NoSymbiosisByte = TRUE;
+					gNewBS->ForceSwitchHelper = Force_Switch_Red_Card;
 					gEffectBank = bank;
 					BattleScriptPushCursor();
 					gBattlescriptCurrInstr = BattleScript_RedCard;
@@ -878,7 +878,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
             switch (atkHoldEffect)
             {
             case ITEM_EFFECT_FLINCH:
-				if (ABILITY(gBankAttacker) == ABILITY_SERENEGRACE || RainbowTimers[SIDE(gBankAttacker)])
+				if (ABILITY(gBankAttacker) == ABILITY_SERENEGRACE || gNewBS->RainbowTimers[SIDE(gBankAttacker)])
 					bankQuality *= 2;
                 if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) 
 				&& ABILITY(gBankTarget) != ABILITY_STENCH

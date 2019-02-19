@@ -297,12 +297,12 @@
 
 .macro pokespritetoBG2 anim22bank
 .byte 0x22
-.byte \anim22bank
+.byte \animABank
 .endm
 
 .macro pokespritefromBG2 anim23bank
 .byte 0x23
-.byte \anim23bank
+.byte \animBBank
 .endm
 
 .macro jumpifnotinbattle jumpifnotinbattlePTR

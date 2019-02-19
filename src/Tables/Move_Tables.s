@@ -15,6 +15,7 @@
 .global DanceMoveTable
 .global GravityBanTable
 .global MeFirstBanTable
+.global CopycatBanTable
 .global PowderTable
 .global SoundMoveTable
 .global SubstituteBypassTable
@@ -29,10 +30,22 @@
 .global MoldBreakerMoves
 .global FlinchMoveTable
 .global ParentalBondBanList
+.global MovesCanUnfreezeAttacker
 .global MovesCanUnfreezeTarget
 .global MovesThatChangePhysicality
 .global TwoToFiveStrikesMoves
 .global TwoStrikesMoves
+.global ThreeStrikesMoves
+.global Percent25RecoilMoves
+.global Percent33RecoilMoves
+.global Percent50RecoilMoves
+.global Percent66RecoilMoves
+.global Percent75RecoilMoves
+.global Percent100RecoilMoves
+.global IgnoreAirTable
+.global IgnoreUndergoundTable
+.global IgnoreUnderwaterTable
+.global AlwaysHitRainTable
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -255,6 +268,52 @@ MeFirstBanTable:
 .hword MOVE_MIRRORCOAT
 .hword MOVE_METALBURST
 .hword MOVE_MEFIRST
+.hword MOVE_TABLES_TERMIN
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+CopycatBanTable:
+.hword MOVE_ASSIST
+.hword MOVE_BANEFULBUNKER
+.hword MOVE_BEAKBLAST
+.hword MOVE_BESTOW
+.hword MOVE_CELEBRATE
+.hword MOVE_CHATTER
+.hword MOVE_CIRCLETHROW
+.hword MOVE_COPYCAT
+.hword MOVE_COUNTER
+.hword MOVE_COVET
+.hword MOVE_DESTINYBOND
+.hword MOVE_DETECT
+.hword MOVE_DRAGONTAIL
+.hword MOVE_ENDURE
+.hword MOVE_FEINT
+.hword MOVE_FOCUSPUNCH
+.hword MOVE_FOLLOWME
+.hword MOVE_HELPINGHAND
+.hword MOVE_HOLDHANDS
+.hword MOVE_KINGSSHIELD
+.hword MOVE_MATBLOCK
+.hword MOVE_MEFIRST
+.hword MOVE_METRONOME
+.hword MOVE_MIMIC
+.hword MOVE_MIRRORCOAT
+.hword MOVE_MIRRORMOVE
+.hword MOVE_PROTECT
+.hword MOVE_RAGEPOWDER
+.hword MOVE_ROAR
+.hword MOVE_SHELLTRAP
+.hword MOVE_SKETCH
+.hword MOVE_SLEEPTALK
+.hword MOVE_SNATCH
+.hword MOVE_STRUGGLE
+.hword MOVE_SPIKYSHIELD
+.hword MOVE_SPOTLIGHT
+.hword MOVE_SWITCHEROO
+.hword MOVE_THIEF
+.hword MOVE_TRANSFORM
+.hword MOVE_TRICK
+.hword MOVE_WHIRLWIND
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -560,6 +619,7 @@ MoldBreakerMoves:
 .hword MOVE_SUNSTEELSTRIKE
 .hword MOVE_LIGHT_THAT_BURNS_THE_SKY
 .hword MOVE_MENACING_MOONRAZE_MAELSTROM
+
 .hword MOVE_SEARING_SUNRAZE_SMASH
 .hword MOVE_TABLES_TERMIN
 
@@ -607,6 +667,18 @@ ParentalBondBanList:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+MovesCanUnfreezeAttacker:
+.hword MOVE_FLAMEWHEEL
+.hword MOVE_SACREDFIRE
+.hword MOVE_FLAREBLITZ
+.hword MOVE_FUSIONFLARE
+.hword MOVE_SCALD
+.hword MOVE_STEAMERUPTION
+.hword MOVE_BURNUP
+.hword MOVE_TABLES_TERMIN
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 MovesCanUnfreezeTarget:
 .hword MOVE_SCALD
 .hword MOVE_STEAMERUPTION
@@ -648,6 +720,71 @@ TwoStrikesMoves:
 .hword MOVE_GEARGRIND
 .hword MOVE_TWINEEDLE
 .hword MOVE_DOUBLEIRONBASH
+.hword MOVE_TABLES_TERMIN
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+ThreeStrikesMoves:
+.hword MOVE_TRIPLEKICK
+.hword MOVE_TABLES_TERMIN
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+Percent25RecoilMoves:
+.hword MOVE_TAKEDOWN
+.hword MOVE_SUBMISSION
+.hword MOVE_WILDCHARGE
+.hword MOVE_HEADCHARGE
+.hword MOVE_TABLES_TERMIN
+
+Percent33RecoilMoves:
+.hword MOVE_DOUBLEEDGE
+.hword MOVE_VOLTTACKLE
+.hword MOVE_FLAREBLITZ
+.hword MOVE_BRAVEBIRD
+.hword MOVE_WOODHAMMER
+.hword MOVE_TABLES_TERMIN
+
+Percent50RecoilMoves:
+.hword MOVE_HEADSMASH
+.hword MOVE_LIGHTOFRUIN
+.hword MOVE_TABLES_TERMIN
+
+Percent66RecoilMoves:
+.hword MOVE_TABLES_TERMIN
+
+Percent75RecoilMoves:
+.hword MOVE_TABLES_TERMIN
+
+Percent100RecoilMoves:
+.hword MOVE_TABLES_TERMIN
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+IgnoreAirTable:
+.hword MOVE_GUST
+.hword MOVE_TWISTER
+.hword MOVE_THUNDER
+.hword MOVE_SKYUPPERCUT
+.hword MOVE_HURRICANE
+.hword MOVE_SMACKDOWN
+.hword MOVE_THOUSANDARROWS
+.hword MOVE_TABLES_TERMIN
+
+IgnoreUndergoundTable:
+.hword MOVE_EARTHQUAKE
+.hword MOVE_MAGNITUDE
+.hword MOVE_FISSURE
+.hword MOVE_TABLES_TERMIN
+
+IgnoreUnderwaterTable:
+.hword MOVE_SURF
+.hword MOVE_WHIRLPOOL
+.hword MOVE_TABLES_TERMIN
+
+AlwaysHitRainTable:
+.hword MOVE_THUNDER
+.hword MOVE_HURRICANE
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

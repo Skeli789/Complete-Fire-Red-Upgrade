@@ -288,7 +288,7 @@ struct UnknownFlags
     u32 flags[4];
 };
 
-#define UNKNOWN_FLAG_FLASH_FIRE 1
+#define RESOURCE_FLAG_FLASH_FIRE 1
 
 struct BattleMove
 {
@@ -418,7 +418,7 @@ struct SpecialStatus
     s32 moveturnLostHP_special;
     u8 moveturnPhysicalBank;
     u8 moveturnSpecialBank;
-    u8 field12;
+    u8 switchInAbilityDone : 1;
     u8 field13;
 };
 
@@ -449,7 +449,7 @@ struct WishFutureKnock
 {
     u8 futureSightCounter[BATTLE_BANKS_COUNT];
     u8 futureSightAttacker[BATTLE_BANKS_COUNT];
-    s32 futureSightDmg[BATTLE_BANKS_COUNT];
+    u32 futureSightPartyIndex[BATTLE_BANKS_COUNT]; //was s32 futureSightDmg[BATTLE_BANKS_COUNT];
     u16 futureSightMove[BATTLE_BANKS_COUNT];
     u8 wishCounter[BATTLE_BANKS_COUNT];
     u8 wishUserID[BATTLE_BANKS_COUNT];
@@ -698,6 +698,149 @@ struct BattleStruct
 };
 
 extern struct BattleStruct* gBattleStruct;
+
+struct NewBattleStruct
+{
+	//Field Counters
+	u8 MudSportTimer;
+	u8 WaterSportTimer;
+	u8 GravityTimer;
+	u8 TrickRoomTimer;
+	u8 MagicRoomTimer;
+	u8 WonderRoomTimer;
+	u8 FairyLockTimer;
+	u8 IonDelugeTimer;
+	u8 TerrainType;
+	u8 TerrainTimer;
+	
+	//Team Counters
+	u8 SeaOfFireTimers[2];
+	u8 SwampTimers[2];
+	u8 RainbowTimers[2];
+	u8 RetaliateCounters[2];
+	u8 LuckyChantTimers[2];
+	u8 TailwindTimers[2];
+	u8 AuroraVeilTimers[2];
+	
+	//Personal Counters
+	u8 TelekinesisTimers[4];
+	u8 MagnetRiseTimers[4];
+	u8 HealBlockTimers[4];
+	u8 LaserFocusTimers[4];
+	u8 ThroatChopTimers[4];
+	u8 EmbargoTimers[4];
+	u8 ElectrifyTimers[4];
+	u8 SlowStartTimers[4];
+	u8 StakeoutCounters[4];
+	u8 StompingTantrumTimers[4];
+	u8 NimbleCounters[4];
+	u8 DestinyBondCounters[4];
+	u8 MetronomeCounter[4];
+	u8 IncinerateCounters[4];
+	u8 LastUsedTypes[4];
+	u8 DisabledMoldBreakerAbilities[4];
+	u8 SuppressedAbilities[4];
+	
+	//Bit Fields for Banks
+	u8 MicleBerryBits;
+	u8 UnburdenBoosts;
+	u8 BeakBlastByte;
+	u8 RoostCounter;
+	u8 CustapQuickClawIndicator;
+	u8 HealingWishLoc;
+	u8 PowderByte;
+	u8 AbsentBattlerHelper;
+	
+	//Bit Fields for Party
+	u8 BelchCounters;
+	u8 IllusionBroken;
+	
+	//Other Helpers
+	u8 SwitchInEffectsTracker;
+	u8 SentInBackup;
+	u8 OriginalAttackerTargetCount;
+	u8 MoveBounceTargetCount;
+	u8 EchoedVoiceCounter;
+	u8 EchoedVoiceDamageScale;
+	u8 EnduranceHelper;
+	u8 MoodyLowerStat;
+	u8 ForceSwitchHelper;
+	u8 DancerBankCount;
+	u8 CurrentTurnAttacker;
+	u8 TargetsHit;
+	u8 FaintEffectsTracker;
+	u8 blockTracker;
+	
+	//Booleans
+	bool8 NoMoreMovingThisTurn : 1;
+	bool8 MoveBounceInProgress : 2;
+	bool8 AttackerDidDamageAtLeastOnce : 1;
+	bool8 PledgeHelper : 1;
+	bool8 ParentalBondOn : 2;
+	bool8 MeFirstByte : 1;
+	bool8 ReceiverActivated : 1;
+	bool8 GemHelper : 1;
+	bool8 EndTurnDone : 1;
+	bool8 HappyHourByte : 1;
+	bool8 DancerInProgress : 1;
+	bool8 DancerByte : 1;
+	bool8 InstructInProgress : 1;
+	bool8 NoSymbiosisByte : 1;
+	bool8 SpectralThiefActive : 1;
+	bool8 MultiHitOn : 1;
+	
+	//Other
+	u16 LastUsedMove;
+	u16 NewWishHealthSave;
+	u8 DancerTurnOrder[4];
+	u8 PayDayByPartyIndices[6];
+	item_t SavedConsumedItems[6];
+	
+	struct MegaData* MegaData;
+	struct UltraData* UltraData;
+	struct ZMoveData* ZMoveData;
+};
+
+#define gNewBS (ExtensionState.newBattleStruct)
+
+struct TrainerSpotted {
+    /* NPC state id */
+    u8 id;
+
+    /* Distance from trainer to player */
+    u8 distance;
+
+    /* The script the on the trainer NPC. */
+    u8* script;
+};
+
+struct BattleExtensionState //Clear After Battle
+{ 
+    struct {
+        u8 count;
+		u8 approachingId;
+		u8 firstTrainerNPCId; //Used in trainerbattle 0xB
+		u8 secondTrainerNPCId;
+        struct TrainerSpotted trainers[2];
+    } spotted;
+	
+    void* partyBackup;
+	pokemon_t* skyBattlePartyBackup;
+	u16* itemBackup;
+	u8* trainerBIntroSpeech;
+	u8* trainerBDefeatSpeech;
+	u8* trainerBVictorySpeech;
+	u8* trainerBCantBattleSpeech;
+	u8* trainerBRetAddress;
+	struct NewBattleStruct* newBattleStruct;
+	
+	u16   partnerTrainerId;
+	u16   partnerBackSpriteId;
+	u16   trainerBTrainerId;
+	u8	  multiTaskStateHelper;
+};
+
+extern struct BattleExtensionState ExtensionState;
 
 struct naturalGift {
 	u16 berry;
@@ -1083,6 +1226,7 @@ struct TerrainTableStruct
 	u8 secretPowerEffect;
 	u16 secretPowerAnim;
 	u16 naturePowerMove;
+	u16 burmyForm;
 };
 
 enum EnduranceListings {ENUDRE_REG, ENDURE_STURDY, ENDURE_FOCUS_SASH};

@@ -193,13 +193,13 @@ bool8 BankMegaEvolved(u8 bank, bool8 checkUB) {
 	||  (SIDE(bank) == B_SIDE_OPPONENT && gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS))
 	{
 		if (checkUB) {
-			if (UltraData->done[bank])
+			if (gNewBS->UltraData->done[bank])
 				return TRUE;
 			else
 				return FALSE;
 		}
 		else {	
-			if (MegaData->done[bank])
+			if (gNewBS->MegaData->done[bank])
 				return TRUE;
 			else
 				return FALSE;
@@ -207,11 +207,11 @@ bool8 BankMegaEvolved(u8 bank, bool8 checkUB) {
 	}
 	
 	if (checkUB) {
-		if (UltraData->done[bank] || UltraData->done[PARTNER(bank)])
+		if (gNewBS->UltraData->done[bank] || gNewBS->UltraData->done[PARTNER(bank)])
 			return TRUE;
 	}
 	else {
-		if (MegaData->done[bank] || (MegaData->done[PARTNER(bank)]))
+		if (gNewBS->MegaData->done[bank] || (gNewBS->MegaData->done[PARTNER(bank)]))
 			return TRUE;
 	}
 	
@@ -283,7 +283,7 @@ u8* GetTrainerName(u8 bank) {
 }
 
 void MegaRetrieveData(void) {
-	MegaData->chosen[gActiveBattler] |= gBattleBufferB[gActiveBattler][4];
-	UltraData->chosen[gActiveBattler] |= gBattleBufferB[gActiveBattler][5];
-	ZMoveData->toBeUsed[gActiveBattler] |= gBattleBufferB[gActiveBattler][6];
+	gNewBS->MegaData->chosen[gActiveBattler] |= gBattleBufferB[gActiveBattler][4];
+	gNewBS->UltraData->chosen[gActiveBattler] |= gBattleBufferB[gActiveBattler][5];
+	gNewBS->ZMoveData->toBeUsed[gActiveBattler] |= gBattleBufferB[gActiveBattler][6];
 }

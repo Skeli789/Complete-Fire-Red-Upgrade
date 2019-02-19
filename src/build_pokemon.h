@@ -4,11 +4,17 @@
 
 #define MAKE_POKEMON(structure)																												\
 {																																			\
-	for (j = 0; gSpeciesNames[structure[i].species][j] != EOS; j++)																			\
+	for (j = 0; gSpeciesNames[structure[i].species][j] != EOS; ++j)																			\
 		nameHash += gSpeciesNames[structure[i].species][j];																					\
 																																			\
 	personalityValue += nameHash << 8;																										\
-	CreateMon(&party[i], structure[i].species, structure[i].lvl, STANDARD_IV, TRUE, personalityValue, OT_ID_PRESET, otid);					\
+																																			\
+	u8 lvl = structure[i].lvl;																												\
+	if (FlagGet(SCALE_TRAINER_LEVELS_FLAG)																									\
+	|| (gBattleTypeFlags & BATTLE_TYPE_TRAINER_TOWER))																						\
+		lvl = GetHighestMonLevel(gPlayerParty);																								\
+																																			\
+	CreateMon(&party[i], structure[i].species, lvl, STANDARD_IV, TRUE, personalityValue, OT_ID_PRESET, otid);								\
 	party[i].metLevel = structure[i].lvl;																									\
 }																																
 

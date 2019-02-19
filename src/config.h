@@ -24,6 +24,7 @@
 #define ACTIVATE_TUTORIAL_FLAG 0x9F5 //Setting this flag will allow you to activate Oak's tutorial in any kind of battle (including doubles)
 #define WILD_CUSTOM_MOVES_FLAG 0x26B
 #define SMART_WILD_FLAG 0x9F6 //Set this flag is you don't want wild Pokemon to act randomly (useful for one time smarter wild battles). This is cleared at the end of the battle.
+#define SCALE_TRAINER_LEVELS_FLAG 0x0 //If this flag is set, all Trainer Pokemon levels will be set to the highest in your party
 
 #define SECOND_OPPONENT_VAR 0x50BE //Set this to the var used to store the Trainer Id of the second opponent in Multi Battles (can be any free var)
 #define PARTNER_VAR 0x50BF //Set this to the var used to store the Trainer Id of your partner in Multi Battles (can be any free var)

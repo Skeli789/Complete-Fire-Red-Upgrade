@@ -111,7 +111,7 @@ const u32 sStatusFlagsForMoveEffects[] =
 void atk15_seteffectwithchance(void) {
     u32 PercentChance;
 
-    if (gBattleMons[gBankAttacker].ability == ABILITY_SERENEGRACE || RainbowTimers[SIDE(gBankAttacker)])
+    if (gBattleMons[gBankAttacker].ability == ABILITY_SERENEGRACE || gNewBS->RainbowTimers[SIDE(gBankAttacker)])
 	{
         PercentChance = gBattleMoves[gCurrentMove].secondaryEffectChance * 2;
 	}
@@ -324,7 +324,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
             case MOVE_EFFECT_PAYDAY:
                 if (SIDE(gBankAttacker) == B_SIDE_PLAYER)
                 {
-                    PayDayByPartyIndices[gBattlerPartyIndexes[gEffectBank]];
+                    gNewBS->PayDayByPartyIndices[gBattlerPartyIndexes[gEffectBank]];
                 }
                 BattleScriptPush(gBattlescriptCurrInstr + 1);
                 gBattlescriptCurrInstr = sMoveEffectBS_Ptrs[gBattleCommunication[MOVE_EFFECT_BYTE]];
@@ -732,7 +732,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 				if ((ITEM_POCKET(gEffectBank) == POCKET_BERRY_POUCH || EFFECT(gEffectBank) == ITEM_EFFECT_GEMS)
 				&&  ABILITY(gEffectBank) != ABILITY_STICKYHOLD)
 				{
-					IncinerateCounters[gEffectBank] = TRUE;
+					gNewBS->IncinerateCounters[gEffectBank] = TRUE;
 					
 					gLastUsedItem = gBattleMons[gEffectBank].item;
 					gBattleMons[gEffectBank].item = 0;
@@ -771,7 +771,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 				
 				if (gStatuses3[gEffectBank] & (STATUS3_SKY_DROP_ATTACKER | STATUS3_SKY_DROP_TARGET | STATUS3_ROOTED)
 				||  EFFECT(gEffectBank) == ITEM_EFFECT_IRON_BALL
-				||  GravityTimer)
+				||  gNewBS->GravityTimer)
 				{
 					gBattlescriptCurrInstr++;
 					break;
@@ -791,7 +791,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 					CancelMultiTurnMoves(gEffectBank);
 					gStatuses3[gEffectBank] ^= STATUS3_IN_AIR;
 					gStatuses3[gEffectBank] |= STATUS3_SMACKED_DOWN;
-					NoMoreMovingThisTurn |= gBitTable[gEffectBank];
+					gNewBS->NoMoreMovingThisTurn |= gBitTable[gEffectBank];
 					
 					gActiveBattler = gEffectBank;
 					EmitSpriteInvisibility(0, FALSE);
@@ -830,13 +830,13 @@ void SetMoveEffect(bool8 primary, u8 certain)
 				break;
 			
 			case MOVE_EFFECT_ION_DELUGE:
-				IonDelugeTimer = 1;
+				gNewBS->IonDelugeTimer = 1;
 				BattleScriptPush(gBattlescriptCurrInstr + 1);
                 gBattlescriptCurrInstr = BattleScript_IonShower;
 				break;
 			
 			case MOVE_EFFECT_THROAT_CHOP:
-				ThroatChopTimers[gEffectBank] = 2;
+				gNewBS->ThroatChopTimers[gEffectBank] = 2;
 				BattleScriptPush(gBattlescriptCurrInstr + 1);
                 gBattlescriptCurrInstr = BattleScript_ThroatChopEffect;
 				break;
@@ -881,13 +881,13 @@ void SetMoveEffect(bool8 primary, u8 certain)
 					u8* atkAbilityLoc, *defAbilityLoc;
 				
 					//Get correct location of ability
-					if (DisabledMoldBreakerAbilities[gEffectBank])
-						atkAbilityLoc = &(DisabledMoldBreakerAbilities[gEffectBank]);
+					if (gNewBS->DisabledMoldBreakerAbilities[gEffectBank])
+						atkAbilityLoc = &(gNewBS->DisabledMoldBreakerAbilities[gEffectBank]);
 					else
 						atkAbilityLoc = &(gBattleMons[gBankAttacker].ability);
 						
 					gStatuses3[gEffectBank) |= STATUS3_ABILITY_SUPPRESSED;
-					SuppressedAbilities[gEffectBank] = *atkAbilityLoc;
+					gNewBS->SuppressedAbilities[gEffectBank] = *atkAbilityLoc;
 					*atkAbilityLoc = 0;
 					
 					BattleScriptPush(gBattlescriptCurrInstr + 1);
@@ -902,13 +902,13 @@ void SetMoveEffect(bool8 primary, u8 certain)
 				u8 side = SIDE(gBankTarget);
 				if (gSideTimers[side].reflectTimer 
 				||  gSideTimers[side].lightscreenTimer 
-				||  AuroraVeilTimers[side]) 
+				||  gNewBS->AuroraVeilTimers[side]) 
 				{
 					gSideAffecting[side] &= ~(SIDE_STATUS_REFLECT);
 					gSideAffecting[side] &= ~(SIDE_STATUS_LIGHTSCREEN);
 					gSideTimers[side].reflectTimer = 0;
 					gSideTimers[side].lightscreenTimer = 0;
-					AuroraVeilTimers[side] = 0;
+					gNewBS->AuroraVeilTimers[side] = 0;
 					BattleScriptPush(gBattlescriptCurrInstr + );
 					gBattlescriptCurrInstr = BattleScript_ScreensShattered;
 				}

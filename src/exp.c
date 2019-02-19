@@ -75,7 +75,7 @@ void atk23_getexp(void) {
             gBattleStruct->givenExpMons |= gBitTable[gBattlerPartyIndexes[gBankFainted]]; //The party indices in the opponent's party that have fainted and been given exp for
 			gBattleStruct->expGetterId = 0;
 			gBattleStruct->sentInPokes = sentIn;
-			SentInBackup = sentIn;
+			gNewBS->SentInBackup = sentIn;
 			gBattleMoveDamage = 0;
 			*expGiveType = GiveExpBattlePariticpants; //Start with battle participants
         }
@@ -186,7 +186,7 @@ void atk23_getexp(void) {
 				if (viaExpShare) { // at least one mon is getting exp via exp share
 					if (holdEffect == ITEM_EFFECT_EXP_SHARE)
 						calculatedExp += ExpCalculator(trainerBonus, tradeBonus, baseExp, eggBoost, defLevel, pokeLevel, passPower, affection, evolutionBoost, 2 * viaExpShare);
-					if (SentInBackup & (1 << gBattleStruct->expGetterId))
+					if (gNewBS->SentInBackup & (1 << gBattleStruct->expGetterId))
 						calculatedExp += ExpCalculator(trainerBonus, tradeBonus, baseExp, eggBoost, defLevel, pokeLevel, passPower, affection, evolutionBoost, 2 * viaSentIn);
 					goto SKIP_EXP_CALC;
 				}
@@ -391,11 +391,11 @@ void atk23_getexp(void) {
         if (gBattleExecBuffer) break;
 		
 		#ifndef OLD_EXP_SHARE
-			if (FlagGet(EXP_SHARE_FLAG) && *expGiveType == GiveExpBattlePariticpants && !WasWholeTeamSentIn(B_POSITION_PLAYER_LEFT, SentInBackup)) {
+			if (FlagGet(EXP_SHARE_FLAG) && *expGiveType == GiveExpBattlePariticpants && !WasWholeTeamSentIn(B_POSITION_PLAYER_LEFT, gNewBS->SentInBackup)) {
 				*expGiveType = GiveExpViaExpShare;
 				gBattleStruct->expGetterId = 0;
 				gBattleMoveDamage = 0;
-				gBattleStruct->sentInPokes = SentInBackup;
+				gBattleStruct->sentInPokes = gNewBS->SentInBackup;
 				gBattleScripting->expStateTracker = GetExp_CheckCurrentMonDeserving; // Time for Exp Share loop
 				BattleStringLoader = String_TeamExpGain;
 				PrepareStringBattle(0x184, 0);

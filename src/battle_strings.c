@@ -270,7 +270,7 @@ void BufferStringBattle(u16 stringID) {
 			
         else 
 		{
-			if (ZMoveData->active && SPLIT(move) != SPLIT_STATUS) 
+			if (gNewBS->ZMoveData->active && SPLIT(move) != SPLIT_STATUS) 
 			{
 				//Load elongated move names for Z-Moves
 				if (move < MOVE_BREAKNECK_BLITZ_P) //Prevent accidental bugs
@@ -284,7 +284,7 @@ void BufferStringBattle(u16 stringID) {
 		
         ChooseTypeOfMoveUsedString(gBattleTextBuff2);
 		
-		if (ZMoveData->active && SPLIT(move) == SPLIT_STATUS)
+		if (gNewBS->ZMoveData->active && SPLIT(move) == SPLIT_STATUS)
 			stringPtr = BattleText_AttackerUsedZStatusMove; //NEED DATA
 		else 
 			stringPtr = BattleText_AttackerUsedX; //0x83FD57B
@@ -535,7 +535,7 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
                     toCpy = sATypeMove_Table[gBattleStruct->stringMoveType];
 				else 
 				{
-					if (ZMoveData->active && SPLIT((*gStringInfo)->currentMove) != SPLIT_STATUS) 
+					if (gNewBS->ZMoveData->active && SPLIT((*gStringInfo)->currentMove) != SPLIT_STATUS) 
 					{
 						//Load elongated move names for Z-Moves
 						if ((*gStringInfo)->currentMove < MOVE_BREAKNECK_BLITZ_P) //Prevent accidental bugs

@@ -9,6 +9,8 @@
 .global BattleScript_Magician
 .global BattleScript_Moxie
 .global BattleScript_MindBlownDamage
+.global BattleScript_FaintAttacker
+.global BattleScript_ExplosionAnim
 .global BattleScript_LifeOrbDamage
 .global BattleScript_Pickpocket
 .global BattleScript_DancerActivated
@@ -64,6 +66,16 @@ BattleScript_MindBlownDamage:
 	setword BATTLE_STRING_LOADER MindBlownString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+	faintpokemon BANK_ATTACKER 0x0 0x0
+	return
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_ExplosionAnim:
+	callasm PlayAttackAnimationForExplosion + 1
+	waitanimation
+	
+BattleScript_FaintAttacker:
 	faintpokemon BANK_ATTACKER 0x0 0x0
 	return
 

@@ -16,8 +16,7 @@ HandleAction_UseMove 8015CA0 0
 PrepareStringBattle 80173AC 3
 CheckMoveLimitations 801779C 3
 TurnBasedEffects 08018258 0
-KnockOutModification 08018FC0 0
-ClearEndTurnEndByte 080191FC 0
+HandleFaintedMonActions 08018F90 0
 HasNoMonsToSwitch 0x8019C10 3
 SwitchMoveDataHook 0x802EF90 0
 MoveSelectionDisplayMoveType 8030940 0

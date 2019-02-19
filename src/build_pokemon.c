@@ -22,6 +22,9 @@ bool8 ItemAlreadyOnTeam(u16 item, u8 partySize, item_t* itemArray);
 bool8 MegastoneAlreadyOnTeam(u16 item, u8 partySize, item_t* itemArray);
 bool8 ZCrystalAlreadyOnTeam(u16 item, u8 partySize, item_t* itemArray);
 bool8 PokemonTierBan(u16 species, u16 item, struct BattleTowerSpreads* spread, pokemon_t* mon, u8 checkFromLocationType);
+u8 GetHighestMonLevel(pokemon_t* party);
+u8 GetMonPokeBall(struct PokemonSubstruct0* data);
+void SetMonPokeBall(struct PokemonSubstruct0* data, u8 ballId);
 
 void BuildTrainerPartySetup(void) {
 	if (gBattleTypeFlags & (BATTLE_TYPE_TOWER_LINK_MULTI)) 
@@ -155,7 +158,10 @@ u8 CreateNPCTrainerParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, b
 			#ifdef TRAINER_CLASS_POKE_BALLS
 				#ifdef CLASS_BASED_BALLS_MULTI_FIX
 				//In multi battles, the second opponent and partner will share poke ball first the first opponent due to graphical issues
-					SetMonData(&party[i], REQ_POKEBALL, &ClassPokeBalls[gTrainers[gTrainerBattleOpponent_A].trainerClass]);
+					if (side == B_SIDE_OPPONENT)
+						SetMonData(&party[i], REQ_POKEBALL, &ClassPokeBalls[gTrainers[gTrainerBattleOpponent_A].trainerClass]);
+					else
+						SetMonData(&party[i], REQ_POKEBALL, &ClassPokeBalls[trainer->trainerClass]);
 				#else
 					SetMonData(&party[i], REQ_POKEBALL, &ClassPokeBalls[trainer->trainerClass]);
 				#endif
@@ -534,6 +540,22 @@ bool8 PokemonTierBan(u16 species, u16 item, struct BattleTowerSpreads* spread, p
 			break;
 	}
 	return FALSE; //Not banned
+}
+
+u8 GetHighestMonLevel(pokemon_t* party)
+{
+	u8 max = party[0].level;
+	
+	for (int i = 0; i < 6; ++i)
+	{
+		if (max == MAX_LEVEL)
+			return max;
+	
+		if (party[i].level > max)
+			max = party[i].level;
+	}
+	
+	return max;
 }
 
 u8 GetMonPokeBall(struct PokemonSubstruct0* data)
