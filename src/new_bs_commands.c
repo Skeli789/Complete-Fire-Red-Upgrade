@@ -118,6 +118,7 @@ void atkFF02_cureprimarystatus(void)
 	else
 	{
 		ClearBankStatus(bank);
+		gBattleScripting->bank = bank;
 		gBattlescriptCurrInstr += 6;
 	}
 }

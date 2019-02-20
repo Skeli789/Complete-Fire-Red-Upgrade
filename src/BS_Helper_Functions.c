@@ -40,6 +40,10 @@ extern u8 CelebrateString[];
 extern u8 HoldHandsString[];
 extern u8 TailwindSetString[];
 extern u8 LuckyChantSetString[];
+extern u8 WorrySeedString[];
+extern u8 AbilitySuppressedString[];
+extern u8 EntrainmentString[];
+extern u8 SimpleBeamString[];
 
 extern ability_t MoldBreakerIgnoreAbilities[];
 extern move_t CopycatBanTable[];
@@ -47,6 +51,11 @@ extern move_t MeFirstBanTable[];
 extern move_t MovesThatCallOtherMovesTable[];
 extern move_t MovesThatRequireRecharging[];
 extern move_t InstructBanList[];
+
+extern ability_t WorrySeedGastroAcidBanTable[];
+extern ability_t EntrainmentBanTableAttacker[];
+extern ability_t EntrainmentBanTableTarget[];
+extern ability_t SimpleBeamBanTable[];
 
 void SetTargetPartner(void);
 bool8 CheckCraftyShield(void);
@@ -1128,3 +1137,131 @@ void FlameBurstFunc(void) {
 	}
 }
 
+void ModifyPostStockpileBoostDecrement(void) {
+	switch (gDisableStructs[gBankAttacker].stockpileCounter) {
+		case 1:
+			gBattleScripting->statChanger |= DECREASE_1;
+			break;
+		case 2:
+			gBattleScripting->statChanger |= DECREASE_2;
+			break;
+		case 3:
+			gBattleScripting->statChanger |= DECREASE_3;
+			break;
+	}
+}
+
+void RemoveStockpileBoosts(void) {
+	gDisableStructs[gBankAttacker].stockpileCounter = 0;
+}
+
+void SetHealingWishLunarDanceFunc(void) {
+	switch (gCurrentMove) {
+		case MOVE_HEALINGWISH:
+			gNewBS->HealingWishLoc |= gBitTable[gBankAttacker];
+			break;
+		case MOVE_LUNARDANCE:
+			gNewBS->HealingWishLoc |= (gBitTable[gBankAttacker] << 4);
+	}
+}
+
+void FinalGambitDamageCalc(void) {
+	gBattleMoveDamage = gBattleMons[gBankAttacker].hp;
+}
+
+void AbilityChangeBSFunc(void) {
+	u8* atkAbilityLoc, *defAbilityLoc;
+	u8 atkAbility, defAbility;
+
+	//Get correct location of ability
+	atkAbilityLoc = GetAbilityLocation(gBankAttacker);
+	defAbilityLoc = GetAbilityLocation(gBankTarget);
+		
+	atkAbility = *atkAbilityLoc;
+	defAbility = *defAbilityLoc;
+
+	switch (gCurrentMove) {
+		case MOVE_WORRYSEED:
+			if (CheckTableForAbility(defAbility, WorrySeedGastroAcidBanTable))
+				gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+			else
+			{
+				*defAbilityLoc = ABILITY_INSOMNIA;
+				gLastUsedAbility = ABILITY_INSOMNIA;
+				RecordAbilityBattle(gBankTarget, gLastUsedAbility);
+				BattleStringLoader = WorrySeedString;
+			}
+			break;
+		
+		case MOVE_GASTROACID:
+			if (CheckTableForAbility(defAbility, WorrySeedGastroAcidBanTable)
+			|| gStatuses3[gBankTarget] & STATUS3_ABILITY_SUPPRESS)
+			{
+				gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+			}
+			else
+			{
+				gStatuses3[gBankTarget] |= STATUS3_ABILITY_SUPPRESS;
+				gNewBS->SuppressedAbilities[gBankTarget] = defAbility;
+				*defAbilityLoc = 0;
+				RecordAbilityBattle(gBankTarget, 0);
+				gBattleScripting->bank = gBankTarget;
+				BattleStringLoader = AbilitySuppressedString;
+			}
+			break;
+		
+		case MOVE_ENTRAINMENT:
+			if (CheckTableForAbility(atkAbility, EntrainmentBanTableAttacker)
+			||  CheckTableForAbility(defAbility, EntrainmentBanTableTarget))
+				gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+			else
+			{
+				*defAbilityLoc = atkAbility;
+				gLastUsedAbility = atkAbility;
+				RecordAbilityBattle(gBankTarget, gLastUsedAbility);
+				BattleStringLoader = EntrainmentString;
+			}
+			break;
+		
+		case MOVE_SIMPLEBEAM:
+			if (CheckTableForAbility(defAbility, SimpleBeamBanTable))
+			{
+				gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+			}
+			else
+			{
+				*defAbilityLoc = ABILITY_SIMPLE;
+				gLastUsedAbility = ABILITY_SIMPLE;
+				RecordAbilityBattle(gBankTarget, gLastUsedAbility);
+				BattleStringLoader = SimpleBeamString;
+			}
+			break;
+	}
+}
+
+void LoadStatustoPsychoShiftTransfer(void) {
+	u32 status = gBattleMons[gBankAttacker].status1;
+	
+	if (status & STATUS_SLEEP && CanBePutToSleep(gBankTarget))
+	{
+		gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_SLEEP;
+	}
+	else if (status & STATUS_TOXIC_POISON && CanBePoisoned(gBankTarget, gBankAttacker))
+	{
+		gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_TOXIC;
+	}
+	else if (status & STATUS_POISON && CanBePoisoned(gBankTarget, gBankAttacker))
+	{
+		gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_POISON;
+	}
+	else if (status & STATUS_BURN && CanBeBurned(gBankTarget))
+	{
+		gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_BURN;
+	}
+	else if (status & STATUS_PARALYSIS && CanBeParalyzed(gBankTarget))
+	{
+		gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_PARALYSIS;
+	}
+	else
+		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+}

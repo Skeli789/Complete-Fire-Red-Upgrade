@@ -8,9 +8,10 @@
 
 .global RolePlayBanTable
 .global SkillSwapBanTable
-.global GastroAcidBanTable
+.global WorrySeedGastroAcidBanTable
 .global EntrainmentBanTableAttacker
 .global EntrainmentBanTableTarget
+.global SimpleBeamBanTable
 .global ReceiverBanTable
 .global TraceBanTable
 .global MoldBreakerIgnoreAbilities
@@ -56,7 +57,7 @@ SkillSwapBanTable:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-GastroAcidBanTable:
+WorrySeedGastroAcidBanTable:
 .byte ABILITY_MULTITYPE
 .byte ABILITY_STANCECHANGE
 .byte ABILITY_SCHOOLING
@@ -83,6 +84,7 @@ EntrainmentBanTableAttacker:
 .byte ABILITY_POWERCONSTRUCT
 .byte ABILITY_TABLES_TERMIN
 
+SimpleBeamBanTable:
 EntrainmentBanTableTarget:
 .byte ABILITY_TRUANT
 .byte ABILITY_MULTITYPE

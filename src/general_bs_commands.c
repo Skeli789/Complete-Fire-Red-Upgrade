@@ -1153,11 +1153,41 @@ void atk84_jumpifcantmakeasleep(void) {
 //This function used to calculate damage, but now all it does is check if Spit Up can be used
 void atk86_stockpiletobasedamage(void) {
     u8* jump_loc = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+	
     if (gDisableStructs[gBankAttacker].stockpileCounter == 0)
         gBattlescriptCurrInstr = jump_loc;
-
-    else 
+    else
+	{
+		gBattleScripting->animTurn = gDisableStructs[gBattlerAttacker].stockpileCounter;
         gBattlescriptCurrInstr += 5;
+	}
+}
+
+void atk87_stockpiletohpheal(void)
+{
+    u8* jumpPtr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+
+    if (gDisableStructs[gBankAttacker].stockpileCounter == 0)
+    {
+        gBattlescriptCurrInstr = jumpPtr;
+        gBattleCommunication[MULTISTRING_CHOOSER] = 0;
+    }
+    else if (gBattleMons[gBankAttacker].maxHP == gBattleMons[gBankAttacker].hp)
+    {
+        gDisableStructs[gBankAttacker].stockpileCounter = 0;
+        gBattlescriptCurrInstr = jumpPtr;
+        gBankTarget = gBankAttacker;
+        gBattleCommunication[MULTISTRING_CHOOSER] = 1;
+    }
+    else
+    {
+        gBattleMoveDamage = MathMax(1, udivsi(gBattleMons[gBankAttacker].maxHP, (1 << (3 - gDisableStructs[gBankAttacker].stockpileCounter))));
+        gBattleMoveDamage *= -1;
+
+        gBattleScripting->animTurn = gDisableStructs[gBankAttacker].stockpileCounter;
+        gBattlescriptCurrInstr += 5;
+        gBankTarget = gBankAttacker;
+    }
 }
 
 void atk88_negativedamage(void) {	
@@ -2181,7 +2211,7 @@ void atkC4_trydobeatup(void)
 {
     struct Pokemon* party;
 
-    if (SIDE(gBattlerAttacker) == B_SIDE_PLAYER)
+    if (SIDE(gBankAttacker) == B_SIDE_PLAYER)
         party = gPlayerParty;
     else
         party = gEnemyParty;
@@ -2379,26 +2409,21 @@ void atkD2_tryswapitems(void) { //Trick
 }
 
 void atkD3_trycopyability(void) { //Role Play
-	u8* atkAbilityLoc;
+	u8* atkAbilityLoc, *defAbilityLoc;
 	u8 atkAbility, defAbility;
 	
 	//Get correct location of ability
-	if (gStatuses3[gBankAttacker] & STATUS3_ABILITY_SUPPRESS)
-		atkAbilityLoc = &(gNewBS->SuppressedAbilities[gBankAttacker]);
-	else
-		atkAbilityLoc = &(gBattleMons[gBankAttacker].ability);
-	
-	if (gStatuses3[gBankTarget] & STATUS3_ABILITY_SUPPRESS)
-		defAbility = gNewBS->SuppressedAbilities[gBankTarget];
-	else
-		defAbility = gBattleMons[gBankTarget].ability;
-	
+	atkAbilityLoc = GetAbilityLocation(gBankAttacker);
+	defAbilityLoc = GetAbilityLocation(gBankTarget);
+		
 	atkAbility = *atkAbilityLoc;
+	defAbility = *defAbilityLoc;
 	
 	if (atkAbility == defAbility || defAbility == 0 || CheckTableForAbility(defAbility, RolePlayBanTable))
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
 		
-	else {
+	else 
+	{
 		*atkAbilityLoc = defAbility;
         gLastUsedAbility = defAbility;
         gBattlescriptCurrInstr += 5;
@@ -2410,15 +2435,8 @@ void atkDA_tryswapabilities(void) { //Skill Swap
 	u8 atkAbility, defAbility;
 	
 	//Get correct location of ability
-	if (gStatuses3[gBankAttacker] & STATUS3_ABILITY_SUPPRESS)
-		atkAbilityLoc = &(gNewBS->SuppressedAbilities[gBankAttacker]);
-	else
-		atkAbilityLoc = &(gBattleMons[gBankAttacker].ability);
-	
-	if (gStatuses3[gBankTarget] & STATUS3_ABILITY_SUPPRESS)
-		defAbilityLoc = &(gNewBS->SuppressedAbilities[gBankTarget]);
-	else
-		defAbilityLoc = &(gBattleMons[gBankTarget].ability);
+	atkAbilityLoc = GetAbilityLocation(gBankAttacker);
+	defAbilityLoc = GetAbilityLocation(gBankTarget);
 		
 	atkAbility = *atkAbilityLoc;
 	defAbility = *defAbilityLoc;
@@ -2426,9 +2444,11 @@ void atkDA_tryswapabilities(void) { //Skill Swap
 	if (atkAbility == 0 || defAbility == 0 
 	|| CheckTableForAbility(atkAbility, SkillSwapBanTable) || CheckTableForAbility(defAbility, SkillSwapBanTable)
 	|| gMoveResultFlags & MOVE_RESULT_NO_EFFECT)
+	{
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
-	
-    else {
+	}
+    else 
+	{
         *atkAbilityLoc = defAbility;
         *defAbilityLoc = atkAbility;
         gBattlescriptCurrInstr += 5;

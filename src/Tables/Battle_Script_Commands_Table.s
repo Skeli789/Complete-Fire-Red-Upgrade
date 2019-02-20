@@ -145,7 +145,7 @@ gBattleScriptingCommandsTable:
 .word atk84_jumpifcantmakeasleep	@jumpifcannotsleep
 .word 0x8027949				@stockpile
 .word atk86_stockpiletobasedamage
-.word 0x8027ae5				@stockpiletohprecovery
+.word atk87_stockpiletohpheal		@stockpiletohprecovery
 .word atk88_negativedamage
 .word atk89_statbuffchange
 .word 0x80280cd				@normalisebuffs
