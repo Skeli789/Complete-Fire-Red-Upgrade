@@ -85,7 +85,7 @@
 	.byte ANDS
 	.word OUTCOME
 	.byte OUTCOME_NO_EFFECT
-	.word /rom_address
+	.word \rom_address
 	.endm
 	
 	.macro jumpifbehindsubstitute bank rom_address
