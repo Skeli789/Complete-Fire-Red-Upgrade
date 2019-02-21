@@ -44,9 +44,11 @@
 #define PARTNER(bank) (bank ^ BIT_FLANK)
 #define FOE(bank) ((bank ^ BIT_SIDE) & BIT_SIDE)
 #define ABILITY(bank) BanksAbility(bank)
+#define SPECIES(bank) gBattleMons[bank].species
 #define ITEM(bank) gBattleMons[bank].item
 #define ITEM_EFFECT(bank) GetBankItemEffect(bank)
 #define ITEM_QUALITY(bank) ItemId_GetHoldEffectParam(gBattleMons[bank].item)
+#define ITEM_POCKET(bank) GetPocketByItemId(gBattleMons[bank].item)
 #define SPLIT(move) gBattleMoves[move].split
 #define CONSUMED_ITEMS(bank) gBattleStruct->usedHeldItems[bank]
 #define SAVED_CONSUMED_ITEMS(bank) gNewBS->SavedConsumedItems[gBattlerPartyIndexes[bank]]
