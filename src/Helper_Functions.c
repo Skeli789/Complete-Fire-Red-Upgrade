@@ -12,23 +12,31 @@ extern s8 PriorityCalc(u8 bank, u8 action, u16 move);
 
 bool8 CheckTableForMove (move_t move, const u16 table[]) {
 	for (u32 i = 0; table[i] != MOVE_TABLES_TERMIN; ++i) {
-		if (move == table [i])
+		if (move == table[i])
 			return TRUE;
 	}
 	return FALSE;
 }
 
-bool8 CheckTableForMoveEffect (move_t move, const u16 table[]) {
+bool8 CheckTableForMoveEffect(move_t move, const u16 table[]) {
 	for (u32 i = 0; table[i] != MOVE_TABLES_TERMIN; ++i) {
-		if (gBattleMoves[move].effect == table [i])
+		if (gBattleMoves[move].effect == table[i])
 			return TRUE;
 	}
 	return FALSE;
 }
 
-bool8 CheckTableForAbility (u8 ability, const u8 table[]) {
+bool8 CheckTableForAbility(u8 ability, const u8 table[]) {
 	for (u32 i = 0; table[i] != ABILITY_TABLES_TERMIN; ++i) {
-		if (ability == table [i])
+		if (ability == table[i])
+			return TRUE;
+	}
+	return FALSE;
+}
+
+bool8 CheckTableForSpecialMoveEffect(u8 effect, const u8 table[]) {
+	for (u32 i = 0; table[i] != ABILITY_TABLES_TERMIN; ++i) {
+		if (effect == table[i])
 			return TRUE;
 	}
 	return FALSE;
@@ -252,7 +260,7 @@ u8 GetMoveTarget(u16 move, u8 useMoveTarget) {
     switch (moveTarget) {
     case 0:
         defSide = SIDE(bankAtk) ^ BIT_SIDE;
-        if (gSideTimers[defSide].followmeTimer && gBattleMons[gSideTimers[defSide].followmeTarget].hp)
+        if (gSideTimers[defSide].followmeTimer && gBattleMons[gSideTimers[defSide].followmeTarget].hp && move != MOVE_SKYDROP)
             bankDef = gSideTimers[defSide].followmeTarget;
 		
         else {
