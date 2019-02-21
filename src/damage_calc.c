@@ -355,6 +355,12 @@ void atk06_typecalc(void) {
 				goto RE_ENTER_TYPE_CHECK;
 		}
 		
+		else if (gCurrentMove == MOVE_SKYDROP && IsOfType(gBankTarget, TYPE_FLYING)) {
+			gMoveResultFlags |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
+			gLastLandedMoves[gBankTarget] = 0;
+			gLastHitByType[gBankTarget] = 0xFF;
+		}
+		
         else {
 		RE_ENTER_TYPE_CHECK:
 			TypeDamageModification(atkAbility, gBankTarget, gCurrentMove, moveType, &gMoveResultFlags);
@@ -427,6 +433,11 @@ void atk4A_typecalc2(void) {
 		else
 			goto RE_ENTER_TYPE_CHECK_2;
 	}
+	
+	else if (gCurrentMove == MOVE_SKYDROP && IsOfType(gBankTarget, TYPE_FLYING)) {
+		gMoveResultFlags |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
+		gLastLandedMoves[gBankTarget] = 0;
+	}
 		
     else {
 	RE_ENTER_TYPE_CHECK_2:	;
@@ -497,7 +508,10 @@ u8 TypeCalc(u16 move, u8 bankAtk, u8 bankDef, pokemon_t* party_data_atk, bool8 C
 	else if (CheckTableForMove(move, PowderTable)
 	&& (defAbility == ABILITY_OVERCOAT || defEffect == ITEM_EFFECT_SAFETY_GOGGLES || IsOfType(bankDef, TYPE_GRASS)))
 		flags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
-	
+
+	else if (move == MOVE_SKYDROP && IsOfType(bankDef, TYPE_FLYING))
+		flags |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
+
 	//Regular Type Calc
     else
 		TypeDamageModification(atkAbility, bankDef, move, moveType, &flags);
@@ -555,6 +569,9 @@ u8 AI_TypeCalc(u16 move, u8 bankAtk, pokemon_t* party_data_def) {
 	else if (CheckTableForMove(move, PowderTable)
 	&& (defAbility == ABILITY_OVERCOAT || defEffect == ITEM_EFFECT_SAFETY_GOGGLES || defType1 == TYPE_GRASS || defType2 == TYPE_GRASS))
 		flags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
+
+	else if (move == MOVE_SKYDROP && (defType1 == TYPE_FLYING || defType2 == TYPE_FLYING))
+		flags |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
 	
     else {
 	TYPE_LOOP_AI:
@@ -2713,12 +2730,12 @@ u16 AdjustWeight(u32 weight, u8 ability, u8 item_effect, u8 bank, bool8 check_ni
 u8 GetFlingPower(u8 ability, u16 item, pokemon_t* party_data, u8 bank, bool8 PartyCheck) {
 	u8 power = 0;
 	if (CanFling(ability, item, party_data, bank, PartyCheck)) {
+		power = 10;
 		for (int i = 0; FlingTable[i].item != ITEM_TABLES_TERMIN; ++i) {
 			if (FlingTable[i].item == item) {
 				power = FlingTable[i].power;
 				break;
 			}
-			power = 10;
 		}
 	}
 	return power;
