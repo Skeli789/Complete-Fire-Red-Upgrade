@@ -1,0 +1,33 @@
+.text
+.thumb
+.align 2
+
+.include "..\\defines"
+
+.global BattleScript_TargetSleepHeal
+.global BattleScript_TargetBurnHeal
+.global BattleScript_StickyHoldActivates
+
+BattleScript_TargetSleepHeal:
+	setword BATTLE_STRING_LOADER SlappedAwakeString
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	refreshhpbar BANK_TARGET
+	return
+
+BattleScript_TargetBurnHeal:
+	setword BATTLE_STRING_LOADER BurnCuredString
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	refreshhpbar BANK_TARGET
+	return
+	
+BattleScript_StickyHoldActivates:
+	pause DELAY_HALFSECOND
+	printstring 0x137
+	waitmessage DELAY_1SECOND
+	return
+	
+.align 2
+SlappedAwakeString: .byte 0xFD, 0x10, 0x00, 0xEB, 0xD5, 0xE7, 0x00, 0xE7, 0xE0, 0xD5, 0xE4, 0xE4, 0xD9, 0xD8, 0xFE, 0xD5, 0xEB, 0xD5, 0xDF, 0xD9, 0xAB
+BurnCuredString: .byte 0xFD, 0x10, 0xB4, 0xE7, 0x00, 0xD6, 0xE9, 0xE6, 0xE2, 0xFE, 0xEB, 0xD5, 0xE7, 0x00, 0xDC, 0xD9, 0xD5, 0xE0, 0xD9, 0xD8, 0xAB, 0xFF
