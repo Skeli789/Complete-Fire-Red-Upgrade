@@ -30,6 +30,7 @@ s8 PriorityCalc(u8 bank, u8 action, u16 move);
 s32 BracketCalc(u8 bank);
 u32 SpeedCalc(u8 bank);
 u32 SpeedCalcForParty(u8 side, pokemon_t*);
+u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck);
 
 void HandleNewBattleRamClearBeforeBattle(void) {
 	gNewBS = Calloc(sizeof(struct NewBattleStruct));
@@ -487,6 +488,7 @@ void RunTurnActionsFunctions(void)
 			}
 		}
 		
+		//Ofiically this goes before the Mega, but I think this is better.
 		u8 atkBank = gBanksByTurnOrder[gCurrentTurnActionNumber];
 		if (gNewBS->CustapQuickClawIndicator & gBitTable[atkBank]) 
 		{
@@ -627,7 +629,8 @@ void HandleAction_UseMove(void)
     if (gSideTimers[side].followmeTimer != 0
     && gBattleMoves[gCurrentMove].target == MOVE_TARGET_SELECTED
     && SIDE(gBankAttacker) != SIDE(gSideTimers[side].followmeTarget)
-    && gBattleMons[gSideTimers[side].followmeTarget].hp != 0)
+    && gBattleMons[gSideTimers[side].followmeTarget].hp != 0
+	&& gCurrentMove != MOVE_SKYDROP)
     {
         gBankTarget = gSideTimers[side].followmeTarget;
     }
