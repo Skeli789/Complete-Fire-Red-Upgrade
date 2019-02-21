@@ -11517,8 +11517,7 @@ SA_BUBBLES: objtemplate 0x27A2 0x27A2 0x83ACB50 0x83E58DC 0x0 0x8231CFC 0x80AB30
 .pool     
 @Credits to Nuisance
 ANIM_SPECTRALTHIEF:
-	launchtask SPECTRAL_THIEF_ASM+1 0x5 0x0  
-	jumpifargmatches 0x0 0x1 SPECTRAL_THIEF_STEAL
+	choosetwoturnanim SPECTRAL_THIEF_STEAL SPECTRAL_THIEF_ATTACK
 
 SPECTRAL_THIEF_ATTACK:
 	loadparticle 0x279F @black color
@@ -11647,25 +11646,6 @@ SPECTRAL_THIEF_BUFF:
 .align 2
 SPECTRAL_THIEF_BLACKCIRCLE: objtemplate 0x27A3 0x279F 0x83ACA90 0x83E2A40 0x0 0x83E2D4C 0x80A3099
 SPECTRAL_THIEF_BLACKFE: objtemplate 0x27C8 0x279F 0x83ACA18 0x83E3600 0x0 0x8231CFC 0x80A5AD9
-
-.align 2
-SPECTRAL_THIEF_ASM:
-	push {r4,lr}
-	lsl r0, r0, #0x18
-	lsr r4, r0, #0x18
-	ldr r1, .SPECTRAL_THIEF_HELPER
-	ldrb r1, [r1]
-
-StoreSpecialThief:
-	ldr r2, .StorageST
-	strh r1, [r2]
-	mov r0, r4
-	ldr r1, =0x80DEAE1
-	bx r1
-
-.align 2
-.SPECTRAL_THIEF_HELPER: .word 0x203D83B
-.StorageST: .word 0x2037F02
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
