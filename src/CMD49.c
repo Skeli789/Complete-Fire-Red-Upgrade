@@ -33,39 +33,46 @@ extern u8 BattleScript_LifeOrbDamage[];
 extern u8 BattleScript_Pickpocket[];
 extern u8 BattleScript_DancerActivated[];
 extern u8 BattleScript_MultiHitPrintStrings[];
-extern u8 BattleScript_FaintAttacker[];
+extern u8 BattleScript_FaintAttackerForExplosion[];
 extern u8 BattleScript_ExplosionAnim[];
+extern u8 BattleScript_PluckEat[];
+extern u8 BattleScript_PrintCustomString[];
+
+extern u8 FreedFromSkyDropString[];
 
 extern u32 SpeedCalc(u8 bank);
+extern bool8 SetMoveEffect2(void);
 
 extern u8* gBattleScriptsForMoveEffects[];
 
 enum
 {
-	//Add in Thief Effect call
 	ATK49_ATTACKER_ABILITIES,
     ATK49_RAGE,
-    ATK49_DEFROST,
     ATK49_SYNCHRONIZE_TARGET,
     ATK49_MOVE_END_ABILITIES,
 	ATK49_BEAK_BLAST_BURN,
     ATK49_SYNCHRONIZE_ATTACKER,
     ATK49_CHOICE_MOVE,
     /*ATK49_CHANGED_ITEMS,*/
+	ATK49_UNDO_SKY_DROP,
     ATK49_ATTACKER_INVISIBLE,
 	ATK49_TARGET_INVISIBLE,
     ATK49_ATTACKER_VISIBLE,
     ATK49_TARGET_VISIBLE,
 	ATK49_ITEM_EFFECTS_END_TURN_TARGET,
 	ATK49_ITEM_EFFECTS_END_TURN_ATTACKER,
+	ATK49_PLUCK,
 	ATK49_ITEM_EFFECTS_CONTACT_ATTACKER,
 	ATK49_ITEM_EFFECTS_CONTACT_TARGET,
 	ATK49_STATUS_IMMUNITY_ABILITIES,
     ATK49_SUBSTITUTE,
     ATK49_UPDATE_LAST_MOVES,
     ATK49_MIRROR_MOVE,
-	ATK49_MAGICIAN_MOXIE,
 	ATK49_MULTI_HIT_MOVES,
+	ATK49_DEFROST,
+	ATK49_SECOND_MOVE_EFFECT,
+	ATK49_MAGICIAN_MOXIE,
     ATK49_NEXT_TARGET,
 	ATK49_MOVE_RECOIL,
 	ATK49_LIFE_ORB_RECOIL,
@@ -128,7 +135,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 				switch (ABILITY(bankAtk)) {
 					case ABILITY_STENCH: //Check for Stench is taken care of in King's Rock check
 						if (umodsi(Random(), 100) < 10
-						&& BankMovedBefore(bankAtk, bankDef)) 
+						&& gCurrentTurnActionNumber < GetBattlerTurnOrderNum(bankDef)) //Attacker moved before target
 						{
 							gBattleMons[bankDef].status2 |= STATUS2_FLINCHED;
 						}
@@ -162,25 +169,6 @@ void atk49_moveend(void) //All the effects that happen after a move is used
                 gBattleMons[bankDef].statStages[STAT_ATK-1]++;
                 BattleScriptPushCursor();
                 gBattlescriptCurrInstr = BattleScript_RageIsBuilding;
-                effect = TRUE;
-            }
-            gBattleScripting->atk49_state++;
-            break;
-		
-        case ATK49_DEFROST: // defrosting check
-            if (gBattleMons[bankDef].status1 & STATUS1_FREEZE
-            &&  gBattleMons[bankDef].hp 
-			&&  bankAtk != bankDef
-            &&  MOVE_HAD_EFFECT
-            &&  TOOK_DAMAGE(bankDef)
-			&& (moveType == TYPE_FIRE || CheckTableForMove(gCurrentMove, MovesCanUnfreezeTarget)))
-            {
-                gBattleMons[bankDef].status1 &= ~(STATUS1_FREEZE);
-                gActiveBattler = bankDef;
-                EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[bankDef].status1);
-                MarkBufferBankForExecution(gActiveBattler);
-                BattleScriptPushCursor();
-                gBattlescriptCurrInstr = BattleScript_DefrostedViaFireMove;
                 effect = TRUE;
             }
             gBattleScripting->atk49_state++;
@@ -253,7 +241,21 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			}
             gBattleScripting->atk49_state++;
             break;
-			
+		
+		case ATK49_UNDO_SKY_DROP:  //The attacker can no longer attack while in the air due to paralysis etc.
+			if (gCurrentMove == MOVE_SKYDROP
+			&& gHitMarker & HITMARKER_UNABLE_TO_USE_MOVE
+			&& gStatuses3[gBankAttacker] & STATUS3_SKY_DROP_ATTACKER)
+			{
+				gStatuses3[gBankAttacker] &= ~STATUS3_SKY_DROP_ATTACKER;
+				gStatuses3[gBankTarget] &= ~STATUS3_SKY_DROP_TARGET;
+				BattleStringLoader = FreedFromSkyDropString;
+				BattleScriptPushCursor();
+                gBattlescriptCurrInstr = BattleScript_PrintCustomString;
+			}
+            gBattleScripting->atk49_state++;
+            break;
+
         case ATK49_ATTACKER_INVISIBLE: // make attacker sprite invisible
             if (gStatuses3[bankAtk] & (STATUS3_SEMI_INVULNERABLE)
             &&  gHitMarker & HITMARKER_NO_ANIMATIONS)
@@ -311,18 +313,6 @@ void atk49_moveend(void) //All the effects that happen after a move is used
             gBattleScripting->atk49_state++;
             break;
 
-		case ATK49_ITEM_EFFECTS_END_TURN_TARGET:
-			if (ItemBattleEffects(ItemEffects_EndTurn, bankDef, TRUE, FALSE))
-                effect = TRUE;
-			gBattleScripting->atk49_state++;
-			break;
-		
-		case ATK49_ITEM_EFFECTS_END_TURN_ATTACKER:
-			if (ItemBattleEffects(ItemEffects_EndTurn, bankAtk, TRUE, FALSE))
-                effect = TRUE;
-			gBattleScripting->atk49_state++;
-			break;
-
         case ATK49_ITEM_EFFECTS_CONTACT_ATTACKER:
 			if (arg1 != ARG_IN_FUTURE_ATTACK)
 			{
@@ -337,7 +327,37 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 				effect = TRUE;
 			gBattleScripting->atk49_state++;
 			break;
-			
+
+		case ATK49_PLUCK:
+			if (gBattleMoves[gCurrentMove].effect == EFFECT_EAT_BERRY
+			&& ITEM_POCKET(bankDef) == POCKET_BERRY_POUCH
+			&&  ABILITY(bankDef) != ABILITY_STICKYHOLD)
+			{
+				gLastUsedItem = gBattleMons[bankDef].item;
+				gBattleMons[bankDef].item = 0;
+					
+				gActiveBattler = bankDef;
+                EmitSetMonData(0, REQUEST_HELDITEM_BATTLE, 0, 2, &gBattleMons[gActiveBattler].item);
+                MarkBufferBankForExecution(gActiveBattler);
+
+                BattleScriptPushCursor();
+                gBattlescriptCurrInstr = BattleScript_PluckEat;
+			}
+			gBattleScripting->atk49_state++;
+			break;
+		
+		case ATK49_ITEM_EFFECTS_END_TURN_TARGET:
+			if (ItemBattleEffects(ItemEffects_EndTurn, bankDef, TRUE, FALSE))
+                effect = TRUE;
+			gBattleScripting->atk49_state++;
+			break;
+		
+		case ATK49_ITEM_EFFECTS_END_TURN_ATTACKER:
+			if (ItemBattleEffects(ItemEffects_EndTurn, bankAtk, TRUE, FALSE))
+                effect = TRUE;
+			gBattleScripting->atk49_state++;
+			break;
+		
         case ATK49_STATUS_IMMUNITY_ABILITIES: // status immunities
             if (AbilityBattleEffects(ABILITYEFFECT_IMMUNITY, 0, 0, 0, 0))
                 effect = TRUE; // it loops through all battlers, so we increment after its done with all battlers
@@ -373,6 +393,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
             {
                 gLastPrintedMoves[bankAtk] = gChosenMove;
 				gNewBS->lastTargeted[gBankAttacker] = gBankTarget;
+				gNewBS->usedMoveIndices[gBankAttacker] |= gBitTable[gCurrMovePos];
             }
 			
             if (!(gAbsentBattlerFlags & gBitTable[bankAtk])
@@ -442,6 +463,80 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			SeedHelper[0] = 0; //Reset Seed Helper for Soul Heart
             break;
 		
+		case ATK49_MULTI_HIT_MOVES:
+			if (arg1 != ARG_IN_FUTURE_ATTACK
+			&& !(gMoveResultFlags & MOVE_RESULT_NO_EFFECT)
+			&& !(gHitMarker & HITMARKER_UNABLE_TO_USE_MOVE)
+			&& gMultiHitCounter)
+			{
+				++gBattleScripting->multihitString[4];
+				if (--gMultiHitCounter == 0)
+				{
+					if (!gNewBS->ParentalBondOn) 
+					{
+						BattleScriptPushCursor();
+						gBattlescriptCurrInstr = BattleScript_MultiHitPrintStrings;
+						effect = 1;
+					}
+				}
+				else
+				{
+					if (gBattleMons[gBankAttacker].hp
+					&& gBattleMons[gBankTarget].hp
+					&& (gChosenMove == MOVE_SLEEPTALK || !(gBattleMons[gBankAttacker].status1 & STATUS1_SLEEP))
+					&& !(gBattleMons[gBankAttacker].status1 & STATUS1_FREEZE))
+					{
+						if (gNewBS->ParentalBondOn)
+							--gNewBS->ParentalBondOn;
+						
+						gHitMarker |= (HITMARKER_NO_PPDEDUCT | HITMARKER_NO_ATTACKSTRING);
+						gBattleScripting->animTargetsHit = 0;
+						gBattleScripting->atk49_state = 0;
+						MoveValuesCleanUp();
+						BattleScriptPush(gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect]);
+						gBattlescriptCurrInstr = BattleScript_FlushMessageBox;
+						return;
+					}
+					else
+					{
+						BattleScriptPushCursor();
+						gBattlescriptCurrInstr = BattleScript_MultiHitPrintStrings;
+						effect = 1;
+					}
+				}
+			}
+			
+            gBattleScripting->atk49_state++;
+			gMultiHitCounter = 0;
+			gNewBS->ParentalBondOn = 0;
+            break;
+
+        case ATK49_DEFROST: // defrosting check
+            if (gBattleMons[bankDef].status1 & STATUS1_FREEZE
+            &&  gBattleMons[bankDef].hp 
+			&&  bankAtk != bankDef
+            &&  MOVE_HAD_EFFECT
+            &&  TOOK_DAMAGE(bankDef)
+			&& (moveType == TYPE_FIRE || CheckTableForMove(gCurrentMove, MovesCanUnfreezeTarget)))
+            {
+                gBattleMons[bankDef].status1 &= ~(STATUS1_FREEZE);
+                gActiveBattler = bankDef;
+                EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[bankDef].status1);
+                MarkBufferBankForExecution(gActiveBattler);
+                BattleScriptPushCursor();
+                gBattlescriptCurrInstr = BattleScript_DefrostedViaFireMove;
+                effect = TRUE;
+            }
+            gBattleScripting->atk49_state++;
+            break;
+		
+		case ATK49_SECOND_MOVE_EFFECT:
+			gBattleCommunication[MOVE_EFFECT_BYTE] = gNewBS->backupMoveEffect;
+			gNewBS->backupMoveEffect = 0;
+			effect = SetMoveEffect2();
+			gBattleScripting->atk49_state++;
+			break;
+		
 		case ATK49_MAGICIAN_MOXIE:
 			switch (ABILITY(bankAtk)) {
 				case ABILITY_MAGICIAN:
@@ -449,7 +544,6 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 					&& ITEM(bankDef)
 					&& gBattleMons[bankAtk].hp
 					&& !MoveBlockedBySubstitute(gCurrentMove, bankAtk, bankDef)
-					&& gMultiHitCounter <= 1
 					&& TOOK_DAMAGE(bankDef)
 					&& MOVE_HAD_EFFECT
 					&& CanTransferItem(gBattleMons[bankDef].species, ITEM(bankDef), GetBankPartyData(bankDef))
@@ -551,55 +645,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			}
             gBattleScripting->atk49_state++;
             break;
-		
-		case ATK49_MULTI_HIT_MOVES:
-			if (arg1 != ARG_IN_FUTURE_ATTACK
-			&& !(gMoveResultFlags & MOVE_RESULT_NO_EFFECT)
-			&& !(gHitMarker & HITMARKER_UNABLE_TO_USE_MOVE)
-			&& gMultiHitCounter)
-			{
-				++gBattleScripting->multihitString[4];
-				if (--gMultiHitCounter == 0)
-				{
-					if (!gNewBS->ParentalBondOn) 
-					{
-						BattleScriptPushCursor();
-						gBattlescriptCurrInstr = BattleScript_MultiHitPrintStrings;
-						effect = 1;
-					}
-				}
-				else
-				{
-					if (gBattleMons[gBankAttacker].hp
-					&& gBattleMons[gBankTarget].hp
-					&& (gChosenMove == MOVE_SLEEPTALK || !(gBattleMons[gBankAttacker].status1 & STATUS1_SLEEP))
-					&& !(gBattleMons[gBankAttacker].status1 & STATUS1_FREEZE))
-					{
-						if (gNewBS->ParentalBondOn)
-							--gNewBS->ParentalBondOn;
-						
-						gHitMarker |= (HITMARKER_NO_PPDEDUCT | HITMARKER_NO_ATTACKSTRING);
-						gBattleScripting->animTargetsHit = 0;
-						gBattleScripting->atk49_state = 0;
-						MoveValuesCleanUp();
-						BattleScriptPush(gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect]);
-						gBattlescriptCurrInstr = BattleScript_FlushMessageBox;
-						return;
-					}
-					else if (!gNewBS->ParentalBondOn)
-					{
-						BattleScriptPushCursor();
-						gBattlescriptCurrInstr = BattleScript_MultiHitPrintStrings;
-						effect = 1;
-					}
-				}
-			}
 			
-            gBattleScripting->atk49_state++;
-			gMultiHitCounter = 0;
-			gNewBS->ParentalBondOn = 0;
-            break;
-		
         case ATK49_NEXT_TARGET: // For moves hitting two opposing Pokemon or whole field.
 			gHitMarker |= HITMARKER_NO_ATTACKSTRING;
 			if (gNewBS->MoveBounceInProgress)
@@ -716,7 +762,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 					BattleScriptPushCursor();
 					
 					if (gNewBS->AttackerDidDamageAtLeastOnce)
-						gBattlescriptCurrInstr = BattleScript_FaintAttacker;
+						gBattlescriptCurrInstr = BattleScript_FaintAttackerForExplosion;
 					else
 						gBattlescriptCurrInstr = BattleScript_ExplosionAnim; //The attacker still needs to explode
 				
@@ -815,9 +861,17 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			break;
 			
 		case ATK49_END_ZMOVES:
+			if (!gNewBS->TargetsHit)
+				gNewBS->StompingTantrumTimers[gBankAttacker]++;
+			else
+				gNewBS->TargetsHit = 0;
+			
 			gNewBS->ZMoveData->active = FALSE;
 			gNewBS->ZMoveData->effectApplied = FALSE;
-			gNewBS->AttackerDidDamageAtLeastOnce = FALSE;
+			gNewBS->AttackerDidDamageAtLeastOnce = FALSE;		
+			gNewBS->secondaryEffectApplied = FALSE;
+			gNewBS->InstructInProgress = FALSE;
+			gNewBS->bypassSubstitute = FALSE;
 			gBattleScripting->atk49_state++;
 			break;
 		
@@ -886,7 +940,6 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			break;
 			
         case ATK49_COUNT:
-			gNewBS->InstructInProgress = FALSE;
             break;
         }
 		
