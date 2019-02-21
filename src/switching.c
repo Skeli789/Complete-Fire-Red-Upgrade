@@ -777,6 +777,8 @@ void ClearSwitchBytes(u8 bank) {
 	gNewBS->IncinerateCounters[bank] = 0;
 	gNewBS->EmbargoTimers[bank] = 0;
 	gNewBS->SuppressedAbilities[bank] = 0;
+	gNewBS->lastTargeted[bank] = 0;
+	gNewBS->usedMoveIndices[bank] = 0;
 }
 
 void ClearSwitchBits(u8 bank) {
