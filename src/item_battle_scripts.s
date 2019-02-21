@@ -32,6 +32,7 @@
 .global BattleScript_HerbCureChosenStatusRet
 .global BattleScript_HerbCureChosenStatusEnd2
 .global BattleScript_RaiseStatsItem
+.global BattleScript_RaiseStatsItemEnd2
 
 .global BattleScript_AirBallooonPop
 .global BattleScript_WeaknessPolicy
@@ -255,7 +256,7 @@ BattleScript_HerbCureChosenStatusEnd2:
 
 BattleScript_RaiseStatsItem:
 	playanimation 0xA ANIM_ITEM_USE 0x0
-	statbuffchange 0x41 RaiseStatsItemPostBuff
+	statbuffchange STAT_TARGET | STAT_BS_PTR RaiseStatsItemPostBuff
 RaiseStatsItemPostBuff:
 	setbyte MULTISTRING_CHOOSER 0x4
 	removeitem 0xA
@@ -263,11 +264,21 @@ RaiseStatsItemPostBuff:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+BattleScript_RaiseStatsItemEnd2:
+	playanimation 0xA ANIM_ITEM_USE 0x0
+	statbuffchange STAT_TARGET | STAT_BS_PTR RaiseStatsItemPostBuffEnd2
+RaiseStatsItemPostBuffEnd2:
+	setbyte MULTISTRING_CHOOSER 0x4
+	removeitem 0xA
+	end2
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 BattleScript_AirBallooonPop:
 	setword BATTLE_STRING_LOADER AirBalloonPopString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
-	setcounter BANK_TARGET INCINERATE_LOC 0x1
+	setcounter BANK_TARGET INCINERATE_COUNTERS 0x1
 	callasm SetUnburdenBoostTarget
 	removeitem BANK_TARGET
 	return
