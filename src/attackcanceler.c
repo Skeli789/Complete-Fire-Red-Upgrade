@@ -171,6 +171,9 @@ void atk00_attackcanceler(void)
     }
 
     gHitMarker |= HITMARKER_OBEYS;
+	
+	if (CheckSoundMove(gCurrentMove) || ABILITY(gBankAttacker) == ABILITY_INFILTRATOR)
+		gNewBS->bypassSubstitute = TRUE;
 
 	if (gNewBS->MoveBounceInProgress == 2) //Bounce just ended
 		gNewBS->MoveBounceInProgress = 0;
@@ -378,7 +381,7 @@ u8 AtkCanceller_UnableToUseMove(void)
             if (gBattleMons[gBankAttacker].status2 & STATUS2_RECHARGE)
             {
                 gBattleMons[gBankAttacker].status2 &= ~(STATUS2_RECHARGE);
-                gDisableStructs[gBankAttacker].rechargeCounter = 0;
+                gDisableStructs[gBankAttacker].rechargeTimer = 0;
                 CancelMultiTurnMoves(gBankAttacker);
                 gBattlescriptCurrInstr = BattleScript_MoveUsedMustRecharge;
                 gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
