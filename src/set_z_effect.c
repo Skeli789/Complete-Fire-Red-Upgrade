@@ -85,7 +85,7 @@ void SetZEffect(void) {
 		case Z_EFFECT_ACC_UP_1:
 		case Z_EFFECT_EVSN_UP_1:
 			if (!ChangeStatBuffs(SET_STAT_BUFF_VALUE(1), gNewBS->ZMoveData->effect - Z_EFFECT_ATK_UP_1 + 1, MOVE_EFFECT_AFFECTS_USER, 0)) {
-				gBattleScripting->animArg1 = MOVE_EFFECT_RECOIL_25 + (gNewBS->ZMoveData->effect - Z_EFFECT_ATK_UP_1 + 1);
+				gBattleScripting->animArg1 = 0xE + (gNewBS->ZMoveData->effect - Z_EFFECT_ATK_UP_1 + 1);
 				gBattleScripting->animArg2 = 0;
 				BattleScriptPush(gBattlescriptCurrInstr + 5);
 				gBattlescriptCurrInstr = BattleScript_StatUpZMove - 5;
@@ -100,7 +100,7 @@ void SetZEffect(void) {
 		case Z_EFFECT_ACC_UP_2:
 		case Z_EFFECT_EVSN_UP_2:
 			if (!ChangeStatBuffs(SET_STAT_BUFF_VALUE(2), gNewBS->ZMoveData->effect - Z_EFFECT_ATK_UP_2 + 1, MOVE_EFFECT_AFFECTS_USER, 0)) {
-				gBattleScripting->animArg1 = MOVE_EFFECT_RECOIL_25 + (gNewBS->ZMoveData->effect - Z_EFFECT_ATK_UP_2 + 1);
+				gBattleScripting->animArg1 = 0xE + (gNewBS->ZMoveData->effect - Z_EFFECT_ATK_UP_2 + 1);
 				gBattleScripting->animArg2 = 0;
 				BattleScriptPush(gBattlescriptCurrInstr + 5);
 				gBattlescriptCurrInstr = BattleScript_StatUpZMove - 5;
@@ -115,7 +115,7 @@ void SetZEffect(void) {
 		case Z_EFFECT_ACC_UP_3:
 		case Z_EFFECT_EVSN_UP_3:
 			if (!ChangeStatBuffs(SET_STAT_BUFF_VALUE(3), gNewBS->ZMoveData->effect - Z_EFFECT_ATK_UP_3 + 1, MOVE_EFFECT_AFFECTS_USER, 0)) {
-				gBattleScripting->animArg1 = MOVE_EFFECT_RECOIL_25 + (gNewBS->ZMoveData->effect - Z_EFFECT_ATK_UP_3 + 1);
+				gBattleScripting->animArg1 = 0xE + (gNewBS->ZMoveData->effect - Z_EFFECT_ATK_UP_3 + 1);
 				gBattleScripting->animArg2 = 0;
 				BattleScriptPush(gBattlescriptCurrInstr + 5);
 				gBattlescriptCurrInstr = BattleScript_StatUpZMove - 5;
