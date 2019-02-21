@@ -344,7 +344,6 @@ typedef u8 Buffer_t[0x200];
 #define UnburdenBoosts *((u8*) 0x203D8B9)
 #define NotEndTurnByte *((u8*) 0x203D8BA)
 #define AttackAnimationPlayed *((u8*) 0x203D8BB)
-#define ForceSwitchHelper (*((u8*) 0x203D8BC))
 
 #define MicleBerryBits (*((u8*) 0x203D8CA))
 
@@ -363,13 +362,15 @@ typedef u8 IllusionNickname_t[10];
 #define UltraData ((struct UltraData*) 0x203D8D8)
 */
 
-#define BattleStringLoader (*((u8**) 0x203C020))
-#define TerrainType *((u8*) 0x203D81B)
-#define FormCounter *((u8*) 0x203D83B)
-#define PoisonedBy *((u8*) 0x203D844)
+#define BattleStringLoader (*((u8**) 0x203C020)) //(*((u8**) 0x203F700))
+#define SeedHelper ((u8*) 0x203F704)
+#define TerrainType *((u8*) 0x203F708)
+#define FormCounter *((u8*) 0x203F709)
+#define PoisonedBy *((u8*) 0x203F70A)
 	// 0x1 = Poison Touch	/ 0x1 = Beak Blast Burn
 	// 0x2 = Toxic Spikes
 	// 0x3 = Toxic Orb		/ 0x3 = Flame Orb
 	// 0x4 = Baneful Bunker
-#define MagicianHelper *((u8*) 0x203D88A)
-#define SeedHelper ((u8*) 0x203D85C)
+#define MagicianHelper *((u8*) 0x203F70B)	
+#define ForceSwitchHelper (*((u8*) 0x203F70C))
+
