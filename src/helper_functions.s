@@ -108,7 +108,7 @@ GetOriginalMoveType:
 	ldr r0, =CURRENT_MOVE
 	ldrh r0, [r0]
 
-	ldr r2, =MOVE_DATA + 0x2
+	ldr r2, =gBattleMoves + 0x2
 	lsl r1, r0, #0x1
 	add r0, r1
 	lsl r0, #0x2
@@ -129,7 +129,7 @@ GetMoveSpecialty:
 	ldr r0, =CURRENT_MOVE
 	ldrh r0, [r0]
 
-	ldr r2, =MOVE_DATA + 0xA
+	ldr r2, =gBattleMoves + 0xA
 	lsl r1, r0, #0x1
 	add r0, r1
 	lsl r0, #0x2
@@ -142,7 +142,7 @@ GetMoveRange:
 	ldr r0, =CURRENT_MOVE
 	ldrh r0, [r0]
 
-	ldr r2, =MOVE_DATA + 0x6
+	ldr r2, =gBattleMoves + 0x6
 	lsl r1, r0, #0x1
 	add r0, r1
 	lsl r0, #0x2
