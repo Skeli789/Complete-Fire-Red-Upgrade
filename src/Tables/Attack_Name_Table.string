@@ -1,0 +1,2194 @@
+#org @gMoveNames
+#org @NAME_MOVE_NONE
+-[FF][FF][FF][FF][FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_POUND
+Pound[FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_KARATE_CHOP
+Karate Chop[FF]
+
+#org @NAME_DOUBLESLAP
+Doubleslap[FF][FF]
+
+#org @NAME_COMET_PUNCH
+Comet Punch[FF]
+
+#org @NAME_MEGA_PUNCH
+Mega Punch[FF][FF]
+
+#org @NAME_PAY_DAY
+Pay Day[FF][FF][FF][FF][FF]
+
+#org @NAME_FIRE_PUNCH
+Fire Punch[FF][FF]
+
+#org @NAME_ICE_PUNCH
+Ice Punch[FF][FF][FF]
+
+#org @NAME_THUNDERPUNCH
+ThunderPunch
+
+#org @NAME_SCRATCH
+Scratch[FF][FF][FF][FF][FF]
+
+#org @NAME_VICEGRIP
+Vicegrip[FF][FF][FF][FF]
+
+#org @NAME_GUILLOTINE
+Guillotine[FF][FF]
+
+#org @NAME_RAZOR_WIND
+Razor Wind[FF][FF]
+
+#org @NAME_SWORDS_DANCE
+Swords Dance
+
+#org @NAME_CUT
+Cut[FF][FF][FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_GUST
+Gust[FF][FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_WING_ATTACK
+Wing Attack[FF]
+
+#org @NAME_WHIRLWIND
+Whirlwind[FF][FF][FF]
+
+#org @NAME_FLY
+Fly[FF][FF][FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_BIND
+Bind[FF][FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_SLAM
+Slam[FF][FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_VINE_WHIP
+Vine Whip[FF][FF][FF]
+
+#org @NAME_STOMP
+Stomp[FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_DOUBLE_KICK
+Double Kick[FF]
+
+#org @NAME_MEGA_KICK
+Mega Kick[FF][FF][FF]
+
+#org @NAME_JUMP_KICK
+Jump Kick[FF][FF][FF]
+
+#org @NAME_ROLLING_KICK
+Rolling Kick
+
+#org @NAME_SAND_ATTACK
+Sand-Attack[FF]
+
+#org @NAME_HEADBUTT
+Headbutt[FF][FF][FF][FF]
+
+#org @NAME_HORN_ATTACK
+Horn Attack[FF]
+
+#org @NAME_FURY_ATTACK
+Fury Attack[FF]
+
+#org @NAME_HORN_DRILL
+Horn Drill[FF][FF]
+
+#org @NAME_TACKLE
+Tackle[FF][FF][FF][FF][FF][FF]
+
+#org @NAME_BODY_SLAM
+Body Slam[FF][FF][FF]
+
+#org @NAME_WRAP
+Wrap[FF][FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_TAKE_DOWN
+Take Down[FF][FF][FF]
+
+#org @NAME_THRASH
+Thrash[FF][FF][FF][FF][FF][FF]
+
+#org @NAME_DOUBLE_EDGE
+Double-Edge[FF]
+
+#org @NAME_TAIL_WHIP
+Tail Whip[FF][FF][FF]
+
+#org @NAME_POISON_STING
+Poison Sting
+
+#org @NAME_TWINEEDLE
+Twineedle[FF][FF][FF]
+
+#org @NAME_PIN_MISSILE
+Pin Missile[FF]
+
+#org @NAME_LEER
+Leer[FF][FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_BITE
+Bite[FF][FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_GROWL
+Growl[FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_ROAR
+Roar[FF][FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_SING
+Sing[FF][FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_SUPERSONIC
+Supersonic[FF][FF]
+
+#org @NAME_SONICBOOM
+Sonicboom[FF][FF][FF]
+
+#org @NAME_DISABLE
+Disable[FF][FF][FF][FF][FF]
+
+#org @NAME_ACID
+Acid[FF][FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_EMBER
+Ember[FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_FLAMETHROWER
+Flamethrower
+
+#org @NAME_MIST
+Mist[FF][FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_WATER_GUN
+Water Gun[FF][FF][FF]
+
+#org @NAME_HYDRO_PUMP
+Hydro Pump[FF][FF]
+
+#org @NAME_SURF
+Surf[FF][FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_ICE_BEAM
+Ice Beam[FF][FF][FF][FF]
+
+#org @NAME_BLIZZARD
+Blizzard[FF][FF][FF][FF]
+
+#org @NAME_PSYBEAM
+Psybeam[FF][FF][FF][FF][FF]
+
+#org @NAME_BUBBLEBEAM
+BubbleBeam[FF][FF]
+
+#org @NAME_AURORA_BEAM
+Aurora Beam[FF]
+
+#org @NAME_HYPER_BEAM
+Hyper Beam[FF][FF]
+
+#org @NAME_PECK
+Peck[FF][FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_DRILL_PECK
+Drill Peck[FF][FF]
+
+#org @NAME_SUBMISSION
+Submission[FF][FF]
+
+#org @NAME_LOW_KICK
+Low Kick[FF][FF][FF][FF]
+
+#org @NAME_COUNTER
+Counter[FF][FF][FF][FF][FF]
+
+#org @NAME_SEISMIC_TOSS
+Seismic Toss
+
+#org @NAME_STRENGTH
+Strength[FF][FF][FF][FF]
+
+#org @NAME_ABSORB
+Absorb[FF][FF][FF][FF][FF][FF]
+
+#org @NAME_MEGA_DRAIN
+Mega Drain[FF][FF]
+
+#org @NAME_LEECH_SEED
+Leech Seed[FF][FF]
+
+#org @NAME_GROWTH
+Growth[FF][FF][FF][FF][FF][FF]
+
+#org @NAME_RAZOR_LEAF
+Razor Leaf[FF][FF]
+
+#org @NAME_SOLARBEAM
+SolarBeam[FF][FF][FF]
+
+#org @NAME_POISONPOWDER
+PoisonPowder
+
+#org @NAME_STUN_SPORE
+Stun Spore[FF][FF]
+
+#org @NAME_SLEEP_POWDER
+Sleep Powder
+
+#org @NAME_PETAL_DANCE
+Petal Dance[FF]
+
+#org @NAME_STRING_SHOT
+String Shot[FF]
+
+#org @NAME_DRAGON_RAGE
+Dragon Rage[FF]
+
+#org @NAME_FIRE_SPIN
+Fire Spin[FF][FF][FF]
+
+#org @NAME_THUNDERSHOCK
+ThunderShock
+
+#org @NAME_THUNDERBOLT
+Thunderbolt[FF]
+
+#org @NAME_THUNDER_WAVE
+Thunder Wave
+
+#org @NAME_THUNDER
+Thunder[FF][FF][FF][FF][FF]
+
+#org @NAME_ROCK_THROW
+Rock Throw[FF][FF]
+
+#org @NAME_EARTHQUAKE
+Earthquake[FF][FF]
+
+#org @NAME_FISSURE
+Fissure[FF][FF][FF][FF][FF]
+
+#org @NAME_DIG
+Dig[FF][FF][FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_TOXIC
+Toxic[FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_CONFUSION
+Confusion[FF][FF][FF]
+
+#org @NAME_PSYCHIC
+Psychic[FF][FF][FF][FF][FF]
+
+#org @NAME_HYPNOSIS
+Hypnosis[FF][FF][FF][FF]
+
+#org @NAME_MEDITATE
+Meditate[FF][FF][FF][FF]
+
+#org @NAME_AGILITY
+Agility[FF][FF][FF][FF][FF]
+
+#org @NAME_QUICK_ATTACK
+Quick Attack
+
+#org @NAME_RAGE
+Rage[FF][FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_TELEPORT
+Teleport[FF][FF][FF][FF]
+
+#org @NAME_NIGHT_SHADE
+Night Shade[FF]
+
+#org @NAME_MIMIC
+Mimic[FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_SCREECH
+Screech[FF][FF][FF][FF][FF]
+
+#org @NAME_DOUBLE_TEAM
+Double Team[FF]
+
+#org @NAME_RECOVER
+Recover[FF][FF][FF][FF][FF]
+
+#org @NAME_HARDEN
+Harden[FF][FF][FF][FF][FF][FF]
+
+#org @NAME_MINIMIZE
+Minimize[FF][FF][FF][FF]
+
+#org @NAME_SMOKESCREEN
+Smokescreen[FF]
+
+#org @NAME_CONFUSE_RAY
+Confuse Ray[FF]
+
+#org @NAME_WITHDRAW
+Withdraw[FF][FF][FF][FF]
+
+#org @NAME_DEFENSE_CURL
+Defense Curl
+
+#org @NAME_BARRIER
+Barrier[FF][FF][FF][FF][FF]
+
+#org @NAME_LIGHT_SCREEN
+Light Screen
+
+#org @NAME_HAZE
+Haze[FF][FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_REFLECT
+Reflect[FF][FF][FF][FF][FF]
+
+#org @NAME_FOCUS_ENERGY
+Focus Energy
+
+#org @NAME_BIDE
+Bide[FF][FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_METRONOME
+Metronome[FF][FF][FF]
+
+#org @NAME_MIRROR_MOVE
+Mirror Move[FF]
+
+#org @NAME_SELFDESTRUCT
+Selfdestruct
+
+#org @NAME_EGG_BOMB
+Egg Bomb[FF][FF][FF][FF]
+
+#org @NAME_LICK
+Lick[FF][FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_SMOG
+Smog[FF][FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_SLUDGE
+Sludge[FF][FF][FF][FF][FF][FF]
+
+#org @NAME_BONE_CLUB
+Bone Club[FF][FF][FF]
+
+#org @NAME_FIRE_BLAST
+Fire Blast[FF][FF]
+
+#org @NAME_WATERFALL
+Waterfall[FF][FF][FF]
+
+#org @NAME_CLAMP
+Clamp[FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_SWIFT
+Swift[FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_SKULL_BASH
+Skull Bash[FF][FF]
+
+#org @NAME_SPIKE_CANNON
+Spike Cannon
+
+#org @NAME_CONSTRICT
+Constrict[FF][FF][FF]
+
+#org @NAME_AMNESIA
+Amnesia[FF][FF][FF][FF][FF]
+
+#org @NAME_KINESIS
+Kinesis[FF][FF][FF][FF][FF]
+
+#org @NAME_SOFT_BOILED
+Soft-Boiled[FF]
+
+#org @NAME_HI_JUMP_KICK
+Hi Jump Kick
+
+#org @NAME_GLARE
+Glare[FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_DREAM_EATER
+Dream Eater[FF]
+
+#org @NAME_POISON_GAS
+Poison Gas[FF][FF]
+
+#org @NAME_BARRAGE
+Barrage[FF][FF][FF][FF][FF]
+
+#org @NAME_LEECH_LIFE
+Leech Life[FF][FF]
+
+#org @NAME_LOVELY_KISS
+Lovely Kiss[FF]
+
+#org @NAME_SKY_ATTACK
+Sky Attack[FF][FF]
+
+#org @NAME_TRANSFORM
+Transform[FF][FF][FF]
+
+#org @NAME_BUBBLE
+Bubble[FF][FF][FF][FF][FF][FF]
+
+#org @NAME_DIZZY_PUNCH
+Dizzy Punch[FF]
+
+#org @NAME_SPORE
+Spore[FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_FLASH
+Flash[FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_PSYWAVE
+Psywave[FF][FF][FF][FF][FF]
+
+#org @NAME_SPLASH
+Splash[FF][FF][FF][FF][FF][FF]
+
+#org @NAME_ACID_ARMOR
+Acid Armor[FF][FF]
+
+#org @NAME_CRABHAMMER
+Crabhammer[FF][FF]
+
+#org @NAME_EXPLOSION
+Explosion[FF][FF][FF]
+
+#org @NAME_FURY_SWIPES
+Fury Swipes[FF]
+
+#org @NAME_BONEMERANG
+Bonemerang[FF][FF]
+
+#org @NAME_REST
+Rest[FF][FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_ROCK_SLIDE
+Rock Slide[FF][FF]
+
+#org @NAME_HYPER_FANG
+Hyper Fang[FF][FF]
+
+#org @NAME_SHARPEN
+Sharpen[FF][FF][FF][FF][FF]
+
+#org @NAME_CONVERSION
+Conversion[FF][FF]
+
+#org @NAME_TRI_ATTACK
+Tri Attack[FF][FF]
+
+#org @NAME_SUPER_FANG
+Super Fang[FF][FF]
+
+#org @NAME_SLASH
+Slash[FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_SUBSTITUTE
+Substitute[FF][FF]
+
+#org @NAME_STRUGGLE
+Struggle[FF][FF][FF][FF]
+
+#org @NAME_SKETCH
+Sketch[FF][FF][FF][FF][FF][FF]
+
+#org @NAME_TRIPLE_KICK
+Triple Kick[FF]
+
+#org @NAME_THIEF
+Thief[FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_SPIDER_WEB
+Spider Web[FF][FF]
+
+#org @NAME_MIND_READER
+Mind Reader[FF]
+
+#org @NAME_NIGHTMARE
+Nightmare[FF][FF][FF]
+
+#org @NAME_FLAME_WHEEL
+Flame Wheel[FF]
+
+#org @NAME_SNORE
+Snore[FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_CURSE
+Curse[FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_FLAIL
+Flail[FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_CONVERSION_2
+Conversion 2
+
+#org @NAME_AEROBLAST
+Aeroblast[FF][FF][FF]
+
+#org @NAME_COTTON_SPORE
+Cotton Spore
+
+#org @NAME_REVERSAL
+Reversal[FF][FF][FF][FF]
+
+#org @NAME_SPITE
+Spite[FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_POWDER_SNOW
+Powder Snow[FF]
+
+#org @NAME_PROTECT
+Protect[FF][FF][FF][FF][FF]
+
+#org @NAME_MACH_PUNCH
+Mach Punch[FF][FF]
+
+#org @NAME_SCARY_FACE
+Scary Face[FF][FF]
+
+#org @NAME_FEINT_ATTACK
+Feint Attack
+
+#org @NAME_SWEET_KISS
+Sweet Kiss[FF][FF]
+
+#org @NAME_BELLY_DRUM
+Belly Drum[FF][FF]
+
+#org @NAME_SLUDGE_BOMB
+Sludge Bomb[FF]
+
+#org @NAME_MUD_SLAP
+Mud-Slap[FF][FF][FF][FF]
+
+#org @NAME_OCTAZOOKA
+Octazooka[FF][FF][FF]
+
+#org @NAME_SPIKES
+Spikes[FF][FF][FF][FF][FF][FF]
+
+#org @NAME_ZAP_CANNON
+Zap Cannon[FF][FF]
+
+#org @NAME_FORESIGHT
+Foresight[FF][FF][FF]
+
+#org @NAME_DESTINY_BOND
+Destiny Bond
+
+#org @NAME_PERISH_SONG
+Perish Song[FF]
+
+#org @NAME_ICY_WIND
+Icy Wind[FF][FF][FF][FF]
+
+#org @NAME_DETECT
+Detect[FF][FF][FF][FF][FF][FF]
+
+#org @NAME_BONE_RUSH
+Bone Rush[FF][FF][FF]
+
+#org @NAME_LOCK_ON
+Lock-On[FF][FF][FF][FF][FF]
+
+#org @NAME_OUTRAGE
+Outrage[FF][FF][FF][FF][FF]
+
+#org @NAME_SANDSTORM
+Sandstorm[FF][FF][FF]
+
+#org @NAME_GIGA_DRAIN
+Giga Drain[FF][FF]
+
+#org @NAME_ENDURE
+Endure[FF][FF][FF][FF][FF][FF]
+
+#org @NAME_CHARM
+Charm[FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_ROLLOUT
+Rollout[FF][FF][FF][FF][FF]
+
+#org @NAME_FALSE_SWIPE
+False Swipe[FF]
+
+#org @NAME_SWAGGER
+Swagger[FF][FF][FF][FF][FF]
+
+#org @NAME_MILK_DRINK
+Milk Drink[FF][FF]
+
+#org @NAME_SPARK
+Spark[FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_FURY_CUTTER
+Fury Cutter[FF]
+
+#org @NAME_STEEL_WING
+Steel Wing[FF][FF]
+
+#org @NAME_MEAN_LOOK
+Mean Look[FF][FF][FF]
+
+#org @NAME_ATTRACT
+Attract[FF][FF][FF][FF][FF]
+
+#org @NAME_SLEEP_TALK
+Sleep Talk[FF][FF]
+
+#org @NAME_HEAL_BELL
+Heal Bell[FF][FF][FF]
+
+#org @NAME_RETURN
+Return[FF][FF][FF][FF][FF][FF]
+
+#org @NAME_PRESENT
+Present[FF][FF][FF][FF][FF]
+
+#org @NAME_FRUSTRATION
+Frustration[FF]
+
+#org @NAME_SAFEGUARD
+Safeguard[FF][FF][FF]
+
+#org @NAME_PAIN_SPLIT
+Pain Split[FF][FF]
+
+#org @NAME_SACRED_FIRE
+Sacred Fire[FF]
+
+#org @NAME_MAGNITUDE
+Magnitude[FF][FF][FF]
+
+#org @NAME_DYNAMICPUNCH
+DynamicPunch
+
+#org @NAME_MEGAHORN
+Megahorn[FF][FF][FF][FF]
+
+#org @NAME_DRAGONBREATH
+DragonBreath
+
+#org @NAME_BATON_PASS
+Baton Pass[FF][FF]
+
+#org @NAME_ENCORE
+Encore[FF][FF][FF][FF][FF][FF]
+
+#org @NAME_PURSUIT
+Pursuit[FF][FF][FF][FF][FF]
+
+#org @NAME_RAPID_SPIN
+Rapid Spin[FF][FF]
+
+#org @NAME_SWEET_SCENT
+Sweet Scent[FF]
+
+#org @NAME_IRON_TAIL
+Iron Tail[FF][FF][FF]
+
+#org @NAME_METAL_CLAW
+Metal Claw[FF][FF]
+
+#org @NAME_VITAL_THROW
+Vital Throw[FF]
+
+#org @NAME_MORNING_SUN
+Morning Sun[FF]
+
+#org @NAME_SYNTHESIS
+Synthesis[FF][FF][FF]
+
+#org @NAME_MOONLIGHT
+Moonlight[FF][FF][FF]
+
+#org @NAME_HIDDEN_POWER
+Hidden Power
+
+#org @NAME_CROSS_CHOP
+Cross Chop[FF][FF]
+
+#org @NAME_TWISTER
+Twister[FF][FF][FF][FF][FF]
+
+#org @NAME_RAIN_DANCE
+Rain Dance[FF][FF]
+
+#org @NAME_SUNNY_DAY
+Sunny Day[FF][FF][FF]
+
+#org @NAME_CRUNCH
+Crunch[FF][FF][FF][FF][FF][FF]
+
+#org @NAME_MIRROR_COAT
+Mirror Coat[FF]
+
+#org @NAME_PSYCH_UP
+Psych Up[FF][FF][FF][FF]
+
+#org @NAME_EXTREMESPEED
+Extremespeed
+
+#org @NAME_ANCIENTPOWER
+Ancientpower
+
+#org @NAME_SHADOW_BALL
+Shadow Ball[FF]
+
+#org @NAME_FUTURE_SIGHT
+Future Sight
+
+#org @NAME_ROCK_SMASH
+Rock Smash[FF][FF]
+
+#org @NAME_WHIRLPOOL
+Whirlpool[FF][FF][FF]
+
+#org @NAME_BEAT_UP
+Beat Up[FF][FF][FF][FF][FF]
+
+#org @NAME_FAKE_OUT
+Fake Out[FF][FF][FF][FF]
+
+#org @NAME_UPROAR
+Uproar[FF][FF][FF][FF][FF][FF]
+
+#org @NAME_STOCKPILE
+Stockpile[FF][FF][FF]
+
+#org @NAME_SPIT_UP
+Spit Up[FF][FF][FF][FF][FF]
+
+#org @NAME_SWALLOW
+Swallow[FF][FF][FF][FF][FF]
+
+#org @NAME_HEAT_WAVE
+Heat Wave[FF][FF][FF]
+
+#org @NAME_HAIL
+Hail[FF][FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_TORMENT
+Torment[FF][FF][FF][FF][FF]
+
+#org @NAME_FLATTER
+Flatter[FF][FF][FF][FF][FF]
+
+#org @NAME_WILL_O_WISP
+Will-O-Wisp[FF]
+
+#org @NAME_MEMENTO
+Memento[FF][FF][FF][FF][FF]
+
+#org @NAME_FACADE
+Facade[FF][FF][FF][FF][FF][FF]
+
+#org @NAME_FOCUS_PUNCH
+Focus Punch[FF]
+
+#org @NAME_SMELLINGSALT
+SmellingSalt
+
+#org @NAME_FOLLOW_ME
+Follow Me[FF][FF][FF]
+
+#org @NAME_NATURE_POWER
+Nature Power
+
+#org @NAME_CHARGE
+Charge[FF][FF][FF][FF][FF][FF]
+
+#org @NAME_TAUNT
+Taunt[FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_HELPING_HAND
+Helping Hand
+
+#org @NAME_TRICK
+Trick[FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_ROLE_PLAY
+Role Play[FF][FF][FF]
+
+#org @NAME_WISH
+Wish[FF][FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_ASSIST
+Assist[FF][FF][FF][FF][FF][FF]
+
+#org @NAME_INGRAIN
+Ingrain[FF][FF][FF][FF][FF]
+
+#org @NAME_SUPERPOWER
+Superpower[FF][FF]
+
+#org @NAME_MAGIC_COAT
+Magic Coat[FF][FF]
+
+#org @NAME_RECYCLE
+Recycle[FF][FF][FF][FF][FF]
+
+#org @NAME_REVENGE
+Revenge[FF][FF][FF][FF][FF]
+
+#org @NAME_BRICK_BREAK
+Brick Break[FF]
+
+#org @NAME_YAWN
+Yawn[FF][FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_KNOCK_OFF
+Knock Off[FF][FF][FF]
+
+#org @NAME_ENDEAVOR
+Endeavor[FF][FF][FF][FF]
+
+#org @NAME_ERUPTION
+Eruption[FF][FF][FF][FF]
+
+#org @NAME_SKILL_SWAP
+Skill Swap[FF][FF]
+
+#org @NAME_IMPRISON
+Imprison[FF][FF][FF][FF]
+
+#org @NAME_REFRESH
+Refresh[FF][FF][FF][FF][FF]
+
+#org @NAME_GRUDGE
+Grudge[FF][FF][FF][FF][FF][FF]
+
+#org @NAME_SNATCH
+Snatch[FF][FF][FF][FF][FF][FF]
+
+#org @NAME_SECRET_POWER
+Secret Power
+
+#org @NAME_DIVE
+Dive[FF][FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_ARM_THRUST
+Arm Thrust[FF][FF]
+
+#org @NAME_CAMOUFLAGE
+Camouflage[FF][FF]
+
+#org @NAME_TAIL_GLOW
+Tail Glow[FF][FF][FF]
+
+#org @NAME_LUSTER_PURGE
+Luster Purge
+
+#org @NAME_MIST_BALL
+Mist Ball[FF][FF][FF]
+
+#org @NAME_FEATHERDANCE
+FeatherDance
+
+#org @NAME_TEETER_DANCE
+Teeter Dance
+
+#org @NAME_BLAZE_KICK
+Blaze Kick[FF][FF]
+
+#org @NAME_MUD_SPORT
+Mud Sport[FF][FF][FF]
+
+#org @NAME_ICE_BALL
+Ice Ball[FF][FF][FF][FF]
+
+#org @NAME_NEEDLE_ARM
+Needle Arm[FF][FF]
+
+#org @NAME_SLACK_OFF
+Slack Off[FF][FF][FF]
+
+#org @NAME_HYPER_VOICE
+Hyper Voice[FF]
+
+#org @NAME_POISON_FANG
+Poison Fang[FF]
+
+#org @NAME_CRUSH_CLAW
+Crush Claw[FF][FF]
+
+#org @NAME_BLAST_BURN
+Blast Burn[FF][FF]
+
+#org @NAME_HYDRO_CANNON
+Hydro Cannon
+
+#org @NAME_METEOR_MASH
+Meteor Mash[FF]
+
+#org @NAME_ASTONISH
+Astonish[FF][FF][FF][FF]
+
+#org @NAME_WEATHER_BALL
+Weather Ball
+
+#org @NAME_AROMATHERAPY
+Aromatherapy
+
+#org @NAME_FAKE_TEARS
+Fake Tears[FF][FF]
+
+#org @NAME_AIR_CUTTER
+Air Cutter[FF][FF]
+
+#org @NAME_OVERHEAT
+Overheat[FF][FF][FF][FF]
+
+#org @NAME_ODOR_SLEUTH
+Odor Sleuth[FF]
+
+#org @NAME_ROCK_TOMB
+Rock Tomb[FF][FF][FF]
+
+#org @NAME_SILVER_WIND
+Silver Wind[FF]
+
+#org @NAME_METAL_SOUND
+Metal Sound[FF]
+
+#org @NAME_GRASSWHISTLE
+Grasswhistle
+
+#org @NAME_TICKLE
+Tickle[FF][FF][FF][FF][FF][FF]
+
+#org @NAME_COSMIC_POWER
+Cosmic Power
+
+#org @NAME_WATER_SPOUT
+Water Spout[FF]
+
+#org @NAME_SIGNAL_BEAM
+Signal Beam[FF]
+
+#org @NAME_SHADOW_PUNCH
+Shadow Punch
+
+#org @NAME_EXTRASENSORY
+Extrasensory
+
+#org @NAME_SKY_UPPERCUT
+Sky Uppercut
+
+#org @NAME_SAND_TOMB
+Sand Tomb[FF][FF][FF]
+
+#org @NAME_SHEER_COLD
+Sheer Cold[FF][FF]
+
+#org @NAME_MUDDY_WATER
+Muddy Water[FF]
+
+#org @NAME_BULLET_SEED
+Bullet Seed[FF]
+
+#org @NAME_AERIAL_ACE
+Aerial Ace[FF][FF]
+
+#org @NAME_ICICLE_SPEAR
+Icicle Spear
+
+#org @NAME_IRON_DEFENSE
+Iron Defense
+
+#org @NAME_BLOCK
+Block[FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_HOWL
+Howl[FF][FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_DRAGON_CLAW
+Dragon Claw[FF]
+
+#org @NAME_FRENZY_PLANT
+Frenzy Plant
+
+#org @NAME_BULK_UP
+Bulk Up[FF][FF][FF][FF][FF]
+
+#org @NAME_BOUNCE
+Bounce[FF][FF][FF][FF][FF][FF]
+
+#org @NAME_MUD_SHOT
+Mud Shot[FF][FF][FF][FF]
+
+#org @NAME_POISON_TAIL
+Poison Tail[FF]
+
+#org @NAME_COVET
+Covet[FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_VOLT_TACKLE
+Volt Tackle[FF]
+
+#org @NAME_MAGICAL_LEAF
+Magical Leaf
+
+#org @NAME_WATER_SPORT
+Water Sport[FF]
+
+#org @NAME_CALM_MIND
+Calm Mind[FF][FF][FF]
+
+#org @NAME_LEAF_BLADE
+Leaf Blade[FF][FF]
+
+#org @NAME_DRAGON_DANCE
+Dragon Dance
+
+#org @NAME_ROCK_BLAST
+Rock Blast[FF][FF]
+
+#org @NAME_SHOCK_WAVE
+Shock Wave[FF][FF]
+
+#org @NAME_WATER_PULSE
+Water Pulse[FF]
+
+#org @NAME_DOOM_DESIRE
+Doom Desire[FF]
+
+#org @NAME_PSYCHO_BOOST
+Psycho Boost
+
+#org @NAME_LEECH_FANG
+Leech Fang[FF][FF]
+
+#org @NAME_AIR_SLASH
+Air Slash[FF][FF][FF]
+
+#org @NAME_AQUA_JET
+Aqua Jet[FF][FF][FF][FF]
+
+#org @NAME_AQUA_TAIL
+Aqua Tail[FF][FF][FF]
+
+#org @NAME_AURA_SPHERE
+Aura Sphere[FF]
+
+#org @NAME_AVALANCHE
+Avalanche[FF][FF][FF]
+
+#org @NAME_BRAVE_BIRD
+Brave Bird[FF][FF]
+
+#org @NAME_BUG_BUZZ
+Bug Buzz[FF][FF][FF][FF]
+
+#org @NAME_BULLET_PUNCH
+Bullet Punch
+
+#org @NAME_CHARGE_BEAM
+Charge Beam[FF]
+
+#org @NAME_CLOSE_COMBAT
+Close Combat
+
+#org @NAME_CROSS_POISON
+Cross Poison
+
+#org @NAME_DARK_PULSE
+Dark Pulse[FF][FF]
+
+#org @NAME_DISCHARGE
+Discharge[FF][FF][FF]
+
+#org @NAME_DRACO_METEOR
+Draco Meteor
+
+#org @NAME_DRAGON_PULSE
+Dragon Pulse
+
+#org @NAME_DRAIN_PUNCH
+Drain Punch[FF]
+
+#org @NAME_EARTH_POWER
+Earth Power[FF]
+
+#org @NAME_ENERGY_BALL
+Energy Ball[FF]
+
+#org @NAME_FOCUS_BLAST
+Focus Blast[FF]
+
+#org @NAME_FORCE_PALM
+Force Palm[FF][FF]
+
+#org @NAME_GIGA_IMPACT
+Giga Impact[FF]
+
+#org @NAME_GRASS_KNOT
+Grass Knot[FF][FF]
+
+#org @NAME_GUNK_SHOT
+Gunk Shot[FF][FF][FF]
+
+#org @NAME_HAMMER_ARM
+Hammer Arm[FF][FF]
+
+#org @NAME_HEAD_SMASH
+Head Smash[FF][FF]
+
+#org @NAME_ICE_SHARD
+Ice Shard[FF][FF][FF]
+
+#org @NAME_IRON_HEAD
+Iron Head[FF][FF][FF]
+
+#org @NAME_LAVA_PLUME
+Lava Plume[FF][FF]
+
+#org @NAME_MAGNET_BOMB
+Magnet Bomb[FF]
+
+#org @NAME_MUD_BOMB
+Mud Bomb[FF][FF][FF][FF]
+
+#org @NAME_NASTY_PLOT
+Nasty Plot[FF][FF]
+
+#org @NAME_NIGHT_SLASH
+Night Slash[FF]
+
+#org @NAME_OMINOUS_WIND
+Ominous Wind
+
+#org @NAME_POWER_GEM
+Power Gem[FF][FF][FF]
+
+#org @NAME_POWER_WHIP
+Power Whip[FF][FF]
+
+#org @NAME_PSYCHO_CUT
+Psycho Cut[FF][FF]
+
+#org @NAME_ROCK_CLIMB
+Rock Climb[FF][FF]
+
+#org @NAME_ROCK_POLISH
+Rock Polish[FF]
+
+#org @NAME_ROCK_WRECKER
+Rock Wrecker
+
+#org @NAME_ROOST
+Roost[FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_SEED_BOMB
+Seed Bomb[FF][FF][FF]
+
+#org @NAME_SHADOW_CLAW
+Shadow Claw[FF]
+
+#org @NAME_SHADOW_SNEAK
+Shadow Sneak
+
+#org @NAME_VACUUM_WAVE
+Vacuum Wave[FF]
+
+#org @NAME_X_SCISSOR
+X-Scissor[FF][FF][FF]
+
+#org @NAME_ZEN_HEADBUTT
+Zen Headbutt
+
+#org @NAME_SWITCHEROO
+Switcheroo[FF][FF]
+
+#org @NAME_DRILL_RUN
+Drill Run[FF][FF][FF]
+
+#org @NAME_BULLDOZE
+Bulldoze[FF][FF][FF][FF]
+
+#org @NAME_ELECTROWEB
+Electroweb[FF][FF]
+
+#org @NAME_FLAME_CHARGE
+Flame Charge
+
+#org @NAME_FROST_BREATH
+Frost Breath
+
+#org @NAME_HEART_STAMP
+Heart Stamp[FF]
+
+#org @NAME_HONE_CLAWS
+Hone Claws[FF][FF]
+
+#org @NAME_HORN_LEECH
+Horn Leech[FF][FF]
+
+#org @NAME_COIL
+Coil[FF][FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_HURRICANE
+Hurricane[FF][FF][FF]
+
+#org @NAME_ICICLE_CRASH
+Icicle Crash
+
+#org @NAME_WORK_UP
+Work Up[FF][FF][FF][FF][FF]
+
+#org @NAME_QUIVER_DANCE
+Quiver Dance
+
+#org @NAME_LEAF_TORNADO
+Leaf Tornado
+
+#org @NAME_LOW_SWEEP
+Low Sweep[FF][FF][FF]
+
+#org @NAME_SNARL
+Snarl[FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_STRUGGLE_BUG
+Struggle Bug
+
+#org @NAME_STEAMROLLER
+Steamroller[FF]
+
+#org @NAME_STORM_THROW
+Storm Throw[FF]
+
+#org @NAME_VENOSHOCK
+Venoshock[FF][FF][FF]
+
+#org @NAME_WILD_CHARGE
+Wild Charge[FF]
+
+#org @NAME_POISON_JAB
+Poison Jab[FF][FF]
+
+#org @NAME_ACID_SPRAY
+Acid Spray[FF][FF]
+
+#org @NAME_FIERY_DANCE
+Fiery Dance[FF]
+
+#org @NAME_CLEAR_SMOG
+Clear Smog[FF][FF]
+
+#org @NAME_LEAF_STORM
+Leaf Storm[FF][FF]
+
+#org @NAME_STONE_EDGE
+Stone Edge[FF][FF]
+
+#org @NAME_PAYBACK
+Payback[FF][FF][FF][FF][FF]
+
+#org @NAME_FIRE_FANG
+Fire Fang[FF][FF][FF]
+
+#org @NAME_ICE_FANG
+Ice Fang[FF][FF][FF][FF]
+
+#org @NAME_THUNDER_FANG
+Thunder Fang
+
+#org @NAME_FLARE_BLITZ
+Flare Blitz[FF]
+
+#org @NAME_INFERNO
+Inferno[FF][FF][FF][FF][FF]
+
+#org @NAME_HEX
+Hex[FF][FF][FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_DUAL_CHOP
+Dual Chop[FF][FF][FF]
+
+#org @NAME_DOUBLE_HIT
+Double Hit[FF][FF]
+
+#org @NAME_COTTON_GUARD
+Cotton Guard
+
+#org @NAME_ACROBATICS
+Acrobatics[FF][FF]
+
+#org @NAME_FLAME_BURST
+Flame Burst[FF]
+
+#org @NAME_U_TURN
+U-turn[FF][FF][FF][FF][FF][FF]
+
+#org @NAME_VOLT_SWITCH
+Volt Switch[FF]
+
+#org @NAME_DRAGON_TAIL
+Dragon Tail[FF]
+
+#org @NAME_CIRCLE_THROW
+Circle Throw
+
+#org @NAME_MIRROR_SHOT
+Mirror Shot[FF]
+
+#org @NAME_WOOD_HAMMER
+Wood Hammer[FF]
+
+#org @NAME_HEAL_PULSE
+Heal Pulse[FF][FF]
+
+#org @NAME_FLASH_CANNON
+Flash Cannon
+
+#org @NAME_BUG_BITE
+Bug Bite[FF][FF][FF][FF]
+
+#org @NAME_PLUCK
+Pluck[FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_SHELL_SMASH
+Shell Smash[FF]
+
+#org @NAME_RAGE_POWDER
+Rage Powder[FF]
+
+#org @NAME_WAKE_UP_SLAP
+Wake-Up Slap
+
+#org @NAME_RAZOR_SHELL
+Razor Shell[FF]
+
+#org @NAME_COPYCAT
+Copycat[FF][FF][FF][FF][FF]
+
+#org @NAME_MIRACLE_EYE
+Miracle Eye[FF]
+
+#org @NAME_SUCKER_PUNCH
+Sucker Punch
+
+#org @NAME_SCALD
+Scald[FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_BRINE
+Brine[FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_FAIRY_WIND
+Fairy Wind[FF][FF]
+
+#org @NAME_DOLL_EYES
+Doll Eyes[FF][FF][FF]
+
+#org @NAME_PLAY_ROUGH
+Play Rough[FF][FF]
+
+#org @NAME_MOONBLAST
+Moonblast[FF][FF][FF]
+
+#org @NAME_DRAIN_KISS
+Drain Kiss[FF][FF]
+
+#org @NAME_DAZZLE_GLEAM
+Dazzle Gleam
+
+#org @NAME_DISARM_CRY
+Disarm Cry[FF][FF]
+
+#org @NAME_STEALTH_ROCK
+Stealth Rock
+
+#org @NAME_TOXIC_SPIKES
+Toxic Spikes
+
+#org @NAME_HEALING_WISH
+Healing Wish
+
+#org @NAME_LUNAR_DANCE
+Lunar Dance[FF]
+
+#org @NAME_TAILWIND
+Tailwind[FF][FF][FF][FF]
+
+#org @NAME_BOOMBURST
+Boomburst[FF][FF][FF]
+
+#org @NAME_INCINERATE
+Incinerate[FF][FF]
+
+#org @NAME_WORRY_SEED
+Worry Seed[FF][FF]
+
+#org @NAME_GASTRO_ACID
+Gastro Acid[FF]
+
+#org @NAME_GEOMANCY
+Geomancy[FF][FF][FF][FF]
+
+#org @NAME_FLOWER_GUARD
+Flower Guard
+
+#org @NAME_ROTOTILLER
+Rototiller[FF][FF]
+
+#org @NAME_SHIFT_GEAR
+Shift Gear[FF][FF]
+
+#org @NAME_STICKY_WEB
+Sticky Web[FF][FF]
+
+#org @NAME_STORED_POWER
+Stored Power
+
+#org @NAME_ACUPRESSURE
+Acupressure[FF]
+
+#org @NAME_PUNISHMENT
+Punishment[FF][FF]
+
+#org @NAME_ASSURANCE
+Assurance[FF][FF][FF]
+
+#org @NAME_DRAGON_RUSH
+Dragon Rush[FF]
+
+#org @NAME_DARK_VOID
+Dark Void[FF][FF][FF]
+
+#org @NAME_FEINT
+Feint[FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_GHOST_FORCE
+Ghost Force[FF]
+
+#org @NAME_PETAL_STORM
+Petal Storm[FF]
+
+#org @NAME_PLAY_NICE
+Play Nice[FF][FF][FF]
+
+#org @NAME_ROAR_OF_TIME
+Roar of Time
+
+#org @NAME_SPACIAL_REND
+Spacial Rend
+
+#org @NAME_MAGMA_STORM
+Magma Storm[FF]
+
+#org @NAME_FINAL_GAMBIT
+Final Gambit
+
+#org @NAME_SHADOW_FORCE
+Shadow Force
+
+#org @NAME_NUZZLE
+Nuzzle[FF][FF][FF][FF][FF][FF]
+
+#org @NAME_RETALIATE
+Retaliate[FF][FF][FF]
+
+#org @NAME_METAL_BASH
+Metal Bash[FF][FF]
+
+#org @NAME_JUDGMENT
+Judgment[FF][FF][FF][FF]
+
+#org @NAME_FREEZE_DRY
+Freeze-Dry[FF][FF]
+
+#org @NAME_PSYSHOCK
+Psyshock[FF][FF][FF][FF]
+
+#org @NAME_ROUND
+Round[FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_TAIL_SLAP
+Tail Slap[FF][FF][FF]
+
+#org @NAME_GEAR_GRIND
+Gear Grind[FF][FF]
+
+#org @NAME_NATURAL_GIFT
+Natural Gift
+
+#org @NAME_CHIP_AWAY
+Chip Away[FF][FF][FF]
+
+#org @NAME_SMACK_DOWN
+Smack Down[FF][FF]
+
+#org @NAME_SPACE_HOLE
+Space Hole[FF][FF]
+
+#org @NAME_GYRO_BALL
+Gyro Ball[FF][FF][FF]
+
+#org @NAME_SPACE_FURY
+Space Fury[FF][FF]
+
+#org @NAME_ATTACK_ORDER
+Attack Order
+
+#org @NAME_DEFEND_ORDER
+Defend Order
+
+#org @NAME_HEAL_ORDER
+Heal Order[FF][FF]
+
+#org @NAME_CAPTIVATE
+Captivate[FF][FF][FF]
+
+#org @NAME_DEFOG
+Defog[FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_ORIGIN_PULSE
+Origin Pulse
+
+#org @NAME_CLIFF_BLADES
+Cliff Blades
+
+#org @NAME_GUARD_SWAP
+Guard Swap[FF][FF]
+
+#org @NAME_STEAM_PUMP
+Steam Pump[FF][FF]
+
+#org @NAME_METAL_BURST
+Metal Burst[FF]
+
+#org @NAME_ME_FIRST
+Me First[FF][FF][FF][FF]
+
+#org @NAME_POWER_SWAP
+Power Swap[FF][FF]
+
+#org @NAME_POWER_TRICK
+Power Trick[FF]
+
+#org @NAME_PSYCHO_SHIFT
+Psycho Shift
+
+#org @NAME_WRING_OUT
+Wring [FF][FF]
+
+#org @NAME_KINGS_SHIELD
+Kings Shield
+
+#org @NAME_PSYSTRIKE
+Psystrike[FF][FF][FF]
+
+#org @NAME_AUTOTOMIZE
+Autotomize[FF][FF]
+
+#org @NAME_DIAMONDSTORM
+Diamondstorm
+
+#org @NAME_SLUDGE_WAVE
+Sludge Wave[FF]
+
+#org @NAME_HEAVY_SLAM
+Heavy Slam[FF][FF]
+
+#org @NAME_SYNCHRONOISE
+Synchronoise
+
+#org @NAME_ELECTRO_BALL
+Electro Ball
+
+#org @NAME_FOUL_PLAY
+Foul Play[FF][FF][FF]
+
+#org @NAME_ENTRAINMENT
+Entrainment[FF]
+
+#org @NAME_NIGHT_DAZE
+Night Daze[FF][FF]
+
+#org @NAME_ECHOED_VOICE
+Echoed Voice
+
+#org @NAME_LAND'S_WRATH
+Land's Wrath
+
+#org @NAME_OBLIVIONWING
+OblivionWing
+
+#org @NAME_HEART_SWAP
+Heart Swap[FF][FF]
+
+#org @NAME_CRUSH_GRIP
+Crush Grip[FF][FF]
+
+#org @NAME_SACRED_SWORD
+Sacred Sword
+
+#org @NAME_HEAT_CRASH
+Heat Crash[FF][FF]
+
+#org @NAME_HEAD_CHARGE
+Head Charge[FF]
+
+#org @NAME_TECHNO_BLAST
+Techno Blast
+
+#org @NAME_RELIC_SONG
+Relic Song[FF][FF]
+
+#org @NAME_SECRET_SWORD
+Secret Sword
+
+#org @NAME_GLACIATE
+Glaciate[FF][FF][FF][FF]
+
+#org @NAME_BOLT_STRIKE
+Bolt Strike[FF]
+
+#org @NAME_BLUE_FLARE
+Blue Flare[FF][FF]
+
+#org @NAME_FREEZE_SHOCK
+Freeze Shock
+
+#org @NAME_ICE_BURN
+Ice Burn[FF][FF][FF][FF]
+
+#org @NAME_V_CREATE
+V-create[FF][FF][FF][FF]
+
+#org @NAME_FUSION_FLARE
+Fusion Flare
+
+#org @NAME_FUSION_BOLT
+Fusion Bolt[FF]
+
+#org @NAME_FELL_STINGER
+Fell Stinger
+
+#org @NAME_NOBLE_ROAR
+Noble Roar[FF][FF]
+
+#org @NAME_DRAGON_RISE
+Dragon Rise[FF]
+
+#org @NAME_PARTING_SHOT
+Parting Shot
+
+#org @NAME_TOPSY_TURVY
+Topsy Turvy[FF]
+
+#org @NAME_CORE_ENFORCE
+Core Enforce
+
+#org @NAME_CHATTER
+Chatter[FF][FF][FF][FF][FF]
+
+#org @NAME_CONFIDE
+Confide[FF][FF][FF][FF][FF]
+
+#org @NAME_WATER_STAR
+Water Star[FF][FF]
+
+#org @NAME_MYSTIC_FIRE
+Mystic Fire[FF]
+
+#org @NAME_SPIKY_SHIELD
+Spiky Shield
+
+#org @NAME_EERIEIMPULSE
+EerieImpulse
+
+#org @NAME_HOLD_BACK
+Hold Back[FF][FF][FF]
+
+#org @NAME_INFESTATION
+Infestation[FF]
+
+#org @NAME_POWER_UP_HIT
+Power-Up Hit
+
+#org @NAME_1000_ARROWS
+1000 Arrows[FF]
+
+#org @NAME_1000_WAVES
+1000 Waves[FF][FF]
+
+#org @NAME_PARA_CHARGE
+Para Charge[FF]
+
+#org @NAME_SEARING_SHOT
+Searing Shot
+
+#org @NAME_SEED_FLARE
+Seed Flare[FF][FF]
+
+#org @NAME_ACCELEROCK
+Accelerock[FF][FF]
+
+#org @NAME_ANCHOR_SHOT
+Anchor Shot[FF]
+
+#org @NAME_AURORA_VEIL
+Aurora Veil[FF]
+
+#org @NAME_BANEFUL_BUNK
+Baneful Bunk
+
+#org @NAME_BEAK_BLAST
+Beak Blast[FF][FF]
+
+#org @NAME_BRUTAL_SWING
+Brutal Swing
+
+#org @NAME_BURN_UP
+Burn Up[FF][FF][FF][FF][FF]
+
+#org @NAME_CLANG_SCALES
+Clang Scales
+
+#org @NAME_DARK_LARIAT
+Dark Lariat[FF]
+
+#org @NAME_DRACO_HAMMER
+Draco Hammer
+
+#org @NAME_FIRE_LASH
+Fire Lash[FF][FF][FF]
+
+#org @NAME_FIRST_PRESS
+First Press[FF]
+
+#org @NAME_FLEUR_CANNON
+Fleur Cannon
+
+#org @NAME_FLORAL_HEAL
+Floral Heal[FF]
+
+#org @NAME_GEAR_UP
+Gear Up[FF][FF][FF][FF][FF]
+
+#org @NAME_HORSEPOWER
+Horsepower[FF][FF]
+
+#org @NAME_ICE_HAMMER
+Ice Hammer[FF][FF]
+
+#org @NAME_LASER_FOCUS
+Laser Focus[FF]
+
+#org @NAME_LEAFAGE
+Leafage[FF][FF][FF][FF][FF]
+
+#org @NAME_LIQUIDATION
+Liquidation[FF]
+
+#org @NAME_LUNGE
+Lunge[FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_GEIST_BEAM
+Geist Beam[FF][FF]
+
+#org @NAME_MULTI_ATTACK
+Multi-Attack
+
+#org @NAME_NATURE'S_MAD
+Nature's Mad
+
+#org @NAME_POLLEN_PUFF
+Pollen Puff[FF]
+
+#org @NAME_POWER_TRIP
+Power Trip[FF][FF]
+
+#org @NAME_PRISM_LASER
+Prism Laser[FF]
+
+#org @NAME_PSYCHIC_FANG
+Psychic Fang
+
+#org @NAME_PURIFY
+Purify[FF][FF][FF][FF][FF][FF]
+
+#org @NAME_REVEL_DANCE
+Revel Dance[FF]
+
+#org @NAME_SHADOW_BONE
+Shadow Bone[FF]
+
+#org @NAME_SHELL_TRAP
+Shell Trap[FF][FF]
+
+#org @NAME_SHORE_UP
+Shore Up[FF][FF][FF][FF]
+
+#org @NAME_SMART_STRIKE
+Smart Strike
+
+#org @NAME_SOLAR_BLADE
+Solar Blade[FF]
+
+#org @NAME_SPARKLE_ARIA
+Sparkle Aria
+
+#org @NAME_SPECT_THIEF
+Spect Thief[FF]
+
+#org @NAME_SPEED_SWAP
+Speed Swap[FF][FF]
+
+#org @NAME_SPIRIT_LOCK
+Spirit Lock[FF]
+
+#org @NAME_SPOTLIGHT
+Spotlight[FF][FF][FF]
+
+#org @NAME_BAD_TANTRUM
+Bad Tantrum[FF]
+
+#org @NAME_STRENGTH_SAP
+Strength Sap
+
+#org @NAME_SUNSTEEL_RAM
+Sunsteel Ram
+
+#org @NAME_TEARY_LOOK
+Teary Look[FF][FF]
+
+#org @NAME_THROAT_CHOP
+Throat Chop[FF]
+
+#org @NAME_TOXIC_THREAD
+Toxic Thread
+
+#org @NAME_TROP_KICK
+Trop Kick[FF][FF][FF]
+
+#org @NAME_ZING_ZAP
+Zing Zap[FF][FF][FF][FF]
+
+#org @NAME_ELEC_TERRAIN
+Elec Terrain
+
+#org @NAME_GRAS_TERRAIN
+Gras Terrain
+
+#org @NAME_MIST_TERRAIN
+Mist Terrain
+
+#org @NAME_PSYC_TERRAIN
+Psyc Terrain
+
+#org @NAME_GRASS_PLEDGE
+Grass Pledge
+
+#org @NAME_FIRE_PLEDGE
+Fire Pledge[FF]
+
+#org @NAME_WATER_PLEDGE
+Water Pledge
+
+#org @NAME_TRICK_ROOM
+Trick Room[FF][FF]
+
+#org @NAME_MAGIC_ROOM
+Magic Room[FF][FF]
+
+#org @NAME_WONDER_ROOM
+Wonder Room[FF]
+
+#org @NAME_CRAFTY_GUARD
+Crafty Guard
+
+#org @NAME_MAT_BLOCK
+Mat Block[FF][FF][FF]
+
+#org @NAME_QUICK_GUARD
+Quick Guard[FF]
+
+#org @NAME_WIDE_GUARD
+Wide Guard[FF][FF]
+
+#org @NAME_AQUA_RING
+Aqua Ring[FF][FF][FF]
+
+#org @NAME_AROMA_MIST
+Aroma Mist[FF][FF]
+
+#org @NAME_BELCH
+Belch[FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_BESTOW
+Bestow[FF][FF][FF][FF][FF][FF]
+
+#org @NAME_FLING
+Fling[FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_FLYING_PRESS
+Flying Press
+
+#org @NAME_GRAVITY
+Gravity[FF][FF][FF][FF][FF]
+
+#org @NAME_GUARD_SPLIT
+Guard Split[FF]
+
+#org @NAME_HEAL_BLOCK
+Heal Block[FF][FF]
+
+#org @NAME_ION_DELUGE
+Ion Deluge[FF][FF]
+
+#org @NAME_LUCKY_CHANT
+Lucky Chant[FF]
+
+#org @NAME_MAGNET_RISE
+Magnet Rise[FF]
+
+#org @NAME_MAGNET_FLUX
+Magnet Flux[FF]
+
+#org @NAME_POWDER
+Powder[FF][FF][FF][FF][FF][FF]
+
+#org @NAME_POWER_SPLIT
+Power Split[FF]
+
+#org @NAME_REFLECT_TYPE
+Reflect Type
+
+#org @NAME_SIMPLE_BEAM
+Simple Beam[FF]
+
+#org @NAME_SOAK
+Soak[FF][FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_TELEKINESIS
+Telekinesis[FF]
+
+#org @NAME_TRICKOTREAT
+TrickoTreat[FF]
+
+#org @NAME_VENOM_DRENCH
+Venom Drench
+
+#org @NAME_WOODS_CURSE
+Woods Curse[FF]
+
+#org @NAME_MIND_BLOWN
+Mind Blown[FF][FF]
+
+#org @NAME_PHOTONGEYSER
+PhotonGeyser
+
+#org @NAME_PLASMA_FISTS
+Plasma Fists
+
+#org @NAME_ELECTRIFY
+Electrify[FF][FF][FF]
+
+#org @NAME_EMBARGO
+Embargo[FF][FF][FF][FF][FF]
+
+#org @NAME_FAIRY_LOCK
+Fairy Lock[FF][FF]
+
+#org @NAME_LIGHT_O_RUIN
+Light o Ruin
+
+#org @NAME_TRUMP_CARD
+Trump Card[FF][FF]
+
+#org @NAME_AFTER_YOU
+After You[FF][FF][FF]
+
+#org @NAME_INSTRUCT
+Instruct[FF][FF][FF][FF]
+
+#org @NAME_QUASH
+Quash[FF][FF][FF][FF][FF][FF][FF]
+
+#org @NAME_HAPPY_HOUR
+Happy Hour[FF][FF]
+
+#org @NAME_DOUBLE_IRON
+Double Iron[FF]
+
+#org @NAME_LAST_RESORT
+Last Resort Resort[FF]
+
+#org @NAME_SKY_DROP
+Sky Drop[FF][FF][FF][FF]
+
+#org @NAME_CELEBRATE
+Celebrate[FF][FF][FF]
+
+#org @NAME_HOLD_HANDS
+Hold Hands[FF][FF]
+
+#org @Z_Move_1
+Z-Move 1[FF][FF][FF][FF]
+
+#org @Z_Move_2
+Z-Move 2[FF][FF][FF][FF]
+
+#org @Z_Move_3
+Z-Move 3[FF][FF][FF][FF]
+
+#org @Z_Move_4
+Z-Move 4[FF][FF][FF][FF]
+
+#org @Z_Move_5
+Z-Move 5[FF][FF][FF][FF]
+
+#org @Z_Move_6
+Z-Move 6[FF][FF][FF][FF]
+
+#org @Z_Move_7
+Z-Move 7[FF][FF][FF][FF]
+
+#org @Z_Move_8
+Z-Move 8[FF][FF][FF][FF]
+
+#org @Z_Move_9
+Z-Move 9[FF][FF][FF][FF]
+
+#org @Z_Move_10
+Z-Move 10[FF][FF][FF]
+
+#org @Z_Move_11
+Z-Move 11[FF][FF][FF]
+
+#org @Z_Move_12
+Z-Move 12[FF][FF][FF]
+
+#org @Z_Move_13
+Z-Move 13[FF][FF][FF]
+
+#org @Z_Move_14
+Z-Move 14[FF][FF][FF]
+
+#org @Z_Move_15
+Z-Move 15[FF][FF][FF]
+
+#org @Z_Move_16
+Z-Move 16[FF][FF][FF]
+
+#org @Z_Move_17
+Z-Move 17[FF][FF][FF]
+
+#org @Z_Move_18
+Z-Move 18[FF][FF][FF]
+
+#org @Z_Move_19
+Z-Move 19[FF][FF][FF]
+
+#org @Z_Move_20
+Z-Move 20[FF][FF][FF]
+
+#org @Z_Move_21
+Z-Move 21[FF][FF][FF]
+
+#org @Z_Move_22
+Z-Move 22[FF][FF][FF]
+
+#org @Z_Move_23
+Z-Move 23[FF][FF][FF]
+
+#org @Z_Move_24
+Z-Move 24[FF][FF][FF]
+
+#org @Z_Move_25
+Z-Move 25[FF][FF][FF]
+
+#org @Z_Move_26
+Z-Move 26[FF][FF][FF]
+
+#org @Z_Move_27
+Z-Move 27[FF][FF][FF]
+
+#org @Z_Move_28
+Z-Move 28[FF][FF][FF]
+
+#org @Z_Move_29
+Z-Move 29[FF][FF][FF]
+
+#org @Z_Move_30
+Z-Move 30[FF][FF][FF]
+
+#org @Z_Move_31
+Z-Move 31[FF][FF][FF]
+
+#org @Z_Move_32
+Z-Move 32[FF][FF][FF]
+
+#org @Z_Move_33
+Z-Move 33[FF][FF][FF]
+
+#org @Z_Move_34
+Z-Move 34[FF][FF][FF]
+
+#org @Z_Move_35
+Z-Move 35[FF][FF][FF]
+
+#org @Z_Move_36
+Z-Move 36[FF][FF][FF]
+
+#org @Z_Move_37
+Z-Move 37[FF][FF][FF]
+
+#org @Z_Move_38
+Z-Move 38[FF][FF][FF]
+
+#org @Z_Move_39
+Z-Move 39[FF][FF][FF]
+
+#org @Z_Move_40
+Z-Move 40[FF][FF][FF]
+
+#org @Z_Move_41
+Z-Move 41[FF][FF][FF]
+
+#org @Z_Move_42
+Z-Move 42[FF][FF][FF]
+
+#org @Z_Move_43
+Z-Move 43[FF][FF][FF]
+
+#org @Z_Move_44
+Z-Move 44[FF][FF][FF]
+
+#org @Z_Move_45
+Z-Move 45[FF][FF][FF]
+
+#org @Z_Move_46
+Z-Move 46[FF][FF][FF]
+
+#org @Z_Move_47
+Z-Move 47[FF][FF][FF]
+
+#org @Z_Move_48
+Z-Move 48[FF][FF][FF]
+
+#org @Z_Move_49
+Z-Move 49[FF][FF][FF]
+
+#org @Z_Move_50
+Z-Move 50[FF][FF][FF]
+
+#org @Z_Move_51
+Z-Move 51[FF][FF][FF]
+
+#org @Z_Move_52
+Z-Move 52[FF][FF][FF]
+
+#org @Z_Move_53
+Z-Move 53[FF][FF][FF]
+

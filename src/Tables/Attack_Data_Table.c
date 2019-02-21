@@ -348,7 +348,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_STOMP
-/*effect*/			EFFECT_FLINCH_HIT_2,
+/*effect*/			EFFECT_FLINCH_HIT,
 /*power*/			65,
 /*type*/			TYPE_NORMAL,
 /*accuracy*/		100,
@@ -513,7 +513,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_BODYSLAM
-/*effect*/			EFFECT_FLINCH_HIT_2,
+/*effect*/			EFFECT_PARALYZE_HIT,
 /*power*/			85,
 /*type*/			TYPE_NORMAL,
 /*accuracy*/		100,
@@ -573,7 +573,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_DOUBLEEDGE
-/*effect*/			EFFECT_DOUBLE_EDGE,
+/*effect*/			EFFECT_RECOIL,
 /*power*/			120,
 /*type*/			TYPE_NORMAL,
 /*accuracy*/		100,
@@ -618,7 +618,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_TWINEEDLE
-/*effect*/			EFFECT_TWINEEDLE,
+/*effect*/			EFFECT_POISON_HIT,
 /*power*/			25,
 /*type*/			TYPE_BUG,
 /*accuracy*/		100,
@@ -1008,7 +1008,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_LOWKICK
-/*effect*/			EFFECT_LOW_KICK,
+/*effect*/			EFFECT_HIT,
 /*power*/			1,
 /*type*/			TYPE_FIGHTING,
 /*accuracy*/		100,
@@ -1338,7 +1338,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_EARTHQUAKE
-/*effect*/			EFFECT_EARTHQUAKE,
+/*effect*/			EFFECT_HIT,
 /*power*/			100,
 /*type*/			TYPE_GROUND,
 /*accuracy*/		100,
@@ -1901,7 +1901,7 @@ struct BattleMove gBattleMoves[] = {
 /*effectChance*/	10,
 /*target*/			MOVE_TARGET_SELECTED,
 /*priority*/		0,
-/*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
+/*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
 /*z_move_power*/	190,
 /*split*/			SPLIT_SPECIAL,
 /*z_move_effect*/	0
@@ -1916,7 +1916,7 @@ struct BattleMove gBattleMoves[] = {
 /*effectChance*/	20,
 /*target*/			MOVE_TARGET_SELECTED,
 /*priority*/		0,
-/*flags*/			FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
+/*flags*/			FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 /*z_move_power*/	160,
 /*split*/			SPLIT_PHYSICAL,
 /*z_move_effect*/	0
@@ -2028,7 +2028,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_SOFTBOILED
-/*effect*/			EFFECT_SOFTBOILED,
+/*effect*/			EFFECT_RESTORE_HP,
 /*power*/			0,
 /*type*/			TYPE_NORMAL,
 /*accuracy*/		0,
@@ -2583,7 +2583,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_FLAMEWHEEL
-/*effect*/			EFFECT_THAW_HIT,
+/*effect*/			EFFECT_BURN_HIT,
 /*power*/			60,
 /*type*/			TYPE_FIRE,
 /*accuracy*/		100,
@@ -3048,7 +3048,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_ENDURE
-/*effect*/			EFFECT_ENDURE,
+/*effect*/			EFFECT_PROTECT,
 /*power*/			0,
 /*type*/			TYPE_NORMAL,
 /*accuracy*/		0,
@@ -3123,7 +3123,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_MILKDRINK
-/*effect*/			EFFECT_SOFTBOILED,
+/*effect*/			EFFECT_RESTORE_HP,
 /*power*/			0,
 /*type*/			TYPE_NORMAL,
 /*accuracy*/		0,
@@ -3243,7 +3243,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_RETURN
-/*effect*/			EFFECT_RETURN,
+/*effect*/			EFFECT_HIT,
 /*power*/			1,
 /*type*/			TYPE_NORMAL,
 /*accuracy*/		100,
@@ -3273,7 +3273,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_FRUSTRATION
-/*effect*/			EFFECT_FRUSTRATION,
+/*effect*/			EFFECT_HIT,
 /*power*/			1,
 /*type*/			TYPE_NORMAL,
 /*accuracy*/		100,
@@ -3318,7 +3318,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_SACREDFIRE
-/*effect*/			EFFECT_THAW_HIT,
+/*effect*/			EFFECT_BURN_HIT,
 /*power*/			100,
 /*type*/			TYPE_FIRE,
 /*accuracy*/		95,
@@ -3498,7 +3498,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_VITALTHROW
-/*effect*/			EFFECT_VITAL_THROW,
+/*effect*/			EFFECT_ALWAYS_HIT,
 /*power*/			70,
 /*type*/			TYPE_FIGHTING,
 /*accuracy*/		0,
@@ -3528,7 +3528,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_SYNTHESIS
-/*effect*/			EFFECT_SYNTHESIS,
+/*effect*/			EFFECT_MORNING_SUN,
 /*power*/			0,
 /*type*/			TYPE_GRASS,
 /*accuracy*/		0,
@@ -3543,7 +3543,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_MOONLIGHT
-/*effect*/			EFFECT_MOONLIGHT,
+/*effect*/			EFFECT_MORNING_SUN,
 /*power*/			0,
 /*type*/			TYPE_FAIRY,
 /*accuracy*/		0,
@@ -3558,7 +3558,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_HIDDENPOWER
-/*effect*/			EFFECT_HIDDEN_POWER,
+/*effect*/			EFFECT_HIT,
 /*power*/			70,
 /*type*/			TYPE_NORMAL,
 /*accuracy*/		100,
@@ -3948,7 +3948,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_FACADE
-/*effect*/			EFFECT_FACADE,
+/*effect*/			EFFECT_HIT,
 /*power*/			70,
 /*type*/			TYPE_NORMAL,
 /*accuracy*/		100,
@@ -4188,7 +4188,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_REVENGE
-/*effect*/			EFFECT_REVENGE,
+/*effect*/			EFFECT_HIT,
 /*power*/			60,
 /*type*/			TYPE_FIGHTING,
 /*accuracy*/		100,
@@ -4263,7 +4263,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_ERUPTION
-/*effect*/			EFFECT_ERUPTION,
+/*effect*/			EFFECT_HIT,
 /*power*/			150,
 /*type*/			TYPE_FIRE,
 /*accuracy*/		100,
@@ -4398,7 +4398,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_CAMOUFLAGE
-/*effect*/			240,
+/*effect*/			EFFECT_CAMOUFLAGE,
 /*power*/			0,
 /*type*/			TYPE_NORMAL,
 /*accuracy*/		100,
@@ -4473,7 +4473,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_TEETERDANCE
-/*effect*/			EFFECT_TEETER_DANCE,
+/*effect*/			EFFECT_CONFUSE,
 /*power*/			0,
 /*type*/			TYPE_NORMAL,
 /*accuracy*/		100,
@@ -4488,7 +4488,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_BLAZEKICK
-/*effect*/			EFFECT_BLAZE_KICK,
+/*effect*/			EFFECT_BURN_HIT,
 /*power*/			85,
 /*type*/			TYPE_FIRE,
 /*accuracy*/		95,
@@ -4578,7 +4578,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_POISONFANG
-/*effect*/			EFFECT_POISON_FANG,
+/*effect*/			EFFECT_POISON_HIT,
 /*power*/			50,
 /*type*/			TYPE_POISON,
 /*accuracy*/		100,
@@ -4668,7 +4668,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_WEATHERBALL
-/*effect*/			EFFECT_WEATHER_BALL,
+/*effect*/			EFFECT_HIT,
 /*power*/			50,
 /*type*/			TYPE_NORMAL,
 /*accuracy*/		100,
@@ -4848,7 +4848,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_WATERSPOUT
-/*effect*/			EFFECT_ERUPTION,
+/*effect*/			EFFECT_HIT,
 /*power*/			150,
 /*type*/			TYPE_WATER,
 /*accuracy*/		100,
@@ -4908,7 +4908,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_SKYUPPERCUT
-/*effect*/			EFFECT_SKY_UPPERCUT,
+/*effect*/			EFFECT_HIT,
 /*power*/			85,
 /*type*/			TYPE_FIGHTING,
 /*accuracy*/		90,
@@ -5163,7 +5163,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_VOLTTACKLE
-/*effect*/			EFFECT_DOUBLE_EDGE,
+/*effect*/			EFFECT_PARALYZE_HIT,
 /*power*/			120,
 /*type*/			TYPE_ELECTRIC,
 /*accuracy*/		100,
@@ -5403,7 +5403,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_AVALANCHE
-/*effect*/			EFFECT_REVENGE,
+/*effect*/			EFFECT_HIT,
 /*power*/			60,
 /*type*/			TYPE_ICE,
 /*accuracy*/		100,
@@ -5418,7 +5418,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_BRAVEBIRD
-/*effect*/			EFFECT_DOUBLE_EDGE,
+/*effect*/			EFFECT_RECOIL,
 /*power*/			120,
 /*type*/			TYPE_FLYING,
 /*accuracy*/		100,
@@ -5463,7 +5463,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_CHARGEBEAM
-/*effect*/			EFFECT_SPECIAL_DEFENSE_DOWN_HIT,
+/*effect*/			EFFECT_UNUSED_6E,
 /*power*/			50,
 /*type*/			TYPE_ELECTRIC,
 /*accuracy*/		90,
@@ -5658,7 +5658,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_GRASSKNOT
-/*effect*/			EFFECT_LOW_KICK,
+/*effect*/			EFFECT_HIT,
 /*power*/			1,
 /*type*/			TYPE_GRASS,
 /*accuracy*/		100,
@@ -5703,7 +5703,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_HEADSMASH
-/*effect*/			EFFECT_DOUBLE_EDGE,
+/*effect*/			EFFECT_RECOIL,
 /*power*/			150,
 /*type*/			TYPE_ROCK,
 /*accuracy*/		80,
@@ -6093,7 +6093,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_FLAMECHARGE
-/*effect*/			EFFECT_SPEED_DOWN_HIT,
+/*effect*/			EFFECT_UNUSED_60,
 /*power*/			50,
 /*type*/			TYPE_FIRE,
 /*accuracy*/		100,
@@ -6108,7 +6108,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_FROSTBREATH
-/*effect*/			EFFECT_ALWAYS_CRIT,
+/*effect*/			EFFECT_HIT,
 /*power*/			60,
 /*type*/			TYPE_ICE,
 /*accuracy*/		90,
@@ -6303,7 +6303,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_STEAMROLLER
-/*effect*/			EFFECT_FLINCH_HIT_2,
+/*effect*/			EFFECT_FLINCH_HIT,
 /*power*/			65,
 /*type*/			TYPE_BUG,
 /*accuracy*/		100,
@@ -6318,7 +6318,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_STORMTHROW
-/*effect*/			EFFECT_ALWAYS_CRIT,
+/*effect*/			EFFECT_HIT,
 /*power*/			60,
 /*type*/			TYPE_FIGHTING,
 /*accuracy*/		100,
@@ -6333,7 +6333,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_VENOSHOCK
-/*effect*/			EFFECT_SMELLINGSALT,
+/*effect*/			EFFECT_HIT,
 /*power*/			65,
 /*type*/			TYPE_POISON,
 /*accuracy*/		100,
@@ -6393,7 +6393,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_FIERYDANCE
-/*effect*/			EFFECT_SPECIAL_DEFENSE_DOWN_HIT,
+/*effect*/			EFFECT_UNUSED_6E,
 /*power*/			80,
 /*type*/			TYPE_FIRE,
 /*accuracy*/		100,
@@ -6408,7 +6408,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_CLEARSMOG
-/*effect*/			222,
+/*effect*/			EFFECT_REMOVE_TARGET_STAT_CHANGES,
 /*power*/			50,
 /*type*/			TYPE_POISON,
 /*accuracy*/		0,
@@ -6453,7 +6453,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_PAYBACK
-/*effect*/			EFFECT_REVENGE,
+/*effect*/			EFFECT_HIT,
 /*power*/			50,
 /*type*/			TYPE_DARK,
 /*accuracy*/		100,
@@ -6513,7 +6513,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_FLAREBLITZ
-/*effect*/			EFFECT_THAW_HIT,
+/*effect*/			EFFECT_BURN_HIT,
 /*power*/			120,
 /*type*/			TYPE_FIRE,
 /*accuracy*/		100,
@@ -6543,7 +6543,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_HEX
-/*effect*/			EFFECT_SMELLINGSALT,
+/*effect*/			EFFECT_HIT,
 /*power*/			65,
 /*type*/			TYPE_GHOST,
 /*accuracy*/		100,
@@ -6603,7 +6603,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_ACROBATICS
-/*effect*/			230,
+/*effect*/			EFFECT_HIT,
 /*power*/			55,
 /*type*/			TYPE_FLYING,
 /*accuracy*/		100,
@@ -6708,7 +6708,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_WOODHAMMER
-/*effect*/			EFFECT_DOUBLE_EDGE,
+/*effect*/			EFFECT_RECOIL,
 /*power*/			120,
 /*type*/			TYPE_GRASS,
 /*accuracy*/		100,
@@ -6723,7 +6723,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_HEALPULSE
-/*effect*/			233,
+/*effect*/			EFFECT_HEAL_TARGET,
 /*power*/			0,
 /*type*/			TYPE_PSYCHIC,
 /*accuracy*/		0,
@@ -6753,7 +6753,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_BUGBITE
-/*effect*/			219,
+/*effect*/			EFFECT_EAT_BERRY,
 /*power*/			60,
 /*type*/			TYPE_BUG,
 /*accuracy*/		100,
@@ -6768,7 +6768,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_PLUCK
-/*effect*/			219,
+/*effect*/			EFFECT_EAT_BERRY,
 /*power*/			60,
 /*type*/			TYPE_FLYING,
 /*accuracy*/		100,
@@ -6873,7 +6873,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_SUCKERPUNCH
-/*effect*/			237,
+/*effect*/			EFFECT_SUCKER_PUNCH,
 /*power*/			80,
 /*type*/			TYPE_DARK,
 /*accuracy*/		100,
@@ -6888,7 +6888,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_SCALD
-/*effect*/			EFFECT_THAW_HIT,
+/*effect*/			EFFECT_BURN_HIT,
 /*power*/			80,
 /*type*/			TYPE_WATER,
 /*accuracy*/		100,
@@ -6903,7 +6903,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_BRINE
-/*effect*/			238,
+/*effect*/			EFFECT_HIT,
 /*power*/			65,
 /*type*/			TYPE_WATER,
 /*accuracy*/		100,
@@ -6968,7 +6968,7 @@ struct BattleMove gBattleMoves[] = {
 /*type*/			TYPE_FAIRY,
 /*accuracy*/		100,
 /*pp*/				40,
-/*effectChance*/	0,
+/*effectChance*/	30,
 /*target*/			MOVE_TARGET_SELECTED,
 /*priority*/		0,
 /*flags*/			FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_KINGS_ROCK_AFFECTED,
@@ -7083,7 +7083,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_TAILWIND
-/*effect*/			239,
+/*effect*/			EFFECT_TEAM_EFFECTS,
 /*power*/			0,
 /*type*/			TYPE_FLYING,
 /*accuracy*/		0,
@@ -7098,7 +7098,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_BOOMBURST
-/*effect*/			EFFECT_UNUSED_6E,
+/*effect*/			EFFECT_HIT,
 /*power*/			140,
 /*type*/			TYPE_NORMAL,
 /*accuracy*/		100,
@@ -7113,7 +7113,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_INCINERATE
-/*effect*/			219,
+/*effect*/			EFFECT_EAT_BERRY,
 /*power*/			60,
 /*type*/			TYPE_FIRE,
 /*accuracy*/		100,
@@ -7233,7 +7233,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_STOREDPOWER
-/*effect*/			214,
+/*effect*/			EFFECT_HIT,
 /*power*/			20,
 /*type*/			TYPE_PSYCHIC,
 /*accuracy*/		100,
@@ -7263,7 +7263,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_PUNISHMENT
-/*effect*/			214,
+/*effect*/			EFFECT_HIT,
 /*power*/			1,
 /*type*/			TYPE_DARK,
 /*accuracy*/		100,
@@ -7278,7 +7278,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_ASSURANCE
-/*effect*/			EFFECT_PURSUIT,
+/*effect*/			EFFECT_HIT,
 /*power*/			60,
 /*type*/			TYPE_DARK,
 /*accuracy*/		100,
@@ -7293,7 +7293,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_DRAGONRUSH
-/*effect*/			EFFECT_FLINCH_HIT_2,
+/*effect*/			EFFECT_FLINCH_HIT,
 /*power*/			100,
 /*type*/			TYPE_DRAGON,
 /*accuracy*/		80,
@@ -7353,7 +7353,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_PETALBLIZZARD
-/*effect*/			EFFECT_UNUSED_6E,
+/*effect*/			EFFECT_HIT,
 /*power*/			90,
 /*type*/			TYPE_GRASS,
 /*accuracy*/		100,
@@ -7473,7 +7473,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_RETALIATE
-/*effect*/			215,
+/*effect*/			EFFECT_HIT,
 /*power*/			70,
 /*type*/			TYPE_NORMAL,
 /*accuracy*/		100,
@@ -7503,7 +7503,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_JUDGMENT
-/*effect*/			215,
+/*effect*/			EFFECT_HIT,
 /*power*/			100,
 /*type*/			TYPE_NORMAL,
 /*accuracy*/		100,
@@ -7533,7 +7533,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_PSYSHOCK
-/*effect*/			EFFECT_SPATK_PHYSICAL_DAMAGE,
+/*effect*/			EFFECT_HIT,
 /*power*/			80,
 /*type*/			TYPE_PSYCHIC,
 /*accuracy*/		0,
@@ -7593,7 +7593,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_NATURALGIFT
-/*effect*/			220,
+/*effect*/			EFFECT_NATURAL_GIFT,
 /*power*/			1,
 /*type*/			TYPE_NORMAL,
 /*accuracy*/		100,
@@ -7608,7 +7608,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_CHIPAWAY
-/*effect*/			EFFECT_IGNORE_STAT_CHANGES,
+/*effect*/			EFFECT_HIT,
 /*power*/			70,
 /*type*/			TYPE_NORMAL,
 /*accuracy*/		100,
@@ -7623,7 +7623,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_SMACKDOWN
-/*effect*/			221,
+/*effect*/			EFFECT_SMACK_DOWN,
 /*power*/			50,
 /*type*/			TYPE_ROCK,
 /*accuracy*/		100,
@@ -7653,7 +7653,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_GYROBALL
-/*effect*/			225,
+/*effect*/			EFFECT_HIT,
 /*power*/			1,
 /*type*/			TYPE_STEEL,
 /*accuracy*/		100,
@@ -7788,7 +7788,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_GUARDSWAP
-/*effect*/			EFFECT_CAMOUFLAGE,
+/*effect*/			EFFECT_STAT_SWAP_SPLT,
 /*power*/			0,
 /*type*/			TYPE_PSYCHIC,
 /*accuracy*/		0,
@@ -7803,7 +7803,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_STEAMERUPTION
-/*effect*/			EFFECT_THAW_HIT,
+/*effect*/			EFFECT_BURN_HIT,
 /*power*/			120,
 /*type*/			TYPE_WATER,
 /*accuracy*/		95,
@@ -7833,7 +7833,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_MEFIRST
-/*effect*/			220,
+/*effect*/			EFFECT_ME_FIRST,
 /*power*/			0,
 /*type*/			TYPE_NORMAL,
 /*accuracy*/		0,
@@ -7848,7 +7848,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_POWERSWAP
-/*effect*/			EFFECT_CAMOUFLAGE,
+/*effect*/			EFFECT_STAT_SWAP_SPLT,
 /*power*/			0,
 /*type*/			TYPE_PSYCHIC,
 /*accuracy*/		0,
@@ -7863,7 +7863,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_POWERTRICK
-/*effect*/			EFFECT_CAMOUFLAGE,
+/*effect*/			EFFECT_STAT_SWAP_SPLT,
 /*power*/			0,
 /*type*/			TYPE_PSYCHIC,
 /*accuracy*/		0,
@@ -7893,7 +7893,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_WRINGOUT
-/*effect*/			EFFECT_ERUPTION,
+/*effect*/			EFFECT_HIT,
 /*power*/			1,
 /*type*/			TYPE_NORMAL,
 /*accuracy*/		100,
@@ -7923,7 +7923,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_PSYSTRIKE
-/*effect*/			EFFECT_SPATK_PHYSICAL_DAMAGE,
+/*effect*/			EFFECT_HIT,
 /*power*/			100,
 /*type*/			TYPE_PSYCHIC,
 /*accuracy*/		100,
@@ -7953,7 +7953,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_DIAMONDSTORM
-/*effect*/			EFFECT_DEFENSE_UP_HIT,
+/*effect*/			EFFECT_HIDDEN_POWER,
 /*power*/			100,
 /*type*/			TYPE_ROCK,
 /*accuracy*/		95,
@@ -7983,7 +7983,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_HEAVYSLAM
-/*effect*/			EFFECT_FLINCH_HIT_2,
+/*effect*/			EFFECT_HIT,
 /*power*/			1,
 /*type*/			TYPE_STEEL,
 /*accuracy*/		100,
@@ -8013,7 +8013,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_ELECTROBALL
-/*effect*/			225,
+/*effect*/			EFFECT_HIT,
 /*power*/			1,
 /*type*/			TYPE_ELECTRIC,
 /*accuracy*/		100,
@@ -8028,7 +8028,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_FOULPLAY
-/*effect*/			224,
+/*effect*/			EFFECT_HIT,
 /*power*/			95,
 /*type*/			TYPE_DARK,
 /*accuracy*/		100,
@@ -8118,7 +8118,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_HEARTSWAP
-/*effect*/			EFFECT_CAMOUFLAGE,
+/*effect*/			EFFECT_STAT_SWAP_SPLT,
 /*power*/			0,
 /*type*/			TYPE_PSYCHIC,
 /*accuracy*/		0,
@@ -8133,7 +8133,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_CRUSHGRIP
-/*effect*/			EFFECT_ERUPTION,
+/*effect*/			EFFECT_HIT,
 /*power*/			1,
 /*type*/			TYPE_NORMAL,
 /*accuracy*/		100,
@@ -8148,7 +8148,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_SACREDSWORD
-/*effect*/			EFFECT_IGNORE_STAT_CHANGES,
+/*effect*/			EFFECT_HIT,
 /*power*/			90,
 /*type*/			TYPE_FIGHTING,
 /*accuracy*/		100,
@@ -8163,7 +8163,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_HEATCRASH
-/*effect*/			EFFECT_FLINCH_HIT_2,
+/*effect*/			EFFECT_HIT,
 /*power*/			80,
 /*type*/			TYPE_FIRE,
 /*accuracy*/		100,
@@ -8193,7 +8193,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_TECHNOBLAST
-/*effect*/			215,
+/*effect*/			EFFECT_HIT,
 /*power*/			120,
 /*type*/			TYPE_NORMAL,
 /*accuracy*/		100,
@@ -8208,7 +8208,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_RELICSONG
-/*effect*/			223,
+/*effect*/			EFFECT_RELIC_SONG,
 /*power*/			75,
 /*type*/			TYPE_NORMAL,
 /*accuracy*/		100,
@@ -8223,7 +8223,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_SECRETSWORD
-/*effect*/			EFFECT_SPATK_PHYSICAL_DAMAGE,
+/*effect*/			EFFECT_HIT,
 /*power*/			85,
 /*type*/			TYPE_FIGHTING,
 /*accuracy*/		100,
@@ -8328,7 +8328,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_FUSIONFLARE
-/*effect*/			EFFECT_THAW_HIT,
+/*effect*/			EFFECT_HIT,
 /*power*/			100,
 /*type*/			TYPE_FIRE,
 /*accuracy*/		100,
@@ -8343,7 +8343,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_FUSIONBOLT
-/*effect*/			223,
+/*effect*/			EFFECT_HIT,
 /*power*/			100,
 /*type*/			TYPE_ELECTRIC,
 /*accuracy*/		100,
@@ -8418,7 +8418,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_TOPSYTURVY
-/*effect*/			234,
+/*effect*/			EFFECT_TOPSY_TURVY_ELECTRIFY,
 /*power*/			0,
 /*type*/			TYPE_DARK,
 /*accuracy*/		0,
@@ -8583,7 +8583,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_THOUSANDARROWS
-/*effect*/			221,
+/*effect*/			EFFECT_SMACK_DOWN,
 /*power*/			90,
 /*type*/			TYPE_GROUND,
 /*accuracy*/		100,
@@ -8733,7 +8733,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_BRUTALSWING
-/*effect*/			EFFECT_UNUSED_6E,
+/*effect*/			EFFECT_HIT,
 /*power*/			60,
 /*type*/			TYPE_DARK,
 /*accuracy*/		100,
@@ -8748,7 +8748,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_BURNUP
-/*effect*/			EFFECT_THAW_HIT,
+/*effect*/			EFFECT_BURN_UP,
 /*power*/			140,
 /*type*/			TYPE_FIRE,
 /*accuracy*/		100,
@@ -8778,7 +8778,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_DARKESTLARIAT
-/*effect*/			EFFECT_IGNORE_STAT_CHANGES,
+/*effect*/			EFFECT_HIT,
 /*power*/			85,
 /*type*/			TYPE_DARK,
 /*accuracy*/		100,
@@ -8853,7 +8853,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_FLORALHEALING
-/*effect*/			233,
+/*effect*/			EFFECT_HEAL_TARGET,
 /*power*/			0,
 /*type*/			TYPE_FAIRY,
 /*accuracy*/		0,
@@ -8988,7 +8988,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_MULTIATTACK
-/*effect*/			215,
+/*effect*/			EFFECT_HIT,
 /*power*/			90,
 /*type*/			TYPE_NORMAL,
 /*accuracy*/		100,
@@ -9018,7 +9018,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_POLLENPUFF
-/*effect*/			233,
+/*effect*/			EFFECT_HEAL_TARGET,
 /*power*/			90,
 /*type*/			TYPE_BUG,
 /*accuracy*/		100,
@@ -9033,7 +9033,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_POWERTRIP
-/*effect*/			214,
+/*effect*/			EFFECT_HIT,
 /*power*/			20,
 /*type*/			TYPE_DARK,
 /*accuracy*/		100,
@@ -9093,7 +9093,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_REVELATIONDANCE
-/*effect*/			215,
+/*effect*/			EFFECT_HIT,
 /*power*/			90,
 /*type*/			TYPE_NORMAL,
 /*accuracy*/		100,
@@ -9213,7 +9213,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_SPEEDSWAP
-/*effect*/			EFFECT_CAMOUFLAGE,
+/*effect*/			EFFECT_STAT_SWAP_SPLT,
 /*power*/			0,
 /*type*/			TYPE_PSYCHIC,
 /*accuracy*/		0,
@@ -9258,7 +9258,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_STOMPINGTANTRUM
-/*effect*/			224,
+/*effect*/			EFFECT_HIT,
 /*power*/			75,
 /*type*/			TYPE_GROUND,
 /*accuracy*/		100,
@@ -9318,7 +9318,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_THROATCHOP
-/*effect*/			231,
+/*effect*/			EFFECT_ATTACK_BLOCKERS,
 /*power*/			80,
 /*type*/			TYPE_DARK,
 /*accuracy*/		100,
@@ -9378,7 +9378,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_ELECTRICTERRAIN
-/*effect*/			226,
+/*effect*/			EFFECT_SET_TERRAIN,
 /*power*/			0,
 /*type*/			TYPE_ELECTRIC,
 /*accuracy*/		0,
@@ -9393,7 +9393,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_GRASSYTERRAIN
-/*effect*/			226,
+/*effect*/			EFFECT_SET_TERRAIN,
 /*power*/			0,
 /*type*/			TYPE_GRASS,
 /*accuracy*/		0,
@@ -9408,7 +9408,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_MISTYTERRAIN
-/*effect*/			226,
+/*effect*/			EFFECT_SET_TERRAIN,
 /*power*/			0,
 /*type*/			TYPE_FAIRY,
 /*accuracy*/		0,
@@ -9423,7 +9423,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_PSYCHICTERRAIN
-/*effect*/			226,
+/*effect*/			EFFECT_SET_TERRAIN,
 /*power*/			0,
 /*type*/			TYPE_PSYCHIC,
 /*accuracy*/		0,
@@ -9438,7 +9438,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_GRASSPLEDGE
-/*effect*/			227,
+/*effect*/			EFFECT_PLEDGE,
 /*power*/			80,
 /*type*/			TYPE_GRASS,
 /*accuracy*/		100,
@@ -9453,7 +9453,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_FIREPLEDGE
-/*effect*/			227,
+/*effect*/			EFFECT_PLEDGE,
 /*power*/			80,
 /*type*/			TYPE_FIRE,
 /*accuracy*/		100,
@@ -9468,7 +9468,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_WATERPLEDGE
-/*effect*/			227,
+/*effect*/			EFFECT_PLEDGE,
 /*power*/			80,
 /*type*/			TYPE_WATER,
 /*accuracy*/		100,
@@ -9483,7 +9483,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_TRICKROOM
-/*effect*/			228,
+/*effect*/			EFFECT_FIELD_EFFECTS,
 /*power*/			0,
 /*type*/			TYPE_PSYCHIC,
 /*accuracy*/		0,
@@ -9498,7 +9498,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_MAGICROOM
-/*effect*/			228,
+/*effect*/			EFFECT_FIELD_EFFECTS,
 /*power*/			0,
 /*type*/			TYPE_PSYCHIC,
 /*accuracy*/		0,
@@ -9513,7 +9513,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_WONDERROOM
-/*effect*/			228,
+/*effect*/			EFFECT_FIELD_EFFECTS,
 /*power*/			0,
 /*type*/			TYPE_PSYCHIC,
 /*accuracy*/		0,
@@ -9588,7 +9588,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_AQUARING
-/*effect*/			EFFECT_LEECH_SEED,
+/*effect*/			EFFECT_INGRAIN,
 /*power*/			0,
 /*type*/			TYPE_WATER,
 /*accuracy*/		0,
@@ -9648,7 +9648,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_FLING
-/*effect*/			229,
+/*effect*/			EFFECT_FLING,
 /*power*/			0,
 /*type*/			TYPE_DARK,
 /*accuracy*/		100,
@@ -9663,7 +9663,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_FLYINGPRESS
-/*effect*/			EFFECT_FLINCH_HIT_2,
+/*effect*/			EFFECT_HIT,
 /*power*/			100,
 /*type*/			TYPE_FIGHTING,
 /*accuracy*/		95,
@@ -9678,7 +9678,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_GRAVITY
-/*effect*/			228,
+/*effect*/			EFFECT_FIELD_EFFECTS,
 /*power*/			0,
 /*type*/			TYPE_PSYCHIC,
 /*accuracy*/		0,
@@ -9693,7 +9693,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_GUARDSPLIT
-/*effect*/			EFFECT_CAMOUFLAGE,
+/*effect*/			EFFECT_STAT_SWAP_SPLT,
 /*power*/			0,
 /*type*/			TYPE_PSYCHIC,
 /*accuracy*/		0,
@@ -9708,7 +9708,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_HEALBLOCK
-/*effect*/			231,
+/*effect*/			EFFECT_ATTACK_BLOCKERS,
 /*power*/			0,
 /*type*/			TYPE_PSYCHIC,
 /*accuracy*/		100,
@@ -9723,7 +9723,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_IONDELUGE
-/*effect*/			228,
+/*effect*/			EFFECT_FIELD_EFFECTS,
 /*power*/			0,
 /*type*/			TYPE_ELECTRIC,
 /*accuracy*/		0,
@@ -9738,7 +9738,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_LUCKYCHANT
-/*effect*/			239,
+/*effect*/			EFFECT_TEAM_EFFECTS,
 /*power*/			0,
 /*type*/			TYPE_NORMAL,
 /*accuracy*/		0,
@@ -9753,7 +9753,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_MAGNETRISE
-/*effect*/			239,
+/*effect*/			EFFECT_TEAM_EFFECTS,
 /*power*/			0,
 /*type*/			TYPE_ELECTRIC,
 /*accuracy*/		0,
@@ -9783,7 +9783,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_POWDER
-/*effect*/			231,
+/*effect*/			EFFECT_ATTACK_BLOCKERS,
 /*power*/			0,
 /*type*/			TYPE_BUG,
 /*accuracy*/		0,
@@ -9798,7 +9798,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_POWERSPLIT
-/*effect*/			EFFECT_CAMOUFLAGE,
+/*effect*/			EFFECT_STAT_SWAP_SPLT,
 /*power*/			0,
 /*type*/			TYPE_PSYCHIC,
 /*accuracy*/		0,
@@ -9843,7 +9843,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_SOAK
-/*effect*/			232,
+/*effect*/			EFFECT_TYPE_CHANGES,
 /*power*/			0,
 /*type*/			TYPE_WATER,
 /*accuracy*/		100,
@@ -9858,7 +9858,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_TELEKINESIS
-/*effect*/			231,
+/*effect*/			EFFECT_ATTACK_BLOCKERS,
 /*power*/			0,
 /*type*/			TYPE_PSYCHIC,
 /*accuracy*/		0,
@@ -9873,7 +9873,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_TRICKORTREAT
-/*effect*/			232,
+/*effect*/			EFFECT_TYPE_CHANGES,
 /*power*/			0,
 /*type*/			TYPE_GHOST,
 /*accuracy*/		100,
@@ -9903,7 +9903,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_FORESTSCURSE
-/*effect*/			232,
+/*effect*/			EFFECT_TYPE_CHANGES,
 /*power*/			0,
 /*type*/			TYPE_GRASS,
 /*accuracy*/		100,
@@ -9918,7 +9918,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_MINDBLOWN
-/*effect*/			EFFECT_BELLY_DRUM,
+/*effect*/			EFFECT_HIT,
 /*power*/			150,
 /*type*/			TYPE_FIRE,
 /*accuracy*/		100,
@@ -9948,7 +9948,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_PLASMAFISTS
-/*effect*/			228,
+/*effect*/			EFFECT_FIELD_EFFECTS,
 /*power*/			100,
 /*type*/			TYPE_ELECTRIC,
 /*accuracy*/		100,
@@ -9963,7 +9963,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_ELECTRIFY
-/*effect*/			234,
+/*effect*/			EFFECT_TOPSY_TURVY_ELECTRIFY,
 /*power*/			0,
 /*type*/			TYPE_ELECTRIC,
 /*accuracy*/		0,
@@ -9978,7 +9978,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_EMBARGO
-/*effect*/			231,
+/*effect*/			EFFECT_ATTACK_BLOCKERS,
 /*power*/			0,
 /*type*/			TYPE_DARK,
 /*accuracy*/		100,
@@ -9993,7 +9993,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_FAIRYLOCK
-/*effect*/			235,
+/*effect*/			EFFECT_FAIRY_LOCK_HAPPY_HOUR,
 /*power*/			0,
 /*type*/			TYPE_FAIRY,
 /*accuracy*/		0,
@@ -10008,7 +10008,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_LIGHTOFRUIN
-/*effect*/			EFFECT_DOUBLE_EDGE,
+/*effect*/			EFFECT_RECOIL,
 /*power*/			140,
 /*type*/			TYPE_FAIRY,
 /*accuracy*/		90,
@@ -10023,7 +10023,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_TRUMPCARD
-/*effect*/			220,
+/*effect*/			EFFECT_HIT,
 /*power*/			0,
 /*type*/			TYPE_NORMAL,
 /*accuracy*/		0,
@@ -10038,7 +10038,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_AFTERYOU
-/*effect*/			236,
+/*effect*/			EFFECT_INSTRUCT_AFTER_YOU_QUASH,
 /*power*/			0,
 /*type*/			TYPE_NORMAL,
 /*accuracy*/		0,
@@ -10053,7 +10053,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_INSTRUCT
-/*effect*/			236,
+/*effect*/			EFFECT_INSTRUCT_AFTER_YOU_QUASH,
 /*power*/			0,
 /*type*/			TYPE_PSYCHIC,
 /*accuracy*/		0,
@@ -10068,7 +10068,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_QUASH
-/*effect*/			236,
+/*effect*/			EFFECT_INSTRUCT_AFTER_YOU_QUASH,
 /*power*/			0,
 /*type*/			TYPE_DARK,
 /*accuracy*/		100,
@@ -10083,7 +10083,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_HAPPYHOUR
-/*effect*/			235,
+/*effect*/			EFFECT_FAIRY_LOCK_HAPPY_HOUR,
 /*power*/			0,
 /*type*/			TYPE_NORMAL,
 /*accuracy*/		0,
@@ -10098,7 +10098,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_DOUBLEIRONBASH
-/*effect*/			EFFECT_DOUBLE_HIT,
+/*effect*/			EFFECT_FLINCH_HIT,
 /*power*/			60,
 /*type*/			TYPE_STEEL,
 /*accuracy*/		100,
@@ -10113,7 +10113,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_LASTRESORT
-/*effect*/			EFFECT_HIT,
+/*effect*/			241,
 /*power*/			140,
 /*type*/			TYPE_NORMAL,
 /*accuracy*/		100,
@@ -10128,7 +10128,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_SKYDROP
-/*effect*/			EFFECT_HIT,
+/*effect*/			241,
 /*power*/			60,
 /*type*/			TYPE_FLYING,
 /*accuracy*/		100,
@@ -10143,7 +10143,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_CELEBRATE
-/*effect*/			EFFECT_SPLASH,
+/*effect*/			EFFECT_FAIRY_LOCK_HAPPY_HOUR,
 /*power*/			0,
 /*type*/			TYPE_NORMAL,
 /*accuracy*/		0,
@@ -10158,7 +10158,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_HOLDHANDS
-/*effect*/			EFFECT_SPLASH,
+/*effect*/			EFFECT_FAIRY_LOCK_HAPPY_HOUR,
 /*power*/			0,
 /*type*/			TYPE_NORMAL,
 /*accuracy*/		0,

@@ -255,6 +255,7 @@ GravityBanTable:
 .hword MOVE_MAGNETRISE
 .hword MOVE_TELEKINESIS
 .hword MOVE_FLYINGPRESS
+.hword MOVE_SKYDROP
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -716,6 +717,9 @@ ParentalBondBanList:
 .hword MOVE_EXPLOSION
 .hword MOVE_FINALGAMBIT
 .hword MOVE_ENDEAVOR
+.hword MOVE_UPROAR
+.hword MOVE_ICEBALL
+.hword MOVE_ROLLOUT
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

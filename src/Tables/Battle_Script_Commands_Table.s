@@ -35,7 +35,7 @@ gBattleScriptingCommandsTable:
 .word 0x8021211				@seteffecttarget
 .word 0x8021221				@seteffectuser
 .word 0x8021231				@clearstatus
-.word 0x80212ad				@faintpokemon
+.word atk19_tryfaintmon			@faintpokemon
 .word 0x80215a1				@dofaintanimation
 .word atk1B_cleareffectsonfaint
 .word 0x8021641				@jumpifstatus
@@ -148,7 +148,7 @@ gBattleScriptingCommandsTable:
 .word atk87_stockpiletohpheal		@stockpiletohprecovery
 .word atk88_negativedamage
 .word atk89_statbuffchange
-.word 0x80280cd				@normalisebuffs
+.word atk8A_normalisebuffs
 .word 0x8028121				@setbide
 .word 0x8028191				@confuseifrepeatingattackends
 .word atk8D_setmultihitcounter		@setloopcounter
@@ -212,7 +212,7 @@ gBattleScriptingCommandsTable:
 .word 0x802bc35				@setminimize
 .word atkC8_sethail
 .word 0x802bccd				@jumpifattackandspecialattackcannotfall
-.word 0x802bd69				@setforcedtarget
+.word atkCA_setforcedtarget
 .word 0x802bdb5				@setcharge
 .word atkCC_callterrainattack
 .word 0x802be8d				@cureifburnedparalysedorpoisoned
