@@ -1,4 +1,3 @@
-//Need to add a blank out for Swallow Stockpile Counter decrement
 //Update Haze to not remove type 3
 //Update  sMovesForbiddenToCopy, called in Mimic, Metronome, Assist, change 0xFFFF to 0xFEFE
 //Update Gen 7 Metronome Choice effect
@@ -7,16 +6,10 @@
 //Sketch update
 //Destiny Bond End Turn Update
 //Substitute for Heal Bell
-//Future sight damage BS
-//Update MoveValuesCleanUp CritMultiplier
 //Type Resist Berries
 //Metronome Item during Charging Turn
 //Reciever ban list
-//Update gCurrMovePos in Instruct
 //Move Stomping Tantrum to end command based on gNewBS->TargetsHit
-//Update EmitMoveAnimation to include attacker's item
-//Make removereflectlightscreen an anim task
-//Update all of the battle script offsets
 
 #include "defines.h"
 #include "helper_functions.h"
@@ -40,6 +33,8 @@
 #define BattleScript_HitFromCritCalc (u8*) 0x81D6930
 #define BattleScript_AlreadyAtFullHp (u8*) 0x81D7DD1
 #define BattleScript_PresentHealTarget (u8*) 0x81D7DB7
+#define BattleScript_DestinyBondTakesLife (u8*) 0x81D8C6C
+#define BattleScript_GrudgeTakesPp (u8*) 0x81D8FA3
 
 bool8 UproarWakeUpCheck(bank_t);
 u8 CheckMoveLimitations(u8 bank, u8 unusableMoves, u8 check);
@@ -62,8 +57,10 @@ extern u8 BattleScript_PrimalWeatherEnd[];
 extern u8 BattleScript_Symbiosis[];
 extern u8 BattleScript_SpikesFreeDefog[];
 extern u8 BattleScript_FlowerGift[];
-//Update this!
-#define BattleScript_NoHealTargetAfterHealBlock (u8*) 0x81D694E //extern u8 BattleScript_NoHealTargetAfterHealBlock[];
+extern u8 BattleScript_NoHealTargetAfterHealBlock[];
+extern u8 BattleScript_FaintAttacker[];
+extern u8 BattleScript_FaintTarget[];
+extern u8 BattleScript_FaintScriptingBank[];
 
 extern u8 MimikyuDisguisedTookDamageString[];
 extern u8 StringEnduredHitWithSturdy[];
@@ -206,17 +203,11 @@ void atk0B_healthbarupdate(void) {
 
     if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT)) {
         gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
-		
-		u8 atkAbility;
-		if (gBattlescriptCurrInstr[1] == BS_GET_TARGET)
-			atkAbility = ABILITY(gBankAttacker);
-		else
-			atkAbility = 0;
 
         if (gBattleMons[gActiveBattler].status2 & STATUS2_SUBSTITUTE 
 		&& gDisableStructs[gActiveBattler].substituteHP 
 		&& !(gHitMarker & HITMARKER_IGNORE_SUBSTITUTE)
-		&& atkAbility != ABILITY_INFILTRATOR)
+		&& !gNewBS->bypassSubstitute)
             PrepareStringBattle(STRINGID_SUBSTITUTEDAMAGED, gActiveBattler);
 		
 		else if (ABILITY(gActiveBattler) == ABILITY_DISGUISE 
@@ -253,18 +244,12 @@ void atk0C_datahpupdate(void) {
 
     if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT)) {
         gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
-		
-		u8 atkAbility;
-		if (gBattlescriptCurrInstr[1] == BS_GET_TARGET)
-			atkAbility = ABILITY(gBankAttacker);
-		else
-			atkAbility = 0;
-		
+	
 		//If Substitute Up
         if (gBattleMons[gActiveBattler].status2 & STATUS2_SUBSTITUTE 
 		&& gDisableStructs[gActiveBattler].substituteHP 
-		&& !(gHitMarker & HITMARKER_IGNORE_SUBSTITUTE) 
-		&& atkAbility != ABILITY_INFILTRATOR) {
+		&& !(gHitMarker & HITMARKER_IGNORE_SUBSTITUTE)
+		&& !gNewBS->bypassSubstitute) {
             if (gDisableStructs[gActiveBattler].substituteHP >= gBattleMoveDamage) {
                 if (gSpecialStatuses[gActiveBattler].moveturnLostHP == 0)
                     gSpecialStatuses[gActiveBattler].moveturnLostHP = gBattleMoveDamage;
@@ -539,6 +524,108 @@ void atk0F_resultmessage(void) {
     gBattlescriptCurrInstr++;
 }
 
+void atk19_tryfaintmon(void)
+{
+    u8* BS_ptr;
+
+    if (gBattlescriptCurrInstr[2] != 0)
+    {
+        gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
+        if (gHitMarker & HITMARKER_FAINTED(gActiveBattler))
+        {
+            BS_ptr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
+
+            BattleScriptPop();
+            gBattlescriptCurrInstr = BS_ptr;
+            gSideAffecting[SIDE(gActiveBattler)] &= ~(SIDE_STATUS_SPIKES_DAMAGED);
+        }
+        else
+        {
+            gBattlescriptCurrInstr += 7;
+        }
+    }
+    else
+    {
+        u8 bank;
+
+        if (gBattlescriptCurrInstr[1] == BS_GET_ATTACKER)
+        {
+            gActiveBattler = gBankAttacker;
+            bank = gBankTarget;
+            BS_ptr = BattleScript_FaintAttacker;
+        }
+        else if (gBattlescriptCurrInstr[1] == BS_GET_SCRIPTING_BANK)
+        {
+            gActiveBattler = gBattleScripting->bank;
+            bank = gBattleScripting->bank;
+            BS_ptr = BattleScript_FaintScriptingBank;
+        }
+        else
+        {
+            gActiveBattler = gBankTarget;
+            bank = gBankAttacker;
+            BS_ptr = BattleScript_FaintTarget;
+        }
+        if (!(gAbsentBattlerFlags & gBitTable[gActiveBattler])
+        && gBattleMons[gActiveBattler].hp == 0)
+        {
+            gHitMarker |= HITMARKER_FAINTED(gActiveBattler);
+            BattleScriptPush(gBattlescriptCurrInstr + 7);
+            gBattlescriptCurrInstr = BS_ptr;
+            if (SIDE(gActiveBattler) == B_SIDE_PLAYER)
+            {
+                gHitMarker |= HITMARKER_x400000;
+                if (gBattleResults->playerFaintCounter < 0xFF)
+                    gBattleResults->playerFaintCounter++;
+                AdjustFriendshipOnBattleFaint(gActiveBattler);
+            }
+            else
+            {
+                if (gBattleResults->opponentFaintCounter < 0xFF)
+                    gBattleResults->opponentFaintCounter++;
+                gBattleResults->lastOpponentSpecies = GetMonData(&gEnemyParty[gBattlerPartyIndexes[gActiveBattler]], MON_DATA_SPECIES, NULL);
+            }
+			
+			gNewBS->RetaliateCounters[SIDE(gActiveBattler)] = 2;
+			
+            if ((gHitMarker & HITMARKER_DESTINYBOND) 
+			&& gBattleMons[gBankAttacker].hp != 0
+			&& gBattlescriptCurrInstr[1] != BS_GET_SCRIPTING_BANK)
+            {
+                gHitMarker &= ~(HITMARKER_DESTINYBOND);
+				u8* backupScript = gBattlescriptCurrInstr;
+				gBattlescriptCurrInstr = BattleScript_DestinyBondTakesLife;
+                BattleScriptPushCursor();
+                gBattleMoveDamage = gBattleMons[bank].hp;
+                gBattlescriptCurrInstr = backupScript;
+            }
+			
+            if ((gStatuses3[gBankTarget] & STATUS3_GRUDGE)
+             && !(gHitMarker & HITMARKER_GRUDGE)
+             && SIDE(gBankAttacker) != SIDE(gBankTarget)
+             && gBattleMons[gBankAttacker].hp != 0
+             && gCurrentMove != MOVE_STRUGGLE
+			 && gBattlescriptCurrInstr[1] != BS_GET_SCRIPTING_BANK)
+            {
+                u8 moveIndex = gBattleStruct->chosenMovePositions[gBankAttacker];
+
+                gBattleMons[gBankAttacker].pp[moveIndex] = 0;
+                BattleScriptPush(gBattlescriptCurrInstr);
+                gBattlescriptCurrInstr = BattleScript_GrudgeTakesPp;
+                gActiveBattler = gBankAttacker;
+                EmitSetMonData(0, moveIndex + REQUEST_PPMOVE1_BATTLE, 0, 1, &gBattleMons[gActiveBattler].pp[moveIndex]);
+                MarkBufferBankForExecution(gActiveBattler);
+
+                PREPARE_MOVE_BUFFER(gBattleTextBuff1, gBattleMons[gBankAttacker].moves[moveIndex])
+            }
+        }
+        else
+        {
+            gBattlescriptCurrInstr += 7;
+        }
+    }
+}
+
 void atk1B_cleareffectsonfaint(void) {
 	int i;
 	u8 partner = PARTNER(gActiveBattler);
@@ -687,6 +774,18 @@ void atk22_jumpiftype(void) //u8 bank, u8 type, *ptr
         gBattlescriptCurrInstr = jump_loc;
     else
         gBattlescriptCurrInstr += 7;
+}
+
+void MoveValuesCleanUp(void)
+{
+    gMoveResultFlags = 0;
+    gBattleScripting->dmgMultiplier = 1;
+    gCritMultiplier = 100;
+    gBattleCommunication[MOVE_EFFECT_BYTE] = 0;
+	gNewBS->backupMoveEffect = 0;
+    gBattleCommunication[6] = 0;
+    gHitMarker &= ~(HITMARKER_DESTINYBOND);
+    gHitMarker &= ~(HITMARKER_SYNCHRONISE_EFFECT);
 }
 
 void atk40_jumpifaffectedbyprotect(void)
@@ -845,11 +944,15 @@ void atk66_chosenstatusanimation(void) {
 void atk6A_removeitem(void) {
     u8 bank = gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
 	u8 oldItemEffect = ITEM_EFFECT(bank);
+	gLastUsedItem = gBattleMons[bank].item;
 	
-	if (!gNewBS->IncinerateCounters[bank]) {
-		CONSUMED_ITEMS(bank) = gBattleMons[bank].item;
-		SAVED_CONSUMED_ITEMS(bank) = gBattleMons[bank].item;
+	if (!gNewBS->IncinerateCounters[bank] && gLastUsedItem) {
+		CONSUMED_ITEMS(bank) = gLastUsedItem;
+		SAVED_CONSUMED_ITEMS(bank) = gLastUsedItem;
 		gNewBS->UnburdenBoosts |= 1 << bank;
+		
+		if (ITEM_POCKET(gLastUsedItem) == POCKET_BERRY_POUCH)
+			gNewBS->BelchCounters |= gBitTable[gBattlerPartyIndexes[bank]];
 	}
 	
     gBattleMons[bank].item = 0;
@@ -864,7 +967,7 @@ void atk6A_removeitem(void) {
 	&& gNewBS->NoSymbiosisByte == FALSE
 	&& ABILITY(partner) == ABILITY_SYMBIOSIS
 	&& (!gNewBS->IncinerateCounters[bank] || oldItemEffect == ITEM_EFFECT_AIR_BALLOON) //Air Balloons can't be restored by Recycle, but they trigger Symbiosis
-	&& !(gWishFutureKnock->knockedOffPokes[GetBattlerSide(bank)] & gBitTable[gBattlerPartyIndexes[bank]])
+	&& !(gWishFutureKnock->knockedOffPokes[SIDE(bank)] & gBitTable[gBattlerPartyIndexes[bank]])
 	&& gBattleMons[partner].item
 	&& CanTransferItem(gBattleMons[bank].species, partnerItem, GetBankPartyData(bank))
 	&& CanTransferItem(gBattleMons[partner].species, partnerItem, GetBankPartyData(bank))) {
@@ -886,7 +989,7 @@ void atk6A_removeitem(void) {
 	
 	gNewBS->NoSymbiosisByte = FALSE;
 	gNewBS->IncinerateCounters[bank] = 0;
-	gWishFutureKnock->knockedOffPokes[GetBattlerSide(bank)] &= ~(gBitTable[gBattlerPartyIndexes[bank]]);
+	gWishFutureKnock->knockedOffPokes[SIDE(bank)] &= ~(gBitTable[gBattlerPartyIndexes[bank]]);
 }
 
 void atk70_recordlastability(void) {
@@ -932,7 +1035,7 @@ void atk77_setprotect(void) {
     if (udivsi(rate, divisor) >= Random() && not_last_turn) {
 	
         if (gBattleMoves[gCurrentMove].effect == EFFECT_PROTECT) {
-			u8 atkSide = GetBattlerSide(gBankAttacker);
+			u8 atkSide = SIDE(gBankAttacker);
 			switch (gCurrentMove) {
 				case MOVE_KINGSSHIELD:
 					gProtectStructs[gBankAttacker].KingsShield = 1;
@@ -1158,7 +1261,7 @@ void atk86_stockpiletobasedamage(void) {
         gBattlescriptCurrInstr = jump_loc;
     else
 	{
-		gBattleScripting->animTurn = gDisableStructs[gBattlerAttacker].stockpileCounter;
+		gBattleScripting->animTurn = gDisableStructs[gBankAttacker].stockpileCounter;
         gBattlescriptCurrInstr += 5;
 	}
 }
@@ -1205,6 +1308,19 @@ void atk88_negativedamage(void) {
         gBattleMoveDamage = -1;
 	
     gBattlescriptCurrInstr++;
+}
+
+void atk8A_normalisebuffs(void) //Haze
+{
+    int i, j;
+
+    for (i = 0; i < gBattlersCount; ++i)
+    {
+        for (j = 0; j < BATTLE_STATS_NO-1; ++j)
+            gBattleMons[i].statStages[j] = 6;
+    }
+
+    ++gBattlescriptCurrInstr;
 }
 
 void atk8D_setmultihitcounter(void) {
@@ -1955,6 +2071,8 @@ void atkB7_presentdamagecalculation(void)
         gBattlescriptCurrInstr = BattleScript_AlreadyAtFullHp;
     else
     {
+		gNewBS->ParentalBondOn = FALSE;
+		gMultiHitCounter = 0;
         gMoveResultFlags &= ~(MOVE_RESULT_DOESNT_AFFECT_FOE);
         gBattlescriptCurrInstr = BattleScript_PresentHealTarget;
     }
@@ -2257,6 +2375,9 @@ void atkC5_setsemiinvulnerablebit(void) {
 		case MOVE_SKYDROP:
 			gStatuses3[gBankAttacker] |= STATUS3_SKY_DROP_ATTACKER;
 			gStatuses3[gBankTarget] |= STATUS3_SKY_DROP_TARGET;
+			
+			if (gSideTimers[SIDE(gBankTarget)].followmeTarget == gBankTarget) //Removes Follow Me's effect
+				gSideTimers[SIDE(gBankTarget)].followmeTimer = 0;
     }
     gBattlescriptCurrInstr++;
 }
@@ -2301,6 +2422,22 @@ void atkC8_sethail(void) {
 			gWishFutureKnock->weatherDuration = 5;
     }
     gBattlescriptCurrInstr++;
+}
+
+void atkCA_setforcedtarget(void) //Follow me
+{
+	if (gCurrentMove == MOVE_SPOTLIGHT)
+	{
+		gSideTimers[SIDE(gBankTarget)].followmeTimer = 1;
+		gSideTimers[SIDE(gBankTarget)].followmeTarget = gBankTarget;
+		gBattlescriptCurrInstr++;
+	}
+	else
+	{
+		gSideTimers[SIDE(gBankAttacker)].followmeTimer = 1;
+		gSideTimers[SIDE(gBankAttacker)].followmeTarget = gBankAttacker;
+		gBattlescriptCurrInstr++;
+	}
 }
 
 void atkCC_callterrainattack(void) { //nature power
