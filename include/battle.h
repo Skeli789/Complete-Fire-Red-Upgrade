@@ -803,7 +803,7 @@ struct NewBattleStruct
 	
 	struct MegaData* MegaData;
 	struct UltraData* UltraData;
-	struct ZMoveData* ZMoveData;
+	struct ZMoveData* ZMoveData; //0x20176A8
 };
 
 #define gNewBS (ExtensionState.newBattleStruct)
