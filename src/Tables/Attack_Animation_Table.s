@@ -14095,7 +14095,7 @@ ANIM_EMBARGO:
 
 .align 2
 @ hook at b68e4 via r0
-Embargo_ASM:
+EmbargoASM:
 	mov r0, r8
 	strh r0, [r4, #0xA]
 	ldr r1, =CURRENT_MOVE
