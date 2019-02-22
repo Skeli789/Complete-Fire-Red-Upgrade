@@ -1,5 +1,10 @@
+//Replace all ASM routines with C routines
+
 #include "defines.h"
 #include "helper_functions.h"
+
+extern const struct CompressedSpriteSheet gBattleAnimPicTable[];
+extern const struct CompressedSpritePalette gBattleAnimPaletteTable[];
 
 bank_t LoadBattleAnimTarget(u8 arg)
 {
@@ -29,6 +34,21 @@ bank_t LoadBattleAnimTarget(u8 arg)
 			battler = gBattleAnimTarget;
 	}
 	return battler;
+}
+
+#define GET_TRUE_SPRITE_INDEX(i) ((i - ANIM_SPRITES_START))
+void ScriptCmd_loadspritegfx(void)
+{
+    u16 index;
+
+    sBattleAnimScriptPtr++;
+    index = T1_READ_16(sBattleAnimScriptPtr);
+    LoadCompressedSpriteSheetUsingHeap(&gBattleAnimPicTable[GET_TRUE_SPRITE_INDEX(index)]);
+    LoadCompressedSpritePaletteUsingHeap(&gBattleAnimPaletteTable[GET_TRUE_SPRITE_INDEX(index)]);
+    sBattleAnimScriptPtr += 2;
+    AddSpriteIndex(GET_TRUE_SPRITE_INDEX(index));
+    gAnimFramesToWait = 1;
+    gAnimScriptCallback = (u32) WaitAnimFrameCount;
 }
 
 /*
@@ -99,6 +119,12 @@ bool8 IsAnimMoveIonDeluge(void)
 	return move == MOVE_IONDELUGE;
 }
 
+bool8 IsAnimMoveTectnoicRage(void)
+{
+	u16 move = gBattleBufferA[gActiveBattler][1] | (gBattleBufferA[gActiveBattler][2] << 8);
+	return  move == MOVE_TECTONIC_RAGE_P || move == MOVE_TECTONIC_RAGE_S;
+}
+
 bool8 IsAnimMoveBloomDoom(void)
 {
 	u16 move = gBattleBufferA[gActiveBattler][1] | (gBattleBufferA[gActiveBattler][2] << 8);
@@ -116,4 +142,58 @@ bool8 IsMoveNeverEndingNightmareOrDevastatingDrake(void)
 	u16 move = gBattleBufferA[gActiveBattler][1] | (gBattleBufferA[gActiveBattler][2] << 8);
 	return  move == MOVE_NEVER_ENDING_NIGHTMARE_P || move == MOVE_NEVER_ENDING_NIGHTMARE_S 
 		 || move == MOVE_DEVASTATING_DRAKE_P 	  || move == MOVE_DEVASTATING_DRAKE_S;
+}
+
+bool8 IsAnimMoveDestinyBond(void)
+{
+	u16 move = gBattleBufferA[gActiveBattler][1] | (gBattleBufferA[gActiveBattler][2] << 8);
+	return  move == MOVE_DESTINYBOND;
+}
+
+bool8 IsAnimMoveThunderWave(void)
+{
+	u16 move = gBattleBufferA[gActiveBattler][1] | (gBattleBufferA[gActiveBattler][2] << 8);
+	return  move == MOVE_THUNDERWAVE;
+}
+
+bool8 IsAnimMoveGrudge(void)
+{
+	u16 move = gBattleBufferA[gActiveBattler][1] | (gBattleBufferA[gActiveBattler][2] << 8);
+	return  move == MOVE_GRUDGE;
+}
+
+bool8 IsAnimMoveFairyLock(void)
+{
+	u16 move = gBattleBufferA[gActiveBattler][1] | (gBattleBufferA[gActiveBattler][2] << 8);
+	return  move == MOVE_FAIRYLOCK;
+}
+
+bool8 IsAnimMoveLightOfRuin(void)
+{
+	u16 move = gBattleBufferA[gActiveBattler][1] | (gBattleBufferA[gActiveBattler][2] << 8);
+	return  move == MOVE_LIGHTOFRUIN;
+}
+
+bool8 IsAnimMoveFlashCannon(void)
+{
+	u16 move = gBattleBufferA[gActiveBattler][1] | (gBattleBufferA[gActiveBattler][2] << 8);
+	return  move == MOVE_FLASHCANNON;
+}
+
+bool8 IsAnimMoveSkillSwap(void)
+{
+	u16 move = gBattleBufferA[gActiveBattler][1] | (gBattleBufferA[gActiveBattler][2] << 8);
+	return  move == MOVE_SKILLSWAP;
+}
+
+bool8 IsAnimMovePowerSwap(void)
+{
+	u16 move = gBattleBufferA[gActiveBattler][1] | (gBattleBufferA[gActiveBattler][2] << 8);
+	return  move == MOVE_POWERSWAP;
+}
+
+bool8 IsAnimMoveHeartSwap(void)
+{
+	u16 move = gBattleBufferA[gActiveBattler][1] | (gBattleBufferA[gActiveBattler][2] << 8);
+	return  move == MOVE_HEARTSWAP;
 }
