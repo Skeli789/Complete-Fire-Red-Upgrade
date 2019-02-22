@@ -49,3 +49,8 @@ BadPoisonedByBS 08250644
 
 ##Poke Ball Expansion
 GetMonPokeBallHook 0803FE70
+
+##Graphics
+Substitute_FrontTiles 080350F4
+Substitute_BackTiles 08035144
+SurfPal 080AB464
