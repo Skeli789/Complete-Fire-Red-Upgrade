@@ -54,6 +54,7 @@ ET_Mud_Sport_Timer,				//Works
 ET_Wonder_Room_Timer,			//Works
 ET_Magic_Room_Timer,			//Works
 ET_Gravity_Timer,				//Works
+ET_Seeds,
 ET_Terrain_Timer,				//Works
 ET_Block_B,
 ET_Form_Change,

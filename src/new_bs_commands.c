@@ -118,6 +118,7 @@ void atkFF02_cureprimarystatus(void)
 	else
 	{
 		ClearBankStatus(bank);
+		gBattleScripting->bank = bank;
 		gBattlescriptCurrInstr += 6;
 	}
 }
@@ -693,7 +694,7 @@ void atkFF19_formchange(void)
 	u16 targetSpecies = T1_READ_16(gBattlescriptCurrInstr + 4);
 	bool8 reloadType = T2_READ_8(gBattlescriptCurrInstr + 6);
 	
-	if (gBattleMons[bank].species != originalSpecies)
+	if (gBattleMons[bank].species != originalSpecies || gBattleMons[bank].hp == 0)
 		gBattlescriptCurrInstr = T2_READ_PTR(gBattlescriptCurrInstr + 7);
 	else
 	{

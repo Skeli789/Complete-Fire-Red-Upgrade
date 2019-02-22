@@ -1,1 +1,1 @@
--g! -ftc -fh -pe16 -pzlz77 -gu8
+-g! -fts -fh -pe16 -pzlz77 -gu8

@@ -866,7 +866,7 @@ void EmitPrintString(u8 bufferId, u16 stringID)
 	stringInfo->battleStringLoader = BattleStringLoader;
 
     for (i = 0; i < MAX_BATTLERS_COUNT; i++)
-        stringInfo->abilities[i] = gBattleMons[i].ability;
+        stringInfo->abilities[i] = *GetAbilityLocation(i);
     for (i = 0; i < TEXT_BUFF_ARRAY_COUNT; i++)
     {
         stringInfo->textBuffs[0][i] = gBattleTextBuff1[i];
@@ -896,7 +896,7 @@ void EmitPrintSelectionString(u8 bufferId, u16 stringID)
 	stringInfo->battleStringLoader = BattleStringLoader;
 
     for (i = 0; i < MAX_BATTLERS_COUNT; i++)
-        stringInfo->abilities[i] = gBattleMons[i].ability;
+        stringInfo->abilities[i] = *GetAbilityLocation(i);
     for (i = 0; i < TEXT_BUFF_ARRAY_COUNT; i++)
     {
         stringInfo->textBuffs[0][i] = gBattleTextBuff1[i];

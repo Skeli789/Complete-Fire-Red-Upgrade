@@ -7,6 +7,7 @@
 .equ BS_MOVE_END, 0x81D694E
 .equ BS_MAKE_MOVE_MISS, 0x81D6958
 .equ BS_MOVE_MISSED, 0x81D695E
+.equ BS_MOVE_MISSED_PAUSE, 0x81D6960
 .equ BS_BUFF_ATK_STATS, 0x81D6B9E
 .equ BS_MOVE_WEATHER_CHANGE, 0x81D7A14
 
@@ -84,7 +85,7 @@
 	.byte ANDS
 	.word OUTCOME
 	.byte OUTCOME_NO_EFFECT
-	.word /rom_address
+	.word \rom_address
 	.endm
 	
 	.macro jumpifbehindsubstitute bank rom_address

@@ -30,3 +30,23 @@ bank_t LoadBattleAnimTarget(u8 arg)
 	}
 	return battler;
 }
+
+/*
+void ScriptCmd_pokespritefromBGsingle(void)
+{
+    u8 animBattlerId;
+    u8 battlerId;
+    u8 taskId;
+
+    sBattleAnimScriptPtr++;
+    animBattlerId = LoadBattleAnimTarget(sBattleAnimScriptPtr[0]);
+
+    if (sMonAnimTaskIdArray[0] != 0xFF)
+        gSprites[gBattlerSpriteIds[animBattlerId]].invisible = FALSE;
+
+    taskId = CreateTask(sub_80A4980, 5);
+    gTasks[taskId].data[0] = animBattlerId;
+    gTasks[taskId].data[2] = animBattlerId;
+
+    sBattleAnimScriptPtr++;
+}*/

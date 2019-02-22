@@ -84,6 +84,7 @@
 #define ACTION_SAFARI_ZONE_RUN      8
 #define ACTION_9                    9
 #define ACTION_RUN_BATTLESCRIPT     10 // when executing an action
+#define ACTION_TRY_FINISH			11
 #define ACTION_CANCEL_PARTNER       12 // when choosing an action
 #define ACTION_FINISHED             12 // when executing an action
 #define ACTION_NOTHING_FAINTED      13 // when choosing an action
@@ -349,7 +350,7 @@ struct DisableStruct
     /*0x18*/ u8 truantSwitchInHack:1;
     /*0x18*/ u8 unk18_a_2 : 2;
     /*0x18*/ u8 mimickedMoves : 4;
-    /*0x19*/ u8 rechargeCounter;
+    /*0x19*/ u8 rechargeTimer;
     /*0x1A*/ u8 unk1A[2];
 };
 	
@@ -739,6 +740,7 @@ struct NewBattleStruct
 	u8 IncinerateCounters[4];
 	u8 LastUsedTypes[4];
 	u8 lastTargeted[4];
+	u8 usedMoveIndices[4];
 	u8 DisabledMoldBreakerAbilities[4];
 	u8 SuppressedAbilities[4];
 	
@@ -764,12 +766,11 @@ struct NewBattleStruct
 	u8 EchoedVoiceCounter;
 	u8 EchoedVoiceDamageScale;
 	u8 EnduranceHelper;
-	u8 MoodyLowerStat;
-	u8 ForceSwitchHelper;
 	u8 DancerBankCount;
 	u8 CurrentTurnAttacker;
 	u8 TargetsHit;
 	u8 targetsToBringDown;
+	u8 backupMoveEffect;
 	u8 FaintEffectsTracker;
 	u8 blockTracker;
 	
@@ -790,6 +791,8 @@ struct NewBattleStruct
 	bool8 NoSymbiosisByte : 1;
 	bool8 SpectralThiefActive : 1;
 	bool8 MultiHitOn : 1;
+	bool8 secondaryEffectApplied : 1;
+	bool8 bypassSubstitute : 1;
 	
 	//Other
 	u16 LastUsedMove;
@@ -868,6 +871,7 @@ typedef struct fling FlingStruct;
 #define IS_TYPE_PHYSICAL(moveType)(moveType < TYPE_MYSTERY)
 #define IS_TYPE_SPECIAL(moveType)(moveType > TYPE_MYSTERY)
 
+/*
 #define MOVE_EFFECT_SLEEP               0x1
 #define MOVE_EFFECT_POISON              0x2
 #define MOVE_EFFECT_BURN                0x3
@@ -933,7 +937,7 @@ typedef struct fling FlingStruct;
 #define MOVE_EFFECT_NOTHING_3F          0x3F
 #define MOVE_EFFECT_AFFECTS_USER        0x40
 #define MOVE_EFFECT_CERTAIN             0x80
-
+*/
 // table ids for general animations
 #define B_ANIM_CASTFORM_CHANGE          0x0
 #define B_ANIM_STATS_CHANGE             0x1
@@ -966,6 +970,7 @@ typedef struct fling FlingStruct;
 #define B_ANIM_WISHIWASHI_FISH 			0x24
 #define B_ANIM_ZYGARDE_CELL_SWIRL 		0x25
 #define B_ANIM_DELTA_STREAM 			0x26
+#define B_ANIM_SEA_OF_FIRE				0x2B
 #define B_ANIM_RED_PRIMAL_REVERSION 	0x2F
 #define B_ANIM_BLUE_PRIMAL_REVERSION 	0x30
 #define B_ANIM_FOG_CONTINUES			0x36

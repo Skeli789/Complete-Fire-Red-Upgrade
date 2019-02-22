@@ -52,6 +52,8 @@
 .global WonderRoomEndString
 .global MagicRoomEndString
 .global GravityEndString
+.global TerrainEndString
+.global TransformedString
 
 .global BattleScript_Victory @More of an "End Battle" BS but whatever
 .global BattleScript_PrintPlayerForfeited
@@ -376,7 +378,7 @@ BattleScript_MoodyRegular:
 	
 MoodyRegularP2:
 	callasm LoadMoodyStatToLower+1
-	setbyte MOODY_STAT_LOWER_BYTE 0x0
+	setbyte SEED_HELPER 0x0
 	goto MoodySkipString
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -749,7 +751,7 @@ SetGTHeal:
 
 
 LoadMoodyStatToLower:
-	ldr r0, =MOODY_STAT_LOWER_BYTE
+	ldr r0, =SEED_HELPER
 	ldrb r0, [r0]
 	ldr r1, =0x2023FD4
 	mov r2, #0x15

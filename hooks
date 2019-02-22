@@ -24,6 +24,7 @@ CheckMoveLimitations 801779C 3
 TurnBasedEffects 08018258 0
 HandleFaintedMonActions 08018F90 0
 HasNoMonsToSwitch 0x8019C10 3
+SetMoveEffect 801FF20 2
 SwitchMoveDataHook 0x802EF90 0
 MoveSelectionDisplayMoveType 8030940 0
 PlayerHandleExpBarUpdate 08032F4C 1
@@ -90,6 +91,7 @@ atk06_typecalc 0801E848 0
 ##atk07_adjustnormaldamage 801F104 0
 atk0B_healthbarupdate 801F5A8 0
 atk0C_datahpupdate 801F684 0
+atk19_tryfaintmon 80212AC 0
 atk23_getexp 8021A68 0
 atk45_playanimation 8022E34 0
 atk46_playanimation2 8022EF4 0

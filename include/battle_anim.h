@@ -48,6 +48,7 @@ struct BattleAnimBackground
 #define PAN_SIDE_PLAYER     -64
 #define PAN_SIDE_OPPONENT   63
 
+/*
 extern void (*gAnimScriptCallback)(void);
 extern bool8 gAnimScriptActive;
 extern u8 gAnimVisualTaskCount;
@@ -92,13 +93,13 @@ void sub_80A6B30(struct UnknownAnimStruct2*);
 void sub_80A6B90(struct UnknownAnimStruct2*, u32 arg1);
 u8 sub_80A82E4(u8 bank);
 bool8 AnimateBallThrow(struct Sprite *sprite);
-
+*/
 enum
 {
     BANK_X_POS,
     BANK_Y_POS,
 };
-
+/*
 u8 GetBankPosition(u8 bank, u8 attributeId);
 
 bool8 IsBankSpritePresent(u8 bank);
@@ -120,5 +121,5 @@ void LaunchStatusAnimation(u8 bank, u8 statusAnimId);
 u8 ItemIdToBallId(u16 itemId);
 u8 LaunchBallStarsTask(u8 x, u8 y, u8 kindOfStars, u8 arg3, u8 ballId);
 u8 LaunchBallFadeMonTask(bool8 unFadeLater, u8 bank, u32 arg2, u8 ballId);
-
+*/
 #endif // GUARD_BATTLE_ANIM_H
