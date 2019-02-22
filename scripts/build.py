@@ -199,9 +199,9 @@ def process_string(filename):
 def process_image(in_file):
 	'''Compile Image'''
 	if '.bmp' in in_file:
-		out_file = in_file.split('.bmp')[0] + '.c'
+		out_file = in_file.split('.bmp')[0] + '.s'
 	else:
-		out_file = in_file.split('.png')[0] + '.c'
+		out_file = in_file.split('.png')[0] + '.s'
 	
 	namelist = in_file.split("\\") #Get path of grit flags
 	namelist.pop(len(namelist) - 1)
@@ -234,7 +234,7 @@ def process_image(in_file):
 		os.remove(out_file)
 		return new_out_file	#No point in recompiling file
 
-	cmd = [CC] + CFLAGS + ['-c', out_file, '-o', new_out_file]
+	cmd = [AS] + ASFLAGS + ['-c', out_file, '-o', new_out_file]
 	run_command(cmd)
 	os.remove(out_file)
 	return new_out_file
