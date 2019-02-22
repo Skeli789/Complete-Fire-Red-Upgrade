@@ -474,6 +474,7 @@ MoveBattleBar = 0x8049FD8 | 1;
 SpriteCB_ReleaseMonFromBall = 0x804B268 | 1;
 IsCryPlayingOrClearCrySongs = 0x80721F0;
 DestroyAnimSprite = 0x8072740 | 1;
+DestroyAnimVisualTask = 0x8072760 | 1;
 StoreSpriteCallbackInData6 = 0x8074A68 | 1;
 sub_8074E14 = 0x8074E14 | 1;
 GetBattlerSide = 0x80751C4 | 1;
