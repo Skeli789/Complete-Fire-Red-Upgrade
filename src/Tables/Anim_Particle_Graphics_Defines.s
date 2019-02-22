@@ -1,6 +1,8 @@
 .equ SWORD_IMG, SwordTiles
+.equ SEED_IMG, Leech_SeedTiles
 .equ HORN_HIT_IMG, HornTiles
 .equ SMALL_EMBER_IMG, EmbersTiles
+.equ LEAF_IMG, LeavesTiles
 .equ SHARP_TEETH_IMG, TeethTiles
 .equ HANDS_AND_FEET_IMG, ThrashTiles
 .equ ROUND_SHADOW_IMG, FlyTiles
@@ -74,8 +76,10 @@
 .equ PURPLE_DRAKE_IMG, Purple_DrakeTiles
 
 .equ SWORD_PAL, SwordPal
+.equ SEED_PAL, Leech_SeedPal
 .equ HORN_HIT_PAL, HornPal
 .equ SMALL_EMBER_PAL, EmbersPal
+.equ LEAF_PAL, LeavesPal
 .equ SHARP_TEETH_PAL, TeethPal
 .equ HANDS_AND_FEET_PAL, ThrashPal
 .equ ROUND_SHADOW_PAL, FlyPal

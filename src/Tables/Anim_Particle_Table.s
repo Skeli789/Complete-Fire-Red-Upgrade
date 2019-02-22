@@ -14,7 +14,7 @@ animparticle 0x8d20958,	0x200,	ANIM_TAG_PENCIL
 animparticle 0x8d025d0,	0x100,	ANIM_TAG_AIR_WAVE
 animparticle 0x8d02644,	0x200,	ANIM_TAG_UNUSED_ORB
 animparticle SWORD_IMG,	0x400,	ANIM_TAG_SWORD
-animparticle 0x8d02710,	0x180,	ANIM_TAG_SEED
+animparticle SEED_IMG,	0x180,	ANIM_TAG_SEED
 animparticle 0x8d029b4,	0x800,	ANIM_TAG_UNUSED_EXPLOSION
 animparticle 0x8d02b50,	0x20,	ANIM_TAG_UNUSED_PINK_ORB
 animparticle 0x8d02f8c,	0x400,	ANIM_TAG_GUST
@@ -71,7 +71,7 @@ animparticle 0x8d0aea4,	0x100,	ANIM_TAG_UNUSED_Z
 animparticle 0x8d0af20,	0x40,	ANIM_TAG_UNUSED_YELLOW_UNK_2
 animparticle 0x8d0af64,	0x180,	ANIM_TAG_UNUSED_AIR_SLASH
 animparticle 0x8d0b034,	0x800,	ANIM_TAG_UNUSED_SPINNING_GREEN_ORBS
-animparticle 0x8d0b42c,	0x480,	ANIM_TAG_LEAF
+animparticle LEAF_IMG,	0x480,	ANIM_TAG_LEAF
 animparticle 0x8d232d8,	0x200,	ANIM_TAG_FINGER
 animparticle 0x8d0b6a4,	0x200,	ANIM_TAG_POISON_POWDER
 animparticle 0x8d0b7d8,	0x100,	ANIM_TAG_UNUSED_BROWN_TRIANGLE
@@ -366,7 +366,7 @@ animparticlepal 0x8d20a3c,	ANIM_TAG_PENCIL,	0x0
 animparticlepal 0x8d028d8,	ANIM_TAG_AIR_WAVE,	0x0
 animparticlepal 0x8d02900,	ANIM_TAG_UNUSED_ORB,	0x0
 animparticlepal SWORD_PAL,	ANIM_TAG_SWORD,	0x0
-animparticlepal 0x8d0293c,	ANIM_TAG_SEED,	0x0
+animparticlepal SEED_PAL,	ANIM_TAG_SEED,	0x0
 animparticlepal 0x8d02b30,	ANIM_TAG_UNUSED_EXPLOSION,	0x0
 animparticlepal 0x8d02b70,	ANIM_TAG_UNUSED_PINK_ORB,	0x0
 animparticlepal 0x8d03274,	ANIM_TAG_GUST,	0x0
@@ -423,7 +423,7 @@ animparticlepal 0x8d0af04,	ANIM_TAG_UNUSED_Z,	0x0
 animparticlepal 0x8d0af48,	ANIM_TAG_UNUSED_YELLOW_UNK_2,	0x0
 animparticlepal 0x8d0b014,	ANIM_TAG_UNUSED_AIR_SLASH,	0x0
 animparticlepal 0x8d0b404,	ANIM_TAG_UNUSED_SPINNING_GREEN_ORBS,	0x0
-animparticlepal 0x8d0b5e8,	ANIM_TAG_LEAF,	0x0
+animparticlepal LEAF_PAL,	ANIM_TAG_LEAF,	0x0
 animparticlepal 0x8d233c8,	ANIM_TAG_FINGER,	0x0
 animparticlepal 0x8d0b7b8,	ANIM_TAG_POISON_POWDER,	0x0
 animparticlepal 0x8d0b824,	ANIM_TAG_UNUSED_BROWN_TRIANGLE,	0x0
