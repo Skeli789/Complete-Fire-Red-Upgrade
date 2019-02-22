@@ -1512,7 +1512,7 @@ ANIM_FORCEPALM:
 	loadparticle 0x27c0  @Purple
 	loadparticle 0x283E  @Palm
 	loadparticle 0x2797  @Hit
-	loadparticle 0x285C  @Palm Colour
+	loadparticle 0x283F  @Palm Colour
 	pokespritetoBG bank_target
 	leftbankBG_over_partnerBG 0x1
 	setblends 0x80C
@@ -1526,7 +1526,7 @@ ANIM_FORCEPALM:
 	endanimation
 
 .align 2
-FORCE_PALM: objtemplate 0x283E 0x285C 0x83AC9D8 0x83E66CC 0x0 0x8231CFC 0x80A4D0D
+FORCE_PALM: objtemplate 0x283E 0x283F 0x83AC9D8 0x83E66CC 0x0 0x8231CFC 0x80A4D0D
 PURPLEHIT: objtemplate 0x2797 0x27C0 0x83ACB58 0x8231CF0 0x0 0x83E7BF8 0x80BA561
 
 
@@ -4015,7 +4015,7 @@ RED_POWDER: objtemplate 0x27AE 0x285D 0x83AC9D0 0x83E2B5C 0x0 0x8231CFC 0x80A27D
 .pool     
 ANIM_WAKEUPSLAP:
 	loadparticle 0x283E  @Palm
-	loadparticle 0x285C  @Palm Colour
+	loadparticle 0x283F  @Palm Colour
 	loadparticle 0x2797 
 	loadparticle 0x27a5 
 	pokespritetoBG side_target
@@ -4038,7 +4038,7 @@ Wack:
 	return
 
 .align 2
-WAKEUP_PALM: objtemplate 0x283E 0x285C 0x83AC9D8 0x83E66CC 0x0 0x8231CFC 0x80B08DD
+WAKEUP_PALM: objtemplate 0x283E 0x283F 0x83AC9D8 0x83E66CC 0x0 0x8231CFC 0x80B08DD
 WAKEUP_HIT: objtemplate 0x2797 0x27A5 0x83ACB58 0x8231CF0 0x0 0x83E7BF8 0x80BA561
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -6427,7 +6427,8 @@ ANIM_PSYCHOSHIFT:
 .pool     
 @ Credits to ghoulslash
 ANIM_WRINGOUT:
-	loadparticle 0x283e	@hand (mrds)
+	loadparticle 0x283E @hand (mrds)
+	loadparticle 0x283F @White Hand Colour
 	pokespritetoBG 0x3
 	setblends 0x080c
 	playsound2 0x80 0xc0
@@ -6460,7 +6461,7 @@ WRINGOUT_CALL:
 	return
 
 .align 2
-WRINGOUT_HAND:	objtemplate 0x283e 0x283e 0x83acb58 0x8231cf0 0x0 0x83e7bf8 0x80ba561
+WRINGOUT_HAND:	objtemplate 0x283e 0x283F 0x83acb58 0x8231cf0 0x0 0x83e7bf8 0x80ba561
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
@@ -7070,8 +7071,8 @@ ANIM_HEARTSWAP:
 @ Credits to Nuisance
 ANIM_CRUSHGRIP:
 	loadparticle 0x27D6 @hits
-	loadparticle 0x2710 @bone
-	loadparticle 0x283E @rock
+	loadparticle 0x283F @hand colour
+	loadparticle 0x283E @hand
 	pokespritetoBG bank_target
 	setblends 0xF
 	launchtemplate CRUSHGRIP_HAND 0x82 0x6 0x10 0x0 0x0 0x0 0x19 0x101
@@ -7097,7 +7098,7 @@ ANIM_CRUSHGRIP:
 
 .align 2
 CRUSHGRIP_HITPARTICLES: objtemplate 0x27D6 0x27D6 0x83AC9D8 0x83E3F90 0x0 0x8231CFC 0x8075D9D
-CRUSHGRIP_HAND: objtemplate 0x283E 0x2710 0x83ACA38 0x83E74A8 0x0 0x83E7540 0x80B5075
+CRUSHGRIP_HAND: objtemplate 0x283E 0x283F 0x83ACA38 0x83E74A8 0x0 0x83E7540 0x80B5075
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
