@@ -1,3 +1,20 @@
+##Tables
+AttackDescriptionTable 080E5440
+AttackDescriptionTable 08137BC8
+AbilityDescriptionTable 080001C4
+AbilityDescriptionTable 081367A8
+AttackAnimationTable 080725D0
+gBattleAnimPicTable 08072914
+gBattleAnimPicTable 08072BF8
+AnimationBackgroundTable 08073960
+
+TrainerBackspritesTable 0803F8A0
+gTrainerBackAnimsPtrTable 0803F8A4
+gTrainerBackPicPaletteTable 08034774
+gTrainerBackPicPaletteTable 080D6EA4
+gTrainerBackPicPaletteTable 080EAEC0
+gTrainerBackPicPaletteTable 08159458
+
 ##
 BattleScript_RainDishActivates 0801A4A0
 
@@ -33,13 +50,6 @@ gEventObjectImageAnim_RunEast 083A34CC
 TestScript 08B7AD70
 TestScript 08B7ADA0
 TestScript 087D67B0
-
-TrainerBackspritesTable 0803F8A0
-gTrainerBackAnimsPtrTable 0803F8A4
-gTrainerBackPicPaletteTable 08034774
-gTrainerBackPicPaletteTable 080D6EA4
-gTrainerBackPicPaletteTable 080EAEC0
-gTrainerBackPicPaletteTable 08159458
 
 ##Battle Scripts
 ThiefStealBS 8020E74
