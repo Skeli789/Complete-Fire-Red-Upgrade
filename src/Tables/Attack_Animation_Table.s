@@ -20,12 +20,13 @@
 .global ROLLOUT_TIMER_ASM	@ hook at 0xb4c40 via r0 - skip over rollout timer for tectonic rage
 .global HEX_SIDE_ASM		@ hook at 0xb8d74 via r0 - hexes on target side instead of attacker
 .global ENCORE_USER_ASM		@ hook at 0xe0da8 via r1 - encore spotlight on attacker
-.global DESTINY_BOND_ASM	@ hook at 0xb60ac via r0 - only one shadow in double battle
+.global DESTINY_BOND_ASM_1	@ hook at 0xB6092 via r0 - only one shadow in double battle
+.global DESTINY_BOND_ASM_2	@ hook at 0xB6160 via r0
 
 
 /* attack animation table */
 .align 2
-/*
+
 AttackAnimationTable:
 .word 0x81c6f34		@MOVE_NONE
 .word 0x81c6f34		@MOVE_POUND
@@ -2094,7 +2095,7 @@ ANIM_ROCKPOLISH:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
 ANIM_ROCKWRECKER:
-	loadparticle 0x274a
+	loadparticle ANIM_TAG_REALLY_BIG_ROCK
 	loadparticle 0x2810 
 	loadparticle 0x2811 
 	pokespritetoBG side_attacker 
@@ -2127,7 +2128,7 @@ ANIM_ROCKWRECKER:
 	endanimation
 
 .align 2
-ROCKWRECKER_BIGROCK: objtemplate 0x274A 0x274A 0x83AC9D8 0x83E73A8 0x0 0x83E779C 0x80B12E9
+ROCKWRECKER_BIGROCK: objtemplate ANIM_TAG_REALLY_BIG_ROCK ANIM_TAG_REALLY_BIG_ROCK 0x83AC9D8 0x83E73A8 0x0 0x83E779C 0x80B12E9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
@@ -2352,7 +2353,7 @@ ZEN_GLOW: objtemplate 0x27E4 0x27A4 0x83ACB60 0x8231CF0 0x0 0x83E61C8 0x80B12E9
 .pool     
 @ credit to MrDollSteak
 ANIM_SWITCHEROO:
-	loadBG1 BG_DARK_2 
+	loadBG1 BG_DARK
 	waitfortransparentBG 
 	loadparticle 0x27f0 
 	loadparticle 0x27df 
@@ -3592,7 +3593,7 @@ ANIM_COTTONGUARD:
 	resetblends
 	endanimation 
 CottonIn:
-	launchtemplate COTTONGUARD_COTTON0x2 0x3 0x28 0xfff6 0xd  
+	launchtemplate COTTONGUARD_COTTON 0x2 0x3 0x28 0xfff6 0xd  
 	pause 0x3 
 	launchtemplate COTTONGUARD_COTTON 0x2 0x3 0xffdd 0xfff6 0xd  
 	pause 0x3 
@@ -4121,7 +4122,7 @@ ANIM_SCALD:
 	endanimation
 
 SCALD_GUN:
-	launchtemplate WATERGUN 0x82 0x5 0x0 0x0 0x0 0x0 0x14 
+	launchtemplate SCALD_WATERGUN 0x82 0x5 0x0 0x0 0x0 0x0 0x14 
 	pause 0x2 
 	return
 	
@@ -4439,16 +4440,18 @@ ANIM_LUNARDANCE:
 	setblends 0x808
 	soundcomplex 0xBC 0xc0 0x10 0x3
 	call 0x81D569E
-	launchtemplate RINGS 0x2 0x0  
+	launchtemplate LUNAR_DANCE_RINGS 0x2 0x0  
 	pause 0x4 
-	launchtemplate RINGS 0x2 0x0 
+	launchtemplate LUNAR_DANCE_RINGS 0x2 0x0 
 	pause 0x4 
-	launchtemplate RINGS 0x2 0x0
+	launchtemplate LUNAR_DANCE_RINGS 0x2 0x0
 	pause 0x40
 	waitanimation 
 	pokespritefromBG side_attacker 
 	resetblends 
 	endanimation
+
+LUNAR_DANCE_RINGS: objtemplate 0x2804 0x272D 0x83ACBE0 0x8231CF0 0x0 0x83E44D4 0x80AAAE5
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
@@ -6986,7 +6989,7 @@ WHIRLPARTICLES: objtemplate 0x27A5 0x271B 0x83ACB50 0x83E5958 0x0 0x83E741C 0x80
 .pool     
 @ credit to ghoulslash
 ANIM_OBLIVIONWING:
-	loadBG1 BG_DARK_2 
+	loadBG1 BG_DARK
 	waitfortransparentBG 
 	launchtask AnimTask_scroll_background 0x5 0x4 0x0 0x0 0x0 0xffff 
 	loadparticle 0x27a3 
@@ -7190,11 +7193,11 @@ ANIM_HEADCHARGE:
 @ Credits to Nuisance
 ANIM_TECHNOBLAST:
 TECHNO_BLAST:
-	launchtask TECHNOBLAST_ASM+1 0x5 0x0  
-	jumpifargmatches 0x0 0xA TECHNO_BLAST_FIRE_ANIM
-	jumpifargmatches 0x0 0xB TECHNO_BLAST_WATER_ANIM
-	jumpifargmatches 0x0 0xD TECHNO_BLAST_ELECTRIC_ANIM
-	jumpifargmatches 0x0 0xF TECHNO_BLAST_ICE_ANIM
+	launchtask AnimTask_TechnoBlast 0x5 0x0  
+	jumpifargmatches 0x0 TYPE_FIRE TECHNO_BLAST_FIRE_ANIM
+	jumpifargmatches 0x0 TYPE_WATER TECHNO_BLAST_WATER_ANIM
+	jumpifargmatches 0x0 TYPE_ELECTRIC TECHNO_BLAST_ELECTRIC_ANIM
+	jumpifargmatches 0x0 TYPE_ICE TECHNO_BLAST_ICE_ANIM
 
 TECHNO_BLAST_NORMAL_ANIM2:
 	loadparticle 0x27E4 @charge animation
@@ -7685,25 +7688,6 @@ ICEBLASTPARTICLES: objtemplate 0x271B 0x273B 0x83ACA30 0x8231CF0 0x0 0x83E6004 0
 ICEDISPERSAL: objtemplate 0x272E 0x273B 0x83AC9D8 0x83E36A4 0x0 0x8231CFC 0x8075D9D
 ICEPARTICLES: objtemplate 0x279D 0x279D 0x83ACB88 0x83E6320 0x0 0x83E7BF8 0x80BA561
 
-
-@ get color argument
-.align 2
-TECHNOBLAST_ASM:
-	push {r4, lr}
-	lsl r0, r0, #0x18
-	lsr r4, r0, #0x18
-	bl GetMoveType
-
-Store:
-	ldr r1, .StorageTechnoBlast
-	strh r0, [r1]
-	mov r0, r4
-	ldr r1, =0x80DEAE1
-	bx r1
-
-.align 2
-.StorageTechnoBlast: .word 0x2037F02
-
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
 @ Credits to Nuisance
@@ -8004,7 +7988,7 @@ FREEZE_SHOCK_CHARGE:
 FREEZE_SHOCK_ATTACK:
 	soundcomplex 0x82 0x3f 0x5 0x5
 	launchtemplate 0x83E7B24 0x2 0x5 0x1 0x1 0x0 0x10 0x0
-	pokespritetoBG BANK_TARGET
+	pokespritetoBG bank_target
 	waitanimation	  
 	playsound2 0x83 0xc0 
 	launchtemplate SHOCK_ICEBALL 0x83 0x6 0xa 0x0 0x0 0x0 0x1e 0x0  
@@ -8022,7 +8006,7 @@ FREEZE_SHOCK_ATTACK:
 	playsound3 0x70 0x3f 0x13 
 	call PARALYZE_CHANCE_ANIM 
 	waitanimation
-	pokespritefromBG BANK_TARGET
+	pokespritefromBG bank_target
 	launchtemplate 0x83E7B24 0x2 0x5 0x1 0x1 0x10 0x0 0x0
 	waitanimation
 	endanimation
@@ -8485,7 +8469,7 @@ ANIM_PARTINGSHOT:
 .pool     
 @ credit to ghoulslash
 ANIM_TOPSYTURVY:
-	loadBG1 BG_DARK_2 
+	loadBG1 BG_DARK
 	waitforBG 
 	launchtask AnimTask_scroll_background 0x5 0x4 0x0 0x0 0x0 0xffff 
 	loadparticle 0x2797 
@@ -9774,7 +9758,7 @@ PURPLEMETAL: objtemplate 0x2814 0x27A6 0x83ACAE0 0x8231CF0 0x0 0x83E3C98 0x8075D
 .pool     
 @ credit to ghoulslash
 ANIM_DARKESTLARIAT:
-	loadBG1 BG_DARK_2 
+	loadBG1 BG_DARK 
 	waitfortransparentBG 
 	launchtask AnimTask_scroll_background 0x5 0x4 0x0 0x0 0x0 0xffff 
 	loadparticle 0x2797 @hit
@@ -10783,7 +10767,7 @@ ANIM_PRISMATICLASER:
 	launchtemplate 0x83E7B24 0x2 0x5 0x1 0x3 0x0 0x10 0x0
 	waitanimation
 	playsound2 0x52 0xc0
-	launchtemplate BGCHARGE 0x2 0x1 0x0
+	launchtemplate PL_BGCHARGE 0x2 0x1 0x0
 	call PL_INWARDSPIKES
 	playsound2 0x52 0xc0
 	call PL_INWARDSPIKES
@@ -11558,11 +11542,11 @@ SPECTRAL_THIEF_ATTACK:
 	waitanimation
 	setblends 0x1000 
 	pause 0x1 
-	anim22 bank_target 
+	pokespritetoBG2 bank_target 
 	launchtask 0x80B8071 0x5 0x0  
 	playsound2 0xb6 0x3f 
 	waitanimation
-	anim23 bank_target
+	pokespritefromBG2 bank_target
 	pause 0x1
 	resetblends
 	pause 0x1
@@ -11990,7 +11974,7 @@ ANIM_THROATCHOP:
 	launchtemplate 0x83E66E0 0x2 0x8 0xfff0 0x0 0x0 0x0 0xa 0x1 0x3 0x0  
 	waitanimation 
 	launchtask 0x80BA0E9 0x2 0x3 0x101 0x101 0x101
-	launchtemplate REDHIT 0x3 0x4 0x0 0x0 0x1 0x2
+	launchtemplate THROATCHOP_REDHIT 0x3 0x4 0x0 0x0 0x1 0x2
 	pause 0x3
 	launchtemplate THROATCHOP_REDHIT 0x3 0x4 0x0 0x0 0x1 0x2
 	pause 0x3
@@ -13198,8 +13182,7 @@ endanimation
 .pool     
 ANIM_IONDELUGE:
 	loadparticle 0x285B @ions
-	pokespritetoBG target_side
-	launchtask ION_DELUGE_ARG+1 0x5 0x0
+	pokespritetoBG side_target
 	launchtemplate 0x83E7B24 0x2 0x5 0x1 0x3 0x0 0xA 0x7440
 	waitanimation
 	soundcomplex 0x70 0x3f 0xA 0x9
@@ -13207,43 +13190,20 @@ ANIM_IONDELUGE:
 	launchtask 0x80AABC1 0x2 0x3 0x0 0x3 0x78
 	waitanimation
 	launchtemplate 0x83E7B24 0x2 0x5 0x1 0x3 0xA 0x0 0x7440
-	launchtask ION_DELUGE_ARG+1 0x5 0x0
 	waitanimation
-	pokespritefromBG target_side
+	pokespritefromBG side_target
 	endanimation
 
 .align 2
 IONS: objtemplate 0x285B 0x285B 0x83ACA18 0x83E5894 0x0 0x8231CFC 0x80AAC55
 
-.align 2
-ION_DELUGE_ARG:
-	push {r4,lr}
-	lsl r0, r0, #0x18
-	lsr r4, r0, #0x18
-	ldr r0, =ION_DELUGE_HELPER
-	ldrb r1, [r0]
-	cmp r1, #0x0
-	bne ReverseIons
-
-SetIons:
-	mov r1, #0x1
-	b StoreIons
-
-ReverseIons:
-	mov r1, #0x0
-
-StoreIons:
-	strb r1, [r0]
-	mov r0, r4
-	ldr r1, =0x80DEAE1
-	bx r1	
-
 @ hook at 0xAAC24 via r0
 .align 2
 ION_DELUGE_ASM:
 	lsr r2, #0x18
-	ldr r0, =ION_DELUGE_HELPER
-	ldrb r0, [r0]
+	push {r1-r3}
+	bl IsAnimMoveIonDeluge
+	pop {r1-r3}
 	cmp r0, #0x0
 	beq RainDanceIon
 
@@ -13259,7 +13219,6 @@ ReturnIonASM:
 	mov r3, #0x4
 	ldr r4, =0x80AAC2D
 	bx r4
-
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
@@ -13521,7 +13480,7 @@ ANIM_SIMPLEBEAM:
 SIMPLE_BEAMS:
 	launchtemplate SIMPLE_BROWNBEAM 0x82 0x6 0x10 0x0 0x0 0x0 0xd 0x0  
 	pause 0x1
-	launchtemplate PSIMPLE_INKBEAM 0x82 0x6 0x10 0x0 0x0 0x0 0xd 0x0  
+	launchtemplate SIMPLE_PINKBEAM 0x82 0x6 0x10 0x0 0x0 0x0 0xd 0x0  
 	pause 0x1
 	return
 
@@ -13734,7 +13693,7 @@ ANIM_FORESTSCURSE:
 	endanimation
 	
 .align 2
-CURSE_PLANTS: objtemplate 0x27EF 0x27EF 0x83AC9D8 0x83E2DB4 0x0 0x8231CFC 0x80AC625
+CURSE_PLANTSPLANTS: objtemplate 0x27EF 0x27EF 0x83AC9D8 0x83E2DB4 0x0 0x8231CFC 0x80AC625
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
@@ -13815,7 +13774,7 @@ ANIM_PHOTONGEYSER:
 	loadparticle 0x27A3 @recover
 	pokespritetoBG bank_attacker
 	setblends 0x80C
-	launchtemplate CHARGE 0x2 0x1 0x0
+	launchtemplate GEYSER_CHARGE 0x2 0x1 0x0
 	call GEYSER_SPARKS1
 	launchtemplate 0x83E2A58 0x2 0x3 0xffd8 0xffd8 0x10
 	launchtemplate 0x83E2A58 0x2 0x3 0x0 0x28 0x10
@@ -13932,7 +13891,7 @@ ANIM_PLASMAFISTS:
 	setblends 0x80C
 	launchtemplate 0x83E7B24 0x2 0x5 0x1 0x3 0x0 0x10 0x0
 	waitanimation
-	launchtemplate CHARGE 0x2 0x1 0x0
+	launchtemplate PFISTS_CHARGE 0x2 0x1 0x0
 	launchtask AnimTask_move_bank 0x2 0x5 bank_attacker 0x0 0x3 0x5c 0x1
 	call PFISTS_SPARKS1
 	pause 0xA
@@ -14385,7 +14344,7 @@ ANIM_QUASH:
 	waitforBG
 	setblends 0x80c 
 	playsound2 0x7f 0x3f 
-	launchtemplate QUASH_ARMHITARMHIT 0x3 0x3 0x0 0xffe0 0xf  
+	launchtemplate QUASH_ARMHIT 0x3 0x3 0x0 0xffe0 0xf  
 	pause 0x13
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x4 0x9 0x1  
 	playsound2 0xC5 0xC0
@@ -14547,6 +14506,11 @@ ANIM_CELEBRATE:
 CELEBRATE_TEMPLATE: objtemplate 0x27f0 0x27f0 0x83ACA38 0x8231CF0 0x0 0x83E3A2C 0x80A6C85 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool  
+ANIM_HOLDHANDS:
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
 @ credit to ghoulslash
 ANIM_BREAKNECK_BLITZ:
@@ -14633,7 +14597,7 @@ BLITZ_HIT: objtemplate 0x2797 0x2811 0x83ACB58 0x8231CF0 0x0 0x83E7BF8 0x80BA561
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
 @ credit to ghoulslash
-.equ OBJ_FIST, 0x0
+.equ OBJ_FIST1, 0x0
 .equ OBJ_FOOT1, 0x1
 .equ OBJ_FOOT2, 0x2
 .equ OBJ_CHOP, 0x3
@@ -14656,7 +14620,7 @@ ANIM_ALL_OUT_PUMMELING:
 	setblends 0x80c
 	pokespritetoBG side_target
 	launchtask AnimTask_move_bank 0x5 0x5 0x1 0x0 0x2 0x3f 0x1 
-	launchtemplate PUMMEL_ONSLAUGHT 0x2 0x8 0xffd0 0x18 0x0 0x0 0xa 0x1 OBJ_FOOT 0x1
+	launchtemplate PUMMEL_ONSLAUGHT 0x2 0x8 0xffd0 0x18 0x0 0x0 0xa 0x1 OBJ_FOOT1 0x1
 	pause 0x2
 	launchtemplate Template_Hit 0x2 0x4 0x0 0x0 0x1 0x1
 	playsound2 0x88 0x3f 
@@ -14686,7 +14650,7 @@ ANIM_ALL_OUT_PUMMELING:
 	launchtemplate Template_Hit 0x2 0x4 0x0 0x0 0x1 0x1
 	playsound2 0x88 0x3f 
 	pause 0x8 
-	launchtemplate PUMMEL_ONSLAUGHT 0x2 0x8 0xffc0 0x11 0x0 0x0 0xa 0x1 OBJ_FOOT 0x1
+	launchtemplate PUMMEL_ONSLAUGHT 0x2 0x8 0xffc0 0x11 0x0 0x0 0xa 0x1 OBJ_FOOT1 0x1
 	pause 0x2
 	launchtemplate Template_Hit 0x2 0x4 0x0 0x0 0x1 0x1
 	playsound2 0x88 0x3f 
@@ -14943,7 +14907,7 @@ ANIM_TECTONIC_RAGE:
 	loadparticle 0x2829 @ dig
 	launchtemplate 0x83e7ac4 0x1 0x3 0x0 0x0 0xb4 
 	launchtemplate 0x83e7ac4 0x1 0x3 0x0 0x1 0xb4 
-	anim22 bank_attacker 
+	pokespritetoBG2 bank_attacker 
 	pause 0x1 
 	launchtask 0x80b8e95 0x2 0x1 0x0 
 	pause 0x6 
@@ -15086,7 +15050,7 @@ get_bank_presence: 	@ sub_8074480
 	
 .align 2
 .pool	
-@ hook at B4C40 via r0
+@ hook at 0xB4C40 via r0
 ROLLOUT_TIMER_ASM:
 	ldr r0, =CURRENT_MOVE
 	ldrh r0, [r0]
@@ -15106,9 +15070,14 @@ ReturnRolloutTimer:
 	lsr r5, r0, #0x18
 	ldr r0, =(0x080b4c48 +1)
 	bx r0
+
+GetRolloutTimer:
+	ldr r0, .GetRolloutTimer
+	bx r0
 	
 .align 2
 .AnimDefender: .word 0x02037f1b
+.GetRolloutTimer: .word 0x80B4FB8 | 1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool   
@@ -15119,7 +15088,7 @@ ANIM_CONTINENTAL_CRUSH:
 	loadparticle 0x274a	@ rocks
 	loadparticle 0x27c8 @ focus energy
 	loadparticle 0x2797 @ hit
-	loadparticle PARTICLE_REALLY_BIG_ROCK
+	loadparticle ANIM_TAG_REALLY_BIG_ROCK
 	playsound2 0xa4 0xc0 
 	call C_CRUSH_BUFF 
 	pause 0x8 
@@ -15138,7 +15107,7 @@ ANIM_CONTINENTAL_CRUSH:
 	launchtemplate 0x83e7aac 0x2 0x6 0x0 0x1 0xe 0x4 0xffee 0x12 
 	launchtemplate 0x83e7aac 0x2 0x6 0x0 0x1 0xc 0x4 0xfff0 0x12 
 	pause 0x30
-	launchtask TASK_TIMEOFDAY+1 0x2 0x0
+	launchtask AnimTask_GetTimeOfDay 0x2 0x0
 	jumpifargmatches 0x0 0x2 CONTINENTAL_CRUSH_DAY
 	jumpifargmatches 0x0 0x2 CONTINENTAL_CRUSH_AFTERNOON
 CONTINENTAL_CRUSH_NIGHT:
@@ -15259,9 +15228,9 @@ ROCKS_COALESCE:
 	
 .align 2
 NEEDLEARM_ROCK: objtemplate 0x274a 0x274a 0x83AC9D8 0x83E73A8 0x0 0x8231CFC 0x80A4299 	
-BIGROCK_STOMP: objtemplate PARTICLE_REALLY_BIG_ROCK PARTICLE_REALLY_BIG_ROCK 0x83AC9E0 0x8231CF0 0x0 0x8231CFC 0x80B0D59	
+BIGROCK_STOMP: objtemplate ANIM_TAG_REALLY_BIG_ROCK ANIM_TAG_REALLY_BIG_ROCK 0x83AC9E0 0x8231CF0 0x0 0x8231CFC 0x80B0D59	
 CC_FOCUS_ENERGY: objtemplate 0x27C8 0x274a 0x83ACA18 0x83E3600 0x0 0x8231CFC 0x80A5AD9 
-CC_ROCK_GROW: objtemplate PARTICLE_REALLY_BIG_ROCK PARTICLE_REALLY_BIG_ROCK 0x83ACB60 0x8231CF0 0x0 0x83E61C8 0x80AE71D 	
+CC_ROCK_GROW: objtemplate ANIM_TAG_REALLY_BIG_ROCK ANIM_TAG_REALLY_BIG_ROCK 0x83ACB60 0x8231CF0 0x0 0x83E61C8 0x80AE71D 	
 CC_ROCK_ERUPTION: objtemplate 0x274a 0x274a 0x83AC9D8 0x8231CF0 0x0 0x8231CFC 0x80AD455 	
 	
 TASK_TIMEOFDAY:
@@ -15284,7 +15253,7 @@ ANIM_SAVAGE_SPIN_OUT:
 	loadparticle 0x27c3 @string shot
 	loadparticle 0x27c5 @spider web
 	loadparticle 0x2797 @hit
-	loadparticle PARTICLE_SAVAGE_SPINOUT
+	loadparticle ANIM_TAG_COCOON
 	loadparticle 0x27aa @white/gray
 	loadparticle 0x275A @rocks
 	loadparticle 0x279a @cut
@@ -15294,7 +15263,7 @@ ANIM_SAVAGE_SPIN_OUT:
 	pokespritetoBG bank_attacker 
 	setblends 0x80c 
 	launchtemplate Template_Pal_Fade 0x2 0x5 0x1 0x2 0x0 0x4 0x0 
-	launchtemplate GREEN_CHARGE 0x2 0x1 0x0 
+	launchtemplate SPINOUT_GREEN_CHARGE 0x2 0x1 0x0 
 	pause 0x19 
 	playsound2 0xce 0xc0 
 	pause 0x14 
@@ -15440,7 +15409,7 @@ SPINOUT_BG_SLOWDOWN:
 
 .align 2
 AEROBLAST_STRING: objtemplate 0x27C3 0x27C3 0x83ACA00 0x83E6B48 0x0 0x8231CFC 0x80B1AB9
-SPINOUT_CACOON: objtemplate PARTICLE_SAVAGE_SPINOUT PARTICLE_SAVAGE_SPINOUT 0x83ACB60 0x8231CF0 0x0 0x83E7910 0x80B7BD5
+SPINOUT_CACOON: objtemplate ANIM_TAG_COCOON ANIM_TAG_COCOON 0x83ACB60 0x8231CF0 0x0 0x83E7910 0x80B7BD5
 SPINOUT_GREEN_CHARGE: objtemplate 0x27E4 0x27b0 0x83ACB60 0x8231CF0 0x0 0x83E61C8 0x80AE71D 
 SPINOUT_GREEN_CUT: objtemplate 0x279A 0x27b0 0x83ACAF8 0x83E3290 0x0 0x8231CFC 0x80A44E1 
 SPINOUT_WHITE_EXPLODE: objtemplate 0x27D6 0x27aa 0x83AC9D8 0x83E3F90 0x0 0x8231CFC 0x8075D9D 
@@ -15618,20 +15587,12 @@ HEX_SIDE_ASM:
 	ldsh r0, [r6, r1]
 	cmp r0, #0x0
 	bne OtherMove
-	ldr r0, .CURRENT_MOVE
-	ldrh r0, [r0]
-	ldr r4, =MOVE_NEVERENDING_NIGHTMARE_P
-	cmp r0, r4
-	beq OnTarget
-	ldr r4, =MOVE_NEVERENDING_NIGHTMARE_S
-	cmp r0, r4
-	beq OnTarget
-	ldr r4, =MOVE_DEVESTATING_DRAKE_P
-	cmp r0, r4
-	beq OnTarget
-	ldr r4, =MOVE_DEVESTATING_DRAKE_S
-	cmp r0, r4
-	beq OnTarget
+	push {r1-r3}
+	bl IsMoveNeverEndingNightmareOrDevastatingDrake
+	pop {r1-r3}
+	cmp r0, #0x0
+	bne OnTarget
+
 OnUser:
 	ldr r4, =(0x02037f1a)
 	b ReturnHex
@@ -15644,8 +15605,6 @@ ReturnHex:
 OtherMove:
 	ldr r0, =(0x080b8dcc +1)
 	bx r0
-.align 2
-.CURRENT_MOVE: .word 0x2023D4A
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -15654,7 +15613,7 @@ ANIM_CORKSCREW_CRASH:
 	loadparticle 0x27a8 @metal bits
 	loadparticle 0x27E4 @charge
 	loadparticle 0x27aa @grey/white
-	loadparticle PARTICLE_CORKSCREW @drill
+	loadparticle ANIM_TAG_CORKSCREW @drill
 	loadparticle 0x27b2 @whirlwind
 	loadparticle 0x275a @rock
 	makebankinvisible bank_target
@@ -15793,19 +15752,19 @@ CORKSCREW_ROCKS_SPRAY:
 
 .align 2
 CORKSCREW_METALBIT: objtemplate 0x27a8 0x27aa 0x83ACB50 0x8231CF0 0x0 0x83E7990 0x80B477D
-CORKSCREW_CHARGE: objtemplate PARTICLE_CORKSCREW PARTICLE_CORKSCREW 0x83ACB60 0x8231CF0 0x0 0x83E61C8 0x80AE71D
-CORKSCREW_UP: objtemplate PARTICLE_CORKSCREW PARTICLE_CORKSCREW 0x83ACA40 0x8231CF0 0x0 0x83e6b8c 0x80B477D
-CORKSCREW_DOWN: objtemplate PARTICLE_CORKSCREW PARTICLE_CORKSCREW 0x83ACA40 0x8231CF0 0x0 CORKSCREW_DOWN_ROTATIONS 0x80B0D59
+CORKSCREW_CHARGE: objtemplate ANIM_TAG_CORKSCREW ANIM_TAG_CORKSCREW 0x83ACB60 0x8231CF0 0x0 0x83E61C8 0x80AE71D
+CORKSCREW_UP: objtemplate ANIM_TAG_CORKSCREW ANIM_TAG_CORKSCREW 0x83ACA40 0x8231CF0 0x0 0x83e6b8c 0x80B477D
+CORKSCREW_DOWN: objtemplate ANIM_TAG_CORKSCREW ANIM_TAG_CORKSCREW 0x83ACA40 0x8231CF0 0x0 CORKSCREW_DOWN_ROTATIONS 0x80B0D59
 CORKSCREW_DOWN_ROTATIONS: .word CORKSCREW_DOWN_ROT
 CORKSCREW_DOWN_ROT: .hword 0,0,0x0180,0,0x7fff,0,0,0
-CORKSCREW_STRIKE: objtemplate PARTICLE_CORKSCREW PARTICLE_CORKSCREW 0x83ACA40 0x8231CF0 0x0 CORKSCREW_STRIKE_ROTS 0x80B1C3D
+CORKSCREW_STRIKE: objtemplate ANIM_TAG_CORKSCREW ANIM_TAG_CORKSCREW 0x83ACA40 0x8231CF0 0x0 CORKSCREW_STRIKE_ROTS 0x80B1C3D
 CORKSCREW_STRIKE_ROTS: .word CORKSCREW_PLAYER_ROT, CORKSCREW_ENEMY_ROT
 CORKSCREW_PLAYER_ROT: .hword 0,0,0x01b9,0,0x7fff,0,0,0
 CORKSCREW_ENEMY_ROT: .hword 0,0,0x0150,0,0x7fff,0,0,0
 
 @ on opponent
-CORKSCREW_RIGHT_UP: objtemplate PARTICLE_CORKSCREW PARTICLE_CORKSCREW 0x83ACA40 0x8231CF0 0x0 CORKSCREW_RIGHTUP_ROTATIONS 0x80E24E1 
-CORKSCREW_LEFT_UP: objtemplate PARTICLE_CORKSCREW PARTICLE_CORKSCREW 0x83ACA40 0x8231CF0 0x0 CORKSCREW_LEFT_ROTATIONS 0x80E24E1
+CORKSCREW_RIGHT_UP: objtemplate ANIM_TAG_CORKSCREW ANIM_TAG_CORKSCREW 0x83ACA40 0x8231CF0 0x0 CORKSCREW_RIGHTUP_ROTATIONS 0x80E24E1 
+CORKSCREW_LEFT_UP: objtemplate ANIM_TAG_CORKSCREW ANIM_TAG_CORKSCREW 0x83ACA40 0x8231CF0 0x0 CORKSCREW_LEFT_ROTATIONS 0x80E24E1
 CORKSCREW_RIGHTUP_ROTATIONS: .word CORKSCREW_RIGHTUP_ROT
 CORKSCREW_RIGHTUP_ROT: .hword 0,0,0x01c2,0,0x7fff,0,0,0
 
@@ -15815,8 +15774,8 @@ CORKSCREW_DOWNUP_ROTATIONS: .word CORKSCREW_DOWNUP_ROT
 CORKSCREW_DOWNUP_ROT: .hword 0,0,0x0180,0,0x7fff,0,0,0
 
 @ on player
-CORKSCREW_RIGHT_DOWN: objtemplate PARTICLE_CORKSCREW PARTICLE_CORKSCREW 0x83ACA40 0x8231CF0 0x0 CORKSCREW_RIGHTDOWN_ROTATIONS 0x80E24E1 
-CORKSCREW_LEFT_DOWN: objtemplate PARTICLE_CORKSCREW PARTICLE_CORKSCREW 0x83ACA40 0x8231CF0 0x0 CORKSCREW_LEFT_ROTATIONS 0x80E24E1
+CORKSCREW_RIGHT_DOWN: objtemplate ANIM_TAG_CORKSCREW ANIM_TAG_CORKSCREW 0x83ACA40 0x8231CF0 0x0 CORKSCREW_RIGHTDOWN_ROTATIONS 0x80E24E1 
+CORKSCREW_LEFT_DOWN: objtemplate ANIM_TAG_CORKSCREW ANIM_TAG_CORKSCREW 0x83ACA40 0x8231CF0 0x0 CORKSCREW_LEFT_ROTATIONS 0x80E24E1
 CORKSCREW_RIGHTDOWN_ROTATIONS: .word CORKSCREW_RIGHTDOWN_ROT
 CORKSCREW_RIGHTDOWN_ROT: .hword 0,0,0x01ba,0,0x7fff,0,0,0
 
@@ -16268,38 +16227,41 @@ HURRICANE_USER_ASM:
 	bl GetAnimBank
 	ldr r0, =(0x080b18ee +1)
 	bx r0
+
 GetAnimBank:
 	push {r4,r5,lr}
 	mov r5, r0
 	lsl r1, r1, #0x18
 	cmp r1, #0x0
-	bne LoadFromMA02
-	ldr r0, =CURRENT_MOVE
-	ldrh r0, [r0]
-	ldr r4, =MOVE_BLOOM_DOOM_P
-	cmp r0, r4
-	beq OnAttacker
-	ldr r4, =MOVE_BLOOM_DOOM_S
-	cmp r0, r4
-	bne OnTarget
-OnAttacker:
-	ldr r4, .AnimAttacker
+	bne InitSpritePosToAnimTargetLoadFromArgs
+	bl IsAnimMoveBloomDoom
+	cmp r0, #0x0
+	beq HurricaneOnTarget
+
+HurricaneOnAttacker:
+	ldr r4, .AnimAttacker2
 	b FinishBankLoad
-OnTarget:
-	ldr r4, .AnimDefender
+
+HurricaneOnTarget:
+	ldr r4, .AnimDefender2
+
 FinishBankLoad:
 	ldr r0, =(0x08075120 +1)
 	bx r0
+
+InitSpritePosToAnimTargetLoadFromArgs:
+	ldr r0, =0x807513C | 1
+	bx r0
 	
 .align 2
-.AnimAttacker: .word 0x02037f1a
-.AnimDefender: .word 0x02037f1b
+.AnimAttacker2: .word 0x02037f1a
+.AnimDefender2: .word 0x02037f1b
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
 @ credit to ghoulslash
 ANIM_GIGAVOLT_HAVOC:
-	loadparticle PARTICLE_HAVOC_SPEAR
+	loadparticle ANIM_TAG_HAVOC_SPEAR
 	loadparticle 0x27e4
 	loadparticle 0x27e3
 	loadparticle 0x27e5
@@ -16411,7 +16373,7 @@ ANIM_GIGAVOLT_HAVOC:
 	pause 0xe
 	pokespritefromBG bank_attacker
 	launchtask AnimTask_screen_shake 0x5 0x3 bank_target 0x8 0x1c 	@shake target
-	unloadparticle PARTICLE_HAVOC_SPEAR
+	unloadparticle ANIM_TAG_HAVOC_SPEAR
 	loadparticle 0x282a @thunderbolt
 	launchtemplate 0x83e6058 0x83 0x4 0x2c 0x0 0x0 0x3 
 	launchtemplate Template_Pal_Fade 0x0 0x5 PAL_DEF 0x0 0x0 0xc 0x5bff
@@ -16478,8 +16440,8 @@ HAVOC_SPARK_TARGET:
 	return
 	
 .align 2
-HAVOC_CHARGE_SPEAR: objtemplate PARTICLE_HAVOC_SPEAR PARTICLE_HAVOC_SPEAR 0x83ACB60 0x8231CF0 0x0 0x83E61C8 0x80AE71D  
-HAVOC_SPEAR: objtemplate PARTICLE_HAVOC_SPEAR PARTICLE_HAVOC_SPEAR 0x83ACB60 0x8231CF0 0x0 0x8231CFC 0x80B12E9 
+HAVOC_CHARGE_SPEAR: objtemplate ANIM_TAG_HAVOC_SPEAR ANIM_TAG_HAVOC_SPEAR 0x83ACB60 0x8231CF0 0x0 0x83E61C8 0x80AE71D  
+HAVOC_SPEAR: objtemplate ANIM_TAG_HAVOC_SPEAR ANIM_TAG_HAVOC_SPEAR 0x83ACB60 0x8231CF0 0x0 0x8231CFC 0x80B12E9 
 HAVOC_RING_TARGET: objtemplate 0x27DB 0x27e4 0x83ACAA0 0x8231CF0 0x0 0x83E4088 0x8075D9D
 HAVOC_GEYSER_HEX: objtemplate 0x2851 0x27e4 0x83AC9D0 0x83E2C00 0x0 0x8231CFC 0x80B8D59
 
@@ -16671,25 +16633,25 @@ SZS_FINISH_BG:
 	pause 0x1
 	pokespritetoBG side_attacker
 	launchtemplate Template_Pal_Fade 0x2 0x5 PAL_ATK 0x0 0x0 0xb 0x7e80
-	launchtemplate ICE_SPIN 0x83 0x4 0x0 0x0 0x38 0x0 
+	launchtemplate SZS_ICE_SPIN 0x83 0x4 0x0 0x0 0x38 0x0 
 	playsound2 0xc3 0xc0 
 	pause 0x2 
-	launchtemplate ICE_SPIN 0x83 0x4 0x0 0x0 0x38 0x4 
+	launchtemplate SZS_ICE_SPIN 0x83 0x4 0x0 0x0 0x38 0x4 
 	playsound2 0xc3 0xc0 
 	pause 0x2 
-	launchtemplate ICE_SPIN 0x83 0x4 0x0 0x0 0x38 0x8 
+	launchtemplate SZS_ICE_SPIN 0x83 0x4 0x0 0x0 0x38 0x8 
 	playsound2 0xc3 0xc0 
 	pause 0x2 
-	launchtemplate ICE_SPIN 0x83 0x4 0x0 0x0 0x38 0xc 
+	launchtemplate SZS_ICE_SPIN 0x83 0x4 0x0 0x0 0x38 0xc 
 	playsound2 0xc3 0xc0 
 	pause 0x2 
-	launchtemplate ICE_SPIN 0x83 0x4 0x0 0x0 0x38 0x10 
+	launchtemplate SZS_ICE_SPIN 0x83 0x4 0x0 0x0 0x38 0x10 
 	playsound2 0xc3 0xc0 
 	pause 0x2 
-	launchtemplate ICE_SPIN 0x83 0x4 0x0 0x0 0x38 0x14 
+	launchtemplate SZS_ICE_SPIN 0x83 0x4 0x0 0x0 0x38 0x14 
 	playsound2 0xc3 0xc0 
 	pause 0x2 
-	launchtemplate ICE_SPIN 0x83 0x4 0x0 0x0 0x38 0x18 
+	launchtemplate SZS_ICE_SPIN 0x83 0x4 0x0 0x0 0x38 0x18 
 	playsound2 0xc3 0xc0 
 	pause 0x20
 	launchtemplate Template_Pal_Fade 0x2 0x5 PAL_ATK 0x0 0xb 0x0 0x7e80 
@@ -16763,7 +16725,7 @@ SZS_ICE_EXPLOSION:
 	pause 0x3
 	playsound2 0xab 0xc0 
 	launchtemplate SZS_BLUE_EXPLOSION 0x83 0x4 0xfff0 0x10 bank_target 0x1 
-	launchtemplate 0x83e63f8 0x82 0x3 0xfff1 0xf 0x
+	launchtemplate 0x83e63f8 0x82 0x3 0xfff1 0xf 0x0
 	pause 0x3
 	launchtemplate 0x83e63f8 0x82 0x3 0x0 0x0 0x0
 	pause 0x3
@@ -16818,7 +16780,7 @@ GLACIER_TASK_ATTACKER:
 .pool     
 @ credit to ghoulslash
 ANIM_DEVASTATING_DRAKE:
-	loadparticle PARTICLE_DRAKE
+	loadparticle ANIM_TAG_PURPLE_DRAKE
 	loadparticle 0x27a6 @ purple
 	loadparticle 0x27c8 @ focus energy
 	loadparticle 0x27e4 @ shock wave 
@@ -16833,7 +16795,7 @@ ANIM_DEVASTATING_DRAKE:
 	waitanimation 
 	unloadparticle 0x27C8
 	playsound2 0xce 0xc0
-	launchtemplate PURPLE_SHOCKWAVE 0x2 0x0
+	launchtemplate DRAKE_PURPLE_SHOCKWAVE 0x2 0x0
 	pause 0x2a
 	unloadparticle 0x27e4
 	pokespritetoBG bank_attacker
@@ -16996,13 +16958,13 @@ DRAKE_EXPLOSION:
 .align 2
 DRAKE_ENERGY_PURPLE: objtemplate 0x27C8 0x27a6 0x83ACA18 0x83E3600 0x0 0x8231CFC 0x80A5AD9 	
 DRAKE_PURPLE_SHOCKWAVE: objtemplate 0x27E4 0x27a6 0x83ACB60 0x8231CF0 0x0 0x83E61C8 0x80AEC81 
-DRAKE_UP: objtemplate PARTICLE_DRAKE PARTICLE_DRAKE 0x83ACA40 0x8231CF0 0x0 DRAKE_UP_ROTATIONS 0x80B477D 
-DRAKE_RIGHT: objtemplate PARTICLE_DRAKE PARTICLE_DRAKE 0x83ACA40 0x8231CF0 0x0 DRAKE_RIGHT_ROTATIONS 0x80E24E1 
-DRAKE_LEFT: objtemplate PARTICLE_DRAKE PARTICLE_DRAKE 0x83ACA40 0x8231CF0 0x0 DRAKE_LEFT_ROTATIONS 0x80E24E1
-DRAKE_STRIKE: objtemplate PARTICLE_DRAKE PARTICLE_DRAKE 0x83ACA40 0x8231CF0 0x0 DRAKE_STRIKE_ROTATIONS 0x80B1C3D
+DRAKE_UP: objtemplate ANIM_TAG_PURPLE_DRAKE ANIM_TAG_PURPLE_DRAKE 0x83ACA40 0x8231CF0 0x0 DRAKE_UP_ROTATIONS 0x80B477D 
+DRAKE_RIGHT: objtemplate ANIM_TAG_PURPLE_DRAKE ANIM_TAG_PURPLE_DRAKE 0x83ACA40 0x8231CF0 0x0 DRAKE_RIGHT_ROTATIONS 0x80E24E1 
+DRAKE_LEFT: objtemplate ANIM_TAG_PURPLE_DRAKE ANIM_TAG_PURPLE_DRAKE 0x83ACA40 0x8231CF0 0x0 DRAKE_LEFT_ROTATIONS 0x80E24E1
+DRAKE_STRIKE: objtemplate ANIM_TAG_PURPLE_DRAKE ANIM_TAG_PURPLE_DRAKE 0x83ACA40 0x8231CF0 0x0 DRAKE_STRIKE_ROTATIONS 0x80B1C3D
 DRAKE_PURPLE_BLAST_BURN: objtemplate 0x2733 0x27a6 0x83AC9D8 0x83E5C50 0x0 0x8231CFC BLASTBURN_TARGET_ASM+1
 DRAKE_GEYSER_HEX: objtemplate 0x2851 0x27a6 0x83AC9D0 0x83E2C00 0x0 0x8231CFC 0x80B8D59
-DRAKE_PURPLE_EXPLOSION: objtemplate 0x27D6 PARTICLE_DRAKE 0x83AC9D8 0x83E3F90 0x0 0x8231CFC 0x8075D9D 
+DRAKE_PURPLE_EXPLOSION: objtemplate 0x27D6 ANIM_TAG_PURPLE_DRAKE 0x83AC9D8 0x83E3F90 0x0 0x8231CFC 0x8075D9D 
 
 DRAKE_STRIKE_ROTATIONS: .word DRAKE_STRIKE_PLAYER_ROT, DRAKE_STRIKE_ENEMY_ROT
 DRAKE_STRIKE_PLAYER_ROT: .hword 0,0,0x01b9,0,0x7fff,0,0,0
@@ -17361,7 +17323,7 @@ TWINKLE_ASM:
 	push {r4,lr}
 	mov r4, r0
 	bl GetAnimDefSide
-	ldr r0, .AnimDefender
+	ldr r0, .AnimDefender6
 	ldr r1, =(0x08076FDA +1)
 	bx r1
 	
@@ -17371,6 +17333,9 @@ GetAnimDefSide:
 	ldr r4, =(0x02037f1b)
 	ldr r1, =(0x08074fd2 +1)
 	bx r1
+
+.align 2
+.AnimDefender6: .word 0x2037F1B
 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -17396,7 +17361,7 @@ ANIM_CATASTROPIKA:
 	waitanimation
 	unloadparticle 0x27c8
 	unloadparticle 0x27ac
-	launchtask TASK_TIMEOFDAY+1 0x2 0x0
+	launchtask AnimTask_GetTimeOfDay 0x2 0x0
 	jumpifargmatches 0x0 0x1 CATASTROPIKA_DAY
 	jumpifargmatches 0x0 0x2 CATASTROPIKA_AFTERNOON
 CATASTROPIKA_NIGHT:
@@ -17870,7 +17835,7 @@ TARGET_SHOCKWAVE_TRAJ:
 	beq OtherSW
 	b EndSW
 GetSWBank:
-	ldr r4, .AnimDefender
+	ldr r4, .AnimDefender3
 	ldr r0, =(0x080aec94 +1)
 	bx r0
 OtherSW:
@@ -17882,7 +17847,7 @@ EndSW:
 	bx r0
 	
 .align 2
-.AnimDefender: .word 0x02037f1b
+.AnimDefender3: .word 0x02037f1b
 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -17912,7 +17877,7 @@ ANIM_STOKED_SPARKSURFER:
 	launchtemplate 0x83e6070 0x2 0x8 0x0 0xffd0 0x20 0x2c 0xe0 0x28 0x2 0x3	
 	waitanimation
 	unloadparticle 0x27ac
-	launchtask DUMMY_TASK+1 0x2 0x0
+	launchtask AnimTask_GetTimeOfDay 0x2 0x0
 	jumpifargmatches 0x0 0x1 SPARKSURFER_DAY
 	jumpifargmatches 0x0 0x2 SPARKSURFER_AFTERNOON
 SPARKSURFER_NIGHT:
@@ -18175,53 +18140,49 @@ PANCAKE_YELLOW_EXPLODE: objtemplate 0x27D6 0x27e3 0x83AC9D8 0x83E3F90 0x0 0x8231
 PANCAKE_YELLOW_RING: objtemplate 0x27DB 0x27e3 0x83ACAA0 0x8231CF0 0x0 0x83E4088 0x8075D9D 
 
 
-@ hook at 0xb60ac via r0
+@ hook at 0xB6092 via r0
 .pool
 .align 2
-DESTINY_BOND_ASM:
-	push {r1}
-	ldr r0, =CurrentMove
-	ldrh r0, [r0]
-	ldr r1, =MOVE_PULVERIZING_PANCAKE
-	cmp r1, r0
-	beq CheckDefender
-	ldr r1, =MOVE_SHADOWSNEAK
-	cmp r1, r0
-	beq CheckDefender
-	ldr r1, =MOVE_HYPERSPACEHOLE
-	cmp r1, r0
-	bne CheckAllBanks
-CheckDefender:
-	mov r0, r4
-	ldr r1, .AnimDefender
-	ldrb r1, [r1]
-	cmp r1, r0
-	beq CheckBank
-	pop {r1}
-SkipBank:
-	ldr r0, .ReturnSkip
-	bx r0
-	
-CheckBank:	
-	mov r0, r4	
-	bl b_side_obj_P__get_some_boolean
-	pop {r1}
-	lsl r0, r0, #0x18
+DetsinyBondASM1:
+	bl ShadowSneakAnimHelper
 	cmp r0, #0x0
-	beq SkipBank
-ReturnNormal:
-	ldr r0, .Return
+	beq NormalDestinyBond
+	ldr r4, .AnimDefender4
+	ldrb r4, [r4]
+
+NormalDestinyBond:
+	lsl r1, r4, #0x10
+	asr r3, r1, #0x10
+	ldr r0, .AnimAttacker4
+	ldrb r2, [r0]
+	str r1, [sp, #0x10]
+	ldr r0, .DestinyBondReturn1
 	bx r0
 
-b_side_obj_P__get_some_boolean:
-	ldr r1, =(0x08072df0 +1)
+@ hook at 0xB6160 via r0
+DetsinyBondASM2:
+	mov r3, #0x80
+	lsl r3, #0x9
+	add r0, r2, r3
+	lsr r4, r0, #0x10
+	push {r0}
+	bl ShadowSneakAnimHelper
+	cmp r0, #0x0
+	pop {r0}
+	bne EndDestinyBondLoop
+	ldr r1, .DestinyBondContinueLoop
 	bx r1
 
+EndDestinyBondLoop:
+	ldr r0, .DestinyBondEndLoop
+	bx r0
+
 .align 2
-.ReturnSkip: .word 0x080b615f
-.CheckBankAlive: .word 
-.Return: .word 0x080b60b9
-.AnimDefender: .word 0x02037f1b
+.DestinyBondReturn1: .word 0x80B609C | 1
+.DestinyBondContinueLoop: .word 0x80B6168 | 1
+.DestinyBondEndLoop: .word 0x80B6210 | 1
+.AnimAttacker4: .word 0x02037F1A
+.AnimDefender4: .word 0x02037F1B
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
@@ -18958,16 +18919,12 @@ ENCORE_USER_ASM:
 GetAnimArgBank:
 	push {r4,r5,lr}
 	mov r5, r0
-	ldr r4, .AnimAttacker
+	ldr r4, .AnimAttacker5
 	push {r4}
-	ldr r4, .CurrentMove
-	ldrh r4, [r4]
-	ldr r0, =MOVE_OCEANIC_OPERETTA_P
-	cmp r0, r4
-	beq AttackerSide
-	ldr r0, =MOVE_OCEANIC_OPERETTA_S
-	cmp r0, r4
-	bne DefenderSide
+	bl IsAnimMoveOceanicOperretta
+	cmp r0, #0x0
+	beq DefenderSide
+
 AttackerSide:
 	pop {r4}
 	b FinishBankArg
@@ -18979,7 +18936,7 @@ FinishBankArg:
 	bx r0
 	
 .align 2
-.AnimAttacker: .word 0x02037f1a
+.AnimAttacker5: .word 0x02037f1a
 .CurrentMove:	.word 0x02023d4a
 .ReturnEncore: .word (0x080E0DB2 +1)
 .FinishArgReturn: .word (0x08075120 +1)
@@ -18993,11 +18950,11 @@ ANIM_SPLINTERED_STORMSHARDS:
 	loadparticle 0x2816 @spear	
 	makebankinvisible attacker_partner
 	makebankinvisible target_partner
-	launchtask DUMMY_TASK+1 0x2 0x0
+	launchtask AnimTask_GetLycanrocForm 0x2 0x0
 	jumpifargmatches 0x0 0x1 SPLINTER_NIGHT_FORME
 SPLINTER_DAY_FORME:
 	launchtemplate Template_Pal_Fade 0x2 0x5 PAL_BG 0x2 0x0 0xc 0x5bff
-	goto FINISH_FADE
+	goto SPLINTER_FINISH_FADE
 SPLINTER_NIGHT_FORME:	
 	launchtemplate Template_Pal_Fade 0x2 0x5 PAL_BG 0x2 0x0 0xc 0x0000
 SPLINTER_FINISH_FADE:
@@ -19248,7 +19205,7 @@ SPLINTERS_RISING_2_OPPONENT:
 	return
 
 SPLINTER_FIX_BG_FADE:
-	launchtask DUMMY_TASK+1 0x2 0x0
+	launchtask AnimTask_GetLycanrocForm 0x2 0x0
 	jumpifargmatches 0x0 0x1 SPLINTER_NIGHT_FORME_RETURN
 SPLINTER_DAY_FORME_RETURN:
 	launchtemplate Template_Pal_Fade 0x2 0x5 PAL_BG 0x2 0xc 0x0 0x5bff
@@ -19408,7 +19365,7 @@ ANIM_SOUL_STEALING_7_STAR_STRIKE:
 	pause 0x1c
 	launchtemplate Template_Pal_Fade 0x2 0x5 PAL_DEF 0x0 0x0 0x10 0x0000
 	pause 0x1
-	launchtemplate ZSTAR 0x82 0x4 0x0 0x0 0x1 0x24
+	launchtemplate SOULSTEAL_ZSTAR 0x82 0x4 0x0 0x0 0x1 0x24
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x3 0x0 0x6 0x1  
 	launchtemplate 0x83e5ee4 0x2 0x1 0x0 
 	launchtemplate 0x83e5ee4 0x2 0x1 0x2a 
@@ -19502,8 +19459,6 @@ SOULSTEAL_BLACK_BLASTBURN: objtemplate 0x2733 0x27f8 0x83AC9D8 0x83E5C50 0x0 0x8
 SOULSTEAL_EXPLOSION: objtemplate 0x27D6 0x27f8 0x83AC9D8 0x83E3F90 0x0 0x8231CFC 0x8075D9D
 SOULSTEAL_ZSTAR: objtemplate 0x27D5 0x27D5 0x83ACAF8 0x8231CF0 0x0 0x8231CFC 0x80BA739
 
-
-
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 .align 2
@@ -19531,21 +19486,19 @@ SwapReturn:
 	bx r2
 
 DoSkillSwap:
-	ldr r0, =SKILLSWAP
-	b Return
+	ldr r0, =SKILLSWAP_TEMPL
+	b SwapReturn
 
 DoPowerSwap:
-	ldr r0, =POWERSWAP
-	b Return
+	ldr r0, =POWERSWAP_TEMPL
+	b SwapReturn
 
 DoHeartSwap:
-	ldr r0, =HEARTSWAP
-	b Return
+	ldr r0, =HEARTSWAP_TEMPL
+	b SwapReturn
 
 .align 2
 .SkillSwapTemplate: .word 0x83E7114
-SKILLSWAP: objtemplate 0x280B 0x27E3 0x83ACA30 0x8231CF0 0x0 0x83E7104 0x80B3A35
-POWERSWAP: objtemplate 0x280B 0x27E8 0x83ACA30 0x8231CF0 0x0 0x83E7104 0x80B3A35
-HEARTSWAP: objtemplate 0x280B 0x27E8 0x83ACA30 0x8231CF0 0x0 0x83E7104 0x80B3A35
-
-*/
+SKILLSWAP_TEMPL: objtemplate 0x280B 0x27E3 0x83ACA30 0x8231CF0 0x0 0x83E7104 0x80B3A35
+POWERSWAP_TEMPL: objtemplate 0x280B 0x27E8 0x83ACA30 0x8231CF0 0x0 0x83E7104 0x80B3A35
+HEARTSWAP_TEMPL: objtemplate 0x280B 0x27E8 0x83ACA30 0x8231CF0 0x0 0x83E7104 0x80B3A35
