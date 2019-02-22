@@ -48,7 +48,7 @@
 .equ BG_GIGA_IMPACT_ON_PLAYER, 0x22
 .equ BG_WATER_2, 0x23
 .equ BG_POISON, 0x24
-.equ BG_MOON, 0x25
+.equ BG_AEROBLAST, 0x25
 .equ BG_HIGH_SPEED, 0x26
 .equ BG_ELECTRIC_TERRAIN, 0x27
 .equ BG_GRASSY_TERRAIN, 0x28
@@ -308,12 +308,12 @@
 .word \jumpifargmatchesPtr
 .endm
 
-.macro pokespritetoBG2 anim22bank
+.macro pokespritetoBG2 animABank
 .byte 0x22
 .byte \animABank
 .endm
 
-.macro pokespritefromBG2 anim23bank
+.macro pokespritefromBG2 animBBank
 .byte 0x23
 .byte \animBBank
 .endm
@@ -792,3 +792,7 @@ waitfortransparentBG
 .equ ANIM_TAG_ULTRA_BURST_SYMBOL, 0x2867
 .equ ANIM_TAG_Z_MOVE_SYMBOL, 0x2868
 .equ ANIM_TAG_REALLY_BIG_ROCK, 0x2869
+.equ ANIM_TAG_COCOON, 0x286A
+.equ ANIM_TAG_CORKSCREW, 0x286B
+.equ ANIM_TAG_HAVOC_SPEAR, 0x286C
+.equ ANIM_TAG_PURPLE_DRAKE, 0x286D
