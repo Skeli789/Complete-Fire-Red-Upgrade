@@ -102,10 +102,10 @@
 .hword \tag
 .endm
 
-.macro animparticlepal offset tag
+.macro animparticlepal offset tag hword
 .word \offset
 .hword \tag
-.hword 0x0
+.hword \hword
 .endm
 
 @commands
