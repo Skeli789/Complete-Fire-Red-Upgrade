@@ -1,12 +1,13 @@
 .thumb
 .text
 .align 2
-.global AnimationParticleTable
+.global gBattleAnimPicTable
+.global gBattleAnimPaletteTable
 
 .include "..\\Anim_Defines.asm"
 .include "src\\Tables\\Anim_Particle_Graphics_Defines.s"
 
-AnimationParticleTable:
+gBattleAnimPicTable:
 animparticle 0x8d02520,	0x200,	ANIM_TAG_BONE
 animparticle 0x8d1c858,	0x300,	ANIM_TAG_SPARK
 animparticle 0x8d20958,	0x200,	ANIM_TAG_PENCIL
@@ -353,11 +354,12 @@ animparticle SPIRIT_ARROW_IMG,	0x200,	ANIM_TAG_SPIRIT_ARROW
 animparticle ULTRA_BURST_SYMBOL_IMG,	0x200,	ANIM_TAG_ULTRA_BURST_SYMBOL
 animparticle Z_MOVE_SYMBOL_IMG,	0x800,	ANIM_TAG_Z_MOVE_SYMBOL
 animparticle REALLY_BIG_ROCK_IMG,	0x0,	ANIM_TAG_REALLY_BIG_ROCK
-animparticlepal COCOON_IMG, 0x800		ANIM_TAG_COCOON
-animparticlepal CORKSCREW_IMG,	0x800	ANIM_TAG_CORKSCREW
-animparticlepal HAVOC_SPEAR_IMG, 0x800	ANIM_TAG_HAVOC_SPEAR
-animparticlepal PURPLE_DRAKE_IMG, 0x800	ANIM_TAG_PURPLE_DRAKE
+animparticle COCOON_IMG, 0x800		ANIM_TAG_COCOON
+animparticle CORKSCREW_IMG,	0x800	ANIM_TAG_CORKSCREW
+animparticle HAVOC_SPEAR_IMG, 0x800	ANIM_TAG_HAVOC_SPEAR
+animparticle PURPLE_DRAKE_IMG, 0x800	ANIM_TAG_PURPLE_DRAKE
 
+gBattleAnimPaletteTable:
 animparticlepal 0x8d028b4,	ANIM_TAG_BONE,	0x0
 animparticlepal 0x8d1c90c,	ANIM_TAG_SPARK,	0x0
 animparticlepal 0x8d20a3c,	ANIM_TAG_PENCIL,	0x0

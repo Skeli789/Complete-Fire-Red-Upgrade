@@ -5,6 +5,7 @@
 #include "../include/global.h"
 #include "../include/battle.h"
 #include "../include/battle_message.h"
+#include "../include/battle_anim.h"
 #include "../include/pokedex.h"
 #include "../include/constants/abilities.h"
 #include "../include/constants/moves.h"
