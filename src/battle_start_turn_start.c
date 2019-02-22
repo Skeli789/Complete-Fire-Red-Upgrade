@@ -478,6 +478,7 @@ void RunTurnActionsFunctions(void)
 				gBattleScripting->bank = gActiveBattler;
 				if (chosenMove == MOVE_BEAKBLAST) {
 					gNewBS->BeakBlastByte |= gBitTable[gActiveBattler];
+					gBattleScripting->bank = gActiveBattler;
 					BattleScriptExecute(BattleScript_BeakBlastSetUp);
 				}
 				else if (chosenMove == MOVE_SHELLTRAP)
