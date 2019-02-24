@@ -378,6 +378,7 @@ EmitTrainerSlideBack = 0x800E114 | 1;
 EmitBallThrow = 0x800E194 | 1;
 EmitMoveAnimation = 0x800E1FC | 1;
 /*EmitPrintString = 0x800E2D4 | 1;*/
+EmitChoosePokemon = 0x800E590 | 1;
 EmitHealthBarUpdate = 0x800E5EC | 1;
 /*EmitExpBarUpdate = 0x800E624 | 1;*/
 EmitStatusAnimation = 0x800E6AC | 1;
