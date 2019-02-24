@@ -1633,7 +1633,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 			}
 			break;
 				
-			case MISTY_TERRAIN:
+		case MISTY_TERRAIN:
 			if (CheckGrounding(bankDef) && type == TYPE_DRAGON) {
 				attack /= 2;
 				spAttack /= 2;
@@ -1660,7 +1660,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 		if (!PartyCheck
 		&& !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_TRAINER_TOWER | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_EREADER_TRAINER))
 		&& gBattleTypeFlags & BATTLE_TYPE_TRAINER
-		&& GetBattlerSide(bankAtk) == B_SIDE_PLAYER
+		&& SIDE(bankAtk) == B_SIDE_PLAYER
 		&& gTrainerBattleOpponent != 0x400) {
 			if (FlagGet(FLAG_BADGE01_GET) && SIDE(bankAtk) == B_PLAYER_SIDE)
 				attack = udivsi((110 * attack), 100);
