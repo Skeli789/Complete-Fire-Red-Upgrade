@@ -7,6 +7,11 @@ AttackAnimationTable 080725D0
 gBattleAnimPicTable 08072914
 gBattleAnimPicTable 08072BF8
 AnimationBackgroundTable 08073960
+gBattleScriptingCommandsTable 08014C1C
+gBattleScriptingCommandsTable 08015A28
+gBattleScriptingCommandsTable 08015C6C
+gBattleScriptingCommandsTable 08015C98
+gBattleScriptingCommandsTable 0801D054
 
 TrainerBackspritesTable 0803F8A0
 gTrainerBackAnimsPtrTable 0803F8A4
