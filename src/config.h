@@ -1,11 +1,12 @@
 #pragma once
 
 #define DEBUG_MEGA
+#define DEBUG_UNBOUND_MUSIC
 
 #define UNBOUND //Don't uncomment this line; it's for compiling specific aspects of Pokemon Unbound
 
 #define TERRAIN_VAR 0x50CA
-#define TOTEM_VAR 0x50CB
+#define TOTEM_VAR 0x50CB //UPDATE HOW THIS WORKS
 #define NPC_FOLLOWING_VAR 0x5000 //This var should should be set to the NPC Id of the NPC following the player. If no NPC is following the player, it should be set to 0.
 #define OW_SPRITE_SWITCH_VAR 0x4054
 #define BACKSPRITE_SWITCH_VAR 0x4062 //This var can be set to a number to change the Player's backsprite
@@ -141,3 +142,7 @@ enum
 #define GEN4_PLUS_SELECTION_SCREEN //Uncommenting this line does not give you the Gen 4+ selection screen, it only adds features that supports it
 //#define OBEDIENCE_CHECK_FOR_PLAYER_ORIGINAL_POKEMON //Uncommenting line line will open up the possibilty that the Player's Pokemon can disobey them (not just traded mons)
 //#define WILD_ALWAYS_SMART //Uncomment this line if you want all Wild Pokemon to act smartly
+#define FOG_IN_BATTLE //Uncommenting this line enables the Fog weather effect in battle. Don't uncomment this line without uncommenting one of the lines below!
+#define FOG_IN_BATTLE_1 //Uncommenting this line enables the Fog weather effect when the OW weather is set to WEATHER_FOG_1 (0x6)
+#define FOG_IN_BATTLE_2 //Uncommenting this line enables the Fog weather effect when the OW weather is set to WEATHER_FOG_2 (0x9)
+#define FOG_IN_BATTLE_3 //Uncommenting this line enables the Fog weather effect when the OW weather is set to WEATHER_FOG_3 (0xA)
