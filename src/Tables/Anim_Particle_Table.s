@@ -1,19 +1,20 @@
 .thumb
 .text
 .align 2
-.global AnimationParticleTable
+.global gBattleAnimPicTable
+.global gBattleAnimPaletteTable
 
 .include "..\\Anim_Defines.asm"
 .include "src\\Tables\\Anim_Particle_Graphics_Defines.s"
 
-AnimationParticleTable:
+gBattleAnimPicTable:
 animparticle 0x8d02520,	0x200,	ANIM_TAG_BONE
 animparticle 0x8d1c858,	0x300,	ANIM_TAG_SPARK
 animparticle 0x8d20958,	0x200,	ANIM_TAG_PENCIL
 animparticle 0x8d025d0,	0x100,	ANIM_TAG_AIR_WAVE
 animparticle 0x8d02644,	0x200,	ANIM_TAG_UNUSED_ORB
 animparticle SWORD_IMG,	0x400,	ANIM_TAG_SWORD
-animparticle 0x8d02710,	0x180,	ANIM_TAG_SEED
+animparticle SEED_IMG,	0x180,	ANIM_TAG_SEED
 animparticle 0x8d029b4,	0x800,	ANIM_TAG_UNUSED_EXPLOSION
 animparticle 0x8d02b50,	0x20,	ANIM_TAG_UNUSED_PINK_ORB
 animparticle 0x8d02f8c,	0x400,	ANIM_TAG_GUST
@@ -70,7 +71,7 @@ animparticle 0x8d0aea4,	0x100,	ANIM_TAG_UNUSED_Z
 animparticle 0x8d0af20,	0x40,	ANIM_TAG_UNUSED_YELLOW_UNK_2
 animparticle 0x8d0af64,	0x180,	ANIM_TAG_UNUSED_AIR_SLASH
 animparticle 0x8d0b034,	0x800,	ANIM_TAG_UNUSED_SPINNING_GREEN_ORBS
-animparticle 0x8d0b42c,	0x480,	ANIM_TAG_LEAF
+animparticle LEAF_IMG,	0x480,	ANIM_TAG_LEAF
 animparticle 0x8d232d8,	0x200,	ANIM_TAG_FINGER
 animparticle 0x8d0b6a4,	0x200,	ANIM_TAG_POISON_POWDER
 animparticle 0x8d0b7d8,	0x100,	ANIM_TAG_UNUSED_BROWN_TRIANGLE
@@ -353,18 +354,19 @@ animparticle SPIRIT_ARROW_IMG,	0x200,	ANIM_TAG_SPIRIT_ARROW
 animparticle ULTRA_BURST_SYMBOL_IMG,	0x200,	ANIM_TAG_ULTRA_BURST_SYMBOL
 animparticle Z_MOVE_SYMBOL_IMG,	0x800,	ANIM_TAG_Z_MOVE_SYMBOL
 animparticle REALLY_BIG_ROCK_IMG,	0x0,	ANIM_TAG_REALLY_BIG_ROCK
-animparticlepal COCOON_IMG, 0x800		ANIM_TAG_COCOON
-animparticlepal CORKSCREW_IMG,	0x800	ANIM_TAG_CORKSCREW
-animparticlepal HAVOC_SPEAR_IMG, 0x800	ANIM_TAG_HAVOC_SPEAR
-animparticlepal PURPLE_DRAKE_IMG, 0x800	ANIM_TAG_PURPLE_DRAKE
+animparticle COCOON_IMG, 0x800		ANIM_TAG_COCOON
+animparticle CORKSCREW_IMG,	0x800	ANIM_TAG_CORKSCREW
+animparticle HAVOC_SPEAR_IMG, 0x800	ANIM_TAG_HAVOC_SPEAR
+animparticle PURPLE_DRAKE_IMG, 0x800	ANIM_TAG_PURPLE_DRAKE
 
+gBattleAnimPaletteTable:
 animparticlepal 0x8d028b4,	ANIM_TAG_BONE,	0x0
 animparticlepal 0x8d1c90c,	ANIM_TAG_SPARK,	0x0
 animparticlepal 0x8d20a3c,	ANIM_TAG_PENCIL,	0x0
 animparticlepal 0x8d028d8,	ANIM_TAG_AIR_WAVE,	0x0
 animparticlepal 0x8d02900,	ANIM_TAG_UNUSED_ORB,	0x0
 animparticlepal SWORD_PAL,	ANIM_TAG_SWORD,	0x0
-animparticlepal 0x8d0293c,	ANIM_TAG_SEED,	0x0
+animparticlepal SEED_PAL,	ANIM_TAG_SEED,	0x0
 animparticlepal 0x8d02b30,	ANIM_TAG_UNUSED_EXPLOSION,	0x0
 animparticlepal 0x8d02b70,	ANIM_TAG_UNUSED_PINK_ORB,	0x0
 animparticlepal 0x8d03274,	ANIM_TAG_GUST,	0x0
@@ -421,7 +423,7 @@ animparticlepal 0x8d0af04,	ANIM_TAG_UNUSED_Z,	0x0
 animparticlepal 0x8d0af48,	ANIM_TAG_UNUSED_YELLOW_UNK_2,	0x0
 animparticlepal 0x8d0b014,	ANIM_TAG_UNUSED_AIR_SLASH,	0x0
 animparticlepal 0x8d0b404,	ANIM_TAG_UNUSED_SPINNING_GREEN_ORBS,	0x0
-animparticlepal 0x8d0b5e8,	ANIM_TAG_LEAF,	0x0
+animparticlepal LEAF_PAL,	ANIM_TAG_LEAF,	0x0
 animparticlepal 0x8d233c8,	ANIM_TAG_FINGER,	0x0
 animparticlepal 0x8d0b7b8,	ANIM_TAG_POISON_POWDER,	0x0
 animparticlepal 0x8d0b824,	ANIM_TAG_UNUSED_BROWN_TRIANGLE,	0x0

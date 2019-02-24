@@ -306,6 +306,7 @@ void EndBattleFlagClear(void) {
 	FlagClear(TAG_BATTLE_FLAG);
 	FlagClear(TWO_OPPONENT_FLAG);
 	FlagClear(SMART_WILD_FLAG);
+	VarSet(TERRAIN_VAR, 0x0);
 	VarSet(BATTLE_TOWER_TRAINER_NAME, 0xFFFF);
 	Free(gNewBS->MegaData);
 	Free(gNewBS->UltraData);

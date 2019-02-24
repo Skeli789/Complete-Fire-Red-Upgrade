@@ -147,6 +147,8 @@ void __attribute__((long_call)) SpriteCB_ReleaseMonFromBall(struct Sprite* sprit
 bool8 __attribute__((long_call)) IsCryPlayingOrClearCrySongs(void);
 void __attribute__((long_call)) DestroyAnimSprite(struct Sprite *sprite);
 void __attribute__((long_call)) DestroyAnimVisualTask(u8 taskId);
+void __attribute__((long_call)) AddSpriteIndex(u16 index);
+void __attribute__((long_call)) WaitAnimFrameCount(void);
 void __attribute__((long_call)) StoreSpriteCallbackInData6(struct Sprite *sprite, void (*callback)(struct Sprite*));
 void __attribute__((long_call)) sub_8074E14(struct Sprite *sprite);
 u8 __attribute__((long_call)) GetBattlerSide(u8 bank);

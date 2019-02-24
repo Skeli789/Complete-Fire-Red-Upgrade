@@ -122,6 +122,7 @@ CheckForTrainersWantingBattle 8081B30 0
 CursorCb_Summary 8122D4C 1
 ##
 ##Battle Animation Hooks
+ScriptCmd_loadspritegfx 08072868 0
 SlideMonToOriginalPosHook 080991BA 0
 SlideMonToOffsetHook 080992E4 0
 DetsinyBondASM1 080B6092 0
@@ -129,7 +130,6 @@ DetsinyBondASM2 080B6160 0
 EmbargoASM 080b68e4 0
 BLACKHOLE_ASM 080b60bc 0
 ANCHORSHOT_ASM 080ae484 2
-GRAVITY_ASM 080991bc 1
 FAIRY_LOCK_ASM 080aeba0 0
 LIGHTOFRUIN_ASM 080ae5ec 0
 SKILLSWAP_CHOOSER 080b39b4 0

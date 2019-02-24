@@ -11,7 +11,6 @@
 /* global ASM hooks */
 .global BLACKHOLE_ASM		@ hook at 0xb60bc via r0
 .global ANCHORSHOT_ASM		@ hook at 0xae484 via r2
-.global GRAVITY_ASM			@ hook at 0x991bc via r1
 .global FAIRY_LOCK_ASM		@ hook at 0xaeba0 via r0
 .global LIGHTOFRUIN_ASM		@ hook at 0xae5ec via r0
 .global SKILLSWAP_CHOOSER	@ hook at 0xb39b4 via r0 - choose btwn skill swap, power swap
@@ -528,6 +527,7 @@ AttackAnimationTable:
 .word ANIM_SHADOWFORCE
 .word ANIM_NUZZLE
 .word ANIM_RETALIATE
+.word 0x81D1064 @ANIM_METALBASH
 .word ANIM_JUDGMENT
 .word ANIM_FREEZEDRY
 .word ANIM_PSYSHOCK
@@ -5047,9 +5047,8 @@ PURPLESTARS: objtemplate 0x2741 0x27A6 0x83AC9D8 0x83E33F0 0x0 0x8231CFC 0x80A4D
 BLACKHOLE_ASM:
 	lsl r0, r3, #0x10
 	asr r7, r0, #0x10
-	ldr r0, =CURRENT_MOVE
-	ldrh r0, [r0]
-	cmp r0, #MOVE_DESTINYBOND
+	bl IsAnimMoveDestinyBond
+	cmp r0, #0x0
 	bne ModBlackHole
 	ldr r0, =(0x83E7668)
 	b End_BlackHoleASM
@@ -9526,26 +9525,25 @@ ANCHORANGLED: objtemplate 0x2854 0x2853 0x83ACA38 0x8231CF0 0x0 0x83E7604 0x80B5
 @ hook at 0xAE484 via r2
 .align 2
 ANCHORSHOT_ASM:
-	push {r1}
+	push {r1-r3}
 	strh r0, [r4, #0x22]
-	ldr r0, =CURRENT_MOVE
-	ldrh r0, [r0]
-	cmp r0, #MOVE_THUNDERWAVE
-	bne AnchorShota
-	ldr r0, .NormalTemplate
+	bl IsAnimMoveThunderWave
+	cmp r0, #0x0
+	beq AnchorShota
+	ldr r0, .NormalTWaveTemplate
 	b Jump
 
 AnchorShota:
 	ldr r0, .ATemplate
 Jump:
-	pop {r1}
+	pop {r1-r3}
 	add r1, #0x20
 	lsl r1, #0x10
 	ldr r2, =(0x80AE48C +1)
 	bx r2
 
 .align 2
-.NormalTemplate: .word 0x83E60B8
+.NormalTWaveTemplate: .word 0x83E60B8
 .ATemplate: .word CHAIN
 CHAIN: objtemplate 0x2853 0x2853 0x83AC9F8 0x8231CF0 0x0 0x8231CFC 0x80AE471
 
@@ -13130,46 +13128,6 @@ ANIM_GRAVITY:
 	pokespritefromBG bank_target
 	endanimation
 
-@ hook at 0x991BC via r1
-.align 2
-GRAVITY_ASM:
-	ldrh r0, [r0]
-	cmp r0, #0x0
-	beq GravityAttacker
-	cmp r0, #0x1
-	beq GravityTarget
-	cmp r0, #0x2
-	beq GravityAttackerPartner
-
-TargetPartner:
-	ldr r0, .AnimAttacker
-	ldrb r0, [r0, #0x1]
-	bl GetPartnerBank
-	b ReturnGravity
-
-GravityAttacker:
-	ldr r0, .AnimAttacker
-	ldrb r0, [r0]
-	b ReturnGravity
-
-GravityTarget:
-	ldr r0, .AnimAttacker
-	ldrb r0, [r0, #0x1]
-	b ReturnGravity
-
-GravityAttackerPartner:
-	ldr r0, .AnimAttacker
-	ldrb r0, [r0]
-	bl GetPartnerBank
-
-ReturnGravity:
-	ldr r1, .battle_side_objid_P_and_priv5_for_dp11b3
-	ldr r2, =0x80991DF
-	bx r2
-
-.align 2
-.AnimAttacker: .word 0x2037F1A
-.battle_side_objid_P_and_priv5_for_dp11b3: .word 0x2023D44
 GRAVITY_BLACKHOLE: objtemplate 0x27C0 0x27C0 0x83ACA38 0x8231CF0 0x0 0x83E7604 0x80B0E81
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -14098,11 +14056,10 @@ ANIM_EMBARGO:
 EmbargoASM:
 	mov r0, r8
 	strh r0, [r4, #0xA]
-	ldr r1, =CURRENT_MOVE
-	ldrh r1, [r1]
-	ldr r0, =MOVE_GRUDGE
-	cmp r0, r1
-	bne TgtSide
+	push {r2-r3}
+	bl IsAnimMoveGrudge
+	cmp r0, #0x0
+	beq TgtSide
 AtkSide:
 	ldr r5, =(0x02037f1a)
 	b ReturnEmbargo
@@ -14144,11 +14101,9 @@ FAIRYLOCK_CHAIN: objtemplate 0x285A 0x2853 0x83ACAC8 0x83E6254 0x0 0x83E6274 0x8
 @hook at 0xAEBA0 via r0
 .align 2
 FAIRY_LOCK_ASM:
-	ldr r0, =CURRENT_MOVE
-	ldrh r0, [r0]
-	ldrh r1, =MOVE_FAIRYLOCK
-	cmp r0, r1
-	beq FairyLock
+	bl IsAnimMoveFairyLock
+	cmp r0, #0x0
+	bne FairyLock
 	ldr r0, .OrigTemplate
 	b ReturnFL
 
@@ -14240,14 +14195,12 @@ LOR_GRAYCHARGE: objtemplate 0x27E3 0x2719 0x83AC9C8 0x83E6118 0x0 0x8231CFC 0x80
 @ hook at 0xAE5EC via r0
 .align 2
 LIGHTOFRUIN_ASM:
-	ldr r0, =CURRENT_MOVE
-	ldrh r0, [r0]
-	ldrh r1, =MOVE_LIGHTOFRUIN
-	cmp r0, r1
-	beq DoLightofRuin
-	ldrh r1, =MOVE_FLASHCANNON
-	cmp r0, r1
-	beq DoFlashCannon
+	bl IsAnimMoveLightOfRuin
+	cmp r0, #0x0
+	bne DoLightofRuin
+	bl IsAnimMoveFlashCannon
+	cmp r0, #0x0
+	bne DoFlashCannon
 	ldr r0, =0x83E6120
 	b ReturnLOR
 
@@ -15082,16 +15035,12 @@ get_bank_presence: 	@ sub_8074480
 .pool	
 @ hook at 0xB4C40 via r0
 ROLLOUT_TIMER_ASM:
-	ldr r0, =CURRENT_MOVE
-	ldrh r0, [r0]
-	ldr r1, =MOVE_TECTONIC_RAGE_P	@physical version
-	cmp r0, r1
-	beq SkipRolloutTimer
-	ldr r1, =MOVE_TECTONIC_RAGE_S	@special version
-	cmp r0, r1
-	beq SkipRolloutTimer
+	bl IsAnimMoveTectnoicRage
+	cmp r0, #0x0
+	bne SkipRolloutTimer
 	bl GetRolloutTimer
 	b ReturnRolloutTimer
+
 SkipRolloutTimer:
 	mov r0, #0x4	@ max timer
 	
@@ -20103,17 +20052,15 @@ SOULSTEAL_ZSTAR: objtemplate 0x27D5 0x27D5 0x83ACAF8 0x8231CF0 0x0 0x8231CFC 0x8
 .pool
 .align 2
 SKILLSWAP_CHOOSER:
-	ldr r0, =CURRENT_MOVE
-	ldrh r0, [r0]
-	ldrh r1, =MOVE_SKILLSWAP
-	cmp r0, r1
-	beq DoSkillSwap
-	ldrh r1, =MOVE_POWERSWAP
-	cmp r0, r1
-	beq DoPowerSwap
-	ldrh r1, =MOVE_HEARTSWAP
-	cmp r0, r1
-	beq DoHeartSwap
+	bl IsAnimMoveSkillSwap
+	cmp r0, #0x0
+	bne DoSkillSwap
+	bl IsAnimMovePowerSwap
+	cmp r0, #0x0
+	bne DoPowerSwap
+	bl IsAnimMoveHeartSwap
+	cmp r0, #0x0
+	bne DoHeartSwap
 
 SkillSwapNrm:
 	ldr r0, .SkillSwapTemplate
@@ -20126,19 +20073,22 @@ SwapReturn:
 	bx r2
 
 DoSkillSwap:
-	ldr r0, =SKILLSWAP_TEMPL
+	ldr r0, .SkillSwapTemplatePointer
 	b SwapReturn
 
 DoPowerSwap:
-	ldr r0, =POWERSWAP_TEMPL
+	ldr r0, .PowerSwapTemplatePointer
 	b SwapReturn
 
 DoHeartSwap:
-	ldr r0, =HEARTSWAP_TEMPL
+	ldr r0, .HeartSwapTemplatePointer
 	b SwapReturn
 
 .align 2
 .SkillSwapTemplate: .word 0x83E7114
+.SkillSwapTemplatePointer: .word SKILLSWAP_TEMPL @This is how they're called!
+.PowerSwapTemplatePointer: .word POWERSWAP_TEMPL @Don't change!
+.HeartSwapTemplatePointer: .word HEARTSWAP_TEMPL
 SKILLSWAP_TEMPL: objtemplate 0x280B 0x27E3 0x83ACA30 0x8231CF0 0x0 0x83E7104 0x80B3A35
 POWERSWAP_TEMPL: objtemplate 0x280B 0x27E8 0x83ACA30 0x8231CF0 0x0 0x83E7104 0x80B3A35
 HEARTSWAP_TEMPL: objtemplate 0x280B 0x27E8 0x83ACA30 0x8231CF0 0x0 0x83E7104 0x80B3A35

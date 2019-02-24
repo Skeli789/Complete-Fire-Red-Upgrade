@@ -475,7 +475,7 @@ void RunTurnActionsFunctions(void)
 			&& !(gDisableStructs[gActiveBattler].truantCounter)
 			&& !(gProtectStructs[gActiveBattler].onlyStruggle)) //or onlyStruggle in Emerald
 			{
-				gBattleScripting->bank = gActiveBattler;
+				gBankAttacker = gBattleScripting->bank = gActiveBattler;
 				if (chosenMove == MOVE_BEAKBLAST) {
 					gNewBS->BeakBlastByte |= gBitTable[gActiveBattler];
 					BattleScriptExecute(BattleScript_BeakBlastSetUp);
