@@ -5049,7 +5049,7 @@ BLACKHOLE_ASM:
 	asr r7, r0, #0x10
 	bl IsAnimMoveDestinyBond
 	cmp r0, #0x0
-	bne ModBlackHole
+	beq ModBlackHole
 	ldr r0, =(0x83E7668)
 	b End_BlackHoleASM
 
