@@ -7,6 +7,7 @@
 #include "../include/battle_message.h"
 #include "../include/battle_anim.h"
 #include "../include/pokedex.h"
+#include "../include/party_menu.h"
 #include "../include/constants/abilities.h"
 #include "../include/constants/moves.h"
 #include "../include/constants/items.h"
@@ -70,6 +71,7 @@
 #define STAT_CAN_RISE(bank, stat) ((gBattleMons[bank].statStages[stat-1] < 12 && ABILITY(bank) != ABILITY_CONTRARY) || (ABILITY(bank) == ABILITY_CONTRARY && gBattleMons[bank].statStages[stat-1] > 0))
 #define STAT_CAN_FALL(bank, stat) ((gBattleMons[bank].statStages[stat-1] > 0 && ABILITY(bank) != ABILITY_CONTRARY) || (ABILITY(bank) == ABILITY_CONTRARY && gBattleMons[bank].statStages[stat-1] < 12))
 #define BATTLER_MAX_HP(bank) (gBattleMons[bank].hp == gBattleMons[bank].maxHP)
+#define IS_Z_MOVE(move) (move >= FIRST_Z_MOVE && move <= LAST_Z_MOVE)
 #define IS_EVEN(val) (umodsi(val, 2) == 0)
 #define IS_ODD(val) (umodsi(val, 2) != 0)
 
