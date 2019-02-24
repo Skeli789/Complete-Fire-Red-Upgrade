@@ -78,3 +78,15 @@ GetProperBallIdHook3:
 	lsr r4, #0x18
 	ldr r1, =0x8139CE4 | 1
 	bx r1
+
+@0x80F1792 with r0
+ShinyAnimFixHook:
+	bl ShinyAnimFix
+	ldr r0, =0x80F179E | 1
+	bx r0
+
+@0x8014450 with r0
+PartyMenuSwitchingHook:
+	bl PartyMenuSwitchingUpdate
+	ldr r0, =0x80146AC | 1
+	bx r0
