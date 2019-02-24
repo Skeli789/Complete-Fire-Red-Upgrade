@@ -44,7 +44,7 @@ const struct Evolution* CanMegaEvolve(u8 bank, bool8 CheckUBInstead) {
 			else if (evolutions[i].unknown == MEGA_VARIANT_WISH) {
 			// Check learned moves
 				for (j = 0; j < 4; ++j) {
-					if (gBattleMons[bank].moves[j] == evolutions[i].param)
+					if (GetBankPartyData(bank)->moves[j] == evolutions[i].param) //Check party moves b/c Mimic can't activate Dragon Ascent
 						return &evolutions[i];
 				}
 			}
