@@ -258,7 +258,9 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, u8* BS_ptr)
 	
 	LOWER_STAT_BUFF:
         if (gSideTimers[SIDE(gActiveBattler)].mistTimer
-        && !certain && gCurrentMove != MOVE_CURSE && ABILITY(gBankAttacker) != ABILITY_INFILTRATOR)
+        && !certain 
+		&& gCurrentMove != MOVE_CURSE 
+		&& ABILITY(gBankAttacker) != ABILITY_INFILTRATOR)
         {
             if (flags == STAT_CHANGE_BS_PTR)
             {
@@ -278,7 +280,8 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, u8* BS_ptr)
         }
 		
         else if (gCurrentMove != MOVE_CURSE
-              && notProtectAffected != TRUE && JumpIfMoveAffectedByProtect(gCurrentMove, gBankAttacker, gBankTarget))
+              && notProtectAffected != TRUE 
+			  && JumpIfMoveAffectedByProtect(gCurrentMove, gBankAttacker, gBankTarget))
         {
             gBattlescriptCurrInstr = BattleScript_ButItFailed;
             return STAT_CHANGE_DIDNT_WORK;
