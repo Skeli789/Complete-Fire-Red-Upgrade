@@ -336,7 +336,7 @@ void BuildRandomPlayerTeam(void) {
 void SetWildMonHeldItem(void)
 {
 	u16 rnd = umodsi(Random(), 100);
-	u16 species = GetMonData(&gEnemyParty[0], MON_DATA_SPECIES, 0);
+	u16 species;
     u16 var1 = 45;
     u16 var2 = 95;
 
@@ -345,22 +345,30 @@ void SetWildMonHeldItem(void)
         var1 = 20;
         var2 = 80;
     }
-		
+	
     if (!(gBattleTypeFlags & (BATTLE_TYPE_POKE_DUDE | BATTLE_TYPE_SCRIPTED_WILD_1 | BATTLE_TYPE_TRAINER)))
     {
-        if (gBaseStats[species].item1 == gBaseStats[species].item2 && gBaseStats[species].item1 != 0)
-        {
-            SetMonData(&gEnemyParty[0], MON_DATA_HELD_ITEM, &gBaseStats[species].item1);
-            return;
-        }
+		for (int i = 0; i < 2; ++i) //Two possible wild opponents
+		{
+			if (i > 0 && !(gBattleTypeFlags & BATTLE_TYPE_DOUBLE))
+				break;
+			
+			species = gEnemyParty[i].species;
+			
+			if (gBaseStats[species].item1 == gBaseStats[species].item2 && gBaseStats[species].item1 != 0)
+			{
+				gEnemyParty[i].item = gBaseStats[species].item1;
+				return;
+			}
 
-        if (rnd < var1)
-			return;
-       
-        if (rnd < var2)
-            SetMonData(&gEnemyParty[0], MON_DATA_HELD_ITEM, &gBaseStats[species].item1);
-        else
-            SetMonData(&gEnemyParty[0], MON_DATA_HELD_ITEM, &gBaseStats[species].item2);
+			if (rnd < var1)
+				return;
+		   
+			if (rnd < var2)
+				gEnemyParty[i].item = gBaseStats[species].item1;
+			else
+				gEnemyParty[i].item = gBaseStats[species].item2;
+		}
     }
 }
 
