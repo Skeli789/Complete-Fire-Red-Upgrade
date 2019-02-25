@@ -33,6 +33,7 @@ extern u8 BattleScript_SelectingNotAllowedHealBlock[];
 
 extern u8* ZMoveNames[];
 extern u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
+extern u8 gTypeNames[][TYPE_NAME_LENGTH + 1];
 extern const u8 sTargetIdentities[];
 
 extern u8 StringNull[];
@@ -417,7 +418,7 @@ void MoveSelectionDisplayMoveType(void)
 	txtPtr = StringCopy(txtPtr, gText_MoveInterfaceType);
 	
 	#ifdef DISPLAY_REAL_MOVE_TYPE_ON_MENU
-		StringCopy(txtPtr, gTypeNames[moveInfo->moveTypes[gMoveSelectionCursor[gActiveBattler]]]); //This isn't working
+		StringCopy(txtPtr, gTypeNames[moveInfo->moveTypes[gMoveSelectionCursor[gActiveBattler]]]);
 	#else
 		StringCopy(txtPtr, gTypeNames[gBattleMoves[moveInfo->moves[gMoveSelectionCursor[gActiveBattler]]].type]);
 	#endif
