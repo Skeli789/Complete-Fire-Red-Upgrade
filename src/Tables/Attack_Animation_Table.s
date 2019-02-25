@@ -20115,38 +20115,15 @@ SUNRAZE_REDFLY: objtemplate 0x27AC 0x2851 0x83ACAA0 0x8231CF0 0x0 0x83E6B8C 0x80
 .pool     
 @ credit to ghoulslash
 ANIM_MENACING_MOONRAZE_MAELSTROM:
-/*
--focus energy/sparkles on attacker
--white/blue shadow ball, target gets sucked in
-	(emulate black hole eclipse)
--blue/black superpower into the hole (banks are all disappeared now)
--change BG to cosmic
--shadow ball, target reappear
--shadow ball, attacker reappear
--black/blue flare around attacker
--purple hyper beam
--purple shock wave in and out towards end
--on finality of beam and shockwave, purple explosion
--fade screen white
-
-*/
-
-@ particles
 	loadparticle 0x27c8 @focus energy
 	loadparticle 0x2741 @sparkles
 	loadparticle 0x27A5 @blue
 	loadparticle 0x27c0 @shadow ball
 	loadparticle 0x279F @black
-	
-@ partners dissapear
 	makebankinvisible attacker_partner
 	makebankinvisible target_partner
-	
 	makebankinvisible bank_target
-		
 	launchtemplate Template_Pal_Fade 0x0 0x5 PAL_BG 0x0 0x0 0xe 0x40c0
-		
-@ flare up
 	playsound2 0xa4 0xc0 
 	call MOONRAZE_FLARE 
 	pause 0x8 
@@ -20159,22 +20136,15 @@ ANIM_MENACING_MOONRAZE_MAELSTROM:
 	waitanimation
 	unloadparticle 0x2741 @sparkles
 	loadparticle 0x27db @ring
-
-@ make hole at target origin
 	loadparticle 0x27aa @white/grey
 	playsound2 0xBF 0xc0
 	launchtemplate MOONRAZE_WORMHOLE_GROW 0x2 0x4 0x0 0x0 bank_target 0x0
-
-@ move target to middle of screen (still invisible)
 	pause 0x10
 	launchtemplate 0x83d4e9c 0x2 0x5 0x1 0x35 0xffed 0x1 0x2	@ target down and left (instantaneously (last arg))
 	pause 0x2
-@ target sucked in
 	loadparticle 0x2810 @superpower
 	makebankvisible bank_target
-	
 	soundcomplex 0xb1 0x3f 0xa 0x4
-	
 	launchtask 0x8099981 0x2 0x4 0x50 0xfc00 bank_target 0x0 @ spin up target
 	call MOONRAZE_RINGS_IN
 	launchtemplate 0x83d4e84 0x2 0x3 0x1 0x0 0x30			@ target back to origin (slowly)
@@ -20185,19 +20155,14 @@ ANIM_MENACING_MOONRAZE_MAELSTROM:
 	pause 0x8
 	launchtemplate MOONRAZE_WHITE_RING_IN 0x28 0x4 0x0 0x0 bank_target 0x0	
 	pause 0x6
-@ attacker charges in
 	launchtemplate 0x83d4e54 0x2 0x2 0x4 0x4	@lunge forward
 	playsound2 0x97 0xc0 
 	pause 0x2
-	
-	
 	makebankinvisible bank_attacker
 	launchtemplate MOONRAZE_BLACK_SUPERPOWER 0x83 0x1 0x0 @superpower
 	launchtemplate MOONRAZE_BLUE_RING_IN 0x28 0x4 0x0 0x0 bank_target 0x0	
-
 	pause 0x8
 	playsound2 0xBF 0xc0 
-@ cosmic bg
 	loadBG1 BG_COSMIC
 	waitforBG
 	launchtask AnimTask_arg7_is_target_player 0x2 0x0
@@ -20208,8 +20173,8 @@ MOONRAZE_ON_OPPONENT:
 MOONRAZE_ON_PLAYER:
 	launchtask AnimTask_scroll_background 0x5 0x4 0x200 0xfd00 0x1 0xffff 
 FINISH_MOONRAZE:
-	waitfortransparentBG 
-	launchtask 0x8099981 0x2 0x4 0x1 0x0 bank_target 0x1
+	waitfortransparentBG 	
+	launchtask 0x8099981 0x2 0x4 0x1 0x0 bank_target 0x1	@ fix tgt rotation
 	pause 0x10
 	waitanimation
 	makebankvisible bank_attacker
@@ -20219,56 +20184,59 @@ FINISH_MOONRAZE:
 	loadparticle 0x27A6 @poison bubble
 	loadparticle 0x27A3 @hyper beam
 	loadparticle 0x27E4 @shock wave
-	loadparticle 0x2779 @explosion
 	unloadparticle 0x27db @ring
 	unloadparticle 0x27aa @white/grey
 	unloadparticle 0x2810 @superpower
 	playsound2 0x85 0xc0 
-	call MOONRAZE_CHARGEUP
+	call MOONRAZE_CHARGEUP+romsize
 	launchtask AnimTask_pal_fade_complex 0x2 0x6 0x2 0x2 0x2 0x0 0xc 0x0000 
 	launchtask AnimTask_move_bank_2 0x2 0x5 0x0 0x1 0x0 0x20 0x1 
-	call MOONRAZE_CHARGEUP
-	call MOONRAZE_CHARGEUP
+	call MOONRAZE_CHARGEUP+romsize
+	call MOONRAZE_CHARGEUP+romsize
 	launchsoundtask 0x80dcf39 0x7 0xf0 0xffc0 0x3f 0x1 0xf 0x0 0x5 
-	call MOONRAZE_BEAM
-	call MOONRAZE_BEAM 
-	call MOONRAZE_BEAM 
-	call MOONRAZE_BEAM 
-	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM+romsize
+	call MOONRAZE_BEAM+romsize 
+	call MOONRAZE_BEAM+romsize 
+	call MOONRAZE_BEAM+romsize 
+	call MOONRAZE_BEAM+romsize 
 	launchtask AnimTask_move_bank_2 0x2 0x5 0x1 0x4 0x0 0x3c 0x1 
 	launchtask AnimTask_pal_fade 0x2 0x5 PAL_DEF 0x4 0x0 0xc 0x0000 
-	call MOONRAZE_BEAM 
-	call MOONRAZE_BEAM 
-	call MOONRAZE_BEAM 
-	call MOONRAZE_BEAM 
-	call MOONRAZE_BEAM 
-	call MOONRAZE_BEAM 
-	call MOONRAZE_BEAM 
-	call MOONRAZE_BEAM 
-	call MOONRAZE_BEAM 
-	call MOONRAZE_BEAM 
-	call MOONRAZE_BEAM 
-	call MOONRAZE_BEAM 
-	call MOONRAZE_BEAM 
-	call MOONRAZE_BEAM 
-	call MOONRAZE_BEAM 
-	call MOONRAZE_BEAM 
-	call MOONRAZE_BEAM 
-	call MOONRAZE_BEAM 
-	call MOONRAZE_BEAM 
-	call MOONRAZE_BEAM 
-	call MOONRAZE_BEAM 
-	call MOONRAZE_BEAM 
-	call MOONRAZE_BEAM 	
+	call MOONRAZE_BEAM+romsize 
+	call MOONRAZE_BEAM+romsize 
+	call MOONRAZE_BEAM+romsize 
+	call MOONRAZE_BEAM+romsize 
+	call MOONRAZE_BEAM+romsize 
+	call MOONRAZE_BEAM+romsize 
+	call MOONRAZE_BEAM+romsize 
+	call MOONRAZE_BEAM+romsize 
+	call MOONRAZE_BEAM+romsize 
+	call MOONRAZE_BEAM+romsize 
+	call MOONRAZE_BEAM+romsize 
+	call MOONRAZE_BEAM+romsize 
+	call MOONRAZE_BEAM+romsize 
+	call MOONRAZE_BEAM+romsize 
+	call MOONRAZE_BEAM+romsize 
+	call MOONRAZE_BEAM+romsize 
+	call MOONRAZE_BEAM+romsize 
+	call MOONRAZE_BEAM+romsize 
+	call MOONRAZE_BEAM+romsize 
+	call MOONRAZE_BEAM+romsize 
+	call MOONRAZE_BEAM+romsize 
+	call MOONRAZE_BEAM+romsize 
+	call MOONRAZE_BEAM+romsize 	
 	playsound2 0x85 0xc0 
-	launchtemplate MOONRAZE_SHOCKWAVE 0x82 0x0
-	call MOONRAZE_BEAM 
+	launchtemplate MOONRAZE_SHOCKWAVE+romsize 0x82 0x0
+	call MOONRAZE_BEAM+romsize 
 	waitanimation
+	unloadparticle 0x27e4 @shock wave
+	unloadparticle 0x27a3 @hyper beam
+	unloadparticle 0x279F @black
+	loadparticle 0x2779 @explosion
 	launchtask AnimTask_move_bank_2 0x2 0x5 0x1 0x4 0x0 0x4c 0x1 
-	call MOONRAZE_EXPLODE
-	call MOONRAZE_EXPLODE
+	call MOONRAZE_EXPLODE+romsize
+	call MOONRAZE_EXPLODE+romsize
 	launchtask AnimTask_pal_fade 0x2 0x5 PAL_ALL 0x2 0x0 0x10 0x7fff
-	call MOONRAZE_EXPLODE
+	call MOONRAZE_EXPLODE+romsize
 	waitanimation
 	pause 0x10
 	launchtask AnimTask_pal_fade 0x2 0x5 PAL_ALL 0x0 0x10 0x0 0x7fff
@@ -20362,7 +20330,6 @@ MOONRAZE_SHOCKWAVE: objtemplate 0x27E4 0x27A6 0x83ACB60 0x8231CF0 0x0 0x83E61C8 
 MOONRAZE_WORMHOLE_GROW: objtemplate 0x27c0 0x27A5 0x83ACA38 0x8231CF0 0x0 MOONRAZE_GROW_SCALE 0x8075D9D
 MOONRAZE_GROW_SCALE: .word MOONRAZE_GROW_SCALE_PTR
 MOONRAZE_GROW_SCALE_PTR: .hword 0x100, 0x100, 0x0, 0x0, 0x0, 0x0, 0x88f6, 0x0, 0x7fff, 0x0, 0x0, 0x0
-
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
