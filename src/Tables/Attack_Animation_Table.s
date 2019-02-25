@@ -17983,8 +17983,178 @@ SPARKSURF_YELLOW_FLY: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_SPARK_2 0x83aca
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
+@ credit to ghoulslash
 ANIM_EXTREME_EVOBOOST:
-endanimation
+	loadparticle ANIM_TAG_LEER @leer
+	makebankinvisible attacker_partner
+	makebankinvisible target_partner
+	makebankinvisible bank_target	
+	launchtemplate Template_Pal_Fade 0x2 0x5 PAL_ALL-PAL_ATK 0x3 0x0 0x10 0x0000
+	makebankinvisible bank_attacker
+	waitanimation
+	playsound2 0xca 0xc0 
+	launchtemplate 0x83fef30 0x2 0x2 0x18 0xfff4
+	launchtemplate 0x83fef30 0x2 0x2 0xffe8 0xfff4
+	pause 0xa
+	playsound2 0xca 0xc0 
+	launchtemplate 0x83fef30 0x2 0x2 0x28 0xfff0
+	launchtemplate 0x83fef30 0x2 0x2 0xfff8 0xfff0
+	pause 0xa
+	playsound2 0xca 0xc0 
+	launchtemplate 0x83fef30 0x2 0x2 0x8 0xfffe
+	launchtemplate 0x83fef30 0x2 0x2 0xffd8 0xfffe
+	pause 0xa	
+	playsound2 0xca 0xc0 
+	launchtemplate 0x83fef30 0x2 0x2 0x10 0x5
+	launchtemplate 0x83fef30 0x2 0x2 0xffe0 0x5
+	pause 0xa
+	playsound2 0xca 0xc0 
+	launchtemplate 0x83fef30 0x2 0x2 0x20 0xfff0
+	launchtemplate 0x83fef30 0x2 0x2 0xfff0 0xfff0
+	pause 0xa
+	playsound2 0xca 0xc0 
+	launchtemplate 0x83fef30 0x2 0x2 0x5 0x0
+	launchtemplate 0x83fef30 0x2 0x2 0xffd5 0x0
+	pause 0xa	
+	playsound2 0xca 0xc0 
+	launchtemplate 0x83fef30 0x2 0x2 0x1c 0x5
+	launchtemplate 0x83fef30 0x2 0x2 0xffec 0x5
+	pause 0xa	
+	playsound2 0xca 0xc0 
+	launchtemplate 0x83fef30 0x2 0x2 0xf 0xfff4
+	launchtemplate 0x83fef30 0x2 0x2 0xffdf 0xfff4
+	waitanimation
+	loadBG1 BG_ZMOVE_ACTIVATE
+	waitforBG
+	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT @charge
+	loadparticle ANIM_TAG_VERTICAL_HEX @red
+	loadparticle ANIM_TAG_BERRY_EATEN @pink
+	loadparticle ANIM_TAG_ICE_CHUNK @ice
+	loadparticle ANIM_TAG_WISP_ORB @will o wisp
+	loadparticle ANIM_TAG_WATER_ORB @blue
+	loadparticle ANIM_TAG_POISON_BUBBLE @purple
+	loadparticle ANIM_TAG_LEAF @green
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_CIRCLE_OF_LIGHT 0x0 0x0 0x10 0x5bff 
+	waitanimation
+	playsound2 0xd2 0xc0
+	launchtemplate EVOBOOST_RED_CHARGE_FLYUP 0x82 0x7 0x0 0x1c 0x510 0x1e 0xd 0x32 bank_attacker 
+	pause 0x2 
+	launchtemplate EVOBOOST_PINK_CHARGE_FLYUP 0x82 0x7 0x0 0x20 0x4e0 0x14 0x10 0xffd2 bank_attacker 
+	pause 0x2 
+	launchtemplate EVOBOOST_ICE_CHARGE_FLYUP 0x82 0x7 0x0 0x21 0x540 0x14 0x8 0x2a bank_attacker 
+	pause 0x2 
+	launchtemplate EVOBOOST_BLACK_CHARGE_FLYUP 0x82 0x7 0x0 0x1f 0x490 0x19 0xb 0xffd6 bank_attacker 
+	pause 0x2 
+	launchtemplate EVOBOOST_BLUE_CHARGE_FLYUP 0x82 0x7 0x0 0x1c 0x500 0x19 0x10 0x2e bank_attacker 
+	pause 0x2 
+	launchtemplate EVOBOOST_PURPLE_CHARGE_FLYUP 0x82 0x7 0x0 0x21 0x4d0 0x1e 0xf 0xffce bank_attacker 
+	pause 0x2 
+	launchtemplate EVOBOOST_YELLOW_CHARGE_FLYUP 0x82 0x7 0x0 0x1c 0x510 0x1e 0xd 0x32 bank_attacker 
+	pause 0x2 
+	launchtemplate EVOBOOST_GREEN_CHARGE_FLYUP 0x82 0x7 0x0 0x20 0x4e0 0x14 0x10 0xffd2 bank_attacker 
+	pause 0x2 	
+	waitanimation
+	makebankvisible bank_attacker
+	soundcomplex 0xc8 0xc0 0x15 0xd
+	call EVOBOOST_COLORS_CIRCLE
+	launchtask 0x80df849 0x5 0x0 	@stockpile movement
+	call EVOBOOST_COLORS_CIRCLE_CHARGE
+	call EVOBOOST_COLORS_CIRCLE_CHARGE
+	call EVOBOOST_COLORS_CIRCLE_CHARGE
+	waitanimation
+	playsound2 0x5f 0xc0
+	pause 0x5
+	launchtemplate Template_Pal_Fade 0x2 0x5 PAL_ALL 0x0 0x0 0x10 0x7fff
+	loaddefaultBG
+	pause 0x18
+	waitanimation
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_CIRCLE_OF_LIGHT 0x0 0x10 0x0 0x5bff 
+	makebankvisible bank_target
+	makebankvisible attacker_partner
+	makebankvisible target_partner
+	waitanimation
+	endanimation
+	
+EVOBOOST_COLORS_CIRCLE:
+	launchtemplate EVOBOOST_RED_CHARGE_CIRCLE 0x2 0x2 0x0 0xfff0 
+	pause 0x2
+	launchtemplate EVOBOOST_PINK_CHARGE_CIRCLE 0x2 0x2 0x0 0xfff0 
+	pause 0x2
+	launchtemplate EVOBOOST_ICE_CHARGE_CIRCLE 0x2 0x2 0x0 0xfff0 
+	pause 0x2
+	launchtemplate EVOBOOST_BLACK_CHARGE_CIRCLE 0x2 0x2 0x0 0xfff0 
+	pause 0x2
+	launchtemplate EVOBOOST_BLUE_CHARGE_CIRCLE 0x2 0x2 0x0 0xfff0 
+	pause 0x2
+	launchtemplate EVOBOOST_PURPLE_CHARGE_CIRCLE 0x2 0x2 0x0 0xfff0 
+	pause 0x2
+	launchtemplate EVOBOOST_YELLOW_CHARGE_CIRCLE 0x2 0x2 0x0 0xfff0 
+	pause 0x2
+	launchtemplate EVOBOOST_GREEN_CHARGE_CIRCLE 0x2 0x2 0x0 0xfff0 
+	pause 0x2
+	return
+	
+EVOBOOST_COLORS_CIRCLE_CHARGE:
+	launchtemplate EVOBOOST_RED_CHARGE_CIRCLE 0x2 0x2 0x0 0xfff0 
+	pause 0x2
+	launchtemplate EVOBOOST_RED_STOCK 0x2 0x3 0x37 0x37 0xd 
+	pause 0x2
+	launchtemplate EVOBOOST_PINK_CHARGE_CIRCLE 0x2 0x2 0x0 0xfff0 
+	pause 0x2
+	launchtemplate EVOBOOST_PINK_STOCK 0x2 0x3 0xffc9 0xffc9 0xd 
+	pause 0x2 
+	launchtemplate EVOBOOST_ICE_CHARGE_CIRCLE 0x2 0x2 0x0 0xfff0
+	pause 0x2
+	launchtemplate EVOBOOST_ICE_STOCK 0x2 0x3 0x0 0x37 0xd 
+	pause 0x2 
+	launchtemplate EVOBOOST_BLACK_CHARGE_CIRCLE 0x2 0x2 0x0 0xfff0 
+	pause 0x2
+	launchtemplate EVOBOOST_BLACK_STOCK 0x2 0x3 0x0 0xffc9 0xd 
+	pause 0x2 
+	launchtemplate EVOBOOST_BLUE_CHARGE_CIRCLE 0x2 0x2 0x0 0xfff0 
+	pause 0x2
+	launchtemplate EVOBOOST_BLUE_STOCK 0x2 0x3 0x37 0xffde 0xd 
+	pause 0x2 
+	launchtemplate EVOBOOST_PURPLE_CHARGE_CIRCLE 0x2 0x2 0x0 0xfff0
+	pause 0x2
+	launchtemplate EVOBOOST_PURPLE_STOCK 0x2 0x3 0x37 0x22 0xd 
+	pause 0x2 
+	launchtemplate EVOBOOST_YELLOW_CHARGE_CIRCLE 0x2 0x2 0x0 0xfff0 
+	pause 0x2
+	launchtemplate EVOBOOST_YELLOW_STOCK 0x2 0x3 0xffc9 0xffde 0xd 
+	pause 0x2
+	launchtemplate EVOBOOST_GREEN_CHARGE_CIRCLE 0x2 0x2 0x0 0xfff0
+	pause 0x2
+	launchtemplate EVOBOOST_GREEN_STOCK 0x2 0x3 0xffc9 0x22 0xd 
+	pause 0x2
+	return
+	
+.align 2
+EVOBOOST_RED_CHARGE_FLYUP: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_VERTICAL_HEX 0x83ACB60 0x8231CF0 0x0 0x8231CFC 0x80B477D	
+EVOBOOST_PINK_CHARGE_FLYUP: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_BERRY_EATEN 0x83ACB60 0x8231CF0 0x0 0x8231CFC 0x80B477D
+EVOBOOST_ICE_CHARGE_FLYUP: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_ICE_CHUNK 0x83ACB60 0x8231CF0 0x0 0x8231CFC 0x80B477D
+EVOBOOST_BLACK_CHARGE_FLYUP: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WISP_ORB 0x83ACB60 0x8231CF0 0x0 0x8231CFC 0x80B477D
+EVOBOOST_BLUE_CHARGE_FLYUP: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WATER_ORB 0x83ACB60 0x8231CF0 0x0 0x8231CFC 0x80B477D
+EVOBOOST_PURPLE_CHARGE_FLYUP: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_POISON_BUBBLE 0x83ACB60 0x8231CF0 0x0 0x8231CFC 0x80B477D
+EVOBOOST_YELLOW_CHARGE_FLYUP: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_CIRCLE_OF_LIGHT 0x83ACB60 0x8231CF0 0x0 0x8231CFC 0x80B477D
+EVOBOOST_GREEN_CHARGE_FLYUP: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_LEAF 0x83ACB60 0x8231CF0 0x0 0x8231CFC 0x80B477D
+EVOBOOST_RED_CHARGE_CIRCLE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_VERTICAL_HEX 0x83ACB60 0x8231CF0 0x0 0x8231CFC HURRICANE_USER_ASM+1 
+EVOBOOST_PINK_CHARGE_CIRCLE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_BERRY_EATEN 0x83ACB60 0x8231CF0 0x0 0x8231CFC HURRICANE_USER_ASM+1 
+EVOBOOST_ICE_CHARGE_CIRCLE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_ICE_CHUNK 0x83ACB60 0x8231CF0 0x0 0x8231CFC HURRICANE_USER_ASM+1 
+EVOBOOST_BLACK_CHARGE_CIRCLE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WISP_ORB 0x83ACB60 0x8231CF0 0x0 0x8231CFC HURRICANE_USER_ASM+1 
+EVOBOOST_BLUE_CHARGE_CIRCLE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WATER_ORB 0x83ACB60 0x8231CF0 0x0 0x8231CFC HURRICANE_USER_ASM+1 
+EVOBOOST_PURPLE_CHARGE_CIRCLE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_POISON_BUBBLE 0x83ACB60 0x8231CF0 0x0 0x8231CFC HURRICANE_USER_ASM+1 
+EVOBOOST_YELLOW_CHARGE_CIRCLE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_CIRCLE_OF_LIGHT 0x83ACB60 0x8231CF0 0x0 0x8231CFC HURRICANE_USER_ASM+1 
+EVOBOOST_GREEN_CHARGE_CIRCLE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_LEAF 0x83ACB60 0x8231CF0 0x0 0x8231CFC HURRICANE_USER_ASM+1 
+EVOBOOST_RED_STOCK: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_VERTICAL_HEX 0x83ACB50 0x8231CF0 0x0 0x83E2AB8 0x80A2389 
+EVOBOOST_PINK_STOCK: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_BERRY_EATEN 0x83ACB50 0x8231CF0 0x0 0x83E2AB8 0x80A2389 
+EVOBOOST_ICE_STOCK: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_ICE_CHUNK 0x83ACB50 0x8231CF0 0x0 0x83E2AB8 0x80A2389 
+EVOBOOST_BLACK_STOCK: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_WISP_ORB 0x83ACB50 0x8231CF0 0x0 0x83E2AB8 0x80A2389 
+EVOBOOST_BLUE_STOCK: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_WATER_ORB 0x83ACB50 0x8231CF0 0x0 0x83E2AB8 0x80A2389 
+EVOBOOST_PURPLE_STOCK: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_POISON_BUBBLE 0x83ACB50 0x8231CF0 0x0 0x83E2AB8 0x80A2389 
+EVOBOOST_YELLOW_STOCK: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_CIRCLE_OF_LIGHT 0x83ACB50 0x8231CF0 0x0 0x83E2AB8 0x80A2389 
+EVOBOOST_GREEN_STOCK: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_LEAF 0x83ACB50 0x8231CF0 0x0 0x83E2AB8 0x80A2389 
+
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool   
@@ -20188,55 +20358,55 @@ FINISH_MOONRAZE:
 	unloadparticle ANIM_TAG_AIR_WAVE_2 @white/grey
 	unloadparticle ANIM_TAG_METEOR @superpower
 	playsound2 0x85 0xc0 
-	call MOONRAZE_CHARGEUP+romsize
+	call MOONRAZE_CHARGEUP
 	launchtask AnimTask_pal_fade_complex 0x2 0x6 0x2 0x2 0x2 0x0 0xc 0x0000 
 	launchtask AnimTask_move_bank_2 0x2 0x5 0x0 0x1 0x0 0x20 0x1 
-	call MOONRAZE_CHARGEUP+romsize
-	call MOONRAZE_CHARGEUP+romsize
+	call MOONRAZE_CHARGEUP
+	call MOONRAZE_CHARGEUP
 	launchsoundtask 0x80dcf39 0x7 0xf0 0xffc0 0x3f 0x1 0xf 0x0 0x5 
-	call MOONRAZE_BEAM+romsize
-	call MOONRAZE_BEAM+romsize 
-	call MOONRAZE_BEAM+romsize 
-	call MOONRAZE_BEAM+romsize 
-	call MOONRAZE_BEAM+romsize 
+	call MOONRAZE_BEAM
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 
 	launchtask AnimTask_move_bank_2 0x2 0x5 0x1 0x4 0x0 0x3c 0x1 
 	launchtask AnimTask_pal_fade 0x2 0x5 PAL_DEF 0x4 0x0 0xc 0x0000 
-	call MOONRAZE_BEAM+romsize 
-	call MOONRAZE_BEAM+romsize 
-	call MOONRAZE_BEAM+romsize 
-	call MOONRAZE_BEAM+romsize 
-	call MOONRAZE_BEAM+romsize 
-	call MOONRAZE_BEAM+romsize 
-	call MOONRAZE_BEAM+romsize 
-	call MOONRAZE_BEAM+romsize 
-	call MOONRAZE_BEAM+romsize 
-	call MOONRAZE_BEAM+romsize 
-	call MOONRAZE_BEAM+romsize 
-	call MOONRAZE_BEAM+romsize 
-	call MOONRAZE_BEAM+romsize 
-	call MOONRAZE_BEAM+romsize 
-	call MOONRAZE_BEAM+romsize 
-	call MOONRAZE_BEAM+romsize 
-	call MOONRAZE_BEAM+romsize 
-	call MOONRAZE_BEAM+romsize 
-	call MOONRAZE_BEAM+romsize 
-	call MOONRAZE_BEAM+romsize 
-	call MOONRAZE_BEAM+romsize 
-	call MOONRAZE_BEAM+romsize 
-	call MOONRAZE_BEAM+romsize 	
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 	
 	playsound2 0x85 0xc0 
-	launchtemplate MOONRAZE_SHOCKWAVE+romsize 0x82 0x0
-	call MOONRAZE_BEAM+romsize 
+	launchtemplate MOONRAZE_SHOCKWAVE 0x82 0x0
+	call MOONRAZE_BEAM 
 	waitanimation
 	unloadparticle ANIM_TAG_CIRCLE_OF_LIGHT @shock wave
 	unloadparticle ANIM_TAG_ORBS @hyper beam
 	unloadparticle ANIM_TAG_HANDS_AND_FEET @black
 	loadparticle ANIM_TAG_UNUSED_EXPLOSION_2 @explosion
 	launchtask AnimTask_move_bank_2 0x2 0x5 0x1 0x4 0x0 0x4c 0x1 
-	call MOONRAZE_EXPLODE+romsize
-	call MOONRAZE_EXPLODE+romsize
+	call MOONRAZE_EXPLODE
+	call MOONRAZE_EXPLODE
 	launchtask AnimTask_pal_fade 0x2 0x5 PAL_ALL 0x2 0x0 0x10 0x7fff
-	call MOONRAZE_EXPLODE+romsize
+	call MOONRAZE_EXPLODE
 	waitanimation
 	pause 0x10
 	launchtask AnimTask_pal_fade 0x2 0x5 PAL_ALL 0x0 0x10 0x0 0x7fff
