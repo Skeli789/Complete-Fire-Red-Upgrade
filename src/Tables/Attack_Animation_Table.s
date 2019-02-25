@@ -19743,63 +19743,63 @@ ANIM_GUARDIAN_OF_ALOLA:
 	unloadparticle 0x27db
 	playsound2 0x91 0xc0
 	launchtemplate 0x83d4e9c 0x2 0x5 bank_attacker 0xff00 0xf 0x0 0x4
-	call GUARDIAN_ROCKS_PLAYER+romsize
+	call GUARDIAN_ROCKS_PLAYER
 	pause 0xa
 	launchtemplate 0x83d4e84 0x2 0x3 bank_attacker 0x0 0x10
-	call GUARDIAN_ROCKS_PLAYER+romsize
+	call GUARDIAN_ROCKS_PLAYER
 	waitanimation
 	pause 0xa
 	playsound2 0x91 0xc0
 	launchtemplate 0x83d4e9c 0x2 0x5 bank_attacker 0xff00 0xf 0x0 0x4
-	call GUARDIAN_ROCKS_PLAYER+romsize
+	call GUARDIAN_ROCKS_PLAYER
 	pause 0xa
 	launchtemplate 0x83d4e84 0x2 0x3 bank_attacker 0x0 0x10
-	call GUARDIAN_ROCKS_PLAYER+romsize
+	call GUARDIAN_ROCKS_PLAYER
 	waitanimation
 	pause 0xa
 	pause 0x10
-	call GUARDIAN_ROCKS_PLAYER+romsize
+	call GUARDIAN_ROCKS_PLAYER
 	launchtask 0x80b54e9 0x5 0x1 0x75 
 	pause 0x10
-	call GUARDIAN_ROCKS_PLAYER+romsize
+	call GUARDIAN_ROCKS_PLAYER
 	pause 0x10
-	call GUARDIAN_ROCKS_PLAYER+romsize
+	call GUARDIAN_ROCKS_PLAYER
 	pause 0x10
 	loadparticle PARTICLE_FIST
-	call GUARDIAN_ROCKS_PLAYER+romsize
+	call GUARDIAN_ROCKS_PLAYER
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x3 0x0 0xb 0x0000
 	pause 0x1
 	launchtask AnimTask_pal_fade_particle 0x2 0x5 PARTICLE_FIST 0x0 0x0 0xc 0x277f
 	loadBG1 BG_FISSURE 
 	waitforBG 
-	call GUARDIAN_ROCKS_PLAYER+romsize
+	call GUARDIAN_ROCKS_PLAYER
 	launchtask 0x80b9801 0x5 0x3 0x1 0x5 0xffff 
 	waitfortransparentBG 
 	playsound2 0x80 0x3f 
-	launchtemplate GUARDIAN_FIST_DOWN+romsize 0x83 0x3 0x0 0xffd0 0x1f
+	launchtemplate GUARDIAN_FIST_DOWN 0x83 0x3 0x0 0xffd0 0x1f
 	pause 0x24
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x0 0xb 0x0 0x0000
 	playsound2 0xab 0x3f
 	launchtask AnimTask_screen_shake 0x3 0x3 bank_target 0xa 0x25 
 	soundcomplex 0x7c 0x3f 0x10 0x9
-	call GUARDIAN_ROCKS_TARGET+romsize
-	call GUARDIAN_ROCK_GEYSER+romsize
-	call GUARDIAN_ROCK_GEYSER+romsize
-	call GUARDIAN_ROCK_GEYSER+romsize
-	call GUARDIAN_ROCKS_TARGET+romsize
-	call GUARDIAN_ROCK_GEYSER+romsize
-	call GUARDIAN_ROCK_GEYSER+romsize
-	call GUARDIAN_ROCK_GEYSER+romsize
-	call GUARDIAN_ROCKS_TARGET+romsize
-	call GUARDIAN_ROCK_GEYSER+romsize
-	call GUARDIAN_ROCK_GEYSER+romsize
-	call GUARDIAN_ROCK_GEYSER+romsize
-	call GUARDIAN_ROCKS_TARGET+romsize
+	call GUARDIAN_ROCKS_TARGET
+	call GUARDIAN_ROCK_GEYSER
+	call GUARDIAN_ROCK_GEYSER
+	call GUARDIAN_ROCK_GEYSER
+	call GUARDIAN_ROCKS_TARGET
+	call GUARDIAN_ROCK_GEYSER
+	call GUARDIAN_ROCK_GEYSER
+	call GUARDIAN_ROCK_GEYSER
+	call GUARDIAN_ROCKS_TARGET
+	call GUARDIAN_ROCK_GEYSER
+	call GUARDIAN_ROCK_GEYSER
+	call GUARDIAN_ROCK_GEYSER
+	call GUARDIAN_ROCKS_TARGET
 	launchtask AnimTask_pal_fade 0x2 0x5 PAL_ALL 0x3 0x0 0x10 0x7fff
-	call GUARDIAN_ROCK_GEYSER+romsize
-	call GUARDIAN_ROCK_GEYSER+romsize
-	call GUARDIAN_ROCK_GEYSER+romsize
-	call GUARDIAN_ROCKS_TARGET+romsize
+	call GUARDIAN_ROCK_GEYSER
+	call GUARDIAN_ROCK_GEYSER
+	call GUARDIAN_ROCK_GEYSER
+	call GUARDIAN_ROCKS_TARGET
 	waitanimation
 	launchtask AnimTask_pal_fade_particle 0x2 0x5 PARTICLE_FIST 0x0 0xc 0x0 0x277f
 	waitanimation
@@ -19828,13 +19828,13 @@ GUARDIAN_ROCKS_TARGET:
 	return
 	
 GUARDIAN_ROCK_GEYSER:
-	launchtemplate GUARDIAN_ROCK_UP+romsize 0x82 0x3 0x0 0xfffc 0x10	@ -4, -0x10
+	launchtemplate GUARDIAN_ROCK_UP 0x82 0x3 0x0 0xfffc 0x10	@ -4, -0x10
 	pause 0x0
-	launchtemplate GUARDIAN_ROCK_UP+romsize 0x82 0x3 0x0 0x100D 0x10	@ 
+	launchtemplate GUARDIAN_ROCK_UP 0x82 0x3 0x0 0x100D 0x10	@ 
 	pause 0x0
-	launchtemplate GUARDIAN_ROCK_UP+romsize 0x82 0x3 0x0 0x4 0x10 
+	launchtemplate GUARDIAN_ROCK_UP 0x82 0x3 0x0 0x4 0x10 
 	pause 0x0
-	launchtemplate GUARDIAN_ROCK_UP+romsize 0x82 0x3 0x0 0xfff0 0x10
+	launchtemplate GUARDIAN_ROCK_UP 0x82 0x3 0x0 0xfff0 0x10
 	pause 0x0
 	return	
 
@@ -19849,8 +19849,266 @@ endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
+@ credit to ghoulslash
 ANIM_MENACING_MOONRAZE_MAELSTROM:
-endanimation
+.include "../../../headers/anim_defines.asm"
+.equ romsize, 0x08000000
+
+.equ rom, romsize
+
+.equ BG_INFERNO_OVERDRIVE, 0x38
+
+.org 0xc40000, 0xff
+
+menacing_moonraze_maelstrom_anim:
+/*
+-focus energy/sparkles on attacker
+-white/blue shadow ball, target gets sucked in
+	(emulate black hole eclipse)
+-blue/black superpower into the hole (banks are all disappeared now)
+-change BG to cosmic
+-shadow ball, target reappear
+-shadow ball, attacker reappear
+-black/blue flare around attacker
+-purple hyper beam
+-purple shock wave in and out towards end
+-on finality of beam and shockwave, purple explosion
+-fade screen white
+
+*/
+
+@ particles
+	loadparticle 0x27c8 @focus energy
+	loadparticle 0x2741 @sparkles
+	loadparticle 0x27A5 @blue
+	loadparticle 0x27c0 @shadow ball
+	loadparticle 0x279F @black
+	
+@ partners dissapear
+	makebankinvisible attacker_partner
+	makebankinvisible target_partner
+	
+	makebankinvisible bank_target
+		
+	launchtemplate Template_Pal_Fade 0x0 0x5 PAL_BG 0x0 0x0 0xe 0x40c0
+		
+@ flare up
+	playsound2 0xa4 0xc0 
+	call MOONRAZE_FLARE 
+	pause 0x8 
+	launchtask AnimTask_pal_fade_complex 0x2 0x6 0x2 0x2 0x2 0x0 0xc 0x0000 
+	launchtask AnimTask_move_bank_2 0x2 0x5 0x0 0x1 0x0 0x20 0x1 
+	call MOONRAZE_FLARE 
+	playsound2 0xa4 0xc0
+	pause 0x8 
+	call MOONRAZE_FLARE
+	waitanimation
+	unloadparticle 0x2741 @sparkles
+	loadparticle 0x27db @ring
+
+@ make hole at target origin
+	loadparticle 0x27aa @white/grey
+	playsound2 0xBF 0xc0
+	launchtemplate MOONRAZE_WORMHOLE_GROW 0x2 0x4 0x0 0x0 bank_target 0x0
+
+@ move target to middle of screen (still invisible)
+	pause 0x10
+	launchtemplate 0x83d4e9c 0x2 0x5 0x1 0x35 0xffed 0x1 0x2	@ target down and left (instantaneously (last arg))
+	pause 0x2
+@ target sucked in
+	loadparticle 0x2810 @superpower
+	makebankvisible bank_target
+	
+	soundcomplex 0xb1 0x3f 0xa 0x4
+	
+	launchtask 0x8099981 0x2 0x4 0x50 0xfc00 bank_target 0x0 @ spin up target
+	call MOONRAZE_RINGS_IN
+	launchtemplate 0x83d4e84 0x2 0x3 0x1 0x0 0x30			@ target back to origin (slowly)
+	call MOONRAZE_RINGS_IN
+	pause 0xD
+	makebankinvisible bank_target	
+	launchtemplate MOONRAZE_BLUE_RING_IN 0x28 0x4 0x0 0x0 bank_target 0x0
+	pause 0x8
+	launchtemplate MOONRAZE_WHITE_RING_IN 0x28 0x4 0x0 0x0 bank_target 0x0	
+	pause 0x6
+@ attacker charges in
+	launchtemplate 0x83d4e54 0x2 0x2 0x4 0x4	@lunge forward
+	playsound2 0x97 0xc0 
+	pause 0x2
+	
+	
+	makebankinvisible bank_attacker
+	launchtemplate MOONRAZE_BLACK_SUPERPOWER 0x83 0x1 0x0 @superpower
+	launchtemplate MOONRAZE_BLUE_RING_IN 0x28 0x4 0x0 0x0 bank_target 0x0	
+
+	pause 0x8
+	playsound2 0xBF 0xc0 
+@ cosmic bg
+	loadBG1 BG_COSMIC
+	waitforBG
+	launchtask AnimTask_arg7_is_target_player 0x2 0x0
+	jumpifargmatches 0x7 bank_target MOONRAZE_ON_PLAYER
+MOONRAZE_ON_OPPONENT:
+	launchtask AnimTask_scroll_background 0x5 0x4 0xfd00 0x200 0x1 0xffff 
+	goto FINISH_MOONRAZE
+MOONRAZE_ON_PLAYER:
+	launchtask AnimTask_scroll_background 0x5 0x4 0x200 0xfd00 0x1 0xffff 
+FINISH_MOONRAZE:
+	waitfortransparentBG 
+	launchtask 0x8099981 0x2 0x4 0x1 0x0 bank_target 0x1
+	pause 0x10
+	waitanimation
+	makebankvisible bank_attacker
+	pause 0x2
+	makebankvisible bank_target
+	waitanimation
+	loadparticle 0x27A6 @poison bubble
+	loadparticle 0x27A3 @hyper beam
+	loadparticle 0x27E4 @shock wave
+	loadparticle 0x2779 @explosion
+	unloadparticle 0x27db @ring
+	unloadparticle 0x27aa @white/grey
+	unloadparticle 0x2810 @superpower
+	playsound2 0x85 0xc0 
+	call MOONRAZE_CHARGEUP
+	launchtask AnimTask_pal_fade_complex 0x2 0x6 0x2 0x2 0x2 0x0 0xc 0x0000 
+	launchtask AnimTask_move_bank_2 0x2 0x5 0x0 0x1 0x0 0x20 0x1 
+	call MOONRAZE_CHARGEUP
+	call MOONRAZE_CHARGEUP
+	launchsoundtask 0x80dcf39 0x7 0xf0 0xffc0 0x3f 0x1 0xf 0x0 0x5 
+	call MOONRAZE_BEAM
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 
+	launchtask AnimTask_move_bank_2 0x2 0x5 0x1 0x4 0x0 0x3c 0x1 
+	launchtask AnimTask_pal_fade 0x2 0x5 PAL_DEF 0x4 0x0 0xc 0x0000 
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 
+	call MOONRAZE_BEAM 	
+	playsound2 0x85 0xc0 
+	launchtemplate MOONRAZE_SHOCKWAVE 0x82 0x0
+	call MOONRAZE_BEAM 
+	waitanimation
+	launchtask AnimTask_move_bank_2 0x2 0x5 0x1 0x4 0x0 0x4c 0x1 
+	call MOONRAZE_EXPLODE
+	call MOONRAZE_EXPLODE
+	launchtask AnimTask_pal_fade 0x2 0x5 PAL_ALL 0x2 0x0 0x10 0x7fff
+	call MOONRAZE_EXPLODE
+	waitanimation
+	pause 0x10
+	launchtask AnimTask_pal_fade 0x2 0x5 PAL_ALL 0x0 0x10 0x0 0x7fff
+	unsetscrollingBG
+	makebankvisible attacker_partner
+	makebankvisible target_partner
+	endanimation
+	
+MOONRAZE_EXPLODE:
+	playsound2 0xab 0xc0 
+	launchtemplate MOONRAZE_EXPLOSION 0x83 0x4 0x0 0x0 bank_target 0x1 
+	pause 0x6 
+	playsound2 0xab 0xc0 
+	launchtemplate MOONRAZE_EXPLOSION 0x83 0x4 0x18 0xffe8 bank_target 0x1 
+	pause 0x6 
+	playsound2 0xab 0xc0 
+	launchtemplate MOONRAZE_EXPLOSION 0x83 0x4 0xfff0 0x10 bank_target 0x1 
+	pause 0x6 
+	playsound2 0xab 0xc0 
+	launchtemplate MOONRAZE_EXPLOSION 0x83 0x4 0xffe8 0xfff4 bank_target 0x1 
+	pause 0x6 
+	playsound2 0xab 0xc0 
+	launchtemplate MOONRAZE_EXPLOSION 0x83 0x4 0x10 0x10 bank_target 0x1 
+	pause 0x6 
+	return 
+	
+MOONRAZE_FLARE:
+	launchtemplate MOONRAZE_BLACK_SPARKLES 0x2 0x6 0xfff1 0x0 0x0 0x0 0x20 0x3c 
+	launchtemplate MOONRAZE_BLUE_FOCUS 0x2 0x4 0x0 0xffe8 0x1a 0x2 
+	pause 0x4 
+	launchtemplate MOONRAZE_BLUE_FOCUS 0x2 0x4 0x0 0xe 0x1c 0x1 
+	pause 0x4 
+	launchtemplate MOONRAZE_BLACK_SPARKLES 0x2 0x6 0xc 0xfffb 0x0 0x0 0x20 0x3c 
+	launchtemplate MOONRAZE_BLACK_FOCUS 0x2 0x4 0x0 0xfffb 0xa 0x2 
+	pause 0x4 
+	launchtemplate MOONRAZE_BLACK_FOCUS 0x2 0x4 0x0 0x1c 0x1a 0x3 
+	pause 0x4 
+	launchtemplate MOONRAZE_BLACK_FOCUS 0x2 0x4 0x0 0xfff4 0x0 0x1 
+	return 
+	
+MOONRAZE_RINGS_IN:
+	launchtemplate MOONRAZE_BLUE_RING_IN 0x28 0x4 0x0 0x0 bank_target 0x0
+	pause 0x8
+	launchtemplate MOONRAZE_WHITE_RING_IN 0x28 0x4 0x0 0x0 bank_target 0x0	
+	pause 0x8
+	launchtemplate MOONRAZE_BLUE_RING_IN 0x28 0x4 0x0 0x0 bank_target 0x0		
+	pause 0x8
+	return
+
+MOONRAZE_CHARGEUP:
+	launchtemplate MOONRAZE_PURPLE_FOCUS 0x2 0x4 0x0 0xffe8 0x1a 0x2 
+	launchtemplate MOONRAZE_BLACK_BALL 0x2 0x7 0x0 0x1c 0x210 0x1e 0xd 0x32 bank_attacker 
+	pause 0x2 
+	launchtemplate MOONRAZE_BLACK_BALL 0x2 0x7 0x0 0x20 0x1e0 0x14 0x10 0xffd2 bank_attacker 
+	pause 0x2 
+	launchtemplate MOONRAZE_PURPLE_FOCUS 0x2 0x4 0x0 0xe 0x1c 0x1 
+	launchtemplate MOONRAZE_BLACK_BALL 0x2 0x7 0x0 0x21 0x240 0x14 0x8 0x2a bank_attacker 
+	pause 0x2 
+	launchtemplate MOONRAZE_BLACK_BALL 0x2 0x7 0x0 0x1f 0x190 0x19 0xb 0xffd6 bank_attacker 
+	pause 0x2 
+	launchtemplate MOONRAZE_BLACK_BALL 0x2 0x7 0x0 0x1c 0x200 0x19 0x10 0x2e bank_attacker 
+	pause 0x2 
+	launchtemplate MOONRAZE_BLACK_BALL 0x2 0x7 0x0 0x21 0x1d0 0x1e 0xf 0xffce bank_attacker 
+	pause 0x2 
+	launchtemplate MOONRAZE_PURPLE_FOCUS 0x2 0x4 0x0 0x1c 0x1a 0x3 
+	launchtemplate MOONRAZE_BLACK_BALL 0x2 0x7 0x0 0x21 0x240 0x14 0x8 0x2a bank_attacker 
+	pause 0x2 
+	launchtemplate MOONRAZE_BLACK_BALL 0x2 0x7 0x0 0x1f 0x190 0x19 0xb 0xffd6 bank_attacker 
+	pause 0x2 
+	launchtemplate MOONRAZE_PURPLE_FOCUS 0x2 0x4 0x0 0xfff4 0x0 0x1 
+	return 
+	
+MOONRAZE_BEAM:
+	launchtemplate MOONRAZE_BEAM_PARTICLE 0x82 0x0 
+	launchtemplate MOONRAZE_BEAM_PARTICLE 0x82 0x0 
+	pause 0x1 
+	return 
+
+.align 2
+MOONRAZE_BLUE_FOCUS: objtemplate 0x27C8 0x27a5 0x83ACA18 0x83E3600 0x0 0x8231CFC 0x80A5AD9 
+MOONRAZE_BLACK_FOCUS: objtemplate 0x27C8 0x279F 0x83ACA18 0x83E3600 0x0 0x8231CFC 0x80A5AD9 
+MOONRAZE_PURPLE_FOCUS: objtemplate 0x27C8 0x27a6 0x83ACA18 0x83E3600 0x0 0x8231CFC 0x80A5AD9 
+MOONRAZE_BLACK_SPARKLES: objtemplate 0x2741 0x279F 0x83AC9D8 0x83E33F0 0x0 0x8231CFC 0x80A4D0D 
+MOONRAZE_BLUE_RING_IN: objtemplate 0x27db 0x27A5 0x83acbc0 0x8231cf0 0x0 0x83e40c4 0x8075d9d
+MOONRAZE_WHITE_RING_IN: objtemplate 0x27db 0x27aa 0x83acbc0 0x8231cf0 0x0 0x83e40c4 0x8075d9d
+MOONRAZE_BLACK_SUPERPOWER: objtemplate 0x2810 0x279F 0x83AC9E0 0x8231CF0 0x0 0x8231CFC 0x80B12E9
+MOONRAZE_BLACK_BALL: objtemplate 0x27A6 0x279F 0x83ACA30 0x8231CF0 0x0 0x8231CFC 0x80B477D 
+MOONRAZE_BEAM_PARTICLE: objtemplate 0x27A3 0x27a6 0x83AC9C8 0x83E2A20 0x0 0x8231CFC 0x80A25ED 
+MOONRAZE_EXPLOSION: objtemplate 0x2779 0x27A6 0x83AC9D8 0x83E3F90 0x0 0x8231CFC 0x8075D9D
+MOONRAZE_SHOCKWAVE: objtemplate 0x27E4 0x27A6 0x83ACB60 0x8231CF0 0x0 0x83E61C8 TARGET_SHOCKWAVE_TRAJ+1
+MOONRAZE_WORMHOLE_GROW: objtemplate 0x27c0 0x27A5 0x83ACA38 0x8231CF0 0x0 MOONRAZE_GROW_SCALE 0x8075D9D
+MOONRAZE_GROW_SCALE: .word MOONRAZE_GROW_SCALE_PTR
+MOONRAZE_GROW_SCALE_PTR: .hword 0x100, 0x100, 0x0, 0x0, 0x0, 0x0, 0x88f6, 0x0, 0x7fff, 0x0, 0x0, 0x0
+
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
