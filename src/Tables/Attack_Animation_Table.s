@@ -19767,11 +19767,7 @@ ANIM_GUARDIAN_OF_ALOLA:
 	pause 0x10
 	call GUARDIAN_ROCKS_PLAYER
 	pause 0x10
-<<<<<<< HEAD
-	loadparticle PARTICLE_FIST
-=======
 	loadparticle ANIM_TAG_HORSESHOE_SIDE_FIST
->>>>>>> b94ff057a527b9f138f0945b983911a4fe9649bd
 	call GUARDIAN_ROCKS_PLAYER
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x3 0x0 0xb 0x0000
 	pause 0x1
@@ -19857,16 +19853,6 @@ endanimation
 .pool     
 @ credit to ghoulslash
 ANIM_MENACING_MOONRAZE_MAELSTROM:
-.include "../../../headers/anim_defines.asm"
-.equ romsize, 0x08000000
-
-.equ rom, romsize
-
-.equ BG_INFERNO_OVERDRIVE, 0x38
-
-.org 0xc40000, 0xff
-
-menacing_moonraze_maelstrom_anim:
 /*
 -focus energy/sparkles on attacker
 -white/blue shadow ball, target gets sucked in
