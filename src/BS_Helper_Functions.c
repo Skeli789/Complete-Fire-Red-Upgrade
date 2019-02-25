@@ -13,6 +13,7 @@ extern u8 BattleScript_PledgeCombined[];
 extern u8 BattleScript_PledgeReady[];
 extern u8 BattleScript_PrintCustomString[];
 extern u8 BattleScript_SeedStatBoost[];
+extern u8 BattleScript_NoTargetMoveFailed[];
 
 extern u8 PowerTrickString[];
 extern u8 PowerSwapString[];
@@ -499,7 +500,10 @@ void DefogHelperFunc(void) {
 }
 
 void ClearBeakBlastBit(void) {
-	gNewBS->BeakBlastByte &= ~(gBitTable[gBankAttacker]);
+	if (!(gNewBS->BeakBlastByte & gBitTable[gBankAttacker])) //Forced by Encore
+		gBattlescriptCurrInstr = BattleScript_NoTargetMoveFailed;
+	else
+		gNewBS->BeakBlastByte &= ~(gBitTable[gBankAttacker]);
 }
 
 void BestowItem(void) {
@@ -1382,4 +1386,10 @@ void LastResortFunc(void) {
 	if (i == 1 //Attacker only knows Last Resort
 	|| !knowsLastResort)
 		gBattlescriptCurrInstr = BattleScript_ButItFailed - 2 - 5;
+}
+
+void TryActivateNewSwitchInAbility(void) {
+	gSpecialStatuses[gActiveBattler].switchInAbilityDone = FALSE;
+	if (AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, gActiveBattler, 0, 0, 0))
+		gBattlescriptCurrInstr -= 5;
 }

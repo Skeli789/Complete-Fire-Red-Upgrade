@@ -228,7 +228,7 @@ bool8 ShouldSwitch(void)
 			return FALSE;
 		if (gStatuses3[gActiveBattler] & STATUS3_ROOTED)
 			return FALSE;
-		if (ABILITY_ON_OPPOSING_FIELD(gActiveBattler, ABILITY_SHADOWTAG))
+		if (ABILITY_ON_OPPOSING_FIELD(gActiveBattler, ABILITY_SHADOWTAG) && ABILITY(gActiveBattler) != ABILITY_SHADOWTAG)
 			return FALSE;
 		if (ABILITY_ON_OPPOSING_FIELD(gActiveBattler, ABILITY_ARENATRAP) && CheckGrounding(gActiveBattler))
 			return FALSE;

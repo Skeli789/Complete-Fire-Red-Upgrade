@@ -1,15 +1,6 @@
-//Update Haze to not remove type 3
-//Update  sMovesForbiddenToCopy, called in Mimic, Metronome, Assist, change 0xFFFF to 0xFEFE
 //Update Gen 7 Metronome Choice effect
-//Update Disable Timer
-//Update Encore Timer
-//Sketch update
-//Destiny Bond End Turn Update
-//Substitute for Heal Bell
 //Type Resist Berries
 //Metronome Item during Charging Turn
-//Reciever ban list
-//Move Stomping Tantrum to end command based on gNewBS->TargetsHit
 
 #include "defines.h"
 #include "helper_functions.h"
@@ -83,6 +74,9 @@ extern move_t GravityBanTable[];
 extern move_t SleepTalkBanTable[];
 extern move_t MovesThatCallOtherMovesTable[];
 extern move_t GemBanTable[];
+extern move_t MetronomeBanTable[];
+extern move_t AssistBanTable[];
+extern move_t MimicBanTable[];
 extern ability_t RolePlayBanTable[];
 extern ability_t SkillSwapBanTable[];
 extern ability_t ReceiverBanTable[];
@@ -1638,6 +1632,63 @@ void atk96_weatherdamage(void) {
     gBattlescriptCurrInstr++;
 }
 
+void atk9D_mimicattackcopy(void)
+{
+    gChosenMove = 0xFFFF;
+
+    if (gBattleMons[gBankAttacker].status2 & STATUS2_TRANSFORMED
+    || gLastUsedMoves[gBankTarget] == 0
+    || gLastUsedMoves[gBankTarget] == 0xFFFF
+	|| CheckTableForMove(gLastUsedMoves[gBankTarget], MimicBanTable)
+	|| (gLastUsedMoves[gBankTarget] >= FIRST_Z_MOVE && gLastUsedMoves[gBankTarget] <= LAST_Z_MOVE))
+    {
+        gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+    }
+    else
+    {
+        int i;
+
+        for (i = 0; i < MAX_MON_MOVES; i++)
+        {
+            if (gBattleMons[gBankAttacker].moves[i] == gLastUsedMoves[gBankTarget])
+                break;
+        }
+
+        if (i == MAX_MON_MOVES)
+        {
+            gBattleMons[gBankAttacker].moves[gCurrMovePos] = gLastUsedMoves[gBankTarget];
+            gBattleMons[gBankAttacker].pp[gCurrMovePos] = gBattleMoves[gLastUsedMoves[gBankTarget]].pp;
+
+            PREPARE_MOVE_BUFFER(gBattleTextBuff1, gLastUsedMoves[gBankTarget])
+
+            gDisableStructs[gBankAttacker].mimickedMoves |= gBitTable[gCurrMovePos];
+            gBattlescriptCurrInstr += 5;
+        }
+        else
+        {
+            gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+        }
+    }
+}
+
+void atk9E_metronome(void)
+{
+    while (TRUE)
+    {
+        gCurrentMove = umodsi(Random(), LAST_MOVE_INDEX) + 1;
+        if (gCurrentMove >= FIRST_Z_MOVE && gCurrentMove <= LAST_Z_MOVE)
+            continue;
+
+        if (CheckTableForMove(gCurrentMove, MetronomeBanTable))
+			continue;
+
+        gHitMarker &= ~(HITMARKER_ATTACKSTRING_PRINTED);
+        gBattlescriptCurrInstr = gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect];
+        gBankTarget = GetMoveTarget(gCurrentMove, 0);
+        return;
+    }
+}
+
 void atkA0_psywavedamageeffect(void)
 {
     s32 randDamage = umodsi(Random(), 100);
@@ -1690,6 +1741,68 @@ void atkA2_mirrorcoatdamagecalculator(void) {
 	
     else {
         gSpecialStatuses[gBankAttacker].flag20 = 1;
+        gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+    }
+}
+
+void atkA3_disablelastusedattack(void)
+{
+    int i;
+
+    for (i = 0; i < MAX_MON_MOVES; i++)
+    {
+        if (gBattleMons[gBankTarget].moves[i] == gLastUsedMoves[gBankTarget])
+            break;
+    }
+    if (gDisableStructs[gBankTarget].disabledMove == 0
+    && i != MAX_MON_MOVES 
+	&& gBattleMons[gBankTarget].pp[i] != 0
+	&& !AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, gBankAttacker, ABILITY_AROMAVEIL, 0, 0))
+    {
+        PREPARE_MOVE_BUFFER(gBattleTextBuff1, gBattleMons[gBankTarget].moves[i])
+
+        gDisableStructs[gBankTarget].disabledMove = gBattleMons[gBankTarget].moves[i];
+        gDisableStructs[gBankTarget].disableTimer1 = 4;
+        gDisableStructs[gBankTarget].disableTimer2 = gDisableStructs[gBankTarget].disableTimer1; // used to save the random amount of turns?
+        gBattlescriptCurrInstr += 5;
+    }
+    else
+    {
+        gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+    }
+}
+
+void atkA4_trysetencore(void)
+{
+    int i;
+
+    for (i = 0; i < MAX_MON_MOVES; i++)
+    {
+        if (gBattleMons[gBankTarget].moves[i] == gLastUsedMoves[gBankTarget])
+            break;
+    }
+
+    if (gLastUsedMoves[gBankTarget] == MOVE_STRUGGLE
+    ||  gLastUsedMoves[gBankTarget] == MOVE_ENCORE
+	||  gNewBS->playedShellTrapMessage & gBitTable[gBankTarget]
+    ||  CheckTableForMove(gLastUsedMoves[gBankTarget], MovesThatCallOtherMovesTable)
+	||  IS_Z_MOVE(gLastUsedMoves[gBankTarget]))
+    {
+        i = 4;
+    }
+
+    if (gDisableStructs[gBankTarget].encoredMove == 0
+    && i != 4 
+	&& gBattleMons[gBankTarget].pp[i] != 0)
+    {
+        gDisableStructs[gBankTarget].encoredMove = gBattleMons[gBankTarget].moves[i];
+        gDisableStructs[gBankTarget].encoredMovePos = i;
+        gDisableStructs[gBankTarget].encoreTimer = 3;
+        gDisableStructs[gBankTarget].encoreTimerStartValue = gDisableStructs[gBankTarget].encoreTimer;
+        gBattlescriptCurrInstr += 5;
+    }
+    else
+    {
         gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
     }
 }
@@ -1799,6 +1912,61 @@ void atkA6_settypetorandomresistance(void) { //Conversion 2
     }
 
     gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+}
+
+void atkA8_copymovepermanently(void) // sketch
+{
+    gChosenMove = 0xFFFF;
+
+    if (!(gBattleMons[gBankAttacker].status2 & STATUS2_TRANSFORMED)
+	&& !(gLastPrintedMoves[gBankTarget] >= FIRST_Z_MOVE && gLastPrintedMoves[gBankTarget] <= LAST_Z_MOVE)
+    && gLastPrintedMoves[gBankTarget] != MOVE_STRUGGLE
+	&& gLastPrintedMoves[gBankTarget] != MOVE_CHATTER
+	&& gLastPrintedMoves[gBankTarget] != MOVE_SKETCH
+    && gLastPrintedMoves[gBankTarget] != 0
+    && gLastPrintedMoves[gBankTarget] != 0xFFFF)
+    {
+        int i;
+
+        for (i = 0; i < MAX_MON_MOVES; i++)
+        {
+            if (gBattleMons[gBankAttacker].moves[i] == MOVE_SKETCH)
+                continue;
+            if (gBattleMons[gBankAttacker].moves[i] == gLastPrintedMoves[gBankTarget])
+                break;
+        }
+
+        if (i != MAX_MON_MOVES)
+        {
+            gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+        }
+        else // sketch worked
+        {
+            struct MovePpInfo movePpData;
+
+            gBattleMons[gBankAttacker].moves[gCurrMovePos] = gLastPrintedMoves[gBankTarget];
+            gBattleMons[gBankAttacker].pp[gCurrMovePos] = gBattleMoves[gLastPrintedMoves[gBankTarget]].pp;
+            gActiveBattler = gBankAttacker;
+
+            for (i = 0; i < MAX_MON_MOVES; i++)
+            {
+                movePpData.moves[i] = gBattleMons[gBankAttacker].moves[i];
+                movePpData.pp[i] = gBattleMons[gBankAttacker].pp[i];
+            }
+            movePpData.ppBonuses = gBattleMons[gBankAttacker].ppBonuses;
+
+            EmitSetMonData(0, REQUEST_MOVES_PP_BATTLE, 0, sizeof(struct MovePpInfo), &movePpData);
+            MarkBufferBankForExecution(gActiveBattler);
+
+            PREPARE_MOVE_BUFFER(gBattleTextBuff1, gLastPrintedMoves[gBankTarget])
+
+            gBattlescriptCurrInstr += 5;
+        }
+    }
+    else
+    {
+        gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+    }
 }
 
 #define MOVE_LIMITATION_ZEROMOVE    (1 << 0)
@@ -2031,6 +2199,15 @@ void atkB3_rolloutdamagecalculation(void)
     }
 }
 
+void atkB4_jumpifconfusedandstatmaxed(void)
+{
+    if (gBattleMons[gBankTarget].status2 & STATUS2_CONFUSION
+    && !STAT_CAN_RISE(gBankTarget, gBattlescriptCurrInstr[1]))
+        gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
+    else
+        gBattlescriptCurrInstr += 6;
+}
+
 void atkB5_furycuttercalc(void)
 {
     if (gMoveResultFlags & MOVE_RESULT_NO_EFFECT
@@ -2077,6 +2254,57 @@ void atkB7_presentdamagecalculation(void)
         gBattlescriptCurrInstr = BattleScript_PresentHealTarget;
     }
 }
+
+void atkB9_magnitudedamagecalculation(void)
+{
+	if (gDynamicBasePower) //Power has already been calculated
+	{
+		gBattlescriptCurrInstr = (u8*) 0x81D6930;
+		return;
+	}
+	
+    int magnitude = umodsi(Random(), 100);
+
+    if (magnitude < 5)
+    {
+        gDynamicBasePower = 10;
+        magnitude = 4;
+    }
+    else if (magnitude < 15)
+    {
+        gDynamicBasePower = 30;
+        magnitude = 5;
+    }
+    else if (magnitude < 35)
+    {
+        gDynamicBasePower = 50;
+        magnitude = 6;
+    }
+    else if (magnitude < 65)
+    {
+        gDynamicBasePower = 70;
+        magnitude = 7;
+    }
+    else if (magnitude < 85)
+    {
+        gDynamicBasePower = 90;
+        magnitude = 8;
+    }
+    else if (magnitude < 95)
+    {
+        gDynamicBasePower = 110;
+        magnitude = 9;
+    }
+    else
+    {
+        gDynamicBasePower = 150;
+        magnitude = 10;
+    }
+
+    PREPARE_BYTE_NUMBER_BUFFER(gBattleTextBuff1, 2, magnitude)
+    gBattlescriptCurrInstr++;
+}
+
 
 //In this function, the target attacks the attacker
 void atkBA_jumpifnopursuitswitchdmg(void) {
@@ -2424,6 +2652,24 @@ void atkC8_sethail(void) {
     gBattlescriptCurrInstr++;
 }
 
+void atkC9_jumpifattackandspecialattackcannotfall(void) // memento
+{
+    if (!STAT_CAN_FALL(gBankTarget, STAT_ATK)
+    && !STAT_CAN_FALL(gBankTarget, STAT_SPATK)
+    && gBattleCommunication[6] != 1)
+    {
+        gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+    }
+    else
+    {
+        gActiveBattler = gBattlerAttacker;
+        gBattleMoveDamage = gBattleMons[gActiveBattler].hp;
+        EmitHealthBarUpdate(0, INSTANT_HP_BAR_DROP);
+        MarkBufferBankForExecution(gActiveBattler);
+        gBattlescriptCurrInstr += 5;
+    }
+}
+
 void atkCA_setforcedtarget(void) //Follow me
 {
 	if (gCurrentMove == MOVE_SPOTLIGHT)
@@ -2467,6 +2713,30 @@ void atkCC_callterrainattack(void) { //nature power
     gBankTarget = GetMoveTarget(gCurrentMove, 0);
     BattleScriptPush(gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect]);
     gBattlescriptCurrInstr++;
+}
+
+void atkCF_jumpifnodamage(void)
+{
+    if (gProtectStructs[gBankAttacker].physicalDmg 
+	||  gProtectStructs[gBankAttacker].specialDmg
+	||  !(gNewBS->playedFocusPunchMessage & gBitTable[gBankAttacker])) //Forced to use Focus Punch by Encore
+        gBattlescriptCurrInstr += 5;
+    else
+        gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+}
+
+void atkD0_settaunt(void)
+{
+    if (gDisableStructs[gBankTarget].tauntTimer == 0)
+    {
+        gDisableStructs[gBankTarget].tauntTimer = 4;
+        gDisableStructs[gBankTarget].tauntTimer2 = 4;
+        gBattlescriptCurrInstr += 5;
+    }
+    else
+    {
+        gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+    }
 }
 
 void atkD2_tryswapitems(void) { //Trick
@@ -2600,6 +2870,50 @@ void atkDB_tryimprision(void) {
         PressurePPLoseOnUsingImprision(gBankAttacker);
         gStatuses3[gBankAttacker] |= STATUS3_IMPRISONED;
         gBattlescriptCurrInstr += 5;
+    }
+}
+
+void atkDE_asistattackselect(void)
+{
+    s32 chooseableMovesNo = 0;
+    struct Pokemon* party;
+    s32 monId, moveId;
+    u16* movesArray = gBattleStruct->assistPossibleMoves;
+	u8 firstMonId, lastMonId;
+
+    party = LoadPartyRange(gBankAttacker, &firstMonId, &lastMonId);
+
+    for (monId = firstMonId; monId < lastMonId; ++monId)
+    {
+        if (monId == gBattlerPartyIndexes[gBankAttacker]
+		|| party[monId].species == PKMN_NONE
+        || GetMonData(&party[monId], MON_DATA_IS_EGG, 0))
+            continue;
+
+        for (moveId = 0; moveId < MAX_MON_MOVES; moveId++)
+        {
+            u16 move = party[monId].moves[moveId];
+
+            if (CheckTableForMove(move, AssistBanTable))
+                continue;
+			
+            if (move == MOVE_NONE)
+                continue;
+
+            movesArray[chooseableMovesNo] = move;
+            chooseableMovesNo++;
+        }
+    }
+    if (chooseableMovesNo)
+    {
+        gHitMarker &= ~(HITMARKER_ATTACKSTRING_PRINTED);
+        gRandomMove = movesArray[((Random() & 0xFF) * chooseableMovesNo) >> 8];
+        gBankTarget = GetMoveTarget(gRandomMove, 0);
+        gBattlescriptCurrInstr += 5;
+    }
+    else
+    {
+        gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
     }
 }
 

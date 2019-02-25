@@ -2182,7 +2182,15 @@ BurnUpEnd:
 
 .global BS_126_Magnitude
 BS_126_Magnitude:
-	end
+	attackcanceler
+	attackstring
+	ppreduce
+	magnitudedamagecalculation
+	pause DELAY_HALFSECOND
+	printstring 0x9A @;STRINGID_MAGNITUDESTRENGTH
+	waitmessage DELAY_1SECOND
+	accuracycheck BS_MOVE_MISSED 0x0
+	goto 0x81D6930
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

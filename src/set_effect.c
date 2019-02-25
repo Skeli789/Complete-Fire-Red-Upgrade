@@ -235,6 +235,15 @@ void SetMoveEffect(bool8 primary, u8 certain)
         ++gBattlescriptCurrInstr;
 		goto CLEAR_MOVE_EFFECT_BYTE;
 	}
+	
+	if (IsOfType(gEffectBank, TYPE_GRASS)
+	&& (ABILITY(gEffectBank) == ABILITY_FLOWERVEIL || (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && ABILITY(PARTNER(gEffectBank)) == ABILITY_FLOWERVEIL))
+	&& gEffectBank != gBankAttacker
+	&& gBattleCommunication[MOVE_EFFECT_BYTE] <= MOVE_EFFECT_CONFUSION)
+	{
+        ++gBattlescriptCurrInstr;
+		goto CLEAR_MOVE_EFFECT_BYTE;
+	}
 
 	if (CheckTableForSpecialMoveEffect(gBattleCommunication[MOVE_EFFECT_BYTE], MoveEffectsThatIgnoreSubstitute))
 		goto SKIP_SUBSTITUTE_CHECK;

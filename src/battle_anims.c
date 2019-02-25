@@ -51,6 +51,12 @@ void ScriptCmd_loadspritegfx(void)
     gAnimScriptCallback = (u32) WaitAnimFrameCount;
 }
 
+void ShinyAnimFix(void)
+{
+	LoadCompressedSpriteSheetUsingHeap(&gBattleAnimPicTable[233]);
+    LoadCompressedSpritePaletteUsingHeap(&gBattleAnimPaletteTable[233]);
+}
+
 /*
 void ScriptCmd_pokespritefromBGsingle(void)
 {

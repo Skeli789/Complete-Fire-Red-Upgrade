@@ -1257,7 +1257,7 @@
 	.4byte \rom_address
 	.endm
 
-	.macro atke1 rom_address
+	.macro trygetintimidatetarget rom_address
 	.byte 0xe1
 	.4byte \rom_address
 	.endm

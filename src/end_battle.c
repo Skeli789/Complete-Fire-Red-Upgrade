@@ -91,9 +91,11 @@ void HandleEndTurn_BattleWon(void)
 			case TRAINER_CLASS_SHADOW_ADMIN: //0x30
 			case TRAINER_CLASS_BOSS: //0x53
 			case TRAINER_CLASS_SHADOW: //0x55
+			#ifndef DEBUG_UNBOUND_MUSIC
 				PlayBGM(BGM_VICYORY_PLASMA);
 				specialMus = TRUE;
 				break;
+			#endif
 			case TRAINER_CLASS_LOR_LEADER: //0x2
 			case TRAINER_CLASS_LOR_ADMIN: //0x2E
 			case TRAINER_CLASS_LOR: //0x2F
@@ -198,6 +200,165 @@ void HandleEndTurn_RanFromBattle(void)
     }
 
     gBattleMainFunc = (u32) HandleEndTurn_FinishBattle;
+}
+
+u8 IsRunningFromBattleImpossible(void)
+{
+    u8 itemEffect;
+    u8 side;
+    int i;
+
+    itemEffect = ITEM_EFFECT(gActiveBattler);
+    gStringBank = gActiveBattler;
+
+    if (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_FRONTIER))
+        return 0;
+		
+	else if (FlagGet(NO_RUNNING_FLAG) || FlagGet(NO_CATCHING_AND_RUNNING_FLAG))
+		return 1;
+		
+    else if (itemEffect == ITEM_EFFECT_CAN_ALWAYS_RUN)
+        return 0;
+    else if (gBattleMons[gActiveBattler].ability == ABILITY_RUNAWAY)
+        return 0;
+	else if (IsOfType(gActiveBattler, TYPE_GHOST))
+		return 0;
+
+    side = SIDE(gActiveBattler);
+
+    for (i = 0; i < gBattlersCount; i++)
+    {
+        if (ABILITY(gActiveBattler) != ABILITY_SHADOWTAG //Shadow Tag's not affected by Shadow Tag
+		&& side != SIDE(i)
+        && ABILITY(i) == ABILITY_SHADOWTAG)
+        {
+            gBattleScripting->bank = i;
+            gLastUsedAbility = ABILITY(i);
+            gBattleCommunication[MULTISTRING_CHOOSER] = 2;
+            return 2;
+        }
+        if (side != SIDE(i)
+        && ABILITY(i) == ABILITY_ARENATRAP
+		&& !CheckGrounding(gActiveBattler))
+        {
+            gBattleScripting->bank = i;
+            gLastUsedAbility = ABILITY(i);
+            gBattleCommunication[MULTISTRING_CHOOSER] = 2;
+            return 2;
+        }
+		
+		if (i != gActiveBattler
+		&& ABILITY(i) == ABILITY_MAGNETPULL
+		&& IsOfType(gActiveBattler, TYPE_STEEL))
+		{
+			gBattleScripting->bank = i;
+			gLastUsedAbility = ABILITY(i);
+			gBattleCommunication[MULTISTRING_CHOOSER] = 2;
+			return 2;
+		}
+    }
+	
+    if ((gBattleMons[gActiveBattler].status2 & (STATUS2_ESCAPE_PREVENTION | STATUS2_WRAPPED))
+    || (gStatuses3[gActiveBattler] & (STATUS3_ROOTED | STATUS3_SKY_DROP_TARGET)))
+    {
+        gBattleCommunication[MULTISTRING_CHOOSER] = 0;
+        return 1;
+    }
+	
+	if (gNewBS->FairyLockTimer)
+	{
+		gBattleCommunication[MULTISTRING_CHOOSER] = 0;
+		return 1;
+	}
+		
+    if (gBattleTypeFlags & BATTLE_TYPE_OAK_TUTORIAL)
+    {
+        gBattleCommunication[MULTISTRING_CHOOSER] = 1;
+        return 1;
+    }
+	
+    return 0;
+}
+
+bool8 TryRunFromBattle(u8 bank)
+{
+    bool8 effect = FALSE;
+    u8 itemEffect;
+    u8 speedVar;
+
+    itemEffect = ITEM_EFFECT(bank);
+    gStringBank = bank;
+
+	if (IsOfType(bank, TYPE_GHOST))
+	{
+		++effect;
+	}
+    else if (itemEffect == ITEM_EFFECT_CAN_ALWAYS_RUN)
+    {
+        gLastUsedItem = ITEM(bank);
+        gProtectStructs[bank].fleeFlag = 1;
+        ++effect;
+    }
+    else if (ABILITY(bank) == ABILITY_RUNAWAY)
+    {
+        gLastUsedAbility = ABILITY_RUNAWAY;
+        gProtectStructs[bank].fleeFlag = 2;
+        ++effect;
+    }
+	#ifdef GHOST_BATTLES
+	else if ((gBattleTypeFlags & (BATTLE_TYPE_SCRIPTED_WILD_1 | BATTLE_TYPE_GHOST)) == BATTLE_TYPE_GHOST) 
+	{
+		if (SIDE(bank) == B_SIDE_PLAYER)
+			++effect;
+	}
+	#endif
+    else if (gBattleTypeFlags & (BATTLE_TYPE_FRONTIER | BATTLE_TYPE_TRAINER_TOWER) && gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+    {
+        ++effect;
+    }
+    else
+    {
+        if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE))
+        {
+		SINGLE_FLEE_CALC:
+            if (gBattleMons[bank].speed < gBattleMons[BATTLE_OPPOSITE(bank)].speed)
+            {
+                speedVar = udivsi((gBattleMons[bank].speed * 128), (gBattleMons[BATTLE_OPPOSITE(bank)].speed)) + (gBattleStruct->runTries * 30);
+                if (speedVar > (Random() & 0xFF))
+                    ++effect;
+            }
+            else // same speed or faster
+            {
+                ++effect;
+            }
+        }
+		else //Wild Double
+		{
+			if (gBattleMons[BATTLE_OPPOSITE(bank)].hp)
+				goto SINGLE_FLEE_CALC;
+			
+            if (gBattleMons[bank].speed < gBattleMons[PARTNER(BATTLE_OPPOSITE(bank))].speed)
+            {
+                speedVar = udivsi((gBattleMons[bank].speed * 128), (gBattleMons[PARTNER(BATTLE_OPPOSITE(bank))].speed)) + (gBattleStruct->runTries * 30);
+                if (speedVar > (Random() & 0xFF))
+                    ++effect;
+            }
+            else // same speed or faster
+            {
+                ++effect;
+            }		
+		}
+
+        gBattleStruct->runTries++;
+    }
+
+    if (effect)
+    {
+        gCurrentTurnActionNumber = gBattlersCount;
+        gBattleOutcome = B_OUTCOME_RAN;
+    }
+
+    return effect;
 }
 
 void EndOfBattleThings(void) {

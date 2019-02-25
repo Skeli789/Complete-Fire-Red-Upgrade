@@ -536,7 +536,7 @@ void atkFF11_reloadhealthbar(void)
 {
 	if (gBattleExecBuffer) return;
 
-	gActiveBattler = gBattlescriptCurrInstr[1];
+	gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
 	UpdateHealthboxAttribute(gHealthboxIDs[gActiveBattler], 
 							GetBankPartyData(gActiveBattler), 
 							HEALTHBOX_ALL);

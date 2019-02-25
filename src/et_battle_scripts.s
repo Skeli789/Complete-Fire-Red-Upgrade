@@ -502,34 +502,54 @@ BattleScript_PowerConstruct:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_StartedSchooling:
+	call BattleScript_StartedSchoolingRet
+	end2
+
+.global BattleScript_StartedSchoolingRet
+BattleScript_StartedSchoolingRet:
 	playanimation BANK_ATTACKER ANIM_WISHIWASHI_FISH 0x0
 	setword BATTLE_STRING_LOADER StartedSchoolingString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
-	end2
-	
+	return
+
 BattleScript_StoppedSchooling:
+	call BattleScript_StoppedSchoolingRet
+	end2
+
+.global BattleScript_StoppedSchoolingRet
+BattleScript_StoppedSchoolingRet:
 	playanimation BANK_ATTACKER ANIM_WISHIWASHI_FISH 0x0
 	setword BATTLE_STRING_LOADER StoppedSchoolingString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
-	end2
+	return
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_ShieldsDownToCore:
+	call BattleScript_ShieldsDownToCoreRet
+	end2
+
+.global BattleScript_ShieldsDownToCoreRet
+BattleScript_ShieldsDownToCoreRet:
 	playanimation BANK_ATTACKER ANIM_TRANSFORM 0x0
 	setword BATTLE_STRING_LOADER ToCoreString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
-	end2
+	return
 
 BattleScript_ShieldsDownToMeteor:
+	call BattleScript_ShieldsDownToMeteorRet
+	end2
+
+.global BattleScript_ShieldsDownToMeteorRet
+BattleScript_ShieldsDownToMeteorRet:
 	playanimation BANK_ATTACKER ANIM_TRANSFORM 0x0
 	setword BATTLE_STRING_LOADER ToMeteorString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
-	end2
+	return
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

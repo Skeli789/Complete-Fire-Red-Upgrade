@@ -11,6 +11,8 @@ LoadBattleBG_EntryOverlay 800F2AC 1
 ##Other Battle Stuff
 BuildTrainerPartyHook 800FF7E 0
 BattleBeginFirstTurn 801385C 0
+IsRunningFromBattleImpossible 08013D54 0
+PartyMenuSwitchingHook 8014450 0
 GetWhoStrikesFirst 8014CD8 3
 SetActionsAndBanksTurnOrder 80150A8 0
 RunTurnActionsFunctions 80155C8 0
@@ -18,6 +20,7 @@ HandleEndTurn_BattleWon 8015670 0
 HandleEndTurn_BattleLost 801578C 0
 HandleEndTurn_RanFromBattle 8015850 0
 HandleAction_UseMove 8015CA0 0
+TryRunFromBattle 8016748 1
 PrepareStringBattle 80173AC 3
 TrySetCantSelectMoveBattleScript 8017594 0
 CheckMoveLimitations 801779C 3
@@ -35,7 +38,7 @@ HandleIntroSlide 80BC3A0 1
 BufferStringBattle 080D7274 1
 BattleStringExpandPlaceholders 80D7868 2
 DisplayStatStageMessage 80D8486 0
-##
+
 ##Multi Hooks
 MultiEnemyPokeballReadoutHook 8049088 0
 MultiInitPokemonOrderHook 800D8A0 0
@@ -55,18 +58,7 @@ SetNewPartySelectTarget2 81200F8 2
 PlayerHandleDrawTrainerPic 803227C 0
 PlayerHandleTrainerSlide 8032428 0
 TagTeamBackspritePalHook 8033530 0
-##
-##Set Status Hooks
-SleepChecks 0802016C 1
-PoisoningChecks 08020198 1
-CorrosionPSN 080201E4 0
-BurnChecks 08020278 1
-FreezingChecks 080203BE 0
-ParalysisChecks 080203F0 2
-BadPoisoningChecks 0802044C 1
-CorrosionBadPSN 080204B0 0
-ConfusionChecks 080207C0 0
-##
+
 ##AI Hooks
 AIHandleItemUseHook 800D2CC 0
 OpponentHandleDrawTrainerPic 08037CD0 0
@@ -77,38 +69,17 @@ ShouldSwitchIfWonderGuard 80391EC 0
 HasSuperEffectiveMoveAgainstOpponents 08039698 1
 FindMonWithFlagsAndSuperEffective 08039828 2
 GetMostSuitableMonToSwitchInto 8039E3C 0
-##
+
 ##Mega Hooks
 MegaRetrieveDataHook 80148C0 0
 HandleInputChooseMove 802EA10 0
-##
-##To Be Removed After Testing
-atk00_attackcanceler 801D760 0
-atk01_accuracycheck 801DDC4 0
-atk04_critcalc 801E408 0
-atk05_damagecalc 801E59C 0
-atk06_typecalc 0801E848 0
-##atk07_adjustnormaldamage 801F104 0
-atk0B_healthbarupdate 801F5A8 0
-atk0C_datahpupdate 801F684 0
-atk19_tryfaintmon 80212AC 0
-atk23_getexp 8021A68 0
-atk45_playanimation 8022E34 0
-atk46_playanimation2 8022EF4 0
-atk4D_switchindataupdate 08023F48 0
-atk49_moveend 08023210 0
-atk52_switchineffects 08024E38 0
-atk53_trainerslidein 080250DC 0
-atk61_drawpartystatussummary 8025BA4 0
-atk96_weatherdamage 8028CF0 0
-atkE2_switchoutabilities 802CCC0 0
-##
+
 BatonPassEffects 08012850 0
-##
+
 GiveMonToPlayer 8040B14 1
-##
+
 ItemId_GetName 809A8BC 1
-##
+
 ##Overworld Hooks
 BattleSetup_ConfigureTrainerBattle 8080228 1
 SetTrainerFlags 80803FC 0
@@ -117,12 +88,13 @@ SetUpTrainerEncounterMusic 8080628 0
 GetIntroSpeechOfApproachingTrainer 80806D8 0
 GetTrainerCantBattleSpeech 8080734 0
 CheckForTrainersWantingBattle 8081B30 0
-##
+
 ##Party Menu Hooks
 CursorCb_Summary 8122D4C 1
-##
+
 ##Battle Animation Hooks
 ScriptCmd_loadspritegfx 08072868 0
+ShinyAnimFixHook 080F1792 0
 SlideMonToOriginalPosHook 080991BA 0
 SlideMonToOffsetHook 080992E4 0
 DetsinyBondASM1 080B6092 0

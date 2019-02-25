@@ -112,6 +112,8 @@ u8 TurnBasedEffects(void) {
 				{ //These should be cleared earlier on, but just in case they aren't
 					gNewBS->PowderByte = 0;
 					gNewBS->BeakBlastByte = 0;
+					gNewBS->playedFocusPunchMessage = 0;
+					gNewBS->playedShellTrapMessage = 0;
 					gNewBS->CustapQuickClawIndicator = 0;
 				}
 				

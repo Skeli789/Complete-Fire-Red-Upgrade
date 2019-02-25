@@ -5049,7 +5049,7 @@ BLACKHOLE_ASM:
 	asr r7, r0, #0x10
 	bl IsAnimMoveDestinyBond
 	cmp r0, #0x0
-	bne ModBlackHole
+	beq ModBlackHole
 	ldr r0, =(0x83E7668)
 	b End_BlackHoleASM
 
@@ -19429,6 +19429,8 @@ endanimation
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
 @ credit to ghoulslash
+.equ RIGHT_FIST, 0x0
+.equ LEFT_FIST, 0x2
 ANIM_CLANGOROUS_SOULBLAZE:
 	loadparticle 0x27c8 @focus energy
 	loadparticle 0x27a5 @blue
@@ -19442,7 +19444,7 @@ ANIM_CLANGOROUS_SOULBLAZE:
 	call SOULBLAZE_STARS_BUFF_EFFECT
 	waitanimation
 	loadparticle 0x2851 @red
-	loadparticle PARTICLE_FIST @fist
+	loadparticle ANIM_TAG_HORSESHOE_SIDE_FIST @fist
 	launchtemplate SOULBLAZE_RED_FIST 0x2 0x8 0xfff0 0x0 0x0 0x0 0xa bank_attacker RIGHT_FIST 0x1
 	launchtemplate SOULBLAZE_RED_FIST 0x2 0x8 0x10 0x0 0x0 0x0 0xa bank_attacker LEFT_FIST 0x1
 	playsound2 0x88 0x3f
@@ -19451,7 +19453,7 @@ ANIM_CLANGOROUS_SOULBLAZE:
 	playsound2 0x5f 0xc0 
 	launchtemplate SOULBLAZE_RED_RING	0x3 0x4 0x0 0x0 0x0 0x0 
 	waitanimation
-	unloadparticle PARTICLE_FIST
+	unloadparticle ANIM_TAG_HORSESHOE_SIDE_FIST
 	unloadparticle 0x2741 @stars
 	loadparticle 0x27ac	@ fly
 	playsound2 0x97 0xc0 
@@ -19721,7 +19723,7 @@ SOULBLAZE_PULSE5:
 SOULBLAZE_BLUE_BUFF: objtemplate 0x27C8 0x27a5 0x83ACA18 0x83E3600 0x0 0x8231CFC 0x80A5AD9 	
 SOULBLAZE_PURPLE_BUFF: objtemplate 0x27C8 0x27a6 0x83ACA18 0x83E3600 0x0 0x8231CFC 0x80A5AD9 	
 SOULBLAZE_WHITE_BUFF: objtemplate 0x27C8 0x27aa 0x83ACA18 0x83E3600 0x0 0x8231CFC 0x80A5AD9 
-SOULBLAZE_RED_FIST: objtemplate PARTICLE_FIST 0x2851 0x83AC9D8 0x83E66CC 0x0 0x8231CFC 0x80B0929
+SOULBLAZE_RED_FIST: objtemplate ANIM_TAG_HORSESHOE_SIDE_FIST 0x2851 0x83AC9D8 0x83E66CC 0x0 0x8231CFC 0x80B0929
 SOULBLAZE_RED_RING: objtemplate 0x27DB 0x2851 0x83ACAA0 0x8231CF0 0x0 0x83E4088 0x8075D9D 
 SOULBLAZE_WHITE_FLY: objtemplate 0x27ac 0x27aa 0x83acaa0 0x8231cf0 0x0 0x83e6b8c 0x80b1bb1
 SOULBLAZE_PURPLE_SWIRL: objtemplate 0x27A5 0x27A6 0x83ACB50 0x83E5958 0x0 0x83E741C 0x80B477D 
@@ -19765,11 +19767,15 @@ ANIM_GUARDIAN_OF_ALOLA:
 	pause 0x10
 	call GUARDIAN_ROCKS_PLAYER
 	pause 0x10
+<<<<<<< HEAD
 	loadparticle PARTICLE_FIST
+=======
+	loadparticle ANIM_TAG_HORSESHOE_SIDE_FIST
+>>>>>>> b94ff057a527b9f138f0945b983911a4fe9649bd
 	call GUARDIAN_ROCKS_PLAYER
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x3 0x0 0xb 0x0000
 	pause 0x1
-	launchtask AnimTask_pal_fade_particle 0x2 0x5 PARTICLE_FIST 0x0 0x0 0xc 0x277f
+	launchtask AnimTask_pal_fade_particle 0x2 0x5 ANIM_TAG_HORSESHOE_SIDE_FIST 0x0 0x0 0xc 0x277f
 	loadBG1 BG_FISSURE 
 	waitforBG 
 	call GUARDIAN_ROCKS_PLAYER
@@ -19801,7 +19807,7 @@ ANIM_GUARDIAN_OF_ALOLA:
 	call GUARDIAN_ROCK_GEYSER
 	call GUARDIAN_ROCKS_TARGET
 	waitanimation
-	launchtask AnimTask_pal_fade_particle 0x2 0x5 PARTICLE_FIST 0x0 0xc 0x0 0x277f
+	launchtask AnimTask_pal_fade_particle 0x2 0x5 ANIM_TAG_HORSESHOE_SIDE_FIST 0x0 0xc 0x0 0x277f
 	waitanimation
 	pause 0x10
 	launchtemplate Template_Pal_Fade 0x2 0x5 PAL_ALL 0x0 0x00 0x10 0x7fff
@@ -19839,7 +19845,7 @@ GUARDIAN_ROCK_GEYSER:
 	return	
 
 .align 2
-GUARDIAN_FIST_DOWN: objtemplate PARTICLE_FIST PARTICLE_FIST 0x83AC9D8 0x8231CF0 0x0 0x8231CFC 0x80B0D59
+GUARDIAN_FIST_DOWN: objtemplate ANIM_TAG_HORSESHOE_SIDE_FIST ANIM_TAG_HORSESHOE_SIDE_FIST 0x83AC9D8 0x8231CF0 0x0 0x8231CFC 0x80B0D59
 GUARDIAN_ROCK_UP: objtemplate 0x275a 0x275a 0x83AC9D8 0x8231CF0 0x0 0x8231CFC 0x80B8D59
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

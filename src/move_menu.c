@@ -24,6 +24,7 @@
 extern move_t SkyBattleBanTable[];
 extern move_t GravityBanTable[];
 
+extern u8 BattleScript_MustSelectEncoredMove[];
 extern u8 BattleScript_SelectingNotAllowedMoveAssaultVest[];
 extern u8 BattleScript_SelectingNotAllowedSkyBattle[];
 extern u8 BattleScript_SelectingNotAllowedGravity[];
@@ -971,7 +972,14 @@ u8 TrySetCantSelectMoveBattleScript(void)
 	gBattleScripting->bank = gActiveBattler;
 	gCurrentMove = move;
 
-    if (gDisableStructs[gActiveBattler].disabledMove == move && move != MOVE_NONE)
+	if (gDisableStructs[gActiveBattler].encoredMove && gDisableStructs[gActiveBattler].encoredMove != move)
+	{
+		gCurrentMove = gDisableStructs[gActiveBattler].encoredMove;
+        gSelectionBattleScripts[gActiveBattler] = BattleScript_MustSelectEncoredMove;
+        ++limitations;
+	}
+
+    else if (gDisableStructs[gActiveBattler].disabledMove == move && move != MOVE_NONE)
     {
         gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingDisabledMove;
         ++limitations;

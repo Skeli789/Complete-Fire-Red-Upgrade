@@ -51,6 +51,7 @@ void __attribute__((long_call)) EmitBallThrow(u8 a, u8 shakes);
 void __attribute__((long_call)) EmitMoveAnimation(u8 bufferId, u16 move, u8 turnOfMove, u16 movePower, s32 dmg, u8 friendship, struct DisableStruct *disableStructPtr, u8 multihit);
 void __attribute__((long_call)) EmitPrintString(u8 a, u16 stringID);
 void __attribute__((long_call)) EmitHealthBarUpdate(u8 a, u16 b);
+void __attribute__((long_call)) EmitChoosePokemon(u8 bufferId, u8 caseId, u8 arg2, u8 abilityId, u8* arg4);
 //void __attribute__((long_call)) EmitExpBarUpdate(u8 a, u8 b, u16 c);
 void __attribute__((long_call)) EmitStatusAnimation(u8 a, u8 b, u32 c);
 void __attribute__((long_call)) EmitTwoReturnValues(u8 a, u8 b, u16 c);

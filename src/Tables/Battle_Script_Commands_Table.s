@@ -167,18 +167,18 @@ gBattleScriptingCommandsTable:
 .word 0x8029279				@setincreasedcriticalchance
 .word 0x80292d5				@transformdataexecution
 .word 0x8029475				@setsubstituteeffect
-.word 0x8029579				@copyattack
-.word 0x8029755				@metronomeeffect
+.word atk9D_mimicattackcopy		@copyattack
+.word atk9E_metronome			@metronomeeffect
 .word 0x80297fd				@nightshadedamageeffect
 .word atkA0_psywavedamageeffect
 .word atkA1_counterdamagecalculator
 .word atkA2_mirrorcoatdamagecalculator
-.word 0x8029a71				@disablelastusedattack
-.word 0x8029bb5				@setencore
+.word atkA3_disablelastusedattack
+.word atkA4_trysetencore		@setencore
 .word 0x8029ce9				@painsplitdamagecalculator
 .word atkA6_settypetorandomresistance
 .word 0x8029fad				@setalwayshitflag
-.word 0x802a005				@copymovepermanently
+.word atkA8_copymovepermanently
 .word atkA9_trychoosesleeptalkmove
 .word atkAA_setdestinybond		@destinybondeffect
 .word 0x802a459				@trysetdestinybondtohappen
@@ -190,12 +190,12 @@ gBattleScriptingCommandsTable:
 .word 0x802aaa5				@setforesight
 .word 0x802aad5				@setperishsong
 .word atkB3_rolloutdamagecalculation
-.word 0x802ad09				@jumpifconfusedandattackmaxed
+.word atkB4_jumpifconfusedandstatmaxed
 .word atkB5_furycuttercalc		@furycutterdamagecalculation
 .word 0x802ae25				@happinesstodamagecalculation
 .word atkB7_presentdamagecalculation
 .word 0x802af75				@setsafeguard
-.word 0x802b01d				@magnitudedamagecalculation
+.word atkB9_magnitudedamagecalculation
 .word atkBA_jumpifnopursuitswitchdmg
 .word atkBB_setsunny
 .word 0x802b32d				@maxattackhalvehp
@@ -206,19 +206,19 @@ gBattleScriptingCommandsTable:
 .word 0x802b679				@hiddenpowerdamagecalculation
 .word atkC2_selectfirstvalidtarget	@selectnexttarget
 .word atkC3_trysetfutureattack		@setfutureattack
-.word 0x802b911				@beatupcalculation
+.word atkC4_trydobeatup			@beatupcalculation
 .word atkC5_setsemiinvulnerablebit
 .word atkC6_clearsemiinvulnerablebit
 .word 0x802bc35				@setminimize
 .word atkC8_sethail
-.word 0x802bccd				@jumpifattackandspecialattackcannotfall
+.word atkC9_jumpifattackandspecialattackcannotfall
 .word atkCA_setforcedtarget
 .word 0x802bdb5				@setcharge
 .word atkCC_callterrainattack
 .word 0x802be8d				@cureifburnedparalysedorpoisoned
 .word 0x802bf11				@settorment
-.word 0x802bf69				@jumpifnodamage
-.word 0x802bfc5				@settaunt
+.word atkCF_jumpifnodamage
+.word atkD0_settaunt
 .word 0x802c039				@sethelpinghand
 .word atkD2_tryswapitems		@itemswap
 .word atkD3_trycopyability		@copyability
@@ -232,7 +232,7 @@ gBattleScriptingCommandsTable:
 .word atkDB_tryimprision		@imprisoneffect
 .word 0x802c875				@setgrudge
 .word 0x802c8cd				@weightdamagecalculation
-.word 0x802c965				@assistattackselect
+.word atkDE_asistattackselect
 .word 0x802cae5				@setmagiccoat
 .word 0x802cb69				@setstealstatchange
 .word 0x802cbe5				@atke1

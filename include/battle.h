@@ -748,6 +748,8 @@ struct NewBattleStruct
 	u8 MicleBerryBits;
 	u8 UnburdenBoosts;
 	u8 BeakBlastByte;
+	u8 playedFocusPunchMessage;
+	u8 playedShellTrapMessage;
 	u8 RoostCounter;
 	u8 CustapQuickClawIndicator;
 	u8 HealingWishLoc;

@@ -430,7 +430,9 @@ void RunTurnActionsFunctions(void)
 						if (gActionsByTurnOrder[i] != ACTION_USE_ITEM
 							&& gActionsByTurnOrder[j] != ACTION_USE_ITEM
 							&& gActionsByTurnOrder[i] != ACTION_SWITCH
-							&& gActionsByTurnOrder[j] != ACTION_SWITCH)
+							&& gActionsByTurnOrder[j] != ACTION_SWITCH
+							&& gActionsByTurnOrder[i] != ACTION_FINISHED
+							&& gActionsByTurnOrder[j] != ACTION_FINISHED)
 						{
 							if (GetWhoStrikesFirst(bank1, bank2, FALSE))
 								SwapTurnOrder(i, j);
@@ -481,9 +483,15 @@ void RunTurnActionsFunctions(void)
 					BattleScriptExecute(BattleScript_BeakBlastSetUp);
 				}
 				else if (chosenMove == MOVE_SHELLTRAP)
+				{
+					gNewBS->playedShellTrapMessage |= gBitTable[gActiveBattler];
 					BattleScriptExecute(BattleScript_ShellTrapSetUp);
+				}
 				else
+				{
+					gNewBS->playedFocusPunchMessage |= gBitTable[gActiveBattler];
 					BattleScriptExecute(BattleScript_FocusPunchSetUp);
+				}
 				return;
 			}
 		}
@@ -563,7 +571,8 @@ void HandleAction_UseMove(void)
     }
     // Encore forces you to use the same move
     else if (gDisableStructs[gBankAttacker].encoredMove != MOVE_NONE
-          && gDisableStructs[gBankAttacker].encoredMove == gBattleMons[gBankAttacker].moves[gDisableStructs[gBankAttacker].encoredMovePos])
+          && gDisableStructs[gBankAttacker].encoredMove == gBattleMons[gBankAttacker].moves[gDisableStructs[gBankAttacker].encoredMovePos]
+		  && !gNewBS->ZMoveData->toBeUsed[gBankAttacker]) //If a Z-Move was chosen, it can still be used
     {
         gCurrentMove = gChosenMove = gDisableStructs[gBankAttacker].encoredMove;
         gCurrMovePos = gChosenMovePos = gDisableStructs[gBankAttacker].encoredMovePos;
@@ -571,7 +580,8 @@ void HandleAction_UseMove(void)
     }
     // Check if the encored move wasn't overwritten
     else if (gDisableStructs[gBankAttacker].encoredMove != MOVE_NONE
-          && gDisableStructs[gBankAttacker].encoredMove != gBattleMons[gBankAttacker].moves[gDisableStructs[gBankAttacker].encoredMovePos])
+          && gDisableStructs[gBankAttacker].encoredMove != gBattleMons[gBankAttacker].moves[gDisableStructs[gBankAttacker].encoredMovePos]
+		  && !gNewBS->ZMoveData->toBeUsed[gBankAttacker]) //If a Z-Move was chosen, it can still be used
     {
         gCurrMovePos = gChosenMovePos = gDisableStructs[gBankAttacker].encoredMovePos;
         gCurrentMove = gChosenMove = gBattleMons[gBankAttacker].moves[gCurrMovePos];
