@@ -9,15 +9,13 @@ extern struct BattleMove gBattleMoves[];
 //#define gBattleMoves ((struct BattleMove*) 0x8900000)
 //#defin gMoveNames ((
 
-typedef u8 TypeNames_t[TYPE_NAME_LENGTH + 1];
-#define gTypeEffectiveness ((u8*) *((u32*) 0x801E944))
-#define gTypeNames ((TypeNames_t*) *((u32*) 0x80309C8))
-
 #define gItems ((struct Item*) *((u32*) 0x80001C8))
 
 typedef u8 SpeciesNames_t[POKEMON_NAME_LENGTH + 1];
 #define gSpeciesNames ((SpeciesNames_t*) *((u32*) 0x8000144))
 #define gBaseStats ((struct BaseStats*) *((u32*) 0x80001BC))
+
+extern const u8 gTypeEffectiveness[124 * 3];
 
 extern const struct Evolution gEvolutionTable[][EVOS_PER_MON];
 

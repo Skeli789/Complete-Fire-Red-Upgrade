@@ -69,3 +69,5 @@ GetMonPokeBallHook 0803FE70
 Substitute_FrontTiles 080350F4
 Substitute_BackTiles 08035144
 SurfPal 080AB464
+gMoveMenuInfoIcons 8107DAC
+Type_IconsTiles 08107DB0
