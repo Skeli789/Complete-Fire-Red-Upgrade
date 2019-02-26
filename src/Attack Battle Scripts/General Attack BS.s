@@ -740,7 +740,12 @@ DragonTailBS:
 	setbyte CMD49_STATE 0x0
 	cmd49 BANK_TARGET 0x0
 	playanimation BANK_TARGET DRAGON_TAIL_BLOW_AWAY_ANIM 0x0
-	forcerandomswitch 0x81D6957
+	setbyte FORCE_SWITCH_HELPER 0x1
+	forcerandomswitch DragonTailResetForceSwitchHelper
+
+DragonTailResetForceSwitchHelper:
+	setbyte FORCE_SWITCH_HELPER 0x0
+	goto 0x81D6957
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
