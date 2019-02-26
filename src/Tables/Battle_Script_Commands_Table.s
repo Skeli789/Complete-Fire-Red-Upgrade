@@ -19,7 +19,7 @@ gBattleScriptingCommandsTable:
 .word atk06_typecalc
 .word atk07_adjustnormaldamage
 .word atk08_adjustnormaldamage2
-.word 0x801f441				@attackanimation
+.word atk09_attackanimation
 .word 0x801f589				@waitanimation
 .word atk0B_healthbarupdate		@graphicalhpupdate
 .word atk0C_datahpupdate
@@ -109,7 +109,7 @@ gBattleScriptingCommandsTable:
 .word 0x8025b75				@incrementgamestat
 .word atk61_drawpartystatussummary
 .word 0x8025c6d				@atk62
-.word 0x8025c9d				@jumptoattack
+.word atk63_jumptocalledmove		@jumptoattack
 .word atk64_statusanimation
 .word 0x8025d91				@status2animation
 .word atk66_chosenstatusanimation
@@ -134,7 +134,7 @@ gBattleScriptingCommandsTable:
 .word 0x80271c1				@setuserhptozero
 .word atk7A_jumpifnexttargetvalid	@jumpwhiletargetvalid
 .word 0x80272c5				@setdamageasrestorehalfmaxhp
-.word 0x8027341				@jumptolastusedattack
+.word atk7C_trymirrormove		@jumptolastusedattack
 .word atk7D_setrain
 .word atk7E_setreflect
 .word atk7F_setseeded			@setleechseed
