@@ -410,7 +410,7 @@ struct SpecialStatus
     u8 restoredBankSprite: 1;       // 0x4
     u8 intimidatedPoke : 1;         // 0x8
     u8 traced : 1;                  // 0x10
-    u8 flag20 : 1;
+    u8 ppNotAffectedByPressure : 1;
     u8 flag40 : 1;
     u8 focusBanded : 1;				// 0x80
     u8 field1[3];
@@ -770,7 +770,6 @@ struct NewBattleStruct
 	u8 EnduranceHelper;
 	u8 DancerBankCount;
 	u8 CurrentTurnAttacker;
-	u8 TargetsHit;
 	u8 targetsToBringDown;
 	u8 backupMoveEffect;
 	u8 FaintEffectsTracker;
@@ -802,6 +801,8 @@ struct NewBattleStruct
 	u8 DancerTurnOrder[4];
 	u8 PayDayByPartyIndices[6];
 	item_t SavedConsumedItems[6];
+	s32 DamageTaken[4]; //0x2017650
+	u8 ResultFlags[4];
 	
 	struct MegaData* MegaData;
 	struct UltraData* UltraData;
