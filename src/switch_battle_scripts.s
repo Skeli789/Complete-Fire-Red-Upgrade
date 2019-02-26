@@ -139,10 +139,10 @@ RedCardForceSwitch:
 	switchoutabilities BANK_TARGET
 	returntoball BANK_TARGET
 	waitstateatk
-	jumpifword ANDS BATTLE_TYPE BATTLE_TRAINER ForceSwitch
+	jumpifword ANDS BATTLE_TYPE BATTLE_TRAINER ForceSwitchRedCard
 	jumpifword ANDS BATTLE_TYPE BATTLE_DOUBLE ForceSwitchRedCard @Wild Double Battles force switches
-	setbyte BATTLE_OUTCOME 0x5
-	finishaction
+	setbyte BATTLE_OUTCOME 0x5 @;Teleported
+	end
 
 ForceSwitchRedCard:
 	switch1 BANK_TARGET
@@ -154,6 +154,8 @@ ForceSwitchRedCard:
 	switchineffects BANK_TARGET
 	callasm MoldBreakerRestoreAbilitiesOnForceSwitchIn
 	setbyte FORCE_SWITCH_HELPER 0x0
+	copyarray USER_BANK TARGET_BANK 0x1 @copies target into user
+	copyarray TARGET_BANK SEED_HELPER 0x1 @restores target	
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
