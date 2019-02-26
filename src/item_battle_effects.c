@@ -49,9 +49,6 @@ extern u8 BattleScript_BlackSludgeHurt[];
 extern u8 BattleScript_MicleBerryRet[];
 extern u8 BattleScript_MicleBerryEnd2[];
 extern u8 BattleScript_StickyBarbTransfer[];
-extern u8 BattleScript_EjectButton[];
-extern u8 BattleScript_RedCard[];
-
 
 extern move_t FlinchMoveTable[];
 
@@ -72,13 +69,6 @@ enum
     FLAVOR_SWEET, // 2
     FLAVOR_BITTER, // 3
     FLAVOR_SOUR, // 4
-};
-
-enum
-{
-	Force_Switch_Regular,
-	Force_Switch_Dragon_Tail,
-	Force_Switch_Red_Card
 };
 
 u8 ConfusionBerries(u8 bank, u8 flavour, bool8 moveTurn, bool8 DoPluck);
@@ -661,41 +651,8 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
 				effect = RaiseStatsContactItem(bank, STAT_STAGE_ATK, TYPE_ELECTRIC);
 				break;
 				
-			case ITEM_EFFECT_EJECT_BUTTON:
-				if (gMultiHitCounter <= 1
-				&& TOOK_DAMAGE(bank)
-				&& gBattleMons[bank].hp
-				&& !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bank))
-				{
-					gNewBS->NoSymbiosisByte = TRUE;
-					gEffectBank = bank;
-					BattleScriptPushCursor();
-					gBattlescriptCurrInstr = BattleScript_EjectButton;
-					gActiveBattler = bank;
-					effect = ITEM_EFFECT_OTHER;
-				}
-				break;
-				
 			case ITEM_EFFECT_LUMINOUS_MOSS:
 				effect = RaiseStatsContactItem(bank, STAT_STAGE_SPDEF, TYPE_WATER);
-				break;
-				
-			case ITEM_EFFECT_RED_CARD:
-				if (gMultiHitCounter <= 1
-				&& TOOK_DAMAGE(bank)
-				&& gBattleMons[bank].hp
-				&& !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bank)
-				&& ((gBattleTypeFlags & BATTLE_TYPE_TRAINER) || SIDE(gBankAttacker) == B_SIDE_PLAYER)
-				&& gCurrentMove != MOVE_DRAGONTAIL && gCurrentMove != MOVE_CIRCLETHROW)
-				{
-					gNewBS->NoSymbiosisByte = TRUE;
-					ForceSwitchHelper = Force_Switch_Red_Card;
-					gEffectBank = bank;
-					BattleScriptPushCursor();
-					gBattlescriptCurrInstr = BattleScript_RedCard;
-					gActiveBattler = bank;
-					effect = ITEM_EFFECT_OTHER;
-				}
 				break;
 				
 			case ITEM_EFFECT_SNOWBALL:
