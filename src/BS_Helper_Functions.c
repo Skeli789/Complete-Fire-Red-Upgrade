@@ -414,7 +414,7 @@ void MetalBurstDamageCalculator(void) {
     }
 	
     else {
-        gSpecialStatuses[gBankAttacker].flag20 = 1;
+        gSpecialStatuses[gBankAttacker].ppNotAffectedByPressure = 1;
         gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
     }
 }
@@ -1136,6 +1136,7 @@ void InitiateInstruct(void) {
 	gHitMarker &= ~(HITMARKER_ATTACKSTRING_PRINTED);
 	BattleScriptPush(gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect]);
 	gBattlescriptCurrInstr = BattleScript_FlushMessageBox - 5;
+	gNewBS->ZMoveData->active = FALSE;
 	gNewBS->InstructInProgress = TRUE;
 }
 
@@ -1392,4 +1393,13 @@ void TryActivateNewSwitchInAbility(void) {
 	gSpecialStatuses[gActiveBattler].switchInAbilityDone = FALSE;
 	if (AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, gActiveBattler, 0, 0, 0))
 		gBattlescriptCurrInstr -= 5;
+}
+
+void MakeScriptingBankInvisible(void)
+{
+	if (gBattleExecBuffer) return;
+	
+	gActiveBattler = gBattleScripting->bank;
+	EmitSpriteInvisibility(0, TRUE);
+    MarkBufferBankForExecution(gActiveBattler);
 }
