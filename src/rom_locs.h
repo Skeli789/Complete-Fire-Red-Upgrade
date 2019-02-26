@@ -24,6 +24,8 @@ typedef u32 ExperienceTable_t[101];
 
 extern const u8 gAbilityNames[][ABILITY_NAME_LENGTH + 1];
 
+#define BattleScript_MoveEnd (u8*) 0x81D694E
+#define BattleScript_Atk49 (u8*) 0x81D6954
 extern u8 BattleScript_ButItFailed[];
 
 #define gGameVersion (*((u8*) 0x81E9F10))
