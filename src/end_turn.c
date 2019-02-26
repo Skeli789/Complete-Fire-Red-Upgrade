@@ -106,16 +106,16 @@ u8 TurnBasedEffects(void) {
 						
 					if(gNewBS->ElectrifyTimers[i])
 						--gNewBS->ElectrifyTimers[i];
+						
+					gBattleMons[i].status2 &= ~(STATUS2_FLINCHED);
 				}
 
-				for (i = 0; i < 4; ++i)
-				{ //These should be cleared earlier on, but just in case they aren't
-					gNewBS->PowderByte = 0;
-					gNewBS->BeakBlastByte = 0;
-					gNewBS->playedFocusPunchMessage = 0;
-					gNewBS->playedShellTrapMessage = 0;
-					gNewBS->CustapQuickClawIndicator = 0;
-				}
+				//These should be cleared earlier on, but just in case they aren't
+				gNewBS->PowderByte = 0;
+				gNewBS->BeakBlastByte = 0;
+				gNewBS->playedFocusPunchMessage = 0;
+				gNewBS->playedShellTrapMessage = 0;
+				gNewBS->CustapQuickClawIndicator = 0;
 				
 				if (gNewBS->RetaliateCounters[0])
 					--gNewBS->RetaliateCounters[0];
@@ -473,11 +473,11 @@ u8 TurnBasedEffects(void) {
 				break;
 				
 			case(ET_Leech_Seed): //TO-DO, Leech Seed + Big Root
-                if (gStatuses3[gActiveBattler] & STATUS3_LEECHSEED && 
-					gBattleMons[gStatuses3[gActiveBattler] & STATUS3_LEECHSEED_BATTLER].hp &&
-					gBattleMons[gStatuses3[gActiveBattler] & STATUS3_LEECHSEED_BATTLER].ability != ABILITY_MAGICGUARD &&
-					gBattleMons[gActiveBattler].hp) {
-					
+                if (gStatuses3[gActiveBattler] & STATUS3_LEECHSEED
+				&& gBattleMons[gStatuses3[gActiveBattler] & STATUS3_LEECHSEED_BATTLER].hp
+				&& gBattleMons[gStatuses3[gActiveBattler] & STATUS3_LEECHSEED_BATTLER].ability != ABILITY_MAGICGUARD
+				&& gBattleMons[gActiveBattler].hp) 
+				{	
                     gBankTarget = gStatuses3[gActiveBattler] & STATUS3_LEECHSEED_BATTLER; //funny how the 'target' is actually the bank that receives HP
                     gBattleMoveDamage = gBattleMons[gActiveBattler].maxHP / 8;
                     if (gBattleMoveDamage == 0)
@@ -490,69 +490,73 @@ u8 TurnBasedEffects(void) {
 				break;
 				
 			case(ET_Poison):
-                if ((gBattleMons[gActiveBattler].status1 & STATUS_POISON) && 
-					 gBattleMons[gActiveBattler].hp && 
-					 gBattleMons[gActiveBattler].ability != ABILITY_MAGICGUARD) {
-						gBattleMoveDamage = gBattleMons[gActiveBattler].maxHP / 8;
-						if (gBattleMoveDamage == 0)
-							gBattleMoveDamage = 1;
-							
-						if (gBattleMons[gActiveBattler].ability == ABILITY_POISONHEAL &&
-						    gBattleMons[gActiveBattler].hp < gBattleMons[gActiveBattler].maxHP) {
-								gBattleMoveDamage *= -1;
-								BattleScriptExecute(BattleScript_PoisonHeal);
+                if ((gBattleMons[gActiveBattler].status1 & STATUS_POISON) 
+				&& gBattleMons[gActiveBattler].hp
+				&& gBattleMons[gActiveBattler].ability != ABILITY_MAGICGUARD) 
+				{
+					gBattleMoveDamage = MathMax(1, gBattleMons[gActiveBattler].maxHP / 8);
+					
+					if (gBattleMons[gActiveBattler].ability == ABILITY_POISONHEAL) 
+					{
+						if (!BATTLER_MAX_HP(gActiveBattler) && !gNewBS->HealBlockTimers[gActiveBattler])
+						{
+							gBattleMoveDamage *= -1;
+							BattleScriptExecute(BattleScript_PoisonHeal);
 						}
-						else
-							BattleScriptExecute(BattleScript_PoisonTurnDmg);
-						effect++;
+					}
+					else
+						BattleScriptExecute(BattleScript_PoisonTurnDmg);
+					++effect;
                 }
                 break;
 				
 			case(ET_Toxic):
-                if ((gBattleMons[gActiveBattler].status1 & STATUS_TOXIC_POISON) && 
-					 gBattleMons[gActiveBattler].hp && 
-					 gBattleMons[gActiveBattler].ability != ABILITY_MAGICGUARD) {
-						gBattleMoveDamage = gBattleMons[gActiveBattler].maxHP / 16;
-						if (gBattleMoveDamage == 0)
-							gBattleMoveDamage = 1;
+                if ((gBattleMons[gActiveBattler].status1 & STATUS_TOXIC_POISON)
+				&& gBattleMons[gActiveBattler].hp
+				&& gBattleMons[gActiveBattler].ability != ABILITY_MAGICGUARD) 
+				{
+					gBattleMoveDamage = MathMax(1, gBattleMons[gActiveBattler].maxHP / 16);
 							
-						if ((gBattleMons[gActiveBattler].status1 & 0xF00) != 0xF00) //not 16 turns
-							gBattleMons[gActiveBattler].status1 += 0x100;
+					if ((gBattleMons[gActiveBattler].status1 & 0xF00) != 0xF00) //not 16 turns
+						gBattleMons[gActiveBattler].status1 += 0x100;
 							
-						gBattleMoveDamage *= (gBattleMons[gActiveBattler].status1 & 0xF00) >> 8;
+					gBattleMoveDamage *= (gBattleMons[gActiveBattler].status1 & 0xF00) >> 8;
 						
-						if (gBattleMons[gActiveBattler].ability == ABILITY_POISONHEAL) {
-							gBattleMoveDamage *= -1;
+					if (gBattleMons[gActiveBattler].ability == ABILITY_POISONHEAL) 
+					{
+						if (!BATTLER_MAX_HP(gActiveBattler) && !gNewBS->HealBlockTimers[gActiveBattler])
+						{
+							gBattleMoveDamage = MathMax(1, gBattleMons[gActiveBattler].maxHP / 8) * -1;
 							BattleScriptExecute(BattleScript_PoisonHeal);
 						}
-						else
-							BattleScriptExecute(BattleScript_PoisonTurnDmg);
-						effect++;
+					}
+					else
+						BattleScriptExecute(BattleScript_PoisonTurnDmg);
+					effect++;
                 }
 				break;
 				
 			case(ET_Burn):
-                if ((gBattleMons[gActiveBattler].status1 & STATUS_BURN) &&				 
-					 gBattleMons[gActiveBattler].hp && 
-					 gBattleMons[gActiveBattler].ability != ABILITY_MAGICGUARD) {
-						 if (ABILITY(gActiveBattler) == ABILITY_HEATPROOF) {
-							#ifdef OLD_BURN_DAMAGE
-								gBattleMoveDamage = gBattleMons[gActiveBattler].maxHP / 16;
-							#else
-								gBattleMoveDamage = gBattleMons[gActiveBattler].maxHP / 32;
-							#endif
-						 }
-						 else {
-							#ifdef OLD_BURN_DAMAGE
-								gBattleMoveDamage = gBattleMons[gActiveBattler].maxHP / 8;
-							#else
-								gBattleMoveDamage = gBattleMons[gActiveBattler].maxHP / 16;
-							#endif
-						}
-						if (gBattleMoveDamage == 0)
-							gBattleMoveDamage = 1;
-						BattleScriptExecute(BattleScript_BurnTurnDmg);
-						effect++;
+                if ((gBattleMons[gActiveBattler].status1 & STATUS_BURN)			 
+				&& gBattleMons[gActiveBattler].hp
+				&& gBattleMons[gActiveBattler].ability != ABILITY_MAGICGUARD) 
+				{
+					if (ABILITY(gActiveBattler) == ABILITY_HEATPROOF) {
+						#ifdef OLD_BURN_DAMAGE
+							gBattleMoveDamage = MathMax(1, gBattleMons[gActiveBattler].maxHP / 16);
+						#else
+							gBattleMoveDamage = MathMax(1, gBattleMons[gActiveBattler].maxHP / 32);
+						#endif
+					}
+					else {
+						#ifdef OLD_BURN_DAMAGE
+							gBattleMoveDamage = MathMax(1, gBattleMons[gActiveBattler].maxHP / 8);
+						#else
+							gBattleMoveDamage = MathMax(1, gBattleMons[gActiveBattler].maxHP / 16);
+						#endif
+					}
+					BattleScriptExecute(BattleScript_BurnTurnDmg);
+					effect++;
                 }
                 break;
 				
@@ -561,9 +565,7 @@ u8 TurnBasedEffects(void) {
 					if (gBattleMons[gActiveBattler].status2 & STATUS_SLEEP) {
 						if (gBattleMons[gActiveBattler].hp && 
 							gBattleMons[gActiveBattler].ability != ABILITY_MAGICGUARD) {
-								gBattleMoveDamage = gBattleMons[gActiveBattler].maxHP / 4;
-								if (gBattleMoveDamage == 0)
-									gBattleMoveDamage = 1;
+								gBattleMoveDamage = MathMax(1, gBattleMons[gActiveBattler].maxHP / 4);
 								BattleScriptExecute(BattleScript_NightmareTurnDmg);
 								effect++;
 						}
@@ -577,9 +579,7 @@ u8 TurnBasedEffects(void) {
                 if ((gBattleMons[gActiveBattler].status2 & STATUS2_CURSED) && 
 					 gBattleMons[gActiveBattler].hp && 
 					 gBattleMons[gActiveBattler].ability != ABILITY_MAGICGUARD) {
-						gBattleMoveDamage = gBattleMons[gActiveBattler].maxHP / 4;
-						if (gBattleMoveDamage == 0)
-							gBattleMoveDamage = 1;
+						gBattleMoveDamage = MathMax(1, gBattleMons[gActiveBattler].maxHP / 4);
 						BattleScriptExecute(BattleScript_CurseTurnDmg);
 						effect++;
                 }
@@ -1269,6 +1269,12 @@ u8 TurnBasedEffects(void) {
 				gNewBS->EndTurnDone = TRUE;
 				gAbsentBattlerFlags &= ~(gNewBS->AbsentBattlerHelper);
 				gNewBS->MegaData->state = 0;
+				
+				for (int i = 0; i < 4; ++i)
+				{
+					gNewBS->DamageTaken[i] = 0;
+					gNewBS->ResultFlags[i] = 0;
+				}
 		}
 		gBattleStruct->turnEffectsBank++;
 		
