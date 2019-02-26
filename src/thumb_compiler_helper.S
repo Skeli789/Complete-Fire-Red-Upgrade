@@ -70,7 +70,26 @@ __gnu_thumb1_case_shi:
 	pop     {r0, r1}
 	bx      lr
     .size __gnu_thumb1_case_shi, . - __gnu_thumb1_case_shi
-	
+
+	.force_thumb
+	.syntax unified
+    .global __gnu_thumb1_case_si
+    .thumb_func
+    .type __gnu_thumb1_case_shi,function
+__gnu_thumb1_case_si:
+        push    {r0, r1}
+        mov     r1, lr
+        adds.n  r1, r1, #2      /* Align to word.  */
+        lsrs    r1, r1, #2
+        lsls    r0, r0, #2
+        lsls    r1, r1, #2
+        ldr     r0, [r1, r0]
+        adds    r0, r0, r1
+        mov     lr, r0
+        pop     {r0, r1}
+        mov     pc, lr          /* We know we were called from thumb code.  */
+    .size __gnu_thumb1_case_si, . - __gnu_thumb1_case_si
+
     .force_thumb
     .syntax unified
     .global __aeabi_uidiv
