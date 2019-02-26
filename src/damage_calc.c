@@ -187,14 +187,37 @@ extern u32 break_helper(u32 a);
 
 void atk05_damagecalc(void) {
 	gBattleStruct->dynamicMoveType = GetMoveTypeSpecial(gBankAttacker, gCurrentMove);
-    u16 side_hword = gSideAffecting[SIDE(gBankTarget)];
-    gBattleMoveDamage = CalculateBaseDamage(&gBattleMons[gBankAttacker], &gBattleMons[gBankTarget], gCurrentMove,
-                                            side_hword, gDynamicBasePower,
-											TypeCalc(gCurrentMove, gBankAttacker, gBankTarget, 0, FALSE),
-                                            gBattleStruct->dynamicMoveType, gBankAttacker, gBankTarget,
-											GetBankPartyData(gBankAttacker), FALSE, FALSE, FALSE);
-    gBattleMoveDamage = gBattleMoveDamage * udivsi(gCritMultiplier, 100);
+	u16 side_hword = gSideAffecting[SIDE(gBankTarget)];
 	
+	if (gNewBS->DamageTaken[gBankTarget] && gMultiHitCounter == 0)
+		gBattleMoveDamage = gNewBS->DamageTaken[gBankTarget];
+	
+	else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE
+	&& gBattleMoves[gCurrentMove].target & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL)) //All multi target foes are calculated now
+	{																			 //b/c stats can change after first kill (eg. Moxie)
+		for (int i = 0; i < gBattlersCount; ++i)
+		{
+			if (!(gNewBS->ResultFlags[i] & MOVE_RESULT_NO_EFFECT)) //The attacker will have had this loaded for itself earlier
+			{
+				gNewBS->DamageTaken[i] = CalculateBaseDamage(&gBattleMons[gBankAttacker], &gBattleMons[i], gCurrentMove,
+															 side_hword, gDynamicBasePower,
+															 gNewBS->ResultFlags[i],
+															 gBattleStruct->dynamicMoveType, gBankAttacker, i,
+															 GetBankPartyData(gBankAttacker), FALSE, FALSE, FALSE);
+			}
+		}
+		gBattleMoveDamage = gNewBS->DamageTaken[gBankTarget];
+	}
+	else //Single Battle or single target move
+	{
+		gBattleMoveDamage = CalculateBaseDamage(&gBattleMons[gBankAttacker], &gBattleMons[gBankTarget], gCurrentMove,
+												side_hword, gDynamicBasePower,
+												TypeCalc(gCurrentMove, gBankAttacker, gBankTarget, 0, FALSE),
+												gBattleStruct->dynamicMoveType, gBankAttacker, gBankTarget,
+												GetBankPartyData(gBankAttacker), FALSE, FALSE, FALSE);
+	}
+											
+    gBattleMoveDamage = gBattleMoveDamage * udivsi(gCritMultiplier, 100);
     ++gBattlescriptCurrInstr;
 }
 
@@ -1937,11 +1960,13 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 		damage = udivsi((damage * 150), 100);
 	
 	if (gNewBS->ParentalBondOn == 1)
+	{
 	#ifdef OLD_PARENTAL_BOND_DAMAGE
 		damage /= 2;
 	#else
 		damage /= 4;
 	#endif
+	}
 	
 	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE) {
 		if (gBattleMoves[move].target & (MOVE_TARGET_BOTH) && CountAliveMons(2) > 1)
