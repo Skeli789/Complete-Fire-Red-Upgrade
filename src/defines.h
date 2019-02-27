@@ -35,6 +35,7 @@
 #include "../include/songs.h"
 #include "../include/gba/m4a_internal.h"
 #include "../include/window.h"
+#include "../include/field_weather.h"
 
 #include "pokemon_data_request.h"
 #include "pokemon.h"
