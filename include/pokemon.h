@@ -505,6 +505,9 @@ enum
     STAT_STAGE_EVASION,  // 7
 };
 
+#define STAT_STAGE_MIN 0
+#define STAT_STAGE_MAX 12
+
 #define INCREASE_1 0x10
 #define INCREASE_2 0x20
 #define INCREASE_3 0x30
