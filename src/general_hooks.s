@@ -90,3 +90,23 @@ PartyMenuSwitchingHook:
 	bl PartyMenuSwitchingUpdate
 	ldr r0, =0x80146AC | 1
 	bx r0
+
+@0x80EFF0C with r2
+CriticalCaptureAnimHook:
+	push {r0-r1}
+	bl CriticalCapturAnimUpdate
+	cmp r0, #0x0
+	pop {r0-r1}
+	bne BallThrowSuccessReturn
+	cmp r0, #0x4
+	bne BallThrowBreakOutReturn
+	cmp r1, #0x3
+	bne BallThrowBreakOutReturn
+
+BallThrowSuccessReturn:
+	ldr r0, =0x80EFF14 | 1
+	bx r0
+
+BallThrowBreakOutReturn:
+	ldr r0, =0x80EFF20 | 1
+	bx r0

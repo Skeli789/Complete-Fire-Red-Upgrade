@@ -1,4 +1,5 @@
 #include "defines.h"
+#include "defines.h"
 #include "helper_functions.h"
 #include "catching.h"
 
@@ -61,7 +62,7 @@ void atkEF_handleballthrow(void) {
 		#endif
     }
 	
-	else if (gBattleTypeFlags & BATTLE_TYPE_GHOST || FlagGet(NO_CATCHING_FLAG) || FlagGet(NO_CATCHING_AND_RUNNING_FLAG)) {
+	else if ((gBattleTypeFlags & BATTLE_TYPE_GHOST) || FlagGet(NO_CATCHING_FLAG) || FlagGet(NO_CATCHING_AND_RUNNING_FLAG)) {
 		EmitBallThrow(0, 6);
 		MarkBufferBankForExecution(gActiveBattler);
 		gBattlescriptCurrInstr = BattleScript_DodgedBall;
@@ -252,7 +253,7 @@ void atkEF_handleballthrow(void) {
         }
         else
             ball_multiplier = sBallCatchBonuses[ItemType - BALL_TYPE_ULTRA_BALL];
-
+		
         odds = udivsi(((catch_rate * udivsi(ball_multiplier, 10)) * (gBattleMons[gBankTarget].maxHP * 3 - gBattleMons[gBankTarget].hp * 2)), (3 * gBattleMons[gBankTarget].maxHP));
 		
 		#ifndef NO_HARDER_WILD_DOUBLES
@@ -303,7 +304,7 @@ void atkEF_handleballthrow(void) {
         else { //Poke may be caught, calculate shakes
             u8 shakes, maxShakes;
 			if (CriticalCapture(odds))
-				maxShakes = 1;
+				maxShakes = 2;
 			else
 				maxShakes = 4;
 			
@@ -364,9 +365,15 @@ bool8 CriticalCapture(u32 odds) {
 	
 	odds = udivsi(odds, 6);
 	if (umodsi(Random(), 0xFF) < odds)
+	{
+		gNewBS->criticalCapture = TRUE;
 		return TRUE;
+	}
 	else
-		return FALSE;	
+	{
+		gNewBS->criticalCapture = FALSE;
+		return FALSE;
+	}
 }
 
 u8 GiveMonToPlayer(pokemon_t* mon) { //Hook in
@@ -418,13 +425,12 @@ u8 ItemIdToBallId(u16 ballItem)
 void LoadBallGfx(u8 ballId)
 {
     u16 var;
-
     if (GetSpriteTileStartByTag(gBallSpriteSheets[ballId].tag) == 0xFFFF)
     {
         LoadCompressedSpriteSheetUsingHeap(&gBallSpriteSheets[ballId]);
         LoadCompressedSpritePaletteUsingHeap(&gBallSpritePalettes[ballId]);
     }
-    switch (ballId) {
+    switch (ballId + 1) {
 		case BALL_TYPE_MASTER_BALL:
 		case BALL_TYPE_ULTRA_BALL:
 		case BALL_TYPE_GREAT_BALL:
@@ -465,4 +471,9 @@ u16 GetBattlerPokeballItemId(u8 bank)
 	}
 		
 	return BallIdToItemId(ballId);
+}
+
+bool8 CriticalCapturAnimUpdate(void)
+{
+	return gNewBS->criticalCapture;
 }

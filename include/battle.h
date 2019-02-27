@@ -794,6 +794,7 @@ struct NewBattleStruct
 	bool8 MultiHitOn : 1;
 	bool8 secondaryEffectApplied : 1;
 	bool8 bypassSubstitute : 1;
+	bool8 criticalCapture : 1;
 	
 	//Other
 	u16 LastUsedMove;
@@ -803,6 +804,7 @@ struct NewBattleStruct
 	item_t SavedConsumedItems[6];
 	s32 DamageTaken[4]; //0x2017650
 	u8 ResultFlags[4];
+	u8 expHelper[4];
 	
 	struct MegaData* MegaData;
 	struct UltraData* UltraData;

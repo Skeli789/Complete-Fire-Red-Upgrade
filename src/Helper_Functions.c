@@ -407,20 +407,32 @@ bool8 IsBattlerAlive(u8 bank) {
 
 u16 GetNationalPokedexCount(u8 caseID) {
     u16 count = 0;
-    u16 i;
+    u32 i;
+	u8 byte;
 
-    for (i = 0; i < NATIONAL_DEX_COUNT; i++) {
-        switch (caseID) {
+	u8* flags;
+
+    switch (caseID) {
         case FLAG_GET_SEEN:
-            if (GetSetPokedexFlag(i + 1, FLAG_GET_SEEN))
-                count++;
+            flags = (u8*) SEEN_DEX_FLAGS;
             break;
 		
-        case FLAG_GET_CAUGHT:
-            if (GetSetPokedexFlag(i + 1, FLAG_GET_CAUGHT))
-                count++;
+        default: //case FLAG_GET_CAUGHT:
+            flags = (u8*) CAUGHT_DEX_FLAGS;
             break;
-        }
+    }
+	
+    for (i = 0; i <= (NATIONAL_DEX_COUNT - 1) / 8; ++i) //8 Pokemon per byte
+	{
+		byte = flags[i];
+		
+		while (byte != 0)
+		{
+			if (byte & 1)
+				++count;
+			
+			byte >>= 1;
+		}
     }
     return count;
 }
