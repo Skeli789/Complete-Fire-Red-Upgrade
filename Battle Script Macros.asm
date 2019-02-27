@@ -918,8 +918,9 @@
 	.byte 0x96
 	.endm
 
-	.macro tryinfatuatetarget rom_address
+	.macro tryinfatuatebank bank rom_address
 	.byte 0x97
+	.byte \bank
 	.4byte \rom_address
 	.endm
 
@@ -971,8 +972,9 @@
 	.4byte \rom_address
 	.endm
 
-	.macro disablelastusedattack rom_address
+	.macro disablelastusedattack bank rom_address
 	.byte 0xa3
+	.byte \bank
 	.4byte \rom_address
 	.endm
 
@@ -1528,4 +1530,10 @@
 	.2byte \target_species
 	.byte \reload_type
 	.4byte \rom_address
-	.endm	
+	.endm
+	
+	.macro jumpifabilitypresentattackerfield ability rom_address
+	.byte 0xFF, 0x1A
+	.byte \ability
+	.4byte \rom_address
+	.endm
