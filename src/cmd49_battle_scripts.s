@@ -5,6 +5,7 @@
 .include "..\\defines"
 
 .global BattleScript_PoisonTouch
+.global BattleScript_RageIsBuilding
 .global BattleScript_BeakBlastBurn
 .global BattleScript_Magician
 .global BattleScript_Moxie
@@ -18,6 +19,7 @@
 .global BattleScript_MultiHitPrintStrings
 .global BattleScript_PluckEat
 
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_PoisonTouch:
@@ -25,6 +27,28 @@ BattleScript_PoisonTouch:
 	setbyte EFFECT_BYTE 0x2
 	seteffecttarget
 	return
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_RageIsBuilding:
+	setstatchanger STAT_ATK | INCREASE_1
+	statbuffchange STAT_TARGET | STAT_BS_PTR | STAT_CERTAIN RageReturn
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 RageReturn
+	setgraphicalstatchangevalues
+	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
+	jumpifability BANK_TARGET ABILITY_CONTRARY RageContraryBS
+
+RagePrintString:
+	printstring 0x83
+	waitmessage DELAY_1SECOND
+	
+RageReturn:
+	return
+	
+RageContraryBS: @;Rage says "Attack fell!" if the target has Contrary. Only the rage string is printed if the stat rises
+	printfromtable 0x83FE57C
+	waitmessage DELAY_1SECOND
+	goto RagePrintString
 	
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

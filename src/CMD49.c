@@ -16,7 +16,6 @@ BattleScript_MoveUsedLoafingAround
 BattleScript_IgnoresAndFallsAsleep
 */
 
-#define BattleScript_RageIsBuilding (u8*) 0x81D8C48
 #define BattleScript_DefrostedViaFireMove (u8*) 0x81D9098
 #define BattleScript_FlushMessageBox (u8*) 0x81D96A8
 #define BattleScript_Recoil (u8*) 0x81D9243
@@ -33,6 +32,7 @@ extern move_t Percent75RecoilMoves[];
 extern move_t Percent100RecoilMoves[];
 
 extern u8 BattleScript_PoisonTouch[];
+extern u8 BattleScript_RageIsBuilding[];
 extern u8 BattleScript_BeakBlastBurn[];
 extern u8 BattleScript_Magician[];
 extern u8 BattleScript_Moxie[];
@@ -195,7 +195,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
             && MOVE_HAD_EFFECT 
 			&& TOOK_DAMAGE(bankDef)
             && SPLIT(gCurrentMove) != SPLIT_STATUS 
-			&& gBattleMons[bankDef].statStages[STAT_ATK-1] < 12)
+			&& STAT_CAN_RISE(bankDef, STAT_ATK))
             {
                 gBattleMons[bankDef].statStages[STAT_ATK-1]++;
                 BattleScriptPushCursor();
