@@ -4,7 +4,6 @@
 //Make sure there's no choice lock glitch
 //Add check to see if AI move prediction was successful. If not, then if the same move is predicted, don't predict that same move again.
 //Remove the lines at the bottom?
-//Put Soul-Heart somewhere
 
 /*Fix references to:
 BattleScript_ActionSwitch
@@ -32,6 +31,9 @@ extern move_t Percent75RecoilMoves[];
 extern move_t Percent100RecoilMoves[];
 
 extern u8 BattleScript_PoisonTouch[];
+extern u8 BattleScript_KingsShield[];
+extern u8 BattleScript_SpikyShield[];
+extern u8 BattleScript_BanefulBunker[];
 extern u8 BattleScript_RageIsBuilding[];
 extern u8 BattleScript_BeakBlastBurn[];
 extern u8 BattleScript_Magician[];
@@ -60,6 +62,7 @@ enum
 {
 	ATK49_SET_UP,
 	ATK49_ATTACKER_ABILITIES,
+	ATK49_ADVERSE_PROTECTION,
     ATK49_RAGE,
     ATK49_SYNCHRONIZE_TARGET,
     ATK49_MOVE_END_ABILITIES,
@@ -187,6 +190,53 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			gBattleScripting->atk49_state++;
             break;
 		
+		case ATK49_ADVERSE_PROTECTION:
+			if (gProtectStructs[bankDef].kingsshield_damage)
+			{
+				gProtectStructs[bankDef].kingsshield_damage = 0;
+				
+				if (gBattleMons[bankAtk].hp
+				&&  STAT_CAN_FALL(bankAtk, STAT_ATK))
+				{
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_KingsShield;
+					effect = TRUE;
+					break;
+				}
+			}
+			if (gProtectStructs[bankDef].spikyshield_damage)
+			{
+				gProtectStructs[bankDef].spikyshield_damage = 0;
+				if (gBattleMons[bankAtk].hp && ABILITY(bankAtk) != ABILITY_MAGICGUARD)
+				{
+					gBattleMoveDamage = MathMax(1, gBattleMons[bankAtk].hp / 8);
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_SpikyShield;			
+					effect = 1;
+				}
+				break;	
+			}
+			if (gProtectStructs[bankDef].banefulbunker_damage)
+			{
+				gProtectStructs[bankDef].banefulbunker_damage = 0;
+				if (gBattleMons[bankAtk].hp
+				&&  CanBePoisoned(bankAtk, bankDef)) //Target poisons Attacker
+				{
+					gBattleMons[bankAtk].status1 = STATUS_POISON;
+					gEffectBank = gActiveBattler = bankAtk;
+					EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[bankAtk].status1);
+					MarkBufferBankForExecution(gActiveBattler);
+					
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_BanefulBunker;			
+					effect = 1;
+				}
+				effect = 1;
+				break;
+			}
+			gBattleScripting->atk49_state++;
+            break;
+			
         case ATK49_RAGE: // rage check
             if (gBattleMons[bankDef].status2 & STATUS2_RAGE
             && gBattleMons[bankDef].hp 
@@ -203,8 +253,8 @@ void atk49_moveend(void) //All the effects that happen after a move is used
                 effect = TRUE;
             }
             gBattleScripting->atk49_state++;
-            break;
-			
+            break;	
+
         case ATK49_SYNCHRONIZE_TARGET: // target synchronize
 			if (gCurrentMove != MOVE_PSYCHOSHIFT || !MOVE_HAD_EFFECT) //The lazy way of taking care of Psycho Shift Status Transfer->Synchronize->Heal Status
 			{
@@ -664,6 +714,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 						}
 					}
 			}
+			*SeedHelper = 0; //For Soul-Heart Loop
             gBattleScripting->atk49_state++;
             break;
 		

@@ -131,7 +131,7 @@ bool8 ProtectAffects(u16 move, u8 bankAtk, u8 bankDef, bool8 set) {
     u8 split = SPLIT(move);
     u8 contact = CheckContact(move, bankAtk);
     u8 target = gBattleMoves[move].target;
-    u8 defSide = GetBattlerSide(bankDef);
+    u8 defSide = SIDE(bankDef);
 	
     if (gProtectStructs[bankDef].protected && protectFlag)
 	{
@@ -141,19 +141,19 @@ bool8 ProtectAffects(u16 move, u8 bankAtk, u8 bankDef, bool8 set) {
 	{
         effect = 1;
         if (contact && set)
-            gProtectStructs[bankAtk].kingsshield_damage = 1;
+            gProtectStructs[bankDef].kingsshield_damage = 1;
     }
     else if (gProtectStructs[bankDef].SpikyShield && protectFlag) 
 	{
         effect = 1;
         if (contact && set)
-            gProtectStructs[bankAtk].spikyshield_damage = 1;
+            gProtectStructs[bankDef].spikyshield_damage = 1;
     }
     else if (gProtectStructs[bankDef].BanefulBunker && protectFlag) 
 	{
         effect = 1;
         if (contact && set)
-            gProtectStructs[bankAtk].banefulbunker_damage = 1;
+            gProtectStructs[bankDef].banefulbunker_damage = 1;
     }
     else if ((gSideAffecting[defSide] & SIDE_STATUS_CRAFTY_SHIELD && target != MOVE_TARGET_USER && split == SPLIT_STATUS)
 		  || (gSideAffecting[defSide] & SIDE_STATUS_QUICK_GUARD && protectFlag && PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > 0)

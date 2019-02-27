@@ -5,6 +5,9 @@
 .include "..\\defines"
 
 .global BattleScript_PoisonTouch
+.global BattleScript_KingsShield
+.global BattleScript_SpikyShield
+.global BattleScript_BanefulBunker
 .global BattleScript_RageIsBuilding
 .global BattleScript_BeakBlastBurn
 .global BattleScript_Magician
@@ -19,6 +22,8 @@
 .global BattleScript_MultiHitPrintStrings
 .global BattleScript_PluckEat
 
+.global AbilityRaisedStatString
+
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -26,6 +31,58 @@ BattleScript_PoisonTouch:
 	setbyte POISONED_BY 0x1
 	setbyte EFFECT_BYTE 0x2
 	seteffecttarget
+	return
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_KingsShield:
+	setstatchanger STAT_ATK | DECREASE_2
+	statbuffchange STAT_ATTACKER | STAT_NOT_PROTECT_AFFECTED | STAT_BS_PTR KingsShieldReturn
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 KingsShieldReturn
+	setgraphicalstatchangevalues
+	playanimation BANK_ATTACKER ANIM_STAT_BUFF ANIM_ARG_1
+	printfromtable 0x83FE588
+	waitmessage DELAY_1SECOND
+	jumpifability BANK_ATTACKER ABILITY_DEFIANT KingsShieldCallDefiant
+	jumpifability BANK_ATTACKER ABILITY_COMPETITIVE KingsShieldCallCompetitive
+
+KingsShieldReturn:
+	return
+
+KingsShieldCallDefiant:
+	setstatchanger STAT_ATK | INCREASE_2
+	copyarray BATTLE_SCRIPTING_BANK USER_BANK 0x1
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR KingsShieldReturn
+	call BattleScript_DefiantCompetitiveCall
+	return
+
+KingsShieldCallCompetitive:
+	setstatchanger STAT_SPATK | INCREASE_2
+	copyarray BATTLE_SCRIPTING_BANK USER_BANK 0x1
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR KingsShieldReturn
+	call BattleScript_DefiantCompetitiveCall
+	return
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_SpikyShield:
+	orword HIT_MARKER, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_NON_ATTACK_DMG
+	graphicalhpupdate BANK_ATTACKER
+	datahpupdate BANK_ATTACKER
+	setword BATTLE_STRING_LOADER SpikyShieldString
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	faintpokemon BANK_ATTACKER 0x0 0x0
+	return
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_BanefulBunker:
+	statusanimation BANK_ATTACKER
+	refreshhpbar BANK_ATTACKER
+	setword BATTLE_STRING_LOADER BanefulBunkerPSNString
+	printstring 0x184
+	waitmessage DELAY_1SECOND
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -86,7 +143,7 @@ MoxieReturnPostBuff:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_MindBlownDamage:
-	orword HIT_MARKER 0x100
+	orword HIT_MARKER 0x100 | HITMARKER_NON_ATTACK_DMG
 	graphicalhpupdate BANK_ATTACKER
 	datahpupdate BANK_ATTACKER
 	setword BATTLE_STRING_LOADER MindBlownString
@@ -108,7 +165,7 @@ BattleScript_FaintAttackerForExplosion:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_LifeOrbDamage:
-	orword HIT_MARKER 0x100
+	orword HIT_MARKER 0x100 | HITMARKER_NON_ATTACK_DMG
 	graphicalhpupdate BANK_ATTACKER
 	datahpupdate BANK_ATTACKER
 	setword BATTLE_STRING_LOADER LifeOrbString
@@ -268,6 +325,7 @@ BattleScript_PluckEat:
 
 .align 2
 PoisonTouchString: .byte 0xFD, 0x0F, 0xB4, 0xE7, 0x00, 0xFD, 0x18, 0xFE, 0xE4, 0xE3, 0xDD, 0xE7, 0xE3, 0xE2, 0xD9, 0xD8, 0x00, 0xFD, 0x11, 0xAB, 0xFF
+SpikyShieldString: .byte 0xFD, 0x0F, 0x00, 0xEB, 0xD5, 0xE7, 0x00, 0xDC, 0xE9, 0xE6, 0xE8, 0x00, 0xD6, 0xED, 0xFE, 0xFD, 0x10, 0xB4, 0xE7, 0x00, 0xCD, 0xE4, 0xDD, 0xDF, 0xED, 0x00, 0xCD, 0xDC, 0xDD, 0xD9, 0xE0, 0xD8, 0xAB, 0xFF
 ToxicSpikesPSNString: .byte 0xFD, 0x11, 0x00, 0xEB, 0xD5, 0xE7, 0xFE, 0xE4, 0xE3, 0xDD, 0xE7, 0xE3, 0xE2, 0xD9, 0xD8, 0x00, 0xD6, 0xED, 0x00, 0xE8, 0xDC, 0xD9, 0x00, 0xCE, 0xE3, 0xEC, 0xDD, 0xD7, 0x00, 0xCD, 0xE4, 0xDD, 0xDF, 0xD9, 0xE7, 0xAB, 0xFF
 ToxicSpikesBadPSNString: .byte 0xFD, 0x11, 0x00, 0xDD, 0xE7, 0x00, 0xD6, 0xD5, 0xD8, 0xE0, 0xED, 0xFE, 0xE4, 0xE3, 0xDD, 0xE7, 0xE3, 0xE2, 0xD9, 0xD8, 0x00, 0xD6, 0xED, 0x00, 0xE8, 0xDC, 0xD9, 0x00, 0xCE, 0xE3, 0xEC, 0xDD, 0xD7, 0x00, 0xCD, 0xE4, 0xDD, 0xDF, 0xD9, 0xE7, 0xAB, 0xFF
 ToxicOrbString: .byte 0xFD, 0x11, 0x00, 0xEB, 0xD5, 0xE7, 0x00, 0xD6, 0xD5, 0xD8, 0xE0, 0xED, 0xFE, 0xE4, 0xE3, 0xDD, 0xE7, 0xE3, 0xE2, 0xD9, 0xD8, 0x00, 0xD6, 0xED, 0x00, 0xE8, 0xDC, 0xD9, 0x00, 0xFD, 0x16, 0xAB, 0xFF
