@@ -14,8 +14,8 @@
 
 #define INVERSE_FLAG 0x23D
 #define SKY_BATTLE_FLAG 0x9AF
-#define NO_CATCHING_FLAG 0x8F9
-#define NO_RUNNING_FLAG 0x0
+#define NO_CATCHING_FLAG 0x9F8
+#define NO_RUNNING_FLAG 0x9F7
 #define NO_CATCHING_AND_RUNNING_FLAG 0x8E2
 #define CATCH_TRAINERS_POKEMON_FLAG 0x0 //If CATCH_TRAINERS_POKEMON is uncommented, then setting this flag will allow you to capture trainers' pokemon
 #define EXP_SHARE_FLAG 0x9F2
@@ -83,6 +83,8 @@ enum
 #define BADGE_7_OBEDIENCE_LEVEL 90
 #endif
 
+#define SEEN_DEX_FLAGS 0x203C700 //gSaveBlock2Ptr->pokedex.seen
+#define CAUGHT_DEX_FLAGS 0x203C765 //gSaveBlock2Ptr->pokedex.owned
 
 #define INVERSE_BATTLES //Comment this line to disable the possibility of having Inverse Battles
 #define TIME_ENABLED //Comment this line to disable time based features. All time dependent features will default in Daytime.
