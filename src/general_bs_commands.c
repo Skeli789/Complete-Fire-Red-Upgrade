@@ -26,10 +26,12 @@
 #define BattleScript_PresentHealTarget (u8*) 0x81D7DB7
 #define BattleScript_DestinyBondTakesLife (u8*) 0x81D8C6C
 #define BattleScript_GrudgeTakesPp (u8*) 0x81D8FA3
+#define BattleScript_ObliviousPreventsAttraction (u8*) 0x81D9444
 
 bool8 UproarWakeUpCheck(bank_t);
 u8 CheckMoveLimitations(u8 bank, u8 unusableMoves, u8 check);
 item_t ChoosePickupItem(u8 level);
+void TransformPokemon(u8 bankAtk, u8 bankDef);
 u8 CastformDataTypeChange(u8 bank);
 
 extern void PrepareStringBattle(u16 stringId, u8 bank);
@@ -895,7 +897,7 @@ void atk45_playanimation(void)
           || gBattlescriptCurrInstr[2] == B_ANIM_SUN_CONTINUES
           || gBattlescriptCurrInstr[2] == B_ANIM_SANDSTORM_CONTINUES
           || gBattlescriptCurrInstr[2] == B_ANIM_HAIL_CONTINUES
-	      || gBattlescriptCurrInstr[2] == B_ANIM_DELTA_STREAM
+	      || gBattlescriptCurrInstr[2] == B_ANIM_STRONG_WINDS_CONTINUE
 	      || gBattlescriptCurrInstr[2] == B_ANIM_FOG_CONTINUES)
     {
         EmitBattleAnimation(0, gBattlescriptCurrInstr[2], *argumentPtr);
@@ -948,7 +950,7 @@ void atk46_playanimation2(void) // animation Id is stored in the first pointer
              || *animationIdPtr == B_ANIM_SUN_CONTINUES
              || *animationIdPtr == B_ANIM_SANDSTORM_CONTINUES
              || *animationIdPtr == B_ANIM_HAIL_CONTINUES
-			 || *animationIdPtr == B_ANIM_DELTA_STREAM
+			 || *animationIdPtr == B_ANIM_STRONG_WINDS_CONTINUE
 			 || *animationIdPtr == B_ANIM_FOG_CONTINUES)
     {
         EmitBattleAnimation(0, *animationIdPtr, *argumentPtr);
@@ -1746,6 +1748,128 @@ void atk96_weatherdamage(void) {
     gBattlescriptCurrInstr++;
 }
 
+void atk97_tryinfatuating(void)
+{
+	u8 bankAtk, bankDef;
+	
+	if (gBattlescriptCurrInstr[1] == BS_GET_TARGET)
+	{	
+		bankAtk = gBankAttacker;
+		bankDef = gBankTarget;
+	}
+	else
+	{
+		bankAtk = gBankTarget;
+		bankDef = gBankAttacker;
+	}
+	
+    struct Pokemon *monAttacker, *monTarget;
+    u16 speciesAttacker, speciesTarget;
+    u32 personalityAttacker, personalityTarget;
+
+    if (SIDE(bankDef) == B_SIDE_PLAYER)
+        monAttacker = &gPlayerParty[gBattlerPartyIndexes[bankAtk]];
+    else
+        monAttacker = &gEnemyParty[gBattlerPartyIndexes[bankAtk]];
+
+    if (SIDE(bankDef) == B_SIDE_PLAYER)
+        monTarget = &gPlayerParty[gBattlerPartyIndexes[bankDef]];
+    else
+        monTarget = &gEnemyParty[gBattlerPartyIndexes[bankDef]];
+
+    speciesAttacker = monAttacker->species;
+    personalityAttacker = monAttacker->personality;
+
+    speciesTarget = monTarget->species;
+    personalityTarget = monTarget->personality;
+
+    if (ABILITY(bankDef) == ABILITY_OBLIVIOUS)
+    {
+        gBattlescriptCurrInstr = BattleScript_ObliviousPreventsAttraction;
+        gLastUsedAbility = ABILITY_OBLIVIOUS;
+        RecordAbilityBattle(bankDef, ABILITY_OBLIVIOUS);
+    }
+	else if (AbilityBattleEffects(ABILITYEFFECT_CHECK_BANK_SIDE, bankDef, ABILITY_AROMAVEIL, 0, 0)) //Handled in the BS so not necessary
+	{
+		if (ABILITY(bankDef) == ABILITY_AROMAVEIL)
+			RecordAbilityBattle(bankDef, ABILITY_AROMAVEIL);
+		else
+			RecordAbilityBattle(PARTNER(bankDef), ABILITY_AROMAVEIL);
+	}
+    else
+    {
+        if (GetGenderFromSpeciesAndPersonality(speciesAttacker, personalityAttacker) == GetGenderFromSpeciesAndPersonality(speciesTarget, personalityTarget)
+        || gBattleMons[bankDef].status2 & STATUS2_INFATUATION
+        || GetGenderFromSpeciesAndPersonality(speciesAttacker, personalityAttacker) == MON_GENDERLESS
+        || GetGenderFromSpeciesAndPersonality(speciesTarget, personalityTarget) == MON_GENDERLESS)
+        {
+            gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
+        }
+        else
+        {
+            gBattleMons[bankDef].status2 |= STATUS2_INFATUATED_WITH(bankAtk);
+            gBattlescriptCurrInstr += 6;
+        }
+    }
+}
+
+void atk9B_transformdataexecution(void)
+{
+    gChosenMove = 0xFFFF;
+    gBattlescriptCurrInstr++;
+    if (gBattleMons[gBankTarget].status2 & STATUS2_TRANSFORMED
+    || gStatuses3[gBankTarget] & (STATUS3_SEMI_INVULNERABLE | STATUS3_ILLUSION))
+    {
+        gMoveResultFlags |= MOVE_RESULT_FAILED;
+        gBattleCommunication[MULTISTRING_CHOOSER] = 1;
+    }
+    else
+    {
+		TransformPokemon(gBankAttacker, gBankTarget);
+        gActiveBattler = gBankAttacker;
+        EmitResetActionMoveSelection(0, RESET_MOVE_SELECTION);
+        MarkBufferBankForExecution(gActiveBattler);
+    }
+}
+
+void TransformPokemon(u8 bankAtk, u8 bankDef)
+{
+    u32 i;
+    u8 *battleMonAttacker, *battleMonTarget;
+
+    gBattleMons[bankAtk].status2 |= STATUS2_TRANSFORMED;
+    gDisableStructs[bankAtk].disabledMove = 0;
+    gDisableStructs[bankAtk].disableTimer1 = 0;
+    gDisableStructs[bankAtk].transformedMonPersonality = gBattleMons[bankDef].personality;
+    gDisableStructs[bankAtk].mimickedMoves = 0;
+
+    PREPARE_SPECIES_BUFFER(gBattleTextBuff1, gBattleMons[bankDef].species)
+
+    battleMonAttacker = (u8*)(&gBattleMons[bankAtk]);
+    battleMonTarget = (u8*)(&gBattleMons[bankDef]);
+
+    for (i = 0; i < offsetof(struct BattlePokemon, pp); i++)
+	{
+        battleMonAttacker[i] = battleMonTarget[i];
+	}
+		
+	if (IS_BLANK_TYPE(gBattleMons[bankDef].type1)
+	&&  IS_BLANK_TYPE(gBattleMons[bankDef].type2))
+	{
+		gBattleMons[bankAtk].type1 = TYPE_NORMAL;
+		gBattleMons[bankAtk].type2 = TYPE_NORMAL;
+	}
+
+    for (i = 0; i < MAX_MON_MOVES; i++)
+    {
+        if (gBattleMoves[gBattleMons[bankAtk].moves[i]].pp < 5)
+            gBattleMons[bankAtk].pp[i] = gBattleMoves[gBattleMons[bankAtk].moves[i]].pp;
+        else
+            gBattleMons[bankAtk].pp[i] = 5;
+    }
+    gBattleCommunication[MULTISTRING_CHOOSER] = 0;
+}
+
 void atk9D_mimicattackcopy(void)
 {
     gChosenMove = 0xFFFF;
@@ -1863,27 +1987,34 @@ void atkA2_mirrorcoatdamagecalculator(void) {
 void atkA3_disablelastusedattack(void)
 {
     int i;
-
+	u8 bankDef;
+	
+	if (gBattlescriptCurrInstr[1] == BS_GET_TARGET)
+		bankDef = gBankTarget;
+	else
+		bankDef = gBankAttacker; //For Cursed Body
+	
     for (i = 0; i < MAX_MON_MOVES; i++)
     {
-        if (gBattleMons[gBankTarget].moves[i] == gLastUsedMoves[gBankTarget])
+        if (gBattleMons[bankDef].moves[i] == gLastUsedMoves[bankDef])
             break;
     }
-    if (gDisableStructs[gBankTarget].disabledMove == 0
+	
+    if (gDisableStructs[bankDef].disabledMove == 0
     && i != MAX_MON_MOVES 
-	&& gBattleMons[gBankTarget].pp[i] != 0
-	&& !AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, gBankAttacker, ABILITY_AROMAVEIL, 0, 0))
+	&& gBattleMons[bankDef].pp[i] != 0
+	&& !AbilityBattleEffects(ABILITYEFFECT_CHECK_BANK_SIDE, bankDef, ABILITY_AROMAVEIL, 0, 0))
     {
-        PREPARE_MOVE_BUFFER(gBattleTextBuff1, gBattleMons[gBankTarget].moves[i])
+        PREPARE_MOVE_BUFFER(gBattleTextBuff1, gBattleMons[bankDef].moves[i])
 
-        gDisableStructs[gBankTarget].disabledMove = gBattleMons[gBankTarget].moves[i];
-        gDisableStructs[gBankTarget].disableTimer1 = 4;
-        gDisableStructs[gBankTarget].disableTimer2 = gDisableStructs[gBankTarget].disableTimer1; // used to save the random amount of turns?
-        gBattlescriptCurrInstr += 5;
+        gDisableStructs[bankDef].disabledMove = gBattleMons[bankDef].moves[i];
+        gDisableStructs[bankDef].disableTimer1 = 4;
+        gDisableStructs[bankDef].disableTimer2 = gDisableStructs[bankDef].disableTimer1; // used to save the random amount of turns?
+        gBattlescriptCurrInstr += 6;
     }
     else
     {
-        gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+        gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
     }
 }
 
@@ -3135,6 +3266,9 @@ void atkE7_trycastformdatachange(void) {
 				DoFormChange(bank, PKMN_CHERRIM, FALSE);
 				form = TRUE;
 			}
+			
+		default:
+			return;
 	}
 	
 	BattleScriptPushCursorAndCallback(BattleScript_FlowerGift);
