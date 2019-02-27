@@ -500,11 +500,11 @@ void PlayerHandleExpBarUpdate(void)
         u8 taskId;
 
         load_gfxc_health_bar(1);
-        gainedExp = gBattleBufferA[gActiveBattler][2] | (gBattleBufferA[gActiveBattler][3] << 0x8) | (gBattleBufferA[gActiveBattler][4] << 0x10) | (gBattleBufferA[gActiveBattler][5] << 0x18);
-		SeedHelper[0] = gainedExp;
-		SeedHelper[1] = gainedExp >> 8;
-		SeedHelper[2] = gainedExp >> 0x10;
-		SeedHelper[3] = gainedExp >> 0x18;
+        gainedExp = T1_READ_32(&gBattleBufferA[gActiveBattler][2]);
+		gNewBS->expHelper[0] = gainedExp;
+		gNewBS->expHelper[1] = gainedExp >> 8;
+		gNewBS->expHelper[2] = gainedExp >> 0x10;
+		gNewBS->expHelper[3] = gainedExp >> 0x18;
         taskId = CreateTask(Task_GiveExpToMon, 10);
         gTasks[taskId].data[0] = bankPartyIndex;
         gTasks[taskId].data[1] = gainedExp;
@@ -517,7 +517,7 @@ void Task_GiveExpToMon(u8 taskId)
 {
     u32 pkmnIndex = (u8)gTasks[taskId].data[0];
     u8 bank = gTasks[taskId].data[2];
-    s32 gainedExp = SeedHelper[0] | (SeedHelper[1] << 0x8) | (SeedHelper[2] << 0x10) | (SeedHelper[3] << 0x18);
+    s32 gainedExp = gNewBS->expHelper[0] | (gNewBS->expHelper[1] << 0x8) | (gNewBS->expHelper[2] << 0x10) | (gNewBS->expHelper[3] << 0x18);
 	
     if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE || pkmnIndex != gBattlerPartyIndexes[bank])
     {
@@ -560,7 +560,7 @@ void Task_GiveExpToMon(u8 taskId)
 void Task_PrepareToGiveExpWithExpBar(u8 taskId)
 {
     u8 pkmnIndex = gTasks[taskId].data[0];
-    s32 gainedExp = SeedHelper[0] | (SeedHelper[1] << 0x8) | (SeedHelper[2] << 0x10) | (SeedHelper[3] << 0x18);
+    s32 gainedExp = gNewBS->expHelper[0] | (gNewBS->expHelper[1] << 0x8) | (gNewBS->expHelper[2] << 0x10) | (gNewBS->expHelper[3] << 0x18);
     u8 bank = gTasks[taskId].data[2];
     pokemon_t* pkmn = &gPlayerParty[pkmnIndex];
     u8 level = pkmn->level;
@@ -584,7 +584,7 @@ void sub_80300F4(u8 taskId)
     else
     {
         u8 monId = gTasks[taskId].data[0];
-        s32 gainedExp = SeedHelper[0] | (SeedHelper[1] << 0x8) | (SeedHelper[2] << 0x10) | (SeedHelper[3] << 0x18);
+        s32 gainedExp = gNewBS->expHelper[0] | (gNewBS->expHelper[1] << 0x8) | (gNewBS->expHelper[2] << 0x10) | (gNewBS->expHelper[3] << 0x18);
         u8 battlerId = gTasks[taskId].data[2];
         s32 newExpPoints;
 		

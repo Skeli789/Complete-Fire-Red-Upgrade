@@ -45,7 +45,7 @@ gBattleScriptingCommandsTable:
 .word atk20_jumpifstat
 .word 0x8021989				@jumpifspecialstatusflag
 .word atk22_jumpiftype
-.word 0x8021a69				@battleendingfunction
+.word atk23_getexp			@battleendingfunction
 .word 0x80223f9				@ifwildbattleend
 .word 0x80225d9				@movevaluescleanup
 .word 0x80225f1				@storeloopingcounter
