@@ -52,5 +52,7 @@ extern struct TrainerPicCoords gTrainerBackPicCoords[];
 #define gStatusConditionString_Paralysis ((u8*) 0x82500A4)
 #define gStatusConditionString_Burn ((u8*) 0x82500AC)
 #define gStatusConditionString_Ice ((u8*) 0x82500B4)
+#define gStatusConditionString_Confusion ((u8*) 0x82500BC)
+#define gStatusConditionString_Love ((u8*) 0x82500C4)
 
 #define gDummySpriteAffineAnimTable (const union AffineAnimCmd* const*) 0x8231CFC

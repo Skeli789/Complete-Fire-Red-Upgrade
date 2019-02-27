@@ -6,10 +6,7 @@
 #define BattleScript_WhiteHerbRet (u8*) 0x81D95DF
 #define BattleScript_WhiteHerbEnd2 (u8*) 0x81D95D9
 
-#define gStatusConditionString_Love (u8*) 0x82500C4
-
 extern u8 gStatusConditionString_DisableProblem[];
-extern u8 gStatusConditionString_Confusion[];
 extern u8 gStatusConditionString_MentalState[];
 extern u8 gStatusConditionString_TauntProblem[];
 
