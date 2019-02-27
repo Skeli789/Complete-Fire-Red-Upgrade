@@ -9,6 +9,7 @@ extern struct BattleMove gBattleMoves[];
 
 extern u8 GetMoveTypeSpecial(bank_t, move_t);
 extern s8 PriorityCalc(u8 bank, u8 action, u16 move);
+extern u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg);
 
 bool8 CheckTableForMove (move_t move, const u16 table[]) {
 	for (u32 i = 0; table[i] != MOVE_TABLES_TERMIN; ++i) {
@@ -747,7 +748,14 @@ u8 CalcMoveSplit(u8 bank, u16 move) {
 			return SPLIT_PHYSICAL;
 	}
 	
-	return SPLIT(move);
+	#ifdef OLD_MOVE_SPLIT
+		if (gBattleMoves[move].type < TYPE_FIRE)
+			return SPLIT_PHYSICAL;
+		else
+			return SPLIT_SPECIAL;
+	#else
+		return SPLIT(move);
+	#endif
 }
 
 u8 CalcMoveSplitFromParty(pokemon_t* mon, u16 move) {
@@ -781,7 +789,7 @@ void ClearBankStatus(bank_t bank) {
 }
 
 bool8 CanBeGeneralStatused(u8 bank) {
-	if (gBattleMons[bank].species == PKMN_MINIORSHIELD)
+	if (GetBankPartyData(bank)->species == PKMN_MINIORSHIELD) //Prevents Ditto from getting this benefit
 		return FALSE;
 	
 	switch (ABILITY(bank)) {
