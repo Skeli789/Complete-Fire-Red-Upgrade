@@ -161,11 +161,11 @@ gBattleScriptingCommandsTable:
 .word atk94_damagetohalftargethp	@gethalfcurrentenemyhp
 .word atk95_setsandstorm
 .word atk96_weatherdamage
-.word 0x8028e91				@tryinfatuatetarget
+.word atk97_tryinfatuating		@tryinfatuatebank
 .word 0x8029049				@refreshhpbar
 .word 0x80291d1				@setmisteffect
 .word 0x8029279				@setincreasedcriticalchance
-.word 0x80292d5				@transformdataexecution
+.word atk9B_transformdataexecution
 .word 0x8029475				@setsubstituteeffect
 .word atk9D_mimicattackcopy		@copyattack
 .word atk9E_metronome			@metronomeeffect
@@ -294,3 +294,4 @@ gBattleScriptingCommandsTable2:
 .word atkFF17_setsidestatus
 .word atkFF18_clearsidestatus
 .word atkFF19_formchange
+.word atkFF1A_jumpifabilitypresentattackerfield
