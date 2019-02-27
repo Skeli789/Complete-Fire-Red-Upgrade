@@ -1049,7 +1049,7 @@ HighJumpKickMiss:
 	printstring 0x60
 	waitmessage DELAY_1SECOND
 	bicbyte OUTCOME OUTCOME_MISSED
-	orword HIT_MARKER HITMARKER_IGNORE_SUBSTITUTE
+	orword HIT_MARKER HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_NON_ATTACK_DMG
 	setdamagetobankhealthpercent BANK_ATTACKER 50
 	graphicalhpupdate BANK_ATTACKER
 	datahpupdate BANK_ATTACKER
@@ -4533,6 +4533,7 @@ BS_241_FlameBurst:
 	seteffectwithchancetarget
 	faintpokemon 0x0 0x0 0x0
 	callasm FlameBurstFunc
+	orword HIT_MARKER, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_NON_ATTACK_DMG
 	graphicalhpupdate BANK_SCRIPTING
 	datahpupdate BANK_SCRIPTING
 	setword BATTLE_STRING_LOADER FlameBurstString
