@@ -70,6 +70,7 @@ extern bool8 CanPartyMonBeParalyzed(pokemon_t* mon);
 extern bool8 CanPartyMonBeBurned(pokemon_t* mon);
 extern bool8 CanPartyMonBeFrozen(pokemon_t* mon);
 
+extern u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg);
 extern u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck);
 
 enum ItemBattleEffectCases {

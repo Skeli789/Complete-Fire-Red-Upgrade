@@ -7,12 +7,8 @@
 extern u8 BattleScript_MysteriousAirCurrentContinues[];
 extern u8 BattleScript_FogEnded[];
 extern u8 BattleScript_FogContinues[];
-extern u8 BattleScript_RainDishActivates[];
-extern u8 BattleScript_DrySkinDamage[];
-extern u8 BattleScript_SolarPowerDamage[];
 extern u8 BattleScript_SeaOfFireDamage[];
 extern u8 BattleScript_GrassyTerrainHeal[];
-extern u8 BattleScript_Healer[];
 extern u8 BattleScript_AquaRing[];
 extern u8 BattleScript_PoisonHeal[];
 extern u8 BattleScript_MagnetRiseEnd[];
@@ -32,13 +28,8 @@ extern u8 BattleScript_WonderRoomEnd[];
 extern u8 BattleScript_MagicRoomEnd[];
 extern u8 BattleScript_GravityEnd[];
 extern u8 BattleScript_TerrainEnd[];
-extern u8 BattleScript_MoodySingleStat[];
-extern u8 BattleScript_MoodyRegular[];
-extern u8 BattleScript_BadDreams[];
 extern u8 BattleScript_ToxicOrb[];
 extern u8 BattleScript_FlameOrb[];
-extern u8 BattleScript_Harvest[];
-extern u8 BattleScript_Pickup[];
 extern u8 BattleScript_ZenMode[];
 extern u8 BattleScript_PowerConstruct[];
 extern u8 BattleScript_StartedSchooling[];
@@ -53,7 +44,6 @@ extern bool8 HasNoMonsToSwitch(u8 battler);
 
 u8 TurnBasedEffects(void);
 void ClearBankStatus(bank_t);
-bool8 AllStatsButOneAreMinned(bank_t);
 u8 CountAliveMonsOnField(void);
 
 u8 TurnBasedEffects(void) {
@@ -264,49 +254,15 @@ u8 TurnBasedEffects(void) {
 			case(ET_Weather_Health_Abilities):
 				if (gBattleMons[gActiveBattler].hp) 
 				{
-					gLastUsedAbility = gBattleMons[gActiveBattler].ability;
+					gLastUsedAbility = ABILITY(gActiveBattler);
 					switch(gLastUsedAbility) {
 						case ABILITY_RAINDISH:
+						case ABILITY_DRYSKIN:
+						case ABILITY_ICEBODY:
+						case ABILITY_SOLARPOWER:
 							if (AbilityBattleEffects(ABILITYEFFECT_ENDTURN, gActiveBattler, 0, 0, 0))
 								effect++;
-							break;
-						case ABILITY_DRYSKIN:
-							if (WEATHER_HAS_EFFECT) {
-								if ((gBattleWeather & WEATHER_RAIN_ANY) 
-								&& gBattleMons[gActiveBattler].hp < gBattleMons[gActiveBattler].maxHP) 
-								{
-									gBattleMoveDamage = MathMax(1, gBattleMons[gActiveBattler].maxHP / 8);
-									gBattleMoveDamage *= -1;
-									BattleScriptExecute(BattleScript_RainDishActivates);
-									effect++;
-								}
-								else if (gBattleWeather & WEATHER_SUN_ANY) 
-								{
-									gBattleMoveDamage = MathMax(1, gBattleMons[gActiveBattler].maxHP / 8);
-									BattleScriptExecute(BattleScript_DrySkinDamage);
-									effect++;			
-								}
-							}
-							break;
-						case ABILITY_ICEBODY:
-							if (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_HAIL_ANY)
-							&& gBattleMons[gActiveBattler].hp < gBattleMons[gActiveBattler].maxHP) 
-							{
-								gBattleMoveDamage = MathMax(1, gBattleMons[gActiveBattler].maxHP / 16);
-								gBattleMoveDamage *= -1;
-								BattleScriptExecute(BattleScript_RainDishActivates);
-								effect++;
-							}
-							break;
-						case ABILITY_SOLARPOWER:
-							if (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_SUN_ANY) 
-							&& gBattleMons[gActiveBattler].hp) 
-							{
-								gBattleMoveDamage = MathMax(1, gBattleMons[gActiveBattler].maxHP / 8);
-								BattleScriptExecute(BattleScript_SolarPowerDamage);
-								effect++;
-							}
-						}
+					}
 				}
 				break;
 			
@@ -401,34 +357,21 @@ u8 TurnBasedEffects(void) {
 						{
 							switch(gBattleMons[gActiveBattler].ability) {
 								case ABILITY_SHEDSKIN:
+								case ABILITY_HYDRATION:
 									if (AbilityBattleEffects(ABILITYEFFECT_ENDTURN, gActiveBattler, 0, 0, 0))
 										effect++;
-									break;
-								case ABILITY_HYDRATION:
-									if (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_RAIN_ANY) &&
-										gBattleMons[gActiveBattler].status1 & STATUS_ANY) {
-											ClearBankStatus(gActiveBattler);
-											BattleScriptPushCursorAndCallback(BattleScript_ShedSkinActivates);
-											gBattleScripting->bank = gActiveBattler;
-											MarkBufferBankForExecution(gActiveBattler);
-											effect++;
-									}
 							}
 						}
 						break;
 						
 					case(ET_Healer):
-						if (gBattleMons[gActiveBattler].ability == ABILITY_HEALER
-						&& gBattleTypeFlags & BATTLE_TYPE_DOUBLE
-						&& gBattleMons[gActiveBattler].hp
-						&& gBattleMons[PARTNER(gActiveBattler)].hp
-						&& gBattleMons[PARTNER(gActiveBattler)].status1
-						&& umodsi(Random(), 100) < 30) 
+						if (gBattleMons[gActiveBattler].hp)
 						{
-							gBankTarget = PARTNER(gActiveBattler);
-							ClearBankStatus(gBankTarget);
-							BattleScriptExecute(BattleScript_Healer);
-							effect++;
+							switch(gBattleMons[gActiveBattler].ability) {
+								case ABILITY_HEALER:
+									if (AbilityBattleEffects(ABILITYEFFECT_ENDTURN, gActiveBattler, 0, 0, 0))
+										effect++;
+							}
 						}
 				}
 				
@@ -1047,65 +990,14 @@ u8 TurnBasedEffects(void) {
 						
 					case(ET_SpeedBoost_Moody_BadDreams):
 						if (gBattleMons[gActiveBattler].hp) {
-							gLastUsedAbility = gBattleMons[gActiveBattler].ability;
+							gLastUsedAbility = ABILITY(gActiveBattler);
 							switch(gLastUsedAbility) {
 							case ABILITY_SPEEDBOOST:
+							case ABILITY_MOODY:
+							case ABILITY_BADDREAMS:
 								if (AbilityBattleEffects(ABILITYEFFECT_ENDTURN, gActiveBattler, 0, 0, 0))
 									effect++;
 								break;
-							case (ABILITY_MOODY): ;
-								u8 stat_to_raise = 0;
-								u8 stat_to_lower = 0;
-								u8* scriptPtr;
-								if (StatsMinned(gActiveBattler)) {
-								//Raise One Stat
-									stat_to_raise = umodsi(Random(), BATTLE_STATS_NO-1) + 1;
-									gStatChangeByte = stat_to_raise | INCREASE_2;
-									scriptPtr = BattleScript_MoodySingleStat;
-								}
-								else if (StatsMaxed(gActiveBattler)) {
-								//Lower One Stat
-									stat_to_lower = umodsi(Random(), BATTLE_STATS_NO-1) + 1;
-									gStatChangeByte = stat_to_lower | DECREASE_1;
-									scriptPtr = BattleScript_MoodySingleStat;
-								}
-								else {
-								//Raise One Stat and Lower Another
-								
-									if (!(AllStatsButOneAreMinned(gActiveBattler))) { //At least two non min stats
-										do {
-											stat_to_raise = umodsi(Random(), BATTLE_STATS_NO-1) + 1;			
-										} while (gBattleMons[gActiveBattler].statStages[stat_to_raise - 1] == 12);
-										
-									}
-									else { //If all stats but one are at min, then raise one of the min ones so the
-										   //non min one canned be lowered.
-										do {
-											stat_to_raise = umodsi(Random(), BATTLE_STATS_NO-1) + 1;			
-										} while (gBattleMons[gActiveBattler].statStages[stat_to_raise - 1] != 0);
-									}
-									
-									do {
-										stat_to_lower = umodsi(Random(), BATTLE_STATS_NO-1) + 1;			
-									} while (stat_to_lower == stat_to_raise ||
-											 gBattleMons[gActiveBattler].statStages[stat_to_lower - 1] == 0);
-									
-									gStatChangeByte = stat_to_raise | INCREASE_2;	
-									SeedHelper[0] = stat_to_lower;
-									scriptPtr = BattleScript_MoodyRegular;
-								}
-								BattleScriptExecute(scriptPtr);
-								effect++;
-								break;
-							
-							case (ABILITY_BADDREAMS):
-								if (gBattleMons[GetFoeBank(gActiveBattler)].status1 & STATUS_SLEEP ||
-									gBattleMons[GetFoeBank(gActiveBattler)].ability == ABILITY_COMATOSE ||
-									gBattleMons[PARTNER(GetFoeBank(gActiveBattler))].status1 & STATUS_SLEEP ||
-									gBattleMons[PARTNER(GetFoeBank(gActiveBattler))].ability == ABILITY_COMATOSE) {
-										BattleScriptExecute(BattleScript_BadDreams);
-										++effect;
-									}
 							}
 						}
 						break;
@@ -1132,29 +1024,11 @@ u8 TurnBasedEffects(void) {
 						
 					case(ET_Harvest_Pickup):
 						if (gBattleMons[gActiveBattler].hp && !(gBattleMons[gActiveBattler].item)) {
-							switch(gBattleMons[gActiveBattler].ability) {
+							switch(ABILITY(gActiveBattler)) {
 							case ABILITY_HARVEST:
-								if (GetPocketByItemId(gNewBS->SavedConsumedItems[gBattlerPartyIndexes[gActiveBattler]]) == POCKET_BERRY_POUCH) {
-									if (!(WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_SUN_ANY))) { //No Sun
-										if (umodsi(Random(), 100) < 50)
-											break;
-									}
-									BattleScriptExecute(BattleScript_Harvest);
-									++effect;
-								}
-								break;
 							case ABILITY_PICKUP:
-								for (u8 bank = 0; bank < 4; ++bank) {
-									if (bank != gActiveBattler && !(gNewBS->IncinerateCounters[bank]) && CONSUMED_ITEMS(bank)) {
-										gBattleMons[gActiveBattler].item = CONSUMED_ITEMS(bank);
-										(GetBankPartyData(gActiveBattler))->item = CONSUMED_ITEMS(bank);
-										gLastUsedItem = CONSUMED_ITEMS(bank);
-										CONSUMED_ITEMS(bank) = 0;
-										BattleScriptExecute(BattleScript_Pickup);
-										++effect;
-										break;
-									}
-								}
+								if (AbilityBattleEffects(ABILITYEFFECT_ENDTURN, gActiveBattler, 0, 0, 0))
+									effect++;
 							}
 						}
 						break;
@@ -1289,18 +1163,6 @@ u8 TurnBasedEffects(void) {
 	
     gHitMarker &= ~(HITMARKER_GRUDGE | HITMARKER_x20);
     return 0;
-}
-
-bool8 AllStatsButOneAreMinned(bank_t bank) {
-	u8 counter = 0;
-	for (u8 i = 0; i < BATTLE_STATS_NO-1; ++i) {
-		if (gBattleMons[bank].statStages[i] > 0) {
-			++counter;
-			if (counter > 1)
-				return FALSE;
-		}
-	}
-	return TRUE;
 }
 
 #define FAINTED_ACTIONS_MAX_CASE 7

@@ -1,0 +1,56 @@
+#org @gText_AirLockActivate
+[FD][13]'s [FD][1A]\nremoved the effects of weather!
+
+#org @gText_PressureActivate
+[FD][13] is exerting\nits pressure!
+
+#org @gText_MoldBreakerActivate
+[FD][13] breaks the\nmold!
+
+#org @gText_TeravoltActivate
+[FD][13] is radiating\na bursting aura!
+
+#org @gText_TurboblazeActivate
+[FD][13] is radiating\na blazing aura!
+
+#org @gText_SlowStartActivate
+[FD][13] couldn't get\ngoing!
+
+#org @gText_UnnerveActivate
+[FD][37] team is too\nnervous to eat berries!
+
+#org @gText_DarkAuraActivate
+[FD][13] is radiating\na dark aura!
+
+#org @gText_FairyAuraActivate
+[FD][13] is radiating\na fairy aura!
+
+#org @gText_AuraBreakActivate
+[FD][13] reversed all\nother Pok\emon's auras!
+
+#org @gText_ComatoseActivate
+[FD][13] is drowsing!
+
+#org @gText_AnticipationActivate
+[FD][13] shuddered!
+
+#org @gText_ForewarnActivate
+[FD][0F]'s [FD][18]\nalerted it to [FD][13]'s\n[FD][00]!
+
+#org @gText_FriskActivate
+[FD][13] frisked\n[FD][10] and found\lits [FD][16]!
+
+#org @gText_FogIsDeep
+The fog is deep[B0]
+
+#org @gText_SnowWarningActivate
+[FD][13]'s [FD][1A]\nwhipped up a hailstorm!
+
+#org @gText_PrimordialSeaActivate
+[FD][13]'s [FD][1A]\ncaused a heavy rain to fall!
+
+#org @gText_DesolateLandActivate
+[FD][13]'s [FD][1A]\nturned the sunlight extremely harsh!
+
+#org @gText_DeltaStream
+[FD][13]'s [FD][1A]\nsummoned a mysterious air current\lthat protects Flying-type Pok\emon!

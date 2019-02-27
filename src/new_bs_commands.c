@@ -186,7 +186,10 @@ void atkFF07_jumpifhelditemeffect(void)
 	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
 
 	if (ITEM_EFFECT(bank) == effect)
+	{
+		gLastUsedItem = ITEM(bank);
 		gBattlescriptCurrInstr = ptr;
+	}
 	else
 		gBattlescriptCurrInstr += 7;
 }
@@ -701,4 +704,16 @@ void atkFF19_formchange(void)
 		DoFormChange(bank, targetSpecies, reloadType);
 		gBattlescriptCurrInstr += 11;
 	}
+}
+
+//jumpifabilitypresentattackerfield ABILITY ROM_OFFSET
+void atkFF1A_jumpifabilitypresentattackerfield(void)
+{
+	u8 ability = gBattlescriptCurrInstr[1];
+	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
+	
+	if (AbilityBattleEffects(ABILITYEFFECT_CHECK_BANK_SIDE, gBankAttacker, ability, 0, 0))
+		gBattlescriptCurrInstr = ptr;
+	else
+		gBattlescriptCurrInstr += 6;
 }
