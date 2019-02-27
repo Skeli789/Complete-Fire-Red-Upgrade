@@ -34,6 +34,7 @@ extern u8 sText_FoePkmnPrefix3[];
 extern u8 sText_FoePkmnPrefix4[];
 extern u8 sText_TheOpposingNoCaps[];
 extern u8 sText_Your[];
+extern u8 sText_YourCaps[];
 
 extern u8* ZMoveNames[];
 extern u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
@@ -509,19 +510,19 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
                 toCpy = text;
                 break;
             case B_TXT_ATK_NAME_WITH_PREFIX_MON1: // attacker name with prefix, only battlerId 0/1
-                HANDLE_NICKNAME_STRING_CASE(gBattlerAttacker, GetBattlerAtPosition(SIDE(gBattlerAttacker)));
+                HANDLE_NICKNAME_STRING_CASE(gBankAttacker, GetBattlerAtPosition(SIDE(gBankAttacker)));
                 break;
             case B_TXT_ATK_PARTNER_NAME: // attacker partner name
-                if (SIDE(gBattlerAttacker) == B_SIDE_PLAYER)
-                    GetMonData(GetIllusionPartyData(gBattlerAttacker ^ BIT_FLANK), MON_DATA_NICKNAME, text);
+                if (SIDE(gBankAttacker) == B_SIDE_PLAYER)
+                    GetMonData(GetIllusionPartyData(gBankAttacker ^ BIT_FLANK), MON_DATA_NICKNAME, text);
                 else
-                    GetMonData(GetIllusionPartyData(gBattlerAttacker ^ BIT_FLANK), MON_DATA_NICKNAME, text);
+                    GetMonData(GetIllusionPartyData(gBankAttacker ^ BIT_FLANK), MON_DATA_NICKNAME, text);
 
                 StringGetEnd10(text);
                 toCpy = text;
                 break;
             case B_TXT_ATK_NAME_WITH_PREFIX: // attacker name with prefix
-                HANDLE_NICKNAME_STRING_CASE(gBattlerAttacker, gBattlerAttacker);
+                HANDLE_NICKNAME_STRING_CASE(gBankAttacker, gBankAttacker);
                 break;
             case B_TXT_DEF_NAME_WITH_PREFIX: // target name with prefix
                 HANDLE_NICKNAME_STRING_CASE(gBattlerTarget, gBattlerTarget);
@@ -566,7 +567,7 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
                 toCpy = gAbilityNames[gLastUsedAbility];
                 break;
             case B_TXT_ATK_ABILITY: // attacker ability
-                toCpy = gAbilityNames[gAbilitiesPerBank[gBattlerAttacker]];
+                toCpy = gAbilityNames[gAbilitiesPerBank[gBankAttacker]];
                 break;
             case B_TXT_DEF_ABILITY: // target ability
                 toCpy = gAbilityNames[gAbilitiesPerBank[gBattlerTarget]];
@@ -700,7 +701,7 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
                 break;
 			
             case B_TXT_ATK_PREFIX1:
-                if (SIDE(gBattlerAttacker) == B_SIDE_PLAYER)
+                if (SIDE(gBankAttacker) == B_SIDE_PLAYER)
                     toCpy = sText_AllyPkmnPrefix; //0x83FD564
                 else
                     toCpy = sText_FoePkmnPrefix2; //0x83FD560
@@ -713,7 +714,7 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
                 break;
 			
             case B_TXT_ATK_PREFIX2:
-                if (SIDE(gBattlerAttacker) == B_SIDE_PLAYER)
+                if (SIDE(gBankAttacker) == B_SIDE_PLAYER)
                     toCpy = sText_AllyPkmnPrefix2; //0x83FD56D
                 else
                     toCpy = sText_FoePkmnPrefix3; //0x83FD569
@@ -726,7 +727,7 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
                 break;
 			
             case B_TXT_ATK_PREFIX3:
-                if (SIDE(gBattlerAttacker) == B_SIDE_PLAYER)
+                if (SIDE(gBankAttacker) == B_SIDE_PLAYER)
                     toCpy = sText_AllyPkmnPrefix3; //0x83FD576
                 else
                     toCpy = sText_FoePkmnPrefix4; //0x83FD572
@@ -799,16 +800,28 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
                 toCpy = text;
                 break;
 			case B_TXT_AFFECTS_TARGET_SIDE:
-                if (SIDE(gBattlerAttacker) == B_SIDE_PLAYER)
+                if (SIDE(gBankAttacker) == B_SIDE_PLAYER)
                     toCpy = sText_TheOpposingNoCaps;
                 else
                     toCpy = sText_Your;
 				break;
 			case B_TXT_AFFECTS_ATTACKER_SIDE:
-                if (SIDE(gBattlerAttacker) == B_SIDE_OPPONENT)
+                if (SIDE(gBankAttacker) == B_SIDE_OPPONENT)
                     toCpy = sText_TheOpposingNoCaps;
                 else
                     toCpy = sText_Your;
+				break;
+			case B_TXT_AFFECTS_TARGET_SIDE_CAPS:
+                if (SIDE(gBankAttacker) == B_SIDE_PLAYER)
+                    toCpy = sText_FoePkmnPrefix2;
+                else
+                    toCpy = sText_YourCaps;
+				break;
+			case B_TXT_AFFECTS_ATTACKER_SIDE_CAPS:
+                if (SIDE(gBankAttacker) == B_SIDE_OPPONENT)
+                    toCpy = sText_FoePkmnPrefix2;
+                else
+                    toCpy = sText_YourCaps;
 				break;		
             }
 
