@@ -1,5 +1,6 @@
 //Update Gen 7 Metronome Choice effect
 //Metronome Item during Charging Turn
+//Proper Protect Strings (Wide Guard, Quick Guard, etc.)
 
 #include "defines.h"
 #include "helper_functions.h"
@@ -55,6 +56,7 @@ extern u8 BattleScript_NoHealTargetAfterHealBlock[];
 extern u8 BattleScript_FaintAttacker[];
 extern u8 BattleScript_FaintTarget[];
 extern u8 BattleScript_FaintScriptingBank[];
+extern u8 BattleScript_SoulHeart[];
 
 extern u8 MimikyuDisguisedTookDamageString[];
 extern u8 StringEnduredHitWithSturdy[];
@@ -264,7 +266,7 @@ void atk09_attackanimation(void)
 void atk0B_healthbarupdate(void) {
     if (gBattleExecBuffer) return;
 
-    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT)) {
+    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) || (gHitMarker & HITMARKER_NON_ATTACK_DMG)) {
         gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
 
         if (gBattleMons[gActiveBattler].status2 & STATUS2_SUBSTITUTE 
@@ -305,7 +307,7 @@ void atk0B_healthbarupdate(void) {
 void atk0C_datahpupdate(void) {
     if (gBattleExecBuffer) return;
 
-    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT)) {
+    if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) || (gHitMarker & HITMARKER_NON_ATTACK_DMG)) {
         gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
 	
 		//If Substitute Up
@@ -705,6 +707,33 @@ void atk1B_cleareffectsonfaint(void) {
 				gNewBS->ZMoveData->toBeUsed[gActiveBattler] = 0; //Because you died before you could use the Z-Move
 				
 				gBattleMons[gActiveBattler].type3 = TYPE_BLANK;
+				++gNewBS->FaintEffectsTracker;
+			__attribute__ ((fallthrough));
+			
+			case Faint_SoulHeart:
+				for (; *SeedHelper < gBattlersCount; ++*SeedHelper)
+				{
+					if (ABILITY(*SeedHelper) == ABILITY_SOULHEART
+					&&  *SeedHelper != gActiveBattler
+					&&  gBattleMons[*SeedHelper].hp
+					&&  STAT_CAN_RISE(*SeedHelper, STAT_SPATK))
+					{
+						++gBattleMons[*SeedHelper].statStages[STAT_SPATK - 1];
+						gBattleScripting->bank = gEffectBank = *SeedHelper;
+						
+						PREPARE_STAT_BUFFER(gBattleTextBuff1, STAT_STAGE_SPATK);
+						gBattleScripting->animArg1 = 0xE + STAT_STAGE_SPATK;
+						gBattleScripting->animArg2 = 0;
+						
+						gLastUsedAbility = ABILITY_SOULHEART;
+						RecordAbilityBattle(*SeedHelper, gLastUsedAbility);
+						
+						BattleScriptPushCursor();
+						gBattlescriptCurrInstr = BattleScript_SoulHeart;
+						++*SeedHelper;
+						return;
+					}
+				}
 				++gNewBS->FaintEffectsTracker;
 			__attribute__ ((fallthrough));
 			

@@ -15,6 +15,7 @@ extern u8 RemovedEntryHazardsFoeSideString[];
 
 enum FaintEffectsStates {
 Faint_ClearEffects,
+Faint_SoulHeart,
 Faint_ReceiverActivate,
 Faint_SwitchInAbilities,
 Faint_PrimalWeather
