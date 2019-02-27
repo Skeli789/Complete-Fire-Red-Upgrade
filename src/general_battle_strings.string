@@ -95,6 +95,9 @@ the opposing
 #org @sText_Your
 your
 
+#org @sText_YourCaps
+Your
+
 //Exp String
 
 #org @String_TeamExpGain
