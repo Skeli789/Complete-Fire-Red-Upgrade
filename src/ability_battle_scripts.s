@@ -58,6 +58,8 @@
 .global BattleScript_Receiver
 .global BattleScript_Symbiosis
 .global BattleScript_DefiantCompetitive
+.global BattleScript_DefiantCompetitiveCall
+.global BattleScript_SoulHeart
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -360,6 +362,7 @@ BadDreams_callhurt:
 BadDreams_hurt:
 	jumpifability BANK_TARGET ABILITY_MAGICGUARD BadDreams_return
 	callasm BadDreamsHurtASM+1
+	orword HIT_MARKER HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_NON_ATTACK_DMG
 	graphicalhpupdate BANK_TARGET
 	datahpupdate BANK_TARGET
 	setword BATTLE_STRING_LOADER BadDreamsHurtString
@@ -652,15 +655,27 @@ BattleScript_Symbiosis:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_DefiantCompetitive:
-	statbuffchange 0xA DefiantReturn
+	statbuffchange STAT_TARGET | STAT_BS_PTR DefiantReturn
+	
+BattleScript_DefiantCompetitiveCall:
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 DefiantReturn
+	setbyte STAT_ANIM_PLAYED 0x0
 	setgraphicalstatchangevalues
-	playanimation 0xA 0x1 0x2023FD4
+	playanimation BANK_SCRIPTING ANIM_STAT_BUFF ANIM_ARG_1
 	setword BATTLE_STRING_LOADER DefiantString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 
 DefiantReturn:
+	return
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_SoulHeart:
+	playanimation BANK_SCRIPTING ANIM_STAT_BUFF ANIM_ARG_1
+	setword BATTLE_STRING_LOADER AbilityRaisedStatString
+	printstring 0x184
+	waitmessage DELAY_1SECOND
 	return
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
