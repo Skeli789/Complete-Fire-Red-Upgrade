@@ -143,6 +143,9 @@ BattleScript_TraceActivates:
 
 BattleScript_TerrainFromAbility:
 	pause DELAY_HALFSECOND
+	setword BATTLE_STRING_LOADER AbilityActivatedString
+	printstring 0x184
+	waitmessage DELAY_HALFSECOND
 	playanimation2 BANK_ATTACKER ANIM_ARG_1 0x0
 	printstring 0x184
 	waitmessage DELAY_1SECOND
