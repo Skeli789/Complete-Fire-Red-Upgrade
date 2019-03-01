@@ -339,6 +339,15 @@ struct BattleAnimBackground
 #define PAN_SIDE_PLAYER     -64
 #define PAN_SIDE_OPPONENT   63
 
+#define STAT_ANIM_PLUS1  15
+#define STAT_ANIM_PLUS2  39
+#define STAT_ANIM_MINUS1 22
+#define STAT_ANIM_MINUS2 46
+#define STAT_ANIM_MULTIPLE_PLUS1 55
+#define STAT_ANIM_MULTIPLE_PLUS2 56
+#define STAT_ANIM_MULTIPLE_MINUS1 57
+#define STAT_ANIM_MULTIPLE_MINUS2 58
+
 /*
 extern void (*gAnimScriptCallback)(void);
 extern bool8 gAnimScriptActive;
