@@ -40,6 +40,8 @@ LDFLAGS = ['BPRE.ld', '-T', 'linker.ld']
 CFLAGS = ['-mthumb', '-mno-thumb-interwork', '-mcpu=arm7tdmi', '-mtune=arm7tdmi',
 '-mno-long-calls', '-march=armv4t', '-Wall', '-Wextra','-Os', '-fira-loop-pressure', '-fipa-pta']
 
+PrintedCompilingImages = False #Used to tell the script whether or not the string "Compiling Images" has been printed
+
 def run_command(cmd):
 	try:
 		subprocess.check_output(cmd)
@@ -228,6 +230,11 @@ def process_image(in_file):
 	except FileNotFoundError:
 		run_command(cmd) #No .o file has been created
 
+	global PrintedCompilingImages
+	if (PrintedCompilingImages is False):
+		print ('Compiling Images')
+		PrintedCompilingImages = True
+	
 	out_file_list = make_output_file(out_file)
 	new_out_file = out_file_list[0]
 	if out_file_list[1] == False:
@@ -268,9 +275,7 @@ def main():
 			'**/*.png': process_image,
 			'**/*.bmp': process_image
 	}
-	
-	print ('Compiling Images')
-	
+		
 	# Create output directory
 	try:
 		os.makedirs(BUILD)
