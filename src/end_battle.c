@@ -305,7 +305,7 @@ bool8 TryRunFromBattle(u8 bank)
         gProtectStructs[bank].fleeFlag = 2;
         ++effect;
     }
-	#ifdef GHOST_BATTLES
+	#ifndef NO_GHOST_BATTLES
 	else if ((gBattleTypeFlags & (BATTLE_TYPE_SCRIPTED_WILD_1 | BATTLE_TYPE_GHOST)) == BATTLE_TYPE_GHOST) 
 	{
 		if (SIDE(bank) == B_SIDE_PLAYER)

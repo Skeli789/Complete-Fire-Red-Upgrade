@@ -157,6 +157,23 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
         move = gCurrentMove;
 	
     moveType = gBattleStruct->dynamicMoveType;
+	
+	#ifndef NO_GHOST_BATTLES
+		if ((gBattleTypeFlags & (BATTLE_TYPE_SCRIPTED_WILD_1 | BATTLE_TYPE_GHOST)) == BATTLE_TYPE_GHOST)
+		{
+			switch (gLastUsedAbility) {		//All of these abilities either use or make changes to
+				case ABILITY_INTIMIDATE:	//the unidentified Ghost. In FR, only Intimidate and
+				case ABILITY_TRACE:			//Trace were included in this list. It has thus been
+				case ABILITY_DOWNLOAD:		//been expanded to support newer abilities.
+				case ABILITY_UNNERVE:
+				case ABILITY_ANTICIPATION:
+				case ABILITY_FOREWARN:
+				case ABILITY_FRISK:
+				case ABILITY_IMPOSTER:
+					return FALSE;
+			}
+		}
+	#endif
 
     switch (caseID)
     {

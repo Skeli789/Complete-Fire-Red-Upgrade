@@ -1742,7 +1742,7 @@ void atk96_weatherdamage(void) {
 
 	#ifndef NO_GHOST_BATTLES //Ghosts can't take damage from Sand Stream or Snow Warning
 	else if ((gBattleTypeFlags & (BATTLE_TYPE_SCRIPTED_WILD_1 | BATTLE_TYPE_GHOST)) == BATTLE_TYPE_GHOST
-	&&  SIDE(gBankAttacker) == B_SIDE_OPPONENT)
+	&&  SIDE(bank) == B_SIDE_OPPONENT)
 		gBattleMoveDamage = 0;
 	#endif
 	
