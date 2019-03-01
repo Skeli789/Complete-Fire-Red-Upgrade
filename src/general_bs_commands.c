@@ -29,6 +29,7 @@
 #define BattleScript_GrudgeTakesPp (u8*) 0x81D8FA3
 #define BattleScript_ObliviousPreventsAttraction (u8*) 0x81D9444
 
+void TryContraryChangeStatAnim(u8 bank, u16* argumentPtr);
 bool8 UproarWakeUpCheck(bank_t);
 u8 CheckMoveLimitations(u8 bank, u8 unusableMoves, u8 check);
 item_t ChoosePickupItem(u8 level);
@@ -893,12 +894,38 @@ void atk42_jumpiftype2(void) //u8 bank, u8 type, *ptr
         gBattlescriptCurrInstr += 7;
 }
 
+void TryContraryChangeStatAnim(u8 bank, u16* argumentPtr)
+{	
+	if (ABILITY(bank) == ABILITY_CONTRARY)
+	{
+		u8 value = 0;
+		switch (GET_STAT_BUFF_VALUE2(gBattleScripting->statChanger)) {
+			case SET_STAT_BUFF_VALUE(1): // +1
+				value = STAT_ANIM_MINUS1;
+				break;
+			case SET_STAT_BUFF_VALUE(2): // +2
+				value = STAT_ANIM_MINUS2;
+				break;
+			case SET_STAT_BUFF_VALUE(1) | STAT_BUFF_NEGATIVE: // -1
+				value = STAT_ANIM_PLUS1;
+				break;
+			case SET_STAT_BUFF_VALUE(2) | STAT_BUFF_NEGATIVE: // -2
+				value = STAT_ANIM_PLUS2;
+				break;
+		}
+		*argumentPtr = GET_STAT_BUFF_ID(gBattleScripting->statChanger) + value - 1;
+	}
+}
+
 void atk45_playanimation(void)
 {
-    const u16* argumentPtr;
+    u16* argumentPtr;
 
     gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
     argumentPtr = T2_READ_PTR(gBattlescriptCurrInstr + 3);
+
+	if (gBattlescriptCurrInstr[2] == B_ANIM_STATS_CHANGE)
+		TryContraryChangeStatAnim(gActiveBattler, argumentPtr);
 
     if (gBattlescriptCurrInstr[2] == B_ANIM_STATS_CHANGE
     || 	gBattlescriptCurrInstr[2] == B_ANIM_SNATCH_MOVE
@@ -947,13 +974,16 @@ void atk45_playanimation(void)
 
 void atk46_playanimation2(void) // animation Id is stored in the first pointer
 {
-    const u16* argumentPtr;
+    u16* argumentPtr;
     const u8* animationIdPtr;
 
     gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
     animationIdPtr = T2_READ_PTR(gBattlescriptCurrInstr + 2);
     argumentPtr = T2_READ_PTR(gBattlescriptCurrInstr + 6);
 
+	if (*animationIdPtr == B_ANIM_STATS_CHANGE)
+		TryContraryChangeStatAnim(gActiveBattler, argumentPtr);
+	
     if (*animationIdPtr == B_ANIM_STATS_CHANGE
     || 	*animationIdPtr == B_ANIM_SNATCH_MOVE
     || 	*animationIdPtr == B_ANIM_SUBSTITUTE_FADE

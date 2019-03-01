@@ -6,6 +6,8 @@
 #define AI_CHOICE_FLEE 4
 #define AI_CHOICE_WATCH 5
 
+//Update Acupressure Targeting
+
 extern u8 GetFrontierTrainerFrontSpriteId(u16 trainerId, u8 battlerNum);
 extern u8 GetMostSuitableMonToSwitchInto(void);
 extern void BattleAI_SetupAIData(u8 defaultScoreMoves);
