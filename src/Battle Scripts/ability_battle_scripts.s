@@ -550,7 +550,7 @@ BattleScript_GooeyActivates:
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	setbyte STAT_ANIM_PLAYED 0x0
-	playstatchangeanimation BANK_ATTACKER STAT_ANIM_SPD STAT_ANIM_DOWN | STAT_ANIM_CAN_FAIL
+	playstatchangeanimation BANK_ATTACKER STAT_ANIM_SPD STAT_ANIM_DOWN
 	setstatchanger STAT_SPD | DECREASE_1
 	statbuffchange STAT_ATTACKER | STAT_BS_PTR GooeyReturn
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 GooeyReturn
