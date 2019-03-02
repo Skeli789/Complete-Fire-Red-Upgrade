@@ -51,7 +51,7 @@ extern u8 BattleScript_EnduredSturdy[];
 extern u8 BattleScript_Receiver[];
 extern u8 BattleScript_PrimalWeatherEnd[];
 extern u8 BattleScript_Symbiosis[];
-extern u8 BattleScript_SpikesFreeDefog[];
+extern u8 BattleScript_PrintCustomString[];
 extern u8 BattleScript_FlowerGift[];
 extern u8 BattleScript_NoHealTargetAfterHealBlock[];
 extern u8 BattleScript_FaintAttacker[];
@@ -64,16 +64,11 @@ extern u8 StringEnduredHitWithSturdy[];
 extern u8 PrimalRainEndString[];
 extern u8 PrimalSunEndString[];
 extern u8 PrimalAirCurrentEndString[];
-extern u8 RemovedEntryHazardsYourSideString[];
-extern u8 RemovedEntryHazardsFoeSideString[];
-extern u8 PlayerSpikesLayString[];
-extern u8 OpponentSpikesLayString[];
-extern u8 PlayerStealthRockLayString[];
-extern u8 OpponentStealthRockLayString[];
-extern u8 PlayerToxicSpikesLayString[];
-extern u8 OpponentToxicSpikesLayString[];
-extern u8 PlayerStickyWebLayString[];
-extern u8 OpponentStickyWebLayString[];
+extern u8 RemovedEntryHazardsString[];
+extern u8 SpikesLayString[];
+extern u8 StealthRockLayString[];
+extern u8 ToxicSpikesLayString[];
+extern u8 StickyWebLayString[];
 
 extern move_t SkyBattleBanTable[];
 extern move_t GravityBanTable[];
@@ -2475,7 +2470,7 @@ void atkB0_trysetspikes(void) {
 	}
 	
 	if (stringcase != 0xFF)
-		BattleStringLoader = EntryHazardsStrings[stringcase + atkSide];
+		BattleStringLoader = EntryHazardsStrings[stringcase];
 }
 
 //Actual calc has been moved to GetBasePower function
@@ -2747,8 +2742,8 @@ void atkBE_rapidspinfree(void) {
 			gSideTimers[sideAtk].srAmount = 0;
 			gSideTimers[sideAtk].stickyWeb = 0;
 			BattleScriptPushCursor();
-			gBattlescriptCurrInstr = BattleScript_SpikesFreeDefog;
-			BattleStringLoader = EntryHazardDefogRemovalStrings[sideAtk];
+			gBattlescriptCurrInstr = BattleScript_PrintCustomString;
+			BattleStringLoader = RemovedEntryHazardsString;
 		}
 		
 		else if (gSideAffecting[sideDef] & SIDE_STATUS_SPIKES) {
@@ -2758,8 +2753,8 @@ void atkBE_rapidspinfree(void) {
 			gSideTimers[sideDef].srAmount = 0;
 			gSideTimers[sideDef].stickyWeb = 0;
 			BattleScriptPushCursor();
-			gBattlescriptCurrInstr = BattleScript_SpikesFreeDefog;
-			BattleStringLoader = EntryHazardDefogRemovalStrings[sideDef];
+			gBattlescriptCurrInstr = BattleScript_PrintCustomString;
+			BattleStringLoader = RemovedEntryHazardsString;
 		}
 		
 		else if (gSideAffecting[sideDef] & (SIDE_STATUS_REFLECT)) {
