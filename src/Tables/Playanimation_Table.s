@@ -3,11 +3,13 @@
 .align 2
 
 .include "..\\Anim_Defines.asm"
-.include "..\\asm_defines.s"
 
 .global PlayAnimationTable	
 
+.equ RED_PRIMAL_TASK, MegaEvoAnimTask1
+.equ RED_PRIMAL_TASK_2, MegaEvoAnimTask2
 
+PlayAnimationTable:
 .word 0x81d5b88	@ ANIM_NOTHING		original 0x1c6ea8
 .word 0x81d5bbe	@ ANIM_STAT_BUFF
 .word 0x81d5bc7	@ ANIM_SUBSTITUTE_REMOVAL
@@ -43,7 +45,7 @@
 .word 0x81d657b	@ ANIM_TURN_INTO_POKEBALL
 .word 0x81d6594	@ ANIM_SWITCH
 .word 0x81d659e	@ ANIM_CREATE_SUBSTITUTE_2
-.word ANIM_TRANSFORM
+.word 0x81d2811
 .word ANIM_WISHIWASHI_FISH
 .word ANIM_ZYGARDE_CELL_SWIRL
 .word ANIM_DELTA_STREAM
@@ -64,22 +66,17 @@
 .word ANIM_BERRY_EAT
 .word ANIM_FOG_CONTINUES
 .word ANIM_AQUA_RING_HEAL
-.word ELECTRIC_TERRAIN_ACTIVE_ANIM
-.word GRASSY_TERRAIN_ACTIVE_ANIM
-.word MISTY_TERRAIN_ACTIVE_ANIM
-.word PSYCHIC_TERRAIN_ACTIVE_ANIM
+.word 0x0
+.word 0x0
+.word 0x0
+.word 0x0
 .word BATON_PASS_ANIM
 .word DRAGON_TAIL_BLOW_AWAY_ANIM
 .word ANIM_ZMOVE_ACTIVATE
 .word ANIM_MEGA_EVOLUTION
 .word ANIM_ULTRA_BURST
 
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool
-ANIM_TRANSFORM:
-	endanimation
-
+.include "..\\asm_defines.s" @Down here so doesn't interfere with table
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -426,41 +423,7 @@ ANIM_RED_PRIMAL_REVERSION:
 	pause 0x14 
 	launchtask 0x80ba83d 0x5 0x5 0x5 0x2 0x0 0x10 0x7fff 
 	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_OMEGA_STONE 0x2 0x0 0x10 0x7fff 
-	goto 0x891ac3e 
-	loadparticle ANIM_TAG_ALPHA_STONE 
-	pokespritefromBG side_attacker 
-	pause 0x0 
-	waitfortransparentBG 
-	pokespritetoBG bank_attacker 
-	setblends 0x80c 
-	playsound2 0xc2 0xc0 
-	launchtemplate RED_PRIMAL_ALPHA 0x29 0x4 0x0 0x0 0x0 0x0 
-	pause 0x14 
-	launchtask 0x80ba83d 0x5 0x5 0x5 0x2 0x0 0x10 0x7fff 
-	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_ALPHA_STONE 0x2 0x0 0x10 0x7fff 
-	waitanimation 
-	launchtask AnimTask_pal_fade_particle 0x5 0x0 
-	launchtask 0x882ec0d 0x2 0x0 
-	launchtask 0x80ba83d 0x5 0x5 0x5 0x2 0x10 0x0 0x7fff 
-	waitanimation 
-	launchtask AnimTask_screen_shake 0x5 0x3 0x1 0x5 0xe 
-	launchtask RED_PRIMAL_TASK 0x1 0x2 0x0 0xff 
-	waitanimation 
-	pokespritefromBG side_attacker 
-	pokespritefromBG 0xd 
-	endanimation 
-Loc_0x91AC3E:
-	waitanimation 
-	launchtask AnimTask_pal_fade_particle 0x5 0x0 
-	launchtask RED_PRIMAL_TASK_2 0x2 0x0 
-	launchtask 0x80ba83d 0x5 0x5 0x5 0x2 0x10 0x0 0x7fff 
-	waitanimation 
-	launchtask AnimTask_screen_shake 0x5 0x3 0x1 0x5 0xe 
-	launchtask RED_PRIMAL_TASK 0x1 0x2 0x0 0xff 
-	waitanimation 
-	pokespritefromBG side_attacker 
-	pokespritefromBG 0xd 
-	endanimation 
+	goto ANIM_PRIMAL_REVERSION_JOIN
 
 .align 2
 RED_PRIMAL_OMEGA: objtemplate ANIM_TAG_OMEGA_STONE ANIM_TAG_OMEGA_STONE 0x83ACBC0 0x8231CF0 0x0 0x83E7144 0x8075D9D 
@@ -480,6 +443,8 @@ ANIM_BLUE_PRIMAL_REVERSION:
 	pause 0x14 
 	launchtask 0x80ba83d 0x5 0x5 0x5 0x2 0x0 0x10 0x7fff 
 	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_ALPHA_STONE 0x2 0x0 0x10 0x7fff 
+	
+ANIM_PRIMAL_REVERSION_JOIN:
 	waitanimation 
 	launchtask AnimTask_pal_fade_particle 0x5 0x0 
 	launchtask RED_PRIMAL_TASK_2 0x2 0x0 
@@ -647,26 +612,6 @@ AQUA_RING_BUBBLES: objtemplate ANIM_TAG_SMALL_BUBBLES ANIM_TAG_SMALL_BUBBLES 0x8
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-ELECTRIC_TERRAIN_ACTIVE_ANIM:
-	endanimation
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool
-GRASSY_TERRAIN_ACTIVE_ANIM:
-	endanimation
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool
-MISTY_TERRAIN_ACTIVE_ANIM:
-	endanimation
-	
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool
-PSYCHIC_TERRAIN_ACTIVE_ANIM:
-	endanimation
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool
 BATON_PASS_ANIM:
 	loadparticle 0x27f2 
 	playsound2 0xd9 0xc0 
@@ -685,7 +630,48 @@ DRAGON_TAIL_BLOW_AWAY_ANIM:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 ANIM_ZMOVE_ACTIVATE:
+	loadparticle 0x27C8 @focus energy
+	loadparticle 0x2868 @Z-Move Symbol
+	loadparticle 0x282F @green color
+	loadparticle 0x2821 @blue color
+	loadparticle 0x280C @yellow color
+	pokespritetoBG bank_attacker
+	setblends 0x80c
+	loadBG1 BG_ZMOVE_ACTIVATE
+	waitfortransparentbg
+	launchtask 0x80BB82D 0x5 0x4 0x0 0x0 0x0 0xFFFF
 
+	playsound2 0xC2 0xc0
+	launchtask AnimTask_pal_fade_complex 0x2 0x6 PAL_ATK 0x0 0x6 0x0 0xb 0x76BC
+	call RAINBOW_BUFF+rom
+	call RAINBOW_BUFF+rom
+	call RAINBOW_BUFF+rom
+	launchtemplate ZSYMBOL+rom 0x29 0x4 0x0 0x0 0x0 0x0
+	call RAINBOW_BUFF+rom
+	call RAINBOW_BUFF+rom
+	waitanimation
+	call UNSET_SCROLLING_BG
+
+	resetblends
+	pokespritefrombg bank_attacker
+	endanimation
+
+RAINBOW_BUFF:
+	launchtemplate BLUEBUFF+rom 0x2 0x4 0x0 0xffe8 0x1a 0x2 
+	pause 0x3
+	launchtemplate 0x83E3604 0x2 0x4 0x0 0xe 0x1c 0x1 @Red Buff
+	pause 0x3 
+	launchtemplate GREENBUFF+rom 0x2 0x4 0x0 0xfffb 0xa 0x2 
+	pause 0x3 
+	launchtemplate YELLOWBUFF+rom 0x2 0x4 0x0 0x1c 0x1a 0x3 
+	pause 0x3
+	return
+
+.align 2
+BLUEBUFF: objtemplate 0x27C8 0x2821 0x83ACA18 0x83E3600 0x0 0x8231CFC 0x80A5AD9
+GREENBUFF: objtemplate 0x27C8 0x282F 0x83ACA18 0x83E3600 0x0 0x8231CFC 0x80A5AD9
+YELLOWBUFF: objtemplate 0x27C8 0x280C 0x83ACA18 0x83E3600 0x0 0x8231CFC 0x80A5AD9
+ZSYMBOL: objtemplate 0x2868 0x2868 0x83ACBC0 0x8231CF0 0x0 0x83E7144 0x8075D9D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -695,7 +681,44 @@ ANIM_MEGA_EVOLUTION:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 ANIM_ULTRA_BURST:
+	loadparticle 0x2867 @Ultra Burst
+	loadparticle 0x281b
+	loadparticle 0x27A3 @Recover
+	pokespritetoBG side_attacker
+	setblends 0x80c
 
+@Recover:
+	soundcomplex 0x85 0xC0 0xD 0x3
+	launchtask AnimTask_pal_fade_complex 0x2 0x6 PAL_ATK 0x0 0x6 0x0 0xb 0x7fff
+	call RECOVER_LOAD_PARTICLES 
+	call RECOVER_LOAD_PARTICLES 
+	call RECOVER_LOAD_PARTICLES
+	waitanimation	
+
+@CircleThing:
+	playsound2 0xc2 0xc0 
+	launchtemplate 0x83e7148 0x29 0x4 0x0 0x0 0x0 0x0 
+	pause 0x14 
+
+@WhiteOutScreen:
+	launchtask 0x80ba83d 0x5 0x5 0x5 0x2 0x0 0x10 0xffff 
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 0x281b 0x2 0x0 0x10 0xffff 
+	waitanimation
+	launchtemplate ULTRABURSTSYMBOL+rom 0x82 0x0
+	launchtask RED_PRIMAL_TASK 0x2 0x0
+	waitanimation
+	launchtask 0x80ba83d 0x5 0x5 0x5 0x2 0x10 0x0 0xffff 
+	launchtask AnimTask_screen_shake 0x5 0x3 0x0 0x5 0xe
+	launchtask RED_PRIMAL_TASK_2 0x1 0x2 0x0 0xFF
+	waitanimation
+
+End:
+	resetblends
+	pokespritefrombg side_attacker
+	endanimation
+
+.align 2
+ULTRABURSTSYMBOL: objtemplate 0x2867 0x2867 0x83ACAF8 0x8231CF0 0x0 0x231CFC 0x80B67D5
 
 
 

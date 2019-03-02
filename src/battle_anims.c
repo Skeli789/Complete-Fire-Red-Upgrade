@@ -203,3 +203,13 @@ bool8 IsAnimMoveHeartSwap(void)
 	u16 move = gBattleBufferA[gActiveBattler][1] | (gBattleBufferA[gActiveBattler][2] << 8);
 	return  move == MOVE_HEARTSWAP;
 }
+
+void MegaEvoAnimTask1(u8 taskId)
+{
+	DestroyAnimVisualTask(taskId);
+}
+
+void MegaEvoAnimTask2(u8 taskId)
+{
+	DestroyAnimVisualTask(taskId);
+}
