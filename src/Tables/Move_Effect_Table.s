@@ -7,23 +7,23 @@
 
 gBattleScriptsForMoveEffects:
 .word 0x81D6926		@EFFECT_HIT
-.word 0x81d696d		@EFFECT_SLEEP
-.word 0x81d69dc		@EFFECT_POISON_HIT
-.word 0x81d69e7		@EFFECT_ABSORB
-.word 0x81d6a55		@EFFECT_BURN_HIT
-.word 0x81d6a60		@EFFECT_FREEZE_HIT
-.word 0x81d6a6b		@EFFECT_PARALYZE_HIT
-.word 0x81d6a76		@EFFECT_EXPLOSION
-.word 0x81d6af6		@EFFECT_DREAM_EATER
-.word 0x81d6b5f		@EFFECT_MIRROR_MOVE
-.word 0x81d6b77		@EFFECT_ATTACK_UP
-.word 0x81d6b82		@EFFECT_DEFENSE_UP
-.word 0x81D6926		@EFFECT_SPEED_UP
-.word 0x81d6b8d		@EFFECT_SPECIAL_ATTACK_UP
-.word 0x81D6926		@EFFECT_SPECIAL_DEFENSE_UP
-.word 0x81D6926		@EFFECT_ACCURACY_UP
-.word 0x81d6b98		@EFFECT_EVASION_UP
-.word 0x81D6926		@EFFECT_ALWAYS_HIT
+.word BS_001_SetSleep
+.word BS_002_SetPoisonChance
+.word BS_003_DrainHP
+.word BS_004_SetBurnChance
+.word BS_005_SetFreezeChance
+.word BS_006_SetParalyzeChance
+.word BS_007_Explode
+.word BS_008_DreamEater
+.word BS_009_MirrorMove
+.word BS_010_RaiseUserAtk1
+.word BS_011_RaiseUserDef1
+.word BS_012_RaiseUserSpd1
+.word BS_013_RaiseUserSpAtk1
+.word BS_014_RaiseUserSpDef1
+.word BS_015_RaiseUserAcc1
+.word BS_016_RaiseUserEvsn1
+.word BS_017_NeverMiss 	@Regular Hit
 .word 0x81d6be1		@EFFECT_ATTACK_DOWN
 .word 0x81d6bec		@EFFECT_DEFENSE_DOWN
 .word 0x81d6bf7		@EFFECT_SPEED_DOWN
