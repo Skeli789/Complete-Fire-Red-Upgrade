@@ -29,6 +29,7 @@ extern move_t Percent50RecoilMoves[];
 extern move_t Percent66RecoilMoves[];
 extern move_t Percent75RecoilMoves[];
 extern move_t Percent100RecoilMoves[];
+extern move_t SpecialWholeFieldMoveTable[];
 
 extern u8 BattleScript_PoisonTouch[];
 extern u8 BattleScript_KingsShield[];
@@ -768,7 +769,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 							}
 						}
 					}
-					else if (gBattleMoves[gCurrentMove].target == MOVE_TARGET_ALL)
+					else if (gBattleMoves[gCurrentMove].target == MOVE_TARGET_ALL && !CheckTableForMove(gCurrentMove, SpecialWholeFieldMoveTable))
 					{
 						if (gNewBS->OriginalAttackerTargetCount < 3)
 						{ //Get Next Target
@@ -782,7 +783,10 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 									{
 										gBattleScripting->atk49_state = 0;
 										MoveValuesCleanUp();
-										BattleScriptPush(gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect]);
+										if (gBattleMoves[gCurrentMove].effect == EFFECT_EXPLOSION)
+											BattleScriptPush(gBattleScriptsForMoveEffects[0]); //Fixes issues with Explosion not changing targets
+										else
+											BattleScriptPush(gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect]);
 										gBattlescriptCurrInstr = BattleScript_FlushMessageBox;
 										return;
 									}
@@ -804,11 +808,11 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 		
 		case ATK49_MOVE_RECOIL:
 			if (arg1 != ARG_IN_FUTURE_ATTACK
-			&& gBattleMons[bankAtk].hp
 			&&  !(gHitMarker & HITMARKER_UNABLE_TO_USE_MOVE))
 			{
 				if (gCurrentMove == MOVE_MINDBLOWN
-				&& ABILITY(bankAtk) != ABILITY_MAGICGUARD)
+				&& ABILITY(bankAtk) != ABILITY_MAGICGUARD
+				&& gBattleMons[bankAtk].hp)
 				{
 					gBattleMoveDamage = MathMax(1, gBattleMons[bankAtk].maxHP / 2);
 					
@@ -821,7 +825,8 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 					
 					effect = 1;
 				}
-				else if (gCurrentMove == MOVE_STRUGGLE)
+				else if (gCurrentMove == MOVE_STRUGGLE
+				&& gBattleMons[bankAtk].hp)
 				{
 					gBattleMoveDamage = MathMax(1, gBattleMons[bankAtk].maxHP / 4);
 					BattleScriptPushCursor();
@@ -842,7 +847,8 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 				}
 				else if (ABILITY(bankAtk) != ABILITY_MAGICGUARD
 				&& ABILITY(bankAtk) != ABILITY_ROCKHEAD
-				&& gNewBS->AttackerDidDamageAtLeastOnce)
+				&& gNewBS->AttackerDidDamageAtLeastOnce
+				&& gBattleMons[bankAtk].hp)
 				{
 					if (CheckTableForMove(gCurrentMove, Percent25RecoilMoves))
 					{

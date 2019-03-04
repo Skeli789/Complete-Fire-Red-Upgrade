@@ -53,6 +53,7 @@
 .global IgnoreUnderwaterTable
 .global AlwaysHitRainTable
 .global SpecialAttackPhysicalDamageMoves
+.global SpecialWholeFieldMoveTable
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -932,6 +933,16 @@ SpecialAttackPhysicalDamageMoves:
 .hword MOVE_PSYSHOCK
 .hword MOVE_PSYSTRIKE
 .hword MOVE_SECRETSWORD
+.hword MOVE_TABLES_TERMIN
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+SpecialWholeFieldMoveTable:
+.hword MOVE_MAGNETICFLUX
+.hword MOVE_GEARUP
+.hword MOVE_FLOWERSHIELD
+.hword MOVE_ROTOTILLER
+.hword MOVE_GRAVITY
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

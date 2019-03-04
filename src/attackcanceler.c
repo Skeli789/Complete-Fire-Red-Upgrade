@@ -26,6 +26,7 @@ extern move_t TwoStrikesMoves[];
 extern move_t ThreeStrikesMoves[];
 extern move_t MovesCanUnfreezeAttacker[];
 extern move_t SkyBattleBanTable[];
+extern move_t SpecialWholeFieldMoveTable[];
 extern ability_t MoldBreakerIgnoreAbilities[];
 
 extern bool8 ProtectAffects(u16 move, u8 bankAtk, u8 bankDef, bool8 set);
@@ -786,7 +787,7 @@ u8 AtkCanceller_UnableToUseMove(void)
 		case CANCELLER_MULTI_TARGET_MOVES:
 			if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
 			{
-				if (gBattleMoves[gCurrentMove].target & MOVE_TARGET_ALL)
+				if (gBattleMoves[gCurrentMove].target & MOVE_TARGET_ALL && !CheckTableForMove(gCurrentMove, SpecialWholeFieldMoveTable))
 				{
 					for (i = 0; i < gBattlersCount; ++i)
 					{
