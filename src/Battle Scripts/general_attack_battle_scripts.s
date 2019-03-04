@@ -606,7 +606,7 @@ BS_019_LowerTargetDef1:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 .global BS_020_LowerTargetSpd1
-BS_021_LowerTargetSpd1:
+BS_020_LowerTargetSpd1:
 	setstatchanger STAT_SPD | DECREASE_1
 	goto 0x81D6C13
 
@@ -2108,7 +2108,7 @@ AttractDestinyKnot:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 .global BS_121_Return @;Free now
-BS_122_Return:
+BS_121_Return:
 	goto BS_STANDARD_HIT
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
