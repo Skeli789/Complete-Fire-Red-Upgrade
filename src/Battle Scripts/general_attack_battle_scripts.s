@@ -918,8 +918,8 @@ Rest_CheckGrounding:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-.global BS_038_0HK0
-BS_038_0HK0:
+.global BS_038_OHK0
+BS_038_OHK0:
 	attackcanceler
 	attackstring
 	ppreduce
@@ -1674,20 +1674,11 @@ BS_090_Encore:
 	ppreduce
 	jumpifabilitypresenttargetfield ABILITY_AROMAVEIL ProtectedByAromaVeil
 	goto 0x81D7453
-
+	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-.global BS_092_Snore
-BS_092_Snore:
-	attackcanceler
-	jumpifstatus BANK_ATTACKER STATUS_SLEEP 0x81D74AE
-	jumpifability BANK_ATTACKER ABILITY_COMATOSE 0x81D74AE
-	goto FAILED - 2
-
-@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-.global BS_093_PainSplit
-BS_093_PainSplit:
+.global BS_091_PainSplit
+BS_091_PainSplit:
 	attackcanceler
 	attackstring
 	ppreduce
@@ -1704,6 +1695,15 @@ BS_093_PainSplit:
 	printstring 0xFC
 	waitmessage DELAY_1SECOND
 	goto BS_MOVE_END
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global BS_092_Snore
+BS_092_Snore:
+	attackcanceler
+	jumpifstatus BANK_ATTACKER STATUS_SLEEP 0x81D74AE
+	jumpifability BANK_ATTACKER ABILITY_COMATOSE 0x81D74AE
+	goto FAILED - 2
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -2591,6 +2591,7 @@ BS_153_Teleport:
 .global BS_154_BeatUp
 BS_154_BeatUp:
 	@;TODO
+	goto BS_STANDARD_HIT
 	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -4446,6 +4447,18 @@ InstructBS:
 	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+.global BS_237_Blank
+BS_237_Blank:
+	goto BS_STANDARD_HIT
+	
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global BS_238_Blank
+BS_238_Blank:
+	goto BS_STANDARD_HIT
+	
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 .global BS_239_TeamEffectsAndMagnetRise
 BS_239_TeamEffectsAndMagnetRise:
 	attackcanceler
@@ -4505,8 +4518,8 @@ BS_241_FlameBurst:
 	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-.global BS_241_LastResortSkyDrop
-BS_241_LastResortSkyDrop:
+.global BS_242_LastResortSkyDrop
+BS_242_LastResortSkyDrop:
 	jumpifmove MOVE_LASTRESORT LastResortBS
 	jumpifsecondarystatus BANK_ATTACKER STATUS2_MULTIPLETURNS BS_SecondTurnSemiInvulnerable
 	jumpifword ANDS HIT_MARKER HITMARKER_NO_ATTACKSTRING BS_SecondTurnSemiInvulnerable
@@ -4538,6 +4551,85 @@ LastResortBS:
 	attackcanceler
 	callasm LastResortFunc
 	goto 0x81D6927
+	
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global BS_243_Blank
+BS_243_Blank:
+	goto BS_STANDARD_HIT
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global BS_244_Blank
+BS_244_Blank:
+	goto BS_STANDARD_HIT	
+	
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global BS_245_Blank
+BS_245_Blank:
+	goto BS_STANDARD_HIT
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global BS_246_Blank
+BS_246_Blank:
+	goto BS_STANDARD_HIT
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global BS_247_Blank
+BS_247_Blank:
+	goto BS_STANDARD_HIT
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global BS_248_Blank
+BS_248_Blank:
+	goto BS_STANDARD_HIT
+	
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global BS_249_Blank
+BS_249_Blank:
+	goto BS_STANDARD_HIT
+	
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global BS_250_Blank
+BS_250_Blank:
+	goto BS_STANDARD_HIT
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global BS_251_Blank
+BS_251_Blank:
+	goto BS_STANDARD_HIT
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global BS_252_Blank
+BS_252_Blank:
+	goto BS_STANDARD_HIT
+	
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global BS_253_Blank
+BS_253_Blank:
+	goto BS_STANDARD_HIT
+	
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global BS_254_Blank
+BS_254_Blank:
+	goto BS_STANDARD_HIT
+	
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global BS_255_Blank
+BS_255_Blank:
+	goto BS_STANDARD_HIT
+
 
 .align 2
 ProtectedByTerrainString: .byte 0xFD, 0x10, 0x00, 0xDD, 0xE7, 0xFE, 0xE4, 0xE6, 0xE3, 0xE8, 0xD9, 0xD7, 0xE8, 0xD9, 0xD8, 0x00, 0xD6, 0xED, 0x00, 0xE8, 0xDC, 0xD9, 0x00, 0xE8, 0xD9, 0xE6, 0xE6, 0xD5, 0xDD, 0xE2, 0xAB, 0xFF

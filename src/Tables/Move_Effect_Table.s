@@ -23,200 +23,244 @@ gBattleScriptsForMoveEffects:
 .word BS_014_RaiseUserSpDef1
 .word BS_015_RaiseUserAcc1
 .word BS_016_RaiseUserEvsn1
-.word BS_017_NeverMiss 	@Regular Hit
-.word 0x81d6be1		@EFFECT_ATTACK_DOWN
-.word 0x81d6bec		@EFFECT_DEFENSE_DOWN
-.word 0x81d6bf7		@EFFECT_SPEED_DOWN
-.word 0x81D6926		@EFFECT_SPECIAL_ATTACK_DOWN
-.word 0x81D6926		@EFFECT_SPECIAL_DEFENSE_DOWN
-.word 0x81d6c02		@EFFECT_ACCURACY_DOWN
-.word 0x81d6c0d		@EFFECT_EVASION_DOWN
-.word 0x81d6c72		@EFFECT_HAZE
-.word 0x81d6c83		@EFFECT_BIDE
-.word 0x81d6c97		@EFFECT_RAMPAGE
-.word 0x81d6cb1		@EFFECT_ROAR
-.word 0x81d6cd9		@EFFECT_MULTI_HIT
-.word 0x81d6d9d		@EFFECT_CONVERSION
-.word 0x81d6db2		@EFFECT_FLINCH_HIT
-.word 0x81d6dbd		@EFFECT_RESTORE_HP
-.word 0x81d6de0		@EFFECT_TOXIC
-.word 0x81d6e69		@EFFECT_PAY_DAY
-.word 0x81d6e74		@EFFECT_LIGHT_SCREEN
-.word 0x81d6e7d		@EFFECT_TRI_ATTACK
-.word 0x81d6e88		@EFFECT_REST
-.word 0x81d6ed0		@EFFECT_0HKO
-.word 0x81d6f01		@EFFECT_RAZOR_WIND
-.word 0x81d6f82		@EFFECT_SUPER_FANG
-.word 0x81d6f99		@EFFECT_DRAGON_RAGE
-.word 0x81d6fc8		@EFFECT_TRAP
-.word 0x81D6926		@EFFECT_HIGH_CRITICAL
-.word 0x81d6926		@EFFECT_DOUBLE_HIT
-.word 0x81d7011		@EFFECT_RECOIL_IF_MISS
-.word 0x81d7062		@EFFECT_MIST
-.word 0x81d7075		@EFFECT_FOCUS_ENERGY
-.word 0x81d7092		@EFFECT_RECOIL
-.word 0x81d70ab		@EFFECT_CONFUSE
-.word 0x81d70f8		@EFFECT_ATTACK_UP_2
-.word 0x81d7103		@EFFECT_DEFENSE_UP_2
-.word 0x81d710e		@EFFECT_SPEED_UP_2
-.word 0x81d7119		@EFFECT_SPECIAL_ATTACK_UP_2
-.word 0x81d7124		@EFFECT_SPECIAL_DEFENSE_UP_2
-.word 0x81D6926		@EFFECT_ACCURACY_UP_2
-.word 0x81D6926		@EFFECT_EVASION_UP_2
-.word 0x81d712f		@EFFECT_TRANSFORM
-.word 0x81d7142		@EFFECT_ATTACK_DOWN_2
-.word 0x81d714d		@EFFECT_DEFENSE_DOWN_2
-.word 0x81d7158		@EFFECT_SPEED_DOWN_2
-.word 0x81D6926		@EFFECT_SPECIAL_ATTACK_DOWN_2
-.word 0x81d7163		@EFFECT_SPECIAL_DEFENSE_DOWN_2
-.word 0x81D6926		@EFFECT_ACCURACY_DOWN_2
-.word 0x81D6926		@EFFECT_EVASION_DOWN_2
-.word 0x81d716e		@EFFECT_REFLECT
-.word 0x81d7181		@EFFECT_POISON
-.word 0x81d71e2		@EFFECT_PARALYZE
-.word 0x81d725f		@EFFECT_ATTACK_DOWN_HIT
-.word 0x81d726a		@EFFECT_DEFENSE_DOWN_HIT
-.word 0x81d7275		@EFFECT_SPEED_DOWN_HIT
-.word 0x81d7280		@EFFECT_SPECIAL_ATTACK_DOWN_HIT
-.word 0x81d728b		@EFFECT_SPECIAL_DEFENSE_DOWN_HIT
-.word 0x81d7296		@EFFECT_ACCURACY_DOWN_HIT
-.word 0x81D6926		@EFFECT_EVASION_DOWN_HIT
-.word 0x81d72a1		@EFFECT_SKY_ATTACK
-.word 0x81d72c9		@EFFECT_CONFUSE_HIT
-.word 0x81d72d4		@EFFECT_TWINEEDLE
-.word 0x81D6926		@EFFECT_VITAL_THROW
-.word 0x81d72ec		@EFFECT_SUBSTITUTE
-.word 0x81d732f		@EFFECT_RECHARGE
-.word 0x81d734d		@EFFECT_RAGE
-.word 0x81d7374		@EFFECT_MIMIC
-.word 0x81d739a		@EFFECT_METRONOME
-.word 0x81d73ae		@EFFECT_LEECH_SEED
-.word 0x81d73d5		@EFFECT_SPLASH
-.word 0x81d73e7		@EFFECT_DISABLE
-.word 0x81d7403		@EFFECT_LEVEL_DAMAGE
-.word 0x81d741b		@EFFECT_PSYWAVE
-.word 0x81d7433		@EFFECT_COUNTER
-.word 0x81d7449		@EFFECT_ENCORE
-.word 0x81d7465		@EFFECT_PAIN_SPLIT
-.word 0x81d749c		@EFFECT_SNORE
+.word BS_017_NeverMiss
+.word BS_018_LowerTargetAtk1
+.word BS_019_LowerTargetDef1
+.word BS_020_LowerTargetSpd1
+.word BS_021_LowerTargetSpAtk1	
+.word BS_022_LowerTargetSpDef1
+.word BS_023_LowerTargetAcc1
+.word BS_024_LowerTargetEvsn1
+.word BS_025_Haze
+.word BS_026_Bide
+.word BS_027_Thrash
+.word BS_028_Roar
+.word BS_029_HitTwoToFiveTimes
+.word BS_030_Conversion
+.word BS_031_Flinch
+.word BS_032_Recover
+.word BS_033_SetBadPoison
+.word BS_034_PayDay
+.word BS_035_LightScreen
+.word BS_036_TriAttack
+.word BS_037_SetRest
+.word BS_038_OHK0
+.word BS_039_RazorWind
+.word BS_040_SuperFang
+.word BS_041_DragonRage
+.word BS_042_TrapAndDamage
+.word BS_043_HighCritRatio
+.word BS_044_HitTwice
+.word BS_045_HighJumpKick
+.word BS_046_Mist
+.word BS_047_FocusEnergy
+.word BS_048_25PercentRecoil
+.word BS_049_SetConfusion
+.word BS_050_RaiseUserAtk2
+.word BS_051_RaiseUserDef2
+.word BS_052_RaiseUserSpd2
+.word BS_053_RaiseUserSpAtk2
+.word BS_054_RaiseUserSpDef2
+.word BS_055_RaiseUserAcc2
+.word BS_056_RaiseUserEvsn2
+.word BS_057_Transform
+.word BS_058_LowerTargetAtk2
+.word BS_059_LowerTargetDef2
+.word BS_060_LowerTargetSpd2
+.word BS_061_LowerTargetSpAtk2
+.word BS_062_LowerTargetSpDef2
+.word BS_063_LowerTargetAcc2
+.word BS_064_LowerTargetEvsn2
+.word BS_065_Reflect
+.word BS_066_SetPoison
+.word BS_067_SetParalyze
+.word BS_068_LowerTargetAtk1Chance
+.word BS_069_LowerTargetDef1Chance
+.word BS_070_LowerTargetSpd1Chance
+.word BS_071_LowerTargetSpAtk1Chance
+.word BS_072_LowerTargetSpDef1Chance
+.word BS_073_LowerTargetAcc1Chance
+.word BS_074_LowerTargetEvsn1Chance
+.word BS_075_SkyAttack
+.word BS_076_SetConfusionChance
+.word BS_077_Twineedle
+.word BS_078_VitalThrow
+.word BS_079_Substitute
+.word BS_080_Recharge
+.word BS_081_Rage
+.word BS_082_Mimic
+.word BS_083_Metronome
+.word BS_084_LeechSeed
+.word BS_085_Splash
+.word BS_086_Disable
+.word BS_087_SeismicToss
+.word BS_088_Psywave
+.word BS_089_Counter
+.word BS_090_Encore
+.word BS_091_PainSplit
+.word BS_092_Snore
 .word 0x81d74d6		@EFFECT_CONVERSION_2
-.word 0x81d74eb		@EFFECT_LOCK_ON
-.word 0x81d750d		@EFFECT_SKETCH
-.word 0x81D6926		@EFFECT_UNUSED_60
-.word 0x81d752c		@EFFECT_SLEEP_TALK
-.word 0x81d756e		@EFFECT_DESTINY_BOND
-.word 0x81d757f		@EFFECT_FLAIL
-.word 0x81d7585		@EFFECT_SPITE
-.word 0x81D6926		@EFFECT_FALSE_SWIPE
-.word 0x81d75a1		@EFFECT_HEAL_BELL
-.word 0x81D6926		@EFFECT_QUICK_ATTACK
-.word 0x81d75e6		@EFFECT_TRIPLE_KICK
-.word 0x81d76c9		@EFFECT_THIEF
-.word 0x81d76d4		@EFFECT_MEAN_LOOK
-.word 0x81d7706		@EFFECT_NIGHTMARE
-.word 0x81d7740		@EFFECT_MINIMIZE
+.word BS_094_LockOn
+.word BS_095_Sketch
+.word BS_096_RaiseAttackerSpd1Chance
+.word BS_097_SleepTalk
+.word BS_098_DestinyBond
+.word BS_099_Flail
+.word BS_100_Spite
+.word BS_101_FalseSwipe
+.word BS_102_HealBell
+.word BS_103_PriorityMove
+.word BS_104_TripleKick
+.word BS_105_StealItem
+.word BS_106_MeanLook
+.word BS_107_Nightmare
+.word BS_108_Minimize
 .word 0x81d774d		@EFFECT_CURSE
-.word 0x81D6926		@EFFECT_UNUSED_6E
-.word 0x81d7816		@EFFECT_PROTECT
-.word 0x81d7829		@EFFECT_SPIKES
-.word 0x81d783e		@EFFECT_FORESIGHT
-.word 0x81d7856		@EFFECT_PERISH_SONG
-.word 0x81d7897		@EFFECT_SANDSTORM
-.word 0x81d7816		@EFFECT_ENDURE
-.word 0x81d78a0		@EFFECT_ROLLOUT
-.word 0x81d78bb		@EFFECT_SWAGGER
-.word 0x81d7919		@EFFECT_FURY_CUTTER
-.word 0x81d7938		@EFFECT_ATTRACT
-.word 0x81d7954		@EFFECT_RETURN
-.word 0x81d7962		@EFFECT_PRESENT
-.word 0x81d7954		@EFFECT_FRUSTRATION
-.word 0x81d796e		@EFFECT_SAFEGUARD
-.word 0x81d7977		@EFFECT_THAW_HIT
-.word 0x81d7982		@EFFECT_MAGNITUDE
-.word 0x81d7995		@EFFECT_BATON_PASS
-.word 0x81D6926		@EFFECT_PURSUIT
-.word 0x81d79c2		@EFFECT_RAPID_SPIN
-.word 0x81d79cd		@EFFECT_SONICBOOM
-.word 0x81D6926		@EFFECT_UNUSED_83
-.word 0x81d79fc		@EFFECT_MORNING_SUN
-.word 0x81d79fc		@EFFECT_SYNTHESIS
-.word 0x81d79fc		@EFFECT_MOONLIGHT
-.word 0x81d7a09		@EFFECT_HIDDEN_POWER
-.word 0x81d7a10		@EFFECT_RAIN_DANCE
-.word 0x81d7a28		@EFFECT_SUNNY_DAY
-.word 0x81d7a31		@EFFECT_DEFENSE_UP_HIT
-.word 0x81d7a3c		@EFFECT_ATTACK_UP_HIT
-.word 0x81d7a47		@EFFECT_ALL_STATS_UP_HIT
-.word 0x81D6926		@EFFECT_UNUSED_8D
-.word 0x81d7a52		@EFFECT_BELLY_DRUM
-.word 0x81d7a74		@EFFECT_PSYCH_UP
-.word 0x81d7a89		@EFFECT_MIRROR_COAT
-.word 0x81d7a9f		@EFFECT_SKULL_BASH
-.word 0x81d7aee		@EFFECT_TWISTER
-.word 0x81d7b13		@EFFECT_EARTHQUAKE
-.word 0x81d7b97		@EFFECT_FUTURE_SIGHT
-.word 0x81d7bae		@EFFECT_GUST
-.word 0x81d7bcd		@EFFECT_FLINCH_HIT_2
-.word 0x81d7be3		@EFFECT_SOLARBEAM
-.word 0x81d7c39		@EFFECT_THUNDER
-.word 0x81d7c4d		@EFFECT_TELEPORT
-.word 0x81d7c8a		@EFFECT_BEAT_UP
-.word 0x81d7ce1		@EFFECT_SEMI_INVULNERABLE
-.word 0x81d7d8c		@EFFECT_DEFENSE_CURL
-.word 0x81d7dae		@EFFECT_SOFTBOILED
-.word 0x81d7ddf		@EFFECT_FAKE_OUT
-.word 0x81d7e16		@EFFECT_UPROAR
-.word 0x81d7e36		@EFFECT_STOCKPILE
-.word 0x81d7e49		@EFFECT_SPIT_UP
-.word 0x81d7e8b		@EFFECT_SWALLOW
-.word 0x81D6926		@EFFECT_UNUSED_A3
-.word 0x81d7ea8		@EFFECT_HAIL
-.word 0x81d7eb1		@EFFECT_TORMENT
-.word 0x81d7ecd		@EFFECT_FLATTER
-.word 0x81d7f2b		@EFFECT_WILL_O_WISP
-.word 0x81d7f9f		@EFFECT_MEMENTO
-.word 0x81d8042		@EFFECT_FACADE
-.word 0x81d805c		@EFFECT_FOCUS_PUNCH
-.word 0x81d806e		@EFFECT_SMELLINGSALT
-.word 0x81d8098		@EFFECT_FOLLOW_ME
-.word 0x81d80a9		@EFFECT_NATURE_POWER
-.word 0x81d80b6		@EFFECT_CHARGE
-.word 0x81d80c7		@EFFECT_TAUNT
-.word 0x81d80e3		@EFFECT_HELPING_HAND
-.word 0x81d80f8		@EFFECT_TRICK
-.word 0x81d8126		@EFFECT_ROLE_PLAY
-.word 0x81d8142		@EFFECT_WISH
-.word 0x81d8152		@EFFECT_ASSIST
-.word 0x81d8169		@EFFECT_INGRAIN
-.word 0x81d817e		@EFFECT_SUPERPOWER
-.word 0x81d8189		@EFFECT_MAGIC_COAT
-.word 0x81d819e		@EFFECT_RECYCLE
-.word 0x81d81b3		@EFFECT_REVENGE
-.word 0x81d81b9		@EFFECT_BRICK_BREAK
-.word 0x81d820a		@EFFECT_YAWN
-.word 0x81d8263		@EFFECT_KNOCK_OFF
-.word 0x81d826e		@EFFECT_ENDEAVOR
-.word 0x81d82a9		@EFFECT_ERUPTION
-.word 0x81d82af		@EFFECT_SKILL_SWAP
-.word 0x81d82cb		@EFFECT_IMPRISON
-.word 0x81d82e0		@EFFECT_REFRESH
-.word 0x81d82f7		@EFFECT_GRUDGE
-.word 0x81d830c		@EFFECT_SNATCH
-.word 0x81d8324		@EFFECT_LOW_KICK
-.word 0x81d8334		@EFFECT_SECRET_POWER
-.word 0x81d833a		@EFFECT_DOUBLE_EDGE
-.word 0x81d8345		@EFFECT_TEETER_DANCE
-.word 0x81d6a55		@EFFECT_BLAZE_KICK
-.word 0x81d83f3		@EFFECT_MUD_SPORT
-.word 0x81d840a		@EFFECT_POISON_FANG
-.word 0x81d8415		@EFFECT_WEATHER_BALL
-.word 0x81d841b		@EFFECT_OVERHEAT
-.word 0x81d8426		@EFFECT_TICKLE
-.word 0x81d84ad		@EFFECT_COSMIC_POWER
-.word 0x81d8511		@EFFECT_SKY_UPPERCUT
-.word 0x81d851f		@EFFECT_BULK_UP
-.word 0x81d69dc		@EFFECT_POISON_TAIL
-.word 0x81d83f3		@EFFECT_WATER_SPORT
-.word 0x81d8583		@EFFECT_CALM_MIND
-.word 0x81d85fb		@EFFECT_DRAGON_DANCE
-.word 0x81d865f		@EFFECT_CAMOUFLAGE
+.word BS_110_RaiseAttackerSpAtk1Chance
+.word BS_111_Protect
+.word BS_112_Spikes
+.word BS_113_Foresight
+.word BS_114_PerishSong
+.word BS_115_Sandstorm
+.word BS_116_Endure
+.word BS_117_Rollout
+.word BS_118_Swagger
+.word BS_119_FuryCutter
+.word BS_120_Attract
+.word BS_121_Return
+.word BS_122_Present
+.word BS_123_Frustration
+.word BS_124_Safeguard
+.word BS_125_BurnUp
+.word BS_126_Magnitude
+.word BS_127_BatonPass
+.word BS_128_Pursuit
+.word BS_129_RapidSpin
+.word BS_130_Sonicboom
+.word BS_131_Blank
+.word BS_132_MorningSun
+.word BS_133_Blank	@was synthesis
+.word BS_134_Blank	@was moonlight
+.word BS_135_AttackerRaiseDef2Chance
+.word BS_136_RainDance
+.word BS_137_SunnyDay
+.word BS_138_AttackerRaiseDef1Chance
+.word BS_139_AttackerRaiseAtk1Chance
+.word BS_140_AttackerRaiseAllStatsChance
+.word BS_141_Blank
+.word BS_142_BellyDrum
+.word BS_143_PsychUp
+.word BS_144_MirrorCoat
+.word BS_145_SkullBash
+.word BS_146_Twister
+.word BS_147_Earthquake
+.word BS_148_FutureSight
+.word BS_149_Gust
+.word BS_150_Stomp
+.word BS_151_Solarbeam
+.word BS_152_Thunder
+.word BS_153_Teleport
+.word BS_154_BeatUp
+.word BS_155_Fly
+.word BS_156_DefenseCurl
+.word BS_157_Blank	@was softboiled
+.word BS_158_FakeOut
+.word BS_159_Uproar
+.word BS_160_Stockpile
+.word BS_161_SpitUp
+.word BS_162_Swallow
+.word BS_163_Blank
+.word BS_164_SetHail
+.word BS_165_Torment
+.word BS_166_Flatter
+.word BS_167_SetBurn
+.word BS_168_Memento
+.word BS_169_Blank
+.word BS_170_FocusPunch
+.word BS_171_SmellingSalt
+.word BS_172_FollowMe
+.word BS_173_NaturePower
+.word BS_174_Charge
+.word BS_175_Taunt
+.word BS_176_HelpingHand
+.word BS_177_Trick
+.word BS_178_RolePlay
+.word BS_179_Wish
+.word BS_180_Assist
+.word BS_181_Ingrain
+.word BS_182_Superpower
+.word BS_183_MagicCoat
+.word BS_184_Recycle
+.word BS_185_Blank	@was revenge
+.word BS_186_BrickBreak
+.word BS_187_Yawn
+.word BS_188_KnockOff
+.word BS_189_Endeavor
+.word BS_190_Blank	@was eruption
+.word BS_191_SkillSwap
+.word BS_192_Imprison
+.word BS_193_Refresh
+.word BS_194_Grudge
+.word BS_195_Snatch
+.word BS_196_Blank	@was low kick
+.word BS_197_SecretPower
+.word BS_198_Blank	@was 33% recoil
+.word BS_199_Blank	@was teeter dance
+.word BS_200_Blank	@was blaze kick
+.word BS_201_MudSport
+.word BS_202_Blank	@was poison fang
+.word BS_203_Blank	@was weather ball
+.word BS_204_Overheat
+.word BS_205_Tickle
+.word BS_206_CosmicPower
+.word BS_207_ExtremeEvoBoost	@was sky uppercut
+.word BS_208_BulkUp
+.word BS_209_BadPoisonChance
+.word BS_210_WaterSport
+.word BS_211_CalmMind
+.word BS_212_DragonDance
+.word BS_213_StatSwapSplitters
+.word BS_214_Blank
+.word BS_215_Blank
+.word BS_216_Blank
+.word BS_217_Blank
+.word BS_218_MeFirst
+.word BS_219_DestroyBerry
+.word BS_220_NaturalGift
+.word BS_221_SmackDown
+.word BS_222_DamageResetTargetStatChanges
+.word BS_223_RelicSong
+.word BS_224_Blank
+.word BS_225_Blank
+.word BS_226_Terrain
+.word BS_227_Pledges
+.word BS_228_FieldEffects
+.word BS_229_Fling
+.word BS_230_Feint
+.word BS_231_AttackBlockers
+.word BS_232_TypeChangers
+.word BS_233_HealTarget
+.word BS_234_TopsyTurvyElectrify
+.word BS_235_FairyLockHappyHourCelebrateHoldHands
+.word BS_236_InstructAfterYouQuash
+.word BS_237_Blank
+.word BS_238_Blank
+.word BS_239_TeamEffectsAndMagnetRise
+.word BS_240_Camouflage
+.word BS_241_FlameBurst
+.word BS_242_LastResortSkyDrop
+.word BS_243_Blank
+.word BS_244_Blank
+.word BS_245_Blank
+.word BS_246_Blank
+.word BS_247_Blank
+.word BS_248_Blank
+.word BS_249_Blank
+.word BS_250_Blank
+.word BS_251_Blank
+.word BS_252_Blank
+.word BS_253_Blank
+.word BS_254_Blank
+.word BS_255_Blank
+
+
