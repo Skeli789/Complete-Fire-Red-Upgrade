@@ -218,7 +218,7 @@ BS_009_MirrorMove:
 
 CopycatBS:
 	attackstring
-	callasm CopycatFunc + 1
+	callasm CopycatFunc
 	attackanimation
 	waitanimation
 	setbyte ANIM_TURN 0x0
@@ -268,7 +268,7 @@ BS_011_RaiseUserDef1:
 	ppreduce
 	setstatchanger STAT_DEF | INCREASE_1
 	jumpifmove MOVE_FLOWERSHIELD FlowerShieldRototillerBS
-	jumpifmove MOVE_MAGNETICFLUX RaiseUserDef1_MagneticFlux
+	jumpifmove MOVE_MAGNETICFLUX MagneticFluxBS
 	jumpifmove MOVE_AROMATICMIST RaiseUserDef1_AromaticMist
 	goto 0x81D6BA1
 
@@ -280,39 +280,20 @@ BattleScript_FlowerShieldRototillerStatBoost:
 	attackanimation
 	waitanimation
 	setbyte ANIM_TARGETS_HIT 0x1
-	statbuffchange STAT_TARGET | STAT_BS_PTR FlowerShieldRototillerLoopBS
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 FlowerShieldRototillerNoHigher
-	setgraphicalstatchangevalues
-	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
-	printfromtable 0x83FE57C
-	waitmessage DELAY_1SECOND
-	callasm FlowerShieldLooper
-
-FlowerShieldRototillerNoHigher:
-	printfromtable 0x83FE57C
-	waitmessage DELAY_1SECOND
-
-FlowerShieldRototillerLoopBS:
+	seteffecttarget
 	callasm FlowerShieldLooper
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-RaiseUserDef1_MagneticFlux:
-	copyarray TARGET_BANK USER_BANK 0x1
-	jumpifabilitypresenttargetfield ABILITY_PLUS RaiseUserDef1_MagneticBoost
-	jumpifabilitypresenttargetfield ABILITY_MINUS RaiseUserDef1_MagneticBoost
-	goto FAILED
-
-RaiseUserDef1_MagneticBoost:
+.global BattleScript_MagneticFluxStatBoost
+MagneticFluxBS:
 	setword SEED_HELPER 0x0
-RaiseUserDef1_MagneticLoop:
-	jumpifability EQUALS ABILITY_PLUS RaiseUserDef1_BoostDefandSpDef
-	jumpifability EQUALS ABILITY_MINUS RaiseUserDef1_BoostDefandSpDef
-	goto RaiseUserDef1_Skip2
+	callasm MagnetFluxLooper
 
-RaiseUserDef1_BoostDefandSpDef:
+BattleScript_MagneticFluxStatBoost:
 	jumpifstatcanberaised BANK_TARGET STAT_DEF RaiseUserDef1_Def
-	jumpifstatcanberaised BANK_TARGET STAT_SP_DEF RaiseUserDef1_Skip2
+	jumpifstatcanberaised BANK_TARGET STAT_SP_DEF MagneticFluxLoop
+	goto MagneticFluxLoop
 
 RaiseUserDef1_Def:
 	attackanimation
@@ -328,22 +309,14 @@ RaiseUserDef1_Def:
 
 RaiseUserDef1_SpDef:
 	setstatchanger STAT_SPDEF | INCREASE_1
-	jumpifstat BANK_TARGET EQUALS STAT_SP_DEF STAT_MAX RaiseUserDef1_Skip2
-	statbuffchange STAT_TARGET | STAT_BS_PTR RaiseUserDef1_Skip2
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 RaiseUserDef1_Skip2
+	jumpifstat BANK_TARGET EQUALS STAT_SP_DEF STAT_MAX MagneticFluxLoop
+	statbuffchange STAT_TARGET | STAT_BS_PTR MagneticFluxLoop
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 MagneticFluxLoop
 	printfromtable 0x83FE57C
 	waitmessage DELAY_1SECOND
 
-RaiseUserDef1_Skip2:
-	addbyte SEED_HELPER 0x1
-	jumpifbyte NOTANDS BATTLE_TYPE BATTLE_DOUBLE MagneticFluxEnder
-	jumpifbyte EQUALS SEED_HELPER 0x2 MagneticFluxEnder
-	callasm SetTargetPartner
-	goto RaiseUserDef1_MagneticLoop
-
-MagneticFluxEnder:
-	jumpifbyte EQUALS ANIM_TARGETS_HIT 0x0 FAILED
-	goto BS_MOVE_END
+MagneticFluxLoop:
+	callasm MagnetFluxLooper
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -446,21 +419,15 @@ WorkUp_RaiseSpAtk:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+.global BattleScript_GearUpStatBoost
 GearUpBS:
-	copyarray TARGET_BANK USER_BANK 0x1
 	setword SEED_HELPER 0x0
-	jumpifabilitypresenttargetfield ABILITY_PLUS GearUp_MagneticLoop
-	jumpifabilitypresenttargetfield ABILITY_MINUS GearUp_MagneticLoop
-	goto FAILED
+	callasm MagnetFluxLooper
 
-GearUp_MagneticLoop:
-	jumpifability BANK_TARGET ABILITY_PLUS GearUp_BoostAtkandSpAtk
-	jumpifability BANK_TARGET ABILITY_MINUS GearUp_BoostAtkandSpAtk
-	goto GearUp_Skip2
-
-GearUp_BoostAtkandSpAtk:
+BattleScript_GearUpStatBoost:
 	jumpifstatcanberaised BANK_TARGET STAT_ATK GearUp_Atk
-	jumpifstatcanberaised BANK_TARGET STAT_SPATK GearUp_Skip2
+	jumpifstatcanberaised BANK_TARGET STAT_SPATK GearUpLoop
+	goto GearUpLoop
 
 GearUp_Atk:
 	attackanimation
@@ -469,29 +436,20 @@ GearUp_Atk:
 	setbyte STAT_ANIM_PLAYED 0x0
 	playstatchangeanimation BANK_TARGET, STAT_ANIM_ATK | STAT_ANIM_SPATK, STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES
 	setstatchanger STAT_ATK | INCREASE_1
-	statbuffchange STAT_TARGET | STAT_BS_PTR | STAT_CERTAIN GearUp_SpAtk
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 GearUp_SpAtk
+	statbuffchange STAT_TARGET | STAT_BS_PTR RaiseUserDef1_SpDef
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 RaiseUserDef1_SpDef
 	printfromtable 0x83FE57C
 	waitmessage DELAY_1SECOND
 
 GearUp_SpAtk:
 	setstatchanger STAT_SPATK | INCREASE_1
-	statbuffchange STAT_TARGET | STAT_BS_PTR | STAT_CERTAIN GearUp_Skip2
-	jumpifbyte 0x0 MULTISTRING_CHOOSER 0x2 GearUp_Skip2
+	statbuffchange STAT_TARGET | STAT_BS_PTR GearUpLoop
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 GearUpLoop
 	printfromtable 0x83FE57C
 	waitmessage DELAY_1SECOND
 
-GearUp_Skip2:
-	addbyte SEED_HELPER 0x1
-	jumpifbyte NOTANDS BATTLE_TYPE BATTLE_DOUBLE GearUp_end
-	jumpifbyte EQUALS SEED_HELPER 0x2 GearUp_end
-	callasm SetTargetPartner
-	goto GearUp_MagneticLoop
-
-GearUp_end:
-	setword SEED_HELPER 0x0
-	jumpifbyte EQUALS ANIM_TARGETS_HIT 0x0 FAILED
-	goto BS_MOVE_END
+GearUpLoop:
+	callasm MagnetFluxLooper
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
