@@ -806,6 +806,7 @@ void HandleInputChooseTarget(void)
     int i;
     u8 identities[4];
     memcpy(identities, sTargetIdentities, 4 /*ARRAY_COUNT(sTargetIdentities)*/); //sTargetIdentities = 0x8250980
+    struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct*)(&gBattleBufferA[gActiveBattler][4]);
 
     DoBounceEffect(gMultiUsePlayerCursor, BOUNCE_HEALTHBOX, 15, 1); //0x8012138
 
@@ -843,8 +844,7 @@ void HandleInputChooseTarget(void)
         {
             u8 currSelIdentity = GetBattlerPosition(gMultiUsePlayerCursor);
 			
-			u16 move = gPlayerParty[gBattlerPartyIndexes[gActiveBattler]].moves[gMoveSelectionCursor[gActiveBattler]];
-			
+			u16 move = moveInfo->moves[gMoveSelectionCursor[gActiveBattler]];	
 			switch (move) {
 				case MOVE_ACUPRESSURE:
 					if (!(gAbsentBattlerFlags & gBitTable[gMultiUsePlayerCursor ^ BIT_FLANK]))
@@ -877,7 +877,7 @@ void HandleInputChooseTarget(void)
             } while (gMultiUsePlayerCursor == gBattlersCount);
 	
             i = 0;
-			move = gPlayerParty[gBattlerPartyIndexes[gActiveBattler]].moves[gMoveSelectionCursor[gActiveBattler]];
+			move = moveInfo->moves[gMoveSelectionCursor[gActiveBattler]];
             switch (GetBattlerPosition(gMultiUsePlayerCursor)) {
 				case B_POSITION_PLAYER_LEFT:
 				case B_POSITION_PLAYER_RIGHT:
@@ -907,7 +907,7 @@ void HandleInputChooseTarget(void)
         {
             u8 currSelIdentity = GetBattlerPosition(gMultiUsePlayerCursor);
 
-			u16 move = gPlayerParty[gBattlerPartyIndexes[gActiveBattler]].moves[gMoveSelectionCursor[gActiveBattler]];
+			u16 move = moveInfo->moves[gMoveSelectionCursor[gActiveBattler]];
 			switch (move) {
 				case MOVE_ACUPRESSURE:
 					if (!(gAbsentBattlerFlags & gBitTable[gMultiUsePlayerCursor ^ BIT_FLANK]))
@@ -940,7 +940,7 @@ void HandleInputChooseTarget(void)
             } while (gMultiUsePlayerCursor == gBattlersCount);
 
             i = 0;
-			move = gPlayerParty[gBattlerPartyIndexes[gActiveBattler]].moves[gMoveSelectionCursor[gActiveBattler]];
+			move = moveInfo->moves[gMoveSelectionCursor[gActiveBattler]];
             switch (GetBattlerPosition(gMultiUsePlayerCursor)) {
 				case B_POSITION_PLAYER_LEFT:
 				case B_POSITION_PLAYER_RIGHT:
