@@ -7,6 +7,8 @@ extern u8* gBattleScriptsForMoveEffects[];
 
 extern u8 BattleScript_DarkVoidFail[];
 extern u8 BattleScript_FlowerShieldRototillerStatBoost[];
+extern u8 BattleScript_MagneticFluxStatBoost[];
+extern u8 BattleScript_GearUpStatBoost[];
 extern u8 BattleScript_SapSipperAromatherapy[];
 extern u8 BattleScript_DefogAdditionalEffects[];
 extern u8 BattleScript_PledgeCombined[];
@@ -126,17 +128,48 @@ void FlowerShieldLooper(void) {
 	for (; *SeedHelper < gBattlersCount; ++*SeedHelper) {
 		u8 bank = gBanksByTurnOrder[*SeedHelper];
 		if (IsOfType(bank, TYPE_GRASS) 
+		&& gBattleMons[bank].hp
 		&& !(gStatuses3[bank] & STATUS3_SEMI_INVULNERABLE)
-		&& !(gBattleMons[bank].status2 & STATUS2_SUBSTITUTE 
-		&& gBankAttacker != gBankTarget))
+		&& !(gBattleMons[bank].status2 & STATUS2_SUBSTITUTE))
 		{	
 			if (gCurrentMove == MOVE_FLOWERSHIELD)
-				gBattleScripting->statChanger = STAT_STAGE_DEF | INCREASE_1;
+				gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_DEF_PLUS_1;
 			else //Rototiller
-				gBattleScripting->statChanger = STAT_STAGE_ATK | INCREASE_1;
+				gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_ATK_PLUS_1;
 			
+			++*SeedHelper;
 			gBankTarget = bank;
-			gBattlescriptCurrInstr = BattleScript_FlowerShieldRototillerStatBoost;
+			gBattlescriptCurrInstr = BattleScript_FlowerShieldRototillerStatBoost - 5;
+			return;
+		}
+	}
+	
+	if (!gBattleScripting->animTargetsHit) //Not a single mon was affected
+		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+	else
+	{
+		gBattlescriptCurrInstr = BattleScript_MoveEnd - 5;
+		gBankTarget = gBankAttacker;
+	}
+}
+
+void MagnetFluxLooper(void) {
+	
+	for (; *SeedHelper < gBattlersCount; ++*SeedHelper) {
+		u8 bank = gBanksByTurnOrder[*SeedHelper];
+		if ((bank == gBankAttacker || bank == PARTNER(gBankAttacker))
+		&&  (ABILITY(bank) == ABILITY_PLUS || ABILITY(bank) == ABILITY_MINUS)
+		&& gBattleMons[bank].hp
+		&& !(gStatuses3[bank] & STATUS3_SEMI_INVULNERABLE)
+		&& !(gBattleMons[bank].status2 & STATUS2_SUBSTITUTE))
+		{	
+			++*SeedHelper;
+			gBankTarget = bank;
+			if (gCurrentMove == MOVE_MAGNETICFLUX)
+				gBattlescriptCurrInstr = BattleScript_MagneticFluxStatBoost - 5;
+			else
+				gBattlescriptCurrInstr = BattleScript_GearUpStatBoost - 5;
+			return;
 		}
 	}
 	
@@ -150,18 +183,8 @@ void FlowerShieldLooper(void) {
 }
 
 void ModifyGrowthInSun(void) {
-	if (WEATHER_HAS_EFFECT & gBattleWeather & WEATHER_SUN_ANY)
+	if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
 		gBattleScripting->statChanger += INCREASE_1;
-}
-
-void CheckIfTypePresent(void) {
-	u8 type = FormCounter;
-	FormCounter = FALSE;
-	
-	for (int i = 0; i < gBattlersCount; ++i) {
-		if (IsOfType(i, type))
-			FormCounter = TRUE;
-	}
 }
 
 void AcupressureFunc(void) {
@@ -549,10 +572,13 @@ void CopycatFunc(void) {
 	|| gNewBS->LastUsedMove == 0xFFFF
 	|| CheckTableForMove(gNewBS->LastUsedMove, CopycatBanTable))
 	{
-		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;	
+		gBattlescriptCurrInstr = BattleScript_ButItFailed - 1 - 5;	//From PP Reduce
 	}
 	else
+	{
+		gHitMarker &= ~(HITMARKER_ATTACKSTRING_PRINTED);
 		gRandomMove = gNewBS->LastUsedMove;
+	}
 }
 
 void SetRoostFunc(void) {
