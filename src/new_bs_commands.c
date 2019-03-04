@@ -616,7 +616,7 @@ void atkFF15_jumpifstatcanbemodified(void)
 			goto STAT_ANIM_UP;
 	
 	STAT_ANIM_DOWN:
-        if (StatsMinned(gActiveBattler))
+        if (gBattleMons[gActiveBattler].statStages[currStat - 1] == 0)
 			FormCounter = 1;
 		
 		else if (gSideTimers[SIDE(gActiveBattler)].mistTimer && (gBattlescriptCurrInstr[1] != 0x0 || ABILITY(gBankAttacker) != ABILITY_INFILTRATOR))
@@ -646,7 +646,7 @@ void atkFF15_jumpifstatcanbemodified(void)
 			goto STAT_ANIM_DOWN;
 	
 	STAT_ANIM_UP:	;
-		if (StatsMaxed(gActiveBattler))
+		if (gBattleMons[gActiveBattler].statStages[currStat - 1] >= 12)
 		{
 			FormCounter = 5;
 			gBattlescriptCurrInstr += 8;
