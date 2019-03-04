@@ -484,7 +484,7 @@ AttackAnimationTable:
 .word ANIM_RAGEPOWDER
 .word ANIM_WAKEUPSLAP
 .word ANIM_RAZORSHELL
-.word 0x81c6f34		 @ ANIM_COPYCAT -> ANIM_NONE
+.word ANIM_COPYCAT
 .word 0x81C9ABA		@ ANIM_MIRACLEEYE -> ANIM_MEANLOOK
 .word ANIM_SUCKERPUNCH
 .word ANIM_SCALD
@@ -4065,7 +4065,20 @@ RAZOR_SHELL: objtemplate ANIM_TAG_RAZOR_SHELL ANIM_TAG_RAZOR_SHELL 0x83ACB58 0x8
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
 ANIM_COPYCAT:
-endanimation
+	loadparticle ANIM_TAG_ORBS @Recover Particles
+	pokespritetoBG side_attacker 
+	setblends 0x80c 
+	soundcomplex 0x85 0xc0 0xd 0x3 
+	launchtask AnimTask_pal_fade_complex 0x2 0x6 PAL_ATK 0x0 0x6 0x0 0xb 0x7fff  
+	call RECOVER_LOAD_PARTICLES 
+	call RECOVER_LOAD_PARTICLES 
+	call RECOVER_LOAD_PARTICLES 
+	waitanimation 
+	pokespritefromBG side_attacker 
+	resetblends 
+	pause 0x1
+	waitanimation 
+	endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
@@ -13288,6 +13301,7 @@ ANIM_MAGNETICFLUX:
 	loadparticle ANIM_TAG_THIN_RING @uproar
 	loadparticle ANIM_TAG_SPARK_2 @paralyze_chance_anim
 	loadparticle ANIM_TAG_SMALL_EMBER @yellow color
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF | PAL_ATK 0x2 0x0 0x9 0x243B
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF | PAL_ATK_PARTNER 0x2 0x0 0x9 0x243B
 	soundcomplex 0xd5 0xc0 0x12 0x3  
 	launchtask 0x80DF525 0x5 0x0
@@ -13300,6 +13314,7 @@ ANIM_MAGNETICFLUX:
 	launchtemplate FLUX_YELLOWUPROAR 0x3 0x6 0x0 0x0 0x0 0x0 0x1f 0x8 
 	call FLUX_SPARKS2
 	waitanimation
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF | PAL_ATK 0x2 0x9 0x0 0x243B
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF | PAL_ATK_PARTNER 0x2 0x9 0x0 0x243B
 	waitanimation
 	endanimation
