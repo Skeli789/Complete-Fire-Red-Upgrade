@@ -14438,26 +14438,28 @@ LASTRESORT_STARS: objtemplate ANIM_TAG_PAIN_SPLIT ANIM_TAG_DUCK 0x83AC9D0 0x8231
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
+@ credit to ghoulslash
 ANIM_SKYDROP:
-	loadparticle ANIM_TAG_ROUND_SHADOW 
-	loadparticle ANIM_TAG_IMPACT 
-	choosetwoturnanim SD_FIRST_TURN SD_SECOND_TURN
+	loadparticle 0x27ac 
+	loadparticle 0x2797 
+	choosetwoturnanim FIRST_TURN SECOND_TURN
 	endanimation
 
-SD_FIRST_TURN:
+FIRST_TURN:
 	makebankinvisible bank_attacker
-	loadparticle ANIM_TAG_SMALL_BUBBLES 
-	loadparticle ANIM_TAG_WHITE_FEATHER 
+	loadparticle 0x27ab @mist ball
+	loadparticle 0x281e 
+	loadparticle 0x27ac @fly
 	pause 0x0 
 	playsound2 0x7a 0xc0 
-	launchtemplate 0x83e64e8 0x80 0x6 0x0 0x0 0x0 0x0 0x1e 0x0 
+	launchtemplate SKYDROP_FLY_BALL 0x80 0x6 0x0 0x0 0x0 0x0 0x1e 0x0 
 	waitanimation 
 	makebankinvisible bank_target
 	playsound2 0x97 0xc0 
-	launchtemplate 0x83e6bb8 0x2 0x4 0x0 0x0 0xd 0x150 
+	launchtemplate SKYDROP_TARGET_FLY 0x2 0x4 0x0 0x0 0xd 0x150
 	endanimation 	
 	
-SD_SECOND_TURN:
+SECOND_TURN:
 	makebankvisible bank_target
 	pokespritetoBG side_target 
 	setblends 0x80c 
@@ -14471,8 +14473,8 @@ SD_SECOND_TURN:
 	pokespritefromBG side_target 
 	resetblends 
 	goto 0x81cfc96 
-	loadparticle ANIM_TAG_HANDS_AND_FEET 
-	loadparticle ANIM_TAG_IMPACT 
+	loadparticle 0x279f 
+	loadparticle 0x2797 
 	pokespritetoBG side_target 
 	leftbankBG_over_partnerBG bank_target 
 	setblends 0x80c 
@@ -14486,6 +14488,25 @@ SD_SECOND_TURN:
 	pokespritefromBG side_target 
 	resetblends 
 	endanimation 
+
+.align 2
+SKYDROP_FLY_BALL: objtemplate 0x27ac 0x27ac 0x83ACAA0 0x8231CF0 0x0 SKYDROP_ROT 0x80AFD4D 
+SKYDROP_ROT:
+.word SKYDROP_ROTATIONS
+SKYDROP_ROTATIONS: .hword 0xa0, 0x100, 0x50, 0x0, 0x7fff, 0x0, 0x0, 0x0
+SKYDROP_TARGET_FLY: objtemplate 0x27ac 0x27ac 0x83acaa0 0x8231cf0 0x0 0x83e6b8c TARGET_FLY_ASM+1
+
+TARGET_FLY_ASM:
+	push {r4, lr}
+	mov r4, r0
+	mov r1, #0x1
+	bl InitSpritePosToAnimTarget
+	ldr r1, =(0x080B1BBA +1)
+	bx r1
+
+InitSpritePosToAnimTarget:
+	ldr r2, =(0x08075114 +1)
+	bx r2
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
