@@ -14441,13 +14441,13 @@ LASTRESORT_STARS: objtemplate ANIM_TAG_PAIN_SPLIT ANIM_TAG_DUCK 0x83AC9D0 0x8231
 @ credit to ghoulslash
 ANIM_SKYDROP:
 	loadparticle 0x27ac 
-	loadparticle 0x2797 
+	loadparticle ANIM_TAG_IMPACT 
 	choosetwoturnanim SKYDROP_FIRST_TURN SKYDROP_SECOND_TURN
 	endanimation
 
 SKYDROP_FIRST_TURN:
 	makebankinvisible bank_attacker
-	loadparticle 0x27ab @mist ball
+	loadparticle ANIM_TAG_SMALL_BUBBLES @mist ball
 	loadparticle 0x281e 
 	loadparticle 0x27ac @fly
 	pause 0x0 
@@ -14474,7 +14474,7 @@ SKYDROP_SECOND_TURN:
 	resetblends 
 	goto 0x81cfc96 
 	loadparticle 0x279f 
-	loadparticle 0x2797 
+	loadparticle ANIM_TAG_IMPACT 
 	pokespritetoBG side_target 
 	leftbankBG_over_partnerBG bank_target 
 	setblends 0x80c 
@@ -14526,8 +14526,50 @@ CELEBRATE_TEMPLATE: objtemplate ANIM_TAG_ITEM_BAG ANIM_TAG_ITEM_BAG 0x83ACA38 0x
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool  
+@ credit to ghoulslash
 ANIM_HOLDHANDS:
-	endanimation
+	loadparticle ANIM_TAG_TAG_HAND @hand
+	loadparticle ANIM_TAG_MAGENTA_HEART @charm
+	loadparticle ANIM_TAG_VERTICAL_HEX @red
+	playsound2 0xc3 0xc0 
+	launchtask 0x809907d 0x2 0x5 0x0 0xc 0x6 0x6 0x3 
+	launchtemplate HOLDHANDS_HEART+romsize 0x2 0x4 0x0 0xffe8 0x8 0x8c 
+	pause 0x8
+	launchtemplate HOLDHANDS_HEART+romsize 0x2 0x4 0x0 0xffe8 0x8 0x8c 
+	pause 0x8
+	launchtemplate HOLDHANDS_HEART+romsize 0x2 0x4 0x0 0xffe8 0x8 0x8c 
+	pause 0x8
+	launchtemplate HOLDHANDS_HEART+romsize 0x2 0x4 0x0 0xffe8 0x8 0x8c 
+	pause 0x8
+	launchtemplate HOLDHANDS_HEART+romsize 0x2 0x4 0x0 0xffe8 0x8 0x8c 
+	pause 0x8
+	launchtemplate HOLDHANDS_HEART+romsize 0x2 0x4 0x0 0xffe8 0x8 0x8c 
+	pause 0x8
+	launchtemplate HOLDHANDS_HEART+romsize 0x2 0x4 0x0 0xffe8 0x8 0x8c	
+	pause 0x8
+	launchtemplate HOLDHANDS_HEART+romsize 0x2 0x4 0x0 0xffe8 0x8 0x8c
+	pause 0x8
+	launchtemplate HOLDHANDS_HEART+romsize 0x2 0x4 0x0 0xffe8 0x8 0x8c
+	pause 0x8
+	launchtemplate HOLDHANDS_HEART+romsize 0x2 0x4 0x0 0xffe8 0x8 0x8c
+	waitanimation 	
+	launchtask 0x80e2ce5 0x5 0x0 
+	launchtemplate 0x83ff68c 0x28 0x1 0x0 
+	launchtemplate 0x83ff68c 0x28 0x1 0x1 
+	pause 0x13 
+	playsound2 0xd7 0x0 
+	launchtask AnimTask_move_bank_2 0x2 0x5 0x2 0x2 0x0 0x5 0x1 
+	pause 0xe 
+	playsound2 0xd7 0x0 
+	launchtask AnimTask_move_bank_2 0x2 0x5 0x2 0x2 0x0 0x5 0x1 
+	pause 0x14 
+	playsound2 0xd7 0x0 
+	launchtask AnimTask_move_bank_2 0x2 0x5 0x2 0x3 0x0 0xa 0x1 
+	launchtask 0x807616d 0x2 0x5 0x2 0x3ff 0xc 0x1 0x1 
+	endanimation 
+	
+.align 2
+HOLDHANDS_HEART: objtemplate ANIM_TAG_MAGENTA_HEART ANIM_TAG_VERTICAL_HEX 0x83AC9D0 0x8231CF0 0x0 0x8231CFC 0x80A2921 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
@@ -19701,10 +19743,10 @@ SPLINTER_THROWN_SHALLOW_PLAYER: .hword 0,0,0x0150,0,0x7fff,0,0,0
 .pool
 @ credit to ghoulslash
 ANIM_LETS_SNUGGLE_FOREVER:
-	loadparticle 0x27e2 @sharm
-	loadparticle 0x2758 @music note
-	loadparticle 0x27ab @fake tears
-	loadparticle 0x2851 @red
+	loadparticle ANIM_TAG_MAGENTA_HEART @sharm
+	loadparticle ANIM_TAG_MUSIC_NOTES @music note
+	loadparticle ANIM_TAG_SMALL_BUBBLES @fake tears
+	loadparticle ANIM_TAG_VERTICAL_HEX @red
 	makebankinvisible attacker_partner
 	makebankinvisible target_partner
 	launchtask 0x80e0559 0x5 0x3 0x0 0x2 0x0 
@@ -19749,7 +19791,7 @@ ANIM_LETS_SNUGGLE_FOREVER:
 	waitanimation
 	launchtemplate Template_Pal_Fade 0x2 0x5 PAL_ALL 0x2 0x0 0x10 0x0000
 	waitanimation
-	loadparticle 0x2757 @detect
+	loadparticle ANIM_TAG_SPARKLE_4 @detect
 	playsound2 0xca 0xc0 
 	launchtemplate SNUGGLE_EYES 0xd 0x2 0xa 0xfff2
 	launchtemplate SNUGGLE_EYES 0xd 0x2 0xfff6 0xfff2
@@ -19757,9 +19799,9 @@ ANIM_LETS_SNUGGLE_FOREVER:
 	launchtemplate Template_Pal_Fade 0x2 0x5 PAL_DEF 0x1 0x0 0x10 0x579D
 	launchtask 0x80a7fb1 0x5 0x0
 	pause 0x5
-	loadparticle 0x2797 @hit
-	loadparticle 0x27ff @painsplit
-	loadparticle 0x2759 @duck
+	loadparticle ANIM_TAG_IMPACT @hit
+	loadparticle ANIM_TAG_PAIN_SPLIT @painsplit
+	loadparticle ANIM_TAG_DUCK @duck
 	call SNUGGLE_SOUNDS
 	launchtask 0x8098f85 0x2 0x5 0x0 0xffee 0xa 0xa 0x4 
 	launchtask 0x8098f85 0x2 0x5 0x1 0x12 0xa 0xa 0x4 
@@ -19857,9 +19899,9 @@ SNUGGLE_SOUNDS:
 
 
 .align 2
-SNUGGLE_EYES: objtemplate 0x2757 0x2851 0x83AC9D8 0x83BF47C 0x0 0x8231CFC 0x8076FD1 
-SNUGGLE_STAR: objtemplate 0x27FF 0x2759 0x83AC9D0 0x8231CF0 0x0 0x8231CFC 0x80B0DF1
-SNUGGLE_HEART: objtemplate 0x27E2 0x2851 0x83AC9D0 0x8231CF0 0x0 0x8231CFC 0x80A9861 
+SNUGGLE_EYES: objtemplate ANIM_TAG_SPARKLE_4 ANIM_TAG_VERTICAL_HEX 0x83AC9D8 0x83BF47C 0x0 0x8231CFC 0x8076FD1 
+SNUGGLE_STAR: objtemplate ANIM_TAG_PAIN_SPLIT ANIM_TAG_DUCK 0x83AC9D0 0x8231CF0 0x0 0x8231CFC 0x80B0DF1
+SNUGGLE_HEART: objtemplate ANIM_TAG_MAGENTA_HEART ANIM_TAG_VERTICAL_HEX 0x83AC9D0 0x8231CF0 0x0 0x8231CFC 0x80A9861 
 
 @ hook at 0xA7FF8 via r1
 .align 2
