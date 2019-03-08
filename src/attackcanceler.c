@@ -548,7 +548,7 @@ u8 AtkCanceller_UnableToUseMove(void)
 				switch (gBattleMons[gBankAttacker].species) {
 					case PKMN_AEGISLASH:
 						if (SPLIT(gCurrentMove) != SPLIT_STATUS) {
-							DoFormChange(gBankAttacker, PKMN_AEGISLASH_BLADE, FALSE);
+							DoFormChange(gBankAttacker, PKMN_AEGISLASH_BLADE, FALSE, TRUE);
 							BattleScriptPushCursor();
 							gBattlescriptCurrInstr = BattleScript_StanceChangeToBlade;
 							gBattleScripting->bank = gBankAttacker;
@@ -557,7 +557,7 @@ u8 AtkCanceller_UnableToUseMove(void)
 					
 					case PKMN_AEGISLASH_BLADE:
 						if (gCurrentMove == MOVE_KINGSSHIELD) {
-							DoFormChange(gBankAttacker, PKMN_AEGISLASH, FALSE);
+							DoFormChange(gBankAttacker, PKMN_AEGISLASH, FALSE, TRUE);
 							BattleScriptPushCursor();
 							gBattlescriptCurrInstr = BattleScript_StanceChangeToShield;
 							gBattleScripting->bank = gBankAttacker;

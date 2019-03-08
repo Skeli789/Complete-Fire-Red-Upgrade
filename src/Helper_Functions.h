@@ -40,7 +40,7 @@ extern ability_t CopyAbility(u8 bank);
 extern ability_t* GetAbilityLocation(u8 bank);
 extern bool8 UproarWakeUpCheck(u8 bank);
 extern bool8 IsUproarBeingMade(void);
-extern void DoFormChange(u8 bank, u16 species, u8 ReloadType);
+extern void DoFormChange(u8 bank, u16 species, bool8 ReloadType, bool8 ReloadStats);
 extern pokemon_t* GetIllusionPartyData(u8 bank);
 extern bool8 BankMovedBefore(u8 bank1, u8 bank2);
 extern bool8 IsFirstAttacker(u8 bank);
