@@ -3,6 +3,7 @@
 
 //Change this to account for new base Exp
 //Test battle continuing after Wild Poke kills itself with Explosion
+//Level 100 pokes gain EVs
 
 #define SE_EXP 0x1B
 #define MUS_WILD_POKE_VICTORY 0x137
@@ -58,7 +59,7 @@ void atk23_getexp(void) {
     {
     case GetExp_Start: // check if should receive exp at all
 		
-        if (GetBattlerSide(gBankFainted) != B_SIDE_OPPONENT 
+        if (SIDE(gBankFainted) != B_SIDE_OPPONENT 
 		|| gBattleStruct->givenExpMons & gBitTable[gBattlerPartyIndexes[gBankFainted]]
 		|| (gBattleTypeFlags &
              (BATTLE_TYPE_LINK
@@ -82,8 +83,7 @@ void atk23_getexp(void) {
         break;
 	
     case GetExp_CheckCurrentMonDeserving: //Check if Current mon deserves EXP
-		if (gPlayerParty[gBattleStruct->expGetterId].level >= MAX_LEVEL
-		||  gPlayerParty[gBattleStruct->expGetterId].hp == 0
+		if (gPlayerParty[gBattleStruct->expGetterId].hp == 0
 		||  GetMonData(&gPlayerParty[gBattleStruct->expGetterId], MON_DATA_IS_EGG, 0))
         {
             gBattleStruct->sentInPokes >>= 1; //One less pokemon to distribute exp to
@@ -116,6 +116,15 @@ void atk23_getexp(void) {
 			break;
 		}
 		#endif
+		
+		if (gPlayerParty[gBattleStruct->expGetterId].level >= MAX_LEVEL) //Max level mons still gain EVs
+		{
+			MonGainEVs(&gPlayerParty[gBattleStruct->expGetterId], gBattleMons[gBankFainted].species);
+            gBattleStruct->sentInPokes >>= 1; //One less pokemon to distribute exp to
+            gBattleScripting->expStateTracker = GetExp_PrepareLoop;
+            gBattleMoveDamage = 0; // used for exp
+			break;
+		}
 		
 		gBattleScripting->expStateTracker++;
 	__attribute__ ((fallthrough));
