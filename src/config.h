@@ -100,6 +100,7 @@ enum
 #define CUSTOM_BATTLE_BACKGROUNDS //If this line remains uncommented, setting BATTLE_BG_VAR will allow custom backgrounds to be loaded in battles
 //#define OVERWRITE_BG_FOR_LEADER_CHAMPION //If this remains uncommented, special Battle Background palettes will be loaded in for battles against Gym Leaders and the Champion
 #define BRIDGE_FIX //If this remains uncommented, the water battle background will only be loaded if the player's surfing sprite is shown
+#define MEGA_EVOLUTION_FEATURE //Comment this line to remove Mega Evolutions
 
 /* Misc Effect Options */
 //#define OLD_BURN_DAMAGE //Uncomment this line if you want burn damage to do 1/8 of max health instead of 1/16
