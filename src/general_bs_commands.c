@@ -2459,7 +2459,7 @@ void atkB0_trysetspikes(void) {
 				gSideAffecting[defSide] |= SIDE_STATUS_SPIKES;
 				gSideTimers[defSide].srAmount = 1;
 				gBattlescriptCurrInstr += 5;
-				stringcase = 2;
+				stringcase = 1;
 			}
 			break;
 		
@@ -2472,7 +2472,7 @@ void atkB0_trysetspikes(void) {
 				gSideAffecting[defSide] |= SIDE_STATUS_SPIKES;
 				gSideTimers[defSide].tspikesAmount++;
 				gBattlescriptCurrInstr += 5;
-				stringcase = 4;
+				stringcase = 2;
 			}
 			break;
 		
@@ -2485,7 +2485,7 @@ void atkB0_trysetspikes(void) {
 				gSideAffecting[defSide] |= SIDE_STATUS_SPIKES;
 				gSideTimers[defSide].stickyWeb = 1;
 				gBattlescriptCurrInstr += 5;
-				stringcase = 6;
+				stringcase = 3;
 			}
 			break;
 		
