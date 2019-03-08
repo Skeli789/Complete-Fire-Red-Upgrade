@@ -419,7 +419,7 @@ struct SpecialStatus
     s32 moveturnLostHP_special;
     u8 moveturnPhysicalBank;
     u8 moveturnSpecialBank;
-    u8 switchInAbilityDone : 1;
+    u8 field12 : 1;
     u8 field13;
 };
 
@@ -774,6 +774,7 @@ struct NewBattleStruct
 	u8 backupMoveEffect;
 	u8 FaintEffectsTracker;
 	u8 blockTracker;
+	u8 savedObjId;
 	
 	//Booleans
 	bool8 NoMoreMovingThisTurn : 1;
@@ -795,6 +796,7 @@ struct NewBattleStruct
 	bool8 secondaryEffectApplied : 1;
 	bool8 bypassSubstitute : 1;
 	bool8 criticalCapture : 1;
+	bool8 trainerSlideLowHpMsgDone : 1;
 	
 	//Other
 	u16 LastUsedMove;
@@ -1166,24 +1168,24 @@ struct BattleAnimationInfo
 
 struct BattleHealthboxInfo
 {
-    u8 flag_x1 : 1;
-    u8 flag_x2 : 1;
-    u8 flag_x4 : 1;
-    u8 ballAnimActive : 1; // 0x8
-    u8 statusAnimActive : 1; // x10
-    u8 animFromTableActive : 1; // x20
-    u8 specialAnimActive : 1; //x40
-    u8 flag_x80 : 1;
-    u8 field_1_x1 : 1;
-    u8 field_1_x1E : 4;
-    u8 field_1_x20 : 1;
-    u8 field_1_x40 : 1;
-    u8 field_1_x80 : 1;
-    u8 field_2;
-    u8 field_3;
+    u8 partyStatusSummaryShown:1;
+    u8 healthboxIsBouncing:1;
+    u8 battlerIsBouncing:1;
+    u8 ballAnimActive:1; // 0x8
+    u8 statusAnimActive:1; // x10
+    u8 animFromTableActive:1; // x20
+    u8 specialAnimActive:1; // x40
+    u8 flag_x80:1;
+    u8 field_1_x1:1;
+    u8 field_1_x1E:4;
+    u8 field_1_x20:1;
+    u8 field_1_x40:1;
+    u8 field_1_x80:1;
+    u8 healthboxBounceSpriteId;
+    u8 battlerBounceSpriteId;
     u8 animationState;
     u8 field_5;
-    u8 field_6;
+    u8 matrixNum;
     u8 shadowSpriteId;
     u8 field_8;
     u8 field_9;
@@ -1280,7 +1282,7 @@ struct MegaData
   u8 state;
   u8 activeBank;
   u8* script;
-  bool8 megaEvoInProgress; //Used to tell the game whether or not the turn order should be recalculated
+  bool8 megaEvoInProgress : 1; //Used to tell the game whether or not the turn order should be recalculated
 };
 
 struct UltraData 
@@ -1310,6 +1312,7 @@ struct SpecialZMoves
 	u16 species;
 	u16 item;
 	u16 move;
+	u16 zmove;
 };
 
 extern struct BattleSpritesGfx* gMonSpritesGfx;
