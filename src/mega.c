@@ -585,6 +585,8 @@ void MegaTriggerCallback(struct Sprite* self)
 	
 	if (gBattleBankFunc[gStringBank] == 0x0802EA11) //HandleInputChooseMove
 	{
+		self->invisible = FALSE;
+	
 		if (self->data[3] > 0)
 			self->data[3] -= 2;
 		else
@@ -597,6 +599,7 @@ void MegaTriggerCallback(struct Sprite* self)
 		else 
 		{
 			// Hide offscreen once invisible
+			self->invisible = TRUE;
 			self->pos1.x = -32;
 			return;
 		}
@@ -768,7 +771,7 @@ void LoadMegaGraphics(u8 state)
 {
 #ifdef MEGA_EVOLUTION_FEATURE
 	u8 objid;
-
+	
 	if (state == 2) 
 	{
 		LoadSpritePalette(&MegaIndicatorPalette);
@@ -797,8 +800,11 @@ void LoadMegaGraphics(u8 state)
 		  gSprites[objid].data[0] = bank;
 		}
 		
-		CreateSprite(&MegaTriggerTemplate, 130, 90, 1);
-		CreateSprite(&UltraTriggerTemplate, 130, 90, 1);
+		objid = CreateSprite(&MegaTriggerTemplate, 130, 90, 1);
+		gSprites[objid].invisible = TRUE;
+		
+		objid = CreateSprite(&UltraTriggerTemplate, 130, 90, 1);
+		gSprites[objid].invisible = TRUE;
 	}
 #endif
 }

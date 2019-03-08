@@ -362,7 +362,7 @@ void RunTurnActionsFunctions(void)
 				for (i = *megaBank; i < gBattlersCount; ++i, ++*megaBank) {
 					u8 bank = gBanksByTurnOrder[i];
 					gActiveBattler = bank;
-					if (gNewBS->MegaData->chosen[bank] && !gNewBS->MegaData->done[bank] && !(gNewBS->ZMoveData->partyIndex[SIDE(bank)] &= gBitTable[gBattlerPartyIndexes[bank]])) {
+					if (gNewBS->MegaData->chosen[bank] && !gNewBS->MegaData->done[bank] && !(gNewBS->ZMoveData->partyIndex[SIDE(bank)] & gBitTable[gBattlerPartyIndexes[bank]])) {
 						u8* script = DoMegaEvolution(bank);
 						if (script != NULL) 
 						{	
@@ -466,6 +466,8 @@ void RunTurnActionsFunctions(void)
 				gNewBS->MegaData->activeBank = 0;
 				gNewBS->MegaData->megaEvoInProgress = FALSE;
 		}
+		
+		*megaBank = 0;
 	
 		while (gBattleStruct->focusPunchBank < gBattlersCount)
 		{

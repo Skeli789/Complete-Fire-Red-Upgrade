@@ -615,7 +615,7 @@ bool8 IsFirstAttacker(u8 bank) {
 bool8 CanTransferItem(u16 species, u16 item, pokemon_t* party_data) {
 	item_effect_t effect = gItems[SanitizeItemId(item)].holdEffect;
 	u8 quality = ItemId_GetHoldEffectParam(item);
-	evolution* evolutions = (evolution*) ((u32) evolution_table + party_data->species * sizeof(evolution) * (evos_per_poke + 1));
+	const struct Evolution* evolutions = gEvolutionTable[party_data->species];
 	int i;
 	
 	switch (effect) {
@@ -643,8 +643,10 @@ bool8 CanTransferItem(u16 species, u16 item, pokemon_t* party_data) {
 			break;
 
 		case ITEM_EFFECT_MEGA_STONE:
-			for (i = 0; i <= evos_per_poke; ++i) {
-				if (evolutions[i].type == MEGA_EVOLUTION && evolutions[i].argument == item)
+			for (i = 0; i < EVOS_PER_MON; ++i) 
+			{
+				if ((evolutions[i].method == MEGA_EVOLUTION && evolutions[i].param == item) //Can Mega Evolve
+				||  (evolutions[i].method == MEGA_EVOLUTION && evolutions[i].param == 0)) //Is Mega
 					return FALSE;
 			}
 			break;
