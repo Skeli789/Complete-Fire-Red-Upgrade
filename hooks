@@ -11,6 +11,7 @@ LoadBattleBG_EntryOverlay 800F2AC 1
 ##Other Battle Stuff
 BuildTrainerPartyHook 800FF7E 0
 BattleBeginFirstTurn 801385C 0
+TrainerSlidingEndTurnHook 08013D14 1
 IsRunningFromBattleImpossible 08013D54 0
 PartyMenuSwitchingHook 8014450 0
 GetWhoStrikesFirst 8014CD8 3
@@ -28,10 +29,15 @@ TurnBasedEffects 08018258 0
 HandleFaintedMonActions 08018F90 0
 HasNoMonsToSwitch 0x8019C10 3
 SetMoveEffect 801FF20 2
+
 SwitchMoveDataHook 0x802EF90 0
 MoveSelectionDisplayMoveType 8030940 0
+PlayerHandleFormChange 8031E40 0
 PlayerHandleExpBarUpdate 08032F4C 1
+OpponentHandleFormChange 08037760 0
 AI_TrySwitchOrUseItem 8039C84 0
+LinkOpponentHandleFormChange 0803C318 0
+
 BattleSetup_GetTerrainId 807FC5C 0
 EndBattleFlagClearHook 80804AC 0
 HandleIntroSlide 80BC3A0 1
@@ -73,6 +79,10 @@ GetMostSuitableMonToSwitchInto 8039E3C 0
 ##Mega Hooks
 MegaRetrieveDataHook 80148C0 0
 HandleInputChooseMove 802EA10 0
+LoadMegaGraphicsHook 803495C 1
+MegaLevelStringHook 80483A4 1
+CreateShakerHook 804BE80 3
+ObjcShakerHook 804BEDC 2
 
 BatonPassEffects 08012850 0
 
