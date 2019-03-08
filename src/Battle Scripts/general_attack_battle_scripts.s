@@ -1842,14 +1842,14 @@ BS_104_TripleKick:
 	ppreduce
 	accuracycheck BS_MOVE_MISSED 0x0
 	addbyte TRIPLE_KICK_POWER 10
-	goto BS_MOVE_END
+	goto BS_STANDARD_HIT
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 .global BS_105_StealItem
 BS_105_StealItem:
 	setmoveeffect MOVE_EFFECT_STEAL_ITEM @;Move to CMD49?
-	goto BS_MOVE_END
+	goto BS_STANDARD_HIT
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
