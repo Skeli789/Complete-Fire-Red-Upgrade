@@ -15616,7 +15616,7 @@ HEX_SIDE_ASM:
 	cmp r0, #0x0
 	bne OtherMove
 	push {r1-r3}
-	bl IsMoveNeverEndingNightmareOrDevastatingDrake
+	bl IsMoveNeverEndingNightmareOrDevastatingDrakeOrLightThatBurnsTheSky
 	pop {r1-r3}
 	cmp r0, #0x0
 	bne OnTarget
@@ -20613,7 +20613,7 @@ ANIM_LIGHT_THAT_BURNS_THE_SKY:
 	waitanimation 
 	launchtask 0x80ae541 0x2 0x4 0x0 0x3c 0x2 0xc 	@ charge particles to attacker
 	pause 0x1e 
-	soundcomplex 0xc1 0xc0 0xe 0xa
+	soundcomplex 0xce 0xc0 0xe 0xa
 	launchtemplate 0x83E6864 0x83 0x1 0x0
 	call LIGHTBURN_GREEN_SPARKS
 	call LIGHTBURN_GREEN_SPARKS
@@ -20645,26 +20645,26 @@ ANIM_LIGHT_THAT_BURNS_THE_SKY:
 	launchtemplate 0x83e6070 0x2 0x8 0xffc0 0xffd8 0x25 0x2c 0xe0 0x8 0x2 0x3 	
 	pause 0x6
 	playsound2 0x86 0x3f  
-	launchtask AnimTask_screen_shake 0x5 0x3 bank_target 0x3 0x3c	
+	launchtask AnimTask_screen_shake 0x5 0x3 bank_target 0x3 0x3c
+	unloadparticle ANIM_TAG_LEAF @green
+	unloadparticle ANIM_TAG_ELECTRIC_ORBS @charge
 	loadparticle ANIM_TAG_FIRE_PLUME @blast burn
 	loadparticle ANIM_TAG_VERTICAL_HEX @hexagon
 	loadparticle ANIM_TAG_UNUSED_EXPLOSION_2 @explode
-	unloadparticle ANIM_TAG_LEAF @green
-	unloadparticle ANIM_TAG_ELECTRIC_ORBS @charge
 	pokespritetoBG bank_target
 	call LIGHTBURN_NUCLEAR_GEYSER 
 	call LIGHTBURN_BLAST_1
 	call LIGHTBURN_NUCLEAR_GEYSER 
 	call LIGHTBURN_BLAST_2
 	call LIGHTBURN_NUCLEAR_GEYSER
-	launchtemplate Template_Pal_Fade 0x2 0x5 PAL_ALL 0x2 0x0 0x10 0x5bff
+	launchtask AnimTask_pal_fade 0x2 0x5 PAL_ALL 0x2 0x0 0x10 0x5bff
 	call LIGHTBURN_BLAST_3
 	pokespritefromBG bank_target
 	waitanimation 
 	pause 0x10
-	launchtemplate Template_Pal_Fade 0x2 0x5 PAL_ALL 0x0 0x0 0x10 0x5bff
+	launchtask AnimTask_pal_fade 0x2 0x5 PAL_ALL 0x0 0x10 0x0 0x5bff
 	loaddefaultBG
-	waitanimation
+	waitforBG
 	endanimation
 	
 LIGHTBURN_BLAST_1:
