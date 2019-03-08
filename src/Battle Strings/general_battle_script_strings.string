@@ -74,3 +74,23 @@ The Lucky Chant shielded\n[FD][36] team from critical hits!
 
 #org @FreedFromSkyDropString
 [FD][10] was freed\nfrom the Sky Drop!
+
+//Status Strings
+
+#org @gText_TargetWrappedInMistyTerrain
+[FD][10] surrounds\nitself in a protective mist!
+
+#org @gText_TargetWrappedInElectricTerrain
+[FD][10] surrounds\nitself with electrified terrain!
+
+#org @gText_TargetAlreadyHasStatusCondition
+[FD][10] already has\na status condition!
+
+#org @gText_SweetVeilProtects
+[FD][10] surrounded\nitself with a veil of sweetness!
+
+#org @gText_FlowerVeilProtects
+[FD][10] surrounded\nitself with a veil of petals!
+
+#org @gText_TargetProtectedByAbility
+[FD][10] is protected\nby its [FD][19]!
