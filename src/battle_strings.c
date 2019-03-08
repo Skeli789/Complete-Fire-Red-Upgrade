@@ -565,18 +565,33 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
                 break;
             case B_TXT_LAST_ABILITY: // last used ability
                 toCpy = gAbilityNames[gLastUsedAbility];
+				
+				if (toCpy[3] == 0x8 || toCpy[3] == 0x9) //Expanded Ability Names
+					toCpy = T2_READ_PTR(toCpy);
                 break;
             case B_TXT_ATK_ABILITY: // attacker ability
                 toCpy = gAbilityNames[gAbilitiesPerBank[gBankAttacker]];
+				
+				if (toCpy[3] == 0x8 || toCpy[3] == 0x9) //Expanded Ability Names
+					toCpy = T2_READ_PTR(toCpy);
                 break;
             case B_TXT_DEF_ABILITY: // target ability
                 toCpy = gAbilityNames[gAbilitiesPerBank[gBattlerTarget]];
+				
+				if (toCpy[3] == 0x8 || toCpy[3] == 0x9) //Expanded Ability Names
+					toCpy = T2_READ_PTR(toCpy);
                 break;
             case B_TXT_SCR_ACTIVE_ABILITY: // scripting active ability
                 toCpy = gAbilityNames[gAbilitiesPerBank[gBattleScripting->bank]];
+				
+				if (toCpy[3] == 0x8 || toCpy[3] == 0x9) //Expanded Ability Names
+					toCpy = T2_READ_PTR(toCpy);
                 break;
             case B_TXT_EFF_ABILITY: // effect battlerId ability
                 toCpy = gAbilityNames[gAbilitiesPerBank[gEffectBank]];
+				
+				if (toCpy[3] == 0x8 || toCpy[3] == 0x9) //Expanded Ability Names
+					toCpy = T2_READ_PTR(toCpy);
                 break;
             case B_TXT_TRAINER1_CLASS: // trainer class name
                 if (gTrainerBattleOpponent_A == 0x400) //Lol Secret Bases
