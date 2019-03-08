@@ -13,7 +13,10 @@ Faint_ClearEffects,
 Faint_SoulHeart,
 Faint_ReceiverActivate,
 Faint_SwitchInAbilities,
-Faint_PrimalWeather
+Faint_PrimalWeather,
+Faint_FormsRevert,
+Faint_FormsStats,
+Faint_FormsHP,
 };
 
 enum
