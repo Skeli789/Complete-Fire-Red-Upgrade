@@ -823,6 +823,9 @@ bool8 CanBeGeneralStatused(u8 bank) {
 	
 	if (TerrainType == MISTY_TERRAIN && CheckGrounding(bank))
 		return FALSE;
+		
+	if (gBattleMons[bank].status1)
+		return FALSE;
 
 	return TRUE;
 }
