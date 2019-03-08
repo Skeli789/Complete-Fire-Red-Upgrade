@@ -36,6 +36,7 @@ extern u8 BattleScript_MoodyRegular[];
 extern u8 BattleScript_BadDreams[];
 extern u8 BattleScript_Harvest[];
 extern u8 BattleScript_Pickup[];
+extern u8 BattleScript_PrintCustomStringEnd3[];
 extern u8 BattleScript_SoundproofProtected[];
 extern u8 BattleScript_FlashFireBoost[];
 extern u8 BattleScript_FlashFireBoost_PPLoss[];
@@ -80,6 +81,7 @@ extern u8 ElectricTerrainSetString[];
 extern u8 GrassyTerrainSetString[];
 extern u8 MistyTerrainSetString[];
 extern u8 PsychicTerrainSetString[];
+extern u8 gText_SlowStartEnd[];
 
 extern ability_t TraceBanTable[];
 extern move_t BallBombMoveTable[];
@@ -981,7 +983,15 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 							break;
 						}
 					}
-			
+					break;
+				
+				case ABILITY_SLOWSTART:
+					if (gNewBS->SlowStartTimers[bank] && gBattleMons[bank].hp && --gNewBS->SlowStartTimers[bank] == 0) 
+					{
+						BattleStringLoader = gText_SlowStartEnd;
+						BattleScriptPushCursorAndCallback(BattleScript_PrintCustomStringEnd3);
+						++effect;
+					}
                 }
             }
             break;

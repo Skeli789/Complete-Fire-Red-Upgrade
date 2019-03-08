@@ -1024,10 +1024,13 @@ u8 TurnBasedEffects(void) {
 						break;
 						
 					case(ET_Harvest_Pickup):
-						if (gBattleMons[gActiveBattler].hp && !(gBattleMons[gActiveBattler].item)) {
+						if (gBattleMons[gActiveBattler].hp 
+						&& (!gBattleMons[gActiveBattler].item || ABILITY(gActiveBattler) == ABILITY_SLOWSTART)) 
+						{
 							switch(ABILITY(gActiveBattler)) {
 							case ABILITY_HARVEST:
 							case ABILITY_PICKUP:
+							case ABILITY_SLOWSTART:
 								if (AbilityBattleEffects(ABILITYEFFECT_ENDTURN, gActiveBattler, 0, 0, 0))
 									effect++;
 							}

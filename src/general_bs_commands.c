@@ -3167,6 +3167,7 @@ void atkD3_trycopyability(void) { //Role Play
 	{
 		*atkAbilityLoc = defAbility;
         gLastUsedAbility = defAbility;
+		gNewBS->SlowStartTimers[gBankAttacker] = 0;
 		gStatuses3[gBankAttacker] &= ~(STATUS3_SWITCH_IN_ABILITY_DONE);
         gBattlescriptCurrInstr += 5;
     }
@@ -3193,6 +3194,8 @@ void atkDA_tryswapabilities(void) { //Skill Swap
 	{
         *atkAbilityLoc = defAbility;
         *defAbilityLoc = atkAbility;
+		gNewBS->SlowStartTimers[gBankAttacker] = 0;
+		gNewBS->SlowStartTimers[gBankTarget] = 0;
 		gStatuses3[gBankAttacker] &= ~(STATUS3_SWITCH_IN_ABILITY_DONE);
 		gStatuses3[gBankTarget] &= ~(STATUS3_SWITCH_IN_ABILITY_DONE);
         gBattlescriptCurrInstr += 5;

@@ -1268,6 +1268,7 @@ void AbilityChangeBSFunc(void) {
 				*defAbilityLoc = ABILITY_INSOMNIA;
 				gLastUsedAbility = ABILITY_INSOMNIA;
 				RecordAbilityBattle(gBankTarget, gLastUsedAbility);
+				gNewBS->SlowStartTimers[gBankTarget] = 0;
 				BattleStringLoader = WorrySeedString;
 			}
 			break;
@@ -1284,6 +1285,7 @@ void AbilityChangeBSFunc(void) {
 				gNewBS->SuppressedAbilities[gBankTarget] = defAbility;
 				*defAbilityLoc = 0;
 				RecordAbilityBattle(gBankTarget, 0);
+				gNewBS->SlowStartTimers[gBankTarget] = 0;
 				gBattleScripting->bank = gBankTarget;
 				BattleStringLoader = AbilitySuppressedString;
 			}
@@ -1298,6 +1300,7 @@ void AbilityChangeBSFunc(void) {
 				*defAbilityLoc = atkAbility;
 				gLastUsedAbility = atkAbility;
 				RecordAbilityBattle(gBankTarget, gLastUsedAbility);
+				gNewBS->SlowStartTimers[gBankTarget] = 0;
 				BattleStringLoader = EntrainmentString;
 			}
 			break;
@@ -1312,6 +1315,7 @@ void AbilityChangeBSFunc(void) {
 				*defAbilityLoc = ABILITY_SIMPLE;
 				gLastUsedAbility = ABILITY_SIMPLE;
 				RecordAbilityBattle(gBankTarget, gLastUsedAbility);
+				gNewBS->SlowStartTimers[gBankTarget] = 0;
 				BattleStringLoader = SimpleBeamString;
 			}
 			break;
