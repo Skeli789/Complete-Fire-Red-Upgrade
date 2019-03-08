@@ -15,6 +15,7 @@ BattleScript_FaintAttacker:
 	printstring 0x1C @;STRINGID_ATTACKERFAINTED
 	cleareffectsonfaint BANK_ATTACKER
 	printstring 0x130
+	trytrainerslidefirstdownmsg BANK_ATTACKER
 	return
 
 BattleScript_FaintTarget:
@@ -24,6 +25,7 @@ BattleScript_FaintTarget:
 	printstring 0x1D @;STRINGID_TARGETFAINTED
 	cleareffectsonfaint BANK_TARGET
 	printstring 0x130
+	trytrainerslidefirstdownmsg BANK_TARGET
 	return
 	
 BattleScript_FaintScriptingBank:
@@ -34,6 +36,7 @@ BattleScript_FaintScriptingBank:
 	printstring 0x184
 	cleareffectsonfaint BANK_SCRIPTING
 	printstring 0x130
+	trytrainerslidefirstdownmsg BANK_SCRIPTING
 	return
 
 .align 2

@@ -295,3 +295,7 @@ gBattleScriptingCommandsTable2:
 .word atkFF18_clearsidestatus
 .word atkFF19_formchange
 .word atkFF1A_jumpifabilitypresentattackerfield
+.word atkFF1B_tryactivateswitchinability
+.word atkFF1C_handletrainerslidemsg
+.word atkFF1D_trytrainerslidefirstdownmsg
+.word atkFF1E_trainerslideout

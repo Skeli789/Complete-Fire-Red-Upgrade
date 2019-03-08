@@ -113,3 +113,10 @@
     (var) = (stat) * (gStatStageRatios)[(mon)->statStages[(statIndex)-1]][0];         	\
     (var) = udivsi((var), (gStatStageRatios)[(mon)->statStages[(statIndex)-1]][1]);     \
 }
+
+enum
+{
+	TRAINER_SLIDE_LAST_SWITCHIN,
+	TRAINER_SLIDE_LAST_LOW_HP,
+	TRAINER_SLIDE_FIRST_DOWN,
+};

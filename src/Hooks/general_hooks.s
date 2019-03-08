@@ -110,3 +110,16 @@ BallThrowSuccessReturn:
 BallThrowBreakOutReturn:
 	ldr r0, =0x80EFF20 | 1
 	bx r0
+
+@0x8013D14 with r1
+TrainerSlidingEndTurnHook:
+	mov r1, r10
+	str r0, [r1]
+	bl CheckLastMonLowHPSlide
+	bl Random
+	ldr r1, =0x8013D1C | 1
+	bx r1
+
+Random:
+	ldr r0, =0x8044EC8 | 1
+	bx r0
