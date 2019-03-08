@@ -124,6 +124,7 @@ BattleScript_IntimidatePrevented:
 	waitmessage DELAY_1SECOND
 
 IntimidateActivatesLoopIncrement:
+	jumpifword NOTANDS BATTLE_TYPE BATTLE_DOUBLE BattleScript_IntimidateActivatesReturn
 	addbyte TARGET_BANK 0x1
 	goto BS_IntimidateActivatesLoop
 
@@ -134,9 +135,10 @@ BattleScript_IntimidateActivatesReturn:
 
 BattleScript_TraceActivates:
 	pause DELAY_HALFSECOND
+	clearspecialstatusbit BANK_ATTACKER STATUS3_SWITCH_IN_ABILITY_DONE
 	printstring 0xD0 @;STRINGID_PKMNTRACED
 	waitmessage DELAY_1SECOND
-	callasm TryActivateNewSwitchInAbility
+	tryactivateswitchinability BANK_SCRIPTING
 	end3
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
