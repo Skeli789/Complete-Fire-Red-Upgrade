@@ -1221,7 +1221,7 @@ BS_064_LowerTargetEvsn2:
 
 .global BS_065_Reflect
 BS_065_Reflect:
-	jumpifnotmove MOVE_AURORAVEIL 0x1D716E
+	jumpifnotmove MOVE_AURORAVEIL 0x81D716E
 	attackcanceler
 	attackstring
 	ppreduce
@@ -1709,7 +1709,7 @@ BS_092_Snore:
 
 .global BS_094_LockOn
 BS_094_LockOn:
-	jumpifnotmove MOVE_LASERFOCUS 0x1D74EB
+	jumpifnotmove MOVE_LASERFOCUS 0x81D74EB
 	attackcanceler
 	attackstring
 	ppreduce
@@ -1863,7 +1863,7 @@ BS_106_MeanLook:
 	ppreduce
 	accuracycheck 0x81D7DF2 0xFFFE
 	jumpiftype BANK_TARGET TYPE_GHOST FAILED
-	goto 0x1D76DE
+	goto 0x81D76DE
 	
 DamageAndTrapBS:
 	jumpifsecondarystatus BANK_TARGET STATUS2_TRAPPED | STATUS2_SUBSTITUTE BS_STANDARD_HIT
@@ -1946,7 +1946,7 @@ BS_112_Spikes:
 
 .global BS_113_Foresight
 BS_113_Foresight:
-	jumpifnotmove MOVE_MIRACLEEYE 0x1D783E
+	jumpifnotmove MOVE_MIRACLEEYE 0x81D783E
 	attackcanceler
 	accuracycheck BS_MOVE_MISSED 0x0
 	attackstring
@@ -2068,12 +2068,12 @@ FuryCutterResetBS:
 RoundBS:
 	attackcanceler
 	callasm RoundBSFunction + 1
-	goto 0x1D6927
+	goto 0x81D6927
 
 EchoedVoiceBS:
 	attackcanceler
 	callasm EchoedVoiceFunc + 1
-	goto 0x1D6927
+	goto 0x81D6927
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -2260,7 +2260,7 @@ BS_128_Pursuit:
 .global BS_129_RapidSpin
 .global BattleScript_DefogAdditionalEffects
 BS_129_RapidSpin:
-	jumpifnotmove MOVE_DEFOG 0x1D79C2
+	jumpifnotmove MOVE_DEFOG 0x81D79C2
 	attackcanceler
 	jumpifbehindsubstitute BANK_TARGET SecondDefogCheck
 	accuracycheck SecondDefogCheck 0x0
@@ -2440,7 +2440,7 @@ BS_142_BellyDrum:
 
 .global BS_143_PsychUp
 BS_143_PsychUp:
-	jumpifnotmove MOVE_SPECTRALTHIEF 0x1D7A74
+	jumpifnotmove MOVE_SPECTRALTHIEF 0x81D7A74
 
 SpectralThiefBS:
 	attackcanceler
@@ -2910,11 +2910,11 @@ BS_169_Blank:
 BS_170_FocusPunch:
 	jumpifmove MOVE_BEAKBLAST BeakBlastDoBS
 	jumpifmove MOVE_SHELLTRAP ShellTrapDoBS
-	goto 0x1D805C
+	goto 0x81D805C
 	
 BeakBlastDoBS:
 	callasm ClearBeakBlastBit
-	goto 0x1D6926
+	goto 0x81D6926
 
 ShellTrapDoBS: @;Do Powder fix
 	attackcanceler
@@ -3052,6 +3052,7 @@ BS_178_RolePlay:
 	waitanimation
 	printstring 0xB0 @;STRINGID_PKMNCOPIEDFOE
 	waitmessage DELAY_1SECOND
+	tryactivateswitchinability BANK_ATTACKER
 	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -3240,7 +3241,7 @@ BS_184_Recycle:
 	attackcanceler
 	jumpifnotmove MOVE_BELCH RecycleBS
 	callasm BelchFunction
-	goto 0x1D6927
+	goto 0x81D6927
 	
 RecycleBS:
 	attackstring
@@ -3360,7 +3361,9 @@ SkillSwapBS:
 	waitanimation
 	printstring 0xB8
 	waitmessage DELAY_1SECOND
-	goto 0x8B6D80
+	tryactivateswitchinability BANK_ATTACKER
+	tryactivateswitchinability BANK_TARGET
+	goto BS_MOVE_END
 
 WorrySeedBS:
 GastroAcidBS:
@@ -4068,13 +4071,13 @@ BS_223_RelicSong:
 TransformToPirouetteBS:
 	setbyte CMD49_STATE 0x0
 	cmd49 0x0 0x0
-	formchange BANK_ATTACKER PKMN_MELOETTA PKMN_MELOETTA_PIROUETTE TRUE RelicSongEndBS
+	formchange BANK_ATTACKER PKMN_MELOETTA PKMN_MELOETTA_PIROUETTE TRUE TRUE RelicSongEndBS
 	goto MeloettaTransformAnim
 
 TransformToAriaBS:
 	setbyte CMD49_STATE 0x0
 	cmd49 0x0 0x0
-	formchange BANK_ATTACKER PKMN_MELOETTA_PIROUETTE PKMN_MELOETTA TRUE RelicSongEndBS
+	formchange BANK_ATTACKER PKMN_MELOETTA_PIROUETTE PKMN_MELOETTA TRUE TRUE RelicSongEndBS
 	
 MeloettaTransformAnim:
 	playanimation BANK_ATTACKER ANIM_TRANSFORM 0x0
@@ -4364,7 +4367,7 @@ BattleScript_NoHealTargetAfterHealBlock:
 
 PollenPuffBS:
 	jumpiftargetpartner HealPulseBS
-	goto 0x1D6927
+	goto 0x81D6927
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
