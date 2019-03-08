@@ -197,7 +197,10 @@ typedef u8 Buffer_t[0x200];
 /*u16*/ #define gSpecialVar_MonBoxId (*((u16*) 0x20370D6))
 /*u16*/ #define gSpecialVar_MonBoxPos (*((u16*) 0x20370D8))
 /*u8*/  #define gPlttBufferUnfaded ((u16*) 0x20371F8)
+/*u8*/  #define gPlttBufferUnfaded2 ((u16*) 0x20373F8)
 /*u8*/  #define gPlttBufferFaded ((u16*) 0x20375F8)
+/*u8*/  #define gPlttBufferFaded2 ((u16*) 0x20377F8)
+
 /*u8*/  #define gPaletteFade ((u8*) 0x2037AB8)
 /*u32*/	#define sBattleAnimScriptPtr (*((u8**) 0x2037ED4))
 		#define gAnimScriptCallback (*((u32*) 0x2037EDC))
@@ -374,6 +377,7 @@ typedef u8 IllusionNickname_t[10];
 	// 0x2 = Toxic Spikes
 	// 0x3 = Toxic Orb		/ 0x3 = Flame Orb
 	// 0x4 = Baneful Bunker
-#define MagicianHelper *((u8*) 0x203F70B)	
-#define ForceSwitchHelper (*((u8*) 0x203F70C))
+#define MagicianHelper *((u8*) 0x203F70B)
+#define ShakerData (((u8*) 0x203F70C))
+#define ForceSwitchHelper (*((u8*) 0x203F70E))
 
