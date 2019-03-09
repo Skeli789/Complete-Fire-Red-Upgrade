@@ -362,7 +362,7 @@ void RunTurnActionsFunctions(void)
 				for (i = *megaBank; i < gBattlersCount; ++i, ++*megaBank) {
 					u8 bank = gBanksByTurnOrder[i];
 					gActiveBattler = bank;
-					if (gNewBS->MegaData->chosen[bank] && !gNewBS->MegaData->done[bank] && !(gNewBS->ZMoveData->partyIndex[SIDE(bank)] &= gBitTable[gBattlerPartyIndexes[bank]])) {
+					if (gNewBS->MegaData->chosen[bank] && !gNewBS->MegaData->done[bank] && !(gNewBS->ZMoveData->partyIndex[SIDE(bank)] & gBitTable[gBattlerPartyIndexes[bank]])) {
 						u8* script = DoMegaEvolution(bank);
 						if (script != NULL) 
 						{	
@@ -466,6 +466,8 @@ void RunTurnActionsFunctions(void)
 				gNewBS->MegaData->activeBank = 0;
 				gNewBS->MegaData->megaEvoInProgress = FALSE;
 		}
+		
+		*megaBank = 0;
 	
 		while (gBattleStruct->focusPunchBank < gBattlersCount)
 		{
@@ -613,9 +615,14 @@ void HandleAction_UseMove(void)
 		
 		if (SPLIT(gCurrentMove) != SPLIT_STATUS) 
 		{
-			for (i = 0; SpecialZMoveTable[i].item != 0xFFFF; ++i) {
-				if (SpecialZMoveTable[i].item == ITEM(gBankAttacker)) //No need to check for correct species here as the check;
-					gCurrentMove = SpecialZMoveTable[i].move;		  //it should already have been carried out during move selection.
+			for (i = 0; SpecialZMoveTable[i].item != 0xFFFF; ++i) 
+			{
+				if (SpecialZMoveTable[i].item == ITEM(gBankAttacker) //No need to check for correct species here as the check;
+				&&  SpecialZMoveTable[i].move == gCurrentMove)		 //it should already have been carried out during move selection.
+				{
+					gCurrentMove = SpecialZMoveTable[i].zmove;
+					goto SKIP_SELECT_REGULAR_Z_MOVE;
+				}
 			}
 							
 			if (SpecialZMoveTable[i].item == 0xFFFF) { //No special Z-Move
@@ -628,6 +635,8 @@ void HandleAction_UseMove(void)
 			}
 		}
 	}
+	
+	SKIP_SELECT_REGULAR_Z_MOVE:
 	
 	gBattleStruct->dynamicMoveType = GetMoveTypeSpecial(gBankAttacker, gCurrentMove);
 	moveType = gBattleStruct->dynamicMoveType;

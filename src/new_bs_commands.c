@@ -11,7 +11,15 @@ extern u8 GrassyTerrainSetString[];
 extern u8 MistyTerrainSetString[];
 extern u8 PsychicTerrainSetString[];
 
-void DoFormChange(u8 bank, u16 species, u8 ReloadType);
+#define gText_TargetAlreadyAsleep (u8*) 0x83FB57C
+extern u8 gText_TargetAlreadyHasStatusCondition[];
+extern u8 gText_TargetWrappedInMistyTerrain[];
+extern u8 gText_TargetWrappedInElectricTerrain[];
+extern u8 gText_FlowerVeilProtects[];
+extern u8 gText_SweetVeilProtects[];
+#define gText_CantFallAsleepDuringUproar (u8*) 0x83FBDC4
+#define gText_TargetStayedAwakeUsingAbility (u8*) 0x83FBDE2
+extern u8 gText_TargetProtectedByAbility[];
 
 //callasm FUNCTION_OFFSET
 void atkF8_callasm(void) 
@@ -696,13 +704,14 @@ void atkFF19_formchange(void)
 	u16 originalSpecies = T1_READ_16(gBattlescriptCurrInstr + 2);
 	u16 targetSpecies = T1_READ_16(gBattlescriptCurrInstr + 4);
 	bool8 reloadType = T2_READ_8(gBattlescriptCurrInstr + 6);
+	bool8 reloadStats = T2_READ_8(gBattlescriptCurrInstr + 7);
 	
 	if (gBattleMons[bank].species != originalSpecies || gBattleMons[bank].hp == 0)
 		gBattlescriptCurrInstr = T2_READ_PTR(gBattlescriptCurrInstr + 7);
 	else
 	{
-		DoFormChange(bank, targetSpecies, reloadType);
-		gBattlescriptCurrInstr += 11;
+		DoFormChange(bank, targetSpecies, reloadType, reloadStats);
+		gBattlescriptCurrInstr += 12;
 	}
 }
 
@@ -716,4 +725,108 @@ void atkFF1A_jumpifabilitypresentattackerfield(void)
 		gBattlescriptCurrInstr = ptr;
 	else
 		gBattlescriptCurrInstr += 6;
+}
+
+void atkFF1B_tryactivateswitchinability(void)
+{
+	u8 bank = GetBattleBank(gBattlescriptCurrInstr[1]);
+	
+	if (AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, bank, 0, 0, 0))
+		return;
+	
+	gBattlescriptCurrInstr += 2;
+}
+
+/*
+Doesn't Affect (Spore, Minior Shield etc.)
+Attack Misses
+Already Asleep
+Already Has Status (Failed)
+Misty Terrain / Electric Terrain
+Flower Veil
+Sweet Veil
+Ability Protects
+*/
+
+//atkFF1C - atkFF1E: Trainer Sliding
+
+//trysetsleep BANK FAIL_ADDRESS
+void atkFF1F_trysetsleep(void)
+{
+	u8 bank = GetBattleBank(gBattlescriptCurrInstr[1]);
+	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
+	bool8 fail = FALSE;
+	
+	if (gBattleMons[bank].status1 & STATUS1_SLEEP || ABILITY(bank) == ABILITY_COMATOSE)
+	{
+		BattleStringLoader = gText_TargetAlreadyAsleep;
+		fail = TRUE;
+	}
+	else if (gBattleMons[bank].status1)
+	{
+		BattleStringLoader = gText_TargetAlreadyHasStatusCondition; //String not in official games; officially "But it failed!"
+		fail = TRUE;
+	}
+	else if (CheckGrounding(bank) && TerrainType == MISTY_TERRAIN)
+	{
+		BattleStringLoader = gText_TargetWrappedInMistyTerrain;
+		fail = TRUE;
+	}
+	else if (CheckGrounding(bank) && TerrainType == ELECTRIC_TERRAIN)
+	{
+		BattleStringLoader = gText_TargetWrappedInElectricTerrain;
+		fail = TRUE;
+	}
+	else if (IsOfType(bank, TYPE_GRASS) && ABILITY(bank) == ABILITY_FLOWERVEIL)
+	{
+		gBattleScripting->bank = bank;
+		BattleStringLoader = gText_FlowerVeilProtects;
+		fail = TRUE;
+	}
+	else if (IsOfType(bank, TYPE_GRASS) && gBattleTypeFlags & BATTLE_TYPE_DOUBLE && ABILITY(PARTNER(bank)) == ABILITY_FLOWERVEIL)
+	{
+		gBattleScripting->bank = PARTNER(bank);
+		BattleStringLoader = gText_FlowerVeilProtects;
+		fail = TRUE;
+	}
+	else if (ABILITY(bank) == ABILITY_SWEETVEIL)
+	{
+		gBattleScripting->bank = bank;
+		BattleStringLoader = gText_SweetVeilProtects;
+		fail = TRUE;
+	}
+	else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && ABILITY(PARTNER(bank)) == ABILITY_SWEETVEIL)
+	{
+		gBattleScripting->bank = PARTNER(bank);
+		BattleStringLoader = gText_SweetVeilProtects;
+		fail = TRUE;
+	}
+	else if (IsUproarBeingMade())
+	{
+		gBattleScripting->bank = bank;
+		BattleStringLoader = gText_CantFallAsleepDuringUproar;
+		fail = TRUE;	
+	}
+	
+	if (!fail)
+	{
+		switch (ABILITY(bank)) {
+			case ABILITY_INSOMNIA:
+			case ABILITY_VITALSPIRIT:
+				BattleStringLoader = gText_TargetStayedAwakeUsingAbility;
+				fail = TRUE;
+				break;
+			case ABILITY_LEAFGUARD:
+				if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
+				{
+					BattleStringLoader = gText_TargetProtectedByAbility;
+					fail = TRUE;
+				}
+		}
+	}
+
+	if (fail)
+		gBattlescriptCurrInstr = ptr;
+	else
+		gBattlescriptCurrInstr += 6;	
 }

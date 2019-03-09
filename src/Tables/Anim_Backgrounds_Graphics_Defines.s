@@ -120,3 +120,6 @@
 .equ BG_CLANGOROUS_SOULBLAZE_IMG, Clangorous_SoulblazeTiles
 .equ BG_CLANGOROUS_SOULBLAZE_PAL, Clangorous_SoulblazePal
 .equ BG_CLANGOROUS_SOULBLAZE_RAW, Clangorous_SoulblazeMap
+.equ BG_SNUGGLE_FOREVER_IMG, Snuggle_ForeverTiles
+.equ BG_SNUGGLE_FOREVER_PAL, Snuggle_ForeverPal
+.equ BG_SNUGGLE_FOREVER_RAW, Snuggle_ForeverMap

@@ -13,6 +13,9 @@ extern s32 BracketCalc(u8 bank);
 extern u32 SpeedCalc(u8 bank);
 extern u8 CheckMoveLimitations(u8 bank, u8 unusableMoves, u8 check);
 extern u32 AI_CalcDmg(u8 bankAtk, u8 bankDef, u16 move);
+extern bool8 IsMega(u8 bank);
+extern bool8 IsBluePrimal(u8 bank);
+extern bool8 IsRedPrimal(u8 bank);
 
 bool8 CanKillAFoe(u8 bank);
 bool8 CanKnockOut(u8 bankAtk, u8 bankDef);
@@ -385,21 +388,34 @@ bool8 HasProtectionMoveInMoveset(u8 bank, bool8 AllKinds) {
 
 u16 ShouldAIUseZMove(u8 bank, u8 moveIndex, u16 move) {
 	int i;
+	bool8 isSpecialZCrystal = FALSE;
+	
 	if (move == 0)
 		move = gBattleMons[bank].moves[moveIndex];
 		
-	if (gNewBS->MegaData->partyIndex[SIDE(bank)] & gBitTable[gBattlerPartyIndexes[bank]])
+	if ((gNewBS->MegaData->partyIndex[SIDE(bank)] & gBitTable[gBattlerPartyIndexes[bank]])
+	|| IsMega(bank) 
+	|| IsRedPrimal(bank) 
+	|| IsBluePrimal(bank))
 		return FALSE;
 	
-	if (gItems[SanitizeItemId(gBattleMons[bank].item)].holdEffect == ITEM_EFFECT_Z_CRYSTAL) {
-		for (i = 0; SpecialZMoveTable[i].species != 0xFFFF; ++i) {
-			if (SpecialZMoveTable[i].species == gBattleMons[bank].species
-			&&	SpecialZMoveTable[i].item == gBattleMons[bank].item
-			&&  SpecialZMoveTable[i].move == move)
-				return SpecialZMoveTable[i].move;
+	if (gItems[SanitizeItemId(gBattleMons[bank].item)].holdEffect == ITEM_EFFECT_Z_CRYSTAL
+	||  ITEM(bank) == ITEM_ULTRANECROZIUM_Z) //The only "Mega Stone" that let's you use a Z-Move
+	{
+		for (i = 0; SpecialZMoveTable[i].species != 0xFFFF; ++i) 
+		{
+			if (SpecialZMoveTable[i].item == ITEM(bank))
+			{
+				isSpecialZCrystal = TRUE;
+				if (SpecialZMoveTable[i].species == SPECIES(bank)
+				&&  SpecialZMoveTable[i].move == move)
+				{
+					return SpecialZMoveTable[i].zmove;
+				}
+			}
 		}
 		
-		if (gBattleMoves[move].type == ITEM_QUALITY(bank)) {
+		if (gBattleMoves[move].type == ITEM_QUALITY(bank) && !isSpecialZCrystal) {
 			if (SPLIT(move) == SPLIT_STATUS)
 				return 0xFFFF;
 			else if (gBattleMoves[move].type < TYPE_FIRE)

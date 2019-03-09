@@ -359,7 +359,7 @@ void atk0C_datahpupdate(void) {
 				gSpecialStatuses[gActiveBattler].moveturnSpecialBank = gBankAttacker;
 			}
 			
-			DoFormChange(gActiveBattler, PKMN_MIMIKYU_BUSTED, TRUE);
+			DoFormChange(gActiveBattler, PKMN_MIMIKYU_BUSTED, TRUE, FALSE);
 			gBattlescriptCurrInstr += 2;
 			BattleScriptPushCursor();
 			gBattlescriptCurrInstr = BattleScript_MimikyuTransform;
@@ -680,13 +680,13 @@ void atk19_tryfaintmon(void)
 
 void atk1B_cleareffectsonfaint(void) {
 	int i;
+	gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
 	u8 partner = PARTNER(gActiveBattler);
+	pokemon_t* mon = GetBankPartyData(gActiveBattler);
 	
     if (!gBattleExecBuffer) {
 		switch (gNewBS->FaintEffectsTracker) {
-			case Faint_ClearEffects:
-				gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
-				
+			case Faint_ClearEffects:	
 				gBattleMons[gActiveBattler].status1 = 0;
 				EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 0x4, &gBattleMons[gActiveBattler].status1);
 				MarkBufferBankForExecution(gActiveBattler);
@@ -801,6 +801,39 @@ void atk1B_cleareffectsonfaint(void) {
 						gBattlescriptCurrInstr = BattleScript_PrimalWeatherEnd;
 						return;
 					}
+				}
+				++gNewBS->FaintEffectsTracker;
+			__attribute__ ((fallthrough));
+				
+			case Faint_FormsRevert:
+				if (mon->backupSpecies)
+				{
+					EmitSetMonData(0, REQUEST_SPECIES_BATTLE, 0, 2, &mon->backupSpecies);
+					MarkBufferBankForExecution(gActiveBattler);
+					mon->backupSpecies = 0;
+					++gNewBS->FaintEffectsTracker;
+					return;
+				}
+				break; //No form change means skip the next two states
+				
+			case Faint_FormsStats:
+				CalculateMonStats(mon);
+				EmitSetRawMonData(0, offsetof(pokemon_t, attack), 2 /*Atk*/ + 2 /*Def*/ + 2 /*Spd*/ + 2 */*Sp Atk*/ + 2 /*Sp Def*/, &mon->attack); //Reload all stats
+				MarkBufferBankForExecution(gActiveBattler);
+				++gNewBS->FaintEffectsTracker;
+				return;
+				
+			case Faint_FormsHP: ;
+				u16 oldHP, newHP;
+				oldHP = mon->hp;
+				
+				if (mon->species == PKMN_ZYGARDE || mon->species == PKMN_ZYGARDE_10)
+				{
+					newHP = MathMin(mon->maxHP, oldHP);
+					EmitSetMonData(0, REQUEST_HP_BATTLE, 0, 2, &newHP);
+					MarkBufferBankForExecution(gActiveBattler);
+					++gNewBS->FaintEffectsTracker;
+					return;
 				}
 		}
 		
@@ -2426,7 +2459,7 @@ void atkB0_trysetspikes(void) {
 				gSideAffecting[defSide] |= SIDE_STATUS_SPIKES;
 				gSideTimers[defSide].srAmount = 1;
 				gBattlescriptCurrInstr += 5;
-				stringcase = 2;
+				stringcase = 1;
 			}
 			break;
 		
@@ -2439,7 +2472,7 @@ void atkB0_trysetspikes(void) {
 				gSideAffecting[defSide] |= SIDE_STATUS_SPIKES;
 				gSideTimers[defSide].tspikesAmount++;
 				gBattlescriptCurrInstr += 5;
-				stringcase = 4;
+				stringcase = 2;
 			}
 			break;
 		
@@ -2452,7 +2485,7 @@ void atkB0_trysetspikes(void) {
 				gSideAffecting[defSide] |= SIDE_STATUS_SPIKES;
 				gSideTimers[defSide].stickyWeb = 1;
 				gBattlescriptCurrInstr += 5;
-				stringcase = 6;
+				stringcase = 3;
 			}
 			break;
 		
@@ -3134,6 +3167,8 @@ void atkD3_trycopyability(void) { //Role Play
 	{
 		*atkAbilityLoc = defAbility;
         gLastUsedAbility = defAbility;
+		gNewBS->SlowStartTimers[gBankAttacker] = 0;
+		gStatuses3[gBankAttacker] &= ~(STATUS3_SWITCH_IN_ABILITY_DONE);
         gBattlescriptCurrInstr += 5;
     }
 }
@@ -3159,6 +3194,10 @@ void atkDA_tryswapabilities(void) { //Skill Swap
 	{
         *atkAbilityLoc = defAbility;
         *defAbilityLoc = atkAbility;
+		gNewBS->SlowStartTimers[gBankAttacker] = 0;
+		gNewBS->SlowStartTimers[gBankTarget] = 0;
+		gStatuses3[gBankAttacker] &= ~(STATUS3_SWITCH_IN_ABILITY_DONE);
+		gStatuses3[gBankTarget] &= ~(STATUS3_SWITCH_IN_ABILITY_DONE);
         gBattlescriptCurrInstr += 5;
     }
 }
@@ -3309,7 +3348,7 @@ void atkE7_trycastformdatachange(void) {
 		case PKMN_CHERRIM:
 			if (ABILITY(bank) == ABILITY_FLOWERGIFT && !IS_TRANSFORMED(bank)
 			&& WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY) {
-				DoFormChange(bank, PKMN_CHERRIMSUN, FALSE);
+				DoFormChange(bank, PKMN_CHERRIMSUN, FALSE, FALSE);
 				form = TRUE;
 			}
 			break;
@@ -3317,7 +3356,7 @@ void atkE7_trycastformdatachange(void) {
 		case PKMN_CHERRIMSUN:
 			if (ABILITY(bank) != ABILITY_FLOWERGIFT
 			|| !WEATHER_HAS_EFFECT || !(gBattleWeather & WEATHER_SUN_ANY)) {
-				DoFormChange(bank, PKMN_CHERRIM, FALSE);
+				DoFormChange(bank, PKMN_CHERRIM, FALSE, FALSE);
 				form = TRUE;
 			}
 			

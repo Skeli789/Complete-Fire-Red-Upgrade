@@ -140,7 +140,7 @@
 //#define STATUS3_MUDSPORT                0x10000
 //#define STATUS3_WATERSPORT              0x20000
 #define STATUS3_UNDERWATER              0x40000
-#define STATUS3_INTIMIDATE_POKES        0x80000
+#define STATUS3_SWITCH_IN_ABILITY_DONE  0x80000
 #define STATUS3_TRACE                   0x100000
 
 #define STATUS3_LEVITATING              0x200000

@@ -1525,12 +1525,13 @@
 	.2byte \halver
 	.endm
 	
-	.macro formchange bank original_species target_species reload_type rom_address
+	.macro formchange bank original_species target_species reload_type reload_stats rom_address
 	.byte 0xFF, 0x19
 	.byte \bank
 	.2byte \original_species
 	.2byte \target_species
 	.byte \reload_type
+	.byte \reload_stats
 	.4byte \rom_address
 	.endm
 	
@@ -1539,3 +1540,24 @@
 	.byte \ability
 	.4byte \rom_address
 	.endm
+	
+	.macro tryactivateswitchinability bank
+	.byte 0xFF, 0x1B
+	.byte \bank
+	.endm
+	
+	.macro handletrainerslidemsg bank case
+	.byte 0xFF, 0x1C
+	.byte \bank
+	.byte \case
+	.endm
+
+	.macro trytrainerslidefirstdownmsg bank
+	.byte 0xFF, 0x1D
+	.byte \bank
+	.endm
+
+	.macro trainerslideout position
+	.byte 0xFF, 0x1E
+	.byte \position
+	.endm	

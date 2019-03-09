@@ -15,6 +15,7 @@ SwitchIn_Truant,
 SwitchIn_Abilities,
 SwitchIn_Items,
 SwitchIn_AirBalloon,
+SwitchIn_TrainerMessage,
 SwitchIn_End
 };
 
@@ -30,6 +31,7 @@ extern u8 BattleScript_AirBalloonSub[];
 extern u8 BattleScript_PrimalWeatherEnd[];
 extern u8 BattleScript_SuccessForceOut[];
 extern u8 BattleScript_HealReplacementZMove[];
+extern u8 BattleScript_TrainerSlideMsgRet[];
 
 extern u8 PrimalRainEndString[];
 extern u8 PrimalSunEndString[];
@@ -41,6 +43,7 @@ extern void FormRevert(bank_t);
 extern u8* DoPrimalReversion(bank_t, u8 caseId);
 extern bool8 IsLinkDoubleBattle(void);
 extern void SwitchOutFormsRevert(u8 bank);
+extern bool8 ShouldDoTrainerSlide(u8 bank, u16 trainerId, u8 caseId);
 
 bool8 TryDoForceSwitchOut(void);
 void sub_80571DC(u8 battlerId, u8 arg1);
@@ -548,6 +551,16 @@ void atk52_switchineffects(void) {
 			++gNewBS->SwitchInEffectsTracker;
 		__attribute__ ((fallthrough));
 	
+		case SwitchIn_TrainerMessage:
+			++gNewBS->SwitchInEffectsTracker;
+			if (ShouldDoTrainerSlide(gActiveBattler, gTrainerBattleOpponent_A, TRAINER_SLIDE_LAST_SWITCHIN))
+			{
+				BattleScriptPushCursor();
+				gBattlescriptCurrInstr = BattleScript_TrainerSlideMsgRet;
+				return;
+			}
+		__attribute__ ((fallthrough));
+		
 		case SwitchIn_End:
 		SWITCH_IN_END:
             gSideAffecting[GetBattlerSide(gActiveBattler)] &= ~(SIDE_STATUS_SPIKES_DAMAGED);

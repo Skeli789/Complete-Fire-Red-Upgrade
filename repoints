@@ -20,6 +20,8 @@ gTrainerBackPicPaletteTable 080D6EA4
 gTrainerBackPicPaletteTable 080EAEC0
 gTrainerBackPicPaletteTable 08159458
 
+PlayAnimationTable 08034150
+
 ##
 BattleScript_RainDishActivates 0801A4A0
 

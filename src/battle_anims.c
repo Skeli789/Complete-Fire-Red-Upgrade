@@ -143,11 +143,12 @@ bool8 IsAnimMoveOceanicOperretta(void)
 	return  move == MOVE_OCEANIC_OPERETTA;
 }
 
-bool8 IsMoveNeverEndingNightmareOrDevastatingDrake(void)
+bool8 IsMoveNeverEndingNightmareOrDevastatingDrakeOrLightThatBurnsTheSky(void)
 {
 	u16 move = gBattleBufferA[gActiveBattler][1] | (gBattleBufferA[gActiveBattler][2] << 8);
 	return  move == MOVE_NEVER_ENDING_NIGHTMARE_P || move == MOVE_NEVER_ENDING_NIGHTMARE_S 
-		 || move == MOVE_DEVASTATING_DRAKE_P 	  || move == MOVE_DEVASTATING_DRAKE_S;
+		 || move == MOVE_DEVASTATING_DRAKE_P 	  || move == MOVE_DEVASTATING_DRAKE_S
+		 || move == MOVE_LIGHT_THAT_BURNS_THE_SKY;
 }
 
 bool8 IsAnimMoveDestinyBond(void)
@@ -204,12 +205,51 @@ bool8 IsAnimMoveHeartSwap(void)
 	return  move == MOVE_HEARTSWAP;
 }
 
-void MegaEvoAnimTask1(u8 taskId)
+void AnimTask_ReloadAttackerSprite(u8 taskId)
 {
-	DestroyAnimVisualTask(taskId);
+	u8 spriteId = gBattlerSpriteIds[gBattleAnimAttacker];
+	
+	struct Task* task = &gTasks[taskId];
+	struct Task* newTask;
+	
+	switch (task->data[10]) {
+		case 0:
+			// To fix an annoying graphical glitch where the old sprite would flash
+			// momentarily, we hide the sprite offscreen while we refresh it.
+			// Remember the old position so we can go back to it later.
+			task->data[11] = gSprites[spriteId].pos1.x;
+			gSprites[spriteId].pos1.x = -64;
+				
+			// Load the palette and graphics. Note this doesn't cause the sprite to
+			// refresh
+			LoadBattleMonGfxAndAnimate(gBattleAnimAttacker, 1, spriteId);
+			++task->data[10];
+			break;
+		
+		case 1:
+			// Actually update the sprite now
+			gSprites[spriteId].invisible = FALSE;
+			newTask = &gTasks[CreateTask(sub_807331C, 5)];
+			newTask->data[0] = 0;
+			newTask->data[2] = gBattleAnimAttacker;
+			++task->data[10];
+			break;
+		
+		case 2:
+			// Make sure the task is done. I'm not sure if this is necessary
+			if (!FuncIsActiveTask(sub_807331C))
+				++task->data[10];
+			break;
+		
+		case 3:
+			// Restore the old X position and end the task
+			gSprites[spriteId].pos1.x = task->data[11];
+			DestroyAnimVisualTask(taskId);
+	}
 }
 
-void MegaEvoAnimTask2(u8 taskId)
+void AnimTask_PlayAttackerCry(u8 taskId)
 {
+	PlayCry3(gBattleMons[gBattleAnimAttacker].species, 0, 0);
 	DestroyAnimVisualTask(taskId);
 }

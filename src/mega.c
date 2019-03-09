@@ -14,13 +14,19 @@ extern u8 BattleScript_UltraBurst[];
 const struct Evolution* CanMegaEvolve(u8 bank, bool8 CheckUBInstead);
 u8* DoMegaEvolution(u8 bank);
 u8* DoPrimalReversion(u8 bank, u8 caseId);
-void MegaRevert(void);
+void MegaRevert(pokemon_t* mon);
+void TryRevertMega(pokemon_t* mon);
 bool8 IsItemKeystone(u16 item);
 item_t FindTrainerKeystone(u16 trainerId);
 item_t FindPlayerKeystone(void);
 item_t FindBankKeystone(u8 bank);
 bool8 MegaEvolutionEnabled(u8 bank);
 bool8 BankMegaEvolved(u8 bank, bool8 checkUB);
+bool8 IsMega(u8 bank);
+bool8 IsBluePrimal(u8 bank);
+bool8 IsRedPrimal(u8 bank);
+bool8 IsUltraNecrozma(u8 bank);
+bool8 HasMegaSymbol(u8 bank);
 u8* GetTrainerName(u8 bank);
 
 item_t KeystoneTable[] = {
@@ -28,6 +34,9 @@ item_t KeystoneTable[] = {
 };
 
 const struct Evolution* CanMegaEvolve(u8 bank, bool8 CheckUBInstead) {
+	#ifndef MEGA_EVOLUTION_FEATURE
+		return 0;
+	#else
 	const struct Evolution* evolutions = gEvolutionTable[gBattleMons[bank].species];
 	int i, j;
 	
@@ -52,6 +61,7 @@ const struct Evolution* CanMegaEvolve(u8 bank, bool8 CheckUBInstead) {
 	}
 	// NULL
 	return 0;
+	#endif
 }
 
 u8* DoMegaEvolution(u8 bank) {
@@ -62,7 +72,7 @@ u8* DoMegaEvolution(u8 bank) {
 	
 	if (evolutions != NULL) {
 		u16 species = gBattleMons[bank].species;
-		DoFormChange(bank, evolutions->targetSpecies, TRUE);
+		DoFormChange(bank, evolutions->targetSpecies, TRUE, TRUE);
 		gBattleMons[bank].ability = GetPartyAbility(GetBankPartyData(bank));
 		gBattleScripting->bank = bank;
 		gLastUsedItem = gBattleMons[bank].item;
@@ -85,14 +95,14 @@ u8* DoMegaEvolution(u8 bank) {
 
 
 u8* DoPrimalReversion(u8 bank, u8 caseId) {
-	pokemon_t* partydata = GetBankPartyData(bank);
-	const struct Evolution* evolutions = gEvolutionTable[partydata->species];
+	pokemon_t* mon = GetBankPartyData(bank);
+	const struct Evolution* evolutions = gEvolutionTable[mon->species];
+	u16 item = mon->item;
 
 	for (u8 i = 0; i < EVOS_PER_MON; ++i) {
-		u16 item = GetMonData(&partydata[i], MON_DATA_HELD_ITEM, 0);
 		if (evolutions[i].method == EVO_MEGA && evolutions[i].unknown == MEGA_VARIANT_PRIMAL && evolutions[i].param == item) {
-			DoFormChange(bank, evolutions[i].targetSpecies, TRUE);
-			gBattleMons[bank].ability = GetPartyAbility(partydata);
+			DoFormChange(bank, evolutions[i].targetSpecies, TRUE, TRUE);
+			gBattleMons[bank].ability = GetPartyAbility(mon);
 			
 			switch (caseId) {
 				case 0:
@@ -105,7 +115,30 @@ u8* DoPrimalReversion(u8 bank, u8 caseId) {
 	return NULL;
 }
 
-void MegaRevert(void) {
+//In theory, this function will do nothing as the regular forms revert should
+//should take care of the reversion. This is to prevent bugs if the player
+//gives themselves a Mega or Primal to start the battle.
+void MegaRevert(pokemon_t* party) 
+{					  
+	int i;			  
+	
+	for (i = 0; i < PARTY_SIZE; ++i) {
+		TryRevertMega(&party[i]);
+	}
+}
+
+void TryRevertMega(pokemon_t* mon)
+{
+	const struct Evolution* evolutions = gEvolutionTable[mon->species];
+
+	for (u8 i = 0; i < EVOS_PER_MON; ++i) 
+	{
+		if (evolutions[i].method == EVO_MEGA && evolutions[i].param == 0)
+		{
+			mon->species = evolutions[i].targetSpecies;
+			CalculateMonStats(mon);
+		}
+	}
 }
 
 bool8 IsItemKeystone(u16 item)
@@ -218,6 +251,50 @@ bool8 BankMegaEvolved(u8 bank, bool8 checkUB) {
 	return FALSE;
 }
 
+bool8 IsMega(u8 bank)
+{
+	pokemon_t* mon = GetBankPartyData(bank);
+	const struct Evolution* evolutions = gEvolutionTable[mon->species];
+
+	for (u8 i = 0; i < EVOS_PER_MON; ++i) 
+	{
+		if (evolutions[i].method == EVO_MEGA && evolutions[i].unknown == MEGA_VARIANT_STANDARD && evolutions[i].param == 0)
+			return TRUE;
+	}
+	
+	return FALSE;
+}
+
+//No better way to check for these next two
+bool8 IsBluePrimal(u8 bank)
+{
+	return gBattleMons[bank].species == PKMN_KYOGRE_PRIMAL;
+}
+
+bool8 IsRedPrimal(u8 bank)
+{
+	return gBattleMons[bank].species == PKMN_GROUDON_PRIMAL;
+}
+
+bool8 IsUltraNecrozma(u8 bank)
+{
+	pokemon_t* mon = GetBankPartyData(bank);
+	const struct Evolution* evolutions = gEvolutionTable[mon->species];
+
+	for (u8 i = 0; i < EVOS_PER_MON; ++i) 
+	{
+		if (evolutions[i].method == EVO_MEGA && evolutions[i].unknown == MEGA_VARIANT_ULTRA_BURST && evolutions[i].param == 0)
+			return TRUE;
+	}
+	
+	return FALSE;
+}
+
+bool8 HasMegaSymbol(u8 bank)
+{
+	return IsMega(bank) || IsBluePrimal(bank) || IsRedPrimal(bank) || IsUltraNecrozma(bank);
+}
+
 u8* GetTrainerName(u8 bank) {
 	u16 trainerId = 0xFFFF;
 	u8 multiplayerId = GetMultiplayerId();
@@ -286,4 +363,448 @@ void MegaRetrieveData(void) {
 	gNewBS->MegaData->chosen[gActiveBattler] |= gBattleBufferB[gActiveBattler][4];
 	gNewBS->UltraData->chosen[gActiveBattler] |= gBattleBufferB[gActiveBattler][5];
 	gNewBS->ZMoveData->toBeUsed[gActiveBattler] |= gBattleBufferB[gActiveBattler][6];
+}
+
+//Graphics//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+extern u8 Mega_IndicatorTiles[];
+extern u8 Alpha_IndicatorTiles[];
+extern u8 Omega_IndicatorTiles[];
+extern u8 Ultra_IndicatorTiles[];
+extern u16 Mega_IndicatorPal[];
+extern u8 Mega_TriggerTiles[];
+extern u8 Ultra_TriggerTiles[];
+extern u16 Mega_TriggerPal[];
+
+bool8 IsIgnoredTriggerColour(u16 colour);
+u16 ConvertColorToGrayscale(u16 colour);
+u16 LightUpMegaSymbol(u16 clra);
+void MegaTriggerCallback(struct Sprite* self);
+void MegaIndicatorCallback(struct Sprite* self);
+void LoadMegaGraphics(u8 state);
+
+const struct CompressedSpriteSheet MegaIndicatorSpriteSheet = {Mega_IndicatorTiles, (8 * 8) / 2, GFX_TAG_MEGA_INDICATOR};
+const struct CompressedSpriteSheet AlphaIndicatorSpriteSheet = {Alpha_IndicatorTiles, (8 * 8) / 2, GFX_TAG_ALPHA_INDICATOR};
+const struct CompressedSpriteSheet OmegaIndicatorSpriteSheet = {Omega_IndicatorTiles, (8 * 8) / 2, GFX_TAG_OMEGA_INDICATOR};
+const struct CompressedSpriteSheet UltraIndicatorSpriteSheet = {Ultra_IndicatorTiles, (8 * 8) / 2, GFX_TAG_ULTRA_INDICATOR};
+const struct SpritePalette MegaIndicatorPalette = {Mega_IndicatorPal, GFX_TAG_MEGA_INDICATOR};
+
+const struct CompressedSpriteSheet MegaTriggerSpriteSheet = {Mega_TriggerTiles, (32 * 32) / 2, GFX_TAG_MEGA_TRIGGER};
+const struct CompressedSpriteSheet UltraTriggerSpriteSheet = {Ultra_TriggerTiles, (32 * 32) / 2, GFX_TAG_ULTRA_TRIGGER};
+const struct SpritePalette MegaTriggerPalette = {Mega_TriggerPal, GFX_TAG_MEGA_TRIGGER};
+
+const struct OamData MegaIndicatorOAM = {0};
+u16 MegaTriggerOAM[] = {0, 0x8000, 0x800, 0};
+
+const struct SpriteTemplate MegaIndicatorTemplate =
+{
+    .tileTag = GFX_TAG_MEGA_INDICATOR,
+    .paletteTag = GFX_TAG_MEGA_INDICATOR,
+    .oam = &MegaIndicatorOAM,
+    .anims = (const union AnimCmd* const*) 0x08231CF0,
+    .images = NULL,
+    .affineAnims = (const union AffineAnimCmd* const*) 0x08231CFC,
+    .callback = MegaIndicatorCallback,
+};
+
+const struct SpriteTemplate AlphaIndicatorTemplate =
+{
+    .tileTag = GFX_TAG_ALPHA_INDICATOR,
+    .paletteTag = GFX_TAG_MEGA_INDICATOR,
+    .oam = &MegaIndicatorOAM,
+    .anims = (const union AnimCmd* const*) 0x08231CF0,
+    .images = NULL,
+    .affineAnims = (const union AffineAnimCmd* const*) 0x08231CFC,
+    .callback = MegaIndicatorCallback,
+};
+
+const struct SpriteTemplate OmegaIndicatorTemplate =
+{
+    .tileTag = GFX_TAG_OMEGA_INDICATOR,
+    .paletteTag = GFX_TAG_MEGA_INDICATOR,
+    .oam = &MegaIndicatorOAM,
+    .anims = (const union AnimCmd* const*) 0x08231CF0,
+    .images = NULL,
+    .affineAnims = (const union AffineAnimCmd* const*) 0x08231CFC,
+    .callback = MegaIndicatorCallback,
+};
+
+const struct SpriteTemplate UltraIndicatorTemplate =
+{
+    .tileTag = GFX_TAG_ULTRA_INDICATOR,
+    .paletteTag = GFX_TAG_MEGA_INDICATOR,
+    .oam = &MegaIndicatorOAM,
+    .anims = (const union AnimCmd* const*) 0x08231CF0,
+    .images = NULL,
+    .affineAnims = (const union AffineAnimCmd* const*) 0x08231CFC,
+    .callback = MegaIndicatorCallback,
+};
+
+
+const struct SpriteTemplate MegaTriggerTemplate =
+{
+    .tileTag = GFX_TAG_MEGA_TRIGGER,
+    .paletteTag = GFX_TAG_MEGA_TRIGGER,
+    .oam = (const struct OamData*) &MegaTriggerOAM,
+    .anims = (const union AnimCmd* const*) 0x08231CF0,
+    .images = NULL,
+    .affineAnims = (const union AffineAnimCmd* const*) 0x08231CFC,
+    .callback = MegaTriggerCallback,
+};
+
+const struct SpriteTemplate UltraTriggerTemplate =
+{
+    .tileTag = GFX_TAG_ULTRA_TRIGGER,
+    .paletteTag = GFX_TAG_MEGA_TRIGGER,
+    .oam = (const struct OamData*) &MegaTriggerOAM,
+    .anims = (const union AnimCmd* const*) 0x08231CF0,
+    .images = NULL,
+    .affineAnims = (const union AffineAnimCmd* const*) 0x08231CFC,
+    .callback = MegaTriggerCallback,
+};
+
+/* Declare the colours the trigger button doesn't light up */
+u16 IgnoredColours[] = 
+{
+  RGB(7, 10, 8), 
+  RGB(15, 18, 16), 
+  RGB(10, 13, 12), 
+  RGB(4, 7, 0),
+  RGB(0, 0, 0),
+};
+
+/* Easy match function */
+bool8 IsIgnoredTriggerColour(u16 colour) 
+{
+	for (u32 i = 0; i < sizeof(IgnoredColours) / sizeof(u16); ++i) 
+	{
+		if (IgnoredColours[i] == colour) 
+			return TRUE;
+	}
+  
+	return FALSE;
+}
+
+struct Sprite* GetHealthboxObjId(u8 bank) 
+{
+	return &gSprites[gHealthboxIDs[bank]];
+}
+
+u16 ConvertColorToGrayscale(u16 colour) 
+{
+	s32 r = colour & 31;
+	s32 g = (colour >> 5) & 31;
+	s32 b = (colour >> 10) & 31;
+	s32 gray = (r * Q_8_8(0.3) + g * Q_8_8(0.59) + b * Q_8_8(0.1133)) >> 8;
+	return RGB2(gray, gray, gray);
+}
+
+u16 LightUpMegaSymbol(u16 clra) 
+{
+	u16 clrb = 0x7FFF;
+	
+	u32 currentAlpha  = 20;
+
+	const u32 rbmask= ((0x1F)|(0x1F << 10)), gmask= 0x1F << 5;
+	const u32 rbhalf= 0x4010, ghalf= 0x0200;
+
+	// Red and blue
+	u32 parta = clra & rbmask;
+	u32 partb = clrb & rbmask;
+	u32 part = (partb-parta) * (32 - ((currentAlpha < 0x100) ? currentAlpha : currentAlpha >> 12)) + parta*32 + rbhalf;
+	u16 clr = (part >> 5) & rbmask;
+
+	// Green
+	parta = clra & gmask;
+	partb = clrb & gmask;
+	part = (partb-parta) * (32 - ((currentAlpha < 0x100) ? currentAlpha : currentAlpha >> 12)) + parta*32 + ghalf;
+	clr |= (part >> 5) & gmask;
+
+	return clr;
+}
+
+#define PALETTE_STATE self->data[1]
+#define TAG self->template->tileTag
+
+void MegaTriggerCallback(struct Sprite* self) 
+{	
+	if (SIDE(gStringBank) == B_SIDE_OPPONENT) //Don't waste time with opponent's side
+		return;
+	
+	if (TAG == GFX_TAG_MEGA_TRIGGER) 
+	{
+		if (!CanMegaEvolve(gStringBank, FALSE))
+		{
+			self->pos1.x = -32;
+			return;
+		}
+	}
+	else //Ultra Burst
+	{
+		if (!CanMegaEvolve(gStringBank, TRUE))
+		{
+			self->pos1.x = -32;
+			return;
+		}
+	}
+		
+	s16 xshift, yshift;
+	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE) 
+	{
+		xshift = -6;
+		yshift = 0;
+	} 
+	else 
+	{
+		xshift = -5;
+		yshift = 2;
+	}
+
+	// Find the health box object that this trigger is supposed to be attached to
+	u8 id = gHealthboxIDs[gStringBank];
+	struct Sprite* healthbox = &gSprites[id];
+	
+	u8 y = healthbox->oam.y;
+
+	u8 pingid = gBattleSpritesDataPtr->healthBoxesData[gStringBank].healthboxBounceSpriteId;
+	struct Sprite* ping = &gSprites[pingid];
+ 
+	if (y) 
+	{
+		// Copy the healthbox's position (it has various animations)
+		//self->y = healthbox->y + 20;
+		self->pos1.x = (healthbox->oam.x) + xshift + self->data[3];
+		self->pos2.y = Sine(ping->data[0], ping->data[2]);
+		self->pos1.y = healthbox->pos1.y + yshift;
+	} 
+	else 
+	{
+		// The box is offscreen, so hide this one as well
+		self->pos1.x = -32;
+	}
+	
+	if (gBattleBankFunc[gStringBank] == 0x0802EA11) //HandleInputChooseMove
+	{
+		self->invisible = FALSE;
+	
+		if (self->data[3] > 0)
+			self->data[3] -= 2;
+		else
+			self->data[3] = 0;  
+	} 
+	else 
+	{
+		if (self->data[3] < 16)
+			self->data[3] += 2;
+		else 
+		{
+			// Hide offscreen once invisible
+			self->invisible = TRUE;
+			self->pos1.x = -32;
+			return;
+		}
+	}
+	
+  	const struct Evolution* evo;
+	if (TAG == GFX_TAG_MEGA_TRIGGER)
+	{
+		evo = CanMegaEvolve(gStringBank, FALSE);
+		if (evo->unknown != MEGA_VARIANT_ULTRA_BURST) 
+		{
+			if (gNewBS->MegaData->done[gStringBank])
+				PALETTE_STATE = MegaTriggerGrayscale;
+			else
+			{
+				if (gNewBS->MegaData->chosen[gStringBank])
+					PALETTE_STATE = MegaTriggerLightUp;
+				else
+					PALETTE_STATE = MegaTriggerNormalColour;
+			}
+		}
+	}
+	else //TAG == GFX_TAG_ULTRA_TRIGGER
+	{
+		evo = CanMegaEvolve(gStringBank, TRUE);
+		if (evo->unknown == MEGA_VARIANT_ULTRA_BURST) 
+		{
+			if (gNewBS->UltraData->done[gStringBank])
+				PALETTE_STATE = MegaTriggerGrayscale;
+			else 
+			{
+				if (gNewBS->UltraData->chosen[gStringBank])
+					PALETTE_STATE = MegaTriggerLightUp;
+				else
+					PALETTE_STATE = MegaTriggerNormalColour;
+			}
+		}
+	}
+	
+	// Only change the palette if the state has changed
+	if (PALETTE_STATE != self->data[2]) 
+	{
+		u16* pal = &gPlttBufferFaded2[IndexOfSpritePaletteTag(GFX_TAG_MEGA_TRIGGER) * 16];
+		u8 i;
+		
+		for(i = 1; i < 16; i++) 
+		{
+			if (IsIgnoredTriggerColour(Mega_TriggerPal[i])) continue;
+	
+			switch(PALETTE_STATE) {
+				case MegaTriggerLightUp:
+					pal[i] = LightUpMegaSymbol(Mega_TriggerPal[i]);
+					break;
+				case MegaTriggerNormalColour:
+					pal[i] = Mega_TriggerPal[i];
+					break;
+				case MegaTriggerGrayscale:
+					pal[i] = ConvertColorToGrayscale(Mega_TriggerPal[i]);
+					break;
+			}
+		}
+		
+		self->data[2] = PALETTE_STATE;
+	}
+}
+
+#define OBJ_BANK self->data[0]
+
+void MegaIndicatorCallback(struct Sprite* self) {
+	// Visibility
+	
+	switch(TAG) {
+		case GFX_TAG_ALPHA_INDICATOR:
+			if (!IsBluePrimal(OBJ_BANK))
+			{
+				self->pos1.x = -8;
+				return;
+			}
+			break;
+		
+		case GFX_TAG_OMEGA_INDICATOR:
+			if (!IsRedPrimal(OBJ_BANK))
+			{
+				self->pos1.x = -8;
+				return;
+			}
+			break;
+		
+		case GFX_TAG_ULTRA_INDICATOR:
+			if (!IsUltraNecrozma(OBJ_BANK))
+			{
+				self->pos1.x = -8;
+				return;
+			}
+			break;
+		
+		default: //GFX_TAG_MEGA_TRIGGER
+			if (!IsMega(OBJ_BANK)) 
+			{
+				self->pos1.x = -8;
+				return;
+			}
+	}
+	
+	struct Sprite* healthbox = GetHealthboxObjId(OBJ_BANK);
+	
+	if (healthbox->invisible) 
+	{
+		self->pos1.x = -8;
+		return;
+	}
+	
+	u8 y = healthbox->oam.y;
+	u8 x = healthbox->oam.x;
+		
+	// Mirror healthbox priority
+	self->oam.priority = healthbox->oam.priority;
+		
+	if (y) 
+	{
+		// Figure out the X position for the indicator - it differs depending on
+		// the battle type and the side the healthbox represents.
+		s16 shift = 64; // Halfway point for OAM
+	
+		if (SIDE(OBJ_BANK) == B_SIDE_OPPONENT)
+			shift += 18;
+		else
+			shift += 26;
+		
+		// Convert the level to a string to get how long it is
+		u8 buf[10];
+		u8 stringlen = ConvertIntToDecimalStringN(buf, gBattleMons[OBJ_BANK].level, 0, 3) - buf;
+			
+		// The x position depends on the X origin of the healthbox as well as
+		// the string length
+		self->pos1.x = x + shift - 5 * stringlen;
+			
+		u8 pingid = gBattleSpritesDataPtr->healthBoxesData[OBJ_BANK].healthboxBounceSpriteId;
+		struct Sprite* ping = &gSprites[pingid]; 
+			
+		bool8 sineActive = (gBattleSpritesDataPtr->healthBoxesData[OBJ_BANK].healthboxIsBouncing 
+						 || gBattleSpritesDataPtr->healthBoxesData[OBJ_BANK].battlerIsBouncing);
+		
+		struct Sprite* shaker = &gSprites[ShakerData[1]];
+		u8 hbid = gHealthboxIDs[OBJ_BANK];
+			
+		if (sineActive) 
+		{
+			self->pos1.y = healthbox->pos1.y - 4;
+			self->pos2.y = Sine(ping->data[0], ping->data[2]);
+			return;
+		} 
+		else if (shaker->data[1] == hbid && ShakerData[0]) 
+		{
+			self->pos2.y = (shaker->data[2] & 1) ? -1 : 1;
+			return;
+		}
+			
+		// Fix indicator position
+		self->pos1.y = healthbox->pos1.y - 5;
+		self->pos2.x = 0;
+		self->pos2.y = 0;
+	}
+	else
+		self->pos1.x = -8;
+}
+
+void LoadMegaGraphics(u8 state) 
+{
+#ifdef MEGA_EVOLUTION_FEATURE
+	u8 objid;
+	
+	if (state == 2) 
+	{
+		LoadSpritePalette(&MegaIndicatorPalette);
+		LoadSpritePalette(&MegaTriggerPalette);
+		
+		LoadCompressedSpriteSheetUsingHeap(&MegaIndicatorSpriteSheet);
+		LoadCompressedSpriteSheetUsingHeap(&AlphaIndicatorSpriteSheet);
+		LoadCompressedSpriteSheetUsingHeap(&OmegaIndicatorSpriteSheet);
+		LoadCompressedSpriteSheetUsingHeap(&UltraIndicatorSpriteSheet);
+		LoadCompressedSpriteSheetUsingHeap(&MegaTriggerSpriteSheet);
+		LoadCompressedSpriteSheetUsingHeap(&UltraTriggerSpriteSheet);
+		
+		// Create a Mega Indicator for every bank
+		for (u8 bank = 0; bank < gBattlersCount; ++bank) 
+		{
+		  objid = CreateSprite(&MegaIndicatorTemplate, 0, 0, 1);
+		  gSprites[objid].data[0] = bank;
+		  
+		  objid = CreateSprite(&AlphaIndicatorTemplate, 0, 0, 1);
+		  gSprites[objid].data[0] = bank;
+		  
+		  objid = CreateSprite(&OmegaIndicatorTemplate, 0, 0, 1);
+		  gSprites[objid].data[0] = bank;
+		  
+		  objid = CreateSprite(&UltraIndicatorTemplate, 0, 0, 1);
+		  gSprites[objid].data[0] = bank;
+		}
+		
+		objid = CreateSprite(&MegaTriggerTemplate, 130, 90, 1);
+		gSprites[objid].invisible = TRUE;
+		
+		objid = CreateSprite(&UltraTriggerTemplate, 130, 90, 1);
+		gSprites[objid].invisible = TRUE;
+	}
+#endif
 }

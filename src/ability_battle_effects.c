@@ -36,6 +36,7 @@ extern u8 BattleScript_MoodyRegular[];
 extern u8 BattleScript_BadDreams[];
 extern u8 BattleScript_Harvest[];
 extern u8 BattleScript_Pickup[];
+extern u8 BattleScript_PrintCustomStringEnd3[];
 extern u8 BattleScript_SoundproofProtected[];
 extern u8 BattleScript_FlashFireBoost[];
 extern u8 BattleScript_FlashFireBoost_PPLoss[];
@@ -80,6 +81,7 @@ extern u8 ElectricTerrainSetString[];
 extern u8 GrassyTerrainSetString[];
 extern u8 MistyTerrainSetString[];
 extern u8 PsychicTerrainSetString[];
+extern u8 gText_SlowStartEnd[];
 
 extern ability_t TraceBanTable[];
 extern move_t BallBombMoveTable[];
@@ -178,12 +180,12 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
     switch (caseID)
     {
     case ABILITYEFFECT_ON_SWITCHIN: // 0;
-		if (gSpecialStatuses[bank].switchInAbilityDone
-		&& gLastUsedAbility != ABILITYEFFECT_SWITCH_IN_WEATHER)
-			break;
-	
 		gBankAttacker = gBattleScripting->bank = bank;
 		
+		if (gStatuses3[bank] & STATUS3_SWITCH_IN_ABILITY_DONE
+		&& gLastUsedAbility != ABILITYEFFECT_SWITCH_IN_WEATHER)
+			break;
+
         switch (gLastUsedAbility)
         {
         case ABILITYEFFECT_SWITCH_IN_WEATHER:
@@ -270,7 +272,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 												ITEM_EFFECT_DAMP_ROCK, bank, 
 												BattleScript_DrizzleActivates);
             }
-			gSpecialStatuses[bank].switchInAbilityDone = 1;
+
             break;
 			
         case ABILITY_SANDSTREAM:
@@ -280,7 +282,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 												ITEM_EFFECT_SMOOTH_ROCK, bank, 
 												BattleScript_SandstreamActivates);
             }
-			gSpecialStatuses[bank].switchInAbilityDone = 1;
+			
             break;
 			
         case ABILITY_DROUGHT:
@@ -290,7 +292,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 												ITEM_EFFECT_HEAT_ROCK, bank, 
 												BattleScript_DroughtActivates);
             }
-			gSpecialStatuses[bank].switchInAbilityDone = 1;
+
             break;
 				
 		case ABILITY_SNOWWARNING:
@@ -302,7 +304,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 												ITEM_EFFECT_ICY_ROCK, bank, 
 												BattleScript_NewWeatherAbilityActivates);
             }
-			gSpecialStatuses[bank].switchInAbilityDone = 1;
+
             break;
 
 		case ABILITY_PRIMORDIALSEA:
@@ -315,7 +317,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				BattleScriptPushCursorAndCallback(BattleScript_NewWeatherAbilityActivates);
                 effect++;
             }
-			gSpecialStatuses[bank].switchInAbilityDone = 1;
+
             break;
 		
 		case ABILITY_DESOLATELAND:
@@ -328,7 +330,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				BattleScriptPushCursorAndCallback(BattleScript_NewWeatherAbilityActivates);
                 effect++;
             }
-			gSpecialStatuses[bank].switchInAbilityDone = 1;
+
             break;
 				
 		case ABILITY_DELTASTREAM:
@@ -341,11 +343,10 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				BattleScriptPushCursorAndCallback(BattleScript_NewWeatherAbilityActivates);
                 effect++;
             }
-			gSpecialStatuses[bank].switchInAbilityDone = 1;
+
             break;
 			
         case ABILITY_INTIMIDATE:
-            gSpecialStatuses[bank].switchInAbilityDone = TRUE;
 			if (!(gBattleMons[FOE(bank)].status2 & STATUS2_SUBSTITUTE) || !(gBattleMons[PARTNER(FOE(bank))].status2 & STATUS2_SUBSTITUTE))
 			{
 				BattleScriptPushCursorAndCallback(BattleScript_IntimidateActivatesEnd3);
@@ -361,7 +362,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
                 BattleScriptPushCursorAndCallback(BattleScript_CastformChange);
                 gBattleStruct->castformToChangeInto = effect - 1;
             }
-			gSpecialStatuses[bank].switchInAbilityDone = 1;
+
             break;
 			
         case ABILITY_TRACE: ;
@@ -412,7 +413,6 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				else
 					--effect;
             }
-			gSpecialStatuses[bank].switchInAbilityDone = TRUE;
             break;
 			
         case ABILITY_CLOUDNINE:
@@ -430,7 +430,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
                 }
 				
 				BattleStringLoader = gText_AirLockActivate;
-				gSpecialStatuses[bank].switchInAbilityDone = 1;
+	
 				BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
 				effect++;
             }
@@ -438,28 +438,25 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 		
 		case ABILITY_PRESSURE:
             BattleStringLoader = gText_PressureActivate;
-            gSpecialStatuses[bank].switchInAbilityDone = 1;
+            
             BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
             effect++;
             break;
 		
 		case ABILITY_MOLDBREAKER:
             BattleStringLoader = gText_MoldBreakerActivate;
-            gSpecialStatuses[bank].switchInAbilityDone = 1;
             BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
             effect++;
             break;
 			
 		case ABILITY_TERAVOLT:
             BattleStringLoader = gText_TeravoltActivate;
-            gSpecialStatuses[bank].switchInAbilityDone = 1;
             BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
             effect++;
             break;
 
 		case ABILITY_TURBOBLAZE:
             BattleStringLoader = gText_TurboblazeActivate;
-            gSpecialStatuses[bank].switchInAbilityDone = 1;
             BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
             effect++;
             break;
@@ -467,7 +464,6 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 		case ABILITY_SLOWSTART:
             gNewBS->SlowStartTimers[bank] = 5;
             BattleStringLoader = gText_SlowStartActivate;
-            gSpecialStatuses[bank].switchInAbilityDone = 1;
             BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
             effect++;
             break;
@@ -475,35 +471,30 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 		case ABILITY_UNNERVE:
 			gBankAttacker = bank;
             BattleStringLoader = gText_UnnerveActivate;
-            gSpecialStatuses[bank].switchInAbilityDone = 1;
             BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
             effect++;
             break;
 
 		case ABILITY_DARKAURA:
             BattleStringLoader = gText_DarkAuraActivate;
-            gSpecialStatuses[bank].switchInAbilityDone = 1;
             BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
             effect++;
             break;
 
 		case ABILITY_FAIRYAURA:
             BattleStringLoader = gText_FairyAuraActivate;
-            gSpecialStatuses[bank].switchInAbilityDone = 1;
             BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
             effect++;
             break;
 		
 		case ABILITY_AURABREAK:
             BattleStringLoader = gText_AuraBreakActivate;
-            gSpecialStatuses[bank].switchInAbilityDone = 1;
             BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
             effect++;
             break;
 		
 		case ABILITY_COMATOSE:
 			BattleStringLoader = gText_ComatoseActivate;
-            gSpecialStatuses[bank].switchInAbilityDone = 1;
             BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
             effect++;
             break;
@@ -562,7 +553,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				BattleStringLoader = gText_AnticipationActivate;
 				BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
             }
-			gSpecialStatuses[bank].switchInAbilityDone = 1;
+			
 			break;
 		
 		case ABILITY_FOREWARN: ;
@@ -607,7 +598,6 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			gBattleScripting->bank = strongestTarget;
 			PREPARE_MOVE_BUFFER(gBattleTextBuff1, strongestMove);
             BattleStringLoader = gText_ForewarnActivate;
-            gSpecialStatuses[bank].switchInAbilityDone = 1;
             BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
             effect++;
             break;
@@ -623,7 +613,6 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
 				effect++;
 			}
-			gSpecialStatuses[bank].switchInAbilityDone = 1;
             break;
 		
         case ABILITY_IMMUNITY:
@@ -679,8 +668,6 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
             else
                 statId = STAT_SPATK;
 
-            gSpecialStatuses[bank].switchInAbilityDone = 1;
-
             if (gBattleMons[bank].statStages[statId-1] < 12)
             {
                 gBattleMons[bank].statStages[statId-1]++;
@@ -710,7 +697,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				if (speciesAtk == PKMN_WISHIWASHI && gBattleMons[gActiveBattler].level >= 20 
 				&&  gBattleMons[gActiveBattler].hp > (gBattleMons[gActiveBattler].maxHP / 4)) 
 				{
-					DoFormChange(bank, PKMN_WISHIWASHI_S, FALSE);
+					DoFormChange(bank, PKMN_WISHIWASHI_S, FALSE, TRUE);
 					BattleScriptPushCursorAndCallback(BattleScript_StartedSchoolingEnd3);
 					++effect;
 				}
@@ -718,12 +705,11 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				&& (gBattleMons[gActiveBattler].level < 20 || 
 					gBattleMons[gActiveBattler].hp <= (gBattleMons[gActiveBattler].maxHP / 4))) 
 				{
-					DoFormChange(bank, PKMN_WISHIWASHI, FALSE);
+					DoFormChange(bank, PKMN_WISHIWASHI, FALSE, TRUE);
 					BattleScriptPushCursorAndCallback(BattleScript_StoppedSchoolingEnd3);
 					++effect;
 				}
 			}
-			gSpecialStatuses[bank].switchInAbilityDone = 1;
 			break;
 							
 		case ABILITY_SHIELDSDOWN:
@@ -732,7 +718,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				if (speciesAtk == PKMN_MINIORSHIELD 
 				&& gBattleMons[gActiveBattler].hp <= (gBattleMons[gActiveBattler].maxHP / 2)) 
 				{
-					DoFormChange(bank, umodsi(GetBankPartyData(bank)->personality, 7), FALSE); //Get Minior Colour
+					DoFormChange(bank, umodsi(GetBankPartyData(bank)->personality, 7), FALSE, TRUE); //Get Minior Colour
 					BattleScriptPushCursorAndCallback(BattleScript_ShieldsDownToCoreEnd3);
 					++effect;
 				}
@@ -745,12 +731,11 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 						  speciesAtk == PKMN_MINIOR_VIOLET) 
 				&& gBattleMons[gActiveBattler].hp > (gBattleMons[gActiveBattler].maxHP / 2)) 
 				{
-					DoFormChange(bank, PKMN_MINIORSHIELD, FALSE);
+					DoFormChange(bank, PKMN_MINIORSHIELD, FALSE, TRUE);
 					BattleScriptPushCursorAndCallback(BattleScript_ShieldsDownToMeteorEnd3);
 					++effect;
 				}
 			}
-			gSpecialStatuses[bank].switchInAbilityDone = 1;
 			break;
 		
 		case ABILITY_FLOWERGIFT:
@@ -761,7 +746,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 					case PKMN_CHERRIM:
 						if (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_SUN_ANY))
 						{
-							DoFormChange(bank, PKMN_CHERRIMSUN, FALSE);
+							DoFormChange(bank, PKMN_CHERRIMSUN, FALSE, FALSE);
 							BattleScriptPushCursorAndCallback(BattleScript_TransformedEnd3);
 							++effect;
 						}
@@ -770,40 +755,41 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 					case PKMN_CHERRIMSUN:
 						if (!WEATHER_HAS_EFFECT || !(gBattleWeather & WEATHER_SUN_ANY))
 						{
-							DoFormChange(bank, PKMN_CHERRIM, FALSE);
+							DoFormChange(bank, PKMN_CHERRIM, FALSE, FALSE);
 							BattleScriptPushCursorAndCallback(BattleScript_TransformedEnd3);
 							++effect;
 						}
 				}
 			}
-			gSpecialStatuses[bank].switchInAbilityDone = 1;
 			break;
 			
 		case ABILITY_ELECTRICSURGE:
             effect = TryActivateTerrainAbility(ELECTRIC_TERRAIN, B_ANIM_ELECTRIC_SURGE, bank);
-			gSpecialStatuses[bank].switchInAbilityDone = 1;
 			break;
 		
 		case ABILITY_GRASSYSURGE:
             effect = TryActivateTerrainAbility(GRASSY_TERRAIN, B_ANIM_GRASSY_SURGE, bank);
-			gSpecialStatuses[bank].switchInAbilityDone = 1;
 			break;
 		
 		case ABILITY_MISTYSURGE:
             effect = TryActivateTerrainAbility(MISTY_TERRAIN, B_ANIM_MISTY_SURGE, bank);
-			gSpecialStatuses[bank].switchInAbilityDone = 1;
 			break;
 		
 		case ABILITY_PSYCHICSURGE:
             effect = TryActivateTerrainAbility(PSYCHIC_TERRAIN, B_ANIM_PSYCHIC_SURGE, bank);
-			gSpecialStatuses[bank].switchInAbilityDone = 1;
 			break;
-		
-		default:
-			gSpecialStatuses[bank].switchInAbilityDone = TRUE;
 		}
 		
-        break;
+		switch (gLastUsedAbility) { //These abilities should always activate if they can
+			case ABILITY_FORECAST:
+			case ABILITY_FLOWERGIFT:
+			case ABILITYEFFECT_SWITCH_IN_WEATHER:
+				break;
+			default:
+				gStatuses3[bank] |= STATUS3_SWITCH_IN_ABILITY_DONE;
+		}
+		
+		break;
 		
     case ABILITYEFFECT_ENDTURN: // 1
             if (gBattleMons[bank].hp != 0)
@@ -997,7 +983,15 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 							break;
 						}
 					}
-			
+					break;
+				
+				case ABILITY_SLOWSTART:
+					if (gNewBS->SlowStartTimers[bank] && gBattleMons[bank].hp && --gNewBS->SlowStartTimers[bank] == 0) 
+					{
+						BattleStringLoader = gText_SlowStartEnd;
+						BattleScriptPushCursorAndCallback(BattleScript_PrintCustomStringEnd3);
+						++effect;
+					}
                 }
             }
             break;
@@ -1854,7 +1848,7 @@ u8 TryActivateTerrainAbility(u8 terrain, u8 anim, u8 bank)
 
 bool8 ImmunityAbilityCheck(u8 bank, u32 status, u8* string)
 {
-	gSpecialStatuses[bank].switchInAbilityDone = 1;
+	
 	if (gBattleMons[bank].status1 & status)
 	{
         StringCopy(gBattleTextBuff1, string);

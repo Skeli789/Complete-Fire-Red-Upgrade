@@ -5,7 +5,7 @@
 [FD][13] is exerting\nits pressure!
 
 #org @gText_MoldBreakerActivate
-[FD][13] breaks the\nmold!
+[FD][13] breaks\nthe mold!
 
 #org @gText_TeravoltActivate
 [FD][13] is radiating\na bursting aura!
@@ -54,3 +54,6 @@ The fog is deep[B0]
 
 #org @gText_DeltaStream
 [FD][13]'s [FD][1A]\nsummoned a mysterious air current\lthat protects Flying-type Pok\emon!
+
+#org @gText_SlowStartEnd
+[FD][13] got its\nact together!

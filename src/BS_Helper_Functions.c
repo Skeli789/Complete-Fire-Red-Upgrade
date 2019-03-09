@@ -95,7 +95,8 @@ void CopycatFunc(void);
 void CheckIfDarkVoidShouldFail(void)
 {
 	if (gCurrentMove == MOVE_DARKVOID
-	&&  SPECIES(gBankAttacker) != PKMN_DARKRAI)
+	&&  SPECIES(gBankAttacker) != PKMN_DARKRAI
+	&&  !gNewBS->MoveBounceInProgress)
 		gBattlescriptCurrInstr = BattleScript_DarkVoidFail - 5;
 }
 
@@ -1267,6 +1268,7 @@ void AbilityChangeBSFunc(void) {
 				*defAbilityLoc = ABILITY_INSOMNIA;
 				gLastUsedAbility = ABILITY_INSOMNIA;
 				RecordAbilityBattle(gBankTarget, gLastUsedAbility);
+				gNewBS->SlowStartTimers[gBankTarget] = 0;
 				BattleStringLoader = WorrySeedString;
 			}
 			break;
@@ -1283,6 +1285,7 @@ void AbilityChangeBSFunc(void) {
 				gNewBS->SuppressedAbilities[gBankTarget] = defAbility;
 				*defAbilityLoc = 0;
 				RecordAbilityBattle(gBankTarget, 0);
+				gNewBS->SlowStartTimers[gBankTarget] = 0;
 				gBattleScripting->bank = gBankTarget;
 				BattleStringLoader = AbilitySuppressedString;
 			}
@@ -1297,6 +1300,7 @@ void AbilityChangeBSFunc(void) {
 				*defAbilityLoc = atkAbility;
 				gLastUsedAbility = atkAbility;
 				RecordAbilityBattle(gBankTarget, gLastUsedAbility);
+				gNewBS->SlowStartTimers[gBankTarget] = 0;
 				BattleStringLoader = EntrainmentString;
 			}
 			break;
@@ -1311,6 +1315,7 @@ void AbilityChangeBSFunc(void) {
 				*defAbilityLoc = ABILITY_SIMPLE;
 				gLastUsedAbility = ABILITY_SIMPLE;
 				RecordAbilityBattle(gBankTarget, gLastUsedAbility);
+				gNewBS->SlowStartTimers[gBankTarget] = 0;
 				BattleStringLoader = SimpleBeamString;
 			}
 			break;
@@ -1413,12 +1418,6 @@ void LastResortFunc(void) {
 	if (i == 1 //Attacker only knows Last Resort
 	|| !knowsLastResort)
 		gBattlescriptCurrInstr = BattleScript_ButItFailed - 2 - 5;
-}
-
-void TryActivateNewSwitchInAbility(void) {
-	gSpecialStatuses[gActiveBattler].switchInAbilityDone = FALSE;
-	if (AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, gActiveBattler, 0, 0, 0))
-		gBattlescriptCurrInstr -= 5;
 }
 
 void MakeScriptingBankInvisible(void)

@@ -1024,10 +1024,13 @@ u8 TurnBasedEffects(void) {
 						break;
 						
 					case(ET_Harvest_Pickup):
-						if (gBattleMons[gActiveBattler].hp && !(gBattleMons[gActiveBattler].item)) {
+						if (gBattleMons[gActiveBattler].hp 
+						&& (!gBattleMons[gActiveBattler].item || ABILITY(gActiveBattler) == ABILITY_SLOWSTART)) 
+						{
 							switch(ABILITY(gActiveBattler)) {
 							case ABILITY_HARVEST:
 							case ABILITY_PICKUP:
+							case ABILITY_SLOWSTART:
 								if (AbilityBattleEffects(ABILITYEFFECT_ENDTURN, gActiveBattler, 0, 0, 0))
 									effect++;
 							}
@@ -1051,16 +1054,17 @@ u8 TurnBasedEffects(void) {
 					u16 species = partydata->species;
 					u8 ability = gBattleMons[gActiveBattler].ability;
 					u16 newspecies = 0;
+					bool8 reloadType = FALSE;
+					bool8 reloadStats = FALSE;
 					u8* battle_script;
 					switch(ability) {
 						
 						case ABILITY_ZENMODE:
 							if (species == PKMN_DARMANITAN) {
 								newspecies = PKMN_DARMANITANZEN;
-								gBattleMons[gActiveBattler].type1 = TYPE_FIRE;
-								gBattleMons[gActiveBattler].type2 = TYPE_PSYCHIC;
-								gBattleMons[gActiveBattler].type3 = TYPE_BLANK;
 								changedform = TRUE;
+								reloadType = TRUE;
+								reloadStats = TRUE;
 								battle_script = BattleScript_ZenMode;
 							}
 							break;
@@ -1068,9 +1072,8 @@ u8 TurnBasedEffects(void) {
 						case ABILITY_POWERCONSTRUCT:
 							if (species == PKMN_ZYGARDE || species == PKMN_ZYGARDE_10) {
 								newspecies = PKMN_ZYGARDE_COMPLETE;
-								gBattleMons[gActiveBattler].type1 = TYPE_DRAGON;
-								gBattleMons[gActiveBattler].type2 = TYPE_GROUND;
-								gBattleMons[gActiveBattler].type3 = TYPE_BLANK;
+								reloadType = TRUE;
+								reloadStats = TRUE;
 								changedform = TRUE;
 								battle_script = BattleScript_PowerConstruct;
 							}
@@ -1081,6 +1084,7 @@ u8 TurnBasedEffects(void) {
 							    gBattleMons[gActiveBattler].hp > (gBattleMons[gActiveBattler].maxHP / 4)) {
 									newspecies = PKMN_WISHIWASHI_S;
 									changedform = TRUE;
+									reloadStats = TRUE;
 									battle_script = BattleScript_StartedSchooling;
 							}
 							else if (species == PKMN_WISHIWASHI_S && 
@@ -1088,6 +1092,7 @@ u8 TurnBasedEffects(void) {
 									 gBattleMons[gActiveBattler].hp <= (gBattleMons[gActiveBattler].maxHP / 4))) {
 										newspecies = PKMN_WISHIWASHI;
 										changedform = TRUE;
+										reloadStats = TRUE;
 										battle_script = BattleScript_StoppedSchooling;
 							}
 							break;
@@ -1098,6 +1103,7 @@ u8 TurnBasedEffects(void) {
 							{
 								newspecies = umodsi(partydata->personality, 7); //Get Minior Colour
 								changedform = TRUE;
+								reloadStats = TRUE;
 								battle_script = BattleScript_ShieldsDownToCore;
 							}
 							else if ((species == PKMN_MINIOR_RED
@@ -1110,6 +1116,7 @@ u8 TurnBasedEffects(void) {
 							{
 								newspecies = PKMN_MINIORSHIELD;
 								changedform = TRUE;
+								reloadStats = TRUE;
 								battle_script = BattleScript_ShieldsDownToMeteor;
 							}
 							break;
@@ -1121,17 +1128,7 @@ u8 TurnBasedEffects(void) {
 							}
 			
 						if (changedform) {
-							partydata->species = newspecies;
-							gBattleMons[gActiveBattler].species = newspecies;
-							partydata->backupSpecies = species;
-							CalculateMonStats(partydata);
-							gBattleMons[gActiveBattler].attack = partydata->attack;
-							gBattleMons[gActiveBattler].defense = partydata->defense;
-							gBattleMons[gActiveBattler].speed = partydata->speed;
-							gBattleMons[gActiveBattler].spAttack = partydata->spAttack;
-							gBattleMons[gActiveBattler].spDefense = partydata->spDefense;
-							gBattleMons[gActiveBattler].hp = partydata->hp;
-							gBattleMons[gActiveBattler].maxHP = partydata->maxHP;
+							DoFormChange(gActiveBattler, newspecies, reloadType, reloadStats);
 							BattleScriptExecute(battle_script);
 							++effect;
 						}

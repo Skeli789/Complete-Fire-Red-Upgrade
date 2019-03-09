@@ -942,33 +942,3 @@ gAbilityNames:
 .word NAME_GALVANIZE
 .byte 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
 
-
-.align 2
-NAME_MEGALAUNCHER: .string "Mega Launcher$"
-
-NAME_PARENTALBOND: .string "Parental Bond$"
-
-NAME_POWERCONSTRUCT: .string "Power Construct$"
-
-NAME_SHADOWSHIELD: .string "Shadow Shield$"
-
-NAME_TANGLINGHAIR: .string "Tangling Hair$"
-
-NAME_WATERCOMPACTION: .string "Water Compaction$"
-
-NAME_ELECTRICSURGE: .string "Electric Surge$"
-
-NAME_PSYCHICSURGE: .string "Psychic Surge$"
-
-NAME_STANCECHANGE: .string "Stance Change$"
-
-NAME_PRIMORDIALSEA: .string "Primordial Sea$"
-
-NAME_DESOLATELAND: .string "Desolate Land$"
-
-NAME_QUEENLYMAJESTY: .string "Queenly Majesty$"
-
-NAME_POWEROFALCHEMY: .string "Power of Alchemy$"
-
-NAME_GALVANIZE: .string "Galvanize$"
-

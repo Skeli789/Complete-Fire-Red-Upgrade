@@ -268,7 +268,9 @@ void HandleInputChooseMove(void)
 }
 
 bool8 TriggerMegaEvolution(void) {
-	
+	#ifndef MEGA_EVOLUTION_FEATURE
+		return FALSE;
+	#else
 	struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct*)(&gBattleBufferA[gActiveBattler][4]);
 	if (!moveInfo->canMegaEvolve)
 		return FALSE;
@@ -303,6 +305,7 @@ bool8 TriggerMegaEvolution(void) {
 		}
 	}
 	return FALSE;
+	#endif
 }
 
 //This function sends useful data over Link Cable for the move menu to use

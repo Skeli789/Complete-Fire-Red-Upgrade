@@ -2,7 +2,7 @@
 #include "helper_functions.h"
 
 //Update synchronize effect
-//Add Contact Protect effects
+//Shyamin Freezing
 
 #define INCREMENT_RESET_RETURN                  \
 {                                               \

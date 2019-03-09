@@ -21,6 +21,9 @@ u8 ItemIdToBallId(u16 ballItem);
 item_t BallIdToItemId(u8 ballId);
 u16 GetBattlerPokeballItemId(u8 bank);
 
+extern void TryFormRevert(pokemon_t* mon);
+extern void TryRevertMega(pokemon_t* mon);
+
 void atkEF_handleballthrow(void) {
 	if (gBattleExecBuffer) return;
 	
@@ -81,7 +84,7 @@ void atkEF_handleballthrow(void) {
         if (ItemType == BALL_TYPE_SAFARI_BALL)
             catch_rate = udivsi(gBattleStruct->safariCatchFactor * 1275, 100);
         else
-            catch_rate = gBaseStats[defSpecies].catchRate;
+            catch_rate = gBaseStats[GetBankPartyData(gBankTarget)->species].catchRate; //Uses party data b/c Transform update Gen 5+
 		
         if (ItemType > 5) {
             switch (ItemType) {
@@ -273,7 +276,7 @@ void atkEF_handleballthrow(void) {
 		#endif
 		
         if (gBattleMons[gBankTarget].status1 & (STATUS_SLEEP | STATUS_FREEZE))
-            odds = udivsi(250 * odds, 100);
+            odds = udivsi(odds * 250, 100);
         if (gBattleMons[gBankTarget].status1 & (STATUS_PSN_ANY | STATUS_BURN | STATUS_PARALYSIS))
             odds = udivsi((odds * 150), 100);
 
@@ -378,6 +381,9 @@ bool8 CriticalCapture(u32 odds) {
 
 u8 GiveMonToPlayer(pokemon_t* mon) { //Hook in
     int i;
+
+	TryFormRevert(mon);
+	TryRevertMega(mon);
 
     SetMonData(mon, MON_DATA_OT_NAME, gSaveBlock2->playerName);
     SetMonData(mon, MON_DATA_OT_GENDER, &gSaveBlock2->playerGender);

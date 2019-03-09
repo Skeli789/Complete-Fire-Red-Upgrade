@@ -22,7 +22,7 @@ void EndBattleFlagClear(void);
 bool8 IsConsumable(u16 item);
 
 extern void FormsRevert(pokemon_t* party);
-extern void MegaRevert(void);
+extern void MegaRevert(pokemon_t* party);
 extern void UpdateBurmy(void);
 
 extern u8 BattleScript_Victory[];
@@ -364,7 +364,7 @@ bool8 TryRunFromBattle(u8 bank)
 void EndOfBattleThings(void) {
 	RestoreNonConsumableItems();
 	FormsRevert(gPlayerParty);
-	MegaRevert();
+	MegaRevert(gPlayerParty);
 	UpdateBurmy();
 	EndPartnerBattlePartyRestore();
 	EndSkyBattlePartyRestore();
