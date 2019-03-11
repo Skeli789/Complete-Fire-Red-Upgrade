@@ -1,8 +1,13 @@
 #include "defines.h"
 #include "end_turn.h"
 #include "helper_functions.h"
+#include "Mega.h"
 
-//Slow start
+extern const struct CompressedSpriteSheet MegaTriggerSpriteSheet;
+extern const struct CompressedSpriteSheet UltraTriggerSpriteSheet;
+extern const struct SpritePalette MegaTriggerPalette;
+extern const struct SpriteTemplate MegaTriggerTemplate;
+extern const struct SpriteTemplate UltraTriggerTemplate;
 
 extern u8 BattleScript_MysteriousAirCurrentContinues[];
 extern u8 BattleScript_FogEnded[];
@@ -126,8 +131,13 @@ u8 TurnBasedEffects(void) {
 				if (gNewBS->EchoedVoiceCounter == 0)
 					gNewBS->EchoedVoiceDamageScale = 0;
 					
+				gSideAffecting[0] &= ~(SIDE_STATUS_CRAFTY_SHIELD | SIDE_STATUS_MAT_BLOCK | SIDE_STATUS_QUICK_GUARD | SIDE_STATUS_WIDE_GUARD);
+				gSideAffecting[1] &= ~(SIDE_STATUS_CRAFTY_SHIELD | SIDE_STATUS_MAT_BLOCK | SIDE_STATUS_QUICK_GUARD | SIDE_STATUS_WIDE_GUARD);
+					
 				gNewBS->NoMoreMovingThisTurn = 0;
-			
+				gNewBS->fusionFlareUsedPrior = FALSE;
+				gNewBS->fusionBoltUsedPrior = FALSE;
+					
 				++gBattleStruct->turnEffectsTracker;
 			__attribute__ ((fallthrough));
 
@@ -530,33 +540,33 @@ u8 TurnBasedEffects(void) {
                 break;
 				
 			case(ET_Trap_Damage):
-                if ((gBattleMons[gActiveBattler].status2 & STATUS2_WRAPPED) && 
-					 gBattleMons[gActiveBattler].hp && 
-					 gBattleMons[gActiveBattler].ability != ABILITY_MAGICGUARD) {
+                if ((gBattleMons[gActiveBattler].status2 & STATUS2_WRAPPED)
+				&& gBattleMons[gActiveBattler].hp
+				&& gBattleMons[gActiveBattler].ability != ABILITY_MAGICGUARD) 
+				{
 						gBattleMons[gActiveBattler].status2 -= 0x2000;
-						if (gBattleMons[gActiveBattler].status2 & STATUS2_WRAPPED) {  // damaged by wrap
-							gBattleScripting->animArg1 = gBattleStruct->wrappedMove[gActiveBattler * 2];
-							gBattleScripting->animArg2 = gBattleStruct->wrappedMove[1 + gActiveBattler * 2];
+						if (gBattleMons[gActiveBattler].status2 & STATUS2_WRAPPED) 
+						{  //Damaged by wrap
+							gBattleScripting->animArg1 = gBattleStruct->wrappedMove[gActiveBattler];
+							gBattleScripting->animArg2 = gBattleStruct->wrappedMove[gActiveBattler] >> 8;
 							gBattleTextBuff1[0] = 0xFD;
 							gBattleTextBuff1[1] = 2;
-							gBattleTextBuff1[2] = gBattleStruct->wrappedMove[gActiveBattler * 2];
-							gBattleTextBuff1[3] = gBattleStruct->wrappedMove[gActiveBattler * 2 + 1];
+							gBattleTextBuff1[2] = gBattleStruct->wrappedMove[gActiveBattler];
+							gBattleTextBuff1[3] = gBattleStruct->wrappedMove[gActiveBattler] >> 8;
 							gBattleTextBuff1[4] = EOS;
 							gBattlescriptCurrInstr = BattleScript_WrapTurnDmg;
 							
 							if (ITEM_EFFECT(gActiveBattler) == ITEM_EFFECT_BINDING_BAND)
-								gBattleMoveDamage = udivsi(gBattleMons[gActiveBattler].maxHP, 6);
+								gBattleMoveDamage = MathMax(1, udivsi(gBattleMons[gActiveBattler].maxHP, 6));
 							else
-								gBattleMoveDamage = gBattleMons[gActiveBattler].maxHP / 8;
-							
-							if (gBattleMoveDamage == 0)
-								gBattleMoveDamage = 1;
+								gBattleMoveDamage = MathMax(1, gBattleMons[gActiveBattler].maxHP / 8);
 						}
-						else { // broke free
+						else 
+						{ 	//Broke free
 							gBattleTextBuff1[0] = 0xFD;
 							gBattleTextBuff1[1] = 2;
-							gBattleTextBuff1[2] = gBattleStruct->wrappedMove[gActiveBattler * 2];
-							gBattleTextBuff1[3] = gBattleStruct->wrappedMove[gActiveBattler * 2 + 1];
+							gBattleTextBuff1[2] = gBattleStruct->wrappedMove[gActiveBattler];
+							gBattleTextBuff1[3] = gBattleStruct->wrappedMove[gActiveBattler] >> 8;
 							gBattleTextBuff1[4] = EOS;
 							gBattlescriptCurrInstr = BattleScript_WrapEnds;
 						}
@@ -1147,6 +1157,14 @@ u8 TurnBasedEffects(void) {
 					gNewBS->DamageTaken[i] = 0;
 					gNewBS->ResultFlags[i] = 0;
 				}
+				
+				u8 objid; //reload mega graphics
+				
+				objid = CreateSprite(&MegaTriggerTemplate, 130, 90, 1);
+				gSprites[objid].invisible = TRUE;
+				
+				objid = CreateSprite(&UltraTriggerTemplate, 130, 90, 1);
+				gSprites[objid].invisible = TRUE;
 		}
 		gBattleStruct->turnEffectsBank++;
 		
