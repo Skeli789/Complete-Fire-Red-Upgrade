@@ -39,7 +39,7 @@ AI_TrySwitchOrUseItem 8039C84 0
 LinkOpponentHandleFormChange 0803C318 0
 
 BattleSetup_GetTerrainId 807FC5C 0
-EndBattleFlagClearHook 80804AC 0
+EndBattleFlagClearHook 80159DC 0
 HandleIntroSlide 80BC3A0 1
 BufferStringBattle 080D7274 1
 BattleStringExpandPlaceholders 80D7868 2
@@ -79,6 +79,10 @@ GetMostSuitableMonToSwitchInto 8039E3C 0
 ##Mega Hooks
 MegaRetrieveDataHook 80148C0 0
 HandleInputChooseMove 802EA10 0
+InitMoveSelectionsVarsAndStrings 08032CB4 0
+PlayerHandleStatusIconUpdateHook 803301C 1
+OpponentHandleStatusIconUpdateHook 8038974 1
+LoadHealthBoxesIndicatorHook 8048398 2
 LoadMegaGraphicsHook 803495C 1
 MegaLevelStringHook 80483A4 1
 CreateShakerHook 804BE80 3
@@ -123,10 +127,14 @@ CriticalCaptureAnimHook 080EFF0C 2
 DISABLE_TIME_ASM 080A7FF8 1
 
 ##Poke Ball Hooks
-SetMonPokeBallHook 8040858 0
-LoadBallGfx 804BEF4 1
+SetMonPokeBallHook 08040858 0
+LoadBallGfx 0804BEF4 1
 GetBattlerPokeballItemId 0804BF90 1
 GetProperBallIdHook1 0804AA1E 1
 GetProperBallIdHook2 080EF3A8 1
 GetProperBallIdHook3 08139CDA 1
-ItemIdToBallId 80EF52C 1
+ItemIdToBallId 080EF52C 1
+DoubleWildAnimBallThrowFixHook 080EF5F4 1
+DoubleWildPokeBallItemUseFixHook 080A1E2C 0
+DoubleWildDexHook1 802D95C 0
+DoubleWildDexHook2 802D9D8 0
