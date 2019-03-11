@@ -2,8 +2,6 @@
 #include "helper_functions.h"
 
 //Change this to account for new base Exp
-//Test battle continuing after Wild Poke kills itself with Explosion
-//Level 100 pokes gain EVs
 
 #define SE_EXP 0x1B
 #define MUS_WILD_POKE_VICTORY 0x137
@@ -11,20 +9,20 @@
 
 enum
 {
-GetExp_Start,
-GetExp_CheckCurrentMonDeserving,
-GetExp_Calculation,
-GetExp_Distribute,
-GetExp_SetStats,
-GetExp_LevelUp,
-GetExp_PrepareLoop,
-GetExp_End,
+	GetExp_Start,
+	GetExp_CheckCurrentMonDeserving,
+	GetExp_Calculation,
+	GetExp_Distribute,
+	GetExp_SetStats,
+	GetExp_LevelUp,
+	GetExp_PrepareLoop,
+	GetExp_End,
 };
 
 enum
 {
-GiveExpBattlePariticpants,
-GiveExpViaExpShare,
+	GiveExpBattlePariticpants,
+	GiveExpViaExpShare,
 };
 
 extern u8 String_TeamExpGain[];
@@ -231,7 +229,9 @@ void atk23_getexp(void) {
     case GetExp_Distribute: // set exp value to the poke in expgetter_id and print message
 	
         // music change in wild battle after fainting a poke
-        if (!(gBattleTypeFlags & (BATTLE_TYPE_TRAINER | BATTLE_TYPE_POKE_DUDE)) && gBattleMons[0].hp && !gBattleStruct->wildVictorySong)
+        if (!(gBattleTypeFlags & (BATTLE_TYPE_TRAINER | BATTLE_TYPE_POKE_DUDE | BATTLE_TYPE_DOUBLE)) 
+		&& gBattleMons[0].hp 
+		&& !gBattleStruct->wildVictorySong)
         {
             BattleStopLowHpSound();
             PlayBGM(MUS_WILD_POKE_VICTORY); //Wild PKMN Victory
