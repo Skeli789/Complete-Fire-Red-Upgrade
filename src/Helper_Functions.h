@@ -55,6 +55,7 @@ extern bool8 MoveBlockedBySubstitute(u16 move, u8 atkBank, u8 defBank);
 extern bool8 IsMockBattle(void);
 extern u8 CalcMoveSplit(u8 bank, u16 move);
 extern u8 CalcMoveSplitFromParty(pokemon_t* mon, u16 move);
+extern u8 FindMovePositionInMoveset(u16 move, u8 bank);
 extern void ClearBankStatus(bank_t bank);
 
 extern bool8 CanBeGeneralStatused(u8 bank);

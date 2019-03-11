@@ -13,6 +13,11 @@ extern move_t AlwaysHitRainTable[];
 extern move_t StatChangeIgnoreTable[];
 extern const struct StatFractions gAccuracyStageRatios[];
 
+extern u8 CraftyShieldProtectedString[];
+extern u8 MatBlockProtectedString[];
+extern u8 QuickGuardProtectedString[];
+extern u8 WideGuardProtectedString[];
+
 void atk01_accuracycheck(void);
 bool8 JumpIfMoveAffectedByProtect(move_t, bank_t, bank_t);
 bool8 ProtectAffects(move_t, bank_t, bank_t, u8 set);
@@ -120,7 +125,6 @@ bool8 JumpIfMoveAffectedByProtect(move_t move, bank_t bankAtk, bank_t bankDef) {
     if (affected) {
         gMoveResultFlags |= MOVE_RESULT_MISSED;
         JumpIfMoveFailed(7, move);
-        gBattleCommunication[6] = 1;
     }
     return affected;
 }
@@ -136,31 +140,58 @@ bool8 ProtectAffects(u16 move, u8 bankAtk, u8 bankDef, bool8 set) {
     if (gProtectStructs[bankDef].protected && protectFlag)
 	{
         effect = 1;
+		gBattleCommunication[6] = 1;
 	}
     else if (gProtectStructs[bankDef].KingsShield && protectFlag && split != SPLIT_STATUS) 
 	{
         effect = 1;
         if (contact && set)
+		{
             gProtectStructs[bankDef].kingsshield_damage = 1;
+			gBattleCommunication[6] = 1;
+		}
     }
     else if (gProtectStructs[bankDef].SpikyShield && protectFlag) 
 	{
         effect = 1;
         if (contact && set)
+		{
             gProtectStructs[bankDef].spikyshield_damage = 1;
+			gBattleCommunication[6] = 1;
+		}
     }
     else if (gProtectStructs[bankDef].BanefulBunker && protectFlag) 
 	{
         effect = 1;
         if (contact && set)
+		{
             gProtectStructs[bankDef].banefulbunker_damage = 1;
+			gBattleCommunication[6] = 1;
+		}
     }
-    else if ((gSideAffecting[defSide] & SIDE_STATUS_CRAFTY_SHIELD && target != MOVE_TARGET_USER && split == SPLIT_STATUS)
-		  || (gSideAffecting[defSide] & SIDE_STATUS_QUICK_GUARD && protectFlag && PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > 0)
-		  || (gSideAffecting[defSide] & SIDE_STATUS_MAT_BLOCK && protectFlag && split != SPLIT_STATUS)
-		  || (gSideAffecting[defSide] & SIDE_STATUS_WIDE_GUARD && protectFlag && (target == MOVE_TARGET_BOTH || target == MOVE_TARGET_FOES_AND_ALLY)))
+    else if (gSideAffecting[defSide] & SIDE_STATUS_CRAFTY_SHIELD && target != MOVE_TARGET_USER && split == SPLIT_STATUS)
+	{
+		effect = 1;
+		BattleStringLoader = CraftyShieldProtectedString;
+		gBattleCommunication[6] = 5;
+	}
+    else if (gSideAffecting[defSide] & SIDE_STATUS_MAT_BLOCK && protectFlag && split != SPLIT_STATUS)
+	{
+		effect = 1;
+		BattleStringLoader = MatBlockProtectedString;
+		gBattleCommunication[6] = 6;
+	}
+    else if (gSideAffecting[defSide] & SIDE_STATUS_QUICK_GUARD && protectFlag && PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > 0)
+	{
+		effect = 1;
+		BattleStringLoader = QuickGuardProtectedString;
+		gBattleCommunication[6] = 7;
+	}
+	else if (gSideAffecting[defSide] & SIDE_STATUS_WIDE_GUARD && protectFlag && (target == MOVE_TARGET_BOTH || target == MOVE_TARGET_FOES_AND_ALLY))
 	{
         effect = 1;
+		BattleStringLoader = WideGuardProtectedString;
+		gBattleCommunication[6] = 8;
     }
 	
 	return effect;

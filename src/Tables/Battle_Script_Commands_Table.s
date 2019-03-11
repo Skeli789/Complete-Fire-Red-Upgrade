@@ -285,7 +285,7 @@ gBattleScriptingCommandsTable2:
 .word atkFF0E_setcounter
 .word atkFF0F_jumpifgrounded
 .word atkFF10_jumpifhelditem
-.word atkFF11_reloadhealthbar
+.word 0x8029049					@refreshhpbar
 .word atkFF12_jumpifhealthcomparestomax
 .word atkFF13_setdamagetobankhealthpercent
 .word atkFF14_jumpiftypepresent

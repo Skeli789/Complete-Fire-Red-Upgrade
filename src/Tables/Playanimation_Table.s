@@ -17,7 +17,7 @@ PlayAnimationTable:
 .word 0x81d5c04	@ ANIM_CREATE_SUBSTITUTE
 .word 0x81d5c0c	@ ANIM_POKEBLOCK_TRANSFORM
 .word 0x81d5c54	@ ANIM_KNOCK_OFF_ITEM
-.word ANIM_WRAP	@ ANIM_WRAP
+.word ANIM_WRAPPED_END_TURN	@ ANIM_WRAP
 .word ANIM_USEITEM	@ ANIM_ITEM_USE
 .word 0x81d5e66	@ ANIM_SMOKE_BALL
 .word 0x81d5f42	@ ANIM_CHARGE
@@ -80,125 +80,6 @@ PlayAnimationTable:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-ANIM_WRAP:
-	launchtask WrapTask+1 0x5 0x0 
-	jumpifargmatches 0x0 0x1 0x81d5cd3 
-	jumpifargmatches 0x0 0x2 0x81d5cf8 
-	jumpifargmatches 0x0 0x3 0x81d5d4c 
-	jumpifargmatches 0x0 0x4 0x81d5da9 
-	jumpifargmatches 0x0 0x5 0x81d5cd3 
-	jumpifargmatches 0x0 0x6 INFESTATION_ANIM
-	goto 0x81d5c8b 
-
-.align 2
-WrapTask:
-	push {lr}
-	lsl r0, r0, #0x18
-	lsr r2, r0, #0x18
-	ldr r0, =BATTLE_RESOURCES
-	ldr r0, [r0]
-	ldr r1, [r0, #0x8]
-	ldrh r1, [r1]		@r1 = move ID
-
-CheckFireSpin:
-	cmp r1, #MOVE_FIRESPIN
-	bne CheckWhirlpool
-	ldr r1, =(0x02037F02)
-	mov r0, #0x1
-	b Ending
-	
-CheckWhirlpool:
-	cmp r1, #MOVE_WHIRLPOOL
-	bne CheckClamp
-	ldr r1, =(0x02037F02)
-	mov r0, #0x2
-	b Ending
-
-CheckClamp:
-	cmp r1, #MOVE_CLAMP
-	bne CheckSandTomb
-	ldr r1, =(0x02037F02)
-	mov r0, #0x3
-	b Ending
-
-CheckSandTomb:
-	ldrh r0, =MOVE_SANDTOMB
-	cmp r1, r0
-	bne CheckMagmaStorm
-	ldr r1, =(0x02037F02)
-	mov r0, #0x4
-	b Ending
-
-CheckMagmaStorm:
-	ldrh r0, =MOVE_MAGMASTORM
-	cmp r1, r0
-	bne CheckInfestation
-	ldr r1, =(0x02037F02)
-	mov r0, #0x5
-	b Ending
-
-CheckInfestation:
-	ldrh r0, =MOVE_INFESTATION
-	cmp r1, r0
-	bne Default
-	ldr r1, =(0x02037F02)
-	mov r0, #0x6
-	b Ending
-	
-Default:
-	ldr r1, =(0x02037F02)
-	mov r0, #0x0
-
-Ending:
-	strh r0, [r1]
-	mov r0, r2
-	bl MoveAnimTaskDel
-	pop {pc}
-	
-MoveAnimTaskDel:
-	ldr r1, =(0x08072760 + 1)
-	bx r1
-	
-INFESTATION_ANIM:
-	loadparticle ANIM_TAG_HANDS_AND_FEET @black color
-	loadparticle ANIM_TAG_SMALL_BUBBLES @circle particles
-	pokespritetoBG side_target 
-	leftbankBG_over_partnerBG bank_target
-	launchtask AnimTask_pal_fade 0xA 0x5 PAL_DEF 0x2 0x0 0x9 0x7320 @I'm not sure for the blue part
-	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x3 0x0 0x4f 0x1
-	launchtemplate INFEST 0x82 0x5 0x78 0x46 0x5 0x46 0x1e
-	soundcomplex 0xCE 0xC0 0x0 0x4F
-	pause 0x1
-	launchtemplate INFEST 0x82 0x5 0x73 0x37 0x6 0x3c 0x19  
-	pause 0x1 
-	launchtemplate INFEST 0x82 0x5 0x73 0x3c 0x7 0x3c 0x1e  
-	launchtemplate INFEST 0x82 0x5 0x73 0x37 0xa 0x3c 0x1e  
-	pause 0x3 
-	launchtemplate INFEST2 0x82 0x5 0x64 0x32 0x4 0x32 0x1a  
-	pause 0x1 
-	launchtemplate INFEST 0x82 0x5 0x69 0x19 0x8 0x3c 0x14  
-	pause 0x1 
-	launchtemplate INFEST 0x82 0x5 0x73 0x28 0xa 0x30 0x1e 
-	pause 0x3 
-	launchtemplate INFEST2 0x82 0x5 0x78 0x1e 0x6 0x2d 0x19  
-	launchtemplate INFEST 0x82 0x5 0x73 0x23 0xa 0x3c 0x1e 
-	pause 0x3 
-	launchtemplate INFEST2 0x82 0x5 0x69 0x14 0x8 0x28 0x0 
-	pause 0x3 
-	launchtemplate INFEST 0x82 0x5 0x14 0xff 0xf 0x20 0x0  
-	launchtemplate INFEST 0x82 0x5 0x6e 0xa 0x8 0x20 0x14
-	waitanimation
-	launchtask AnimTask_pal_fade 0xA 0x5 PAL_DEF 0x2 0x9 0x0 0x7320
-	waitanimation
-	pokespritefromBG side_target
-	endanimation
-
-.align 2
-INFEST: objtemplate ANIM_TAG_SMALL_BUBBLES ANIM_TAG_HANDS_AND_FEET 0x83AC9C8 0x83E5B10 0x0 0x8231CFC 0x80A2D11
-INFEST2: objtemplate ANIM_TAG_SMALL_BUBBLES ANIM_TAG_HANDS_AND_FEET 0x83AC9C8 0x83E5B10 0x0 0x83E7540 0x80A2D11
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool
 ANIM_USEITEM:
 	loadparticle ANIM_TAG_THIN_RING 
 	loadparticle ANIM_TAG_SPARKLE_2 
@@ -215,6 +96,19 @@ ANIM_USEITEM:
 	launchtemplate 0x83E4094 0x3 0x4 0x0 0x0 0x0 0x0	 
 	waitanimation 
 	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.pool
+ANIM_WRAPPED_END_TURN:
+	launchtask AnimTask_GetTrappedMoveAnimId 0x5 0x0 
+	jumpifargmatches 0x0 0x1 0x81d5cd3 
+	jumpifargmatches 0x0 0x2 0x81d5cf8 
+	jumpifargmatches 0x0 0x3 0x81d5d4c 
+	jumpifargmatches 0x0 0x4 0x81d5da9 
+	jumpifargmatches 0x0 0x5 0x81d5cd3 
+	jumpifargmatches 0x0 0x6 ANIM_INFESTATION
+	goto 0x81d5c8b 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool

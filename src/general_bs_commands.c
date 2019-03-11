@@ -1,7 +1,3 @@
-//Update Gen 7 Metronome Choice effect
-//Metronome Item during Charging Turn
-//Proper Protect Strings (Wide Guard, Quick Guard, etc.)
-
 #include "defines.h"
 #include "helper_functions.h"
 #include "pickup_items.h"
@@ -69,6 +65,10 @@ extern u8 SpikesLayString[];
 extern u8 StealthRockLayString[];
 extern u8 ToxicSpikesLayString[];
 extern u8 StickyWebLayString[];
+extern u8 CraftyShieldSetString[];
+extern u8 MatBlockSetString[];
+extern u8 QuickGuardSetString[];
+extern u8 WideGuardSetString[];
 
 extern move_t SkyBattleBanTable[];
 extern move_t GravityBanTable[];
@@ -84,6 +84,17 @@ extern ability_t ReceiverBanTable[];
 extern const struct TerrainTableStruct TerrainTable[];
 
 extern u8* gBattleScriptsForMoveEffects[];
+
+const u16 gMissStringIds[] =
+{
+    STRINGID_PKMNAVOIDEDATTACK, STRINGID_PKMNPROTECTEDITSELF,
+    STRINGID_PKMNAVOIDEDATTACK, STRINGID_AVOIDEDDAMAGE,
+    STRINGID_PKMNMAKESGROUNDMISS,
+	0x184, //Crafty Shield
+	0x184, //Mat Block
+	0x184, //Quick Guard
+	0x184, //Wide Guard
+};
 
 void atk02_attackstring(void) {
 	u8 moveType = gBattleStruct->dynamicMoveType;
@@ -1192,18 +1203,23 @@ void atk77_setprotect(void) {
 			switch (gCurrentMove) {
 				case MOVE_KINGSSHIELD:
 					gProtectStructs[gBankAttacker].KingsShield = 1;
+					gBattleCommunication[MULTISTRING_CHOOSER] = 0;
 					break;
 				
 				case MOVE_SPIKYSHIELD:
 					gProtectStructs[gBankAttacker].SpikyShield = 1;
+					gBattleCommunication[MULTISTRING_CHOOSER] = 0;
 					break;
 				
 				case MOVE_BANEFULBUNKER:
 					gProtectStructs[gBankAttacker].BanefulBunker = 1;
+					gBattleCommunication[MULTISTRING_CHOOSER] = 0;
 					break;
 				
 				case MOVE_CRAFTYSHIELD:
 					gSideAffecting[atkSide] |= SIDE_STATUS_CRAFTY_SHIELD;
+					gBattleCommunication[MULTISTRING_CHOOSER] = 3;
+					BattleStringLoader = CraftyShieldSetString;
 					break;
 				
 				case MOVE_MATBLOCK:
@@ -1211,20 +1227,26 @@ void atk77_setprotect(void) {
 						goto PROTECT_FAILED;
 					
 					gSideAffecting[atkSide] |= SIDE_STATUS_MAT_BLOCK;
+					gBattleCommunication[MULTISTRING_CHOOSER] = 3;
+					BattleStringLoader = MatBlockSetString;
 					break;
 				
 				case MOVE_QUICKGUARD:
 					gSideAffecting[atkSide] |= SIDE_STATUS_QUICK_GUARD;
+					gBattleCommunication[MULTISTRING_CHOOSER] = 3;
+					BattleStringLoader = QuickGuardSetString;
 					break;
 				
 				case MOVE_WIDEGUARD:
 					gSideAffecting[atkSide] |= SIDE_STATUS_WIDE_GUARD;
+					gBattleCommunication[MULTISTRING_CHOOSER] = 3;
+					BattleStringLoader = WideGuardSetString;
 					break;
 				
 				default:
 					gProtectStructs[gBankAttacker].protected = 1;
+					gBattleCommunication[MULTISTRING_CHOOSER] = 0;
 			}
-            gBattleCommunication[MULTISTRING_CHOOSER] = 0;
         }
 		
         else if (gBattleMoves[gCurrentMove].effect == EFFECT_ENDURE) {
@@ -2739,8 +2761,8 @@ void atkBE_rapidspinfree(void) {
 			gBankTarget = gBattleStruct->wrappedBy[bankAtk];
 			gBattleTextBuff1[0] = 0xFD;
 			gBattleTextBuff1[1] = 2;
-			gBattleTextBuff1[2] = gBattleStruct->wrappedMove[bankAtk * 2];
-			gBattleTextBuff1[3] = gBattleStruct->wrappedMove[bankAtk * 2 + 1];
+			gBattleTextBuff1[2] = gBattleStruct->wrappedMove[bankAtk];
+			gBattleTextBuff1[3] = gBattleStruct->wrappedMove[bankAtk] >> 8;
 			gBattleTextBuff1[4] = 0xFF;
 			BattleScriptPushCursor();
 			gBattlescriptCurrInstr = BattleScript_WrapFree;

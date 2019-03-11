@@ -111,6 +111,55 @@ BallThrowBreakOutReturn:
 	ldr r0, =0x80EFF20 | 1
 	bx r0
 
+@0x80EF5F4 with r1
+DoubleWildAnimBallThrowFixHook:
+	strh r0, [r6, #0x2E]
+	bl DoubleWildAnimBallThrowFix
+	ldr r2, =ANIM_TARGET
+	mov r8, r2
+	ldrb r0, [r2]
+	ldr r1, =0x80EF5FC | 1
+	bx r1
+
+@0x80A1E2C with r0
+DoubleWildPokeBallItemUseFixHook:
+	mov r0, r4
+	bl DoubleWildPokeBallItemUseFix
+	cmp r0, #0x0
+	bne DoubleWildPokeBallItemUseFixEnd
+	
+	ldr r0, =0x203AD30 @Var 0x800E
+	ldrh r0, [r0]
+	mov r1, #0x1
+	bl RemoveBagItem
+	ldr r0, =0x80A1E36 | 1
+	bx r0
+
+DoubleWildPokeBallItemUseFixEnd:
+	pop {r4, pc}
+
+RemoveBagItem:
+	ldr r3, =0x809A1D8 | 1
+	bx r3
+
+@0x802D95C with r0
+DoubleWildDexHook1:
+	push {r4-r5,lr}
+	bl LoadTargetPartyData
+	mov r4, r0
+	mov r1, #0xB
+	ldr r2, =0x802D964 | 1
+	bx r2
+
+@0x802D9D8 with r0
+DoubleWildDexHook2:
+	push {r4-r5,lr}
+	sub sp, #0x18
+	bl LoadTargetPartyData
+	mov r1, #0xB
+	ldr r2, =0x802D9E0 | 1
+	bx r2
+
 @0x8013D14 with r1
 TrainerSlidingEndTurnHook:
 	mov r1, r10

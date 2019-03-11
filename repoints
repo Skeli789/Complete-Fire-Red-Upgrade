@@ -43,6 +43,14 @@ TheOpposingString 080D7E00
 TheOpposingString 080D7E74
 TheOpposingString 080D82C0
 TheOpposingString 080D8554
+##Other Stings
+sText_GotMoneyForWinning 083FDF84
+sText_OutofUsablePokemon 083FDF88
+sText_LostAgaintWild 083FDF8C
+
+sText_LostAgainstTrainer 083FE4C0
+sText_PaidPrizeMoney 083FE4C4
+sText_BlackedOut 083FE4F0
 
 ##Gen 4 Player OW Running Fix
 gEventObjectImageAnim_RunSouth 083A3460
@@ -62,7 +70,10 @@ TestScript 087D67B0
 ThiefStealBS 8020E74
 PoisonedByBS 08250634
 BurnedByBS 08250638
+BattleScript_WasFrozen 0825063C
+BattleScript_MoveEffectWrap 08250660
 BadPoisonedByBS 08250644
+BattleScript_ActionSwitch 0801640C
 
 ##Poke Ball Expansion
 GetMonPokeBallHook 0803FE70

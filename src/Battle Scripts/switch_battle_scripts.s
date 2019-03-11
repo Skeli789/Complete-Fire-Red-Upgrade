@@ -160,6 +160,62 @@ ForceSwitchRedCard:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+BattleScript_ActionSwitch:
+	hpthresholds2 BANK_ATTACKER
+	printstring 0x2 @;STRINGID_RETURNMON
+	setbyte DMG_MULTIPLIER 0x2
+	jumpifbattletype BATTLE_DOUBLE BattleScript_PursuitSwitchDmgSetMultihit
+	storeloopingcounter 0x1
+	goto BattleScript_PursuitSwitchDmgLoop
+
+BattleScript_PursuitSwitchDmgSetMultihit:
+	storeloopingcounter 0x2
+
+BattleScript_PursuitSwitchDmgLoop:
+	jumpifnopursuitswitchdmg BattleScript_DoSwitchOut
+	swapattackerwithtarget
+	trysetdestinybondtohappen
+	call BattleScript_PursuitDmgOnSwitchOut
+	swapattackerwithtarget
+
+BattleScript_DoSwitchOut:
+	decrementmultihit BattleScript_PursuitSwitchDmgLoop
+	switchoutabilities BANK_ATTACKER
+	waitstateatk
+	returnatktoball
+	waitstateatk
+	drawpartystatussummary BANK_ATTACKER
+	switchhandleorder BANK_ATTACKER 0x1
+	switch1 BANK_ATTACKER
+	switch2 BANK_ATTACKER
+	hpthresholds BANK_ATTACKER
+	printstring 0x3 @;STRINGID_SWITCHINMON
+	hidepartystatussummary BANK_ATTACKER
+	switch3 BANK_ATTACKER 0x0
+	waitstateatk
+	switchineffects BANK_ATTACKER 
+	setbyte CMD49_STATE 0x4
+	cmd49 0x1 0x0
+	setbyte CMD49_STATE 0xF
+	cmd49 0x1 0x0
+	end2
+	
+BattleScript_PursuitDmgOnSwitchOut:
+	pause DELAY_HALFSECOND
+	call STANDARD_DAMAGE
+	faintpokemon BANK_TARGET 0x0 0x0
+	setbyte CMD49_STATE, 0x0
+	cmd49 0x4 0x0
+	various BANK_TARGET 4
+	jumpifbyte EQUALS BATTLE_COMMUNICATION 0x0 BattleScript_PursuitDmgOnSwitchOutRet
+	setbyte EXP_STATE 0x0
+	getexp BANK_TARGET
+	
+BattleScript_PursuitDmgOnSwitchOutRet:
+	return
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 .align 2
 HealingWishHealString: .byte 0xCE, 0xDC, 0xD9, 0x00, 0xC2, 0xD9, 0xD5, 0xE0, 0xDD, 0xE2, 0xDB, 0x00, 0xD1, 0xDD, 0xE7, 0xDC, 0x00, 0xD7, 0xD5, 0xE1, 0xD9, 0x00, 0xE8, 0xE6, 0xE9, 0xD9, 0xFE, 0xDA, 0xE3, 0xE6, 0x00, 0xFD, 0x0F, 0xAB, 0xFF
 LunarDanceHealString: .byte 0xFD, 0x0F, 0x00, 0xD6, 0xD9, 0xD7, 0xD5, 0xE1, 0xD9, 0xFE, 0xD7, 0xE0, 0xE3, 0xD5, 0xDF, 0xD9, 0xD8, 0x00, 0xDD, 0xE2, 0x00, 0xE1, 0xED, 0xE7, 0xE8, 0xDD, 0xD7, 0xD5, 0xE0, 0x00, 0xE1, 0xE3, 0xE3, 0xE2, 0xE0, 0xDD, 0xDB, 0xDC, 0xE8, 0xAB, 0xFF

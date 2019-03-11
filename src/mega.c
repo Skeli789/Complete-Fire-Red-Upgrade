@@ -375,6 +375,7 @@ extern u16 Mega_IndicatorPal[];
 extern u8 Mega_TriggerTiles[];
 extern u8 Ultra_TriggerTiles[];
 extern u16 Mega_TriggerPal[];
+extern u16 Ultra_TriggerPal[];
 
 bool8 IsIgnoredTriggerColour(u16 colour);
 u16 ConvertColorToGrayscale(u16 colour);
@@ -392,6 +393,7 @@ const struct SpritePalette MegaIndicatorPalette = {Mega_IndicatorPal, GFX_TAG_ME
 const struct CompressedSpriteSheet MegaTriggerSpriteSheet = {Mega_TriggerTiles, (32 * 32) / 2, GFX_TAG_MEGA_TRIGGER};
 const struct CompressedSpriteSheet UltraTriggerSpriteSheet = {Ultra_TriggerTiles, (32 * 32) / 2, GFX_TAG_ULTRA_TRIGGER};
 const struct SpritePalette MegaTriggerPalette = {Mega_TriggerPal, GFX_TAG_MEGA_TRIGGER};
+const struct SpritePalette UltraTriggerPalette = {Ultra_TriggerPal, GFX_TAG_ULTRA_TRIGGER};
 
 const struct OamData MegaIndicatorOAM = {0};
 u16 MegaTriggerOAM[] = {0, 0x8000, 0x800, 0};
@@ -455,7 +457,7 @@ const struct SpriteTemplate MegaTriggerTemplate =
 const struct SpriteTemplate UltraTriggerTemplate =
 {
     .tileTag = GFX_TAG_ULTRA_TRIGGER,
-    .paletteTag = GFX_TAG_MEGA_TRIGGER,
+    .paletteTag = GFX_TAG_ULTRA_TRIGGER,
     .oam = (const struct OamData*) &MegaTriggerOAM,
     .anims = (const union AnimCmd* const*) 0x08231CF0,
     .images = NULL,
@@ -642,7 +644,7 @@ void MegaTriggerCallback(struct Sprite* self)
 	// Only change the palette if the state has changed
 	if (PALETTE_STATE != self->data[2]) 
 	{
-		u16* pal = &gPlttBufferFaded2[IndexOfSpritePaletteTag(GFX_TAG_MEGA_TRIGGER) * 16];
+		u16* pal = &gPlttBufferFaded2[IndexOfSpritePaletteTag(TAG) * 16];
 		u8 i;
 		
 		for(i = 1; i < 16; i++) 
@@ -776,6 +778,7 @@ void LoadMegaGraphics(u8 state)
 	{
 		LoadSpritePalette(&MegaIndicatorPalette);
 		LoadSpritePalette(&MegaTriggerPalette);
+		LoadSpritePalette(&UltraTriggerPalette);
 		
 		LoadCompressedSpriteSheetUsingHeap(&MegaIndicatorSpriteSheet);
 		LoadCompressedSpriteSheetUsingHeap(&AlphaIndicatorSpriteSheet);
@@ -787,17 +790,32 @@ void LoadMegaGraphics(u8 state)
 		// Create a Mega Indicator for every bank
 		for (u8 bank = 0; bank < gBattlersCount; ++bank) 
 		{
-		  objid = CreateSprite(&MegaIndicatorTemplate, 0, 0, 1);
-		  gSprites[objid].data[0] = bank;
-		  
-		  objid = CreateSprite(&AlphaIndicatorTemplate, 0, 0, 1);
-		  gSprites[objid].data[0] = bank;
-		  
-		  objid = CreateSprite(&OmegaIndicatorTemplate, 0, 0, 1);
-		  gSprites[objid].data[0] = bank;
-		  
-		  objid = CreateSprite(&UltraIndicatorTemplate, 0, 0, 1);
-		  gSprites[objid].data[0] = bank;
+			if (IsMega(bank))
+			{
+				objid = CreateSprite(&MegaIndicatorTemplate, 0, 0, 1);
+				gSprites[objid].data[0] = bank;
+				gNewBS->megaIndicatorObjIds[bank] = objid + 1;
+			}
+			else if (IsBluePrimal(bank))
+			{
+				objid = CreateSprite(&AlphaIndicatorTemplate, 0, 0, 1);
+				gSprites[objid].data[0] = bank;
+				gNewBS->megaIndicatorObjIds[bank] = objid + 1;
+			}
+			else if (IsRedPrimal(bank))
+			{
+				objid = CreateSprite(&OmegaIndicatorTemplate, 0, 0, 1);
+				gSprites[objid].data[0] = bank;
+				gNewBS->megaIndicatorObjIds[bank] = objid + 1;
+			}
+			else if (IsUltraNecrozma(bank))
+			{
+				objid = CreateSprite(&UltraIndicatorTemplate, 0, 0, 1);
+				gSprites[objid].data[0] = bank;
+				gNewBS->megaIndicatorObjIds[bank] = objid + 1;
+			}
+			else
+				gNewBS->megaIndicatorObjIds[bank] = 0;
 		}
 		
 		objid = CreateSprite(&MegaTriggerTemplate, 130, 90, 1);
@@ -807,4 +825,45 @@ void LoadMegaGraphics(u8 state)
 		gSprites[objid].invisible = TRUE;
 	}
 #endif
+}
+
+void CreateMegaIndicatorAfterAnim(void)
+{
+	u8 objid;
+	
+	if (!gNewBS->megaIndicatorObjIds[gActiveBattler])
+	{
+		if (IsMega(gActiveBattler))
+		{
+			objid = CreateSprite(&MegaIndicatorTemplate, 0, 0, 1);
+			gSprites[objid].data[0] = gActiveBattler;
+			gNewBS->megaIndicatorObjIds[gActiveBattler] = objid + 1;
+		}
+		else if (IsBluePrimal(gActiveBattler))
+		{
+			objid = CreateSprite(&AlphaIndicatorTemplate, 0, 0, 1);
+			gSprites[objid].data[0] = gActiveBattler;
+			gNewBS->megaIndicatorObjIds[gActiveBattler] = objid + 1;
+		}
+		else if (IsRedPrimal(gActiveBattler))
+		{
+			objid = CreateSprite(&OmegaIndicatorTemplate, 0, 0, 1);
+			gSprites[objid].data[0] = gActiveBattler;
+			gNewBS->megaIndicatorObjIds[gActiveBattler] = objid + 1;
+		}
+		else if (IsUltraNecrozma(gActiveBattler))
+		{
+			objid = CreateSprite(&UltraIndicatorTemplate, 0, 0, 1);
+			gSprites[objid].data[0] = gActiveBattler;
+			gNewBS->megaIndicatorObjIds[gActiveBattler] = objid + 1;
+		}
+	}
+}
+
+//The Mega Graphics are usually loaded before, but this is placed here just in
+//case the battle started against a Primal and their symbol wasn't loaded.
+void TryLoadIndicatorForEachBank(void)
+{
+	for (gActiveBattler = 0; gActiveBattler < gBattlersCount; ++gActiveBattler)
+		CreateMegaIndicatorAfterAnim();
 }

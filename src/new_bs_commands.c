@@ -1,8 +1,6 @@
 #include "defines.h"
 #include "helper_functions.h"
 
-//Need emit function for atkFF11_reloadhealthbar
-
 extern void (* const gBattleScriptingCommandsTable[])(void);
 extern void (* const gBattleScriptingCommandsTable2[])(void);
 
@@ -543,16 +541,7 @@ void atkFF10_jumpifhelditem(void)
 }
 
 //reloadhealthbar BANK
-void atkFF11_reloadhealthbar(void)
-{
-	if (gBattleExecBuffer) return;
-
-	gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
-	UpdateHealthboxAttribute(gHealthboxIDs[gActiveBattler], 
-							GetBankPartyData(gActiveBattler), 
-							HEALTHBOX_ALL);
-	gBattlescriptCurrInstr += 2;
-}
+//void atkFF11_reloadhealthbar(void)
 
 //jumpifhealthcomparestomax BANK PREDICATE ROM_OFFSET
 void atkFF12_jumpifhealthcomparestomax(void)

@@ -130,7 +130,7 @@ CreateShakerHook:
 	ldr r3, =0x0804BE88 | 1
 	bx r3
 	
-@;0804BEDC with r2
+@;0x804BEDC with r2
 ObjcShakerHook:
 	mov r2, #0
 	asr r0, #0x10
@@ -152,3 +152,42 @@ ObjcShakerHookReturn:
 
 .align 2
 .ShakerData: .word SHAKER_HELPER
+
+@;0x803301C with r1
+PlayerHandleStatusIconUpdateHook:
+	ldr r0, [r0, #0x4]
+	lsl r1, r2, #0x1
+	add r1, r2
+	lsl r1, #0x2
+	add r1, r0
+	push {r1}
+	bl CreateMegaIndicatorAfterAnim
+	pop {r1}
+	ldr r0, =0x8033026 | 1
+	bx r0
+
+@;0x8038974 with r1
+OpponentHandleStatusIconUpdateHook:
+	ldr r0, [r0, #0x4]
+	lsl r1, r2, #0x1
+	add r1, r2
+	lsl r1, #0x2
+	add r1, r0
+	push {r1}
+	bl CreateMegaIndicatorAfterAnim
+	pop {r1}
+	ldr r0, =0x803897E | 1
+	bx r0
+
+@;0x802F858 with r0
+LoadHealthBoxesIndicatorHook:
+	push {r4-r6,lr}
+	sub sp, #0x14
+	mov r5, r0
+	mov r4, r1
+	lsl r5, #0x18
+	lsr r5, #0x18
+	bl CreateMegaIndicatorAfterAnim
+	ldr r1, =0x80483A4 | 1
+	bx r1
+

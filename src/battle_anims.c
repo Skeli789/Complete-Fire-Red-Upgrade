@@ -1,5 +1,3 @@
-//Replace all ASM routines with C routines
-
 #include "defines.h"
 #include "helper_functions.h"
 
@@ -104,6 +102,44 @@ void AnimTask_GetLycanrocForm(u8 taskId)
 	else
 		gBattleAnimArgs[0] = 0;
 	
+	DestroyAnimVisualTask(taskId);
+}
+
+void AnimTask_IsTargetPartner(u8 taskId)
+{
+	if (gBattleAnimTarget == PARTNER(gBattleAnimAttacker))
+		gBattleAnimArgs[0] = 1;
+	else
+		gBattleAnimArgs[0] = 0;
+
+	DestroyAnimVisualTask(taskId);
+}
+
+void AnimTask_GetTrappedMoveAnimId(u8 taskId)
+{
+	switch (gBattleSpritesDataPtr->animationData->animArg) {
+		case MOVE_FIRESPIN:
+			gBattleAnimArgs[0] = 1;
+			break;
+		case MOVE_WHIRLPOOL:
+			gBattleAnimArgs[0] = 2;
+			break;
+		case MOVE_CLAMP:
+			gBattleAnimArgs[0] = 3;
+			break;
+		case MOVE_SANDTOMB:
+			gBattleAnimArgs[0] = 4;
+			break;
+		case MOVE_MAGMASTORM:
+			gBattleAnimArgs[0] = 5;
+			break;
+		case MOVE_INFESTATION:
+			gBattleAnimArgs[0] = 6;
+			break;			
+		default:
+			gBattleAnimArgs[0] = 0;
+	}
+
 	DestroyAnimVisualTask(taskId);
 }
 
@@ -252,4 +288,15 @@ void AnimTask_PlayAttackerCry(u8 taskId)
 {
 	PlayCry3(gBattleMons[gBattleAnimAttacker].species, 0, 0);
 	DestroyAnimVisualTask(taskId);
+}
+
+void DoubleWildAnimBallThrowFix(void)
+{
+	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && !(gBattleTypeFlags & BATTLE_TYPE_TRAINER))
+	{
+		if (gBattleMons[GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)].hp)
+			gBattleAnimTarget = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
+		else
+			gBattleAnimTarget = GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
+	}
 }

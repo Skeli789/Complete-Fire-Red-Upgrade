@@ -8,7 +8,7 @@ Intimidate,
 AmuletCoin_WhiteHerb,
 AirBalloon,
 TotemPokemon,
-StartTurnEnd
+StartTurnEnd,
 };
 
 enum SpeedWarResults {

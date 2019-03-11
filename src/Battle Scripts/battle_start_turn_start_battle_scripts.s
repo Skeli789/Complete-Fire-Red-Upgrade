@@ -74,6 +74,7 @@ PKyogreAnim:
 	playanimation BANK_ATTACKER ANIM_BLUE_PRIMAL_REVERSION 0x0
 	
 PrimalStringDisplay:
+	reloadhealthbar BANK_ATTACKER
 	setword BATTLE_STRING_LOADER PrimalReversionString
 	printstring 0x184
 	waitmessage DELAY_1SECOND

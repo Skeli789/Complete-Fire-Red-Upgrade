@@ -663,7 +663,7 @@
 	.byte \bank
 	.endm
 
-	.macro atk5f
+	.macro swapattackerwithtarget
 	.byte 0x5f
 	.endm
 
@@ -672,14 +672,14 @@
 	.byte \int
 	.endm
 
-	.macro drawpartystatussummary bank_or_side
+	.macro drawpartystatussummary bank
 	.byte 0x61
-	.byte \bank_or_side
+	.byte \bank
 	.endm
 
-	.macro atk62 bank_or_side
+	.macro hidepartystatussummary bank
 	.byte 0x62
-	.byte \bank_or_side
+	.byte \bank
 	.endm
 
 	.macro jumptoattack bank
@@ -771,7 +771,7 @@
 	.byte 0x75
 	.endm
 
-	.macro atk76 bank, int
+	.macro various bank, int
 	.byte 0x76
 	.byte \bank
 	.byte \int

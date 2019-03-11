@@ -40,7 +40,7 @@ BattleScript_MagicBounce:
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	orword 0x2023DD0 0x800C00
-	atk76 BANK_ATTACKER 0x1
+	various BANK_ATTACKER 0x1
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -70,7 +70,7 @@ BattleScript_MoveUsedGravityPrevents:
 	setword BATTLE_STRING_LOADER GravityAttackCancelString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
-	goto 0x1D694E
+	goto 0x81D694E
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -79,7 +79,7 @@ BattleScript_MoveUsedHealBlockPrevents:
 	setword BATTLE_STRING_LOADER HealBlockAttackCancelString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
-	goto 0x1D694E
+	goto BS_MOVE_END
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -88,7 +88,7 @@ BattleScript_MoveUsedThroatChopPrevents:
 	setword BATTLE_STRING_LOADER ThroatChopAttackCancelString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
-	goto 0x1D694E
+	goto BS_MOVE_END
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -101,13 +101,13 @@ BattleScript_MoveUsedFailedPrimalWeather:
 	setword BATTLE_STRING_LOADER MoveFizzledInHeavyRainString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
-	goto 0x1D694E
+	goto BS_MOVE_END
 
 HarshSunEvaportionBS:
 	setword BATTLE_STRING_LOADER MoveEvaporatedInHarshSunString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
-	goto 0x1D694E
+	goto BS_MOVE_END
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -119,7 +119,7 @@ BattleScript_MoveUsedPsychicTerrainPrevents:
 	setword BATTLE_STRING_LOADER PsychicTerrainAttackCancelString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
-	goto 0x1D694E
+	goto BS_MOVE_END
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -138,7 +138,7 @@ SkipPowderDamage:
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	faintpokemon BANK_ATTACKER 0x0 0x0
-	goto 0x1D694E
+	goto BS_MOVE_END
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -212,7 +212,7 @@ BattleScript_MoveUsedSkyBattlePrevents:
 	setword BATTLE_STRING_LOADER SkyBattleAttackCancelString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
-	goto 0x1D694E
+	goto BS_MOVE_END
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

@@ -1,18 +1,14 @@
 #include "defines.h"
 #include "helper_functions.h"
 
+//Emergency Exit Spikes
 //Make sure there's no choice lock glitch
 //Add check to see if AI move prediction was successful. If not, then if the same move is predicted, don't predict that same move again.
 //Remove the lines at the bottom?
 
 /*Fix references to:
-BattleScript_ActionSwitch
-BattleScript_PursuitDmgOnSwitchOut
 BattleScript_SpikesOnAttackerFainted
 BattleScript_SpikesOnTargetFainted
-BattleScript_IgnoresWhileAsleep
-BattleScript_MoveUsedLoafingAround
-BattleScript_IgnoresAndFallsAsleep
 */
 
 #define BattleScript_DefrostedViaFireMove (u8*) 0x81D9098
@@ -109,6 +105,7 @@ enum
 };
 
 #define ARG_IN_FUTURE_ATTACK 3
+#define ARG_IN_PURSUIT 4
 
 void atk49_moveend(void);
 bank_t GetNextMultiTarget(void);
@@ -970,7 +967,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 				{
 					if (*SeedHelper != gBankAttacker
 					&&  !SheerForceCheck()
-					&& (ABILITY(*SeedHelper) == ABILITY_WIMPOUT || ABILITY(*SeedHelper) == ABILITY_PRESSURE)
+					&& (ABILITY(*SeedHelper) == ABILITY_WIMPOUT || ABILITY(*SeedHelper) == ABILITY_EMERGENCYEXIT)
 					&&  !(gNewBS->ResultFlags[*SeedHelper] & MOVE_RESULT_NO_EFFECT)
 					&&  !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, gBankTarget)
 					&&  !(gStatuses3[*SeedHelper] & (STATUS3_SKY_DROP_ANY))
@@ -1071,6 +1068,21 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 				gNewBS->ResultFlags[i] = 0;
 			}
 			
+			switch (gCurrentMove) {
+				case MOVE_FUSIONFLARE:
+					gNewBS->fusionFlareUsedPrior = TRUE;
+					gNewBS->fusionBoltUsedPrior = FALSE;
+					break;
+				case MOVE_FUSIONBOLT:
+					gNewBS->fusionFlareUsedPrior = FALSE;
+					gNewBS->fusionBoltUsedPrior = TRUE;
+					break;
+				default:
+					gNewBS->fusionFlareUsedPrior = FALSE;
+					gNewBS->fusionBoltUsedPrior = FALSE;
+					break;
+			}
+			
 			gNewBS->ZMoveData->active = FALSE;
 			gNewBS->ZMoveData->effectApplied = FALSE;
 			gNewBS->AttackerDidDamageAtLeastOnce = FALSE;		
@@ -1094,6 +1106,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			}
 		
 			if (!gNewBS->DancerInProgress
+			&&  arg1 != ARG_IN_PURSUIT
 			&& ABILITY_PRESENT(ABILITY_DANCER)
 			&& gHitMarker & HITMARKER_ATTACKSTRING_PRINTED
 			&& MOVE_HAD_EFFECT

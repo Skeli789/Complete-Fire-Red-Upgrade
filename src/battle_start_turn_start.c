@@ -2,6 +2,7 @@
 #include "battle_start_turn_start.h"
 #include "helper_functions.h"
 #include "multi.h"
+#include "mega.h"
 
 extern void (* const sTurnActionsFuncsTable[])(void);
 extern void (* const sEndTurnFuncsTable[])(void);
@@ -12,6 +13,8 @@ extern u8* DoMegaEvolution(u8 bank);
 extern u8* DoPrimalReversion(bank_t, u8 caseId);
 extern u8 GetMoveTypeSpecial(u8 bankAtk, move_t);
 extern bank_t GetNextMultiTarget(void) ;
+extern u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck);
+extern void CreateMegaIndicatorAfterAnim(void);
 
 extern u8 BattleScript_AirBalloonFloat[];
 extern u8 BattleScript_Totem[];
@@ -30,7 +33,7 @@ s8 PriorityCalc(u8 bank, u8 action, u16 move);
 s32 BracketCalc(u8 bank);
 u32 SpeedCalc(u8 bank);
 u32 SpeedCalcForParty(u8 side, pokemon_t*);
-u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck);
+void DestroyMegaTriggers(void);
 
 void HandleNewBattleRamClearBeforeBattle(void) {
 	gNewBS = Calloc(sizeof(struct NewBattleStruct));
@@ -207,7 +210,7 @@ void BattleBeginFirstTurn(void)
 				*bank = 0; //Reset Bank for next loop
 				++*state;
 				break;
-			
+				
 			case StartTurnEnd:
 				for (i = 0; i < 4; i++)
 				{
@@ -338,12 +341,13 @@ void SetActionsAndBanksTurnOrder(void)
     gBattleStruct->focusPunchBank = 0;
 }
 
-enum MegaStates {
-Mega_Check,
-Mega_CalcTurnOrder,
-Mega_SwitchInAbilities,
-Mega_Intimidate,
-Mega_End
+enum MegaStates 
+{
+	Mega_Check,
+	Mega_CalcTurnOrder,
+	Mega_SwitchInAbilities,
+	Mega_Intimidate,
+	Mega_End
 };
 
 void RunTurnActionsFunctions(void)
@@ -351,6 +355,8 @@ void RunTurnActionsFunctions(void)
 	u8 effect;
 	int i, j;
 	u8* megaBank = &(gNewBS->MegaData->activeBank);
+	
+	DestroyMegaTriggers();
 	
     if (gBattleOutcome != 0)
         gCurrentActionFuncId = ACTION_FINISHED;
@@ -368,7 +374,6 @@ void RunTurnActionsFunctions(void)
 						{	
 							gNewBS->MegaData->chosen[bank] = 0;
 							gNewBS->MegaData->done[bank] = TRUE;
-							gNewBS->MegaData->partyIndex[SIDE(bank)] |= gBitTable[gBattlerPartyIndexes[bank]]; //Stops Mega Rayquaza from Using a Z-Move
 							gNewBS->MegaData->megaEvoInProgress = TRUE;
 							gNewBS->MegaData->script = script;
 							if (!(gBattleTypeFlags & (BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_MULTI)) 
@@ -376,14 +381,12 @@ void RunTurnActionsFunctions(void)
 							{
 								gNewBS->MegaData->chosen[PARTNER(bank)] = 0;
 								gNewBS->MegaData->done[PARTNER(bank)] = TRUE;
-								gNewBS->MegaData->partyIndex[SIDE(bank)] |= gBitTable[gBattlerPartyIndexes[PARTNER(bank)]]; //Stops Mega Rayquaza from Using a Z-Move
 							}
 							else if (!(gBattleTypeFlags & (BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_MULTI)) 
 							&& SIDE(bank) == B_SIDE_OPPONENT) 
 							{
 								gNewBS->MegaData->chosen[PARTNER(bank)] = 0;
 								gNewBS->MegaData->done[PARTNER(bank)] = TRUE;
-								gNewBS->MegaData->partyIndex[SIDE(bank)] |= gBitTable[gBattlerPartyIndexes[PARTNER(bank)]]; //Stops Mega Rayquaza from Using a Z-Move
 							}
 							BattleScriptExecute(gNewBS->MegaData->script);
 							return;
@@ -566,10 +569,23 @@ void HandleAction_UseMove(void)
         gHitMarker |= HITMARKER_NO_PPDEDUCT;
         gBattleStruct->moveTarget[gBankAttacker] = GetMoveTarget(MOVE_STRUGGLE, 0);
     }
-    else if (gBattleMons[gBankAttacker].status2 & STATUS2_MULTIPLETURNS 
-	      || gBattleMons[gBankAttacker].status2 & STATUS2_RECHARGE)
+	else if (gBattleMons[gBankAttacker].status2 & STATUS2_RECHARGE)
+	{
+		gCurrentMove = gChosenMove = gLockedMoves[gBankAttacker];
+	}
+    else if (gBattleMons[gBankAttacker].status2 & STATUS2_MULTIPLETURNS)
     {
-        gCurrentMove = gChosenMove = gLockedMoves[gBankAttacker];
+		gCurrentMove = gChosenMove = gLockedMoves[gBankAttacker];
+		
+		if (FindMovePositionInMoveset(gLockedMoves[gBankAttacker], gBankAttacker) == 4) //The Pokemon doesn't know the move it's locked into
+		{
+			CancelMultiTurnMoves(gBankAttacker);
+			gBattleStruct->dynamicMoveType = GetMoveTypeSpecial(gBankAttacker, gCurrentMove);
+			gBankTarget = gBattleStruct->moveTarget[gBankAttacker];
+			gBattlescriptCurrInstr = BattleScript_NoTargetMoveFailed;
+			gCurrentActionFuncId = ACTION_RUN_BATTLESCRIPT;
+			return;
+		}
     }
     // Encore forces you to use the same move
     else if (gDisableStructs[gBankAttacker].encoredMove != MOVE_NONE
@@ -1050,6 +1066,18 @@ u32 SpeedCalcForParty(u8 side, pokemon_t* party) {
 		#endif
 	}
     return speed;
+}
+
+void DestroyMegaTriggers(void)
+{
+	for (int i = 0; i < MAX_SPRITES; ++i)
+	{
+		if (gSprites[i].template->tileTag == GFX_TAG_MEGA_TRIGGER
+		||  gSprites[i].template->tileTag == GFX_TAG_ULTRA_TRIGGER)
+		{
+			DestroySprite(&gSprites[i]);
+		}
+	}
 }
 
 const u8 gStatStageRatios[][2] =
