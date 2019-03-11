@@ -1,5 +1,3 @@
-//Cursed Body Aroma Veil
-
 #include "defines.h"
 #include "helper_functions.h"
 
@@ -1331,6 +1329,8 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				&& gBattleMons[bank].hp
 				&& gBattleMons[gBankAttacker].hp
 				&& gBankAttacker != bank
+				&& ABILITY(gBankAttacker) != ABILITY_AROMAVEIL
+				&& !(gBattleTypeFlags & BATTLE_TYPE_DOUBLE && ABILITY(PARTNER(gBankAttacker)) == ABILITY_AROMAVEIL)
 				&& umodsi(Random(), 3) == 0)
 				{
 					BattleScriptPushCursor();
