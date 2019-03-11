@@ -7,6 +7,7 @@
 .global BattleScript_TargetSleepHeal
 .global BattleScript_TargetBurnHeal
 .global BattleScript_StickyHoldActivates
+.global BattleScript_TargetFrozen
 
 BattleScript_TargetSleepHeal:
 	setword BATTLE_STRING_LOADER SlappedAwakeString
@@ -25,6 +26,27 @@ BattleScript_TargetBurnHeal:
 BattleScript_StickyHoldActivates:
 	pause DELAY_HALFSECOND
 	printstring 0x137
+	waitmessage DELAY_1SECOND
+	return
+
+BattleScript_WasFrozen:
+	statusanimation 0x2
+	printfromtable 0x83FE5CC
+	waitmessage DELAY_1SECOND
+	refreshhpbar 0x2
+	waitstateatk
+	formchange 0x2 PKMN_SHAYMIN PKMN_SHAYMINSKY TRUE TRUE TargetFrozenReturn
+	playanimation 0x2 ANIM_TRANSFORM 0x0
+	copyarray BATTLE_SCRIPTING_BANK EFFECT_BANK 0x1
+	setword BATTLE_STRING_LOADER TransformedString
+	printstring 0x184
+	waitmessage DELAY_1SECOND	
+
+TargetFrozenReturn:
+	return
+
+BattleScript_MoveEffectWrap:
+	printfromtable gWrappedStringIds
 	waitmessage DELAY_1SECOND
 	return
 	
