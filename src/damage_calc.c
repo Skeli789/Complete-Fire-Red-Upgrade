@@ -1788,7 +1788,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
     
 	if (CheckTableForMove(move, SpecialAttackPhysicalDamageMoves)) {
 		damage *= buffedSpAttack;
-		damage = udivsi(damage, buffedDefense);
+		damage = udivsi(damage, MathMax(1, buffedDefense)); //MathMax prevents underflow
 	}
 	
 	else {
@@ -1796,11 +1796,11 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 			case SPLIT_PHYSICAL:
 				PHYS_CALC:
 					damage *= buffedAttack;
-					damage = udivsi(damage, buffedDefense);
+					damage = udivsi(damage, MathMax(1, buffedDefense));
 					break;
 			case SPLIT_SPECIAL:
 					damage *= buffedSpAttack;
-					damage = udivsi(damage, buffedSpDefense);
+					damage = udivsi(damage, MathMax(1, buffedSpDefense));
 					break;
 			default:
 				goto PHYS_CALC;
@@ -2032,7 +2032,7 @@ u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 
 		case MOVE_FUSIONBOLT:
 			if (!menuCheck
 			&& !PartyCheck
-			&& gNewBS->LastUsedMove == MOVE_FUSIONFLARE 
+			&& gNewBS->fusionFlareUsedPrior
 			&& gBanksByTurnOrder[0] != bankAtk)
 				power *= 2;
 			break;
@@ -2040,7 +2040,7 @@ u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 
 		case MOVE_FUSIONFLARE:
 			if (!menuCheck
 			&& !PartyCheck 
-			&& gNewBS->LastUsedMove == MOVE_FUSIONBOLT 
+			&& gNewBS->fusionBoltUsedPrior 
 			&& gBanksByTurnOrder[0] != bankAtk)
 				power *= 2;
 			break;
