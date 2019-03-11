@@ -1924,7 +1924,13 @@ BS_111_Protect:
 	setprotect
 	attackanimation
 	waitanimation
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x3 ProtectPrintCustomMessage
 	printfromtable 0x83FE546
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
+	
+ProtectPrintCustomMessage:
+	printstring 0x184
 	waitmessage DELAY_1SECOND
 	goto BS_MOVE_END
 
@@ -4248,6 +4254,7 @@ BS_231_AttackBlockers:
 HealBlockBS:
 	jumpifbehindsubstitute BANK_TARGET FAILED-2
 	jumpifcounter BANK_TARGET HEAL_BLOCK_TIMERS NOTEQUALS 0x0 FAILED-2
+	jumpifabilitypresenttargetfield ABILITY_AROMAVEIL ProtectedByAromaVeil
 	accuracycheck BS_MOVE_MISSED 0x0
 	attackstring
 	ppreduce
@@ -4536,7 +4543,7 @@ BS_242_LastResortSkyDrop:
 	attackanimation
 	waitanimation
 	setsemiinvulnerablebit
-	atk76 BANK_TARGET 0x0 @;Cancel Multi Turn Moves
+	various BANK_TARGET 0x0 @;Cancel Multi Turn Moves
 	setword BATTLE_STRING_LOADER SkyDropUpString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
