@@ -98,6 +98,24 @@ your
 #org @sText_YourCaps
 Your
 
+#org @sText_GotMoneyForWinning
+You got [B7][FD][00]\nfor winning!
+
+#org @sText_OutofUsablePokemon
+You have no more Pok\emon\nthat can fight!\p
+
+#org @sText_LostAgaintWild
+You panicked and lost [B7][FD][00][B0]\p[B0] [B0] [B0] [B0]\pYou blacked out![FC][09]
+
+#org @sText_LostAgainstTrainer
+You have no more Pok\emon\nthat can fight!\pYou lost against\n[FD][1C] [FD][1D]![FC][09]
+
+#org @sText_PaidPrizeMoney
+You paid [B7][FD][00] as the prize\nmoney[B0]\p[B0] [B0] [B0] [B0]\pYou blacked out![FC][09]
+
+#org @sText_BlackedOut
+You blacked out![FC][09]
+
 //Exp String
 
 #org @String_TeamExpGain
@@ -139,3 +157,9 @@ Recover HP
 
 #org @gText_HealAllyHP
 Heal Ally HP
+
+#org @gText_CantAimAtTwoTargets
+It's no good! It's impossible to aim\nwhen there are two Pok\emon![FC][09]
+
+#org @gText_CantAimAtSemiInvulnerableTarget
+It's no good! It's impossible to aim\nat a Pok\emon that's not in sight![FC][09]
