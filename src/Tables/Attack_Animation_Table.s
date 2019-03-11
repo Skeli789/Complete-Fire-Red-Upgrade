@@ -7,6 +7,7 @@
 .include "..\\asm_defines.s"
 
 .global AttackAnimationTable
+.global ANIM_INFESTATION
 
 /* global ASM hooks */
 .global BLACKHOLE_ASM		@ hook at 0xb60bc via r0
@@ -5316,8 +5317,9 @@ ANIM_MAGMASTORM:
 	playsound2 0x8F 0x3f 
 	launchtask AnimTask_move_bank 0x5 0x5 bank_target 0x0 0x2 0x2f 0x1  
 	call 0x81C885F
+	launchtask AnimTask_pal_fade_complex 0x2 0x6 PAL_DEF 0x2 0x2 0x0 0xb 0x1F 
 	call 0x81C885F
-	call 0x81C885F
+	call 0x81C885F 
 	waitanimation
 	unsetscrollingBG
 	waitanimation
@@ -10589,7 +10591,7 @@ NM_GRAYRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_ECLIPSING_ORB 0x83ACBC0 0x8
 .pool     
 @ Credits to Nuisance
 ANIM_POLLENPUFF:
-	launchtask POLLENPUFF_ASM+1 0x5 0x0  
+	launchtask AnimTask_IsTargetPartner 0x5 0x0  
 	jumpifargmatches 0x0 0x1 POLLEN_PUFF_ALLY
 
 POLLEN_PUFF_ENEMY:
@@ -10714,33 +10716,6 @@ POLLEN_PUFF_ALLY:
 	pokespritefromBG bank_target
 	resetblends
 	endanimation
-
-
-.align 2
-POLLENPUFF_ASM:
-	push {r4,lr}
-	lsl r0, r0, #0x18
-	lsr r4, r0, #0x18
-	ldr r0, =USER_BANK
-	ldrb r0, [r0]
-	bl GetPartnerBank
-	ldr r1, =USER_BANK
-	ldrb r1, [r1, #0x1]
-	mov r2, #0x0
-	cmp r0, r1
-	bne StorePuff
-	mov r2, #0x1
-
-StorePuff:
-	ldr r1, .StorageRAM
-	strh r2, [r1]
-	mov r0, r4
-	ldr r1, =0x80DEAE1
-	bx r1
-
-.align 2
-.StorageRAM: .word 0x2037F02
-
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
@@ -19485,7 +19460,6 @@ FinishBankArg:
 	
 .align 2
 .AnimAttacker5: .word 0x02037f1a
-.CurrentMove:	.word 0x02023d4a
 .ReturnEncore: .word (0x080E0DB2 +1)
 .FinishArgReturn: .word (0x08075120 +1)
 
