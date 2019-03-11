@@ -45,7 +45,6 @@ extern struct TrainerPicCoords gTrainerBackPicCoords[];
 
 #define sATypeMove_Table ((u8**) 0x83FEA28) //Table of things like "A Normal Move!"
 #define gBattleStringsTable ((u8**) 0x83FDF3C)
-#define gMissStringIds ((u16*) 0x83FE514)
 
 #define gStatusConditionString_Poison ((u8*) 0x8250094)
 #define gStatusConditionString_Sleep ((u8*) 0x825009C)
