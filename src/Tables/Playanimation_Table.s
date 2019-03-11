@@ -16,7 +16,7 @@ PlayAnimationTable:
 .word 0x81d5c04	@ ANIM_CREATE_SUBSTITUTE
 .word 0x81d5c0c	@ ANIM_POKEBLOCK_TRANSFORM
 .word 0x81d5c54	@ ANIM_KNOCK_OFF_ITEM
-.word 0x81d5c5f	@ ANIM_WRAP
+.word ANIM_WRAPPED_END_TURN
 .word 0x81d5df2	@ ANIM_ITEM_USE
 .word 0x81d5e66	@ ANIM_SMOKE_BALL
 .word 0x81d5f42	@ ANIM_CHARGE
@@ -75,6 +75,19 @@ PlayAnimationTable:
 .word ANIM_ZMOVE_ACTIVATE
 .word ANIM_MEGA_EVOLUTION
 .word ANIM_ULTRA_BURST
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.pool
+ANIM_WRAPPED_END_TURN:
+	launchtask AnimTask_GetTrappedMoveAnimId 0x5 0x0 
+	jumpifargmatches 0x0 0x1 0x81d5cd3 
+	jumpifargmatches 0x0 0x2 0x81d5cf8 
+	jumpifargmatches 0x0 0x3 0x81d5d4c 
+	jumpifargmatches 0x0 0x4 0x81d5da9 
+	jumpifargmatches 0x0 0x5 0x81d5cd3 
+	jumpifargmatches 0x0 0x6 ANIM_INFESTATION
+	goto 0x81d5c8b 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
