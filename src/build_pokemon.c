@@ -5,8 +5,6 @@
 #include "build_pokemon.h"
 #include "multi.h"
 
-//Fix EV Setting
-
 extern u8 ClassPokeBalls[NUM_TRAINER_CLASSES];
 
 extern void GetFrontierTrainerName(u8* dst, u16 trainerId, u8 battlerNum);
