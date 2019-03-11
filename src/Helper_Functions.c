@@ -784,6 +784,16 @@ u8 CalcMoveSplitFromParty(pokemon_t* mon, u16 move) {
 	return SPLIT(move);
 }
 
+u8 FindMovePositionInMoveset(u16 move, u8 bank) {
+	int i;
+	for (i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		if (gBattleMons[bank].moves[i] == move)
+			break;
+	}
+	return i;
+}
+
 void ClearBankStatus(bank_t bank) {
 	if (gBattleMons[bank].status1 & (STATUS_POISON | STATUS_TOXIC_POISON))
 		StringCopy(gBattleTextBuff1, gStatusConditionString_Poison);

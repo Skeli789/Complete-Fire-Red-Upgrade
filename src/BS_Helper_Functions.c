@@ -1110,16 +1110,6 @@ void QuashFunc(void) {
 	else
 		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
 }
-
-u8 FindMovePositionInMoveset(u16 move, u8 bank) {
-	int i;
-	for (i = 0; i < MAX_MON_MOVES; ++i)
-	{
-		if (gBattleMons[bank].moves[i] == move)
-			break;
-	}
-	return i;
-}
 			
 void TryExecuteInstruct(void) {
 	u16 move = gLastPrintedMoves[gBankTarget];
