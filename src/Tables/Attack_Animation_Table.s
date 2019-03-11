@@ -811,7 +811,7 @@ ANIM_WATERFALL:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 ANIM_WATERGUN:
-	loadparticle 0x2839
+	loadparticle ANIM_TAG_WATER_GUN
 	playsoundpanchange 0x9d 0xc0 0x3f 0x2 0x0 
 	launchtemplate WATERGUN_PARTICLE 0x82 0x2 0x14 0x0 
 	pause 0x5 
@@ -837,7 +837,7 @@ ANIM_WATERGUN:
 	endanimation
 	
 .align 2
-WATERGUN_PARTICLE: objtemplate 0x2839 0x2839 0x83ACA30 0x8231CF0 0x0 0x83E3D90 0x80A7BC5
+WATERGUN_PARTICLE: objtemplate ANIM_TAG_WATER_GUN ANIM_TAG_WATER_GUN 0x83ACA30 0x8231CF0 0x0 0x83E3D90 0x80A7BC5
 	
 @ hook at A7C28
 WATERGUN_ASM:
@@ -15142,7 +15142,7 @@ LASTRESORT_STARS: objtemplate ANIM_TAG_PAIN_SPLIT ANIM_TAG_DUCK 0x83AC9D0 0x8231
 .pool     
 @ credit to ghoulslash
 ANIM_SKYDROP:
-	loadparticle 0x27ac 
+	loadparticle ANIM_TAG_ROUND_SHADOW 
 	loadparticle ANIM_TAG_IMPACT 
 	choosetwoturnanim SKYDROP_FIRST_TURN SKYDROP_SECOND_TURN
 	endanimation
@@ -15150,8 +15150,8 @@ ANIM_SKYDROP:
 SKYDROP_FIRST_TURN:
 	makebankinvisible bank_attacker
 	loadparticle ANIM_TAG_SMALL_BUBBLES @mist ball
-	loadparticle 0x281e 
-	loadparticle 0x27ac @fly
+	loadparticle ANIM_TAG_WHITE_FEATHER 
+	loadparticle ANIM_TAG_ROUND_SHADOW @fly
 	pause 0x0 
 	playsound2 0x7a 0xc0 
 	launchtemplate SKYDROP_FLY_BALL 0x80 0x6 0x0 0x0 0x0 0x0 0x1e 0x0 
@@ -15192,10 +15192,10 @@ SKYDROP_SECOND_TURN:
 	endanimation 
 
 .align 2
-SKYDROP_FLY_BALL: objtemplate 0x27ac 0x27ac 0x83ACAA0 0x8231CF0 0x0 SKYDROP_ROT 0x80AFD4D 
+SKYDROP_FLY_BALL: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_ROUND_SHADOW 0x83ACAA0 0x8231CF0 0x0 SKYDROP_ROT 0x80AFD4D 
 SKYDROP_ROT: .word SKYDROP_ROTATIONS
 SKYDROP_ROTATIONS: .hword 0xa0, 0x100, 0x50, 0x0, 0x7fff, 0x0, 0x0, 0x0
-SKYDROP_TARGET_FLY: objtemplate 0x27ac 0x27ac 0x83acaa0 0x8231cf0 0x0 0x83e6b8c TARGET_FLY_ASM+1
+SKYDROP_TARGET_FLY: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_ROUND_SHADOW 0x83acaa0 0x8231cf0 0x0 0x83e6b8c TARGET_FLY_ASM+1
 
 .align 2
 TARGET_FLY_ASM:
