@@ -69,11 +69,38 @@ The Lucky Chant shielded\n[FD][36] team from critical hits!
 #org @RoastedBerryString
 [FD][10]'s [FD][16]\nwas burnt up!
 
+#org @gText_TargetWasInfested
+[FD][10] has been\nafflicted with an Infestation!
+
 #org @SkyDropUpString
 [FD][0F] took\n[FD][10] into the sky!
 
 #org @FreedFromSkyDropString
 [FD][10] was freed\nfrom the Sky Drop!
+
+#org @CraftyShieldSetString
+Crafty Shield protected\n[FD][36] team!
+
+#org @MatBlockSetString
+[FD][0F] intends to flip\nup a mat and block incoming attacks!
+
+#org @QuickGuardSetString
+Quick Guard protected\n[FD][36] team!
+
+#org @WideGuardSetString
+Wide Guard protected\n[FD][36] team!
+
+#org @CraftyShieldProtectedString
+The Crafty Shield protected\n[FD][10]!
+
+#org @MatBlockProtectedString
+[FD][14] was blocked by the\nkicked-up mat!
+
+#org @QuickGuardProtectedString
+The Quick Guard protected\n[FD][10]!
+
+#org @WideGuardProtectedString
+The Wide Guard protected\n[FD][10]!
 
 //Status Strings
 
