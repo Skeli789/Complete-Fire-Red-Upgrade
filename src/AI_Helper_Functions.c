@@ -393,11 +393,12 @@ u16 ShouldAIUseZMove(u8 bank, u8 moveIndex, u16 move) {
 	if (move == 0)
 		move = gBattleMons[bank].moves[moveIndex];
 		
-	if ((gNewBS->MegaData->partyIndex[SIDE(bank)] & gBitTable[gBattlerPartyIndexes[bank]])
-	|| IsMega(bank) 
+	if (IsMega(bank) 
 	|| IsRedPrimal(bank) 
 	|| IsBluePrimal(bank))
+	{
 		return FALSE;
+	}
 	
 	if (gItems[SanitizeItemId(gBattleMons[bank].item)].holdEffect == ITEM_EFFECT_Z_CRYSTAL
 	||  ITEM(bank) == ITEM_ULTRANECROZIUM_Z) //The only "Mega Stone" that let's you use a Z-Move

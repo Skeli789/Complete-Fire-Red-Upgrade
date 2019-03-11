@@ -59,7 +59,11 @@ extern u16 CalcVisualBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 power, u8 m
 extern u32 AccuracyCalc(u16 move, u8 bankAtk, u8 bankDef);
 extern u32 AccuracyCalcNoTarget(u16 move, u8 bankAtk);
 extern u8 CheckMoveLimitations(u8 bank, u8 unusableMoves, u8 check);
+extern bool8 IsMega(u8 bank);
+extern bool8 IsBluePrimal(u8 bank);
+extern bool8 IsRedPrimal(u8 bank);
 
+void InitMoveSelectionsVarsAndStrings(void);
 void HandleInputChooseMove(void);
 bool8 TriggerMegaEvolution(void);
 void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct ChooseMoveStruct *movePpData);
@@ -72,6 +76,16 @@ void MoveSelectionDisplayDetails(void);
 void ReloadMoveNamesIfNecessary(void);
 void HandleInputChooseTarget(void);
 u8 TrySetCantSelectMoveBattleScript(void);
+
+void InitMoveSelectionsVarsAndStrings(void)
+{
+    MoveSelectionDisplayMoveNames();
+    gMultiUsePlayerCursor = 0xFF;
+    MoveSelectionCreateCursorAt(gMoveSelectionCursor[gActiveBattler], 0);
+    MoveSelectionDisplayPpString();
+    MoveSelectionDisplayPpNumber();
+    MoveSelectionDisplayMoveType();
+}
 
 void HandleInputChooseMove(void)
 {
@@ -96,6 +110,7 @@ void HandleInputChooseMove(void)
 		}
 		
 		gNewBS->ZMoveData->viewingDetails = FALSE;
+		
         PlaySE(SE_SELECT);
         if (moveInfo->moves[gMoveSelectionCursor[gActiveBattler]] == MOVE_CURSE)
         {
@@ -169,6 +184,7 @@ void HandleInputChooseMove(void)
 				gNewBS->ZMoveData->backupTilemap = NULL;
 			}
 		}
+		
 		gNewBS->ZMoveData->viewingDetails = FALSE;
 		gMoveSelectionCursor[gActiveBattler] = 0;
         PlaySE(SE_SELECT);
@@ -373,7 +389,7 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 		}
 	}
 	
-	if (!gNewBS->ZMoveData->used[gActiveBattler] && !(gNewBS->MegaData->partyIndex[SIDE(gActiveBattler)] & gBitTable[gBattlerPartyIndexes[i]])) 
+	if (!gNewBS->ZMoveData->used[gActiveBattler] && !IsMega(gActiveBattler) && !IsBluePrimal(gActiveBattler) && !IsRedPrimal(gActiveBattler)) 
 	{
 		for (i = 0; i < MAX_MON_MOVES; ++i)
 			if (!(CheckMoveLimitations(gActiveBattler, 0, MOVE_LIMITATION_PP) & gBitTable[i])) //Don't display a Z-Move if the base move has no PP
