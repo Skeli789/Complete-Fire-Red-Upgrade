@@ -352,6 +352,7 @@ u8 AtkCanceller_UnableToUseMove(void)
         case CANCELLER_RECHARGE: // recharge
             if (gBattleMons[gBankAttacker].status2 & STATUS2_RECHARGE)
             {
+				gNewBS->MetronomeCounter[gBankAttacker] = MathMin(100, gNewBS->MetronomeCounter[gBankAttacker] + 20);
                 gBattleMons[gBankAttacker].status2 &= ~(STATUS2_RECHARGE);
                 gDisableStructs[gBankAttacker].rechargeTimer = 0;
                 CancelMultiTurnMoves(gBankAttacker);
