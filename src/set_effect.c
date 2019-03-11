@@ -2,7 +2,6 @@
 #include "helper_functions.h"
 
 //Update synchronize effect
-//Shyamin Freezing
 
 #define INCREMENT_RESET_RETURN                  \
 {                                               \
@@ -40,6 +39,7 @@ extern u8 TargetStatsResetString[];
 extern u8 AbilitySuppressedString[];
 extern u8 TerrainEndString[];
 extern u8 RoastedBerryString[];
+extern u8 gText_TargetWasInfested[];
 
 extern u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, u8* BS_ptr);
 extern void BringDownMons(void);
@@ -81,75 +81,38 @@ u8 ShieldDustIgnoredEffects[] =
 
 const u32 sStatusFlagsForMoveEffects[] =
 {
-    0x00000000,
-    STATUS1_SLEEP,
-    STATUS1_POISON,
-    STATUS1_BURN,
-    STATUS1_FREEZE,
-    STATUS1_PARALYSIS,
-    STATUS1_TOXIC_POISON,
-    STATUS2_CONFUSION,
-    STATUS2_FLINCHED,
-    0x00000000,
-    STATUS2_UPROAR,
-    0x00000000,
-    STATUS2_MULTIPLETURNS,
-    STATUS2_WRAPPED,
-    0x00000000,
-    0x00000000,
-    0x00000000,
-    0x00000000,
-    0x00000000,
-    0x00000000,
-    0x00000000,
-    0x00000000,
-    0x00000000,
-    0x00000000,
-    0x00000000,
-    0x00000000,
-    0x00000000,
-    0x00000000,
-    0x00000000,
-    STATUS2_RECHARGE,
-    0x00000000,
-    0x00000000,
-    STATUS2_ESCAPE_PREVENTION,
-    STATUS2_NIGHTMARE,
-    0x00000000,
-    0x00000000,
-    0x00000000,
-    0x00000000,
-    0x00000000,
-    0x00000000,
-    0x00000000,
-    0x00000000,
-    0x00000000,
-    0x00000000,
-    0x00000000,
-    0x00000000,
-    0x00000000,
-    0x00000000,
-    0x00000000,
-    0x00000000,
-    0x00000000,
-    0x00000000,
-    0x00000000,
-    STATUS2_LOCK_CONFUSE,
-    0x00000000,
-    0x00000000,
-    0x00000000,
-    0x00000000,
-    0x00000000,
-	0x00000000,
-	0x00000000,
-	0x00000000,
-	0x00000000,
-    0x00000000,
-};
+	[MOVE_EFFECT_SLEEP] = STATUS1_SLEEP,
+	[MOVE_EFFECT_POISON] = STATUS1_POISON,
+    [MOVE_EFFECT_BURN] = STATUS1_BURN,
+    [MOVE_EFFECT_FREEZE] = STATUS1_FREEZE,
+    [MOVE_EFFECT_PARALYSIS] = STATUS1_PARALYSIS,
+    [MOVE_EFFECT_TOXIC] = STATUS1_TOXIC_POISON,
+    [MOVE_EFFECT_CONFUSION] = STATUS2_CONFUSION,
+    [MOVE_EFFECT_FLINCH] = STATUS2_FLINCHED,
+	[MOVE_EFFECT_UPROAR] = STATUS2_UPROAR,
+	[MOVE_EFFECT_CHARGING] = STATUS2_MULTIPLETURNS,
+	[MOVE_EFFECT_WRAP] = STATUS2_WRAPPED,
+    [MOVE_EFFECT_RECHARGE] = STATUS2_RECHARGE,
+	[MOVE_EFFECT_PREVENT_ESCAPE] = STATUS2_ESCAPE_PREVENTION,
+	[MOVE_EFFECT_NIGHTMARE] = STATUS2_NIGHTMARE,
+	[MOVE_EFFECT_THRASH] = STATUS2_LOCK_CONFUSE,
+ };
 
 const u16 gTrappingMoves[] =
 {
     MOVE_BIND, MOVE_WRAP, MOVE_FIRESPIN, MOVE_CLAMP, MOVE_WHIRLPOOL, MOVE_SANDTOMB, MOVE_MAGMASTORM, MOVE_INFESTATION, 0xFFFF
+};
+
+const u16 gWrappedStringIds[] =
+{
+    STRINGID_PKMNSQUEEZEDBYBIND, 
+	STRINGID_PKMNWRAPPEDBY, 
+	STRINGID_PKMNTRAPPEDINVORTEX,
+    STRINGID_PKMNCLAMPED, 
+	STRINGID_PKMNTRAPPEDINVORTEX, 
+	STRINGID_PKMNTRAPPEDBYSANDTOMB,
+	STRINGID_PKMNTRAPPEDINVORTEX,
+	0x184,
 };
 
 void atk15_seteffectwithchance(void) {
@@ -430,8 +393,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 					gNewBS->secondaryEffectApplied = TRUE;
                     gBattleMons[gEffectBank].status2 |= ((Random() & 3) + 3) << 0xD;
 
-                    gBattleStruct->wrappedMove[gEffectBank * 2] = gCurrentMove;
-                    gBattleStruct->wrappedMove[gEffectBank * 2 + 1] = gCurrentMove >> 8;
+                    gBattleStruct->wrappedMove[gEffectBank] = gCurrentMove;
                     gBattleStruct->wrappedBy[gEffectBank] = gBankAttacker;
 
                     BattleScriptPush(gBattlescriptCurrInstr + 1);
@@ -444,6 +406,9 @@ void SetMoveEffect(bool8 primary, u8 certain)
                         if (gTrappingMoves[gBattleCommunication[MULTISTRING_CHOOSER]] == gCurrentMove)
                             break;
                     }
+					
+					if (gCurrentMove == MOVE_INFESTATION)
+						BattleStringLoader = gText_TargetWasInfested;
                 }
                 break;
 			
