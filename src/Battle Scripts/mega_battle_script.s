@@ -9,7 +9,6 @@
 .global BattleScript_UltraBurst
 
 BattleScript_MegaEvolution:
-	reloadhealthbar 0xA
 	setword BATTLE_STRING_LOADER MegaReactingString
 	printstring 0x184
 	waitmessage DELAY_HALFSECOND
@@ -23,14 +22,12 @@ MegaAnimBS:
 	end3
 
 BattleScript_MegaWish:
-	reloadhealthbar 0xA
 	setword BATTLE_STRING_LOADER FerventWishString
 	printstring 0x184
 	waitmessage DELAY_HALFSECOND
 	goto MegaAnimBS
 
 BattleScript_UltraBurst:
-	reloadhealthbar 0xA
 	setword BATTLE_STRING_LOADER UltraBurstGlowingString
 	printstring 0x184
 	waitmessage DELAY_HALFSECOND
