@@ -112,6 +112,7 @@ void __attribute__((long_call)) CompleteOnInactiveTextPrinter(void);
 void __attribute__((long_call)) Task_LaunchLvlUpAnim(u8);
 void __attribute__((long_call)) DestroyExpTaskAndCompleteOnInactiveTextPrinter(u8);
 void __attribute__((long_call)) MoveSelectionDisplayMoveNames(void);
+void __attribute__((long_call)) MoveSelectionDisplayPpString(void);
 void __attribute__((long_call)) MoveSelectionDisplayPpNumber(void);
 /*void __attribute__((long_call)) MoveSelectionDisplayMoveType(void);*/
 void __attribute__((long_call)) MoveSelectionCreateCursorAt(u8 cursorPos, u8 arg1);
@@ -334,6 +335,7 @@ void* __attribute__((long_call)) Malloc(u32 size);
 void* __attribute__((long_call)) Calloc(u32 size);
 void __attribute__((long_call)) Free(void *pointer);
 u8 __attribute__((long_call)) CreateSprite(const struct SpriteTemplate* template, s16 x, s16 y, u8 subpriority);
+void __attribute__((long_call)) DestroySprite(struct Sprite *sprite);
 void __attribute__((long_call)) SpriteCallbackDummy(struct Sprite *sprite);
 
 void __attribute__((long_call)) StartSpriteAnim(struct Sprite *sprite, u8 animNum);
@@ -398,6 +400,8 @@ bool8 __attribute__((long_call)) FuncIsActiveTask(TaskFunc func);
 u8 __attribute__((long_call)) FindTaskIdByFunc(TaskFunc func);
 u8 __attribute__((long_call)) GetTaskCount(void);
 u8* __attribute__((long_call)) ReturnEmptyStringIfNull(const u8* string);
+void __attribute__((long_call)) DisplayItemMessage(u8 taskId, u8 a, const u8* str, void(*callback)(u8 taskId));
+void __attribute__((long_call)) bag_menu_inits_lists_menu(u8 taskId);
 void __attribute__((long_call)) m4aSongNumStop(u16 n);
 void __attribute__((long_call)) m4aMPlayContinue(struct MusicPlayerInfo *mplayInfo);
 void __attribute__((long_call)) m4aMPlayVolumeControl(struct MusicPlayerInfo *mplayInfo, u16 trackBits, u16 volume);
