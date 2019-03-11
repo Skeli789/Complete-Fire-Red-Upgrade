@@ -587,7 +587,7 @@ struct BattleStruct
     u8 turnEffectsBank;
     u8 filler2;
     u8 turncountersTracker;
-    u8 wrappedMove[8]; //Split into bytes to help the string buffer
+    u16 wrappedMove[4];
     u8 moveTarget[4];
     u8 expGetterId;
     u8 field_11;
@@ -731,7 +731,7 @@ struct NewBattleStruct
 	u8 ThroatChopTimers[4];
 	u8 EmbargoTimers[4];
 	u8 ElectrifyTimers[4];
-	u8 SlowStartTimers[4];
+	u8 SlowStartTimers[4];					//0x20175E8
 	u8 StakeoutCounters[4];
 	u8 StompingTantrumTimers[4];
 	u8 NimbleCounters[4];
@@ -785,6 +785,8 @@ struct NewBattleStruct
 	bool8 MeFirstByte : 1;
 	bool8 ReceiverActivated : 1;
 	bool8 GemHelper : 1;
+	bool8 fusionFlareUsedPrior : 1;
+	bool8 fusionBoltUsedPrior : 1;
 	bool8 EndTurnDone : 1;
 	bool8 HappyHourByte : 1;
 	bool8 DancerInProgress : 1;
@@ -807,8 +809,9 @@ struct NewBattleStruct
 	s32 DamageTaken[4]; //0x2017650
 	u8 ResultFlags[4];
 	u8 expHelper[4];
+	u8 megaIndicatorObjIds[4];
 	
-	struct MegaData* MegaData;
+	struct MegaData* MegaData;	 //0x2017684
 	struct UltraData* UltraData;
 	struct ZMoveData* ZMoveData; //0x20176A8
 };
@@ -1278,7 +1281,6 @@ struct MegaData
 {
   u8 chosen[4];
   u8 done[4];
-  u8 partyIndex[2]; //Index of party member who Mega Evolved
   u8 state;
   u8 activeBank;
   u8* script;
