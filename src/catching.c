@@ -3,15 +3,14 @@
 #include "helper_functions.h"
 #include "catching.h"
 
-//Put check for Wild Double Battle in Item Use code
-//Figure out how to check Surfing for Dive Ball
-//Make it so you can't catch Semi-Invulnerable targets
-
 #define gOpenPokeballGfx (u8*) 0x8D022E8
 
 extern const struct BallIdItemIdRelation BallIdItemIdRelations[];
 extern const struct CompressedSpriteSheet gBallSpriteSheets[];
 extern const struct CompressedSpritePalette gBallSpritePalettes[];
+
+extern u8 gText_CantAimAtTwoTargets[];
+extern u8 gText_CantAimAtSemiInvulnerableTarget[];
 
 void atkEF_handleballthrow(void);
 u8 GetCatchingBattler(void);
@@ -20,6 +19,8 @@ u8 GiveMonToPlayer(pokemon_t* mon);
 u8 ItemIdToBallId(u16 ballItem);
 item_t BallIdToItemId(u8 ballId);
 u16 GetBattlerPokeballItemId(u8 bank);
+bool8 DoubleWildPokeBallItemUseFix(u8 taskId);
+pokemon_t* LoadTargetPartyData(void);
 
 extern void TryFormRevert(pokemon_t* mon);
 extern void TryRevertMega(pokemon_t* mon);
@@ -482,4 +483,37 @@ u16 GetBattlerPokeballItemId(u8 bank)
 bool8 CriticalCapturAnimUpdate(void)
 {
 	return gNewBS->criticalCapture;
+}
+
+bool8 DoubleWildPokeBallItemUseFix(u8 taskId)
+{
+	bool8 effect = FALSE;
+
+	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	{
+		if (BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT))
+		&& BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT)))
+		{
+			DisplayItemMessage(taskId, 2, gText_CantAimAtTwoTargets, bag_menu_inits_lists_menu);
+			effect = TRUE;
+		}
+		else if ((BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)) && BATTLER_SEMI_INVULERABLE(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)))
+		||       (BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT)) && BATTLER_SEMI_INVULERABLE(GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT))))
+		{
+			DisplayItemMessage(taskId, 2, gText_CantAimAtSemiInvulnerableTarget, bag_menu_inits_lists_menu);
+			effect = TRUE;
+		}
+	}
+	else if (BATTLER_SEMI_INVULERABLE(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)))
+	{
+		DisplayItemMessage(taskId, 2, gText_CantAimAtSemiInvulnerableTarget, bag_menu_inits_lists_menu);
+		effect = TRUE;
+	}
+
+	return effect;
+}
+
+pokemon_t* LoadTargetPartyData(void)
+{
+	return GetBankPartyData(gBankTarget);
 }
