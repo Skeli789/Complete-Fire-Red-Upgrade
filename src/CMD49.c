@@ -2,6 +2,7 @@
 #include "helper_functions.h"
 
 //Emergency Exit Spikes
+//Pickpocket Fix
 //Make sure there's no choice lock glitch
 //Add check to see if AI move prediction was successful. If not, then if the same move is predicted, don't predict that same move again.
 //Remove the lines at the bottom?
@@ -11,6 +12,7 @@ BattleScript_SpikesOnAttackerFainted
 BattleScript_SpikesOnTargetFainted
 */
 
+#define BattleScript_ThrashConfuses (u8*) 0x81D90C5
 #define BattleScript_DefrostedViaFireMove (u8*) 0x81D9098
 #define BattleScript_FlushMessageBox (u8*) 0x81D96A8
 #define BattleScript_Recoil (u8*) 0x81D9243
@@ -60,6 +62,7 @@ enum
 	ATK49_SET_UP,
 	ATK49_ATTACKER_ABILITIES,
 	ATK49_ADVERSE_PROTECTION,
+	ATK49_FATIGUE,
     ATK49_RAGE,
     ATK49_SYNCHRONIZE_TARGET,
     ATK49_MOVE_END_ABILITIES,
@@ -234,6 +237,34 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			}
 			gBattleScripting->atk49_state++;
             break;
+			
+		case ATK49_FATIGUE:
+			if (gBattleMons[gBankAttacker].status2 & STATUS2_LOCK_CONFUSE
+			&& gBattleMons[gBankAttacker].hp
+			&& !gNewBS->DancerInProgress)
+            {
+                gBattleMons[gBankAttacker].status2 -= 0x400;
+                
+				if (!(gBattleMons[gBankAttacker].status2 & STATUS2_LOCK_CONFUSE)
+                &&   (gBattleMons[gBankAttacker].status2 & STATUS2_MULTIPLETURNS))
+                {
+                    gBattleMons[gBankAttacker].status2 &= ~(STATUS2_MULTIPLETURNS);
+					
+                    if (!(gBattleMons[gBankAttacker].status2 & STATUS2_CONFUSION)
+					&& ABILITY(gBankAttacker) != ABILITY_OWNTEMPO
+					&& !(CheckGrounding(gBankAttacker) && TerrainType == MISTY_TERRAIN))
+                    {
+						gBattleMons[gBankAttacker].status2 |= (umodsi(Random(), 4)) + 2;
+						BattleScriptPushCursor();
+                        gBattlescriptCurrInstr = BattleScript_ThrashConfuses;
+						effect = 1;
+                    }
+                }
+				else if (!MOVE_HAD_EFFECT || (gHitMarker & HITMARKER_UNABLE_TO_USE_MOVE))
+					CancelMultiTurnMoves(gBankAttacker);
+            }
+			gBattleScripting->atk49_state++;
+			break;
 			
         case ATK49_RAGE: // rage check
             if (gBattleMons[bankDef].status2 & STATUS2_RAGE
@@ -446,7 +477,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 		
         case ATK49_UPDATE_LAST_MOVES:
 			if (gNewBS->DancerInProgress
-			||  arg1 == ARG_IN_FUTURE_ATTACK) 
+			|| arg1 == ARG_IN_FUTURE_ATTACK) 
 			{
 				gBattleScripting->atk49_state++;
 				break;
@@ -845,6 +876,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 				else if (ABILITY(bankAtk) != ABILITY_MAGICGUARD
 				&& ABILITY(bankAtk) != ABILITY_ROCKHEAD
 				&& gNewBS->AttackerDidDamageAtLeastOnce
+				&& SPLIT(gCurrentMove) != SPLIT_STATUS
 				&& gBattleMons[bankAtk].hp)
 				{
 					if (CheckTableForMove(gCurrentMove, Percent25RecoilMoves))
@@ -992,6 +1024,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 		case ATK49_LIFE_ORB_RECOIL:
 			if (arg1 != ARG_IN_FUTURE_ATTACK
 			&& ITEM_EFFECT(bankAtk) == ITEM_EFFECT_LIFE_ORB
+			&& SPLIT(gCurrentMove) != SPLIT_STATUS
 			&& gNewBS->AttackerDidDamageAtLeastOnce
 			&& ABILITY(bankAtk) != ABILITY_MAGICGUARD
 			&& gBattleMons[bankAtk].hp
@@ -1084,8 +1117,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			}
 			
 			gNewBS->ZMoveData->active = FALSE;
-			gNewBS->ZMoveData->effectApplied = FALSE;
-			gNewBS->AttackerDidDamageAtLeastOnce = FALSE;		
+			gNewBS->ZMoveData->effectApplied = FALSE;	
 			gNewBS->secondaryEffectApplied = FALSE;
 			gNewBS->InstructInProgress = FALSE;
 			gNewBS->bypassSubstitute = FALSE;
@@ -1097,23 +1129,28 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			{
 				gNewBS->DancerInProgress = FALSE;
 				gNewBS->DancerByte = 0;
+				gNewBS->DancerBankCount = 0;
 				gNewBS->DancerTurnOrder[0] = 0; //Set the whole array to 0
 				gNewBS->DancerTurnOrder[1] = 0;
 				gNewBS->DancerTurnOrder[2] = 0;
 				gNewBS->DancerTurnOrder[3] = 0;
 				gBattleScripting->atk49_state++;
+				gNewBS->AttackerDidDamageAtLeastOnce = FALSE;
+				gNewBS->attackAnimationPlayed = FALSE;
+				gNewBS->moveWasBouncedThisTurn = FALSE;
 				break;
 			}
 		
 			if (!gNewBS->DancerInProgress
-			&&  arg1 != ARG_IN_PURSUIT
+			&& arg1 != ARG_IN_PURSUIT
 			&& ABILITY_PRESENT(ABILITY_DANCER)
-			&& gHitMarker & HITMARKER_ATTACKSTRING_PRINTED
-			&& MOVE_HAD_EFFECT
-			&& !gNewBS->MoveBounceInProgress
+			&& gNewBS->attackAnimationPlayed
+			&& !gNewBS->moveWasBouncedThisTurn
 			&& CheckTableForMove(gCurrentMove, DanceMoveTable))
 			{
+				gNewBS->DancerInProgress = TRUE;
 				gNewBS->CurrentTurnAttacker = bankAtk;
+				gNewBS->CurrentTurnTarget = gBankTarget;
 				gNewBS->DancerBankCount = 0;
 				
 				for (i = 0; i < gBattlersCount; ++i)
@@ -1124,6 +1161,9 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			else if (!gNewBS->DancerInProgress)
 			{
 				gBattleScripting->atk49_state++;
+				gNewBS->AttackerDidDamageAtLeastOnce = FALSE;
+				gNewBS->attackAnimationPlayed = FALSE;
+				gNewBS->moveWasBouncedThisTurn = FALSE;
 				break;
 			}
 				
@@ -1134,15 +1174,24 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			&& bank != gNewBS->CurrentTurnAttacker)
 			{
 				gBankAttacker = bank;
-				gBankTarget = GetMoveTarget(gCurrentMove, FALSE);
+				
+				if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE
+				&&  gNewBS->CurrentTurnAttacker == PARTNER(bank)
+				&&  gBattleMoves[gCurrentMove].target == MOVE_TARGET_SELECTED
+				&&  gBattleMons[gNewBS->CurrentTurnTarget].hp)
+					gBankTarget = gNewBS->CurrentTurnTarget; //Target the same as partner's target
+				else
+					gBankTarget = GetMoveTarget(gCurrentMove, FALSE);
+				
 				gBattleScripting->atk49_state = 0;
+				gBattleStruct->atkCancellerTracker = 0;
+				gNewBS->AttackerDidDamageAtLeastOnce = FALSE;
 				gRandomMove = gCurrentMove;
 				gBattleScripting->bank = gBankAttacker;
                 gBattlescriptCurrInstr = BattleScript_DancerActivated;
 				gHitMarker &= ~(HITMARKER_NO_ATTACKSTRING | HITMARKER_ATTACKSTRING_PRINTED);
-				gNewBS->AttackerDidDamageAtLeastOnce = FALSE;
-				gNewBS->DancerInProgress = TRUE;
-				effect = TRUE;
+				++gNewBS->DancerBankCount;
+				return;
 			}
 			
 			++gNewBS->DancerBankCount;
