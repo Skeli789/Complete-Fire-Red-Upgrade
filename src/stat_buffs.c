@@ -61,9 +61,9 @@ void atk13_printfromtable(void) {
 void atk20_jumpifstat(void)
 {
     u8 ret = 0;
-    u8 bank = GetBattleBank(T2_READ_8(gBattlescriptCurrInstr + 1));
-    u8 value = gBattleMons[bank].statStages[T2_READ_8(gBattlescriptCurrInstr + 3) - 1];
-	s8 comparison = T2_READ_8(gBattlescriptCurrInstr + 4);
+    u8 bank = GetBattleBank(gBattlescriptCurrInstr[1]);
+    u8 value = gBattleMons[bank].statStages[gBattlescriptCurrInstr[3] - 1];
+	s8 comparison = gBattlescriptCurrInstr[4];
 	
 	if (ABILITY(bank) == ABILITY_CONTRARY) {
 		comparison -= 12;

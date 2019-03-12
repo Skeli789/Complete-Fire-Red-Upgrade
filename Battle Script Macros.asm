@@ -309,8 +309,8 @@
 	.byte 0x20
 	.byte \bank
 	.byte \predicate
-	.byte \quantity
 	.byte \statid
+	.byte \quantity
 	.4byte \rom_address
 	.endm
 
