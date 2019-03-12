@@ -2877,6 +2877,9 @@ HealingWishBS:
 	attackanimation
 	waitanimation
 	callasm SetHealingWishLunarDanceFunc
+	setuserhptozero
+	graphicalhpupdate BANK_ATTACKER
+	datahpupdate BANK_ATTACKER
 	faintpokemon BANK_ATTACKER 0x0 0x0
 	goto BS_MOVE_END
 
