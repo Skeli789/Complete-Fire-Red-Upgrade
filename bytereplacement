@@ -20,6 +20,8 @@
 081D9500 49 00 00
 081D94E6 49 00 00
 081D9517 49 00 00
+##Fix ThrashConfuses End2 -> Return
+081D90D2 3C
 
 ##Update Routines##
 ##Update ReloadHealthBar

@@ -15,7 +15,6 @@ ET_Fog,
 ET_Weather_Health_Abilities,
 ET_Future_Sight,
 ET_Wish,
-ET_Thrash,
 ET_Block_A,
 ET_Aqua_Ring,
 ET_Ingrain,
@@ -88,7 +87,6 @@ ET_Harvest_Pickup,
 #define BattleScript_MonTookFutureAttack ((u8*) 0x81D8E12)
 #define BattleScript_WishComesTrue ((u8*) 0x81D8ED5)
 #define BattleScript_ShedSkinActivates ((u8*) 0x81D92D3) 
-#define BattleScript_ThrashConfuses ((u8*) 0x81D90C5)
 #define BattleScript_IngrainTurnHeal ((u8*) 0x81D8F0C)
 #define BattleScript_LeechSeedTurnDrain ((u8*) 0x81D8B4D)
 #define BattleScript_PoisonTurnDmg ((u8*) 0x81D9053)

@@ -309,29 +309,6 @@ u8 TurnBasedEffects(void) {
 				gNewBS->blockTracker = 0; //For later
                 break;
 				
-			case(ET_Thrash):
-                if (gBattleMons[gActiveBattler].status2 & STATUS2_LOCK_CONFUSE
-				&& gBattleMons[gActiveBattler].hp)
-                {
-                    gBattleMons[gActiveBattler].status2 -= 0x400;
-                    if (!(gBattleMons[gActiveBattler].status2 & STATUS2_LOCK_CONFUSE)
-                     && (gBattleMons[gActiveBattler].status2 & STATUS2_MULTIPLETURNS))
-                    {
-                        gBattleMons[gActiveBattler].status2 &= ~(STATUS2_MULTIPLETURNS);
-                        if (!(gBattleMons[gActiveBattler].status2 & STATUS2_CONFUSION))
-                        {
-                            gBattleCommunication[MOVE_EFFECT_BYTE] = 0x47;
-                            SetMoveEffect(1, 0);
-                            if (gBattleMons[gActiveBattler].status2 & STATUS2_CONFUSION)
-                                BattleScriptExecute(BattleScript_ThrashConfuses);
-                            effect++;
-                        }
-                    }
-					else if (WasUnableToUseMove(gActiveBattler))
-						CancelMultiTurnMoves(gActiveBattler);
-                }
-				break;
-				
 			case(ET_Block_A):
 				switch(gNewBS->blockTracker) {
 					case(ET_Sea_Of_Fire):
