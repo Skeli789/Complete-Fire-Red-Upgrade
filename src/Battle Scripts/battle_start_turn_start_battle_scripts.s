@@ -136,6 +136,8 @@ BattleScript_FocusPunchSetUp:
 	end3
 
 BattleScript_BeakBlastSetUp:
+	printstring 0x130
+	waitmessage 0xA
 	playanimation 0xA ANIM_BEAK_BLAST_WARM_UP 0x0
 	setword BATTLE_STRING_LOADER BeakBlastWarmUpString
 	printstring 0x184
@@ -143,6 +145,8 @@ BattleScript_BeakBlastSetUp:
 	end3
 
 BattleScript_ShellTrapSetUp:
+	printstring 0x130
+	waitmessage 0xA
 	playanimation 0xA ANIM_SHELL_TRAP_SET 0x0
 	setword BATTLE_STRING_LOADER ShellTrapSetString
 	printstring 0x184
