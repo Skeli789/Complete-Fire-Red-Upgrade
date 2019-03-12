@@ -160,6 +160,7 @@ void atk00_attackcanceler(void)
 				PressurePPLose(gBankAttacker, SIDE(gBankAttacker) ^ BIT_SIDE, MOVE_MAGICCOAT);
 				gProtectStructs[SIDE(gBankAttacker) ^ BIT_SIDE].bounceMove = 0;
 				gNewBS->MoveBounceInProgress = TRUE;
+				gNewBS->moveWasBouncedThisTurn = TRUE;
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_MagicCoatBounce;
 				return;
@@ -169,6 +170,7 @@ void atk00_attackcanceler(void)
 				PressurePPLose(gBankAttacker, PARTNER(SIDE(gBankAttacker)) ^ BIT_SIDE, MOVE_MAGICCOAT);
 				gProtectStructs[PARTNER(SIDE(gBankAttacker)) ^ BIT_SIDE].bounceMove = 0;
 				gNewBS->MoveBounceInProgress = TRUE;
+				gNewBS->moveWasBouncedThisTurn = TRUE;
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_MagicCoatBounce;
 				return;
@@ -176,6 +178,7 @@ void atk00_attackcanceler(void)
 			else if (ABILITY(SIDE(gBankAttacker) ^ BIT_SIDE) == ABILITY_MAGICBOUNCE && !(gStatuses3[SIDE(gBankAttacker) ^ BIT_SIDE] & STATUS3_SEMI_INVULNERABLE))
 			{
 				gNewBS->MoveBounceInProgress = TRUE;
+				gNewBS->moveWasBouncedThisTurn = TRUE;
 				gLastUsedAbility = ABILITY_MAGICBOUNCE;
 				RecordAbilityBattle(SIDE(gBankAttacker) ^ BIT_SIDE, gLastUsedAbility);
 				gBattleScripting->bank = SIDE(gBankAttacker) ^ BIT_SIDE;
@@ -186,6 +189,7 @@ void atk00_attackcanceler(void)
 			else if (ABILITY(PARTNER(SIDE(gBankAttacker)) ^ BIT_SIDE) == ABILITY_MAGICBOUNCE && !(gStatuses3[PARTNER(SIDE(gBankAttacker)) ^ BIT_SIDE] & STATUS3_SEMI_INVULNERABLE))
 			{
 				gNewBS->MoveBounceInProgress = TRUE;
+				gNewBS->moveWasBouncedThisTurn = TRUE;
 				gLastUsedAbility = ABILITY_MAGICBOUNCE;
 				RecordAbilityBattle(PARTNER(SIDE(gBankAttacker)) ^ BIT_SIDE, gLastUsedAbility);
 				gBattleScripting->bank = SIDE(gBankAttacker) ^ BIT_SIDE;
@@ -201,6 +205,7 @@ void atk00_attackcanceler(void)
 				PressurePPLose(gBankAttacker, gBankTarget, MOVE_MAGICCOAT);
 				gProtectStructs[gBankTarget].bounceMove = 0;
 				gNewBS->MoveBounceInProgress = TRUE;
+				gNewBS->moveWasBouncedThisTurn = TRUE;
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_MagicCoatBounce;
 				return;
@@ -208,6 +213,7 @@ void atk00_attackcanceler(void)
 			else if (ABILITY(gBankTarget) == ABILITY_MAGICBOUNCE && !(gStatuses3[gBankTarget] & STATUS3_SEMI_INVULNERABLE))
 			{
 				gNewBS->MoveBounceInProgress = TRUE;
+				gNewBS->moveWasBouncedThisTurn = TRUE;
 				gLastUsedAbility = ABILITY_MAGICBOUNCE;
 				RecordAbilityBattle(gBankTarget, gLastUsedAbility);
 				gBattleScripting->bank = gBankTarget;
@@ -692,6 +698,36 @@ u8 AtkCanceller_UnableToUseMove(void)
 			|| gNewBS->EmbargoTimers[gBankAttacker]))
 			{
 				gBattlescriptCurrInstr = BattleScript_ButItFailed - 2;
+				gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
+				effect = 1;
+			}
+			gBattleStruct->atkCancellerTracker++;
+			break;
+			
+		case CANCELLER_DANCER:
+			if (gNewBS->DancerInProgress)
+			{
+				if ((gBattleMons[gBankAttacker].status2 & STATUS2_MULTIPLETURNS)
+				&&  gCurrentMove != gLockedMoves[gBankAttacker])
+				{
+					gBattlescriptCurrInstr = BattleScript_ButItFailed - 2;
+					gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
+					effect = 1;
+				}
+				else if (gDisableStructs[gBankAttacker].encoredMove
+				&& gCurrentMove != gDisableStructs[gBankAttacker].encoredMove)
+				{
+					gBattlescriptCurrInstr = BattleScript_ButItFailed - 2;
+					gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
+					effect = 1;
+				}
+				else if (gBattleStruct->choicedMove[gBankAttacker]
+				&& gCurrentMove != gBattleStruct->choicedMove[gBankAttacker])
+				{
+					gBattlescriptCurrInstr = BattleScript_ButItFailed - 2;
+					gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
+					effect = 1;
+				}
 			}
 			gBattleStruct->atkCancellerTracker++;
 			break;
@@ -701,6 +737,8 @@ u8 AtkCanceller_UnableToUseMove(void)
             {
                 gBattleMoveDamage = gBattleMons[gBankAttacker].maxHP / 4;
 				gBattlescriptCurrInstr = BattleScript_MoveUsedPowderPrevents;
+				gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
+				effect = 1;
             }
             gBattleStruct->atkCancellerTracker++;
             break;

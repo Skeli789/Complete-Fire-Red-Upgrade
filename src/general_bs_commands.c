@@ -222,6 +222,9 @@ void atk09_attackanimation(void)
 
     if ((gHitMarker & HITMARKER_NO_ANIMATIONS) && (gCurrentMove != MOVE_TRANSFORM && gCurrentMove != MOVE_SUBSTITUTE))
     {
+		if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT))
+			gNewBS->attackAnimationPlayed = TRUE;
+		
         BattleScriptPush(gBattlescriptCurrInstr + 1);
         gBattlescriptCurrInstr = BattleScript_Pausex20;
         gBattleScripting->animTurn++;
@@ -256,6 +259,7 @@ void atk09_attackanimation(void)
             else
                 multihit = gMultiHitCounter;
 
+			gNewBS->attackAnimationPlayed = TRUE;
             EmitMoveAnimation(0, gCurrentMove, gBattleScripting->animTurn, gBattleMovePower, gBattleMoveDamage, gBattleMons[gBankAttacker].friendship, &gDisableStructs[gBankAttacker], multihit);
             gBattleScripting->animTurn += 1;
             gBattleScripting->animTargetsHit += 1;
@@ -1074,7 +1078,8 @@ void atk63_jumptocalledmove(void)
     else
         gChosenMove = gCurrentMove = gRandomMove;
 
-	gBattleStruct->atkCancellerTracker = CANCELLER_GRAVITY_2;
+	if (gBattlescriptCurrInstr[1] != 0xFF)
+		gBattleStruct->atkCancellerTracker = CANCELLER_GRAVITY_2;
     gBattlescriptCurrInstr = gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect];
 }
 

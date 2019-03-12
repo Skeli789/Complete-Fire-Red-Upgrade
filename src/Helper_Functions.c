@@ -380,7 +380,10 @@ u8 GetMoveTarget(u16 move, u8 useMoveTarget) {
         bankDef = bankAtk;
         break;
     }
-    gBattleStruct->moveTarget[bankAtk] = bankDef;
+	
+	if (!gNewBS->DancerInProgress && !gNewBS->InstructInProgress)
+		gBattleStruct->moveTarget[bankAtk] = bankDef;
+	
     return bankDef;
 }
 

@@ -769,7 +769,8 @@ struct NewBattleStruct
 	u8 EchoedVoiceDamageScale;
 	u8 EnduranceHelper;
 	u8 DancerBankCount;
-	u8 CurrentTurnAttacker;
+	u8 CurrentTurnAttacker : 4;
+	u8 CurrentTurnTarget : 4;
 	u8 targetsToBringDown;
 	u8 backupMoveEffect;
 	u8 FaintEffectsTracker;
@@ -779,6 +780,7 @@ struct NewBattleStruct
 	//Booleans
 	bool8 NoMoreMovingThisTurn : 1;
 	bool8 MoveBounceInProgress : 2;
+	bool8 moveWasBouncedThisTurn : 1;
 	bool8 AttackerDidDamageAtLeastOnce : 1;
 	bool8 PledgeHelper : 3;
 	bool8 ParentalBondOn : 2;
@@ -789,6 +791,7 @@ struct NewBattleStruct
 	bool8 fusionBoltUsedPrior : 1;
 	bool8 EndTurnDone : 1;
 	bool8 HappyHourByte : 1;
+	bool8 attackAnimationPlayed : 1;
 	bool8 DancerInProgress : 1;
 	bool8 DancerByte : 1;
 	bool8 InstructInProgress : 1;

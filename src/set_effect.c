@@ -595,7 +595,8 @@ void SetMoveEffect(bool8 primary, u8 certain)
                 break;
 			
             case MOVE_EFFECT_THRASH:
-                if (gBattleMons[gEffectBank].status2 & STATUS2_LOCK_CONFUSE)
+				if (gNewBS->DancerInProgress
+				|| gBattleMons[gEffectBank].status2 & STATUS2_LOCK_CONFUSE)
                 {
                     gBattlescriptCurrInstr++;
                 }

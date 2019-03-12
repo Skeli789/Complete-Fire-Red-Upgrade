@@ -302,7 +302,7 @@ BattleScript_DancerActivated:
 	setword BATTLE_STRING_LOADER AbilityActivatedString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
-	jumptoattack
+	jumptoattack 0xFF
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
