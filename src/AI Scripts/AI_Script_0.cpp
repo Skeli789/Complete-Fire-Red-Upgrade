@@ -58,17 +58,31 @@ RESTART_AI_SCRIPT_0:
 				viability += 2;
 		}
 	#endif
+	// Not Very Effective check
 	
-	//Powder Check
+
+	// Gravity Table Prevention Check
+	if (gNewBS->GravityTimer && CheckMoveInTable(move, GravityTable))
+		return 0; //Can't select this move period
+
+	// Ungrounded check (need air balloon in CheckGrounding)
+	if ( (CheckGrounding(bankDef) == IN_AIR) && (moveType==TYPE_GROUND) ) {
+		return viability = 0;
+	}
+		
+	// Powder Move Checks (safety goggles, defender has grass type, overcoat, and powder move table)
 	if ((defEffect == ITEM_EFFECT_SAFETY_GOGGLES || IsOfType(bankDef, TYPE_GRASS || defAbility == ABILITY_OVERCOAT))
 	&& CheckMoveInTable(move, PowderTable))
 		viability -= 10; //No return b/c could be reduced further by absorb abilities
-	
-	//Target Ability Check
+		
+	//Target Ability Checks
 	if (NO_MOLD_BREAKERS(bankAtk) || !CheckMoveInTable(move, MoldBreakerMovesTable)) {
 		switch (defAbility) {
+			
+			// type-specific ability checks - primordial weather handled separately
+			// Electric
 			case ABILITY_VOLTABSORB:
-				if (moveType == TYPE_ELECTRIC)
+				if ( (moveType == TYPE_ELECTRIC) && !(moveSplit == SPLIT_STATUS) )
 					return viability - 20;
 				break;
 					
@@ -82,6 +96,7 @@ RESTART_AI_SCRIPT_0:
 					return viability - 20;
 				break;
 			
+			// Water
 			case ABILITY_WATERABSORB:
 				if (moveType == TYPE_WATER)
 					return viability - 20;
@@ -97,16 +112,52 @@ RESTART_AI_SCRIPT_0:
 					return viability - 20;
 				break;
 			
+			case ABILITY_WATERCOMPACTION:
+				if (moveType == TYPE_WATER)		// defense-related condition?
+					return viability - 10;
+				break;
+			
+			// Fire			
+			case ABILITY_WATERBUBBLE:
+				if ( (moveType == TYPE_FIRE) && !(moveSplit == SPLIT_STATUS) )
+					return viability - 20;
+				break;
+				
 			case ABILITY_FLASHFIRE:
 				if (moveType == TYPE_FIRE)
 					return viability - 20;
 				break;
+				
+			case ABILITY_HEATPROOF:
+				if ( (moveType == TYPE_FIRE) && !(moveSplit == SPLIT_STATUS) )
+					return viability - 10;
+				break;
 			
+			// Grass
 			case ABILITY_SAPSIPPER:
 				if (moveType == TYPE_GRASS)
 					return viability - 20;
 				break;
+				
+			// Dark
+			case ABILITY_JUSTIFIED:
+				if ((moveType == TYPE_DARK) && !(moveSplit == SPLIT_STATUS) )
+					return viability - 10;
+				break;
+				
+				
+			// multiple move types
+			case ABILITY_THICKFAT:
+				if (moveType == TYPE_FIRE || moveType == TYPE_ICE )
+					return viability - 10;
+				break;
+				
+			case ABILITY_RATTLED:
+				if ( !(moveSplit == TYPE_STATUS) && (moveType == TYPE_DARK) || (moveType == TYPE_GHOST) || (moveType == TYPE_BUG) )
+					return viability - 10;
+				break;
 			
+			// move category checks
 			case ABILITY_SOUNDPROOF:
 				if (CheckSoundMove(move))
 					return viability - 10;
@@ -129,7 +180,7 @@ RESTART_AI_SCRIPT_0:
 				break;
 			
 			case ABILITY_SWEETVEIL:
-				if (moveEffect == EFFECT_SET_SLEEP || moveEffect == EFFECT_SET_YAWN)
+				if (moveEffect == EFFECT_SLEEP || moveEffect == EFFECT_SET_YAWN)
 					return viability - 10;
 				break;
 			
@@ -154,7 +205,6 @@ RESTART_AI_SCRIPT_0:
 			case ABILITY_WHITESMOKE:
 				if (CheckMoveEffectInTable(move, StatLowerTable))
 					return viability - 10;
-				break;
 				break;
 			
 			case ABILITY_HYPERCUTTER:
@@ -186,14 +236,10 @@ RESTART_AI_SCRIPT_0:
 					return viability - 10;
 				break;
 			
-			case ABILITY_JUSTIFIED:
-				if (moveType == TYPE_DARK)
-					return viability - 10;
-				break;
-			
 			case ABILITY_WONDERSKIN:
 				if (moveSplit == SPLIT_STATUS)
-					moveAcc = 50;
+					//moveAcc = 50;
+					return viability - 8;
 				break;
 				
 			case ABILITY_LEAFGUARD:
@@ -216,7 +262,7 @@ RESTART_AI_SCRIPT_0:
 					break;
 				
 				case ABILITY_SWEETVEIL:
-					if (moveEffect == EFFECT_SET_SLEEP || moveEffect == EFFECT_SET_YAWN)
+					if (moveEffect == EFFECT_SLEEP || moveEffect == EFFECT_SET_YAWN)
 						return viability - 10;
 					break;
 				
@@ -240,13 +286,17 @@ RESTART_AI_SCRIPT_0:
 	}
 	
 	//Terrain Check
-	if (CheckGrounding(bankDef) {
+	if (CheckGrounding(bankDef) == GROUNDED) {
 		switch (TerrainType) {
 			case ELECTRIC_TERRAIN:
-				if (moveEffect == EFFECT_SET_SLEEP || moveEffect == EFFECT_SET_YAWN)
+				if (moveEffect == EFFECT_SLEEP || moveEffect == EFFECT_SET_YAWN)
 					return viability - 10;
 				break;
-				
+			
+			case GRASSY_TERRAIN:
+				if ( (move == MOVE_BULLDOZE) || (move == MOVE_EARTHQUAKE) || (move == MOVE_MAGNITUDE) )
+					return viability - 10;
+			
 			case MISTY_TERRAIN:
 				if (CheckMoveEffectInTable(move, SetStatusTable) || CheckMoveEffectInTable(move, ConfusionTable))
 					return viability - 10;
@@ -262,11 +312,7 @@ RESTART_AI_SCRIPT_0:
 	if (defSpecies == PKMN_MINIORSHIELD
 	&& CheckMoveEffectInTable(move, SetStatusTable))
 		return viability - 10;
-			
-	//Gravity Check
-	if (gNewBS->GravityTimer && CheckMoveInTable(move, GravityTable))
-		return 0; //Can't select this move period
-			
+		
 	//Throat Chop Check
 	if (gNewBS->ThroatChopTimers[bankAtk] && CheckSoundMove(move))
 		return 0; //Can't select this move period
@@ -276,14 +322,15 @@ RESTART_AI_SCRIPT_0:
 		return 0; //Can't select this move period
 		
 	//Primal Weather Check
-	if (gBattleWeather & WEATHER_SUN_PRIMAL && moveType == TYPE_WATER)
-		return viability - 10;
-	else if (gBattleWeather & WEATHER_RAIN_PRIMAL && moveType == TYPE_FIRE)
-		return viability - 10;
+	if (gBattleWeather & WEATHER_SUN_PRIMAL && moveType == TYPE_WATER && !(moveSplit == SPLIT_STATUS) )
+		return viability - 20;
+	else if (gBattleWeather & WEATHER_RAIN_PRIMAL && moveType == TYPE_FIRE && !(moveSplit == SPLIT_STATUS) )
+		return viability - 20;
 	
+	// Check Move Effects
 	MOVESCR_CHECK_0:
 	switch (moveEffect) {
-		case EFFECT_SetSleep:
+		case EFFECT_SLEEP:
 		AI_SET_SLEEP:
 			if (!CanBePutToSleep(bankDef, bankAtk)
 			|| !CanBeGeneralStatused(bankDef)
@@ -291,14 +338,14 @@ RESTART_AI_SCRIPT_0:
 				viability -= 10;
 			break;
 			
-		case EFFECT_DrainHP:
+		case EFFECT_ABSORB:
 			if (abilityDef == ABILITY_LIQUIDOOZE)
 				viability -= 6;
 			if (move == MOVE_STRENGTHSAP && gBattleMons[bankDef].statstages[STAT_STAGE_ATK-1] == 0)
 				viability -= 10;
 			break;
 			
-		case EFFECT_Explosion:
+		case EFFECT_EXPLOSION:
 		#ifdef OKAY_WITH_AI_SUICIDE
 			if (NO_MOLD_BREAKERS(bankAtk) && ABILITY_PRESENT(ABILITY_DAMP))
 				viability -= 10;
@@ -311,31 +358,32 @@ RESTART_AI_SCRIPT_0:
 		#endif
 			break;
 		
-		case EFFECT_DreamEater:
+		case EFFECT_DREAM_EATER:
 			if (!(defAbility == ABILITY_COMATOSE || defStatus1 & STATUS_SLEEP))
 				viability -= 10;
 			break;
 			
-		case EFFECT_MirrorMove: //May cause issues with priority calcs
+		case EFFECT_MIRROR_MOVE: //May cause issues with priority calcs
 			if (lastTakenMoveFrom[bankAtk][bankDef]) {
 				move = lastTakenMoveFrom[bankAtk][bankDef];
 				goto RESTART_AI_SCRIPT_0;
 			}
 		
-		case EFFECT_Splash:
-		case EFFECT_Teleport:
+		// useless effects
+		case EFFECT_SPLASH:
+		case EFFECT_TELEPORT:
 			viability -= 10;
 			break;
 		
-		case EFFECT_UserAtk+1:
-		case EFFECT_UserAtk+2:
+		case EFFECT_ATTACK_UP:
+		case EFFECT_ATTACK_UP_2:
 			if (StatMaxed(bankAtk, STAT_STAGE_ATK))
 				viability -= 10;
 			break;
 		
-		case EFFECT_UserDef+1:
-		case EFFECT_UserDef+2:
-		case EFFECT_DefenseCurl:
+		case EFFECT_DEFENSE_UP:
+		case EFFECT_DEFENSE_UP_2:
+		case EFFECT_DEFENSE_CURL:
 			switch (move) {
 				case MOVE_FLOWERSHIELD:
 					if (!IsOfType(bankAtk, TYPE_GRASS)
@@ -366,14 +414,15 @@ RESTART_AI_SCRIPT_0:
 			}
 			break;
 		
-		case EFFECT_UserSpd+1:
-		case EFFECT_UserSpd+2:
+		case EFFECT_SPEED_UP:
+		case EFFECT_SPEED_UP_2:
 			if (StatMaxed(bankAtk, STAT_STAGE_SPD))
 				viability -= 10;
 			break;
 		
-		case EFFECT_UserSpAtk+1: AI_Minus_10_SpAtk_Max
-		case EFFECT_UserSpAtk+2: AI_Minus_10_SpAtk_Max
+		case EFFECT_SPECIAL_ATTACK_UP: 
+		case EFFECT_SPECIAL_ATTACK_UP_2: 
+		AI_RAISE_SPATK:			
 			switch(move) {
 				case MOVE_WORKUP:
 					if (StatMaxed(bankAtk, STAT_STAGE_ATK) 
@@ -409,22 +458,22 @@ RESTART_AI_SCRIPT_0:
 			}
 			break;
 			
-		case EFFECT_UserSpDef+1:
-		case EFFECT_UserSpDef+2:
+		case EFFECT_SPECIAL_DEFENSE_UP:
+		case EFFECT_SPECIAL_DEFENSE_UP_2:
 		AI_SPDEF_RAISE_1:
 			if (StatMaxed(bankAtk, STAT_STAGE_SPDEF))
 				viability -= 10;
 			break;
 		
-		case EFFECT_UserAcc+1:
-		case EFFECT_UserAcc+2:
+		case EFFECT_ACCURACY_UP:
+		case EFFECT_ACCURACY_UP_2:
 			if (StatMaxed(bankAtk, STAT_STAGE_ACC))
 				viability -= 10;
 			break;
 		
-		case EFFECT_UserEvsn+1:
-		case EFFECT_UserEvsn+2:
-		case EFFECT_Minimize:
+		case EFFECT_EVASION_UP:
+		case EFFECT_EVASION_UP_2:
+		case EFFECT_MINIMIZE:
 			switch (move) {
 				case MOVE_ACUPRESSURE:
 					if (StatsMaxed(bankDef))
@@ -437,8 +486,9 @@ RESTART_AI_SCRIPT_0:
 			}
 			break;
 		
-		case EFFECT_TargetAtk-1: AI_Minus_10_Atk_Min
-		case EFFECT_TargetAtk-2: AI_Minus_10_Atk_Min
+		case EFFECT_ATTACK_DOWN:
+		case EFFECT_ATTACK_DOWN_2:
+		AI_ATTACK_MINUS:
 			decreased = FALSE;
 			switch (move) {
 				case MOVE_VENOMDRENCH:
@@ -473,24 +523,27 @@ RESTART_AI_SCRIPT_0:
 				viability -= 10;
 			break;
 			
-		case EFFECT_TargetDef-1: AI_Minus_10_Def_Min
-		case EFFECT_TargetDef-2: AI_Minus_10_Def_Min
+		case EFFECT_DEFENSE_DOWN: 
+		case EFFECT_DEFENSE_DOWN_2: 
+		AI_DEFENSE_MINUS:		
 			if (StatMinned(bankDef, STAT_STAGE_DEF))
 				viability -= 10;
 			else if (MoveBlockedBySubstitute(move, bankAtk, bankDef))
 				viability -= 10;
 			break;
 		
-		case EFFECT_TargetSpd-1: AI_Minus_10_Spd_Min
-		case EFFECT_TargetSpd-2: AI_Minus_10_Spd_Min
+		case EFFECT_SPEED_DOWN:
+		case EFFECT_SPEED_DOWN_2: 
+		AI_SPEED_MINUS:	
 			if (StatMinned(bankDef, STAT_STAGE_SPD))
 				viability -= 10;
 			else if (MoveBlockedBySubstitute(move, bankAtk, bankDef))
 				viability -= 10;
 			break;
 		
-		case EFFECT_TargetSpAtk-1: AI_Minus_10_SpAtk_Min
-		case EFFECT_TargetSpAtk-2: AI_Minus_10_SpAtk_Min
+		case EFFECT_SPECIAL_ATTACK_DOWN: 
+		case EFFECT_SPECIAL_ATTACK_DOWN_2:
+		AI_SPATK_MINUS:		
 			if (StatMinned(bankDef, STAT_STAGE_SPATK))
 				viability -= 10;
 				
@@ -504,31 +557,37 @@ RESTART_AI_SCRIPT_0:
 				viability -= 10;
 			break;
 		
-		case EFFECT_TargetSpDef-1: AI_Minus_10_SpDef_Min
-		case EFFECT_TargetSpDef-2: AI_Minus_10_SpDef_Min
+		case EFFECT_SPECIAL_DEFENSE_DOWN:
+		case EFFECT_SPECIAL_DEFENSE_DOWN_2:
+		AI_SPDEF_MINUS:	
 			if (StatMinned(bankDef, STAT_STAGE_SPDEF))
 				viability -= 10;
 			else if (MoveBlockedBySubstitute(move, bankAtk, bankDef))
 				viability -= 10;
 			break;
 		
-		case EFFECT_TargetAcc-1: AI_Minus_10_Acc_Min
-		case EFFECT_TargetAcc-2: AI_Minus_10_Acc_Min
+		case EFFECT_ACCURACY_DOWN: 
+		case EFFECT_ACCURACY_DOWN_2:
+		AI_ACCURACY_MINUS:
 			if (StatMinned(bankDef, STAT_STAGE_ACC))
 				viability -= 10;
 			else if (MoveBlockedBySubstitute(move, bankAtk, bankDef))
 				viability -= 10;
 			break;
 		
-		case EFFECT_TargetEvsn-1: AI_Minus_10_Evsn_Min
-		case EFFECT_TargetEvsn-2: AI_Minus_10_Evsn_Min
+		case EFFECT_EVASION_DOWN: 
+			// TO DO
+			goto AI_Minus_10_Evsn_Min
+		case EFFECT_EVASION_DOWN_2: 
+			AI_Minus_10_Evsn_Min
+			
 			if (StatMinned(bankDef, STAT_STAGE_EVSN))
 				viability -= 10;
 			else if (MoveBlockedBySubstitute(move, bankAtk, bankDef))
 				viability -= 10;
 			break;
 		
-		case EFFECT_Haze: //Clear smog here?
+		case EFFECT_HAZE: //Clear smog here?
 		HAZE_CHECK:
 			decreased = FALSE;
 			for (i = 0; i < NUM_STAT_STAGES-1; ++i) {
@@ -547,7 +606,7 @@ RESTART_AI_SCRIPT_0:
 			}
 			break;
 			
-		case EFFECT_Roar:
+		case EFFECT_ROAR:
 			switch (move) {
 				case MOVE_DRAGONTAIL:
 				case MOVE_CIRCLETHROW:
@@ -560,17 +619,17 @@ RESTART_AI_SCRIPT_0:
 			}
 			break;
 			
-		case EFFECT_Conversion:
+		case EFFECT_CONVERSION:
 			if (IsOfType(bankAtk, gBattleMoves[gBattleMons[bankAtk].move1].type))
 				viability -= 10;
 			break;
 		
-		case EFFECT_Recovery:
-		case EFFECT_Rest:
-		case EFFECT_MorningSun:
-		case EFFECT_Synthesis:
-		case EFFECT_Moonlight:
-		case EFFECT_Softboiled:
+		case EFFECT_RESTORE_HP:
+		case EFFECT_REST:
+		case EFFECT_MORNING_SUN:
+		case EFFECT_SYNTHESIS:
+		case EFFECT_MOONLIGHT:
+		case EFFECT_SOFTBOILED:
 		AI_RECOVERY:
 			switch (move) {
 				case MOVE_PURIFY:
@@ -595,8 +654,11 @@ RESTART_AI_SCRIPT_0:
 			}
 			break;
 		
-		case EFFECT_PoisonTarget:
-		case EFFECT_ToxicPoisonTarget:
+		//case EFFECT_POISON_HIT:
+		case EFFECT_POISON:
+		//case EFFECT_POISON_FANG:
+		//case EFFECT_POISON_TAIL:
+		case EFFECT_TOXIC:
 			switch (move) {
 				case MOVE_TOXICTHREAD:
 					if (!StatMinned(bankDef, STAT_STAGE_SPD)
@@ -611,42 +673,42 @@ RESTART_AI_SCRIPT_0:
 			}
 			break;
 		
-		case EFFECT_LightScreen:
+		case EFFECT_LIGHT_SCREEN:
 			if (gSideStatuses[bankAtk & 1] & SIDE_STATUS_LIGHT_SCREEN)
 				viability -= 10;
 			break;
 		
 		case EFFECT_0HKO:
-			if (TypeCalc(move, bankAtk, bankDef...) & (RESULT_NO_EFFECT | RESULT_MISSED)
+			if (TypeCalc(move, bankAtk, bankDef, 0, FALSE) & (RESULT_NO_EFFECT | RESULT_MISSED)
 			|| (NO_MOLD_BREAKERS(bankAtk) && defAbility == ABILITY_STURDY)
 				viability -= 10;
 			break;
 		
-		case EFFECT_JumpKick:
+		case EFFECT_RECOIL_IF_MISS:
 			if (atkAbility == ABILITY_MAGICGUARD)
 				goto AI_STANDARD_DAMAGE;
 			if (moveAcc < 75)
 				viability -= 6;
 			break;
 				
-		case EFFECT_Mist:
+		case EFFECT_MIST:
 			if (gSideStatuses[bankAtk & 1] & SIDE_STATUS_MIST)
 				viability -= 10;
 			break;
 		
-		case EFFECT_1/4Recoil:
+		case EFFECT_RECOIL:
 			if (atkAbility == ABILITY_MAGICGUARD || atkAbility == ABILITY_ROCKHEAD)
 				goto AI_STANDARD_DAMAGE;
 			if (GetHealthPercentage(bankAtk) < 10)
 				viability -= 4;
 			break;
 			
-		case EFFECT_FocusEnergy:
+		case EFFECT_FOCUS_ENERGY:
 			if (defStatus2 & STATUS2_FOCUS_ENERGY)
 				viability -= 10;
 			break;
 		
-		case EFFECT_ConfuseTarget:
+		case EFFECT_CONFUSE:
 		AI_CONFUSE:
 			if (defStatus2 & STATUS2_CONFUSE 
 			|| (NO_MOLD_BREAKERS(bankAtk) && defAbility == ABILITY_OWNTEMPO)
@@ -655,12 +717,13 @@ RESTART_AI_SCRIPT_0:
 				viability -= 6;
 			break;
 
-		case EFFECT_Transform:
+		case EFFECT_TRANSFORM:
 			if (atkStatus2 & STATUS2_TRANSFORMED
 			||  defStatus2 & (STATUS2_TRANSFORMED | STATUS2_SUBSTITUTE))
 				viability -= 10;
 			
-		case EFFECT_Reflect: AI_Reflect
+		case EFFECT_REFLECT: 
+		AI_REFLECT:
 			switch (move) {
 				case MOVE_AURORAVEIL:
 					if (gNewBS->AuroraVeilTimers[bankAtk & 1]
@@ -674,18 +737,19 @@ RESTART_AI_SCRIPT_0:
 			}
 			break;
 			
-		case EFFECT_ParalyzeTarget:
+		//case EFFECT_PARALYZE_HIT:
+		case EFFECT_PARALYZE:
 			if (!CanBeParalyzed(bankDef, bankAtk)
 			|| MoveBlockedBySubstitute(move, bankAtk, bankDef))
 				viability -= 10;
 			else {
 				if (move == MOVE_THUNDERWAVE
-				&& TypeCalc(move, bankAtk, bankDef...) & (RESULT_NO_EFFECT | RESULT_MISSED))
+				&& TypeCalc(move, bankAtk, bankDef, 0, FALSE ) & (RESULT_NO_EFFECT | RESULT_MISSED))
 					viability -= 10;
 			}
 			break;
 			
-		case EFFECT_Substitute:
+		case EFFECT_SUBSTITUTE:
 			if (defStatus2 & STATUS2_SUBSTITUTE
 			|| GetHealthPercentage(bankAtk) <= 25)
 				viability -= 10;
@@ -695,14 +759,14 @@ RESTART_AI_SCRIPT_0:
 				viability -= 8; //Not really much point in making a sub if the foe is gonna bust right through it
 			break;
 			
-		case EFFECT_Mimic:
+		case EFFECT_MIMIC:
 			//Put some last used move logic here
 			break;
 		
-		case EFFECT_Metronome:
+		case EFFECT_METRONOME:
 			break;
 		
-		case EFFECT_LeechSeed:
+		case EFFECT_LEECH_SEED:
 			switch (move) {
 				case MOVE_AQUARING:
 					if (atkStatus3 & STATUS3_AQUA_RING)
@@ -717,14 +781,18 @@ RESTART_AI_SCRIPT_0:
 			}
 			break;
 		
-		case EFFECT_Disable:
+		case EFFECT_DISABLE:
 			//Check Disable Timer
-			//Check Last Used Move
+			if ( gDisableStructs[bankDef].disableTimer1 )
+				viability -= 10;			
+			//Check Last Used Move ??
+			
+			//Check Mental Herb
 			if (defEffect == ITEM_EFFECT_MENTAL_HERB)
 				viability -= 6;
 			break;
 			
-		case EFFECT_Counter:
+		case EFFECT_COUNTER:
 			switch (move) {
 				case MOVE_METALBURST:
 					if (MoveWouldHitFirst(move, bankAtk, bankDef)
@@ -738,27 +806,32 @@ RESTART_AI_SCRIPT_0:
 						viability -= 10;
 			}
 		
-		case EFFECT_Encore:
+		case EFFECT_ENCORE:
 			//Check Encore Timer
+			if (gDisableStructs[gActiveBattler].encoreTimer)
+				viability -= 10;
+			break;
+			
 			//Check Last Used Move
 			if (defEffect == ITEM_EFFECT_MENTAL_HERB)
 				viability -= 6;
 			break;
 			
-		case EFFECT_PainSplit:
+		case EFFECT_PAIN_SPLIT:
 			if (gBattleMons[bankAtk].hp > (gBattleMons[bankAtk].hp + gBattleMons[bankDef].hp) / 2)
 				viability -= 10;
 			break;
 		
-		case EFFECT_Snore:
-		case EFFECT_SleepTalk:
+		case EFFECT_SNORE:
+		case EFFECT_SLEEP_TALK:
 			if (!(defStatus1 & STATUS_SLEEP) && defAbility != ABILITY_COMATOSE)
 				viability -= 10;
 			break;
 		
-		case EFFECT_Conversion2:
+		case EFFECT_CONVERSION_2:
 			// To do
-		case EFFECT_LockOn:
+			
+		case EFFECT_LOCK_ON:
 			switch (move) {
 				case MOVE_LASERFOCUS:
 					if (gNewBS->LaserFocusTimers[bankAtk])
@@ -774,27 +847,37 @@ RESTART_AI_SCRIPT_0:
 						viability -= 10;
 			}
 		
-		case EFFECT_DestinyBond:
+		case EFFECT_DESTINY_BOND:
 			if (gLastUsedMoves[bankAtk] == move
 			|| atkStatus2 & STATUS2_DESTINY_BOND)
 				viability -= 10;
 			break;
 		
-		case EFFECT_Spite:
-			//Spite Logic
+		case EFFECT_FLAIL:
+			// check HP percentage
+			
 			break;
 		
-		case EFFECT_FalseSwipe:
+		case EFFECT_SPITE:
+			//Spite Logic
+			
+			break;
+		
+		case EFFECT_FALSE_SWIPE:
 			if (MoveKnocksOut(move, bankAtk, bankDef))
 				viability -= 10;
 			break;
 		
-		case EFFECT_Aromatherapy:
+		case EFFECT_HEAL_BELL:
 			if (!PartyMemberStatused(bankAtk))
 				viability -= 10;
 			break;
+			
+		case EFFECT_THIEF:
+			// check if holding an item
+			break;
 		
-		case EFFECT_MeanLook:
+		case EFFECT_MEAN_LOOK:
 			switch (move) {
 				case MOVE_SPIRITSHACKLE:
 				case MOVE_ANCHORSHOT:
@@ -811,13 +894,13 @@ RESTART_AI_SCRIPT_0:
 			}
 			break;
 		
-		case EFFECT_Nightmare:
+		case EFFECT_NIGHTMARE:
 			if (defStatus2 & STATUS2_NIGHTMARE
 			|| !(defStatus1 & STATUS_SLEEP || defAbility == ABILITY_COMATOSE)) 
 				viability -= 10;
 			break;
 		
-		case EFFECT_Curse:
+		case EFFECT_CURSE:
 			if (IsOfType(bankAtk, TYPE_GHOST)) {
 				if (defStatus2 & STATUS2_CURSE)
 					viability -= 10;
@@ -830,7 +913,7 @@ RESTART_AI_SCRIPT_0:
 					viability -= 10;
 			}
 			
-		case EFFECT_Protect:
+		case EFFECT_PROTECT:
 			decreased = FALSE;
 			switch (move) {
 				case MOVE_QUICKGUARD:
@@ -870,7 +953,7 @@ RESTART_AI_SCRIPT_0:
 			}
 		
 		//Fix up!
-		case EFFECT_EntryHazards:
+		case EFFECT_SPIKES:
 			if (ViableMonCountFromBank(bankDef) <= 1) {
 				viability -= 10;
 				break;
@@ -899,7 +982,7 @@ RESTART_AI_SCRIPT_0:
 			}
 			break;
 			
-		case EFFECT_Foresight:
+		case EFFECT_FORESIGHT:
 			switch (move) {
 				case MOVE_MIRACLEEYE:
 					if (defStatus3 & STATUS3_MIRACLE_EYED)
@@ -920,18 +1003,18 @@ RESTART_AI_SCRIPT_0:
 			}
 			break;
 			
-		case EFFECT_PerishSong:
+		case EFFECT_PERISH_SONG:
 			if (gStatuses3[GetFoeBank(bankAtk)] & STATUS3_PERISH_SONG)
 			&& !(gBattleTypeFlags & BATTLE_TYPE_DOUBLE && !(gStatuses3[PARTNER(GetFoeBank(bankAtk))] & STATUS3_PERISH_SONG)))
 				viability -= 10;
 			break;
 			
-		case EFFECT_Sandstorm:
+		case EFFECT_SANDSTORM:
 			if (gBattleWeather & (WEATHER_SANDSTORM_ANY | WEATHER_PRIMAL))
 				viability -= 10;
 			break;
 		
-		case EFFECT_Endure:
+		case EFFECT_ENDURE:
 			if (gBattleMons[bankAtk].hp == 1) {
 				viability -= 10;
 				break;
@@ -943,7 +1026,7 @@ RESTART_AI_SCRIPT_0:
 			}
 			break;
 			
-		case EFFECT_Swagger:
+		case EFFECT_SWAGGER:
 			if (bankDef == bankAtkPartner)
 			&& StatMaxed(bankDef, STAT_STAGE_ATK))
 				viability -= 10;
@@ -951,24 +1034,42 @@ RESTART_AI_SCRIPT_0:
 				goto AI_CONFUSE;
 			break;
 		
-		case EFFECT_Attract: AI_Attract
+		case EFFECT_ATTRACT: 
+		AI_ATTRACT:
+			// to do
+			break;
 
-		case EFFECT_Safeguard: AI_Safeguard
-		case EFFECT_BatonPass: AI_BatonPass
-		case EFFECT_RapidSpin: AI_RapidSpin
+		case EFFECT_SAFEGUARD:
+		AI_SAFEGUARD:
+			// to do
+			break;
 		
-
-		case EFFECT_Rain:
+		case EFFECT_BURNUP:
+			if !(IsOfType(bankAtk, TYPE_FIRE) )
+				viability = 0;
+			break;
+			
+		case EFFECT_BATON_PASS:
+		AI_BATON_PASS:
+			// to do
+			break;
+			
+		case EFFECT_RAPID_SPIN:
+		AI_RAPID_SPIN:
+			// to do
+			break;
+		
+		case EFFECT_RAIN_DANCE:
 			if (gBattleWeather & (WEATHER_RAIN_ANY | WEATHER_PRIMAL))
 				viability -= 10;
 			break;
 		
-		case EFFECT_Sun:
+		case EFFECT_SUNNY_DAY:
 			if (gBattleWeather & (WEATHER_SUN_ANY | WEATHER_PRIMAL))
 				viability -= 10;
 			break;
 		
-		case EFFECT_BellyDrum:
+		case EFFECT_BELLY_DRUM:
 			switch (move) {
 				case MOVE_MINDBLOWN:
 					if (GetHealthPercentage(bankAtk) <= 50)
@@ -982,7 +1083,7 @@ RESTART_AI_SCRIPT_0:
 			}
 			break;
 			
-		case EFFECT_PsychUp:
+		case EFFECT_PSYCH_UP:
 			switch (move) {
 				case MOVE_SPECTRALTHIEF:
 					goto AI_STANDARD_DAMAGE;
@@ -992,45 +1093,47 @@ RESTART_AI_SCRIPT_0:
 			}
 			break;
 			
-		case EFFECT_FutureAttack:
-			if (/*Check Future Sight Timer*/)
+		case EFFECT_FUTURE_SIGHT:
+			// check if future sight already set
+			if (gWishFutureKnock->futureSightCounter[bankAtk])
 				viability -= 10;
 			else
 				goto AI_STANDARD_DAMAGE;
 			break;
 			
-		case EFFECT_FakeOut: AI_FakeOut
-			if (/*Not First Turn*/)
+		case EFFECT_FAKE_OUT:
+		AI_FAKEOUT:
+			if !(gDisableStructs[gBankAttacker].isFirstTurn)
 				viability -= 10;
 			else
 				goto AI_STANDARD_DAMAGE;
 			break;
 			
-		case EFFECT_Stockpile:
+		case EFFECT_STOCKPILE:
 			if (/*StockpileCounter(bankAtk) >= 3*/)
 				viability -= 10;
 			break;
+			
+		case EFFECT_SPIT_UP:
+			if (/*StockpileCounter(bankAtk) == 0*/)
+				viability -= 10;
+			else
+				goto AI_STANDARD_DAMAGE;
+			break;
 		
-		case EFFECT_Swallow:
+		case EFFECT_SWALLOW:
 			if (/*StockpileCounter(bankAtk) == 0*/)
 				viability -= 10;
 			else
 				goto AI_RECOVERY;
 			break;
-			
-		case EFFECT_SpitUp:
-			if (/*StockpileCounter(bankAtk) == 0*/)
-				viability -= 10;
-			else
-				goto AI_STANDARD_DAMAGE;
-			break;
 		
-		case EFFECT_Hail:
+		case EFFECT_HAIL:
 			if (gBattleWeather & (WEATHER_HAIL_ANY | WEATHER_PRIMAL))
 				viability -= 10;
 			break;
 
-		case EFFECT_Torment:
+		case EFFECT_TORMENT:
 			if (defStatus2 & STATUS2_TORMENT) {
 				viability -= 10;
 				break;
@@ -1039,7 +1142,7 @@ RESTART_AI_SCRIPT_0:
 				viability -= 6;
 			break;
 		
-		case EFFECT_Flatter:
+		case EFFECT_FLATTER:
 			if (bankDef == bankAtkPartner)
 			&& StatMaxed(bankDef, STAT_STAGE_SPATK))
 				viability -= 10;
@@ -1047,13 +1150,13 @@ RESTART_AI_SCRIPT_0:
 				goto AI_CONFUSE;
 			break;
 		
-		case EFFECT_SetBurn:
+		case EFFECT_WILL_O_WISP:
 			If (!CanBeBurned(bankDef, bankAtk)
 			|| MoveBlockedBySubstitute(move, bankAtk, bankDef))
 				viability -= 10;
 			break;
 		
-		case EFFECT_Memento:
+		case EFFECT_MEMENTO:
 			if (ViableMonCountFromBank(bankAtk) <= 1) {
 				viability -= 10;
 				break;
@@ -1077,7 +1180,7 @@ RESTART_AI_SCRIPT_0:
 			}
 			break;
 		
-		case EFFECT_Charge:
+		case EFFECT_CHARGE:
 			if (atkStatus3 & STATUS3_CHARGED_UP) {
 				viability -= 10;
 				break;
@@ -1086,18 +1189,18 @@ RESTART_AI_SCRIPT_0:
 				goto AI_SPDEF_RAISE_1;
 			break;
 			
-		case EFFECT_Taunt:
+		case EFFECT_TAUNT:
 			if (/*TauntTimer(bankDef)*/)
 				viability -= 1;
 			break;
 		
-		case EFFECT_FollowMe:
-		case EFFECT_HelpingHand:
+		case EFFECT_FOLLOW_ME:
+		case EFFECT_HELPING_HAND:
 			if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE))
 				viability -= 10;
 			break;
 		
-		case EFFECT_Trick:
+		case EFFECT_TRICK:
 			switch (move) {
 				case MOVE_BESTOW:
 					if (!CanTranferItem(bankAtk, atkItem))
@@ -1112,81 +1215,146 @@ RESTART_AI_SCRIPT_0:
 			}
 			break;
 			
-		case EFFECT_RolePlay:
+		case EFFECT_ROLE_PLAY:
 			if (atkAbility == defAbility
 			|| CheckTableForAbility(defAbility, RolePlayBanList)
 			|| CheckTableForAbility(defAbility, BadAbilities))
 				viability -= 10;
 			break;
 		
-		case EFFECT_Wish:
+		case EFFECT_WISH:
 			(/*If WishCounter(bankAtk) != 0*/)
 				viability -= 10;
 			break;
 		
-		case EFFECT_Assist:
+		case EFFECT_ASSIST:
 			if (CountPokemonOnTeam(bankAtk) == 1)
 				viability -= 10;
 			break;
 		
-		case EFFECT_Ingrain:
+		case EFFECT_INGRAIN:
 			if (atkStatus3 & STATUS3_ROOTED)
 				viability -= 10;
 			break;
 
-		case EFFECT_MagicCoat:
+		case EFFECT_MAGIC_COAT:
 			if (!MagicCoatableMovesInMoveset(bankDef))
 				viability -= 10;
 			break;
 			
-		case EFFECT_Recycle:
+		case EFFECT_RECYCLE:
 			if (!gNewBS->SavedConsumedItems[bankAtk] || atkItem != 0)
 				viability -= 10;
 			break;
 		
-		case EFFECT_SetYawn:
+		case EFFECT_YAWN:
 			if (defStatus3 & STATUS3_DROWSY)
 				viability -= 10;
 			else
 				goto AI_SET_SLEEP;
 			break;
 			
-		case EFFECT_Endeavor: AI_PainSplit
-		case EFFECT_SkillSwap: AI_SkillSwap
-		case EFFECT_Imprison: AI_Imprison
-		case EFFECT_Refresh: AI_Refresh
-		case EFFECT_Grudge: AI_BatonPass
-		case EFFECT_Snatch: Return
-		case EFFECT_1/3Recoil: AI_Recoil
-		case EFFECT_TeeterDance: AI_TeeterDance
-		case EFFECT_MudSport: AI_MudSport
-		case EFFECT_Tickle: AI_Tickle
-		case EFFECT_CosmicPower: AI_CosmicPower
-		case EFFECT_BulkUp: AI_BulkUp
-		case EFFECT_WaterSport: AI_WaterSport
-		case EFFECT_CalmMind: AI_CalmMind
-		case EFFECT_DragonDance: AI_DragonDance
+		case EFFECT_ENDEAVOR: 
+		AI_PAINSPLIT:
+			// to do
+		
+		case EFFECT_ERUPTION:
+			// to do
+			// flail AI
+			
+		case EFFECT_SKILL_SWAP:
+		AI_SKILLSWAP:
+			// to do
+		case EFFECT_IMPRISON:
+		AI_IMPRISON:
+			// to do
+		case EFFECT_REFRESH:
+		AI_REFRESH:
+			// to do
+		case EFFECT_GRUDGE:
+		AI_BATON_PASS:
+			// to do
+		case EFFECT_SNATCH:
+			break;
+		case EFFECT_DOUBLE_EDGE:
+		AI_RECOIL:
+			// to do
+		case EFFECT_TEETER_DANCE:
+		AI_TEETER_DANCE:
+			// to do
+		case EFFECT_MUD_SPORT:
+		AI_MUD_SPORT:
+			// to do
+		case EFFECT_TICKLE:
+		AI_TICKLE:
+			// to do
+		case EFFECT_COSMIC_POWER:
+		AI_COSMIC_POWER:
+			// to do
+		case EFFECT_BULK_UP:
+		AI_BULK_UP:
+			// to do
+		case EFFECT_WATER_SPORT:
+		AI_WATER_SPORT:
+			// to do
+		case EFFECT_CALM_MIND:
+		AI_CALM_MIND:
+			// to do
+		case EFFECT_DRAGON_DANCE:
+		AI_DRAGON_DANCE:
+			// to do
 
-		case EFFECT_StatSwapperSplitter: Return
-		case EFFECT_StoredPower: AI_StoredPower
-		case EFFECT_FrostBreath: AI_FrostBreath
-		case EFFECT_NaturalGift_MeFirst: AI_NaturalGift_MeFirst
-		case EFFECT_ClearSmog: AI_ClearSmog
-		case EFFECT_SpeedBalls: AI_Speed_Balls
-		case EFFECT_Terrain: AI_Terrain
-		case EFFECT_FieldEffects: AI_FieldEffects
-		case EFFECT_Fling: AI_Fling
-		case EFFECT_AttackBlockers: AI_AttackBlockers
-		case EFFECT_TypeChangers: AI_TypeChangers
-		case EFFECT_HealTarget: AI_HealTarget
-		case EFFECT_TopsyTurvyElectrify: AI_TopsyTurvyElectrify
-		case EFFECT_TeamEffects: AI_TeamEffects
-		case EFFECT_Synchronoise: AI_Synchronoise
+		case EFFECT_STAT_SWAP_SPLT:
+			break;
+		case EFFECT_StoredPower: 
+		AI_STOREDPOWER:
+			// to do
+		case EFFECT_FrostBreath:
+		AI_FROSTBREATH:
+			// to do
+		case EFFECT_ME_FIRST:
+		AI_NATURALGIFT_MEFIRST:
+			// to do
+		case EFFECT_ClearSmog: 
+		AI_CLEARSMOG:
+			// to do
+		case EFFECT_SpeedBalls:		// to do
+		AI_SPEED_BALLS:
+			// to do
+		case EFFECT_SET_TERRAIN:
+		AI_TERRAIN:
+			// to do
+		case EFFECT_PLEDGE:
+			// to do - check ally move for same pledge
+		case EFFECT_FIELD_EFFECTS:
+		AI_FIELDEFFECTS:
+			// to do 
+		case EFFECT_FLING:
+		AI_FLING:
+			// to do
+		case EFFECT_ATTACK_BLOCKERS:
+		AI_ATTACKBLOCKERS:
+			// to do
+		case EFFECT_TYPE_CHANGES:
+		AI_TYPECHANGERS:
+			// to do
+		case EFFECT_HEAL_TARGET:
+		AI_HEALTARGET:
+			// to do 
+		case EFFECT_TOPSY_TURVY_ELECTRIFY:
+		AI_TOPSYTURVYELECTRIFY:
+			// to do
+		case EFFECT_TEAM_EFFECTS:
+		AI_TEAMEFFECTS:
+			// to do
+		case EFFECT_Synchronoise:	// to do
+		AI_SYNCHRONOISE:
+			// to do
 		
 		default:
 		AI_STANDARD_DAMAGE:
 			if (moveSplit != SPLIT_STATUS) {
-				if (TypeCalc(move, bankAtk, bankDef...) & (RESULT_NO_EFFECT | RESULT_MISSED))
+				if (TypeCalc(move, bankAtk, bankDef, 0, FALSE) & (RESULT_NO_EFFECT | RESULT_MISSED))
 					viability -= 10;
 			}
 	}
