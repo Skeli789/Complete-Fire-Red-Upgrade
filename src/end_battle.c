@@ -65,9 +65,9 @@ void HandleEndTurn_BattleWon(void)
 	VICTORY_MUSIC_SELECTION:
         switch (gTrainers[id].trainerClass) {
 		#ifndef UNBOUND //Change this part
-			case TRAINER_CLASS_LEADER:
-			case TRAINER_CLASS_ELITE_4:
-			case TRAINER_CLASS_CHAMPION:
+			case CLASS_LEADER:
+			case CLASS_ELITE_4:
+			case CLASS_CHAMPION:
 				PlayBGM(BGM_VICTORY_SPECIAL);
 				specialMus = TRUE;
 				break;
@@ -76,30 +76,30 @@ void HandleEndTurn_BattleWon(void)
 				break;
 		
 		#else //For Pokemon Unbound
-			case TRAINER_CLASS_CHAMPION:
+			case CLASS_CHAMPION:
 				PlayBGM(BGM_VICTORY_CHAMPION);
 				specialMus = TRUE;
 				break;
-			case TRAINER_CLASS_ELITE_4:
-				PlayBGM(BGM_VICYORY_ELITE_4);
+			case CLASS_ELITE_4:
+				PlayBGM(BGM_VICTORY_ELITE_4);
 				specialMus = TRUE;
 				break;
-			case TRAINER_CLASS_LEADER:
-				PlayBGM(BGM_VICYORY_GYM);
+			case CLASS_LEADER:
+				PlayBGM(BGM_VICTORY_GYM);
 				specialMus = TRUE;
 				break;
-			case TRAINER_CLASS_SHADOW_ADMIN: //0x30
-			case TRAINER_CLASS_BOSS: //0x53
-			case TRAINER_CLASS_SHADOW: //0x55
+			case CLASS_SHADOW_ADMIN: //0x30
+			case CLASS_BOSS: //0x53
+			case CLASS_SHADOW: //0x55
 			#ifndef DEBUG_UNBOUND_MUSIC
-				PlayBGM(BGM_VICYORY_PLASMA);
+				PlayBGM(BGM_VICTORY_PLASMA);
 				specialMus = TRUE;
 				break;
 			#endif
-			case TRAINER_CLASS_LOR_LEADER: //0x2
-			case TRAINER_CLASS_LOR_ADMIN: //0x2E
-			case TRAINER_CLASS_LOR: //0x2F
-				PlayBGM(BGM_VICYORY_GALACTIC);
+			case CLASS_LOR_LEADER: //0x2
+			case CLASS_LOR_ADMIN: //0x2E
+			case CLASS_LOR: //0x2F
+				PlayBGM(BGM_VICTORY_GALACTIC);
 				specialMus = TRUE;
 				break;
 			default:

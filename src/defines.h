@@ -18,6 +18,7 @@
 #include "../include/constants/flags.h"
 #include "../include/constants/pokemon.h"
 #include "../include/constants/trainers.h"
+#include "../include/trainer_classes.h"
 #include "../include/constants/metatile_behaviors.h"
 #include "../include/pokemon.h"
 #include "../include/battle_controllers.h"

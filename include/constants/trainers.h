@@ -13,11 +13,6 @@
 #define TRAINER_STEVEN_PARTNER              3075
 #define TRAINER_CUSTOM_PARTNER              3076
 
-#define TRAINER_CLASS_LEADER				0x54
-#define TRAINER_CLASS_ROCKET				0x55
-#define TRAINER_CLASS_ELITE_4				0x57
-#define TRAINER_CLASS_CHAMPION				0x5A
-
 #ifndef UNBOUND //CHANGE THESE
 
 #define TRAINER_ENCOUNTER_MUSIC_MALE         0 // standard male encounter music
@@ -52,13 +47,6 @@
 #define TRAINER_ENCOUNTER_LOR 					12
 #define TRAINER_ENCOUNTER_ELITE_4        		13
 #define TRAINER_ENCOUNTER_CYNTHIA				14
-
-#define TRAINER_CLASS_LOR_LEADER 				0x2
-#define TRAINER_CLASS_LOR_ADMIN 				0x2E
-#define TRAINER_CLASS_LOR 						0x2F
-#define TRAINER_CLASS_SHADOW_ADMIN 				0x30
-#define TRAINER_CLASS_BOSS 						0x53
-#define TRAINER_CLASS_SHADOW					0x55
 
 #endif
 

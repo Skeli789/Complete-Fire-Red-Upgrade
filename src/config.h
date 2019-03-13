@@ -38,6 +38,7 @@
 #define BATTLE_TOWER_TIER 0x50C4 //Var
 #define BATTLE_TOWER_TID 0x50C5 //Trainer Index
 #define BATTLE_TOWER_TRAINER_NAME 0x50C6 //Empty var. Will be set to 0xFFFF after every battle.
+#define BATTLE_TOWER_SONG_OVERRIDE 0x50CF //Set this var to the song id to be played during Link Battles and in the Battle Tower.
 
 enum 
 {
@@ -57,6 +58,7 @@ enum
 #define MAX_LEVEL 100
 #define NUM_TRAINER_CLASSES 107
 #define EVOS_PER_MON 16
+#define MAX_NUM_POKEMON PKMN_MELMETAL + 1
 
 #define DUSK_BALL_MULTIPLIER 30 //Change this line to 35 to make the catch rate for the Dusk Ball 3.5x like before Gen 7
 #define STANDARD_IV 10 //Change this to be the number of IVs Pokemon owned by random trainers should have (all stats will have this number)

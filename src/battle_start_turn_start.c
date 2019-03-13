@@ -8,6 +8,8 @@ extern void (* const sTurnActionsFuncsTable[])(void);
 extern void (* const sEndTurnFuncsTable[])(void);
 extern u8* const gBattleScriptsForMoveEffects[];
 extern const bank_t gTargetsByBank[4][4];
+extern const u16 gClassBasedBattleBGM[];
+extern const u16 gWildSpeciesBasedBattleBGM[];
 
 extern u8* DoMegaEvolution(u8 bank);
 extern u8* DoPrimalReversion(bank_t, u8 caseId);
@@ -28,12 +30,12 @@ extern u8 BattleScript_FocusPunchSetUp[];
 extern u8 BattleScript_QuickClaw[];
 extern u8 BattleScript_NoTargetMoveFailed[];
 
+u16 GetMUS_ForBattle(void);
 u8 GetWhoStrikesFirst(bank_t, bank_t, bool8 ignoreMovePriorities);
 s8 PriorityCalc(u8 bank, u8 action, u16 move);
 s32 BracketCalc(u8 bank);
 u32 SpeedCalc(u8 bank);
 u32 SpeedCalcForParty(u8 side, pokemon_t*);
-void DestroyMegaTriggers(void);
 
 void HandleNewBattleRamClearBeforeBattle(void) {
 	gNewBS = Calloc(sizeof(struct NewBattleStruct));
@@ -180,33 +182,35 @@ void BattleBeginFirstTurn(void)
 				break;
 			
 			case TotemPokemon:	;
-				u16 totem_var = VarGet(TOTEM_VAR);
-				u16 stat_to_raise = VarGet(TOTEM_VAR + 1 + *bank);
-				if (totem_var) {
-					while (*bank < gBattlersCount) {
-						u8 amount_to_raise = stat_to_raise & ~(0x7);
-						if ((totem_var & (1 << *bank)) && stat_to_raise > 0 && 
-							 stat_to_raise <= STAT_STAGE_EVASION && 
-							((amount_to_raise >= 0x10 && amount_to_raise <= 0x60) || 
-						     (amount_to_raise >= 0x90 && amount_to_raise <= 0xE0))) {
-								gStatChangeByte = stat_to_raise | amount_to_raise;
-								BattleScriptPushCursorAndCallback(BattleScript_Totem);
-								gBankAttacker = gBattleScripting->bank = *bank;
-								++effect;
-							}
-						++*bank;
-						
-						if (effect) return;
+				if (!(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_FRONTIER)))
+				{
+					u16 totem_var = VarGet(TOTEM_VAR);
+					u16 stat_to_raise = VarGet(TOTEM_VAR + 1 + *bank);
+					if (totem_var) {
+						while (*bank < gBattlersCount) {
+							u8 amount_to_raise = stat_to_raise & ~(0x7);
+							if ((totem_var & (1 << *bank)) && stat_to_raise > 0 && 
+								 stat_to_raise <= STAT_STAGE_EVASION && 
+								((amount_to_raise >= 0x10 && amount_to_raise <= 0x60) || 
+								 (amount_to_raise >= 0x90 && amount_to_raise <= 0xE0))) {
+									gStatChangeByte = stat_to_raise | amount_to_raise;
+									BattleScriptPushCursorAndCallback(BattleScript_Totem);
+									gBankAttacker = gBattleScripting->bank = *bank;
+									++effect;
+								}
+							++*bank;
+							
+							if (effect) return;
+						}
 					}
+					
+					//Reset Totem Vars
+					VarSet(TOTEM_VAR, 0);		//Totem Banks
+					VarSet(TOTEM_VAR + 1, 0);	//Bank 0's Stat
+					VarSet(TOTEM_VAR + 2, 0);	//Bank 1's Stat
+					VarSet(TOTEM_VAR + 3, 0);	//Bank 2's Stat
+					VarSet(TOTEM_VAR + 4, 0);	//Bank 3's Stat
 				}
-				
-				//Reset Totem Vars
-				VarSet(TOTEM_VAR, 0);		//Totem Banks
-				VarSet(TOTEM_VAR + 1, 0);	//Bank 0's Stat
-				VarSet(TOTEM_VAR + 2, 0);	//Bank 1's Stat
-				VarSet(TOTEM_VAR + 3, 0);	//Bank 2's Stat
-				VarSet(TOTEM_VAR + 4, 0);	//Bank 3's Stat
-				
 				*bank = 0; //Reset Bank for next loop
 				++*state;
 				break;
@@ -355,8 +359,6 @@ void RunTurnActionsFunctions(void)
 	u8 effect;
 	int i, j;
 	u8* megaBank = &(gNewBS->MegaData->activeBank);
-	
-	DestroyMegaTriggers();
 	
     if (gBattleOutcome != 0)
         gCurrentActionFuncId = ACTION_FINISHED;
@@ -626,7 +628,7 @@ void HandleAction_UseMove(void)
             gBattleResults->lastUsedMoveOpponent = gCurrentMove;
     }
 	
-	if (gNewBS->ZMoveData->toBeUsed[gBankAttacker]) {
+	if (gNewBS->ZMoveData->toBeUsed[gBankAttacker]/* && !gNewBS->ZMoveData->used[gBankAttacker]*/) {
 		gNewBS->ZMoveData->active = TRUE;
 		
 		if (SPLIT(gCurrentMove) != SPLIT_STATUS) 
@@ -791,6 +793,57 @@ void HandleAction_UseMove(void)
         gBattlescriptCurrInstr = gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect];
 
     gCurrentActionFuncId = ACTION_RUN_BATTLESCRIPT;
+}
+
+extern u32 PlayAnimationTable[];
+u16 GetMUS_ForBattle(void)
+{
+    if (gBattleTypeFlags & BATTLE_TYPE_LINK)
+	{
+		if (VarGet(BATTLE_TOWER_SONG_OVERRIDE))
+			return VarGet(BATTLE_TOWER_SONG_OVERRIDE); //Play custom song
+		else
+		{
+			#ifdef UNBOUND
+				return BGM_BATTLE_BORRIUS_TRAINER;
+			#else
+				return BGM_BATTLE_RSE_TRAINER;
+			#endif
+		}
+	}
+	
+    if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+    {
+		u8 trainerClass = gTrainers[gTrainerBattleOpponent_A].trainerClass;
+		
+		if (gClassBasedBattleBGM[trainerClass])
+			return gClassBasedBattleBGM[trainerClass];
+		else if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER && VarGet(BATTLE_TOWER_SONG_OVERRIDE))
+			return VarGet(BATTLE_TOWER_SONG_OVERRIDE);
+		else
+		#ifdef UNBOUND
+			return BGM_BATTLE_BORRIUS_TRAINER;
+		#else
+			return BGM_BATTLE_TRAINER;
+		#endif
+    }
+	
+	u16 species = gEnemyParty[0].species;
+	
+	if (gWildSpeciesBasedBattleBGM[species])
+		return gWildSpeciesBasedBattleBGM[species];
+	
+	#ifdef UNBOUND
+		return BGM_BATTLE_BORRIUS_WILD;
+	#else
+		return BGM_BATTLE_WILD;
+	#endif
+}
+
+u16 LoadProperMusicForLinkBattles(void)
+{
+	gBattleTypeFlags |= BATTLE_TYPE_LINK;
+	return GetMUS_ForBattle();
 }
 
 // Determines which of the two given mons will strike first in a battle.
@@ -1066,18 +1119,6 @@ u32 SpeedCalcForParty(u8 side, pokemon_t* party) {
 		#endif
 	}
     return speed;
-}
-
-void DestroyMegaTriggers(void)
-{
-	for (int i = 0; i < MAX_SPRITES; ++i)
-	{
-		if (gSprites[i].template->tileTag == GFX_TAG_MEGA_TRIGGER
-		||  gSprites[i].template->tileTag == GFX_TAG_ULTRA_TRIGGER)
-		{
-			DestroySprite(&gSprites[i]);
-		}
-	}
 }
 
 const u8 gStatStageRatios[][2] =
