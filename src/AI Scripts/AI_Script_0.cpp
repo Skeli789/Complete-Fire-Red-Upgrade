@@ -82,7 +82,7 @@ RESTART_AI_SCRIPT_0:
 			// type-specific ability checks - primordial weather handled separately
 			// Electric
 			case ABILITY_VOLTABSORB:
-				if ( (moveType == TYPE_ELECTRIC) && !(moveSplit == SPLIT_STATUS) )
+				if ( (moveType == TYPE_ELECTRIC) && (moveSplit != SPLIT_STATUS) )
 					return viability - 20;
 				break;
 					
@@ -119,7 +119,7 @@ RESTART_AI_SCRIPT_0:
 			
 			// Fire			
 			case ABILITY_WATERBUBBLE:
-				if ( (moveType == TYPE_FIRE) && !(moveSplit == SPLIT_STATUS) )
+				if ( (moveType == TYPE_FIRE) && (moveSplit != SPLIT_STATUS) )
 					return viability - 20;
 				break;
 				
@@ -129,7 +129,7 @@ RESTART_AI_SCRIPT_0:
 				break;
 				
 			case ABILITY_HEATPROOF:
-				if ( (moveType == TYPE_FIRE) && !(moveSplit == SPLIT_STATUS) )
+				if ( (moveType == TYPE_FIRE) && (moveSplit != SPLIT_STATUS) )
 					return viability - 10;
 				break;
 			
@@ -141,7 +141,7 @@ RESTART_AI_SCRIPT_0:
 				
 			// Dark
 			case ABILITY_JUSTIFIED:
-				if ((moveType == TYPE_DARK) && !(moveSplit == SPLIT_STATUS) )
+				if ((moveType == TYPE_DARK) && (moveSplit != SPLIT_STATUS) )
 					return viability - 10;
 				break;
 				
@@ -153,7 +153,8 @@ RESTART_AI_SCRIPT_0:
 				break;
 				
 			case ABILITY_RATTLED:
-				if ( !(moveSplit == TYPE_STATUS) && (moveType == TYPE_DARK) || (moveType == TYPE_GHOST) || (moveType == TYPE_BUG) )
+				if ( (moveSplit != TYPE_STATUS) && 
+					(moveType == TYPE_DARK || moveType == TYPE_GHOST || moveType == TYPE_BUG )
 					return viability - 10;
 				break;
 			
@@ -576,11 +577,8 @@ RESTART_AI_SCRIPT_0:
 			break;
 		
 		case EFFECT_EVASION_DOWN: 
-			// TO DO
-			goto AI_Minus_10_Evsn_Min
 		case EFFECT_EVASION_DOWN_2: 
-			AI_Minus_10_Evsn_Min
-			
+		AI_EVASION_MINUS:	
 			if (StatMinned(bankDef, STAT_STAGE_EVSN))
 				viability -= 10;
 			else if (MoveBlockedBySubstitute(move, bankAtk, bankDef))
@@ -588,7 +586,7 @@ RESTART_AI_SCRIPT_0:
 			break;
 		
 		case EFFECT_HAZE: //Clear smog here?
-		HAZE_CHECK:
+		AI_HAZE_CHECK:
 			decreased = FALSE;
 			for (i = 0; i < NUM_STAT_STAGES-1; ++i) {
 				if (gBattleMons[bankAtk].statstages[i] > 6)
@@ -639,8 +637,8 @@ RESTART_AI_SCRIPT_0:
 						viability -= 10;
 						break;
 					}
-					
-					if (bankDef == bankAtkPartner) break; //Always heal your ally
+					if (bankDef == bankAtkPartner) 
+						break; //Always heal your ally
 					
 					if (GetHealthPercentage(bankAtk) >= 90)
 						viability -= 9; //No point in healing, but should at least do it if nothing better
@@ -659,6 +657,7 @@ RESTART_AI_SCRIPT_0:
 		//case EFFECT_POISON_FANG:
 		//case EFFECT_POISON_TAIL:
 		case EFFECT_TOXIC:
+		AI_POISON_CHECK:
 			switch (move) {
 				case MOVE_TOXICTHREAD:
 					if (!StatMinned(bankDef, STAT_STAGE_SPD)
@@ -739,6 +738,7 @@ RESTART_AI_SCRIPT_0:
 			
 		//case EFFECT_PARALYZE_HIT:
 		case EFFECT_PARALYZE:
+		AI_PARALYZE_CHECK:
 			if (!CanBeParalyzed(bankDef, bankAtk)
 			|| MoveBlockedBySubstitute(move, bankAtk, bankDef))
 				viability -= 10;
@@ -786,7 +786,6 @@ RESTART_AI_SCRIPT_0:
 			if ( gDisableStructs[bankDef].disableTimer1 )
 				viability -= 10;			
 			//Check Last Used Move ??
-			
 			//Check Mental Herb
 			if (defEffect == ITEM_EFFECT_MENTAL_HERB)
 				viability -= 6;
@@ -816,7 +815,8 @@ RESTART_AI_SCRIPT_0:
 			if (defEffect == ITEM_EFFECT_MENTAL_HERB)
 				viability -= 6;
 			break;
-			
+		
+		case EFFECT_ENDEAVOR:
 		case EFFECT_PAIN_SPLIT:
 			if (gBattleMons[bankAtk].hp > (gBattleMons[bankAtk].hp + gBattleMons[bankDef].hp) / 2)
 				viability -= 10;
@@ -853,14 +853,13 @@ RESTART_AI_SCRIPT_0:
 				viability -= 10;
 			break;
 		
+		case EFFECT_ERUPTION:
 		case EFFECT_FLAIL:
 			// check HP percentage
-			
 			break;
 		
 		case EFFECT_SPITE:
 			//Spite Logic
-			
 			break;
 		
 		case EFFECT_FALSE_SWIPE:
@@ -874,7 +873,7 @@ RESTART_AI_SCRIPT_0:
 			break;
 			
 		case EFFECT_THIEF:
-			// check if holding an item
+			// check if holding an item?
 			break;
 		
 		case EFFECT_MEAN_LOOK:
@@ -958,7 +957,6 @@ RESTART_AI_SCRIPT_0:
 				viability -= 10;
 				break;
 			}
-			
 			switch (move) {
 				case MOVE_STEALTHROCK:
 					if (something[bankDef & 1].SRLay)
@@ -1067,16 +1065,8 @@ RESTART_AI_SCRIPT_0:
 					viability -= 6;
 				else if !( gStatuses2[bankAtk] & STATUS2_SUBSTITUTE )
 					viability -= 6;
-				// check stats
-				u8 statVal = 6;
-				u8 statId = 0;
-				// if any stat decreased, less viability for move
-				while (statVal <= 6) {
-					statVal = gBattleMons[bankAtk].statStages[statId];
-					if (statId == 6)
-						break;
-					statId++;
-				}
+				viabilility = aiAllStatChecks(viabilility, bankAtk, 6);
+				break;
 			}
 			break;
 			
@@ -1135,13 +1125,13 @@ RESTART_AI_SCRIPT_0:
 					goto AI_STANDARD_DAMAGE;
 					
 				default: //Psych Up
-					goto HAZE_CHECK;
+					goto AI_HAZE_CHECK;
 			}
 			break;
 			
 		case EFFECT_FUTURE_SIGHT:
 			// check if future sight already set
-			if (gWishFutureKnock->futureSightCounter[bankAtk])
+			if (gWishFutureKnock->futureSightCounter[bankAtk] > 0)
 				viability -= 10;
 			else
 				goto AI_STANDARD_DAMAGE;
@@ -1156,19 +1146,20 @@ RESTART_AI_SCRIPT_0:
 			break;
 			
 		case EFFECT_STOCKPILE:
-			if (/*StockpileCounter(bankAtk) >= 3*/)
+			if ( gDisableStructs[bankAtk].stockpileCounter >= 3 )
 				viability -= 10;
+				// scale to stockpileCounter?
 			break;
 			
 		case EFFECT_SPIT_UP:
-			if (/*StockpileCounter(bankAtk) == 0*/)
+			if ( gDisableStructs[bankAtk].stockpileCounter == 0 )
 				viability -= 10;
 			else
 				goto AI_STANDARD_DAMAGE;
 			break;
 		
 		case EFFECT_SWALLOW:
-			if (/*StockpileCounter(bankAtk) == 0*/)
+			if ( gDisableStructs[bankAtk].stockpileCounter == 0 )
 				viability -= 10;
 			else
 				goto AI_RECOVERY;
@@ -1197,7 +1188,8 @@ RESTART_AI_SCRIPT_0:
 			break;
 		
 		case EFFECT_WILL_O_WISP:
-			If (!CanBeBurned(bankDef, bankAtk)
+		AI_BURN_CHECK:
+			if (!CanBeBurned(bankDef, bankAtk)
 			|| MoveBlockedBySubstitute(move, bankAtk, bankDef))
 				viability -= 10;
 			break;
@@ -1215,7 +1207,8 @@ RESTART_AI_SCRIPT_0:
 					break;
 				
 				case MOVE_FINALGAMBIT:
-					// Some Logics
+					if ( gBattleMons[bankAtk].hp < gBattleMons[bankDef].hp )
+						viability -= 10;
 					break;
 				
 				default: //Memento
@@ -1236,7 +1229,7 @@ RESTART_AI_SCRIPT_0:
 			break;
 			
 		case EFFECT_TAUNT:
-			if (/*TauntTimer(bankDef)*/)
+			if ( gDisableStructs[bankDef].tauntTimer > 0 )
 				viability -= 1;
 			break;
 		
@@ -1269,7 +1262,7 @@ RESTART_AI_SCRIPT_0:
 			break;
 		
 		case EFFECT_WISH:
-			(/*If WishCounter(bankAtk) != 0*/)
+			if (gWishFutureKnock->wishCounter[bankAtk] != 0)
 				viability -= 10;
 			break;
 		
@@ -1299,24 +1292,61 @@ RESTART_AI_SCRIPT_0:
 			else
 				goto AI_SET_SLEEP;
 			break;
-			
-		case EFFECT_ENDEAVOR: 
-		AI_PAINSPLIT:
-			// to do
 		
-		case EFFECT_ERUPTION:
-			// to do
-			// flail AI
-			
 		case EFFECT_SKILL_SWAP:
 		AI_SKILLSWAP:
-			// to do
+			if ( CheckTableForAbility(defAbility, WorrySeedGastroAcidBanTable) && (move != MOVE_COREENFORCER) ) {
+				viability -= 10;
+				break;
+			}
+			switch (move) {
+				case MOVE_WORRYSEED:
+					if ( defAbility == ABILITY_INSOMNIA )						
+						viability -= 10;
+					else
+						goto AI_SUBSTITUTE_CHECK
+				case MOVE_GASTROACID:
+					if ( defAbility == 0 )
+						viability -= 10;
+					else
+						goto AI_SUBSTITUTE_CHECK				
+				case MOVE_ENTRAINMENT:
+					if ( CheckTableForAbility(atkAbility, EntrainmentBanTableAttacker) )
+						viability -= 10;
+					else
+						goto AI_SUBSTITUTE_CHECK
+				case MOVE_COREENFORCER:
+					goto AI_STANDARD_DAMAGE;
+					
+				case MOVE_SIMPLEBEAM:
+					if ( defAbility == ABILITY_SIMPLE )
+						viability -= 10;
+					break;
+				
+				default:	// skill swap
+					if ( CheckTableForAbility(atkAbility, SkillSwapBanTable) || 
+						CheckTableForAbility(defAbility, SkillSwapBanTable) )
+						viability -= 10;
+					break;
+			}
 		case EFFECT_IMPRISON:
 		AI_IMPRISON:
 			// to do
 		case EFFECT_REFRESH:
 		AI_REFRESH:
-			// to do
+			if ( atkStatus1 & (STATUS_POISON | STATUS_BAD_POISON | STATUS_BURN | STATUS_PARALYSIS) )
+				viability -= 10;
+			else if ( move == MOVE_PSYCHOSHIFT ) {
+				if ( atkStatus1 & (STATUS_POISON & STATUS_BAD_POISON) )
+					goto AI_POISON_CHECK;
+				else if ( atkStatus1 & STATUS_BURN )
+					goto AI_BURN_CHECK;
+				else if ( atkStatus1 & STATUS_PARALYSIS )
+					goto AI_PARALYZE_CHECK;
+				else
+					viability -= 10;
+			break;
+			
 		case EFFECT_GRUDGE:
 		AI_BATON_PASS:
 			// to do
@@ -1330,31 +1360,74 @@ RESTART_AI_SCRIPT_0:
 			// to do
 		case EFFECT_MUD_SPORT:
 		AI_MUD_SPORT:
-			// to do
+			if ( gNewBS->MudSportTimer != 0 )
+				viability -= 10;
+			break;
+			
 		case EFFECT_TICKLE:
 		AI_TICKLE:
-			// to do
+			// lower viability if atk or def buffs = 0
+			if ( gBattleMons[bankDef].statstages[STAT_ATK] == 0 || 
+				gBattleMons[bankDef].statstages[STAT_DEF] == 0)
+				viability -= 10;
+			break;
+			
 		case EFFECT_COSMIC_POWER:
 		AI_COSMIC_POWER:
-			// to do
+			// lower viability if def/spdef maxed
+			if ( gBattleMons[bankAtk].statstages[STAT_DEF] >= 12 || 
+				gBattleMons[bankAtk].statstages[STAT_SPDEF] >= 12 )
+				viability -= 10;
+			break;
+			
 		case EFFECT_BULK_UP:
 		AI_BULK_UP:
-			// to do
+			if ( move == MOVE_COIL && gBattleMons[bankAtk].statstages[STAT_ACC] >= 12 ) {
+				viability -= 10;
+			if ( gBattleMons[bankAtk].statstages[STAT_ATK] >= 12 || 
+				gBattleMons[bankAtk].statstages[STAT_DEF] >= 12 )
+				viability -= 10;
+			break;
+			
 		case EFFECT_WATER_SPORT:
 		AI_WATER_SPORT:
-			// to do
+			if ( gNewBS->WaterSportTimer != 0 )
+				viability -= 10;
+			break;
+			
 		case EFFECT_CALM_MIND:
 		AI_CALM_MIND:
-			// to do
+			if ( ( move == MOVE_QUIVERDANCE || move == MOVE_GEOMANCY ) && 
+				(gBattleMons[bankAtk].statstages[STAT_SPEED] >= 12) )
+				viability -= 10;
+			if ( gBattleMons[bankAtk].statstages[STAT_SPATK] >= 12 || 
+				gBattleMons[bankAtk].statstages[STAT_SPDEF] >= 12 )
+				viability -= 10;
+			break;
+			
 		case EFFECT_DRAGON_DANCE:
 		AI_DRAGON_DANCE:
-			// to do
-
+			if ( move == MOVE_SHELLSMASH ) {
+				if (atkAbility == ABILITY_CONTRARY)
+					goto AI_COSMIC_POWER;
+				else if (gBattleMons[bankAtk].statstages[STAT_SPATK] >= 12 )
+					viability -= 10;
+			// dragon dance
+			if ( gBattleMons[bankAtk].statstages[STAT_ATK] >= 12 || 
+				gBattleMons[bankAtk].statstages[STAT_SPEED] >= 12 )
+				viability -= 10;			
+			break;
+			
 		case EFFECT_STAT_SWAP_SPLT:
 			break;
+		
 		case EFFECT_StoredPower: 
 		AI_STOREDPOWER:
-			// to do
+			if ( move == MOVE_PUNISHMENT )
+				viabilility = aiAllStatChecks(viabilility, bankDef, 6);
+			else
+				viabilility = aiAllStatChecks(viabilility, bankAtk, 6);		
+			break;
 		case EFFECT_FrostBreath:
 		AI_FROSTBREATH:
 			// to do
@@ -1406,3 +1479,6 @@ RESTART_AI_SCRIPT_0:
 	}
 	return viability;
 }
+
+
+
