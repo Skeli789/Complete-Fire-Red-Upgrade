@@ -1679,7 +1679,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 	}
 
 //Gym Badge Checks
-	#ifdef GYM_BADGE_BOOSTS
+	#ifdef BADGE_BOOSTS
 		if (!PartyCheck
 		&& !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_TRAINER_TOWER | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_EREADER_TRAINER))
 		&& gBattleTypeFlags & BATTLE_TYPE_TRAINER
