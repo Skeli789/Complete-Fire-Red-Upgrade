@@ -30,14 +30,20 @@ HandleFaintedMonActions 08018F90 0
 HasNoMonsToSwitch 0x8019C10 3
 SetMoveEffect 801FF20 2
 
-SwitchMoveDataHook 0x802EF90 0
+HandleInputChooseAction 0802E438 0
+SwitchMoveDataHook 802EF90 0
 MoveSelectionDisplayMoveType 8030940 0
 PlayerHandleFormChange 8031E40 0
 PlayerHandleExpBarUpdate 08032F4C 1
+HandleDataTransfer 8033134 0
 OpponentHandleFormChange 08037760 0
+HandleDataTransfer 8038A2C 0
 AI_TrySwitchOrUseItem 8039C84 0
 LinkOpponentHandleFormChange 0803C318 0
+HandleDataTransfer 0803D200 0
 
+GetMUS_ForBattle 08043FD4 0
+LoadProperMusicForLinkBattlesHook 80813B8 0
 BattleSetup_GetTerrainId 807FC5C 0
 EndBattleFlagClearHook 80159DC 0
 HandleIntroSlide 80BC3A0 1
@@ -139,3 +145,11 @@ DoubleWildAnimBallThrowFixHook 080EF5F4 1
 DoubleWildPokeBallItemUseFixHook 080A1E2C 0
 DoubleWildDexHook1 802D95C 0
 DoubleWildDexHook2 802D9D8 0
+
+##Illusion Hooks
+BattleLoadOpponentMonSpriteGfxHook 803432C 2
+BattleLoadPlayerMonSpriteGfxHook 80344A4 2
+UpdateNickForIllusionHook 80496C8 2
+UpdatePokeBallForIllusionHook 804A9E0 1
+UpdateCryForIllusionHook 804B2DC 1
+UpdateAltitudeForIllusionHook 8074598 2
