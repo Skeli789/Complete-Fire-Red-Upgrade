@@ -353,6 +353,10 @@ u8 GetCatchingBattler(void) {
 }
 
 bool8 CriticalCapture(u32 odds) {
+	#ifndef CRITICAL_CAPTURE
+		odds += 1; //So the compiler doesn't complain
+		return FALSE;
+	#else
 	u16 PokesCaught = GetNationalPokedexCount(FLAG_GET_CAUGHT);
 	if (PokesCaught <= 30)
 		odds = 0;
@@ -378,6 +382,7 @@ bool8 CriticalCapture(u32 odds) {
 		gNewBS->criticalCapture = FALSE;
 		return FALSE;
 	}
+	#endif
 }
 
 u8 GiveMonToPlayer(pokemon_t* mon) { //Hook in
