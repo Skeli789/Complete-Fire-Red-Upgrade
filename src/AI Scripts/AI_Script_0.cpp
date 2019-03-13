@@ -1036,12 +1036,17 @@ RESTART_AI_SCRIPT_0:
 		
 		case EFFECT_ATTRACT: 
 		AI_ATTRACT:
-			// to do
+			if (defAbility == ABILITY_OBLIVIOUS || (defStatus2 & STATUS2_INFATUATION) )
+				viability -= 20;
+			else if (GetGenderFromSpeciesAndPersonality(defSpecies, gBattleMons[bankDef].personality) == 
+				GetGenderFromSpeciesAndPersonality(atkSpecies, gBattleMons[bankAtk].personality) )
+				viability -= 10;
 			break;
 
 		case EFFECT_SAFEGUARD:
 		AI_SAFEGUARD:
-			// to do
+			if (gSideAffecting[SIDE(bankDef)] & SIDE_STATUS_SAFEGUARD)
+				viability -= 10;
 			break;
 		
 		case EFFECT_BURNUP:
@@ -1051,13 +1056,54 @@ RESTART_AI_SCRIPT_0:
 			
 		case EFFECT_BATON_PASS:
 		AI_BATON_PASS:
-			// to do
+			if (move == MOVE_UTURN || move == MOVE_VOLTSWITCH)
+				break;
+			else if (ViableMonCountFromBank(bankDef) <= 1)
+				viability -= 10;
+				break;
+			else {	// baton pass
+				// check aqua ring, magnet rise, ingrain
+				if !( gStatuses3[bankAtk] & (STATUS3_ROOTED || STATUS3_AQUA_RING || STATUS3_LEVITATING) ) {
+					viability -= 6;
+				else if !( gStatuses2[bankAtk] & STATUS2_SUBSTITUTE )
+					viability -= 6;
+				// check stats
+				u8 statVal = 6;
+				u8 statId = 0;
+				// if any stat decreased, less viability for move
+				while (statVal <= 6) {
+					statVal = gBattleMons[bankAtk].statStages[statId];
+					if (statId == 6)
+						break;
+					statId++;
+				}
+			}
 			break;
 			
 		case EFFECT_RAPID_SPIN:
 		AI_RAPID_SPIN:
-			// to do
+			if (move == MOVE_DEFOG) {
+				if (defAbility == ABILITY_KEENEYE
+					|| defAbility == ABILITY_CLEARBODY
+					|| defAbility == ABILITY_FULLMETALBODY
+					|| defAbility == ABILITY_WHITESMOKE)
+					viability -= 10;
+				else if (  gBattleMons[bankDef].statStages[STAT_STAGE_ACC] == 0 )
+					viability -= 10;
+				else if ( gSideAffecting[SIDE(bankDef)] & (SIDE_REFLECT || SIDE_SAFEGUARD || SIDE_MIST)
+					goto AI_STANDARD_DAMAGE;
+				else if ( gNewBS->AuroraVeilTimers[bankDef] )
+					goto AI_STANDARD_DAMAGE;
+			}
+			else {
+				if ( (gStatuses3[bankAtk] & STATUS3_SEEDED) || (gStatuses2[bankAtk] & STATUS2_WRAPPED) )
+					goto AI_STANDARD_DAMAGE;
+			}
+			// spin checks
+			if ( gSideAffecting[SIDE(bankAtk)] & SIDE_STATUS_SPIKES )
+				viability -= 6;
 			break;
+		
 		
 		case EFFECT_RAIN_DANCE:
 			if (gBattleWeather & (WEATHER_RAIN_ANY | WEATHER_PRIMAL))
