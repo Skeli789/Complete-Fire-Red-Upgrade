@@ -429,13 +429,15 @@ u16 ShouldAIUseZMove(u8 bank, u8 moveIndex, u16 move) {
 	return FALSE;
 }
 
-// AI function to successively decrease viabilility for decreased stats
-u8 aiAllStatChecks(u8 viabilility, u8 bank, u8 cmpVal) {
+//AI function to successively decrease viability for decreased stats
+u8 aiAllStatChecks(u8 viability, u8 bank, u8 cmpVal) {
 	u8 statId;
-	for ( statId = 0; statId <= 6; statId++ ) {
+	
+	for (statId = 0; statId < BATTLE_STATS_NO - 1; ++statId) 
+	{
 		if (gBattleMons[bank].statStages[statId] < cmpVal)
 			viability -= 6;
 	}
-	return viabilility;
+	return viability;
 }
 
