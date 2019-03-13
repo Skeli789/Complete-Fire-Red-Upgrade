@@ -62,12 +62,12 @@ void OpponentHandleChooseMove(void)
 							gBankTarget = GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT);
 					}
 				}
-				if (moveInfo->canMegaEvolve && moveInfo->megaVariance != MEGA_VARIANT_ULTRA_BURST)
+				if (moveInfo->possibleZMoves[chosenMoveId])
+					gNewBS->ZMoveData->toBeUsed[gActiveBattler] = TRUE;
+				else if (moveInfo->canMegaEvolve && moveInfo->megaVariance != MEGA_VARIANT_ULTRA_BURST)
 					gNewBS->MegaData->chosen[gActiveBattler] = TRUE;
 				else if (moveInfo->canMegaEvolve && moveInfo->megaVariance == MEGA_VARIANT_ULTRA_BURST)
 					gNewBS->UltraData->chosen[gActiveBattler] = TRUE;
-				else if (moveInfo->possibleZMoves[chosenMoveId])
-					gNewBS->ZMoveData->toBeUsed[gActiveBattler] = TRUE;
 				EmitMoveChosen(1, chosenMoveId, gBankTarget, gNewBS->MegaData->chosen[gActiveBattler], gNewBS->UltraData->chosen[gActiveBattler], gNewBS->ZMoveData->toBeUsed[gActiveBattler]);
 				break;
         }

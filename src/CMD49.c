@@ -1117,7 +1117,8 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			}
 			
 			gNewBS->ZMoveData->active = FALSE;
-			gNewBS->ZMoveData->effectApplied = FALSE;	
+			gNewBS->ZMoveData->effectApplied = FALSE;
+			gNewBS->ZMoveData->toBeUsed[gBankAttacker] = 0;
 			gNewBS->secondaryEffectApplied = FALSE;
 			gNewBS->InstructInProgress = FALSE;
 			gNewBS->bypassSubstitute = FALSE;

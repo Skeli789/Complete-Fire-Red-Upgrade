@@ -286,7 +286,7 @@ void AnimTask_ReloadAttackerSprite(u8 taskId)
 
 void AnimTask_PlayAttackerCry(u8 taskId)
 {
-	PlayCry3(gBattleMons[gBattleAnimAttacker].species, 0, 0);
+	PlayCry3(GetBankPartyData(gBattleAnimAttacker)->species, 0, 0);
 	DestroyAnimVisualTask(taskId);
 }
 

@@ -115,7 +115,9 @@ struct ChooseMoveStruct
 	u8 monType3;
 	bool8 canMegaEvolve;
 	u8 megaVariance;
-	bool8 canZMoveBanks;
+	bool8 zMoveUsed : 1;
+	bool8 megaDone : 1;
+	bool8 bank : 8;
 	u16 possibleZMoves[MAX_MON_MOVES];
 };
 

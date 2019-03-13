@@ -62,6 +62,7 @@
 #define B_TXT_AFFECTS_ATTACKER_SIDE 0x36
 #define B_TXT_AFFECTS_TARGET_SIDE_CAPS 0x37
 #define B_TXT_AFFECTS_ATTACKER_SIDE_CAPS 0x38
+#define B_TXT_SCRIPTING_TRAINER 0x39
 
 // for B_TXT_BUFF1, B_TXT_BUFF2 and B_TXT_BUFF3
 
@@ -213,6 +214,7 @@ struct BattleMsgData
     u8 hpScale;
     u8 stringBank;
     u8 moveType;
+	bool8 zMoveActive;
     u8 abilities[MAX_BATTLERS_COUNT];
     u8 textBuffs[3][TEXT_BUFF_ARRAY_COUNT];
 	u8* battleStringLoader;

@@ -190,4 +190,3 @@ LoadHealthBoxesIndicatorHook:
 	bl CreateMegaIndicatorAfterAnim
 	ldr r1, =0x80483A4 | 1
 	bx r1
-

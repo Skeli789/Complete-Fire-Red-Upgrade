@@ -162,7 +162,7 @@ typedef u8 Buffer_t[0x200];
 /*u8*/  #define gStatChangeByte	*((u8*) 0x2023FDE)
 /*u8*/  #define gUnknown_2023FEC  (u8*) (*((u32*) 0x2023FEC))
 /*u8*/  #define gUnknown_2023FF0  (u8*) (*((u32*) 0x2023FF0))
-/*u8*/  #define gUnknown_2023FF8  (u8*) (*((u32*) 0x2023FF8))
+/*u8*/  #define gActionSelectionCursor ((u8*) 0x2023FF8)
 /*u8*/  #define gMoveSelectionCursor ((u8*) 0x2023FFC)
 /*u8*/  #define gUnknown_2024000 ((u8*) 0x2024000)
 
