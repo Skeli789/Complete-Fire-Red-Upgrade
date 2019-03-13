@@ -186,6 +186,13 @@ with open(ROM_NAME, 'rb+') as rom:
 		for entry in table:
 				table[entry] += OFFSET_TO_PUT
 
+		# Insert byte changes
+		with open('bytereplacement', 'r') as replacelist:
+				for line in replacelist:
+						if line.strip().startswith('#') or line.strip() == '' : continue
+						offset = int(line[:8],16) - 0x08000000
+						bytereplace(rom, offset, line[9:].strip())
+						
 		# Read hooks from a file
 		with open('hooks', 'r') as hooklist:
 				for line in hooklist:
@@ -301,13 +308,6 @@ with open(ROM_NAME, 'rb+') as rom:
 								continue
 
 						funcwrap(rom, code, offset, int(nparam), int(isreturning))
-
-		# Insert byte changes
-		with open('bytereplacement', 'r') as replacelist:
-				for line in replacelist:
-						if line.strip().startswith('#') or line.strip() == '' : continue
-						offset = int(line[:8],16) - 0x08000000
-						bytereplace(rom, offset, line[9:].strip())
 						
 		width = max(map(len, table.keys())) + 1
 		try:
