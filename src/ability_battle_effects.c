@@ -1884,6 +1884,7 @@ bool8 AllStatsButOneAreMinned(bank_t bank) {
 //Illusion Updates////////////////////////////////////////////////////////////////////////////////////
 extern u8 ItemIdToBallId(u16 ballItem);
 extern item_t BallIdToItemId(u8 ballId);
+extern void LoadBallGfx(u8 ballId);
 
 pokemon_t* UpdateNickForIllusion(pokemon_t* mon)
 {
@@ -1897,6 +1898,5 @@ pokemon_t* UpdateNickForIllusion(pokemon_t* mon)
 
 u8 UpdatePokeBallForIllusion(u8 bank)
 {
-	pokemon_t* mon = GetIllusionPartyData(bank);
-	return ItemIdToBallId(BallIdToItemId(mon->pokeball));
+	return GetMonData(GetIllusionPartyData(bank), MON_DATA_POKEBALL, NULL);
 }
