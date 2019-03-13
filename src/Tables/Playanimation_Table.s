@@ -3,7 +3,7 @@
 .align 2
 
 .include "..\\Anim_Defines.asm"
-.include "..\\asm_defines.s"
+/*.include "..\\asm_defines.s" Don't Uncomment This!*/
 
 .global PlayAnimationTable	
 
@@ -46,7 +46,7 @@ PlayAnimationTable:
 .word 0x81d657b	@ ANIM_TURN_INTO_POKEBALL
 .word 0x81d6594	@ ANIM_SWITCH
 .word 0x81d659e	@ ANIM_CREATE_SUBSTITUTE_2
-.word 0x81d2811
+.word 0x81d2811 @ ANIM_TRANSFORM
 .word ANIM_WISHIWASHI_FISH
 .word ANIM_ZYGARDE_CELL_SWIRL
 .word ANIM_DELTA_STREAM
@@ -76,7 +76,7 @@ PlayAnimationTable:
 .word ANIM_ZMOVE_ACTIVATE
 .word ANIM_MEGA_EVOLUTION
 .word ANIM_ULTRA_BURST
-
+.word ANIM_LOAD_DEAFUALT_BG
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -237,14 +237,12 @@ ANIM_ELECTRIC_SURGE:
 	launchtemplate ELECTRIC_SURGE_2 0x82 0x1 0xc0 
 	launchtemplate ELECTRIC_SURGE_2 0x82 0x1 0xe0 
 	waitanimation 
-	loadBG1 BG_ELECTRIC_TERRAIN 
+	loaddefaultBG @At this point the new BG is in effect
 	waitfortransparentBG 
 	playsound2 0x70 0x3f 
 	pause 0x40 
 	playsound2 0x70 0x3f 
-	pause 0x40 
-	loaddefaultBG 
-	waitfortransparentBG 
+	pause 0x40
 	endanimation 
 
 .align 2
@@ -276,13 +274,11 @@ ANIM_GRASSY_SURGE:
 	launchtemplate GRASSY_TERRAIN_1 0x82 0x1 0xc0 
 	launchtemplate GRASSY_TERRAIN_1 0x82 0x1 0xe0 
 	waitanimation 
-	loadBG1 BG_GRASSY_TERRAIN 
-	waitfortransparentBG 
+	loaddefaultBG @At this point the new BG is in effect
+	waitfortransparentBG
 	playsoundpanchange2 0xc3 0xc0 0x3f 0x1 0x0 
 	pause 0x40 
-	pause 0x40 
-	loaddefaultBG 
-	waitfortransparentBG 
+	pause 0x40
 	endanimation 
 
 .align 2
@@ -315,13 +311,11 @@ ANIM_MISTY_SURGE:
 	launchtemplate MISTY_TERRAIN_1 0x82 0x1 0xc0 
 	launchtemplate MISTY_TERRAIN_1 0x82 0x1 0xe0 
 	waitanimation 
-	loadBG1 BG_MISTY_TERRAIN 
-	waitfortransparentBG 
+	loaddefaultBG @At this point the new BG is in effect
+	waitfortransparentBG
 	playsound2 0xec 0xc0 
 	pause 0x40 
 	pause 0x40 
-	loaddefaultBG 
-	waitfortransparentBG 
 	endanimation 
 
 .align 2
@@ -354,13 +348,11 @@ ANIM_PSYCHIC_SURGE:
 	launchtemplate PSYCHIC_TERRAIN_1 0x82 0x1 0xc0 
 	launchtemplate PSYCHIC_TERRAIN_1 0x82 0x1 0xe0 
 	waitanimation 
-	loadBG1 BG_PSYCHIC_TERRAIN 
-	waitfortransparentBG 
+	loaddefaultBG @At this point the new BG is in effect
+	waitfortransparentBG
 	soundcomplex 0xb1 0x3f 0xa 0x3 
 	pause 0x40 
-	pause 0x40 
-	loaddefaultBG 
-	waitfortransparentBG 
+	pause 0x40
 	endanimation 
 
 .align 2
@@ -809,3 +801,10 @@ End:
 
 .align 2
 ULTRABURSTSYMBOL: objtemplate ANIM_TAG_ULTRA_BURST_SYMBOL ANIM_TAG_ULTRA_BURST_SYMBOL 0x83ACAF8 0x8231CF0 0x0 0x231CFC 0x80B67D5
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+ANIM_LOAD_DEAFUALT_BG:
+	loaddefaultBG
+	waitfortransparentBG
+	endanimation
