@@ -1418,3 +1418,47 @@ void MakeScriptingBankInvisible(void)
 	EmitSpriteInvisibility(0, TRUE);
     MarkBufferBankForExecution(gActiveBattler);
 }
+
+void TransferTerrainData(void)
+{
+	if (gBattleExecBuffer)
+		gBattlescriptCurrInstr -= 5;
+	else
+	{
+		gActiveBattler = 0;
+		EmitDataTransfer(0, &TerrainType, 1, &TerrainType);
+		MarkBufferBankForExecution(gActiveBattler);
+	}
+}
+
+void TransferIllusionBroken(void)
+{
+	if (gBattleExecBuffer)
+	{
+		gBattlescriptCurrInstr -= 5;
+		return;
+	}
+	
+	gActiveBattler = gBattleScripting->bank;
+	EmitDataTransfer(0, &gStatuses3[gActiveBattler], 4, &gStatuses3[gActiveBattler]);
+	MarkBufferBankForExecution(gActiveBattler);
+}
+
+void CycleScriptingBankHealthBetween0And1(void)
+{
+	if (gBattleExecBuffer)
+	{
+		gBattlescriptCurrInstr -= 5;
+		return;
+	}
+	
+	gActiveBattler = gBattleScripting->bank;
+	
+	if (!gBattleMons[gActiveBattler].hp)
+		gBattleMons[gActiveBattler].hp = 1;
+	else
+		gBattleMons[gActiveBattler].hp = 0;
+	
+	EmitSetMonData(0, REQUEST_HP_BATTLE, 0, 2, &gBattleMons[gActiveBattler].hp);
+	MarkBufferBankForExecution(gActiveBattler);
+}

@@ -39,6 +39,7 @@ extern u8 GetFrontierTrainerClassId(u16 trainerId, u8 battlerNum);
 extern void GetFrontierTrainerName(u8* dst, u16 trainerId, u8 battlerNum);
 extern void CopyFrontierTrainerText(u8 whichText, u16 trainerId, u8 battlerNum);
 extern u8* GetTrainerBLoseText(void);
+extern u8* GetTrainerName(u8 bank);
 
 void EmitPrintString(u8 bufferId, u16 stringID);
 
@@ -63,7 +64,8 @@ void BufferStringBattle(u16 stringID) {
     gStringBank = (*gStringInfo)->stringBank;
     gBattleStruct->stringMoveType = (*gStringInfo)->moveType;
 	BattleStringLoader = (*gStringInfo)->battleStringLoader;
-
+	bool8 zMoveActive = (*gStringInfo)->zMoveActive;
+	
     for (i = 0; i < MAX_BATTLERS_COUNT; i++)
     {
         gAbilitiesPerBank[i] = (*gStringInfo)->abilities[i];
@@ -272,7 +274,7 @@ void BufferStringBattle(u16 stringID) {
 			
         else 
 		{
-			if (gNewBS->ZMoveData->active && SPLIT(move) != SPLIT_STATUS) 
+			if (zMoveActive && SPLIT(move) != SPLIT_STATUS) 
 			{
 				//Load elongated move names for Z-Moves
 				if (move < MOVE_BREAKNECK_BLITZ_P) //Prevent accidental bugs
@@ -286,7 +288,7 @@ void BufferStringBattle(u16 stringID) {
 		
         ChooseTypeOfMoveUsedString(gBattleTextBuff2);
 		
-		if (gNewBS->ZMoveData->active && SPLIT(move) == SPLIT_STATUS)
+		if (zMoveActive && SPLIT(move) == SPLIT_STATUS)
 			stringPtr = BattleText_AttackerUsedZStatusMove; //NEED DATA
 		else 
 			stringPtr = BattleText_AttackerUsedX; //0x83FD57B
@@ -833,7 +835,10 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
                     toCpy = sText_FoePkmnPrefix2;
                 else
                     toCpy = sText_YourCaps;
-				break;		
+				break;
+			case B_TXT_SCRIPTING_TRAINER:
+				 toCpy = GetTrainerName(gBattleScripting->bank);
+				 break;
             }
 
             if (toCpy != NULL) {
@@ -888,6 +893,7 @@ void EmitPrintString(u8 bufferId, u16 stringID)
     stringInfo->stringBank = gStringBank;
     stringInfo->moveType = gBattleMoves[gCurrentMove].type;
 	stringInfo->battleStringLoader = BattleStringLoader;
+	stringInfo->zMoveActive = gNewBS->ZMoveData->active;
 
     for (i = 0; i < MAX_BATTLERS_COUNT; i++)
         stringInfo->abilities[i] = *GetAbilityLocation(i);
@@ -918,6 +924,7 @@ void EmitPrintSelectionString(u8 bufferId, u16 stringID)
     stringInfo->scrActive = gBattleScripting->bank;
     stringInfo->unk1605E = gBattleStruct->field_52;
 	stringInfo->battleStringLoader = BattleStringLoader;
+	stringInfo->zMoveActive = gNewBS->ZMoveData->active;
 
     for (i = 0; i < MAX_BATTLERS_COUNT; i++)
         stringInfo->abilities[i] = *GetAbilityLocation(i);

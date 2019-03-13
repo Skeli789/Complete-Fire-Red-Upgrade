@@ -693,6 +693,10 @@ void SetMoveEffect(bool8 primary, u8 certain)
 					BattleScriptPush(gBattlescriptCurrInstr + 1);
 					BattleStringLoader = TerrainEndString;
 					gBattlescriptCurrInstr = BattleScript_PrintCustomString;
+					
+					gActiveBattler = 0;
+					EmitDataTransfer(0, &TerrainType, 1, &TerrainType);
+					MarkBufferBankForExecution(gActiveBattler);
 				}
 				else
 					gBattlescriptCurrInstr++;

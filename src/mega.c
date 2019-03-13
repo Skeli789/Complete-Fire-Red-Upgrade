@@ -37,7 +37,8 @@ const struct Evolution* CanMegaEvolve(u8 bank, bool8 CheckUBInstead) {
 	#ifndef MEGA_EVOLUTION_FEATURE
 		return 0;
 	#else
-	const struct Evolution* evolutions = gEvolutionTable[gBattleMons[bank].species];
+	pokemon_t* mon = GetBankPartyData(bank);
+	const struct Evolution* evolutions = gEvolutionTable[mon->species];
 	int i, j;
 	
 	for (i = 0; i < EVOS_PER_MON; ++i) {
@@ -47,13 +48,13 @@ const struct Evolution* CanMegaEvolve(u8 bank, bool8 CheckUBInstead) {
 			
 			// Check for held item
 			if ((!CheckUBInstead && evolutions[i].unknown == MEGA_VARIANT_STANDARD) || (CheckUBInstead && evolutions[i].unknown == MEGA_VARIANT_ULTRA_BURST)) {
-				if (evolutions[i].param == gBattleMons[bank].item)
+				if (evolutions[i].param == mon->item)
 					return &evolutions[i];	
 			} 
 			else if (evolutions[i].unknown == MEGA_VARIANT_WISH) {
 			// Check learned moves
 				for (j = 0; j < 4; ++j) {
-					if (GetBankPartyData(bank)->moves[j] == evolutions[i].param) //Check party moves b/c Mimic can't activate Dragon Ascent
+					if (evolutions[i].param == mon->moves[j])
 						return &evolutions[i];
 				}
 			}
@@ -80,7 +81,6 @@ u8* DoMegaEvolution(u8 bank) {
 		//FD 00's FD 16 FE is reacting to FD 04's FD 01!
 		PREPARE_SPECIES_BUFFER(gBattleTextBuff1, species);
 		PREPARE_ITEM_BUFFER(gBattleTextBuff2, FindBankKeystone(bank));
-		StringCopy(gStringVar3, GetTrainerName(bank));
 		
 		if (evolutions->unknown == MEGA_VARIANT_WISH)
 			return BattleScript_MegaWish;
@@ -383,6 +383,10 @@ u16 LightUpMegaSymbol(u16 clra);
 void MegaTriggerCallback(struct Sprite* self);
 void MegaIndicatorCallback(struct Sprite* self);
 void LoadMegaGraphics(u8 state);
+void CreateMegaIndicatorAfterAnim(void);
+void TryLoadIndicatorForEachBank(void);
+void TryLoadMegaTriggers(void);
+void DestroyMegaTriggers(void);
 
 const struct CompressedSpriteSheet MegaIndicatorSpriteSheet = {Mega_IndicatorTiles, (8 * 8) / 2, GFX_TAG_MEGA_INDICATOR};
 const struct CompressedSpriteSheet AlphaIndicatorSpriteSheet = {Alpha_IndicatorTiles, (8 * 8) / 2, GFX_TAG_ALPHA_INDICATOR};
@@ -396,7 +400,7 @@ const struct SpritePalette MegaTriggerPalette = {Mega_TriggerPal, GFX_TAG_MEGA_T
 const struct SpritePalette UltraTriggerPalette = {Ultra_TriggerPal, GFX_TAG_ULTRA_TRIGGER};
 
 const struct OamData MegaIndicatorOAM = {0};
-u16 MegaTriggerOAM[] = {0, 0x8000, 0x800, 0};
+const u16 MegaTriggerOAM[4] = {0, 0x8000, 0x800, 0};
 
 const struct SpriteTemplate MegaIndicatorTemplate =
 {
@@ -442,7 +446,6 @@ const struct SpriteTemplate UltraIndicatorTemplate =
     .callback = MegaIndicatorCallback,
 };
 
-
 const struct SpriteTemplate MegaTriggerTemplate =
 {
     .tileTag = GFX_TAG_MEGA_TRIGGER,
@@ -466,19 +469,20 @@ const struct SpriteTemplate UltraTriggerTemplate =
 };
 
 /* Declare the colours the trigger button doesn't light up */
-u16 IgnoredColours[] = 
+const u16 IgnoredColours[] = 
 {
   RGB(7, 10, 8), 
   RGB(15, 18, 16), 
   RGB(10, 13, 12), 
   RGB(4, 7, 0),
+  RGB(4, 4, 0),
   RGB(0, 0, 0),
 };
 
 /* Easy match function */
 bool8 IsIgnoredTriggerColour(u16 colour) 
 {
-	for (u32 i = 0; i < sizeof(IgnoredColours) / sizeof(u16); ++i) 
+	for (u32 i = 0; i < ARRAY_COUNT(IgnoredColours); ++i) 
 	{
 		if (IgnoredColours[i] == colour) 
 			return TRUE;
@@ -525,29 +529,27 @@ u16 LightUpMegaSymbol(u16 clra)
 	return clr;
 }
 
+#define TRIGGER_BANK self->data[4]
 #define PALETTE_STATE self->data[1]
 #define TAG self->template->tileTag
 
 void MegaTriggerCallback(struct Sprite* self) 
-{	
-	if (SIDE(gStringBank) == B_SIDE_OPPONENT) //Don't waste time with opponent's side
-		return;
-	
+{		
 	if (TAG == GFX_TAG_MEGA_TRIGGER) 
 	{
-		if (!CanMegaEvolve(gStringBank, FALSE))
+		if (!CanMegaEvolve(TRIGGER_BANK, FALSE))
 		{
-			self->pos1.x = -32;
-			return;
+			self->invisible = TRUE;
 		}
+		else
+			self->invisible = FALSE;
 	}
 	else //Ultra Burst
 	{
-		if (!CanMegaEvolve(gStringBank, TRUE))
-		{
-			self->pos1.x = -32;
-			return;
-		}
+		if (!CanMegaEvolve(TRIGGER_BANK, TRUE))
+			self->invisible = TRUE;
+		else
+			self->invisible = FALSE;
 	}
 		
 	s16 xshift, yshift;
@@ -563,12 +565,12 @@ void MegaTriggerCallback(struct Sprite* self)
 	}
 
 	// Find the health box object that this trigger is supposed to be attached to
-	u8 id = gHealthboxIDs[gStringBank];
+	u8 id = gHealthboxIDs[TRIGGER_BANK];
 	struct Sprite* healthbox = &gSprites[id];
 	
 	u8 y = healthbox->oam.y;
 
-	u8 pingid = gBattleSpritesDataPtr->healthBoxesData[gStringBank].healthboxBounceSpriteId;
+	u8 pingid = gBattleSpritesDataPtr->healthBoxesData[TRIGGER_BANK].healthboxBounceSpriteId;
 	struct Sprite* ping = &gSprites[pingid];
  
 	if (y) 
@@ -585,24 +587,25 @@ void MegaTriggerCallback(struct Sprite* self)
 		self->pos1.x = -32;
 	}
 	
-	if (gBattleBankFunc[gStringBank] == 0x0802EA11) //HandleInputChooseMove
+	if (gBattleBankFunc[TRIGGER_BANK] == (0x0802EA10 | 1)) //HandleInputChooseMove
 	{
-		self->invisible = FALSE;
-	
 		if (self->data[3] > 0)
 			self->data[3] -= 2;
 		else
 			self->data[3] = 0;  
-	} 
-	else 
+	}
+	
+	//Mega Trigger should recede and destroy itself as long as the game isn't
+	//running one of the two mentioned functions.
+	else if (gBattleBankFunc[TRIGGER_BANK] != (0x08032C90 | 1)  //PlayerHandleChooseMove
+	      && gBattleBankFunc[TRIGGER_BANK] != (0x08032C4C | 1)) //HandleChooseMoveAfterDma3
 	{
 		if (self->data[3] < 16)
 			self->data[3] += 2;
 		else 
 		{
-			// Hide offscreen once invisible
-			self->invisible = TRUE;
 			self->pos1.x = -32;
+			DestroyMegaTriggers();
 			return;
 		}
 	}
@@ -610,14 +613,14 @@ void MegaTriggerCallback(struct Sprite* self)
   	const struct Evolution* evo;
 	if (TAG == GFX_TAG_MEGA_TRIGGER)
 	{
-		evo = CanMegaEvolve(gStringBank, FALSE);
+		evo = CanMegaEvolve(TRIGGER_BANK, FALSE);
 		if (evo->unknown != MEGA_VARIANT_ULTRA_BURST) 
 		{
-			if (gNewBS->MegaData->done[gStringBank])
+			if (gNewBS->MegaData->done[TRIGGER_BANK])
 				PALETTE_STATE = MegaTriggerGrayscale;
 			else
 			{
-				if (gNewBS->MegaData->chosen[gStringBank])
+				if (gNewBS->MegaData->chosen[TRIGGER_BANK])
 					PALETTE_STATE = MegaTriggerLightUp;
 				else
 					PALETTE_STATE = MegaTriggerNormalColour;
@@ -626,14 +629,14 @@ void MegaTriggerCallback(struct Sprite* self)
 	}
 	else //TAG == GFX_TAG_ULTRA_TRIGGER
 	{
-		evo = CanMegaEvolve(gStringBank, TRUE);
+		evo = CanMegaEvolve(TRIGGER_BANK, TRUE);
 		if (evo->unknown == MEGA_VARIANT_ULTRA_BURST) 
 		{
-			if (gNewBS->UltraData->done[gStringBank])
+			if (gNewBS->UltraData->done[TRIGGER_BANK])
 				PALETTE_STATE = MegaTriggerGrayscale;
 			else 
 			{
-				if (gNewBS->UltraData->chosen[gStringBank])
+				if (gNewBS->UltraData->chosen[TRIGGER_BANK])
 					PALETTE_STATE = MegaTriggerLightUp;
 				else
 					PALETTE_STATE = MegaTriggerNormalColour;
@@ -733,7 +736,7 @@ void MegaIndicatorCallback(struct Sprite* self) {
 		
 		// Convert the level to a string to get how long it is
 		u8 buf[10];
-		u8 stringlen = ConvertIntToDecimalStringN(buf, gBattleMons[OBJ_BANK].level, 0, 3) - buf;
+		u8 stringlen = ConvertIntToDecimalStringN(buf, GetBankPartyData(OBJ_BANK)->level, 0, 3) - buf;
 			
 		// The x position depends on the X origin of the healthbox as well as
 		// the string length
@@ -773,19 +776,15 @@ void LoadMegaGraphics(u8 state)
 {
 #ifdef MEGA_EVOLUTION_FEATURE
 	u8 objid;
-	
+
 	if (state == 2) 
-	{
+	{	
 		LoadSpritePalette(&MegaIndicatorPalette);
-		LoadSpritePalette(&MegaTriggerPalette);
-		LoadSpritePalette(&UltraTriggerPalette);
 		
 		LoadCompressedSpriteSheetUsingHeap(&MegaIndicatorSpriteSheet);
 		LoadCompressedSpriteSheetUsingHeap(&AlphaIndicatorSpriteSheet);
 		LoadCompressedSpriteSheetUsingHeap(&OmegaIndicatorSpriteSheet);
 		LoadCompressedSpriteSheetUsingHeap(&UltraIndicatorSpriteSheet);
-		LoadCompressedSpriteSheetUsingHeap(&MegaTriggerSpriteSheet);
-		LoadCompressedSpriteSheetUsingHeap(&UltraTriggerSpriteSheet);
 		
 		// Create a Mega Indicator for every bank
 		for (u8 bank = 0; bank < gBattlersCount; ++bank) 
@@ -817,12 +816,6 @@ void LoadMegaGraphics(u8 state)
 			else
 				gNewBS->megaIndicatorObjIds[bank] = 0;
 		}
-		
-		objid = CreateSprite(&MegaTriggerTemplate, 130, 90, 1);
-		gSprites[objid].invisible = TRUE;
-		
-		objid = CreateSprite(&UltraTriggerTemplate, 130, 90, 1);
-		gSprites[objid].invisible = TRUE;
 	}
 #endif
 }
@@ -831,8 +824,8 @@ void CreateMegaIndicatorAfterAnim(void)
 {
 	u8 objid;
 	
-	if (!gNewBS->megaIndicatorObjIds[gActiveBattler])
-	{
+	if (!gNewBS->megaIndicatorObjIds[gActiveBattler] && gActiveBattler < gBattlersCount)
+	{	
 		if (IsMega(gActiveBattler))
 		{
 			objid = CreateSprite(&MegaIndicatorTemplate, 0, 0, 1);
@@ -866,4 +859,45 @@ void TryLoadIndicatorForEachBank(void)
 {
 	for (gActiveBattler = 0; gActiveBattler < gBattlersCount; ++gActiveBattler)
 		CreateMegaIndicatorAfterAnim();
+}
+
+void TryLoadMegaTriggers(void)
+{
+	u8 objid;
+	
+	if (gBattleTypeFlags & BATTLE_TYPE_SAFARI)
+		return;
+	
+	LoadSpritePalette(&MegaTriggerPalette);
+	LoadSpritePalette(&UltraTriggerPalette);
+	LoadCompressedSpriteSheetUsingHeap(&MegaTriggerSpriteSheet);
+	LoadCompressedSpriteSheetUsingHeap(&UltraTriggerSpriteSheet);
+		
+	objid = CreateSprite(&MegaTriggerTemplate, 130, 90, 1);
+	gSprites[objid].data[3] = 16;
+	gSprites[objid].pos1.x = -32;
+	gSprites[objid].data[4] = gActiveBattler;
+		
+	objid = CreateSprite(&UltraTriggerTemplate, 130, 90, 1);
+	gSprites[objid].data[3] = 16;
+	gSprites[objid].pos1.x = -32;
+	gSprites[objid].data[4] = gActiveBattler;
+
+}
+
+void DestroyMegaTriggers(void)
+{
+	FreeSpritePaletteByTag(GFX_TAG_MEGA_TRIGGER);
+    FreeSpriteTilesByTag(GFX_TAG_MEGA_TRIGGER);
+	FreeSpritePaletteByTag(GFX_TAG_ULTRA_TRIGGER);
+    FreeSpriteTilesByTag(GFX_TAG_ULTRA_TRIGGER);
+	
+	for (int i = 0; i < MAX_SPRITES; ++i)
+	{
+		if (gSprites[i].template->tileTag == GFX_TAG_MEGA_TRIGGER
+		||  gSprites[i].template->tileTag == GFX_TAG_ULTRA_TRIGGER)
+		{
+			DestroySprite(&gSprites[i]);
+		}
+	}
 }

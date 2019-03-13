@@ -1479,10 +1479,14 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				
 			case ABILITY_ILLUSION:
 				if (MOVE_HAD_EFFECT
-				&& TOOK_DAMAGE(bank))
+				&& TOOK_DAMAGE(bank)
+				&& gStatuses3[bank] & STATUS3_ILLUSION)
 				{
 					gNewBS->IllusionBroken |= gBitTable[bank];
 					gStatuses3[bank] &= ~(STATUS3_ILLUSION);
+					gActiveBattler = bank;
+					EmitDataTransfer(0, &gStatuses3[gActiveBattler], 4, &gStatuses3[gActiveBattler]);
+					MarkBufferBankForExecution(gActiveBattler);
 					BattleScriptPushCursor();
 					gBattlescriptCurrInstr = BattleScript_IllusionBroken;
 					effect++;
@@ -1840,6 +1844,7 @@ u8 TryActivateTerrainAbility(u8 terrain, u8 anim, u8 bank)
 		
 		gBattleScripting->animArg1 = anim;
         gBattleScripting->bank = bank;
+		*((u32*) SeedHelper) = (u32) BattleStringLoader; //Backup String
 		BattleScriptPushCursorAndCallback(BattleScript_TerrainFromAbility);
 		++effect;
 	}
@@ -1874,4 +1879,24 @@ bool8 AllStatsButOneAreMinned(bank_t bank) {
 		}
 	}
 	return TRUE;
+}
+
+//Illusion Updates////////////////////////////////////////////////////////////////////////////////////
+extern u8 ItemIdToBallId(u16 ballItem);
+extern item_t BallIdToItemId(u8 ballId);
+
+pokemon_t* UpdateNickForIllusion(pokemon_t* mon)
+{
+	u8 bank = GetBankFromPartyData(mon);
+	
+	if (bank >= 6) //Safety Measure
+		return mon;
+	
+	return GetIllusionPartyData(bank);
+}
+
+u8 UpdatePokeBallForIllusion(u8 bank)
+{
+	pokemon_t* mon = GetIllusionPartyData(bank);
+	return ItemIdToBallId(BallIdToItemId(mon->pokeball));
 }

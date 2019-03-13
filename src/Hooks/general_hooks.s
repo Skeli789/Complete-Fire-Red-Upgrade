@@ -172,3 +172,10 @@ TrainerSlidingEndTurnHook:
 Random:
 	ldr r0, =0x8044EC8 | 1
 	bx r0
+	
+@0x80813B8 with r0
+LoadProperMusicForLinkBattlesHook:
+	bl LoadProperMusicForLinkBattles
+	ldr r1, =0x80813C6 | 1
+	bx r1
+	

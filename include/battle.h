@@ -814,7 +814,7 @@ struct NewBattleStruct
 	u8 expHelper[4];
 	u8 megaIndicatorObjIds[4];
 	
-	struct MegaData* MegaData;	 //0x2017684
+	struct MegaData* MegaData;	 //0x2017688
 	struct UltraData* UltraData;
 	struct ZMoveData* ZMoveData; //0x20176A8
 };
@@ -991,7 +991,7 @@ typedef struct fling FlingStruct;
 #define B_ANIM_TRANSFORM 0x23
 #define B_ANIM_WISHIWASHI_FISH 0x24
 #define B_ANIM_ZYGARDE_CELL_SWIRL 0x25
-#define  B_ANIM_STRONG_WINDS_CONTINUE 0x26
+#define B_ANIM_STRONG_WINDS_CONTINUE 0x26
 #define B_ANIM_ELECTRIC_SURGE 0x27
 #define B_ANIM_GRASSY_SURGE 0x28
 #define B_ANIM_MISTY_SURGE 0x29
@@ -1018,6 +1018,7 @@ typedef struct fling FlingStruct;
 #define B_ANIM_ZMOVE_ACTIVATE 0x3E
 #define B_ANIM_MEGA_EVOLUTION 0x3F
 #define B_ANIM_ULTRA_BURST 0x40
+#define B_ANIM_LOAD_DEAFUALT_BG 0x41
 
 // special animations table
 #define B_ANIM_LVL_UP                   0x0
@@ -1123,14 +1124,12 @@ void task00_0800F6FC(u8 taskId);
 
 enum BackSprites 
 {
-    BACK_PIC_BRENDAN,
-    BACK_PIC_MAY,
     BACK_PIC_RED,
     BACK_PIC_LEAF,
-    BACK_PIC_RS_BRENDAN,
-    BACK_PIC_RS_MAY,
-    BACK_PIC_WALLY,
-    BACK_PIC_STEVEN
+    BACK_PIC_BRENDAN,
+    BACK_PIC_MAY,
+    BACK_PIC_PRIMO,
+    BACK_PIC_OLD_MAN,
 };
 
 // rom_80A5C6C

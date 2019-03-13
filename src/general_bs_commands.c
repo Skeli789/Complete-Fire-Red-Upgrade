@@ -54,6 +54,7 @@ extern u8 BattleScript_FaintAttacker[];
 extern u8 BattleScript_FaintTarget[];
 extern u8 BattleScript_FaintScriptingBank[];
 extern u8 BattleScript_SoulHeart[];
+extern u8 BattleScript_IllusionBrokenFaint[];
 
 extern u8 MimikyuDisguisedTookDamageString[];
 extern u8 StringEnduredHitWithSturdy[];
@@ -233,10 +234,8 @@ void atk09_attackanimation(void)
     else
     {
         if (gNewBS->ParentalBondOn == 1
-		|| ((gBattleMoves[gCurrentMove].target & MOVE_TARGET_BOTH
-        ||   gBattleMoves[gCurrentMove].target & MOVE_TARGET_FOES_AND_ALLY
-        ||   gBattleMoves[gCurrentMove].target & MOVE_TARGET_DEPENDS)
-             && gBattleScripting->animTargetsHit))
+		|| (gBattleMoves[gCurrentMove].target & (MOVE_TARGET_BOTH | MOVE_TARGET_FOES_AND_ALLY | MOVE_TARGET_DEPENDS) && gBattleScripting->animTargetsHit)
+		|| (gCurrentMove == MOVE_DEFOG && gBattleScripting->animTargetsHit))
         {
             gBattlescriptCurrInstr++;
             return;
@@ -380,9 +379,9 @@ void atk0C_datahpupdate(void) {
 			gBattlescriptCurrInstr = BattleScript_MimikyuTransform;
 			return;
 		}
-		
-        else {
-            gHitMarker &= ~(HITMARKER_IGNORE_SUBSTITUTE);
+
+        else 
+		{
             if (gBattleMoveDamage < 0) { // HP goes up
                 gBattleMons[gActiveBattler].hp -= gBattleMoveDamage;
                 if (gBattleMons[gActiveBattler].hp > gBattleMons[gActiveBattler].maxHP)
@@ -451,6 +450,18 @@ void atk0C_datahpupdate(void) {
                         gSpecialStatuses[gActiveBattler].moveturnSpecialBank = gBankTarget;
                     }
                 }
+				
+				if (gStatuses3[gActiveBattler] & STATUS3_ILLUSION
+				&& !(gHitMarker & HITMARKER_IGNORE_SUBSTITUTE)
+				&& gBattleMons[gActiveBattler].hp == 0)
+				{
+					gBattleScripting->bank = gActiveBattler;
+					gStatuses3[gActiveBattler] &= ~(STATUS3_ILLUSION);
+					BattleScriptPush(gBattlescriptCurrInstr + 2);
+					gBattlescriptCurrInstr = BattleScript_IllusionBrokenFaint - 2;
+				}
+			
+				gHitMarker &= ~(HITMARKER_IGNORE_SUBSTITUTE);
             }
             gHitMarker &= ~(HITMARKER_NON_ATTACK_DMG);
             EmitSetMonData(0, REQUEST_HP_BATTLE, 0, 2, &gBattleMons[gActiveBattler].hp);
@@ -981,7 +992,8 @@ void atk45_playanimation(void)
 	|| 	gBattlescriptCurrInstr[2] == B_ANIM_TRANSFORM
 	|| 	gBattlescriptCurrInstr[2] == B_ANIM_ZMOVE_ACTIVATE
 	|| 	gBattlescriptCurrInstr[2] == B_ANIM_MEGA_EVOLUTION
-	|| 	gBattlescriptCurrInstr[2] == B_ANIM_ULTRA_BURST)
+	|| 	gBattlescriptCurrInstr[2] == B_ANIM_ULTRA_BURST
+	||  gBattlescriptCurrInstr[2] == B_ANIM_LOAD_DEAFUALT_BG)
     {
         EmitBattleAnimation(0, gBattlescriptCurrInstr[2], *argumentPtr);
         MarkBufferBankForExecution(gActiveBattler);
@@ -1038,7 +1050,8 @@ void atk46_playanimation2(void) // animation Id is stored in the first pointer
 	|| 	*animationIdPtr == B_ANIM_TRANSFORM
 	|| 	*animationIdPtr == B_ANIM_ZMOVE_ACTIVATE
 	|| 	*animationIdPtr == B_ANIM_MEGA_EVOLUTION
-	|| 	*animationIdPtr == B_ANIM_ULTRA_BURST)
+	|| 	*animationIdPtr == B_ANIM_ULTRA_BURST
+	||  *animationIdPtr == B_ANIM_LOAD_DEAFUALT_BG)
     {
         EmitBattleAnimation(0, *animationIdPtr, *argumentPtr);
         MarkBufferBankForExecution(gActiveBattler);

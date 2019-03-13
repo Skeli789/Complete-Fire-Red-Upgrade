@@ -119,9 +119,13 @@ u8 BattleSetup_GetTerrainId(void)
 u8 LoadBattleBG_TerrainID(void) {
 	u8 terrain = gBattleTerrain;
 
-	if (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_TRAINER_TOWER | BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_LINK))
+	if (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_TRAINER_TOWER | BATTLE_TYPE_EREADER_TRAINER))
 	{
-		terrain =  10;
+		#ifdef UNBOUND
+			terrain = BATTLE_TERRAIN_INSIDE;
+		#else
+			terrain =  10;
+		#endif
 	}
 	else if (gBattleTypeFlags & BATTLE_TYPE_POKE_DUDE)
 	{

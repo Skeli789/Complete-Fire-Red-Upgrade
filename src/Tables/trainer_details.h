@@ -1,5 +1,5 @@
 #pragma once
-
+/*
 enum trainer_classes {
 	CLASS_BLANK_0, // 0
 	
@@ -22,7 +22,7 @@ enum trainer_classes {
     CLASS_BLANK_6, // 0xC
 	
     CLASS_RICHBOY, // 0xD
-    CLASS_TERRORGRANBULL, // 0xE
+    CLASS_TERROR_GRANBULL, // 0xE
     CLASS_CAMPINGDUO, // 0xF
     CLASS_SKIIER, // 0x10
     CLASS_GUITARIST_R, // 0x11
@@ -30,7 +30,7 @@ enum trainer_classes {
     CLASS_SHOCKER, // 0x13
     CLASS_BUG_MANIAC, // 0x14
     CLASS_OFFICER, // 0x15
-    CLASS_BLACKFERROTHORN, // 0x16
+    CLASS_BLACK_FERROTHORN, // 0x16
 	
     CLASS_BLANK_7, // 0x17
 	
@@ -76,7 +76,6 @@ enum trainer_classes {
     CLASS_EXPERTDUO, // 0x35
 	
     CLASS_BLANK_22, // 0x36
-	
     CLASS_AQUAADMIN, // 0x37
     CLASS_MAGMAADMIN, // 0x38
     CLASS_YOUNGSTER, // 0x39
@@ -129,8 +128,9 @@ enum trainer_classes {
 	CLASS_RUINMANIAC, // 0x68
 	CLASS_LADY, // 0x69
 	CLASS_PAINTER, // 0x6A
-};
 
+};
+	*/
 enum trainer_sprites {
 	TRAINER_SPRITE_ARCHIE, // 0
     TRAINER_SPRITE_AQUA_GRUNT_M, // 1

@@ -13785,6 +13785,7 @@ ANIM_GRAVITY:
 	pokespritefromBG bank_target
 	endanimation
 
+.align 2
 GRAVITY_BLACKHOLE: objtemplate ANIM_TAG_SHADOW_BALL ANIM_TAG_SHADOW_BALL 0x83ACA38 0x8231CF0 0x0 0x83E7604 0x80B0E81
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -15998,16 +15999,10 @@ CC_ROCK_ERUPTION: objtemplate ANIM_TAG_ROCKS ANIM_TAG_ROCKS 0x83AC9D8 0x8231CF0 
 @ credit to ghoulslash
 ANIM_SAVAGE_SPIN_OUT:
 	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT @charge
-	loadparticle ANIM_TAG_ELECTRIC_ORBS @charge
+	loadparticle ANIM_TAG_RAZOR_LEAF @green color
 	loadparticle ANIM_TAG_STRING @string shot
 	loadparticle ANIM_TAG_SPIDER_WEB @spider web
-	loadparticle ANIM_TAG_IMPACT @hit
-	loadparticle ANIM_TAG_COCOON
-	loadparticle ANIM_TAG_AIR_WAVE_2 @white/gray
 	loadparticle ANIM_TAG_MUD_SAND @rocks
-	loadparticle ANIM_TAG_CUT @cut
-	loadparticle ANIM_TAG_UNUSED_EXPLOSION_2 @explosion
-	loadparticle ANIM_TAG_RAZOR_LEAF @green color
 	makebankinvisible target_partner
 	pokespritetoBG bank_attacker 
 	setblends 0x80c 
@@ -16024,7 +16019,6 @@ ANIM_SAVAGE_SPIN_OUT:
 	pokespritefromBG bank_attacker  
 	waitanimation
 	unloadparticle ANIM_TAG_CIRCLE_OF_LIGHT
-	unloadparticle ANIM_TAG_ELECTRIC_ORBS
 	call AEROBLAST_STRINGSHOT
 	launchtask AnimTask_move_bank 0x5 0x5 0x1 0x5 0x0 0x32 0x1 
 	call AEROBLAST_STRINGSHOT 
@@ -16036,6 +16030,9 @@ ANIM_SAVAGE_SPIN_OUT:
 	resetblends 
 	waitanimation
 	unloadparticle ANIM_TAG_STRING
+	unloadparticle ANIM_TAG_CIRCLE_OF_LIGHT
+	loadparticle ANIM_TAG_COCOON
+	loadparticle ANIM_TAG_IMPACT @hit
 	pause 0x1
 	makebankinvisible bank_target
 	pause 0x0
@@ -16076,14 +16073,18 @@ FINISH_CACOON:
 	pause 0xa 
 	call SPINOUT_SMASH_GROUND1 	@SeismicToss1
 	pause 0xc
-	unloadparticle ANIM_TAG_MUD_SAND
 	launchtask 0x80BC091 0x2 0x0		@ user fly offscreen
 	playsound2 0x80 0xc0 
 	launchtask 0x80E392D 0x2 0x0		@ user fly on screen on enemy side
 	loaddefaultBG
 	setarg 0x7 0xffff
 	pause 0x18
-	pause 0x7	
+	pause 0x7
+	unloadparticle ANIM_TAG_MUD_SAND
+	unloadparticle ANIM_TAG_IMPACT @hit
+	loadparticle ANIM_TAG_CUT @cut
+	loadparticle ANIM_TAG_UNUSED_EXPLOSION_2 @explosion
+	loadparticle ANIM_TAG_AIR_WAVE_2 @white/gray	
 	launchtask 0x8098CD1 0x82 0x5 0x1 0x4 0x0 0xc 0x1
 	launchtask 0x8098CD1 0x82 0x5 0x1 0x4 0x0 0xc 0x1 
 	launchtemplate SPINOUT_GREEN_CUT 0x82 0x3 0x28 0xffe0 0x0  

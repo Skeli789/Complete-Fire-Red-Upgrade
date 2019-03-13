@@ -1,13 +1,6 @@
 #include "defines.h"
 #include "end_turn.h"
 #include "helper_functions.h"
-#include "Mega.h"
-
-extern const struct CompressedSpriteSheet MegaTriggerSpriteSheet;
-extern const struct CompressedSpriteSheet UltraTriggerSpriteSheet;
-extern const struct SpritePalette MegaTriggerPalette;
-extern const struct SpriteTemplate MegaTriggerTemplate;
-extern const struct SpriteTemplate UltraTriggerTemplate;
 
 extern u8 BattleScript_MysteriousAirCurrentContinues[];
 extern u8 BattleScript_FogEnded[];
@@ -1128,20 +1121,6 @@ u8 TurnBasedEffects(void) {
 				gNewBS->EndTurnDone = TRUE;
 				gAbsentBattlerFlags &= ~(gNewBS->AbsentBattlerHelper);
 				gNewBS->MegaData->state = 0;
-				
-				for (int i = 0; i < 4; ++i)
-				{
-					gNewBS->DamageTaken[i] = 0;
-					gNewBS->ResultFlags[i] = 0;
-				}
-				
-				u8 objid; //reload mega graphics
-				
-				objid = CreateSprite(&MegaTriggerTemplate, 130, 90, 1);
-				gSprites[objid].invisible = TRUE;
-				
-				objid = CreateSprite(&UltraTriggerTemplate, 130, 90, 1);
-				gSprites[objid].invisible = TRUE;
 		}
 		gBattleStruct->turnEffectsBank++;
 		

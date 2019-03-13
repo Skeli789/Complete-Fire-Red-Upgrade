@@ -46,6 +46,7 @@
 .global BattleScript_MummyActivates
 .global BattleScript_GooeyActivates
 .global BattleScript_IllusionBroken
+.global BattleScript_IllusionBrokenFaint
 .global BattleScript_AngerPointActivates
 .global BattleScript_SynchronizeActivates_StatusesAttacker
 .global BattleScript_SynchronizeActivates_StatusesTarget
@@ -148,20 +149,23 @@ BattleScript_TerrainFromAbility:
 	setword BATTLE_STRING_LOADER AbilityActivatedString
 	printstring 0x184
 	waitmessage DELAY_HALFSECOND
+	callasm TransferTerrainData
 	playanimation2 BANK_ATTACKER ANIM_ARG_1 0x0
+	copyarray BATTLE_STRING_LOADER SEED_HELPER 0x4
 	printstring 0x184
 	waitmessage DELAY_1SECOND
-	call SEED_HELPER
+	call TerrainSeedCheck
 	end3
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 
 BattleScript_ImposterActivates:
 	pause DELAY_HALFSECOND
 	playanimation BANK_ATTACKER ANIM_TRANSFORM 0x0
 	printfromtable 0x83FE5B4
 	waitmessage DELAY_1SECOND
-	return
+	end3
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -564,11 +568,23 @@ GooeyReturn:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_IllusionBroken:
+	callasm TransferIllusionBroken
 	reloadhealthbar BANK_TARGET
 	playanimation BANK_TARGET ANIM_TRANSFORM 0x0
 	setword BATTLE_STRING_LOADER IllusionWoreOffString
 	printstring 0x184
-	waitmessage DELAY_HALFSECOND
+	waitmessage DELAY_1SECOND
+	return
+	
+BattleScript_IllusionBrokenFaint:
+	callasm TransferIllusionBroken
+	reloadhealthbar BANK_TARGET
+	callasm CycleScriptingBankHealthBetween0And1
+	playanimation BANK_TARGET ANIM_TRANSFORM 0x0
+	callasm CycleScriptingBankHealthBetween0And1
+	setword BATTLE_STRING_LOADER IllusionWoreOffString
+	printstring 0x184
+	waitmessage DELAY_1SECOND
 	return
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

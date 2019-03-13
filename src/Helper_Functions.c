@@ -69,9 +69,29 @@ bool8 CheckAbilityTargetField(ability_t ability) {
 
 pokemon_t* GetBankPartyData(bank_t bank) {
 	u8 index = gBattlerPartyIndexes[bank];
-	if (bank & 1)
+	if (SIDE(bank) == B_SIDE_OPPONENT)
 		return &gEnemyParty[index];
 	return &gPlayerParty[index];
+}
+
+bank_t GetBankFromPartyData(pokemon_t* mon) {
+
+	for (int i = 0; i < gBattlersCount; ++i)
+	{
+		if (SIDE(i) == B_SIDE_OPPONENT)
+		{
+			if ((u32) (&gEnemyParty[gBattlerPartyIndexes[i]]) == (u32) mon)
+				return i;
+		}
+	
+		if (SIDE(i) == B_SIDE_PLAYER)
+		{
+			if ((u32) (&gPlayerParty[gBattlerPartyIndexes[i]]) == (u32) mon)
+				return i;
+		}
+	}
+	
+	return PARTY_SIZE;
 }
 
 enum {IN_AIR, GROUNDED};
@@ -81,11 +101,13 @@ bool8 CheckGrounding(bank_t bank) {
 			return GROUNDED;
 			
 	else if ((gStatuses3[bank] & (STATUS3_LEVITATING | STATUS3_TELEKINESIS | STATUS3_IN_AIR)) 
+		   || ITEM_EFFECT(bank) == ITEM_EFFECT_AIR_BALLOON
 		   || gBattleMons[bank].ability == ABILITY_LEVITATE 
 		   || gBattleMons[bank].type3 == TYPE_FLYING
 		   || gBattleMons[bank].type1 == TYPE_FLYING
 		   || gBattleMons[bank].type2 == TYPE_FLYING)
 				return IN_AIR;
+	
 	return GROUNDED;
 }
 
@@ -580,12 +602,12 @@ pokemon_t* GetIllusionPartyData(u8 bank) {
 
 	pokemon_t* party = LoadPartyRange(bank, &firstMonId, &lastMonId);
 	
-	for (i = lastMonId; i > firstMonId; --i) { //Loop through party in reverse order
+	for (i = lastMonId - 1; i >= firstMonId; --i) { //Loop through party in reverse order
 		if (i == gBattlerPartyIndexes[bank]) //Finsihed checking mons after
 			return GetBankPartyData(bank);
 	
-		if (GetMonData(&party[i], MON_DATA_SPECIES, 0) == PKMN_NONE
-		||  GetMonData(&party[i], MON_DATA_HP, 0) == 0)
+		
+		if (party[i].species == PKMN_NONE ||  party[i].hp == 0)
 			continue;
 		
 		return &party[i];
