@@ -11,6 +11,7 @@ extern bank_t GetFoeBank(bank_t);
 extern item_effect_t GetBankItemEffect(bank_t);
 extern bool8 CheckAbilityTargetField(ability_t);
 extern pokemon_t* GetBankPartyData(bank_t);
+extern bank_t GetBankFromPartyData(pokemon_t* mon);
 extern bool8 CheckGrounding(bank_t);
 extern bool8 CheckGroundingFromPartyData(pokemon_t* party);
 extern bool8 PartyAlive (bank_t);
@@ -73,6 +74,7 @@ extern bool8 CanPartyMonBeFrozen(pokemon_t* mon);
 
 extern u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg);
 extern u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck);
+extern void EmitDataTransfer(u8 bufferId, void* dst, u16 size, void* data);
 
 enum ItemBattleEffectCases {
 ItemEffects_SwitchIn,

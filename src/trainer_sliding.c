@@ -46,7 +46,13 @@ void atk53_trainerslidein(void) {
 void HandleIntroSlide(u8 terrain)
 {
     u8 taskId;
-
+	
+	for (int bank = 0; bank < gBattlersCount; ++bank)
+	{
+		if (GetPartyAbility(GetBankPartyData(bank)) == ABILITY_ILLUSION)
+			gStatuses3[bank] |= STATUS3_ILLUSION;
+	}
+	
     if (gBattleTypeFlags & BATTLE_TYPE_LINK)
     {
         taskId = CreateTask(BattleIntroSlideLink, 0);
