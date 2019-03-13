@@ -1,5 +1,6 @@
 #include "defines.h"
 #include "mega.h"
+#include "frontier.h"
 
 extern move_t SheerForceTable[];
 extern move_t SoundMoveTable[];
@@ -881,6 +882,23 @@ bool8 CanBePutToSleep(u8 bank) {
 	
 	if (TerrainType == ELECTRIC_TERRAIN && CheckGrounding(bank))
 		return FALSE;
+		
+	if (FlagGet(BATTLE_TOWER_FLAG)) //Sleep Clause
+	{
+		switch (VarGet(BATTLE_TOWER_TIER)) {
+			case BATTLE_TOWER_OU:
+			case BATTLE_TOWER_UBER:
+			case BATTLE_TOWER_LITTLE_CUP: ;
+				u8 firstId, lastId;
+				pokemon_t* party = LoadPartyRange(bank, &firstId, &lastId);
+				
+				for (int i = firstId; i < lastId; ++i)
+				{
+					if (party[i].condition & STATUS1_SLEEP)
+						return FALSE; 
+				}
+		}
+	}
 
 	return TRUE;
 }
