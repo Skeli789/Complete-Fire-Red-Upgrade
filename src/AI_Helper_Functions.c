@@ -32,6 +32,7 @@ bool8 TeamFullyHealedMinusBank(u8 bank);
 bool8 HasProtectionMoveInMoveset(u8 bank, bool8 AllKinds);
 move_t ShouldAIUseZMove(u8 bank, u8 moveIndex, u16 move);
 
+
 bool8 CanKillAFoe(u8 bank) {
 	u8 foe = FOE(bank);
 	if (!(gAbsentBattlerFlags & gBitTable[foe]) && CanKnockOut(bank, foe))
@@ -427,3 +428,14 @@ u16 ShouldAIUseZMove(u8 bank, u8 moveIndex, u16 move) {
 	}
 	return FALSE;
 }
+
+// AI function to successively decrease viabilility for decreased stats
+u8 aiAllStatChecks(u8 viabilility, u8 bank, u8 cmpVal) {
+	u8 statId;
+	for ( statId = 0; statId <= 6; statId++ ) {
+		if (gBattleMons[bank].statStages[statId] < cmpVal)
+			viability -= 6;
+	}
+	return viabilility;
+}
+
