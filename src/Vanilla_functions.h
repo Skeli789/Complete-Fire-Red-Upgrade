@@ -171,6 +171,8 @@ u8 __attribute__((long_call)) GetBattlerAtPosition(u8);
 bool8 __attribute__((long_call)) IsDoubleBattle(void);
 void __attribute__((long_call)) InitSpriteDataForLinearTranslation(struct Sprite *sprite);
 u8 __attribute__((long_call)) GetBattlerSpriteSubpriority(u8 bank);
+void __attribute__((long_call)) BattleSetup_StartRoamerBattle(void);
+void __attribute__((long_call)) BattleSetup_StartWildBattle(void);
 void __attribute__((long_call)) StartTheBattle(void);
 u8* __attribute__((long_call)) GetTrainerALoseText(void);
 u8* __attribute__((long_call)) GetTrainerAWinText(void);
@@ -222,6 +224,8 @@ void __attribute__((long_call)) ZeroPlayerPartyMons(void);
 void __attribute__((long_call)) ZeroEnemyPartyMons(void);
 void __attribute__((long_call)) CreateMon(struct Pokemon *mon, u16 species, u8 level, u8 fixedIV, u8 hasFixedPersonality, u32 fixedPersonality, u8 otIdType, u32 fixedOtId);
 void __attribute__((long_call)) CreateBoxMon(struct Pokemon *mon, u16 species, u8 level, u8 fixedIV, u8 hasFixedPersonality, u32 fixedPersonality, u8 otIdType, u32 fixedOtId);
+void __attribute__((long_call)) CreateMonWithNature(struct Pokemon *mon, u16 species, u8 level, u8 fixedIV, u8 nature);
+void __attribute__((long_call)) CreateMonWithGenderNatureLetter(struct Pokemon *mon, u16 species, u8 level, u8 fixedIV, u8 gender, u8 nature, u8 unownLetter);
 void __attribute__((long_call)) CalculateMonStats(pokemon_t*);
 u8 __attribute__((long_call)) GetMonGender(pokemon_t* mon);
 u8 __attribute__((long_call)) GetBoxMonGender(struct BoxPokemon* boxMon);
@@ -244,6 +248,20 @@ u16 __attribute__((long_call)) GetPokedexHeightWeight(u16 dexNum, u8 data);
 void __attribute__((long_call)) ReducePartyToThree(void);
 u8 __attribute__((long_call)) pokemon_order_func(u8 a);
 
+//Wild Encounter Functions
+u8 __attribute__((long_call)) ChooseWildMonIndex_Land(void);
+u8 __attribute__((long_call)) ChooseWildMonIndex_WaterRock(void);
+u8 __attribute__((long_call)) ChooseWildMonIndex_Fishing(u8 rod);
+bool8 __attribute__((long_call)) CanEncounterUnownInTanobyRuins(void);
+u32 __attribute__((long_call)) GenerateUnownPersonality(u8 letter);
+bool8 __attribute__((long_call)) DoWildEncounterRateDiceRoll(u16 encounterRate);
+bool8 __attribute__((long_call)) DoGlobalWildEncounterDiceRoll(void);
+bool8 __attribute__((long_call)) IsWildLevelAllowedByRepel(u8 level);
+void __attribute__((long_call)) ApplyFluteEncounterRateMod(u32 *encRate);
+void __attribute__((long_call)) ApplyCleanseTagEncounterRateMod(u32 *encRate);
+void __attribute__((long_call)) IncrementEncounterProbabilityBonus(u8 encounterRate);
+bool8 __attribute__((long_call)) TryStartRoamerEncounter(void);
+
 //Item Functions
 bool8 __attribute__((long_call)) IsMail(u16 item_id);
 void __attribute__((long_call)) CopyItemName(u16 itemId, u8* dst);
@@ -264,6 +282,8 @@ void __attribute__((long_call)) AddMoney(u32* moneySaveblock, u32 to_give);
 u8 __attribute__((long_call)) GetTrainerEncounterMusicId(u16 trainerOpponentId);
 u8 __attribute__((long_call)) Overworld_GetMapTypeOfSaveblockLocation(void);
 u8 __attribute__((long_call)) GetCurrentMapBattleScene(void);
+u32 __attribute__((long_call)) MetatileBehavior_GetLowerBytes(u32 a, u8 b);
+u16 __attribute__((long_call)) MapGridGetMetatileField(u16 x, u16 y, u8 a);
 u32 __attribute__((long_call)) MapGridGetMetatileBehaviorAt(int, int);
 bool8 __attribute__((long_call)) MetatileBehavior_IsSandOrDeepSand(u8 metatileBehavior);
 bool8 __attribute__((long_call)) MetatileBehavior_IsSurfableWaterOrUnderwater(u8 metatileBehavior);

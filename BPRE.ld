@@ -10,6 +10,7 @@ sTurnActionsFuncsTable = 0x8250038;
 sEndTurnFuncsTable = 0x8250070;
 sTargetIdentities = 0x8250980;
 sBattleIntroSlideFuncs = 0x83E7CD4;
+gUnownDistributionByChamber = 0x83CA71C;
 
 gMapHeader = 0x2036DFC;
 gMPlay_BGM = 0x3007300;
@@ -499,6 +500,8 @@ GetBattlerAtPosition = 0x80751E8 | 1;
 IsDoubleBattle = 0x8075290 | 1;
 InitSpriteDataForLinearTranslation = 0x80754B8 | 1;
 GetBattlerSpriteSubpriority = 0x807685C | 1;
+BattleSetup_StartRoamerBattle = 0x807F78C | 1;
+BattleSetup_StartWildBattle = 0x807F704 | 1;
 StartTheBattle = 0x807F868 | 1;
 GetTrainerALoseText = 0x80806EC | 1;
 GetTrainerAWinText = 0x8080710 | 1;
@@ -550,6 +553,8 @@ ZeroPlayerPartyMons = 0x0803DA14 |1;
 ZeroEnemyPartyMons = 0x803DA34 | 1;
 CreateMon = 0x803DA54 | 1;
 CreateBoxMon = 0x803DAC4 | 1;
+CreateMonWithNature = 0x803DD98 | 1;
+CreateMonWithGenderNatureLetter = 0x803DE00  | 1;
 CalculateMonStats = 0x0803E47C | 1;
 GetMonGender = 0x803F720 | 1;
 GetBoxMonGender = 0x803F730 | 1;
@@ -572,6 +577,20 @@ GetPokedexHeightWeight = 0x8088E38 | 1;
 ReducePartyToThree = 0x80A03D8 | 1;
 pokemon_order_func = 0x8128030 | 1;
 
+/*Wild Encounter Functions*/
+ChooseWildMonIndex_Land = 0x808274C | 1;
+ChooseWildMonIndex_WaterRock = 0x8082808 | 1;
+ChooseWildMonIndex_Fishing = 0x808285C | 1;
+CanEncounterUnownInTanobyRuins = 0x80829C0 | 1;
+GenerateUnownPersonality = 0x8082A88  | 1;
+DoWildEncounterRateDiceRoll = 0x8082BA0 | 1;
+DoGlobalWildEncounterDiceRoll = 0x8082C98 | 1;
+IsWildLevelAllowedByRepel = 0x808310C | 1;
+ApplyFluteEncounterRateMod = 0x8083174 | 1;
+ApplyCleanseTagEncounterRateMod = 0x80831D8 | 1;
+IncrementEncounterProbabilityBonus = 0x8083410 | 1;
+TryStartRoamerEncounter = 0x8141FAC | 1;
+
 /*Item Functions*/
 IsMail = 0x80980F8 | 1;
 CopyItemName = 0x8099E90 | 1;
@@ -589,6 +608,8 @@ AddMoney = 0x809FDA0 | 1;
 GetTrainerEncounterMusicId = 0x804367C | 1;
 Overworld_GetMapTypeOfSaveblockLocation = 0x8056188 | 1;
 GetCurrentMapBattleScene = 0x8056288 | 1;
+MetatileBehavior_GetLowerBytes = 0x8058F1C | 1;
+MapGridGetMetatileField = 0x8058F48 | 1;
 MapGridGetMetatileBehaviorAt = 0x8058F78 | 1;
 MetatileBehavior_IsSandOrDeepSand = 0x8059B74 | 1;
 MetatileBehavior_IsSurfableWaterOrUnderwater = 0x8059CA4 | 1;

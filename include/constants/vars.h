@@ -68,7 +68,9 @@
 #define VAR_0x403B                 0x403B
 #define VAR_0x403C                 0x403C
 #define VAR_0x403D                 0x403D
-#define VAR_ALTERING_CAVE_WILD_SET 0x403E
+
+#define VAR_ALTERING_CAVE_WILD_SET 0x4024 //This is correct
+
 #define VAR_0x403F                 0x403F
 #define VAR_DAYS                   0x4040
 #define VAR_0x4041                 0x4041

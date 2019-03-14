@@ -55,3 +55,6 @@ extern struct TrainerPicCoords gTrainerBackPicCoords[];
 #define gStatusConditionString_Love ((u8*) 0x82500C4)
 
 #define gDummySpriteAffineAnimTable (const union AffineAnimCmd* const*) 0x8231CFC
+
+#define gWildMonHeaders ((struct WildPokemonHeader*) *((u32*) 0x8082990))
+extern u8 gUnownDistributionByChamber[7][12]; //[NUM_ROOMS][NUM_WILD_INDEXES]

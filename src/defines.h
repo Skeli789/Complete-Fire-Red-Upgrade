@@ -20,6 +20,8 @@
 #include "../include/constants/trainers.h"
 #include "../include/trainer_classes.h"
 #include "../include/constants/metatile_behaviors.h"
+#include "../include/constants/maps.h"
+#include "../include/constants/vars.h"
 #include "../include/pokemon.h"
 #include "../include/battle_controllers.h"
 #include "../include/item.h"
@@ -37,6 +39,7 @@
 #include "../include/gba/m4a_internal.h"
 #include "../include/window.h"
 #include "../include/field_weather.h"
+#include "../include/wild_encounter.h"
 
 #include "pokemon_data_request.h"
 #include "pokemon.h"

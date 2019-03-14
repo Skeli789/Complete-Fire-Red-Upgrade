@@ -11,6 +11,8 @@
 #define OW_SPRITE_SWITCH_VAR 0x4054
 #define BACKSPRITE_SWITCH_VAR 0x4062 //This var can be set to a number to change the Player's backsprite
 #define BATTLE_BG_VAR 0x4039 //Set this var to a custom background id
+#define SWARM_SPECIES_VAR 0x5030
+#define SWARM_MAP_NAME_VAR 0x5031
 
 #define INVERSE_FLAG 0x23D
 #define SKY_BATTLE_FLAG 0x9AF
@@ -26,6 +28,8 @@
 #define WILD_CUSTOM_MOVES_FLAG 0x26B
 #define SMART_WILD_FLAG 0x9F6 //Set this flag is you don't want wild Pokemon to act randomly (useful for one time smarter wild battles). This is cleared at the end of the battle.
 #define SCALE_TRAINER_LEVELS_FLAG 0x0 //If this flag is set, all Trainer Pokemon levels will be set to the highest in your party
+#define HIDDEN_ABILITY_FLAG 0x943 //If this flag is set, generated wild Pokemon will have their hidden abilities
+#define DOUBLE_WILD_BATTLE_FLAG 0x9F9 //If this flag is set, a wild battles will be against two Pokemon
 
 #define SECOND_OPPONENT_VAR 0x50BE //Set this to the var used to store the Trainer Id of the second opponent in Multi Battles (can be any free var)
 #define PARTNER_VAR 0x50BF //Set this to the var used to store the Trainer Id of your partner in Multi Battles (can be any free var)
@@ -62,6 +66,7 @@ enum
 
 #define DUSK_BALL_MULTIPLIER 30 //Change this line to 35 to make the catch rate for the Dusk Ball 3.5x like before Gen 7
 #define STANDARD_IV 10 //Change this to be the number of IVs Pokemon owned by random trainers should have (all stats will have this number)
+#define SWARM_CHANCE 50
 
 #ifndef UNBOUND 
 //Change These
@@ -104,6 +109,9 @@ enum
 #define BRIDGE_FIX //If this remains uncommented, the water battle background will only be loaded if the player's surfing sprite is shown
 #define MEGA_EVOLUTION_FEATURE //Comment this line to remove Mega Evolutions
 #define TUTORIAL_BATTLES //Comment this line to remove Oak's Tutorial
+#define TANOBY_RUINS_ENABLED
+#define ALTERING_CAVE_ENABLED
+#define SWEET_SCENT_ONLY_IN_CLEAR_WEATHER
 
 /* Misc Effect Options */
 //#define OLD_BURN_DAMAGE //Uncomment this line if you want burn damage to do 1/8 of max health instead of 1/16

@@ -153,3 +153,13 @@ UpdateNickForIllusionHook 80496C8 2
 UpdatePokeBallForIllusionHook 804A9E0 1
 UpdateCryForIllusionHook 804B2DC 1
 UpdateAltitudeForIllusionHook 8074598 2
+
+##Wild Encounter Hooks
+StandardWildEncounter 8082CBC 2
+RockSmashWildEncounter 8082E54 0
+SweetScentWildEncounter 8082EC0 0
+GenerateFishingWildMon 8082B64 2
+
+##Other Hooks
+BattlePokemonScriptCommand_GiveHiddenAbilityHook 80A02EA 0
+DaycareInheritHiddenAbility 8046116 0
