@@ -187,3 +187,37 @@ BattlePokemonScriptCommand_GiveHiddenAbilityHook:
 	mov r8, r3
 	pop {r4,r7,pc}
 	
+@0x806E454 with r1
+ExpandedVarsHook:
+	push {r4-r6, lr}
+	lsl r0, r0, #0x10
+	lsr r4, r0, #0x10
+	mov r6, r4
+	mov r0, r4
+	bl GetExpandedVarPointer
+	cmp r0, #0x1
+	beq VarReturn0
+	cmp r0, #0x0
+	bne ExpandedVarsPop
+	ldr r0, =0x806E45C | 1
+	bx r0
+	
+ExpandedVarsPop:
+	pop {r4-r6,pc}
+	
+VarReturn0:
+	ldr r0, =0x806E462 | 1
+	bx r0
+	
+@0x806E5C0 with r1
+ExpandedFlagsHook:
+	push {r4-r6, lr}
+	lsl r5, r0, #0x10
+	lsr r4, r5, #0x10
+	mov r6, r4
+	mov r0, r4
+	bl GetExpandedFlagPointer
+	cmp r0, #0x0
+	bne ExpandedVarsPop
+	ldr r0, =0x806E5C8 | 1
+	bx r0

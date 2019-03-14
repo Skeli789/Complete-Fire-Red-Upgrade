@@ -8,6 +8,7 @@
 typedef void (*MainCallback)(void);
 typedef void (*IntrCallback)(void);
 typedef void (*IntrFunc)(void);
+typedef void (*EraseFlash)(u16);
 
 struct Main
 {

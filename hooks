@@ -160,6 +160,13 @@ RockSmashWildEncounter 8082E54 0
 SweetScentWildEncounter 8082EC0 0
 GenerateFishingWildMon 8082B64 2
 
+##Save Expansion Hooks
+HandleWriteSector 80D9870 2
+HandleLoadSector 80D9E54 2
+HandleSavingData 80DA248 1
+ExpandedVarsHook 806E454 1
+ExpandedFlagsHook 806E5C0 1
+
 ##Other Hooks
 BattlePokemonScriptCommand_GiveHiddenAbilityHook 80A02EA 0
 DaycareInheritHiddenAbility 8046116 0

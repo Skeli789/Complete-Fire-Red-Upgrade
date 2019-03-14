@@ -22,6 +22,8 @@ gTrainerBackPicPaletteTable 08159458
 
 PlayAnimationTable 08034150
 
+SaveSectionOffsets 080DA23C
+
 ##
 BattleScript_RainDishActivates 0801A4A0
 

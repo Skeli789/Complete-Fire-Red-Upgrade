@@ -15,6 +15,11 @@ gUnownDistributionByChamber = 0x83CA71C;
 gMapHeader = 0x2036DFC;
 gMPlay_BGM = 0x3007300;
 
+gRamSaveSectionLocations = 0x030053B0;
+gFirstSaveSector = 0x03005380;
+gSaveCounter = 0x03005390;
+gFastSaveSection = 0x03005394;
+ 
 /* Variables */
 var_8003 = 0x020370BE;
 var_8004 = 0x020370C0;
@@ -26,6 +31,7 @@ var_800E = 0x0203AD30;
 __udivsi3 = 0x081E460C|1;
 __umodsi3 = 0x081E4684|1;
 __divsi3 = 0x081E4018|1;
+__modsi3 = 0x081E40F4|1;
 
 /* Attributes */
 get_attr = 0x0803FBE8|1;
@@ -321,8 +327,6 @@ create_pokemon = 0x0803DD98|1;
 
 divmod_remainder = 0x081E4684|1;
 rand = 0x08044EC8|1;
-__aeabi_idiv = 0x081E4684|1;
-__aeabi_uidiv = 0x081E4684|1;
 sub_8037A28 = 0x08037A28|1;
 species_to_dex_index = 0x08043298|1;
 
@@ -684,7 +688,14 @@ TintPalette_GrayScale2 = 0x8071594 | 1;
 TintPalette_SepiaTone = 0x80715F4 | 1;
 TintPalette_CustomTone = 0x8071660 | 1;
 
-
+/*Save Functions*/
+SaveSerializedGame = 0x0804C300|1;
+UpdateSaveAddresses = 0x080DA1D4|1;
+CalculateChecksum = 0x080DA1A8|1;
+TryWriteSector = 0x080D99D8|1;
+save_write_to_flash = 0x080D97D0|1;
+DoReadFlashWholeSection = 0x080DA190|1;
+ 
 /*Other Functions*/
 Malloc = 0x8002B9C | 1;
 Calloc = 0x8002BB0 | 1;

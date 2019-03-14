@@ -358,6 +358,14 @@ void __attribute__((long_call)) TintPalette_GrayScale2(u16 *palette, u16 count);
 void __attribute__((long_call)) TintPalette_SepiaTone(u16 *palette, u16 count);
 void __attribute__((long_call)) TintPalette_CustomTone(u16 *palette, u16 count, u16 rTone, u16 gTone, u16 bTone);
 
+//Save Functions
+void __attribute__((long_call)) SaveSerializedGame(void);
+void __attribute__((long_call)) UpdateSaveAddresses(void);
+u16 __attribute__((long_call)) CalculateChecksum(void* data, u16 size);
+u8 __attribute__((long_call)) TryWriteSector(u8 sector, u8 *data);
+u8 __attribute__((long_call)) save_write_to_flash(u16 chunkId, const struct SaveBlockChunk *chunks);
+u8 __attribute__((long_call)) DoReadFlashWholeSection(u8 sector, struct SaveSection *section);
+
 //Other Functions
 void* __attribute__((long_call)) Malloc(u32 size);
 void* __attribute__((long_call)) Calloc(u32 size);

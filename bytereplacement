@@ -1,6 +1,7 @@
 ##Remove Things##
 ##Remove Help System
 0800051A C0 46 C0 46 C0 46 C0 46 C0 46
+0813B8C2 1D E0
 ##Nop Out End Turn 1,
 08013BEC C0 46 C0 46 C0 46 C0 46 C0 46 C0 46
 ##Nop Out PerishSong_FutureSight
@@ -25,6 +26,14 @@
 ##Remove Ditto Palette Fading
 08034454 C0 46 C0 46
 08034612 C0 46 C0 46
+##Save Expansion
+080DA5E0 FF 20 70 47
+080F5190 C0 46 C0 46
+080F52A0 C0 46 C0 46
+0813BAA8 C0 46 C0 46
+0815D80C 70 47
+0806E45C 02 48 84 42 04 D8 00 20
+0806E5D6 05 48 00 78 01 28 08 D0 01 28
 
 ##Update Routines##
 ##Update ReloadHealthBar

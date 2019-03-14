@@ -1,6 +1,9 @@
 #ifndef GUARD_CONSTANTS_VARS_H
 #define GUARD_CONSTANTS_VARS_H
 
+#define VARS_START 0x4000
+#define SPECIAL_VARS_START 0x8000
+
 #define VAR_0x3F20                 0x3F20
 
 #define VAR_0x4000                 0x4000
