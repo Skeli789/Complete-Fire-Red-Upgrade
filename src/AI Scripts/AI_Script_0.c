@@ -82,7 +82,7 @@ RESTART_AI_SCRIPT_0:
 			// type-specific ability checks - primordial weather handled separately
 			// Electric
 			case ABILITY_VOLTABSORB:
-				if ( (moveType == TYPE_ELECTRIC) && (moveSplit != SPLIT_STATUS) )
+				if ( (moveType == TYPE_ELECTRIC) // && (moveSplit != SPLIT_STATUS) )
 					return viability - 20;
 				break;
 					
@@ -119,7 +119,7 @@ RESTART_AI_SCRIPT_0:
 			
 			// Fire			
 			case ABILITY_WATERBUBBLE:
-				if ( (moveType == TYPE_FIRE) && (moveSplit != SPLIT_STATUS) )
+				if ( (moveType == TYPE_FIRE) // && (moveSplit != SPLIT_STATUS) )
 					return viability - 20;
 				break;
 				
@@ -129,7 +129,7 @@ RESTART_AI_SCRIPT_0:
 				break;
 				
 			case ABILITY_HEATPROOF:
-				if ( (moveType == TYPE_FIRE) && (moveSplit != SPLIT_STATUS) )
+				if ( (moveType == TYPE_FIRE) // && (moveSplit != SPLIT_STATUS) )
 					return viability - 10;
 				break;
 			
@@ -141,7 +141,7 @@ RESTART_AI_SCRIPT_0:
 				
 			// Dark
 			case ABILITY_JUSTIFIED:
-				if ((moveType == TYPE_DARK) && (moveSplit != SPLIT_STATUS) )
+				if ((moveType == TYPE_DARK) // && (moveSplit != SPLIT_STATUS) )
 					return viability - 10;
 				break;
 				
@@ -853,7 +853,8 @@ RESTART_AI_SCRIPT_0:
 		
 		case EFFECT_ERUPTION:
 		case EFFECT_FLAIL:
-			// check HP percentage
+			if (gBattleMons[bankAtk].hp > (gBattleMons.maxHP/2) )
+				viabilility -= 10;
 			break;
 		
 		case EFFECT_SPITE:
@@ -928,7 +929,8 @@ RESTART_AI_SCRIPT_0:
 						decreased = TRUE;
 					}
 			}
-			if (decreased) break;
+			if (decreased)
+				break;
 			
 			if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE) {
 				if (gBattleMons[GetFoeBank(bankAtk)].status2 & STATUS2_RECHARGE
@@ -1049,7 +1051,8 @@ RESTART_AI_SCRIPT_0:
 			if !(IsOfType(bankAtk, TYPE_FIRE) )
 				viability = 0;
 			break;
-			
+		
+		case EFFECT_GRUDGE:
 		case EFFECT_BATON_PASS:
 		AI_BATON_PASS:
 			if (move == MOVE_UTURN || move == MOVE_VOLTSWITCH)
@@ -1280,12 +1283,17 @@ RESTART_AI_SCRIPT_0:
 			break;
 			
 		case EFFECT_RECYCLE:
-			if (!gNewBS->SavedConsumedItems[bankAtk] || atkItem != 0)
+			if ( move == MOVE_BELCH )
+				if (!(gNewBS->BelchCounters & gBitTable[gBattlerPartyIndexes[bankAtk]]))
+					viabilility -= 10;
+				else
+					goto AI_STANDARD_DAMAGE;
+			else if (!gNewBS->SavedConsumedItems[bankAtk] || atkItem != 0)
 				viability -= 10;
 			break;
 		
 		case EFFECT_YAWN:
-			if (defStatus3 & STATUS3_DROWSY)
+			if (defStatus3 & STATUS3_YAWN)
 				viability -= 10;
 			else
 				goto AI_SET_SLEEP;
@@ -1329,7 +1337,10 @@ RESTART_AI_SCRIPT_0:
 			}
 		case EFFECT_IMPRISON:
 		AI_IMPRISON:
-			// to do
+			if ( atkStatus3 & STATUS3_IMPRISONED )
+				viabilility -= 10;
+			break;
+			
 		case EFFECT_REFRESH:
 		AI_REFRESH:
 			if ( atkStatus1 & (STATUS_POISON | STATUS_BAD_POISON | STATUS_BURN | STATUS_PARALYSIS) )
@@ -1345,17 +1356,36 @@ RESTART_AI_SCRIPT_0:
 					viability -= 10;
 			break;
 			
-		case EFFECT_GRUDGE:
-		AI_BATON_PASS:
-			// to do
 		case EFFECT_SNATCH:
+			// to do
 			break;
+			
 		case EFFECT_DOUBLE_EDGE:
 		AI_RECOIL:
-			// to do
+			if (atkAbility == ABILITY_ROCKHEAD || atkAbility == ABILITY_MAGICGUARD )
+				goto AI_STANDARD_DAMAGE;
+			// check < 10% hp
+			else if (gBattleMons[bankAtk].hp < (gBattleMons[bankAtk].maxHP/10) )
+				viabilility -= 4;
+			else
+				goto AI_STANDARD_DAMAGE;
+			break; 
+			
 		case EFFECT_TEETER_DANCE:
 		AI_TEETER_DANCE:
-			// to do
+			if ( gBattleTypeFlags & BATTLE_TYPE_DOUBLE )
+				// check if adjacent banks for falling asleep
+				if ( CanBePutToSleep(bankAtkPartner) )
+					viabilility -= 4;
+				if ( CanBePutToSleep(bankDef) == FALSE )
+					viabilility -= 6;
+				if ( CanBePutToSleep(bankDefPartner) == FALSE )
+					viabilility -= 6;
+				break;
+			else
+				goto AI_SET_SLEEP;
+			break;
+			
 		case EFFECT_MUD_SPORT:
 		AI_MUD_SPORT:
 			if ( gNewBS->MudSportTimer != 0 )
@@ -1457,7 +1487,7 @@ RESTART_AI_SCRIPT_0:
 					goto AI_STANDARD_DAMAGE;
 			}
 			break;
-		case EFFECT_SpeedBalls:		// to do
+		case EFFECT_SpeedBalls:
 		AI_SPEED_BALLS:
 			if ( move == MOVE_ELECTROBALL && MoveWouldHitFirst(move, bankAtk, bankDef) )
 					viabilility -= 6;
@@ -1482,11 +1512,7 @@ RESTART_AI_SCRIPT_0:
 						viabilility -= 10;
 			}
 			break;
-			
-		case EFFECT_PLEDGE:
-			// to do - check ally move for same pledge
-			break;
-			
+						
 		case EFFECT_FIELD_EFFECTS:
 		AI_FIELDEFFECTS:
 			switch (move) {
