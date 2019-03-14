@@ -518,11 +518,9 @@ RESTART_AI_SCRIPT_0:
 						decreased = TRUE;
 					}
 			}
-			if (decreased) break;
-			
-			if (MoveBlockedBySubstitute(move, bankAtk, bankDef))
-				viability -= 10;
-			break;
+			if (decreased)
+				break;
+			goto AI_STANDARD_DAMAGE;
 			
 		case EFFECT_DEFENSE_DOWN: 
 		case EFFECT_DEFENSE_DOWN_2: 
@@ -1061,7 +1059,7 @@ RESTART_AI_SCRIPT_0:
 				break;
 			else {	// baton pass
 				// check aqua ring, magnet rise, ingrain
-				if !( gStatuses3[bankAtk] & (STATUS3_ROOTED || STATUS3_AQUA_RING || STATUS3_LEVITATING) ) {
+				if !( gStatuses3[bankAtk] & (STATUS3_ROOTED | STATUS3_AQUA_RING | STATUS3_LEVITATING) ) {
 					viability -= 6;
 				else if !( gStatuses2[bankAtk] & STATUS2_SUBSTITUTE )
 					viability -= 6;
@@ -1080,7 +1078,7 @@ RESTART_AI_SCRIPT_0:
 					viability -= 10;
 				else if (  gBattleMons[bankDef].statStages[STAT_STAGE_ACC] == 0 )
 					viability -= 10;
-				else if ( gSideAffecting[SIDE(bankDef)] & (SIDE_REFLECT || SIDE_SAFEGUARD || SIDE_MIST)
+				else if ( gSideAffecting[SIDE(bankDef)] & (SIDE_REFLECT | SIDE_SAFEGUARD | SIDE_MIST)
 					goto AI_STANDARD_DAMAGE;
 				else if ( gNewBS->AuroraVeilTimers[bankDef] )
 					goto AI_STANDARD_DAMAGE;
@@ -1428,44 +1426,188 @@ RESTART_AI_SCRIPT_0:
 			else
 				viabilility = aiAllStatChecks(viabilility, bankAtk, 6);		
 			break;
+			
 		case EFFECT_FrostBreath:
 		AI_FROSTBREATH:
-			// to do
+			if ( defAbility == ABILITY_SHELLARMOR || defAbility == ABILITY_BATTLEARMOR )
+				viabilility -= 4;
+			break;
+			
 		case EFFECT_ME_FIRST:
 		AI_NATURALGIFT_MEFIRST:
-			// to do
+			if (move == MOVE_MEFIRST ) {
+				if ( MoveWouldHitFirst(move, bankAtk, bankDef) )
+					viabilility -= 10;
+				else
+					goto AI_SUBSTITUTE_CHECK;
+			}
+			else if (move == MOVE_TRUMPCARD)
+				goto AI_STANDARD_DAMAGE;
+			else if ( (defAbility == ABILITY_KLUTZ) || 
+				(gNewBS->MagicRoomTimer > 0) || 
+				
+				viabilility -= 10;
+			break;
+			
 		case EFFECT_ClearSmog: 
 		AI_CLEARSMOG:
-			// to do
+			u8 i;
+			for (i = 0, i<=6, i++) {
+				if gBattleMons[bankDef].statStages[i] > 6
+					goto AI_STANDARD_DAMAGE;
+			}
+			break;
 		case EFFECT_SpeedBalls:		// to do
 		AI_SPEED_BALLS:
-			// to do
+			if ( move == MOVE_ELECTROBALL && MoveWouldHitFirst(move, bankAtk, bankDef) )
+					viabilility -= 6;
+			else if ( move == MOVE_GYROBALL && MoveWouldHitFirst(move, bankDef, bankAtk) )
+					viabilility -= 6;					
+			goto AI_STANDARD_DAMAGE;
+			
 		case EFFECT_SET_TERRAIN:
 		AI_TERRAIN:
-			// to do
+			switch (move) {
+				case MOVE_ELECTRICTERRAIN:
+					if ( gBattleTerrain == ELECTRIC_TERRAIN )
+						viabilility -= 10;
+				case MOVE_GRASSYTERRAIN:
+					if ( gBattleTerrain == GRASSY_TERRAIN )
+						viabilility -= 10;				
+				case MOVE_MISTYTERRAIN:
+					if ( gBattleTerrain == MISTY_TERRAIN )
+						viabilility -= 10;				
+				case MOVE_PSYCHICTERRAIN:
+					if ( gBattleTerrain == PSYCHIC_TERRAIN )
+						viabilility -= 10;
+			}
+			break;
+			
 		case EFFECT_PLEDGE:
 			// to do - check ally move for same pledge
+			break;
+			
 		case EFFECT_FIELD_EFFECTS:
 		AI_FIELDEFFECTS:
-			// to do 
+			switch (move) {
+				case MOVE_TRICKROOM:
+					if ( MoveWouldHitFirst(move, bankAtk, bankDef) )
+						viabilility -= 10;
+					break;
+				case MOVE_MAGICROOM:
+					if ( gNewBS->MagicRoomTimer > 0 )
+						viabilility -= 10;
+					break;				
+				case MOVE_WONDERROOM:
+					if ( gNewBS->WonderRoomTimer > 0 )
+						viabilility -= 10;
+					break;				
+				case MOVE_GRAVITY:
+					if (gNewBS->GravityTimer > 0)
+						viabilility -= 10;
+					break;
+				case MOVE_IONDELUGE:
+					goto AI_HELPING_HAND_CHECK;
+				case MOVE_PLASMAFISTS:
+					goto AI_STANDARD_DAMAGE;
+			}
+			break;
+			
 		case EFFECT_FLING:
 		AI_FLING:
-			// to do
+			if (atkAbility == ABILITY_STICKYHOLD)
+				viabilility -= 10;
+			else if ( CanFling(atkAbility, GetBankItemEffect(bankAtk), gBattleMons[bankAtk], bankAtk, FALSE )
+				viabilility -= 8;
+			break;
+					
 		case EFFECT_ATTACK_BLOCKERS:
 		AI_ATTACKBLOCKERS:
-			// to do
+			switch (move) {
+				case MOVE_HEALBLOCK:
+					if (gNewBS->HealBlockTimers[bankDef] > 0)
+						viabilility -= 10;
+					break;
+				case MOVE_EMBARGO:
+					if ( (defAbility == ABILITY_KLUTZ) 
+					|| (gNewBS->MagicRoomTimer > 0)
+					|| (gNewBS->EmbargoTimers[bankDef]) )
+						viabilility -= 10;
+					goto AI_SUBSTITUTE_CHECK;
+				//case MOVE_POWDER:
+					//break;
+				case MOVE_TELEKINESIS:
+					if ( (defStatus3 & (STATUS3_ROOTED | STATUS3_SMACKED_DOWN | STATUS3_TELEKINESIS))
+					|| (gNewBS->GravityTimer != 0)
+					|| (GetBankItemEffect(bankDef) == ITEM_EFFECT_IRON_BALL)
+					|| () ) {
+						viabilility -= 10;
+						break;
+					}
+					goto AI_SUBSTITUTE_CHECK;
+				case MOVE_THROATCHOP:
+					goto AI_STANDARD_DAMAGE;
+			}
+			break;
+			
 		case EFFECT_TYPE_CHANGES:
 		AI_TYPECHANGERS:
-			// to do
+			switch (move) {
+				case MOVE_SOAK:
+					if ( gBattleMons[bankDef].type1 == TYPE_WATER || gBattleMons[bankDef].type2 == TYPE_WATER )
+						viabilility -= 10;
+					goto AI_SUBSTITUTE_CHECK;
+				case MOVE_TRICKORTREAT:
+					if ( gBattleMons[bankDef].type1 == TYPE_GHOST
+					|| gBattleMons[bankDef].type2 == TYPE_GHOST
+					|| gBattleMons[bankDef].type3 == TYPE_GHOST )
+						viabilility -= 10;
+					goto AI_SUBSTITUTE_CHECK;
+				case MOVE_FORESTSCURSE:
+					if ( gBattleMons[bankDef].type1 == TYPE_GRASS
+					|| gBattleMons[bankDef].type2 == TYPE_GRASS
+					|| gBattleMons[bankDef].type3 == TYPE_GRASS )
+						viabilility -= 10;
+					goto AI_SUBSTITUTE_CHECK;
+			};
+			break;
+			
 		case EFFECT_HEAL_TARGET:
 		AI_HEALTARGET:
-			// to do 
+			if ( move == MOVE_POLLENPUFF )
+				goto AI_STANDARD_DAMAGE;
+			else if ( gBattleMons[bankDef].hp > (gBattleMons[bankDef].maxHP/2) )
+				viabilility -= 10;
+			goto AI_SUBSTITUTE_CHECK;
+			
 		case EFFECT_TOPSY_TURVY_ELECTRIFY:
 		AI_TOPSYTURVYELECTRIFY:
-			// to do
+			if ( move == MOVE_ELECTRIFY && MoveWouldHitFirst(move, bankDef, bankAtk) )
+				viabilility -= 10;
+			goto AI_SUBSTITUTE_CHECK;
+				
 		case EFFECT_TEAM_EFFECTS:
 		AI_TEAMEFFECTS:
-			// to do
+			switch (move) {
+				case MOVE_TAILWIND:
+					if (gNewBS->TailwindTimers[SIDE(bankAtk)] != 0)
+						viabilility -= 10;
+					break;				
+				case MOVE_LUCKYCHANT:
+					if (gNewBS->LuckyChantTimers[SIDE(bankAtk)] != 0)
+						viabilility -= 10;
+					break;
+				case MOVE_MAGNETRISE:
+					if ( (atkStatus3 & (STATUS3_ROOTED | STATUS3_LEVITATING | STATUS3_SMACKED_DOWN)) // 0x600400
+					|| (gNewBS->GravityTimer > 0)
+					|| (GetBankItemEffect(bankAtk) == ITEM_EFFECT_IRON_BALL)
+					|| (gNewBS->MagnetRiseTimers[bankAtk] != 0)
+					|| (defAbility == ABILITY_LEVITATE) )
+						viabilility -= 10;
+					break;
+			}
+			
+			break;
 		case EFFECT_Synchronoise:	// to do
 		AI_SYNCHRONOISE:
 			// to do
@@ -1476,6 +1618,10 @@ RESTART_AI_SCRIPT_0:
 				if (TypeCalc(move, bankAtk, bankDef, 0, FALSE) & (RESULT_NO_EFFECT | RESULT_MISSED))
 					viability -= 10;
 			}
+			return viabilility;
+		AI_SUBSTITUTE_CHECK:
+			if (MoveBlockedBySubstitute(move, bankAtk, bankDef))
+				viability -= 10;
 	}
 	return viability;
 }

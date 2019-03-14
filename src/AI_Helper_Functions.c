@@ -435,6 +435,7 @@ u8 aiAllStatChecks(u8 viabilility, u8 bank, u8 cmpVal) {
 	for ( statId = 0; statId <= 6; statId++ ) {
 		if (gBattleMons[bank].statStages[statId] < cmpVal)
 			viability -= 6;
+			// multiple of reduction value?
 	}
 	return viabilility;
 }
