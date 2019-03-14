@@ -178,4 +178,12 @@ LoadProperMusicForLinkBattlesHook:
 	bl LoadProperMusicForLinkBattles
 	ldr r1, =0x80813C6 | 1
 	bx r1
+
+@0x80A02EA with r0
+BattlePokemonScriptCommand_GiveHiddenAbilityHook:
+	mov r0, r8
+	bl BattlePokemonScriptCommand_GiveHiddenAbility
+	pop {r3}
+	mov r8, r3
+	pop {r4,r7,pc}
 	

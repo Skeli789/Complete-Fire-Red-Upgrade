@@ -579,3 +579,12 @@ void SetMonPokeBall(struct PokemonSubstruct0* data, u8 ballId)
 {
 	data->pokeball = ballId;
 }
+
+void BattlePokemonScriptCommand_GiveHiddenAbility(pokemon_t* mon)
+{
+	if (FlagGet(HIDDEN_ABILITY_FLAG))
+	{
+		FlagClear(HIDDEN_ABILITY_FLAG);
+		mon->hiddenAbility = TRUE;
+	}
+}
