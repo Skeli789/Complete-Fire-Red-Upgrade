@@ -1,12 +1,6 @@
 # Complete-Fire-Red-Upgrade
 A complete upgrade for Fire Red, including an upgraded Battle Engine.
 
-As of right now, the code uses many graphical assests only found in Unbound, and thus
-will likely crash if certain features are used in a rom that is not Pokemon Unbound.
-The only feature that I've personally tested in a rom that was not Pokemon Unbound,
-is the new EXP system. Multi Battles will likely work as well, although they have
-not been tested on other roms.
-
 Personalized options are available in src/config.h. The options can be customized
 by commenting and uncommenting lines.
 

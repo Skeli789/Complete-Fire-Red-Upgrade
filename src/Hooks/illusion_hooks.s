@@ -40,8 +40,7 @@ UpdateNickForIllusionHook:
 @0x804A9E0 with r1
 UpdatePokeBallForIllusionHook:
 	bl UpdatePokeBallForIllusion
-	mov r5, r0
-	ldr r1, =0x804AA28 | 1
+	ldr r1, =0x804AA1E | 1
 	bx r1
 	
 @0x804B2DC with r1

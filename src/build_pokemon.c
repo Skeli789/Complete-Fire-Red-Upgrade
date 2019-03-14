@@ -167,7 +167,8 @@ u8 CreateNPCTrainerParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, b
 			
 			#ifdef TRAINERS_WITH_EVS
 				u8 spreadNum = trainer->party.NoItemCustomMoves[i].iv;
-				if (trainer->aiFlags > 1 
+				if (gTrainers[trainerNum].partyFlags == (PARTY_FLAG_CUSTOM_MOVES | PARTY_FLAG_HAS_ITEM)
+				&& trainer->aiFlags > 1 
 				&& spreadNum != 0
 				&& spreadNum < TRAINERS_WITH_EVS_TABLE_SIZE)
 				{
@@ -234,7 +235,7 @@ u8 BuildFrontierParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, bool
 	else if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER && VarGet(BATTLE_TOWER_POKE_NUM) > 3 && side == B_SIDE_PLAYER)
         monsCount = 3;
     else {
-        monsCount = VarGet(BATTLE_TOWER_POKE_NUM);
+        monsCount = MathMax(1, MathMin(PARTY_SIZE, VarGet(BATTLE_TOWER_POKE_NUM)));
     }
 	
 	species_t* speciesArray = Calloc(sizeof(species_t) * monsCount);
@@ -271,7 +272,7 @@ u8 BuildFrontierParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, bool
 		if (VarGet(BATTLE_TOWER_TIER) == BATTLE_TOWER_LITTLE_CUP)
 			level = 5;
 		else
-			level = VarGet(BATTLE_TOWER_POKE_LEVEL);
+			level = MathMax(1, MathMin(MAX_LEVEL, VarGet(BATTLE_TOWER_POKE_LEVEL)));
 		
 		if (ForPlayer)
 			CreateMon(&party[i], spread.species, level, 0, TRUE, 0, OT_ID_PLAYER_ID, otid);
