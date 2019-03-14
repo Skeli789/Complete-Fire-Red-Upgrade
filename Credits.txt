@@ -11,3 +11,4 @@ Lixdel - Attack Animations
 Pret - PokeRuby, PokeFireRed, PokeEmerald
 Sagari - Trainer Class Poke Balls, Pickup Update
 DizzyEgg - Emerald Battle Engine Upgrade V1 & V2
+FBI - Expanded Saveblock
