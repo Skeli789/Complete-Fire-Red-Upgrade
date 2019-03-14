@@ -192,6 +192,50 @@ with open(ROM_NAME, 'rb+') as rom:
 						if line.strip().startswith('#') or line.strip() == '' : continue
 						offset = int(line[:8],16) - 0x08000000
 						bytereplace(rom, offset, line[9:].strip())
+		
+		# Do Special Inserts
+		with open('special_inserts.asm', 'r') as file:
+			loadOffsets = False
+			offsetList = []
+			for line in file:
+				if line.strip().startswith('.org '):
+					offsetList.append(int(line.split('.org ')[1].split(',')[0], 16))
+					
+			offsetList.sort()
+			
+			try:
+				with open('build/special_inserts.bin', 'rb') as binFile:
+					for offset in offsetList:
+						originalOffset = offset
+						dataList = ""
+						
+						if offsetList.index(offset) == len(offsetList) - 1:
+							while True:
+								try:
+									binFile.seek(offset)
+									dataList += hex(binFile.read(1)[0]) + " "
+								except IndexError:
+									break
+									
+								offset += 1
+						else:
+							binFile.seek(offset)
+							word = ExtractPointer(binFile.read(4))
+							
+							while (word != 0xFFFFFFFF):
+								binFile.seek(offset)
+								dataList += hex(binFile.read(1)[0]) + " "
+								offset += 1
+								
+								if offset in offsetList: #Overlapping data
+									break
+									
+								word = ExtractPointer(binFile.read(4))
+							
+						bytereplace(rom, originalOffset, dataList.strip())
+							
+			except FileNotFoundError:
+				pass
 						
 		# Read hooks from a file
 		with open('hooks', 'r') as hooklist:

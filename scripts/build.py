@@ -288,6 +288,28 @@ def main():
 	# Link and extract raw binary
 	linked = link(itertools.chain.from_iterable(objects))
 	objcopy(linked)
+	
+	#Build special_inserts.asm
+	buildSpecialInserts = False
+	
+	try:
+		if os.path.getmtime('build/special_inserts.bin') > os.path.getmtime('special_inserts.asm'): #If the binary file was created after the file was last modified
+			pass
+		else:
+			buildSpecialInserts = True
+	
+	except FileNotFoundError: #If the object file doesn't exist, then obviously it needs to be made
+		buildSpecialInserts = True
+	
+	if (buildSpecialInserts):
+		cmd = cmd = [AS] + ASFLAGS + ['-c', 'special_inserts.asm', '-o', 'build/special_inserts.o']
+		run_command(cmd)
+		
+		cmd = [OBJCOPY, '-O', 'binary', 'build/special_inserts.o', 'build/special_inserts.bin']
+		run_command(cmd)
+		
+		print ('Assembling special_inserts.asm')
+	
 	print('Built in ' + str(datetime.now() - starttime) + '.')
 	
 if __name__ == '__main__':
