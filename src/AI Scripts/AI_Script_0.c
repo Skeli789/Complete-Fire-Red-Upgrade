@@ -1,8 +1,8 @@
 //Add ,move to NO_MOLD_BREAKERS
-
-#include "defines.h"
-#include "ai_script_functions.h"
-#include "helper_functions.h"
+/*
+#include "..\\defines.h"
+#include "..\\AI_Helper_Functions.h
+#include "..\\helper_functions.h"
 
 u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move) {
 RESTART_AI_SCRIPT_0:
@@ -1652,5 +1652,5 @@ RESTART_AI_SCRIPT_0:
 	return viability;
 }
 
-
+*/
 
