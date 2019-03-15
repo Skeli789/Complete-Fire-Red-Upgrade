@@ -4,8 +4,8 @@
 struct BattleMove gBattleMoves[] = {
 {				//MOVE_NONE
 /*effect*/			EFFECT_HIT,
-/*power*/			50,
-/*type*/			TYPE_NORMAL,
+/*power*/			40,
+/*type*/			TYPE_MYSTERY,
 /*accuracy*/		100,
 /*pp*/				35,
 /*effectChance*/	0,
@@ -2480,7 +2480,7 @@ struct BattleMove gBattleMoves[] = {
 {				//MOVE_STRUGGLE
 /*effect*/			EFFECT_RECOIL,
 /*power*/			50,
-/*type*/			TYPE_NORMAL,
+/*type*/			TYPE_MYSTERY,
 /*accuracy*/		0,
 /*pp*/				1,
 /*effectChance*/	0,
@@ -10113,7 +10113,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_LASTRESORT
-/*effect*/			241,
+/*effect*/			242,
 /*power*/			140,
 /*type*/			TYPE_NORMAL,
 /*accuracy*/		100,
@@ -10128,7 +10128,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_SKYDROP
-/*effect*/			241,
+/*effect*/			242,
 /*power*/			60,
 /*type*/			TYPE_FLYING,
 /*accuracy*/		100,
