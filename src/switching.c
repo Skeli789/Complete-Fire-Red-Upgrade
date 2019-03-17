@@ -162,7 +162,7 @@ void atk4D_switchindataupdate(void) {
 	ClearSwitchBytes(gActiveBattler);
 	ClearSwitchBits(gActiveBattler);
 	
-	//LastUsedMoves[gActiveBattler] = 0;
+	//gNewBS->LastUsedMoves[gActiveBattler] = 0;
 	//gNewBS->LastUsedTypes[gActiveBattler] = TYPE_BLANK;
 	
     //Former Knock Off Check was here

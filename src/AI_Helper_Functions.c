@@ -31,6 +31,7 @@ bool8 GetHealthPercentage(u8 bank);
 bool8 TeamFullyHealedMinusBank(u8 bank);
 bool8 HasProtectionMoveInMoveset(u8 bank, bool8 AllKinds);
 move_t ShouldAIUseZMove(u8 bank, u8 moveIndex, u16 move);
+u8 aiAllStatChecks(u8 viability, u8 bank, u8 cmpVal);
 
 
 bool8 CanKillAFoe(u8 bank) {
