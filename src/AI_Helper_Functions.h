@@ -16,3 +16,4 @@ extern bool8 TeamFullyHealedMinusBank(u8 bank);
 extern bool8 HasProtectionMoveInMoveset(u8 bank, bool8 AllKinds);
 extern move_t ShouldAIUseZMove(u8 bank, u8 moveIndex, u16 move);
 extern u8 aiAllStatChecks(u8 viability, u8 bank, u8 cmpVal);
+extern bool8 isStatEqual(u8 bank, u8 statId, u8 statVal);

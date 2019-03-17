@@ -1,6 +1,6 @@
 //Add ,move to NO_MOLD_BREAKERS
-
 /*
+
 
 #include "..\\defines.h"
 #include "..\\AI_Helper_Functions.h"
@@ -19,13 +19,13 @@ RESTART_AI_SCRIPT_0:
 	u16 atkSpecies = SPECIES(bankAtk);
 	u16 defSpecies = SPECIES(bankDef);
 	u8 atkAbility = ABILITY(bankAtk);
-	u8 atkPartnerAbility = ABILITY(bankAtkPartner);
+	//u8 atkPartnerAbility = ABILITY(bankAtkPartner);	//unused
 	u8 defPartnerAbility = ABILITY(bankDefPartner);
 	u8 defAbility = ABILITY(bankDef);
-	u8 atkEffect = ITEM_EFFECT(bankAtk);
+	//u8 atkEffect = ITEM_EFFECT(bankAtk);	//unused
 	u8 defEffect = ITEM_EFFECT(bankDef);
-	u8 atkQuality = ITEM_QUALITY(bankAtk);
-	u8 defQuality = ITEM_QUALITY(bankDef);
+	//u8 atkQuality = ITEM_QUALITY(bankAtk);	//unused
+	//u8 defQuality = ITEM_QUALITY(bankDef);	//unused
 	u32 atkStatus1 = gBattleMons[bankAtk].status1;
 	u32 defStatus1 = gBattleMons[bankDef].status1;
 	u32 atkStatus2 = gBattleMons[bankAtk].status2;
@@ -33,15 +33,11 @@ RESTART_AI_SCRIPT_0:
 	u32 atkStatus3 = gStatuses3[bankAtk];
 	u32 defStatus3 = gStatuses3[bankDef];
 	
-	//u8 moveEffect = MOVE_EFFECT(move);
 	u8 moveEffect = gBattleMoves[move].effect;
 	u8 moveSplit = SPLIT(move);
-	//u8 moveRange = RANGE(move);
 	u8 moveTarget = gBattleMoves[move].target;
 	u8 moveType = GetMoveTypeSpecial(bankAtk, move);
-	//u8 moveFlags = MOVE_FLAGS(move);
 	u8 moveFlags = gBattleMoves[move].flags;
-	//u8 moveAcc = MOVE_ACC(move); //Do something with stat buffs and Unaware/Keen Eye
 	u8 moveAcc = gBattleMoves[move].accuracy;
 	
 	//Affects User Check
@@ -464,7 +460,7 @@ RESTART_AI_SCRIPT_0:
 					break;
 				
 				default:
-					if (StatMaxed(bankAtk, STAT_STAGE_SPATK))
+					//if (StatMaxed(bankAtk, STAT_STAGE_SPATK))
 						viability -= 10;
 			}
 			break;
@@ -472,13 +468,15 @@ RESTART_AI_SCRIPT_0:
 		case EFFECT_SPECIAL_DEFENSE_UP:
 		case EFFECT_SPECIAL_DEFENSE_UP_2:
 		AI_SPDEF_RAISE_1:
-			if (StatMaxed(bankAtk, STAT_STAGE_SPDEF))
+			//if (StatMaxed(bankAtk, STAT_STAGE_SPDEF))
+			if (isStatEqual(bankAtk, STAT_SPDEF, 12))
 				viability -= 10;
 			break;
 		
 		case EFFECT_ACCURACY_UP:
 		case EFFECT_ACCURACY_UP_2:
-			if (StatMaxed(bankAtk, STAT_STAGE_ACC))
+			//if (StatMaxed(bankAtk, STAT_STAGE_ACC))
+			if (isStatEqual(bankAtk, STAT_ACC, 12))
 				viability -= 10;
 			break;
 		
@@ -492,7 +490,8 @@ RESTART_AI_SCRIPT_0:
 					break;
 					
 				default:
-					if (StatMaxed(bankAtk, STAT_STAGE_EVSN))
+					//if (StatMaxed(bankAtk, STAT_STAGE_EVSN))
+					if (isStatEqual(bankAtk, STAT_EVSN, 12))
 						viability -= 10;
 			}
 			break;
@@ -509,8 +508,13 @@ RESTART_AI_SCRIPT_0:
 					}
 					else if (!StatMinned(bankDef, STAT_STAGE_SPD))
 						break;
-					else
-						break;
+					else if (StatMinned(bankDef, STAT_STAGE_ATK)
+					&&  StatMinned(bankDef, STAT_STAGE_SPATK)) {
+						viability -= 10;
+						decreased = TRUE;
+					}
+					break;
+					
 				case MOVE_PLAYNICE:
 				case MOVE_NOBLEROAR:
 				case MOVE_TEARFULOOK:
@@ -526,7 +530,7 @@ RESTART_AI_SCRIPT_0:
 						viability -= 10;
 						decreased = TRUE;
 					}
-			}
+			} // attack_down switch
 			if (decreased)
 				break;
 			goto AI_STANDARD_DAMAGE;
@@ -715,6 +719,7 @@ RESTART_AI_SCRIPT_0:
 			if (atkStatus2 & STATUS2_TRANSFORMED
 			||  defStatus2 & (STATUS2_TRANSFORMED | STATUS2_SUBSTITUTE))
 				viability -= 10;
+			break;
 			
 		case EFFECT_REFLECT:
 			switch (move) {
@@ -889,7 +894,9 @@ RESTART_AI_SCRIPT_0:
 				else if (GetHealthPercentage(bankAtk) <= 50)
 					viability -= 6;
 			}
-			else if (atkAbility == ABILITY_CONTRARY || (StatMaxed(bankAtk, STAT_STAGE_ATK) && StatMaxed(bankAtk, STAT_STAGE_DEF)))
+			//else if (atkAbility == ABILITY_CONTRARY || (StatMaxed(bankAtk, STAT_STAGE_ATK) && StatMaxed(bankAtk, STAT_STAGE_DEF)))
+			else if (atkAbility == ABILITY_CONTRARY
+			|| (isStatEqual(bankAtk,STAT_ATK, 12) && (isStatEqual(bankAtk, STAT_DEF, 12))))
 				viability -= 10;
 			break;
 			
@@ -1001,8 +1008,8 @@ RESTART_AI_SCRIPT_0:
 			break;
 			
 		case EFFECT_SWAGGER:
-			if (bankDef == bankAtkPartner)
-			&& StatMaxed(bankDef, STAT_STAGE_ATK))
+			if ((bankDef == bankAtkPartner) && (isStatEqual(bankDef, STAT_ATK, 12)))
+			//&& StatMaxed(bankDef, STAT_STAGE_ATK))
 				viability -= 10;
 			else
 				goto AI_CONFUSE;
@@ -1300,6 +1307,8 @@ RESTART_AI_SCRIPT_0:
 						viability -= 10;
 					break;
 			}
+			break;
+			
 		case EFFECT_IMPRISON:
 			if (atkStatus3 & STATUS3_IMPRISONED)
 				viabilility -= 10;
@@ -1460,15 +1469,19 @@ RESTART_AI_SCRIPT_0:
 				case MOVE_ELECTRICTERRAIN:
 					if (gBattleTerrain == ELECTRIC_TERRAIN)
 						viabilility -= 10;
+					break;
 				case MOVE_GRASSYTERRAIN:
 					if (gBattleTerrain == GRASSY_TERRAIN)
-						viabilility -= 10;				
+						viabilility -= 10;
+					break;
 				case MOVE_MISTYTERRAIN:
 					if (gBattleTerrain == MISTY_TERRAIN)
-						viabilility -= 10;				
+						viabilility -= 10;	
+					break;
 				case MOVE_PSYCHICTERRAIN:
 					if (gBattleTerrain == PSYCHIC_TERRAIN)
 						viabilility -= 10;
+					break;
 			}
 			break;
 						
