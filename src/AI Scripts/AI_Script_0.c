@@ -1,6 +1,6 @@
 //Add ,move to NO_MOLD_BREAKERS
-/*
 
+/*
 
 #include "..\\defines.h"
 #include "..\\AI_Helper_Functions.h"
@@ -350,7 +350,7 @@ RESTART_AI_SCRIPT_0:
 		case EFFECT_ABSORB:
 			if (abilityDef == ABILITY_LIQUIDOOZE)
 				viability -= 6;
-			if (move == MOVE_STRENGTHSAP && gBattleMons[bankDef].statstages[STAT_STAGE_ATK-1] == 0)
+			if (move == MOVE_STRENGTHSAP && gBattleMons[bankDef].statstages[STAT_ATK-1] == 0)
 				viability -= 10;
 			break;
 			
@@ -385,7 +385,7 @@ RESTART_AI_SCRIPT_0:
 		
 		case EFFECT_ATTACK_UP:
 		case EFFECT_ATTACK_UP_2:
-			if (StatMaxed(bankAtk, STAT_STAGE_ATK))
+			if (isStatEqual(bankAtk, STAT_ATK,12))
 				viability -= 10;
 			break;
 		
@@ -401,30 +401,30 @@ RESTART_AI_SCRIPT_0:
 				
 				case MOVE_MAGNETIC_FLUX:
 					if (abilityAtk == ABILITY_PLUS || ability_Atk == ABILITY_MINUS) {
-						if (StatMaxed(bankAtk, STAT_STAGE_DEF) && StatMaxed(bankAtk, STAT_STAGE_SPDEF))
+						if (isStatEqual(bankAtk, STAT_DEF,12) && isStatEqual(bankAtk, STAT_SPDEF,12))
 							viability -= 10;
 					}
 					else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE
 					&& (defPartnerAbility == ABILITY_PLUS || defPartnerAbility == ABILITY_MINUS)) {
-						if (StatMaxed(bankAtkPartner, STAT_STAGE_DEF) && StatMaxed(bankAtkPartner, STAT_STAGE_SPDEF))
+						if (isStatEqual(bankAtkPartner, STAT_DEF,12) && isStatEqual(bankAtkPartner, STAT_SPDEF,12))
 							viability -= 10;
 					}
 					break;
 				
 				case MOVE_AROMATIC_MIST:
-					if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE) || StatMaxed(bankAtkPartner, STAT_STAGE_SPDEF))
+					if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE) || isStatEqual(bankAtkPartner, STAT_SPDEF,12))
 						viability -= 10;
 					break;
 				
 				default:
-					if (StatMaxed(bankAtk, STAT_STAGE_DEF))
+					if (isStatEqual(bankAtk, STAT_DEF, 12))
 						viability -= 10;
 			}
 			break;
 		
 		case EFFECT_SPEED_UP:
 		case EFFECT_SPEED_UP_2:
-			if (StatMaxed(bankAtk, STAT_STAGE_SPD))
+			if (isStatEqual(bankAtk, STAT_SPD, 12))
 				viability -= 10;
 			break;
 		
@@ -432,8 +432,8 @@ RESTART_AI_SCRIPT_0:
 		case EFFECT_SPECIAL_ATTACK_UP_2:			
 			switch(move) {
 				case MOVE_WORKUP:
-					if (StatMaxed(bankAtk, STAT_STAGE_ATK) 
-					&&  StatMaxed(bankAtk, STAT_STAGE_SPATK))
+					if (isStatEqual(bankAtk, STAT_ATK, 12) 
+					&&  isStatEqual(bankAtk, STAT_SPATK, 12))
 						viability -= 10;
 					break;
 				
@@ -449,18 +449,18 @@ RESTART_AI_SCRIPT_0:
 					
 				case MOVE_GEARUP:
 					if (abilityAtk == ABILITY_PLUS || ability_Atk == ABILITY_MINUS) {
-						if (StatMaxed(bankAtk, STAT_STAGE_ATK) && StatMaxed(bankAtk, STAT_STAGE_SPATK))
+						if ((isStatEqual(bankAtk, STAT_ATK, 12)) && isStatEqual((bankAtk, STAT_SPATK, 12)))	
 							viability -= 10;
 					}
 					else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE
 					&& (defPartnerAbility == ABILITY_PLUS || defPartnerAbility == ABILITY_MINUS)) {
-						if (StatMaxed(bankAtkPartner, STAT_STAGE_ATK) && StatMaxed(bankAtkPartner, STAT_STAGE_SPATK))
+						if ((isStatEqual(bankAtkPartner, STAT_ATK, 12)) && (isStatEqual(bankAtkPartner, STAT_SPATK, 12)))
 							viability -= 10;
 					}
 					break;
 				
 				default:
-					//if (StatMaxed(bankAtk, STAT_STAGE_SPATK))
+					if (isStatEqual(bankAtk, STAT_SPATK, 12))
 						viability -= 10;
 			}
 			break;
@@ -468,14 +468,12 @@ RESTART_AI_SCRIPT_0:
 		case EFFECT_SPECIAL_DEFENSE_UP:
 		case EFFECT_SPECIAL_DEFENSE_UP_2:
 		AI_SPDEF_RAISE_1:
-			//if (StatMaxed(bankAtk, STAT_STAGE_SPDEF))
 			if (isStatEqual(bankAtk, STAT_SPDEF, 12))
 				viability -= 10;
 			break;
 		
 		case EFFECT_ACCURACY_UP:
 		case EFFECT_ACCURACY_UP_2:
-			//if (StatMaxed(bankAtk, STAT_STAGE_ACC))
 			if (isStatEqual(bankAtk, STAT_ACC, 12))
 				viability -= 10;
 			break;
@@ -490,7 +488,6 @@ RESTART_AI_SCRIPT_0:
 					break;
 					
 				default:
-					//if (StatMaxed(bankAtk, STAT_STAGE_EVSN))
 					if (isStatEqual(bankAtk, STAT_EVSN, 12))
 						viability -= 10;
 			}
@@ -506,10 +503,10 @@ RESTART_AI_SCRIPT_0:
 						decreased = TRUE;
 						break;
 					}
-					else if (!StatMinned(bankDef, STAT_STAGE_SPD))
+					else if (!isStatEqual(bankDef, STAT_SPD,0))
 						break;
-					else if (StatMinned(bankDef, STAT_STAGE_ATK)
-					&&  StatMinned(bankDef, STAT_STAGE_SPATK)) {
+					else if (isStatEqual(bankDef, STAT_ATK,0)
+					&&  isStatEqual(bankDef, STAT_SPATK,0)) {
 						viability -= 10;
 						decreased = TRUE;
 					}
@@ -518,15 +515,15 @@ RESTART_AI_SCRIPT_0:
 				case MOVE_PLAYNICE:
 				case MOVE_NOBLEROAR:
 				case MOVE_TEARFULOOK:
-					if (StatMinned(bankDef, STAT_STAGE_ATK)
-					&&  StatMinned(bankDef, STAT_STAGE_SPATK)) {
+					if (isStatEqual(bankDef, STAT_ATK,0)
+					&&  isStatEqual(bankDef, STAT_SPATK,0)) {
 						viability -= 10;
 						decreased = TRUE;
 					}
 					break;
 				
 				default:
-					if (StatMinned(bankDef, STAT_STAGE_ATK)) {
+					if (isStatEqual(bankDef, STAT_ATK,0)) {
 						viability -= 10;
 						decreased = TRUE;
 					}
@@ -537,7 +534,7 @@ RESTART_AI_SCRIPT_0:
 			
 		case EFFECT_DEFENSE_DOWN: 
 		case EFFECT_DEFENSE_DOWN_2: 
-			if (StatMinned(bankDef, STAT_STAGE_DEF))
+			if (isStatEqual(bankDef, STAT_DEF,0))
 				viability -= 10;
 			else if (MoveBlockedBySubstitute(move, bankAtk, bankDef))
 				viability -= 10;
@@ -545,7 +542,7 @@ RESTART_AI_SCRIPT_0:
 		
 		case EFFECT_SPEED_DOWN:
 		case EFFECT_SPEED_DOWN_2: 
-			if (StatMinned(bankDef, STAT_STAGE_SPD))
+			if (isStatEqual(bankDef, STAT_SPD,0))
 				viability -= 10;
 			else if (MoveBlockedBySubstitute(move, bankAtk, bankDef))
 				viability -= 10;
@@ -553,7 +550,7 @@ RESTART_AI_SCRIPT_0:
 		
 		case EFFECT_SPECIAL_ATTACK_DOWN: 
 		case EFFECT_SPECIAL_ATTACK_DOWN_2:
-			if (StatMinned(bankDef, STAT_STAGE_SPATK))
+			if (isStatEqual(bankDef, STAT_SPATK,0))
 				viability -= 10;
 			else if ((move == MOVE_CAPTIVATE)
 			&& (gBattleMons[bankAtk].gender == GENDER_UNKNOWN)
@@ -566,7 +563,7 @@ RESTART_AI_SCRIPT_0:
 		
 		case EFFECT_SPECIAL_DEFENSE_DOWN:
 		case EFFECT_SPECIAL_DEFENSE_DOWN_2:
-			if (StatMinned(bankDef, STAT_STAGE_SPDEF))
+			if (isStatEqual(bankDef, STAT_SPDEF,0))
 				viability -= 10;
 			else if (MoveBlockedBySubstitute(move, bankAtk, bankDef))
 				viability -= 10;
@@ -574,7 +571,7 @@ RESTART_AI_SCRIPT_0:
 		
 		case EFFECT_ACCURACY_DOWN: 
 		case EFFECT_ACCURACY_DOWN_2:
-			if (StatMinned(bankDef, STAT_STAGE_ACC))
+			if (isStatEqual(bankDef, STAT_ACC,0))
 				viability -= 10;
 			else if (MoveBlockedBySubstitute(move, bankAtk, bankDef))
 				viability -= 10;
@@ -582,7 +579,7 @@ RESTART_AI_SCRIPT_0:
 		
 		case EFFECT_EVASION_DOWN: 
 		case EFFECT_EVASION_DOWN_2: 
-			if (StatMinned(bankDef, STAT_STAGE_EVSN))
+			if (isStatEqual(bankDef, STAT_EVSN,0))
 				viability -= 10;
 			else if (MoveBlockedBySubstitute(move, bankAtk, bankDef))
 				viability -= 10;
@@ -659,16 +656,11 @@ RESTART_AI_SCRIPT_0:
 		
 		case EFFECT_POISON:
 		case EFFECT_TOXIC:
-			switch (move) {
-				case MOVE_TOXICTHREAD:
-					if (!StatMinned(bankDef, STAT_STAGE_SPD)
-					&& !MoveBlockedBySubstitute(move, bankAtk, bankDef))
-						break;
-				default:
-					If (!CanBePoisoned(bankDef, bankAtk)
-					|| MoveBlockedBySubstitute(move, bankAtk, bankDef))
-						viability -= 10;
-			}
+			if (move == MOVE_TOXICTHREAD && !(isStatEqual(bankDef, STAT_SPD, 0)))
+				break;
+			if (!CanBePoisoned(bankDef, bankAtk)
+			|| MoveBlockedBySubstitute(move, bankAtk, bankDef))
+				viability -= 10;
 			break;
 		
 		case EFFECT_LIGHT_SCREEN:
@@ -894,7 +886,6 @@ RESTART_AI_SCRIPT_0:
 				else if (GetHealthPercentage(bankAtk) <= 50)
 					viability -= 6;
 			}
-			//else if (atkAbility == ABILITY_CONTRARY || (StatMaxed(bankAtk, STAT_STAGE_ATK) && StatMaxed(bankAtk, STAT_STAGE_DEF)))
 			else if (atkAbility == ABILITY_CONTRARY
 			|| (isStatEqual(bankAtk,STAT_ATK, 12) && (isStatEqual(bankAtk, STAT_DEF, 12))))
 				viability -= 10;
@@ -1009,7 +1000,6 @@ RESTART_AI_SCRIPT_0:
 			
 		case EFFECT_SWAGGER:
 			if ((bankDef == bankAtkPartner) && (isStatEqual(bankDef, STAT_ATK, 12)))
-			//&& StatMaxed(bankDef, STAT_STAGE_ATK))
 				viability -= 10;
 			else
 				goto AI_CONFUSE;
@@ -1057,7 +1047,7 @@ RESTART_AI_SCRIPT_0:
 				|| defAbility == ABILITY_FULLMETALBODY
 				|| defAbility == ABILITY_WHITESMOKE)
 					viability -= 10;
-				else if ( gBattleMons[bankDef].statStages[STAT_STAGE_ACC] == 0)
+				else if ( gBattleMons[bankDef].statStages[STAT_ACC] == 0)
 					viability -= 10;
 				else if (gSideAffecting[SIDE(bankDef)] & (SIDE_REFLECT | SIDE_SAFEGUARD | SIDE_MIST)
 					goto AI_STANDARD_DAMAGE;
@@ -1091,7 +1081,7 @@ RESTART_AI_SCRIPT_0:
 					goto AI_STANDARD_DAMAGE
 					
 				default: //Belly Drum
-					if (StatMaxed(bankAtk, STAT_STAGE_ATK)
+					if (isStatEqual(bankAtk, STAT_ATK, 12)
 					|| GetHealthPercentage(bankAtk) <= 50)
 						viability -= 10;
 			}
@@ -1153,7 +1143,7 @@ RESTART_AI_SCRIPT_0:
 		
 		case EFFECT_FLATTER:
 			if ((bankDef == bankAtkPartner)
-			&& StatMaxed(bankDef, STAT_STAGE_SPATK))
+			&& isStatEqual(bankDef, STAT_SPATK, 12))
 				viability -= 10;
 			else
 				goto AI_CONFUSE;
@@ -1183,8 +1173,8 @@ RESTART_AI_SCRIPT_0:
 					break;
 				
 				default: //Memento
-					if ((StatMinned(bankDef, STAT_STAGE_ATK) 
-					&&  StatMinned(bankDef, STAT_STAGE_SPATK))
+					if ((isStatEqual(bankDef, STAT_ATK,0) 
+					&&  isStatEqual(bankDef, STAT_SPATK,0))
 					&&  !MoveBlockedBySubstitute(move, bankAtk, bankDef))
 						viability -= 10;
 			}
@@ -1450,14 +1440,14 @@ RESTART_AI_SCRIPT_0:
 				viabilility -= 10;
 			break;
 			
-		case EFFECT_ClearSmog: 
+		case EFFECT_CLEAR_SMOG: 
 			u8 i;
 			for (i = 0; i <= 6; i++) {
 				if (gBattleMons[bankDef].statStages[i] > 6)
 					goto AI_STANDARD_DAMAGE;
 			}
 			break;
-		case EFFECT_SpeedBalls:
+		case EFFECT_SPEEDBALLS:
 			if (move == MOVE_ELECTROBALL && MoveWouldHitFirst(move, bankAtk, bankDef))
 					viabilility -= 6;
 			else if (move == MOVE_GYROBALL && MoveWouldHitFirst(move, bankDef, bankAtk))
@@ -1511,7 +1501,7 @@ RESTART_AI_SCRIPT_0:
 			break;
 			
 		case EFFECT_FLING:
-			if !(CanTransferItem(atkSpecies, atkItem, GetBankPartyData(bankAtk)))
+			if (!(CanTransferItem(atkSpecies, atkItem, GetBankPartyData(bankAtk))))
 				viabilility -= 10;
 			break;
 					
@@ -1602,7 +1592,7 @@ RESTART_AI_SCRIPT_0:
 			}
 			break;
 			
-		case EFFECT_Synchronoise:
+		case EFFECT_SYNCHRONOISE:
 			// check holding ring target or is of same type
 			if (GetBankItemEffect(bankAtk) == ITEM_EFFECT_RING_TARGET
 				|| IsOfType(bankDef, gBattleMons[bankAtk].type1)

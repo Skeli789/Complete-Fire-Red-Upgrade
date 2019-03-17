@@ -7998,7 +7998,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_SYNCHRONOISE
-/*effect*/			254,
+/*effect*/			EFFECT_SYNCHRONOISE,
 /*power*/			120,
 /*type*/			TYPE_PSYCHIC,
 /*accuracy*/		100,

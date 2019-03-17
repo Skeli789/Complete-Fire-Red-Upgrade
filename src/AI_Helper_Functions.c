@@ -445,7 +445,7 @@ u8 aiAllStatChecks(u8 viability, u8 bank, u8 cmpVal) {
 }
 
 // AI function to check if given stat is equal to a value (eg. minned/maxed)
-bool isStatEqual(u8 bank, u8 statId, u8 statVal) {
+bool8 isStatEqual(u8 bank, u8 statId, u8 statVal) {
 	if (gBattleMons[bank].statStages[statId] == statVal)
 		return TRUE;
 	return FALSE;
