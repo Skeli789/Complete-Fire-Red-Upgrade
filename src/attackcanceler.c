@@ -887,25 +887,76 @@ u8 IsMonDisobedient(void)
         return 0;
 	#endif
 	
-    if (FlagGet(FLAG_BADGE08_GET))
-        return 0;
-	else if (FlagGet(FLAG_BADGE07_GET))
-        obedienceLevel = BADGE_7_OBEDIENCE_LEVEL;
-	else if (FlagGet(FLAG_BADGE06_GET))
-        obedienceLevel = BADGE_6_OBEDIENCE_LEVEL;
-	else if (FlagGet(FLAG_BADGE05_GET))
-        obedienceLevel = BADGE_5_OBEDIENCE_LEVEL;
-	else if (FlagGet(FLAG_BADGE04_GET))
-        obedienceLevel = BADGE_4_OBEDIENCE_LEVEL;
-	else if (FlagGet(FLAG_BADGE03_GET))
-        obedienceLevel = BADGE_3_OBEDIENCE_LEVEL;
-	else if (FlagGet(FLAG_BADGE02_GET))
-        obedienceLevel = BADGE_2_OBEDIENCE_LEVEL;
-	else if (FlagGet(FLAG_BADGE01_GET))
-        obedienceLevel = BADGE_1_OBEDIENCE_LEVEL;
-	else
-		obedienceLevel = BASE_OBEDIENCE_LEVEL;
-
+	#ifdef OBEDIENCE_BY_BADGE_AMOUNT
+		u8 badgeCount = 0;
+		
+		if (FlagGet(FLAG_BADGE08_GET))
+			++badgeCount;
+		if (FlagGet(FLAG_BADGE07_GET))
+			++badgeCount;
+		if (FlagGet(FLAG_BADGE06_GET))
+			++badgeCount;
+		if (FlagGet(FLAG_BADGE05_GET))
+			++badgeCount;
+		if (FlagGet(FLAG_BADGE04_GET))
+			++badgeCount;
+		if (FlagGet(FLAG_BADGE03_GET))
+			++badgeCount;
+		if (FlagGet(FLAG_BADGE02_GET))
+			++badgeCount;
+		if (FlagGet(FLAG_BADGE01_GET))
+			++badgeCount;
+		
+		switch(badgeCount) {
+			case 0:
+				obedienceLevel = BASE_OBEDIENCE_LEVEL;
+				break;
+			case 1:
+				obedienceLevel = BADGE_1_OBEDIENCE_LEVEL;
+				break;
+			case 2:
+				obedienceLevel = BADGE_2_OBEDIENCE_LEVEL;
+				break;
+			case 3:
+				obedienceLevel = BADGE_3_OBEDIENCE_LEVEL;
+				break;
+			case 4:
+				obedienceLevel = BADGE_4_OBEDIENCE_LEVEL;
+				break;
+			case 5:
+				obedienceLevel = BADGE_5_OBEDIENCE_LEVEL;
+				break;
+			case 6:
+				obedienceLevel = BADGE_6_OBEDIENCE_LEVEL;
+				break;
+			case 7:
+				obedienceLevel = BADGE_7_OBEDIENCE_LEVEL;
+				break;
+			default:
+				return 0;
+		}
+	
+	#else
+		if (FlagGet(FLAG_BADGE08_GET))
+			return 0;
+		else if (FlagGet(FLAG_BADGE07_GET))
+			obedienceLevel = BADGE_7_OBEDIENCE_LEVEL;
+		else if (FlagGet(FLAG_BADGE06_GET))
+			obedienceLevel = BADGE_6_OBEDIENCE_LEVEL;
+		else if (FlagGet(FLAG_BADGE05_GET))
+			obedienceLevel = BADGE_5_OBEDIENCE_LEVEL;
+		else if (FlagGet(FLAG_BADGE04_GET))
+			obedienceLevel = BADGE_4_OBEDIENCE_LEVEL;
+		else if (FlagGet(FLAG_BADGE03_GET))
+			obedienceLevel = BADGE_3_OBEDIENCE_LEVEL;
+		else if (FlagGet(FLAG_BADGE02_GET))
+			obedienceLevel = BADGE_2_OBEDIENCE_LEVEL;
+		else if (FlagGet(FLAG_BADGE01_GET))
+			obedienceLevel = BADGE_1_OBEDIENCE_LEVEL;
+		else
+			obedienceLevel = BASE_OBEDIENCE_LEVEL;
+	#endif
+	
     if (gBattleMons[gBankAttacker].level <= obedienceLevel)
         return 0;
     rnd = (Random() & 255);
