@@ -33,6 +33,7 @@ typedef u8  ability_t;
 typedef u16 item_t;
 typedef u8  item_effect_t;
 typedef u8  bank_t;
+typedef u8  move_effect_t;
 
 struct PlttData
 {
