@@ -2,7 +2,7 @@
 #include "defines.h"
 
 extern bool8 CheckTableForMove(move_t, const u16 table[]);
-extern bool8 CheckTableForMoveEffect(move_t move, const u16 table[]);
+extern bool8 CheckTableForMoveEffect(move_t move, const u8 table[]);
 extern bool8 CheckTableForSpecialMoveEffect(u8 effect, const u8 table[]);
 extern bool8 CheckTableForAbility(ability_t, const u8 table[]);
 extern ability_t BanksAbility(bank_t);

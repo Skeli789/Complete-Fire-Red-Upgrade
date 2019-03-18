@@ -418,7 +418,9 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move) {
 		case EFFECT_MIRROR_MOVE: //May cause issues with priority calcs?
 			if (gBattleStruct->lastTakenMoveFrom[bankAtk][bankDef] != 0)
 				return AI_Script_Negatives(bankAtk, bankDef, gBattleStruct->lastTakenMoveFrom[bankAtk][bankDef]);
-		
+			viability -= 10;
+			break;
+			
 		case EFFECT_SPLASH:
 		case EFFECT_TELEPORT:
 			viability -= 10;
@@ -1015,7 +1017,7 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move) {
 					if (defStatus3 & STATUS3_MIRACLE_EYED)
 						viability -= 10;
 					
-					if (gBattleMons[bankDef].statStages[STAT_STAGE_EVASION] <= 6
+					if (gBattleMons[bankDef].statStages[STAT_STAGE_EVASION - 1] <= 6
 					&& !IsOfType(bankDef, TYPE_DARK))
 						viability -= 9;
 					break;
@@ -1024,7 +1026,7 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move) {
 					if (defStatus2 & STATUS2_FORESIGHT)
 						viability -= 10;
 					
-					if (gBattleMons[bankDef].statStages[STAT_STAGE_EVASION] <= 6
+					if (gBattleMons[bankDef].statStages[STAT_STAGE_EVASION - 1] <= 6
 					&& !IsOfType(bankDef, TYPE_GHOST))
 						viability -= 9;
 			}
@@ -1097,7 +1099,7 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move) {
 				|| defAbility == ABILITY_FULLMETALBODY
 				|| defAbility == ABILITY_WHITESMOKE)
 					viability -= 10;
-				else if (gBattleMons[bankDef].statStages[STAT_STAGE_ACC] == 0)
+				else if (gBattleMons[bankDef].statStages[STAT_STAGE_ACC - 1] == 0)
 					viability -= 10;
 				else if (gSideAffecting[SIDE(bankDef)] & (SIDE_STATUS_REFLECT | SIDE_STATUS_SAFEGUARD | SIDE_STATUS_MIST))
 					goto AI_STANDARD_DAMAGE;
@@ -1410,16 +1412,16 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move) {
 			
 		case EFFECT_TICKLE:
 			// lower viability if atk or def buffs = 0
-			if (gBattleMons[bankDef].statStages[STAT_STAGE_ATK] == 0
-				|| gBattleMons[bankDef].statStages[STAT_STAGE_DEF] == 0)
+			if (gBattleMons[bankDef].statStages[STAT_STAGE_ATK - 1] == 0
+				|| gBattleMons[bankDef].statStages[STAT_STAGE_DEF - 1] == 0)
 				viability -= 10;
 			break;
 			
 		case EFFECT_COSMIC_POWER:
 		AI_COSMIC_POWER: ;
 			// lower viability if def/spdef maxed
-			if (gBattleMons[bankAtk].statStages[STAT_STAGE_DEF] >= 12
-				|| gBattleMons[bankAtk].statStages[STAT_STAGE_SPDEF] >= 12)
+			if (gBattleMons[bankAtk].statStages[STAT_STAGE_DEF - 1] >= 12
+				|| gBattleMons[bankAtk].statStages[STAT_STAGE_SPDEF - 1] >= 12)
 				viability -= 10;
 			break;
 			
