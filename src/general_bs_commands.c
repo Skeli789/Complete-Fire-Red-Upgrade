@@ -291,6 +291,7 @@ void atk0B_healthbarupdate(void) {
 		&& !(gHitMarker & HITMARKER_IGNORE_SUBSTITUTE)
 		&& !(gBattleMons[gActiveBattler].status2 & STATUS2_TRANSFORMED)) 
 		{
+			gBattleScripting->bank = gBankTarget;
 			BattleScriptPush(gBattlescriptCurrInstr + 2);
 			gBattlescriptCurrInstr = BattleScript_MimikyuTookDamage;
 			return;
