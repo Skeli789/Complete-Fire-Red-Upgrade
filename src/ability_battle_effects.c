@@ -2342,6 +2342,7 @@ void TransferAbilityPopUpHelper(void)
 	
 	gActiveBattler = gBattleScripting->bank;
 	AbilityPopUpHelper = CopyAbility(gActiveBattler);
+	gLastUsedAbility = AbilityPopUpHelper;
 	
 	EmitDataTransfer(0, &AbilityPopUpHelper, 1, &AbilityPopUpHelper);
 	MarkBufferBankForExecution(gActiveBattler);
