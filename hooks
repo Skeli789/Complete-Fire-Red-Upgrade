@@ -113,6 +113,7 @@ CheckForTrainersWantingBattle 8081B30 0
 CursorCb_Summary 8122D4C 1
 
 ##Battle Animation Hooks
+UpdateOamPriorityInAllHealthboxes 804828C 1
 ScriptCmd_loadspritegfx 08072868 0
 ShinyAnimFixHook 080F1792 0
 SlideMonToOriginalPosHook 080991BA 0
