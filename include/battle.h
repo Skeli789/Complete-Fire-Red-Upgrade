@@ -755,6 +755,7 @@ struct NewBattleStruct
 	u8 HealingWishLoc;
 	u8 PowderByte;
 	u8 AbsentBattlerHelper;
+	u8 activeAbilityPopUps;
 	
 	//Bit Fields for Party
 	u8 BelchCounters;
@@ -813,6 +814,7 @@ struct NewBattleStruct
 	u8 ResultFlags[4];
 	u8 expHelper[4];
 	u8 megaIndicatorObjIds[4];
+	u8 abilityPopUpIds[2];
 	
 	struct MegaData* MegaData;	 //0x2017688
 	struct UltraData* UltraData;
@@ -1019,6 +1021,8 @@ typedef struct fling FlingStruct;
 #define B_ANIM_MEGA_EVOLUTION 0x3F
 #define B_ANIM_ULTRA_BURST 0x40
 #define B_ANIM_LOAD_DEAFUALT_BG 0x41
+#define B_ANIM_LOAD_ABILITY_POP_UP 0x42
+#define B_ANIM_DESTROY_ABILITY_POP_UP 0x43
 
 // special animations table
 #define B_ANIM_LVL_UP                   0x0

@@ -76,7 +76,9 @@ PlayAnimationTable:
 .word ANIM_ZMOVE_ACTIVATE
 .word ANIM_MEGA_EVOLUTION
 .word ANIM_ULTRA_BURST
-.word ANIM_LOAD_DEAFUALT_BG
+.word ANIM_LOAD_DEFAULT_BG
+.word ANIM_LOAD_ABILITY_POP_UP
+.word ANIM_REMOVE_ABILITY_POP_UP
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -804,7 +806,25 @@ ULTRABURSTSYMBOL: objtemplate ANIM_TAG_ULTRA_BURST_SYMBOL ANIM_TAG_ULTRA_BURST_S
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-ANIM_LOAD_DEAFUALT_BG:
+ANIM_LOAD_DEFAULT_BG:
 	loaddefaultBG
 	waitfortransparentBG
+	endanimation
+	
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+ANIM_LOAD_ABILITY_POP_UP:
+	@loadparticle ANIM_TAG_ABILITY_POP_UP @;Done by the task b\c not compressed
+	pokespritetoBG side_attacker
+	launchtask AnimTask_LoadAbilityPopUp 0x5 0x0
+	waitanimation
+	pause 0x20
+	pokespritefromBG side_attacker
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+ANIM_REMOVE_ABILITY_POP_UP:
+	launchtask AnimTask_DestroyAbilityPopUp 0x5 0x0
+	pause 0x20
 	endanimation

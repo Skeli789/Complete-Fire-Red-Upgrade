@@ -1,6 +1,8 @@
 #include "defines.h"
 #include "helper_functions.h"
 
+//Do Sleep Clause
+
 extern void (* const gBattleScriptingCommandsTable[])(void);
 extern void (* const gBattleScriptingCommandsTable2[])(void);
 
@@ -83,10 +85,15 @@ void atkFD_jumpifabilitypresenttargetfield(void)
 	u8 ability = gBattlescriptCurrInstr[1];
 	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
 	
-	if (AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, gBankAttacker, ability, 0, 0))
-		gBattlescriptCurrInstr = ptr;
+	if (ABILITY(gBankTarget) == ability)
+		gBattleScripting->bank = gBankTarget;
+	else if (ABILITY(PARTNER(gBankTarget)) == ability)
+		gBattleScripting->bank = PARTNER(gBankTarget);
 	else
 		gBattlescriptCurrInstr += 6;
+	
+	gLastUsedAbility = ability;
+	gBattlescriptCurrInstr = ptr;		
 }
 
 //jumpifspecies BANK SPECIES ROM_OFFSET
@@ -719,11 +726,8 @@ void atkFF1A_jumpifabilitypresentattackerfield(void)
 void atkFF1B_tryactivateswitchinability(void)
 {
 	u8 bank = GetBattleBank(gBattlescriptCurrInstr[1]);
-	
-	if (AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, bank, 0, 0, 0))
-		return;
-	
 	gBattlescriptCurrInstr += 2;
+	AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, bank, 0, 0, 0);
 }
 
 /*

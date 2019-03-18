@@ -3,7 +3,6 @@ ExtensionState = 0x3000F28;
 
 /*Old Things*/
 gEvolutionTable = 0x08989D30; /*Change this*/
-/*gBattleScriptsForMoveEffects = 0x8903B70; Remove This*/
 
 gAccuracyStageRatios = 0x82504FC;
 sTurnActionsFuncsTable = 0x8250038;
@@ -657,6 +656,28 @@ sub_811FA78 = 0x811FA78 | 1;
 sub_812029C = 0x812029C | 1;
 sub_8122D78 = 0x8122D78 | 1;
 
+/*Window Functions*/
+InitWindows = 0x8003B24 | 1;
+AddWindow = 0x8003CE4 | 1;
+RemoveWindow = 0x8003E3C | 1;
+FreeAllWindowBuffers = 0x8003ECC | 1;
+CopyWindowToVram = 0x8003F20 | 1;
+PutWindowTilemap = 0x8003FA0 | 1;
+PutWindowRectTilemapOverridePalette = 0x8004000 | 1;
+ClearWindowTilemap = 0x80040B8 | 1;
+PutWindowRectTilemap = 0x8004108 | 1;
+BlitBitmapToWindow = 0x80041B8 | 1;
+BlitBitmapRectToWindow = 0x80041F0 | 1;
+BlitBitmapRectToWindowWithColorKey = 0x80042B0 | 1;
+FillWindowPixelRect = 0x8004378 | 1;
+CopyToWindowPixelBuffer = 0x8004404 | 1;
+FillWindowPixelBuffer = 0x800445C | 1;
+ScrollWindow = 0x80044A8 | 1;
+CallWindowFunction = 0x800486C | 1;
+SetWindowAttribute = 0x80048BC | 1;
+GetWindowAttribute = 0x8004950 | 1;
+GetNumActiveWindowsOnBg = 0x8004A34 | 1;
+
 /*Palette Functions*/
 LoadCompressedPalette = 0x80703A8 | 1;
 LoadPalette = 0x80703EC | 1;
@@ -772,6 +793,7 @@ GetTaskCount = 0x80776B8 | 1;
 ReturnEmptyStringIfNull = 0x80806C8 | 1;
 DisplayItemMessage = 0x8108E70 | 1;
 bag_menu_inits_lists_menu = 0x810A1F8 | 1;
+AddTextPrinterParameterized4 = 0x812E5A4 | 1;
 m4aSongNumStop = 0x81DD1C0 | 1;
 m4aMPlayContinue = 0x81DD26C | 1;
 m4aMPlayVolumeControl = 0x81DE0E0 | 1;

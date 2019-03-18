@@ -334,10 +334,12 @@ BattleScript_FlameOrb:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_ZenMode:
-	setword BATTLE_STRING_LOADER AbilityActivatedString
+	call BattleScript_AbilityPopUp
+	playanimation BANK_ATTACKER ANIM_TRANSFORM 0x0
+	setword BATTLE_STRING_LOADER TransformedString
 	printstring 0x184
 	waitmessage DELAY_HALFSECOND
-	playanimation BANK_ATTACKER ANIM_TRANSFORM 0x0
+	call BattleScript_AbilityPopUpRevert
 	end2
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

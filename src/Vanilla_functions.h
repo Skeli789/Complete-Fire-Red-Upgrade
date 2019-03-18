@@ -327,6 +327,28 @@ void __attribute__((long_call)) sub_811FA78(u8 taskId);
 s8 __attribute__((long_call)) sub_812029C(s8 a, s8 b);
 void __attribute__((long_call)) sub_8122D78(void);
 
+//Window Functions
+u16 __attribute__((long_call)) InitWindows(const struct WindowTemplate *templates);
+u16 __attribute__((long_call)) AddWindow(const struct WindowTemplate *template);
+void __attribute__((long_call)) RemoveWindow(u8 windowId);
+void __attribute__((long_call)) FreeAllWindowBuffers(void);
+void __attribute__((long_call)) CopyWindowToVram(u8 windowId, u8 mode);
+void __attribute__((long_call)) PutWindowTilemap(u8 windowId);
+void __attribute__((long_call)) PutWindowRectTilemapOverridePalette(u8 windowId, u8 x, u8 y, u8 width, u8 height, u8 palette);
+void __attribute__((long_call)) ClearWindowTilemap(u8 windowId);
+void __attribute__((long_call)) PutWindowRectTilemap(u8 windowId, u8 x, u8 y, u8 width, u8 height);
+void __attribute__((long_call)) BlitBitmapToWindow(u8 windowId, const u8 *pixels, u16 x, u16 y, u16 width, u16 height);
+void __attribute__((long_call)) BlitBitmapRectToWindow(u8 windowId, const u8 *pixels, u16 srcX, u16 srcY, u16 srcWidth, int srcHeight, u16 destX, u16 destY, u16 rectWidth, u16 rectHeight);
+void __attribute__((long_call)) BlitBitmapRectToWindowWithColorKey(u8 windowId, const u8 *pixels, u16 srcX, u16 srcY, u16 srcWidth, int srcHeight, u16 destX, u16 destY, u16 rectWidth, u16 rectHeight, u8 colorKey);
+void __attribute__((long_call)) FillWindowPixelRect(u8 windowId, u8 fillValue, u16 x, u16 y, u16 width, u16 height);
+void __attribute__((long_call)) CopyToWindowPixelBuffer(u8 windowId, const void *src, u16 size, u16 tileOffset);
+void __attribute__((long_call)) FillWindowPixelBuffer(u8 windowId, u8 fillValue);
+void __attribute__((long_call)) ScrollWindow(u8 windowId, u8 direction, u8 distance, u8 fillValue);
+void __attribute__((long_call)) CallWindowFunction(u8 windowId, void ( *func)(u8, u8, u8, u8, u8, u8));
+bool8 __attribute__((long_call)) SetWindowAttribute(u8 windowId, u8 attributeId, u32 value);
+u32 __attribute__((long_call)) GetWindowAttribute(u8 windowId, u8 attributeId);
+u8 __attribute__((long_call)) GetNumActiveWindowsOnBg(u8 bgId);
+
 //Palette Functions
 void __attribute__((long_call)) LoadCompressedPalette(const void* src, u16 offset, u16 size);
 void __attribute__((long_call)) LoadPalette(const void *src, u16 offset, u16 size);
@@ -438,6 +460,7 @@ u8 __attribute__((long_call)) GetTaskCount(void);
 u8* __attribute__((long_call)) ReturnEmptyStringIfNull(const u8* string);
 void __attribute__((long_call)) DisplayItemMessage(u8 taskId, u8 a, const u8* str, void(*callback)(u8 taskId));
 void __attribute__((long_call)) bag_menu_inits_lists_menu(u8 taskId);
+void __attribute__((long_call)) AddTextPrinterParameterized4(u8 windowId, u8 fontId, u8 left, u8 top, u8 letterSpacing, u8 lineSpacing, const u8 *color, s8 speed, const u8 *str);
 void __attribute__((long_call)) m4aSongNumStop(u16 n);
 void __attribute__((long_call)) m4aMPlayContinue(struct MusicPlayerInfo *mplayInfo);
 void __attribute__((long_call)) m4aMPlayVolumeControl(struct MusicPlayerInfo *mplayInfo, u16 trackBits, u16 volume);

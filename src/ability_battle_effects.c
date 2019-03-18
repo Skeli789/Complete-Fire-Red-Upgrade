@@ -1900,3 +1900,464 @@ u8 UpdatePokeBallForIllusion(u8 bank)
 {
 	return GetMonData(GetIllusionPartyData(bank), MON_DATA_POKEBALL, NULL);
 }
+
+//Ability Pop-Up//////////////////////////////////////////////////////////////////////////////////////
+//Credit to the Emerald Battle Engine Upgrade 2.0 by DizzyEgg for the original code.
+
+// for sprite
+#define tOriginalX      data[0]
+#define tHide           data[1]
+#define tFrames         data[2]
+#define tRightToLeft    data[3]
+#define tBattlerId      data[4]
+#define tIsMain         data[5]
+
+// for task
+#define tSpriteId1      data[6]
+#define tSpriteId2      data[7]
+
+extern const struct CompressedSpriteSheet gBattleAnimPicTable[];
+extern const struct CompressedSpritePalette gBattleAnimPaletteTable[];
+extern const u8 Ability_Pop_UpTiles[64 * 64 / 2];
+
+static void SpriteCb_AbilityPopUp(struct Sprite *sprite);
+static void Task_FreeAbilityPopUpGfx(u8 taskId);
+
+static const struct OamData sOamData_AbilityPopUp =
+{
+    .y = 0,
+    .affineMode = 0,
+    .objMode = 0,
+    .mosaic = 0,
+    .bpp = 0,
+    .shape = ST_OAM_H_RECTANGLE,
+    .x = 0,
+    .matrixNum = 0,
+    .size = 3,
+    .tileNum = 0,
+    .priority = 0,
+    .paletteNum = 0,
+    .affineParam = 0,
+};
+
+static const union AnimCmd sSpriteAnim_AbilityPopUp1[] =
+{
+    ANIMCMD_FRAME(0, 0),
+    ANIMCMD_END
+};
+
+static const union AnimCmd *const sSpriteAnimTable_AbilityPopUp1[] =
+{
+    sSpriteAnim_AbilityPopUp1
+};
+
+static const struct SpriteTemplate sSpriteTemplate_AbilityPopUp1 =
+{
+    .tileTag = ANIM_TAG_ABILITY_POP_UP,
+    .paletteTag = ANIM_TAG_ABILITY_POP_UP,
+    .oam = &sOamData_AbilityPopUp,
+    .anims = sSpriteAnimTable_AbilityPopUp1,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = SpriteCb_AbilityPopUp
+};
+
+static const union AnimCmd sSpriteAnim_AbilityPopUp2[] =
+{
+    ANIMCMD_FRAME(32, 0),
+    ANIMCMD_END
+};
+
+static const union AnimCmd *const sSpriteAnimTable_AbilityPopUp2[] =
+{
+    sSpriteAnim_AbilityPopUp2
+};
+
+static const struct SpriteTemplate sSpriteTemplate_AbilityPopUp2 =
+{
+    .tileTag = ANIM_TAG_ABILITY_POP_UP,
+    .paletteTag = ANIM_TAG_ABILITY_POP_UP,
+    .oam = &sOamData_AbilityPopUp,
+    .anims = sSpriteAnimTable_AbilityPopUp2,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = SpriteCb_AbilityPopUp
+};
+
+#define ABILITY_POP_UP_POS_X_DIFF 64
+#define ABILITY_POP_UP_POS_X_SLIDE 68
+
+static const s16 sAbilityPopUpCoordsDoubles[MAX_BATTLERS_COUNT][2] =
+{
+    {29, 80}, // player left
+    {186, 19}, // opponent left
+    {29, 97}, // player right
+    {186, 36}, // opponent right
+};
+
+static const s16 sAbilityPopUpCoordsSingles[MAX_BATTLERS_COUNT][2] =
+{
+    {29, 97}, // player
+    {186, 57}, // opponent
+};
+
+static u8* AddTextPrinterAndCreateWindowOnAbilityPopUp(const u8* str, u32 x, u32 y, u32 color1, u32 color2, u32 color3, u32* windowId)
+{
+    u8 color[3] = {color1, color2, color3};
+    struct WindowTemplate winTemplate = {0};
+    winTemplate.width = 8;
+    winTemplate.height = 2;
+
+    *windowId = AddWindow(&winTemplate);
+    FillWindowPixelBuffer(*windowId, (color1 << 4) | (color1));
+
+    AddTextPrinterParameterized4(*windowId, 0, x, y, 0, 0, color, -1, str);
+    return (u8*)(GetWindowAttribute(*windowId, WINDOW_TILE_DATA));
+}
+
+static void TextIntoAbilityPopUp(void *dest, u8 *windowTileData, s32 arg2, bool32 arg3)
+{
+    CpuCopy32(windowTileData + 256, dest + 256, arg2 * 32);
+    if (arg2 > 0)
+    {
+        do
+        {
+            if (arg3)
+                CpuCopy32(windowTileData + 16, dest + 16, 16);
+            else
+                CpuCopy32(windowTileData + 20, dest + 20, 12);
+            dest += 32, windowTileData += 32;
+            arg2--;
+        } while (arg2 != 0);
+    }
+}
+
+#define MAX_CHARS_PRINTED 12
+
+static void PrintOnAbilityPopUp(const u8* str, u8* spriteTileData1, u8* spriteTileData2, u32 x1, u32 x2, u32 y, u32 color1, u32 color2, u32 color3)
+{
+    u32 windowId, i;
+    u8 *windowTileData;
+    u8 text1[MAX_CHARS_PRINTED];
+    u8 text2[MAX_CHARS_PRINTED];
+
+    for (i = 0; i < MAX_CHARS_PRINTED; i++)
+    {
+        text1[i] = str[i];
+        if (text1[i] == EOS)
+            break;
+    }
+    text1[i] = EOS;
+
+    windowTileData = AddTextPrinterAndCreateWindowOnAbilityPopUp(text1, x1, y, color1, color2, color3, &windowId);
+    TextIntoAbilityPopUp(spriteTileData1, windowTileData, 8, (y == 0));
+    RemoveWindow(windowId);
+
+    if (i == MAX_CHARS_PRINTED)
+    {
+        for (i = 0; i < MAX_CHARS_PRINTED; i++)
+        {
+            text2[i] = str[MAX_CHARS_PRINTED + i];
+            if (text2[i] == EOS)
+                break;
+        }
+        text2[i] = EOS;
+
+        windowTileData = AddTextPrinterAndCreateWindowOnAbilityPopUp(text2, x2, y, color1, color2, color3, &windowId);
+        TextIntoAbilityPopUp(spriteTileData2, windowTileData, 3, (y == 0));
+        RemoveWindow(windowId);
+    }
+}
+
+static void PrintBattlerOnAbilityPopUp(u8 battlerId, u8 spriteId1, u8 spriteId2)
+{
+	u8* textPtr = StringCopy(gDisplayedStringBattle, GetIllusionPartyData(battlerId)->nickname);
+	
+	//Make the string say "[NAME]'s" instead of "[NAME]"
+	textPtr[0] = 0xB4; //'
+	++textPtr;
+	textPtr[0] = 0xE7; //s
+	++textPtr;
+	textPtr[0] = EOS;
+
+    PrintOnAbilityPopUp((const u8*) gDisplayedStringBattle,
+                        (void*)(OBJ_VRAM0) + (gSprites[spriteId1].oam.tileNum * 32),
+                        (void*)(OBJ_VRAM0) + (gSprites[spriteId2].oam.tileNum * 32),
+                        5, 0,
+                        0,
+                        2, 7, 1);
+}
+
+static void PrintAbilityOnAbilityPopUp(u32 ability, u8 spriteId1, u8 spriteId2)
+{
+	const u8* abilityName = gAbilityNames[ability];
+	
+	if (abilityName[3] == 0x8) //Expanded Ability Name
+		abilityName = T2_READ_PTR(abilityName);
+
+    PrintOnAbilityPopUp(abilityName,
+                        (void*)(OBJ_VRAM0) + (gSprites[spriteId1].oam.tileNum * 32) + 256,
+                        (void*)(OBJ_VRAM0) + (gSprites[spriteId2].oam.tileNum * 32) + 256,
+                        5, 1,
+                        4,
+                        7, 9, 1);
+}
+
+#define PIXEL_COORDS_TO_OFFSET(x, y)(			\
+/*Add tiles by X*/								\
+((y / 8) * 32 * 8)								\
+/*Add tiles by X*/								\
++ ((x / 8) * 32)								\
+/*Add pixels by Y*/								\
++ ((((y) - ((y / 8) * 8))) * 4)				    \
+/*Add pixels by X*/								\
++ ((((x) - ((x / 8) * 8)) / 2)))
+
+static const u16 sOverwrittenPixelsTable[][2] =
+{
+	{PIXEL_COORDS_TO_OFFSET(0, 0), 5},
+	{PIXEL_COORDS_TO_OFFSET(0, 1), 5},
+	{PIXEL_COORDS_TO_OFFSET(0, 2), 5},
+	{PIXEL_COORDS_TO_OFFSET(0, 3), 5},
+	{PIXEL_COORDS_TO_OFFSET(0, 4), 5},
+	{PIXEL_COORDS_TO_OFFSET(0, 5), 5},
+	{PIXEL_COORDS_TO_OFFSET(0, 6), 5},
+	{PIXEL_COORDS_TO_OFFSET(0, 7), 3},
+	{PIXEL_COORDS_TO_OFFSET(0, 8), 3},
+	{PIXEL_COORDS_TO_OFFSET(0, 9), 3},
+	{PIXEL_COORDS_TO_OFFSET(0, 10), 3},
+	{PIXEL_COORDS_TO_OFFSET(0, 11), 3},
+	{PIXEL_COORDS_TO_OFFSET(0, 12), 3},
+	{PIXEL_COORDS_TO_OFFSET(0, 13), 8},
+
+	{PIXEL_COORDS_TO_OFFSET(8, 13), 8},
+	{PIXEL_COORDS_TO_OFFSET(16, 13), 8},
+	{PIXEL_COORDS_TO_OFFSET(24, 13), 8},
+	{PIXEL_COORDS_TO_OFFSET(32, 13), 8},
+	{PIXEL_COORDS_TO_OFFSET(40, 13), 8},
+	{PIXEL_COORDS_TO_OFFSET(48, 13), 8},
+	{PIXEL_COORDS_TO_OFFSET(56, 13), 8},
+
+    {PIXEL_COORDS_TO_OFFSET(0, 14), 8},
+	{PIXEL_COORDS_TO_OFFSET(8, 14), 8},
+	{PIXEL_COORDS_TO_OFFSET(16, 14), 8},
+	{PIXEL_COORDS_TO_OFFSET(24, 14), 8},
+	{PIXEL_COORDS_TO_OFFSET(32, 14), 8},
+	{PIXEL_COORDS_TO_OFFSET(40, 14), 8},
+	{PIXEL_COORDS_TO_OFFSET(48, 14), 8},
+	{PIXEL_COORDS_TO_OFFSET(56, 14), 8},
+	
+	{PIXEL_COORDS_TO_OFFSET(0, 15), 3},
+	{PIXEL_COORDS_TO_OFFSET(0, 16), 3},
+	{PIXEL_COORDS_TO_OFFSET(0, 17), 3},
+	{PIXEL_COORDS_TO_OFFSET(0, 18), 3},
+	{PIXEL_COORDS_TO_OFFSET(0, 19), 3},
+	{PIXEL_COORDS_TO_OFFSET(0, 20), 3},
+	{PIXEL_COORDS_TO_OFFSET(0, 21), 3},
+	{PIXEL_COORDS_TO_OFFSET(0, 22), 3},
+	{PIXEL_COORDS_TO_OFFSET(0, 23), 3},
+	{PIXEL_COORDS_TO_OFFSET(0, 24), 3},
+	{PIXEL_COORDS_TO_OFFSET(0, 25), 3},
+	{PIXEL_COORDS_TO_OFFSET(0, 26), 3},
+	
+//Second Row Of Image
+	{PIXEL_COORDS_TO_OFFSET(0, 45), 8},
+	{PIXEL_COORDS_TO_OFFSET(0, 46), 8},
+	{PIXEL_COORDS_TO_OFFSET(8, 45), 8},
+	{PIXEL_COORDS_TO_OFFSET(8, 46), 8},
+	{PIXEL_COORDS_TO_OFFSET(16, 45), 8},
+	{PIXEL_COORDS_TO_OFFSET(16, 46), 8},
+};
+
+static inline void CopyPixels(u8 *dest, const u8 *src, u32 pixelCount)
+{
+	u32 i = 0;
+
+	if (pixelCount & 1)
+	{
+		while (pixelCount != 0)
+		{
+			dest[i] &= ~(0xF);
+			dest[i] |= (src[i] & 0xF);
+			if (--pixelCount != 0)
+			{
+				dest[i] &= ~(0xF0);
+				dest[i] |= (src[i] & 0xF0);
+				pixelCount--;
+			}
+			i++;
+		}
+	}
+	else
+	{
+		for (i = 0; i < pixelCount / 2; i++)
+			dest[i] = src[i];
+	}
+}
+
+static void RestoreOverwrittenPixels(u8 *tiles)
+{
+	u32 i;
+	u8 *buffer = Malloc(sizeof(Ability_Pop_UpTiles) * 2);
+
+	CpuCopy32(tiles, buffer, sizeof(Ability_Pop_UpTiles));
+
+	for (i = 0; i < ARRAY_COUNT(sOverwrittenPixelsTable); i++)
+	{
+		CopyPixels(buffer + sOverwrittenPixelsTable[i][0],
+				   Ability_Pop_UpTiles + sOverwrittenPixelsTable[i][0],
+				   sOverwrittenPixelsTable[i][1]);
+	}
+
+	CpuCopy32(buffer, tiles, sizeof(Ability_Pop_UpTiles));
+	Free(buffer);
+}
+
+void AnimTask_LoadAbilityPopUp(u8 taskId)
+{
+    const s16 (*coords)[2];
+    u8 spriteId1, spriteId2, battlerPosition, destroyerTaskId;
+	u8 ability = AbilityPopUpHelper; //Preceded by transfer of proper ability
+
+	LoadSpriteSheet((const struct SpriteSheet*) &gBattleAnimPicTable[ANIM_TAG_ABILITY_POP_UP - ANIM_SPRITES_START]);
+    LoadSpritePalette((const struct SpritePalette*) &gBattleAnimPaletteTable[ANIM_TAG_ABILITY_POP_UP - ANIM_SPRITES_START]);
+		
+    gNewBS->activeAbilityPopUps |= gBitTable[gBattleAnimAttacker];
+    battlerPosition = GetBattlerPosition(gBattleAnimAttacker);
+
+    if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+        coords = sAbilityPopUpCoordsDoubles;
+    else
+        coords = sAbilityPopUpCoordsSingles;
+
+    if ((battlerPosition & BIT_SIDE) == B_SIDE_PLAYER)
+    {
+        spriteId1 = CreateSprite(&sSpriteTemplate_AbilityPopUp1,
+                                coords[battlerPosition][0] - ABILITY_POP_UP_POS_X_SLIDE,
+                                coords[battlerPosition][1], 0);
+        spriteId2 = CreateSprite(&sSpriteTemplate_AbilityPopUp2,
+                                coords[battlerPosition][0] - ABILITY_POP_UP_POS_X_SLIDE + ABILITY_POP_UP_POS_X_DIFF,
+                                coords[battlerPosition][1], 0);
+
+        gSprites[spriteId1].tOriginalX = coords[battlerPosition][0];
+        gSprites[spriteId2].tOriginalX = coords[battlerPosition][0] + ABILITY_POP_UP_POS_X_DIFF;
+
+        gSprites[spriteId1].tRightToLeft = TRUE;
+        gSprites[spriteId2].tRightToLeft = TRUE;
+    }
+    else
+    {
+        spriteId1 = CreateSprite(&sSpriteTemplate_AbilityPopUp1,
+                                coords[battlerPosition][0] + ABILITY_POP_UP_POS_X_SLIDE,
+                                coords[battlerPosition][1], 0);
+        spriteId2 = CreateSprite(&sSpriteTemplate_AbilityPopUp2,
+                                coords[battlerPosition][0] + ABILITY_POP_UP_POS_X_SLIDE + ABILITY_POP_UP_POS_X_DIFF,
+                                coords[battlerPosition][1], 0);
+
+        gSprites[spriteId1].tOriginalX = coords[battlerPosition][0];
+        gSprites[spriteId2].tOriginalX = coords[battlerPosition][0] + ABILITY_POP_UP_POS_X_DIFF;
+
+        gSprites[spriteId1].tRightToLeft = FALSE;
+        gSprites[spriteId2].tRightToLeft = FALSE;
+    }
+
+	gNewBS->abilityPopUpIds[0] = spriteId1;
+	gNewBS->abilityPopUpIds[1] = spriteId2;
+	
+    destroyerTaskId = CreateTask(Task_FreeAbilityPopUpGfx, 5);
+    gTasks[destroyerTaskId].tSpriteId1 = spriteId1;
+    gTasks[destroyerTaskId].tSpriteId2 = spriteId2;
+
+    gSprites[spriteId1].tIsMain = TRUE;
+    gSprites[spriteId1].tBattlerId = gBattleAnimAttacker;
+    gSprites[spriteId2].tBattlerId = gBattleAnimAttacker;
+
+    StartSpriteAnim(&gSprites[spriteId1], 0);
+    StartSpriteAnim(&gSprites[spriteId2], 0);
+
+
+    PrintBattlerOnAbilityPopUp(gBattleAnimAttacker, spriteId1, spriteId2);
+    PrintAbilityOnAbilityPopUp(ability, spriteId1, spriteId2);
+    RestoreOverwrittenPixels((void*)(OBJ_VRAM0) + (gSprites[spriteId1].oam.tileNum * 32));
+	
+	DestroyAnimVisualTask(taskId);
+}
+
+static void SpriteCb_AbilityPopUp(struct Sprite* sprite)
+{
+    if (!sprite->tHide) // Show
+    {
+        if (sprite->tIsMain && ++sprite->tFrames == 4)
+            PlaySE(0x80); //Also could be 0xBA
+        if ((!sprite->tRightToLeft && (sprite->pos1.x -= 4) <= sprite->tOriginalX)
+        ||   (sprite->tRightToLeft && (sprite->pos1.x += 4) >= sprite->tOriginalX))
+        {
+            sprite->pos1.x = sprite->tOriginalX;
+            sprite->tHide = TRUE;
+            sprite->tFrames = 1;
+        }
+    }
+    else // Hide
+    {
+        if (sprite->tFrames == 0)
+        {
+            if ((!sprite->tRightToLeft && (sprite->pos1.x += 4) >= sprite->tOriginalX + ABILITY_POP_UP_POS_X_SLIDE)
+            ||   (sprite->tRightToLeft && (sprite->pos1.x -= 4) <= sprite->tOriginalX - ABILITY_POP_UP_POS_X_SLIDE))
+            {
+                gNewBS->activeAbilityPopUps &= ~(gBitTable[sprite->tBattlerId]);
+                DestroySprite(sprite);
+            }
+        }
+    }
+}
+
+static void Task_FreeAbilityPopUpGfx(u8 taskId)
+{
+    if (!gSprites[gTasks[taskId].tSpriteId1].inUse
+        && !gSprites[gTasks[taskId].tSpriteId2].inUse
+        && !gNewBS->activeAbilityPopUps)
+    {
+		gNewBS->abilityPopUpIds[0] = 0;
+		gNewBS->abilityPopUpIds[1] = 0;
+        FreeSpriteTilesByTag(ANIM_TAG_ABILITY_POP_UP);
+        FreeSpritePaletteByTag(ANIM_TAG_ABILITY_POP_UP);
+        DestroyTask(taskId);
+    }
+}
+
+void AnimTask_DestroyAbilityPopUp(u8 taskId)
+{
+	gSprites[gNewBS->abilityPopUpIds[0]].tFrames = 0;
+	gSprites[gNewBS->abilityPopUpIds[1]].tFrames = 0;
+	DestroyAnimVisualTask(taskId);
+}
+
+void TransferAbilityPopUpHelper(void)
+{
+	if (gBattleExecBuffer)
+	{
+		gBattlescriptCurrInstr -= 5;
+		return;
+	}
+	
+	gActiveBattler = gBattleScripting->bank;
+	AbilityPopUpHelper = CopyAbility(gActiveBattler);
+	
+	EmitDataTransfer(0, &AbilityPopUpHelper, 1, &AbilityPopUpHelper);
+	MarkBufferBankForExecution(gActiveBattler);
+}
+
+void TransferAbilityPopUpHelperAsTrace(void)
+{
+	if (gBattleExecBuffer)
+	{
+		gBattlescriptCurrInstr -= 5;
+		return;
+	}
+	
+	gActiveBattler = gBattleScripting->bank;
+	AbilityPopUpHelper = ABILITY_TRACE;
+	
+	EmitDataTransfer(0, &AbilityPopUpHelper, 1, &AbilityPopUpHelper);
+	MarkBufferBankForExecution(gActiveBattler);
+}

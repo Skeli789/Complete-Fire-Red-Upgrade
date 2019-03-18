@@ -383,6 +383,7 @@ typedef u8 IllusionNickname_t[10];
 #define MagicianHelper *((u8*) 0x203F70B)
 #define ShakerData (((u8*) 0x203F70C))
 #define ForceSwitchHelper (*((u8*) 0x203F70E))
+#define AbilityPopUpHelper (*((u8*) 0x203F70F))
 
 #define gExpandedFlags ((u8*) 0x0203B174)
 #define gExpandedVars ((u16*) (0x0203B174 + 0x200))

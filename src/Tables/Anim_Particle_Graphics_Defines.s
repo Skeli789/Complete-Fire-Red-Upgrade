@@ -74,6 +74,7 @@
 .equ CORKSCREW_IMG, DrillTiles
 .equ HAVOC_SPEAR_IMG, Gigavolt_Havoc_SpearTiles
 .equ PURPLE_DRAKE_IMG, Purple_DrakeTiles
+.equ ABILITY_POP_UP_IMG, Ability_Pop_UpTiles
 
 .equ SWORD_PAL, SwordPal
 .equ SEED_PAL, Leech_SeedPal
@@ -152,3 +153,4 @@
 .equ CORKSCREW_PAL, DrillPal
 .equ HAVOC_SPEAR_PAL, Gigavolt_Havoc_SpearPal
 .equ PURPLE_DRAKE_PAL, Purple_DrakePal
+.equ ABILITY_POP_UP_PAL, Ability_Pop_UpPal
