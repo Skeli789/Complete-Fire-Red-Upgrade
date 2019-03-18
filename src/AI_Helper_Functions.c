@@ -31,6 +31,8 @@ bool8 GetHealthPercentage(u8 bank);
 bool8 TeamFullyHealedMinusBank(u8 bank);
 bool8 HasProtectionMoveInMoveset(u8 bank, bool8 AllKinds);
 move_t ShouldAIUseZMove(u8 bank, u8 moveIndex, u16 move);
+u8 aiAllStatChecks(u8 viability, u8 bank, u8 cmpVal);
+bool8 isStatEqual(u8 bank, u8 statId, u8 statVal);
 
 
 bool8 CanKillAFoe(u8 bank) {
@@ -440,5 +442,12 @@ u8 aiAllStatChecks(u8 viability, u8 bank, u8 cmpVal) {
 			// multiple of reduction value?
 	}
 	return viability;
+}
+
+// AI function to check if given stat is equal to a value (eg. minned/maxed)
+bool8 isStatEqual(u8 bank, u8 statId, u8 statVal) {
+	if (gBattleMons[bank].statStages[statId] == statVal)
+		return TRUE;
+	return FALSE;
 }
 
