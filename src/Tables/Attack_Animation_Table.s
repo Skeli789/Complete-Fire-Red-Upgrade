@@ -2834,7 +2834,7 @@ ANIM_ROOST:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
 ANIM_SEEDBOMB:
-	loadparticle ANIM_TAG_SWORD 
+	loadparticle ANIM_TAG_SEED 
 	loadparticle ANIM_TAG_IMPACT
 	loadparticle ANIM_TAG_EXPLOSION 
 	pokespritetoBG bank_target
@@ -2873,7 +2873,7 @@ ANIM_SEEDBOMB:
 	endanimation
 
 .align 2
-SEEDBOMB_SEED: objtemplate ANIM_TAG_SWORD ANIM_TAG_SWORD 0x83ACA30 0x8231CF0 0x0 0x83E3D90 0x80B4495
+SEEDBOMB_SEED: objtemplate ANIM_TAG_SEED ANIM_TAG_SEED 0x83ACA30 0x8231CF0 0x0 0x83E3D90 0x80B4495
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
@@ -3868,7 +3868,7 @@ CLEARSMOG_MIST: objtemplate ANIM_TAG_PURPLE_GAS_CLOUD ANIM_TAG_POWER_GEM 0x83ACB
 .pool     
 ANIM_LEAFSTORM:
 	loadparticle ANIM_TAG_LEAF 
-	loadparticle ANIM_TAG_SWORD
+	loadparticle ANIM_TAG_SEED
 	loadBG1 BG_LEAF_STORM
 	waitforBG
 	launchtask 0x80bb82d 0x5 0x4 0xF000 0x0 0x0 0xffff
@@ -5238,7 +5238,7 @@ INCINERATE_FLAME: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_SMALL_EMBER 0x83ACA9
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
 ANIM_WORRYSEED:
-	loadparticle ANIM_TAG_SWORD
+	loadparticle ANIM_TAG_SEED
 	loadparticle ANIM_TAG_ANGER 
 	playsound2 0xa2 0xc0 
 	launchtemplate 0x83e2b34 0x82 0x6 0xf 0x0 0x0 0x18 0x23 0xffe0 
