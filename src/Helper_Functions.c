@@ -20,8 +20,8 @@ bool8 CheckTableForMove (move_t move, const u16 table[]) {
 	return FALSE;
 }
 
-bool8 CheckTableForMoveEffect(move_t move, const u16 table[]) {
-	for (u32 i = 0; table[i] != MOVE_TABLES_TERMIN; ++i) {
+bool8 CheckTableForMoveEffect(move_t move, const u8 table[]) {
+	for (u32 i = 0; table[i] != MOVE_EFFECT_TABLES_TERMIN; ++i) {
 		if (gBattleMoves[move].effect == table[i])
 			return TRUE;
 	}

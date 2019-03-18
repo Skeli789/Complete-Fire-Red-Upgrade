@@ -32,7 +32,9 @@ bool8 TeamFullyHealedMinusBank(u8 bank);
 bool8 HasProtectionMoveInMoveset(u8 bank, bool8 AllKinds);
 move_t ShouldAIUseZMove(u8 bank, u8 moveIndex, u16 move);
 u8 aiAllStatChecks(u8 viability, u8 bank, u8 cmpVal);
-bool8 isStatEqual(u8 bank, u8 statId, u8 statVal);
+bool8 MoveTypeInMoveset(u8 bank, u8 moveType);
+bool8 HasSnatchableMove(u8 bank);
+bool8 PartyMemberStatused(u8 bank);
 
 
 bool8 CanKillAFoe(u8 bank) {
@@ -444,10 +446,36 @@ u8 aiAllStatChecks(u8 viability, u8 bank, u8 cmpVal) {
 	return viability;
 }
 
-// AI function to check if given stat is equal to a value (eg. minned/maxed)
-bool8 isStatEqual(u8 bank, u8 statId, u8 statVal) {
-	if (gBattleMons[bank].statStages[statId] == statVal)
-		return TRUE;
+
+// AI function to check if any move is of given type
+bool8 MoveTypeInMoveset(u8 bank, u8 moveType) {
+	u8 i;
+	for (i = 0; i <= 4; ++i)
+	{
+		if (gBattleMoves[gBattleMons[bank].moves[i]].type == moveType)
+			return TRUE;
+	}
 	return FALSE;
+}
+
+// AI Function to check if bank has a snatchable move in moveset
+bool8 HasSnatchableMove(u8 bank) {
+	u8 i;
+	for (i = 0; i <= 4; ++i)
+	{
+		if (gBattleMoves[gBattleMons[bank].moves[i]].flags & FLAG_SNATCH_AFFECTED)
+			return TRUE;
+	}
+	return FALSE;
+}
+
+// AI function to see if a party member (attacker or attacker partner) has a primary status
+bool8 PartyMemberStatused(u8 bank) {
+	if (gBattleMons[bank].status1 & STATUS_ANY)
+		return TRUE;
+	else if (gBattleMons[PARTNER(bank)].status1 & STATUS_ANY)
+		return TRUE;
+	else
+		return FALSE;	
 }
 

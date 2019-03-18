@@ -1,9 +1,13 @@
 .thumb
 .text
 .align 2
-.global gBattleScriptsForMoveEffects
 
 .include "..\\defines"
+
+.global gBattleScriptsForMoveEffects
+.global SetStatusTable
+.global StatLowerTable
+.global ConfusionTable
 
 gBattleScriptsForMoveEffects:
 .word 0x81D6926		@EFFECT_HIT
@@ -263,4 +267,41 @@ gBattleScriptsForMoveEffects:
 .word BS_254_Blank
 .word BS_255_Blank
 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+SetStatusTable:
+.byte EFFECT_SLEEP
+.byte EFFECT_TOXIC
+.byte EFFECT_POISON
+.byte EFFECT_PARALYZE
+.byte EFFECT_WILL_O_WISP
+.byte EFFECT_YAWN
+.byte MOVE_EFFECT_TABLES_TERMIN
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+StatLowerTable:
+.byte EFFECT_ATTACK_DOWN
+.byte EFFECT_DEFENSE_DOWN
+.byte EFFECT_SPEED_DOWN
+.byte EFFECT_SPECIAL_ATTACK_DOWN
+.byte EFFECT_SPECIAL_DEFENSE_DOWN
+.byte EFFECT_ACCURACY_DOWN
+.byte EFFECT_EVASION_DOWN
+.byte EFFECT_ATTACK_DOWN_2
+.byte EFFECT_DEFENSE_DOWN_2
+.byte EFFECT_SPEED_DOWN_2
+.byte EFFECT_SPECIAL_ATTACK_DOWN_2
+.byte EFFECT_SPECIAL_DEFENSE_DOWN_2
+.byte EFFECT_ACCURACY_DOWN_2
+.byte EFFECT_EVASION_DOWN_2
+.byte MOVE_EFFECT_TABLES_TERMIN
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+ConfusionTable:
+.byte EFFECT_CONFUSE_HIT
+.byte EFFECT_SWAGGER
+.byte EFFECT_FLATTER
+.byte EFFECT_TEETER_DANCE
+.byte MOVE_EFFECT_TABLES_TERMIN

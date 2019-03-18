@@ -54,6 +54,7 @@
 .global AlwaysHitRainTable
 .global SpecialAttackPhysicalDamageMoves
 .global SpecialWholeFieldMoveTable
+.global AromaVeilTable
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -943,6 +944,17 @@ SpecialWholeFieldMoveTable:
 .hword MOVE_FLOWERSHIELD
 .hword MOVE_ROTOTILLER
 .hword MOVE_GRAVITY
+.hword MOVE_TABLES_TERMIN
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+AromaVeilTable:
+.hword MOVE_DISABLE
+.hword MOVE_ATTRACT
+.hword MOVE_ENCORE
+.hword MOVE_TORMENT
+.hword MOVE_TAUNT
+.hword MOVE_HEALBLOCK
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
