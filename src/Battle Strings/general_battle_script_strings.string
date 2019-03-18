@@ -119,5 +119,8 @@ The Wide Guard protected\n[FD][10]!
 #org @gText_FlowerVeilProtects
 [FD][10] surrounded\nitself with a veil of petals!
 
+#org @gText_AromaVeilProtects
+[FD][10] is protected\nby an aromatic veil!
+
 #org @gText_TargetProtectedByAbility
 [FD][10] is protected\nby its [FD][19]!

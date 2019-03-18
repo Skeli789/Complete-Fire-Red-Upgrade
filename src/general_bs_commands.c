@@ -41,6 +41,7 @@ extern void ClearSwitchBits(u8 bank);
 extern u8 BattleScript_Gems[];
 extern u8 BattleScript_Protean[];
 extern u8 BattleScript_WeaknessBerryActivate[];
+extern u8 BattleScript_MimikyuTookDamage[];
 extern u8 BattleScript_MimikyuTransform[];
 extern u8 BattleScript_HangedOnFocusSash[];
 extern u8 BattleScript_EnduredSturdy[];
@@ -56,7 +57,6 @@ extern u8 BattleScript_FaintScriptingBank[];
 extern u8 BattleScript_SoulHeart[];
 extern u8 BattleScript_IllusionBrokenFaint[];
 
-extern u8 MimikyuDisguisedTookDamageString[];
 extern u8 StringEnduredHitWithSturdy[];
 extern u8 PrimalRainEndString[];
 extern u8 PrimalSunEndString[];
@@ -141,6 +141,7 @@ void atk02_attackstring(void) {
 				||  gBattleMons[gBankAttacker].type2 != moveType
 				|| (gBattleMons[gBankAttacker].type3 != moveType && gBattleMons[gBankAttacker].type3 != TYPE_BLANK)) 
 				{
+					gBattleScripting->bank = gBankAttacker;
 					SET_BATTLER_TYPE(gBankAttacker, moveType);
 					PREPARE_TYPE_BUFFER(gBattleTextBuff1, moveType);
 					BattleScriptPushCursor();
@@ -290,8 +291,9 @@ void atk0B_healthbarupdate(void) {
 		&& !(gHitMarker & HITMARKER_IGNORE_SUBSTITUTE)
 		&& !(gBattleMons[gActiveBattler].status2 & STATUS2_TRANSFORMED)) 
 		{
-			BattleStringLoader = MimikyuDisguisedTookDamageString;
-			PrepareStringBattle(0x184, gActiveBattler);
+			BattleScriptPush(gBattlescriptCurrInstr + 2);
+			gBattlescriptCurrInstr = BattleScript_MimikyuTookDamage;
+			return;
 		}
 			
         else 
@@ -373,6 +375,7 @@ void atk0C_datahpupdate(void) {
 				gSpecialStatuses[gActiveBattler].moveturnSpecialBank = gBankAttacker;
 			}
 			
+			gBattleScripting->bank = gActiveBattler;
 			DoFormChange(gActiveBattler, PKMN_MIMIKYU_BUSTED, TRUE, FALSE);
 			gBattlescriptCurrInstr += 2;
 			BattleScriptPushCursor();
@@ -993,7 +996,9 @@ void atk45_playanimation(void)
 	|| 	gBattlescriptCurrInstr[2] == B_ANIM_ZMOVE_ACTIVATE
 	|| 	gBattlescriptCurrInstr[2] == B_ANIM_MEGA_EVOLUTION
 	|| 	gBattlescriptCurrInstr[2] == B_ANIM_ULTRA_BURST
-	||  gBattlescriptCurrInstr[2] == B_ANIM_LOAD_DEAFUALT_BG)
+	||  gBattlescriptCurrInstr[2] == B_ANIM_LOAD_DEAFUALT_BG
+	||  gBattlescriptCurrInstr[2] == B_ANIM_LOAD_ABILITY_POP_UP
+	||  gBattlescriptCurrInstr[2] == B_ANIM_DESTROY_ABILITY_POP_UP)
     {
         EmitBattleAnimation(0, gBattlescriptCurrInstr[2], *argumentPtr);
         MarkBufferBankForExecution(gActiveBattler);
@@ -1051,7 +1056,9 @@ void atk46_playanimation2(void) // animation Id is stored in the first pointer
 	|| 	*animationIdPtr == B_ANIM_ZMOVE_ACTIVATE
 	|| 	*animationIdPtr == B_ANIM_MEGA_EVOLUTION
 	|| 	*animationIdPtr == B_ANIM_ULTRA_BURST
-	||  *animationIdPtr == B_ANIM_LOAD_DEAFUALT_BG)
+	||  *animationIdPtr == B_ANIM_LOAD_DEAFUALT_BG
+	||  *animationIdPtr == B_ANIM_LOAD_ABILITY_POP_UP
+	||  *animationIdPtr == B_ANIM_DESTROY_ABILITY_POP_UP)
     {
         EmitBattleAnimation(0, *animationIdPtr, *argumentPtr);
         MarkBufferBankForExecution(gActiveBattler);

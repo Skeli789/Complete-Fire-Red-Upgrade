@@ -299,9 +299,9 @@ PickpocketStealBS:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_DancerActivated:
-	setword BATTLE_STRING_LOADER AbilityActivatedString
-	printstring 0x184
-	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUp
+	pause 0x40
+	call BattleScript_AbilityPopUpRevert
 	jumptoattack 0xFF
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

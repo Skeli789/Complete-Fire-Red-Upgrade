@@ -779,6 +779,7 @@ u8 AtkCanceller_UnableToUseMove(void)
 			&& gBankAttacker != gBankTarget
 			&& IsOfType(gBankTarget, TYPE_DARK))
 			{
+				gBattleScripting->bank = gBankTarget;
 				CancelMultiTurnMoves(gBankAttacker);
 				gBattlescriptCurrInstr = BattleScript_DarkTypePreventsPrankster;
                 gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;

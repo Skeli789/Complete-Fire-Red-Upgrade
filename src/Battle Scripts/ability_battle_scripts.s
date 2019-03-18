@@ -52,6 +52,7 @@
 .global BattleScript_SynchronizeActivates_StatusesTarget
 
 .global BattleScript_Protean
+.global BattleScript_MimikyuTookDamage
 .global BattleScript_MimikyuTransform
 .global MimikyuDisguisedTookDamageString
 .global BattleScript_EnduredSturdy
@@ -61,6 +62,9 @@
 .global BattleScript_DefiantCompetitive
 .global BattleScript_DefiantCompetitiveCall
 .global BattleScript_SoulHeart
+
+.global BattleScript_AbilityPopUp
+.global BattleScript_AbilityPopUpRevert
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -73,10 +77,11 @@ BattleScript_OverworldWeatherStarts:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_NewWeatherAbilityActivates:
-	pause DELAY_HALFSECOND
+	call BattleScript_AbilityPopUp
 	printstring 0x184
 	waitstateatk
 	playanimation2 BANK_ATTACKER ANIM_ARG_1 0x0
+	call BattleScript_AbilityPopUpRevert
 	call 0x81D92DC @;BattleScript_WeatherFormChanges
 	end3
 
@@ -87,10 +92,7 @@ BattleScript_IntimidateActivatesEnd3:
 	end3
 
 BattleScript_PauseIntimidateActivates:
-	pause DELAY_HALFSECOND
-	setword BATTLE_STRING_LOADER AbilityActivatedString
-	printstring 0x184
-	waitmessage DELAY_HALFSECOND
+	call BattleScript_AbilityPopUp
 	setbyte TARGET_BANK 0x0
 	setstatchanger STAT_ATK | DECREASE_1
 
@@ -130,30 +132,34 @@ IntimidateActivatesLoopIncrement:
 	goto BS_IntimidateActivatesLoop
 
 BattleScript_IntimidateActivatesReturn:
+	call BattleScript_AbilityPopUpRevert
 	return
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_TraceActivates:
-	pause DELAY_HALFSECOND
+	callasm TransferAbilityPopUpHelperAsTrace
+	playanimation BANK_SCRIPTING ANIM_LOAD_ABILITY_POP_UP 0x0
+	pause 0x20
+	call BattleScript_AbilityPopUpRevert
 	clearspecialstatusbit BANK_ATTACKER STATUS3_SWITCH_IN_ABILITY_DONE
+	call BattleScript_AbilityPopUp
 	printstring 0xD0 @;STRINGID_PKMNTRACED
 	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
 	tryactivateswitchinability BANK_SCRIPTING
 	end3
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_TerrainFromAbility:
-	pause DELAY_HALFSECOND
-	setword BATTLE_STRING_LOADER AbilityActivatedString
-	printstring 0x184
-	waitmessage DELAY_HALFSECOND
+	call BattleScript_AbilityPopUp
 	callasm TransferTerrainData
 	playanimation2 BANK_ATTACKER ANIM_ARG_1 0x0
 	copyarray BATTLE_STRING_LOADER SEED_HELPER 0x4
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
 	call TerrainSeedCheck
 	end3
 
@@ -161,10 +167,12 @@ BattleScript_TerrainFromAbility:
 
 
 BattleScript_ImposterActivates:
-	pause DELAY_HALFSECOND
+	call BattleScript_AbilityPopUp
 	playanimation BANK_ATTACKER ANIM_TRANSFORM 0x0
 	printfromtable 0x83FE5B4
 	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	tryactivateswitchinability BANK_SCRIPTING
 	end3
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -174,27 +182,33 @@ BattleScript_AttackerAbilityStatRaiseEnd3:
 	end3	
 	
 BattleScript_AttackerAbilityStatRaise:
+	call BattleScript_AbilityPopUp
 	setgraphicalstatchangevalues
 	playanimation BANK_ATTACKER ANIM_STAT_BUFF ANIM_ARG_1
 	setword BATTLE_STRING_LOADER DownloadString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
 	return
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_SwitchInAbilityMsg:
+	call BattleScript_AbilityPopUp
 	pause DELAY_HALFSECOND
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
 	end3	
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_AbilityCuredStatusEnd3:
+	call BattleScript_AbilityPopUp
 	printstring 0x40 @;STRINGID_PKMNSXCUREDITSYPROBLEM
 	waitmessage DELAY_1SECOND
 	refreshhpbar BANK_SCRIPTING
+	call BattleScript_AbilityPopUpRevert
 	end3
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -234,9 +248,7 @@ BattleScript_EmergencyExit:
 EmergencyExitFleeBS:
 	getifcantrunfrombattle BANK_SCRIPTING
 	jumpifbyte EQUALS BATTLE_COMMUNICATION 0x1 EmergencyExitReturn
-	setword BATTLE_STRING_LOADER AbilityActivatedString
-	printstring 0x184
-	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUp
 	copyarray USER_BANK BATTLE_SCRIPTING_BANK 0x1
 	printstring 0xA0 @;STRINGID_PKMNFLEDFROMBATTLE
 	waitmessage DELAY_1SECOND
@@ -245,11 +257,11 @@ EmergencyExitFleeBS:
 
 EmergencyExitSwitchBS:
 	jumpifcannotswitch BANK_SCRIPTING EmergencyExitReturn
-	setword BATTLE_STRING_LOADER AbilityActivatedString
-	printstring 0x184
-	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUp
+	pause DELAY_HALFSECOND
 	playanimation BANK_SCRIPTING ANIM_CALL_BACK_POKEMON 0x0
 	callasm MakeScriptingBankInvisible
+	call BattleScript_AbilityPopUpRevert
 	openpartyscreen BANK_SCRIPTING EmergencyExitReturn
 	switchoutabilities BANK_SCRIPTING
 	waitstateatk
@@ -268,43 +280,47 @@ EmergencyExitReturn:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_RainDishActivates:
+	call BattleScript_AbilityPopUp
 	playanimation BANK_ATTACKER ANIM_HEALING_SPARKLES 0x0
 	orword HIT_MARKER HITMARKER_IGNORE_SUBSTITUTE
 	graphicalhpupdate BANK_ATTACKER
 	datahpupdate BANK_ATTACKER
 	printstring 0x133
 	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
 	end3
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_DrySkinDamage:
 BattleScript_SolarPowerDamage:
+	call BattleScript_AbilityPopUp
 	orword HIT_MARKER HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_NON_ATTACK_DMG
 	graphicalhpupdate BANK_ATTACKER
 	datahpupdate BANK_ATTACKER
 	setword BATTLE_STRING_LOADER HurtByAbilityString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
 	faintpokemon BANK_ATTACKER 0x0 0x0
 	end3
 	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_Healer:
+	call BattleScript_AbilityPopUp
 	setword BATTLE_STRING_LOADER, HealerString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	refreshhpbar BANK_TARGET
+	call BattleScript_AbilityPopUpRevert
 HealerBSEnd:
 	end3
 	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_MoodySingleStat:
-	setword BATTLE_STRING_LOADER AbilityActivatedString
-	printstring 0x184
-	waitmessage DELAY_HALFSECOND
+	call BattleScript_AbilityPopUp
 MoodySkipString:	
 	statbuffchange STAT_ATTACKER MoodyStatRaiseEnd
 	setgraphicalstatchangevalues
@@ -312,12 +328,11 @@ MoodySkipString:
 	printfromtable 0x83FE57C
 	waitmessage DELAY_1SECOND
 MoodyStatRaiseEnd:
+	call BattleScript_AbilityPopUpRevert
 	end3
 
 BattleScript_MoodyRegular:
-	setword BATTLE_STRING_LOADER AbilityActivatedString
-	printstring 0x184
-	waitmessage DELAY_HALFSECOND
+	call BattleScript_AbilityPopUp
 	statbuffchange STAT_ATTACKER MoodyRegularP2
 	setgraphicalstatchangevalues
 	playanimation BANK_ATTACKER 0x1 0x2023FD4
@@ -332,6 +347,7 @@ MoodyRegularP2:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_BadDreams:
+	call BattleScript_AbilityPopUp
 	setbyte SEED_HELPER 0x0
 	jumpifbyte ANDS USER_BANK 0x1 BadDreams_OpponentSidePlayer1
 
@@ -384,15 +400,18 @@ BadDreams_hurt:
 
 BadDreams_end:
 	setbyte SEED_HELPER 0x0
+	call BattleScript_AbilityPopUpRevert
 	end3
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_Harvest:
 	recycleitem HarvestBSEnd
+	call BattleScript_AbilityPopUp
 	setword BATTLE_STRING_LOADER HarvestString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
 	callasm HarvestActivateBerry
 
 HarvestBSEnd:
@@ -402,9 +421,11 @@ HarvestBSEnd:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_Pickup:
+	call BattleScript_AbilityPopUp
 	setword BATTLE_STRING_LOADER PickupString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
 	end3
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -413,8 +434,10 @@ BattleScript_SoundproofProtected:
 	attackstring
 	ppreduce
 	pause DELAY_HALFSECOND
+	call BattleScript_AbilityPopUp
 	printstring 0x132 @;STRINGID_PKMNSXBLOCKSY
 	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
 	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -424,8 +447,10 @@ BattleScript_FlashFireBoost_PPLoss:
 BattleScript_FlashFireBoost:
 	attackstring
 	pause DELAY_HALFSECOND
+	call BattleScript_AbilityPopUp
 	printfromtable 0x83FE650 @;gFlashFireStringIds
 	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
 	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -435,6 +460,7 @@ BattleScript_MoveHPDrain_PPLoss:
 BattleScript_MoveHPDrain:
 	attackstring
 	pause DELAY_HALFSECOND
+	call BattleScript_AbilityPopUp
 	playanimation BANK_TARGET ANIM_HEALING_SPARKLES 0x0
 	orword HIT_MARKER HITMARKER_IGNORE_SUBSTITUTE
 	healthbarupdate BANK_TARGET
@@ -442,6 +468,7 @@ BattleScript_MoveHPDrain:
 	printstring 0xC5 @;STRINGID_PKMNRESTOREDHPUSING
 	waitmessage DELAY_1SECOND
 	orbyte OUTCOME OUTCOME_NOT_AFFECTED
+	call BattleScript_AbilityPopUpRevert
 	goto BS_MOVE_END
 
 BattleScript_MonMadeMoveUseless_PPLoss:
@@ -449,9 +476,11 @@ BattleScript_MonMadeMoveUseless_PPLoss:
 BattleScript_MonMadeMoveUseless:
 	attackstring
 	pause DELAY_HALFSECOND
+	call BattleScript_AbilityPopUp
 	printstring 0x147 @;STRINGID_PKMNSXMADEYUSELESS
 	waitmessage DELAY_1SECOND
 	orbyte OUTCOME OUTCOME_NOT_AFFECTED
+	call BattleScript_AbilityPopUpRevert
 	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -463,26 +492,27 @@ BattleScript_MoveStatDrain:
 	pause DELAY_HALFSECOND
 
 BattleScript_TargetAbilityStatRaise:
-	setword BATTLE_STRING_LOADER AbilityActivatedString
-	printstring 0x184
-	waitmessage DELAY_HALFSECOND
+	call BattleScript_AbilityPopUp
 	statbuffchange BANK_TARGET BattleScript_MoveStatDrainReturn
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_MoveStatDrainReturn
 	setgraphicalstatchangevalues
 	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
 	
 BattleScript_MoveStatDrainReturn:
+	call BattleScript_AbilityPopUpRevert
 	goto BS_MOVE_END
 	
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_RoughSkinActivates:
+	call BattleScript_AbilityPopUp
 	orword HIT_MARKER, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_NON_ATTACK_DMG
 	healthbarupdate BANK_ATTACKER
 	datahpupdate BANK_ATTACKER
 	printstring 0xCF @;STRINGID_PKMNHURTSWITH
 	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
 	faintpokemon BANK_ATTACKER 0x0 0x0
 	return
 
@@ -490,9 +520,11 @@ BattleScript_RoughSkinActivates:
 
 .global DestinyKnotString
 BattleScript_CuteCharmActivates:
+	call BattleScript_AbilityPopUp
 	status2animation BANK_ATTACKER STATUS2_INLOVE
 	printstring 0x136
 	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
 	jumpifsecondarystatus BANK_TARGET STATUS2_INLOVE CuteCharmActivatesReturn
 	jumpifability BANK_TARGET ABILITY_OBLIVIOUS CuteCharmActivatesReturn
 	jumpifabilitypresenttargetfield ABILITY_AROMAVEIL CuteCharmActivatesReturn
@@ -518,13 +550,12 @@ BattleScript_WeakArmorActivates:
 	jumpifstat BANK_TARGET EQUALS STAT_SPDEF STAT_MAX WeakArmorReturn
 
 WeakArmorModStats:
-	setword BATTLE_STRING_LOADER AbilityActivatedString
-	printstring 0x184
-	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUp
 	setmoveeffect MOVE_EFFECT_DEF_MINUS_1 | MOVE_EFFECT_CERTAIN
 	seteffecttarget
 	setmoveeffect MOVE_EFFECT_SPD_PLUS_2 | MOVE_EFFECT_CERTAIN
 	seteffecttarget
+	call BattleScript_AbilityPopUpRevert
 
 WeakArmorReturn:
 	return
@@ -532,10 +563,12 @@ WeakArmorReturn:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_CursedBodyActivates:
+	call BattleScript_AbilityPopUp
 	disablelastusedattack BANK_ATTACKER CursedBodyReturn
 	setword BATTLE_STRING_LOADER CursedBodyString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
 	
 CursedBodyReturn:
 	return
@@ -543,17 +576,17 @@ CursedBodyReturn:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_MummyActivates:
+	call BattleScript_AbilityPopUp
 	setword BATTLE_STRING_LOADER MummyString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
 	return
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 	
 BattleScript_GooeyActivates:
-	setword BATTLE_STRING_LOADER AbilityActivatedString
-	printstring 0x184
-	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUp
 	setbyte STAT_ANIM_PLAYED 0x0
 	playstatchangeanimation BANK_ATTACKER STAT_ANIM_SPD STAT_ANIM_DOWN
 	setstatchanger STAT_SPD | DECREASE_1
@@ -561,6 +594,7 @@ BattleScript_GooeyActivates:
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 GooeyReturn
 	printfromtable 0x83FE588
 	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
 
 GooeyReturn:
 	return
@@ -569,15 +603,18 @@ GooeyReturn:
 
 BattleScript_IllusionBroken:
 	callasm TransferIllusionBroken
+	call BattleScript_AbilityPopUp
 	reloadhealthbar BANK_TARGET
 	playanimation BANK_TARGET ANIM_TRANSFORM 0x0
 	setword BATTLE_STRING_LOADER IllusionWoreOffString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
 	return
 	
 BattleScript_IllusionBrokenFaint:
 	callasm TransferIllusionBroken
+	call BattleScript_AbilityPopUp
 	reloadhealthbar BANK_TARGET
 	callasm CycleScriptingBankHealthBetween0And1
 	playanimation BANK_TARGET ANIM_TRANSFORM 0x0
@@ -585,26 +622,27 @@ BattleScript_IllusionBrokenFaint:
 	setword BATTLE_STRING_LOADER IllusionWoreOffString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
 	return
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_AngerPointActivates:
+	call BattleScript_AbilityPopUp
 	setstatchanger STAT_ATK | INCREASE_1
 	setgraphicalstatchangevalues
 	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
 	setword BATTLE_STRING_LOADER AngerPointString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
 	return
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_SynchronizeActivates_StatusesAttacker:
 	waitstateatk
-	setword BATTLE_STRING_LOADER AbilityActivatedString
-	printstring 0x184
-	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUp
 	copyarray BATTLE_SCRIPTING_BANK BANK_ATTACKER 0x1
 	jumpifstatus BANK_ATTACKER STATUS_ANY SynchronizeNoEffect
 	seteffecttarget
@@ -616,13 +654,12 @@ SynchronizeNoEffect:
 	waitmessage DELAY_1SECOND	
 
 SynchronizeReturn:
+	call BattleScript_AbilityPopUpRevert
 	return
 	
 BattleScript_SynchronizeActivates_StatusesTarget:
 	waitstateatk
-	setword BATTLE_STRING_LOADER AbilityActivatedString
-	printstring 0x184
-	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUp
 	copyarray BATTLE_SCRIPTING_BANK BANK_TARGET 0x1
 	jumpifstatus BANK_TARGET STATUS_ANY SynchronizeNoEffect
 	seteffecttarget
@@ -634,11 +671,23 @@ BattleScript_SynchronizeActivates_StatusesTarget:
 
 BattleScript_Protean:
 	pause DELAY_HALFSECOND
+	call BattleScript_AbilityPopUp
 	setword BATTLE_STRING_LOADER ProteanString
 	printstring 0x184
 	waitmessage DELAY_HALFSECOND
+	call BattleScript_AbilityPopUpRevert
 	return
 
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_MimikyuTookDamage:
+	call BattleScript_AbilityPopUp
+	setword BATTLE_STRING_LOADER MimikyuDisguisedTookDamageString
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	return
+	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_MimikyuTransform:
@@ -651,25 +700,31 @@ BattleScript_MimikyuTransform:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_EnduredSturdy:
+	call BattleScript_AbilityPopUp
 	setword BATTLE_STRING_LOADER StringEnduredHitWithSturdy
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
 	return
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_Receiver:
+	call BattleScript_AbilityPopUp
 	setword BATTLE_STRING_LOADER ReceiverString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
 	return
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_Symbiosis:
+	call BattleScript_AbilityPopUp
 	setword BATTLE_STRING_LOADER SymbiosisString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
 	return
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -680,11 +735,13 @@ BattleScript_DefiantCompetitive:
 BattleScript_DefiantCompetitiveCall:
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 DefiantReturn
 	setbyte STAT_ANIM_PLAYED 0x0
+	call BattleScript_AbilityPopUp
 	setgraphicalstatchangevalues
 	playanimation BANK_SCRIPTING ANIM_STAT_BUFF ANIM_ARG_1
 	setword BATTLE_STRING_LOADER DefiantString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
 
 DefiantReturn:
 	return
@@ -692,10 +749,24 @@ DefiantReturn:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_SoulHeart:
+	call BattleScript_AbilityPopUp
 	playanimation BANK_SCRIPTING ANIM_STAT_BUFF ANIM_ARG_1
 	setword BATTLE_STRING_LOADER AbilityRaisedStatString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	return
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_AbilityPopUp:
+	callasm TransferAbilityPopUpHelper
+	recordlastability BANK_SCRIPTING
+	playanimation BANK_SCRIPTING ANIM_LOAD_ABILITY_POP_UP 0x0
+	return
+
+BattleScript_AbilityPopUpRevert:
+	playanimation BANK_SCRIPTING ANIM_REMOVE_ABILITY_POP_UP 0x0
 	return
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

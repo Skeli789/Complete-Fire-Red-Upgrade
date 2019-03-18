@@ -143,23 +143,21 @@ SkipPowderDamage:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_StanceChangeToBlade:
-	setword BATTLE_STRING_LOADER AbilityActivatedString
-	printstring 0x184
-	waitmessage DELAY_HALFSECOND
+	call BattleScript_AbilityPopUp
 	playanimation BANK_ATTACKER ANIM_TRANSFORM 0x0
 	setword BATTLE_STRING_LOADER String_SwitchedToBladeForm
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
 	return
 
 BattleScript_StanceChangeToShield:
-	setword BATTLE_STRING_LOADER AbilityActivatedString
-	printstring 0x184
-	waitmessage DELAY_HALFSECOND
+	call BattleScript_AbilityPopUp
 	playanimation BANK_ATTACKER ANIM_TRANSFORM 0x0
 	setword BATTLE_STRING_LOADER String_SwitchedToShieldForm
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -189,20 +187,24 @@ BSTryRemoveIllusion:
 	jumpifspecialstatusflag BANK_SCRIPTING STATUS3_ILLUSION 0x1 RemoveIllusionReturn
 	@;remove illusion counter
 	clearspecialstatusbit BANK_SCRIPTING STATUS3_ILLUSION
+	call BattleScript_AbilityPopUp
 	reloadhealthbar BANK_SCRIPTING
 	playanimation BANK_SCRIPTING ANIM_TRANSFORM 0x0
 	setword BATTLE_STRING_LOADER IllusionWoreOffString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
 RemoveIllusionReturn:
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_DarkTypePreventsPrankster:
+	call BattleScript_AbilityPopUp
 	orbyte OUTCOME OUTCOME_MISSED
 	printstring 27 @;STRINGID_IT_DOESNT_AFFECT
 	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
 	goto BS_MOVE_END
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
