@@ -154,15 +154,7 @@ u8 CreateNPCTrainerParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, b
 			party[i].obedient = 1;
 		
 			#ifdef TRAINER_CLASS_POKE_BALLS
-				#ifdef CLASS_BASED_BALLS_MULTI_FIX
-				//In multi battles, the second opponent and partner will share poke ball first the first opponent due to graphical issues
-					if (side == B_SIDE_OPPONENT)
-						SetMonData(&party[i], REQ_POKEBALL, &ClassPokeBalls[gTrainers[gTrainerBattleOpponent_A].trainerClass]);
-					else
-						SetMonData(&party[i], REQ_POKEBALL, &ClassPokeBalls[trainer->trainerClass]);
-				#else
-					SetMonData(&party[i], REQ_POKEBALL, &ClassPokeBalls[trainer->trainerClass]);
-				#endif
+				SetMonData(&party[i], REQ_POKEBALL, &ClassPokeBalls[trainer->trainerClass]);
 			#endif
 			
 			#ifdef TRAINERS_WITH_EVS
