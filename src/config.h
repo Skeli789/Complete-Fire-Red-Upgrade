@@ -60,7 +60,7 @@ enum
 #define NATIONAL_DEX_COUNT 386
 #define MAX_NUM_POKEMON PKMN_EGG + 1
 
-#define MAX_LEVEL 100
+#define MAX_LEVEL 100 //Also change this in the file “special_inserts.asm” found in the root
 #define NUM_TRAINER_CLASSES 107
 #define EVOS_PER_MON 4
 
@@ -90,8 +90,8 @@ enum
 #define BADGE_7_OBEDIENCE_LEVEL 90
 #endif
 
-#define SEEN_DEX_FLAGS gSaveBlock2Ptr->pokedex.seen
-#define CAUGHT_DEX_FLAGS gSaveBlock2Ptr->pokedex.owned
+#define SEEN_DEX_FLAGS gSaveBlock2->pokedex.seen
+#define CAUGHT_DEX_FLAGS gSaveBlock2->pokedex.owned
 
 #define INVERSE_BATTLES //Comment this line to disable the possibility of having Inverse Battles
 #define TIME_ENABLED //Comment this line to disable time based features. All time dependent features will default in Daytime.
