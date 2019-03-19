@@ -3,7 +3,7 @@
 
 
 #include "..\\defines.h"
-#include "..\\AI_Helper_Functions.h"
+#include "AI_Helper_Functions.h"
 #include "..\\Helper_Functions.h"
 
 // functions

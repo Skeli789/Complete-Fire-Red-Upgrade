@@ -387,6 +387,7 @@ void UpdateOamPriorityInAllHealthboxes(u8 priority)
 				
 				goto DEFAULT_CASE;
 			}
+			break;
 			
 		default:
 		DEFAULT_CASE:

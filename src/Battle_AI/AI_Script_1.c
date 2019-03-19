@@ -1,13 +1,14 @@
-#include "../defines.h"
-#include "../AI_Helper_Functions.h"
-#include "../Helper_Functions.h"
+#include "..\\defines.h"
+#include "AI_Helper_Functions.h"
+#include "..\\Helper_Functions.h"
 
 /*
 
-u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move) {
-	u8 viability = 100;
+u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
+	//u8 viability = 100;
 	// get relevant params
 	u8 moveEffect = gBattleMoves[move].effect;
+	u8 atkItemEffect = ITEM_EFFECT(bankAtk);
 	
 	
 	switch (moveEffect) {
@@ -16,7 +17,13 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move) {
 			break;
 		
 		case EFFECT_SLEEP:
-			// to do
+		case EFFECT_YAWN:
+			if (defItemEffect == ITEM_EFFECT_CURE_SLP || defItemEffect == ITEM_EFFECT_CURE_STATUS)
+				break;
+			else if (defAbility == ABILITY_EARLYBIRD || defAbility == ABILITY_SHEDSKIN)
+				break;
+			else
+				viability += 6;
 			break;
 			
 		case EFFECT_ABSORB:
@@ -376,10 +383,6 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move) {
 			//todo
 			break;
 			
-		case EFFECT_YAWN:
-			//todo
-			break;
-			
 		case EFFECT_ENDEAVOR:	//flail?
 			//todo
 			break;
@@ -419,16 +422,15 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move) {
 			goto AI_SPEED_PLUS;
 			
 		
-		
-
-		
-		// to do
-		
+		// other effects ???
+		case EFFECT_PLEDGE:
+			//todo - if partner going to use same pledge move
+			break;
 		
 		
 	}
 	
-	
+	return viability;
 }
 
 */
