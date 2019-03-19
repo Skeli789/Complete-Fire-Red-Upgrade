@@ -390,9 +390,9 @@ void atk06_typecalc(void) {
 		}
 
         if (defAbility == ABILITY_WONDERGUARD 
-		 && AttacksThisTurn(gBankAttacker, gCurrentMove) == 2
+		 //&& AttacksThisTurn(gBankAttacker, gCurrentMove) == 2
          && (!(gMoveResultFlags & MOVE_RESULT_SUPER_EFFECTIVE) || ((gMoveResultFlags & (MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE)) == (MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE)))
-         && gBattleMoves[gCurrentMove].power) {
+         && SPLIT(gCurrentMove) != SPLIT_STATUS) {
             gLastUsedAbility = defAbility;
             gMoveResultFlags |= MOVE_RESULT_MISSED;
             gLastLandedMoves[gBankTarget] = 0;
