@@ -10,5 +10,5 @@ Ghoulslash - Attack Animations, Various Code
 Lixdel - Attack Animations
 Pret - PokeRuby, PokeFireRed, PokeEmerald
 Sagari - Trainer Class Poke Balls, Pickup Update
-DizzyEgg - Emerald Battle Engine Upgrade V1 & V2
+DizzyEgg - Emerald Battle Engine Upgrade V1 & V2, Dizzy's Emerald Hacked Engine
 FBI - Expanded Saveblock
