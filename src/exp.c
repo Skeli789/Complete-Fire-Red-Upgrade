@@ -1,8 +1,6 @@
 #include "defines.h"
 #include "helper_functions.h"
 
-//Change this to account for new base Exp
-
 #define SE_EXP 0x1B
 #define MUS_WILD_POKE_VICTORY 0x137
 #define BattleScript_LevelUp (u8*) 0x81D89F5
@@ -25,6 +23,7 @@ enum
 	GiveExpViaExpShare,
 };
 
+extern const u16 gBaseExpBySpecies[];
 extern u8 String_TeamExpGain[];
 
 extern void PrepareStringBattle(u16 stringId, u8 bank);
@@ -163,7 +162,11 @@ void atk23_getexp(void) {
 			tradeBonus = 15;
 			
 		//Base Experience - b
-		baseExp = gBaseStats[gBattleMons[gBankFainted].species].expYield; 
+		#ifdef GEN_7_BASE_EXP_YIELD
+			baseExp = gBaseExpBySpecies[gBattleMons[gBankFainted].species];
+		#else
+			baseExp = gBaseStats[gBattleMons[gBankFainted].species].expYield;
+		#endif
 			
 		//Lucky Egg Boost - e
 		eggBoost = 10;
