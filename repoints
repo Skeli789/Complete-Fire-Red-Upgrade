@@ -22,6 +22,25 @@ gTrainerBackPicPaletteTable 08159458
 
 PlayAnimationTable 08034150
 
+gExperienceTables 0802FFB8
+gExperienceTables 080300E4
+gExperienceTables 080301F4
+gExperienceTables 0803DCC8
+gExperienceTables 0803E828
+gExperienceTables 0803E894
+gExperienceTables 0804199C
+gExperienceTables 08043B88
+gExperienceTables 08043C0C
+gExperienceTables 08049F48
+gExperienceTables 080E7F10
+gExperienceTables 080E803C
+gExperienceTables 080E814C
+gExperienceTables 08136790
+gExperienceTables 0813AADC
+gExperienceTables 081569E8
+gExperienceTables 08156B14
+gExperienceTables 08156C24
+
 SaveSectionOffsets 080DA23C
 
 ##

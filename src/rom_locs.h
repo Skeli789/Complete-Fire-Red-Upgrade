@@ -19,8 +19,9 @@ extern const u8 gTypeEffectiveness[124 * 3];
 
 extern const struct Evolution gEvolutionTable[][EVOS_PER_MON];
 
-typedef u32 ExperienceTable_t[101];
-#define gExperienceTables ((ExperienceTable_t*) 0x8253AE4)
+//typedef u32 ExperienceTable_t[101];
+//#define gExperienceTables ((ExperienceTable_t*) 0x8253AE4)
+extern const u32 gExperienceTables[][255 + 1];
 
 extern const u8 gAbilityNames[][ABILITY_NAME_LENGTH + 1];
 

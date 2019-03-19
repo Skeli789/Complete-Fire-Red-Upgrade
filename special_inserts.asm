@@ -2,6 +2,8 @@
 .align 2
 .thumb
 
+.equ MAX_LEVEL, 100
+
 .org 0x013144, 0xFF
 HiddenAbilityChange1:
 	mov r1, r9
@@ -13,6 +15,14 @@ HiddenAbilityChange1:
 	ldrb r1, [r1, #0x17]
 	lsr r1, r1, #0x7 @ability bit
 	bl HiddenAbilityChange1 + 0x2DC28 @0x08040D6C
+
+.org 0x21CFA, 0xFF
+MaxLevelChange2:
+	.byte MAX_LEVEL
+
+.org 0x21FB6, 0xFF
+MaxLevelChange3:
+	.byte MAX_LEVEL
 
 .org 0x026E34, 0xFF
 @player ability
@@ -60,6 +70,10 @@ HiddenAbilityChange4_2:
 	mov r2, r5 @species
 	bl HiddenAbilityChange4_2 + 0x164DC @0x08040D6C
 
+.org 0x32F6E, 0xFF
+MaxLevelChange14:
+	.byte MAX_LEVEL - 1
+
 .org 0x03DD58, 0xFF
 HiddenAbilityPokemonGeneration:
 	mov r0, #0x0
@@ -69,6 +83,14 @@ HiddenAbilityPokemonGeneration:
 	mov r2, r9
 	bl HiddenAbilityPokemonGeneration + 0x2778 @ set_pokemon_data_2
 	b HiddenAbilityPokemonGeneration + 0x26 @ 0x0803DD7E
+
+.org 0x3E806, 0xFF
+MaxLevelChange4:
+	.byte MAX_LEVEL
+
+.org 0x3E872, 0xFF
+MaxLevelChange5:
+	.byte MAX_LEVEL
 
 .org 0x40D38, 0xFF
 DetermineAbilityMain:
@@ -150,6 +172,38 @@ HiddenAbilityChange5:
 	add r1, r7, #0x4
 	strb r0, [r1, #0x1C]
 
+.org 0x41834, 0xFF
+MaxLevelChange6:
+	.byte MAX_LEVEL
+
+.org 0x41B0E, 0xFF
+MaxLevelChange13:
+	.byte MAX_LEVEL - 1
+
+.org 0x41B1E, 0xFF
+MaxLevelChange7:
+	.byte MAX_LEVEL
+
+.org 0x41B22, 0xFF
+MaxLevelChange8:
+	.byte MAX_LEVEL
+
+.org 0x420E8, 0xFF
+MaxLevelChange9:
+	.byte MAX_LEVEL
+
+.org 0x420EC, 0xFF
+MaxLevelChange10:
+	.byte MAX_LEVEL
+
+.org 0x4274E, 0xFF
+MaxLevelChange11:
+	.byte MAX_LEVEL
+
+.org 0x45684, 0xFF
+MaxLevelChange12:
+	.byte MAX_LEVEL
+
 .org 0x46CA0, 0xFF
 HiddenAbilityEggHatching1:
 	mov r0, r6
@@ -160,10 +214,22 @@ HiddenAbilityEggHatching2:
 	mov r0, r5
 	mov r1, #0x2E
 
+.org 0x4A216, 0xFF
+MaxLevelChange1:
+	.byte MAX_LEVEL
+
 .org 0x082C70, 0xFF
 @stench, illuminate
 HiddenAbilityChange6:
 	bl HiddenAbilityChange6 - 0x41F38 @0x08040D38
+
+.org 0x1262D2, 0xFF
+MaxLevelRareCandies:
+	.byte MAX_LEVEL
+
+.org 0x136684, 0xFF
+SummaryScreenExpDisplay1:
+	.byte MAX_LEVEL - 1
 
 .org 0x1366EC, 0xFF
 @ability names
@@ -185,3 +251,6 @@ HiddenAbilityChange7:
 	lsr r4, r0, #0x18
 	ldr r0, [r6]
 
+.org 0x13A9DC, 0xFF
+SummaryScreenExpDisplay2:
+	.byte MAX_LEVEL - 1, 0x2D, 0x0, 0xD9

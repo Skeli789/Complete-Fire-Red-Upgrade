@@ -637,41 +637,5 @@ void sub_80300F4(u8 taskId)
 }
 
 u32 GetExpToLevel(u8 toLevel, u8 growthRate) {
-	u32 required;
-	
-	if (toLevel <= 100)
-		return gExperienceTables[growthRate][toLevel];
-
-	switch (growthRate) {
-		case GROWTH_MEDIUM_FAST:
-			required = toLevel * toLevel * toLevel;
-			break;
-		
-		case GROWTH_ERRATIC:
-		//The original function was 160 - level, which can cause issues if the level if > 160
-		//So the function was changed to be the maximum level + 60, similar to the original
-			required = udivsi(((MAX_LEVEL + 60) - toLevel) * toLevel * toLevel, 100) * toLevel;
-			break;	
-		
-		case GROWTH_FLUCTUATING:
-			required = udivsi((toLevel / 2) + 32, 50) * toLevel * toLevel * toLevel;
-			break;	
-		
-		case GROWTH_MEDIUM_SLOW:
-			required = udivsi(6 * toLevel * toLevel * toLevel, 5) + 100 * toLevel - 15 * toLevel * toLevel - 140;
-			break;
-		
-		case GROWTH_FAST:
-			required = udivsi(4 * toLevel * toLevel * toLevel, 5);
-			break;
-		
-		case GROWTH_SLOW:
-			required = udivsi(5 * toLevel * toLevel * toLevel, 4);
-			break;
-		
-		default:
-			required = 1;
-	}
-	
-	return required;
+	return gExperienceTables[growthRate][toLevel];
 }
