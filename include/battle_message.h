@@ -58,6 +58,11 @@
 #define B_TXT_PARTNER_CLASS 0x32
 #define B_TXT_PARTNER_NAME 0x33
 #define B_TXT_BUFF3 0x34
+#define B_TXT_AFFECTS_TARGET_SIDE 0x35
+#define B_TXT_AFFECTS_ATTACKER_SIDE 0x36
+#define B_TXT_AFFECTS_TARGET_SIDE_CAPS 0x37
+#define B_TXT_AFFECTS_ATTACKER_SIDE_CAPS 0x38
+#define B_TXT_SCRIPTING_TRAINER 0x39
 
 // for B_TXT_BUFF1, B_TXT_BUFF2 and B_TXT_BUFF3
 
@@ -198,7 +203,7 @@
 
 #define TEXT_BUFF_ARRAY_COUNT   16
 
-struct StringInfoBattle
+struct BattleMsgData
 {
     u16 currentMove;
     u16 originallyUsedMove;
@@ -207,10 +212,12 @@ struct StringInfoBattle
     u8 scrActive;
     u8 unk1605E;
     u8 hpScale;
-    u8 StringBank;
+    u8 stringBank;
     u8 moveType;
+	bool8 zMoveActive;
     u8 abilities[MAX_BATTLERS_COUNT];
     u8 textBuffs[3][TEXT_BUFF_ARRAY_COUNT];
+	u8* battleStringLoader;
 };
 
 /*

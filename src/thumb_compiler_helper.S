@@ -70,7 +70,26 @@ __gnu_thumb1_case_shi:
 	pop     {r0, r1}
 	bx      lr
     .size __gnu_thumb1_case_shi, . - __gnu_thumb1_case_shi
-	
+
+	.force_thumb
+	.syntax unified
+    .global __gnu_thumb1_case_si
+    .thumb_func
+    .type __gnu_thumb1_case_shi,function
+__gnu_thumb1_case_si:
+        push    {r0, r1}
+        mov     r1, lr
+        adds.n  r1, r1, #2      /* Align to word.  */
+        lsrs    r1, r1, #2
+        lsls    r0, r0, #2
+        lsls    r1, r1, #2
+        ldr     r0, [r1, r0]
+        adds    r0, r0, r1
+        mov     lr, r0
+        pop     {r0, r1}
+        mov     pc, lr          /* We know we were called from thumb code.  */
+    .size __gnu_thumb1_case_si, . - __gnu_thumb1_case_si
+
     .force_thumb
     .syntax unified
     .global __aeabi_uidiv
@@ -90,7 +109,39 @@ __aeabi_idiv:
 	ldr r3, =(__divsi3)
 	bx r3
 	.size __aeabi_idiv, . - __aeabi_idiv
+
+    .force_thumb
+    .syntax unified
+    .global __aeabi_idivmod
+    .thumb_func
+    .type __aeabi_idivmod,function
+__aeabi_idivmod:
+	push {lr}
+	bl ActualModulationInt
+.byte 0x01, 0x1C @;mov r1, r0 - Return to r1 for some reason
+	pop {pc}
 	
+ActualModulationInt:
+	ldr r3, =(__modsi3)
+	bx r3
+	.size __aeabi_idivmod, . - __aeabi_idivmod
+
+    .force_thumb
+    .syntax unified
+    .global __aeabi_uidivmod
+    .thumb_func
+    .type __aeabi_uidivmod,function
+__aeabi_uidivmod:
+	push {lr}
+	bl ActualModulationUInt
+.byte 0x01, 0x1C @;mov r1, r0 - Return to r1 for some reason
+	pop {pc}
+	
+ActualModulationUInt:
+	ldr r3, =(__umodsi3)
+	bx r3
+	.size __aeabi_uidivmod, . - __aeabi_uidivmod
+
     .force_thumb
     .syntax unified
     .global memcpy

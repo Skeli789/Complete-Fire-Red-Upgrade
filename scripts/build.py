@@ -40,6 +40,8 @@ LDFLAGS = ['BPRE.ld', '-T', 'linker.ld']
 CFLAGS = ['-mthumb', '-mno-thumb-interwork', '-mcpu=arm7tdmi', '-mtune=arm7tdmi',
 '-mno-long-calls', '-march=armv4t', '-Wall', '-Wextra','-Os', '-fira-loop-pressure', '-fipa-pta']
 
+PrintedCompilingImages = False #Used to tell the script whether or not the string "Compiling Images" has been printed
+
 def run_command(cmd):
 	try:
 		subprocess.check_output(cmd)
@@ -199,9 +201,9 @@ def process_string(filename):
 def process_image(in_file):
 	'''Compile Image'''
 	if '.bmp' in in_file:
-		out_file = in_file.split('.bmp')[0] + '.c'
+		out_file = in_file.split('.bmp')[0] + '.s'
 	else:
-		out_file = in_file.split('.png')[0] + '.c'
+		out_file = in_file.split('.png')[0] + '.s'
 	
 	namelist = in_file.split("\\") #Get path of grit flags
 	namelist.pop(len(namelist) - 1)
@@ -228,13 +230,18 @@ def process_image(in_file):
 	except FileNotFoundError:
 		run_command(cmd) #No .o file has been created
 
+	global PrintedCompilingImages
+	if (PrintedCompilingImages is False):
+		print ('Compiling Images')
+		PrintedCompilingImages = True
+	
 	out_file_list = make_output_file(out_file)
 	new_out_file = out_file_list[0]
 	if out_file_list[1] == False:
 		os.remove(out_file)
 		return new_out_file	#No point in recompiling file
 
-	cmd = [CC] + CFLAGS + ['-c', out_file, '-o', new_out_file]
+	cmd = [AS] + ASFLAGS + ['-c', out_file, '-o', new_out_file]
 	run_command(cmd)
 	os.remove(out_file)
 	return new_out_file
@@ -268,9 +275,7 @@ def main():
 			'**/*.png': process_image,
 			'**/*.bmp': process_image
 	}
-	
-	print ('Compiling Images')
-	
+		
 	# Create output directory
 	try:
 		os.makedirs(BUILD)
@@ -283,6 +288,28 @@ def main():
 	# Link and extract raw binary
 	linked = link(itertools.chain.from_iterable(objects))
 	objcopy(linked)
+	
+	#Build special_inserts.asm
+	buildSpecialInserts = False
+	
+	try:
+		if os.path.getmtime('build/special_inserts.bin') > os.path.getmtime('special_inserts.asm'): #If the binary file was created after the file was last modified
+			pass
+		else:
+			buildSpecialInserts = True
+	
+	except FileNotFoundError: #If the object file doesn't exist, then obviously it needs to be made
+		buildSpecialInserts = True
+	
+	if (buildSpecialInserts):
+		cmd = cmd = [AS] + ASFLAGS + ['-c', 'special_inserts.asm', '-o', 'build/special_inserts.o']
+		run_command(cmd)
+		
+		cmd = [OBJCOPY, '-O', 'binary', 'build/special_inserts.o', 'build/special_inserts.bin']
+		run_command(cmd)
+		
+		print ('Assembling special_inserts.asm')
+	
 	print('Built in ' + str(datetime.now() - starttime) + '.')
 	
 if __name__ == '__main__':

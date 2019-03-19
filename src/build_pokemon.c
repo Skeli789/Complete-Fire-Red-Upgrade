@@ -5,8 +5,6 @@
 #include "build_pokemon.h"
 #include "multi.h"
 
-//Fix EV Setting
-
 extern u8 ClassPokeBalls[NUM_TRAINER_CLASSES];
 
 extern void GetFrontierTrainerName(u8* dst, u16 trainerId, u8 battlerNum);
@@ -22,6 +20,9 @@ bool8 ItemAlreadyOnTeam(u16 item, u8 partySize, item_t* itemArray);
 bool8 MegastoneAlreadyOnTeam(u16 item, u8 partySize, item_t* itemArray);
 bool8 ZCrystalAlreadyOnTeam(u16 item, u8 partySize, item_t* itemArray);
 bool8 PokemonTierBan(u16 species, u16 item, struct BattleTowerSpreads* spread, pokemon_t* mon, u8 checkFromLocationType);
+u8 GetHighestMonLevel(pokemon_t* party);
+u8 GetMonPokeBall(struct PokemonSubstruct0* data);
+void SetMonPokeBall(struct PokemonSubstruct0* data, u8 ballId);
 
 void BuildTrainerPartySetup(void) {
 	if (gBattleTypeFlags & (BATTLE_TYPE_TOWER_LINK_MULTI)) 
@@ -153,17 +154,13 @@ u8 CreateNPCTrainerParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, b
 			party[i].obedient = 1;
 		
 			#ifdef TRAINER_CLASS_POKE_BALLS
-				#ifdef CLASS_BASED_BALLS_MULTI_FIX
-				//In multi battles, the second opponent and partner will share poke ball first the first opponent due to graphical issues
-					SetMonData(&party[i], REQ_POKEBALL, &ClassPokeBalls[gTrainers[gTrainerBattleOpponent_A].trainerClass]);
-				#else
-					SetMonData(&party[i], REQ_POKEBALL, &ClassPokeBalls[trainer->trainerClass]);
-				#endif
+				SetMonData(&party[i], REQ_POKEBALL, &ClassPokeBalls[trainer->trainerClass]);
 			#endif
 			
 			#ifdef TRAINERS_WITH_EVS
 				u8 spreadNum = trainer->party.NoItemCustomMoves[i].iv;
-				if (trainer->aiFlags > 1 
+				if (gTrainers[trainerNum].partyFlags == (PARTY_FLAG_CUSTOM_MOVES | PARTY_FLAG_HAS_ITEM)
+				&& trainer->aiFlags > 1 
 				&& spreadNum != 0
 				&& spreadNum < TRAINERS_WITH_EVS_TABLE_SIZE)
 				{
@@ -230,7 +227,7 @@ u8 BuildFrontierParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, bool
 	else if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER && VarGet(BATTLE_TOWER_POKE_NUM) > 3 && side == B_SIDE_PLAYER)
         monsCount = 3;
     else {
-        monsCount = VarGet(BATTLE_TOWER_POKE_NUM);
+        monsCount = MathMax(1, MathMin(PARTY_SIZE, VarGet(BATTLE_TOWER_POKE_NUM)));
     }
 	
 	species_t* speciesArray = Calloc(sizeof(species_t) * monsCount);
@@ -267,7 +264,7 @@ u8 BuildFrontierParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, bool
 		if (VarGet(BATTLE_TOWER_TIER) == BATTLE_TOWER_LITTLE_CUP)
 			level = 5;
 		else
-			level = VarGet(BATTLE_TOWER_POKE_LEVEL);
+			level = MathMax(1, MathMin(MAX_LEVEL, VarGet(BATTLE_TOWER_POKE_LEVEL)));
 		
 		if (ForPlayer)
 			CreateMon(&party[i], spread.species, level, 0, TRUE, 0, OT_ID_PLAYER_ID, otid);
@@ -330,7 +327,7 @@ void BuildRandomPlayerTeam(void) {
 void SetWildMonHeldItem(void)
 {
 	u16 rnd = umodsi(Random(), 100);
-	u16 species = GetMonData(&gEnemyParty[0], MON_DATA_SPECIES, 0);
+	u16 species;
     u16 var1 = 45;
     u16 var2 = 95;
 
@@ -339,22 +336,30 @@ void SetWildMonHeldItem(void)
         var1 = 20;
         var2 = 80;
     }
-		
+	
     if (!(gBattleTypeFlags & (BATTLE_TYPE_POKE_DUDE | BATTLE_TYPE_SCRIPTED_WILD_1 | BATTLE_TYPE_TRAINER)))
     {
-        if (gBaseStats[species].item1 == gBaseStats[species].item2 && gBaseStats[species].item1 != 0)
-        {
-            SetMonData(&gEnemyParty[0], MON_DATA_HELD_ITEM, &gBaseStats[species].item1);
-            return;
-        }
+		for (int i = 0; i < 2; ++i) //Two possible wild opponents
+		{
+			if (i > 0 && !(gBattleTypeFlags & BATTLE_TYPE_DOUBLE))
+				break;
+			
+			species = gEnemyParty[i].species;
+			
+			if (gBaseStats[species].item1 == gBaseStats[species].item2 && gBaseStats[species].item1 != 0)
+			{
+				gEnemyParty[i].item = gBaseStats[species].item1;
+				return;
+			}
 
-        if (rnd < var1)
-			return;
-       
-        if (rnd < var2)
-            SetMonData(&gEnemyParty[0], MON_DATA_HELD_ITEM, &gBaseStats[species].item1);
-        else
-            SetMonData(&gEnemyParty[0], MON_DATA_HELD_ITEM, &gBaseStats[species].item2);
+			if (rnd < var1)
+				return;
+		   
+			if (rnd < var2)
+				gEnemyParty[i].item = gBaseStats[species].item1;
+			else
+				gEnemyParty[i].item = gBaseStats[species].item2;
+		}
     }
 }
 
@@ -534,4 +539,44 @@ bool8 PokemonTierBan(u16 species, u16 item, struct BattleTowerSpreads* spread, p
 			break;
 	}
 	return FALSE; //Not banned
+}
+
+u8 GetHighestMonLevel(pokemon_t* party)
+{
+	u8 max = party[0].level;
+	
+	for (int i = 0; i < 6; ++i)
+	{
+		if (max == MAX_LEVEL)
+			return max;
+	
+		if (party[i].level > max)
+			max = party[i].level;
+	}
+	
+	return max;
+}
+
+u8 GetMonPokeBall(struct PokemonSubstruct0* data)
+{
+	u8 ball = data->pokeball;
+	
+	if (ball == 0) //Bug prevention
+		return BALL_TYPE_POKE_BALL;
+	
+	return ball;
+}
+
+void SetMonPokeBall(struct PokemonSubstruct0* data, u8 ballId)
+{
+	data->pokeball = ballId;
+}
+
+void BattlePokemonScriptCommand_GiveHiddenAbility(pokemon_t* mon)
+{
+	if (FlagGet(HIDDEN_ABILITY_FLAG))
+	{
+		FlagClear(HIDDEN_ABILITY_FLAG);
+		mon->hiddenAbility = TRUE;
+	}
 }

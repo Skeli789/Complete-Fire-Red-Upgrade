@@ -84,6 +84,7 @@
 #define ACTION_SAFARI_ZONE_RUN      8
 #define ACTION_9                    9
 #define ACTION_RUN_BATTLESCRIPT     10 // when executing an action
+#define ACTION_TRY_FINISH			11
 #define ACTION_CANCEL_PARTNER       12 // when choosing an action
 #define ACTION_FINISHED             12 // when executing an action
 #define ACTION_NOTHING_FAINTED      13 // when choosing an action
@@ -288,7 +289,7 @@ struct UnknownFlags
     u32 flags[4];
 };
 
-#define UNKNOWN_FLAG_FLASH_FIRE 1
+#define RESOURCE_FLAG_FLASH_FIRE 1
 
 struct BattleMove
 {
@@ -349,7 +350,7 @@ struct DisableStruct
     /*0x18*/ u8 truantSwitchInHack:1;
     /*0x18*/ u8 unk18_a_2 : 2;
     /*0x18*/ u8 mimickedMoves : 4;
-    /*0x19*/ u8 rechargeCounter;
+    /*0x19*/ u8 rechargeTimer;
     /*0x1A*/ u8 unk1A[2];
 };
 	
@@ -409,7 +410,7 @@ struct SpecialStatus
     u8 restoredBankSprite: 1;       // 0x4
     u8 intimidatedPoke : 1;         // 0x8
     u8 traced : 1;                  // 0x10
-    u8 flag20 : 1;
+    u8 ppNotAffectedByPressure : 1;
     u8 flag40 : 1;
     u8 focusBanded : 1;				// 0x80
     u8 field1[3];
@@ -418,7 +419,7 @@ struct SpecialStatus
     s32 moveturnLostHP_special;
     u8 moveturnPhysicalBank;
     u8 moveturnSpecialBank;
-    u8 field12;
+    u8 field12 : 1;
     u8 field13;
 };
 
@@ -449,7 +450,7 @@ struct WishFutureKnock
 {
     u8 futureSightCounter[BATTLE_BANKS_COUNT];
     u8 futureSightAttacker[BATTLE_BANKS_COUNT];
-    s32 futureSightDmg[BATTLE_BANKS_COUNT];
+    u32 futureSightPartyIndex[BATTLE_BANKS_COUNT]; //was s32 futureSightDmg[BATTLE_BANKS_COUNT];
     u16 futureSightMove[BATTLE_BANKS_COUNT];
     u8 wishCounter[BATTLE_BANKS_COUNT];
     u8 wishUserID[BATTLE_BANKS_COUNT];
@@ -586,7 +587,7 @@ struct BattleStruct
     u8 turnEffectsBank;
     u8 filler2;
     u8 turncountersTracker;
-    u8 wrappedMove[8]; //Split into bytes to help the string buffer
+    u16 wrappedMove[4];
     u8 moveTarget[4];
     u8 expGetterId;
     u8 field_11;
@@ -699,6 +700,168 @@ struct BattleStruct
 
 extern struct BattleStruct* gBattleStruct;
 
+struct NewBattleStruct
+{
+	//Field Counters
+	u8 MudSportTimer;
+	u8 WaterSportTimer;
+	u8 GravityTimer;
+	u8 TrickRoomTimer;
+	u8 MagicRoomTimer;
+	u8 WonderRoomTimer;
+	u8 FairyLockTimer;
+	u8 IonDelugeTimer;
+	u8 TerrainType;
+	u8 TerrainTimer;
+	
+	//Team Counters
+	u8 SeaOfFireTimers[2];
+	u8 SwampTimers[2];
+	u8 RainbowTimers[2];
+	u8 RetaliateCounters[2];
+	u8 LuckyChantTimers[2];
+	u8 TailwindTimers[2];
+	u8 AuroraVeilTimers[2];
+	
+	//Personal Counters
+	u8 TelekinesisTimers[4];
+	u8 MagnetRiseTimers[4];
+	u8 HealBlockTimers[4]; 					//0x20175D4
+	u8 LaserFocusTimers[4];
+	u8 ThroatChopTimers[4];
+	u8 EmbargoTimers[4];
+	u8 ElectrifyTimers[4];
+	u8 SlowStartTimers[4];					//0x20175E8
+	u8 StakeoutCounters[4];
+	u8 StompingTantrumTimers[4];
+	u8 NimbleCounters[4];
+	u8 DestinyBondCounters[4];
+	u8 MetronomeCounter[4];
+	u8 IncinerateCounters[4];
+	u8 LastUsedTypes[4];
+	u8 lastTargeted[4];
+	u8 usedMoveIndices[4];
+	u8 DisabledMoldBreakerAbilities[4];
+	u8 SuppressedAbilities[4];
+	
+	//Bit Fields for Banks
+	u8 MicleBerryBits;
+	u8 UnburdenBoosts;
+	u8 BeakBlastByte;
+	u8 playedFocusPunchMessage;
+	u8 playedShellTrapMessage;
+	u8 RoostCounter;
+	u8 CustapQuickClawIndicator;
+	u8 HealingWishLoc;
+	u8 PowderByte;
+	u8 AbsentBattlerHelper;
+	u8 activeAbilityPopUps;
+	
+	//Bit Fields for Party
+	u8 BelchCounters;
+	u8 IllusionBroken;
+	
+	//Other Helpers
+	u8 SwitchInEffectsTracker;
+	u8 SentInBackup;
+	u8 OriginalAttackerTargetCount;
+	u8 MoveBounceTargetCount;
+	u8 EchoedVoiceCounter;
+	u8 EchoedVoiceDamageScale;
+	u8 EnduranceHelper;
+	u8 DancerBankCount;
+	u8 CurrentTurnAttacker : 4;
+	u8 CurrentTurnTarget : 4;
+	u8 targetsToBringDown;
+	u8 backupMoveEffect;
+	u8 FaintEffectsTracker;
+	u8 blockTracker;
+	u8 savedObjId;
+	
+	//Booleans
+	bool8 NoMoreMovingThisTurn : 1;
+	bool8 MoveBounceInProgress : 2;
+	bool8 moveWasBouncedThisTurn : 1;
+	bool8 AttackerDidDamageAtLeastOnce : 1;
+	bool8 PledgeHelper : 3;
+	bool8 ParentalBondOn : 2;
+	bool8 MeFirstByte : 1;
+	bool8 ReceiverActivated : 1;
+	bool8 GemHelper : 1;
+	bool8 fusionFlareUsedPrior : 1;
+	bool8 fusionBoltUsedPrior : 1;
+	bool8 EndTurnDone : 1;
+	bool8 HappyHourByte : 1;
+	bool8 attackAnimationPlayed : 1;
+	bool8 DancerInProgress : 1;
+	bool8 DancerByte : 1;
+	bool8 InstructInProgress : 1;
+	bool8 NoSymbiosisByte : 1;
+	bool8 SpectralThiefActive : 1;
+	bool8 MultiHitOn : 1;
+	bool8 secondaryEffectApplied : 1;
+	bool8 bypassSubstitute : 1;
+	bool8 criticalCapture : 1;
+	bool8 trainerSlideLowHpMsgDone : 1;
+	
+	//Other
+	u16 LastUsedMove;
+	u16 NewWishHealthSave;
+	u8 DancerTurnOrder[4];
+	u8 PayDayByPartyIndices[6];
+	item_t SavedConsumedItems[6];
+	s32 DamageTaken[4]; //0x2017650
+	u8 ResultFlags[4];
+	u8 expHelper[4];
+	u8 megaIndicatorObjIds[4];
+	u8 abilityPopUpIds[2];
+	
+	struct MegaData* MegaData;	 //0x2017688
+	struct UltraData* UltraData;
+	struct ZMoveData* ZMoveData; //0x20176A8
+};
+
+#define gNewBS (ExtensionState.newBattleStruct)
+
+struct TrainerSpotted {
+    /* NPC state id */
+    u8 id;
+
+    /* Distance from trainer to player */
+    u8 distance;
+
+    /* The script the on the trainer NPC. */
+    u8* script;
+};
+
+struct BattleExtensionState //Clear After Battle
+{ 
+    struct {
+        u8 count;
+		u8 approachingId;
+		u8 firstTrainerNPCId; //Used in trainerbattle 0xB
+		u8 secondTrainerNPCId;
+        struct TrainerSpotted trainers[2];
+    } spotted;
+	
+    void* partyBackup;
+	pokemon_t* skyBattlePartyBackup;
+	u16* itemBackup;
+	u8* trainerBIntroSpeech;
+	u8* trainerBDefeatSpeech;
+	u8* trainerBVictorySpeech;
+	u8* trainerBCantBattleSpeech;
+	u8* trainerBRetAddress;
+	struct NewBattleStruct* newBattleStruct;
+	
+	u16   partnerTrainerId;
+	u16   partnerBackSpriteId;
+	u16   trainerBTrainerId;
+	u8	  multiTaskStateHelper;
+};
+
+extern struct BattleExtensionState ExtensionState;
+
 struct naturalGift {
 	u16 berry;
 	u8 type;
@@ -723,6 +886,7 @@ typedef struct fling FlingStruct;
 #define IS_TYPE_PHYSICAL(moveType)(moveType < TYPE_MYSTERY)
 #define IS_TYPE_SPECIAL(moveType)(moveType > TYPE_MYSTERY)
 
+/*
 #define MOVE_EFFECT_SLEEP               0x1
 #define MOVE_EFFECT_POISON              0x2
 #define MOVE_EFFECT_BURN                0x3
@@ -788,7 +952,7 @@ typedef struct fling FlingStruct;
 #define MOVE_EFFECT_NOTHING_3F          0x3F
 #define MOVE_EFFECT_AFFECTS_USER        0x40
 #define MOVE_EFFECT_CERTAIN             0x80
-
+*/
 // table ids for general animations
 #define B_ANIM_CASTFORM_CHANGE          0x0
 #define B_ANIM_STATS_CHANGE             0x1
@@ -814,19 +978,51 @@ typedef struct fling FlingStruct;
 #define B_ANIM_INGRAIN_HEAL             0x15
 #define B_ANIM_WISH_HEAL                0x16
 
-#define B_ANIM_CALL_BACK_POKEMON		0x1D
-#define B_ANIM_CALL_BACK_POKEMON_2		0x1E
-#define B_ANIM_CAPTURE_POKEMON			0x1F
-#define B_ANIM_TRANSFORM				0x23
-#define B_ANIM_WISHIWASHI_FISH 			0x24
-#define B_ANIM_ZYGARDE_CELL_SWIRL 		0x25
-#define B_ANIM_DELTA_STREAM 			0x26
-#define B_ANIM_RED_PRIMAL_REVERSION 	0x2F
-#define B_ANIM_BLUE_PRIMAL_REVERSION 	0x30
-#define B_ANIM_FOG_CONTINUES			0x36
-#define B_ANIM_ZMOVE_ACTIVATE 			0x3E
-#define B_ANIM_MEGA_EVOLUTION 			0x3F
-#define B_ANIM_ULTRA_BURST 				0x40
+#define B_ANIM_ASTONISH_DROPS 0x17
+#define B_ANIM_SCARY_FACE_ASTONISH 0x18
+#define B_ANIM_TRANSFORM_FRONT 0x19
+#define B_ANIM_TURN_INTO_ROCK 0x1A
+#define B_ANIM_WAITING_WAGGLE 0x1B
+#define B_ANIM_LEVEL_UP_SHINE 0x1C
+#define B_ANIM_CALL_BACK_POKEMON 0x1D
+#define B_ANIM_CALL_BACK_POKEMON_2 0x1E
+#define B_ANIM_CAPTURE_POKEMON 0x1F
+#define B_ANIM_TURN_INTO_POKEBALL 0x20
+#define B_ANIM_SWITCH 0x21
+#define B_ANIM_CREATE_SUBSTITUTE_2 0x22
+#define B_ANIM_TRANSFORM 0x23
+#define B_ANIM_WISHIWASHI_FISH 0x24
+#define B_ANIM_ZYGARDE_CELL_SWIRL 0x25
+#define B_ANIM_STRONG_WINDS_CONTINUE 0x26
+#define B_ANIM_ELECTRIC_SURGE 0x27
+#define B_ANIM_GRASSY_SURGE 0x28
+#define B_ANIM_MISTY_SURGE 0x29
+#define B_ANIM_PSYCHIC_SURGE 0x2A
+#define B_ANIM_SEA_OF_FIRE 0x2B
+#define B_ANIM_HEALING_SPARKLES 0x2C
+#define B_ANIM_LUNAR_DANCE_HEAL 0x2D
+#define B_ANIM_HEALING_WISH_HEAL 0x2E
+#define B_ANIM_RED_PRIMAL_REVERSION 0x2F
+#define B_ANIM_BLUE_PRIMAL_REVERSION 0x30
+#define B_ANIM_GRASSY_TERRAIN_HEAL 0x31
+#define B_ANIM_POWDER_EXPLOSION 0x32
+#define B_ANIM_BEAK_BLAST_WARM_UP 0x33
+#define B_ANIM_SHELL_TRAP_SET 0x34
+#define B_ANIM_BERRY_EAT 0x35
+#define B_ANIM_FOG_CONTINUES 0x36
+#define B_ANIM_AQUA_RING_HEAL 0x37
+#define B_ELECTRIC_TERRAIN_ACTIVE_ANIM 0x38
+#define B_GRASSY_TERRAIN_ACTIVE_ANIM 0x39
+#define B_MISTY_TERRAIN_ACTIVE_ANIM 0x3A
+#define B_PSYCHIC_TERRAIN_ACTIVE_ANIM 0x3B
+#define B_BATON_PASS_ANIM 0x3C
+#define B_DRAGON_TAIL_BLOW_AWAY_ANIM 0x3D
+#define B_ANIM_ZMOVE_ACTIVATE 0x3E
+#define B_ANIM_MEGA_EVOLUTION 0x3F
+#define B_ANIM_ULTRA_BURST 0x40
+#define B_ANIM_LOAD_DEAFUALT_BG 0x41
+#define B_ANIM_LOAD_ABILITY_POP_UP 0x42
+#define B_ANIM_DESTROY_ABILITY_POP_UP 0x43
 
 // special animations table
 #define B_ANIM_LVL_UP                   0x0
@@ -850,6 +1046,7 @@ typedef struct fling FlingStruct;
 #define B_ANIM_STATUS_WRAPPED           0x9
 
 #define GET_STAT_BUFF_ID(n)((n & 0xF))              // first four bits 0x1, 0x2, 0x4, 0x8
+#define GET_STAT_BUFF_VALUE2(n)((n & 0xF0))
 #define GET_STAT_BUFF_VALUE(n)(((n >> 4) & 7))      // 0x10, 0x20, 0x40
 #define STAT_BUFF_NEGATIVE 0x80                     // 0x80, the sign bit
 
@@ -931,14 +1128,12 @@ void task00_0800F6FC(u8 taskId);
 
 enum BackSprites 
 {
-    BACK_PIC_BRENDAN,
-    BACK_PIC_MAY,
     BACK_PIC_RED,
     BACK_PIC_LEAF,
-    BACK_PIC_RS_BRENDAN,
-    BACK_PIC_RS_MAY,
-    BACK_PIC_WALLY,
-    BACK_PIC_STEVEN
+    BACK_PIC_BRENDAN,
+    BACK_PIC_MAY,
+    BACK_PIC_PRIMO,
+    BACK_PIC_OLD_MAN,
 };
 
 // rom_80A5C6C
@@ -982,24 +1177,24 @@ struct BattleAnimationInfo
 
 struct BattleHealthboxInfo
 {
-    u8 flag_x1 : 1;
-    u8 flag_x2 : 1;
-    u8 flag_x4 : 1;
-    u8 ballAnimActive : 1; // 0x8
-    u8 statusAnimActive : 1; // x10
-    u8 animFromTableActive : 1; // x20
-    u8 specialAnimActive : 1; //x40
-    u8 flag_x80 : 1;
-    u8 field_1_x1 : 1;
-    u8 field_1_x1E : 4;
-    u8 field_1_x20 : 1;
-    u8 field_1_x40 : 1;
-    u8 field_1_x80 : 1;
-    u8 field_2;
-    u8 field_3;
+    u8 partyStatusSummaryShown:1;
+    u8 healthboxIsBouncing:1;
+    u8 battlerIsBouncing:1;
+    u8 ballAnimActive:1; // 0x8
+    u8 statusAnimActive:1; // x10
+    u8 animFromTableActive:1; // x20
+    u8 specialAnimActive:1; // x40
+    u8 flag_x80:1;
+    u8 field_1_x1:1;
+    u8 field_1_x1E:4;
+    u8 field_1_x20:1;
+    u8 field_1_x40:1;
+    u8 field_1_x80:1;
+    u8 healthboxBounceSpriteId;
+    u8 battlerBounceSpriteId;
     u8 animationState;
     u8 field_5;
-    u8 field_6;
+    u8 matrixNum;
     u8 shadowSpriteId;
     u8 field_8;
     u8 field_9;
@@ -1083,6 +1278,7 @@ struct TerrainTableStruct
 	u8 secretPowerEffect;
 	u16 secretPowerAnim;
 	u16 naturePowerMove;
+	u16 burmyForm;
 };
 
 enum EnduranceListings {ENUDRE_REG, ENDURE_STURDY, ENDURE_FOCUS_SASH};
@@ -1091,11 +1287,10 @@ struct MegaData
 {
   u8 chosen[4];
   u8 done[4];
-  u8 partyIndex[2]; //Index of party member who Mega Evolved
   u8 state;
   u8 activeBank;
   u8* script;
-  bool8 megaEvoInProgress; //Used to tell the game whether or not the turn order should be recalculated
+  bool8 megaEvoInProgress : 1; //Used to tell the game whether or not the turn order should be recalculated
 };
 
 struct UltraData 
@@ -1125,6 +1320,7 @@ struct SpecialZMoves
 	u16 species;
 	u16 item;
 	u16 move;
+	u16 zmove;
 };
 
 extern struct BattleSpritesGfx* gMonSpritesGfx;

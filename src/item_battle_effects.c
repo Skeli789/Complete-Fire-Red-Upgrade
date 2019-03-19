@@ -6,10 +6,7 @@
 #define BattleScript_WhiteHerbRet (u8*) 0x81D95DF
 #define BattleScript_WhiteHerbEnd2 (u8*) 0x81D95D9
 
-#define gStatusConditionString_Love (u8*) 0x82500C4
-
 extern u8 gStatusConditionString_DisableProblem[];
-extern u8 gStatusConditionString_Confusion[];
 extern u8 gStatusConditionString_MentalState[];
 extern u8 gStatusConditionString_TauntProblem[];
 
@@ -39,6 +36,7 @@ extern u8 BattleScript_BerryCureChosenStatusEnd2[];
 extern u8 BattleScript_HerbCureChosenStatusRet[];
 extern u8 BattleScript_HerbCureChosenStatusEnd2[];
 extern u8 BattleScript_RaiseStatsItem[];
+extern u8 BattleScript_RaiseStatsItemEnd2[];
 
 extern u8 BattleScript_AirBallooonPop[];
 extern u8 BattleScript_WeaknessPolicy[];
@@ -48,9 +46,6 @@ extern u8 BattleScript_BlackSludgeHurt[];
 extern u8 BattleScript_MicleBerryRet[];
 extern u8 BattleScript_MicleBerryEnd2[];
 extern u8 BattleScript_StickyBarbTransfer[];
-extern u8 BattleScript_EjectButton[];
-extern u8 BattleScript_RedCard[];
-
 
 extern move_t FlinchMoveTable[];
 
@@ -71,13 +66,6 @@ enum
     FLAVOR_SWEET, // 2
     FLAVOR_BITTER, // 3
     FLAVOR_SOUR, // 4
-};
-
-enum
-{
-	Force_Switch_Regular,
-	Force_Switch_Dragon_Tail,
-	Force_Switch_Red_Card
 };
 
 u8 ConfusionBerries(u8 bank, u8 flavour, bool8 moveTurn, bool8 DoPluck);
@@ -144,6 +132,41 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
 					BattleScriptExecute(BattleScript_WhiteHerbEnd2);
 				}
 				break;
+				
+			case ITEM_EFFECT_SEEDS: ;
+				u8 stat = 0;
+				
+				if (bankQuality && bankQuality == TerrainType)
+				{
+					switch (TerrainType) {
+						case ELECTRIC_TERRAIN:
+						case GRASSY_TERRAIN:
+							if (STAT_CAN_RISE(bank, STAT_STAGE_DEF))
+							{
+								stat = STAT_STAGE_DEF;
+								effect = ITEM_STATS_CHANGE;
+							}
+							break;
+						case MISTY_TERRAIN:
+						case PSYCHIC_TERRAIN:
+							if (STAT_CAN_RISE(bank, STAT_STAGE_SPDEF))
+							{
+								stat = STAT_STAGE_SPDEF;
+								effect = ITEM_STATS_CHANGE;
+							}
+							break;
+					}
+					
+					if (effect)
+					{
+						PREPARE_STAT_BUFFER(gBattleTextBuff1, stat);
+						gBattleScripting->statChanger = INCREASE_1 | stat;
+						gBattleScripting->animArg1 = 0xE + stat;
+						gBattleScripting->animArg2 = 0;
+						gBattleScripting->bank = gBankTarget = gActiveBattler = bank;
+						BattleScriptExecute(BattleScript_RaiseStatsItemEnd2);
+					}
+				}
 		}
         break;
 	
@@ -506,7 +529,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
 			
 			case ITEM_EFFECT_MICLE_BERRY:
 				if (PINCH_BERRY_CHECK(bank) || DoPluck) {
-					MicleBerryBits |= (1 << bank);
+					gNewBS->MicleBerryBits |= (1 << bank);
 				
 					if (moveTurn || DoPluck) {
 						BattleScriptPushCursor();
@@ -625,41 +648,8 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
 				effect = RaiseStatsContactItem(bank, STAT_STAGE_ATK, TYPE_ELECTRIC);
 				break;
 				
-			case ITEM_EFFECT_EJECT_BUTTON:
-				if (gMultiHitCounter <= 1
-				&& TOOK_DAMAGE(bank)
-				&& gBattleMons[bank].hp
-				&& !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bank))
-				{
-					NoSymbiosisByte = TRUE;
-					gEffectBank = bank;
-					BattleScriptPushCursor();
-					gBattlescriptCurrInstr = BattleScript_EjectButton;
-					gActiveBattler = bank;
-					effect = ITEM_EFFECT_OTHER;
-				}
-				break;
-				
 			case ITEM_EFFECT_LUMINOUS_MOSS:
 				effect = RaiseStatsContactItem(bank, STAT_STAGE_SPDEF, TYPE_WATER);
-				break;
-				
-			case ITEM_EFFECT_RED_CARD:
-				if (gMultiHitCounter <= 1
-				&& TOOK_DAMAGE(bank)
-				&& gBattleMons[bank].hp
-				&& !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bank)
-				&& ((gBattleTypeFlags & BATTLE_TYPE_TRAINER) || SIDE(gBankAttacker) == B_SIDE_PLAYER)
-				&& gCurrentMove != MOVE_DRAGONTAIL && gCurrentMove != MOVE_CIRCLETHROW)
-				{
-					NoSymbiosisByte = TRUE;
-					ForceSwitchHelper = Force_Switch_Red_Card;
-					gEffectBank = bank;
-					BattleScriptPushCursor();
-					gBattlescriptCurrInstr = BattleScript_RedCard;
-					gActiveBattler = bank;
-					effect = ITEM_EFFECT_OTHER;
-				}
 				break;
 				
 			case ITEM_EFFECT_SNOWBALL:
@@ -878,7 +868,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
             switch (atkHoldEffect)
             {
             case ITEM_EFFECT_FLINCH:
-				if (ABILITY(gBankAttacker) == ABILITY_SERENEGRACE || RainbowTimers[SIDE(gBankAttacker)])
+				if (ABILITY(gBankAttacker) == ABILITY_SERENEGRACE || gNewBS->RainbowTimers[SIDE(gBankAttacker)])
 					bankQuality *= 2;
                 if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) 
 				&& ABILITY(gBankTarget) != ABILITY_STENCH
@@ -985,7 +975,7 @@ u8 StatRaiseBerries(u8 bank, u8 stat, bool8 moveTurn, bool8 DoPluck) {
 	
         PREPARE_STAT_BUFFER(gBattleTextBuff1, stat);
 
-        gEffectBank = bank;
+        gBankTarget = gEffectBank = bank;
         gBattleScripting->statChanger = INCREASE_1 | stat;
         gBattleScripting->animArg1 = 0xE + stat;
         gBattleScripting->animArg2 = 0;
@@ -1018,7 +1008,7 @@ u8 RaiseStatsContactItem(u8 bank, u8 stat, u8 moveType) {
 		
 		BattleScriptPushCursor();
 		gBattlescriptCurrInstr = BattleScript_RaiseStatsItem;
-		gActiveBattler = bank;
+		gBankTarget = gActiveBattler = bank;
 		effect = ITEM_STATS_CHANGE;
 	}
 	return effect;
@@ -1039,7 +1029,7 @@ u8 KeeMaranagaBerryFunc(u8 bank, u8 stat, u8 split, bool8 DoPluck) {
 		
 		BattleScriptPushCursor();
 		gBattlescriptCurrInstr = BattleScript_RaiseStatsItem;
-		gActiveBattler = bank;
+		gBankTarget = gActiveBattler = bank;
 		effect = ITEM_STATS_CHANGE;
 	}
 	return effect;

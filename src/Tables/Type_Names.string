@@ -1,0 +1,72 @@
+#org @gTypeNames
+#org @NAME_NORMAL
+Normal
+
+#org @NAME_FIGHTING
+Fight[00]
+
+#org @NAME_FLYING
+Flying
+
+#org @NAME_POISON
+Poison
+
+#org @NAME_GROUND
+Ground
+
+#org @NAME_ROCK
+Rock[00][00]
+
+#org @NAME_BUG
+Bug[00][00][00]
+
+#org @NAME_GHOST
+Ghost[00]
+
+#org @NAME_STEEL
+Steel[00]
+
+#org @NAME_TYPELESS
+???[00][00][00]
+
+#org @NAME_FIRE
+Fire[00][00]
+
+#org @NAME_WATER
+Water[00]
+
+#org @NAME_GRASS
+Grass[00]
+
+#org @NAME_ELECTRIC
+Electr
+
+#org @NAME_PSYCHC
+Psychc
+
+#org @NAME_ICE
+Ice[00][00][00]
+
+#org @NAME_DRAGON
+Dragon
+
+#org @NAME_DARK
+Dark[00][00]
+
+#org @FAIRY_TYPE_ALIGNMENT_1
+[00][00][00][00][00][00]
+
+#org @FAIRY_TYPE_ALIGNMENT_2
+[00][00][00][00][00][00]
+
+#org @FAIRY_TYPE_ALIGNMENT_3
+[00][00][00][00][00][00]
+
+#org @FAIRY_TYPE_ALIGNMENT_4
+[00][00][00][00][00][00]
+
+#org @FAIRY_TYPE_ALIGNMENT_5
+[00][00][00][00][00][00]
+
+#org @NAME_FAIRY
+Fairy[00]

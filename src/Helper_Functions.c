@@ -1,5 +1,6 @@
 #include "defines.h"
 #include "mega.h"
+#include "frontier.h"
 
 extern move_t SheerForceTable[];
 extern move_t SoundMoveTable[];
@@ -9,26 +10,35 @@ extern struct BattleMove gBattleMoves[];
 
 extern u8 GetMoveTypeSpecial(bank_t, move_t);
 extern s8 PriorityCalc(u8 bank, u8 action, u16 move);
+extern u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg);
 
 bool8 CheckTableForMove (move_t move, const u16 table[]) {
 	for (u32 i = 0; table[i] != MOVE_TABLES_TERMIN; ++i) {
-		if (move == table [i])
+		if (move == table[i])
 			return TRUE;
 	}
 	return FALSE;
 }
 
-bool8 CheckTableForMoveEffect (move_t move, const u16 table[]) {
-	for (u32 i = 0; table[i] != MOVE_TABLES_TERMIN; ++i) {
-		if (gBattleMoves[move].effect == table [i])
+bool8 CheckTableForMoveEffect(move_t move, const u8 table[]) {
+	for (u32 i = 0; table[i] != MOVE_EFFECT_TABLES_TERMIN; ++i) {
+		if (gBattleMoves[move].effect == table[i])
 			return TRUE;
 	}
 	return FALSE;
 }
 
-bool8 CheckTableForAbility (u8 ability, const u8 table[]) {
+bool8 CheckTableForAbility(u8 ability, const u8 table[]) {
 	for (u32 i = 0; table[i] != ABILITY_TABLES_TERMIN; ++i) {
-		if (ability == table [i])
+		if (ability == table[i])
+			return TRUE;
+	}
+	return FALSE;
+}
+
+bool8 CheckTableForSpecialMoveEffect(u8 effect, const u8 table[]) {
+	for (u32 i = 0; table[i] != ABILITY_TABLES_TERMIN; ++i) {
+		if (effect == table[i])
 			return TRUE;
 	}
 	return FALSE;
@@ -49,7 +59,7 @@ bank_t GetFoeBank(bank_t bank) {
 }
 
 item_effect_t GetBankItemEffect(bank_t bank) {
-	if (gBattleMons[bank].ability != ABILITY_KLUTZ && !(EmbargoTimers[bank]) && !MagicRoomTimer)
+	if (gBattleMons[bank].ability != ABILITY_KLUTZ && !(gNewBS->EmbargoTimers[bank]) && !gNewBS->MagicRoomTimer)
 		return ItemId_GetHoldEffect(gBattleMons[bank].item);
 	return 0;
 }
@@ -60,28 +70,50 @@ bool8 CheckAbilityTargetField(ability_t ability) {
 
 pokemon_t* GetBankPartyData(bank_t bank) {
 	u8 index = gBattlerPartyIndexes[bank];
-	if (bank & 1)
+	if (SIDE(bank) == B_SIDE_OPPONENT)
 		return &gEnemyParty[index];
 	return &gPlayerParty[index];
 }
 
+bank_t GetBankFromPartyData(pokemon_t* mon) {
+
+	for (int i = 0; i < gBattlersCount; ++i)
+	{
+		if (SIDE(i) == B_SIDE_OPPONENT)
+		{
+			if ((u32) (&gEnemyParty[gBattlerPartyIndexes[i]]) == (u32) mon)
+				return i;
+		}
+	
+		if (SIDE(i) == B_SIDE_PLAYER)
+		{
+			if ((u32) (&gPlayerParty[gBattlerPartyIndexes[i]]) == (u32) mon)
+				return i;
+		}
+	}
+	
+	return PARTY_SIZE;
+}
+
 enum {IN_AIR, GROUNDED};
 bool8 CheckGrounding(bank_t bank) {
-	if (GravityTimer || GetBankItemEffect(bank) == ITEM_EFFECT_IRON_BALL ||
+	if (gNewBS->GravityTimer || GetBankItemEffect(bank) == ITEM_EFFECT_IRON_BALL ||
 		(gStatuses3[bank] & (STATUS3_SMACKED_DOWN | STATUS3_ROOTED)))
 			return GROUNDED;
 			
 	else if ((gStatuses3[bank] & (STATUS3_LEVITATING | STATUS3_TELEKINESIS | STATUS3_IN_AIR)) 
+		   || ITEM_EFFECT(bank) == ITEM_EFFECT_AIR_BALLOON
 		   || gBattleMons[bank].ability == ABILITY_LEVITATE 
 		   || gBattleMons[bank].type3 == TYPE_FLYING
 		   || gBattleMons[bank].type1 == TYPE_FLYING
 		   || gBattleMons[bank].type2 == TYPE_FLYING)
 				return IN_AIR;
+	
 	return GROUNDED;
 }
 
 bool8 CheckGroundingFromPartyData(pokemon_t* party) {
-	if (GravityTimer 
+	if (gNewBS->GravityTimer 
 	|| (ItemId_GetHoldEffect(party->item) == ITEM_EFFECT_IRON_BALL && GetPartyAbility(party) != ABILITY_KLUTZ))
 		return GROUNDED;
 			
@@ -121,6 +153,13 @@ u8 ViableMonCount(pokemon_t* party) {
 			++count;
     }
 	return count;
+}
+
+u8 ViableMonCountFromBank(u8 bank) {
+	if (SIDE(bank) == B_SIDE_PLAYER)
+		return ViableMonCount(gPlayerParty);
+	else
+		return ViableMonCount(gEnemyParty);
 }
 
 bool8 CheckContact(u16 move, u8 bank) {
@@ -245,7 +284,7 @@ u8 GetMoveTarget(u16 move, u8 useMoveTarget) {
     switch (moveTarget) {
     case 0:
         defSide = SIDE(bankAtk) ^ BIT_SIDE;
-        if (gSideTimers[defSide].followmeTimer && gBattleMons[gSideTimers[defSide].followmeTarget].hp)
+        if (gSideTimers[defSide].followmeTimer && gBattleMons[gSideTimers[defSide].followmeTarget].hp && move != MOVE_SKYDROP)
             bankDef = gSideTimers[defSide].followmeTarget;
 		
         else {
@@ -364,7 +403,10 @@ u8 GetMoveTarget(u16 move, u8 useMoveTarget) {
         bankDef = bankAtk;
         break;
     }
-    gBattleStruct->moveTarget[bankAtk] = bankDef;
+	
+	if (!gNewBS->DancerInProgress && !gNewBS->InstructInProgress)
+		gBattleStruct->moveTarget[bankAtk] = bankDef;
+	
     return bankDef;
 }
 
@@ -391,20 +433,32 @@ bool8 IsBattlerAlive(u8 bank) {
 
 u16 GetNationalPokedexCount(u8 caseID) {
     u16 count = 0;
-    u16 i;
+    u32 i;
+	u8 byte;
 
-    for (i = 0; i < NATIONAL_DEX_COUNT; i++) {
-        switch (caseID) {
+	u8* flags;
+
+    switch (caseID) {
         case FLAG_GET_SEEN:
-            if (GetSetPokedexFlag(i + 1, FLAG_GET_SEEN))
-                count++;
+            flags = (u8*) SEEN_DEX_FLAGS;
             break;
 		
-        case FLAG_GET_CAUGHT:
-            if (GetSetPokedexFlag(i + 1, FLAG_GET_CAUGHT))
-                count++;
+        default: //case FLAG_GET_CAUGHT:
+            flags = (u8*) CAUGHT_DEX_FLAGS;
             break;
-        }
+    }
+	
+    for (i = 0; i <= (NATIONAL_DEX_COUNT - 1) / 8; ++i) //8 Pokemon per byte
+	{
+		byte = flags[i];
+		
+		while (byte != 0)
+		{
+			if (byte & 1)
+				++count;
+			
+			byte >>= 1;
+		}
     }
     return count;
 }
@@ -418,7 +472,7 @@ bool8 CheckBattleTerrain(u8 caseID) {
 pokemon_t* LoadPartyRange(u8 bank, u8* FirstMonId, u8* lastMonId) {
 	pokemon_t* party;
 	
-	if (GetBattlerSide(bank) == B_SIDE_OPPONENT) {
+	if (SIDE(bank) == B_SIDE_OPPONENT) {
         party = gEnemyParty;
 	}
     else {
@@ -440,7 +494,7 @@ pokemon_t* LoadPartyRange(u8 bank, u8* FirstMonId, u8* lastMonId) {
 		//Two Human Trainers vs Two AI Trainers
         if (gBattleTypeFlags & BATTLE_TYPE_TOWER_LINK_MULTI)
 		{
-            if (GetBattlerSide(bank) == B_SIDE_PLAYER) {
+            if (SIDE(bank) == B_SIDE_PLAYER) {
                 *FirstMonId = 0;
                 if (GetLinkTrainerFlankId(GetBattlerMultiplayerId(bank)) == TRUE)
                     *FirstMonId = 3;
@@ -486,9 +540,20 @@ pokemon_t* LoadPartyRange(u8 bank, u8* FirstMonId, u8* lastMonId) {
 
 ability_t CopyAbility(u8 bank) {
 	if (gStatuses3[bank] & STATUS3_ABILITY_SUPPRESS)
-		return SuppressedAbilities[bank];
+		return gNewBS->SuppressedAbilities[bank];
+	else if (gNewBS->DisabledMoldBreakerAbilities[bank])
+		return gNewBS->DisabledMoldBreakerAbilities[bank];
 	else
 		return gBattleMons[bank].ability;
+}
+
+ability_t* GetAbilityLocation(u8 bank) {
+	if (gStatuses3[bank] & STATUS3_ABILITY_SUPPRESS)
+		return &gNewBS->SuppressedAbilities[bank];
+	else if (gNewBS->DisabledMoldBreakerAbilities[bank])
+		return &gNewBS->DisabledMoldBreakerAbilities[bank];
+	else
+		return &gBattleMons[bank].ability;
 }
 
 
@@ -538,12 +603,12 @@ pokemon_t* GetIllusionPartyData(u8 bank) {
 
 	pokemon_t* party = LoadPartyRange(bank, &firstMonId, &lastMonId);
 	
-	for (i = lastMonId; i > firstMonId; --i) { //Loop through party in reverse order
-		if (i == gBattlerPartyIndexes[bank])
+	for (i = lastMonId - 1; i >= firstMonId; --i) { //Loop through party in reverse order
+		if (i == gBattlerPartyIndexes[bank]) //Finsihed checking mons after
 			return GetBankPartyData(bank);
 	
-		if (GetMonData(&party[i], MON_DATA_SPECIES, 0) == PKMN_NONE
-		||  GetMonData(&party[i], MON_DATA_HP, 0) == 0)
+		
+		if (party[i].species == PKMN_NONE ||  party[i].hp == 0)
 			continue;
 		
 		return &party[i];
@@ -576,7 +641,7 @@ bool8 IsFirstAttacker(u8 bank) {
 bool8 CanTransferItem(u16 species, u16 item, pokemon_t* party_data) {
 	item_effect_t effect = gItems[SanitizeItemId(item)].holdEffect;
 	u8 quality = ItemId_GetHoldEffectParam(item);
-	evolution* evolutions = (evolution*) ((u32) evolution_table + party_data->species * sizeof(evolution) * (evos_per_poke + 1));
+	const struct Evolution* evolutions = gEvolutionTable[party_data->species];
 	int i;
 	
 	switch (effect) {
@@ -604,8 +669,10 @@ bool8 CanTransferItem(u16 species, u16 item, pokemon_t* party_data) {
 			break;
 
 		case ITEM_EFFECT_MEGA_STONE:
-			for (i = 0; i <= evos_per_poke; ++i) {
-				if (evolutions[i].type == MEGA_EVOLUTION && evolutions[i].argument == item)
+			for (i = 0; i < EVOS_PER_MON; ++i) 
+			{
+				if ((evolutions[i].method == MEGA_EVOLUTION && evolutions[i].param == item) //Can Mega Evolve
+				||  (evolutions[i].method == MEGA_EVOLUTION && evolutions[i].param == 0)) //Is Mega
 					return FALSE;
 			}
 			break;
@@ -622,8 +689,8 @@ bool8 CanTransferItem(u16 species, u16 item, pokemon_t* party_data) {
 //Make sure the input bank is any bank on the specific mon's side
 bool8 CanFling(u8 ability, u16 item, pokemon_t* party_data, u8 bank, bool8 PartyCheck) {
 	if (ability == ABILITY_KLUTZ
-	|| MagicRoomTimer
-	|| (!PartyCheck && EmbargoTimers[bank])
+	|| gNewBS->MagicRoomTimer
+	|| (!PartyCheck && gNewBS->EmbargoTimers[bank])
 	|| !CanTransferItem(party_data->species, item, party_data)
 	|| gItems[SanitizeItemId(item)].holdEffect == ITEM_EFFECT_PRIMAL_ORB
 	|| IsMail(item)
@@ -721,7 +788,14 @@ u8 CalcMoveSplit(u8 bank, u16 move) {
 			return SPLIT_PHYSICAL;
 	}
 	
-	return SPLIT(move);
+	#ifdef OLD_MOVE_SPLIT
+		if (gBattleMoves[move].type < TYPE_FIRE)
+			return SPLIT_PHYSICAL;
+		else
+			return SPLIT_SPECIAL;
+	#else
+		return SPLIT(move);
+	#endif
 }
 
 u8 CalcMoveSplitFromParty(pokemon_t* mon, u16 move) {
@@ -736,8 +810,36 @@ u8 CalcMoveSplitFromParty(pokemon_t* mon, u16 move) {
 	return SPLIT(move);
 }
 
+u8 FindMovePositionInMoveset(u16 move, u8 bank) {
+	int i;
+	for (i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		if (gBattleMons[bank].moves[i] == move)
+			break;
+	}
+	return i;
+}
+
+void ClearBankStatus(bank_t bank) {
+	if (gBattleMons[bank].status1 & (STATUS_POISON | STATUS_TOXIC_POISON))
+		StringCopy(gBattleTextBuff1, gStatusConditionString_Poison);
+	else if (gBattleMons[bank].status1 & STATUS_SLEEP)
+		StringCopy(gBattleTextBuff1, gStatusConditionString_Sleep);
+	else if (gBattleMons[bank].status1 & STATUS_PARALYSIS)
+		StringCopy(gBattleTextBuff1, gStatusConditionString_Paralysis);
+	else if (gBattleMons[bank].status1 & STATUS_BURN)
+		StringCopy(gBattleTextBuff1, gStatusConditionString_Burn);
+	else if (gBattleMons[bank].status1 & STATUS_FREEZE)
+		StringCopy(gBattleTextBuff1, gStatusConditionString_Ice);
+	gBattleMons[bank].status1 = 0;
+	gBattleMons[bank].status2 &= ~(STATUS2_NIGHTMARE);
+	gActiveBattler = bank;
+	EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[bank].status1);
+	MarkBufferBankForExecution(gActiveBattler);
+}
+
 bool8 CanBeGeneralStatused(u8 bank) {
-	if (gBattleMons[bank].species == PKMN_MINIORSHIELD)
+	if (GetBankPartyData(bank)->species == PKMN_MINIORSHIELD) //Prevents Ditto from getting this benefit
 		return FALSE;
 	
 	switch (ABILITY(bank)) {
@@ -759,6 +861,9 @@ bool8 CanBeGeneralStatused(u8 bank) {
 	
 	if (TerrainType == MISTY_TERRAIN && CheckGrounding(bank))
 		return FALSE;
+		
+	if (gBattleMons[bank].status1)
+		return FALSE;
 
 	return TRUE;
 }
@@ -777,6 +882,23 @@ bool8 CanBePutToSleep(u8 bank) {
 	
 	if (TerrainType == ELECTRIC_TERRAIN && CheckGrounding(bank))
 		return FALSE;
+		
+	if (FlagGet(BATTLE_TOWER_FLAG)) //Sleep Clause
+	{
+		switch (VarGet(BATTLE_TOWER_TIER)) {
+			case BATTLE_TOWER_OU:
+			case BATTLE_TOWER_UBER:
+			case BATTLE_TOWER_LITTLE_CUP: ;
+				u8 firstId, lastId;
+				pokemon_t* party = LoadPartyRange(bank, &firstId, &lastId);
+				
+				for (int i = firstId; i < lastId; ++i)
+				{
+					if (party[i].condition & STATUS1_SLEEP)
+						return FALSE; 
+				}
+		}
+	}
 
 	return TRUE;
 }

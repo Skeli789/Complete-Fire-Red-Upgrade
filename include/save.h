@@ -43,11 +43,13 @@ struct UnkSaveSection
     u32 signature;
 }; // size is 0xFF8
 
-struct SaveSectionOffsets
+struct SaveSectionOffset
 {
     u16 toAdd;
     u16 size;
 };
+
+extern struct SaveBlockChunk gRamSaveSectionLocations[0xE];
 
 // Emerald changes this definition to be the sectors per slot.
 #define NUM_SECTORS_PER_SAVE_SLOT 14  // Number of sectors occupied by a save slot
@@ -73,21 +75,20 @@ enum
     HOF_DELETE_SAVE // unused
 };
 
-extern u16 gFirstSaveSector;
+extern u16* gFirstSaveSector;
 extern u32 gPrevSaveCounter;
 extern u16 gLastKnownGoodSector;
 extern u32 gDamagedSaveSectors;
-extern u32 gSaveCounter;
-extern struct SaveSection *gFastSaveSection; // the pointer is in fast IWRAM but may sometimes point to the slower EWRAM.
+extern u32* gSaveCounter;
+extern struct SaveSection* gFastSaveSection; // the pointer is in fast IWRAM but may sometimes point to the slower EWRAM.
 extern u16 gUnknown_3005398;
 extern u16 gSaveUnusedVar;
 extern u16 gSaveFileStatus;
 extern void (*gGameContinueCallback)(void);
-extern struct SaveBlockChunk gRamSaveSectionLocations[0xE];
 extern u16 gUnknown_3005420;
 
 extern struct SaveSection gSaveDataBuffer;
-
+/*
 void ClearSaveData(void);
 void Save_ResetSaveCounters(void);
 bool32 SetSectorDamagedStatus(u8 op, u8 bit);
@@ -123,5 +124,6 @@ u32 sub_8153634(u8 sector, u8* src);
 void sub_8153688(u8 taskId);
 u32 sub_80DA5E0(u8 sector, u8* src);
 void sub_80DA634(u8 taskId);
+*/
 
 #endif // GUARD_SAVE_H

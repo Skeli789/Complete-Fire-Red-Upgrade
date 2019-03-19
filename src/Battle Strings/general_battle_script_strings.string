@@ -1,0 +1,126 @@
+#org @TrickRoomSetString
+[FD][0F] twisted\nthe dimensions!
+
+#org @WonderRoomSetString
+It created a bizarre area in which\nthe Def and Sp. Def stats are swapped!
+
+#org @MagicRoomSetString
+It created a bizarre are in which\nheld items lose their effects!
+
+#org @GravitySetString
+Gravity intensified!
+
+#org @IonDelugeShowerString
+A deluge of ions showers the\nbattlefield!
+
+#org @NoMoreAirborneFromGravityString
+[FD][13] couldn't\nstay airborne due to Gravity!
+
+#org @Bank0AWasBroughtDownString
+[FD][13] was\nbrought down!
+
+#org @ElectricTerrainSetString
+An electric current runs across\nthe battlefield!
+
+#org @GrassyTerrainSetString
+Grass grew to cover the\nbattlefield!
+
+#org @MistyTerrainSetString
+Mist swirls around the\nbattlefield!
+
+#org @PsychicTerrainSetString
+The battlefield got weird!
+
+#org @TargetTransformedIntoType
+[FD][10] transformed\ninto the [FD][00] type!
+
+#org @ThirdTypeAddedString
+[FD][00] type was added to\n[FD][13]!
+
+#org @FairyLockString
+[FD][0F] locked down the battlefield!
+
+#org @HappyHourString
+Everyone is caught up in the\nhappy atmosphere!
+
+#org @CelebrateString
+Congratulations [FD][23]!
+
+#org @HoldHandsString
+[FD][0F] and [FD][10]\nheld hands!
+
+#org @TailwindSetString
+The tailwind blew from behind\n[FD][36] team!
+
+#org @LuckyChantSetString
+The Lucky Chant shielded\n[FD][36] team from critical hits!
+
+#org @EntrainmentString
+#org @WorrySeedString
+#org @SimpleBeamString
+[FD][10] acquired\n[FD][19]!
+
+#org @AbilitySuppressedString
+[FD][13]'s Ability\nwas suppressed!
+
+#org @TargetStatsResetString
+[FD][02]'s stat changes\nwere removed!
+
+#org @RoastedBerryString
+[FD][10]'s [FD][16]\nwas burnt up!
+
+#org @gText_TargetWasInfested
+[FD][10] has been\nafflicted with an Infestation!
+
+#org @SkyDropUpString
+[FD][0F] took\n[FD][10] into the sky!
+
+#org @FreedFromSkyDropString
+[FD][10] was freed\nfrom the Sky Drop!
+
+#org @CraftyShieldSetString
+Crafty Shield protected\n[FD][36] team!
+
+#org @MatBlockSetString
+[FD][0F] intends to flip\nup a mat and block incoming attacks!
+
+#org @QuickGuardSetString
+Quick Guard protected\n[FD][36] team!
+
+#org @WideGuardSetString
+Wide Guard protected\n[FD][36] team!
+
+#org @CraftyShieldProtectedString
+The Crafty Shield protected\n[FD][10]!
+
+#org @MatBlockProtectedString
+[FD][14] was blocked by the\nkicked-up mat!
+
+#org @QuickGuardProtectedString
+The Quick Guard protected\n[FD][10]!
+
+#org @WideGuardProtectedString
+The Wide Guard protected\n[FD][10]!
+
+//Status Strings
+
+#org @gText_TargetWrappedInMistyTerrain
+[FD][10] surrounds\nitself in a protective mist!
+
+#org @gText_TargetWrappedInElectricTerrain
+[FD][10] surrounds\nitself with electrified terrain!
+
+#org @gText_TargetAlreadyHasStatusCondition
+[FD][10] already has\na status condition!
+
+#org @gText_SweetVeilProtects
+[FD][10] surrounded\nitself with a veil of sweetness!
+
+#org @gText_FlowerVeilProtects
+[FD][10] surrounded\nitself with a veil of petals!
+
+#org @gText_AromaVeilProtects
+[FD][10] is protected\nby an aromatic veil!
+
+#org @gText_TargetProtectedByAbility
+[FD][10] is protected\nby its [FD][19]!

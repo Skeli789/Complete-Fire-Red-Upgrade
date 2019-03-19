@@ -10,7 +10,7 @@
 
 #define sBallCatchBonuses ((u8*) 0x8250892)
 
-#define NUM_BALLS BALL_TYPE_CHERISH_BALL //BALL_TYPE_DREAM_BALL
+#define NUM_BALLS BALL_TYPE_DREAM_BALL
 
 enum BallTypes {
 BALL_TYPE_MASTER_BALL = 1,
@@ -40,4 +40,10 @@ BALL_TYPE_MOON_BALL,
 BALL_TYPE_SPORT_BALL,
 BALL_TYPE_BEAST_BALL,
 BALL_TYPE_DREAM_BALL
+};
+
+struct BallIdItemIdRelation
+{
+	u16 itemId;
+	u8 ballId;
 };

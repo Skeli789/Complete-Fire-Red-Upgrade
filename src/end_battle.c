@@ -22,7 +22,7 @@ void EndBattleFlagClear(void);
 bool8 IsConsumable(u16 item);
 
 extern void FormsRevert(pokemon_t* party);
-extern void MegaRevert(void);
+extern void MegaRevert(pokemon_t* party);
 extern void UpdateBurmy(void);
 
 extern u8 BattleScript_Victory[];
@@ -65,9 +65,9 @@ void HandleEndTurn_BattleWon(void)
 	VICTORY_MUSIC_SELECTION:
         switch (gTrainers[id].trainerClass) {
 		#ifndef UNBOUND //Change this part
-			case TRAINER_CLASS_LEADER:
-			case TRAINER_CLASS_ELITE_4:
-			case TRAINER_CLASS_CHAMPION:
+			case CLASS_LEADER:
+			case CLASS_ELITE_4:
+			case CLASS_CHAMPION:
 				PlayBGM(BGM_VICTORY_SPECIAL);
 				specialMus = TRUE;
 				break;
@@ -76,28 +76,30 @@ void HandleEndTurn_BattleWon(void)
 				break;
 		
 		#else //For Pokemon Unbound
-			case TRAINER_CLASS_CHAMPION:
+			case CLASS_CHAMPION:
 				PlayBGM(BGM_VICTORY_CHAMPION);
 				specialMus = TRUE;
 				break;
-			case TRAINER_CLASS_ELITE_4:
-				PlayBGM(BGM_VICYORY_ELITE_4);
+			case CLASS_ELITE_4:
+				PlayBGM(BGM_VICTORY_ELITE_4);
 				specialMus = TRUE;
 				break;
-			case TRAINER_CLASS_LEADER:
-				PlayBGM(BGM_VICYORY_GYM);
+			case CLASS_LEADER:
+				PlayBGM(BGM_VICTORY_GYM);
 				specialMus = TRUE;
 				break;
-			case TRAINER_CLASS_SHADOW_ADMIN: //0x30
-			case TRAINER_CLASS_BOSS: //0x53
-			case TRAINER_CLASS_SHADOW: //0x55
-				PlayBGM(BGM_VICYORY_PLASMA);
+			case CLASS_SHADOW_ADMIN: //0x30
+			case CLASS_BOSS: //0x53
+			case CLASS_SHADOW: //0x55
+			#ifndef DEBUG_UNBOUND_MUSIC
+				PlayBGM(BGM_VICTORY_PLASMA);
 				specialMus = TRUE;
 				break;
-			case TRAINER_CLASS_LOR_LEADER: //0x2
-			case TRAINER_CLASS_LOR_ADMIN: //0x2E
-			case TRAINER_CLASS_LOR: //0x2F
-				PlayBGM(BGM_VICYORY_GALACTIC);
+			#endif
+			case CLASS_LOR_LEADER: //0x2
+			case CLASS_LOR_ADMIN: //0x2E
+			case CLASS_LOR: //0x2F
+				PlayBGM(BGM_VICTORY_GALACTIC);
 				specialMus = TRUE;
 				break;
 			default:
@@ -200,10 +202,169 @@ void HandleEndTurn_RanFromBattle(void)
     gBattleMainFunc = (u32) HandleEndTurn_FinishBattle;
 }
 
+u8 IsRunningFromBattleImpossible(void)
+{
+    u8 itemEffect;
+    u8 side;
+    int i;
+
+    itemEffect = ITEM_EFFECT(gActiveBattler);
+    gStringBank = gActiveBattler;
+
+    if (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_FRONTIER))
+        return 0;
+		
+	else if (FlagGet(NO_RUNNING_FLAG) || FlagGet(NO_CATCHING_AND_RUNNING_FLAG))
+		return 1;
+		
+    else if (itemEffect == ITEM_EFFECT_CAN_ALWAYS_RUN)
+        return 0;
+    else if (gBattleMons[gActiveBattler].ability == ABILITY_RUNAWAY)
+        return 0;
+	else if (IsOfType(gActiveBattler, TYPE_GHOST))
+		return 0;
+
+    side = SIDE(gActiveBattler);
+
+    for (i = 0; i < gBattlersCount; i++)
+    {
+        if (ABILITY(gActiveBattler) != ABILITY_SHADOWTAG //Shadow Tag's not affected by Shadow Tag
+		&& side != SIDE(i)
+        && ABILITY(i) == ABILITY_SHADOWTAG)
+        {
+            gBattleScripting->bank = i;
+            gLastUsedAbility = ABILITY(i);
+            gBattleCommunication[MULTISTRING_CHOOSER] = 2;
+            return 2;
+        }
+        if (side != SIDE(i)
+        && ABILITY(i) == ABILITY_ARENATRAP
+		&& !CheckGrounding(gActiveBattler))
+        {
+            gBattleScripting->bank = i;
+            gLastUsedAbility = ABILITY(i);
+            gBattleCommunication[MULTISTRING_CHOOSER] = 2;
+            return 2;
+        }
+		
+		if (i != gActiveBattler
+		&& ABILITY(i) == ABILITY_MAGNETPULL
+		&& IsOfType(gActiveBattler, TYPE_STEEL))
+		{
+			gBattleScripting->bank = i;
+			gLastUsedAbility = ABILITY(i);
+			gBattleCommunication[MULTISTRING_CHOOSER] = 2;
+			return 2;
+		}
+    }
+	
+    if ((gBattleMons[gActiveBattler].status2 & (STATUS2_ESCAPE_PREVENTION | STATUS2_WRAPPED))
+    || (gStatuses3[gActiveBattler] & (STATUS3_ROOTED | STATUS3_SKY_DROP_TARGET)))
+    {
+        gBattleCommunication[MULTISTRING_CHOOSER] = 0;
+        return 1;
+    }
+	
+	if (gNewBS->FairyLockTimer)
+	{
+		gBattleCommunication[MULTISTRING_CHOOSER] = 0;
+		return 1;
+	}
+		
+    if (gBattleTypeFlags & BATTLE_TYPE_OAK_TUTORIAL)
+    {
+        gBattleCommunication[MULTISTRING_CHOOSER] = 1;
+        return 1;
+    }
+	
+    return 0;
+}
+
+bool8 TryRunFromBattle(u8 bank)
+{
+    bool8 effect = FALSE;
+    u8 itemEffect;
+    u8 speedVar;
+
+    itemEffect = ITEM_EFFECT(bank);
+    gStringBank = bank;
+
+	if (IsOfType(bank, TYPE_GHOST))
+	{
+		++effect;
+	}
+    else if (itemEffect == ITEM_EFFECT_CAN_ALWAYS_RUN)
+    {
+        gLastUsedItem = ITEM(bank);
+        gProtectStructs[bank].fleeFlag = 1;
+        ++effect;
+    }
+    else if (ABILITY(bank) == ABILITY_RUNAWAY)
+    {
+        gLastUsedAbility = ABILITY_RUNAWAY;
+        gProtectStructs[bank].fleeFlag = 2;
+        ++effect;
+    }
+	#ifndef NO_GHOST_BATTLES
+	else if ((gBattleTypeFlags & (BATTLE_TYPE_SCRIPTED_WILD_1 | BATTLE_TYPE_GHOST)) == BATTLE_TYPE_GHOST) 
+	{
+		if (SIDE(bank) == B_SIDE_PLAYER)
+			++effect;
+	}
+	#endif
+    else if (gBattleTypeFlags & (BATTLE_TYPE_FRONTIER | BATTLE_TYPE_TRAINER_TOWER) && gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+    {
+        ++effect;
+    }
+    else
+    {
+        if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE))
+        {
+		SINGLE_FLEE_CALC:
+            if (gBattleMons[bank].speed < gBattleMons[BATTLE_OPPOSITE(bank)].speed)
+            {
+                speedVar = udivsi((gBattleMons[bank].speed * 128), (gBattleMons[BATTLE_OPPOSITE(bank)].speed)) + (gBattleStruct->runTries * 30);
+                if (speedVar > (Random() & 0xFF))
+                    ++effect;
+            }
+            else // same speed or faster
+            {
+                ++effect;
+            }
+        }
+		else //Wild Double
+		{
+			if (gBattleMons[BATTLE_OPPOSITE(bank)].hp)
+				goto SINGLE_FLEE_CALC;
+			
+            if (gBattleMons[bank].speed < gBattleMons[PARTNER(BATTLE_OPPOSITE(bank))].speed)
+            {
+                speedVar = udivsi((gBattleMons[bank].speed * 128), (gBattleMons[PARTNER(BATTLE_OPPOSITE(bank))].speed)) + (gBattleStruct->runTries * 30);
+                if (speedVar > (Random() & 0xFF))
+                    ++effect;
+            }
+            else // same speed or faster
+            {
+                ++effect;
+            }		
+		}
+
+        gBattleStruct->runTries++;
+    }
+
+    if (effect)
+    {
+        gCurrentTurnActionNumber = gBattlersCount;
+        gBattleOutcome = B_OUTCOME_RAN;
+    }
+
+    return effect;
+}
+
 void EndOfBattleThings(void) {
 	RestoreNonConsumableItems();
 	FormsRevert(gPlayerParty);
-	MegaRevert();
+	MegaRevert(gPlayerParty);
 	UpdateBurmy();
 	EndPartnerBattlePartyRestore();
 	EndSkyBattlePartyRestore();
@@ -306,7 +467,12 @@ void EndBattleFlagClear(void) {
 	FlagClear(TAG_BATTLE_FLAG);
 	FlagClear(TWO_OPPONENT_FLAG);
 	FlagClear(SMART_WILD_FLAG);
+	VarSet(TERRAIN_VAR, 0x0);
 	VarSet(BATTLE_TOWER_TRAINER_NAME, 0xFFFF);
+	Free(gNewBS->MegaData);
+	Free(gNewBS->UltraData);
+	Free(gNewBS->ZMoveData);
+	Free(gNewBS);
 	Memset(&ExtensionState, 0x0, sizeof(struct BattleExtensionState));
 }
 

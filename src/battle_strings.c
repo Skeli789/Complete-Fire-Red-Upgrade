@@ -3,10 +3,6 @@
 #include "battle_strings.h"
 #include "frontier.h"
 
-//The link opponent needs the data from BattleStringLoader sent over
-//Change to "You have no more Pokemon that can fight!"
-//Change to "You blacked out!"
-
 #define EOS 0xFF
 
 //New Strings
@@ -32,6 +28,9 @@ extern u8 BattleText_WildPkmnAppeared[];
 extern u8 sText_FoePkmnPrefix2[];
 extern u8 sText_FoePkmnPrefix3[];
 extern u8 sText_FoePkmnPrefix4[];
+extern u8 sText_TheOpposingNoCaps[];
+extern u8 sText_Your[];
+extern u8 sText_YourCaps[];
 
 extern u8* ZMoveNames[];
 extern u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
@@ -40,6 +39,9 @@ extern u8 GetFrontierTrainerClassId(u16 trainerId, u8 battlerNum);
 extern void GetFrontierTrainerName(u8* dst, u16 trainerId, u8 battlerNum);
 extern void CopyFrontierTrainerText(u8 whichText, u16 trainerId, u8 battlerNum);
 extern u8* GetTrainerBLoseText(void);
+extern u8* GetTrainerName(u8 bank);
+
+void EmitPrintString(u8 bufferId, u16 stringID);
 
 void PrepareStringBattle(u16 stringId, u8 bank) {
     gActiveBattler = bank;
@@ -47,21 +49,23 @@ void PrepareStringBattle(u16 stringId, u8 bank) {
     MarkBufferBankForExecution(gActiveBattler);
 }
 
-struct StringInfoBattle** gStringInfo = ((struct StringInfoBattle**) 0x2039A34);
+struct BattleMsgData** gStringInfo = ((struct BattleMsgData**) 0x2039A34);
 
 void BufferStringBattle(u16 stringID) {
     int i;
     const u8 *stringPtr = NULL;
 	
-    *gStringInfo = (struct StringInfoBattle*) (&(gBattleBufferA[gActiveBattler][4]));
+    *gStringInfo = (struct BattleMsgData*) (&(gBattleBufferA[gActiveBattler][4]));
     gLastUsedItem = (*gStringInfo)->lastItem;
     gLastUsedAbility = (*gStringInfo)->lastAbility;
     gBattleScripting->bank = (*gStringInfo)->scrActive;
     gBattleStruct->field_52 = (*gStringInfo)->unk1605E;
     gBattleStruct->hpScale = (*gStringInfo)->hpScale; //Check this line
-    gStringBank = (*gStringInfo)->StringBank;
+    gStringBank = (*gStringInfo)->stringBank;
     gBattleStruct->stringMoveType = (*gStringInfo)->moveType;
-
+	BattleStringLoader = (*gStringInfo)->battleStringLoader;
+	bool8 zMoveActive = (*gStringInfo)->zMoveActive;
+	
     for (i = 0; i < MAX_BATTLERS_COUNT; i++)
     {
         gAbilitiesPerBank[i] = (*gStringInfo)->abilities[i];
@@ -270,7 +274,7 @@ void BufferStringBattle(u16 stringID) {
 			
         else 
 		{
-			if (ZMoveData->active && SPLIT(move) != SPLIT_STATUS) 
+			if (zMoveActive && SPLIT(move) != SPLIT_STATUS) 
 			{
 				//Load elongated move names for Z-Moves
 				if (move < MOVE_BREAKNECK_BLITZ_P) //Prevent accidental bugs
@@ -284,7 +288,7 @@ void BufferStringBattle(u16 stringID) {
 		
         ChooseTypeOfMoveUsedString(gBattleTextBuff2);
 		
-		if (ZMoveData->active && SPLIT(move) == SPLIT_STATUS)
+		if (zMoveActive && SPLIT(move) == SPLIT_STATUS)
 			stringPtr = BattleText_AttackerUsedZStatusMove; //NEED DATA
 		else 
 			stringPtr = BattleText_AttackerUsedX; //0x83FD57B
@@ -504,19 +508,19 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
                 toCpy = text;
                 break;
             case B_TXT_ATK_NAME_WITH_PREFIX_MON1: // attacker name with prefix, only battlerId 0/1
-                HANDLE_NICKNAME_STRING_CASE(gBattlerAttacker, GetBattlerAtPosition(SIDE(gBattlerAttacker)));
+                HANDLE_NICKNAME_STRING_CASE(gBankAttacker, GetBattlerAtPosition(SIDE(gBankAttacker)));
                 break;
             case B_TXT_ATK_PARTNER_NAME: // attacker partner name
-                if (SIDE(gBattlerAttacker) == B_SIDE_PLAYER)
-                    GetMonData(GetIllusionPartyData(gBattlerAttacker ^ BIT_FLANK), MON_DATA_NICKNAME, text);
+                if (SIDE(gBankAttacker) == B_SIDE_PLAYER)
+                    GetMonData(GetIllusionPartyData(gBankAttacker ^ BIT_FLANK), MON_DATA_NICKNAME, text);
                 else
-                    GetMonData(GetIllusionPartyData(gBattlerAttacker ^ BIT_FLANK), MON_DATA_NICKNAME, text);
+                    GetMonData(GetIllusionPartyData(gBankAttacker ^ BIT_FLANK), MON_DATA_NICKNAME, text);
 
                 StringGetEnd10(text);
                 toCpy = text;
                 break;
             case B_TXT_ATK_NAME_WITH_PREFIX: // attacker name with prefix
-                HANDLE_NICKNAME_STRING_CASE(gBattlerAttacker, gBattlerAttacker);
+                HANDLE_NICKNAME_STRING_CASE(gBankAttacker, gBankAttacker);
                 break;
             case B_TXT_DEF_NAME_WITH_PREFIX: // target name with prefix
                 HANDLE_NICKNAME_STRING_CASE(gBattlerTarget, gBattlerTarget);
@@ -535,7 +539,7 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
                     toCpy = sATypeMove_Table[gBattleStruct->stringMoveType];
 				else 
 				{
-					if (ZMoveData->active && SPLIT((*gStringInfo)->currentMove) != SPLIT_STATUS) 
+					if (gNewBS->ZMoveData->active && SPLIT((*gStringInfo)->currentMove) != SPLIT_STATUS) 
 					{
 						//Load elongated move names for Z-Moves
 						if ((*gStringInfo)->currentMove < MOVE_BREAKNECK_BLITZ_P) //Prevent accidental bugs
@@ -559,18 +563,33 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
                 break;
             case B_TXT_LAST_ABILITY: // last used ability
                 toCpy = gAbilityNames[gLastUsedAbility];
+				
+				if (toCpy[3] == 0x8 || toCpy[3] == 0x9) //Expanded Ability Names
+					toCpy = T2_READ_PTR(toCpy);
                 break;
             case B_TXT_ATK_ABILITY: // attacker ability
-                toCpy = gAbilityNames[gAbilitiesPerBank[gBattlerAttacker]];
+                toCpy = gAbilityNames[gAbilitiesPerBank[gBankAttacker]];
+				
+				if (toCpy[3] == 0x8 || toCpy[3] == 0x9) //Expanded Ability Names
+					toCpy = T2_READ_PTR(toCpy);
                 break;
             case B_TXT_DEF_ABILITY: // target ability
                 toCpy = gAbilityNames[gAbilitiesPerBank[gBattlerTarget]];
+				
+				if (toCpy[3] == 0x8 || toCpy[3] == 0x9) //Expanded Ability Names
+					toCpy = T2_READ_PTR(toCpy);
                 break;
             case B_TXT_SCR_ACTIVE_ABILITY: // scripting active ability
                 toCpy = gAbilityNames[gAbilitiesPerBank[gBattleScripting->bank]];
+				
+				if (toCpy[3] == 0x8 || toCpy[3] == 0x9) //Expanded Ability Names
+					toCpy = T2_READ_PTR(toCpy);
                 break;
             case B_TXT_EFF_ABILITY: // effect battlerId ability
                 toCpy = gAbilityNames[gAbilitiesPerBank[gEffectBank]];
+				
+				if (toCpy[3] == 0x8 || toCpy[3] == 0x9) //Expanded Ability Names
+					toCpy = T2_READ_PTR(toCpy);
                 break;
             case B_TXT_TRAINER1_CLASS: // trainer class name
                 if (gTrainerBattleOpponent_A == 0x400) //Lol Secret Bases
@@ -695,7 +714,7 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
                 break;
 			
             case B_TXT_ATK_PREFIX1:
-                if (SIDE(gBattlerAttacker) == B_SIDE_PLAYER)
+                if (SIDE(gBankAttacker) == B_SIDE_PLAYER)
                     toCpy = sText_AllyPkmnPrefix; //0x83FD564
                 else
                     toCpy = sText_FoePkmnPrefix2; //0x83FD560
@@ -708,7 +727,7 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
                 break;
 			
             case B_TXT_ATK_PREFIX2:
-                if (SIDE(gBattlerAttacker) == B_SIDE_PLAYER)
+                if (SIDE(gBankAttacker) == B_SIDE_PLAYER)
                     toCpy = sText_AllyPkmnPrefix2; //0x83FD56D
                 else
                     toCpy = sText_FoePkmnPrefix3; //0x83FD569
@@ -721,7 +740,7 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
                 break;
 			
             case B_TXT_ATK_PREFIX3:
-                if (SIDE(gBattlerAttacker) == B_SIDE_PLAYER)
+                if (SIDE(gBankAttacker) == B_SIDE_PLAYER)
                     toCpy = sText_AllyPkmnPrefix3; //0x83FD576
                 else
                     toCpy = sText_FoePkmnPrefix4; //0x83FD572
@@ -793,6 +812,33 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
                 GetFrontierTrainerName(text, VarGet(PARTNER_VAR), 2);
                 toCpy = text;
                 break;
+			case B_TXT_AFFECTS_TARGET_SIDE:
+                if (SIDE(gBankAttacker) == B_SIDE_PLAYER)
+                    toCpy = sText_TheOpposingNoCaps;
+                else
+                    toCpy = sText_Your;
+				break;
+			case B_TXT_AFFECTS_ATTACKER_SIDE:
+                if (SIDE(gBankAttacker) == B_SIDE_OPPONENT)
+                    toCpy = sText_TheOpposingNoCaps;
+                else
+                    toCpy = sText_Your;
+				break;
+			case B_TXT_AFFECTS_TARGET_SIDE_CAPS:
+                if (SIDE(gBankAttacker) == B_SIDE_PLAYER)
+                    toCpy = sText_FoePkmnPrefix2;
+                else
+                    toCpy = sText_YourCaps;
+				break;
+			case B_TXT_AFFECTS_ATTACKER_SIDE_CAPS:
+                if (SIDE(gBankAttacker) == B_SIDE_OPPONENT)
+                    toCpy = sText_FoePkmnPrefix2;
+                else
+                    toCpy = sText_YourCaps;
+				break;
+			case B_TXT_SCRIPTING_TRAINER:
+				 toCpy = GetTrainerName(gBattleScripting->bank);
+				 break;
             }
 
             if (toCpy != NULL) {
@@ -826,19 +872,67 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
     return dstID;
 }
 
-void EmitPrintStringUpdate(void)
+void EmitPrintString(u8 bufferId, u16 stringID)
 {
+    int i;
+    struct BattleMsgData* stringInfo;
+
     gBattleBuffersTransferData[0] = CONTROLLER_PRINTSTRING;
-    gBattleBuffersTransferData[1] = (u32) BattleStringLoader;
-    gBattleBuffersTransferData[2] = ((u32) BattleStringLoader) >> 0x8;
-    gBattleBuffersTransferData[3] = ((u32) BattleStringLoader) >> 0x10;
-	gBattleBuffersTransferData[4] = ((u32) BattleStringLoader) >> 0x18;
-    PrepareBufferDataTransfer(1, gBattleBuffersTransferData, 5);
+    gBattleBuffersTransferData[1] = gBattleOutcome;
+    gBattleBuffersTransferData[2] = stringID;
+    gBattleBuffersTransferData[3] = (stringID & 0xFF00) >> 8;
+
+    stringInfo = (struct BattleMsgData*)(&gBattleBuffersTransferData[4]);
+    stringInfo->currentMove = gCurrentMove;
+    stringInfo->originallyUsedMove = gChosenMove;
+    stringInfo->lastItem = gLastUsedItem;
+    stringInfo->lastAbility = gLastUsedAbility;
+    stringInfo->scrActive = gBattleScripting->bank;
+    stringInfo->unk1605E = gBattleStruct->field_52;
+    stringInfo->hpScale = gBattleStruct->hpScale;
+    stringInfo->stringBank = gStringBank;
+    stringInfo->moveType = gBattleMoves[gCurrentMove].type;
+	stringInfo->battleStringLoader = BattleStringLoader;
+	stringInfo->zMoveActive = gNewBS->ZMoveData->active;
+
+    for (i = 0; i < MAX_BATTLERS_COUNT; i++)
+        stringInfo->abilities[i] = *GetAbilityLocation(i);
+    for (i = 0; i < TEXT_BUFF_ARRAY_COUNT; i++)
+    {
+        stringInfo->textBuffs[0][i] = gBattleTextBuff1[i];
+        stringInfo->textBuffs[1][i] = gBattleTextBuff2[i];
+        stringInfo->textBuffs[2][i] = gBattleTextBuff3[i];
+    }
+    PrepareBufferDataTransfer(bufferId, gBattleBuffersTransferData, sizeof(struct BattleMsgData) + 4);
 }
 
-void PlayerHandlePrintStringUpdate(void)
+void EmitPrintSelectionString(u8 bufferId, u16 stringID)
 {
-	BattleStringLoader = T1_READ_PTR(&gBattleBufferB[gActiveBattler][1]);
-    gBattle_BG0_X = 0;
-    gBattle_BG0_Y = 0;
+    int i;
+    struct BattleMsgData* stringInfo;
+
+    gBattleBuffersTransferData[0] = CONTROLLER_PRINTSTRINGPLAYERONLY;
+    gBattleBuffersTransferData[1] = CONTROLLER_PRINTSTRINGPLAYERONLY;
+    gBattleBuffersTransferData[2] = stringID;
+    gBattleBuffersTransferData[3] = (stringID & 0xFF00) >> 8;
+
+    stringInfo = (struct BattleMsgData*)(&gBattleBuffersTransferData[4]);
+    stringInfo->currentMove = gCurrentMove;
+    stringInfo->originallyUsedMove = gChosenMove;
+    stringInfo->lastItem = gLastUsedItem;
+    stringInfo->lastAbility = gLastUsedAbility;
+    stringInfo->scrActive = gBattleScripting->bank;
+    stringInfo->unk1605E = gBattleStruct->field_52;
+	stringInfo->battleStringLoader = BattleStringLoader;
+	stringInfo->zMoveActive = gNewBS->ZMoveData->active;
+
+    for (i = 0; i < MAX_BATTLERS_COUNT; i++)
+        stringInfo->abilities[i] = *GetAbilityLocation(i);
+    for (i = 0; i < TEXT_BUFF_ARRAY_COUNT; i++)
+    {
+        stringInfo->textBuffs[0][i] = gBattleTextBuff1[i];
+        stringInfo->textBuffs[1][i] = gBattleTextBuff2[i];
+        stringInfo->textBuffs[2][i] = gBattleTextBuff3[i];
+    }
+    PrepareBufferDataTransfer(bufferId, gBattleBuffersTransferData, sizeof(struct BattleMsgData) + 4);
 }

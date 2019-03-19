@@ -2,22 +2,21 @@
 
 #include "defines.h"
 
-extern u8 PlayerSpikesLayString[];
-extern u8 OpponentSpikesLayString[];
-extern u8 PlayerStealthRockLayString[];
-extern u8 OpponentStealthRockLayString[];
-extern u8 PlayerToxicSpikesLayString[];
-extern u8 OpponentToxicSpikesLayString[];
-extern u8 PlayerStickyWebLayString[];
-extern u8 OpponentStickyWebLayString[];
-extern u8 RemovedEntryHazardsYourSideString[];
-extern u8 RemovedEntryHazardsFoeSideString[];
+extern u8 RemovedEntryHazardsString[];
+extern u8 SpikesLayString[];
+extern u8 StealthRockLayString[];
+extern u8 ToxicSpikesLayString[];
+extern u8 StickyWebLayString[];
 
 enum FaintEffectsStates {
 Faint_ClearEffects,
+Faint_SoulHeart,
 Faint_ReceiverActivate,
 Faint_SwitchInAbilities,
-Faint_PrimalWeather
+Faint_PrimalWeather,
+Faint_FormsRevert,
+Faint_FormsStats,
+Faint_FormsHP,
 };
 
 enum
@@ -39,19 +38,10 @@ CASTFORM_HAIL
 
 
 u8* EntryHazardsStrings[] = {
-PlayerSpikesLayString,
-OpponentSpikesLayString,
-PlayerStealthRockLayString,
-OpponentStealthRockLayString,
-PlayerToxicSpikesLayString,
-OpponentToxicSpikesLayString,
-PlayerStickyWebLayString,
-OpponentStickyWebLayString
-};
-
-u8* EntryHazardDefogRemovalStrings[] = {
-RemovedEntryHazardsYourSideString,
-RemovedEntryHazardsFoeSideString
+SpikesLayString,
+StealthRockLayString,
+ToxicSpikesLayString,
+StickyWebLayString,
 };
 
 #define BattleScript_SturdyPreventsOHKO (u8*) 0x0

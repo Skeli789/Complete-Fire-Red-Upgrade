@@ -6,6 +6,8 @@
 #define AI_CHOICE_FLEE 4
 #define AI_CHOICE_WATCH 5
 
+//Update Acupressure Targeting
+
 extern u8 GetFrontierTrainerFrontSpriteId(u16 trainerId, u8 battlerNum);
 extern u8 GetMostSuitableMonToSwitchInto(void);
 extern void BattleAI_SetupAIData(u8 defaultScoreMoves);
@@ -60,13 +62,13 @@ void OpponentHandleChooseMove(void)
 							gBankTarget = GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT);
 					}
 				}
-				if (moveInfo->canMegaEvolve && moveInfo->megaVariance != MEGA_VARIANT_ULTRA_BURST)
-					MegaData->chosen[gActiveBattler] = TRUE;
+				if (moveInfo->possibleZMoves[chosenMoveId])
+					gNewBS->ZMoveData->toBeUsed[gActiveBattler] = TRUE;
+				else if (moveInfo->canMegaEvolve && moveInfo->megaVariance != MEGA_VARIANT_ULTRA_BURST)
+					gNewBS->MegaData->chosen[gActiveBattler] = TRUE;
 				else if (moveInfo->canMegaEvolve && moveInfo->megaVariance == MEGA_VARIANT_ULTRA_BURST)
-					UltraData->chosen[gActiveBattler] = TRUE;
-				else if (moveInfo->possibleZMoves[chosenMoveId])
-					ZMoveData->toBeUsed[gActiveBattler] = TRUE;
-				EmitMoveChosen(1, chosenMoveId, gBankTarget, MegaData->chosen[gActiveBattler], UltraData->chosen[gActiveBattler], ZMoveData->toBeUsed[gActiveBattler]);
+					gNewBS->UltraData->chosen[gActiveBattler] = TRUE;
+				EmitMoveChosen(1, chosenMoveId, gBankTarget, gNewBS->MegaData->chosen[gActiveBattler], gNewBS->UltraData->chosen[gActiveBattler], gNewBS->ZMoveData->toBeUsed[gActiveBattler]);
 				break;
         }
         OpponentBufferExecCompleted();

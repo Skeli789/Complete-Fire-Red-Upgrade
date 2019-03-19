@@ -4,11 +4,17 @@
 #define EOS 0xFF
 
 enum EndTurnEffects {
+ET_Order,
 ET_General_Counter_Decrement,	//Works
+ET_Rain,
+ET_Sun,
+ET_Sandstorm,
+ET_Hail,
+ET_Air_Current,
+ET_Fog,
 ET_Weather_Health_Abilities,
 ET_Future_Sight,
 ET_Wish,
-ET_Thrash,
 ET_Block_A,
 ET_Aqua_Ring,
 ET_Ingrain,
@@ -47,6 +53,7 @@ ET_Mud_Sport_Timer,				//Works
 ET_Wonder_Room_Timer,			//Works
 ET_Magic_Room_Timer,			//Works
 ET_Gravity_Timer,				//Works
+ET_Seeds,
 ET_Terrain_Timer,				//Works
 ET_Block_B,
 ET_Form_Change,
@@ -72,32 +79,30 @@ ET_Harvest_Pickup,
 
 #define TURNBASED_MAX_CASE ET_End
 
-u8* ByBankCounterTable[] = {
-DisabledMoldBreakerAbilities,
-LaserFocusTimers,
-ThroatChopTimers,
-StompingTantrumTimers,
-StakeoutCounters,
-DestinyBondCounters,
-ElectrifyTimers,
-(u8*) 0xFEFEFEFE //End
-};
+#define BattleScript_RainContinuesOrEnds (u8*) 0x81D8A64
+#define BattleScript_SunlightFaded (u8*) 0x81D8B18
+#define BattleScript_SunlightContinues (u8*) 0x81D8B0A
+#define BattleScript_SandStormHailEnds (u8*) 0x81D8B01
+#define BattleScript_DamagingWeatherContinues (u8*) 0x81D8A7F
+#define BattleScript_MonTookFutureAttack ((u8*) 0x81D8E12)
+#define BattleScript_WishComesTrue ((u8*) 0x81D8ED5)
+#define BattleScript_ShedSkinActivates ((u8*) 0x81D92D3) 
+#define BattleScript_IngrainTurnHeal ((u8*) 0x81D8F0C)
+#define BattleScript_LeechSeedTurnDrain ((u8*) 0x81D8B4D)
+#define BattleScript_PoisonTurnDmg ((u8*) 0x81D9053)
+#define BattleScript_BurnTurnDmg ((u8*) 0x81D9075)
+#define BattleScript_NightmareTurnDmg ((u8*) 0x81D9155)
+#define BattleScript_CurseTurnDmg ((u8*) 0x81D9166)
+#define BattleScript_WrapTurnDmg ((u8*) 0x81D9124)
+#define BattleScript_WrapEnds ((u8*) 0x81D9136)
+#define BattleScript_EncoredNoMore ((u8*) 0x81D8C65)
+#define BattleScript_DisabledNoMore ((u8*) 0x81D8C5E)
+#define BattleScript_YawnMakesAsleep ((u8*) 0x81D91C7)
+#define BattleScript_PerishSongHits ((u8*) 0x81D8D33)
+#define BattleScript_PerishSongTimerGoesDown ((u8*) 0x81D8D4E)
+#define BattleScript_SideStatusWoreOff ((u8*) 0x81D8B32)
+#define BattleScript_SafeguardEnds ((u8*) 0x81D8B43)
+#define BattleScript_PrintUproarOverTurns ((u8*) 0x81D90BC)
+#define BattleScript_GiveExp ((u8*) 0x81D8694)
+#define BattleScript_HandleFaintedMon ((u8*) 0x81D869D)
 
-u8* BytesCounterTable[] = {
-RetaliateCounters,
-RetaliateCounters + 1, 
-&EchoedVoiceCounter,
-(u8*) 0x203D87E, //Fusion Flare
-(u8*) 0x203D87F, //Fusion Bolt
-//&EnduranceHelper, //Endurance
-&IonDelugeTimer, //Ion Deluge
-&FairyLockTimer, //Fairy Lock
-(u8*) 0xFEFEFEFE //End
-};
-
-u8* BitsCounterTable[] = {
-&PowderByte,
-&BeakBlastByte,
-&CustapQuickClawIndicator,
-(u8*) 0xFEFEFEFE
-};

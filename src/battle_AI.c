@@ -228,13 +228,13 @@ bool8 ShouldSwitch(void)
 			return FALSE;
 		if (gStatuses3[gActiveBattler] & STATUS3_ROOTED)
 			return FALSE;
-		if (ABILITY_ON_OPPOSING_FIELD(gActiveBattler, ABILITY_SHADOWTAG))
+		if (ABILITY_ON_OPPOSING_FIELD(gActiveBattler, ABILITY_SHADOWTAG) && ABILITY(gActiveBattler) != ABILITY_SHADOWTAG)
 			return FALSE;
 		if (ABILITY_ON_OPPOSING_FIELD(gActiveBattler, ABILITY_ARENATRAP) && CheckGrounding(gActiveBattler))
 			return FALSE;
 		if (ABILITY_ON_FIELD2(ABILITY_MAGNETPULL) && IsOfType(gActiveBattler, TYPE_STEEL))
 			return FALSE;
-		if (FairyLockTimer)
+		if (gNewBS->FairyLockTimer)
 			return FALSE;
 	}
 	if (gStatuses3[gActiveBattler] & STATUS3_SKY_DROP_TARGET)
@@ -328,7 +328,7 @@ bool8 FindMonThatAbsorbsOpponentsMove(void)
         battlerIn2 = gActiveBattler;
     }
 
-	switch (LastUsedTypes[gLastHitBy[gActiveBattler]]) {
+	switch (gNewBS->LastUsedTypes[gLastHitBy[gActiveBattler]]) {
 		case TYPE_FIRE:
 			absorbingTypeAbility1 = ABILITY_FLASHFIRE;
 			absorbingTypeAbility2 = ABILITY_FLASHFIRE;
@@ -538,7 +538,7 @@ bool8 SemiInvulnerableTroll(void) {
 		if (!(gStatuses3[opposingBattler1] & STATUS3_SEMI_INVULNERABLE) && !(gStatuses3[opposingBattler2] & STATUS3_SEMI_INVULNERABLE))
 			return FALSE;
 		#ifndef REALLY_SMART_AI
-			if (ViableMonCount(GetBankPartyData(gActiveBattler)) > 1)
+			if (ViableMonCountFromBank(gActiveBattler) > 1)
 				return FALSE; //AI doesn't know which mon is being targeted if there's more than one on the field
 		#endif
 	}

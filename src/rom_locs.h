@@ -9,15 +9,13 @@ extern struct BattleMove gBattleMoves[];
 //#define gBattleMoves ((struct BattleMove*) 0x8900000)
 //#defin gMoveNames ((
 
-typedef u8 TypeNames_t[TYPE_NAME_LENGTH + 1];
-#define gTypeEffectiveness ((u8*) *((u32*) 0x801E944))
-#define gTypeNames ((TypeNames_t*) *((u32*) 0x80309C8))
-
 #define gItems ((struct Item*) *((u32*) 0x80001C8))
 
 typedef u8 SpeciesNames_t[POKEMON_NAME_LENGTH + 1];
 #define gSpeciesNames ((SpeciesNames_t*) *((u32*) 0x8000144))
 #define gBaseStats ((struct BaseStats*) *((u32*) 0x80001BC))
+
+extern const u8 gTypeEffectiveness[124 * 3];
 
 extern const struct Evolution gEvolutionTable[][EVOS_PER_MON];
 
@@ -26,7 +24,9 @@ typedef u32 ExperienceTable_t[101];
 
 extern const u8 gAbilityNames[][ABILITY_NAME_LENGTH + 1];
 
-#define BattleScript_ButItFailed (u8*) 0x81D7DF0
+#define BattleScript_MoveEnd (u8*) 0x81D694E
+#define BattleScript_Atk49 (u8*) 0x81D6954
+extern u8 BattleScript_ButItFailed[];
 
 #define gGameVersion (*((u8*) 0x81E9F10))
 
@@ -45,10 +45,16 @@ extern struct TrainerPicCoords gTrainerBackPicCoords[];
 
 #define sATypeMove_Table ((u8**) 0x83FEA28) //Table of things like "A Normal Move!"
 #define gBattleStringsTable ((u8**) 0x83FDF3C)
-#define gMissStringIds ((u16*) 0x83FE514)
 
 #define gStatusConditionString_Poison ((u8*) 0x8250094)
 #define gStatusConditionString_Sleep ((u8*) 0x825009C)
 #define gStatusConditionString_Paralysis ((u8*) 0x82500A4)
 #define gStatusConditionString_Burn ((u8*) 0x82500AC)
 #define gStatusConditionString_Ice ((u8*) 0x82500B4)
+#define gStatusConditionString_Confusion ((u8*) 0x82500BC)
+#define gStatusConditionString_Love ((u8*) 0x82500C4)
+
+#define gDummySpriteAffineAnimTable (const union AffineAnimCmd* const*) 0x8231CFC
+
+#define gWildMonHeaders ((struct WildPokemonHeader*) *((u32*) 0x8082990))
+extern u8 gUnownDistributionByChamber[7][12]; //[NUM_ROOMS][NUM_WILD_INDEXES]

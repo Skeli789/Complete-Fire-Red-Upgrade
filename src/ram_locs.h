@@ -107,7 +107,7 @@ typedef u8 Buffer_t[0x200];
 //Padding 0x2023D78?
 /*u8*/  #define gActionForBanks ((u8*) 0x2023D7C)
 
-/*u8*/  #define gUnknown_2023D80 ((u8*) 0x2023D80)
+/*u8*/  #define gSelectionBattleScripts ((const u8**) 0x2023D80)
 /*u8*/  #define gLastPrintedMoves ((u16*) 0x2023D90)
 
 /*u16*/ #define gLastUsedMoves ((u16*) 0x2023D98)
@@ -162,7 +162,7 @@ typedef u8 Buffer_t[0x200];
 /*u8*/  #define gStatChangeByte	*((u8*) 0x2023FDE)
 /*u8*/  #define gUnknown_2023FEC  (u8*) (*((u32*) 0x2023FEC))
 /*u8*/  #define gUnknown_2023FF0  (u8*) (*((u32*) 0x2023FF0))
-/*u8*/  #define gUnknown_2023FF8  (u8*) (*((u32*) 0x2023FF8))
+/*u8*/  #define gActionSelectionCursor ((u8*) 0x2023FF8)
 /*u8*/  #define gMoveSelectionCursor ((u8*) 0x2023FFC)
 /*u8*/  #define gUnknown_2024000 ((u8*) 0x2024000)
 
@@ -197,8 +197,14 @@ typedef u8 Buffer_t[0x200];
 /*u16*/ #define gSpecialVar_MonBoxId (*((u16*) 0x20370D6))
 /*u16*/ #define gSpecialVar_MonBoxPos (*((u16*) 0x20370D8))
 /*u8*/  #define gPlttBufferUnfaded ((u16*) 0x20371F8)
+/*u8*/  #define gPlttBufferUnfaded2 ((u16*) 0x20373F8)
 /*u8*/  #define gPlttBufferFaded ((u16*) 0x20375F8)
+/*u8*/  #define gPlttBufferFaded2 ((u16*) 0x20377F8)
+
 /*u8*/  #define gPaletteFade ((u8*) 0x2037AB8)
+/*u32*/	#define sBattleAnimScriptPtr (*((u8**) 0x2037ED4))
+		#define gAnimScriptCallback (*((u32*) 0x2037EDC))
+/*s8*/	#define gAnimFramesToWait (*((s8*) 0x2037EE0))
 /*s16*/ #define gBattleAnimArgs ((s16*) 0x2037F02)
 /*u8*/  #define gBattleAnimAttacker (*((u8*) 0x2037F1A))
 /*u8*/  #define gBattleAnimTarget (*((u8*) 0x2037F1B))
@@ -213,6 +219,9 @@ typedef u8 Buffer_t[0x200];
 		#define sTrainerBattleEndScript (*((u32*) 0x20386C4))
 		#define sTrainerBattleScriptRetAddr (*((u32*) 0x20386C8))
 		#define sTrainerBattleOakTutorialHelper (*((u16*) 0x20386CC))
+		
+		#define sEncounterRateBonuses ((u16*) 0x20386D0)
+		#define sWildEncountersDisabled (*((u8*) 0x20386DC))
 
 /*u8*/  #define gFieldEffectArguments ((u8*) 0x20386E0)
 
@@ -220,7 +229,7 @@ typedef u8 Buffer_t[0x200];
 /*u16*/ #define gSafariSteps	   (*((u16*) 0x02039996))
 
 /*u8*/  #define gAbilitiesPerBank ((u8*) 0x2039A30)
-		//#define gStringInfo ((struct StringInfoBattle*) *((u32*) 0x2039A34))
+		//#define gStringInfo ((struct BattleMsgData*) *((u32*) 0x2039A34))
 
 /*u8*/	#define QuestLogMode (*((u8*) 0x203ADFA))
 		#define gPartyMenuView ((struct PartyMenuViewing*) 0x203B09C)
@@ -246,7 +255,7 @@ typedef u8 Buffer_t[0x200];
 		extern struct MusicPlayerInfo gMPlay_BGM;
 
 /*Custom Ram Locs*/
-#define BattleStringLoader (*((u8**) 0x203C020))
+/*
 #define DisabledMoldBreakerAbilities ((u8*) 0x203C034)
 #define SuppressedAbilities ((u8*) 0x203C038)
 #define SwitchInEffectsTracker (*((u8*) 0x203C03D))
@@ -276,7 +285,6 @@ typedef u8 Buffer_t[0x200];
 #define EchoedVoiceCounter *((u8*) 0x203D818)
 #define EchoedVoiceDamageScale *((u8*) 0x203D819)
 #define CustapQuickClawHelper *((u8*) 0x203D81A)
-#define TerrainType *((u8*) 0x203D81B)
 #define TerrainTimer *((u8*) 0x203D81C)
 #define PrimalWeatherLoc *((u8*) 0x203D81D)
 
@@ -308,7 +316,6 @@ typedef u8 Buffer_t[0x200];
 #define MetronomeCounter ((u8*) 0x203D853)
 #define StakeoutCounters ((u8*) 0x203D857)
 #define IonDelugeTimer *((u8*) 0x203D85B)
-#define SeedHelper ((u8*) 0x203D85C)
 #define RoostCounter *((u8*) 0x203D85F)
 #define NormalizeHelper *((u8*) 0x203D860)
 #define GemHelper *((u8*) 0x203D861)
@@ -346,7 +353,6 @@ typedef u8 Buffer_t[0x200];
 #define UnburdenBoosts *((u8*) 0x203D8B9)
 #define NotEndTurnByte *((u8*) 0x203D8BA)
 #define AttackAnimationPlayed *((u8*) 0x203D8BB)
-#define ForceSwitchHelper (*((u8*) 0x203D8BC))
 
 #define MicleBerryBits (*((u8*) 0x203D8CA))
 
@@ -363,153 +369,22 @@ typedef u8 IllusionNickname_t[10];
 #define IllusionNickNameBackup ((IllusionNickname_t*) 0x203D900)
 
 #define UltraData ((struct UltraData*) 0x203D8D8)
-
-
-/*
-struct BattleEnigmaBerry gEnigmaBerries[MAX_BATTLERS_COUNT] = ((struct BattleEnigmaBerry*) 0x2023F54); //Length 0x70
-struct BattleScripting gBattleScripting = ((struct BattleScripting*) 0x2023FC4);
-struct BattleStruct* gBattleStruct = (struct BattleStruct*) *((struct BattleStruct**) 0x2023FE8);
-struct BattleResources* gBattleResources = (struct BattleResources*) *((struct BattleResources**) 0x2023FF4)
-struct SideTimer* gSideTimers = ((struct SideTimer*) 0x2023DE4);
-struct DisableStruct* gDisableStructs = ((struct DisableStruct*) 0x2023E0C);
-struct ProtectStruct* gProtectStructs = ((struct ProtectStruct*) 0x2023E8C);
-struct SpecialStatus* gSpecialStatuses = ((struct SpecialStatus*) 0x2023ECC);
-struct WishFutureKnock* gWishFutureKnock = ((struct WishFutureKnock*) 0x2023F20);
-struct BattlePokemon* gBattleMons = ((BattlePokemon*) 0x2023BE4);
-pokemon_t* gEnemyParty = *((pokemon_t*) 0x202402C);
-pokemon_t* gPlayerParty = *((pokemon_t*) 0x2024284);
-
-gBitTable
-
-u8*  gDecompressionBuffer = ((u8*) 0x201C000);
-u32  gTrainerId = *((u32*) 0x2020000);
-
-u8*  gStringVar1 = ((u8*) 0x2021CD0);
-u8*  gStringVar2 = ((u8*) 0x2021CF0);
-u8*  gStringVar3 = ((u8*) 0x2021D04);
-u8*  gStringVar4 = ((u8*) 0x2021D18);
-
-u8*  gLinkPlayers = ((u8*) 0x202273C);
-u8*  gDisplayedStringBattle = ((u8*) 0x202298C);
-u8*  gBattleTextBuff1 = ((u8*) 0x2022AB8);
-u8*  gBattleTextBuff2 = ((u8*) 0x2022AC8);
-
-u32  gBattleTypeFlags = *((u32*) 0x2022B4C);
-u8   gActiveBattler = *((u8*) 0x2023BC4);
-u32  gBattleExecBuffer = *((u32*) 0x2023BC8);
-u8   gBattlersCount = *((u8*) 0x2023BCC);
-u16* gBattlerPartyIndexes = ((u16*) 0x2023BCE);
-u8*  gBanksBySide = ((u8*) 0x2023BD6);
-u8*  gActionsByTurnOrder = ((u8*) 0x2023BDA);
-u8*  gBanksByTurnOrder = ((u8*) 0x2023BDE);
-u8   gCurrentTurnActionNumber = *((u8*) 0x2023BE2);
-u8   gCurrentActionFuncId = *((u8*) 0x2023BE3);
-
-u8   gCurrMovePos = *((u8*) 0x2023D48);
-u16  gCurrentMove = *((u16*) 0x2023D4A);
-u16  gChosenMove = *((u16*) 0x2023D4C);
-u16  gRandomMove = *((u16*) 0x2023D4E);
-s32  gBattleMoveDamage = *((u32*) 0x2023D50);
-u32  gHpDealt = *((u32*) 0x2023D54);
-
-u32* gTakenDmg = ((u32*) 0x2023D58);
-
-u16  gLastUsedItem = *((u16*) 0x2023D68);
-u8   gLastUsedAbility = *((u8*) 0x2023D6A);
-u8   gBattlerAttacker = *((u8*) 0x2023D6B);
-u8   gBattlerTarget = *((u8*) 0x2023D6C);
-u8   gBank1 = *((u8*) 0x2023D6D);
-u8   gEffectBank = *((u8*) 0x2023D6E);
-u8   gStringBank = *((u8*) 0x2023D6F);
-u8   gAbsentBattlerFlags = *((u8*) 0x2023D70);
-u8   gCritMultiplier = *((u8*) 0x2023D71);
-u8   gMultiHitCounter = *((u8*) 0x2023D72));
-//Padding 0x2023D73
-u32* gBattlescriptCurrInstr = 0x2023D74
-//Padding 0x2023D78?
-u8*  gActionForBanks = ((u8*) 0x2023D7C);
-
-u8*  gUnknown_2023D80: = ((u8*) 2023D80);
-u8*  gUnknown_2023D90 = ((u8*) 2023D90);
-
-u16  g3 = *((u16*) 0x2023D98);
-u16* gUnknown_gLastLandedMoves: = ((u16*) 0x2023DA0);
-u16* gLastHitByType = ((u16*) 0x2023DA8);
-u16* gUnknown_2023DB0 = ((u16*) 0x2023DB0);
-u16* gLockedMoves = ((u16*) 0x2023DB8);
-u8*  gLastHitBy = ((u8*) 0x2023DC0);
-u16* gChosenMovesByBanks = ((u16*) 0x2023DC4);
-u32  gMoveResultFlags = *((u32*) 0x2023DCC);
-u32  gHitMarker  = *((u32*) 0x2023DD0);
-
-u8*  gUnknown_2023DD4 = ((u8*) 0x2023DD4);
-u8*  gTakenDmgBanks = ((u8*) 0x2023DD8);
-u16  gUnknown_2023DDC = *((u16*) 0x2023DDC);
-	
-u16* gSideAffecting = ((u16*) 0x2023DDE);
-//Padding 0x2023DE2
-
-
-u32  gStatuses3 = *((u32*) 0x2023DE4);
-
-//Disable Struct
-
-u16  gPauseCounterBattle = *((u16*) 0x2023E7C);
-u16  gPaydayMoney = *((u16*) 0x2023E7E);
-u16  gRandomTurnNumber = *((u16*) 0x2023E80);
-u8   gBattleCommunication = *((u8*) 0x2023E82);
-
-u8*  gUnknown_02023E83 = ((u8*) 0x2023E83); //Length 0x7
-
-u16  gBattleOutcome = *((u16*) 0x2023E8A);
-
-//Protect Struct
-//Special Status Struct
-
-u16  gBattleWeather = *((u16*) 2023F1C);
-
-//WishFutureKnock Struct
-
-u8*  gUnknown_02023F40 = ((u8*) 0x2023F40); //Length 0x8
-u8   gWeatherCounter = *((u8)* 0x2023F48);
-//Padding 0x3
-u16  gUnknown_02023F4C = *((u16*) 0x2023F4C);
-
-u16  gSentPokesToOpponent = *((u16*) 0x2023F4E);
-u16  gDynamicBasePower = *((u16*) 0x2023F50);
-u16  gExpShareExp = *((u16*) 0x2023F52);
-
-u8*  gUnknown_2023FC8 = ((u8*) 0x2023FC8); //Length 0x20
-u8*  gUnknown_2023FEC = (u8*) (*((u32*) 0x2023FEC))
-u8*  gUnknown_2023FF0 = (u8*) (*((u32*) 0x2023FF0))
-u8*  gUnknown_2023FF8 = (u8*) (*((u32*) 0x2023FF8))
-u8*  gUnknown_2023FFC = (u8*) (*((u32*) 0x2023FFC))
-u8*  gUnknown_2024000 = ((u8*) 0x2024000);
-
-u8   gBattlerInMenuId = *((u8*) 0x2024004);
-
-u8*  gUnknown_2024005 = ((u8*) 0x2024005); //Length 0x3
-u8*  gUnknown_2024008 = ((u8*) 0x2024008); //Length 0x10
-
-u32* gBattleResources =(u32*) (*((u32*) 2024018));
-
-u8*  gMonSpritesGfxPtr = ((u8*) 0x202401C);
-u16  gBattleMovePower = *((u16*) 0x2024020);
-u16  gMoveToLearn = *((u16*) 0x2024022);
-u8*  gBattleMonForms = ((u8*) 0x2024024);
-u8   sLearningMoveTableID = *((u8*) 0x2024028);
-u8   gPlayerPartyCount = *((u8*) 0x2024029);
-u8   gEnemyPartyCount = *((u8*) 0x202402A);
-
-u8*  gMultiuseSpriteTemplate = ((u8*) 0x20244DC);
-
-gMapHeader = 0x2036DFC
-
-u16  gSpecialVar_MonBoxId = *((u16*) 0x20370D6);
-u16  gSpecialVar_MonBoxPos = *((u16*) 0x20370D8);
-u8*  gPlttBufferUnfaded = ((u8*) 0x20371F8);
-u8*  gPlttBufferFaded = ((u8*) 0x20375F8);
-u8*  gPaletteFade = ((u8*) 0x2037AB8);
-u16  gTrainerBattleOpponent_A = *((u16*) 0x20386AE);
-u8*  gFieldEffectArguments = ((u8*) 0x20386E0);
 */
+
+#define BattleStringLoader (*((u8**) 0x203C020)) //(*((u8**) 0x203F700))
+#define SeedHelper ((u8*) 0x203F704)
+#define TerrainType *((u8*) 0x203F708)
+#define FormCounter *((u8*) 0x203F709)
+#define PoisonedBy *((u8*) 0x203F70A)
+	// 0x1 = Poison Touch	/ 0x1 = Beak Blast Burn
+	// 0x2 = Toxic Spikes
+	// 0x3 = Toxic Orb		/ 0x3 = Flame Orb
+	// 0x4 = Baneful Bunker
+#define MagicianHelper *((u8*) 0x203F70B)
+#define ShakerData (((u8*) 0x203F70C))
+#define ForceSwitchHelper (*((u8*) 0x203F70E))
+#define AbilityPopUpHelper (*((u8*) 0x203F70F))
+
+#define gExpandedFlags ((u8*) 0x0203B174)
+#define gExpandedVars ((u16*) (0x0203B174 + 0x200))
+

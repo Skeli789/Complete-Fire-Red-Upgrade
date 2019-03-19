@@ -14,6 +14,10 @@
 	u8* playerLoseText;
 };*/
 
+extern u8 FrontierText_Youngster_PreBattle_1[];
+extern u8 FrontierText_Youngster_PlayerWin_1[];
+extern u8 FrontierText_Youngster_PlayerLose_1[];
+
 #ifdef UNBOUND
 const struct BattleTowerTrainer gTowerTrainers[] = 
 {

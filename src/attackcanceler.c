@@ -1,41 +1,8 @@
 #include "defines.h"
 #include "helper_functions.h"
+#include "attackcanceler.h"
 
-//Update Choose Target or whatever to allow Magic Bounce to reflect to both attacker and attacker partner, and then moves that target multiple pokes can continue from the attacker's side
-//Z-Move Illusion
-//De-activate Z-Move when used by Z-Instruct
 //Make sure Powder stops Inferno Overdrive
-//Set gBattleStruct->field_91 in Smack Down
-
-#define BattleScript_MoveEnd (u8*) 0x81D694E
-#define BattleScript_NoPPForMove (u8*) 0x81D8EA8
-#define BattleScript_MagicCoatBounce (u8*) 0x81D8FAA
-#define BattleScript_SnatchedMove (u8*) 0x81D8FC2
-#define BattleScript_TookAttack (u8*) 0x81D938D
-
-#define BattleScript_MoveUsedIsAsleep (u8*) 0x81D9029
-#define BattleScript_MoveUsedWokeUp (u8*) 0x81D9036
-#define BattleScript_MoveUsedIsFrozen (u8*) 0x81D9080
-#define BattleScript_MoveUsedUnfroze (u8*) 0x81D908D
-#define BattleScript_MoveUsedLoafingAround (u8*) 0x81D94F2
-#define BattleScript_MoveUsedMustRecharge (u8*) 0x81D7342
-#define BattleScript_MoveUsedIsDisabled (u8*) 0x81D8C4F
-#define BattleScript_MoveUsedIsTaunted (u8*) 0x81D8ECA
-#define BattleScript_MoveUsedIsImprisoned (u8*) 0x81D8F94
-#define BattleScript_MoveUsedIsConfused (u8*) 0x81D90D3
-#define BattleScript_MoveUsedIsConfusedNoMore (u8*) 0x81D9116
-#define BattleScript_MoveUsedIsParalyzed (u8*) 0x81D90A1
-#define BattleScript_TooScaredToMove (u8*) 0x81D9180
-#define BattleScript_GhostGetOut (u8*) 0x81D9192
-#define BattleScript_ImmobilizedByLove (u8*) 0x81D914A
-#define BattleScript_MoveUsedIsInLove (u8*) 0x81D913D
-#define BattleScript_BideStoringEnergy (u8*) 0x81D8BA9
-#define BattleScript_BideAttack (u8*) 0x81D8BB4
-#define BattleScript_BideNoEnergyToAttack (u8*) 0x81D8BFC
-#define BattleScript_IgnoresWhileAsleep (u8*) 0x81D94DA
-#define BattleScript_IgnoresAndUsesRandomMove (u8*) 0x81D94EA
-#define BattleScript_IgnoresAndFallsAsleep (u8*) 0x81D9504
-#define BattleScript_IgnoresAndHitsItself (u8*) 0x81D951B
 
 extern u8 BattleScript_MagicBounce[];
 extern u8 BattleScript_MoveUsedFlinched[]; //0x81D90B1
@@ -50,54 +17,27 @@ extern u8 BattleScript_StanceChangeToShield[];
 extern u8 BattleScript_ZMoveActivateStatus[];
 extern u8 BattleScript_ZMoveActivateDamaging[];
 extern u8 BattleScript_DarkTypePreventsPrankster[];
+extern u8 BattleScript_MoveUsedSkyBattlePrevents[];
 
 extern move_t GravityBanTable[];
 extern move_t ParentalBondBanList[];
 extern move_t TwoToFiveStrikesMoves[];
 extern move_t TwoStrikesMoves[];
+extern move_t ThreeStrikesMoves[];
+extern move_t MovesCanUnfreezeAttacker[];
+extern move_t SkyBattleBanTable[];
+extern move_t SpecialWholeFieldMoveTable[];
 extern ability_t MoldBreakerIgnoreAbilities[];
-
-extern u8* const gBattleScriptsForMoveEffects[];
 
 extern bool8 ProtectAffects(u16 move, u8 bankAtk, u8 bankDef, bool8 set);
 extern s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* defender, u32 move, u16 sideStatus, u16 powerOverride, u8 effectivenessFlags, u8 typeOverride, u8 bankAtk, u8 bankDef, pokemon_t* party_data_atk, bool8 PartyCheck, bool8 IgnoreAttacker, bool8 CheckingConfusion);
+extern u8 TypeCalc(move_t, u8 bankAtk, u8 bankDef, pokemon_t* party_data_atk, bool8 CheckParty);
 extern s8 PriorityCalc(u8 bank, u8 action, u16 move);
 extern u8 CheckMoveLimitations(u8 bank, u8 unusableMoves, u8 check);
 
 void atk00_attackcanceler(void);
 u8 AtkCanceller_UnableToUseMove(void);
 u8 IsMonDisobedient(void);
-
-enum
-{
-	CANCELLER_FLAGS,
-	CANCELLER_ASLEEP,
-	CANCELLER_FROZEN,
-	CANCELLER_TRUANT,
-	CANCELLER_RECHARGE,
-	CANCELLER_FLINCH,
-	CANCELLER_GRAVITY,
-	CANCELLER_DISABLED,
-	CANCELLER_HEAL_BLOCKED,
-	CANCELLER_THROAT_CHOP,
-	CANCELLER_TAUNTED,
-	CANCELLER_IMPRISONED,
-	CANCELLER_CONFUSED,
-	CANCELLER_PARALYSED,
-	CANCELLER_GHOST,
-	CANCELLER_IN_LOVE,
-	CANCELLER_STANCE_CHANGE,
-	CANCELLER_BIDE,
-	CANCELLER_THAW,
-	CANCELLER_Z_MOVES,
-	CANCELLER_GRAVITY_Z_MOVES,
-	CANCELLER_POWDER,
-	CANCELLER_PRIMAL_WEATHER,
-	CANCELLER_PSYCHIC_TERRAIN,
-	CANCELLER_PRANKSTER,
-	CANCELLER_MULTIHIT_MOVES,
-	CANCELLER_END,
-};
 
 void atk00_attackcanceler(void)
 {
@@ -110,7 +50,7 @@ void atk00_attackcanceler(void)
     }
     if ((gBattleMons[gBankAttacker].hp == 0 
 	|| (gStatuses3[gBankAttacker] & STATUS3_SKY_DROP_TARGET) 
-	|| (NoMoreMovingThisTurn & gBitTable[gBankAttacker])) //From Smack Down/Gravity
+	|| (gNewBS->NoMoreMovingThisTurn & gBitTable[gBankAttacker])) //From Smack Down/Gravity
 		&& !(gHitMarker & HITMARKER_NO_ATTACKSTRING))
     {
         gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
@@ -125,7 +65,7 @@ void atk00_attackcanceler(void)
 			if (i == gBankAttacker) continue;
 			
 			if (CheckTableForAbility(ABILITY(i), MoldBreakerIgnoreAbilities)) {
-				DisabledMoldBreakerAbilities[i] = ABILITY(i); //Temporarily disable all relevant abilities on the field
+				gNewBS->DisabledMoldBreakerAbilities[i] = ABILITY(i); //Temporarily disable all relevant abilities on the field
 				gBattleMons[i].ability = 0;
 			}
 		}
@@ -136,7 +76,7 @@ void atk00_attackcanceler(void)
     else if (AbilityBattleEffects(ABILITYEFFECT_MOVES_BLOCK, gBankTarget, 0, 0, 0))
         return;
 	
-	else if (!ParentalBondOn
+	else if (!gNewBS->ParentalBondOn
 	&& ABILITY(gBankAttacker) == ABILITY_PARENTALBOND 
 	&& SPLIT(gCurrentMove) != SPLIT_STATUS
 	&& !CheckTableForMove(gCurrentMove, ParentalBondBanList)
@@ -149,33 +89,36 @@ void atk00_attackcanceler(void)
 			switch (gBattleMoves[gCurrentMove].target) {
 				case MOVE_TARGET_BOTH:
 					if (CountAliveMons(2) <= 1) { //Check for single target
-						ParentalBondOn = 2;
+						gNewBS->ParentalBondOn = 2;
 						gMultiHitCounter = 2;			
 					}
 					break;
 				case MOVE_TARGET_FOES_AND_ALLY:
 					if (CountAliveMons(1) +  CountAliveMons(2) <= 2) { //Count mons on both sides; ignore attacker
-						ParentalBondOn = 2;
+						gNewBS->ParentalBondOn = 2;
 						gMultiHitCounter = 2;			
 					}
 					break;
 				default:
-					ParentalBondOn = 2;
+					gNewBS->ParentalBondOn = 2;
 					gMultiHitCounter = 2;
 			}
 		}
 		
 		else {
-			ParentalBondOn = 2;
+			gNewBS->ParentalBondOn = 2;
 			gMultiHitCounter = 2;
 		}
+		
+		if (gNewBS->ParentalBondOn == 2)
+			PREPARE_BYTE_NUMBER_BUFFER(gBattleScripting->multihitString, 1, 0);
 	}
 	
     if (!gBattleMons[gBankAttacker].pp[gCurrMovePos] 
 	&& gCurrentMove != MOVE_STRUGGLE 
 	&& !(gHitMarker & (HITMARKER_x800000 | HITMARKER_NO_ATTACKSTRING))
     && !(gBattleMons[gBankAttacker].status2 & STATUS2_MULTIPLETURNS)
-	&& !DancerInProgress)
+	&& !gNewBS->DancerInProgress)
     {
         gBattlescriptCurrInstr = BattleScript_NoPPForMove;
         gMoveResultFlags |= MOVE_RESULT_MISSED;
@@ -199,11 +142,14 @@ void atk00_attackcanceler(void)
     }
 
     gHitMarker |= HITMARKER_OBEYS;
+	
+	if (CheckSoundMove(gCurrentMove) || ABILITY(gBankAttacker) == ABILITY_INFILTRATOR)
+		gNewBS->bypassSubstitute = TRUE;
 
-	if (MoveBounceInProgress == 2) //Bounce just ended
-		MoveBounceInProgress = 0;
+	if (gNewBS->MoveBounceInProgress == 2) //Bounce just ended
+		gNewBS->MoveBounceInProgress = 0;
 
-    if (!MoveBounceInProgress 
+    if (!gNewBS->MoveBounceInProgress 
 	&& gBattleMoves[gCurrentMove].flags & FLAG_MAGIC_COAT_AFFECTED 
 	&& !(gBattleMoves[gCurrentMove].target & MOVE_TARGET_ALL)) //Safety measure; no default moves allow this
 	{
@@ -213,7 +159,8 @@ void atk00_attackcanceler(void)
 			{
 				PressurePPLose(gBankAttacker, SIDE(gBankAttacker) ^ BIT_SIDE, MOVE_MAGICCOAT);
 				gProtectStructs[SIDE(gBankAttacker) ^ BIT_SIDE].bounceMove = 0;
-				MoveBounceInProgress = TRUE;
+				gNewBS->MoveBounceInProgress = TRUE;
+				gNewBS->moveWasBouncedThisTurn = TRUE;
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_MagicCoatBounce;
 				return;
@@ -222,14 +169,16 @@ void atk00_attackcanceler(void)
 			{
 				PressurePPLose(gBankAttacker, PARTNER(SIDE(gBankAttacker)) ^ BIT_SIDE, MOVE_MAGICCOAT);
 				gProtectStructs[PARTNER(SIDE(gBankAttacker)) ^ BIT_SIDE].bounceMove = 0;
-				MoveBounceInProgress = TRUE;
+				gNewBS->MoveBounceInProgress = TRUE;
+				gNewBS->moveWasBouncedThisTurn = TRUE;
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_MagicCoatBounce;
 				return;
 			}
 			else if (ABILITY(SIDE(gBankAttacker) ^ BIT_SIDE) == ABILITY_MAGICBOUNCE && !(gStatuses3[SIDE(gBankAttacker) ^ BIT_SIDE] & STATUS3_SEMI_INVULNERABLE))
 			{
-				MoveBounceInProgress = TRUE;
+				gNewBS->MoveBounceInProgress = TRUE;
+				gNewBS->moveWasBouncedThisTurn = TRUE;
 				gLastUsedAbility = ABILITY_MAGICBOUNCE;
 				RecordAbilityBattle(SIDE(gBankAttacker) ^ BIT_SIDE, gLastUsedAbility);
 				gBattleScripting->bank = SIDE(gBankAttacker) ^ BIT_SIDE;
@@ -239,7 +188,8 @@ void atk00_attackcanceler(void)
 			}
 			else if (ABILITY(PARTNER(SIDE(gBankAttacker)) ^ BIT_SIDE) == ABILITY_MAGICBOUNCE && !(gStatuses3[PARTNER(SIDE(gBankAttacker)) ^ BIT_SIDE] & STATUS3_SEMI_INVULNERABLE))
 			{
-				MoveBounceInProgress = TRUE;
+				gNewBS->MoveBounceInProgress = TRUE;
+				gNewBS->moveWasBouncedThisTurn = TRUE;
 				gLastUsedAbility = ABILITY_MAGICBOUNCE;
 				RecordAbilityBattle(PARTNER(SIDE(gBankAttacker)) ^ BIT_SIDE, gLastUsedAbility);
 				gBattleScripting->bank = SIDE(gBankAttacker) ^ BIT_SIDE;
@@ -254,14 +204,16 @@ void atk00_attackcanceler(void)
 			{
 				PressurePPLose(gBankAttacker, gBankTarget, MOVE_MAGICCOAT);
 				gProtectStructs[gBankTarget].bounceMove = 0;
-				MoveBounceInProgress = TRUE;
+				gNewBS->MoveBounceInProgress = TRUE;
+				gNewBS->moveWasBouncedThisTurn = TRUE;
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_MagicCoatBounce;
 				return;
 			}
 			else if (ABILITY(gBankTarget) == ABILITY_MAGICBOUNCE && !(gStatuses3[gBankTarget] & STATUS3_SEMI_INVULNERABLE))
 			{
-				MoveBounceInProgress = TRUE;
+				gNewBS->MoveBounceInProgress = TRUE;
+				gNewBS->moveWasBouncedThisTurn = TRUE;
 				gLastUsedAbility = ABILITY_MAGICBOUNCE;
 				RecordAbilityBattle(gBankTarget, gLastUsedAbility);
 				gBattleScripting->bank = gBankTarget;
@@ -312,6 +264,7 @@ void atk00_attackcanceler(void)
 
 u8 AtkCanceller_UnableToUseMove(void)
 {
+	int i;
     u8 effect = 0;
 	
     do
@@ -320,6 +273,7 @@ u8 AtkCanceller_UnableToUseMove(void)
         case CANCELLER_FLAGS: // flags clear
             gBattleMons[gBankAttacker].status2 &= ~(STATUS2_DESTINY_BOND);
             gStatuses3[gBankAttacker] &= ~(STATUS3_GRUDGE);
+			gBattleScripting->tripleKickPower = 0;
             gBattleStruct->atkCancellerTracker++;
             break;
 		
@@ -365,7 +319,7 @@ u8 AtkCanceller_UnableToUseMove(void)
             {
                 if (umodsi(Random(), 5))
                 {
-                    if (gBattleMoves[gCurrentMove].effect != EFFECT_THAW_HIT) // unfreezing via a move effect happens in case 13
+                    if (!CheckTableForMove(gCurrentMove, MovesCanUnfreezeAttacker) || gMoveResultFlags & MOVE_RESULT_FAILED) // unfreezing via a move effect happens in case 13
                     {
                         gBattlescriptCurrInstr = BattleScript_MoveUsedIsFrozen;
                         gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
@@ -404,8 +358,9 @@ u8 AtkCanceller_UnableToUseMove(void)
         case CANCELLER_RECHARGE: // recharge
             if (gBattleMons[gBankAttacker].status2 & STATUS2_RECHARGE)
             {
+				gNewBS->MetronomeCounter[gBankAttacker] = MathMin(100, gNewBS->MetronomeCounter[gBankAttacker] + 20);
                 gBattleMons[gBankAttacker].status2 &= ~(STATUS2_RECHARGE);
-                gDisableStructs[gBankAttacker].rechargeCounter = 0;
+                gDisableStructs[gBankAttacker].rechargeTimer = 0;
                 CancelMultiTurnMoves(gBankAttacker);
                 gBattlescriptCurrInstr = BattleScript_MoveUsedMustRecharge;
                 gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
@@ -417,7 +372,6 @@ u8 AtkCanceller_UnableToUseMove(void)
         case CANCELLER_FLINCH: // flinch
             if (gBattleMons[gBankAttacker].status2 & STATUS2_FLINCHED)
             {
-                gBattleMons[gBankAttacker].status2 &= ~(STATUS2_FLINCHED);
                 gProtectStructs[gBankAttacker].flinchImmobility = 1;
                 CancelMultiTurnMoves(gBankAttacker);
                 gBattlescriptCurrInstr = BattleScript_MoveUsedFlinched;
@@ -428,7 +382,7 @@ u8 AtkCanceller_UnableToUseMove(void)
             break;
 		
         case CANCELLER_DISABLED: // disabled move
-            if (gDisableStructs[gBankAttacker].disabledMove == gCurrentMove && gDisableStructs[gBankAttacker].disabledMove != 0 && !ZMoveData->active)
+            if (gDisableStructs[gBankAttacker].disabledMove == gCurrentMove && gDisableStructs[gBankAttacker].disabledMove != 0 && !gNewBS->ZMoveData->active)
             {
                 gProtectStructs[gBankAttacker].usedDisabledMove = 1;
                 gBattleScripting->bank = gBankAttacker;
@@ -441,7 +395,8 @@ u8 AtkCanceller_UnableToUseMove(void)
             break;
 		
         case CANCELLER_HEAL_BLOCKED:
-            if (HealBlockTimers[gBankAttacker] && CheckHealingMove(gCurrentMove) && !ZMoveData->active)
+		case CANCELLER_HEAL_BLOCKED_2:
+            if (gNewBS->HealBlockTimers[gBankAttacker] && CheckHealingMove(gCurrentMove) && !gNewBS->ZMoveData->active)
             {
                 gBattleScripting->bank = gBankAttacker;
                 CancelMultiTurnMoves(gBankAttacker);
@@ -453,7 +408,8 @@ u8 AtkCanceller_UnableToUseMove(void)
             break;
 		
 		case CANCELLER_THROAT_CHOP:
-            if (ThroatChopTimers[gBankAttacker] && CheckSoundMove(gCurrentMove) && !ZMoveData->active)
+		case CANCELLER_THROAT_CHOP_2:
+            if (gNewBS->ThroatChopTimers[gBankAttacker] && CheckSoundMove(gCurrentMove) && !gNewBS->ZMoveData->active)
             {
                 gBattleScripting->bank = gBankAttacker;
                 CancelMultiTurnMoves(gBankAttacker);
@@ -465,7 +421,8 @@ u8 AtkCanceller_UnableToUseMove(void)
             break;
 		
 		case CANCELLER_GRAVITY:
-            if (GravityTimer && CheckTableForMove(gCurrentMove, GravityBanTable) && !ZMoveData->active) //Gravity stops Z-Moves, so there will be
+		case CANCELLER_GRAVITY_2:
+            if (gNewBS->GravityTimer && CheckTableForMove(gCurrentMove, GravityBanTable) && !gNewBS->ZMoveData->active) //Gravity stops Z-Moves, so there will be
             {																							//a second check later on
                 gBattleScripting->bank = gBankAttacker;
                 CancelMultiTurnMoves(gBankAttacker);
@@ -477,7 +434,7 @@ u8 AtkCanceller_UnableToUseMove(void)
             break;
 		
         case CANCELLER_TAUNTED: // taunt
-            if (gDisableStructs[gBankAttacker].tauntTimer && SPLIT(gCurrentMove) == SPLIT_STATUS && !ZMoveData->active)
+            if (gDisableStructs[gBankAttacker].tauntTimer && SPLIT(gCurrentMove) == SPLIT_STATUS && !gNewBS->ZMoveData->active)
             {
                 gProtectStructs[gBankAttacker].usedTauntedMove = 1;
                 CancelMultiTurnMoves(gBankAttacker);
@@ -489,7 +446,7 @@ u8 AtkCanceller_UnableToUseMove(void)
             break;
 		
         case CANCELLER_IMPRISONED: // imprisoned
-            if (IsImprisoned(gBankAttacker, gCurrentMove) && !ZMoveData->active)
+            if (IsImprisoned(gBankAttacker, gCurrentMove) && !gNewBS->ZMoveData->active)
             {
                 gProtectStructs[gBankAttacker].usedImprisionedMove = 1;
                 CancelMultiTurnMoves(gBankAttacker);
@@ -593,21 +550,24 @@ u8 AtkCanceller_UnableToUseMove(void)
             break;
 		
 		case CANCELLER_STANCE_CHANGE:
+		case CANCELLER_STANCE_CHANGE_2:
 			if (gBattleMons[gBankAttacker].ability == ABILITY_STANCECHANGE && !(gBattleMons[gBankAttacker].status2 & STATUS2_TRANSFORMED)) {
 				switch (gBattleMons[gBankAttacker].species) {
 					case PKMN_AEGISLASH:
 						if (SPLIT(gCurrentMove) != SPLIT_STATUS) {
-							DoFormChange(gBankAttacker, PKMN_AEGISLASH_BLADE, FALSE);
+							DoFormChange(gBankAttacker, PKMN_AEGISLASH_BLADE, FALSE, TRUE);
 							BattleScriptPushCursor();
 							gBattlescriptCurrInstr = BattleScript_StanceChangeToBlade;
+							gBattleScripting->bank = gBankAttacker;
 						}
 						break;
 					
 					case PKMN_AEGISLASH_BLADE:
 						if (gCurrentMove == MOVE_KINGSSHIELD) {
-							DoFormChange(gBankAttacker, PKMN_AEGISLASH, FALSE);
+							DoFormChange(gBankAttacker, PKMN_AEGISLASH, FALSE, TRUE);
 							BattleScriptPushCursor();
 							gBattlescriptCurrInstr = BattleScript_StanceChangeToShield;
+							gBattleScripting->bank = gBankAttacker;
 						}
 						break;
 				}
@@ -648,7 +608,8 @@ u8 AtkCanceller_UnableToUseMove(void)
         case CANCELLER_THAW: // move thawing
             if (gBattleMons[gBankAttacker].status1 & STATUS1_FREEZE)
             {
-                if (gBattleMoves[gCurrentMove].effect == EFFECT_THAW_HIT)
+                if (CheckTableForMove(gCurrentMove, MovesCanUnfreezeAttacker) 
+				&& !(gMoveResultFlags & MOVE_RESULT_FAILED)) //When Burn Up fails, it can't unfreeze
                 {
                     gBattleMons[gBankAttacker].status1 &= ~(STATUS1_FREEZE);
                     BattleScriptPushCursor();
@@ -661,31 +622,32 @@ u8 AtkCanceller_UnableToUseMove(void)
             break;
 		
 		case CANCELLER_Z_MOVES:
-			if (ZMoveData->active) 
+			if (gNewBS->ZMoveData->active) 
 			{
-				ZMoveData->used[gBankAttacker] = TRUE;
-				ZMoveData->toBeUsed[gBankAttacker] = 0;
-				ZMoveData->partyIndex[gBankAttacker] |= gBitTable[gBattlerPartyIndexes[gBankAttacker]]; //Stops Rayquaza from Mega Evolving
+				gNewBS->ZMoveData->used[gBankAttacker] = TRUE;
+				gNewBS->ZMoveData->toBeUsed[gBankAttacker] = 0;
+				gNewBS->ZMoveData->partyIndex[gBankAttacker] |= gBitTable[gBattlerPartyIndexes[gBankAttacker]]; //Stops Rayquaza from Mega Evolving
 				if (SIDE(gBankAttacker) == B_SIDE_PLAYER && !(gBattleTypeFlags & (BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_MULTI))) //In team Battles, both players can use Z-moves
 				{
-					ZMoveData->used[PARTNER(gBankAttacker)] = TRUE;
-					ZMoveData->toBeUsed[PARTNER(gBankAttacker)] = 0;
-					ZMoveData->partyIndex[SIDE(gBankAttacker)] |= gBitTable[gBattlerPartyIndexes[PARTNER(gBankAttacker)]]; //Stops Rayquaza from Mega Evolving
+					gNewBS->ZMoveData->used[PARTNER(gBankAttacker)] = TRUE;
+					gNewBS->ZMoveData->toBeUsed[PARTNER(gBankAttacker)] = 0;
+					gNewBS->ZMoveData->partyIndex[SIDE(gBankAttacker)] |= gBitTable[gBattlerPartyIndexes[PARTNER(gBankAttacker)]]; //Stops Rayquaza from Mega Evolving
 				}
 				else if (SIDE(gBankAttacker) == B_SIDE_OPPONENT && !(gBattleTypeFlags & (BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_MULTI)))
 				{
-					ZMoveData->used[PARTNER(gBankAttacker)] = TRUE;
-					ZMoveData->toBeUsed[PARTNER(gBankAttacker)] = 0;
-					ZMoveData->partyIndex[SIDE(gBankAttacker)] |= gBitTable[gBattlerPartyIndexes[PARTNER(gBankAttacker)]]; //Stops Rayquaza from Mega Evolving
+					gNewBS->ZMoveData->used[PARTNER(gBankAttacker)] = TRUE;
+					gNewBS->ZMoveData->toBeUsed[PARTNER(gBankAttacker)] = 0;
+					gNewBS->ZMoveData->partyIndex[SIDE(gBankAttacker)] |= gBitTable[gBattlerPartyIndexes[PARTNER(gBankAttacker)]]; //Stops Rayquaza from Mega Evolving
 				}
 				
+				gBattleScripting->bank = gBankAttacker;
 				if (SPLIT(gCurrentMove) == SPLIT_STATUS) 
 				{
-					if (!ZMoveData->effectApplied) {
+					if (!gNewBS->ZMoveData->effectApplied) {
 						BattleScriptPushCursor();
 						gBattlescriptCurrInstr = BattleScript_ZMoveActivateStatus;
-						ZMoveData->effect = gBattleMoves[gCurrentMove].z_move_effect; 
-						ZMoveData->effectApplied = TRUE;
+						gNewBS->ZMoveData->effect = gBattleMoves[gCurrentMove].z_move_effect; 
+						gNewBS->ZMoveData->effectApplied = TRUE;
 					}
 					else {
 						gBattleStruct->atkCancellerTracker++;
@@ -703,7 +665,7 @@ u8 AtkCanceller_UnableToUseMove(void)
 			break;
 		
 		case CANCELLER_GRAVITY_Z_MOVES:
-            if (GravityTimer && CheckTableForMove(gCurrentMove, GravityBanTable) && ZMoveData->active) //Gravity stops Z-Moves after they apply their effect
+            if (gNewBS->GravityTimer && CheckTableForMove(gCurrentMove, GravityBanTable) && gNewBS->ZMoveData->active) //Gravity stops Z-Moves after they apply their effect
             {																						
                 gBattleScripting->bank = gBankAttacker;
                 CancelMultiTurnMoves(gBankAttacker);
@@ -713,12 +675,70 @@ u8 AtkCanceller_UnableToUseMove(void)
             }
             gBattleStruct->atkCancellerTracker++;
             break;
+
+		case CANCELLER_SKY_BATTLE:
+            if (FlagGet(SKY_BATTLE_FLAG) && CheckTableForMove(gCurrentMove, SkyBattleBanTable))
+            {																						
+                gBattleScripting->bank = gBankAttacker;
+                CancelMultiTurnMoves(gBankAttacker);
+                gBattlescriptCurrInstr = BattleScript_MoveUsedSkyBattlePrevents;
+                gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
+                effect = 1;
+            }
+            gBattleStruct->atkCancellerTracker++;
+            break;
+		
+		//Natural Gift fails before it can take Powder damage
+		case CANCELLER_NATURAL_GIFT:
+			if (gCurrentMove == MOVE_NATURALGIFT &&
+			  (ABILITY(gBankAttacker) == ABILITY_KLUTZ
+			|| GetPocketByItemId(ITEM(gBankAttacker)) != POCKET_BERRY_POUCH 
+			|| AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, gBankAttacker, ABILITY_UNNERVE, 0, 0)
+			|| gNewBS->MagicRoomTimer
+			|| gNewBS->EmbargoTimers[gBankAttacker]))
+			{
+				gBattlescriptCurrInstr = BattleScript_ButItFailed - 2;
+				gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
+				effect = 1;
+			}
+			gBattleStruct->atkCancellerTracker++;
+			break;
 			
+		case CANCELLER_DANCER:
+			if (gNewBS->DancerInProgress)
+			{
+				if ((gBattleMons[gBankAttacker].status2 & STATUS2_MULTIPLETURNS)
+				&&  gCurrentMove != gLockedMoves[gBankAttacker])
+				{
+					gBattlescriptCurrInstr = BattleScript_ButItFailed - 2;
+					gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
+					effect = 1;
+				}
+				else if (gDisableStructs[gBankAttacker].encoredMove
+				&& gCurrentMove != gDisableStructs[gBankAttacker].encoredMove)
+				{
+					gBattlescriptCurrInstr = BattleScript_ButItFailed - 2;
+					gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
+					effect = 1;
+				}
+				else if (gBattleStruct->choicedMove[gBankAttacker]
+				&& gCurrentMove != gBattleStruct->choicedMove[gBankAttacker])
+				{
+					gBattlescriptCurrInstr = BattleScript_ButItFailed - 2;
+					gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
+					effect = 1;
+				}
+			}
+			gBattleStruct->atkCancellerTracker++;
+			break;
+		
 		case CANCELLER_POWDER:
-            if ((PowderByte & gBitTable[gBankAttacker]) && (gBattleStruct->dynamicMoveType == TYPE_FIRE))
+            if ((gNewBS->PowderByte & gBitTable[gBankAttacker]) && (gBattleStruct->dynamicMoveType == TYPE_FIRE))
             {
                 gBattleMoveDamage = gBattleMons[gBankAttacker].maxHP / 4;
 				gBattlescriptCurrInstr = BattleScript_MoveUsedPowderPrevents;
+				gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
+				effect = 1;
             }
             gBattleStruct->atkCancellerTracker++;
             break;
@@ -759,6 +779,7 @@ u8 AtkCanceller_UnableToUseMove(void)
 			&& gBankAttacker != gBankTarget
 			&& IsOfType(gBankTarget, TYPE_DARK))
 			{
+				gBattleScripting->bank = gBankTarget;
 				CancelMultiTurnMoves(gBankAttacker);
 				gBattlescriptCurrInstr = BattleScript_DarkTypePreventsPrankster;
                 gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
@@ -773,6 +794,9 @@ u8 AtkCanceller_UnableToUseMove(void)
 			{
 				if (ABILITY(gBankAttacker) == ABILITY_SKILLLINK)
 					gMultiHitCounter = 5;
+					
+				else if (CheckTableForMove(gCurrentMove, ThreeStrikesMoves))
+					gMultiHitCounter = 3;
 				
 				else if (ABILITY(gBankAttacker) == ABILITY_BATTLEBOND
 				&& gCurrentMove == MOVE_WATERSHURIKEN
@@ -797,6 +821,33 @@ u8 AtkCanceller_UnableToUseMove(void)
 				PREPARE_BYTE_NUMBER_BUFFER(gBattleScripting->multihitString, 1, 0)
 			}
 
+			gBattleStruct->atkCancellerTracker++;
+			break;
+		
+		case CANCELLER_MULTI_TARGET_MOVES:
+			if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+			{
+				if (gBattleMoves[gCurrentMove].target & MOVE_TARGET_ALL && !CheckTableForMove(gCurrentMove, SpecialWholeFieldMoveTable))
+				{
+					for (i = 0; i < gBattlersCount; ++i)
+					{
+						if (i != gBankAttacker && gBattleMons[i].hp)
+							gNewBS->ResultFlags[i] = TypeCalc(gCurrentMove, gBankAttacker, i, 0, FALSE);
+						else
+							gNewBS->ResultFlags[i] = MOVE_RESULT_NO_EFFECT; //You can't strike these targets
+					}
+				}
+				else if (gBattleMoves[gCurrentMove].target & MOVE_TARGET_BOTH)
+				{
+					for (i = 0; i < gBattlersCount; ++i)
+					{
+						if (i != gBankAttacker && i != PARTNER(gBankAttacker) && gBattleMons[i].hp)
+							gNewBS->ResultFlags[i] = TypeCalc(gCurrentMove, gBankAttacker, i, 0, FALSE);
+						else
+							gNewBS->ResultFlags[i] = MOVE_RESULT_NO_EFFECT; //You can't strike these targets
+					}
+				}
+			}
 			gBattleStruct->atkCancellerTracker++;
 			break;
 		
@@ -829,7 +880,7 @@ u8 IsMonDisobedient(void)
 		return 0;
     else if (SIDE(gBankAttacker) == B_SIDE_OPPONENT)
         return 0;
-	else if (InstructInProgress || DancerInProgress || ZMoveData->active)
+	else if (gNewBS->InstructInProgress || gNewBS->DancerInProgress || gNewBS->ZMoveData->active)
 		return 0;
 
 	#ifndef OBEDIENCE_CHECK_FOR_PLAYER_ORIGINAL_POKEMON
@@ -837,25 +888,76 @@ u8 IsMonDisobedient(void)
         return 0;
 	#endif
 	
-    if (FlagGet(FLAG_BADGE08_GET))
-        return 0;
-	else if (FlagGet(FLAG_BADGE07_GET))
-        obedienceLevel = BADGE_7_OBEDIENCE_LEVEL;
-	else if (FlagGet(FLAG_BADGE06_GET))
-        obedienceLevel = BADGE_6_OBEDIENCE_LEVEL;
-	else if (FlagGet(FLAG_BADGE05_GET))
-        obedienceLevel = BADGE_5_OBEDIENCE_LEVEL;
-	else if (FlagGet(FLAG_BADGE04_GET))
-        obedienceLevel = BADGE_4_OBEDIENCE_LEVEL;
-	else if (FlagGet(FLAG_BADGE03_GET))
-        obedienceLevel = BADGE_3_OBEDIENCE_LEVEL;
-	else if (FlagGet(FLAG_BADGE02_GET))
-        obedienceLevel = BADGE_2_OBEDIENCE_LEVEL;
-	else if (FlagGet(FLAG_BADGE01_GET))
-        obedienceLevel = BADGE_1_OBEDIENCE_LEVEL;
-	else
-		obedienceLevel = BASE_OBEDIENCE_LEVEL;
-
+	#ifdef OBEDIENCE_BY_BADGE_AMOUNT
+		u8 badgeCount = 0;
+		
+		if (FlagGet(FLAG_BADGE08_GET))
+			++badgeCount;
+		if (FlagGet(FLAG_BADGE07_GET))
+			++badgeCount;
+		if (FlagGet(FLAG_BADGE06_GET))
+			++badgeCount;
+		if (FlagGet(FLAG_BADGE05_GET))
+			++badgeCount;
+		if (FlagGet(FLAG_BADGE04_GET))
+			++badgeCount;
+		if (FlagGet(FLAG_BADGE03_GET))
+			++badgeCount;
+		if (FlagGet(FLAG_BADGE02_GET))
+			++badgeCount;
+		if (FlagGet(FLAG_BADGE01_GET))
+			++badgeCount;
+		
+		switch(badgeCount) {
+			case 0:
+				obedienceLevel = BASE_OBEDIENCE_LEVEL;
+				break;
+			case 1:
+				obedienceLevel = BADGE_1_OBEDIENCE_LEVEL;
+				break;
+			case 2:
+				obedienceLevel = BADGE_2_OBEDIENCE_LEVEL;
+				break;
+			case 3:
+				obedienceLevel = BADGE_3_OBEDIENCE_LEVEL;
+				break;
+			case 4:
+				obedienceLevel = BADGE_4_OBEDIENCE_LEVEL;
+				break;
+			case 5:
+				obedienceLevel = BADGE_5_OBEDIENCE_LEVEL;
+				break;
+			case 6:
+				obedienceLevel = BADGE_6_OBEDIENCE_LEVEL;
+				break;
+			case 7:
+				obedienceLevel = BADGE_7_OBEDIENCE_LEVEL;
+				break;
+			default:
+				return 0;
+		}
+	
+	#else
+		if (FlagGet(FLAG_BADGE08_GET))
+			return 0;
+		else if (FlagGet(FLAG_BADGE07_GET))
+			obedienceLevel = BADGE_7_OBEDIENCE_LEVEL;
+		else if (FlagGet(FLAG_BADGE06_GET))
+			obedienceLevel = BADGE_6_OBEDIENCE_LEVEL;
+		else if (FlagGet(FLAG_BADGE05_GET))
+			obedienceLevel = BADGE_5_OBEDIENCE_LEVEL;
+		else if (FlagGet(FLAG_BADGE04_GET))
+			obedienceLevel = BADGE_4_OBEDIENCE_LEVEL;
+		else if (FlagGet(FLAG_BADGE03_GET))
+			obedienceLevel = BADGE_3_OBEDIENCE_LEVEL;
+		else if (FlagGet(FLAG_BADGE02_GET))
+			obedienceLevel = BADGE_2_OBEDIENCE_LEVEL;
+		else if (FlagGet(FLAG_BADGE01_GET))
+			obedienceLevel = BADGE_1_OBEDIENCE_LEVEL;
+		else
+			obedienceLevel = BASE_OBEDIENCE_LEVEL;
+	#endif
+	
     if (gBattleMons[gBankAttacker].level <= obedienceLevel)
         return 0;
     rnd = (Random() & 255);

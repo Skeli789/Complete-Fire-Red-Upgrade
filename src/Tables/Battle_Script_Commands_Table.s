@@ -4,8 +4,12 @@
 .global BattleScriptCommandsTable
 
 .include "..\\defines"
+.equ NULL, 0x00000000
 
-BattleScriptCommandsTable:
+.global gBattleScriptingCommandsTable
+.global gBattleScriptingCommandsTable2
+
+gBattleScriptingCommandsTable:
 .word atk00_attackcanceler
 .word atk01_accuracycheck
 .word atk02_attackstring
@@ -15,7 +19,7 @@ BattleScriptCommandsTable:
 .word atk06_typecalc
 .word atk07_adjustnormaldamage
 .word atk08_adjustnormaldamage2
-.word 0x801f441				@attackanimation
+.word atk09_attackanimation
 .word 0x801f589				@waitanimation
 .word atk0B_healthbarupdate		@graphicalhpupdate
 .word atk0C_datahpupdate
@@ -31,7 +35,7 @@ BattleScriptCommandsTable:
 .word 0x8021211				@seteffecttarget
 .word 0x8021221				@seteffectuser
 .word 0x8021231				@clearstatus
-.word 0x80212ad				@faintpokemon
+.word atk19_tryfaintmon			@faintpokemon
 .word 0x80215a1				@dofaintanimation
 .word atk1B_cleareffectsonfaint
 .word 0x8021641				@jumpifstatus
@@ -41,7 +45,7 @@ BattleScriptCommandsTable:
 .word atk20_jumpifstat
 .word 0x8021989				@jumpifspecialstatusflag
 .word atk22_jumpiftype
-.word 0x8021a69				@battleendingfunction
+.word atk23_getexp			@battleendingfunction
 .word 0x80223f9				@ifwildbattleend
 .word 0x80225d9				@movevaluescleanup
 .word 0x80225f1				@storeloopingcounter
@@ -105,7 +109,7 @@ BattleScriptCommandsTable:
 .word 0x8025b75				@incrementgamestat
 .word atk61_drawpartystatussummary
 .word 0x8025c6d				@atk62
-.word 0x8025c9d				@jumptoattack
+.word atk63_jumptocalledmove		@jumptoattack
 .word atk64_statusanimation
 .word 0x8025d91				@status2animation
 .word atk66_chosenstatusanimation
@@ -130,21 +134,21 @@ BattleScriptCommandsTable:
 .word 0x80271c1				@setuserhptozero
 .word atk7A_jumpifnexttargetvalid	@jumpwhiletargetvalid
 .word 0x80272c5				@setdamageasrestorehalfmaxhp
-.word 0x8027341				@jumptolastusedattack
+.word atk7C_trymirrormove		@jumptolastusedattack
 .word atk7D_setrain
 .word atk7E_setreflect
 .word atk7F_setseeded			@setleechseed
 .word 0x8027689				@manipulatedamage
 .word atk81_trysetrest			@setrest
-.word 0x80277d9				@jumpifnotfirstturn
+.word atk82_jumpifnotfirstturn
 .word 0x8027821				@nop3
 .word atk84_jumpifcantmakeasleep	@jumpifcannotsleep
 .word 0x8027949				@stockpile
 .word atk86_stockpiletobasedamage
-.word 0x8027ae5				@stockpiletohprecovery
+.word atk87_stockpiletohpheal		@stockpiletohprecovery
 .word atk88_negativedamage
 .word atk89_statbuffchange
-.word 0x80280cd				@normalisebuffs
+.word atk8A_normalisebuffs
 .word 0x8028121				@setbide
 .word 0x8028191				@confuseifrepeatingattackends
 .word atk8D_setmultihitcounter		@setloopcounter
@@ -157,24 +161,24 @@ BattleScriptCommandsTable:
 .word atk94_damagetohalftargethp	@gethalfcurrentenemyhp
 .word atk95_setsandstorm
 .word atk96_weatherdamage
-.word 0x8028e91				@tryinfatuatetarget
+.word atk97_tryinfatuating		@tryinfatuatebank
 .word 0x8029049				@refreshhpbar
 .word 0x80291d1				@setmisteffect
 .word 0x8029279				@setincreasedcriticalchance
-.word 0x80292d5				@transformdataexecution
+.word atk9B_transformdataexecution
 .word 0x8029475				@setsubstituteeffect
-.word 0x8029579				@copyattack
-.word 0x8029755				@metronomeeffect
+.word atk9D_mimicattackcopy		@copyattack
+.word atk9E_metronome			@metronomeeffect
 .word 0x80297fd				@nightshadedamageeffect
 .word atkA0_psywavedamageeffect
 .word atkA1_counterdamagecalculator
 .word atkA2_mirrorcoatdamagecalculator
-.word 0x8029a71				@disablelastusedattack
-.word 0x8029bb5				@setencore
+.word atkA3_disablelastusedattack
+.word atkA4_trysetencore		@setencore
 .word 0x8029ce9				@painsplitdamagecalculator
 .word atkA6_settypetorandomresistance
 .word 0x8029fad				@setalwayshitflag
-.word 0x802a005				@copymovepermanently
+.word atkA8_copymovepermanently
 .word atkA9_trychoosesleeptalkmove
 .word atkAA_setdestinybond		@destinybondeffect
 .word 0x802a459				@trysetdestinybondtohappen
@@ -185,13 +189,13 @@ BattleScriptCommandsTable:
 .word atkB0_trysetspikes
 .word 0x802aaa5				@setforesight
 .word 0x802aad5				@setperishsong
-.word 0x802ab8d				@rolloutdamagecalculation
-.word 0x802ad09				@jumpifconfusedandattackmaxed
-.word 0x802ad71				@furycutterdamagecalculation
+.word atkB3_rolloutdamagecalculation
+.word atkB4_jumpifconfusedandstatmaxed
+.word atkB5_furycuttercalc		@furycutterdamagecalculation
 .word 0x802ae25				@happinesstodamagecalculation
-.word 0x802aea9				@presentdamagecalculation
+.word atkB7_presentdamagecalculation
 .word 0x802af75				@setsafeguard
-.word 0x802b01d				@magnitudedamagecalculation
+.word atkB9_magnitudedamagecalculation
 .word atkBA_jumpifnopursuitswitchdmg
 .word atkBB_setsunny
 .word 0x802b32d				@maxattackhalvehp
@@ -202,19 +206,19 @@ BattleScriptCommandsTable:
 .word 0x802b679				@hiddenpowerdamagecalculation
 .word atkC2_selectfirstvalidtarget	@selectnexttarget
 .word atkC3_trysetfutureattack		@setfutureattack
-.word 0x802b911				@beatupcalculation
+.word atkC4_trydobeatup			@beatupcalculation
 .word atkC5_setsemiinvulnerablebit
 .word atkC6_clearsemiinvulnerablebit
 .word 0x802bc35				@setminimize
 .word atkC8_sethail
-.word 0x802bccd				@jumpifattackandspecialattackcannotfall
-.word 0x802bd69				@setforcedtarget
+.word atkC9_jumpifattackandspecialattackcannotfall
+.word atkCA_setforcedtarget
 .word 0x802bdb5				@setcharge
 .word atkCC_callterrainattack
 .word 0x802be8d				@cureifburnedparalysedorpoisoned
 .word 0x802bf11				@settorment
-.word 0x802bf69				@jumpifnodamage
-.word 0x802bfc5				@settaunt
+.word atkCF_jumpifnodamage
+.word atkD0_settaunt
 .word 0x802c039				@sethelpinghand
 .word atkD2_tryswapitems		@itemswap
 .word atkD3_trycopyability		@copyability
@@ -228,7 +232,7 @@ BattleScriptCommandsTable:
 .word atkDB_tryimprision		@imprisoneffect
 .word 0x802c875				@setgrudge
 .word 0x802c8cd				@weightdamagecalculation
-.word 0x802c965				@assistattackselect
+.word atkDE_asistattackselect
 .word 0x802cae5				@setmagiccoat
 .word 0x802cb69				@setstealstatchange
 .word 0x802cbe5				@atke1
@@ -254,3 +258,44 @@ BattleScriptCommandsTable:
 .word 0x802dfed				@removeattackerstatus1
 .word 0x802e015				@finishaction
 .word 0x802e021				@finishturn
+.word atkF8_callasm
+.word atkF9_sethalfword
+.word atkFA_setword
+.word atkFB_setspecialstatusbit
+.word atkFC_clearspecialstatusbit
+.word atkFD_jumpifabilitypresenttargetfield
+.word atkFE_jumpifspecies
+.word atkFF_callsecondarytable
+
+gBattleScriptingCommandsTable2:
+.word NULL
+.word NULL
+.word atkFF02_cureprimarystatus
+.word atkFF03_jumpifpartnerattack
+.word NULL
+.word NULL
+.word atkFF06_setterrain
+.word atkFF07_jumpifhelditemeffect
+.word atkFF08_counterclear
+.word atkFF09_jumpifcounter
+.word atkFF0A_setability
+.word NULL
+.word atkFF0C_jumpiftargetpartner
+.word NULL
+.word atkFF0E_setcounter
+.word atkFF0F_jumpifgrounded
+.word atkFF10_jumpifhelditem
+.word 0x8029049					@refreshhpbar
+.word atkFF12_jumpifhealthcomparestomax
+.word atkFF13_setdamagetobankhealthpercent
+.word atkFF14_jumpiftypepresent
+.word atkFF15_jumpifstatcanbemodified
+.word atkFF16_jumpifnoviablemonsleft
+.word atkFF17_setsidestatus
+.word atkFF18_clearsidestatus
+.word atkFF19_formchange
+.word atkFF1A_jumpifabilitypresentattackerfield
+.word atkFF1B_tryactivateswitchinability
+.word atkFF1C_handletrainerslidemsg
+.word atkFF1D_trytrainerslidefirstdownmsg
+.word atkFF1E_trainerslideout

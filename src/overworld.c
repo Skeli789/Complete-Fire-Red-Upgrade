@@ -422,28 +422,48 @@ void InitTrainerBattleVariables(void)
 
 void BattleSetup_StartTrainerBattle(void)
 {
-    if (gApproachingTrainerId == 2 || FlagGet(TWO_OPPONENT_FLAG))
-        gBattleTypeFlags = (BATTLE_TYPE_DOUBLE | BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_TRAINER);
-    else
-        gBattleTypeFlags = (BATTLE_TYPE_TRAINER);
-		
-	if (FlagGet(TAG_BATTLE_FLAG))
-		gBattleTypeFlags |= (BATTLE_TYPE_DOUBLE | BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_INGAME_PARTNER /* | BATTLE_TYPE_MULTI*/);
-	
 	if (FlagGet(BATTLE_TOWER_FLAG))
-		gBattleTypeFlags |= BATTLE_TYPE_FRONTIER;
-	
-	#ifdef CONTINUE_LOST_BATTLES
-		if (Var8000 != 0xFEFE && sTrainerBattleMode == TRAINER_BATTLE_OAK_TUTORIAL && sTrainerBattleOakTutorialHelper & 3)
+	{
+		gBattleTypeFlags |= (BATTLE_TYPE_FRONTIER | BATTLE_TYPE_TRAINER);
+		
+		switch (BATTLE_TOWER_BATTLE_TYPE) {
+			case BATTLE_TOWER_DOUBLE:
+				gBattleTypeFlags |= BATTLE_TYPE_DOUBLE;
+				break;
+			case BATTLE_TOWER_MULTI:
+				gBattleTypeFlags |= (BATTLE_TYPE_DOUBLE | BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_INGAME_PARTNER);
+				break;
+			case BATTLE_TOWER_LINK_MULTI:
+				gBattleTypeFlags |= (BATTLE_TYPE_DOUBLE | BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_MULTI);
+				break;
+		}
+	}
+	else
+	{
+		if (gApproachingTrainerId == 2 || FlagGet(TWO_OPPONENT_FLAG))
+			gBattleTypeFlags = (BATTLE_TYPE_DOUBLE | BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_TRAINER);
+		else
+			gBattleTypeFlags = (BATTLE_TYPE_TRAINER);
+			
+		if (FlagGet(TAG_BATTLE_FLAG))
+			gBattleTypeFlags |= (BATTLE_TYPE_DOUBLE | BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_INGAME_PARTNER /* | BATTLE_TYPE_MULTI*/);
+				
+		#ifdef CONTINUE_LOST_BATTLES
+			#ifdef TUTORIAL_BATTLES
+				if (Var8000 != 0xFEFE && sTrainerBattleMode == TRAINER_BATTLE_OAK_TUTORIAL && sTrainerBattleOakTutorialHelper & 3)
+					gBattleTypeFlags |= BATTLE_TYPE_OAK_TUTORIAL;
+			#endif
+		#else
+			#ifdef TUTORIAL_BATTLES
+				if (sTrainerBattleMode == TRAINER_BATTLE_OAK_TUTORIAL && sTrainerBattleOakTutorialHelper & 3)
+					gBattleTypeFlags |= BATTLE_TYPE_OAK_TUTORIAL;
+			#endif
+		#endif
+		
+		if (FlagGet(ACTIVATE_TUTORIAL_FLAG)) {
 			gBattleTypeFlags |= BATTLE_TYPE_OAK_TUTORIAL;
-	#else
-		if (sTrainerBattleMode == TRAINER_BATTLE_OAK_TUTORIAL && sTrainerBattleOakTutorialHelper & 3)
-			gBattleTypeFlags |= BATTLE_TYPE_OAK_TUTORIAL;
-	#endif
-	
-	if (FlagGet(ACTIVATE_TUTORIAL_FLAG)) {
-		gBattleTypeFlags |= BATTLE_TYPE_OAK_TUTORIAL;
-		sTrainerBattleMode = TRAINER_BATTLE_OAK_TUTORIAL;
+			sTrainerBattleMode = TRAINER_BATTLE_OAK_TUTORIAL;
+		}
 	}
 	
     gMain.savedCallback = CB2_EndTrainerBattle;

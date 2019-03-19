@@ -63,7 +63,7 @@ enum
     REQUEST_BEAUTY_RIBBON_BATTLE,
     REQUEST_CUTE_RIBBON_BATTLE,
     REQUEST_SMART_RIBBON_BATTLE,
-    REQUEST_TOUGH_RIBBON_BATTLE,
+    REQUEST_FORM_CHANGE_BATTLE, //Was REQUEST_TOUGH_RIBBON_BATTLE
 };
 
 #define RESET_ACTION_MOVE_SELECTION     0
@@ -115,7 +115,9 @@ struct ChooseMoveStruct
 	u8 monType3;
 	bool8 canMegaEvolve;
 	u8 megaVariance;
-	bool8 canZMoveBanks;
+	bool8 zMoveUsed : 1;
+	bool8 megaDone : 1;
+	bool8 bank : 8;
 	u16 possibleZMoves[MAX_MON_MOVES];
 };
 

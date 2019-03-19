@@ -1,15 +1,29 @@
 #include "defines.h"
+#include "defines.h"
 #include "helper_functions.h"
 #include "catching.h"
 
-//Put check for Wild Double Battle in Item Use code
-//Figure out how to check Surfing for Dive Ball
-//Make it so you can't catch Semi-Invulnerable targets
+#define gOpenPokeballGfx (u8*) 0x8D022E8
+
+extern const struct BallIdItemIdRelation BallIdItemIdRelations[];
+extern const struct CompressedSpriteSheet gBallSpriteSheets[];
+extern const struct CompressedSpritePalette gBallSpritePalettes[];
+
+extern u8 gText_CantAimAtTwoTargets[];
+extern u8 gText_CantAimAtSemiInvulnerableTarget[];
 
 void atkEF_handleballthrow(void);
 u8 GetCatchingBattler(void);
 bool8 CriticalCapture(u32 odds);
 u8 GiveMonToPlayer(pokemon_t* mon);
+u8 ItemIdToBallId(u16 ballItem);
+item_t BallIdToItemId(u8 ballId);
+u16 GetBattlerPokeballItemId(u8 bank);
+bool8 DoubleWildPokeBallItemUseFix(u8 taskId);
+pokemon_t* LoadTargetPartyData(void);
+
+extern void TryFormRevert(pokemon_t* mon);
+extern void TryRevertMega(pokemon_t* mon);
 
 void atkEF_handleballthrow(void) {
 	if (gBattleExecBuffer) return;
@@ -52,7 +66,7 @@ void atkEF_handleballthrow(void) {
 		#endif
     }
 	
-	else if (gBattleTypeFlags & BATTLE_TYPE_GHOST || FlagGet(NO_CATCHING_FLAG) || FlagGet(NO_CATCHING_AND_RUNNING_FLAG)) {
+	else if ((gBattleTypeFlags & BATTLE_TYPE_GHOST) || FlagGet(NO_CATCHING_FLAG) || FlagGet(NO_CATCHING_AND_RUNNING_FLAG)) {
 		EmitBallThrow(0, 6);
 		MarkBufferBankForExecution(gActiveBattler);
 		gBattlescriptCurrInstr = BattleScript_DodgedBall;
@@ -71,7 +85,7 @@ void atkEF_handleballthrow(void) {
         if (ItemType == BALL_TYPE_SAFARI_BALL)
             catch_rate = udivsi(gBattleStruct->safariCatchFactor * 1275, 100);
         else
-            catch_rate = gBaseStats[defSpecies].catchRate;
+            catch_rate = gBaseStats[GetBankPartyData(gBankTarget)->species].catchRate; //Uses party data b/c Transform update Gen 5+
 		
         if (ItemType > 5) {
             switch (ItemType) {
@@ -243,7 +257,7 @@ void atkEF_handleballthrow(void) {
         }
         else
             ball_multiplier = sBallCatchBonuses[ItemType - BALL_TYPE_ULTRA_BALL];
-
+		
         odds = udivsi(((catch_rate * udivsi(ball_multiplier, 10)) * (gBattleMons[gBankTarget].maxHP * 3 - gBattleMons[gBankTarget].hp * 2)), (3 * gBattleMons[gBankTarget].maxHP));
 		
 		#ifndef NO_HARDER_WILD_DOUBLES
@@ -263,7 +277,7 @@ void atkEF_handleballthrow(void) {
 		#endif
 		
         if (gBattleMons[gBankTarget].status1 & (STATUS_SLEEP | STATUS_FREEZE))
-            odds = udivsi(250 * odds, 100);
+            odds = udivsi(odds * 250, 100);
         if (gBattleMons[gBankTarget].status1 & (STATUS_PSN_ANY | STATUS_BURN | STATUS_PARALYSIS))
             odds = udivsi((odds * 150), 100);
 
@@ -294,7 +308,7 @@ void atkEF_handleballthrow(void) {
         else { //Poke may be caught, calculate shakes
             u8 shakes, maxShakes;
 			if (CriticalCapture(odds))
-				maxShakes = 1;
+				maxShakes = 2;
 			else
 				maxShakes = 4;
 			
@@ -339,6 +353,10 @@ u8 GetCatchingBattler(void) {
 }
 
 bool8 CriticalCapture(u32 odds) {
+	#ifndef CRITICAL_CAPTURE
+		odds += 1; //So the compiler doesn't complain
+		return FALSE;
+	#else
 	u16 PokesCaught = GetNationalPokedexCount(FLAG_GET_CAUGHT);
 	if (PokesCaught <= 30)
 		odds = 0;
@@ -355,13 +373,23 @@ bool8 CriticalCapture(u32 odds) {
 	
 	odds = udivsi(odds, 6);
 	if (umodsi(Random(), 0xFF) < odds)
+	{
+		gNewBS->criticalCapture = TRUE;
 		return TRUE;
+	}
 	else
-		return FALSE;	
+	{
+		gNewBS->criticalCapture = FALSE;
+		return FALSE;
+	}
+	#endif
 }
 
 u8 GiveMonToPlayer(pokemon_t* mon) { //Hook in
     int i;
+
+	TryFormRevert(mon);
+	TryRevertMega(mon);
 
     SetMonData(mon, MON_DATA_OT_NAME, gSaveBlock2->playerName);
     SetMonData(mon, MON_DATA_OT_GENDER, &gSaveBlock2->playerGender);
@@ -383,4 +411,114 @@ u8 GiveMonToPlayer(pokemon_t* mon) { //Hook in
     CopyMon(&gPlayerParty[i], mon, sizeof(*mon));
     gPlayerPartyCount = i + 1;
     return 0;
+}
+
+u8 ItemIdToBallId(u16 ballItem)
+{
+	switch (ballItem) {
+		case ITEM_POKE_BALL:
+			return 0;
+		case ITEM_GREAT_BALL:
+			return 1;
+		case ITEM_SAFARI_BALL:
+			return 2;
+		case ITEM_ULTRA_BALL:
+			return 3;
+		case ITEM_MASTER_BALL:
+			return 4;
+		default:
+			if (ItemId_GetType(ballItem) > 0)
+				return ItemId_GetType(ballItem) - 1;
+			else
+				return 0;
+	}
+}
+
+void LoadBallGfx(u8 ballId)
+{
+    u16 var;
+    if (GetSpriteTileStartByTag(gBallSpriteSheets[ballId].tag) == 0xFFFF)
+    {
+        LoadCompressedSpriteSheetUsingHeap(&gBallSpriteSheets[ballId]);
+        LoadCompressedSpritePaletteUsingHeap(&gBallSpritePalettes[ballId]);
+    }
+    switch (ballId + 1) {
+		case BALL_TYPE_MASTER_BALL:
+		case BALL_TYPE_ULTRA_BALL:
+		case BALL_TYPE_GREAT_BALL:
+		case BALL_TYPE_POKE_BALL:
+		case BALL_TYPE_SAFARI_BALL:
+		case BALL_TYPE_NET_BALL:
+		case BALL_TYPE_NEST_BALL:
+		case BALL_TYPE_REPEAT_BALL:
+		case BALL_TYPE_TIMER_BALL:
+			var = GetSpriteTileStartByTag(gBallSpriteSheets[ballId].tag);
+			LZDecompressVram(gOpenPokeballGfx, (void*)(VRAM + 0x10100 + var * 32));
+			break;
+    }
+}
+
+item_t BallIdToItemId(u8 ballId)
+{
+	for (int i = 0; i < NUM_BALLS; ++i)
+	{
+		if (BallIdItemIdRelations[i].ballId == ballId)
+			return BallIdItemIdRelations[i].itemId;
+	}
+	
+	return ITEM_NONE;
+}
+
+u16 GetBattlerPokeballItemId(u8 bank)
+{
+	u8 ballId;
+
+    if (SIDE(bank) == B_SIDE_PLAYER)
+	{
+        ballId = GetMonData(&gPlayerParty[gBattlerPartyIndexes[bank]], MON_DATA_POKEBALL, 0);
+	}
+    else
+	{
+        ballId = GetMonData(&gEnemyParty[gBattlerPartyIndexes[bank]], MON_DATA_POKEBALL, 0);
+	}
+		
+	return BallIdToItemId(ballId);
+}
+
+bool8 CriticalCapturAnimUpdate(void)
+{
+	return gNewBS->criticalCapture;
+}
+
+bool8 DoubleWildPokeBallItemUseFix(u8 taskId)
+{
+	bool8 effect = FALSE;
+
+	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	{
+		if (BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT))
+		&& BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT)))
+		{
+			DisplayItemMessage(taskId, 2, gText_CantAimAtTwoTargets, bag_menu_inits_lists_menu);
+			effect = TRUE;
+		}
+		else if ((BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)) && BATTLER_SEMI_INVULERABLE(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)))
+		||       (BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT)) && BATTLER_SEMI_INVULERABLE(GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT))))
+		{
+			DisplayItemMessage(taskId, 2, gText_CantAimAtSemiInvulnerableTarget, bag_menu_inits_lists_menu);
+			effect = TRUE;
+		}
+	}
+	else if (BATTLER_SEMI_INVULERABLE(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)))
+	{
+		DisplayItemMessage(taskId, 2, gText_CantAimAtSemiInvulnerableTarget, bag_menu_inits_lists_menu);
+		effect = TRUE;
+	}
+
+	return effect;
+}
+
+pokemon_t* LoadTargetPartyData(void)
+{
+	return GetBankPartyData(gBankTarget);
 }

@@ -33,6 +33,13 @@ struct WildPokemonHeader
 
 extern const struct WildPokemonHeader gWildMonHeaders[];
 
+struct SwarmData
+{
+	u8 mapName;
+	u16 species;
+};
+
+/*
 void DisableWildEncounters(bool8 disabled);
 bool8 StandardWildEncounter(u16 currMetaTileBehavior, u16 previousMetaTileBehavior);
 void ScrSpecial_RockSmashWildEncounter(void);
@@ -43,5 +50,6 @@ u16 GetLocalWildMon(bool8 *isWaterMon);
 u16 GetLocalWaterMon(void);
 bool8 UpdateRepelCounter(void);
 void sub_8082740(u8);
+*/
 
 #endif // GUARD_WILD_ENCOUNTER_H

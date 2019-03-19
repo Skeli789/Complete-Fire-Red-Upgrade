@@ -2,6 +2,10 @@
 #include "helper_functions.h"
 
 extern move_t MinimizeHitTable[];
+extern move_t IgnoreAirTable[];
+extern move_t IgnoreUndergoundTable[];
+extern move_t IgnoreUnderwaterTable[];
+extern move_t AlwaysHitRainTable[];
 extern const struct SpecialZMoves SpecialZMoveTable[];
 
 extern s8 PriorityCalc(u8 bank, u8 action, u16 move);
@@ -9,6 +13,9 @@ extern s32 BracketCalc(u8 bank);
 extern u32 SpeedCalc(u8 bank);
 extern u8 CheckMoveLimitations(u8 bank, u8 unusableMoves, u8 check);
 extern u32 AI_CalcDmg(u8 bankAtk, u8 bankDef, u16 move);
+extern bool8 IsMega(u8 bank);
+extern bool8 IsBluePrimal(u8 bank);
+extern bool8 IsRedPrimal(u8 bank);
 
 bool8 CanKillAFoe(u8 bank);
 bool8 CanKnockOut(u8 bankAtk, u8 bankDef);
@@ -24,6 +31,11 @@ bool8 GetHealthPercentage(u8 bank);
 bool8 TeamFullyHealedMinusBank(u8 bank);
 bool8 HasProtectionMoveInMoveset(u8 bank, bool8 AllKinds);
 move_t ShouldAIUseZMove(u8 bank, u8 moveIndex, u16 move);
+u8 aiAllStatChecks(u8 viability, u8 bank, u8 cmpVal);
+bool8 MoveTypeInMoveset(u8 bank, u8 moveType);
+bool8 HasSnatchableMove(u8 bank);
+bool8 PartyMemberStatused(u8 bank);
+
 
 bool8 CanKillAFoe(u8 bank) {
 	u8 foe = FOE(bank);
@@ -149,8 +161,6 @@ bool8 IsStrongestMove(u16 currentMove, u8 bankAtk, u8 bankDef) {
 }
 
 bool8 MoveWillHit(u16 move, u8 bankAtk, u8 bankDef) {
-	u8 moveEffect = gBattleMoves[move].effect;
-	
 	#ifdef REALLY_SMART_AI
 		u8 defAbility = BATTLE_HISTORY->abilities[bankDef];
 	#else
@@ -162,9 +172,9 @@ bool8 MoveWillHit(u16 move, u8 bankAtk, u8 bankDef) {
 	||  (gStatuses3[bankDef] & STATUS3_ALWAYS_HITS && gDisableStructs[bankDef].bankWithSureHit == bankAtk))
 		return TRUE;
 	
-	if (((gStatuses3[bankDef] & (STATUS3_IN_AIR | STATUS3_SKY_DROP_ATTACKER | STATUS3_SKY_DROP_TARGET)) && moveEffect != EFFECT_THUNDER && moveEffect != EFFECT_TWISTER) //Includes Hurricane
-    ||  ((gStatuses3[bankDef] & STATUS3_UNDERGROUND) && moveEffect != EFFECT_EARTHQUAKE && move != EFFECT_MAGNITUDE)
-    ||  ((gStatuses3[bankDef] & STATUS3_UNDERWATER) && move != MOVE_SURF)
+	if (((gStatuses3[bankDef] & (STATUS3_IN_AIR | STATUS3_SKY_DROP_ATTACKER | STATUS3_SKY_DROP_TARGET)) && !CheckTableForMove(move, IgnoreAirTable))
+    ||  ((gStatuses3[bankDef] & STATUS3_UNDERGROUND) && !CheckTableForMove(move, IgnoreUndergoundTable))
+    ||  ((gStatuses3[bankDef] & STATUS3_UNDERWATER) && !CheckTableForMove(move, IgnoreUnderwaterTable))
     ||   (gStatuses3[bankDef] & STATUS3_DISAPPEARED))
 		return FALSE;
 		
@@ -172,12 +182,12 @@ bool8 MoveWillHit(u16 move, u8 bankAtk, u8 bankDef) {
 	||  (CheckTableForMove(move, MinimizeHitTable) && gStatuses3[bankDef] & STATUS3_MINIMIZED)
 	|| ((gStatuses3[bankDef] & STATUS3_TELEKINESIS) && gBattleMoves[move].effect != EFFECT_0HKO)
 	||  gBattleMoves[move].accuracy == 0
-	|| (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_RAIN_ANY) && gBattleMoves[move].effect == EFFECT_THUNDER))
+	|| (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_RAIN_ANY) && CheckTableForMove(move, AlwaysHitRainTable)))
 		return TRUE;
 	
 	return FALSE;
 }
-
+	
 bool8 MoveWouldHitFirst(u16 move, u16 bankAtk, u16 bankDef) {
 	u32 temp;
 	u32 bankAtkSpeed, bankDefSpeed;
@@ -193,7 +203,7 @@ bool8 MoveWouldHitFirst(u16 move, u16 bankAtk, u16 bankDef) {
 //SpeedCalc
 	bankAtkSpeed = SpeedCalc(bankAtk);
 	bankDefSpeed = SpeedCalc(bankDef);
-	if (TrickRoomTimer) {
+	if (gNewBS->TrickRoomTimer) {
 		temp = bankDefSpeed;
 		bankDefSpeed = bankAtkSpeed;
 		bankAtkSpeed = temp;
@@ -383,21 +393,35 @@ bool8 HasProtectionMoveInMoveset(u8 bank, bool8 AllKinds) {
 
 u16 ShouldAIUseZMove(u8 bank, u8 moveIndex, u16 move) {
 	int i;
+	bool8 isSpecialZCrystal = FALSE;
+	
 	if (move == 0)
 		move = gBattleMons[bank].moves[moveIndex];
 		
-	if (MegaData->partyIndex[SIDE(bank)] & gBitTable[gBattlerPartyIndexes[bank]])
+	if (IsMega(bank) 
+	|| IsRedPrimal(bank) 
+	|| IsBluePrimal(bank))
+	{
 		return FALSE;
+	}
 	
-	if (gItems[SanitizeItemId(gBattleMons[bank].item)].holdEffect == ITEM_EFFECT_Z_CRYSTAL) {
-		for (i = 0; SpecialZMoveTable[i].species != 0xFFFF; ++i) {
-			if (SpecialZMoveTable[i].species == gBattleMons[bank].species
-			&&	SpecialZMoveTable[i].item == gBattleMons[bank].item
-			&&  SpecialZMoveTable[i].move == move)
-				return SpecialZMoveTable[i].move;
+	if (gItems[SanitizeItemId(gBattleMons[bank].item)].holdEffect == ITEM_EFFECT_Z_CRYSTAL
+	||  ITEM(bank) == ITEM_ULTRANECROZIUM_Z) //The only "Mega Stone" that let's you use a Z-Move
+	{
+		for (i = 0; SpecialZMoveTable[i].species != 0xFFFF; ++i) 
+		{
+			if (SpecialZMoveTable[i].item == ITEM(bank))
+			{
+				isSpecialZCrystal = TRUE;
+				if (SpecialZMoveTable[i].species == SPECIES(bank)
+				&&  SpecialZMoveTable[i].move == move)
+				{
+					return SpecialZMoveTable[i].zmove;
+				}
+			}
 		}
 		
-		if (gBattleMoves[move].type == ITEM_QUALITY(bank)) {
+		if (gBattleMoves[move].type == ITEM_QUALITY(bank) && !isSpecialZCrystal) {
 			if (SPLIT(move) == SPLIT_STATUS)
 				return 0xFFFF;
 			else if (gBattleMoves[move].type < TYPE_FIRE)
@@ -408,3 +432,50 @@ u16 ShouldAIUseZMove(u8 bank, u8 moveIndex, u16 move) {
 	}
 	return FALSE;
 }
+
+//AI function to successively decrease viability for decreased stats
+u8 aiAllStatChecks(u8 viability, u8 bank, u8 cmpVal) {
+	u8 statId;
+	
+	for (statId = 0; statId < BATTLE_STATS_NO - 1; ++statId) 
+	{
+		if (gBattleMons[bank].statStages[statId] < cmpVal)
+			viability -= 6;
+			// multiple of reduction value?
+	}
+	return viability;
+}
+
+
+// AI function to check if any move is of given type
+bool8 MoveTypeInMoveset(u8 bank, u8 moveType) {
+	u8 i;
+	for (i = 0; i <= 4; ++i)
+	{
+		if (gBattleMoves[gBattleMons[bank].moves[i]].type == moveType)
+			return TRUE;
+	}
+	return FALSE;
+}
+
+// AI Function to check if bank has a snatchable move in moveset
+bool8 HasSnatchableMove(u8 bank) {
+	u8 i;
+	for (i = 0; i <= 4; ++i)
+	{
+		if (gBattleMoves[gBattleMons[bank].moves[i]].flags & FLAG_SNATCH_AFFECTED)
+			return TRUE;
+	}
+	return FALSE;
+}
+
+// AI function to see if a party member (attacker or attacker partner) has a primary status
+bool8 PartyMemberStatused(u8 bank) {
+	if (gBattleMons[bank].status1 & STATUS_ANY)
+		return TRUE;
+	else if (gBattleMons[PARTNER(bank)].status1 & STATUS_ANY)
+		return TRUE;
+	else
+		return FALSE;	
+}
+

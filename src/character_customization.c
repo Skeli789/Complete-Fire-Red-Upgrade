@@ -89,7 +89,7 @@ u16 GetBackspriteId(void) {
     {
         if ((gLinkPlayers[GetMultiplayerId()].version & 0xFF) == VERSION_FIRE_RED
         || (gLinkPlayers[GetMultiplayerId()].version & 0xFF) == VERSION_LEAF_GREEN)
-            trainerPicId = gLinkPlayers[GetMultiplayerId()].gender + BACK_PIC_RED;
+            trainerPicId = gLinkPlayers[GetMultiplayerId()].gender;
         else
             trainerPicId = gLinkPlayers[GetMultiplayerId()].gender + BACK_PIC_BRENDAN;
     }
