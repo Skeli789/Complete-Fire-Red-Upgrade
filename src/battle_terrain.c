@@ -139,11 +139,11 @@ u8 LoadBattleBG_TerrainID(void) {
 		u8 trainerClass = gTrainers[gTrainerBattleOpponent_A].trainerClass;
 		u8 trainerClassB = gTrainers[SECOND_OPPONENT].trainerClass;
 		#ifdef OVERWRITE_BG_FOR_LEADER_CHAMPION
-			if (trainerClass == TRAINER_CLASS_LEADER || trainerClassB == TRAINER_CLASS_LEADER)
+			if (trainerClass == CLASS_LEADER || trainerClassB == CLASS_LEADER)
 			{
 				terrain = 12;
 			}
-			else if (trainerClass == TRAINER_CLASS_CHAMPION || trainerClassB == TRAINER_CLASS_CHAMPION)
+			else if (trainerClass == CLASS_CHAMPION || trainerClassB == CLASS_CHAMPION)
 			{
 				terrain = 19;
 			}
