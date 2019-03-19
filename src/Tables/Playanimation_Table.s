@@ -818,6 +818,7 @@ ANIM_LOAD_ABILITY_POP_UP:
 	pokespritetoBG side_attacker
 	launchtask AnimTask_LoadAbilityPopUp 0x5 0x0
 	waitanimation
+	pause 0x20
 	pokespritefromBG side_attacker
 	endanimation
 

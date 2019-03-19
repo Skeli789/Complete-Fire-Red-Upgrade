@@ -140,7 +140,6 @@ BattleScript_IntimidateActivatesReturn:
 BattleScript_TraceActivates:
 	callasm TransferAbilityPopUpHelperAsTrace
 	playanimation BANK_SCRIPTING ANIM_LOAD_ABILITY_POP_UP 0x0
-	pause 0x20
 	call BattleScript_AbilityPopUpRevert
 	clearspecialstatusbit BANK_ATTACKER STATUS3_SWITCH_IN_ABILITY_DONE
 	call BattleScript_AbilityPopUp
@@ -195,7 +194,6 @@ BattleScript_AttackerAbilityStatRaise:
 
 BattleScript_SwitchInAbilityMsg:
 	call BattleScript_AbilityPopUp
-	pause DELAY_HALFSECOND
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
@@ -258,7 +256,6 @@ EmergencyExitFleeBS:
 EmergencyExitSwitchBS:
 	jumpifcannotswitch BANK_SCRIPTING EmergencyExitReturn
 	call BattleScript_AbilityPopUp
-	pause DELAY_HALFSECOND
 	playanimation BANK_SCRIPTING ANIM_CALL_BACK_POKEMON 0x0
 	callasm MakeScriptingBankInvisible
 	call BattleScript_AbilityPopUpRevert
