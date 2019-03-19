@@ -1,6 +1,5 @@
 //Add ,move to NO_MOLD_BREAKERS
-
-
+// fix entry hazards
 
 #include "..\\defines.h"
 #include "AI_Helper_Functions.h"
@@ -29,8 +28,7 @@ extern ability_t EntrainmentBanTableAttacker[];
 
 enum {IN_AIR, GROUNDED};
 
-u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move) {
-	u8 viability = 100;
+u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 	u8 decreased;
 	u8 i;
 	
@@ -90,21 +88,21 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move) {
 		}
 	#endif
 	// Gravity Table Prevention Check
-	if ((gNewBS->GravityTimer > 0) && CheckTableForMove(move, GravityBanTable))
+	if ((gNewBS->GravityTimer != 0) && CheckTableForMove(move, GravityBanTable))
 		return 0; //Can't select this move period
 
 	// Ungrounded check (need air balloon in CheckGrounding)
-	if ((CheckGrounding(bankDef) == IN_AIR) && (moveType==TYPE_GROUND)) {
+	if ((CheckGrounding(bankDef) == IN_AIR) && (moveType == TYPE_GROUND)) {
 		return viability = 0;
 	}
 		
 	// Powder Move Checks (safety goggles, defender has grass type, overcoat, and powder move table)
-	if ((defEffect == ITEM_EFFECT_SAFETY_GOGGLES || IsOfType(bankDef, TYPE_GRASS || defAbility == ABILITY_OVERCOAT))
+	if ((defEffect == ITEM_EFFECT_SAFETY_GOGGLES) || IsOfType(bankDef, TYPE_GRASS) || defAbility == ABILITY_OVERCOAT)
 	&& CheckTableForMove(move, PowderTable))
 		viability -= 10; //No return b/c could be reduced further by absorb abilities
 		
 	//Target Ability Checks
-	if (NO_MOLD_BREAKERS(bankAtk) || !CheckTableForMove(move, MoldBreakerMoves)) {
+	if (NO_MOLD_BREAKERS(bankAtk) || (!CheckTableForMove(move, MoldBreakerMoves))) {
 		switch (defAbility) {
 			
 			// type-specific ability checks - primordial weather handled separately
