@@ -169,5 +169,5 @@ ExpandedVarsHook 806E454 1
 ExpandedFlagsHook 806E5C0 1
 
 ##Other Hooks
-BattlePokemonScriptCommand_GiveHiddenAbilityHook 80A02EA 0
+BattlePokemonScriptCommand_GiveHiddenAbilityHook 80A02EC 0
 DaycareInheritHiddenAbility 8046116 0
