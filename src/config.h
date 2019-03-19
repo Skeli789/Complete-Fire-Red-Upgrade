@@ -30,6 +30,7 @@
 #define SCALE_TRAINER_LEVELS_FLAG 0x90D //If this flag is set, all Trainer Pokemon levels will be set to the highest in your party
 #define HIDDEN_ABILITY_FLAG 0x90E //If this flag is set, generated wild Pokemon will have their hidden abilities
 #define DOUBLE_WILD_BATTLE_FLAG 0x90F //If this flag is set, a wild battles will be against two Pokemon
+#define NO_RANDOM_WILD_ENCOUNTERS_FLAG 0x910 //If this is set, wild Pokemon won't appear when walking/surfing in grass, caves, water, etc.
 
 #define SECOND_OPPONENT_VAR 0x5010 //Set this to the var used to store the Trainer Id of the second opponent in Multi Battles (can be any free var)
 #define PARTNER_VAR 0x5011 //Set this to the var used to store the Trainer Id of your partner in Multi Battles (can be any free var)
