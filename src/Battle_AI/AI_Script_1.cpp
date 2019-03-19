@@ -2,13 +2,32 @@
 #include "AI_Helper_Functions.h"
 #include "..\\Helper_Functions.h"
 
-/*
+
 
 u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 	//u8 viability = 100;
+	
 	// get relevant params
 	u8 moveEffect = gBattleMoves[move].effect;
+	u8 bankAtkPartner = PARTNER(bankAtk);
+	u8 bankDefPartner = PARTNER(bankDef);
+	
+	u16 atkItem = ITEM(bankAtk);
+	u16 defItem = ITEM(bankDef);
 	u8 atkItemEffect = ITEM_EFFECT(bankAtk);
+	u8 defItemEffect = ITEM_EFFECT(bankDef);
+	u8 atkItemQuality = ITEM_QUALITY(bankAtk);
+	
+	u8 atkAbility = ABILITY(bankAtk);
+	u8 defAbility = ABILITY(bankDef);
+	
+	u32 atkStatus1 = gBattleMons[bankAtk].status1;
+	u32 atkStatus2 = gBattleMons[bankAtk].status2;
+	u32 atkStatus3 = gBattleMons[bankAtk].status3;
+	u32 defStatus1 = gBattleMons[bankDef].status1;
+	u32 defStatus2 = gBattleMons[bankDef].status2;
+	u32 defStatus3 = gBattleMons[bankDef].status3;
+	
 	
 	
 	switch (moveEffect) {
@@ -27,92 +46,216 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 			break;
 			
 		case EFFECT_ABSORB:
-			// to do
+		AI_DRAIN_HP_CHECK: ;
+			if (atkItemEffect == ITEM_EFFECT_BIGROOT || GetHealthPercentage(bankAtk) <= 50)
+				viability += 5;
 			break;
 			
 		case EFFECT_EXPLOSION:
 		case EFFECT_MEMENTO:
-			// to do
+			if (atkItemEffect == ITEM_EFFECT_GEM)
+			{
+				if (atkItemQuality == 0)
+					viability += 6;
+				break;
+			}
+			else if (atkItemEffect == ITEM_EFFECT_CUSTAP_BERRY)
+			{
+				if (GetHealthPercentage(bankAtk) <= 25)
+					viability += 6;
+				break;
+			}
 			break;
 			
 		case EFFECT_DREAM_EATER:
-			// to do
-			break;
+			if (defAbility == ABILITY_COMATOSE)
+				viability += 5;
+			else if (defStatus1 & STATUS1_SLEEP)
+				viability += 5;
+			goto AI_DRAIN_HP_CHECK;
 			
 		// increased stat effects
 		case EFFECT_ATTACK_UP:
 		case EFFECT_ATTACK_UP_2:
 		AI_ATTACK_PLUS: ;
-			// to do
+			if (move == MOVE_HONECLAWS)
+			{
+				if (STAT_STAGE(bankAtk,STAT_STAGE_ATK) > 7)
+					goto AI_ACCURACY_PLUS;
+				else if (PhysicalMoveInMoveset(bankAtk))
+					viability += 6;
+				goto AI_ACCURACY_PLUS;
+			}
+			else
+			{
+				if (STAT_STAGE(bankAtk,STAT_STAGE_ATK) > 7)
+					break;
+				else if (PhysicalMoveInMoveset(bankAtk))
+					viability += 6;
+				break;
+			}
 			break;
 			
 		case EFFECT_DEFENSE_UP:
 		case EFFECT_DEFENSE_UP_2:
 		AI_DEFENSE_PLUS: ;
-			// to do
-			break;
+			switch (move)
+			{
+				case MOVE_FLOWERSHIELD:
+					if (IsOfType(bankAtkPartner, TYPE_GRASS))
+					{
+						viability += 5;
+						break;
+					}
+					break;
+					
+				case MOVE_MAGNETICFLUX:
+					if (ABILITY(bankAtkPartner) == ABILITY_PLUS || ABILITY(bankAtkPartner) == ABILITY_MINUS)
+					{
+						viability += 5;
+						break;
+					}
+					else if (STAT_STAGE(bankDef,STAT_STAGE_ATK) > STAT_STAGE(bankDef,STAT_STAGE_SPATK))
+						break;
+					else
+						goto AI_SPDEF_PLUS;
+					
+				case MOVE_AROMATICMIST:
+					viability += 5;
+					break;
+			}
+			// continue defense check
+			if (STAT_STAGE(bankAtk,STAT_STAGE_DEF) > 7)
+				break;
+			else if (STAT_STAGE(bankDef,STAT_STAGE_ATK) > STAT_STAGE(bankDef,STAT_STAGE_SPATK) && atkAbility != ABILITY_CONTRARY)
+				viability += 5;
+			break;	
 			
 		case EFFECT_SPEED_UP:
 		case EFFECT_SPEED_UP_2:
 		AI_SPEED_PLUS: ;
-			// to do
+			if (MoveWouldHitFirst(move, bankAtk, bankDef))
+				break;
+			else if (atkAbility != ABILITY_CONTRARY)
+				viability += 6;
 			break;
 			
 		case EFFECT_SPECIAL_ATTACK_UP:
 		case EFFECT_SPECIAL_ATTACK_UP_2:
-			// to do
+		AI_SPATK_PLUS: ;
+			switch (move)
+			{
+				case MOVE_WORKUP:
+					if (PhysicalMoveInMoveset(bankAtk))
+						goto AI_ATTACK_PLUS;
+					else if (SpecialMoveInMoveset(bankAtk))
+						break;
+					goto FUNCTION_RETURN;
+					
+				case MOVE_ROTOTILLER:
+					if (IsOfType(bankAtkPartner,TYPE_GRASS))
+						viability += 5;
+					else if (PhysicalMoveInMoveset(bankAtk))
+						goto AI_ATTACK_PLUS;
+					else if (SpecialMoveInMoveset(bankAtk))
+						break;
+					goto FUNCTION_RETURN;
+					
+				case MOVE_GEARUP:
+					if (ABILITY(bankAtkPartner) == ABILITY_PLUS || ABILITY(bankAtkPartner) == ABILITY_MINUS)
+					{
+						viability += 5;
+						goto FUNCTION_RETURN;
+					}
+					else if (PhysicalMoveInMoveset(bankAtk))
+						goto AI_ATTACK_PLUS;
+					else if (SpecialMoveInMoveset(bankAtk))
+						break;
+					goto FUNCTION_RETURN;
+			}
+			// continue spatk plus check
+			if (STAT_STAGE(bankAtk,STAT_STAGE_SPATK) > 7)
+				break;
+			else if (SpecialMoveInMoveset(bankAtk) && atkAbility != ABILITY_CONTRARY)
+				viability += 6;
 			break;
 			
 		case EFFECT_SPECIAL_DEFENSE_UP:
 		case EFFECT_SPECIAL_DEFENSE_UP_2:
-			// to do
+		AI_SPDEF_PLUS: ;
+			if (STAT_STAGE(bankAtk,STAT_STAGE_SPDEF) > 7)
+				break;
+			else if (STAT_STAGE(bankDef,STAT_STAGE_SPATK) > STAT_STAGE(bankDef,STAT_STAGE_ATK) && atkAbility != ABILITY_CONTRARY)
+				viability += 5;
 			break;
 			
 		case EFFECT_ACCURACY_UP:
 		case EFFECT_ACCURACY_UP_2:
 		case EFFECT_MINIMIZE:
-			// to do 
+		AI_ACCURACY_PLUS: ;
+			if (STAT_STAGE(bankAtk,STAT_STAGE_ACC) < 6 && atkAbility != ABILITY_CONTRARY)
+				viability += 5;
 			break;
 			
 		case EFFECT_EVASION_UP:
 		case EFFECT_EVASION_UP_2:
-			// to do 
+			if (atkAbility != ABILITY_CONTRARY)
+				viability += 6;
 			break;
 			
 		// decreased stat effects 
 		case EFFECT_ATTACK_DOWN:
 		case EFFECT_ATTACK_DOWN_2:
-			// to do
+			if (STAT_STAGE(bankDef,STAT_STAGE_ATK) < 5)
+				break;
+			else if (STAT_STAGE(bankDef,STAT_STAGE_ATK) > STAT_STAGE(bankDef,STAT_STAGE_SPATK) && defAbility != ABILITY_CONTRARY)
+				viability += 3;
 			break;
 			
 		case EFFECT_DEFENSE_DOWN:
 		case EFFECT_DEFENSE_DOWN_2:
-			// to do
+			if (STAT_STAGE(bankDef,STAT_STAGE_DEF) < 5)
+				break;
+			else if (PhysicalMoveInMoveset(bankAtk) && defAbility != ABILITY_CONTRARY)
+				viability += 3;
 			break;
 			
 		case EFFECT_SPEED_DOWN:
 		case EFFECT_SPEED_DOWN_2:
-			// to do
+			if (MoveWouldHitFirst(move, bankAtk, bankDef))
+				break;
+			else if (defAbility != ABILITY_CONTRARY)
+				viability += 5;
 			break;
 			
 		case EFFECT_SPECIAL_ATTACK_DOWN:
 		case EFFECT_SPECIAL_ATTACK_DOWN_2:
-			// to do
+			if (STAT_STAGE(bankDef, STAT_STAGE_SPATK) < 5)
+				break;
+			else if (STAT_STAGE(bankDef, STAT_STAGE_SPATK) > STAT_STAGE(bankDef, STAT_STAGE_ATK) && defAbility != ABILITY_CONTRARY)
+				viability += 3;
 			break;
 			
 		case EFFECT_SPECIAL_DEFENSE_DOWN:
 		case EFFECT_SPECIAL_DEFENSE_DOWN_2:
-			// to do
+			if (STAT_STAGE(bankDef, STAT_STAGE_SPDEF) < 5)
+				break;
+			else if (SpecialMoveInMoveset(bankAtk) && defAbility != ABILITY_CONTRARY)
+				viability += 3;
 			break;
 			
 		case EFFECT_ACCURACY_DOWN:
 		case EFFECT_ACCURACY_DOWN_2:
-			// to do
+			if (defAbility != ABILITY_CONTRARY)
+				viability += 3;
 			break;
 			
 		case EFFECT_EVASION_DOWN:
 		case EFFECT_EVASION_DOWN_2:
-			// to do
+			if (STAT_STAGE(bankDef,STAT_STAGE_EVASION) < 5)
+				break;
+			else if (defAbility != ABILITY_CONTRARY)
+				viability += 3;
 			break;
 			
 		case EFFECT_ROAR:
@@ -429,8 +572,7 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 		
 		
 	}
-	
+	FUNCTION_RETURN: ;
 	return viability;
 }
 
-*/
