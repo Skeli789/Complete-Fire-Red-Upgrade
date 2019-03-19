@@ -257,7 +257,7 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move) {
 			case ABILITY_DEFIANT:
 			case ABILITY_COMPETITIVE:
 				if (CheckTableForMoveEffect(move, StatLowerTable))
-					return (viability - 8); //Not -10 b/c move still works, just not recommended
+					return (viability - 8); //Not 0 b/c move still works, just not recommended
 				break;
 			
 			case ABILITY_COMATOSE:
@@ -428,7 +428,7 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move) {
 		
 		case EFFECT_ATTACK_UP:
 		case EFFECT_ATTACK_UP_2:
-			if (STAT_CAN_RISE(bankAtk, STAT_STAGE_ATK))
+			if (STAT_CAN_RISE(bankAtk, STAT_STAGE_ATK-1))
 				viability -= 10;
 			break;
 		
@@ -444,30 +444,30 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move) {
 				
 				case MOVE_MAGNETICFLUX:
 					if (atkAbility == ABILITY_PLUS || atkAbility == ABILITY_MINUS) {
-						if (STAT_CAN_RISE(bankAtk, STAT_STAGE_DEF) && STAT_CAN_RISE(bankAtk, STAT_STAGE_SPDEF))
+						if (STAT_CAN_RISE(bankAtk, STAT_STAGE_DEF-1) && STAT_CAN_RISE(bankAtk, STAT_STAGE_SPDEF-1))
 							viability -= 10;
 					}
 					else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE
 					&& (defPartnerAbility == ABILITY_PLUS || defPartnerAbility == ABILITY_MINUS)) {
-						if (STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_DEF) && STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPDEF))
+						if (STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_DEF-1) && STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPDEF-1))
 							viability -= 10;
 					}
 					break;
 				
 				case MOVE_AROMATICMIST:
-					if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE) || STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPDEF))
+					if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE) || STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPDEF-1))
 						viability -= 10;
 					break;
 				
 				default:
-					if (STAT_CAN_RISE(bankAtk, STAT_STAGE_DEF))
+					if (STAT_CAN_RISE(bankAtk, STAT_STAGE_DEF-1))
 						viability -= 10;
 			}
 			break;
 		
 		case EFFECT_SPEED_UP:
 		case EFFECT_SPEED_UP_2:
-			if (STAT_CAN_RISE(bankAtk, STAT_STAGE_SPEED))
+			if (STAT_CAN_RISE(bankAtk, STAT_STAGE_SPEED-1))
 				viability -= 10;
 			break;
 		
@@ -475,8 +475,8 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move) {
 		case EFFECT_SPECIAL_ATTACK_UP_2:			
 			switch(move) {
 				case MOVE_WORKUP:
-					if (STAT_CAN_RISE(bankAtk, STAT_STAGE_ATK) 
-					&&  STAT_CAN_RISE(bankAtk, STAT_STAGE_SPATK))
+					if (STAT_CAN_RISE(bankAtk, STAT_STAGE_ATK-1) 
+					&&  STAT_CAN_RISE(bankAtk, STAT_STAGE_SPATK-1))
 						viability -= 10;
 					break;
 				
@@ -492,18 +492,18 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move) {
 					
 				case MOVE_GEARUP:
 					if (atkAbility == ABILITY_PLUS || atkAbility == ABILITY_MINUS) {
-						if ((STAT_CAN_RISE(bankAtk, STAT_STAGE_ATK)) && (STAT_CAN_RISE(bankAtk, STAT_STAGE_SPATK)))
+						if ((STAT_CAN_RISE(bankAtk, STAT_STAGE_ATK-1)) && (STAT_CAN_RISE(bankAtk, STAT_STAGE_SPATK-1)))
 							viability -= 10;
 					}
 					else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE
 					&& (defPartnerAbility == ABILITY_PLUS || defPartnerAbility == ABILITY_MINUS)) {
-						if ((STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_ATK)) && (STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPATK)))
+						if ((STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_ATK-1)) && (STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPATK-1)))
 							viability -= 10;
 					}
 					break;
 				
 				default:
-					if (STAT_CAN_RISE(bankAtk, STAT_STAGE_SPATK))
+					if (STAT_CAN_RISE(bankAtk, STAT_STAGE_SPATK-1))
 						viability -= 10;
 			}
 			break;
@@ -511,13 +511,13 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move) {
 		case EFFECT_SPECIAL_DEFENSE_UP:
 		case EFFECT_SPECIAL_DEFENSE_UP_2:
 		AI_SPDEF_RAISE_1: ;
-			if (STAT_CAN_RISE(bankAtk, STAT_STAGE_SPDEF))
+			if (STAT_CAN_RISE(bankAtk, STAT_STAGE_SPDEF-1))
 				viability -= 10;
 			break;
 		
 		case EFFECT_ACCURACY_UP:
 		case EFFECT_ACCURACY_UP_2:
-			if (STAT_CAN_RISE(bankAtk, STAT_STAGE_ACC))
+			if (STAT_CAN_RISE(bankAtk, STAT_STAGE_ACC-1))
 				viability -= 10;
 			break;
 		
@@ -531,7 +531,7 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move) {
 					break;
 					
 				default:
-					if (STAT_CAN_RISE(bankAtk, STAT_STAGE_EVASION))
+					if (STAT_CAN_RISE(bankAtk, STAT_STAGE_EVASION-1))
 						viability -= 10;
 			}
 			break;
@@ -546,10 +546,10 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move) {
 						decreased = TRUE;
 						break;
 					}
-					else if (!STAT_CAN_FALL(bankDef, STAT_STAGE_SPEED))
+					else if (!STAT_CAN_FALL(bankDef, STAT_STAGE_SPEED-1))
 						break;
-					else if (STAT_CAN_FALL(bankDef, STAT_STAGE_ATK)
-					&&  STAT_CAN_FALL(bankDef, STAT_STAGE_SPATK)) {
+					else if (STAT_CAN_FALL(bankDef, STAT_STAGE_ATK-1)
+					&&  STAT_CAN_FALL(bankDef, STAT_STAGE_SPATK-1)) {
 						viability -= 10;
 						decreased = TRUE;
 					}
@@ -558,15 +558,15 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move) {
 				case MOVE_PLAYNICE:
 				case MOVE_NOBLEROAR:
 				case MOVE_TEARFULLOOK:
-					if (STAT_CAN_FALL(bankDef, STAT_STAGE_ATK)
-					&&  STAT_CAN_FALL(bankDef, STAT_STAGE_SPATK)) {
+					if (STAT_CAN_FALL(bankDef, STAT_STAGE_ATK-1)
+					&&  STAT_CAN_FALL(bankDef, STAT_STAGE_SPATK-1)) {
 						viability -= 10;
 						decreased = TRUE;
 					}
 					break;
 				
 				default:
-					if (STAT_CAN_FALL(bankDef, STAT_STAGE_ATK)) {
+					if (STAT_CAN_FALL(bankDef, STAT_STAGE_ATK-1)) {
 						viability -= 10;
 						decreased = TRUE;
 					}
@@ -577,7 +577,7 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move) {
 			
 		case EFFECT_DEFENSE_DOWN: 
 		case EFFECT_DEFENSE_DOWN_2: 
-			if (STAT_CAN_FALL(bankDef, STAT_STAGE_DEF))
+			if (STAT_CAN_FALL(bankDef, STAT_STAGE_DEF-1))
 				viability -= 10;
 			else if (MoveBlockedBySubstitute(move, bankAtk, bankDef))
 				viability -= 10;
@@ -585,7 +585,7 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move) {
 		
 		case EFFECT_SPEED_DOWN:
 		case EFFECT_SPEED_DOWN_2: 
-			if (STAT_CAN_FALL(bankDef, STAT_STAGE_SPEED))
+			if (STAT_CAN_FALL(bankDef, STAT_STAGE_SPEED-1))
 				viability -= 10;
 			else if (MoveBlockedBySubstitute(move, bankAtk, bankDef))
 				viability -= 10;
@@ -593,7 +593,7 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move) {
 		
 		case EFFECT_SPECIAL_ATTACK_DOWN: 
 		case EFFECT_SPECIAL_ATTACK_DOWN_2:
-			if (STAT_CAN_FALL(bankDef, STAT_STAGE_SPATK))
+			if (STAT_CAN_FALL(bankDef, STAT_STAGE_SPATK-1))
 				viability -= 10;
 			else if ((move == MOVE_CAPTIVATE)
 			&& (atkGender == MON_GENDERLESS || defGender == MON_GENDERLESS || atkGender == defGender))
@@ -604,7 +604,7 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move) {
 		
 		case EFFECT_SPECIAL_DEFENSE_DOWN:
 		case EFFECT_SPECIAL_DEFENSE_DOWN_2:
-			if (STAT_CAN_FALL(bankDef, STAT_STAGE_SPDEF))
+			if (STAT_CAN_FALL(bankDef, STAT_STAGE_SPDEF-1))
 				viability -= 10;
 			else if (MoveBlockedBySubstitute(move, bankAtk, bankDef))
 				viability -= 10;
@@ -612,7 +612,7 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move) {
 		
 		case EFFECT_ACCURACY_DOWN: 
 		case EFFECT_ACCURACY_DOWN_2:
-			if (STAT_CAN_FALL(bankDef, STAT_STAGE_ACC))
+			if (STAT_CAN_FALL(bankDef, STAT_STAGE_ACC-1))
 				viability -= 10;
 			else if (MoveBlockedBySubstitute(move, bankAtk, bankDef))
 				viability -= 10;
@@ -620,7 +620,7 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move) {
 		
 		case EFFECT_EVASION_DOWN: 
 		case EFFECT_EVASION_DOWN_2: 
-			if (STAT_CAN_FALL(bankDef, STAT_STAGE_EVASION))
+			if (STAT_CAN_FALL(bankDef, STAT_STAGE_EVASION-1))
 				viability -= 10;
 			else if (MoveBlockedBySubstitute(move, bankAtk, bankDef))
 				viability -= 10;
@@ -698,7 +698,7 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move) {
 		
 		case EFFECT_POISON:
 		case EFFECT_TOXIC:
-			if (move == MOVE_TOXICTHREAD && !(STAT_CAN_FALL(bankDef, STAT_STAGE_SPEED)))
+			if (move == MOVE_TOXICTHREAD && !(STAT_CAN_FALL(bankDef, STAT_STAGE_SPEED-1)))
 				break;
 		AI_POISON_CHECK: ;
 			if (!CanBePoisoned(bankDef, bankAtk)
@@ -932,7 +932,7 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move) {
 					viability -= 6;
 			}
 			else if (atkAbility == ABILITY_CONTRARY
-			|| (STAT_CAN_RISE(bankAtk,STAT_STAGE_ATK) && (STAT_CAN_RISE(bankAtk, STAT_STAGE_DEF))))
+			|| (STAT_CAN_RISE(bankAtk,STAT_STAGE_ATK-1) && (STAT_CAN_RISE(bankAtk, STAT_STAGE_DEF-1))))
 				viability -= 10;
 			break;
 			
@@ -1017,7 +1017,7 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move) {
 					if (defStatus3 & STATUS3_MIRACLE_EYED)
 						viability -= 10;
 					
-					if (gBattleMons[bankDef].statStages[STAT_STAGE_EVASION - 1] <= 6
+					if (gBattleMons[bankDef].statStages[STAT_STAGE_EVASION-1 - 1] <= 6
 					&& !IsOfType(bankDef, TYPE_DARK))
 						viability -= 9;
 					break;
@@ -1026,7 +1026,7 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move) {
 					if (defStatus2 & STATUS2_FORESIGHT)
 						viability -= 10;
 					
-					if (gBattleMons[bankDef].statStages[STAT_STAGE_EVASION - 1] <= 6
+					if (gBattleMons[bankDef].statStages[STAT_STAGE_EVASION-1 - 1] <= 6
 					&& !IsOfType(bankDef, TYPE_GHOST))
 						viability -= 9;
 			}
@@ -1051,7 +1051,7 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move) {
 			break;
 			
 		case EFFECT_SWAGGER:
-			if ((bankDef == bankAtkPartner) && (STAT_CAN_RISE(bankDef, STAT_STAGE_ATK)))
+			if ((bankDef == bankAtkPartner) && (STAT_CAN_RISE(bankDef, STAT_STAGE_ATK-1)))
 				viability -= 10;
 			else
 				goto AI_CONFUSE;
@@ -1099,7 +1099,7 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move) {
 				|| defAbility == ABILITY_FULLMETALBODY
 				|| defAbility == ABILITY_WHITESMOKE)
 					viability -= 10;
-				else if (gBattleMons[bankDef].statStages[STAT_STAGE_ACC - 1] == 0)
+				else if (gBattleMons[bankDef].statStages[STAT_STAGE_ACC-1 - 1] == 0)
 					viability -= 10;
 				else if (gSideAffecting[SIDE(bankDef)] & (SIDE_STATUS_REFLECT | SIDE_STATUS_SAFEGUARD | SIDE_STATUS_MIST))
 					goto AI_STANDARD_DAMAGE;
@@ -1132,7 +1132,7 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move) {
 					goto AI_STANDARD_DAMAGE;
 					
 				default: //Belly Drum
-					if (STAT_CAN_RISE(bankAtk, STAT_STAGE_ATK)
+					if (STAT_CAN_RISE(bankAtk, STAT_STAGE_ATK-1)
 					|| GetHealthPercentage(bankAtk) <= 50)
 						viability -= 10;
 			}
@@ -1194,7 +1194,7 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move) {
 		
 		case EFFECT_FLATTER:
 			if ((bankDef == bankAtkPartner)
-			&& STAT_CAN_RISE(bankDef, STAT_STAGE_SPATK))
+			&& STAT_CAN_RISE(bankDef, STAT_STAGE_SPATK-1))
 				viability -= 10;
 			else
 				goto AI_CONFUSE;
@@ -1224,8 +1224,8 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move) {
 					break;
 				
 				default: //Memento
-					if ((STAT_CAN_FALL(bankDef, STAT_STAGE_ATK) 
-					&&  STAT_CAN_FALL(bankDef, STAT_STAGE_SPATK))
+					if ((STAT_CAN_FALL(bankDef, STAT_STAGE_ATK-1) 
+					&&  STAT_CAN_FALL(bankDef, STAT_STAGE_SPATK-1))
 					&&  !MoveBlockedBySubstitute(move, bankAtk, bankDef))
 						viability -= 10;
 			}
@@ -1412,24 +1412,24 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move) {
 			
 		case EFFECT_TICKLE:
 			// lower viability if atk or def buffs = 0
-			if (gBattleMons[bankDef].statStages[STAT_STAGE_ATK - 1] == 0
-				|| gBattleMons[bankDef].statStages[STAT_STAGE_DEF - 1] == 0)
+			if (gBattleMons[bankDef].statStages[STAT_STAGE_ATK-1 - 1] == 0
+				|| gBattleMons[bankDef].statStages[STAT_STAGE_DEF-1 - 1] == 0)
 				viability -= 10;
 			break;
 			
 		case EFFECT_COSMIC_POWER:
 		AI_COSMIC_POWER: ;
 			// lower viability if def/spdef maxed
-			if (gBattleMons[bankAtk].statStages[STAT_STAGE_DEF - 1] >= 12
-				|| gBattleMons[bankAtk].statStages[STAT_STAGE_SPDEF - 1] >= 12)
+			if (gBattleMons[bankAtk].statStages[STAT_STAGE_DEF-1 - 1] >= 12
+				|| gBattleMons[bankAtk].statStages[STAT_STAGE_SPDEF-1 - 1] >= 12)
 				viability -= 10;
 			break;
 			
 		case EFFECT_BULK_UP:
-			if (move == MOVE_COIL && gBattleMons[bankAtk].statStages[STAT_STAGE_ACC] >= 12)
+			if (move == MOVE_COIL && gBattleMons[bankAtk].statStages[STAT_STAGE_ACC-1] >= 12)
 				viability -= 10;
-			if (gBattleMons[bankAtk].statStages[STAT_STAGE_ATK] >= 12
-				|| gBattleMons[bankAtk].statStages[STAT_STAGE_DEF] >= 12)
+			if (gBattleMons[bankAtk].statStages[STAT_STAGE_ATK-1] >= 12
+				|| gBattleMons[bankAtk].statStages[STAT_STAGE_DEF-1] >= 12)
 				viability -= 10;
 			break;
 			
@@ -1440,10 +1440,10 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move) {
 			
 		case EFFECT_CALM_MIND:
 			if ((move == MOVE_QUIVERDANCE || move == MOVE_GEOMANCY) && 
-				(gBattleMons[bankAtk].statStages[STAT_STAGE_SPEED] >= 12))
+				(gBattleMons[bankAtk].statStages[STAT_STAGE_SPEED-1] >= 12))
 				viability -= 10;
-			if (gBattleMons[bankAtk].statStages[STAT_STAGE_SPATK] >= 12
-				|| gBattleMons[bankAtk].statStages[STAT_STAGE_SPDEF] >= 12)
+			if (gBattleMons[bankAtk].statStages[STAT_STAGE_SPATK-1] >= 12
+				|| gBattleMons[bankAtk].statStages[STAT_STAGE_SPDEF-1] >= 12)
 				viability -= 10;
 			break;
 			
@@ -1451,12 +1451,12 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move) {
 			if (move == MOVE_SHELLSMASH) {
 				if (atkAbility == ABILITY_CONTRARY)
 					goto AI_COSMIC_POWER;
-				else if (gBattleMons[bankAtk].statStages[STAT_STAGE_SPATK] >= 12)
+				else if (gBattleMons[bankAtk].statStages[STAT_STAGE_SPATK-1] >= 12)
 					viability -= 10;
 			}
 			// dragon dance
-			if (gBattleMons[bankAtk].statStages[STAT_STAGE_ATK] >= 12 || 
-				gBattleMons[bankAtk].statStages[STAT_STAGE_SPEED] >= 12)
+			if (gBattleMons[bankAtk].statStages[STAT_STAGE_ATK-1] >= 12 || 
+				gBattleMons[bankAtk].statStages[STAT_STAGE_SPEED-1] >= 12)
 				viability -= 10;			
 			break;
 		
