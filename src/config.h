@@ -3,14 +3,14 @@
 #define DEBUG_MEGA
 #define DEBUG_UNBOUND_MUSIC
 
-#define UNBOUND //Don't uncomment this line; it's for compiling specific aspects of Pokemon Unbound
+//#define UNBOUND //Don't uncomment this line; it's for compiling specific aspects of Pokemon Unbound
 
 #define TERRAIN_VAR 0x50CA
 #define TOTEM_VAR 0x50CB //UPDATE HOW THIS WORKS
 #define NPC_FOLLOWING_VAR 0x5000 //This var should should be set to the NPC Id of the NPC following the player. If no NPC is following the player, it should be set to 0.
 #define OW_SPRITE_SWITCH_VAR 0x4054
 #define BACKSPRITE_SWITCH_VAR 0x4062 //This var can be set to a number to change the Player's backsprite
-#define BATTLE_BG_VAR 0x4039 //Set this var to a custom background id
+#define BATTLE_BG_VAR 0x5003 //Set this var to a custom background id
 #define SWARM_SPECIES_VAR 0x5030
 #define SWARM_MAP_NAME_VAR 0x5031
 
@@ -163,3 +163,5 @@ enum
 #define FOG_IN_BATTLE_1 //Uncommenting this line enables the Fog weather effect when the OW weather is set to WEATHER_FOG_1 (0x6)
 #define FOG_IN_BATTLE_2 //Uncommenting this line enables the Fog weather effect when the OW weather is set to WEATHER_FOG_2 (0x9)
 #define FOG_IN_BATTLE_3 //Uncommenting this line enables the Fog weather effect when the OW weather is set to WEATHER_FOG_3 (0xA)
+#define HIDE_HEALTHBOXES_DURING_ANIMS //Uncommenting this line hides the health boxes during move animations and some special animations.
+//#define DONT_HIDE_HEALTHBOXES_ATTACKER_STATUS_MOVES //Uncommenting this line doesn't hide the healthboxes when the attacker is using a status move that targets itself.

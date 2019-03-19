@@ -339,10 +339,19 @@ void UpdateOamPriorityInAllHealthboxes(u8 priority)
 {
     u32 i, sprite;
 	
+	#ifndef HIDE_HEALTHBOXES_DURING_ANIMS
+		goto DEFAULT_CASE;
+	#endif
+	
 	switch (gBattleBufferA[gActiveBattler][0]) {
-		case CONTROLLER_MOVEANIMATION:
-			if ((gBattleBufferA[gActiveBattler][1] | (gBattleBufferA[gActiveBattler][2] << 8)) == MOVE_TRANSFORM)
+		case CONTROLLER_MOVEANIMATION: ;
+			u16 move = (gBattleBufferA[gActiveBattler][1]) | (gBattleBufferA[gActiveBattler][2] << 8);
+			if (move == MOVE_TRANSFORM)
 				goto DEFAULT_CASE;
+			#ifdef DONT_HIDE_HEALTHBOXES_ATTACKER_STATUS_MOVES
+			if (gBattleMoves[move].target & MOVE_TARGET_USER)
+				goto DEFAULT_CASE;
+			#endif
 			goto HIDE_BOXES;
 			
 		case CONTROLLER_BATTLEANIMATION:
