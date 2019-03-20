@@ -1,5 +1,5 @@
 Grit_Flags.docx
-offsets.ini
+*.ini
 *config.h
 *.gba
 build/*
@@ -9,6 +9,8 @@ build/*
 *.bak
 *.lnk
 *.sav
+*.sa1
+*.sg1
 *.ss1
 *.ss2
 *.ss3
