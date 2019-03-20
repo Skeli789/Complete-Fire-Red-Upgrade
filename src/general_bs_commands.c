@@ -877,7 +877,7 @@ void atk1D_jumpifstatus2(void) {
     u32 flags = T2_READ_32(gBattlescriptCurrInstr + 2);
     void* jump_loc = T2_READ_PTR(gBattlescriptCurrInstr + 6);
 	
-	if (gBattlescriptCurrInstr[1] == BS_GET_TARGET && ABILITY(gBankAttacker) == ABILITY_INFILTRATOR)
+	if (gBattlescriptCurrInstr[1] == BS_GET_TARGET && !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bank))
 		flags &= ~(STATUS2_SUBSTITUTE);
 	
     if (gBattleMons[bank].status2 & flags && gBattleMons[bank].hp)
