@@ -33,6 +33,23 @@ extern u8 BattleScript_LostBattleTower[];
 
 extern u8 ConsumableItemEffectTable[];
 
+u16 gEndBattleFlagClearTable[] =
+{
+	INVERSE_FLAG,
+	SKY_BATTLE_FLAG,
+	NO_CATCHING_FLAG,
+	NO_RUNNING_FLAG,
+	NO_CATCHING_AND_RUNNING_FLAG,
+	CATCH_TRAINERS_POKEMON_FLAG,
+	TAG_BATTLE_FLAG,
+	TWO_OPPONENT_FLAG,
+	ACTIVATE_TUTORIAL_FLAG,
+	WILD_CUSTOM_MOVES_FLAG,
+	SMART_WILD_FLAG,
+	HIDDEN_ABILITY_FLAG,
+	DOUBLE_WILD_BATTLE_FLAG,
+};
+
 void HandleEndTurn_BattleWon(void)
 {
     gCurrentActionFuncId = 0;
@@ -416,25 +433,33 @@ void EndPartnerBattlePartyRestore(void) {
 	u8 counter = 0;
 	pokemon_t* backup = ExtensionState.partyBackup;
 	
-	if (ExtensionState.partyBackup != NULL) {
-		if (gSelectedOrderFromParty[0] == 0) { //Special 0x2F was not used
-			for (i = 0; i < PARTY_SIZE; ++i) {
+	if (ExtensionState.partyBackup != NULL) 
+	{
+		if (gSelectedOrderFromParty[0] == 0) 
+		{ 	//Special 0x2F was not used
+			for (i = 0; i < PARTY_SIZE; ++i) 
+			{
 				if (gPlayerParty[i].species == 0)
 					Memcpy(&gPlayerParty[i], &backup[counter++], sizeof(struct Pokemon));
 			}
 		}
 		
-		else { //Special 0x2F was used
+		else 
+		{ 	//Special 0x2F was used
 			pokemon_t* foughtMons = Calloc(sizeof(struct Pokemon) * 3);
-			if (foughtMons != NULL) {
+			if (foughtMons != NULL) 
+			{
 				Memcpy(foughtMons, gPlayerParty, sizeof(struct Pokemon) * 3);
 				Memset(gPlayerParty, 0x0, sizeof(struct Pokemon) * 6);
-				for (i = 0; i < 3; ++i) {
+				for (i = 0; i < 3; ++i) 
+				{
 					if (gSelectedOrderFromParty[i] != 0)
 						Memcpy(&gPlayerParty[gSelectedOrderFromParty[i] - 1], &foughtMons[i], sizeof(struct Pokemon));
 				}
 			}
-			for (i = 0; i < PARTY_SIZE; ++i) {
+			
+			for (i = 0; i < PARTY_SIZE; ++i) 
+			{
 				if (gPlayerParty[i].species == 0)
 					Memcpy(&gPlayerParty[i], &backup[counter++], sizeof(struct Pokemon));
 			}
@@ -460,13 +485,9 @@ void EndSkyBattlePartyRestore(void) {
 }
 
 void EndBattleFlagClear(void) {
-	FlagClear(NO_CATCHING_FLAG);
-	FlagClear(NO_RUNNING_FLAG);
-	FlagClear(NO_CATCHING_AND_RUNNING_FLAG);
-	FlagClear(WILD_CUSTOM_MOVES_FLAG);
-	FlagClear(TAG_BATTLE_FLAG);
-	FlagClear(TWO_OPPONENT_FLAG);
-	FlagClear(SMART_WILD_FLAG);
+	for (u32 i = 0; i < ARRAY_COUNT(gEndBattleFlagClearTable); ++i)
+		FlagClear(gEndBattleFlagClearTable[i]);
+	
 	VarSet(TERRAIN_VAR, 0x0);
 	VarSet(BATTLE_TOWER_TRAINER_NAME, 0xFFFF);
 	Free(gNewBS->MegaData);
