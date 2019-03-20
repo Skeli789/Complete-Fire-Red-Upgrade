@@ -54,7 +54,7 @@ enum
 
 #define TIME_MORNING_START 4		//4:00 AM -  4:00
 #define TIME_DAY_START 8			//8:00 AM -  8:00
-#define TIME_AFTERNOON_START 17		//5:00 PM - 17:00
+#define TIME_EVENING_START 17		//5:00 PM - 17:00
 #define TIME_NIGHT_START 20			//8:00 PM - 20:00
 
 #define KANTO_DEX_COUNT 151
