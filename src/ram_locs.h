@@ -220,7 +220,7 @@ typedef u8 Buffer_t[0x200];
 		#define sTrainerBattleScriptRetAddr (*((u32*) 0x20386C8))
 		#define sTrainerBattleOakTutorialHelper (*((u16*) 0x20386CC))
 		
-		#define sEncounterRateBonuses ((u16*) 0x20386D0)
+		//#define gEncounterRate ((struct EncounterRate*) 0x20386D0)
 		#define sWildEncountersDisabled (*((u8*) 0x20386DC))
 
 /*u8*/  #define gFieldEffectArguments ((u8*) 0x20386E0)

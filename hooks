@@ -44,6 +44,7 @@ HandleDataTransfer 0803D200 0
 
 GetMUS_ForBattle 08043FD4 0
 LoadProperMusicForLinkBattlesHook 80813B8 0
+DoStandardWildBattle 807F748 0
 BattleSetup_GetTerrainId 807FC5C 0
 EndBattleFlagClearHook 80159DC 0
 HandleIntroSlide 80BC3A0 1
@@ -159,7 +160,9 @@ UpdateAltitudeForIllusionHook 8074598 2
 StandardWildEncounter 8082CBC 2
 RockSmashWildEncounter 8082E54 0
 SweetScentWildEncounter 8082EC0 0
-GenerateFishingWildMon 8082B64 2
+DoesCurrentMapHaveFishingMons 8082F78 0
+FishingWildEncounter 8082FB0 1
+CheckStandardWildEncounter 80833B0 1
 
 ##Save Expansion Hooks
 HandleWriteSector 80D9870 2

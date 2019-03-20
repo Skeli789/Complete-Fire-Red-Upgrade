@@ -1,5 +1,53 @@
 #include "..\\defines.h"
 
+#ifndef UNBOUND //Modify this section
+
+const struct WildPokemonHeader gWildMonMorningHeaders[] =
+{
+	{
+        .mapGroup = 0xFF,
+        .mapNum = 0xFF,
+        .landMonsInfo = NULL,
+        .waterMonsInfo = NULL,
+        .rockSmashMonsInfo = NULL,
+        .fishingMonsInfo = NULL,
+    }
+};
+
+const struct WildPokemonHeader gWildMonEveningHeaders[] =
+{
+	{
+        .mapGroup = 0xFF,
+        .mapNum = 0xFF,
+        .landMonsInfo = NULL,
+        .waterMonsInfo = NULL,
+        .rockSmashMonsInfo = NULL,
+        .fishingMonsInfo = NULL,
+    }
+};
+
+const struct WildPokemonHeader gWildMonNightHeaders[] =
+{
+	{
+        .mapGroup = 0xFF,
+        .mapNum = 0xFF,
+        .landMonsInfo = NULL
+        .waterMonsInfo = NULL,
+        .rockSmashMonsInfo = NULL,
+        .fishingMonsInfo = NULL,
+    }
+};
+
+const struct SwarmData gSwarmTable[] =
+{
+	{
+		.mapName = 0xFF,
+		.species = 0xFFFF,
+	},
+};
+
+#else //Below is for Pokemon Unbound. Feel free to remove.
+
 #define MAP_ROUTE_2			((3 << 8) | 69)
 #define MAP_ROUTE_3			((3 << 8) | 70)
 #define MAP_ROUTE_4			((3 << 8) | 72)
@@ -125,6 +173,24 @@ const struct WildPokemon gRoute5_LandMonsNight[] =
 };
 
 const struct WildPokemonInfo gRoute5_LandMonsInfoNight = {21, gRoute5_LandMonsNight};
+
+const struct WildPokemon gRoute6_LandMonsMorning[] =
+{
+    {20, 22, PKMN_ZIGZAGOON},
+    {20, 22, PKMN_LEDYBA},
+    {20, 22, PKMN_SHINX},
+    {20, 22, PKMN_DEERLING},
+    {20, 22, PKMN_ZIGZAGOON},
+    {20, 22, PKMN_KRICKETOT},
+    {21, 22, PKMN_KRICKETOT},
+    {21, 22, PKMN_KRICKETOT},
+    {21, 22, PKMN_DEERLING},
+    {21, 22, PKMN_KRICKETOT},
+    {22, 22, PKMN_LEDIAN},
+    {22, 22, PKMN_LUXIO},
+};
+
+const struct WildPokemonInfo gRoute6_LandMonsInfoMorning = {21, gRoute6_LandMonsMorning};
 
 const struct WildPokemon gRoute6_LandMonsNight[] =
 {
@@ -290,6 +356,14 @@ const struct WildPokemonInfo gRoute17_LandMonsInfoNight = {21, gRoute17_LandMons
 
 const struct WildPokemonHeader gWildMonMorningHeaders[] =
 {
+	{
+        .mapGroup = MAP_GROUP(ROUTE_6),
+        .mapNum = MAP_NUM(ROUTE_6),
+        .landMonsInfo = &gRoute6_LandMonsInfoMorning,
+        .waterMonsInfo = NULL,
+        .rockSmashMonsInfo = NULL,
+        .fishingMonsInfo = NULL,
+    },
     {
         .mapGroup = 0xFF,
         .mapNum = 0xFF,
@@ -300,7 +374,7 @@ const struct WildPokemonHeader gWildMonMorningHeaders[] =
     }
 };
 
-const struct WildPokemonHeader gWildMonAfternoonHeaders[] =
+const struct WildPokemonHeader gWildMonEveningHeaders[] =
 {
     {
         .mapGroup = 0xFF,
@@ -543,3 +617,5 @@ const struct SwarmData gSwarmTable[] =
 		.species = 0xFFFF,
 	},
 };
+
+#endif
