@@ -31,7 +31,7 @@ const struct WildPokemonHeader gWildMonNightHeaders[] =
 	{
         .mapGroup = 0xFF,
         .mapNum = 0xFF,
-        .landMonsInfo = NULL
+        .landMonsInfo = NULL,
         .waterMonsInfo = NULL,
         .rockSmashMonsInfo = NULL,
         .fishingMonsInfo = NULL,
