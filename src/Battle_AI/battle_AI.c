@@ -619,7 +619,7 @@ bool8 CanStopLockedMove(void) {
 		if (!(gLockedMoves[opposingBattler1] && SPLIT(gLockedMoves[opposingBattler1]) != SPLIT_STATUS) && !(gLockedMoves[opposingBattler2] && SPLIT(gLockedMoves[opposingBattler2]) != SPLIT_STATUS))
 			return FALSE;
 		#ifndef REALLY_SMART_AI
-			if (ViableMonCount(GetBankPartyData(gActiveBattler)) > 1)
+			if (ViableMonCountFromBank(gActiveBattler) > 1)
 				return FALSE; //AI doesn't know which mon is being targeted if there's more than one on the field
 		#endif
 	}
