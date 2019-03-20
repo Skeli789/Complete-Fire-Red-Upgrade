@@ -869,6 +869,7 @@ u8 GetWhoStrikesFirst(bank_t bank1, bank_t bank2, bool8 ignoreMovePriorities) {
 //BracketCalc
 	bank1_bracket = BracketCalc(bank1);
 	bank2_bracket = BracketCalc(bank2);
+		
 	if (bank1_bracket > bank2_bracket)
 		return FirstMon;
 	else if (bank1_bracket < bank2_bracket)
@@ -935,20 +936,16 @@ s32 BracketCalc(bank_t bank) {
 	switch (item_effect) {
 		case ITEM_EFFECT_QUICK_CLAW:
 			if (umodsi(gRandomTurnNumber, 100) < item_quality) {
-				gNewBS->CustapQuickClawIndicator |= (1 << bank);
+				gNewBS->CustapQuickClawIndicator |= gBitTable[bank];
 				return 1;
 			}
 			break;
 		case ITEM_EFFECT_CUSTAP_BERRY:
-			if (!AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, bank, ABILITY_UNNERVE, 0, 0)) {
-				if (ability == ABILITY_GLUTTONY && gBattleMons[bank].hp > gBattleMons[bank].maxHP / 2) {
-					gNewBS->CustapQuickClawIndicator |= (1 << bank << 4);
-					return 1;
-				}
-				else if (gBattleMons[bank].hp > gBattleMons[bank].maxHP / 4) {
-					gNewBS->CustapQuickClawIndicator |= (1 << bank << 4);
-					return 1;
-				}
+			if (!AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, bank, ABILITY_UNNERVE, 0, 0)
+			&& PINCH_BERRY_CHECK(bank))
+			{
+				gNewBS->CustapQuickClawIndicator |= gBitTable[bank];
+				return 1;
 			}
 			break;
 		case ITEM_EFFECT_LAGGING_TAIL:
