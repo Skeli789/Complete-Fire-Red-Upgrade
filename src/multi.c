@@ -240,8 +240,12 @@ bool8 IsMultiBattle(void) {
 	u32 flags = (BATTLE_TYPE_MULTI | BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_TRAINER | BATTLE_TYPE_DOUBLE);
 	u32 flags2 = (BATTLE_TYPE_MULTI | BATTLE_TYPE_TRAINER | BATTLE_TYPE_DOUBLE);
 	u32 flags3 = (BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_TRAINER | BATTLE_TYPE_DOUBLE);
+	u32 flags4 = (BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_DOUBLE);
 	
-	if (((gBattleTypeFlags & flags) == flags || (gBattleTypeFlags & flags) == flags2 || (gBattleTypeFlags & flags) == flags3) && gMain.inBattle)
+	if (((gBattleTypeFlags & flags) == flags 
+	||   (gBattleTypeFlags & flags) == flags2 
+	||   (gBattleTypeFlags & flags) == flags3
+	||   (gBattleTypeFlags & flags) == flags4) && gMain.inBattle)
 		return TRUE;
     else
         return FALSE;
@@ -250,7 +254,7 @@ bool8 IsMultiBattle(void) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 bool8 IsTagBattle(void) {
-	u32 flags = (BATTLE_TYPE_TRAINER | BATTLE_TYPE_DOUBLE | BATTLE_TYPE_INGAME_PARTNER);
+	u32 flags = (BATTLE_TYPE_DOUBLE | BATTLE_TYPE_INGAME_PARTNER);
 	
 	if ((gBattleTypeFlags & flags) == flags)
 		return TRUE;

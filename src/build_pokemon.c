@@ -55,8 +55,8 @@ void BuildTrainerPartySetup(void) {
 	}
 	
 	if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER) {
-		ExtensionState.partyBackup = Calloc(sizeof(struct Pokemon) * 5); //Space of 5 because you can choose to only use 1 mon
-		if (!ExtensionState.partyBackup)
+		ExtensionState.partyBackup = Calloc(sizeof(struct Pokemon) * 6);
+		if (ExtensionState.partyBackup == NULL)
 			return;
 				
 		if (gSelectedOrderFromParty[0] == 0)
@@ -90,7 +90,8 @@ u8 CreateNPCTrainerParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, b
     
     struct Trainer* trainer = &gTrainers[trainerNum];
     
-    if ((gBattleTypeFlags & (BATTLE_TYPE_TRAINER | BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_TRAINER_TOWER)) == BATTLE_TYPE_TRAINER) 
+    if (((gBattleTypeFlags & (BATTLE_TYPE_TRAINER | BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_TRAINER_TOWER)) == BATTLE_TYPE_TRAINER)
+	||   (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER))
 	{
 		if (firstTrainer)
 			ZeroEnemyPartyMons(); //party_opponent_purge();
