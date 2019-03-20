@@ -3,7 +3,7 @@
 #include "..\\Helper_Functions.h"
 
 
-
+enum {IN_AIR, GROUNDED};
 u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 	u8 i;
 	
@@ -12,27 +12,27 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 	u8 bankAtkPartner = PARTNER(bankAtk);
 	u8 bankDefPartner = PARTNER(bankDef);
 	
-	u16 atkSpecies == SPECIES(bankAtk);
+	u16 atkSpecies = SPECIES(bankAtk);
+	u16 defSpecies = SPECIES(bankDef);
 	
 	u16 atkItem = ITEM(bankAtk);
 	u16 defItem = ITEM(bankDef);
 	u8 atkItemEffect = ITEM_EFFECT(bankAtk);
 	u8 defItemEffect = ITEM_EFFECT(bankDef);
-	u8 atkPartnerItemEffect == ITEM_EFFECT(bankAtkPartner);
+	u8 atkPartnerItemEffect = ITEM_EFFECT(bankAtkPartner);
 	
 	u8 atkItemQuality = ITEM_QUALITY(bankAtk);
 	
 	u8 atkAbility = ABILITY(bankAtk);
 	u8 defAbility = ABILITY(bankDef);
 	u8 atkPartnerAbility = ABILITY(bankAtkPartner);
-	u8 defPartnerAbility = ABILITY(bankDefPartner);
 	
 	u32 atkStatus1 = gBattleMons[bankAtk].status1;
 	u32 atkStatus2 = gBattleMons[bankAtk].status2;
-	u32 atkStatus3 = gBattleMons[bankAtk].status3;
+	u32 atkStatus3 = gStatuses3[bankAtk];
 	u32 defStatus1 = gBattleMons[bankDef].status1;
 	u32 defStatus2 = gBattleMons[bankDef].status2;
-	u32 defStatus3 = gBattleMons[bankDef].status3;
+	u32 defStatus3 = gStatuses3[bankDef];
 	
 	
 	
@@ -148,7 +148,6 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 			
 		case EFFECT_SPECIAL_ATTACK_UP:
 		case EFFECT_SPECIAL_ATTACK_UP_2:
-		AI_SPATK_PLUS: ;
 			switch (move)
 			{
 				case MOVE_WORKUP:
@@ -220,6 +219,7 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 			
 		case EFFECT_DEFENSE_DOWN:
 		case EFFECT_DEFENSE_DOWN_2:
+		AI_DEFENSE_MINUS:
 			if (STAT_STAGE(bankDef,STAT_STAGE_DEF) < 5)
 				break;
 			else if (PhysicalMoveInMoveset(bankAtk) && defAbility != ABILITY_CONTRARY)
@@ -296,7 +296,7 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 				viability += 5;
 			else if (defStatus2 & STATUS2_SUBSTITUTE)
 				viability += 5;
-			else if (atkItemEffect == ITEM_EFFECT_KINGS_ROCK)
+			else if (atkItemEffect == ITEM_EFFECT_FLINCH)
 				viability += 5;
 			break;
 			
@@ -305,7 +305,7 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 				break;
 			else if (defStatus2 & STATUS2_SUBSTITUTE)
 				break;
-			else if (MoveWouldHitFirst(move, bankDef, bankAtk)
+			else if (MoveWouldHitFirst(move, bankDef, bankAtk))
 				break;
 			else if (atkAbility == ABILITY_SERENEGRACE)
 				viability += 5;
@@ -356,7 +356,7 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 				break;
 			else if (CheckGrounding(bankAtk) == GROUNDED && (gBattleTerrain == ELECTRIC_TERRAIN || gBattleTerrain == MISTY_TERRAIN))
 				break;
-			else if (IsUproarBeingMade)
+			else if (IsUproarBeingMade())
 				break;
 			else if (!(CanBePutToSleep(bankAtk)))
 				break;
@@ -366,7 +366,7 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 				viability += 5;
 			else if (atkAbility == ABILITY_SHEDSKIN)
 				viability += 5;
-			else if ((gBatttleWeather & WEATHER_RAIN_ANY) && atkAbility == ABILITY_HYDRATION)
+			else if ((gBattleWeather & WEATHER_RAIN_ANY) && atkAbility == ABILITY_HYDRATION)
 				viability += 4;
 			else if (atkAbility == ABILITY_EARLYBIRD)
 				viability += 3;
@@ -379,7 +379,7 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 			else if (atkStatus3 & (STATUS3_ALWAYS_HITS))
 				viability += 7;
 			break;
-		#else
+		#endif
 			break;
 		
 		case EFFECT_SUPER_FANG:
@@ -390,7 +390,7 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 		case EFFECT_TRAP:
 			if (FindMovePositionInMoveset(MOVE_RAPIDSPIN, bankDef) != 4)
 				break;
-			else if (atkItemEffect == EFFECT_BINDINGBAND || atkItemEffect == EFFECT_GRIPCLAW)
+			else if (atkItemEffect == ITEM_EFFECT_BINDING_BAND || atkItemEffect == ITEM_EFFECT_GRIP_CLAW)
 				viability += 5;
 			else
 				goto AI_TRAP_TARGET_CHECK;	// check conditions to trap target
@@ -499,9 +499,9 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 		case EFFECT_LEECH_SEED:
 			if (IsOfType(bankDef, TYPE_GRASS))
 				break;
-			else if (gStatuses3[bankDef] & STATUS3_LEECHSEED)
+			else if (defStatus3 & STATUS3_LEECHSEED)
 				break;
-			else if (gStatuses2[bankDef] & STATUS2_SUBSTITUTE)
+			else if (defStatus2 & STATUS2_SUBSTITUTE)
 				break;
 			else if (FindMovePositionInMoveset(MOVE_RAPIDSPIN, bankDef) != 4)
 				break;
@@ -592,7 +592,7 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 			break;
 		
 		case EFFECT_CURSE:
-			if (IsOfType(bankAtk), TYPE_GHOST)
+			if (IsOfType(bankAtk, TYPE_GHOST))
 			{
 				if (atkAbility == ABILITY_SHADOWTAG || atkAbility == ABILITY_ARENATRAP)
 					viability += 5;
@@ -645,6 +645,7 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 					goto FUNCTION_RETURN;
 					
 				case MOVE_CRAFTYSHIELD:
+				AI_DOUBLEBATTLE_CHECK: ;
 					if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
 						viability += 5;
 					goto FUNCTION_RETURN;
@@ -726,7 +727,7 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 			}
 			break;
 			
-		case EFFECT_PERISH_SONG;
+		case EFFECT_PERISH_SONG:
 			if (atkAbility == ABILITY_SHADOWTAG || atkAbility == ABILITY_ARENATRAP)
 				viability += 5;
 			else if (atkStatus2 & (STATUS2_ESCAPE_PREVENTION | STATUS2_WRAPPED))
@@ -764,7 +765,7 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 			
 		case EFFECT_SWAGGER:
 			if (FindMovePositionInMoveset(MOVE_FOULPLAY, bankAtk) != 4)
-				viability += 5
+				viability += 5;
 			else
 				goto AI_CONFUSE_CHECK;
 			break;
@@ -815,7 +816,7 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 			if (move == MOVE_DEFOG)
 			{
 				if (gSideAffecting[SIDE(bankDef)] & 
-				(SIDE_STATUS_REFLECT | SIDE_STATUS_LIGHTSCREEN | SIDE_STATUS_SAFEGUARD | SIDE_STATUS_MIST)
+				(SIDE_STATUS_REFLECT | SIDE_STATUS_LIGHTSCREEN | SIDE_STATUS_SAFEGUARD | SIDE_STATUS_MIST))
 					viability += 6;
 				else if (gNewBS->AuroraVeilTimers[SIDE(bankDef)] != 0)
 					viability += 6;
@@ -840,9 +841,9 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 			|| atkAbility == ABILITY_RAINDISH
 			|| atkAbility == ABILITY_DRYSKIN)
 				viability += 6;
-			else if (MoveEffectInMoveset(EFFECT_THUNDER, bankAtk) 
+			else if (MoveEffectInMoveset(EFFECT_THUNDER, bankAtk))
 				viability += 6;
-			else if (FindMovePositionInMoveset(MOVE_WEATHERBALL bankAtk) != 4)
+			else if (FindMovePositionInMoveset(MOVE_WEATHERBALL, bankAtk) != 4)
 				viability += 6;
 			else if (atkItemEffect == ITEM_EFFECT_DAMP_ROCK)
 				viability += 6;
@@ -893,7 +894,7 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 					viability += 6;
 				else if (MoveEffectInMoveset(EFFECT_SOLARBEAM, bankAtkPartner))
 					viability += 6;
-				else if (FindMovePositionInMoveset(MOVE_WEATHERBALL, bankAtkPartner) += 4)
+				else if (FindMovePositionInMoveset(MOVE_WEATHERBALL, bankAtkPartner) != 4)
 					viability += 6;
 				else if (atkPartnerItemEffect == ITEM_EFFECT_HEAT_ROCK)
 					viability += 6;
@@ -1061,75 +1062,128 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 			
 		case EFFECT_FOLLOW_ME:
 		case EFFECT_HELPING_HAND:
-			//todo
+			goto AI_DOUBLEBATTLE_CHECK;
 			break;
 			
 		case EFFECT_TAUNT:
-			//todo
+			if (StatusMoveInMoveset(bankDef))
+				viability += 6;
 			break;
 			
 		case EFFECT_TRICK:
-			//todo
+			if ((CanTransferItem(atkSpecies, atkItem, GetBankPartyData(bankAtk)))
+			&& (CanTransferItem(defSpecies, defItem, GetBankPartyData(bankDef))))
+				viability += 6;
 			break;
 			
 		case EFFECT_INGRAIN:
-			//todo
+			// checks related to trapping self?
+			if (atkItemEffect == ITEM_EFFECT_BIGROOT)
+				viability += 7;
+			else
+				viability += 6;
 			break;
 			
 		case EFFECT_RECYCLE:
+			// if saved item exists and bank not holding anything
+			if ((SAVED_CONSUMED_ITEMS(bankAtk) != 0) && (atkItem == 0))			
+				viability += 5;
+			break;
+		
 		case EFFECT_BRICK_BREAK:
-			//todo
+			if (gSideAffecting[SIDE(bankDef)] & 
+			(SIDE_STATUS_REFLECT | SIDE_STATUS_LIGHTSCREEN | SIDE_STATUS_SAFEGUARD | SIDE_STATUS_MIST))
+				viability += 6;
+			else if (gNewBS->AuroraVeilTimers[SIDE(bankDef)] != 0)
+				viability += 6;
 			break;
-			
-		case EFFECT_ENDEAVOR:	//flail?
-			//todo
-			break;
-			
+						
 		case EFFECT_REFRESH:
 			if (atkStatus1 & STATUS1_ANY)
 				viability += 5;
 			break;
 			
+		case EFFECT_KNOCK_OFF:
+			if (CanKnockOffItem(bankDef))
+				viability += 5;
+			break;
+			
 		case EFFECT_TICKLE:
-			//todo
+			if (STAT_STAGE(bankDef, STAT_STAGE_ATK) < 5)
+				goto AI_DEFENSE_MINUS;
+			else if (STAT_STAGE(bankDef, STAT_STAGE_ATK) > STAT_STAGE(bankDef, STAT_STAGE_SPATK) && defAbility != ABILITY_CONTRARY)
+				viability += 3;
+			else
+				goto AI_DEFENSE_MINUS;
 			break;
 			
 		case EFFECT_COSMIC_POWER:
 		AI_COSMIC_POWER: ;
-			//todo
+			if (STAT_STAGE(bankAtk, STAT_STAGE_DEF) > 7)
+				goto AI_SPDEF_PLUS;
+			else if (STAT_STAGE(bankAtk, STAT_STAGE_ATK) > STAT_STAGE(bankAtk, STAT_STAGE_SPATK) && atkAbility != ABILITY_CONTRARY)
+				viability += 5;
+			else
+				goto AI_SPDEF_PLUS;
 			break;
 			
 		case EFFECT_BULK_UP:
-			//todo;
+			if (STAT_STAGE(bankAtk, STAT_STAGE_ATK) > 7)
+				goto AI_DEFENSE_PLUS;
+			else if (PhysicalMoveInMoveset(bankAtk) && atkAbility != ABILITY_CONTRARY)
+				viability += 6;
+			else
+				goto AI_DEFENSE_PLUS;
 			break;
 			
 		case EFFECT_CALM_MIND:
-			//todo;
+			if (move == MOVE_QUIVERDANCE)
+			{
+				if (MoveWouldHitFirst(move, bankAtk, bankDef))
+					goto AI_CALM_MIND_CHECK;
+				else if (atkAbility != ABILITY_CONTRARY)
+					viability += 6;
+				break;
+			}
+			else if (move == MOVE_GEOMANCY)
+			{
+				if (atkItemEffect == ITEM_EFFECT_POWER_HERB && atkAbility != ABILITY_CONTRARY)
+					viability += 6;
+				break;
+			}
+			else
+		AI_CALM_MIND_CHECK:
+			if (STAT_STAGE(bankAtk, STAT_STAGE_SPATK) > 7)
+				goto AI_SPDEF_PLUS;
+			else if (SpecialMoveInMoveset(bankAtk) && atkAbility != ABILITY_CONTRARY)
+				viability += 6;
+			else
+				goto AI_SPDEF_PLUS;
 			break;
 			
 		case EFFECT_DRAGON_DANCE:
 			if (move == MOVE_SHELLSMASH)
 			{
-				if (atkItem == ITEM_EFFECT_WHITE_HERB)
+				if (atkItem == ITEM_EFFECT_POWER_HERB)
+				{
 					viability += 6;
-				else if (gBattleMons[bankAtk].statStages[STAT_SPECIAL_ATTACK-1] <= 6 && (SpecialMoveInMoveset(bankAtk)))
+					break;
+				}
+				else if (STAT_STAGE(bankAtk, STAT_STAGE_SPATK) <= 6 && (SpecialMoveInMoveset(bankAtk)))
+				{
 					viability += 6;
+					break;
+				}
 			}
-			if (gBattleMons[bankAtk].statStages[STAT_ATTACK-1] > 7)
+			// dragon dance
+			if (STAT_STAGE(bankAtk, STAT_STAGE_ATK) > 7)
 				goto AI_SPEED_PLUS;
 			else if (PhysicalMoveInMoveset(bankAtk))
 				viability += 6;
 			goto AI_SPEED_PLUS;
-			
-		
-		// other effects ???
-		case EFFECT_PLEDGE:
-			//todo - if partner going to use same pledge move
-			break;
-		
-		
+					
 	}
-	FUNCTION_RETURN: ;
+	FUNCTION_RETURN:
 	return viability;
 }
 
