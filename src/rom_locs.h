@@ -32,8 +32,6 @@ extern u8 BattleScript_ButItFailed[];
 #define gGameVersion (*((u8*) 0x81E9F10))
 
 #define gBattleTerrainTable ((struct BattleBackground*) *((u32*) 0x800F320))
-#define gBattleTerrainTableAfternoon ((struct BattleBackground*) 0x88C8720) //For Unbound
-#define gBattleTerrainTableNight ((struct BattleBackground*) 0x88C8A30) //For Unbound
 
 typedef u8 TrainerClassNames_t[13];
 #define gTrainerClassNames ((TrainerClassNames_t*) *((u32*) 0x811B4B4)) //0x823E558

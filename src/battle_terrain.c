@@ -2,6 +2,9 @@
 #include "helper_functions.h"
 #include "battle_terrain.h"
 
+#define gBattleTerrainTableEvening ((struct BattleBackground*) 0x88C8720) //For Unbound
+#define gBattleTerrainTableNight ((struct BattleBackground*) 0x88C8A30) //For Unbound
+
 extern const struct BattleBackground gAttackTerrainTable[];
 extern const struct TerrainTableStruct TerrainTable[];
 
@@ -177,8 +180,8 @@ void LoadBattleBG_Background(u8 terrainId) {
 	#ifdef UNBOUND //Load different BGs depending on time of day
 		if (Clock->hour >= TIME_NIGHT_START || Clock->hour < TIME_MORNING_START)
 			table = gBattleTerrainTableNight;
-		else if (Clock->hour >= TIME_AFTERNOON_START)
-			table = gBattleTerrainTableAfternoon;
+		else if (Clock->hour >= TIME_EVENING_START)
+			table = gBattleTerrainTableEvening;
 	#endif
 	
 	LZDecompressVram(table[terrainId].tileset, (void*) 0x6008000);
@@ -192,8 +195,8 @@ void LoadBattleBG_EntryOverlay(u8 terrainId)  {
 	#ifdef UNBOUND //Load different BGs depending on time of day
 		if (Clock->hour >= TIME_NIGHT_START || Clock->hour < TIME_MORNING_START)
 			table = gBattleTerrainTableNight;
-		else if (Clock->hour >= TIME_AFTERNOON_START)
-			table = gBattleTerrainTableAfternoon;
+		else if (Clock->hour >= TIME_EVENING_START)
+			table = gBattleTerrainTableEvening;
 	#endif
 	
     LZDecompressVram(table[terrainId].entryTileset, (void*) 0x6004000);

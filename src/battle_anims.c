@@ -88,7 +88,7 @@ void AnimTask_GetTimeOfDay(u8 taskId)
 	#ifdef TIME_ENABLED
 		if (Clock->hour >= TIME_NIGHT_START || Clock->hour < TIME_MORNING_START)
 			gBattleAnimArgs[0] = 1;
-		else if (Clock->hour >= TIME_AFTERNOON_START)
+		else if (Clock->hour >= TIME_EVENING_START)
 			gBattleAnimArgs[0] = 2;
 	#endif
 
