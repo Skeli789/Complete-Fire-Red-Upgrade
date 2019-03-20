@@ -97,6 +97,7 @@ enum
 
 #define INVERSE_BATTLES //Comment this line to disable the possibility of having Inverse Battles
 #define TIME_ENABLED //Comment this line to disable time based features. All time dependent features will default in Daytime.
+#define DNS_IN_BATTLE //Comment this line to disable the Day/Night system from working in battle
 #define OVERWRITE_RIVAL //Comment this line to disable to loading of your rival's name into trainer classes 0x51, 0x59, and 0x5A
 #define TRAINER_CLASS_POKE_BALLS //Comment this line to disable creating Trainer's pokemon with Poke Balls specific to their trainer class
 #define TRAINERS_WITH_EVS //Comment this line to disbale the Trainers with EVs hack, (only avaible with custom moveset)
