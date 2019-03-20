@@ -20,6 +20,8 @@
 .global BattleScript_StickyWebSpeedDrop
 .global BattleScript_SuccessForceOut
 
+.global BattleScript_WildDoubleSwitchFix
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_HealingWishHeal:
@@ -213,6 +215,22 @@ BattleScript_PursuitDmgOnSwitchOut:
 	
 BattleScript_PursuitDmgOnSwitchOutRet:
 	return
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_WildDoubleSwitchFix:
+	jumpifbattletype BATTLE_TRAINER 0x81D86E6
+	jumpifbattletype BATTLE_DOUBLE WildDoubleCheckSwitchPossible
+	goto 0x81D86BB
+
+WildDoubleCheckSwitchPossible:
+	jumpifcannotswitch 0xB WildDoubleCantSwitch
+	goto 0x81D86BB
+
+WildDoubleCantSwitch:
+	openpartyscreen 0x3 0x81D87B7
+	switchhandleorder 0x3 0x2
+	goto 0x81D8792
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

@@ -232,14 +232,17 @@ void atk23_getexp(void) {
     case GetExp_Distribute: // set exp value to the poke in expgetter_id and print message
 	
         // music change in wild battle after fainting a poke
-        if (!(gBattleTypeFlags & (BATTLE_TYPE_TRAINER | BATTLE_TYPE_POKE_DUDE | BATTLE_TYPE_DOUBLE)) 
-		&& gBattleMons[0].hp 
+        if (!(gBattleTypeFlags & (BATTLE_TYPE_TRAINER | BATTLE_TYPE_POKE_DUDE)) 
 		&& !gBattleStruct->wildVictorySong)
         {
-            BattleStopLowHpSound();
-            PlayBGM(MUS_WILD_POKE_VICTORY); //Wild PKMN Victory
-            gBattleStruct->wildVictorySong++;
-			gAbsentBattlerFlags |= gBitTable[gBankFainted];
+			if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE && gBattleMons[0].hp && gBattleMons[1].hp == 0 && gBattleMons[3].hp == 0)
+			|| (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE) && gBattleMons[0].hp && gBattleMons[1].hp == 0))
+			{
+				BattleStopLowHpSound();
+				PlayBGM(MUS_WILD_POKE_VICTORY); //Wild PKMN Victory
+				gBattleStruct->wildVictorySong++;
+				gAbsentBattlerFlags |= gBitTable[gBankFainted];
+			}
         }
 
         if (gPlayerParty[gBattleStruct->expGetterId].hp)
