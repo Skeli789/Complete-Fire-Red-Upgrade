@@ -20,6 +20,8 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 	
 	u8 atkAbility = ABILITY(bankAtk);
 	u8 defAbility = ABILITY(bankDef);
+	u8 atkPartnerAbility = ABILITY(bankAtkPartner);
+	u8 defPartnerAbility = ABILITY(bankDefPartner);
 	
 	u32 atkStatus1 = gBattleMons[bankAtk].status1;
 	u32 atkStatus2 = gBattleMons[bankAtk].status2;
@@ -110,7 +112,7 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 					break;
 					
 				case MOVE_MAGNETICFLUX:
-					if (ABILITY(bankAtkPartner) == ABILITY_PLUS || ABILITY(bankAtkPartner) == ABILITY_MINUS)
+					if (atkPartnerAbility == ABILITY_PLUS || atkPartnerAbility == ABILITY_MINUS)
 					{
 						viability += 5;
 						break;
@@ -162,7 +164,7 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 					goto FUNCTION_RETURN;
 					
 				case MOVE_GEARUP:
-					if (ABILITY(bankAtkPartner) == ABILITY_PLUS || ABILITY(bankAtkPartner) == ABILITY_MINUS)
+					if (atkPartnerAbility == ABILITY_PLUS || atkPartnerAbility == ABILITY_MINUS)
 					{
 						viability += 5;
 						goto FUNCTION_RETURN;
@@ -617,8 +619,8 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 					if (defAbility == ABILITY_GALEWINGS
 					|| defAbility == ABILITY_PRANKSTER)
 						viability += 5;
-					else if (ABILITY(bankAtkPartner) == ABILITY_GALEWINGS
-					|| ABILITY(bankAtkPartner) == ABILITY_PRANKSTER)
+					else if (atkPartnerAbility == ABILITY_GALEWINGS
+					|| atkPartnerAbility == ABILITY_PRANKSTER)
 						viability += 5;
 					else if (MoveEffectInMoveset(EFFECT_QUICK_ATTACK, bankDef)
 					|| MoveEffectInMoveset(EFFECT_QUICK_ATTACK, bankAtkPartner))
@@ -636,12 +638,12 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 							viability += 5;
 						goto FUNCTION_RETURN;
 					}
-					break;
+					goto FUNCTION_RETURN;
 					
 				case MOVE_CRAFTYSHIELD:
 					if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
 						viability += 5;
-					break;
+					goto FUNCTION_RETURN;
 				
 				case MOVE_MATBLOCK:
 					if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
@@ -650,7 +652,7 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 							viability += 7;
 						break;
 					}
-					break;
+					goto FUNCTION_RETURN;
 				
 				default:
 					if (atkAbility == ABILITY_POISONHEAL && (atkStatus1 & STATUS1_PSN_ANY))
@@ -679,9 +681,7 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 					else
 						goto AI_RANDOM_DOUBLES_PROTECT;
 					break;
-			}
-			break;
-			
+			} // switch move
 		AI_PROTECT_LOW_HEALTH_CHECK: ;
 			if (GetHealthPercentage(bankAtk) > 35)
 				goto AI_RANDOM_DOUBLES_PROTECT;
@@ -695,45 +695,98 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 				goto AI_CHECK_PROTECT_CHANCE;
 			break;
 			
-		// entry hazards
+		// entry hazards - fix?
 		case EFFECT_SPIKES:
-			// to do
+			if (MoveWouldHitFirst(move, bankAtk, bankDef))
+				viability += 6;
+			else if (GetHealthPercentage(bankAtk) > 20)
+				viability += 6;
 			break;
 			
 		case EFFECT_FORESIGHT:
-			// to do
+			if (move == MOVE_MIRACLEEYE)
+			{
+				if (IsOfType(bankDef, TYPE_DARK))
+					viability += 4;
+				break;
+			}
+			else
+			{
+				if (atkAbility == ABILITY_SCRAPPY)
+					break;
+				else if (STAT_STAGE(bankDef, STAT_STAGE_EVASION) > 6)
+					viability += 4;
+				else if (IsOfType(bankDef, TYPE_GHOST))
+					viability += 4;
+				break;
+			}
 			break;
 			
 		case EFFECT_PERISH_SONG;
-			// todo
+			if (atkAbility == ABILITY_SHADOWTAG || atkAbility == ABILITY_ARENATRAP)
+				viability += 5;
+			else if (atkStatus2 & (STATUS2_ESCAPE_PREVENTION | STATUS2_WRAPPED))
+				viability += 5;
 			break;
 			
 		case EFFECT_SANDSTORM:
-			// todo 
+			if (atkAbility == ABILITY_SANDVEIL || atkAbility == ABILITY_SANDRUSH || atkAbility == ABILITY_SANDFORCE)
+				viability += 6;
+			else if ((IsOfType(bankAtk, TYPE_ROCK)) || (IsOfType(bankAtk, TYPE_STEEL)) || (IsOfType(bankAtk, TYPE_GROUND)))
+				viability += 6;
+			else if (FindMovePositionInMoveset(MOVE_SHOREUP, bankAtk) != 4)
+				viability += 6;
+			else if (FindMovePositionInMoveset(MOVE_WEATHERBALL, bankAtk) != 4)
+				viability += 6;
+			else if (atkItemEffect == ITEM_EFFECT_SMOOTH_ROCK)
+				viability += 6;
+			else if (atkPartnerAbility == ABILITY_SANDVEIL || atkPartnerAbility == ABILITY_SANDRUSH || atkPartnerAbility == ABILITY_SANDFORCE)
+				viability += 6;
+			else if ((IsOfType(bankAtkPartner, TYPE_ROCK)) || (IsOfType(bankAtkPartner, TYPE_STEEL)) || (IsOfType(bankAtkPartner, TYPE_GROUND)))
+				viability += 6;
 			break;
 			
 		case EFFECT_ENDURE:
-			// todo
+			if (!(MoveEffectInMoveset(EFFECT_FLAIL, bankAtk)))
+				break;
+			else if (GetHealthPercentage(bankAtk) > 25)
+				viability += 5;
 			break;
 		
 		case EFFECT_ROLLOUT:
-			// to do
+			if (atkStatus2 & STATUS2_DEFENSE_CURL)
+				viability += 5;
 			break;
 			
 		case EFFECT_SWAGGER:
-			// to do
+			if (FindMovePositionInMoveset(MOVE_FOULPLAY, bankAtk) != 4)
+				viability += 5
+			else
+				goto AI_CONFUSE_CHECK;
 			break;
 			
 		case EFFECT_FURY_CUTTER:
-			// to do
+			if (atkItemEffect == ITEM_EFFECT_METRONOME)
+				viability += 5;
 			break;
 			
 		case EFFECT_ATTRACT:
-			// to do
+			if (atkStatus1 & STATUS1_ANY)
+				viability += 5;
+			else if (atkStatus2 & STATUS2_CONFUSION)
+				viability += 5;
 			break;
 			
 		case EFFECT_BATON_PASS:
-			// todo
+			switch (move)
+			{
+				case MOVE_UTURN:
+					
+				case MOVE_VOLTSWITCH:
+				
+				case MOVE_BATONPASS:
+					
+			}
 			break;
 			
 		case EFFECT_RAPID_SPIN:
