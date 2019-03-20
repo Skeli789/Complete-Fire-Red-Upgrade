@@ -2202,10 +2202,10 @@ BS_127_BatonPass:
 	jumpifmovehadnoeffect BS_MOVE_FAINT
 	seteffectwithchancetarget
 	faintpokemon BANK_TARGET 0x0 0x0
+	jumpifnoviablemonsleft BANK_TARGET BS_MOVE_END
 	setbyte CMD49_STATE 0x0
 	cmd49 BANK_TARGET 0x0
 	jumpifcannotswitch BANK_ATTACKER 0x81D6957
-	jumpifnoviablemonsleft BANK_TARGET BS_MOVE_END
 	jumpiffainted BANK_TARGET UTurnGiveEXPBS
 
 UTurnSwitchBS:

@@ -1510,6 +1510,7 @@
 	
 	.macro jumpifnoviablemonsleft bank rom_address
 	.byte 0xFF, 0x16
+	.byte \bank
 	.4byte \rom_address
 	.endm
 	
