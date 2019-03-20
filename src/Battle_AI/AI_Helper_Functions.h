@@ -20,3 +20,4 @@ extern bool8 MoveTypeInMoveset(u8 bank, u8 moveType);
 extern bool8 HasSnatchableMove(u8 bank);
 extern bool8 PartyMemberStatused(u8 bank);
 extern bool8 MoveEffectInMoveset(u8 moveEffect, u8 bank);
+extern bool8 StatusMoveInMoveset(u8 bank);

@@ -36,6 +36,7 @@ bool8 MoveTypeInMoveset(u8 bank, u8 moveType);
 bool8 HasSnatchableMove(u8 bank);
 bool8 PartyMemberStatused(u8 bank);
 bool8 MoveEffectInMoveset(u8 moveEffect, u8 bank);
+bool8 StatusMoveInMoveset(u8 bank);
 
 bool8 CanKillAFoe(u8 bank) {
 	u8 foe = FOE(bank);
@@ -490,7 +491,36 @@ bool8 MoveEffectInMoveset(u8 moveEffect, u8 bank) {
 	return FALSE;
 }
 
-
+// AI function to check if bank has a status move in their moveset
+bool8 StatusMoveInMoveset(u8 bank) {
+	u16 move;
+	u8 moveLimitations = CheckMoveLimitations(bank, 0, 0xFF);
+	
+	for (int i = 0; i < 4; ++i) {
+		#ifdef REALLY_SMART_AI
+			move = gBattleMons[bank].moves[i];
+		#else
+			if (SIDE(bank) == B_SIDE_PLAYER && !(gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER))
+				move = BATTLE_HISTORY->usedMoves[bank].moves[i];
+			else if (SIDE(bank) == B_SIDE_PLAYER && gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER && GetBattlerPosition(bank) == B_POSITION_PLAYER_LEFT)
+				move = BATTLE_HISTORY->usedMoves[bank].moves[i];
+			else
+				move = gBattleMons[bank].moves[i];
+		#endif
+		
+		if (move == MOVE_NONE)
+			break;
+		
+		if (!(gBitTable[i] & moveLimitations))
+		{
+			if (CalcMoveSplit(move, bank) == SPLIT_STATUS)
+				return TRUE;
+		}
+	}
+	return FALSE;	
+	
+	
+}
 
 
 

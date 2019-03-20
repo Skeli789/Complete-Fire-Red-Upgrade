@@ -1101,7 +1101,7 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 					viability -= 10;
 				else if (gSideAffecting[SIDE(bankDef)] & (SIDE_STATUS_REFLECT | SIDE_STATUS_SAFEGUARD | SIDE_STATUS_MIST))
 					goto AI_STANDARD_DAMAGE;
-				else if (gNewBS->AuroraVeilTimers[bankDef])
+				else if (gNewBS->AuroraVeilTimers[SIDE(bankDef)])
 					goto AI_STANDARD_DAMAGE;
 			}
 			else if ((atkStatus3 & STATUS3_LEECHSEED) || (atkStatus2 & STATUS2_WRAPPED))
