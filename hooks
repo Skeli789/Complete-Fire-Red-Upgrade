@@ -176,3 +176,6 @@ ExpandedFlagsHook 806E5C0 1
 ##Other Hooks
 BattlePokemonScriptCommand_GiveHiddenAbilityHook 80A02EC 0
 DaycareInheritHiddenAbility 8046116 0
+
+##DNS
+TransferPlttBuffer 8070474 0

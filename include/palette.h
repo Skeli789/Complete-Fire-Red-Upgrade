@@ -15,6 +15,13 @@
 
 enum
 {
+    NORMAL_FADE,
+    FAST_FADE,
+    HARDWARE_FADE,
+};
+
+enum
+{
     FAST_FADE_IN_FROM_WHITE,
     FAST_FADE_OUT_TO_WHTIE,
     FAST_FADE_IN_FROM_BLACK,
@@ -41,6 +48,7 @@ struct PaletteFadeControl
     u8 deltaY:4; // rate of change of blend coefficient
 };
 
+/*
 extern struct PaletteFadeControl gPaletteFade;
 extern u32 gPlttBufferTransferPending;
 extern u8 gPaletteDecompressionBuffer[];
@@ -72,5 +80,5 @@ void BlendPalettesUnfaded(u32, u8, u16);
 void sub_80716F8(const u16 *, u16 *, u16, u8);
 
 extern struct PaletteFadeControl gPaletteFade;
-
+*/
 #endif // GUARD_PALETTE_H

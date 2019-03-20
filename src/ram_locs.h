@@ -201,7 +201,8 @@ typedef u8 Buffer_t[0x200];
 /*u8*/  #define gPlttBufferFaded ((u16*) 0x20375F8)
 /*u8*/  #define gPlttBufferFaded2 ((u16*) 0x20377F8)
 
-/*u8*/  #define gPaletteFade ((u8*) 0x2037AB8)
+/*u8*/  #define gPaletteFade ((struct PaletteFadeControl*) 0x2037AB8)
+/*u32*/	#define sPlttBufferTransferPending (*((u32*) 0x2037AC8))
 /*u32*/	#define sBattleAnimScriptPtr (*((u8**) 0x2037ED4))
 		#define gAnimScriptCallback (*((u32*) 0x2037EDC))
 /*s8*/	#define gAnimFramesToWait (*((s8*) 0x2037EE0))
