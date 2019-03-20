@@ -3,6 +3,8 @@
 
 // TODO: Get correct names and numbers
 
+#define FLAG_SYS_WHITE_FLUTE	0x803
+#define FLAG_SYS_BLACK_FLUTE	0x804
 #define FLAG_SYS_PC_BILL 		0x834
 
 #define FLAG_0x001               0x1

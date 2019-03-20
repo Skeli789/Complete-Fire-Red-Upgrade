@@ -73,6 +73,9 @@ sText_LostAgainstTrainer 083FE4C0
 sText_PaidPrizeMoney 083FE4C4
 sText_BlackedOut 083FE4F0
 
+gText_UsedVar2WildStronger 080A1B3C
+gText_UsedVar2WildWeaker 080A1AEC
+
 ##Gen 4 Player OW Running Fix
 gEventObjectImageAnim_RunSouth 083A3460
 gEventObjectImageAnim_RunNorth 083A3464
