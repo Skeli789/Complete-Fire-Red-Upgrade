@@ -97,7 +97,7 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 	}
 		
 	// Powder Move Checks (safety goggles, defender has grass type, overcoat, and powder move table)
-	if ((defEffect == ITEM_EFFECT_SAFETY_GOGGLES) || IsOfType(bankDef, TYPE_GRASS) || defAbility == ABILITY_OVERCOAT)
+	if ((defEffect == ITEM_EFFECT_SAFETY_GOGGLES || IsOfType(bankDef, TYPE_GRASS) || defAbility == ABILITY_OVERCOAT)
 	&& CheckTableForMove(move, PowderTable))
 		viability -= 10; //No return b/c could be reduced further by absorb abilities
 		
@@ -415,7 +415,7 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 			
 		case EFFECT_MIRROR_MOVE: //May cause issues with priority calcs?
 			if (gBattleStruct->lastTakenMoveFrom[bankAtk][bankDef] != 0)
-				return AI_Script_Negatives(bankAtk, bankDef, gBattleStruct->lastTakenMoveFrom[bankAtk][bankDef]);
+				return AI_Script_Negatives(bankAtk, bankDef, gBattleStruct->lastTakenMoveFrom[bankAtk][bankDef], viability);
 			viability -= 10;
 			break;
 			

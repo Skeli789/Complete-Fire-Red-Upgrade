@@ -1,7 +1,7 @@
 #include "defines.h"
 #include "helper_functions.h"
 #include "mega.h"
-#include "AI_Helper_Functions.h"
+#include "Battle_AI/AI_Helper_Functions.h"
 #include "z_move_effects.h"
 
 //Make The Z-Move Names change colour (look in SetPpNumbersPaletteInMoveSelection)

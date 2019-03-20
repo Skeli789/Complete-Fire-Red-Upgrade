@@ -384,11 +384,8 @@ void UpdateOamPriorityInAllHealthboxes(u8 priority)
 				case B_ANIM_MEGA_EVOLUTION:
 				case B_ANIM_ULTRA_BURST:
 					goto HIDE_BOXES;
-				
-				goto DEFAULT_CASE;
 			}
-			break;
-			
+		__attribute__ ((fallthrough));
 		default:
 		DEFAULT_CASE:
 			for (i = 0; i < gBattlersCount; i++)

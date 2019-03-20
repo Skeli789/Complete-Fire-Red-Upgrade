@@ -1,7 +1,7 @@
 #include "defines.h"
 #include "helper_functions.h"
 #include "multi.h"
-#include "AI_Helper_Functions.h"
+#include "Battle_AI/AI_Helper_Functions.h"
 #include "mega.h"
 
 #define BANK_PLAYER_ALLY 2

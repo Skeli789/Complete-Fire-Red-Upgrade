@@ -1,7 +1,7 @@
 #include "defines.h"
 #include "helper_functions.h"
 #include "mega.h"
-#include "AI_Helper_Functions.h"
+#include "Battle_AI/AI_Helper_Functions.h"
 
 #define AI_CHOICE_FLEE 4
 #define AI_CHOICE_WATCH 5
