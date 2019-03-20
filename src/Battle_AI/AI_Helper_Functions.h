@@ -19,3 +19,4 @@ extern u8 aiAllStatChecks(u8 viability, u8 bank, u8 cmpVal);
 extern bool8 MoveTypeInMoveset(u8 bank, u8 moveType);
 extern bool8 HasSnatchableMove(u8 bank);
 extern bool8 PartyMemberStatused(u8 bank);
+extern bool8 MoveEffectInMoveset(u8 moveEffect, u8 bank);

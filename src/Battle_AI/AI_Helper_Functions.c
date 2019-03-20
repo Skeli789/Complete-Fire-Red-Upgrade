@@ -35,7 +35,7 @@ u8 aiAllStatChecks(u8 viability, u8 bank, u8 cmpVal);
 bool8 MoveTypeInMoveset(u8 bank, u8 moveType);
 bool8 HasSnatchableMove(u8 bank);
 bool8 PartyMemberStatused(u8 bank);
-
+bool8 MoveEffectInMoveset(u8 moveEffect, u8 bank);
 
 bool8 CanKillAFoe(u8 bank) {
 	u8 foe = FOE(bank);
@@ -323,7 +323,7 @@ bool8 MagicCoatableMovesInMoveset(u8 bank) {
 			break;
 		
 		if (!(gBitTable[i] & moveLimitations)) {
-			if (gBattleMoves[move].flags & FLAG_MAGIC_COAT_AFFECTED)
+			if (gBattleMoves[move].target & FLAG_MAGIC_COAT_AFFECTED)
 				return TRUE;
 		}
 	}
@@ -450,7 +450,7 @@ u8 aiAllStatChecks(u8 viability, u8 bank, u8 cmpVal) {
 // AI function to check if any move is of given type
 bool8 MoveTypeInMoveset(u8 bank, u8 moveType) {
 	u8 i;
-	for (i = 0; i <= 4; ++i)
+	for (i = 0; i <= 3; ++i)
 	{
 		if (gBattleMoves[gBattleMons[bank].moves[i]].type == moveType)
 			return TRUE;
@@ -461,7 +461,7 @@ bool8 MoveTypeInMoveset(u8 bank, u8 moveType) {
 // AI Function to check if bank has a snatchable move in moveset
 bool8 HasSnatchableMove(u8 bank) {
 	u8 i;
-	for (i = 0; i <= 4; ++i)
+	for (i = 0; i <= 3; ++i)
 	{
 		if (gBattleMoves[gBattleMons[bank].moves[i]].flags & FLAG_SNATCH_AFFECTED)
 			return TRUE;
@@ -478,4 +478,19 @@ bool8 PartyMemberStatused(u8 bank) {
 	else
 		return FALSE;	
 }
+
+// AI function to see if bank has a move with specific move effect
+bool8 MoveEffectInMoveset(u8 moveEffect, u8 bank) {
+	u8 i;
+	for (i = 0; i <= 3; ++i)
+	{
+		if (gBattleMoves[gBattleMons[bank].moves[i]].effect == moveEffect)
+			return TRUE;		
+	}
+	return FALSE;
+}
+
+
+
+
 

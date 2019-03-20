@@ -65,6 +65,7 @@ extern bool8 CanBePoisoned(u8 bankDef, u8 bankAtk);
 extern bool8 CanBeParalyzed(u8 bank);
 extern bool8 CanBeBurned(u8 bank);
 extern bool8 CanBeFrozen(u8 bank);
+extern bool8 CanBeConfused(u8 bank);
 extern bool8 CanPartyMonBeGeneralStatused(pokemon_t* mon);
 extern bool8 CanPartyMonBePutToSleep(pokemon_t* mon);
 extern bool8 CanPartyMonBePoisoned(pokemon_t* mon);

@@ -970,7 +970,7 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 				}
 			}
 			
-			if ((gProtectStructs[bankAtk].protected) && (umodsi(Random(), 100) < 50))
+			if ((gDisableStructs[gBankAttacker].protectUses > 0) && (umodsi(Random(), 100) < 50))
 				viability -= 6;
 			break;
 			
@@ -1151,7 +1151,7 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 			break;
 			
 		case EFFECT_FAKE_OUT:
-			if (!gDisableStructs[gBankAttacker].isFirstTurn)
+			if (!gDisableStructs[bankAtk].isFirstTurn)
 				viability -= 10;
 			else
 				goto AI_STANDARD_DAMAGE;

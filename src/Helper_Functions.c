@@ -967,6 +967,15 @@ bool8 CanBeFrozen(u8 bank) {
 	return TRUE;
 }
 
+bool8 CanBeConfused(u8 bank) {
+	if (!CanBeGeneralStatused(bank))
+		return FALSE;
+	else if (ABILITY(bank) == ABILITY_OWNTEMPO)
+		return FALSE;
+	else
+		return TRUE;	
+}
+
 bool8 CanPartyMonBeGeneralStatused(pokemon_t* mon) {
 	if (mon->species == PKMN_MINIORSHIELD)
 		return FALSE;
@@ -1064,3 +1073,4 @@ bool8 CanPartyMonBeFrozen(pokemon_t* mon) {
 		
 	return TRUE;
 }
+
