@@ -30,6 +30,7 @@
 #define SCALE_TRAINER_LEVELS_FLAG 0x90D //If this flag is set, all Trainer Pokemon levels will be set to the highest in your party
 #define HIDDEN_ABILITY_FLAG 0x90E //If this flag is set, generated wild Pokemon will have their hidden abilities
 #define DOUBLE_WILD_BATTLE_FLAG 0x90F //If this flag is set, a wild battles will be against two Pokemon
+#define NO_RANDOM_WILD_ENCOUNTERS_FLAG 0x910 //If this is set, wild Pokemon won't appear when walking/surfing in grass, caves, water, etc.
 
 #define SECOND_OPPONENT_VAR 0x5010 //Set this to the var used to store the Trainer Id of the second opponent in Multi Battles (can be any free var)
 #define PARTNER_VAR 0x5011 //Set this to the var used to store the Trainer Id of your partner in Multi Battles (can be any free var)
@@ -53,7 +54,7 @@ enum
 
 #define TIME_MORNING_START 4		//4:00 AM -  4:00
 #define TIME_DAY_START 8			//8:00 AM -  8:00
-#define TIME_AFTERNOON_START 17		//5:00 PM - 17:00
+#define TIME_EVENING_START 17		//5:00 PM - 17:00
 #define TIME_NIGHT_START 20			//8:00 PM - 20:00
 
 #define KANTO_DEX_COUNT 151
@@ -66,7 +67,8 @@ enum
 
 #define DUSK_BALL_MULTIPLIER 30 //Change this line to 35 to make the catch rate for the Dusk Ball 3.5x like before Gen 7
 #define STANDARD_IV 10 //Change this to be the number of IVs Pokemon owned by random trainers should have (all stats will have this number)
-#define SWARM_CHANCE 50
+#define SWARM_CHANCE 50 //Change this to the percentage that swarming Pokemon will appear if they can be found on the current route.
+#define WILD_DOUBLE_RANDOM_CHANCE 50 //Change this to the percentage that a wild double battle will be initiated if the player is in special grass.
 
 #ifndef UNBOUND 
 //Change These

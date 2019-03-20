@@ -1,5 +1,5 @@
-#include "defines.h"
-#include "helper_functions.h"
+#include "..\\defines.h"
+#include "..\\helper_functions.h"
 #include "AI_Helper_Functions.h"
 
 extern u8 TypeCalc(u16 move, u8 bankAtk, u8 bankDef, pokemon_t* party_data_atk, bool8 CheckParty);

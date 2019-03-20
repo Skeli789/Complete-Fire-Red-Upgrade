@@ -1,5 +1,5 @@
 #pragma once
-#include "defines.h"
+#include "..\\defines.h"
 
 extern bool8 CanKillAFoe(u8 bank);
 extern bool8 CanKnockOut(u8 bankAtk, u8 bankDef);

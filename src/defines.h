@@ -83,6 +83,7 @@
 #define IS_Z_MOVE(move) (move >= FIRST_Z_MOVE && move <= LAST_Z_MOVE)
 #define IS_EVEN(val) (umodsi(val, 2) == 0)
 #define IS_ODD(val) (umodsi(val, 2) != 0)
+#define STAT_STAGE(bank, stat) (gBattleMons[bank].statStages[stat - 1])
 
 #define AI_THINKING_STRUCT ((struct AI_ThinkingStruct*)(gBattleResources->ai))
 #define BATTLE_HISTORY ((struct BattleHistory*)(gBattleResources->battleHistory))
