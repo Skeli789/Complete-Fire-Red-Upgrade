@@ -20,6 +20,7 @@
 #define BattleScript_SelectingImprisionedMove (u8*) 0x81D8F9F
 #define BattleScript_SelectingNotAllowedMoveChoiceItem (u8*) 0x81D963D
 #define BattleScript_SelectingMoveWithNoPP (u8*) 0x81D8EA4
+#define gText_WhatWillPkmnDo (u8*) 0x83FE6D5
 
 extern move_t SkyBattleBanTable[];
 extern move_t GravityBanTable[];
@@ -49,6 +50,8 @@ extern u8 gText_CritHitsPlus[];
 extern u8 gText_FollowMe[];
 extern u8 gText_RecoverHP[];
 extern u8 gText_HealAllyHP[];
+extern u8 gText_BattleMenu[];
+extern u8 gText_BattleMenu2[];
 
 extern const struct Evolution* CanMegaEvolve(u8 bank, bool8 CheckUBInstead);
 extern bool8 MegaEvolutionEnabled(u8 bank);
@@ -1086,10 +1089,50 @@ u8 TrySetCantSelectMoveBattleScript(void)
     return limitations;
 }
 
+void PlayerHandleChooseAction(void)
+{
+    int i;
+	
+	u16 itemId = gBattleBufferA[gActiveBattler][2] | (gBattleBufferA[gActiveBattler][3] << 8);
+
+	//Running or using balls cancels the second mon's attack
+	if (gBattleBufferA[gActiveBattler][1] == ACTION_USE_ITEM //If mon 1 used a ball, then
+	&&  GetPocketByItemId(itemId) == POCKET_POKEBALLS)		 //mon 2 doesn't get to do anything.
+	{
+		gNewBS->NoMoreMovingThisTurn |= gBitTable[gActiveBattler];
+		EmitTwoReturnValues(1, ACTION_USE_MOVE, 0);
+		PlayerBufferExecCompleted();
+		return;
+	}
+	else if (gBattleBufferA[gActiveBattler][1] == ACTION_RUN)
+	{
+		gNewBS->NoMoreMovingThisTurn |= gBitTable[gActiveBattler];
+		EmitTwoReturnValues(1, ACTION_USE_MOVE, 0);
+		PlayerBufferExecCompleted();
+		return;
+	}
+	
+    gBattleBankFunc[gActiveBattler] = (u32) HandleChooseActionAfterDma3;
+	
+	if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	&& GetBattlerPosition(gActiveBattler) == B_POSITION_PLAYER_RIGHT
+	&& !(gAbsentBattlerFlags & gBitTable[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)])
+	&& !(gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_INGAME_PARTNER))
+	&& gBattleBufferA[gActiveBattler][1] != ACTION_USE_ITEM) //Mon 1 didn't use item
+		BattlePutTextOnWindow(gText_BattleMenu2, 2);
+	else
+		BattlePutTextOnWindow(gText_BattleMenu, 2);
+
+    for (i = 0; i < 4; i++)
+        ActionSelectionDestroyCursorAt(i);
+
+    ActionSelectionCreateCursorAt(gActionSelectionCursor[gActiveBattler], 0);
+    BattleStringExpandPlaceholdersToDisplayedString(gText_WhatWillPkmnDo);
+    BattlePutTextOnWindow(gDisplayedStringBattle, 1);
+}
+
 void HandleInputChooseAction(void)
 {
-    u16 itemId = gBattleBufferA[gActiveBattler][2] | (gBattleBufferA[gActiveBattler][3] << 8);
-
     DoBounceEffect(gActiveBattler, BOUNCE_HEALTHBOX, 7, 1);
     DoBounceEffect(gActiveBattler, BOUNCE_MON, 7, 1);
 
@@ -1102,12 +1145,26 @@ void HandleInputChooseAction(void)
 				EmitTwoReturnValues(1, ACTION_USE_MOVE, 0);
 				break;
 			case 1:
+				gNewBS->MegaData->chosen[gActiveBattler] = FALSE;
+				gNewBS->UltraData->chosen[gActiveBattler] = FALSE;
 				EmitTwoReturnValues(1, ACTION_USE_ITEM, 0);
 				break;
 			case 2:
+				gNewBS->MegaData->chosen[gActiveBattler] = FALSE;
+				gNewBS->UltraData->chosen[gActiveBattler] = FALSE;
 				EmitTwoReturnValues(1, ACTION_SWITCH, 0);
 				break;
 			case 3:
+				gNewBS->MegaData->chosen[gActiveBattler] = FALSE;
+				gNewBS->UltraData->chosen[gActiveBattler] = FALSE;
+				
+				if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+				&& GetBattlerPosition(gActiveBattler) == B_POSITION_PLAYER_RIGHT
+				&& !(gAbsentBattlerFlags & gBitTable[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)])
+				&& !(gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_INGAME_PARTNER))
+				&& gBattleBufferA[gActiveBattler][1] != ACTION_USE_ITEM) //Mon 1 didn't use item
+					goto CANCEL_PARTNER;
+				
 				EmitTwoReturnValues(1, ACTION_RUN, 0);
 				break;
         }
@@ -1160,14 +1217,10 @@ void HandleInputChooseAction(void)
          && !(gAbsentBattlerFlags & gBitTable[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)])
          && !(gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_INGAME_PARTNER)))
         {
+		CANCEL_PARTNER:
             if (gBattleBufferA[gActiveBattler][1] == ACTION_USE_ITEM)
-            {
-                // Add item back to bag if it is a ball
-                if (GetPocketByItemId(itemId) == POCKET_POKEBALLS)
-                    AddBagItem(itemId, 1);
-                else
-                    return;
-            }
+                return;
+            
             PlaySE(SE_SELECT);
             EmitTwoReturnValues(1, ACTION_CANCEL_PARTNER, 0);
             PlayerBufferExecCompleted();
@@ -1177,4 +1230,14 @@ void HandleInputChooseAction(void)
     {
         SwapHpBarsWithHpText();
     }
+}
+
+bool8 CheckCantMoveThisTurn(void)
+{
+	if (gNewBS->NoMoreMovingThisTurn & gBitTable[gActiveBattler])
+	{
+		EmitMoveChosen(1, 0, gMultiUsePlayerCursor, FALSE, FALSE, FALSE);
+		return TRUE;
+	}
+	return FALSE;
 }

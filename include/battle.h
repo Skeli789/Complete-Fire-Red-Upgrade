@@ -756,6 +756,7 @@ struct NewBattleStruct
 	u8 PowderByte;
 	u8 AbsentBattlerHelper;
 	u8 activeAbilityPopUps;
+	u8 NoMoreMovingThisTurn;
 	
 	//Bit Fields for Party
 	u8 BelchCounters;
@@ -779,7 +780,6 @@ struct NewBattleStruct
 	u8 savedObjId;
 	
 	//Booleans
-	bool8 NoMoreMovingThisTurn : 1;
 	bool8 MoveBounceInProgress : 2;
 	bool8 moveWasBouncedThisTurn : 1;
 	bool8 AttackerDidDamageAtLeastOnce : 1;

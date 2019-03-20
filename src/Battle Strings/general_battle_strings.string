@@ -116,6 +116,12 @@ You paid [B7][FD][00] as the prize\nmoney[B0]\p[B0] [B0] [B0] [B0]\pYou blacked 
 #org @sText_BlackedOut
 You blacked out![FC][09]
 
+#org @gText_BattleMenu 
+[FC][05][05][FC][04][0D][0E][0F]Fight[FC][13][38]Bag\nPok\emon[FC][13][38]Run
+
+#org @gText_BattleMenu2
+[FC][05][05][FC][04][0D][0E][0F]Fight[FC][13][38]Bag\nPok\emon[FC][13][38]Back
+
 //Exp String
 
 #org @String_TeamExpGain

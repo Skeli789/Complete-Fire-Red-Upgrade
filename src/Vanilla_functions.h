@@ -121,6 +121,7 @@ void __attribute__((long_call)) MoveSelectionCreateCursorAt(u8 cursorPos, u8 arg
 void __attribute__((long_call)) MoveSelectionDestroyCursorAt(u8 cursorPos);
 void __attribute__((long_call)) ActionSelectionCreateCursorAt(u8 cursorPos, u8 arg1);
 void __attribute__((long_call)) ActionSelectionDestroyCursorAt(u8 cursorPosition);
+void __attribute__((long_call)) HandleChooseActionAfterDma3(void);
 void __attribute__((long_call)) sub_8033AC8(void);
 void __attribute__((long_call)) sub_8033EEC(struct Sprite *sprite);
 void __attribute__((long_call)) BattleLoadOpponentMonSpriteGfx(struct Pokemon* mon, u8 bank);
@@ -186,7 +187,7 @@ void __attribute__((long_call)) BattleIntroSlideLink(u8 taskId);
 u8 __attribute__((long_call)) BattleAI_ChooseMoveOrAction(void);
 void __attribute__((long_call)) RecordAbilityBattle(u8 bank, u8 ability);
 void __attribute__((long_call)) RecordItemBattle(u8 bank, u8 item_effect);
-void __attribute__((long_call)) StrCpyDecodeToDisplayedStringBattle(const u8* textPtr);
+void __attribute__((long_call)) BattleStringExpandPlaceholdersToDisplayedString(const u8* textPtr);
 u8* __attribute__((long_call)) TryGetStatusString(u8 *src);
 void __attribute__((long_call)) ExpandBattleTextBuffPlaceholders(const u8 *src, u8 *dst);
 void __attribute__((long_call)) ChooseMoveUsedParticle(u8* textPtr);

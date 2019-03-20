@@ -13,6 +13,7 @@ BuildTrainerPartyHook 800FF7E 0
 BattleBeginFirstTurn 801385C 0
 TrainerSlidingEndTurnHook 08013D14 1
 IsRunningFromBattleImpossible 08013D54 0
+DoubleWildUseItemRunFixHook 80142D8 0
 PartyMenuSwitchingHook 8014450 0
 GetWhoStrikesFirst 8014CD8 3
 SetActionsAndBanksTurnOrder 80150A8 0
@@ -34,6 +35,7 @@ HandleInputChooseAction 0802E438 0
 SwitchMoveDataHook 802EF90 0
 MoveSelectionDisplayMoveType 8030940 0
 PlayerHandleFormChange 8031E40 0
+PlayerHandleChooseAction 8032BD4 0
 PlayerHandleExpBarUpdate 08032F4C 1
 HandleDataTransfer 8033134 0
 OpponentHandleFormChange 08037760 0

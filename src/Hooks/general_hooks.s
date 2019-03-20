@@ -221,3 +221,17 @@ ExpandedFlagsHook:
 	bne ExpandedVarsPop
 	ldr r0, =0x806E5C8 | 1
 	bx r0
+
+@0x80142D8 with r0
+DoubleWildUseItemRunFixHook:
+	ldr r5, =ACTIVE_BATTLER
+	ldrb r4, [r5]
+	bl CheckCantMoveThisTurn
+	cmp r0, #0x0
+	beq SkipEncoreReturn
+	ldr r0, =0x801460E | 1
+	bx r0
+
+SkipEncoreReturn:
+	ldr r0, =0x801432C | 1
+	bx r0

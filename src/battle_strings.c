@@ -399,7 +399,7 @@ void BufferStringBattle(u16 stringID) {
         break;
     }
 
-    StrCpyDecodeToDisplayedStringBattle(stringPtr);
+    BattleStringExpandPlaceholdersToDisplayedString(stringPtr);
 }
 
 u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
