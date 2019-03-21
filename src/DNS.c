@@ -2,7 +2,43 @@
 #include "helper_functions.h"
 #include "../include/palette.h"
 
+//TODO: Ignore certain palette indices
+
 //Change These
+#define OW_BG_PAL_0 TRUE
+#define OW_BG_PAL_1 TRUE
+#define OW_BG_PAL_2 TRUE
+#define OW_BG_PAL_3 TRUE
+#define OW_BG_PAL_4 TRUE
+#define OW_BG_PAL_5 TRUE
+#define OW_BG_PAL_6 TRUE
+#define OW_BG_PAL_7 TRUE
+#define OW_BG_PAL_8 TRUE
+#define OW_BG_PAL_9 TRUE
+#define OW_BG_PAL_10 TRUE
+#define OW_BG_PAL_11 TRUE
+#define OW_BG_PAL_12 FALSE
+#define OW_BG_PAL_13 FALSE
+#define OW_BG_PAL_14 FALSE
+#define OW_BG_PAL_15 FALSE
+
+#define OW_SPRITE_PAL_0 TRUE
+#define OW_SPRITE_PAL_1 TRUE
+#define OW_SPRITE_PAL_2 TRUE
+#define OW_SPRITE_PAL_3 TRUE
+#define OW_SPRITE_PAL_4 TRUE
+#define OW_SPRITE_PAL_5 TRUE
+#define OW_SPRITE_PAL_6 TRUE
+#define OW_SPRITE_PAL_7 TRUE
+#define OW_SPRITE_PAL_8 TRUE
+#define OW_SPRITE_PAL_9 TRUE
+#define OW_SPRITE_PAL_10 TRUE
+#define OW_SPRITE_PAL_11 TRUE
+#define OW_SPRITE_PAL_12 TRUE
+#define OW_SPRITE_PAL_13 TRUE
+#define OW_SPRITE_PAL_14 TRUE
+#define OW_SPRITE_PAL_15 TRUE
+
 #define BBG_PAL_0 FALSE
 #define BBG_PAL_1 FALSE
 #define BBG_PAL_2 TRUE
@@ -19,13 +55,45 @@
 #define BBG_PAL_13 FALSE
 #define BBG_PAL_14 FALSE
 #define BBG_PAL_15 FALSE
+
+#define B_SPRITE_PAL_0 FALSE
+#define B_SPRITE_PAL_1 FALSE
+#define B_SPRITE_PAL_2 FALSE
+#define B_SPRITE_PAL_3 FALSE
+#define B_SPRITE_PAL_4 FALSE
+#define B_SPRITE_PAL_5 FALSE
+#define B_SPRITE_PAL_6 FALSE
+#define B_SPRITE_PAL_7 FALSE
+#define B_SPRITE_PAL_8 FALSE
+#define B_SPRITE_PAL_9 FALSE
+#define B_SPRITE_PAL_10 FALSE
+#define B_SPRITE_PAL_11 FALSE
+#define B_SPRITE_PAL_12 FALSE
+#define B_SPRITE_PAL_13 FALSE
+#define B_SPRITE_PAL_14 FALSE
+#define B_SPRITE_PAL_15 FALSE
 //The above values are set to only change the battle background.
 
-#define BG_SHI(num) (BBG_PAL_##num << num)
+#define OBG_SHI(num) (OW_BG_PAL_##num << num)
+#define OSP_SHI(num) (OW_SPRITE_PAL_##num << (num + 16))
+#define BBG_SHI(num) (BBG_PAL_##num << num)
+#define BSP_SHI(num) (B_SPRITE_PAL_##num << (num + 16))
 
-#define BATTLE_DNS_PAL_FADE BG_SHI(0) | BG_SHI(1) | BG_SHI(2) | BG_SHI(3) | BG_SHI(4) | BG_SHI(5) 	\
-						 | BG_SHI(6) | BG_SHI(7) | BG_SHI(8) | BG_SHI(9) | BG_SHI(10) | BG_SHI(11) 	\
-						 | BG_SHI(12) | BG_SHI(13) | BG_SHI(14) | BG_SHI(15)
+#define OW_DNS_BG_PAL_FADE OBG_SHI(0) | OBG_SHI(1) | OBG_SHI(2) | OBG_SHI(3) | OBG_SHI(4) | OBG_SHI(5) 		\
+						 | OBG_SHI(6) | OBG_SHI(7) | OBG_SHI(8) | OBG_SHI(9) | OBG_SHI(10) | OBG_SHI(11) 	\
+						 | OBG_SHI(12) | OBG_SHI(13) | OBG_SHI(14) | OBG_SHI(15) 							\
+						 | OSP_SHI(0) | OSP_SHI(1) | OSP_SHI(2) | OSP_SHI(3) | OSP_SHI(4) | OSP_SHI(5) 		\
+						 | OSP_SHI(6) | OSP_SHI(7) | OSP_SHI(8) | OSP_SHI(9) | OSP_SHI(10) | OSP_SHI(11) 	\
+						 | OSP_SHI(12) | OSP_SHI(13) | OSP_SHI(14) | OSP_SHI(15)
+
+
+#define BATTLE_DNS_PAL_FADE BBG_SHI(0) | BBG_SHI(1) | BBG_SHI(2) | BBG_SHI(3) | BBG_SHI(4) | BBG_SHI(5) 	\
+						 | BBG_SHI(6) | BBG_SHI(7) | BBG_SHI(8) | BBG_SHI(9) | BBG_SHI(10) | BBG_SHI(11) 	\
+						 | BBG_SHI(12) | BBG_SHI(13) | BBG_SHI(14) | BBG_SHI(15)							\
+						 | BSP_SHI(0) | BSP_SHI(1) | BSP_SHI(2) | BSP_SHI(3) | BSP_SHI(4) | BSP_SHI(5) 		\
+						 | BSP_SHI(6) | BSP_SHI(7) | BSP_SHI(8) | BSP_SHI(9) | BSP_SHI(10) | BSP_SHI(11)	\
+						 | BSP_SHI(12) | BSP_SHI(13) | BSP_SHI(14) | BSP_SHI(15)
+
 
 void TransferPlttBuffer(void);
 static void BlendFadedPalettes(u32 selectedPalettes, u8 coeff, u32 color);
@@ -71,7 +139,7 @@ void TransferPlttBuffer(void)
 						else
 					#endif
 					
-					BlendFadedPalettes(0xFFFF0FFF, gDNSNightFadingByTime[Clock->hour][Clock->minute / 10].amount, gDNSNightFadingByTime[Clock->hour][Clock->minute / 10].colour);
+					BlendFadedPalettes(OW_DNS_BG_PAL_FADE, gDNSNightFadingByTime[Clock->hour][Clock->minute / 10].amount, gDNSNightFadingByTime[Clock->hour][Clock->minute / 10].colour);
 				}
 		}
 		#endif
