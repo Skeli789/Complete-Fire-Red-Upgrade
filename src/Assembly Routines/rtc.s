@@ -58,7 +58,7 @@ skipOver:
 
 doFuncs2:
 	push {r4,r5,lr}
-	sup sp, #0x8
+	sub sp, #0x8
 	mov r5, r0
 	ldr r0, =(0x03005504)
 	ldr r0, [r0]
