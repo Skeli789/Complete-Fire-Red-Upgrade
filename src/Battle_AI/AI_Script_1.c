@@ -1181,6 +1181,96 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 			else if (PhysicalMoveInMoveset(bankAtk))
 				viability += 6;
 			goto AI_SPEED_PLUS;
+			
+			
+		case EFFECT_STAT_SWAP_SPLT:
+			// to do
+			break;
+			
+		case EFFECT_ME_FIRST:
+			//todo
+			break;
+			
+		case EFFECT_EAT_BERRY:
+			//todo
+			break;
+			
+		case EFFECT_NATURAL_GIFT:
+			//todo
+			break;
+			
+		case EFFECT_SMACK_DOWN:
+			//todo
+			break;
+			
+		case EFFECT_REMOVE_TARGET_STAT_CHANGES:
+			//todo
+			break;
+			
+		case EFFECT_RELIC_SONG:
+			//todo
+			break;
+			
+		case EFFECT_SET_TERRAIN:
+			//todo
+			break;
+			
+		case EFFECT_PLEDGE:
+			//todo
+			break;
+			
+		case EFFECT_FIELD_EFFECTS:
+			//todo
+			break;
+			
+		case EFFECT_FLING:
+			//todo
+			break;
+			
+		case EFFECT_FEINT:
+			//todo
+			break;
+			
+		case EFFECT_ATTACK_BLOCKERS:
+			//todo
+			break;
+			
+		case EFFECT_TYPE_CHANGES:
+			//todo
+			break;
+			
+		case EFFECT_HEAL_TARGET:
+			//todo
+			break;
+			
+		case EFFECT_TOPSY_TURVY_ELECTRIFY:
+			//todo
+			break;
+			
+		case EFFECT_FAIRY_LOCK_HAPPY_HOUR:
+			//todo
+			break;
+			
+		case EFFECT_INSTRUCT_AFTER_YOU_QUASH:
+			//todo 
+			break;
+			
+		case EFFECT_TEAM_EFFECTS:
+			//todo
+			break;
+			
+		case EFFECT_CAMOUFLAGE:
+			//todo
+			break;
+			
+		case EFFECT_FLAMEBURST:
+			//todo
+			break;
+			
+		case EFFECT_LASTRESORT_SKYDROP:
+			//todo
+			break;
+			
 					
 	}
 	FUNCTION_RETURN:

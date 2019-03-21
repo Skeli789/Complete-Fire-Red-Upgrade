@@ -6618,7 +6618,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_FLAMEBURST
-/*effect*/			241,
+/*effect*/			EFFECT_FLAMEBURST,
 /*power*/			70,
 /*type*/			TYPE_FIRE,
 /*accuracy*/		100,
@@ -7323,7 +7323,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_FEINT
-/*effect*/			230,
+/*effect*/			EFFECT_FEINT,
 /*power*/			50,
 /*type*/			TYPE_NORMAL,
 /*accuracy*/		100,
@@ -10113,7 +10113,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_LASTRESORT
-/*effect*/			242,
+/*effect*/			EFFECT_LASTRESORT_SKYDROP,
 /*power*/			140,
 /*type*/			TYPE_NORMAL,
 /*accuracy*/		100,
@@ -10128,7 +10128,7 @@ struct BattleMove gBattleMoves[] = {
 },
 
 {				//MOVE_SKYDROP
-/*effect*/			242,
+/*effect*/			EFFECT_LASTRESORT_SKYDROP,
 /*power*/			60,
 /*type*/			TYPE_FLYING,
 /*accuracy*/		100,
