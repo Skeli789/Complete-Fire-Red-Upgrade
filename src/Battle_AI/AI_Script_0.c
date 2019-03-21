@@ -391,7 +391,7 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 		case EFFECT_ABSORB:
 			if (defAbility == ABILITY_LIQUIDOOZE)
 				viability -= 6;
-			if (move == MOVE_STRENGTHSAP
+			if (move == MOVE_STRENGTHSAP)
 			{
 				if (defAbility == ABILITY_CONTRARY)
 					viability -= 10;
@@ -564,7 +564,7 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 				case MOVE_PLAYNICE:
 				case MOVE_NOBLEROAR:
 				case MOVE_TEARFULLOOK:
-					if (STAT_STAGE(bankDef, STAT_STAGE_ATK) == 0)
+					if (STAT_STAGE(bankDef, STAT_STAGE_ATK) == 0
 					||  STAT_STAGE(bankDef, STAT_STAGE_SPATK) == 0) {
 						viability -= 10;
 						decreased = TRUE;
@@ -1223,9 +1223,9 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 			break;
 		
 		case EFFECT_FLATTER:
-			if ((bankDef == bankAtkPartner)
+			if (bankDef == bankAtkPartner)
 			{
-				if STAT_STAGE(bankDef, STAT_STAGE_SPATK) < 3)
+				if (STAT_STAGE(bankDef, STAT_STAGE_SPATK) < 3)
 					viability -= 10;
 			}
 			else
