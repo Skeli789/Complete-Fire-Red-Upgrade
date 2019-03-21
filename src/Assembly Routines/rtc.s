@@ -188,12 +188,13 @@ timer4_part2_loop:
 	lsl r1, r1, #0x04
 	lsl r3, r3, #0x04
 	b timer4_part2_loop
+timer4_part2:
 	lsl r4, r4, #0x03
 timer4_part3_loop:
 	cmp r1, r4
-	bcs timer4_part3
+	bcs timer4_outerloop
 	cmp r1, r0
-	bcs timer4_part3
+	bcs timer4_outerloop
 	lsl r1, r1, #0x01
 	lsl r3, r3, #0x01
 	b timer4_part3_loop
@@ -433,3 +434,5 @@ checkVal:
 	mov r0, #0x1
 bxlr:
 	bx lr
+	
+	
