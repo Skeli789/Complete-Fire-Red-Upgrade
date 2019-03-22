@@ -1162,6 +1162,8 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 			break;
 			
 		case EFFECT_DRAGON_DANCE:
+			if (atkAbility == ABILITY_CONTRARY)
+				break;
 			if (move == MOVE_SHELLSMASH)
 			{
 				if (atkItem == ITEM_EFFECT_POWER_HERB)
@@ -1264,7 +1266,6 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 			break;
 			
 		case EFFECT_FLAMEBURST:
-			//todo
 			break;
 			
 		case EFFECT_LASTRESORT_SKYDROP:
