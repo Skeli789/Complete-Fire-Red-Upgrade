@@ -1172,7 +1172,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				&& ABILITY(gBankAttacker) != ABILITY_MAGICGUARD
                 && CheckContact(move, gBankAttacker))
                 {
-                    gBattleMoveDamage = MathMax(1, gBattleMons[gBankAttacker].maxHP / 16);
+                    gBattleMoveDamage = MathMax(1, gBattleMons[gBankAttacker].maxHP / 8);
                     BattleScriptPushCursor();
                     gBattlescriptCurrInstr = BattleScript_RoughSkinActivates;
                     effect++;

@@ -5,7 +5,7 @@
 ##Nop Out End Turn 1,
 08013BEC C0 46 C0 46 C0 46 C0 46 C0 46 C0 46
 ##Nop Out PerishSong_FutureSight
-08013C1A C0 46 C0 46 C0 46 C0 46 C0 46 C0 46
+08013C1A C0 46 C0 46 C0 46 C0 46 C0 46 00 24
 ##Nop Out Incorrect Focus Punch Activation
 080154AE 56 E0
 ##Free Up Old Turn Order
