@@ -8,6 +8,8 @@
 extern const struct BattleBackground gAttackTerrainTable[];
 extern const struct TerrainTableStruct TerrainTable[];
 
+extern void DNSBattleBGPalFade(void);
+
 //This File's Functions
 u8 BattleSetup_GetTerrainId(void);
 u8 LoadBattleBG_TerrainID(void);
@@ -187,6 +189,10 @@ void LoadBattleBG_Background(u8 terrainId) {
 	LZDecompressVram(table[terrainId].tileset, (void*) 0x6008000);
 	LZDecompressVram(table[terrainId].tilemap, (void*) 0x600d000);
 	LoadCompressedPalette(table[terrainId].palette, 0x20, 0x60);
+	
+	#ifdef DNS_IN_BATTLE
+		DNSBattleBGPalFade();
+	#endif
 }
 
 void LoadBattleBG_EntryOverlay(u8 terrainId)  {
