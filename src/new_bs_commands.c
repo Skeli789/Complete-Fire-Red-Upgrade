@@ -90,7 +90,10 @@ void atkFD_jumpifabilitypresenttargetfield(void)
 	else if (ABILITY(PARTNER(gBankTarget)) == ability)
 		gBattleScripting->bank = PARTNER(gBankTarget);
 	else
+	{
 		gBattlescriptCurrInstr += 6;
+		return;
+	}
 	
 	gLastUsedAbility = ability;
 	gBattlescriptCurrInstr = ptr;		
