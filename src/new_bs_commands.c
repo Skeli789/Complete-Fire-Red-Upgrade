@@ -694,7 +694,7 @@ void atkFF18_clearsidestatus(void)
 	gBattlescriptCurrInstr += 3;
 }
 
-//formchange BANK ORIGIN_SPECIES TARGET_SPECIES RELOAD_TYPE ROM_ADDRESS
+//formchange BANK ORIGIN_SPECIES TARGET_SPECIES RELOAD_TYPE RELOAD_STATS ROM_ADDRESS
 void atkFF19_formchange(void)
 {
 	if (gBattleExecBuffer) return;
@@ -706,7 +706,7 @@ void atkFF19_formchange(void)
 	bool8 reloadStats = T2_READ_8(gBattlescriptCurrInstr + 7);
 	
 	if (gBattleMons[bank].species != originalSpecies || gBattleMons[bank].hp == 0)
-		gBattlescriptCurrInstr = T2_READ_PTR(gBattlescriptCurrInstr + 7);
+		gBattlescriptCurrInstr = T2_READ_PTR(gBattlescriptCurrInstr + 8);
 	else
 	{
 		DoFormChange(bank, targetSpecies, reloadType, reloadStats);
