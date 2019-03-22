@@ -7,12 +7,13 @@
 	ldr r3, .ptr1
 	bx r3
 .align 2
-.ptr1: .word Main1+rom+1
+.ptr1: .word RealTimeClock + rom + 1
 
 
 .org offset, 0xff
 
 0300553C year (2 bytes)
+0300553E day of week (1 byte) 
 0300553F month (1 byte)
 03005540 day (1 byte)
 03005542 hour (24-hr format, 1 byte)
@@ -21,13 +22,13 @@
 
 */
 
-.global realTimeClock
+.global RealTimeClock
 
-realTimeClock:
+RealTimeClock:
 	bl callRTC
-	ldr r0, =(0x03003530)
+	ldr r0, .ClockArea
 	ldrb r0, [r0]
-	ldr r3, =(0x00b0101c)
+	ldr r3, .B00000Jump
 	cmp r0, #0x0
 	bne jump_r3
 	ldrh r1, [r7, #0x28]
@@ -37,35 +38,232 @@ realTimeClock:
 jump_r3:
 	mov pc, r3
 
-callRTC:
-	push {lr}
-	bl init
-	pop {pc}
-	
-init:
-	push {lr}
-	bl checkVal
-	cmp r0, #0x0
-	bne skipOver
-	bl doFuncs1
-skipOver:
-	ldr r0, =(0x0300553d)
-	bl doFuncs2	
+.align 2
+.ClockArea: .word 0x03003530
+.word 0x8000445
+
+.pool
+
+timer1:
+	push {r4-r7,lr}
+	lsl r4, r0, #0x01
+	mov r3, #0x7
+	mov r7, #0x2
+	ldr r2, =(0x080000c4)
+	mov r6, #0x4
+	mov r5, #0x5
+timer1_loop:
+	mov r0, r4
+	asr r0, r3
+	and r0, r7
+	lsl r0, r0, #16
+	lsr r0, r0, #16
+	mov r1, r0
+	orr r1, r6
+	strh r1, [r2]
+	strh r1, [r2]
+	strh r1, [r2]
+	orr r0, r5
+	strh r0, [r2]
+	sub r3, #0x1
+	cmp r3, #0x0
+	bge timer1_loop
 	mov r0, #0x0
+	pop {r4-r7}
+	pop {r1}
+	bx r1	
+
+.pool
+
+Unused_timer:
+	push {r4-r7,lr}
+	mov r4, r0
+	lsl r4, #0x1
+	mov r3, #0x0
+	mov r7, #0x2
+	ldr r2, =(0x080000c4)
+	mov r6, #0x4
+	mov r5, #0x5
+Unused_timer_loop:
+	mov r0, r4
+	asr r0, r3
+	and r0, r7
+	lsl r0, r0, #0x10
+	lsr r0, r0, #0x10
+	mov r1, r0
+	orr r1, r6
+	strh r1, [r2]
+	strh r1, [r2]
+	strh r1, [r2]
+	orr r0, r5
+	strh r0, [r2]
+	add r3, #0x1
+	cmp r3, #0x7
+	ble Unused_timer_loop
+	mov r0, #0x0
+	pop {r4-r7}
 	pop {r1}
 	bx r1
 
+	nop 
+	nop 
+	nop 
+	nop 
+	nop
+	nop 
+	nop
+.pool
 
+timer2:
+	push {r4-r7,lr}
+	mov r5, #0x0
+	mov r2, #0x0
+	ldr r3, =(0x080000c4)
+	mov r6, #0x4
+	mov r7, #0x5
+	mov r0, #0x2
+	mov r12, r0
+timer2_loop_outer:
+	add r4, r2, #0x1
+	mov r0, #0x4
+timer2_loop_inner:
+	strh r6, [r3]
+	sub r0, #0x1
+	cmp r0, #0x0
+	bge timer2_loop_inner
+	strh r7, [r3]
+	ldrh r1, [r3]
+	mov r0, r12
+	and r0, r1
+	lsl r0, r0, #16
+	lsr r0, r0, #16
+	lsl r0, r2
+	orr r5, r0
+	mov r2, r4
+	cmp r2, #0x7
+	ble timer2_loop_outer
+	asr r5, r5, #0x01
+	mov r0, r5
+	pop {r4-r7}
+	pop {r1}
+	bx r1
+
+.pool
+
+checkVal:
+	ldr r0, =(0x03005547)
+	ldr r0, [r0]
+	cmp r0, #0x0
+	beq bxlr
+	mov r0, #0x1
+bxlr:
+	bx lr
+
+.pool
+
+timer3:
+	push {r4-r6,lr}
+	mov r6, r0
+	ldr r5, =(0x080000c6)
+	mov r0, #0x7
+	strh r0, [r5]
+	ldr r1, .Timer3_C4
+	mov r2, #0x1
+	strh r2, [r1, #0x4]
+	strh r2, [r1]
+
+	mov r4, #0x5
+	strh r4, [r1]
+	mov r0, #0x65
+	bl timer1
+	strh r4, [r5]
+	mov r4, r6
+	mov r5, #0x3
+
+timer3_inner:
+	bl timer2
+	strb r0, [r4]
+	add r4, #0x1
+	sub r5, #0x1
+	cmp r5, #0x0
+	bge timer3_inner
+	ldr r1, .B000000Jump2
+	mov r0, #0x5
+	strh r0, [r1]
+	add r4, r6, #0x4
+	mov r5, #0x2
+
+timer3_inner2:
+	bl timer2
+	strb r0, [r4]
+	add r4, #0x1
+	sub r5, #0x1
+	cmp r5, #0x0
+	bge timer3_inner2
+	mov r0, #0x0
+	pop {r4-r6}
+	pop {r1}
+	bx r1
+
+.align 2
+.Timer3_C4: .word 0x080000c4
+.pool
+
+doFuncs1:
+	push {r4-r5, lr}
+	ldr r4, .DoFuncs1_C6
+	mov r0, #0x7
+	strh r0, [r4]
+	ldr r0, .DoFuncs1_C4
+	mov r1, #0x1
+	strh r1, [r0, #0x4]
+	strh r1, [r0]
+	mov r5, #0x5
+	strh r5, [r0]
+	lsl r0, #0x0
+	mov r0, #0x63
+	bl timer1		@08b01024
+	strh r5, [r4]
+	bl timer2		@08b010a4
+	ldr r1, =(0x03005547)
+	str r0, [r1]
+	bl checkVal		@08b010e4
+	ldr r1, =(0x03005504)
+	str r0, [r1]
+	ldr r0, =(0x03005505)
+	bl timer3		@08b010f4
+	mov r0, #0x0
+	pop {r4-r5}
+	pop {r1}
+	bx r1
+
+.align 2
+.DoFuncs1_C4: .word 0x080000c4
+.DoFuncs1_C6: .word 0x080000c6
+.pool
+
+valMath:
+	mov r2, #0xf
+	and r2, r0
+	asr r0, r0, #0x04
+	lsl r1, r0, #0x02
+	add r1, r1, r0
+	lsl r1, r1, #0x01
+	add r2, r2, r1
+	mov r0, r2
+	bx lr
+
+.align 2
 doFuncs2:
 	push {r4,r5,lr}
 	sub sp, #0x8
 	mov r5, r0
-	ldr r0, =(0x03005504)
+	ldr r0, .Word3005504
 	ldr r0, [r0]
 	cmp r0, #0x0
 	bne otherFuncs2
 	mov r1, #0x0
-	ldr r0, =(0x000007d9)
+	ldr r0, .Word7D9
 	strh r0, [r5]
 	mov r0, #0x6
 	strb r0, [r5, #0x2]
@@ -78,14 +276,21 @@ doFuncs2:
 	strb r1, [r5, #0x6]
 	strb r1, [r5, #0x7]
 	b endFuncs2
-	
+
+	nop
+	nop
+	nop
+
+.Word3005504: .word 0x3005504
+.Word7D9: .word 0x7D9
+
 otherFuncs2:
 	mov r0, sp
 	bl timer3
 	mov r0, sp
 	ldrb r0, [r0]
 	bl valMath
-	ldr r1, =(0x000007d0)
+	ldr r1, .Word7D0_2
 	add r0, r0, r1
 	strh r0, [r5]
 	mov r0, sp
@@ -119,7 +324,7 @@ otherFuncs2:
 	ldrb r0, [r0, #0x6]
 	bl valMath
 	strb r0, [r5, #0x7]
-	ldr r2, =(0x03005537)
+	ldr r2, .Word3005537
 	ldrb r3, [r5, #0x6]
 	ldrb r0, [r2, #0x2]
 	add r1, r3, r0
@@ -159,7 +364,48 @@ funcs2_part3:
 endFuncs2:
 	mov r0, #0x0
 	add sp, #0x8
-	pop {r4-r5, pc}
+	pop {r4-r5}
+	pop {r1}
+	bx r1
+
+	nop
+	nop
+	nop
+	nop
+
+.Word3005537: .word 0x03005537
+.Word7D0_2: .word 0x7D0
+
+init:
+	push {lr}
+	bl checkVal
+	cmp r0, #0x0
+	bne skipOver
+	bl doFuncs1
+skipOver:
+	ldr r0, .Word300553D
+	bl doFuncs2	
+	mov r0, #0x0
+	pop {r1}
+	bx r1
+
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+
+.word 0x0300553D
+
+callRTC:
+	push {lr}
+	bl init
+	pop {r0}
+	bx r0
+
+	nop
 	
 timer4:
 	mov r3, #0x1
@@ -285,154 +531,18 @@ jumpOver:
 	bl movPcLr
 	mov r0, #0x0
 	pop {pc}
+
+.align 2
+	nop
+	nop
+	nop
+	nop
+
 movPcLr:
 	mov pc, lr
-		
-	
-valMath:
-	mov r2, #0xf
-	and r2, r0
-	asr r0, r0, #0x04
-	lsl r1, r0, #0x02
-	add r1, r1, r0
-	lsl r1, r1, #0x01
-	add r2, r2, r1
-	mov r0, r2
-	bx lr		
-	
 
-doFuncs1:
-	push {r4-r5, lr}
-	ldr r0, =(0x080000c8)
-	mov r1, #0x1
-	strh r1, [r0]
-	sub r0, #0x4
-	strh r1, [r0]
-	mov r5, #0x5
-	strh r5, [r0]
-	ldr r4, =(0x080000c6)
-	mov r0, #0x7
-	strh r0, [r4]
-	mov r0, #0x63
-	bl timer1		@08b01024
-	strh r5, [r4]
-	bl timer2		@08b010a4
-	ldr r1, =(0x03005547)
-	str r0, [r1]
-	bl checkVal		@08b010e4
-	ldr r1, =(0x03005504)
-	str r0, [r1]
-	ldr r0, =(0x03005505)
-	bl timer3		@08b010f4
-	mov r0, #0x0
-	pop {r4-r5, pc}
-	
-	
-timer3:
-	push {r4-r6,lr}
-	mov r6, r0
-	ldr r1, =(0x080000c4)
-	mov r2, #0x1
-	strh r2, [r1]
-	ldr r5, =(0x00b01148)
-	mov r0, #0x7
-	strh r0, [r5]
-	strh r2, [r1]
-	mov r4, #0x5
-	strh r4, [r1]
-	mov r0, #0x65
-	bl timer1		@08b01024
-	strh r4, [r5]
-	mov r4, r6
-	mov r5, #0x3
-timer3_inner:
-	bl timer2
-	strb r0, [r4]
-	add r4, #0x1
-	sub r5, #0x1
-	cmp r5, #0x0
-	bge timer3_inner
-	ldr r1, =(0x00b01148)
-	mov r0, #0x5
-	strh r0, [r1]
-	add r4, r6, #0x4
-	mov r5, #0x2
-timer3_inner2:
-	bl timer2
-	strb r0, [r4]
-	add r4, #0x1
-	sub r5, #0x1
-	cmp r5, #0x0
-	bge timer3_inner2
-	mov r0, #0x0
-	pop {r4-r6, pc}	
-	
-timer2:
-	push {r4-r7,lr}
-	mov r5, #0x0
-	mov r2, #0x0
-	ldr r3, =(0x080000c4)
-	mov r6, #0x4
-	mov r7, #0x5
-	mov r0, #0x2
-	mov r12, r0
-timer2_loop_outer:
-	add r4, r2, #0x1
-	mov r0, #0x4
-timer2_loop_inner:
-	strh r6, [r3]
-	sub r0, #0x1
-	cmp r0, #0x0
-	bge timer2_loop_inner
-	strh r7, [r3]
-	ldrh r1, [r3]
-	mov r0, r12
-	and r0, r1
-	lsl r0, r0, #16
-	lsr r0, r0, #16
-	lsl r0, r2
-	orr r5, r0
-	mov r2, r4
-	cmp r2, #0x7
-	ble timer2_loop_outer
-	asr r5, r5, #0x01
-	mov r0, r5
-	pop {r4-r7, pc}
-	
-timer1:
-	push {r4-r7,lr}
-	lsl r4, r0, #0x01
-	mov r3, #0x7
-	mov r7, #0x2
-	ldr r2, =(0x080000c4)
-	mov r6, #0x4
-	mov r5, #0x5
-timer1_loop:
-	mov r0, r4
-	asr r0, r3
-	and r0, r7
-	lsl r0, r0, #16
-	lsr r0, r0, #16
-	mov r1, r0
-	orr r1, r6
-	strh r1, [r2]
-	strh r1, [r2]
-	strh r1, [r2]
-	orr r0, r5
-	strh r0, [r2]
-	sub r3, #0x1
-	cmp r3, #0x0
-	bge timer1_loop
-	mov r0, #0x0
-	pop {r4-r7, pc}	
-
-checkVal:
-	ldr r0, =(0x03005547)
-	ldr r0, [r0]
-	cmp r0, #0x0
-	beq bxlr
-	mov r0, #0x1
-bxlr:
-	bx lr
-	
-	
+lsl r0, #0x0
+.align 2
+.B00000Jump: .word 0x8000445 @.word 0x0B0101C - Mistake in Original
+.B000000Jump2: .word 0x80000C6 @0x0B01148 - Mistake in Original
+.Word300553D: .word 0x0300553D
