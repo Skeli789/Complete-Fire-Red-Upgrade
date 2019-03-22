@@ -15,6 +15,7 @@
 0300553C year (2 bytes)
 0300553F month (1 byte)
 03005540 day (1 byte)
+03005541 day of week (1 byte)
 03005542 hour (24-hr format, 1 byte)
 03005543 min (1 byte)
 03005544 second (1 byte)
