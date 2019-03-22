@@ -52,6 +52,8 @@
 081D947A 4E 69 1D 08
 ##Remove Mr. DS Roost
 08013BBC D5 3B 01 08
+##Remove Fixed Ability Prevention
+0803DAF6 00 2C 02 D0
 
 ##Rain Dish Heal String
 083FC92A AB FF

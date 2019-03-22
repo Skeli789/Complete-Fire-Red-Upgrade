@@ -436,6 +436,7 @@ bool8 __attribute__((long_call)) AddSpriteToOamBuffer(struct Sprite *sprite, u8 
 bool8 __attribute__((long_call)) AddSubspritesToOamBuffer(struct Sprite *sprite, struct OamData *destOam, u8 *oamIndex);
 
 u8* __attribute__((long_call)) StringCopy(u8* dest, u8* src);
+u16 __attribute__((long_call)) StringLength(const u8 *str);
 u8* __attribute__((long_call)) ConvertIntToDecimalStringN(u8 *dest, s32 value, enum StringConvertMode mode, u8 n);
 void __attribute__((long_call)) LZDecompressVram(const void *src, void *dest);
 bool8 __attribute__((long_call)) LoadCompressedSpriteSheetUsingHeap(const struct CompressedSpriteSheet* src);

@@ -766,6 +766,7 @@ AddSpriteToOamBuffer = 0x8008A64 | 1;
 AddSubspritesToOamBuffer = 0x8008AD0 | 1;
 
 StringCopy = 0x8008D84 | 1;
+StringLength = 0x8008E08 | 1;
 ConvertIntToDecimalStringN = 0x8008E78 | 1;
 LZDecompressVram = 0x800EBC0 | 1;
 LoadCompressedSpriteSheetUsingHeap = 0x800F034 | 1;

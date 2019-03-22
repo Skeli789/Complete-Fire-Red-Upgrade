@@ -113,15 +113,27 @@ u8 CreateNPCTrainerParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, b
 		else
             monsCount = trainer->partySize;
 		
-        
+        u8 trainerNameLengthOddness = StringLength(trainer->trainerName) % 2;
         for (i = 0; i < monsCount; ++i) {
 		
-			if (trainer->doubleBattle)
-				personalityValue = 0x80;
-			else if (trainer->gender) //Female
-				personalityValue = 0x78;
+			u8 genderOffset = 0x80;
+		
+			if ((i + 1) % 3 == 0) //Every third Pokemon
+			{
+				if (trainerNameLengthOddness == 0) //If trainer name length is even
+					genderOffset = 0x78; //Female
+				else
+					genderOffset = 0x88; //Male
+			}
 			else
-				personalityValue = 0x88;
+			{
+				if (trainerNameLengthOddness == 0) //If trainer name length is even
+					genderOffset = 0x88; //Male
+				else
+					genderOffset = 0x78; //Female
+			}
+			
+			personalityValue = genderOffset ^ StringLength(trainer->trainerName); //"Randomize" ability
 				
 			for (j = 0; trainer->trainerName[j] != EOS; ++j)
 				nameHash += trainer->trainerName[j];
