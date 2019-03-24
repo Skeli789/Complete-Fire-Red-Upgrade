@@ -18,6 +18,8 @@
 #define EventScript_TryDoRematchBattle (u8*) 0x81A4F3E
 #define EventScript_TryDoDoubleRematchBattle (u8*) 0x81A4F73
 
+extern const u16 gClassBasedTrainerEncounterBGM[NUM_TRAINER_CLASSES];
+
 extern u8 Script_TrainerSpottedMulti[];
 extern u8 EventScript_DoTwoOpponentBattle[];
 extern u8 EventScript_TryDoTwoOpponentBattle[];
@@ -525,9 +527,8 @@ void SetUpTrainerEncounterMusic(void) {
     if (sTrainerBattleMode != TRAINER_BATTLE_CONTINUE_SCRIPT_NO_MUSIC
     &&  sTrainerBattleMode != TRAINER_BATTLE_CONTINUE_SCRIPT_DOUBLE_NO_MUSIC)
     {
+		#ifndef ENCOUNTER_MUSIC_BY_CLASS
         switch (GetTrainerEncounterMusicId(trainerId)) {
-		#ifndef UNBOUND 
-		//CHANGE THIS STUFF
 			case TRAINER_ENCOUNTER_MUSIC_MALE: //0
 			case TRAINER_ENCOUNTER_MUSIC_INTENSE: //4
 			case TRAINER_ENCOUNTER_MUSIC_COOL: //5
@@ -546,58 +547,13 @@ void SetUpTrainerEncounterMusic(void) {
 			default:
 				music = BGM_EYE_CREEPY; //0x11B
 				break;
-		
-		#else //For Pokemon Unbound
-			case TRAINER_ENCOUNTER_MALE: //0
-				music = BGM_EYE_BOY; //0x11D
-				break;
-			case TRAINER_ENCOUNTER_FEMALE: //1
-				music = BGM_EYE_GIRL; //0x11C
-				break;
-			case TRAINER_ENCOUNTER_LADY: //2
-				music = BGM_EYE_AROMA_LADY_BEAUTY; //0x1B5
-				break;
-			case TRAINER_ENCOUNTER_SUSPICIOUS: //3
-				music = BGM_EYE_CREEPY; //0x11B
-				break;
-			case TRAINER_ENCOUNTER_INTENSE: //4
-				music = BGM_EYE_BLACK_BELT; //0x19B
-				break;
-			case TRAINER_ENCOUNTER_ACE_TRAINER: //5
-				music = BGM_EYE_ACE; //0x165
-				break;
-			case TRAINER_ENCOUNTER_HIKER: //6
-				music = BGM_EYE_HIKER; //0x164
-				break;
-			case TRAINER_ENCOUNTER_MYSTERIOUS_TRAINER: //7
-				music = BGM_EYE_MYSTERIOUS; //0x166
-				break;
-			case TRAINER_ENCOUNTER_SAILOR: //8
-				music = BGM_EYE_SAILOR; //0x167
-				break;
-			case TRAINER_ENCOUNTER_GAMBLER: //9
-				music = BGM_EYE_GAMBLER; //0x1B6
-				break;
-			case TRAINER_ENCOUNTER_ARTIST: //10
-				music = BGM_EYE_ARTIST; //0x1B7
-				break;
-			case TRAINER_ENCOUNTER_SHADOW: //11
-				music = BGM_EYE_NEO_PLASMA; //0x146
-				break;
-			case TRAINER_ENCOUNTER_LOR: //12
-				music = BGM_EYE_GALACTIC; //0x1A8
-				break;
-			case TRAINER_ENCOUNTER_ELITE_4: //13
-				music = BGM_EYE_ELITE_4; //0x1B8
-				break;
-			case TRAINER_ENCOUNTER_CYNTHIA: //14
-				music = BGM_EYE_CYNTHIA; //0x1B9
-				break;
-			default:
-				music = BGM_EYE_BOY; //0x11D
-				break;
-		#endif
 		}
+		#else //ENCOUNTER_MUSIC_BY_CLASS
+			music = gClassBasedTrainerEncounterBGM[gTrainers[trainerId].trainerClass];
+
+			if (music == 0)
+				music = BGM_EYE_BOY;
+		#endif
         PlayNewMapMusic(music);
     }
 }
