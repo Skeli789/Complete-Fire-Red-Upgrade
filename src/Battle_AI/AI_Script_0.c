@@ -1603,7 +1603,7 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 			break;
 			
 		case EFFECT_FEINT:
-			if (MoveWouldHitFirst(move, bankAtk, bankDef)
+			if (MoveWouldHitFirst(move, bankAtk, bankDef))
 				viability -= 10;
 			else if (gDisableStructs[bankAtk].protectUses > 0)
 				viability -= 5;
@@ -1726,7 +1726,8 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 		
 		default:
 		AI_STANDARD_DAMAGE: ;
-			if (moveSplit != SPLIT_STATUS) {
+			if (moveSplit != SPLIT_STATUS)
+			{
 				if (TypeCalc(move, bankAtk, bankDef, 0, FALSE) & (MOVE_RESULT_NO_EFFECT | MOVE_RESULT_MISSED))
 					viability -= 10;
 			}

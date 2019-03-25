@@ -4,6 +4,8 @@
 
 extern NaturalGiftStruct NaturalGiftTable[];
 
+extern u8 TypeCalc(move_t, u8 bankAtk, u8 bankDef, pokemon_t* party_data_atk, bool8 CheckParty);
+
 enum {IN_AIR, GROUNDED};
 u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 	u8 i;
@@ -32,6 +34,7 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 	u8 atkAbility = ABILITY(bankAtk);
 	u8 defAbility = ABILITY(bankDef);
 	u8 atkPartnerAbility = ABILITY(bankAtkPartner);
+	u8 defPartnerAbility = ABILITY(bankDefPartner);
 	
 	u32 atkStatus1 = gBattleMons[bankAtk].status1;
 	u32 atkStatus2 = gBattleMons[bankAtk].status2;
@@ -54,6 +57,7 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 	u16 defSpAtk = gBattleMons[bankDef].spAttack;
 	u16 defSpDef = gBattleMons[bankDef].spDefense;	
 	
+	u8 moveSplit = SPLIT(move);
 	
 	switch (moveEffect) {
 		case EFFECT_HIT:
@@ -1212,9 +1216,9 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 						break;
 					else
 					{
-						if (STAT_STAGE(bankDef, STAT_STAGE_DEF) > STAT_STAGE(bankAtk, STAT_STAGE_DEF)
+						if (STAT_STAGE(bankDef, STAT_STAGE_DEF) > STAT_STAGE(bankAtk, STAT_STAGE_DEF))
 							viability += 5;
-						else if (STAT_STAGE(bankDef, STAT_STAGE_SPDEF) > STAT_STAGE(bankAtk, STAT_STAGE_SPDEF)
+						else if (STAT_STAGE(bankDef, STAT_STAGE_SPDEF) > STAT_STAGE(bankAtk, STAT_STAGE_SPDEF))
 							viability += 5;
 						else
 							break;
@@ -1226,9 +1230,9 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 						break;
 					else
 					{
-						if (STAT_STAGE(bankDef, STAT_STAGE_ATK) > STAT_STAGE(bankAtk, STAT_STAGE_ATK)
+						if (STAT_STAGE(bankDef, STAT_STAGE_ATK) > STAT_STAGE(bankAtk, STAT_STAGE_ATK))
 							viability += 5;
-						else if (STAT_STAGE(bankDef, STAT_STAGE_SPATK) > STAT_STAGE(bankAtk, STAT_STAGE_SPATK)
+						else if (STAT_STAGE(bankDef, STAT_STAGE_SPATK) > STAT_STAGE(bankAtk, STAT_STAGE_SPATK))
 							viability += 5;
 						else
 							break;
@@ -1255,7 +1259,7 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 						break;
 					else
 					{
-						for (i=0; i = BATTLE_STATS_NO-1; ++i)
+						for (i=0; i <= BATTLE_STATS_NO-1; ++i)
 						{
 							if (STAT_STAGE(bankDef, i) > STAT_STAGE(bankAtk, i))
 							{
@@ -1312,7 +1316,7 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 				case MOVE_PLUCK:		
 					if (defStatus2 & STATUS2_SUBSTITUTE)
 						break;
-					else if (defAbility == ABILITY_STICKYHOLD
+					else if (defAbility == ABILITY_STICKYHOLD)
 						break;
 					else if (defItemPocket == POCKET_BERRY_POUCH)
 						viability += 5;
@@ -1326,7 +1330,7 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 					else if (defPartnerItemPocket == POCKET_BERRY_POUCH && defPartnerAbility != ABILITY_STICKYHOLD)
 						viability += 5;
 					break;
-			}	
+			}
 			break;
 			
 		case EFFECT_NATURAL_GIFT:
@@ -1399,9 +1403,9 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 			// lower chance of using protect each successive time
 			if (gDisableStructs[bankAtk].protectUses > 0)
 				break;
-			else if (MoveWouldHitFirst(move, bankAtk, bankDef)
+			else if (MoveWouldHitFirst(move, bankAtk, bankDef))
 				break;
-			else if (HasProtectionMoveInMoveset(bankDef))
+			else if (HasProtectionMoveInMoveset(bankDef, TRUE))
 				viability += 5;
 			break;
 			
@@ -1518,7 +1522,7 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 			switch (move)
 			{
 				case MOVE_TAILWIND:
-					if (gNewBS->TailwindTimers[SIDE(bankAtk)] != )
+					if (gNewBS->TailwindTimers[SIDE(bankAtk)] != 0)
 						break;
 					viability += 5;	// double speed is pretty sweet
 					break;
@@ -1535,9 +1539,9 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 						break;
 					else if (atkItemEffect == ITEM_EFFECT_IRON_BALL)
 						break;
-					else if (gStatuses3[bank] & (STATUS3_SMACKED_DOWN | STATUS3_ROOTED))
+					else if (atkStatus3 & (STATUS3_SMACKED_DOWN | STATUS3_ROOTED))
 						break;
-					else if (MoveEffectInMoveset(EFFECT_SMACK_DOWN, bankDef) || MoveEffectInMoveset(EFFECT_SMACK_DOWN, bankDefPartner)
+					else if (MoveEffectInMoveset(EFFECT_SMACK_DOWN, bankDef) || MoveEffectInMoveset(EFFECT_SMACK_DOWN, bankDefPartner))
 						break;
 					else if (gSideAffecting[SIDE(bankAtk)] & SIDE_STATUS_SPIKES)
 						viability += 6;
@@ -1557,7 +1561,7 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 			
 					
 	} // move effect switch
-	FUNCTION_CHECK_RESULT:
+	FUNCTION_CHECK_RESULT: ;
 	if (moveSplit != SPLIT_STATUS)
 	{
 		if (TypeCalc(move, bankAtk, bankDef, 0, FALSE) & (MOVE_RESULT_SUPER_EFFECTIVE))
