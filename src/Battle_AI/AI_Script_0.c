@@ -1602,6 +1602,13 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 			}
 			break;
 			
+		case EFFECT_FEINT:
+			if (MoveWouldHitFirst(move, bankAtk, bankDef)
+				viability -= 10;
+			else if (gDisableStructs[bankAtk].protectUses > 0)
+				viability -= 5;
+			break;
+			
 		case EFFECT_FLING:
 			if (!(CanTransferItem(atkSpecies, atkItem, GetBankPartyData(bankAtk))))
 				viability -= 10;
@@ -1669,9 +1676,21 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 			goto AI_SUBSTITUTE_CHECK;
 			
 		case EFFECT_TOPSY_TURVY_ELECTRIFY:
-			if (move == MOVE_ELECTRIFY && MoveWouldHitFirst(move, bankDef, bankAtk))
-				viability -= 10;
+			if (move == MOVE_ELECTRIFY)
+			{
+				if (MoveWouldHitFirst(move, bankDef, bankAtk))
+					viability -= 10;
+				else if (IsOfType(bankDef, TYPE_ELECTRIC))
+					viability -= 10;
+			}
 			goto AI_SUBSTITUTE_CHECK;
+			
+		case EFFECT_INSTRUCT_AFTER_YOU_QUASH:
+			if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE))
+				viability -= 6;
+			if (MoveWouldHitFirst(move, bankDef, bankAtk))
+				viability -= 6;
+			break;
 				
 		case EFFECT_TEAM_EFFECTS:
 			switch (move) {

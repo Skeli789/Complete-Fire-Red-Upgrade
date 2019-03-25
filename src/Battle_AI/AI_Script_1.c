@@ -2,6 +2,7 @@
 #include "AI_Helper_Functions.h"
 #include "..\\Helper_Functions.h"
 
+extern NaturalGiftStruct NaturalGiftTable[];
 
 enum {IN_AIR, GROUNDED};
 u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
@@ -23,6 +24,11 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 	
 	u8 atkItemQuality = ITEM_QUALITY(bankAtk);
 	
+	u8 atkItemPocket = ITEM_POCKET(bankAtk);
+	u8 atkPartnerItemPocket = ITEM_POCKET(bankAtkPartner);
+	u8 defItemPocket = ITEM_POCKET(bankDef);
+	u8 defPartnerItemPocket = ITEM_POCKET(bankDefPartner);
+	
 	u8 atkAbility = ABILITY(bankAtk);
 	u8 defAbility = ABILITY(bankDef);
 	u8 atkPartnerAbility = ABILITY(bankAtkPartner);
@@ -34,6 +40,19 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 	u32 defStatus2 = gBattleMons[bankDef].status2;
 	u32 defStatus3 = gStatuses3[bankDef];
 	
+	u32 defPartnerStatus2 = gBattleMons[bankDefPartner].status2;
+	
+	u16 atkAttack = gBattleMons[bankAtk].attack;
+	u16 atkDefense = gBattleMons[bankAtk].defense;
+	u16 atkSpeed = gBattleMons[bankAtk].speed;
+	u16 atkSpAtk = gBattleMons[bankAtk].spAttack;
+	u16 atkSpDef = gBattleMons[bankAtk].spDefense;
+	
+	u16 defAttack = gBattleMons[bankDef].attack;
+	u16 defDefense = gBattleMons[bankDef].defense;
+	u16 defSpeed = gBattleMons[bankDef].speed;
+	u16 defSpAtk = gBattleMons[bankDef].spAttack;
+	u16 defSpDef = gBattleMons[bankDef].spDefense;	
 	
 	
 	switch (moveEffect) {
@@ -791,7 +810,7 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 						break;
 					else if (atkItemEffect == ITEM_EFFECT_CHOICE_BAND)
 						viability += 5;
-					break;
+					goto FUNCTION_CHECK_RESULT;
 				
 				case MOVE_BATONPASS:
 					// pass on boosted stats
@@ -922,7 +941,7 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 			
 		case EFFECT_PSYCH_UP:
 			if (move == MOVE_SPECTRALTHIEF)
-				break;
+				goto FUNCTION_CHECK_RESULT;
 			else
 			{
 				// copy positive stat changes
@@ -1151,7 +1170,7 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 					viability += 6;
 				break;
 			}
-			else
+			
 		AI_CALM_MIND_CHECK:
 			if (STAT_STAGE(bankAtk, STAT_STAGE_SPATK) > 7)
 				goto AI_SPDEF_PLUS;
@@ -1186,93 +1205,365 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 			
 			
 		case EFFECT_STAT_SWAP_SPLT:
-			// to do
+			switch (move)
+			{
+				case MOVE_GUARDSWAP:
+					if (defStatus3 & STATUS3_SEMI_INVULNERABLE)
+						break;
+					else
+					{
+						if (STAT_STAGE(bankDef, STAT_STAGE_DEF) > STAT_STAGE(bankAtk, STAT_STAGE_DEF)
+							viability += 5;
+						else if (STAT_STAGE(bankDef, STAT_STAGE_SPDEF) > STAT_STAGE(bankAtk, STAT_STAGE_SPDEF)
+							viability += 5;
+						else
+							break;
+					}
+					break;
+					
+				case MOVE_POWERSWAP:
+					if (defStatus3 & STATUS3_SEMI_INVULNERABLE)
+						break;
+					else
+					{
+						if (STAT_STAGE(bankDef, STAT_STAGE_ATK) > STAT_STAGE(bankAtk, STAT_STAGE_ATK)
+							viability += 5;
+						else if (STAT_STAGE(bankDef, STAT_STAGE_SPATK) > STAT_STAGE(bankAtk, STAT_STAGE_SPATK)
+							viability += 5;
+						else
+							break;
+					}
+					break;
+					
+				case MOVE_POWERTRICK:
+					if (atkStatus3 & STATUS3_POWER_TRICK)
+					{
+						// power trick in effect
+						break;
+						
+					}
+					else
+					{
+						if ((atkDefense > atkAttack) && PhysicalMoveInMoveset(bankAtk))
+							viability += 5;
+						break;
+					}
+					break;
+					
+				case MOVE_HEARTSWAP:
+					if (defStatus3 & STATUS3_SEMI_INVULNERABLE)
+						break;
+					else
+					{
+						for (i=0; i = BATTLE_STATS_NO-1; ++i)
+						{
+							if (STAT_STAGE(bankDef, i) > STAT_STAGE(bankAtk, i))
+							{
+								if (i == STAT_STAGE_ATK && (PhysicalMoveInMoveset(bankAtk) || PhysicalMoveInMoveset(bankDef)))
+									viability += 5;
+								else if (i == STAT_STAGE_SPATK && (SpecialMoveInMoveset(bankAtk) || SpecialMoveInMoveset(bankDef)))
+									viability += 5;
+								else if (i == STAT_STAGE_SPEED || i == STAT_STAGE_ACC)
+									viability += 5;
+								break;
+							}
+							
+						}
+						
+					}
+					break;
+					
+				case MOVE_SPEEDSWAP:
+					if (defStatus3 & STATUS3_SEMI_INVULNERABLE)
+						break;
+					else
+					{
+						if (defSpeed > atkSpeed)
+							viability += 5;
+					}
+					break;
+					
+				case MOVE_GUARDSPLIT:
+					if (defStatus3 & STATUS3_SEMI_INVULNERABLE)
+						break;
+					else
+					{
+						if (defDefense > atkDefense || defSpDef > atkSpDef)
+							viability += 5;
+					}
+					break;
+					
+				case MOVE_POWERSPLIT:
+					if (defStatus3 & STATUS3_SEMI_INVULNERABLE)
+						break;
+					else
+					{
+						if (defAttack > atkAttack || defSpAtk > atkSpAtk)
+							viability += 5;
+					}
+					break;
+			}
 			break;
-			
-		case EFFECT_ME_FIRST:
-			//todo
-			break;
-			
+						
 		case EFFECT_EAT_BERRY:
-			//todo
+			switch (move)
+			{
+				case MOVE_BUGBITE:
+				case MOVE_PLUCK:		
+					if (defStatus2 & STATUS2_SUBSTITUTE)
+						break;
+					else if (defAbility == ABILITY_STICKYHOLD
+						break;
+					else if (defItemPocket == POCKET_BERRY_POUCH)
+						viability += 5;
+					break;
+					
+				case MOVE_INCINERATE:
+					if (atkPartnerItemPocket == POCKET_BERRY_POUCH && atkPartnerAbility != ABILITY_STICKYHOLD)
+						break;	//don't destory ally item
+					else if (defItemPocket == POCKET_BERRY_POUCH && defAbility != ABILITY_STICKYHOLD)
+						viability += 5;
+					else if (defPartnerItemPocket == POCKET_BERRY_POUCH && defPartnerAbility != ABILITY_STICKYHOLD)
+						viability += 5;
+					break;
+			}	
 			break;
 			
 		case EFFECT_NATURAL_GIFT:
-			//todo
+			if (atkItemPocket == POCKET_BERRY_POUCH)
+			{
+				for (i = 0; NaturalGiftTable[i].berry != ITEM_TABLES_TERMIN; ++i)
+				{
+					if (NaturalGiftTable[i].berry == atkItem)
+					{
+						if (IsOfType(bankDef, NaturalGiftTable[i].type))
+							break;
+						viability += 5;
+						break;
+					}
+				}
+			}
 			break;
 			
 		case EFFECT_SMACK_DOWN:
-			//todo
+			if (CheckGrounding(bankDef) == GROUNDED)
+				break;
+			else if (defStatus3 & STATUS3_TELEKINESIS)
+				break;
+			else if (defStatus3 & STATUS3_LEVITATING)
+				viability += 5;	// remove magnet rise good
 			break;
 			
 		case EFFECT_REMOVE_TARGET_STAT_CHANGES:
-			//todo
+			// clear smog
+			if (defStatus3 & STATUS3_SEMI_INVULNERABLE)
+				break;
+			else if (defStatus2 & STATUS2_SUBSTITUTE)
+				break;
+			for (i = 0; i <= BATTLE_STATS_NO-1; ++i)
+			{
+				if (STAT_STAGE(bankDef, i) > 6)
+				{
+					viability += 5;
+					break;
+				}
+			}
 			break;
 			
 		case EFFECT_RELIC_SONG:
-			//todo
+			if (CanBePutToSleep(bankDef))
+				viability += 5;
 			break;
 			
-		case EFFECT_SET_TERRAIN:
-			//todo
-			break;
+		//case EFFECT_SET_TERRAIN:
+			// handled in negative checks
+		//	break;
 			
 		case EFFECT_PLEDGE:
-			//todo
+			if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+			{
+				if (MoveEffectInMoveset(EFFECT_PLEDGE, bankAtkPartner))
+					viability += 2;	// small extra boost if partner might use pledge move
+			}
 			break;
 			
-		case EFFECT_FIELD_EFFECTS:
-			//todo
-			break;
+		//case EFFECT_FIELD_EFFECTS:
+			// handled in negative checks
+		//	break;
 			
-		case EFFECT_FLING:
-			//todo
-			break;
+		//case EFFECT_FLING:
+			// handled in negative checks
+		//	break;
 			
 		case EFFECT_FEINT:
-			//todo
+			// lower chance of using protect each successive time
+			if (gDisableStructs[bankAtk].protectUses > 0)
+				break;
+			else if (MoveWouldHitFirst(move, bankAtk, bankDef)
+				break;
+			else if (HasProtectionMoveInMoveset(bankDef))
+				viability += 5;
 			break;
 			
+		/*
+		// handled in negative checks
 		case EFFECT_ATTACK_BLOCKERS:
-			//todo
+			switch (move)
+			{
+				case MOVE_HEALBLOCK:
+				case MOVE_POWDER:
+				case MOVE_TELEKINESIS:
+				case MOVE_EMBARGO:
+				case MOVE_THROATCHOP:
+				
+			}
 			break;
+		*/
 			
-		case EFFECT_TYPE_CHANGES:
-			//todo
-			break;
+		//case EFFECT_TYPE_CHANGES:
+			//handled in negative checks
+		//	break;
 			
 		case EFFECT_HEAL_TARGET:
-			//todo
+			if (bankDef != bankAtkPartner)
+			{
+				if (move == MOVE_POLLENPUFF)
+					goto FUNCTION_CHECK_RESULT;
+				break;
+			}
+			else if ((defStatus2 & STATUS2_SUBSTITUTE) || (defStatus3 & STATUS3_SEMI_INVULNERABLE))
+				break;
+			else if (gNewBS->HealBlockTimers[bankDef] != 0 || gNewBS->HealBlockTimers[bankAtk] != 0)
+				break;
+			else
+			{
+				switch (move)
+				{
+					case MOVE_HEALPULSE:
+						if (GetHealthPercentage(bankDef) <= 50)
+							viability += 5;
+						break;
+						
+					case MOVE_POLLENPUFF:
+						if (defAbility == ABILITY_BULLETPROOF)
+							break;
+						else if (GetHealthPercentage(bankDef) <= 50)
+							viability += 5;
+						break;
+												
+					case MOVE_FLORALHEALING:
+						if (gBattleTerrain == GRASSY_TERRAIN)
+							viability += 6;
+						else
+							viability += 5;
+						break;
+				}
+				break;
+			}
 			break;
 			
 		case EFFECT_TOPSY_TURVY_ELECTRIFY:
-			//todo
+			// electrify handled in negative checks
+			if (move == MOVE_TOPSYTURVY)
+			{
+				if (defStatus3 & STATUS3_SEMI_INVULNERABLE)
+					break;
+				u8 boostCounter = 0;
+				for (i = 0; i <= BATTLE_STATS_NO-1; ++i)
+				{
+					if (STAT_STAGE(bankDef, i) > 6)
+					{
+						boostCounter++;
+						if (i == STAT_STAGE_ATK && PhysicalMoveInMoveset(bankDef))
+						{
+							viability += 5;
+							break;
+						}
+						else if (i == STAT_STAGE_SPATK && SpecialMoveInMoveset(bankDef))
+						{
+							viability += 5;
+							break;
+						}
+						else if (i == STAT_STAGE_ACC)
+						{
+							viability += 5;
+							break;
+						}
+						else if (boostCounter >= 3)
+						{						
+							// extra viability if a bunch of stats are heightened regardless of type ?
+							viability += 5;
+							break;
+						}
+					}
+				}
+			}
 			break;
 			
 		case EFFECT_FAIRY_LOCK_HAPPY_HOUR:
-			//todo
+			// happy hour no benefit
+			if (move == MOVE_FAIRYLOCK)
+			{
+				if (IsOfType(bankDef, TYPE_GHOST))
+					break;
+				goto AI_TRAP_TARGET_CHECK;
+			}
 			break;
 			
-		case EFFECT_INSTRUCT_AFTER_YOU_QUASH:
-			//todo 
-			break;
+		//case EFFECT_INSTRUCT_AFTER_YOU_QUASH:
+			// handled in negative checks
+		//	break;
 			
 		case EFFECT_TEAM_EFFECTS:
-			//todo
+			switch (move)
+			{
+				case MOVE_TAILWIND:
+					if (gNewBS->TailwindTimers[SIDE(bankAtk)] != )
+						break;
+					viability += 5;	// double speed is pretty sweet
+					break;
+					
+				case MOVE_LUCKYCHANT:
+					if (defAbility == ABILITY_SNIPER || defAbility == ABILITY_SUPERLUCK || (defStatus2 & STATUS2_FOCUS_ENERGY))
+						viability += 5;
+					else if (defPartnerAbility == ABILITY_SNIPER || defPartnerAbility == ABILITY_SUPERLUCK || (defPartnerStatus2 & STATUS2_FOCUS_ENERGY))
+						viability += 5;
+					break;
+					
+				case MOVE_MAGNETRISE:
+					if (gNewBS->GravityTimer != 0)
+						break;
+					else if (atkItemEffect == ITEM_EFFECT_IRON_BALL)
+						break;
+					else if (gStatuses3[bank] & (STATUS3_SMACKED_DOWN | STATUS3_ROOTED))
+						break;
+					else if (MoveEffectInMoveset(EFFECT_SMACK_DOWN, bankDef) || MoveEffectInMoveset(EFFECT_SMACK_DOWN, bankDefPartner)
+						break;
+					else if (gSideAffecting[SIDE(bankAtk)] & SIDE_STATUS_SPIKES)
+						viability += 6;
+					else
+						viability += 4;	// raised up pretty cool
+			}
 			break;
 			
-		case EFFECT_CAMOUFLAGE:
-			//todo
-			break;
+		//case EFFECT_CAMOUFLAGE:
+		//	break;
 			
-		case EFFECT_FLAMEBURST:
-			break;
+		//case EFFECT_FLAMEBURST:
+		//	break;
 			
-		case EFFECT_LASTRESORT_SKYDROP:
-			//todo
-			break;
+		//case EFFECT_LASTRESORT_SKYDROP:
+		//	break;
 			
 					
+	} // move effect switch
+	FUNCTION_CHECK_RESULT:
+	if (moveSplit != SPLIT_STATUS)
+	{
+		if (TypeCalc(move, bankAtk, bankDef, 0, FALSE) & (MOVE_RESULT_SUPER_EFFECTIVE))
+			viability += 3;
+		else if (IsStrongestMove(move, bankAtk, bankDef))
+			viability += 1;
 	}
 	FUNCTION_RETURN:
 	return viability;

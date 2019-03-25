@@ -641,6 +641,12 @@ void sp02F_KeyDump(void) {
 };
 
 void sp0C9_ForceOneKeyInput(void) {
+	u8 key = Var8004;	// 
+	u16 num = Var8005;	// num times to press keys
+	(u32*) pointer = (u32*) 0x0203f4de;
+	*pointer = key;
+	
+	
 	return;
 };
 
@@ -738,10 +744,16 @@ u16 sp044_XORVariables(void) {
 ///////////////////////////////////////////////////////////////////////////////////
 
 void sp024_AddTextByVariable(void) {
+	u8 multiIndex = Var8006;
+	
 	return;
 };
 
 void sp025_AddTextByPointer(void) {
+	u8 multiIndex = Var8006;
+	if (multiIndex > 6)
+		return;
+	// [0203f4a0] + 8*multiIndex = gLoadPointer;
 	return;
 };
 

@@ -245,6 +245,7 @@ typedef u8 Buffer_t[0x200];
 		#define gSelectedOrderFromParty ((u8*) 0x203B0D4)
 /*u8*/  #define gUnknown_0203B0DC ((u8*) 0x203B0DC)
 
+		#define gLoadPointer (*((u32*) 0x03000f14))
 		#define sScriptContext2Enabled (*((u8*) 0x3000F28))
 		#define gMain (((struct Main*) 0x30030F0)[0])
 /*u32*/ #define gBattleMainFunc (*((u32*) 0x3004F84))
@@ -260,7 +261,7 @@ typedef u8 Buffer_t[0x200];
 		
 		#define GBATimer ((u16*) 0x4000108)
 		#define gKeyReg (*((u16*) 0x4000130))
-		
+				
 		extern struct MusicPlayerInfo gMPlay_BGM;
 
 /*Custom Ram Locs*/
