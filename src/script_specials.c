@@ -3,6 +3,11 @@
 #include "catching.h"
 #include "Vanilla_Functions.h"
 
+/*
+NOTE: a lot of specials will not work unless you have chosen to expand the save block!
+
+*/
+
 //Pokemon Specials//
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -743,25 +748,40 @@ u16 sp044_XORVariables(void) {
 //Other Specials//
 ///////////////////////////////////////////////////////////////////////////////////
 
-// multichoice:
-// 0x20: 3E05B0 up to index 0x25
-//		.word ram_ptr
-//		.word num_opts
 
+
+
+// add a string to custom multichoice box by vars 0x8004 and 0x8005
+// eg:
+//		setvar 0x8004 0x0890
+//		setvar 0x8005 0x5040
+//		special 0x24
+// would load a multichoice pointer to 0x8905040
+// personally, special 0x25 is much better/easier to use
 void sp024_AddTextByVariable(void) {
+#ifdef SAVE_BLOCK_EXPANSION
 	u8 multiIndex = Var8006;
-	
-	return;
+	u32 stringPointer = ((Var8004 << 16) | Var8005);
+	if (multiIndex > 6)
+		return;
+	gMultiChoice[multiIndex].stringPointer = stringPointer;
+#endif
 };
 
 
 
+// add a string to custom multichoice box by loadpointer
+// eg.
+//		setvar 0x8006 0x0
+//		loadpointer 0x0 @string
+//		special 0x25
 void sp025_AddTextByPointer(void) {
+#ifdef SAVE_BLOCK_EXPANSION
 	u8 multiIndex = Var8006;
 	if (multiIndex > 6)
 		return;
 	gMultiChoice[multiIndex].stringPointer = gLoadPointer;
-	// [0203f4a0] + 8*multiIndex = gLoadPointer;
+#endif
 };
 
 
