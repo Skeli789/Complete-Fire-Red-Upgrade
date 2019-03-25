@@ -785,22 +785,37 @@ void sp025_AddTextByPointer(void) {
 };
 
 
-
-void sp026_TurnMultiBox20to26IntoRamPointed(void) {
-	return;
-};
-
+// special to buffer a pokemon species and size
+// Inputs: 	Var8005: variable to get measurements from/store to
+// 			Var8006: species to measure
 void sp075_MeasurePokemon1(void) {
-	return;
+	u32 varAddr = (u32*) VarGetAddress(Var8005);	// decrypt var ram loc
+	u16 species = Var8006;
+	bufferPokeNameSize(species, varAddr);	
 };
 
-void sp076_MeasurePokemon2(void) {
-	return;
+
+// measure pokemon special
+// Inputs: 
+// 		var8005: variable the measurement was in (from special 0x75)
+// 		var8006: species
+// Output:
+//		Returns 1 if the pokémon is not of the selected type
+//		Returns 2 if the pokémon is smaller
+//		Returns 3 if bigger, and also stores the biggest value in the variable
+//		Returns 4 if equal in length
+u8 sp076_MeasurePokemon2(void) {
+	u32 varAddr = (u32*) VarGetAddress(Var8005);	// decrypt var ram loc
+	u16 species = Var8006;
+	u8 result = CalculateHeight(
+	return result;
 };
+
 
 void sp09C_OldManBattleModifier(void) {
 	return;
 };
+
 
 void sp18B_DisplayImagesFromTable(void) {
 	return;

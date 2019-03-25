@@ -449,6 +449,7 @@ u16 __attribute__((long_call)) Random();
 u8 __attribute__((long_call)) GetEventObjectIdByLocalIdAndMapInternal(u8 localId, u8 mapNum, u8 mapGroupId);
 u8 __attribute__((long_call)) GetEventObjectIdByLocalId(u8 localId);
 u16 __attribute__((long_call)) VarGet(u16 var);
+u32 __attribute__((long_call)) VarGetAddress(u16 var);
 bool8 __attribute__((long_call)) VarSet(u16 var, u16 value);
 void __attribute__((long_call)) PlayCry3(u16 species, s8 pan, u8 mode);
 void __attribute__((long_call)) PlayBGM(u16 songNum);
@@ -476,6 +477,10 @@ void __attribute__((long_call)) CpuSet(const void* src, void* dest, u32 mode);
 u16 __attribute__((long_call)) Sqrt(u32);
 u32 __attribute__((long_call)) udivsi(u32, u32);
 u32 __attribute__((long_call)) umodsi(u32, u32);
+
+u32* __attribute__((long_call)) bufferPokeNameSize(u16 species, void *varAddress);
+u8 __attribute__((long_call)) CalculateHeight(u16 species, void *varAddress);
+
 
 //The Deal Breaker
 void __attribute__((long_call)) break_func(u32);

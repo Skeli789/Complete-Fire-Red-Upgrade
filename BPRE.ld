@@ -49,6 +49,9 @@ species_to_dex_index = 0x08043298|1;
 givepokemon = 0x080A011C|1;
 party_move_up_no_free_slots_in_between = 0x080937DC|1;
 
+bufferPokeNameSize = 0x080A08CC | 1;
+CalculateHeight = 0x080A082C | 1;
+
 /*items*/
 routine_to_run_after_graphics = 0x02039998;
 run_after_graphics = 0x080A103C|1;
@@ -782,6 +785,7 @@ FlagSet = 0x806E680 | 1;
 FlagClear = 0x806E6A8 | 1;
 FlagGet = 0x806E6D0 | 1;
 VarGet = 0x806E568 | 1;
+VarGetAddress = 0x806E454 | 1;
 VarSet = 0x806E584 | 1;
 LoadCompressedPalette = 0x80703A8 | 1;
 PlayCry3 = 0x8071E60 | 1;
