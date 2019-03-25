@@ -743,19 +743,28 @@ u16 sp044_XORVariables(void) {
 //Other Specials//
 ///////////////////////////////////////////////////////////////////////////////////
 
+// multichoice:
+// 0x20: 3E05B0 up to index 0x25
+//		.word ram_ptr
+//		.word num_opts
+
 void sp024_AddTextByVariable(void) {
 	u8 multiIndex = Var8006;
 	
 	return;
 };
 
+
+
 void sp025_AddTextByPointer(void) {
 	u8 multiIndex = Var8006;
 	if (multiIndex > 6)
 		return;
+	gMultiChoice[multiIndex].stringPointer = gLoadPointer;
 	// [0203f4a0] + 8*multiIndex = gLoadPointer;
-	return;
 };
+
+
 
 void sp026_TurnMultiBox20to26IntoRamPointed(void) {
 	return;

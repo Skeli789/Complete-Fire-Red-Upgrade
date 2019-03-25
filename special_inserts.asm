@@ -3,6 +3,7 @@
 .thumb
 
 .equ MAX_LEVEL, 100
+.include "../asm_defines.s"
 
 .org 0x013144, 0xFF
 HiddenAbilityChange1:
@@ -254,3 +255,21 @@ HiddenAbilityChange7:
 .org 0x13A9DC, 0xFF
 SummaryScreenExpDisplay2:
 	.byte MAX_LEVEL - 1, 0x2D, 0x0, 0xD9
+	
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+// Multichoice Pointers
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x3E05B0, 0xFF
+.word MULTICHOICE_STRING_LOADER
+.word 0x2
+.word MULTICHOICE_STRING_LOADER
+.word 0x3
+.word MULTICHOICE_STRING_LOADER
+.word 0x4
+.word MULTICHOICE_STRING_LOADER
+.word 0x5
+.word MULTICHOICE_STRING_LOADER
+.word 0x6
+.word MULTICHOICE_STRING_LOADER
+.word 0x7	
+	

@@ -398,3 +398,5 @@ typedef u8 IllusionNickname_t[10];
 #define gExpandedFlags ((u8*) 0x0203B174)
 #define gExpandedVars ((u16*) (0x0203B174 + 0x200))
 
+#define gMultiChoice ((struct Multichoice*) 0x203B774)
+

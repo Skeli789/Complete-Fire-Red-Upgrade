@@ -41,6 +41,7 @@
 #include "../include/field_weather.h"
 #include "../include/wild_encounter.h"
 #include "../include/save.h"
+#include "../include/script_menu.h"
 
 #include "pokemon_data_request.h"
 #include "pokemon.h"
