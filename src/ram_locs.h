@@ -198,6 +198,7 @@ typedef u8 Buffer_t[0x200];
 		#define Var8007 (*((u16*) 0x20370C6))
 		#define Var8008 (*((u16*) 0x20370C8))
 		#define Var800D (*((u16*) 0x20370D0))
+		#define Var8010 (*((u16*) 0x20370d6))
 		
 /*u16*/ #define gSpecialVar_LastResult (*((u16*) 0x20370D0))
 /*u16*/ #define gSpecialVar_LastTalked (*((u16*) 0x20370D2))

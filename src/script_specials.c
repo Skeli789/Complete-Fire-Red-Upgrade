@@ -501,21 +501,17 @@ void sp019_CheckAttackPP(void) {
 //Party Specials//
 ///////////////////////////////////////////////////////////////////////////////////
 
-
-
+// erase pokemon from party, or entire party
 void sp062_PokemonEraser(void) {
 	u8 slot = Var8004;
 	if (slot == 0xf)
-	{
 		ZeroPlayerPartyMons();
-		return;
-	}
 	else
 	{
 		pokemon_slot_purge(&gPlayerParty[slot]);
 		gPlayerPartyCount -= 1;
 		// shift later slots up one
-		for (u8 i = slot; i <= gPlayerPartyCount; ++i)
+		for (u8 i = slot; i <= gPlayerPartyCount-1; ++i)
 		{
 			// copy slot+i+1 to slot+i up to numPokes - 2
 			CopyMon(&gPlayerParty[i],&gPlayerParty[i+1],100);
@@ -526,19 +522,51 @@ void sp062_PokemonEraser(void) {
 
 
 // check status of pokemon in slot var8004
-void sp063_StatusChecker(void) {
-	return;
+u8 sp063_StatusChecker(void) {
+	u8 slot = Var8004;	
+	return (get_attr(&gPlayerParty[slot], MON_DATA_STATUS, 0));
 };
 
+
+// Inflict a status to affect a party member or entire party
 void sp064_InflictStatus(void) {
+	u8 slot = Var8004;
+	if (Var8005 == 0xf)
+		for (i = 0; i <= gPlayerPartyCount-1; ++i)
+		{
+			set_attr(&gPlayerParty[i], MON_DATA_STATUS, &Var8005);
+		}
+	else
+		set_attr(&gPlayerParty[slot], MON_DATA_STATUS, &Var8005);
 	return;
 };
 
-void sp065_CheckMonHP(void) {
-	return;
+
+// check slot pokemon's HP
+u16 sp065_CheckMonHP(void) {
+	u8 slot = Var8004;
+	return get_attr(&gPlayerParty[slot], MON_DATA_HP, 0);
 };
 
+
+// inflict damage on a party pokemon, or entire party
 void sp066_InflictPartyDamage(void) {
+	u8 slot = Var8004;
+	s16 dmg = Var8005;
+	u8 switcher = Var8006;	//1 to heal, else damage
+	u16 currHP;
+	if (slot == 0xf)
+	{
+		for (i = 0; i <= gPlayerPartyCount-1; ++i)
+		{
+			currHP = get_attr(&gPlayerParty[slot], MON_DATA_HP, 0);
+			if (switcher == 1)
+				Var8006 = currHP + dmg;
+			else
+				Var8006 = currHP - dmg;
+			set_attr(&gPlayerParty[slot], MON_DATA_HP, Var8006);
+		}
+	}
 	return;
 };
 
@@ -633,8 +661,8 @@ u16 sp03E_AddVariables(void) {
 	bool8 overflow = FALSE;
 	u32 sum;
 	
-	var1 = VarGet(var1);
-	var2 = VarGet(var2);
+	u16 var1 = VarGet(var1);
+	u16 var2 = VarGet(var2);
 	
 	sum = var1 + var2;
 	
@@ -648,8 +676,8 @@ u16 sp03E_AddVariables(void) {
 };
 
 u16 sp03F_SubtractVariables(void) {
-	var1 = Var8004; //Var contained in Var8004
-	var2 = Var8005; //Var contained in Var8005
+	u16 var1 = Var8004; //Var contained in Var8004
+	u16 var2 = Var8005; //Var contained in Var8005
 	bool8 overflow = FALSE;
 	u32 diff;
 	
@@ -668,8 +696,8 @@ u16 sp03F_SubtractVariables(void) {
 };
 
 u16 sp040_MultiplyVariables(void) {
-	var1 = Var8004; //Var contained in Var8004
-	var2 = Var8005; //Var contained in Var8005
+	u16 var1 = Var8004; //Var contained in Var8004
+	u16 var2 = Var8005; //Var contained in Var8005
 	bool8 overflow = FALSE;
 	u32 prod;
 	
@@ -689,33 +717,21 @@ u16 sp040_MultiplyVariables(void) {
 
 
 u16 sp041_DivideVariables(void) {
-	var1 = Var8004; //Var contained in Var8004
-	var2 = Var8005; //Var contained in Var8005
-	Var8004 = udivsi(var1, var2);
-	
-	return (umodsi(var1, var2));
+	Var8004 = udivsi(Var8004, Var8005);
+	return (umodsi(Var8004, Var8005));
 };
 
 
 u16 sp042_ANDVariables(void) {
-	var1 = Var8004; //Var contained in Var8004
-	var2 = Var8005; //Var contained in Var8005
-	
-	return (var1 & var2);
+	return (Var8004 & Var8005);
 };
 
-u16 sp043_ORVariables(void) {
-	var1 = Var8004; //Var contained in Var8004
-	var2 = Var8005; //Var contained in Var8005
-	
-	return (var1 | var2);
+u16 sp043_ORVariables(void) {	
+	return (Var8004 | Var8005);
 };
 
 u16 sp044_XORVariables(void) {
-	var1 = Var8004; //Var contained in Var8004
-	var2 = Var8005; //Var contained in Var8005
-	
-	return (var1 ^ var2);
+	return (Var8004 ^ Var8005);
 };
 
 //Other Specials//
@@ -819,7 +835,7 @@ void sp048_ResumeTimer(void) {
 //@Details:	Stops the timer.
 //@Returns: The time on the timer.
 u16 sp049_StopTimer(void) {
-	u16 time = GBATimer[2]
+	u16 time = GBATimer[2];
 	GBATimer[3] = 0;
 	GBATimer[1] = 0;
 	GBATimer[0] = 0;
@@ -830,7 +846,7 @@ u16 sp049_StopTimer(void) {
 
 //@Returns: The time on the timer.
 u16 sp04A_GetTimerValue(void) {
-	return GBATimer[2] = 0;;
+	return GBATimer[2] = 0;
 };
 
 void sp04B_StopAndUpdatePlaytime(void) {
@@ -884,8 +900,7 @@ void sp050_StoreTimerToVariable(void) {
 //			it to the saved timer.
 //@Input:	Var 0x8006 - Timer value.
 void sp061_LoadTimerFromVariable(void) {
-	u16 var = Var8006 //Var in Var8006
-	var = VarGet(var);
+	u16 var = Var8006; //Var in Var8006
 	ScriptSpecialsStruct.savedTimer = var;
 	return;
 };
@@ -899,9 +914,9 @@ void sp061_LoadTimerFromVariable(void) {
 //		  2. Var 0x8005 - The extra ball slot number
 //		  3. To a given variable the number as a full integer. Max value is 0x63FF
 u16 sp086_GetSafariBalls(void) {
-	Var8004 = gSafariBalls;
-	Var8005 = *(&gSafariBalls + 1);
-	return Var8004 + Var8005;
+	Var8004 = gSafariBallNumber;
+	Var8005 = *(&gSafariBallNumber + 1);
+	return (Var8004 + Var8005);
 };
 
 
@@ -993,6 +1008,6 @@ void sp081_SetWalkingScript(void) {
 };
 
 
-*/
 
+*/
 
