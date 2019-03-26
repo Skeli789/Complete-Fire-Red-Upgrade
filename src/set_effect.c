@@ -278,15 +278,15 @@ void SetMoveEffect(bool8 primary, u8 certain)
             EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[gEffectBank].status1);
             MarkBufferBankForExecution(gActiveBattler);
 
-            if (gHitMarker & HITMARKER_IGNORE_SAFEGUARD)
+            /*if (gHitMarker & HITMARKER_IGNORE_SAFEGUARD)
             {
                 gBattleCommunication[MULTISTRING_CHOOSER] = 1;
                 gHitMarker &= ~(HITMARKER_IGNORE_SAFEGUARD);
             }
             else
-            {
+            {*/
                 gBattleCommunication[MULTISTRING_CHOOSER] = 0;
-            }
+            //}
 			
             return;
         }

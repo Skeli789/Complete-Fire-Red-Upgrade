@@ -39,6 +39,7 @@
 .global BattleScript_MoveStatDrain_PPLoss
 .global BattleScript_MoveStatDrain
 .global BattleScript_TargetAbilityStatRaise
+.global BattleScript_AbilityApplySecondaryEffect
 .global BattleScript_RoughSkinActivates
 .global BattleScript_CuteCharmActivates
 .global BattleScript_WeakArmorActivates
@@ -499,6 +500,16 @@ BattleScript_MoveStatDrainReturn:
 	call BattleScript_AbilityPopUpRevert
 	goto BS_MOVE_END
 	
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_AbilityApplySecondaryEffect:
+	waitstateatk
+	call BattleScript_AbilityPopUp
+	waitstateatk
+	seteffectuser
+	call BattleScript_AbilityPopUpRevert
+	return
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
