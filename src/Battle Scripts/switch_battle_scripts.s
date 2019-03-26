@@ -220,14 +220,10 @@ BattleScript_PursuitDmgOnSwitchOutRet:
 
 BattleScript_WildDoubleSwitchFix:
 	jumpifbattletype BATTLE_TRAINER 0x81D86E6
-	jumpifbattletype BATTLE_DOUBLE WildDoubleCheckSwitchPossible
+	jumpifbattletype BATTLE_DOUBLE WildDoubleTrySwitchOut
 	goto 0x81D86BB
 
-WildDoubleCheckSwitchPossible:
-	jumpifcannotswitch 0xB WildDoubleCantSwitch
-	goto 0x81D86BB
-
-WildDoubleCantSwitch:
+WildDoubleTrySwitchOut:
 	openpartyscreen 0x3 0x81D87B7
 	switchhandleorder 0x3 0x2
 	goto 0x81D8792
