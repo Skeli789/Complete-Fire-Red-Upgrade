@@ -1095,21 +1095,25 @@ void PlayerHandleChooseAction(void)
 	
 	u16 itemId = gBattleBufferA[gActiveBattler][2] | (gBattleBufferA[gActiveBattler][3] << 8);
 
-	//Running or using balls cancels the second mon's attack
-	if (gBattleBufferA[gActiveBattler][1] == ACTION_USE_ITEM //If mon 1 used a ball, then
-	&&  GetPocketByItemId(itemId) == POCKET_POKEBALLS)		 //mon 2 doesn't get to do anything.
+	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
 	{
-		gNewBS->NoMoreMovingThisTurn |= gBitTable[gActiveBattler];
-		EmitTwoReturnValues(1, ACTION_USE_MOVE, 0);
-		PlayerBufferExecCompleted();
-		return;
-	}
-	else if (gBattleBufferA[gActiveBattler][1] == ACTION_RUN)
-	{
-		gNewBS->NoMoreMovingThisTurn |= gBitTable[gActiveBattler];
-		EmitTwoReturnValues(1, ACTION_USE_MOVE, 0);
-		PlayerBufferExecCompleted();
-		return;
+		//Running or using balls cancels the second mon's attack
+		if (gBattleBufferA[gActiveBattler][1] == ACTION_USE_ITEM //If mon 1 used a ball, then
+		&&  GetPocketByItemId(itemId) == POCKET_POKEBALLS)		 //mon 2 doesn't get to do anything.
+		{
+			gNewBS->NoMoreMovingThisTurn |= gBitTable[gActiveBattler];
+			EmitTwoReturnValues(1, ACTION_USE_MOVE, 0);
+			PlayerBufferExecCompleted();
+			return;
+		}
+		else if (GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT) == gActiveBattler
+		&& gBattleBufferA[gActiveBattler][1] == ACTION_RUN)
+		{
+			gNewBS->NoMoreMovingThisTurn |= gBitTable[gActiveBattler];
+			EmitTwoReturnValues(1, ACTION_USE_MOVE, 0);
+			PlayerBufferExecCompleted();
+			return;
+		}
 	}
 	
     gBattleBankFunc[gActiveBattler] = (u32) HandleChooseActionAfterDma3;
