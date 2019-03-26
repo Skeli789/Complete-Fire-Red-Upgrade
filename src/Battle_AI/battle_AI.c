@@ -2,11 +2,14 @@
 #include "..\\helper_functions.h"
 #include "AI_Helper_Functions.h"
 
+extern move_t MoldBreakerMoves[];
+
 extern u8 TypeCalc(u16 move, u8 bankAtk, u8 bankDef, pokemon_t* party_data_atk, bool8 CheckParty);
 extern u8 AI_TypeCalc(move_t, u8 bankAtk, pokemon_t* party_data_def);
 extern u32 AI_CalcPartyDmg(u8 bankAtk, u8 bankDef, u16 move, pokemon_t* mon);
 extern u8 CheckMoveLimitations(u8 bank, u8 unusableMoves, u8 check);
 extern u32 GetAIFlagsInBattleFrontier(u8 bank);
+extern const struct Evolution* CanMegaEvolve(u8 bank, bool8 CheckUBInstead);
 
 void BattleAI_HandleItemUseBeforeAISetup(u8 defaultScoreMoves);
 void BattleAI_SetupAIData(u8 defaultScoreMoves);
@@ -744,13 +747,31 @@ bool8 ShouldSwitchIfWonderGuard(void) {
 	||  ABILITY(gActiveBattler) == ABILITY_TERAVOLT
 	||  ABILITY(gActiveBattler) == ABILITY_TURBOBLAZE)
 		return FALSE;
+	
+	//Check Mega Evolving into a mon with Mold Breaker
+	const struct Evolution* evos = CanMegaEvolve(gActiveBattler, FALSE);
+	if (evos != NULL)
+	{
+		u16 megaSpecies = evos->targetSpecies;
+		u8 megaAbility = gBaseStats[megaSpecies].ability1; //Megas can only have 1 ability
+		
+		if (megaAbility == ABILITY_MOLDBREAKER
+		||  megaAbility == ABILITY_TERAVOLT
+		||  megaAbility == ABILITY_TURBOBLAZE)
+			return FALSE;
+	}
 
-    // check if pokemon has a super effective move
-    
+    //Check if pokemon has a super effective move or Mold Breaker Move
     for (i = 0; i < 4; i++) {
         u16 move = gBattleMons[gActiveBattler].moves[i];
-        if (move == MOVE_NONE || SPLIT(move) == SPLIT_STATUS)
+        if (move == MOVE_NONE)
             continue;
+			
+		if (CheckTableForMove(move, MoldBreakerMoves))
+			return FALSE;
+			
+		if (SPLIT(move) == SPLIT_STATUS)
+			continue;
 					
         moveFlags = TypeCalc(move, gActiveBattler, opposingBattler, 0, 0);
         if (moveFlags & MOVE_RESULT_SUPER_EFFECTIVE)
