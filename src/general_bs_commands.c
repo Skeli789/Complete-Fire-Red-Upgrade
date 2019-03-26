@@ -126,7 +126,6 @@ void atk02_attackstring(void) {
 			&&  ITEM_QUALITY(gBankAttacker) == moveType 
 			&&  SPLIT(gCurrentMove) != SPLIT_STATUS
 			&& !(gMoveResultFlags & (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE | MOVE_RESULT_FAILED))
-			&& !CheckTableForMove(gCurrentMove, GemBanTable)
 			&& !(TypeCalc(gCurrentMove, gBankAttacker, gBankTarget, GetBankPartyData(gBankAttacker), 0) & (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE | MOVE_RESULT_FAILED))
 			&& gBattleMoves[gCurrentMove].effect != EFFECT_PLEDGE) 
 			{
