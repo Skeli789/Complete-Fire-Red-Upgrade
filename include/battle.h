@@ -803,6 +803,7 @@ struct NewBattleStruct
 	bool8 bypassSubstitute : 1;
 	bool8 criticalCapture : 1;
 	bool8 trainerSlideLowHpMsgDone : 1;
+	bool8 TeleportBit : 1;
 	
 	//Other
 	u16 LastUsedMove;

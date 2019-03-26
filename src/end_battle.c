@@ -219,6 +219,8 @@ void HandleEndTurn_RanFromBattle(void)
     gBattleMainFunc = (u32) HandleEndTurn_FinishBattle;
 }
 
+#define ABILITY_PREVENTING_ESCAPE 2
+
 u8 IsRunningFromBattleImpossible(void)
 {
     u8 itemEffect;
@@ -229,17 +231,17 @@ u8 IsRunningFromBattleImpossible(void)
     gStringBank = gActiveBattler;
 
     if (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_FRONTIER))
-        return 0;
+        return FALSE;
 		
 	else if (FlagGet(NO_RUNNING_FLAG) || FlagGet(NO_CATCHING_AND_RUNNING_FLAG))
-		return 1;
+		return TRUE;
 		
     else if (itemEffect == ITEM_EFFECT_CAN_ALWAYS_RUN)
-        return 0;
+        return FALSE;
     else if (gBattleMons[gActiveBattler].ability == ABILITY_RUNAWAY)
-        return 0;
+        return FALSE;
 	else if (IsOfType(gActiveBattler, TYPE_GHOST))
-		return 0;
+		return FALSE;
 
     side = SIDE(gActiveBattler);
 
@@ -252,7 +254,7 @@ u8 IsRunningFromBattleImpossible(void)
             gBattleScripting->bank = i;
             gLastUsedAbility = ABILITY(i);
             gBattleCommunication[MULTISTRING_CHOOSER] = 2;
-            return 2;
+            return ABILITY_PREVENTING_ESCAPE;
         }
         if (side != SIDE(i)
         && ABILITY(i) == ABILITY_ARENATRAP
@@ -261,7 +263,7 @@ u8 IsRunningFromBattleImpossible(void)
             gBattleScripting->bank = i;
             gLastUsedAbility = ABILITY(i);
             gBattleCommunication[MULTISTRING_CHOOSER] = 2;
-            return 2;
+            return ABILITY_PREVENTING_ESCAPE;
         }
 		
 		if (i != gActiveBattler
@@ -271,27 +273,38 @@ u8 IsRunningFromBattleImpossible(void)
 			gBattleScripting->bank = i;
 			gLastUsedAbility = ABILITY(i);
 			gBattleCommunication[MULTISTRING_CHOOSER] = 2;
-			return 2;
+			return ABILITY_PREVENTING_ESCAPE;
 		}
     }
 	
     if ((gBattleMons[gActiveBattler].status2 & (STATUS2_ESCAPE_PREVENTION | STATUS2_WRAPPED))
-    || (gStatuses3[gActiveBattler] & (STATUS3_ROOTED | STATUS3_SKY_DROP_TARGET)))
+    || (gStatuses3[gActiveBattler] & STATUS3_SKY_DROP_TARGET))
     {
         gBattleCommunication[MULTISTRING_CHOOSER] = 0;
-        return 1;
+        return TRUE;
     }
+	
+	if (!gNewBS->TeleportBit)
+	{
+		if (gStatuses3[gActiveBattler] & STATUS3_ROOTED)
+		{
+			gBattleCommunication[MULTISTRING_CHOOSER] = 0;
+			return 1;
+		}
+	}
+	else
+		gNewBS->TeleportBit = FALSE;
 	
 	if (gNewBS->FairyLockTimer)
 	{
 		gBattleCommunication[MULTISTRING_CHOOSER] = 0;
-		return 1;
+		return TRUE;
 	}
 		
     if (gBattleTypeFlags & BATTLE_TYPE_OAK_TUTORIAL)
     {
         gBattleCommunication[MULTISTRING_CHOOSER] = 1;
-        return 1;
+        return TRUE;
     }
 	
     return 0;

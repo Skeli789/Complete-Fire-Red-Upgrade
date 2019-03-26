@@ -1462,3 +1462,8 @@ void CycleScriptingBankHealthBetween0And1(void)
 	EmitSetMonData(0, REQUEST_HP_BATTLE, 0, 2, &gBattleMons[gActiveBattler].hp);
 	MarkBufferBankForExecution(gActiveBattler);
 }
+
+void SetTeleportBit(void)
+{
+	gNewBS->TeleportBit = TRUE;
+}
