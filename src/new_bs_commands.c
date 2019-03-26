@@ -21,6 +21,8 @@ extern u8 gText_SweetVeilProtects[];
 #define gText_TargetStayedAwakeUsingAbility (u8*) 0x83FBDE2
 extern u8 gText_TargetProtectedByAbility[];
 
+extern bool8 CheckCraftyShield(u8 bank);
+
 //callasm FUNCTION_OFFSET
 void atkF8_callasm(void) 
 {
@@ -746,8 +748,92 @@ Ability Protects
 
 //atkFF1C - atkFF1E: Trainer Sliding
 
+//flowershieldlooper MOVE_EFFECT SUCCESS_ADDRESS FAIL_ADDRESS
+void atkFF1F_flowershieldlooper(void)
+{
+	for (; gBattleCommunication[0] < gBattlersCount; ++gBattleCommunication[0]) 
+	{
+		u8 bank = gBanksByTurnOrder[gBattleCommunication[0]];
+		if (IsOfType(bank, TYPE_GRASS) 
+		&& gBattleMons[bank].hp
+		&& !(gStatuses3[bank] & STATUS3_SEMI_INVULNERABLE)
+		&& !(gBattleMons[bank].status2 & STATUS2_SUBSTITUTE))
+		{	
+			gBattleCommunication[MOVE_EFFECT_BYTE] = gBattlescriptCurrInstr[1];
+			++gBattleCommunication[0];
+			gBankTarget = bank;
+			gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
+			return;
+		}
+	}
+	
+	if (!gBattleScripting->animTargetsHit) //Not a single mon was affected
+		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 6);
+	else
+	{
+		gBankTarget = gBankAttacker;
+		gBattlescriptCurrInstr += 10;
+	}
+}
+
+//jumpifprotectedbycraftyshield BANK ROM_ADDRESS
+void atkFF20_jumpifprotectedbycraftyshield(void)
+{
+	if (CheckCraftyShield(GetBattleBank(gBattlescriptCurrInstr[1])))
+		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
+	else
+		gBattlescriptCurrInstr += 5;
+}
+
+//tryspectralthiefsteal SUCCESS_ADDRESS
+void atkFF21_tryspectralthiefsteal(void) 
+{
+	s8 increment = 1;
+	bool8 success = FALSE;
+	u8 atkAbility = ABILITY(gBankAttacker);
+	
+	for (int i = 0; i < BATTLE_STATS_NO-1; ++i) 
+	{
+		switch (atkAbility) {
+			case ABILITY_SIMPLE:
+				increment = 2;
+				break;
+			
+			case ABILITY_CONTRARY:
+				increment = -1;
+		}
+		
+		if (atkAbility == ABILITY_CONTRARY) 
+		{
+			while (gBattleMons[gBankTarget].statStages[i] > 6 && gBattleMons[gBankAttacker].statStages[i] > 0) 
+			{
+				success = TRUE;
+				gBattleMons[gBankTarget].statStages[i] -= 1;
+				gBattleMons[gBankAttacker].statStages[i] += increment;
+			}
+		}
+		else 
+		{
+			while (gBattleMons[gBankTarget].statStages[i] > 6 && gBattleMons[gBankAttacker].statStages[i] < 12) 
+			{
+				success = TRUE;
+				gBattleMons[gBankTarget].statStages[i] -= 1;
+				gBattleMons[gBankAttacker].statStages[i] += increment;
+				
+				if (gBattleMons[gBankAttacker].statStages[i] > 12)
+					gBattleMons[gBankAttacker].statStages[i] = 12;
+			}
+		}
+	}
+	
+	if (success)
+		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+	else
+		gBattlescriptCurrInstr += 5;
+}
+
 //trysetsleep BANK FAIL_ADDRESS
-void atkFF1F_trysetsleep(void)
+void atkFF22_trysetsleep(void)
 {
 	u8 bank = GetBattleBank(gBattlescriptCurrInstr[1]);
 	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 2);

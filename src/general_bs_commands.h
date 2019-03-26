@@ -44,16 +44,27 @@ ToxicSpikesLayString,
 StickyWebLayString,
 };
 
-#define BattleScript_SturdyPreventsOHKO (u8*) 0x0
+extern u8 BattleScript_SturdyPreventsOHKO[];
 #define BattleScript_SubstituteFade (u8*)  0x81D9526
-#define BattleScript_HangedOnMsg (u8*) 0x0
-#define BattleScript_OneHitKOMsg (u8*) 0x0
-#define BattleScript_EnduredMsg (u8*) 0x0
-#define BattleScript_PrintPayDayMoneyString (u8*) 0x0
-#define BattleScript_Failed (u8*) 0x0
-#define BattleScript_WrapFree (u8*) 0x0
-#define BattleScript_LeechSeedFree (u8*) 0x0
-#define BattleScript_SpikesFree (u8*) 0x0
-#define BattleScript_SideStatusWoreOffRet (u8*) 0x0
-#define BattleScript_StickyHoldActivates (u8*) 0x0
-#define BattleScript_CastformChange (u8*) 0x0
+#define BattleScript_HangedOnMsg (u8*) 0x81D9641
+#define BattleScript_OneHitKOMsg (u8*) 0x81D8FE4
+extern u8 BattleScript_EnduredMsg[];
+#define BattleScript_PrintPayDayMoneyString (u8*) 0x81D911D
+#define BattleScript_WrapFree (u8*) 0x81D8DF3
+#define BattleScript_LeechSeedFree (u8*) 0x81D8E04
+#define BattleScript_SpikesFree (u8*) 0x81D8E0B
+extern u8 BattleScript_SideStatusWoreOffRet[];
+extern u8 BattleScript_StickyHoldActivates[];
+extern u8 BattleScript_CastformChange[];
+
+#define TEXT_BUFFER_SIDE_STATUS(move, status, side) 			\
+{																\
+	gSideAffecting[side] &= ~status;							\
+    gBattleTextBuff1[0] = 0xFD;									\
+    gBattleTextBuff1[1] = 0x2;									\
+    gBattleTextBuff1[2] = (move & 0xFF);						\
+    gBattleTextBuff1[3] = move >> 8;							\
+    gBattleTextBuff1[4] = EOS;									\
+	BattleScriptPushCursor();									\
+	gBattlescriptCurrInstr = BattleScript_SideStatusWoreOffRet;	\
+}

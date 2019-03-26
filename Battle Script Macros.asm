@@ -10,7 +10,9 @@
 .equ BS_MOVE_MISSED_PAUSE, 0x81D6960
 .equ BS_BUFF_ATK_STATS, 0x81D6B9E
 .equ BS_MOVE_WEATHER_CHANGE, 0x81D7A14
+.equ BS_HIT_FROM_ATTACKSTRING, 0x81D692E
 .equ BS_HIT_FROM_DAMAGE_CALC, 0x81D6930
+.equ BS_HIT_FROM_ATTACKANIMATION, 0x81D6934
 .equ BS_STANDARD_HIT, 0x81D6926
 
 @Banks
@@ -1561,4 +1563,22 @@
 	.macro trainerslideout position
 	.byte 0xFF, 0x1E
 	.byte \position
-	.endm	
+	.endm
+	
+	.macro flowershieldlooper move_effect rom_address fail_address
+	.byte 0xFF, 0x1F
+	.byte \move_effect
+	.4byte \rom_address
+	.4byte \fail_address
+	.endm
+	
+	.macro jumpifprotectedbycraftyshield bank rom_address
+	.byte 0xFF, 0x20
+	.byte \bank
+	.4byte \rom_address
+	.endm
+	
+	.macro tryspectralthiefsteal rom_address
+	.byte 0xFF, 0x21
+	.4byte \rom_address
+	.endm
