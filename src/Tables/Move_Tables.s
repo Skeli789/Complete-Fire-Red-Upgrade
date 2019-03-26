@@ -663,7 +663,7 @@ HighCritTable:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 AlwaysCritTable:
-.hword MOVE_CIRCLETHROW
+.hword MOVE_STORMTHROW
 .hword MOVE_FROSTBREATH
 .hword MOVE_TABLES_TERMIN
 
