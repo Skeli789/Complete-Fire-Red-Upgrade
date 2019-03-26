@@ -995,40 +995,43 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
             break;
 		
         case ABILITYEFFECT_MOVES_BLOCK: // 2
-			switch (gLastUsedAbility) {
-				case ABILITY_SOUNDPROOF:
-					if (CheckSoundMove(move))
-						effect = 1;
-					break;
-				
-				case ABILITY_BULLETPROOF:
-					if (CheckTableForMove(move, BallBombMoveTable))
-						effect = 1;
-					break;
-				
-				case ABILITY_OVERCOAT:
-					if (CheckTableForMove(move, PowderTable))
-						effect = 1;
-					break;
-				
-				case ABILITY_DAZZLING:
-				case ABILITY_QUEENLYMAJESTY:
-					if (PriorityCalc(gBankAttacker, ACTION_USE_MOVE, move) > 0)
-						effect = 1;
-					break;
-				
-				case ABILITY_TELEPATHY:
-					if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE
-					&& gBankAttacker == PARTNER(bank))
-						effect = 1;
-					break;
-			}
-			
-			if (effect)
+			if (gBankAttacker != bank) //Can't block against self
 			{
-				if (gBattleMons[gBankAttacker].status2 & STATUS2_MULTIPLETURNS)
-					gHitMarker |= HITMARKER_NO_PPDEDUCT;
-				gBattlescriptCurrInstr = BattleScript_SoundproofProtected;
+				switch (gLastUsedAbility) {
+					case ABILITY_SOUNDPROOF:
+						if (CheckSoundMove(move))
+							effect = 1;
+						break;
+					
+					case ABILITY_BULLETPROOF:
+						if (CheckTableForMove(move, BallBombMoveTable))
+							effect = 1;
+						break;
+					
+					case ABILITY_OVERCOAT:
+						if (CheckTableForMove(move, PowderTable))
+							effect = 1;
+						break;
+					
+					case ABILITY_DAZZLING:
+					case ABILITY_QUEENLYMAJESTY:
+						if (PriorityCalc(gBankAttacker, ACTION_USE_MOVE, move) > 0)
+							effect = 1;
+						break;
+					
+					case ABILITY_TELEPATHY:
+						if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE
+						&& gBankAttacker == PARTNER(bank))
+							effect = 1;
+						break;
+				}
+			
+				if (effect)
+				{
+					if (gBattleMons[gBankAttacker].status2 & STATUS2_MULTIPLETURNS)
+						gHitMarker |= HITMARKER_NO_PPDEDUCT;
+					gBattlescriptCurrInstr = BattleScript_SoundproofProtected;
+				}
 			}
 			break;
 		

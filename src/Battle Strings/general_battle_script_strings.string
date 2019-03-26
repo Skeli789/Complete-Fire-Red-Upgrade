@@ -124,3 +124,24 @@ The Wide Guard protected\n[FD][10]!
 
 #org @gText_TargetProtectedByAbility
 [FD][10] is protected\nby its [FD][19]!
+
+#org @gText_AbilityPreventsStatLoss
+[FD][13]'s stats were\nnot lowered!
+
+#org @gText_AbilityPreventsSpecificStatLoss
+[FD][13]'s [FD][00]\nwas not lowered!
+
+#org @gText_AbilityPreventsConfusion
+[FD][13] doesn't\nbecome confused!
+
+#org @gText_AbilityBlocksHealBell
+[FD][13] blocks\n[FD][14]!
+
+#org @gText_DefogRemovedSideStatus
+[FD][37] team's [FD][00]\nwore off!
+
+#org @gText_ScreenRaisedStat
+[FD][14] raised [FD][36]\nteam's [FD][00]!
+
+#org @gText_SetAuroraVeil
+[FD][14] protects [FD][36] team\nagainst physical and special moves!

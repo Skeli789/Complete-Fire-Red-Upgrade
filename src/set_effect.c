@@ -31,7 +31,7 @@ extern u8 BattleScript_PluckEat[];
 extern u8 BattleScript_TargetSleepHeal[];
 extern u8 BattleScript_TargetBurnHeal[];
 extern u8 BattleScript_ItemSteal[];
-extern u8 BattleScript_StickyHoldActivates[];
+extern u8 BattleScript_StickyHoldActivatesRet[];
 extern u8 BattleScript_PrintCustomString[];
 
 extern u8 IonDelugeShowerString[];
@@ -769,7 +769,7 @@ bool8 SetMoveEffect2(void)
             else if (gBattleMons[gEffectBank].ability == ABILITY_STICKYHOLD && gBattleMons[gEffectBank].hp != 0)
             {
                 BattleScriptPushCursor();
-                gBattlescriptCurrInstr = BattleScript_StickyHoldActivates;
+                gBattlescriptCurrInstr = BattleScript_StickyHoldActivatesRet;
 
                 gLastUsedAbility = gBattleMons[gEffectBank].ability;
                 RecordAbilityBattle(gEffectBank, gLastUsedAbility);
@@ -811,7 +811,7 @@ bool8 SetMoveEffect2(void)
             else if (ABILITY(gEffectBank) == ABILITY_STICKYHOLD && gBattleMons[gEffectBank].hp)
             {
                 gLastUsedAbility = ABILITY_STICKYHOLD;
-                gBattlescriptCurrInstr = BattleScript_StickyHoldActivates;
+                gBattlescriptCurrInstr = BattleScript_StickyHoldActivatesRet;
                 RecordAbilityBattle(gEffectBank, gLastUsedAbility);
 				effect = TRUE;
             }

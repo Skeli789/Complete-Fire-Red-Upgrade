@@ -109,6 +109,7 @@ enum
 
 #define ARG_IN_FUTURE_ATTACK 3
 #define ARG_IN_PURSUIT 4
+#define ARG_ONLY_EMERGENCY_EXIT 5
 
 void atk49_moveend(void);
 bank_t GetNextMultiTarget(void);
@@ -145,6 +146,9 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 		gNewBS->ZMoveData->active = FALSE;
 		gNewBS->ZMoveData->toBeUsed[gBankAttacker] = 0;
 	}
+	
+	if (ARG_ONLY_EMERGENCY_EXIT)
+		gBattleScripting->atk49_state = ATK49_SWITCH_OUT_ABILITIES;
 
     do
     {
@@ -571,6 +575,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 		
 		case ATK49_MULTI_HIT_MOVES:
 			if (arg1 != ARG_IN_FUTURE_ATTACK
+			&&  arg1 != ARG_IN_PURSUIT
 			&& !(gMoveResultFlags & MOVE_RESULT_NO_EFFECT)
 			&& !(gHitMarker & HITMARKER_UNABLE_TO_USE_MOVE)
 			&& gMultiHitCounter)
@@ -1210,8 +1215,10 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 		//Should I remove these lines?
         if (arg1 == 1 && effect == FALSE)
             gBattleScripting->atk49_state = ATK49_COUNT;
-        if (arg1 == 2 && arg2 == gBattleScripting->atk49_state)
+        else if (arg1 == 2 && arg2 == gBattleScripting->atk49_state)
             gBattleScripting->atk49_state = ATK49_COUNT;
+		else if (arg1 == ARG_ONLY_EMERGENCY_EXIT)
+			gBattleScripting->atk49_state = ATK49_COUNT;
 
     } while (gBattleScripting->atk49_state != ATK49_COUNT && effect == FALSE);
 	

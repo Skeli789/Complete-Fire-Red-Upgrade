@@ -66,6 +66,11 @@ TheOpposingString 080D7E74
 TheOpposingString 080D82C0
 TheOpposingString 080D8554
 ##Other Stings
+gText_AbilityPreventsConfusion 083FE234
+gText_AbilityPreventsStatLoss 083FE244
+gText_AbilityPreventsSpecificStatLoss 083FE3E0
+gText_AbilityBlocksHealBell 083FE484
+
 sText_GotMoneyForWinning 083FDF84
 sText_OutofUsablePokemon 083FDF88
 sText_LostAgaintWild 083FDF8C
