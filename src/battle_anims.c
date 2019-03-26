@@ -148,6 +148,7 @@ bool8 ShadowSneakAnimHelper(void)
 	switch (gBattleBufferA[gActiveBattler][1] | (gBattleBufferA[gActiveBattler][2] << 8)) {
 		case MOVE_SHADOWSNEAK:
 		case MOVE_HYPERSPACEHOLE:
+		case MOVE_SPECTRALTHIEF:
 		case MOVE_PULVERIZING_PANCAKE:
 			return TRUE;
 	}
