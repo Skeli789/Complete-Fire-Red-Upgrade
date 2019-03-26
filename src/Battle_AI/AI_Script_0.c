@@ -680,8 +680,6 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 		case EFFECT_RESTORE_HP:
 		case EFFECT_REST:
 		case EFFECT_MORNING_SUN:
-		case EFFECT_SYNTHESIS:
-		case EFFECT_MOONLIGHT:
 		case EFFECT_SOFTBOILED:
 		AI_RECOVERY: ;
 			switch (move) {
@@ -978,6 +976,14 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 						decreased = TRUE;
 					}
 					break;
+					
+				case MOVE_ENDURE:
+					if (gBattleMons[bankAtk].hp == 1)
+					{
+						viability -= 10;
+						decreased = TRUE;
+					}
+					break;
 			}
 			if (decreased)
 				break;
@@ -1067,13 +1073,6 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 		case EFFECT_SANDSTORM:
 			if (gBattleWeather & (WEATHER_SANDSTORM_ANY | WEATHER_PRIMAL_ANY))
 				viability -= 10;
-			break;
-		
-		case EFFECT_ENDURE:
-			if (gBattleMons[bankAtk].hp == 1)
-				viability -= 10;
-			else if ((gProtectStructs[bankAtk].protected) && (umodsi(Random(), 100) < 50))
-				viability -= 6;
 			break;
 			
 		case EFFECT_SWAGGER:
