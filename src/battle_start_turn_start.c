@@ -787,7 +787,8 @@ void HandleAction_UseMove(void)
 		gBankTarget = selectedTarget;
 
     // choose battlescript
-	if (gBattleMons[gBankTarget].hp == 0)
+	if (gBattleMons[gBankTarget].hp == 0
+	&&  AttacksThisTurn(gBankAttacker, gCurrentMove) == 2) //Not charging move
 		gBattlescriptCurrInstr = BattleScript_NoTargetMoveFailed;
     else
         gBattlescriptCurrInstr = gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect];

@@ -73,6 +73,12 @@ void atk00_attackcanceler(void)
 	
     if (AtkCanceller_UnableToUseMove())
         return;
+	else if (gBattleMons[gBankTarget].hp == 0
+	&& AttacksThisTurn(gBankAttacker, gCurrentMove) == 2) //Not charging move
+	{
+		gBattlescriptCurrInstr = BattleScript_ButItFailed - 2;
+		return;
+	}
     else if (AbilityBattleEffects(ABILITYEFFECT_MOVES_BLOCK, gBankTarget, 0, 0, 0))
         return;
 	
