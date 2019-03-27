@@ -3,6 +3,10 @@
 
 .equ rom, 0x8000000
 
+@Custom Defines
+.equ MAX_LEVEL, 100
+.equ fossilImageTable, 0x081a4600
+
 @Ram Locs
 .equ CURRENT_MOVE, 0x2023D4A
 .equ BATTLE_DATA, 0x2023BE4
@@ -28,6 +32,26 @@
 .equ DAMAGE_STRUCT, 0x2023ECC
 .equ MULTI_HIT_COUNTER, 0x2023D72
 .equ TRIPLE_KICK_POWER, 0x2023FD6
+
+@Scriping
+.equ var8000, 0x020370b8
+.equ var8001, 0x020370ba
+.equ var8002, 0x020370bc
+.equ var8003, 0x020370be
+.equ var8004, 0x020370c0
+.equ var8005, 0x020370c2
+.equ var8006, 0x020370c4
+.equ var8007, 0x020370c6
+.equ var8008, 0x020370c8
+.equ var8009, 0x020370ca
+.equ var800a, 0x020370cc
+.equ var800b, 0x020370ce
+.equ var800d, 0x020370d0
+.equ var800f, 0x020370d2
+.equ var800c, 0x020370d4
+.equ var800e, 0x0203ad30
+.equ var8010, 0x020370d6
+.equ var8011, 0x020370d8
 
 .equ ACTIVE_BATTLER, 0x2023BC4
 .equ NUM_POKEMON, 0x2023BCC

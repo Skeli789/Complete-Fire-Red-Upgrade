@@ -480,7 +480,8 @@ u32 __attribute__((long_call)) umodsi(u32, u32);
 
 u32* __attribute__((long_call)) bufferPokeNameSize(u16 species, void *varAddress);
 u8 __attribute__((long_call)) CalculateHeight(u16 species, void *varAddress);
-
+void __attribute__((long_call)) createMaleMon(pokemon_t* poke_address, u16 species, u8 level);
+void __attribute__((long_call)) ReturnToFieldContinueScriptPlayMapMusic(void);
 
 //The Deal Breaker
 void __attribute__((long_call)) break_func(u32);

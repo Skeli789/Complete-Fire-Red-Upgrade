@@ -181,5 +181,6 @@ DaycareInheritHiddenAbility 8046116 0
 TransferPlttBuffer 8070474 0
 RealTimeClock 0800041E 3
 
-
+##Script Specials
+sp156_GhostBattleSpecial 0807f92a 2
 

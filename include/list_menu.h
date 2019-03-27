@@ -7,6 +7,13 @@
 
 // Exported RAM declarations
 
+struct Multichoice {
+	u32 stringPointer;
+	u32 boxSize;
+};
+
+typedef struct Multichoice gMultiChoice;
+
 struct ListMenuItem
 {
     const u8 *unk_00;

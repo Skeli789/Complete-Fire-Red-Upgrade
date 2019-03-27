@@ -812,9 +812,19 @@ u8 sp076_MeasurePokemon2(void) {
 };
 
 
+
+// old man battle with given species/level
+// Inputs:
+//		var8004: species
+//		var8005: level
 void sp09C_OldManBattleModifier(void) {
-	return;
+	createMaleMon(&gEnemyParty[0], Var8004, Var8005);
+	ScriptContext2_Enable;
+	gMain.savedCallback = ReturnToFieldContinueScriptPlayMapMusic;
+	gBattleTypeFlags = BATTLE_TYPE_OLD_MAN;
+	CreateBattleStartTask(8, 0);
 };
+
 
 
 void sp18B_DisplayImagesFromTable(void) {
