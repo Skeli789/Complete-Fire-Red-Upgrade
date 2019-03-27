@@ -24,6 +24,7 @@ struct Clock {
 
 #define gSaveBlock1 ((struct SaveBlock1*) *((u32*) 0x3005008))
 #define gSaveBlock2 ((struct SaveBlock2*) *((u32*) 0x300500C))
+#define gSaveBlock3 ((struct SaveBlock3*) *((u32*) 0x3005010))
 
 #define Clock ((struct Clock*) 0x300553C)
 

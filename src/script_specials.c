@@ -63,10 +63,12 @@ u32 setAttrFromVar8003(u8 dataRequest) {
 	return attr;
 };
 
-u32* getBoxedMonAddr(void) {
-	u32 *addr = (u32*) &(gPokemonStoragePtr->boxes[Var8000][Var8001]);
-	return addr;
+
+
+u32* getBoxedMonAddr(void) {;
+	return ((u32*) &(gSaveBlock3->boxes[Var8000][Var8001]));
 };
+
 
 
 #endif
