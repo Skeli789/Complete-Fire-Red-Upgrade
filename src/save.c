@@ -230,20 +230,35 @@ u8 HandleSavingData(u8 saveType) {
 
 u8* GetExpandedFlagPointer(u16 id)
 {
-	if (id >= 0x900 && id < 0x1900)
-		return &gExpandedFlags[(id - 0x900) / 8];
-	else if (id >= 0x1900)
-		return (u8*) &Var8000; //Returns Var8000 to prevent bad memory access
-	else
-		return NULL;
+	#ifdef SAVE_BLOCK_EXPANSION
+		if (id >= 0x900 && id < 0x1900)
+			return &gExpandedFlags[(id - 0x900) / 8];
+		else if (id >= 0x1900)
+			return (u8*) &Var8000; //Returns Var8000 to prevent bad memory access
+		else
+			return NULL;
+	#else
+		if (id >= 0x1900)
+			return (u8*) &Var8000; //Returns Var8000 to prevent bad memory access
+		else
+			return NULL;
+	#endif
 }
 
 u16* GetExpandedVarPointer(u16 id)
 {
-	if (id >= 0x5000 && id < 0x5200)
-		return &gExpandedVars[id - 0x5000];
-	else if (id >= VARS_START + 0x100 && id < SPECIAL_VARS_START)
-		return (u16*) 1; //Indicates to return NULL
-	else
-		return NULL;
+	#ifdef SAVE_BLOCK_EXPANSION
+		if (id >= 0x5000 && id < 0x5200)
+			return &gExpandedVars[id - 0x5000];
+		else if (id >= VARS_START + 0x100 && id < SPECIAL_VARS_START)
+			return (u16*) 1; //Indicates to return NULL
+		else
+			return NULL;
+	#else
+		if (id >= VARS_START + 0x100 && id < SPECIAL_VARS_START)
+			return (u16*) 1; //Indicates to return NULL
+		else
+			return NULL;
+	#endif
+	
 }

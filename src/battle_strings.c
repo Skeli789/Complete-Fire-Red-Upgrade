@@ -28,6 +28,7 @@ extern u8 BattleText_WildPkmnAppeared[];
 extern u8 sText_FoePkmnPrefix2[];
 extern u8 sText_FoePkmnPrefix3[];
 extern u8 sText_FoePkmnPrefix4[];
+extern u8 sText_TheOpposingCapsNoSpace[];
 extern u8 sText_TheOpposingNoCaps[];
 extern u8 sText_Your[];
 extern u8 sText_YourCaps[];
@@ -826,13 +827,13 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 				break;
 			case B_TXT_AFFECTS_TARGET_SIDE_CAPS:
                 if (SIDE(gBankAttacker) == B_SIDE_PLAYER)
-                    toCpy = sText_FoePkmnPrefix2;
+                    toCpy = sText_TheOpposingCapsNoSpace;
                 else
                     toCpy = sText_YourCaps;
 				break;
 			case B_TXT_AFFECTS_ATTACKER_SIDE_CAPS:
                 if (SIDE(gBankAttacker) == B_SIDE_OPPONENT)
-                    toCpy = sText_FoePkmnPrefix2;
+                    toCpy = sText_TheOpposingCapsNoSpace;
                 else
                     toCpy = sText_YourCaps;
 				break;

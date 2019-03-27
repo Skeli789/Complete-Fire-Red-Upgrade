@@ -273,21 +273,21 @@ BS_011_RaiseUserDef1:
 	attackstring
 	ppreduce
 	setstatchanger STAT_DEF | INCREASE_1
-	jumpifmove MOVE_FLOWERSHIELD FlowerShieldRototillerBS
+	jumpifmove MOVE_FLOWERSHIELD FlowerShieldBS
 	jumpifmove MOVE_MAGNETICFLUX MagneticFluxBS
 	jumpifmove MOVE_AROMATICMIST RaiseUserDef1_AromaticMist
 	goto 0x81D6BA1
 
-FlowerShieldRototillerBS:
-	setword SEED_HELPER 0x0
-	callasm FlowerShieldLooper
+FlowerShieldBS:
+	setbyte BATTLE_COMMUNICATION 0x0
+	flowershieldlooper MOVE_EFFECT_DEF_PLUS_1 BattleScript_FlowerShieldStatBoost FAILED
 
-BattleScript_FlowerShieldRototillerStatBoost:
+BattleScript_FlowerShieldStatBoost:
 	attackanimation
 	waitanimation
 	setbyte ANIM_TARGETS_HIT 0x1
 	seteffecttarget
-	callasm FlowerShieldLooper
+	flowershieldlooper MOVE_EFFECT_DEF_PLUS_1 BattleScript_FlowerShieldStatBoost FAILED
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -331,9 +331,7 @@ RaiseUserDef1_AromaticMist:
 	callasm SetTargetPartner
 	jumpifspecialstatusflag EQUALS STATUS3_SEMI_INVULNERABLE 0x0 FAILED
 	jumpiffainted BANK_TARGET FAILED
-	callasm CheckCraftyShield
-	jumpifbyte NOTEQUALS FORM_COUNTER FALSE FAILED
-	setbyte FORM_COUNTER 0x0
+	jumpifprotectedbycraftyshield BANK_TARGET FAILED
 	setbyte STAT_ANIM_PLAYED 0x0
 	jumpifstatcanberaised BANK_TARGET STAT_SPDEF AromaticMistRaiseSpDef
 	goto FAILED
@@ -367,7 +365,7 @@ BS_013_RaiseUserSpAtk1:
 	setstatchanger STAT_SPATK | INCREASE_1
 	jumpifmove MOVE_GROWTH GrowthBS
 	jumpifmove MOVE_WORKUP WorkUpBS
-	jumpifmove MOVE_ROTOTILLER FlowerShieldRototillerBS
+	jumpifmove MOVE_ROTOTILLER RototillerBS
 	jumpifmove MOVE_GEARUP GearUpBS
 	goto 0x81D6BA1
 
@@ -425,6 +423,39 @@ WorkUp_RaiseSpAtk:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+RototillerBS:
+	setbyte BATTLE_COMMUNICATION 0x0
+	flowershieldlooper 0x0 BattleScript_RototillerStatBoost FAILED
+
+BattleScript_RototillerStatBoost:
+	jumpifstatcanberaised BANK_TARGET STAT_ATK Rototiller_Atk
+	jumpifstatcanberaised BANK_TARGET STAT_SPATK RototillerLoop
+	goto RototillerLoop
+
+Rototiller_Atk:
+	attackanimation
+	waitanimation
+	setbyte ANIM_TARGETS_HIT 0x1
+	setbyte STAT_ANIM_PLAYED 0x0
+	playstatchangeanimation BANK_TARGET, STAT_ANIM_ATK | STAT_ANIM_SPATK, STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES
+	setstatchanger STAT_ATK | INCREASE_1
+	statbuffchange STAT_TARGET | STAT_BS_PTR Rototiller_SpAtk
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 Rototiller_SpAtk
+	printfromtable 0x83FE57C
+	waitmessage DELAY_1SECOND
+	
+Rototiller_SpAtk:
+	setstatchanger STAT_SPATK | INCREASE_1
+	statbuffchange STAT_TARGET | STAT_BS_PTR RototillerLoop
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 RototillerLoop
+	printfromtable 0x83FE57C
+	waitmessage DELAY_1SECOND
+
+RototillerLoop:
+	flowershieldlooper 0x0 BattleScript_RototillerStatBoost FAILED
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 .global BattleScript_GearUpStatBoost
 GearUpBS:
 	setword SEED_HELPER 0x0
@@ -442,8 +473,8 @@ GearUp_Atk:
 	setbyte STAT_ANIM_PLAYED 0x0
 	playstatchangeanimation BANK_TARGET, STAT_ANIM_ATK | STAT_ANIM_SPATK, STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES
 	setstatchanger STAT_ATK | INCREASE_1
-	statbuffchange STAT_TARGET | STAT_BS_PTR RaiseUserDef1_SpDef
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 RaiseUserDef1_SpDef
+	statbuffchange STAT_TARGET | STAT_BS_PTR GearUp_SpAtk
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 GearUp_SpAtk
 	printfromtable 0x83FE57C
 	waitmessage DELAY_1SECOND
 
@@ -590,12 +621,16 @@ CheckReasonForStatLowerFail:
 	jumpifbyte EQUALS SEED_HELPER 0x1 0x81D8499 @;Stats won't go lower
 	jumpifbyte EQUALS SEED_HELPER 0x2 MistProtectedBS
 	jumpifbyte EQUALS SEED_HELPER 0x3 AbilityPreventsStatLossBS
-	jumpifbyte EQUALS SEED_HELPER 0x4 0x81D947E @;Ability prevents specific stat loss
+	jumpifbyte EQUALS SEED_HELPER 0x4 CallAbilityNoSpecificStatLoss
 	jumpifbyte EQUALS SEED_HELPER 0x5 0x81D85E7 @;Stats won't go higher
 	goto FAILED
 
 AbilityPreventsStatLossBS:
-	call 0x81D9416 @;Ability prevents stat loss
+	call BattleScript_AbilityNoStatLoss
+	goto BS_MOVE_END
+	
+CallAbilityNoSpecificStatLoss:
+	call BattleScript_AbilityNoSpecificStatLoss
 	goto BS_MOVE_END
 
 MistProtectedBS:
@@ -689,19 +724,27 @@ SkipThrashPPReduce:
 
 .global BS_028_Roar
 BS_028_Roar:
+	attackcanceler
 	jumpifmove MOVE_DRAGONTAIL DragonTailBS
 	jumpifmove MOVE_CIRCLETHROW DragonTailBS
-	goto 0x81D6CB1
+
+RoarBS:
+	attackstring
+	ppreduce
+	jumpifability BANK_TARGET ABILITY_SUCTIONCUPS BattleScript_AbilityPreventsPhasingOut
+	jumpifspecialstatusflag BANK_TARGET STATUS3_ROOTED 0x0 0x81D8F27 @;BattleScript_PrintMonIsRooted
+	accuracycheck FAILED 0x0
+	forcerandomswitch FAILED
 
 DragonTailBS:
 	attackcanceler
 	accuracycheck BS_MOVE_MISSED 0x0
-	jumpifbehindsubstitute BANK_TARGET 0x81D692E
+	jumpifbehindsubstitute BANK_TARGET BS_HIT_FROM_ATTACKSTRING
 	call STANDARD_DAMAGE
 	jumpiffainted BANK_TARGET BS_MOVE_FAINT
 	jumpifmovehadnoeffect BS_MOVE_FAINT
-	jumpifspecialstatusflag BANK_TARGET STATUS3_ROOTED 0x0 0x81D8F27
-	jumpifability BANK_TARGET ABILITY_SUCTIONCUPS 0x81D9408
+	jumpifspecialstatusflag BANK_TARGET STATUS3_ROOTED 0x0 0x81D8F27 @;BattleScript_PrintMonIsRooted
+	jumpifability BANK_TARGET ABILITY_SUCTIONCUPS BattleScript_AbilityPreventsPhasingOut
 	setbyte CMD49_STATE 0x0
 	cmd49 BANK_TARGET 0x0
 	playanimation BANK_TARGET DRAGON_TAIL_BLOW_AWAY_ANIM 0x0
@@ -711,6 +754,15 @@ DragonTailBS:
 DragonTailResetForceSwitchHelper:
 	setbyte FORCE_SWITCH_HELPER 0x0
 	goto 0x81D6957
+	
+BattleScript_AbilityPreventsPhasingOut:
+	pause 0x10
+	orbyte OUTCOME OUTCOME_NOT_AFFECTED
+	call BattleScript_AbilityPopUp
+	printstring 0xCC @STRINGID_PKMNANCHORSITSELFWITH
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -722,8 +774,20 @@ BS_029_HitTwoToFiveTimes:
 
 .global BS_030_Conversion
 BS_030_Conversion:
-	jumpifnotmove MOVE_REFLECTTYPE 0x81D6D9D
 	attackcanceler
+	jumpifmove MOVE_REFLECTTYPE ReflectTypeBS
+	
+ConversionBS:
+	attackstring
+	ppreduce
+	changetypestoenemyattacktype FAILED
+	attackanimation
+	waitanimation
+	printstring 0x49 @;STRINGID_PKMNCHANGEDTYPE
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
+
+ReflectTypeBS:
 	accuracycheck BS_MOVE_MISSED 0x0
 	attackstring
 	ppreduce
@@ -782,25 +846,28 @@ BS_032_Recover:
 	ppreduce
 	jumpifhalfword EQUALS CURRENT_MOVE MOVE_ROOST RoostBS
 	jumpifhalfword EQUALS CURRENT_MOVE MOVE_PURIFY PurifyBS
-	goto 0x81D6DC0
+
+RecoverBS:
+	setdamageasrestorehalfmaxhp 0x81D7DD1 BANK_ATTACKER @;BattleScript_AlreadyAtFullHp
+	
+RecoverAnimBS:
+	attackanimation
+	waitanimation
+	
+RecoverHealthUpdateBS:
+	orword HIT_MARKER HITMARKER_IGNORE_SUBSTITUTE
+	graphicalhpupdate BANK_ATTACKER
+	datahpupdate BANK_ATTACKER
+	printstring 0x4B @;STRINGID_PKMNREGAINEDHEALTH
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 RoostBS:
-	setdamageasrestorehalfmaxhp 0x81D7DD1 0x1
-	attackanimation
-	waitanimation
-	orword HIT_MARKER HITMARKER_IGNORE_SUBSTITUTE
-	graphicalhpupdate BANK_ATTACKER
-	datahpupdate BANK_ATTACKER
-	printstring 0x4B
-	waitmessage DELAY_1SECOND
-	jumpiftype BANK_ATTACKER TYPE_FLYING RemoveFlyingType
-	goto BS_MOVE_END
-
-RemoveFlyingType:
+	setdamageasrestorehalfmaxhp 0x81D7DD1 0x1 @;BattleScript_AlreadyAtFullHp
 	callasm SetRoostFunc+1
-	goto BS_MOVE_END
+	goto RecoverAnimBS
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -818,12 +885,7 @@ PurifyHeal:
 	refreshhpbar BANK_TARGET
 	setdamageasrestorehalfmaxhp 0x81D7DD1 0x1
 	playanimation BANK_ATTACKER ANIM_HEALING_SPARKLES 0x0
-	orword HIT_MARKER HITMARKER_IGNORE_SUBSTITUTE
-	graphicalhpupdate BANK_ATTACKER
-	datahpupdate BANK_ATTACKER
-	printstring 0x4B
-	waitmessage DELAY_1SECOND
-	goto BS_MOVE_END
+	goto RecoverHealthUpdateBS
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -881,7 +943,7 @@ BS_035_LightScreen:
 	attackstring
 	ppreduce
 	setlightscreen
-	goto 0x81D7172
+	goto ReflectBS
 	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -931,10 +993,10 @@ BS_038_OHK0:
 	ppreduce
 	accuracycheck FAILED 0xFFFF
 	typecalc
-	jumpifbyte ANDS OUTCOME OUTCOME_NO_EFFECT 0x81D6934
+	jumpifmovehadnoeffect BS_HIT_FROM_ATTACKANIMATION
 	tryko 0x81D6EF1
 	trysetdestinybondtohappen
-	goto 0x81D6934
+	goto BS_HIT_FROM_ATTACKANIMATION
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -957,7 +1019,7 @@ BS_040_SuperFang:
 	typecalc
 	bicbyte OUTCOME OUTCOME_SUPER_EFFECTIVE | OUTCOME_NOT_VERY_EFFECTIVE
 	gethalfcurrentenemyhp
-	goto 0x81D6934
+	goto BS_HIT_FROM_ATTACKANIMATION
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -972,17 +1034,12 @@ BS_041_DragonRage:
 	setword DAMAGE_LOC 0x0
 	setbyte DAMAGE_LOC 40
 	adjustsetdamage
-	goto 0x81D6934
+	goto BS_HIT_FROM_ATTACKANIMATION
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 .global BS_042_TrapAndDamage
 BS_042_TrapAndDamage:
-	jumpifnotmove MOVE_WHIRLPOOL SetWrapEffectBS
-	jumpifspecialstatusflag BANK_TARGET STATUS3_UNDERWATER 0x1 SetWrapEffectBS
-	orword HIT_MARKER HITMARKER_IGNORE_UNDERWATER
-
-SetWrapEffectBS:
 	setmoveeffect MOVE_EFFECT_WRAP
 	goto BS_STANDARD_HIT
 	
@@ -1005,7 +1062,7 @@ BS_045_HighJumpKick:
 	jumpifability BANK_ATTACKER ABILITY_MAGICGUARD BS_STANDARD_HIT
 	attackcanceler
 	accuracycheck HighJumpKickMiss 0x0
-	goto 0x81D692E
+	goto BS_HIT_FROM_ATTACKSTRING
 
 HighJumpKickMiss:
 	attackstring
@@ -1020,7 +1077,7 @@ HighJumpKickMiss:
 	setdamagetobankhealthpercent BANK_ATTACKER 50
 	graphicalhpupdate BANK_ATTACKER
 	datahpupdate BANK_ATTACKER
-	faintpokemon BANK_ATTACKER 0x0 0x8000000
+	faintpokemon BANK_ATTACKER 0x0 0x0
 	orbyte OUTCOME OUTCOME_MISSED
 	goto BS_MOVE_END
 
@@ -1068,13 +1125,33 @@ BS_049_SetConfusion:
 	ppreduce
 	jumpifbehindsubstitute BANK_TARGET FAILED
 	jumpifsecondarystatus BANK_TARGET STATUS2_CONFUSION 0x81D70EA @;Already confused
-	jumpifability BANK_TARGET ABILITY_OWNTEMPO 0x81D9460 @;Ability prevents confusion
+	jumpifability BANK_TARGET ABILITY_OWNTEMPO BattleScript_OwnTempoPrevents
 	jumpifbyte EQUALS TERRAIN_BYTE MISTY_TERRAIN CFSN_CheckGrounding
-	goto 0x81D70BF
+
+SetConfusionAccCheckBS:
+	accuracycheck FAILED 0x0
+	jumpifsideaffecting BANK_TARGET SIDE_SAFEGUARD 0x81D8B39 @;BattleScript_SafeguardProtected
+	attackanimation
+	waitanimation
+	setmoveeffect MOVE_EFFECT_CONFUSION
+	seteffecttarget
+	resultmessage
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
 
 CFSN_CheckGrounding:
 	jumpifgrounded BANK_TARGET ProtectedByTerrainBS
-	goto 0x81D70BF
+	goto SetConfusionAccCheckBS
+
+BattleScript_OwnTempoPrevents:
+	pause 0x10
+	orbyte OUTCOME OUTCOME_NOT_AFFECTED
+	copyarray BATTLE_SCRIPTING_BANK TARGET_BANK 0x1
+	call BattleScript_AbilityPopUp
+	printstring 0xCA @;STRINGID_PKMNPREVENTSCONFUSIONWITH
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -1103,15 +1180,15 @@ AutotomizeBS:
 	attackcanceler
 	attackstring
 	ppreduce
-	statbuffchange STAT_ATTACKER | STAT_BS_PTR 0x81D6BCC
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN 0x81D6BCC
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 0x81D6BB2
 	attackanimation
 	waitanimation
 	setgraphicalstatchangevalues
-	playanimation BANK_ATTACKER 0x1 ANIM_ARG_1
+	playanimation BANK_ATTACKER ANIM_STAT_BUFF ANIM_ARG_1
 	printfromtable 0x83FE57C
 	waitmessage DELAY_1SECOND
-	callasm IncreaseNimbleCounter+1
+	callasm IncreaseNimbleCounter
 	setword BATTLE_STRING_LOADER BecameNimbleString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
@@ -1152,11 +1229,11 @@ BS_056_RaiseUserEvsn2:
 .global BS_057_Transform
 BS_057_Transform:
 	attackcanceler
-	jumpifbehindsubstitute BANK_TARGET FAILED-2
-	jumpifsecondarystatus BANK_ATTACKER STATUS2_TRANSFORMED FAILED-2
-	jumpifspecialstatusflag BANK_TARGET STATUS3_ILLUSION 0x0 FAILED-2
 	attackstring
 	ppreduce
+	jumpifbehindsubstitute BANK_TARGET FAILED
+	jumpifsecondarystatus BANK_ATTACKER STATUS2_TRANSFORMED FAILED
+	jumpifspecialstatusflag BANK_TARGET STATUS3_ILLUSION 0x0 FAILED
 	transformdataexecution
 	attackanimation
 	waitanimation
@@ -1198,9 +1275,19 @@ CaptivateBS:
 	accuracycheck BS_MOVE_MISSED 0x0
 	attackstring
 	ppreduce
-	jumpifability BANK_TARGET ABILITY_OBLIVIOUS NOEFFECT
-	callasm CaptivateFunc+1
+	jumpifability BANK_TARGET ABILITY_OBLIVIOUS BattleScript_ObliviousPrevents
+	callasm CaptivateFunc
 	goto 0x81D6C27
+	
+BattleScript_ObliviousPrevents:
+	pause 0x10
+	copyarray BATTLE_SCRIPTING_BANK TARGET_BANK 0x1
+	call BattleScript_AbilityPopUp
+	orbyte OUTCOME OUTCOME_NOT_AFFECTED
+	resultmessage
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -1227,17 +1314,22 @@ BS_064_LowerTargetEvsn2:
 
 .global BS_065_Reflect
 BS_065_Reflect:
-	jumpifnotmove MOVE_AURORAVEIL 0x81D716E
 	attackcanceler
 	attackstring
 	ppreduce
-	callasm SetAuroraVeil + 1
+	jumpifmove MOVE_AURORAVEIL AuroraVeilBS
+	setreflect
+	
+ReflectBS:
 	attackanimation
 	waitanimation
-	setword BATTLE_STRING_LOADER AuroraVeilSetString
-	printstring 0x184
+	printfromtable gReflectLightScreenSafeguardStringIds
 	waitmessage DELAY_1SECOND
 	goto BS_MOVE_END
+
+AuroraVeilBS:
+	callasm SetAuroraVeil
+	goto ReflectBS
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -1496,15 +1588,15 @@ BS_076_SetConfusionChance:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-.global BS_077_Twineedle
-BS_077_Twineedle:
+.global BS_077_Blank @;Was Twineedle
+BS_077_Blank:
 	setmoveeffect MOVE_EFFECT_POISON
 	goto BS_STANDARD_HIT
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-.global BS_078_VitalThrow
-BS_078_VitalThrow:
+.global BS_078_Blank @;Was VitalThrow
+BS_078_Blank:
 	goto BS_STANDARD_HIT
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -1528,7 +1620,7 @@ BS_080_Recharge:
 	attackcanceler
 	accuracycheck BS_MOVE_MISSED 0x0
 	setmoveeffect MOVE_EFFECT_RECHARGE | MOVE_EFFECT_CERTAIN | MOVE_EFFECT_AFFECTS_USER
-	goto 0x81D692E
+	goto BS_HIT_FROM_ATTACKSTRING
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -1641,7 +1733,7 @@ BS_087_SeismicToss:
 	bicbyte OUTCOME OUTCOME_SUPER_EFFECTIVE | OUTCOME_NOT_VERY_EFFECTIVE
 	nightshadedamageeffect
 	adjustsetdamage
-	goto 0x81D6934
+	goto BS_HIT_FROM_ATTACKANIMATION
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -1655,7 +1747,7 @@ BS_088_Psywave:
 	bicbyte OUTCOME OUTCOME_SUPER_EFFECTIVE | OUTCOME_NOT_VERY_EFFECTIVE
 	psywavedamageeffect
 	adjustsetdamage
-	goto 0x81D6934
+	goto BS_HIT_FROM_ATTACKANIMATION
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -1666,10 +1758,10 @@ BS_089_Counter:
 	accuracycheck BS_MOVE_MISSED 0x0
 	attackstring
 	ppreduce
-	callasm MetalBurstDamageCalculator + 1
+	callasm MetalBurstDamageCalculator
 	typecalc2
 	adjustsetdamage
-	goto 0x81D6934
+	goto BS_HIT_FROM_ATTACKANIMATION
 	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -1680,7 +1772,12 @@ BS_090_Encore:
 	attackstring
 	ppreduce
 	jumpifabilitypresenttargetfield ABILITY_AROMAVEIL ProtectedByAromaVeil
-	goto 0x81D7453
+	setencore FAILED
+	attackanimation
+	waitanimation
+	printstring 0x87
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
 	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -1708,18 +1805,46 @@ BS_091_PainSplit:
 .global BS_092_Snore
 BS_092_Snore:
 	attackcanceler
-	jumpifstatus BANK_ATTACKER STATUS_SLEEP 0x81D74AE
-	jumpifability BANK_ATTACKER ABILITY_COMATOSE 0x81D74AE
+	jumpifstatus BANK_ATTACKER STATUS_SLEEP BattleScript_SnoreIsAsleep
+	jumpifability BANK_ATTACKER ABILITY_COMATOSE BattleScript_SnoreIsAsleep
 	goto FAILED - 2
+
+BattleScript_SnoreIsAsleep:
+	jumpifmove MOVE_SLEEPTALK BattleScript_DoSnore
+	printstring 0x6B @;STRINGID_PKMNFASTASLEEP
+	waitmessage DELAY_1SECOND
+	statusanimation BANK_ATTACKER
+
+BattleScript_DoSnore:
+	attackstring
+	ppreduce
+	accuracycheck BS_MOVE_MISSED 0x0
+	setmoveeffect MOVE_EFFECT_FLINCH
+	goto BS_HIT_FROM_DAMAGE_CALC
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 .global BS_094_LockOn
 BS_094_LockOn:
-	jumpifnotmove MOVE_LASERFOCUS 0x81D74EB
 	attackcanceler
 	attackstring
 	ppreduce
+	jumpifmove MOVE_LASERFOCUS LaserFocusBS
+	
+LockOnBS:
+	attackcanceler
+	attackstring
+	ppreduce
+	jumpifbehindsubstitute BANK_TARGET FAILED
+	accuracycheck FAILED 0x0
+	setalwayshitflag
+	attackanimation
+	waitanimation
+	printstring 0x89
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
+
+LaserFocusBS:
 	setcounter BANK_ATTACKER LASER_FOCUS_TIMERS 0x2
 	attackanimation
 	waitanimation
@@ -1755,9 +1880,27 @@ BS_096_RaiseAttackerSpd1Chance:
 .global BS_097_SleepTalk
 BS_097_SleepTalk:
 	attackcanceler
-	jumpifstatus BANK_ATTACKER STATUS_SLEEP 0x81D753E
-	jumpifability BANK_ATTACKER ABILITY_COMATOSE 0x81D753E
+	jumpifstatus BANK_ATTACKER STATUS_SLEEP BattleScript_SleepTalkIsAsleep
+	jumpifability BANK_ATTACKER ABILITY_COMATOSE BattleScript_SleepTalkIsAsleep
 	goto FAILED - 2
+
+BattleScript_SleepTalkIsAsleep:
+	printstring 0x6B @;STRINGID_PKMNFASTASLEEP
+	waitmessage DELAY_1SECOND
+	statusanimation BANK_ATTACKER
+	attackstring
+	ppreduce
+	orword HIT_MARKER HITMARKER_NO_PPDEDUCT
+	trychoosesleeptalkmove BattleScript_SleepTalkUsingMove
+	pause DELAY_1SECOND
+	goto FAILED
+
+BattleScript_SleepTalkUsingMove:
+	attackanimation
+	waitanimation
+	setbyte ANIM_TURN, 0x0
+	setbyte ANIM_TARGETS_HIT, 0x0
+	jumptoattack TRUE
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -1775,7 +1918,7 @@ BS_098_DestinyBond:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-.global BS_099_Flail
+.global BS_099_Flail @;Was Flail
 BS_099_Flail:
 	goto BS_STANDARD_HIT
 
@@ -1815,22 +1958,34 @@ BS_102_HealBell:
 	printfromtable 0x83FE5E4
 	waitmessage DELAY_1SECOND
 	jumpifmove MOVE_AROMATHERAPY AromatherapySapSipperCheckBS
-	jumpifnotmove MOVE_HEALBELL 0x81D75DE
-	jumpifbyte NOTANDS MULTISTRING_CHOOSER 0x1 0x81D75CD
+	jumpifnotmove MOVE_HEALBELL BattleScript_PartyHealEnd
+	jumpifbyte NOTANDS MULTISTRING_CHOOSER 0x1 BattleScript_CheckHealBellMon2Unaffected
 	printstring 0x132
 	waitmessage DELAY_1SECOND
-	goto 0x81D75CD
-	
+
+BattleScript_CheckHealBellMon2Unaffected:
+	jumpifbyte NOTANDS MULTISTRING_CHOOSER 0x2 BattleScript_PartyHealEnd
+	call BattleScript_AbilityPopUp
+	printstring 0x15E @;STRINGID_PKMNSXBLOCKSY2
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+
+BattleScript_PartyHealEnd:
+	refreshhpbar 0x4
+	waitstateatk
+	goto BS_MOVE_END
+
 AromatherapySapSipperCheckBS:
-	callasm TryActivatePartnerSapSipper + 1
-	goto 0x81D75DE
+	callasm TryActivatePartnerSapSipper
+	goto BattleScript_PartyHealEnd
 	
 BattleScript_SapSipperAromatherapy:
 	statbuffchange STAT_TARGET | STAT_BS_PTR SapSipperReturnBS
+	call BattleScript_AbilityPopUp
 	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
-	setword BATTLE_STRING_LOADER AbilityRaisedStatString
-	printstring 0x184
+	printfromtable 0x83FE57C
 	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
 SapSipperReturnBS:
 	return
 
@@ -1855,7 +2010,7 @@ BS_104_TripleKick:
 
 .global BS_105_StealItem
 BS_105_StealItem:
-	setmoveeffect MOVE_EFFECT_STEAL_ITEM @;Move to CMD49?
+	setmoveeffect MOVE_EFFECT_STEAL_ITEM
 	goto BS_STANDARD_HIT
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -1868,9 +2023,16 @@ BS_106_MeanLook:
 	attackcanceler
 	attackstring
 	ppreduce
-	accuracycheck 0x81D7DF2 0xFFFE
+	accuracycheck FAILED 0x0
 	jumpiftype BANK_TARGET TYPE_GHOST FAILED
-	goto 0x81D76DE
+	jumpifsecondarystatus BANK_TARGET STATUS2_TRAPPED | STATUS2_SUBSTITUTE FAILED
+	attackanimation
+	waitanimation
+	setmoveeffect MOVE_EFFECT_PREVENT_ESCAPE
+	seteffecttarget
+	printstring 0x8F @;STRINGID_TARGETCANTESCAPENOW
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
 	
 DamageAndTrapBS:
 	jumpifsecondarystatus BANK_TARGET STATUS2_TRAPPED | STATUS2_SUBSTITUTE BS_STANDARD_HIT
@@ -1893,10 +2055,19 @@ BS_107_Nightmare:
 	attackcanceler
 	attackstring
 	ppreduce
-	jumpifsecondarystatus 0x0 STATUS2_SUBSTITUTE | STATUS2_NIGHTMARE 0x81D7DF2
-	jumpifstatus BANK_TARGET STATUS_SLEEP 0x81D772C
-	jumpifability BANK_TARGET ABILITY_COMATOSE 0x81D772C
+	jumpifsecondarystatus 0x0 STATUS2_SUBSTITUTE | STATUS2_NIGHTMARE FAILED
+	jumpifstatus BANK_TARGET STATUS_SLEEP SetNightmareBS
+	jumpifability BANK_TARGET ABILITY_COMATOSE SetNightmareBS
 	goto FAILED
+
+SetNightmareBS:
+	attackanimation
+	waitanimation
+	setmoveeffect MOVE_EFFECT_NIGHTMARE
+	seteffecttarget
+	printstring 0x90 @;STRINGID_PKMNFELLINTONIGHTMARE
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -1959,7 +2130,21 @@ BS_112_Spikes:
 
 .global BS_113_Foresight
 BS_113_Foresight:
-	jumpifnotmove MOVE_MIRACLEEYE 0x81D783E
+	jumpifmove MOVE_MIRACLEEYE MiracleEyeBS
+	
+ForesightBS:
+	attackcanceler
+	accuracycheck BS_MOVE_MISSED 0x0
+	attackstring
+	ppreduce
+	setforesight
+	attackanimation
+	waitanimation
+	printstring 0x96
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
+	
+MiracleEyeBS:
 	attackcanceler
 	accuracycheck BS_MOVE_MISSED 0x0
 	attackstring
@@ -1987,10 +2172,20 @@ BS_114_PerishSong:
 	setbyte BATTLE_SCRIPTING_BANK 0x0
 	
 PerishSongLoopBS:
-	jumpifability BANK_SCRIPTING ABILITY_SOUNDPROOF 0x81D788C
+	jumpifability BANK_SCRIPTING ABILITY_SOUNDPROOF BattleScript_PerishSongNotAffected
+	
+BattleScript_PerishSongLoopIncrement:
 	addbyte BATTLE_SCRIPTING_BANK 0x1
 	jumpifarraynotequal BATTLE_SCRIPTING_BANK NUM_POKEMON 0x1 PerishSongLoopBS
 	goto BS_MOVE_END
+	
+BattleScript_PerishSongNotAffected:
+	copyarray TARGET_BANK BATTLE_SCRIPTING_BANK 0x1
+	call BattleScript_AbilityPopUp
+	printstring 0x1B @;STRINGID_ITDOESNTAFFECT
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	goto BattleScript_PerishSongLoopIncrement
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -2004,10 +2199,16 @@ BS_115_Sandstorm:
 	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-.global BS_116_Endure @;Free now
-BS_116_Endure:
+.global BattleScript_EnduredMsg
+.global BS_116_Blank @;Was Endure
+BS_116_Blank:
 	goto BS_STANDARD_HIT
-	
+
+BattleScript_EnduredMsg:
+	printstring 0x99 @;STRINGID_PKMNENDUREDHIT
+	waitmessage 0x40
+	return
+
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 .global BS_117_Rollout
@@ -2046,7 +2247,7 @@ BS_118_Swagger:
 	waitmessage DELAY_1SECOND
 	
 SwaggerTryConfuseBS:
-	jumpifability BANK_TARGET ABILITY_OWNTEMPO 0x81D9460 @;Ability prevents confusion
+	jumpifability BANK_TARGET ABILITY_OWNTEMPO BattleScript_OwnTempoPrevents
 	jumpifsideaffecting BANK_TARGET SIDE_SAFEGUARD 0x81D8B39 @;Protected By Safeguard
 	jumpifbyte EQUALS TERRAIN_BYTE MISTY_TERRAIN Swagger_CheckGrounding
 	
@@ -2080,12 +2281,12 @@ FuryCutterResetBS:
 
 RoundBS:
 	attackcanceler
-	callasm RoundBSFunction + 1
+	callasm RoundBSFunction
 	goto 0x81D6927
 
 EchoedVoiceBS:
 	attackcanceler
-	callasm EchoedVoiceFunc + 1
+	callasm EchoedVoiceFunc
 	goto 0x81D6927
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -2096,6 +2297,7 @@ BS_120_Attract:
 	attackstring
 	ppreduce
 	accuracycheck FAILED 0x0
+	jumpifability BANK_TARGET ABILITY_OBLIVIOUS BattleScript_ObliviousPrevents
 	jumpifabilitypresenttargetfield ABILITY_AROMAVEIL ProtectedByAromaVeil
 	tryinfatuatebank BANK_TARGET FAILED
 	attackanimation
@@ -2120,8 +2322,8 @@ AttractDestinyKnot:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-.global BS_121_Return @;Free now
-BS_121_Return:
+.global BS_121_Blank @;Was Return
+BS_121_Blank:
 	goto BS_STANDARD_HIT
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -2137,8 +2339,8 @@ BS_122_Present:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-.global BS_123_Frustration @;Free now
-BS_123_Frustration:
+.global BS_123_Blank @;Was Frustration
+BS_123_Blank:
 	goto BS_STANDARD_HIT
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -2194,28 +2396,16 @@ BS_126_Magnitude:
 
 .global BS_127_BatonPass
 BS_127_BatonPass:
-	jumpifmove MOVE_BATONPASS 0x81D7995
+	jumpifnotmove MOVE_BATONPASS UTurnBS
 	attackcanceler
-	accuracycheck BS_MOVE_MISSED 0x0
-	jumpifmove MOVE_PARTINGSHOT PartingShotBS
-	call STANDARD_DAMAGE
-	jumpifmovehadnoeffect BS_MOVE_FAINT
-	seteffectwithchancetarget
-	faintpokemon BANK_TARGET 0x0 0x0
-	jumpifnoviablemonsleft BANK_TARGET BS_MOVE_END
-	setbyte CMD49_STATE 0x0
-	cmd49 BANK_TARGET 0x0
-	jumpifcannotswitch BANK_ATTACKER 0x81D6957
-	jumpiffainted BANK_TARGET UTurnGiveEXPBS
+	attackstring
+	ppreduce
+	jumpifcannotswitch 0x81 FAILED
+	attackanimation
+	waitanimation
 
-UTurnSwitchBS:
-	copyarray BATTLE_SCRIPTING_BANK USER_BANK 0x1
-	setword BATTLE_STRING_LOADER UTurnString
-	printstring 0x184
-	waitmessage DELAY_1SECOND
-	playanimation BANK_ATTACKER ANIM_CALL_BACK_POKEMON 0x0
-	callasm MakeScriptingBankInvisible @;So the sprite stays hidden
-	openpartyscreen BANK_ATTACKER 0x81D7DF2
+BatonPassSwitchOutBS:
+	openpartyscreen BANK_ATTACKER FAILED
 	switchoutabilities BANK_ATTACKER
 	waitstateatk
 	switchhandleorder BANK_ATTACKER 0x2
@@ -2227,7 +2417,31 @@ UTurnSwitchBS:
 	switch3 BANK_ATTACKER 0x1
 	waitstateatk
 	switchineffects BANK_ATTACKER
-	goto 0x81D6957
+	jumpifnotmove MOVE_BATONPASS 0x81D6957
+	goto BS_MOVE_END
+
+UTurnBS:
+	attackcanceler
+	accuracycheck BS_MOVE_MISSED 0x0
+	jumpifmove MOVE_PARTINGSHOT PartingShotBS
+	call STANDARD_DAMAGE
+	jumpifmovehadnoeffect BS_MOVE_FAINT
+	seteffectwithchancetarget
+	faintpokemon BANK_TARGET 0x0 0x0
+	setbyte CMD49_STATE 0x0
+	cmd49 BANK_TARGET 0x0
+	jumpifcannotswitch BANK_ATTACKER 0x81D6957
+	jumpifnoviablemonsleft BANK_TARGET 0x81D6957
+	jumpiffainted BANK_TARGET UTurnGiveEXPBS
+
+UTurnSwitchBS:
+	copyarray BATTLE_SCRIPTING_BANK USER_BANK 0x1
+	setword BATTLE_STRING_LOADER UTurnString
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	playanimation BANK_ATTACKER ANIM_CALL_BACK_POKEMON 0x0
+	callasm MakeScriptingBankInvisible @;So the sprite stays hidden
+	goto BatonPassSwitchOutBS
 	
 UTurnGiveEXPBS:
 	setbyte EXP_STATE 0x0
@@ -2273,8 +2487,15 @@ BS_128_Pursuit:
 
 .global BS_129_RapidSpin
 .global BattleScript_DefogAdditionalEffects
+.global BattleScript_SideStatusWoreOffRet
 BS_129_RapidSpin:
-	jumpifnotmove MOVE_DEFOG 0x81D79C2
+	jumpifmove MOVE_DEFOG DefogBS
+	
+RapidSpinBS:
+	setmoveeffect MOVE_EFFECT_RAPIDSPIN | MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN
+	goto BS_STANDARD_HIT
+	
+DefogBS:
 	attackcanceler
 	jumpifbehindsubstitute BANK_TARGET SecondDefogCheck
 	accuracycheck SecondDefogCheck 0x0
@@ -2292,7 +2513,7 @@ BS_129_RapidSpin:
 DefogLoweredStat:
 	attackanimation
 	waitanimation
-	setbyte ANIM_TARGETS_HIT 0x1
+	setbyte ANIM_TARGETS_HIT 0x1 @;So animation doesn't play again
 	setgraphicalstatchangevalues
 	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
 	printfromtable 0x83FE588
@@ -2314,8 +2535,14 @@ RemoveFogBS:
 	goto BS_MOVE_END
 	
 SecondDefogCheck:
-	callasm DefogHelperFunc + 1 @;Automatically redirects to BattleScript_DefogAdditionalEffects if applicable
+	callasm DefogHelperFunc @;Automatically redirects to BattleScript_DefogAdditionalEffects if applicable
 	goto BS_MOVE_END
+
+BattleScript_SideStatusWoreOffRet:
+	setword BATTLE_STRING_LOADER gText_DefogRemovedSideStatus
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	return
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -2330,7 +2557,7 @@ BS_130_Sonicboom:
 	setword DAMAGE_LOC 0x0
 	setbyte DAMAGE_LOC 20
 	adjustsetdamage
-	goto 0x81D6934
+	goto BS_HIT_FROM_ATTACKANIMATION
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -2462,9 +2689,7 @@ SpectralThiefBS:
 	accuracycheck BS_MOVE_MISSED 0x0
 	attackstring
 	ppreduce
-	setbyte FORM_COUNTER 0x0
-	callasm SpectralThiefFunc+1
-	jumpifbyte NOTEQUALS FORM_COUNTER 0x0 PlaySpectBoost
+	tryspectralthiefsteal PlaySpectBoost
 	setbyte ANIM_TURN 0x1
 	goto BS_HIT_FROM_DAMAGE_CALC
 
@@ -2492,7 +2717,7 @@ BS_144_MirrorCoat:
 	ppreduce
 	typecalc2
 	adjustsetdamage
-	goto 0x81D6934
+	goto BS_HIT_FROM_ATTACKANIMATION
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -2548,9 +2773,9 @@ BS_149_Gust:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-.global BS_150_Stomp
-BS_150_Stomp:
-	goto BS_031_Flinch
+.global BS_150_Blank @;Was Stomp
+BS_150_Blank:
+	goto BS_STANDARD_HIT
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -2590,10 +2815,10 @@ BS_153_Teleport:
 	attackcanceler
 	attackstring
 	ppreduce
-	jumpifbattletype BATTLE_TRAINER FAILED
-	getifcantrunfrombattle BANK_ATTACKER
+	jumpifbattletype BATTLE_TRAINER | BATTLE_DOUBLE, FAILED
+	callasm SetTeleportBit
 	jumpifbyte EQUALS BATTLE_COMMUNICATION 0x1 FAILED
-	jumpifbyte EQUALS BATTLE_COMMUNICATION 0x2 0x81D8255 @;BattleScript_PrintAbilityMadeIneffective
+	jumpifbyte EQUALS BATTLE_COMMUNICATION 0x2 FAILED
 	attackanimation
 	waitanimation
 	printstring 0xA0 @;STRINGID_PKMNFLEDFROMBATTLE
@@ -2997,18 +3222,9 @@ BS_175_Taunt:
 	accuracycheck FAILED - 2 0x0
 	attackstring
 	ppreduce
-	jumpifability BANK_TARGET ABILITY_OBLIVIOUS ProtectedByOblivious
+	jumpifability BANK_TARGET ABILITY_OBLIVIOUS BattleScript_ObliviousPrevents
 	jumpifabilitypresenttargetfield ABILITY_AROMAVEIL ProtectedByAromaVeil
 	goto 0x81D80D1
-	
-ProtectedByOblivious:
-	pause DELAY_HALFSECOND
-	call BattleScript_AbilityPopUp
-	setword BATTLE_STRING_LOADER ProtectedByObliviousString
-	printstring 0x184
-	waitmessage DELAY_1SECOND
-	call BattleScript_AbilityPopUpRevert
-	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -3352,11 +3568,11 @@ BS_189_Endeavor:
 	copyarray HP_DEALT DAMAGE_LOC 0x4
 	accuracycheck BS_MOVE_MISSED + 2 0x0
 	typecalc
-	jumpifmovehadnoeffect 0x81D6934
+	jumpifmovehadnoeffect BS_HIT_FROM_ATTACKANIMATION
 	bicbyte OUTCOME OUTCOME_SUPER_EFFECTIVE | OUTCOME_NOT_VERY_EFFECTIVE
 	copyarray DAMAGE_LOC HP_DEALT 0x4
 	adjustsetdamage
-	goto 0x81D6934 @;Hit from attackanimation
+	goto BS_HIT_FROM_ATTACKANIMATION @;Hit from attackanimation
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -3770,6 +3986,8 @@ BS_211_CalmMind:
 	jumpifhalfword EQUALS CURRENT_MOVE MOVE_GEOMANCY GeomancyBS
 
 CalmMindBS:
+	attackstring
+	ppreduce
 	jumpifstat BANK_TARGET LESSTHAN STAT_SPATK STAT_MAX CalmMind_SpAtk
 	jumpifstat BANK_TARGET EQUALS STAT_SPDEF STAT_MAX 0x81D85E7
 
@@ -4430,7 +4648,7 @@ PollenPuffBS:
 .global BS_234_TopsyTurvyElectrify
 BS_234_TopsyTurvyElectrify:
 	attackcanceler
-	accuracycheck BS_MOVE_MISSED
+	accuracycheck BS_MOVE_MISSED 0x0
 	attackstring
 	ppreduce
 	jumpifbehindsubstitute BANK_TARGET FAILED
@@ -4695,7 +4913,6 @@ ProtectedByTerrainString: .byte 0xFD, 0x10, 0x00, 0xDD, 0xE7, 0xFE, 0xE4, 0xE6, 
 ReflectTypeString: .byte 0xFD, 0x0F, 0xB4, 0xE7, 0x00, 0xE8, 0xED, 0xE4, 0xD9, 0x00, 0xD6, 0xD9, 0xD7, 0xD5, 0xE1, 0xD9, 0xFE, 0xE8, 0xDC, 0xD9, 0x00, 0xE7, 0xD5, 0xE1, 0xD9, 0x00, 0xD5, 0xE7, 0x00, 0xFD, 0x10, 0xB4, 0xE7, 0xAB, 0xFF
 PurifyString: .byte 0xFD, 0x10, 0x00, 0xEB, 0xD5, 0xE7, 0x00, 0xD7, 0xE9, 0xE6, 0xD9, 0xD8, 0xFE, 0xE3, 0xDA, 0x00, 0xDD, 0xE8, 0xE7, 0x00, 0xE7, 0xE8, 0xD5, 0xE8, 0xE9, 0xE7, 0xAD, 0xFF
 BecameNimbleString: .byte 0xFD, 0x0F, 0x00, 0xD6, 0xD9, 0xD7, 0xD5, 0xE1, 0xD9, 0x00, 0xE2, 0xDD, 0xE1, 0xD6, 0xE0, 0xD9, 0xAB, 0xFF
-AuroraVeilSetString: .byte 0xFD, 0x14, 0x00, 0xE4, 0xE6, 0xE3, 0xE8, 0xD9, 0xD7, 0xE8, 0xE7, 0x00, 0xD5, 0xDB, 0xD5, 0xDD, 0xE2, 0xE7, 0xE8, 0x00, 0xE4, 0xDC, 0xED, 0xE7, 0xDD, 0xD7, 0xD5, 0xE0, 0xFE, 0xD5, 0xE2, 0xD8, 0x00, 0xE7, 0xE4, 0xD9, 0xD7, 0xDD, 0xD5, 0xE0, 0x00, 0xE1, 0xE3, 0xEA, 0xD9, 0xE7, 0xAB, 0xFF
 FreezeShockChargingString: .byte 0xFD, 0x0F, 0x00, 0xD6, 0xD9, 0xD7, 0xD5, 0xE1, 0xD9, 0xFE, 0xD7, 0xE0, 0xE3, 0xD5, 0xDF, 0xD9, 0xD8, 0x00, 0xDD, 0xE2, 0x00, 0xD5, 0x00, 0xDA, 0xE6, 0xD9, 0xD9, 0xEE, 0xDD, 0xE2, 0xDB, 0x00, 0xE0, 0xDD, 0xDB, 0xDC, 0xE8, 0xAB, 0xFF
 IceBurnChargingString: .byte 0xFD, 0x0F, 0x00, 0xD6, 0xD9, 0xD7, 0xD5, 0xE1, 0xD9, 0xFE, 0xD7, 0xE0, 0xE3, 0xD5, 0xDF, 0xD9, 0xD8, 0x00, 0xDD, 0xE2, 0x00, 0xDA, 0xE6, 0xD9, 0xD9, 0xEE, 0xDD, 0xE2, 0xDB, 0x00, 0xD5, 0xDD, 0xE6, 0xAB, 0xFF
 ShadowForceString: .byte 0xFD, 0x0F, 0x00, 0xEA, 0xD5, 0xE2, 0xDD, 0xE7, 0xDC, 0xD9, 0xD8, 0xFE, 0xDD, 0xE2, 0xE7, 0xE8, 0xD5, 0xE2, 0xE8, 0xE0, 0xED, 0xAB, 0xFF
@@ -4705,7 +4922,6 @@ UTurnString: .byte 0xFD, 0x0F, 0x00, 0xEB, 0xD9, 0xE2, 0xE8, 0x00, 0xD6, 0xD5, 0
 RemoveFogString: .byte 0xFD, 0x0F, 0x00, 0xD6, 0xE0, 0xD9, 0xEB, 0x00, 0xD5, 0xEB, 0xD5, 0xED, 0xFE, 0xE8, 0xDC, 0xD9, 0x00, 0xD8, 0xD9, 0xD9, 0xE4, 0x00, 0xDA, 0xE3, 0xDB, 0x00, 0xEB, 0xDD, 0xE8, 0xDC, 0x00, 0xFD, 0x14, 0xAB, 0xFF
 SpectralThiefString: .byte 0xFD, 0x0F, 0x00, 0xE7, 0xE8, 0xE3, 0xE0, 0xD9, 0xFE, 0xFD, 0x10, 0xB4, 0xE7, 0x00, 0xE7, 0xE8, 0xD5, 0xE8, 0x00, 0xD6, 0xE3, 0xE3, 0xE7, 0xE8, 0xE7, 0xAB, 0xFF
 StockpileWoreOffString: .byte 0xFD, 0x0F, 0xB4, 0xE7, 0x00, 0xE7, 0xE8, 0xE3, 0xD7, 0xDF, 0xE4, 0xDD, 0xE0, 0xD9, 0xD8, 0xFE, 0xD9, 0xDA, 0xDA, 0xD9, 0xD7, 0xE8, 0x00, 0xEB, 0xE3, 0xE6, 0xD9, 0x00, 0xE3, 0xDA, 0xDA, 0xAB, 0xFF
-ProtectedByObliviousString: .byte 0xFD, 0x10, 0x0, 0xEB, 0xD5, 0xE7, 0x00, 0xE4, 0xE6, 0xE3, 0xE8, 0xD9, 0xD7, 0xE8, 0xD9, 0xD8, 0xFE, 0xD6, 0xED, 0x00, 0xFD, 0x19, 0xAB, 0xFF
 BestowString: .byte 0xFD, 0x10, 0x00, 0xE6, 0xD9, 0xD7, 0xD9, 0xDD, 0xEA, 0xD9, 0xD8, 0x00, 0xE8, 0xDC, 0xD9, 0xFE, 0xFD, 0x16, 0x00, 0xDA, 0xE6, 0xE3, 0xE1, 0x00, 0xFD, 0x0F, 0xAB, 0xFF
 AquaRingSetString: .byte 0xFD, 0x0F, 0x00, 0xE7, 0xE9, 0xE6, 0xE6, 0xE3, 0xE9, 0xE2, 0xD8, 0xD9, 0xD8, 0xFE, 0xDD, 0xE8, 0xE7, 0xD9, 0xE0, 0xDA, 0x00, 0xEB, 0xDD, 0xE8, 0xDC, 0x00, 0xD5, 0x00, 0xEA, 0xD9, 0xDD, 0xE0, 0x00, 0xE3, 0xDA, 0x00, 0xEB, 0xD5, 0xE8, 0xD9, 0xE6, 0xAB, 0xFF
 CantUseHyperspaceFuryString: .byte 0xBC, 0xE9, 0xE8, 0x00, 0xFD, 0x0F, 0x00, 0xD7, 0xD5, 0xE2, 0xB4, 0xE8, 0x00, 0xE9, 0xE7, 0xD9, 0xFE, 0xE8, 0xDC, 0xD9, 0x00, 0xE1, 0xE3, 0xEA, 0xD9, 0xAB, 0xFF
@@ -4733,7 +4949,7 @@ PowderSetString: .byte 0xFD, 0x10, 0x00, 0xDD, 0xE7, 0x00, 0xD7, 0xE3, 0xEA, 0xD
 TelekinesisSetString: .byte 0xFD, 0x10, 0x00, 0xEB, 0xD5, 0xE7, 0x00, 0xDC, 0xE9, 0xE6, 0xE0, 0xD9, 0xD8, 0xFE, 0xDD, 0xE2, 0xE8, 0xE3, 0x00, 0xE8, 0xDC, 0xD9, 0x00, 0xD5, 0xDD, 0xE6, 0xAB, 0xFF
 HealBlockTargetString: .byte 0xFD, 0x10, 0x00, 0xEB, 0xD5, 0xE7, 0x00, 0xE4, 0xE6, 0xD9, 0xEA, 0xD9, 0xE2, 0xE8, 0xD9, 0xD8, 0xFE, 0xDA, 0xE6, 0xE3, 0xE1, 0x00, 0xDC, 0xD9, 0xD5, 0xE0, 0xDD, 0xE2, 0xDB, 0x00, 0xD8, 0xE9, 0xD9, 0x00, 0xE8, 0xE3, 0x00, 0xC2, 0xD9, 0xD5, 0xE0, 0x00, 0xBC, 0xE0, 0xE3, 0xD7, 0xDF, 0xAB, 0xFF
 ElectrifyString: .byte 0xFD, 0x10, 0xB4, 0xE7, 0x00, 0xE1, 0xE3, 0xEA, 0xD9, 0xE7, 0xFE, 0xDC, 0xD5, 0xEA, 0xD9, 0x00, 0xD6, 0xD9, 0xD9, 0xE2, 0x00, 0xD9, 0xE0, 0xD9, 0xD7, 0xE8, 0xE6, 0xDD, 0xDA, 0xDD, 0xD9, 0xD8, 0xAB, 0xFF
-TopsyTurvyString: .byte 0xFD, 0x10, 0xB4, 0xE7, 0x00, 0xE7, 0xE8, 0xD5, 0xE8, 0xE7, 0x00, 0xD7, 0xDC, 0xD5, 0xE2, 0xDB, 0xD9, 0xE7, 0x00, 0xEB, 0xD9, 0xE6, 0xD9, 0xFE, 0xE6, 0xD9, 0xEA, 0xD9, 0xE6, 0xE7, 0xD9, 0xD8, 0xAB, 0xFF
+TopsyTurvyString: .byte 0xFD, 0x10, 0xB4, 0xE7, 0x00, 0xE7, 0xE8, 0xD5, 0xE8, 0xE7, 0x00, 0xD7, 0xDC, 0xD5, 0xE2, 0xDB, 0xD9, 0xE7, 0xFE, 0xEB, 0xD9, 0xE6, 0xD9, 0x00, 0xE6, 0xD9, 0xEA, 0xD9, 0xE6, 0xE7, 0xD9, 0xD8, 0xAB, 0xFF
 AfterYouString: .byte 0xFD, 0x10, 0xFE, 0xE8, 0xE3, 0xE3, 0xDF, 0x00, 0xE8, 0xDC, 0xD9, 0x00, 0xDF, 0xDD, 0xE2, 0xD8, 0x00, 0xE3, 0xDA, 0xDA, 0xD9, 0xE6, 0xAB, 0xFF
 QuashString: .byte 0xFD, 0x10, 0xB4, 0xE7, 0x00, 0xE1, 0xE3, 0xEA, 0xD9, 0xFE, 0xEB, 0xD5, 0xE7, 0x00, 0xE4, 0xE3, 0xE7, 0xE8, 0xE4, 0xE3, 0xE2, 0xD9, 0xD8, 0xAB, 0xFF
 MagnetRiseSetString: .byte 0xFD, 0x0F, 0x00, 0xE0, 0xD9, 0xEA, 0xDD, 0xE8, 0xD5, 0xE8, 0xD9, 0xD8, 0xFE, 0xEB, 0xDD, 0xE8, 0xDC, 0x00, 0xD9, 0xE0, 0xD9, 0xD7, 0xE8, 0xE6, 0xE3, 0xE1, 0xD5, 0xDB, 0xE2, 0xD9, 0xE8, 0xDD, 0xE7, 0xE1, 0xAB, 0xFF

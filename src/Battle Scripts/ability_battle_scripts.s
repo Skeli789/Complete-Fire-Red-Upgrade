@@ -39,6 +39,7 @@
 .global BattleScript_MoveStatDrain_PPLoss
 .global BattleScript_MoveStatDrain
 .global BattleScript_TargetAbilityStatRaise
+.global BattleScript_AbilityApplySecondaryEffect
 .global BattleScript_RoughSkinActivates
 .global BattleScript_CuteCharmActivates
 .global BattleScript_WeakArmorActivates
@@ -62,6 +63,11 @@
 .global BattleScript_DefiantCompetitive
 .global BattleScript_DefiantCompetitiveCall
 .global BattleScript_SoulHeart
+.global BattleScript_AbilityNoStatLoss
+.global BattleScript_AbilityNoSpecificStatLoss
+.global BattleScript_CastformChange
+.global BattleScript_SturdyPreventsOHKO
+.global BattleScript_StickyHoldActivates
 
 .global BattleScript_AbilityPopUp
 .global BattleScript_AbilityPopUpRevert
@@ -502,6 +508,16 @@ BattleScript_MoveStatDrainReturn:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+BattleScript_AbilityApplySecondaryEffect:
+	waitstateatk
+	call BattleScript_AbilityPopUp
+	waitstateatk
+	seteffectuser
+	call BattleScript_AbilityPopUpRevert
+	return
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 BattleScript_RoughSkinActivates:
 	call BattleScript_AbilityPopUp
 	orword HIT_MARKER, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_NON_ATTACK_DMG
@@ -753,6 +769,63 @@ BattleScript_SoulHeart:
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
 	return
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_AbilityNoStatLoss:
+	pause 0x10
+	call BattleScript_AbilityPopUp
+	copyarray BATTLE_SCRIPTING_BANK SEED_HELPER 0x1
+	printstring 0xCE
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	return
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_AbilityNoSpecificStatLoss:
+	pause 0x10
+	call BattleScript_AbilityPopUp
+	printstring 0x135
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	setbyte MULTISTRING_CHOOSER 0x3
+	return
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_CastformChange:
+	call BattleScript_CastformChangeRet
+	end3
+
+BattleScript_CastformChangeRet:
+	call BattleScript_AbilityPopUp
+	castformtransform
+	waitstateatk
+	printstring 0x13A @;STRINGID_PKMNTRANSFORMED
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	return
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_SturdyPreventsOHKO:
+	pause 0x10
+	call BattleScript_AbilityPopUp
+	printstring 0x1B @;STRINGID_ITDOESNTAFFECT
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	goto BS_MOVE_END
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_StickyHoldActivates:
+	pause 0x10
+	call BattleScript_AbilityPopUp
+	printstring 0x1B @;STRINGID_ITDOESNTAFFECT
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

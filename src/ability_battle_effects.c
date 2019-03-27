@@ -9,7 +9,6 @@
 #define BattleScript_ShedSkinActivates (u8*) 0x81D92D3
 #define BattleScript_SpeedBoostActivates (u8*) 0x81D9293
 #define BattleScript_ColorChangeActivates (u8*) 0x81D949C
-#define BattleScript_ApplySecondaryEffect (u8*) 0x81D94CB
 #define BattleScript_AbilityCuredStatus (u8*) 0x81D94D1
 
 extern u8 BattleScript_NewWeatherAbilityActivates[];
@@ -44,6 +43,7 @@ extern u8 BattleScript_MoveHPDrain[];
 extern u8 BattleScript_MoveHPDrain_PPLoss[];
 extern u8 BattleScript_MoveStatDrain[];
 extern u8 BattleScript_MoveStatDrain_PPLoss[];
+extern u8 BattleScript_AbilityApplySecondaryEffect[];
 extern u8 BattleScript_RoughSkinActivates[];
 extern u8 BattleScript_CuteCharmActivates[];
 extern u8 BattleScript_TargetAbilityStatRaise[];
@@ -995,40 +995,43 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
             break;
 		
         case ABILITYEFFECT_MOVES_BLOCK: // 2
-			switch (gLastUsedAbility) {
-				case ABILITY_SOUNDPROOF:
-					if (CheckSoundMove(move))
-						effect = 1;
-					break;
-				
-				case ABILITY_BULLETPROOF:
-					if (CheckTableForMove(move, BallBombMoveTable))
-						effect = 1;
-					break;
-				
-				case ABILITY_OVERCOAT:
-					if (CheckTableForMove(move, PowderTable))
-						effect = 1;
-					break;
-				
-				case ABILITY_DAZZLING:
-				case ABILITY_QUEENLYMAJESTY:
-					if (PriorityCalc(gBankAttacker, ACTION_USE_MOVE, move) > 0)
-						effect = 1;
-					break;
-				
-				case ABILITY_TELEPATHY:
-					if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE
-					&& gBankAttacker == PARTNER(bank))
-						effect = 1;
-					break;
-			}
-			
-			if (effect)
+			if (gBankAttacker != bank) //Can't block against self
 			{
-				if (gBattleMons[gBankAttacker].status2 & STATUS2_MULTIPLETURNS)
-					gHitMarker |= HITMARKER_NO_PPDEDUCT;
-				gBattlescriptCurrInstr = BattleScript_SoundproofProtected;
+				switch (gLastUsedAbility) {
+					case ABILITY_SOUNDPROOF:
+						if (CheckSoundMove(move))
+							effect = 1;
+						break;
+					
+					case ABILITY_BULLETPROOF:
+						if (CheckTableForMove(move, BallBombMoveTable))
+							effect = 1;
+						break;
+					
+					case ABILITY_OVERCOAT:
+						if (CheckTableForMove(move, PowderTable))
+							effect = 1;
+						break;
+					
+					case ABILITY_DAZZLING:
+					case ABILITY_QUEENLYMAJESTY:
+						if (PriorityCalc(gBankAttacker, ACTION_USE_MOVE, move) > 0)
+							effect = 1;
+						break;
+					
+					case ABILITY_TELEPATHY:
+						if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE
+						&& gBankAttacker == PARTNER(bank))
+							effect = 1;
+						break;
+				}
+			
+				if (effect)
+				{
+					if (gBattleMons[gBankAttacker].status2 & STATUS2_MULTIPLETURNS)
+						gHitMarker |= HITMARKER_NO_PPDEDUCT;
+					gBattlescriptCurrInstr = BattleScript_SoundproofProtected;
+				}
 			}
 			break;
 		
@@ -1200,7 +1203,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 
                     gBattleCommunication[MOVE_EFFECT_BYTE] |= MOVE_EFFECT_AFFECTS_USER;
                     BattleScriptPushCursor();
-                    gBattlescriptCurrInstr = BattleScript_ApplySecondaryEffect;
+                    gBattlescriptCurrInstr = BattleScript_AbilityApplySecondaryEffect;
                     gHitMarker |= HITMARKER_IGNORE_SAFEGUARD;
                     effect++;
                 }
@@ -1217,7 +1220,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
                 {
                     gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_POISON;
                     BattleScriptPushCursor();
-                    gBattlescriptCurrInstr = BattleScript_ApplySecondaryEffect;
+                    gBattlescriptCurrInstr = BattleScript_AbilityApplySecondaryEffect;
                     gHitMarker |= HITMARKER_IGNORE_SAFEGUARD;
                     effect++;
                 }
@@ -1234,7 +1237,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
                 {
                     gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_PARALYSIS;
                     BattleScriptPushCursor();
-                    gBattlescriptCurrInstr = BattleScript_ApplySecondaryEffect;
+                    gBattlescriptCurrInstr = BattleScript_AbilityApplySecondaryEffect;
                     gHitMarker |= HITMARKER_IGNORE_SAFEGUARD;
                     effect++;
                 }
@@ -1251,7 +1254,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
                 {
                     gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_BURN;
                     BattleScriptPushCursor();
-                    gBattlescriptCurrInstr = BattleScript_ApplySecondaryEffect;
+                    gBattlescriptCurrInstr = BattleScript_AbilityApplySecondaryEffect;
                     gHitMarker |= HITMARKER_IGNORE_SAFEGUARD;
                     effect++;
                 }

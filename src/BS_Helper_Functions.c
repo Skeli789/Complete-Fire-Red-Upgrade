@@ -6,7 +6,6 @@ extern u8* gBattleScriptsForMoveEffects[];
 #define BattleScript_MoveEnd (u8*) 0x81D694E
 
 extern u8 BattleScript_DarkVoidFail[];
-extern u8 BattleScript_FlowerShieldRototillerStatBoost[];
 extern u8 BattleScript_MagneticFluxStatBoost[];
 extern u8 BattleScript_GearUpStatBoost[];
 extern u8 BattleScript_SapSipperAromatherapy[];
@@ -50,6 +49,7 @@ extern u8 WorrySeedString[];
 extern u8 AbilitySuppressedString[];
 extern u8 EntrainmentString[];
 extern u8 SimpleBeamString[];
+extern u8 gText_SetAuroraVeil[];
 
 extern ability_t MoldBreakerIgnoreAbilities[];
 extern move_t CopycatBanTable[];
@@ -67,7 +67,7 @@ extern ability_t SimpleBeamBanTable[];
 extern u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck);
 
 void SetTargetPartner(void);
-bool8 CheckCraftyShield(void);
+bool8 CheckCraftyShield(u8 bank);
 void LiftProtectTarget(void);
 void IncreaseNimbleCounter(void);
 void FlowerShieldLooper(void);
@@ -75,7 +75,6 @@ void CheckIfTypePresent(void);
 void AcupressureFunc(void);
 void SetStatSwapSplit(void);
 void ResetTargetStats(void);
-void SpectralThiefFunc(void);
 void CheeckPouchFunc(void);
 void SetUnburdenBoostTarget(void);
 void MoldBreakerRemoveAbilitiesOnForceSwitchIn(void);
@@ -105,13 +104,11 @@ void SetTargetPartner(void) {
 	gBankTarget = PARTNER(gBankAttacker);
 }
 
-bool8 CheckCraftyShield(void) {
-	if (gSideAffecting[SIDE(gBankTarget)] & SIDE_STATUS_CRAFTY_SHIELD)
-		FormCounter = TRUE;
-	else
-		FormCounter = FALSE;
+bool8 CheckCraftyShield(u8 bank) {
+	if (gSideAffecting[SIDE(bank)] & SIDE_STATUS_CRAFTY_SHIELD)
+		return TRUE;
 		
-	return FormCounter;
+	return FALSE;
 }
 
 void LiftProtectTarget(void) {
@@ -122,36 +119,6 @@ void LiftProtectTarget(void) {
 void IncreaseNimbleCounter(void) {
 	if (gNewBS->NimbleCounters[gBankAttacker] != 0xFF)
 		gNewBS->NimbleCounters[gBankAttacker] += 1;
-}
-
-void FlowerShieldLooper(void) {
-
-	for (; *SeedHelper < gBattlersCount; ++*SeedHelper) {
-		u8 bank = gBanksByTurnOrder[*SeedHelper];
-		if (IsOfType(bank, TYPE_GRASS) 
-		&& gBattleMons[bank].hp
-		&& !(gStatuses3[bank] & STATUS3_SEMI_INVULNERABLE)
-		&& !(gBattleMons[bank].status2 & STATUS2_SUBSTITUTE))
-		{	
-			if (gCurrentMove == MOVE_FLOWERSHIELD)
-				gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_DEF_PLUS_1;
-			else //Rototiller
-				gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_ATK_PLUS_1;
-			
-			++*SeedHelper;
-			gBankTarget = bank;
-			gBattlescriptCurrInstr = BattleScript_FlowerShieldRototillerStatBoost - 5;
-			return;
-		}
-	}
-	
-	if (!gBattleScripting->animTargetsHit) //Not a single mon was affected
-		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
-	else
-	{
-		gBattlescriptCurrInstr = BattleScript_MoveEnd - 5;
-		gBankTarget = gBankAttacker;
-	}
 }
 
 void MagnetFluxLooper(void) {
@@ -190,8 +157,7 @@ void ModifyGrowthInSun(void) {
 
 void AcupressureFunc(void) {
 	if (gBankAttacker != gBankTarget) {
-		if ((gBattleMons[gBankTarget].status2 & STATUS2_SUBSTITUTE && ABILITY(gBankAttacker) != ABILITY_INFILTRATOR)
-		|| CheckCraftyShield()) {
+		if (MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, gBankTarget) || CheckCraftyShield(gBankTarget)) {
 			gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
 			return;
 		}
@@ -301,43 +267,6 @@ void ResetTargetStats(void) {
 		gBattleMons[gBankTarget].statStages[i] = 6;
 }
 
-void SpectralThiefFunc(void) {
-	s8 increment = 1;
-	bool8 success = FALSE;
-	u8 atkAbility = ABILITY(gBankAttacker);
-	
-	for (int i = 0; i < BATTLE_STATS_NO-1; ++i) {
-		switch (atkAbility) {
-			case ABILITY_SIMPLE:
-				increment = 2;
-				break;
-			
-			case ABILITY_CONTRARY:
-				increment = -1;
-		}
-		
-		if (atkAbility == ABILITY_CONTRARY) {
-			while (gBattleMons[gBankTarget].statStages[i] > 6 && gBattleMons[gBankAttacker].statStages[i] > 0) {
-				success = TRUE;
-				gBattleMons[gBankTarget].statStages[i] -= 1;
-				gBattleMons[gBankAttacker].statStages[i] += increment; //gBattleMons[gBankAttacker].statStages[i] -= 1;
-			}
-		}
-		else {
-			while (gBattleMons[gBankTarget].statStages[i] > 6 && gBattleMons[gBankAttacker].statStages[i] < 12) {
-				success = TRUE;
-				gBattleMons[gBankTarget].statStages[i] -= 1;
-				gBattleMons[gBankAttacker].statStages[i] += increment;
-				
-				if (gBattleMons[gBankAttacker].statStages[i] > 12)
-					gBattleMons[gBankAttacker].statStages[i] = 12;
-			}
-		}
-	}
-	
-	FormCounter = success;
-}
-
 void ToggleSpectralThiefByte(void) {
 	gNewBS->SpectralThiefActive ^= TRUE;
 }
@@ -398,9 +327,15 @@ void SetAuroraVeil(void) {
 			gNewBS->AuroraVeilTimers[SIDE(gBankAttacker)] = 8;
 		else
 			gNewBS->AuroraVeilTimers[SIDE(gBankAttacker)] = 5;
+		
+		BattleStringLoader = gText_SetAuroraVeil;
+		gBattleCommunication[MULTISTRING_CHOOSER] = 1;
     }
 	else
-		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+	{
+		gMoveResultFlags |= MOVE_RESULT_MISSED;
+        gBattleCommunication[MULTISTRING_CHOOSER] = 0;
+	}
 }
 
 void MetalBurstDamageCalculator(void) {
@@ -451,15 +386,12 @@ void TryActivatePartnerSapSipper(void) {
 	&& gBattleStruct->dynamicMoveType == TYPE_GRASS
 	&& STAT_CAN_RISE(PARTNER(gBankAttacker), STAT_STAGE_ATK))
 	{
-		gBankTarget = PARTNER(gBankAttacker);
-		gBattleScripting->bank = gBankTarget;
+		gBattleScripting->bank = gBankTarget = PARTNER(gBankAttacker);
         gBattleScripting->statChanger = INCREASE_1 | STAT_STAGE_ATK;
         gBattleScripting->animArg1 = 0xE + STAT_STAGE_ATK;
         gBattleScripting->animArg2 = 0;
 		gLastUsedAbility = ABILITY(gBankTarget);
-		RecordAbilityBattle(gBankTarget, gLastUsedAbility);
-		gBattlescriptCurrInstr += 5;
-		BattleScriptPushCursor();
+		BattleScriptPush(gBattlescriptCurrInstr + 5);
         gBattlescriptCurrInstr = BattleScript_SapSipperAromatherapy - 5;
 	}
 }
@@ -475,16 +407,16 @@ void RoundBSFunction(void) {
 	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE) {
 		for (i = 0; i < gBattlersCount; ++i) {
 			if (gBanksByTurnOrder[i] == gBankAttacker) {
-				index = i + 1;
+				index = i + 1; //Index after attacker; index to start swapping data
 				break;
 			}
 		}
 		
 		for (i = index; i < gBattlersCount; ++i) {
-			if (gChosenMovesByBanks[i] == MOVE_ROUND)
-				rounders[j++] = gChosenMovesByBanks[i];
+			if (gChosenMovesByBanks[gBanksByTurnOrder[i]] == MOVE_ROUND)
+				rounders[j++] = gBanksByTurnOrder[i];
 			else
-				nonRounders[k++] = gChosenMovesByBanks[i];
+				nonRounders[k++] = gBanksByTurnOrder[i];
 		}
 		
 		for (i = 0; rounders[i] != 0xFF && i < 3; ++i)
@@ -1461,4 +1393,9 @@ void CycleScriptingBankHealthBetween0And1(void)
 	
 	EmitSetMonData(0, REQUEST_HP_BATTLE, 0, 2, &gBattleMons[gActiveBattler].hp);
 	MarkBufferBankForExecution(gActiveBattler);
+}
+
+void SetTeleportBit(void)
+{
+	gNewBS->TeleportBit = TRUE;
 }

@@ -29,7 +29,6 @@
 .global HighCritTable
 .global AlwaysCritTable
 .global SleepTalkBanTable
-.global GemBanTable
 .global MovesThatCallOtherMovesTable
 .global MovesThatRequireRecharging
 .global MinimizeHitTable
@@ -664,7 +663,7 @@ HighCritTable:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 AlwaysCritTable:
-.hword MOVE_CIRCLETHROW
+.hword MOVE_STORMTHROW
 .hword MOVE_FROSTBREATH
 .hword MOVE_TABLES_TERMIN
 
@@ -700,15 +699,6 @@ SleepTalkBanTable:
 .hword MOVE_SOLARBLADE
 .hword MOVE_SOLARBEAM
 .hword MOVE_UPROAR
-.hword MOVE_TABLES_TERMIN
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-GemBanTable:
-.hword MOVE_STRUGGLE
-.hword MOVE_WATERPLEDGE
-.hword MOVE_FIREPLEDGE
-.hword MOVE_GRASSPLEDGE
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

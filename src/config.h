@@ -115,6 +115,7 @@ enum
 #define ALTERING_CAVE_ENABLED //The Altering Cave from FR will work as intended provided the proper var is set
 #define SWEET_SCENT_ONLY_IN_CLEAR_WEATHER //Sweet Scent won't attract any wild Pokemon if the weather is not clear
 #define OBEDIENCE_BY_BADGE_AMOUNT //Determines obedience based on the number of badges the Player has, rather than which badges the player has.
+#define SAVE_BLOCK_EXPANSION //Uncommenting this requires you to also manually remove Save Expansion Hooks found in hooks.
 
 /* Misc Effect Options */
 //#define OLD_BURN_DAMAGE //Uncomment this line if you want burn damage to do 1/8 of max health instead of 1/16

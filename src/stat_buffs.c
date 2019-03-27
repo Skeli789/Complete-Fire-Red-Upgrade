@@ -11,12 +11,12 @@
 #define STAT_ANIM_MULTIPLE_MINUS2 58
 
 #define BattleScript_MistProtected (u8*) 0x81D8C3E
-#define BattleScript_AbilityNoStatLoss (u8*) 0x81D9416
-#define BattleScript_AbilityNoSpecificStatLoss (u8*) 0x81D947E
 
 extern void PrepareStringBattle(u16 stringId, u8 bank);
 extern bool8 JumpIfMoveAffectedByProtect(u16 move, u8 bankAtk, u8 bankDef);
 
+extern u8 BattleScript_AbilityNoStatLoss[];
+extern u8 BattleScript_AbilityNoSpecificStatLoss[];
 extern u8 BattleScript_DefiantCompetitive[];
 
 extern u8 DrasticallyString[];
@@ -126,33 +126,34 @@ void atk48_playstatchangeanimation(void)
             startingStatAnimId = STAT_ANIM_MINUS2 - 1;
         else
             startingStatAnimId = STAT_ANIM_MINUS1 - 1;
-
+		
         while (statsToCheck != 0) {
 			
-            if (!(statsToCheck & 1)) continue;
-			
-            if (T2_READ_8(gBattlescriptCurrInstr + 3) & ATK48_DONT_CHECK_LOWER)
-            {
-                if (gBattleMons[gActiveBattler].statStages[currStat] > 0)
-                {
-                    statAnimId = startingStatAnimId + currStat + 1;
-                    changeableStatsCount++;
-                }
-            }
-            else if (!gSideTimers[SIDE(gActiveBattler)].mistTimer
-                    && ability != ABILITY_CLEARBODY
-                    && ability != ABILITY_WHITESMOKE
-					&& ability != ABILITY_FULLMETALBODY
-                    && !(ability == ABILITY_KEENEYE && currStat == STAT_STAGE_ACC)
-                    && !(ability == ABILITY_HYPERCUTTER && currStat == STAT_STAGE_ATK)
-					&& !(ability == ABILITY_BIGPECKS && currStat == STAT_STAGE_DEF))
-            {
-                if (gBattleMons[gActiveBattler].statStages[currStat] > 0)
-                {
-                    statAnimId = startingStatAnimId + currStat + 1;
-                    changeableStatsCount++;
-                }
-            }
+            if (statsToCheck & 1)
+			{
+				if (T2_READ_8(gBattlescriptCurrInstr + 3) & ATK48_DONT_CHECK_LOWER)
+				{
+					if (gBattleMons[gActiveBattler].statStages[currStat] > 0)
+					{
+						statAnimId = startingStatAnimId + currStat + 1;
+						changeableStatsCount++;
+					}
+				}
+				else if (!gSideTimers[SIDE(gActiveBattler)].mistTimer
+						&& ability != ABILITY_CLEARBODY
+						&& ability != ABILITY_WHITESMOKE
+						&& ability != ABILITY_FULLMETALBODY
+						&& !(ability == ABILITY_KEENEYE && currStat == STAT_STAGE_ACC)
+						&& !(ability == ABILITY_HYPERCUTTER && currStat == STAT_STAGE_ATK)
+						&& !(ability == ABILITY_BIGPECKS && currStat == STAT_STAGE_DEF))
+				{
+					if (gBattleMons[gActiveBattler].statStages[currStat] > 0)
+					{
+						statAnimId = startingStatAnimId + currStat + 1;
+						changeableStatsCount++;
+					}
+				}
+			}
             statsToCheck >>= 1, ++currStat;
         }
 
@@ -303,6 +304,7 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, u8* BS_ptr)
                 {
                     BattleScriptPush(BS_ptr);
                     gBattleScripting->bank = gActiveBattler;
+					*SeedHelper = gActiveBattler;
                     gBattlescriptCurrInstr = BattleScript_AbilityNoStatLoss;
                     gLastUsedAbility = gBattleMons[gActiveBattler].ability;
                     RecordAbilityBattle(gActiveBattler, gLastUsedAbility);
@@ -327,6 +329,7 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, u8* BS_ptr)
                 {
                     BattleScriptPush(BS_ptr);
                     gBattleScripting->bank = PARTNER(gActiveBattler);
+					*SeedHelper = gActiveBattler;
                     gBattlescriptCurrInstr = BattleScript_AbilityNoStatLoss;
                     gLastUsedAbility = ABILITY(PARTNER(gActiveBattler));
                     RecordAbilityBattle(PARTNER(gActiveBattler), gLastUsedAbility);

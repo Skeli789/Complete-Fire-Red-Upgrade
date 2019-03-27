@@ -49,7 +49,7 @@ gBattleScriptingCommandsTable:
 .word 0x80223f9				@ifwildbattleend
 .word 0x80225d9				@movevaluescleanup
 .word 0x80225f1				@storeloopingcounter
-.word 0x8022609				@decrementmultihit
+.word atk27_decrementmultihit
 .word 0x8022651				@goto
 .word 0x8022671				@jumpifbyte
 .word 0x8022711				@jumpifhalfword
@@ -299,3 +299,6 @@ gBattleScriptingCommandsTable2:
 .word atkFF1C_handletrainerslidemsg
 .word atkFF1D_trytrainerslidefirstdownmsg
 .word atkFF1E_trainerslideout
+.word atkFF1F_flowershieldlooper
+.word atkFF20_jumpifprotectedbycraftyshield
+.word atkFF21_tryspectralthiefsteal

@@ -87,8 +87,8 @@ gBattleScriptsForMoveEffects:
 .word BS_074_LowerTargetEvsn1Chance
 .word BS_075_SkyAttack
 .word BS_076_SetConfusionChance
-.word BS_077_Twineedle
-.word BS_078_VitalThrow
+.word BS_077_Blank
+.word BS_078_Blank
 .word BS_079_Substitute
 .word BS_080_Recharge
 .word BS_081_Rage
@@ -126,14 +126,14 @@ gBattleScriptsForMoveEffects:
 .word BS_113_Foresight
 .word BS_114_PerishSong
 .word BS_115_Sandstorm
-.word BS_116_Endure
+.word BS_116_Blank
 .word BS_117_Rollout
 .word BS_118_Swagger
 .word BS_119_FuryCutter
 .word BS_120_Attract
-.word BS_121_Return
+.word BS_121_Blank
 .word BS_122_Present
-.word BS_123_Frustration
+.word BS_123_Blank
 .word BS_124_Safeguard
 .word BS_125_BurnUp
 .word BS_126_Magnitude
@@ -160,7 +160,7 @@ gBattleScriptsForMoveEffects:
 .word BS_147_Earthquake
 .word BS_148_FutureSight
 .word BS_149_Gust
-.word BS_150_Stomp
+.word BS_150_Blank
 .word BS_151_Solarbeam
 .word BS_152_Thunder
 .word BS_153_Teleport

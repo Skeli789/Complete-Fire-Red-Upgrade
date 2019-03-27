@@ -10,6 +10,7 @@
 .global BattleScript_ItemHealHP_End2
 .global BattleScript_ItemHealHP_RemoveItemRet
 .global BattleScript_ItemHealHP_RemoveItemEnd2
+.global BattleScript_BerryPPHealRet
 .global BattleScript_BerryPPHealEnd2
 .global BattleScript_BerryFocusEnergyRet
 .global BattleScript_BerryFocusEnergyEnd2
@@ -90,11 +91,16 @@ BattleScript_ItemHealHP_RemoveItemEnd2:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-BattleScript_BerryPPHealEnd2:
+BattleScript_BerryPPHealRet:
+	waitstateatk
 	playanimation 0xA ANIM_BERRY_EAT 0x0
 	printstring 0x12B
 	waitmessage DELAY_1SECOND
 	call DoCheekPouch
+	return
+	
+BattleScript_BerryPPHealEnd2:
+	call BattleScript_BerryPPHealRet
 	end2
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -114,8 +120,6 @@ BattleScript_BerryFocusEnergyEnd2:
 
 BattleScript_BerryStatRaiseRet:
 	playanimation 0xA ANIM_BERRY_EAT 0x0
-	statbuffchange 0x41 BerryStatRaiseReturnPostBuff
-BerryStatRaiseReturnPostBuff:
 	setbyte MULTISTRING_CHOOSER 0x4
 	call 0x81D6BD1
 	call DoCheekPouch
@@ -257,9 +261,8 @@ BattleScript_HerbCureChosenStatusEnd2:
 
 BattleScript_RaiseStatsItem:
 	playanimation 0xA ANIM_ITEM_USE 0x0
-	statbuffchange STAT_TARGET | STAT_BS_PTR RaiseStatsItemPostBuff
-RaiseStatsItemPostBuff:
 	setbyte MULTISTRING_CHOOSER 0x4
+	call 0x81D6BD1
 	removeitem 0xA
 	return
 
@@ -334,7 +337,6 @@ BattleScript_JabocaRowapBerry:
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	faintpokemon BANK_ATTACKER 0x0 0x0
-	jumpiffainted BANK_TARGET @return
 	call DoCheekPouch
 	return
 

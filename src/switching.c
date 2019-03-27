@@ -80,7 +80,7 @@ void atk61_drawpartystatussummary(void) {
     if (gBattleExecBuffer)
         return;
 
-    gActiveBattler = GetBattleBank(T2_READ_8(gBattlescriptCurrInstr + 1));
+    gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
 
     switch (ABILITY(gActiveBattler)) {	
 		case ABILITY_PRIMORDIALSEA:
@@ -297,12 +297,12 @@ void atk51_switchhandleorder(void) {
     int i;
     if (gBattleExecBuffer) return;
 
-    gActiveBattler = GetBattleBank(T2_READ_8(gBattlescriptCurrInstr + 1));
+    gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
 
-    switch (T2_READ_8(gBattlescriptCurrInstr + 2)) {
+    switch (gBattlescriptCurrInstr[2]) {
 		case 0:
 			for (i = 0; i < gBattlersCount; ++i) {
-				if (gBattleBufferB[i][0] == 0x22)
+				if (gBattleBufferB[i][0] == CONTROLLER_CHOSENMONRETURNVALUE)
 					gBattleStruct->monToSwitchIntoId[i] = gBattleBufferB[i][1];
 			}
 			break;

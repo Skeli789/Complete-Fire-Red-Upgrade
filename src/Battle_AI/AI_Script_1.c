@@ -340,8 +340,6 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 			
 		case EFFECT_RESTORE_HP:
 		case EFFECT_MORNING_SUN:
-		case EFFECT_SYNTHESIS:
-		case EFFECT_MOONLIGHT:
 		case EFFECT_SOFTBOILED:
 		case EFFECT_SWALLOW:
 		case EFFECT_WISH:
@@ -493,7 +491,7 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 				break;
 			else if (FindMovePositionInMoveset(MOVE_HEX, bankAtk) != 4)
 				viability += 6;
-			else if ((MoveEffectInMoveset(EFFECT_FLINCH_HIT,bankAtk)) || (MoveEffectInMoveset(EFFECT_FLINCH_HIT_2,bankAtk)))
+			else if (MoveEffectInMoveset(EFFECT_FLINCH_HIT,bankAtk))
 				viability += 6;
 			else if (defStatus2 & (STATUS2_CONFUSION | STATUS2_INFATUATION))
 				viability += 6;
@@ -553,7 +551,6 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 			break;
 		
 		case EFFECT_DESTINY_BOND:
-		case EFFECT_FLAIL:
 			if (MoveWouldHitFirst(move, bankDef, bankAtk))
 				break;
 			else if (GetHealthPercentage(bankAtk) > 25)
@@ -774,13 +771,6 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 				viability += 6;
 			break;
 			
-		case EFFECT_ENDURE:
-			if (!(MoveEffectInMoveset(EFFECT_FLAIL, bankAtk)))
-				break;
-			else if (GetHealthPercentage(bankAtk) > 25)
-				viability += 5;
-			break;
-		
 		case EFFECT_ROLLOUT:
 			if (atkStatus2 & STATUS2_DEFENSE_CURL)
 				viability += 5;
@@ -994,11 +984,6 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 				break;
 			else
 				viability += 8;
-			break;
-			
-		case EFFECT_FLINCH_HIT_2:
-			if (defStatus3 & STATUS3_MINIMIZED)
-				viability += 7;
 			break;
 			
 		case EFFECT_SOLARBEAM:
@@ -1401,12 +1386,20 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 			
 		case EFFECT_FEINT:
 			// lower chance of using protect each successive time
-			if (gDisableStructs[bankAtk].protectUses > 0)
-				break;
-			else if (MoveWouldHitFirst(move, bankAtk, bankDef))
-				break;
-			else if (HasProtectionMoveInMoveset(bankDef, TRUE))
-				viability += 5;
+			if (move == MOVE_ENDURE)
+			{
+				if (MoveEffectInMoveset(EFFECT_FLAIL, bankAtk) && GetHealthPercentage(bankAtk) > 25)
+					viability += 5;
+			}
+			else
+			{
+				if (gDisableStructs[bankAtk].protectUses > 0)
+					break;
+				else if (MoveWouldHitFirst(move, bankAtk, bankDef))
+					break;
+				else if (HasProtectionMoveInMoveset(bankDef, TRUE))
+					viability += 5;
+			}
 			break;
 			
 		/*

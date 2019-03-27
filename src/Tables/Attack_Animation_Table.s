@@ -12190,7 +12190,8 @@ ANIM_SPECTRALTHIEF:
 	choosetwoturnanim SPECTRAL_THIEF_STEAL SPECTRAL_THIEF_ATTACK
 
 SPECTRAL_THIEF_ATTACK:
-	loadparticle ANIM_TAG_HANDS_AND_FEET @black color
+	loadparticle ANIM_TAG_HANDS_AND_FEET @Black Colour
+	loadparticle ANIM_TAG_QUICK_GUARD_HAND @Black Colour
 	loadparticle ANIM_TAG_GRAY_SMOKE @smoke
 	loadparticle ANIM_TAG_WHITE_SHADOW @destiny bond
 	loadparticle ANIM_TAG_IMPACT @hits

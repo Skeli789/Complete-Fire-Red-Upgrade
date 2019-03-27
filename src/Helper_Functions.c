@@ -820,6 +820,32 @@ u8 FindMovePositionInMoveset(u16 move, u8 bank) {
 	return i;
 }
 
+u8 AttacksThisTurn(u8 bank, u16 move) // Note: returns 1 if it's a charging turn, otherwise 2
+{
+    // first argument is unused
+	if (ITEM_EFFECT(bank) == ITEM_EFFECT_POWER_HERB)
+		return 2;
+	
+    if (gBattleMoves[move].effect == EFFECT_SOLARBEAM && (gBattleWeather & WEATHER_SUN_ANY))
+        return 2;
+
+    if (gBattleMoves[move].effect == EFFECT_SKULL_BASH
+    ||  gBattleMoves[move].effect == EFFECT_RAZOR_WIND
+    ||  gBattleMoves[move].effect == EFFECT_SKY_ATTACK
+    ||  gBattleMoves[move].effect == EFFECT_SOLARBEAM
+    ||  gBattleMoves[move].effect == EFFECT_SEMI_INVULNERABLE
+    ||  gBattleMoves[move].effect == EFFECT_BIDE
+	||	move == MOVE_GEOMANCY)
+    {
+        if (gBattleMons[bank].status2 & STATUS2_MULTIPLETURNS)
+            return 2;
+		else
+			return 1; //About to initiate attack.
+    }
+	
+    return 2;
+}
+
 void ClearBankStatus(bank_t bank) {
 	if (gBattleMons[bank].status1 & (STATUS_POISON | STATUS_TOXIC_POISON))
 		StringCopy(gBattleTextBuff1, gStatusConditionString_Poison);

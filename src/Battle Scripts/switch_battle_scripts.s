@@ -167,11 +167,11 @@ BattleScript_ActionSwitch:
 	printstring 0x2 @;STRINGID_RETURNMON
 	setbyte DMG_MULTIPLIER 0x2
 	jumpifbattletype BATTLE_DOUBLE BattleScript_PursuitSwitchDmgSetMultihit
-	storeloopingcounter 0x1
+	setbyte MULTI_HIT_COUNTER 0x1
 	goto BattleScript_PursuitSwitchDmgLoop
 
 BattleScript_PursuitSwitchDmgSetMultihit:
-	storeloopingcounter 0x2
+	setbyte MULTI_HIT_COUNTER 0x2
 
 BattleScript_PursuitSwitchDmgLoop:
 	jumpifnopursuitswitchdmg BattleScript_DoSwitchOut
@@ -195,11 +195,9 @@ BattleScript_DoSwitchOut:
 	hidepartystatussummary BANK_ATTACKER
 	switch3 BANK_ATTACKER 0x0
 	waitstateatk
-	switchineffects BANK_ATTACKER 
-	setbyte CMD49_STATE 0x4
-	cmd49 0x1 0x0
-	setbyte CMD49_STATE 0xF
-	cmd49 0x1 0x0
+	switchineffects BANK_ATTACKER
+	
+HandleActionSwitchEnd:
 	end2
 	
 BattleScript_PursuitDmgOnSwitchOut:
@@ -212,6 +210,7 @@ BattleScript_PursuitDmgOnSwitchOut:
 	jumpifbyte EQUALS BATTLE_COMMUNICATION 0x0 BattleScript_PursuitDmgOnSwitchOutRet
 	setbyte EXP_STATE 0x0
 	getexp BANK_TARGET
+	goto HandleActionSwitchEnd
 	
 BattleScript_PursuitDmgOnSwitchOutRet:
 	return
@@ -220,14 +219,10 @@ BattleScript_PursuitDmgOnSwitchOutRet:
 
 BattleScript_WildDoubleSwitchFix:
 	jumpifbattletype BATTLE_TRAINER 0x81D86E6
-	jumpifbattletype BATTLE_DOUBLE WildDoubleCheckSwitchPossible
+	jumpifbattletype BATTLE_DOUBLE WildDoubleTrySwitchOut
 	goto 0x81D86BB
 
-WildDoubleCheckSwitchPossible:
-	jumpifcannotswitch 0xB WildDoubleCantSwitch
-	goto 0x81D86BB
-
-WildDoubleCantSwitch:
+WildDoubleTrySwitchOut:
 	openpartyscreen 0x3 0x81D87B7
 	switchhandleorder 0x3 0x2
 	goto 0x81D8792
