@@ -184,3 +184,14 @@ RealTimeClock 0800041E 3
 ##Script Specials
 sp156_GhostBattleSpecial 0807f92a 2
 
+
+##Select-From-PC
+pcSelect_ClosingCheck 0808ebb2 0
+pcSelect_HackWithdrawBRM 08094982 0
+pcSelect_ForceMulti 0810f99c 1
+pcSelect_ChooseSelect 0808d934 1
+pcSelect_NoPartyString 0808d3b8 1
+pcSelect_OperationsMsg 0808ed54 0
+pcSelect_SkipMultiGen 0808c3e0 0
+pcSelect_SkipWithdrawCount 0808c53c 1
+pcSelect_SwapDecision 0808ed8c 1

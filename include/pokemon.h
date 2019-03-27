@@ -420,7 +420,8 @@ struct Pokemon
 struct PokemonStorage
 {
     /*0x0000*/ u8 currentBox;
-    /*0x0001*/ struct BoxPokemon boxes[14][30];
+	/*0x1-03*/ u8 gap[3];
+    /*0x0004*/ struct BoxPokemon boxes[14][30];
     /*0x8344*/ u8 boxNames[14][9];
     /*0x83C2*/ u8 boxWallpapers[14];
 };

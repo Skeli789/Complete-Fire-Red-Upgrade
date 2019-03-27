@@ -590,6 +590,10 @@ GetPokedexHeightWeight = 0x8088E38 | 1;
 ReducePartyToThree = 0x80A03D8 | 1;
 pokemon_order_func = 0x8128030 | 1;
 
+/* Pokemon Storage */
+getAttrFromAnyBox = 0x808BA18 | 1;
+setAttrFromAnyBox = 0x808BA5C | 1;
+
 /*Wild Encounter Functions*/
 ChooseWildMonIndex_Land = 0x808274C | 1;
 ChooseWildMonIndex_WaterRock = 0x8082808 | 1;
