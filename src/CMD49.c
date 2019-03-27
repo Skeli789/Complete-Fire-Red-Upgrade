@@ -147,7 +147,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 		gNewBS->ZMoveData->toBeUsed[gBankAttacker] = 0;
 	}
 	
-	if (ARG_ONLY_EMERGENCY_EXIT)
+	if (arg1 == ARG_ONLY_EMERGENCY_EXIT)
 		gBattleScripting->atk49_state = ATK49_SWITCH_OUT_ABILITIES;
 
     do
@@ -812,24 +812,21 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 						if (gNewBS->OriginalAttackerTargetCount < 3)
 						{ //Get Next Target
 							u8 battlerId = GetNextMultiTarget();
-							if (battlerId != 0xFF)
+							while ((battlerId = GetNextMultiTarget()) != 0xFF)
 							{
-								while ((battlerId = GetNextMultiTarget()) != 0xFF)
+								gBankTarget = battlerId;
+								if (gBattleMons[battlerId].hp && battlerId != gBankAttacker)
 								{
-									gBankTarget = battlerId;
-									if (gBattleMons[battlerId].hp && battlerId != gBankAttacker)
-									{
-										gBattleScripting->atk49_state = 0;
-										MoveValuesCleanUp();
-										if (gBattleMoves[gCurrentMove].effect == EFFECT_EXPLOSION)
-											BattleScriptPush(gBattleScriptsForMoveEffects[0]); //Fixes issues with Explosion not changing targets
-										else
-											BattleScriptPush(gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect]);
-										gBattlescriptCurrInstr = BattleScript_FlushMessageBox;
-										return;
-									}
-									++gNewBS->OriginalAttackerTargetCount;
+									gBattleScripting->atk49_state = 0;
+									MoveValuesCleanUp();
+									if (gBattleMoves[gCurrentMove].effect == EFFECT_EXPLOSION)
+										BattleScriptPush(gBattleScriptsForMoveEffects[0]); //Fixes issues with Explosion not changing targets
+									else
+										BattleScriptPush(gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect]);
+									gBattlescriptCurrInstr = BattleScript_FlushMessageBox;
+									return;
 								}
+								++gNewBS->OriginalAttackerTargetCount;
 							}
 						}
 					}
