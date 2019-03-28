@@ -3,6 +3,11 @@
 
 .equ rom, 0x8000000
 
+@Custom Defines
+.equ MAX_LEVEL, 100
+.equ fossilImageTable, 0x081a4600
+.equ pcSelect_StateTracker, 0x0203b7ac
+
 @Ram Locs
 .equ CURRENT_MOVE, 0x2023D4A
 .equ BATTLE_DATA, 0x2023BE4
@@ -28,6 +33,31 @@
 .equ DAMAGE_STRUCT, 0x2023ECC
 .equ MULTI_HIT_COUNTER, 0x2023D72
 .equ TRIPLE_KICK_POWER, 0x2023FD6
+
+@Save Data Pointers
+.equ MapDMA, 0x03005008
+.equ TrainerDMA, 0x0300500c
+.equ BoxDMA, 0x03005010
+
+@Scriping
+.equ var8000, 0x020370b8
+.equ var8001, 0x020370ba
+.equ var8002, 0x020370bc
+.equ var8003, 0x020370be
+.equ var8004, 0x020370c0
+.equ var8005, 0x020370c2
+.equ var8006, 0x020370c4
+.equ var8007, 0x020370c6
+.equ var8008, 0x020370c8
+.equ var8009, 0x020370ca
+.equ var800a, 0x020370cc
+.equ var800b, 0x020370ce
+.equ var800d, 0x020370d0
+.equ var800f, 0x020370d2
+.equ var800c, 0x020370d4
+.equ var800e, 0x0203ad30
+.equ var8010, 0x020370d6
+.equ var8011, 0x020370d8
 
 .equ ACTIVE_BATTLER, 0x2023BC4
 .equ NUM_POKEMON, 0x2023BCC
@@ -3558,3 +3588,75 @@
 
 .equ EFFECT_SYNCHRONOISE, 254
 .equ MOVE_EFFECT_TABLES_TERMIN, 0xFF
+
+
+
+@ Pokemon Data Requests
+.equ REQ_PERSONALITY, 0x0
+.equ REQ_OTID, 0x1
+.equ REQ_NICK, 0x2
+.equ REQ_LANG, 0x3
+.equ REQ_SANITYx4, 0x4
+.equ REQ_SANITYx5, 0x5
+.equ REQ_SANITYx6, 0x6
+.equ REQ_OTNAME, 0x7
+.equ REQ_MARKS, 0x8
+.equ REQ_CHECKSUM, 0x9
+.equ REQ_SPECIES, 0xB
+.equ REQ_HELDITEM, 0xC
+.equ REQ_MOVE1, 0xD
+.equ REQ_MOVE2,0xE
+.equ REQ_MOVE3,0xF
+.equ REQ_MOVE4,0x10
+.equ REQ_PP1,0x11
+.equ REQ_PP2,0x12
+.equ REQ_PP3,0x13
+.equ REQ_PP4,0x14
+.equ REQ_PPBONUSES,0x15
+.equ REQ_COOLNESS,0x16
+.equ REQ_BEAUTY,0x17
+.equ REQ_CUTENESS,0x18
+.equ REQ_EXP,0x19
+.equ REQ_HPEV,0x1a
+.equ REQ_ATKEV,0x1b
+.equ REQ_DEFEV,0x1c
+.equ REQ_SPDEV,0x1d
+.equ REQ_SPATKEV,0x1e
+.equ REQ_SPDEFEV,0x1f
+.equ REQ_HAPPINESS,0x20
+.equ REQ_SMARTNESS,0x21
+.equ REQ_POKERUS,0x22
+.equ REQ_METLOC,0x23
+.equ REQ_METLEVEL,0x24
+.equ REQ_METGAME,0x25
+.equ REQ_POKEBALL,0x26
+.equ REQ_HPIV,0x27
+.equ REQ_ATKIV,0x28
+.equ REQ_DEFIV,0x29
+.equ REQ_SPDIV,0x2a
+.equ REQ_SPATKIV,0x2b
+.equ REQ_SPDEFIV,0x2c
+.equ REQ_EGG,0x2d
+.equ REQ_ABILITY,0x2e
+.equ REQ_TOUGHNESS,0x2f
+.equ REQ_SHEEN,0x30
+.equ REQ_OTGENDER,0x31
+.equ REQ_UNKNOWN,0x32
+.equ REQ_STATUS,0x37
+.equ REQ_LEVEL,0x38
+.equ REQ_CURRHP,0x39
+.equ REQ_MAXHP,0x3a
+.equ REQ_ATK,0x3b
+.equ REQ_DEF,0x3c
+.equ REQ_SPD,0x3d
+.equ REQ_SPATK,0x3e
+.equ REQ_SPDEF,0x3f
+.equ REQ_POKERUSLEFT,0x40
+.equ REQ_SPECIES2,0x41
+.equ REQ_FAMERIBBON,0x43
+.equ REQ_OBEDIENCE,0x50
+.equ REQ_ATK2,0x54
+.equ REQ_DEF2,0x55
+.equ REQ_SPD2,0x56
+.equ REQ_SPATK2,0x57
+.equ REQ_SPDEF2,0x58

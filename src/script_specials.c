@@ -4,14 +4,19 @@
 #include "Vanilla_Functions.h"
 
 /*
-NOTE: a lot of specials will not work unless you have chosen to expand the save block!
-
+NOTES: 
+	1. a lot of specials will not work unless you have chosen to expand the save block!
+	2. PC selection hack allows a lot all of the attribute getter/setter specials to reference boxed pokemon via var8003
+		-var8003 = 1: boxed pokemon (output from pc selection: box num in var8000, slot in var8001)
+		-else: menu pokemon (and slot in var8004, etc)
+	
 */
 
 //Pokemon Specials//
 ///////////////////////////////////////////////////////////////////////////////////
 
 /*
+
 
 enum EVStatChecker
 {
@@ -29,6 +34,46 @@ enum EVStatChecker
 	CheckEVs_Luster
 };
 
+enum IVStatChecker
+{
+	CheckIVs_HP,
+	CheckIVs_Atk,
+	CheckIVs_Def,
+	CheckIVs_Spd,
+	CheckIVs_SpAtk,
+	CheckIVs_SpDef,
+	SetAllIVs
+};
+
+#ifdef SELECT_FROM_PC
+u32 getAttrFromVar8003(u8 dataRequest) {
+	u32 attr;
+	if (Var8003 == 1)
+		attr = getAttrFromAnyBox(Var8000, Var8001, dataRequest);
+	else
+		attr = get_attr($gPlayerParty[Var8004], dataRequest, 0);
+	return attr;
+};
+
+u32 setAttrFromVar8003(u8 dataRequest) {
+	if (Var8003 == 1)
+		attr = setAttrFromAnyBox(Var8000, Var8001, dataRequest, $Var8005);
+	else
+		attr = set_attr($gPlayerParty[Var8004], dataRequest, $Var8005);
+	return attr;
+};
+
+
+
+u32* getBoxedMonAddr(void) {;
+	return ((u32*) &(gSaveBlock3->boxes[Var8000][Var8001]));
+};
+
+
+
+#endif
+
+
 u8 sp007_PokemonEVContestStatsChecker(void) {
 	u16 mon = Var8004;
 	u16 stat = Var8005;
@@ -37,6 +82,33 @@ u8 sp007_PokemonEVContestStatsChecker(void) {
 		return 0;
 	
 	switch(stat) {
+		
+	#ifdef SELECT_FROM_PC
+		case CheckEVs_HP:
+			return getAttrFromVar8003(MON_DATA_HP_EV);
+		case CheckEVs_Atk:
+			return getAttrFromVar8003(MON_DATA_ATK_EV);
+		case CheckEVs_Def:
+			return getAttrFromVar8003(MON_DATA_DEF_EV);
+		case CheckEVs_Spd:
+			return getAttrFromVar8003(MON_DATA_SPEED_EV);
+		case CheckEVs_SpAtk:
+			return getAttrFromVar8003(MON_DATA_SPATK_EV);
+		case CheckEVs_SpDef:
+			return getAttrFromVar8003(MON_DATA_SPDEF_EV);
+		case CheckEVs_Coolness:
+			return getAttrFromVar8003(MON_DATA_COOL);
+		case CheckEVs_Beauty:
+			return getAttrFromVar8003(MON_DATA_BEAUTY);
+		case CheckEVs_Cuteness:
+			return getAttrFromVar8003(MON_DATA_CUTE);
+		case CheckEVs_Smartness:
+			return getAttrFromVar8003(MON_DATA_SMART);
+		case CheckEVs_Toughness:
+			return getAttrFromVar8003(MON_DATA_TOUGH);
+		case CheckEVs_Luster:
+			return getAttrFromVar8003(MON_DATA_SHEEN);
+	#else	
 		case CheckEVs_HP:
 			return gPlayerParty[mon].hpEv;
 		case CheckEVs_Atk:
@@ -61,22 +133,10 @@ u8 sp007_PokemonEVContestStatsChecker(void) {
 			return gPlayerParty[mon].toughness;
 		case CheckEVs_Luster:
 			return gPlayerParty[mon].feel;
+	#endif
 		default:
 			return 0;
 	}
-};
-
-
-
-enum IVStatChecker
-{
-	CheckIVs_HP,
-	CheckIVs_Atk,
-	CheckIVs_Def,
-	CheckIVs_Spd,
-	CheckIVs_SpAtk,
-	CheckIVs_SpDef,
-	SetAllIVs
 };
 
 u8 sp008_PokemonIVChecker(void) {
@@ -87,6 +147,20 @@ u8 sp008_PokemonIVChecker(void) {
 		return 0;
 	
 	switch(stat) {
+	#ifdef SELECT_FROM_PC
+		case CheckIVs_HP:
+			return getAttrFromVar8003(MON_DATA_HP_IV);
+		case CheckIVs_Atk:
+			return getAttrFromVar8003(MON_DATA_ATK_IV);
+		case CheckIVs_Def:
+			return getAttrFromVar8003(MON_DATA_DEF_IV);
+		case CheckIVs_Spd:
+			return getAttrFromVar8003(MON_DATA_SPEED_IV);
+		case CheckIVs_SpAtk:
+			return getAttrFromVar8003(MON_DATA_SPATK_IV);
+		case CheckIVs_SpDef:
+			return getAttrFromVar8003(MON_DATA_SPDEF_IV);	
+	#else
 		case CheckIVs_HP:
 			return gPlayerParty[mon].hpIV;
 		case CheckIVs_Atk:
@@ -99,6 +173,7 @@ u8 sp008_PokemonIVChecker(void) {
 			return gPlayerParty[mon].spAttackIV;
 		case CheckIVs_SpDef:
 			return gPlayerParty[mon].spDefenseIV;
+	#endif
 		default:
 			return 0;
 	}
@@ -114,14 +189,21 @@ bool8 sp009_PokemonRibbonChecker(void) {
 	if (ribbon > 0x1F)
 		return FALSE;
 		
-	u32 *pointer = (u32*) &gPlayerParty[mon];
-	pointer += (76 / sizeof(u32));
-	u32 data = *pointer;
-	
-	if (data & gBitTable[ribbon])
-		return TRUE;
-	else
-		return FALSE;
+	#ifdef SELECT_FROM_PC
+		if (Var8003 == 1)
+			u32 *pointer = getBoxedMonAddr;
+		else
+			u32 *pointer = (u32*) &gPlayerParty[mon];
+	#else
+		u32 *pointer = (u32*) &gPlayerParty[mon];
+	#endif
+		pointer += (76 / sizeof(u32));
+		u32 data = *pointer;
+		
+		if (data & gBitTable[ribbon])
+			return TRUE;
+		else
+			return FALSE;
 };
 
 #define POKERUS_CURED 0x10
@@ -812,9 +894,19 @@ u8 sp076_MeasurePokemon2(void) {
 };
 
 
+
+// old man battle with given species/level
+// Inputs:
+//		var8004: species
+//		var8005: level
 void sp09C_OldManBattleModifier(void) {
-	return;
+	createMaleMon(&gEnemyParty[0], Var8004, Var8005);
+	ScriptContext2_Enable;
+	gMain.savedCallback = ReturnToFieldContinueScriptPlayMapMusic;
+	gBattleTypeFlags = BATTLE_TYPE_OLD_MAN;
+	CreateBattleStartTask(8, 0);
 };
+
 
 
 void sp18B_DisplayImagesFromTable(void) {

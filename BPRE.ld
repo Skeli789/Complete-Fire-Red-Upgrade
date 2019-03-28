@@ -284,6 +284,7 @@ task_add = 0x0807741C|1;
 task_delete = 0x08077508|1;
 set_callback2 = 0x08000544|1;
 set_callback1 = 0x080565E0|1;
+ReturnToFieldContinueScriptPlayMapMusic = 0x080568E0|1;
 fade_screen = 0x08070588|1;
 sp198_help_system_disable = 0x0812B478|1;
 malloc_and_LZ77UnComp = 0x080F6AA0|1;
@@ -327,6 +328,7 @@ sub_0804B908 = 0x0804B908|1;
 
 
 create_pokemon = 0x0803DD98|1;
+createMaleMon = 0x0803DF00 | 1;
 
 divmod_remainder = 0x081E4684|1;
 rand = 0x08044EC8|1;
@@ -589,6 +591,10 @@ GetSetPokedexFlag = 0x8044898 | 1;
 GetPokedexHeightWeight = 0x8088E38 | 1;
 ReducePartyToThree = 0x80A03D8 | 1;
 pokemon_order_func = 0x8128030 | 1;
+
+/* Pokemon Storage */
+getAttrFromAnyBox = 0x808BA18 | 1;
+setAttrFromAnyBox = 0x808BA5C | 1;
 
 /*Wild Encounter Functions*/
 ChooseWildMonIndex_Land = 0x808274C | 1;

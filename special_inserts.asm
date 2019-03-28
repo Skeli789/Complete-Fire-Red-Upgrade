@@ -5,6 +5,9 @@
 .equ MAX_LEVEL, 100
 .include "../asm_defines.s"
 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Hidden Abilities - Change Bit
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x013144, 0xFF
 HiddenAbilityChange1:
 	mov r1, r9
@@ -17,6 +20,9 @@ HiddenAbilityChange1:
 	lsr r1, r1, #0x7 @ability bit
 	bl HiddenAbilityChange1 + 0x2DC28 @0x08040D6C
 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Max Level Limiters
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x21CFA, 0xFF
 MaxLevelChange2:
 	.byte MAX_LEVEL
@@ -25,8 +31,10 @@ MaxLevelChange2:
 MaxLevelChange3:
 	.byte MAX_LEVEL
 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Hidden Abilities - Player
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x026E34, 0xFF
-@player ability
 HiddenAbilityChange2:
 	ldrb r0, [r4, #0x0] @personality
 	mov r1, r6 @ability bit
@@ -34,8 +42,10 @@ HiddenAbilityChange2:
 	bl HiddenAbilityChange2 + 0x19F38 @0x08040D6C
 	lsl r0, r0, #0x0
 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Hidden Abilities - Opponent
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x026ECC, 0xFF
-@opponent ability
 HiddenAbilityChange3:
 	and r0, r1
 	cmp r0, #0x0
@@ -49,8 +59,10 @@ HiddenAbilityChange3:
 	beq HiddenAbilityChange3 + 0x20
 	mov r0, #0x1
 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Hidden Abilities - Player
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x02A800, 0xFF
-@player ability second
 HiddenAbilityChange4_1:
 	mov r1, #0x41
 	bl HiddenAbilityChange4_1 + 0x153E8 @get_attr
@@ -62,8 +74,10 @@ HiddenAbilityChange4_1:
 	lsl r0, r0, #0x18
 	orr r4, r0 @000000b 00000000 00000000 pppppppp
 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Hidden Abilities - Opponent
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x02A890, 0xFF
-@opponent ability second
 HiddenAbilityChange4_2:
 	lsl r0, r4, #0x18
 	lsr r0, r0, #0x18 @personality lowest byte
@@ -71,10 +85,16 @@ HiddenAbilityChange4_2:
 	mov r2, r5 @species
 	bl HiddenAbilityChange4_2 + 0x164DC @0x08040D6C
 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Max Level Limiter
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x32F6E, 0xFF
 MaxLevelChange14:
 	.byte MAX_LEVEL - 1
 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Hidden Abilities - Generate Poke
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x03DD58, 0xFF
 HiddenAbilityPokemonGeneration:
 	mov r0, #0x0
@@ -85,6 +105,9 @@ HiddenAbilityPokemonGeneration:
 	bl HiddenAbilityPokemonGeneration + 0x2778 @ set_pokemon_data_2
 	b HiddenAbilityPokemonGeneration + 0x26 @ 0x0803DD7E
 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Max Level Limiters
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x3E806, 0xFF
 MaxLevelChange4:
 	.byte MAX_LEVEL
@@ -93,6 +116,9 @@ MaxLevelChange4:
 MaxLevelChange5:
 	.byte MAX_LEVEL
 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Hidden Abilities - Determine Ability Bit
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x40D38, 0xFF
 DetermineAbilityMain:
 	push {lr}
@@ -162,6 +188,9 @@ copy_hidden:
 base_stats_table: .word 0x80001BC
 b_last_copied_ability: .word 0x02023D6A
 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Hidden Abilities - Summary
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x041318, 0xFF
 @poke summary info
 HiddenAbilityChange5:
@@ -172,7 +201,10 @@ HiddenAbilityChange5:
 	bl HiddenAbilityChange5 - 0x5AC @ 0x08040D6C
 	add r1, r7, #0x4
 	strb r0, [r1, #0x1C]
-
+	
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Max Level Limiters
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x41834, 0xFF
 MaxLevelChange6:
 	.byte MAX_LEVEL
@@ -205,35 +237,109 @@ MaxLevelChange11:
 MaxLevelChange12:
 	.byte MAX_LEVEL
 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Hidden Abilities - Egg Hatching 1
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x46CA0, 0xFF
 HiddenAbilityEggHatching1:
 	mov r0, r6
 	mov r1, #0x2E
 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Hidden Abilities - Egg Hatching 2
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x46D3C, 0xFF
 HiddenAbilityEggHatching2:
 	mov r0, r5
 	mov r1, #0x2E
 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Max Level Hack - Limiter
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x4A216, 0xFF
 MaxLevelChange1:
-	.byte MAX_LEVEL
+	.byte MAX_LEVEL	
 
-.org 0x082C70, 0xFF
-@stench, illuminate
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Hidden Abilities - Stench, Illuminate
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x82C70, 0xFF
 HiddenAbilityChange6:
 	bl HiddenAbilityChange6 - 0x41F38 @0x08040D38
-
+	
+	
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Fossil Image Hack
+@ Inputs:
+@	var8004: image number
+@	vars8005/8006: x,y position on screen
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x9d504, 0xff
+sp18b_FossilImageHack:
+	push {r4-r6, lr}
+	mov r6, r8
+	push {r6}
+	ldr r0, .PicboxTaskLoc
+	bl 0x1119d4
+	lsl r0, r0, #0x18
+	lsr r0, r0, #0x18
+	cmp r0, #0x1
+	beq 0x9d5f2
+	ldr r0, .FreeTaskLoc
+	bl 0x77688
+	lsl r0, r0, #0x18
+	lsr r0, r0, #0x18
+	cmp r0, #0xff
+	bne EndFossilImageHack
+	ldr r0, .Var_8004
+	ldrh r0, [r0]
+	ldr r1, .imageTable
+	mov r2, #0x2
+	lsl r2, r2, #0x8
+	cmp r0, r2
+	bgt 0x9d5f4
+	lsl r0, r0, #0x3
+	add r1, r0, r1
+	ldr r0, [r1]
+	push {r1}
+	bl 0x8720
+	pop {r1}
+	add r1, #0x4
+	ldr r0, [r1]
+	mov r1, #0xe8
+	lsl r1, r1, #0x1
+	mov r2, #0x20
+	bl 0x703ec
+	b 0x9d572
+EndFossilImageHack:
+	mov r0, #0x0
+	b 0x9d5f4
+.align 2
+.Var_8004: .word var8004
+.imageTable: .word fossilImageTable
+.PicboxTaskLoc: .word 0x0809d6d4|1
+.FreeTaskLoc: .word 0x0809d494|1
+	
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Max Level Hack - Rare Candies
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x1262D2, 0xFF
 MaxLevelRareCandies:
 	.byte MAX_LEVEL
 
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Max Level Hack - Summary Screen
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x136684, 0xFF
 SummaryScreenExpDisplay1:
 	.byte MAX_LEVEL - 1
 
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Hidden Abilities - Ability Names
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x1366EC, 0xFF
-@ability names
 HiddenAbilityChange7:
 	lsl r4, r0, #0x10
 	ldr r0, [r6]
@@ -252,12 +358,17 @@ HiddenAbilityChange7:
 	lsr r4, r0, #0x18
 	ldr r0, [r6]
 
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Max Level Hack - Summary Screen Exp Display
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x13A9DC, 0xFF
 SummaryScreenExpDisplay2:
 	.byte MAX_LEVEL - 1, 0x2D, 0x0, 0xD9
 	
+	
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-// Multichoice Pointers
+@ Multichoice Pointers
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x3E05B0, 0xFF
 .word MULTICHOICE_STRING_LOADER
@@ -273,3 +384,5 @@ SummaryScreenExpDisplay2:
 .word MULTICHOICE_STRING_LOADER
 .word 0x7	
 	
+
+
