@@ -97,6 +97,9 @@ bank_t GetBankFromPartyData(pokemon_t* mon) {
 
 enum {IN_AIR, GROUNDED};
 bool8 CheckGrounding(bank_t bank) {
+	if (gStatuses3[gEffectBank] & STATUS3_IN_AIR)
+		return IN_AIR;
+
 	if (gNewBS->GravityTimer || GetBankItemEffect(bank) == ITEM_EFFECT_IRON_BALL ||
 		(gStatuses3[bank] & (STATUS3_SMACKED_DOWN | STATUS3_ROOTED)))
 			return GROUNDED;
