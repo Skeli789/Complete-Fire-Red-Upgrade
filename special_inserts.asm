@@ -259,7 +259,7 @@ HiddenAbilityEggHatching2:
 .org 0x4A216, 0xFF
 MaxLevelChange1:
 	.byte MAX_LEVEL	
-	
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Createsprite Fix - remove bit shifts in lnpc_new
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
