@@ -826,6 +826,27 @@ u8 AtkCanceller_UnableToUseMove(void)
 				gMultiHitCounter = 2;
 				PREPARE_BYTE_NUMBER_BUFFER(gBattleScripting->multihitString, 1, 0)
 			}
+			else if (gBattleMoves[gCurrentMove].effect == EFFECT_BEAT_UP)
+			{
+				struct Pokemon* party;
+				
+				if (SIDE(gBankAttacker) == B_SIDE_PLAYER)
+					party = gPlayerParty;
+				else
+					party = gEnemyParty;
+		
+				for (int i = 0; i < 6; ++i)
+				{
+					if (GetMonData(&party[i], MON_DATA_HP, 0)
+					&& GetMonData(&party[i], MON_DATA_SPECIES2, 0)
+					&& GetMonData(&party[i], MON_DATA_SPECIES2, 0) != PKMN_EGG
+					&& !GetMonData(&party[i], MON_DATA_STATUS, 0))
+						++gMultiHitCounter;
+				}
+				
+				gBattleCommunication[0] = 0; //For later
+				PREPARE_BYTE_NUMBER_BUFFER(gBattleScripting->multihitString, 1, 0)
+			}
 
 			gBattleStruct->atkCancellerTracker++;
 			break;

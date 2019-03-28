@@ -58,6 +58,9 @@ A wild [FD][06] appeared!\p
 #org @gStatusConditionString_DisableProblem
 Disable
 
+#org @gStatusConditionString_EncoreProblem
+Encore
+
 #org @gStatusConditionString_Confusion
 Confusion
 
@@ -70,10 +73,10 @@ Taunt
 //Stat Buff Strings
 
 #org @DrasticallyString
-drastically
+drastically 
 
 #org @SeverelyString
-severely
+severely 
 
 //General String Updates
 

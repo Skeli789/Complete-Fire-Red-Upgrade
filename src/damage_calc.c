@@ -1811,26 +1811,35 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 	damage += 2;
 
 //Final Damage mods
-	switch (moveSplit) {
-		case SPLIT_PHYSICAL:
-			if ((sideStatus & SIDE_STATUS_REFLECT || gNewBS->AuroraVeilTimers[SIDE(bankDef)]) && gCritMultiplier <= 100 && !(atkAbility == ABILITY_INFILTRATOR && !IgnoreAttacker)) {
-				if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE) && CountAliveMons(2) == 2)
-					damage = udivsi((damage * 2), 3);
-				else
+	if (gBattleMoves[move].effect != EFFECT_BRICK_BREAK) //Shatters the screens
+	{
+		switch (moveSplit) {
+			case SPLIT_PHYSICAL:
+				if ((sideStatus & SIDE_STATUS_REFLECT || gNewBS->AuroraVeilTimers[SIDE(bankDef)]) 
+				&& gCritMultiplier <= 100 
+				&& !(atkAbility == ABILITY_INFILTRATOR 
+				&& !IgnoreAttacker)) {
+					if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE) && CountAliveMons(2) == 2)
+						damage = udivsi((damage * 2), 3);
+					else
+						damage /= 2;
+				}
+				
+				if ((attackerStatus1 & STATUS_BURN) && atkAbility != ABILITY_GUTS && move != MOVE_FACADE)
 					damage /= 2;
-			}
+				break;
 			
-			if ((attackerStatus1 & STATUS_BURN) && atkAbility != ABILITY_GUTS && move != MOVE_FACADE)
-				damage /= 2;
-			break;
-		
-		case SPLIT_SPECIAL:
-			if ((sideStatus & SIDE_STATUS_LIGHTSCREEN || gNewBS->AuroraVeilTimers[SIDE(bankDef)]) && gCritMultiplier <= 100 && !(atkAbility == ABILITY_INFILTRATOR && !IgnoreAttacker)) {
-				if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE) && CountAliveMons(2) == 2)
-					damage = udivsi((damage * 2), 3);
-				else
-					damage /= 2;
-			}
+			case SPLIT_SPECIAL:
+				if ((sideStatus & SIDE_STATUS_LIGHTSCREEN || gNewBS->AuroraVeilTimers[SIDE(bankDef)]) 
+				&& gCritMultiplier <= 100 
+				&& !(atkAbility == ABILITY_INFILTRATOR 
+				&& !IgnoreAttacker)) {
+					if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE) && CountAliveMons(2) == 2)
+						damage = udivsi((damage * 2), 3);
+					else
+						damage /= 2;
+				}
+		}
 	}
 	
 	if (WEATHER_HAS_EFFECT) {
@@ -2349,6 +2358,8 @@ u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 
 					party = gPlayerParty;
 				else
 					party = gEnemyParty;
+				
+				break_func(gBattleCommunication[0]);
 				
 				power = udivsi(gBaseStats[party[gBattleCommunication[0] - 1].species].baseAttack, 10) + 5;
 			}

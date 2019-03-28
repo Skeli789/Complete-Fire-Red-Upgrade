@@ -124,7 +124,6 @@ BattleScript_MoveUsedPsychicTerrainPrevents:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_MoveUsedPowderPrevents:
-	orbyte OUTCOME 0x1
 	attackstring
 	ppreduce
 	pause DELAY_HALFSECOND
@@ -138,6 +137,7 @@ SkipPowderDamage:
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	faintpokemon BANK_ATTACKER 0x0 0x0
+	orbyte OUTCOME 0x1
 	goto BS_MOVE_END
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

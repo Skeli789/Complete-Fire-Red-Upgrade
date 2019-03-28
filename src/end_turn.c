@@ -92,9 +92,6 @@ u8 TurnBasedEffects(void) {
 					if (gNewBS->DestinyBondCounters[i])
 						--gNewBS->DestinyBondCounters[i];
 						
-					if(gNewBS->ElectrifyTimers[i])
-						--gNewBS->ElectrifyTimers[i];
-						
 					gBattleMons[i].status2 &= ~(STATUS2_FLINCHED);
 				}
 
@@ -295,7 +292,16 @@ u8 TurnBasedEffects(void) {
 				break;
 	
 			case(ET_Wish):
-                if (gWishFutureKnock->wishCounter[gActiveBattler] && --gWishFutureKnock->wishCounter[gActiveBattler] == 0 && gBattleMons[gActiveBattler].hp) {
+				for (i = 0; i < 4; ++i) //Cleared down here because necessary for Future Sight
+				{
+					if(gNewBS->ElectrifyTimers[i])
+						--gNewBS->ElectrifyTimers[i];
+				}
+				
+                if (gWishFutureKnock->wishCounter[gActiveBattler] 
+				&& --gWishFutureKnock->wishCounter[gActiveBattler] == 0 
+				&& gBattleMons[gActiveBattler].hp) 
+				{
                     BattleScriptExecute(BattleScript_WishComesTrue);
                     effect++;
                 }
@@ -305,7 +311,7 @@ u8 TurnBasedEffects(void) {
 			case(ET_Block_A):
 				switch(gNewBS->blockTracker) {
 					case(ET_Sea_Of_Fire):
-						if (gNewBS->SeaOfFireTimers[gActiveBattler] && 
+						if (gNewBS->SeaOfFireTimers[SIDE(gActiveBattler)] && 
 						    gBattleMons[gActiveBattler].ability != ABILITY_MAGICGUARD &&
 							gBattleMons[gActiveBattler].hp &&
 							gBattleMons[gActiveBattler].type1 != TYPE_FIRE &&

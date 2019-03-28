@@ -680,7 +680,6 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 		case EFFECT_RESTORE_HP:
 		case EFFECT_REST:
 		case EFFECT_MORNING_SUN:
-		case EFFECT_SOFTBOILED:
 		AI_RECOVERY: ;
 			switch (move) {
 				case MOVE_PURIFY:
@@ -740,8 +739,11 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 		case EFFECT_RECOIL:
 			if (atkAbility == ABILITY_MAGICGUARD || atkAbility == ABILITY_ROCKHEAD)
 				goto AI_STANDARD_DAMAGE;
+			// check < 10% hp
 			else if (GetHealthPercentage(bankAtk) < 10)
 				viability -= 4;
+			else
+				goto AI_STANDARD_DAMAGE;
 			break;
 			
 		case EFFECT_FOCUS_ENERGY:
@@ -751,11 +753,20 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 		
 		case EFFECT_CONFUSE:
 		AI_CONFUSE: ;
-			if (defStatus2 & STATUS2_CONFUSION 
-			|| (NO_MOLD_BREAKERS(bankAtk) && defAbility == ABILITY_OWNTEMPO))
-				viability -= 10;
-			else if (defEffect == ITEM_EFFECT_CURE_ATTRACT)
-				viability -= 6;
+			switch (move) {
+				case MOVE_TEETERDANCE:
+					if ((defStatus2 & STATUS2_CONFUSION || (NO_MOLD_BREAKERS(bankAtk) && defAbility == ABILITY_OWNTEMPO) || (CheckGrounding(bankDef) && TerrainType == MISTY_TERRAIN))
+					&& ((gBattleMons[bankDefPartner].status2 & STATUS2_CONFUSION) || (NO_MOLD_BREAKERS(bankAtk) && ABILITY(bankDefPartner) == ABILITY_OWNTEMPO) || (CheckGrounding(bankDefPartner) && TerrainType == MISTY_TERRAIN)))
+						viability -= 10;
+					break;
+				default:
+					if (defStatus2 & STATUS2_CONFUSION 
+					|| (NO_MOLD_BREAKERS(bankAtk) && defAbility == ABILITY_OWNTEMPO)
+					||  (CheckGrounding(bankDef) && TerrainType == MISTY_TERRAIN))
+						viability -= 10;
+					else if (defEffect == ITEM_EFFECT_CURE_ATTRACT)
+						viability -= 6;
+			}
 			break;
 
 		case EFFECT_TRANSFORM:
@@ -1411,31 +1422,6 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 			// check target for any snatchable moves
 			if (!HasSnatchableMove(bankDef))
 				viability -= 20;
-			break;
-			
-		case EFFECT_DOUBLE_EDGE:
-			if (atkAbility == ABILITY_ROCKHEAD || atkAbility == ABILITY_MAGICGUARD)
-				goto AI_STANDARD_DAMAGE;
-			// check < 10% hp
-			else if (GetHealthPercentage(bankAtk) < 10)
-				viability -= 4;
-			else
-				goto AI_STANDARD_DAMAGE;
-			break; 
-			
-		case EFFECT_TEETER_DANCE:
-			if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE) {
-				// check if adjacent banks for falling asleep
-				if (CanBePutToSleep(bankAtkPartner))
-					viability -= 4;
-				if (CanBePutToSleep(bankDef) == FALSE)
-					viability -= 6;
-				if (CanBePutToSleep(bankDefPartner) == FALSE)
-					viability -= 6;
-				break;
-			}
-			else
-				goto AI_CHECK_SLEEP;
 			break;
 			
 		case EFFECT_MUD_SPORT:

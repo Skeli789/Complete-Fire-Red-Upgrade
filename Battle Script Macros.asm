@@ -1126,7 +1126,7 @@
 	.4byte \rom_address
 	.endm
 
-	.macro beatupcalculation rom_address1, rom_address2
+	.macro trydobeatup rom_address1, rom_address2
 	.byte 0xc4
 	.4byte \rom_address1
 	.4byte \rom_address2

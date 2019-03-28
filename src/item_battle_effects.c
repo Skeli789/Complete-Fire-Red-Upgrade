@@ -7,6 +7,7 @@
 #define BattleScript_WhiteHerbEnd2 (u8*) 0x81D95D9
 
 extern u8 gStatusConditionString_DisableProblem[];
+extern u8 gStatusConditionString_EncoreProblem[];
 extern u8 gStatusConditionString_MentalState[];
 extern u8 gStatusConditionString_TauntProblem[];
 
@@ -524,7 +525,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
 				if (gDisableStructs[bank].encoredMove) {
 					gDisableStructs[bank].encoredMove = 0; //Same as end turn clear
 					gDisableStructs[bank].encoreTimer = 0;
-					StringCopy(gBattleTextBuff1, gStatusConditionString_DisableProblem);
+					StringCopy(gBattleTextBuff1, gStatusConditionString_EncoreProblem);
 					++i;
                 }
 				if (gDisableStructs[gActiveBattler].tauntTimer) {
@@ -583,6 +584,9 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
 	
             if (effect)
             {
+				if (GetPocketByItemId(gLastUsedItem) == POCKET_BERRY_POUCH)
+					gNewBS->BelchCounters |= gBitTable[gBattlerPartyIndexes[bank]];
+				
                 gBattleScripting->bank = bank;
                 gStringBank = bank;
                 gActiveBattler = bank;
@@ -710,7 +714,8 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
 				break;
 				
 			case ITEM_EFFECT_ENIGMA_BERRY:
-				if (TOOK_DAMAGE(bank)
+				if (!DoPluck
+				&& TOOK_DAMAGE(bank)
 				&& gMoveResultFlags == MOVE_RESULT_SUPER_EFFECTIVE
 				&& gBattleMons[bank].hp
 				&& !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bank)) 
@@ -740,6 +745,9 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
 				break;
 		}
 		
+		if (effect && GetPocketByItemId(gLastUsedItem)== POCKET_BERRY_POUCH)
+			gNewBS->BelchCounters |= gBitTable[gBattlerPartyIndexes[bank]];
+		
 	    if (effect == REQUEST_HP_BATTLE) 
 		{
             gBattleScripting->bank = bank;
@@ -750,142 +758,6 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
             break;
         }
 			
-        break;
-/*    case 3:
-			
-	
-        for (bank = 0; bank < gBattlersCount; bank++)
-        {
-            gLastUsedItem = gBattleMons[bank].item;
-            bankHoldEffect = ItemId_GetHoldEffect(gLastUsedItem);
-            bankQuality = ItemId_GetHoldEffectParam(gLastUsedItem);
-            
-            switch (bankHoldEffect)
-            {
-            case ITEM_EFFECT_CURE_PAR:
-                if (gBattleMons[bank].status1 & STATUS_PARALYSIS)
-                {
-                    gBattleMons[bank].status1 &= ~(STATUS_PARALYSIS);
-                    BattleScriptPushCursor();
-                    gBattlescriptCurrInstr = BattleScript_BerryCureParRet;
-                    effect = ITEM_STATUS_CHANGE;
-                }
-                break;
-            case ITEM_EFFECT_CURE_PSN:
-                if (gBattleMons[bank].status1 & STATUS_PSN_ANY)
-                {
-                    gBattleMons[bank].status1 &= ~(STATUS_PSN_ANY | STATUS_TOXIC_COUNTER);
-                    BattleScriptPushCursor();
-                    gBattlescriptCurrInstr = BattleScript_BerryCurePsnRet;
-                    effect = ITEM_STATUS_CHANGE;
-                }
-                break;
-            case ITEM_EFFECT_CURE_BRN:
-                if (gBattleMons[bank].status1 & STATUS_BURN)
-                {
-                    gBattleMons[bank].status1 &= ~(STATUS_BURN);
-                    BattleScriptPushCursor();
-                    gBattlescriptCurrInstr = BattleScript_BerryCureBrnRet;
-                    effect = ITEM_STATUS_CHANGE;
-                }
-                break;
-            case ITEM_EFFECT_CURE_FRZ:
-                if (gBattleMons[bank].status1 & STATUS_FREEZE)
-                {
-                    gBattleMons[bank].status1 &= ~(STATUS_FREEZE);
-                    BattleScriptPushCursor();
-                    gBattlescriptCurrInstr = BattleScript_BerryCureFrzRet;
-                    effect = ITEM_STATUS_CHANGE;
-                }
-                break;
-            case ITEM_EFFECT_CURE_SLP:
-                if (gBattleMons[bank].status1 & STATUS_SLEEP)
-                {
-                    gBattleMons[bank].status1 &= ~(STATUS_SLEEP);
-                    gBattleMons[bank].status2 &= ~(STATUS2_NIGHTMARE);
-                    BattleScriptPushCursor();
-                    gBattlescriptCurrInstr = BattleScript_BerryCureSlpRet;
-                    effect = ITEM_STATUS_CHANGE;
-                }
-                break;
-            case ITEM_EFFECT_CURE_CONFUSION:
-                if (gBattleMons[bank].status2 & STATUS2_CONFUSION)
-                {
-                    gBattleMons[bank].status2 &= ~(STATUS2_CONFUSION);
-                    BattleScriptPushCursor();
-                    gBattlescriptCurrInstr = BattleScript_BerryCureConfusionRet;
-                    effect = ITEM_EFFECT_OTHER;
-                }
-                break;
-            case ITEM_EFFECT_CURE_ATTRACT:
-                if (gBattleMons[bank].status2 & STATUS2_INFATUATION)
-                {
-                    gBattleMons[bank].status2 &= ~(STATUS2_INFATUATION);
-                    StringCopy(gBattleTextBuff1, gStatusConditionString_LoveJpn);
-                    BattleScriptPushCursor();
-                    gBattleCommunication[MULTISTRING_CHOOSER] = 0;
-                    gBattlescriptCurrInstr = BattleScript_BerryCureChosenStatusRet;
-                    effect = ITEM_EFFECT_OTHER;
-                }
-                break;
-            case ITEM_EFFECT_CURE_STATUS:
-                if (gBattleMons[bank].status1 & STATUS_ANY || gBattleMons[bank].status2 & STATUS2_CONFUSION)
-                {
-                    if (gBattleMons[bank].status1 & STATUS_PSN_ANY)
-                    {
-                        StringCopy(gBattleTextBuff1, gStatusConditionString_PoisonJpn);
-                    }
-                    if (gBattleMons[bank].status1 & STATUS_SLEEP)
-                    {
-                        gBattleMons[bank].status2 &= ~(STATUS2_NIGHTMARE);
-                        StringCopy(gBattleTextBuff1, gStatusConditionString_SleepJpn);
-                    }
-                    if (gBattleMons[bank].status1 & STATUS_PARALYSIS)
-                    {
-                        StringCopy(gBattleTextBuff1, gStatusConditionString_ParalysisJpn);
-                    }
-                    if (gBattleMons[bank].status1 & STATUS_BURN)
-                    {
-                        StringCopy(gBattleTextBuff1, gStatusConditionString_BurnJpn);
-                    }
-                    if (gBattleMons[bank].status1 & STATUS_FREEZE)
-                    {
-                        StringCopy(gBattleTextBuff1, gStatusConditionString_IceJpn);
-                    }
-                    if (gBattleMons[bank].status2 & STATUS2_CONFUSION)
-                    {
-                        StringCopy(gBattleTextBuff1, gStatusConditionString_ConfusionJpn);
-                    }
-                    gBattleMons[bank].status1 = 0;
-                    gBattleMons[bank].status2 &= ~(STATUS2_CONFUSION);
-                    BattleScriptPushCursor();
-                    gBattleCommunication[MULTISTRING_CHOOSER] = 0;
-                    gBattlescriptCurrInstr = BattleScript_BerryCureChosenStatusRet;
-                    effect = ITEM_STATUS_CHANGE;
-                }
-                break;
-            case ITEM_EFFECT_RESTORE_STATS:
-                for (i = 0; i < 8; i++)
-                {
-                    if (gBattleMons[bank].statStages[i] < 6)
-                    {
-                        gBattleMons[bank].statStages[i] = 6;
-                        effect = ITEM_STATS_CHANGE;
-                    }
-                }
-                if (effect)
-                {
-                    gBattleScripting->bank = bank;
-                    gStringBank = bank;
-                    BattleScriptPushCursor();
-                    gBattlescriptCurrInstr = BattleScript_WhiteHerbRet;
-                    return effect; // unnecessary return
-                }
-                break;
-            }
-
-        }
-	*/
         break;
 	
     case ItemEffects_ContactAttacker:
@@ -1000,6 +872,7 @@ u8 StatRaiseBerries(u8 bank, u8 stat, bool8 moveTurn, bool8 DoPluck) {
     if ((PINCH_BERRY_CHECK(bank) || DoPluck) && STAT_CAN_RISE(bank, stat)) {
 	
         PREPARE_STAT_BUFFER(gBattleTextBuff1, stat);
+		PREPARE_STRING_BUFFER(gBattleTextBuff2, STRINGID_STATROSE);
 
         gEffectBank = bank;
         gBattleScripting->statChanger = INCREASE_1 | stat;

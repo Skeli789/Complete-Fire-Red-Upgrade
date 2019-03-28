@@ -25,7 +25,7 @@
 #define BattleScript_StatUp (u8*) 0x81D6BD1
 #define BattleScript_StatDown (u8*) 0x81D6C62
 #define BattleScript_SAtkDown2 (u8*) 0x81D8FEB
-#define ScreensShatteredString (u8*) 0x83DC646
+#define ScreensShatteredString (u8*) 0x83FC646
 
 extern u8 BattleScript_PluckEat[];
 extern u8 BattleScript_TargetSleepHeal[];
@@ -644,7 +644,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 				gBattlescriptCurrInstr = BattleScript_PrintCustomString;
 				break;
 				
-			case MOVE_EFFECT_SUPPRESS_ABILITY:	
+			case MOVE_EFFECT_SUPPRESS_ABILITY:
 				if (!gNewBS->secondaryEffectApplied
 				&& !(gStatuses3[gEffectBank] & STATUS3_ABILITY_SUPPRESS)
 				&&  GetBattlerTurnOrderNum(gEffectBank) < gCurrentTurnActionNumber) //Target moved before attacker
@@ -670,6 +670,8 @@ void SetMoveEffect(bool8 primary, u8 certain)
 				u8 side = SIDE(gBankTarget);
 				if (gSideTimers[side].reflectTimer 
 				||  gSideTimers[side].lightscreenTimer 
+				||  gSideAffecting[side] & SIDE_STATUS_REFLECT
+				||  gSideAffecting[side] & SIDE_STATUS_LIGHTSCREEN
 				||  gNewBS->AuroraVeilTimers[side]) 
 				{
 					gSideAffecting[side] &= ~(SIDE_STATUS_REFLECT);
@@ -882,6 +884,9 @@ bool8 SetMoveEffect2(void)
 			break;
 		
 		case MOVE_EFFECT_BRING_DOWN:
+			if (gStatuses3[gEffectBank] & STATUS3_IN_AIR)
+				goto SMACK_TGT_DOWN;
+		
 			if (gStatuses3[gEffectBank] & (STATUS3_SKY_DROP_ATTACKER | STATUS3_SKY_DROP_TARGET | STATUS3_ROOTED | STATUS3_SMACKED_DOWN)
 			||  ITEM_EFFECT(gEffectBank) == ITEM_EFFECT_IRON_BALL
 			||  gNewBS->GravityTimer)
@@ -891,8 +896,10 @@ bool8 SetMoveEffect2(void)
 
 			if (IsOfType(gEffectBank, TYPE_FLYING)
 			||  ABILITY(gEffectBank) == ABILITY_LEVITATE
-			||  (gStatuses3[gEffectBank] & (STATUS3_IN_AIR | STATUS3_LEVITATING | STATUS3_TELEKINESIS)))
-			{
+			||  (gStatuses3[gEffectBank] & (STATUS3_IN_AIR | STATUS3_LEVITATING | STATUS3_TELEKINESIS))
+			||  (ITEM_EFFECT(gEffectBank) == ITEM_EFFECT_AIR_BALLOON))
+			{ 
+			SMACK_TGT_DOWN:
 				gStatuses3[gEffectBank] |= STATUS3_SMACKED_DOWN;
 				gNewBS->targetsToBringDown |= gBitTable[gEffectBank];
 				gBattlescriptCurrInstr += 1;

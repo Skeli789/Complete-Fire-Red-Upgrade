@@ -779,6 +779,7 @@ BattleScript_AbilityNoStatLoss:
 	printstring 0xCE
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
+	setbyte MULTISTRING_CHOOSER 0x4
 	return
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

@@ -340,7 +340,6 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 			
 		case EFFECT_RESTORE_HP:
 		case EFFECT_MORNING_SUN:
-		case EFFECT_SOFTBOILED:
 		case EFFECT_SWALLOW:
 		case EFFECT_WISH:
 			if (GetHealthPercentage(bankAtk) <= 50)
@@ -455,25 +454,16 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 				viability += 4;
 			break;
 			
-		case EFFECT_TEETER_DANCE:
-			if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE))
-				goto AI_CONFUSE_CHECK;
-			if (atkAbility == ABILITY_SERENEGRACE)
-				viability += 6;
-			else if ((CanBeConfused(bankDef)) || (CanBeConfused(bankDefPartner)))
-				viability += 6;
-			break;	
-			
 		case EFFECT_CONFUSE:
 		case EFFECT_FLATTER:
-		AI_CONFUSE_CHECK: ;
+		AI_CONFUSE_CHECK: ;				
 			if (atkAbility == ABILITY_SERENEGRACE)
 				viability += 6;
 			else if (defStatus1 & STATUS1_PARALYSIS)
 				viability += 6;
 			else if (defStatus2 & (STATUS2_INFATUATION))
 				viability += 6;
-			else if (CanBeConfused(bankDef))
+			else if (CanBeConfused(bankDef) || (move == MOVE_TEETERDANCE && CanBeConfused(bankDefPartner)))
 				viability += 5;
 			break;
 		

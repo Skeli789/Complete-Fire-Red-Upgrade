@@ -206,7 +206,7 @@ gBattleScriptingCommandsTable:
 .word 0x802b679				@hiddenpowerdamagecalculation
 .word atkC2_selectfirstvalidtarget	@selectnexttarget
 .word atkC3_trysetfutureattack		@setfutureattack
-.word atkC4_trydobeatup			@beatupcalculation
+.word 0x802B911				@beatupcalculation
 .word atkC5_setsemiinvulnerablebit
 .word atkC6_clearsemiinvulnerablebit
 .word 0x802bc35				@setminimize

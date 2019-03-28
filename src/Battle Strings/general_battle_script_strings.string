@@ -61,7 +61,7 @@ The Lucky Chant shielded\n[FD][36] team from critical hits!
 [FD][10] acquired\n[FD][19]!
 
 #org @AbilitySuppressedString
-[FD][13]'s Ability\nwas suppressed!
+[FD][10]'s Ability\nwas suppressed!
 
 #org @TargetStatsResetString
 [FD][02]'s stat changes\nwere removed!
@@ -121,9 +121,6 @@ The Wide Guard protected\n[FD][10]!
 
 #org @gText_AromaVeilProtects
 [FD][10] is protected\nby an aromatic veil!
-
-#org @gText_TargetProtectedByAbility
-[FD][10] is protected\nby its [FD][19]!
 
 #org @gText_AbilityPreventsStatLoss
 [FD][13]'s stats were\nnot lowered!

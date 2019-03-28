@@ -1136,9 +1136,6 @@ void atk6A_removeitem(void) {
 		CONSUMED_ITEMS(bank) = gLastUsedItem;
 		SAVED_CONSUMED_ITEMS(bank) = gLastUsedItem;
 		gNewBS->UnburdenBoosts |= 1 << bank;
-		
-		if (ITEM_POCKET(gLastUsedItem) == POCKET_BERRY_POUCH)
-			gNewBS->BelchCounters |= gBitTable[gBattlerPartyIndexes[bank]];
 	}
 	
     gBattleMons[bank].item = 0;
@@ -2928,8 +2925,8 @@ void atkC3_trysetfutureattack(void) {
         gBattlescriptCurrInstr += 5;
     }
 }
-
-void atkC4_trydobeatup(void)
+/*
+void atkC4_trydobeatup(void) //Not really needed anymore
 {
     struct Pokemon* party;
 
@@ -2950,12 +2947,12 @@ void atkC4_trydobeatup(void)
 	if (gBattleCommunication[0] < 6)
     {
         ++gBattleCommunication[0];
-		gBattlescriptCurrInstr += 9;
+		gBattlescriptCurrInstr += 5;
     }
 	else
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
 }
-
+*/
 void atkC5_setsemiinvulnerablebit(void) {
     switch (gCurrentMove) {
 		case MOVE_FLY:
@@ -3529,7 +3526,12 @@ void atkEB_settypetoterrain(void) {
 
 void atkEE_removelightscreenreflect(void) { //Brick Break
     u8 side = SIDE(gBankTarget);
-    if (gSideTimers[side].reflectTimer || gSideTimers[side].lightscreenTimer || gNewBS->AuroraVeilTimers[side]) {
+    if (gSideTimers[side].reflectTimer 
+	||  gSideTimers[side].lightscreenTimer
+	||  gSideAffecting[side] & SIDE_STATUS_REFLECT
+	||  gSideAffecting[side] & SIDE_STATUS_LIGHTSCREEN
+	||  gNewBS->AuroraVeilTimers[side])
+	{
         //Now handled as a move effect
 		/*gSideAffecting[side] &= ~(SIDE_STATUS_REFLECT);
         gSideAffecting[side] &= ~(SIDE_STATUS_LIGHTSCREEN);

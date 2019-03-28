@@ -247,7 +247,7 @@ gBattleScriptsForMoveEffects:
 .word BS_234_TopsyTurvyElectrify
 .word BS_235_FairyLockHappyHourCelebrateHoldHands
 .word BS_236_InstructAfterYouQuash
-.word BS_237_Blank
+.word BS_237_SuckerPunch
 .word BS_238_Blank
 .word BS_239_TeamEffectsAndMagnetRise
 .word BS_240_Camouflage
@@ -264,7 +264,7 @@ gBattleScriptsForMoveEffects:
 .word BS_251_Blank
 .word BS_252_Blank
 .word BS_253_Blank
-.word BS_254_Blank
+.word BS_254_Synchronoise
 .word BS_255_Blank
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

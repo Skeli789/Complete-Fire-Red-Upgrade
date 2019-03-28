@@ -435,6 +435,8 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			&& ABILITY(gBankTarget) != ABILITY_STICKYHOLD
 			&& (!gBattleMons[gBankTarget].hp || !(ITEM_EFFECT(gBankTarget) == ITEM_EFFECT_JABOCA_ROWAP_BERRY && ITEM_QUALITY(gBankTarget) == CalcMoveSplit(gBankAttacker, gCurrentMove))))
 			{
+				gNewBS->BelchCounters |= gBitTable[gBattlerPartyIndexes[gBankAttacker]];
+				
 				gLastUsedItem = gBattleMons[gBankTarget].item;
 				gBattleMons[gBankTarget].item = 0;
 					

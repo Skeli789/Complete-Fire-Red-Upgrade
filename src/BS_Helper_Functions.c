@@ -4,6 +4,7 @@
 extern u8* gBattleScriptsForMoveEffects[];
 #define BattleScript_FlushMessageBox (u8*) 0x81D96A8
 #define BattleScript_MoveEnd (u8*) 0x81D694E
+#define BattleScript_ButItDoesntAffect (u8*) 0x81D7E04
 
 extern u8 BattleScript_DarkVoidFail[];
 extern u8 BattleScript_MagneticFluxStatBoost[];
@@ -468,7 +469,7 @@ void BestowItem(void) {
 
 void BelchFunction(void) {
 	if (!(gNewBS->BelchCounters & gBitTable[gBattlerPartyIndexes[gBankAttacker]]))
-		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;	
+		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5 - 2;	
 }
 
 void StrengthSapFunc(void) {
@@ -602,16 +603,19 @@ void LoadPledgeScript(void) {
 		if ((gCurrentMove == MOVE_GRASSPLEDGE && partnerMove == MOVE_WATERPLEDGE)
 		||  (partnerMove == MOVE_GRASSPLEDGE && gCurrentMove == MOVE_WATERPLEDGE))
 		{
+			gCurrentMove = MOVE_GRASSPLEDGE;
 			gNewBS->PledgeHelper = Pledge_Swamp;
 		}
 		else if ((gCurrentMove == MOVE_GRASSPLEDGE && partnerMove == MOVE_FIREPLEDGE)
 			  || (partnerMove == MOVE_GRASSPLEDGE && gCurrentMove == MOVE_FIREPLEDGE))
 		{
+			gCurrentMove = MOVE_FIREPLEDGE;
 			gNewBS->PledgeHelper = Pledge_SeaOfFire;
 		}
 		else if ((gCurrentMove == MOVE_FIREPLEDGE && partnerMove == MOVE_WATERPLEDGE)
 			  || (partnerMove == MOVE_FIREPLEDGE && gCurrentMove == MOVE_WATERPLEDGE))
 		{
+			gCurrentMove = MOVE_WATERPLEDGE;
 			gNewBS->PledgeHelper = Pledge_Rainbow;
 		}
 	
@@ -622,31 +626,33 @@ void LoadPledgeScript(void) {
 	&& partnerMove != gCurrentMove
 	&& gBattleMoves[partnerMove].effect == EFFECT_PLEDGE)
 	{
-		u8 newTurnOrder[] = {0};
+		u8 index = 0;
+		u8 newTurnOrder[] = {0xFF, 0xFF};
 		
-		for (i = 0; gBanksByTurnOrder[i] != gBankAttacker; ++i)
+		for (i = 0; i < gBattlersCount; ++i) 
 		{
-			newTurnOrder[k++] = gBanksByTurnOrder[i];
-			gBanksByTurnOrder[i] = 0xFF;
+			if (gBanksByTurnOrder[i] == gBankAttacker) 
+			{
+				index = i + 1; //Index after attacker; index to start swapping data
+				break;
+			}
 		}
-		gBanksByTurnOrder[i] = 0xFF;
 		
-		for (i = 0; gBanksByTurnOrder[i] != PARTNER(gBankAttacker); ++i) ;
-		gBanksByTurnOrder[i] = 0xFF;
-			
-		newTurnOrder[k++] = gBankAttacker;
-		newTurnOrder[k++] = PARTNER(gBankAttacker);
-		
-		for (i = 0; i < 4; ++i)
-		{
-			if (gBanksByTurnOrder[i] != 0xFF)
+		for (i = index; i < gBattlersCount; ++i) {
+			if (gBanksByTurnOrder[i] != PARTNER(gBankAttacker))
 				newTurnOrder[k++] = gBanksByTurnOrder[i];
 		}
 		
-		for (i = 0; i < 4; ++i)
-			gBanksByTurnOrder[i] = newTurnOrder[i];
+		gBanksByTurnOrder[index++] = PARTNER(gBankAttacker);
+		
+		if (newTurnOrder[0] != 0xFF)
+			gBanksByTurnOrder[index++] = newTurnOrder[0];
+			
+		if (newTurnOrder[1] != 0xFF)
+			gBanksByTurnOrder[index] = newTurnOrder[1];
 			
 		gNewBS->PledgeHelper = TRUE;
+		gBattleScripting->bank = PARTNER(gBankAttacker);
 		gBattlescriptCurrInstr = BattleScript_PledgeReady - 5;
 	}
 }
@@ -792,6 +798,7 @@ void BringDownMons(void) {
 				BattleStringLoader = Bank0AWasBroughtDownString;
 			BattleScriptPushCursor();
 			gBattlescriptCurrInstr = BattleScript_PrintCustomString - 5;
+			return;
 		}
 	}
 }
@@ -968,7 +975,14 @@ void DoFairyLockHappyHourFunc(void) {
 			break;
 		
 		case MOVE_HOLDHANDS:
-			BattleStringLoader = HoldHandsString;
+			if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE
+			&&  gBattleMons[PARTNER(gBankAttacker)].hp)
+			{
+				BattleStringLoader = HoldHandsString;
+			}
+			else
+				gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+			
 			break;
 	}
 }
@@ -990,30 +1004,31 @@ void AfterYouFunc(void) {
 	&&  GetBattlerTurnOrderNum(gBankTarget) > gCurrentTurnActionNumber //Attacker moved before target
 	&&  !TargetMovesRightAfterAttacker())
 	{
-		int k = 0;
-		u8 newTurnOrder[] = {0};
+		u8 index = 0;
+		u8 k = 0;
+		u8 newTurnOrder[] = {0xFF, 0xFF};
 			
-		for (i = 0; gBanksByTurnOrder[i] != gBankAttacker; ++i)
+		for (i = 0; i < gBattlersCount; ++i) 
 		{
-			newTurnOrder[k++] = gBanksByTurnOrder[i];
-			gBanksByTurnOrder[i] = 0xFF;
+			if (gBanksByTurnOrder[i] == gBankAttacker) 
+			{
+				index = i + 1; //Index after attacker; index to start swapping data
+				break;
+			}
 		}
-		gBanksByTurnOrder[i] = 0xFF;
 			
-		for (i = 0; gBanksByTurnOrder[i] != gBankTarget; ++i) ;
-		gBanksByTurnOrder[i] = 0xFF;
-				
-			newTurnOrder[k++] = gBankAttacker;
-			newTurnOrder[k++] = gBankTarget;
-			
-		for (i = 0; i < 4; ++i)
-		{
-			if (gBanksByTurnOrder[i] != 0xFF)
+		for (i = index; i < gBattlersCount; ++i) {
+			if (gBanksByTurnOrder[i] != gBankTarget)
 				newTurnOrder[k++] = gBanksByTurnOrder[i];
 		}
+		
+		gBanksByTurnOrder[index++] = gBankTarget;
+		
+		if (newTurnOrder[0] != 0xFF)
+			gBanksByTurnOrder[index++] = newTurnOrder[0];
 			
-		for (i = 0; i < 4; ++i)
-			gBanksByTurnOrder[i] = newTurnOrder[i];
+		if (newTurnOrder[1] != 0xFF)
+			gBanksByTurnOrder[index] = newTurnOrder[1];
 	}
 	else
 		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
@@ -1026,7 +1041,7 @@ void QuashFunc(void) {
 	&&  GetBattlerTurnOrderNum(gBankTarget) > gCurrentTurnActionNumber) //Attacker moved before target
 	{
 		int k = 0;
-		u8 newTurnOrder[] = {0};
+		u8 newTurnOrder[] = {0xFF, 0xFF, 0xFF, 0xFF};
 		
 		for (i = 0; i < gBattlersCount; ++i)
 		{
@@ -1036,8 +1051,11 @@ void QuashFunc(void) {
 		
 		newTurnOrder[k] = gBankTarget;
 		
-		for (i = 0; i < 4; ++i)
-			gBanksByTurnOrder[i] = newTurnOrder[i];
+		for (i = 0; i < gBattlersCount; ++i)
+		{
+			if (newTurnOrder[i] != 0xFF)
+				gBanksByTurnOrder[i] = newTurnOrder[i];
+		}
 	}
 	else
 		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
@@ -1096,7 +1114,10 @@ void TrySetMagnetRise(void) {
 	|| ITEM_EFFECT(gBankAttacker) == ITEM_EFFECT_IRON_BALL)
 		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
 	else
+	{
 		gNewBS->MagnetRiseTimers[gBankAttacker] = 5;
+		gStatuses3[gBankAttacker] |= STATUS3_LEVITATING;
+	}
 }
 
 void TailwindLuckyChantFunc(void) {
@@ -1273,7 +1294,7 @@ void LoadStatustoPsychoShiftTransfer(void) {
 
 void PluckBerryEat(void) {
 	gBattlescriptCurrInstr += 5;
-	
+			
 	if (ItemBattleEffects(ItemEffects_EndTurn, gBankAttacker, TRUE, TRUE))
 		gBattlescriptCurrInstr -= 5;
 	else if (ItemBattleEffects(ItemEffects_ContactTarget, gBankAttacker, TRUE, TRUE))
@@ -1342,6 +1363,19 @@ void LastResortFunc(void) {
 		gBattlescriptCurrInstr = BattleScript_ButItFailed - 2 - 5;
 }
 
+void SynchronoiseFunc(void)
+{
+	if (ITEM_EFFECT(gBankTarget) == ITEM_EFFECT_RING_TARGET
+	|| (!IS_BLANK_TYPE(gBattleMons[gBankAttacker].type1) && IsOfType(gBankTarget, gBattleMons[gBankAttacker].type1))
+	|| (!IS_BLANK_TYPE(gBattleMons[gBankAttacker].type2) && IsOfType(gBankTarget, gBattleMons[gBankAttacker].type2))
+	|| (!IS_BLANK_TYPE(gBattleMons[gBankAttacker].type3) && IsOfType(gBankTarget, gBattleMons[gBankAttacker].type3)))
+	{
+		return;
+	}
+
+	gBattlescriptCurrInstr = BattleScript_ButItDoesntAffect - 5;
+}
+
 void MakeScriptingBankInvisible(void)
 {
 	if (gBattleExecBuffer) return;
@@ -1398,4 +1432,22 @@ void CycleScriptingBankHealthBetween0And1(void)
 void SetTeleportBit(void)
 {
 	gNewBS->TeleportBit = TRUE;
+}
+
+void TryLaunchShellTrap(void)
+{
+	u8 atkSide = SIDE(gBankAttacker);
+    u8 defSide = SIDE(gProtectStructs[gBankAttacker].physicalBank);
+	
+	if (!gProtectStructs[gBankAttacker].physicalDmg || atkSide == defSide)
+		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5 - 2;
+}
+
+void TrySuckerPunch(void)
+{
+	if ((SPLIT(gChosenMovesByBanks[gBankTarget]) != SPLIT_STATUS && GetBattlerTurnOrderNum(gBankTarget) > gCurrentTurnActionNumber) //Attacker moved before target
+	|| gChosenMovesByBanks[gBankTarget] == MOVE_MEFIRST)
+		return;
+
+	gBattlescriptCurrInstr = BattleScript_ButItFailed - 5 - 2;
 }
