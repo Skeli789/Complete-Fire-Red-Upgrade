@@ -109,11 +109,15 @@ void atk48_playstatchangeanimation(void)
     u16 statAnimId = 0;
     s32 changeableStatsCount = 0;
     u8 statsToCheck = 0;
-
+	u8 flags = gBattlescriptCurrInstr[3];
+	
     gActiveBattler = GetBattleBank(T2_READ_8(gBattlescriptCurrInstr + 1));
     statsToCheck = T2_READ_8(gBattlescriptCurrInstr + 2);
+	
+	if (ABILITY(gActiveBattler) == ABILITY_SIMPLE)
+		flags |= ATK48_STAT_BY_TWO;
 
-    if (T2_READ_8(gBattlescriptCurrInstr + 3) & ATK48_STAT_NEGATIVE) // goes down
+    if (flags & ATK48_STAT_NEGATIVE) // goes down
     {
 		if (ABILITY(gActiveBattler) == ABILITY_CONTRARY)
 			goto STAT_ANIM_UP;
@@ -122,7 +126,7 @@ void atk48_playstatchangeanimation(void)
         s16 startingStatAnimId;
 		u8 ability = ABILITY(gActiveBattler);
 		
-        if (T2_READ_8(gBattlescriptCurrInstr + 3) & ATK48_STAT_BY_TWO)
+        if (flags & ATK48_STAT_BY_TWO)
             startingStatAnimId = STAT_ANIM_MINUS2 - 1;
         else
             startingStatAnimId = STAT_ANIM_MINUS1 - 1;
@@ -131,11 +135,11 @@ void atk48_playstatchangeanimation(void)
 			
             if (statsToCheck & 1)
 			{
-				if (T2_READ_8(gBattlescriptCurrInstr + 3) & ATK48_DONT_CHECK_LOWER)
+				if (flags & ATK48_DONT_CHECK_LOWER)
 				{
-					if (gBattleMons[gActiveBattler].statStages[currStat] > 0)
+					if (gBattleMons[gActiveBattler].statStages[currStat - 1] > 0)
 					{
-						statAnimId = startingStatAnimId + currStat + 1;
+						statAnimId = startingStatAnimId + currStat;
 						changeableStatsCount++;
 					}
 				}
@@ -147,9 +151,9 @@ void atk48_playstatchangeanimation(void)
 						&& !(ability == ABILITY_HYPERCUTTER && currStat == STAT_STAGE_ATK)
 						&& !(ability == ABILITY_BIGPECKS && currStat == STAT_STAGE_DEF))
 				{
-					if (gBattleMons[gActiveBattler].statStages[currStat] > 0)
+					if (gBattleMons[gActiveBattler].statStages[currStat - 1] > 0)
 					{
-						statAnimId = startingStatAnimId + currStat + 1;
+						statAnimId = startingStatAnimId + currStat;
 						changeableStatsCount++;
 					}
 				}
@@ -159,7 +163,7 @@ void atk48_playstatchangeanimation(void)
 
         if (changeableStatsCount > 1) // more than one stat, so the color is gray
         {
-            if (T2_READ_8(gBattlescriptCurrInstr + 3) & ATK48_STAT_BY_TWO)
+            if (flags & ATK48_STAT_BY_TWO)
                 statAnimId = STAT_ANIM_MULTIPLE_MINUS2;
             else
                 statAnimId = STAT_ANIM_MULTIPLE_MINUS1;
@@ -173,16 +177,16 @@ void atk48_playstatchangeanimation(void)
 	
 	STAT_ANIM_UP:	;
         s16 startingStatAnimId;
-        if (T2_READ_8(gBattlescriptCurrInstr + 3) & ATK48_STAT_BY_TWO)
+        if (flags & ATK48_STAT_BY_TWO)
             startingStatAnimId = STAT_ANIM_PLUS2 - 1;
         else
             startingStatAnimId = STAT_ANIM_PLUS1 - 1;
 
         while (statsToCheck != 0)
         {
-            if (statsToCheck & 1 && gBattleMons[gActiveBattler].statStages[currStat] < 12)
+            if (statsToCheck & 1 && gBattleMons[gActiveBattler].statStages[currStat - 1] < 12)
             {
-                statAnimId = startingStatAnimId + currStat + 1;
+                statAnimId = startingStatAnimId + currStat;
                 changeableStatsCount++;
             }
             statsToCheck >>= 1, ++currStat;
@@ -190,7 +194,7 @@ void atk48_playstatchangeanimation(void)
 
         if (changeableStatsCount > 1) // more than one stat, so the color is gray
         {
-            if (T2_READ_8(gBattlescriptCurrInstr + 3) & ATK48_STAT_BY_TWO)
+            if (flags & ATK48_STAT_BY_TWO)
                 statAnimId = STAT_ANIM_MULTIPLE_PLUS2;
             else
                 statAnimId = STAT_ANIM_MULTIPLE_PLUS1;
@@ -340,8 +344,8 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, u8* BS_ptr)
         }
 		
         else if (((ability == ABILITY_KEENEYE && statId == STAT_STAGE_ACC)
-			  ||  (ability == ABILITY_HYPERCUTTER && STAT_STAGE_ATK)
-			  ||  (ability == ABILITY_BIGPECKS && STAT_STAGE_DEF))
+			  ||  (ability == ABILITY_HYPERCUTTER && statId == STAT_STAGE_ATK)
+			  ||  (ability == ABILITY_BIGPECKS && statId == STAT_STAGE_DEF))
         && !certain)
         {
             if (flags == STAT_CHANGE_BS_PTR)

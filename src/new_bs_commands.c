@@ -19,7 +19,6 @@ extern u8 gText_FlowerVeilProtects[];
 extern u8 gText_SweetVeilProtects[];
 #define gText_CantFallAsleepDuringUproar (u8*) 0x83FBDC4
 #define gText_TargetStayedAwakeUsingAbility (u8*) 0x83FBDE2
-extern u8 gText_TargetProtectedByAbility[];
 
 extern bool8 CheckCraftyShield(u8 bank);
 
@@ -633,9 +632,18 @@ void atkFF15_jumpifstatcanbemodified(void)
 			
 		else if (ability == ABILITY_CLEARBODY
         || ability == ABILITY_WHITESMOKE
-		|| ability == ABILITY_FULLMETALBODY)
+		|| ability == ABILITY_FULLMETALBODY
+		|| (ability == ABILITY_FLOWERVEIL && IsOfType(gActiveBattler, TYPE_GRASS)))
+		{
+			gBattleScripting->bank = gActiveBattler;
 			FormCounter = 3;
-			
+		}
+		else if (ABILITY(PARTNER(gActiveBattler)) == ABILITY_FLOWERVEIL
+		&& IsOfType(gActiveBattler, TYPE_GRASS))
+		{
+			gBattleScripting->bank = PARTNER(gActiveBattler);
+			FormCounter = 3;
+		}
 		else if ((ability == ABILITY_KEENEYE && currStat == STAT_STAGE_ACC)
         || (ability == ABILITY_HYPERCUTTER && currStat == STAT_STAGE_ATK)
 		|| (ability == ABILITY_BIGPECKS && currStat == STAT_STAGE_DEF))
@@ -901,7 +909,7 @@ void atkFF22_trysetsleep(void)
 			case ABILITY_LEAFGUARD:
 				if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
 				{
-					BattleStringLoader = gText_TargetProtectedByAbility;
+					BattleStringLoader = gText_TargetStayedAwakeUsingAbility;
 					fail = TRUE;
 				}
 		}
