@@ -1274,7 +1274,6 @@ struct TrainerBattleParameter
 
 struct TerrainTableStruct
 {
-	u16 terrainNum;
 	u8 camouflageType;
 	u8 secretPowerEffect;
 	u16 secretPowerAnim;

@@ -3,6 +3,9 @@
 
 extern const struct CompressedSpriteSheet gBattleAnimPicTable[];
 extern const struct CompressedSpritePalette gBattleAnimPaletteTable[];
+extern const struct TerrainTableStruct TerrainTable[];
+extern u8* AttackAnimationTable[];
+extern const u16 gCamouflageColours[];
 
 bank_t LoadBattleAnimTarget(u8 arg)
 {
@@ -42,7 +45,7 @@ void ScriptCmd_loadspritegfx(void)
     sBattleAnimScriptPtr++;
     index = T1_READ_16(sBattleAnimScriptPtr);
     LoadCompressedSpriteSheetUsingHeap(&gBattleAnimPicTable[GET_TRUE_SPRITE_INDEX(index)]);
-    LoadCompressedSpritePaletteUsingHeap(&gBattleAnimPaletteTable[GET_TRUE_SPRITE_INDEX(index)]);
+    LoadCompressedSpritePaletteUsingHeap(&gBattleAnimPaletteTable[GET_TRUE_SPRITE_INDEX(index)]);	
     sBattleAnimScriptPtr += 2;
     AddSpriteIndex(GET_TRUE_SPRITE_INDEX(index));
     gAnimFramesToWait = 1;
@@ -158,8 +161,8 @@ bool8 ShadowSneakAnimHelper(void)
 
 bool8 IsAnimMoveIonDeluge(void)
 {
-	u16 move = gBattleBufferA[gActiveBattler][1] | (gBattleBufferA[gActiveBattler][2] << 8);
-	return move == MOVE_IONDELUGE;
+	u16 move = gBattleBufferA[gBattleAnimAttacker][1] | (gBattleBufferA[gBattleAnimAttacker][2] << 8);	
+	return gBattleBufferA[gBattleAnimAttacker][0] == CONTROLLER_MOVEANIMATION && move == MOVE_IONDELUGE;
 }
 
 bool8 IsAnimMoveTectnoicRage(void)
@@ -289,6 +292,59 @@ void AnimTask_PlayAttackerCry(u8 taskId)
 {
 	PlayCry3(GetBankPartyData(gBattleAnimAttacker)->species, 0, 0);
 	DestroyAnimVisualTask(taskId);
+}
+
+void AnimTask_GetSecretPowerAnimation(u8 taskId)
+{
+	u16 move;
+	
+	switch (TerrainType) {
+		case ELECTRIC_TERRAIN:
+			move = TerrainTable[0].secretPowerAnim;
+			break;
+		case GRASSY_TERRAIN:
+			move = TerrainTable[1].secretPowerAnim;
+			break;
+		case MISTY_TERRAIN:
+			move = TerrainTable[2].secretPowerAnim;
+			break;
+		case PSYCHIC_TERRAIN:
+			move = TerrainTable[3].secretPowerAnim;
+			break;
+		default:
+			move = TerrainTable[gBattleTerrain + 4].secretPowerAnim;
+	}
+	
+	sBattleAnimScriptPtr = AttackAnimationTable[move];
+	DestroyAnimVisualTask(taskId);
+}
+
+void AnimTask_SetCamouflageBlend(u8 taskId)
+{
+	u8 entry = 0;
+    u32 selectedPalettes = UnpackSelectedBattleAnimPalettes(gBattleAnimArgs[0]);
+	
+	switch (TerrainType) {
+		case ELECTRIC_TERRAIN:
+			entry = 0;
+			break;
+		case GRASSY_TERRAIN:
+			entry = 1;
+			break;
+		case MISTY_TERRAIN:
+			entry = 2;
+			break;
+		case PSYCHIC_TERRAIN:
+			entry = 3;
+			break;
+	}
+	
+	if (entry)
+		gBattleAnimArgs[4] = gCamouflageColours[TerrainTable[entry].camouflageType];
+	else
+		gBattleAnimArgs[4] = gCamouflageColours[TerrainTable[gBattleTerrain + 4].camouflageType];
+
+	StartBlendAnimSpriteColor(taskId, selectedPalettes);
 }
 
 void DoubleWildAnimBallThrowFix(void)

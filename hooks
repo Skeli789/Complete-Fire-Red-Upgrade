@@ -121,6 +121,7 @@ ScriptCmd_loadspritegfx 08072868 0
 ShinyAnimFixHook 080F1792 0
 SlideMonToOriginalPosHook 080991BA 0
 SlideMonToOffsetHook 080992E4 0
+AnimTask_SetCamouflageBlend 080BA934 1
 DetsinyBondASM1 080B6092 0
 DetsinyBondASM2 080B6160 0
 EmbargoASM 080b68e4 0
@@ -136,6 +137,7 @@ ENCORE_USER_ASM 080e0da8 1
 CriticalCaptureAnimHook 080EFF0C 2
 DISABLE_TIME_ASM 080A7FF8 1
 WATERGUN_ASM 080A7C28 0
+ION_DELUGE_ASM 080AAC24 0
 
 ##Poke Ball Hooks
 SetMonPokeBallHook 08040858 0

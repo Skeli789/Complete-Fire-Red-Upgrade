@@ -180,6 +180,8 @@ void __attribute__((long_call)) CB2_EndWildBattle(void);
 u8 __attribute__((long_call)) GetWildBattleTransition(void);
 u8* __attribute__((long_call)) GetTrainerALoseText(void);
 u8* __attribute__((long_call)) GetTrainerAWinText(void);
+u32 __attribute__((long_call)) UnpackSelectedBattleAnimPalettes(s16);
+void __attribute__((long_call)) StartBlendAnimSpriteColor(u8, u32);
 void __attribute__((long_call)) BattleIntroSlide2(u8 taskId);
 void __attribute__((long_call)) BattleIntroSlide3(u8 taskId);
 void __attribute__((long_call)) BattleIntroSlideLink(u8 taskId);
