@@ -41,7 +41,7 @@
 .equ ALPHA_STONE_IMG, Alpha_StoneTiles
 .equ BERRY_NORMAL_IMG, Berry_NormalTiles
 .equ BERRY_EATEN_IMG, Berry_EatenTiles
-.equ DRAGON_ASCENT_IMG, 0x8777777
+.equ DRAGON_ASCENT_IMG, Purple_DrakeTiles @Can be changed
 .equ PINK_DIAMOND_IMG, Pink_DiamondTiles
 .equ STEAM_ERUPTION_IMG, Steam_EruptionTiles
 .equ CONFIDE_IMG, ConfideTiles
@@ -50,7 +50,7 @@
 .equ CHAIN_LINK_IMG, Chain_LinkTiles
 .equ ANCHOR_IMG, AnchorTiles
 .equ HORSESHOE_SIDE_FIST_IMG, Horseshoe_HammerFistTiles
-.equ DRAGON_ASCENT_FOE_IMG, 0x8777777
+.equ DRAGON_ASCENT_FOE_IMG, Purple_DrakeTiles @Can be changed
 .equ CRAFTY_SHIELD_IMG, Crafty_ShieldTiles
 .equ QUICK_GUARD_HAND_IMG, Quick_GuardTiles
 .equ BLACEPHALON_HEAD_IMG, Blacephalon_HeadTiles

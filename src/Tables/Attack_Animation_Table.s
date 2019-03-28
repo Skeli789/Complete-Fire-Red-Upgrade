@@ -319,7 +319,7 @@ AttackAnimationTable:
 .word 0x81d2c42		@MOVE_REFRESH
 .word 0x81cc04a		@MOVE_GRUDGE
 .word 0x81d414f		@MOVE_SNATCH
-.word 0x81d4cba		@MOVE_SECRETPOWER
+.word ANIM_SECRETPOWER
 .word 0x81d4169		@MOVE_DIVE
 .word 0x81d2e93		@MOVE_ARMTHRUST
 .word 0x81cc072		@MOVE_CAMOUFLAGE
@@ -1442,6 +1442,12 @@ ANIM_SKILLSWAP:
 	pause 0x10 
 	launchtask 0x80B3835 0x3 0x1 0x0  
 	launchtask 0x807616D 0x5 0x5 0x0 0x7fff 0xc 0x3 0x1  
+	waitanimation
+	endanimation
+
+.pool
+ANIM_SECRETPOWER:
+	launchtask AnimTask_GetSecretPowerAnimation 0x5 0x0
 	waitanimation
 	endanimation
 
@@ -9078,10 +9084,7 @@ ANIM_NOBLEROAR:
 .pool     
 @ Credits to Nuisance
 ANIM_DRAGONASCENT:
-	loadparticle ANIM_TAG_ROUND_SHADOW 
-	loadparticle ANIM_TAG_IMPACT
 	loadparticle ANIM_TAG_DRAGON_ASCENT
-	loadparticle ANIM_TAG_DRAGON_ASCENT_FOE
 	setblends 0xB0C
 	pokespritetoBG side_target
 	launchtemplate 0x83E7B24 0x2 0x5 0x1 0x3 0x0 0xC 0x0 @Darkens the BG
@@ -9093,18 +9096,15 @@ ANIM_DRAGONASCENT:
 	pause 0x14 
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ATK 0x1 0xf 0x0 0x7fff  
 	waitanimation
-	playsound2 0x97 0xc0 
-	launchtemplate ASCENT_FLYUP 0x2 0x4 0x0 0x0 0xd 0x150
+	playsound2 0x97 0xc0
+	launchtemplate ASCENT_FLYUP 0x2 0x7 0x0 0x0 0x400 0x24 0x15 0x1 bank_attacker
+	makebankinvisible bank_attacker
 	waitanimation
 	loadBG1 BG_COSMIC
 	waitforBG
 	launchtask AnimTask_scroll_background 0x5 0x4 0xf700 0x300 0x1 0xffff
 	waitfortransparentBG
-	launchtask AnimTask_arg7_is_target_player 0x2 0x0  
-	jumpifargmatches 0x7 0x1 OPPONENT_ATTACK
-	launchtemplate DRAGONASCENTFOE 0x2 0x1 0x14
-
-AFTERHIT:
+	launchtemplate DRAGONASCENT_DRAKE 0x82 0x1 0x14
 	pause 0x7
 	playsound2 0x86 0x3F
 	pause 0x5
@@ -9117,14 +9117,9 @@ AFTERHIT:
 	waitanimation
 	endanimation
 
-OPPONENT_ATTACK:
-	launchtemplate DRAGONASCENTPLAYER 0x2 0x1 0x14
-	goto AFTERHIT
-
 .align 2
-ASCENT_FLYUP: 	objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_DRAGON_ASCENT 0x83ACAA0 0x8231CF0 0x0 0x83E6B8C 0x80B1BB1
-DRAGONASCENTPLAYER: objtemplate ANIM_TAG_DRAGON_ASCENT_FOE ANIM_TAG_DRAGON_ASCENT 0x83AC9E0 0x8231CF0 0x0 0x83E6BB0 0x80B1C3D
-DRAGONASCENTFOE: objtemplate ANIM_TAG_DRAGON_ASCENT ANIM_TAG_DRAGON_ASCENT 0x83AC9E0 0x8231CF0 0x0 0x83E6BB0 0x80B1C3D
+ASCENT_FLYUP: objtemplate ANIM_TAG_DRAGON_ASCENT ANIM_TAG_DRAGON_ASCENT 0x83ACA40 0x8231CF0 0x0 DRAKE_UP_ROTATIONS 0x80B477D 
+DRAGONASCENT_DRAKE: objtemplate ANIM_TAG_DRAGON_ASCENT ANIM_TAG_DRAGON_ASCENT 0x83ACA40 0x8231CF0 0x0 DRAKE_STRIKE_ROTATIONS 0x80B1C3D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
@@ -12606,7 +12601,7 @@ SUNSTRIKE_BEAM:
 
 SUNSTRIKE_OPPONENT_ATTACK:
 	launchtemplate SUNSTRIKE_BEFOREHIT2 0x2 0x1 0x14
-	goto AFTERHIT
+	goto SUNSTRIKE_AFTERHIT
 
 .align 2
 SUNSTRIKE_BLACKFLY: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_AIR_WAVE_2 0x83ACAA0 0x8231CF0 0x0 0x83E6B8C 0x80B1BB1
@@ -13855,7 +13850,7 @@ ION_DELUGE_ASM:
 	beq RainDanceIon
 
 DoIonDeluge:
-	ldr r0, =IONS
+	ldr r0, .IonTemplate
 	b ReturnIonASM
 
 RainDanceIon:
@@ -13866,6 +13861,8 @@ ReturnIonASM:
 	mov r3, #0x4
 	ldr r4, =0x80AAC2D
 	bx r4
+
+.IonTemplate: .word IONS
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
@@ -15011,7 +15008,6 @@ ANIM_HAPPYHOUR:
 	loadparticle ANIM_TAG_COIN
 	pokespritetoBG bank_attacker
 	soundcomplex 0xa7 0x3f 0x8 10 
-	launchtask AnimTask_move_bank 0x2 0x5 bank_attacker 0x0 0x5 0x32 0x1 
 	launchtemplate COIN_DROP 0x82 0x4 0xfffb 0x0 0xfffb 0x1  
 	pause 0x2 
 	launchtemplate COIN_DROP 0x82 0x4 0x5 0x0 0x6 0x1   
