@@ -7,6 +7,7 @@
 .equ MAX_LEVEL, 100
 .equ fossilImageTable, 0x081a4600
 .equ pcSelect_StateTracker, 0x0203b7ac
+.equ gCreateSpriteTableSetter, 0x0203b7ad
 
 @Ram Locs
 .equ CURRENT_MOVE, 0x2023D4A

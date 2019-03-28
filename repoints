@@ -115,8 +115,10 @@ SurfPal 080AB464
 gMoveMenuInfoIcons 8107DAC
 Type_IconsTiles 08107DB0
 
-
 ## PC Selection BRM
 pcSelect_newBrmTable 08094e48
 pcSelect_OperationsTable 0808fbc8
 pcSelect_OperationsTable 0808fce4
+
+##Script Commands
+createSpriteLoadTable 08015fc5c

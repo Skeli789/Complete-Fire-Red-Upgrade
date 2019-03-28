@@ -259,6 +259,12 @@ HiddenAbilityEggHatching2:
 .org 0x4A216, 0xFF
 MaxLevelChange1:
 	.byte MAX_LEVEL	
+	
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Createsprite Fix - remove bit shifts in lnpc_new
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x5EA0A, 0xff
+	.word 0x0	
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Hidden Abilities - Stench, Illuminate
