@@ -157,7 +157,7 @@ AttackAnimationTable:
 .word 0x81cf456		@MOVE_BONECLUB
 .word 0x81c7af5		@MOVE_FIREBLAST
 .word ANIM_WATERFALL		@MOVE_WATERFALL
-.word 0x81ce29e		@MOVE_CLAMP
+.word ANIM_CLAMP
 .word 0x81c7345		@MOVE_SWIFT
 .word 0x81cab2f		@MOVE_SKULLBASH
 .word 0x81c8591		@MOVE_SPIKECANNON
@@ -807,6 +807,27 @@ ANIM_WATERFALL:
 	pokespritefromBG side_target
 	call UNSET_SCROLLING_BG
 	endanimation 
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+.global ANIM_CLAMP
+ANIM_CLAMP:
+	loadparticle ANIM_TAG_SHELL_RIGHT 
+	loadparticle ANIM_TAG_SHELL_LEFT  
+	loadparticle ANIM_TAG_IMPACT 
+	pokespritetoBG bank_target 
+	setblends 0x80c 
+	playsound2 0x95 0x3f 
+	launchtemplate ShellRight 0x2 0x6 0xffd7 0x0 0x2 0x333 0x0 0xa 
+	launchtemplate ShellLeft 0x2 0x6 0x20 0x0 0x6 0xfccd 0x0 0xa 
+	pause 0xa 
+	launchtemplate Template_Hit 0x2 0x4 0x0 0x0 0x1 0x2 
+	launchtask AnimTask_move_bank 0x5 0x5 0x1 0x3 0x0 0x5 0x1 
+	waitanimation 
+	pokespritefromBG bank_target 
+	resetblends 
+	waitanimation 
+	endanimation  
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
