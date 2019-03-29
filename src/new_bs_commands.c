@@ -1,10 +1,21 @@
 #include "defines.h"
 #include "helper_functions.h"
+#include "CMD49.h"
 
 //Do Sleep Clause
 
 extern void (* const gBattleScriptingCommandsTable[])(void);
 extern void (* const gBattleScriptingCommandsTable2[])(void);
+
+#define BattleScript_DestinyBondTakesLife (u8*) 0x81D8C6C
+#define BattleScript_GrudgeTakesPp (u8*) 0x81D8FA3
+extern u8 BattleScript_FaintTarget[];
+extern u8 BattleScript_PoisonTouch[];
+extern u8 BattleScript_KingsShield[];
+extern u8 BattleScript_SpikyShield[];
+extern u8 BattleScript_BanefulBunker[];
+extern u8 BattleScript_RageIsBuilding[];
+extern u8 BattleScript_BeakBlastBurn[];
 
 extern u8 ElectricTerrainSetString[];
 extern u8 GrassyTerrainSetString[];
@@ -19,6 +30,7 @@ extern u8 gText_FlowerVeilProtects[];
 extern u8 gText_SweetVeilProtects[];
 #define gText_CantFallAsleepDuringUproar (u8*) 0x83FBDC4
 #define gText_TargetStayedAwakeUsingAbility (u8*) 0x83FBDE2
+
 
 extern bool8 CheckCraftyShield(u8 bank);
 
@@ -101,7 +113,7 @@ void atkFD_jumpifabilitypresenttargetfield(void)
 }
 
 //jumpifspecies BANK SPECIES ROM_OFFSET
-void atkFE_jumpifspecies(void)
+void atkFF22_jumpifspecies(void)
 {
 	u8 bank = GetBattleBank(gBattlescriptCurrInstr[1]);
 	u16 species = T1_READ_16(gBattlescriptCurrInstr + 2);
@@ -840,8 +852,246 @@ void atkFF21_tryspectralthiefsteal(void)
 		gBattlescriptCurrInstr += 5;
 }
 
+//prefaintmoveendeffects ARG NULL_BYTE
+void atkFE_prefaintmoveendeffects(void)
+{
+	if (gBattleExecBuffer) return;
+	
+	u32 effect = FALSE;
+	u8 arg1 = gBattlescriptCurrInstr[1];
+	
+	do
+    {
+        switch (gNewBS->preFaintEffectsTracker)
+        {
+		case FAINT_SET_UP: //For Emergency Exit to use later
+			if (gNewBS->MultiHitOn)
+				gNewBS->DamageTaken[gBankTarget] += gHpDealt; //Total up damage taken
+			else
+				gNewBS->DamageTaken[gBankTarget] = gHpDealt;
+			
+			gNewBS->ResultFlags[gBankTarget] = gMoveResultFlags;
+			gNewBS->preFaintEffectsTracker++;
+            break;
+		
+		case FAINT_ATTACKER_ABILITIES:			
+			if (arg1 != ARG_IN_FUTURE_ATTACK
+			&& TOOK_DAMAGE(gBankTarget)
+			&& MOVE_HAD_EFFECT
+			&& gBattleMons[gBankTarget].hp
+			&& !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, gBankTarget))
+			{
+				switch (ABILITY(gBankAttacker)) {
+					case ABILITY_STENCH: //Check for Stench is taken care of in King's Rock check
+						if (umodsi(Random(), 100) < 10
+						&& gCurrentTurnActionNumber < GetBattlerTurnOrderNum(gBankTarget)) //Attacker moved before target
+						{
+							gBattleMons[gBankTarget].status2 |= STATUS2_FLINCHED;
+						}
+						break;
+					
+					case ABILITY_POISONTOUCH:
+						if (CheckContact(gCurrentMove, gBankAttacker)
+						&& ABILITY(gBankTarget) != ABILITY_SHIELDDUST
+						&& CanBePoisoned(gBankTarget, gBankAttacker)
+						&& umodsi(Random(), 100) < 30)
+						{
+							BattleScriptPushCursor();
+							gBattlescriptCurrInstr = BattleScript_PoisonTouch;
+							effect = TRUE;
+						}
+				}
+			}
+			gNewBS->preFaintEffectsTracker++;
+            break;
+		
+		case FAINT_ADVERSE_PROTECTION:
+			if (gProtectStructs[gBankTarget].kingsshield_damage)
+			{
+				gProtectStructs[gBankTarget].kingsshield_damage = 0;
+				
+				if (gBattleMons[gBankAttacker].hp
+				&&  STAT_CAN_FALL(gBankAttacker, STAT_ATK))
+				{
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_KingsShield;
+					effect = TRUE;
+					break;
+				}
+			}
+			if (gProtectStructs[gBankTarget].spikyshield_damage)
+			{
+				gProtectStructs[gBankTarget].spikyshield_damage = 0;
+				if (gBattleMons[gBankAttacker].hp && ABILITY(gBankAttacker) != ABILITY_MAGICGUARD)
+				{
+					gBattleMoveDamage = MathMax(1, gBattleMons[gBankAttacker].hp / 8);
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_SpikyShield;			
+					effect = 1;
+				}
+				break;	
+			}
+			if (gProtectStructs[gBankTarget].banefulbunker_damage)
+			{
+				gProtectStructs[gBankTarget].banefulbunker_damage = 0;
+				if (gBattleMons[gBankAttacker].hp
+				&&  CanBePoisoned(gBankAttacker, gBankTarget)) //Target poisons Attacker
+				{
+					gBattleMons[gBankAttacker].status1 = STATUS_POISON;
+					gEffectBank = gActiveBattler = gBankAttacker;
+					EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[gBankAttacker].status1);
+					MarkBufferBankForExecution(gActiveBattler);
+					
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_BanefulBunker;			
+					effect = 1;
+				}
+				effect = 1;
+				break;
+			}
+			gNewBS->preFaintEffectsTracker++;
+            break;
+
+		case FAINT_RAGE: // rage check
+            if (gBattleMons[gBankTarget].status2 & STATUS2_RAGE
+            && gBattleMons[gBankTarget].hp 
+			&& gBankAttacker != gBankTarget
+            && SIDE(gBankAttacker) != SIDE(gBankTarget)
+            && MOVE_HAD_EFFECT 
+			&& TOOK_DAMAGE(gBankTarget)
+            && SPLIT(gCurrentMove) != SPLIT_STATUS 
+			&& STAT_CAN_RISE(gBankTarget, STAT_ATK))
+            {
+                gBattleMons[gBankTarget].statStages[STAT_ATK - 1]++;
+                BattleScriptPushCursor();
+                gBattlescriptCurrInstr = BattleScript_RageIsBuilding;
+                effect = TRUE;
+            }
+            gNewBS->preFaintEffectsTracker++;
+            break;	
+
+        case FAINT_SYNCHRONIZE_TARGET: // target synchronize
+			if (gCurrentMove != MOVE_PSYCHOSHIFT || !MOVE_HAD_EFFECT) //The lazy way of taking care of Psycho Shift Status Transfer->Synchronize->Heal Status
+			{
+				if (AbilityBattleEffects(ABILITYEFFECT_SYNCHRONIZE, gBankTarget, 0, 0, 0))
+					effect = TRUE;
+			}
+            gNewBS->preFaintEffectsTracker++;
+            break;
+			
+		case FAINT_BEAK_BLAST_BURN:
+			if (CheckContact(gCurrentMove, gBankAttacker)
+			&& MOVE_HAD_EFFECT
+			&& TOOK_DAMAGE(gBankTarget)
+			&& gNewBS->BeakBlastByte & gBitTable[gBankTarget]
+			&& CanBeBurned(gBankAttacker))
+			{
+				BattleScriptPushCursor();
+                gBattlescriptCurrInstr = BattleScript_BeakBlastBurn;
+                effect = TRUE;
+			}
+			else
+				gNewBS->preFaintEffectsTracker++;
+            break;
+			
+		case FAINT_SYNCHRONIZE_ATTACKER: // attacker synchronize
+		case FAINT_SYNCHRONIZE_ATTACKER_2:
+            if (AbilityBattleEffects(ABILITYEFFECT_ATK_SYNCHRONIZE, gBankAttacker, 0, 0, 0))
+                effect = TRUE;
+            gNewBS->preFaintEffectsTracker++;
+            break;
+			
+		case FAINT_MOVE_END_ABILITIES: // Such as abilities activating on contact(Poison Spore, Rough Skin, etc.).
+			if (AbilityBattleEffects(ABILITYEFFECT_CONTACT, gBankTarget, 0, 0, 0))
+                effect = TRUE;
+            gNewBS->preFaintEffectsTracker++;
+            break;
+			
+		case FAINT_ITEM_EFFECTS_CONTACT_TARGET:
+			if (gBattleMoves[gCurrentMove].effect != EFFECT_EAT_BERRY //Skip Berries for Pluck to eat
+			|| gCurrentMove == MOVE_INCINERATE
+			|| ITEM_POCKET(gBankTarget) != POCKET_BERRY_POUCH
+			|| ITEM_EFFECT(gBankTarget) == ITEM_EFFECT_JABOCA_ROWAP_BERRY) //Only berries that activate before pluck
+			{
+				if (ItemBattleEffects(ItemEffects_ContactTarget, gBankTarget, TRUE, FALSE))
+					effect = TRUE;
+			}
+			gNewBS->preFaintEffectsTracker++;
+			break;
+			
+		case FAINT_COUNT:
+            break;
+        }
+	} while (gNewBS->preFaintEffectsTracker != FAINT_COUNT && effect == FALSE);
+	
+    if (gNewBS->preFaintEffectsTracker == FAINT_COUNT && effect == FALSE)
+        gBattlescriptCurrInstr += 3;
+}
+
+// faintpokemonaftermove NULL_BYTE NULL_WORD
+void atkFF23_faintpokemonaftermove(void)
+{	
+	gActiveBattler = gBankTarget;
+	
+    if (!(gAbsentBattlerFlags & gBitTable[gActiveBattler])
+    && gBattleMons[gActiveBattler].hp == 0)
+    {
+        gHitMarker |= HITMARKER_FAINTED(gActiveBattler);
+        BattleScriptPush(gBattlescriptCurrInstr + 3);
+        gBattlescriptCurrInstr = BattleScript_FaintTarget;
+        if (SIDE(gActiveBattler) == B_SIDE_PLAYER)
+        {
+            gHitMarker |= HITMARKER_x400000;
+            if (gBattleResults->playerFaintCounter < 0xFF)
+                gBattleResults->playerFaintCounter++;
+            AdjustFriendshipOnBattleFaint(gActiveBattler);
+        }
+        else
+        {
+            if (gBattleResults->opponentFaintCounter < 0xFF)
+                gBattleResults->opponentFaintCounter++;
+            gBattleResults->lastOpponentSpecies = GetBankPartyData(gActiveBattler)->species;
+        }
+			
+		gNewBS->RetaliateCounters[SIDE(gActiveBattler)] = 2;
+			
+        if ((gHitMarker & HITMARKER_DESTINYBOND) 
+		&& gBattleMons[gBankAttacker].hp != 0)
+        {
+            gHitMarker &= ~(HITMARKER_DESTINYBOND);
+			u8* backupScript = gBattlescriptCurrInstr;
+			gBattlescriptCurrInstr = BattleScript_DestinyBondTakesLife;
+            BattleScriptPushCursor();
+            gBattleMoveDamage = gBattleMons[gBankAttacker].hp;
+            gBattlescriptCurrInstr = backupScript;
+        }
+			
+        if ((gStatuses3[gBankTarget] & STATUS3_GRUDGE)
+        && !(gHitMarker & HITMARKER_GRUDGE)
+        && SIDE(gBankAttacker) != SIDE(gBankTarget)
+        && gBattleMons[gBankAttacker].hp != 0
+        && gCurrentMove != MOVE_STRUGGLE)
+        {
+            u8 moveIndex = gBattleStruct->chosenMovePositions[gBankAttacker];
+
+            gBattleMons[gBankAttacker].pp[moveIndex] = 0;
+            BattleScriptPush(gBattlescriptCurrInstr);
+            gBattlescriptCurrInstr = BattleScript_GrudgeTakesPp;
+            gActiveBattler = gBankAttacker;
+            EmitSetMonData(0, moveIndex + REQUEST_PPMOVE1_BATTLE, 0, 1, &gBattleMons[gActiveBattler].pp[moveIndex]);
+            MarkBufferBankForExecution(gActiveBattler);
+
+            PREPARE_MOVE_BUFFER(gBattleTextBuff1, gBattleMons[gBankAttacker].moves[moveIndex])
+        }
+    }
+    else
+    {
+        gBattlescriptCurrInstr += 3;
+    }
+}
+
 //trysetsleep BANK FAIL_ADDRESS
-void atkFF22_trysetsleep(void)
+void atkFF23_trysetsleep(void)
 {
 	u8 bank = GetBattleBank(gBattlescriptCurrInstr[1]);
 	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 2);

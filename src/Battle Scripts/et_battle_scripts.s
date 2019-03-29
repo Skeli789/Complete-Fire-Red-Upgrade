@@ -448,7 +448,8 @@ BattleScript_DoFutureAttackHit:
 	datahpupdate BANK_TARGET
 	resultmessage
 	waitmessage DELAY_1SECOND
-	faintpokemon BANK_TARGET 0x0 0x0
+	prefaintmoveendeffects 0x3
+	faintpokemonaftermove
 	ifwildbattleend BattleScript_FutureAttackEnd
 
 BattleScript_FutureAttackEnd:

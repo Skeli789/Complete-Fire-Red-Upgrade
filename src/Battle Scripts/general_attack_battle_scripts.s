@@ -2361,7 +2361,8 @@ DoBurnUp:
 	accuracycheck BS_MOVE_MISSED 0x0
 	call STANDARD_DAMAGE
 	seteffectwithchancetarget
-	faintpokemon BANK_TARGET 0x0 0x0
+	prefaintmoveendeffects 0x0
+	faintpokemonaftermove
 	jumpifmovehadnoeffect BS_MOVE_END
 	setbyte CMD49_STATE 0x0
 	cmd49 0x0 0x0
@@ -2423,7 +2424,8 @@ UTurnBS:
 	call STANDARD_DAMAGE
 	jumpifmovehadnoeffect BS_MOVE_FAINT
 	seteffectwithchancetarget
-	faintpokemon BANK_TARGET 0x0 0x0
+	prefaintmoveendeffects 0x0
+	faintpokemonaftermove
 	setbyte CMD49_STATE 0x0
 	cmd49 BANK_TARGET 0x0
 	jumpifcannotswitch BANK_ATTACKER 0x81D6957
@@ -2629,7 +2631,8 @@ FellStingerBS: @;Add in Volt Switch Fix?
 	attackcanceler
 	accuracycheck BS_MOVE_MISSED 0x0
 	call STANDARD_DAMAGE
-	faintpokemon BANK_TARGET 0x0 0x0
+	prefaintmoveendeffects 0x0
+	faintpokemonaftermove
 	jumpiffainted BANK_TARGET FellStingerKill
 	goto BS_MOVE_FAINT
 
@@ -2963,7 +2966,8 @@ BS_161_SpitUp:
 	stockpiletobasedamage 0x81D7E6A @;Spit Up Fail
 	call STANDARD_DAMAGE
 	seteffectwithchancetarget
-	faintpokemon BANK_TARGET 0x0 0x0
+	prefaintmoveendeffects 0x0
+	faintpokemonaftermove
 	
 SpitUpCompareStats:
 	jumpifstat BANK_TARGET GREATERTHAN STAT_DEF STAT_MIN SpitUpLowerDef
@@ -3175,7 +3179,8 @@ FinalGambitBS:
 	graphicalhpupdate BANK_TARGET
 	datahpupdate BANK_TARGET
 	seteffectwithchancetarget
-	faintpokemon BANK_TARGET 0x0 0x0
+	prefaintmoveendeffects 0x0
+	faintpokemonaftermove
 	jumpifmovehadnoeffect BS_MOVE_END
 	setuserhptozero
 	graphicalhpupdate BANK_ATTACKER
@@ -4341,7 +4346,8 @@ BS_220_NaturalGift:
 	accuracycheck NaturalGiftMiss 0x0
 	call STANDARD_DAMAGE
 	seteffectwithchancetarget
-	faintpokemon BANK_TARGET 0x0 0x0
+	prefaintmoveendeffects 0x0
+	faintpokemonaftermove
 	removeitem BANK_ATTACKER
 	goto BS_MOVE_END
 
@@ -4378,7 +4384,8 @@ BS_223_RelicSong:
 	accuracycheck BS_MOVE_MISSED 0x0
 	call STANDARD_DAMAGE
 	seteffectwithchancetarget
-	faintpokemon BANK_TARGET 0x0 0x0
+	prefaintmoveendeffects 0x0
+	faintpokemonaftermove
 	jumpifmovehadnoeffect BS_MOVE_END
 	jumpifnoviablemonsleft BANK_TARGET BS_MOVE_END
 	jumpifspecies BANK_ATTACKER PKMN_MELOETTA TransformToPirouetteBS
@@ -4525,7 +4532,8 @@ BS_229_Fling:
 	accuracycheck FlingMissBS 0x0
 	call STANDARD_DAMAGE
 	seteffectwithchancetarget
-	faintpokemon BANK_TARGET 0x0 0x0
+	prefaintmoveendeffects 0x0
+	faintpokemonaftermove
 	removeitem 0x1
 	goto BS_MOVE_END
 
@@ -4628,7 +4636,8 @@ ThroatChopBS:
 	call STANDARD_DAMAGE
 	setcounter BANK_TARGET THROAT_CHOP_TIMERS 0x2
 	seteffectwithchancetarget
-	faintpokemon BANK_TARGET 0x0 0x0
+	prefaintmoveendeffects 0x0
+	faintpokemonaftermove
 	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -4839,7 +4848,8 @@ BS_241_FlameBurst:
 	call STANDARD_DAMAGE
 	jumpifmovehadnoeffect BS_MOVE_FAINT
 	seteffectwithchancetarget
-	faintpokemon 0x0 0x0 0x0
+	prefaintmoveendeffects 0x0
+	faintpokemonaftermove
 	callasm FlameBurstFunc
 	orword HIT_MARKER, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_NON_ATTACK_DMG
 	graphicalhpupdate BANK_SCRIPTING
@@ -4855,14 +4865,14 @@ BS_241_FlameBurst:
 .global BS_242_LastResortSkyDrop
 BS_242_LastResortSkyDrop:
 	jumpifmove MOVE_LASTRESORT LastResortBS
-	jumpifsecondarystatus BANK_ATTACKER STATUS2_MULTIPLETURNS BS_SecondTurnSemiInvulnerable
-	jumpifword ANDS HIT_MARKER HITMARKER_NO_ATTACKSTRING BS_SecondTurnSemiInvulnerable
+	jumpifsecondarystatus BANK_ATTACKER STATUS2_MULTIPLETURNS SkyDropDropBS
+	jumpifword ANDS HIT_MARKER HITMARKER_NO_ATTACKSTRING SkyDropDropBS
 	
 	attackcanceler
 	jumpifbehindsubstitute BANK_TARGET FAILED-2
 	jumpifspecialstatusflag EQUALS STATUS3_SEMI_INVULNERABLE 0x0 FAILED-2
 	accuracycheck BS_MOVE_MISSED 0x0
-	printstring 0x130 @;Blank String
+	attackstring
 	ppreduce
 	attackanimation
 	waitanimation
@@ -4871,12 +4881,22 @@ BS_242_LastResortSkyDrop:
 	setword BATTLE_STRING_LOADER SkyDropUpString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+	orword HIT_MARKER HITMARKER_CHARGING
+	setmoveeffect MOVE_EFFECT_CHARGING | MOVE_EFFECT_AFFECTS_USER
+	seteffecttarget
 	goto BS_MOVE_END
 
 SkyDropDropBS:
+	attackcanceler
+	attackstring
+	pause DELAY_HALFSECOND
+	setmoveeffect MOVE_EFFECT_CHARGING
+	setbyte ANIM_TURN 0x1
+	clearstatus BANK_ATTACKER
 	clearsemiinvulnerablebit
 	makevisible BANK_TARGET
-	setword FreedFromSkyDropString
+	copyarray BATTLE_SCRIPTING_BANK TARGET_BANK 0x1
+	setword BATTLE_STRING_LOADER FreedFromSkyDropString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	goto BS_HIT_FROM_DAMAGE_CALC

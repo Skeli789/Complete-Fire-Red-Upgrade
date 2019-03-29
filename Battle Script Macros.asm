@@ -1400,11 +1400,9 @@
 	.4byte \rom_address
 	.endm
 
-	.macro jumpifspecies bank species rom_address
-	.byte 0xfe
-	.byte \bank
-	.2byte \species
-	.4byte \rom_address
+	.macro prefaintmoveendeffects arg
+	.byte 0xFE
+	.byte \arg, 0x0
 	.endm
 
 	.macro cureprimarystatus bank rom_address
@@ -1581,4 +1579,16 @@
 	.macro tryspectralthiefsteal rom_address
 	.byte 0xFF, 0x21
 	.4byte \rom_address
+	.endm
+
+	.macro jumpifspecies bank species rom_address
+	.byte 0xFF, 0x22
+	.byte \bank
+	.2byte \species
+	.4byte \rom_address
+	.endm
+	
+	.macro faintpokemonaftermove
+	.byte 0xFF, 0x23
+	.byte 0x0, 0x0
 	.endm

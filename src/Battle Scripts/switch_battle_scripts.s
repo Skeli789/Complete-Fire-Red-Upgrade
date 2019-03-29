@@ -203,7 +203,8 @@ HandleActionSwitchEnd:
 BattleScript_PursuitDmgOnSwitchOut:
 	pause DELAY_HALFSECOND
 	call STANDARD_DAMAGE
-	faintpokemon BANK_TARGET 0x0 0x0
+	prefaintmoveendeffects 0x0
+	faintpokemonaftermove
 	setbyte CMD49_STATE, 0x0
 	cmd49 0x4 0x0
 	various BANK_TARGET 4

@@ -264,7 +264,7 @@ gBattleScriptingCommandsTable:
 .word atkFB_setspecialstatusbit
 .word atkFC_clearspecialstatusbit
 .word atkFD_jumpifabilitypresenttargetfield
-.word atkFE_jumpifspecies
+.word atkFE_prefaintmoveendeffects
 .word atkFF_callsecondarytable
 
 gBattleScriptingCommandsTable2:
@@ -302,3 +302,5 @@ gBattleScriptingCommandsTable2:
 .word atkFF1F_flowershieldlooper
 .word atkFF20_jumpifprotectedbycraftyshield
 .word atkFF21_tryspectralthiefsteal
+.word atkFF22_jumpifspecies
+.word atkFF23_faintpokemonaftermove
