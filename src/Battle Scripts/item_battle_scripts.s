@@ -463,6 +463,8 @@ BattleScript_HangedOnFocusSash:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_Gems:
+	callasm BufferAttackerItem
+	pause DELAY_HALFSECOND
 	playanimation BANK_ATTACKER ANIM_ITEM_USE 0x0
 	setword BATTLE_STRING_LOADER GemString
 	printstring 0x184
