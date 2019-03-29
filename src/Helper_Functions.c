@@ -838,7 +838,8 @@ u8 AttacksThisTurn(u8 bank, u16 move) // Note: returns 1 if it's a charging turn
     ||  gBattleMoves[move].effect == EFFECT_SOLARBEAM
     ||  gBattleMoves[move].effect == EFFECT_SEMI_INVULNERABLE
     ||  gBattleMoves[move].effect == EFFECT_BIDE
-	||	move == MOVE_GEOMANCY)
+	||	move == MOVE_GEOMANCY
+	||  move == MOVE_SKYDROP)
     {
         if (gBattleMons[bank].status2 & STATUS2_MULTIPLETURNS)
             return 2;

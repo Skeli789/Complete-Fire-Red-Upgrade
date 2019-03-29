@@ -743,6 +743,8 @@ struct NewBattleStruct
 	u8 usedMoveIndices[4];
 	u8 DisabledMoldBreakerAbilities[4];
 	u8 SuppressedAbilities[4];
+	u8 skyDropAttackersTarget[4]; //skyDropAttackersTarget[gBankAttacker] = gBankTarget
+	u8 skyDropTargetsAttacker[4]; //skyDropTargetsAttacker[gBankTarget] = gBankAttacker
 	
 	//Bit Fields for Banks
 	u8 MicleBerryBits;
@@ -777,6 +779,7 @@ struct NewBattleStruct
 	u8 backupMoveEffect;
 	u8 FaintEffectsTracker;
 	u8 blockTracker;
+	u8 preFaintEffectsTracker;
 	u8 savedObjId;
 	
 	//Booleans

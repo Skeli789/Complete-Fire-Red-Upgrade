@@ -787,7 +787,15 @@ void HandleAction_UseMove(void)
 		gBankTarget = selectedTarget;
 
     // choose battlescript
-	if (gBattleMons[gBankTarget].hp == 0
+	if (gBattleMons[gNewBS->skyDropAttackersTarget[gBankAttacker]].hp == 0
+	&&  gStatuses3[gBankAttacker] & STATUS3_SKY_DROP_ATTACKER)
+	{
+		gStatuses3[gBankAttacker] &= ~(STATUS3_SKY_DROP_ATTACKER | STATUS3_SKY_DROP_TARGET | STATUS3_IN_AIR);
+		gNewBS->skyDropTargetsAttacker[gBankTarget] = 0;
+		gNewBS->skyDropAttackersTarget[gBankAttacker] = 0;
+		gBattlescriptCurrInstr = BattleScript_NoTargetMoveFailed;
+	}
+	else if (gBattleMons[gBankTarget].hp == 0
 	&&  AttacksThisTurn(gBankAttacker, gCurrentMove) == 2) //Not charging move
 		gBattlescriptCurrInstr = BattleScript_NoTargetMoveFailed;
     else

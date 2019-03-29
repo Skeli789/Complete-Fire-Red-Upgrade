@@ -117,12 +117,13 @@ void atk02_attackstring(void) {
 			&&  SPLIT(gCurrentMove) != SPLIT_STATUS
 			&& !(gMoveResultFlags & (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE | MOVE_RESULT_FAILED))
 			&& !(TypeCalc(gCurrentMove, gBankAttacker, gBankTarget, GetBankPartyData(gBankAttacker), 0) & (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE | MOVE_RESULT_FAILED))
-			&& gBattleMoves[gCurrentMove].effect != EFFECT_PLEDGE) 
+			&& gBattleMoves[gCurrentMove].effect != EFFECT_PLEDGE
+			&& AttacksThisTurn(gBankAttacker, gCurrentMove) == 2)
 			{
 				gLastUsedItem = ITEM(gBankAttacker);
 				gNewBS->GemHelper = TRUE;
 				BattleScriptPushCursor();
-				gBattlescriptCurrInstr = BattleScript_Gems; 
+				gBattlescriptCurrInstr = BattleScript_Gems;
 			}
 			
 			if (ABILITY(gBankAttacker) == ABILITY_PROTEAN) {
@@ -146,6 +147,11 @@ void atk02_attackstring(void) {
 		gBattlescriptCurrInstr++;
 		gBattleCommunication[MSG_DISPLAY] = 0;
 	}
+}
+
+void BufferAttackerItem(void)
+{
+	gLastUsedItem = ITEM(gBankAttacker);
 }
 
 void atk03_ppreduce(void) {
@@ -2974,8 +2980,11 @@ void atkC5_setsemiinvulnerablebit(void) {
 			break;
 		
 		case MOVE_SKYDROP:
-			gStatuses3[gBankAttacker] |= STATUS3_SKY_DROP_ATTACKER;
-			gStatuses3[gBankTarget] |= STATUS3_SKY_DROP_TARGET;
+			gStatuses3[gBankAttacker] |= (STATUS3_SKY_DROP_ATTACKER | STATUS3_IN_AIR);
+			gStatuses3[gBankTarget] |= (STATUS3_SKY_DROP_TARGET | STATUS3_IN_AIR);
+			
+			gNewBS->skyDropAttackersTarget[gBankAttacker] = gBankTarget;
+			gNewBS->skyDropTargetsAttacker[gBankTarget] = gBankAttacker;
 			
 			if (gSideTimers[SIDE(gBankTarget)].followmeTarget == gBankTarget) //Removes Follow Me's effect
 				gSideTimers[SIDE(gBankTarget)].followmeTimer = 0;
@@ -3000,8 +3009,10 @@ void atkC6_clearsemiinvulnerablebit(void) {
 			gStatuses3[gBankAttacker] &= ~STATUS3_DISAPPEARED;
 			break;
 		case MOVE_SKYDROP:
-			gStatuses3[gBankAttacker] &= ~STATUS3_SKY_DROP_ATTACKER;
-			gStatuses3[gBankTarget] &= ~STATUS3_SKY_DROP_TARGET;
+			gStatuses3[gBankAttacker] &= ~(STATUS3_SKY_DROP_ATTACKER | STATUS3_IN_AIR);
+			gStatuses3[gBankTarget] &= ~(STATUS3_SKY_DROP_TARGET | STATUS3_IN_AIR);
+			gNewBS->skyDropAttackersTarget[gBankAttacker] = 0;
+			gNewBS->skyDropTargetsAttacker[gBankTarget] = 0;
 			break;
     }
     gBattlescriptCurrInstr++;
