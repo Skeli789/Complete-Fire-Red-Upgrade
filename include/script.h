@@ -8,6 +8,7 @@ struct ScriptContext;
 typedef bool8 (*ScrCmdFunc)(struct ScriptContext *);
 typedef u8 Script[];
 
+/*
 struct ScriptContext
 {
     u8 stackDepth;
@@ -20,6 +21,41 @@ struct ScriptContext
     ScrCmdFunc *cmdTableEnd;
     u32 data[4];
 };
+*/
+
+
+typedef u8 (*ScriptFunction)(void);
+//typedef u8 (*ScriptCommand)(struct ScriptEnvironment* environment);
+
+enum ScriptExecutionMode {
+    /** The environment is not executing anything (wait state). */
+    SCRIPT_EXECUTE_MODE_PAUSED,
+    /** Normal script execution mode. */
+    SCRIPT_EXECUTE_MODE_NORMAL,
+    /** Executing pointer_asm function. */
+    SCRIPT_EXECUTE_MODE_ASM,
+};
+
+struct ScriptEnvironment {
+    u8 depth;
+    enum ScriptExecutionMode mode;
+    u8 cmp_result;		//Function to run.
+    u8 field_3;
+    ScriptFunction pointer_asm;	//executed when mode = SCRIPT_EXECUTE_MODE_ASM
+    u8* pointer_script;	//Executed when mode = SCRIPT_EXECUTE_MODE_NORMAL
+    u8* stack[20];	//Call stack.
+    ScrCmdFunc* cmd_table;	//pointer to script cmds
+    ScrCmdFunc* cmd_table_max;	//Pointer to the last command in the table.
+    u32 vars[4];	//Script banks.  Bank 0 is used for loading a pointer to a message to display.
+    bool8 enabled;	//Usually set to false during cutscenes.
+    u8 field_75;
+    u8 keypad_control_enabled;	// if true, can walk away to cancel script (eg. signpost)
+    u8 keypad_override_direction;	// Locks player movement.
+};
+
+typedef struct ScriptEnvironment gScriptEnv1;	//03000EB0
+typedef struct ScriptEnvironment gScriptEnv2;	//03000F28
+
 
 #define ScriptReadByte(ctx) (*(ctx->scriptPtr++))
 
@@ -41,7 +77,7 @@ bool8 ScriptContext2_IsEnabled(void);
 void ScriptContext1_Init(void);
 bool8 ScriptContext1_IsScriptSetUp(void);
 bool8 ScriptContext2_RunScript(void);
-void ScriptContext1_SetupScript(const u8 *ptr);
+//void ScriptContext1_SetupScript(const u8 *ptr);
 void ScriptContext1_Stop(void);
 void EnableBothScriptContexts(void);
 void ScriptContext2_RunNewScript(const u8 *ptr);

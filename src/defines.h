@@ -42,6 +42,7 @@
 #include "../include/wild_encounter.h"
 #include "../include/save.h"
 #include "../include/list_menu.h"
+#include "../include/script.h"
 
 #include "pokemon_data_request.h"
 #include "pokemon.h"

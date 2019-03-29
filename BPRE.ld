@@ -651,6 +651,7 @@ ScriptContext1_SetupScript = 0x8069AE4 | 1;
 ScriptContext1_Stop = 0x8069B28 | 1;
 PlayNewMapMusic = 0x8071A74 | 1;
 GetCurrentWeather = 0x807AF98 | 1;
+TaskOverworld = 0x8079e0c | 1;
 
 /*InitTrainerBattleVariables = 0x8080110 | 1;*/
 TrainerBattleLoadArgs = 0x8080168 | 1;

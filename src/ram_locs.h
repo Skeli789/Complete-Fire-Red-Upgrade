@@ -15,6 +15,17 @@ struct Clock {
 	u8 second;
 };
 
+// in progress
+struct keyBluff {
+	u8 checkKey;
+	u8 keyFlag;
+	u16 pressed;
+	u32 empty;
+	u32 scriptToRun;
+	u16 keyMapToForce;
+	u16 keysToIgnore;
+};
+
 #define gEnigmaBerries ((struct BattleEnigmaBerry*) 0x2023F54) //Length 0x70
 #define gBattleScripting ((struct BattleScripting*) 0x2023FC4)
 #define gBattleStruct ((struct BattleStruct*) *((u32*) 0x2023FE8))
@@ -246,6 +257,8 @@ typedef u8 Buffer_t[0x200];
 		#define gSelectedOrderFromParty ((u8*) 0x203B0D4)
 /*u8*/  #define gUnknown_0203B0DC ((u8*) 0x203B0DC)
 
+		#define gScriptEnv1 ((struct ScriptEnvironment*) 0x03000EB0)
+		#define gScriptEnv2 ((struct ScriptEnvironment*) 0x03000F28)
 		#define gLoadPointer (*((u32*) 0x03000f14))
 		#define sScriptContext2Enabled (*((u8*) 0x3000F28))
 		#define gMain (((struct Main*) 0x30030F0)[0])
@@ -404,6 +417,9 @@ typedef u8 IllusionNickname_t[10];
 #define gCreateSpriteTableSetter 0x203B7AD  // allow createsprite to load from a table as well
 #define gForceKeypadFlag 0x203B7AE  	//force a key to be pressed (special 0xc9)
 #define gForceKeypadNumber 0x203B7AF	//number of times to force key
+
+#define gKeyBluff ((struct keyBluff*) 0x203B7B0)
+
 
 
 

@@ -22,7 +22,7 @@ bool8 __attribute__((long_call)) bag_add_item(u16 item_id, u8 a);
 
 // used for form change //
 void __attribute__((long_call)) run_after_graphics();
-void __attribute__((long_call)) script_env_2_enable(int taskID);
+void __attribute__((long_call)) script_env_2_enable(void);
 void __attribute__((long_call)) script_run(void *scriptLoc);
 void __attribute__((long_call)) task_delete(u8 taskID);
 void* __attribute__((long_call)) memcpy_(void *dst, void *src, u8 size);
@@ -486,6 +486,8 @@ void __attribute__((long_call)) createMaleMon(pokemon_t* poke_address, u16 speci
 void __attribute__((long_call)) ReturnToFieldContinueScriptPlayMapMusic(void);
 u32 __attribute__((long_call)) getAttrFromAnyBox(u8 boxId, u8 boxSlot, u8 dataRequest);
 void __attribute__((long_call)) setAttrFromAnyBox(u8 boxId, u8 boxSlot, u8 dataRequest, void* dataAddr);
+
+void __attribute__((long_call)) TaskOverworld(void);
 
 //The Deal Breaker
 void __attribute__((long_call)) break_func(u32);
