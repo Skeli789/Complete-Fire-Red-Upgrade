@@ -36,7 +36,7 @@ enum ScriptExecutionMode {
     SCRIPT_EXECUTE_MODE_ASM,
 };
 
-struct ScriptEnvironment {
+struct ScriptContext {
     u8 depth;
     enum ScriptExecutionMode mode;
     u8 cmp_result;		//Function to run.

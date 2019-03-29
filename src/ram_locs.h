@@ -20,7 +20,7 @@ struct keyBluff {
 	u8 checkKey;
 	u8 keyFlag;
 	u16 pressed;
-	u32 empty;
+	u32 empty;	// or is it
 	u32 scriptToRun;
 	u16 keyMapToForce;
 	u16 keysToIgnore;
@@ -257,8 +257,8 @@ typedef u8 Buffer_t[0x200];
 		#define gSelectedOrderFromParty ((u8*) 0x203B0D4)
 /*u8*/  #define gUnknown_0203B0DC ((u8*) 0x203B0DC)
 
-		#define gScriptEnv1 ((struct ScriptEnvironment*) 0x03000EB0)
-		#define gScriptEnv2 ((struct ScriptEnvironment*) 0x03000F28)
+		#define gScriptEnv1 ((struct ScriptContext*) 0x03000EB0)
+		#define gScriptEnv2 ((struct ScriptContext*) 0x03000F28)
 		#define gLoadPointer (*((u32*) 0x03000f14))
 		#define sScriptContext2Enabled (*((u8*) 0x3000F28))
 		#define gMain (((struct Main*) 0x30030F0)[0])
