@@ -1104,4 +1104,32 @@ void sp081_SetWalkingScript(void) {
 	return;
 };
 
+// read a pedometer value from custom pedometers (see ram_locs.h)
+// flag-based
+// Inputs:
+//	Var8004:
+//		0: return Pedometers.alwaysActive (32bit)
+//		1: Pedometers.large (32bit)
+//		2: Pedometers.medium (16bit)
+//		3: Pedometers.small_1 (8bit)
+//		4: Pedometers.small_2 (8bit)
+// Outputs: given pedometer value (be sure to free up 2 variables for the 32bit vals)
+u32 sp08A_ReadPedometerValue(void) {
+	u8 input = Var8004;
+	switch (input)
+	{
+		case 0:
+			return Pedometers.alwaysActive;
+		case 1:
+			return Pedometers.large;
+		case 2:
+			return Pedometers.medium;
+		case 3:
+			return Pedometers.smallOne;
+		case 4:
+			return Pedometers.smallTwo;
+		default:
+			return 0;		
+	}	
+};
 
