@@ -9,9 +9,45 @@ script functions/specials in asm - hooks and returns
 
 .include "../asm_defines.s"
 
+.global sp097_WildGroundBattle
+.global sp098_WildSeaBattle
 .global sp156_GhostBattleSpecial
-.global createSpriteLoadTable
+.global CreateSpriteLoadTable
 
+
+/*@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+Activate Wild Ground Battle
+	ptr+1 at 15ffbc
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@*/
+.align 2
+.pool
+sp097_WildGroundBattle:
+	push {r4-r7, lr}
+	mov r7, r8
+	push {r7}
+	sub sp, #0x8
+	ldr r0, =(0x01000202)	@grass block data
+	lsl r4, r0, #0x18
+	lsr r4, r4, #0x18
+	ldr r1, =(0x0806cbe4|1)
+	bx r1
+	
+/*@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+Activate Wild Sea Battle
+	ptr+1 at 15ffc0
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@*/
+.align 2
+.pool
+sp098_WildSeaBattle:
+	push {r4-r7, lr}
+	mov r7, r8
+	push {r7}
+	sub SP, SP, #0x8
+	ldr r0, =(0x22000410)	@water tile data
+	lsl r4, r0, #0x18
+	lsr r4, r4, #0x18
+	ldr r1, =(0x0806cbe4|1)
+	bx r1
 
 /*@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 Createsprite from any Table
@@ -22,7 +58,7 @@ Createsprite from any Table
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@*/
 .align 2
 .pool
-createSpriteLoadTable:
+CreateSpriteLoadTable:
 	push {r4-r6,lr}
 	mov r6, r8
 	push {r6}

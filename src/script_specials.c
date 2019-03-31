@@ -9,13 +9,23 @@ NOTES:
 	2. PC selection hack allows a lot all of the attribute getter/setter specials to reference boxed pokemon via var8003
 		-var8003 = 1: boxed pokemon (output from pc selection: box num in var8000, slot in var8001)
 		-else: menu pokemon (and slot in var8004, etc)
+		
+		
+TO DO:
+	-timer specials
+	-battle specials
+	
+	-test keypad
+	-walking scripts
+	
+	-select from PC distinctions
 	
 */
 
+#define POKERUS_CURED 0x10
+
 //Pokemon Specials//
 ///////////////////////////////////////////////////////////////////////////////////
-
-/*
 
 
 enum EVStatChecker
@@ -45,33 +55,35 @@ enum IVStatChecker
 	SetAllIVs
 };
 
-#ifdef SELECT_FROM_PC
-u32 getAttrFromVar8003(u8 dataRequest) {
+u32 GetAttrFromVar8003(u8 dataRequest) {
 	u32 attr;
-	if (Var8003 == 1)
-		attr = getAttrFromAnyBox(Var8000, Var8001, dataRequest);
-	else
-		attr = get_attr($gPlayerParty[Var8004], dataRequest, 0);
+	#ifdef SELECT_FROM_PC
+		if (Var8003 == 1)
+			attr = GetAttrFromAnyBox(Var8000, Var8001, dataRequest);
+		else
+			attr = GetAttr(&gPlayerParty[Var8004], dataRequest, 0);
+	#else
+		attr = GetAttr(&gPlayerParty[Var8004], dataRequest, 0);
+	#endif
 	return attr;
 };
 
-u32 setAttrFromVar8003(u8 dataRequest) {
-	if (Var8003 == 1)
-		attr = setAttrFromAnyBox(Var8000, Var8001, dataRequest, $Var8005);
-	else
-		attr = set_attr($gPlayerParty[Var8004], dataRequest, $Var8005);
-	return attr;
+void SetAttrFromVar8003(u8 dataRequest) {
+	#ifdef SELECT_FROM_PC
+		if (Var8003 == 1)
+			SetAttrFromAnyBox(Var8000, Var8001, dataRequest, &Var8005);
+		else
+			SetAttr(&gPlayerParty[Var8004], dataRequest, &Var8005);
+	#else
+		SetAttr(&gPlayerParty[Var8004], dataRequest, &Var8005);
+	#endif
 };
 
 
 
-u32* getBoxedMonAddr(void) {;
+u32* GetBoxedMonAddr(void) {;
 	return ((u32*) &(gSaveBlock3->boxes[Var8000][Var8001]));
 };
-
-
-
-#endif
 
 
 u8 sp007_PokemonEVContestStatsChecker(void) {
@@ -83,59 +95,32 @@ u8 sp007_PokemonEVContestStatsChecker(void) {
 	
 	switch(stat) {
 		
-	#ifdef SELECT_FROM_PC
-		case CheckEVs_HP:
-			return getAttrFromVar8003(MON_DATA_HP_EV);
-		case CheckEVs_Atk:
-			return getAttrFromVar8003(MON_DATA_ATK_EV);
-		case CheckEVs_Def:
-			return getAttrFromVar8003(MON_DATA_DEF_EV);
-		case CheckEVs_Spd:
-			return getAttrFromVar8003(MON_DATA_SPEED_EV);
-		case CheckEVs_SpAtk:
-			return getAttrFromVar8003(MON_DATA_SPATK_EV);
-		case CheckEVs_SpDef:
-			return getAttrFromVar8003(MON_DATA_SPDEF_EV);
-		case CheckEVs_Coolness:
-			return getAttrFromVar8003(MON_DATA_COOL);
-		case CheckEVs_Beauty:
-			return getAttrFromVar8003(MON_DATA_BEAUTY);
-		case CheckEVs_Cuteness:
-			return getAttrFromVar8003(MON_DATA_CUTE);
-		case CheckEVs_Smartness:
-			return getAttrFromVar8003(MON_DATA_SMART);
-		case CheckEVs_Toughness:
-			return getAttrFromVar8003(MON_DATA_TOUGH);
-		case CheckEVs_Luster:
-			return getAttrFromVar8003(MON_DATA_SHEEN);
-	#else	
-		case CheckEVs_HP:
-			return gPlayerParty[mon].hpEv;
-		case CheckEVs_Atk:
-			return gPlayerParty[mon].atkEv;
-		case CheckEVs_Def:
-			return gPlayerParty[mon].defEv;
-		case CheckEVs_Spd:
-			return gPlayerParty[mon].spdEv;
-		case CheckEVs_SpAtk:
-			return gPlayerParty[mon].spAtkEv;
-		case CheckEVs_SpDef:
-			return gPlayerParty[mon].spDefEv;
-		case CheckEVs_Coolness:
-			return gPlayerParty[mon].coolness;
-		case CheckEVs_Beauty:
-			return gPlayerParty[mon].beauty;
-		case CheckEVs_Cuteness:
-			return gPlayerParty[mon].cuteness;
-		case CheckEVs_Smartness:
-			return gPlayerParty[mon].smartness;
-		case CheckEVs_Toughness:
-			return gPlayerParty[mon].toughness;
-		case CheckEVs_Luster:
-			return gPlayerParty[mon].feel;
-	#endif
-		default:
-			return 0;
+	case CheckEVs_HP:
+		return GetAttrFromVar8003(MON_DATA_HP_EV);
+	case CheckEVs_Atk:
+		return GetAttrFromVar8003(MON_DATA_ATK_EV);
+	case CheckEVs_Def:
+		return GetAttrFromVar8003(MON_DATA_DEF_EV);
+	case CheckEVs_Spd:
+		return GetAttrFromVar8003(MON_DATA_SPEED_EV);
+	case CheckEVs_SpAtk:
+		return GetAttrFromVar8003(MON_DATA_SPATK_EV);
+	case CheckEVs_SpDef:
+		return GetAttrFromVar8003(MON_DATA_SPDEF_EV);
+	case CheckEVs_Coolness:
+		return GetAttrFromVar8003(MON_DATA_COOL);
+	case CheckEVs_Beauty:
+		return GetAttrFromVar8003(MON_DATA_BEAUTY);
+	case CheckEVs_Cuteness:
+		return GetAttrFromVar8003(MON_DATA_CUTE);
+	case CheckEVs_Smartness:
+		return GetAttrFromVar8003(MON_DATA_SMART);
+	case CheckEVs_Toughness:
+		return GetAttrFromVar8003(MON_DATA_TOUGH);
+	case CheckEVs_Luster:
+		return GetAttrFromVar8003(MON_DATA_SHEEN);	
+	default:
+		return 0;
 	}
 };
 
@@ -147,38 +132,24 @@ u8 sp008_PokemonIVChecker(void) {
 		return 0;
 	
 	switch(stat) {
-	#ifdef SELECT_FROM_PC
 		case CheckIVs_HP:
-			return getAttrFromVar8003(MON_DATA_HP_IV);
+			return GetAttrFromVar8003(MON_DATA_HP_IV);
 		case CheckIVs_Atk:
-			return getAttrFromVar8003(MON_DATA_ATK_IV);
+			return GetAttrFromVar8003(MON_DATA_ATK_IV);
 		case CheckIVs_Def:
-			return getAttrFromVar8003(MON_DATA_DEF_IV);
+			return GetAttrFromVar8003(MON_DATA_DEF_IV);
 		case CheckIVs_Spd:
-			return getAttrFromVar8003(MON_DATA_SPEED_IV);
+			return GetAttrFromVar8003(MON_DATA_SPEED_IV);
 		case CheckIVs_SpAtk:
-			return getAttrFromVar8003(MON_DATA_SPATK_IV);
+			return GetAttrFromVar8003(MON_DATA_SPATK_IV);
 		case CheckIVs_SpDef:
-			return getAttrFromVar8003(MON_DATA_SPDEF_IV);	
-	#else
-		case CheckIVs_HP:
-			return gPlayerParty[mon].hpIV;
-		case CheckIVs_Atk:
-			return gPlayerParty[mon].attackIV;
-		case CheckIVs_Def:
-			return gPlayerParty[mon].defenseIV;
-		case CheckIVs_Spd:
-			return gPlayerParty[mon].speedIV;
-		case CheckIVs_SpAtk:
-			return gPlayerParty[mon].spAttackIV;
-		case CheckIVs_SpDef:
-			return gPlayerParty[mon].spDefenseIV;
-	#endif
+			return GetAttrFromVar8003(MON_DATA_SPDEF_IV);	
 		default:
 			return 0;
 	}
 };
 
+/*
 bool8 sp009_PokemonRibbonChecker(void) {
 	u16 mon = Var8004;
 	u16 ribbon = Var8005;
@@ -189,13 +160,14 @@ bool8 sp009_PokemonRibbonChecker(void) {
 	if (ribbon > 0x1F)
 		return FALSE;
 		
+	u32* pointer;
 	#ifdef SELECT_FROM_PC
 		if (Var8003 == 1)
-			u32 *pointer = getBoxedMonAddr;
+			pointer = GetBoxedMonAddr;
 		else
-			u32 *pointer = (u32*) &gPlayerParty[mon];
+			pointer = (u32*) &gPlayerParty[mon];
 	#else
-		u32 *pointer = (u32*) &gPlayerParty[mon];
+		pointer = (u32*) &gPlayerParty[mon];
 	#endif
 		pointer += (76 / sizeof(u32));
 		u32 data = *pointer;
@@ -205,21 +177,15 @@ bool8 sp009_PokemonRibbonChecker(void) {
 		else
 			return FALSE;
 };
+*/
 
-#define POKERUS_CURED 0x10
+
 
 u8 sp00A_CheckPokerusTimer(void) {
 	u16 mon = Var8004;
-	
 	if (mon >= 6)
 		return 0;
-		
-	if (gPlayerParty[mon].pokerusDays == 0
-	&&  gPlayerParty[mon].pokerusStrain != 0)
-		return POKERUS_CURED;
-		
-	else
-		return gPlayerParty[mon].pokerusDays == 0;
+	return GetAttrFromVar8003(MON_DATA_POKERUS);
 };
 
 u16 sp00B_CheckPokeball(void) {
@@ -228,7 +194,7 @@ u16 sp00B_CheckPokeball(void) {
 	if (mon >= 6)
 		return 0;
 		
-	return GetMonData(&gPlayerParty[mon], REQ_POKEBALL, 0);
+	return GetAttrFromVar8003(REQ_POKEBALL);
 };
 
 u8 sp00C_CheckCaptureLocation(void) {
@@ -237,16 +203,14 @@ u8 sp00C_CheckCaptureLocation(void) {
 	if (mon >= 6)
 		return 0;
 		
-	return gPlayerParty[mon].metLocation;
+	return GetAttrFromVar8003(MON_DATA_MET_LOCATION);
 };
 
 u8 sp00D_CheckHappiness(void) {
 	u16 mon = Var8004;
-	
 	if (mon >= 6)
 		return 0;
-		
-	return gPlayerParty[mon].friendship;
+	return GetAttrFromVar8003(MON_DATA_FRIENDSHIP);
 };
 
 item_t sp00E_CheckHeldItem(void) {
@@ -255,81 +219,50 @@ item_t sp00E_CheckHeldItem(void) {
 	if (mon >= 6)
 		return 0;
 		
-	return gPlayerParty[mon].item;
+	return GetAttrFromVar8003(MON_DATA_HELD_ITEM);
 };
 
 void sp00F_EVAdderSubtracter(void) {
 	u16 mon = Var8004;
 	u16 stat = Var8005;
 	u16 amount = Var8006;
-	u8* modify;
-	s32 calc;
-	
-	if (amount & 0x100) 
-	{
-		amount ^= 0x100;
-		amount *= -1;
-		if (amount < -255)
-			amount = -255;
-	}
-	else if (amount > 255)
-		amount = 255;
+	//u16 new;
 	
 	if (mon >= 6)
-		return;
+		return;	
 	
-	switch(stat) {
-		case CheckEVs_HP:
-			modify = &gPlayerParty[mon].hpEv;
-			break;
-		case CheckEVs_Atk:
-			modify = &gPlayerParty[mon].atkEv;
-			break;
-		case CheckEVs_Def:
-			modify = &gPlayerParty[mon].defEv;
-			break;
-		case CheckEVs_Spd:
-			modify = &gPlayerParty[mon].spdEv;
-			break;
-		case CheckEVs_SpAtk:
-			modify = &gPlayerParty[mon].spAtkEv;
-			break;
-		case CheckEVs_SpDef:
-			modify = &gPlayerParty[mon].spDefEv;
-			break;
-		case CheckEVs_Coolness:
-			modify = &gPlayerParty[mon].coolness;
-			break;
-		case CheckEVs_Beauty:
-			modify = &gPlayerParty[mon].beauty;
-			break;
-		case CheckEVs_Cuteness:
-			modify = &gPlayerParty[mon].cuteness;
-			break;
-		case CheckEVs_Smartness:
-			modify = &gPlayerParty[mon].smartness;
-			break;
-		case CheckEVs_Toughness:
-			modify = &gPlayerParty[mon].toughness;
-			break;
-		case CheckEVs_Luster:
-			modify = &gPlayerParty[mon].feel;
-			break;
-		default:
-			return;
-		
-		calc = *modify;
-		calc += amount;
-		
-		if (calc < 0)
-			calc = 0;
-		
-		if (calc > 255)
-			calc = 255;
-			
-		*modify = calc;
+	//u8 curr = sp007_PokemonEVContestStatsChecker();	// current val
+	if (amount & 0x100) 
+	{
+		// subtracting
+		amount ^= 0x100;
+		Var8005 = Var8006 - amount;
 	}
-	return;
+	else 
+		Var8005 = Var8006 + amount;
+	// limit to [0,EV_CAP]
+	if (Var8005 > EV_CAP)
+		Var8005 = EV_CAP;
+	else if (Var8005 < 0)
+		Var8005 = 0;
+	
+	// setter at Var8005
+	Var8006 = 0;
+	switch(stat)
+	{
+		case CheckIVs_HP:
+			return SetAttrFromVar8003(MON_DATA_HP_IV);
+		case CheckIVs_Atk:
+			return SetAttrFromVar8003(MON_DATA_ATK_IV);
+		case CheckIVs_Def:
+			return SetAttrFromVar8003(MON_DATA_DEF_IV);
+		case CheckIVs_Spd:
+			return SetAttrFromVar8003(MON_DATA_SPEED_IV);
+		case CheckIVs_SpAtk:
+			return SetAttrFromVar8003(MON_DATA_SPATK_IV);
+		case CheckIVs_SpDef:
+			return SetAttrFromVar8003(MON_DATA_SPDEF_IV);
+	}
 };
 
 void sp010_IVSetter(void) {
@@ -389,7 +322,7 @@ void sp011_RibbonSetterCleaner(void) {
 	if (ribbon > 0x1F)
 		return;
 		
-	u32 pointer = (u32*) &gPlayerParty[mon];
+	u32* pointer = (u32*) &gPlayerParty[mon];
 	pointer += (76 / sizeof(u32));
 	
 	if (clear)
@@ -401,12 +334,16 @@ void sp011_RibbonSetterCleaner(void) {
 
 void sp012_PokerusSetter(void) {
 	u16 mon = Var8004;
-	u16 timer = Var8005;
-	u8 strain;
+	//u16 timer = Var8005;
+	//u8 strain;
 	
 	if (mon >= 6)
 		return;
-		
+	else if (Var8005 > 16)
+		Var8005 = 16;
+	SetAttrFromVar8003(MON_DATA_POKERUS);
+
+	/*	
 	if (timer > 0x10) 
 	{
 		gPlayerParty[mon].pokerusDays = 0;
@@ -443,33 +380,31 @@ void sp012_PokerusSetter(void) {
 		
 		gPlayerParty[mon].pokerusStrain = strain;
 	}
-	return;
+	*/
 };
 
 void sp013_IncreaseDecreaseHappiness(void) {
 	u16 mon = Var8004;
 	u16 amount = Var8005;
-	u8* modify;
-	s32 calc;
-
+	
 	if (mon >= 6)
 		return;
-		
-	if (amount & 0x100) {
+	u8 current = GetAttrFromVar8003(MON_DATA_FRIENDSHIP);	// current happiness
+	if (amount & 0x100)
+	{
+		//subtraction
 		amount ^= 0x100;
-		amount = -1 * MathMax(amount, 255);
+		Var8005 = current - amount;
 	}
-	
-	u8* modify = (u8*) &gPlayerParty[mon].friendship;
-	calc = *modify + amount;
-	
-	if (calc < 0)
-		calc = 0;
-	else if (calc > 255)
-		calc = 255
-		
-	*modify = calc;
-	return;
+	else
+		Var8005 = current + amount;
+	// bound friendship
+	if (Var8005 < 0)
+		Var8005 = 0;
+	else if (Var8005 > 255)
+		Var8005 = 255;
+	Var8006 = 0;	
+	SetAttrFromVar8003(MON_DATA_FRIENDSHIP);
 };
 
 void sp014_ChangeCapturedBall(void) {
@@ -477,43 +412,41 @@ void sp014_ChangeCapturedBall(void) {
 	u16 ball = Var8005;
 	
 	if (mon >= 6)
+		return;	
+	else if (ball > NUM_BALLS)
 		return;
+	SetAttrFromVar8003(MON_DATA_POKEBALL);	
 		
-	if (ball > NUM_BALLS)
-		return;
-		
-	gPlayerParty[mon].pokeball = ball;
 	return;
 };
 
 void sp015_ModifyHeldItem(void) {
 	u16 mon = Var8004;
-	u16 item = Var8005;
+	//u16 item = Var8005;
 	Var800D = 1;
 	
 	if (mon >= 6)
 		return;
-	
-	//Can't be used if mon already has item
-	if (gPlayerParty[mon].item && item)
-		return;
-	
-	gPlayerParty[mon].item = item;
-	Var800D = 0;
+	else if (GetAttrFromVar8003(MON_DATA_HELD_ITEM) != 0)
+		return;	// cant change existing item
+	else
+	{
+		SetAttrFromVar8003(MON_DATA_HELD_ITEM);
+		Var800D = 0;
+	}
 	return;
 };
 
 void sp016_ChangePokemonSpecies(void) {
 	u16 mon = Var8004;
-	u16 species = Var8005;
+	//u16 species = Var8005;
 
 	if (mon >= 6)
 		return;
-
-	gPlayerParty[mon].species = species;
-	return;
+	SetAttrFromVar8003(MON_DATA_SPECIES);
 };
 
+/*
 void sp017_ChangePokemonAttacks(void) {
 	u16 mon = Var8004;
 	u16 slot = Var8005;
@@ -536,7 +469,7 @@ void sp017_ChangePokemonAttacks(void) {
 	
 	gPlayerParty[mon].moves[slot] = move;
 	gPlayerParty[mon].pp[slot] = gBattleMoves[move].pp;
-	gPlayerParty[mon].pp_bonuses &= ~(gBitTable[slot * 2] | gBitTable[slot * 2 + 1])
+	gPlayerParty[mon].pp_bonuses &= ~(gBitTable[slot * 2] | gBitTable[slot * 2 + 1]);
 	
 	//Clean Up Moves
 	u8 moves[4] = {0};
@@ -559,28 +492,26 @@ void sp017_ChangePokemonAttacks(void) {
 	}
 	return;
 };
+*/
 
 species_t sp018_CheckPokemonSpecies(void) {
 	u16 mon = Var8004;
-
 	if (mon >= 6)
-		return;
-
-	return gPlayerParty[mon].species;
+		return 0;
+	else
+		return GetAttrFromVar8003(MON_DATA_SPECIES);
 };
 
 //Add pp bonus calc?
-void sp019_CheckAttackPP(void) {
+u8 sp019_CheckAttackPP(void) {
 	u16 mon = Var8004;
 	u16 slot = Var8005;
-
 	if (mon >= 6)
-		return;
-
-	if (slot >= MAX_MON_MOVES)
-		return;
+		return 0;
+	else if (slot >= MAX_MON_MOVES)
+		return 0;
 	
-	return gPlayerParty[mon].pp[slot];
+	return GetAttrFromVar8003(MON_DATA_PP1 + slot);
 };
 
 
@@ -595,36 +526,36 @@ void sp062_PokemonEraser(void) {
 		ZeroPlayerPartyMons();
 	else
 	{
-		pokemon_slot_purge(&gPlayerParty[slot]);
+		PokemonSlotPurge(&gPlayerParty[slot]);
 		gPlayerPartyCount -= 1;
 		// shift later slots up one
-		for (u8 i = slot; i <= gPlayerPartyCount-1; ++i)
+		for (u8 i = slot; i <= gPlayerPartyCount; ++i)
 		{
 			// copy slot+i+1 to slot+i up to numPokes - 2
 			CopyMon(&gPlayerParty[i],&gPlayerParty[i+1],100);
 		}
 	}
-	return;
 };
 
 
 // check status of pokemon in slot var8004
 u8 sp063_StatusChecker(void) {
 	u8 slot = Var8004;	
-	return (get_attr(&gPlayerParty[slot], MON_DATA_STATUS, 0));
+	return (GetAttr(&gPlayerParty[slot], MON_DATA_STATUS, 0));
 };
 
 
 // Inflict a status to affect a party member or entire party
 void sp064_InflictStatus(void) {
 	u8 slot = Var8004;
+	u8 i;
 	if (Var8005 == 0xf)
 		for (i = 0; i <= gPlayerPartyCount-1; ++i)
 		{
-			set_attr(&gPlayerParty[i], MON_DATA_STATUS, &Var8005);
+			SetAttr(&gPlayerParty[i], MON_DATA_STATUS, &Var8005);
 		}
 	else
-		set_attr(&gPlayerParty[slot], MON_DATA_STATUS, &Var8005);
+		SetAttr(&gPlayerParty[slot], MON_DATA_STATUS, &Var8005);
 	return;
 };
 
@@ -632,7 +563,7 @@ void sp064_InflictStatus(void) {
 // check slot pokemon's HP
 u16 sp065_CheckMonHP(void) {
 	u8 slot = Var8004;
-	return get_attr(&gPlayerParty[slot], MON_DATA_HP, 0);
+	return GetAttr(&gPlayerParty[slot], MON_DATA_HP, 0);
 };
 
 
@@ -644,14 +575,15 @@ void sp066_InflictPartyDamage(void) {
 	u16 currHP;
 	if (slot == 0xf)
 	{
+		u8 i;
 		for (i = 0; i <= gPlayerPartyCount-1; ++i)
 		{
-			currHP = get_attr(&gPlayerParty[slot], MON_DATA_HP, 0);
+			currHP = GetAttr(&gPlayerParty[slot], MON_DATA_HP, 0);
 			if (switcher == 1)
 				Var8006 = currHP + dmg;
 			else
 				Var8006 = currHP - dmg;
-			set_attr(&gPlayerParty[slot], MON_DATA_HP, Var8006);
+			SetAttr(&gPlayerParty[slot], MON_DATA_HP, &Var8006);
 		}
 	}
 	return;
@@ -699,10 +631,8 @@ u16 sp02C_CheckDPad(void) {
 			return 7;
 		case DPAD_DOWN | DPAD_RIGHT:
 			return 8;
-		default:
-			return 0;
 	}
-	return;
+	return 0;
 };
 
 //Special 0x2d checks for the start select buttons
@@ -727,41 +657,51 @@ void sp02F_KeyDump(void) {
 	Var800D = ~(gKeyReg) & 0x3FF;
 };
 
+// Inputs:
+//		var8004: key(s) to force 
+//		var8005: num times to 'press'
 void sp0C9_ForceOneKeyInput(void) {
-	u8 key = Var8004;	// 
-	u16 num = Var8005;	// num times to press keys
-	(u32*) pointer = (u32*) 0x0203f4de;
-	*pointer = key;
-	
-	
-	return;
+	gKeypadSetter->keyMapToForce = Var8004;
+	gKeypadSetter->keyForcingCounter = Var8005;
+	gKeypadSetter->keyFlags |= 1;
 };
 
 void sp0CA_IgnoreKeys(void) {
-	return;
+	gKeypadSetter->keysToIgnore = Var8004;
+	gKeypadSetter->keyFlags |= 2;	
 };
 
 void sp0CB_PlaceKeyScript(void) {
-	return;
+	u16 key = Var8004;
+	gKeypadSetter->keyToRunScript = key;
+	if (key == 0)
+	{
+		gKeypadSetter->scriptToRun = (u32) 0;
+		gKeypadSetter->keyFlags &= (0xfb);
+	}
+	else
+	{
+		gKeypadSetter->scriptToRun = gLoadPointer;
+		gKeypadSetter->keyFlags |= 4;
+	}
 };
 
 //Variable Math Specials//
 ///////////////////////////////////////////////////////////////////////////////////
 
 u16 sp03E_AddVariables(void) {
-	var1 = Var8004; //Var contained in Var8004
-	var2 = Var8005; //Var contained in Var8005
+	u16 var1 = Var8004; //Var contained in Var8004
+	u16 var2 = Var8005; //Var contained in Var8005
 	bool8 overflow = FALSE;
-	u32 sum;
 	
-	u16 var1 = VarGet(var1);
-	u16 var2 = VarGet(var2);
+	var1 = VarGet(var1);
+	var2 = VarGet(var2);
 	
-	sum = var1 + var2;
+	u32 sum = var1 + var2;
 	
 	if (sum > 0xFFFF) {
 		overflow = TRUE;
-		sum = 0xFFFF
+		sum = 0xFFFF;
 	}
 	
 	VarSet(Var8004, sum); //Set var in Var8004
@@ -871,9 +811,8 @@ void sp025_AddTextByPointer(void) {
 // Inputs: 	Var8005: variable to get measurements from/store to
 // 			Var8006: species to measure
 void sp075_MeasurePokemon1(void) {
-	u32 varAddr = (u32*) VarGetAddress(Var8005);	// decrypt var ram loc
 	u16 species = Var8006;
-	bufferPokeNameSize(species, varAddr);	
+	BufferPokeNameSize(species, &Var8005);
 };
 
 
@@ -887,10 +826,8 @@ void sp075_MeasurePokemon1(void) {
 //		Returns 3 if bigger, and also stores the biggest value in the variable
 //		Returns 4 if equal in length
 u8 sp076_MeasurePokemon2(void) {
-	u32 varAddr = (u32*) VarGetAddress(Var8005);	// decrypt var ram loc
 	u16 species = Var8006;
-	u8 result = CalculateHeight(
-	return result;
+	return CalculateHeight(species, &Var8005);;
 };
 
 
@@ -900,22 +837,23 @@ u8 sp076_MeasurePokemon2(void) {
 //		var8004: species
 //		var8005: level
 void sp09C_OldManBattleModifier(void) {
-	createMaleMon(&gEnemyParty[0], Var8004, Var8005);
-	ScriptContext2_Enable;
+	CreateMaleMon(&gEnemyParty[0], Var8004, Var8005);
+	ScriptContext2_Enable();
 	gMain.savedCallback = ReturnToFieldContinueScriptPlayMapMusic;
 	gBattleTypeFlags = BATTLE_TYPE_OLD_MAN;
 	CreateBattleStartTask(8, 0);
 };
 
-
-
+/*
 void sp18B_DisplayImagesFromTable(void) {
 	return;
 };
+*/
 
 //Battle Specials//
 ///////////////////////////////////////////////////////////////////////////////////
 
+/*
 void sp051_WildShinyBattle(void) {
 	return;
 };
@@ -951,8 +889,9 @@ void sp058_WildDataSwitch(void) {
 void sp059_WildDataSwitchCanceller(void) {
 	return;
 };
+*/
 
-
+/*
 //Timer Specials//
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -1053,6 +992,8 @@ void sp061_LoadTimerFromVariable(void) {
 	return;
 };
 
+*/
+
 //Safari Specials//
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -1125,6 +1066,8 @@ u16 sp07E_GetTileNumber(void) {
 	return MapGridGetMetatileIdAt(x + 7, y + 7);
 };
 
+
+/*
 //@Details: The Tile Attribute getter. Designed to be used with 
 //		  special 0x8f before it (to get the positions) and to 
 //		  be possible to use the required wild battle randomizer afterwards.'
@@ -1142,7 +1085,10 @@ u16 sp07F_GetTileBehaviour(void) {
 	Var8005 = (field & 0xFFFF);
 	return Var8004 & 3;
 };
+*/
 
+
+/*	// in src/Assembly/script.s
 void sp097_StartGroundBattle(void) {
 	return;
 };
@@ -1150,12 +1096,12 @@ void sp097_StartGroundBattle(void) {
 void sp098_StartWaterBattle(void) {
 	return;
 };
+*/
 
+// load a walking script
 void sp081_SetWalkingScript(void) {
+	gWalkingScript = gLoadPointer;
 	return;
 };
 
-
-
-*/
 

@@ -3,3 +3,90 @@ TagTeamExecutionCompleteHook 802E384
 ##For Unbound Temporary
 BuildRandomPlayerTeam 8740F4B
 atk15_seteffectwithchance 895F4D4
+
+##Script Commands
+CreateSpriteLoadTable 0815fc5c
+
+##Specials
+sp007_PokemonEVContestStatsChecker 0815FD7C
+sp008_PokemonIVChecker 0815FD80
+#sp009_PokemonRibbonChecker 0815FD84
+sp00A_CheckPokerusTimer 0815FD88
+sp00B_CheckPokeball 0815FD8C
+sp00C_CheckCaptureLocation 0815FD90
+sp00D_CheckHappiness 0815FD94
+sp00E_CheckHeldItem 0815FD98
+sp00F_EVAdderSubtracter 0815FD9C
+sp010_IVSetter 0815FDA0
+sp011_RibbonSetterCleaner 0815FDA4
+sp012_PokerusSetter 0815FDA8
+sp013_IncreaseDecreaseHappiness 0815FDAC
+sp014_ChangeCapturedBall 0815FDB0
+sp015_ModifyHeldItem 0815FDB4
+sp016_ChangePokemonSpecies 0815FDB8
+#sp017_ChangePokemonAttacks 0815FDBC
+sp018_CheckPokemonSpecies 0815FDC0
+sp019_CheckAttackPP 0815FDC4
+
+sp024_AddTextByVariable 0815FDF0
+sp025_AddTextByPointer 0815FDF4
+
+sp02B_CheckABButtons 0815FE0C
+sp02C_CheckDPad 0815FE10
+sp02D_CheckStartSelect 0815FE14
+sp02E_CheckLRButtons 0815FE18
+sp02F_KeyDump 0815FE1C
+
+sp03E_AddVariables 0815FE58
+sp03F_SubtractVariables 0815FE5C
+sp040_MultiplyVariables 0815FE60
+sp041_DivideVariables 0815FE64
+sp042_ANDVariables 0815FE68
+sp043_ORVariables 0815FE6C
+sp044_XORVariables 0815FE70
+
+#sp046_StartTimer 0815FE78
+#sp047_HaltTimer 0815FE7C
+#sp048_ResumeTimer 0815FE80
+#sp049_StopTimer 0815FE84
+#sp04A_GetTimerValue 0815FE88
+#sp04B_StopAndUpdatePlaytime 0815FE8C
+#sp04C_UpdatePlaytime 0815FE90
+#sp04D_TimerValueReached 0815FE94
+#sp04E_SaveTimerValue 0815FE98
+#sp04F_StartTimerAtTime 0815FE9C
+#sp050_StoreTimerToVariable 0815FEA0
+#sp051_WildShinyBattle 0815FEA4
+#sp052_TemporaryStatusInducer 0815FEA8
+#sp053_TemporaryStatusCanceller 0815FEAC
+#sp054_PermanentStatusInducer 0815FEB0
+#sp055_PermanentStatusCanceller 0815FEB4
+#sp056_RoamChanger 0815FEB8
+#sp057_RoamCanceller 0815FEBC
+#sp058_WildDataSwitch 0815FEC0
+#sp059_WildDataSwitchCanceller 0815FEC4
+
+sp062_PokemonEraser 0815FEE8
+sp063_StatusChecker 0815FEEC
+sp064_InflictStatus 0815FEF0
+sp065_CheckMonHP 0815FEF4
+sp066_InflictPartyDamage 0815FEF8
+
+sp075_MeasurePokemon1 0815FF34
+sp076_MeasurePokemon2 0815FF38
+
+sp07E_GetTileNumber 0815FF58
+#sp07F_GetTileBehaviour 0815FF5C
+
+sp086_GetSafariBalls 0815FF78
+sp087_ChangeSafariBalls 0815FF7C
+sp088_GetSafariCounter 0815FF80
+sp089_SetSafariCounter 0815FF84
+
+sp097_WildGroundBattle 0815FFBC
+sp098_WildSeaBattle 0815FFC0
+sp09C_OldManBattleModifier 0815FFD0
+
+sp0C9_ForceOneKeyInput 08160084
+sp0CA_IgnoreKeys 08160088
+sp0CB_PlaceKeyScript 0816008C

@@ -34,11 +34,11 @@ __divsi3 = 0x081E4018|1;
 __modsi3 = 0x081E40F4|1;
 
 /* Attributes */
-get_attr = 0x0803FBE8|1;
-set_attr = 0x0804037C|1;
+GetAttr = 0x0803FBE8|1;
+SetAttr = 0x0804037C|1;
 
 /* Pokemon */
-pokemon_slot_purge = 0x0803D994|1;
+PokemonSlotPurge = 0x0803D994|1;
 count_pokemon = 0x02024029;
 party_player = 0x02024284;
 
@@ -49,7 +49,7 @@ species_to_dex_index = 0x08043298|1;
 givepokemon = 0x080A011C|1;
 party_move_up_no_free_slots_in_between = 0x080937DC|1;
 
-bufferPokeNameSize = 0x080A08CC | 1;
+BufferPokeNameSize = 0x080A08CC | 1;
 CalculateHeight = 0x080A082C | 1;
 
 /*items*/
@@ -327,8 +327,8 @@ sub_8037A2A = 0x08038C80|1;
 sub_0804B908 = 0x0804B908|1;
 
 
-create_pokemon = 0x0803DD98|1;
-createMaleMon = 0x0803DF00 | 1;
+CreatePokemon = 0x0803DD98|1;
+CreateMaleMon = 0x0803DF00 | 1;
 
 divmod_remainder = 0x081E4684|1;
 rand = 0x08044EC8|1;
@@ -593,8 +593,8 @@ ReducePartyToThree = 0x80A03D8 | 1;
 pokemon_order_func = 0x8128030 | 1;
 
 /* Pokemon Storage */
-getAttrFromAnyBox = 0x808BA18 | 1;
-setAttrFromAnyBox = 0x808BA5C | 1;
+GetAttrFromAnyBox = 0x808BA18 | 1;
+SetAttrFromAnyBox = 0x808BA5C | 1;
 
 /*Wild Encounter Functions*/
 ChooseWildMonIndex_Land = 0x808274C | 1;
@@ -628,6 +628,7 @@ GetTrainerEncounterMusicId = 0x804367C | 1;
 Overworld_GetMapTypeOfSaveblockLocation = 0x8056188 | 1;
 GetCurrentMapBattleScene = 0x8056288 | 1;
 MetatileBehavior_GetLowerBytes = 0x8058F1C | 1;
+MapGridGetMetatileIdAt = 0x8058E48 | 1;
 MapGridGetMetatileField = 0x8058F48 | 1;
 MapGridGetMetatileBehaviorAt = 0x8058F78 | 1;
 MetatileBehavior_IsSandOrDeepSand = 0x8059B74 | 1;

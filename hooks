@@ -182,7 +182,7 @@ DaycareInheritHiddenAbility 8046116 0
 ##DNS
 TransferPlttBuffer 8070474 0
 RealTimeClock 0800041E 3
-
+	
 ##Script Specials
 sp156_GhostBattleSpecial 0807f92a 2
 
@@ -197,3 +197,8 @@ pcSelect_OperationsMsg 0808ed54 0
 pcSelect_SkipMultiGen 0808c3e0 0
 pcSelect_SkipWithdrawCount 0808c53c 1
 pcSelect_SwapDecision 0808ed8c 1
+
+##Keypad
+ReadKeys 080005e8 0
+
+

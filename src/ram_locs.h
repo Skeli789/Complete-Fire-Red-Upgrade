@@ -15,15 +15,14 @@ struct Clock {
 	u8 second;
 };
 
-// in progress
-struct keyBluff {
-	u8 checkKey;
-	u8 keyFlag;
-	u16 pressed;
-	u32 empty;	// or is it
-	u32 scriptToRun;
-	u16 keyMapToForce;
-	u16 keysToIgnore;
+// keypad struct
+struct KeypadSetter {
+	u16 keyMapToForce;	// key(s) to force
+	u16 keysToIgnore;		// key(s) to ignore
+	u8 keyForcingCounter;	// number of times to force said key(s)
+	u8 keyFlags;			// flags for specific key functions
+	u16 keyToRunScript;	// key to enable script to run
+	u32 scriptToRun;	// script to run from specified key
 };
 
 #define gEnigmaBerries ((struct BattleEnigmaBerry*) 0x2023F54) //Length 0x70
@@ -261,7 +260,9 @@ typedef u8 Buffer_t[0x200];
 		#define gScriptEnv2 ((struct ScriptContext*) 0x03000F28)
 		#define gLoadPointer (*((u32*) 0x03000f14))
 		#define sScriptContext2Enabled (*((u8*) 0x3000F28))
+		#define gKeypadInitialCountdown ((*u16) 0x030030e0)
 		#define gMain (((struct Main*) 0x30030F0)[0])
+		#define gKeypadFollowUpCountdown ((*u16) 0x0300352c)
 /*u32*/ #define gBattleMainFunc (*((u32*) 0x3004F84))
 /*u8*/  #define gLeveledUpInBattle (*((u8*) 0x3004FD4))
 		#define gBattleBankFunc ((u32*) 0x3004FE0)
@@ -415,11 +416,10 @@ typedef u8 IllusionNickname_t[10];
 #define gMultiChoice ((struct Multichoice*) 0x203B774)	// up to 7 pointers, 8 bytes each
 #define gPcSelectionTracker 0x203B7AC	// state tracker for pc selection
 #define gCreateSpriteTableSetter 0x203B7AD  // allow createsprite to load from a table as well
-#define gForceKeypadFlag 0x203B7AE  	//force a key to be pressed (special 0xc9)
-#define gForceKeypadNumber 0x203B7AF	//number of times to force key
-
-#define gKeyBluff ((struct keyBluff*) 0x203B7B0)
-
+//0x203B7AE
+//0x203B7AF
+#define gKeypadSetter ((struct KeypadSetter*) 0x203B7B0)	//12 bytes
+#define gWalkingScript (*(u32*) 0x203B7BC)
 
 
 

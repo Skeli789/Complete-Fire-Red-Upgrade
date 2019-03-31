@@ -3,8 +3,8 @@
 
 #define BC_Menu 0x8014040 | 1
 
-u32 __attribute__((long_call)) get_attr(pokemon_t* poke_address, u8 request, void* dst);
-void __attribute__((long_call)) set_attr(pokemon_t* poke_address, u8 request, void* new_value);
+u32 __attribute__((long_call)) GetAttr(pokemon_t* poke_address, u8 request, void* dst);
+void __attribute__((long_call)) SetAttr(pokemon_t* poke_address, u8 request, void* new_value);
 void __attribute__((long_call)) calculate_stats_pokemon(pokemon_t* poke);
 u16 __attribute__((long_call)) teach_move_in_available_slot(pokemon_t* poke, u16 move);
 u16 __attribute__((long_call)) bag_remove_item(u16 itemID, u16 quantity);
@@ -31,7 +31,7 @@ void* __attribute__((long_call)) memset_(void *dst, u8 pattern, u8 size);
 void* __attribute__((long_call)) Memcpy(void *dst, void *src, u32 size);
 void* __attribute__((long_call)) Memset(void *dst, u8 pattern, u32 size);
 
-void __attribute__((long_call)) pokemon_slot_purge(pokemon_t*);
+void __attribute__((long_call)) PokemonSlotPurge(pokemon_t*);
 void __attribute__((long_call)) Special_DD_delete_move();
 u8 __attribute__((long_call)) party_move_up_no_free_slots_in_between();
 
@@ -480,12 +480,12 @@ u16 __attribute__((long_call)) Sqrt(u32);
 u32 __attribute__((long_call)) udivsi(u32, u32);
 u32 __attribute__((long_call)) umodsi(u32, u32);
 
-u32* __attribute__((long_call)) bufferPokeNameSize(u16 species, void *varAddress);
-u8 __attribute__((long_call)) CalculateHeight(u16 species, void *varAddress);
-void __attribute__((long_call)) createMaleMon(pokemon_t* poke_address, u16 species, u8 level);
+void __attribute__((long_call)) BufferPokeNameSize(u16 species, void* varAddress);
+u8 __attribute__((long_call)) CalculateHeight(u16 species, void* varAddress);
+void __attribute__((long_call)) CreateMaleMon(pokemon_t* poke_address, u16 species, u8 level);
 void __attribute__((long_call)) ReturnToFieldContinueScriptPlayMapMusic(void);
-u32 __attribute__((long_call)) getAttrFromAnyBox(u8 boxId, u8 boxSlot, u8 dataRequest);
-void __attribute__((long_call)) setAttrFromAnyBox(u8 boxId, u8 boxSlot, u8 dataRequest, void* dataAddr);
+u32 __attribute__((long_call)) GetAttrFromAnyBox(u8 boxId, u8 boxSlot, u8 dataRequest);
+void __attribute__((long_call)) SetAttrFromAnyBox(u8 boxId, u8 boxSlot, u8 dataRequest, void* dataAddr);
 
 void __attribute__((long_call)) TaskOverworld(void);
 

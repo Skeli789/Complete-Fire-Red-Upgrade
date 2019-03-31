@@ -64,6 +64,7 @@ enum
 #define MAX_LEVEL 100 //Also change this in the file “special_inserts.asm” found in the root
 #define NUM_TRAINER_CLASSES 107
 #define EVOS_PER_MON 4
+#define EV_CAP 252
 
 #define DUSK_BALL_MULTIPLIER 30 //Change this line to 35 to make the catch rate for the Dusk Ball 3.5x like before Gen 7
 #define STANDARD_IV 10 //Change this to be the number of IVs Pokemon owned by random trainers should have (all stats will have this number)
@@ -171,3 +172,7 @@ enum
 #define HIDE_HEALTHBOXES_DURING_ANIMS //Uncommenting this line hides the health boxes during move animations and some special animations.
 //#define DONT_HIDE_HEALTHBOXES_ATTACKER_STATUS_MOVES //Uncommenting this line doesn't hide the healthboxes when the attacker is using a status move that targets itself.
 //#define ENCOUNTER_MUSIC_BY_CLASS //Plays music when a trainer spots the player based on the trainer class rather than the value set in the trainer data.
+
+#define SELECT_FROM_PC //comment this out to remove select-from-pc hack
+
+
