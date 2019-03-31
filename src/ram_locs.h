@@ -15,6 +15,15 @@ struct Clock {
 	u8 second;
 };
 
+struct GbaTimer {
+	u16 init;	// 4000108
+	u8 timerFlags;	// 400010A
+	u8 empty;		// 400010B
+	u16 timerVal;	// 400010C
+	u8 timerOn;	// 400010E
+	
+};
+
 // keypad struct
 struct KeypadSetter {
 	u16 keyMapToForce;	// key(s) to force
@@ -218,7 +227,7 @@ typedef u8 Buffer_t[0x200];
 		#define Var8007 (*((u16*) 0x20370C6))
 		#define Var8008 (*((u16*) 0x20370C8))
 		#define Var800D (*((u16*) 0x20370D0))
-		#define Var8010 (*((u16*) 0x20370d6))
+		#define Var8010 (*((u16*) 0X20370D6))
 		
 /*u16*/ #define gSpecialVar_LastResult (*((u16*) 0x20370D0))
 /*u16*/ #define gSpecialVar_LastTalked (*((u16*) 0x20370D2))
@@ -283,7 +292,7 @@ typedef u8 Buffer_t[0x200];
 		
 		#define gCurrentMapName *((u8*) 0x3005558)
 		
-		#define GBATimer ((u16*) 0x4000108)
+		#define gGbaTimer ((struct GbaTimer*) 0x4000108)
 		#define gKeyReg (*((u16*) 0x4000130))
 				
 		extern struct MusicPlayerInfo gMPlay_BGM;
@@ -425,8 +434,7 @@ typedef u8 IllusionNickname_t[10];
 #define gMultiChoice ((struct Multichoice*) 0x203B774)	// up to 7 pointers, 8 bytes each
 #define gPcSelectionTracker 0x203B7AC	// state tracker for pc selection
 #define gCreateSpriteTableSetter 0x203B7AD  // allow createsprite to load from a table as well
-//0x203B7AE
-//0x203B7AF
+#define gTimerValue (*(u16*) 0x203B7AE)
 #define gKeypadSetter ((struct KeypadSetter*) 0x203B7B0)	//12 bytes
 #define gPedometers ((struct Pedometers*) 0x203B7BC)		//12 bytes
 #define gWalkingScript (*(u32*) 0x203B7C8)

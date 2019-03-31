@@ -891,68 +891,75 @@ void sp059_WildDataSwitchCanceller(void) {
 };
 */
 
-/*
+
 //Timer Specials//
 ///////////////////////////////////////////////////////////////////////////////////
 
 //@Details: Starts the timer
 void sp046_StartTimer(void) {
-	GBATimer[3] = 0x84;
-	GBATimer[2] = 0x0;
-	GBATimer[1] = 0x83;
-	GBATimer[0] = 0x0;
+	gGbaTimer->init = 0xC000;
+	gGbaTimer->timerFlags = 0x83;
+	gGbaTimer->timerVal = 0;
+	gGbaTimer->timerOn = 0x84;
 	return;
 };
 
 //@Details: Pauses the timer
 void sp047_HaltTimer(void) {
-	GBATimer[3] = 0x4;
-	GBATimer[1] = 0x3;
+	gGbaTimer->timerOn = 4;
+	gGbaTimer->timerFlags = 3;
 	return;
 };
 
+
 //@Details: Unpauses the timer
 void sp048_ResumeTimer(void) {
-	GBATimer[2] = GBATimer[2];
-	GBATimer[3] = 0x84;
-	GBATimer[1] = 0x83;
+	gGbaTimer->timerVal = gGbaTimer->timerVal;
+	gGbaTimer->timerOn = 0x84;
+	gGbaTimer->timerFlags = 0x83;
 	return;
 };
 
 //@Details:	Stops the timer.
 //@Returns: The time on the timer.
 u16 sp049_StopTimer(void) {
-	u16 time = GBATimer[2];
-	GBATimer[3] = 0;
-	GBATimer[1] = 0;
-	GBATimer[0] = 0;
-	GBATimer[2] = 0;
-	
+	gGbaTimer->timerOn = 0;
+	gGbaTimer->timerFlags = 0;
+	u16 time = gGbaTimer->timerVal;
+	gGbaTimer->init = time;
+	gGbaTimer->timerVal = time;
 	return time;
 };
 
 //@Returns: The time on the timer.
 u16 sp04A_GetTimerValue(void) {
-	return GBATimer[2] = 0;
+	return gGbaTimer->timerVal;
 };
 
+
+/*
 void sp04B_StopAndUpdatePlaytime(void) {
-	return;
+	gGbaTimer->init = 0;
+	gGbaTimer->timerFlags = 0;
+	gGbaTimer->timerOn = 0;
+	
 };
 
 void sp04C_UpdatePlaytime(void) {
 	return;
 };
 
+*/
+
+
+
 //@Details: Checks if the timer has reached a value
 //			sorted in var 0x8010.
 //@Returns: True or False
-void sp04D_TimerValueReached(void) {
-	u16 time = GBATimer[2];
-	
-	if (time < Var8010)
+bool8 sp04D_TimerValueReached(void) {
+	u16 timerVal = gGbaTimer->timerVal;
+	if (timerVal < Var8010)
 		return FALSE;
-		
 	return TRUE;
 };
 
@@ -960,39 +967,34 @@ void sp04D_TimerValueReached(void) {
 //@Details: Saves the value in the seconds timer to a 
 //			specific memory address.
 void sp04E_SaveTimerValue(void) {
-	ScriptSpecialsStruct.savedTimer = sp049_StopTimer();
-	return;
+	gTimerValue = sp049_StopTimer();
 };
+
 
 //@Details: Starts the timer with the value stored by
 //			Special 0x4E.
 void sp04F_StartTimerAtTime(void) {
-	StartTimer();
-	GBATimer[3] = 0;
-	GBATimer[2] = ScriptSpecialsStruct.savedTimer;
-	GBATimer[3] = 0x84;
-	return;
+	sp046_StartTimer();
+	gGbaTimer->timerOn = 0;
+	gGbaTimer->timerVal = gTimerValue;
+	gGbaTimer->timerOn = 0x84;
 };
+
 
 //@Details: Stores the timer value stored by
 //			Special 0x4E.
 //@Returns: Var 0x8006 - Timer time.
 void sp050_StoreTimerToVariable(void) {
-	u16 var = Var8006; //Var in Var8006
-	VarSet(var, ScriptSpecialsStruct.savedTimer);
-	return;
+	VarSet(Var8006, gTimerValue);
 };
+
 
 //@Details: Loads the value at a given variable and stores
 //			it to the saved timer.
-//@Input:	Var 0x8006 - Timer value.
+//@Input:	Var 0x8006 - Variable that is holding timer.
 void sp061_LoadTimerFromVariable(void) {
-	u16 var = Var8006; //Var in Var8006
-	ScriptSpecialsStruct.savedTimer = var;
-	return;
+	gTimerValue = VarGet(Var8006);
 };
-
-*/
 
 //Safari Specials//
 ///////////////////////////////////////////////////////////////////////////////////
