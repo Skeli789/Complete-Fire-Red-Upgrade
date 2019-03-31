@@ -50,8 +50,8 @@ sp047_HaltTimer 0815FE7C
 sp048_ResumeTimer 0815FE80
 sp049_StopTimer 0815FE84
 sp04A_GetTimerValue 0815FE88
-#sp04B_StopAndUpdatePlaytime 0815FE8C
-#sp04C_UpdatePlaytime 0815FE90
+sp04B_StopAndUpdatePlaytime 0815FE8C
+sp04C_UpdatePlaytime 0815FE90
 sp04D_TimerValueReached 0815FE94
 sp04E_SaveTimerValue 0815FE98
 sp04F_StartTimerAtTime 0815FE9C

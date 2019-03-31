@@ -937,19 +937,27 @@ u16 sp04A_GetTimerValue(void) {
 };
 
 
-/*
+
+void sp04C_UpdatePlaytime(void) {
+	u8 secs = gGbaTimer->timerVal + gSaveBlock2->playTimeSeconds;	
+	while (secs > 60)
+	{
+		secs -= 60;
+		gSaveBlock2->playTimeMinutes++;
+		if (gSaveBlock2->playTimeMinutes == 60)
+		{
+			gSaveBlock2->playTimeMinutes -= 60;
+			gSaveBlock2->playTimeHours++;
+		}
+	}
+};
+
 void sp04B_StopAndUpdatePlaytime(void) {
 	gGbaTimer->init = 0;
 	gGbaTimer->timerFlags = 0;
 	gGbaTimer->timerOn = 0;
-	
+	sp04C_UpdatePlaytime();
 };
-
-void sp04C_UpdatePlaytime(void) {
-	return;
-};
-
-*/
 
 
 
