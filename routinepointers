@@ -78,6 +78,8 @@ sp076_MeasurePokemon2 0815FF38
 sp07E_GetTileNumber 0815FF58
 #sp07F_GetTileBehaviour 0815FF5C
 
+sp081_SetWalkingScript 0815FF64
+
 sp086_GetSafariBalls 0815FF78
 sp087_ChangeSafariBalls 0815FF7C
 sp088_GetSafariCounter 0815FF80

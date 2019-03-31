@@ -32,6 +32,16 @@
 #define DOUBLE_WILD_BATTLE_FLAG 0x90F //If this flag is set, a wild battles will be against two Pokemon
 #define NO_RANDOM_WILD_ENCOUNTERS_FLAG 0x910 //If this is set, wild Pokemon won't appear when walking/surfing in grass, caves, water, etc.
 
+// Pedometer Flags as in JPAN Engine
+#define FLAG_LONG_PEDOMETER 0x911	// 32 bit
+#define FLAG_MED_PEDOMETER 0x912	// 16 bit
+#define FLAG_SMALL_PEDOMETER_1 0x913	// 8 bit
+#define FLAG_SMALL_PEDOMETER_2 0x914	// 8 bit
+
+// Walking Scripts
+#define DEFAULT_WALKING_SCRIPT 0x407e  // default walking scripts in jpan engine
+
+
 #define SECOND_OPPONENT_VAR 0x5010 //Set this to the var used to store the Trainer Id of the second opponent in Multi Battles (can be any free var)
 #define PARTNER_VAR 0x5011 //Set this to the var used to store the Trainer Id of your partner in Multi Battles (can be any free var)
 #define PARTNER_BACKSPRITE_VAR 0x5012 //Set this to the var used to store the backsprite number of your partner in Multi Battles (can be any free var)

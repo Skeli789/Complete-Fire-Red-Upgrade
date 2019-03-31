@@ -201,4 +201,5 @@ pcSelect_SwapDecision 0808ed8c 1
 ##Keypad
 ReadKeys 080005e8 0
 
-
+##Walking Scripts
+TakeStep 080A0F0C 0

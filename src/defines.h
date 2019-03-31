@@ -44,6 +44,7 @@
 #include "../include/list_menu.h"
 #include "../include/script.h"
 #include "../include/fieldmap.h"
+#include "../include/safari_zone.h"
 
 #include "pokemon_data_request.h"
 #include "pokemon.h"

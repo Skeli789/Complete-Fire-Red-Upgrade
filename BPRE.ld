@@ -827,3 +827,12 @@ umodsi = 0x81E4684 | 1;
 
 /*The Deal Breaker*/
 break_func = 0x08416304 | 1;
+
+
+/* Safari Zone Functions */
+GetSafariZoneFlag = 0x080A0E90 | 1;
+SetSafariZoneFlag = 0x080A0EA4 | 1;
+ResetSafariZoneFlag = 0x080A0EB4 | 1;
+
+
+

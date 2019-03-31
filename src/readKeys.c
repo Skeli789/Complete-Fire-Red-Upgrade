@@ -67,6 +67,8 @@ void ReadKeys(void) {
 		currKeys = TryForcedKey(tryKey, currKeys);
 		currKeys = TryIgnoringKeys(tryKey, currKeys);
 	}
+	//u16 keyInput = currKeys ^ KEYS_MASK;
+	
 	// pokeem
     u16 keyInput = REG_KEYINPUT ^ KEYS_MASK;
     gMain.newKeysRaw = keyInput & ~gMain.heldKeysRaw;

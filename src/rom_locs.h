@@ -2,6 +2,7 @@
 
 #include "defines.h"
 
+
 //#define gStatStageRatios ((u8**) 0x825DEAD)
 #define gBitTable ((u32*) 0x825E45C)
 
@@ -57,3 +58,5 @@ extern struct TrainerPicCoords gTrainerBackPicCoords[];
 
 #define gWildMonHeaders ((struct WildPokemonHeader*) *((u32*) 0x8082990))
 extern u8 gUnownDistributionByChamber[7][12]; //[NUM_ROOMS][NUM_WILD_INDEXES]
+
+#define SafariZoneEndScript ((void*) 0x81bfbc5)

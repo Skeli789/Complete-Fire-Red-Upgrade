@@ -25,6 +25,15 @@ struct KeypadSetter {
 	u32 scriptToRun;	// script to run from specified key
 };
 
+// new pedometers
+struct Pedometers {
+	u32 alwaysActive;
+	u32 large;
+	u16 medium;
+	u8 smallOne;
+	u8 smallTwo;
+};
+
 #define gEnigmaBerries ((struct BattleEnigmaBerry*) 0x2023F54) //Length 0x70
 #define gBattleScripting ((struct BattleScripting*) 0x2023FC4)
 #define gBattleStruct ((struct BattleStruct*) *((u32*) 0x2023FE8))
@@ -419,7 +428,7 @@ typedef u8 IllusionNickname_t[10];
 //0x203B7AE
 //0x203B7AF
 #define gKeypadSetter ((struct KeypadSetter*) 0x203B7B0)	//12 bytes
-#define gWalkingScript (*(u32*) 0x203B7BC)
-
+#define gPedometers ((struct Pedometers*) 0x203B7BC)		//12 bytes
+#define gWalkingScript (*(u32*) 0x203B7C8)
 
 

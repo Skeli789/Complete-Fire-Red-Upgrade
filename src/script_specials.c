@@ -1098,7 +1098,7 @@ void sp098_StartWaterBattle(void) {
 };
 */
 
-// load a walking script
+// WALKING SCRIPTS
 void sp081_SetWalkingScript(void) {
 	gWalkingScript = gLoadPointer;
 	return;
