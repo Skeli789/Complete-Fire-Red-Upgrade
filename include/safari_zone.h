@@ -5,7 +5,7 @@
 
 extern u8 gNumSafariBalls;
 
-bool32 GetSafariZoneFlag(void);
+bool8 GetSafariZoneFlag(void);
 void SetSafariZoneFlag(void);
 void ResetSafariZoneFlag(void);
 

@@ -8,47 +8,21 @@ struct ScriptContext;
 typedef bool8 (*ScrCmdFunc)(struct ScriptContext *);
 typedef u8 Script[];
 
-/*
+
 struct ScriptContext
 {
     u8 stackDepth;
     u8 mode;
     u8 comparisonResult;
     u8 (*nativePtr)(void);
+	//ScrCmdFunc *scriptAsmPointer;
     const u8 *scriptPtr;
     const u8 *stack[20];
     ScrCmdFunc *cmdTable;
     ScrCmdFunc *cmdTableEnd;
     u32 data[4];
-};
-*/
-
-
-typedef u8 (*ScriptFunction)(void);
-//typedef u8 (*ScriptCommand)(struct ScriptEnvironment* environment);
-
-enum ScriptExecutionMode {
-    /** The environment is not executing anything (wait state). */
-    SCRIPT_EXECUTE_MODE_PAUSED,
-    /** Normal script execution mode. */
-    SCRIPT_EXECUTE_MODE_NORMAL,
-    /** Executing pointer_asm function. */
-    SCRIPT_EXECUTE_MODE_ASM,
-};
-
-struct ScriptContext {
-    u8 depth;
-    enum ScriptExecutionMode mode;
-    u8 cmp_result;		//Function to run.
-    u8 field_3;
-    ScriptFunction pointer_asm;	//executed when mode = SCRIPT_EXECUTE_MODE_ASM
-    u8* pointer_script;	//Executed when mode = SCRIPT_EXECUTE_MODE_NORMAL
-    u8* stack[20];	//Call stack.
-    ScrCmdFunc* cmd_table;	//pointer to script cmds
-    ScrCmdFunc* cmd_table_max;	//Pointer to the last command in the table.
-    u32 vars[4];	//Script banks.  Bank 0 is used for loading a pointer to a message to display.
-    bool8 enabled;	//Usually set to false during cutscenes.
-    u8 field_75;
+	bool8 enabled;
+	u8 field_75;
     u8 keypad_control_enabled;	// if true, can walk away to cancel script (eg. signpost)
     u8 keypad_override_direction;	// Locks player movement.
 };
