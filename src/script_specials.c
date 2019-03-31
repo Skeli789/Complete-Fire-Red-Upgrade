@@ -1119,15 +1119,15 @@ u32 sp08A_ReadPedometerValue(void) {
 	switch (input)
 	{
 		case 0:
-			return Pedometers.alwaysActive;
+			return gPedometers->alwaysActive;
 		case 1:
-			return Pedometers.large;
+			return gPedometers->large;
 		case 2:
-			return Pedometers.medium;
+			return gPedometers->medium;
 		case 3:
-			return Pedometers.smallOne;
+			return gPedometers->smallOne;
 		case 4:
-			return Pedometers.smallTwo;
+			return gPedometers->smallTwo;
 		default:
 			return 0;		
 	}	

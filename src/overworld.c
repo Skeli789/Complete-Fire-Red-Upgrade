@@ -49,6 +49,8 @@ bool8 GetProperDirection(u16 currentX, u16 currentY, u16 toX, u16 toY);
 void TrainerFaceFix(void);
 void FollowerPositionFix(void);
 
+
+// table full of pointers to custom walking scripts
 u8* gDefaultWalkingScripts[] =
 {
 	(u32) 0,

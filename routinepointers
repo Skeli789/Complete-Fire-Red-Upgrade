@@ -84,6 +84,7 @@ sp086_GetSafariBalls 0815FF78
 sp087_ChangeSafariBalls 0815FF7C
 sp088_GetSafariCounter 0815FF80
 sp089_SetSafariCounter 0815FF84
+sp08A_ReadPedometerValue 0815FF88
 
 sp097_WildGroundBattle 0815FFBC
 sp098_WildSeaBattle 0815FFC0
