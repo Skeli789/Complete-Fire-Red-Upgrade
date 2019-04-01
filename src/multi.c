@@ -38,6 +38,13 @@ void PlayerPartnerHandleChooseAction(void);
 void PlayerPartnerHandleChoosePokemon(void);
 void (*sPlayerPartnerBufferCommands[COMMAND_MAX])(void);
 
+#ifdef OPEN_WORLD_TRAINERS
+
+extern const u8 openWorldLevelRanges[NUM_BADGE_OPTIONS][2];
+u8 GetOpenWorldBadgeCount(void);
+
+#endif
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void BattleIntroOpponent1SendsOutMonAnimation(void)
@@ -200,11 +207,14 @@ u32 CalcMultiMoneyForTrainer(u16 trainerId)
 		lastMon = 3;
 	
     u8 level = 0;
-    if (trainer.partyFlags & PARTY_FLAG_CUSTOM_MOVES)
-        level = trainer.party.ItemCustomMoves[lastMon].lvl;
-    else
-        level = trainer.party.NoItemDefaultMoves[lastMon].lvl;
-
+	#ifdef OPEN_WORLD_TRAINERS
+		level = openWorldLevelRanges[GetOpenWorldBadgeCount()][1];
+	#else
+		if (trainer.partyFlags & PARTY_FLAG_CUSTOM_MOVES)
+			level = trainer.party.ItemCustomMoves[lastMon].lvl;
+		else
+			level = trainer.party.NoItemDefaultMoves[lastMon].lvl;
+	#endif
     
     for (i = 0; i < NUM_TRAINER_CLASSES; ++i) {
         if (gTrainerMoneyTable[i].trainerClass == trainer.trainerClass) {

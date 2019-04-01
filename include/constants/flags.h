@@ -1320,6 +1320,8 @@
 #define FLAG_BADGE07_GET         (CODE_FLAGS + 0xD)
 #define FLAG_BADGE08_GET         (CODE_FLAGS + 0xE)
 
+#define FLAG_ELITE4_BEAT		 (CODE_FLAGS + 0x13) //0x82C
+
 // cities and towns
 #define FLAG_VISITED_LITTLEROOT_TOWN  (CODE_FLAGS + 0xF)
 #define FLAG_VISITED_OLDALE_TOWN      (CODE_FLAGS + 0x10)

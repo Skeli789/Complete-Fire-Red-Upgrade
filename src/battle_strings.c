@@ -35,6 +35,8 @@ extern u8 sText_YourCaps[];
 
 extern u8* ZMoveNames[];
 extern u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
+extern u8* gMaleFrontierNamesTable[];
+extern u8* gFemaleFrontierNamesTable[];
 
 extern u8 GetFrontierTrainerClassId(u16 trainerId, u8 battlerNum);
 extern void GetFrontierTrainerName(u8* dst, u16 trainerId, u8 battlerNum);
@@ -42,7 +44,13 @@ extern void CopyFrontierTrainerText(u8 whichText, u16 trainerId, u8 battlerNum);
 extern u8* GetTrainerBLoseText(void);
 extern u8* GetTrainerName(u8 bank);
 
+void PrepareStringBattle(u16 stringId, u8 bank);
+void BufferStringBattle(u16 stringID);
 void EmitPrintString(u8 bufferId, u16 stringID);
+
+#ifdef OPEN_WORLD_TRAINERS
+u8* GetOpenWorldTrainerName(bool8 female);
+#endif
 
 void PrepareStringBattle(u16 stringId, u8 bank) {
     gActiveBattler = bank;
@@ -639,19 +647,25 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
                 else
                 {
 					u8 class = gTrainers[gTrainerBattleOpponent_A].trainerClass;
+					#ifdef OPEN_WORLD_TRAINERS
+						if (gTrainerBattleOpponent_A < DYNAMIC_TRAINER_LIMIT && class != CLASS_TEAM_ROCKET)
+						{
+							toCpy = GetOpenWorldTrainerName(gTrainers[gTrainerBattleOpponent_A].gender);
+							break;
+						}
+					#endif
+					
 					#ifdef UNBOUND
 						if (class == 0x51 || class == 0x59)
 							toCpy = GetExpandedPlaceholder(ExpandPlaceholder_RivalName);
 						else
-							toCpy = gTrainers[gTrainerBattleOpponent_A].trainerName;
 					#elif defined OVERWRITE_RIVAL
 						if (class == 0x51 || class == 0x59 || class == 0x5A)
 							toCpy = GetExpandedPlaceholder(ExpandPlaceholder_RivalName);
 						else
-							toCpy = gTrainers[gTrainerBattleOpponent_A].trainerName;
-					#else
-						toCpy = gTrainers[gTrainerBattleOpponent_A].trainerName;
 					#endif
+					
+					toCpy = gTrainers[gTrainerBattleOpponent_A].trainerName;
                 }
                 break;
             case B_TXT_LINK_PLAYER_NAME: // link player name
@@ -785,6 +799,25 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 				}
                 else
                 {
+					u8 class = gTrainers[VarGet(SECOND_OPPONENT_VAR)].trainerClass;
+					#ifdef OPEN_WORLD_TRAINERS
+						if (VarGet(SECOND_OPPONENT_VAR) < DYNAMIC_TRAINER_LIMIT && class != CLASS_TEAM_ROCKET)
+						{
+							toCpy = GetOpenWorldTrainerName(gTrainers[VarGet(SECOND_OPPONENT_VAR)].gender);
+							break;
+						}
+					#endif
+					
+					#ifdef UNBOUND
+						if (class == 0x51 || class == 0x59)
+							toCpy = GetExpandedPlaceholder(ExpandPlaceholder_RivalName);
+						else
+					#elif defined OVERWRITE_RIVAL
+						if (class == 0x51 || class == 0x59 || class == 0x5A)
+							toCpy = GetExpandedPlaceholder(ExpandPlaceholder_RivalName);
+						else
+					#endif
+					
                     toCpy = gTrainers[VarGet(SECOND_OPPONENT_VAR)].trainerName;
                 }
                 break;
@@ -937,3 +970,15 @@ void EmitPrintSelectionString(u8 bufferId, u16 stringID)
     }
     PrepareBufferDataTransfer(bufferId, gBattleBuffersTransferData, sizeof(struct BattleMsgData) + 4);
 }
+
+#ifdef OPEN_WORLD_TRAINERS
+u8* GetOpenWorldTrainerName(bool8 female)
+{
+	u8 nameId = gSpecialVar_LastTalked * MathMax(1, gSaveBlock1->location.mapGroup) * MathMax(1, gSaveBlock1->location.mapNum);
+	
+	if (female)
+		return gFemaleFrontierNamesTable[nameId % NUM_FEMALE_NAMES];
+	else
+		return gMaleFrontierNamesTable[nameId % NUM_MALE_NAMES];
+}
+#endif

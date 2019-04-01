@@ -24,6 +24,18 @@ u8 GetHighestMonLevel(pokemon_t* party);
 u8 GetMonPokeBall(struct PokemonSubstruct0* data);
 void SetMonPokeBall(struct PokemonSubstruct0* data, u8 ballId);
 
+#ifdef OPEN_WORLD_TRAINERS
+
+extern const u8 openWorldLevelRanges[NUM_BADGE_OPTIONS][2];
+extern const species_t gGeneralTrainerSpreads[NUM_TRAINER_CLASSES][NUM_BADGE_OPTIONS][NUM_MONS_PER_BADGE];
+
+u8 GetOpenWorldTrainerMonAmount(void);
+u8 GetOpenWorldSpeciesIndex(u32 nameHash, u8 i);
+u8 GetOpenWorldSpeciesLevel(u32 nameHash, u8 i);
+u8 GetOpenWorldBadgeCount(void);
+
+#endif
+
 void BuildTrainerPartySetup(void) {
 	if (gBattleTypeFlags & (BATTLE_TYPE_TOWER_LINK_MULTI)) 
 	{
@@ -95,13 +107,27 @@ u8 CreateNPCTrainerParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, b
 	{
 		if (firstTrainer)
 			ZeroEnemyPartyMons(); //party_opponent_purge();
-			
+		
 		if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS && side == B_SIDE_OPPONENT)
         {
-            if (trainer->partySize > 3)
-                monsCount = 3;
-            else
-                monsCount = trainer->partySize;
+			#ifdef OPEN_WORLD_TRAINERS
+			if ((firstTrainer && gTrainerBattleOpponent_A < DYNAMIC_TRAINER_LIMIT)
+			||  (!firstTrainer && VarGet(SECOND_OPPONENT_VAR) < DYNAMIC_TRAINER_LIMIT))
+			{
+				u8 openWorldAmount = GetOpenWorldTrainerMonAmount();
+				if (openWorldAmount > 3)
+					monsCount = 3;
+				else
+					monsCount = openWorldAmount;
+			}
+			else
+			#endif
+			{
+				if (trainer->partySize > 3)
+					monsCount = 3;
+				else
+					monsCount = trainer->partySize;
+			}
         }
         else if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER && side == B_SIDE_PLAYER)
         {
@@ -111,9 +137,21 @@ u8 CreateNPCTrainerParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, b
                 monsCount = trainer->partySize;
         }
 		else
-            monsCount = trainer->partySize;
+		{
+			#ifdef OPEN_WORLD_TRAINERS
+			if (gTrainerBattleOpponent_A < DYNAMIC_TRAINER_LIMIT)
+			{
+				monsCount = GetOpenWorldTrainerMonAmount();
+				
+				if (trainer->doubleBattle)
+					monsCount = MathMax(monsCount, 2);
+			}
+			else
+			#endif
+				monsCount = trainer->partySize;
+		}
 		
-        u8 trainerNameLengthOddness = StringLength(trainer->trainerName) % 2;
+        u8 trainerNameLengthOddness = StringLength(trainer->trainerName) & 1;
         for (i = 0; i < monsCount; ++i) {
 		
 			u8 genderOffset = 0x80;
@@ -138,28 +176,44 @@ u8 CreateNPCTrainerParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, b
 			for (j = 0; trainer->trainerName[j] != EOS; ++j)
 				nameHash += trainer->trainerName[j];
 			
-			switch (gTrainers[trainerNum].partyFlags) {
-				case 0:
-					MAKE_POKEMON(trainer->party.NoItemDefaultMoves);
-					break;
-
-				case PARTY_FLAG_CUSTOM_MOVES:
-					MAKE_POKEMON(trainer->party.NoItemCustomMoves);
-					SET_MOVES(trainer->party.NoItemCustomMoves);
-					break;
-				
-				case PARTY_FLAG_HAS_ITEM:				
-					MAKE_POKEMON(trainer->party.ItemDefaultMoves);
-					party[i].item = trainer->party.ItemDefaultMoves[i].heldItem;
-					break;
-
-				case PARTY_FLAG_CUSTOM_MOVES | PARTY_FLAG_HAS_ITEM:
-					MAKE_POKEMON(trainer->party.ItemCustomMoves);
-					SET_MOVES(trainer->party.ItemCustomMoves);
-					party[i].item = trainer->party.ItemCustomMoves[i].heldItem;
-					break;
-            }
+			#ifdef OPEN_WORLD_TRAINERS
+			u8 openWorldSpeciesIndex = GetOpenWorldSpeciesIndex(nameHash, i);
+			u8 openWorldLevel = GetOpenWorldSpeciesLevel(nameHash, i);
 			
+			if (gTrainerBattleOpponent_A < DYNAMIC_TRAINER_LIMIT)
+			{
+				u16 speciesToCreate = gGeneralTrainerSpreads[trainer->trainerClass][GetOpenWorldBadgeCount()][openWorldSpeciesIndex];
+				
+				if (FlagGet(SCALE_TRAINER_LEVELS_FLAG) || (gBattleTypeFlags & BATTLE_TYPE_TRAINER_TOWER))																					\
+					openWorldLevel = GetHighestMonLevel(gPlayerParty);
+		
+				CreateMon(&party[i], speciesToCreate, openWorldLevel, STANDARD_IV, TRUE, personalityValue, OT_ID_PRESET, otid);
+			}
+			else
+			#endif
+			{
+				switch (gTrainers[trainerNum].partyFlags) {
+					case 0:
+						MAKE_POKEMON(trainer->party.NoItemDefaultMoves);
+						break;
+
+					case PARTY_FLAG_CUSTOM_MOVES:
+						MAKE_POKEMON(trainer->party.NoItemCustomMoves);
+						SET_MOVES(trainer->party.NoItemCustomMoves);
+						break;
+					
+					case PARTY_FLAG_HAS_ITEM:				
+						MAKE_POKEMON(trainer->party.ItemDefaultMoves);
+						party[i].item = trainer->party.ItemDefaultMoves[i].heldItem;
+						break;
+
+					case PARTY_FLAG_CUSTOM_MOVES | PARTY_FLAG_HAS_ITEM:
+						MAKE_POKEMON(trainer->party.ItemCustomMoves);
+						SET_MOVES(trainer->party.ItemCustomMoves);
+						party[i].item = trainer->party.ItemCustomMoves[i].heldItem;
+						break;
+				}
+			}
 			u8 otGender = trainer->gender;
 			SetMonData(&party[i], REQ_OTGENDER, &otGender);
 			SetMonData(&party[i], REQ_OTNAME, &trainer->trainerName);
@@ -199,7 +253,12 @@ u8 CreateNPCTrainerParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, b
 			CalculateMonStats(&party[i]);
 			HealMon(&party[i]);
         }
-		if (trainer->partySize > 1 && ViableMonCount(gPlayerParty) >= 2) //Double battles will not happen if the player only has 1 mon that can fight or if the foe only has 1 poke
+		#ifdef OPEN_WORLD_TRAINERS
+		if ((GetOpenWorldTrainerMonAmount() > 1 || trainer->doubleBattle)
+		#else
+		if (trainer->partySize > 1
+		#endif
+		&& ViableMonCount(gPlayerParty) >= 2) //Double battles will not happen if the player only has 1 mon that can fight or if the foe only has 1 poke
 		{
 			gBattleTypeFlags |= trainer->doubleBattle;
 		
@@ -593,3 +652,72 @@ void BattlePokemonScriptCommand_GiveHiddenAbility(pokemon_t* mon)
 		mon->hiddenAbility = TRUE;
 	}
 }
+
+#ifdef OPEN_WORLD_TRAINERS
+
+u8 GetOpenWorldTrainerMonAmount(void)
+{
+	switch (GetOpenWorldBadgeCount()) {
+		case 0:
+			return 1;
+		case 1:
+		case 2:
+			return 2;
+		case 3:
+		case 4:
+			return 3;
+		case 5:
+		case 6:
+			return 4;
+		case 7:
+		case 8:
+			return 5;
+		default:
+			return 6;
+	}
+}
+
+u8 GetOpenWorldSpeciesIndex(u32 nameHash, u8 i)
+{
+	return ((nameHash + 2 * i) ^ T1_READ_32(gSaveBlock2->playerTrainerId)) % 10;
+}
+
+u8 GetOpenWorldSpeciesLevel(u32 nameHash, u8 i)
+{
+	u8 badgeCount = GetOpenWorldBadgeCount();
+
+	u8 max = MathMax(openWorldLevelRanges[badgeCount][0], openWorldLevelRanges[badgeCount][1]); //Prevent incorrect order errors
+	u8 min = MathMin(openWorldLevelRanges[badgeCount][0], openWorldLevelRanges[badgeCount][1]); 
+	u8 range = (max - min) + 1;
+
+	return min + ((nameHash + 7 * i) ^ T1_READ_32(gSaveBlock2->playerTrainerId)) % range;
+}
+
+u8 GetOpenWorldBadgeCount(void)
+{
+	u8 badgeCount = 0;
+	
+	if (FlagGet(FLAG_ELITE4_BEAT)) //0x82C
+		return 9;
+	
+	if (FlagGet(FLAG_BADGE08_GET))
+		++badgeCount;
+	if (FlagGet(FLAG_BADGE07_GET))
+		++badgeCount;
+	if (FlagGet(FLAG_BADGE06_GET))
+		++badgeCount;
+	if (FlagGet(FLAG_BADGE05_GET))
+		++badgeCount;
+	if (FlagGet(FLAG_BADGE04_GET))
+		++badgeCount;
+	if (FlagGet(FLAG_BADGE03_GET))
+		++badgeCount;
+	if (FlagGet(FLAG_BADGE02_GET))
+		++badgeCount;
+	if (FlagGet(FLAG_BADGE01_GET))
+		++badgeCount;
+		
+	return badgeCount;
+}
+
+#endif
