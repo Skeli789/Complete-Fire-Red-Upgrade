@@ -4,8 +4,8 @@
 
 //Maybe add stuff in for Frontier brains
 
-extern u8* MaleFrontierNamesTable[];
-extern u8* FemaleFrontierNamesTable[];
+extern u8* gMaleFrontierNamesTable[];
+extern u8* gFemaleFrontierNamesTable[];
 
 u8 GetFrontierTrainerClassId(u16 trainerId, u8 battlerNum);
 void GetFrontierTrainerName(u8* dst, u16 trainerId, u8 battlerNum);
@@ -38,14 +38,14 @@ void GetFrontierTrainerName(u8* dst, u16 trainerId, u8 battlerNum)
 			if (VarGet(BATTLE_TOWER_TRAINER_NAME) == 0xFFFF)
 				VarSet(BATTLE_TOWER_TRAINER_NAME, umodsi(MathMin(Random(), NUM_MALE_NAMES), 0xFFFE));
 			
-			name = MaleFrontierNamesTable[VarGet(BATTLE_TOWER_TRAINER_NAME)];
+			name = gMaleFrontierNamesTable[VarGet(BATTLE_TOWER_TRAINER_NAME)];
 		}
 		else
 		{
 			if (VarGet(BATTLE_TOWER_TRAINER_NAME) == 0xFFFF)
 				VarSet(BATTLE_TOWER_TRAINER_NAME, umodsi(MathMin(Random(), NUM_FEMALE_NAMES), 0xFFFE));
 			
-			name = FemaleFrontierNamesTable[VarGet(BATTLE_TOWER_TRAINER_NAME)];
+			name = gFemaleFrontierNamesTable[VarGet(BATTLE_TOWER_TRAINER_NAME)];
 		}
 
 		for (i = 0; i < PLAYER_NAME_LENGTH; i++)

@@ -4,8 +4,8 @@
 
 #define TOTAL_SPREADS 0x4A0 //sizeof(gFrontierSpreads) / sizeof(struct BattleTowerSpreads)
 
-#define NUM_MALE_NAMES 0xAA //sizeof(MaleFrontierNamesTable) / sizeof(u8*)
-#define NUM_FEMALE_NAMES 0xAA //sizeof(FemaleFrontierNamesTable) / sizeof(u8*)
+#define NUM_MALE_NAMES 100
+#define NUM_FEMALE_NAMES 100
 
 #define species_array ((species_t*) 0x203DA00)
 #define item_array ((item_t*) 0x203DA10)
