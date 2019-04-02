@@ -757,13 +757,13 @@ void HandleAction_UseMove(void)
 	else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE
 		 && gBattleMoves[gCurrentMove].target & MOVE_TARGET_ALL)
 	{
-		while (GetNextMultiTarget() != 0xFF)
+		while ((gBankTarget = GetNextMultiTarget()) != 0xFF && gBattleMons[gBankTarget].hp == 0)
 		{
-			gBankTarget = GetNextMultiTarget();
-			if (gBattleMons[gBankTarget].hp)
-				break;
 			++gNewBS->OriginalAttackerTargetCount;
-		}	
+		}
+		
+		if (gBankTarget == 0xFF) //No targets left
+			gBankTarget = FOE(gBankAttacker); //Doesn't matter who, as long as not attacker
 	}
     else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
     {
@@ -787,8 +787,8 @@ void HandleAction_UseMove(void)
 		gBankTarget = selectedTarget;
 
     // choose battlescript
-	if (gBattleMons[gNewBS->skyDropAttackersTarget[gBankAttacker]].hp == 0
-	&&  gStatuses3[gBankAttacker] & STATUS3_SKY_DROP_ATTACKER)
+	if (gStatuses3[gBankAttacker] & STATUS3_SKY_DROP_ATTACKER
+	&& gBattleMons[gNewBS->skyDropAttackersTarget[gBankAttacker]].hp == 0)
 	{
 		gStatuses3[gBankAttacker] &= ~(STATUS3_SKY_DROP_ATTACKER | STATUS3_SKY_DROP_TARGET | STATUS3_IN_AIR);
 		gNewBS->skyDropTargetsAttacker[gBankTarget] = 0;

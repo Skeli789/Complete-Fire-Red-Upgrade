@@ -130,7 +130,7 @@ gBattleScriptingCommandsTable:
 .word 0x8026a59				@useitemonopponent
 .word 0x8026ab1				@atk76
 .word atk77_setprotect
-.word 0x80270a5				@faintifabilitynotdamp
+.word atk78_faintifabilitynotdamp
 .word 0x80271c1				@setuserhptozero
 .word atk7A_jumpifnexttargetvalid	@jumpwhiletargetvalid
 .word 0x80272c5				@setdamageasrestorehalfmaxhp

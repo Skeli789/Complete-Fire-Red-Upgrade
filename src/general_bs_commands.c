@@ -44,6 +44,7 @@ extern u8 BattleScript_FaintTarget[];
 extern u8 BattleScript_FaintScriptingBank[];
 extern u8 BattleScript_SoulHeart[];
 extern u8 BattleScript_IllusionBrokenFaint[];
+extern u8 BattleScript_DampStopsExplosion[];
 
 extern u8 StringEnduredHitWithSturdy[];
 extern u8 PrimalRainEndString[];
@@ -582,6 +583,8 @@ void atk0F_resultmessage(void) {
 				}
 				else
 					gBattlescriptCurrInstr = BattleScript_HangedOnMsg;
+					
+				gSpecialStatuses[gBankTarget].focusBanded = FALSE;
                 return;
             }
 			
@@ -1289,6 +1292,34 @@ void atk77_setprotect(void) {
     }
 
     gBattlescriptCurrInstr++;
+}
+
+void atk78_faintifabilitynotdamp(void)
+{
+    if (gBattleExecBuffer) return;
+
+	u8 bank;
+	
+    for (bank = 0; bank < gBattlersCount; ++bank)
+    {
+        if (ABILITY(bank) == ABILITY_DAMP)
+            break;
+    }
+
+    if (bank == gBattlersCount)
+    {
+        gActiveBattler = gBankAttacker;
+        gBattleMoveDamage = gBattleMons[gActiveBattler].hp;
+        EmitHealthBarUpdate(0, INSTANT_HP_BAR_DROP);
+        MarkBufferBankForExecution(gActiveBattler);
+        gBattlescriptCurrInstr++;
+    }
+    else
+    {
+        gLastUsedAbility = ABILITY_DAMP;
+        gBattleScripting->bank = bank;
+        gBattlescriptCurrInstr = BattleScript_DampStopsExplosion;
+    }
 }
 
 void atk7A_jumpifnexttargetvalid(void) {

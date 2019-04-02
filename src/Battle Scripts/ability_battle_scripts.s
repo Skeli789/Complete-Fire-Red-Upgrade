@@ -68,6 +68,7 @@
 .global BattleScript_CastformChange
 .global BattleScript_SturdyPreventsOHKO
 .global BattleScript_StickyHoldActivates
+.global BattleScript_DampStopsExplosion
 
 .global BattleScript_AbilityPopUp
 .global BattleScript_AbilityPopUpRevert
@@ -828,6 +829,19 @@ BattleScript_StickyHoldActivates:
 	call BattleScript_AbilityPopUpRevert
 	goto BS_MOVE_END
 
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_DampStopsExplosion:
+	pause 0x10
+	call BattleScript_AbilityPopUp
+	setword BATTLE_STRING_LOADER CantUseMoveString
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	orbyte OUTCOME OUTCOME_FAILED
+	orword HIT_MARKER HITMARKER_UNABLE_TO_USE_MOVE
+	goto BS_MOVE_END
+	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_AbilityPopUp:
