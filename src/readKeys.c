@@ -24,6 +24,7 @@ void InitKeys(void)
 #define gKeyRepeatContinueDelay 5
 #define gKeyRepeatStartDelay 40
 
+#ifdef SAVE_BLOCK_EXPANSION
 void TryForcedScript(u8 keyFlag, u16 currKeys) {
 	if (!(keyFlag & 0x4))
 		return;	// flag not set
@@ -53,22 +54,25 @@ u16 TryIgnoringKeys(u8 keyFlag, u16 currKeys) {
 		return currKeys;
 	return (currKeys | gKeypadSetter->keysToIgnore);
 };
+#endif
 
-// from pokeem
+
 // hook at 080005e8 via r0
 void ReadKeys(void) {
-	// JPAN code
-	u16 currKeys = gKeyReg;
-	u8 tryKey = gKeypadSetter->keyFlags;
-	if (tryKey != 0)
-	{
-		TryForcedScript(tryKey, currKeys);
-		currKeys = TryForcedKey(tryKey, currKeys);
-		currKeys = TryIgnoringKeys(tryKey, currKeys);
-	}
-	u16 keyInput = KEYS_MASK ^ currKeys;
-    //u16 keyInput = REG_KEYINPUT ^ KEYS_MASK;
 	
+	#ifdef SAVE_BLOCK_EXPANSION
+		u16 currKeys = gKeyReg;
+		u8 tryKey = gKeypadSetter->keyFlags;
+		if (tryKey != 0)
+		{
+			TryForcedScript(tryKey, currKeys);
+			currKeys = TryForcedKey(tryKey, currKeys);
+			currKeys = TryIgnoringKeys(tryKey, currKeys);
+		}
+		u16 keyInput = KEYS_MASK ^ currKeys;
+	#else
+		u16 keyInput = REG_KEYINPUT ^ KEYS_MASK;
+	#endif
     gMain.newKeysRaw = keyInput & ~gMain.heldKeysRaw;
     gMain.newKeys = gMain.newKeysRaw;
     gMain.newAndRepeatedKeys = gMain.newKeysRaw;

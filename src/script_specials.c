@@ -592,29 +592,41 @@ void sp02F_KeyDump(void) {
 //		var8004: key(s) to force 
 //		var8005: num times to 'press'
 void sp0C9_ForceOneKeyInput(void) {
-	gKeypadSetter->keyMapToForce = Var8004;
-	gKeypadSetter->keyForcingCounter = Var8005;
-	gKeypadSetter->keyFlags |= 1;
+	#ifdef SAVE_BLOCK_EXPANSION
+		gKeypadSetter->keyMapToForce = Var8004;
+		gKeypadSetter->keyForcingCounter = Var8005;
+		gKeypadSetter->keyFlags |= 1;
+	#else
+		return;
+	#endif
 };
 
 void sp0CA_IgnoreKeys(void) {
-	gKeypadSetter->keysToIgnore = Var8004;
-	gKeypadSetter->keyFlags |= 2;	
+	#ifdef SAVE_BLOCK_EXPANSION
+		gKeypadSetter->keysToIgnore = Var8004;
+		gKeypadSetter->keyFlags |= 2;
+	#else
+		return;
+	#endif
 };
 
 void sp0CB_PlaceKeyScript(void) {
-	u16 key = Var8004;
-	gKeypadSetter->keyToRunScript = key;
-	if (key == 0)
-	{
-		gKeypadSetter->scriptToRun = (u32) 0;
-		gKeypadSetter->keyFlags &= (0xfb);
-	}
-	else
-	{
-		gKeypadSetter->scriptToRun = gLoadPointer;
-		gKeypadSetter->keyFlags |= 4;
-	}
+	#ifdef SAVE_BLOCK_EXPANSION
+		u16 key = Var8004;
+		gKeypadSetter->keyToRunScript = key;
+		if (key == 0)
+		{
+			gKeypadSetter->scriptToRun = (u32) 0;
+			gKeypadSetter->keyFlags &= (0xfb);
+		}
+		else
+		{
+			gKeypadSetter->scriptToRun = gLoadPointer;
+			gKeypadSetter->keyFlags |= 4;
+		}
+	#else
+		return;
+	#endif
 };
 
 //Variable Math Specials//
@@ -700,10 +712,6 @@ u16 sp044_XORVariables(void) {
 
 //Other Specials//
 ///////////////////////////////////////////////////////////////////////////////////
-
-
-
-
 // add a string to custom multichoice box by vars 0x8004 and 0x8005
 // eg:
 //		setvar 0x8004 0x0890
@@ -718,9 +726,10 @@ void sp024_AddTextByVariable(void) {
 	if (multiIndex > 6)
 		return;
 	gMultiChoice[multiIndex].stringPointer = stringPointer;
+#else
+	return;
 #endif
 };
-
 
 
 // add a string to custom multichoice box by loadpointer
@@ -734,6 +743,8 @@ void sp025_AddTextByPointer(void) {
 	if (multiIndex > 6)
 		return;
 	gMultiChoice[multiIndex].stringPointer = gLoadPointer;
+#else
+	return;
 #endif
 };
 
@@ -775,7 +786,8 @@ void sp09C_OldManBattleModifier(void) {
 	CreateBattleStartTask(8, 0);
 };
 
-/*
+/* 
+// in Assembly/script.s
 void sp18B_DisplayImagesFromTable(void) {
 	return;
 };
@@ -784,7 +796,7 @@ void sp18B_DisplayImagesFromTable(void) {
 //Battle Specials//
 ///////////////////////////////////////////////////////////////////////////////////
 
-/*
+
 void sp051_WildShinyBattle(void) {
 	return;
 };
@@ -820,7 +832,6 @@ void sp058_WildDataSwitch(void) {
 void sp059_WildDataSwitchCanceller(void) {
 	return;
 };
-*/
 
 
 //Timer Specials//
@@ -906,17 +917,21 @@ bool8 sp04D_TimerValueReached(void) {
 //@Details: Saves the value in the seconds timer to a 
 //			specific memory address.
 void sp04E_SaveTimerValue(void) {
-	gTimerValue = sp049_StopTimer();
+	#ifdef SAVE_BLOCK_EXPANSION
+		gTimerValue = sp049_StopTimer();
+	#endif
 };
 
 
 //@Details: Starts the timer with the value stored by
 //			Special 0x4E.
 void sp04F_StartTimerAtTime(void) {
-	sp046_StartTimer();
-	gGbaTimer->timerOn = 0;
-	gGbaTimer->timerVal = gTimerValue;
-	gGbaTimer->timerOn = 0x84;
+	#ifdef SAVE_BLOCK_EXPANSION
+		sp046_StartTimer();
+		gGbaTimer->timerOn = 0;
+		gGbaTimer->timerVal = gTimerValue;
+		gGbaTimer->timerOn = 0x84;
+	#endif
 };
 
 
@@ -924,7 +939,9 @@ void sp04F_StartTimerAtTime(void) {
 //			Special 0x4E.
 //@Returns: Var 0x8006 - Timer time.
 void sp050_StoreTimerToVariable(void) {
-	VarSet(Var8006, gTimerValue);
+	#ifdef SAVE_BLOCK_EXPANSION
+		VarSet(Var8006, gTimerValue);
+	#endif
 };
 
 
@@ -932,7 +949,9 @@ void sp050_StoreTimerToVariable(void) {
 //			it to the saved timer.
 //@Input:	Var 0x8006 - Variable that is holding timer.
 void sp061_LoadTimerFromVariable(void) {
-	gTimerValue = VarGet(Var8006);
+	#ifdef SAVE_BLOCK_EXPANSION
+		gTimerValue = VarGet(Var8006);
+	#endif
 };
 
 //Safari Specials//
@@ -1055,21 +1074,25 @@ void sp081_SetWalkingScript(void) {
 //		4: Pedometers.small_2 (8bit)
 // Outputs: given pedometer value (be sure to free up 2 variables for the 32bit vals)
 u32 sp08A_ReadPedometerValue(void) {
-	u8 input = Var8004;
-	switch (input)
-	{
-		case 0:
-			return gPedometers->alwaysActive;
-		case 1:
-			return gPedometers->large;
-		case 2:
-			return gPedometers->medium;
-		case 3:
-			return gPedometers->smallOne;
-		case 4:
-			return gPedometers->smallTwo;
-		default:
-			return 0;		
-	}	
+	#ifdef SAVE_BLOCK_EXPANSION
+		u8 input = Var8004;
+		switch (input)
+		{
+			case 0:
+				return gPedometers->alwaysActive;
+			case 1:
+				return gPedometers->large;
+			case 2:
+				return gPedometers->medium;
+			case 3:
+				return gPedometers->smallOne;
+			case 4:
+				return gPedometers->smallTwo;
+			default:
+				return 0;		
+		}	
+	#else
+		return 0;
+	#endif
 };
 
