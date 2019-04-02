@@ -826,6 +826,11 @@ u8 AtkCanceller_UnableToUseMove(void)
 				gMultiHitCounter = 2;
 				PREPARE_BYTE_NUMBER_BUFFER(gBattleScripting->multihitString, 1, 0)
 			}
+			else if (CheckTableForMove(gCurrentMove, ThreeStrikesMoves))
+			{
+				gMultiHitCounter = 3;
+				PREPARE_BYTE_NUMBER_BUFFER(gBattleScripting->multihitString, 1, 0)
+			}
 			else if (gBattleMoves[gCurrentMove].effect == EFFECT_BEAT_UP)
 			{
 				struct Pokemon* party;
