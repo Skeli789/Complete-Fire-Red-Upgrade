@@ -9,16 +9,11 @@ NOTES:
 	2. PC selection hack allows a lot all of the attribute getter/setter specials to reference boxed pokemon via var8003
 		-var8003 = 1: boxed pokemon (output from pc selection: box num in var8000, slot in var8001)
 		-else: menu pokemon (and slot in var8004, etc)
+		-Be sure to always set var8003 for data manipulation specials!
 		
 		
 TO DO:
-	-timer specials
 	-battle specials
-	
-	-test keypad
-	-walking scripts
-	
-	-select from PC distinctions
 	
 */
 
@@ -149,36 +144,16 @@ u8 sp008_PokemonIVChecker(void) {
 	}
 };
 
-/*
+
 bool8 sp009_PokemonRibbonChecker(void) {
 	u16 mon = Var8004;
 	u16 ribbon = Var8005;
-	
 	if (mon >= 6)
 		return FALSE;
-	
-	if (ribbon > 0x1F)
+	else if (ribbon > 0x1F)
 		return FALSE;
-		
-	u32* pointer;
-	#ifdef SELECT_FROM_PC
-		if (Var8003 == 1)
-			pointer = GetBoxedMonAddr;
-		else
-			pointer = (u32*) &gPlayerParty[mon];
-	#else
-		pointer = (u32*) &gPlayerParty[mon];
-	#endif
-		pointer += (76 / sizeof(u32));
-		u32 data = *pointer;
-		
-		if (data & gBitTable[ribbon])
-			return TRUE;
-		else
-			return FALSE;
+	return (GetAttrFromVar8003(MON_DATA_RIBBONS) & ribbon);
 };
-*/
-
 
 
 u8 sp00A_CheckPokerusTimer(void) {
@@ -187,6 +162,7 @@ u8 sp00A_CheckPokerusTimer(void) {
 		return 0;
 	return GetAttrFromVar8003(MON_DATA_POKERUS);
 };
+
 
 u16 sp00B_CheckPokeball(void) {
 	u16 mon = Var8004;
@@ -197,6 +173,7 @@ u16 sp00B_CheckPokeball(void) {
 	return GetAttrFromVar8003(REQ_POKEBALL);
 };
 
+
 u8 sp00C_CheckCaptureLocation(void) {
 	u16 mon = Var8004;
 	
@@ -206,12 +183,14 @@ u8 sp00C_CheckCaptureLocation(void) {
 	return GetAttrFromVar8003(MON_DATA_MET_LOCATION);
 };
 
+
 u8 sp00D_CheckHappiness(void) {
 	u16 mon = Var8004;
 	if (mon >= 6)
 		return 0;
 	return GetAttrFromVar8003(MON_DATA_FRIENDSHIP);
 };
+
 
 item_t sp00E_CheckHeldItem(void) {
 	u16 mon = Var8004;
@@ -221,6 +200,7 @@ item_t sp00E_CheckHeldItem(void) {
 		
 	return GetAttrFromVar8003(MON_DATA_HELD_ITEM);
 };
+
 
 void sp00F_EVAdderSubtracter(void) {
 	u16 mon = Var8004;
@@ -265,43 +245,44 @@ void sp00F_EVAdderSubtracter(void) {
 	}
 };
 
+
 void sp010_IVSetter(void) {
 	u16 mon = Var8004;
 	u16 stat = Var8005;
-	u16 amount = Var8006;
-	
-	if (amount > 31)
-		amount = 31;
-	
+	u16 amount = Var8006;	
 	if (mon >= 6)
 		return;
+	if (amount > 31)
+		amount = 31;
+	Var8005 = amount;
 	
 	switch(stat) {
 		case CheckIVs_HP:
-			gPlayerParty[mon].hpIV = amount;
+			SetAttrFromVar8003(MON_DATA_HP_IV);
 			break;
 		case CheckIVs_Atk:
-			gPlayerParty[mon].attackIV = amount;
+			SetAttrFromVar8003(MON_DATA_ATK_IV);
 			break;
 		case CheckIVs_Def:
-			gPlayerParty[mon].defenseIV = amount;
+			SetAttrFromVar8003(MON_DATA_DEF_IV);
 			break;
 		case CheckIVs_Spd:
-			gPlayerParty[mon].speedIV = amount;
+			SetAttrFromVar8003(MON_DATA_SPEED_IV);
 			break;
 		case CheckIVs_SpAtk:
-			gPlayerParty[mon].spAttackIV = amount;
+			SetAttrFromVar8003(MON_DATA_SPATK_IV);
 			break;
 		case CheckIVs_SpDef:
-			gPlayerParty[mon].spDefenseIV = amount;
+			SetAttrFromVar8003(MON_DATA_SPDEF_IV);
 			break;
 		case SetAllIVs:
-			gPlayerParty[mon].hpIV = amount;
-			gPlayerParty[mon].attackIV = amount;
-			gPlayerParty[mon].defenseIV = amount;
-			gPlayerParty[mon].speedIV = amount;
-			gPlayerParty[mon].spAttackIV = amount;
-			gPlayerParty[mon].spDefenseIV = amount;
+		{
+			u8 i;
+			for (i = 0; i <= CheckIVs_SpDef; ++i)
+			{
+				SetAttrFromVar8003(MON_DATA_HP_IV + i);
+			}
+		}
 	}
 	return;
 };
@@ -309,27 +290,19 @@ void sp010_IVSetter(void) {
 void sp011_RibbonSetterCleaner(void) {
 	u16 mon = Var8004;
 	u16 ribbon = Var8005;
-	bool8 clear = FALSE;
+	//bool8 clear = FALSE;
 	
 	if (mon >= 6)
 		return;
-		
-	if (ribbon & 0x100) {
-		ribbon ^= 0x100;
-		clear = TRUE;
-	}
-	
-	if (ribbon > 0x1F)
+	else if (ribbon > 0x1F)
 		return;
-		
-	u32* pointer = (u32*) &gPlayerParty[mon];
-	pointer += (76 / sizeof(u32));
 	
-	if (clear)
-		*pointer &= ~(gBitTable[ribbon]);
+	// check set vs clear
+	if (ribbon & 0x100)
+		Var8005 = 0;
 	else
-		*pointer |= gBitTable[ribbon];
-	return;
+		Var8005 = 1;
+	SetAttrFromVar8003(MON_DATA_RIBBONS);
 };
 
 void sp012_PokerusSetter(void) {
@@ -339,48 +312,12 @@ void sp012_PokerusSetter(void) {
 	
 	if (mon >= 6)
 		return;
-	else if (Var8005 > 16)
+	
+	if (Var8005 > 16)
 		Var8005 = 16;
+	
 	SetAttrFromVar8003(MON_DATA_POKERUS);
-
-	/*	
-	if (timer > 0x10) 
-	{
-		gPlayerParty[mon].pokerusDays = 0;
-		gPlayerParty[mon].pokerusStrain = 1;
-	}
-	else 
-	{
-		gPlayerParty[mon].pokerusDays = timer;
-		
-		//Get appropriate strain depending on the timer
-		switch (timer) {
-			case 0:
-			case 4:
-			case 8:
-			case 12:
-				strain = (1 << 0);
-				break;
-			case 1:
-			case 5:
-			case 9:
-			case 13:
-				strain = (1 << 1);
-				break;
-			case 2:
-			case 6:
-			case 10:
-			case 14:
-				strain = (1 << 2);
-				break;
-			default:
-				strain = (1 << 3);
-				break;
-		}
-		
-		gPlayerParty[mon].pokerusStrain = strain;
-	}
-	*/
+	
 };
 
 void sp013_IncreaseDecreaseHappiness(void) {
@@ -446,53 +383,47 @@ void sp016_ChangePokemonSpecies(void) {
 	SetAttrFromVar8003(MON_DATA_SPECIES);
 };
 
-/*
+
+// Change Pokemon Attacks
+// Inputs:
+//		Var8004: pokemon slot
+//		Var8005: move slot (0x0-0x3) for move 1-4, respectively
+//		Var8006: move to replace (0 to delete)
+//
+// Unavailable for pc selection
 void sp017_ChangePokemonAttacks(void) {
 	u16 mon = Var8004;
-	u16 slot = Var8005;
+	u16 moveSlot = Var8005;
 	u16 move = Var8006;
-	int i;
-
+	
+	u8 i;
 	if (mon >= 6)
 		return;
-
+	else if (move > LAST_MOVE_INDEX)
+		return;
+	else if (moveSlot > MAX_MON_MOVES)
+		return;
+	
+	// check empty move slots, if not deleting
 	if (move != 0)
 	{
-		for (int i = 0; i < MAX_MON_MOVES; ++i) {
-			if (gPlayerParty[mon].moves[i] == 0) {
+		for (i = 0; i < MAX_MON_MOVES-1; ++i)
+		{
+			if (gPlayerParty[mon].moves[i] == 0)
+			{
 				gPlayerParty[mon].moves[i] = move;
 				gPlayerParty[mon].pp[i] = gBattleMoves[move].pp;
 				return;
-			}
+			}	
 		}
-	}
-	
-	gPlayerParty[mon].moves[slot] = move;
-	gPlayerParty[mon].pp[slot] = gBattleMoves[move].pp;
-	gPlayerParty[mon].pp_bonuses &= ~(gBitTable[slot * 2] | gBitTable[slot * 2 + 1]);
-	
-	//Clean Up Moves
-	u8 moves[4] = {0};
-	u8 pps[4] = {0};
-	u8 pp_bonuses = 0;
-	u8 availableSlot = 0;
-	
-	for (i = 0; i < MAX_MON_MOVES; ++i) {
-		if (gPlayerParty[mon].moves[i] != 0) {
-			moves[availableSlot] = gPlayerParty[mon].moves[i];
-			pps[availableSlot] = gPlayerParty[mon].pp[i];
-			pp_bonuses |= (((gBitTable[i * 2] & gPlayerParty[mon].pp_bonuses) | (gBitTable[i * 2 + 1] & gPlayerParty[mon].pp_bonuses)) << (availableSlot *2));
-		}
-	}
-	
-	for (i = 0; i < MAX_MON_MOVES; ++i) {
-		gPlayerParty[mon].moves[i] = moves[i];
-		gPlayerParty[mon].pp[i] = pps[i];
-		gPlayerParty[mon].pp_bonuses = pp_bonuses;
-	}
-	return;
+		// otherwise, replace given slot
+		gPlayerParty[mon].moves[moveSlot] = move;
+		gPlayerParty[mon].pp[moveSlot] = gBattleMoves[move].pp;
+		gPlayerParty[mon].pp_bonuses &= ~(gBitTable[moveSlot * 2] | gBitTable[moveSlot * 2 + 1]);	//reset pp bonuses
+	}		
+	else if (move == 0)
+		Special_DD_delete_move();
 };
-*/
 
 species_t sp018_CheckPokemonSpecies(void) {
 	u16 mon = Var8004;
@@ -1077,7 +1008,7 @@ u16 sp07E_GetTileNumber(void) {
 };
 
 
-/*
+
 //@Details: The Tile Attribute getter. Designed to be used with 
 //		  special 0x8f before it (to get the positions) and to 
 //		  be possible to use the required wild battle randomizer afterwards.'
@@ -1089,13 +1020,12 @@ u16 sp07E_GetTileNumber(void) {
 u16 sp07F_GetTileBehaviour(void) {
 	u16 x = Var8004;
 	u16 y = Var8005;
-	u32 field = MapGridGetMetatileField(x + 7, y + 7, field);
-	
+	u32 field = MapGridGetMetatileField(x + 7, y + 7, 0xFF);
 	Var8004 = (field & 0xFF000000) >> 0x18;
 	Var8005 = (field & 0xFFFF);
 	return Var8004 & 3;
 };
-*/
+
 
 
 /*	// in src/Assembly/script.s

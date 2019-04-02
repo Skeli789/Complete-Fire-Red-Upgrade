@@ -24,7 +24,7 @@ sp013_IncreaseDecreaseHappiness 0815FDAC
 sp014_ChangeCapturedBall 0815FDB0
 sp015_ModifyHeldItem 0815FDB4
 sp016_ChangePokemonSpecies 0815FDB8
-#sp017_ChangePokemonAttacks 0815FDBC
+sp017_ChangePokemonAttacks 0815FDBC
 sp018_CheckPokemonSpecies 0815FDC0
 sp019_CheckAttackPP 0815FDC4
 
