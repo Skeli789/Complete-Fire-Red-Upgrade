@@ -2045,7 +2045,7 @@ void atk9D_mimicattackcopy(void)
     || gLastUsedMoves[gBankTarget] == 0
     || gLastUsedMoves[gBankTarget] == 0xFFFF
 	|| CheckTableForMove(gLastUsedMoves[gBankTarget], MimicBanTable)
-	|| (gLastUsedMoves[gBankTarget] >= FIRST_Z_MOVE && gLastUsedMoves[gBankTarget] <= LAST_Z_MOVE))
+	|| IsZMove(gLastUsedMoves[gBankTarget]))
     {
         gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
     }
@@ -2081,7 +2081,7 @@ void atk9E_metronome(void)
     while (TRUE)
     {
         gCurrentMove = umodsi(Random(), LAST_MOVE_INDEX) + 1;
-        if (gCurrentMove >= FIRST_Z_MOVE && gCurrentMove <= LAST_Z_MOVE)
+        if (IsZMove(gCurrentMove))
             continue;
 
         if (CheckTableForMove(gCurrentMove, MetronomeBanTable))
@@ -2282,7 +2282,7 @@ void atkA6_settypetorandomresistance(void) { //Conversion 2
 			case TYPE_FORESIGHT:
 				break;
 			default:
-			#ifdef INVERSE_BATTLES
+		#ifdef INVERSE_BATTLES
 			if (FlagGet(INVERSE_FLAG)) {
 				if (TYPE_EFFECT_ATK_TYPE(j) == gNewBS->LastUsedTypes[bankDef]
 				&& TYPE_EFFECT_MULTIPLIER(j) >= TYPE_MUL_SUPER_EFFECTIVE
@@ -2295,8 +2295,9 @@ void atkA6_settypetorandomresistance(void) { //Conversion 2
 					return;
 				}
 			}
-			
-			else {
+			else
+		#endif
+			{
 				if (TYPE_EFFECT_ATK_TYPE(j) == gNewBS->LastUsedTypes[bankDef]
 				&& TYPE_EFFECT_MULTIPLIER(j) <= TYPE_MUL_NOT_EFFECTIVE
 				&& !IsOfType(bankAtk, TYPE_EFFECT_DEF_TYPE(i)))
@@ -2307,20 +2308,7 @@ void atkA6_settypetorandomresistance(void) { //Conversion 2
 					gBattlescriptCurrInstr += 5;
 					return;
 				}
-			}
-		#else
-			if (TYPE_EFFECT_ATK_TYPE(j) == gNewBS->LastUsedTypes[bankDef]
-			&& TYPE_EFFECT_MULTIPLIER(j) <= TYPE_MUL_NOT_EFFECTIVE
-			&& !IsOfType(bankAtk, TYPE_EFFECT_DEF_TYPE(i)))
-			{
-				SET_BATTLER_TYPE(bankAtk, TYPE_EFFECT_DEF_TYPE(rands));
-				PREPARE_TYPE_BUFFER(gBattleTextBuff1, TYPE_EFFECT_DEF_TYPE(rands))
-
-				gBattlescriptCurrInstr += 5;
-				return;
-			}
-		#endif
-				
+			}	
         }
     }
 
@@ -2332,7 +2320,7 @@ void atkA8_copymovepermanently(void) // sketch
     gChosenMove = 0xFFFF;
 
     if (!(gBattleMons[gBankAttacker].status2 & STATUS2_TRANSFORMED)
-	&& !(gLastPrintedMoves[gBankTarget] >= FIRST_Z_MOVE && gLastPrintedMoves[gBankTarget] <= LAST_Z_MOVE)
+	&& !IsZMove(gLastPrintedMoves[gBankTarget])
     && gLastPrintedMoves[gBankTarget] != MOVE_STRUGGLE
 	&& gLastPrintedMoves[gBankTarget] != MOVE_CHATTER
 	&& gLastPrintedMoves[gBankTarget] != MOVE_SKETCH

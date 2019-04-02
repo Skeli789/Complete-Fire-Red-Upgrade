@@ -283,13 +283,10 @@ void BufferStringBattle(u16 stringID) {
 			
         else 
 		{
-			if (zMoveActive && SPLIT(move) != SPLIT_STATUS) 
+			if (IsZMove(move)) 
 			{
 				//Load elongated move names for Z-Moves
-				if (move < MOVE_BREAKNECK_BLITZ_P) //Prevent accidental bugs
-					StringCopy(gBattleTextBuff2, ZMoveNames[0]);
-				else
-					StringCopy(gBattleTextBuff2, ZMoveNames[move - MOVE_BREAKNECK_BLITZ_P]);
+				StringCopy(gBattleTextBuff2, ZMoveNames[move - MOVE_BREAKNECK_BLITZ_P]);
 			}
 			else
 				StringCopy(gBattleTextBuff2, gMoveNames[move]);
