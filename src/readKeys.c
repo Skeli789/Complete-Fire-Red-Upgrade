@@ -27,11 +27,11 @@ void InitKeys(void)
 void TryForcedScript(u8 keyFlag, u16 currKeys) {
 	if (!(keyFlag & 0x4))
 		return;	// flag not set
-	else if (gScriptEnv2->enabled)
+	if (gScriptEnv2->enabled)
 		return;	// a script is already enabled
-	else if (!(gKeypadSetter->keyToRunScript & currKeys))
-		return;	// current key not mapped to script
-	else if (gTasks[0].func == (void*) TaskOverworld)
+	if (gTasks[0].func != (void*) TaskOverworld)
+		return;
+	if ((gKeypadSetter->keyToRunScript & currKeys))
 		return;
 	script_env_2_enable();
 	script_run((void*) gKeypadSetter->scriptToRun);
@@ -40,18 +40,17 @@ void TryForcedScript(u8 keyFlag, u16 currKeys) {
 
 u16 TryForcedKey(u8 keyFlag, u16 currKeys) {
 	if (!(keyFlag & 0x1))
-		return 0;
+		return currKeys;
 	u8 keyCounter = gKeypadSetter->keyForcingCounter;
 	if (keyCounter == 0)
-		return 0;
+		return currKeys;
 	gKeypadSetter->keyForcingCounter -= 1;
-	u16 keyMap = ~gKeypadSetter->keyMapToForce;
-	return (keyMap & currKeys);
+	return (~(gKeypadSetter->keyMapToForce) & currKeys);
 };
 
 u16 TryIgnoringKeys(u8 keyFlag, u16 currKeys) {
 	if (!(keyFlag & 0x2))
-		return 0;
+		return currKeys;
 	return (currKeys | gKeypadSetter->keysToIgnore);
 };
 
@@ -67,10 +66,9 @@ void ReadKeys(void) {
 		currKeys = TryForcedKey(tryKey, currKeys);
 		currKeys = TryIgnoringKeys(tryKey, currKeys);
 	}
-	//u16 keyInput = currKeys ^ KEYS_MASK;
+	u16 keyInput = KEYS_MASK ^ currKeys;
+    //u16 keyInput = REG_KEYINPUT ^ KEYS_MASK;
 	
-	// pokeem
-    u16 keyInput = REG_KEYINPUT ^ KEYS_MASK;
     gMain.newKeysRaw = keyInput & ~gMain.heldKeysRaw;
     gMain.newKeys = gMain.newKeysRaw;
     gMain.newAndRepeatedKeys = gMain.newKeysRaw;

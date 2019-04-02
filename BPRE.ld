@@ -41,6 +41,7 @@ SetAttr = 0x0804037C|1;
 PokemonSlotPurge = 0x0803D994|1;
 count_pokemon = 0x02024029;
 party_player = 0x02024284;
+WritePokeAttacks = 0x0803EC40 | 1;
 
 calculate_stats_pokemon = 0x0803E47C|1;
 
@@ -797,6 +798,7 @@ FlagGet = 0x806E6D0 | 1;
 VarGet = 0x806E568 | 1;
 VarGetAddress = 0x806E454 | 1;
 VarSet = 0x806E584 | 1;
+VarGetX4010 = 0x0806e5a4 | 1;
 LoadCompressedPalette = 0x80703A8 | 1;
 PlayCry3 = 0x8071E60 | 1;
 PlayBGM = 0x80722A0 | 1;
