@@ -147,12 +147,11 @@ bool8 PartyAlive (u8 bank) {
 u8 ViableMonCount(pokemon_t* party) {
 	u8 count = 0;
 	
-    for (int i = 0; i < 6; ++i) {
-        if (pokemon_getattr(&party[i], REQ_SPECIES) == PKMN_NONE
-        || pokemon_getattr(&party[i], REQ_EGG) 
-		|| pokemon_getattr(&party[i], REQ_CURRHP) == 0) 
-			continue;
-		else
+    for (int i = 0; i < 6; ++i) 
+	{
+        if (party[i].species != PKMN_NONE
+        && !GetMonData(&party[i], REQ_EGG, NULL) 
+		&& party[i].hp != 0)
 			++count;
     }
 	return count;

@@ -18,7 +18,13 @@
 @Banks
 .equ BANK_TARGET, 0x0
 .equ BANK_ATTACKER, 0x1
-.equ BANK_SCRIPTING, 0xA 
+.equ BANK_EFFECT, 0x2
+.equ BANK_FAINTED, 0x3
+.equ BANK_SCRIPTING, 0xA
+.equ BANK_PLAYER_1, 0xB
+.equ BANK_OPPONENT_1, 0xC
+.equ BANK_PLAYER_2, 0xD
+.equ BANK_OPPONENT_2, 0xE
 
 @Comparisons
 .equ EQUALS, 0x0

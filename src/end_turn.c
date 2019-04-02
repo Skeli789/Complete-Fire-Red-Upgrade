@@ -36,6 +36,9 @@ extern u8 BattleScript_ShieldsDownToCore[];
 extern u8 BattleScript_ShieldsDownToMeteor[];
 extern u8 BattleScript_FlowerGift[];
 extern u8 BattleScript_RaiseStatsItemEnd2[];
+extern u8 BattleScript_HandleFaintedMonDoublesInitial[];
+extern u8 BattleScript_HandleFaintedMonDoublesPart2[];
+extern u8 BattleScript_HandleFaintedMonDoublesSwitchInEffects[];
 
 extern u8 GetWhoStrikesFirst(bank_t, bank_t, bool8 ignoreMovePriorities);
 extern bool8 HasNoMonsToSwitch(u8 battler);
@@ -1143,16 +1146,17 @@ u8 TurnBasedEffects(void) {
     return 0;
 }
 
-#define FAINTED_ACTIONS_MAX_CASE 7
+#define FAINTED_ACTIONS_MAX_CASE 9
 
 bool8 HandleFaintedMonActions(void)
 {
+	int i, j;
+	
     if (gBattleTypeFlags & BATTLE_TYPE_SAFARI)
         return FALSE;
 	
     do
     {
-        int i;
         switch (gBattleStruct->faintedActionsState) {
 			case 0:
 				gBattleStruct->faintedActionsBank = 0;
@@ -1204,7 +1208,16 @@ bool8 HandleFaintedMonActions(void)
 						if (gNewBS->EndTurnDone 
 						||  ViableMonCountFromBank(gBattleStruct->faintedActionsBank) == 0)
 						{
-							BattleScriptExecute(BattleScript_HandleFaintedMon);
+							//Double battle that's not wild
+							//This allows the AI to know what you're sending out and react accordingly in regular Single Battles (ie send in a mon strong against you)
+							if (gBattleTypeFlags & BATTLE_TYPE_TRAINER && gBattleTypeFlags & (BATTLE_TYPE_DOUBLE | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_LINK))
+							{
+								gNewBS->handleDoublesSwitchIns |= gBitTable[gBattleStruct->faintedActionsBank];
+								BattleScriptExecute(BattleScript_HandleFaintedMonDoublesInitial);
+							}
+							else
+								BattleScriptExecute(BattleScript_HandleFaintedMon);
+							
 							gBattleStruct->faintedActionsState = 5;
 							return TRUE;
 						}
@@ -1216,24 +1229,75 @@ bool8 HandleFaintedMonActions(void)
 					}
 				} while (++gBattleStruct->faintedActionsBank < gBattlersCount);
 				
-
-				gBattleStruct->faintedActionsState = 6;
+				if (gNewBS->handleDoublesSwitchIns)
+				{
+					gBattleStruct->faintedActionsBank = 0;
+					gBattleStruct->faintedActionsState = 6;
+				}
+				else
+					gBattleStruct->faintedActionsState = 8;
 				break;
 			
 			case 5:
 				if (++gBattleStruct->faintedActionsBank >= gBattlersCount)
-					gBattleStruct->faintedActionsState = 6;
+				{
+					if (gNewBS->handleDoublesSwitchIns)
+					{
+						gBattleStruct->faintedActionsBank = 0;
+						gBattleStruct->faintedActionsState = 6;
+					}
+					else
+						gBattleStruct->faintedActionsState = 8;
+				}
 				else
 					gBattleStruct->faintedActionsState = 4;
 				break;
 			
 			case 6:
+				do
+				{
+					gBankFainted = gBankTarget = gBattleStruct->faintedActionsBank;
+					if (gNewBS->handleDoublesSwitchIns & gBitTable[gBattleStruct->faintedActionsBank])
+					{
+						++gBattleStruct->faintedActionsBank;
+						BattleScriptExecute(BattleScript_HandleFaintedMonDoublesPart2);
+						return TRUE;
+					}
+				} while (++gBattleStruct->faintedActionsBank < gBattlersCount);
+				
+				//Recalc turn order for switch-in abilities
+				for (i = 0; i < gBattlersCount; ++i)
+					gBanksByTurnOrder[i] = i;
+				
+				for (i = 0; i < gBattlersCount - 1; ++i) 
+				{
+					for (j = i + 1; j < gBattlersCount; ++j) 
+					{
+						if (GetWhoStrikesFirst(gBanksByTurnOrder[i], gBanksByTurnOrder[j], 1))
+							SwapTurnOrder(i, j);
+					}
+				}
+				
+				gBattleStruct->faintedActionsBank = 0;
+				gBattleStruct->faintedActionsState++;
+				__attribute__ ((fallthrough));
+			
+			case 7:
+				do
+					{
+						gBankFainted = gBankTarget = gBattleStruct->faintedActionsBank;
+						if (gNewBS->handleDoublesSwitchIns & gBitTable[gBattleStruct->faintedActionsBank])
+						{
+							gNewBS->handleDoublesSwitchIns &= ~(gBitTable[gBattleStruct->faintedActionsBank]);
+							BattleScriptExecute(BattleScript_HandleFaintedMonDoublesSwitchInEffects);
+							return TRUE;
+						}
+					} while (++gBattleStruct->faintedActionsBank < gBattlersCount);
+				gBattleStruct->faintedActionsState++;
+				__attribute__ ((fallthrough));
+			
+			case 8:
 				gNewBS->EndTurnDone = FALSE;
-				/*==if (AbilityBattleEffects(ABILITYEFFECT_INTIMIDATE1, 0, 0, 0, 0) //I don't think this is necessary, but I'm not sure
-				|| AbilityBattleEffects(ABILITYEFFECT_TRACE, 0, 0, 0, 0) 
-				|| ItemBattleEffects(ItemEffects_EndTurn, gBankAttacker, TRUE, FALSE) 
-				|| AbilityBattleEffects(ABILITYEFFECT_FORECAST, 0, 0, 0, 0))
-					return TRUE;*/
 				gBattleStruct->faintedActionsState++;
 				break;
 			
@@ -1255,4 +1319,9 @@ u8 CountAliveMonsOnField(void)
 			++count;
 	}
 	return count;
+}
+
+void RemoveSwitchInForFaintedBank(void)
+{
+	gNewBS->handleDoublesSwitchIns &= ~(gBitTable[gBankFainted]);
 }

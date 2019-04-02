@@ -759,6 +759,7 @@ struct NewBattleStruct
 	u8 AbsentBattlerHelper;
 	u8 activeAbilityPopUps;
 	u8 NoMoreMovingThisTurn;
+	u8 handleDoublesSwitchIns;
 	
 	//Bit Fields for Party
 	u8 BelchCounters;

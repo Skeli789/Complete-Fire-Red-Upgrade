@@ -22,6 +22,10 @@
 
 .global BattleScript_WildDoubleSwitchFix
 
+.global BattleScript_HandleFaintedMonDoublesInitial
+.global BattleScript_HandleFaintedMonDoublesPart2
+.global BattleScript_HandleFaintedMonDoublesSwitchInEffects
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_HealingWishHeal:
@@ -228,6 +232,50 @@ WildDoubleTrySwitchOut:
 	switchhandleorder 0x3 0x2
 	goto 0x81D8792
 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_HandleFaintedMonDoublesInitial:
+	ifwildbattleend BattleScript_81D87B8
+	jumpifbyte NOTEQUALS BATTLE_OUTCOME 0 BattleScript_FaintedMonCancelSwitchIn
+	jumpifnoviablemonsleft BANK_TARGET BattleScript_FaintedMonCancelSwitchIn
+	openpartyscreen 0x3 BattleScript_FaintedMonCancelSwitchIn
+	switchhandleorder BANK_FAINTED 0x2
+	drawpartystatussummary BANK_FAINTED
+	switch1 BANK_FAINTED
+	goto BattleScript_FaintedMonEnd
+	
+BattleScript_FaintedMonCancelSwitchIn:
+	callasm RemoveSwitchInForFaintedBank
+
+BattleScript_FaintedMonEnd:
+	end2
+	
+BattleScript_81D87B8:
+	openpartyscreen 0x5, BattleScript_81D87BE
+
+BattleScript_81D87BE:
+	switchhandleorder BANK_FAINTED, 0x0
+	openpartyscreen 0x6 BattleScript_FaintedMonEnd
+	switchhandleorder BANK_FAINTED, 0x0	
+	switchhandleorder BANK_FAINTED, 0x3
+	drawpartystatussummary BANK_FAINTED
+	switch1 BANK_FAINTED
+	end2
+
+BattleScript_HandleFaintedMonDoublesPart2:
+	switch2 BANK_FAINTED
+	hpthresholds BANK_FAINTED
+	printstring 0x3 @;STRINGID_SWITCHINMON
+	hidepartystatussummary BANK_FAINTED
+	switch3 BANK_FAINTED, FALSE
+	waitstateatk
+	various BANK_ATTACKER 0x7
+	end2
+	
+BattleScript_HandleFaintedMonDoublesSwitchInEffects:
+	switchineffects BANK_FAINTED
+	end2	
+	
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 .align 2
