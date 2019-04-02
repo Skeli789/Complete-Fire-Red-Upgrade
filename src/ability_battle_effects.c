@@ -2074,7 +2074,19 @@ static void PrintOnAbilityPopUp(const u8* str, u8* spriteTileData1, u8* spriteTi
 
 static void PrintBattlerOnAbilityPopUp(u8 battlerId, u8 spriteId1, u8 spriteId2)
 {
-	u8* textPtr = StringCopy(gDisplayedStringBattle, GetIllusionPartyData(battlerId)->nickname);
+	u8* textPtr;
+	u8 monName[POKEMON_NAME_LENGTH + 3];
+	u8* nick = GetIllusionPartyData(battlerId)->nickname;
+
+	if (nick[9] == 0xFF || nick[9] == 0x0)
+		textPtr = StringCopy(monName, nick);
+	else
+	{
+		for (int i = 0; i < POKEMON_NAME_LENGTH; ++i)
+			monName[i] = nick[i];
+			
+		textPtr = monName + POKEMON_NAME_LENGTH;
+	}
 	
 	//Make the string say "[NAME]'s" instead of "[NAME]"
 	textPtr[0] = 0xB4; //'
@@ -2083,7 +2095,7 @@ static void PrintBattlerOnAbilityPopUp(u8 battlerId, u8 spriteId1, u8 spriteId2)
 	++textPtr;
 	textPtr[0] = EOS;
 
-    PrintOnAbilityPopUp((const u8*) gDisplayedStringBattle,
+    PrintOnAbilityPopUp((const u8*) monName,
                         (void*)(OBJ_VRAM0) + (gSprites[spriteId1].oam.tileNum * 32),
                         (void*)(OBJ_VRAM0) + (gSprites[spriteId2].oam.tileNum * 32),
                         5, 0,
@@ -2166,10 +2178,16 @@ static const u16 sOverwrittenPixelsTable[][2] =
 //Second Row Of Image
 	{PIXEL_COORDS_TO_OFFSET(0, 45), 8},
 	{PIXEL_COORDS_TO_OFFSET(0, 46), 8},
+	{PIXEL_COORDS_TO_OFFSET(0, 47), 8},
+	{PIXEL_COORDS_TO_OFFSET(0, 48), 8},
 	{PIXEL_COORDS_TO_OFFSET(8, 45), 8},
 	{PIXEL_COORDS_TO_OFFSET(8, 46), 8},
+	{PIXEL_COORDS_TO_OFFSET(8, 47), 8},
+	{PIXEL_COORDS_TO_OFFSET(8, 48), 8},
 	{PIXEL_COORDS_TO_OFFSET(16, 45), 8},
 	{PIXEL_COORDS_TO_OFFSET(16, 46), 8},
+	{PIXEL_COORDS_TO_OFFSET(16, 47), 8},
+	{PIXEL_COORDS_TO_OFFSET(16, 48), 8},
 };
 
 static inline void CopyPixels(u8 *dest, const u8 *src, u32 pixelCount)
