@@ -2359,8 +2359,6 @@ u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 
 				else
 					party = gEnemyParty;
 				
-				break_func(gBattleCommunication[0]);
-				
 				power = udivsi(gBaseStats[party[gBattleCommunication[0] - 1].species].baseAttack, 10) + 5;
 			}
             break;
