@@ -57,6 +57,7 @@ u8* gDefaultWalkingScripts[] =
 	(u32) 0,
 	(u32) 0,
 	(u32) 0,
+	//etc
 };
 
 enum

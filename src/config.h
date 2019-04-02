@@ -185,4 +185,17 @@ enum
 
 #define SELECT_FROM_PC //comment this out to remove select-from-pc hack
 
+// Character Customization
+#define VAR_PLAYER_WALKRUN 0x4054		//change walking, running player sprite
+#define VAR_PLAYER_BIKING 0x4055		//change biking player sprite
+#define VAR_PLAYER_SURFING 0x4056		//change player surfing sprite
+#define VAR_PLAYER_VS_SEEKER 0x4057		//change vs seeker usage sprite
+#define VAR_PLAYER_FISHING 0x4058		//change fishing sprite
+#define VAR_PLAYER_VS_SEEKER_ON_BIKE 0x4059		//change vs seeker on bike sprite
+#define VAR_TRAINERCARD_MALE 0x4060		//change trainer card image (male)
+#define VAR_TRAINERCARD_FEMALE 0x4061		//change trainer card image (female)
+#define VAR_PLAYER_BACKSPRITE 0x4062		//change player backsprite image (table at 0x1ab200)
+
+#define VAR_RUNTIME_CHANGEABLE 0x4080		// 'secret base' variables, save 15 consecutive variables for this
+// #define EXISTING_OW_TABLE_ADDRESS 0x81a2000	// uncomment if you want new overworld tables to be generated
 

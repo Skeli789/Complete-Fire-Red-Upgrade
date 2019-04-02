@@ -439,4 +439,3 @@ typedef u8 IllusionNickname_t[10];
 #define gPedometers ((struct Pedometers*) 0x203B7BC)		//12 bytes
 #define gWalkingScript (*(u32*) 0x203B7C8)
 
-
