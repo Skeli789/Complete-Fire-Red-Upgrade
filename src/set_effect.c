@@ -391,7 +391,11 @@ void SetMoveEffect(bool8 primary, u8 certain)
                 else
                 {
 					gNewBS->secondaryEffectApplied = TRUE;
-                    gBattleMons[gEffectBank].status2 |= ((Random() & 3) + 3) << 0xD;
+					
+					if (ITEM_EFFECT(gBankAttacker) == ITEM_EFFECT_GRIP_CLAW)
+						gBattleMons[gEffectBank].status2 |= (7 << 0xD);
+					else
+						gBattleMons[gEffectBank].status2 |= ((Random() & 1) + 4) << 0xD;
 
                     gBattleStruct->wrappedMove[gEffectBank] = gCurrentMove;
                     gBattleStruct->wrappedBy[gEffectBank] = gBankAttacker;

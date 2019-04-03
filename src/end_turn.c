@@ -519,39 +519,54 @@ u8 TurnBasedEffects(void) {
                 break;
 				
 			case(ET_Trap_Damage):
-                if ((gBattleMons[gActiveBattler].status2 & STATUS2_WRAPPED)
-				&& gBattleMons[gActiveBattler].hp
-				&& gBattleMons[gActiveBattler].ability != ABILITY_MAGICGUARD) 
+				if (gNewBS->brokeFreeMessage & gBitTable[gActiveBattler]
+				&& gBattleMons[gActiveBattler].hp) 
 				{
-						gBattleMons[gActiveBattler].status2 -= 0x2000;
-						if (gBattleMons[gActiveBattler].status2 & STATUS2_WRAPPED) 
-						{  //Damaged by wrap
-							gBattleScripting->animArg1 = gBattleStruct->wrappedMove[gActiveBattler];
-							gBattleScripting->animArg2 = gBattleStruct->wrappedMove[gActiveBattler] >> 8;
-							gBattleTextBuff1[0] = 0xFD;
-							gBattleTextBuff1[1] = 2;
-							gBattleTextBuff1[2] = gBattleStruct->wrappedMove[gActiveBattler];
-							gBattleTextBuff1[3] = gBattleStruct->wrappedMove[gActiveBattler] >> 8;
-							gBattleTextBuff1[4] = EOS;
-							gBattlescriptCurrInstr = BattleScript_WrapTurnDmg;
-							
-							if (ITEM_EFFECT(gActiveBattler) == ITEM_EFFECT_BINDING_BAND)
-								gBattleMoveDamage = MathMax(1, udivsi(gBattleMons[gActiveBattler].maxHP, 6));
-							else
-								gBattleMoveDamage = MathMax(1, gBattleMons[gActiveBattler].maxHP / 8);
-						}
-						else 
-						{ 	//Broke free
-							gBattleTextBuff1[0] = 0xFD;
-							gBattleTextBuff1[1] = 2;
-							gBattleTextBuff1[2] = gBattleStruct->wrappedMove[gActiveBattler];
-							gBattleTextBuff1[3] = gBattleStruct->wrappedMove[gActiveBattler] >> 8;
-							gBattleTextBuff1[4] = EOS;
-							gBattlescriptCurrInstr = BattleScript_WrapEnds;
-						}
+					//Broke free
+					gBattleMons[gActiveBattler].status2 &= ~(STATUS2_WRAPPED);
+					gNewBS->brokeFreeMessage &= ~(gBitTable[gActiveBattler]);
+					
+					gBattleTextBuff1[0] = 0xFD;
+					gBattleTextBuff1[1] = 2;
+					gBattleTextBuff1[2] = gBattleStruct->wrappedMove[gActiveBattler];
+					gBattleTextBuff1[3] = gBattleStruct->wrappedMove[gActiveBattler] >> 8;
+					gBattleTextBuff1[4] = EOS;
+					gBattlescriptCurrInstr = BattleScript_WrapEnds;
+					BattleScriptExecute(gBattlescriptCurrInstr);
+					effect++;
+				}
+                else if ((gBattleMons[gActiveBattler].status2 & STATUS2_WRAPPED)
+				&& gBattleMons[gActiveBattler].hp) 
+				{
+					gBattleMons[gActiveBattler].status2 -= 0x2000;
+					
+					if (ABILITY(gActiveBattler) != ABILITY_MAGICGUARD)
+					{
+						//Damaged by wrap
+						gBattleScripting->animArg1 = gBattleStruct->wrappedMove[gActiveBattler];
+						gBattleScripting->animArg2 = gBattleStruct->wrappedMove[gActiveBattler] >> 8;
+						gBattleTextBuff1[0] = 0xFD;
+						gBattleTextBuff1[1] = 2;
+						gBattleTextBuff1[2] = gBattleStruct->wrappedMove[gActiveBattler];
+						gBattleTextBuff1[3] = gBattleStruct->wrappedMove[gActiveBattler] >> 8;
+						gBattleTextBuff1[4] = EOS;
+						gBattlescriptCurrInstr = BattleScript_WrapTurnDmg;
+								
+						if (ITEM_EFFECT(gActiveBattler) == ITEM_EFFECT_BINDING_BAND)
+							gBattleMoveDamage = MathMax(1, udivsi(gBattleMons[gActiveBattler].maxHP, 6));
+						else
+							gBattleMoveDamage = MathMax(1, gBattleMons[gActiveBattler].maxHP / 8);
+
 						BattleScriptExecute(gBattlescriptCurrInstr);
 						effect++;
 					}
+					
+					if (!(gBattleMons[gActiveBattler].status2 & STATUS2_WRAPPED))
+					{
+						gBattleMons[gActiveBattler].status2 |= STATUS2_WRAPPED; //Reactivate temporarily
+						gNewBS->brokeFreeMessage |= gBitTable[gActiveBattler]; //Will play next turn
+					}
+				}
                 break;
 				
 			case(ET_Taunt_Timer):
