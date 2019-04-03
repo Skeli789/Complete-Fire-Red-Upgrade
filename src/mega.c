@@ -2,7 +2,6 @@
 #include "helper_functions.h"
 #include "mega.h"
 
-#define ITEM_MEGA_RING 0x161
 #define TRAINER_ITEM_COUNT 4
 
 extern u8 BattleScript_Primal[];
@@ -29,14 +28,19 @@ bool8 IsUltraNecrozma(u8 bank);
 bool8 HasMegaSymbol(u8 bank);
 u8* GetTrainerName(u8 bank);
 
-item_t KeystoneTable[] = {
+item_t KeystoneTable[] = 
+{
     ITEM_MEGA_RING,
 };
 
 const struct Evolution* CanMegaEvolve(u8 bank, bool8 CheckUBInstead) {
 	#ifndef MEGA_EVOLUTION_FEATURE
-		return 0;
+		return NULL;
 	#else
+	
+	if (!CheckUBInstead && !MegaEvolutionEnabled(bank)) //Ultra Burst doesn't need Mega Ring
+		return NULL;
+	
 	pokemon_t* mon = GetBankPartyData(bank);
 	const struct Evolution* evolutions = gEvolutionTable[mon->species];
 	int i, j;
@@ -60,8 +64,8 @@ const struct Evolution* CanMegaEvolve(u8 bank, bool8 CheckUBInstead) {
 			}
 		}
 	}
-	// NULL
-	return 0;
+	
+	return NULL;
 	#endif
 }
 
@@ -210,6 +214,14 @@ item_t FindBankKeystone(u8 bank)
 }
 
 bool8 MegaEvolutionEnabled(u8 bank) {
+	if (gBattleTypeFlags & (BATTLE_TYPE_LINK 
+						  | BATTLE_TYPE_TRAINER_TOWER 
+						  | BATTLE_TYPE_FRONTIER
+						  | BATTLE_TYPE_EREADER_TRAINER))
+	{
+		return TRUE;
+	}
+
 	if (FindBankKeystone(bank) == ITEM_NONE) {
 	#ifdef DEBUG_MEGA
 		return TRUE;
@@ -268,12 +280,14 @@ bool8 IsMega(u8 bank)
 //No better way to check for these next two
 bool8 IsBluePrimal(u8 bank)
 {
-	return gBattleMons[bank].species == PKMN_KYOGRE_PRIMAL;
+	u16 species = GetBankPartyData(bank)->species;
+	return species == PKMN_KYOGRE_PRIMAL;
 }
 
 bool8 IsRedPrimal(u8 bank)
 {
-	return gBattleMons[bank].species == PKMN_GROUDON_PRIMAL;
+	u16 species = GetBankPartyData(bank)->species;
+	return species == PKMN_GROUDON_PRIMAL;
 }
 
 bool8 IsUltraNecrozma(u8 bank)
