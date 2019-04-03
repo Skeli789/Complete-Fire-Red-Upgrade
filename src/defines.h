@@ -22,7 +22,7 @@
 #include "../include/constants/metatile_behaviors.h"
 #include "../include/constants/maps.h"
 #include "../include/constants/vars.h"
-#include "../include/pokemon.h"
+#include "../include/constants/species.h"
 #include "../include/battle_controllers.h"
 #include "../include/item.h"
 #include "../include/battle_string_ids.h"
