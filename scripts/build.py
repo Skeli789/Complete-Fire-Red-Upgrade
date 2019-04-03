@@ -55,14 +55,15 @@ def make_output_file(filename):
 	m.update(filename.encode())
 	newfilename = os.path.join(BUILD, m.hexdigest() + '.o')
 	
-	try:
-		if os.path.getmtime(newfilename) > os.path.getmtime(filename): #If the object file was created after the file was last modified
-			return [newfilename, False]
-		else:
-			return [newfilename, True]
+	if not os.path.isfile(filename):
+		return [newfilename, False]
 	
-	except FileNotFoundError: #If the object file doesn't exist, then obviously it needs to be made
-		return [newfilename, True]
+	fileExists = os.path.isfile(newfilename)
+	
+	if fileExists and os.path.getmtime(newfilename) > os.path.getmtime(filename): #If the object file was created after the file was last modified
+		return [newfilename, False]
+	
+	return [newfilename, True]
 
 CharMap = "charmap.tbl"
 
@@ -87,7 +88,7 @@ def process_assembly(in_file):
 	'''Assemble'''
 	out_file_list = make_output_file(in_file)
 	out_file = out_file_list[0]
-	if out_file_list[1] == False:
+	if out_file_list[1] is False:
 		return out_file #No point in recompiling file
 	
 	print ('Assembling %s' % in_file)
@@ -99,7 +100,7 @@ def process_c(in_file):
 	'''Compile C'''
 	out_file_list = make_output_file(in_file)
 	out_file = out_file_list[0]
-	if out_file_list[1] == False:
+	if out_file_list[1] is False:
 		return out_file #No point in recompiling file
 	
 	print ('Compiling %s' % in_file)
@@ -112,12 +113,12 @@ def process_string(filename):
     '''Build Strings'''
     charMap = PokeByteTableMaker()
     out_file = filename.split(".string")[0] + '.s'
-    
-    try:
-        if os.path.getmtime(make_output_file(out_file)[0]) > os.path.getmtime(filename): #If the .o file was created after the image was last modified
-            return make_output_file(out_file)[0]
-    except FileNotFoundError:
-        pass
+    object_file = make_output_file(out_file)[0]
+
+    fileExists = os.path.isfile(object_file)
+
+    if fileExists and os.path.getmtime(object_file) > os.path.getmtime(filename): #If the .o file was created after the image was last modified
+        return make_output_file(out_file)[0]
 
     output = open(out_file, 'w')
     output.write(".thumb\n.text\n.align 2\n\n")
@@ -207,9 +208,7 @@ def process_image(in_file):
 	
 	namelist = in_file.split("\\") #Get path of grit flags
 	namelist.pop(len(namelist) - 1)
-	flags = ""
-	for i in namelist:
-		flags += i + "\\"
+	flags = "".join(str(i) + "\\" for i in namelist)
 	flags += "gritflags.txt"
 	
 	try:
@@ -290,18 +289,7 @@ def main():
 	objcopy(linked)
 	
 	#Build special_inserts.asm
-	buildSpecialInserts = False
-	
-	try:
-		if os.path.getmtime('build/special_inserts.bin') > os.path.getmtime('special_inserts.asm'): #If the binary file was created after the file was last modified
-			pass
-		else:
-			buildSpecialInserts = True
-	
-	except FileNotFoundError: #If the object file doesn't exist, then obviously it needs to be made
-		buildSpecialInserts = True
-	
-	if (buildSpecialInserts):
+	if not os.path.isfile('build/special_inserts.bin') or os.path.getmtime('build/special_inserts.bin') < os.path.getmtime('special_inserts.asm'): #If the binary file was created after the file was last modified):
 		cmd = cmd = [AS] + ASFLAGS + ['-c', 'special_inserts.asm', '-o', 'build/special_inserts.o']
 		run_command(cmd)
 		
