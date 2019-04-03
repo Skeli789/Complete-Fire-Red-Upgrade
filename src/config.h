@@ -6,13 +6,18 @@
 //#define UNBOUND //Don't uncomment this line; it's for compiling specific aspects of Pokemon Unbound
 
 #define TERRAIN_VAR 0x5000
-#define TOTEM_VAR 0x5001 //-0x5004
+#define TOTEM_VAR 0x5001 //to 0x5004
 #define NPC_FOLLOWING_VAR 0x5005 //This var should should be set to the NPC Id of the NPC following the player. If no NPC is following the player, it should be set to 0.
 #define OW_SPRITE_SWITCH_VAR 0x5006
 #define BACKSPRITE_SWITCH_VAR 0x5007 //This var can be set to a number to change the Player's backsprite
 #define BATTLE_BG_VAR 0x5008 //Set this var to a custom background id
 #define SWARM_SPECIES_VAR 0x5009
 #define SWARM_MAP_NAME_VAR 0x500A
+#define DEFAULT_WALKING_SCRIPT 0x500B  //Walking scripts from JPAN's engine. His engine used 0x407E.
+
+#define SECOND_OPPONENT_VAR 0x5010 //Set this to the var used to store the Trainer Id of the second opponent in Multi Battles (can be any free var)
+#define PARTNER_VAR 0x5011 //Set this to the var used to store the Trainer Id of your partner in Multi Battles (can be any free var)
+#define PARTNER_BACKSPRITE_VAR 0x5012 //Set this to the var used to store the backsprite number of your partner in Multi Battles (can be any free var)
 
 #define INVERSE_FLAG 0x900
 #define SKY_BATTLE_FLAG 0x901
@@ -32,20 +37,13 @@
 #define DOUBLE_WILD_BATTLE_FLAG 0x90F //If this flag is set, a wild battles will be against two Pokemon
 #define NO_RANDOM_WILD_ENCOUNTERS_FLAG 0x910 //If this is set, wild Pokemon won't appear when walking/surfing in grass, caves, water, etc.
 
-// Pedometer Flags as in JPAN Engine
+//Pedometer Flags as in JPAN Engine
 #define FLAG_LONG_PEDOMETER 0x911	// 32 bit
 #define FLAG_MED_PEDOMETER 0x912	// 16 bit
 #define FLAG_SMALL_PEDOMETER_1 0x913	// 8 bit
 #define FLAG_SMALL_PEDOMETER_2 0x914	// 8 bit
 
-// Walking Scripts
-#define DEFAULT_WALKING_SCRIPT 0x407e  // default walking scripts in jpan engine
-
-
-#define SECOND_OPPONENT_VAR 0x5010 //Set this to the var used to store the Trainer Id of the second opponent in Multi Battles (can be any free var)
-#define PARTNER_VAR 0x5011 //Set this to the var used to store the Trainer Id of your partner in Multi Battles (can be any free var)
-#define PARTNER_BACKSPRITE_VAR 0x5012 //Set this to the var used to store the backsprite number of your partner in Multi Battles (can be any free var)
-
+//Battle Tower Options
 #define BATTLE_TOWER_FLAG 0x920
 #define BATTLE_TOWER_POKE_NUM 0x5015 //Var
 #define BATTLE_TOWER_POKE_LEVEL 0x5016 //Var
@@ -62,6 +60,20 @@ enum
 	TOWER_TRAINER_ID_PARTNER_VAR, //0x501D	//If your partner is randomized, its Id would be found in this var
 };
 
+//Character Customization
+#define VAR_PLAYER_WALKRUN 0x501E		//Change walking, running player sprite. 0x4054 in JPAN engine.
+#define VAR_PLAYER_BIKING 0x501F		//Change biking player sprite. 0x4055 in JPAN engine.
+#define VAR_PLAYER_SURFING 0x5020		//Change player surfing sprite. 0x4056 in JPAN engine.
+#define VAR_PLAYER_VS_SEEKER 0x5021		//Change vs seeker usage sprite. 0x4057 in JPAN engine.
+#define VAR_PLAYER_FISHING 0x5022		//Change fishing sprite. 0x4058 in JPAN engine.
+#define VAR_PLAYER_VS_SEEKER_ON_BIKE 0x5023	//Change vs seeker on bike sprite. 0x4059 in JPAN engine.
+#define VAR_TRAINERCARD_MALE 0x5024		//Change trainer card image (male). 0x4060 in JPAN engine.
+#define VAR_TRAINERCARD_FEMALE 0x5025		//Change trainer card image (female). 0x4061 in JPAN engine.
+
+#define VAR_RUNTIME_CHANGEABLE 0x5026		//'Secret Base' variables, save 15 consecutive variables for this. 0x4080 in JPAN engine.
+//#define EXISTING_OW_TABLE_ADDRESS 0x81a2000	//Uncomment if you want new overworld NPC tables to be generated.
+
+//General Options
 #define TIME_MORNING_START 4		//4:00 AM -  4:00
 #define TIME_DAY_START 8			//8:00 AM -  8:00
 #define TIME_EVENING_START 17		//5:00 PM - 17:00
@@ -127,6 +139,7 @@ enum
 #define SWEET_SCENT_ONLY_IN_CLEAR_WEATHER //Sweet Scent won't attract any wild Pokemon if the weather is not clear
 #define OBEDIENCE_BY_BADGE_AMOUNT //Determines obedience based on the number of badges the Player has, rather than which badges the player has.
 #define SAVE_BLOCK_EXPANSION //Uncommenting this requires you to also manually remove Save Expansion Hooks found in hooks.
+#define SELECT_FROM_PC //Comment this out to remove select-from-pc hack.
 
 /* Misc Effect Options */
 //#define OLD_BURN_DAMAGE //Uncomment this line if you want burn damage to do 1/8 of max health instead of 1/16
@@ -182,20 +195,3 @@ enum
 #define HIDE_HEALTHBOXES_DURING_ANIMS //Uncommenting this line hides the health boxes during move animations and some special animations.
 //#define DONT_HIDE_HEALTHBOXES_ATTACKER_STATUS_MOVES //Uncommenting this line doesn't hide the healthboxes when the attacker is using a status move that targets itself.
 //#define ENCOUNTER_MUSIC_BY_CLASS //Plays music when a trainer spots the player based on the trainer class rather than the value set in the trainer data.
-
-#define SELECT_FROM_PC //comment this out to remove select-from-pc hack
-
-// Character Customization
-#define VAR_PLAYER_WALKRUN 0x4054		//change walking, running player sprite
-#define VAR_PLAYER_BIKING 0x4055		//change biking player sprite
-#define VAR_PLAYER_SURFING 0x4056		//change player surfing sprite
-#define VAR_PLAYER_VS_SEEKER 0x4057		//change vs seeker usage sprite
-#define VAR_PLAYER_FISHING 0x4058		//change fishing sprite
-#define VAR_PLAYER_VS_SEEKER_ON_BIKE 0x4059		//change vs seeker on bike sprite
-#define VAR_TRAINERCARD_MALE 0x4060		//change trainer card image (male)
-#define VAR_TRAINERCARD_FEMALE 0x4061		//change trainer card image (female)
-#define VAR_PLAYER_BACKSPRITE 0x4062		//change player backsprite image (table at 0x1ab200)
-
-#define VAR_RUNTIME_CHANGEABLE 0x4080		// 'secret base' variables, save 15 consecutive variables for this
-// #define EXISTING_OW_TABLE_ADDRESS 0x81a2000	// uncomment if you want new overworld tables to be generated
-
