@@ -1,8 +1,6 @@
 #pragma once
 
 #include "../include/global.h"
-#include "../include/battle.h"
-#include "pokemon.h"
 
 struct Clock {
 	u16 year;

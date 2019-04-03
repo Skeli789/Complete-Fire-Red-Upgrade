@@ -23,6 +23,8 @@
 #include "../include/constants/maps.h"
 #include "../include/constants/vars.h"
 #include "../include/constants/species.h"
+#include "../include/pokemon.h"
+#include "../include/pokemon_data_request.h"
 #include "../include/battle_controllers.h"
 #include "../include/item.h"
 #include "../include/battle_string_ids.h"
@@ -46,8 +48,6 @@
 #include "../include/fieldmap.h"
 #include "../include/safari_zone.h"
 
-#include "pokemon_data_request.h"
-#include "pokemon.h"
 #include "ram_locs.h"
 #include "rom_locs.h"
 #include "Vanilla_functions.h"

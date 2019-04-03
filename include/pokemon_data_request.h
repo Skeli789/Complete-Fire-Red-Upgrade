@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../include/global.h"
-#include "pokemon.h"
 
 typedef u8 pokemon_data_request_t;
 
