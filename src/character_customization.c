@@ -70,7 +70,7 @@ NPCPtr GetEventObjectGraphicsInfo(u32 gfxId) {
 	{
 		//runtime changeable
 		newId = VarGet(VAR_RUNTIME_CHANGEABLE+spriteId);
-		tableId = ((gfxId << 16) >> 24) & 0xFF;	// upper byte
+		tableId = ((newId << 16) >> 24) & 0xFF;	// upper byte
 		spriteId = (newId & 0xFF);		// lower byte
 	}
 	else
@@ -80,7 +80,7 @@ NPCPtr GetEventObjectGraphicsInfo(u32 gfxId) {
 			if (spriteId > 239)
 			{
 				newId = VarGetX4010(spriteId + 16);
-				tableId = ((gfxId << 16) >> 24) & 0xFF;	// upper byte
+				tableId = ((newId << 16) >> 24) & 0xFF;	// upper byte
 				spriteId = (newId & 0xFF);		// lower byte
 			}
 			else	// load sprite/table IDs from vars
@@ -100,8 +100,8 @@ NPCPtr GetEventObjectGraphicsInfo(u32 gfxId) {
 				// get updated table and sprite IDs
 				if (newId != 0)
 				{
-					tableId = ((gfxId << 16) >> 24) & 0xFF;	// upper byte
-					spriteId = (gfxId & 0xFF);		// lower byte
+					tableId = ((newId << 16) >> 24) & 0xFF;	// upper byte
+					spriteId = (newId & 0xFF);		// lower byte
 				}	// else, table and sprite ID stay the same
 			}	// runtime changeable
 		}	// non-zero table ID
@@ -111,7 +111,7 @@ NPCPtr GetEventObjectGraphicsInfo(u32 gfxId) {
 		spriteAddr = gOverworldTableSwitcher[0][16];	// first non-player sprite in first table default
 	return spriteAddr;
 };
-
+*/
 
 // load trainer card sprite based on variables
 // 	hook at 810c374 via r2
@@ -123,7 +123,7 @@ void TrainerCardSprite(u8 gender, bool8 modify) {
 		trainerId = 0x87 + gender;	
 };
 
-*/
+
 
 void PlayerHandleDrawTrainerPic(void)
 {
