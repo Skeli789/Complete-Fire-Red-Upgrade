@@ -45,8 +45,8 @@ struct CharacterCustomizationPaletteSwitch CharacterPalSwitchTable[] =
 
 #endif
 
-/*
 
+/*
 typedef const struct EventObjectGraphicsInfo* NPCPtr;
 #ifdef EXISTING_OW_TABLE_ADDRESS
 	#define gOverworldTableSwitcher ((struct EventObjectGraphicsInfo***) EXISTING_OW_TABLE_ADDRESS)
@@ -58,19 +58,22 @@ typedef const struct EventObjectGraphicsInfo* NPCPtr;
 };
 #endif
 
+
+
 //npc_get_type hack for character customization
 //	hook at 0805F2C8 via r1
-NPCPtr GetEventObjectGraphicsInfo(u32 gfxId) {
-	u8 tableId = ((gfxId << 16) >> 24) & 0xFF;	// upper byte
+NPCPtr GetEventObjectGraphicsInfo(u16 gfxId) {
+	//u8 tableId = ((gfxId << 16) >> 24) & 0xFF;	// upper byte
+	u8 tableId = (gfxId >> 8) & 0xFF;
 	u8 spriteId = gfxId & 0xFF;		// lower byte
-	u32 newId;
+	u16 newId;
 
 	// check runtime changeable OWs
 	if (tableId == 0xFF && spriteId <= 0xF)
 	{
 		//runtime changeable
 		newId = VarGet(VAR_RUNTIME_CHANGEABLE+spriteId);
-		tableId = ((newId << 16) >> 24) & 0xFF;	// upper byte
+		tableId = (newId >> 8) & 0xFF;	// upper byte
 		spriteId = (newId & 0xFF);		// lower byte
 	}
 	else
@@ -80,11 +83,12 @@ NPCPtr GetEventObjectGraphicsInfo(u32 gfxId) {
 			if (spriteId > 239)
 			{
 				newId = VarGetX4010(spriteId + 16);
-				tableId = ((newId << 16) >> 24) & 0xFF;	// upper byte
+				tableId = (newId >> 8) & 0xFF;	// upper byte
 				spriteId = (newId & 0xFF);		// lower byte
 			}
 			else	// load sprite/table IDs from vars
 			{
+				u16 newId = 0;
 				if ((spriteId == 0) || (spriteId == 7))
 					newId = VarGet(VAR_PLAYER_WALKRUN);
 				else if ((spriteId == 1) || (spriteId == 8))
@@ -100,7 +104,7 @@ NPCPtr GetEventObjectGraphicsInfo(u32 gfxId) {
 				// get updated table and sprite IDs
 				if (newId != 0)
 				{
-					tableId = ((newId << 16) >> 24) & 0xFF;	// upper byte
+					tableId = (newId >> 8) & 0xFF;	// upper byte
 					spriteId = (newId & 0xFF);		// lower byte
 				}	// else, table and sprite ID stay the same
 			}	// runtime changeable
