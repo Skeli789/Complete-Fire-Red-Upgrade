@@ -24,15 +24,16 @@ if PATH == "":
 		sys.exit(1)
 	else:
 		print("Devkit found.")
-		
+
 PREFIX = '/arm-none-eabi-'
 AS = (PATH + PREFIX + 'as')
 CC = (PATH + PREFIX + 'gcc')
 LD = (PATH + PREFIX + 'ld')
-GR = (PATH + '/grit')
+GR = ("deps/grit.exe")
 ARP = ('armips')
 OBJCOPY = (PATH + PREFIX + 'objcopy')
 SRC = './src'
+GRAPHICS = './graphics'
 BUILD = './build'
 IMAGES = '\Images'
 ASFLAGS = ['-mthumb', '-I', SRC]
@@ -54,6 +55,22 @@ def make_output_file(filename):
 	m = hashlib.md5()
 	m.update(filename.encode())
 	newfilename = os.path.join(BUILD, m.hexdigest() + '.o')
+	
+	if not os.path.isfile(filename):
+		return [newfilename, False]
+	
+	fileExists = os.path.isfile(newfilename)
+	
+	if fileExists and os.path.getmtime(newfilename) > os.path.getmtime(filename): #If the object file was created after the file was last modified
+		return [newfilename, False]
+	
+	return [newfilename, True]
+
+def make_output_img_file(filename):
+	'''Return "IMG" + hash of filename to use as object filename'''
+	m = hashlib.md5()
+	m.update(filename.encode())
+	newfilename = os.path.join(BUILD, 'IMG_' + m.hexdigest() + '.o')
 	
 	if not os.path.isfile(filename):
 		return [newfilename, False]
@@ -220,9 +237,11 @@ def process_image(in_file):
 		print("No gritflags.txt found in directory with " + in_file)
 		return 0
 	
+	out_file_list = make_output_img_file(out_file)
+	new_out_file = out_file_list[0]
 	try:
-		if os.path.getmtime(make_output_file(out_file)[0]) > os.path.getmtime(in_file): #If the .o file was created after the image was last modified
-			return make_output_file(out_file)[0]
+		if os.path.getmtime(new_out_file) > os.path.getmtime(in_file): #If the .o file was created after the image was last modified
+			return new_out_file
 		else:
 			run_command(cmd)
 	
@@ -234,7 +253,7 @@ def process_image(in_file):
 		print ('Compiling Images')
 		PrintedCompilingImages = True
 	
-	out_file_list = make_output_file(out_file)
+	out_file_list = make_output_img_file(out_file)
 	new_out_file = out_file_list[0]
 	if out_file_list[1] == False:
 		os.remove(out_file)
@@ -258,6 +277,9 @@ def objcopy(binary):
 	
 def run_glob(globstr, fn):
 	'''Glob recursively and run the processor function on each file in result'''
+	if globstr == '**/*.png' or globstr == '**/*.bmp': #Search the graphics location
+		return run_glob_graphics(globstr, fn)
+	
 	if sys.version_info > (3, 4):
 		files = glob(os.path.join(SRC, globstr), recursive = True)
 		return map(fn, files)
@@ -265,6 +287,15 @@ def run_glob(globstr, fn):
 		files = Path(SRC).glob(globstr)
 		return map(fn, map(str, files))
 
+def run_glob_graphics(globstr, fn):
+	'''Glob recursively and run the processor function on each file in result'''
+	if sys.version_info > (3, 4):
+		files = glob(os.path.join(GRAPHICS, globstr), recursive = True)
+		return map(fn, files)
+	else:
+		files = Path(GRAPHICS).glob(globstr)
+		return map(fn, map(str, files))
+		
 def main():
 	starttime = datetime.now()
 	globs = {
@@ -280,7 +311,7 @@ def main():
 		os.makedirs(BUILD)
 	except FileExistsError:
 		pass
-	
+		
 	# Gather source files and process them
 	objects = itertools.starmap(run_glob, globs.items())
 	
