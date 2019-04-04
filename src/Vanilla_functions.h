@@ -311,8 +311,12 @@ void __attribute__((long_call)) FreezeEventObjects(void);
 void __attribute__((long_call)) ScriptContext2_Enable(void);
 void __attribute__((long_call)) ScriptContext1_Stop(void);
 void __attribute__((long_call)) PlayNewMapMusic(u16 musicId);
+
+//Field Weather Functions
+void __attribute__((long_call)) Task_WeatherMain(u8 taskId);
 u8 __attribute__((long_call)) GetCurrentWeather(void);
 
+//Start Trainer Battle Functions
 //void __attribute__((long_call)) InitTrainerBattleVariables(void);
 void __attribute__((long_call)) TrainerBattleLoadArgs(const struct TrainerBattleParameter* specs, const u8 *data);
 u16 __attribute__((long_call)) TrainerBattleLoadArg16(const u8 *ptr);
@@ -487,8 +491,6 @@ void __attribute__((long_call)) ReturnToFieldContinueScriptPlayMapMusic(void);
 u32 __attribute__((long_call)) GetAttrFromAnyBox(u8 boxId, u8 boxSlot, u8 dataRequest);
 void __attribute__((long_call)) SetAttrFromAnyBox(u8 boxId, u8 boxSlot, u8 dataRequest, void* dataAddr);
 u16 __attribute__((long_call)) VarGetX4010(u8 Id);
-
-void __attribute__((long_call)) TaskOverworld(void);
 
 //The Deal Breaker
 void __attribute__((long_call)) break_func(u32);
