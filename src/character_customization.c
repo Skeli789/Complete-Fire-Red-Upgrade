@@ -1,5 +1,17 @@
 #include "defines.h"
 #include "helper_functions.h"
+/*
+
+npc_palletes:
+	0805F4B0
+	0805F570
+	0805F5C8
+	
+	npc_change_type_maybe?
+	
+
+*/
+
 
 u16 GetBackspriteId(void);
 void LoadTrainerBackPal(u16 trainerPicId, u8 bank);
@@ -32,6 +44,90 @@ struct CharacterCustomizationPaletteSwitch CharacterPalSwitchTable[] =
 };
 
 #endif
+
+
+/*
+typedef const struct EventObjectGraphicsInfo* NPCPtr;
+#ifdef EXISTING_OW_TABLE_ADDRESS
+	#define gOverworldTableSwitcher ((struct EventObjectGraphicsInfo***) EXISTING_OW_TABLE_ADDRESS)
+#else
+	// create 255 OW tables
+	const struct EventObjectGraphicsInfo** gOverworldTableSwitcher[255] = {
+		(NPCPtr*) 0x839fdb0,
+		(NPCPtr*) 0,
+};
+#endif
+
+
+
+//npc_get_type hack for character customization
+//	hook at 0805F2C8 via r1
+NPCPtr GetEventObjectGraphicsInfo(u16 gfxId) {
+	//u8 tableId = ((gfxId << 16) >> 24) & 0xFF;	// upper byte
+	u8 tableId = (gfxId >> 8) & 0xFF;
+	u8 spriteId = gfxId & 0xFF;		// lower byte
+	u16 newId;
+
+	// check runtime changeable OWs
+	if (tableId == 0xFF && spriteId <= 0xF)
+	{
+		//runtime changeable
+		newId = VarGet(VAR_RUNTIME_CHANGEABLE+spriteId);
+		tableId = (newId >> 8) & 0xFF;	// upper byte
+		spriteId = (newId & 0xFF);		// lower byte
+	}
+	else
+	{
+		if (tableId == 0)
+		{
+			if (spriteId > 239)
+			{
+				newId = VarGetX4010(spriteId + 16);
+				tableId = (newId >> 8) & 0xFF;	// upper byte
+				spriteId = (newId & 0xFF);		// lower byte
+			}
+			else	// load sprite/table IDs from vars
+			{
+				u16 newId = 0;
+				if ((spriteId == 0) || (spriteId == 7))
+					newId = VarGet(VAR_PLAYER_WALKRUN);
+				else if ((spriteId == 1) || (spriteId == 8))
+					newId = VarGet(VAR_PLAYER_BIKING);
+				else if ((spriteId == 2) || (spriteId == 9))
+					newId = VarGet(VAR_PLAYER_SURFING);
+				else if ((spriteId == 3) || (spriteId == 5) || (spriteId == 0xA) || (spriteId == 0xC))
+					newId = VarGet(VAR_PLAYER_VS_SEEKER);
+				else if ((spriteId == 4) || (spriteId == 0xB))
+					newId = VarGet(VAR_PLAYER_FISHING);
+				else if ((spriteId == 6) || (spriteId == 0xD))
+					newId = VarGet(VAR_PLAYER_VS_SEEKER_ON_BIKE);
+				// get updated table and sprite IDs
+				if (newId != 0)
+				{
+					tableId = (newId >> 8) & 0xFF;	// upper byte
+					spriteId = (newId & 0xFF);		// lower byte
+				}	// else, table and sprite ID stay the same
+			}	// runtime changeable
+		}	// non-zero table ID
+	}
+	NPCPtr spriteAddr = gOverworldTableSwitcher[tableId][spriteId];
+	if (spriteAddr == 0)
+		spriteAddr = gOverworldTableSwitcher[0][16];	// first non-player sprite in first table default
+	return spriteAddr;
+};
+*/
+
+// load trainer card sprite based on variables
+// 	hook at 810c374 via r2
+void TrainerCardSprite(u8 gender, bool8 modify) {
+	if (modify != TRUE)
+		return;
+	u16 trainerId = VarGet(VAR_TRAINERCARD_MALE + gender);
+	if (trainerId == 0)
+		trainerId = 0x87 + gender;	
+};
+
+
 
 void PlayerHandleDrawTrainerPic(void)
 {
@@ -127,3 +223,4 @@ void LoadTrainerBackPal(u16 trainerPicId, u8 paletteNum) {
 		DecompressTrainerBackPic(trainerPicId, paletteNum);
 	#endif
 }
+

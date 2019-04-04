@@ -273,12 +273,57 @@ HiddenAbilityEggHatching2:
 .org 0x4A216, 0xFF
 MaxLevelChange1:
 	.byte MAX_LEVEL	
+	
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Character Customization
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+/*
+.org 0x5e152, 0xff
+	mov r1, #0x5
+	orr r0, r1
+	strb r0, [r4]
+	ldrb r0, [r5, #0x3]
+	strb r0, [r4, #0x1a]
+	
+.org 0x5e5d4, 0xff
+	.byte 0x8, 0x47		@ routine_ptr+1 at 5e5f4
+	
+.org 0x5e744, 0xff		@ fix size
+	lsl r4, r4, #0x10
+	lsr r4, r4, #0x10
+	lsl r5, r5, #0x10
+	lsr r5, r5, #0x10
+	mov r0, #0x0
+	str r0, [sp, #0x20]
+	mov r1, r9
+	ldrb r0, [r1, #0x1]
+	ldrb r1, [r1, #0x3]
+	lsl r1, r1, #0x18
+	lsr r1, r1, #0x10
+	orr r0, r1	
+
+.org 0x5e8f0, 0xff		@ change size
+	lsl r0, r0, #0x10
+	lsr r0, r0, #0x10
+	
+.org 0x5e962, 0xff
+	.hword 0x0
+
+.org 0x5ea0a, 0xff		@ fix createsprite
+	.word 0x0	
+	
+.org 0x5ee84, 0xff		@ fix link npcs
+	.byte 0x8, 0x47
+*/	
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@ Createsprite Fix - remove bit shifts in lnpc_new
+@ Dynamic Overworld Palettes
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.org 0x5EA0A, 0xff
-	.word 0x0	
+@.org 0x5f093, 0xff
+@	.byte 0xE0
+@
+@.org 0x5f114, 0xff
+@	.hword 0x0
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Hidden Abilities - Stench, Illuminate

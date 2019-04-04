@@ -199,7 +199,16 @@ pcSelect_SkipWithdrawCount 0808c53c 1
 pcSelect_SwapDecision 0808ed8c 1
 
 ##Keypad
-ReadKeys 080005e8 0
+ReadKeys 080005E8 0
 
 ##Walking Scripts
 TakeStep 080A0F0C 0
+
+##Character Customization
+#TrainerCardSprite 0810c374 2
+#GetEventObjectGraphicsInfo 0805F2C8 2
+#NpcSizeFix 0805e510 1
+#NewNpcInfo 0805e964 4
+#NpcOffscreenFix 08067a12 5
+#NpcWaterFix 08067f92 5
+

@@ -76,7 +76,7 @@ sp075_MeasurePokemon1 0815FF34
 sp076_MeasurePokemon2 0815FF38
 
 sp07E_GetTileNumber 0815FF58
-#sp07F_GetTileBehaviour 0815FF5C
+sp07F_GetTileBehaviour 0815FF5C
 
 sp081_SetWalkingScript 0815FF64
 
@@ -93,3 +93,8 @@ sp09C_OldManBattleModifier 0815FFD0
 sp0C9_ForceOneKeyInput 08160084
 sp0CA_IgnoreKeys 08160088
 sp0CB_PlaceKeyScript 0816008C
+
+## Character Customization
+# NpcSpawnWithTemplate 0805e5f4
+# LinkNpcFix 0805efe4
+
