@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+import sys
 import shutil
 import glob, os.path
 
@@ -21,15 +22,23 @@ try:
 except:
 	pass
 
-try:
-	shutil.rmtree('build/')
-except:
-	pass
-	
-os.chdir("src\\Images")
-for root, dirs, files in os.walk(".", topdown = False):
-	for file in files:
-		if file.endswith('.h'):
-			os.remove(os.path.join(root, file))
+if (len(sys.argv) > 1) and sys.argv[1].upper() == 'ALL':
+	try:
+		shutil.rmtree('build/')
+	except:
+		pass	
+
+	os.chdir("graphics")
+	for root, dirs, files in os.walk(".", topdown = False):
+		for file in files:
+			if file.endswith('.h'):
+				os.remove(os.path.join(root, file))
+				
+else:
+	os.chdir("build")
+	for root, dirs, files in os.walk(".", topdown = False):
+		for file in files:
+			if not file.startswith('IMG_'): #Don't remove image file
+				os.remove(os.path.join(root, file))	
 
 print("Directory cleaned!")
