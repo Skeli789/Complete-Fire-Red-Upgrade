@@ -247,6 +247,9 @@ typedef u8 Buffer_t[0x200];
 /*u8*/  #define gBattleAnimAttacker (*((u8*) 0x2037F1A))
 /*u8*/  #define gBattleAnimTarget (*((u8*) 0x2037F1B))
 
+		#define gWeatherPtr ((struct Weather*) 0x2037F34)
+
+/*u8*/  #define sPaletteGammaTypes ((u8*) 0x20386A4)
 /*u16*/ #define sTrainerBattleMode (*((u16*) 0x20386AC))
 /*u16*/ #define gTrainerBattleOpponent_A (*((u16*) 0x20386AE))
 		#define sTrainerEventObjectLocalId (*((u16*) 0x20386B0))

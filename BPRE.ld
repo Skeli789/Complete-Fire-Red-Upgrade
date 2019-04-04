@@ -12,6 +12,7 @@ sBattleIntroSlideFuncs = 0x83E7CD4;
 gUnownDistributionByChamber = 0x83CA71C;
 
 gMapHeader = 0x2036DFC;
+gWeatherPtr = 0x2037F34;
 gEncounterRate = 0x20386D0;
 gMPlay_BGM = 0x3007300;
 
@@ -652,9 +653,12 @@ ScriptContext2_Enable = 0x8069940 | 1;
 ScriptContext1_SetupScript = 0x8069AE4 | 1;
 ScriptContext1_Stop = 0x8069B28 | 1;
 PlayNewMapMusic = 0x8071A74 | 1;
-GetCurrentWeather = 0x807AF98 | 1;
-TaskOverworld = 0x8079e0c | 1;
 
+/*Field Weather Functions*/
+Task_WeatherMain = 0x8079e0c | 1;
+GetCurrentWeather = 0x807AF98 | 1;
+
+/*Start Trainer Battle Functions*/
 /*InitTrainerBattleVariables = 0x8080110 | 1;*/
 TrainerBattleLoadArgs = 0x8080168 | 1;
 SetMapVarsToTrainer = 0x80801F0 | 1;
@@ -700,6 +704,7 @@ GetWindowAttribute = 0x8004950 | 1;
 GetNumActiveWindowsOnBg = 0x8004A34 | 1;
 
 /*Palette Functions*/
+BlendPalette = 0x8045274 | 1;
 LoadCompressedPalette = 0x80703A8 | 1;
 LoadPalette = 0x80703EC | 1;
 FillPalette = 0x870424 | 1;

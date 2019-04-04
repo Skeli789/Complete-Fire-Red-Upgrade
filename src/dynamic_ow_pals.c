@@ -10,16 +10,10 @@ Credit to Navenatox
 #define Green(Color)	((Color >> 5) & 31)
 #define Blue(Color)		((Color >> 10) & 31)
 
-#define LoadOBJPalette(PalAddress, StartColor) ((void(*)(Palette*, u16))0x80089A0+1)(PalAddress, StartColor)
 #define LoadNPCPalette(PalTag, PalSlot) ((void(*)(u16, u8))0x805F538+1)(PalTag, PalSlot)
-#define FadePalette(StartColor, ColorCount, FadeIntensity, FadeColor) ((void(*)(u16, u16, u8, u16))0x8045274+1)(StartColor, ColorCount, FadeIntensity, FadeColor)
 #define TintOBJPalette(PalSlot) ((void(*)(u8))0x8083598+1)(PalSlot)
-#define TintGrayscale(Colors, ColorCount) ((void(*)(u16*, u16))0x8071544+1)(Colors, ColorCount)
-#define TintSepia(Colors, ColorCount) ((void(*)(u16*, u16))0x80715F4+1)(Colors, ColorCount)
 
-#define TaskIsRunning(Func) ((u8(*)(TaskFunc))0x8077650+1)(Func)
-#define TaskOverworld ((TaskFunc)0x8079E0C+1)
-#define OverworldIsActive TaskIsRunning(TaskOverworld)
+#define OverworldIsActive FuncIsActiveTask(Task_WeatherMain)
 
 #define SetUpDisguise(Arg1, Arg2, PalSlot) ((u8(*)(u8, u8, u8))0x80DCA10+1)(Arg1, Arg2, PalSlot)
 
@@ -35,12 +29,8 @@ Credit to Navenatox
 // #define PalRefs ((PalRef*)0x203FF00)	// moved to ram_locs
 #define PalTags ((u16*)0x3000DE8)
 
-#define Palettes ((Palette*)0x20375F8)
-#define UnfadedPalettes ((Palette*)0x20371F8)
-
 #define PalTagsStart *((u8*)0x3003E58)
 #define ColorFilter *((u8*)0x2036E28)
-#define FadeInfo2 ((void*)0x2037F34+0x6C0)
 #define AlphaBlendingCoeffA *((u8*)0x3000052)
 
 typedef struct
@@ -90,30 +80,29 @@ u8 FindPalRef(u8 Type, u16 PalTag)
 	return 0xFF; // not found
 };
 
-
 u8 GetFadeTypeByWeather(u8 Weather)
 {
 	switch (Weather)
 	{
-		case 0:
-		case 1:
-		case 2:
-		case 7:
-		case 8:
+		case WEATHER_NONE:
+		case WEATHER_CLOUDS:
+		case WEATHER_SUNNY:
+		case WEATHER_SNOW:
+		case WEATHER_STEADY_SNOW:
+		case WEATHER_SANDSTORM:
 		default:
 			return 0; // normal fade
-		case 3:
-		case 4:
-		case 5:
-		case 11:
+		case WEATHER_RAIN_LIGHT:
+		case WEATHER_RAIN_MED:
+		case WEATHER_SHADE:
 		case 13:
 			return 1; // fade and darken
-		case 6:
-		case 9:
-		case 10:
-		case 14:
+		case WEATHER_FOG_1:
+		case WEATHER_FOG_2:
+		case WEATHER_FOG_3:
+		case WEATHER_BUBBLES:
 			return 2; // fade and brighten
-		case 12:
+		case WEATHER_DROUGHT:
 			return 3; // harsh sunlight
 	}
 };
@@ -125,10 +114,10 @@ u16 TintColor(u16 Color)
 	{
 		case 1:
 		case 3:
-			TintGrayscale(&Color, 1);
+			TintPalette_GrayScale(&Color, 1);
 			break;
 		case 2:
-			TintSepia(&Color, 1);
+			TintPalette_SepiaTone(&Color, 1);
 			break;
 	}
 	return Color;
@@ -199,12 +188,12 @@ void ClearAllPalRefs(void)
 void ClearAllPalettes(void) // hook at 0x5F574 via r0
 {
 	int Fill = 0;
-	CpuSet(&Fill, &UnfadedPalettes[16], 256 | CpuSetFill);
+	CpuSet(&Fill, &gPlttBufferUnfaded[16 * 16], 256 | CpuSetFill);
 };
 
 void BrightenReflection(u8 PalSlot)
 {
-	Palette *Pal = &Palettes[PalSlot + 16];
+	Palette* Pal = (Palette*) &gPlttBufferFaded[PalSlot * 16 + 16 * 16];
 	u16 Color;
 	u8 R, G, B;
 	int i;
@@ -219,7 +208,7 @@ void BrightenReflection(u8 PalSlot)
 		if (B > 31) B = 31;
 		Pal->Colors[i] = RGB(R, G, B);
 	}
-	CpuSet(Pal, &UnfadedPalettes[PalSlot + 16], 16);
+	CpuSet(Pal, &gPlttBufferUnfaded[PalSlot * 16 + 16 * 16], 16);
 };
 
 
@@ -264,19 +253,19 @@ u8 FindOrLoadPalette(PalInfo *Pal) // hook at 0x8928 via r1
 		if (PalSlot == 0xFF)
 			return 0xFF;
 	}
-	LoadOBJPalette(Pal->Address, PalSlot * 16);
+	DoLoadSpritePalette((u16*) Pal->Address, PalSlot * 16);
 	return PalSlot;
 };
 
 
 void MaskPaletteIfFadingIn(u8 PalSlot) // prevent the palette from flashing briefly before fading starts
 {
-	u8 FadeState = *(u8*)(FadeInfo2 + 6);
-	u8 AboutToFadeIn = *(u8*)(FadeInfo2 + 10);
+	u8 FadeState = gWeatherPtr->palProcessingState;
+	u8 AboutToFadeIn = gWeatherPtr->unknown_6CA;
 	if (FadeState == 1 && AboutToFadeIn)
 	{
-		u16 FadeColor = *(u16*)(FadeInfo2 + 4);
-		CpuSet(&FadeColor, &Palettes[PalSlot + 16], 16 | CpuSetFill);
+		u16 FadeColor = gWeatherPtr->fadeDestColor;
+		CpuSet(&FadeColor, &gPlttBufferFaded[PalSlot * 16 + 16 * 16], 16 | CpuSetFill);
 	}
 };
 
@@ -297,7 +286,7 @@ u8 GetPalSlotMisc(u32 OBJData)
 	PalSlot = AddPalRef(PalTypeWeather, PalTag);
 	if (PalSlot == 0xFF)
 		return 0xFF;
-	LoadOBJPalette((Palette*)0x83C2CE0, PalSlot * 16);
+	DoLoadSpritePalette((u16*) 0x83C2CE0, PalSlot * 16);
 	TintOBJPalette(PalSlot);
 	MaskPaletteIfFadingIn(PalSlot);
 	return PalRefIncreaseCount(PalSlot);
@@ -330,7 +319,7 @@ u8 FindOrCreateReflectionPalette(u8 PalSlotNPC)
 	if (PalSlot == 0xFF)
 		return PalRefIncreaseCount(0);
 	LoadNPCPalette(PalTag, PalSlot);
-	FadePalette((PalSlot + 16) * 16, 16, 6, RGB(12, 20, 27)); // make it blueish
+	BlendPalette((PalSlot + 16) * 16, 16, 6, RGB(12, 20, 27)); // make it blueish
 	BrightenReflection(PalSlot); // and a little brighter
 	TintOBJPalette(PalSlot);
 	MaskPaletteIfFadingIn(PalSlot);
@@ -355,21 +344,19 @@ u8 SetUpWeirdDisguise(void) // hook at 0xDCA00 via r3
 	return SetUpDisguise(0x24, 0x1C, FindOrLoadNPCPalette(0x1103));
 };
 
-
-
 void FogBrightenPalettes(u16 BrightenIntensity)
 {
-	u8 Weather = *(u8*)(FadeInfo2 + 16);
-	if (GetFadeTypeByWeather(Weather) != 2)
+	if (GetFadeTypeByWeather(gWeatherPtr->currWeather) != 2)
 		return; // only brighten if there is fog weather
-	u8 FadeState = *(u8*)(FadeInfo2 + 6);
-	if (FadeState != 3)
+	
+	if (gWeatherPtr->palProcessingState != 3)
 		return; // don't brighten while fading
-	u16 BrightenColor = TintColor(RGB(28, 31, 28));
-	int i;
-	for (i = 16; i < 32; i++)
+
+	//u16 BrightenColor = TintColor(RGB(28, 31, 28));
+	for (int i = 16; i < 32; i++)
 	{
-		if (PaletteNeedsFogBrightening(i)) FadePalette(i * 16, 16, BrightenIntensity, BrightenColor);
+		if (PaletteNeedsFogBrightening(i)) 
+			BlendPalette(i * 16, 16, BrightenIntensity, BrightenColor);
 	}
 };
 
@@ -383,7 +370,7 @@ void FogBrightenAndFade(u8 PalSlot, u8 FadeIntensity, u16 FadeColor)
 	int i;
 	for (i = 0; i < 16; i++)
 	{
-		Color = UnfadedPalettes[PalSlot].Colors[i];
+		Color = gPlttBufferUnfaded[PalSlot * 16 + i];
 		R = Red(Color);
 		G = Green(Color);
 		B = Blue(Color);
@@ -396,7 +383,7 @@ void FogBrightenAndFade(u8 PalSlot, u8 FadeIntensity, u16 FadeColor)
 		G += (Green(FadeColor) - G) *  FadeIntensity / 16;
 		B += (Blue(FadeColor) - B) *  FadeIntensity / 16;
 
-		Palettes[PalSlot].Colors[i] = RGB(R, G, B);
+		gPlttBufferFaded[PalSlot * 16 + i] = RGB(R, G, B);
 	}
 };
 
@@ -407,7 +394,7 @@ void LoadCloudOrSandstormPalette(Palette *Pal) // hook at 0x7ABC0 via r1
 	PalSlot = AddPalRef(PalTypeWeather, 0x1200);
 	if (PalSlot == 0xFF)
 		return;
-	LoadOBJPalette(Pal, PalSlot * 16);
+	DoLoadSpritePalette((u16*) Pal, PalSlot * 16);
 	TintOBJPalette(PalSlot);
 	MaskPaletteIfFadingIn(PalSlot);
 };
@@ -427,6 +414,4 @@ u8 GetDarkeningTypeBySlot(u8 PalSlot) // replaces table at 0x3C2CC0
 		return 1;
 	return 0;
 };
-
-
 
