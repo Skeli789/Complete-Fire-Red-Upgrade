@@ -30,7 +30,7 @@ void TryForcedScript(u8 keyFlag, u16 currKeys) {
 		return;	// flag not set
 	if (gScriptEnv2->enabled)
 		return;	// a script is already enabled
-	if (gTasks[0].func != (void*) TaskOverworld)
+	if (gTasks[0].func != (void*) Task_WeatherMain)
 		return;
 	if ((gKeypadSetter->keyToRunScript & currKeys))
 		return;
