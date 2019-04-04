@@ -197,5 +197,5 @@ enum
 #define VAR_PLAYER_BACKSPRITE 0x4062		//change player backsprite image (table at 0x1ab200)
 
 #define VAR_RUNTIME_CHANGEABLE 0x4080		// 'secret base' variables, save 15 consecutive variables for this
-// #define EXISTING_OW_TABLE_ADDRESS 0x81a2000	// uncomment if you want new overworld tables to be generated
+//#define EXISTING_OW_TABLE_ADDRESS 0x81a2000	// uncomment if you want new overworld tables to be generated
 

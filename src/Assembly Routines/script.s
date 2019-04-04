@@ -9,12 +9,170 @@ script functions/specials in asm - hooks and returns
 
 .include "../asm_defines.s"
 
+@@ Specials
 .global sp097_WildGroundBattle
 .global sp098_WildSeaBattle
 .global sp156_GhostBattleSpecial
+
+/*
+@@ Character Customization
+.global NpcSpawnWithTemplate
+.global NpcSizeFix
+.global NewNpcInfo
+.global LinkNpcFix
+.global NpcOffscreenFix
+.global NpcWaterFix
 .global CreateSpriteLoadTable
 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@	08 47 at 5e5d4
+@	ptr+1 at 5e5f4
+.align 2
+.pool
+NpcSpawnWithTemplate:
+	ldr r1, =(0x02036e38)
+	add r5, r0, r1
+	ldrb r0, [r5, #0x5] 
+	ldrb r1, [r5, #0x1a]
+	lsl r1, r1, #0x8
+	orr r0, r1
+	
+	bl GetEventObjectGraphicsInfo
+	
+	ldr r1, =(0x0805e5dc+1)
+	bx r1
+	
+	@mov lr, r1
+	@ldr r1, =(0x0805F2C8+1)
+	@bx r1
 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@	hook at 5e510 via r1
+.align 2
+.pool
+NpcSizeFix:	
+	push {r4, lr}
+	sub sp, #0x8
+	mov r4, r0
+	ldrb r0, [r4, #0x5] 
+	ldrb r1, [r4, #0x1a]
+	lsl r1, r1, #0x8
+	orr r0, r1
+	
+	bl GetEventObjectGraphicsInfo
+	
+	ldr r1, =(0x0805e51c+1)
+	bx r1
+	
+	@mov lr, r1
+	@ldr r1, =(0x0805f2c8+1)
+	@bx r1
+		
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@	hook at 5e964 via r4
+.align 2
+.pool	
+NewNpcInfo:
+	mov r4, r0
+	mov r5, r1
+	mov r3, r2
+	ldrb r0, [r4, #0x1]
+	lsl r0, r0, #0x18
+	lsr r0, r0, #0x18
+	ldrb r1, [r4, #0x3]
+	lsl r1, r1, #0x18
+	lsr r1, r1, #0x10
+	orr r0, r0, r1
+	ldrb r1, [r4, #0x9]
+	mov r2, r5
+	ldr r4, =(0x0805e96e+1)
+	bx r4
+	 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@	08 47 at 5ee84
+@	ptr+1 at 5EFE4
+.align 2
+.pool		 
+LinkNpcFix:
+	ldr r6, =(0x02036e38)
+	add r6, r6, r0
+	mov r0, #0x0
+	str r0, [sp, #0x20]
+	ldrb r0, [r6, #0x5] 
+	ldrb r1, [r6, #0x1a]
+	lsl r1, r1, #0x8
+	orr r0, r1
+	bl GetEventObjectGraphicsInfo
+	add r5, r0, #0x0
+	ldrh r2, [r5, #0x6]
+	add r4, sp, #0x18
+	ldr r0, [r4, #0x4]
+	lsr r0, r0, #0x10
+	lsl r0, r0, #0x10
+	orr r0, r2
+	str r0, [r4, #0x4]
+	ldrb r0, [r6, #0x5] 
+	ldrb r1, [r6, #0x1a]
+	lsl r1, r1, #0x8
+	orr r0, r1
+	ldr r1, =(0x0805eea2+1)
+	bx r1
+
+@CallLinkNpcLoader:
+@	ldr r1, =(0x0805F2C8+1)
+@	bx r1
+
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@	hook at 67a26 via r5
+.align 2
+.pool
+NpcOffscreenFix:
+	add r5, r0, #0x0
+	add r4, r1, #0x0
+	ldrb r1, [r5,#1]
+	mov r0, #0x41
+	neg r0, r0
+	and r0, r1
+	strb r0, [r5,#1]
+	ldrb r0, [r5, #0x5]
+	ldrb r1, [r5, #0x1a]
+	lsl r1, r1, #0x8
+	orr r0, r1
+	
+	bl GetEventObjectGraphicsInfo
+	ldr r1, =(0x08067a26+1)
+	bx r1
+	
+	@mov lr, r1
+	@ldr r1, =(0x0805F2C8+1)
+	@bx r1
+	
+	
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@	hook at 67f92 via r5
+.align 2
+.pool
+NpcWaterFix:	
+	mov r5, r0
+	mov r4, #0x0
+	ldrb r0, [r5, #0x5] 
+	ldrb r1, [r5, #0x1a]
+	lsl r1, r1, #0x8
+	orr r0, r1
+	
+	bl GetEventObjectGraphicsInfo
+	
+	ldr r1, =(0x08067f9c+1)
+	bx r1
+	
+	@mov lr, r1
+	@ldr r1, =(0x0805F2C8+1)
+	@bx r1
+	
+	 
+*/ 
+	 
 /*@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 Activate Wild Ground Battle
 	ptr+1 at 15ffbc
