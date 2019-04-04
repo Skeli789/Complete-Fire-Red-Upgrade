@@ -95,6 +95,8 @@ typedef u8 Buffer_t[0x200];
 /*u8*/  #define gBattleBufferA ((Buffer_t*) 0x2022BC4) //u8 gBattleBufferA[MAX_BATTLERS_COUNT][0x200];
 /*u8*/  #define gBattleBufferB ((Buffer_t*) 0x20233C4)
 
+		#define gPlayerAvatar ((struct PlayerAvatar*) 0x02037078)
+
 /*u8*/  #define gActiveBattler 			(*((u8*) 0x2023BC4))
 /*u32*/ #define gBattleExecBuffer 		(*((u32*) 0x2023BC8))
 /*u8*/  #define gBattlersCount 			(*((u8*) 0x2023BCC))
@@ -434,7 +436,7 @@ typedef u8 IllusionNickname_t[10];
 
 // JPAN Code
 #define gMultiChoice ((struct Multichoice*) 0x203B774)	// up to 7 pointers, 8 bytes each
-#define gPcSelectionTracker 0x203B7AC	// state tracker for pc selection
+#define gPcSelectionTracker ((u8* 0x203B7AC)	// state tracker for pc selection
 #define gCreateSpriteTableSetter 0x203B7AD  // allow createsprite to load from a table as well
 #define gTimerValue (*(u16*) 0x203B7AE)
 #define gKeypadSetter ((struct KeypadSetter*) 0x203B7B0)	//12 bytes

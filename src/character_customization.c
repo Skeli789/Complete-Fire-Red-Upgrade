@@ -4,8 +4,9 @@
 
 npc_palletes:
 	0805F4B0
-	0805F570
-	0805F5C8
+	5F570
+	5F5C8
+	5F4D8
 	
 npc_change_type_maybe?
 	
@@ -44,7 +45,6 @@ struct CharacterCustomizationPaletteSwitch CharacterPalSwitchTable[] =
 };
 
 #endif
-
 
 
 /*
@@ -107,12 +107,17 @@ NPCPtr GetEventObjectGraphicsInfo(u16 gfxId) {
 				if (newId != 0)
 				{
 					tableId = (newId >> 8) & 0xFF;	// upper byte
-					spriteId = (newId & 0xFF);		// lower byte
+					spriteId = (newId & 0xFF);		// lower byte			
 				}	// else, table and sprite ID stay the same
 			}	// runtime changeable
 		}	// non-zero table ID
 	}
-	NPCPtr spriteAddr = gOverworldTableSwitcher[tableId][spriteId];
+	NPCPtr spriteAddr;
+	if (gOverworldTableSwitcher[tableId] == 0)
+		spriteAddr = gOverworldTableSwitcher[0][spriteId];
+	else
+		spriteAddr = gOverworldTableSwitcher[tableId][spriteId];
+	
 	if (spriteAddr == 0)
 		spriteAddr = gOverworldTableSwitcher[0][16];	// first non-player sprite in first table default
 	return spriteAddr;
@@ -129,8 +134,8 @@ void TrainerCardSprite(u8 gender, bool8 modify) {
 		trainerId = 0x87 + gender;	
 };
 
-*/
 
+*/
 
 
 void PlayerHandleDrawTrainerPic(void)

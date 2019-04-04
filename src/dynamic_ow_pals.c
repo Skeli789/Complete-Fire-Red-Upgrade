@@ -1,5 +1,9 @@
 #include "defines.h"
 #include "helper_functions.h"
+/*
+Credit to Navenatox
+*/
+
 
 //#define RGB(R, G, B)	(R | G << 5 | B << 10)
 #define Red(Color)		((Color) & 31)

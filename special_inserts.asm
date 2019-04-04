@@ -284,7 +284,6 @@ MaxLevelChange1:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Character Customization
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
 /*
 .org 0x5e152, 0xff
 	mov r1, #0x5
@@ -322,9 +321,7 @@ MaxLevelChange1:
 	
 .org 0x5ee84, 0xff		@ fix link npcs
 	.byte 0x8, 0x47
-
 */
-
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Dynamic Overworld Palettes
@@ -368,6 +365,14 @@ MaxLevelChange1:
 .org 0x7aae7, 0xff	@don't record brightened slots
 	.byte 0xe0
 	
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Ghost Battle - Register Push
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x7F904, 0xff	
+	.byte 0x10
+	
+.org 0x7f986, 0xff
+	.byte 0x10, 0xbd
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Hidden Abilities - Stench, Illuminate
