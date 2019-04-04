@@ -704,6 +704,7 @@ GetWindowAttribute = 0x8004950 | 1;
 GetNumActiveWindowsOnBg = 0x8004A34 | 1;
 
 /*Palette Functions*/
+BlendPalette = 0x8045274 | 1;
 LoadCompressedPalette = 0x80703A8 | 1;
 LoadPalette = 0x80703EC | 1;
 FillPalette = 0x870424 | 1;

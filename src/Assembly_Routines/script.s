@@ -354,7 +354,7 @@ SetPalMisc_DoNotSet:
 @ hook at 0x82664 via r3
 SetPalEmotionBubble:
 	push {r0-r2}
-	ldr r0, =0x1100
+	ldr r0, .PalTagEmotionBubble
 	bl FindOrLoadNPCPalette
 	lsl r1, r0, #4
 	pop {r0}
@@ -378,7 +378,7 @@ SetPalEmotionBubble:
 @ hook at 0xDB1AC via r3
 SetPalWarpArrow: 
 	push {r2}
-	ldr r0, =0x1100
+	ldr r0, .PalTagEmotionBubble
 	bl FindOrLoadNPCPalette
 	pop {r2}
 	lsl r0, #4
@@ -401,7 +401,7 @@ SetPalWarpArrow:
 .pool
 @ hook at 0x13F434 via r0
 SetPalItemfinderArrow: 
-	ldr r0, =0x1100
+	ldr r0, .PalTagEmotionBubble
 	bl FindOrLoadNPCPalette
 	lsl r0, #4
 	ldrb r1, [r4,#5]
@@ -413,13 +413,16 @@ SetPalItemfinderArrow:
 	ldr r1, =0x813F43C+1
 	bx r1
 
+.align 2
+.PalTagEmotionBubble: .word 0x1100
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .align 2
 .pool
 @ hook at 0x12D7A8 via r1
 SetPalFameCheckerUnknown: 
 	push {r0}
-	ldr r0, =0x1103
+	ldr r0, .PalTagFameChecker
 	push {r2}
 	bl FindOrLoadNPCPalette
 	pop {r2}
@@ -436,7 +439,10 @@ SetPalFameCheckerUnknown:
 	pop {r0}
 	ldr r3, =0x812D7BA+1
 	bx r3
-	
+
+.align 2
+.PalTagFameChecker: .word 0x1103
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .align 2
 .pool	
@@ -712,12 +718,15 @@ FogBrightenAll:
 	bl FogBrightenPalettes
 	
 FogBrightenAll_End:
-	ldr r0, =0x732
-	add r0, r5
+	ldr r6, .hword732
+	add r0, r5, r6
 	ldrh r1, [r0]
-	lsl r1, #8
-	ldr r0, =0x807AECC|1
+	lsl r1, r1, #8
+	ldr r0, =0x807AECC | 1
 	bx r0
+
+.align 2
+.hword732: .word 0x732
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .align 2

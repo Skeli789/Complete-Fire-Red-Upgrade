@@ -362,6 +362,7 @@ u32 __attribute__((long_call)) GetWindowAttribute(u8 windowId, u8 attributeId);
 u8 __attribute__((long_call)) GetNumActiveWindowsOnBg(u8 bgId);
 
 //Palette Functions
+void BlendPalette(u16 palOffset, u16 numEntries, u8 coeff, u16 blendColor);
 void __attribute__((long_call)) LoadCompressedPalette(const void* src, u16 offset, u16 size);
 void __attribute__((long_call)) LoadPalette(const void *src, u16 offset, u16 size);
 void __attribute__((long_call)) FillPalette(u16 value, u16 offset, u16 size);

@@ -7,7 +7,6 @@
 #define Blue(Color)		((Color >> 10) & 31)
 
 #define LoadNPCPalette(PalTag, PalSlot) ((void(*)(u16, u8))0x805F538+1)(PalTag, PalSlot)
-#define FadePalette(StartColor, ColorCount, FadeIntensity, FadeColor) ((void(*)(u16, u16, u8, u16))0x8045274+1)(StartColor, ColorCount, FadeIntensity, FadeColor)
 #define TintOBJPalette(PalSlot) ((void(*)(u8))0x8083598+1)(PalSlot)
 
 #define OverworldIsActive FuncIsActiveTask(Task_WeatherMain)
@@ -316,7 +315,7 @@ u8 FindOrCreateReflectionPalette(u8 PalSlotNPC)
 	if (PalSlot == 0xFF)
 		return PalRefIncreaseCount(0);
 	LoadNPCPalette(PalTag, PalSlot);
-	FadePalette((PalSlot + 16) * 16, 16, 6, RGB(12, 20, 27)); // make it blueish
+	BlendPalette((PalSlot + 16) * 16, 16, 6, RGB(12, 20, 27)); // make it blueish
 	BrightenReflection(PalSlot); // and a little brighter
 	TintOBJPalette(PalSlot);
 	MaskPaletteIfFadingIn(PalSlot);
@@ -341,21 +340,19 @@ u8 SetUpWeirdDisguise(void) // hook at 0xDCA00 via r3
 	return SetUpDisguise(0x24, 0x1C, FindOrLoadNPCPalette(0x1103));
 };
 
-
-
 void FogBrightenPalettes(u16 BrightenIntensity)
 {
-	u8 Weather = gWeatherPtr->currWeather;
-	if (GetFadeTypeByWeather(Weather) != 2)
+	if (GetFadeTypeByWeather(gWeatherPtr->currWeather) != 2)
 		return; // only brighten if there is fog weather
-	u8 FadeState = gWeatherPtr->palProcessingState;
-	if (FadeState != 3)
+	
+	if (gWeatherPtr->palProcessingState != 3)
 		return; // don't brighten while fading
-	u16 BrightenColor = TintColor(RGB(28, 31, 28));
-	int i;
-	for (i = 16; i < 32; i++)
+
+	//u16 BrightenColor = TintColor(RGB(28, 31, 28));
+	for (int i = 16; i < 32; i++)
 	{
-		if (PaletteNeedsFogBrightening(i)) FadePalette(i * 16, 16, BrightenIntensity, BrightenColor);
+		if (PaletteNeedsFogBrightening(i)) 
+			BlendPalette(i * 16, 16, BrightenIntensity, BrightenColor);
 	}
 };
 
