@@ -3,20 +3,21 @@
 
 //Do Illusion hooks
 
-enum SwitchInStates {
-SwitchIn_HealingWish,
-SwitchIn_ZHealingWish,
-SwitchIn_Spikes,
-SwitchIn_StealthRock,
-SwitchIn_ToxicSpikes,
-SwitchIn_StickyWeb,
-SwitchIn_PrimalReversion,
-SwitchIn_Truant,
-SwitchIn_Abilities,
-SwitchIn_Items,
-SwitchIn_AirBalloon,
-SwitchIn_TrainerMessage,
-SwitchIn_End
+enum SwitchInStates 
+{
+	SwitchIn_HealingWish,
+	SwitchIn_ZHealingWish,
+	SwitchIn_Spikes,
+	SwitchIn_StealthRock,
+	SwitchIn_ToxicSpikes,
+	SwitchIn_StickyWeb,
+	SwitchIn_PrimalReversion,
+	SwitchIn_Truant,
+	SwitchIn_Abilities,
+	SwitchIn_Items,
+	SwitchIn_AirBalloon,
+	SwitchIn_TrainerMessage,
+	SwitchIn_End
 };
 
 extern u8 BattleScript_HealingWishHeal[];
