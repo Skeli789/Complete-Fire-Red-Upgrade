@@ -10,6 +10,22 @@
 .equ gCreateSpriteTableSetter, 0x0203b7ad
 .equ EV_CAP, 252
 
+@Custom Ram Locs
+.equ BATTLE_STRING_LOADER, 0x203C020 @;0x203F700
+.equ SEED_HELPER, 0x203F704
+.equ TERRAIN_BYTE, 0x203F708
+.equ FORM_COUNTER, 0x203F709
+.equ POISONED_BY, 0x203F70A
+	@ 0x1 = Poison Touch	/ 0x1 = Beak Blast Burn
+	@ 0x2 = Toxic Spikes
+	@ 0x3 = Toxic Orb		/ 0x3 = Flame Orb
+	@ 0x4 = Baneful Bunker
+.equ MAGICIAN_HELPER, 0x203F70B
+.equ SHAKER_HELPER, 0x203F70C
+.equ FORCE_SWITCH_HELPER, 0x203F70E
+.equ MULTICHOICE_STRING_LOADER, 0x203B774
+
+
 @Ram Locs
 .equ CURRENT_MOVE, 0x2023D4A
 .equ BATTLE_DATA, 0x2023BE4
@@ -106,21 +122,6 @@
 .equ INCINERATE_COUNTERS, 13
 .equ POWDER_TIMERS, 14
 .equ BEAK_BLAST_TIMERS, 15
-
-@Custom Ram Locs
-.equ BATTLE_STRING_LOADER, 0x203C020 @;0x203F700
-.equ SEED_HELPER, 0x203F704
-.equ TERRAIN_BYTE, 0x203F708
-.equ FORM_COUNTER, 0x203F709
-.equ POISONED_BY, 0x203F70A
-	@ 0x1 = Poison Touch	/ 0x1 = Beak Blast Burn
-	@ 0x2 = Toxic Spikes
-	@ 0x3 = Toxic Orb		/ 0x3 = Flame Orb
-	@ 0x4 = Baneful Bunker
-.equ MAGICIAN_HELPER, 0x203F70B
-.equ SHAKER_HELPER, 0x203F70C
-.equ FORCE_SWITCH_HELPER, 0x203F70E
-.equ MULTICHOICE_STRING_LOADER, 0x203B774
 
 @Structure Offsets
 .equ BDATA_SPECIES, 0x0

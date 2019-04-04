@@ -5,6 +5,13 @@
 .equ MAX_LEVEL, 100
 .include "../asm_defines.s"
 
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Dynamic Overworld Palette - part of hook at 0x779c
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x779A, 0xff
+	.byte 0x0, 0x0
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Hidden Abilities - Change Bit
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -277,6 +284,7 @@ MaxLevelChange1:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Character Customization
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 /*
 .org 0x5e152, 0xff
 	mov r1, #0x5
@@ -314,16 +322,52 @@ MaxLevelChange1:
 	
 .org 0x5ee84, 0xff		@ fix link npcs
 	.byte 0x8, 0x47
-*/	
+
+*/
+
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Dynamic Overworld Palettes
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@.org 0x5f093, 0xff
-@	.byte 0xE0
-@
-@.org 0x5f114, 0xff
-@	.hword 0x0
+.org 0x5f093, 0xff	@don't auto-load NPC palettes into slot 0 or 0xA
+	.byte 0xE0
+
+.org 0x5f114, 0xff	@don't reset pal slot during player animation or reflection
+	.hword 0x0
+	
+.org 0x5f4ba, 0xff	@remove byte casts for NPC palette number
+	.byte 0x1, 0x0, 0x0, 0x0
+
+.org 0x5f548, 0xff	@remove byte casts for NPC palette number
+	.byte 0xc0, 0x0, 0x9, 0x49
+	
+.org 0x5f54c, 0xff	@remove byte casts for NPC palette number
+	.byte 0x0, 0x0
+	
+.org 0x5f5d2, 0xff	@remove byte casts for NPC palette number
+	.byte 0x2, 0x0, 0x0, 0x0
+
+.org 0x5f5e8, 0xff	@don't auto-load NPC palettes into slot 0 or 0xA
+	.byte 0x70, 0x47
+		
+.org 0x5f658, 0xff	@don't auto-load NPC palettes into slot 0 or 0xA
+	.byte 0x70, 0x47
+	
+.org 0x79c18, 0xff	@don't load rain palette on entering map
+	.byte 0x0, 0x25, 0xe, 0xe0
+
+.org 0x7a31f, 0xff	@don't treat slot 0xC as weather palette
+	.byte 0xe0
+	
+.org 0x7a85e, 0xff	@make it compatible with daniilS' snowflakes routine
+	.byte 0x80, 0x18
+	
+.org 0x7a872, 0xff	@make it compatible with daniilS' snowflakes routine
+	.byte 0x1, 0x22, 0x5, 0xe0
+		
+.org 0x7aae7, 0xff	@don't record brightened slots
+	.byte 0xe0
+	
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Hidden Abilities - Stench, Illuminate
@@ -384,6 +428,20 @@ EndFossilImageHack:
 .imageTable: .word fossilImageTable
 .PicboxTaskLoc: .word 0x0809d6d4|1
 .FreeTaskLoc: .word 0x0809d494|1
+
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Dynamic Overworld Palettes
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@	
+.org 0xdaec4, 0xff	@@don't auto-load NPC palettes into slot 0 or 0xA
+	.byte 0x70, 0x47
+	
+.org 0xdaf20, 0xff	@don't auto-load NPC palettes into slot 0 or 0xA
+	.byte 0x70, 0x47
+	
+.org 0xdafb8, 0xff	@don't reset pal slot during player animation or reflection
+	.hword 0x0
+	
 	
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Max Level Hack - Rare Candies
@@ -433,6 +491,13 @@ SummaryScreenExpDisplay2:
 	
 	
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Dynamic Overworld Palettes
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@	
+.org 0x1d9895, 0xff		@don't load sand palette on healing
+	.byte 0x7, 0x9c, 0xbe, 0x3c, 0x8, 0x8d, 0x3b, 0x8, 0x8, 0x4
+	
+	
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Multichoice Pointers
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x3E05B0, 0xFF
@@ -448,6 +513,12 @@ SummaryScreenExpDisplay2:
 .word 0x6
 .word MULTICHOICE_STRING_LOADER
 .word 0x7	
-	
 
+
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Dynamic Overworld Palettes
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x45fd52, 0xff		@pal slot of scroll arrow in Fame Checker
+	.byte 0x9
 

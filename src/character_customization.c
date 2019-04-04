@@ -7,7 +7,7 @@ npc_palletes:
 	0805F570
 	0805F5C8
 	
-	npc_change_type_maybe?
+npc_change_type_maybe?
 	
 
 */
@@ -46,7 +46,9 @@ struct CharacterCustomizationPaletteSwitch CharacterPalSwitchTable[] =
 #endif
 
 
+
 /*
+
 typedef const struct EventObjectGraphicsInfo* NPCPtr;
 #ifdef EXISTING_OW_TABLE_ADDRESS
 	#define gOverworldTableSwitcher ((struct EventObjectGraphicsInfo***) EXISTING_OW_TABLE_ADDRESS)
@@ -115,7 +117,7 @@ NPCPtr GetEventObjectGraphicsInfo(u16 gfxId) {
 		spriteAddr = gOverworldTableSwitcher[0][16];	// first non-player sprite in first table default
 	return spriteAddr;
 };
-*/
+
 
 // load trainer card sprite based on variables
 // 	hook at 810c374 via r2
@@ -126,6 +128,8 @@ void TrainerCardSprite(u8 gender, bool8 modify) {
 	if (trainerId == 0)
 		trainerId = 0x87 + gender;	
 };
+
+*/
 
 
 

@@ -429,6 +429,7 @@ typedef u8 IllusionNickname_t[10];
 #define gExpandedFlags ((u8*) 0x0203B174)
 #define gExpandedVars ((u16*) (0x0203B174 + 0x200))
 
+// JPAN Code
 #define gMultiChoice ((struct Multichoice*) 0x203B774)	// up to 7 pointers, 8 bytes each
 #define gPcSelectionTracker 0x203B7AC	// state tracker for pc selection
 #define gCreateSpriteTableSetter 0x203B7AD  // allow createsprite to load from a table as well
@@ -436,4 +437,8 @@ typedef u8 IllusionNickname_t[10];
 #define gKeypadSetter ((struct KeypadSetter*) 0x203B7B0)	//12 bytes
 #define gPedometers ((struct Pedometers*) 0x203B7BC)		//12 bytes
 #define gWalkingScript (*(u32*) 0x203B7C8)
+
+// Dynamic Overworld Palettes
+#define PalRefs ((PalRef*)0x203FF00)
+
 
