@@ -849,6 +849,11 @@ u8 AttacksThisTurn(u8 bank, u16 move) // Note: returns 1 if it's a charging turn
     return 2;
 }
 
+bool8 IsZMove(u16 move)
+{
+	return move >= FIRST_Z_MOVE && move <= LAST_Z_MOVE;
+}
+
 void ClearBankStatus(bank_t bank) {
 	if (gBattleMons[bank].status1 & (STATUS_POISON | STATUS_TOXIC_POISON))
 		StringCopy(gBattleTextBuff1, gStatusConditionString_Poison);

@@ -809,6 +809,7 @@ void ClearSwitchBits(u8 bank) {
 	gNewBS->BeakBlastByte &= ~(gBitTable[bank]);
 	gNewBS->UnburdenBoosts &= ~(gBitTable[bank]);
 	gNewBS->IllusionBroken &= ~(gBitTable[bank]);
+	gNewBS->brokeFreeMessage &= ~(gBitTable[bank]);
 }
 
 void PartyMenuSwitchingUpdate(void)

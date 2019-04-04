@@ -760,6 +760,7 @@ struct NewBattleStruct
 	u8 activeAbilityPopUps;
 	u8 NoMoreMovingThisTurn;
 	u8 handleDoublesSwitchIns;
+	u8 brokeFreeMessage;
 	
 	//Bit Fields for Party
 	u8 BelchCounters;
