@@ -28,7 +28,6 @@
 
 #define PalTagsStart *((u8*)0x3003E58)
 #define ColorFilter *((u8*)0x2036E28)
-#define FadeInfo2 (&gWeatherPtr->gammaIndex)
 #define AlphaBlendingCoeffA *((u8*)0x3000052)
 
 typedef struct
@@ -186,12 +185,12 @@ void ClearAllPalRefs(void)
 void ClearAllPalettes(void) // hook at 0x5F574 via r0
 {
 	int Fill = 0;
-	CpuSet(&Fill, &gPlttBufferUnfaded[16], 256 | CpuSetFill);
+	CpuSet(&Fill, &gPlttBufferUnfaded[16 * 16], 256 | CpuSetFill);
 };
 
 void BrightenReflection(u8 PalSlot)
 {
-	Palette* Pal = (Palette*) &gPlttBufferFaded[PalSlot + 16];
+	Palette* Pal = (Palette*) &gPlttBufferFaded[PalSlot * 16 + 16 * 16];
 	u16 Color;
 	u8 R, G, B;
 	int i;
@@ -206,7 +205,7 @@ void BrightenReflection(u8 PalSlot)
 		if (B > 31) B = 31;
 		Pal->Colors[i] = RGB(R, G, B);
 	}
-	CpuSet(Pal, &gPlttBufferUnfaded[PalSlot + 16], 16);
+	CpuSet(Pal, &gPlttBufferUnfaded[PalSlot * 16 + 16 * 16], 16);
 };
 
 
@@ -263,7 +262,7 @@ void MaskPaletteIfFadingIn(u8 PalSlot) // prevent the palette from flashing brie
 	if (FadeState == 1 && AboutToFadeIn)
 	{
 		u16 FadeColor = gWeatherPtr->fadeDestColor;
-		CpuSet(&FadeColor, &gPlttBufferFaded[PalSlot + 16], 16 | CpuSetFill);
+		CpuSet(&FadeColor, &gPlttBufferFaded[PalSlot * 16 + 16 * 16], 16 | CpuSetFill);
 	}
 };
 
@@ -349,7 +348,7 @@ void FogBrightenPalettes(u16 BrightenIntensity)
 	u8 Weather = gWeatherPtr->currWeather;
 	if (GetFadeTypeByWeather(Weather) != 2)
 		return; // only brighten if there is fog weather
-	u8 FadeState = *(u8*)(FadeInfo2 + 6);
+	u8 FadeState = gWeatherPtr->palProcessingState;
 	if (FadeState != 3)
 		return; // don't brighten while fading
 	u16 BrightenColor = TintColor(RGB(28, 31, 28));
@@ -414,6 +413,4 @@ u8 GetDarkeningTypeBySlot(u8 PalSlot) // replaces table at 0x3C2CC0
 		return 1;
 	return 0;
 };
-
-
 

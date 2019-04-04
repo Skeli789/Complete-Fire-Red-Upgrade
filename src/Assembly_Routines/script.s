@@ -716,7 +716,7 @@ FogBrightenAll_End:
 	add r0, r5
 	ldrh r1, [r0]
 	lsl r1, #8
-	ldr r0, =0x807AECC+1
+	ldr r0, =0x807AECC|1
 	bx r0
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
