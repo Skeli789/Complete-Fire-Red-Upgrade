@@ -84,7 +84,7 @@ NPCPtr GetEventObjectGraphicsInfo(u16 gfxId) {
 		{
 			if (spriteId > 239)
 			{
-				newId = VarGetX4010(spriteId + 16);
+				newId = VarGetEventObjectGraphicsId(spriteId + 16);
 				tableId = (newId >> 8) & 0xFF;	// upper byte
 				spriteId = (newId & 0xFF);		// lower byte
 			}

@@ -491,7 +491,7 @@ void __attribute__((long_call)) CreateMaleMon(pokemon_t* poke_address, u16 speci
 void __attribute__((long_call)) ReturnToFieldContinueScriptPlayMapMusic(void);
 u32 __attribute__((long_call)) GetAttrFromAnyBox(u8 boxId, u8 boxSlot, u8 dataRequest);
 void __attribute__((long_call)) SetAttrFromAnyBox(u8 boxId, u8 boxSlot, u8 dataRequest, void* dataAddr);
-u16 __attribute__((long_call)) VarGetX4010(u8 Id);
+u16 __attribute__((long_call)) VarGetEventObjectGraphicsId(u8 Id);
 
 //The Deal Breaker
 void __attribute__((long_call)) break_func(u32);
