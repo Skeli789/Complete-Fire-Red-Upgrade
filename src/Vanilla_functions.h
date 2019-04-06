@@ -25,6 +25,7 @@ void __attribute__((long_call)) run_after_graphics();
 void __attribute__((long_call)) script_env_2_enable(void);
 void __attribute__((long_call)) script_run(void *scriptLoc);
 bool8 __attribute__((long_call)) ScriptEnv2IsEnabled(void);
+void __attribute__((long_call)) ScriptEnvDisable(void);
 void __attribute__((long_call)) task_delete(u8 taskID);
 void* __attribute__((long_call)) memcpy_(void *dst, void *src, u8 size);
 void* __attribute__((long_call)) memset_(void *dst, u8 pattern, u8 size);
@@ -254,6 +255,9 @@ bool8 __attribute__((long_call)) GetSetPokedexFlag(u16 nationalNum, u8 caseID);
 u16 __attribute__((long_call)) GetPokedexHeightWeight(u16 dexNum, u8 data);
 void __attribute__((long_call)) ReducePartyToThree(void);
 u8 __attribute__((long_call)) pokemon_order_func(u8 a);
+bool8 __attribute__((long_call)) GetIndexFromDexFlag(u16 index, u8 dexFlag);
+
+u8 __attribute__((long_call)) GetWildDataIndexForMap(void);
 
 //Wild Encounter Functions
 u8 __attribute__((long_call)) ChooseWildMonIndex_Land(void);
@@ -361,6 +365,12 @@ void __attribute__((long_call)) CallWindowFunction(u8 windowId, void ( *func)(u8
 bool8 __attribute__((long_call)) SetWindowAttribute(u8 windowId, u8 attributeId, u32 value);
 u32 __attribute__((long_call)) GetWindowAttribute(u8 windowId, u8 attributeId);
 u8 __attribute__((long_call)) GetNumActiveWindowsOnBg(u8 bgId);
+u32 __attribute__((long_call)) WindowOutline(u8 rid, bool8 triggerA, u16 tilemap_set_something_idk, u8 pal_slot);
+u8 __attribute__((long_call)) WindowPrint(u8 id, u8 font, u8 x, u8 y, struct TextColor* color, u8 speed, const u8* s);
+void __attribute__((long_call)) ChoiceSetupSimple(u8 rid, u8 fboxid, u8 x, u8 y, u8 y_stride, u8 num_choices, u8 preselected_choice);
+s8 __attribute__((long_call)) RboxChoiceUpdate(void);
+u8 __attribute__((long_call)) RboxIdClean(u8 id, bool8 update);
+
 
 //Palette Functions
 void BlendPalette(u16 palOffset, u16 numEntries, u8 coeff, u16 blendColor);
@@ -372,6 +382,7 @@ u8 __attribute__((long_call)) UpdatePaletteFade(void);
 void __attribute__((long_call)) ResetPaletteFade(void);
 void __attribute__((long_call)) ReadPlttIntoBuffers(void);
 bool8 __attribute__((long_call)) BeginNormalPaletteFade(u32 selectedPalettes, s8 delay, u8 startY, u8 targetY, u16 blendColor);
+void __attribute__((long_call)) FadeBgPalAndFillBlack(void);
 void __attribute__((long_call)) ResetPaletteStructByUid(u16 a1);
 void __attribute__((long_call)) ResetPaletteStruct(u8 paletteNum);
 void __attribute__((long_call)) ResetPaletteFadeControl(void);
@@ -393,6 +404,20 @@ void __attribute__((long_call)) TintPalette_GrayScale(u16 *palette, u16 count);
 void __attribute__((long_call)) TintPalette_GrayScale2(u16 *palette, u16 count);
 void __attribute__((long_call)) TintPalette_SepiaTone(u16 *palette, u16 count);
 void __attribute__((long_call)) TintPalette_CustomTone(u16 *palette, u16 count, u16 rTone, u16 gTone, u16 bTone);
+void __attribute__((long_call)) SyncTilemaps(void);
+//void __attribute__((long_call)) SetVBlankCallback(void(*callback) func);
+//void __attribute__((long_call)) SetHBlankCallback(void(*callback) func);
+void __attribute__((long_call)) SetCallback1(void* func);
+void __attribute__((long_call)) SetCallback2(void* func);
+
+//void __attribute__((long_call)) LZ77UnCompWram(void* src, void* dst);
+//void __attribute__((long_call)) LZ77UnCompVram(void* src, void* dst);
+
+void __attribute__((long_call)) BuildOamBuffer(void);
+void __attribute__((long_call)) AnimateSprites(void);
+void __attribute__((long_call)) BgIdSetTilemap(u8 layer, u8* space);
+void __attribute__((long_call)) BgIdMarkForSync(u8 bgid);
+void __attribute__((long_call)) GpuSyncBGShow(u8 layer);
 
 //Save Functions
 void __attribute__((long_call)) SaveSerializedGame(void);
@@ -442,6 +467,11 @@ void __attribute__((long_call)) FreeSpritePaletteByTag(u16 tag);
 void __attribute__((long_call)) SetSubspriteTables(struct Sprite *sprite, const struct SubspriteTable *subspriteTables);
 bool8 __attribute__((long_call)) AddSpriteToOamBuffer(struct Sprite *sprite, u8 *oamIndex);
 bool8 __attribute__((long_call)) AddSubspritesToOamBuffer(struct Sprite *sprite, struct OamData *destOam, u8 *oamIndex);
+
+void __attribute__((long_call)) CleanupOverworldWindowsAndTilemaps(void);
+void __attribute__((long_call)) ResetBgsAndClearDma3BusyFlags(u8 bg);
+void __attribute__((long_call))BgIdModOffsetX(u8 bgid, s32 delta, u8 dir);
+void __attribute__((long_call))BgIdModOffsetY(u8 bgid, s32 delta, u8 dir);
 
 u8* __attribute__((long_call)) StringCopy(u8* dest, u8* src);
 u16 __attribute__((long_call)) StringLength(const u8 *str);
@@ -497,11 +527,20 @@ u16 __attribute__((long_call)) VarGetEventObjectGraphicsId(u8 Id);
 
 void __attribute__((long_call)) PatchObjectPalette(u16 PalTag, u8 PalSlot);
 
-void __attribute__((long_call)) GpuPalObjAllocTagAndApply(struct SpritePalette* pal);
+void __attribute__((long_call)) GpuTileObjAllocTagAndUpload(struct SpriteSheet* tile);
+u8 __attribute__((long_call)) GpuPalObjAllocTagAndApply(struct SpritePalette* pal);
 void __attribute__((long_call)) GpuPalApply(void* src, int dstIndex, int numCols);
 void __attribute__((long_call)) LogCoordsCameraRelative(s32* x, s32* y, u8 size_x, u8 size_y);
+void __attribute__((long_call)) LoadOAM(void);
+void __attribute__((long_call)) ProcessSpriteCopyRequests(void);
 
-//u8 __attribute__((long_call)) TemplateInstanciateReverseSearch(struct Template* tmp, s16 x, s16 y, u8 height);
+u8 __attribute__((long_call)) TemplateInstanciateReverseSearch(struct SpriteTemplate* tmp, s16 x, s16 y, u8 height);
+
+// Textbox Stuff
+void __attribute__((long_call)) TextboxClose(void);
+void __attribute__((long_call)) TextboxFdecodeAutoAndCreateTask(const u8* text);
+void __attribute__((long_call)) RemoBoxesUploadTilesets(void);
+void __attribute__((long_call)) DeactivateAllTextPrinters(void);
 
 // Start Menu
 void __attribute__((long_call)) CloseSafariStepsBox(void);

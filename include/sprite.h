@@ -25,6 +25,19 @@ struct SpriteFrameImage
     u16 size;
 };
 
+struct Frame {
+    u16 data;
+    u16 duration;
+};
+
+struct RotscaleFrame {
+    u16 scale_delta_x;
+    u16 scale_delta_y;
+    u8 rot_delta;
+    u8 duration;
+    u16 field_6;
+};
+
 #define obj_frame_tiles(ptr) {.data = (u8 *)ptr, .size = sizeof ptr}
 
 struct SpritePalette

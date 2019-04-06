@@ -5,6 +5,8 @@
 
 //#define UNBOUND //Don't uncomment this line; it's for compiling specific aspects of Pokemon Unbound
 
+#define DEXNAV_VAR 0x408B
+
 #define TERRAIN_VAR 0x5000
 #define TOTEM_VAR 0x5001 //to 0x5004
 #define NPC_FOLLOWING_VAR 0x5005 //This var should should be set to the NPC Id of the NPC following the player. If no NPC is following the player, it should be set to 0.

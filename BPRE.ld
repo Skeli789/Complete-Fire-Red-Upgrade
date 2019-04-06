@@ -50,6 +50,7 @@ get_poke_ability = 0x08040D46|1;
 species_to_dex_index = 0x08043298|1;
 givepokemon = 0x080A011C|1;
 party_move_up_no_free_slots_in_between = 0x080937DC|1;
+GetIndexFromDexFlag = 0x08088E74 | 1;
 
 BufferPokeNameSize = 0x080A08CC | 1;
 CalculateHeight = 0x080A082C | 1;
@@ -66,6 +67,7 @@ item_is_mail = 0x080980F8|1;
 prepare_party_mail_to_give = 0x08097D38|1;
 bag_add_item = 0x0809A084|1;
 ScriptEnv2IsEnabled = 0x08069958 | 1;
+ScriptEnvDisable = 0x0806994C | 1;
 
 /* move */
 teach_move_in_available_slot = 0x0803E8B0|1;
@@ -85,7 +87,9 @@ rboxes = 0x20204B4;
 ball_tiles = 0x0826056C;
 ball_palettes = 0x082605CC;
 gpu_pal_decompress_alloc_tag_and_upload = 0x0800F078|1;
-obj_sync_something = 0x08006BA8|1;
+//obj_sync_something = 0x08006BA8|1;
+BuildOAMBuffer = 0x08006BA8 | 1;
+
 objc_ball_instanciate2_entry_804B9E8 = 0x0804B9E8|1;
 sub_804BF64 = 0x804BF64|1;
 super_sprites_delete_range = 0x080072E8|1;
@@ -220,23 +224,22 @@ sub_80357C8 = 0x080357C8|1;
 GpuPalApply = 0x080703EC|1;
 LogCoordsCameraRelative = 0x08063BC4 | 1;
 
-remoboxes_upload_tilesets = 0x08002DE8|1;
+RemoBoxesUploadTilesets = 0x08002DE8|1;
 pal_fade_control_reset_maybe = 0x08070A84|1;
 fmt_int_10 = 0x08008E78|1;
 tasks_init = 0x080773BC|1;
-gpu_pal_allocator_reset = 0x080088F0|1;
+
 gpu_tile_obj_decompress_alloc_tag_and_upload = 0x0800F035;
-gpu_pal_obj_alloc_tag_and_apply = 0x08008929;
 oac_nullsub_0 = 0x810BB88|1;
 rboxid_clear_pixels = 0x0800445C|1;
 rboxid_08003FA0 =  0x08003FA0|1;
 rboxid_to_vram = 0x08003F20|1;
 something_08050DE1 = 0x08050DE0|1;
-gpu_tile_obj_alloc_tag_and_upload = 0x080086DC|1;
-gpu_pal_obj_alloc_tag_and_apply = 0x08008928|1;
-gpu_sync_bg_show = 0x080019BC|1;
+GpuTileObjAllocTagAndUpload = 0x080086DC|1;
+GpuPalObjAllocTagAndApply = 0x08008928|1;
+gpu_sync_bg_show = 0x080019BC | 1;
 something_08050969 = 0x08050968|1;
-box_print = 0x0812E51C|1;
+WindowPrint = 0x0812E51C | 1;
 sub_0800F380 = 0x0800F380|1;
 sub_0800F34C = 0x0800F34C|1;
 sub_0800F420 = 0x0800F420|1;
@@ -248,21 +251,23 @@ battle_show_message = 0x080D87BC|1;
 remoid_a_pressed_maybe = 0x08002E64|1;
 
 c2_exit_to_overworld_1_continue_scripts_and_music = 0x080568C4|1;
-palette_bg_faded_fill_black = 0x0807DB38 |1;
-overworld_free_bgmaps = 0x080563F0|1;
+FadeBgPalAndFillBlack = 0x0807DB38 |1;
+
+CleanupOverworldWindowsAndTilemaps = 0x080563F0 | 1;
 lcd_io_set = 0x08000A38|1;
 lcd_io_get = 0x08000AC4|1;
-vblank_handler_set = 0x080006F4|1;
-hblank_handler_set = 0x08000700|1;
-gpu_tile_bg_drop_all_sets = 0x08001618|1;
+SetVBlankCallback = 0x080006F4 | 1;
+SetHBlankCallback = 0x08000700 | 1;
+ResetBgsAndClearDma3BusyFlags = 0x08001618 | 1;
 bg_positions_reset = 0x0812D594|1;
 callback_clear_and_init = 0x080F4E24|1;
 bgid_nullify_tilemap = 0x08001FD4|1;
 mapldr_continue_scripts_restart_music = 0x0807DD24|1;
 c2_exit_to_overworld_2_switch = 0x080567DC|1;
-gpu_sprites_upload = 0x08007320|1;
-copy_queue_process = 0x08007610|1;
-gpu_pal_upload = 0x08070474|1;
+LoadOAM = 0x08007320|1;
+ProcessSpriteCopyRequests = 0x08007610 | 1;
+//TransferPlttBuffer = 0x08070474 | 1;
+SyncTilemaps = 0x080F67B8 | 1;
 bg_scroll_invert = 0x08087F54|1;
 dp12_reset_something = 0x08087EA4|1;
 dp12_something = 0x08087EE4|1;
@@ -286,8 +291,8 @@ malloc_and_clear = 0x08002BB0|1;
 free_ = 0x08002BC4|1;
 CreateTask = 0x0807741C|1;
 task_delete = 0x08077508|1;
-set_callback2 = 0x08000544|1;
-set_callback1 = 0x080565E0|1;
+SetCallback2 = 0x08000544 | 1;
+SetCallback1 = 0x080565E0 | 1;
 ReturnToFieldContinueScriptPlayMapMusic = 0x080568E0|1;
 fade_screen = 0x08070588|1;
 sp198_help_system_disable = 0x0812B478|1;
@@ -296,30 +301,33 @@ gpu_copy_to_tileset = 0x080017D0|1;
 gpu_copy_tilemap = 0x08002040|1;
 bgid_send_tilemap = 0x080020BC|1;
 gpu_pal_apply = 0x080703EC|1;
-lz77_uncomp_vram = 0x081E3B6C|1;
-lz77_uncomp_wram = 0x081E3B70|1;
+lz77UnCompVram = 0x081E3B6C|1;
+LZ77UnCompWram = 0x081E3B70 | 1;
 
 trainer_card_reset = 0x08089D0C|1;
 
 task_exec = 0x08077578|1;
 textbox_something = 0x08002DE8|1;
-objc_exec = 0x08006B5C|1;
-obj_sync_something = 0x08006BA8|1;
-fade_and_return_progress_probably = 0x080704D0|1;
+TextboxClose = 0x080694F4 | 1;
+TextboxFdecodeAutoAndCreateTask = 0x080694C8 | 1;
+DeactivateAllTextPrinters = 0x08002C28 | 1;
+ChoiceSetupSimple = 0x0810F7D8 | 1;
+
 decompress_with_fallback_maybe = 0x080F6878|1;
-gpu_sync_bg_show = 0x080019BC|1;
+GpuSyncBGShow = 0x080019BC | 1;
 gpu_sync_bg_hide = 0x080019D0|1;
-bgid_mod_x_offset = 0x08001B90|1;
-bgid_mod_y_offset = 0x08001D08|1;
+BgIdModOffsetX = 0x08001B90 | 1;
+BgIdModOffsetY = 0x08001D08 | 1;
 gpu_pal_alloc_new = 0x080089B8|1;
 
-bgid_set_tilemap = 0x08001FA0|1;
+BgIdSetTilemap = 0x08001FA0 | 1;
+BgIdMarkForSync = 0x080F67A4 | 1;
 bg_vram_setup = 0x08001658|1;
 memset_ = 0x081E5ED8|1;
 Memset = 0x081E5ED8|1;
 
 
-template_instanciate_forward_search = 0x08006F8C|1;
+CreateSprite = 0x08006F8C | 1;
 obj_delete_and_free_tiles = 0x080073DC|1;
 sub_08034750 = 0x08034750|1;
 template_build_for_pokemon_or_trainer = 0x0803F864|1;
@@ -553,6 +561,7 @@ GetTrainerTowerTrainerName = 0x815DA28 | 1;
 GetTrainerTowerTrainerPicIndex = 0x815DA3C | 1;
 CopyTrainerTowerPlayerLostText = 0x815DBF4 | 1;
 CopyTrainerTowerPlayerWonText = 0x815DC40 | 1;
+GetWildDataIndexForMap = 0x08082934 | 1;
 
 /*Poke Ball Functions*/
 SpriteCB_TestBallThrow = 0x804ABD4 | 1;
@@ -705,6 +714,10 @@ CallWindowFunction = 0x800486C | 1;
 SetWindowAttribute = 0x80048BC | 1;
 GetWindowAttribute = 0x8004950 | 1;
 GetNumActiveWindowsOnBg = 0x8004A34 | 1;
+WindowOutline = 0x0810F2E8 | 1;
+RboxChoiceUpdate = 0x0810FA04 | 1;
+RboxIdClean = 0x0810F4D8 | 1;
+
 
 /* Start Menu Functions */
 CloseSafariStepsBox = 0x0806EF18 | 1;
@@ -717,8 +730,8 @@ StartMenuPokedexFunc = 0x0806F410 | 1;
 BlendPalette = 0x8045274 | 1;
 LoadCompressedPalette = 0x80703A8 | 1;
 LoadPalette = 0x80703EC | 1;
-FillPalette = 0x870424 | 1;
-/*TransferPlttBuffer = 0x8070474 | 1;*/
+FillPalette = 0x8070424 | 1;
+AnimateSprites = 0x08006B5C | 1;
 UpdatePaletteFade = 0x80704D0 | 1;
 ResetPaletteFade = 0x8070528 | 1;
 ReadPlttIntoBuffers = 0x8070548 | 1;

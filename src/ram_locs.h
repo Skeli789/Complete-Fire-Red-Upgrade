@@ -95,7 +95,11 @@ typedef u8 Buffer_t[0x200];
 /*u8*/  #define gBattleBufferA ((Buffer_t*) 0x2022BC4) //u8 gBattleBufferA[MAX_BATTLERS_COUNT][0x200];
 /*u8*/  #define gBattleBufferB ((Buffer_t*) 0x20233C4)
 
+		#define ColorFilter *((u8*)0x2036E28)
+
 		#define gPlayerAvatar ((struct PlayerAvatar*) 0x02037078)
+		
+		#define gBoxStatusAndType ((u8*) 0x0203709C)		
 
 /*u8*/  #define gActiveBattler 			(*((u8*) 0x2023BC4))
 /*u32*/ #define gBattleExecBuffer 		(*((u32*) 0x2023BC8))
@@ -277,6 +281,11 @@ typedef u8 Buffer_t[0x200];
 		#define gSelectedOrderFromParty ((u8*) 0x203B0D4)
 /*u8*/  #define gUnknown_0203B0DC ((u8*) 0x203B0DC)
 
+		#define AlphaBlendingCoeffA *((u8*)0x3000052)
+		#define PalTagsStart *((u8*)0x3003E58)
+		
+		#define PalTags ((u16*)0x3000DE8)
+
 		#define gScriptEnv1 ((struct ScriptContext*) 0x03000EB0)
 		#define gScriptEnv2 ((struct ScriptContext*) 0x03000F28)
 		#define gLoadPointer (*((u32*) 0x03000f14))
@@ -445,5 +454,7 @@ typedef u8 IllusionNickname_t[10];
 
 // Dynamic Overworld Palettes
 //#define PalRefs ((PalRef*)0x203FF00)
-#define PalRefs ((PalRef*)0x203B7D4)
+#define PalRefs ((PalRef*)0x203B7D4)	// 16 sprites * 4 bytes each = 0x40 bytes
+
+#define DEXNAV_SAVERAM 0x203B814
 

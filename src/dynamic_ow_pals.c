@@ -27,11 +27,7 @@ Credit to Navenatox
 #define PalTypeOther 5
 
 // #define PalRefs ((PalRef*)0x203FF00)	// moved to ram_locs
-#define PalTags ((u16*)0x3000DE8)
 
-#define PalTagsStart *((u8*)0x3003E58)
-#define ColorFilter *((u8*)0x2036E28)
-#define AlphaBlendingCoeffA *((u8*)0x3000052)
 
 typedef struct
 {

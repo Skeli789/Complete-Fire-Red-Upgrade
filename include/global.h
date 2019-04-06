@@ -44,6 +44,8 @@
 #define min(a, b) ((a) < (b) ? (a) : (b))
 #define max(a, b) ((a) >= (b) ? (a) : (b))
 
+#define ABS(x) (x) < 0 ? -(x) : (x)
+
 // There are many quirks in the source code which have overarching behavioral differences from
 // a number of other files. For example, diploma.c seems to declare rodata before each use while
 // other files declare out of order and must be at the beginning. There are also a number of

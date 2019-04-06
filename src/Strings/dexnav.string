@@ -1,4 +1,35 @@
 #org @gText_DexNavText
+Pok\edex\nDexnav
 
 #org @gText_PokeTools
+TOOLS
+
+#org @gText_GotAway
+The Pok\emon got away!\p
+
+#org @gText_LostSignal
+There is no reaction.\nThe signal was lost!\p
+
+#org @gText_CannotBeFound
+This Pok\emon cannot be found here.\p
+
+#org @gText_NotFoundNearby
+It couldn't be found nearby.\nTry looking in a different area!\p
+
+#org @gText_DexNavBack
+ Back  
+
+#org @gText_DexNav_NoInfo
+--------
+
+#org @gText_DexNav_ChooseMon
+Choose a Pok\emon
+
+#org @gText_DexNav_Invalid
+That Pok\emon can't be searched!
+
+#org @gText_DexNav_Locked
+Pok\emon searchable via Select!
+
+
 

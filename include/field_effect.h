@@ -73,7 +73,17 @@ enum FieldEffectScriptIdx
     FLDEFF_UNK_41  // TODO: related to vs_seeker
 };
 
-extern u32 gFieldEffectArguments[8];
+//extern u32 gFieldEffectArguments[8];
+
+struct Coords32 {
+    s32 x;
+    s32 y;
+};
+
+extern struct gFieldEffectArguments {
+    struct Coords32 effect_pos;
+    u32 priority;
+};
 
 u8 FieldEffectStart(u8);
 bool8 FieldEffectActiveListContains(u8 id);
