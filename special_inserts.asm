@@ -37,6 +37,23 @@ MaxLevelChange2:
 .org 0x21FB6, 0xFF
 MaxLevelChange3:
 	.byte MAX_LEVEL
+	
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Hidden Abilities - AI Switch Logic
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x23FD0, 0xff
+HiddenAbilityAISwitch:
+	ldrb r0, [r7]
+	mul r0, r6
+	add r0, r0, r4
+	ldrh r2, [r0, #0x0] @species
+	ldrb r1, [r0, #0x17]
+	lsr r1, r1, #0x7 @ability bit
+	ldr r0, [r1, #0x48] @personality
+	bl HiddenAbilityAISwitch + 0x1CD9C @0x08040D6C
+	ldrb r1, [r7]
+	
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Hidden Abilities - Player
@@ -92,12 +109,53 @@ HiddenAbilityChange4_2:
 	mov r2, r5 @species
 	bl HiddenAbilityChange4_2 + 0x164DC @0x08040D6C
 
+/*
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Hidden Abilities - Pickup
+@	handled in general_bs_commands -> atkE5_pickupitemcalculation
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x2CE60, 0xFF
+HiddenAbilityPickup:
+	mov r1, #0x41
+	bl HiddenAbilityPickup + 0x12D88 @get_attr
+	lsl r0, r0, #0x10
+	lsr r5, r0, #0x10
+	mov r0, r4
+	mov r1, #0xC @held item
+	bl HiddenAbilityPickup + 0x12D88 @get_attr
+	lsl r0, r0, #0x10
+	lsr r6, r0, #0x10
+	mov r0, r4
+	mov r1, #0x2E
+	bl HiddenAbilityPickup + 0x12D88 @get_attr
+	lsl r1, r0, #0x18
+	lsr r1, r1, #0x18 @ability bit
+	ldrb r0, [r4, #0x0] @personality
+	mov r2, r5 @species
+	bl HiddenAbilityPickup + 0x13F1A @0x08040D7A
+	b HiddenAbilityPickup + 0x42 @0x0802CEA2
+*/
+
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Max Level Limiter
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x32F6E, 0xFF
 MaxLevelChange14:
 	.byte MAX_LEVEL - 1
+	
+	
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Hidden Abilities - Water/Volt Absorb, Flash Fire
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@	
+.org 0x039548, 0xFF
+HiddenAbilityAbsorbAbilities:
+	lsl r0, r0, #0x18
+	lsr r1, r0, #0x18 	@ability bit
+	ldrb r0, [r5, #0x0] @personality
+	mov r2, r4 			@species
+	bl HiddenAbilityAbsorbAbilities + 0x7832 @ 0x08040D7A
+	b HiddenAbilityAbsorbAbilities + 0x2A @ 0x08039572	
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Hidden Abilities - Generate Poke
@@ -122,6 +180,28 @@ MaxLevelChange4:
 .org 0x3E872, 0xFF
 MaxLevelChange5:
 	.byte MAX_LEVEL
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Hidden Abilities - Battle Malloc (DexNav)
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x40938, 0xFF
+   ldrb r0, [r4]
+   lsl r0, r0, #0x6
+   mov r1, r7
+   orr r0, r1
+   strb r0, [r7, #0x1D]
+   mov r8, r8
+   mov r8, r8
+   
+   
+/*
+.org 0x40D38
+     push {lr}
+     bl get_ability
+     ldr r1, =(0x2023D6A)
+     strb r0, [r1]
+     pop {pc}
+*/
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Hidden Abilities - Determine Ability Bit
@@ -196,7 +276,7 @@ base_stats_table: .word 0x80001BC
 b_last_copied_ability: .word 0x02023D6A
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@ Hidden Abilities - Summary
+@ Hidden Abilities - Summary Screen
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x041318, 0xFF
 @poke summary info
@@ -496,11 +576,46 @@ SummaryScreenExpDisplay2:
 	
 	
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ DexNav - overworld anim for caves
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@	
+.org 0x1D9714, 0xff		@ 0x081D96AC + 4 * 0x1A
+	.word 0x081d98a4
+
+	
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Dynamic Overworld Palettes
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@	
 .org 0x1d9895, 0xff		@don't load sand palette on healing
 	.byte 0x7, 0x9c, 0xbe, 0x3c, 0x8, 0x8d, 0x3b, 0x8, 0x8, 0x4
 	
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ DexNav - overworld anim for caves
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@	
+.org 0x1d98a4, 0xff
+	.byte 0x7
+	.word 0x083A5348
+	@ .word oei_1A_cave|1	@1d98a9
+	.org 0x1d98ae, 0xff
+	.byte 0x4
+	
+@ extend animation frames for hidden water and cave
+.org 0x3a5b56, 0xff
+	.byte 0x8
+
+.org 0x3a5b5a, 0xff
+	.byte 0x8
+
+.org 0x3a5b5e, 0xff
+	.byte 0x8
+
+.org 0x3a5b62, 0xff
+	.byte 0x8
+
+.org 0x3a5b66, 0xff
+	.byte 0x8
+
+.org 0x3a5b6a, 0xff
+	.byte 0x8
 	
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Multichoice Pointers

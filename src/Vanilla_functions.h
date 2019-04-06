@@ -24,6 +24,7 @@ bool8 __attribute__((long_call)) bag_add_item(u16 item_id, u8 a);
 void __attribute__((long_call)) run_after_graphics();
 void __attribute__((long_call)) script_env_2_enable(void);
 void __attribute__((long_call)) script_run(void *scriptLoc);
+bool8 __attribute__((long_call)) ScriptEnv2IsEnabled(void);
 void __attribute__((long_call)) task_delete(u8 taskID);
 void* __attribute__((long_call)) memcpy_(void *dst, void *src, u8 size);
 void* __attribute__((long_call)) memset_(void *dst, u8 pattern, u8 size);
@@ -481,6 +482,7 @@ void __attribute__((long_call)) m4aSongNumStop(u16 n);
 void __attribute__((long_call)) m4aMPlayContinue(struct MusicPlayerInfo *mplayInfo);
 void __attribute__((long_call)) m4aMPlayVolumeControl(struct MusicPlayerInfo *mplayInfo, u16 trackBits, u16 volume);
 void __attribute__((long_call)) CpuSet(const void* src, void* dest, u32 mode);
+void __attribute__((long_call)) CpuFastSet(const void* src, void* dest, u32 mode);
 u16 __attribute__((long_call)) Sqrt(u32);
 u32 __attribute__((long_call)) udivsi(u32, u32);
 u32 __attribute__((long_call)) umodsi(u32, u32);
@@ -494,6 +496,18 @@ void __attribute__((long_call)) SetAttrFromAnyBox(u8 boxId, u8 boxSlot, u8 dataR
 u16 __attribute__((long_call)) VarGetEventObjectGraphicsId(u8 Id);
 
 void __attribute__((long_call)) PatchObjectPalette(u16 PalTag, u8 PalSlot);
+
+void __attribute__((long_call)) GpuPalObjAllocTagAndApply(struct SpritePalette* pal);
+void __attribute__((long_call)) GpuPalApply(void* src, int dstIndex, int numCols);
+void __attribute__((long_call)) LogCoordsCameraRelative(s32* x, s32* y, u8 size_x, u8 size_y);
+
+//u8 __attribute__((long_call)) TemplateInstanciateReverseSearch(struct Template* tmp, s16 x, s16 y, u8 height);
+
+// Start Menu
+void __attribute__((long_call)) CloseSafariStepsBox(void);
+void __attribute__((long_call)) CloseStartMenuDescriptionBox(void);
+void __attribute__((long_call)) HideStartMenu(void);
+void __attribute__((long_call)) StartMenuPokedexFunc(void);
 
 //The Deal Breaker
 void __attribute__((long_call)) break_func(u32);

@@ -14,15 +14,18 @@ script functions/specials in asm - hooks and returns
 .global sp098_WildSeaBattle
 .global sp156_GhostBattleSpecial
 
+@@ Hidden Abilities (credit to azurile13)
+.global DaycareInheritHiddenAbility
+@ see special_inserts for most of the code
 
 @@ Character Customization (credit to JPAN)
-@.global NpcSpawnWithTemplate
-@.global NpcSizeFix
-@.global NewNpcInfo
-@.global LinkNpcFix
-@.global NpcOffscreenFix
-@.global NpcWaterFix
-@.global CreateSpriteLoadTable	@credit to ghoulslash
+.global NpcSpawnWithTemplate
+.global NpcSizeFix
+.global NewNpcInfo
+.global LinkNpcFix
+.global NpcOffscreenFix
+.global NpcWaterFix
+.global CreateSpriteLoadTable	@credit to ghoulslash
 
 @@ Dynamic Overworld Palettes (credit to Navenatox)
 .global SetPalFossilImage
@@ -56,6 +59,90 @@ script functions/specials in asm - hooks and returns
 .global FogBrightenAndFadeIn
 .global GetFadeType1
 .global GetFadeType2
+
+@@ Dex Nav (Credit to FBI)
+.global GetAttrHiddenAbility
+.global CheckDexNavSelect
+.global PokeToolNoFade
+
+/*
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ hook at 3FD58 via r5
+.align 2
+.pool
+GetAttrHiddenAbility:
+	cmp r1, #46
+	bne hook_restore
+
+ability_bit_get:
+	add r0, r0, #30
+	ldrb r0, [r0]
+	lsr r0, r0, #6
+	ldr r3, =(0x0804036A|1)
+	bx r3
+
+hook_restore:
+	mov r9, r4
+	mov r10, r4
+	mov r7, #0
+	mov r5, #0
+	cmp r1, #0xA
+	ble hop_decoder
+	ldr r2, =(0x0803FD64|1)
+	bx r2
+
+hop_decoder:
+	ldr r1, =(0x0803FDC2|1)
+	bx r1
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.align 2
+.pool
+@ hook at 10AD98 via r1
+CheckDexNavSelect:
+    bl CheckRegisteredSelect
+    cmp r0, #0x0
+    bne RestoreSelect
+    ldr r1, =(0x810ADA0|1)
+    bx r1
+
+RestoreSelect:
+   bl SelectHookRestore
+   ldr r1, =(0x810ADA0|1)
+   bx r1
+   
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.align 2
+.pool
+@ hook at 6F3A8 via r3
+PokeToolNoFade:
+    cmp r1, r0
+    beq EndStartOptFadeCheck
+    ldr r0, =(PokeToolsFunc)
+    cmp r1, r0
+    beq EndStartOptFadeCheck
+    ldr r0, =(0x080CCB68|1)
+    bl CallViaR0
+    ldr r0, =(0x0806F3B0|1)
+CallViaR0:
+    bx r0
+EndStartOptFadeCheck:
+    pop {pc}
+	
+	
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.align 2
+.pool
+@ 
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.align 2
+.pool
+@ 
+
+
+*/
 
 
 
@@ -908,3 +995,73 @@ defaultGhost:
 	ldr r1, =PKMN_MAROWAK
 	ldr r2, =(0x0807f938|1)
 	bx r2
+
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ hook at 46116 via r0
+.align 2
+.pool
+DaycareInheritHiddenAbility:
+	mov r4, sp
+	add r0, r5, #0x0
+	ldr r3 , func_roll_gender
+	bl bx_r3
+	cmp r0, #0xFE
+	beq mother_in_slot_one
+	mov r0, r5
+	add r0, r0, #0x8C
+	mov r1, #0xB
+	bl get_zero_attr
+	cmp r0, #0x84
+	beq mother_in_slot_one
+	mov r0, r5
+	add r0, r0, #0x8C
+	b check_for_hidden
+
+mother_in_slot_one:
+	add r0, r5, #0x0
+
+check_for_hidden:
+	mov r1, #0x2E
+	bl get_zero_attr
+	cmp r0, #0x0
+	beq end
+	ldr r3, func_rand
+	bl bx_r3
+	lsr r0, r0, #0x8
+	cmp r0, #0x99
+	bhi end
+	ldr r3, func_set_attr
+	mov r2, #0x1
+	push {r2}
+	mov r2, sp
+	mov r1, #0x2E
+	mov r0, r4
+	bl bx_r3
+	add sp, #0x4
+
+end:
+	mov r2, r4
+	add r2, r2, #0x6A
+	mov r0, #0x1
+	strb r0, [r2]
+	mov r0, r4
+	ldr r1, func_return
+	bx r1
+
+get_zero_attr:
+	mov r2, #0x0
+	ldr r3, func_get_attr
+
+bx_r3:
+	bx r3
+
+.align 2
+func_roll_gender: .word 0x0803F730 + 1
+func_get_attr: .word 0x0803FBE8 + 1
+func_rand: .word 0x08044EC8 + 1
+func_set_attr: .word 0x0804037C + 1
+func_return: .word 0x08046120 + 1
+
+
+

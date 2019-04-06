@@ -65,6 +65,7 @@ get_item_quality = 0x0809A949|1;
 item_is_mail = 0x080980F8|1;
 prepare_party_mail_to_give = 0x08097D38|1;
 bag_add_item = 0x0809A084|1;
+ScriptEnv2IsEnabled = 0x08069958 | 1;
 
 /* move */
 teach_move_in_available_slot = 0x0803E8B0|1;
@@ -108,9 +109,9 @@ rboxid_get_field = 0x08004950|1;
 gf_strcat = 0x08008DA4 |1;
 
 healthbar_draw_level = 0x08048398|1;
-gpu_pal_obj_alloc_tag_and_apply = 0x08008928|1;
+GpuPalObjAllocTagAndApply = 0x08008928|1;
 gpu_tile_obj_decompress_alloc_tag_and_upload = 0x0800F034|1;
-template_instanciate_reverse_search = 0x08006FE0|1;
+TemplateInstanciateReverseSearch = 0x08006FE0 | 1;
 palc_health_boxes = 0x08260260|1;
 tester_run = 0x080347A8|1;
 healthbar_draw_field_maybe = 0x08049D98|1;
@@ -216,7 +217,8 @@ load_battle_screen_elements2 = 0x0800F2AC|1;
 vblank_cb_battle = 0x080116F4|1;
 sub_8001960 = 0x08001960|1;
 sub_80357C8 = 0x080357C8|1;
-gpu_pal_apply = 0x080703EC|1;
+GpuPalApply = 0x080703EC|1;
+LogCoordsCameraRelative = 0x08063BC4 | 1;
 
 remoboxes_upload_tilesets = 0x08002DE8|1;
 pal_fade_control_reset_maybe = 0x08070A84|1;
@@ -282,7 +284,7 @@ malloc_ = 0x08002B9C|1;
 calloc_ = 0x8002BB0 | 1;
 malloc_and_clear = 0x08002BB0|1;
 free_ = 0x08002BC4|1;
-task_add = 0x0807741C|1;
+CreateTask = 0x0807741C|1;
 task_delete = 0x08077508|1;
 set_callback2 = 0x08000544|1;
 set_callback1 = 0x080565E0|1;
@@ -704,6 +706,13 @@ SetWindowAttribute = 0x80048BC | 1;
 GetWindowAttribute = 0x8004950 | 1;
 GetNumActiveWindowsOnBg = 0x8004A34 | 1;
 
+/* Start Menu Functions */
+CloseSafariStepsBox = 0x0806EF18 | 1;
+HideStartMenu = 0x0806FEA0 | 1;
+CloseStartMenuDescriptionBox = 0x080F7998 | 1;
+StartMenuPokedexFunc = 0x0806F410 | 1;
+
+
 /*Palette Functions*/
 BlendPalette = 0x8045274 | 1;
 LoadCompressedPalette = 0x80703A8 | 1;
@@ -829,6 +838,7 @@ m4aSongNumStop = 0x81DD1C0 | 1;
 m4aMPlayContinue = 0x81DD26C | 1;
 m4aMPlayVolumeControl = 0x81DE0E0 | 1;
 CpuSet = 0x81E3B64 | 1;
+CpuFastSet = 0x081E3B60 | 1;
 Sqrt = 0x81E3B9C | 1;
 udivsi = 0x81E460C | 1;
 umodsi = 0x81E4684 | 1;
