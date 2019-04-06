@@ -349,10 +349,13 @@ void FogBrightenPalettes(u16 BrightenIntensity)
 	if (GetFadeTypeByWeather(gWeatherPtr->currWeather) != 2)
 		return; // only brighten if there is fog weather
 	
+	u16 BrightenColor = TintColor(RGB(28, 31, 28));
+	//BlendPalettes(0xFFFF0000, BrightenIntensity, BrightenColor); //Uncomment to fade player on weather fade out
+	
 	if (gWeatherPtr->palProcessingState != 3)
 		return; // don't brighten while fading
-
-	u16 BrightenColor = TintColor(RGB(28, 31, 28));
+	
+	//u16 BrightenColor = TintColor(RGB(28, 31, 28));
 	for (int i = 16; i < 32; i++)
 	{
 		if (PaletteNeedsFogBrightening(i)) 

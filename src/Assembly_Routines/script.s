@@ -66,7 +66,7 @@ script functions/specials in asm - hooks and returns
 .align 2
 .pool
 NpcSpawnWithTemplate:
-	ldr r1, =(0x02036e38)
+	ldr r1, =(0x02036e38) @EventObjects
 	add r5, r0, r1
 	ldrb r0, [r5, #0x5] 
 	ldrb r1, [r5, #0x1a]

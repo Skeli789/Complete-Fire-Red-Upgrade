@@ -1,25 +1,9 @@
 #include "defines.h"
 #include "helper_functions.h"
 /*
-
-npc_palletes:
-	0805F4B0
-	5F570
-	5F5C8
-	5F4D8
-	
-npc_change_type_maybe?
-	
-
-
-surfing palette problem:
-	switches to: 35B968 -> 68 b9 35 08
-		F0 51 F5 21 1F 4B 5B 3A 0F 21 08 69 E7 3C 8E 62 AD 14 BD 7F D6 6A BF 25 F8 1C 7F 2F 77 1E 00 00
-	pal 0x1100 (surfing blob)
-
-
+Dynamic Overworld Palettes
+	credit to Navenatox
 */
-
 
 u16 GetBackspriteId(void);
 void LoadTrainerBackPal(u16 trainerPicId, u8 bank);
@@ -63,12 +47,9 @@ typedef const struct EventObjectGraphicsInfo* NPCPtr;
 	// create 255 OW tables
 	const struct EventObjectGraphicsInfo** gOverworldTableSwitcher[255] = {
 		(NPCPtr*) 0x839fdb0,
-		(NPCPtr*) 0x8808114,
-		(NPCPtr*) 0x8811d24,
-		(NPCPtr*) 0x8811d6c,
-		(NPCPtr*) 0x8811db4,
-		(NPCPtr*) 0x8811dfc,
-		(NPCPtr*) 0x8821220,
+		(NPCPtr*) 0x0,
+		// etc...
+		// please note that this method makes compatability with OW Manager challenging
 };
 #endif
 
@@ -77,8 +58,7 @@ typedef const struct EventObjectGraphicsInfo* NPCPtr;
 //npc_get_type hack for character customization
 //	hook at 0805F2C8 via r1
 NPCPtr GetEventObjectGraphicsInfo(u16 gfxId) {
-	//u8 tableId = ((gfxId << 16) >> 24) & 0xFF;	// upper byte
-	u8 tableId = (gfxId >> 8) & 0xFF;
+	u8 tableId = (gfxId >> 8) & 0xFF;	// upper byte
 	u8 spriteId = gfxId & 0xFF;		// lower byte
 	u16 newId;
 	// check runtime changeable OWs
@@ -93,7 +73,7 @@ NPCPtr GetEventObjectGraphicsInfo(u16 gfxId) {
 	{
 		if ((tableId == 0) && spriteId > 239)
 		{
-			newId = VarGetX4010(spriteId + 16);
+			newId = VarGetEventObjectGraphicsId(spriteId + 16);
 			tableId = (newId >> 8) & 0xFF;	// upper byte
 			spriteId = (newId & 0xFF);		// lower byte
 		}
@@ -131,6 +111,7 @@ NPCPtr GetEventObjectGraphicsInfo(u16 gfxId) {
 };
 
 
+/*
 // load trainer card sprite based on variables
 // 	hook at 810c374 via r2
 void TrainerCardSprite(u8 gender, bool8 modify) {
@@ -140,10 +121,7 @@ void TrainerCardSprite(u8 gender, bool8 modify) {
 	if (trainerId == 0)
 		trainerId = 0x87 + gender;	
 };
-
-
-
-
+*/
 
 void PlayerHandleDrawTrainerPic(void)
 {

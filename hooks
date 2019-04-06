@@ -205,7 +205,7 @@ ReadKeys 080005E8 0
 TakeStep 080A0F0C 0
 
 ##Character Customization
-TrainerCardSprite 0810c374 2
+#TrainerCardSprite 0810c374 2
 GetEventObjectGraphicsInfo 0805F2C8 2
 NpcSizeFix 0805e510 1
 NewNpcInfo 0805e964 4

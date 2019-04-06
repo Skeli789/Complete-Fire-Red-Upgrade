@@ -268,6 +268,8 @@ struct MapObjectGraphicsInfo
     /*0x20*/ const union AffineAnimCmd *const *affineAnims;
 };
 
+#define EventObjectGraphicsInfo MapObjectGraphicsInfo
+ 
 #define PLAYER_AVATAR_FLAG_ON_FOOT   (1 << 0)
 #define PLAYER_AVATAR_FLAG_MACH_BIKE (1 << 1)
 #define PLAYER_AVATAR_FLAG_ACRO_BIKE (1 << 2)
