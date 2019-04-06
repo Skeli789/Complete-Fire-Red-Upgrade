@@ -11,6 +11,13 @@ npc_palletes:
 npc_change_type_maybe?
 	
 
+
+surfing palette problem:
+	switches to: 35B968 -> 68 b9 35 08
+		F0 51 F5 21 1F 4B 5B 3A 0F 21 08 69 E7 3C 8E 62 AD 14 BD 7F D6 6A BF 25 F8 1C 7F 2F 77 1E 00 00
+	pal 0x1100 (surfing blob)
+
+
 */
 
 
@@ -47,7 +54,7 @@ struct CharacterCustomizationPaletteSwitch CharacterPalSwitchTable[] =
 #endif
 
 
-/*
+
 
 typedef const struct EventObjectGraphicsInfo* NPCPtr;
 #ifdef EXISTING_OW_TABLE_ADDRESS
@@ -56,7 +63,12 @@ typedef const struct EventObjectGraphicsInfo* NPCPtr;
 	// create 255 OW tables
 	const struct EventObjectGraphicsInfo** gOverworldTableSwitcher[255] = {
 		(NPCPtr*) 0x839fdb0,
-		(NPCPtr*) 0,
+		(NPCPtr*) 0x8808114,
+		(NPCPtr*) 0x8811d24,
+		(NPCPtr*) 0x8811d6c,
+		(NPCPtr*) 0x8811db4,
+		(NPCPtr*) 0x8811dfc,
+		(NPCPtr*) 0x8821220,
 };
 #endif
 
@@ -69,7 +81,6 @@ NPCPtr GetEventObjectGraphicsInfo(u16 gfxId) {
 	u8 tableId = (gfxId >> 8) & 0xFF;
 	u8 spriteId = gfxId & 0xFF;		// lower byte
 	u16 newId;
-
 	// check runtime changeable OWs
 	if (tableId == 0xFF && spriteId <= 0xF)
 	{
@@ -80,44 +91,40 @@ NPCPtr GetEventObjectGraphicsInfo(u16 gfxId) {
 	}
 	else
 	{
-		if (tableId == 0)
+		if ((tableId == 0) && spriteId > 239)
 		{
-			if (spriteId > 239)
+			newId = VarGetX4010(spriteId + 16);
+			tableId = (newId >> 8) & 0xFF;	// upper byte
+			spriteId = (newId & 0xFF);		// lower byte
+		}
+		else	// load sprite/table IDs from vars
+		{
+			u16 newId = 0;
+			if ((spriteId == 0) || (spriteId == 7))
+				newId = VarGet(VAR_PLAYER_WALKRUN);
+			else if ((spriteId == 1) || (spriteId == 8))
+				newId = VarGet(VAR_PLAYER_BIKING);
+			else if ((spriteId == 2) || (spriteId == 9))
+				newId = VarGet(VAR_PLAYER_SURFING);
+			else if ((spriteId == 3) || (spriteId == 5) || (spriteId == 0xA) || (spriteId == 0xC))
+				newId = VarGet(VAR_PLAYER_VS_SEEKER);
+			else if ((spriteId == 4) || (spriteId == 0xB))
+				newId = VarGet(VAR_PLAYER_FISHING);
+			else if ((spriteId == 6) || (spriteId == 0xD))
+				newId = VarGet(VAR_PLAYER_VS_SEEKER_ON_BIKE);
+			// get updated table and sprite IDs
+			if (newId != 0)
 			{
-				newId = VarGetX4010(spriteId + 16);
 				tableId = (newId >> 8) & 0xFF;	// upper byte
 				spriteId = (newId & 0xFF);		// lower byte
-			}
-			else	// load sprite/table IDs from vars
-			{
-				u16 newId = 0;
-				if ((spriteId == 0) || (spriteId == 7))
-					newId = VarGet(VAR_PLAYER_WALKRUN);
-				else if ((spriteId == 1) || (spriteId == 8))
-					newId = VarGet(VAR_PLAYER_BIKING);
-				else if ((spriteId == 2) || (spriteId == 9))
-					newId = VarGet(VAR_PLAYER_SURFING);
-				else if ((spriteId == 3) || (spriteId == 5) || (spriteId == 0xA) || (spriteId == 0xC))
-					newId = VarGet(VAR_PLAYER_VS_SEEKER);
-				else if ((spriteId == 4) || (spriteId == 0xB))
-					newId = VarGet(VAR_PLAYER_FISHING);
-				else if ((spriteId == 6) || (spriteId == 0xD))
-					newId = VarGet(VAR_PLAYER_VS_SEEKER_ON_BIKE);
-				// get updated table and sprite IDs
-				if (newId != 0)
-				{
-					tableId = (newId >> 8) & 0xFF;	// upper byte
-					spriteId = (newId & 0xFF);		// lower byte			
-				}	// else, table and sprite ID stay the same
-			}	// runtime changeable
-		}	// non-zero table ID
+			}	// else, table and sprite ID stay the same
+		}	// runtime changeable
 	}
 	NPCPtr spriteAddr;
 	if (gOverworldTableSwitcher[tableId] == 0)
 		spriteAddr = gOverworldTableSwitcher[0][spriteId];
 	else
 		spriteAddr = gOverworldTableSwitcher[tableId][spriteId];
-	
 	if (spriteAddr == 0)
 		spriteAddr = gOverworldTableSwitcher[0][16];	// first non-player sprite in first table default
 	return spriteAddr;
@@ -135,7 +142,7 @@ void TrainerCardSprite(u8 gender, bool8 modify) {
 };
 
 
-*/
+
 
 
 void PlayerHandleDrawTrainerPic(void)

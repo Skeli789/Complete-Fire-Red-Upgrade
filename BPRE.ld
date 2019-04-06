@@ -653,6 +653,7 @@ ScriptContext2_Enable = 0x8069940 | 1;
 ScriptContext1_SetupScript = 0x8069AE4 | 1;
 ScriptContext1_Stop = 0x8069B28 | 1;
 PlayNewMapMusic = 0x8071A74 | 1;
+PatchObjectPalette = 0x0805F538 | 1;
 
 /*Field Weather Functions*/
 Task_WeatherMain = 0x8079e0c | 1;

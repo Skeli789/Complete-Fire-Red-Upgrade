@@ -193,7 +193,7 @@ struct MapObject
              u32 landingJump:1;
              u32 heldMovementActive:1;
              u32 heldMovementFinished:1;
-    /*0x01*/ u32 frozen:1;
+    /*0x01*/ u32 frozen:1;				
              u32 facingDirectionLocked:1;
              u32 disableAnim:1;
              u32 enableAnim:1;

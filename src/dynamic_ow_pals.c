@@ -301,7 +301,7 @@ u8 FindOrLoadNPCPalette(u16 PalTag)
 		return PalRefIncreaseCount(PalSlot);
 	PalSlot = AddPalRef(PalTypeNPC, PalTag);
 	if (PalSlot == 0xFF)
-		return PalRefIncreaseCount(0);
+		return PalRefIncreaseCount(0);	
 	LoadNPCPalette(PalTag, PalSlot);
 	MaskPaletteIfFadingIn(PalSlot);
 	return PalRefIncreaseCount(PalSlot);
@@ -352,7 +352,7 @@ void FogBrightenPalettes(u16 BrightenIntensity)
 	if (gWeatherPtr->palProcessingState != 3)
 		return; // don't brighten while fading
 
-	//u16 BrightenColor = TintColor(RGB(28, 31, 28));
+	u16 BrightenColor = TintColor(RGB(28, 31, 28));
 	for (int i = 16; i < 32; i++)
 	{
 		if (PaletteNeedsFogBrightening(i)) 

@@ -444,6 +444,6 @@ typedef u8 IllusionNickname_t[10];
 #define gWalkingScript (*(u32*) 0x203B7C8)
 
 // Dynamic Overworld Palettes
-#define PalRefs ((PalRef*)0x203FF00)
-
+//#define PalRefs ((PalRef*)0x203FF00)
+#define PalRefs ((PalRef*)0x203B7D4)
 

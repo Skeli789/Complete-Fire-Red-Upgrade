@@ -493,6 +493,8 @@ u32 __attribute__((long_call)) GetAttrFromAnyBox(u8 boxId, u8 boxSlot, u8 dataRe
 void __attribute__((long_call)) SetAttrFromAnyBox(u8 boxId, u8 boxSlot, u8 dataRequest, void* dataAddr);
 u16 __attribute__((long_call)) VarGetX4010(u8 Id);
 
+void __attribute__((long_call)) PatchObjectPalette(u16 PalTag, u8 PalSlot);
+
 //The Deal Breaker
 void __attribute__((long_call)) break_func(u32);
 u32 break_helper(u32 a);

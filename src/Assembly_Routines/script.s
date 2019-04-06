@@ -57,7 +57,7 @@ script functions/specials in asm - hooks and returns
 .global GetFadeType1
 .global GetFadeType2
 
-/*
+
 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -206,7 +206,7 @@ NpcWaterFix:
 	@ldr r1, =(0x0805F2C8+1)
 	@bx r1
 	
-*/
+
 	
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ DYNAMIC OVERWORLD PALETTES
@@ -449,7 +449,7 @@ SetPalFameCheckerUnknown:
 .pool	
 @ hook at 0x5E6B0 via r0, for regular NPCs
 SetPalNPC1: 
-	ldrh r0, [r6,#2]
+	ldrh r0, [r6,#2]	@palette tag
 	bl FindOrLoadNPCPalette
 	lsl r1, r0, #4
 	ldrb r2, [r4,#5]

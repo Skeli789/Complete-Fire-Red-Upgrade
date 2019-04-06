@@ -284,7 +284,7 @@ MaxLevelChange1:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Character Customization
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-/*
+
 .org 0x5e152, 0xff
 	mov r1, #0x5
 	orr r0, r1
@@ -321,7 +321,7 @@ MaxLevelChange1:
 	
 .org 0x5ee84, 0xff		@ fix link npcs
 	.byte 0x8, 0x47
-*/
+
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Dynamic Overworld Palettes

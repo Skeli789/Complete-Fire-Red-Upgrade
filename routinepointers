@@ -95,6 +95,6 @@ sp0CA_IgnoreKeys 08160088
 sp0CB_PlaceKeyScript 0816008C
 
 ## Character Customization
-#NpcSpawnWithTemplate 0805e5f4
-#LinkNpcFix 0805efe4
+NpcSpawnWithTemplate 0805e5f4
+LinkNpcFix 0805efe4
 
