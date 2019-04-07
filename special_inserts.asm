@@ -40,22 +40,6 @@ MaxLevelChange3:
 	
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@ Hidden Abilities - AI Switch Logic
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.org 0x23FD0, 0xff
-HiddenAbilityAISwitch:
-	ldrb r0, [r7]
-	mul r0, r6
-	add r0, r0, r4
-	ldrh r2, [r0, #0x0] @species
-	ldrb r1, [r0, #0x17]
-	lsr r1, r1, #0x7 @ability bit
-	ldr r0, [r1, #0x48] @personality
-	bl HiddenAbilityAISwitch + 0x1CD9C @0x08040D6C
-	ldrb r1, [r7]
-	
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Hidden Abilities - Player
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x026E34, 0xFF
@@ -109,53 +93,12 @@ HiddenAbilityChange4_2:
 	mov r2, r5 @species
 	bl HiddenAbilityChange4_2 + 0x164DC @0x08040D6C
 
-/*
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@ Hidden Abilities - Pickup
-@	handled in general_bs_commands -> atkE5_pickupitemcalculation
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.org 0x2CE60, 0xFF
-HiddenAbilityPickup:
-	mov r1, #0x41
-	bl HiddenAbilityPickup + 0x12D88 @get_attr
-	lsl r0, r0, #0x10
-	lsr r5, r0, #0x10
-	mov r0, r4
-	mov r1, #0xC @held item
-	bl HiddenAbilityPickup + 0x12D88 @get_attr
-	lsl r0, r0, #0x10
-	lsr r6, r0, #0x10
-	mov r0, r4
-	mov r1, #0x2E
-	bl HiddenAbilityPickup + 0x12D88 @get_attr
-	lsl r1, r0, #0x18
-	lsr r1, r1, #0x18 @ability bit
-	ldrb r0, [r4, #0x0] @personality
-	mov r2, r5 @species
-	bl HiddenAbilityPickup + 0x13F1A @0x08040D7A
-	b HiddenAbilityPickup + 0x42 @0x0802CEA2
-*/
-
-
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Max Level Limiter
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x32F6E, 0xFF
 MaxLevelChange14:
 	.byte MAX_LEVEL - 1
-	
-	
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@ Hidden Abilities - Water/Volt Absorb, Flash Fire
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@	
-.org 0x039548, 0xFF
-HiddenAbilityAbsorbAbilities:
-	lsl r0, r0, #0x18
-	lsr r1, r0, #0x18 	@ability bit
-	ldrb r0, [r5, #0x0] @personality
-	mov r2, r4 			@species
-	bl HiddenAbilityAbsorbAbilities + 0x7832 @ 0x08040D7A
-	b HiddenAbilityAbsorbAbilities + 0x2A @ 0x08039572	
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Hidden Abilities - Generate Poke
@@ -181,27 +124,6 @@ MaxLevelChange4:
 MaxLevelChange5:
 	.byte MAX_LEVEL
 
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@ Hidden Abilities - Battle Malloc (DexNav)
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.org 0x40938, 0xFF
-   ldrb r0, [r4]
-   lsl r0, r0, #0x6
-   mov r1, r7
-   orr r0, r1
-   strb r0, [r7, #0x1D]
-   mov r8, r8
-   mov r8, r8
-   
-   
-/*
-.org 0x40D38
-     push {lr}
-     bl get_ability
-     ldr r1, =(0x2023D6A)
-     strb r0, [r1]
-     pop {pc}
-*/
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Hidden Abilities - Determine Ability Bit
@@ -452,15 +374,7 @@ MaxLevelChange1:
 	.byte 0x10
 	
 .org 0x7f986, 0xff
-	.byte 0x10, 0xbd
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@ Hidden Abilities - Stench, Illuminate
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.org 0x82C70, 0xFF
-HiddenAbilityChange6:
-	bl HiddenAbilityChange6 - 0x41F38 @0x08040D38
-	
+	.byte 0x10, 0xbd	
 	
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Fossil Image Hack
