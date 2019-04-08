@@ -37,20 +37,26 @@ struct CharacterCustomizationPaletteSwitch CharacterPalSwitchTable[] =
 
 #endif
 
-
-
-
 typedef const struct EventObjectGraphicsInfo* NPCPtr;
 #ifdef EXISTING_OW_TABLE_ADDRESS
 	#define gOverworldTableSwitcher ((struct EventObjectGraphicsInfo***) EXISTING_OW_TABLE_ADDRESS)
-#else
+#elif defined UNBOUND //For Pokemon Unbound
+	const struct EventObjectGraphicsInfo** gOverworldTableSwitcher[] = 
+	{
+		(NPCPtr*) 0x88110E0,
+		(NPCPtr*) 0x88B2720,
+		(NPCPtr*) 0x88B2B20,
+	};
+
+#else //Modify this
 	// create 255 OW tables
-	const struct EventObjectGraphicsInfo** gOverworldTableSwitcher[255] = {
+	const struct EventObjectGraphicsInfo** gOverworldTableSwitcher[255] = 
+	{
 		(NPCPtr*) 0x839fdb0,
 		(NPCPtr*) 0x0,
 		// etc...
 		// please note that this method makes compatability with OW Manager challenging
-};
+	};
 #endif
 
 

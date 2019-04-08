@@ -122,6 +122,7 @@ enum
 #define CLASS_WAITRESS			0x5
 #define CLASS_CYCLIST			0x7
 #define CLASS_NURSE				0xA
+#define CLASS_POKE_KID			0xC
 #define CLASS_TERROR_GRANBULL 	0xE
 #define CLASS_CAMPING_DUO		0xF
 #define	CLASS_SKIIER			0x10
