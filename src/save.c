@@ -1,4 +1,5 @@
 #include "defines.h"
+#include "../include/constants/vars.h"
 
 //extern void dprintf(const char * str, ...);
 

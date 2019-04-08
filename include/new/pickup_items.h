@@ -1,6 +1,6 @@
 #pragma once
 
-#include "defines.h"
+#include "../global.h"
 
 #define PU_NUM_COMMON_ITEMS     18
 #define PU_NUM_RARE_ITEMS       11

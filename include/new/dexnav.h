@@ -1,6 +1,6 @@
 #pragma once
 
-#include "defines.h"
+#include "../../src/defines.h"
 
 
 // DEFINES

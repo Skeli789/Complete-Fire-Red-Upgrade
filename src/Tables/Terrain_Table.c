@@ -1,5 +1,5 @@
 #include "..\\defines.h"
-#include "..\\battle_terrain.h"
+#include "../../include/new/battle_terrain.h"
 
 const struct TerrainTableStruct TerrainTable[] =
 {

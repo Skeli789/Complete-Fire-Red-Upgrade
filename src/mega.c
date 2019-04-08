@@ -1,6 +1,10 @@
 #include "defines.h"
-#include "helper_functions.h"
-#include "mega.h"
+#include "defines_battle.h"
+#include "../include/link.h"
+#include "../include/constants/items.h"
+
+#include "../include/new/helper_functions.h"
+#include "../include/new/mega.h"
 
 #define TRAINER_ITEM_COUNT 4
 

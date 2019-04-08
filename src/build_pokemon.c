@@ -1,9 +1,10 @@
 #include "defines.h"
-#include "helper_functions.h"
-#include "catching.h"
-#include "frontier.h"
-#include "build_pokemon.h"
-#include "multi.h"
+#include "defines_battle.h"
+#include "../include/new/helper_functions.h"
+#include "../include/new/catching.h"
+#include "../include/new/frontier.h"
+#include "../include/new/build_pokemon.h"
+#include "../include/new/multi.h"
 
 extern u8 ClassPokeBalls[NUM_TRAINER_CLASSES];
 

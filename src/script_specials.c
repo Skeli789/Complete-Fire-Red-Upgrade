@@ -1,7 +1,9 @@
 #include "defines.h"
-#include "helper_functions.h"
-#include "catching.h"
-#include "Vanilla_Functions.h"
+#include "../include/list_menu.h"
+
+#include "../include/new/helper_functions.h"
+#include "../include/new/catching.h"
+#include "../include/new/Vanilla_Functions.h"
 
 /*
 NOTES: 

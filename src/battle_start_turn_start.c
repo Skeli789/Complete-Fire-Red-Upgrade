@@ -1,8 +1,10 @@
 #include "defines.h"
-#include "battle_start_turn_start.h"
-#include "helper_functions.h"
-#include "multi.h"
-#include "mega.h"
+#include "defines_battle.h"
+#include "../include/songs.h"
+#include "../include/new/battle_start_turn_start.h"
+#include "../include/new/helper_functions.h"
+#include "../include/new/multi.h"
+#include "../include/new/mega.h"
 
 extern void (* const sTurnActionsFuncsTable[])(void);
 extern void (* const sEndTurnFuncsTable[])(void);

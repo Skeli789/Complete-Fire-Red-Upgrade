@@ -1,6 +1,7 @@
 #include "defines.h"
-#include "helper_functions.h"
-#include "frontier.h"
+#include "defines_battle.h"
+#include "../include/new/helper_functions.h"
+#include "../include/new/frontier.h"
 
 //Maybe add stuff in for Frontier brains
 

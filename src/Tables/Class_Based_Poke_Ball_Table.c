@@ -1,5 +1,5 @@
-#include "../defines.h"
-#include "../catching.h"
+#include "../config.h"
+#include "../../include/new/catching.h"
 
 #ifndef UNBOUND
 u8 ClassPokeBalls[NUM_TRAINER_CLASSES] = {

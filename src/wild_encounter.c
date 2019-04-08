@@ -1,5 +1,9 @@
 #include "defines.h"
-#include "helper_functions.h"
+#include "../include/constants/flags.h"
+#include "../include/wild_encounter.h"
+#include "../include/field_weather.h"
+
+#include "../include/new/helper_functions.h"
 
 #define TILE_FLAG_ENCOUNTER_TILE 1
 #define TILE_FLAG_SURFABLE 2

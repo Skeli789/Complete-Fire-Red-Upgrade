@@ -1,7 +1,7 @@
 #include "defines.h"
-#include "helper_functions.h"
+#include "../include/new/helper_functions.h"
 #include "../include/palette.h"
-#include "dns.h"
+#include "../include/new/dns.h"
 
 #define DNSHelper ((u8*) 0x2021691)
 

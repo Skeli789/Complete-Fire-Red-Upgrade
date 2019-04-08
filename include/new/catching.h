@@ -1,6 +1,7 @@
 #pragma once
 
-#include "defines.h"
+#include "../../src/defines.h"
+#include "../../src/defines_battle.h"
 
 #define BattleScript_SuccessBallThrow 	((u8*) 0x81D9A42)
 #define BattleScript_TutorialThrow 		((u8*) 0x81D9A88)

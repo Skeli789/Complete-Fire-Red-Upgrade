@@ -1,4 +1,5 @@
 #pragma once
+#include "../constants/items.h"
 
 enum BattleBeginStates {
 GetTurnOrder,

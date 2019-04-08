@@ -1,5 +1,4 @@
-#ifndef GUARD_SCRIPT_H
-#define GUARD_SCRIPT_H
+#pragma once
 
 #include "global.h"
 
@@ -27,12 +26,12 @@ struct ScriptContext
     u8 keypad_override_direction;	// Locks player movement.
 };
 
-typedef struct ScriptEnvironment gScriptEnv1;	//03000EB0
-typedef struct ScriptEnvironment gScriptEnv2;	//03000F28
-
+//extern struct ScriptEnvironment gScriptEnv1;	//03000EB0
+//extern struct ScriptEnvironment gScriptEnv2;	//03000F28
 
 #define ScriptReadByte(ctx) (*(ctx->scriptPtr++))
 
+/*
 void InitScriptContext(struct ScriptContext *ctx, void *cmdTable, void *cmdTableEnd);
 u8 SetupBytecodeScript(struct ScriptContext *ctx, const u8 *ptr);
 void SetupNativeScript(struct ScriptContext *ctx, bool8 (*ptr)(void));
@@ -72,5 +71,4 @@ u8 *GetRamScript(u8 objectId, u8 *script);
 bool32 sub_80991F8(void);
 u8 *sub_8099244(void);
 void sub_80992A0(u8 *script, u16 scriptSize);
-
-#endif // GUARD_SCRIPT_H
+*/

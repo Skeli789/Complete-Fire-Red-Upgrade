@@ -1,5 +1,7 @@
 #include "defines.h"
-#include "helper_functions.h"
+#include "../include/songs.h"
+
+#include "../include/new/helper_functions.h"
 
 #define MENU_UP -1
 #define MENU_DOWN 1

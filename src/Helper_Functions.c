@@ -1,6 +1,8 @@
 #include "defines.h"
-#include "mega.h"
-#include "frontier.h"
+#include "defines_battle.h"
+#include "../include/new/mega.h"
+#include "../include/new/frontier.h"
+#include "../include/constants/items.h"
 
 extern move_t SheerForceTable[];
 extern move_t SoundMoveTable[];

@@ -32,7 +32,7 @@ struct WildPokemonHeader
     const struct WildPokemonInfo *fishingMonsInfo;
 };
 
-extern const struct WildPokemonHeader gWildMonHeaders[];
+//extern const struct WildPokemonHeader gWildMonHeaders[];
 
 struct SwarmData
 {

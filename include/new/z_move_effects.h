@@ -1,6 +1,7 @@
 #pragma once
 
-#include "defines.h"
+#include "../../src/defines.h"
+#include "../../src/defines_battle.h"
 
 #define Z_EFFECT_NONE
 #define Z_EFFECT_RESET_STATS 1

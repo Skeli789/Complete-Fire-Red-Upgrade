@@ -1,5 +1,9 @@
 #include "defines.h"
-#include "helper_functions.h"
+#include "defines_battle.h"
+#include "../include/battle_string_ids.h"
+#include "../include/constants/items.h"
+
+#include "../include/new/helper_functions.h"
 
 //Update synchronize effect
 

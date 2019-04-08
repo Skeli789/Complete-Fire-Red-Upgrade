@@ -1,5 +1,5 @@
 #include "defines.h"
-#include "dexnav.h"
+#include "../include/new/dexnav.h"
 
 /*
 Simplified DexNav System

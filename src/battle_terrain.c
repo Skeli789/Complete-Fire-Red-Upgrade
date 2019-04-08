@@ -1,6 +1,9 @@
 #include "defines.h"
-#include "helper_functions.h"
-#include "battle_terrain.h"
+#include "defines_battle.h"
+#include "../include/constants/metatile_behaviors.h"
+
+#include "../include/new/helper_functions.h"
+#include "../include/new/battle_terrain.h"
 
 #define gBattleTerrainTableEvening ((struct BattleBackground*) 0x88C8720) //For Unbound
 #define gBattleTerrainTableNight ((struct BattleBackground*) 0x88C8A30) //For Unbound

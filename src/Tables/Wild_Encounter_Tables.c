@@ -1,4 +1,9 @@
-#include "..\\defines.h"
+#include "../config.h"
+#include "../../include/global.h"
+#include "../../include/constants/maps.h"
+#include "../../include/wild_encounter.h"
+#include "../../include/constants/species.h"
+
 
 #ifndef UNBOUND //Modify this section
 

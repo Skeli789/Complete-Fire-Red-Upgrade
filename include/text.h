@@ -187,6 +187,7 @@ struct __attribute__((packed)) TextColor
     u8 shadowColor;
 };
 
+/*
 extern u8 gStringVar1[];
 extern u8 gStringVar2[];
 extern u8 gStringVar3[];
@@ -250,5 +251,5 @@ s32 GetGlyphWidthFont3(u16 glyphId, bool32 isJapanese);
 s32 GetGlyphWidthFont4(u16 glyphId, bool32 isJapanese);
 s32 GetGlyphWidthFont5(u16 glyphId, bool32 isJapanese);
 void sub_80062B0(struct Sprite *sprite);
-
+*/
 #endif // GUARD_TEXT_H

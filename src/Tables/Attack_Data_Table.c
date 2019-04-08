@@ -1,5 +1,5 @@
 #include "..\\defines.h"
-#include "..\\z_move_effects.h"
+#include "../../include/new/z_move_effects.h"
 
 struct BattleMove gBattleMoves[] = {
 [MOVE_NONE] =

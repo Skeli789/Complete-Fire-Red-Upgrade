@@ -130,7 +130,7 @@ struct BlockRequest
     void * address;
     u32 size;
 };
-
+/*
 extern const struct BlockRequest sBlockRequestLookupTable[5];
 
 extern struct Link gLink;
@@ -196,5 +196,5 @@ void sub_8011BD0(void);
 u8 sub_800ABAC(void);
 u8 sub_800ABBC(void);
 void sub_800AC34(void);
-
+*/
 #endif // GUARD_LINK_H

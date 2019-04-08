@@ -1,24 +1,13 @@
 #pragma once
-#include "defines.h"
+#include "../../src/defines.h"
+#include "../text.h"
+#include "../save.h"
+#include "../string_util.h"
 
 #define BC_Menu 0x8014040 | 1
 
 u32 __attribute__((long_call)) GetAttr(pokemon_t* poke_address, u8 request, void* dst);
 void __attribute__((long_call)) SetAttr(pokemon_t* poke_address, u8 request, void* new_value);
-void __attribute__((long_call)) calculate_stats_pokemon(pokemon_t* poke);
-u16 __attribute__((long_call)) teach_move_in_available_slot(pokemon_t* poke, u16 move);
-u16 __attribute__((long_call)) bag_remove_item(u16 itemID, u16 quantity);
-
-/* doing for held item form change */
-u8 __attribute__((long_call)) get_poke_ability(pokemon_t* poke);
-u8 __attribute__((long_call)) get_item_x12_battle_function(u16 item_id);
-u32 __attribute__((long_call)) get_item_lastword(u16 itemID);
-u8 __attribute__((long_call)) get_item_quality(u16 itemID);
-u8 __attribute__((long_call)) item_is_mail(u16 itemID);
-u8 __attribute__((long_call)) prepare_party_mail_to_give(pokemon_t* poke, u16 item);
-bool8 __attribute__((long_call)) bag_add_item(u16 item_id, u8 a);
-// ends here //
-
 
 // used for form change //
 void __attribute__((long_call)) run_after_graphics();
@@ -43,28 +32,6 @@ u8 __attribute__((long_call)) party_move_up_no_free_slots_in_between();
 u8*  __attribute__((long_call)) StringGetEnd10(u8 *str);
 u8*  __attribute__((long_call)) GetExpandedPlaceholder(u32 id);
 u8   __attribute__((long_call)) GetMultiplayerId(void);
-void __attribute__((long_call)) PrepareBufferDataTransfer(u8 a, u8 *data, u16 size);
-void __attribute__((long_call)) PrepareBufferDataTransferLink(u8 a, u16 size, u8 *data);
-void __attribute__((long_call)) BtlController_EmitSetMonData(u8 bufferId, u8 requestId, u8 monToCheck, u8 bytes, void *data);
-void __attribute__((long_call)) EmitSetRawMonData(u8 bufferId, u8 offset, u8 bytes, void *data);
-void __attribute__((long_call)) EmitTrainerThrow(u8);
-void __attribute__((long_call)) EmitTrainerSlide(u8 a);
-void __attribute__((long_call)) EmitTrainerSlideBack(u8 a);
-void __attribute__((long_call)) EmitBallThrow(u8 a, u8 shakes);
-void __attribute__((long_call)) EmitMoveAnimation(u8 bufferId, u16 move, u8 turnOfMove, u16 movePower, s32 dmg, u8 friendship, struct DisableStruct *disableStructPtr, u8 multihit);
-void __attribute__((long_call)) EmitPrintString(u8 a, u16 stringID);
-void __attribute__((long_call)) EmitHealthBarUpdate(u8 a, u16 b);
-void __attribute__((long_call)) EmitChoosePokemon(u8 bufferId, u8 caseId, u8 arg2, u8 abilityId, u8* arg4);
-//void __attribute__((long_call)) EmitExpBarUpdate(u8 a, u8 b, u16 c);
-void __attribute__((long_call)) EmitStatusAnimation(u8 a, u8 b, u32 c);
-void __attribute__((long_call)) EmitDMA3Transfer(u8 bufferId, void *dst, u16 size, void *data);
-void __attribute__((long_call)) EmitTwoReturnValues(u8 a, u8 b, u16 c);
-void __attribute__((long_call)) EmitChosenMonReturnValue(u8 a, u8 b, u8* c);
-void  __attribute__((long_call)) EmitTrainerBallThrow(u8 a);
-void __attribute__((long_call)) EmitSpriteInvisibility(u8 bufferId, bool8 isInvisible);
-void __attribute__((long_call)) EmitDrawPartyStatusSummary(u8 bufferId, struct HpAndStatus* hpAndStatus, u8 arg2);
-void __attribute__((long_call)) EmitBattleAnimation(u8 a, u8 b, u16 c);
-void __attribute__((long_call)) EmitResetActionMoveSelection(u8 bufferId, u8 caseId);
 u8 __attribute__((long_call)) LoadBattleBG_SpecialTerrainID(u8 mapType);
 void __attribute__((long_call)) sub_8012098(struct Sprite *sprite);
 void __attribute__((long_call)) DoBounceEffect(u8 battlerId, u8 b, s8 c, s8 d);
@@ -309,6 +276,7 @@ u8 __attribute__((long_call)) GetTrainerEncounterMusicId(u16 trainerOpponentId);
 u8 __attribute__((long_call)) Overworld_GetMapTypeOfSaveblockLocation(void);
 u8 __attribute__((long_call)) GetCurrentMapBattleScene(void);
 u32 __attribute__((long_call)) MetatileBehavior_GetLowerBytes(u32 a, u8 b);
+u32 __attribute__((long_call)) MapGridGetMetatileIdAt(int x, int y);
 u16 __attribute__((long_call)) MapGridGetMetatileField(u16 x, u16 y, u8 a);
 u32 __attribute__((long_call)) MapGridGetMetatileBehaviorAt(int, int);
 bool8 __attribute__((long_call)) MetatileBehavior_IsSandOrDeepSand(u8 metatileBehavior);
@@ -353,6 +321,11 @@ u16 __attribute__((long_call)) GetRematchTrainerId(u16 opponentId);
 //Quest Log
 void __attribute__((long_call)) QuestLogRemtachBattleStore(void);
 bool8 __attribute__((long_call)) IsQuestLogActive(void);
+
+//Safari Zone Functions
+bool8 __attribute__((long_call)) GetSafariZoneFlag(void);
+void __attribute__((long_call)) SetSafariZoneFlag(void);
+void __attribute__((long_call)) ResetSafariZoneFlag(void);
 
 //Party Menu Functions
 void __attribute__((long_call)) sub_811FA78(u8 taskId);

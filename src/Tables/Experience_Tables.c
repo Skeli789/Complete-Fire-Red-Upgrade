@@ -1,4 +1,6 @@
-#include "..\\defines.h"
+#include "..\\config.h"
+#include "../../include/global.h"
+#include "../../include/constants/species.h"
 
 #ifdef GEN_7_BASE_EXP_YIELD
 

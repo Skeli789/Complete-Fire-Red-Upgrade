@@ -1,8 +1,10 @@
-#include "..\\defines.h"
+#include "../config.h"
+#include "../../include/global.h"
 #include "trainer_details.h"
 #include "frontier_trainer_names.h"
-#include "..\\frontier.h"
-#include "..\\text.h"
+#include "../../include/new/frontier.h"
+#include "../../include/new/text.h"
+#include "../../include/trainer_classes.h"
 
 /*struct BattleTowerTrainer
 {

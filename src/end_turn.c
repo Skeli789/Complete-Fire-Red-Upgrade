@@ -1,6 +1,7 @@
 #include "defines.h"
-#include "end_turn.h"
-#include "helper_functions.h"
+#include "defines_battle.h"
+#include "../include/new/end_turn.h"
+#include "../include/new/helper_functions.h"
 
 extern u8 BattleScript_MysteriousAirCurrentContinues[];
 extern u8 BattleScript_FogEnded[];

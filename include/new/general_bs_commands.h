@@ -1,6 +1,7 @@
 #pragma once
 
-#include "defines.h"
+#include "../../src/defines.h"
+#include "../../src/defines_battle.h"
 
 extern u8 RemovedEntryHazardsString[];
 extern u8 SpikesLayString[];

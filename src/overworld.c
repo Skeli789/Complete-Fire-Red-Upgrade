@@ -1,7 +1,11 @@
 #include "defines.h"
-#include "helper_functions.h"
-#include "multi.h"
-#include "frontier.h"
+#include "../include/trainer_classes.h"
+#include "../include/constants/flags.h"
+#include "../include/songs.h"
+
+#include "../include/new/helper_functions.h"
+#include "../include/new/multi.h"
+#include "../include/new/frontier.h"
 
 #define SCRCMD_TRAINERBATTLE 0x5C
 

@@ -1,5 +1,6 @@
 #include "..\\defines.h"
-#include "..\\helper_functions.h"
+#include "../../include/new/helper_functions.h"
+#include "../../include/constants/items.h"
 
 extern move_t MinimizeHitTable[];
 extern move_t IgnoreAirTable[];

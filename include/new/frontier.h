@@ -1,6 +1,7 @@
 #pragma once
 
-#include "defines.h"
+#include "../../src/defines.h"
+#include "../../src/defines_battle.h"
 
 #define TOTAL_SPREADS 0x4A0 //sizeof(gFrontierSpreads) / sizeof(struct BattleTowerSpreads)
 

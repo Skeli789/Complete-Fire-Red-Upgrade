@@ -1,5 +1,6 @@
 #pragma once
-#include "defines.h"
+#include "../../src/defines.h"
+#include "../../src/defines_battle.h"
 
 #define gBattleTerrainAnimTiles_Building (void*) 0x824E410
 #define gBattleTerrainAnimTilemap_Building (void*) 0x824E490
