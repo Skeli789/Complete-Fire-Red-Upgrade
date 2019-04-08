@@ -609,6 +609,21 @@ pokemon_order_func = 0x8128030 | 1;
 GetAttrFromAnyBox = 0x808BA18 | 1;
 SetAttrFromAnyBox = 0x808BA5C | 1;
 
+/*Pokemon Icon Functions*/
+CreateMonIcon = 0x8096E18 | 1;
+GetMonIconTiles = 0x8097028 | 1;
+LoadMonIconPalettes = 0x809707C | 1;
+SafeLoadMonIconPalette = 0x80970A0 | 1;
+LoadMonIconPalette = 0x80970E0 | 1;
+FreeMonIconPalettes = 0x8097114 | 1;
+SafeFreeMonIconPalette = 0x8097138 | 1;
+FreeMonIconPalette = 0x8097168 | 1;
+SpriteCB_PokeIcon = 0x809718C | 1;
+GetValidMonIconPalettePtr = 0x80971CC | 1;
+GetValidMonIconPalIndex = 0x80971F8 | 1;
+GetSpeciesIconPaletteIndex = 0x8097218 | 1;
+UpdateMonIconFrame = 0x8097228 | 1;
+
 /*Wild Encounter Functions*/
 ChooseWildMonIndex_Land = 0x808274C | 1;
 ChooseWildMonIndex_WaterRock = 0x8082808 | 1;
