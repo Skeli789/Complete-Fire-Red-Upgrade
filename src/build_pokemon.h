@@ -67,13 +67,10 @@
 		ability = gBaseStats[species].ability1;							\
 }
 
-#define TRAINERS_WITH_EVS_TABLE_SIZE 2
+#define TRAINERS_WITH_EVS_TABLE_SIZE 31
 
 struct TrainersWithEvs {
     u8 nature;
-	u8 _1;
-	u8 _2;
-	u8 _3;
     u8 ivs;
     u8 hpEv;
 	u8 atkEv;
@@ -81,11 +78,21 @@ struct TrainersWithEvs {
 	u8 spdEv;
 	u8 spAtkEv;
 	u8 spDefEv;
-	u8 ball; //0xFF = Random Ball
-	u8 ability; //0 = Hidden, 1 = Ability_1, 2 = Ability_2
-	u8 _4;
-    u16 _5;         // 0x0000
+	u8 ball; //0FE = Class-Based Ball, 0xFF = Random Ball
+	u8 ability; //0 = Hidden, 1 = Ability_1, 2 = Ability_2, 3 = Random Ability 1 & 2, 4 = Random Any Ability
 };
 
-extern struct TrainersWithEvs TrainersWithEvsTable[];
+enum
+{
+	Ability_Hidden,
+	Ability_1,
+	Ability_2,
+	Ability_Random_1_2,
+	Ability_RandomAll,
+};
+
+#define TRAINER_EV_CLASS_BALL 0xFE
+#define TRAINER_EV_RANDOM_BALL 0xFF
+
+extern struct TrainersWithEvs gTrainersWithEvsSpreads[TRAINERS_WITH_EVS_TABLE_SIZE];
 
