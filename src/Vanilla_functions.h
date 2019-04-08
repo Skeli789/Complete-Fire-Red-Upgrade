@@ -261,6 +261,21 @@ u8 __attribute__((long_call)) GetEggMoves(pokemon_t* poke, void* storageAddr);
 
 u8 __attribute__((long_call)) GetWildDataIndexForMap(void);
 
+//Pokemon Icon Functions
+u8 CreateMonIcon(u16 species, void (*callback)(struct Sprite *), s16 x, s16 y, u8 subpriority, u32 personality, bool32 extra);
+const u8* __attribute__((long_call)) GetMonIconTiles(u16 species, bool32 extra);
+void __attribute__((long_call)) LoadMonIconPalettes(void);
+void __attribute__((long_call)) SafeLoadMonIconPalette(u16 species);
+void __attribute__((long_call)) LoadMonIconPalette(u16 species);
+void __attribute__((long_call)) FreeMonIconPalettes(void);
+void __attribute__((long_call)) SafeFreeMonIconPalette(u16 species);
+void __attribute__((long_call)) FreeMonIconPalette(u16 species);
+void __attribute__((long_call)) SpriteCB_PokeIcon(struct Sprite *sprite);
+const u16* __attribute__((long_call)) GetValidMonIconPalettePtr(u16 species);
+u8 __attribute__((long_call)) GetValidMonIconPalIndex(u16 species);
+u8 __attribute__((long_call)) GetSpeciesIconPaletteIndex(u16 species);
+const u16* __attribute__((long_call)) GetValidMonIconPalettePtr(u16 species);
+
 //Wild Encounter Functions
 u8 __attribute__((long_call)) ChooseWildMonIndex_Land(void);
 u8 __attribute__((long_call)) ChooseWildMonIndex_WaterRock(void);
@@ -372,7 +387,6 @@ u8 __attribute__((long_call)) WindowPrint(u8 id, u8 font, u8 x, u8 y, struct Tex
 void __attribute__((long_call)) ChoiceSetupSimple(u8 rid, u8 fboxid, u8 x, u8 y, u8 y_stride, u8 num_choices, u8 preselected_choice);
 s8 __attribute__((long_call)) RboxChoiceUpdate(void);
 u8 __attribute__((long_call)) RboxIdClean(u8 id, bool8 update);
-
 
 //Palette Functions
 void BlendPalette(u16 palOffset, u16 numEntries, u8 coeff, u16 blendColor);

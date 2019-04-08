@@ -5,7 +5,7 @@
 .global gBattleAnimPaletteTable
 
 .include "..\\Anim_Defines.asm"
-.include "src\\Tables\\Anim_Particle_Graphics_Defines.s"
+.include "assembly\\data\\Anim_Particle_Graphics_Defines.s"
 
 gBattleAnimPicTable:
 animparticle 0x8d02520,	0x200,	ANIM_TAG_BONE

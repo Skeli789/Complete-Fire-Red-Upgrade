@@ -231,22 +231,51 @@ u8 CreateNPCTrainerParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, b
 				&& spreadNum != 0
 				&& spreadNum < TRAINERS_WITH_EVS_TABLE_SIZE)
 				{
-					struct TrainersWithEvs spread = TrainersWithEvsTable[spreadNum];
+					struct TrainersWithEvs spread = gTrainersWithEvsSpreads[spreadNum];
 					
 					SET_EVS(spread);
 					SET_IVS_SINGLE_VALUE(MathMin(31, spread.ivs));
 					
 					u8 ballType;
-					if (spread.ball != 0xFF)
-						ballType = MathMin(NUM_BALLS, spread.ball);
-					else
-						ballType = umodsi(Random(), NUM_BALLS + 1); //Set Random Ball
+					switch(spread.ball) {
+						case TRAINER_EV_CLASS_BALL:
+						#ifdef TRAINER_CLASS_POKE_BALLS
+							ballType = ClassPokeBalls[trainer->trainerClass];
+						#else
+							ballType = BALL_TYPE_POKE_BALL;
+						#endif
+							break;
+						case TRAINER_EV_RANDOM_BALL:
+							ballType = Random() % (NUM_BALLS + 1); //Set Random Ball
+							break;
+						default:
+							ballType = MathMin(NUM_BALLS, spread.ball);
+					}
+						
 					SetMonData(&party[i], REQ_POKEBALL, &ballType);
 					
-					if (spread.ability == 0)
-						GiveMonNatureAndAbility(&party[i], spread.nature, 0xFF); //Give Hidden Ability
-					else
-						GiveMonNatureAndAbility(&party[i], spread.nature, MathMin(1, spread.ability - 1));
+					switch(spread.ability) {
+						case Ability_Hidden:
+						TRAINER_WITH_EV_GIVE_HIDDEN_ABILITY:
+							GiveMonNatureAndAbility(&party[i], spread.nature, 0xFF); //Give Hidden Ability
+							break;
+						case Ability_1:
+						case Ability_2:
+							GiveMonNatureAndAbility(&party[i], spread.nature, MathMin(1, spread.ability - 1));
+							break;
+						case Ability_Random_1_2:
+						TRAINER_WITH_EV_GIVE_RANDOM_ABILITY:
+							GiveMonNatureAndAbility(&party[i], spread.nature, Random() % 2);
+							break;
+						case Ability_RandomAll: ;
+							u8 random = Random() % 3;
+							
+							if (random == 2)
+								goto TRAINER_WITH_EV_GIVE_HIDDEN_ABILITY;
+							else
+								goto TRAINER_WITH_EV_GIVE_RANDOM_ABILITY;
+							break;
+					}
 				}
 			#endif
 			
