@@ -20,6 +20,8 @@ gRamSaveSectionLocations = 0x030053B0;
 gFirstSaveSector = 0x03005380;
 gSaveCounter = 0x03005390;
 gFastSaveSection = 0x03005394;
+
+gIconPals = 0x0808AB40;
  
 /* Variables */
 var_8003 = 0x020370BE;
@@ -51,6 +53,7 @@ species_to_dex_index = 0x08043298|1;
 givepokemon = 0x080A011C|1;
 party_move_up_no_free_slots_in_between = 0x080937DC|1;
 GetIndexFromDexFlag = 0x08088E74 | 1;
+GetBaseSpecies = 0x08045970 | 1;
 
 BufferPokeNameSize = 0x080A08CC | 1;
 CalculateHeight = 0x080A082C | 1;
@@ -87,9 +90,7 @@ rboxes = 0x20204B4;
 ball_tiles = 0x0826056C;
 ball_palettes = 0x082605CC;
 gpu_pal_decompress_alloc_tag_and_upload = 0x0800F078|1;
-//obj_sync_something = 0x08006BA8|1;
 BuildOAMBuffer = 0x08006BA8 | 1;
-
 objc_ball_instanciate2_entry_804B9E8 = 0x0804B9E8|1;
 sub_804BF64 = 0x804BF64|1;
 super_sprites_delete_range = 0x080072E8|1;
@@ -250,7 +251,7 @@ sub_8150048 = 0x08150048|1;
 battle_show_message = 0x080D87BC|1;
 remoid_a_pressed_maybe = 0x08002E64|1;
 
-c2_exit_to_overworld_1_continue_scripts_and_music = 0x080568C4|1;
+CallbackOWandContinueScriptsMusic = 0x080568C4 | 1;
 FadeBgPalAndFillBlack = 0x0807DB38 |1;
 
 CleanupOverworldWindowsAndTilemaps = 0x080563F0 | 1;
@@ -278,7 +279,7 @@ dp12_abort = 0x08087E64|1;
 pal_decompress_slice_to_faded_and_unfaded = 0x080703A8|1;
 get_bs_elem_env_index = 0x0800FC2C|1;
 
-obj_and_aux_reset_all = 0x08006B10|1;
+ResetSpriteData = 0x08006B10 | 1;
 
 load_var_value = 0x0806E568|1;
 var_set_value = 0x0806E584|1;
@@ -301,7 +302,7 @@ gpu_copy_to_tileset = 0x080017D0|1;
 gpu_copy_tilemap = 0x08002040|1;
 bgid_send_tilemap = 0x080020BC|1;
 gpu_pal_apply = 0x080703EC|1;
-lz77UnCompVram = 0x081E3B6C|1;
+LZ77UnCompVram = 0x081E3B6C | 1;
 LZ77UnCompWram = 0x081E3B70 | 1;
 
 trainer_card_reset = 0x08089D0C|1;
@@ -315,14 +316,14 @@ ChoiceSetupSimple = 0x0810F7D8 | 1;
 
 decompress_with_fallback_maybe = 0x080F6878|1;
 GpuSyncBGShow = 0x080019BC | 1;
-gpu_sync_bg_hide = 0x080019D0|1;
+GpuSyncBGHide = 0x080019D0|1;
 BgIdModOffsetX = 0x08001B90 | 1;
 BgIdModOffsetY = 0x08001D08 | 1;
 gpu_pal_alloc_new = 0x080089B8|1;
 
 BgIdSetTilemap = 0x08001FA0 | 1;
 BgIdMarkForSync = 0x080F67A4 | 1;
-bg_vram_setup = 0x08001658|1;
+InitBgsFromTemplates = 0x08001658|1;
 memset_ = 0x081E5ED8|1;
 Memset = 0x081E5ED8|1;
 
@@ -333,10 +334,12 @@ sub_08034750 = 0x08034750|1;
 template_build_for_pokemon_or_trainer = 0x0803F864|1;
 obj_anim_image_start = 0x0800838C|1;
 obj_delete_and_free_tiles_and_free_tiles = 0x08007280|1;
-obj_delete = 0x080073DC|1;
+DeleteOBJ = 0x080073DC | 1;
 object_new_hidden_with_callback = 0x08044EF8|1;
 sub_8037A2A = 0x08038C80|1;
 sub_0804B908 = 0x0804B908|1;
+
+LoadPartyIconTiles = 0x08097054 | 1;
 
 
 CreatePokemon = 0x0803DD98|1;
@@ -365,7 +368,7 @@ ball_to_ram_setup = 0x0804BEF4|1;
 dp13_810BB8C = 0x0810BB8C|1;
 battle_load_health_boxes_unused = 0x080347A8|1;
 some_test_func = 0x080F1198|1;
-init_malloc = 0x08002B80|1;
+MallocInit = 0x08002B80 | 1;
 
 pal_fade_control_and_dead_struct_reset = 0x08070528|1;
 
@@ -587,8 +590,9 @@ CalculateMonStats = 0x0803E47C | 1;
 GetMonGender = 0x803F720 | 1;
 GetBoxMonGender = 0x803F730 | 1;
 GetGenderFromSpeciesAndPersonality = 0x803F78C | 1;
-GetMonData = 0x0803FBE8|1;
-SetMonData = 0x0804037C|1;
+GetMonData = 0x0803FBE8 | 1;
+SetMonData = 0x0804037C | 1;
+SetMonData2 = 0x080404D0 | 1;
 CopyMon = 0x8040B08 | 1;
 SendMonToPC = 0x8040B90 | 1;
 GetPartyAbility = 0x8040D38 | 1;
@@ -604,6 +608,7 @@ GetSetPokedexFlag = 0x8044898 | 1;
 GetPokedexHeightWeight = 0x8088E38 | 1;
 ReducePartyToThree = 0x80A03D8 | 1;
 pokemon_order_func = 0x8128030 | 1;
+GetEggMoves = 0x08045C28 | 1;
 
 /* Pokemon Storage */
 GetAttrFromAnyBox = 0x808BA18 | 1;
@@ -680,6 +685,9 @@ ScriptContext1_SetupScript = 0x8069AE4 | 1;
 ScriptContext1_Stop = 0x8069B28 | 1;
 PlayNewMapMusic = 0x8071A74 | 1;
 PatchObjectPalette = 0x0805F538 | 1;
+CurrMapHeightMismatch = 0x080681B0 | 1;
+
+CheckOpenSky = 0x080561FC | 1;
 
 /*Field Weather Functions*/
 Task_WeatherMain = 0x8079e0c | 1;
@@ -873,6 +881,17 @@ CpuFastSet = 0x081E3B60 | 1;
 Sqrt = 0x81E3B9C | 1;
 udivsi = 0x81E460C | 1;
 umodsi = 0x81E4684 | 1;
+
+EnableInterrupts = 0x08000B68 | 1;
+DisableInterrupts = 0x08000B94 | 1;
+ExecOE = 0x08083444 | 1;
+StopOE = 0x080836D8 | 1;
+FreeOBJ = 0x080836B4 | 1;
+
+OverworldCallback1 = 0x08056534 | 1;
+OverworldCallbackSwitchStartMenu = 0x080568A8 | 1;
+
+MakeExclamationMark = 0x08066920 | 1;
 
 /*The Deal Breaker*/
 break_func = 0x08416304 | 1;
