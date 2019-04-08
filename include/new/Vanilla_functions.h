@@ -543,7 +543,6 @@ void __attribute__((long_call)) MallocInit(void* memStart, u32 memSize);
 void __attribute__((long_call)) EnableInterrupts(u8 disable);
 void __attribute__((long_call)) DisableInterrupts(u8 disable);
 
-void __attribute__((long_call)) InitBgsFromTemplates(u8 layer, const struct BgTemplate* config, u8 layers);
 void __attribute__((long_call)) GpuSyncBGHide(u8 layer);
 void* __attribute__((long_call)) LoadPartyIconTiles(u16 species, u32 pid, bool8 isDeoxys);
 
