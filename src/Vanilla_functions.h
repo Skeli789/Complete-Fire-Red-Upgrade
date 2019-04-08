@@ -386,7 +386,6 @@ void __attribute__((long_call)) ChoiceSetupSimple(u8 rid, u8 fboxid, u8 x, u8 y,
 s8 __attribute__((long_call)) RboxChoiceUpdate(void);
 u8 __attribute__((long_call)) RboxIdClean(u8 id, bool8 update);
 
-
 //Palette Functions
 void BlendPalette(u16 palOffset, u16 numEntries, u8 coeff, u16 blendColor);
 void __attribute__((long_call)) LoadCompressedPalette(const void* src, u16 offset, u16 size);

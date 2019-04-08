@@ -1,4 +1,4 @@
-#include "..\\..\\frontier.h"
+#include "..\\frontier.h"
 
 extern u8 sTrainerName_Liam[];
 extern u8 sTrainerName_Noah[];

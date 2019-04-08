@@ -34,9 +34,11 @@ ARP = ('armips')
 OBJCOPY = (PATH + PREFIX + 'objcopy')
 SRC = './src'
 GRAPHICS = './graphics'
+ASSEMBLY = './assembly'
+STRINGS = './strings'
 BUILD = './build'
 IMAGES = '\Images'
-ASFLAGS = ['-mthumb', '-I', SRC]
+ASFLAGS = ['-mthumb', '-I', ASSEMBLY]
 LDFLAGS = ['BPRE.ld', '-T', 'linker.ld']
 CFLAGS = ['-mthumb', '-mno-thumb-interwork', '-mcpu=arm7tdmi', '-mtune=arm7tdmi',
 '-mno-long-calls', '-march=armv4t', '-Wall', '-Wextra','-Os', '-fira-loop-pressure', '-fipa-pta']
@@ -279,12 +281,34 @@ def run_glob(globstr, fn):
 	'''Glob recursively and run the processor function on each file in result'''
 	if globstr == '**/*.png' or globstr == '**/*.bmp': #Search the graphics location
 		return run_glob_graphics(globstr, fn)
+	elif globstr == '**/*.s':
+		return run_glob_assembly(globstr, fn)
+	elif globstr == '**/*.string':
+		return run_glob_strings(globstr, fn)
 	
 	if sys.version_info > (3, 4):
 		files = glob(os.path.join(SRC, globstr), recursive = True)
 		return map(fn, files)
 	else:
 		files = Path(SRC).glob(globstr)
+		return map(fn, map(str, files))
+
+def run_glob_assembly(globstr, fn):
+	'''Glob recursively and run the processor function on each file in result'''
+	if sys.version_info > (3, 4):
+		files = glob(os.path.join(ASSEMBLY, globstr), recursive = True)
+		return map(fn, files)
+	else:
+		files = Path(ASSEMBLY).glob(globstr)
+		return map(fn, map(str, files))
+
+def run_glob_strings(globstr, fn):
+	'''Glob recursively and run the processor function on each file in result'''
+	if sys.version_info > (3, 4):
+		files = glob(os.path.join(STRINGS, globstr), recursive = True)
+		return map(fn, files)
+	else:
+		files = Path(STRINGS).glob(globstr)
 		return map(fn, map(str, files))
 
 def run_glob_graphics(globstr, fn):
