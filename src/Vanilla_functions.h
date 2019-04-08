@@ -33,7 +33,7 @@ void* __attribute__((long_call)) memset_(void *dst, u8 pattern, u8 size);
 void* __attribute__((long_call)) Memcpy(void *dst, void *src, u32 size);
 void* __attribute__((long_call)) Memset(void *dst, u8 pattern, u32 size);
 
-void __attribute__((long_call)) PokemonSlotPurge(pokemon_t*);
+void __attribute__((long_call)) PokemonSlotPurge(pokemon_t* mon);
 void __attribute__((long_call)) Special_DD_delete_move();
 u8 __attribute__((long_call)) party_move_up_no_free_slots_in_between();
 
@@ -234,12 +234,13 @@ void __attribute__((long_call)) CreateMon(struct Pokemon *mon, u16 species, u8 l
 void __attribute__((long_call)) CreateBoxMon(struct Pokemon *mon, u16 species, u8 level, u8 fixedIV, u8 hasFixedPersonality, u32 fixedPersonality, u8 otIdType, u32 fixedOtId);
 void __attribute__((long_call)) CreateMonWithNature(struct Pokemon *mon, u16 species, u8 level, u8 fixedIV, u8 nature);
 void __attribute__((long_call)) CreateMonWithGenderNatureLetter(struct Pokemon *mon, u16 species, u8 level, u8 fixedIV, u8 gender, u8 nature, u8 unownLetter);
-void __attribute__((long_call)) CalculateMonStats(pokemon_t*);
+void __attribute__((long_call)) CalculateMonStats(pokemon_t *mon);
 u8 __attribute__((long_call)) GetMonGender(pokemon_t* mon);
 u8 __attribute__((long_call)) GetBoxMonGender(struct BoxPokemon* boxMon);
 u8 __attribute__((long_call)) GetGenderFromSpeciesAndPersonality(u16 species, u32 personality);
 u32 __attribute__((long_call)) GetMonData(struct Pokemon *, s32, const void *data);
 void __attribute__((long_call)) SetMonData(struct Pokemon *mon, s32 field, const void *data);
+void __attribute__((long_call)) SetMonData2(struct Pokemon *mon, s32 PokemonDataRequest, const void *data);
 void __attribute__((long_call)) CopyMon(void *dest, void *src, size_t size);
 u8 __attribute__((long_call)) SendMonToPC(struct Pokemon* mon);
 u8 __attribute__((long_call)) GetPartyAbility(pokemon_t*);
@@ -256,6 +257,7 @@ u16 __attribute__((long_call)) GetPokedexHeightWeight(u16 dexNum, u8 data);
 void __attribute__((long_call)) ReducePartyToThree(void);
 u8 __attribute__((long_call)) pokemon_order_func(u8 a);
 bool8 __attribute__((long_call)) GetIndexFromDexFlag(u16 index, u8 dexFlag);
+u8 __attribute__((long_call)) GetEggMoves(pokemon_t* poke, void* storageAddr);
 
 u8 __attribute__((long_call)) GetWildDataIndexForMap(void);
 
@@ -413,7 +415,7 @@ void __attribute__((long_call)) SetCallback2(void* func);
 //void __attribute__((long_call)) LZ77UnCompWram(void* src, void* dst);
 //void __attribute__((long_call)) LZ77UnCompVram(void* src, void* dst);
 
-void __attribute__((long_call)) BuildOamBuffer(void);
+void __attribute__((long_call)) BuildOAMBuffer(void);
 void __attribute__((long_call)) AnimateSprites(void);
 void __attribute__((long_call)) BgIdSetTilemap(u8 layer, u8* space);
 void __attribute__((long_call)) BgIdMarkForSync(u8 bgid);
@@ -467,9 +469,10 @@ void __attribute__((long_call)) FreeSpritePaletteByTag(u16 tag);
 void __attribute__((long_call)) SetSubspriteTables(struct Sprite *sprite, const struct SubspriteTable *subspriteTables);
 bool8 __attribute__((long_call)) AddSpriteToOamBuffer(struct Sprite *sprite, u8 *oamIndex);
 bool8 __attribute__((long_call)) AddSubspritesToOamBuffer(struct Sprite *sprite, struct OamData *destOam, u8 *oamIndex);
+void __attribute__((long_call)) ResetSpriteData(void);
 
 void __attribute__((long_call)) CleanupOverworldWindowsAndTilemaps(void);
-void __attribute__((long_call)) ResetBgsAndClearDma3BusyFlags(u8 bg);
+//void __attribute__((long_call)) ResetBgsAndClearDma3BusyFlags(u8 bg);	// in bg.h
 void __attribute__((long_call))BgIdModOffsetX(u8 bgid, s32 delta, u8 dir);
 void __attribute__((long_call))BgIdModOffsetY(u8 bgid, s32 delta, u8 dir);
 
@@ -524,6 +527,7 @@ void __attribute__((long_call)) ReturnToFieldContinueScriptPlayMapMusic(void);
 u32 __attribute__((long_call)) GetAttrFromAnyBox(u8 boxId, u8 boxSlot, u8 dataRequest);
 void __attribute__((long_call)) SetAttrFromAnyBox(u8 boxId, u8 boxSlot, u8 dataRequest, void* dataAddr);
 u16 __attribute__((long_call)) VarGetEventObjectGraphicsId(u8 Id);
+u16 __attribute__((long_call)) GetBaseSpecies(u16 species);
 
 void __attribute__((long_call)) PatchObjectPalette(u16 PalTag, u8 PalSlot);
 
@@ -547,6 +551,28 @@ void __attribute__((long_call)) CloseSafariStepsBox(void);
 void __attribute__((long_call)) CloseStartMenuDescriptionBox(void);
 void __attribute__((long_call)) HideStartMenu(void);
 void __attribute__((long_call)) StartMenuPokedexFunc(void);
+
+void __attribute__((long_call)) MallocInit(void* memStart, u32 memSize);
+void __attribute__((long_call)) EnableInterrupts(u8 disable);
+void __attribute__((long_call)) DisableInterrupts(u8 disable);
+
+void __attribute__((long_call)) InitBgsFromTemplates(u8 layer, const struct BgTemplate* config, u8 layers);
+void __attribute__((long_call)) GpuSyncBGHide(u8 layer);
+void* __attribute__((long_call)) LoadPartyIconTiles(u16 species, u32 pid, bool8 isDeoxys);
+
+
+u8* __attribute__((long_call)) ExecOE(u8 anim);
+void __attribute__((long_call)) CallbackOWandContinueScriptsMusic(void);
+bool8 __attribute__((long_call)) CheckOpenSky(u8 mapLight);
+void __attribute__((long_call)) StopOE(struct Sprite* s, u8 animation);
+void __attribute__((long_call)) FreeOBJ(struct Sprite *s);
+void __attribute__((long_call)) DeleteOBJ(struct Sprite *s);
+
+void __attribute__((long_call)) OverworldCallback1(void);
+void __attribute__((long_call)) OverworldCallbackSwitchStartMenu(void);
+u8 __attribute__((long_call)) CurrMapHeightMismatch(u8 height, s16 x, s16 y);
+
+void __attribute__((long_call)) MakeExclamationMark(struct MapObject* npc, struct Sprite* s);
 
 //The Deal Breaker
 void __attribute__((long_call)) break_func(u32);
