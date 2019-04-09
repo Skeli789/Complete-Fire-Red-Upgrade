@@ -12,9 +12,9 @@
 #include "../../graphics/DexNav/empty/empty.h"
 */
 
-extern const u8 gInterfaceGfx_dexNavGuiTiles[];
-extern const u8 gInterfaceGfx_dexNavGuiMap[];
-extern const u8 gInterfaceGfx_dexNavGuiPal[];
+extern const u8 gInterfaceGfx_dexnavGuiTiles[];
+extern const u8 gInterfaceGfx_dexnavGuiMap[];
+extern const u8 gInterfaceGfx_dexnavGuiPal[];
 extern const u8 gInterfaceGfx_dexnavStarsTiles[];
 extern const u8 gInterfaceGfx_dexnavStarsPal[];
 extern const u8 gInterfaceGfx_selectionCursorTiles[];
@@ -119,6 +119,19 @@ typedef void (*SpriteCallback)(struct Sprite* s);
 
 // GUI Rboxes
 #define rgb5(r, g, b) (u16)((r >> 3) | ((g >> 3) << 5) | ((b >> 3) << 10))
+
+
+struct Coords32 {
+    s32 x;
+    s32 y;
+};
+
+struct FieldEffectArguments {
+    struct Coords32 effectPos;
+    u32 priority;
+};
+
+#define gFieldEffectArguments ((struct FieldEffectArguments*) 0x20386E0)
 
 
 /*
@@ -325,19 +338,19 @@ const u16 CursorPositions1[] = {
 };
 
 const struct SpriteSheet caveGfx[4] = {
-	{.data = (const u8*)&caveSmokeTiles[128 * 0],
+	{.data = (const u8*)&gInterfaceGfx_caveSmokeTiles[128 * 0],
 		.size = 0x80,
 		.tag = 0xFFFF
 	},
-	{.data = (const u8*)&caveSmokeTiles[128 * 1],
+	{.data = (const u8*)&gInterfaceGfx_caveSmokeTiles[128 * 1],
 		.size = 0x80,
 		.tag = 0xFFFF
 	},
-	{.data = (const u8*)&caveSmokeTiles[128 * 2],
+	{.data = (const u8*)&gInterfaceGfx_caveSmokeTiles[128 * 2],
 		.size = 0x80,
 		.tag = 0xFFFF
 	},
-	{.data = (const u8*)&caveSmokeTiles[128 * 3],
+	{.data = (const u8*)&gInterfaceGfx_caveSmokeTiles[128 * 3],
 		.size = 0x80,
 		.tag = 0xFFFF
 	},
