@@ -5,7 +5,7 @@
 
 #define DNSHelper ((u8*) 0x2021691)
 
-void TransferPlttBuffer(void);
+extern void TransferPlttBuffer(void);
 static void BlendFadedPalettes(u32 selectedPalettes, u8 coeff, u32 color);
 static void BlendFadedPalette(u16 palOffset, u16 numEntries, u8 coeff, u32 blendColor, bool8 ignoredIndices[32][16]);
 

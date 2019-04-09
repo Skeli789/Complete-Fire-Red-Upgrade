@@ -9,7 +9,6 @@
 #include "../include/songs.h"
 #include "../include/wild_encounter.h"
 #include "../include/palette.h"
-
 /*
 Simplified DexNav System
 	credits to FBI: https://github.com/EternalCode/Dexnav
@@ -20,6 +19,7 @@ extern void CreateWildMon(u16 species, u8 level, u8 monHeaderIndex, bool8 purgeP
 extern void DoStandardWildBattle(void);
 extern void DexNavGuiHandler(void);
 extern u8 ExecDexNav(void);
+extern void TransferPlttBuffer(void);
 
 extern const struct WildPokemonHeader* GetCurrentMapWildMonHeaderId(void);
 
