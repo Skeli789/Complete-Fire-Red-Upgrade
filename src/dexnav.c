@@ -1,9 +1,14 @@
 #include "defines.h"
 #include "../include/bg.h"
 #include "../include/new/dexnav.h"
-
-
-
+#include "../include/constants/moves.h"
+#include "../include/constants/species.h"
+#include "../include/constants/items.h"
+#include "../include/new/build_pokemon.h"
+#include "../include/field_effect.h"
+#include "../include/songs.h"
+#include "../include/wild_encounter.h"
+#include "../include/palette.h"
 
 /*
 Simplified DexNav System
@@ -50,7 +55,7 @@ void DestroyTaskCompletedTextbox(u8 tId)
 void MsgNormal(const u8* str)
 {
    TextboxFdecodeAutoAndCreateTask(str);
-   gBoxStatusAndType = 1;
+   *gBoxStatusAndType = 1;
    CreateTask((TaskFunc)DestroyTaskCompletedTextbox, 0x1);
    ScriptContext2_Enable();
    return;
@@ -393,8 +398,8 @@ u8 ShakingGrass(u8 environment, u8 xSize, u8 ySize, bool8 smallScan)
     if (DexNavPickTile(environment, xSize, ySize, smallScan))
 	{
 
-        gFieldEffectArguments->effect_pos.x = (*DNavState)->tileX;
-        gFieldEffectArguments->effect_pos.y = (*DNavState)->tileY;
+        gFieldEffectArguments->effectPos.x = (*DNavState)->tileX;
+        gFieldEffectArguments->effectPos.y = (*DNavState)->tileY;
         gFieldEffectArguments->priority = 0xFF; // height.
         switch (environment)
 		{
@@ -2100,8 +2105,8 @@ void OeiCaveEffect(void)
 	struct SpritePalette caveSmoke = {(void*) &caveSmokePal, 0x1005};
     GpuPalObjAllocTagAndApply(&caveSmoke);
     GpuPalApply((u8 *)&caveSmokePal, 29 * 16, 32);
-    LogCoordsCameraRelative(&gFieldEffectArguments->effect_pos.x, &gFieldEffectArguments->effect_pos.y, 8, 8);
-    u8 objId = TemplateInstanciateReverseSearch(&ObjtCave, gFieldEffectArguments->effect_pos.x, gFieldEffectArguments->effect_pos.y, 0xFF);
+    LogCoordsCameraRelative(&gFieldEffectArguments->effectPos.x, &gFieldEffectArguments->effectPos.y, 8, 8);
+    u8 objId = TemplateInstanciateReverseSearch(&ObjtCave, gFieldEffectArguments->effectPos.x, gFieldEffectArguments->effectPos.y, 0xFF);
     if (objId != 64)
 	{
         gSprites[objId].coordOffsetEnabled = TRUE;

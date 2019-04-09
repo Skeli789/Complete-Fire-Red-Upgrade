@@ -4,6 +4,7 @@
 
 #include "../include/new/helper_functions.h"
 #include "../include/new/battle_terrain.h"
+#include "../include/trainer_classes.h"
 
 #define gBattleTerrainTableEvening ((struct BattleBackground*) 0x88C8720) //For Unbound
 #define gBattleTerrainTableNight ((struct BattleBackground*) 0x88C8A30) //For Unbound

@@ -2,6 +2,8 @@
 #include "../include/constants/flags.h"
 #include "../include/wild_encounter.h"
 #include "../include/field_weather.h"
+#include "../include/constants/vars.h"
+#include "../include/constants/maps.h"
 
 #include "../include/new/helper_functions.h"
 

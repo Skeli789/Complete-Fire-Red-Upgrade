@@ -2,6 +2,7 @@
 #include "../include/trainer_classes.h"
 #include "../include/constants/flags.h"
 #include "../include/songs.h"
+#include "../include/constants/trainers.h"
 
 #include "../include/new/helper_functions.h"
 #include "../include/new/multi.h"

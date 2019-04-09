@@ -20,6 +20,9 @@ extern const u32 gExperienceTables[][255 + 1];
 
 extern const u8 gAbilityNames[][ABILITY_NAME_LENGTH + 1];
 
+#define gMonIconPaletteIndices ((u8*) (*((u32*) 0x0800013C)))
+
+
 #define gGameVersion (*((u8*) 0x81E9F10))
 
 #define gDummySpriteAffineAnimTable (const union AffineAnimCmd* const*) 0x8231CFC

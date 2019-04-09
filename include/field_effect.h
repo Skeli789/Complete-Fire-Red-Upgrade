@@ -81,11 +81,11 @@ struct Coords32 {
 };
 
 struct FieldEffectArguments {
-    struct Coords32 effect_pos;
+    struct Coords32 effectPos;
     u32 priority;
 };
 
-extern const struct FieldEffectArguments gFieldEffectArguments[];
+//extern struct FieldEffectArguments gFieldEffectArguments[];
 
 u8 FieldEffectStart(u8);
 bool8 FieldEffectActiveListContains(u8 id);
