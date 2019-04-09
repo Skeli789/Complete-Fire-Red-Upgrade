@@ -1098,3 +1098,118 @@ u32 sp08A_ReadPedometerValue(void) {
 	#endif
 };
 
+//Other New Specials//
+///////////////////////////////////////////////////////////////////////////////////
+
+u32 GetMinuteDifference(u32 startYear, u8 startMonth, u8 startDay, u8 startHour, u8 startMin, u32 endYear, u8 endMonth, u8 endDay, u8 endHour, u8 endMin);
+u32 GetHourDifference(u32 startYear, u8 startMonth, u8 startDay, u8 startHour, u32 endYear, u8 endMonth, u8 endDay, u8 endHour);
+u32 GetDayDifference(u32 startYear, u8 startMonth, u8 startDay, u32 endYear, u8 endMonth, u8 endDay);
+u32 GetMonthDifference(u32 startYear, u8 startMonth, u32 endYear, u8 endMonth);
+u32 GetYearDifference(u32 startYear, u32 endYear);
+
+struct DailyEventVar
+{
+	u32 minute : 6;	//60 min in hour
+	u32 hour : 5;	//24 hrs in day
+	u32 day : 5;	//31 days max in month
+	u32 month : 4;	//12 months in year
+	u32 year : 7; //99 years in century
+	u32 century : 5; //31 centuries max - starts at 0
+};
+
+//@Details: Runs a daily event.
+//@Input: Var 0x8000: A var containing the daily event data. 
+//					  The var after this one is used as well.
+//		  Var 0x8001: 0x0 - Don't set daily event var.
+//@Returns: False if the event has already been done. True otherwise.
+bool8 sp0A0_CheckAndSetDailyEvent(void)
+{
+	bool8 toReturn = FALSE;
+	u16 eventVar = Var8000; //Var contained in Var8000
+	struct DailyEventVar* dailyData = (struct DailyEventVar*) VarGetAddress(eventVar);
+	
+	u8 dailyDay = dailyData->day;
+	u8 dailyMonth = dailyData->month;
+	u32 dailyYear = dailyData->year + dailyData->century * 100;
+	
+	if (dailyYear > Clock->year
+	|| (dailyYear == Clock->year && dailyMonth > Clock->month)
+	|| (dailyYear == Clock->year && dailyMonth == Clock->month && dailyDay > Clock->day))
+		return FALSE; //Player changed date on their computer.
+	
+	if (dailyDay != Clock->day
+	||  dailyMonth != Clock->month
+	||  dailyYear != Clock->year)
+	{
+		if (Var8001)
+		{
+			dailyData->minute = Clock->minute;
+			dailyData->hour = Clock->hour;
+			dailyData->day = Clock->day;
+			dailyData->month = Clock->month;
+			dailyData->year = Clock->year % 100;
+			dailyData->century = Clock->year / 100;
+		}
+		toReturn = TRUE;
+	}
+
+	return toReturn;
+}
+
+//@Details: Updates the time stored in a pair of vars.
+//@Input: Var 0x8000 - A var containing the daily event data. 
+//					   The var after this one is used as well.
+void sp0A1_UpdateTimeInVars(void)
+{
+	u16 eventVar = Var8000; //Var contained in Var8000
+	struct DailyEventVar* data = (struct DailyEventVar*) VarGetAddress(eventVar);
+
+	data->minute = Clock->minute;
+	data->hour = Clock->hour;
+	data->day = Clock->day;
+	data->month = Clock->month;
+	data->year = Clock->year % 100;
+	data->century = Clock->year / 100;
+}
+
+//@Details: Gets the time difference between the data stored in a var and the current time.
+//@Input: Var 0x8000 - A var containing the time data. 
+//					   The var after this one is used as well.
+//@Input: Var 0x8001: 0 - Get minute difference
+//					  1 - Get hour difference.
+//					  2 - Get day difference. 
+//					  3 - Get month difference.
+//					  4 - Get year difference.
+//@Returns: The time difference between the current time and the time stored in the given var.
+u32 sp0A2_GetTimeDifference(void)
+{
+	u32 difference = 0;
+	u16 eventVar = Var8000; //Var contained in Var8000
+	struct DailyEventVar* startTime = (struct DailyEventVar*) VarGetAddress(eventVar);
+
+	u8 startMinute = startTime->minute;
+	u8 startHour = startTime->hour;
+	u8 startDay = startTime->day;
+	u8 startMonth = startTime->month;
+	u32 startYear = startTime->year + startTime->century * 100;
+	
+	switch (Var8001) {
+		case 0: //Get minute difference
+			difference = GetMinuteDifference(startYear, startMonth, startDay, startHour, startMinute, Clock->year, Clock->month, Clock->day, Clock->hour, Clock->minute);
+			break;
+		case 1: //Get hour difference
+			difference = GetMinuteDifference(startYear, startMonth, startDay, startHour, startMinute, Clock->year, Clock->month, Clock->day, Clock->hour, Clock->minute) / 60;
+			break;
+		case 2: //Get day difference.
+			difference = GetMinuteDifference(startYear, startMonth, startDay, startHour, startMinute, Clock->year, Clock->month, Clock->day, Clock->hour, Clock->minute) / 60 / 24;
+			break;
+		case 3: //Get month difference.
+			difference = GetMonthDifference(startYear, startMonth, Clock->year, Clock->month);
+			break;
+		case 4: //Get year difference.
+			difference = GetYearDifference(startYear, Clock->year);
+			break;
+	}
+
+	return difference;
+}
