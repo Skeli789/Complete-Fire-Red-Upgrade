@@ -687,10 +687,22 @@ void MoveCameraToTrainerB(void) {
 	Var8005 = 0x7F; //Camera
 }
 
+u8 GetPlayerObjId(void)
+{
+	for (u8 eventObjId = 0; eventObjId < MAP_OBJECTS_COUNT; ++eventObjId) 
+	{
+		if (gEventObjects[eventObjId].isPlayer)
+			return eventObjId;
+	}
+	
+	return 0;
+}
+
 void TrainerFaceFix(void) 
 {
-	u16 playerX = gEventObjects[0].currentCoords.x;
-	u16 playerY = gEventObjects[0].currentCoords.y;
+	u8 playerObjId = GetPlayerObjId();
+	u16 playerX = gEventObjects[playerObjId].currentCoords.x;
+	u16 playerY = gEventObjects[playerObjId].currentCoords.y;
 	u16 npcX = gEventObjects[gSelectedEventObject].currentCoords.x;
 	u16 npcY = gEventObjects[gSelectedEventObject].currentCoords.y;
 	
@@ -722,62 +734,126 @@ bool8 GetProperDirection(u16 currentX, u16 currentY, u16 toX, u16 toY) {
 
 void FollowerPositionFix(void)
 {
-	if (!VarGet(NPC_FOLLOWING_VAR)) {
-		gSpecialVar_LastResult = 0xFFFF;
+	gSpecialVar_LastResult = 0xFFFF;
+	
+	if (!VarGet(NPC_FOLLOWING_VAR))	
 		return;
-	}
 	
 	Var8005 = VarGet(NPC_FOLLOWING_VAR);
 	
-	u16 playerX = gEventObjects[0].currentCoords.x;
-	u16 playerY = gEventObjects[0].currentCoords.y;
+	u8 playerObjId = GetPlayerObjId();
+	u16 playerX = gEventObjects[playerObjId].currentCoords.x;
+	u16 playerY = gEventObjects[playerObjId].currentCoords.y;
 	
-	for (u8 eventObjId = 0; eventObjId < MAP_OBJECTS_COUNT; ++eventObjId) {
-		if (gEventObjects[eventObjId].active && gEventObjects[eventObjId].playerCopyableMovement) {
-			u16 npcX = gEventObjects[gSelectedEventObject].currentCoords.x;
-			u16 npcY = gEventObjects[gSelectedEventObject].currentCoords.y;
+	for (u8 eventObjId = 0; eventObjId < MAP_OBJECTS_COUNT; ++eventObjId) 
+	{
+		if (gEventObjects[eventObjId].active && gEventObjects[eventObjId].localId == Var8005) 
+		{
+			u16 npcX = gEventObjects[eventObjId].currentCoords.x;
+			u16 npcY = gEventObjects[eventObjId].currentCoords.y;
 			
 			if (playerX == npcX) 
 			{
-				if (playerY > npcY) {
-					if (playerY != npcY + 1) { //Player and follower are not 1 tile apart
-						if (!Var8000)
+				if (playerY > npcY) 
+				{
+					if (playerY != npcY + 1) //Player and follower are not 1 tile apart
+					{ 
+						if (Var8000 == 0)
 							gSpecialVar_LastResult = GoDown;
 						else
-							gEventObjects[gSelectedEventObject].currentCoords.y = playerY - 1;
+							gEventObjects[eventObjId].currentCoords.y = playerY - 1;
 					}
 				}
-				else {// Player Y < npcY
-					if (playerY != npcY - 1) { //Player and follower are not 1 tile apart
-						if (!Var8000)
+				else // Player Y <= npcY
+				{ 
+					if (playerY != npcY - 1) //Player and follower are not 1 tile apart
+					{ 
+						if (Var8000 == 0)
 							gSpecialVar_LastResult = GoUp;
 						else
-							gEventObjects[gSelectedEventObject].currentCoords.y = playerY + 1;
+							gEventObjects[eventObjId].currentCoords.y = playerY + 1;
 					}
 				}
 			}
 			else //playerY == npcY
 			{ 
-				if (playerX > npcX) {
-					if (playerX != npcX + 1) { //Player and follower are not 1 tile apart
-						if (!Var8000)
+				if (playerX > npcX) 
+				{
+					if (playerX != npcX + 1) //Player and follower are not 1 tile apart
+					{
+						if (Var8000 == 0)
 							gSpecialVar_LastResult = GoRight;
 						else
-							gEventObjects[gSelectedEventObject].currentCoords.x = playerX - 1;
+							gEventObjects[eventObjId].currentCoords.x = playerX - 1;
 					}
 				}
-				else {// Player X < npcX
-					if (playerX != npcX - 1) { //Player and follower are not 1 tile apart
-						if (!Var8000)
+				else // Player X <= npcX
+				{
+					if (playerX != npcX - 1) //Player and follower are not 1 tile apart
+					{ 
+						if (Var8000 == 0)
 							gSpecialVar_LastResult = GoLeft;
 						else
-							gEventObjects[gSelectedEventObject].currentCoords.x = playerX + 1;
+							gEventObjects[eventObjId].currentCoords.x = playerX + 1;
 					}
 				}
 			}
 		}
 	}
 }
+
+// hack safari step function to include custom walking scripts
+// hook at 080A0F0C via r0
+bool8 TakeStep(void)
+{
+	// increment new pedometer, always on
+	if (gPedometers->alwaysActive != 0xFFFFFFFF)
+		gPedometers->alwaysActive += 1;
+	
+	// check new pedometers
+	if ((FlagGet(FLAG_LONG_PEDOMETER)) && gPedometers->large != 0xFFFFFFFF)
+		gPedometers->large += 1;
+	if ((FlagGet(FLAG_MED_PEDOMETER)) && gPedometers->medium != 0xFFFF)
+		gPedometers->medium += 1;
+	if ((FlagGet(FLAG_SMALL_PEDOMETER_1)) && gPedometers->smallOne != 0xFF)
+		gPedometers->smallOne += 1;		
+	if ((FlagGet(FLAG_SMALL_PEDOMETER_2)) && gPedometers->smallTwo != 0xFF)
+		gPedometers->smallTwo += 1;	
+	
+	// check in safari zone
+	if ((GetSafariZoneFlag() == TRUE) && (gSafariSteps != 0))
+	{
+		gSafariSteps -= 1;
+		if (gSafariSteps == 0)	// safari steps went to zero
+		{
+			ScriptContext1_SetupScript((void*) SafariZoneEndScript);
+			return TRUE;
+		}
+    }
+	else
+	{
+		// check custom walking scripts
+		if (gWalkingScript != 0)
+		{
+			ScriptContext1_SetupScript((void*) gWalkingScript);
+			return TRUE;
+		}
+		else
+		{
+			u8 scriptInd = VarGet(DEFAULT_WALKING_SCRIPT);
+			if (scriptInd != 0 || scriptInd > ARRAY_COUNT(gDefaultWalkingScripts))
+			{
+				if (gDefaultWalkingScripts[scriptInd-1] == 0)
+					return FALSE;
+				ScriptContext1_SetupScript(gDefaultWalkingScripts[scriptInd-1]);
+				return TRUE;
+			}
+			else
+				return FALSE;
+		}
+	}
+	return FALSE;
+};
 
 #ifdef GEN_4_PLAYER_RUNNING_FIX
 const union AnimCmd gEventObjectImageAnim_RunSouth[] =
@@ -852,58 +928,3 @@ const union AnimCmd gEventObjectImageAnim_RunEast[] =
     ANIMCMD_JUMP(0),
 };
 #endif
-
-
-// hack safari step function to include custom walking scripts
-// hook at 080A0F0C via r0
-bool8 TakeStep(void)
-{
-	// increment new pedometer, always on
-	if (gPedometers->alwaysActive != 0xFFFFFFFF)
-		gPedometers->alwaysActive += 1;
-	
-	// check new pedometers
-	if ((FlagGet(FLAG_LONG_PEDOMETER)) && gPedometers->large != 0xFFFFFFFF)
-		gPedometers->large += 1;
-	if ((FlagGet(FLAG_MED_PEDOMETER)) && gPedometers->medium != 0xFFFF)
-		gPedometers->medium += 1;
-	if ((FlagGet(FLAG_SMALL_PEDOMETER_1)) && gPedometers->smallOne != 0xFF)
-		gPedometers->smallOne += 1;		
-	if ((FlagGet(FLAG_SMALL_PEDOMETER_2)) && gPedometers->smallTwo != 0xFF)
-		gPedometers->smallTwo += 1;	
-	
-	// check in safari zone
-	if ((GetSafariZoneFlag() == TRUE) && (gSafariSteps != 0))
-	{
-		gSafariSteps -= 1;
-		if (gSafariSteps == 0)	// safari steps went to zero
-		{
-			ScriptContext1_SetupScript((void*) SafariZoneEndScript);
-			return TRUE;
-		}
-    }
-	else
-	{
-		// check custom walking scripts
-		if (gWalkingScript != 0)
-		{
-			ScriptContext1_SetupScript((void*) gWalkingScript);
-			return TRUE;
-		}
-		else
-		{
-			u8 scriptInd = VarGet(DEFAULT_WALKING_SCRIPT);
-			if (scriptInd != 0 || scriptInd > ARRAY_COUNT(gDefaultWalkingScripts))
-			{
-				if (gDefaultWalkingScripts[scriptInd-1] == 0)
-					return FALSE;
-				ScriptContext1_SetupScript(gDefaultWalkingScripts[scriptInd-1]);
-				return TRUE;
-			}
-			else
-				return FALSE;
-		}
-	}
-	return FALSE;
-};
-
