@@ -67,7 +67,7 @@ void BuildTrainerPartySetup(void) {
 			SetWildMonHeldItem();
 	}
 	
-	if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER) {
+	if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER && ViableMonCount(gEnemyParty) > 1) {
 		ExtensionState.partyBackup = Calloc(sizeof(struct Pokemon) * 6);
 		if (ExtensionState.partyBackup == NULL)
 			return;
@@ -89,6 +89,9 @@ void BuildTrainerPartySetup(void) {
 		Memset(&gPlayerParty[3], 0x0, sizeof(struct Pokemon) * 3);
 		CreateNPCTrainerParty(&gPlayerParty[3], VarGet(PARTNER_VAR), FALSE, B_SIDE_PLAYER);
 	}
+	
+	if (ViableMonCount(gEnemyParty) <= 1) //Error prevention
+		gBattleTypeFlags &= ~(BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_DOUBLE);
 }
 
 //Returns the number of Pokemon
