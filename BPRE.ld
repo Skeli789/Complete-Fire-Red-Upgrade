@@ -1,4 +1,5 @@
 /* New Things */
+gFollowerState = 0x203B818;
 ExtensionState = 0x3000F28;
 
 /*Old Things*/
@@ -10,6 +11,8 @@ sEndTurnFuncsTable = 0x8250070;
 sTargetIdentities = 0x8250980;
 sBattleIntroSlideFuncs = 0x83E7CD4;
 gUnownDistributionByChamber = 0x83CA71C;
+stepspeeds = 0x083A719C;
+stepspeed_seq_length = 0x083A71B0;
 
 gMapHeader = 0x2036DFC;
 gWeatherPtr = 0x2037F34;
@@ -688,6 +691,24 @@ PatchObjectPalette = 0x0805F538 | 1;
 CurrMapHeightMismatch = 0x080681B0 | 1;
 
 CheckOpenSky = 0x080561FC | 1;
+
+/*Event Object Movement Functions*/
+TrySpawnEventObjectTemplate = 0x0805E72C | 1;
+EventObjectSetGraphicsId = 0x0805F060 | 1;
+EventObjectTurn = 0x0805F218 | 1;
+MoveEventObjectToMapCoords = 0x0805F724|1;
+EventObjectSetHeldMovement = 0x08063CA4 | 1;
+EventObjectClearHeldMovementIfActive = 0x08063D1C | 1;
+GetEventObjectTemplateByLocalIdAndMap = 0x0805FD5C|1;
+EventObjectClearHeldMovement = 0x08063D34 | 1;
+EventObjectClearHeldMovementIfFinished = 0x08063D7C | 1;
+GetJumpSpecialMovementAction = 0x080641C0 | 1;
+UnfreezeEventObjects = 0x08068A5C|1;
+
+/*Field Effects Functions*/
+FieldEffectStart = 0x08083444 | 1;
+FldEff_SurfBlob = 0x080DC3D0|1;
+BindFieldEffectToSprite = 0x080DC44C | 1;
 
 /*Field Weather Functions*/
 Task_WeatherMain = 0x8079e0c | 1;

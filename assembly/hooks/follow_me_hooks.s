@@ -13,7 +13,7 @@ FollowMe_SetStateHook:
 	bx r1
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
+.pool
 FollowMe_LedgeHook:
 	mov r3, r6 		@ npc_state pointer from parent function
 	mov r6, #0
@@ -32,7 +32,7 @@ dont_move_oam:
 	bx r2
 	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
+.pool
 FollowMe_CollisionHook:
 	push {r1-r3}
 	mov r0, r2
@@ -55,13 +55,13 @@ check_for_collision:
 	bx r0
 	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
+.pool
 bike_hook:
 	bl FollowMe_HandleBike
 	pop {r4, pc}
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
+.pool
 @Surf hook, make follower jump into water as well
 @hook via R0, at 0x8086B00. Write 00 00 to 0x8086AFE
 FollowMe_SurfHook:
@@ -80,7 +80,7 @@ linker:
 	bx r0
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
+.pool
 @Surf hook, startmenu/bag access
 @hook via R0, at 0x8086B00. Write 00 00 to 0x8086AFE
 FollowMe_SurfBagHook:	
@@ -100,7 +100,8 @@ linker:
 	bx r0
 	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@WarpHook
+.pool
+@WarpInHook
 FollowMe_CreateAvatarHook1:
 	bl CreateFollowerAvatar
 	mov r9, r4
@@ -114,6 +115,7 @@ FollowMe_CreateAvatarHook2:
 	pop {r4-r5, pc}
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
 FollowMe_StairsMoveHook:	
 	strh r0, [r7, #0x26]
 	mov r0, r7		
@@ -130,40 +132,41 @@ FollowMe_StairsMoveHook:
 
 FollowMe_WarpDoorEndHook:
 	bl FollowMe_WarpSetEnd
-	ldr r3, =(0x08068A5C + 1)
+	ldr r3, =0x08068A5C | 1
 	bl call_via_r3
-	ldr r3, =(0x0806994C + 1)
+	ldr r3, =0x0806994C | 1
 	bl call_via_r3
-	ldr r0, =(0x0807E200 + 1)
+	ldr r0, =0x0807E200 | 1
 	bx r0
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
+.pool
 FollowMe_WarpNormalEndHook:
 	bl FollowMe_WarpSetEnd
-	ldr r3, =(0x08068A5C + 1)
+	ldr r3, =0x08068A5C | 1
 	bl call_via_r3
-	ldr r3, =(0x0806994C + 1)
+	ldr r3, =0x0806994C | 1
 	bl call_via_r3
-	ldr r0, =(0x0807E310 + 1)
+	ldr r0, =0x0807E310 | 1
 	bx r0
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 FollowMe_WarpStairsEndHook:
 	bl FollowMe_WarpSetEnd
-	ldr r3, =(0x0805FAA8 + 1)
+	ldr r3, =0x0805FAA8 | 1
 	bl call_via_r3
-	ldr r3, =(0x0806994C + 1)
+	ldr r3, =0x0806994C | 1
 	bl call_via_r3
 	mov r0, r4
-	ldr r1, =(0x0807EC64 + 1)
+	ldr r1, =0x0807EC64 | 1
 	bx r1
 
 call_via_r3:
 	bx r3
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 FollowMe_LocalIdHook:
 	push {lr}
 	lsl r0, #0x18
@@ -175,7 +178,7 @@ FollowMe_LocalIdHook:
 	bx r3
 
 local_id_return:
-	bl GetFollowerNPCId
+	bl GetFollowerLocalId
 	ldr r3, =(0x0805DF7C + 1)
 	bx r3
 */
