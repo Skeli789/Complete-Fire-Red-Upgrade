@@ -4,11 +4,25 @@
 
 
 // IMAGES
+/*
 #include "../../graphics/DexNav/CaveSmoke/caveSmoke.h"
 #include "../../graphics/DexNav/dexnavGui.h"
 #include "../../graphics/DexNav/SelectionCursor/selectionCursor.h"
 #include "../../graphics/DexNav/stars/dexnavStars.h"
 #include "../../graphics/DexNav/empty/empty.h"
+*/
+
+extern const u8 gInterfaceGfx_dexNavGuiTiles[];
+extern const u8 gInterfaceGfx_dexNavGuiMap[];
+extern const u8 gInterfaceGfx_dexNavGuiPal[];
+extern const u8 gInterfaceGfx_dexnavStarsTiles[];
+extern const u8 gInterfaceGfx_dexnavStarsPal[];
+extern const u8 gInterfaceGfx_selectionCursorTiles[];
+extern const u8 gInterfaceGfx_selectionCursorPal[];
+extern const u8 gInterfaceGfx_emptyTiles[];
+extern const u8 gInterfaceGfx_emptyPal[];
+extern const u8 gInterfaceGfx_caveSmokeTiles[];
+extern const u8 gInterfaceGfx_caveSmokePal[];
 
 // TYPEDEFS
 typedef void (*SuperCallback)(void);
