@@ -58,5 +58,5 @@ UpdateAltitudeForIllusionHook:
 	ldrh r4, [r0]
 	ldrh r7, [r0]
 	mov r0, r5
-	ldr r1, =0x807459E | 1
+	ldr r1, =0x80745A0 | 1
 	bx r1
