@@ -324,7 +324,7 @@ enum
     T_TILE_CENTER, // player is on a frame in which they are centered on a tile during which the player either stops or keeps their momentum and keeps going, changing direction if necessary.
 };
 
-struct PlayerAvatar /* 0x202E858 */
+struct PlayerAvatar /* 0x02037078 */
 {
     /*0x00*/ u8 flags;
     /*0x01*/ u8 unk1; // used to be named bike, but its definitely not that. seems to be some transition flags

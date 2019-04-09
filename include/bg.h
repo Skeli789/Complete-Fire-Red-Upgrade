@@ -40,7 +40,7 @@ struct BgTemplate
     u16 screenSize:2;           // 0x200, 0x400 -> 0x600
     u16 paletteMode:1;          // 0x800
     u16 priority:2;             // 0x1000, 0x2000 > 0x3000
-	u16 b_padding : 2; // bit field padding
+	u16 bPadding : 2; // bit field padding
 	u16 padding;
 };
 
@@ -57,7 +57,7 @@ u8 LoadBgVram(u8 bg, const void *src, u16 size, u16 destOffset, u8 mode);
 void SetTextModeAndHideBgs(void);
 bool8 IsInvalidBg(u8 bg);
 int BgTileAllocOp(int bg, int offset, int count, int mode);
-void ResetBgsAndClearDma3BusyFlags(bool32 enableWindowTileAutoAlloc);
+//void ResetBgsAndClearDma3BusyFlags(bool32 enableWindowTileAutoAlloc);
 void InitBgsFromTemplates(u8 bgMode, const struct BgTemplate *templates, u8 numTemplates);
 void InitBgFromTemplate(const struct BgTemplate *template);
 void SetBgMode(u8 bgMode);

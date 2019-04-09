@@ -4,6 +4,7 @@
 #include "../include/songs.h"
 #include "../include/field_effect.h"
 #include "../include/event_object_movement.h"
+#include "../include/constants/trainers.h"
 
 #include "../include/new/helper_functions.h"
 #include "../include/new/multi.h"
@@ -107,19 +108,19 @@ const struct TrainerBattleParameter sTrainerBOrdinaryBattleParams[] =
 const struct TrainerBattleParameter sTagBattleParams[] =
 {
     {&sTrainerBattleMode,           TRAINER_PARAM_LOAD_VAL_8BIT},
-	
+
     {&gTrainerBattleOpponent_A,      TRAINER_PARAM_LOAD_VAL_16BIT},
-	{&gTrainerBattleOpponent_B,      TRAINER_PARAM_LOAD_VAL_16BIT}, 
+	{&gTrainerBattleOpponent_B,      TRAINER_PARAM_LOAD_VAL_16BIT},
 	{&gTrainerBattlePartner,     	 TRAINER_PARAM_LOAD_VAL_16BIT},
 	{&sPartnerBackSpriteId,			 TRAINER_PARAM_LOAD_VAL_16BIT},
-	
+
     {&sTrainerEventObjectLocalId,    TRAINER_PARAM_LOAD_VAL_16BIT},
     {&sTrainerIntroSpeech_A,         TRAINER_PARAM_CLEAR_VAL_32BIT},
 	{&sTrainerIntroSpeech_B,       	 TRAINER_PARAM_CLEAR_VAL_32BIT},
-	
+
     {&sTrainerDefeatSpeech_A,        TRAINER_PARAM_LOAD_VAL_32BIT},
 	{&sTrainerDefeatSpeech_B, 		 TRAINER_PARAM_LOAD_VAL_32BIT},
-	
+
     {&sTrainerVictorySpeech,         TRAINER_PARAM_CLEAR_VAL_32BIT},
 	{&sTrainerVictorySpeech_B,       TRAINER_PARAM_CLEAR_VAL_32BIT},
     {&sTrainerCannotBattleSpeech,    TRAINER_PARAM_CLEAR_VAL_32BIT},
@@ -132,26 +133,26 @@ const struct TrainerBattleParameter sTagBattleParams[] =
 const struct TrainerBattleParameter sTwoOpponentBattleParams[] =
 {
     {&sTrainerBattleMode,          	 TRAINER_PARAM_LOAD_VAL_8BIT},
-	
+
     {&gTrainerBattleOpponent_A,    	 TRAINER_PARAM_LOAD_VAL_16BIT},
 	{&gTrainerBattleOpponent_B,    	 TRAINER_PARAM_LOAD_VAL_16BIT},
 	{&gTrainerBattlePartner,     	 TRAINER_PARAM_CLEAR_VAL_16BIT},
-	
+
 	{&gFirstTrainerNPCId,			 TRAINER_PARAM_LOAD_VAL_8BIT},
 	{&gSecondTrainerNPCId,			 TRAINER_PARAM_LOAD_VAL_8BIT},
-	
+
     {&sTrainerEventObjectLocalId,  	 TRAINER_PARAM_LOAD_VAL_16BIT},
     {&sTrainerIntroSpeech_A,       	 TRAINER_PARAM_LOAD_VAL_32BIT},
 	{&sTrainerIntroSpeech_B,       	 TRAINER_PARAM_LOAD_VAL_32BIT},
-	
+
     {&sTrainerDefeatSpeech_A,     	 TRAINER_PARAM_LOAD_VAL_32BIT},
 	{&sTrainerDefeatSpeech_B,      	 TRAINER_PARAM_LOAD_VAL_32BIT},
-	
+
     {&sTrainerVictorySpeech,       	 TRAINER_PARAM_CLEAR_VAL_32BIT},
 	{&sTrainerVictorySpeech_B,       TRAINER_PARAM_CLEAR_VAL_32BIT},
     {&sTrainerCannotBattleSpeech,    TRAINER_PARAM_LOAD_VAL_32BIT},
 	{&sTrainerCannotBattleSpeech_B,  TRAINER_PARAM_LOAD_VAL_32BIT},
-	
+
     {&sTrainerBattleScriptRetAddr,   TRAINER_PARAM_CLEAR_VAL_32BIT},
 	{&sTrainerBattleScriptRetAddr_B, TRAINER_PARAM_CLEAR_VAL_32BIT},
     {&sTrainerBattleEndScript,       TRAINER_PARAM_LOAD_SCRIPT_RET_ADDR},
@@ -160,52 +161,52 @@ const struct TrainerBattleParameter sTwoOpponentBattleParams[] =
 u8 CheckForTrainersWantingBattle(void) {
 	if (IsQuestLogActive())
 		return FALSE;
-		
+
 	if (FuncIsActiveTask(Task_OverworldMultiTrainers)) {
 		return FALSE;
 	}
-	
+
 	if (ViableMonCount(gPlayerParty) == 0) //NPC's won't challenge you if, for some reason, you have no Pokemon
 		return FALSE;
-	
+
     ExtensionState.spotted.count = 0;
-	
+
     for (u8 eventObjId = 0; eventObjId < MAP_OBJECTS_COUNT; ++eventObjId) {
 
 		if (!gEventObjects[eventObjId].active)
             continue;
         if (gEventObjects[eventObjId].trainerType != 1 && gEventObjects[eventObjId].trainerType != 3)
             continue;
-		
+
 		if (CheckTrainerSpotting(eventObjId)) {
             if (ViableMonCount(gPlayerParty) < 2)
                 break;
-            
+
             // We've found enough opponents
             if (ExtensionState.spotted.count > 1)
-                break; 
+                break;
 		}
     }
-	
+
 	//These battle types have built in features
 	if (ExtensionState.spotted.trainers[0].script[1] == TRAINER_BATTLE_TWO_OPPONENTS
 	||  ExtensionState.spotted.trainers[1].script[1] == TRAINER_BATTLE_TWO_OPPONENTS)
 		ExtensionState.spotted.count = 1;
-	
+
 	//Put extra logic here for Unbound's Claydol SQ
-	
+
 	switch (ExtensionState.spotted.count) {
 		case 1: ;
 			struct TrainerSpotted* trainer = &ExtensionState.spotted.trainers[0];
-			
+
 			TrainerWantsBattle(trainer->id, trainer->script);
 			TrainerApproachPlayer(&gEventObjects[trainer->id], trainer->distance - 1);
-			
+
 			if (trainer->script[1] == TRAINER_BATTLE_TWO_OPPONENTS)
 				ScriptContext1_SetupScript(EventScript_DoTwoOpponentBattle);
-			
+
 			return TRUE;
-	
+
 		case 2:
 			// TODO: reset state data
 			CreateTask(Task_OverworldMultiTrainers, 0x50);
@@ -221,7 +222,7 @@ bool8 CheckTrainerSpotting(u8 eventObjId) //Or just CheckTrainer
 	if (scriptPtr[1] == TRAINER_BATTLE_TWO_OPPONENTS
 	&&  (FlagGet(FLAG_TRAINER_FLAG_START + T1_READ_16(scriptPtr + 2)) || FlagGet(FLAG_TRAINER_FLAG_START + T1_READ_16(scriptPtr + 4))))
 		return FALSE;
-		
+
     else if (GetTrainerFlagFromScriptPointer(scriptPtr)) //Trainer has already been beaten
         return FALSE;
 
@@ -240,10 +241,10 @@ bool8 CheckTrainerSpotting(u8 eventObjId) //Or just CheckTrainer
 				if (ViableMonCount(gPlayerParty) < 2)
 					return FALSE;
 			}
-			
+
 			if (scriptPtr[1] == TRAINER_BATTLE_TAG) //You can't be stopped by someone using the tag battle feature
 				return FALSE;
-			
+
 			struct TrainerSpotted trainer = {eventObjId, canApproach, (u8*) scriptPtr};
 			ExtensionState.spotted.trainers[ExtensionState.spotted.count++] = trainer;
             return TRUE;
@@ -257,7 +258,7 @@ bool8 GetTrainerFlagFromScriptPointer(const u8* data)
 {
 	if (TrainerBattleLoadArg8(data) != SCRCMD_TRAINERBATTLE) //Prevents game from crashing if you are spotted by someone
 		return TRUE;							 			 //who's not a trainer
-		
+
     u16 flag = TrainerBattleLoadArg16(data + 2);
     return FlagGet(FLAG_TRAINER_FLAG_START + flag);
 }
@@ -265,13 +266,13 @@ bool8 GetTrainerFlagFromScriptPointer(const u8* data)
 void Task_OverworldMultiTrainers(u8 id)
 {
     struct Task* task = &gTasks[id];
-	
+
     switch (task->data[0]) {
 		case 0:
 			gApproachingTrainerId = 0; //Reset Value
-			for (int i = 0; i < 2; ++i, ++gApproachingTrainerId) 
+			for (int i = 0; i < 2; ++i, ++gApproachingTrainerId)
 				ConfigureTwoTrainersBattle(ExtensionState.spotted.trainers[i].id, ExtensionState.spotted.trainers[i].script);
-			
+
 			task->data[0]++;
 			break;
 
@@ -283,12 +284,12 @@ void Task_OverworldMultiTrainers(u8 id)
 			TrainerApproachPlayer(&gEventObjects[ExtensionState.spotted.trainers[0].id], ExtensionState.spotted.trainers[0].distance - 1);
 			task->data[0]++;
 			break;
-		
+
 		case 2:
 			if (ExtensionState.multiTaskStateHelper)
 				task->data[0]++;
 			break;
-		
+
 		case 3:
 			ExtensionState.multiTaskStateHelper = 0;
 			gApproachingTrainerId = 1;
@@ -297,12 +298,12 @@ void Task_OverworldMultiTrainers(u8 id)
 			TrainerApproachPlayer(&gEventObjects[ExtensionState.spotted.trainers[1].id], ExtensionState.spotted.trainers[1].distance - 1);
 			task->data[0]++;
 			break;
-			
+
 		case 4:
 			if (ExtensionState.multiTaskStateHelper)
 				task->data[0]++;
 			break;
-			
+
 		case 5:
 			/*
 			 * Jump halfway into the battle init script to actually start
@@ -340,7 +341,7 @@ u8* BattleSetup_ConfigureTrainerBattle(const u8* data) {
 			TrainerBattleLoadArgs(sContinueScriptBattleParams, data);
 			SetMapVarsToTrainer();
 			return EventScript_TryDoNormalTrainerBattle;
-		
+
 		case TRAINER_BATTLE_CONTINUE_SCRIPT:
 			if (gApproachingTrainerId == 0) {
 				TrainerBattleLoadArgs(sContinueScriptBattleParams, data); //0x8080168
@@ -351,42 +352,42 @@ u8* BattleSetup_ConfigureTrainerBattle(const u8* data) {
 				VarSet(SECOND_OPPONENT_VAR, gTrainerBattleOpponent_B);
 			}
 			return EventScript_TryDoNormalTrainerBattle;
-			
+
 		case TRAINER_BATTLE_SINGLE_NO_INTRO_TEXT:
 			TrainerBattleLoadArgs(sOrdinaryNoIntroBattleParams, data);
 			return EventScript_DoTrainerBattle;
-			
+
 		case TRAINER_BATTLE_DOUBLE:
 			TrainerBattleLoadArgs(sDoubleBattleParams, data);
 			SetMapVarsToTrainer();
 			return EventScript_TryDoDoubleTrainerBattle;
-			
+
 		case TRAINER_BATTLE_REMATCH:
 			QuestLogRemtachBattleStore();
-			
+
 			TrainerBattleLoadArgs(sOrdinaryBattleParams, data);
 			SetMapVarsToTrainer();
 			gTrainerBattleOpponent_A = GetRematchTrainerId(gTrainerBattleOpponent_A);
 			return EventScript_TryDoRematchBattle;
-			
+
 		case TRAINER_BATTLE_CONTINUE_SCRIPT_DOUBLE:
 		case TRAINER_BATTLE_CONTINUE_SCRIPT_DOUBLE_NO_MUSIC: //Gym Leader Doubles
 			TrainerBattleLoadArgs(sContinueScriptDoubleBattleParams, data);
 			SetMapVarsToTrainer();
 			return EventScript_TryDoDoubleTrainerBattle;
-			
+
 		case TRAINER_BATTLE_REMATCH_DOUBLE:
 			QuestLogRemtachBattleStore();
-			
+
 			TrainerBattleLoadArgs(sDoubleBattleParams, data);
 			SetMapVarsToTrainer();
 			gTrainerBattleOpponent_A = GetRematchTrainerId(gTrainerBattleOpponent_A);
 			return EventScript_TryDoDoubleRematchBattle;
-		
+
 		case TRAINER_BATTLE_OAK_TUTORIAL:
 			TrainerBattleLoadArgs(sOakTutorialParams, data);
 			return EventScript_DoTrainerBattle;
-		
+
 		case TRAINER_BATTLE_TAG:
 			TrainerBattleLoadArgs(sTagBattleParams, data);
 			VarSet(SECOND_OPPONENT_VAR, gTrainerBattleOpponent_B);
@@ -394,7 +395,7 @@ u8* BattleSetup_ConfigureTrainerBattle(const u8* data) {
 			VarSet(PARTNER_BACKSPRITE_VAR, sPartnerBackSpriteId);
 			FlagSet(TAG_BATTLE_FLAG);
 			return EventScript_DoTrainerBattle;
-		
+
 		case TRAINER_BATTLE_TWO_OPPONENTS:
 			TrainerBattleLoadArgs(sTwoOpponentBattleParams, data);
 			SetMapVarsToTrainer();
@@ -402,7 +403,7 @@ u8* BattleSetup_ConfigureTrainerBattle(const u8* data) {
 			FlagSet(TWO_OPPONENT_FLAG);
 			gApproachingTrainerId = 0;
 			return EventScript_TryDoTwoOpponentBattle;
-			
+
 		default:
 			if (gApproachingTrainerId == 0) {
 				TrainerBattleLoadArgs(sOrdinaryBattleParams, data);
@@ -443,7 +444,7 @@ void BattleSetup_StartTrainerBattle(void)
 	if (FlagGet(BATTLE_TOWER_FLAG))
 	{
 		gBattleTypeFlags |= (BATTLE_TYPE_FRONTIER | BATTLE_TYPE_TRAINER);
-		
+
 		switch (BATTLE_TOWER_BATTLE_TYPE) {
 			case BATTLE_TOWER_DOUBLE:
 				gBattleTypeFlags |= BATTLE_TYPE_DOUBLE;
@@ -462,10 +463,10 @@ void BattleSetup_StartTrainerBattle(void)
 			gBattleTypeFlags = (BATTLE_TYPE_DOUBLE | BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_TRAINER);
 		else
 			gBattleTypeFlags = (BATTLE_TYPE_TRAINER);
-			
+
 		if (FlagGet(TAG_BATTLE_FLAG))
 			gBattleTypeFlags |= (BATTLE_TYPE_DOUBLE | BATTLE_TYPE_INGAME_PARTNER /* | BATTLE_TYPE_MULTI*/);
-				
+
 		#ifdef CONTINUE_LOST_BATTLES
 			#ifdef TUTORIAL_BATTLES
 				if (Var8000 != 0xFEFE && sTrainerBattleMode == TRAINER_BATTLE_OAK_TUTORIAL && sTrainerBattleOakTutorialHelper & 3)
@@ -477,13 +478,13 @@ void BattleSetup_StartTrainerBattle(void)
 					gBattleTypeFlags |= BATTLE_TYPE_OAK_TUTORIAL;
 			#endif
 		#endif
-		
+
 		if (FlagGet(ACTIVATE_TUTORIAL_FLAG)) {
 			gBattleTypeFlags |= BATTLE_TYPE_OAK_TUTORIAL;
 			sTrainerBattleMode = TRAINER_BATTLE_OAK_TUTORIAL;
 		}
 	}
-	
+
     gMain.savedCallback = CB2_EndTrainerBattle;
     StartTheBattle();
     ScriptContext1_Stop();
@@ -497,15 +498,15 @@ u8* GetIntroSpeechOfApproachingTrainer(void)
 			case 0:
 				CopyFrontierTrainerText(FRONTIER_BEFORE_TEXT, BATTLE_TOWER_TID, 0);
 				return ReturnEmptyStringIfNull((const u8*) gStringVar4);
-				
+
 			case 1:
 				CopyFrontierTrainerText(FRONTIER_BEFORE_TEXT, BATTLE_TOWER_TID, 1);
 				return ReturnEmptyStringIfNull((const u8*) gStringVar4);
-			
+
 			case 2:
 				CopyFrontierTrainerText(FRONTIER_BEFORE_TEXT, Var8001, 0); //For Frontier Brain
 				return ReturnEmptyStringIfNull((const u8*) gStringVar4);
-				
+
 			default:
 				return ReturnEmptyStringIfNull((const u8*) sTrainerIntroSpeech_A);
 		}
@@ -520,7 +521,7 @@ u8* GetIntroSpeechOfApproachingTrainer(void)
 //Special 0x35
 const u8* GetTrainerCantBattleSpeech(void)
 {
-	if (sTrainerBattleMode == TRAINER_BATTLE_TWO_OPPONENTS 
+	if (sTrainerBattleMode == TRAINER_BATTLE_TWO_OPPONENTS
 	&& gEventObjects[gSelectedEventObject].localId == ExtensionState.spotted.secondTrainerNPCId)
 		return ReturnEmptyStringIfNull((const u8*) sTrainerCannotBattleSpeech_B);
 	else
@@ -602,15 +603,15 @@ void MoveSecondNPCForTwoOpponentSighting(void) {
 		localId = ExtensionState.spotted.secondTrainerNPCId;
 	else
 		localId = ExtensionState.spotted.firstTrainerNPCId;
-		
+
 	obj = GetEventObjectIdByLocalId(localId);
 	Var8005 = localId;
-	
+
 	u16 playerX = gEventObjects[0].currentCoords.x;
 	u16 playerY = gEventObjects[0].currentCoords.y;
 	u16 npcX = gEventObjects[obj].currentCoords.x;
 	u16 npcY = gEventObjects[obj].currentCoords.y;
-	
+
 	gSpecialVar_LastResult = 0xFFFF;
 	switch(gEventObjects[obj].facingDirection) {
 		case 0:
@@ -649,7 +650,7 @@ void LoadProperIntroSpeechForTwoOpponentSighting(void) {
 				gApproachingTrainerId = 0;
 			}
 			break;
-		
+
 		default:
 			if (gEventObjects[gSelectedEventObject].localId != ExtensionState.spotted.firstTrainerNPCId)
 				gApproachingTrainerId = 1;
@@ -678,48 +679,48 @@ void MoveCameraToTrainerB(void) {
 		newObj = GetEventObjectIdByLocalId(ExtensionState.spotted.secondTrainerNPCId);
 	else
 		newObj = GetEventObjectIdByLocalId(ExtensionState.spotted.firstTrainerNPCId);
-	
+
 	u16 currentX = gEventObjects[gSelectedEventObject].currentCoords.x;
 	u16 currentY = gEventObjects[gSelectedEventObject].currentCoords.y;
 	u16 toX = gEventObjects[newObj].currentCoords.x;
 	u16 toY = gEventObjects[newObj].currentCoords.y;
-	
+
 	GetProperDirection(currentX, currentY, toX, toY);
 	Var8005 = 0x7F; //Camera
 }
 
 u8 GetPlayerMapObjId(void)
 {
-	for (u8 eventObjId = 0; eventObjId < MAP_OBJECTS_COUNT; ++eventObjId) 
+	for (u8 eventObjId = 0; eventObjId < MAP_OBJECTS_COUNT; ++eventObjId)
 	{
 		if (gEventObjects[eventObjId].isPlayer)
 			return eventObjId;
 	}
-	
+
 	return 0;
 }
 
-void TrainerFaceFix(void) 
+void TrainerFaceFix(void)
 {
 	u8 playerObjId = GetPlayerMapObjId();
 	u16 playerX = gEventObjects[playerObjId].currentCoords.x;
 	u16 playerY = gEventObjects[playerObjId].currentCoords.y;
 	u16 npcX = gEventObjects[gSelectedEventObject].currentCoords.x;
 	u16 npcY = gEventObjects[gSelectedEventObject].currentCoords.y;
-	
+
 	if (!GetProperDirection(playerX, playerY, npcX, npcY))
 		gSpecialVar_LastResult = 0xFFFF;
 }
 
 bool8 GetProperDirection(u16 currentX, u16 currentY, u16 toX, u16 toY) {
 	u8 ret = FALSE;
-	
+
 	if (currentX == toX) {
 		if (currentY < toY)
 			gSpecialVar_LastResult = GoDown;
 		else
 			gSpecialVar_LastResult = GoUp;
-		
+
 		ret = TRUE;
 	}
 	else if (currentY == toY) {
@@ -727,7 +728,7 @@ bool8 GetProperDirection(u16 currentX, u16 currentY, u16 toX, u16 toY) {
 			gSpecialVar_LastResult = GoRight;
 		else
 			gSpecialVar_LastResult = GoLeft;
-		
+
 		ret = TRUE;
 	}
 	return ret;
@@ -736,29 +737,29 @@ bool8 GetProperDirection(u16 currentX, u16 currentY, u16 toX, u16 toY) {
 void FollowerPositionFix(void)
 {
 	gSpecialVar_LastResult = 0xFFFF;
-	
-	if (!VarGet(NPC_FOLLOWING_VAR))	
+
+	if (!VarGet(NPC_FOLLOWING_VAR))
 		return;
-	
+
 	Var8005 = VarGet(NPC_FOLLOWING_VAR);
-	
+
 	u8 playerObjId = GetPlayerMapObjId();
 	u16 playerX = gEventObjects[playerObjId].currentCoords.x;
 	u16 playerY = gEventObjects[playerObjId].currentCoords.y;
-	
-	for (u8 eventObjId = 0; eventObjId < MAP_OBJECTS_COUNT; ++eventObjId) 
+
+	for (u8 eventObjId = 0; eventObjId < MAP_OBJECTS_COUNT; ++eventObjId)
 	{
-		if (gEventObjects[eventObjId].active && gEventObjects[eventObjId].localId == Var8005) 
+		if (gEventObjects[eventObjId].active && gEventObjects[eventObjId].localId == Var8005)
 		{
 			u16 npcX = gEventObjects[eventObjId].currentCoords.x;
 			u16 npcY = gEventObjects[eventObjId].currentCoords.y;
-			
-			if (playerX == npcX) 
+
+			if (playerX == npcX)
 			{
-				if (playerY > npcY) 
+				if (playerY > npcY)
 				{
 					if (playerY != npcY + 1) //Player and follower are not 1 tile apart
-					{ 
+					{
 						if (Var8000 == 0)
 							gSpecialVar_LastResult = GoDown;
 						else
@@ -766,9 +767,9 @@ void FollowerPositionFix(void)
 					}
 				}
 				else // Player Y <= npcY
-				{ 
+				{
 					if (playerY != npcY - 1) //Player and follower are not 1 tile apart
-					{ 
+					{
 						if (Var8000 == 0)
 							gSpecialVar_LastResult = GoUp;
 						else
@@ -777,8 +778,8 @@ void FollowerPositionFix(void)
 				}
 			}
 			else //playerY == npcY
-			{ 
-				if (playerX > npcX) 
+			{
+				if (playerX > npcX)
 				{
 					if (playerX != npcX + 1) //Player and follower are not 1 tile apart
 					{
@@ -791,7 +792,7 @@ void FollowerPositionFix(void)
 				else // Player X <= npcX
 				{
 					if (playerX != npcX - 1) //Player and follower are not 1 tile apart
-					{ 
+					{
 						if (Var8000 == 0)
 							gSpecialVar_LastResult = GoLeft;
 						else
@@ -810,17 +811,17 @@ bool8 TakeStep(void)
 	// increment new pedometer, always on
 	if (gPedometers->alwaysActive != 0xFFFFFFFF)
 		gPedometers->alwaysActive += 1;
-	
+
 	// check new pedometers
 	if ((FlagGet(FLAG_LONG_PEDOMETER)) && gPedometers->large != 0xFFFFFFFF)
 		gPedometers->large += 1;
 	if ((FlagGet(FLAG_MED_PEDOMETER)) && gPedometers->medium != 0xFFFF)
 		gPedometers->medium += 1;
 	if ((FlagGet(FLAG_SMALL_PEDOMETER_1)) && gPedometers->smallOne != 0xFF)
-		gPedometers->smallOne += 1;		
+		gPedometers->smallOne += 1;
 	if ((FlagGet(FLAG_SMALL_PEDOMETER_2)) && gPedometers->smallTwo != 0xFF)
-		gPedometers->smallTwo += 1;	
-	
+		gPedometers->smallTwo += 1;
+
 	// check in safari zone
 	if ((GetSafariZoneFlag() == TRUE) && (gSafariSteps != 0))
 	{
@@ -882,13 +883,13 @@ void CreateFollowerAvatar();
 void StairsMoveFollower(struct Sprite* obj);
 void FollowMe_WarpSetEnd();
 
-struct Follower 
+struct Follower
 {
 	u8 objId;
 	u8 currentSprite;
 	u8 locked;
 	u8 delayedState;
-	struct 
+	struct
 	{
 		u8 id;
 		u8 number;
@@ -911,20 +912,20 @@ static u8 GetFollowerMapObjId()
 	return gFollowerState.objId;
 }
 
-void FollowMe(struct MapObject* npc, u8 state) 
+void FollowMe(struct MapObject* npc, u8 state)
 {
 	struct MapObject* player = &gEventObjects[GetPlayerMapObjId()];
-	
+
 	if (player != npc) //Only when the player moves
 		return;
-		
+
 	if (!gFollowerState.inProgress)
 		return;
 
 	struct MapObject* follower = &gEventObjects[GetFollowerMapObjId()];
-	
+
 	// Check if state would cause movement
-	if (CopyPlayer_StateIsMovement(state) && gFollowerState.warpEnd) 
+	if (CopyPlayer_StateIsMovement(state) && gFollowerState.warpEnd)
 	{
 		follower->invisible = FALSE;
 		gFollowerState.warpEnd = 0;
@@ -942,13 +943,13 @@ void FollowMe(struct MapObject* npc, u8 state)
 
 	EventObjectClearHeldMovementIfActive(follower);
 	EventObjectSetHeldMovement(follower, newState);
-	PlayerLogCoordinates(player);	
+	PlayerLogCoordinates(player);
 
 RESET:
 	EventObjectClearHeldMovementIfFinished(follower);
 }
 
-static u8 FollowMe_DetermineDirection(struct MapObject* player, struct MapObject* follower) 
+static u8 FollowMe_DetermineDirection(struct MapObject* player, struct MapObject* follower)
 {
 	s8 delta_x = follower->currentCoords.x - player->currentCoords.x;
 	s8 delta_y = follower->currentCoords.y - player->currentCoords.y;
@@ -966,25 +967,25 @@ static u8 FollowMe_DetermineDirection(struct MapObject* player, struct MapObject
 	return DIR_NONE;
 }
 
-static void PlayerLogCoordinates(struct MapObject* player) 
+static void PlayerLogCoordinates(struct MapObject* player)
 {
 	gFollowerState.log.x = player->currentCoords.x;
 	gFollowerState.log.y = player->currentCoords.y;
 }
 
 
-//static bool8 PlayerMoved(struct MapObject* player) 
+//static bool8 PlayerMoved(struct MapObject* player)
 //{
-//	return gFollowerState.log.x != player->currentCoords.x 
+//	return gFollowerState.log.x != player->currentCoords.x
 //		|| gFollowerState.log.y != player->currentCoords.y;
 //}
 
 
-bool8 FollowMe_CollisionExempt(struct MapObject* obstacle, struct MapObject* collider) 
+bool8 FollowMe_CollisionExempt(struct MapObject* obstacle, struct MapObject* collider)
 {
 	if (!gFollowerState.inProgress)
 		return FALSE;
-	
+
 	struct MapObject* follower = &gEventObjects[GetFollowerMapObjId()];
 	struct MapObject* player = &gEventObjects[GetPlayerMapObjId()];
 
@@ -999,19 +1000,19 @@ bool8 FollowMe_CollisionExempt(struct MapObject* obstacle, struct MapObject* col
 extern void (**stepspeeds[5])(struct Sprite*, u8);
 extern const u16 stepspeed_seq_length[5];
 
-void CopyPlayer_Ledges(struct MapObject* npc, struct Sprite* obj, u16* ledgeFramesTbl) 
+void CopyPlayer_Ledges(struct MapObject* npc, struct Sprite* obj, u16* ledgeFramesTbl)
 {
 	u8 speed;
-	
+
 	if (!gFollowerState.inProgress)
 		return;
-	
+
 	struct MapObject* follower = &gEventObjects[GetFollowerMapObjId()];
 
 	if (follower == npc)
 		speed = gPlayerAvatar->runningState ? 3 : 1;
 	else
-		speed = 0;	
+		speed = 0;
 
 	// Calculate the frames for the jump
 	u16 frameCount = (u16) stepspeed_seq_length[speed] * LEDGE_FRAMES_MULTIPLIER;
@@ -1022,14 +1023,14 @@ void CopyPlayer_Ledges(struct MapObject* npc, struct Sprite* obj, u16* ledgeFram
 	stepspeeds[speed][currentFrame](obj, obj->data[3]);
 }
 
-static bool8 CopyPlayer_StateIsMovement(u8 state) 
+static bool8 CopyPlayer_StateIsMovement(u8 state)
 {
 	return state > 3;
 }
 
 #define RETURN_STATE(state) return newState == MOVEMENT_INVALID ? state : CopyPlayer_ReturnDelayedState(direction);
 
-static u8 CopyPlayer_ReturnDelayedState(u8 direction) 
+static u8 CopyPlayer_ReturnDelayedState(u8 direction)
 {
 	u8 newState = gFollowerState.delayedState;
 	gFollowerState.delayedState = 0;
@@ -1044,7 +1045,7 @@ static u8 DetermineFollowerState(struct MapObject* follower, u8 state, u8 direct
 		newState = gFollowerState.delayedState + direction;
 
 	// Clear ice tile stuff
-	follower->disableAnim = FALSE; //follower->field1 &= 0xFB; 
+	follower->disableAnim = FALSE; //follower->field1 &= 0xFB;
 
 	switch (state) {
 		case 0x08:
@@ -1058,7 +1059,7 @@ static u8 DetermineFollowerState(struct MapObject* follower, u8 state, u8 direct
 		case 0x0E:
 		case 0x0F:
 			// Slow slow
-			RETURN_STATE(0xC + direction);		
+			RETURN_STATE(0xC + direction);
 		case 0x10:
 		case 0x11:
 		case 0x12:
@@ -1146,7 +1147,7 @@ void FollowerToWater()
 {
 	if (!gFollowerState.inProgress)
 		return;
-	
+
 	//Make the follower do the jump and spawn the surf head
 	//right in front of the follower's location.
 	SetSurfJump(&gEventObjects[GetFollowerMapObjId()]);
@@ -1162,27 +1163,27 @@ static void SetSurfJump(struct MapObject* npc)
 {
 	//reset NPC movement bits
 	EventObjectClearHeldMovement(npc);
-	
+
 	//jump animation according to direction
 	u8 direction = npc->movementDirection;
 	u8 jumpState = GetJumpSpecialMovementAction(direction);
 	EventObjectSetHeldMovement(npc, jumpState);
 	FollowMe_SetUpFieldEffect(npc);
-	
+
 	//adjust surf head spawn location infront of npc
 	switch (direction) {
 		case DIR_SOUTH:
 			gFieldEffectArguments[1]++; //effect_y
 			break;
-			
+
 		case DIR_NORTH:
 			gFieldEffectArguments[1]--;
 			break;
-			
+
 		case DIR_WEST:
 			gFieldEffectArguments[0]--; //effect_x
 			break;
-			
+
 		default: //DIR_EAST
 			gFieldEffectArguments[0]++;
 	};
@@ -1199,7 +1200,7 @@ static void FollowMe_SetSurf(struct MapObject* npc)
 	FollowMe_SetUpFieldEffect(npc);
 	u8 surfBlobObjId = FieldEffectStart(FLDEFF_SURF_BLOB);
 	npc->fieldEffectSpriteId = surfBlobObjId;
-	
+
 	u8 taskId = CreateTask(Task_BindSurfBlobToFollower, 0x1);
 	gTasks[taskId].data[0] = npc->localId;
 }
@@ -1207,12 +1208,12 @@ static void FollowMe_SetSurf(struct MapObject* npc)
 static void Task_BindSurfBlobToFollower(u8 taskId)
 {
 	struct MapObject* npc = &gEventObjects[GetFollowerMapObjId()];
-	
+
 	//Wait animation
 	bool8 animStatus = EventObjectClearHeldMovementIfFinished(npc);
 	if (animStatus == 0)
 		return;
-	
+
 	//Bind objs
 	BindFieldEffectToSprite(npc->fieldEffectSpriteId, 0x1);
 	UnfreezeEventObjects();
@@ -1232,10 +1233,10 @@ static void SetFollowerSprite(u8 spriteIndex)
 {
 	if (!gFollowerState.inProgress)
 		return;
-	
+
 	// Save sprite
 	gFollowerState.currentSprite = spriteIndex;
-	
+
 	struct MapObject* follower = &gEventObjects[GetFollowerMapObjId()];
 	EventObjectSetGraphicsId(follower, GetFollowerSprite());
 
@@ -1252,7 +1253,7 @@ static u8 GetFollowerSprite()
 {
 	if (gFollowerState.currentSprite == 0)
 		return gFollowerState.gfxId;
-	
+
 	return gCopyPlayerSpriteTable[gFollowerState.gfxId];
 }
 
@@ -1298,7 +1299,7 @@ void FollowMe_WarpSetEnd()
 {
 	struct MapObject* player = &gEventObjects[GetPlayerMapObjId()];
 	struct MapObject* follower = &gEventObjects[GetFollowerMapObjId()];
-	
+
 	gFollowerState.warpEnd = 1;
 	PlayerLogCoordinates(player);
 	MoveEventObjectToMapCoords(follower, player->currentCoords.x, player->currentCoords.y);

@@ -255,8 +255,8 @@ PaletteNeedsFogBrightening 0807A748 1
 LoadCloudOrSandstormPalette 0807ABC0 1
 
 ## Dex Nav
-#CheckDexNavSelect 0810AD98 1
-#PokeToolNoFade 0806F3A8 3
+CheckDexNavSelect 0810AD98 1
+PokeToolNoFade 0806F3A8 3
 
 ##Follow Me
 #FollowMe_SetStateHook 08063CF4 1
