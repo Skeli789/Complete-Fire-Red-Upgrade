@@ -94,7 +94,7 @@ struct MapObjectTemplate
     /*0x16*/ u8 filler_16[2];
 };  /*size = 0x18*/
 
-typedef struct MapObjectTemplate EventObjectTemplate;
+#define EventObjectTemplate MapObjectTemplate 
 
 struct WarpEvent
 {
@@ -246,7 +246,7 @@ struct MapObject
     /*size = 0x24*/
 };
 
-typedef struct MapObject EventObject;
+#define EventObject MapObject
 
 struct MapObjectGraphicsInfo
 {

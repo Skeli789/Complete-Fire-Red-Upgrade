@@ -120,7 +120,7 @@ struct Pedometers {
 		//#define gEncounterRate ((struct EncounterRate*) 0x20386D0)
 		#define sWildEncountersDisabled (*((u8*) 0x20386DC))
 
-/*u8*/  #define gFieldEffectArguments ((u8*) 0x20386E0)
+/*u8*/  #define gFieldEffectArguments ((s32*) 0x20386E0)
 
 /*u8*/  #define gSafariBallNumber 	(*((u8*) 0x02039994))
 /*u16*/ #define gSafariSteps	   (*((u16*) 0x02039996))
