@@ -2,19 +2,23 @@
 
 #include "defines.h"
 
-
 //#define gStatStageRatios ((u8**) 0x825DEAD)
 #define gBitTable ((u32*) 0x825E45C)
 
 extern struct BattleMove gBattleMoves[];
 //#define gBattleMoves ((struct BattleMove*) 0x8900000)
-//#defin gMoveNames ((
+
+//typedef u8 MoveNames_t[MOVE_NAME_LENGTH + 1];
+//#define gMoveNames ((MoveNames_t*) *((u32*)	0x08000148))
 
 #define gItems ((struct Item*) *((u32*) 0x80001C8))
 
 typedef u8 SpeciesNames_t[POKEMON_NAME_LENGTH + 1];
 #define gSpeciesNames ((SpeciesNames_t*) *((u32*) 0x8000144))
 #define gBaseStats ((struct BaseStats*) *((u32*) 0x80001BC))
+
+typedef u8 AbilityNames_t[ABILITY_NAME_LENGTH + 1];
+#define gAbilityNames ((AbilityNames_t*) (*((u32*) 0x080001C0)))
 
 extern const u8 gTypeEffectiveness[124 * 3];
 
@@ -24,7 +28,7 @@ extern const struct Evolution gEvolutionTable[][EVOS_PER_MON];
 //#define gExperienceTables ((ExperienceTable_t*) 0x8253AE4)
 extern const u32 gExperienceTables[][255 + 1];
 
-extern const u8 gAbilityNames[][ABILITY_NAME_LENGTH + 1];
+#define gMonIconPaletteIndices ((u8*) (*((u32*) 0x0800013C)))
 
 #define BattleScript_MoveEnd (u8*) 0x81D694E
 #define BattleScript_Atk49 (u8*) 0x81D6954

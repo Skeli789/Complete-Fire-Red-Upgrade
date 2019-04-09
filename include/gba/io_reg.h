@@ -562,6 +562,23 @@
 // BLDALPHA
 #define BLDALPHA_BLEND(target1, target2) (((target2) << 8) | (target1))
 
+#define WIN_BG0 (1 << 0)
+#define WIN_BG1 (1 << 1)
+#define WIN_BG2 (1 << 2)
+#define WIN_BG3 (1 << 3)
+#define WIN_OBJ (1 << 4)
+#define WIN_BLD (1 << 5)
+/**
+ * @param win0 Window 0 Control
+ * @param win1 Window 1 Control
+ */
+#define WININ_BUILD(win0, win1) ((win0) | ((win1) << 8))
+/**
+ * @param outside Window Outside Control
+ * @param object Object Window Control
+ */
+#define WINOUT_BUILD(outside, object) ((outside) | ((object) << 8))
+
 // SOUNDCNT_H
 #define SOUND_CGB_MIX_QUARTER 0x0000
 #define SOUND_CGB_MIX_HALF    0x0001

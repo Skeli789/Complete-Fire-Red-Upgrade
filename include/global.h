@@ -291,7 +291,8 @@ struct SaveBlock2
     /*0x000*/ u8 playerName[PLAYER_NAME_LENGTH];
     /*0x008*/ u8 playerGender; // MALE, FEMALE
     /*0x009*/ u8 specialSaveWarp;
-    /*0x00A*/ u8 playerTrainerId[4];
+   // /*0x00A*/ u8 playerTrainerId[4];
+    /*0x00A*/ u32 playerTrainerId;
     /*0x00E*/ u16 playTimeHours;
     /*0x010*/ u8 playTimeMinutes;
     /*0x011*/ u8 playTimeSeconds;

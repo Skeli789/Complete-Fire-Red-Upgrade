@@ -99,7 +99,7 @@ typedef u8 Buffer_t[0x200];
 
 		#define gPlayerAvatar ((struct PlayerAvatar*) 0x02037078)
 		
-		#define gBoxStatusAndType ((u8*) 0x0203709C)		
+		#define gBoxStatusAndType (*(u8*) 0x0203709C)		
 
 /*u8*/  #define gActiveBattler 			(*((u8*) 0x2023BC4))
 /*u32*/ #define gBattleExecBuffer 		(*((u32*) 0x2023BC8))
@@ -268,7 +268,7 @@ typedef u8 Buffer_t[0x200];
 		//#define gEncounterRate ((struct EncounterRate*) 0x20386D0)
 		#define sWildEncountersDisabled (*((u8*) 0x20386DC))
 
-/*u8*/  #define gFieldEffectArguments ((u8*) 0x20386E0)
+/*u8*/  #define gFieldEffectArguments ((struct FieldEffectArguments*) 0x20386E0)
 
 /*u8*/  #define gSafariBallNumber 	(*((u8*) 0x02039994))
 /*u16*/ #define gSafariSteps	   (*((u16*) 0x02039996))
@@ -302,12 +302,16 @@ typedef u8 Buffer_t[0x200];
 /*u8*/  #define gSelectedEventObject (*((u8*) 0x3005074))
 		#define gTasks ((struct Task*) 0x3005090) //struct Task gTasks[ACTIVE_SENTINEL];
 		
+		#define gMPlayTable ((struct MusicPlayerInfo*) 0x03007300)
+		
 		#define gCurrentMapName *((u8*) 0x3005558)
 		
 		#define gGbaTimer ((struct GbaTimer*) 0x4000108)
 		#define gKeyReg (*((u16*) 0x4000130))
-				
+						
 		extern struct MusicPlayerInfo gMPlay_BGM;
+		
+		extern struct IconPals* gIconPals;
 
 /*Custom Ram Locs*/
 /*
@@ -457,4 +461,3 @@ typedef u8 IllusionNickname_t[10];
 #define PalRefs ((PalRef*)0x203B7D4)	// 16 sprites * 4 bytes each = 0x40 bytes
 
 #define DEXNAV_SAVERAM 0x203B814
-

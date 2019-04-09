@@ -47,6 +47,9 @@
 #include "../include/script.h"
 #include "../include/fieldmap.h"
 #include "../include/safari_zone.h"
+#include "../include/bg.h"
+#include "../include/field_effect.h"
+#include "../include/palette.h"
 
 #include "ram_locs.h"
 #include "rom_locs.h"
@@ -126,6 +129,8 @@
     (var) = (stat) * (gStatStageRatios)[(mon)->statStages[(statIndex)-1]][0];         	\
     (var) = udivsi((var), (gStatStageRatios)[(mon)->statStages[(statIndex)-1]][1]);     \
 }
+
+
 
 enum
 {

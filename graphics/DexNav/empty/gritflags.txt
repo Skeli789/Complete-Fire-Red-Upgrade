@@ -1,0 +1,1 @@
+-fh -p -pe16 -g -gB4 -gu8 -Mh4 -Mw8

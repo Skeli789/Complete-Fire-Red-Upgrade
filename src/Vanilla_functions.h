@@ -421,13 +421,13 @@ void __attribute__((long_call)) TintPalette_GrayScale2(u16 *palette, u16 count);
 void __attribute__((long_call)) TintPalette_SepiaTone(u16 *palette, u16 count);
 void __attribute__((long_call)) TintPalette_CustomTone(u16 *palette, u16 count, u16 rTone, u16 gTone, u16 bTone);
 void __attribute__((long_call)) SyncTilemaps(void);
-//void __attribute__((long_call)) SetVBlankCallback(void(*callback) func);
-//void __attribute__((long_call)) SetHBlankCallback(void(*callback) func);
+void __attribute__((long_call)) SetVBlankCallback(void (*callback));
+void __attribute__((long_call)) SetHBlankCallback(void (*callback));
 void __attribute__((long_call)) SetCallback1(void* func);
 void __attribute__((long_call)) SetCallback2(void* func);
 
-//void __attribute__((long_call)) LZ77UnCompWram(void* src, void* dst);
-//void __attribute__((long_call)) LZ77UnCompVram(void* src, void* dst);
+void __attribute__((long_call)) LZ77UnCompWram(const void *src, void *dest);
+void __attribute__((long_call)) LZ77UnCompVram(const void *src, void *dest);
 
 void __attribute__((long_call)) BuildOAMBuffer(void);
 void __attribute__((long_call)) AnimateSprites(void);
@@ -486,7 +486,7 @@ bool8 __attribute__((long_call)) AddSubspritesToOamBuffer(struct Sprite *sprite,
 void __attribute__((long_call)) ResetSpriteData(void);
 
 void __attribute__((long_call)) CleanupOverworldWindowsAndTilemaps(void);
-//void __attribute__((long_call)) ResetBgsAndClearDma3BusyFlags(u8 bg);	// in bg.h
+void __attribute__((long_call)) ResetBgsAndClearDma3BusyFlags(u8 bg);	// in bg.h
 void __attribute__((long_call))BgIdModOffsetX(u8 bgid, s32 delta, u8 dir);
 void __attribute__((long_call))BgIdModOffsetY(u8 bgid, s32 delta, u8 dir);
 

@@ -80,10 +80,12 @@ struct Coords32 {
     s32 y;
 };
 
-extern struct gFieldEffectArguments {
+struct FieldEffectArguments {
     struct Coords32 effect_pos;
     u32 priority;
 };
+
+extern const struct FieldEffectArguments gFieldEffectArguments[];
 
 u8 FieldEffectStart(u8);
 bool8 FieldEffectActiveListContains(u8 id);

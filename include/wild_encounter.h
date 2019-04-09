@@ -17,8 +17,8 @@ struct WildPokemon
 
 struct WildPokemonInfo
 {
-    u8 encounterRate;
-    const struct WildPokemon *wildPokemon;
+   u8 encounterRate;
+   const struct WildPokemon *wildPokemon;
 };
 
 struct WildPokemonHeader

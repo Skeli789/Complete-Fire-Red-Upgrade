@@ -99,7 +99,7 @@ NpcSpawnWithTemplate 0805e5f4
 LinkNpcFix 0805efe4
 
 ## Dex Nav
-#OeiCaveEffect 081d98a9
-#PokeToolsFunc 083a7348
-#PokeToolsFunc 0806F404
+OeiCaveEffect 081d98a9
+PokeToolsFunc 083a7348
+PokeToolsFunc 0806F404
 

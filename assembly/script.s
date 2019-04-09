@@ -66,8 +66,6 @@ script functions/specials in asm - hooks and returns
 .global PokeToolNoFade
 
 
-/*
-
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ hook at 3FD58 via r5
 .align 2
@@ -96,6 +94,7 @@ hook_restore:
 hop_decoder:
 	ldr r1, =(0x0803FDC2|1)
 	bx r1
+
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .align 2
@@ -133,11 +132,6 @@ EndStartOptFadeCheck:
     pop {pc}
 	
 
-*/
-
-
-
-
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @	08 47 at 5e5d4
 @	ptr+1 at 5e5f4
@@ -150,15 +144,9 @@ NpcSpawnWithTemplate:
 	ldrb r1, [r5, #0x1a]
 	lsl r1, r1, #0x8
 	orr r0, r1
-	
 	bl GetEventObjectGraphicsInfo
-	
 	ldr r1, =(0x0805e5dc+1)
 	bx r1
-	
-	@mov lr, r1
-	@ldr r1, =(0x0805F2C8+1)
-	@bx r1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @	hook at 5e510 via r1
@@ -172,15 +160,9 @@ NpcSizeFix:
 	ldrb r1, [r4, #0x1a]
 	lsl r1, r1, #0x8
 	orr r0, r1
-	
 	bl GetEventObjectGraphicsInfo
-	
 	ldr r1, =(0x0805e51c+1)
 	bx r1
-	
-	@mov lr, r1
-	@ldr r1, =(0x0805f2c8+1)
-	@bx r1
 		
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @	hook at 5e964 via r4
@@ -232,10 +214,6 @@ LinkNpcFix:
 	ldr r1, =(0x0805eea2+1)
 	bx r1
 
-@CallLinkNpcLoader:
-@	ldr r1, =(0x0805F2C8+1)
-@	bx r1
-
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @	hook at 67a12 via r5
@@ -253,14 +231,9 @@ NpcOffscreenFix:
 	ldrb r1, [r5, #0x1a]
 	lsl r1, r1, #0x8
 	orr r0, r1
-	
 	bl GetEventObjectGraphicsInfo
 	ldr r1, =(0x08067a26+1)
 	bx r1
-	
-	@mov lr, r1
-	@ldr r1, =(0x0805F2C8+1)
-	@bx r1
 	
 	
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -274,15 +247,9 @@ NpcWaterFix:
 	ldrb r1, [r5, #0x1a]
 	lsl r1, r1, #0x8
 	orr r0, r1
-	
 	bl GetEventObjectGraphicsInfo
-	
 	ldr r1, =(0x08067f9c+1)
 	bx r1
-	
-	@mov lr, r1
-	@ldr r1, =(0x0805F2C8+1)
-	@bx r1
 	
 
 	
@@ -705,9 +672,6 @@ RefreshFameCheckerNPCs_DoNotColor:
 RefreshFameCheckerNPCs_Return2:
 	ldr r0, =0x812D2E0+1
 	bx r0
-
-@CallByR1:
-@	bx r1
 
 CallByR4:
 	bx r4	
