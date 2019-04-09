@@ -64,6 +64,8 @@ script functions/specials in asm - hooks and returns
 .global CheckDexNavSelect
 .global PokeToolNoFade
 
+/*
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .align 2
 .pool
 @ hook at 10AD98 via r1
@@ -97,7 +99,7 @@ CallViaR0:
     bx r0
 EndStartOptFadeCheck:
     pop {pc}
-	
+*/
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @	08 47 at 5e5d4
