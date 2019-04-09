@@ -270,3 +270,4 @@ LoadCloudOrSandstormPalette 0807ABC0 1
 #FollowMe_WarpDoorEndHook 0807E1F8 0
 #FollowMe_WarpNormalEndHook 0807E308 0
 #FollowMe_WarpStairsEndHook 0807EC5A 0
+#FollowMe_LocalIdHook 0805DF60 3

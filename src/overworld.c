@@ -2,6 +2,8 @@
 #include "../include/trainer_classes.h"
 #include "../include/constants/flags.h"
 #include "../include/songs.h"
+#include "../include/field_effect.h"
+#include "../include/event_object_movement.h"
 
 #include "../include/new/helper_functions.h"
 #include "../include/new/multi.h"
@@ -52,7 +54,6 @@ void MoveCameraToTrainerB(void);
 bool8 GetProperDirection(u16 currentX, u16 currentY, u16 toX, u16 toY);
 void TrainerFaceFix(void);
 void FollowerPositionFix(void);
-
 
 // table full of pointers to custom walking scripts
 u8* gDefaultWalkingScripts[] =
@@ -687,7 +688,7 @@ void MoveCameraToTrainerB(void) {
 	Var8005 = 0x7F; //Camera
 }
 
-u8 GetPlayerObjId(void)
+u8 GetPlayerMapObjId(void)
 {
 	for (u8 eventObjId = 0; eventObjId < MAP_OBJECTS_COUNT; ++eventObjId) 
 	{
@@ -700,7 +701,7 @@ u8 GetPlayerObjId(void)
 
 void TrainerFaceFix(void) 
 {
-	u8 playerObjId = GetPlayerObjId();
+	u8 playerObjId = GetPlayerMapObjId();
 	u16 playerX = gEventObjects[playerObjId].currentCoords.x;
 	u16 playerY = gEventObjects[playerObjId].currentCoords.y;
 	u16 npcX = gEventObjects[gSelectedEventObject].currentCoords.x;
@@ -741,7 +742,7 @@ void FollowerPositionFix(void)
 	
 	Var8005 = VarGet(NPC_FOLLOWING_VAR);
 	
-	u8 playerObjId = GetPlayerObjId();
+	u8 playerObjId = GetPlayerMapObjId();
 	u16 playerX = gEventObjects[playerObjId].currentCoords.x;
 	u16 playerY = gEventObjects[playerObjId].currentCoords.y;
 	
@@ -855,11 +856,35 @@ bool8 TakeStep(void)
 	return FALSE;
 };
 
-//Follow Me Updates
+//Follow Me Updates/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /*
+static u8 GetFollowerMapObjId();
+void FollowMe(struct MapObject* npc, u8 state);
+static u8 FollowMe_DetermineDirection(struct MapObject* player, struct MapObject* follower);
+static void PlayerLogCoordinates(struct MapObject* player);
+bool8 FollowMe_CollisionExempt(struct MapObject* obstacle, struct MapObject* collider);
+void CopyPlayer_Ledges(struct MapObject* npc, struct Sprite* obj, u16* ledgeFramesTbl);
+static bool8 CopyPlayer_StateIsMovement(u8 state);
+static u8 CopyPlayer_ReturnDelayedState(u8 direction);
+static u8 DetermineFollowerState(struct MapObject* follower, u8 state, u8 direction);
+void FollowMe_HandleBike();
+void FollowMe_HandleSprite();
+void FollowerToWater();
+void FollowerNoMoveSurf();
+static void SetSurfJump(struct MapObject* npc);
+static void FollowMe_SetSurf(struct MapObject* npc);
+static void Task_BindSurfBlobToFollower(u8 taskId);
+static void FollowMe_SetUpFieldEffect(struct MapObject* npc);
+static void SetFollowerSprite(u8 spriteIndex);
+static u8 GetFollowerSprite();
+u8 GetFollowerLocalId(void);
+void CreateFollowerAvatar();
+void StairsMoveFollower(struct Sprite* obj);
+void FollowMe_WarpSetEnd();
+
 struct Follower 
 {
-	u8 npcid;
+	u8 objId;
 	u8 currentSprite;
 	u8 locked;
 	u8 delayedState;
@@ -869,59 +894,35 @@ struct Follower
 		u8 number;
 		u8 bank;
 	} map;
-	struct Coords16 log;
 	bool8 warpEnd;
+	struct Coords16 log;
 	u8* script;
+	u16 flag;
+	u8 gfxId;
+	bool8 inProgress;
 };
 
 extern struct Follower gFollowerState;
 
-u8 FollowMe_DetermineDirection(struct MapObject* player, struct MapObject* follower) 
-{
-	s8 delta_x = follower->currentCoords.x - player->currentCoords.x;
-	s8 delta_y = follower->currentCoords.y - player->currentCoords.y;
-
-	if (delta_x < 0)
-		return DIR_EAST;
-	else if (delta_x > 0) {
-		return DIR_WEST;
-
-	if (delta_y < 0)
-		return DIR_SOUTH;
-	else if (delta_y > 0) {
-		return DIR_NORTH;
-
-	return DIR_NONE;
-}
-
-u8 SetFollowerNpcid(u8 npcid) 
-{
-	gFollowerState.npcid = npcid;
-	return npcid;
-}
-
-void PlayerLogCoordinates(struct MapObject* player) 
-{
-	gFollowerState.log.x = player->currentCoords.x;
-	gFollowerState.log.y = player->currentCoords.y;
-}
-
-bool8 PlayerMoved(struct MapObject* player) 
-{
-	return gFollowerState.log.x != player->currentCoords.x 
-		|| gFollowerState.log.y != player->currentCoords.y;
-}
-
 #define MOVEMENT_INVALID 0xFE
+
+static u8 GetFollowerMapObjId()
+{
+	return gFollowerState.objId;
+}
 
 void FollowMe(struct MapObject* npc, u8 state) 
 {
-	struct MapObject* follower = &gEventObjects[GetFollowerMapObjId()];
-	struct MapObject* player = &gEventObjects[GetPlayerObjId()];
-
-	if (player != npc)
+	struct MapObject* player = &gEventObjects[GetPlayerMapObjId()];
+	
+	if (player != npc) //Only when the player moves
+		return;
+		
+	if (!gFollowerState.inProgress)
 		return;
 
+	struct MapObject* follower = &gEventObjects[GetFollowerMapObjId()];
+	
 	// Check if state would cause movement
 	if (CopyPlayer_StateIsMovement(state) && gFollowerState.warpEnd) 
 	{
@@ -936,7 +937,7 @@ void FollowMe(struct MapObject* npc, u8 state)
 
 	u8 newState = DetermineFollowerState(follower, state, dir);
 
-	if (new_state == MOVEMENT_INVALID)
+	if (newState == MOVEMENT_INVALID)
 		goto RESET;
 
 	EventObjectClearHeldMovementIfActive(follower);
@@ -947,12 +948,47 @@ RESET:
 	EventObjectClearHeldMovementIfFinished(follower);
 }
 
-bool8 FollowMe_CollisionExempt(struct MapObject* obstacle,struct MapObject* collider) 
+static u8 FollowMe_DetermineDirection(struct MapObject* player, struct MapObject* follower) 
 {
-	struct MapObject* follower = &gEventObjects[GetFollowerMapObjId()];
-	struct MapObject* player = &gEventObjects[GetPlayerObjId()];
+	s8 delta_x = follower->currentCoords.x - player->currentCoords.x;
+	s8 delta_y = follower->currentCoords.y - player->currentCoords.y;
 
-	if (follower == obstacle && player == collider)
+	if (delta_x < 0)
+		return DIR_EAST;
+	else if (delta_x > 0)
+		return DIR_WEST;
+
+	if (delta_y < 0)
+		return DIR_SOUTH;
+	else if (delta_y > 0)
+		return DIR_NORTH;
+
+	return DIR_NONE;
+}
+
+static void PlayerLogCoordinates(struct MapObject* player) 
+{
+	gFollowerState.log.x = player->currentCoords.x;
+	gFollowerState.log.y = player->currentCoords.y;
+}
+
+
+//static bool8 PlayerMoved(struct MapObject* player) 
+//{
+//	return gFollowerState.log.x != player->currentCoords.x 
+//		|| gFollowerState.log.y != player->currentCoords.y;
+//}
+
+
+bool8 FollowMe_CollisionExempt(struct MapObject* obstacle, struct MapObject* collider) 
+{
+	if (!gFollowerState.inProgress)
+		return FALSE;
+	
+	struct MapObject* follower = &gEventObjects[GetFollowerMapObjId()];
+	struct MapObject* player = &gEventObjects[GetPlayerMapObjId()];
+
+	if (obstacle == follower && collider == player)
 		return TRUE;
 
 	return FALSE;
@@ -963,12 +999,17 @@ bool8 FollowMe_CollisionExempt(struct MapObject* obstacle,struct MapObject* coll
 extern void (**stepspeeds[5])(struct Sprite*, u8);
 extern const u16 stepspeed_seq_length[5];
 
-void CopyPlayer_Ledges(struct MapObject* npc, struct Sprite* obj, u16* ledgeFramesTbl) {
+void CopyPlayer_Ledges(struct MapObject* npc, struct Sprite* obj, u16* ledgeFramesTbl) 
+{
 	u8 speed;
+	
+	if (!gFollowerState.inProgress)
+		return;
+	
 	struct MapObject* follower = &gEventObjects[GetFollowerMapObjId()];
 
 	if (follower == npc)
-		speed = gPlayerAvatar.running2 ? 3 : 1;
+		speed = gPlayerAvatar->runningState ? 3 : 1;
 	else
 		speed = 0;	
 
@@ -978,27 +1019,28 @@ void CopyPlayer_Ledges(struct MapObject* npc, struct Sprite* obj, u16* ledgeFram
 
 	// Call the step shifter
 	u8 currentFrame = obj->data[6] / LEDGE_FRAMES_MULTIPLIER;
-	stepspeeds[speed][current_frame](obj, obj->data[3]);
+	stepspeeds[speed][currentFrame](obj, obj->data[3]);
 }
 
-bool CopyPlayer_StateIsMovement(u8 state) 
+static bool8 CopyPlayer_StateIsMovement(u8 state) 
 {
 	return state > 3;
 }
 
 #define RETURN_STATE(state) return newState == MOVEMENT_INVALID ? state : CopyPlayer_ReturnDelayedState(direction);
 
-u8 CopyPlayer_ReturnDelayedState(u8 direction) 
+static u8 CopyPlayer_ReturnDelayedState(u8 direction) 
 {
 	u8 newState = gFollowerState.delayedState;
 	gFollowerState.delayedState = 0;
 	return newState + direction;
 }
 
-u8 DetermineFollowerState(struct MapObject* follower, u8 state, u8 direction) {
+static u8 DetermineFollowerState(struct MapObject* follower, u8 state, u8 direction)
+{
 	u8 newState = MOVEMENT_INVALID;
 
-	if (StateIsMovement(state) && gFollowerState.delayedState)
+	if (CopyPlayer_StateIsMovement(state) && gFollowerState.delayedState)
 		newState = gFollowerState.delayedState + direction;
 
 	// Clear ice tile stuff
@@ -1037,7 +1079,7 @@ u8 DetermineFollowerState(struct MapObject* follower, u8 state, u8 direction) {
 			 //Handle ice tile (some walking animation)
 			 //Set a bit to freeze the follower's animation
 			 //FIXME: Use a hook (at 08063E28) to set this bit
-			follower->field1 |= 0x4;
+			follower->disableAnim = TRUE;
 			RETURN_STATE(0x1d + direction);
 		case 0x3d:
 		case 0x3E:
@@ -1055,15 +1097,17 @@ u8 DetermineFollowerState(struct MapObject* follower, u8 state, u8 direction) {
 		case 0x42:
 		case 0x43:
 		case 0x44:
-			//
 			// Stairs (slow walking)
 			// Running sideways on stairs does not use the slow
-			// frames, so split this into two. 
-			//
+			// frames, so split this into two.
 			if (direction < 2)
+			{
 				RETURN_STATE(0x41 + direction);
+			}
 			else
+			{
 				RETURN_STATE(0x3d + direction);
+			}
 		case 0x94:
 		case 0x95:
 		case 0x96:
@@ -1082,17 +1126,17 @@ u8 DetermineFollowerState(struct MapObject* follower, u8 state, u8 direction) {
 	return newState;
 }
 
-void FollowMe_HandleBike() 
+void FollowMe_HandleBike()
 {
-	if (gPlayerAvatar.flags & 6)
+	if (gPlayerAvatar->flags & 6)
 		SetFollowerSprite(1); //Bike on
 	else
 		SetFollowerSprite(0);
 }
 
-void FollowMe_HandleSprite() 
+void FollowMe_HandleSprite()
 {
-	if (gPlayerAvatar.flags & 6)
+	if (gPlayerAvatar->flags & 6)
 		SetFollowerSprite(1);
 	else
 		SetFollowerSprite(0);
@@ -1100,6 +1144,9 @@ void FollowMe_HandleSprite()
 
 void FollowerToWater()
 {
+	if (!gFollowerState.inProgress)
+		return;
+	
 	//Make the follower do the jump and spawn the surf head
 	//right in front of the follower's location.
 	SetSurfJump(&gEventObjects[GetFollowerMapObjId()]);
@@ -1111,7 +1158,7 @@ void FollowerNoMoveSurf()
 	FollowMe_SetSurf(&gEventObjects[GetFollowerMapObjId()]);
 }
 
-void SetSurfJump(struct MapObject* npc) 
+static void SetSurfJump(struct MapObject* npc)
 {
 	//reset NPC movement bits
 	EventObjectClearHeldMovement(npc);
@@ -1124,19 +1171,19 @@ void SetSurfJump(struct MapObject* npc)
 	
 	//adjust surf head spawn location infront of npc
 	switch (direction) {
-		case 0x1:
+		case DIR_SOUTH:
 			gFieldEffectArguments[1]++; //effect_y
 			break;
 			
-		case 0x2:
+		case DIR_NORTH:
 			gFieldEffectArguments[1]--;
 			break;
 			
-		case 0x3:
+		case DIR_WEST:
 			gFieldEffectArguments[0]--; //effect_x
 			break;
 			
-		default:
+		default: //DIR_EAST
 			gFieldEffectArguments[0]++;
 	};
 
@@ -1147,7 +1194,7 @@ void SetSurfJump(struct MapObject* npc)
 	gTasks[taskId].data[0] = npc->localId;
 }
 
-void FollowMe_SetSurf(struct MapObject* npc)
+static void FollowMe_SetSurf(struct MapObject* npc)
 {
 	FollowMe_SetUpFieldEffect(npc);
 	u8 surfBlobObjId = FieldEffectStart(FLDEFF_SURF_BLOB);
@@ -1157,9 +1204,9 @@ void FollowMe_SetSurf(struct MapObject* npc)
 	gTasks[taskId].data[0] = npc->localId;
 }
 
-void Task_BindSurfBlobToFollower(u8 taskId)
+static void Task_BindSurfBlobToFollower(u8 taskId)
 {
-	struct MapObject* npc = gEventObjects[GetFollowerMapObjId()];
+	struct MapObject* npc = &gEventObjects[GetFollowerMapObjId()];
 	
 	//Wait animation
 	bool8 animStatus = EventObjectClearHeldMovementIfFinished(npc);
@@ -1167,13 +1214,13 @@ void Task_BindSurfBlobToFollower(u8 taskId)
 		return;
 	
 	//Bind objs
-	FldEff_SurfBlob(npc->fieldEffectSpriteId, 0x1);
+	BindFieldEffectToSprite(npc->fieldEffectSpriteId, 0x1);
 	UnfreezeEventObjects();
 	DestroyTask(taskId);
 	return;
 }
 
-void FollowMe_SetUpFieldEffect(struct npc_state *npc)
+static void FollowMe_SetUpFieldEffect(struct MapObject* npc)
 {
 	//Set up gFieldEffectArguments for execution
 	gFieldEffectArguments[0] = npc->currentCoords.x; 	//effect_x
@@ -1181,66 +1228,76 @@ void FollowMe_SetUpFieldEffect(struct npc_state *npc)
 	gFieldEffectArguments[2] = npc->localId; 			//npc_id
 }
 
-void SetFollowerSprite(u8 spriteIndex) 
+static void SetFollowerSprite(u8 spriteIndex)
 {
+	if (!gFollowerState.inProgress)
+		return;
+	
 	// Save sprite
 	gFollowerState.currentSprite = spriteIndex;
 	
-	struct MapObject* npc = gEventObjects[GetFollowerMapObjId()];
+	struct MapObject* follower = &gEventObjects[GetFollowerMapObjId()];
 	EventObjectSetGraphicsId(follower, GetFollowerSprite());
 
 	// Update direction to prevent graphical glitches
-	EventObjectTurn(follower, follower->direction);
+	EventObjectTurn(follower, follower->facingDirection);
 }
 
-u8 GetFollowerSprite() 
+static const u8 gCopyPlayerSpriteTable[] =
 {
-//	static const u8 sprite_table[] = { 7, 8 };
-//  return sprite_table[follower_state.current_sprite];
+	[212] = 9, //Poke Kid -> Temporary Female Surfing Sprite
+};
 
-	return gFollowerState.currentSprite;
-}
-
-u8 GetFollowerNPCId(void) 
+static u8 GetFollowerSprite()
 {
-	return gFollowerState.npcid;
+	if (gFollowerState.currentSprite == 0)
+		return gFollowerState.gfxId;
+	
+	return gCopyPlayerSpriteTable[gFollowerState.gfxId];
 }
 
-void CreateFollowerAvatar() 
+u8 GetFollowerLocalId(void)
+{
+	return gEventObjects[gFollowerState.objId].localId;
+}
+
+void CreateFollowerAvatar()
 {
 	struct EventObjectTemplate clone;
 	struct EventObjectTemplate* npc;
 
-	npc = GetEventObjectTemplateByLocalIdAndMap(1, 0, 3);
+	npc = GetEventObjectTemplateByLocalIdAndMap(1, 0, 3); //Load dummy data
 
-	// Create in-memory copy of constant data
+	//Create in-memory copy of constant data
 	Memcpy(&clone, npc, sizeof(struct EventObjectTemplate));
 
-	struct MapObject* player = gEventObjects[GetPlayerMapObjId()];
+	struct MapObject* player = &gEventObjects[GetPlayerMapObjId()];
 	clone.x = player->currentCoords.x - 7;
 	clone.y = player->currentCoords.y - 7;
+	clone.graphicsId = gFollowerState.gfxId;
+	clone.script = gFollowerState.script;
 
-	// Create NPC and store ID 
-	u8 npcid = TrySpawnEventObject(&clone, 0, 3, 0, 0);
-	gFollowerState.npcid = npcid;
+	// Create NPC and store ID
+	gFollowerState.objId = TrySpawnEventObjectTemplate(&clone, 0, 3, 0, 0);
 
-	struct MapObject* follower = gEventObjects[GetFollowerMapObjId()];
-	follower->invisible = TRUE;
+	if (gFollowerState.objId == EVENT_OBJECTS_COUNT)
+		gFollowerState.inProgress = FALSE; //Cancel the following because couldn't load sprite
 
-	gFollowerState.warpEnd = 0;
+	gEventObjects[gFollowerState.objId].invisible = TRUE;
+	//gFollowerState.warpEnd = 0;
 }
 
-void StairsMoveFollower(struct object *obj) 
+void StairsMoveFollower(struct Sprite* obj)
 {
-	struct Sprite* follower = &gSprites[gEventObjects[GetFollowerMapObjId()]->oam_id];
+	struct Sprite* follower = &gSprites[gEventObjects[GetFollowerMapObjId()].spriteId];
 	follower->pos2.x = obj->pos2.x;
 	follower->pos2.y = obj->pos2.y;
 }
 
-void FollowMe_WarpSetEnd() 
+void FollowMe_WarpSetEnd()
 {
-	struct MapObject* player = gEventObjects[GetPlayerMapObjId()];
-	struct MapObject* follower = gEventObjects[GetFollowerMapObjId()];
+	struct MapObject* player = &gEventObjects[GetPlayerMapObjId()];
+	struct MapObject* follower = &gEventObjects[GetFollowerMapObjId()];
 	
 	gFollowerState.warpEnd = 1;
 	PlayerLogCoordinates(player);
@@ -1249,20 +1306,6 @@ void FollowMe_WarpSetEnd()
 	follower->facingDirection = player->facingDirection;
 	follower->movementDirection = player->movementDirection;
 }
-
-EventObjectClearHeldMovementIfActive = 0x08063D1C | 1;
-EventObjectSetHeldMovement = 0x08063CA4 | 1;
-EventObjectClearHeldMovementIfFinished = 0x08063D7C | 1;
-TrySpawnEventObject = 0x0805E72C | 1;
-GetEventObjectTemplateByLocalIdAndMap = 0x0805FD5C|1;
-MoveEventObjectToMapCoords = 0x0805F724|1;
-EventObjectSetGraphicsId = 0x0805F060 | 1;
-EventObjectTurn = 0x0805F218 | 1;
-FieldEffectStart = 0x08083444 | 1;
-EventObjectClearHeldMovement = 0x08063D34 | 1;
-GetJumpSpecialMovementAction = 0x080641C0 | 1;
-UnfreezeEventObjects = 0x08068A5C|1;
-FldEff_SurfBlob = 0x080DC44C|1;
 */
 
 #ifdef GEN_4_PLAYER_RUNNING_FIX

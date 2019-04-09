@@ -80,13 +80,18 @@ struct Coords32 {
     s32 y;
 };
 
-extern struct gFieldEffectArguments {
+/*extern struct gFieldEffectArguments {
     struct Coords32 effect_pos;
     u32 priority;
 };
+*/
 
-u8 FieldEffectStart(u8);
+u8 __attribute__((long_call)) FieldEffectStart(u8);
+u32 __attribute__((long_call)) FldEff_SurfBlob(void);
+void __attribute__((long_call)) BindFieldEffectToSprite(u8 spriteId, u8 value);
+
+/*
 bool8 FieldEffectActiveListContains(u8 id);
 void sub_80B69DC(void);
-
+*/
 #endif //GUARD_FIELD_EFFECTS_H
