@@ -61,41 +61,11 @@ script functions/specials in asm - hooks and returns
 .global GetFadeType2
 
 @@ Dex Nav (Credit to FBI)
-.global GetAttrHiddenAbility
 .global CheckDexNavSelect
 .global PokeToolNoFade
 
 
 /*
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@ hook at 3FD58 via r5
-.align 2
-.pool
-GetAttrHiddenAbility:
-	cmp r1, #46
-	bne hook_restore
-
-ability_bit_get:
-	add r0, r0, #30
-	ldrb r0, [r0]
-	lsr r0, r0, #6
-	ldr r3, =(0x0804036A|1)
-	bx r3
-
-hook_restore:
-	mov r9, r4
-	mov r10, r4
-	mov r7, #0
-	mov r5, #0
-	cmp r1, #0xA
-	ble hop_decoder
-	ldr r2, =(0x0803FD64|1)
-	bx r2
-
-hop_decoder:
-	ldr r1, =(0x0803FDC2|1)
-	bx r1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .align 2
