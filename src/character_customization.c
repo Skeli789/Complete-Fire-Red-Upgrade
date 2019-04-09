@@ -1,5 +1,7 @@
 #include "defines.h"
-#include "helper_functions.h"
+#include "defines_battle.h"
+#include "../include/link.h"
+#include "../include/new/helper_functions.h"
 /*
 Dynamic Overworld Palettes
 	credit to Navenatox

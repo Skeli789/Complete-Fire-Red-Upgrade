@@ -1,6 +1,9 @@
 #include "defines.h"
-#include "helper_functions.h"
-#include "attackcanceler.h"
+#include "defines_battle.h"
+#include "../include/constants/flags.h"
+#include "../include/constants/items.h"
+#include "../include/new/helper_functions.h"
+#include "../include/new/attackcanceler.h"
 
 //Make sure Powder stops Inferno Overdrive
 

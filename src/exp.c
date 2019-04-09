@@ -1,5 +1,7 @@
 #include "defines.h"
-#include "helper_functions.h"
+#include "defines_battle.h"
+#include "../include/battle_string_ids.h"
+#include "../include/new/helper_functions.h"
 
 #define SE_EXP 0x1B
 #define MUS_WILD_POKE_VICTORY 0x137

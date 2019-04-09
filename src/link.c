@@ -1,5 +1,6 @@
 #include "defines.h"
-#include "helper_functions.h"
+#include "defines_battle.h"
+#include "../include/new/helper_functions.h"
 
 void EmitDataTransfer(u8 bufferId, void* dst, u16 size, void* data)
 {

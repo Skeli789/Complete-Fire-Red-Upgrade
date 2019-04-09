@@ -1,5 +1,6 @@
 #pragma once
-#include "defines.h"
+#include "../../src/defines.h"
+#include "../../src/defines_battle.h"
 
 enum
 {

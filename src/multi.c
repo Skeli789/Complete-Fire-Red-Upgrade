@@ -1,8 +1,9 @@
 #include "defines.h"
-#include "helper_functions.h"
-#include "multi.h"
+#include "defines_battle.h"
+#include "../include/new/helper_functions.h"
+#include "../include/new/multi.h"
 #include "Battle_AI/AI_Helper_Functions.h"
-#include "mega.h"
+#include "../include/new/mega.h"
 
 #define BANK_PLAYER_ALLY 2
 #define sBattler data[6]
@@ -56,7 +57,7 @@ void BattleIntroOpponent1SendsOutMonAnimation(void)
     {
         if (GetBattlerPosition(gActiveBattler) == B_POSITION_OPPONENT_LEFT)
         {
-            EmitTrainerBallThrow(0);
+            EmitIntroTrainerBallThrow(0);
             MarkBufferBankForExecution(gActiveBattler);
             if (gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_TWO_OPPONENTS))
             {
@@ -75,7 +76,7 @@ void BattleIntroOpponent2SendsOutMonAnimation(void)
     {
         if (GetBattlerPosition(gActiveBattler) == B_POSITION_OPPONENT_RIGHT)
         {
-            EmitTrainerBallThrow(0);
+            EmitIntroTrainerBallThrow(0);
             MarkBufferBankForExecution(gActiveBattler);
         }
     }
@@ -104,7 +105,7 @@ void MultiBattleAddSecondOpponent(void)
 {
     if (gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_TWO_OPPONENTS)) {
         if (GetBattlerPosition(gActiveBattler) == 3) {
-            EmitTrainerThrow(0);
+            EmitDrawTrainerPic(0);
             MarkBufferBankForExecution(gActiveBattler);
         }
     }
@@ -112,7 +113,7 @@ void MultiBattleAddSecondOpponent(void)
     /* Send command to partner in case of tag team battle */
     if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER) {
         if (GetBattlerPosition(gActiveBattler) == 2) {
-            EmitTrainerThrow(0);
+            EmitDrawTrainerPic(0);
             MarkBufferBankForExecution(gActiveBattler);
         }
     }

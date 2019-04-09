@@ -259,4 +259,15 @@ GetAttrHiddenAbility 0803FD58 5
 CheckDexNavSelect 0810AD98 1
 PokeToolNoFade 0806F3A8 3
 
-
+##Follow Me
+#FollowMe_SetStateHook 08063CF4 1
+#FollowMe_LedgeHook 08068D58 0
+#FollowMe_CollisionHook 08063928 0
+#FollowMe_SurfHook 08086B00 0
+#FollowMe_SurfBagHook 08150708 0
+#FollowMe_CreateAvatarHook1 0805CAF4 0
+#FollowMe_CreateAvatarHook2 080570EC 0
+#FollowMe_StairsMoveHook 0807EB28 1
+#FollowMe_WarpDoorEndHook 0807E1F8 0
+#FollowMe_WarpNormalEndHook 0807E308 0
+#FollowMe_WarpStairsEndHook 0807EC5A 0

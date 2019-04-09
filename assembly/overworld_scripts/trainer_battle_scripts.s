@@ -16,6 +16,17 @@ TestScript:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+.global EventScript_TrainerSpottedInitiate
+EventScript_TrainerSpottedInitiate:
+	lock
+	special SetUpTrainerEncounterMusic
+	special EndTrainerApproach
+	waitstate
+	call TrainerFaceFixScript
+	goto 0x81A4FC7
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 .global Script_TrainerSpottedMulti
 Script_TrainerSpottedMulti:
 	lock

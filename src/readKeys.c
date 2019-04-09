@@ -1,9 +1,9 @@
 #include "defines.h"
-#include "helper_functions.h"
-#include "Vanilla_Functions.h"
-/*
-emulate JPANs keypad hack
-*/
+#include "../include/script.h"
+#include "../include/new/helper_functions.h"
+#include "../include/new/Vanilla_Functions.h"
+
+//emulate JPANs keypad hack
 
 /*
 // called from AgbMain

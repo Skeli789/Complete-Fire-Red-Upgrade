@@ -1,5 +1,5 @@
 #include "defines.h"
-#include "helper_functions.h"
+#include "../include/new/helper_functions.h"
 
 u8* ItemId_GetName(u16 itemId) {
 	u8* name = gItems[SanitizeItemId(itemId)].name;

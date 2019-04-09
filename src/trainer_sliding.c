@@ -1,5 +1,6 @@
 #include "defines.h"
-#include "helper_functions.h"
+#include "defines_battle.h"
+#include "../include/new/helper_functions.h"
 
 extern const TaskFunc sBattleIntroSlideFuncs[];
 

@@ -1,5 +1,6 @@
 #include "defines.h"
-#include "dexnav.h"
+#include "../include/bg.h"
+#include "../include/new/dexnav.h"
 
 
 

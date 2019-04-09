@@ -92,6 +92,7 @@ gEventObjectImageAnim_RunNorth 083A34C4
 gEventObjectImageAnim_RunWest 083A34C8
 gEventObjectImageAnim_RunEast 083A34CC
 
+EventScript_TrainerSpottedInitiate 08080374
 TestScript 08B7AD70
 TestScript 08B7ADA0
 TestScript 087D67B0

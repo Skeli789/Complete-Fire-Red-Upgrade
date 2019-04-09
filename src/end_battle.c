@@ -1,6 +1,10 @@
 #include "defines.h"
-#include "helper_functions.h"
-#include "multi.h"
+#include "defines_battle.h"
+#include "../include/trainer_classes.h"
+#include "../include/songs.h"
+
+#include "../include/new/helper_functions.h"
+#include "../include/new/multi.h"
 
 #define BattleScript_LinkBattleWonOrLost (u8*) 0x81D88CC
 #define BattleScript_PayDayMoneyAndPickUpItems (u8*) 0x81D8803

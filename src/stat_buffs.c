@@ -1,5 +1,8 @@
 #include "defines.h"
-#include "helper_functions.h"
+#include "defines_battle.h"
+#include "../include/battle_string_ids.h"
+
+#include "../include/new/helper_functions.h"
 
 #define STAT_ANIM_PLUS1  15
 #define STAT_ANIM_PLUS2  39

@@ -3,7 +3,7 @@
 
 #include "..\\defines.h"
 #include "AI_Helper_Functions.h"
-#include "..\\Helper_Functions.h"
+#include "../../include/new/helper_functions.h"
 
 // functions
 extern u8 GetMoveTypeSpecial(bank_t, move_t);

@@ -8,6 +8,7 @@ extern struct MapCoords {
     int height;
 } gUnknown_03005DC0;
 
+/*
 u32 MapGridGetMetatileIdAt(int, int);
 u32 MapGridGetMetatileBehaviorAt(int, int);
 void MapGridSetMetatileIdAt(int, int, u16);
@@ -17,5 +18,6 @@ bool8 MapGridIsImpassableAt(s16, s16);
 s32 GetMapBorderIdAt(s16, s16);
 bool32 CanCameraMoveInDirection(u8);
 u16 GetBehaviorByMetatileId(u16 metatileId);
+*/
 
 #endif //GUARD_FIELDMAP_H

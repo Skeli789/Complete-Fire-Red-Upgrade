@@ -44,6 +44,9 @@ struct BgTemplate
 	u16 padding;
 };
 
+void __attribute__((long_call)) InitBgsFromTemplates(u8 layer, const struct BgTemplate* config, u8 layers);
+
+/*
 void ResetBgs(void);
 u8 GetBgMode(void);
 void ResetBgControlStructs(void);
@@ -93,5 +96,5 @@ bool32 IsInvalidBg32(u8 bg);
 bool32 IsTileMapOutsideWram(u8 bg);
 
 extern bool32 gWindowTileAutoAllocEnabled;
-
+*/
 #endif // GUARD_BG_H

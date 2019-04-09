@@ -3,8 +3,8 @@
 #ifdef TRAINERS_WITH_EVS
 
 #include "..\\defines.h"
-#include "..\\build_pokemon.h"
-#include "..\\catching.h"
+#include "../../include/new/build_pokemon.h"
+#include "../../include/new/catching.h"
 
 struct TrainersWithEvs gTrainersWithEvsSpreads[TRAINERS_WITH_EVS_TABLE_SIZE] =
 {

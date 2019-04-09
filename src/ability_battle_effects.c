@@ -1,5 +1,10 @@
 #include "defines.h"
-#include "helper_functions.h"
+#include "defines_battle.h"
+#include "../include/battle_string_ids.h"
+#include "../include/field_weather.h"
+#include "../include/battle_anim.h"
+#include "../include/constants/items.h"
+#include "../include/new/helper_functions.h"
 
 #define BattleScript_OverworldWeatherStarts (u8*) 0x81D8B1F
 #define BattleScript_DrizzleActivates (u8*) 0x81D927F

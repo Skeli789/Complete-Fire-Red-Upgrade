@@ -398,10 +398,10 @@ PrepareBufferDataTransfer = 0x800D8B0 | 1;
 PrepareBufferDataTransferLink = 0x800D9EC | 1;
 BtlController_EmitSetMonData = 0x800DFF0 | 1;
 EmitSetRawMonData = 0x800E030 | 1;
-EmitTrainerThrow = 0x800E0D4 | 1;
+EmitDrawTrainerPic = 0x800E0D4 | 1;
 EmitTrainerSlide = 0x800E0F4 | 1;
 EmitTrainerSlideBack = 0x800E114 | 1;
-EmitBallThrow = 0x800E194 | 1;
+EmitBallThrowAnim = 0x800E194 | 1;
 EmitMoveAnimation = 0x800E1FC | 1;
 /*EmitPrintString = 0x800E2D4 | 1;*/
 EmitChoosePokemon = 0x800E590 | 1;
@@ -411,7 +411,7 @@ EmitStatusAnimation = 0x800E6AC | 1;
 EmitDMA3Transfer = 0x800E750 | 1;
 EmitTwoReturnValues = 0x800E848 | 1;
 EmitChosenMonReturnValue = 0x800E874 | 1;
-EmitTrainerBallThrow = 0x800EA5C | 1;
+EmitIntroTrainerBallThrow = 0x800EA5C | 1;
 EmitDrawPartyStatusSummary = 0x800EA7C | 1;
 EmitSpriteInvisibility = 0x800EB04 | 1;
 EmitBattleAnimation = 0x800EB28 | 1;
@@ -711,6 +711,11 @@ GetRematchTrainerId = 0x810CE64 | 1;
 QuestLogRemtachBattleStore = 0x811231C | 1;
 IsQuestLogActive = 0x8111C2C | 1;
 
+/* Safari Zone Functions */
+GetSafariZoneFlag = 0x080A0E90 | 1;
+SetSafariZoneFlag = 0x080A0EA4 | 1;
+ResetSafariZoneFlag = 0x080A0EB4 | 1;
+
 /*Party Menu Functions*/
 sub_811FA78 = 0x811FA78 | 1;
 sub_812029C = 0x812029C | 1;
@@ -741,13 +746,11 @@ WindowOutline = 0x0810F2E8 | 1;
 RboxChoiceUpdate = 0x0810FA04 | 1;
 RboxIdClean = 0x0810F4D8 | 1;
 
-
 /* Start Menu Functions */
 CloseSafariStepsBox = 0x0806EF18 | 1;
 HideStartMenu = 0x0806FEA0 | 1;
 CloseStartMenuDescriptionBox = 0x080F7998 | 1;
 StartMenuPokedexFunc = 0x0806F410 | 1;
-
 
 /*Palette Functions*/
 BlendPalette = 0x8045274 | 1;
@@ -788,7 +791,7 @@ CalculateChecksum = 0x080DA1A8|1;
 TryWriteSector = 0x080D99D8|1;
 save_write_to_flash = 0x080D97D0|1;
 DoReadFlashWholeSection = 0x080DA190|1;
- 
+
 /*Other Functions*/
 Malloc = 0x8002B9C | 1;
 Calloc = 0x8002BB0 | 1;
@@ -892,12 +895,4 @@ MakeExclamationMark = 0x08066920 | 1;
 
 /*The Deal Breaker*/
 break_func = 0x08416304 | 1;
-
-
-/* Safari Zone Functions */
-GetSafariZoneFlag = 0x080A0E90 | 1;
-SetSafariZoneFlag = 0x080A0EA4 | 1;
-ResetSafariZoneFlag = 0x080A0EB4 | 1;
-
-
 

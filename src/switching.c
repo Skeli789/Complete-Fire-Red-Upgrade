@@ -1,5 +1,7 @@
 #include "defines.h"
-#include "helper_functions.h"
+#include "defines_battle.h"
+#include "../include/party_menu.h"
+#include "../include/new/helper_functions.h"
 
 //Do Illusion hooks
 

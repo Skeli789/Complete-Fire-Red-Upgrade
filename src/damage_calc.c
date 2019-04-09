@@ -1,7 +1,9 @@
 //Update Type Calc to have an option to be fooled by Illusion
 
 #include "defines.h"
-#include "helper_functions.h"
+#include "defines_battle.h"
+#include "../include/constants/items.h"
+#include "../include/new/helper_functions.h"
 
 extern u32 SpeedCalc(bank_t);
 extern u32 SpeedCalcForParty(u8 side, pokemon_t*);

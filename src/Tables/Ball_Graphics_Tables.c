@@ -1,5 +1,6 @@
 #include "..\\defines.h"
-#include "..\\catching.h"
+#include "../../include/new/catching.h"
+#include "../../include/constants/items.h"
 
 #define POKEBALL_COUNT NUM_BALLS
 

@@ -1,7 +1,8 @@
 #include "defines.h"
-#include "defines.h"
-#include "helper_functions.h"
-#include "catching.h"
+#include "defines_battle.h"
+#include "../include/constants/items.h"
+#include "../include/new/helper_functions.h"
+#include "../include/new/catching.h"
 
 #define gOpenPokeballGfx (u8*) 0x8D022E8
 
@@ -43,7 +44,7 @@ void atkEF_handleballthrow(void) {
     if (gBattleTypeFlags & BATTLE_TYPE_TRAINER) {
 		#ifdef CATCH_TRAINERS_POKEMON
 			if (FlagGet(CATCH_TRAINERS_POKEMON_FLAG)) {
-				EmitBallThrow(0, 4);
+				EmitBallThrowAnim(0, 4);
 				MarkBufferBankForExecution(gActiveBattler);
 				gBattlescriptCurrInstr = BattleScript_SuccessBallThrow;
 				if (ItemType != BALL_TYPE_PARK_BALL)
@@ -54,26 +55,26 @@ void atkEF_handleballthrow(void) {
 					gBattleCommunication[MULTISTRING_CHOOSER] = 1;
 			}
 			else {
-				EmitBallThrow(0, 5);
+				EmitBallThrowAnim(0, 5);
 				MarkBufferBankForExecution(gActiveBattler);
 				gBattlescriptCurrInstr = BattleScript_TrainerBallBlock;
 			}
 		
 		#else
-			EmitBallThrow(0, 5);
+			EmitBallThrowAnim(0, 5);
 			MarkBufferBankForExecution(gActiveBattler);
 			gBattlescriptCurrInstr = BattleScript_TrainerBallBlock;
 		#endif
     }
 	
 	else if ((gBattleTypeFlags & BATTLE_TYPE_GHOST) || FlagGet(NO_CATCHING_FLAG) || FlagGet(NO_CATCHING_AND_RUNNING_FLAG)) {
-		EmitBallThrow(0, 6);
+		EmitBallThrowAnim(0, 6);
 		MarkBufferBankForExecution(gActiveBattler);
 		gBattlescriptCurrInstr = BattleScript_DodgedBall;
 	}
 	
     else if (gBattleTypeFlags & (BATTLE_TYPE_OLD_MAN | BATTLE_TYPE_POKE_DUDE)) {
-        EmitBallThrow(0, 4);
+        EmitBallThrowAnim(0, 4);
         MarkBufferBankForExecution(gActiveBattler);
         gBattlescriptCurrInstr = BattleScript_TutorialThrow;
     }
@@ -292,7 +293,7 @@ void atkEF_handleballthrow(void) {
         }
 		
         if (odds >= 0xFF) { //Poke Caught
-            EmitBallThrow(0, 4);
+            EmitBallThrowAnim(0, 4);
             MarkBufferBankForExecution(gActiveBattler);
             gBattlescriptCurrInstr = BattleScript_SuccessBallThrow;
 			
@@ -322,7 +323,7 @@ void atkEF_handleballthrow(void) {
 				for (shakes = 0; shakes < maxShakes && Random() < odds; ++shakes) ;
 			}
         
-            EmitBallThrow(0, shakes);
+            EmitBallThrowAnim(0, shakes);
             MarkBufferBankForExecution(gActiveBattler);
 			
             if (shakes == maxShakes) {

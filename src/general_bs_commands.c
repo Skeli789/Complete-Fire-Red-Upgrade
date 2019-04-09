@@ -1,8 +1,13 @@
 #include "defines.h"
-#include "helper_functions.h"
-#include "pickup_items.h"
-#include "general_bs_commands.h"
-#include "attackcanceler.h"
+#include "defines_battle.h"
+#include "../include/battle_string_ids.h"
+#include "../include/battle_anim.h"
+#include "../include/constants/items.h"
+
+#include "../include/new/helper_functions.h"
+#include "../include/new/pickup_items.h"
+#include "../include/new/general_bs_commands.h"
+#include "../include/new/attackcanceler.h"
 
 #define BattleScript_Pausex20 (u8*) 0x81D89F1
 #define BattleScript_MoveMissedPause (u8*) 0x81D695E

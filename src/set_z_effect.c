@@ -1,6 +1,7 @@
 #include "defines.h"
-#include "helper_functions.h"
-#include "z_move_effects.h"
+#include "defines_battle.h"
+#include "../include/new/helper_functions.h"
+#include "../include/new/z_move_effects.h"
 
 extern u8 BattleScript_StatsResetZMove[];
 extern u8 BattleScript_AllStatsUpZMove[];
