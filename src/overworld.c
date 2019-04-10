@@ -1,9 +1,13 @@
 #include "defines.h"
-#include "../include/trainer_classes.h"
-#include "../include/constants/flags.h"
-#include "../include/songs.h"
-#include "../include/field_effect.h"
+#include "../include/battle_setup.h"
 #include "../include/event_object_movement.h"
+#include "../include/field_effect.h"
+#include "../include/metatile_behavior.h"
+#include "../include/safari_zone.h"
+#include "../include/songs.h"
+#include "../include/trainer_classes.h"
+
+#include "../include/constants/flags.h"
 #include "../include/constants/trainers.h"
 
 #include "../include/new/helper_functions.h"

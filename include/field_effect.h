@@ -87,6 +87,9 @@ struct Coords32 {
 */
 
 u8 __attribute__((long_call)) FieldEffectStart(u8);
+void __attribute__((long_call)) FieldEffectFreeGraphicsResources(struct Sprite *s);
+void __attribute__((long_call)) FieldEffectStop(struct Sprite* s, u8 animation);
+void __attribute__((long_call)) DeleteOBJ(struct Sprite *s);
 u32 __attribute__((long_call)) FldEff_SurfBlob(void);
 void __attribute__((long_call)) BindFieldEffectToSprite(u8 spriteId, u8 value);
 

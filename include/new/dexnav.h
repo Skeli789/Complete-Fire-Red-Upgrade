@@ -120,12 +120,6 @@ typedef void (*SpriteCallback)(struct Sprite* s);
 // GUI Rboxes
 #define rgb5(r, g, b) (u16)((r >> 3) | ((g >> 3) << 5) | ((b >> 3) << 10))
 
-
-struct Coords32 {
-    s32 x;
-    s32 y;
-};
-
 struct FieldEffectArguments {
     struct Coords32 effectPos;
     u32 priority;

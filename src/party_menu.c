@@ -1,5 +1,6 @@
 #include "defines.h"
 #include "../include/songs.h"
+#include "../include/party_menu.h"
 
 #include "../include/new/helper_functions.h"
 

@@ -1,5 +1,6 @@
 #include "defines.h"
 #include "../include/script.h"
+#include "../include/field_weather.h"
 #include "../include/new/helper_functions.h"
 #include "../include/new/Vanilla_Functions.h"
 
@@ -34,8 +35,8 @@ void TryForcedScript(u8 keyFlag, u16 currKeys) {
 		return;
 	if ((gKeypadSetter->keyToRunScript & currKeys))
 		return;
-	script_env_2_enable();
-	script_run((void*) gKeypadSetter->scriptToRun);
+	ScriptContext2_Enable();
+	ScriptContext1_SetupScript((void*) gKeypadSetter->scriptToRun);
 	return;
 };
 

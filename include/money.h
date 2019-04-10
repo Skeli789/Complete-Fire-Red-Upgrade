@@ -1,12 +1,13 @@
-#ifndef GUARD_MONEY_H
-#define GUARD_MONEY_H
+#pragma once
 
 #include "global.h"
 
+void __attribute__((long_call)) AddMoney(u32* moneySaveblock, u32 to_give);
+
+/*
 u32 GetMoney(u32* moneyPtr);
 void SetMoney(u32* moneyPtr, u32 newValue);
 bool8 IsEnoughMoney(u32* moneyPtr, u32 cost);
-void AddMoney(u32* moneyPtr, u32 toAdd);
 void RemoveMoney(u32* moneyPtr, u32 toSub);
 bool8 IsEnoughForCostInVar0x8005(void);
 void SubtractMoneyFromVar0x8005(void);
@@ -18,5 +19,4 @@ void DrawMoneyBox(int amount, u8 x, u8 y);
 void HideMoneyBox(void);
 void AddMoneyLabelObject(u16 x, u16 y);
 void RemoveMoneyLabelObject(void);
-
-#endif // GUARD_MONEY_H
+*/

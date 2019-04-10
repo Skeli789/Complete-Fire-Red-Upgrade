@@ -1,14 +1,22 @@
 #include "defines.h"
 #include "../include/bg.h"
-#include "../include/new/dexnav.h"
+#include "../include/event_data.h"
+#include "../include/fieldmap.h"
+#include "../include/field_effect.h"
+#include "../include/gba/io_reg.h"
+#include "../include/palette.h"
+#include "../include/pokemon_icon.h"
+#include "../include/songs.h"
+#include "../include/wild_encounter.h"
+#include "../include/window.h"
 #include "../include/constants/moves.h"
 #include "../include/constants/species.h"
 #include "../include/constants/items.h"
+
 #include "../include/new/build_pokemon.h"
-#include "../include/songs.h"
-#include "../include/wild_encounter.h"
-#include "../include/palette.h"
-#include "../include/gba/io_reg.h"
+#include "../include/new/dexnav.h"
+
+
 /*
 Simplified DexNav System
 	credits to FBI: https://github.com/EternalCode/Dexnav
@@ -373,18 +381,18 @@ u8 ShakingGrass(u8 environment, u8 xSize, u8 ySize, bool8 smallScan)
             case 0:
                 {
 					if (!CheckOpenSky(gMapHeader.mapType))
-						ExecOE(OEI_CAVE);
+						FieldEffectStart(OEI_CAVE);
 					else
-						ExecOE(OEI_GRASS);
+						FieldEffectStart(OEI_GRASS);
 					break;
                 }
             case 1:
-                ExecOE(OEI_WATER);
+                FieldEffectStart(OEI_WATER);
                 break;
             default:
-                ExecOE(0x31);
+                FieldEffectStart(0x31);
                 break;
-        };//ExecOE(*d); //16 water, 13 grass
+        };//FieldEffectStart(*d); //16 water, 13 grass
 
         // get objid of shaking grass
         u8 i;
@@ -451,37 +459,37 @@ void DexNavFreeHUD(void)
 	{
         case 0:
             if (!CheckOpenSky(gMapHeader.mapType))
-                StopOE(&gSprites[(*DNavState)->objIdShakingGrass], 0x1A); //cave
+                FieldEffectStop(&gSprites[(*DNavState)->objIdShakingGrass], 0x1A); //cave
 			else 
-                StopOE(&gSprites[(*DNavState)->objIdShakingGrass], 0x13);
+                FieldEffectStop(&gSprites[(*DNavState)->objIdShakingGrass], 0x13);
             break;
         case 1:
-            StopOE(&gSprites[(*DNavState)->objIdShakingGrass], 0x13);
+            FieldEffectStop(&gSprites[(*DNavState)->objIdShakingGrass], 0x13);
             break;
     };
-    FreeOBJ(&gSprites[(*DNavState)->objIdSpecies]);
-    DeleteOBJ(&gSprites[(*DNavState)->objIdSpecies]);
+    FieldEffectFreeGraphicsResources(&gSprites[(*DNavState)->objIdSpecies]);
+    ResetSprite(&gSprites[(*DNavState)->objIdSpecies]);
 
-    FreeOBJ(&gSprites[(*DNavState)->objIdSight]);
-    DeleteOBJ(&gSprites[(*DNavState)->objIdSight]);
+    FieldEffectFreeGraphicsResources(&gSprites[(*DNavState)->objIdSight]);
+    ResetSprite(&gSprites[(*DNavState)->objIdSight]);
 
-    FreeOBJ(&gSprites[(*DNavState)->objIdAbility]);
-    DeleteOBJ(&gSprites[(*DNavState)->objIdAbility]);
+    FieldEffectFreeGraphicsResources(&gSprites[(*DNavState)->objIdAbility]);
+    ResetSprite(&gSprites[(*DNavState)->objIdAbility]);
 
-    FreeOBJ(&gSprites[(*DNavState)->objIdMove]);
-    DeleteOBJ(&gSprites[(*DNavState)->objIdMove]);
+    FieldEffectFreeGraphicsResources(&gSprites[(*DNavState)->objIdMove]);
+    ResetSprite(&gSprites[(*DNavState)->objIdMove]);
 
-    FreeOBJ(&gSprites[(*DNavState)->objIdItem]);
-    DeleteOBJ(&gSprites[(*DNavState)->objIdItem]);
+    FieldEffectFreeGraphicsResources(&gSprites[(*DNavState)->objIdItem]);
+    ResetSprite(&gSprites[(*DNavState)->objIdItem]);
 
-    FreeOBJ(&gSprites[(*DNavState)->objIdPotential[0]]);
-    DeleteOBJ(&gSprites[(*DNavState)->objIdPotential[0]]);
+    FieldEffectFreeGraphicsResources(&gSprites[(*DNavState)->objIdPotential[0]]);
+    ResetSprite(&gSprites[(*DNavState)->objIdPotential[0]]);
 
-    FreeOBJ(&gSprites[(*DNavState)->objIdPotential[1]]);
-    DeleteOBJ(&gSprites[(*DNavState)->objIdPotential[1]]);
+    FieldEffectFreeGraphicsResources(&gSprites[(*DNavState)->objIdPotential[1]]);
+    ResetSprite(&gSprites[(*DNavState)->objIdPotential[1]]);
 
-    FreeOBJ(&gSprites[(*DNavState)->objIdPotential[2]]);
-    DeleteOBJ(&gSprites[(*DNavState)->objIdPotential[2]]);
+    FieldEffectFreeGraphicsResources(&gSprites[(*DNavState)->objIdPotential[2]]);
+    ResetSprite(&gSprites[(*DNavState)->objIdPotential[2]]);
 
     FreeSpriteTilesByTag(0x4736);
     FreeSpriteTilesByTag(0x61);
@@ -813,10 +821,10 @@ void DexNavManageHUD(u8 taskId)
         switch((*DNavState)->environment)
 		{
             case 0:
-                StopOE(&gSprites[(*DNavState)->objIdShakingGrass], 0x1A); // 1a
+                FieldEffectStop(&gSprites[(*DNavState)->objIdShakingGrass], 0x1A); // 1a
                 break;
             case 1:
-                StopOE(&gSprites[(*DNavState)->objIdShakingGrass], 0x16);
+                FieldEffectStop(&gSprites[(*DNavState)->objIdShakingGrass], 0x16);
                 break;
             default:
                 break;
@@ -846,7 +854,7 @@ void DexNavManageHUD(u8 taskId)
 
         // exclamation point animation over the player
         MakeExclamationMark(gEventObjects, &gSprites[gPlayerAvatar->spriteId]);
-        ExecOE(0x0);
+        FieldEffectStart(0x0);
 
         // do battle
         DoStandardWildBattle();

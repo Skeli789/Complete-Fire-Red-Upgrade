@@ -1,13 +1,14 @@
 #pragma once
 
 #include "../include/battle.h"
-#include "../include/battle_message.h"
-#include "../include/pokemon.h"
-#include "../include/pokemon_data_request.h"
 #include "../include/battle_controllers.h"
 #include "../include/battle_interface.h"
+#include "../include/battle_message.h"
 #include "../include/battle_setup.h"
 #include "../include/data2.h"
+#include "../include/pokemon.h"
+#include "../include/pokemon_data_request.h"
+
 #include "../include/constants/pokemon.h"
 #include "../include/constants/species.h"
 #include "../include/constants/abilities.h"
@@ -16,6 +17,7 @@
 #include "../include/constants/battle_move_effects.h"
 
 #include "../include/new/ram_locs_battle.h"
+#include "../include/new/Vanilla_functions_battle.h"
 
 #define SIDE(bank) GetBattlerSide(bank)
 #define PARTNER(bank) (bank ^ BIT_FLANK)

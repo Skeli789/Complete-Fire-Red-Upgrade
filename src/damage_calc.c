@@ -2,6 +2,7 @@
 
 #include "defines.h"
 #include "defines_battle.h"
+#include "../include/event_data.h"
 #include "../include/constants/items.h"
 #include "../include/new/helper_functions.h"
 

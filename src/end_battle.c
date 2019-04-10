@@ -1,5 +1,6 @@
 #include "defines.h"
 #include "defines_battle.h"
+#include "../include/event_data.h"
 #include "../include/trainer_classes.h"
 #include "../include/songs.h"
 

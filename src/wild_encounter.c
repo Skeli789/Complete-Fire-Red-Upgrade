@@ -1,9 +1,12 @@
 #include "defines.h"
-#include "../include/constants/flags.h"
-#include "../include/wild_encounter.h"
+#include "../include/event_object_movement.h"
+#include "../include/fieldmap.h"
 #include "../include/field_weather.h"
-#include "../include/constants/vars.h"
+#include "../include/wild_encounter.h"
+
+#include "../include/constants/flags.h"
 #include "../include/constants/maps.h"
+#include "../include/constants/vars.h"
 
 #include "../include/new/helper_functions.h"
 

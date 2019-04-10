@@ -52,7 +52,7 @@ struct Pedometers {
 
 //gBitTable;
 
-/*u8*/  #define gDecompressionBuffer 	 ((u8*) 0x201C000)
+/*u8*/  //#define gDecompressionBuffer 	 ((u8*) 0x201C000)
 /*u32*/ #define gTrainerId 				*((u32*) 0x2020000)
 
 		#define gWindows ((struct Window*) 0x20204B4)
@@ -72,11 +72,6 @@ struct Pedometers {
 /*u8*/  #define gUnknown_2024005 ((u8*) 0x2024005) //Length 0x3
 /*u8*/  #define gUnknown_2024008 ((u8*) 0x2024008) //Length 0x10
 
-		#define gBattleSpritesDataPtr ((struct BattleSpriteData*) *((u32*) 0x2024018))
-/*u8*/  #define gMonSpritesGfxPtr ((struct BattleSpriteData*) *((u32*) 0x2024018))
-/*u16*/ #define gBattleMovePower *((u16*) 0x2024020)
-/*u16*/ #define gMoveToLearn *((u16*) 0x2024022)
-/*u8*/  #define gBattleMonForms ((u8*) 0x2024024)
 /*u8*/  #define sLearningMoveTableID *((u8*) 0x2024028)
 /*u8*/  #define gPlayerPartyCount *((u8*) 0x2024029)
 /*u8*/  #define gEnemyPartyCount *((u8*) 0x202402A)
@@ -88,7 +83,7 @@ struct Pedometers {
 		
 /*u8*/	#define FishingByte *((u8*) 0x2036E38)
 		#define gEventObjects ((struct MapObject*) 0x2036E38)
-		
+/*		
 		#define Var8000 (*((u16*) 0x20370B8))
 		#define Var8001 (*((u16*) 0x20370BA))
 		#define Var8002 (*((u16*) 0x20370BC))
@@ -100,11 +95,14 @@ struct Pedometers {
 		#define Var8008 (*((u16*) 0x20370C8))
 		#define Var800D (*((u16*) 0x20370D0))
 		#define Var8010 (*((u16*) 0X20370D6))
-		
-/*u16*/ #define gSpecialVar_LastResult (*((u16*) 0x20370D0))
-/*u16*/ #define gSpecialVar_LastTalked (*((u16*) 0x20370D2))
-/*u16*/ #define gSpecialVar_MonBoxId (*((u16*) 0x20370D6))
-/*u16*/ #define gSpecialVar_MonBoxPos (*((u16*) 0x20370D8))
+
+
+#define gSpecialVar_LastResult (*((u16*) 0x20370D0))
+#define gSpecialVar_LastTalked (*((u16*) 0x20370D2))
+#define gSpecialVar_MonBoxId (*((u16*) 0x20370D6))
+#define gSpecialVar_MonBoxPos (*((u16*) 0x20370D8))
+*/
+
 /*u8*/  #define gPlttBufferUnfaded ((u16*) 0x20371F8)
 /*u8*/  #define gPlttBufferUnfaded2 ((u16*) 0x20373F8)
 /*u8*/  #define gPlttBufferFaded ((u16*) 0x20375F8)
@@ -129,7 +127,7 @@ struct Pedometers {
 		//#define gStringInfo ((struct BattleMsgData*) *((u32*) 0x2039A34))
 
 /*u8*/	#define QuestLogMode (*((u8*) 0x203ADFA))
-		#define gPartyMenuView ((struct PartyMenuViewing*) 0x203B09C)
+		//#define gPartyMenuView ((struct PartyMenuViewing*) 0x203B09C)
 		#define gSelectedOrderFromParty ((u8*) 0x203B0D4)
 /*u8*/  #define gUnknown_0203B0DC ((u8*) 0x203B0DC)
 
@@ -152,7 +150,7 @@ struct Pedometers {
 		#define gMultiUsePlayerCursor (*((u8*) 0x3004FF4))
 		#define gNumberOfMovesToChoose (*((u8*) 0x3004FF8))
 /*u8*/  #define gSelectedEventObject (*((u8*) 0x3005074))
-		#define gTasks ((struct Task*) 0x3005090) //struct Task gTasks[ACTIVE_SENTINEL];
+		//#define gTasks ((struct Task*) 0x3005090) //struct Task gTasks[ACTIVE_SENTINEL];
 		
 		#define gCurrentMapName *((u8*) 0x3005558)
 		

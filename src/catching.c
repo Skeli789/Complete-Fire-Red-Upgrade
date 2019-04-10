@@ -1,5 +1,6 @@
 #include "defines.h"
 #include "defines_battle.h"
+#include "../include/event_data.h"
 #include "../include/constants/items.h"
 #include "../include/new/helper_functions.h"
 #include "../include/new/catching.h"
@@ -13,6 +14,7 @@ extern const struct CompressedSpritePalette gBallSpritePalettes[];
 extern u8 gText_CantAimAtTwoTargets[];
 extern u8 gText_CantAimAtSemiInvulnerableTarget[];
 
+//This file's functions:
 void atkEF_handleballthrow(void);
 u8 GetCatchingBattler(void);
 bool8 CriticalCapture(u32 odds);
@@ -394,7 +396,7 @@ u8 GiveMonToPlayer(pokemon_t* mon) { //Hook in
 
     SetMonData(mon, MON_DATA_OT_NAME, gSaveBlock2->playerName);
     SetMonData(mon, MON_DATA_OT_GENDER, &gSaveBlock2->playerGender);
-    SetMonData(mon, MON_DATA_OT_ID, gSaveBlock2->playerTrainerId);
+    SetMonData(mon, MON_DATA_OT_ID, &gSaveBlock2->playerTrainerId);
 	
 	if (ItemId_GetType(gLastUsedItem) == BALL_TYPE_HEAL_BALL)
 		HealMon(mon);

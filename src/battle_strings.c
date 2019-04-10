@@ -1,10 +1,12 @@
 #include "defines.h"
 #include "defines_battle.h"
+
+#include "../include/battle_string_ids.h"
+#include "../include/link.h"
+#include "../include/string_util.h"
+#include "../include/text.h"
 #include "../include/constants/flags.h"
 #include "../include/constants/trainers.h"
-#include "../include/battle_string_ids.h"
-#include "../include/string_util.h"
-#include "../include/link.h"
 
 #include "../include/new/helper_functions.h"
 #include "../include/new/battle_strings.h"

@@ -4,6 +4,17 @@
 
 #define POKEBALL_COUNT NUM_BALLS
 
+void __attribute__((long_call)) SpriteCB_TestBallThrow(struct Sprite *sprite);
+void __attribute__((long_call)) PokeBallOpenParticleAnimation(u8 taskId);
+void __attribute__((long_call)) GreatBallOpenParticleAnimation(u8 taskId);
+void __attribute__((long_call)) SafariBallOpenParticleAnimation(u8 taskId);
+void __attribute__((long_call)) UltraBallOpenParticleAnimation(u8 taskId);
+void __attribute__((long_call)) MasterBallOpenParticleAnimation(u8 taskId);
+void __attribute__((long_call)) DiveBallOpenParticleAnimation(u8 taskId);
+void __attribute__((long_call)) RepeatBallOpenParticleAnimation(u8 taskId);
+void __attribute__((long_call)) TimerBallOpenParticleAnimation(u8 taskId);
+void __attribute__((long_call)) PremierBallOpenParticleAnimation(u8 taskId);
+
 #define gInterfaceGfx_PokeBall (const u8*) 0x8D01724
 #define gInterfaceGfx_GreatBall (const u8*) 0x8D01800
 #define gInterfaceGfx_SafariBall (const u8*) 0x8D018E0
