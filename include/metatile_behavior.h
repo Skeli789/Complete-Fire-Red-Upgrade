@@ -1,15 +1,21 @@
-#ifndef GUARD_METATILE_BEHAVIOR
-#define GUARD_METATILE_BEHAVIOR
+#pragma once
 
 #include "global.h"
 
+bool8 __attribute__((long_call)) MetatileBehavior_IsSandOrDeepSand(u8 metatileBehavior);
+bool8 __attribute__((long_call)) MetatileBehavior_IsSurfableWaterOrUnderwater(u8 metatileBehavior);
+bool8 __attribute__((long_call)) MetatileBehavior_IsTallGrass(u8 metatileBehavior);
+bool8 __attribute__((long_call)) MetatileBehavior_IsLongGrass(u8 metatileBehavior);
+bool8 __attribute__((long_call)) MetatileBehavior_IsIndoorEncounter(u8 metatileBehavior);
+bool8 __attribute__((long_call)) MetatileBehavior_IsMountain(u8 metatileBehavior);
+bool8 __attribute__((long_call)) MetatileBehavior_IsDeepOrOceanWater(u8 metatileBehavior);
+
+/*
 bool8 MetatileBehavior_UnusedReturnTrue(u8 metatileBehavior);
 bool8 MetatileBehavior_IsJumpEast(u8 metatileBehavior);
 bool8 MetatileBehavior_IsJumpWest(u8 metatileBehavior);
 bool8 MetatileBehavior_IsJumpNorth(u8 metatileBehavior);
 bool8 MetatileBehavior_IsJumpSouth(u8 metatileBehavior);
-bool8 MetatileBehavior_IsTallGrass(u8 metatileBehavior);
-bool8 MetatileBehavior_IsMB21OrSand(u8 metatileBehavior);
 bool8 MetatileBehavior_IsMB21OrWaterfallBottom(u8 metatileBehavior);
 bool8 MetatileBehavior_ReturnFalse(u8 metatileBehavior);
 bool8 MetatileBehavior_IsReflective(u8 metatileBehavior);
@@ -25,8 +31,6 @@ bool8 MetatileBehavior_IsUnknownWarp6C_to_6F(u8 metatileBehavior);
 bool8 MetatileBehavior_IsLadder(u8 metatileBehavior);
 bool8 MetatileBehavior_IsCaveDoor(u8 metatileBehavior);
 bool8 MetatileBehavior_ReturnFalse_2(u8 metatileBehavior);
-bool8 MetatileBehavior_IsSurfable(u8 metatileBehavior);
-bool8 MetatileBehavior_IsSemiDeepWater(u8 metatileBehavior);
 bool8 MetatileBehavior_IsEastArrowWarp(u8 metatileBehavior);
 bool8 MetatileBehavior_IsWestArrowWarp(u8 metatileBehavior);
 bool8 MetatileBehavior_IsNorthArrowWarp(u8 metatileBehavior);
@@ -52,7 +56,6 @@ bool8 MetatileBehavior_IsPlayerFacingTVScreen(u8 tile, u8 playerDirection);
 bool8 MetatileBehavior_IsPC(u8 metatileBehavior);
 bool8 MetatileBehavior_IsPondWaterOrPuddle(u8 metatileBehavior);
 bool8 MetatileBehavior_IsPuddle(u8 metatileBehavior);
-bool8 MetatileBehavior_IsTallGrass_2(u8 metatileBehavior);
 bool8 MetatileBehavior_ReturnFalse_3(u8 metatileBehavior);
 bool8 MetatileBehavior_ReturnFalse_4(u8 metatileBehavior);
 bool8 MetatileBehavior_ReturnFalse_5(u8 metatileBehavior);
@@ -152,5 +155,4 @@ bool8 MetatileBehavior_IsVideoGame(u8 metatileBehavior);
 bool8 MetatileBehavior_IsBurglary(u8 metatileBehavior);
 bool8 MetatileBehavior_IsMBA3(u8 metatileBehavior);
 extern u8 gUnknown_8353068[];
-
-#endif // GUARD_METATILE_BEHAVIOR
+*/

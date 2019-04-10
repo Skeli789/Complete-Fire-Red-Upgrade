@@ -1,5 +1,4 @@
-#ifndef GUARD_CONSTANTS_FLAGS_H
-#define GUARD_CONSTANTS_FLAGS_H
+#pragma once
 
 // TODO: Get correct names and numbers
 
@@ -1589,5 +1588,3 @@
 #define FLAG_SPECIAL_FLAG_0x4002    0x4002
 #define FLAG_SPECIAL_FLAG_0x4003    0x4003
 #define FLAG_SPECIAL_FLAG_0x4004    0x4004
-
-#endif // GUARD_CONSTANTS_FLAGS_H

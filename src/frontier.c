@@ -1,5 +1,6 @@
 #include "defines.h"
 #include "defines_battle.h"
+#include "../include/event_data.h"
 #include "../include/new/helper_functions.h"
 #include "../include/new/frontier.h"
 

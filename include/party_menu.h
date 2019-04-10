@@ -21,6 +21,10 @@ enum
     PARTY_GIVE_ITEM,
 };
 
+void __attribute__((long_call)) sub_811FA78(u8 taskId);
+s8 __attribute__((long_call)) sub_812029C(s8 a, s8 b);
+void __attribute__((long_call)) sub_8122D78(void);
+
 /*
 bool8 pokemon_has_move(struct Pokemon *, u16);
 void sub_81B58A8(void);

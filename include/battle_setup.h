@@ -15,10 +15,29 @@
 #define TRAINER_BATTLE_TAG								10
 #define TRAINER_BATTLE_TWO_OPPONENTS					11
 
+struct TrainerBattleParameter
+{
+    void* varPtr;
+    u8 ptrType;
+};
 
+//void __attribute__((long_call)) InitTrainerBattleVariables(void);
+void __attribute__((long_call)) TrainerBattleLoadArgs(const struct TrainerBattleParameter* specs, const u8 *data);
+u16 __attribute__((long_call)) TrainerBattleLoadArg16(const u8 *ptr);
+u8 __attribute__((long_call)) TrainerBattleLoadArg8(const u8 *ptr);
+void __attribute__((long_call)) SetMapVarsToTrainer(void);
+//u8* __attribute__((long_call)) BattleSetup_ConfigureTrainerBattle(u8 *data);
+void __attribute__((long_call)) TrainerWantsBattle(u8 trainerEventObjId, const u8 *trainerScript);
+//u32 __attribute__((long_call)) GetTrainerFlagFromScriptPointer(const u8 *data);
+void __attribute__((long_call)) CB2_EndTrainerBattle(void);
+bool8 __attribute__((long_call)) TrainerCanApproachPlayer(struct MapObject* trainerObj);
+void __attribute__((long_call)) TrainerApproachPlayer(struct MapObject* trainerObj, u8 range);
+u16 __attribute__((long_call)) GetRematchTrainerId(u16 opponentId);
+
+/*
 void __attribute__((long_call)) BattleSetup_StartScriptedWildBattle(void);
 u8 __attribute__((long_call)) BattleSetup_GetTerrainId(void);
-u8 __attribute__((long_call)) *BattleSetup_ConfigureTrainerBattle(const u8 *data);
+u8* __attribute__((long_call)) BattleSetup_ConfigureTrainerBattle(const u8 *data);
 void __attribute__((long_call)) BattleSetup_StartBattlePikeWildBattle(void);
 void __attribute__((long_call)) BattleSetup_StartWildBattle(void);
 void __attribute__((long_call)) BattleSetup_StartRoamerBattle(void);
@@ -27,7 +46,7 @@ u8 __attribute__((long_call)) HasTrainerAlreadyBeenFought(u16);
 void __attribute__((long_call)) trainer_flag_set(u16);
 void __attribute__((long_call)) trainer_flag_clear(u16);
 void __attribute__((long_call)) BattleSetup_StartTrainerBattle(void);
-u8 __attribute__((long_call)) *BattleSetup_GetScriptAddrAfterBattle(void);
-u8 __attribute__((long_call)) *BattleSetup_GetTrainerPostBattleScript(void);
+u8* __attribute__((long_call)) BattleSetup_GetScriptAddrAfterBattle(void);
+u8* __attribute__((long_call)) BattleSetup_GetTrainerPostBattleScript(void);
 void __attribute__((long_call)) sub_80803FC(void);
-
+*/

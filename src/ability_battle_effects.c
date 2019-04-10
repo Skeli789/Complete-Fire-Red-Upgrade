@@ -3,6 +3,7 @@
 #include "../include/battle_string_ids.h"
 #include "../include/field_weather.h"
 #include "../include/battle_anim.h"
+#include "../include/window.h"
 #include "../include/constants/items.h"
 #include "../include/new/helper_functions.h"
 

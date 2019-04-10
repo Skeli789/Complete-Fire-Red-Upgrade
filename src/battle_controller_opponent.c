@@ -1,8 +1,10 @@
 #include "defines.h"
 #include "defines_battle.h"
+#include "Battle_AI/AI_Helper_Functions.h"
+
+#include "../include/event_data.h"
 #include "../include/new/helper_functions.h"
 #include "../include/new/mega.h"
-#include "Battle_AI/AI_Helper_Functions.h"
 
 #define AI_CHOICE_FLEE 4
 #define AI_CHOICE_WATCH 5

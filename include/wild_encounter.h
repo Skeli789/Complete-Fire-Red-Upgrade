@@ -1,5 +1,4 @@
-#ifndef GUARD_WILD_ENCOUNTER_H
-#define GUARD_WILD_ENCOUNTER_H
+#pragma once
 
 #include "global.h"
 
@@ -32,7 +31,7 @@ struct WildPokemonHeader
     const struct WildPokemonInfo *fishingMonsInfo;
 };
 
-//extern const struct WildPokemonHeader gWildMonHeaders[];
+#define gWildMonHeaders ((struct WildPokemonHeader*) *((u32*) 0x8082990))
 
 struct SwarmData
 {
@@ -40,17 +39,15 @@ struct SwarmData
 	u16 species;
 };
 
-/*
-void DisableWildEncounters(bool8 disabled);
-bool8 StandardWildEncounter(u16 currMetaTileBehavior, u16 previousMetaTileBehavior);
-void ScrSpecial_RockSmashWildEncounter(void);
-bool8 SweetScentWildEncounter(void);
-bool8 DoesCurrentMapHaveFishingMons(void);
-void FishingWildEncounter(u8 rod);
-u16 GetLocalWildMon(bool8 *isWaterMon);
-u16 GetLocalWaterMon(void);
-bool8 UpdateRepelCounter(void);
-void sub_8082740(u8);
-*/
-
-#endif // GUARD_WILD_ENCOUNTER_H
+u8 __attribute__((long_call)) ChooseWildMonIndex_Land(void);
+u8 __attribute__((long_call)) ChooseWildMonIndex_WaterRock(void);
+u8 __attribute__((long_call)) ChooseWildMonIndex_Fishing(u8 rod);
+bool8 __attribute__((long_call)) CanEncounterUnownInTanobyRuins(void);
+u32 __attribute__((long_call)) GenerateUnownPersonality(u8 letter);
+//bool8 __attribute__((long_call)) DoWildEncounterRateDiceRoll(u16 encounterRate);
+bool8 __attribute__((long_call)) DoGlobalWildEncounterDiceRoll(void);
+bool8 __attribute__((long_call)) IsWildLevelAllowedByRepel(u8 level);
+void __attribute__((long_call)) ApplyFluteEncounterRateMod(u32 *encRate);
+void __attribute__((long_call)) ApplyCleanseTagEncounterRateMod(u32 *encRate);
+void __attribute__((long_call)) IncrementEncounterProbabilityBonus(u8 encounterRate);
+bool8 __attribute__((long_call)) TryStartRoamerEncounter(void);

@@ -1,6 +1,7 @@
 #include "defines.h"
 #include "defines_battle.h"
 #include "../include/battle_anim.h"
+#include "../include/event_data.h"
 #include "../include/new/helper_functions.h"
 
 extern const struct CompressedSpriteSheet gBattleAnimPicTable[];

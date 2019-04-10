@@ -3,18 +3,19 @@
 #include "config.h"
 
 #include "../include/global.h"
-#include "../include/battle.h"
 #include "../include/pokedex.h"
 
 #include "../include/item.h"
 #include "../include/task.h"
 #include "../include/sprite.h"
-#include "../include/gba/m4a_internal.h"
-#include "../include/window.h"
+#include "../include/decompress.h"
+#include "../include/palette.h"
 
 #include "../include/new/ram_locs.h"
 #include "../include/new/rom_locs.h"
 #include "../include/new/Vanilla_functions.h"
+
+#include "../include/event_data.h"
 
 #define IS_EVEN(val) (umodsi(val, 2) == 0)
 #define IS_ODD(val) (umodsi(val, 2) != 0)

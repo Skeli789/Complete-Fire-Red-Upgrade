@@ -1,5 +1,4 @@
-#ifndef GUARD_SAVE_H
-#define GUARD_SAVE_H
+#pragma once
 
 #include "global.h"
 
@@ -88,14 +87,20 @@ extern void (*gGameContinueCallback)(void);
 extern u16 gUnknown_3005420;
 
 extern struct SaveSection gSaveDataBuffer;
+
+void __attribute__((long_call)) SaveSerializedGame(void);
+void __attribute__((long_call)) UpdateSaveAddresses(void);
+u16 __attribute__((long_call)) CalculateChecksum(void* data, u16 size);
+u8 __attribute__((long_call)) TryWriteSector(u8 sector, u8 *data);
+u8 __attribute__((long_call)) save_write_to_flash(u16 chunkId, const struct SaveBlockChunk *chunks);
+u8 __attribute__((long_call)) DoReadFlashWholeSection(u8 sector, struct SaveSection *section);
+
 /*
 void ClearSaveData(void);
 void Save_ResetSaveCounters(void);
 bool32 SetSectorDamagedStatus(u8 op, u8 bit);
-u8 save_write_to_flash(u16 a1, const struct SaveBlockChunk *location);
 u8 HandleWriteSector(u16 a1, const struct SaveBlockChunk *location);
 u8 HandleWriteSectorNBytes(u8 sector, u8 *data, u16 size);
-u8 TryWriteSector(u8 sector, u8 *data);
 u32 RestoreSaveBackupVarsAndIncrement(const struct SaveBlockChunk *location);
 u32 RestoreSaveBackupVars(const struct SaveBlockChunk *location);
 u8 sub_80D9AA4(u16 a1, const struct SaveBlockChunk *location);
@@ -107,9 +112,6 @@ u8 sub_80D9E14(u16 a1, const struct SaveBlockChunk *location);
 u8 sub_80D9E54(u16 a1, const struct SaveBlockChunk *location);
 u8 GetSaveValidStatus(const struct SaveBlockChunk *location);
 u8 sub_80DA120(u8 a1, u8 *data, u16 size);
-u8 DoReadFlashWholeSection(u8 sector, struct SaveSection *section);
-u16 CalculateChecksum(void *data, u16 size);
-void UpdateSaveAddresses(void);
 u8 HandleSavingData(u8 saveType);
 u8 TrySavingData(u8 saveType);
 u8 sub_80DA3AC(void);
@@ -125,5 +127,3 @@ void sub_8153688(u8 taskId);
 u32 sub_80DA5E0(u8 sector, u8* src);
 void sub_80DA634(u8 taskId);
 */
-
-#endif // GUARD_SAVE_H

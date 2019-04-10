@@ -1,15 +1,18 @@
-#ifndef GUARD_DECOMPRESS_H
-#define GUARD_DECOMPRESS_H
+#pragma once
 
 #include "global.h"
 
 #include "sprite.h"
 
-extern u8 gDecompressionBuffer[0x4000];
+#define gDecompressionBuffer 	 ((u8*) 0x201C000) //extern u8 gDecompressionBuffer[0x4000];
 
-void LZDecompressWram(const void *src, void *dest);
-void LZDecompressVram(const void *src, void *dest);
+void __attribute__((long_call)) LZDecompressVram(const void *src, void *dest);
+void __attribute__((long_call)) LZ77UnCompWram(const void *src, void *dest);
+void __attribute__((long_call)) LZ77UnCompVram(const void *src, void *dest);
+bool8 __attribute__((long_call)) LoadCompressedSpriteSheetUsingHeap(const struct CompressedSpriteSheet* src);
+bool8 __attribute__((long_call)) LoadCompressedSpritePaletteUsingHeap(const struct CompressedSpritePalette *src);
 
+/*
 u16 LoadCompressedObjectPic(const struct CompressedSpriteSheet *src);
 void LoadCompressedObjectPicOverrideBuffer(const struct CompressedSpriteSheet *src, void *buffer);
 bool8 LoadCompressedObjectPicUsingHeap(const struct CompressedSpriteSheet* src);
@@ -31,5 +34,4 @@ void LoadSpecialPokePic_2(const struct CompressedSpriteSheet *src, void *dest, s
 void LoadSpecialPokePic_DontHandleDeoxys(const struct CompressedSpriteSheet *src, void *dest, s32 species, u32 personality, bool8 isFrontPic);
 
 u32 sub_8034974(const u8 *ptr);
-
-#endif // GUARD_DECOMPRESS_H
+*/

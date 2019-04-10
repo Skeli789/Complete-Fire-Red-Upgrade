@@ -1,8 +1,11 @@
 #include "defines.h"
 #include "defines_battle.h"
+#include "Battle_AI/AI_Helper_Functions.h"
+
+#include "../include/event_data.h"
+
 #include "../include/new/helper_functions.h"
 #include "../include/new/multi.h"
-#include "Battle_AI/AI_Helper_Functions.h"
 #include "../include/new/mega.h"
 
 #define BANK_PLAYER_ALLY 2

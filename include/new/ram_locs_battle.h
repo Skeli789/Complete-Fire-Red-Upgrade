@@ -135,6 +135,12 @@ typedef u8 Buffer_t[0x200];
 
 /*u8*/  #define gBattlerInMenuId *((u8*) 0x2024004)
 
+/*u8*/  #define gBattleSpritesDataPtr ((struct BattleSpriteData*) *((u32*) 0x2024018))
+/*u8*/  #define gMonSpritesGfxPtr ((struct BattleSpriteData*) *((u32*) 0x2024018))
+/*u16*/ #define gBattleMovePower *((u16*) 0x2024020)
+/*u16*/ #define gMoveToLearn *((u16*) 0x2024022)
+/*u8*/  #define gBattleMonForms ((u8*) 0x2024024)
+
 /*u32*/	#define sBattleAnimScriptPtr (*((u8**) 0x2037ED4))
 		#define gAnimScriptCallback (*((u32*) 0x2037EDC))
 /*s8*/	#define gAnimFramesToWait (*((s8*) 0x2037EE0))

@@ -19,16 +19,8 @@
 #define WEATHER_BUBBLES        14
 #define WEATHER_15             15
 
-/*
-void fade_screen(u8, s8);
-
-void SetSav1Weather(u32);
-u8 GetSav1Weather(void);
-void sub_80AEDBC(void);
-
-void DoCurrentWeather(void);
-void sub_807B0C4(u16 *, u16 *, u32);
-*/
+void __attribute__((long_call)) Task_WeatherMain(u8 taskId);
+u8 __attribute__((long_call)) GetCurrentWeather(void);
 
 // Controls how the weather should be changing the screen palettes.
 enum

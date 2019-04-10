@@ -65,7 +65,6 @@ CalculateHeight = 0x080A082C | 1;
 routine_to_run_after_graphics = 0x02039998;
 run_after_graphics = 0x080A103C|1;
 script_env_2_enable = 0x08069940|1;
-script_run = 0x08069AE4|1;
 get_item_x12_battle_function = 0x0809A924|1;
 get_item_lastword = 0x0809AA8C|1;
 get_item_quality = 0x0809A949|1;
@@ -77,7 +76,7 @@ ScriptEnvDisable = 0x0806994C | 1;
 
 /* move */
 teach_move_in_available_slot = 0x0803E8B0|1;
-Special_DD_delete_move = 0x080BFBA8|1;
+Special_0DD_DeleteMove = 0x080BFBA8|1;
 
 /* Strings */
 str_cpy = 0x08008D84|1;
@@ -330,20 +329,13 @@ InitBgsFromTemplates = 0x08001658|1;
 memset_ = 0x081E5ED8|1;
 Memset = 0x081E5ED8|1;
 
-
-CreateSprite = 0x08006F8C | 1;
-obj_delete_and_free_tiles = 0x080073DC|1;
 sub_08034750 = 0x08034750|1;
 template_build_for_pokemon_or_trainer = 0x0803F864|1;
-obj_anim_image_start = 0x0800838C|1;
-obj_delete_and_free_tiles_and_free_tiles = 0x08007280|1;
-DeleteOBJ = 0x080073DC | 1;
 object_new_hidden_with_callback = 0x08044EF8|1;
 sub_8037A2A = 0x08038C80|1;
 sub_0804B908 = 0x0804B908|1;
 
 LoadPartyIconTiles = 0x08097054 | 1;
-
 
 CreatePokemon = 0x0803DD98|1;
 CreateMaleMon = 0x0803DF00 | 1;
@@ -706,6 +698,8 @@ UnfreezeEventObjects = 0x08068A5C|1;
 
 /*Field Effects Functions*/
 FieldEffectStart = 0x08083444 | 1;
+FieldEffectFreeGraphicsResources = 0x080836B4 | 1;
+FieldEffectStop = 0x080836D8 | 1;
 FldEff_SurfBlob = 0x080DC3D0|1;
 BindFieldEffectToSprite = 0x080DC44C | 1;
 
@@ -777,7 +771,6 @@ BlendPalette = 0x8045274 | 1;
 LoadCompressedPalette = 0x80703A8 | 1;
 LoadPalette = 0x80703EC | 1;
 FillPalette = 0x8070424 | 1;
-AnimateSprites = 0x08006B5C | 1;
 UpdatePaletteFade = 0x80704D0 | 1;
 ResetPaletteFade = 0x8070528 | 1;
 ReadPlttIntoBuffers = 0x8070548 | 1;
@@ -816,10 +809,76 @@ DoReadFlashWholeSection = 0x080DA190|1;
 Malloc = 0x8002B9C | 1;
 Calloc = 0x8002BB0 | 1;
 Free = 0x8002BC4 | 1;
-CreateSprite = 0x8006F8C | 1;
-DestroySprite = 0x8007280 | 1;
-SpriteCallbackDummy = 0x800760C | 1;
 
+
+/*Sprite Functions*/
+ResetSpriteData = 0x8006B10 | 1;
+AnimateSprites = 0x8006B5C | 1;
+BuildOamBuffer = 0x8006BA8 | 1;
+UpdateOamCoords = 0x8006BF4 | 1;
+BuildSpritePriorities = 0x8006CB8 | 1;
+SortSprites = 0x8006CF8 | 1;
+CopyMatricesToOamBuffer = 0x8006EB8 | 1;
+AddSpritesToOamBuffer = 0x8006F04 | 1;
+CreateSprite = 0x8006F8C | 1;
+CreateSpriteAtEnd = 0x8006FE0 | 1;
+CreateInvisibleSprite =0x800704C | 1;
+CreateSpriteAt = 0x8007094 | 1;
+CreateSpriteAndAnimate = 0x80071EC | 1;
+DestroySprite = 0x8007280 | 1;
+ResetOamRange = 0x80072E8 | 1;
+LoadOam = 0x8007320 | 1;
+ClearSpriteCopyRequests = 0x8007350 | 1;
+ResetOamMatrices = 0x8007390 | 1;
+SetOamMatrix = 0x80073BC | 1;
+ResetSprite = 0x80073DC | 1;
+CalcCenterToCornerVec = 0x080073F0 | 1;
+AllocSpriteTiles = 0x8007434 | 1;
+SpriteCallbackDummy = 0x800760C | 1;
+ProcessSpriteCopyRequests = 0x8007610 | 1;
+RequestSpriteFrameImageCopy = 0x800766C | 1;
+RequestSpriteCopy = 0x80076D0 | 1;
+CopyFromSprites = 0x8007720 | 1;
+CopyToSprites = 0x8007748 | 1;
+ResetAllSprites = 0x8007770 | 1;
+FreeSpriteTiles = 0x80077AC | 1;
+FreeSpritePalette = 0x80077C8 | 1;
+FreeSpriteOamMatrix = 0x80077D8 | 1;
+DestroySpriteAndFreeResources = 0x8007804 | 1;
+AnimateSprite = 0x8007824 | 1;
+BeginAnim = 0x800786C | 1;
+ContinueAnim = 0x800795C | 1;
+AnimCmd_frame = 0x80079FC | 1;
+AnimCmd_end = 0x8007AA8 | 1;
+AnimCmd_jump = 0x8007AC0 | 1;
+AnimCmd_loop = 0x8007B88 | 1;
+BeginAnimLoop = 0x8007BA8 | 1;
+ContinueAnimLoop = 0x8007BE0 | 1;
+JumpToTopOfAnimLoop = 0x8007C00 | 1;
+BeginAffineAnim = 0x8007C74 | 1;
+ContinueAffineAnim = 0x8007D08 | 1;
+AffineAnimDelay = 0x8007DBC | 1;
+AffineAnimCmd_loop = 0x8007DF0 | 1;
+BeginAffineAnimLoop = 0x8007E24 | 1;
+ContinueAffineAnimLoop = 0x8007E60 | 1;
+JumpToTopOfAffineAnimLoop = 0x8007E90 | 1;
+AffineAnimCmd_jump = 0x8007EFC | 1;
+AffineAnimCmd_end = 0x8007F48 | 1;
+AffineAnimCmd_frame = 0x8007F84 | 1;
+CopyOamMatrix = 0x8007FBC | 1;
+GetSpriteMatrixNum = 0x8007FDC | 1;
+obj_update_pos2 = 0x8008038 | 1;
+SetSpriteOamFlipBits = 0x80080D4 | 1;
+AffineAnimStateRestartAnim = 0x8008148 | 1;
+AffineAnimStateStartAnim = 0x8008164 | 1;
+AffineAnimStateReset = 0x800818C | 1;
+ApplyAffineAnimFrameAbsolute = 0x80081B4 | 1;
+DecrementAnimDelayCounter = 0x80081D8 | 1;
+DecrementAffineAnimDelayCounter = 0x8008200 | 1;
+ApplyAffineAnimFrameRelativeAndUpdateMatrix = 0x8008230 | 1;
+ConvertScaleParam = 0x80082C8 | 1;
+GetAffineAnimFrame = 0x80082E0 | 1;
+ApplyAffineAnimFrame = 0x800834C | 1;
 StartSpriteAnim = 0x800838C | 1;
 StartSpriteAnimIfDifferent = 0x80083A4 | 1;
 SeekSpriteAnim = 0x80083C0 | 1;
@@ -904,9 +963,6 @@ umodsi = 0x81E4684 | 1;
 
 EnableInterrupts = 0x08000B68 | 1;
 DisableInterrupts = 0x08000B94 | 1;
-ExecOE = 0x08083444 | 1;
-StopOE = 0x080836D8 | 1;
-FreeOBJ = 0x080836B4 | 1;
 
 OverworldCallback1 = 0x08056534 | 1;
 OverworldCallback2 = 0x080565B4 | 1;

@@ -1225,7 +1225,7 @@ struct BattleSpriteData
     struct BattleBarInfo* battleBars;
 };
 
-extern struct BattleSpriteData* gBattleSpritesDataPtr;
+#define gBattleSpritesDataPtr ((struct BattleSpriteData*) *((u32*) 0x2024018)) //extern struct BattleSpriteData* gBattleSpritesDataPtr;
 
 #define BATTLE_BUFFER_LINK_SIZE 0x1000
 
@@ -1269,13 +1269,7 @@ struct PartyMenuViewing
     s16 data[16];
 };
 
-extern struct PartyMenuViewing gPartyMenuView; //0x203B09C
-
-struct TrainerBattleParameter
-{
-    void* varPtr;
-    u8 ptrType;
-};
+#define gPartyMenuView ((struct PartyMenuViewing*) 0x203B09C) //extern struct PartyMenuViewing gPartyMenuView;
 
 struct TerrainTableStruct
 {

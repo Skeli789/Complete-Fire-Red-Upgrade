@@ -68,7 +68,16 @@ void __attribute__((long_call)) EventObjectSetGraphicsId(struct EventObject *eve
 void __attribute__((long_call)) EventObjectTurn(struct EventObject *eventObject, u8 direction);
 void __attribute__((long_call)) EventObjectClearHeldMovement(struct EventObject *eventObject);
 u8 __attribute__((long_call)) GetJumpSpecialMovementAction(u32 idx);
+void __attribute__((long_call)) FreezeEventObjects(void);
 void __attribute__((long_call)) UnfreezeEventObjects(void);
+u8* __attribute__((long_call)) GetEventObjectScriptPointerByEventObjectId(u8);
+u8 __attribute__((long_call)) GetRunningDirectionAnimNum(u8 direction);
+void __attribute__((long_call)) npc_apply_anim_looping(struct MapObject *eventObject, struct Sprite *sprite, u8 animNum);
+void __attribute__((long_call)) npc_apply_direction(struct MapObject *eventObject, struct Sprite *sprite, u8 direction, u8 speed);
+bool8 __attribute__((long_call)) npc_obj_ministep_stop_on_arrival(struct MapObject *eventObject, struct Sprite *sprite);
+void __attribute__((long_call)) sub_805C780(void);
+u8 __attribute__((long_call)) GetEventObjectIdByLocalIdAndMapInternal(u8 localId, u8 mapNum, u8 mapGroupId);
+u8 __attribute__((long_call)) GetEventObjectIdByLocalId(u8 localId);
 
 /*
 extern const struct SpriteFrameImage gEventObjectPicTable_PechaBerryTree[];
@@ -190,11 +199,9 @@ void sub_8097750(struct Sprite *);
 bool8 sub_8097758(struct Sprite *);
 void CreateLevitateMovementTask(struct EventObject *);
 void DestroyExtraMovementTask(u8);
-void UnfreezeEventObjects(void);
 void FreezeEventObjectsExceptOne(u8 eventObjectId);
 void sub_8097B78(u8, u8);
 void sub_8098074(u8 var1, u8 var2);
-void FreezeEventObjects(void);
 bool8 FreezeEventObject(struct EventObject *eventObject);
 u8 GetMoveDirectionFastAnimNum(u8);
 u8 GetMoveDirectionFasterAnimNum(u8);
