@@ -55,8 +55,8 @@ u8 __attribute__((long_call)) GetWildDataIndexForMap(void);
 void __attribute__((long_call)) BufferPokeNameSize(u16 species, void* varAddress);
 u8 __attribute__((long_call)) CalculateHeight(u16 species, void* varAddress);
 void __attribute__((long_call)) CreateMaleMon(pokemon_t* poke_address, u16 species, u8 level);
-u32 __attribute__((long_call)) GetAttrFromAnyBox(u8 boxId, u8 boxSlot, u8 dataRequest);
-void __attribute__((long_call)) SetAttrFromAnyBox(u8 boxId, u8 boxSlot, u8 dataRequest, void* dataAddr);
+//u32 __attribute__((long_call)) GetAttrFromAnyBox(u8 boxId, u8 boxSlot, u8 dataRequest);
+//void __attribute__((long_call)) SetAttrFromAnyBox(u8 boxId, u8 boxSlot, u8 dataRequest, void* dataAddr);
 u16 __attribute__((long_call)) GetBaseSpecies(u16 species);
 
 /*Overworld Functions*/

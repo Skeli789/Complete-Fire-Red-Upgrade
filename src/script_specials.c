@@ -5,6 +5,7 @@
 #include "../include/new/helper_functions.h"
 #include "../include/new/catching.h"
 #include "../include/new/Vanilla_Functions.h"
+#include "../include/pokemon_storage_system.h"
 
 /*
 NOTES: 

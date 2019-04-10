@@ -605,8 +605,8 @@ pokemon_order_func = 0x8128030 | 1;
 GetEggMoves = 0x08045C28 | 1;
 
 /* Pokemon Storage */
-GetAttrFromAnyBox = 0x808BA18 | 1;
-SetAttrFromAnyBox = 0x808BA5C | 1;
+GetMonDataFromAnyBox = 0x808BA18 | 1;
+SetMonDataFromAnyBox = 0x808BA5C | 1;
 
 /*Pokemon Icon Functions*/
 CreateMonIcon = 0x8096E18 | 1;
