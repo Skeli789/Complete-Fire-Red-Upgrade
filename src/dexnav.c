@@ -44,7 +44,9 @@ static struct DexnavHudData** DNavState = (struct DexnavHudData**)(DEXNAV_SAVERA
 
 void DexNavPopulateEncounterList();
 void ExecDexNavHUD(void);
-
+u8 ShakingGrass(u8 environment, u8 xSize, u8 ySize, bool8 smallScan);
+void DexNavLoadNames(u8 status);
+void OutlinedFontDraw(u8 objId, u8 tileNum, u16 size);
 
 void DestroyTaskCompletedTextbox(u8 tId)
 {
@@ -434,20 +436,20 @@ void DexHUDHBlank(void)
 
 void DexNavProximityUpdate(void)
 {
-    (*DNavState)->proximity =  GetPlayerDistance((*DNavState)->tileX, (*DNavState)->tileY);
+    (*DNavState)->proximity = GetPlayerDistance((*DNavState)->tileX, (*DNavState)->tileY);
 };
 
 
 
 void NullSubHBlank(void)
 {
-    return;
+	return;
 };
 
 
 void DexNavFreeHUD(void)
 {
-    switch ((*DNavState)->environment)
+	switch ((*DNavState)->environment)
 	{
         case 0:
             if (!CheckOpenSky(gMapHeader.mapType))
@@ -541,14 +543,19 @@ void OutlinedFontDraw(u8 objId, u8 tileNum, u16 size)
     //u8* dst = (u8*)Malloc(size + TILE_SIZE);
     //u8* dst = &gEnemyParty[0];
 	
-	u8* dst = (u8*) (&gEnemyParty[0]);
+	u8 *dst = (u8*) (&gEnemyParty[0]);
+	u8 *strPtr = gStringVar4;
+	
+	//gLoadPointer = ptr;
 	
     u8 counter = 1;
     u16 index = 320;
     u16 prevIndex;
 	
-	u8 element = *gStringVar4;
-	u8 i = 0;
+	//u8 element = *gStringVar4;
+	
+	u8 element = *strPtr;
+	//u8 i = 0;
 	
     while (element != 0xFF)
 	{
@@ -627,7 +634,7 @@ void OutlinedFontDraw(u8 objId, u8 tileNum, u16 size)
 
         // TODO: Use macros here //
 
-        if ((counter == 0) || (*(gStringVar4 + 1) == 0xFF))
+        if ((counter == 0) || (*(strPtr + 1) == 0xFF))
 		{
             // first or last pcharacters don't need pixel merging
             Memcpy((void*)dst, (void*)(&gInterfaceGfx_dexnavStarsTiles[index]), TILE_SIZE);
@@ -645,7 +652,7 @@ void OutlinedFontDraw(u8 objId, u8 tileNum, u16 size)
             *(dst + 24) = *(prevLetter + 26);
             *(dst + 28) = *(prevLetter + 30);
         }
-		else if ((*(gStringVar4 + 1) != 0xFF))
+		else if ((*(strPtr + 1) != 0xFF))
 		{
 
             // pcharacter in middle, if blank space fill blank with previous pcharacter's last pixel row IFF previous pchar's last pixel row non-empty
@@ -661,7 +668,7 @@ void OutlinedFontDraw(u8 objId, u8 tileNum, u16 size)
             *(dst + 28) |= (((*(prevLetter + 28) & 0xF) == 0) ? (*(dst + 28) & 0xF) : (*(prevLetter + 28) & 0xF));
         }
 
-        if ((counter == 2) && (*(gStringVar4 + 1) != 0xFF))
+        if ((counter == 2) && (*(strPtr + 1) != 0xFF))
 		{
             // every two pchars, we need to merge
             // 8x8px made of 4x8px from previous pchar and 4x8px of this pchar
@@ -691,11 +698,12 @@ void OutlinedFontDraw(u8 objId, u8 tileNum, u16 size)
         dst += TILE_SIZE; // next tile
         //gStringVar4++;
         //element = *gStringVar4;
-		i++;
-		element = *(gStringVar4 + i);
+		//i++;
+		strPtr++;
+		element = *strPtr;
     }
-    Memcpy((void*) toWrite, (void*) dst, size);
-    Memset((void*) dst, 0x0, size + TILE_SIZE);
+    Memcpy((void*) toWrite, (void*) 0x202402C, size);
+    Memset((void*) 0x202402C, 0x0, size + TILE_SIZE);
 };
 
 
@@ -799,7 +807,7 @@ void DexNavManageHUD(u8 taskId)
     }
 
     // check if script just executed
-    if (ScriptEnv2IsEnabled())
+    if (ScriptEnv2IsEnabled() == TRUE)
 	{
         DestroyTask(taskId);
         DexNavFreeHUD();
@@ -821,12 +829,14 @@ void DexNavManageHUD(u8 taskId)
             default:
                 break;
         };
-        //extern u8 ShakingGrass(u8, u8, u8, bool8);
+        
+		/*
         while(!(ShakingGrass((*DNavState)->environment, 8, 8, 1)))
 		{
             __asm__("mov r8, r8"); // nop...do I even need this?
         }
         (*DNavState)->movementTimes++;
+		*/
     }
 
     // check for encounter start
@@ -1282,7 +1292,7 @@ void DexNavDrawAbility(u8 ability, u8* objidAddr)
 		.paletteTag = 0x8472, 
 		.oam = (struct OamData*) &FontOAM, 
 		.anims = (const union AnimCmd* const*)0x8231CF0, 
-		.images = NULL,
+		.images = 0,
 		.affineAnims = (const union AffineAnimCmd* const*) 0x8231CFC,  
 		.callback = (SpriteCallback) 0x800760D,
 	};
@@ -1320,13 +1330,13 @@ void DexNavDrawAbility(u8 ability, u8* objidAddr)
 void DexNavDrawMove(u16 move, u8 searchLevel, u8* objidAddr)
 {
     // create empty object of size 32x64 to draw font on
-    struct SpriteSheet FontSpriteMove = {(const u8*)(&gInterfaceGfx_emptyTiles), 0x800, 0x4736};
+    struct SpriteSheet FontSpriteMove = {(u8*) gInterfaceGfx_emptyTiles, 0x800, 0x4736};
     struct SpriteTemplate FontTempMove = {
 		.tileTag = 0x4736,
 		.paletteTag = 0x8472,
 		.oam = (struct OamData*) &FontOAM,
 		.anims = (const union AnimCmd* const*) 0x8231CF0,
-		.images = NULL,
+		.images = 0,
         .affineAnims = (const union AffineAnimCmd* const*) 0x8231CFC,
 		.callback = (SpriteCallback) 0x800760D,
 	};
@@ -1337,9 +1347,9 @@ void DexNavDrawMove(u16 move, u8 searchLevel, u8* objidAddr)
     gSprites[objId].oam.affineMode = 2;
 
     // Copy move string from table using state id, add '/' character to the end of it
-    Memcpy((void *)gStringVar4, (void *)gMoveNames[move], MOVE_NAME_LENGTH);
-    gStringVar4[MOVE_NAME_LENGTH + 1] = 0xFF;
-    u8 len = StringLength(gStringVar4);
+    Memcpy(&gStringVar4[0], gMoveNames[move], MOVE_NAME_LENGTH);
+    //gStringVar4[MOVE_NAME_LENGTH + 1] = 0xFF;
+    u8 len = StringLength(&gStringVar4[0]);
 
     if (searchLevel > 2) 
 	{
@@ -1356,7 +1366,7 @@ void DexNavDrawMove(u16 move, u8 searchLevel, u8* objidAddr)
         gStringVar4[len] = 0x0;
         gStringVar4[len + 1] = 0x0;
         gStringVar4[len + 2] = 0xFF;
-    } 
+    }
 	else 
 	{
         gStringVar4[len] = 0xFF;
@@ -1373,7 +1383,7 @@ void DexNavDrawPotential(u8 potential, u8* objidAddr)
 {
     // 19 tiles per row, stars are on the 4th row. 1 tile is 32 bytes. Hence 19 * 4 *32
     struct SpriteSheet StarIconLit = {(const u8*)(&(gInterfaceGfx_dexnavStarsTiles[19 * 4 * 32])), 64, 0x61};
-    struct SpriteSheet StarIconOff = {(const u8*)(&(gInterfaceGfx_dexnavStarsTiles[((19 * 4) + 1) *32])), 64, 0x2613};
+    struct SpriteSheet StarIconOff = {(const u8*)(&(gInterfaceGfx_dexnavStarsTiles[((19 * 4) + 1)*32])), 64, 0x2613};
 
     // TODO: put these function pointers and other data ptrs in PokeAGB.
     struct SpriteTemplate StarLitTemp = {
@@ -1381,7 +1391,7 @@ void DexNavDrawPotential(u8 potential, u8* objidAddr)
 		.paletteTag = 0x8472,
 		.oam = (struct OamData*) &HeldOAM,
 		.anims = (const union AnimCmd* const*) 0x8231CF0, 
-		.images = NULL,
+		.images = 0,
         .affineAnims = (const union AffineAnimCmd* const*) 0x8231CFC, 
 		.callback = (SpriteCallback) 0x800760D,
 	};
@@ -1390,7 +1400,7 @@ void DexNavDrawPotential(u8 potential, u8* objidAddr)
 		.paletteTag = 0x8472,
 		.oam = (struct OamData*) &HeldOAM,
 		.anims = (const union AnimCmd* const*)0x8231CF0, 
-		.images = NULL,
+		.images = 0,
         .affineAnims = (const union AffineAnimCmd* const*) 0x8231CFC, 
 		.callback = (SpriteCallback) 0x800760D,
 		};
@@ -1425,21 +1435,17 @@ void DexNavDrawPotential(u8 potential, u8* objidAddr)
 
 
 
-//void DexNavDrawSpeciesIcon(u16 species, u8* objIdAddr)
-void DexNavDrawSpeciesIcon(u16 species)
+void DexNavDrawSpeciesIcon(u16 species, u8* objIdAddr)
+//void DexNavDrawSpeciesIcon(u16 species)
 {
-	//doesnt make it here
-	u32 pid = RandRange(0, 0xFFFF) | RandRange(0, 0xFFFF) << 16;
-	CreateMonIcon(species, SpriteCB_PokeIcon, ICONX, ICONY, 0, pid, FALSE);
+	//u32 pid = RandRange(0, 0xFFFF) | RandRange(0, 0xFFFF) << 16;
+	//CreateMonIcon(species, SpriteCB_PokeIcon, ICONX, ICONY, 0, pid, FALSE);
 
-
-
-/* 
-
- // check which palette the species icon uses
+	// check which palette the species icon uses
     u8 iconPal = gMonIconPaletteIndices[species];
     //struct SpritePalette bulbPal = {&(gPokeIconPals[iconPal]), 0x3139};
-    struct SpritePalette bulbPal = {(gPokeIconPals[iconPal]), 0x3139};
+    //struct SpritePalette bulbPal = {(gPokeIconPals[iconPal]), 0x3139};
+	struct SpritePalette bulbPal = {(void*) 0x83d3740, 0x3139};
 	GpuPalObjAllocTagAndApply(&bulbPal);
 
     u32 pid = RandRange(0, 0xFFFF) | RandRange(0, 0xFFFF) << 16;
@@ -1455,9 +1461,6 @@ void DexNavDrawSpeciesIcon(u16 species)
 	//dprintf("address is: %x\n", &picon_oam);
     gSprites[objId].oam.affineMode = 2;
     gSprites[objId].oam.objMode = 1;
-	
-*/
-
 
 };
 
@@ -1471,7 +1474,7 @@ void DexNavDrawHeldItem(u8* objidAddr)
 		.paletteTag = 0x8472,
 		.oam = (struct OamData*) &HeldOAM,
 		.anims = (const union AnimCmd* const*)0x8231CF0, 
-		.images = NULL,
+		.images = 0,
 		.affineAnims = (const union AffineAnimCmd* const*) 0x8231CFC,
 		.callback = (SpriteCallback) 0x800760D,
 		};
@@ -1487,11 +1490,10 @@ void DexNavDrawHeldItem(u8* objidAddr)
 
 void DexNavDrawIcons(void)
 {
-    //DOESNT MAKE IT HERE
 	u8 searchLevel = (*DNavState)->searchLevel;
     DexNavDrawSight((*DNavState)->proximity, &(*DNavState)->objIdSight);
-    //DexNavDrawSpeciesIcon((*DNavState)->species, &(*DNavState)->objIdSpecies);
-	DexNavDrawSpeciesIcon((*DNavState)->species);
+    DexNavDrawSpeciesIcon((*DNavState)->species, &(*DNavState)->objIdSpecies);
+	//DexNavDrawSpeciesIcon((*DNavState)->species);
     DexNavDrawMove((*DNavState)->moveId[0], searchLevel, &(*DNavState)->objIdMove);
     DexNavDrawAbility((*DNavState)->ability, &(*DNavState)->objIdAbility);
     DexNavDrawHeldItem(&(*DNavState)->objIdItem);
@@ -1731,20 +1733,25 @@ void SpawnPointerArrow(void)
 void DexNavLoadNames(u8 status)
 {
     // clean boxes
-    for (u32 i = 0; i < 5; ++i)
+    for (int i = 0; i < 5; ++i)
 	{
         FillWindowPixelBuffer(i, 0);
     }
 	
     // rbox commit species name
-    u16 species = (*DNavState)->selectedArr ? (*DNavState)->waterSpecies[(*DNavState)->selectedIndex >> 1] : (*DNavState)->grassSpecies[(*DNavState)->selectedIndex>>1];
+    u16 species = (*DNavState)->selectedArr ? (*DNavState)->waterSpecies[(*DNavState)->selectedIndex >> 1] : (*DNavState)->grassSpecies
+		[(*DNavState)->selectedIndex>>1];
+	
+	gLoadPointer = DNavState;	// 03000f14
+	Var8005 = species;	// 020370c2
+	
     if (species)
         WindowPrint(0, 0, 0, 4, &DexNav_BlackText, 0, gSpeciesNames[species]);
 	else
         WindowPrint(0, 0, 0, 4, &DexNav_BlackText, 0, &gText_DexNav_NoInfo[0]);
 
     // rbox commit search level
-    ConvertIntToDecimalStringN(gStringVar4, SearchLevels[species], 0, 4);
+    ConvertIntToDecimalStringN(&gStringVar4[0], SearchLevels[species], 0, 4);
     WindowPrint(1, 0, 0, 4, &DexNav_BlackText, 0, &gStringVar4[0]);
 
     // rbox commit level bonus
@@ -1754,11 +1761,11 @@ void DexNavLoadNames(u8 status)
     else
         searchLevelBonus = (SearchLevels[species] >> 2);
 	
-    ConvertIntToDecimalStringN(gStringVar4, searchLevelBonus, 0, 4);
+    ConvertIntToDecimalStringN(&gStringVar4[0], searchLevelBonus, 0, 4);
     WindowPrint(2, 0, 0, 4, &DexNav_BlackText, 0, &gStringVar4[0]);
 
     // rbox commit hidden ability name
-    if (gBaseStats[species].hiddenAbility)
+    if (gBaseStats[species].hiddenAbility != 0)
         WindowPrint(3, 0, 0, 4, &DexNav_BlackText, 0, gAbilityNames[gBaseStats[species].hiddenAbility]);
     else
         WindowPrint(3, 0, 0, 4, &DexNav_BlackText, 0, &gText_DexNav_NoInfo[0]);
@@ -1777,7 +1784,7 @@ void DexNavLoadNames(u8 status)
 			break;
     }
     // display committed gfx
-    for (u8 i = 0; i < 5; ++i)
+    for (int i = 0; i < 5; ++i)
 	{
         CopyWindowToVram(i, 3);
         PutWindowTilemap(i);
@@ -1844,44 +1851,40 @@ void DexNavGuiExitNoSearch(void)
 void DexNavPopulateEncounterList(void)
 {
     // nop struct data
-    //Memset(&((*DNavState)->grassSpecies[0]), 0, 34);
 	Memset(&((*DNavState)->grassSpecies[0]), 0, 34);
    
     
 	// populate unique wild grass encounters
-    u8 insertionIndex = 0;
-    u8 index = GetWildDataIndexForMap();
-	
-	//const struct WildPokemonHeader* header = GetCurrentMapWildMonHeaderId();
-
-    if (gWildMonHeaders[index].landMonsInfo)
-	{
-        for (u8 i = 0; i < 12; ++i)
-		{
-            //struct WildPokemon WildMons = gWildMonHeaders[index].landMonsInfo->wildEncounters->wildGrass[i];
-			struct WildPokemon WildMons = gWildMonHeaders[index].landMonsInfo->wildPokemon[i];
-            if (!SpeciesInArray(WildMons.species, 12))
+    u8 grassIndex = 0;
+	u8 sizeGrass = 12;
+   
+   const struct WildPokemonHeader* header = GetCurrentMapWildMonHeaderId();
+   if (header != NULL && header->landMonsInfo != NULL)
+   {
+	   for (int i = 0; i < sizeGrass; ++i)
+	   {
+			if (!(SpeciesInArray(header->landMonsInfo->wildPokemon[i].species, sizeGrass)))
 			{
-                (*DNavState)->grassSpecies[insertionIndex] = WildMons.species;
-                insertionIndex++;
-            }
-        }
-    };
-	
-    // populate unique wild water encounters
-    insertionIndex = 0;
-    // exit if no water encounters
-    if (gWildMonHeaders[index].waterMonsInfo == NULL)
-        return;
-    for (u8 i = 0; i < 5; ++i)
-	{
-        //struct WildPokemon WildMons = gWildMonHeaders[index].waterMonsInfo->wildEncounters->wildWater[i];
-        struct WildPokemon WildMons = gWildMonHeaders[index].waterMonsInfo->wildPokemon[i];
-		if (!SpeciesInArray(WildMons.species, 5)) {
-            (*DNavState)->waterSpecies[insertionIndex] = WildMons.species;
-            insertionIndex++;
-        }
-    }
+				(*DNavState)->grassSpecies[grassIndex] = header->landMonsInfo->wildPokemon[i].species;
+				grassIndex++;
+			}
+	   }
+   }
+   
+   u8 waterIndex = 0;
+   u8 sizeWater = 5;
+   if (header != NULL && header->waterMonsInfo != NULL)
+   {
+	   for (int i = 0; i < sizeWater; ++i)
+	   {
+			if (!(SpeciesInArray(header->waterMonsInfo->wildPokemon[i].species, sizeWater)))
+			{
+				(*DNavState)->grassSpecies[waterIndex] = header->waterMonsInfo->wildPokemon[i].species;
+				waterIndex++;
+			}
+	   }
+   }
+   
 };
 
 void DexNavGuiHandler(void)
@@ -1924,6 +1927,12 @@ void DexNavGuiHandler(void)
             gMain.state++;
             break;
         case 3:
+           // REG_DISPCNT = 0x7F60;
+            //REG_WININ = WININ_BUILD(WIN_BG0 | WIN_BG1 | WIN_BG2 | WIN_BG3 | WIN_OBJ, WIN_BG0 |
+             //               WIN_BG1 | WIN_BG2 | WIN_BG3 | WIN_OBJ);
+            //WRITE_REG_BLDCNT(0x401E);
+            //REG_BLDCNT = BLDALPHA_BUILD(BLDCNT_BG1_SRC | BLDCNT_BG2_SRC | BLDCNT_BG3_SRC | BLDCNT_SPRITES_SRC, 0);		
+		
             BeginNormalPaletteFade(0xFFFFFFFF, 0, 16, 0, 0x0000);
             GpuSyncBGShow(0);
             GpuSyncBGShow(1);
@@ -2036,7 +2045,7 @@ void OeiCaveEffect(void)
     GpuPalObjAllocTagAndApply(&caveSmoke);
     GpuPalApply((u8 *)&gInterfaceGfx_caveSmokePal, 29 * 16, 32);
     LogCoordsCameraRelative(&gFieldEffectArguments->effectPos.x, &gFieldEffectArguments->effectPos.y, 8, 8);
-	//LogCoordsCameraRelative(&gFieldEffectArguments->effectPos.x, &gFieldEffectArguments->effectPos.y, 7, 7);
+	//LogCoordsCameraRelative(&gFieldEffectArguments->effectPos.x, &gFieldEffectArguments->effectPos.y, 0, 0);
     u8 objId = TemplateInstanciateReverseSearch(&ObjtCave, gFieldEffectArguments->effectPos.x, gFieldEffectArguments->effectPos.y, 0xFF);
     if (objId != 64)
 	{

@@ -373,7 +373,6 @@ battle_load_health_boxes_unused = 0x080347A8|1;
 some_test_func = 0x080F1198|1;
 MallocInit = 0x08002B80 | 1;
 
-pal_fade_control_and_dead_struct_reset = 0x08070528|1;
 
 /*
  * IO
@@ -917,4 +916,22 @@ MakeExclamationMark = 0x08066920 | 1;
 
 /*The Deal Breaker*/
 break_func = 0x08416304 | 1;
+
+
+get_wild_data_index_for_map = 0x08082934|1;
+gpu_sprites_upload = 0x08007320|1;
+copy_queue_process = 0x08007610|1;
+gpu_pal_upload = 0x08070474|1;
+process_palfade = 0x080704D0|1;
+tilemaps_sync = 0x080F67B8|1;
+RunTextPrinters = 0x08002DE8|1;
+SetMainCallback = 0x080565E0|1;
+SetMainCallback2 = 0x08000544|1;
+pal_fade_control_and_dead_struct_reset = 0x08070528|1;
+palette_bg_faded_fill_black = 0x0807DB38|1;
+gpu_pal_allocator_reset = 0x080088F0|1;
+
+
+
+
 

@@ -398,7 +398,7 @@ void __attribute__((long_call)) SetVBlankCallback(void (*callback));
 void __attribute__((long_call)) SetHBlankCallback(void (*callback));
 void __attribute__((long_call)) SetCallback1(void* func);
 void __attribute__((long_call)) SetCallback2(void* func);
-void __attribute__((long_call)) OverworldCallback2(void); 
+void __attribute__((long_call)) OverworldCallback2(void);
 
 void __attribute__((long_call)) LZ77UnCompWram(const void *src, void *dest);
 void __attribute__((long_call)) LZ77UnCompVram(const void *src, void *dest);

@@ -509,7 +509,7 @@ SummaryScreenExpDisplay2:
 	.byte 0x7
 	.word 0x083A5348
 	@ .word oei_1A_cave|1	@1d98a9
-	.org 0x1d98ae, 0xff
+.org 0x1d98ad, 0xff
 	.byte 0x4
 	
 @ extend animation frames for hidden water and cave
