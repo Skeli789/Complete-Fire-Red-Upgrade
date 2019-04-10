@@ -54,31 +54,32 @@ extern u32 gPlttBufferTransferPending;
 extern u8 gPaletteDecompressionBuffer[];
 extern u16 gPlttBufferUnfaded[PLTT_BUFFER_SIZE];
 extern u16 gPlttBufferFaded[PLTT_BUFFER_SIZE];
-
-void LoadCompressedPalette(const void *, u16, u16);
-void LoadPalette(const void *, u16, u16);
-void FillPalette(u16, u16, u16);
-void TransferPlttBuffer(void);
-u8 UpdatePaletteFade(void);
-void ResetPaletteFade(void);
-void ReadPlttIntoBuffers(void);
-bool8 BeginNormalPaletteFade(u32, s8, u8, u8, u16);
-bool8 unref_sub_8073D3C(u32, u8, u8, u8, u16);
-void unref_sub_8073D84(u8, u32 *);
-void ResetPaletteStructByUid(u16);
-void ResetPaletteStruct(u8);
-void ResetPaletteFadeControl();
-void unref_sub_8074168(u16);
-void unref_sub_8074194(u16);
-void InvertPlttBuffer(u32);
-void TintPlttBuffer(u32, s8, s8, s8);
-void UnfadePlttBuffer(u32);
-void BeginFastPaletteFade(u8);
-void BeginHardwarePaletteFade(u8, u8, u8, u8, u8);
-void BlendPalettes(u32, u8, u16);
-void BlendPalettesUnfaded(u32, u8, u16);
-void sub_80716F8(const u16 *, u16 *, u16, u8);
-
-extern struct PaletteFadeControl gPaletteFade;
 */
+
+void __attribute__((long_call)) LoadCompressedPalette(const void *, u16, u16);
+void __attribute__((long_call)) LoadPalette(const void *, u16, u16);
+void __attribute__((long_call)) FillPalette(u16, u16, u16);
+//void __attribute__((long_call)) TransferPlttBuffer(void);	// redone in DNS.c
+u8 __attribute__((long_call)) UpdatePaletteFade(void);
+void __attribute__((long_call)) ResetPaletteFade(void);
+void __attribute__((long_call)) ReadPlttIntoBuffers(void);
+bool8 __attribute__((long_call)) BeginNormalPaletteFade(u32, s8, u8, u8, u16);
+bool8 __attribute__((long_call)) unref_sub_8073D3C(u32, u8, u8, u8, u16);
+void __attribute__((long_call)) unref_sub_8073D84(u8, u32 *);
+void __attribute__((long_call)) ResetPaletteStructByUid(u16);
+void __attribute__((long_call)) ResetPaletteStruct(u8);
+void __attribute__((long_call)) ResetPaletteFadeControl();
+void __attribute__((long_call)) unref_sub_8074168(u16);
+void __attribute__((long_call)) unref_sub_8074194(u16);
+void __attribute__((long_call)) InvertPlttBuffer(u32);
+void __attribute__((long_call)) TintPlttBuffer(u32, s8, s8, s8);
+void __attribute__((long_call)) UnfadePlttBuffer(u32);
+void __attribute__((long_call)) BeginFastPaletteFade(u8);
+void __attribute__((long_call)) BeginHardwarePaletteFade(u8, u8, u8, u8, u8);
+void __attribute__((long_call)) BlendPalettes(u32, u8, u16);
+void __attribute__((long_call)) BlendPalettesUnfaded(u32, u8, u16);
+void __attribute__((long_call)) sub_80716F8(const u16 *, u16 *, u16, u8);
+
+// extern struct PaletteFadeControl gPaletteFade;
+
 #endif // GUARD_PALETTE_H

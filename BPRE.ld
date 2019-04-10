@@ -910,6 +910,7 @@ StopOE = 0x080836D8 | 1;
 FreeOBJ = 0x080836B4 | 1;
 
 OverworldCallback1 = 0x08056534 | 1;
+OverworldCallback2 = 0x080565B4 | 1;
 OverworldCallbackSwitchStartMenu = 0x080568A8 | 1;
 
 MakeExclamationMark = 0x08066920 | 1;

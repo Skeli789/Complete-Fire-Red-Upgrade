@@ -13,7 +13,7 @@ enum
     AI_ITEM_NOT_RECOGNIZABLE
 };
 
-void AI_TrySwitchOrUseItem(void);
-u8 GetMostSuitableMonToSwitchInto(void);
+void __attribute__((long_call)) AI_TrySwitchOrUseItem(void);
+u8 __attribute__((long_call)) GetMostSuitableMonToSwitchInto(void);
 
 #endif // GUARD_BATTLE_AI_SWITCH_ITEMS_H

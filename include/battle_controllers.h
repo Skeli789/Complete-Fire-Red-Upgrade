@@ -264,40 +264,40 @@ void __attribute__((long_call)) EmitResetActionMoveSelection(u8 bufferId, u8 cas
 void __attribute__((long_call)) EmitCmd55(u8 bufferId, u8 arg1);
 
 // player controller
-/*
-void SetControllerToPlayer(void);
-void nullsub_21(void);
-void PlayerHandleGetRawMonData(void);
-void sub_80587B0(void);
-void sub_805CC00(struct Sprite *sprite);
-void SetCB2ToReshowScreenAfterMenu(void);
-void SetCB2ToReshowScreenAfterMenu2(void);
-void c3_0802FDF4(u8 taskId);
-void ActionSelectionCreateCursorAt(u8 cursorPos, u8 unused);
-void ActionSelectionDestroyCursorAt(u8 cursorPos);
-void InitMoveSelectionsVarsAndStrings(void);
+
+void __attribute__((long_call)) SetControllerToPlayer(void);
+void __attribute__((long_call)) nullsub_21(void);
+void __attribute__((long_call)) PlayerHandleGetRawMonData(void);
+void __attribute__((long_call)) sub_80587B0(void);
+void __attribute__((long_call)) sub_805CC00(struct Sprite *sprite);
+void __attribute__((long_call)) SetCB2ToReshowScreenAfterMenu(void);
+void __attribute__((long_call)) SetCB2ToReshowScreenAfterMenu2(void);
+void __attribute__((long_call)) c3_0802FDF4(u8 taskId);
+void __attribute__((long_call)) ActionSelectionCreateCursorAt(u8 cursorPos, u8 unused);
+void __attribute__((long_call)) ActionSelectionDestroyCursorAt(u8 cursorPos);
+void __attribute__((long_call)) InitMoveSelectionsVarsAndStrings(void);
 
 // recorded player controller
-void SetControllerToRecordedPlayer(void);
+void __attribute__((long_call)) SetControllerToRecordedPlayer(void);
 
 // opponent controller
-void SetControllerToOpponent(void);
+void __attribute__((long_call)) SetControllerToOpponent(void);
 
 // player partner controller
-void SetControllerToPlayerPartner(void);
+void __attribute__((long_call)) SetControllerToPlayerPartner(void);
 
 // safari controller
-void SetControllerToSafari(void);
+void __attribute__((long_call)) SetControllerToSafari(void);
 
 // wally controller
-void SetControllerToWally(void);
+void __attribute__((long_call)) SetControllerToWally(void);
 
 // recorded opponent controller
-void SetControllerToRecordedOpponent(void);
+void __attribute__((long_call)) SetControllerToRecordedOpponent(void);
 
 // link opponent
-void SetControllerToLinkOpponent(void);
+void __attribute__((long_call)) SetControllerToLinkOpponent(void);
 
 // link partner
-void SetControllerToLinkPartner(void);
-*/
+void __attribute__((long_call)) SetControllerToLinkPartner(void);
+

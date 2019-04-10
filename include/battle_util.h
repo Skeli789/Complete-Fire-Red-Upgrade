@@ -50,43 +50,42 @@
 #define BS_GET_PLAYER2                  13
 #define BS_GET_OPPONENT2                14
 
-/*
-void PressurePPLose(u8 bankDef, u8 bankAtk, u16 move);
-void PressurePPLoseOnUsingPerishSong(u8 bankAtk);
-void PressurePPLoseOnUsingImprision(u8 bankAtk);
-void MarkAllBufferBanksForExecution(void); // unused
-void MarkBufferBankForExecution(u8 bank);
-void sub_803F850(u8 arg0);
-void CancelMultiTurnMoves(u8 bank);
-bool8 WasUnableToUseMove(u8 bank);
-void PrepareStringBattle(u16 stringId, u8 bank);
-void ResetSentPokesToOpponentValue(void);
-void sub_803F9EC(u8 bank);
-void sub_803FA70(u8 bank);
-void BattleScriptPush(const u8* bsPtr);
-void BattleScriptPushCursor(void);
-void BattleScriptPop(void);
-u8 TrySetCantSelectMoveBattleScript(void);
-u8 CheckMoveLimitations(u8 bank, u8 unusableMoves, u8 check);
-bool8 AreAllMovesUnusable(void);
-u8 GetImprisonedMovesCount(u8 bank, u16 move);
-u8 UpdateTurnCounters(void);
-u8 TurnBasedEffects(void);
-bool8 HandleWishPerishSongOnTurnEnd(void);
-bool8 HandleFaintedMonActions(void);
-void TryClearRageStatuses(void);
-u8 AtkCanceller_UnableToUseMove(void);
-bool8 sub_80423F4(u8 bank, u8 r1, u8 r2);
-u8 CastformDataTypeChange(u8 bank);
-u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg);
-void BattleScriptExecute(const u8* BS_ptr);
-void BattleScriptPushCursorAndCallback(const u8* BS_ptr);
-u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn);
-void ClearFuryCutterDestinyBondGrudge(u8 bank);
-void HandleAction_RunBattleScript(void);
-u8 GetMoveTarget(u16 move, u8 useMoveTarget);
-u8 IsMonDisobedient(void);
-void MarkBufferBankForExecution(u8 battlerId);
-*/
+
+void __attribute__((long_call)) PressurePPLose(u8 bankDef, u8 bankAtk, u16 move);
+void __attribute__((long_call)) PressurePPLoseOnUsingPerishSong(u8 bankAtk);
+void __attribute__((long_call)) PressurePPLoseOnUsingImprision(u8 bankAtk);
+void __attribute__((long_call)) MarkAllBufferBanksForExecution(void); // unused
+void __attribute__((long_call)) MarkBufferBankForExecution(u8 bank);
+void __attribute__((long_call)) sub_803F850(u8 arg0);
+void __attribute__((long_call)) CancelMultiTurnMoves(u8 bank);
+bool8 __attribute__((long_call)) WasUnableToUseMove(u8 bank);
+void __attribute__((long_call)) PrepareStringBattle(u16 stringId, u8 bank);
+void __attribute__((long_call)) ResetSentPokesToOpponentValue(void);
+void __attribute__((long_call)) sub_803F9EC(u8 bank);
+void __attribute__((long_call)) sub_803FA70(u8 bank);
+void __attribute__((long_call)) BattleScriptPush(const u8* bsPtr);
+void __attribute__((long_call)) BattleScriptPushCursor(void);
+void __attribute__((long_call)) BattleScriptPop(void);
+u8 __attribute__((long_call)) TrySetCantSelectMoveBattleScript(void);
+u8 __attribute__((long_call)) CheckMoveLimitations(u8 bank, u8 unusableMoves, u8 check);
+bool8 __attribute__((long_call)) AreAllMovesUnusable(void);
+u8 __attribute__((long_call)) GetImprisonedMovesCount(u8 bank, u16 move);
+u8 __attribute__((long_call)) UpdateTurnCounters(void);
+u8 __attribute__((long_call)) TurnBasedEffects(void);
+bool8 __attribute__((long_call)) HandleWishPerishSongOnTurnEnd(void);
+bool8 __attribute__((long_call)) HandleFaintedMonActions(void);
+void __attribute__((long_call)) TryClearRageStatuses(void);
+u8 __attribute__((long_call)) AtkCanceller_UnableToUseMove(void);
+bool8 __attribute__((long_call)) sub_80423F4(u8 bank, u8 r1, u8 r2);
+u8 __attribute__((long_call)) CastformDataTypeChange(u8 bank);
+u8 __attribute__((long_call)) AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg);
+void __attribute__((long_call)) BattleScriptExecute(const u8* BS_ptr);
+void __attribute__((long_call)) BattleScriptPushCursorAndCallback(const u8* BS_ptr);
+//u8 __attribute__((long_call)) ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn);
+void __attribute__((long_call)) ClearFuryCutterDestinyBondGrudge(u8 bank);
+void __attribute__((long_call)) HandleAction_RunBattleScript(void);
+u8 __attribute__((long_call)) GetMoveTarget(u16 move, u8 useMoveTarget);
+u8 __attribute__((long_call)) IsMonDisobedient(void);
+void __attribute__((long_call)) MarkBufferBankForExecution(u8 battlerId);
 
 #endif // GUARD_BATTLE_UTIL_H

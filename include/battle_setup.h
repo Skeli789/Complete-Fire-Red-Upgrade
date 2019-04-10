@@ -15,19 +15,19 @@
 #define TRAINER_BATTLE_TAG								10
 #define TRAINER_BATTLE_TWO_OPPONENTS					11
 
-/*
-void BattleSetup_StartScriptedWildBattle(void);
-u8 BattleSetup_GetTerrainId(void);
-u8 *BattleSetup_ConfigureTrainerBattle(const u8 *data);
-void BattleSetup_StartBattlePikeWildBattle(void);
-void BattleSetup_StartWildBattle(void);
-void BattleSetup_StartRoamerBattle(void);
 
-u8 HasTrainerAlreadyBeenFought(u16);
-void trainer_flag_set(u16);
-void trainer_flag_clear(u16);
-void BattleSetup_StartTrainerBattle(void);
-u8 *BattleSetup_GetScriptAddrAfterBattle(void);
-u8 *BattleSetup_GetTrainerPostBattleScript(void);
-void sub_80803FC(void);
-*/
+void __attribute__((long_call)) BattleSetup_StartScriptedWildBattle(void);
+u8 __attribute__((long_call)) BattleSetup_GetTerrainId(void);
+u8 __attribute__((long_call)) *BattleSetup_ConfigureTrainerBattle(const u8 *data);
+void __attribute__((long_call)) BattleSetup_StartBattlePikeWildBattle(void);
+void __attribute__((long_call)) BattleSetup_StartWildBattle(void);
+void __attribute__((long_call)) BattleSetup_StartRoamerBattle(void);
+
+u8 __attribute__((long_call)) HasTrainerAlreadyBeenFought(u16);
+void __attribute__((long_call)) trainer_flag_set(u16);
+void __attribute__((long_call)) trainer_flag_clear(u16);
+void __attribute__((long_call)) BattleSetup_StartTrainerBattle(void);
+u8 __attribute__((long_call)) *BattleSetup_GetScriptAddrAfterBattle(void);
+u8 __attribute__((long_call)) *BattleSetup_GetTrainerPostBattleScript(void);
+void __attribute__((long_call)) sub_80803FC(void);
+

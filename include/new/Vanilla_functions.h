@@ -121,7 +121,7 @@ void __attribute__((long_call)) AdjustFriendship(struct Pokemon *mon, u8 event);
 u8 __attribute__((long_call)) sub_80447F0(void); //Something Trainer Related
 u8 __attribute__((long_call)) GetLinkTrainerFlankId(u8 a);
 u8 __attribute__((long_call)) GetBattlerMultiplayerId(u8 bank);
-void __attribute__((long_call)) SetBattleBarStruct(u8, u8, u32, u32, u32);
+//void __attribute__((long_call)) SetBattleBarStruct(u8, u8, u32, u32, u32);
 void __attribute__((long_call)) SwapHpBarsWithHpText(void);
 void __attribute__((long_call)) SetHealthboxSpriteVisible(u8 healthboxSpriteId);
 void __attribute__((long_call)) UpdateHealthboxAttribute(u8 healthboxSpriteId, struct Pokemon* mon, u8 elementId);
@@ -158,7 +158,7 @@ void __attribute__((long_call)) BattleIntroSlideLink(u8 taskId);
 u8 __attribute__((long_call)) BattleAI_ChooseMoveOrAction(void);
 void __attribute__((long_call)) RecordAbilityBattle(u8 bank, u8 ability);
 void __attribute__((long_call)) RecordItemBattle(u8 bank, u8 item_effect);
-void __attribute__((long_call)) BattleStringExpandPlaceholdersToDisplayedString(const u8* textPtr);
+//void __attribute__((long_call)) BattleStringExpandPlaceholdersToDisplayedString(const u8* textPtr);
 u8* __attribute__((long_call)) TryGetStatusString(u8 *src);
 void __attribute__((long_call)) ExpandBattleTextBuffPlaceholders(const u8 *src, u8 *dst);
 void __attribute__((long_call)) ChooseMoveUsedParticle(u8* textPtr);
@@ -398,6 +398,7 @@ void __attribute__((long_call)) SetVBlankCallback(void (*callback));
 void __attribute__((long_call)) SetHBlankCallback(void (*callback));
 void __attribute__((long_call)) SetCallback1(void* func);
 void __attribute__((long_call)) SetCallback2(void* func);
+void __attribute__((long_call)) OverworldCallback2(void); 
 
 void __attribute__((long_call)) LZ77UnCompWram(const void *src, void *dest);
 void __attribute__((long_call)) LZ77UnCompVram(const void *src, void *dest);

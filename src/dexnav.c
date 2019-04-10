@@ -40,14 +40,16 @@ extern u8 gText_DexNav_Invalid[];
 extern u8 gText_DexNav_Locked[];
 
 static struct DexnavHudData** DNavState = (struct DexnavHudData**)(DEXNAV_SAVERAM + MAX_NUM_POKEMON);
+//static struct DexnavHudData** DNavState = (struct DexnavHudData**)(DEXNAV_SAVERAM + 40);
 
-extern void DexNavPopulateEncounterList();
-extern void ExecDexNavHUD(void);
+void DexNavPopulateEncounterList();
+void ExecDexNavHUD(void);
 
 
 void DestroyTaskCompletedTextbox(u8 tId)
 {
-    if (!gBoxStatusAndType) {
+    if (*gBoxStatusAndType != 1)
+	{
         TextboxClose();
         DestroyTask(tId);
         ScriptEnvDisable();
@@ -495,11 +497,19 @@ void DexNavFreeHUD(void)
     DisableInterrupts(2);
     SetHBlankCallback(NullSubHBlank);
 
+/*
     // WRITE_REG_WININ(0x1F1F);
     REG_WININ = WININ_BUILD(WIN_BG0 | WIN_BG1 | WIN_BG2 | WIN_BG3 | WIN_OBJ, WIN_BG0 |
                             WIN_BG1 | WIN_BG2 | WIN_BG3 | WIN_OBJ);
     //WRITE_REG_BLDCNT(0x401E);
     REG_BLDCNT = BLDALPHA_BLEND(BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 | BLDCNT_TGT1_OBJ, 0);
+*/
+
+	// WRITE_REG_WININ(0x1F1F);
+	REG_WININ = WININ_BUILD(WIN_BG0 | WIN_BG1 | WIN_BG2 | WIN_BG3 | WIN_OBJ, WIN_BG0 |
+		WIN_BG1 | WIN_BG2 | WIN_BG3 | WIN_OBJ);
+	//WRITE_REG_BLDCNT(0x401E);
+	REG_BLDCNT = BLDALPHA_BLEND(BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 | BLDCNT_TGT1_OBJ, 0);
 };
 
 
@@ -531,7 +541,7 @@ void OutlinedFontDraw(u8 objId, u8 tileNum, u16 size)
     //u8* dst = (u8*)Malloc(size + TILE_SIZE);
     //u8* dst = &gEnemyParty[0];
 	
-	u8* dst = (u8*) (0x0202402c);
+	u8* dst = (u8*) (&gEnemyParty[0]);
 	
     u8 counter = 1;
     u16 index = 320;
@@ -863,93 +873,52 @@ u8 GetEncounterLevel(u16 species, u8 environment)
     //u8 index = GetWildDataIndexForMap();
 	const struct WildPokemonHeader* header = GetCurrentMapWildMonHeaderId();
     if (header == NULL)
-		return 22;
+		return 0xFF;
 	
 	u8 min = 100;
     u8 max = 0;
-	u8 loopInd;
-	//struct WildPokemon MonData;
-    
+	    
 	switch (environment)
 	{
-		case 0:
+		case 0:	// grass
 			if (header->landMonsInfo == NULL)
-				return 22;			
+				return 22; // Hidden pokemon should only appear on walkable tiles or surf tiles
+						
 			for (u8 i = 0; i < 12; ++i)
 			{
-				if (header->landMonsInfo->wildPokemon[i].species == species)
+				struct WildPokemon monData = header->landMonsInfo->wildPokemon[i];
+				//if (header->landMonsInfo->wildPokemon[i].species == species)
+				if (monData.species == species)
 				{
-					min = (min < header->landMonsInfo->wildPokemon[i].minLevel) ? min : header->landMonsInfo->wildPokemon[i].minLevel;
-					max = (max < header->landMonsInfo->wildPokemon[i].maxLevel) ? max : header->landMonsInfo->wildPokemon[i].maxLevel;
+					//min = (min < header->landMonsInfo->wildPokemon[i].minLevel) ? min : header->landMonsInfo->wildPokemon[i].minLevel;
+					//max = (max < header->landMonsInfo->wildPokemon[i].maxLevel) ? max : header->landMonsInfo->wildPokemon[i].maxLevel;
+					min = (min < monData.minLevel) ? min : monData.minLevel;
+					max = (max > monData.maxLevel) ? max : monData.maxLevel;
 				}
 			}
 			break;
 			//struct WildPokemon MonData = header->landMonsInfo->wildPokemon;
 			//if (MonData == 0)
-			//	return 22;			
+			//	return 22;
 			//break;
 			
-		case 1:
+		case 1:	//water
 			if (header->waterMonsInfo == NULL)
-				return 22;
+				return 22; // Hidden pokemon should only appear on walkable tiles or surf tiles
 
-			for (u8 i = 0; i < loopInd; ++i)
+			for (u8 i = 0; i < 5; ++i)
 			{
-				if (header->waterMonsInfo->wildPokemon[i].species == species)
+				struct WildPokemon monData = header->waterMonsInfo->wildPokemon[i];
+				if (monData.species == species)
 				{
-					min = (min < header->waterMonsInfo->wildPokemon[i].minLevel) ? min : header->waterMonsInfo->wildPokemon[i].minLevel;
-					max = (max < header->waterMonsInfo->wildPokemon[i].maxLevel) ? max : header->waterMonsInfo->wildPokemon[i].maxLevel;
+					min = (min < monData.minLevel) ? min : monData.minLevel;
+					max = (max > monData.maxLevel) ? max : monData.maxLevel;
 				}
 			}
 			break;
 		default:
 			return 22;
 	}
-			
-	/*
-	switch (environment)
-	{
-        // grass
-        case 0:
-        {
-			if (header->landMonsInfo == NULL)
-				return 0;
-            u8 i;
-            for (i = 0; i < 12; ++i)
-			{
-                //struct WildPokemon WildMons = gWildMonHeaders[index].landMonsInfo->wildEncounters->wildGrass[i];
-                //if (WildMons.species == species)
-				if (header->landMonsInfo->wildPokemon[i].species == species)
-				{
-                    min = (min < header->landMonsInfo->wildPokemon[i].minLevel) ? min : header->landMonsInfo->wildPokemon[i].minLevel;
-                    max = (max > header->landMonsInfo->wildPokemon[i].maxLevel) ? max : header->landMonsInfo->wildPokemon[i].maxLevel;
-                }
-            }
-            break;
-        }
-        // surf
-        case 1:
-        {
-            u8 i;
-            for (i = 0; i < 5; ++i)
-			{
-                struct WildPokemon WildMons = gWildMonHeaders[index].waterMonsInfo->wildEncounters->wildWater[i];
-                if (WildMons.species == species)
-				{
-                    min = (min < WildMons.minLevel) ? min : WildMons.minLevel;
-                    max = (max > WildMons.maxLevel) ? max : WildMons.maxLevel;
-                }
-            }
-            break;
-        }
-        default:
-        {
-            return 22; // Hidden pokemon should only appear on walkable tiles or surf tiles
-            break;
-        }
-    };
-	
-	*/
 	
     if (max == 0)
 	{
@@ -1532,7 +1501,7 @@ void DexNavDrawIcons(void)
 
 
 void InitDexNavHUD(u16 species, u8 environment)
-{
+{	
 	*DNavState = (struct DexnavHudData*)Calloc(sizeof(struct DexnavHudData));
     // assign non-objects to struct
     (*DNavState)->species = species;
@@ -1541,11 +1510,9 @@ void InitDexNavHUD(u16 species, u8 environment)
     (*DNavState)->searchLevel = searchLevel;
     (*DNavState)->pokemonLevel = DexNavGenerateMonLevel(species, searchLevel, environment);
 
-
     if ((*DNavState)->pokemonLevel < 1)
 	{
         Free((void*)*DNavState);
-        // pchar empty_string[] = _("This Pokemon cannot be found here.\p");
         MsgNormal(&gText_CannotBeFound[0]);
         return;
     }
@@ -1555,7 +1522,6 @@ void InitDexNavHUD(u16 species, u8 environment)
     if (!ShakingGrass(environment, 12, 12, 0))
 	{
         Free((void*)*DNavState);
-        //pchar empty_string[] = _("It couldn’t be found nearby.\nTry looking in a different area!\p");
         MsgNormal(&gText_NotFoundNearby[0]);
         return;
     }
@@ -1587,10 +1553,10 @@ void InitDexNavHUD(u16 species, u8 environment)
 
 // This is called via a c1 from the GUI, while waiting to return to the OW
 void ExecDexNavHUD(void) 
-{
-    if (!gPaletteFade->active && !ScriptEnv2IsEnabled() && gMain.callback2 == OverworldCallbackSwitchStartMenu)
+{	
+	if ((!gPaletteFade->active) && (!ScriptEnv2IsEnabled()) && (gMain.callback2 == OverworldCallback2))
 	{
-        SetCallback1(OverworldCallback1);
+		SetCallback1(OverworldCallback1);
         InitDexNavHUD(Var8000, Var8001);
     }
 };
@@ -2070,6 +2036,7 @@ void OeiCaveEffect(void)
     GpuPalObjAllocTagAndApply(&caveSmoke);
     GpuPalApply((u8 *)&gInterfaceGfx_caveSmokePal, 29 * 16, 32);
     LogCoordsCameraRelative(&gFieldEffectArguments->effectPos.x, &gFieldEffectArguments->effectPos.y, 8, 8);
+	//LogCoordsCameraRelative(&gFieldEffectArguments->effectPos.x, &gFieldEffectArguments->effectPos.y, 7, 7);
     u8 objId = TemplateInstanciateReverseSearch(&ObjtCave, gFieldEffectArguments->effectPos.x, gFieldEffectArguments->effectPos.y, 0xFF);
     if (objId != 64)
 	{

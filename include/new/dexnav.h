@@ -133,6 +133,16 @@ struct FieldEffectArguments {
 
 #define gFieldEffectArguments ((struct FieldEffectArguments*) 0x20386E0)
 
+/*
+#define WIN_BG0 (1 << 0)
+#define WIN_BG1 (1 << 1)
+#define WIN_BG2 (1 << 2)
+#define WIN_BG3 (1 << 3)
+#define WIN_OBJ (1 << 4)
+#define WIN_BLD (1 << 5)
+
+#define WININ_BUILD(win0, win1) ((win0) | ((win1) << 8))
+*/
 
 /*
 struct WildPokemon

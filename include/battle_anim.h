@@ -401,26 +401,25 @@ enum
     BANK_X_POS,
     BANK_Y_POS,
 };
-/*
-u8 GetBankPosition(u8 bank, u8 attributeId);
 
-bool8 IsBankSpritePresent(u8 bank);
-void sub_80A6C68(u8 arg0);
-u8 GetAnimBankSpriteId(u8 wantedBank);
-bool8 IsDoubleBattle(void);
-u8 sub_80A6D94(void);
-u8 sub_80A8364(u8);
-void StoreSpriteCallbackInData6(struct Sprite *sprite, void (*spriteCallback)(struct Sprite*));
-void oamt_add_pos2_onto_pos1(struct Sprite *sprite);
-u8 GetBankSpriteDefault_Y(u8 bank);
-u8 sub_80A82E4(u8 bank);
-u8 GetSubstituteSpriteDefault_Y(u8 bank);
+u8 __attribute__((long_call)) GetBankPosition(u8 bank, u8 attributeId);
+
+bool8 __attribute__((long_call)) IsBankSpritePresent(u8 bank);
+void __attribute__((long_call)) sub_80A6C68(u8 arg0);
+u8 __attribute__((long_call)) GetAnimBankSpriteId(u8 wantedBank);
+bool8 __attribute__((long_call)) IsDoubleBattle(void);
+u8 __attribute__((long_call)) sub_80A6D94(void);
+u8 __attribute__((long_call)) sub_80A8364(u8);
+void __attribute__((long_call)) StoreSpriteCallbackInData6(struct Sprite *sprite, void (*spriteCallback)(struct Sprite*));
+void __attribute__((long_call)) oamt_add_pos2_onto_pos1(struct Sprite *sprite);
+u8 __attribute__((long_call)) GetBankSpriteDefault_Y(u8 bank);
+u8 __attribute__((long_call)) sub_80A82E4(u8 bank);
+u8 __attribute__((long_call)) GetSubstituteSpriteDefault_Y(u8 bank);
 
 // battle_anim_80A9C70.s
-void LaunchStatusAnimation(u8 bank, u8 statusAnimId);
+void __attribute__((long_call)) LaunchStatusAnimation(u8 bank, u8 statusAnimId);
 
 // battle_anim_8170478.s
-u8 ItemIdToBallId(u16 itemId);
-u8 LaunchBallStarsTask(u8 x, u8 y, u8 kindOfStars, u8 arg3, u8 ballId);
-u8 LaunchBallFadeMonTask(bool8 unFadeLater, u8 bank, u32 arg2, u8 ballId);
-*/
+u8 __attribute__((long_call)) ItemIdToBallId(u16 itemId);
+u8 __attribute__((long_call)) LaunchBallStarsTask(u8 x, u8 y, u8 kindOfStars, u8 arg3, u8 ballId);
+u8 __attribute__((long_call)) LaunchBallFadeMonTask(bool8 unFadeLater, u8 bank, u32 arg2, u8 ballId);
