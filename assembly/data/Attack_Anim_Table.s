@@ -1517,6 +1517,7 @@ ANIM_AIRSLASH:
 	call UNSET_SCROLLING_BG 
 	endanimation 
 
+.align 2
 Template_0x910040:
 	objtemplate ANIM_TAG_CUT ANIM_TAG_SPLASH 0x83ACAF8 0x83E3290 0x0 0x8231CFC 0x80A44E1 
 
@@ -1601,19 +1602,21 @@ ANIM_AQUATAIL:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
 ANIM_AURASPHERE:
+	loadparticle ANIM_TAG_AURA_SPHERE 
 	loadBG1 0x9 
 	waitfortransparentBG 
 	launchtask 0x80bb82d 0x5 0x4 0xf700 0x0 0x1 0xffff 
-	loadparticle ANIM_TAG_AURA_SPHERE 
 	pause 0xf 
 	launchsoundtask 0x80dcf39 0x7 0xa1 0xffc0 0x3f 0x5 0x5 0x0 0x5 
-	launchtemplate 0x890ffe0 0x82 0x3 0x0 0x0 0x19 
+	launchtemplate AURA_SPHERE_BALL 0x82 0x3 0x0 0x0 0x19 
 	waitanimation 
 	playsound2 0x98 0x3f 
 	launchtask 0x8098b1d 0x2 0x5 0x1 0x4 0x0 0x8 0x1 
 	waitanimation 
 	call 0x81d59c7 
-	endanimation 
+	endanimation
+
+AURA_SPHERE_BALL: objtemplate ANIM_TAG_AURA_SPHERE ANIM_TAG_AURA_SPHERE 0x83ACA38 0x8231CF0 0x0 0x83E7604 0x80B563D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
@@ -2242,7 +2245,7 @@ ANIM_GIGAIMPACT:
 	pause 0x6 
 	launchtemplate 0x83e7c08 0x4 0x4 0xfff6 0x0 0x1 0x0 
 	soundcomplex 0x86 0x3f 0xa 0x2 
-	call 0x89138f0 
+	chooseBG BG_GIGA_IMPACT_ON_OPPONENT, BG_GIGA_IMPACT_ON_PLAYER, BG_GIGA_IMPACT_ON_OPPONENT
 	pause 0x1 
 	launchtemplate 0x83d4e9c 0x2 0x5 0x1 0xffe4 0x0 0x0 0x3 
 	waitanimation 
@@ -2766,7 +2769,8 @@ ROCKCLIMB_ROCKY:
 	launchtemplate CLIMB_ROCKPARTICLES 0x2 0x2 0x0 0x2  
 	launchtemplate CLIMB_ROCKPARTICLES 0x2 0x2 0x0 0x3
 	return
-	
+
+.align 2
 CLIMB_ROCKPARTICLES: objtemplate ANIM_TAG_SMALL_ROCK ANIM_TAG_ROCKS 0x83ACA30 0x8231CF0 0x0 0x83E7990 0x80B7C89
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -2967,9 +2971,8 @@ SHADOWSNEAK_MOVE:
 	pause 0x4
 	return
 
-.align
+.align 2
 SHADOWSNEAK_HITS: objtemplate ANIM_TAG_IMPACT ANIM_TAG_HANDS_AND_FEET 0x83ACB58 0x8231CF0 0x0 0x83E63DC 0x80AF3B9
-
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
@@ -3044,7 +3047,6 @@ ANIM_ZENHEADBUTT:
 .align 2
 ZEN_BLUECHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WATER_IMPACT 0x83ACB60 0x8231CF0 0x0 0x83E61C8 0x80AEC81
 ZEN_GLOW: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WATER_IMPACT 0x83ACB60 0x8231CF0 0x0 0x83E61C8 0x80B12E9
-
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
@@ -3223,7 +3225,6 @@ FLAMEWHEEL_SWIRL:
 
 .align 2
 FLAMES_CHARGE: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_SMALL_EMBER 0x83AC9D8 0x83E59CC 0x0 0x8231CFC 0x80A2921
-
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
@@ -3552,7 +3553,6 @@ LEAFTORNADO_TORNADO:
 .align 2
 LEAFTORNADO_BITS: objtemplate ANIM_TAG_LEAF ANIM_TAG_LEAF 0x83AC9D0 0x83E2C00 0x0 0x8231CFC 0x80B477D
 
-
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
 ANIM_LOWSWEEP:
@@ -3723,7 +3723,6 @@ ANIM_VENOSHOCK:
 
 .align 2
 VENOSHOCK_POISON: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_BUBBLE 0x83ACA30 0x83E69E4 0x0 0x8231CFC 0x80A4299
-
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
@@ -5831,10 +5830,14 @@ PHANTOM_FORCE_ATTACK:
 	setblends 0x80c
 	soundcomplex 0x86 0xc0 0x1 0x5
 	pause 0x10
-	launchtemplate 0x891AE88 0x2 0x4 0x0 0x0 0x1 0x2
-	launchtemplate 0x891AE88 0x2 0x4 0xA 0x0 0x1 0x2
-	launchtemplate 0x891AE88 0x2 0x4 0x0 0xA 0x1 0x2
-	launchtemplate 0x891AE88 0x2 0x4 0xA 0xA 0x1 0x2
+	launchtemplate SHADOWFORCE_PURPLEHIT 0x82 0x3 0xfff6 0xfff6 0x0
+	call SHADOWSNEAK_MOVE
+	launchtemplate SHADOWFORCE_PURPLEHIT 0x82 0x3 0xa 0x14 0x0
+	call SHADOWSNEAK_MOVE
+	launchtemplate SHADOWFORCE_PURPLEHIT 0x82 0x3 0xfffb 0xa 0x0
+	call SHADOWSNEAK_MOVE
+	launchtemplate SHADOWFORCE_PURPLEHIT 0x82 0x3 0x11 0xfff4 0x0
+	call SHADOWSNEAK_MOVE
 	pause 0x10
 	makebankvisible 0x0
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0003 0x0000 0x0006 0x0001  
@@ -6091,10 +6094,14 @@ SHADOW_FORCE_ATTACK:
 	setblends 0x80c
 	soundcomplex 0x86 0xc0 0x1 0x5
 	pause 0x10
-	launchtemplate SHADOWFORCE_PURPLEHIT 0x2 0x4 0x0 0x0 0x1 0x2
-	launchtemplate SHADOWFORCE_PURPLEHIT 0x2 0x4 0xA 0x0 0x1 0x2
-	launchtemplate SHADOWFORCE_PURPLEHIT 0x2 0x4 0x0 0xA 0x1 0x2
-	launchtemplate SHADOWFORCE_PURPLEHIT 0x2 0x4 0xA 0xA 0x1 0x2
+	launchtemplate SHADOWFORCE_PURPLEHIT 0x82 0x3 0xfff6 0xfff6 0x0
+	call SHADOWSNEAK_MOVE
+	launchtemplate SHADOWFORCE_PURPLEHIT 0x82 0x3 0xa 0x14 0x0
+	call SHADOWSNEAK_MOVE
+	launchtemplate SHADOWFORCE_PURPLEHIT 0x82 0x3 0xfffb 0xa 0x0
+	call SHADOWSNEAK_MOVE
+	launchtemplate SHADOWFORCE_PURPLEHIT 0x82 0x3 0x11 0xfff4 0x0
+	call SHADOWSNEAK_MOVE
 	pause 0x10
 	makebankvisible 0x0
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0003 0x0000 0x0006 0x0001  
@@ -6105,8 +6112,7 @@ SHADOW_FORCE_ATTACK:
     goto SHADOW_FORCE_WAIT_END
 
 .align 2
-SHADOWFORCE_PURPLEHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_POISON_BUBBLE 0x83ACB58 0x8231CF0 0x0 0x83E7BF8 0x80BA561
-
+SHADOWFORCE_PURPLEHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_POISON_BUBBLE 0x83ACB58 0x8231CF0 0x0 0x83E63DC 0x80AF3B9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
