@@ -741,7 +741,8 @@ DragonTailBS:
 	jumpiffainted BANK_TARGET BS_MOVE_FAINT
 	jumpifmovehadnoeffect BS_MOVE_FAINT
 	jumpifspecialstatusflag BANK_TARGET STATUS3_ROOTED 0x0 0x81D8F27 @;BattleScript_PrintMonIsRooted
-	jumpifability BANK_TARGET ABILITY_SUCTIONCUPS BattleScript_AbilityPreventsPhasingOut
+	jumpifability BANK_TARGET ABILITY_SUCTIONCUPS BattleScript_AbilityPreventsPhasingOutSkipFail
+	jumpifcannotswitch BANK_ATTACKER BS_MOVE_FAINT
 	setbyte CMD49_STATE 0x0
 	cmd49 BANK_TARGET 0x0
 	playanimation BANK_TARGET DRAGON_TAIL_BLOW_AWAY_ANIM 0x0
@@ -753,8 +754,11 @@ DragonTailResetForceSwitchHelper:
 	goto 0x81D6957
 	
 BattleScript_AbilityPreventsPhasingOut:
-	pause 0x10
 	orbyte OUTCOME OUTCOME_NOT_AFFECTED
+
+BattleScript_AbilityPreventsPhasingOutSkipFail:
+	pause 0x10
+	copyarray BATTLE_SCRIPTING_BANK TARGET_BANK 0x1
 	call BattleScript_AbilityPopUp
 	printstring 0xCC @STRINGID_PKMNANCHORSITSELFWITH
 	waitmessage DELAY_1SECOND
