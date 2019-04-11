@@ -148,7 +148,7 @@
 .equ SPIRIT_ARROW_PAL, Spirit_Shackle_ArrowPal
 .equ ULTRA_BURST_SYMBOL_PAL, Necrozma_StarPal
 .equ Z_MOVE_SYMBOL_PAL, Z_Move_SymbolPal
-.equ REALLY_BIG_ROCK_PAL, RocksPal
+.equ REALLY_BIG_ROCK_PAL, Big_RockPal
 .equ COCOON_PAL, CocoonPal
 .equ CORKSCREW_PAL, DrillPal
 .equ HAVOC_SPEAR_PAL, Gigavolt_Havoc_SpearPal

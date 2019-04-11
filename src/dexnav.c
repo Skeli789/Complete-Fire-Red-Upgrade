@@ -203,7 +203,7 @@ void DexNavGetMon(u16 species, u8 potential, u8 level, u8 ability, u16* moves)
 	PokemonSlotPurge(pkmn);
 	
     //CreateBoxMon(&gEnemyParty[0]->base, species, level, 0x0, 0, 0, 0, saveblock2->trainerid);
-	CreateBoxMon(pkmn, species, level, 0, 0, 0, 0, gSaveBlock2->playerTrainerId);
+	CreateBoxMon(pkmn, species, level, 0, FALSE, 0, OT_ID_PLAYER_ID, 0);
 
     // set IVs randomly
     u8 i;
@@ -1742,6 +1742,7 @@ void DexNavLoadNames(u8 status)
     }
 	
     // rbox commit species name
+
     u16 species = (*DNavState)->selectedArr ? (*DNavState)->waterSpecies[(*DNavState)->selectedIndex >> 1] : (*DNavState)->grassSpecies		[(*DNavState)->selectedIndex>>1];
 	
     if (species != 0)

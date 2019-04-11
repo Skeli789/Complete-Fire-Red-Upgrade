@@ -4,7 +4,6 @@
 .global AttackDescriptionTable
 
 AttackDescriptionTable:
-.word 0x8482834		@MOVE_NONE
 .word 0x8482874		@MOVE_POUND
 .word 0x84828bd		@MOVE_KARATECHOP
 .word 0x84828ff		@MOVE_DOUBLESLAP

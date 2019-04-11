@@ -396,7 +396,7 @@ u8 GiveMonToPlayer(pokemon_t* mon) { //Hook in
 
     SetMonData(mon, MON_DATA_OT_NAME, gSaveBlock2->playerName);
     SetMonData(mon, MON_DATA_OT_GENDER, &gSaveBlock2->playerGender);
-    SetMonData(mon, MON_DATA_OT_ID, &gSaveBlock2->playerTrainerId);
+    SetMonData(mon, MON_DATA_OT_ID, gSaveBlock2->playerTrainerId);
 	
 	if (ItemId_GetType(gLastUsedItem) == BALL_TYPE_HEAL_BALL)
 		HealMon(mon);
