@@ -4,14 +4,6 @@
 
 
 // IMAGES
-/*
-#include "../../graphics/DexNav/CaveSmoke/caveSmoke.h"
-#include "../../graphics/DexNav/dexnavGui.h"
-#include "../../graphics/DexNav/SelectionCursor/selectionCursor.h"
-#include "../../graphics/DexNav/stars/dexnavStars.h"
-#include "../../graphics/DexNav/empty/empty.h"
-*/
-
 extern const u8 gInterfaceGfx_dexnavGuiTiles[];
 extern const u8 gInterfaceGfx_dexnavGuiMap[];
 extern const u8 gInterfaceGfx_dexnavGuiPal[];

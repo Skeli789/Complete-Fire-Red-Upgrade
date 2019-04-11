@@ -130,14 +130,14 @@ void __attribute__((long_call)) ReturnToFieldContinueScriptPlayMapMusic(void);
 
 void __attribute__((long_call)) PatchObjectPalette(u16 PalTag, u8 PalSlot);
 
-void __attribute__((long_call)) GpuTileObjAllocTagAndUpload(struct SpriteSheet* tile);
-u8 __attribute__((long_call)) GpuPalObjAllocTagAndApply(struct SpritePalette* pal);
+void __attribute__((long_call)) GpuTileObjAllocTagAndUpload(const struct SpriteSheet* tile);
+u8 __attribute__((long_call)) GpuPalObjAllocTagAndApply(const struct SpritePalette* pal);
 void __attribute__((long_call)) GpuPalApply(void* src, int dstIndex, int numCols);
 void __attribute__((long_call)) LogCoordsCameraRelative(s32* x, s32* y, u8 size_x, u8 size_y);
 void __attribute__((long_call)) LoadOAM(void);
 void __attribute__((long_call)) ProcessSpriteCopyRequests(void);
 
-u8 __attribute__((long_call)) TemplateInstanciateReverseSearch(struct SpriteTemplate* tmp, s16 x, s16 y, u8 height);
+u8 __attribute__((long_call)) TemplateInstanciateReverseSearch(const struct SpriteTemplate* tmp, s16 x, s16 y, u8 height);
 
 // Textbox Stuff
 void __attribute__((long_call)) TextboxClose(void);
