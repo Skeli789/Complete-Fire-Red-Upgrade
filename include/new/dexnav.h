@@ -117,9 +117,6 @@ typedef void (*SpriteCallback)(struct Sprite* s);
 #define SEARCHLEVEL50_ITEM 6
 #define SEARCHLEVEL100_ITEM 12
 
-// GUI Rboxes
-#define rgb5(r, g, b) (u16)((r >> 3) | ((g >> 3) << 5) | ((b >> 3) << 10))
-
 struct FieldEffectArguments {
     struct Coords32 effectPos;
     u32 priority;
@@ -127,61 +124,8 @@ struct FieldEffectArguments {
 
 #define gFieldEffectArguments ((struct FieldEffectArguments*) 0x20386E0)
 
-/*
-#define WIN_BG0 (1 << 0)
-#define WIN_BG1 (1 << 1)
-#define WIN_BG2 (1 << 2)
-#define WIN_BG3 (1 << 3)
-#define WIN_OBJ (1 << 4)
-#define WIN_BLD (1 << 5)
-
-#define WININ_BUILD(win0, win1) ((win0) | ((win1) << 8))
-*/
-
-/*
-struct WildPokemon
-{
-    u8 minLevel;
-    u8 maxLevel;
-    u16 species;
-};
-
-union WildMonDensities {
-    struct WildPokemon wildGrass[12];
-    struct WildPokemon wildWater[5];
-    struct WildPokemon wildTree[5];
-    struct WildPokemon wildFishing[10];
-};
-
-struct WildPokemonInfo
-{
-    u8 encounterRate;
-    u8 padding[3];
-    union WildMonDensities *wildEncounters;
-};
-
-struct WildMonData	// WildPokemonHeader
-{
-    u8 mapGroup;
-    u8 mapNum;
-	u16 padding;
-    const struct WildPokemonInfo *landMonsInfo;
-    const struct WildPokemonInfo *waterMonsInfo;
-    const struct WildPokemonInfo *rockSmashMonsInfo;
-    const struct WildPokemonInfo *fishingMonsInfo;
-};
-
-extern const struct WildMonData gDexNevWildData[];
-#define gDexNevWildData ((struct WildMonData*) *((u32*) 0x8082990))
-*/
-
 
 extern const u16 DexNavTextPal[];
-extern struct TextColor DexNav_BlackText;
-extern struct TextColor DexNav_WhiteText;
-extern struct TextColor DexNav_RedText;
-extern struct TextColor DexNav_GreenText;
-extern struct WindowTemplate DexNavBoxes[];
 extern const struct OamData IconOAM;
 extern const struct OamData CursorOAM;
 extern const struct BgTemplate BgConfigDexNavGUI[4];
@@ -198,6 +142,13 @@ struct TextColor DexNav_BlackText = {0, 3, 4};
 struct TextColor DexNav_WhiteText = {0, 1, 2};
 struct TextColor DexNav_RedText = {0, 7, 8};
 struct TextColor DexNav_GreenText = {0, 5, 6};
+
+
+const u8* gIconPals[] = {
+	(void*) 0x83d3740, 
+	(void*) 0x83d3760,
+	(void*) 0x83d3780,
+}; 
 
 struct DexnavHudData {
     u16 species;
@@ -238,7 +189,7 @@ struct OieState2
     SuperCallback s;
 };
 
-const struct BgTemplate BgConfigDexNavGUI[4];
+extern const struct BgTemplate BgConfigDexNavGUI[4];
 const struct BgTemplate BgConfigDexNavGUI[4] = {
     {
         .padding = 0,
@@ -360,7 +311,7 @@ const struct SpriteSheet caveGfx[4] = {
 	},
 };
 //struct SpriteSheet* ptr_caveGfx =
-struct SpriteTemplate ObjtCave = {
+const struct SpriteTemplate ObjtCave = {
 	.tileTag = 0xFFFF,
 	.paletteTag = 0x1005,
 	.oam = (struct OamData*) 0x83A36F0,
@@ -372,25 +323,27 @@ struct SpriteTemplate ObjtCave = {
 
 
 // GUI Rboxes
-const u16 DexNavTextPal[] = {rgb5(255, 0, 255),   rgb5(248, 248, 248), rgb5(112, 112, 112), rgb5(96, 96, 96),
-                                rgb5(208, 208, 208), rgb5(76, 154, 38),   rgb5(102, 194, 66),  rgb5(168, 75, 76),
-                                rgb5(224, 114, 75),  rgb5(180, 124, 41),  rgb5(241, 188, 60),  rgb5(255, 0, 255),
-                                rgb5(255, 0, 255),   rgb5(255, 0, 255),   rgb5(255, 133, 200),   rgb5(64, 200, 248)};
+#define rgb5(r, g, b) (u16)((r >> 3) | ((g >> 3) << 5) | ((b >> 3) << 10))
+const u16 DexNavTextPal[] = {
+	rgb5(255, 0, 255), rgb5(248, 248, 248), rgb5(112, 112, 112), rgb5(96, 96, 96),
+	rgb5(208, 208, 208), rgb5(76, 154, 38), rgb5(102, 194, 66), rgb5(168, 75, 76),
+	rgb5(224, 114, 75), rgb5(180, 124, 41), rgb5(241, 188, 60), rgb5(255, 0, 255),
+	rgb5(255, 0, 255), rgb5(255, 0, 255), rgb5(255, 133, 200), rgb5(64, 200, 248)
+};
 
-struct WindowTemplate DexNavBoxes[] = {
-    {
-        //Species
-        .priority = 0,
+//extern const struct WindowTemplate sDexNavWindows[];
+const struct WindowTemplate sDexNavWindows[] = {
+	{
+        .priority = 0,		//Species 
         .tilemapLeft = 21,
         .tilemapTop = 6,
         .width = 9,
         .height = 2,
         .paletteNum = 15,
         .baseBlock = 1,
-    },
+	},
     {
-        //Search level
-        .priority = 0,
+        .priority = 0,		//Search level
         .tilemapLeft = 21,
         .tilemapTop = 9,
         .width = 9,
@@ -399,8 +352,7 @@ struct WindowTemplate DexNavBoxes[] = {
         .baseBlock = 31,
     },
     {
-        //Level bonus
-        .priority = 0,
+        .priority = 0,		//Level bonus
         .tilemapLeft = 21,
         .tilemapTop = 12,
         .width = 3,
@@ -409,8 +361,7 @@ struct WindowTemplate DexNavBoxes[] = {
         .baseBlock = 61,
     },
     {
-        //Hidden Ability
-        .priority = 0,
+        .priority = 0,		//Hidden Ability
         .tilemapLeft = 21,
         .tilemapTop = 15,
         .width = 12,
@@ -419,8 +370,7 @@ struct WindowTemplate DexNavBoxes[] = {
         .baseBlock = 76,
     },
     {
-        // Reply text
-        .priority = 0,
+        .priority = 0,		// Reply text
         .tilemapLeft = 1,
         .tilemapTop = 17,
         .width = 22,
@@ -433,6 +383,7 @@ struct WindowTemplate DexNavBoxes[] = {
     },
 
 };
+
 
 //const struct Frame (**nullframe)[] = (const struct Frame (**)[])0x8231CF0;
 //const struct AffineAnimCmd (**nullrsf)[] = (const struct AffineAnimCmd (**)[])0x8231CFC;
@@ -471,7 +422,7 @@ const struct OamData HeldOAM = {   .y = ICONY,
 };
 
 //#define gPalHeldItemIcon ((u32*) 0x0845A3EC) //Pal for held items. The yellow box and mail icon
-struct SpritePalette HeldPal = {(void*) 0x0845A3EC, 0x8472};
+const struct SpritePalette HeldPal = {(void*) 0x0845A3EC, 0x8472};
 
 // 32x32 object with priority 1, one less than held item which overlaps it
 const struct OamData PIconOAM = {  .y = ICONY,
@@ -498,53 +449,4 @@ const struct SpriteTemplate BulbTemp = {
     .affineAnims = (const union AffineAnimCmd* const*) 0x8231CFC, 
 	.callback = (SpriteCallback) 0x800760D,
 };
-
-/*
-
-extern u16 rand_range(u16 min, u16 max);
-extern const struct OamData FontOAM;
-extern const struct OamData HeldOAM;
-extern struct SpritePalette HeldPal;
-extern const struct OamData PIconOAM;
-extern const struct SpriteTemplate BulbTemp;
-
-extern void vblank_cb_spq(void);
-extern void c2_dexnav_gui(void);
-extern void setup(void);
-extern u16 rand_range(u16 min, u16 max);
-
-extern void dexnav_generate_move(u16, u8, u8, u16*);
-extern u8 PokemonAbility dexnav_generate_hiddenability(u16, u8);
-extern u8 dexnav_generate_potential(u8);
-extern u16 Item dexnav_generate_helditem(u16, u8);
-extern u8 get_sightlvl(u8);
-extern u8 dexnav_generate_pokemonlvl(u16, u8, u8);
-extern void dexnav_proximity_update(void);
-extern void dexnav_draw_icons(void);
-extern void dexnav_icons_vision_update(u8, u8);
-extern void dexnav_hud_manage(u8);
-extern void dexhud_hblank(void);
-extern void MsgNormal(pchar *);
-
-extern const u16 DexNavTextPal[];
-extern struct TextColor dnav_text_black;
-extern struct TextColor dnav_text_white;
-extern struct TextColor dnav_text_red;
-extern struct TextColor dnav_text_green;
-extern struct WindowTemplate DexNavBoxes[];
-
-extern const struct BgTemplate BgConfigDexNavGUI[4];
-
-
-extern const struct OamData icon_oam;
-extern const struct OamData CursorOAM;
-
-// cursor positions for water
-extern const u16 CursorPositions2[];
-
-// positions for grass
-extern const u16 CursorPositions1[];
-
-
-*/
 

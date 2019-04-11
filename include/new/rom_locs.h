@@ -34,3 +34,4 @@ extern u8 gUnownDistributionByChamber[7][12]; //[NUM_ROOMS][NUM_WILD_INDEXES]
 #define SafariZoneEndScript ((void*) 0x81bfbc5)
 
 #define sBasePaletteGammaTypes ((u8*) 0x83C2CC0)
+
