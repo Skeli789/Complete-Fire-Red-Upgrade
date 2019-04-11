@@ -110,9 +110,15 @@ def process_assembly(in_file):
 	if out_file_list[1] is False:
 		return out_file #No point in recompiling file
 	
-	print ('Assembling %s' % in_file)
-	cmd = [AS] + ASFLAGS + ['-c', in_file, '-o', out_file]
-	run_command(cmd)
+	try:
+		print ('Assembling %s' % in_file)
+		cmd = [AS] + ASFLAGS + ['-c', in_file, '-o', out_file]
+		run_command(cmd)
+		
+	except FileNotFoundError:
+		print('Error! The assembler could not be located.\nAre you sure you set up your path to devkitPro/devkitARM/bin correctly?')
+		sys.exit()
+		
 	return out_file
 	
 def process_c(in_file):
@@ -122,9 +128,14 @@ def process_c(in_file):
 	if out_file_list[1] is False:
 		return out_file #No point in recompiling file
 	
-	print ('Compiling %s' % in_file)
-	cmd = [CC] + CFLAGS + ['-c', in_file, '-o', out_file]
-	run_command(cmd)
+	try:
+		print ('Compiling %s' % in_file)
+		cmd = [CC] + CFLAGS + ['-c', in_file, '-o', out_file]
+		run_command(cmd)
+
+	except FileNotFoundError:
+		print('Error! The C compiler could not be located.\nAre you sure you set up your path to devkitPro/devkitARM/bin correctly?')
+		sys.exit()
 	
 	return out_file
 
