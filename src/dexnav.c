@@ -1438,11 +1438,6 @@ void DexNavDrawPotential(u8 potential, u8* objidAddr)
 };
 
 
-
-//const (u8*) gPokeIconPals[] = {(u32*) 0x83d3740, 0x83D3760, 0x83D3780}; 
-
-
-
 void DexNavDrawSpeciesIcon(u16 species, u8* objIdAddr)
 //void DexNavDrawSpeciesIcon(u16 species)
 {
@@ -1451,9 +1446,7 @@ void DexNavDrawSpeciesIcon(u16 species, u8* objIdAddr)
 
 	// check which palette the species icon uses
     u8 iconPal = gMonIconPaletteIndices[species];
-    //struct SpritePalette bulbPal = {&(gPokeIconPals[iconPal]), 0x3139};
-    //struct SpritePalette bulbPal = {(gPokeIconPals[iconPal]), 0x3139};
-	struct SpritePalette bulbPal = {(void*) 0x83d3740, 0x3139};
+	struct SpritePalette bulbPal = {(void*) gIconPals[iconPal], 0x3139};
 	GpuPalObjAllocTagAndApply(&bulbPal);
 
     u32 pid = RandRange(0, 0xFFFF) | RandRange(0, 0xFFFF) << 16;
@@ -1583,9 +1576,9 @@ u8 ExecDexNav(void)
 // gfx clean
 void DexNavGuiSetup(void)
 {
-    Setup();	
+    Setup();
     FreeAllWindowBuffers();
-    BgIdModOffsetX(0, 0, 0);
+	BgIdModOffsetX(0, 0, 0);
     BgIdModOffsetY(0, 0, 0);
     BgIdModOffsetX(1, 0, 0);
     BgIdModOffsetY(1, 0, 0);
@@ -1738,6 +1731,8 @@ void SpawnPointerArrow(void)
     UpdateCursorPosition();
 };
 
+
+
 void DexNavLoadNames(u8 status)
 {
     // clean boxes
@@ -1747,19 +1742,18 @@ void DexNavLoadNames(u8 status)
     }
 	
     // rbox commit species name
-    u16 species = (*DNavState)->selectedArr ? (*DNavState)->waterSpecies[(*DNavState)->selectedIndex >> 1] : (*DNavState)->grassSpecies
-		[(*DNavState)->selectedIndex>>1];
+
+    u16 species = (*DNavState)->selectedArr ? (*DNavState)->waterSpecies[(*DNavState)->selectedIndex >> 1] : (*DNavState)->grassSpecies		[(*DNavState)->selectedIndex>>1];
 	
-	gLoadPointer = (u32) DNavState;	// 03000f14
-	Var8005 = species;	// 020370c2
-	
-    if (species)
+    if (species != 0)
         WindowPrint(0, 0, 0, 4, &DexNav_BlackText, 0, gSpeciesNames[species]);
 	else
+	{
         WindowPrint(0, 0, 0, 4, &DexNav_BlackText, 0, &gText_DexNav_NoInfo[0]);
-
+	}
+	
     // rbox commit search level
-    ConvertIntToDecimalStringN(&gStringVar4[0], SearchLevels[species], 0, 4);
+    ConvertIntToDecimalStringN(gStringVar4, SearchLevels[species], 0, 4);
     WindowPrint(1, 0, 0, 4, &DexNav_BlackText, 0, &gStringVar4[0]);
 
     // rbox commit level bonus
@@ -1769,7 +1763,7 @@ void DexNavLoadNames(u8 status)
     else
         searchLevelBonus = (SearchLevels[species] >> 2);
 	
-    ConvertIntToDecimalStringN(&gStringVar4[0], searchLevelBonus, 0, 4);
+    ConvertIntToDecimalStringN(gStringVar4, searchLevelBonus, 0, 4);
     WindowPrint(2, 0, 0, 4, &DexNav_BlackText, 0, &gStringVar4[0]);
 
     // rbox commit hidden ability name
@@ -1789,15 +1783,16 @@ void DexNavLoadNames(u8 status)
             break;
         case 2:
             WindowPrint(4, 1, 0, 8, &DexNav_WhiteText, 0, &gText_DexNav_Locked[0]);
-			break;
     }
     // display committed gfx
-    for (int i = 0; i < 5; ++i)
+    for (u8 i = 0; i < 5; ++i)
 	{
         CopyWindowToVram(i, 3);
         PutWindowTilemap(i);
     }
 };
+
+
 
 void CallbackDexNavOW(void)
 {
@@ -1861,7 +1856,6 @@ void DexNavPopulateEncounterList(void)
     // nop struct data
 	Memset(&((*DNavState)->grassSpecies[0]), 0, 34);
    
-    
 	// populate unique wild grass encounters
     u8 grassIndex = 0;
 	u8 sizeGrass = 12;
@@ -1900,24 +1894,21 @@ void DexNavGuiHandler(void)
 	switch(gMain.state)
 	{
         case 0:
-            if (!gPaletteFade->active)
+            if (!(gPaletteFade->active))
 			{
                 DexNavGuiSetup();
-				// gets through here
-				
                 SetCallback1(DexNavGuiHandler);
                 // allocate dexnav struct
                 *DNavState = (struct DexnavHudData*)Calloc(sizeof(struct DexnavHudData));
 				gMain.state++;
-                //gMain.state = 1;
 			}
             break;
         case 1:
-		{
+			{
 				// load BG assets
 				void* DexNav_gbackBuffer = Malloc(0x800);
 				(*DNavState)->backBuffer = DexNav_gbackBuffer;
-				LoadPalette((void*) &DexNavTextPal, 15 * 16, 32);
+				LoadPalette((void*) &DexNavTextPal, 15*16, 32);
 				LoadCompressedPalette((void*) gInterfaceGfx_dexnavGuiPal, 0, 32);				
 				LZ77UnCompWram((void*) gInterfaceGfx_dexnavGuiMap, (void*) DexNav_gbackBuffer);
 				LZ77UnCompVram((void*) gInterfaceGfx_dexnavGuiTiles, (void*) 0x06000000);
@@ -1925,11 +1916,11 @@ void DexNavGuiHandler(void)
 				BgIdMarkForSync(1);
 				BgIdMarkForSync(0);
 				gMain.state++;
-		}
+			}
 			break;
 			
         case 2:
-			InitWindows(DexNavBoxes);
+			InitWindows(sDexNavWindows);
             DexNavPopulateEncounterList();
             DexNavLoadNames(1);
             gMain.state++;
@@ -1950,6 +1941,7 @@ void DexNavGuiHandler(void)
             (*DNavState)->selectedIndex = 0;
             gMain.state++;
             break;
+			
         case 4:
             if (!gPaletteFade->active)
 			{
