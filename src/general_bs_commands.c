@@ -2236,14 +2236,15 @@ void atkA6_settypetorandomresistance(void) { //Conversion 2
 		return;
 	}
 
-    for (rands = 0; rands < 1000; ++rands) {
-		
+    for (rands = 0; rands < 1000; ++rands) 
+	{	
         while (((i = (Random() & 0x7F)) > udivsi(sizeof(gTypeEffectiveness), 3)));
 
         i *= 3;
 		
 		#ifdef INVERSE_BATTLES
-			if (FlagGet(INVERSE_FLAG)) {
+			if (FlagGet(INVERSE_FLAG)) 
+			{
 				if (TYPE_EFFECT_ATK_TYPE(i) == gNewBS->LastUsedTypes[bankDef]
 				&& TYPE_EFFECT_MULTIPLIER(i) >= TYPE_MUL_SUPER_EFFECTIVE
 				&& !IsOfType(bankAtk, TYPE_EFFECT_DEF_TYPE(i)))
@@ -2256,7 +2257,9 @@ void atkA6_settypetorandomresistance(void) { //Conversion 2
 				}
 			}
 			
-			else {
+			else
+		#endif
+			{
 				if (TYPE_EFFECT_ATK_TYPE(i) == gNewBS->LastUsedTypes[bankDef]
 				&& TYPE_EFFECT_MULTIPLIER(i) <= TYPE_MUL_NOT_EFFECTIVE
 				&& !IsOfType(bankAtk, TYPE_EFFECT_DEF_TYPE(i)))
@@ -2268,18 +2271,6 @@ void atkA6_settypetorandomresistance(void) { //Conversion 2
 					return;
 				}
 			}
-		#else
-			if (TYPE_EFFECT_ATK_TYPE(i) == gNewBS->LastUsedTypes[bankDef]
-			&& TYPE_EFFECT_MULTIPLIER(i) <= TYPE_MUL_NOT_EFFECTIVE
-			&& !IsOfType(bankAtk, TYPE_EFFECT_DEF_TYPE(i)))
-			{
-				SET_BATTLER_TYPE(bankAtk, TYPE_EFFECT_DEF_TYPE(i));
-				PREPARE_TYPE_BUFFER(gBattleTextBuff1, TYPE_EFFECT_DEF_TYPE(i));
-
-				gBattlescriptCurrInstr += 5;
-				return;
-			}
-		#endif
     }
 
     for (j = 0, rands = 0; rands < sizeof(gTypeEffectiveness); j += 3, rands += 3) {

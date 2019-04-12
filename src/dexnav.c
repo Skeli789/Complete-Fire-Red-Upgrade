@@ -25,7 +25,6 @@ Known BUGS:
 	-GUI gets messed up in dark, flashable rooms
 */
 
-
 extern void CreateWildMon(u16 species, u8 level, u8 monHeaderIndex, bool8 purgeParty);
 extern void DoStandardWildBattle(void);
 extern void DexNavGuiHandler(void);
@@ -35,6 +34,7 @@ extern void TransferPlttBuffer(void);
 extern u8 GetPlayerDistance(s16 x, s16 y);
 
 extern const struct WildPokemonHeader* GetCurrentMapWildMonHeaderId(void);
+extern const struct WildPokemonHeader* GetCurrentMapWildMonDaytimeHeader(void);
 
 extern u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
 
@@ -916,8 +916,18 @@ u8 GetEncounterLevel(u16 species, u8 environment)
 	switch (environment)
 	{
 		case 0:	// grass
+		RETRY_LAND_HEADER:
 			if (header->landMonsInfo == NULL)
-				return 22; // Hidden pokemon should only appear on walkable tiles or surf tiles
+			{
+				#ifdef TIME_ENABLED
+					header = GetCurrentMapWildMonDaytimeHeader();
+					if (header->landMonsInfo == NULL)
+						return 22;
+					goto RETRY_LAND_HEADER;
+				#else
+					return 22; // Hidden pokemon should only appear on walkable tiles or surf tiles
+				#endif
+			}
 						
 			for (u8 i = 0; i < 12; ++i)
 			{
@@ -938,8 +948,18 @@ u8 GetEncounterLevel(u16 species, u8 environment)
 			//break;
 			
 		case 1:	//water
+		RETRY_WATER_HEADER:
 			if (header->waterMonsInfo == NULL)
-				return 22; // Hidden pokemon should only appear on walkable tiles or surf tiles
+			{
+				#ifdef TIME_ENABLED
+					header = GetCurrentMapWildMonDaytimeHeader();
+					if (header->waterMonsInfo == NULL)
+						return 22;
+					goto RETRY_WATER_HEADER;
+				#else
+					return 22; // Hidden pokemon should only appear on walkable tiles or surf tiles
+				#endif
+			}
 
 			for (u8 i = 0; i < 5; ++i)
 			{
@@ -1206,10 +1226,17 @@ void DexNavGenerateMoveset(u16 species, u8 searchLevel, u8 encounterLevel, u16* 
 			wildMonIndex = ChooseWildMonIndex_Land();
 		else if (header->waterMonsInfo != NULL)
 			wildMonIndex = ChooseWildMonIndex_WaterRock();
-		CreateWildMon(species, encounterLevel, wildMonIndex, TRUE);
-	#else
-		CreateWildMon(species, encounterLevel, 0, TRUE);
-	#endif
+		else
+		{
+			#ifdef TIME_ENABLED
+			header = GetCurrentMapWildMonDaytimeHeader();
+			if (header->landMonsInfo != NULL)
+				wildMonIndex = ChooseWildMonIndex_Land();
+			else if (header->waterMonsInfo != NULL)
+				wildMonIndex = ChooseWildMonIndex_WaterRock();
+			#endif
+		}
+		CreateWildMon(species, encounterLevel, wildMonIndex, FALSE);
 	
 
 	// store generated mon moves into Dex Nav Struct

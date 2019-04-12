@@ -496,9 +496,9 @@ u8 TurnBasedEffects(void) {
 				
 			case(ET_Nightmare):
                 if (gBattleMons[gActiveBattler].status2 & STATUS2_NIGHTMARE) {
-					if (gBattleMons[gActiveBattler].status2 & STATUS_SLEEP) {
-						if (gBattleMons[gActiveBattler].hp && 
-							gBattleMons[gActiveBattler].ability != ABILITY_MAGICGUARD) {
+					if (gBattleMons[gActiveBattler].status1 & STATUS_SLEEP) {
+						if (gBattleMons[gActiveBattler].hp
+						&&  gBattleMons[gActiveBattler].ability != ABILITY_MAGICGUARD) {
 								gBattleMoveDamage = MathMax(1, gBattleMons[gActiveBattler].maxHP / 4);
 								BattleScriptExecute(BattleScript_NightmareTurnDmg);
 								effect++;
