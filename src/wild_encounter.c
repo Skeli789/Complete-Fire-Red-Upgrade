@@ -42,7 +42,7 @@ u8 ChooseWildMonLevel(const struct WildPokemon* wildPokemon);
 const struct WildPokemonHeader* GetCurrentMapWildMonHeaderId(void);
 const struct WildPokemonHeader* GetCurrentMapWildMonDaytimeHeader(void);
 u8 PickWildMonNature(void);
-void CreateWildMon(u16 species, u8 level, u8 monHeaderIndex, bool8 purgeParty);
+extern void CreateWildMon(u16 species, u8 level, u8 monHeaderIndex, bool8 purgeParty);
 bool8 TryGenerateWildMon(const struct WildPokemonInfo* wildMonInfo, u8 area, u8 flags);
 static species_t GenerateFishingWildMon(const struct WildPokemonInfo* wildMonInfo, u8 rod);
 void FishingWildEncounter(u8 rod);

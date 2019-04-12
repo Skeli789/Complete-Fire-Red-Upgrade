@@ -132,7 +132,7 @@ void __attribute__((long_call)) PatchObjectPalette(u16 PalTag, u8 PalSlot);
 
 void __attribute__((long_call)) GpuTileObjAllocTagAndUpload(const struct SpriteSheet* tile);
 u8 __attribute__((long_call)) GpuPalObjAllocTagAndApply(const struct SpritePalette* pal);
-void __attribute__((long_call)) GpuPalApply(void* src, int dstIndex, int numCols);
+void __attribute__((long_call)) GpuPalApply(void* pal, u16 offset, u16 size);
 void __attribute__((long_call)) LogCoordsCameraRelative(s32* x, s32* y, u8 size_x, u8 size_y);
 void __attribute__((long_call)) LoadOAM(void);
 void __attribute__((long_call)) ProcessSpriteCopyRequests(void);

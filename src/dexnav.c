@@ -20,6 +20,9 @@
 /*
 Simplified DexNav System
 	credits to FBI: https://github.com/EternalCode/Dexnav
+	
+Known BUGS:
+	-GUI gets messed up in dark, flashable rooms
 */
 
 
@@ -238,20 +241,29 @@ void DexNavGetMon(u16 species, u8 potential, u8 level, u8 ability, u16* moves)
 	else
 		onBit = 0;
     //u8 onBit = gBaseStats[species].ability2 ? 1 : 0;
-    SetMonData2(pkmn, MON_DATA_ALT_ABILITY, (void*) &onBit);
+    SetMonData2(pkmn, MON_DATA_ALT_ABILITY, &onBit);
 
     // set moves
-    SetMonData2(pkmn, MON_DATA_MOVE1, &moves);
+	for (int i = 0; i < 4; ++i)
+	{
+		//Var8006 = moves[i];	//020370c4
+		Var8006 = (*DNavState)->moveId[i];
+		SetMonData2(pkmn, MON_DATA_MOVE1 + i, (void*) &Var8006);
+		SetMonData2(pkmn, MON_DATA_PP1 + i, (void*) &gBattleMoves[moves[i]].pp);
+	}
+	/*
+    SetMonData2(pkmn, MON_DATA_MOVE1, moves[0]);
     SetMonData2(pkmn, MON_DATA_MOVE2, &moves + 1);
     SetMonData2(pkmn, MON_DATA_MOVE3, &moves + 2);
     SetMonData2(pkmn, MON_DATA_MOVE4, &moves + 3);
-
+	
+	
     // set PP of moves
     SetMonData2(pkmn, MON_DATA_PP1, &gBattleMoves[moves[0]].pp);
     SetMonData2(pkmn, MON_DATA_PP2, &gBattleMoves[moves[1]].pp);
     SetMonData2(pkmn, MON_DATA_PP3, &gBattleMoves[moves[2]].pp);
     SetMonData2(pkmn, MON_DATA_PP4, &gBattleMoves[moves[3]].pp);
-
+	*/
     // pokerus
     i = 0xFF;
     SetMonData2(pkmn, MON_DATA_POKERUS, &i);
@@ -285,6 +297,8 @@ u8 PickTileScreen(u8 targetBehaviour, u8 areaX, u8 areaY, s16 *xBuff, s16 *yBuff
 		{
             u32 tileBehaviour = MapGridGetMetatileField(topX, topY, 0xFF);
             u8 blockProperties = MetatileBehavior_GetLowerBytes(tileBehaviour, 4);
+			
+			Var8005 = tileBehaviour;	//020370c2
 
             // check NPCs on tile
             bool8 goNext = FALSE;
@@ -303,6 +317,7 @@ u8 PickTileScreen(u8 targetBehaviour, u8 areaX, u8 areaY, s16 *xBuff, s16 *yBuff
             }
 
             // tile must be target behaviour (wild tile) and must be passable
+			// targetBehaviour = 1 grass, 2 water			
             if ((targetBehaviour == blockProperties))
 			{// ) {
                  // caves and water need to have their encounter values scaled higher
@@ -311,7 +326,12 @@ u8 PickTileScreen(u8 targetBehaviour, u8 areaX, u8 areaY, s16 *xBuff, s16 *yBuff
 				{
                     // water
                     u8 scale = 320 - (smallScan * 200) - (GetPlayerDistance(topX, topY) / 2);
-                    weight = (((Random() % scale) <= 1) && (CurrMapHeightMismatch(gEventObjects[gPlayerAvatar->spriteId].elevation, topX, topY))) ;
+					u8 elevDiff = (CurrMapHeightMismatch((gEventObjects[gPlayerAvatar->spriteId].elevation << 4
+						| gEventObjects[gPlayerAvatar->spriteId].currentElevation), topX, topY));
+					
+					
+					
+                    weight = (((Random() % scale) <= 1) && elevDiff);
                 } 
 				else if (!CheckOpenSky(gMapHeader.mapType))
 				{
@@ -328,7 +348,8 @@ u8 PickTileScreen(u8 targetBehaviour, u8 areaX, u8 areaY, s16 *xBuff, s16 *yBuff
                     weight = ((Random() % scale) <= 5);
                 }
 
-                if (weight) 
+				// 
+                if (weight > 0) 
 				{
                     *xBuff = topX;
                     *yBuff = topY;
@@ -351,16 +372,12 @@ u8 DexNavPickTile(u8 environment, u8 xSize, u8 ySize, bool8 smallScan)
     switch (environment)
 	{
         case 0:
-        {
             targetBehaviour = 1; // grass
             break;
-        }
         default:
-        {
-            targetBehaviour = 2; // water
+            targetBehaviour = 2; // cave, water
             break;
-        }
-    };
+    }
     // tile pick chance is 5% + 1/5 search level
     
 	//u8 searchLevel = (*DNavState)->searchLevel / 5;
@@ -756,7 +773,7 @@ void DexNavIconsVisionUpdate(u8 proximity, u8 searchLevel)
     gSprites[(*DNavState)->objIdPotential[1]].oam.affineMode = 2;
     gSprites[(*DNavState)->objIdPotential[2]].oam.affineMode = 2;
 
-    //extern void DexNavSightUpdate(u8);
+    extern void DexNavSightUpdate(u8);
     if (proximity < 3)
 	{
         // at proximity 5, the sight should start to show and indicate sneaking is required
@@ -800,18 +817,18 @@ void DexNavManageHUD(u8 taskId)
 	{
         DestroyTask(taskId);
         DexNavFreeHUD();
-        DexNavShowMessage(1);
+        DexNavShowMessage(1);	//there is no reaction!\nThe signal was lost!
         return;
     }
 
     // check for timeout.
     gTasks[taskId].data[1]++;
-    if (gTasks[taskId].data[1] > (0x384))
+    if (gTasks[taskId].data[1] > (900))
 	{
         DestroyTask(taskId);
         DexNavFreeHUD();
-        DexNavShowMessage(0);
-        return;
+        DexNavShowMessage(0);	//The pokemon got away!
+        return;	
     }
 
     // check if script just executed
@@ -829,22 +846,22 @@ void DexNavManageHUD(u8 taskId)
         switch((*DNavState)->environment)
 		{
             case 0:
-                FieldEffectStop(&gSprites[(*DNavState)->objIdShakingGrass], 0x1A); // 1a
+                FieldEffectStop(&gSprites[(*DNavState)->objIdShakingGrass], OEI_CAVE); // 1a
                 break;
             case 1:
-                FieldEffectStop(&gSprites[(*DNavState)->objIdShakingGrass], 0x16);
+                FieldEffectStop(&gSprites[(*DNavState)->objIdShakingGrass], OEI_WATER);
                 break;
             default:
                 break;
         };
         
-		/*
+		
         while(!(ShakingGrass((*DNavState)->environment, 8, 8, 1)))
 		{
             __asm__("mov r8, r8"); // nop...do I even need this?
         }
-        (*DNavState)->movementTimes++;
-		*/
+        (*DNavState)->movementTimes += 1;
+		
     }
 
     // check for encounter start
@@ -1140,11 +1157,11 @@ u8 DexNavGeneratePotential(u8 searchLevel)
 };
 
 
-void DexNavGenerateMove(u16 species, u8 searchLevel, u8 encounterLevel, u16* moveLoc)
+void DexNavGenerateMoveset(u16 species, u8 searchLevel, u8 encounterLevel, u16* moveLoc)
 {
     bool8 genMove = FALSE;
     u16 randVal = Random() % 100;
-
+	
     // evaluate if Pokemon should get an egg move in first slot
     if (searchLevel < 5)
 	{
@@ -1181,6 +1198,7 @@ void DexNavGenerateMove(u16 species, u8 searchLevel, u8 encounterLevel, u16* mov
     //u16 move[4] = {MOVE_NONE, MOVE_NONE, MOVE_NONE, MOVE_NONE};
     
 	// generate a wild mon and copy moveset
+	
 	#ifdef TANOBY_RUINS_ENABLED
 		const struct WildPokemonHeader* header = GetCurrentMapWildMonHeaderId();
 		u8 wildMonIndex = 0;
@@ -1188,19 +1206,20 @@ void DexNavGenerateMove(u16 species, u8 searchLevel, u8 encounterLevel, u16* mov
 			wildMonIndex = ChooseWildMonIndex_Land();
 		else if (header->waterMonsInfo != NULL)
 			wildMonIndex = ChooseWildMonIndex_WaterRock();
-		CreateWildMon(species, encounterLevel, wildMonIndex, FALSE);
+		CreateWildMon(species, encounterLevel, wildMonIndex, TRUE);
 	#else
-		CreateWildMon(species, encounterLevel, 0, FALSE);
+		CreateWildMon(species, encounterLevel, 0, TRUE);
 	#endif
+	
 
 	// store generated mon moves into Dex Nav Struct
-	for (u8 i = 0; i < 4; i++)
+	for (int i = 0; i < 4; ++i)
 	{
 		moveLoc[i] = gEnemyParty[0].moves[i];
 	}
 
 	// set first move slot to a random egg move if search level is good enough
-	if (genMove)
+	if (genMove == TRUE)
 	{
 		u16 eggMoveBuffer[EGGMOVE_MAX];
 		u8 numEggMoves = GetEggMoves(&gEnemyParty[0], &eggMoveBuffer);
@@ -1259,8 +1278,6 @@ void DexNavGenerateMove(u16 species, u8 searchLevel, u8 encounterLevel, u16* mov
 	
 */
 
-
-    return;
 };
 
 
@@ -1522,7 +1539,7 @@ void InitDexNavHUD(u16 species, u8 environment)
 
     // draw shaking grass
     //extern u8 ShakingGrass(u8, u8, u8, bool8);
-    if (!ShakingGrass(environment, 12, 12, 0))
+    if (!(ShakingGrass(environment, 12, 12, 0)))
 	{
         Free((void*)*DNavState);
         MsgNormal(&gText_NotFoundNearby[0]);
@@ -1530,7 +1547,7 @@ void InitDexNavHUD(u16 species, u8 environment)
     }
 
     // Populate DNavState objects
-    DexNavGenerateMove(species, searchLevel, (*DNavState)->pokemonLevel, &(*DNavState)->moveId[0]);
+    DexNavGenerateMoveset(species, searchLevel, (*DNavState)->pokemonLevel, &(*DNavState)->moveId[0]);
     (*DNavState)->heldItem = DexNavGenerateHeldItem(species, searchLevel);
     (*DNavState)->ability = DexNavGenerateHiddenAbility(species, searchLevel);
     (*DNavState)->potential = DexNavGeneratePotential(searchLevel);
@@ -1809,13 +1826,13 @@ void DexNavGuiExitSearch(void)
         case 0:
             BeginNormalPaletteFade(~0, 0, 0x0, 0x10, 0);
             PlaySE(SE_PC_ON);
-            gMain.state++;
+            gMain.state += 1;
             break;
         case 1:
             if (!gPaletteFade->active)
 			{
                 Free((*DNavState)->backBuffer);
-                gMain.state++;
+                gMain.state += 1;
             }
             break;
         case 2:
@@ -1833,14 +1850,14 @@ void DexNavGuiExitNoSearch(void)
 	{
         case 0:
             BeginNormalPaletteFade(~0, 0, 0x0, 0x10, 0);
-            gMain.state++;
+            gMain.state += 1;
             break;
         case 1:
             if (!gPaletteFade->active)
 			{
                 Free((*DNavState)->backBuffer);
                 Free((void*)*DNavState);
-                gMain.state++;
+                gMain.state += 1;
             }
             break;
         case 2:
@@ -1881,7 +1898,7 @@ void DexNavPopulateEncounterList(void)
 	   {
 			if (!(SpeciesInArray(header->waterMonsInfo->wildPokemon[i].species, sizeWater)))
 			{
-				(*DNavState)->grassSpecies[waterIndex] = header->waterMonsInfo->wildPokemon[i].species;
+				(*DNavState)->waterSpecies[waterIndex] = header->waterMonsInfo->wildPokemon[i].species;
 				waterIndex++;
 			}
 	   }
@@ -1900,7 +1917,7 @@ void DexNavGuiHandler(void)
                 SetCallback1(DexNavGuiHandler);
                 // allocate dexnav struct
                 *DNavState = (struct DexnavHudData*)Calloc(sizeof(struct DexnavHudData));
-				gMain.state++;
+				gMain.state += 1;
 			}
             break;
         case 1:
@@ -1915,7 +1932,7 @@ void DexNavGuiHandler(void)
 				BgIdSetTilemap(1, DexNav_gbackBuffer);
 				BgIdMarkForSync(1);
 				BgIdMarkForSync(0);
-				gMain.state++;
+				gMain.state += 1;
 			}
 			break;
 			
@@ -1923,7 +1940,7 @@ void DexNavGuiHandler(void)
 			InitWindows(sDexNavWindows);
             DexNavPopulateEncounterList();
             DexNavLoadNames(1);
-            gMain.state++;
+            gMain.state += 1;
             break;
         case 3:
            // REG_DISPCNT = 0x7F60;
@@ -1939,7 +1956,7 @@ void DexNavGuiHandler(void)
             SpawnPointerArrow();
             (*DNavState)->selectedArr = 0;
             (*DNavState)->selectedIndex = 0;
-            gMain.state++;
+            gMain.state += 1;
             break;
 			
         case 4:
@@ -2038,25 +2055,72 @@ void DexNavGuiHandler(void)
 // ============================= //
 // ===== Overworld Effects ===== //
 // ============================= //
-void OeiCaveEffect(void)
-{
-    //struct SpritePalette caveSmoke = {(const u8*)&gInterfaceGfx_caveSmokePal, 0x1005};
-	struct SpritePalette caveSmoke = {(void*) &gInterfaceGfx_caveSmokePal, 0x1005};
-    GpuPalObjAllocTagAndApply(&caveSmoke);
-    GpuPalApply((u8 *)&gInterfaceGfx_caveSmokePal, 29 * 16, 32);
-    LogCoordsCameraRelative(&gFieldEffectArguments->effectPos.x, &gFieldEffectArguments->effectPos.y, 8, 8);
-	//LogCoordsCameraRelative(&gFieldEffectArguments->effectPos.x, &gFieldEffectArguments->effectPos.y, 0, 0);
-    u8 objId = TemplateInstanciateReverseSearch(&ObjtCave, gFieldEffectArguments->effectPos.x, gFieldEffectArguments->effectPos.y, 0xFF);
-    if (objId != 64)
+struct SpriteSheet caveGfx[4] = {
 	{
-        gSprites[objId].coordOffsetEnabled = TRUE;
-        gSprites[objId].data[0] = 22;
-    }
+		.data = (const u8*)&gInterfaceGfx_caveSmokeTiles[128 * 0],
+		.size = 0x80,
+		.tag = 0xFFFF,
+	},
+	{
+		.data = (const u8*)&gInterfaceGfx_caveSmokeTiles[128 * 1],
+		.size = 0x80,
+		.tag = 0xFFFF,
+	},
+	{
+		.data = (const u8*)&gInterfaceGfx_caveSmokeTiles[128 * 2],
+		.size = 0x80,
+		.tag = 0xFFFF,
+	},
+	{
+		.data = (const u8*)&gInterfaceGfx_caveSmokeTiles[128 * 3],
+		.size = 0x80,
+		.tag = 0xFFFF,
+	},
 };
 
-const struct OieState2 caveState = { .p = (const struct SpritePalette*) 0x083A5348,
-                                        .s = (SuperCallback) OeiCaveEffect,
-                                        };
+const struct SpriteTemplate ObjtCave = {
+	.tileTag = 0xFFFF,
+	.paletteTag = SMOKE_TAG,
+	.oam = (struct OamData*) 0x83A36F0,
+	.anims = (const union AnimCmd* const*) 0x83A5B70,
+	.images = (const struct SpriteFrameImage *) &caveGfx[0],
+	.affineAnims = (const union AffineAnimCmd* const*) 0x8231CFC,
+	.callback = (SpriteCallback) 0x80DCD1D,
+};
+
+
+
+const struct SpritePalette caveSmoke = {
+		.data = (void*) &gInterfaceGfx_caveSmokePal,
+		.tag = SMOKE_TAG,
+	};   
+
+void OeiCaveEffect(void)
+{
+    GpuPalObjAllocTagAndApply((void*)&caveSmoke);
+    GpuPalApply((void*)&gInterfaceGfx_caveSmokePal, 29*16, 32);
+    LogCoordsCameraRelative(&gFieldEffectArguments->effectPos.x, &gFieldEffectArguments->effectPos.y, 8, 8);
+	
+    u8 objId = TemplateInstanciateReverseSearch(&ObjtCave, gFieldEffectArguments->effectPos.x,
+		gFieldEffectArguments->effectPos.y, 0xFF);
+    if (objId != 64)
+	{
+        gSprites[objId].coordOffsetEnabled = 1;
+        gSprites[objId].data[0] = 22;
+    }
+}
+
+struct oie_state_2 {
+    const struct SpritePalette* p;
+    SuperCallback s;
+};
+
+const struct oie_state_2 cave_state = {
+	.p = (const struct SpritePalette*) 0x083A5348,
+	.s = (SuperCallback) OeiCaveEffect,
+};
+
+extern const struct oie_state_2 cave_state;
 
 
 // ========================================== //
