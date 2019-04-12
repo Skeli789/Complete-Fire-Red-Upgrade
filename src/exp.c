@@ -238,13 +238,13 @@ void atk23_getexp(void) {
         if (!(gBattleTypeFlags & (BATTLE_TYPE_TRAINER | BATTLE_TYPE_POKE_DUDE)) 
 		&& !gBattleStruct->wildVictorySong)
         {
-			if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE && gBattleMons[0].hp && gBattleMons[1].hp == 0 && gBattleMons[3].hp == 0)
+			if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE && (gBattleMons[0].hp || gBattleMons[2].hp) && gBattleMons[1].hp == 0 && gBattleMons[3].hp == 0)
 			|| (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE) && gBattleMons[0].hp && gBattleMons[1].hp == 0))
 			{
 				BattleStopLowHpSound();
 				PlayBGM(MUS_WILD_POKE_VICTORY); //Wild PKMN Victory
 				gBattleStruct->wildVictorySong++;
-				gAbsentBattlerFlags |= gBitTable[gBankFainted];
+				//gAbsentBattlerFlags |= gBitTable[gBankFainted];
 			}
         }
 
