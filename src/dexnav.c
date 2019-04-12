@@ -838,6 +838,14 @@ void DexNavManageHUD(u8 taskId)
         DexNavFreeHUD();
         return;
     }
+	
+	if (gMain.newKeys & (B_BUTTON | START_BUTTON))
+	{
+        DestroyTask(taskId);
+        DexNavFreeHUD();
+		PlaySE(SE_PC_OFF);
+        return;		
+	}
 
     // caves and water the pokemon moves around
     if ((((*DNavState)->environment == 1) || (!CheckOpenSky(gMapHeader.mapType)))
@@ -1219,6 +1227,7 @@ void DexNavGenerateMoveset(u16 species, u8 searchLevel, u8 encounterLevel, u16* 
     
 	// generate a wild mon and copy moveset
 	
+	// generate a wild mon and copy moveset
 	#ifdef TANOBY_RUINS_ENABLED
 		const struct WildPokemonHeader* header = GetCurrentMapWildMonHeaderId();
 		u8 wildMonIndex = 0;
@@ -1237,7 +1246,10 @@ void DexNavGenerateMoveset(u16 species, u8 searchLevel, u8 encounterLevel, u16* 
 			#endif
 		}
 		CreateWildMon(species, encounterLevel, wildMonIndex, FALSE);
-	
+	#else
+		CreateWildMon(species, encounterLevel, 0, FALSE);
+	#endif
+
 
 	// store generated mon moves into Dex Nav Struct
 	for (int i = 0; i < 4; ++i)
