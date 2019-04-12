@@ -64,6 +64,7 @@ script functions/specials in asm - hooks and returns
 .global CheckDexNavSelect
 .global PokeToolNoFade
 
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .align 2
 .pool

@@ -295,11 +295,11 @@ struct BoxPokemon
 
 typedef struct Pokemon
 {
-	u32 personality;
-	u32 otid;
-	u8 nickname[10];
-	u8 language;
-	u8 sanity;
+	u32 personality;	//0x0
+	u32 otid;			//0x4
+	u8 nickname[10];	//0x8
+	u8 language;		//0x12
+	u8 sanity;			//0x13
 	u8 otname[7];
 	u8 markings;
 	u16 backupSpecies;

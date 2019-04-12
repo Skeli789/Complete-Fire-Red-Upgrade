@@ -47,6 +47,8 @@ typedef void (*SpriteCallback)(struct Sprite* s);
 #define ICON_GFX_TAG 0xD75A
 #define SELECTION_CURSOR_TAG 0x200
 
+#define SMOKE_TAG 0x2710
+
 #define ICONX 0x10
 #define ICONY 0x92
 
@@ -174,18 +176,18 @@ struct DexnavHudData {
     void* backBuffer;
 };
 
-
+/*
 struct OieState2
 {
     const struct SpritePalette* p;
     SuperCallback s;
 };
+*/
 
 extern const struct BgTemplate BgConfigDexNavGUI[4];
 const struct BgTemplate BgConfigDexNavGUI[4] = {
     {
-        .padding = 0,
-        .bPadding = 0,
+        .baseTile = 0,
         .priority = 2,
         .paletteMode = 0,
         .screenSize = 0,
@@ -194,8 +196,7 @@ const struct BgTemplate BgConfigDexNavGUI[4] = {
         .bg = 0,
     },
     {
-        .padding = 0,
-        .bPadding = 0,
+        .baseTile = 0,
         .priority = 3,
         .paletteMode = 0,
         .screenSize = 0,
@@ -204,8 +205,7 @@ const struct BgTemplate BgConfigDexNavGUI[4] = {
         .bg = 1,
     },
     {
-        .padding = 0,
-        .bPadding = 0,
+        .baseTile = 0,
         .priority = 3,
         .paletteMode = 0,
         .screenSize = 0,
@@ -214,8 +214,7 @@ const struct BgTemplate BgConfigDexNavGUI[4] = {
         .bg = 2,
     },
     {
-        .padding = 0,
-        .bPadding = 0,
+        .baseTile = 0,
         .priority = 3,
         .paletteMode = 0,
         .screenSize = 1,
@@ -284,35 +283,6 @@ const u16 CursorPositions1[] = {
     20 + 24 * 5, 92 + 28,
 };
 
-const struct SpriteSheet caveGfx[4] = {
-	{.data = (const u8*)&gInterfaceGfx_caveSmokeTiles[128 * 0],
-		.size = 0x80,
-		.tag = 0xFFFF
-	},
-	{.data = (const u8*)&gInterfaceGfx_caveSmokeTiles[128 * 1],
-		.size = 0x80,
-		.tag = 0xFFFF
-	},
-	{.data = (const u8*)&gInterfaceGfx_caveSmokeTiles[128 * 2],
-		.size = 0x80,
-		.tag = 0xFFFF
-	},
-	{.data = (const u8*)&gInterfaceGfx_caveSmokeTiles[128 * 3],
-		.size = 0x80,
-		.tag = 0xFFFF
-	},
-};
-//struct SpriteSheet* ptr_caveGfx =
-const struct SpriteTemplate ObjtCave = {
-	.tileTag = 0xFFFF,
-	.paletteTag = 0x1005,
-	.oam = (struct OamData*) 0x83A36F0,
-	.anims = (const union AnimCmd* const*) 0x83A5B70,
-	.images = (const struct SpriteFrameImage *) &caveGfx[0],
-	.affineAnims = (const union AffineAnimCmd* const*) 0x8231CFC,
-	.callback = (SpriteCallback) 0x80DCD1D,
-};
-
 
 // GUI Rboxes
 #define rgb5(r, g, b) (u16)((r >> 3) | ((g >> 3) << 5) | ((b >> 3) << 10))
@@ -326,7 +296,7 @@ const u16 DexNavTextPal[] = {
 //extern const struct WindowTemplate sDexNavWindows[];
 const struct WindowTemplate sDexNavWindows[] = {
 	{
-        .priority = 0,		//Species 
+        .bg = 0,		//Species 
         .tilemapLeft = 21,
         .tilemapTop = 6,
         .width = 9,
@@ -335,7 +305,7 @@ const struct WindowTemplate sDexNavWindows[] = {
         .baseBlock = 1,
 	},
     {
-        .priority = 0,		//Search level
+        .bg = 0,		//Search level
         .tilemapLeft = 21,
         .tilemapTop = 9,
         .width = 9,
@@ -344,7 +314,7 @@ const struct WindowTemplate sDexNavWindows[] = {
         .baseBlock = 31,
     },
     {
-        .priority = 0,		//Level bonus
+        .bg = 0,		//Level bonus
         .tilemapLeft = 21,
         .tilemapTop = 12,
         .width = 3,
@@ -353,7 +323,7 @@ const struct WindowTemplate sDexNavWindows[] = {
         .baseBlock = 61,
     },
     {
-        .priority = 0,		//Hidden Ability
+        .bg = 0,		//Hidden Ability
         .tilemapLeft = 21,
         .tilemapTop = 15,
         .width = 12,
@@ -362,7 +332,7 @@ const struct WindowTemplate sDexNavWindows[] = {
         .baseBlock = 76,
     },
     {
-        .priority = 0,		// Reply text
+        .bg = 0,		// Reply text
         .tilemapLeft = 1,
         .tilemapTop = 17,
         .width = 22,
@@ -371,7 +341,7 @@ const struct WindowTemplate sDexNavWindows[] = {
         .baseBlock = 136,
     },
     {
-        .priority = 0xFF, // marks the end of the tb array
+        .bg = 0xFF, // marks the end of the tb array
     },
 
 };
