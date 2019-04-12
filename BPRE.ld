@@ -323,9 +323,6 @@ BgIdModOffsetX = 0x08001B90 | 1;
 BgIdModOffsetY = 0x08001D08 | 1;
 gpu_pal_alloc_new = 0x080089B8|1;
 
-BgIdSetTilemap = 0x08001FA0 | 1;
-BgIdMarkForSync = 0x080F67A4 | 1;
-InitBgsFromTemplates = 0x08001658|1;
 memset_ = 0x081E5ED8|1;
 Memset = 0x081E5ED8|1;
 
@@ -760,6 +757,13 @@ WindowOutline = 0x0810F2E8 | 1;
 RboxChoiceUpdate = 0x0810FA04 | 1;
 RboxIdClean = 0x0810F4D8 | 1;
 
+/*Text Window Functions*/
+LoadWindowGfx = 0x14FFC4 | 1;
+LoadUserWindowBorderGfx = 0x815001C | 1;
+DrawTextBorderOuter = 0x8150048 | 1;
+DrawTextBorderInner = 0x81501D0 | 1;
+GetWindowFrameTilesPal = 0x8069788 | 1;
+
 /* Start Menu Functions */
 CloseSafariStepsBox = 0x0806EF18 | 1;
 HideStartMenu = 0x0806FEA0 | 1;
@@ -810,6 +814,8 @@ Malloc = 0x8002B9C | 1;
 Calloc = 0x8002BB0 | 1;
 Free = 0x8002BC4 | 1;
 
+/*GPU Regs Functions*/
+SetGpuReg = 0x8000A38 | 1;
 
 /*Sprite Functions*/
 ResetSpriteData = 0x8006B10 | 1;
@@ -951,7 +957,6 @@ GetTaskCount = 0x80776B8 | 1;
 ReturnEmptyStringIfNull = 0x80806C8 | 1;
 DisplayItemMessage = 0x8108E70 | 1;
 bag_menu_inits_lists_menu = 0x810A1F8 | 1;
-AddTextPrinterParameterized4 = 0x812E5A4 | 1;
 m4aSongNumStop = 0x81DD1C0 | 1;
 m4aMPlayContinue = 0x81DD26C | 1;
 m4aMPlayVolumeControl = 0x81DE0E0 | 1;
@@ -970,6 +975,34 @@ OverworldCallbackSwitchStartMenu = 0x080568A8 | 1;
 
 MakeExclamationMark = 0x08066920 | 1;
 
+/*BG Functions*/
+BgIdSetTilemap = 0x08001FA0 | 1;
+BgIdMarkForSync = 0x080F67A4 | 1;
+
+InitBgsFromTemplates = 0x08001658|1;
+LoadBgTiles = 0x80017D0 | 1;
+
+ShowBg = 0x80019BC | 1;
+HideBg = 0x80019D0 | 1;
+SetBgAttribute = 0x80019E4 | 1;
+GetBgAttribute = 0x8001AA8 | 1;
+ChangeBgX = 0x8001B90 | 1;
+ChangeBgY = 0x8001D08 | 1;
+
+CopyBgTilemapBufferToVram = 0x80020BC | 1;
+FillBgTilemapBufferRect = 0x8002554 | 1;
+
+/*Scanline Effect Functions*/
+ScanlineEffect_Stop = 0x8087E64 | 1;
+ScanlineEffect_Clear = 0x8087EA4 | 1;
+ScanlineEffect_SetParams = 0x8087EE4 | 1;
+ScanlineEffect_InitHBlankDmaTransfer = 0x8087F54 | 1;
+ScanlineEffect_InitWave = 0x8088230 | 1;
+
+/*Text Functions*/
+AddTextPrinterParameterized = 0x8002C48 | 1;
+GetStringWidth = 0x8005ED4 | 1;
+
 /*The Deal Breaker*/
 break_func = 0x08416304 | 1;
 
@@ -986,7 +1019,8 @@ SetMainCallback2 = 0x08000544|1;
 pal_fade_control_and_dead_struct_reset = 0x08070528|1;
 palette_bg_faded_fill_black = 0x0807DB38|1;
 gpu_pal_allocator_reset = 0x080088F0|1;
-
+AddTextPrinterParameterized3 = 0x812E51C | 1;
+AddTextPrinterParameterized4 = 0x812E5A4 | 1;
 
 
 

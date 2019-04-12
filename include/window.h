@@ -3,6 +3,8 @@
 #include "global.h"
 #include "text.h"
 
+#define PIXEL_FILL(num) ((num) | ((num) << 4))
+
 enum
 {
     WINDOW_PRIORITY,
@@ -17,7 +19,7 @@ enum
 
 struct WindowTemplate
 {
-    u8 priority;
+    u8 bg;
     u8 tilemapLeft;
     u8 tilemapTop;
     u8 width;

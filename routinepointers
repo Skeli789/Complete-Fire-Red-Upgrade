@@ -107,3 +107,5 @@ OeiCaveEffect 081d98a9
 PokeToolsFunc 083a7348
 PokeToolsFunc 0806F404
 
+##Second Options Menu
+#CB2_InitQuestMenu 0806F534
