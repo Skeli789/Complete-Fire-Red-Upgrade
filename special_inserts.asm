@@ -429,6 +429,33 @@ EndFossilImageHack:
 .FreeTaskLoc: .word 0x0809d494|1
 
 
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ SetHealingPlace - Return Loc
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0xbfd54, 0xFF
+replacer_code:
+	ldr r0, =VAR_HEALINGMAP
+	bl 0x6e568			@ get var value
+	lsl r1, r0, #0x18
+	lsr r0, r0, #0x8
+	lsr r1, r1, #0x18
+	strb r1, [r4]
+	strb r0, [r4, #0x1]
+	mov r0, #0xff
+	strb r0, [r4, #0x2]
+	ldr r0, =VAR_HEALING_XPOS
+	bl 0x6e568			@ get var value
+	lsl r0, r0, #0x10
+	lsr r0, r0, #0x10
+	strh r0, [r4, #0x4]
+	ldr r0, =VAR_HEALING_YPOS
+	bl 0x6e568			@ get var value
+	lsl r0, r0, #0x10
+	lsr r0, r0, #0x10
+	strh r0, [r4, #0x6]
+	b 0xbfdf4
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Dynamic Overworld Palettes
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@	
@@ -548,6 +575,12 @@ SummaryScreenExpDisplay2:
 .word MULTICHOICE_STRING_LOADER
 .word 0x7	
 
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Ghost Battle Fix
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x3fd35b, 0xff
+.byte 0xfd, 0x6, 0xab, 0xfb, 0xfe, 0xff
 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

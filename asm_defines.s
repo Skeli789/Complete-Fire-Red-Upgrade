@@ -9,6 +9,10 @@
 .equ pcSelect_StateTracker, 0x0203b7ac
 .equ gCreateSpriteTableSetter, 0x0203b7ad
 .equ EV_CAP, 252
+.equ VAR_HEALINGMAP, 0x405A
+.equ VAR_HEALING_XPOS, 0x405B
+.equ VAR_HEALING_YPOS, 0x405C
+
 
 @Custom Ram Locs
 .equ BATTLE_STRING_LOADER, 0x203C020 @;0x203F700
