@@ -49,6 +49,7 @@ u8 __attribute__((long_call)) pokemon_order_func(u8 a);
 bool8 __attribute__((long_call)) GetIndexFromDexFlag(u16 index, u8 dexFlag);
 u8 __attribute__((long_call)) GetEggMoves(pokemon_t* poke, void* storageAddr);
 void __attribute__((long_call)) Special_0DD_DeleteMove();
+u8 __attribute__((long_call)) NicknameMalloc(u8 a1, void *name, u16 species, u8 gender, u16 PID, void (*callback));
 
 u8 __attribute__((long_call)) GetWildDataIndexForMap(void);
 
@@ -167,6 +168,8 @@ void __attribute__((long_call)) OverworldCallbackSwitchStartMenu(void);
 u8 __attribute__((long_call)) CurrMapHeightMismatch(u8 height, s16 x, s16 y);
 
 void __attribute__((long_call)) MakeExclamationMark(struct MapObject* npc, struct Sprite* s);
+
+u16 __attribute__((long_call)) GetCombinedOTID(void);
 
 //The Deal Breaker
 void __attribute__((long_call)) break_func(u32);

@@ -27,6 +27,8 @@ sp016_ChangePokemonSpecies 0815FDB8
 sp017_ChangePokemonAttacks 0815FDBC
 sp018_CheckPokemonSpecies 0815FDC0
 sp019_CheckAttackPP 0815FDC4
+sp01A_CopyPartyData 0815FDC8
+sp01B_SwapPartyAndBoxData 0815FDCC
 
 sp024_AddTextByVariable 0815FDF0
 sp025_AddTextByPointer 0815FDF4
@@ -75,6 +77,9 @@ sp066_InflictPartyDamage 0815FEF8
 sp075_MeasurePokemon1 0815FF34
 sp076_MeasurePokemon2 0815FF38
 
+
+sp07C_BufferNickname 0815FF50
+sp07D_CheckTradedPokemon 0815FF54
 sp07E_GetTileNumber 0815FF58
 sp07F_GetTileBehaviour 0815FF5C
 
@@ -89,6 +94,8 @@ sp08A_ReadPedometerValue 0815FF88
 sp097_WildGroundBattle 0815FFBC
 sp098_WildSeaBattle 0815FFC0
 sp09C_OldManBattleModifier 0815FFD0
+
+sp09E_NicknamePokemon 0815FFD8
 
 sp0A0_CheckAndSetDailyEvent 0815FFE0
 sp0A1_UpdateTimeInVars 0815FFE4

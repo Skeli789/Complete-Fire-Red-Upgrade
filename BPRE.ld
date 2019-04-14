@@ -49,6 +49,8 @@ count_pokemon = 0x02024029;
 party_player = 0x02024284;
 WritePokeAttacks = 0x0803EC40 | 1;
 
+NicknameMalloc = 0x0809D954 | 1;
+
 calculate_stats_pokemon = 0x0803E47C|1;
 
 get_poke_ability = 0x08040D46|1; 
@@ -556,6 +558,8 @@ GetTrainerTowerTrainerPicIndex = 0x815DA3C | 1;
 CopyTrainerTowerPlayerLostText = 0x815DBF4 | 1;
 CopyTrainerTowerPlayerWonText = 0x815DC40 | 1;
 GetWildDataIndexForMap = 0x08082934 | 1;
+
+GetCombinedOTID = 0x080CC1E4 | 1;
 
 /*Poke Ball Functions*/
 SpriteCB_TestBallThrow = 0x804ABD4 | 1;

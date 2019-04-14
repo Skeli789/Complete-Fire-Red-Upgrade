@@ -5,6 +5,7 @@
 #include "../include/new/helper_functions.h"
 #include "../include/new/catching.h"
 #include "../include/new/Vanilla_Functions.h"
+#include "../include/new/Vanilla_Functions_battle.h"
 #include "../include/pokemon_storage_system.h"
 
 /*
@@ -366,8 +367,12 @@ void sp015_ModifyHeldItem(void) {
 	
 	if (mon >= 6)
 		return;
-	else if (GetMonDataFromVar8003(MON_DATA_HELD_ITEM) != 0)
-		return;	// cant change existing item
+	
+	if (GetMonDataFromVar8003(MON_DATA_HELD_ITEM) != 0)
+	{
+		if (Var8005 != 0)
+			return;	// cant change existing item
+	}
 	else
 	{
 		SetMonDataFromVar8003(MON_DATA_HELD_ITEM);
@@ -427,6 +432,7 @@ void sp017_ChangePokemonAttacks(void) {
 		Special_0DD_DeleteMove();
 };
 
+
 species_t sp018_CheckPokemonSpecies(void) {
 	u16 mon = Var8004;
 	if (mon >= 6)
@@ -434,6 +440,7 @@ species_t sp018_CheckPokemonSpecies(void) {
 	else
 		return GetMonDataFromVar8003(MON_DATA_SPECIES);
 };
+
 
 //Add pp bonus calc?
 u8 sp019_CheckAttackPP(void) {
@@ -447,6 +454,159 @@ u8 sp019_CheckAttackPP(void) {
 	return GetMonDataFromVar8003(MON_DATA_PP1 + slot);
 };
 
+
+// Trading Specials //
+////////////////////////////////////////////////////////////////
+// Store/Return Party Pokemon Data to Free RAM
+// Inputs:
+//		Var8002: 
+//			0 for store to free ram
+//			1 for return to party from free ram
+//			2 for store from free ram to box
+//			3 for store from box to free ram
+// 		Var8005: slot num (for special 0xFE, activate trade)
+// Outputs:
+//		Var800D: success (0) or failure (1)
+//
+void sp01A_CopyPartyData(void) {
+#ifdef SELECT_FROM_PC
+	u8 slot = Var8005;
+	Var800D = 1;
+	if (slot >= 6)
+		return;
+	
+	if (Var8002 == 0)
+		// save party slot data to last enemy slot
+		Memcpy((void*) &gEnemyParty[5], (void*) &gPlayerParty[slot], 100);
+	else if (Var8002 == 1)
+		// return last enemy slot data to given party slot
+		Memcpy((void*) &gPlayerParty[slot], (void*) &gEnemyParty[5], 100);
+	else if (Var8002 == 2)
+	{
+		// enemy ram to box
+		Memcpy((void*) GetBoxedMonAddr(), (void*) &gEnemyParty[5], 80);
+		CalculateMonStats((pokemon_t*) GetBoxedMonAddr());
+	}
+	else if (Var8003 == 3)
+	{
+		// box to free ram
+		Memcpy((void*) &gEnemyParty[5], (void*) GetBoxedMonAddr(), 80);
+		CalculateMonStats((pokemon_t*) &gEnemyParty[5]);
+	}
+	else
+		return;
+	Var800D = 0;
+	return;
+#else
+	return;
+#endif
+};
+
+
+// replace a pokemon party slot with boxed mon
+//Inputs:
+//	var8000: box num
+//	var8001: box index
+//	var8002: withdraw (0) or deposit (1)
+//	var8005: party slot num
+//Outputs:
+//	var800d: success(0) or failure(1)
+//
+void sp01B_SwapPartyAndBoxData(void) {
+#ifdef SELECT_FROM_PC
+	u8 slot = Var8005;
+	Var800D = 1;
+	if (slot >= 6)
+		return;
+	
+	if (Var8002 == 1)
+	{
+		// deposit from party to box
+		Memcpy((void*) GetBoxedMonAddr(), (void*) &gPlayerParty[slot], 80);
+		CalculateMonStats((pokemon_t*) GetBoxedMonAddr());
+		Var800D = 0;
+	}
+	else
+	{
+		Memcpy((void*) &gPlayerParty[slot], (void*) GetBoxedMonAddr(), 80);
+		CalculateMonStats((pokemon_t*) &gPlayerParty[slot]);
+		Var800D = 0;
+	}
+	return;
+#else
+	return;
+#endif	
+};
+
+//Nicknaming Specials//
+///////////////////////////////////////////////////////////////////////////////////
+void sp07C_BufferNickname(void) {
+	void* src;
+#ifdef SELECT_FROM_PC
+	if (Var8003 == 1)
+		src = GetBoxedMonAddr();
+	else
+		src = &gPlayerParty[Var8004];
+#else
+	src = &gPlayerParty[Var8004];
+#endif	
+	GetMonData(src, MON_DATA_NICKNAME, gStringVar1);
+	StringGetEnd10(gStringVar1);
+};
+
+
+bool8 sp07D_CheckTradedPokemon(void) {
+	void* src;
+#ifdef SELECT_FROM_PC
+	if (Var8003 == 1)
+		src = GetBoxedMonAddr();
+	else
+		src = &gPlayerParty[Var8004];
+#else
+	src = &gPlayerParty[Var8004];
+#endif
+	u16 TID = GetCombinedOTID();
+	u16 monOTID = GetMonData(src, MON_DATA_OT_ID, 0);
+	if (monOTID == TID)
+		return TRUE;
+	else
+		return FALSE;
+};
+
+
+void NicknameFunc(void) {
+	void* src;
+#ifdef SELECT_FROM_PC
+	if (Var8003 == 1)
+		src = GetBoxedMonAddr();
+	else
+		src = &gPlayerParty[Var8004];
+#else
+	src = &gPlayerParty[Var8004];
+#endif
+	SetMonData(src, MON_DATA_NICKNAME, gStringVar2);
+	ReturnToFieldContinueScriptPlayMapMusic();
+};
+
+
+void sp09E_NicknamePokemon(void) {
+	void* src;
+#ifdef SELECT_FROM_PC
+	if (Var8003 == 1)
+		src = GetBoxedMonAddr();
+	else
+		src = &gPlayerParty[Var8004];
+#else
+	src = &gPlayerParty[Var8004];
+#endif
+	GetMonData(src, MON_DATA_NICKNAME, gStringVar3);
+	GetMonData(src, MON_DATA_NICKNAME, gStringVar2);
+	u16 species = GetMonData(src, MON_DATA_SPECIES, 0);
+	u8 gender = GetMonGender(src);
+	u16 PID = GetMonData(src, MON_DATA_PERSONALITY, 0);
+	NicknameMalloc(3, gStringVar2, species, gender, PID, (void*) NicknameFunc);
+	return;
+};
 
 
 //Party Specials//
@@ -1213,3 +1373,4 @@ u32 sp0A2_GetTimeDifference(void)
 
 	return difference;
 }
+
