@@ -5,6 +5,10 @@
 
 //#define UNBOUND //Don't uncomment this line; it's for compiling specific aspects of Pokemon Unbound
 
+#define VAR_HEALINGMAP 0x405A
+#define VAR_HEALING_XPOS 0x405B
+#define VAR_HEALING_YPOS 0x405C
+
 #define DEXNAV_VAR 0x408B
 
 #define TERRAIN_VAR 0x5000
@@ -142,6 +146,7 @@ enum
 #define OBEDIENCE_BY_BADGE_AMOUNT //Determines obedience based on the number of badges the Player has, rather than which badges the player has.
 #define SAVE_BLOCK_EXPANSION //Uncommenting this requires you to also manually remove Save Expansion Hooks found in hooks.
 #define SELECT_FROM_PC //Comment this out to remove select-from-pc hack.
+#define SET_HEALING_PLACE_HACK  // comment this out if you don't want custom map/bank whiteout respawn locations
 
 /* Misc Effect Options */
 //#define OLD_BURN_DAMAGE //Uncomment this line if you want burn damage to do 1/8 of max health instead of 1/16

@@ -6,6 +6,7 @@
 #include "../include/safari_zone.h"
 #include "../include/songs.h"
 #include "../include/trainer_classes.h"
+#include "../include/event_data.h"
 
 #include "../include/constants/flags.h"
 #include "../include/constants/trainers.h"
@@ -860,6 +861,25 @@ bool8 TakeStep(void)
 	}
 	return FALSE;
 };
+
+
+// Whiteout Hack
+bool8 WhiteoutLogic(void) {
+#ifdef SET_HEALING_PLACE_HACK
+	u16 loc = VarGet(VAR_HEALINGMAP);
+	gWarp1->mapNum = (loc >> 8) & 0xFF;	// upper byte
+	gWarp1->mapGroup = loc & 0xFF;	// lower byte
+	gWarp1->warpId = 0xFF;
+	gWarp1->x = VarGet(VAR_HEALING_XPOS);
+	gWarp1->y = VarGet(VAR_HEALING_YPOS);
+	return 0;
+#else
+	return 1;
+#endif
+};
+
+
+
 
 //Follow Me Updates/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /*

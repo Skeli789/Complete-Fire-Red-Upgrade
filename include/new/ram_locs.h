@@ -65,6 +65,8 @@ struct Pedometers {
 
 		#define ColorFilter *((u8*)0x2036E28)
 
+		#define gWarp1 ((struct WarpData*) 0x2031dbc)
+		
 		#define gPlayerAvatar ((struct PlayerAvatar*) 0x02037078)
 		
 		#define gBoxStatusAndType ((u8*) 0x0203709C)		

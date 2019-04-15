@@ -64,6 +64,31 @@ script functions/specials in asm - hooks and returns
 .global CheckDexNavSelect
 .global PokeToolNoFade
 
+@@ Whiteout Hack
+.global DynamicWhiteoutMap
+
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Whiteout Hack
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+DynamicWhiteoutMap:
+	push {lr}
+	bl WhiteoutLogic
+	cmp r0, #0x1
+	beq NoHack
+	ldr r0, =(0x080bfdf4|1)
+	bx r0
+NoHack:
+	ldr r2, =(0x083eec98)
+	sub r0, r6, #0x1
+	lsl r0, r0, #0x2
+	add r1, r0, r2
+	ldrh r1, [r1]
+	strb r1, [r4]
+	add r2, #0x2
+	add r0, r0, r2
+	ldr r2, =(0x080bfd64|1)
+	bx r2
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .align 2
