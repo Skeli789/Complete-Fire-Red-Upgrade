@@ -375,58 +375,6 @@ MaxLevelChange1:
 	
 .org 0x7f986, 0xff
 	.byte 0x10, 0xbd	
-	
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@ Fossil Image Hack
-@ Inputs:
-@	var8004: image number
-@	vars8005/8006: x,y position on screen
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.org 0x9d504, 0xff
-sp18b_FossilImageHack:
-	push {r4-r6, lr}
-	mov r6, r8
-	push {r6}
-	ldr r0, .PicboxTaskLoc
-	bl 0x1119d4
-	lsl r0, r0, #0x18
-	lsr r0, r0, #0x18
-	cmp r0, #0x1
-	beq 0x9d5f2
-	ldr r0, .FreeTaskLoc
-	bl 0x77688
-	lsl r0, r0, #0x18
-	lsr r0, r0, #0x18
-	cmp r0, #0xff
-	bne EndFossilImageHack
-	ldr r0, .Var_8004
-	ldrh r0, [r0]
-	ldr r1, .imageTable
-	mov r2, #0x2
-	lsl r2, r2, #0x8
-	cmp r0, r2
-	bgt 0x9d5f4
-	lsl r0, r0, #0x3
-	add r1, r0, r1
-	ldr r0, [r1]
-	push {r1}
-	bl 0x8720
-	pop {r1}
-	add r1, #0x4
-	ldr r0, [r1]
-	mov r1, #0xe8
-	lsl r1, r1, #0x1
-	mov r2, #0x20
-	bl 0x703ec
-	b 0x9d572
-EndFossilImageHack:
-	mov r0, #0x0
-	b 0x9d5f4
-.align 2
-.Var_8004: .word var8004
-.imageTable: .word fossilImageTable
-.PicboxTaskLoc: .word 0x0809d6d4|1
-.FreeTaskLoc: .word 0x0809d494|1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Dynamic Overworld Palettes

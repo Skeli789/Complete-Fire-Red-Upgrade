@@ -7,6 +7,7 @@
 #include "../include/new/Vanilla_Functions.h"
 #include "../include/new/Vanilla_Functions_battle.h"
 #include "../include/pokemon_storage_system.h"
+#include "../include/new_menu_helpers.h"
 
 /*
 NOTES: 
@@ -16,7 +17,6 @@ NOTES:
 		-else: menu pokemon (and slot in var8004, etc)
 		-Be sure to always set var8003 for data manipulation specials!
 		
-		
 TO DO:
 	-battle specials
 	
@@ -24,9 +24,31 @@ TO DO:
 
 #define POKERUS_CURED 0x10
 
+
+extern u8 AddPalRef(u8 Type, u16 PalTag);
+
+
 //Pokemon Specials//
 ///////////////////////////////////////////////////////////////////////////////////
 
+
+#ifdef FOSSIL_IMAGE_HACK
+struct FossilTable {
+	struct SpriteSheet* data;
+	u32 palette;
+};
+
+	#ifdef EXISTING_FOSSIL_IMAGE_TABLE_ADDRESS
+		#define gFossilImageTable ((struct FossilTable*) EXISTING_FOSSIL_IMAGE_TABLE_ADDRESS)
+	#else
+		// create a 255 image table
+		struct FossilTable gFossilImageTable[255] = {
+			{0x83e17c0, 0x83e17a0},	// kabutops (originally index 0x8d, now 0x0)
+			{0x83e17d0, 0x83e0f80},	// aerodactyl (originally index 0x8e, now 0x1)
+			{0,0},
+		};
+	#endif
+#endif
 
 enum EVStatChecker
 {
@@ -1374,3 +1396,55 @@ u32 sp0A2_GetTimeDifference(void)
 	return difference;
 }
 
+
+
+
+
+#define FossilTemplate ((struct SpriteTemplate*) 0x83E0768)
+bool8 sp18B_ShowFossilImage(void) {
+	u8 result = BoxCreateTask(PicBoxSetter);
+	if (result == 1)
+		return TRUE;
+	
+	result = FindTaskIdByFunc(TaskDestroyPicBox);
+	if (result != 0xFF)
+		return FALSE;
+	if (Var8004 > 255)
+		return FALSE;
+	
+	#ifdef EXISTING_FOSSIL_IMAGE_TABLE_ADDRESS
+		LoadSpriteSheets(gFossilImageTable[Var8004].data);
+
+		u8 pal = AddPalRef(5, Var8004);	// dynamic OW pals
+		if (pal == 0xFF)	
+			LoadPalette((void*) gFossilImageTable[Var8004].palette, 0x1d0, 0x20);
+		else
+			DoLoadSpritePalette((void*) gFossilImageTable[Var8004].palette, pal*16);
+	#else
+		LoadSpriteSheets(gFossilImageTable[Var8004].data);
+		
+		u8 pal = AddPalRef(5, Var8004);	// dynamic OW pals
+		if (pal == 0xFF)	
+			LoadPalette((void*) gFossilImageTable[Var8004].palette, 0x1d0, 0x20);
+		else
+			DoLoadSpritePalette((void*) gFossilImageTable[Var8004].palette, pal*16);
+	#endif
+	
+	s16 x = ((Var8005 << 0x13) + 0x280000) >> 0x10;
+	s16 y = ((Var8006 << 0x13) + 0x280000) >> 0x10;
+	
+	u8 objId = CreateSprite(FossilTemplate, x, y, 0);
+	
+	gSprites[objId].oam.paletteNum |= pal;
+		
+	u8 taskId = CreateTask(TaskDestroyPicBox, 0x50);
+	u8 windowId = PicBoxWindow(Var8005, Var8006, 8, 8);
+	gTasks[taskId].data[5] = windowId;
+	gTasks[taskId].data[0] = 0;
+	gTasks[taskId].data[2] = objId;
+	
+	SetStandardWindowBorderStyle(windowId, 1);
+	BgIdMarkForSync(0);
+	
+	return TRUE;
+};

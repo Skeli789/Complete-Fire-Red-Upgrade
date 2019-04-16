@@ -1026,6 +1026,8 @@ gpu_pal_allocator_reset = 0x080088F0|1;
 AddTextPrinterParameterized3 = 0x812E51C | 1;
 AddTextPrinterParameterized4 = 0x812E5A4 | 1;
 
-
-
-
+PicBoxSetter = 0x809D6D4 | 1;
+BoxCreateTask = 0x81119D4 | 1;
+TaskDestroyPicBox = 0x809D494 | 1;
+PicBoxWindow = 0x0809D654 | 1;
+SetStandardWindowBorderStyle = 0x080F7750 | 1;

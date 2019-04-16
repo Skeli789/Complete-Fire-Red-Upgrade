@@ -171,6 +171,11 @@ void __attribute__((long_call)) MakeExclamationMark(struct MapObject* npc, struc
 
 u16 __attribute__((long_call)) GetCombinedOTID(void);
 
+void __attribute__((long_call)) PicBoxSetter(void);
+bool8 __attribute__((long_call)) BoxCreateTask(void* func);
+void __attribute__((long_call)) TaskDestroyPicBox(u8 taskId);
+u8 __attribute__((long_call)) PicBoxWindow(u16 x, u16 y, u8, u8);
+
 //The Deal Breaker
 void __attribute__((long_call)) break_func(u32);
 u32 break_helper(u32 a);

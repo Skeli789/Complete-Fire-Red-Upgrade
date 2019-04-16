@@ -148,6 +148,9 @@ enum
 #define SELECT_FROM_PC //Comment this out to remove select-from-pc hack.
 #define SET_HEALING_PLACE_HACK  // comment this out if you don't want custom map/bank whiteout respawn locations
 
+#define FOSSIL_IMAGE_HACK  // comment this out if you don't want JPANs fossil image hack
+#define EXISTING_FOSSIL_IMAGE_TABLE_ADDRESS 0x81a4600  // comment this out if you've already inserted a fossil image table
+
 /* Misc Effect Options */
 //#define OLD_BURN_DAMAGE //Uncomment this line if you want burn damage to do 1/8 of max health instead of 1/16
 //#define OLD_PARALYSIS_SPD_DROP //Uncomment this line if you want paralysis to lower Spd down to 1/4 instead of 1/2

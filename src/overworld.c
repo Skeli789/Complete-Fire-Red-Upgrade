@@ -874,7 +874,7 @@ bool8 WhiteoutLogic(void) {
 	gWarp1->y = VarGet(VAR_HEALING_YPOS);
 	return 0;
 #else
-	return 1;
+	return 1;	// load from original table
 #endif
 };
 

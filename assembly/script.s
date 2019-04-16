@@ -67,7 +67,6 @@ script functions/specials in asm - hooks and returns
 @@ Whiteout Hack
 .global DynamicWhiteoutMap
 
-
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Whiteout Hack
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

@@ -27,6 +27,8 @@
 
 // #define PalRefs ((PalRef*)0x203FF00)	// moved to ram_locs
 
+extern u8 AddPalRef(u8 Type, u16 PalTag);
+
 
 typedef struct
 {
@@ -47,7 +49,6 @@ typedef struct
 } PalInfo;
 
 typedef void(*TaskFunc)(u8);
-
 
 u8 AddPalRef(u8 Type, u16 PalTag)
 {

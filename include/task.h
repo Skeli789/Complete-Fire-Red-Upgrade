@@ -8,12 +8,12 @@ typedef void (*TaskFunc)(u8 taskId);
 
 struct Task
 {
-    TaskFunc func;
-    bool8 isActive;
-    u8 prev;
-    u8 next;
-    u8 priority;
-    s16 data[16];
+    TaskFunc func;	//0
+    bool8 isActive;	//4
+    u8 prev;		//5
+    u8 next;		//6
+    u8 priority;	//7
+    s16 data[16];	//8,A,C,E,10,12,14
 };
 
 #define gTasks ((struct Task*) 0x3005090) //extern struct Task gTasks[ACTIVE_SENTINEL];
