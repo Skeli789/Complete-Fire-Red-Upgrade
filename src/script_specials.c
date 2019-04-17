@@ -1411,24 +1411,14 @@ bool8 sp18B_ShowFossilImage(void) {
 		return FALSE;
 	if (Var8004 > 255)
 		return FALSE;
-	
-	#ifdef EXISTING_FOSSIL_IMAGE_TABLE_ADDRESS
-		LoadSpriteSheets(gFossilImageTable[Var8004].data);
 
-		u8 pal = AddPalRef(5, Var8004);	// dynamic OW pals
-		if (pal == 0xFF)	
-			LoadPalette((void*) gFossilImageTable[Var8004].palette, 0x1d0, 0x20);
-		else
-			DoLoadSpritePalette((void*) gFossilImageTable[Var8004].palette, pal*16);
-	#else
-		LoadSpriteSheets(gFossilImageTable[Var8004].data);
-		
-		u8 pal = AddPalRef(5, Var8004);	// dynamic OW pals
-		if (pal == 0xFF)	
-			LoadPalette((void*) gFossilImageTable[Var8004].palette, 0x1d0, 0x20);
-		else
-			DoLoadSpritePalette((void*) gFossilImageTable[Var8004].palette, pal*16);
-	#endif
+	LoadSpriteSheets(gFossilImageTable[Var8004].data);
+
+	u8 pal = AddPalRef(5, Var8004);	// dynamic OW pals
+	if (pal == 0xFF)	
+		LoadPalette((void*) gFossilImageTable[Var8004].palette, 0x1d0, 0x20);
+	else
+		DoLoadSpritePalette((void*) gFossilImageTable[Var8004].palette, pal*16);
 	
 	s16 x = ((Var8005 << 0x13) + 0x280000) >> 0x10;
 	s16 y = ((Var8006 << 0x13) + 0x280000) >> 0x10;
