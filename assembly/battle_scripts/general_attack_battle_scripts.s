@@ -552,6 +552,7 @@ BS_018_LowerTargetAtk1:
 	accuracycheck BS_MOVE_MISSED 0x0
 	attackstring
 	ppreduce
+	setbyte STAT_ANIM_PLAYED 0x0
 	jumpifmove MOVE_PLAYNICE PlayNiceBS
 	jumpifmove MOVE_NOBLEROAR PlayNiceBS
 	jumpifmove MOVE_TEARFULLOOK PlayNiceBS
@@ -564,24 +565,29 @@ BS_018_LowerTargetAtk1:
 PlayNiceBS:
 	jumpifstatcanbelowered BANK_TARGET STAT_ATK PlayNice_Atk
 	jumpifstatcanbelowered BANK_TARGET STAT_SPATK PlayNice_Atk
-	goto CheckReasonForStatLowerFail
+	pause 0x10
+	goto PlayNice_SkipAnim
 
 PlayNice_Atk:
-	setbyte FORM_COUNTER 0x0
 	attackanimation
 	waitanimation
-	setbyte STAT_ANIM_PLAYED 0x0
-	playstatchangeanimation BANK_TARGET, STAT_ANIM_ATK | STAT_ANIM_SPATK, STAT_ANIM_DOWN
+	playstatchangeanimation BANK_TARGET, STAT_ANIM_ATK | STAT_ANIM_SPATK, STAT_ANIM_DOWN | STAT_ANIM_ONLY_MULTIPLE
+	
+PlayNice_SkipAnim:
+	setbyte FORM_COUNTER 0x0
+	playstatchangeanimation BANK_TARGET, STAT_ANIM_ATK STAT_ANIM_DOWN
 	setstatchanger STAT_ATK | DECREASE_1
 	statbuffchange STAT_TARGET | STAT_BS_PTR PlayNice_SpAtk
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 PlayNice_SpAtk
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x3 PlayNice_SpAtk
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x4 BS_MOVE_END
 	printfromtable 0x83FE588
 	waitmessage DELAY_1SECOND
 
 PlayNice_SpAtk:
+	playstatchangeanimation BANK_TARGET, STAT_ANIM_SPATK STAT_ANIM_DOWN
 	setstatchanger STAT_SPATK | DECREASE_1
 	statbuffchange STAT_TARGET | STAT_BS_PTR BS_MOVE_END
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BS_MOVE_END
+	jumpifbyte GREATERTHAN MULTISTRING_CHOOSER 0x2 BS_MOVE_END
 	printfromtable 0x83FE588
 	waitmessage DELAY_1SECOND
 	goto BS_MOVE_END
@@ -596,57 +602,42 @@ DoVenomDrench:
 	jumpifstatcanbelowered BANK_TARGET STAT_ATK VenomDrench_Atk
 	jumpifstatcanbelowered BANK_TARGET STAT_SPATK VenomDrench_Atk
 	jumpifstatcanbelowered BANK_TARGET STAT_SPD VenomDrench_Atk
-	goto CheckReasonForStatLowerFail
+	pause 0x10
+	goto VenomDrench_SkipAnim
 
 VenomDrench_Atk:
-	setbyte FORM_COUNTER 0x0
 	attackanimation
 	waitanimation
-	setbyte STAT_ANIM_PLAYED 0x0
-	playstatchangeanimation BANK_TARGET, STAT_ANIM_ATK | STAT_ANIM_SPATK | STAT_ANIM_SPD, STAT_ANIM_DOWN
+	playstatchangeanimation BANK_TARGET, STAT_ANIM_ATK | STAT_ANIM_SPATK | STAT_ANIM_SPD, STAT_ANIM_DOWN | STAT_ANIM_ONLY_TRIPLE
+	
+VenomDrench_SkipAnim:
+	setbyte FORM_COUNTER 0x0
+	playstatchangeanimation BANK_TARGET, STAT_ANIM_ATK | STAT_ANIM_SPATK, STAT_ANIM_DOWN | STAT_ANIM_ONLY_MULTIPLE
+	playstatchangeanimation BANK_TARGET, STAT_ANIM_ATK | STAT_ANIM_SPD, STAT_ANIM_DOWN | STAT_ANIM_ONLY_MULTIPLE
+	playstatchangeanimation BANK_TARGET, STAT_ANIM_ATK, STAT_ANIM_DOWN
 	setstatchanger STAT_ATK | DECREASE_1
 	statbuffchange STAT_TARGET | STAT_BS_PTR VenomDrench_SpAtk
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 VenomDrench_SpAtk
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x3 VenomDrench_SpAtk
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x4 BS_MOVE_END
 	printfromtable 0x83FE588
 	waitmessage DELAY_1SECOND
 
 VenomDrench_SpAtk:
+	playstatchangeanimation BANK_TARGET, STAT_ANIM_SPATK | STAT_ANIM_SPD, STAT_ANIM_DOWN | STAT_ANIM_ONLY_MULTIPLE
+	playstatchangeanimation BANK_TARGET, STAT_ANIM_SPATK, STAT_ANIM_DOWN
 	setstatchanger STAT_SPATK | DECREASE_1
 	statbuffchange STAT_TARGET | STAT_BS_PTR VenomDrench_Spd
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 VenomDrench_Spd
+	jumpifbyte GREATERTHAN MULTISTRING_CHOOSER 0x2 VenomDrench_Spd
 	printfromtable 0x83FE588
 	waitmessage DELAY_1SECOND
 
 VenomDrench_Spd:
+	playstatchangeanimation BANK_TARGET, STAT_ANIM_SPD, STAT_ANIM_DOWN
 	setstatchanger STAT_SPD | DECREASE_1
 	statbuffchange STAT_TARGET | STAT_BS_PTR BS_MOVE_END
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BS_MOVE_END
+	jumpifbyte GREATERTHAN MULTISTRING_CHOOSER 0x2 BS_MOVE_END
 	printfromtable 0x83FE588
 	waitmessage DELAY_1SECOND
-	goto BS_MOVE_END
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-CheckReasonForStatLowerFail:
-	copyarray SEED_HELPER FORM_COUNTER 0x1
-	setbyte FORM_COUNTER 0x0
-	jumpifbyte EQUALS SEED_HELPER 0x1 0x81D8499 @;Stats won't go lower
-	jumpifbyte EQUALS SEED_HELPER 0x2 MistProtectedBS
-	jumpifbyte EQUALS SEED_HELPER 0x3 AbilityPreventsStatLossBS
-	jumpifbyte EQUALS SEED_HELPER 0x4 CallAbilityNoSpecificStatLoss
-	jumpifbyte EQUALS SEED_HELPER 0x5 0x81D85E7 @;Stats won't go higher
-	goto FAILED
-
-AbilityPreventsStatLossBS:
-	call BattleScript_AbilityNoStatLoss
-	goto BS_MOVE_END
-	
-CallAbilityNoSpecificStatLoss:
-	call BattleScript_AbilityNoSpecificStatLoss
-	goto BS_MOVE_END
-
-MistProtectedBS:
-	call 0x81D8C3E @;Mist protected
 	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -860,8 +851,8 @@ BS_032_Recover:
 	attackcanceler
 	attackstring
 	ppreduce
-	jumpifhalfword EQUALS CURRENT_MOVE MOVE_ROOST RoostBS
-	jumpifhalfword EQUALS CURRENT_MOVE MOVE_PURIFY PurifyBS
+	jumpifmove MOVE_ROOST RoostBS
+	jumpifmove MOVE_PURIFY PurifyBS
 
 RecoverBS:
 	setdamageasrestorehalfmaxhp 0x81D7DD1 BANK_ATTACKER @;BattleScript_AlreadyAtFullHp
@@ -892,7 +883,7 @@ PurifyBS:
 	goto FAILED
 
 PurifyHeal:
-	cureprimarystatus BANK_TARGET
+	cureprimarystatus BANK_TARGET FAILED
 	attackanimation
 	waitanimation
 	setword BATTLE_STRING_LOADER PurifyString
@@ -2469,28 +2460,39 @@ UTurnGiveEXPBS:
 PartingShotBS:
 	attackstring
 	ppreduce
-	jumpifstatcanbelowered BANK_TARGET STAT_ATK PartingShotLowerAtk
-	jumpifstatcanbelowered BANK_TARGET STAT_SPATK PartingShotLowerAtk
-	goto CheckReasonForStatLowerFail
+	setbyte ANIM_TARGETS_HIT 0x0
+	setbyte STAT_ANIM_PLAYED 0x0
+	jumpifstatcanbelowered BANK_TARGET STAT_ATK PartingShot_LowerAtk
+	jumpifstatcanbelowered BANK_TARGET STAT_SPATK PartingShot_LowerAtk
+	pause 0x10
+	goto PartingShot_SkipAnim
 	
-PartingShotLowerAtk:
-	setbyte FORM_COUNTER 0x0
+PartingShot_LowerAtk:
 	attackanimation
 	waitanimation
-	setbyte STAT_ANIM_PLAYED 0x0
-	playstatchangeanimation BANK_TARGET, STAT_ANIM_ATK | STAT_ANIM_SPATK, STAT_ANIM_DOWN
+	setbyte ANIM_TARGETS_HIT 0x1 @;So we know parting shot worked
+	playstatchangeanimation BANK_TARGET, STAT_ANIM_ATK | STAT_ANIM_SPATK, STAT_ANIM_DOWN | STAT_ANIM_ONLY_MULTIPLE
+
+PartingShot_SkipAnim:
+	setbyte FORM_COUNTER 0x0
+	playstatchangeanimation BANK_TARGET, STAT_ANIM_ATK STAT_ANIM_DOWN
 	setstatchanger STAT_ATK | DECREASE_1
-	statbuffchange STAT_TARGET | STAT_BS_PTR PartingShotLowerSpAtk
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 PartingShotLowerSpAtk
+	statbuffchange STAT_TARGET | STAT_BS_PTR PartingShot_LowerSpAtk
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x3 PartingShot_LowerSpAtk
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x4 BS_MOVE_END
 	printfromtable 0x83FE588
 	waitmessage DELAY_1SECOND
 
-PartingShotLowerSpAtk:
+PartingShot_LowerSpAtk:
+	playstatchangeanimation BANK_TARGET, STAT_ANIM_SPATK STAT_ANIM_DOWN
 	setstatchanger STAT_SPATK | DECREASE_1
-	statbuffchange STAT_TARGET | STAT_BS_PTR UTurnSwitchBS
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 UTurnSwitchBS
+	statbuffchange STAT_TARGET | STAT_BS_PTR CheckPartingShotFail
+	jumpifbyte GREATERTHAN MULTISTRING_CHOOSER 0x2 CheckPartingShotFail
 	printfromtable 0x83FE588
 	waitmessage DELAY_1SECOND
+	
+CheckPartingShotFail:
+	jumpifbyte EQUALS ANIM_TARGETS_HIT 0x0 BS_MOVE_END @;Anim didn't play means no stats were lowered
 	goto UTurnSwitchBS
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -3872,26 +3874,37 @@ BS_204_Overheat:
 
 .global BS_205_Tickle
 BS_205_Tickle:
+	attackcanceler
+	jumpifbehindsubstitute BANK_TARGET FAILED-2
+	accuracycheck BS_MOVE_MISSED 0x0
+	attackstring
+	ppreduce
+	setbyte STAT_ANIM_PLAYED 0x0
 	jumpifstatcanbelowered BANK_TARGET STAT_ATK Tickle_Atk
 	jumpifstatcanbelowered BANK_TARGET STAT_DEF Tickle_Atk
-	goto CheckReasonForStatLowerFail
+	pause 0x10
+	goto Tickle_SkipAnim
 
 Tickle_Atk:
-	setbyte FORM_COUNTER 0x0
 	attackanimation
 	waitanimation
-	setbyte STAT_ANIM_PLAYED 0x0
-	playstatchangeanimation BANK_TARGET, STAT_ANIM_ATK | STAT_ANIM_DEF, STAT_ANIM_DOWN
+	playstatchangeanimation BANK_TARGET, STAT_ANIM_ATK | STAT_ANIM_DEF, STAT_ANIM_DOWN | STAT_ANIM_ONLY_MULTIPLE
+	
+Tickle_SkipAnim:
+	setbyte FORM_COUNTER 0x0
+	playstatchangeanimation BANK_TARGET, STAT_ANIM_ATK STAT_ANIM_DOWN
 	setstatchanger STAT_ATK | DECREASE_1
 	statbuffchange STAT_TARGET | STAT_BS_PTR Tickle_Def
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 Tickle_Def
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x3 Tickle_Def
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x4 BS_MOVE_END
 	printfromtable 0x83FE588
 	waitmessage DELAY_1SECOND
 
 Tickle_Def:
+	playstatchangeanimation BANK_TARGET, STAT_ANIM_DEF STAT_ANIM_DOWN
 	setstatchanger STAT_DEF | DECREASE_1
 	statbuffchange STAT_TARGET | STAT_BS_PTR BS_MOVE_END
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BS_MOVE_END
+	jumpifbyte GREATERTHAN MULTISTRING_CHOOSER 0x2 BS_MOVE_END
 	printfromtable 0x83FE588
 	waitmessage DELAY_1SECOND
 	goto BS_MOVE_END
@@ -5012,7 +5025,7 @@ BS_255_Blank:
 .align 2
 ProtectedByTerrainString: .byte 0xFD, 0x10, 0x00, 0xDD, 0xE7, 0xFE, 0xE4, 0xE6, 0xE3, 0xE8, 0xD9, 0xD7, 0xE8, 0xD9, 0xD8, 0x00, 0xD6, 0xED, 0x00, 0xE8, 0xDC, 0xD9, 0x00, 0xE8, 0xD9, 0xE6, 0xE6, 0xD5, 0xDD, 0xE2, 0xAB, 0xFF
 ReflectTypeString: .byte 0xFD, 0x0F, 0xB4, 0xE7, 0x00, 0xE8, 0xED, 0xE4, 0xD9, 0x00, 0xD6, 0xD9, 0xD7, 0xD5, 0xE1, 0xD9, 0xFE, 0xE8, 0xDC, 0xD9, 0x00, 0xE7, 0xD5, 0xE1, 0xD9, 0x00, 0xD5, 0xE7, 0x00, 0xFD, 0x10, 0xB4, 0xE7, 0xAB, 0xFF
-PurifyString: .byte 0xFD, 0x10, 0x00, 0xEB, 0xD5, 0xE7, 0x00, 0xD7, 0xE9, 0xE6, 0xD9, 0xD8, 0xFE, 0xE3, 0xDA, 0x00, 0xDD, 0xE8, 0xE7, 0x00, 0xE7, 0xE8, 0xD5, 0xE8, 0xE9, 0xE7, 0xAD, 0xFF
+PurifyString: .byte 0xFD, 0x10, 0x00, 0xEB, 0xD5, 0xE7, 0x00, 0xD7, 0xE9, 0xE6, 0xD9, 0xD8, 0xFE, 0xE3, 0xDA, 0x00, 0xDD, 0xE8, 0xE7, 0x00, 0xFD, 0x0, 0x0, 0xE4, 0xE6, 0xE3, 0xD6, 0xE0, 0xD9, 0xE1, 0xAB, 0xFF
 BecameNimbleString: .byte 0xFD, 0x0F, 0x00, 0xD6, 0xD9, 0xD7, 0xD5, 0xE1, 0xD9, 0x00, 0xE2, 0xDD, 0xE1, 0xD6, 0xE0, 0xD9, 0xAB, 0xFF
 FreezeShockChargingString: .byte 0xFD, 0x0F, 0x00, 0xD6, 0xD9, 0xD7, 0xD5, 0xE1, 0xD9, 0xFE, 0xD7, 0xE0, 0xE3, 0xD5, 0xDF, 0xD9, 0xD8, 0x00, 0xDD, 0xE2, 0x00, 0xD5, 0x00, 0xDA, 0xE6, 0xD9, 0xD9, 0xEE, 0xDD, 0xE2, 0xDB, 0x00, 0xE0, 0xDD, 0xDB, 0xDC, 0xE8, 0xAB, 0xFF
 IceBurnChargingString: .byte 0xFD, 0x0F, 0x00, 0xD6, 0xD9, 0xD7, 0xD5, 0xE1, 0xD9, 0xFE, 0xD7, 0xE0, 0xE3, 0xD5, 0xDF, 0xD9, 0xD8, 0x00, 0xDD, 0xE2, 0x00, 0xDA, 0xE6, 0xD9, 0xD9, 0xEE, 0xDD, 0xE2, 0xDB, 0x00, 0xD5, 0xDD, 0xE6, 0xAB, 0xFF

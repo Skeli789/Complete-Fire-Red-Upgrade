@@ -464,8 +464,26 @@ void ClearBeakBlastBit(void) {
 		gNewBS->BeakBlastByte &= ~(gBitTable[gBankAttacker]);
 }
 
-void BestowItem(void) {
-
+void BestowItem(void) 
+{
+	if (ITEM(gBankTarget) == 0
+	&& ITEM(gBankAttacker) != 0
+	&& CanTransferItem(gBattleMons[gBankTarget].species, ITEM(gBankAttacker), GetBankPartyData(gBankTarget))
+	&& CanTransferItem(gBattleMons[gBankAttacker].species, ITEM(gBankAttacker), GetBankPartyData(gBankAttacker)))
+	{
+		gLastUsedItem = gBattleMons[gBankTarget].item = ITEM(gBankAttacker);
+		gBattleMons[gBankAttacker].item = 0;
+		
+		gActiveBattler = gBankAttacker;
+		EmitSetMonData(0, REQUEST_HELDITEM_BATTLE, 0, 2, &gBattleMons[gActiveBattler].item);
+		MarkBufferBankForExecution(gActiveBattler);
+		
+		gActiveBattler = gBankTarget;
+		EmitSetMonData(0, REQUEST_HELDITEM_BATTLE, 0, 2, &gBattleMons[gActiveBattler].item);
+		MarkBufferBankForExecution(gActiveBattler);
+	}
+	else
+		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
 }
 
 void BelchFunction(void) {
@@ -562,11 +580,7 @@ void CaptivateFunc(void) {
     || GetGenderFromSpeciesAndPersonality(speciesAtk, personalityAtk) == MON_GENDERLESS
     || GetGenderFromSpeciesAndPersonality(speciesDef, personalityDef) == MON_GENDERLESS)
     {
-        gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
-    }
-    else
-    {
-        gBattlescriptCurrInstr += 5;
+        gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
     }
 }
 

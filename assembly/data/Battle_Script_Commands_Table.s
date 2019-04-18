@@ -304,3 +304,4 @@ gBattleScriptingCommandsTable2:
 .word atkFF21_tryspectralthiefsteal
 .word atkFF22_jumpifspecies
 .word atkFF23_faintpokemonaftermove
+.word atkFF24_jumpifattackeralreadydiddamage

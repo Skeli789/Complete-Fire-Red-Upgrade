@@ -1598,3 +1598,8 @@
 	.byte 0xFF, 0x23
 	.byte 0x0, 0x0
 	.endm
+	
+	.macro jumpifattackeralreadydiddamage rom_address
+	.byte 0xFF, 0x24
+	.4byte \rom_address
+	.endm

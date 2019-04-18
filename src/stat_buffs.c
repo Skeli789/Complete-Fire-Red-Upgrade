@@ -209,7 +209,8 @@ void atk48_playstatchangeanimation(void)
 		changeableStatsCount = 0xFF;
 	}
 		
-    if (T2_READ_8(gBattlescriptCurrInstr + 3) & ATK48_ONLY_MULTIPLE && changeableStatsCount < 2)
+    if ((T2_READ_8(gBattlescriptCurrInstr + 3) & ATK48_ONLY_MULTIPLE && changeableStatsCount < 2)
+	|| (T2_READ_8(gBattlescriptCurrInstr + 3) & ATK48_ONLY_TRIPLE && changeableStatsCount < 3))
     {
         gBattlescriptCurrInstr += 4;
     }
@@ -217,7 +218,8 @@ void atk48_playstatchangeanimation(void)
     {
         EmitBattleAnimation(0, B_ANIM_STATS_CHANGE, statAnimId);
         MarkBufferBankForExecution(gActiveBattler);
-        if (T2_READ_8(gBattlescriptCurrInstr + 3) & ATK48_ONLY_MULTIPLE && changeableStatsCount > 1)
+        if ((T2_READ_8(gBattlescriptCurrInstr + 3) & ATK48_ONLY_MULTIPLE && changeableStatsCount > 1)
+		||  (T2_READ_8(gBattlescriptCurrInstr + 3) & ATK48_ONLY_TRIPLE && changeableStatsCount > 2))
             gBattleScripting->statAnimPlayed = TRUE;
         gBattlescriptCurrInstr += 4;
     }

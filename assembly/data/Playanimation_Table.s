@@ -279,8 +279,7 @@ ANIM_GRASSY_SURGE:
 	loaddefaultBG @At this point the new BG is in effect
 	waitfortransparentBG
 	playsoundpanchange2 0xc3 0xc0 0x3f 0x1 0x0 
-	pause 0x40 
-	pause 0x40
+	waitforsound
 	endanimation 
 
 .align 2
@@ -353,8 +352,7 @@ ANIM_PSYCHIC_SURGE:
 	loaddefaultBG @At this point the new BG is in effect
 	waitfortransparentBG
 	soundcomplex 0xb1 0x3f 0xa 0x3 
-	pause 0x40 
-	pause 0x40
+	waitforsound
 	endanimation 
 
 .align 2
@@ -491,8 +489,6 @@ BLUE_PRIMAL_ALPHA: objtemplate ANIM_TAG_ALPHA_STONE ANIM_TAG_ALPHA_STONE 0x83ACB
 ANIM_GRASSY_TERRAIN_HEAL:
 	loadparticle ANIM_TAG_ORBS 
 	loadparticle ANIM_TAG_BLUE_STAR 
-	loadBG1 BG_GRASSY_TERRAIN 
-	waitfortransparentBG 
 	pokespritetoBG side_target 
 	setblends 0x80c 
 	waitanimation 
@@ -505,9 +501,7 @@ ANIM_GRASSY_TERRAIN_HEAL:
 	launchtemplate Template_Pal_Fade 0x2 0x5 0x1 0x1 0x4 0x0 0x33ed 
 	waitanimation 
 	pokespritefromBG side_target 
-	resetblends 
-	loaddefaultBG 
-	waitfortransparentBG 
+	resetblends
 	endanimation 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

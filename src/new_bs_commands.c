@@ -1092,8 +1092,17 @@ void atkFF23_faintpokemonaftermove(void)
     }
 }
 
+//jumpifattackeralreadydiddamage ROM_ADDRESS
+void atkFF24_jumpifattackeralreadydiddamage(void)
+{
+	if (gNewBS->AttackerDidDamageAtLeastOnce)
+		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+	else
+		gBattlescriptCurrInstr += 5;
+}
+
 //trysetsleep BANK FAIL_ADDRESS
-void atkFF23_trysetsleep(void)
+void atkFF25_trysetsleep(void)
 {
 	u8 bank = GetBattleBank(gBattlescriptCurrInstr[1]);
 	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 2);

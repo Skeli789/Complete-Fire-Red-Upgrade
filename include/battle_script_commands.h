@@ -23,6 +23,7 @@
 #define ATK48_STAT_BY_TWO           0x2
 #define ATK48_ONLY_MULTIPLE         0x4
 #define ATK48_DONT_CHECK_LOWER      0x8
+#define ATK48_ONLY_TRIPLE			0x10
 
 #define BIT_HP                      0x1
 #define BIT_ATK                     0x2

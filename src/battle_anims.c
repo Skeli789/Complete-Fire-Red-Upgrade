@@ -356,6 +356,40 @@ void AnimTask_SetCamouflageBlend(u8 taskId)
 	StartBlendAnimSpriteColor(taskId, selectedPalettes);
 }
 
+void SpriteCB_TranslateAnimSpriteToTargetMonLocationDoubles(struct Sprite *sprite)
+{
+	bool8 v1;
+	bank_t target;
+    u8 coordType;
+
+    if (!(gBattleAnimArgs[5] & 0xff00))
+        v1 = TRUE;
+    else
+        v1 = FALSE;
+
+    if (!(gBattleAnimArgs[5] & 0xff))
+        coordType = BATTLER_COORD_Y_PIC_OFFSET;
+    else
+        coordType = BATTLER_COORD_Y;
+
+    InitSpritePosToAnimAttacker(sprite, v1);
+    if (SIDE(gBattleAnimAttacker) != B_SIDE_PLAYER)
+        gBattleAnimArgs[2] = -gBattleAnimArgs[2];
+		
+	target = LoadBattleAnimTarget(6);
+	
+	if (GetBankPartyData(target)->hp == 0)
+		DestroyAnimSprite(sprite);
+	else
+	{
+		sprite->data[0] = gBattleAnimArgs[4];
+		sprite->data[2] = GetBattlerSpriteCoord(target, BATTLER_COORD_X_2) + gBattleAnimArgs[2];
+		sprite->data[4] = GetBattlerSpriteCoord(target, coordType) + gBattleAnimArgs[3];
+		sprite->callback = StartAnimLinearTranslation;
+		StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
+	}
+}
+
 void DoubleWildAnimBallThrowFix(void)
 {
 	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && !(gBattleTypeFlags & BATTLE_TYPE_TRAINER))
