@@ -8,6 +8,7 @@
 .equ ROUND_SHADOW_IMG, FlyTiles
 .equ ROCKS_IMG, RocksTiles
 .equ BATON_PASS_POKEBALL_IMG, Baton_Pass_BallTiles
+.equ GREEN_STAR_IMG, Green_StarTiles
 .equ EYE_IMG, Mean_LookTiles
 .equ NAIL_IMG, Curse_NailTiles
 .equ SPIKES_IMG, SpikesTiles
@@ -75,6 +76,7 @@
 .equ HAVOC_SPEAR_IMG, Gigavolt_Havoc_SpearTiles
 .equ PURPLE_DRAKE_IMG, Purple_DrakeTiles
 .equ ABILITY_POP_UP_IMG, Ability_Pop_UpTiles
+.equ MUD_BOMB_IMG, Mud_BombTiles
 
 .equ SWORD_PAL, SwordPal
 .equ SEED_PAL, Leech_SeedPal
@@ -86,6 +88,7 @@
 .equ ROUND_SHADOW_PAL, FlyPal
 .equ ROCKS_PAL, RocksPal
 .equ BATON_PASS_POKEBALL_PAL, Baton_Pass_BallPal
+.equ GREEN_STAR_PAL, Green_StarPal
 .equ EYE_PAL, Mean_LookPal
 .equ NAIL_PAL, Curse_NailPal
 .equ SPIKES_PAL, SpikesPal
@@ -154,3 +157,4 @@
 .equ HAVOC_SPEAR_PAL, Gigavolt_Havoc_SpearPal
 .equ PURPLE_DRAKE_PAL, Purple_DrakePal
 .equ ABILITY_POP_UP_PAL, Ability_Pop_UpPal
+.equ MUD_BOMB_PAL, Mud_BombPal

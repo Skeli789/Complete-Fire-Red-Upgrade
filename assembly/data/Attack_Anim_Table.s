@@ -24,6 +24,8 @@
 .global DESTINY_BOND_ASM_2	@ hook at 0xB6160 via r0
 .global DISABLE_TIME_ASM	@ hook at 0xA7FF8 via r1 - lengthen disable timer for lets snuggle forever
 .global WATERGUN_ASM		@ hook at 0xA7C28 via r0
+.global MudBombASM 		@ hook at 0xE2590 via r0
+
 
 /* attack animation table */
 .align 2
@@ -2531,7 +2533,7 @@ MAGNET_BLUEBOMB: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_WATER_GUN 0x83AC9D8 0x8
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
 ANIM_MUDBOMB:
-	loadparticle ANIM_TAG_RED_BALL @Barrage Ball
+	loadparticle ANIM_TAG_MUD_BOMB
 	loadparticle ANIM_TAG_POISON_BUBBLE @Sludge
 	loadparticle ANIM_TAG_BROWN_ORB @Brown Colour
 	launchtask 0x80e2519 0x3 0x0 
@@ -2549,6 +2551,25 @@ ANIM_MUDBOMB:
 .align 2
 BROWNSLUDGE: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_BROWN_ORB 0x83ACA90 0x83E69DC 0x0 0x83E6A18 0x80B46F9
 BROWNDRIPS: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_BROWN_ORB 0x83ACA90 0x83E69E0 0x0 0x83E6A80 0x80B17C5
+MUD_BOMB_TEMPLATE: objtemplate ANIM_TAG_MUD_BOMB ANIM_TAG_MUD_BOMB 0x83ACA40 0x8231CF0 0x0 0x83FF624 0x800760D
+
+@0x80E2590 with r0
+MudBombASM:
+	bl IsAnimMoveMudBomb
+	cmp r0, #0x0
+	beq DefaultBarrage
+	ldr r4, =MUD_BOMB_TEMPLATE
+	b MudBombASMReturn
+
+DefaultBarrage:
+	ldr r4, =0x83FF62C
+
+MudBombASMReturn:
+	mov r0, #0x1E
+	ldrh r5, [r7, r0]
+	mov r1, #0x20
+	ldr r2, =0x80E2598 | 1
+	bx r2
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
@@ -14741,7 +14762,6 @@ ANIM_EMBARGO:
 EmbargoASM:
 	mov r0, r8
 	strh r0, [r4, #0xA]
-	push {r2-r3}
 	bl IsAnimMoveGrudge
 	cmp r0, #0x0
 	beq TgtSide

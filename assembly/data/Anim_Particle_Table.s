@@ -249,7 +249,7 @@ animparticle 0x8d28a54,	0x60,	ANIM_TAG_RED_ORB_2
 animparticle 0x8d289c8,	0x80,	ANIM_TAG_PINK_PETAL
 animparticle 0x8d2cc74,	0x180,	ANIM_TAG_PAIN_SPLIT
 animparticle 0x8d2cfc8,	0x180,	ANIM_TAG_CONFETTI
-animparticle 0x8d2cd80,	0x200,	ANIM_TAG_GREEN_STAR
+animparticle GREEN_STAR_IMG,	0x200,	ANIM_TAG_GREEN_STAR
 animparticle 0x8d2d744,	0x200,	ANIM_TAG_PINK_CLOUD
 animparticle 0x8d2d8a4,	0x20,	ANIM_TAG_SWEAT_DROP
 animparticle 0x8d2e728,	0x400,	ANIM_TAG_GUARD_RING
@@ -359,6 +359,7 @@ animparticle CORKSCREW_IMG,	0x800	ANIM_TAG_CORKSCREW
 animparticle HAVOC_SPEAR_IMG, 0x800	ANIM_TAG_HAVOC_SPEAR
 animparticle PURPLE_DRAKE_IMG, 0x800	ANIM_TAG_PURPLE_DRAKE
 animparticle ABILITY_POP_UP_IMG, (64 * 64) / 2,	ANIM_TAG_ABILITY_POP_UP
+animparticle MUD_BOMB_IMG, (64 * 64) / 2, ANIM_TAG_MUD_BOMB
 
 gBattleAnimPaletteTable:
 animparticlepal 0x8d028b4,	ANIM_TAG_BONE,	0x0
@@ -602,7 +603,7 @@ animparticlepal 0x8d28adc,	ANIM_TAG_RED_ORB_2,	0x0
 animparticlepal 0x8d28a30,	ANIM_TAG_PINK_PETAL,	0x0
 animparticlepal 0x8d2cd58,	ANIM_TAG_PAIN_SPLIT,	0x0
 animparticlepal 0x8d2d068,	ANIM_TAG_CONFETTI,	0x0
-animparticlepal 0x8d2d550,	ANIM_TAG_GREEN_STAR,	0x0
+animparticlepal GREEN_STAR_PAL,	ANIM_TAG_GREEN_STAR,	0x0
 animparticlepal 0x8d2d880,	ANIM_TAG_PINK_CLOUD,	0x0
 animparticlepal 0x8d2d8cc,	ANIM_TAG_SWEAT_DROP,	0x0
 animparticlepal 0x8d2e804,	ANIM_TAG_GUARD_RING,	0x0
@@ -712,3 +713,4 @@ animparticlepal CORKSCREW_PAL,		ANIM_TAG_CORKSCREW,	0x0
 animparticlepal HAVOC_SPEAR_PAL,	ANIM_TAG_HAVOC_SPEAR,	0x0
 animparticlepal PURPLE_DRAKE_PAL,	ANIM_TAG_PURPLE_DRAKE,	0x0
 animparticlepal ABILITY_POP_UP_PAL,	ANIM_TAG_ABILITY_POP_UP, 0x0
+animparticlepal MUD_BOMB_PAL, ANIM_TAG_MUD_BOMB, 0x0

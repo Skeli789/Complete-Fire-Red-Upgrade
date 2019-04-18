@@ -248,6 +248,12 @@ bool8 IsAnimMoveHeartSwap(void)
 	return  move == MOVE_HEARTSWAP;
 }
 
+bool8 IsAnimMoveMudBomb(void)
+{
+	u16 move = gBattleBufferA[gActiveBattler][1] | (gBattleBufferA[gActiveBattler][2] << 8);
+	return  move == MOVE_MUDBOMB;
+}
+
 void AnimTask_ReloadAttackerSprite(u8 taskId)
 {
 	u8 spriteId = gBattlerSpriteIds[gBattleAnimAttacker];
