@@ -2001,7 +2001,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 
 //Banks need to be accurate, even if just checking party data (for side checking)
 u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 ability, u32 atkStatus1, u16 atk_hp, u16 atk_maxHP, u16 species, pokemon_t* party_data_atk, bool8 PartyCheck, bool8 menuCheck, bool8 ignoreDef) {
-	u8 power = gBattleMoves[move].power;
+	u16 power = gBattleMoves[move].power;
 	int i;
 
 	switch (move) {

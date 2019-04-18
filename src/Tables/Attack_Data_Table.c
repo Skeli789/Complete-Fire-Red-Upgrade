@@ -4094,7 +4094,7 @@ struct BattleMove gBattleMoves[] = {
 		.priority = 0,
 		.flags = FLAG_PROTECT_AFFECTED,
 		.z_move_power = 100,
-		.split = SPLIT_STATUS,
+		.split = SPLIT_SPECIAL,
 		.z_move_effect = 0
 	},
 
