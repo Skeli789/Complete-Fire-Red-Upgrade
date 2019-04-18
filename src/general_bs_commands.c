@@ -370,13 +370,13 @@ void atk0C_datahpupdate(void) {
 			gNewBS->AttackerDidDamageAtLeastOnce = TRUE;
 			gMoveResultFlags = 0;
 			
-			if (CalcMoveSplit(gCurrentMove, gActiveBattler) == SPLIT_PHYSICAL) {
+			if (CalcMoveSplit(gActiveBattler, gCurrentMove) == SPLIT_PHYSICAL) {
 				gProtectStructs[gActiveBattler].physicalDmg = gHpDealt;
 				gSpecialStatuses[gActiveBattler].moveturnLostHP_physical = gHpDealt;
 				gProtectStructs[gActiveBattler].physicalBank = gBankAttacker;
 				gSpecialStatuses[gActiveBattler].moveturnPhysicalBank = gBankAttacker;
 			}
-			else if (CalcMoveSplit(gCurrentMove, gActiveBattler) == SPLIT_SPECIAL) {
+			else if (CalcMoveSplit(gActiveBattler, gCurrentMove) == SPLIT_SPECIAL) {
 				gProtectStructs[gActiveBattler].specialDmg = gHpDealt;
 				gSpecialStatuses[gActiveBattler].moveturnLostHP_special = gHpDealt;
 				gProtectStructs[gActiveBattler].specialBank = gBankAttacker;
@@ -426,7 +426,7 @@ void atk0C_datahpupdate(void) {
                 if (!gSpecialStatuses[gActiveBattler].moveturnLostHP && !(gHitMarker & HITMARKER_NON_ATTACK_DMG))
                     gSpecialStatuses[gActiveBattler].moveturnLostHP = gHpDealt;
 
-                if (CalcMoveSplit(gCurrentMove, gActiveBattler) == SPLIT_PHYSICAL 
+                if (CalcMoveSplit(gActiveBattler, gCurrentMove) == SPLIT_PHYSICAL 
 				&& !(gHitMarker & HITMARKER_NON_ATTACK_DMG)) 
 				{
                     gProtectStructs[gActiveBattler].physicalDmg = gHpDealt;
@@ -444,7 +444,7 @@ void atk0C_datahpupdate(void) {
                     }
                 }
 				
-                else if (CalcMoveSplit(gCurrentMove, gActiveBattler) == SPLIT_SPECIAL 
+                else if (CalcMoveSplit(gActiveBattler, gCurrentMove) == SPLIT_SPECIAL 
 				&& !(gHitMarker & HITMARKER_NON_ATTACK_DMG)) 
 				{
                     gProtectStructs[gActiveBattler].specialDmg = gHpDealt;
@@ -2171,10 +2171,7 @@ void atkA1_counterdamagecalculator(void) {
 	
     if (gProtectStructs[gBankAttacker].physicalDmg && atkSide != defSide && gBattleMons[gProtectStructs[gBankAttacker].physicalBank].hp) {
 	
-		if (!gSpecialStatuses[gBankAttacker].moveturnLostHP)
-			gBattleMoveDamage = 1; //Suffered physical damage, but negated damage
-		else
-			gBattleMoveDamage = gProtectStructs[gBankAttacker].physicalDmg * 2;
+		gBattleMoveDamage = gProtectStructs[gBankAttacker].physicalDmg * 2;
 		
         if (gSideTimers[defSide].followmeTimer && gBattleMons[gSideTimers[defSide].followmeTarget].hp)
             gBankTarget = gSideTimers[defSide].followmeTarget;
@@ -2193,12 +2190,9 @@ void atkA2_mirrorcoatdamagecalculator(void) {
     u8 atkSide = SIDE(gBankAttacker);
     u8 defSide = SIDE(gProtectStructs[gBankAttacker].specialBank);
 	
-    if (gProtectStructs[gBankAttacker].specialDmg && atkSide != defSide && gBattleMons[gProtectStructs[gBankAttacker].specialBank].hp) {
-	
-		if (!gSpecialStatuses[gBankAttacker].moveturnLostHP)
-			gBattleMoveDamage = 1; //Suffered special damage, but negated damage
-		else
-			gBattleMoveDamage = gProtectStructs[gBankAttacker].specialDmg * 2;
+    if (gProtectStructs[gBankAttacker].specialDmg && atkSide != defSide && gBattleMons[gProtectStructs[gBankAttacker].specialBank].hp) 
+	{
+		gBattleMoveDamage = gProtectStructs[gBankAttacker].specialDmg * 2;
 		
         if (gSideTimers[defSide].followmeTimer && gBattleMons[gSideTimers[defSide].followmeTarget].hp)
             gBankTarget = gSideTimers[defSide].followmeTarget;
@@ -2206,8 +2200,8 @@ void atkA2_mirrorcoatdamagecalculator(void) {
             gBankTarget = gProtectStructs[gBankAttacker].specialBank;
         gBattlescriptCurrInstr += 5;
     }
-	
-    else {
+    else 
+	{
         gSpecialStatuses[gBankAttacker].ppNotAffectedByPressure = 1;
         gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
     }

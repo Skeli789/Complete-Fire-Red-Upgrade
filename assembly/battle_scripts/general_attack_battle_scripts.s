@@ -1754,13 +1754,26 @@ BS_088_Psywave:
 
 .global BS_089_Counter
 BS_089_Counter:
-	jumpifnotmove MOVE_METALBURST 0x81D7433
 	attackcanceler
+	jumpifmove MOVE_METALBURST MetalBurstBS
+	
+CounterBS:
+	counterdamagecalculator FAILED-2
+	accuracycheck BS_MOVE_MISSED 0x0
+	attackstring
+	ppreduce
+	typecalc2
+	bicbyte OUTCOME OUTCOME_SUPER_EFFECTIVE | OUTCOME_NOT_VERY_EFFECTIVE
+	adjustsetdamage
+	goto BS_HIT_FROM_ATTACKANIMATION
+
+MetalBurstBS:
 	accuracycheck BS_MOVE_MISSED 0x0
 	attackstring
 	ppreduce
 	callasm MetalBurstDamageCalculator
 	typecalc2
+	bicbyte OUTCOME OUTCOME_SUPER_EFFECTIVE | OUTCOME_NOT_VERY_EFFECTIVE
 	adjustsetdamage
 	goto BS_HIT_FROM_ATTACKANIMATION
 	
@@ -2720,6 +2733,7 @@ BS_144_MirrorCoat:
 	attackstring
 	ppreduce
 	typecalc2
+	bicbyte OUTCOME OUTCOME_SUPER_EFFECTIVE | OUTCOME_NOT_VERY_EFFECTIVE
 	adjustsetdamage
 	goto BS_HIT_FROM_ATTACKANIMATION
 

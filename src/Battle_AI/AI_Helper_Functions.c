@@ -267,7 +267,7 @@ bool8 PhysicalMoveInMoveset(u8 bank) {
 			break;
 
 		if (!(gBitTable[i] & moveLimitations)) {
-			if (CalcMoveSplit(move, bank) == SPLIT_PHYSICAL
+			if (CalcMoveSplit(bank, move) == SPLIT_PHYSICAL
 			&& gBattleMoves[move].power != 0
 			&& gBattleMoves[move].effect != EFFECT_COUNTER)
 				return TRUE;
@@ -296,7 +296,7 @@ bool8 SpecialMoveInMoveset(u8 bank) {
 			break;
 		
 		if (!(gBitTable[i] & moveLimitations)) {
-			if (CalcMoveSplit(move, bank) == SPLIT_SPECIAL
+			if (CalcMoveSplit(bank, move) == SPLIT_SPECIAL
 			&& gBattleMoves[move].power != 0
 			&& gBattleMoves[move].effect != EFFECT_MIRROR_COAT)
 				return TRUE;
@@ -427,9 +427,9 @@ u16 ShouldAIUseZMove(u8 bank, u8 moveIndex, u16 move) {
 			if (SPLIT(move) == SPLIT_STATUS)
 				return 0xFFFF;
 			else if (gBattleMoves[move].type < TYPE_FIRE)
-				return MOVE_BREAKNECK_BLITZ_P + (gBattleMoves[move].type * 2) + CalcMoveSplit(move, bank);
+				return MOVE_BREAKNECK_BLITZ_P + (gBattleMoves[move].type * 2) + CalcMoveSplit(bank, move);
 			else
-				return MOVE_BREAKNECK_BLITZ_P + ((gBattleMoves[move].type - 1) * 2) + CalcMoveSplit(move, bank);
+				return MOVE_BREAKNECK_BLITZ_P + ((gBattleMoves[move].type - 1) * 2) + CalcMoveSplit(bank, move);
 		}
 	}
 	return FALSE;
@@ -514,7 +514,7 @@ bool8 StatusMoveInMoveset(u8 bank) {
 		
 		if (!(gBitTable[i] & moveLimitations))
 		{
-			if (CalcMoveSplit(move, bank) == SPLIT_STATUS)
+			if (CalcMoveSplit(bank, move) == SPLIT_STATUS)
 				return TRUE;
 		}
 	}

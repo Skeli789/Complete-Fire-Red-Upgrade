@@ -253,7 +253,7 @@ u32 AccuracyCalc(u16 move, u8 bankAtk, u8 bankDef) {
         u8 defQuality = ITEM_QUALITY(bankDef);
 		u8 atkAbility = ABILITY(bankAtk);
 		u8 defAbility = ABILITY(bankDef);
-		u8 moveSplit = CalcMoveSplit(move, gBankAttacker);
+		u8 moveSplit = CalcMoveSplit(gBankAttacker, move);
 		
 		u8 acc;
 		if (defAbility == ABILITY_UNAWARE)
