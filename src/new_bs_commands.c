@@ -1164,6 +1164,12 @@ void atkFF23_trysetsleep(void)
 					BattleStringLoader = gText_TargetStayedAwakeUsingAbility;
 					fail = TRUE;
 				}
+				break;
+			case ABILITY_SHIELDSDOWN:
+				if (SPECIES(bank) == PKMN_MINIORSHIELD)
+				{
+				
+				}
 		}
 	}
 

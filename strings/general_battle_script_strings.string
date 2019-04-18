@@ -104,6 +104,9 @@ The Wide Guard protected\n[FD][10]!
 
 //Status Strings
 
+#org @gText_TargetStaysAwake
+[FD][10] stays awake!
+
 #org @gText_TargetWrappedInMistyTerrain
 [FD][10] surrounds\nitself in a protective mist!
 

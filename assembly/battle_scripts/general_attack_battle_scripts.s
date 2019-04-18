@@ -32,7 +32,7 @@ BS_001_SetSleep:
 	jumpifability BANK_TARGET ABILITY_LEAFGUARD SLP_SunnyCheck
 
 SLP_CheckVeils:
-	jumpifabilitypresenttargetfield ABILITY_SWEETVEIL TeamProtectedBySVBS
+	jumpifabilitypresenttargetfield ABILITY_SWEETVEIL BattleScript_TeamProtectedBySweetVeil
 	jumpifabilitypresenttargetfield ABILITY_FLOWERVEIL SLP_GrassTypeCheck
 
 SLP_CheckTerrain:
@@ -41,11 +41,11 @@ SLP_CheckTerrain:
 	goto SetSleepFinalChecks
 
 SLP_SunnyCheck:
-	jumpifhalfword ANDS WEATHER_FLAGS WEATHER_SUN_ANY ProtectedByAbilityBS
+	jumpifhalfword ANDS WEATHER_FLAGS WEATHER_SUN_ANY BattleScript_ProtectedByAbility
 	goto SLP_CheckVeils
 
 SLP_GrassTypeCheck:
-	jumpiftype BANK_TARGET TYPE_GRASS TeamProtectedByFVBS
+	jumpiftype BANK_TARGET TYPE_GRASS BattleScript_TeamProtectedByFlowerVeil
 	goto SLP_CheckTerrain
 
 SLP_CheckGrounding:
@@ -70,8 +70,9 @@ ProtectedByTerrainBS:
 	waitmessage DELAY_1SECOND
 	goto BS_MOVE_END
 
-TeamProtectedBySVBS:
-	pause DELAY_HALFSECOND
+.global BattleScript_TeamProtectedBySweetVeil
+BattleScript_TeamProtectedBySweetVeil:
+	pause 0x10
 	call BattleScript_AbilityPopUp
 	setword BATTLE_STRING_LOADER gText_SweetVeilProtects
 	printstring 0x184
@@ -79,8 +80,9 @@ TeamProtectedBySVBS:
 	call BattleScript_AbilityPopUpRevert
 	goto BS_MOVE_END
 
-TeamProtectedByFVBS:
-	pause DELAY_HALFSECOND
+.global BattleScript_TeamProtectedByFlowerVeil
+BattleScript_TeamProtectedByFlowerVeil:
+	pause 0x10
 	call BattleScript_AbilityPopUp
 	setword BATTLE_STRING_LOADER gText_FlowerVeilProtects
 	printstring 0x184
@@ -88,14 +90,27 @@ TeamProtectedByFVBS:
 	call BattleScript_AbilityPopUpRevert
 	goto BS_MOVE_END
 
-ProtectedByAbilityBS:
+.global BattleScript_ProtectedByAbility
+BattleScript_ProtectedByAbility:
 	pause 0x10
+	copyarray BATTLE_SCRIPTING_BANK TARGET_BANK 0x1
 	call BattleScript_AbilityPopUp
 	printstring 0x1B @;STRINGID_ITDOESNTAFFECT
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
 	goto BS_MOVE_END
-	
+
+.global BattleScript_TargetStayedAwakeUsingAbility	
+BattleScript_TargetStayedAwakeUsingAbility:
+	pause 0x10
+	copyarray BATTLE_SCRIPTING_BANK TARGET_BANK 0x1
+	call BattleScript_AbilityPopUp
+	setword BATTLE_STRING_LOADER gText_TargetStaysAwake
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	goto BS_MOVE_END
+
 .global BattleScript_DarkVoidFail
 BattleScript_DarkVoidFail:
 	pause DELAY_HALFSECOND
@@ -918,11 +933,11 @@ BadPSN_After:
 	goto 0x81D6E20
 
 BadPSN_SunnyCheck:
-	jumpifhalfword ANDS WEATHER_FLAGS WEATHER_SUN_ANY ProtectedByAbilityBS
+	jumpifhalfword ANDS WEATHER_FLAGS WEATHER_SUN_ANY BattleScript_ProtectedByAbility
 	goto BadPSN_CheckFlowerVeil
 
 BadPSN_GrassTypeCheck:
-	jumpiftype BANK_TARGET TYPE_GRASS TeamProtectedByFVBS
+	jumpiftype BANK_TARGET TYPE_GRASS BattleScript_TeamProtectedByFlowerVeil
 	goto BadPSN_CheckTerrain
 
 BadPSN_CheckGrounding:
@@ -960,30 +975,14 @@ BS_037_SetRest:
 	attackcanceler
 	attackstring
 	ppreduce
-	jumpifstatus BANK_ATTACKER STATUS_SLEEP 0x81D6EC2 @;Attacker Already Asleep
-	jumpifability BANK_ATTACKER ABILITY_COMATOSE 0x81D6EC2 @;Attacker Already Asleep
-	jumpifspecies BANK_ATTACKER PKMN_MINIORSHIELD FAILED
-	jumpifabilitypresent ABILITY_CLOUDNINE Rest_CheckVeils
-	jumpifabilitypresent ABILITY_AIRLOCK Rest_CheckVeils
-	jumpifability BANK_ATTACKER ABILITY_LEAFGUARD Rest_SunnyCheck
-
-Rest_CheckVeils:
-	jumpifabilitypresenttargetfield ABILITY_SWEETVEIL FAILED
-
-Rest_CheckTerrain:
-	jumpifbyte EQUALS TERRAIN_BYTE ELECTRIC_TERRAIN Rest_CheckGrounding
-	jumpifbyte EQUALS TERRAIN_BYTE MISTY_TERRAIN Rest_CheckGrounding
-
-Rest_After:
-	goto 0x81D6E95
-
-Rest_SunnyCheck:
-	jumpifhalfword ANDS WEATHER_FLAGS WEATHER_SUN_ANY FAILED
-	goto Rest_CheckVeils
-
-Rest_CheckGrounding:
-	jumpifgrounded BANK_ATTACKER FAILED
-	goto Rest_After
+	jumpifstatus BANK_ATTACKER, STATUS_SLEEP, 0x81D6EC2 @;BattleScript_RestIsAlreadyAsleep
+	setrest 0x0
+	pause DELAY_HALFSECOND
+	printfromtable 0x83FE562 @;gRestUsedStringIds
+	waitmessage DELAY_1SECOND
+	refreshhpbar BANK_ATTACKER
+	waitstateatk
+	goto 0x81D7DB7 @;BattleScript_PresentHealTarget
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -1279,13 +1278,14 @@ CaptivateBS:
 	jumpifability BANK_TARGET ABILITY_OBLIVIOUS BattleScript_ObliviousPrevents
 	callasm CaptivateFunc
 	goto 0x81D6C27
-	
+
+.global BattleScript_ObliviousPrevents
 BattleScript_ObliviousPrevents:
 	pause 0x10
 	copyarray BATTLE_SCRIPTING_BANK TARGET_BANK 0x1
 	call BattleScript_AbilityPopUp
 	orbyte OUTCOME OUTCOME_NOT_AFFECTED
-	resultmessage
+	printstring 0x1B @;STRINGID_ITDOESNTAFFECT
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
 	goto BS_MOVE_END
@@ -1366,11 +1366,11 @@ PSN_After:
 	goto 0x81D71C1
 
 PSN_SunnyCheck:
-	jumpifhalfword ANDS WEATHER_FLAGS WEATHER_SUN_ANY ProtectedByAbilityBS
+	jumpifhalfword ANDS WEATHER_FLAGS WEATHER_SUN_ANY BattleScript_ProtectedByAbility
 	goto PSN_CheckFlowerVeil
 
 PSN_GrassTypeCheck:
-	jumpiftype BANK_TARGET TYPE_GRASS TeamProtectedByFVBS
+	jumpiftype BANK_TARGET TYPE_GRASS BattleScript_TeamProtectedByFlowerVeil
 	goto PSN_CheckTerrain
 
 PSN_CheckGrounding:
@@ -1431,11 +1431,11 @@ PRZ_After:
 	goto 0x81D7216
 
 PRZ_SunnyCheck:
-	jumpifhalfword ANDS WEATHER_FLAGS WEATHER_SUN_ANY ProtectedByAbilityBS
+	jumpifhalfword ANDS WEATHER_FLAGS WEATHER_SUN_ANY BattleScript_ProtectedByAbility
 	goto PRZ_CheckFlowerVeil
 
 PRZ_GrassTypeCheck:
-	jumpiftype BANK_TARGET TYPE_GRASS TeamProtectedByFVBS
+	jumpiftype BANK_TARGET TYPE_GRASS BattleScript_TeamProtectedByFlowerVeil
 	goto PRZ_CheckTerrain
 
 PRZ_CheckGrounding:
@@ -1704,7 +1704,7 @@ BS_086_Disable:
 	attackcanceler
 	attackstring
 	ppreduce
-	jumpifabilitypresenttargetfield ABILITY_AROMAVEIL ProtectedByAromaVeil
+	jumpifabilitypresenttargetfield ABILITY_AROMAVEIL BattleScript_ProtectedByAromaVeil
 	accuracycheck FAILED 0x0
 	disablelastusedattack BANK_TARGET FAILED
 	attackanimation
@@ -1713,7 +1713,7 @@ BS_086_Disable:
 	waitmessage DELAY_1SECOND
 	goto BS_MOVE_END
 
-ProtectedByAromaVeil:
+BattleScript_ProtectedByAromaVeil:
 	pause 0x10
 	call BattleScript_AbilityPopUp
 	setword BATTLE_STRING_LOADER gText_AromaVeilProtects
@@ -1772,7 +1772,7 @@ BS_090_Encore:
 	accuracycheck BS_MOVE_MISSED 0x0
 	attackstring
 	ppreduce
-	jumpifabilitypresenttargetfield ABILITY_AROMAVEIL ProtectedByAromaVeil
+	jumpifabilitypresenttargetfield ABILITY_AROMAVEIL BattleScript_ProtectedByAromaVeil
 	setencore FAILED
 	attackanimation
 	waitanimation
@@ -2299,7 +2299,7 @@ BS_120_Attract:
 	ppreduce
 	accuracycheck FAILED 0x0
 	jumpifability BANK_TARGET ABILITY_OBLIVIOUS BattleScript_ObliviousPrevents
-	jumpifabilitypresenttargetfield ABILITY_AROMAVEIL ProtectedByAromaVeil
+	jumpifabilitypresenttargetfield ABILITY_AROMAVEIL BattleScript_ProtectedByAromaVeil
 	tryinfatuatebank BANK_TARGET FAILED
 	attackanimation
 	waitanimation
@@ -3044,7 +3044,7 @@ BS_165_Torment:
 	attackstring
 	ppreduce
 	accuracycheck FAILED 0x0
-	jumpifabilitypresenttargetfield ABILITY_AROMAVEIL ProtectedByAromaVeil
+	jumpifabilitypresenttargetfield ABILITY_AROMAVEIL BattleScript_ProtectedByAromaVeil
 	goto 0x81D7EBB
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -3094,11 +3094,11 @@ BRN_CheckTerrain:
 	goto 0x81D7F5A
 
 BRN_SunnyCheck:
-	jumpifhalfword ANDS WEATHER_FLAGS WEATHER_SUN_ANY ProtectedByAbilityBS
+	jumpifhalfword ANDS WEATHER_FLAGS WEATHER_SUN_ANY BattleScript_ProtectedByAbility
 	goto BRN_CheckFlowerVeil
 
 BRN_GrassTypeCheck:
-	jumpiftype BANK_TARGET TYPE_GRASS TeamProtectedByFVBS
+	jumpiftype BANK_TARGET TYPE_GRASS BattleScript_TeamProtectedByFlowerVeil
 	goto BRN_CheckTerrain
 
 BRN_CheckGrounding:
@@ -3275,7 +3275,7 @@ BS_175_Taunt:
 	attackstring
 	ppreduce
 	jumpifability BANK_TARGET ABILITY_OBLIVIOUS BattleScript_ObliviousPrevents
-	jumpifabilitypresenttargetfield ABILITY_AROMAVEIL ProtectedByAromaVeil
+	jumpifabilitypresenttargetfield ABILITY_AROMAVEIL BattleScript_ProtectedByAromaVeil
 	settaunt 0x81D7DF2
 	attackanimation
 	waitanimation
@@ -3583,7 +3583,7 @@ BS_187_Yawn:
 	jumpifability BANK_TARGET ABILITY_LEAFGUARD YWN_SunnyCheck
 
 YWN_CheckVeils:
-	jumpifabilitypresenttargetfield ABILITY_SWEETVEIL TeamProtectedBySVBS
+	jumpifabilitypresenttargetfield ABILITY_SWEETVEIL BattleScript_TeamProtectedBySweetVeil
 	jumpifabilitypresenttargetfield ABILITY_FLOWERVEIL YWN_GrassTypeCheck
 
 YWN_CheckTerrain:
@@ -3596,11 +3596,11 @@ YawnReturn:
 	goto 0x81D8239
 
 YWN_SunnyCheck:
-	jumpifhalfword ANDS WEATHER_FLAGS WEATHER_SUN_ANY ProtectedByAbilityBS
+	jumpifhalfword ANDS WEATHER_FLAGS WEATHER_SUN_ANY BattleScript_ProtectedByAbility
 	goto YWN_CheckVeils
 
 YWN_GrassTypeCheck:
-	jumpiftype BANK_TARGET TYPE_GRASS TeamProtectedByFVBS
+	jumpiftype BANK_TARGET TYPE_GRASS BattleScript_TeamProtectedByFlowerVeil
 	goto YWN_CheckTerrain
 
 YWN_CheckGrounding:
@@ -4581,7 +4581,7 @@ BS_231_AttackBlockers:
 HealBlockBS:
 	jumpifbehindsubstitute BANK_TARGET FAILED-2
 	jumpifcounter BANK_TARGET HEAL_BLOCK_TIMERS NOTEQUALS 0x0 FAILED-2
-	jumpifabilitypresenttargetfield ABILITY_AROMAVEIL ProtectedByAromaVeil
+	jumpifabilitypresenttargetfield ABILITY_AROMAVEIL BattleScript_ProtectedByAromaVeil
 	accuracycheck BS_MOVE_MISSED 0x0
 	attackstring
 	ppreduce

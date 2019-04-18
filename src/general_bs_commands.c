@@ -17,7 +17,8 @@
 #define BattleScript_PresentHealTarget (u8*) 0x81D7DB7
 #define BattleScript_DestinyBondTakesLife (u8*) 0x81D8C6C
 #define BattleScript_GrudgeTakesPp (u8*) 0x81D8FA3
-#define BattleScript_ObliviousPreventsAttraction (u8*) 0x81D9444
+extern u8 BattleScript_ObliviousPrevents[];
+#define BattleScript_RestCantSleep (u8*) 0x81D6EB2
 
 void TryContraryChangeStatAnim(u8 bank, u16* argumentPtr);
 bool8 UproarWakeUpCheck(bank_t);
@@ -51,6 +52,10 @@ extern u8 BattleScript_FaintScriptingBank[];
 extern u8 BattleScript_SoulHeart[];
 extern u8 BattleScript_IllusionBrokenFaint[];
 extern u8 BattleScript_DampStopsExplosion[];
+extern u8 BattleScript_TeamProtectedByFlowerVeil[];
+extern u8 BattleScript_TeamProtectedBySweetVeil[];
+extern u8 BattleScript_TargetStayedAwakeUsingAbility[];
+extern u8 BattleScript_ProtectedByAbility[];
 
 extern u8 StringEnduredHitWithSturdy[];
 extern u8 PrimalRainEndString[];
@@ -1468,22 +1473,89 @@ void atk7F_setseeded(void) {
     gBattlescriptCurrInstr++;
 }
 
-void atk81_trysetrest(void) {
-    u8* fail_loc = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+void atk81_trysetrest(void) 
+{
+	bool8 fail = FALSE;
     gActiveBattler = gBankTarget = gBankAttacker;
     gBattleMoveDamage = gBattleMons[gBankTarget].maxHP * (-1);
 	
-    if (gBattleMons[gBankTarget].hp == gBattleMons[gBankTarget].maxHP)
-        gBattlescriptCurrInstr = fail_loc;
+	if (CheckGrounding(gActiveBattler) && (TerrainType == MISTY_TERRAIN || TerrainType == ELECTRIC_TERRAIN))
+	{
+		gBattlescriptCurrInstr = BattleScript_ButItFailed;
+		fail = TRUE;
+	}
+	else if (IsOfType(gActiveBattler, TYPE_GRASS) && ABILITY(gActiveBattler) == ABILITY_FLOWERVEIL)
+	{
+		gBattleScripting->bank = gActiveBattler;
+		gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
+		fail = TRUE;
+	}
+	else if (IsOfType(gActiveBattler, TYPE_GRASS) && gBattleTypeFlags & BATTLE_TYPE_DOUBLE && ABILITY(PARTNER(gActiveBattler)) == ABILITY_FLOWERVEIL)
+	{
+		gBattleScripting->bank = PARTNER(gActiveBattler);
+		gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
+		fail = TRUE;
+	}
+	else if (ABILITY(gActiveBattler) == ABILITY_SWEETVEIL)
+	{
+		gBattleScripting->bank = gActiveBattler;
+		gBattlescriptCurrInstr = BattleScript_TeamProtectedBySweetVeil;
+		fail = TRUE;
+	}
+	else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && ABILITY(PARTNER(gActiveBattler)) == ABILITY_SWEETVEIL)
+	{
+		gBattleScripting->bank = PARTNER(gActiveBattler);
+		gBattlescriptCurrInstr = BattleScript_TeamProtectedBySweetVeil;
+		fail = TRUE;
+	}
+	else if (IsUproarBeingMade())
+	{
+		gBattleScripting->bank = gActiveBattler;
+		gBattleCommunication[MULTISTRING_CHOOSER] = 0;
+		gBattlescriptCurrInstr = BattleScript_RestCantSleep;
+		fail = TRUE;	
+	}
+	else if (BATTLER_MAX_HP(gActiveBattler))
+	{
+		gBattleScripting->bank = gActiveBattler;
+		gBattlescriptCurrInstr = BattleScript_AlreadyAtFullHp;
+		fail = TRUE;
+	}
 	
-	else if (!CanBePutToSleep(gBankTarget) && !(gBattleMons[gBankTarget].status1 & STATUS_SLEEP))
-		gBattlescriptCurrInstr = fail_loc;
+	if (!fail)
+	{
+		switch (ABILITY(gActiveBattler)) {
+			case ABILITY_INSOMNIA:
+			case ABILITY_VITALSPIRIT:
+				gBattlescriptCurrInstr = BattleScript_TargetStayedAwakeUsingAbility;
+				fail = TRUE;
+				break;
+			case ABILITY_LEAFGUARD:
+				if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
+				{
+					gBattlescriptCurrInstr = BattleScript_ProtectedByAbility;
+					fail = TRUE;
+				}
+				break;
+			case ABILITY_COMATOSE:
+				gBattlescriptCurrInstr = BattleScript_ButItFailed;
+				fail = TRUE;
+				break;
+			case ABILITY_SHIELDSDOWN:
+				if (SPECIES(gBankAttacker) == PKMN_MINIORSHIELD)
+				{
+					gBattlescriptCurrInstr = BattleScript_ButItFailed;
+					fail = TRUE;
+				}
+		}
+	}
 	
-    else {
-        if (gBattleMons[gBankTarget].status1 & STATUS_SLEEP)
-            gBattleCommunication[MULTISTRING_CHOOSER] = 0;
+	if (!fail)
+	{
+        if (gBattleMons[gActiveBattler].status1 & ((u8)(~STATUS1_SLEEP)))
+            gBattleCommunication[MULTISTRING_CHOOSER] = 1;
         else
-			gBattleCommunication[MULTISTRING_CHOOSER] = 1;
+            gBattleCommunication[MULTISTRING_CHOOSER] = 0;
 
         gBattleMons[gBankTarget].status1 = 3;
         EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[gActiveBattler].status1);
@@ -1940,15 +2012,8 @@ void atk97_tryinfatuating(void)
     u16 speciesAttacker, speciesTarget;
     u32 personalityAttacker, personalityTarget;
 
-    if (SIDE(bankDef) == B_SIDE_PLAYER)
-        monAttacker = &gPlayerParty[gBattlerPartyIndexes[bankAtk]];
-    else
-        monAttacker = &gEnemyParty[gBattlerPartyIndexes[bankAtk]];
-
-    if (SIDE(bankDef) == B_SIDE_PLAYER)
-        monTarget = &gPlayerParty[gBattlerPartyIndexes[bankDef]];
-    else
-        monTarget = &gEnemyParty[gBattlerPartyIndexes[bankDef]];
+	monAttacker = GetBankPartyData(bankAtk);
+	monTarget = GetBankPartyData(bankDef);
 
     speciesAttacker = monAttacker->species;
     personalityAttacker = monAttacker->personality;
@@ -1958,17 +2023,8 @@ void atk97_tryinfatuating(void)
 
     if (ABILITY(bankDef) == ABILITY_OBLIVIOUS)
     {
-        gBattlescriptCurrInstr = BattleScript_ObliviousPreventsAttraction;
-        gLastUsedAbility = ABILITY_OBLIVIOUS;
-        RecordAbilityBattle(bankDef, ABILITY_OBLIVIOUS);
+        gBattlescriptCurrInstr = BattleScript_ObliviousPrevents;
     }
-	else if (AbilityBattleEffects(ABILITYEFFECT_CHECK_BANK_SIDE, bankDef, ABILITY_AROMAVEIL, 0, 0)) //Handled in the BS so not necessary
-	{
-		if (ABILITY(bankDef) == ABILITY_AROMAVEIL)
-			RecordAbilityBattle(bankDef, ABILITY_AROMAVEIL);
-		else
-			RecordAbilityBattle(PARTNER(bankDef), ABILITY_AROMAVEIL);
-	}
     else
     {
         if (GetGenderFromSpeciesAndPersonality(speciesAttacker, personalityAttacker) == GetGenderFromSpeciesAndPersonality(speciesTarget, personalityTarget)
@@ -2617,9 +2673,9 @@ void atkB5_furycuttercalc(void)
     {
         if (gDisableStructs[gBankAttacker].furyCutterCounter < 4)
             gDisableStructs[gBankAttacker].furyCutterCounter++;
-
-        gBattlescriptCurrInstr++;
     }
+	
+	gBattlescriptCurrInstr++;
 }
 
 void atkB7_presentdamagecalculation(void)
