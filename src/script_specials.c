@@ -33,19 +33,33 @@ extern u8 AddPalRef(u8 Type, u16 PalTag);
 
 
 #ifdef FOSSIL_IMAGE_HACK
-struct FossilTable {
+struct FossilTable 
+{
 	struct SpriteSheet* data;
-	u32 palette;
+	u16* palette;
 };
 
 	#ifdef EXISTING_FOSSIL_IMAGE_TABLE_ADDRESS
 		#define gFossilImageTable ((struct FossilTable*) EXISTING_FOSSIL_IMAGE_TABLE_ADDRESS)
 	#else
 		// create a 255 image table
-		struct FossilTable gFossilImageTable[255] = {
-			{0x83e17c0, 0x83e17a0},	// kabutops (originally index 0x8d, now 0x0)
-			{0x83e17d0, 0x83e0f80},	// aerodactyl (originally index 0x8e, now 0x1)
-			{0,0},
+		struct FossilTable gFossilImageTable[] = 
+		{
+			[0] = //Kabutops (originally index 0x8D, now 0x0)
+				{
+					.data = (struct SpriteSheet*) 	0x83E17C0, 
+					.palette = (u16*) 				0x83E17A0,
+				},
+			[1] = 
+				{ //Aerodactyl (originally index 0x8e, now 0x1)
+					.data = (struct SpriteSheet*) 	0x83E17D0, 
+					.palette = (u16*) 				0x83E0F80,
+				},	
+			[2] =
+				{ //Start adding new data here
+					.data = (struct SpriteSheet*) 	0x8AAAAAA, 
+					.palette = (u16*) 				0x8AAAAAA,
+				},	
 		};
 	#endif
 #endif
@@ -1416,9 +1430,9 @@ bool8 sp18B_ShowFossilImage(void) {
 
 	u8 pal = AddPalRef(5, Var8004);	// dynamic OW pals
 	if (pal == 0xFF)	
-		LoadPalette((void*) gFossilImageTable[Var8004].palette, 0x1d0, 0x20);
+		LoadPalette(gFossilImageTable[Var8004].palette, 0x1d0, 0x20);
 	else
-		DoLoadSpritePalette((void*) gFossilImageTable[Var8004].palette, pal*16);
+		DoLoadSpritePalette(gFossilImageTable[Var8004].palette, pal*16);
 	
 	s16 x = ((Var8005 << 0x13) + 0x280000) >> 0x10;
 	s16 y = ((Var8006 << 0x13) + 0x280000) >> 0x10;
