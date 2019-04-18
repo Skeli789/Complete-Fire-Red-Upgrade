@@ -277,7 +277,7 @@ animparticle 0x8e7a97c,	0x20,	ANIM_TAG_GLOWY_GREEN_ORB
 animparticle 0x8e7fab0,	0x80,	ANIM_TAG_GREEN_SPIKE
 animparticle 0x8d24250,	0x800,	ANIM_TAG_WHITE_CIRCLE_OF_LIGHT
 animparticle 0x8e7a97c,	0x20,	ANIM_TAG_GLOWY_BLUE_ORB
-animparticle 0x8e7ae40,	0x80,	ANIM_TAG_UNUSED_RED_BRICK
+animparticle 0x8e7ae40,	0x80,	ANIM_TAG_POKEBLOCK
 animparticle 0x8e93974,	0x400,	ANIM_TAG_WHITE_FEATHER
 animparticle 0x8e93ab4,	0x80,	ANIM_TAG_SPARKLE_6
 animparticle 0x8e7abd8,	0x800,	ANIM_TAG_SPLASH
@@ -630,7 +630,7 @@ animparticlepal 0x8e7a9b4,	ANIM_TAG_GLOWY_GREEN_ORB,	0x0
 animparticlepal 0x8e7faf0,	ANIM_TAG_GREEN_SPIKE,	0x0
 animparticlepal 0x8e7fb08,	ANIM_TAG_WHITE_CIRCLE_OF_LIGHT,	0x0
 animparticlepal 0x8e7fb20,	ANIM_TAG_GLOWY_BLUE_ORB,	0x0
-animparticlepal 0x8e7ae94,	ANIM_TAG_UNUSED_RED_BRICK,	0x0
+animparticlepal 0x8e7ae94,	ANIM_TAG_POKEBLOCK,	0x0
 animparticlepal 0x8e93958,	ANIM_TAG_WHITE_FEATHER,	0x0
 animparticlepal 0x8e93a9c,	ANIM_TAG_SPARKLE_6,	0x0
 animparticlepal 0x8e7adf4,	ANIM_TAG_SPLASH,	0x0
