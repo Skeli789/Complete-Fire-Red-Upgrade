@@ -15,7 +15,7 @@
 .global FAIRY_LOCK_ASM		@ hook at 0xaeba0 via r0
 .global LIGHTOFRUIN_ASM		@ hook at 0xae5ec via r0
 .global SKILLSWAP_CHOOSER	@ hook at 0xb39b4 via r0 - choose btwn skill swap, power swap
-.global EMBARGO_ASM			@ hook at 0xb68e4 via r0 - grudge on target vs attacker side
+.global EmbargoASM			@ hook at 0xb68e4 via r0 - grudge on target vs attacker side
 .global SLUDGE_WAVE_ASM		@ hook at 0xab43c via r0 - change sludge wave color
 .global ROLLOUT_TIMER_ASM	@ hook at 0xb4c40 via r0 - skip over rollout timer for tectonic rage
 .global HEX_SIDE_ASM		@ hook at 0xb8d74 via r0 - hexes on target side instead of attacker

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "global.h"
+#include "pokemon.h"
 
 enum {
     AILMENT_NONE,
@@ -19,6 +20,16 @@ enum
     PARTY_USE_ITEM_ON,
     PARTY_ABILITY_PREVENTS,
     PARTY_GIVE_ITEM,
+};
+
+struct MonSummaryData {
+	u8 field0[0x3210];
+	u8 maxPartyIndex;
+	u8 field3211[3];
+	u8 currentPage;
+	u8 field3215[0xDF];
+	struct Pokemon* partyData;
+	u8 field32f8[0x10];
 };
 
 void __attribute__((long_call)) sub_811FA78(u8 taskId);

@@ -773,6 +773,7 @@ GetNumActiveWindowsOnBg = 0x8004A34 | 1;
 WindowOutline = 0x0810F2E8 | 1;
 RboxChoiceUpdate = 0x0810FA04 | 1;
 RboxIdClean = 0x0810F4D8 | 1;
+DeleteWindow = 0x080F6F54 | 1;
 
 /*Text Window Functions*/
 LoadWindowGfx = 0x14FFC4 | 1;
@@ -1044,3 +1045,28 @@ BoxCreateTask = 0x81119D4 | 1;
 TaskDestroyPicBox = 0x809D494 | 1;
 PicBoxWindow = 0x0809D654 | 1;
 SetStandardWindowBorderStyle = 0x080F7750 | 1;
+
+InitHallOfFameScreen = 0x080F1DDC | 1;
+HallOfFameSetMonDisplayTask = 0x080F2294 | 1;
+SaveLoadGameData = 0x080DA4FC | 1;
+sub_8112450 = 0x08112450 | 1;
+DrawDialogueFrameNewMenuHelpers = 0x080F6EE4 | 1;
+AddTextPrinterParameterized2 = 0x080F6CD0 | 1;
+HallOfFameTrySaveData = 0x080F2220 | 1;
+HallofFameMonFullTeamPositions = 0x0840C268 | 1;
+HallofFameMonHalfTeamPositions = 0x0840C298 | 1;
+CreatePicSprite2 = 0x0810C1CC | 1;
+SpriteCbAnimateOnScreen = 0x080F3870 | 1;
+HallOfFamePrintWelcomeTextTask = 0x080F2514 | 1;
+PlayCry1 = 0x08071DF0 | 1;
+StopCryAndClearCrySongs = 0x080721C4 | 1;
+CreateHallOfFameWindow = 0x0810F558 | 1;
+TaskHallOfFamePrintCorruptedData = 0x080F30A4 | 1;
+GetGameStat = 0x08054EC4 | 1;
+StringExpandPlaceholders = 0x08008FCC | 1;
+HallOfFamePutText = 0x0810F650 | 1;
+TaskHallOfFameHandleInput = 0x080F2E8C | 1;
+SpeciesToPokedexNum = 0x08043F90 | 1;
+GetFontAttribute = 0x080F79D8 | 1;
+
+

@@ -320,6 +320,8 @@ void __attribute__((long_call)) SetSubspriteTables(struct Sprite *sprite, const 
 bool8 __attribute__((long_call)) AddSpriteToOamBuffer(struct Sprite *sprite, u8 *oamIndex);
 bool8 __attribute__((long_call)) AddSubspritesToOamBuffer(struct Sprite *sprite, struct OamData *destOam, u8 *oamIndex);
 void __attribute__((long_call)) ResetSpriteData(void);
+u16 __attribute__((long_call)) CreatePicSprite2(u16 species, u32 otId, u32 personality, u8 flags, s16 x, s16 y, u8 paletteSlot, u16 paletteTag);
+void __attribute__((long_call)) SpriteCbAnimateOnScreen(struct Sprite *sprite);
 
 /*
 u16 AllocTilesForSpriteSheet(struct SpriteSheet *sheet);

@@ -1,6 +1,7 @@
 #include "defines.h"
 #include "../include/songs.h"
 #include "../include/party_menu.h"
+#include "../include/new/Vanilla_functions.h"
 
 #include "../include/new/helper_functions.h"
 
@@ -335,3 +336,42 @@ void openSummary(u8 taskId)
 {
 	sub_811FA78(taskId); //Replace this
 }
+
+
+
+// Summary Screen wraps around
+// Credit to Sagiri: https://github.com/Sagiri/sswa
+
+#define PAGE_INFO       0
+#define PAGE_SKILLS     1
+#define PAGE_ATTACKS    2
+
+u8 ChangeSummaryScreenMon(u8 delta)
+{
+    u8 numMons = gSummaryScreenData->maxPartyIndex + 1;
+    delta += numMons;
+
+    // guarantees result will be in range [0, numMons)
+    u8 result = umodsi(gCurrentPartyIndex + delta, numMons);
+
+    // skip over eggs on other pages
+    if (gSummaryScreenData->currentPage != PAGE_INFO)
+	{
+        while (GetMonData(gSummaryScreenData->partyData+result, MON_DATA_IS_EGG, NULL))
+		{
+            result = umodsi(result + delta, numMons);
+        }
+    }
+
+    // necessary to gracefully handle parties of 1 Pokemon
+    if (result == gCurrentPartyIndex)
+		return -1;
+
+    return result;
+};
+
+
+
+
+
+

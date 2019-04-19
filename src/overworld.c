@@ -872,9 +872,9 @@ bool8 WhiteoutLogic(void) {
 	gWarp1->warpId = 0xFF;
 	gWarp1->x = VarGet(VAR_HEALING_XPOS);
 	gWarp1->y = VarGet(VAR_HEALING_YPOS);
-	return 0;
+	return FALSE;
 #else
-	return 1;	// load from original table
+	return TRUE;	// load from original table
 #endif
 };
 

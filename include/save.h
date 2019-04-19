@@ -94,6 +94,7 @@ u16 __attribute__((long_call)) CalculateChecksum(void* data, u16 size);
 u8 __attribute__((long_call)) TryWriteSector(u8 sector, u8 *data);
 u8 __attribute__((long_call)) save_write_to_flash(u16 chunkId, const struct SaveBlockChunk *chunks);
 u8 __attribute__((long_call)) DoReadFlashWholeSection(u8 sector, struct SaveSection *section);
+u8 __attribute__((long_call)) SaveLoadGameData(u8 a1);
 
 /*
 void ClearSaveData(void);

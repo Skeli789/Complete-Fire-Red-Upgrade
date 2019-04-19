@@ -5,6 +5,8 @@
 #include "text.h"
 #include "task.h"
 
+struct TextPrinterTemplate;	// ??
+
 void sub_81973A4(void);
 void sub_81973C4(u8, u8);
 void sub_819746C(u8 windowId, bool8 copyToVram);
@@ -18,6 +20,9 @@ u8 __attribute((long_call)) GetPlayerTextSpeed(void);
 void sub_80F6F54(u8, u8);
 u8 sub_80F78A8(void);
 void sub_80F6E9C(void);
-void sub_80F6EE4(u8 windowId, bool8 transfer);
+
+void __attribute__((long_call)) DrawDialogueFrameNewMenuHelpers(u8 windowId, bool8 transfer);
+u16 __attribute__((long_call)) AddTextPrinterParameterized2(u8 windowId, u8 fontId, const u8 *str, u8 speed, void (*callback)(struct TextPrinterTemplate *, u16), u8 fgColor, u8 bgColor, u8 shadowColor);
+
 
 #endif // GUARD_NEW_MENU_HELPERS_H
