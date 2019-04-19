@@ -176,6 +176,10 @@ bool8 __attribute__((long_call)) BoxCreateTask(void* func);
 void __attribute__((long_call)) TaskDestroyPicBox(u8 taskId);
 u8 __attribute__((long_call)) PicBoxWindow(u16 x, u16 y, u8, u8);
 
+u32 __attribute__((long_call)) GetGameStat(u8 index);
+u8* __attribute__((long_call)) StringExpandPlaceholders(u8 *dest, const u8 *src);
+u16 __attribute__((long_call)) SpeciesToPokedexNum(u16 species);
+
 //The Deal Breaker
 void __attribute__((long_call)) break_func(u32);
 u32 break_helper(u32 a);

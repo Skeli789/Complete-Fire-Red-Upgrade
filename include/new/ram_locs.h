@@ -127,6 +127,10 @@ struct Pedometers {
 
 /*u8*/  #define gAbilitiesPerBank ((u8*) 0x2039A30)
 		//#define gStringInfo ((struct BattleMsgData*) *((u32*) 0x2039A34))
+		
+		#define gHallOfFameFadingRelated (*((u32*) 0x0203AB34))
+		#define gHallOfFameMonData ((struct HallofFameTeam*) (u32*) 0x203AB38)
+		#define gHasHallOfFameRecords (*(u8*) 0x0203AB44)
 
 /*u8*/	#define QuestLogMode (*((u8*) 0x203ADFA))
 		//#define gPartyMenuView ((struct PartyMenuViewing*) 0x203B09C)

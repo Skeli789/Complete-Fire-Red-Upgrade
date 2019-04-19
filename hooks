@@ -265,6 +265,19 @@ DynamicWhiteoutMap 080bfd54 0
 ## Summary Screen Changing
 SummaryScreenWrapAround 0813b20c 1
 
+## Hall of Fame Fix
+#FameHallScreen 080F1EFC 3
+#FameHallSaveTeamData 080F2114 3
+#FameHallDisplayMon 080F22B0 3
+#FameHallPrintMonInfoAfterAnimation 080F23A0 3
+#FameHallTryNewMon 080F2424 3
+#FameHallCopySaveData 080F2AA4 3
+#FameHallDrawAndPrint 080F2B6C 3
+#FameHallPrintMonInfo 080F2D60 3
+#FameHallInitMonData 080F1F74 3
+#FameHallPrintInfo 080F3194 3
+
+
 ##Follow Me
 #FollowMe_SetStateHook 08063CF4 1
 #FollowMe_LedgeHook 08068D58 0

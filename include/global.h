@@ -5,6 +5,9 @@
 #include "gba/gba.h"
 #include <string.h>
 
+// Define unused parameters
+#define unusedArg __attribute__((unused))
+
 // Prevent cross-jump optimization.
 #define BLOCK_CROSS_JUMP asm("");
 

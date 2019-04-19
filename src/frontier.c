@@ -84,6 +84,6 @@ u8 GetFrontierTrainerFrontSpriteId(u16 trainerId, u8 battlerNum)
 		return gTowerTrainers[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].trainerSprite;
 }
 
-u32 GetAIFlagsInBattleFrontier(u8 bank) {
+u32 GetAIFlagsInBattleFrontier(unusedArg u8 bank) {
 	return AI_SCRIPT_CHECK_BAD_MOVE;
 }
