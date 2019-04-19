@@ -262,6 +262,9 @@ PokeToolNoFade 0806F3A8 3
 ## Whiteout Hack
 DynamicWhiteoutMap 080bfd54 0
 
+## Summary Screen Changing
+SummaryScreenWrapAround 0813b20c 1
+
 ##Follow Me
 #FollowMe_SetStateHook 08063CF4 1
 #FollowMe_LedgeHook 08068D58 0

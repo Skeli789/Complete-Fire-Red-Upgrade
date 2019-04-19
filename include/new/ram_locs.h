@@ -131,6 +131,9 @@ struct Pedometers {
 /*u8*/	#define QuestLogMode (*((u8*) 0x203ADFA))
 		//#define gPartyMenuView ((struct PartyMenuViewing*) 0x203B09C)
 		#define gSelectedOrderFromParty ((u8*) 0x203B0D4)
+		#define gSummaryScreenData ((struct MonSummaryData*) *((u32*) 0x203B140))
+		#define gCurrentPartyIndex (*(u8*) 0x203B16C)
+		
 /*u8*/  #define gUnknown_0203B0DC ((u8*) 0x203B0DC)
 
 		#define AlphaBlendingCoeffA *((u8*)0x3000052)
