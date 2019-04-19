@@ -71,7 +71,6 @@ script functions/specials in asm - hooks and returns
 @ Whiteout Hack
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 DynamicWhiteoutMap:
-	push {lr}
 	bl WhiteoutLogic
 	cmp r0, #0x1
 	beq NoHack
