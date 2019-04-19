@@ -254,6 +254,12 @@ bool8 IsAnimMoveMudBomb(void)
 	return  move == MOVE_MUDBOMB;
 }
 
+bool8 IsAnimMoveCoreEnforcer(void)
+{
+	u16 move = gBattleBufferA[gActiveBattler][1] | (gBattleBufferA[gActiveBattler][2] << 8);
+	return  move == MOVE_COREENFORCER;
+}
+
 void AnimTask_ReloadAttackerSprite(u8 taskId)
 {
 	u8 spriteId = gBattlerSpriteIds[gBattleAnimAttacker];
@@ -356,7 +362,7 @@ void AnimTask_SetCamouflageBlend(u8 taskId)
 	StartBlendAnimSpriteColor(taskId, selectedPalettes);
 }
 
-void SpriteCB_TranslateAnimSpriteToTargetMonLocationDoubles(struct Sprite *sprite)
+void SpriteCB_TranslateAnimSpriteToTargetMonLocationDoubles(struct Sprite* sprite)
 {
 	bool8 v1;
 	bank_t target;
@@ -388,6 +394,217 @@ void SpriteCB_TranslateAnimSpriteToTargetMonLocationDoubles(struct Sprite *sprit
 		sprite->callback = StartAnimLinearTranslation;
 		StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
 	}
+}
+
+void InitSpritePosToAnimTargetsCentre(struct Sprite *sprite, bool8 respectMonPicOffsets)
+{
+	if (!respectMonPicOffsets)
+	{
+		sprite->pos1.x = (GetBattlerSpriteCoord2(gBattleAnimTarget, BATTLER_COORD_X)
+					   +  GetBattlerSpriteCoord2(PARTNER(gBattleAnimTarget), BATTLER_COORD_X)) / 2;
+		sprite->pos1.y = (GetBattlerSpriteCoord2(gBattleAnimTarget, BATTLER_COORD_Y)
+					   +  GetBattlerSpriteCoord2(PARTNER(gBattleAnimTarget), BATTLER_COORD_Y)) / 2;
+	}
+	
+	SetAnimSpriteInitialXOffset(sprite, gBattleAnimArgs[0]);
+	sprite->pos1.y += gBattleAnimArgs[1];
+}
+
+void InitSpritePosToAnimAttackersCentre(struct Sprite *sprite, bool8 respectMonPicOffsets)
+{
+	if (!respectMonPicOffsets)
+	{
+		sprite->pos1.x = (GetBattlerSpriteCoord2(gBattleAnimAttacker, BATTLER_COORD_X)
+					   +  GetBattlerSpriteCoord2(PARTNER(gBattleAnimAttacker), BATTLER_COORD_X)) / 2;
+		sprite->pos1.y = (GetBattlerSpriteCoord2(gBattleAnimAttacker, BATTLER_COORD_Y)
+					   +  GetBattlerSpriteCoord2(PARTNER(gBattleAnimAttacker), BATTLER_COORD_Y)) / 2;
+	}
+	else
+	{
+		sprite->pos1.x = (GetBattlerSpriteCoord2(gBattleAnimAttacker, BATTLER_COORD_X_2)
+					   +  GetBattlerSpriteCoord2(PARTNER(gBattleAnimAttacker), BATTLER_COORD_X_2)) / 2;
+		sprite->pos1.y = (GetBattlerSpriteCoord2(gBattleAnimAttacker, BATTLER_COORD_Y_PIC_OFFSET)
+					   +  GetBattlerSpriteCoord2(PARTNER(gBattleAnimAttacker), BATTLER_COORD_Y_PIC_OFFSET)) / 2;
+	}
+	
+	SetAnimSpriteInitialXOffset(sprite, gBattleAnimArgs[0]);
+	sprite->pos1.y += gBattleAnimArgs[1];
+}
+
+void SpriteCB_SpriteToCentreOfSide(struct Sprite* sprite)
+{
+    bool8 var;
+
+    if (!sprite->data[0])
+    {
+        if (!gBattleAnimArgs[3])
+            var = TRUE;
+        else
+            var = FALSE;
+		
+        if (gBattleAnimArgs[2] == 0) //Attacker
+		{
+			if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+				InitSpritePosToAnimAttackersCentre(sprite, var);
+			else
+				InitSpritePosToAnimAttacker(sprite, var);
+		}
+        else
+		{
+			if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+				InitSpritePosToAnimTargetsCentre(sprite, var);
+			else
+				InitSpritePosToAnimTarget(sprite, var);
+		}
+		
+        sprite->data[0]++;
+    }
+    else if (sprite->animEnded || sprite->affineAnimEnded)
+    {
+        DestroySpriteAndMatrix(sprite);
+    }
+}
+
+void SpriteCB_RandomCentredHits(struct Sprite* sprite)
+{
+    if (gBattleAnimArgs[1] == -1)
+        gBattleAnimArgs[1] = Random() & 3;
+
+    StartSpriteAffineAnim(sprite, gBattleAnimArgs[1]);
+	
+    if (gBattleAnimArgs[0] == 0)
+	{
+		if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+			InitSpritePosToAnimAttackersCentre(sprite, FALSE);
+		else
+			InitSpritePosToAnimAttacker(sprite, FALSE);
+	}
+    else
+	{
+		if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+			InitSpritePosToAnimTargetsCentre(sprite, FALSE);
+		else
+			InitSpritePosToAnimTarget(sprite, FALSE);
+	}
+
+    sprite->pos2.x += (Random() % 48) - 24;
+    sprite->pos2.y += (Random() % 24) - 12;
+
+    StoreSpriteCallbackInData6(sprite, DestroySpriteAndMatrix);
+    sprite->callback = RunStoredCallbackWhenAffineAnimEnds;
+}
+
+void SpriteCB_CentredElectricity(struct Sprite* sprite)
+{
+	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+		InitSpritePosToAnimTargetsCentre(sprite, FALSE);
+	else
+		InitSpritePosToAnimTarget(sprite, FALSE);
+	
+    sprite->oam.tileNum += gBattleAnimArgs[3] * 4;
+
+    if (gBattleAnimArgs[3] == 1)
+        sprite->oam.matrixNum = 8;
+    else if (gBattleAnimArgs[3] == 2)
+        sprite->oam.matrixNum = 16;
+
+    sprite->data[0] = gBattleAnimArgs[2];
+    sprite->callback = WaitAnimForDuration;
+    StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
+}
+
+void SpriteCB_CentredSpiderWeb(struct Sprite* sprite)
+{
+	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+		InitSpritePosToAnimTargetsCentre(sprite, FALSE);
+	else
+		InitSpritePosToAnimTarget(sprite, FALSE);
+		
+	sprite->callback = SpriteCB_SpiderWeb;
+}
+
+static void InitSpritePosToGivenTarget(struct Sprite* sprite, u8 target)
+{
+	sprite->pos1.x = GetBattlerSpriteCoord2(target, BATTLER_COORD_X);
+	sprite->pos1.y = GetBattlerSpriteCoord2(target, BATTLER_COORD_Y);
+		
+	SetAnimSpriteInitialXOffset(sprite, gBattleAnimArgs[0]);
+	sprite->pos1.y += gBattleAnimArgs[1];
+}
+
+void SpriteCB_SearingShotRock(struct Sprite* sprite)
+{
+	u8 target = LoadBattleAnimTarget(4);
+	
+	if (GetBankPartyData(target)->hp == 0)
+		DestroyAnimSprite(sprite);
+	else
+	{	
+		InitSpritePosToGivenTarget(sprite, target);
+		
+		StartSpriteAnim(sprite, gBattleAnimArgs[2]);
+		sprite->data[0] = gBattleAnimArgs[3];
+
+		sprite->callback = WaitAnimForDuration;
+		StoreSpriteCallbackInData6(sprite, AnimSpinningKickOrPunchFinish);
+	}
+}
+
+void SpriteCB_CoreEnforcerHits(struct Sprite* sprite)
+{
+	StartSpriteAffineAnim(sprite, gBattleAnimArgs[3]);
+	
+	if (gBattleAnimArgs[2] == 0)
+	{
+		if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+			InitSpritePosToAnimAttackersCentre(sprite, FALSE);
+		else
+			InitSpritePosToAnimAttacker(sprite, FALSE);
+	}
+    else
+	{
+		if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+			InitSpritePosToAnimTargetsCentre(sprite, FALSE);
+		else
+			InitSpritePosToAnimTarget(sprite, FALSE);
+	}
+
+	sprite->pos1.y += 20;
+	sprite->callback = SpriteCB_80BA7BC;
+}
+
+void SpriteCB_CoreEnforcerBeam(struct Sprite* sprite)
+{
+	if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE))
+		SpriteCB_AnimSolarbeamBigOrb(sprite);
+	else
+	{
+		InitSpritePosToAnimAttacker(sprite, TRUE);
+		StartSpriteAnim(sprite, gBattleAnimArgs[3]);
+
+		sprite->data[0] = gBattleAnimArgs[2];
+		
+		sprite->data[2] = (GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2)
+						+  GetBattlerSpriteCoord(PARTNER(gBattleAnimTarget), BATTLER_COORD_X_2)) / 2;
+		
+		
+		sprite->data[4] = (GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET)
+						+  GetBattlerSpriteCoord(PARTNER(gBattleAnimTarget), BATTLER_COORD_Y_PIC_OFFSET)) / 2;
+
+		sprite->callback = StartAnimLinearTranslation;
+		StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
+	}
+}
+
+void CoreEnforcerLoadBeamTarget(struct Sprite* sprite)
+{
+	sprite->data[0] = gBattleAnimArgs[2];
+    sprite->data[1] = sprite->pos1.x;
+    sprite->data[2] = (GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2)
+					+  GetBattlerSpriteCoord(PARTNER(gBattleAnimTarget), BATTLER_COORD_X_2)) / 2;
+    sprite->data[3] = sprite->pos1.y;
+    sprite->data[4] = (GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET)
+					+  GetBattlerSpriteCoord(PARTNER(gBattleAnimTarget), BATTLER_COORD_Y_PIC_OFFSET)) / 2;
 }
 
 void DoubleWildAnimBallThrowFix(void)

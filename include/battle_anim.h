@@ -341,6 +341,7 @@ struct BattleAnimBackground
 #define PAN_SIDE_PLAYER     -64
 #define PAN_SIDE_OPPONENT   63
 
+void __attribute__((long_call)) InitSpritePosToAnimTarget(struct Sprite *sprite, bool8 respectMonPicOffsets);
 void __attribute__((long_call)) InitSpritePosToAnimAttacker(struct Sprite *sprite, bool8 respectMonPicOffsets);
 
 enum
@@ -364,6 +365,7 @@ enum
 };
 
 u8 __attribute__((long_call)) GetBattlerSpriteCoord(u8 battlerId, u8 attributeId);
+u8 __attribute__((long_call)) GetBattlerSpriteCoord2(u8 battlerId, u8 coordType);
 
 u8 __attribute__((long_call)) GetBankPosition(u8 bank, u8 attributeId);
 
@@ -378,6 +380,14 @@ void __attribute__((long_call)) oamt_add_pos2_onto_pos1(struct Sprite *sprite);
 u8 __attribute__((long_call)) GetBankSpriteDefault_Y(u8 bank);
 u8 __attribute__((long_call)) sub_80A82E4(u8 bank);
 u8 __attribute__((long_call)) GetSubstituteSpriteDefault_Y(u8 bank);
+void __attribute__((long_call)) SetAnimSpriteInitialXOffset(struct Sprite *sprite, s16 xOffset);
+void __attribute__((long_call)) DestroySpriteAndMatrix(struct Sprite *sprite);
+void __attribute__((long_call)) RunStoredCallbackWhenAffineAnimEnds(struct Sprite *sprite);
+void __attribute__((long_call)) WaitAnimForDuration(struct Sprite *sprite);
+void __attribute__((long_call)) SpriteCB_SpiderWeb(struct Sprite* sprite);
+void __attribute__((long_call)) AnimSpinningKickOrPunchFinish(struct Sprite *sprite);
+void __attribute__((long_call)) SpriteCB_80BA7BC(struct Sprite *sprite);
+void __attribute__((long_call)) SpriteCB_AnimSolarbeamBigOrb(struct Sprite *sprite);
 
 void __attribute__((long_call)) StartAnimLinearTranslation(struct Sprite *sprite);
 

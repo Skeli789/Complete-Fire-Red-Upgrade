@@ -410,6 +410,7 @@
 .equ AnimTask_create_haze, 0x80AFAE5
 .equ AnimTask_SwaggerBulkUp, 0x80A84B5
 .equ AnimTask_flash_anim, 0x80BB661
+.equ AnimTask_RapidWhackSound, 0x80DD3DD
 
 @launchtemplate
 
@@ -417,8 +418,11 @@
 .equ Template_Fist, 0x83E6710
 .equ Template_Claws, 0x83E79E8
 .equ Template_Healing_Circle, 0x83E37A4
-.equ Template_Pal_Fade, 0x83E7B24
 .equ Template_Ring, 0x83E4094
+.equ Template_Explosion, 0x83E3F94
+.equ Template_LusterPurgeHits, 0x83E7C50
+
+.equ Template_Pal_Fade, 0x83E7B24
 .equ Template_SlideMonToOffset, 0x83d4e9c
 .equ Template_SlideMonToOriginalPos, 0x83d4e84
 .equ Template_HorizontalLunge, 0x83D4E54
