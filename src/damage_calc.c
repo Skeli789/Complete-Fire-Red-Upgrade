@@ -2783,3 +2783,19 @@ void ApplyRandomDmgMultiplier(void) {
 	if (gBattleMoveDamage)
 		gBattleMoveDamage = MathMax(1, udivsi((gBattleMoveDamage * rando), 100));
 }
+
+
+
+
+// Unhidden Power function
+u8 GetSummaryScreenMoveType(u16 move, pokemon_t* mon) {
+#ifdef UNHIDDEN_POWER
+	return GetMoveTypeSpecialFromParty(mon, move);
+#else
+	return gBattleMoves[move].type;
+#endif
+};
+
+
+
+

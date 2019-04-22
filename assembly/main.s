@@ -83,6 +83,55 @@ script functions/specials in asm - hooks and returns
 .global pcSelect_SkipWithdrawCount
 .global pcSelect_SwapDecision
 
+@@ Unhidden Power (credit to Sagiri)
+.global WriteTypeHook
+.global DisplayTypeHook
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Unhidden Power - Write Type
+@ GetMoveTypeSpecialFromParty
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.align 2
+.pool
+WriteTypeHook:
+	mov r0, r1	@move
+	push {r0}
+	ldrb r0, [r5]	@active battler
+	lsl r0, #1
+	ldr r1, =(0x02023BCE)
+	add r0, r0, r1
+	ldrb r0, [r0]
+	mov r1, #100
+	mul r0, r1
+	ldr r1, =(0x02024284)
+	add r1, r0, r1				@pokemon
+	pop {r0}
+	bl GetSummaryScreenMoveType
+	ldr r1, =(0x0803098E +1)
+	bx r1
+	
+	
+.align 2
+.pool
+DisplayTypeHook:
+	push {r3-r7}
+	ldr r0, =(0x0203B140)	@pkmn_status_data
+	ldr r0, [r0]
+	ldr r1, .monLoc
+	add r1, r0, r1		@pokemon	
+	mov r0, r2	@move
+	bl GetSummaryScreenMoveType
+	pop {r3-r7}
+	strh r0, [r4]
+	ldr r0, [r6]
+	ldr r2, =(0x081368D8 +1)
+	bx r2
+	
+.align 2
+.pool
+.monLoc: .word 0x00003290
+
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Summary Screen Wrapping - hook at 13B20C via r1
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

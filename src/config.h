@@ -147,9 +147,9 @@ enum
 #define SAVE_BLOCK_EXPANSION //Uncommenting this requires you to also manually remove Save Expansion Hooks found in hooks.
 #define SELECT_FROM_PC //Comment this out to remove select-from-pc hack.
 #define SET_HEALING_PLACE_HACK  // comment this out if you don't want custom map/bank whiteout respawn locations
-
 #define FOSSIL_IMAGE_HACK  // comment this out if you don't want JPANs fossil image hack
 #define EXISTING_FOSSIL_IMAGE_TABLE_ADDRESS 0x81a4600  // comment this out if you've already inserted a fossil image table
+#define UNHIDDEN_POWER  // show move type for moves that change type
 
 /* Misc Effect Options */
 //#define OLD_BURN_DAMAGE //Uncomment this line if you want burn damage to do 1/8 of max health instead of 1/16
