@@ -907,13 +907,14 @@ u8 GetExceptionMoveType(u8 bankAtk, u16 move) {
 				for (i = 0; NaturalGiftTable[i].berry != ITEM_TABLES_TERMIN; ++i) {
 					if (NaturalGiftTable[i].berry == item) {
 						moveType = NaturalGiftTable[i].type;
-						break;
+						goto BREAK_NATURAL_GIFT;
 					}
 				}
 				moveType = TYPE_MYSTERY; //If the berry isn't in the table, it has no type
 			}
 			else
 				moveType = TYPE_MYSTERY; //If Natural Gift fails, it has no type
+		BREAK_NATURAL_GIFT:
 			break;
 		
 		case MOVE_JUDGMENT:
