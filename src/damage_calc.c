@@ -2789,7 +2789,7 @@ void ApplyRandomDmgMultiplier(void) {
 
 // Unhidden Power function
 u8 GetSummaryScreenMoveType(u16 move, pokemon_t* mon) {
-#ifdef UNHIDDEN_POWER
+#ifdef DISPLAY_REAL_MOVE_TYPE_ON_MENU
 	return GetMoveTypeSpecialFromParty(mon, move);
 #else
 	return gBattleMoves[move].type;

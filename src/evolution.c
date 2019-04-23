@@ -2,7 +2,6 @@
 #include "../include/constants/pokemon.h"	
 
 
-
 /*
 u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem) {
 
@@ -41,9 +40,10 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem) {
                 break;
 				
             case EVO_FRIENDSHIP_DAY:
-                RtcCalcLocalTime();
-                if (gLocalTime.hours >= 12 && gLocalTime.hours < 24 && friendship >= 220)
+			#ifdef TIME_ENABLED
+                if (Clock->hours >= TIME_DAY_START && Block->hours < 24 && friendship >= 220)
                     targetSpecies = gEvolutionTable[species][i].targetSpecies;
+			#endif
                 break;
 				
             case EVO_FRIENDSHIP_NIGHT:
