@@ -9,6 +9,7 @@ extern move_t SoundMoveTable[];
 extern move_t MoldBreakerMoves[];
 extern move_t MovesThatChangePhysicality[];
 extern struct BattleMove gBattleMoves[];
+extern struct Evolution gEvolutionTable[MAX_NUM_POKEMON][EVOS_PER_MON];
 
 extern u8 GetMoveTypeSpecial(bank_t, move_t);
 extern s8 PriorityCalc(u8 bank, u8 action, u16 move);

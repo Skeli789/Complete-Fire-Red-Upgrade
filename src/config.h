@@ -91,7 +91,7 @@ enum
 
 #define MAX_LEVEL 100 //Also change this in the file “special_inserts.asm” found in the root
 #define NUM_TRAINER_CLASSES 107
-#define EVOS_PER_MON 4
+#define EVOS_PER_MON 5
 #define EV_CAP 252
 
 #define DUSK_BALL_MULTIPLIER 30 //Change this line to 35 to make the catch rate for the Dusk Ball 3.5x like before Gen 7
@@ -149,6 +149,11 @@ enum
 #define SET_HEALING_PLACE_HACK  // comment this out if you don't want custom map/bank whiteout respawn locations
 #define FOSSIL_IMAGE_HACK  // comment this out if you don't want JPANs fossil image hack
 #define EXISTING_FOSSIL_IMAGE_TABLE_ADDRESS 0x81a4600  // comment this out if you've already inserted a fossil image table
+
+// Evolution Stuff
+//#define EXISTING_EVO_TABLE_ADDRESS 0x8989D30	// if you already have an evo table you want to keep (fix evolution method indices in include/pokemon.h
+#define EVO_HOLD_ITEM_REMOVAL	// on leveling up/hold item evolution (eg. sneasel), remove the item
+#define FLAG_REMOVE_EVO_ITEM 0x2D0  // flag to toggle item removal after leveling up
 
 /* Misc Effect Options */
 //#define OLD_BURN_DAMAGE //Uncomment this line if you want burn damage to do 1/8 of max health instead of 1/16

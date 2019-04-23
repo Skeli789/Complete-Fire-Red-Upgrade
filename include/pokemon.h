@@ -623,14 +623,15 @@ enum EVOLUTION_METHODS {
 	EVO_BEAUTY,
 	// new evolutions
 	EVO_RAINY_OW,		// raining in overworld
-	EVO_HOLD_ITEM_LEVEL,	// level up while holding a specific item
-	EVO_ITEM_DAY,	// holding item in the daytime
-	EVO_ITEM_NIGHT, 	// holding item at night
-	EVO_MAP, 	// specific map evolution
+	EVO_HOLD_ITEM_DAY,	// level up while holding a specific item during the day (eg. happiny)
+	EVO_HOLD_ITEM_NIGHT,	// level up holding item at night (eg. sneasel)
+	EVO_MAP, 	// specific map evolution. bank in param, map in unknown (NOTE: prevents the evolving mon to have a mega evo)
 	EVO_MOVE,	// knows a given move
 	EVO_FAIRY_MOVE,	// knows a fairy-type move
-	EVO_OTHER_PARTY_MON,	//another poke in the party
+	EVO_OTHER_PARTY_MON,	//another poke in the party, arg is a specific species
 	EVO_DARK_TYPE_IN_PARTY,	//pancham
+	EVO_MALE_LEVEL,		// above given level if male
+	EVO_FEMALE_LEVEL,	// above given level if female
 };
 #define EVO_MEGA			 0x00FE
 
@@ -639,7 +640,7 @@ struct Evolution
     u16 method;
     u16 param;
     u16 targetSpecies;
-	u16 unknown;
+	u16 unknown;		// used for map number, mega evo
 };
 
 
@@ -650,7 +651,7 @@ extern u8 gEnemyPartyCount;
 extern struct Pokemon gEnemyParty[PARTY_SIZE];
 extern const struct BaseStats gBaseStats[];
 extern const u8 *const gItemEffectTable[];
-extern const struct Evolution gEvolutionTable[][EVOS_PER_MON];
+//extern const struct Evolution gEvolutionTable[][EVOS_PER_MON];
 extern const u8 gStatStageRatios[][2];
 extern struct SpriteTemplate gMultiuseSpriteTemplate;
 extern struct SaveBlock3* gSaveBlock3;

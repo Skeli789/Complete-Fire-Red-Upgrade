@@ -13,6 +13,7 @@ extern u8 BattleScript_PrimalSub[];
 extern u8 BattleScript_MegaEvolution[];
 extern u8 BattleScript_MegaWish[];
 extern u8 BattleScript_UltraBurst[];
+extern struct Evolution gEvolutionTable[MAX_NUM_POKEMON][EVOS_PER_MON];
 
 const struct Evolution* CanMegaEvolve(u8 bank, bool8 CheckUBInstead);
 u8* DoMegaEvolution(u8 bank);

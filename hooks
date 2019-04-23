@@ -283,7 +283,8 @@ WriteTypeHook 08030984 0
 DisplayTypeHook 081368CC 1
 
 ## Evolution Methods
-# EvoMethods 08042EC4 4
+GetEvolutionTargetSpecies 08042EC4 4
+RemoveEvoItem 080CED5C 0
 
 
 ##Follow Me
