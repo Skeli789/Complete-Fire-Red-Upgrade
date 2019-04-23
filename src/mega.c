@@ -285,13 +285,13 @@ bool8 IsMega(u8 bank)
 bool8 IsBluePrimal(u8 bank)
 {
 	u16 species = GetBankPartyData(bank)->species;
-	return species == PKMN_KYOGRE_PRIMAL;
+	return species == SPECIES_KYOGRE_PRIMAL;
 }
 
 bool8 IsRedPrimal(u8 bank)
 {
 	u16 species = GetBankPartyData(bank)->species;
-	return species == PKMN_GROUDON_PRIMAL;
+	return species == SPECIES_GROUDON_PRIMAL;
 }
 
 bool8 IsUltraNecrozma(u8 bank)

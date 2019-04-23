@@ -26,7 +26,7 @@ BS_001_SetSleep:
 	jumpifability BANK_TARGET ABILITY_COMATOSE 0x81D69B0 @;Already Asleep
 	jumpifability BANK_TARGET ABILITY_INSOMNIA 0x81D824B
 	jumpifability BANK_TARGET ABILITY_VITALSPIRIT 0x81D824B
-	jumpifspecies BANK_TARGET PKMN_MINIORSHIELD NOEFFECT
+	jumpifspecies BANK_TARGET SPECIES_MINIORSHIELD NOEFFECT
 	jumpifabilitypresent ABILITY_CLOUDNINE SLP_CheckVeils
 	jumpifabilitypresent ABILITY_AIRLOCK SLP_CheckVeils
 	jumpifability BANK_TARGET ABILITY_LEAFGUARD SLP_SunnyCheck
@@ -903,7 +903,7 @@ BS_033_SetBadPoison:
 	ppreduce
 	jumpifbehindsubstitute BANK_TARGET FAILED
 	jumpifability BANK_TARGET ABILITY_COMATOSE FAILED
-	jumpifspecies BANK_TARGET PKMN_MINIORSHIELD FAILED
+	jumpifspecies BANK_TARGET SPECIES_MINIORSHIELD FAILED
 	jumpifabilitypresent ABILITY_CLOUDNINE BadPSN_CheckFlowerVeil
 	jumpifabilitypresent ABILITY_AIRLOCK BadPSN_CheckFlowerVeil
 	jumpifability BANK_TARGET ABILITY_LEAFGUARD BadPSN_SunnyCheck
@@ -1335,7 +1335,7 @@ BS_066_SetPoison:
 PoisonChecks:
 	jumpifbehindsubstitute BANK_TARGET FAILED
 	jumpifability BANK_TARGET ABILITY_COMATOSE FAILED
-	jumpifspecies BANK_TARGET PKMN_MINIORSHIELD FAILED
+	jumpifspecies BANK_TARGET SPECIES_MINIORSHIELD FAILED
 	jumpifabilitypresent ABILITY_CLOUDNINE PSN_CheckFlowerVeil
 	jumpifabilitypresent ABILITY_AIRLOCK PSN_CheckFlowerVeil
 	jumpifability BANK_TARGET ABILITY_LEAFGUARD PSN_SunnyCheck
@@ -1400,7 +1400,7 @@ BS_067_SetParalyze:
 	attackstring
 	ppreduce
 	jumpifbehindsubstitute BANK_TARGET FAILED
-	jumpifspecies BANK_TARGET PKMN_MINIORSHIELD FAILED
+	jumpifspecies BANK_TARGET SPECIES_MINIORSHIELD FAILED
 	jumpifability BANK_TARGET ABILITY_COMATOSE FAILED
 	jumpifstatus BANK_TARGET STATUS_PARALYSIS 0x81D7237 @;Already paralyzed
 	jumpifstatus BANK_TARGET STATUS_ANY FAILED
@@ -3091,7 +3091,7 @@ BS_167_SetBurn:
 	attackcanceler
 	attackstring
 	ppreduce
-	jumpifspecies BANK_TARGET PKMN_MINIORSHIELD FAILED
+	jumpifspecies BANK_TARGET SPECIES_MINIORSHIELD FAILED
 	jumpifability BANK_TARGET ABILITY_COMATOSE FAILED
 	jumpifstatus BANK_TARGET STATUS_BURN 0x81D7F91 @;Already Burned
 	jumpifstatus BANK_TARGET STATUS_ANY FAILED
@@ -3512,12 +3512,12 @@ HyperspaceHoleBS:
 
 HyperspaceFuryBS:
 	attackcanceler
-	jumpifspecies BANK_ATTACKER PKMN_HOOPA_UNBOUND HyperspaceFurySuccess
+	jumpifspecies BANK_ATTACKER SPECIES_HOOPA_UNBOUND HyperspaceFurySuccess
 	orbyte OUTCOME OUTCOME_FAILED
 	attackstring
 	ppreduce
 	pause DELAY_HALFSECOND
-	jumpifspecies BANK_ATTACKER PKMN_HOOPA HoopaCant
+	jumpifspecies BANK_ATTACKER SPECIES_HOOPA HoopaCant
 	setword BATTLE_STRING_LOADER CantUseHyperspaceFuryString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
@@ -3588,7 +3588,7 @@ BS_187_Yawn:
 	attackcanceler
 	attackstring
 	ppreduce
-	jumpifspecies BANK_TARGET PKMN_MINIORSHIELD FAILED
+	jumpifspecies BANK_TARGET SPECIES_MINIORSHIELD FAILED
 	jumpifability BANK_TARGET ABILITY_COMATOSE 0x81D69B0
 	jumpifstatus BANK_TARGET STATUS_SLEEP 0x81D69B0
 	jumpifstatus BANK_TARGET STATUS_ANY FAILED
@@ -4420,22 +4420,22 @@ BS_223_RelicSong:
 	faintpokemonaftermove
 	jumpifmovehadnoeffect BS_MOVE_END
 	jumpifnoviablemonsleft BANK_TARGET BS_MOVE_END
-	jumpifspecies BANK_ATTACKER PKMN_MELOETTA TransformToPirouetteBS
-	jumpifspecies BANK_ATTACKER PKMN_MELOETTA_PIROUETTE TransformToAriaBS
+	jumpifspecies BANK_ATTACKER SPECIES_MELOETTA TransformToPirouetteBS
+	jumpifspecies BANK_ATTACKER SPECIES_MELOETTA_PIROUETTE TransformToAriaBS
 	goto BS_MOVE_END
 	
 TransformToPirouetteBS:
 	setbyte CMD49_STATE 0x0
 	cmd49 0x0 0x0
 	jumpiffainted BANK_ATTACKER RelicSongEndBS
-	formchange BANK_ATTACKER PKMN_MELOETTA PKMN_MELOETTA_PIROUETTE TRUE TRUE RelicSongEndBS
+	formchange BANK_ATTACKER SPECIES_MELOETTA SPECIES_MELOETTA_PIROUETTE TRUE TRUE RelicSongEndBS
 	goto MeloettaTransformAnim
 
 TransformToAriaBS:
 	setbyte CMD49_STATE 0x0
 	cmd49 0x0 0x0
 	jumpiffainted BANK_ATTACKER RelicSongEndBS
-	formchange BANK_ATTACKER PKMN_MELOETTA_PIROUETTE PKMN_MELOETTA TRUE TRUE RelicSongEndBS
+	formchange BANK_ATTACKER SPECIES_MELOETTA_PIROUETTE SPECIES_MELOETTA TRUE TRUE RelicSongEndBS
 	
 MeloettaTransformAnim:
 	playanimation BANK_ATTACKER ANIM_TRANSFORM 0x0

@@ -540,7 +540,7 @@ bool8 PokemonTierBan(u16 species, u16 item, struct BattleTowerSpreads* spread, p
 	u8 ability;
 	u16* moveLoc;
 	
-	if (species == PKMN_EGG)
+	if (species == SPECIES_EGG)
 		return 1;
 		
 	u16 tier = VarGet(BATTLE_TOWER_TIER);
@@ -613,7 +613,7 @@ bool8 PokemonTierBan(u16 species, u16 item, struct BattleTowerSpreads* spread, p
 			for (i = 0; i < MAX_MON_MOVES; ++i) {
 				if (CheckTableForMove(moveLoc[i], SmogonMoveBanList))
 					return TRUE;
-				if (species == PKMN_RAYQUAZA && moveLoc[i] == MOVE_DRAGONASCENT)
+				if (species == SPECIES_RAYQUAZA && moveLoc[i] == MOVE_DRAGONASCENT)
 					return TRUE;
 			}
 			break;

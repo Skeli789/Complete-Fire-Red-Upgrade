@@ -186,7 +186,7 @@ void OpponentHandleChoosePokemon(void)
 				
             for (chosenMonId = firstId; chosenMonId < lastId; ++chosenMonId)
             {
-                if (party[chosenMonId].species != PKMN_NONE
+                if (party[chosenMonId].species != SPECIES_NONE
 				&& party[chosenMonId].hp != 0
 				&& !GetMonData(&party[chosenMonId], MON_DATA_IS_EGG, 0)
                 && chosenMonId != gBattlerPartyIndexes[battlerIn1]

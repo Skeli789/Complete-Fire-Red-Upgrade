@@ -335,7 +335,7 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 	}
 		
 	//Minior Check
-	if (defSpecies == PKMN_MINIORSHIELD
+	if (defSpecies == SPECIES_MINIORSHIELD
 	&& CheckTableForMoveEffect(move, SetStatusTable))
 		return viability - 10;
 		
@@ -1617,13 +1617,13 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 					if ((defStatus3 & (STATUS3_ROOTED | STATUS3_SMACKED_DOWN | STATUS3_TELEKINESIS))
 						|| (gNewBS->GravityTimer != 0)
 						|| (GetBankItemEffect(bankDef) == ITEM_EFFECT_IRON_BALL)
-						||  (defSpecies == PKMN_DIGLETT)
-						||  (defSpecies == PKMN_DUGTRIO)
-						||  (defSpecies == PKMN_DIGLETT_A)
-						||  (defSpecies == PKMN_DUGTRIO_A)
-						||  (defSpecies == PKMN_SANDYGAST)
-						||  (defSpecies == PKMN_PALOSSAND)
-						||  (defSpecies == PKMN_GENGAR_MEGA))
+						||  (defSpecies == SPECIES_DIGLETT)
+						||  (defSpecies == SPECIES_DUGTRIO)
+						||  (defSpecies == SPECIES_DIGLETT_A)
+						||  (defSpecies == SPECIES_DUGTRIO_A)
+						||  (defSpecies == SPECIES_SANDYGAST)
+						||  (defSpecies == SPECIES_PALOSSAND)
+						||  (defSpecies == SPECIES_GENGAR_MEGA))
 						viability -= 10;
 					goto AI_SUBSTITUTE_CHECK;
 					

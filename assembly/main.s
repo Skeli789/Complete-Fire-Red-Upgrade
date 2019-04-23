@@ -87,6 +87,24 @@ script functions/specials in asm - hooks and returns
 .global WriteTypeHook
 .global DisplayTypeHook
 
+
+@@ Evolution Methods
+.global EvoMethods
+
+/*
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Evo Methods
+@ hook at 42EC4 via r4
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.align 2
+.pool
+EvoMethods:
+	bl GetEvolutionTargetSpecies
+	pop {pc}
+*/
+	
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Unhidden Power - Write Type
 @ GetMoveTypeSpecialFromParty
@@ -1012,7 +1030,7 @@ sp156_GhostBattleSpecial:
 	ldr r4, =(0x0807f93c|1)
 	bx r4
 defaultGhost:
-	ldr r1, =PKMN_MAROWAK
+	ldr r1, =SPECIES_MAROWAK
 	ldr r2, =(0x0807f938|1)
 	bx r2
 

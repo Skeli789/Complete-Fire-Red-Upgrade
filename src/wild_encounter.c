@@ -237,7 +237,7 @@ void CreateWildMon(u16 species, u8 level, u8 monHeaderIndex, bool8 purgeParty)
     }
 	REGULAR_NATURE_CREATION:
 	#ifdef TANOBY_RUINS_ENABLED
-		if (species == PKMN_UNOWN)
+		if (species == SPECIES_UNOWN)
 		{
 			u32 personality;
 			u8 room = gSaveBlock1->location.mapNum - 0x1B;

@@ -294,7 +294,7 @@ void atk0B_healthbarupdate(void) {
             PrepareStringBattle(STRINGID_SUBSTITUTEDAMAGED, gActiveBattler);
 		
 		else if (ABILITY(gActiveBattler) == ABILITY_DISGUISE 
-		&& gBattleMons[gActiveBattler].species == PKMN_MIMIKYU
+		&& gBattleMons[gActiveBattler].species == SPECIES_MIMIKYU
 		&& !(gHitMarker & HITMARKER_IGNORE_SUBSTITUTE)
 		&& !(gBattleMons[gActiveBattler].status2 & STATUS2_TRANSFORMED)) 
 		{
@@ -361,7 +361,7 @@ void atk0C_datahpupdate(void) {
 		
 		//No Substitute
 		else if (ABILITY(gActiveBattler) == ABILITY_DISGUISE 
-		&& gBattleMons[gActiveBattler].species == PKMN_MIMIKYU
+		&& gBattleMons[gActiveBattler].species == SPECIES_MIMIKYU
 		&& !(gHitMarker & HITMARKER_IGNORE_SUBSTITUTE)
 		&& !(gBattleMons[gActiveBattler].status2 & STATUS2_TRANSFORMED)) {
 			if (gSpecialStatuses[gActiveBattler].moveturnLostHP == 0)
@@ -384,7 +384,7 @@ void atk0C_datahpupdate(void) {
 			}
 			
 			gBattleScripting->bank = gActiveBattler;
-			DoFormChange(gActiveBattler, PKMN_MIMIKYU_BUSTED, TRUE, FALSE);
+			DoFormChange(gActiveBattler, SPECIES_MIMIKYU_BUSTED, TRUE, FALSE);
 			gBattlescriptCurrInstr += 2;
 			BattleScriptPushCursor();
 			gBattlescriptCurrInstr = BattleScript_MimikyuTransform;
@@ -866,7 +866,7 @@ void atk1B_cleareffectsonfaint(void) {
 				u16 oldHP, newHP;
 				oldHP = mon->hp;
 				
-				if (mon->species == PKMN_ZYGARDE || mon->species == PKMN_ZYGARDE_10)
+				if (mon->species == SPECIES_ZYGARDE || mon->species == SPECIES_ZYGARDE_10)
 				{
 					newHP = MathMin(mon->maxHP, oldHP);
 					EmitSetMonData(0, REQUEST_HP_BATTLE, 0, 2, &newHP);
@@ -1542,7 +1542,7 @@ void atk81_trysetrest(void)
 				fail = TRUE;
 				break;
 			case ABILITY_SHIELDSDOWN:
-				if (SPECIES(gBankAttacker) == PKMN_MINIORSHIELD)
+				if (SPECIES(gBankAttacker) == SPECIES_MINIORSHIELD)
 				{
 					gBattlescriptCurrInstr = BattleScript_ButItFailed;
 					fail = TRUE;
@@ -1583,7 +1583,7 @@ void atk84_jumpifcantmakeasleep(void) {
 	
     u8* jump_loc = T1_READ_PTR(gBattlescriptCurrInstr + 1);
 	
-    if (UproarWakeUpCheck(bankDef) || gBattleMons[bankDef].species == PKMN_MINIORSHIELD)
+    if (UproarWakeUpCheck(bankDef) || gBattleMons[bankDef].species == SPECIES_MINIORSHIELD)
         gBattlescriptCurrInstr = jump_loc;
 	
     else if (defAbility == ABILITY_INSOMNIA || defAbility == ABILITY_VITALSPIRIT || defAbility == ABILITY_COMATOSE || defAbility == ABILITY_SWEETVEIL
@@ -1688,7 +1688,7 @@ void atk8D_setmultihitcounter(void) {
 		
 	else if (ABILITY(gBankAttacker) == ABILITY_BATTLEBOND
 	&& gCurrentMove == MOVE_WATERSHURIKEN
-	&& gBattleMons[gBankAttacker].species == PKMN_ASHGRENINJA)
+	&& gBattleMons[gBankAttacker].species == SPECIES_ASHGRENINJA)
 	{
 		gMultiHitCounter = 3;
 	}
@@ -3011,7 +3011,7 @@ void atkC4_trydobeatup(void) //Not really needed anymore
     {
         if (GetMonData(&party[gBattleCommunication[0]], MON_DATA_HP, 0)
         && GetMonData(&party[gBattleCommunication[0]], MON_DATA_SPECIES2, 0)
-        && GetMonData(&party[gBattleCommunication[0]], MON_DATA_SPECIES2, 0) != PKMN_EGG
+        && GetMonData(&party[gBattleCommunication[0]], MON_DATA_SPECIES2, 0) != SPECIES_EGG
         && !GetMonData(&party[gBattleCommunication[0]], MON_DATA_STATUS, 0))
             break;
     }
@@ -3343,7 +3343,7 @@ void atkDE_asistattackselect(void)
     for (monId = firstMonId; monId < lastMonId; ++monId)
     {
         if (monId == gBattlerPartyIndexes[gBankAttacker]
-		|| party[monId].species == PKMN_NONE
+		|| party[monId].species == SPECIES_NONE
         || GetMonData(&party[monId], MON_DATA_IS_EGG, 0))
             continue;
 
@@ -3404,7 +3404,7 @@ void atkE5_pickupitemcalculation(void) {
 	
     for (int i = 0; i < 6; ++i) {
         
-        if (gPlayerParty[i].species == PKMN_NONE) break;
+        if (gPlayerParty[i].species == SPECIES_NONE) break;
 		if (gPlayerParty[i].item) continue;
         if (GetMonData(&gPlayerParty[i], MON_DATA_IS_EGG, 0)) continue;
 
@@ -3454,7 +3454,7 @@ void atkE7_trycastformdatachange(void) {
     gBattlescriptCurrInstr++;
 	
 	switch (gBattleMons[bank].species) { //Not ability b/c you can lose ability
-		case PKMN_CASTFORM:
+		case SPECIES_CASTFORM:
 			form = CastformDataTypeChange(bank);
 			if (form) {
 				BattleScriptPushCursorAndCallback(BattleScript_CastformChange);
@@ -3462,18 +3462,18 @@ void atkE7_trycastformdatachange(void) {
 			}
 			return;
 			
-		case PKMN_CHERRIM:
+		case SPECIES_CHERRIM:
 			if (ABILITY(bank) == ABILITY_FLOWERGIFT && !IS_TRANSFORMED(bank)
 			&& WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY) {
-				DoFormChange(bank, PKMN_CHERRIMSUN, FALSE, FALSE);
+				DoFormChange(bank, SPECIES_CHERRIMSUN, FALSE, FALSE);
 				form = TRUE;
 			}
 			break;
 		
-		case PKMN_CHERRIMSUN:
+		case SPECIES_CHERRIMSUN:
 			if (ABILITY(bank) != ABILITY_FLOWERGIFT
 			|| !WEATHER_HAS_EFFECT || !(gBattleWeather & WEATHER_SUN_ANY)) {
-				DoFormChange(bank, PKMN_CHERRIM, FALSE, FALSE);
+				DoFormChange(bank, SPECIES_CHERRIM, FALSE, FALSE);
 				form = TRUE;
 			}
 			
@@ -3486,7 +3486,7 @@ void atkE7_trycastformdatachange(void) {
 
 u8 CastformDataTypeChange(u8 bank) {
     u8 formChange = 0;
-    if (gBattleMons[bank].species != PKMN_CASTFORM || gBattleMons[bank].hp == 0)
+    if (gBattleMons[bank].species != SPECIES_CASTFORM || gBattleMons[bank].hp == 0)
         return CASTFORM_NO_CHANGE;
 		
     if ((!WEATHER_HAS_EFFECT || ABILITY(bank) != ABILITY_FORECAST) && gBattleMonForms[bank] != CASTFORM_NORMAL) {

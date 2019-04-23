@@ -1026,7 +1026,7 @@ u32 SpeedCalc(bank_t bank) {
 			speed /= 2;
 			break;			
 		case ITEM_EFFECT_QUICK_POWDER:
-			if (gBattleMons[bank].species == PKMN_DITTO && !(gBattleMons[bank].status2 & STATUS2_TRANSFORMED))
+			if (gBattleMons[bank].species == SPECIES_DITTO && !(gBattleMons[bank].status2 & STATUS2_TRANSFORMED))
 				speed *= 2;
 	}
 	
@@ -1110,7 +1110,7 @@ u32 SpeedCalcForParty(u8 side, pokemon_t* party) {
 			speed /= 2;
 			break;			
 		case ITEM_EFFECT_QUICK_POWDER:
-			if (party->species == PKMN_DITTO)
+			if (party->species == SPECIES_DITTO)
 				speed *= 2;
 	}
 	

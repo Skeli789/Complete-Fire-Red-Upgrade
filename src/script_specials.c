@@ -1524,7 +1524,7 @@ void Task_Hof_InitTeamSaveData(u8 taskId) {
 
     for (i = 0; i < HALL_OF_FAME_MAX_TEAMS; ++i, ++lastSavedTeam)
 	{
-        if (lastSavedTeam->mon[0].species == PKMN_NONE)
+        if (lastSavedTeam->mon[0].species == SPECIES_NONE)
             break;
     }
     if (i >= HALL_OF_FAME_MAX_TEAMS) {
@@ -1564,7 +1564,7 @@ void Task_Hof_DisplayMon(u8 taskId) {
         field6 = sHallOfFame_MonHalfTeamPositions[currMonId][3];
     }
 
-    // if (currMon->species == PKMN_EGG)
+    // if (currMon->species == SPECIES_EGG)
     //     field6 += 10;
 
     spriteId = CreatePicSprite2(currMon->species, currMon->tid, currMon->personality, 1, xPos, yPos, currMonId, 0xFFFF);
@@ -1585,7 +1585,7 @@ void Task_Hof_PrintMonInfoAfterAnimating(u8 taskId) {
     struct Sprite *monSprite = &gSprites[gTasks[taskId].tMonSpriteId(currMonId)];
 
     if (monSprite->data[0]) {
-        if (currMon->species != PKMN_EGG)
+        if (currMon->species != SPECIES_EGG)
             PlayCry1(currMon->species, 0);
 
         HallOfFame_PrintMonInfo(currMon, 0, 14);
@@ -1603,7 +1603,7 @@ void Task_Hof_TryDisplayAnotherMon(u8 taskId) {
         gTasks[taskId].tFrameCount--;
     } else {
         sHofFadingRelated |= (0x10000 << gSprites[gTasks[taskId].tMonSpriteId(currPokeID)].oam.paletteNum);
-        if (gTasks[taskId].tDisplayedMonId <= 4 && currMon[1].species != PKMN_NONE)  // there is another pokemon to display
+        if (gTasks[taskId].tDisplayedMonId <= 4 && currMon[1].species != SPECIES_NONE)  // there is another pokemon to display
         {
             gTasks[taskId].tDisplayedMonId++;
             BeginNormalPaletteFade(sHofFadingRelated, 0, 12, 12, RGB(22, 24, 29));
@@ -1631,7 +1631,7 @@ void Task_HofPC_CopySaveData(u8 taskId) {
         savedTeams = sHofMonPtr;
         for (i = 0; i < HALL_OF_FAME_MAX_TEAMS; ++i, ++savedTeams)
 		{
-            if (savedTeams->mon[0].species == PKMN_NONE)
+            if (savedTeams->mon[0].species == SPECIES_NONE)
                 break;
         }
 
@@ -1681,7 +1681,7 @@ void Task_HofPC_DrawSpritesPrintText(u8 taskId) {
                 posY = sHallOfFame_MonHalfTeamPositions[i][3];
             }
 
-            if (currMon->species == PKMN_EGG)
+            if (currMon->species == SPECIES_EGG)
                 posY += 10;
 
             spriteId = CreatePicSprite2(currMon->species, currMon->tid, currMon->personality, 1, posX, posY, i, 0xFFFF);
@@ -1728,7 +1728,7 @@ void Task_HofPC_PrintMonInfo(u8 taskId) {
     BlendPalettesUnfaded(sHofFadingRelated, 0xC, RGB(22, 24, 29));
 
     currMon = &savedTeams->mon[gTasks[taskId].tCurrMonId];
-    if (currMon->species != PKMN_EGG) {
+    if (currMon->species != SPECIES_EGG) {
         StopCryAndClearCrySongs();
         PlayCry1(currMon->species, 0);
     }
@@ -1791,7 +1791,7 @@ void HallOfFame_PrintMonInfo(struct HallofFameMon *currMon, unusedArg u8 a1, unu
     PutWindowTilemap(0);
 
     // dex number
-    if (currMon->species != PKMN_EGG) {
+    if (currMon->species != SPECIES_EGG) {
         stringPtr = StringCopy(text, gText_Number);
         dexNumber = SpeciesToPokedexNum(currMon->species);
         if (dexNumber != 0xFFFF) {
@@ -1814,7 +1814,7 @@ void HallOfFame_PrintMonInfo(struct HallofFameMon *currMon, unusedArg u8 a1, unu
     // nick, species names, gender and level
     Memcpy(text, currMon->nick, POKEMON_NAME_LENGTH);
     text[POKEMON_NAME_LENGTH] = EOS;
-    if (currMon->species == PKMN_EGG) {
+    if (currMon->species == SPECIES_EGG) {
         width = 128 - GetStringWidth(2, text, GetFontAttribute(2, 2)) / 2;
         AddTextPrinterParameterized3(0, 2, width, 1, sUnknown_0840C23C, 0, text);
         CopyWindowToVram(0, 3);
@@ -1900,7 +1900,7 @@ void FameHallSaveTeamData(u8 taskId) {
 
     for (i = 0; i < HALL_OF_FAME_MAX_TEAMS; ++i, lastSavedTeam++)
 	{
-        if (lastSavedTeam->mon[0].species == PKMN_NONE)
+        if (lastSavedTeam->mon[0].species == SPECIES_NONE)
             break;
     }
     if (i >= HALL_OF_FAME_MAX_TEAMS)
@@ -1945,7 +1945,7 @@ void FameHallDisplayMon(u8 taskId) {
         field6 = HallofFameMonHalfTeamPositions[currMonId][3];
     }
 
-    // if (currMon->species == PKMN_EGG)
+    // if (currMon->species == SPECIES_EGG)
     //     field6 += 10;
 
     spriteId = CreatePicSprite2(currMon->species, currMon->tid, currMon->personality, 1, xPos, yPos, currMonId, 0xFFFF);
@@ -1968,7 +1968,7 @@ void FameHallPrintMonInfoAfterAnimation(u8 taskId) {
     struct Sprite *monSprite = &gSprites[gTasks[taskId].data[currMonId + 5]];
 
     if (monSprite->data[0]) {
-        if (currMon->species != PKMN_EGG)
+        if (currMon->species != SPECIES_EGG)
             PlayCry1(currMon->species, 0);
 
         FameHallPrintInfo(currMon, 0, 14);
@@ -1991,7 +1991,7 @@ void FameHallTryNewMon(u8 taskId) {
 	else
 	{
         gHallOfFameFadingRelated |= (0x10000 << gSprites[gTasks[taskId].data[currPokeID+5]].oam.paletteNum);
-        if (gTasks[taskId].data[1] <= 4 && currMon[1].species != PKMN_NONE)  // there is another pokemon to display
+        if (gTasks[taskId].data[1] <= 4 && currMon[1].species != SPECIES_NONE)  // there is another pokemon to display
         {
             gTasks[taskId].data[1]++;
             BeginNormalPaletteFade(gHallOfFameFadingRelated, 0, 12, 12, RGB(22, 24, 29));
@@ -2018,7 +2018,7 @@ void FameHallCopySaveData(u8 taskId) {
         CpuCopy16(gDecompressionBuffer, gHallOfFameMonData, 0x2000);
         savedTeams = gHallOfFameMonData;
         for (i = 0; i < HALL_OF_FAME_MAX_TEAMS; ++i, savedTeams++) {
-            if (savedTeams->mon[0].species == PKMN_NONE)
+            if (savedTeams->mon[0].species == SPECIES_NONE)
                 break;
         }
 
@@ -2073,7 +2073,7 @@ void FameHallDrawAndPrint(u8 taskId) {
                 posY = HallofFameMonHalfTeamPositions[i][3];
             }
 
-            if (currMon->species == PKMN_EGG)
+            if (currMon->species == SPECIES_EGG)
                 posY += 10;
 
             spriteId = CreatePicSprite2(currMon->species, currMon->tid, currMon->personality, 1, posX, posY, i, 0xFFFF);
@@ -2122,7 +2122,7 @@ void FameHallPrintMonInfo(u8 taskId) {
     BlendPalettesUnfaded(gHallOfFameFadingRelated, 0xC, RGB(22, 24, 29));
 
     currMon = &savedTeams->mon[gTasks[taskId].data[2]];
-    if (currMon->species != PKMN_EGG)
+    if (currMon->species != SPECIES_EGG)
 	{
         StopCryAndClearCrySongs();
         PlayCry1(currMon->species, 0);
@@ -2192,7 +2192,7 @@ void FameHallPrintInfo(struct HallofFameMon *currMon, unusedArg u8 a1, unusedArg
     PutWindowTilemap(0);
 
     // dex number
-    if (currMon->species != PKMN_EGG)
+    if (currMon->species != SPECIES_EGG)
 	{
         stringPtr = StringCopy(text, gText_Number);
         dexNumber = SpeciesToPokedexNum(currMon->species);
@@ -2219,7 +2219,7 @@ void FameHallPrintInfo(struct HallofFameMon *currMon, unusedArg u8 a1, unusedArg
     // nick, species names, gender and level
     memcpy(text, currMon->nick, POKEMON_NAME_LENGTH);
     text[POKEMON_NAME_LENGTH] = EOS;
-    if (currMon->species == PKMN_EGG)
+    if (currMon->species == SPECIES_EGG)
 	{
         width = 128 - GetStringWidth(2, text, GetFontAttribute(2, 2)) / 2;
         AddTextPrinterParameterized3(0, 2, width, 1, sUnknown_0840C23C, 0, text);

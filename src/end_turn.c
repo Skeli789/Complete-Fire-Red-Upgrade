@@ -659,7 +659,7 @@ u8 TurnBasedEffects(void) {
 					
                     if (!(gStatuses3[gActiveBattler] & STATUS3_YAWN) && 
 						!(gBattleMons[gActiveBattler].status1 & STATUS_ANY) &&
-						  gBattleMons[gActiveBattler].species != PKMN_MINIORSHIELD &&
+						  gBattleMons[gActiveBattler].species != SPECIES_MINIORSHIELD &&
                           gBattleMons[gActiveBattler].ability != ABILITY_VITALSPIRIT &&
                           gBattleMons[gActiveBattler].ability != ABILITY_INSOMNIA && 
 						  gBattleMons[gActiveBattler].ability != ABILITY_COMATOSE &&
@@ -1065,8 +1065,8 @@ u8 TurnBasedEffects(void) {
 					switch(ability) {
 						
 						case ABILITY_ZENMODE:
-							if (species == PKMN_DARMANITAN) {
-								newspecies = PKMN_DARMANITANZEN;
+							if (species == SPECIES_DARMANITAN) {
+								newspecies = SPECIES_DARMANITANZEN;
 								changedform = TRUE;
 								reloadType = TRUE;
 								reloadStats = TRUE;
@@ -1075,8 +1075,8 @@ u8 TurnBasedEffects(void) {
 							break;
 						
 						case ABILITY_POWERCONSTRUCT:
-							if (species == PKMN_ZYGARDE || species == PKMN_ZYGARDE_10) {
-								newspecies = PKMN_ZYGARDE_COMPLETE;
+							if (species == SPECIES_ZYGARDE || species == SPECIES_ZYGARDE_10) {
+								newspecies = SPECIES_ZYGARDE_COMPLETE;
 								reloadType = TRUE;
 								reloadStats = TRUE;
 								changedform = TRUE;
@@ -1085,17 +1085,17 @@ u8 TurnBasedEffects(void) {
 							break;
 						
 						case ABILITY_SCHOOLING:
-							if (species == PKMN_WISHIWASHI && gBattleMons[gActiveBattler].level >= 20 &&
+							if (species == SPECIES_WISHIWASHI && gBattleMons[gActiveBattler].level >= 20 &&
 							    gBattleMons[gActiveBattler].hp > (gBattleMons[gActiveBattler].maxHP / 4)) {
-									newspecies = PKMN_WISHIWASHI_S;
+									newspecies = SPECIES_WISHIWASHI_S;
 									changedform = TRUE;
 									reloadStats = TRUE;
 									battle_script = BattleScript_StartedSchooling;
 							}
-							else if (species == PKMN_WISHIWASHI_S && 
+							else if (species == SPECIES_WISHIWASHI_S && 
 									(gBattleMons[gActiveBattler].level < 20 || 
 									 gBattleMons[gActiveBattler].hp <= (gBattleMons[gActiveBattler].maxHP / 4))) {
-										newspecies = PKMN_WISHIWASHI;
+										newspecies = SPECIES_WISHIWASHI;
 										changedform = TRUE;
 										reloadStats = TRUE;
 										battle_script = BattleScript_StoppedSchooling;
@@ -1103,7 +1103,7 @@ u8 TurnBasedEffects(void) {
 							break;
 							
 						case ABILITY_SHIELDSDOWN:
-							if (species == PKMN_MINIORSHIELD 
+							if (species == SPECIES_MINIORSHIELD 
 							&& gBattleMons[gActiveBattler].hp <= (gBattleMons[gActiveBattler].maxHP / 2)) 
 							{
 								newspecies = umodsi(partydata->personality, 7); //Get Minior Colour
@@ -1111,15 +1111,15 @@ u8 TurnBasedEffects(void) {
 								reloadStats = TRUE;
 								battle_script = BattleScript_ShieldsDownToCore;
 							}
-							else if ((species == PKMN_MINIOR_RED
-								  || species == PKMN_MINIOR_BLUE
-								  || species == PKMN_MINIOR_ORANGE
-								  || species == PKMN_MINIOR_YELLOW
-								  || species == PKMN_MINIOR_INDIGO
-								  || species == PKMN_MINIOR_GREEN
-								  || species == PKMN_MINIOR_VIOLET) && gBattleMons[gActiveBattler].hp > (gBattleMons[gActiveBattler].maxHP / 2)) 
+							else if ((species == SPECIES_MINIOR_RED
+								  || species == SPECIES_MINIOR_BLUE
+								  || species == SPECIES_MINIOR_ORANGE
+								  || species == SPECIES_MINIOR_YELLOW
+								  || species == SPECIES_MINIOR_INDIGO
+								  || species == SPECIES_MINIOR_GREEN
+								  || species == SPECIES_MINIOR_VIOLET) && gBattleMons[gActiveBattler].hp > (gBattleMons[gActiveBattler].maxHP / 2)) 
 							{
-								newspecies = PKMN_MINIORSHIELD;
+								newspecies = SPECIES_MINIORSHIELD;
 								changedform = TRUE;
 								reloadStats = TRUE;
 								battle_script = BattleScript_ShieldsDownToMeteor;
@@ -1127,8 +1127,8 @@ u8 TurnBasedEffects(void) {
 							break;
 							
 						case ABILITY_FLOWERGIFT:
-							if (species == PKMN_CHERRIMSUN && (!WEATHER_HAS_EFFECT || !(gBattleWeather & WEATHER_SUN_ANY) || ability != ABILITY_FLOWERGIFT)) {
-								newspecies = PKMN_CHERRIM;
+							if (species == SPECIES_CHERRIMSUN && (!WEATHER_HAS_EFFECT || !(gBattleWeather & WEATHER_SUN_ANY) || ability != ABILITY_FLOWERGIFT)) {
+								newspecies = SPECIES_CHERRIM;
 								battle_script = BattleScript_FlowerGift;
 							}
 			

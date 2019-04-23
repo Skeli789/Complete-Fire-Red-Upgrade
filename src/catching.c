@@ -405,7 +405,7 @@ u8 GiveMonToPlayer(pokemon_t* mon) { //Hook in
 	
     i = 0;
 
-    while (i < 6 && gPlayerParty[i].species != PKMN_NONE)
+    while (i < 6 && gPlayerParty[i].species != SPECIES_NONE)
         ++i;
 
     if (i >= 6)

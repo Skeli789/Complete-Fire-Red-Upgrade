@@ -81,18 +81,18 @@ void SetNewPartySelectTarget2(s8* highlightedMon, s8 movementDir)
 			case 7:
 				switch (gPartyMenuView->lastViewed) {
 					case 0: //You just looped around from your side (arrived at cancel by pressing up)
-						if (gPlayerParty[3].species != PKMN_NONE)
+						if (gPlayerParty[3].species != SPECIES_NONE)
 							*highlightedMon = 3; //Go to your last mon from cancel
-						else if (gPlayerParty[2].species != PKMN_NONE)
+						else if (gPlayerParty[2].species != SPECIES_NONE)
 							*highlightedMon = 2;
 						else
 							*highlightedMon = 0;
 						break;
 					
 					case 1: //You just looped around from partner's side (arrived at cancel by pressing up)
-						if (gPlayerParty[5].species != PKMN_NONE)
+						if (gPlayerParty[5].species != SPECIES_NONE)
 							*highlightedMon = 5; //Go to partner's last mon from cancel
-						else if (gPlayerParty[4].species != PKMN_NONE)
+						else if (gPlayerParty[4].species != SPECIES_NONE)
 							*highlightedMon = 4;
 						else
 							*highlightedMon = 1;
@@ -111,14 +111,14 @@ void SetNewPartySelectTarget2(s8* highlightedMon, s8 movementDir)
 			
 		switch (*highlightedMon) {
 			case 0:
-				if (gPlayerParty[2].species != PKMN_NONE)
+				if (gPlayerParty[2].species != SPECIES_NONE)
 					*highlightedMon = 2;
 				else
 					*highlightedMon = 7;
 				break;
 			
 			case 1:
-				if (gPlayerParty[4].species != PKMN_NONE)
+				if (gPlayerParty[4].species != SPECIES_NONE)
 					*highlightedMon = 4;
 				else
 					*highlightedMon = 7;
@@ -126,7 +126,7 @@ void SetNewPartySelectTarget2(s8* highlightedMon, s8 movementDir)
 				
 			case 2:
 			case 4:
-				if (gPlayerParty[*highlightedMon + 1].species != PKMN_NONE)
+				if (gPlayerParty[*highlightedMon + 1].species != SPECIES_NONE)
 					*highlightedMon = *highlightedMon + 1;
 				else
 					*highlightedMon = 7;
@@ -284,10 +284,10 @@ void SetNewPartySelectTarget2(s8* highlightedMon, s8 movementDir)
         {
             if (gPartyMenuView->lastViewed == 3) //gUnknown_0203CEC4->unk8_1 in Emerald
             {
-                if (gPlayerParty[3].species != PKMN_NONE)
+                if (gPlayerParty[3].species != SPECIES_NONE)
                     *highlightedMon = 3; //Go to your last mon
             }
-            else if (gPlayerParty[2].species != PKMN_NONE)
+            else if (gPlayerParty[2].species != SPECIES_NONE)
             {
                 *highlightedMon = 2; //Go to the pokemon at the top right (your second last mon)
             }
@@ -296,10 +296,10 @@ void SetNewPartySelectTarget2(s8* highlightedMon, s8 movementDir)
         {
             if (gPartyMenuView->lastViewed == 5) //gUnknown_0203CEC4->unk8_1 in Emerald
             {
-                if (gPlayerParty[5].species != PKMN_NONE)
+                if (gPlayerParty[5].species != SPECIES_NONE)
                     *highlightedMon = 5;
             }
-            else if (gPlayerParty[4].species != PKMN_NONE)
+            else if (gPlayerParty[4].species != SPECIES_NONE)
             {
                 *highlightedMon = 4;
             }

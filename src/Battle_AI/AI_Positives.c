@@ -424,9 +424,9 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 				viability += 5;
 			else if (atkItemEffect == ITEM_EFFECT_SCOPE_LENS)
 				viability += 5;
-			else if (atkSpecies == PKMN_CHANSEY && atkItemEffect == ITEM_EFFECT_LUCKY_PUNCH)
+			else if (atkSpecies == SPECIES_CHANSEY && atkItemEffect == ITEM_EFFECT_LUCKY_PUNCH)
 				viability += 5;
-			else if (atkSpecies == PKMN_FARFETCHD && atkItemEffect == ITEM_EFFECT_STICK)
+			else if (atkSpecies == SPECIES_FARFETCHD && atkItemEffect == ITEM_EFFECT_STICK)
 				viability += 5;
 			else if (atkStatus2 & STATUS2_FOCUS_ENERGY)
 				break;

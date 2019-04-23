@@ -38,27 +38,27 @@ struct SmartWildMons
 
 struct SmartWildMons SmartWildAITable[] =
 {
-	{PKMN_ARTICUNO, AI_SCRIPT_CHECK_BAD_MOVE},
-	{PKMN_ZAPDOS, AI_SCRIPT_CHECK_BAD_MOVE},
-	{PKMN_MOLTRES, AI_SCRIPT_CHECK_BAD_MOVE},
-	{PKMN_MEWTWO, AI_SCRIPT_CHECK_BAD_MOVE},
-	{PKMN_MEW, AI_SCRIPT_CHECK_BAD_MOVE},
-	{PKMN_ENTEI, AI_SCRIPT_CHECK_BAD_MOVE},
-	{PKMN_RAIKOU, AI_SCRIPT_CHECK_BAD_MOVE},
-	{PKMN_SUICUNE, AI_SCRIPT_CHECK_BAD_MOVE},
-	{PKMN_LUGIA, AI_SCRIPT_CHECK_BAD_MOVE},
-	{PKMN_HOOH, AI_SCRIPT_CHECK_BAD_MOVE},
-	{PKMN_CELEBI, AI_SCRIPT_CHECK_BAD_MOVE},
-	{PKMN_REGIROCK, AI_SCRIPT_CHECK_BAD_MOVE},
-	{PKMN_REGICE, AI_SCRIPT_CHECK_BAD_MOVE},
-	{PKMN_REGISTEEL, AI_SCRIPT_CHECK_BAD_MOVE},
-	{PKMN_LATIAS, AI_SCRIPT_CHECK_BAD_MOVE},
-	{PKMN_LATIOS, AI_SCRIPT_CHECK_BAD_MOVE},
-	{PKMN_KYOGRE, AI_SCRIPT_CHECK_BAD_MOVE},
-	{PKMN_GROUDON, AI_SCRIPT_CHECK_BAD_MOVE},
-	{PKMN_RAYQUAZA, AI_SCRIPT_CHECK_BAD_MOVE},
-	{PKMN_JIRACHI, AI_SCRIPT_CHECK_BAD_MOVE},
-	{PKMN_DEOXYS, AI_SCRIPT_CHECK_BAD_MOVE},
+	{SPECIES_ARTICUNO, AI_SCRIPT_CHECK_BAD_MOVE},
+	{SPECIES_ZAPDOS, AI_SCRIPT_CHECK_BAD_MOVE},
+	{SPECIES_MOLTRES, AI_SCRIPT_CHECK_BAD_MOVE},
+	{SPECIES_MEWTWO, AI_SCRIPT_CHECK_BAD_MOVE},
+	{SPECIES_MEW, AI_SCRIPT_CHECK_BAD_MOVE},
+	{SPECIES_ENTEI, AI_SCRIPT_CHECK_BAD_MOVE},
+	{SPECIES_RAIKOU, AI_SCRIPT_CHECK_BAD_MOVE},
+	{SPECIES_SUICUNE, AI_SCRIPT_CHECK_BAD_MOVE},
+	{SPECIES_LUGIA, AI_SCRIPT_CHECK_BAD_MOVE},
+	{SPECIES_HOOH, AI_SCRIPT_CHECK_BAD_MOVE},
+	{SPECIES_CELEBI, AI_SCRIPT_CHECK_BAD_MOVE},
+	{SPECIES_REGIROCK, AI_SCRIPT_CHECK_BAD_MOVE},
+	{SPECIES_REGICE, AI_SCRIPT_CHECK_BAD_MOVE},
+	{SPECIES_REGISTEEL, AI_SCRIPT_CHECK_BAD_MOVE},
+	{SPECIES_LATIAS, AI_SCRIPT_CHECK_BAD_MOVE},
+	{SPECIES_LATIOS, AI_SCRIPT_CHECK_BAD_MOVE},
+	{SPECIES_KYOGRE, AI_SCRIPT_CHECK_BAD_MOVE},
+	{SPECIES_GROUDON, AI_SCRIPT_CHECK_BAD_MOVE},
+	{SPECIES_RAYQUAZA, AI_SCRIPT_CHECK_BAD_MOVE},
+	{SPECIES_JIRACHI, AI_SCRIPT_CHECK_BAD_MOVE},
+	{SPECIES_DEOXYS, AI_SCRIPT_CHECK_BAD_MOVE},
 	{0xFFFF, 0}
 };
 
@@ -263,7 +263,7 @@ bool8 ShouldSwitch(void)
     for (i = firstId; i < lastId; ++i)
     {
         if (party[i].hp == 0
-        ||	GetMonData(&party[i], MON_DATA_SPECIES2, 0) == PKMN_NONE
+        ||	GetMonData(&party[i], MON_DATA_SPECIES2, 0) == SPECIES_NONE
         || 	GetMonData(&party[i], MON_DATA_IS_EGG, 0)
         ||	i == gBattlerPartyIndexes[battlerIn1]
         ||	i == gBattlerPartyIndexes[battlerIn2]
@@ -369,7 +369,7 @@ bool8 FindMonThatAbsorbsOpponentsMove(void)
         u8 monAbility = GetPartyAbility(&party[i]);
 
         if (party[i].hp == 0
-        ||  species == PKMN_NONE
+        ||  species == SPECIES_NONE
         ||	GetMonData(&party[i], MON_DATA_IS_EGG, 0)
         ||	i == gBattlerPartyIndexes[battlerIn1]
         ||	i == gBattlerPartyIndexes[battlerIn2]
@@ -507,7 +507,7 @@ bool8 PassOnWish(void) {
 		
 		for (i = firstId; i < lastId; ++i) {
 			if (party[i].hp == 0
-			||  party[i].species == PKMN_NONE
+			||  party[i].species == SPECIES_NONE
 			||	GetMonData(&party[i], MON_DATA_IS_EGG, 0)
 			||	i == gBattlerPartyIndexes[battlerIn1]
 			||	i == gBattlerPartyIndexes[battlerIn2]
@@ -588,7 +588,7 @@ bool8 TheCalcForSemiInvulnerableTroll(u8 bankAtk, u8 flags, bool8 JustCheckLocke
 			
 		for (i = firstId; i < lastId; ++i) {
 			if (party[i].hp == 0
-			||  party[i].species == PKMN_NONE
+			||  party[i].species == SPECIES_NONE
 			||	GetMonData(&party[i], MON_DATA_IS_EGG, 0)
 			||	i == gBattlerPartyIndexes[battlerIn1]
 			||	i == gBattlerPartyIndexes[battlerIn2]
@@ -692,7 +692,7 @@ bool8 FindMonWithFlagsAndSuperEffective(u8 flags, u8 moduloPercent) {
     for (i = start; i < end; ++i) {
         if (party[i].hp == 0)
             continue;
-        if (party[i].species == PKMN_NONE)
+        if (party[i].species == SPECIES_NONE)
             continue;
         if (GetMonData(&party[i], MON_DATA_IS_EGG, 0))
             continue;
@@ -797,7 +797,7 @@ bool8 ShouldSwitchIfWonderGuard(void) {
     // find a pokemon in the party that has a super effective move
     for (i = start; i < end; i++) {
         if (party[i].hp == 0
-            || party[i].species == PKMN_NONE
+            || party[i].species == SPECIES_NONE
             || GetMonData(&party[i], MON_DATA_IS_EGG, 0)
             || i == gBattlerPartyIndexes[battlerIn1]
 			|| i == gBattlerPartyIndexes[battlerIn2]
@@ -863,7 +863,7 @@ u8 GetMostSuitableMonToSwitchInto(void)
 	//Check if point even running calcs
 	u8 count = 0, potentialMon = 0;
 	for (i = firstId; i < lastId; ++i) {
-		if (party[i].species != PKMN_NONE
+		if (party[i].species != SPECIES_NONE
 		&& !GetMonData(&party[i], MON_DATA_IS_EGG, 0)
         && party[i].hp
         && gBattlerPartyIndexes[battlerIn1] != i
@@ -892,7 +892,7 @@ u8 GetMostSuitableMonToSwitchInto(void)
         for (i = firstId; i < lastId; i++)
         {
             u16 species = party[i].species;
-            if (species != PKMN_NONE
+            if (species != SPECIES_NONE
                 && party[i].hp != 0
                 && !(gBitTable[i] & invalidMons)
                 && gBattlerPartyIndexes[battlerIn1] != i
@@ -948,7 +948,7 @@ u8 GetMostSuitableMonToSwitchInto(void)
     // If we couldn't find the best mon in terms of typing, find the one that deals most damage.
     for (i = firstId; i < lastId; i++)
     {
-        if (party[i].species == PKMN_NONE
+        if (party[i].species == SPECIES_NONE
         || party[i].hp == 0
         || gBattlerPartyIndexes[battlerIn1] == i
         || gBattlerPartyIndexes[battlerIn2] == i
