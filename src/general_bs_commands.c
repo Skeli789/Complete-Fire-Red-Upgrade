@@ -3458,7 +3458,7 @@ void atkE7_trycastformdatachange(void) {
     gBattlescriptCurrInstr++;
 
 	switch (SPECIES(bank)) { //Not ability b/c you can lose ability
-		case PKMN_CASTFORM:
+		case SPECIES_CASTFORM:
 			form = CastformDataTypeChange(bank);
 			if (form) {
 				BattleScriptPushCursorAndCallback(BattleScript_CastformChange);
