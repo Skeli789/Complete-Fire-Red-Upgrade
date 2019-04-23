@@ -96,7 +96,7 @@ void CopycatFunc(void);
 void CheckIfDarkVoidShouldFail(void)
 {
 	if (gCurrentMove == MOVE_DARKVOID
-	&&  SPECIES(gBankAttacker) != PKMN_DARKRAI
+	&&  SPECIES(gBankAttacker) != SPECIES_DARKRAI
 	&&  !gNewBS->MoveBounceInProgress)
 		gBattlescriptCurrInstr = BattleScript_DarkVoidFail - 5;
 }
@@ -844,13 +844,13 @@ void CheckTelekinesisFail(void) {
 	if (gStatuses3[gBankTarget] & (STATUS3_TELEKINESIS | STATUS3_ROOTED | STATUS3_SMACKED_DOWN)
 	||  gNewBS->GravityTimer
 	||  ITEM_EFFECT(gBankTarget) == ITEM_EFFECT_IRON_BALL
-	||  species == PKMN_DIGLETT
-	||  species == PKMN_DUGTRIO
-	||  species == PKMN_DIGLETT_A
-	||  species == PKMN_DUGTRIO_A
-	||  species == PKMN_SANDYGAST
-	||  species == PKMN_PALOSSAND
-	||  species == PKMN_GENGAR_MEGA)
+	||  species == SPECIES_DIGLETT
+	||  species == SPECIES_DUGTRIO
+	||  species == SPECIES_DIGLETT_A
+	||  species == SPECIES_DUGTRIO_A
+	||  species == SPECIES_SANDYGAST
+	||  species == SPECIES_PALOSSAND
+	||  species == SPECIES_GENGAR_MEGA)
 	{
 		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5 - 2;
 	}

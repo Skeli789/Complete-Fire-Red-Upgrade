@@ -342,7 +342,7 @@ bool8 TeamFullyHealedMinusBank(u8 bank) {
 	pokemon_t* party = LoadPartyRange(bank, &firstId, &lastId);
 	
     for (int i = firstId; i < lastId; ++i) {
-        if (pokemon_getattr(&party[i], REQ_SPECIES) == PKMN_NONE
+        if (pokemon_getattr(&party[i], REQ_SPECIES) == SPECIES_NONE
         || pokemon_getattr(&party[i], REQ_EGG)
 		|| i == gBattlerPartyIndexes[bank])
 			continue;

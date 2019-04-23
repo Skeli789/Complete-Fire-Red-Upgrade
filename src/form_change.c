@@ -40,12 +40,12 @@ void DoFormChange(u8 bank, u16 species, bool8 ReloadType, bool8 ReloadStats) {
 
 void SwitchOutFormsRevert(u8 bank) {
 	switch (gBattleMons[bank].species) {
-		case PKMN_CHERRIMSUN:
-		case PKMN_DARMANITANZEN:
-		case PKMN_MELOETTA_PIROUETTE:
-		case PKMN_AEGISLASH_BLADE:
-		case PKMN_WISHIWASHI_S:
-		case PKMN_MINIORSHIELD:
+		case SPECIES_CHERRIMSUN:
+		case SPECIES_DARMANITANZEN:
+		case SPECIES_MELOETTA_PIROUETTE:
+		case SPECIES_AEGISLASH_BLADE:
+		case SPECIES_WISHIWASHI_S:
+		case SPECIES_MINIORSHIELD:
 			DoFormChange(bank, GetBankPartyData(bank)->backupSpecies, FALSE, TRUE);
 	}
 }
@@ -68,10 +68,10 @@ void TryFormRevert(pokemon_t* mon)
 		oldHP = mon->hp;
 		CalculateMonStats(mon);
 			
-		if (mon->species == PKMN_ZYGARDE || mon->species == PKMN_ZYGARDE_10)
+		if (mon->species == SPECIES_ZYGARDE || mon->species == SPECIES_ZYGARDE_10)
 			mon->hp = MathMin(mon->maxHP, oldHP);
 	}
-	else if (mon->species == PKMN_MINIORSHIELD) //Minior that has never had a colour yet (Eg. Wild)
+	else if (mon->species == SPECIES_MINIORSHIELD) //Minior that has never had a colour yet (Eg. Wild)
 	{
 		mon->species = umodsi(mon->personality, 7); //Get Minior Colour
 		CalculateMonStats(mon);
@@ -82,14 +82,14 @@ void UpdateBurmy(void) {
 	int i;
 	u16 form = TerrainTable[gBattleTerrain].burmyForm;
 	
-	if (form != PKMN_NONE)
+	if (form != SPECIES_NONE)
 	{	
 		for (i = 0; i < PARTY_SIZE; ++i) 
 		{
 			u16 species = gPlayerParty[i].species;
-			if (species == PKMN_BURMY
-			||  species == PKMN_BURMY_SANDY
-			||  species == PKMN_BURMY_TRASH)
+			if (species == SPECIES_BURMY
+			||  species == SPECIES_BURMY_SANDY
+			||  species == SPECIES_BURMY_TRASH)
 			{
 				gPlayerParty[i].species = form;
 				CalculateMonStats(&gPlayerParty[i]);

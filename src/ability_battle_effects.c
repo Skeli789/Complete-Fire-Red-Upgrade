@@ -704,18 +704,18 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 		case ABILITY_SCHOOLING:
             if (!(gBattleMons[gActiveBattler].status2 & STATUS2_TRANSFORMED))
 			{
-				if (speciesAtk == PKMN_WISHIWASHI && gBattleMons[gActiveBattler].level >= 20 
+				if (speciesAtk == SPECIES_WISHIWASHI && gBattleMons[gActiveBattler].level >= 20 
 				&&  gBattleMons[gActiveBattler].hp > (gBattleMons[gActiveBattler].maxHP / 4)) 
 				{
-					DoFormChange(bank, PKMN_WISHIWASHI_S, FALSE, TRUE);
+					DoFormChange(bank, SPECIES_WISHIWASHI_S, FALSE, TRUE);
 					BattleScriptPushCursorAndCallback(BattleScript_StartedSchoolingEnd3);
 					++effect;
 				}
-				else if (speciesAtk == PKMN_WISHIWASHI_S 
+				else if (speciesAtk == SPECIES_WISHIWASHI_S 
 				&& (gBattleMons[gActiveBattler].level < 20 || 
 					gBattleMons[gActiveBattler].hp <= (gBattleMons[gActiveBattler].maxHP / 4))) 
 				{
-					DoFormChange(bank, PKMN_WISHIWASHI, FALSE, TRUE);
+					DoFormChange(bank, SPECIES_WISHIWASHI, FALSE, TRUE);
 					BattleScriptPushCursorAndCallback(BattleScript_StoppedSchoolingEnd3);
 					++effect;
 				}
@@ -725,23 +725,23 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 		case ABILITY_SHIELDSDOWN:
             if (!(gBattleMons[gActiveBattler].status2 & STATUS2_TRANSFORMED))
 			{
-				if (speciesAtk == PKMN_MINIORSHIELD 
+				if (speciesAtk == SPECIES_MINIORSHIELD 
 				&& gBattleMons[gActiveBattler].hp <= (gBattleMons[gActiveBattler].maxHP / 2)) 
 				{
 					DoFormChange(bank, umodsi(GetBankPartyData(bank)->personality, 7), FALSE, TRUE); //Get Minior Colour
 					BattleScriptPushCursorAndCallback(BattleScript_ShieldsDownToCoreEnd3);
 					++effect;
 				}
-				else if ((speciesAtk == PKMN_MINIOR_RED ||
-						  speciesAtk == PKMN_MINIOR_BLUE ||
-					      speciesAtk == PKMN_MINIOR_ORANGE ||
-					      speciesAtk == PKMN_MINIOR_YELLOW ||
-						  speciesAtk == PKMN_MINIOR_INDIGO ||
-						  speciesAtk == PKMN_MINIOR_GREEN ||
-						  speciesAtk == PKMN_MINIOR_VIOLET) 
+				else if ((speciesAtk == SPECIES_MINIOR_RED ||
+						  speciesAtk == SPECIES_MINIOR_BLUE ||
+					      speciesAtk == SPECIES_MINIOR_ORANGE ||
+					      speciesAtk == SPECIES_MINIOR_YELLOW ||
+						  speciesAtk == SPECIES_MINIOR_INDIGO ||
+						  speciesAtk == SPECIES_MINIOR_GREEN ||
+						  speciesAtk == SPECIES_MINIOR_VIOLET) 
 				&& gBattleMons[gActiveBattler].hp > (gBattleMons[gActiveBattler].maxHP / 2)) 
 				{
-					DoFormChange(bank, PKMN_MINIORSHIELD, FALSE, TRUE);
+					DoFormChange(bank, SPECIES_MINIORSHIELD, FALSE, TRUE);
 					BattleScriptPushCursorAndCallback(BattleScript_ShieldsDownToMeteorEnd3);
 					++effect;
 				}
@@ -753,19 +753,19 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			{
 				gBankAttacker = bank;
 				switch(speciesAtk) {
-					case PKMN_CHERRIM:
+					case SPECIES_CHERRIM:
 						if (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_SUN_ANY))
 						{
-							DoFormChange(bank, PKMN_CHERRIMSUN, FALSE, FALSE);
+							DoFormChange(bank, SPECIES_CHERRIMSUN, FALSE, FALSE);
 							BattleScriptPushCursorAndCallback(BattleScript_TransformedEnd3);
 							++effect;
 						}
 						break;
 					
-					case PKMN_CHERRIMSUN:
+					case SPECIES_CHERRIMSUN:
 						if (!WEATHER_HAS_EFFECT || !(gBattleWeather & WEATHER_SUN_ANY))
 						{
-							DoFormChange(bank, PKMN_CHERRIM, FALSE, FALSE);
+							DoFormChange(bank, SPECIES_CHERRIM, FALSE, FALSE);
 							BattleScriptPushCursorAndCallback(BattleScript_TransformedEnd3);
 							++effect;
 						}

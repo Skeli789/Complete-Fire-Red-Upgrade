@@ -92,8 +92,8 @@ u8 GetEnemyMonCount(bool8 onlyAlive)
     for (i = 0; i < PARTY_SIZE; i++)
     {
         u32 species = GetMonData(&gEnemyParty[i], MON_DATA_SPECIES2, NULL);
-        if (species != PKMN_NONE
-        &&  species != PKMN_EGG
+        if (species != SPECIES_NONE
+        &&  species != SPECIES_EGG
         && (!onlyAlive || gEnemyParty[i].hp))
             ++count;
     }

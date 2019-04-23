@@ -38,7 +38,7 @@ BattleScript_WasFrozen:
 	waitmessage DELAY_1SECOND
 	refreshhpbar 0x2
 	waitstateatk
-	formchange 0x2 PKMN_SHAYMIN PKMN_SHAYMINSKY TRUE TRUE TargetFrozenReturn
+	formchange 0x2 SPECIES_SHAYMIN SPECIES_SHAYMINSKY TRUE TRUE TargetFrozenReturn
 	playanimation 0x2 ANIM_TRANSFORM 0x0
 	copyarray BATTLE_SCRIPTING_BANK EFFECT_BANK 0x1
 	setword BATTLE_STRING_LOADER TransformedString

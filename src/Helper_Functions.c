@@ -138,7 +138,7 @@ bool8 PartyAlive (u8 bank) {
 		party = gEnemyParty;
 	
     for (int i = 0; i < 6; ++i) {
-        if (pokemon_getattr(&party[i], REQ_SPECIES) == PKMN_NONE) break;
+        if (pokemon_getattr(&party[i], REQ_SPECIES) == SPECIES_NONE) break;
         if (pokemon_getattr(&party[i], REQ_EGG) || pokemon_getattr(&party[i], REQ_CURRHP) == 0) continue;
 		
 		return 1;
@@ -151,7 +151,7 @@ u8 ViableMonCount(pokemon_t* party) {
 	
     for (int i = 0; i < 6; ++i) 
 	{
-        if (party[i].species != PKMN_NONE
+        if (party[i].species != SPECIES_NONE
         && !GetMonData(&party[i], REQ_EGG, NULL) 
 		&& party[i].hp != 0)
 			++count;
@@ -612,7 +612,7 @@ pokemon_t* GetIllusionPartyData(u8 bank) {
 			return GetBankPartyData(bank);
 	
 		
-		if (party[i].species == PKMN_NONE ||  party[i].hp == 0)
+		if (party[i].species == SPECIES_NONE ||  party[i].hp == 0)
 			continue;
 		
 		return &party[i];
@@ -653,7 +653,7 @@ bool8 CanTransferItem(u16 species, u16 item, pokemon_t* party_data) {
 			return FALSE;
 			
 		case ITEM_EFFECT_GRISEOUS_ORB:
-			if (species == PKMN_GIRATINA || species == PKMN_GIRATINA_ORIGIN)
+			if (species == SPECIES_GIRATINA || species == SPECIES_GIRATINA_ORIGIN)
 				return FALSE;
 			break;
 			
@@ -682,8 +682,8 @@ bool8 CanTransferItem(u16 species, u16 item, pokemon_t* party_data) {
 			break;
 		
 		case ITEM_EFFECT_PRIMAL_ORB:
-			if ((quality == QUALITY_BLUE_ORB && (species == PKMN_KYOGRE  || species == PKMN_KYOGRE_PRIMAL))
-			||  (quality == QUALITY_RED_ORB &&  (species == PKMN_GROUDON || species == PKMN_KYOGRE_PRIMAL)))
+			if ((quality == QUALITY_BLUE_ORB && (species == SPECIES_KYOGRE  || species == SPECIES_KYOGRE_PRIMAL))
+			||  (quality == QUALITY_RED_ORB &&  (species == SPECIES_GROUDON || species == SPECIES_KYOGRE_PRIMAL)))
 				return FALSE;
 	}
 	return TRUE;
@@ -875,7 +875,7 @@ void ClearBankStatus(bank_t bank) {
 }
 
 bool8 CanBeGeneralStatused(u8 bank) {
-	if (GetBankPartyData(bank)->species == PKMN_MINIORSHIELD) //Prevents Ditto from getting this benefit
+	if (GetBankPartyData(bank)->species == SPECIES_MINIORSHIELD) //Prevents Ditto from getting this benefit
 		return FALSE;
 	
 	switch (ABILITY(bank)) {
@@ -1013,7 +1013,7 @@ bool8 CanBeConfused(u8 bank) {
 }
 
 bool8 CanPartyMonBeGeneralStatused(pokemon_t* mon) {
-	if (mon->species == PKMN_MINIORSHIELD)
+	if (mon->species == SPECIES_MINIORSHIELD)
 		return FALSE;
 	
 	switch (GetPartyAbility(mon)) {

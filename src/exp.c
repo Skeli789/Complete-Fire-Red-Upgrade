@@ -134,7 +134,7 @@ void atk23_getexp(void) {
 		
         for (viaSentIn = 0, i = 0; i < 6; i++)
         {
-			if (gPlayerParty[i].species == PKMN_NONE || gPlayerParty[i].hp == 0)
+			if (gPlayerParty[i].species == SPECIES_NONE || gPlayerParty[i].hp == 0)
 				continue;
 			
 			if (gBitTable[i] & sentIn)

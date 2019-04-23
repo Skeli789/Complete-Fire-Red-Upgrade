@@ -4,7 +4,7 @@
 
 #include "sprite.h"
 
-#define gDecompressionBuffer 	 ((u8*) 0x201C000) //extern u8 gDecompressionBuffer[0x4000];
+#define gDecompressionBuffer 	 ((u8*) 0x201C000)
 
 void __attribute__((long_call)) LZDecompressVram(const void *src, void *dest);
 void __attribute__((long_call)) LZ77UnCompWram(const void *src, void *dest);
