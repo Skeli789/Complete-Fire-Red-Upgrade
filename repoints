@@ -125,3 +125,6 @@ pcSelect_OperationsTable 0808fce4
 
 ## Dex Nav
 gText_PokeTools 083A7344
+
+## Evolution Methods
+gEvolutionTable 08042F6C

@@ -11,7 +11,7 @@
 extern struct Evolution gEvolutionTable[MAX_NUM_POKEMON][EVOS_PER_MON];
 
 u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem) {
-    int i;
+    int i, j;
     u16 targetSpecies = 0;
     u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
     u16 heldItem = GetMonData(mon, MON_DATA_HELD_ITEM, NULL);
@@ -111,6 +111,8 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem) {
 					break;
 					
 				case EVO_HOLD_ITEM_DAY:
+					// hold item in param
+					#ifdef TIME_ENABLED
 					if ((Clock->hour >= TIME_DAY_START && Clock->hour < TIME_NIGHT_START)
 					&& heldItem == gEvolutionTable[species][i].param)
 					{
@@ -119,9 +121,11 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem) {
 							FlagSet(FLAG_REMOVE_EVO_ITEM);
 						#endif
 					}
+					#endif
 					break;
 					
 				case EVO_HOLD_ITEM_NIGHT:
+					#ifdef TIME_ENABLED
 					if (heldItem == gEvolutionTable[species][i].param)
 					{
 						targetSpecies = gEvolutionTable[species][i].targetSpecies;
@@ -129,6 +133,7 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem) {
 							FlagSet(FLAG_REMOVE_EVO_ITEM);
 						#endif
 					}
+					#endif
 					break;
 					
 				case EVO_MAP:
@@ -138,7 +143,7 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem) {
 					break;
 					
 				case EVO_MOVE:
-					for (int j = 0; j < MAX_MON_MOVES; ++j)
+					for (j = 0; j < MAX_MON_MOVES; ++j)
 					{
 						if (gEvolutionTable[species][i].param == GetMonData(mon, MON_DATA_MOVE1 + j, NULL))
 						{
@@ -148,10 +153,11 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem) {
 					}
 					break;
 					
-				case EVO_FAIRY_MOVE:
-					for (int j = 0; j < MAX_MON_MOVES; ++j)
+				case EVO_MOVE_TYPE:	// expanded for custom evolutions of any move type
+					// move type to know in param
+					for (j = 0; j < MAX_MON_MOVES; ++j)
 					{
-						if (gBattleMoves[GetMonData(mon, MON_DATA_MOVE1 + j, NULL)].type == TYPE_FAIRY)
+						if (gBattleMoves[GetMonData(mon, MON_DATA_MOVE1 + j, NULL)].type == gEvolutionTable[species][i].param)
 						{
 							targetSpecies = gEvolutionTable[species][i].targetSpecies;
 							break;
@@ -160,11 +166,85 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem) {
 					break;
 					
 				case EVO_OTHER_PARTY_MON:
+					// species to check for in param
+					for (j = 0; j < gPlayerPartyCount; ++j)
+					{
+						if (GetMonData(&gPlayerParty[j],MON_DATA_SPECIES,NULL) == gEvolutionTable[species][i].param)
+						{
+							targetSpecies = gEvolutionTable[species][i].targetSpecies;
+							break;
+						}
+					}
 					break;
 					
-				case EVO_DARK_TYPE_IN_PARTY:
+				case EVO_TYPE_IN_PARTY:
+					// type in param
+					// level in unknown
+					// eg. Pancham table would be:
+					//		[SPECIES_PANCHAM] = {{EVO_TYPE_IN_PARTY, TYPE_DARK, SPECIES_PANGORO, 32}},
+					if (level >= gEvolutionTable[species][i].unknown)
+					{
+						u8 typeCheck = gEvolutionTable[species][i].param;
+						if (typeCheck >= NUMBER_OF_MON_TYPES)
+							break;
+						for (j = 0; j < gPlayerPartyCount; ++j)
+						{
+							if (gBaseStats[GetMonData(&gPlayerParty[j],MON_DATA_SPECIES,NULL)].type1 == typeCheck
+							|| gBaseStats[GetMonData(&gPlayerParty[j],MON_DATA_SPECIES,NULL)].type2 == typeCheck)
+							{
+								targetSpecies = gEvolutionTable[species][i].targetSpecies;
+								break;
+							}
+						}
+					}
+					break;
+					
+				case EVO_MALE_LEVEL:
+					if (gEvolutionTable[species][i].param <= level && GetMonGender(mon) == MON_MALE)
+						targetSpecies = gEvolutionTable[species][i].targetSpecies;
 					break;
 				
+				case EVO_FEMALE_LEVEL:
+					if (gEvolutionTable[species][i].param <= level && GetMonGender(mon) == MON_FEMALE)
+						targetSpecies = gEvolutionTable[species][i].targetSpecies;
+					break;
+					
+				case EVO_LEVEL_DAY:
+					#ifdef TIME_ENABLED
+						if (gEvolutionTable[species][i].param <= level &&
+						(Clock->hour >= TIME_DAY_START && Clock->hour < TIME_NIGHT_START))
+							targetSpecies = gEvolutionTable[species][i].targetSpecies;
+					#else  // regular level up check
+						if (gEvolutionTable[species][i].param <= level)
+							targetSpecies = gEvolutionTable[species][i].targetSpecies;
+					#endif
+					break;
+				
+				case EVO_LEVEL_NIGHT:
+					#ifdef TIME_ENABLED
+						if (gEvolutionTable[species][i].param <= level &&
+						(Clock->hour >= TIME_NIGHT_START && Clock->hour < TIME_DAY_START))
+							targetSpecies = gEvolutionTable[species][i].targetSpecies;
+					#else  // regular level up check
+						if (gEvolutionTable[species][i].param <= level)
+							targetSpecies = gEvolutionTable[species][i].targetSpecies;
+					#endif
+					break;
+					
+				case EVO_LEVEL_SPECIFIC_TIME_RANGE:
+					{
+					#ifdef TIME_ENABLED
+						u8 startTime = (gEvolutionTable[species][i].unknown >> 8) & 0xFF;	//upper byte
+						u8 endTime = gEvolutionTable[species][i].unknown & 0xFF;	// lower byte
+						if (gEvolutionTable[species][i].param <= level &&
+						(Clock->hour >= startTime && Clock->hour < endTime))
+							targetSpecies = gEvolutionTable[species][i].targetSpecies;
+					#else  // regular level up check
+						if (gEvolutionTable[species][i].param <= level)
+							targetSpecies = gEvolutionTable[species][i].targetSpecies;
+					#endif
+					}
+					break;
             }
         }
         break;
@@ -190,13 +270,15 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem) {
         break;
 		
     case 2:
-    case 3:
+    case 3:	// using items
         for (i = 0; i < EVOS_PER_MON; ++i)
         {
             if (gEvolutionTable[species][i].method == EVO_ITEM
              && gEvolutionTable[species][i].param == evolutionItem)
             {
-                targetSpecies = gEvolutionTable[species][i].targetSpecies;
+                if (evolutionItem == ITEM_DAWN_STONE && GetMonGender(mon) != gEvolutionTable[species][i].unknown)
+					break;
+				targetSpecies = gEvolutionTable[species][i].targetSpecies;
                 break;
             }
         }

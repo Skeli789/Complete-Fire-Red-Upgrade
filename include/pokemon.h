@@ -606,13 +606,14 @@ enum
 };
 
 enum EVOLUTION_METHODS {
-	EVO_FRIENDSHIP = 1,
+	EVO_NONE = 0,
+	EVO_FRIENDSHIP,
 	EVO_FRIENDSHIP_DAY,
 	EVO_FRIENDSHIP_NIGHT,
 	EVO_LEVEL,
 	EVO_TRADE,
 	EVO_TRADE_ITEM,
-	EVO_ITEM,
+	EVO_ITEM,		// for dawn stone, add MON_MALE(0x0) or MON_FEMALE(0xFF) to .unknown in evo table entry
 	EVO_LEVEL_ATK_GT_DEF,
 	EVO_LEVEL_ATK_EQ_DEF,
 	EVO_LEVEL_ATK_LT_DEF,
@@ -625,13 +626,16 @@ enum EVOLUTION_METHODS {
 	EVO_RAINY_OW,		// raining in overworld
 	EVO_HOLD_ITEM_DAY,	// level up while holding a specific item during the day (eg. happiny)
 	EVO_HOLD_ITEM_NIGHT,	// level up holding item at night (eg. sneasel)
-	EVO_MAP, 	// specific map evolution. bank in param, map in unknown (NOTE: prevents the evolving mon to have a mega evo)
+	EVO_MAP, 	// specific map evolution. bank in param, map in unknown (NOTE: prevents this species from having a mega evo)
 	EVO_MOVE,	// knows a given move
-	EVO_FAIRY_MOVE,	// knows a fairy-type move
+	EVO_MOVE_TYPE,	// knows a move with a specific type (eg. sylveon: fairy type move). Param is the move type
 	EVO_OTHER_PARTY_MON,	//another poke in the party, arg is a specific species
-	EVO_DARK_TYPE_IN_PARTY,	//pancham
+	EVO_TYPE_IN_PARTY,	//specific type (param) in party after given level (unknown). NOTE: prevents this species from having a mega evo
 	EVO_MALE_LEVEL,		// above given level if male
 	EVO_FEMALE_LEVEL,	// above given level if female
+	EVO_LEVEL_DAY,		// above given level during day
+	EVO_LEVEL_NIGHT,	// above given level at night
+	EVO_LEVEL_SPECIFIC_TIME_RANGE, // above given level with a range (unknown is [start][end]. eg lycanroc -> 1700-1800hrs -> 0x1112)
 };
 #define EVO_MEGA			 0x00FE
 
@@ -640,7 +644,7 @@ struct Evolution
     u16 method;
     u16 param;
     u16 targetSpecies;
-	u16 unknown;		// used for map number, mega evo
+	u16 unknown; // used for mega evo, map number in EVO_MAP, level in EVO_TYPE_IN_PARTY, or time range in EVO_LEVEL_SPECIFIC_TIME_RANGE
 };
 
 

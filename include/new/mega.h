@@ -14,7 +14,7 @@ typedef struct evolution {
 #define evolution_table *((evolution***) 0x08042F6C)
 
 // an offsetstochangetonewminus1 offset in PokeRoms.ini from G3HS
-#define evos_per_poke *((u8*) 0x08043116)
+//#define evos_per_poke *((u8*) 0x08043116)
 
 // The evolutionary type for Megas
 #define MEGA_EVOLUTION 0xFE
