@@ -26,6 +26,8 @@
 ##Remove Ditto Palette Fading
 08034454 C0 46 C0 46
 08034612 C0 46 C0 46
+08035004 C0 46 C0 46
+
 ##Save Expansion
 080DA5E0 FF 20 70 47
 080F5190 C0 46 C0 46
@@ -176,4 +178,4 @@
 
 ##Animations##
 ##Hydro Pump Particle Update
-83E595C 38 28 38 28
+083E595C 38 28 38 28

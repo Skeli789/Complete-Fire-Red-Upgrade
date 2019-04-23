@@ -67,6 +67,7 @@ TheOpposingString 080D82C0
 TheOpposingString 080D8554
 ##Other Stings
 gText_AbilityPreventsConfusion 083FE234
+gText_FlashFirePowerUp 083FE238
 gText_AbilityPreventsStatLoss 083FE244
 gText_AbilityPreventsSpecificStatLoss 083FE3E0
 gText_AbilityBlocksHealBell 083FE484

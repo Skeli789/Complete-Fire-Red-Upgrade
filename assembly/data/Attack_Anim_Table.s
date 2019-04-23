@@ -15768,13 +15768,10 @@ SLUDGE_WAVE_PAL:
 .pool     
 @ credit to ghoulslash
 ANIM_TECTONIC_RAGE:
-	loadparticle ANIM_TAG_IMPACT @ hit
+	loadparticle ANIM_TAG_DIRT_MOUND @ dig
 	loadparticle ANIM_TAG_MUD_SAND @ rollout small rocks
 	loadparticle ANIM_TAG_ROCKS @ rollout
-	loadparticle ANIM_TAG_WARM_ROCK @ eruption
-	loadparticle ANIM_TAG_FIRE_PLUME @ blast burn
-	loadparticle ANIM_TAG_UNUSED_EXPLOSION_2 @ explosion
-	loadparticle ANIM_TAG_DIRT_MOUND @ dig
+	loadparticle ANIM_TAG_IMPACT @ hit
 	launchtemplate 0x83e7ac4 0x1 0x3 0x0 0x0 0xb4 
 	launchtemplate 0x83e7ac4 0x1 0x3 0x0 0x1 0xb4 
 	pokespritetoBG2 bank_attacker 
@@ -15805,7 +15802,14 @@ ANIM_TECTONIC_RAGE:
 	waitanimation
 	pause 0xa
 	launchtemplate 0x83d4e84 0x2 0x3 0x1 0x0 0x10 	
-	loadBG1 BG_TECTONIC_RAGE	@ brown/yellow sky uppercut	
+	loadBG1 BG_TECTONIC_RAGE	@ brown/yellow sky uppercut
+	unloadparticle ANIM_TAG_DIRT_MOUND @ dig
+	unloadparticle ANIM_TAG_MUD_SAND @ rollout small rocks
+	unloadparticle ANIM_TAG_ROCKS @ rollout
+	unloadparticle ANIM_TAG_IMPACT @ hit
+	loadparticle ANIM_TAG_WARM_ROCK @ eruption
+	loadparticle ANIM_TAG_FIRE_PLUME @ blast burn
+	loadparticle ANIM_TAG_UNUSED_EXPLOSION_2 @ explosion
 	pause 0x18
 	makebankvisible bank_target
 	launchtask AnimTask_scroll_background 0x5 0x4 0x0 0xf800 0x0 0xffff
@@ -16674,10 +16678,8 @@ CORKSCREW_RIGHTDOWN_ROT: .hword 0,0,0x01ba,0,0x7fff,0,0,0
 @ credit to ghoulslash
 ANIM_INFERNO_OVERDRIVE:
 	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT @charge
-	loadparticle ANIM_TAG_METEOR @superpower
 	loadparticle ANIM_TAG_SMALL_EMBER @fire
-	loadparticle ANIM_TAG_VERTICAL_HEX @red color
-	loadparticle ANIM_TAG_UNUSED_EXPLOSION_2 @explosion
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_CIRCLE_OF_LIGHT 0x0 0x0 0xA 0x1F
 	makebankinvisible target_partner
 	loadBG1 BG_INFERNO_OVERDRIVE
 	waitfortransparentbg
@@ -16705,6 +16707,12 @@ IO_FINISH_BG:
 	playsound2 0xce 0xc0 
 	call IO_FIRESPIN_FLARE
 	waitanimation
+	unloadparticle ANIM_TAG_CIRCLE_OF_LIGHT @charge
+	unloadparticle ANIM_TAG_SMALL_EMBER @fire
+	loadparticle ANIM_TAG_EXPLOSION
+	loadparticle ANIM_TAG_UNUSED_EXPLOSION_2 @explosion
+	loadparticle ANIM_TAG_METEOR @superpower
+	loadparticle ANIM_TAG_VERTICAL_HEX @red color
 	pokespritefromBG bank_attacker 
 	launchtemplate IO_RED_SUPERPOWER 0x83 0x1 0x0 		@ super power shot
 	playsound2 0xba 0xc0 
@@ -16787,7 +16795,7 @@ IO_EXPLOSION:
 
 .align 2
 IO_RED_SUPERPOWER: objtemplate ANIM_TAG_METEOR ANIM_TAG_VERTICAL_HEX 0x83AC9E0 0x8231CF0 0x0 0x8231CFC 0x80B12E9 
-IO_RED_CHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_VERTICAL_HEX 0x83ACB60 0x8231CF0 0x0 0x83E61C8 0x80AE71D
+IO_RED_CHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_CIRCLE_OF_LIGHT 0x83ACB60 0x8231CF0 0x0 0x83E61C8 0x80AE71D
 INFERNO_EXPLOSION: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_UNUSED_EXPLOSION_2 0x83AC9D8 0x83E3F90 0x0 0x8231CFC 0x8075D9D 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -17398,13 +17406,15 @@ SPSY_FINISH_PSYCHE:
 	pause 0x8
 	playsound2 0xab 0x3f
 	loaddefaultBG
-	launchtask AnimTask_move_bank 0x2 0x5 0x1 0x3 0x0 0xf 0x1 
+	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x3 0x0 0xf 0x1 
 	launchtask 0x80998b1 0x5 0x5 0xfffc 0xfffc 0xf 0x1 0x1 
 	launchtemplate 0x83E6820 0x82 0x4 0x1 0x0 0x0 0x0  		@ -8, -12
 	launchtemplate 0x83E6820 0x82 0x4 0x1 0x1 0x0 0x0  
 	launchtemplate 0x83E6820 0x82 0x4 0x1 0x2 0x0 0x0  
 	launchtemplate 0x83E6820 0x82 0x4 0x1 0x3 0x0 0x0  
 	waitforBG
+	makebankvisible attacker_partner
+	makebankvisible target_partner
 	waitanimation
 	endanimation
 
@@ -17512,6 +17522,7 @@ ANIM_SUBZERO_SLAMMER:
 	loadparticle ANIM_TAG_UNUSED_EXPLOSION_2 @explosion
 	loadBG1 BG_ICE
 	waitfortransparentbg
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_UNUSED_EXPLOSION_2 0x0 0x0 0xC 0x6A23
 	launchtask AnimTask_arg7_is_target_player 0x2 0x0
 	jumpifargmatches 0x7 bank_target SZS_ON_PLAYER
 SZS_ON_TARGET:
@@ -17654,7 +17665,7 @@ SZS_ICE_SWIRL_CALL:
 
 .align 2
 SZS_ICE_SPIN: objtemplate ANIM_TAG_ICE_CRYSTALS ANIM_TAG_ICE_CRYSTALS 0x83ACB88 0x83E6320 0x0 0x83E63DC 0x80ACDE9
-SZS_BLUE_EXPLOSION: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_ICE_CRYSTALS 0x83AC9D8 0x83E3F90 0x0 0x8231CFC 0x8075D9D 
+SZS_BLUE_EXPLOSION: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_UNUSED_EXPLOSION_2 0x83AC9D8 0x83E3F90 0x0 0x8231CFC 0x8075D9D 
 SZS_ICE_SWIRL: objtemplate ANIM_TAG_ICE_CRYSTALS ANIM_TAG_ICE_CRYSTALS 0x83ACB88 0x83E6320 0x0 0x83E63DC 0x80B477D 
 
 .align 2
@@ -17734,9 +17745,10 @@ FINISH_DRAKE:
 	launchtemplate DRAKE_STRIKE 0x82 0x1 0x14 
 	pause 0x10 
 	playsound2 0xab 0xc0
+	loadparticle ANIM_TAG_EXPLOSION
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_EXPLOSION 0x0 0x0 0xC 0x502B
 	launchtask AnimTask_screen_shake 0x5 0x3 0x1 0x5 0x35
 	launchtemplate Template_Pal_Fade 0x0 0x5 PAL_DEF 0x2 0x0 0x10 0x40c0		@ fade to purple 
-	loadparticle ANIM_TAG_EXPLOSION
 	call DRAKE_EXPLOSION
 	pause 0x6
 	launchtemplate Template_Pal_Fade 0x0 0x5 0x1b 0x6 0x0 0x10 0x40c0
@@ -17747,7 +17759,10 @@ FINISH_DRAKE:
 	loadparticle ANIM_TAG_FIRE_PLUME
 	loadparticle ANIM_TAG_VERTICAL_HEX
 	loadparticle ANIM_TAG_UNUSED_EXPLOSION_2 @explosion
-	unloadparticle ANIM_TAG_PURPLE_DRAKE 
+	unloadparticle ANIM_TAG_PURPLE_DRAKE
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_FIRE_PLUME 0x0 0x0 0xC 0x502B
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_VERTICAL_HEX 0x0 0x0 0xC 0x502B
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_UNUSED_EXPLOSION_2 0x0 0x0 0xC 0x502B
 	launchtask AnimTask_screen_shake 0x5 0x3 0x1 0x5 0x20
 	playsound2 0xab 0xc0 
 	call DEVESTATING_DRAKE_GEYSER
@@ -17884,10 +17899,10 @@ DRAKE_UP: objtemplate ANIM_TAG_PURPLE_DRAKE ANIM_TAG_PURPLE_DRAKE 0x83ACA40 0x82
 DRAKE_RIGHT: objtemplate ANIM_TAG_PURPLE_DRAKE ANIM_TAG_PURPLE_DRAKE 0x83ACA40 0x8231CF0 0x0 DRAKE_RIGHT_ROTATIONS 0x80E24E1 
 DRAKE_LEFT: objtemplate ANIM_TAG_PURPLE_DRAKE ANIM_TAG_PURPLE_DRAKE 0x83ACA40 0x8231CF0 0x0 DRAKE_LEFT_ROTATIONS 0x80E24E1
 DRAKE_STRIKE: objtemplate ANIM_TAG_PURPLE_DRAKE ANIM_TAG_PURPLE_DRAKE 0x83ACA40 0x8231CF0 0x0 DRAKE_STRIKE_ROTATIONS 0x80B1C3D
-DRAKE_PURPLE_BLAST_BURN: objtemplate ANIM_TAG_FIRE_PLUME ANIM_TAG_POISON_BUBBLE 0x83AC9D8 0x83E5C50 0x0 0x8231CFC BLASTBURN_TARGET_ASM+1
-DRAKE_GEYSER_HEX: objtemplate ANIM_TAG_VERTICAL_HEX ANIM_TAG_POISON_BUBBLE 0x83AC9D0 0x83E2C00 0x0 0x8231CFC 0x80B8D59
-DRAKE_PURPLE_EXPLOSION: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_PURPLE_DRAKE 0x83AC9D8 0x83E3F90 0x0 0x8231CFC 0x8075D9D 
-DRAKE_EXPLODE: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 0x27a6 0x83AC9D8 0x83E3F90 0x0 0x8231CFC 0x8075D9D 
+DRAKE_PURPLE_BLAST_BURN: objtemplate ANIM_TAG_FIRE_PLUME ANIM_TAG_FIRE_PLUME 0x83AC9D8 0x83E5C50 0x0 0x8231CFC BLASTBURN_TARGET_ASM+1
+DRAKE_GEYSER_HEX: objtemplate ANIM_TAG_VERTICAL_HEX ANIM_TAG_VERTICAL_HEX 0x83AC9D0 0x83E2C00 0x0 0x8231CFC 0x80B8D59
+DRAKE_PURPLE_EXPLOSION: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_EXPLOSION 0x83AC9D8 0x83E3F90 0x0 0x8231CFC 0x8075D9D 
+DRAKE_EXPLODE: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_UNUSED_EXPLOSION_2 0x83AC9D8 0x83E3F90 0x0 0x8231CFC 0x8075D9D 
 
 DRAKE_STRIKE_ROTATIONS: .word DRAKE_STRIKE_PLAYER_ROT, DRAKE_STRIKE_ENEMY_ROT
 DRAKE_STRIKE_PLAYER_ROT: .hword 0,0,0x01b9,0,0x7fff,0,0,0
@@ -17943,7 +17958,7 @@ ANIM_BLACK_HOLE_ECLIPSE:
 	pause 0x8
 	waitanimation
 	stopmusic
-	launchtemplate Template_Pal_Fade 0x2 0x5 PAL_BG 0x1 0x0 0x07 0x0000
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x07 0x0000
 	loadparticle ANIM_TAG_WISP_ORB @will o wisp
 	makebankinvisible bank_attacker
 	soundcomplex 0x8b 0x3f 0x10 0x5
@@ -18002,14 +18017,16 @@ ANIM_BLACK_HOLE_ECLIPSE:
 	unloadparticle ANIM_TAG_THIN_RING
 	loadparticle ANIM_TAG_UNUSED_EXPLOSION_2
 	call BHE_EXPLODE
-	launchtemplate Template_Pal_Fade 0x2 0x5 PAL_BG 0x1 0x0 0x10 0x7fff	@ white pal to bg
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x10 0x7fff	@ white pal to bg
 	call BHE_EXPLODE
 	waitanimation
 	loaddefaultBG
 	pause 0x18
-	launchtask 0x8099981 0x2 0x4 0x1 0x0 bank_target 0x1	@ fix rotation	
+	launchtask 0x8099981 0x2 0x4 0x1 0x0 bank_target 0x1	@ fix rotation
 	waitforBG
 	pause 0x1
+	waitanimation
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x0 0x7fff	@ white pal to bg
 	waitanimation
 	makebankvisible bank_target
 	waitanimation

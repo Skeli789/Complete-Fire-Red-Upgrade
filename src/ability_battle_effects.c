@@ -8,12 +8,8 @@
 #include "../include/new/helper_functions.h"
 
 #define BattleScript_OverworldWeatherStarts (u8*) 0x81D8B1F
-#define BattleScript_DrizzleActivates (u8*) 0x81D927F
-#define BattleScript_SandstreamActivates (u8*) 0x81D92BF
-#define BattleScript_DroughtActivates (u8*) 0x81D9379
 #define BattleScript_CastformChange (u8*) 0x81D92F8
 #define BattleScript_ShedSkinActivates (u8*) 0x81D92D3
-#define BattleScript_SpeedBoostActivates (u8*) 0x81D9293
 #define BattleScript_ColorChangeActivates (u8*) 0x81D949C
 #define BattleScript_AbilityCuredStatus (u8*) 0x81D94D1
 
@@ -114,6 +110,11 @@ const u16 gWeatherContinuesStringIds[] =
 	STRINGID_ITISRAINING		//???
 };
 
+const u16 gFlashFireStringIds[] =
+{
+    STRINGID_PKMNRAISEDFIREPOWERWITH, STRINGID_ITDOESNTAFFECT
+};
+
 extern u8 TypeCalc(move_t, u8 bankAtk, u8 bankDef, pokemon_t* party_data_atk, bool8 CheckParty);
 extern u8 GetExceptionMoveType(u8 bankAtk, move_t);
 extern u8 CastformDataTypeChange(u8 bank);
@@ -121,9 +122,9 @@ extern s8 PriorityCalc(u8 bank, u8 action, u16 move);
 extern void TransformPokemon(u8 bankAtk, u8 bankDef);
 
 u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg);
-u8 CalcMovePowerForForewarn(u16 move);
-u8 ActivateWeatherAbility(u16 flags, u16 item, u8 bank, u8* script);
-u8 TryActivateTerrainAbility(u8 terrain, u8 anim, u8 bank);
+static u8 CalcMovePowerForForewarn(u16 move);
+static u8 ActivateWeatherAbility(u16 flags, u16 item, u8 bank, u8 animArg, u8 stringIndex);
+static u8 TryActivateTerrainAbility(u8 terrain, u8 anim, u8 bank);
 bool8 ImmunityAbilityCheck(u8 bank, u32 status, u8* string);
 bool8 AllStatsButOneAreMinned(u8 bank);
 
@@ -273,8 +274,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
             if (!(gBattleWeather & (WEATHER_RAIN_ANY | WEATHER_PRIMAL_ANY)))
             {
 				effect = ActivateWeatherAbility(WEATHER_RAIN_PERMANENT | WEATHER_RAIN_TEMPORARY, 
-												ITEM_EFFECT_DAMP_ROCK, bank, 
-												BattleScript_DrizzleActivates);
+												ITEM_EFFECT_DAMP_ROCK, bank, B_ANIM_RAIN_CONTINUES, 0);
             }
 
             break;
@@ -283,8 +283,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
             if (!(gBattleWeather & (WEATHER_SANDSTORM_ANY | WEATHER_PRIMAL_ANY)))
             {
 				effect = ActivateWeatherAbility(WEATHER_SANDSTORM_PERMANENT | WEATHER_SANDSTORM_TEMPORARY, 
-												ITEM_EFFECT_SMOOTH_ROCK, bank, 
-												BattleScript_SandstreamActivates);
+												ITEM_EFFECT_SMOOTH_ROCK, bank, B_ANIM_SANDSTORM_CONTINUES, 1);
             }
 			
             break;
@@ -293,8 +292,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
             if (!(gBattleWeather & (WEATHER_SUN_ANY | WEATHER_PRIMAL_ANY)))
             {
 				effect = ActivateWeatherAbility(WEATHER_SUN_PERMANENT | WEATHER_SUN_TEMPORARY, 
-												ITEM_EFFECT_HEAT_ROCK, bank, 
-												BattleScript_DroughtActivates);
+												ITEM_EFFECT_HEAT_ROCK, bank, B_ANIM_SUN_CONTINUES, 2);
             }
 
             break;
@@ -303,10 +301,8 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
             if (!(gBattleWeather & (WEATHER_HAIL_ANY | WEATHER_PRIMAL_ANY)))
             {
 				gBattleScripting->animArg1 = B_ANIM_HAIL_CONTINUES;
-				BattleStringLoader = gText_SnowWarningActivate;
 				effect = ActivateWeatherAbility(WEATHER_HAIL_PERMANENT | WEATHER_HAIL_TEMPORARY, 
-												ITEM_EFFECT_ICY_ROCK, bank, 
-												BattleScript_NewWeatherAbilityActivates);
+												ITEM_EFFECT_ICY_ROCK, bank, B_ANIM_HAIL_CONTINUES, 3);
             }
 
             break;
@@ -318,6 +314,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
                 gWishFutureKnock->weatherDuration = 0;
 				gBattleScripting->animArg1 = B_ANIM_RAIN_CONTINUES;
 				BattleStringLoader = gText_PrimordialSeaActivate;
+				gBattleCommunication[MULTISTRING_CHOOSER] = 4;
 				BattleScriptPushCursorAndCallback(BattleScript_NewWeatherAbilityActivates);
                 effect++;
             }
@@ -331,6 +328,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
                 gWishFutureKnock->weatherDuration = 0;
 				gBattleScripting->animArg1 = B_ANIM_SUN_CONTINUES;
 				BattleStringLoader = gText_DesolateLandActivate;
+				gBattleCommunication[MULTISTRING_CHOOSER] = 4;
 				BattleScriptPushCursorAndCallback(BattleScript_NewWeatherAbilityActivates);
                 effect++;
             }
@@ -344,6 +342,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
                 gWishFutureKnock->weatherDuration = 0;
 				gBattleScripting->animArg1 = B_ANIM_STRONG_WINDS_CONTINUE;
 				BattleStringLoader = gText_DeltaStream;
+				gBattleCommunication[MULTISTRING_CHOOSER] = 4;
 				BattleScriptPushCursorAndCallback(BattleScript_NewWeatherAbilityActivates);
                 effect++;
             }
@@ -677,6 +676,13 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
                 gBattleMons[bank].statStages[statId-1]++;
                 gBattleScripting->statChanger = statId | INCREASE_1;
                 PREPARE_STAT_BUFFER(gBattleTextBuff1, statId);
+				
+				gBattleTextBuff2[0] = B_BUFF_PLACEHOLDER_BEGIN;
+				gBattleTextBuff2[1] = B_BUFF_STRING;
+				gBattleTextBuff2[2] = STRINGID_STATROSE;
+				gBattleTextBuff2[3] = STRINGID_STATROSE >> 8;
+				gBattleTextBuff2[4] = B_BUFF_EOS;
+				
                 BattleScriptPushCursorAndCallback(BattleScript_AttackerAbilityStatRaiseEnd3);
                 effect++;
             }
@@ -888,10 +894,18 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
                 case ABILITY_SPEEDBOOST:
                     if (gBattleMons[bank].statStages[STAT_SPEED] < STAT_STAGE_MAX && gDisableStructs[bank].isFirstTurn != 2)
                     {
-                        gBattleMons[bank].statStages[STAT_SPEED]++;
+					    gBattleMons[bank].statStages[STAT_SPEED]++;
+						gBattleScripting->statChanger = STAT_SPEED | INCREASE_1;
                         gBattleScripting->animArg1 = 0x11;
                         gBattleScripting->animArg2 = 0;
-                        BattleScriptPushCursorAndCallback(BattleScript_SpeedBoostActivates);
+						PREPARE_STAT_BUFFER(gBattleTextBuff1, STAT_SPEED);
+						
+						gBattleTextBuff2[0] = B_BUFF_PLACEHOLDER_BEGIN;
+						gBattleTextBuff2[1] = B_BUFF_STRING;
+						gBattleTextBuff2[2] = STRINGID_STATROSE;
+						gBattleTextBuff2[3] = STRINGID_STATROSE >> 8;
+						gBattleTextBuff2[4] = B_BUFF_EOS;
+                        BattleScriptPushCursorAndCallback(BattleScript_AttackerAbilityStatRaiseEnd3);
                         effect++;
                     }
                     break;
@@ -1044,6 +1058,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
         case ABILITYEFFECT_ABSORBING: // 3
             if (!move) break;
 			u8 statId = 0;
+			gBattleScripting->bank = bank;
             switch (gLastUsedAbility) {
                 case ABILITY_VOLTABSORB:
 					if (moveType == TYPE_ELECTRIC)
@@ -1078,73 +1093,72 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				
                 case ABILITY_FLASHFIRE:
                     if (moveType == TYPE_FIRE && !(gBattleMons[bank].status1 & STATUS1_FREEZE))
-                    {
-                        if (!(gBattleResources->flags->flags[bank] & RESOURCE_FLAG_FLASH_FIRE))
-                        {
-                            gBattleCommunication[MULTISTRING_CHOOSER] = 0;
-                            if (gProtectStructs[gBankAttacker].notFirstStrike)
-                                gBattlescriptCurrInstr = BattleScript_FlashFireBoost;
-                            else
-                                gBattlescriptCurrInstr = BattleScript_FlashFireBoost_PPLoss;
-
-                            gBattleResources->flags->flags[bank] |= RESOURCE_FLAG_FLASH_FIRE;
-                            effect = 2;
-                        }
-                        else
-                        {
-                            gBattleCommunication[MULTISTRING_CHOOSER] = 1;
-                            if (gProtectStructs[gBankAttacker].notFirstStrike)
-                                gBattlescriptCurrInstr = BattleScript_FlashFireBoost;
-                            else
-                                gBattlescriptCurrInstr = BattleScript_FlashFireBoost_PPLoss;
-
-                            effect = 2;
-                        }
-                    }
+                        effect = 3;
                     break;
             }
 			
-            if (effect == 1) // Restore HP ability.
-            {
-                if (BATTLER_MAX_HP(bank) || gNewBS->HealBlockTimers[bank])
-                {
-                    if ((gProtectStructs[gBattlerAttacker].notFirstStrike))
-                        gBattlescriptCurrInstr = BattleScript_MonMadeMoveUseless;
-                    else
-                        gBattlescriptCurrInstr = BattleScript_MonMadeMoveUseless_PPLoss;
-                }
-                else
-                {
-                    if (gProtectStructs[gBankAttacker].notFirstStrike)
-                        gBattlescriptCurrInstr = BattleScript_MoveHPDrain;
-                    else
-                        gBattlescriptCurrInstr = BattleScript_MoveHPDrain_PPLoss;
+			switch (effect) {
+				case 1: // Restore HP ability
+					if (BATTLER_MAX_HP(bank) || gNewBS->HealBlockTimers[bank])
+					{
+						if ((gProtectStructs[gBattlerAttacker].notFirstStrike))
+							gBattlescriptCurrInstr = BattleScript_MonMadeMoveUseless;
+						else
+							gBattlescriptCurrInstr = BattleScript_MonMadeMoveUseless_PPLoss;
+					}
+					else
+					{
+						if (gProtectStructs[gBankAttacker].notFirstStrike)
+							gBattlescriptCurrInstr = BattleScript_MoveHPDrain;
+						else
+							gBattlescriptCurrInstr = BattleScript_MoveHPDrain_PPLoss;
 
-                    gBattleMoveDamage = MathMax(1, gBattleMons[bank].maxHP / 4);
-                    gBattleMoveDamage *= -1;
-                }
-            }
-            else if (effect == 2) // Boost Stat ability;
-            {
-                if (gBattleMons[bank].statStages[statId - 1] >= STAT_STAGE_MAX)
-                {
-                    if ((gProtectStructs[gBankAttacker].notFirstStrike))
-                        gBattlescriptCurrInstr = BattleScript_MonMadeMoveUseless;
-                    else
-                        gBattlescriptCurrInstr = BattleScript_MonMadeMoveUseless_PPLoss;
-                }
-                else
-                {
-                    if (gProtectStructs[gBankAttacker].notFirstStrike)
-                        gBattlescriptCurrInstr = BattleScript_MoveStatDrain;
-                    else
-                        gBattlescriptCurrInstr = BattleScript_MoveStatDrain_PPLoss;
+						gBattleMoveDamage = MathMax(1, gBattleMons[bank].maxHP / 4);
+						gBattleMoveDamage *= -1;
+					}
+					break;
+				
+				case 2: // Boost Stat ability
+					if (gBattleMons[bank].statStages[statId - 1] >= STAT_STAGE_MAX)
+					{
+						if ((gProtectStructs[gBankAttacker].notFirstStrike))
+							gBattlescriptCurrInstr = BattleScript_MonMadeMoveUseless;
+						else
+							gBattlescriptCurrInstr = BattleScript_MonMadeMoveUseless_PPLoss;
+					}
+					else
+					{
+						if (gProtectStructs[gBankAttacker].notFirstStrike)
+							gBattlescriptCurrInstr = BattleScript_MoveStatDrain;
+						else
+							gBattlescriptCurrInstr = BattleScript_MoveStatDrain_PPLoss;
 
-					gBattleScripting->statChanger = statId | INCREASE_1;
-                    gBattleMons[bank].statStages[statId - 1]++;
-                    PREPARE_STAT_BUFFER(gBattleTextBuff1, statId);
-                }
-            }
+						gBattleScripting->statChanger = statId | INCREASE_1;
+						gBattleMons[bank].statStages[statId - 1]++;
+						PREPARE_STAT_BUFFER(gBattleTextBuff1, statId);
+					}
+					break;
+				
+				case 3: //Flash Fire
+					if (!(gBattleResources->flags->flags[bank] & RESOURCE_FLAG_FLASH_FIRE))
+                    {
+                        gBattleCommunication[MULTISTRING_CHOOSER] = 0;
+                        if (gProtectStructs[gBankAttacker].notFirstStrike)
+                            gBattlescriptCurrInstr = BattleScript_FlashFireBoost;
+                        else
+                            gBattlescriptCurrInstr = BattleScript_FlashFireBoost_PPLoss;
+
+                        gBattleResources->flags->flags[bank] |= RESOURCE_FLAG_FLASH_FIRE;
+                    }
+                    else
+                    {
+                        gBattleCommunication[MULTISTRING_CHOOSER] = 1;
+                        if (gProtectStructs[gBankAttacker].notFirstStrike)
+                            gBattlescriptCurrInstr = BattleScript_FlashFireBoost;
+                        else
+                            gBattlescriptCurrInstr = BattleScript_FlashFireBoost_PPLoss;
+                    }
+			}
 			
             break;
         case ABILITYEFFECT_CONTACT: //After being hit by a move. Not necessarilly contact.
@@ -1753,7 +1767,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
     return effect;
 }
 
-u8 CalcMovePowerForForewarn(u16 move) 
+static u8 CalcMovePowerForForewarn(u16 move) 
 {
 	u8 power;
 	
@@ -1802,7 +1816,12 @@ u8 CalcMovePowerForForewarn(u16 move)
 	return power;
 }
 
-u8 ActivateWeatherAbility(u16 flags, u16 item, u8 bank, u8* script)
+const u16 gWeatherAbilityStrings[] =
+{
+	STRINGID_STARTEDTORAIN, STRINGID_SANDSTORMBREWED, STRINGID_SUNLIGHTGOTBRIGHT, STRINGID_STARTEDHAIL, 0x184
+};
+
+static u8 ActivateWeatherAbility(u16 flags, u16 item, u8 bank, u8 animArg, u8 stringIndex)
 {
 	#ifdef INFINITE_WEATHER
 		gBattleWeather = flags;
@@ -1815,12 +1834,15 @@ u8 ActivateWeatherAbility(u16 flags, u16 item, u8 bank, u8* script)
 		else
 			gWishFutureKnock->weatherDuration = 5;
 	#endif
-    BattleScriptPushCursorAndCallback(script);
+	
+	gBattleCommunication[MULTISTRING_CHOOSER] = stringIndex;
+	gBattleScripting->animArg1 = animArg;
+    BattleScriptPushCursorAndCallback(BattleScript_NewWeatherAbilityActivates);
     gBattleScripting->bank = bank;
     return TRUE;
 }
 				
-u8 TryActivateTerrainAbility(u8 terrain, u8 anim, u8 bank)
+static u8 TryActivateTerrainAbility(u8 terrain, u8 anim, u8 bank)
 {
 	u8 effect = 0;
 	

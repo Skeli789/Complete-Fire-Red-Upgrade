@@ -22,9 +22,10 @@ extern u8 WideGuardProtectedString[];
 void atk01_accuracycheck(void);
 bool8 JumpIfMoveAffectedByProtect(move_t, bank_t, bank_t);
 bool8 ProtectAffects(move_t, bank_t, bank_t, u8 set);
-bool8 AccuracyCalcHelper(move_t);
+static bool8 AccuracyCalcHelper(move_t);
 u32 AccuracyCalc(move_t, bank_t, bank_t);
 u32 AccuracyCalcNoTarget(u16 move, u8 bankAtk);
+void JumpIfMoveFailed(u8 adder, u16 move);
 
 /*Other Necessary Functions:
 JumpIfMoveFailed
@@ -198,7 +199,7 @@ bool8 ProtectAffects(u16 move, u8 bankAtk, u8 bankDef, bool8 set) {
 	return effect;
 }
 
-bool8 AccuracyCalcHelper(u16 move) {
+static bool8 AccuracyCalcHelper(u16 move) {
     u8 doneStatus = FALSE;
 	if (ABILITY(gBankAttacker) != ABILITY_NOGUARD 
 	&&  ABILITY(gBankTarget)   != ABILITY_NOGUARD 
@@ -398,4 +399,22 @@ u32 AccuracyCalcNoTarget(u16 move, u8 bankAtk) {
 			calc = udivsi(calc * 120, 100); // 1.2 Micle Berry Boost
 			
 	return calc;
+}
+
+void JumpIfMoveFailed(u8 adder, u16 move)
+{
+    u8* BS_ptr = gBattlescriptCurrInstr + adder;
+    if (gMoveResultFlags & MOVE_RESULT_NO_EFFECT)
+    {
+        gLastLandedMoves[gBankTarget] = 0;
+        gLastHitByType[gBankTarget] = 0;
+        BS_ptr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+    }
+    else
+    {
+        TrySetDestinyBondToHappen();
+        if (AbilityBattleEffects(ABILITYEFFECT_ABSORBING, gBattlerTarget, 0, 0, move))
+            return;
+    }
+    gBattlescriptCurrInstr = BS_ptr;
 }
