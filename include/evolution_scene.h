@@ -3,16 +3,6 @@
 
 #include "global.h"
 
-
-struct Evolution
-{
-    u16 method;
-    u16 param;
-    u16 targetSpecies;
-};
-
-extern const struct Evolution gEvolutionTable[][EVOS_PER_MON];
-
 void BeginEvolutionScene(struct Pokemon* mon, u16 speciesToEvolve, bool8 canStopEvo, u8 partyID);
 void EvolutionScene(struct Pokemon* mon, u16 speciesToEvolve, bool8 canStopEvo, u8 partyID);
 void TradeEvolutionScene(struct Pokemon* mon, u16 speciesToEvolve, u8 preEvoSpriteID, u8 partyID);

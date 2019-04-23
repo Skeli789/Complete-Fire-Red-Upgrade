@@ -632,7 +632,6 @@ enum EVOLUTION_METHODS {
 	EVO_OTHER_PARTY_MON,	//another poke in the party
 	EVO_DARK_TYPE_IN_PARTY,	//pancham
 };
-
 #define EVO_MEGA			 0x00FE
 
 struct Evolution

@@ -1,8 +1,12 @@
 #include "defines.h"
+
 #include "../include/constants/pokemon.h"	
+#include "../include/constants/items.h"
+#include "../include/constants/hold_effects.h"
+#include "../include/constants/species.h"
 
 
-/*
+
 u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem) {
 
     int i;
@@ -17,11 +21,11 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem) {
     u8 holdEffect;
 
     if (heldItem == ITEM_ENIGMA_BERRY)
-        holdEffect = gSaveBlock1Ptr->enigmaBerry.holdEffect;
+        holdEffect = gSaveBlock1->enigmaBerry.holdEffect;
     else
         holdEffect = ItemId_GetHoldEffect(heldItem);
 
-    if (holdEffect == HOLD_EFFECT_PREVENT_EVOLVE && type != 3)
+    if (holdEffect == ITEM_EFFECT_PREVENT_EVOLVE && type != 3)
         return SPECIES_NONE;
 
     switch (type)
@@ -30,7 +34,7 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem) {
         level = GetMonData(mon, MON_DATA_LEVEL, 0);
         friendship = GetMonData(mon, MON_DATA_FRIENDSHIP, 0);
 
-        for (i = 0; i < EVOS_PER_MON; i++)
+        for (i = 0; i < EVOS_PER_MON; ++i)
         {
             switch (gEvolutionTable[species][i].method)
             {
@@ -41,15 +45,16 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem) {
 				
             case EVO_FRIENDSHIP_DAY:
 			#ifdef TIME_ENABLED
-                if (Clock->hours >= TIME_DAY_START && Block->hours < 24 && friendship >= 220)
+                if (Clock->hour >= TIME_DAY_START && Clock->hour < TIME_NIGHT_START && friendship >= 220)
                     targetSpecies = gEvolutionTable[species][i].targetSpecies;
 			#endif
                 break;
 				
             case EVO_FRIENDSHIP_NIGHT:
-                RtcCalcLocalTime();
-                if (gLocalTime.hours >= 0 && gLocalTime.hours < 12 && friendship >= 220)
+            #ifdef TIME_ENABLED
+                if (Clock->hour >= TIME_NIGHT_START && Clock->hour < TIME_DAY_START && friendship >= 220)
                     targetSpecies = gEvolutionTable[species][i].targetSpecies;
+			#endif
                 break;
 				
             case EVO_LEVEL:
@@ -95,11 +100,38 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem) {
                     targetSpecies = gEvolutionTable[species][i].targetSpecies;
                 break;
 				
+			case EVO_RAINY_OW:
+				break;
+				
+			case EVO_HOLD_ITEM_LEVEL:
+				break;
+				
+			case EVO_ITEM_DAY:
+				break;
+				
+			case EVO_ITEM_NIGHT:
+				break;
+				
+			case EVO_MAP:
+				break;
+				
+			case EVO_MOVE:
+				break;
+				
+			case EVO_FAIRY_MOVE:
+				break;
+				
+			case EVO_OTHER_PARTY_MON:
+				break;
+				
+			case EVO_DARK_TYPE_IN_PARTY:
+				break;
+				
             }
         }
         break;
     case 1:
-        for (i = 0; i < EVOS_PER_MON; i++)
+        for (i = 0; i < EVOS_PER_MON; ++i)
         {
             switch (gEvolutionTable[species][i].method)
             {
@@ -119,7 +151,7 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem) {
         break;
     case 2:
     case 3:
-        for (i = 0; i < EVOS_PER_MON; i++)
+        for (i = 0; i < EVOS_PER_MON; ++i)
         {
             if (gEvolutionTable[species][i].method == EVO_ITEM
              && gEvolutionTable[species][i].param == evolutionItem)
@@ -133,7 +165,4 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem) {
 
     return targetSpecies;
 };
-
-*/
-
 
