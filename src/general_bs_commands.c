@@ -32,6 +32,7 @@ extern u8 TypeCalc(move_t, u8 bankAtk, u8 bankDef, pokemon_t* party_data_atk, bo
 extern bool8 ProtectAffects(move_t, bank_t, bank_t, u8 set);
 extern void ClearSwitchBytes(u8 bank);
 extern void ClearSwitchBits(u8 bank);
+extern void JumpIfMoveFailed(u8 adder, u16 move);
 
 extern u8 BattleScript_Gems[];
 extern u8 BattleScript_Protean[];
@@ -524,12 +525,15 @@ void atk0F_resultmessage(void) {
             break;
 			
         case MOVE_RESULT_FOE_ENDURED:
-			if (gNewBS->EnduranceHelper == ENDURE_STURDY) {
-				stringId = 0x184;
-				BattleStringLoader = StringEnduredHitWithSturdy;
-				gLastUsedAbility = ABILITY(gBankTarget);
+			if (gNewBS->EnduranceHelper == ENDURE_STURDY) 
+			{
+				gMoveResultFlags &= ~(MOVE_RESULT_FOE_ENDURED);
 				gNewBS->EnduranceHelper = 0;
 				gProtectStructs[gBankTarget].enduredSturdy = 0;
+				gBattleScripting->bank = gBankTarget;
+				BattleScriptPushCursor();
+				gBattlescriptCurrInstr = BattleScript_EnduredSturdy;
+				return;
 			}
 			else
 				stringId = STRINGID_PKMNENDUREDHIT;
@@ -573,9 +577,9 @@ void atk0F_resultmessage(void) {
                 gMoveResultFlags &= ~(MOVE_RESULT_FOE_ENDURED | MOVE_RESULT_FOE_HUNG_ON);
                 BattleScriptPushCursor();
 				if (gNewBS->EnduranceHelper == ENDURE_STURDY) {
-					gLastUsedAbility = ABILITY(gBankTarget);
 					gNewBS->EnduranceHelper = 0;
 					gProtectStructs[gBankTarget].enduredSturdy = 0;
+					gBattleScripting->bank = gBankTarget;
 					gBattlescriptCurrInstr = BattleScript_EnduredSturdy;
 				}
 				else
@@ -3453,7 +3457,7 @@ void atkE7_trycastformdatachange(void) {
 	
     gBattlescriptCurrInstr++;
 	
-	switch (gBattleMons[bank].species) { //Not ability b/c you can lose ability
+	switch (SPECIES(bank)) { //Not ability b/c you can lose ability
 		case PKMN_CASTFORM:
 			form = CastformDataTypeChange(bank);
 			if (form) {

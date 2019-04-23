@@ -1,5 +1,5 @@
 #org @gText_AirLockActivate
-[FD][13]'s [FD][1A]\nremoved the effects of weather!
+The effects of weather disappeared!
 
 #org @gText_PressureActivate
 [FD][13] is exerting\nits pressure!
@@ -35,7 +35,7 @@
 [FD][13] shuddered!
 
 #org @gText_ForewarnActivate
-[FD][0F]'s [FD][18]\nalerted it to [FD][13]'s\n[FD][00]!
+It was alerted to\n[FD][13]'s\n[FD][00]!
 
 #org @gText_FriskActivate
 [FD][13] frisked\n[FD][10] and found\lits [FD][16]!
@@ -43,17 +43,17 @@
 #org @gText_FogIsDeep
 The fog is deep[B0]
 
-#org @gText_SnowWarningActivate
-[FD][13]'s [FD][1A]\nwhipped up a hailstorm!
-
 #org @gText_PrimordialSeaActivate
-[FD][13]'s [FD][1A]\ncaused a heavy rain to fall!
+A heavy rain began to fall!
 
 #org @gText_DesolateLandActivate
-[FD][13]'s [FD][1A]\nturned the sunlight extremely harsh!
+The sunlight turned extremely harsh!
 
 #org @gText_DeltaStream
-[FD][13]'s [FD][1A]\nsummoned a mysterious air current\lthat protects Flying-type Pok\emon!
+Mysterious strong winds are protecting\nFlying-type Pok\emon!
 
 #org @gText_SlowStartEnd
 [FD][13] got its\nact together!
+
+#org @gText_FlashFirePowerUp
+The power of [FD][13]'s\nFire-type moves rose!
