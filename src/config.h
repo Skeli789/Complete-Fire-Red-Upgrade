@@ -5,12 +5,6 @@
 
 //#define UNBOUND //Don't uncomment this line; it's for compiling specific aspects of Pokemon Unbound
 
-#define VAR_HEALINGMAP 0x405A
-#define VAR_HEALING_XPOS 0x405B
-#define VAR_HEALING_YPOS 0x405C
-
-#define DEXNAV_VAR 0x408B
-
 #define TERRAIN_VAR 0x5000
 #define TOTEM_VAR 0x5001 //to 0x5004
 #define NPC_FOLLOWING_VAR 0x5005 //This var should should be set to the NPC Id of the NPC following the player. If no NPC is following the player, it should be set to 0.
@@ -20,6 +14,7 @@
 #define SWARM_SPECIES_VAR 0x5009
 #define SWARM_MAP_NAME_VAR 0x500A
 #define DEFAULT_WALKING_SCRIPT 0x500B  //Walking scripts from JPAN's engine. His engine used 0x407E.
+#define DEXNAV_VAR 0x500C
 
 #define SECOND_OPPONENT_VAR 0x5010 //Set this to the var used to store the Trainer Id of the second opponent in Multi Battles (can be any free var)
 #define PARTNER_VAR 0x5011 //Set this to the var used to store the Trainer Id of your partner in Multi Battles (can be any free var)
@@ -42,15 +37,16 @@
 #define HIDDEN_ABILITY_FLAG 0x90E //If this flag is set, generated wild Pokemon will have their hidden abilities
 #define DOUBLE_WILD_BATTLE_FLAG 0x90F //If this flag is set, a wild battles will be against two Pokemon
 #define NO_RANDOM_WILD_ENCOUNTERS_FLAG 0x910 //If this is set, wild Pokemon won't appear when walking/surfing in grass, caves, water, etc.
+#define FLAG_REMOVE_EVO_ITEM 0x911  //Flag to toggle item removal after leveling up (set by the engine)
 
 //Pedometer Flags as in JPAN Engine
-#define FLAG_LONG_PEDOMETER 0x911	// 32 bit
-#define FLAG_MED_PEDOMETER 0x912	// 16 bit
-#define FLAG_SMALL_PEDOMETER_1 0x913	// 8 bit
-#define FLAG_SMALL_PEDOMETER_2 0x914	// 8 bit
+#define FLAG_LONG_PEDOMETER 0x920	// 32 bit
+#define FLAG_MED_PEDOMETER 0x921	// 16 bit
+#define FLAG_SMALL_PEDOMETER_1 0x922	// 8 bit
+#define FLAG_SMALL_PEDOMETER_2 0x923	// 8 bit
 
 //Battle Tower Options
-#define BATTLE_TOWER_FLAG 0x920
+#define BATTLE_TOWER_FLAG 0x930
 #define BATTLE_TOWER_POKE_NUM 0x5015 //Var
 #define BATTLE_TOWER_POKE_LEVEL 0x5016 //Var
 #define BATTLE_TOWER_BATTLE_TYPE 0x5017 //Var
@@ -79,6 +75,11 @@ enum
 #define VAR_RUNTIME_CHANGEABLE 0x5026		//'Secret Base' variables, save 15 consecutive variables for this. 0x4080 in JPAN engine.
 //#define EXISTING_OW_TABLE_ADDRESS 0x81a2000	//Uncomment if you want new overworld NPC tables to be generated.
 
+//Healing Place as in JPAN's Engine
+#define VAR_HEALINGMAP 0x5030 //0x405A in JPAN's Engine
+#define VAR_HEALING_XPOS 0x5031 //0x405B in JPAN's Engine
+#define VAR_HEALING_YPOS 0x5032 //0x405C in JPAN's Engine
+
 //General Options
 #define TIME_MORNING_START 4		//4:00 AM -  4:00
 #define TIME_DAY_START 8			//8:00 AM -  8:00
@@ -87,11 +88,11 @@ enum
 
 #define KANTO_DEX_COUNT 151
 #define NATIONAL_DEX_COUNT 386
-//#define MAX_NUM_POKEMON SPECIES_EGG + 1
-#define MAX_NUM_POKEMON SPECIES_MELMETAL + 1
+#define MAX_NUM_POKEMON SPECIES_EGG + 1
 
 #define MAX_LEVEL 100 //Also change this in the file “special_inserts.asm” found in the root
 #define NUM_TRAINER_CLASSES 107
+#define EVOS_PER_MON 4
 #define EV_CAP 252
 
 #define DUSK_BALL_MULTIPLIER 30 //Change this line to 35 to make the catch rate for the Dusk Ball 3.5x like before Gen 7
@@ -123,6 +124,7 @@ enum
 
 #define SEEN_DEX_FLAGS gSaveBlock2->pokedex.seen
 #define CAUGHT_DEX_FLAGS gSaveBlock2->pokedex.owned
+#define EXISTING_FOSSIL_IMAGE_TABLE_ADDRESS 0x81a4600  //Comment this out if you've already inserted a fossil image table
 
 #define INVERSE_BATTLES //Comment this line to disable the possibility of having Inverse Battles
 #define TIME_ENABLED //Comment this line to disable time based features. All time dependent features will default in Daytime.
@@ -148,13 +150,7 @@ enum
 #define SELECT_FROM_PC //Comment this out to remove select-from-pc hack.
 #define SET_HEALING_PLACE_HACK  // comment this out if you don't want custom map/bank whiteout respawn locations
 #define FOSSIL_IMAGE_HACK  // comment this out if you don't want JPANs fossil image hack
-#define EXISTING_FOSSIL_IMAGE_TABLE_ADDRESS 0x81a4600  // comment this out if you've already inserted a fossil image table
-
-// Evolution Stuff
-//#define EXISTING_EVO_TABLE_ADDRESS 0x8989D30	// if you already have an evo table you want to keep (fix evolution method indices in include/pokemon.h
-#define EVO_HOLD_ITEM_REMOVAL	// on leveling up/hold item evolution (eg. sneasel), remove the item
-#define FLAG_REMOVE_EVO_ITEM 0x2D0  // flag to toggle item removal after leveling up
-#define EVOS_PER_MON 8			// for eevolutions
+#define EVO_HOLD_ITEM_REMOVAL //Comment this out if you want leveling up/hold item evolution (eg. sneasel) to remove the item (like normal)
 
 /* Misc Effect Options */
 //#define OLD_BURN_DAMAGE //Uncomment this line if you want burn damage to do 1/8 of max health instead of 1/16
