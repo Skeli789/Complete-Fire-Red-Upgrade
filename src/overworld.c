@@ -62,7 +62,7 @@ void TrainerFaceFix(void);
 void FollowerPositionFix(void);
 
 // table full of pointers to custom walking scripts
-u8* gDefaultWalkingScripts[] =
+const u8* gDefaultWalkingScripts[] =
 {
 	(u32) 0,
 	(u32) 0,
