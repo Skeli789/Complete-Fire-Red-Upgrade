@@ -87,27 +87,31 @@ script functions/specials in asm - hooks and returns
 .global WriteTypeHook
 .global DisplayTypeHook
 
+@@ Evolution Method Extra Hooks
+.global RemoveEvoItem
 
-@@ Evolution Methods
-.global EvoMethods
-
-/*
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@ Evo Methods
-@ hook at 42EC4 via r4
+@ Evolution Methods - Remove Evo Item
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .align 2
 .pool
-EvoMethods:
-	bl GetEvolutionTargetSpecies
-	pop {pc}
-*/
-	
+RemoveEvoItem:
+	ldrh r0, [r4, #0x8]
+	add r0, #0x1
+	strh r0, [r4, #0x8]
+	add r2, r2, r1
+	add r2, #0xC
+	push {r1-r5}
+	mov r0, r9
+	bl ItemEvolutionRemoval
+	pop {r1-r5}
+	mov r0, r9
+	ldr r1, =(0x080CED68 +1)
+	bx r1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Unhidden Power - Write Type
-@ GetMoveTypeSpecialFromParty
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .align 2
 .pool

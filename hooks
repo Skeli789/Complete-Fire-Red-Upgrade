@@ -282,6 +282,10 @@ SummaryScreenWrapAround 0813b20c 1
 WriteTypeHook 08030984 0
 DisplayTypeHook 081368CC 1
 
+## Evolution Methods
+GetEvolutionTargetSpecies 08042EC4 4
+RemoveEvoItem 080CED5C 0
+
 
 ##Follow Me
 #FollowMe_SetStateHook 08063CF4 1

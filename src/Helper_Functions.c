@@ -9,6 +9,7 @@ extern move_t SoundMoveTable[];
 extern move_t MoldBreakerMoves[];
 extern move_t MovesThatChangePhysicality[];
 extern struct BattleMove gBattleMoves[];
+extern struct Evolution gEvolutionTable[MAX_NUM_POKEMON][EVOS_PER_MON];
 
 extern u8 GetMoveTypeSpecial(bank_t, move_t);
 extern s8 PriorityCalc(u8 bank, u8 action, u16 move);
@@ -729,9 +730,9 @@ bool8 CanKnockOffItem(bank_t bank) {
 
 bool8 CanEvolve(pokemon_t* party_data) {
 	int i;
-	evolution* evolutions = (evolution*) ((u32) evolution_table + party_data->species * sizeof(evolution) * (evos_per_poke + 1));
+	evolution* evolutions = (evolution*) ((u32) evolution_table + party_data->species * sizeof(evolution) * (EVOS_PER_MON + 1));
 	
-	for (i = 0; i <= evos_per_poke; ++i) {
+	for (i = 0; i <= EVOS_PER_MON; ++i) {
 		if (evolutions[i].type != MEGA_EVOLUTION && evolutions[i].type != 0)
 			return TRUE;
 	}
@@ -740,9 +741,9 @@ bool8 CanEvolve(pokemon_t* party_data) {
 
 bool8 CouldHaveEvolvedViaLevelUp(pokemon_t* mon) {
 	int i;
-	evolution* evolutions = (evolution*) ((u32) evolution_table + mon->species * sizeof(evolution) * (evos_per_poke + 1));
+	evolution* evolutions = (evolution*) ((u32) evolution_table + mon->species * sizeof(evolution) * (EVOS_PER_MON + 1));
 	
-	for (i = 0; i <= evos_per_poke; ++i) {
+	for (i = 0; i <= EVOS_PER_MON; ++i) {
 		if (evolutions[i].type == EVO_LEVEL && mon->level >= evolutions[i].argument)
 			return TRUE;
 	}
