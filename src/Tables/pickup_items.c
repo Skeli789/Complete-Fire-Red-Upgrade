@@ -1,6 +1,6 @@
-#include "defines.h"
-#include "../include/new/pickup_items.h"
-#include "../include/constants/items.h"
+#include "../defines.h"
+#include "../../include/new/pickup_items.h"
+#include "../../include/constants/items.h"
 
 item_t pickup_common_items[PU_NUM_COMMON_ITEMS] = {
     ITEM_POTION,
