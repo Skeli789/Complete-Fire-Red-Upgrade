@@ -65,6 +65,8 @@
 083FC231 FD 10
 ##Suction Cups String
 083FC871 AB FF
+##Lightning Rod String
+083FCA15 00 E8 E3 E3 DF 00 E8 DC D9 FE D5 E8 E8 D5 D7 DF AB FF
 ##Black Flute String
 083D5AA1 E0 D9 EA D9 E0 E7 00 DC DD DB DC D9 E6 AD FF
 ##White Flute String

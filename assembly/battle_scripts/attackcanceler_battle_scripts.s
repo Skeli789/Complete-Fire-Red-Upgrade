@@ -35,10 +35,12 @@ BattleScript_PrintCustomString:
 BattleScript_MagicBounce:
 	attackstring
 	ppreduce
-	pause DELAY_HALFSECOND
-	setword BATTLE_STRING_LOADER MagicBounceString
+	pause 0x10
+	call BattleScript_AbilityPopUp
+	setword BATTLE_STRING_LOADER gText_MagicBounce
 	printstring 0x184
-	waitmessage DELAY_1SECOND
+	waitmessage DELAY_1SECOND	
+	call BattleScript_AbilityPopUpRevert
 	orword 0x2023DD0 0x800C00
 	various BANK_ATTACKER 0x1
 	return
@@ -52,21 +54,24 @@ BattleScript_MoveUsedFlinched:
 	goto BS_MOVE_END
 
 SteadfastBoost:
+	jumpifstat BANK_ATTACKER EQUALS STAT_SPD STAT_MAX BS_MOVE_END
+	copyarray BATTLE_SCRIPTING_BANK USER_BANK 0x1
+	call BattleScript_AbilityPopUp
 	setbyte 0x2023FDF 0x0
 	playstatchangeanimation BANK_ATTACKER STAT_ANIM_SPD STAT_ANIM_UP
 	setbyte STAT_CHANGE_BYTE STAT_SPD | INCREASE_1
 	statbuffchange STAT_ATTACKER | STAT_BS_PTR BS_MOVE_END
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BS_MOVE_END
 	copyarray 0x2023FDB USER_BANK 0x1 @;gBattlescripting->bank
-	setword BATTLE_STRING_LOADER AbilityRaisedStatString
-	printstring 0x184
+	printfromtable 0x83FE57C
 	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
 	goto BS_MOVE_END
 	
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_MoveUsedGravityPrevents:
-	pause DELAY_HALFSECOND
+	orbyte OUTCOME OUTCOME_FAILED
 	setword BATTLE_STRING_LOADER GravityAttackCancelString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
@@ -75,7 +80,7 @@ BattleScript_MoveUsedGravityPrevents:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_MoveUsedHealBlockPrevents:
-	pause DELAY_HALFSECOND
+	orbyte OUTCOME OUTCOME_FAILED
 	setword BATTLE_STRING_LOADER HealBlockAttackCancelString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
@@ -84,7 +89,7 @@ BattleScript_MoveUsedHealBlockPrevents:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_MoveUsedThroatChopPrevents:
-	pause DELAY_HALFSECOND
+	orbyte OUTCOME OUTCOME_FAILED
 	setword BATTLE_STRING_LOADER ThroatChopAttackCancelString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
@@ -93,7 +98,7 @@ BattleScript_MoveUsedThroatChopPrevents:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_MoveUsedFailedPrimalWeather:
-	orbyte OUTCOME 0x20
+	orbyte OUTCOME OUTCOME_FAILED
 	attackstring
 	ppreduce
 	pause DELAY_HALFSECOND
@@ -112,7 +117,7 @@ HarshSunEvaportionBS:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_MoveUsedPsychicTerrainPrevents:
-	orbyte OUTCOME 0x20
+	orbyte OUTCOME OUTCOME_FAILED
 	attackstring
 	ppreduce
 	pause DELAY_HALFSECOND
@@ -200,17 +205,18 @@ RemoveIllusionReturn:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_DarkTypePreventsPrankster:
-	call BattleScript_AbilityPopUp
-	orbyte OUTCOME OUTCOME_MISSED
+	orbyte OUTCOME OUTCOME_NOT_AFFECTED
+	attackstring
+	ppreduce
+	pause DELAY_HALFSECOND
 	printstring 27 @;STRINGID_IT_DOESNT_AFFECT
 	waitmessage DELAY_1SECOND
-	call BattleScript_AbilityPopUpRevert
 	goto BS_MOVE_END
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_MoveUsedSkyBattlePrevents:
-	pause DELAY_HALFSECOND
+	orbyte OUTCOME OUTCOME_FAILED
 	setword BATTLE_STRING_LOADER SkyBattleAttackCancelString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
@@ -219,8 +225,7 @@ BattleScript_MoveUsedSkyBattlePrevents:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 .align 2
-MagicBounceString: .byte 0xFD, 0x0F, 0xB4, 0xE7, 0x00, 0xFD, 0x14, 0xFE, 0xEB, 0xD5, 0xE7, 0x00, 0xD6, 0xE3, 0xE9, 0xE2, 0xD7, 0xD9, 0xD8, 0x00, 0xD6, 0xD5, 0xD7, 0xDF, 0x00, 0xD6, 0xED, 0x00, 0xC7, 0xD5, 0xDB, 0xDD, 0xD7, 0x00, 0xBC, 0xE3, 0xE9, 0xE2, 0xD7, 0xD9, 0xAB, 0xFF
-AbilityRaisedStatString: .byte 0xFD, 0x13, 0xB4, 0xE7, 0x00, 0xFD, 0x1A, 0xFE, 0xE6, 0xD5, 0xDD, 0xE7, 0xD9, 0xD8, 0x00, 0xDD, 0xE8, 0xE7, 0x0, 0xFD, 0x0, 0xAB, 0xFF
+AbilityRaisedStatString: .byte 0xFD, 0x13, 0xB4, 0xE7, 0x00, 0xFD, 0x00, 0xFE, 0xFD, 0x01, 0xFF
 GravityAttackCancelString: .byte 0xFD, 0x0F, 0x00, 0xD7, 0xD5, 0xE2, 0xB4, 0xE8, 0x00, 0xE9, 0xE7, 0xD9, 0xFE, 0xFD, 0x14, 0x00, 0xD6, 0xD9, 0xD7, 0xD5, 0xE9, 0xE7, 0xD9, 0x00, 0xE3, 0xDA, 0x00, 0xDB, 0xE6, 0xD5, 0xEA, 0xDD, 0xE8, 0xED, 0xAB, 0xFF
 HealBlockAttackCancelString: .byte 0xFD, 0x0F, 0x00, 0xD7, 0xD5, 0xE2, 0xB4, 0xE8, 0x00, 0xE9, 0xE7, 0xD9, 0xFE, 0xFD, 0x14, 0x00, 0xD5, 0xDA, 0xE8, 0xD9, 0xE6, 0x00, 0xE8, 0xDC, 0xD9, 0x00, 0xC2, 0xD9, 0xD5, 0xE0, 0x00, 0xBC, 0xE0, 0xE3, 0xD7, 0xDF, 0xAB, 0xFF
 ThroatChopAttackCancelString: .byte 0xFD, 0x0F, 0x00, 0xD7, 0xD5, 0xE2, 0xB4, 0xE8, 0x00, 0xE9, 0xE7, 0xD9, 0xFE, 0xE7, 0xE3, 0xE9, 0xE2, 0xD8, 0x00, 0xE1, 0xE3, 0xEA, 0xD9, 0xE7, 0x00, 0xD5, 0xDA, 0xE8, 0xD9, 0xE6, 0x00, 0xE8, 0xDC, 0xD9, 0x00, 0xCE, 0xDC, 0xE6, 0xE3, 0xD5, 0xE8, 0x00, 0xBD, 0xDC, 0xE3, 0xE4, 0xAB, 0xFF

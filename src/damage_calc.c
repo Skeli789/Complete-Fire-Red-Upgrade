@@ -47,6 +47,7 @@ u8 GetMoveTypeSpecialFromParty(pokemon_t* party_data, u16 move);
 bool8 AbilityCanChangeTypeAndBoost(u8 bankAtk, u16 move);
 u8 GetExceptionMoveType(u8 bankAtk, move_t);
 u8 GetExceptionMoveTypeFromParty(pokemon_t*, move_t);
+u8 GetSummaryScreenMoveType(u16 move, pokemon_t* mon);
 
 void atk05_damagecalc(void);
 void FutureSightDamageCalc(void);
@@ -94,15 +95,15 @@ void atk04_critcalc(void) {
 		
 		if (critChance > 4)
 			critChance = 4;
-
+		
 		#ifdef CRIT_CHANCE_GEN_6
-			if (!(umodsi(Random(), Gen6CriticalHitChance[critChance])))
+			if (!(Random() % Gen6CriticalHitChance[critChance]))
 				ConfirmedCrit = TRUE;
 		#elifdef CRIT_CHANCE_GEN_2_TO_5
-			if (!(umodsi(Random(), Gen2_5CriticalHitChance[critChance])))
+			if (!(Random() % Gen2_5CriticalHitChance[critChance]))
 				ConfirmedCrit = TRUE;
 		#else
-			if (!(umodsi(Random(), Gen7CriticalHitChance[critChance])))
+			if (!(Random() % Gen7CriticalHitChance[critChance]))
 				ConfirmedCrit = TRUE;			
 		#endif   
 	}
@@ -185,8 +186,6 @@ u8 CalcPossibleCritChance(u8 bankAtk, u8 bankDef, u16 move, pokemon_t* atkMon, b
 	}
 	return FALSE;
 }
-
-extern u32 break_helper(u32 a);
 
 void atk05_damagecalc(void) {
 	gBattleStruct->dynamicMoveType = GetMoveTypeSpecial(gBankAttacker, gCurrentMove);
@@ -1031,6 +1030,16 @@ u8 GetExceptionMoveTypeFromParty(pokemon_t* party_data, u16 move) {
 	}
 	
 	return moveType;
+}
+
+// Unhidden Power function
+u8 GetSummaryScreenMoveType(u16 move, pokemon_t* mon) {
+#ifdef DISPLAY_REAL_MOVE_TYPE_ON_MENU
+	return GetMoveTypeSpecialFromParty(mon, move);
+#else
+	++mon; //So no compiler errors
+	return gBattleMoves[move].type;
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2784,19 +2793,3 @@ void ApplyRandomDmgMultiplier(void) {
 	if (gBattleMoveDamage)
 		gBattleMoveDamage = MathMax(1, udivsi((gBattleMoveDamage * rando), 100));
 }
-
-
-
-
-// Unhidden Power function
-u8 GetSummaryScreenMoveType(u16 move, pokemon_t* mon) {
-#ifdef UNHIDDEN_POWER
-	return GetMoveTypeSpecialFromParty(mon, move);
-#else
-	return gBattleMoves[move].type;
-#endif
-};
-
-
-
-

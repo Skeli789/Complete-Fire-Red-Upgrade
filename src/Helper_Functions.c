@@ -851,9 +851,67 @@ u8 AttacksThisTurn(u8 bank, u16 move) // Note: returns 1 if it's a charging turn
     return 2;
 }
 
-bool8 IsZMove(u16 move)
+bool8 IsZMove(const u16 move)
 {
 	return move >= FIRST_Z_MOVE && move <= LAST_Z_MOVE;
+}
+
+void AddBankToPickupStack(const u8 bank)
+{
+	int i, j;
+	u8 newStack[4];
+	
+	for (i = 0, j = 0; i < gBattlersCount; ++i)
+	{
+		if (gNewBS->pickupStack[i] != bank && gNewBS->pickupStack[i] != 0xFF)
+			newStack[j++] = gNewBS->pickupStack[i];
+	}
+	
+	newStack[j++] = bank;
+	
+	while (j < gBattlersCount)
+		newStack[j++] = 0xFF;
+		
+	for (i = 0; i < gBattlersCount; ++i)
+		gNewBS->pickupStack[i] = newStack[i];
+}
+
+void RemoveBankFromPickupStack(const u8 bank)
+{
+	int i, j;
+	u8 newStack[4];
+	
+	for (i = 0, j = 0; i < gBattlersCount; ++i)
+	{
+		if (gNewBS->pickupStack[i] != bank && gNewBS->pickupStack[i] != 0xFF)
+			newStack[j++] = gNewBS->pickupStack[i];
+	}
+	
+	while (j < gBattlersCount)
+		newStack[j++] = 0xFF;
+		
+	for (i = 0; i < gBattlersCount; ++i)
+		gNewBS->pickupStack[i] = newStack[i];
+}
+
+u8 GetTopOfPickupStackNotIncludingBank(const u8 bank)
+{
+	int i;
+	
+	for (i = 0; i < gBattlersCount; ++i)
+	{
+		if (gNewBS->pickupStack[i] == 0xFF)
+			break;
+	}
+	
+	if (i == 0 //Stack is empty
+	|| (i == 1 && gNewBS->pickupStack[0] == bank)) //Stack only contains ignored bank
+		return 0xFF;
+	
+	if (gNewBS->pickupStack[i - 1] == bank)
+		return gNewBS->pickupStack[i - 2];
+	
+	return gNewBS->pickupStack[i - 1];
 }
 
 void ClearBankStatus(bank_t bank) {

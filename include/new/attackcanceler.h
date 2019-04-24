@@ -38,6 +38,7 @@ enum
 	CANCELLER_PRIMAL_WEATHER,
 	CANCELLER_PSYCHIC_TERRAIN,
 	CANCELLER_PRANKSTER,
+	CANCELLER_EXPLODING_DAMP,
 	CANCELLER_MULTIHIT_MOVES,
 	CANCELLER_MULTI_TARGET_MOVES,
 	CANCELLER_END,
@@ -46,7 +47,6 @@ enum
 #define BattleScript_NoPPForMove (u8*) 0x81D8EA8
 #define BattleScript_MagicCoatBounce (u8*) 0x81D8FAA
 #define BattleScript_SnatchedMove (u8*) 0x81D8FC2
-#define BattleScript_TookAttack (u8*) 0x81D938D
 
 #define BattleScript_MoveUsedIsAsleep (u8*) 0x81D9029
 #define BattleScript_MoveUsedWokeUp (u8*) 0x81D9036

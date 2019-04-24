@@ -745,6 +745,7 @@ struct NewBattleStruct
 	u8 SuppressedAbilities[4];
 	u8 skyDropAttackersTarget[4]; //skyDropAttackersTarget[gBankAttacker] = gBankTarget
 	u8 skyDropTargetsAttacker[4]; //skyDropTargetsAttacker[gBankTarget] = gBankAttacker
+	u8 pickupStack[4]; //0x2017620
 	
 	//Bit Fields for Banks
 	u8 MicleBerryBits;
@@ -1029,6 +1030,8 @@ typedef struct fling FlingStruct;
 #define B_ANIM_LOAD_DEAFUALT_BG 0x41
 #define B_ANIM_LOAD_ABILITY_POP_UP 0x42
 #define B_ANIM_DESTROY_ABILITY_POP_UP 0x43
+
+#define B_ANIM_TRANSFORM_MOVE 0xFF
 
 // special animations table
 #define B_ANIM_LVL_UP                   0x0

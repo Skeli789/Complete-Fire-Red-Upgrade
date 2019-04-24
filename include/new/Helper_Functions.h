@@ -59,7 +59,10 @@ extern u8 CalcMoveSplit(u8 bank, u16 move);
 extern u8 CalcMoveSplitFromParty(pokemon_t* mon, u16 move);
 extern u8 FindMovePositionInMoveset(u16 move, u8 bank);
 extern u8 AttacksThisTurn(u8 bank, u16 move);
-extern bool8 IsZMove(u16 move);
+extern bool8 IsZMove(const u16 move);
+extern void AddBankToPickupStack(const u8 bank);
+extern void RemoveBankFromPickupStack(const u8 bank);
+extern u8 GetTopOfPickupStackNotIncludingBank(const u8 bank);
 extern void ClearBankStatus(bank_t bank);
 
 extern bool8 CanBeGeneralStatused(u8 bank);

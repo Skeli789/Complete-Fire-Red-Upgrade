@@ -22,9 +22,6 @@
 .global BattleScript_MultiHitPrintStrings
 .global BattleScript_PluckEat
 
-.global AbilityRaisedStatString
-
-
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_PoisonTouch:
@@ -133,10 +130,12 @@ BattleScript_Magician:
 
 BattleScript_Moxie:
 	statbuffchange STAT_ATTACKER | STAT_BS_PTR MoxieReturnPostBuff
-	playanimation BANK_ATTACKER 0x1 0x2023FD4
-	setword BATTLE_STRING_LOADER AbilityRaisedStatString
-	printstring 0x184
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 MoxieReturnPostBuff
+	call BattleScript_AbilityPopUp
+	playanimation BANK_ATTACKER ANIM_STAT_BUFF ANIM_ARG_1
+	printfromtable 0x83FE57C
 	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
 MoxieReturnPostBuff:
 	return
 
@@ -190,8 +189,8 @@ BattleScript_Pickpocket:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 PoisonedByBS:
-	statusanimation 0x2
 	jumpifbyte EQUALS POISONED_BY 0x1 PoisonTouchPSN
+	statusanimation 0x2
 	jumpifbyte EQUALS POISONED_BY 0x2 ToxicSpikesPSN
 	jumpifbyte EQUALS POISONED_BY 0x3 ToxicOrbBadPSN
 	jumpifbyte EQUALS POISONED_BY 0x4 BanefulBunkerPSN
@@ -201,9 +200,11 @@ PoisonedByBS:
 
 PoisonTouchPSN:
 	setbyte POISONED_BY 0x0
-	setword BATTLE_STRING_LOADER PoisonTouchString
-	printstring 0x184
+	call BattleScript_AbilityPopUp
+	statusanimation 0x2
+	printfromtable 0x83FE5BC
 	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
 	goto 0x81D91C3
 
 ToxicSpikesPSN:

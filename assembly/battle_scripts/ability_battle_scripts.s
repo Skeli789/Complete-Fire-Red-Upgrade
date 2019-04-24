@@ -12,25 +12,27 @@
 .global BattleScript_ImposterActivates
 .global BattleScript_AttackerAbilityStatRaiseEnd3
 .global BattleScript_SwitchInAbilityMsg
+.global BattleScript_AbilityCuredStatus
 .global BattleScript_AbilityCuredStatusEnd3
 .global BattleScript_StartedSchoolingEnd3
 .global BattleScript_StoppedSchoolingEnd3
 .global BattleScript_ShieldsDownToCoreEnd3
 .global BattleScript_ShieldsDownToMeteorEnd3
 .global BattleScript_EmergencyExit
+.global BattleScript_AbilityTransformed
+.global BattleScript_TransformedEnd2
 .global BattleScript_TransformedEnd3
 
 .global BattleScript_RainDishActivates
 .global BattleScript_DrySkinDamage
 .global BattleScript_SolarPowerDamage
 .global BattleScript_Healer
-.global BattleScript_SpeedBoostActivates
 .global BattleScript_MoodySingleStat
 .global BattleScript_MoodyRegular
 .global BattleScript_BadDreams
 .global BattleScript_Harvest
 .global BattleScript_Pickup
-.global BattleScript_SoundproofProtected
+.global BattleScript_AttackerCantUseMove
 .global BattleScript_FlashFireBoost_PPLoss
 .global BattleScript_FlashFireBoost
 .global BattleScript_MoveHPDrain_PPLoss
@@ -53,7 +55,8 @@
 .global BattleScript_SynchronizeActivates_StatusesAttacker
 .global BattleScript_SynchronizeActivates_StatusesTarget
 
-.global BattleScript_Protean
+.global BattleScript_AbilityChangedType
+.global BattleScript_AbilityChangedTypeContact
 .global BattleScript_MimikyuTookDamage
 .global BattleScript_MimikyuTransform
 .global MimikyuDisguisedTookDamageString
@@ -69,6 +72,7 @@
 .global BattleScript_SturdyPreventsOHKO
 .global BattleScript_StickyHoldActivates
 .global BattleScript_DampStopsExplosion
+.global BattleScript_TookAttack
 
 .global BattleScript_AbilityPopUp
 .global BattleScript_AbilityPopUpRevert
@@ -173,11 +177,13 @@ BattleScript_TerrainFromAbility:
 
 
 BattleScript_ImposterActivates:
-	call BattleScript_AbilityPopUp
-	playanimation BANK_ATTACKER ANIM_TRANSFORM 0x0
+	callasm TransferAbilityPopUpHelperAsImposter
+	playanimation BANK_SCRIPTING ANIM_LOAD_ABILITY_POP_UP 0x0
+	playanimation BANK_SCRIPTING ANIM_TRANSFORM_MOVE 0x0
 	printfromtable 0x83FE5B4
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
+	clearspecialstatusbit BANK_SCRIPTING STATUS3_SWITCH_IN_ABILITY_DONE
 	tryactivateswitchinability BANK_SCRIPTING
 	end3
 
@@ -208,12 +214,16 @@ BattleScript_SwitchInAbilityMsg:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_AbilityCuredStatusEnd3:
+	call BattleScript_AbilityCuredStatus
+	end3
+	
+BattleScript_AbilityCuredStatus:
 	call BattleScript_AbilityPopUp
-	printstring 0x40 @;STRINGID_PKMNSXCUREDITSYPROBLEM
+	printstring 0x164 @;STRINGID_PKMNSXCUREDITSYPROBLEM
 	waitmessage DELAY_1SECOND
 	refreshhpbar BANK_SCRIPTING
 	call BattleScript_AbilityPopUpRevert
-	end3
+	return
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -237,12 +247,22 @@ BattleScript_ShieldsDownToMeteorEnd3:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+BattleScript_TransformedEnd2:
+	call BattleScript_AbilityTransformed
+	end2
+
 BattleScript_TransformedEnd3:
-	playanimation BANK_ATTACKER ANIM_TRANSFORM 0x0
+	call BattleScript_AbilityTransformed
+	end3
+
+BattleScript_AbilityTransformed:
+	call BattleScript_AbilityPopUp
+	playanimation BANK_SCRIPTING ANIM_TRANSFORM 0x0
 	setword BATTLE_STRING_LOADER TransformedString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
-	end3
+	call BattleScript_AbilityPopUpRevert
+	return
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -312,20 +332,11 @@ BattleScript_SolarPowerDamage:
 
 BattleScript_Healer:
 	call BattleScript_AbilityPopUp
-	setword BATTLE_STRING_LOADER, HealerString
+	setword BATTLE_STRING_LOADER, gText_HealerCuredStatusProblem
 	printstring 0x184
 	waitmessage DELAY_1SECOND
-	refreshhpbar BANK_TARGET
+	refreshhpbar BANK_EFFECT
 	call BattleScript_AbilityPopUpRevert
-HealerBSEnd:
-	end3
-	
-@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-BattleScript_SpeedBoostActivates:
-	playanimation BANK_ATTACKER ANIM_STAT_BUFF ANIM_ARG_1
-	printfromtable 0x83FE57C
-	waitmessage DELAY_1SECOND
 	end3
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -441,12 +452,13 @@ BattleScript_Pickup:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-BattleScript_SoundproofProtected:
+BattleScript_AttackerCantUseMove:
 	attackstring
 	ppreduce
 	pause DELAY_HALFSECOND
 	call BattleScript_AbilityPopUp
-	printstring 0x132 @;STRINGID_PKMNSXBLOCKSY
+	setword BATTLE_STRING_LOADER CantUseMoveString
+	printstring 0x184
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
 	goto BS_MOVE_END
@@ -485,12 +497,12 @@ BattleScript_MoveHPDrain:
 BattleScript_MonMadeMoveUseless_PPLoss:
 	ppreduce
 BattleScript_MonMadeMoveUseless:
+	orbyte OUTCOME OUTCOME_NOT_AFFECTED
 	attackstring
 	pause DELAY_HALFSECOND
 	call BattleScript_AbilityPopUp
 	printstring 0x1B @;STRINGID_ITDOESNTAFFECT
 	waitmessage DELAY_1SECOND
-	orbyte OUTCOME OUTCOME_NOT_AFFECTED
 	call BattleScript_AbilityPopUpRevert
 	goto BS_MOVE_END
 
@@ -499,20 +511,24 @@ BattleScript_MonMadeMoveUseless:
 BattleScript_MoveStatDrain_PPLoss:
 	ppreduce
 BattleScript_MoveStatDrain:
+	orbyte OUTCOME OUTCOME_NOT_AFFECTED
 	attackstring
 	pause DELAY_HALFSECOND
+	call BattleScript_TargetAbilityStatRaise
+	goto BS_MOVE_END
 
 BattleScript_TargetAbilityStatRaise:
 	call BattleScript_AbilityPopUp
-	statbuffchange BANK_TARGET BattleScript_MoveStatDrainReturn
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_MoveStatDrainReturn
+	statbuffchange BANK_TARGET BattleScript_TargetAbilityStatRaiseReturn
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_TargetAbilityStatRaiseReturn
 	setgraphicalstatchangevalues
 	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
+	printstring 0xD8 @;STRINGID_PKMNSSTATCHANGED4
+	waitmessage DELAY_1SECOND
 	
-BattleScript_MoveStatDrainReturn:
+BattleScript_TargetAbilityStatRaiseReturn:
 	call BattleScript_AbilityPopUpRevert
-	goto BS_MOVE_END
-	
+	return
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -567,15 +583,29 @@ CuteCharmDestinyKnot:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_WeakArmorActivates:
-	jumpifstat BANK_TARGET GREATERTHAN STAT_DEF STAT_MIN WeakArmorModStats
-	jumpifstat BANK_TARGET EQUALS STAT_SPDEF STAT_MAX WeakArmorReturn
+	jumpifstat BANK_TARGET GREATERTHAN STAT_DEF STAT_MIN WeakArmorModDef
+	jumpifstat BANK_TARGET EQUALS STAT_SPD STAT_MAX WeakArmorReturn
 
-WeakArmorModStats:
+WeakArmorModDef:
 	call BattleScript_AbilityPopUp
-	setmoveeffect MOVE_EFFECT_DEF_MINUS_1 | MOVE_EFFECT_CERTAIN
-	seteffecttarget
-	setmoveeffect MOVE_EFFECT_SPD_PLUS_2 | MOVE_EFFECT_CERTAIN
-	seteffecttarget
+	setstatchanger STAT_DEF | DECREASE_1
+	statbuffchange BANK_TARGET | STAT_CERTAIN WeakArmorModSpd
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 WeakArmorModSpd
+	setgraphicalstatchangevalues
+	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
+	printfromtable 0x83FE588
+	waitmessage DELAY_1SECOND
+	
+WeakArmorModSpd:
+	setstatchanger STAT_SPD | INCREASE_2
+	statbuffchange BANK_TARGET | STAT_CERTAIN WeakArmorRevertPopUp
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 WeakArmorRevertPopUp
+	setgraphicalstatchangevalues
+	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
+	printfromtable 0x83FE57C
+	waitmessage DELAY_1SECOND
+	
+WeakArmorRevertPopUp:
 	call BattleScript_AbilityPopUpRevert
 
 WeakArmorReturn:
@@ -597,6 +627,14 @@ CursedBodyReturn:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_MummyActivates:
+	call BattleScript_AbilityPopUp
+	pause DELAY_HALFSECOND
+	call BattleScript_AbilityPopUpRevert
+	copyarray BATTLE_SCRIPTING_BANK USER_BANK 0x1
+	call BattleScript_AbilityPopUp
+	pause DELAY_HALFSECOND
+	call BattleScript_AbilityPopUpRevert
+	setability BANK_ATTACKER ABILITY_MUMMY
 	call BattleScript_AbilityPopUp
 	setword BATTLE_STRING_LOADER MummyString
 	printstring 0x184
@@ -690,12 +728,21 @@ BattleScript_SynchronizeActivates_StatusesTarget:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-BattleScript_Protean:
+BattleScript_AbilityChangedType:
 	pause DELAY_HALFSECOND
+	callasm DoProteanTypeChange
 	call BattleScript_AbilityPopUp
-	setword BATTLE_STRING_LOADER ProteanString
+	setword BATTLE_STRING_LOADER gText_AbilityChangedType
 	printstring 0x184
 	waitmessage DELAY_HALFSECOND
+	call BattleScript_AbilityPopUpRevert
+	return
+	
+BattleScript_AbilityChangedTypeContact:
+	call BattleScript_AbilityPopUp
+	setword BATTLE_STRING_LOADER gText_AbilityChangedType
+	printstring 0x184
+	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
 	return
 
@@ -731,11 +778,16 @@ BattleScript_EnduredSturdy:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_Receiver:
+	playanimation BANK_SCRIPTING ANIM_LOAD_ABILITY_POP_UP 0x0
+	pause DELAY_HALFSECOND
+	call BattleScript_AbilityPopUpRevert
 	call BattleScript_AbilityPopUp
 	setword BATTLE_STRING_LOADER ReceiverString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
+	clearspecialstatusbit BANK_SCRIPTING STATUS3_SWITCH_IN_ABILITY_DONE
+	tryactivateswitchinability BANK_SCRIPTING
 	return
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -755,12 +807,12 @@ BattleScript_DefiantCompetitive:
 	
 BattleScript_DefiantCompetitiveCall:
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 DefiantReturn
+	pause DELAY_HALFSECOND
 	setbyte STAT_ANIM_PLAYED 0x0
 	call BattleScript_AbilityPopUp
 	setgraphicalstatchangevalues
 	playanimation BANK_SCRIPTING ANIM_STAT_BUFF ANIM_ARG_1
-	setword BATTLE_STRING_LOADER DefiantString
-	printstring 0x184
+	printfromtable 0x83FE57C
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
 
@@ -783,7 +835,7 @@ BattleScript_SoulHeart:
 BattleScript_AbilityNoStatLoss:
 	pause 0x10
 	call BattleScript_AbilityPopUp
-	copyarray BATTLE_SCRIPTING_BANK SEED_HELPER 0x1
+	copyarray BATTLE_SCRIPTING_BANK BATTLE_COMMUNICATION 0x1
 	printstring 0xCE
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
@@ -839,16 +891,28 @@ BattleScript_StickyHoldActivates:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_DampStopsExplosion:
-	pause 0x10
+	attackstring
+	ppreduce
+	pause DELAY_HALFSECOND
 	call BattleScript_AbilityPopUp
 	setword BATTLE_STRING_LOADER CantUseMoveString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
-	orbyte OUTCOME OUTCOME_FAILED
-	orword HIT_MARKER HITMARKER_UNABLE_TO_USE_MOVE
 	goto BS_MOVE_END
 	
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_TookAttack:
+	attackstring
+	pause 0x10
+	call BattleScript_AbilityPopUp
+	printstring 0x14E @;STRINGID_PKMNSXTOOKATTACK
+	waitmessage DELAY_HALFSECOND
+	call BattleScript_AbilityPopUpRevert
+	orword HIT_MARKER HITMARKER_ATTACKSTRING_PRINTED
+	return
+
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_AbilityPopUp:
@@ -864,11 +928,10 @@ BattleScript_AbilityPopUpRevert:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 AdrenalineOrbString: .byte 0xFD, 0x10, 0xB4, 0xE7, 0x00, 0xBB, 0xD8, 0xE6, 0xD9, 0xE2, 0xD5, 0xE0, 0xDD, 0xE2, 0xD9, 0x00, 0xC9, 0xE6, 0xD6, 0xFE, 0xE6, 0xD5, 0xDD, 0xE7, 0xD9, 0xD8, 0x00, 0xDD, 0xE8, 0xE7, 0x00, 0xCD, 0xE4, 0xD9, 0xD9, 0xD8, 0xAB, 0xFF
-HurtByAbilityString: .byte 0xFD, 0x10, 0x00, 0xEB, 0xD5, 0xE7, 0x00, 0xDC, 0xE9, 0xE6, 0xE8, 0xFE, 0xD6, 0xED, 0x00, 0xDD, 0xE8, 0xE7, 0x00, 0xFD, 0x19, 0xAB, 0xFF
-HealerString: .byte 0xFD, 0x0F, 0xB4, 0xE7, 0x00, 0xFD, 0x18, 0xFE, 0xD7, 0xE9, 0xE6, 0xD9, 0xD8, 0x00, 0xFD, 0x10, 0xB4, 0xE7, 0xFA, 0xFD, 0x00, 0x00, 0xE4, 0xE6, 0xE3, 0xD6, 0xE0, 0xD9, 0xE1, 0xAB, 0xFF
-BadDreamsHurtString: .byte 0xFD, 0x10, 0x00, 0xDD, 0xE7, 0x00, 0xE8, 0xE3, 0xE6, 0xE1, 0xD9, 0xE2, 0xE8, 0xD9, 0xD8, 0xFE, 0xD6, 0xED, 0x00, 0xFD, 0x0F, 0xB4, 0xE7, 0x00, 0xFD, 0x18, 0xAB, 0xFF
-HarvestString: .byte 0xFD, 0x0F, 0x00, 0xDC, 0xD5, 0xE6, 0xEA, 0xD9, 0xE7, 0xE8, 0xD9, 0xD8, 0xFE, 0xE3, 0xE2, 0xD9, 0x00, 0xFD, 0x16, 0x00, 0xEB, 0xDD, 0xE8, 0xDC, 0x00, 0xFD, 0x18, 0xAB, 0xFF
-PickupString: .byte 0xFD, 0x13, 0x00, 0xDA, 0xE3, 0xE9, 0xE2, 0xD8, 0x00, 0xE3, 0xE2, 0xD9, 0xFE, 0xFD, 0x16, 0x00, 0xEB, 0xDD, 0xE8, 0xDC, 0x00, 0xFD, 0x1A, 0xAB, 0xFF
+HurtByAbilityString: .byte 0xFD, 0x10, 0x00, 0xEB, 0xD5, 0xE7, 0x00, 0xDC, 0xE9, 0xE6, 0xE8, 0xAB, 0xFF
+BadDreamsHurtString: .byte 0xFD, 0x10, 0x00, 0xDD, 0xE7, 0x00, 0xE8, 0xE3, 0xE6, 0xE1, 0xD9, 0xE2, 0xE8, 0xD9, 0xD8, 0xAB, 0xFF
+HarvestString: .byte 0xFD, 0x0F, 0x00, 0xDC, 0xD5, 0xE6, 0xEA, 0xD9, 0xE7, 0xE8, 0xD9, 0xD8, 0xFE, 0xE3, 0xE2, 0xD9, 0x00, 0xFD, 0x16, 0xAB, 0xFF
+PickupString: .byte 0xFD, 0x13, 0x00, 0xDA, 0xE3, 0xE9, 0xE2, 0xD8, 0x00, 0xE3, 0xE2, 0xD9, 0xFE, 0xFD, 0x16, 0xAB, 0xFF
 DestinyKnotString: .byte 0xFD, 0x13, 0x00, 0xDA, 0xD9, 0xE0, 0xE0, 0x00, 0xDD, 0xE2, 0x00, 0xE0, 0xE3, 0xEA, 0xD9, 0xFE, 0xDA, 0xE6, 0xE3, 0xE1, 0x00, 0xE8, 0xDC, 0xD9, 0x00, 0xFD, 0x16, 0xAB, 0xFF
 CursedBodyString: .byte 0xFD, 0x10, 0xB4, 0xE7, 0x00, 0xFD, 0x19, 0xFE, 0xD8, 0xDD, 0xE7, 0xD5, 0xD6, 0xE0, 0xD9, 0xD8, 0x00, 0xFD, 0x0F, 0xB4, 0xE7, 0x00, 0xFD, 0x14, 0xAB, 0xFF
 MummyString: .byte 0xFD, 0x0F, 0xB4, 0xE7, 0x00, 0xD5, 0xD6, 0xDD, 0xE0, 0xDD, 0xE8, 0xED, 0xFE, 0xD6, 0xD9, 0xD7, 0xD5, 0xE1, 0xD9, 0x00, 0xFD, 0x19, 0xAB, 0xFF
@@ -876,7 +939,6 @@ AngerPointString: .byte 0xFD, 0x10, 0xB4, 0xE7, 0x00, 0xFD, 0x19, 0xFE, 0xE1, 0x
 IllusionWoreOffString: .byte 0xFD, 0x10, 0xB4, 0xE7, 0x00, 0xDD, 0xE0, 0xE0, 0xE9, 0xE7, 0xDD, 0xE3, 0xE2, 0xFE, 0xEB, 0xE3, 0xE6, 0xD9, 0x00, 0xE3, 0xDA, 0xDA, 0xAB, 0xFF
 SynchronizeNoEffectString: .byte 0xBC, 0xE9, 0xE8, 0x00, 0xDD, 0xE8, 0x00, 0xDC, 0xD5, 0xD8, 0x00, 0xE2, 0xE3, 0x00, 0xD9, 0xDA, 0xDA, 0xD9, 0xD7, 0xE8, 0x00, 0xE3, 0xE2, 0xFE, 0xFD, 0x13, 0xB0, 0xFF
 
-ProteanString: .byte 0xFD, 0x0F, 0xB4, 0xE7, 0x0, 0xFD, 0x18, 0x0, 0xD7, 0xDC, 0xD5, 0xE2, 0xDB, 0xD9, 0xD8, 0xFE, 0xDD, 0xE8, 0x0, 0xDD, 0xE2, 0xE8, 0xE3, 0x0, 0xE8, 0xDC, 0xD9, 0x0, 0xFD, 0x0, 0x0, 0xE8, 0xED, 0xE4, 0xD9, 0xAB, 0xFF
 MimikyuDisguisedTookDamageString: .byte 0xFD, 0x10, 0xB4, 0xE7, 0x00, 0xD8, 0xDD, 0xE7, 0xDB, 0xE9, 0xDD, 0xE7, 0xD9, 0xFE, 0xE7, 0xD9, 0xE6, 0xEA, 0xD9, 0xD8, 0x00, 0xD5, 0xE7, 0x00, 0xDD, 0xE8, 0xE7, 0x00, 0xD8, 0xD9, 0xD7, 0xE3, 0xED, 0xAB, /*0xFB,*/ 0xFF
 DisguiseBustedString: .byte 0xFD, 0x10, 0xB4, 0xE7, 0x00, 0xD8, 0xDD, 0xE7, 0xDB, 0xE9, 0xDD, 0xE7, 0xD9, 0xFE, 0xEB, 0xD5, 0xE7, 0x00, 0xD6, 0xE9, 0xE7, 0xE8, 0xD9, 0xD8, 0xAB, /*0xFB,*/ 0xFF
 ReceiverString: .byte 0xFD, 0x13, 0x00, 0xE8, 0xE3, 0xE3, 0xDF, 0x00, 0xE3, 0xEA, 0xD9, 0xE6, 0x00, 0xFE, 0xFD, 0x11, 0xB4, 0xE7, 0x00, 0xFD, 0x1A, 0xAB, 0xFF
@@ -914,24 +976,3 @@ SetBDDamage:
 	ldr r1, =DAMAGE_LOC
 	str r0, [r1]
 	pop {pc}
-
-
-HarvestActivateBerry:
-	push {lr}
-	ldr r5, =BS_SCRIPT_LOC
-	ldr r1, [r5]
-	add r1, #0x5
-	str r1, [r5]
-	mov r0, #0x1
-	ldr r1, =USER_BANK
-	ldrb r1, [r1]
-	mov r2, #0x0
-	bl BerryEffects
-	ldr r1, [r5]
-	sub r1, #0x5
-	str r1, [r5]
-	pop {pc}
-
-BerryEffects:
-	ldr r3, =0x0801BC68
-	bx r3

@@ -125,7 +125,7 @@ ANIM_WISHIWASHI_FISH:
 	call WISHIWASHI_SWIRL_PARTICLES
 	call WISHIWASHI_SWIRL_PARTICLES
 	waitanimation
-	launchtask AnimTask_play_growling_cry 0x2 0x2 bank_attacker 0xff 
+	launchtask RED_PRIMAL_TASK_2 0x1 0x2 0x0 0xff
 	waitanimation
 	pokespritefromBG bank_attacker
 	endanimation
@@ -193,7 +193,7 @@ ANIM_ZYGARDE_CELL_SWIRL:
 	launchtemplate Template_Pal_Fade 0x2 0x5 0x1 0x1 0xf 0x0 0xc0 
 	waitanimation 
 	pokespritefromBG bank_target 
-	launchtask AnimTask_play_growling_cry 0x2 0x2 0x0 0xff 
+	launchtask RED_PRIMAL_TASK_2 0x1 0x2 0x0 0xff 
 	waitanimation 
 	resetblends 
 	endanimation 

@@ -22,6 +22,8 @@ extern u8 BattleScript_ZMoveActivateStatus[];
 extern u8 BattleScript_ZMoveActivateDamaging[];
 extern u8 BattleScript_DarkTypePreventsPrankster[];
 extern u8 BattleScript_MoveUsedSkyBattlePrevents[];
+extern u8 BattleScript_DampStopsExplosion[];
+extern u8 BattleScript_TookAttack[];
 
 extern move_t GravityBanTable[];
 extern move_t ParentalBondBanList[];
@@ -83,7 +85,8 @@ void atk00_attackcanceler(void)
 		gBattlescriptCurrInstr = BattleScript_ButItFailed - 2;
 		return;
 	}
-    else if (AbilityBattleEffects(ABILITYEFFECT_MOVES_BLOCK, gBankTarget, 0, 0, 0))
+    else if (AbilityBattleEffects(ABILITYEFFECT_MOVES_BLOCK, gBankTarget, 0, 0, 0)
+	|| (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && AbilityBattleEffects(ABILITYEFFECT_MOVES_BLOCK_PARTNER, PARTNER(gBankTarget), 0, 0, 0)))
         return;
 	
 	else if (!gNewBS->ParentalBondOn
@@ -189,8 +192,6 @@ void atk00_attackcanceler(void)
 			{
 				gNewBS->MoveBounceInProgress = TRUE;
 				gNewBS->moveWasBouncedThisTurn = TRUE;
-				gLastUsedAbility = ABILITY_MAGICBOUNCE;
-				RecordAbilityBattle(SIDE(gBankAttacker) ^ BIT_SIDE, gLastUsedAbility);
 				gBattleScripting->bank = SIDE(gBankAttacker) ^ BIT_SIDE;
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_MagicBounce;
@@ -200,9 +201,7 @@ void atk00_attackcanceler(void)
 			{
 				gNewBS->MoveBounceInProgress = TRUE;
 				gNewBS->moveWasBouncedThisTurn = TRUE;
-				gLastUsedAbility = ABILITY_MAGICBOUNCE;
-				RecordAbilityBattle(PARTNER(SIDE(gBankAttacker)) ^ BIT_SIDE, gLastUsedAbility);
-				gBattleScripting->bank = SIDE(gBankAttacker) ^ BIT_SIDE;
+				gBattleScripting->bank = PARTNER(SIDE(gBankAttacker) ^ BIT_SIDE);
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_MagicBounce;
 				return;
@@ -250,10 +249,9 @@ void atk00_attackcanceler(void)
     if (gSpecialStatuses[gBankTarget].lightningRodRedirected)
     {
         gSpecialStatuses[gBankTarget].lightningRodRedirected = 0;
-        gLastUsedAbility = ABILITY(gBankTarget);
+        gBattleScripting->bank = gBankTarget;
         BattleScriptPushCursor();
         gBattlescriptCurrInstr = BattleScript_TookAttack;
-        RecordAbilityBattle(gBankTarget, gLastUsedAbility);
     }
     else if (ProtectAffects(gCurrentMove, gBankAttacker, gBankTarget, FALSE)
      && (gCurrentMove != MOVE_CURSE || IsOfType(gBankAttacker, TYPE_GHOST))
@@ -798,7 +796,29 @@ u8 AtkCanceller_UnableToUseMove(void)
 			#endif
 			gBattleStruct->atkCancellerTracker++;
 			break;
-			
+		
+		case CANCELLER_EXPLODING_DAMP:
+			if (gBattleMoves[gCurrentMove].effect == EFFECT_EXPLOSION)
+			{
+				u8 bank;
+				
+				for (bank = 0; bank < gBattlersCount; ++bank)
+				{
+					if (ABILITY(bank) == ABILITY_DAMP)
+						break;
+				}
+				
+				if (bank != gBattlersCount)
+				{
+					gBattleScripting->bank = bank;
+					gBattlescriptCurrInstr = BattleScript_DampStopsExplosion;
+					gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
+					effect = 1;
+				}
+			}
+			gBattleStruct->atkCancellerTracker++;
+			break;
+				
 		case CANCELLER_MULTIHIT_MOVES:
 			if (CheckTableForMove(gCurrentMove, TwoToFiveStrikesMoves))
 			{

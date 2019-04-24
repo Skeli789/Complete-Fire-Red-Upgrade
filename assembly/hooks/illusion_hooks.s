@@ -52,11 +52,16 @@ UpdateCryForIllusionHook:
 	
 @0x8074598 with r2
 UpdateAltitudeForIllusionHook:
+	lsl r1, r1, #0x10
+	lsr r4, r1, #0x10
 	mov r0, r5
-	bl GetIllusionPartyData
-	add r0, #0x20 @;Species Index
-	ldrh r4, [r0]
-	ldrh r7, [r0]
+	bl TryUpdateIllusionAltitude
+	cmp r0, #0x0
+	beq AltitudeIllusionReturn
+	mov r4, r0 @;Update Species
+	
+AltitudeIllusionReturn:
+	mov r7, r4
 	mov r0, r5
 	ldr r1, =0x80745A0 | 1
 	bx r1

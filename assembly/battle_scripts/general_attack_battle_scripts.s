@@ -1,3 +1,5 @@
+@;Make sure Toxic has a check for Protean
+
 .text
 .thumb
 .align 2
@@ -143,10 +145,10 @@ DrainHPBSP2:
 	goto 0x81D6A2B
 	
 StrengthSapBS:
+	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
+	jumpifstat BANK_TARGET EQUALS STAT_ATK STAT_MIN FAILED_PRE
 	attackstring
 	ppreduce
-	jumpifbehindsubstitute BANK_TARGET FAILED
-	jumpifstat BANK_TARGET EQUALS STAT_ATK STAT_MIN FAILED
 	attackanimation
 	waitanimation
 	setgraphicalstatchangevalues
@@ -225,7 +227,7 @@ EatTheDreams:
 BS_009_MirrorMove:
 	attackcanceler
 	jumpifmove MOVE_COPYCAT CopycatBS
-	attackstring
+	attackstringnoprotean
 	pause DELAY_1SECOND
 	jumptolastusedattack
 	ppreduce
@@ -235,7 +237,8 @@ BS_009_MirrorMove:
 	goto BS_MOVE_END
 
 CopycatBS:
-	attackstring
+	attackstringnoprotean
+	ppreduce
 	callasm CopycatFunc
 	attackanimation
 	waitanimation
@@ -548,10 +551,10 @@ BS_017_NeverMiss:
 .global BS_018_LowerTargetAtk1
 BS_018_LowerTargetAtk1:
 	attackcanceler
-	jumpifbehindsubstitute BANK_TARGET FAILED-2
-	accuracycheck BS_MOVE_MISSED 0x0
+	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
 	attackstring
 	ppreduce
+	accuracycheck BS_MOVE_MISSED+2 0x0
 	setbyte STAT_ANIM_PLAYED 0x0
 	jumpifmove MOVE_PLAYNICE PlayNiceBS
 	jumpifmove MOVE_NOBLEROAR PlayNiceBS
@@ -732,7 +735,7 @@ BS_028_Roar:
 	jumpifmove MOVE_CIRCLETHROW DragonTailBS
 
 RoarBS:
-	attackstring
+	attackstringnoprotean
 	ppreduce
 	jumpifability BANK_TARGET ABILITY_SUCTIONCUPS BattleScript_AbilityPreventsPhasingOut
 	jumpifspecialstatusflag BANK_TARGET STATUS3_ROOTED 0x0 0x81D8F27 @;BattleScript_PrintMonIsRooted
@@ -785,9 +788,9 @@ BS_030_Conversion:
 	jumpifmove MOVE_REFLECTTYPE ReflectTypeBS
 	
 ConversionBS:
+	changetypestoenemyattacktype FAILED_PRE
 	attackstring
 	ppreduce
-	changetypestoenemyattacktype FAILED
 	attackanimation
 	waitanimation
 	printstring 0x49 @;STRINGID_PKMNCHANGEDTYPE
@@ -795,11 +798,11 @@ ConversionBS:
 	goto BS_MOVE_END
 
 ReflectTypeBS:
+	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
 	accuracycheck BS_MOVE_MISSED 0x0
+	changetypestoenemyattacktype FAILED_PRE
 	attackstring
-	ppreduce
-	jumpifbehindsubstitute BANK_TARGET FAILED
-	changetypestoenemyattacktype FAILED
+	ppreduce	
 	attackanimation
 	waitanimation
 	setword BATTLE_STRING_LOADER ReflectTypeString
@@ -849,10 +852,10 @@ IceFangBS:
 .global BS_032_Recover
 BS_032_Recover:
 	attackcanceler
+	jumpifmove MOVE_PURIFY PurifyBS
 	attackstring
 	ppreduce
 	jumpifmove MOVE_ROOST RoostBS
-	jumpifmove MOVE_PURIFY PurifyBS
 
 RecoverBS:
 	setdamageasrestorehalfmaxhp 0x81D7DD1 BANK_ATTACKER @;BattleScript_AlreadyAtFullHp
@@ -880,10 +883,13 @@ RoostBS:
 
 PurifyBS:
 	jumpifstatus BANK_TARGET STATUS_ANY PurifyHeal
-	goto FAILED
+	goto FAILED_PRE
 
 PurifyHeal:
+	attackstringnoprotean
+	ppreduce
 	cureprimarystatus BANK_TARGET FAILED
+	tryactivateprotean
 	attackanimation
 	waitanimation
 	setword BATTLE_STRING_LOADER PurifyString
@@ -947,6 +953,7 @@ BS_034_PayDay:
 .global BS_035_LightScreen
 BS_035_LightScreen:
 	attackcanceler
+	jumpifsideaffecting BANK_ATTACKER SIDE_LIGHTSCREEN FAILED_PRE
 	attackstring
 	ppreduce
 	setlightscreen
@@ -964,6 +971,8 @@ BS_036_TriAttack:
 .global BS_037_SetRest
 BS_037_SetRest:
 	attackcanceler
+	jumpifterrainandgrounded ELECTRIC_TERRAIN BANK_ATTACKER FAILED_PRE
+	jumpifterrainandgrounded MISTY_TERRAIN BANK_ATTACKER FAILED_PRE
 	attackstring
 	ppreduce
 	jumpifstatus BANK_ATTACKER, STATUS_SLEEP, 0x81D6EC2 @;BattleScript_RestIsAlreadyAsleep
@@ -980,9 +989,9 @@ BS_037_SetRest:
 .global BS_038_OHK0
 BS_038_OHK0:
 	attackcanceler
+	accuracycheck FAILED 0xFFFF
 	attackstring
 	ppreduce
-	accuracycheck FAILED 0xFFFF
 	typecalc
 	jumpifmovehadnoeffect BS_HIT_FROM_ATTACKANIMATION
 	tryko 0x81D6EF1
@@ -1077,6 +1086,7 @@ HighJumpKickMiss:
 .global BS_046_Mist
 BS_046_Mist:
 	attackcanceler
+	jumpifsideaffecting BANK_ATTACKER SIDE_MIST FAILED_PRE
 	attackstring
 	ppreduce
 	setmisteffect
@@ -1091,9 +1101,9 @@ BS_046_Mist:
 .global BS_047_FocusEnergy
 BS_047_FocusEnergy:
 	attackcanceler
+	jumpifsecondarystatus BANK_ATTACKER STATUS2_PUMPEDUP FAILED_PRE
 	attackstring
 	ppreduce
-	jumpifsecondarystatus BANK_ATTACKER STATUS2_PUMPEDUP FAILED
 	setincreasedcriticalchance
 	attackanimation
 	waitanimation
@@ -1112,12 +1122,12 @@ BS_048_25PercentRecoil:
 .global BS_049_SetConfusion
 BS_049_SetConfusion:
 	attackcanceler
+	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
 	attackstring
 	ppreduce
-	jumpifbehindsubstitute BANK_TARGET FAILED
 	jumpifsecondarystatus BANK_TARGET STATUS2_CONFUSION 0x81D70EA @;Already confused
 	jumpifability BANK_TARGET ABILITY_OWNTEMPO BattleScript_OwnTempoPrevents
-	jumpifbyte EQUALS TERRAIN_BYTE MISTY_TERRAIN CFSN_CheckGrounding
+	jumpifterrainandgrounded MISTY_TERRAIN BANK_TARGET ProtectedByTerrainBS
 
 SetConfusionAccCheckBS:
 	accuracycheck FAILED 0x0
@@ -1129,10 +1139,6 @@ SetConfusionAccCheckBS:
 	resultmessage
 	waitmessage DELAY_1SECOND
 	goto BS_MOVE_END
-
-CFSN_CheckGrounding:
-	jumpifgrounded BANK_TARGET ProtectedByTerrainBS
-	goto SetConfusionAccCheckBS
 
 BattleScript_OwnTempoPrevents:
 	pause 0x10
@@ -1220,11 +1226,11 @@ BS_056_RaiseUserEvsn2:
 .global BS_057_Transform
 BS_057_Transform:
 	attackcanceler
+	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
+	jumpifsecondarystatus BANK_ATTACKER STATUS2_TRANSFORMED FAILED_PRE
+	jumpifspecialstatusflag BANK_TARGET STATUS3_ILLUSION 0x0 FAILED_PRE
 	attackstring
 	ppreduce
-	jumpifbehindsubstitute BANK_TARGET FAILED
-	jumpifsecondarystatus BANK_ATTACKER STATUS2_TRANSFORMED FAILED
-	jumpifspecialstatusflag BANK_TARGET STATUS3_ILLUSION 0x0 FAILED
 	transformdataexecution
 	attackanimation
 	waitanimation
@@ -1262,7 +1268,7 @@ BS_061_LowerTargetSpAtk2:
 	
 CaptivateBS:
 	attackcanceler
-	jumpifbehindsubstitute BANK_TARGET FAILED-2
+	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
 	accuracycheck BS_MOVE_MISSED 0x0
 	attackstring
 	ppreduce
@@ -1307,9 +1313,10 @@ BS_064_LowerTargetEvsn2:
 .global BS_065_Reflect
 BS_065_Reflect:
 	attackcanceler
+	jumpifmove MOVE_AURORAVEIL AuroraVeilBS
+	jumpifsideaffecting BANK_ATTACKER SIDE_REFLECT FAILED_PRE
 	attackstring
 	ppreduce
-	jumpifmove MOVE_AURORAVEIL AuroraVeilBS
 	setreflect
 	
 ReflectBS:
@@ -1320,6 +1327,9 @@ ReflectBS:
 	goto BS_MOVE_END
 
 AuroraVeilBS:
+	jumpifcounter BANK_ATTACKER AURORA_VEIL_TIMERS NOTEQUALS 0 FAILED_PRE
+	attackstring
+	ppreduce
 	callasm SetAuroraVeil
 	goto ReflectBS
 
@@ -1413,7 +1423,7 @@ PRZ_CheckFlowerVeil:
 
 PRZ_CheckTerrain:
 	jumpiftype BANK_TARGET TYPE_ELECTRIC NOEFFECT
-	jumpifbyte EQUALS TERRAIN_BYTE MISTY_TERRAIN PRZ_CheckGrounding
+	jumpifterrainandgrounded MISTY_TERRAIN BANK_TARGET ProtectedByTerrainBS
 
 PRZ_After:
 	jumpifability BANK_TARGET ABILITY_LIMBER 0x81D7245
@@ -1428,10 +1438,6 @@ PRZ_SunnyCheck:
 PRZ_GrassTypeCheck:
 	jumpiftype BANK_TARGET TYPE_GRASS BattleScript_TeamProtectedByFlowerVeil
 	goto PRZ_CheckTerrain
-
-PRZ_CheckGrounding:
-	jumpifgrounded BANK_TARGET ProtectedByTerrainBS
-	goto PRZ_After
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -1631,11 +1637,12 @@ BS_081_Rage:
 .global BS_082_Mimic
 BS_082_Mimic:
 	attackcanceler
-	attackstring
+	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
+	accuracycheck FAILED_PRE 0xFFFF
+	attackstringnoprotean
 	ppreduce
-	jumpifbehindsubstitute BANK_TARGET FAILED
-	accuracycheck FAILED 0xFFFF
 	copyattack FAILED
+	tryactivateprotean
 	attackanimation
 	waitanimation
 	printstring 0x16
@@ -1660,10 +1667,9 @@ BS_083_Metronome:
 .global BS_084_LeechSeed
 BS_084_LeechSeed:
 	attackcanceler
+	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
 	attackstring
-	pause DELAY_HALFSECOND
 	ppreduce
-	jumpifbehindsubstitute BANK_TARGET FAILED
 	accuracycheck SetLeechSeedBS 0x0
 	
 SetLeechSeedBS:
@@ -1698,6 +1704,7 @@ BS_086_Disable:
 	jumpifabilitypresenttargetfield ABILITY_AROMAVEIL BattleScript_ProtectedByAromaVeil
 	accuracycheck FAILED 0x0
 	disablelastusedattack BANK_TARGET FAILED
+	tryactivateprotean
 	attackanimation
 	waitanimation
 	printstring 0x84 @;STRINGID_PKMNMOVEWASDISABLED
@@ -1749,7 +1756,7 @@ BS_089_Counter:
 	jumpifmove MOVE_METALBURST MetalBurstBS
 	
 CounterBS:
-	counterdamagecalculator FAILED-2
+	counterdamagecalculator FAILED_PRE
 	accuracycheck BS_MOVE_MISSED 0x0
 	attackstring
 	ppreduce
@@ -1774,10 +1781,11 @@ MetalBurstBS:
 BS_090_Encore:
 	attackcanceler	
 	accuracycheck BS_MOVE_MISSED 0x0
-	attackstring
+	attackstringnoprotean
 	ppreduce
 	jumpifabilitypresenttargetfield ABILITY_AROMAVEIL BattleScript_ProtectedByAromaVeil
 	setencore FAILED
+	tryactivateprotean
 	attackanimation
 	waitanimation
 	printstring 0x87
@@ -1789,10 +1797,11 @@ BS_090_Encore:
 .global BS_091_PainSplit
 BS_091_PainSplit:
 	attackcanceler
-	attackstring
+	accuracycheck FAILED_PRE 0xFFFF
+	attackstringnoprotean
 	ppreduce
-	accuracycheck FAILED 0xFFFF
 	painsplitdamagecalculator FAILED
+	tryactivateprotean
 	attackanimation
 	waitanimation
 	orword HIT_MARKER HITMARKER_IGNORE_SUBSTITUTE
@@ -1812,7 +1821,7 @@ BS_092_Snore:
 	attackcanceler
 	jumpifstatus BANK_ATTACKER STATUS_SLEEP BattleScript_SnoreIsAsleep
 	jumpifability BANK_ATTACKER ABILITY_COMATOSE BattleScript_SnoreIsAsleep
-	goto FAILED - 2
+	goto FAILED_PRE
 
 BattleScript_SnoreIsAsleep:
 	jumpifmove MOVE_SLEEPTALK BattleScript_DoSnore
@@ -1838,10 +1847,10 @@ BS_094_LockOn:
 	
 LockOnBS:
 	attackcanceler
+	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
+	accuracycheck FAILED_PRE 0x0
 	attackstring
 	ppreduce
-	jumpifbehindsubstitute BANK_TARGET FAILED
-	accuracycheck FAILED 0x0
 	setalwayshitflag
 	attackanimation
 	waitanimation
@@ -1863,10 +1872,11 @@ LaserFocusBS:
 .global BS_095_Sketch
 BS_095_Sketch:
 	attackcanceler
-	attackstring
+	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
+	attackstringnoprotean
 	ppreduce
-	jumpifbehindsubstitute BANK_TARGET FAILED
 	copymovepermanently FAILED
+	tryactivateprotean
 	attackanimation
 	waitanimation
 	printstring 0x8A
@@ -1887,7 +1897,7 @@ BS_097_SleepTalk:
 	attackcanceler
 	jumpifstatus BANK_ATTACKER STATUS_SLEEP BattleScript_SleepTalkIsAsleep
 	jumpifability BANK_ATTACKER ABILITY_COMATOSE BattleScript_SleepTalkIsAsleep
-	goto FAILED - 2
+	goto FAILED_PRE
 
 BattleScript_SleepTalkIsAsleep:
 	printstring 0x6B @;STRINGID_PKMNFASTASLEEP
@@ -1912,9 +1922,10 @@ BattleScript_SleepTalkUsingMove:
 .global BS_098_DestinyBond
 BS_098_DestinyBond:
 	attackcanceler
-	attackstring
+	attackstringnoprotean
 	ppreduce
 	destinybondeffect
+	tryactivateprotean
 	attackanimation
 	waitanimation
 	printstring 0x8B
@@ -1932,10 +1943,11 @@ BS_099_Flail:
 .global BS_100_Spite
 BS_100_Spite:
 	attackcanceler
-	attackstring
+	accuracycheck FAILED_PRE 0x0
+	attackstringnoprotean
 	ppreduce
-	accuracycheck FAILED 0x0
 	reducepprandom FAILED
+	tryactivateprotean
 	attackanimation
 	waitanimation
 	printstring 0x8D
@@ -2026,11 +2038,11 @@ BS_106_MeanLook:
 	jumpifmove MOVE_SPIRITSHACKLE DamageAndTrapBS
 	jumpifmove MOVE_THOUSANDWAVES DamageAndTrapBS
 	attackcanceler
+	accuracycheck FAILED_PRE 0x0
+	jumpiftype BANK_TARGET TYPE_GHOST FAILED_PRE
+	jumpifsecondarystatus BANK_TARGET STATUS2_TRAPPED | STATUS2_SUBSTITUTE FAILED_PRE
 	attackstring
 	ppreduce
-	accuracycheck FAILED 0x0
-	jumpiftype BANK_TARGET TYPE_GHOST FAILED
-	jumpifsecondarystatus BANK_TARGET STATUS2_TRAPPED | STATUS2_SUBSTITUTE FAILED
 	attackanimation
 	waitanimation
 	setmoveeffect MOVE_EFFECT_PREVENT_ESCAPE
@@ -2058,12 +2070,12 @@ DamageAndTrapBS:
 .global BS_107_Nightmare
 BS_107_Nightmare:
 	attackcanceler
+	jumpifsecondarystatus 0x0 STATUS2_SUBSTITUTE | STATUS2_NIGHTMARE FAILED_PRE
 	attackstring
 	ppreduce
-	jumpifsecondarystatus 0x0 STATUS2_SUBSTITUTE | STATUS2_NIGHTMARE FAILED
 	jumpifstatus BANK_TARGET STATUS_SLEEP SetNightmareBS
 	jumpifability BANK_TARGET ABILITY_COMATOSE SetNightmareBS
-	goto FAILED
+	goto NOEFFECT
 
 SetNightmareBS:
 	attackanimation
@@ -2102,9 +2114,10 @@ BS_110_RaiseAttackerSpAtk1Chance:
 .global BS_111_Protect
 BS_111_Protect:
 	attackcanceler
-	attackstring
+	attackstringnoprotean
 	ppreduce
 	setprotect
+	tryactivateprotean
 	attackanimation
 	waitanimation
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x3 ProtectPrintCustomMessage
@@ -2122,9 +2135,10 @@ ProtectPrintCustomMessage:
 .global BS_112_Spikes
 BS_112_Spikes:
 	attackcanceler
-	attackstring
+	attackstringnoprotean
 	ppreduce
 	setspikes FAILED
+	tryactivateprotean
 	attackanimation
 	waitanimation
 	printstring 0x184
@@ -2152,9 +2166,9 @@ ForesightBS:
 MiracleEyeBS:
 	attackcanceler
 	accuracycheck BS_MOVE_MISSED 0x0
+	jumpifspecialstatusflag BANK_TARGET STATUS3_MIRACLE_EYED 0x0 FAILED_PRE
 	attackstring
 	ppreduce
-	jumpifspecialstatusflag BANK_TARGET STATUS3_MIRACLE_EYED 0x0 FAILED
 	attackanimation
 	waitanimation
 	setspecialstatusbit BANK_TARGET STATUS3_MIRACLE_EYED
@@ -2167,9 +2181,10 @@ MiracleEyeBS:
 .global BS_114_PerishSong
 BS_114_PerishSong:
 	attackcanceler
-	attackstring
+	attackstringnoprotean
 	ppreduce
 	setperishsong FAILED
+	tryactivateprotean
 	attackanimation
 	waitanimation
 	printstring 0xFE
@@ -2197,9 +2212,10 @@ BattleScript_PerishSongNotAffected:
 .global BS_115_Sandstorm
 BS_115_Sandstorm:
 	attackcanceler
-	attackstring
+	attackstringnoprotean
 	ppreduce
 	setsandstorm
+	tryactivateprotean
 	goto BS_MOVE_WEATHER_CHANGE
 	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -2238,9 +2254,9 @@ BS_118_Swagger:
 	attackcanceler
 	jumpifbehindsubstitute BANK_TARGET BS_MAKE_MOVE_MISS
 	accuracycheck BS_MOVE_MISSED 0x0
+	jumpifconfusedandstatmaxed STAT_ATK FAILED_PRE
 	attackstring
 	ppreduce
-	jumpifconfusedandstatmaxed STAT_ATK FAILED
 	attackanimation
 	waitanimation
 	setstatchanger STAT_ATK | INCREASE_2
@@ -2299,12 +2315,12 @@ EchoedVoiceBS:
 .global BS_120_Attract
 BS_120_Attract:
 	attackcanceler
+	accuracycheck FAILED_PRE 0x0
 	attackstring
 	ppreduce
-	accuracycheck FAILED 0x0
 	jumpifability BANK_TARGET ABILITY_OBLIVIOUS BattleScript_ObliviousPrevents
 	jumpifabilitypresenttargetfield ABILITY_AROMAVEIL BattleScript_ProtectedByAromaVeil
-	tryinfatuatebank BANK_TARGET FAILED
+	tryinfatuatebank BANK_TARGET NOEFFECT
 	attackanimation
 	waitanimation
 	printstring 0x45
@@ -2353,6 +2369,7 @@ BS_123_Blank:
 .global BS_124_Safeguard
 BS_124_Safeguard:
 	attackcanceler
+	jumpifsideaffecting BANK_ATTACKER SIDE_SAFEGUARD FAILED_PRE
 	attackstring
 	ppreduce
 	setsafeguard
@@ -2364,7 +2381,7 @@ BS_124_Safeguard:
 BS_125_BurnUp:
 	attackcanceler
 	jumpiftype BANK_ATTACKER TYPE_FIRE DoBurnUp
-	goto FAILED-2
+	goto FAILED_PRE
 
 DoBurnUp:
 	accuracycheck BS_MOVE_MISSED 0x0
@@ -2404,9 +2421,9 @@ BS_126_Magnitude:
 BS_127_BatonPass:
 	jumpifnotmove MOVE_BATONPASS UTurnBS
 	attackcanceler
+	jumpifcannotswitch 0x81 FAILED_PRE
 	attackstring
 	ppreduce
-	jumpifcannotswitch 0x81 FAILED
 	attackanimation
 	waitanimation
 
@@ -2617,9 +2634,10 @@ BS_135_AttackerRaiseDef2Chance:
 .global BS_136_RainDance
 BS_136_RainDance:
 	attackcanceler
-	attackstring
+	attackstringnoprotean
 	ppreduce
 	setrain
+	tryactivateprotean
 	goto BS_MOVE_WEATHER_CHANGE
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -2627,9 +2645,10 @@ BS_136_RainDance:
 .global BS_137_SunnyDay
 BS_137_SunnyDay:
 	attackcanceler
-	attackstring
+	attackstringnoprotean
 	ppreduce
 	setsunny
+	tryactivateprotean
 	goto BS_MOVE_WEATHER_CHANGE
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -2685,10 +2704,11 @@ BS_141_Blank:
 .global BS_142_BellyDrum
 BS_142_BellyDrum:
 	attackcanceler
-	attackstring
+	attackstringnoprotean
 	ppreduce
 	maxattackhalvehp FAILED
 	orword HIT_MARKER HITMARKER_IGNORE_SUBSTITUTE
+	tryactivateprotean
 	attackanimation
 	waitanimation
 	graphicalhpupdate BANK_ATTACKER
@@ -2730,7 +2750,7 @@ PlaySpectBoost:
 .global BS_144_MirrorCoat
 BS_144_MirrorCoat:
 	attackcanceler
-	mirrorcoatdamagecalculator FAILED-2
+	mirrorcoatdamagecalculator FAILED_PRE
 	accuracycheck BS_MOVE_MISSED 0x0
 	attackstring
 	ppreduce
@@ -2775,9 +2795,10 @@ BS_147_Earthquake:
 .global BS_148_FutureSight
 BS_148_FutureSight:
 	attackcanceler
-	attackstring
+	attackstringnoprotean
 	ppreduce
 	setfutureattack FAILED
+	tryactivateprotean
 	attackanimation
 	waitanimation
 	printfromtable 0x83FE5EE
@@ -2833,12 +2854,13 @@ BS_152_Thunder:
 .global BS_153_Teleport
 BS_153_Teleport:
 	attackcanceler
+	jumpifbattletype BATTLE_TRAINER | BATTLE_DOUBLE, FAILED_PRE
+	callasm SetTeleportBit
+	getifcantrunfrombattle BANK_ATTACKER
+	jumpifbyte EQUALS BATTLE_COMMUNICATION 0x1 FAILED_PRE
+	jumpifbyte EQUALS BATTLE_COMMUNICATION 0x2 FAILED_PRE
 	attackstring
 	ppreduce
-	jumpifbattletype BATTLE_TRAINER | BATTLE_DOUBLE, FAILED
-	callasm SetTeleportBit
-	jumpifbyte EQUALS BATTLE_COMMUNICATION 0x1 FAILED
-	jumpifbyte EQUALS BATTLE_COMMUNICATION 0x2 FAILED
 	attackanimation
 	waitanimation
 	printstring 0xA0 @;STRINGID_PKMNFLEDFROMBATTLE
@@ -2927,7 +2949,7 @@ BS_157_Blank:
 .global BS_158_FakeOut
 BS_158_FakeOut:
 	attackcanceler
-	jumpifnotfirstturn FAILED - 2
+	jumpifnotfirstturn FAILED_PRE
 	jumpifmove MOVE_FIRSTIMPRESSION BS_STANDARD_HIT
 	setmoveeffect MOVE_EFFECT_FLINCH | MOVE_EFFECT_CERTAIN
 	goto BS_STANDARD_HIT
@@ -2981,11 +3003,12 @@ StockpileRaiseSpDef:
 BS_161_SpitUp:
 	attackcanceler
 	jumpifbyte EQUALS, BATTLE_COMMUNICATION + 6, 0x1 0x81D7E78
-	attackstring
+	accuracycheck BS_MOVE_MISSED 0x0
+	attackstringnoprotean
 	ppreduce
-	accuracycheck BS_MOVE_MISSED + 2 0x0
 	stockpiletobasedamage 0x81D7E6A @;Spit Up Fail
-	call STANDARD_DAMAGE
+	tryactivateprotean
+	call STANDARD_DAMAGE+2
 	seteffectwithchancetarget
 	prefaintmoveendeffects 0x0
 	faintpokemonaftermove
@@ -3024,9 +3047,10 @@ StockpileWearOff:
 .global BS_162_Swallow
 BS_162_Swallow:
 	attackcanceler
-	attackstring
+	attackstringnoprotean
 	ppreduce
 	stockpiletohprecovery 0x81D7E98
+	tryactivateprotean
 	attackanimation
 	waitanimation
 	orword HIT_MARKER HITMARKER_IGNORE_SUBSTITUTE
@@ -3047,9 +3071,10 @@ BS_163_Blank:
 .global BS_164_SetHail
 BS_164_SetHail:
 	attackcanceler
-	attackstring
+	attackstringnoprotean
 	ppreduce
 	sethail
+	tryactivateprotean
 	goto BS_MOVE_WEATHER_CHANGE
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -3057,11 +3082,17 @@ BS_164_SetHail:
 .global BS_165_Torment
 BS_165_Torment:
 	attackcanceler
-	attackstring
+	accuracycheck FAILED_PRE 0x0
+	attackstringnoprotean
 	ppreduce
-	accuracycheck FAILED 0x0
 	jumpifabilitypresenttargetfield ABILITY_AROMAVEIL BattleScript_ProtectedByAromaVeil
-	goto 0x81D7EBB
+	settorment FAILED
+	tryactivateprotean
+	attackanimation
+	waitanimation
+	printstring 0xA9 @;STRINGID_PKMNSUBJECTEDTOTORMENT
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -3070,9 +3101,9 @@ BS_166_Flatter:
 	attackcanceler
 	jumpifbehindsubstitute BANK_TARGET BS_MAKE_MOVE_MISS
 	accuracycheck BS_MOVE_MISSED 0x0
+	jumpifconfusedandstatmaxed STAT_SPATK FAILED_PRE
 	attackstring
 	ppreduce
-	jumpifconfusedandstatmaxed STAT_SPATK FAILED
 	attackanimation
 	waitanimation
 	setstatchanger STAT_SPATK | INCREASE_1
@@ -3132,9 +3163,9 @@ BS_168_Memento:
 	
 MementoBS:
 	jumpifbyte EQUALS, BATTLE_COMMUNICATION + 6, 0x1, 0x81D8026
+	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
 	attackstring
 	ppreduce
-	jumpifbehindsubstitute BANK_TARGET FAILED
 	attackanimation
 	waitanimation
 	setbyte STAT_ANIM_PLAYED 0x0
@@ -3169,9 +3200,9 @@ MementoFaintUser:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 HealingWishBS:
+	jumpifcannotswitch BANK_ATTACKER FAILED_PRE
 	attackstring
 	ppreduce
-	jumpifcannotswitch BANK_ATTACKER FAILED
 	setuserhptozero
 	attackanimation
 	waitanimation
@@ -3287,16 +3318,17 @@ BS_174_Charge:
 .global BS_175_Taunt
 BS_175_Taunt:
 	attackcanceler
-	accuracycheck FAILED - 2 0x0
-	attackstring
+	accuracycheck FAILED_PRE 0x0
+	attackstringnoprotean
 	ppreduce
 	jumpifability BANK_TARGET ABILITY_OBLIVIOUS BattleScript_ObliviousPrevents
 	jumpifabilitypresenttargetfield ABILITY_AROMAVEIL BattleScript_ProtectedByAromaVeil
-	settaunt 0x81D7DF2
+	settaunt FAILED
+	tryactivateprotean
 	attackanimation
 	waitanimation
 	printstring 0xAC
-	waitmessage 0x40
+	waitmessage DELAY_1SECOND
 	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -3304,9 +3336,10 @@ BS_175_Taunt:
 .global BS_176_HelpingHand
 BS_176_HelpingHand:
 	attackcanceler
-	attackstring
+	attackstringnoprotean
 	ppreduce
 	sethelpinghand FAILED
+	tryactivateprotean
 	attackanimation
 	waitanimation
 	printstring 0xAE @;STRINGID_PKMNREADYTOHELP
@@ -3321,11 +3354,12 @@ BS_177_Trick:
 
 TrickBS:
 	attackcanceler
-	attackstring
+	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
+	accuracycheck FAILED_PRE 0x0
+	attackstringnoprotean
 	ppreduce
-	jumpifbehindsubstitute BANK_TARGET FAILED
-	accuracycheck FAILED 0x0
 	itemswap FAILED
+	tryactivateprotean
 	attackanimation
 	waitanimation
 	printstring 0xAF @;STRINGID_PKMNSWITCHEDITEMS
@@ -3336,11 +3370,12 @@ TrickBS:
 
 BestowBS:
 	attackcanceler
-	jumpifbehindsubstitute BANK_TARGET FAILED - 2
-	accuracycheck FAILED - 2 0x0
-	attackstring
+	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
+	accuracycheck FAILED_PRE 0x0
+	attackstringnoprotean
 	ppreduce
 	callasm BestowItem
+	tryactivateprotean
 	attackanimation
 	waitanimation
 	setword BATTLE_STRING_LOADER BestowString
@@ -3353,10 +3388,11 @@ BestowBS:
 .global BS_178_RolePlay
 BS_178_RolePlay:
 	attackcanceler
-	attackstring
+	accuracycheck FAILED_PRE 0xFFFF
+	attackstringnoprotean
 	ppreduce
-	accuracycheck FAILED 0xFFFF
 	copyability FAILED
+	tryactivateprotean
 	attackanimation
 	waitanimation
 	copyarray BATTLE_SCRIPTING_BANK USER_BANK 0x1
@@ -3373,9 +3409,10 @@ BS_178_RolePlay:
 .global BS_179_Wish
 BS_179_Wish:
 	attackcanceler
-	attackstring
+	attackstringnoprotean
 	ppreduce
 	trywish 0x0 FAILED
+	tryactivateprotean
 	attackanimation
 	waitanimation
 	goto BS_MOVE_END
@@ -3385,7 +3422,7 @@ BS_179_Wish:
 .global BS_180_Assist
 BS_180_Assist:
 	attackcanceler
-	attackstring
+	attackstringnoprotean
 	assistattackselect FAILED-1
 	attackanimation
 	waitanimation
@@ -3402,9 +3439,10 @@ BS_181_Ingrain:
 
 IngrainBS:
 	attackcanceler
-	attackstring
+	attackstringnoprotean
 	ppreduce
 	setroots FAILED
+	tryactivateprotean
 	attackanimation
 	waitanimation
 	printstring 0xB3
@@ -3412,9 +3450,9 @@ IngrainBS:
 	goto BS_MOVE_END
 	
 AquaRingBS:
+	jumpifspecialstatusflag BANK_ATTACKER STATUS3_AQUA_RING 0x0 FAILED_PRE
 	attackstring
 	ppreduce
-	jumpifspecialstatusflag BANK_ATTACKER STATUS3_AQUA_RING 0x0 FAILED
 	attackanimation
 	waitanimation
 	setword BATTLE_STRING_LOADER AquaRingSetString
@@ -3538,9 +3576,10 @@ HyperspaceFurySuccess:
 .global BS_183_MagicCoat
 BS_183_MagicCoat:
 	attackcanceler
-	attackstring
+	attackstringnoprotean
 	ppreduce
 	setmagiccoat FAILED
+	tryactivateprotean
 	attackanimation
 	waitanimation
 	printstring 0xBD
@@ -3557,10 +3596,11 @@ BS_184_Recycle:
 	goto 0x81D6927
 	
 RecycleBS:
-	attackstring
+	jumpifcounter BANK_ATTACKER INCINERATE_COUNTERS NOTEQUALS 0x0 FAILED_PRE
+	attackstringnoprotean
 	ppreduce
-	jumpifcounter BANK_ATTACKER INCINERATE_COUNTERS NOTEQUALS 0x0 FAILED
 	recycleitem FAILED
+	tryactivateprotean
 	attackanimation
 	waitanimation
 	printstring 0x140
@@ -3665,11 +3705,12 @@ BS_191_SkillSwap:
 	
 SkillSwapBS:
 	attackcanceler
-	jumpifbehindsubstitute BANK_TARGET FAILED-2
+	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
 	accuracycheck BS_MOVE_MISSED 0x0
-	attackstring
+	attackstringnoprotean
 	ppreduce
 	abilityswap FAILED
+	tryactivateprotean
 	attackanimation
 	waitanimation
 	copyarray BATTLE_SCRIPTING_BANK USER_BANK 0x1
@@ -3690,11 +3731,12 @@ SkillSwapBS:
 
 GastroAcidBS:
 	attackcanceler
-	jumpifbehindsubstitute BANK_TARGET FAILED-2
+	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
 	accuracycheck BS_MOVE_MISSED 0x0
-	attackstring
+	attackstringnoprotean
 	ppreduce
 	callasm AbilityChangeBSFunc
+	tryactivateprotean
 	attackanimation
 	waitanimation
 	printstring 0x184
@@ -3705,11 +3747,12 @@ WorrySeedBS:
 EntrainmentBS:
 SimpleBeamBS:
 	attackcanceler
-	jumpifbehindsubstitute BANK_TARGET FAILED-2
+	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
 	accuracycheck BS_MOVE_MISSED 0x0
-	attackstring
+	attackstringnoprotean
 	ppreduce
 	callasm AbilityChangeBSFunc
+	tryactivateprotean
 	attackanimation
 	waitanimation
 
@@ -3732,9 +3775,10 @@ CoreEnforcerBS:
 .global BS_192_Imprison
 BS_192_Imprison:
 	attackcanceler
-	attackstring
+	attackstringnoprotean
 	ppreduce
 	imprisoneffect FAILED
+	tryactivateprotean
 	attackanimation
 	waitanimation
 	printstring 0xB9 @;STRINGID_PKMNSEALEDOPPONENTMOVE
@@ -3746,12 +3790,13 @@ BS_192_Imprison:
 .global BS_193_Refresh
 BS_193_Refresh:
 	attackcanceler
-	attackstring
-	ppreduce
 	jumpifmove MOVE_PSYCHOSHIFT PsychoShiftBS
 	
 RefreshBS:
+	attackstringnoprotean
+	ppreduce
 	cureifburnedparalysedorpoisoned FAILED
+	tryactivateprotean
 	attackanimation
 	waitanimation
 	printstring 0xA7 @;STRINGID_PKMNSTATUSNORMAL
@@ -3760,12 +3805,15 @@ RefreshBS:
 	goto BS_MOVE_END
 	
 PsychoShiftBS:
-	jumpifbehindsubstitute BANK_TARGET FAILED
-	jumpifstatus BANK_TARGET STATUS_ANY FAILED
-	accuracycheck FAILED 0x0
+	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
+	jumpifstatus BANK_TARGET STATUS_ANY FAILED_PRE
+	accuracycheck FAILED_PRE 0x0
+	attackstringnoprotean
+	ppreduce
 	jumpifsideaffecting BANK_TARGET SIDE_SAFEGUARD 0x81D8B39 @;Protected By Safeguard
 	callasm LoadStatustoPsychoShiftTransfer
 	cureprimarystatus BANK_ATTACKER FAILED
+	tryactivateprotean
 	attackanimation
 	waitanimation
 	seteffecttarget
@@ -3780,9 +3828,10 @@ PsychoShiftBS:
 .global BS_194_Grudge
 BS_194_Grudge:
 	attackcanceler
-	attackstring
+	attackstringnoprotean
 	ppreduce
 	setgrudge FAILED
+	tryactivateprotean
 	attackanimation
 	waitanimation
 	printstring 0xBB
@@ -3794,9 +3843,10 @@ BS_194_Grudge:
 .global BS_195_Snatch
 BS_195_Snatch:
 	attackcanceler
-	attackstring
+	attackstringnoprotean
 	ppreduce
 	setstealstatchange FAILED
+	tryactivateprotean
 	attackanimation
 	waitanimation
 	pause DELAY_HALFSECOND
@@ -3842,9 +3892,10 @@ BS_200_Blank:
 BS_201_MudSport:
 BS_210_WaterSport:
 	attackcanceler
-	attackstring
+	attackstringnoprotean
 	ppreduce
 	settypebasedhalvers FAILED
+	tryactivateprotean
 	attackanimation
 	waitanimation
 	printfromtable 0x83FE5E0 @;gSportsUsedStringIds
@@ -3875,7 +3926,7 @@ BS_204_Overheat:
 .global BS_205_Tickle
 BS_205_Tickle:
 	attackcanceler
-	jumpifbehindsubstitute BANK_TARGET FAILED-2
+	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
 	accuracycheck BS_MOVE_MISSED 0x0
 	attackstring
 	ppreduce
@@ -4309,9 +4360,10 @@ ShellSmash_SharpSpAtk:
 .global BS_213_StatSwapSplitters
 BS_213_StatSwapSplitters:
 	attackcanceler
-	attackstring
+	attackstringnoprotean
 	ppreduce
 	callasm SetStatSwapSplit
+	tryactivateprotean
 	attackanimation
 	waitanimation
 	printstring 0x184
@@ -4347,7 +4399,7 @@ BS_217_Blank:
 .global BS_218_MeFirst
 BS_218_MeFirst:
 	attackcanceler
-	attackstring
+	attackstringnoprotean
 	ppreduce
 	accuracycheck FAILED 0x0
 	callasm MeFirstFunc + 1
@@ -4464,10 +4516,11 @@ BS_225_Blank:
 .global TerrainSeedCheck
 BS_226_Terrain:
 	attackcanceler
-	attackstring
+	attackstringnoprotean
 	ppreduce
 	setterrain FAILED
 	callasm TransferTerrainData
+	tryactivateprotean
 	attackanimation
 	waitanimation
 	printstring 0x184
@@ -4606,8 +4659,8 @@ BS_231_AttackBlockers:
 	jumpifmove MOVE_TELEKINESIS TelekinesisBS
 	
 HealBlockBS:
-	jumpifbehindsubstitute BANK_TARGET FAILED-2
-	jumpifcounter BANK_TARGET HEAL_BLOCK_TIMERS NOTEQUALS 0x0 FAILED-2
+	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
+	jumpifcounter BANK_TARGET HEAL_BLOCK_TIMERS NOTEQUALS 0x0 FAILED_PRE
 	jumpifabilitypresenttargetfield ABILITY_AROMAVEIL BattleScript_ProtectedByAromaVeil
 	accuracycheck BS_MOVE_MISSED 0x0
 	attackstring
@@ -4621,8 +4674,8 @@ HealBlockBS:
 	goto BS_MOVE_END
 
 EmbargoBS:
-	jumpifbehindsubstitute BANK_TARGET FAILED-2
-	jumpifcounter BANK_TARGET EMBARGO_TIMERS NOTEQUALS 0x0 FAILED-2
+	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
+	jumpifcounter BANK_TARGET EMBARGO_TIMERS NOTEQUALS 0x0 FAILED_PRE
 	accuracycheck BS_MOVE_MISSED 0x0
 	attackstring
 	ppreduce
@@ -4635,7 +4688,7 @@ EmbargoBS:
 	goto BS_MOVE_END
 
 PowderBS:
-	jumpifcounter BANK_TARGET POWDER_TIMERS NOTEQUALS 0x0 FAILED-2
+	jumpifcounter BANK_TARGET POWDER_TIMERS NOTEQUALS 0x0 FAILED_PRE
 	accuracycheck BS_MOVE_MISSED 0x0
 	attackstring
 	ppreduce
@@ -4648,7 +4701,7 @@ PowderBS:
 	goto BS_MOVE_END
 
 TelekinesisBS:
-	jumpifbehindsubstitute BANK_TARGET FAILED-2
+	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
 	callasm CheckTelekinesisFail
 	accuracycheck BS_MOVE_MISSED 0x0
 	attackstring
@@ -4677,11 +4730,12 @@ ThroatChopBS:
 .global BS_232_TypeChangers
 BS_232_TypeChangers:
 	attackcanceler
-	attackstring
+	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
+	attackstringnoprotean
 	ppreduce
-	jumpifbehindsubstitute BANK_TARGET FAILED
 	jumpifmove MOVE_SOAK SoakBS
 	callasm ChangeTargetTypeFunc
+	tryactivateprotean
 	attackanimation
 	waitanimation
 	printstring 0x184
@@ -4689,6 +4743,7 @@ BS_232_TypeChangers:
 	goto BS_MOVE_END
 	
 SoakBS:
+	tryactivateprotean
 	attackanimation
 	callasm ChangeTargetTypeFunc
 	printstring 0x184
@@ -4704,12 +4759,13 @@ BS_233_HealTarget:
 	jumpifmove MOVE_POLLENPUFF PollenPuffBS
 
 HealPulseBS:
-	attackstring
+	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
+	attackstringnoprotean
 	ppreduce
-	jumpifbehindsubstitute BANK_TARGET FAILED
 	jumpifcounter BANK_TARGET HEAL_BLOCK_TIMERS NOTEQUALS 0x0 BattleScript_NoHealTargetAfterHealBlock
 	accuracycheck BS_MOVE_MISSED+2 0x0
 	callasm HealTargetFunc
+	tryactivateprotean
 	attackanimation
 	waitanimation
 	orword HIT_MARKER HITMARKER_IGNORE_SUBSTITUTE
@@ -4737,9 +4793,9 @@ PollenPuffBS:
 BS_234_TopsyTurvyElectrify:
 	attackcanceler
 	accuracycheck BS_MOVE_MISSED 0x0
+	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
 	attackstring
 	ppreduce
-	jumpifbehindsubstitute BANK_TARGET FAILED
 	jumpifmove MOVE_ELECTRIFY ElectrifyBS
 	callasm TopsyTurvyFunc
 	attackanimation
@@ -4764,12 +4820,13 @@ ElectrifyBS:
 .global BS_235_FairyLockHappyHourCelebrateHoldHands
 BS_235_FairyLockHappyHourCelebrateHoldHands:
 	attackcanceler
-	attackstring
+	attackstringnoprotean
 	ppreduce
 	callasm DoFairyLockHappyHourFunc
 	jumpifmove MOVE_HOLDHANDS HoldHandsBS
 	
 HappyHourAnimBS:
+	tryactivateprotean
 	attackanimation
 	waitanimation
 	printstring 0x184
@@ -4786,7 +4843,7 @@ HoldHandsBS:
 .global BS_236_InstructAfterYouQuash
 BS_236_InstructAfterYouQuash:
 	attackcanceler
-	attackstring
+	attackstringnoprotean
 	ppreduce
 	jumpifmove MOVE_INSTRUCT InstructBS
 	jumpifmove MOVE_QUASH QuashBS
@@ -4794,6 +4851,7 @@ BS_236_InstructAfterYouQuash:
 AfterYouBS:
 	callasm AfterYouFunc
 	accuracycheck FAILED 0x0
+	tryactivateprotean
 	attackanimation
 	waitanimation
 	setword BATTLE_STRING_LOADER AfterYouString
@@ -4804,6 +4862,7 @@ AfterYouBS:
 QuashBS:
 	callasm QuashFunc
 	accuracycheck FAILED 0x0
+	tryactivateprotean
 	attackanimation
 	waitanimation
 	setword BATTLE_STRING_LOADER QuashString
@@ -4838,9 +4897,10 @@ BS_238_Blank:
 BS_239_TeamEffectsAndMagnetRise:
 	attackcanceler
 	jumpifmove MOVE_MAGNETRISE MagnetRiseBS
-	attackstring
+	attackstringnoprotean
 	ppreduce
 	callasm TailwindLuckyChantFunc
+	tryactivateprotean
 	attackanimation
 	waitanimation
 	printstring 0x184
@@ -4848,9 +4908,10 @@ BS_239_TeamEffectsAndMagnetRise:
 	goto BS_MOVE_END
 	
 MagnetRiseBS:
-	attackstring
+	attackstringnoprotean
 	ppreduce
 	callasm TrySetMagnetRise
+	tryactivateprotean
 	attackanimation
 	waitanimation
 	setword BATTLE_STRING_LOADER MagnetRiseSetString
@@ -4862,9 +4923,10 @@ MagnetRiseBS:
 .global BS_240_Camouflage
 BS_240_Camouflage:
 	attackcanceler
-	attackstring
+	attackstringnoprotean
 	ppreduce
 	settypetoterrain FAILED
+	tryactivateprotean
 	attackanimation
 	waitanimation
 	printstring 0x49 @;STRINGID_PKMNCHANGEDTYPE
@@ -4901,8 +4963,8 @@ BS_242_LastResortSkyDrop:
 	jumpifword ANDS HIT_MARKER HITMARKER_NO_ATTACKSTRING SkyDropDropBS
 	
 	attackcanceler
-	jumpifbehindsubstitute BANK_TARGET FAILED-2
-	jumpifspecialstatusflag EQUALS STATUS3_SEMI_INVULNERABLE 0x0 FAILED-2
+	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
+	jumpifspecialstatusflag EQUALS STATUS3_SEMI_INVULNERABLE 0x0 FAILED_PRE
 	accuracycheck BS_MOVE_MISSED 0x0
 	attackstring
 	ppreduce

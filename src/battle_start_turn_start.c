@@ -234,7 +234,10 @@ void BattleBeginFirstTurn(void)
 				for (i = 0; i < 8; i++)
 					gBattleCommunication[i] = 0;
 				for (i = 0; i < gBattlersCount; i++)
+				{
 					gBattleMons[i].status2 &= ~8;
+					gNewBS->pickupStack[i] = 0xFF;
+				}
 				gBattleStruct->turnEffectsTracker = 0;
 				gBattleStruct->turnEffectsBank = 0;
 				gBattleStruct->field_180 = 0;

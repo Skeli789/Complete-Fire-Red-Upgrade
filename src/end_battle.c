@@ -18,12 +18,13 @@ void HandleEndTurn_BattleWon(void);
 void HandleEndTurn_BattleLost(void);
 void HandleEndTurn_RanFromBattle(void);
 void EndOfBattleThings(void);
-void RestoreNonConsumableItems(void);
-void RecalcAllStats(void);
-void BringBackTheDead(void);
-void EndPartnerBattlePartyRestore(void);
-void EndSkyBattlePartyRestore(void);
-void EndBattleFlagClear(void);
+static void NaturalCureHeal(void);
+static void RestoreNonConsumableItems(void);
+static void RecalcAllStats(void);
+static void BringBackTheDead(void);
+static void EndPartnerBattlePartyRestore(void);
+static void EndSkyBattlePartyRestore(void);
+static void EndBattleFlagClear(void);
 bool8 IsConsumable(u16 item);
 
 extern void FormsRevert(pokemon_t* party);
@@ -397,6 +398,7 @@ bool8 TryRunFromBattle(u8 bank)
 }
 
 void EndOfBattleThings(void) {
+	NaturalCureHeal();
 	RestoreNonConsumableItems();
 	FormsRevert(gPlayerParty);
 	MegaRevert(gPlayerParty);
@@ -409,7 +411,16 @@ void EndOfBattleThings(void) {
 	TerrainType = 0; //Reset now b/c normal reset is after BG is loaded
 }
 
-void RestoreNonConsumableItems(void) {
+static void NaturalCureHeal(void)
+{
+	for (int bank = 0; bank < gBattlersCount; ++bank)
+	{
+		if (ABILITY(bank) == ABILITY_NATURALCURE && gBattleMons[bank].status1)
+			GetBankPartyData(bank)->condition = 0;
+	}
+}
+
+static void RestoreNonConsumableItems(void) {
 	u16* items = ExtensionState.itemBackup;
 	
 	if (ExtensionState.itemBackup != NULL) {
@@ -430,12 +441,12 @@ void RestoreNonConsumableItems(void) {
 	}
 }
 
-void RecalcAllStats(void) {
+static void RecalcAllStats(void) {
 	for (int i = 0; i < PARTY_SIZE; ++i) 
 		CalculateMonStats(&gPlayerParty[i]);
 }
 
-void BringBackTheDead(void) { //Used after Multi Battles that you lost, but your partner won
+static void BringBackTheDead(void) { //Used after Multi Battles that you lost, but your partner won
 	if (ViableMonCount(gPlayerParty) == 0) {
 		for (int i = 0; i < PARTY_SIZE; ++i) {
 			if (gPlayerParty[i].species != 0 && !GetMonData(&gPlayerParty[i], MON_DATA_IS_EGG, 0)) {
@@ -446,7 +457,7 @@ void BringBackTheDead(void) { //Used after Multi Battles that you lost, but your
 	}
 }
 
-void EndPartnerBattlePartyRestore(void) {
+static void EndPartnerBattlePartyRestore(void) {
 	int i;
 	u8 counter = 0;
 	pokemon_t* backup = ExtensionState.partyBackup;
@@ -488,7 +499,7 @@ void EndPartnerBattlePartyRestore(void) {
 
 
 //TO DO, restore party order like above
-void EndSkyBattlePartyRestore(void) {
+static void EndSkyBattlePartyRestore(void) {
 	int i;
 	u8 counter = 0;
 	pokemon_t* backup = ExtensionState.skyBattlePartyBackup;
@@ -502,7 +513,7 @@ void EndSkyBattlePartyRestore(void) {
 	}
 }
 
-void EndBattleFlagClear(void) {
+static void EndBattleFlagClear(void) {
 	for (u32 i = 0; i < ARRAY_COUNT(gEndBattleFlagClearTable); ++i)
 		FlagClear(gEndBattleFlagClearTable[i]);
 	

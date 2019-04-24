@@ -580,7 +580,7 @@ void CaptivateFunc(void) {
     || GetGenderFromSpeciesAndPersonality(speciesAtk, personalityAtk) == MON_GENDERLESS
     || GetGenderFromSpeciesAndPersonality(speciesDef, personalityDef) == MON_GENDERLESS)
     {
-        gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+        gBattlescriptCurrInstr = BattleScript_ButItDoesntAffect - 5;
     }
 }
 
@@ -1465,4 +1465,20 @@ void TrySuckerPunch(void)
 		return;
 
 	gBattlescriptCurrInstr = BattleScript_ButItFailed - 5 - 2;
+}
+
+void DoProteanTypeChange(void)
+{
+	u8 moveType = gBattleStruct->dynamicMoveType;
+	
+	gBattleScripting->bank = gBankAttacker;
+	SET_BATTLER_TYPE(gBankAttacker, moveType);
+	PREPARE_TYPE_BUFFER(gBattleTextBuff1, moveType);
+}
+
+void HarvestActivateBerry(void)
+{
+	gBattlescriptCurrInstr += 5;
+	if (ItemBattleEffects(ItemEffects_EndTurn, gBattleScripting->bank, TRUE, FALSE))
+		gBattlescriptCurrInstr -= 5;
 }

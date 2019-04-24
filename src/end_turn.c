@@ -29,7 +29,7 @@ extern u8 BattleScript_GravityEnd[];
 extern u8 BattleScript_TerrainEnd[];
 extern u8 BattleScript_ToxicOrb[];
 extern u8 BattleScript_FlameOrb[];
-extern u8 BattleScript_ZenMode[];
+extern u8 BattleScript_TransformedEnd2[];
 extern u8 BattleScript_PowerConstruct[];
 extern u8 BattleScript_StartedSchooling[];
 extern u8 BattleScript_StoppedSchooling[];
@@ -426,15 +426,16 @@ u8 TurnBasedEffects(void) {
 			case(ET_Poison):
                 if ((gBattleMons[gActiveBattler].status1 & STATUS_POISON) 
 				&& gBattleMons[gActiveBattler].hp
-				&& gBattleMons[gActiveBattler].ability != ABILITY_MAGICGUARD) 
+				&& ABILITY(gActiveBattler) != ABILITY_MAGICGUARD) 
 				{
 					gBattleMoveDamage = MathMax(1, gBattleMons[gActiveBattler].maxHP / 8);
 					
-					if (gBattleMons[gActiveBattler].ability == ABILITY_POISONHEAL) 
+					if (ABILITY(gActiveBattler) == ABILITY_POISONHEAL) 
 					{
 						if (!BATTLER_MAX_HP(gActiveBattler) && !gNewBS->HealBlockTimers[gActiveBattler])
 						{
 							gBattleMoveDamage *= -1;
+							gBattleScripting->bank = gActiveBattler;
 							BattleScriptExecute(BattleScript_PoisonHeal);
 						}
 					}
@@ -447,7 +448,7 @@ u8 TurnBasedEffects(void) {
 			case(ET_Toxic):
                 if ((gBattleMons[gActiveBattler].status1 & STATUS_TOXIC_POISON)
 				&& gBattleMons[gActiveBattler].hp
-				&& gBattleMons[gActiveBattler].ability != ABILITY_MAGICGUARD) 
+				&& ABILITY(gActiveBattler) != ABILITY_MAGICGUARD) 
 				{
 					gBattleMoveDamage = MathMax(1, gBattleMons[gActiveBattler].maxHP / 16);
 							
@@ -456,11 +457,12 @@ u8 TurnBasedEffects(void) {
 							
 					gBattleMoveDamage *= (gBattleMons[gActiveBattler].status1 & 0xF00) >> 8;
 						
-					if (gBattleMons[gActiveBattler].ability == ABILITY_POISONHEAL) 
+					if (ABILITY(gActiveBattler) == ABILITY_POISONHEAL) 
 					{
 						if (!BATTLER_MAX_HP(gActiveBattler) && !gNewBS->HealBlockTimers[gActiveBattler])
 						{
 							gBattleMoveDamage = MathMax(1, gBattleMons[gActiveBattler].maxHP / 8) * -1;
+							gBattleScripting->bank = gActiveBattler;
 							BattleScriptExecute(BattleScript_PoisonHeal);
 						}
 					}
@@ -999,6 +1001,7 @@ u8 TurnBasedEffects(void) {
 							gLastUsedAbility = ABILITY(gActiveBattler);
 							switch(gLastUsedAbility) {
 							case ABILITY_SPEEDBOOST:
+							case ABILITY_TRUANT:
 							case ABILITY_MOODY:
 							case ABILITY_BADDREAMS:
 								if (AbilityBattleEffects(ABILITYEFFECT_ENDTURN, gActiveBattler, 0, 0, 0))
@@ -1053,63 +1056,67 @@ u8 TurnBasedEffects(void) {
 				}
 					
 			case(ET_Form_Change):
-				if (gBattleMons[gActiveBattler].hp && !(gBattleMons[gActiveBattler].status2 & STATUS2_TRANSFORMED)) {
+				if (gBattleMons[gActiveBattler].hp && !(gBattleMons[gActiveBattler].status2 & STATUS2_TRANSFORMED)) 
+				{
 					pokemon_t* partydata = GetBankPartyData(gActiveBattler);
 					bool8 changedform = FALSE;
 					u16 species = partydata->species;
-					u8 ability = gBattleMons[gActiveBattler].ability;
+					u8 ability = ABILITY(gActiveBattler);
 					u16 newspecies = 0;
 					bool8 reloadType = FALSE;
 					bool8 reloadStats = FALSE;
-					u8* battle_script;
+					u8* battleScript;
 					switch(ability) {
-						
 						case ABILITY_ZENMODE:
-							if (species == SPECIES_DARMANITAN) {
+							if (species == SPECIES_DARMANITAN) 
+							{
 								newspecies = SPECIES_DARMANITANZEN;
 								changedform = TRUE;
 								reloadType = TRUE;
 								reloadStats = TRUE;
-								battle_script = BattleScript_ZenMode;
+								battleScript = BattleScript_TransformedEnd2;
 							}
 							break;
 						
 						case ABILITY_POWERCONSTRUCT:
-							if (species == SPECIES_ZYGARDE || species == SPECIES_ZYGARDE_10) {
+							if (species == SPECIES_ZYGARDE || species == SPECIES_ZYGARDE_10) 
+							{
 								newspecies = SPECIES_ZYGARDE_COMPLETE;
 								reloadType = TRUE;
 								reloadStats = TRUE;
 								changedform = TRUE;
-								battle_script = BattleScript_PowerConstruct;
+								battleScript = BattleScript_PowerConstruct;
 							}
 							break;
 						
 						case ABILITY_SCHOOLING:
-							if (species == SPECIES_WISHIWASHI && gBattleMons[gActiveBattler].level >= 20 &&
-							    gBattleMons[gActiveBattler].hp > (gBattleMons[gActiveBattler].maxHP / 4)) {
-									newspecies = SPECIES_WISHIWASHI_S;
-									changedform = TRUE;
-									reloadStats = TRUE;
-									battle_script = BattleScript_StartedSchooling;
+							if (species == SPECIES_WISHIWASHI && gBattleMons[gActiveBattler].level >= 20
+							&& gBattleMons[gActiveBattler].hp > gBattleMons[gActiveBattler].maxHP / 4)
+							{
+								newspecies = SPECIES_WISHIWASHI_S;
+								changedform = TRUE;
+								reloadStats = TRUE;
+								battleScript = BattleScript_StartedSchooling;
 							}
-							else if (species == SPECIES_WISHIWASHI_S && 
-									(gBattleMons[gActiveBattler].level < 20 || 
-									 gBattleMons[gActiveBattler].hp <= (gBattleMons[gActiveBattler].maxHP / 4))) {
-										newspecies = SPECIES_WISHIWASHI;
-										changedform = TRUE;
-										reloadStats = TRUE;
-										battle_script = BattleScript_StoppedSchooling;
+							else if (species == SPECIES_WISHIWASHI_S
+								&&  (gBattleMons[gActiveBattler].level < 20
+								  || gBattleMons[gActiveBattler].hp <= gBattleMons[gActiveBattler].maxHP / 4)) 
+							{
+								newspecies = SPECIES_WISHIWASHI;
+								changedform = TRUE;
+								reloadStats = TRUE;
+								battleScript = BattleScript_StoppedSchooling;
 							}
 							break;
 							
 						case ABILITY_SHIELDSDOWN:
 							if (species == SPECIES_MINIORSHIELD 
-							&& gBattleMons[gActiveBattler].hp <= (gBattleMons[gActiveBattler].maxHP / 2)) 
+							&& gBattleMons[gActiveBattler].hp <= gBattleMons[gActiveBattler].maxHP / 2)
 							{
 								newspecies = umodsi(partydata->personality, 7); //Get Minior Colour
 								changedform = TRUE;
 								reloadStats = TRUE;
-								battle_script = BattleScript_ShieldsDownToCore;
+								battleScript = BattleScript_ShieldsDownToCore;
 							}
 							else if ((species == SPECIES_MINIOR_RED
 								  || species == SPECIES_MINIOR_BLUE
@@ -1122,21 +1129,25 @@ u8 TurnBasedEffects(void) {
 								newspecies = SPECIES_MINIORSHIELD;
 								changedform = TRUE;
 								reloadStats = TRUE;
-								battle_script = BattleScript_ShieldsDownToMeteor;
+								battleScript = BattleScript_ShieldsDownToMeteor;
 							}
 							break;
 							
 						case ABILITY_FLOWERGIFT:
-							if (species == SPECIES_CHERRIMSUN && (!WEATHER_HAS_EFFECT || !(gBattleWeather & WEATHER_SUN_ANY) || ability != ABILITY_FLOWERGIFT)) {
+							if (species == SPECIES_CHERRIMSUN && (!WEATHER_HAS_EFFECT || !(gBattleWeather & WEATHER_SUN_ANY) || ability != ABILITY_FLOWERGIFT)) 
+							{
 								newspecies = SPECIES_CHERRIM;
-								battle_script = BattleScript_FlowerGift;
+								changedform = TRUE;
+								battleScript = BattleScript_FlowerGift;
 							}
-			
-						if (changedform) {
-							DoFormChange(gActiveBattler, newspecies, reloadType, reloadStats);
-							BattleScriptExecute(battle_script);
-							++effect;
-						}
+					}
+					
+					if (changedform) 
+					{
+						gBattleScripting->bank = gActiveBattler;
+						DoFormChange(gActiveBattler, newspecies, reloadType, reloadStats);
+						BattleScriptExecute(battleScript);
+						++effect;
 					}
 				}
 				break;
@@ -1146,6 +1157,9 @@ u8 TurnBasedEffects(void) {
 				gNewBS->EndTurnDone = TRUE;
 				gAbsentBattlerFlags &= ~(gNewBS->AbsentBattlerHelper);
 				gNewBS->MegaData->state = 0;
+				
+				for (int i = 0; i < gBattlersCount; ++i)
+					gNewBS->pickupStack[i] = 0xFF;
 		}
 		gBattleStruct->turnEffectsBank++;
 		

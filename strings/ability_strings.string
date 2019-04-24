@@ -35,7 +35,7 @@ The effects of weather disappeared!
 [FD][13] shuddered!
 
 #org @gText_ForewarnActivate
-It was alerted to\n[FD][13]'s\n[FD][00]!
+It was alerted to\n[FD][11]'s\l[FD][00]!
 
 #org @gText_FriskActivate
 [FD][13] frisked\n[FD][10] and found\lits [FD][16]!
@@ -57,3 +57,21 @@ Mysterious strong winds are protecting\nFlying-type Pok\emon!
 
 #org @gText_FlashFirePowerUp
 The power of [FD][13]'s\nFire-type moves rose!
+
+#org @gText_AbilityChangedType
+[FD][13] transformed into\nthe [FD][00] type!
+
+#org @gText_AbilityCuredStatusProblem
+[FD][13] was cured of\nits [FD][00] problem!
+
+#org @gText_HealerCuredStatusProblem
+[FD][11] was cured of\nits [FD][00] problem!
+
+#org @gText_MagicBounce
+[FD][10] bounced the\n[FD][14] back!
+
+#org @gText_StartedSchooling
+[FD][13] started\nschooling!
+
+#org @gText_StoppedSchooling
+[FD][13] stopped\nschooling!

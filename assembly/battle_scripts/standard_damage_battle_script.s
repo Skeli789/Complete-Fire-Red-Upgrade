@@ -23,8 +23,12 @@ STANDARD_DAMAGE:
 	return
 
 .global FAILED
+.global FAILED_PRE
+.global BattleScript_ButItFailedAttackstring
 .global BattleScript_ButItFailed
 FailedPreBS:
+BattleScript_ButItFailedAttackstring:
+FAILED_PRE:
 	attackstring
 	ppreduce
 FAILED:

@@ -1,5 +1,6 @@
 #include "defines.h"
 #include "defines_battle.h"
+#include "../include/battle_string_ids.h"
 #include "../include/constants/items.h"
 #include "../include/new/helper_functions.h"
 #include "../include/new/CMD49.h"
@@ -8,6 +9,8 @@
 
 extern void (* const gBattleScriptingCommandsTable[])(void);
 extern void (* const gBattleScriptingCommandsTable2[])(void);
+
+extern move_t MovesThatCallOtherMovesTable[];
 
 #define BattleScript_DestinyBondTakesLife (u8*) 0x81D8C6C
 #define BattleScript_GrudgeTakesPp (u8*) 0x81D8FA3
@@ -18,6 +21,7 @@ extern u8 BattleScript_SpikyShield[];
 extern u8 BattleScript_BanefulBunker[];
 extern u8 BattleScript_RageIsBuilding[];
 extern u8 BattleScript_BeakBlastBurn[];
+extern u8 BattleScript_AbilityChangedType[];
 
 extern u8 ElectricTerrainSetString[];
 extern u8 GrassyTerrainSetString[];
@@ -243,6 +247,7 @@ enum Counters
 	Counters_Incinerate,		//13
 	Counters_Powder,			//14
 	Counters_BeakBlast,			//15
+	Counters_AuroraVeil, 		//16
 };
 
 
@@ -351,6 +356,12 @@ void atkFF08_counterclear(void)
 			else
 				failed = TRUE;
 			break;
+		case Counters_AuroraVeil:
+			if (gNewBS->AuroraVeilTimers[SIDE(bank)])
+				gNewBS->AuroraVeilTimers[SIDE(bank)] = 0;
+			else
+				failed = TRUE;
+			break;
 	}
 	
 	if (failed)
@@ -418,6 +429,9 @@ void atkFF09_jumpifcounter(void)
 			break;
 		case Counters_BeakBlast:
 			counter = gNewBS->BeakBlastByte & gBitTable[bank];
+			break;
+		case Counters_AuroraVeil:
+			counter = gNewBS->AuroraVeilTimers[SIDE(bank)];
 			break;
 		default:
 			counter = 0; //Shouldn't happen...
@@ -1101,8 +1115,79 @@ void atkFF24_jumpifattackeralreadydiddamage(void)
 		gBattlescriptCurrInstr += 5;
 }
 
+//jumpifterrainandgrounded TERRAIN_ID BANK ROM_ADDRESS
+void atkFF25_jumpifterrainandgrounded(void)
+{
+	if (TerrainType == gBattlescriptCurrInstr[1]
+	&&  CheckGrounding(GetBattleBank(gBattlescriptCurrInstr[2])))
+		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
+	else
+		gBattlescriptCurrInstr += 7;
+}
+
+//attackstringnoprotean
+void atkFF26_attackstringnoprotean(void)
+{
+    if (gBattleExecBuffer) return;
+
+	u8 moveType = gBattleStruct->dynamicMoveType;
+	
+    if (!(gHitMarker & (HITMARKER_NO_ATTACKSTRING | HITMARKER_ATTACKSTRING_PRINTED))) 
+	{
+        PrepareStringBattle(STRINGID_USEDMOVE, gBankAttacker);
+
+		gBattlescriptCurrInstr++;
+		gBattleCommunication[MSG_DISPLAY] = 0;
+
+		if (!gNewBS->DancerInProgress && gCurrentMove != MOVE_COPYCAT) 
+		{
+			gNewBS->LastUsedMove = gCurrentMove;
+			gNewBS->LastUsedTypes[gBankAttacker] = moveType;
+
+			if (!CheckTableForMove(gCurrentMove, MovesThatCallOtherMovesTable)) 
+			{
+				if (gLastPrintedMoves[gBankAttacker] == gCurrentMove)
+					gNewBS->MetronomeCounter[gBankAttacker] = MathMin(100, gNewBS->MetronomeCounter[gBankAttacker] + 20);
+				else
+					gNewBS->MetronomeCounter[gBankAttacker] = 0;
+			}
+		}
+
+		gHitMarker |= HITMARKER_ATTACKSTRING_PRINTED;
+    }
+	else 
+	{
+		gBattlescriptCurrInstr++;
+		gBattleCommunication[MSG_DISPLAY] = 0;
+	}
+}
+
+//tryactivateprotean
+void atkFF27_tryactivateprotean(void)
+{
+	u8 moveType = gBattleStruct->dynamicMoveType;
+	
+	if (ABILITY(gBankAttacker) == ABILITY_PROTEAN
+	&& !(gMoveResultFlags & MOVE_RESULT_FAILED)
+	&& gCurrentMove != MOVE_STRUGGLE 
+	&& !(gHitMarker & HITMARKER_UNABLE_TO_USE_MOVE)
+	&& !(CheckTableForMove(gCurrentMove, MovesThatCallOtherMovesTable)))
+	{
+		if (gBattleMons[gBankAttacker].type1 != moveType
+		||  gBattleMons[gBankAttacker].type2 != moveType
+		|| (gBattleMons[gBankAttacker].type3 != moveType && gBattleMons[gBankAttacker].type3 != TYPE_BLANK))
+		{
+			BattleScriptPush(gBattlescriptCurrInstr + 1);
+			gBattlescriptCurrInstr = BattleScript_AbilityChangedType;
+			return;
+		}
+	}
+	
+	gBattlescriptCurrInstr++;
+}
+
 //trysetsleep BANK FAIL_ADDRESS
-void atkFF25_trysetsleep(void)
+void atkFF26_trysetsleep(void)
 {
 	u8 bank = GetBattleBank(gBattlescriptCurrInstr[1]);
 	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 2);

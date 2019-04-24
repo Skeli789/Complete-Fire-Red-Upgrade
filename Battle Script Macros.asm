@@ -1603,3 +1603,18 @@
 	.byte 0xFF, 0x24
 	.4byte \rom_address
 	.endm
+	
+	.macro jumpifterrainandgrounded terrain bank rom_address
+	.byte 0xFF, 0x25
+	.byte \terrain
+	.byte \bank
+	.4byte \rom_address
+	.endm
+	
+	.macro attackstringnoprotean
+	.byte 0xFF, 0x26
+	.endm
+	
+	.macro tryactivateprotean
+	.byte 0xFF, 0x27
+	.endm

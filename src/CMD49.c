@@ -47,11 +47,13 @@ extern u8 BattleScript_EjectButton[];
 extern u8 BattleScript_RedCard[];
 extern u8 BattleScript_EmergencyExit[];
 extern u8 BattleScript_PrintCustomString[];
+extern u8 BattleScript_AbilityTransformed[];
 
 extern u8 FreedFromSkyDropString[];
 
 extern u32 SpeedCalc(u8 bank);
 extern bool8 SetMoveEffect2(void);
+extern void DoFormChange(u8 bank, u16 species, bool8 ReloadType, bool8 ReloadStats);
 
 extern u8* gBattleScriptsForMoveEffects[];
 
@@ -88,7 +90,7 @@ enum
 	ATK49_MULTI_HIT_MOVES,
 	ATK49_DEFROST,
 	ATK49_SECOND_MOVE_EFFECT,
-	ATK49_MAGICIAN_MOXIE,
+	ATK49_MAGICIAN_MOXIE_BATTLEBOND,
 	ATK49_FATIGUE,
 	ATK49_ITEM_EFFECTS_END_TURN_ATTACKER_2,
     ATK49_NEXT_TARGET,
@@ -678,7 +680,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			gBattleScripting->atk49_state++;
 			break;
 		
-		case ATK49_MAGICIAN_MOXIE:
+		case ATK49_MAGICIAN_MOXIE_BATTLEBOND:
 			switch (ABILITY(bankAtk)) {
 				case ABILITY_MAGICIAN:
 					if (ITEM(bankAtk) == 0
@@ -713,8 +715,6 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 						gBattleScripting->statChanger = INCREASE_1 | STAT_STAGE_ATK;
 						gBattleScripting->animArg1 = 0xE + STAT_STAGE_ATK;
 						gBattleScripting->animArg2 = 0;
-						gLastUsedAbility = ABILITY_MOXIE;
-						RecordAbilityBattle(gBankAttacker, gLastUsedAbility);
 						
 						BattleScriptPushCursor();
 						gBattlescriptCurrInstr = BattleScript_Moxie;
@@ -782,6 +782,24 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 							gBattlescriptCurrInstr = BattleScript_Moxie;
 							effect = 1;
 						}
+					}
+					break;
+				
+				case ABILITY_BATTLEBOND:
+					if ((arg1 != ARG_IN_FUTURE_ATTACK || gWishFutureKnock->futureSightPartyIndex[bankDef] == gBattlerPartyIndexes[bankAtk])
+					&& SPECIES(bankAtk) == SPECIES_GRENINJA
+					&& gBattleMons[bankDef].hp == 0
+					&& gBattleMons[bankAtk].hp
+					&& TOOK_DAMAGE(bankDef)
+					&& MOVE_HAD_EFFECT
+					&& PartyAlive(bankDef)
+					&& !IS_TRANSFORMED(bankAtk))
+					{
+						DoFormChange(bankAtk, SPECIES_ASHGRENINJA, TRUE, TRUE);
+						
+						BattleScriptPushCursor();
+						gBattlescriptCurrInstr = BattleScript_AbilityTransformed;
+						effect = 1;
 					}
 			}
 			*SeedHelper = 0; //For Soul-Heart Loop

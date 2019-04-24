@@ -305,3 +305,6 @@ gBattleScriptingCommandsTable2:
 .word atkFF22_jumpifspecies
 .word atkFF23_faintpokemonaftermove
 .word atkFF24_jumpifattackeralreadydiddamage
+.word atkFF25_jumpifterrainandgrounded
+.word atkFF26_attackstringnoprotean
+.word atkFF27_tryactivateprotean

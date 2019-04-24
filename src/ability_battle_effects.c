@@ -9,14 +9,12 @@
 
 #define BattleScript_OverworldWeatherStarts (u8*) 0x81D8B1F
 #define BattleScript_CastformChange (u8*) 0x81D92F8
-#define BattleScript_ShedSkinActivates (u8*) 0x81D92D3
-#define BattleScript_ColorChangeActivates (u8*) 0x81D949C
-#define BattleScript_AbilityCuredStatus (u8*) 0x81D94D1
 
 extern u8 BattleScript_NewWeatherAbilityActivates[];
 extern u8 BattleScript_IntimidateActivatesEnd3[];
 extern u8 BattleScript_TraceActivates[];
 extern u8 BattleScript_SwitchInAbilityMsg[];
+extern u8 BattleScript_AbilityCuredStatus[];
 extern u8 BattleScript_AbilityCuredStatusEnd3[];
 extern u8 BattleScript_StartedSchoolingEnd3[];
 extern u8 BattleScript_StoppedSchoolingEnd3[];
@@ -36,7 +34,7 @@ extern u8 BattleScript_BadDreams[];
 extern u8 BattleScript_Harvest[];
 extern u8 BattleScript_Pickup[];
 extern u8 BattleScript_PrintCustomStringEnd3[];
-extern u8 BattleScript_SoundproofProtected[];
+extern u8 BattleScript_AttackerCantUseMove[];
 extern u8 BattleScript_FlashFireBoost[];
 extern u8 BattleScript_FlashFireBoost_PPLoss[];
 extern u8 BattleScript_MonMadeMoveUseless[];
@@ -46,6 +44,7 @@ extern u8 BattleScript_MoveHPDrain_PPLoss[];
 extern u8 BattleScript_MoveStatDrain[];
 extern u8 BattleScript_MoveStatDrain_PPLoss[];
 extern u8 BattleScript_AbilityApplySecondaryEffect[];
+extern u8 BattleScript_AbilityChangedTypeContact[];
 extern u8 BattleScript_RoughSkinActivates[];
 extern u8 BattleScript_CuteCharmActivates[];
 extern u8 BattleScript_TargetAbilityStatRaise[];
@@ -598,7 +597,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			}
 
 			gBankAttacker = bank;
-			gBattleScripting->bank = strongestTarget;
+			gEffectBank = strongestTarget;
 			PREPARE_MOVE_BUFFER(gBattleTextBuff1, strongestMove);
             BattleStringLoader = gText_ForewarnActivate;
             BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
@@ -606,7 +605,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
             break;
 		
 		case ABILITY_FRISK: ;
-            u8 foe = (SIDE(bank) ^ BIT_SIDE) | (Random() & 1);
+            u8 foe = (SIDE(bank) ^ BIT_SIDE) | (Random() & BIT_FLANK);
 			if (ITEM(foe))
 			{
 				gLastUsedItem = ITEM(foe);
@@ -676,13 +675,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
                 gBattleMons[bank].statStages[statId-1]++;
                 gBattleScripting->statChanger = statId | INCREASE_1;
                 PREPARE_STAT_BUFFER(gBattleTextBuff1, statId);
-				
-				gBattleTextBuff2[0] = B_BUFF_PLACEHOLDER_BEGIN;
-				gBattleTextBuff2[1] = B_BUFF_STRING;
-				gBattleTextBuff2[2] = STRINGID_STATROSE;
-				gBattleTextBuff2[3] = STRINGID_STATROSE >> 8;
-				gBattleTextBuff2[4] = B_BUFF_EOS;
-				
+				PREPARE_STAT_ROSE(gBattleTextBuff2);		
                 BattleScriptPushCursorAndCallback(BattleScript_AttackerAbilityStatRaiseEnd3);
                 effect++;
             }
@@ -702,18 +695,18 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
             break;
 		
 		case ABILITY_SCHOOLING:
-            if (!(gBattleMons[gActiveBattler].status2 & STATUS2_TRANSFORMED))
+            if (!(gBattleMons[bank].status2 & STATUS2_TRANSFORMED))
 			{
-				if (speciesAtk == SPECIES_WISHIWASHI && gBattleMons[gActiveBattler].level >= 20 
-				&&  gBattleMons[gActiveBattler].hp > (gBattleMons[gActiveBattler].maxHP / 4)) 
+				if (speciesAtk == SPECIES_WISHIWASHI && gBattleMons[bank].level >= 20 
+				&&  gBattleMons[bank].hp > (gBattleMons[bank].maxHP / 4)) 
 				{
 					DoFormChange(bank, SPECIES_WISHIWASHI_S, FALSE, TRUE);
 					BattleScriptPushCursorAndCallback(BattleScript_StartedSchoolingEnd3);
 					++effect;
 				}
 				else if (speciesAtk == SPECIES_WISHIWASHI_S 
-				&& (gBattleMons[gActiveBattler].level < 20 || 
-					gBattleMons[gActiveBattler].hp <= (gBattleMons[gActiveBattler].maxHP / 4))) 
+				&& (gBattleMons[bank].level < 20 || 
+					gBattleMons[bank].hp <= (gBattleMons[bank].maxHP / 4))) 
 				{
 					DoFormChange(bank, SPECIES_WISHIWASHI, FALSE, TRUE);
 					BattleScriptPushCursorAndCallback(BattleScript_StoppedSchoolingEnd3);
@@ -723,10 +716,10 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			break;
 							
 		case ABILITY_SHIELDSDOWN:
-            if (!(gBattleMons[gActiveBattler].status2 & STATUS2_TRANSFORMED))
+            if (!(gBattleMons[bank].status2 & STATUS2_TRANSFORMED))
 			{
 				if (speciesAtk == SPECIES_MINIORSHIELD 
-				&& gBattleMons[gActiveBattler].hp <= (gBattleMons[gActiveBattler].maxHP / 2)) 
+				&& gBattleMons[bank].hp <= (gBattleMons[bank].maxHP / 2)) 
 				{
 					DoFormChange(bank, umodsi(GetBankPartyData(bank)->personality, 7), FALSE, TRUE); //Get Minior Colour
 					BattleScriptPushCursorAndCallback(BattleScript_ShieldsDownToCoreEnd3);
@@ -739,7 +732,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 						  speciesAtk == SPECIES_MINIOR_INDIGO ||
 						  speciesAtk == SPECIES_MINIOR_GREEN ||
 						  speciesAtk == SPECIES_MINIOR_VIOLET) 
-				&& gBattleMons[gActiveBattler].hp > (gBattleMons[gActiveBattler].maxHP / 2)) 
+				&& gBattleMons[bank].hp > (gBattleMons[bank].maxHP / 2)) 
 				{
 					DoFormChange(bank, SPECIES_MINIORSHIELD, FALSE, TRUE);
 					BattleScriptPushCursorAndCallback(BattleScript_ShieldsDownToMeteorEnd3);
@@ -749,7 +742,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			break;
 		
 		case ABILITY_FLOWERGIFT:
-            if (!(gBattleMons[gActiveBattler].status2 & STATUS2_TRANSFORMED))
+            if (!(gBattleMons[bank].status2 & STATUS2_TRANSFORMED))
 			{
 				gBankAttacker = bank;
 				switch(speciesAtk) {
@@ -860,10 +853,10 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 					break;
 				
                 case ABILITY_SHEDSKIN:
-                    if ((gBattleMons[bank].status1 & STATUS1_ANY) && (umodsi(Random(), 3)) == 0)
+                    if ((gBattleMons[bank].status1 & STATUS1_ANY) && Random() % 3 == 0)
                     {
                         ClearBankStatus(bank);
-                        BattleScriptPushCursorAndCallback(BattleScript_ShedSkinActivates);
+                        BattleScriptPushCursorAndCallback(BattleScript_AbilityCuredStatusEnd3);
                         effect++;
                     }
                     break;
@@ -873,7 +866,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 					&& gBattleMons[bank].status1 & STATUS_ANY) 
 					{
 						ClearBankStatus(bank);
-						BattleScriptPushCursorAndCallback(BattleScript_ShedSkinActivates);
+						BattleScriptPushCursorAndCallback(BattleScript_AbilityCuredStatusEnd3);
 						effect++;
 					}
 					break;
@@ -884,8 +877,8 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 					&& gBattleMons[PARTNER(bank)].status1
 					&& umodsi(Random(), 100) < 30) 
 					{
-						gBattleScripting->bank = PARTNER(bank);
-						ClearBankStatus(gBattleScripting->bank);
+						gEffectBank = PARTNER(bank);
+						ClearBankStatus(gEffectBank);
 						BattleScriptPushCursorAndCallback(BattleScript_Healer);
 						effect++;
 					}
@@ -899,12 +892,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
                         gBattleScripting->animArg1 = 0x11;
                         gBattleScripting->animArg2 = 0;
 						PREPARE_STAT_BUFFER(gBattleTextBuff1, STAT_SPEED);
-						
-						gBattleTextBuff2[0] = B_BUFF_PLACEHOLDER_BEGIN;
-						gBattleTextBuff2[1] = B_BUFF_STRING;
-						gBattleTextBuff2[2] = STRINGID_STATROSE;
-						gBattleTextBuff2[3] = STRINGID_STATROSE >> 8;
-						gBattleTextBuff2[4] = B_BUFF_EOS;
+						PREPARE_STAT_ROSE(gBattleTextBuff2);
                         BattleScriptPushCursorAndCallback(BattleScript_AttackerAbilityStatRaiseEnd3);
                         effect++;
                     }
@@ -972,11 +960,11 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
                     break;
 					
 				case ABILITY_HARVEST:
-					if (ITEM_POCKET(gNewBS->SavedConsumedItems[gBattlerPartyIndexes[bank]]) == POCKET_BERRY_POUCH) 
+					if (gItems[(SAVED_CONSUMED_ITEMS(bank))].pocket == POCKET_BERRY_POUCH) 
 					{
-						if (!(WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_SUN_ANY))) 
+						if (!(WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_SUN_ANY)))
 						{ //No Sun
-							if (umodsi(Random(), 100) < 50)
+							if (Random() % 100 < 50)
 								break;
 						}
 						BattleScriptPushCursorAndCallback(BattleScript_Harvest);
@@ -984,18 +972,19 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 					}
 					break;
 							
-				case ABILITY_PICKUP:
-					for (u8 bank = 0; bank < 4; ++bank) 
+				case ABILITY_PICKUP: ;
+					u8 itemBank = GetTopOfPickupStackNotIncludingBank(bank);
+					
+					if (itemBank != 0xFF)
 					{
-						if (bank != gActiveBattler 
-						&& !(gNewBS->IncinerateCounters[bank]) 
-						&& CONSUMED_ITEMS(bank)) 
+						RemoveBankFromPickupStack(itemBank);
+						if (CONSUMED_ITEMS(itemBank)) //This shouldn't be empty but just in case
 						{
-							gBattleMons[gActiveBattler].item = CONSUMED_ITEMS(bank);
-							EmitSetMonData(0, REQUEST_HELDITEM_BATTLE, 0, 2, &gBattleMons[gActiveBattler].item);
-							MarkBufferBankForExecution(gActiveBattler);
-							gLastUsedItem = CONSUMED_ITEMS(bank);
-							CONSUMED_ITEMS(bank) = 0;
+							gBattleMons[bank].item = CONSUMED_ITEMS(itemBank);
+							EmitSetMonData(0, REQUEST_HELDITEM_BATTLE, 0, 2, &gBattleMons[bank].item);
+							MarkBufferBankForExecution(bank);
+							gLastUsedItem = CONSUMED_ITEMS(itemBank);
+							CONSUMED_ITEMS(itemBank) = 0;
 							BattleScriptPushCursorAndCallback(BattleScript_Pickup);
 							++effect;
 							break;
@@ -1033,10 +1022,10 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 							effect = 1;
 						break;
 					
-					case ABILITY_DAZZLING:
-					case ABILITY_QUEENLYMAJESTY:
+					case ABILITY_DAZZLING: //Cannot use
+					case ABILITY_QUEENLYMAJESTY: //Cannot use
 						if (PriorityCalc(gBankAttacker, ACTION_USE_MOVE, move) > 0)
-							effect = 1;
+							effect = 2;
 						break;
 					
 					case ABILITY_TELEPATHY:
@@ -1050,8 +1039,34 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				{
 					if (gBattleMons[gBankAttacker].status2 & STATUS2_MULTIPLETURNS)
 						gHitMarker |= HITMARKER_NO_PPDEDUCT;
-					gBattlescriptCurrInstr = BattleScript_SoundproofProtected;
+					gBattleScripting->bank = bank;
+					
+					if (effect == 1)
+						gBattlescriptCurrInstr = BattleScript_MonMadeMoveUseless_PPLoss;
+					else
+						gBattlescriptCurrInstr = BattleScript_AttackerCantUseMove;
 				}
+			}
+			break;
+			
+		case ABILITYEFFECT_MOVES_BLOCK_PARTNER: //0x14
+			if (gBankAttacker != PARTNER(bank)) //Can't block against partner
+			{
+				switch (gLastUsedAbility) {
+					case ABILITY_DAZZLING:
+					case ABILITY_QUEENLYMAJESTY:
+						if (PriorityCalc(gBankAttacker, ACTION_USE_MOVE, move) > 0)
+							effect = 1;
+						break;
+				}
+				
+				if (effect)
+				{
+					if (gBattleMons[gBankAttacker].status2 & STATUS2_MULTIPLETURNS)
+						gHitMarker |= HITMARKER_NO_PPDEDUCT;
+					gBattleScripting->bank = bank;
+					gBattlescriptCurrInstr = BattleScript_AttackerCantUseMove;
+				}	
 			}
 			break;
 		
@@ -1134,8 +1149,6 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 							gBattlescriptCurrInstr = BattleScript_MoveStatDrain_PPLoss;
 
 						gBattleScripting->statChanger = statId | INCREASE_1;
-						gBattleMons[bank].statStages[statId - 1]++;
-						PREPARE_STAT_BUFFER(gBattleTextBuff1, statId);
 					}
 					break;
 				
@@ -1181,7 +1194,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
                     SET_BATTLER_TYPE(bank, moveType);
                     PREPARE_TYPE_BUFFER(gBattleTextBuff1, moveType);
                     BattleScriptPushCursor();
-                    gBattlescriptCurrInstr = BattleScript_ColorChangeActivates;
+                    gBattlescriptCurrInstr = BattleScript_AbilityChangedTypeContact;
                     effect++;
                 }
                 break;
@@ -1383,9 +1396,6 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 						case ABILITY_STANCECHANGE:
 							break;
 						default:
-							gLastUsedAbility = *GetAbilityLocation(gBankAttacker) = ABILITY_MUMMY;
-							RecordAbilityBattle(gBankAttacker, gLastUsedAbility);
-							RecordAbilityBattle(bank, gLastUsedAbility);
 							BattleScriptPushCursor();
 							gBattlescriptCurrInstr = BattleScript_MummyActivates;
 							effect++;
@@ -1932,6 +1942,14 @@ u8 UpdatePokeBallForIllusion(u8 bank)
 	return GetMonData(GetIllusionPartyData(bank), MON_DATA_POKEBALL, NULL);
 }
 
+species_t TryUpdateIllusionAltitude(u8 bank)
+{
+	if (gBattleMons[bank].status2 & STATUS2_TRANSFORMED)
+		return SPECIES_NONE;
+		
+	return GetIllusionPartyData(bank)->species;
+}
+
 //Ability Pop-Up//////////////////////////////////////////////////////////////////////////////////////
 //Credit to the Emerald Battle Engine Upgrade 2.0 by DizzyEgg for the original code.
 
@@ -2102,19 +2120,23 @@ static void PrintOnAbilityPopUp(const u8* str, u8* spriteTileData1, u8* spriteTi
 
 static void PrintBattlerOnAbilityPopUp(u8 battlerId, u8 spriteId1, u8 spriteId2)
 {
+	int i;
 	u8* textPtr;
-	u8 monName[POKEMON_NAME_LENGTH + 3];
+	u8 monName[POKEMON_NAME_LENGTH + 3] = {0};
 	u8* nick = GetIllusionPartyData(battlerId)->nickname;
 
-	if (nick[9] == 0xFF || nick[9] == 0x0)
-		textPtr = StringCopy(monName, nick);
-	else
+	for (i = 0; i < POKEMON_NAME_LENGTH; ++i)
 	{
-		for (int i = 0; i < POKEMON_NAME_LENGTH; ++i)
-			monName[i] = nick[i];
-			
-		textPtr = monName + POKEMON_NAME_LENGTH;
+		monName[i] = nick[i];
+		
+		if (nick[i] == 0xFF)
+			break;
 	}
+			
+	textPtr = monName + i + 1;
+	
+	if (*(textPtr - 1) == 0xFF)
+		--textPtr;
 	
 	//Make the string say "[NAME]'s" instead of "[NAME]"
 	textPtr[0] = 0xB4; //'
@@ -2324,7 +2346,6 @@ void AnimTask_LoadAbilityPopUp(u8 taskId)
     StartSpriteAnim(&gSprites[spriteId1], 0);
     StartSpriteAnim(&gSprites[spriteId2], 0);
 
-
     PrintBattlerOnAbilityPopUp(gBattleAnimAttacker, spriteId1, spriteId2);
     PrintAbilityOnAbilityPopUp(ability, spriteId1, spriteId2);
     RestoreOverwrittenPixels((void*)(OBJ_VRAM0) + (gSprites[spriteId1].oam.tileNum * 32));
@@ -2407,6 +2428,21 @@ void TransferAbilityPopUpHelperAsTrace(void)
 	
 	gActiveBattler = gBattleScripting->bank;
 	AbilityPopUpHelper = ABILITY_TRACE;
+	
+	EmitDataTransfer(0, &AbilityPopUpHelper, 1, &AbilityPopUpHelper);
+	MarkBufferBankForExecution(gActiveBattler);
+}
+
+void TransferAbilityPopUpHelperAsImposter(void)
+{
+	if (gBattleExecBuffer)
+	{
+		gBattlescriptCurrInstr -= 5;
+		return;
+	}
+	
+	gActiveBattler = gBattleScripting->bank;
+	AbilityPopUpHelper = ABILITY_IMPOSTER;
 	
 	EmitDataTransfer(0, &AbilityPopUpHelper, 1, &AbilityPopUpHelper);
 	MarkBufferBankForExecution(gActiveBattler);

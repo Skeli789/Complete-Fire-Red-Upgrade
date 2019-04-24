@@ -97,6 +97,15 @@
     textVar[3] = B_BUFF_EOS;                                                \
 }
 
+#define PREPARE_STAT_ROSE(textvar);											\
+{																			\
+	textvar[0] = B_BUFF_PLACEHOLDER_BEGIN;									\
+	textvar[1] = B_BUFF_STRING;												\
+	textvar[2] = STRINGID_STATROSE;											\
+	textvar[3] = STRINGID_STATROSE >> 8;									\
+	textvar[4] = B_BUFF_EOS;												\
+}
+				
 #define PREPARE_ABILITY_BUFFER(textVar, abilityId)                          \
 {                                                                           \
     textVar[0] = B_BUFF_PLACEHOLDER_BEGIN;                                  \

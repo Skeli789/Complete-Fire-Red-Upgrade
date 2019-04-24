@@ -4,7 +4,7 @@
 
 extern const struct TerrainTableStruct TerrainTable[];
 
-void DoFormChange(u8 bank, u16 species, bool8 ReloadType, bool8 ReloadStats) ;
+void DoFormChange(u8 bank, u16 species, bool8 ReloadType, bool8 ReloadStats);
 void SwitchOutFormsRevert(u8 bank);
 void FormsRevert(pokemon_t* party);
 void TryFormRevert(pokemon_t* mon);

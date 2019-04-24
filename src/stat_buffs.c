@@ -46,17 +46,18 @@ void atk13_printfromtable(void) {
 		
 		switch (ABILITY(gBankTarget)) {
 			case ABILITY_DEFIANT:
-				gBattleScripting->statChanger = 0x20 | STAT_STAGE_ATK;
+				gBattleScripting->statChanger = INCREASE_2 | STAT_STAGE_ATK;
 				break;
 			
 			case ABILITY_COMPETITIVE:
-				gBattleScripting->statChanger = 0x20 | STAT_STAGE_SPATK;
+				gBattleScripting->statChanger = INCREASE_2 | STAT_STAGE_SPATK;
 				break;
 			
 			default:
 				return;
 		}
-		BattleScriptPush(BattleScript_DefiantCompetitive);
+		BattleScriptPushCursor();
+		gBattlescriptCurrInstr = BattleScript_DefiantCompetitive;
         gBattleScripting->bank = gBankTarget;
 	}
 }
@@ -313,7 +314,7 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, u8* BS_ptr)
                 {
                     BattleScriptPush(BS_ptr);
                     gBattleScripting->bank = gActiveBattler;
-					*SeedHelper = gActiveBattler;
+					gBattleCommunication[0] = gActiveBattler;
                     gBattlescriptCurrInstr = BattleScript_AbilityNoStatLoss;
                     gLastUsedAbility = gBattleMons[gActiveBattler].ability;
                     RecordAbilityBattle(gActiveBattler, gLastUsedAbility);
@@ -338,7 +339,7 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, u8* BS_ptr)
                 {
                     BattleScriptPush(BS_ptr);
                     gBattleScripting->bank = PARTNER(gActiveBattler);
-					*SeedHelper = gActiveBattler;
+					gBattleCommunication[0] = gActiveBattler;
                     gBattlescriptCurrInstr = BattleScript_AbilityNoStatLoss;
                     gLastUsedAbility = ABILITY(PARTNER(gActiveBattler));
                     RecordAbilityBattle(PARTNER(gActiveBattler), gLastUsedAbility);
