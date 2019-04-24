@@ -385,7 +385,7 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 	}
 
 	tempMoveStruct->megaDone = gNewBS->MegaData->done[gActiveBattler];
-	if (!gNewBS->MegaData->done[gActiveBattler]) {
+	if (!gNewBS->MegaData->done[gActiveBattler] && !IS_TRANSFORMED(gActiveBattler)) {
 		const struct Evolution* evolutions = CanMegaEvolve(gActiveBattler, FALSE);
 		if (evolutions == NULL)
 			evolutions = CanMegaEvolve(gActiveBattler, TRUE); //Check Ultra Burst
