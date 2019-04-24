@@ -2,9 +2,6 @@
 gFollowerState = 0x203B818;
 ExtensionState = 0x3000F28;
 
-/*Old Things*/
-gEvolutionTable = 0x08989D30; /*Change this*/
-
 gAccuracyStageRatios = 0x82504FC;
 sTurnActionsFuncsTable = 0x8250038;
 sEndTurnFuncsTable = 0x8250070;

@@ -13,6 +13,9 @@ typedef u8 SpeciesNames_t[POKEMON_NAME_LENGTH + 1];
 #define gSpeciesNames ((SpeciesNames_t*) *((u32*) 0x8000144))
 #define gBaseStats ((struct BaseStats*) *((u32*) 0x80001BC))
 
+typedef struct Evolution EvolutionTableT[EVOS_PER_MON];
+#define gEvolutionTable ((EvolutionTableT*) *((u32*) 0x8042F6C))
+
 //extern const struct Evolution gEvolutionTable[][EVOS_PER_MON];
 
 //typedef u32 ExperienceTable_t[101];

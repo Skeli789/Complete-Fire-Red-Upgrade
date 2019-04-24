@@ -647,8 +647,6 @@ struct Evolution
 	u16 unknown; // used for mega evo, map number in EVO_MAP, level in EVO_TYPE_IN_PARTY, or time range in EVO_LEVEL_SPECIFIC_TIME_RANGE
 };
 
-
-
 extern u8 gPlayerPartyCount;
 extern struct Pokemon gPlayerParty[PARTY_SIZE];
 extern u8 gEnemyPartyCount;

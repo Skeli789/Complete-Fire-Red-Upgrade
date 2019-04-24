@@ -8,24 +8,17 @@
 #include "../include/field_weather.h"
 #include "../include/battle.h"
 
-extern struct Evolution gEvolutionTable[MAX_NUM_POKEMON][EVOS_PER_MON];
-
 u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem) {
     int i, j;
     u16 targetSpecies = 0;
-    u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
-    u16 heldItem = GetMonData(mon, MON_DATA_HELD_ITEM, NULL);
-    u32 personality = GetMonData(mon, MON_DATA_PERSONALITY, NULL);
+	u32 personality = mon->personality;
+    u16 species = mon->species;
+    u16 heldItem = mon->item;
     u8 level;
     u16 friendship;
-    u8 beauty = GetMonData(mon, MON_DATA_BEAUTY, 0);
+    u8 beauty = mon->beauty;
     u16 upperPersonality = personality >> 16;
-    u8 holdEffect;
-	
-    if (heldItem == ITEM_ENIGMA_BERRY)
-        holdEffect = gSaveBlock1->enigmaBerry.holdEffect;
-    else
-        holdEffect = ItemId_GetHoldEffect(heldItem);
+    u8 holdEffect = ItemId_GetHoldEffect(heldItem);
 
     if (holdEffect == ITEM_EFFECT_PREVENT_EVOLVE && type != 3)
         return SPECIES_NONE;
@@ -33,8 +26,8 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem) {
     switch (type)
     {
     case 0:
-        level = GetMonData(mon, MON_DATA_LEVEL, 0);
-        friendship = GetMonData(mon, MON_DATA_FRIENDSHIP, 0);
+        level = mon->level;
+        friendship = mon->friendship;
 		
         for (i = 0; i < EVOS_PER_MON; ++i)
         {
@@ -47,14 +40,14 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem) {
 					
 				case EVO_FRIENDSHIP_DAY:
 				#ifdef TIME_ENABLED
-					if (Clock->hour >= TIME_DAY_START && Clock->hour < TIME_NIGHT_START && friendship >= 220)
+					if (Clock->hour >= TIME_MORNING_START && Clock->hour < TIME_NIGHT_START && friendship >= 220)
 						targetSpecies = gEvolutionTable[species][i].targetSpecies;
 				#endif
 					break;
 					
 				case EVO_FRIENDSHIP_NIGHT:
 				#ifdef TIME_ENABLED
-					if (Clock->hour >= TIME_NIGHT_START && Clock->hour < TIME_DAY_START && friendship >= 220)
+					if (Clock->hour >= TIME_NIGHT_START && Clock->hour < TIME_MORNING_START && friendship >= 220)
 						targetSpecies = gEvolutionTable[species][i].targetSpecies;
 				#endif
 					break;
@@ -104,16 +97,18 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem) {
 					
 				case EVO_RAINY_OW:
 					if (gEvolutionTable[species][i].param <= level
-						&& (GetCurrentWeather() == WEATHER_RAIN_LIGHT
-						|| GetCurrentWeather() == WEATHER_RAIN_MED
-						|| GetCurrentWeather() == WEATHER_RAIN_HEAVY))
+					&& (GetCurrentWeather() == WEATHER_RAIN_LIGHT
+					 || GetCurrentWeather() == WEATHER_RAIN_MED
+					 || GetCurrentWeather() == WEATHER_RAIN_HEAVY))
+					{
 						targetSpecies = gEvolutionTable[species][i].targetSpecies;
+					}
 					break;
 					
 				case EVO_HOLD_ITEM_DAY:
 					// hold item in param
 					#ifdef TIME_ENABLED
-					if ((Clock->hour >= TIME_DAY_START && Clock->hour < TIME_NIGHT_START)
+					if ((Clock->hour >= TIME_MORNING_START && Clock->hour < TIME_NIGHT_START)
 					&& heldItem == gEvolutionTable[species][i].param)
 					{
 						targetSpecies = gEvolutionTable[species][i].targetSpecies;
@@ -137,15 +132,14 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem) {
 					break;
 					
 				case EVO_MAP:
-					if (gSaveBlock1->location.mapGroup == gEvolutionTable[species][i].param
-					&& gSaveBlock1->location.mapNum == gEvolutionTable[species][i].unknown)
+					if (gCurrentMapName == gEvolutionTable[species][i].param) //Based on map name
 						targetSpecies = gEvolutionTable[species][i].targetSpecies;
 					break;
 					
 				case EVO_MOVE:
 					for (j = 0; j < MAX_MON_MOVES; ++j)
 					{
-						if (gEvolutionTable[species][i].param == GetMonData(mon, MON_DATA_MOVE1 + j, NULL))
+						if (gEvolutionTable[species][i].param == mon->moves[j])
 						{
 							targetSpecies = gEvolutionTable[species][i].targetSpecies;
 							break;
@@ -157,7 +151,7 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem) {
 					// move type to know in param
 					for (j = 0; j < MAX_MON_MOVES; ++j)
 					{
-						if (gBattleMoves[GetMonData(mon, MON_DATA_MOVE1 + j, NULL)].type == gEvolutionTable[species][i].param)
+						if (gBattleMoves[mon->moves[j]].type == gEvolutionTable[species][i].param)
 						{
 							targetSpecies = gEvolutionTable[species][i].targetSpecies;
 							break;
@@ -169,7 +163,7 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem) {
 					// species to check for in param
 					for (j = 0; j < gPlayerPartyCount; ++j)
 					{
-						if (GetMonData(&gPlayerParty[j],MON_DATA_SPECIES,NULL) == gEvolutionTable[species][i].param)
+						if (gPlayerParty[j].species == gEvolutionTable[species][i].param)
 						{
 							targetSpecies = gEvolutionTable[species][i].targetSpecies;
 							break;
@@ -189,8 +183,8 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem) {
 							break;
 						for (j = 0; j < gPlayerPartyCount; ++j)
 						{
-							if (gBaseStats[GetMonData(&gPlayerParty[j],MON_DATA_SPECIES,NULL)].type1 == typeCheck
-							|| gBaseStats[GetMonData(&gPlayerParty[j],MON_DATA_SPECIES,NULL)].type2 == typeCheck)
+							if (gBaseStats[gPlayerParty[j].species].type1 == typeCheck
+							|| gBaseStats[gPlayerParty[j].species].type2 == typeCheck)
 							{
 								targetSpecies = gEvolutionTable[species][i].targetSpecies;
 								break;
@@ -211,8 +205,8 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem) {
 					
 				case EVO_LEVEL_DAY:
 					#ifdef TIME_ENABLED
-						if (gEvolutionTable[species][i].param <= level &&
-						(Clock->hour >= TIME_DAY_START && Clock->hour < TIME_NIGHT_START))
+						if (gEvolutionTable[species][i].param <= level
+						&& (Clock->hour >= TIME_MORNING_START && Clock->hour < TIME_NIGHT_START))
 							targetSpecies = gEvolutionTable[species][i].targetSpecies;
 					#else  // regular level up check
 						if (gEvolutionTable[species][i].param <= level)
@@ -223,7 +217,7 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem) {
 				case EVO_LEVEL_NIGHT:
 					#ifdef TIME_ENABLED
 						if (gEvolutionTable[species][i].param <= level &&
-						(Clock->hour >= TIME_NIGHT_START && Clock->hour < TIME_DAY_START))
+						(Clock->hour >= TIME_NIGHT_START && Clock->hour < TIME_MORNING_START))
 							targetSpecies = gEvolutionTable[species][i].targetSpecies;
 					#else  // regular level up check
 						if (gEvolutionTable[species][i].param <= level)
@@ -236,8 +230,8 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem) {
 					#ifdef TIME_ENABLED
 						u8 startTime = (gEvolutionTable[species][i].unknown >> 8) & 0xFF;	//upper byte
 						u8 endTime = gEvolutionTable[species][i].unknown & 0xFF;	// lower byte
-						if (gEvolutionTable[species][i].param <= level &&
-						(Clock->hour >= startTime && Clock->hour < endTime))
+						if (gEvolutionTable[species][i].param <= level
+						&& (Clock->hour >= startTime && Clock->hour < endTime))
 							targetSpecies = gEvolutionTable[species][i].targetSpecies;
 					#else  // regular level up check
 						if (gEvolutionTable[species][i].param <= level)
@@ -261,7 +255,7 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem) {
                 if (gEvolutionTable[species][i].param == heldItem)
                 {
                     heldItem = 0;
-                    SetMonData(mon, MON_DATA_HELD_ITEM, &heldItem);
+                    mon->item = heldItem;
                     targetSpecies = gEvolutionTable[species][i].targetSpecies;
                 }
                 break;
@@ -289,18 +283,15 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem) {
 };
 
 
-void ItemEvolutionRemoval(pokemon_t* mon) {
+void ItemEvolutionRemoval(pokemon_t* mon) 
+{
 	#ifdef EVO_HOLD_ITEM_REMOVAL
 		if (FlagGet(FLAG_REMOVE_EVO_ITEM))
 		{
-			u32 heldItem = 0;
-			SetMonData(mon, MON_DATA_HELD_ITEM, &heldItem);
+			mon->item = 0;
 			FlagClear(FLAG_REMOVE_EVO_ITEM);
 		}
+	#else
+		++mon; //So compiler doesn't complain
 	#endif
-	
 };
-
-
-
-
