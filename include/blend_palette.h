@@ -9,6 +9,6 @@
 
 // Exported ROM declarations
 
-void BlendPalette(u16, u16, u8, u16);
+//void BlendPalette(u16, u16, u8, u16);
 
 #endif //GUARD_BLEND_PALETTE_H

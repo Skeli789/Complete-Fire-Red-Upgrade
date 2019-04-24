@@ -313,9 +313,9 @@ u8 FindOrCreateReflectionPalette(u8 PalSlotNPC)
 		return PalRefIncreaseCount(PalSlot);
 	PalSlot = AddPalRef(PalTypeReflection, PalTag);
 	if (PalSlot == 0xFF)
-		return PalRefIncreaseCount(0);
+		return PalRefIncreaseCount(0);	
 	LoadNPCPalette(PalTag, PalSlot);
-	BlendPalette((PalSlot + 16) * 16, 16, 6, RGB(12, 20, 27)); // make it blueish
+	BlendPalettes(gBitTable[(PalSlot + 16)], 6, RGB(12, 20, 27)); // make it blueish
 	BrightenReflection(PalSlot); // and a little brighter
 	TintOBJPalette(PalSlot);
 	MaskPaletteIfFadingIn(PalSlot);
