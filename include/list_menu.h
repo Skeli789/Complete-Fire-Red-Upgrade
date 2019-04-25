@@ -5,20 +5,21 @@
 
 // Exported RAM declarations
 
-struct Multichoice {
+struct Multichoice 
+{
 	u32 stringPointer;
 	u32 boxSize;
 };
 
 //extern struct Multichoice gMultiChoice;
 
+struct ListMenu;
+
 struct ListMenuItem
 {
-    const u8 *unk_00;
-    s32 unk_04;
+    const u8* name;
+    s32 id;
 };
-
-struct ListMenu;
 
 struct ListMenuTemplate
 {
@@ -42,17 +43,54 @@ struct ListMenuTemplate
     u8 cursorKind:2; // x40, x80
 };
 
-struct ListMenu {
-    struct ListMenuTemplate _template;
+struct ListMenu
+{
+    struct ListMenuTemplate template;
     u16 scrollOffset;
     u16 selectedRow;
     u8 unk_1C;
     u8 unk_1D;
-    u8 unk_1E;
+    u8 taskId;
     u8 unk_1F;
 };
 
-extern struct ListMenuTemplate gUnknown_03006310;
+struct ListMenuWindowRect
+{
+    u8 x;
+    u8 y;
+    u8 width;
+    u8 height;
+    u8 palNum;
+};
+
+struct ScrollArrowsTemplate
+{
+    u8 firstArrowType;
+    u8 firstX;
+    u8 firstY;
+    u8 secondArrowType;
+    u8 secondX;
+    u8 secondY;
+    u16 fullyUpThreshold;
+    u16 fullyDownThreshold;
+    u16 tileTag;
+    u16 palTag;
+    u8 palNum;
+};
+
+struct CursorStruct
+{
+    u8 left;
+    u8 top;
+    u16 rowWidth;
+    u16 rowHeight;
+    u16 tileTag;
+    u16 palTag;
+    u8 palNum;
+};
+
+extern struct ScrollArrowsTemplate gTempScrollArrowTemplate;
+extern struct ListMenuTemplate gMultiuseListMenuTemplate;
 
 // Exported ROM declarations
 /*

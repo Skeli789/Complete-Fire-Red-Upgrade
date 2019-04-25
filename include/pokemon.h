@@ -138,6 +138,8 @@
 #define UNOWN_FORM_COUNT 28
 #define MAX_MON_LEVEL 100
 
+#define MAX_MON_MOVES 4
+
 enum
 {
     EGG_GROUP_NONE,
@@ -573,13 +575,13 @@ struct SpindaSpot
     u16 image[16];
 };
 
-/*
+
 struct __attribute__((packed)) LevelUpMove
 {
-    u16 move:9;
-    u16 level:7;
+	u16 move;
+	u8 level;
 };
-*/
+
 
 enum
 {
@@ -624,18 +626,18 @@ enum EVOLUTION_METHODS {
 	EVO_BEAUTY,
 	// new evolutions
 	EVO_RAINY_OW,		// raining in overworld
-	EVO_HOLD_ITEM_DAY,	// level up while holding a specific item during the day (eg. happiny)
-	EVO_HOLD_ITEM_NIGHT,	// level up holding item at night (eg. sneasel)
-	EVO_MAP, 	// specific map evolution. bank in param, map in unknown (NOTE: prevents this species from having a mega evo)
-	EVO_MOVE,	// knows a given move
 	EVO_MOVE_TYPE,	// knows a move with a specific type (eg. sylveon: fairy type move). Param is the move type
-	EVO_OTHER_PARTY_MON,	//another poke in the party, arg is a specific species
-	EVO_TYPE_IN_PARTY,	//specific type (param) in party after given level (unknown). NOTE: prevents this species from having a mega evo
+	EVO_TYPE_IN_PARTY,	//specific type (param) in party after given level (unknown).
+	EVO_MAP, 	// specific map evolution. bank in param, map in unknown
 	EVO_MALE_LEVEL,		// above given level if male
-	EVO_FEMALE_LEVEL,	// above given level if female
-	EVO_LEVEL_DAY,		// above given level during day
+	EVO_FEMALE_LEVEL,	// above given level if female	
 	EVO_LEVEL_NIGHT,	// above given level at night
-	EVO_LEVEL_SPECIFIC_TIME_RANGE, // above given level with a range (unknown is [start][end]. eg lycanroc -> 1700-1800hrs -> 0x1112)
+	EVO_LEVEL_DAY,		// above given level during day
+	EVO_HOLD_ITEM_NIGHT,	// level up holding item at night (eg. sneasel)
+	EVO_HOLD_ITEM_DAY,	// level up while holding a specific item during the day (eg. happiny)
+	EVO_MOVE,	// knows a given move
+	EVO_OTHER_PARTY_MON,	//another poke in the party, arg is a specific species
+	EVO_LEVEL_SPECIFIC_TIME_RANGE, // above given level with a range (unknown is [start][end]. eg lycanroc -> 1700-1800 hrs -> 0x1112)
 };
 #define EVO_MEGA			 0x00FE
 
@@ -658,7 +660,7 @@ extern const u8 gStatStageRatios[][2];
 extern struct SpriteTemplate gMultiuseSpriteTemplate;
 extern struct SaveBlock3* gSaveBlock3;
 //extern const u32 gExperienceTables[][MAX_MON_LEVEL + 1];
-extern const u16 *const gLevelUpLearnsets[];
+#define gLevelUpLearnsets ((struct LevelUpMove**) *((u32*) 0x8043E20)) //extern const struct LevelUpMove* const gLevelUpLearnsets[];
 extern const u8 gFacilityClassToPicIndex[];
 extern const u8 gFacilityClassToTrainerClass[];
 
@@ -666,6 +668,12 @@ u8 CountAliveMons(u8 caseId);
 #define BATTLE_ALIVE_EXCEPT_ACTIVE  0
 #define BATTLE_ALIVE_ATK_SIDE       1
 #define BATTLE_ALIVE_DEF_SIDE       2
+
+u8 __attribute__((long_call)) GetLevelFromBoxMonExp(struct BoxPokemon *boxMon);
+u16 __attribute__((long_call)) GiveMoveToMon(struct Pokemon *mon, u16 move);
+u16 __attribute__((long_call)) GiveMoveToBoxMon(struct BoxPokemon *boxMon, u16 move);
+void __attribute__((long_call)) DeleteFirstMoveAndGiveMoveToBoxMon(struct BoxPokemon *boxMon, u16 move);
+u32 __attribute__((long_call)) GetBoxMonData(struct BoxPokemon *boxMon, s32 field, u8 *data);
 
 /*
 void ZeroBoxMonData(struct BoxPokemon *boxMon);

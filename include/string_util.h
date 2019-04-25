@@ -26,8 +26,9 @@ enum {
 	ExpandPlaceholder_Groudon,
 };
 
+u8* __attribute__((long_call)) StringCopy10(u8 *dest, const u8 *src);
+
 /*
-u8 *StringCopy10(u8 *dest, const u8 *src);
 u8 *StringGetEnd10(u8 *str);
 u8 *StringCopy7(u8 *dest, const u8 *src);
 u8 *StringCopy(u8 *dest, const u8 *src);

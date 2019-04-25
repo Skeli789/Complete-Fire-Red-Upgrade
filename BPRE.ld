@@ -587,6 +587,7 @@ PremierBallOpenParticleAnimation = 0x80F103C | 1;
 
 /*Pokemon Functions*/
 EmitSetMonData = 0x800DFF0 | 1;
+
 ZeroPlayerPartyMons = 0x0803DA14 |1;
 ZeroEnemyPartyMons = 0x803DA34 | 1;
 CreateMon = 0x803DA54 | 1;
@@ -594,10 +595,15 @@ CreateBoxMon = 0x803DAC4 | 1;
 CreateMonWithNature = 0x803DD98 | 1;
 CreateMonWithGenderNatureLetter = 0x803DE00  | 1;
 CalculateMonStats = 0x0803E47C | 1;
+GetLevelFromBoxMonExp = 0x803E830 | 1;
+GiveMoveToMon = 0x803E89C | 1;
+GiveMoveToBoxMon = 0x803E8B0 | 1;
+DeleteFirstMoveAndGiveMoveToBoxMon = 0x803EC40 | 1;
 GetMonGender = 0x803F720 | 1;
 GetBoxMonGender = 0x803F730 | 1;
 GetGenderFromSpeciesAndPersonality = 0x803F78C | 1;
 GetMonData = 0x0803FBE8 | 1;
+GetBoxMonData = 0x803FD44 | 1;
 SetMonData = 0x0804037C | 1;
 SetMonData2 = 0x080404D0 | 1;
 CopyMon = 0x8040B08 | 1;
@@ -935,6 +941,7 @@ SetSubspriteTables = 0x8008A58 | 1;
 AddSpriteToOamBuffer = 0x8008A64 | 1;
 AddSubspritesToOamBuffer = 0x8008AD0 | 1;
 
+StringCopy10 = 0x8008CF4 | 1;
 StringCopy = 0x8008D84 | 1;
 StringLength = 0x8008E08 | 1;
 ConvertIntToDecimalStringN = 0x8008E78 | 1;

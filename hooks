@@ -174,6 +174,7 @@ CheckStandardWildEncounter 80833B0 1
 HandleWriteSector 80D9870 2
 HandleLoadSector 80D9E54 2
 HandleSavingData 80DA248 1
+NewGameSaveClearHook 8054B44 0
 ExpandedVarsHook 806E454 1
 ExpandedFlagsHook 806E5C0 1
 
@@ -283,9 +284,9 @@ WriteTypeHook 08030984 0
 DisplayTypeHook 081368CC 1
 
 ## Evolution Methods
-GetEvolutionTargetSpecies 08042EC4 4
+GetEvolutionTargetSpecies 08042EC4 3
 RemoveEvoItem 080CED5C 0
-
+EvolutionMovesHook 080CEDD4 1
 
 ##Follow Me
 #FollowMe_SetStateHook 08063CF4 1
@@ -300,3 +301,10 @@ RemoveEvoItem 080CED5C 0
 #FollowMe_WarpNormalEndHook 0807E308 0
 #FollowMe_WarpStairsEndHook 0807EC5A 0
 #FollowMe_LocalIdHook 0805DF60 3
+
+##Learn Move
+#GiveBoxMonInitialMoveset 0803E9E0 1
+#MonTryLearningNewMove 0803EA88 2
+#GetMoveRelearnerMoves 08043C84 2
+#GetLevelUpMovesBySpecies 08043DD4 2
+#GetNumberOfRelearnableMoves 08043E2C 1
