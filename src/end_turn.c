@@ -661,7 +661,7 @@ u8 TurnBasedEffects(void) {
 					
                     if (!(gStatuses3[gActiveBattler] & STATUS3_YAWN) && 
 						!(gBattleMons[gActiveBattler].status1 & STATUS_ANY) &&
-						  gBattleMons[gActiveBattler].species != SPECIES_MINIORSHIELD &&
+						  gBattleMons[gActiveBattler].species != SPECIES_MINIOR_SHIELD &&
                           gBattleMons[gActiveBattler].ability != ABILITY_VITALSPIRIT &&
                           gBattleMons[gActiveBattler].ability != ABILITY_INSOMNIA && 
 						  gBattleMons[gActiveBattler].ability != ABILITY_COMATOSE &&
@@ -1110,7 +1110,7 @@ u8 TurnBasedEffects(void) {
 							break;
 							
 						case ABILITY_SHIELDSDOWN:
-							if (species == SPECIES_MINIORSHIELD 
+							if (species == SPECIES_MINIOR_SHIELD 
 							&& gBattleMons[gActiveBattler].hp <= gBattleMons[gActiveBattler].maxHP / 2)
 							{
 								newspecies = umodsi(partydata->personality, 7); //Get Minior Colour
@@ -1126,7 +1126,7 @@ u8 TurnBasedEffects(void) {
 								  || species == SPECIES_MINIOR_GREEN
 								  || species == SPECIES_MINIOR_VIOLET) && gBattleMons[gActiveBattler].hp > (gBattleMons[gActiveBattler].maxHP / 2)) 
 							{
-								newspecies = SPECIES_MINIORSHIELD;
+								newspecies = SPECIES_MINIOR_SHIELD;
 								changedform = TRUE;
 								reloadStats = TRUE;
 								battleScript = BattleScript_ShieldsDownToMeteor;
@@ -1134,7 +1134,7 @@ u8 TurnBasedEffects(void) {
 							break;
 							
 						case ABILITY_FLOWERGIFT:
-							if (species == SPECIES_CHERRIMSUN && (!WEATHER_HAS_EFFECT || !(gBattleWeather & WEATHER_SUN_ANY) || ability != ABILITY_FLOWERGIFT)) 
+							if (species == SPECIES_CHERRIM_SUN && (!WEATHER_HAS_EFFECT || !(gBattleWeather & WEATHER_SUN_ANY) || ability != ABILITY_FLOWERGIFT)) 
 							{
 								newspecies = SPECIES_CHERRIM;
 								changedform = TRUE;

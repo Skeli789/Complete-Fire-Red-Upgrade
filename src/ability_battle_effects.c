@@ -718,7 +718,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 		case ABILITY_SHIELDSDOWN:
             if (!(gBattleMons[bank].status2 & STATUS2_TRANSFORMED))
 			{
-				if (speciesAtk == SPECIES_MINIORSHIELD 
+				if (speciesAtk == SPECIES_MINIOR_SHIELD 
 				&& gBattleMons[bank].hp <= (gBattleMons[bank].maxHP / 2)) 
 				{
 					DoFormChange(bank, umodsi(GetBankPartyData(bank)->personality, 7), FALSE, TRUE); //Get Minior Colour
@@ -734,7 +734,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 						  speciesAtk == SPECIES_MINIOR_VIOLET) 
 				&& gBattleMons[bank].hp > (gBattleMons[bank].maxHP / 2)) 
 				{
-					DoFormChange(bank, SPECIES_MINIORSHIELD, FALSE, TRUE);
+					DoFormChange(bank, SPECIES_MINIOR_SHIELD, FALSE, TRUE);
 					BattleScriptPushCursorAndCallback(BattleScript_ShieldsDownToMeteorEnd3);
 					++effect;
 				}
@@ -749,13 +749,13 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 					case SPECIES_CHERRIM:
 						if (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_SUN_ANY))
 						{
-							DoFormChange(bank, SPECIES_CHERRIMSUN, FALSE, FALSE);
+							DoFormChange(bank, SPECIES_CHERRIM_SUN, FALSE, FALSE);
 							BattleScriptPushCursorAndCallback(BattleScript_TransformedEnd3);
 							++effect;
 						}
 						break;
 					
-					case SPECIES_CHERRIMSUN:
+					case SPECIES_CHERRIM_SUN:
 						if (!WEATHER_HAS_EFFECT || !(gBattleWeather & WEATHER_SUN_ANY))
 						{
 							DoFormChange(bank, SPECIES_CHERRIM, FALSE, FALSE);

@@ -1260,7 +1260,7 @@ void atkFF26_trysetsleep(void)
 				}
 				break;
 			case ABILITY_SHIELDSDOWN:
-				if (SPECIES(bank) == SPECIES_MINIORSHIELD)
+				if (SPECIES(bank) == SPECIES_MINIOR_SHIELD)
 				{
 				
 				}

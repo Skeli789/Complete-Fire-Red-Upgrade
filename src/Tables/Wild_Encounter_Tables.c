@@ -165,12 +165,12 @@ const struct WildPokemon gRoute5_LandMonsNight[] =
 {
     {15, 18, SPECIES_MURKROW},
     {15, 18, SPECIES_ZUBAT},
-    {15, 18, SPECIES_NIDORANM},
-    {15, 18, SPECIES_NIDORANF},
+    {15, 18, SPECIES_NIDORAN_M},
+    {15, 18, SPECIES_NIDORAN_F},
     {16, 19, SPECIES_HOUNDOUR},
     {15, 18, SPECIES_ZUBAT},
-    {15, 18, SPECIES_NIDORANM},
-    {15, 18, SPECIES_NIDORANF},
+    {15, 18, SPECIES_NIDORAN_M},
+    {15, 18, SPECIES_NIDORAN_F},
     {17, 19, SPECIES_MURKROW},
     {17, 19, SPECIES_DEDENNE},
     {19, 19, SPECIES_NIDORINA},
@@ -245,8 +245,8 @@ const struct WildPokemon gRoute8_LandMonsNight[] =
     {22, 25, SPECIES_FLAAFFY},
     {23, 25, SPECIES_SNOVER},
     {23, 25, SPECIES_SNORUNT},
-    {23, 25, SPECIES_MINIORSHIELD},
-    {23, 25, SPECIES_MINIORSHIELD},
+    {23, 25, SPECIES_MINIOR_SHIELD},
+    {23, 25, SPECIES_MINIOR_SHIELD},
 };
 
 const struct WildPokemonInfo gRoute8_LandMonsInfoNight = {21, gRoute8_LandMonsNight};
@@ -563,7 +563,7 @@ const struct SwarmData gSwarmTable[] =
 	},
 	{
 		.mapName = MAP_NAME_ROUTE_7,
-		.species = SPECIES_MRMIME,
+		.species = SPECIES_MR_MIME,
 	},
 	{
 		.mapName = MAP_NAME_ROUTE_8,

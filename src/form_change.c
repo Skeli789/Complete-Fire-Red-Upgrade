@@ -40,12 +40,12 @@ void DoFormChange(u8 bank, u16 species, bool8 ReloadType, bool8 ReloadStats) {
 
 void SwitchOutFormsRevert(u8 bank) {
 	switch (gBattleMons[bank].species) {
-		case SPECIES_CHERRIMSUN:
+		case SPECIES_CHERRIM_SUN:
 		case SPECIES_DARMANITANZEN:
 		case SPECIES_MELOETTA_PIROUETTE:
 		case SPECIES_AEGISLASH_BLADE:
 		case SPECIES_WISHIWASHI_S:
-		case SPECIES_MINIORSHIELD:
+		case SPECIES_MINIOR_SHIELD:
 			DoFormChange(bank, GetBankPartyData(bank)->backupSpecies, FALSE, TRUE);
 	}
 }
@@ -71,7 +71,7 @@ void TryFormRevert(pokemon_t* mon)
 		if (mon->species == SPECIES_ZYGARDE || mon->species == SPECIES_ZYGARDE_10)
 			mon->hp = MathMin(mon->maxHP, oldHP);
 	}
-	else if (mon->species == SPECIES_MINIORSHIELD) //Minior that has never had a colour yet (Eg. Wild)
+	else if (mon->species == SPECIES_MINIOR_SHIELD) //Minior that has never had a colour yet (Eg. Wild)
 	{
 		mon->species = umodsi(mon->personality, 7); //Get Minior Colour
 		CalculateMonStats(mon);
