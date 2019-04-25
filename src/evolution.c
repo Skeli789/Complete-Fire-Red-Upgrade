@@ -104,49 +104,7 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem) {
 						targetSpecies = gEvolutionTable[species][i].targetSpecies;
 					}
 					break;
-					
-				case EVO_HOLD_ITEM_DAY:
-					// hold item in param
-					#ifdef TIME_ENABLED
-					if ((Clock->hour >= TIME_MORNING_START && Clock->hour < TIME_NIGHT_START)
-					&& heldItem == gEvolutionTable[species][i].param)
-					{
-						targetSpecies = gEvolutionTable[species][i].targetSpecies;
-						#ifdef EVO_HOLD_ITEM_REMOVAL
-							FlagSet(FLAG_REMOVE_EVO_ITEM);
-						#endif
-					}
-					#endif
-					break;
-					
-				case EVO_HOLD_ITEM_NIGHT:
-					#ifdef TIME_ENABLED
-					if (heldItem == gEvolutionTable[species][i].param)
-					{
-						targetSpecies = gEvolutionTable[species][i].targetSpecies;
-						#ifdef EVO_HOLD_ITEM_REMOVAL
-							FlagSet(FLAG_REMOVE_EVO_ITEM);
-						#endif
-					}
-					#endif
-					break;
-					
-				case EVO_MAP:
-					if (gCurrentMapName == gEvolutionTable[species][i].param) //Based on map name
-						targetSpecies = gEvolutionTable[species][i].targetSpecies;
-					break;
-					
-				case EVO_MOVE:
-					for (j = 0; j < MAX_MON_MOVES; ++j)
-					{
-						if (gEvolutionTable[species][i].param == mon->moves[j])
-						{
-							targetSpecies = gEvolutionTable[species][i].targetSpecies;
-							break;
-						}
-					}
-					break;
-					
+
 				case EVO_MOVE_TYPE:	// expanded for custom evolutions of any move type
 					// move type to know in param
 					for (j = 0; j < MAX_MON_MOVES; ++j)
@@ -158,19 +116,7 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem) {
 						}
 					}
 					break;
-					
-				case EVO_OTHER_PARTY_MON:
-					// species to check for in param
-					for (j = 0; j < gPlayerPartyCount; ++j)
-					{
-						if (gPlayerParty[j].species == gEvolutionTable[species][i].param)
-						{
-							targetSpecies = gEvolutionTable[species][i].targetSpecies;
-							break;
-						}
-					}
-					break;
-					
+
 				case EVO_TYPE_IN_PARTY:
 					// type in param
 					// level in unknown
@@ -192,7 +138,12 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem) {
 						}
 					}
 					break;
-					
+				
+				case EVO_MAP:
+					if (gCurrentMapName == gEvolutionTable[species][i].param) //Based on map name
+						targetSpecies = gEvolutionTable[species][i].targetSpecies;
+					break;
+
 				case EVO_MALE_LEVEL:
 					if (gEvolutionTable[species][i].param <= level && GetMonGender(mon) == MON_MALE)
 						targetSpecies = gEvolutionTable[species][i].targetSpecies;
@@ -202,18 +153,7 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem) {
 					if (gEvolutionTable[species][i].param <= level && GetMonGender(mon) == MON_FEMALE)
 						targetSpecies = gEvolutionTable[species][i].targetSpecies;
 					break;
-					
-				case EVO_LEVEL_DAY:
-					#ifdef TIME_ENABLED
-						if (gEvolutionTable[species][i].param <= level
-						&& (Clock->hour >= TIME_MORNING_START && Clock->hour < TIME_NIGHT_START))
-							targetSpecies = gEvolutionTable[species][i].targetSpecies;
-					#else  // regular level up check
-						if (gEvolutionTable[species][i].param <= level)
-							targetSpecies = gEvolutionTable[species][i].targetSpecies;
-					#endif
-					break;
-				
+
 				case EVO_LEVEL_NIGHT:
 					#ifdef TIME_ENABLED
 						if (gEvolutionTable[species][i].param <= level &&
@@ -224,9 +164,68 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem) {
 							targetSpecies = gEvolutionTable[species][i].targetSpecies;
 					#endif
 					break;
-					
-				case EVO_LEVEL_SPECIFIC_TIME_RANGE:
+			
+				case EVO_LEVEL_DAY:
+					#ifdef TIME_ENABLED
+						if (gEvolutionTable[species][i].param <= level
+						&& (Clock->hour >= TIME_MORNING_START && Clock->hour < TIME_NIGHT_START))
+							targetSpecies = gEvolutionTable[species][i].targetSpecies;
+					#else  // regular level up check
+						if (gEvolutionTable[species][i].param <= level)
+							targetSpecies = gEvolutionTable[species][i].targetSpecies;
+					#endif
+					break;
+
+				case EVO_HOLD_ITEM_NIGHT:
+					#ifdef TIME_ENABLED
+					if (heldItem == gEvolutionTable[species][i].param)
 					{
+						targetSpecies = gEvolutionTable[species][i].targetSpecies;
+						#ifdef EVO_HOLD_ITEM_REMOVAL
+							FlagSet(FLAG_REMOVE_EVO_ITEM);
+						#endif
+					}
+					#endif
+					break;
+				
+				case EVO_HOLD_ITEM_DAY:
+					// hold item in param
+					#ifdef TIME_ENABLED
+					if ((Clock->hour >= TIME_MORNING_START && Clock->hour < TIME_NIGHT_START)
+					&& heldItem == gEvolutionTable[species][i].param)
+					{
+						targetSpecies = gEvolutionTable[species][i].targetSpecies;
+						#ifdef EVO_HOLD_ITEM_REMOVAL
+							FlagSet(FLAG_REMOVE_EVO_ITEM);
+						#endif
+					}
+					#endif
+					break;
+					
+				case EVO_MOVE:
+					for (j = 0; j < MAX_MON_MOVES; ++j)
+					{
+						if (gEvolutionTable[species][i].param == mon->moves[j])
+						{
+							targetSpecies = gEvolutionTable[species][i].targetSpecies;
+							break;
+						}
+					}
+					break;
+					
+				case EVO_OTHER_PARTY_MON:
+					// species to check for in param
+					for (j = 0; j < gPlayerPartyCount; ++j)
+					{
+						if (gPlayerParty[j].species == gEvolutionTable[species][i].param)
+						{
+							targetSpecies = gEvolutionTable[species][i].targetSpecies;
+							break;
+						}
+					}
+					break;
+
+				case EVO_LEVEL_SPECIFIC_TIME_RANGE: ;
 					#ifdef TIME_ENABLED
 						u8 startTime = (gEvolutionTable[species][i].unknown >> 8) & 0xFF;	//upper byte
 						u8 endTime = gEvolutionTable[species][i].unknown & 0xFF;	// lower byte
@@ -237,7 +236,6 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem) {
 						if (gEvolutionTable[species][i].param <= level)
 							targetSpecies = gEvolutionTable[species][i].targetSpecies;
 					#endif
-					}
 					break;
             }
         }
