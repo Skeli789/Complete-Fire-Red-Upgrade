@@ -227,6 +227,7 @@ void atk09_attackanimation(void)
 		if ((gMoveResultFlags & MOVE_RESULT_SUPER_EFFECTIVE && ITEM_QUALITY(gBankTarget) == gBattleStruct->dynamicMoveType)
 		||  (ITEM_QUALITY(gBankTarget) == TYPE_NORMAL && gBattleStruct->dynamicMoveType == TYPE_NORMAL)) //Chilan Berry
 		{
+			gLastUsedItem = ITEM(gBankTarget);
 			gBattleScripting->bank = gBankTarget;
 			BattleScriptPushCursor();
 			gBattlescriptCurrInstr = BattleScript_WeaknessBerryActivate;
