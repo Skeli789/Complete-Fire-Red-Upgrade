@@ -121,16 +121,6 @@
 0809B440 05
 0809B47A 66
 
-##Specific For Unbound, overrites a hook that shouldn't be there with vanilla data.##
-0803352C 00 68 24 0D
-08034750 00 B5 00 04 09 06 07 4A 40 0B 80 18 00 68 09 09 80 22 52 04 89 18 09 0C 20 22 3B F0 1D FE 01 BC
-
-##Unbound Give All Pokes Guy##
-08740F45 16 C2 50 32 00 23
-08740F4F 02
-##Battle BG
-##087803A5 1E
-
 ##Old PokeBall Expansion Data Reset##
 080400B4 68 88 80 05 44 0F 4F E1
 08040840 21 78 0F 20 01 40 C9 01 6A 88 02 48 10 40 08 43 68 80 42 E1 7F F8 FF FF
@@ -186,3 +176,13 @@
 ##Animations##
 ##Hydro Pump Particle Update
 083E595C 38 28 38 28
+
+##Specific For Unbound, overrites a hook that shouldn't be there with vanilla data.##
+0803352C 00 68 24 0D
+08034750 00 B5 00 04 09 06 07 4A 40 0B 80 18 00 68 09 09 80 22 52 04 89 18 09 0C 20 22 3B F0 1D FE 01 BC
+
+##Unbound Give All Pokes Guy##
+08740F45 16 C2 50 32 00 23
+08740F4F 02
+##Battle BG
+##087803A5 02
