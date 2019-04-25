@@ -169,7 +169,7 @@ void HandleInputChooseMove(void)
 
 		ResetPaletteFadeControl();
 		BeginNormalPaletteFade(0xF0000, 0, 0, 0, 0x7FFF);
-
+	
         if (!canSelectTarget)
         {
 			EmitMoveChosen(1, gMoveSelectionCursor[gActiveBattler], gMultiUsePlayerCursor, gNewBS->MegaData->chosen[gActiveBattler], gNewBS->UltraData->chosen[gActiveBattler], gNewBS->ZMoveData->toBeUsed[gActiveBattler]);
@@ -873,6 +873,7 @@ void HandleInputChooseTarget(void)
         DoBounceEffect(gActiveBattler, BOUNCE_HEALTHBOX, 7, 1);
         DoBounceEffect(gActiveBattler, BOUNCE_MON, 7, 1);
         EndBounceEffect(gMultiUsePlayerCursor, BOUNCE_HEALTHBOX);
+		TryLoadMegaTriggers();
     }
     else if (gMain.newKeys & (DPAD_LEFT | DPAD_UP))
     {

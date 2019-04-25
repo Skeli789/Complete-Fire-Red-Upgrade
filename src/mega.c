@@ -59,7 +59,7 @@ const struct Evolution* CanMegaEvolve(u8 bank, bool8 CheckUBInstead) {
 				if (evolutions[i].param == mon->item)
 					return &evolutions[i];	
 			} 
-			else if (evolutions[i].unknown == MEGA_VARIANT_WISH) {
+			else if (evolutions[i].unknown == MEGA_VARIANT_WISH && !CheckUBInstead) {
 			// Check learned moves
 				for (j = 0; j < 4; ++j) {
 					if (evolutions[i].param == mon->moves[j])
@@ -274,7 +274,9 @@ bool8 IsMega(u8 bank)
 
 	for (u8 i = 0; i < EVOS_PER_MON; ++i) 
 	{
-		if (evolutions[i].method == EVO_MEGA && evolutions[i].unknown == MEGA_VARIANT_STANDARD && evolutions[i].param == 0)
+		if (evolutions[i].method == EVO_MEGA 
+		&& (evolutions[i].unknown == MEGA_VARIANT_STANDARD || evolutions[i].unknown == MEGA_VARIANT_WISH) 
+		&& evolutions[i].param == 0)
 			return TRUE;
 	}
 	
@@ -393,9 +395,10 @@ extern u16 Mega_IndicatorPal[];
 extern u8 Mega_TriggerTiles[];
 extern u8 Ultra_TriggerTiles[];
 extern u16 Mega_TriggerPal[];
-extern u16 Ultra_TriggerPal[];
 
-bool8 IsIgnoredTriggerColour(u16 colour);
+extern void HandleInputChooseMove(void);
+
+static bool8 IsIgnoredTriggerColour(u16 colour);
 u16 ConvertColorToGrayscale(u16 colour);
 u16 LightUpMegaSymbol(u16 clra);
 void MegaTriggerCallback(struct Sprite* self);
@@ -406,21 +409,20 @@ void TryLoadIndicatorForEachBank(void);
 void TryLoadMegaTriggers(void);
 void DestroyMegaTriggers(void);
 
-const struct CompressedSpriteSheet MegaIndicatorSpriteSheet = {Mega_IndicatorTiles, (8 * 8) / 2, GFX_TAG_MEGA_INDICATOR};
-const struct CompressedSpriteSheet AlphaIndicatorSpriteSheet = {Alpha_IndicatorTiles, (8 * 8) / 2, GFX_TAG_ALPHA_INDICATOR};
-const struct CompressedSpriteSheet OmegaIndicatorSpriteSheet = {Omega_IndicatorTiles, (8 * 8) / 2, GFX_TAG_OMEGA_INDICATOR};
-const struct CompressedSpriteSheet UltraIndicatorSpriteSheet = {Ultra_IndicatorTiles, (8 * 8) / 2, GFX_TAG_ULTRA_INDICATOR};
-const struct SpritePalette MegaIndicatorPalette = {Mega_IndicatorPal, GFX_TAG_MEGA_INDICATOR};
+static const struct CompressedSpriteSheet MegaIndicatorSpriteSheet = {Mega_IndicatorTiles, (8 * 8) / 2, GFX_TAG_MEGA_INDICATOR};
+static const struct CompressedSpriteSheet AlphaIndicatorSpriteSheet = {Alpha_IndicatorTiles, (8 * 8) / 2, GFX_TAG_ALPHA_INDICATOR};
+static const struct CompressedSpriteSheet OmegaIndicatorSpriteSheet = {Omega_IndicatorTiles, (8 * 8) / 2, GFX_TAG_OMEGA_INDICATOR};
+static const struct CompressedSpriteSheet UltraIndicatorSpriteSheet = {Ultra_IndicatorTiles, (8 * 8) / 2, GFX_TAG_ULTRA_INDICATOR};
+static const struct SpritePalette MegaIndicatorPalette = {Mega_IndicatorPal, GFX_TAG_MEGA_INDICATOR};
 
-const struct CompressedSpriteSheet MegaTriggerSpriteSheet = {Mega_TriggerTiles, (32 * 32) / 2, GFX_TAG_MEGA_TRIGGER};
-const struct CompressedSpriteSheet UltraTriggerSpriteSheet = {Ultra_TriggerTiles, (32 * 32) / 2, GFX_TAG_ULTRA_TRIGGER};
-const struct SpritePalette MegaTriggerPalette = {Mega_TriggerPal, GFX_TAG_MEGA_TRIGGER};
-const struct SpritePalette UltraTriggerPalette = {Ultra_TriggerPal, GFX_TAG_ULTRA_TRIGGER};
+static const struct CompressedSpriteSheet MegaTriggerSpriteSheet = {Mega_TriggerTiles, (32 * 32) / 2, GFX_TAG_MEGA_TRIGGER};
+static const struct CompressedSpriteSheet UltraTriggerSpriteSheet = {Ultra_TriggerTiles, (32 * 32) / 2, GFX_TAG_ULTRA_TRIGGER};
+static const struct SpritePalette MegaTriggerPalette = {Mega_TriggerPal, GFX_TAG_MEGA_TRIGGER};
 
-const struct OamData MegaIndicatorOAM = {0};
-const u16 MegaTriggerOAM[4] = {0, 0x8000, 0x800, 0};
+static const struct OamData MegaIndicatorOAM = {0};
+static const u16 MegaTriggerOAM[4] = {0, 0x8000, 0x800, 0};
 
-const struct SpriteTemplate MegaIndicatorTemplate =
+static const struct SpriteTemplate MegaIndicatorTemplate =
 {
     .tileTag = GFX_TAG_MEGA_INDICATOR,
     .paletteTag = GFX_TAG_MEGA_INDICATOR,
@@ -431,7 +433,7 @@ const struct SpriteTemplate MegaIndicatorTemplate =
     .callback = MegaIndicatorCallback,
 };
 
-const struct SpriteTemplate AlphaIndicatorTemplate =
+static const struct SpriteTemplate AlphaIndicatorTemplate =
 {
     .tileTag = GFX_TAG_ALPHA_INDICATOR,
     .paletteTag = GFX_TAG_MEGA_INDICATOR,
@@ -442,7 +444,7 @@ const struct SpriteTemplate AlphaIndicatorTemplate =
     .callback = MegaIndicatorCallback,
 };
 
-const struct SpriteTemplate OmegaIndicatorTemplate =
+static const struct SpriteTemplate OmegaIndicatorTemplate =
 {
     .tileTag = GFX_TAG_OMEGA_INDICATOR,
     .paletteTag = GFX_TAG_MEGA_INDICATOR,
@@ -453,7 +455,7 @@ const struct SpriteTemplate OmegaIndicatorTemplate =
     .callback = MegaIndicatorCallback,
 };
 
-const struct SpriteTemplate UltraIndicatorTemplate =
+static const struct SpriteTemplate UltraIndicatorTemplate =
 {
     .tileTag = GFX_TAG_ULTRA_INDICATOR,
     .paletteTag = GFX_TAG_MEGA_INDICATOR,
@@ -464,7 +466,7 @@ const struct SpriteTemplate UltraIndicatorTemplate =
     .callback = MegaIndicatorCallback,
 };
 
-const struct SpriteTemplate MegaTriggerTemplate =
+static const struct SpriteTemplate MegaTriggerTemplate =
 {
     .tileTag = GFX_TAG_MEGA_TRIGGER,
     .paletteTag = GFX_TAG_MEGA_TRIGGER,
@@ -475,10 +477,10 @@ const struct SpriteTemplate MegaTriggerTemplate =
     .callback = MegaTriggerCallback,
 };
 
-const struct SpriteTemplate UltraTriggerTemplate =
+static const struct SpriteTemplate UltraTriggerTemplate =
 {
     .tileTag = GFX_TAG_ULTRA_TRIGGER,
-    .paletteTag = GFX_TAG_ULTRA_TRIGGER,
+    .paletteTag = GFX_TAG_MEGA_TRIGGER,
     .oam = (const struct OamData*) &MegaTriggerOAM,
     .anims = (const union AnimCmd* const*) 0x08231CF0,
     .images = NULL,
@@ -487,7 +489,7 @@ const struct SpriteTemplate UltraTriggerTemplate =
 };
 
 /* Declare the colours the trigger button doesn't light up */
-const u16 IgnoredColours[] = 
+static const u16 IgnoredColours[] = 
 {
   RGB(7, 10, 8), 
   RGB(15, 18, 16), 
@@ -498,7 +500,7 @@ const u16 IgnoredColours[] =
 };
 
 /* Easy match function */
-bool8 IsIgnoredTriggerColour(u16 colour) 
+static bool8 IsIgnoredTriggerColour(u16 colour) 
 {
 	for (u32 i = 0; i < ARRAY_COUNT(IgnoredColours); ++i) 
 	{
@@ -550,15 +552,14 @@ u16 LightUpMegaSymbol(u16 clra)
 #define TRIGGER_BANK self->data[4]
 #define PALETTE_STATE self->data[1]
 #define TAG self->template->tileTag
+#define PAL_TAG self->template->paletteTag
 
 void MegaTriggerCallback(struct Sprite* self) 
 {		
 	if (TAG == GFX_TAG_MEGA_TRIGGER) 
 	{
 		if (!CanMegaEvolve(TRIGGER_BANK, FALSE) || gBattleSpritesDataPtr->bankData[TRIGGER_BANK].transformSpecies)
-		{
 			self->invisible = TRUE;
-		}
 		else
 			self->invisible = FALSE;
 	}
@@ -605,7 +606,8 @@ void MegaTriggerCallback(struct Sprite* self)
 		self->pos1.x = -32;
 	}
 	
-	if (gBattleBankFunc[TRIGGER_BANK] == (0x0802EA10 | 1)) //HandleInputChooseMove
+	if (gBattleBankFunc[TRIGGER_BANK] == (0x0802EA10 | 1) //HandleInputChooseMove
+	||  gBattleBankFunc[TRIGGER_BANK] == (u32) HandleInputChooseMove) 
 	{
 		if (self->data[3] > 0)
 			self->data[3] -= 2;
@@ -665,7 +667,7 @@ void MegaTriggerCallback(struct Sprite* self)
 	// Only change the palette if the state has changed
 	if (PALETTE_STATE != self->data[2]) 
 	{
-		u16* pal = &gPlttBufferFaded2[IndexOfSpritePaletteTag(TAG) * 16];
+		u16* pal = &gPlttBufferFaded2[IndexOfSpritePaletteTag(PAL_TAG) * 16];
 		u8 i;
 		
 		for(i = 1; i < 16; i++) 
@@ -887,7 +889,6 @@ void TryLoadMegaTriggers(void)
 		return;
 	
 	LoadSpritePalette(&MegaTriggerPalette);
-	LoadSpritePalette(&UltraTriggerPalette);
 	LoadCompressedSpriteSheetUsingHeap(&MegaTriggerSpriteSheet);
 	LoadCompressedSpriteSheetUsingHeap(&UltraTriggerSpriteSheet);
 		

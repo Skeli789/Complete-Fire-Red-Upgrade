@@ -698,7 +698,6 @@ ZSYMBOL: objtemplate ANIM_TAG_Z_MOVE_SYMBOL ANIM_TAG_Z_MOVE_SYMBOL 0x83ACBC0 0x8
 ANIM_MEGA_EVOLUTION:
 	loadparticle ANIM_TAG_MEGA_RAINBOW
 	loadparticle ANIM_TAG_MEGA_STONE
-	loadparticle ANIM_TAG_MEGA_SYMBOL
 	pokespritetoBG side_attacker 
 	setblends 0x80c 
 	soundcomplex 0x85 0xc0 0xd 0x3 
@@ -717,9 +716,11 @@ ANIM_MEGA_EVOLUTION:
 	launchtemplate MEGA_STONE 0x29 0x4 0x0 0x0 0x0 0x0 
 	pause 0x14 
 	launchtask 0x80ba83d 0x5 0x5 0x5 0x2 0x0 0x10 0xffff 
-	launchtask AnimTask_pal_fade_particle 0x5 0x5 0x2847 0x2 0x0 0x10 0xffff 
-	waitanimation 
-	launchtask AnimTask_pal_fade_particle 0x5 0x0 
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_MEGA_STONE 0x2 0x0 0x10 0xffff 
+	waitanimation
+	unloadparticle ANIM_TAG_MEGA_RAINBOW
+	unloadparticle ANIM_TAG_MEGA_STONE
+	loadparticle ANIM_TAG_MEGA_SYMBOL
 	launchtask RED_PRIMAL_TASK 0x2 0x0 
 	launchtask 0x80ba83d 0x5 0x5 0x5 0x2 0x10 0x0 0xffff 
 	waitanimation 
