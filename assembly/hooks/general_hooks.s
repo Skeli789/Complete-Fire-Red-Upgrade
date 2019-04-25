@@ -208,7 +208,8 @@ ExpandedVarsPop:
 VarReturn0:
 	ldr r0, =0x806E462 | 1
 	bx r0
-	
+
+.pool
 @0x806E5C0 with r1
 ExpandedFlagsHook:
 	push {r4-r6, lr}
@@ -222,6 +223,7 @@ ExpandedFlagsHook:
 	ldr r0, =0x806E5C8 | 1
 	bx r0
 
+.pool
 @0x80142D8 with r0
 DoubleWildUseItemRunFixHook:
 	ldr r5, =ACTIVE_BATTLER
@@ -235,3 +237,23 @@ DoubleWildUseItemRunFixHook:
 SkipEncoreReturn:
 	ldr r0, =0x801432C | 1
 	bx r0
+
+.pool
+@0x8054B44 with r0
+NewGameSaveClearHook:
+	bl NewGameWipeNewSaveData
+	pop {r3}
+	mov r8, r3
+	pop {r4-r6}
+	pop {r0}
+	bx r0
+
+.pool
+@0x80CEDD4 with r1
+EvolutionMovesHook:
+	ldrb r1, [r5, #0x10]
+	mov r0, r9
+	bl MonTryLearningNewMoveAfterEvolution
+	ldr r1, =0x80CEDDC | 1
+	bx r1
+

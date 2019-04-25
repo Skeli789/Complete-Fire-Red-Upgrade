@@ -230,6 +230,15 @@ u8 HandleSavingData(u8 saveType) {
     return 0;
 }
 
+void NewGameWipeNewSaveData(void)
+{
+	#ifdef UNBOUND
+		Memset((void*) gSaveBlockParasite, 0, 0x2A8C);
+	#else
+		Memset((void*) gSaveBlockParasite, 0, 0x2EA4);
+	#endif
+}
+
 u8* GetExpandedFlagPointer(u16 id)
 {
 	#ifdef SAVE_BLOCK_EXPANSION
@@ -261,6 +270,5 @@ u16* GetExpandedVarPointer(u16 id)
 			return (u16*) 1; //Indicates to return NULL
 		else
 			return NULL;
-	#endif
-	
+	#endif	
 }
