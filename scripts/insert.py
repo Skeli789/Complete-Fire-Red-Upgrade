@@ -42,19 +42,25 @@ def ExtractPointer(listy):
 	return pointer
 
 def get_text_section():
-		# Dump sections
-		out = subprocess.check_output([OBJDUMP, '-t', 'build/linked.o'])
-		lines = out.decode().split('\n')
-		
-		# Find text section
-		text = filter(lambda x: x.strip().endswith('.text'), lines)
-		section = (list(text))[0]
-		
-		# Get the offset
-		offset = int(section.split(' ')[0], 16)
-		
-		return offset
-		
+		try:
+			# Dump sections
+			out = subprocess.check_output([OBJDUMP, '-t', 'build/linked.o'])
+			lines = out.decode().split('\n')
+			
+			# Find text section
+			text = filter(lambda x: x.strip().endswith('.text'), lines)
+			section = (list(text))[0]
+			
+			# Get the offset
+			offset = int(section.split(' ')[0], 16)
+			
+			return offset
+			
+		except:
+			print("Error: The insertion process could not be completed.\n" +
+				  "The linker symbol file was not found.")
+			sys.exit(1)
+
 def symbols(subtract=0):
 		out = subprocess.check_output([NM, 'build/linked.o'])
 		lines = out.decode().split('\n')
