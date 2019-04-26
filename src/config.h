@@ -94,6 +94,7 @@ enum
 #define NUM_TRAINER_CLASSES 107
 #define EVOS_PER_MON 4
 #define EV_CAP 252
+#define DAYCARE_BREEDING_RATE 
 
 #define DUSK_BALL_MULTIPLIER 30 //Change this line to 35 to make the catch rate for the Dusk Ball 3.5x like before Gen 7
 #define STANDARD_IV 10 //Change this to be the number of IVs Pokemon owned by random trainers should have (all stats will have this number)

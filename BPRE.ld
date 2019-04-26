@@ -1074,3 +1074,6 @@ Task_HofPC_PrintDataIsCorrupted = 0x080F30A4 | 1;
 Task_Hof_PaletteFadeAndPrintWelcomeText = 0x080F2514 | 1;
 SpriteCB_GetOnScreenAndAnimate = 0x080F3870 | 1;
 Task_Hof_TrySaveData = 0x080F2220 | 1;
+
+sHofMonPtr = 0x203AB38;
+

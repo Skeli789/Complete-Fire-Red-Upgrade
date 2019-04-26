@@ -268,16 +268,16 @@ DynamicWhiteoutMap 080bfd54 0
 SummaryScreenWrapAround 0813b20c 1
 
 ## Hall of Fame Fix
-#CB2_DoHallOfFameScreen 080F1EFC 3
-#Task_Hof_InitTeamSaveData 080F2114 3
-#Task_Hof_DisplayMon 080F22B0 3
-#Task_Hof_PrintMonInfoAfterAnimating 080F23A0 3
-#Task_Hof_TryDisplayAnotherMon 080F2424 3
-#Task_HofPC_CopySaveData 080F2AA4 3
-#Task_HofPC_DrawSpritesPrintText 080F2B6C 3
-#Task_HofPC_PrintMonInfo 080F2D60 3
-#Task_Hof_InitMonData 080F1F74 3
-#HallOfFame_PrintMonInfo 080F3194 3
+CB2_DoHallOfFameScreen 080F1EFC 3
+Task_Hof_InitTeamSaveData 080F2114 3
+Task_Hof_DisplayMon 080F22B0 3
+Task_Hof_PrintMonInfoAfterAnimating 080F23A0 3
+Task_Hof_TryDisplayAnotherMon 080F2424 3
+Task_HofPC_CopySaveData 080F2AA4 3
+Task_HofPC_DrawSpritesPrintText 080F2B6C 3
+Task_HofPC_PrintMonInfo 080F2D60 3
+Task_Hof_InitMonData 080F1F74 3
+HallOfFame_PrintMonInfo 080F3194 3
 
 ## Unhidden Power
 WriteTypeHook 08030984 0

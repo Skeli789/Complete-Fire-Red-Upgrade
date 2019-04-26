@@ -1460,58 +1460,38 @@ bool8 sp18B_ShowFossilImage(void) {
 };
 
 
-/*
+
 
 // Hall of Fame Fix for Expanded Pokemon
 // credit to sagiri: https://github.com/Sagiri/fame-hall
 
-#define tDontSaveData       data[0]
-#define tDisplayedMonId     data[1]
-#define tMonNumber          data[2]
-#define tFrameCount         data[3]
-#define tPlayerSpriteID     data[4]
-#define tMonSpriteId(i)     data[i + 5]
-
-#define tDestinationX  data[1]
-#define tDestinationY  data[2]
-#define tSpecies       data[7]
-
-#define tCurrTeamNo     data[0]
-#define tCurrPageNo     data[1]
-#define tCurrMonId      data[2]
-#define tMonNo          data[4]
-// #define tMonSpriteId(i) data[i + 5]
-
-#define CpuCopy16(src, dest, size) CPU_COPY(src, dest, size, 16)
-#define CPU_COPY(src, dest, size, bit) CpuSet(src, dest, CPU_SET_##bit##BIT | ((size)/(bit/8) & 0x1FFFFF))
-#define CPU_SET_16BIT     0x00000000
-
-extern void CB2_DoHallOfFameScreen(void);
-extern void Task_Hof_InitTeamSaveData(u8 taskId);
-extern void Task_Hof_DisplayMon(u8 taskId);
-extern void Task_Hof_PrintMonInfoAfterAnimating(u8 taskId);
-extern void Task_Hof_TryDisplayAnotherMon(u8 taskId);
-extern void Task_HofPC_CopySaveData(u8 taskId);
-extern void Task_HofPC_DrawSpritesPrintText(u8 taskId);
-extern void Task_HofPC_PrintMonInfo(u8 taskId);
-extern void Task_Hof_InitMonData(u8 taskId);
-extern void HallOfFame_PrintMonInfo(struct HallofFameMon *currMon, unusedArg u8 a1, unusedArg u8 a2);
+void CB2_DoHallOfFameScreen(void);
+void Task_Hof_InitTeamSaveData(u8 taskId);
+void Task_Hof_DisplayMon(u8 taskId);
+void Task_Hof_PrintMonInfoAfterAnimating(u8 taskId);
+void Task_Hof_TryDisplayAnotherMon(u8 taskId);
+void Task_HofPC_CopySaveData(u8 taskId);
+void Task_HofPC_DrawSpritesPrintText(u8 taskId);
+void Task_HofPC_PrintMonInfo(u8 taskId);
+void Task_Hof_InitMonData(u8 taskId);
+void HallOfFame_PrintMonInfo(struct HallofFameMon *currMon, unusedArg u8 a1, unusedArg u8 a2);
 
 
 void CB2_DoHallOfFameScreen(void) {
     if (!InitHallOfFameScreen()) {
         u8 taskId = CreateTask(Task_Hof_InitMonData, 0);
         gTasks[taskId].tDontSaveData = FALSE;
-        gHofMonPtr = Calloc(sizeof(*sHofMonPtr));
+        sHofMonPtr = Calloc(sizeof(*sHofMonPtr));
 	}
-	return;
 };
 
 
 void Task_Hof_InitTeamSaveData(u8 taskId) {
     u16 i;
+	
+	Var8005 = 50;	// 020370c2
     struct HallofFameTeam *lastSavedTeam = (struct HallofFameTeam *)(gDecompressionBuffer);
-
+	
     sub_8112450();
 
     if (gHasHallOfFameRecords == 0)
@@ -1527,11 +1507,12 @@ void Task_Hof_InitTeamSaveData(u8 taskId) {
         if (lastSavedTeam->mon[0].species == SPECIES_NONE)
             break;
     }
+			
     if (i >= HALL_OF_FAME_MAX_TEAMS) {
         struct HallofFameTeam *afterTeam = (struct HallofFameTeam *)(gDecompressionBuffer);
         struct HallofFameTeam *beforeTeam = (struct HallofFameTeam *)(gDecompressionBuffer);
         afterTeam++;
-        for (i = 0; i < HALL_OF_FAME_MAX_TEAMS - 1; i++, beforeTeam++, afterTeam++) {
+        for (i = 0; i < HALL_OF_FAME_MAX_TEAMS - 1; ++i, beforeTeam++, afterTeam++) {
             *beforeTeam = *afterTeam;
         }
         lastSavedTeam--;
@@ -1567,7 +1548,7 @@ void Task_Hof_DisplayMon(u8 taskId) {
     // if (currMon->species == SPECIES_EGG)
     //     field6 += 10;
 
-    spriteId = CreatePicSprite2(currMon->species, currMon->tid, currMon->personality, 1, xPos, yPos, currMonId, 0xFFFF);
+	spriteId = CreatePicSprite2(currMon->species, currMon->tid, currMon->personality, 1, xPos, yPos, currMonId, 0xFFFF);
     gSprites[spriteId].tDestinationX = field4;
     gSprites[spriteId].tDestinationY = field6;
     gSprites[spriteId].data[0] = 0;
@@ -1653,7 +1634,7 @@ void Task_HofPC_DrawSpritesPrintText(u8 taskId) {
     struct HallofFameMon *currMon;
     u16 i;
 
-    for (i = 0; i < gTasks[taskId].tCurrTeamNo; i++)
+    for (i = 0; i < gTasks[taskId].tCurrTeamNo; ++i)
         savedTeams++;
 
     currMon = &savedTeams->mon[0];
@@ -1661,14 +1642,14 @@ void Task_HofPC_DrawSpritesPrintText(u8 taskId) {
     gTasks[taskId].tCurrMonId = 0;
     gTasks[taskId].tMonNo = 0;
 
-    for (i = 0; i < PARTY_SIZE; i++, currMon++) {
+    for (i = 0; i < PARTY_SIZE; ++i, currMon++) {
         if (currMon->species != 0)
             gTasks[taskId].tMonNo++;
     }
 
     currMon = &savedTeams->mon[0];
 
-    for (i = 0; i < PARTY_SIZE; i++, currMon++) {
+    for (i = 0; i < PARTY_SIZE; ++i, currMon++) {
         if (currMon->species != 0) {
             u16 spriteId;
             s16 posX, posY;
@@ -1713,10 +1694,10 @@ void Task_HofPC_PrintMonInfo(u8 taskId) {
     u16 i;
     u16 currMonID;
 
-    for (i = 0; i < gTasks[taskId].tCurrTeamNo; i++)
+    for (i = 0; i < gTasks[taskId].tCurrTeamNo; ++i)
         savedTeams++;
 
-    for (i = 0; i < PARTY_SIZE; i++) {
+    for (i = 0; i < PARTY_SIZE; ++i) {
         u16 spriteId = gTasks[taskId].tMonSpriteId(i);
         if (spriteId != 0xFF)
             gSprites[spriteId].oam.priority = 1;
@@ -1728,7 +1709,8 @@ void Task_HofPC_PrintMonInfo(u8 taskId) {
     BlendPalettesUnfaded(sHofFadingRelated, 0xC, RGB(22, 24, 29));
 
     currMon = &savedTeams->mon[gTasks[taskId].tCurrMonId];
-    if (currMon->species != SPECIES_EGG) {
+    if (currMon->species != SPECIES_EGG)
+	{
         StopCryAndClearCrySongs();
         PlayCry1(currMon->species, 0);
     }
@@ -1743,20 +1725,25 @@ void Task_Hof_InitMonData(u8 taskId) {
     u16 i, j;
 
     gTasks[taskId].tMonNumber = 0;  // valid pokes
-
-    for (i = 0; i < PARTY_SIZE; i++) {
+	
+    for (i = 0; i < PARTY_SIZE; ++i)
+	{
         u8 nick[POKEMON_NAME_LENGTH + 2];
-        if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES, NULL)) {
+        if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES, NULL) != 0)
+		{
             sHofMonPtr->mon[i].species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2, NULL);
             sHofMonPtr->mon[i].tid = GetMonData(&gPlayerParty[i], MON_DATA_OT_ID, NULL);
             sHofMonPtr->mon[i].personality = GetMonData(&gPlayerParty[i], MON_DATA_PERSONALITY, NULL);
             sHofMonPtr->mon[i].lvl = GetMonData(&gPlayerParty[i], MON_DATA_LEVEL, NULL);
             GetMonData(&gPlayerParty[i], MON_DATA_NICKNAME, nick);
-            for (j = 0; j < POKEMON_NAME_LENGTH; j++) {
+            for (j = 0; j < POKEMON_NAME_LENGTH; ++j)
+			{
                 sHofMonPtr->mon[i].nick[j] = nick[j];
             }
             gTasks[taskId].tMonNumber++;
-        } else {
+        }
+		else
+		{
             sHofMonPtr->mon[i].species = 0;
             sHofMonPtr->mon[i].tid = 0;
             sHofMonPtr->mon[i].personality = 0;
@@ -1764,17 +1751,18 @@ void Task_Hof_InitMonData(u8 taskId) {
             sHofMonPtr->mon[i].nick[0] = EOS;
         }
     }
-
+		
     sHofFadingRelated = 0;
     gTasks[taskId].tDisplayedMonId = 0;
     gTasks[taskId].tPlayerSpriteID = 0xFF;
 
-    for (i = 0; i < PARTY_SIZE; i++) {
+    for (i = 0; i < PARTY_SIZE; ++i)
+	{
         gTasks[taskId].tMonSpriteId(i) = 0xFF;
     }
-
-    if (gTasks[taskId].tDontSaveData)
-        gTasks[taskId].func = Task_Hof_SetMonDisplayTask;
+	
+    if (gTasks[taskId].tDontSaveData != 0)
+		gTasks[taskId].func = Task_Hof_SetMonDisplayTask;
     else
         gTasks[taskId].func = Task_Hof_InitTeamSaveData;
 };
@@ -1854,4 +1842,3 @@ void HallOfFame_PrintMonInfo(struct HallofFameMon *currMon, unusedArg u8 a1, unu
 };
 
 
-*/

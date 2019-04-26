@@ -129,8 +129,6 @@ struct Pedometers {
 		//#define gStringInfo ((struct BattleMsgData*) *((u32*) 0x2039A34))
 		
 		#define sHofFadingRelated (*((u32*) 0x0203AB34))
-		#define sHofMonPtr ((struct HallofFameTeam*) 0x203AB38)
-		#define gHofMonPtr ( *((u32*) 0x203AB38))
 		#define gHasHallOfFameRecords (*(u8*) 0x0203AB44)
 
 /*u8*/	#define QuestLogMode (*((u8*) 0x203ADFA))
