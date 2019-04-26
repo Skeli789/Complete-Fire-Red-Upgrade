@@ -335,7 +335,7 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 	}
 		
 	//Minior Check
-	if (defSpecies == SPECIES_MINIORSHIELD
+	if (defSpecies == SPECIES_MINIOR_SHIELD
 	&& CheckTableForMoveEffect(move, SetStatusTable))
 		return viability - 10;
 		

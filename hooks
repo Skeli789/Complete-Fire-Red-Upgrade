@@ -303,8 +303,8 @@ EvolutionMovesHook 080CEDD4 1
 #FollowMe_LocalIdHook 0805DF60 3
 
 ##Learn Move
-#GiveBoxMonInitialMoveset 0803E9E0 1
-#MonTryLearningNewMove 0803EA88 2
-#GetMoveRelearnerMoves 08043C84 2
-#GetLevelUpMovesBySpecies 08043DD4 2
-#GetNumberOfRelearnableMoves 08043E2C 1
+GiveBoxMonInitialMoveset 0803E9E0 1
+MonTryLearningNewMove 0803EA88 2
+GetMoveRelearnerMoves 08043C84 2
+GetLevelUpMovesBySpecies 08043DD4 2
+GetNumberOfRelearnableMoves 08043E2C 1

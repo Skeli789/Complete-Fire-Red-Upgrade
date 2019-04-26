@@ -1549,7 +1549,7 @@ void atk81_trysetrest(void)
 				fail = TRUE;
 				break;
 			case ABILITY_SHIELDSDOWN:
-				if (SPECIES(gBankAttacker) == SPECIES_MINIORSHIELD)
+				if (SPECIES(gBankAttacker) == SPECIES_MINIOR_SHIELD)
 				{
 					gBattlescriptCurrInstr = BattleScript_ButItFailed;
 					fail = TRUE;
@@ -1590,7 +1590,7 @@ void atk84_jumpifcantmakeasleep(void) {
 
     u8* jump_loc = T1_READ_PTR(gBattlescriptCurrInstr + 1);
 
-    if (UproarWakeUpCheck(bankDef) || gBattleMons[bankDef].species == SPECIES_MINIORSHIELD)
+    if (UproarWakeUpCheck(bankDef) || gBattleMons[bankDef].species == SPECIES_MINIOR_SHIELD)
         gBattlescriptCurrInstr = jump_loc;
 
     else if (defAbility == ABILITY_INSOMNIA || defAbility == ABILITY_VITALSPIRIT || defAbility == ABILITY_COMATOSE || defAbility == ABILITY_SWEETVEIL
@@ -3474,12 +3474,12 @@ void atkE7_trycastformdatachange(void) {
 		case SPECIES_CHERRIM:
 			if (ABILITY(bank) == ABILITY_FLOWERGIFT && !IS_TRANSFORMED(bank)
 			&& WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY) {
-				DoFormChange(bank, SPECIES_CHERRIMSUN, FALSE, FALSE);
+				DoFormChange(bank, SPECIES_CHERRIM_SUN, FALSE, FALSE);
 				form = TRUE;
 			}
 			break;
 
-		case SPECIES_CHERRIMSUN:
+		case SPECIES_CHERRIM_SUN:
 			if (ABILITY(bank) != ABILITY_FLOWERGIFT
 			|| !WEATHER_HAS_EFFECT || !(gBattleWeather & WEATHER_SUN_ANY)) {
 				DoFormChange(bank, SPECIES_CHERRIM, FALSE, FALSE);

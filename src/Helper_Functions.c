@@ -935,7 +935,7 @@ void ClearBankStatus(bank_t bank) {
 }
 
 bool8 CanBeGeneralStatused(u8 bank) {
-	if (GetBankPartyData(bank)->species == SPECIES_MINIORSHIELD) //Prevents Ditto from getting this benefit
+	if (GetBankPartyData(bank)->species == SPECIES_MINIOR_SHIELD) //Prevents Ditto from getting this benefit
 		return FALSE;
 	
 	switch (ABILITY(bank)) {
@@ -1073,7 +1073,7 @@ bool8 CanBeConfused(u8 bank) {
 }
 
 bool8 CanPartyMonBeGeneralStatused(pokemon_t* mon) {
-	if (mon->species == SPECIES_MINIORSHIELD)
+	if (mon->species == SPECIES_MINIOR_SHIELD)
 		return FALSE;
 	
 	switch (GetPartyAbility(mon)) {

@@ -2,23 +2,11 @@
 #include "../include/list_menu.h"
 #include "../include/string_util.h"
 
-//struct MoveRelearner
-//{
-//    u8 state;
-//    u8 heartSpriteIds[16];              /*0x001*/
-//    u16 movesToLearn[4];                /*0x012*/   //0xE8
-//    u8 filler1A[0x44 - 0x1A];           /*0x01A*/
-//    u8 partyMon;                        /*0x044*/	//0x260
-//    u8 moveSlot;                        /*0x045*/
-//    struct ListMenuItem menuItems[20];  /*0x048*/	//0x11A
-//    u8 fillerE8[0x110 - 0xE8];          /*0x0E8*/
-//    u8 numMenuChoices;                  /*0x110*/ 	//0x1A
-//    u8 numToShowAtOnce;                 /*0x111*/
-//    u8 moveListMenuTask;                /*0x112*/
-//    u8 moveListScrollArrowTask;         /*0x113*/
-//    u8 moveDisplayArrowTask;            /*0x114*/
-//    u16 scrollOffset;                   /*0x116*/
-//};
+#ifdef EXPAND_MOVESETS
+	extern const struct LevelUpMove* const gLevelUpLearnsets[];
+#else
+	#define gLevelUpLearnsets ((struct LevelUpMove**) *((u32*) 0x8043E20)) //extern const struct LevelUpMove* const gLevelUpLearnsets[];
+#endif
 
 #define gMoveToLearn (*((u16*) 0x2024022))
 #define sLearningMoveTableID (*((u8*) 0x2024028))
