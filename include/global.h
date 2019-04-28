@@ -511,10 +511,10 @@ struct ContestWinner
     u8 contestRank;
 };
 
-struct DaycareMiscMon
+struct DayCareMail
 {
-    struct MailStruct mail;
-    u8 OT_name[OT_NAME_LENGTH + 1];
+    struct MailStruct message;
+    u8 OT_name[PLAYER_NAME_LENGTH + 1];
     u8 monName[POKEMON_NAME_LENGTH + 1];
     u8 gameLanguage:4;
     u8 monLanguage:4;
@@ -523,23 +523,17 @@ struct DaycareMiscMon
 struct DaycareMon
 {
     struct BoxPokemon mon;
-    struct DaycareMiscMon misc;
+    struct DayCareMail mail;
     u32 steps;
 };
 
-#define DAYCARE_MON_COUNT   2
+#define DAYCARE_MON_COUNT 2
 
 struct DayCare
 {
     struct DaycareMon mons[DAYCARE_MON_COUNT];
-    u16 unk_118;
-    u8 unk_11A;
-};
-
-struct DayCareMail
-{
-    /*0x00*/ struct MailStruct message;
-    /*0x24*/ u8 names[19];
+    u32 offspringPersonality;
+    u8 stepCounter;
 };
 
 struct RecordMixingDayCareMail

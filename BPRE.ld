@@ -598,6 +598,7 @@ CalculateMonStats = 0x0803E47C | 1;
 GetLevelFromBoxMonExp = 0x803E830 | 1;
 GiveMoveToMon = 0x803E89C | 1;
 GiveMoveToBoxMon = 0x803E8B0 | 1;
+DeleteFirstMoveAndGiveMoveToMon = 0x803EB94 | 1;
 DeleteFirstMoveAndGiveMoveToBoxMon = 0x803EC40 | 1;
 GetMonGender = 0x803F720 | 1;
 GetBoxMonGender = 0x803F730 | 1;
@@ -622,6 +623,9 @@ GetPokedexHeightWeight = 0x8088E38 | 1;
 ReducePartyToThree = 0x80A03D8 | 1;
 pokemon_order_func = 0x8128030 | 1;
 GetEggMoves = 0x08045C28 | 1;
+
+/*Daycare*/
+GetEggSpecies = 0x8045970 | 1;
 
 /* Pokemon Storage */
 GetMonDataFromAnyBox = 0x808BA18 | 1;
