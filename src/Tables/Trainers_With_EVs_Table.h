@@ -1,12 +1,6 @@
-#include "..\\config.h"
-
 #ifdef TRAINERS_WITH_EVS
 
-#include "..\\defines.h"
-#include "../../include/new/build_pokemon.h"
-#include "../../include/new/catching.h"
-
-struct TrainersWithEvs gTrainersWithEvsSpreads[TRAINERS_WITH_EVS_TABLE_SIZE] =
+const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 {
 [0] = {0}, //Empty Spread
 [1] =

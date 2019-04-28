@@ -2,7 +2,8 @@
 #include "../../include/new/catching.h"
 
 #ifndef UNBOUND
-u8 ClassPokeBalls[NUM_TRAINER_CLASSES] = {
+//Modify this.
+u8 gClassPokeBalls[NUM_TRAINER_CLASSES] = {
     BALL_TYPE_POKE_BALL,      //	TRAINER_PKMNTRAINER	       	0x00
     BALL_TYPE_POKE_BALL,      //	TRAINER_PKMNTRAINER	       	0x01
     BALL_TYPE_DIVE_BALL,      //	TRAINER_AQUALEADER	       	0x02
@@ -114,7 +115,7 @@ u8 ClassPokeBalls[NUM_TRAINER_CLASSES] = {
 
 #else
 //This table is for Pokemon Unbound. Modifying it will do nothing for you.
-u8 ClassPokeBalls[NUM_TRAINER_CLASSES] = {
+u8 gClassPokeBalls[NUM_TRAINER_CLASSES] = {
     BALL_TYPE_POKE_BALL,      	//	BLANK	                   0x00
     BALL_TYPE_POKE_BALL,      	//	TRAINER_PKMNTRAINER	       0x01
     BALL_TYPE_ULTRA_BALL,      	//	TRAINER_LORLEADER	       0x02
