@@ -765,8 +765,7 @@ void MegaIndicatorCallback(struct Sprite* self) {
 		u8 pingid = gBattleSpritesDataPtr->healthBoxesData[OBJ_BANK].healthboxBounceSpriteId;
 		struct Sprite* ping = &gSprites[pingid]; 
 			
-		bool8 sineActive = (gBattleSpritesDataPtr->healthBoxesData[OBJ_BANK].healthboxIsBouncing 
-						 || gBattleSpritesDataPtr->healthBoxesData[OBJ_BANK].battlerIsBouncing);
+		bool8 sineActive = (gBattleSpritesDataPtr->healthBoxesData[OBJ_BANK].healthboxIsBouncing);
 		
 		struct Sprite* shaker = &gSprites[ShakerData[1]];
 		u8 hbid = gHealthboxIDs[OBJ_BANK];

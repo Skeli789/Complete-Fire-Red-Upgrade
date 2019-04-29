@@ -8,9 +8,6 @@
 #define NUM_MALE_NAMES 100
 #define NUM_FEMALE_NAMES 100
 
-#define species_array ((species_t*) 0x203DA00)
-#define item_array ((item_t*) 0x203DA10)
-
 enum 
 {
 	FRONTIER_BEFORE_TEXT,
@@ -31,7 +28,7 @@ struct BattleTowerTrainer
 
 extern const struct BattleTowerTrainer gTowerTrainers[];
 
-struct BattleTowerSpreads 
+struct BattleTowerSpread
 {
     u16 species;
 	u8 nature;
@@ -55,8 +52,8 @@ struct BattleTowerSpreads
 	u32 _2; // 0x00000000
 };
 
-extern const struct BattleTowerSpreads gFrontierSpreads[];
-#define gFrontierSpreads ((const struct BattleTowerSpreads*) 0x89DFA00)
+extern const struct BattleTowerSpread gFrontierSpreads[];
+#define gFrontierSpreads ((const struct BattleTowerSpread*) 0x89DFA00)
 
 enum BattleTowerBattleTypes
 {

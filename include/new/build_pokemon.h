@@ -68,9 +68,8 @@
 		ability = gBaseStats[species].ability1;							\
 }
 
-#define TRAINERS_WITH_EVS_TABLE_SIZE 31
-
-struct TrainersWithEvs {
+struct TrainersWithEvs 
+{
     u8 nature;
     u8 ivs;
     u8 hpEv;
@@ -94,6 +93,3 @@ enum
 
 #define TRAINER_EV_CLASS_BALL 0xFE
 #define TRAINER_EV_RANDOM_BALL 0xFF
-
-extern struct TrainersWithEvs gTrainersWithEvsSpreads[TRAINERS_WITH_EVS_TABLE_SIZE];
-

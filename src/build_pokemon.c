@@ -8,7 +8,9 @@
 #include "../include/new/build_pokemon.h"
 #include "../include/new/multi.h"
 
-extern u8 ClassPokeBalls[NUM_TRAINER_CLASSES];
+#include "Tables/Trainers_With_EVs_Table.h"
+
+extern u8 gClassPokeBalls[NUM_TRAINER_CLASSES];
 
 extern void GetFrontierTrainerName(u8* dst, u16 trainerId, u8 battlerNum);
 extern void MultiInitPokemonOrder(void);
@@ -22,7 +24,7 @@ bool8 SpeciesAlreadyOnTeam(u16 species, u8 partySize, species_t* speciesArray);
 bool8 ItemAlreadyOnTeam(u16 item, u8 partySize, item_t* itemArray);
 bool8 MegastoneAlreadyOnTeam(u16 item, u8 partySize, item_t* itemArray);
 bool8 ZCrystalAlreadyOnTeam(u16 item, u8 partySize, item_t* itemArray);
-bool8 PokemonTierBan(u16 species, u16 item, struct BattleTowerSpreads* spread, pokemon_t* mon, u8 checkFromLocationType);
+bool8 PokemonTierBan(u16 species, u16 item, struct BattleTowerSpread* spread, pokemon_t* mon, u8 checkFromLocationType);
 u8 GetHighestMonLevel(pokemon_t* party);
 u8 GetMonPokeBall(struct PokemonSubstruct0* data);
 void SetMonPokeBall(struct PokemonSubstruct0* data, u8 ballId);
@@ -227,7 +229,7 @@ u8 CreateNPCTrainerParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, b
 			party[i].obedient = 1;
 		
 			#ifdef TRAINER_CLASS_POKE_BALLS
-				SetMonData(&party[i], REQ_POKEBALL, &ClassPokeBalls[trainer->trainerClass]);
+				SetMonData(&party[i], REQ_POKEBALL, &gClassPokeBalls[trainer->trainerClass]);
 			#endif
 			
 			#ifdef TRAINERS_WITH_EVS
@@ -235,7 +237,7 @@ u8 CreateNPCTrainerParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, b
 				if (gTrainers[trainerNum].partyFlags == (PARTY_FLAG_CUSTOM_MOVES | PARTY_FLAG_HAS_ITEM)
 				&& trainer->aiFlags > 1 
 				&& spreadNum != 0
-				&& spreadNum < TRAINERS_WITH_EVS_TABLE_SIZE)
+				&& spreadNum < ARRAY_COUNT(gTrainersWithEvsSpreads))
 				{
 					struct TrainersWithEvs spread = gTrainersWithEvsSpreads[spreadNum];
 					
@@ -246,7 +248,7 @@ u8 CreateNPCTrainerParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, b
 					switch(spread.ball) {
 						case TRAINER_EV_CLASS_BALL:
 						#ifdef TRAINER_CLASS_POKE_BALLS
-							ballType = ClassPokeBalls[trainer->trainerClass];
+							ballType = gClassPokeBalls[trainer->trainerClass];
 						#else
 							ballType = BALL_TYPE_POKE_BALL;
 						#endif
@@ -343,7 +345,7 @@ u8 BuildFrontierParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, bool
     for (i = 0; i < monsCount; ++i) {
 		
         u8 loop = 1;
-		struct BattleTowerSpreads spread;
+		struct BattleTowerSpread spread;
 		u16 species;
 		u16 item;
 			
@@ -535,7 +537,7 @@ bool8 ZCrystalAlreadyOnTeam(u16 item, u8 partySize, item_t* itemArray) {
 	return FALSE;
 }
 
-bool8 PokemonTierBan(u16 species, u16 item, struct BattleTowerSpreads* spread, pokemon_t* mon, u8 checkFromLocationType) {
+bool8 PokemonTierBan(u16 species, u16 item, struct BattleTowerSpread* spread, pokemon_t* mon, u8 checkFromLocationType) {
 	u32 i;
 	u8 ability;
 	u16* moveLoc;
