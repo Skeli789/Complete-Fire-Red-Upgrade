@@ -941,6 +941,11 @@ SetSubspriteTables = 0x8008A58 | 1;
 AddSpriteToOamBuffer = 0x8008A64 | 1;
 AddSubspritesToOamBuffer = 0x8008AD0 | 1;
 
+FieldEffectActiveListRemove = 0x080837fc | 1;
+gFieldEffectObjectTemplatePointers = 0x083a0010;
+UpdateSurfBlobFieldEffect = 0x80DC4F8 | 1;
+gFieldEffectArguments = 0x20386E0;
+
 StringCopy10 = 0x8008CF4 | 1;
 StringCopy = 0x8008D84 | 1;
 StringLength = 0x8008E08 | 1;
@@ -1051,6 +1056,8 @@ BoxCreateTask = 0x81119D4 | 1;
 TaskDestroyPicBox = 0x809D494 | 1;
 PicBoxWindow = 0x0809D654 | 1;
 SetStandardWindowBorderStyle = 0x080F7750 | 1;
+
+MonHasMove = 0x08125AC0 | 1;
 
 InitHallOfFameScreen = 0x080F1DDC | 1;
 Task_Hof_SetMonDisplayTask = 0x080F2294 | 1;
