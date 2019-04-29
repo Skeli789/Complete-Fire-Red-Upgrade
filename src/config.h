@@ -92,7 +92,7 @@ enum
 
 #define MAX_LEVEL 100 //Also change this in the file “special_inserts.asm” found in the root
 #define NUM_TRAINER_CLASSES 107
-#define EVOS_PER_MON 4
+#define EVOS_PER_MON 5
 #define EV_CAP 252
 #define DAYCARE_BREEDING_RATE 
 
