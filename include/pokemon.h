@@ -676,6 +676,7 @@ void __attribute__((long_call)) DeleteFirstMoveAndGiveMoveToMon(struct Pokemon *
 void __attribute__((long_call)) DeleteFirstMoveAndGiveMoveToBoxMon(struct BoxPokemon *boxMon, u16 move);
 u32 __attribute__((long_call)) GetBoxMonData(struct BoxPokemon *boxMon, s32 field, u8 *data);
 bool8 __attribute__((long_call)) MonHasMove(pokemon_t* mon, u16 move);
+u8 __attribute__((long_call)) CalculatePlayerPartyCount(void);
 
 /*
 void ZeroBoxMonData(struct BoxPokemon *boxMon);

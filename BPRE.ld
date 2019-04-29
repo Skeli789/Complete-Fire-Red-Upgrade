@@ -626,6 +626,12 @@ GetEggMoves = 0x08045C28 | 1;
 
 /*Daycare*/
 GetEggSpecies = 0x8045970 | 1;
+DetermineEggSpeciesAndParentSlots = 0x08046000 | 1;
+AlterEggSpeciesWithIncenseItem = 0x08045FA0 | 1;
+SetInitialEggData = 0x08046208 | 1;
+RemoveEggFromDayCare = 0x08045F70 | 1;
+RemoveIVIndexFromList = 0x08045A78 | 1;
+CompactPartySlots = 0x080937DC | 1;
 
 /* Pokemon Storage */
 GetMonDataFromAnyBox = 0x808BA18 | 1;

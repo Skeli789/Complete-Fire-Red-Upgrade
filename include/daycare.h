@@ -3,6 +3,11 @@
 #include "global.h"
 
 u16 __attribute__((long_call)) GetEggSpecies(u16 species);
+u16 __attribute__((long_call)) DetermineEggSpeciesAndParentSlots(struct DayCare *daycare, u8 *parentSlots);
+void __attribute__((long_call)) AlterEggSpeciesWithIncenseItem(u16 *species, struct DayCare *daycare);
+void __attribute__((long_call)) SetInitialEggData(struct Pokemon *mon, u16 species, struct DayCare *daycare);
+void __attribute__((long_call)) RemoveEggFromDayCare(struct DayCare *daycare);
+void __attribute__((long_call)) RemoveIVIndexFromList(u8 *ivs, u8 selectedIv);
 
 /*
 #define EGG_HATCH_LEVEL 5

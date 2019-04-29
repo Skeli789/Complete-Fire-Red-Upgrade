@@ -3,6 +3,8 @@
 #include "../include/constants/moves.h"
 #include "../include/constants/species.h"
 #include "../include/constants/items.h"
+#include "../include/pokemon.h"
+#include "../include/pokemon_storage_system.h"
 
 #define sHatchedEggFatherMoves ((u16*) 0x202455C)
 #define sHatchedEggMotherMoves ((u16*)0x2024580)
@@ -23,6 +25,7 @@ extern u8 GetLevelUpMovesBySpecies(u16 species, u16* moves);
 6. Baby's Default Moveset.
 */
 
+// called from GiveEggFromDaycare
 void BuildEggMoveset(struct Pokemon* egg, struct BoxPokemon* father, struct BoxPokemon* mother)
 {
 	
@@ -211,3 +214,105 @@ u16 DetermineEggSpeciesAndParentSlots(struct DayCare* daycare, u8* parentSlots)
 
     return eggSpecies;
 }
+
+
+
+
+static void InheritIVs(struct Pokemon *egg, struct DayCare *daycare) {
+    u8 i, numIVs;
+	if (GetBoxMonData(&daycare->mons[0].mon, MON_DATA_HELD_ITEM, NULL) == ITEM_DESTINY_KNOT
+	|| GetBoxMonData(&daycare->mons[1].mon, MON_DATA_HELD_ITEM, NULL) == ITEM_DESTINY_KNOT)
+		numIVs = 5;
+	else
+		numIVs = 3;
+	
+    u8 selectedIvs[numIVs];
+    u8 availableIVs[NUM_STATS];
+    u8 whichParent[ARRAY_COUNT(selectedIvs)];
+    u8 iv;
+
+    // Initialize a list of IV indices.
+    for (i = 0; i < NUM_STATS; i++)
+    {
+        availableIVs[i] = i;
+    }
+
+    // Select the num IVs that will be inherited.
+    for (i = 0; i < ARRAY_COUNT(selectedIvs); i++)
+    {
+        // Randomly pick an IV from the available list.
+        selectedIvs[i] = availableIVs[Random() % (NUM_STATS - i)];
+
+        // Remove the selected IV index from the available IV indices.
+        RemoveIVIndexFromList(availableIVs, i);
+    }
+
+    // Determine which parent each of the selected IVs should inherit from.
+    for (i = 0; i < ARRAY_COUNT(selectedIvs); i++)
+    {
+        whichParent[i] = Random() % 2;
+    }
+
+    // Set each of inherited IVs on the egg mon.
+    for (i = 0; i < ARRAY_COUNT(selectedIvs); i++)
+    {
+        switch (selectedIvs[i])
+        {
+            case 0:
+                iv = GetBoxMonData(&daycare->mons[whichParent[i]].mon, MON_DATA_HP_IV, NULL);
+                SetMonData(egg, MON_DATA_HP_IV, &iv);
+                break;
+            case 1:
+                iv = GetBoxMonData(&daycare->mons[whichParent[i]].mon, MON_DATA_ATK_IV, NULL);
+                SetMonData(egg, MON_DATA_ATK_IV, &iv);
+                break;
+            case 2:
+                iv = GetBoxMonData(&daycare->mons[whichParent[i]].mon, MON_DATA_DEF_IV, NULL);
+                SetMonData(egg, MON_DATA_DEF_IV, &iv);
+                break;
+            case 3:
+                iv = GetBoxMonData(&daycare->mons[whichParent[i]].mon, MON_DATA_SPEED_IV, NULL);
+                SetMonData(egg, MON_DATA_SPEED_IV, &iv);
+                break;
+            case 4:
+                iv = GetBoxMonData(&daycare->mons[whichParent[i]].mon, MON_DATA_SPATK_IV, NULL);
+                SetMonData(egg, MON_DATA_SPATK_IV, &iv);
+                break;
+            case 5:
+                iv = GetBoxMonData(&daycare->mons[whichParent[i]].mon, MON_DATA_SPDEF_IV, NULL);
+                SetMonData(egg, MON_DATA_SPDEF_IV, &iv);
+                break;
+        }
+    }
+};
+
+
+// Decide features to inherit
+void GiveEggFromDaycare(struct DayCare *daycare) {
+    struct Pokemon egg;
+    u16 species;
+    u8 parentSlots[2]; // 0th index is "mother" daycare slot, 1st is "father"
+    bool8 isEgg;
+
+    species = DetermineEggSpeciesAndParentSlots(daycare, parentSlots);
+    AlterEggSpeciesWithIncenseItem(&species, daycare);
+    SetInitialEggData(&egg, species, daycare);
+    InheritIVs(&egg, daycare);	// destiny knot check
+    BuildEggMoveset(&egg, &daycare->mons[parentSlots[1]].mon, &daycare->mons[parentSlots[0]].mon);
+
+	// handled in BuildEggMoveset
+    //if (species == SPECIES_PICHU)
+    //    GiveVoltTackleIfLightBall(&egg, daycare);
+
+    isEgg = TRUE;
+    SetMonData(&egg, MON_DATA_IS_EGG, &isEgg);
+    gPlayerParty[PARTY_SIZE - 1] = egg;
+    CompactPartySlots();
+    CalculatePlayerPartyCount();
+    RemoveEggFromDayCare(daycare);
+};
+
+
+
+
+

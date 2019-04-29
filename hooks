@@ -308,3 +308,6 @@ MonTryLearningNewMove 0803EA88 2
 GetMoveRelearnerMoves 08043C84 2
 GetLevelUpMovesBySpecies 08043DD4 2
 GetNumberOfRelearnableMoves 08043E2C 1
+
+##Daycare
+#GiveEggFromDaycare 080460D4 1

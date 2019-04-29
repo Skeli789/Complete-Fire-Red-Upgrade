@@ -2,6 +2,9 @@
 #define GUARD_FIELD_EFFECTS_H
 
 #include "global.h"
+#include "sprite.h"
+
+extern const struct SpriteTemplate *const gFieldEffectObjectTemplatePointers[36];
 
 enum FieldEffectScriptIdx
 {
@@ -92,6 +95,8 @@ void __attribute__((long_call)) FieldEffectStop(struct Sprite* s, u8 animation);
 void __attribute__((long_call)) DeleteOBJ(struct Sprite *s);
 u32 __attribute__((long_call)) FldEff_SurfBlob(void);
 void __attribute__((long_call)) BindFieldEffectToSprite(u8 spriteId, u8 value);
+void __attribute__((long_call)) FieldEffectActiveListRemove(u8 id);
+void __attribute__((long_call)) UpdateSurfBlobFieldEffect(struct Sprite*);
 
 /*
 bool8 FieldEffectActiveListContains(u8 id);
