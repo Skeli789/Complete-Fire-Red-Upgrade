@@ -3,6 +3,7 @@
 #include "defines.h"
 #include "defines_battle.h"
 #include "../include/event_data.h"
+#include "../include/pokedex.h"
 #include "../include/constants/items.h"
 #include "../include/new/helper_functions.h"
 
@@ -12,8 +13,6 @@ extern bool8 ProtectAffects(u16 move, u8 bankAtk, u8 bankDef, bool8 set);
 
 extern move_t HighCritTable[];
 extern move_t AlwaysCritTable[];
-extern NaturalGiftStruct NaturalGiftTable[];
-extern FlingStruct FlingTable[];
 extern move_t RecklessTable[];
 extern move_t IronFistTable[];
 extern move_t SheerForceTable[];
@@ -28,6 +27,10 @@ extern move_t TwoStrikesMoves[];
 extern move_t ThreeStrikesMoves[];
 extern move_t StatChangeIgnoreTable[];
 extern move_t SpecialAttackPhysicalDamageMoves[];
+
+extern NaturalGiftStruct NaturalGiftTable[];
+extern FlingStruct FlingTable[];
+extern struct AlternateSize gAlternateSpeciesSizeTable[];
 
 const u16 Gen2_5CriticalHitChance[] = {16, 8, 4, 3, 2};
 const u16 Gen6CriticalHitChance[] = {16, 8, 2, 1, 1};
@@ -61,6 +64,7 @@ u16 AdjustWeight(u32 weight, ability_t, item_effect_t, bank_t, bool8 check_nimbl
 u8 GetFlingPower(ability_t, item_t, pokemon_t*, bank_t, bool8 PartyCheck);
 void AdjustDamage(bool8 CheckFalseSwipe);
 void ApplyRandomDmgMultiplier(void);
+u16 TryGetAlternateSpeciesSize(u16 species, u8 type);
 
 
 void atk04_critcalc(void) {
@@ -2192,8 +2196,10 @@ u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 
 		case MOVE_GRASSKNOT:	;
 			if (!ignoreDef)
 			{
-				u32 weight = GetPokedexHeightWeight(SpeciesToNationalPokedexNum(gBattleMons[bankDef].species), 1);
-
+				u32 weight = TryGetAlternateSpeciesSize(SPECIES(bankDef), PKDX_GET_WEIGHT); //Eg. Mega Form
+				if (weight == 0)
+					weight = GetPokedexHeightWeight(SpeciesToNationalPokedexNum(gBattleMons[bankDef].species), 1);
+				
 				weight = udivsi(AdjustWeight(weight, ABILITY(bankDef), ITEM_EFFECT(bankDef), bankDef, TRUE), 10);
 
 				if (weight >= 200)
@@ -2215,16 +2221,20 @@ u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 
 		case MOVE_HEATCRASH:	;
 			if (!ignoreDef)
 			{
-				u32 atk_weight, def_weight, weight_ratio;
+				u32 atkWeight, defWeight, weightRatio;
 
-				def_weight = GetPokedexHeightWeight(SpeciesToNationalPokedexNum(gBattleMons[bankDef].species), 1);
-				def_weight = AdjustWeight(def_weight, ABILITY(bankDef), ITEM_EFFECT(bankDef), bankDef, TRUE);
+				defWeight = TryGetAlternateSpeciesSize(SPECIES(bankDef), PKDX_GET_WEIGHT);
+				if (defWeight == 0)
+					defWeight = GetPokedexHeightWeight(SpeciesToNationalPokedexNum(gBattleMons[bankDef].species), 1);
+				defWeight = AdjustWeight(defWeight, ABILITY(bankDef), ITEM_EFFECT(bankDef), bankDef, TRUE);
 
-				atk_weight = GetPokedexHeightWeight(SpeciesToNationalPokedexNum(species), 1);
-				atk_weight = AdjustWeight(atk_weight, ability, item_effect, bankAtk, !PartyCheck);
+				atkWeight = TryGetAlternateSpeciesSize(SPECIES(bankAtk), PKDX_GET_WEIGHT);
+				if (atkWeight == 0)
+					atkWeight = GetPokedexHeightWeight(SpeciesToNationalPokedexNum(species), 1);
+				atkWeight = AdjustWeight(atkWeight, ability, item_effect, bankAtk, !PartyCheck);
 
-				weight_ratio = udivsi(atk_weight, def_weight);
-				switch (weight_ratio) {
+				weightRatio = udivsi(atkWeight, defWeight);
+				switch (weightRatio) {
 					case 0:
 					case 1:
 						power = 40;
@@ -2792,4 +2802,24 @@ void ApplyRandomDmgMultiplier(void) {
 	u16 rando = 100 - (Random() & 15);
 	if (gBattleMoveDamage)
 		gBattleMoveDamage = MathMax(1, udivsi((gBattleMoveDamage * rando), 100));
+}
+
+//Some species have alternate forms with different sizes (like Megas)
+u16 TryGetAlternateSpeciesSize(u16 species, u8 type)
+{
+	for (int i = 0; gAlternateSpeciesSizeTable[i].species != SPECIES_TABLES_TERMIN; ++i)
+	{
+		if (gAlternateSpeciesSizeTable[i].species == species)
+		{
+			switch (type) {
+				case PKDX_GET_HEIGHT:
+					return gAlternateSpeciesSizeTable[i].height;
+				
+				case PKDX_GET_WEIGHT:
+					return gAlternateSpeciesSizeTable[i].weight;
+			}
+		}
+	}
+	
+	return 0;
 }

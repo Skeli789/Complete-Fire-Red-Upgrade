@@ -2,13 +2,6 @@
 
 #include "global.h"
 
-void ResetPokedex(void);
-void CopyMonCategoryText(u16 species, u8 *dst);
-u16 GetPokedexHeightWeight(u16 dexNum, u8 data);
-u16 GetNationalPokedexCount(u8);
-u16 GetHoennPokedexCount(u8);
-u8 CreateDexDisplayMonDataTask(u16 dexNum, u32 trainerId, u32 personality);
-
 enum
 {
     FLAG_GET_SEEN,
@@ -23,53 +16,33 @@ enum
 	PKDX_GET_WEIGHT
 };
 
-u16 pokedex_count(u8);
-u16 sub_80C0844(u8);
+struct PokedexEntry
+{
+    /*0x00*/ u8 categoryName[12];
+    /*0x0C*/ u16 height; //in decimeters
+    /*0x0E*/ u16 weight; //in hectograms
+    /*0x10*/ const u8* description;
+    /*0x14*/ u16 unused;
+    /*0x16*/ u16 pokemonScale;
+    /*0x18*/ u16 pokemonOffset;
+    /*0x1A*/ u16 trainerScale;
+    /*0x1C*/ u16 trainerOffset;
+	/*0x1E*/ u16 unknown1;
+	/*0x20*/ u32 unknown2;
+};  /*size = 0x24*/
 
-enum PokedexSpecies {
-PKDX_NIDORAN_F = 29,
-PKDX_NIDORINA,
-PKDX_NIDOQUEEN,
-PKDX_NIDORAN_M,
-PKDX_NIDORINO,
-PKDX_NIDOKING,
-PKDX_CLEFAIRY,
-PKDX_CLEFABLE,
-PKDX_VULPIX,
-PKDX_NINETALES,
-PKDX_JIGGLYPUFF,
-PKDX_WIGGLYTUFF,
-
-PKDX_CLEFFA = 173,
-PKDX_IGGLYBUFF,
-
-PKDX_SKITTY = 300,
-PKDX_DELCATTY,
-
-PKDX_ARCEUS = 493,
-
-PKDX_MUNNA = 517,
-PKDX_MUSHARNA,
-
-PKDX_GENESECT = 649,
-
-PKDX_SILVALLY = 773,
-
-PKDX_NIHILEGO = 793,
-PKDX_BUZZWOLE,
-PKDX_PHEROMOSA,
-PKDX_XURKITREE,
-PKDX_CELESTEELA,
-PKDX_KARTANA,
-PKDX_GUZZLORD,
-PKDX_NECROZMA,
-PKDX_MAGEARNA,
-PKDX_MARSHADOW,
-PKDX_POIPOLE,
-PKDX_NAGANADEL,
-PKDX_STAKATAKA,
-PKDX_BLACEPHALON,
-PKDX_ZERAORA,
-PKDX_MELTAN,
-PKDX_MELMETAL
+struct AlternateSize
+{
+	u16 species;
+	u16 height;
+	u16 weight;
 };
+
+/*
+void ResetPokedex(void);
+void CopyMonCategoryText(u16 species, u8 *dst);
+u16 GetPokedexHeightWeight(u16 dexNum, u8 data);
+u16 GetNationalPokedexCount(u8);
+u16 GetHoennPokedexCount(u8);
+u8 CreateDexDisplayMonDataTask(u16 dexNum, u32 trainerId, u32 personality);
+*/

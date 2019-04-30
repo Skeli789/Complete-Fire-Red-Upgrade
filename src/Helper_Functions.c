@@ -3,6 +3,7 @@
 #include "../include/new/mega.h"
 #include "../include/new/frontier.h"
 #include "../include/constants/items.h"
+#include "../include/constants/pokedex.h"
 
 extern move_t SheerForceTable[];
 extern move_t SoundMoveTable[];
@@ -41,6 +42,14 @@ bool8 CheckTableForAbility(u8 ability, const u8 table[]) {
 bool8 CheckTableForSpecialMoveEffect(u8 effect, const u8 table[]) {
 	for (u32 i = 0; table[i] != ABILITY_TABLES_TERMIN; ++i) {
 		if (effect == table[i])
+			return TRUE;
+	}
+	return FALSE;
+}
+
+bool8 CheckTableForSpecies(u16 species, const u16 table[]) {
+	for (u32 i = 0; table[i] != SPECIES_TABLES_TERMIN; ++i) {
+		if (species == table[i])
 			return TRUE;
 	}
 	return FALSE;
@@ -643,6 +652,7 @@ bool8 IsFirstAttacker(u8 bank) {
 }
 
 bool8 CanTransferItem(u16 species, u16 item, pokemon_t* party_data) {
+	u16 dexNum = SpeciesToNationalPokedexNum(species);
 	item_effect_t effect = gItems[SanitizeItemId(item)].holdEffect;
 	u8 quality = ItemId_GetHoldEffectParam(item);
 	const struct Evolution* evolutions = gEvolutionTable[party_data->species];
@@ -653,22 +663,22 @@ bool8 CanTransferItem(u16 species, u16 item, pokemon_t* party_data) {
 			return FALSE;
 			
 		case ITEM_EFFECT_GRISEOUS_ORB:
-			if (species == SPECIES_GIRATINA || species == SPECIES_GIRATINA_ORIGIN)
+			if (dexNum == NATIONAL_DEX_GIRATINA)
 				return FALSE;
 			break;
 			
 		case ITEM_EFFECT_PLATE:
-			if (SpeciesToNationalPokedexNum(species) == PKDX_ARCEUS)
+			if (dexNum == NATIONAL_DEX_ARCEUS)
 				return FALSE;
 			break;
 			
 		case ITEM_EFFECT_MEMORY:
-			if (SpeciesToNationalPokedexNum(species) == PKDX_SILVALLY)
+			if (dexNum == NATIONAL_DEX_SILVALLY)
 				return FALSE;
 			break;
 			
 		case ITEM_EFFECT_DRIVE:
-			if (SpeciesToNationalPokedexNum(species) == PKDX_GENESECT)
+			if (dexNum == NATIONAL_DEX_GENESECT)
 				return FALSE;
 			break;
 
@@ -682,8 +692,8 @@ bool8 CanTransferItem(u16 species, u16 item, pokemon_t* party_data) {
 			break;
 		
 		case ITEM_EFFECT_PRIMAL_ORB:
-			if ((quality == QUALITY_BLUE_ORB && (species == SPECIES_KYOGRE  || species == SPECIES_KYOGRE_PRIMAL))
-			||  (quality == QUALITY_RED_ORB &&  (species == SPECIES_GROUDON || species == SPECIES_KYOGRE_PRIMAL)))
+			if ((quality == QUALITY_BLUE_ORB && dexNum == NATIONAL_DEX_KYOGRE)
+			||  (quality == QUALITY_RED_ORB && dexNum == NATIONAL_DEX_GROUDON))
 				return FALSE;
 	}
 	return TRUE;

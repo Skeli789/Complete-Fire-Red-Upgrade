@@ -257,3 +257,54 @@ EvolutionMovesHook:
 	ldr r1, =0x80CEDDC | 1
 	bx r1
 
+.pool
+@0x81058DC with r0
+PokedexLoadAlternateHeightHook:
+	lsr r7, r2, #0x18
+	lsl r3, r3, #0x18
+	lsr r3, r3, #0x18
+	mov r8, r3
+	mov r5, r1 @Save species
+	mov r0, r1
+	mov r1, #0x0 @PKDX_GET_HEIGHT
+	bl TryGetAlternateSpeciesSize
+	cmp r0, #0x0
+	bne ReturnPokedexHeight
+	mov r0, r5
+	ldr r1, =0x81058E6 | 1
+	bx r1
+
+ReturnPokedexHeight:
+	mov r4, r0 @Store height in r4
+	mov r0, r5 @Store species in r0
+	ldr r1, =SpeciesToNationalPokedexNum
+	bl bxr1
+	ldr r1, =0x81058F6 | 1
+	bx r1
+
+.pool
+@0x8105A58 with r0
+PokedexLoadAlternateWeightHook:
+	lsl r3, r3, #0x18
+	lsr r3, r3, #0x18
+	mov r9, r3
+	mov r5, r1 @Save species
+	mov r0, r1
+	mov r1, #0x1 @PKDX_GET_WEIGHT
+	bl TryGetAlternateSpeciesSize
+	cmp r0, #0x0
+	bne ReturnPokedexWeight
+	mov r0, r5
+	ldr r1, =0x8105A60 | 1
+	bx r1
+
+ReturnPokedexWeight:
+	mov r4, r0 @Store weight in r4
+	mov r0, r5 @Store species in r0
+	ldr r1, =SpeciesToNationalPokedexNum
+	bl bxr1
+	ldr r1, =0x8105A70 | 1
+bxr1:
+	bx r1
+.pool
+

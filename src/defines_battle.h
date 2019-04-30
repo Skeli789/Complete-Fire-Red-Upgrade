@@ -1,5 +1,7 @@
 #pragma once
 
+#include "config.h"
+
 #include "../include/battle.h"
 #include "../include/battle_controllers.h"
 #include "../include/battle_interface.h"
