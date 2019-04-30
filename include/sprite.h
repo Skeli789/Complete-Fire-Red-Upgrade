@@ -5,6 +5,7 @@
 #define MAX_SPRITES 64
 #define MAX_NPCS 16
 
+
 struct SpriteSheet
 {
     const u8 *data;  // Raw uncompressed pixel data

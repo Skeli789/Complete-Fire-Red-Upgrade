@@ -11,6 +11,7 @@ u32 __attribute__((long_call)) MetatileBehavior_GetLowerBytes(u32 a, u8 b);
 u32 __attribute__((long_call)) MapGridGetMetatileIdAt(int x, int y);
 u16 __attribute__((long_call)) MapGridGetMetatileField(u16 x, u16 y, u8 a);
 u32 __attribute__((long_call)) MapGridGetMetatileBehaviorAt(int, int);
+u8 __attribute__((long_call)) MapGridGetZCoordAt(int x, int y);
 
 /*
 u32 MapGridGetMetatileIdAt(int, int);

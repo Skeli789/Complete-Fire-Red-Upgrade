@@ -97,6 +97,7 @@ u32 __attribute__((long_call)) FldEff_SurfBlob(void);
 void __attribute__((long_call)) BindFieldEffectToSprite(u8 spriteId, u8 value);
 void __attribute__((long_call)) FieldEffectActiveListRemove(u8 id);
 void __attribute__((long_call)) UpdateSurfBlobFieldEffect(struct Sprite*);
+void __attribute__((long_call)) BindObj(u8 spriteId, u8 value);
 
 /*
 bool8 FieldEffectActiveListContains(u8 id);

@@ -36,19 +36,19 @@ void BuildEggMoveset(struct Pokemon* egg, struct BoxPokemon* father, struct BoxP
 	u16 sHatchedEggEggMoves[EGG_MOVES_ARRAY_COUNT] = {0};
 
     numSharedParentMoves = 0;
-    for (i = 0; i < MAX_MON_MOVES; i++)
+    for (i = 0; i < MAX_MON_MOVES; ++i)
     {
         sHatchedEggMotherMoves[i] = 0;
         sHatchedEggFatherMoves[i] = 0;
         sHatchedEggFinalMoves[i] = 0;
     }
-    //for (i = 0; i < EGG_MOVES_ARRAY_COUNT; i++)
+    //for (i = 0; i < EGG_MOVES_ARRAY_COUNT; ++i)
     //    sHatchedEggEggMoves[i] = 0;
     for (i = 0; i < EGG_LVL_UP_MOVES_ARRAY_COUNT; ++i)
         sHatchedEggLevelUpMoves[i] = 0;
 
     numLevelUpMoves = GetLevelUpMovesBySpecies(eggSpecies, sHatchedEggLevelUpMoves);
-    for (i = 0; i < MAX_MON_MOVES; i++)
+    for (i = 0; i < MAX_MON_MOVES; ++i)
     {
         sHatchedEggFatherMoves[i] = GetBoxMonData(father, MON_DATA_MOVE1 + i, NULL);
         sHatchedEggMotherMoves[i] = GetBoxMonData(mother, MON_DATA_MOVE1 + i, NULL);
@@ -57,7 +57,7 @@ void BuildEggMoveset(struct Pokemon* egg, struct BoxPokemon* father, struct BoxP
     numEggMoves = GetEggMoves(egg, sHatchedEggEggMoves);
 	
 	//Shared Moves Between Parents
-    for (i = 0; i < MAX_MON_MOVES; i++)
+    for (i = 0; i < MAX_MON_MOVES; ++i)
     {
         for (j = 0; j < MAX_MON_MOVES && sHatchedEggFatherMoves[i] != MOVE_NONE; j++)
         {
@@ -67,7 +67,7 @@ void BuildEggMoveset(struct Pokemon* egg, struct BoxPokemon* father, struct BoxP
     }
 	
 	//Try Assign Shared Moves to Baby
-    for (i = 0; i < MAX_MON_MOVES; i++)
+    for (i = 0; i < MAX_MON_MOVES; ++i)
     {
         for (j = 0; j < numLevelUpMoves && sHatchedEggFinalMoves[i] != MOVE_NONE; ++j)
         {
@@ -82,7 +82,7 @@ void BuildEggMoveset(struct Pokemon* egg, struct BoxPokemon* father, struct BoxP
 
 #ifdef FATHER_PASSES_TMS
 	//Father TMs
-    for (i = 0; i < MAX_MON_MOVES; i++)
+    for (i = 0; i < MAX_MON_MOVES; ++i)
     {
         if (sHatchedEggFatherMoves[i] != MOVE_NONE)
         {
@@ -217,20 +217,112 @@ u16 DetermineEggSpeciesAndParentSlots(struct DayCare* daycare, u8* parentSlots)
 
 
 
+enum {
+	HpIv = 0,
+	AtkIv,
+	DefIv,
+	SpdIv,
+	SpAtkIv,
+	SpDefIv,
+};
 
-static void InheritIVs(struct Pokemon *egg, struct DayCare *daycare) {
-    u8 i, numIVs;
-	if (GetBoxMonData(&daycare->mons[0].mon, MON_DATA_HELD_ITEM, NULL) == ITEM_DESTINY_KNOT
-	|| GetBoxMonData(&daycare->mons[1].mon, MON_DATA_HELD_ITEM, NULL) == ITEM_DESTINY_KNOT)
+
+u8 CheckPowerItem(u16 item) {
+	//u16 item = GetBoxMonData(&daycare->mons[parent].mon, MON_DATA_HELD_ITEM, NULL);
+	
+	// use hold effect / hold parameter instead?
+	switch (item)
+	{
+		case ITEM_POWER_BRACER:
+			return HpIv;
+		case ITEM_POWER_BELT:
+			return AtkIv;
+		case ITEM_POWER_LENS:
+			return DefIv;
+		case ITEM_POWER_BAND:
+			return SpdIv;
+		case ITEM_POWER_ANKLET:
+			return SpAtkIv;
+		case ITEM_POWER_WEIGHT:
+			return SpDefIv;
+		default:
+			return 0xFF;
+	}
+};
+
+
+
+
+void InheritIVs(struct Pokemon *egg, struct DayCare *daycare) {
+    u8 i, numIVs, iv;
+	u16 items[2];
+	
+	items[0] = GetBoxMonData(&daycare->mons[0].mon, MON_DATA_HELD_ITEM, NULL);
+	items[1] = GetBoxMonData(&daycare->mons[1].mon, MON_DATA_HELD_ITEM, NULL);
+		
+	// get number of IVs to inherit from either parent
+	if (items[0] == ITEM_DESTINY_KNOT || items[1] == ITEM_DESTINY_KNOT)
 		numIVs = 5;
 	else
 		numIVs = 3;
 	
     u8 selectedIvs[numIVs];
-    u8 availableIVs[NUM_STATS];
-    u8 whichParent[ARRAY_COUNT(selectedIvs)];
-    u8 iv;
-
+    //u8 availableIVs[NUM_STATS];
+    u8 whichParent[numIVs];
+		
+	// initiate first 1 or 2 IV slots with power items from either or both parents
+	u8 initVal = 0;
+	u8 powerResult = 0xFF;
+	for (i = 0; i < DAYCARE_MON_COUNT; ++i)
+	{
+		powerResult = CheckPowerItem(items[i]);	// check if parent i has a power item
+		if (powerResult == 0xFF)
+			continue;	// parent does not have a power item
+		
+		// parent has a power item, save index to IV slot
+		if (items[0] == items[1])
+		{
+			// both parents have same power item, choose parent at random
+			whichParent[i] = Random() % 2;
+			selectedIvs[i] = powerResult;
+			initVal++;
+			break;
+		}
+		else
+		{
+			whichParent[i] = i;
+			selectedIvs[i] = powerResult;
+			initVal++;
+		}
+	}
+	
+	// randomize the remaining IV indices with unique values
+	bool8 unique;
+	for (i = initVal; i < ARRAY_COUNT(selectedIvs); ++i)
+	{
+		iv = Random() % NUM_STATS;
+		
+		// check if index is unique
+		unique = TRUE;
+		u8 j = 0;
+		while (unique == TRUE)
+		{
+			if (iv == selectedIvs[j])
+				unique = FALSE;
+			
+			if (j == NUM_STATS)
+			{
+				selectedIvs[i] = iv;
+				break;
+			}
+			j++;
+		}
+		whichParent[i] = Random() % 2;
+	}
+	
+	
+	
+/*			original routine
     // Initialize a list of IV indices.
     for (i = 0; i < NUM_STATS; i++)
     {
@@ -252,33 +344,35 @@ static void InheritIVs(struct Pokemon *egg, struct DayCare *daycare) {
     {
         whichParent[i] = Random() % 2;
     }
+	
+*/
 
     // Set each of inherited IVs on the egg mon.
-    for (i = 0; i < ARRAY_COUNT(selectedIvs); i++)
+    for (i = 0; i < ARRAY_COUNT(selectedIvs); ++i)
     {
         switch (selectedIvs[i])
         {
-            case 0:
+            case HpIv:
                 iv = GetBoxMonData(&daycare->mons[whichParent[i]].mon, MON_DATA_HP_IV, NULL);
                 SetMonData(egg, MON_DATA_HP_IV, &iv);
                 break;
-            case 1:
+            case AtkIv:
                 iv = GetBoxMonData(&daycare->mons[whichParent[i]].mon, MON_DATA_ATK_IV, NULL);
                 SetMonData(egg, MON_DATA_ATK_IV, &iv);
                 break;
-            case 2:
+            case DefIv:
                 iv = GetBoxMonData(&daycare->mons[whichParent[i]].mon, MON_DATA_DEF_IV, NULL);
                 SetMonData(egg, MON_DATA_DEF_IV, &iv);
                 break;
-            case 3:
+            case SpdIv:
                 iv = GetBoxMonData(&daycare->mons[whichParent[i]].mon, MON_DATA_SPEED_IV, NULL);
                 SetMonData(egg, MON_DATA_SPEED_IV, &iv);
                 break;
-            case 4:
+            case SpAtkIv:
                 iv = GetBoxMonData(&daycare->mons[whichParent[i]].mon, MON_DATA_SPATK_IV, NULL);
                 SetMonData(egg, MON_DATA_SPATK_IV, &iv);
                 break;
-            case 5:
+            case SpDefIv:
                 iv = GetBoxMonData(&daycare->mons[whichParent[i]].mon, MON_DATA_SPDEF_IV, NULL);
                 SetMonData(egg, MON_DATA_SPDEF_IV, &iv);
                 break;
@@ -286,6 +380,74 @@ static void InheritIVs(struct Pokemon *egg, struct DayCare *daycare) {
     }
 };
 
+
+void AlterEggSpeciesWithIncenseItem(u16 *species, struct DayCare *daycare) {
+	u16 motherItem = GetBoxMonData(&daycare->mons[0].mon, MON_DATA_HELD_ITEM, NULL);
+	u16 fatherItem = GetBoxMonData(&daycare->mons[1].mon, MON_DATA_HELD_ITEM, NULL);   
+	
+	// if neither parent holding incense, force 2nd evo species
+	switch (*species)
+	{
+		case SPECIES_WYNAUT:
+			if (motherItem != ITEM_LAX_INCENSE && fatherItem != ITEM_LAX_INCENSE)
+				*species = SPECIES_WOBBUFFET;
+			break;
+		case SPECIES_AZURILL:
+			if (motherItem != ITEM_SEA_INCENSE && fatherItem != ITEM_SEA_INCENSE)
+				*species = SPECIES_MARILL;
+			break;
+		case SPECIES_MUNCHLAX:
+			if (motherItem != ITEM_FULL_INCENSE && fatherItem != ITEM_FULL_INCENSE)
+				*species = SPECIES_SNORLAX;
+			break;
+		case SPECIES_MIME_JR:
+			if (motherItem != ITEM_ODD_INCENSE && fatherItem != ITEM_ODD_INCENSE)
+				*species = SPECIES_MR_MIME;
+			break;
+		case SPECIES_CHINGLING:
+			if (motherItem != ITEM_PURE_INCENSE && fatherItem != ITEM_PURE_INCENSE)
+				*species = SPECIES_CHIMECHO;
+			break;
+		case SPECIES_BONSLY:
+			if (motherItem != ITEM_ROCK_INCENSE && fatherItem != ITEM_ROCK_INCENSE)
+				*species = SPECIES_SUDOWOODO;
+			break;
+		case SPECIES_BUDEW:
+			if (motherItem != ITEM_ROSE_INCENSE && fatherItem != ITEM_ROSE_INCENSE)
+				*species = SPECIES_ROSELIA;
+			break;
+		case SPECIES_MANTYKE:
+			if (motherItem != ITEM_WAVE_INCENSE && fatherItem != ITEM_WAVE_INCENSE)
+				*species = SPECIES_MANTINE;
+			break;
+		case SPECIES_HAPPINY:
+			if (motherItem != ITEM_LUCK_INCENSE && fatherItem != ITEM_LUCK_INCENSE)
+				*species = SPECIES_CHANSEY;
+			break;
+		default:
+			break;
+	}
+};
+
+/* ORIGINAL	
+void AlterEggSpeciesWithIncenseItem(u16 *species, struct DayCare *daycare) {
+	u16 motherItem, fatherItem;
+    if (*species == SPECIES_WYNAUT || *species == SPECIES_AZURILL)
+    {
+        motherItem = GetBoxMonData(&daycare->mons[0].mon, MON_DATA_HELD_ITEM);
+        fatherItem = GetBoxMonData(&daycare->mons[1].mon, MON_DATA_HELD_ITEM);
+        if (*species == SPECIES_WYNAUT && motherItem != ITEM_LAX_INCENSE && fatherItem != ITEM_LAX_INCENSE)
+        {
+            *species = SPECIES_WOBBUFFET;
+        }
+
+        if (*species == SPECIES_AZURILL && motherItem != ITEM_SEA_INCENSE && fatherItem != ITEM_SEA_INCENSE)
+        {
+            *species = SPECIES_MARILL;
+        }
+    }
+};
+*/
 
 // Decide features to inherit
 void GiveEggFromDaycare(struct DayCare *daycare) {
