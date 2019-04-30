@@ -14,6 +14,7 @@
 #include "../include/sound.h"
 #include "../include/text.h"
 #include "../include/string_util.h"
+#include "../include/constants/pokedex.h"
 
 /*
 NOTES: 
@@ -1813,7 +1814,7 @@ void HallOfFame_PrintMonInfo(struct HallofFameMon *currMon, unusedArg u8 a1, unu
         text[0] = CHAR_SLASH;
         stringPtr = StringCopy(text + 1, gSpeciesNames[currMon->species]);
 
-        if (currMon->species != PKDX_NIDORAN_M && currMon->species != PKDX_NIDORAN_F) {
+        if (currMon->species != NATIONAL_DEX_NIDORAN_M && currMon->species != NATIONAL_DEX_NIDORAN_F) {
             switch (GetGenderFromSpeciesAndPersonality(currMon->species, currMon->personality)) {
                 case MON_MALE:
                     stringPtr[0] = CHAR_MALE;

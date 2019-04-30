@@ -624,6 +624,27 @@ void atk0F_resultmessage(void) {
     gBattlescriptCurrInstr++;
 }
 
+void atk12_waitmessage(void)
+{
+    if (gBattleExecBuffer == 0)
+    {
+        if (!gBattleCommunication[MSG_DISPLAY])
+        {
+            gBattlescriptCurrInstr += 3;
+        }
+        else
+        {
+            u16 toWait = T2_READ_16(gBattlescriptCurrInstr + 1);
+            if (++gPauseCounterBattle >= toWait || gMain.newKeys & A_BUTTON)
+            {
+                gPauseCounterBattle = 0;
+                gBattlescriptCurrInstr += 3;
+                gBattleCommunication[MSG_DISPLAY] = 0;
+            }
+        }
+    }
+}
+
 void atk19_tryfaintmon(void)
 {
     u8* BS_ptr;

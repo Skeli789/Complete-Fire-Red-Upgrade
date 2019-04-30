@@ -2,46 +2,46 @@
 The effects of weather\ndisappeared.
 
 #org @gText_PressureActivate
-[FD][13] is exerting\nits pressure!
+[SCRIPTING_BANK] is exerting\nits pressure!
 
 #org @gText_MoldBreakerActivate
-[FD][13] breaks\nthe mold!
+[SCRIPTING_BANK] breaks\nthe mold!
 
 #org @gText_TeravoltActivate
-[FD][13] is radiating\na bursting aura!
+[SCRIPTING_BANK] is radiating\na bursting aura!
 
 #org @gText_TurboblazeActivate
-[FD][13] is radiating\na blazing aura!
+[SCRIPTING_BANK] is radiating\na blazing aura!
 
 #org @gText_SlowStartActivate
-[FD][13] couldn't get\ngoing!
+[SCRIPTING_BANK] couldn't get\ngoing!
 
 #org @gText_UnnerveActivate
 [FD][37] team is too\nnervous to eat berries!
 
 #org @gText_DarkAuraActivate
-[FD][13] is radiating\na dark aura!
+[SCRIPTING_BANK] is radiating\na dark aura!
 
 #org @gText_FairyAuraActivate
-[FD][13] is radiating\na fairy aura!
+[SCRIPTING_BANK] is radiating\na fairy aura!
 
 #org @gText_AuraBreakActivate
-[FD][13] reversed all\nother Pok\emon's auras!
+[SCRIPTING_BANK] reversed all\nother Pok\emon's auras!
 
 #org @gText_ComatoseActivate
-[FD][13] is drowsing!
+[SCRIPTING_BANK] is drowsing!
 
 #org @gText_AnticipationActivate
-[FD][13] shuddered!
+[SCRIPTING_BANK] shuddered!
 
 #org @gText_ForewarnActivate
-It was alerted to\n[FD][11]'s\l[FD][00]!
+It was alerted to\n[EFFECT_BANK]'s\l[BUFFER][00]!
 
 #org @gText_FriskActivate
-[FD][13] frisked\n[FD][10] and found\lits [FD][16]!
+[SCRIPTING_BANK] frisked\n[TARGET] and found\lits [LAST_ITEM]!
 
 #org @gText_FogIsDeep
-The fog is deep[B0]
+The fog is deep[.]
 
 #org @gText_PrimordialSeaActivate
 A heavy rain began to fall!
@@ -53,25 +53,25 @@ The sunlight turned extremely harsh!
 Mysterious strong winds are protecting\nFlying-type Pok\emon!
 
 #org @gText_SlowStartEnd
-[FD][13] got its\nact together!
+[SCRIPTING_BANK] got its\nact together!
 
 #org @gText_FlashFirePowerUp
-The power of [FD][13]'s\nFire-type moves rose!
+The power of [SCRIPTING_BANK]'s\nFire-type moves rose!
 
 #org @gText_AbilityChangedType
-[FD][13] transformed into\nthe [FD][00] type!
+[SCRIPTING_BANK] transformed into\nthe [BUFFER][00] type!
 
 #org @gText_AbilityCuredStatusProblem
-[FD][13] was cured of\nits [FD][00] problem!
+[SCRIPTING_BANK] was cured of\nits [BUFFER][00] problem!
 
 #org @gText_HealerCuredStatusProblem
-[FD][11] was cured of\nits [FD][00] problem!
+[EFFECT_BANK] was cured of\nits [BUFFER][00] problem!
 
 #org @gText_MagicBounce
-[FD][10] bounced the\n[FD][14] back!
+[TARGET] bounced the\n[CURRENT_MOVE] back!
 
 #org @gText_StartedSchooling
-[FD][13] started\nschooling!
+[SCRIPTING_BANK] started\nschooling!
 
 #org @gText_StoppedSchooling
-[FD][13] stopped\nschooling!
+[SCRIPTING_BANK] stopped\nschooling!

@@ -8,6 +8,7 @@ import hashlib
 import subprocess
 import sys
 from datetime import datetime
+from string import StringFileConverter
 
 PathVar = os.environ.get('Path')
 Paths = PathVar.split(';')
@@ -84,25 +85,6 @@ def make_output_img_file(filename):
 	
 	return [newfilename, True]
 
-CharMap = "charmap.tbl"
-
-def PokeByteTableMaker():
-    dicty = {}
-    with open(CharMap) as file:
-            for line in file:
-                if line.strip() != "/FF" and line.strip() != "":
-                    if (line[2] == '=' and line[3] != ""):
-                        try:
-                            if line[3] == '\\':
-                                dicty[line[3] + line[4]] = int(line.split('=')[0], 16)
-                            else:
-                                dicty[line[3]] = int(line.split('=')[0], 16)
-                        except:
-                            pass
-            dicty[' '] = 0
-        
-    return dicty
-
 def process_assembly(in_file):
 	'''Assemble'''
 	out_file_list = make_output_file(in_file)
@@ -141,7 +123,6 @@ def process_c(in_file):
 
 def process_string(filename):
     '''Build Strings'''
-    charMap = PokeByteTableMaker()
     out_file = filename.split(".string")[0] + '.s'
     object_file = make_output_file(out_file)[0]
 
@@ -150,80 +131,15 @@ def process_string(filename):
     if fileExists and os.path.getmtime(object_file) > os.path.getmtime(filename): #If the .o file was created after the image was last modified
         return make_output_file(out_file)[0]
 
-    output = open(out_file, 'w')
-    output.write(".thumb\n.text\n.align 2\n\n")
-    with open(filename, 'r') as file:
-        readingState = 0
-        for line in file:
-            if line == "\n" or line == "":
-                continue
-            
-            if line[:2] == "//":
-                continue
-            
-            line = line.rstrip("\n\r")
-            if readingState == 0:
-                if line[:6].upper() == "#ORG @" and line[6:] != "":
-                    line = line.strip()
-                    title = line[6:]
-                    output.write(".global " + title + "\n" + title + ":\n")
-                    readingState = 1
-                else:
-                    print('Warning! Error with line: "' + line + '" in file: "' + filename + '"')
-                    
-            elif readingState == 1:
-                if line[:6].upper() == "#ORG @" and line[6:] != "":
-                    line = line.strip()
-                    title = line[6:]
-                    output.write(".global " + title + "\n" + title + ":\n")
-                else:
-                    output.write(".byte ")
-                    buffer = False
-                    escapeChar = False
-                    for char in line:        
-                        if buffer == True:
-                            if char == ']':
-                                buffer = False
-                                output.write(", ")
-                            else:
-                                output.write(char)
+    print ('Building Strings %s' % filename)
+    StringFileConverter(filename)
 
-                        elif escapeChar == True:
-                            escapeChar = False
-                            try:
-                                output.write(hex(charMap["\\" + char]) + ", ")
-
-                            except KeyError:
-                                print('Error parsing string: "' + line + '"')
-                                break
-
-
-                        else:
-                            try:
-                                output.write(hex(charMap[char]) + ", ")
-
-                            except KeyError:
-                                if (char == '['):
-                                    output.write("0x")
-                                    buffer = True
-                                elif (char == '\\'):
-                                    escapeChar = True
-                                else:
-                                    print('Error parsing string: "' + line + '"')
-                                    break
-
-                    output.write("0xFF\n\n")
-                    readingState = 0
-    
-    output.close()
-    
     out_file_list = make_output_file(out_file)
     new_out_file = out_file_list[0]
     if out_file_list[1] == False:
         os.remove(out_file)
         return new_out_file	#No point in recompiling file
 
-    print ('Building Strings %s' % filename)
     cmd = [AS] + ASFLAGS + ['-c', out_file, '-o', new_out_file]
     run_command(cmd)
     os.remove(out_file)

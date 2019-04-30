@@ -1,5 +1,5 @@
 #org @TrickRoomSetString
-[FD][0F] twisted\nthe dimensions!
+[ATTACKER] twisted\nthe dimensions!
 
 #org @WonderRoomSetString
 It created a bizarre area in which\nthe Def and Sp. Def stats are swapped!
@@ -14,10 +14,10 @@ Gravity intensified!
 A deluge of ions showers the\nbattlefield!
 
 #org @NoMoreAirborneFromGravityString
-[FD][13] couldn't\nstay airborne due to Gravity!
+[SCRIPTING_BANK] couldn't\nstay airborne due to Gravity!
 
 #org @Bank0AWasBroughtDownString
-[FD][13] was\nbrought down!
+[SCRIPTING_BANK] was\nbrought down!
 
 #org @ElectricTerrainSetString
 An electric current runs across\nthe battlefield!
@@ -32,22 +32,22 @@ Mist swirls around the\nbattlefield!
 The battlefield got weird!
 
 #org @TargetTransformedIntoType
-[FD][10] transformed\ninto the [FD][00] type!
+[TARGET] transformed\ninto the [BUFFER][00] type!
 
 #org @ThirdTypeAddedString
-[FD][00] type was added to\n[FD][13]!
+[BUFFER][00] type was added to\n[SCRIPTING_BANK]!
 
 #org @FairyLockString
-[FD][0F] locked down the battlefield!
+[ATTACKER] locked down the battlefield!
 
 #org @HappyHourString
 Everyone is caught up in the\nhappy atmosphere!
 
 #org @CelebrateString
-Congratulations [FD][23]!
+Congratulations [PLAYER_NAME]!
 
 #org @HoldHandsString
-[FD][0F] and [FD][10]\nheld hands!
+[ATTACKER] and [TARGET]\nheld hands!
 
 #org @TailwindSetString
 The tailwind blew from behind\n[FD][36] team!
@@ -58,31 +58,31 @@ The Lucky Chant shielded\n[FD][36] team from critical hits!
 #org @EntrainmentString
 #org @WorrySeedString
 #org @SimpleBeamString
-[FD][10] acquired\n[FD][19]!
+[TARGET] acquired\n[TARGET_ABILITY]!
 
 #org @AbilitySuppressedString
-[FD][10]'s Ability\nwas suppressed!
+[TARGET]'s Ability\nwas suppressed!
 
 #org @TargetStatsResetString
 [FD][02]'s stat changes\nwere removed!
 
 #org @RoastedBerryString
-[FD][10]'s [FD][16]\nwas burnt up!
+[TARGET]'s [FD][16]\nwas burnt up!
 
 #org @gText_TargetWasInfested
-[FD][10] has been\nafflicted with an Infestation!
+[TARGET] has been\nafflicted with an Infestation!
 
 #org @SkyDropUpString
-[FD][0F] took\n[FD][10] into the sky!
+[ATTACKER] took\n[TARGET] into the sky!
 
 #org @FreedFromSkyDropString
-[FD][13] was freed\nfrom the Sky Drop!
+[SCRIPTING_BANK] was freed\nfrom the Sky Drop!
 
 #org @CraftyShieldSetString
 Crafty Shield protected\n[FD][36] team!
 
 #org @MatBlockSetString
-[FD][0F] intends to flip\nup a mat and block incoming attacks!
+[ATTACKER] intends to flip\nup a mat and block incoming attacks!
 
 #org @QuickGuardSetString
 Quick Guard protected\n[FD][36] team!
@@ -91,57 +91,57 @@ Quick Guard protected\n[FD][36] team!
 Wide Guard protected\n[FD][36] team!
 
 #org @CraftyShieldProtectedString
-The Crafty Shield protected\n[FD][10]!
+The Crafty Shield protected\n[TARGET]!
 
 #org @MatBlockProtectedString
-[FD][14] was blocked by the\nkicked-up mat!
+[CURRENT_MOVE] was blocked by the\nkicked-up mat!
 
 #org @QuickGuardProtectedString
-The Quick Guard protected\n[FD][10]!
+The Quick Guard protected\n[TARGET]!
 
 #org @WideGuardProtectedString
-The Wide Guard protected\n[FD][10]!
+The Wide Guard protected\n[TARGET]!
 
 //Status Strings
 
 #org @gText_TargetStaysAwake
-[FD][10] stays awake!
+[TARGET] stays awake!
 
 #org @gText_TargetWrappedInMistyTerrain
-[FD][10] surrounds\nitself in a protective mist!
+[TARGET] surrounds\nitself in a protective mist!
 
 #org @gText_TargetWrappedInElectricTerrain
-[FD][10] surrounds\nitself with electrified terrain!
+[TARGET] surrounds\nitself with electrified terrain!
 
 #org @gText_TargetAlreadyHasStatusCondition
-[FD][10] already has\na status condition!
+[TARGET] already has\na status condition!
 
 #org @gText_SweetVeilProtects
-[FD][10] surrounded\nitself with a veil of sweetness!
+[TARGET] surrounded\nitself with a veil of sweetness!
 
 #org @gText_FlowerVeilProtects
-[FD][10] surrounded\nitself with a veil of petals!
+[TARGET] surrounded\nitself with a veil of petals!
 
 #org @gText_AromaVeilProtects
-[FD][10] is protected\nby an aromatic veil!
+[TARGET] is protected\nby an aromatic veil!
 
 #org @gText_AbilityPreventsStatLoss
-[FD][13]'s stats were\nnot lowered!
+[SCRIPTING_BANK]'s stats were\nnot lowered!
 
 #org @gText_AbilityPreventsSpecificStatLoss
-[FD][13]'s [FD][00]\nwas not lowered!
+[SCRIPTING_BANK]'s [BUFFER][00]\nwas not lowered!
 
 #org @gText_AbilityPreventsConfusion
-[FD][13] doesn't\nbecome confused!
+[SCRIPTING_BANK] doesn't\nbecome confused!
 
 #org @gText_AbilityBlocksHealBell
-[FD][13] blocks\n[FD][14]!
+[SCRIPTING_BANK] blocks\n[CURRENT_MOVE]!
 
 #org @gText_DefogRemovedSideStatus
-[FD][37] team's [FD][00]\nwore off!
+[FD][37] team's [BUFFER][00]\nwore off!
 
 #org @gText_ScreenRaisedStat
-[FD][14] raised [FD][36]\nteam's [FD][00]!
+[CURRENT_MOVE] raised [FD][36]\nteam's [BUFFER][00]!
 
 #org @gText_SetAuroraVeil
-[FD][14] protects [FD][36] team\nagainst physical and special moves!
+[CURRENT_MOVE] protects [FD][36] team\nagainst physical and special moves!

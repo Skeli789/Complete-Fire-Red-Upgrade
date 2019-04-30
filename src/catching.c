@@ -14,10 +14,12 @@ extern const struct CompressedSpritePalette gBallSpritePalettes[];
 extern u8 gText_CantAimAtTwoTargets[];
 extern u8 gText_CantAimAtSemiInvulnerableTarget[];
 
+extern species_t UltraBeastTable[];
+
 //This file's functions:
 void atkEF_handleballthrow(void);
-u8 GetCatchingBattler(void);
-bool8 CriticalCapture(u32 odds);
+static u8 GetCatchingBattler(void);
+static bool8 CriticalCapture(u32 odds);
 u8 GiveMonToPlayer(pokemon_t* mon);
 u8 ItemIdToBallId(u16 ballItem);
 item_t BallIdToItemId(u8 ballId);
@@ -151,30 +153,29 @@ void atkEF_handleballthrow(void) {
 						ball_multiplier = 10;
 					break;
 				
-				case BALL_TYPE_MOON_BALL:
-					switch (SpeciesToNationalPokedexNum(defSpecies)) {
-						case PKDX_NIDORAN_F:
-						case PKDX_NIDORINA:
-						case PKDX_NIDOQUEEN:
-						case PKDX_NIDORAN_M:
-						case PKDX_NIDORINO:
-						case PKDX_NIDOKING:
-						case PKDX_JIGGLYPUFF:
-						case PKDX_WIGGLYTUFF:
-						case PKDX_CLEFAIRY:
-						case PKDX_CLEFABLE:
-						case PKDX_IGGLYBUFF:
-						case PKDX_CLEFFA:
-						case PKDX_SKITTY:
-						case PKDX_DELCATTY:
-						case PKDX_MUNNA:
-						case PKDX_MUSHARNA:
-							ball_multiplier = 40;
-							break;
-						
-						default:
-							ball_multiplier = 10;
+				case BALL_TYPE_MOON_BALL: ;
+					int i;
+					const struct Evolution* evolutions = gEvolutionTable[defSpecies];
+					
+					for (i = 0; i < EVOS_PER_MON; ++i) 
+					{
+						switch (evolutions[i].method) {
+							case EVO_ITEM:
+							case EVO_TRADE_ITEM:
+							case EVO_HOLD_ITEM_NIGHT:
+							case EVO_HOLD_ITEM_DAY:
+								if (evolutions[i].param == ITEM_MOON_STONE)
+								{
+									ball_multiplier = 40;
+									goto END_MOON_LOOP;
+								}
+						}
 					}
+					
+					END_MOON_LOOP:
+					if (i == EVOS_PER_MON)
+						ball_multiplier = 10;
+					
 					break;
 				
 				case BALL_TYPE_LOVE_BALL:
@@ -237,24 +238,10 @@ void atkEF_handleballthrow(void) {
 					break;
 				
 				case BALL_TYPE_BEAST_BALL:
-					switch (SpeciesToNationalPokedexNum(defSpecies)) {
-						case PKDX_NIHILEGO:
-						case PKDX_BUZZWOLE:
-						case PKDX_PHEROMOSA:
-						case PKDX_XURKITREE:
-						case PKDX_CELESTEELA:
-						case PKDX_KARTANA:
-						case PKDX_GUZZLORD:
-						case PKDX_POIPOLE:
-						case PKDX_NAGANADEL:
-						case PKDX_STAKATAKA:
-						case PKDX_BLACEPHALON:
-							ball_multiplier = 50;
-							break;
-						
-						default:
-							ball_multiplier = 1;
-					}
+					if (CheckTableForSpecies(defSpecies, UltraBeastTable))
+						ball_multiplier = 50;
+					else
+						ball_multiplier = 1;
 					break;
 			}
         }
@@ -348,14 +335,14 @@ void atkEF_handleballthrow(void) {
     }
 }
 
-u8 GetCatchingBattler(void) {
+static u8 GetCatchingBattler(void) {
     if (IsBattlerAlive(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)))
         return GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
     else
         return GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
 }
 
-bool8 CriticalCapture(u32 odds) {
+static bool8 CriticalCapture(u32 odds) {
 	#ifndef CRITICAL_CAPTURE
 		odds += 1; //So the compiler doesn't complain
 		return FALSE;

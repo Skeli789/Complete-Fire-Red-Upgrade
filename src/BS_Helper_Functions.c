@@ -59,6 +59,7 @@ extern move_t MeFirstBanTable[];
 extern move_t MovesThatCallOtherMovesTable[];
 extern move_t MovesThatRequireRecharging[];
 extern move_t InstructBanList[];
+extern species_t TelekinesisBanList[];
 extern FlingStruct FlingTable[];
 
 extern ability_t WorrySeedGastroAcidBanTable[];
@@ -844,13 +845,7 @@ void CheckTelekinesisFail(void) {
 	if (gStatuses3[gBankTarget] & (STATUS3_TELEKINESIS | STATUS3_ROOTED | STATUS3_SMACKED_DOWN)
 	||  gNewBS->GravityTimer
 	||  ITEM_EFFECT(gBankTarget) == ITEM_EFFECT_IRON_BALL
-	||  species == SPECIES_DIGLETT
-	||  species == SPECIES_DUGTRIO
-	||  species == SPECIES_DIGLETT_A
-	||  species == SPECIES_DUGTRIO_A
-	||  species == SPECIES_SANDYGAST
-	||  species == SPECIES_PALOSSAND
-	||  species == SPECIES_GENGAR_MEGA)
+	||  CheckTableForSpecies(species, TelekinesisBanList))
 	{
 		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5 - 2;
 	}

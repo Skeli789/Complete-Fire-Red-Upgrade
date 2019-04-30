@@ -34,10 +34,10 @@ void SetMonPokeBall(struct PokemonSubstruct0* data, u8 ballId);
 extern const u8 openWorldLevelRanges[NUM_BADGE_OPTIONS][2];
 extern const species_t gGeneralTrainerSpreads[NUM_TRAINER_CLASSES][NUM_BADGE_OPTIONS][NUM_MONS_PER_BADGE];
 
-u8 GetOpenWorldTrainerMonAmount(void);
-u8 GetOpenWorldSpeciesIndex(u32 nameHash, u8 i);
-u8 GetOpenWorldSpeciesLevel(u32 nameHash, u8 i);
-u8 GetOpenWorldBadgeCount(void);
+static u8 GetOpenWorldTrainerMonAmount(void);
+static u8 GetOpenWorldSpeciesIndex(u32 nameHash, u8 i);
+static u8 GetOpenWorldSpeciesLevel(u32 nameHash, u8 i);
+static u8 GetOpenWorldBadgeCount(void);
 
 #endif
 
@@ -692,7 +692,7 @@ void BattlePokemonScriptCommand_GiveHiddenAbility(pokemon_t* mon)
 
 #ifdef OPEN_WORLD_TRAINERS
 
-u8 GetOpenWorldTrainerMonAmount(void)
+static u8 GetOpenWorldTrainerMonAmount(void)
 {
 	switch (GetOpenWorldBadgeCount()) {
 		case 0:
@@ -714,12 +714,12 @@ u8 GetOpenWorldTrainerMonAmount(void)
 	}
 }
 
-u8 GetOpenWorldSpeciesIndex(u32 nameHash, u8 i)
+static u8 GetOpenWorldSpeciesIndex(u32 nameHash, u8 i)
 {
 	return ((nameHash + 2 * i) ^ T1_READ_32(gSaveBlock2->playerTrainerId)) % 10;
 }
 
-u8 GetOpenWorldSpeciesLevel(u32 nameHash, u8 i)
+static u8 GetOpenWorldSpeciesLevel(u32 nameHash, u8 i)
 {
 	u8 badgeCount = GetOpenWorldBadgeCount();
 
@@ -730,7 +730,7 @@ u8 GetOpenWorldSpeciesLevel(u32 nameHash, u8 i)
 	return min + ((nameHash + 7 * i) ^ T1_READ_32(gSaveBlock2->playerTrainerId)) % range;
 }
 
-u8 GetOpenWorldBadgeCount(void)
+static u8 GetOpenWorldBadgeCount(void)
 {
 	u8 badgeCount = 0;
 	

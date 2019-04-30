@@ -111,13 +111,13 @@ You got [B7][FD][00]\nfor winning!
 You have no more Pok\emon\nthat can fight!\p
 
 #org @sText_LostAgaintWild
-You panicked and lost [B7][FD][00][B0]\p[B0] [B0] [B0] [B0]\pYou blacked out![FC][09]
+You panicked and lost [B7][BUFFER][00][.]\p[.] [.] [.] [.]\pYou blacked out![FC][09]
 
 #org @sText_LostAgainstTrainer
 You have no more Pok\emon\nthat can fight!\pYou lost against\n[FD][1C] [FD][1D]![FC][09]
 
 #org @sText_PaidPrizeMoney
-You paid [B7][FD][00] as the prize\nmoney[B0]\p[B0] [B0] [B0] [B0]\pYou blacked out![FC][09]
+You paid [B7][BUFFER][00] as the prize\nmoney[.]\p[.] [.] [.] [.]\pYou blacked out![FC][09]
 
 #org @sText_BlackedOut
 You blacked out![FC][09]

@@ -607,7 +607,8 @@ enum
     BODY_COLOR_PINK
 };
 
-enum EVOLUTION_METHODS {
+enum EvolutionMethods
+{
 	EVO_NONE = 0,
 	EVO_FRIENDSHIP,
 	EVO_FRIENDSHIP_DAY,
@@ -615,7 +616,7 @@ enum EVOLUTION_METHODS {
 	EVO_LEVEL,
 	EVO_TRADE,
 	EVO_TRADE_ITEM,
-	EVO_ITEM,		// for dawn stone, add MON_MALE(0x0) or MON_FEMALE(0xFF) to .unknown in evo table entry
+	EVO_ITEM,		// for dawn stone, add MON_MALE(0x0) or MON_FEMALE(0xFE) to .unknown in evo table entry
 	EVO_LEVEL_ATK_GT_DEF,
 	EVO_LEVEL_ATK_EQ_DEF,
 	EVO_LEVEL_ATK_LT_DEF,
@@ -639,14 +640,14 @@ enum EVOLUTION_METHODS {
 	EVO_OTHER_PARTY_MON,	//another poke in the party, arg is a specific species
 	EVO_LEVEL_SPECIFIC_TIME_RANGE, // above given level with a range (unknown is [start][end]. eg lycanroc -> 1700-1800 hrs -> 0x1112)
 };
-#define EVO_MEGA			 0x00FE
+#define EVO_MEGA 0xFE
 
 struct Evolution
 {
     u16 method;
     u16 param;
     u16 targetSpecies;
-	u16 unknown; // used for mega evo, map number in EVO_MAP, level in EVO_TYPE_IN_PARTY, or time range in EVO_LEVEL_SPECIFIC_TIME_RANGE
+	u16 unknown; // used for mega evo, Dawn Stone, level in EVO_TYPE_IN_PARTY, or time range in EVO_LEVEL_SPECIFIC_TIME_RANGE
 };
 
 extern u8 gPlayerPartyCount;
