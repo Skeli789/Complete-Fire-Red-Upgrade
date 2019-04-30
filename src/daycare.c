@@ -16,6 +16,8 @@
 
 extern u8 GetLevelUpMovesBySpecies(u16 species, u16* moves);
 
+void BuildEggMoveset(struct Pokemon* egg, struct BoxPokemon* father, struct BoxPokemon* mother);
+
 /*Priority: 
 1. Volt Tackle
 2. Mother's Egg Moves
@@ -144,7 +146,6 @@ void BuildEggMoveset(struct Pokemon* egg, struct BoxPokemon* father, struct BoxP
 	}
 }
 
-
 s32 GetSlotToInheritNature(struct DayCare* daycare)
 {
 	int i;
@@ -191,17 +192,35 @@ u16 DetermineEggSpeciesAndParentSlots(struct DayCare* daycare, u8* parentSlots)
     }
 
     eggSpecies = GetEggSpecies(species[parentSlots[0]]);
-    if (eggSpecies == SPECIES_NIDORAN_F && daycare->offspringPersonality & 0x8000)
-	{
-        eggSpecies = SPECIES_NIDORAN_M;
-	}
-    else if (eggSpecies == SPECIES_ILLUMISE && daycare->offspringPersonality & 0x8000)
-	{
-        eggSpecies = SPECIES_VOLBEAT;
-	}
-	else if (eggSpecies == SPECIES_MANAPHY)
-	{
-		eggSpecies = SPECIES_PHIONE;
+	switch(eggSpecies) {
+		case SPECIES_NIDORAN_F:
+			if (daycare->offspringPersonality & 0x8000)
+				eggSpecies = SPECIES_NIDORAN_M;
+			break;
+		case SPECIES_ILLUMISE:
+			if (daycare->offspringPersonality & 0x8000)
+				eggSpecies = SPECIES_VOLBEAT;
+			break;
+		case SPECIES_MANAPHY:
+			eggSpecies = SPECIES_PHIONE;
+			break;
+		case SPECIES_ROTOM_HEAT:
+		case SPECIES_ROTOM_WASH:
+		case SPECIES_ROTOM_FROST:
+		case SPECIES_ROTOM_FAN:
+		case SPECIES_ROTOM_MOW:
+			eggSpecies = SPECIES_ROTOM;
+			break;
+		case SPECIES_FURFROU_HEART:
+		case SPECIES_FURFROU_DIAMOND:
+		case SPECIES_FURFROU_STAR:
+		case SPECIES_FURFROU_PHAROAH:
+		case SPECIES_FURFROU_KABUKI:
+		case SPECIES_FURFROU_LA_REINE:
+		case SPECIES_FURFROU_MATRON:
+		case SPECIES_FURFROU_DANDY:
+		case SPECIES_FURFROU_DEBUTANTE:
+			eggSpecies = SPECIES_FURFROU;
 	}
 
     // Make Ditto the "mother" slot if the other daycare mon is male.
