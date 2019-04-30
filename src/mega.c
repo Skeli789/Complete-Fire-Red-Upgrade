@@ -606,8 +606,9 @@ void MegaTriggerCallback(struct Sprite* self)
 		self->pos1.x = -32;
 	}
 	
-	if (gBattleBankFunc[TRIGGER_BANK] == (0x0802EA10 | 1) //HandleInputChooseMove
-	||  gBattleBankFunc[TRIGGER_BANK] == (u32) HandleInputChooseMove) 
+	if (gBattleBankFunc[TRIGGER_BANK] == (0x0802EA10 | 1) //Old HandleInputChooseMove
+	||  gBattleBankFunc[TRIGGER_BANK] == (u32) HandleInputChooseMove
+	|| gBattleBankFunc[TRIGGER_BANK] == (u32) HandleMoveSwitching)
 	{
 		if (self->data[3] > 0)
 			self->data[3] -= 2;
