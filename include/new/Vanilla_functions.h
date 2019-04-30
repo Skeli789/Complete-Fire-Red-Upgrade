@@ -34,7 +34,7 @@ void __attribute__((long_call)) SetMonData2(struct Pokemon *mon, s32 PokemonData
 void __attribute__((long_call)) CopyMon(void *dest, void *src, size_t size);
 u8 __attribute__((long_call)) SendMonToPC(struct Pokemon* mon);
 u8 __attribute__((long_call)) GetPartyAbility(pokemon_t*);
-u8 __attribute__((long_call)) CalculatePlayerPartyCount(void);
+//u8 __attribute__((long_call)) CalculatePlayerPartyCount(void);
 u8 __attribute__((long_call)) CalculatePPWithBonus(u16 move, u8 ppBonuses, u8 moveIndex);
 u16 __attribute__((long_call)) SpeciesToNationalPokedexNum(u16 species);
 void __attribute__((long_call)) MonGainEVs(struct Pokemon *mon, u16 defeatedSpecies);

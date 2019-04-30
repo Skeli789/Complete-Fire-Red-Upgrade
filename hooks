@@ -185,7 +185,7 @@ DaycareInheritHiddenAbility 8046116 0
 ##DNS
 TransferPlttBuffer 8070474 0
 RealTimeClock 0800041E 3
-	
+
 ##Script Specials
 sp156_GhostBattleSpecial 0807f92a 2
 
@@ -312,3 +312,6 @@ GetNumberOfRelearnableMoves 08043E2C 1
 #Pokedex
 PokedexLoadAlternateHeightHook 081058DC 0
 PokedexLoadAlternateWeightHook 08105A58 0
+
+##Daycare
+#GiveEggFromDaycare 080460D4 1

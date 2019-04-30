@@ -79,6 +79,7 @@ void __attribute__((long_call)) sub_805C780(void);
 u8 __attribute__((long_call)) GetEventObjectIdByLocalIdAndMapInternal(u8 localId, u8 mapNum, u8 mapGroupId);
 u8 __attribute__((long_call)) GetEventObjectIdByLocalId(u8 localId);
 
+
 /*
 extern const struct SpriteFrameImage gEventObjectPicTable_PechaBerryTree[];
 extern const struct OamData gEventObjectBaseOam_32x8;
