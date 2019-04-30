@@ -28,7 +28,7 @@ gBattleScriptingCommandsTable:
 .word atk0F_resultmessage
 .word 0x801fd51				@printstring
 .word 0x801fd91				@printstring2
-.word 0x801fdd5				@waitmessage
+.word atk12_waitmessage
 .word atk13_printfromtable
 .word 0x801fe85				@printfromtable2
 .word atk15_seteffectwithchance		@seteffectwithchancetarget
