@@ -2,6 +2,9 @@
 
 #include "global.h"
 
+#define NUM_PALS_IN_PRIMARY 7
+#define NUM_PALS_TOTAL 13
+
 extern struct MapCoords {
     int width;
     int height;
@@ -11,6 +14,7 @@ u32 __attribute__((long_call)) MetatileBehavior_GetLowerBytes(u32 a, u8 b);
 u32 __attribute__((long_call)) MapGridGetMetatileIdAt(int x, int y);
 u16 __attribute__((long_call)) MapGridGetMetatileField(u16 x, u16 y, u8 a);
 u32 __attribute__((long_call)) MapGridGetMetatileBehaviorAt(int, int);
+void __attribute__((long_call)) ApplySpecialMapPalette(u16 a0, u16 a1);
 u8 __attribute__((long_call)) MapGridGetZCoordAt(int x, int y);
 
 /*

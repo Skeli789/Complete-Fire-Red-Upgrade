@@ -687,6 +687,7 @@ MetatileBehavior_GetLowerBytes = 0x8058F1C | 1;
 MapGridGetMetatileIdAt = 0x8058E48 | 1;
 MapGridGetMetatileField = 0x8058F48 | 1;
 MapGridGetMetatileBehaviorAt = 0x8058F78 | 1;
+ApplySpecialMapPalette = 0x80598CC | 1;
 MetatileBehavior_IsSandOrDeepSand = 0x8059B74 | 1;
 MetatileBehavior_IsSurfableWaterOrUnderwater = 0x8059CA4 | 1;
 MetatileBehavior_IsTallGrass = 0x8059F34 | 1;
