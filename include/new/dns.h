@@ -8,12 +8,17 @@ struct DNSPalFade
 	u8 amount;
 };
 
+struct IndexPalFade
+{
+	u8 index;
+	u16 colour;
+};
+
 struct SpecificTilesetFade
 {
 	u32 tilesetPointer;
 	u8 paletteNumToFade;
-	u8 paletteIndexToFade;
-	u16 colourToFade;
+	struct IndexPalFade paletteIndicesToFade[16 + 1];
 };
 
 //Change These
@@ -247,27 +252,45 @@ const struct DNSPalFade gDNSNightFadingByTime[24][6] =
 		   },
 };
 
+#define TILESET_PAL_FADE_END {0xFF, 0x0}
+
 #ifndef UNBOUND //Change This
 
 const struct SpecificTilesetFade gSpecificTilesetFades[] =
 {
+	//These Palette Town ones have been left in as examples. Feel free to remove.
 	{ //Palette Town - Player's Door
-		.tilesetPointer = 0x82D4AAC,
+		.tilesetPointer = 0x82D4AAC, //Tileset 1
 		.paletteNumToFade = 8,
-		.paletteIndexToFade = 8,
-		.colourToFade = RGB(31, 31, 20),
+		.paletteIndicesToFade =
+		{
+			{8,  RGB(31, 31, 20)},
+			{9,  RGB(31, 31, 11)},
+			{10, RGB(31, 31, 10)},
+			TILESET_PAL_FADE_END
+		},
 	},
-	{ //Palette Town - Player's Door
-		.tilesetPointer = 0x82D4AAC,
-		.paletteNumToFade = 8,
-		.paletteIndexToFade = 9,
-		.colourToFade = RGB(31, 31, 11),
+	{ //Palette Town - Oak's Lab Windows
+		.tilesetPointer = 0x82D4AAC, //Tileset 1
+		.paletteNumToFade = 9,
+		.paletteIndicesToFade =
+		{
+			{8,  RGB(31, 31, 20)},
+			{9,  RGB(31, 31, 14)},
+			{10, RGB(31, 30, 0)},
+			TILESET_PAL_FADE_END
+		},
 	},
-	{ //Palette Town - Player's Door
-		.tilesetPointer = 0x82D4AAC,
-		.paletteNumToFade = 8,
-		.paletteIndexToFade = 10,
-		.colourToFade = RGB(31, 31, 1),
+	{ //Palette Town - Oak's Lab Door
+		.tilesetPointer = 0x82D4AAC, //Tileset 1
+		.paletteNumToFade = 10,
+		.paletteIndicesToFade =
+		{
+			{8,  RGB(31, 31, 20)},
+			{9,  RGB(31, 31, 14)},
+			{10, RGB(31, 30, 0)},
+			TILESET_PAL_FADE_END
+		},
 	},
 };
 
@@ -278,57 +301,223 @@ const struct SpecificTilesetFade gSpecificTilesetFades[] =
 	{ //Gym
 		.tilesetPointer = 0x82D4A94,
 		.paletteNumToFade = 6,
-		.paletteIndexToFade = 2,
-		.colourToFade = RGB(31, 31, 20),
+		.paletteIndicesToFade =
+		{
+			{2, RGB(31, 31, 20)},
+			{3, RGB(31, 31, 11)},
+			{6, RGB(31, 30, 1)},
+			TILESET_PAL_FADE_END
+		},
 	},
-	{ //Gym
-		.tilesetPointer = 0x82D4A94,
-		.paletteNumToFade = 6,
-		.paletteIndexToFade = 3,
-		.colourToFade = RGB(31, 31, 11),
+	/*{ //Frozen Heights - Lab - Issue: Lights up border
+		.tilesetPointer = 0x873230C,
+		.paletteNumToFade = 7,
+		.paletteIndicesToFade =
+		{
+			{8,  RGB(31, 30, 12)},
+			{9,  RGB(31, 30, 25)},
+			{15, RGB(31, 30, 17)},
+			TILESET_PAL_FADE_END
+		},
+	},*/
+	{ //Ice Town Marts
+		.tilesetPointer = 0x8725AB4, //Tileset 188588
+		.paletteNumToFade = 3,
+		.paletteIndicesToFade =
+		{
+			{5,  RGB(27, 27, 0)},
+			{13, RGB(31, 31, 0)},
+			TILESET_PAL_FADE_END
+		},
 	},
-	{ //Gym
-		.tilesetPointer = 0x82D4A94,
-		.paletteNumToFade = 6,
-		.paletteIndexToFade = 6,
-		.colourToFade = RGB(31, 30, 1),
+	{ //Bellin Town Lamp
+		.tilesetPointer = 0x82D4AC4, //Tileset 2
+		.paletteNumToFade = 9,
+		.paletteIndicesToFade =
+		{
+			{3,  RGB(31, 30, 1)},
+			{10, RGB(30, 28, 0)},
+			{13, RGB(31, 31, 16)},
+			TILESET_PAL_FADE_END
+		},
+	},
+	{ //Main Pokemon Centre Windows
+		.tilesetPointer = 0x82D4A94, //Tileset 0
+		.paletteNumToFade = 2,
+		.paletteIndicesToFade =
+		{
+			{7,  RGB(31, 31, 14)},
+			{15, RGB(31, 30, 0)},
+			TILESET_PAL_FADE_END
+		},
+	},
+	/*{ //Dresco Town Moltres - Issue: Lights up bench too :(
+		.tilesetPointer = 0x82D4AF4, //Tileset 4
+		.paletteNumToFade = 7,
+		.paletteIndicesToFade =
+		{
+			{1,  RGB(26 + 4, 11 + 4, 10 + 4)},
+			{3,  RGB(24 + 4, 8 + 4, 7 + 4)},
+			{4,  RGB(28 + 3, 16 + 4, 12 + 4)},
+			{8,  RGB(26 + 4, 9 + 4, 8 + 4)},
+			{10, RGB(11 + 4, 4 + 4, 3 + 4)},
+			{11, RGB(14 + 4, 7 + 4, 7 + 4)},
+			{13, RGB(19 + 4, 3 + 4, 4 + 4)},
+			TILESET_PAL_FADE_END
+		},
+	},*/
+	{ //Route 5 / Day-Care House
+		.tilesetPointer = 0x8B56314, //Tileset 371632
+		.paletteNumToFade = 11,
+		.paletteIndicesToFade =
+		{
+			{5,  RGB(31, 31, 14)},
+			{7,  RGB(31, 30, 0)},
+			TILESET_PAL_FADE_END
+		},
+	},
+	{ //Crater Town House Windows
+		.tilesetPointer = 0x82D4ADC, //Tileset 3
+		.paletteNumToFade = 7,
+		.paletteIndicesToFade =
+		{
+			{4,  RGB(31, 31, 14)},
+			{10, RGB(31, 30, 0)},
+			TILESET_PAL_FADE_END
+		},
+	},
+	{ //Crater Town Lamps
+		.tilesetPointer = 0x82D4ADC, //Tileset 3
+		.paletteNumToFade = 9,
+		.paletteIndicesToFade =
+		{
+			{8,  RGB(31, 31, 14)},
+			{15, RGB(31, 30, 0)},
+			TILESET_PAL_FADE_END
+		},
+	},
+	{ //Tehl Town House Windows
+		.tilesetPointer = 0x873CC2C, //Tileset 192529
+		.paletteNumToFade = 9,
+		.paletteIndicesToFade =
+		{
+			{7,  RGB(31, 31, 20)},
+			{11, RGB(31, 30, 0)},
+			{12, RGB(31, 31, 14)},
+			TILESET_PAL_FADE_END
+		},
+	},
+	{ //Fallshore City House Windows
+		.tilesetPointer = 0x8744D8C, //Tileset 193909
+		.paletteNumToFade = 8,
+		.paletteIndicesToFade =
+		{
+			{1,  RGB(31, 31, 24)},
+			{2,  RGB(31, 31, 20)},
+			{3,  RGB(31, 31, 14)},
+			{4,  RGB(31, 30, 11)},
+			{5,  RGB(31, 30, 1)},
+			TILESET_PAL_FADE_END
+		},
+	},
+	{ //Fallshore City Lamps
+		.tilesetPointer = 0x8744D8C, //Tileset 193909
+		.paletteNumToFade = 12,
+		.paletteIndicesToFade =
+		{
+			{1,  RGB(31, 31, 24)},
+			{2,  RGB(31, 31, 14)},
+			{3,  RGB(31, 30, 11)},
+			TILESET_PAL_FADE_END
+		},
+	},
+	{ //Epidimy Town Lamps
+		.tilesetPointer = 0x8B5419C, //Tileset 371275
+		.paletteNumToFade = 8,
+		.paletteIndicesToFade =
+		{
+			{1,  RGB(31, 31, 14)},
+			{2,  RGB(31, 30, 0)},
+			TILESET_PAL_FADE_END
+		},
+	},
+	{ //Tarmigan Mansion Windows
+		.tilesetPointer = 0x82D4B6C, //Tileset 9
+		.paletteNumToFade = 8,
+		.paletteIndicesToFade =
+		{
+			{15, RGB(31, 31, 14)},
+			TILESET_PAL_FADE_END
+		},
+	},
+	{ //Dream Research Lab Windows
+		.tilesetPointer = 0x82D4B6C, //Tileset 9
+		.paletteNumToFade = 9,
+		.paletteIndicesToFade =
+		{
+			{9,  RGB(31, 31, 14)},
+			{10, RGB(31, 30, 0)},
+			TILESET_PAL_FADE_END
+		},
 	},
 	{ //Dehara Game Corner
-		.tilesetPointer = 0x82D4B3C,
+		.tilesetPointer = 0x82D4B3C, //Tileset 7
 		.paletteNumToFade = 8,
-		.paletteIndexToFade = 5,
-		.colourToFade = RGB(14, 23, 26),
+		.paletteIndicesToFade =
+		{
+			{5,  RGB(14, 23, 26)},
+			{6,  RGB(9, 18, 23)},
+			{7,  RGB(0, 14, 18)},
+			{8,  RGB(28, 28, 29)},
+			{14, RGB(29, 30, 6)},
+			{15, RGB(24, 25, 1)},
+			TILESET_PAL_FADE_END
+		},
 	},
-	{ //Dehara Game Corner
-		.tilesetPointer = 0x82D4B3C,
+	{ //Gurun Town House Window
+		.tilesetPointer = 0x82D4B24, //Tileset 6
 		.paletteNumToFade = 8,
-		.paletteIndexToFade = 6,
-		.colourToFade = RGB(9, 18, 23),
+		.paletteIndicesToFade =
+		{
+			{2,  RGB(31, 31, 14)},
+			TILESET_PAL_FADE_END
+		},
 	},
-	{ //Dehara Game Corner
-		.tilesetPointer = 0x82D4B3C,
-		.paletteNumToFade = 8,
-		.paletteIndexToFade = 7,
-		.colourToFade = RGB(0, 14, 18),
+	{ //Gurun Town Fire
+		.tilesetPointer = 0x82D4B24, //Tileset 6
+		.paletteNumToFade = 12,
+		.paletteIndicesToFade =
+		{
+			{1,  RGB(30, 30, 25)},
+			{2,  RGB(30, 29, 21)},
+			{3,  RGB(28, 25, 11)},
+			TILESET_PAL_FADE_END
+		},
 	},
-	{ //Dehara Game Corner
-		.tilesetPointer = 0x82D4B3C,
-		.paletteNumToFade = 8,
-		.paletteIndexToFade = 8,
-		.colourToFade = RGB(28, 28, 29),
+	{ //Vivill Town House Windows
+		.tilesetPointer = 0x82D5064, //Tileset 62
+		.paletteNumToFade = 7,
+		.paletteIndicesToFade =
+		{
+			{1,  RGB(31, 31, 20)},
+			{2,  RGB(31, 30, 0)},
+			{7,  RGB(31, 31, 14)},
+			{12, RGB(31, 30, 0)},
+			TILESET_PAL_FADE_END
+		},
 	},
-	{ //Dehara Game Corner
-		.tilesetPointer = 0x82D4B3C,
-		.paletteNumToFade = 8,
-		.paletteIndexToFade = 14,
-		.colourToFade = RGB(29, 30, 6),
+	{ //Vivill Town Lamp
+		.tilesetPointer = 0x82D5064, //Tileset 62
+		.paletteNumToFade = 9,
+		.paletteIndicesToFade =
+		{
+			{5,  RGB(31, 30, 1)},
+			{10, RGB(30, 28, 0)},
+			{15, RGB(31, 31, 16)},
+			TILESET_PAL_FADE_END
+		},
 	},
-	{ //Dehara Game Corner
-		.tilesetPointer = 0x82D4B3C,
-		.paletteNumToFade = 8,
-		.paletteIndexToFade = 15,
-		.colourToFade = RGB(24, 25, 1),
-	},	
+	//Do Antisis City and all skipped things
 };
 
 #endif

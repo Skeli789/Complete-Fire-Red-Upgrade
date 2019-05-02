@@ -1,9 +1,13 @@
 #include "defines.h"
 #include "../include/new/helper_functions.h"
+#include "../include/fieldmap.h"
 #include "../include/palette.h"
 #include "../include/new/dns.h"
 
 #define DNSHelper ((u8*) 0x2021691)
+
+typedef bool8 IgnoredPalT[16];
+#define gIgnoredDNSPalIndices ((IgnoredPalT*) 0x203B830)
 
 extern void TransferPlttBuffer(void);
 static void BlendFadedPalettes(u32 selectedPalettes, u8 coeff, u32 color);
@@ -67,29 +71,12 @@ void TransferPlttBuffer(void)
 
 static void BlendFadedPalettes(u32 selectedPalettes, u8 coeff, u32 color)
 {
-	u32 i;
     u16 paletteOffset;
-	bool8 ignoredIndices[32][16] = {0};
-	
-	if ((Clock->hour >= TIME_NIGHT_START || Clock->hour < TIME_MORNING_START)/* && DNSHelper[1] < 3*/) //At night not in battle
-	{
-		for (i = 0; i < ARRAY_COUNT(gSpecificTilesetFades); ++i)
-		{
-			if ((u32) gMapHeader.mapData->primaryTileset == gSpecificTilesetFades[i].tilesetPointer
-			||  (u32) gMapHeader.mapData->secondaryTileset == gSpecificTilesetFades[i].tilesetPointer)
-			{
-				u8 row = gSpecificTilesetFades[i].paletteNumToFade;
-				u8 column = gSpecificTilesetFades[i].paletteIndexToFade;
-				gPlttBufferUnfaded[row * 16 + column] = gSpecificTilesetFades[i].colourToFade;
-				ignoredIndices[row][column] = TRUE;
-			}
-		}
-	}
 	
     for (paletteOffset = 0; selectedPalettes; paletteOffset += 16)
     {
         if (selectedPalettes & 1)
-            BlendFadedPalette(paletteOffset, 16, coeff, color, ignoredIndices);
+            BlendFadedPalette(paletteOffset, 16, coeff, color, gIgnoredDNSPalIndices);
         selectedPalettes >>= 1;
     }
 }
@@ -114,6 +101,51 @@ static void BlendFadedPalette(u16 palOffset, u16 numEntries, u8 coeff, u32 blend
     }
 }
 
+void apply_map_tileset_palette(struct Tileset const* tileset, u16 destOffset, u16 size)
+{
+	u32 i, j, row, column;
+    u16 black = RGB_BLACK;
+	
+    if (tileset)
+    {
+        if (tileset->isSecondary == FALSE)
+        {
+            LoadPalette(&black, destOffset, 2);
+            LoadPalette(((u16*)tileset->palettes) + 1, destOffset + 1, size - 2);
+            ApplySpecialMapPalette(destOffset + 1, (size - 2) >> 1);
+        }
+        else if (tileset->isSecondary == TRUE)
+        {
+            LoadPalette(((u16*) tileset->palettes) + (NUM_PALS_IN_PRIMARY * 16), destOffset, size);
+            ApplySpecialMapPalette(destOffset, size >> 1);
+        }
+        else
+        {
+            LoadCompressedPalette((u32*) tileset->palettes, destOffset, size);
+            ApplySpecialMapPalette(destOffset, size >> 1);
+        }
+		
+		Memset(gIgnoredDNSPalIndices, 0, sizeof(bool8) * 16 * 32);
+		if ((Clock->hour >= TIME_NIGHT_START || Clock->hour < TIME_MORNING_START))
+		{
+			for (i = 0; i < ARRAY_COUNT(gSpecificTilesetFades); ++i)
+			{
+				if ((u32) gMapHeader.mapData->primaryTileset == gSpecificTilesetFades[i].tilesetPointer
+				||  (u32) gMapHeader.mapData->secondaryTileset == gSpecificTilesetFades[i].tilesetPointer)
+				{
+					row = gSpecificTilesetFades[i].paletteNumToFade;
+					for (j = 0; gSpecificTilesetFades[i].paletteIndicesToFade[j].index != 0xFF; ++j)
+					{
+						column = gSpecificTilesetFades[i].paletteIndicesToFade[j].index;
+						gPlttBufferUnfaded[row * 16 + column] = gSpecificTilesetFades[i].paletteIndicesToFade[j].colour;
+						gIgnoredDNSPalIndices[row][column] = TRUE;
+					}
+				}
+			}
+		}
+    }
+}
+
 #ifdef DNS_IN_BATTLE
 void DNSBattleBGPalFade(void)
 { 
@@ -129,7 +161,7 @@ void DNSBattleBGPalFade(void)
 			for (i = 0; i < 16; ++i)
 			{
 				u16 index = i + palOffset;
-				struct PlttData *data1 = (struct PlttData *)&gPlttBufferUnfaded[index];
+				struct PlttData* data1 = (struct PlttData*) &gPlttBufferUnfaded[index];
 				s8 r = data1->r;
 				s8 g = data1->g;
 				s8 b = data1->b;
