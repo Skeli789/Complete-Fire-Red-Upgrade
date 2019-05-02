@@ -3,7 +3,6 @@
 #include "../../src/defines.h"
 #include "../../src/defines_battle.h"
 
-#define BattleScript_SuccessBallThrow 	((u8*) 0x81D9A42)
 #define BattleScript_TutorialThrow 		((u8*) 0x81D9A88)
 #define BattleScript_ShakeBallThrow 	((u8*) 0x81D9A93)
 #define BattleScript_TrainerBallBlock 	((u8*) 0x81D9AC1)
