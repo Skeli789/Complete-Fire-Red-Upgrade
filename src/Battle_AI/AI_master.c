@@ -1,6 +1,7 @@
 #include "..\\defines.h"
 #include "../../include/new/helper_functions.h"
 #include "AI_Helper_Functions.h"
+#include "../../include/random.h"
 
 extern move_t MoldBreakerMoves[];
 

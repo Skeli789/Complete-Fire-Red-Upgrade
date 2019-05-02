@@ -1,6 +1,7 @@
 #include "defines.h"
 #include "defines_battle.h"
 #include "../include/new/helper_functions.h"
+#include "../include/random.h"
 
 extern u8* gBattleScriptsForMoveEffects[];
 #define BattleScript_FlushMessageBox (u8*) 0x81D96A8

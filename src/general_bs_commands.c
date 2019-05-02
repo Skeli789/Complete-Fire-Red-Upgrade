@@ -9,6 +9,7 @@
 #include "../include/new/pickup_items.h"
 #include "../include/new/general_bs_commands.h"
 #include "../include/new/attackcanceler.h"
+#include "../include/random.h"
 
 #define BattleScript_Pausex20 (u8*) 0x81D89F1
 #define BattleScript_MoveMissedPause (u8*) 0x81D695E

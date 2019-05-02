@@ -108,7 +108,7 @@ int __attribute__((long_call)) CountTrailingZeroBits(u32 value);
 void __attribute__((long_call)) IncrementGameStat(u8 gameStat);
 void __attribute__((long_call)) nullsub_8(void);
 s16 __attribute__((long_call)) Sine(s16 index, s16 amplitude);
-u16 __attribute__((long_call)) Random();
+//u16 __attribute__((long_call)) Random();
 
 void __attribute__((long_call)) PlayCry3(u16 species, s8 pan, u8 mode);
 void __attribute__((long_call)) PlayBGM(u16 songNum);

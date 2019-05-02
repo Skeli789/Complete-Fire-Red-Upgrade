@@ -3,6 +3,7 @@
 #include "../include/fieldmap.h"
 #include "../include/field_weather.h"
 #include "../include/wild_encounter.h"
+#include "../include/random.h"
 
 #include "../include/constants/flags.h"
 #include "../include/constants/maps.h"

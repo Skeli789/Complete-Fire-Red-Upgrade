@@ -6,6 +6,7 @@
 #include "../include/window.h"
 #include "../include/constants/items.h"
 #include "../include/new/helper_functions.h"
+#include "../include/random.h"
 
 #define BattleScript_OverworldWeatherStarts (u8*) 0x81D8B1F
 #define BattleScript_CastformChange (u8*) 0x81D92F8

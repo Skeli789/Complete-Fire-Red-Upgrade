@@ -1,6 +1,7 @@
 #include "defines.h"
 #include "defines_battle.h"
 #include "../include/new/helper_functions.h"
+#include "../include/random.h"
 
 extern s8 PriorityCalc(u8 bank, u8 action, u16 move);
 extern u8 TypeCalc(move_t, u8 bankAtk, u8 bankDef, pokemon_t* party_data_atk, bool8 CheckParty);

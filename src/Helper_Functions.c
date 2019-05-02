@@ -4,6 +4,7 @@
 #include "../include/new/frontier.h"
 #include "../include/constants/items.h"
 #include "../include/constants/pokedex.h"
+#include "../include/random.h"
 
 extern move_t SheerForceTable[];
 extern move_t SoundMoveTable[];

@@ -4,6 +4,7 @@
 #include "../include/constants/items.h"
 #include "../include/new/helper_functions.h"
 #include "../include/new/catching.h"
+#include "../include/random.h"
 
 #define gOpenPokeballGfx (u8*) 0x8D022E8
 

@@ -2,6 +2,7 @@
 #include "AI_Helper_Functions.h"
 #include "../../include/new/helper_functions.h"
 #include "../../include/constants/items.h"
+#include "../../include/random.h"
 
 extern NaturalGiftStruct NaturalGiftTable[];
 

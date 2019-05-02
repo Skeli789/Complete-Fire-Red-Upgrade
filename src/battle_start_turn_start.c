@@ -7,6 +7,7 @@
 #include "../include/new/helper_functions.h"
 #include "../include/new/multi.h"
 #include "../include/new/mega.h"
+#include "../include/random.h"
 
 extern void (* const sTurnActionsFuncsTable[])(void);
 extern void (* const sEndTurnFuncsTable[])(void);

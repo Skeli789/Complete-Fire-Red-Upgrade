@@ -3,6 +3,7 @@
 #include "../include/event_data.h"
 #include "../include/trainer_classes.h"
 #include "../include/songs.h"
+#include "../include/random.h"
 
 #include "../include/new/helper_functions.h"
 #include "../include/new/multi.h"

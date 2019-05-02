@@ -593,6 +593,7 @@ ZeroEnemyPartyMons = 0x803DA34 | 1;
 CreateMon = 0x803DA54 | 1;
 CreateBoxMon = 0x803DAC4 | 1;
 CreateMonWithNature = 0x803DD98 | 1;
+GetNatureFromPersonality = 0x08042EB4 | 1;
 CreateMonWithGenderNatureLetter = 0x803DE00  | 1;
 CalculateMonStats = 0x0803E47C | 1;
 GetLevelFromBoxMonExp = 0x803E830 | 1;
@@ -971,6 +972,7 @@ LoadCompressedSpritePaletteUsingHeap = 0x800F078 | 1;
 nullsub_8 = 0x802E310 | 1;
 Sine = 0x8044E30 | 1;
 Random = 0x8044EC8 | 1;
+Random2 = 0x0808322C | 1;
 CountTrailingZeroBits = 0x8045190 | 1;
 IncrementGameStat = 0x8054E90 | 1;
 GetEventObjectIdByLocalIdAndMapInternal = 0x805DFF4 | 1;
@@ -1073,6 +1075,8 @@ PicBoxWindow = 0x0809D654 | 1;
 SetStandardWindowBorderStyle = 0x080F7750 | 1;
 
 MonHasMove = 0x08125AC0 | 1;
+
+SeedRng2 = 0x08044EE8 | 1;
 
 InitHallOfFameScreen = 0x080F1DDC | 1;
 Task_Hof_SetMonDisplayTask = 0x080F2294 | 1;

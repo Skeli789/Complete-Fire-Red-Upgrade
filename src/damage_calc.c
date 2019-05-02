@@ -6,6 +6,7 @@
 #include "../include/pokedex.h"
 #include "../include/constants/items.h"
 #include "../include/new/helper_functions.h"
+#include "../include/random.h"
 
 extern u32 SpeedCalc(bank_t);
 extern u32 SpeedCalcForParty(u8 side, pokemon_t*);

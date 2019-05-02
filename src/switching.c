@@ -2,6 +2,7 @@
 #include "defines_battle.h"
 #include "../include/party_menu.h"
 #include "../include/new/helper_functions.h"
+#include "../include/random.h"
 
 //Do Illusion hooks
 

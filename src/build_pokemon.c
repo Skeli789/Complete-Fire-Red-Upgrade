@@ -7,6 +7,7 @@
 #include "../include/new/frontier.h"
 #include "../include/new/build_pokemon.h"
 #include "../include/new/multi.h"
+#include "../include/random.h"
 
 #include "Tables/Trainers_With_EVs_Table.h"
 

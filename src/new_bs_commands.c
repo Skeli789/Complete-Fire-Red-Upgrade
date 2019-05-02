@@ -4,6 +4,7 @@
 #include "../include/constants/items.h"
 #include "../include/new/helper_functions.h"
 #include "../include/new/CMD49.h"
+#include "../include/random.h"
 
 //Do Sleep Clause
 

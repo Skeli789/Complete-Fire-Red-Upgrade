@@ -12,6 +12,7 @@
 #include "../include/constants/moves.h"
 #include "../include/constants/species.h"
 #include "../include/constants/items.h"
+#include "../include/random.h"
 
 #include "../include/new/build_pokemon.h"
 #include "../include/new/dexnav.h"

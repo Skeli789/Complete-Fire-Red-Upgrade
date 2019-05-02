@@ -6,6 +6,7 @@
 #include "../include/pokemon.h"
 #include "../include/pokemon_storage_system.h"
 #include "../include/new/catching.h"
+#include "../include/random.h"
 
 #define sHatchedEggFatherMoves ((u16*) 0x202455C)
 #define sHatchedEggMotherMoves ((u16*)0x2024580)
@@ -146,6 +147,7 @@ void BuildEggMoveset(struct Pokemon* egg, struct BoxPokemon* father, struct BoxP
 		}
 	}
 }
+
 
 s32 GetSlotToInheritNature(struct DayCare* daycare)
 {
@@ -475,12 +477,11 @@ void InheritPokeBall(struct Pokemon *egg, struct DayCare *daycare) {
 	u16 fatherSpecies = GetBoxMonData(&daycare->mons[1].mon, MON_DATA_SPECIES, NULL);
 	
 	u8 parent = 0;	// mother default
-	
 	// gen 7 same species check
 	if (motherSpecies == fatherSpecies)
-		parent = Random() % 2;
+		parent = Random() % 2;	// same parent species -> pokeball inherited randomly
 	
-	// get poke ball
+	// get poke ball ID
 	u8 parentBall = GetBoxMonData(&daycare->mons[parent].mon, MON_DATA_POKEBALL, NULL);
 	
 	// master ball and cherish ball become poke ball
@@ -520,6 +521,38 @@ void GiveEggFromDaycare(struct DayCare *daycare) {
 };
 
 
+
+void TriggerPendingDaycareEgg(struct DayCare *daycare) {
+    s32 natureSlot;
+    s32 natureTries = 0;
+
+    SeedRng2(gMain.vblankCounter2);
+	
+    natureSlot = GetSlotToInheritNature(daycare);	// updated nature slot check
+
+    if (natureSlot < 0)
+    {
+        daycare->offspringPersonality = (Random2() << 0x10) | ((Random() % 0xfffe) + 1);
+    }
+    else
+    {
+        u8 wantedNature = GetNatureFromPersonality(GetBoxMonData(&daycare->mons[natureSlot].mon, MON_DATA_PERSONALITY, NULL));
+        u32 personality;
+
+        do
+        {
+            personality = (Random2() << 0x10) | (Random());
+            if (wantedNature == GetNatureFromPersonality(personality) && personality != 0)
+                break; // we found a personality with the same nature
+
+            natureTries++;
+        } while (natureTries <= 2400);
+
+        daycare->offspringPersonality = personality;
+    }
+
+    FlagSet(FLAG_PENDING_DAYCARE_EGG);
+};
 
 
 
