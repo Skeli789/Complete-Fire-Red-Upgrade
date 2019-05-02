@@ -1,8 +1,8 @@
 #include "defines.h"
 #include "defines_battle.h"
 #include "../include/event_data.h"
-#include "../include/trainer_classes.h"
-#include "../include/songs.h"
+#include "../include/constants/trainer_classes.h"
+#include "../include/constants/songs.h"
 
 #include "../include/new/helper_functions.h"
 #include "../include/new/multi.h"

@@ -4,8 +4,8 @@
 #include "../include/event_data.h"
 #include "../include/fieldmap.h"
 #include "../include/metatile_behavior.h"
-#include "../include/trainer_classes.h"
 #include "../include/constants/metatile_behaviors.h"
+#include "../include/constants/trainer_classes.h"
 
 #include "../include/new/helper_functions.h"
 #include "../include/new/battle_terrain.h"

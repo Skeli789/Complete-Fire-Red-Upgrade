@@ -1,7 +1,7 @@
 #include "defines.h"
 #include "defines_battle.h"
 #include "../include/event_data.h"
-#include "../include/songs.h"
+#include "../include/constants/songs.h"
 
 #include "../include/new/battle_start_turn_start.h"
 #include "../include/new/helper_functions.h"

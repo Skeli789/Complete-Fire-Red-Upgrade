@@ -1,7 +1,5 @@
 #pragma once
 
-#include "global.h"
-
 enum
 {
 	CLASS_PKMN_TRAINER_1,	//0x0
@@ -125,22 +123,22 @@ enum
 #define CLASS_POKE_KID			0xC
 #define CLASS_TERROR_GRANBULL 	0xE
 #define CLASS_CAMPING_DUO		0xF
-#define	CLASS_SKIIER			0x10
+#define CLASS_SKIIER			0x10
 #define CLASS_GUITARIST			0x11
-#define	CLASS_KINDLER			0x12
-#define	CLASS_SHOCKER			0x13
+#define CLASS_KINDLER			0x12
+#define CLASS_SHOCKER			0x13
 #define CLASS_BUG_MANIAC		0x14
 #define CLASS_POLICEMAN			0x15
 #define CLASS_BLACK_FERROTHORN 	0x16
 #define CLASS_SUCCESSOR			0x18
 #define CLASS_SCHOOL_KID		0x19
-#define	CLASS_EXPERT			0x1C
-#define	CLASS_RANCHER			0x1D
+#define CLASS_EXPERT			0x1C
+#define CLASS_RANCHER			0x1D
 #define CLASS_JOGGER			0x1E
 #define CLASS_DRAGON_TAMER		0x21
 #define CLASS_NINJA_BOY			0x23
 #define CLASS_BOARDER			0x2A
-#define	CLASS_COLLECTOR			0x2B
+#define CLASS_COLLECTOR			0x2B
 #define CLASS_LOR_ADMIN 		0x2E
 #define CLASS_LOR 				0x2F
 #define CLASS_SHADOW_ADMIN 		0x30

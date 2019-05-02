@@ -6,7 +6,7 @@
 #include "../include/gba/io_reg.h"
 #include "../include/palette.h"
 #include "../include/pokemon_icon.h"
-#include "../include/songs.h"
+#include "../include/constants/songs.h"
 #include "../include/wild_encounter.h"
 #include "../include/window.h"
 #include "../include/constants/moves.h"

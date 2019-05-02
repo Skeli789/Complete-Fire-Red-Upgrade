@@ -2,7 +2,7 @@
 #include "../../include/new/pickup_items.h"
 #include "../../include/constants/items.h"
 
-item_t pickup_common_items[PU_NUM_COMMON_ITEMS] = {
+item_t sPickupCommonItems[PU_NUM_COMMON_ITEMS] = {
     ITEM_POTION,
     ITEM_ANTIDOTE,
     ITEM_SUPER_POTION,
@@ -20,10 +20,10 @@ item_t pickup_common_items[PU_NUM_COMMON_ITEMS] = {
     ITEM_FULL_RESTORE,
     ITEM_MAX_REVIVE,
 	ITEM_PP_UP,
-    ITEM_MAX_ELIXIR
+    ITEM_MAX_ELIXIR,
 };
 
-item_t pickup_rare_items[PU_NUM_RARE_ITEMS] = {
+item_t sPickupRareItems[PU_NUM_RARE_ITEMS] = {
     ITEM_HYPER_POTION,
     ITEM_NUGGET,
     ITEM_KINGS_ROCK,
@@ -34,7 +34,7 @@ item_t pickup_rare_items[PU_NUM_RARE_ITEMS] = {
     ITEM_ELIXIR,
     ITEM_DESTINY_KNOT,
     ITEM_LEFTOVERS,
-    ITEM_DESTINY_KNOT
+    ITEM_DESTINY_KNOT,
 };
 
 u32 pickup_common_item_ceilings[PU_COMMON_PER_ROW] = {

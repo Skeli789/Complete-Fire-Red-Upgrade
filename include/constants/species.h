@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../../src/config.h"
+
 #define SPECIES_NONE 0x0
 #define SPECIES_BULBASAUR 0x1
 #define SPECIES_IVYSAUR 0x2
@@ -1084,5 +1086,5 @@
 #define SPECIES_PICHU_SPIKY 0x44C
 #define SPECIES_XERNEAS_NATURAL 0x44D
 
-#define NUM_SPECIES (SPECIES_XERNEAS_NATURAL + 1)
+#define NUM_SPECIES MAX_NUM_POKEMON
 
