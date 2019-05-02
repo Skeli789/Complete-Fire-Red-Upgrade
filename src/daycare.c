@@ -494,6 +494,30 @@ void InheritPokeBall(struct Pokemon *egg, struct DayCare *daycare) {
 };
 
 
+/*
+void CreateMon(struct Pokemon *mon, u16 species, u8 level, u8 fixedIV, u8 hasFixedPersonality, u32 fixedPersonality, u8 otIdType, u32 fixedOtId)
+void SetInitialEggData(struct Pokemon *mon, u16 species, struct DayCare *daycare) {
+    u32 personality;
+    u16 ball;
+    u8 metLevel;
+    u8 language;
+
+    personality = daycare->offspringPersonality;
+    
+	CreateMon(mon, species, EGG_HATCH_LEVEL, 0x20, TRUE, personality, FALSE, 0);
+    
+	metLevel = 0;
+    ball = ITEM_POKE_BALL;
+    language = LANGUAGE_JAPANESE;
+    SetMonData(mon, MON_DATA_POKEBALL, &ball);
+    SetMonData(mon, MON_DATA_NICKNAME, sJapaneseEggNickname);
+    SetMonData(mon, MON_DATA_FRIENDSHIP, &gBaseStats[species].eggCycles);
+    SetMonData(mon, MON_DATA_MET_LEVEL, &metLevel);
+    SetMonData(mon, MON_DATA_LANGUAGE, &language);
+}
+*/
+
+
 // Decide features to inherit
 void GiveEggFromDaycare(struct DayCare *daycare) {
     struct Pokemon egg;
