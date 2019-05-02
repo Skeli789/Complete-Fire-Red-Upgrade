@@ -213,11 +213,11 @@ const struct TerrainTableStruct TerrainTable[] =
 		.secretPowerAnim = MOVE_BODYSLAM,
 		.naturePowerMove = MOVE_TRIATTACK,
 		.burmyForm = SPECIES_BURMY_TRASH,
-	}
-	
-	#ifdef UNBOUND
-	,
-	
+	},
+
+//ADD NEW ENTRIES HERE
+
+#ifdef UNBOUND //The ones below are for Pokemon Unbound. Feel free to remove.
 [BATTLE_TERRAIN_SNOW_FIELD + 4] =
 	{
 		.camouflageType = TYPE_ICE,
@@ -378,8 +378,8 @@ const struct TerrainTableStruct TerrainTable[] =
 		.secretPowerAnim = MOVE_AVALANCHE,
 		.naturePowerMove = MOVE_FROSTBREATH,
 		.burmyForm = SPECIES_BURMY,
-	}
-	#endif
+	},
+#endif
 };
 
 const struct BattleBackground gAttackTerrainTable[] =
@@ -414,7 +414,7 @@ const struct BattleBackground gAttackTerrainTable[] =
         .entryTileset = gBattleTerrainAnimTiles_Building,
         .entryTilemap = gBattleTerrainAnimTilemap_Building,
         .palette = BG_Psychic_TerrainPal,
-    }
+    },
 };
 
 const u16 gCamouflageColours[] =

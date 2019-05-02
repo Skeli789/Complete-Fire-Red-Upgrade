@@ -40,11 +40,11 @@ extern u8 AddPalRef(u8 Type, u16 PalTag);
 
 
 #ifdef FOSSIL_IMAGE_HACK
-struct FossilTable 
-{
-	struct SpriteSheet* data;
-	u16* palette;
-};
+	struct FossilTable 
+	{
+		struct SpriteSheet* data;
+		u16* palette;
+	};
 
 	#ifdef EXISTING_FOSSIL_IMAGE_TABLE_ADDRESS
 		#define gFossilImageTable ((struct FossilTable*) EXISTING_FOSSIL_IMAGE_TABLE_ADDRESS)

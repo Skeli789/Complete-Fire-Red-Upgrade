@@ -24,15 +24,15 @@ void atkFF1E_trainerslideout(void);
 struct TrainerSlide
 {
     u16 trainerId;
+	u8* msgFirstDown;
     u8* msgLastSwitchIn;
     u8* msgLastLowHp;
-    u8* msgFirstDown;
 };
 
 static const struct TrainerSlide sTrainerSlides[] =
 {
-	{0x17, sText_VegaLastSwitchIn, sText_VegaLastLowHP, sText_VegaFirstMonDown},
-    {0x19F, sText_VegaLastSwitchIn, sText_VegaLastLowHP, sText_VegaFirstMonDown},
+	{0x17, sText_VegaFirstMonDown, sText_VegaLastSwitchIn, sText_VegaLastLowHP},
+    {0x19F, sText_VegaFirstMonDown, sText_VegaLastSwitchIn, sText_VegaLastLowHP},
 };
 
 void atk53_trainerslidein(void) {

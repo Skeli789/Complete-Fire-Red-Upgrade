@@ -640,17 +640,17 @@ void HandleAction_UseMove(void)
 		
 		if (SPLIT(gCurrentMove) != SPLIT_STATUS) 
 		{
-			for (i = 0; SpecialZMoveTable[i].item != 0xFFFF; ++i) 
+			for (i = 0; gSpecialZMoveTable[i].item != 0xFFFF; ++i) 
 			{
-				if (SpecialZMoveTable[i].item == ITEM(gBankAttacker) //No need to check for correct species here as the check;
-				&&  SpecialZMoveTable[i].move == gCurrentMove)		 //it should already have been carried out during move selection.
+				if (gSpecialZMoveTable[i].item == ITEM(gBankAttacker) //No need to check for correct species here as the check;
+				&&  gSpecialZMoveTable[i].move == gCurrentMove)		 //it should already have been carried out during move selection.
 				{
-					gCurrentMove = SpecialZMoveTable[i].zmove;
+					gCurrentMove = gSpecialZMoveTable[i].zmove;
 					goto SKIP_SELECT_REGULAR_Z_MOVE;
 				}
 			}
 							
-			if (SpecialZMoveTable[i].item == 0xFFFF) { //No special Z-Move
+			if (gSpecialZMoveTable[i].item == 0xFFFF) { //No special Z-Move
 				u16 moveReplaced = gBattleMons[gBankAttacker].moves[gCurrMovePos];
 				u8 moveType = gBattleMoves[moveReplaced].type;
 				if (moveType < TYPE_FIRE)
