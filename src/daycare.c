@@ -5,6 +5,7 @@
 #include "../include/constants/items.h"
 #include "../include/pokemon.h"
 #include "../include/pokemon_storage_system.h"
+#include "../include/new/catching.h"
 
 #define sHatchedEggFatherMoves ((u16*) 0x202455C)
 #define sHatchedEggMotherMoves ((u16*)0x2024580)
@@ -468,6 +469,30 @@ void AlterEggSpeciesWithIncenseItem(u16 *species, struct DayCare *daycare) {
 };
 */
 
+
+void InheritPokeBall(struct Pokemon *egg, struct DayCare *daycare) {
+	u16 motherSpecies = GetBoxMonData(&daycare->mons[0].mon, MON_DATA_SPECIES, NULL);
+	u16 fatherSpecies = GetBoxMonData(&daycare->mons[1].mon, MON_DATA_SPECIES, NULL);
+	
+	u8 parent = 0;	// mother default
+	
+	// gen 7 same species check
+	if (motherSpecies == fatherSpecies)
+		parent = Random() % 2;
+	
+	// get poke ball
+	u8 parentBall = GetBoxMonData(&daycare->mons[parent].mon, MON_DATA_POKEBALL, NULL);
+	
+	// master ball and cherish ball become poke ball
+	#ifndef INHERIT_MASTER_CHERISH_BALL
+	if (parentBall == BALL_TYPE_MASTER_BALL || parentBall == BALL_TYPE_CHERISH_BALL)
+		parentBall = BALL_TYPE_POKE_BALL;
+	#endif
+	
+	SetMonData(egg, MON_DATA_POKEBALL, &parentBall);	
+};
+
+
 // Decide features to inherit
 void GiveEggFromDaycare(struct DayCare *daycare) {
     struct Pokemon egg;
@@ -477,8 +502,9 @@ void GiveEggFromDaycare(struct DayCare *daycare) {
 
     species = DetermineEggSpeciesAndParentSlots(daycare, parentSlots);
     AlterEggSpeciesWithIncenseItem(&species, daycare);
-    SetInitialEggData(&egg, species, daycare);
+    SetInitialEggData(&egg, species, daycare);	// sets base data (ball, met level, lang, etc)
     InheritIVs(&egg, daycare);	// destiny knot check
+	InheritPokeBall(&egg, daycare);
     BuildEggMoveset(&egg, &daycare->mons[parentSlots[1]].mon, &daycare->mons[parentSlots[0]].mon);
 
 	// handled in BuildEggMoveset

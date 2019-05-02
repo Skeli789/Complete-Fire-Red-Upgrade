@@ -708,7 +708,7 @@ ScriptContext1_SetupScript = 0x8069AE4 | 1;
 ScriptContext1_Stop = 0x8069B28 | 1;
 PlayNewMapMusic = 0x8071A74 | 1;
 PatchObjectPalette = 0x0805F538 | 1;
-CurrMapHeightMismatch = 0x080681B0 | 1;
+CurrMapHeightMismatch = 0x080681B0 | 1;	
 MapGridGetZCoordAt = 0x08058D44 | 1;
 
 CheckOpenSky = 0x080561FC | 1;

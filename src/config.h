@@ -153,6 +153,7 @@ enum
 #define FOSSIL_IMAGE_HACK  // comment this out if you don't want JPANs fossil image hack
 #define EVO_HOLD_ITEM_REMOVAL //Comment this out if you want leveling up/hold item evolution (eg. sneasel) to remove the item (like normal)
 #define EXPAND_MOVESETS //Comment this out if you're using the Dynamic Pokemon Expansion repo to expand the movesets
+//#define INHERIT_MASTER_CHERISH_BALL  // uncomment this if you want Master and Cherish balls to be inherited by daycare offspring
 
 /* Misc Effect Options */
 //#define OLD_BURN_DAMAGE //Uncomment this line if you want burn damage to do 1/8 of max health instead of 1/16

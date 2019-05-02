@@ -714,4 +714,28 @@ struct BrmData {
     s16 unk10;
 };
 
+struct MenuChoiceStruct {
+	u8 choiceX;
+	u8 choiceY;
+	u8 choiceCurrent;
+	u8 choiceMin;
+	u8 choiceMax;
+	u8 choiceRboxId;
+	u16 choiceFboxId;
+	u16 choiceYStride;
+};
+
+struct BrmBoxes {
+	/*0x00*/ u32 brmCallback;
+	/*0x04*/ u16 field4;
+	/*0x06*/ u16 field6;
+	/*0x08*/ u16 field8;
+	/*0x0A*/ u16 fieldA;
+	/*0x0C*/ u8 optsBoxId;   // box that holds brm options
+	/*0x0D*/ u8 actionBoxId;  // box in bottom left that tells you what to do
+	/*0x0E*/ u8 fieldMoveHelpboxId;	// lists what field move does
+	/*0x0F*/ u8 brmSequence[8];	// sequence of brm field Ids
+	/*0x17*/ u8 numBrmOpts;		// number of brm options
+};
+
 #endif // GUARD_GLOBAL_H
