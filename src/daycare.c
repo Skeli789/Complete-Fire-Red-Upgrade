@@ -549,3 +549,63 @@ void TriggerPendingDaycareEgg(struct DayCare *daycare) {
 
     FlagSet(FLAG_PENDING_DAYCARE_EGG);
 };
+
+
+
+// ability inheritance
+void CreatedHatchedMon(struct Pokemon *egg, struct Pokemon *temp) {
+    u16 species;
+    u32 personality, pokerus;
+    u8 i, friendship, language, gameMet, markings, obedience;
+    u16 moves[4];
+    u32 ivs[NUM_STATS];
+
+
+    species = GetMonData(egg, MON_DATA_SPECIES);
+
+    for (i = 0; i < 4; i++)
+    {
+        moves[i] = GetMonData(egg, MON_DATA_MOVE1 + i);
+    }
+
+    personality = GetMonData(egg, MON_DATA_PERSONALITY);
+
+    for (i = 0; i < NUM_STATS; i++)
+    {
+        ivs[i] = GetMonData(egg, MON_DATA_HP_IV + i);
+    }
+
+    language = GetMonData(egg, MON_DATA_LANGUAGE);
+    gameMet = GetMonData(egg, MON_DATA_MET_GAME);
+    markings = GetMonData(egg, MON_DATA_MARKINGS);
+    pokerus = GetMonData(egg, MON_DATA_POKERUS);
+    obedience = GetMonData(egg, MON_DATA_OBEDIENCE);
+
+    CreateMon(temp, species, EGG_HATCH_LEVEL, 32, TRUE, personality, 0, 0);
+
+    for (i = 0; i < 4; i++)
+    {
+        SetMonData(temp, MON_DATA_MOVE1 + i,  &moves[i]);
+    }
+
+    for (i = 0; i < NUM_STATS; i++)
+    {
+        SetMonData(temp, MON_DATA_HP_IV + i,  &ivs[i]);
+    }
+
+    language = GAME_LANGUAGE;
+    SetMonData(temp, MON_DATA_LANGUAGE, &language);
+    SetMonData(temp, MON_DATA_MET_GAME, &gameMet);
+    SetMonData(temp, MON_DATA_MARKINGS, &markings);
+
+    friendship = 120;
+    SetMonData(temp, MON_DATA_FRIENDSHIP, &friendship);
+    SetMonData(temp, MON_DATA_POKERUS, &pokerus);
+    SetMonData(temp, MON_DATA_OBEDIENCE, &obedience);
+
+    *egg = *temp;
+}
+
+
+
+
