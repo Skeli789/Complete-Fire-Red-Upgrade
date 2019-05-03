@@ -276,9 +276,9 @@ u8 CheckPowerItem(u16 item) {
 
 
 void InheritIVs(struct Pokemon *egg, struct DayCare *daycare) {
-    u8 i, numIVs, iv;
+	u8 i, numIVs, iv;
 	u16 items[2];
-	
+
 	items[0] = GetBoxMonData(&daycare->mons[0].mon, MON_DATA_HELD_ITEM, NULL);
 	items[1] = GetBoxMonData(&daycare->mons[1].mon, MON_DATA_HELD_ITEM, NULL);
 		
@@ -287,10 +287,10 @@ void InheritIVs(struct Pokemon *egg, struct DayCare *daycare) {
 		numIVs = 5;
 	else
 		numIVs = 3;
-	
-    u8 selectedIvs[numIVs];
-    //u8 availableIVs[NUM_STATS];
-    u8 whichParent[numIVs];
+
+	u8 selectedIvs[numIVs];
+	//u8 availableIVs[NUM_STATS];
+	u8 whichParent[numIVs];
 		
 	// initiate first 1 or 2 IV slots with power items from either or both parents
 	u8 initVal = 0;
@@ -317,7 +317,7 @@ void InheritIVs(struct Pokemon *egg, struct DayCare *daycare) {
 			initVal++;
 		}
 	}
-	
+
 	// randomize the remaining IV indices with unique values
 	bool8 unique;
 	for (i = initVal; i < ARRAY_COUNT(selectedIvs); ++i)
@@ -556,7 +556,7 @@ void TriggerPendingDaycareEgg(struct DayCare *daycare) {
 void CreatedHatchedMon(struct Pokemon *egg, struct Pokemon *temp) {
     u16 species;
     u32 personality, pokerus;
-    u8 i, friendship, language, gameMet, markings, obedience;
+    u8 i, friendship, language, gameMet, markings, hidden;
     u16 moves[4];
     u32 ivs[NUM_STATS];
 
