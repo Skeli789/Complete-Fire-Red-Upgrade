@@ -90,6 +90,26 @@ script functions/specials in asm - hooks and returns
 @@ Evolution Method Extra Hooks
 .global RemoveEvoItem
 
+@@ Shiny Rate
+.global AlterShinyRate
+
+
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Shiny Charm Check
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.align 2
+.pool
+AlterShinyRate:
+	push {r2-r4}
+	mov r0, r4	@ hasFixedPersonality
+	ldr r1, [sp, #0x44]	@ personalityValue
+	bl CheckShinyMon
+	pop {r2-r4}
+	str r0, [sp, #0x14]		@PID
+	ldr r0, =(0x0803db14 +1)
+	bx r0
+
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Evolution Methods - Remove Evo Item

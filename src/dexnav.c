@@ -59,6 +59,7 @@ void ExecDexNavHUD(void);
 u8 ShakingGrass(u8 environment, u8 xSize, u8 ySize, bool8 smallScan);
 void DexNavLoadNames(u8 status);
 void OutlinedFontDraw(u8 objId, u8 tileNum, u16 size);
+u16 RandRange(u16 min, u16 max);
 
 void DestroyTaskCompletedTextbox(u8 tId)
 {

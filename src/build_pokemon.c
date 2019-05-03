@@ -8,6 +8,7 @@
 #include "../include/new/build_pokemon.h"
 #include "../include/new/multi.h"
 #include "../include/random.h"
+#include "../include/constants/items.h"
 
 #include "Tables/Trainers_With_EVs_Table.h"
 
@@ -15,6 +16,7 @@ extern u8 gClassPokeBalls[NUM_TRAINER_CLASSES];
 
 extern void GetFrontierTrainerName(u8* dst, u16 trainerId, u8 battlerNum);
 extern void MultiInitPokemonOrder(void);
+extern u16 RandRange(u16 min, u16 max);
 
 u8 CreateNPCTrainerParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, u8 side);
 u8 BuildFrontierParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, bool8 ForPlayer, u8 side);
@@ -759,3 +761,30 @@ static u8 GetOpenWorldBadgeCount(void)
 }
 
 #endif
+
+
+u32 CheckShinyMon(bool8 hasFixedPersonality, u32 personality) {
+	u16 numerator = 1;	//default 1/4096 rate
+	u32 pid;
+	
+	if (hasFixedPersonality)
+		pid = personality;
+	else
+		pid = Random32();
+	
+	if (CheckBagHasItem(ITEM_SHINY_CHARM, 1) > 0)
+		numerator = 3;
+	
+	if (RandRange(0,4097) < numerator)
+	{
+		// make shiny
+		u8 shinyRange = RandRange(0,8);
+
+		u32 playerId = T1_READ_32(gSaveBlock2->playerTrainerId);
+		u16 sid = HIHALF(playerId);
+		u16 tid = LOHALF(playerId);			
+		pid = (((shinyRange ^ (sid ^ tid)) ^ LOHALF(pid)) << 16) | LOHALF(pid);
+	}
+	return pid;
+};
+

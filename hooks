@@ -317,3 +317,6 @@ PokedexLoadAlternateWeightHook 08105A58 0
 ##Daycare
 #GiveEggFromDaycare 080460D4 1
 #TriggerPendingDaycareEgg 080459F0 1
+
+##Pokemon Hooks
+AlterShinyRate 0803DAF6 1

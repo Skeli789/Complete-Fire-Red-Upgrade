@@ -494,30 +494,6 @@ void InheritPokeBall(struct Pokemon *egg, struct DayCare *daycare) {
 };
 
 
-/*
-void CreateMon(struct Pokemon *mon, u16 species, u8 level, u8 fixedIV, u8 hasFixedPersonality, u32 fixedPersonality, u8 otIdType, u32 fixedOtId)
-void SetInitialEggData(struct Pokemon *mon, u16 species, struct DayCare *daycare) {
-    u32 personality;
-    u16 ball;
-    u8 metLevel;
-    u8 language;
-
-    personality = daycare->offspringPersonality;
-    
-	CreateMon(mon, species, EGG_HATCH_LEVEL, 0x20, TRUE, personality, FALSE, 0);
-    
-	metLevel = 0;
-    ball = ITEM_POKE_BALL;
-    language = LANGUAGE_JAPANESE;
-    SetMonData(mon, MON_DATA_POKEBALL, &ball);
-    SetMonData(mon, MON_DATA_NICKNAME, sJapaneseEggNickname);
-    SetMonData(mon, MON_DATA_FRIENDSHIP, &gBaseStats[species].eggCycles);
-    SetMonData(mon, MON_DATA_MET_LEVEL, &metLevel);
-    SetMonData(mon, MON_DATA_LANGUAGE, &language);
-}
-*/
-
-
 // Decide features to inherit
 void GiveEggFromDaycare(struct DayCare *daycare) {
     struct Pokemon egg;
@@ -531,10 +507,6 @@ void GiveEggFromDaycare(struct DayCare *daycare) {
     InheritIVs(&egg, daycare);	// destiny knot check
 	InheritPokeBall(&egg, daycare);
     BuildEggMoveset(&egg, &daycare->mons[parentSlots[1]].mon, &daycare->mons[parentSlots[0]].mon);
-
-	// handled in BuildEggMoveset
-    //if (species == SPECIES_PICHU)
-    //    GiveVoltTackleIfLightBall(&egg, daycare);
 
     isEgg = TRUE;
     SetMonData(&egg, MON_DATA_IS_EGG, &isEgg);
@@ -577,107 +549,3 @@ void TriggerPendingDaycareEgg(struct DayCare *daycare) {
 
     FlagSet(FLAG_PENDING_DAYCARE_EGG);
 };
-
-
-/*
-void CreateBoxMon(struct BoxPokemon *boxMon, u16 species, u8 level, u8 fixedIV, u8 hasFixedPersonality, u32 fixedPersonality, u8 otIdType, u32 fixedOtId)
-{
-    u8 speciesName[POKEMON_NAME_LENGTH + 1];
-    u32 personality;
-    u32 value;
-    u16 checksum;
-
-    ZeroBoxMonData(boxMon);
-
-    if (hasFixedPersonality)
-        personality = fixedPersonality;
-    else
-        personality = Random32();
-
-    SetBoxMonData(boxMon, MON_DATA_PERSONALITY, &personality);
-
-    //Determine original trainer ID
-    
-    // Shiny Charm
-    
-    if (otIdType == OT_ID_RANDOM_NO_SHINY) //Pokemon cannot be shiny
-    {
-        u32 shinyValue;
-        do
-        {
-            value = Random32();
-            shinyValue = HIHALF(value) ^ LOHALF(value) ^ HIHALF(personality) ^ LOHALF(personality);
-        } while (shinyValue < 8);
-    }
-    else if (otIdType == OT_ID_PRESET) //Pokemon has a preset OT ID
-    {
-        value = fixedOtId;
-    }
-    else //Player is the OT
-    {
-        value = gSaveBlock2Ptr->playerTrainerId[0]
-              | (gSaveBlock2Ptr->playerTrainerId[1] << 8)
-              | (gSaveBlock2Ptr->playerTrainerId[2] << 16)
-              | (gSaveBlock2Ptr->playerTrainerId[3] << 24);
-    }
-
-    SetBoxMonData(boxMon, MON_DATA_OT_ID, &value);
-
-    checksum = CalculateBoxMonChecksum(boxMon);
-    SetBoxMonData(boxMon, MON_DATA_CHECKSUM, &checksum);
-    EncryptBoxMon(boxMon);
-    GetSpeciesName(speciesName, species);
-    SetBoxMonData(boxMon, MON_DATA_NICKNAME, speciesName);
-    SetBoxMonData(boxMon, MON_DATA_LANGUAGE, &gGameLanguage);
-    SetBoxMonData(boxMon, MON_DATA_OT_NAME, gSaveBlock2Ptr->playerName);
-    SetBoxMonData(boxMon, MON_DATA_SPECIES, &species);
-    SetBoxMonData(boxMon, MON_DATA_EXP, &gExperienceTables[gBaseStats[species].growthRate][level]);
-    SetBoxMonData(boxMon, MON_DATA_FRIENDSHIP, &gBaseStats[species].friendship);
-    value = GetCurrentRegionMapSectionId();
-    SetBoxMonData(boxMon, MON_DATA_MET_LOCATION, &value);
-    SetBoxMonData(boxMon, MON_DATA_MET_LEVEL, &level);
-    SetBoxMonData(boxMon, MON_DATA_MET_GAME, &gGameVersion);
-    value = ITEM_POKE_BALL;
-    SetBoxMonData(boxMon, MON_DATA_POKEBALL, &value);
-    SetBoxMonData(boxMon, MON_DATA_OT_GENDER, &gSaveBlock2Ptr->playerGender);
-
-    if (fixedIV < 32)
-    {
-        SetBoxMonData(boxMon, MON_DATA_HP_IV, &fixedIV);
-        SetBoxMonData(boxMon, MON_DATA_ATK_IV, &fixedIV);
-        SetBoxMonData(boxMon, MON_DATA_DEF_IV, &fixedIV);
-        SetBoxMonData(boxMon, MON_DATA_SPEED_IV, &fixedIV);
-        SetBoxMonData(boxMon, MON_DATA_SPATK_IV, &fixedIV);
-        SetBoxMonData(boxMon, MON_DATA_SPDEF_IV, &fixedIV);
-    }
-    else
-    {
-        u32 iv;
-        value = Random();
-
-        iv = value & 0x1F;
-        SetBoxMonData(boxMon, MON_DATA_HP_IV, &iv);
-        iv = (value & 0x3E0) >> 5;
-        SetBoxMonData(boxMon, MON_DATA_ATK_IV, &iv);
-        iv = (value & 0x7C00) >> 10;
-        SetBoxMonData(boxMon, MON_DATA_DEF_IV, &iv);
-
-        value = Random();
-
-        iv = value & 0x1F;
-        SetBoxMonData(boxMon, MON_DATA_SPEED_IV, &iv);
-        iv = (value & 0x3E0) >> 5;
-        SetBoxMonData(boxMon, MON_DATA_SPATK_IV, &iv);
-        iv = (value & 0x7C00) >> 10;
-        SetBoxMonData(boxMon, MON_DATA_SPDEF_IV, &iv);
-    }
-
-    if (gBaseStats[species].ability2)
-    {
-        value = personality & 1;
-        SetBoxMonData(boxMon, MON_DATA_ALT_ABILITY, &value);
-    }
-
-    GiveBoxMonInitialMoveset(boxMon);
-}
-*/
