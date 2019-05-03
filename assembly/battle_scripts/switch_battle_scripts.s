@@ -240,7 +240,6 @@ BattleScript_HandleFaintedMonDoublesInitial:
 	jumpifnoviablemonsleft BANK_TARGET BattleScript_FaintedMonCancelSwitchIn
 	openpartyscreen 0x3 BattleScript_FaintedMonCancelSwitchIn
 	switchhandleorder BANK_FAINTED 0x2
-	drawpartystatussummary BANK_FAINTED
 	switch1 BANK_FAINTED
 	goto BattleScript_FaintedMonEnd
 	
@@ -263,6 +262,7 @@ BattleScript_81D87BE:
 	end2
 
 BattleScript_HandleFaintedMonDoublesPart2:
+	drawpartystatussummary BANK_FAINTED
 	switch2 BANK_FAINTED
 	hpthresholds BANK_FAINTED
 	printstring 0x3 @;STRINGID_SWITCHINMON
