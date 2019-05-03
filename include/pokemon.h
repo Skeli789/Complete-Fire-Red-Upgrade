@@ -671,6 +671,7 @@ u8 CountAliveMons(u8 caseId);
 #define BATTLE_ALIVE_ATK_SIDE       1
 #define BATTLE_ALIVE_DEF_SIDE       2
 
+void __attribute__((long_call)) CreateMonWithIVsPersonality(struct Pokemon* mon, u16 species, u8 level, u32 ivs, u32 personality);
 u8 __attribute__((long_call)) GetLevelFromBoxMonExp(struct BoxPokemon *boxMon);
 u16 __attribute__((long_call)) GiveMoveToMon(struct Pokemon *mon, u16 move);
 u16 __attribute__((long_call)) GiveMoveToBoxMon(struct BoxPokemon *boxMon, u16 move);
@@ -679,6 +680,7 @@ void __attribute__((long_call)) DeleteFirstMoveAndGiveMoveToBoxMon(struct BoxPok
 u32 __attribute__((long_call)) GetBoxMonData(struct BoxPokemon *boxMon, s32 field, u8 *data);
 bool8 __attribute__((long_call)) MonHasMove(pokemon_t* mon, u16 move);
 u8 __attribute__((long_call)) CalculatePlayerPartyCount(void);
+species_t __attribute__((long_call)) GetStarterChoice(void);
 
 /*
 void ZeroBoxMonData(struct BoxPokemon *boxMon);

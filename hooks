@@ -176,6 +176,15 @@ sp138_StartLegendaryBattle 807F9D8 0
 GetLocalWildMon 8082FE8 1
 GetLocalWaterMon 8083074 0
 
+#Roamer Hooks
+ClearRoamersData 8141C54 0
+sp129_InitRoamer 8141D9C 0
+UpdateLocationHistoryForRoamers 8141DAC 0
+RoamersMoveToOtherLocationSet 8141DD4 0
+RoamersMove 8141E28 0
+UpdateFoughtRoamerHPStatus 8141FE8 1
+SetFoughtRoamerInactive 814201C 1
+
 ##Save Expansion Hooks
 HandleWriteSector 80D9870 2
 HandleLoadSector 80D9E54 2

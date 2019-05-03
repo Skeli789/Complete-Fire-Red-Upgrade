@@ -595,6 +595,7 @@ CreateMon = 0x803DA54 | 1;
 CreateBoxMon = 0x803DAC4 | 1;
 CreateMonWithNature = 0x803DD98 | 1;
 CreateMonWithGenderNatureLetter = 0x803DE00  | 1;
+CreateMonWithIVsPersonality = 0x803DF68  | 1;
 CalculateMonStats = 0x0803E47C | 1;
 GetLevelFromBoxMonExp = 0x803E830 | 1;
 GiveMoveToMon = 0x803E89C | 1;
@@ -623,7 +624,9 @@ GetSetPokedexFlag = 0x8044898 | 1;
 GetPokedexHeightWeight = 0x8088E38 | 1;
 ReducePartyToThree = 0x80A03D8 | 1;
 pokemon_order_func = 0x8128030 | 1;
-GetEggMoves = 0x08045C28 | 1;
+GetEggMoves = 0x8045C28 | 1;
+
+GetStarterChoice = 0x80CBDB0 | 1;
 
 /*Daycare*/
 GetEggSpecies = 0x8045970 | 1;
@@ -682,6 +685,7 @@ AddMoney = 0x809FDA0 | 1;
 
 /*Overworld Functions*/
 GetTrainerEncounterMusicId = 0x804367C | 1;
+Overworld_GetMapHeaderByGroupAndId = 0x8055238 | 1;
 Overworld_GetMapTypeOfSaveblockLocation = 0x8056188 | 1;
 GetCurrentMapBattleScene = 0x8056288 | 1;
 MetatileBehavior_GetLowerBytes = 0x8058F1C | 1;
@@ -715,6 +719,9 @@ CurrMapHeightMismatch = 0x080681B0 | 1;
 MapGridGetZCoordAt = 0x08058D44 | 1;
 
 CheckOpenSky = 0x080561FC | 1;
+
+/*Region Map Functions*/
+GetMapName = 0x80C4D78 | 1;
 
 /*Event Object Movement Functions*/
 TrySpawnEventObjectTemplate = 0x0805E72C | 1;

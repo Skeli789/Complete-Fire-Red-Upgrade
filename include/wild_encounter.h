@@ -50,4 +50,3 @@ bool8 __attribute__((long_call)) IsWildLevelAllowedByRepel(u8 level);
 void __attribute__((long_call)) ApplyFluteEncounterRateMod(u32 *encRate);
 void __attribute__((long_call)) ApplyCleanseTagEncounterRateMod(u32 *encRate);
 void __attribute__((long_call)) IncrementEncounterProbabilityBonus(u8 encounterRate);
-bool8 __attribute__((long_call)) TryStartRoamerEncounter(void);

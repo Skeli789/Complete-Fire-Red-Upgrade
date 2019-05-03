@@ -186,5 +186,6 @@ struct Pedometers {
 #define DEXNAV_SAVERAM 0x203B814
 //#define gFollowerState ((struct Follower*) 0x203B818) //Approximately ~20 bytes, use 24 to be safe
 //extern bool8 gIgnoredDNSPalIndices[32][16] //0x203B830
-//#define [FILL_IN_NEXT] 0x203BA30
+//extern struct Roamer* gRoamers[10] //0x203BA30
+//#define [FILL_IN_NEXT] 0x203BB20
 

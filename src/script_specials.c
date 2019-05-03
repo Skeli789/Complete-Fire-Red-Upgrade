@@ -5,6 +5,8 @@
 #include "../include/pokemon_storage_system.h"
 #include "../include/new_menu_helpers.h"
 #include "../include/hall_of_fame.h"
+#include "../include/overworld.h"
+#include "../include/region_map.h"
 #include "../include/save.h"
 #include "../include/script.h"
 #include "../include/sound.h"
@@ -16,6 +18,7 @@
 #include "../include/new/helper_functions.h"
 #include "../include/new/catching.h"
 #include "../include/new/multi.h"
+#include "../include/new/roamer.h"
 #include "../include/new/Vanilla_Functions_battle.h"
 
 /*
@@ -1002,7 +1005,7 @@ void sp025_AddTextByPointer(void)
 	if (multiIndex <= 6)
 		gMultiChoice[multiIndex].stringPointer = gLoadPointer;
 #endif
-};
+}
 
 
 // special to buffer a pokemon species and size
@@ -1012,7 +1015,7 @@ void sp075_MeasurePokemon1(void)
 {
 	u16 species = Var8006;
 	BufferPokeNameSize(species, &Var8005);
-};
+}
 
 
 // measure pokemon special
@@ -1028,7 +1031,7 @@ u8 sp076_MeasurePokemon2(void)
 {
 	u16 species = Var8006;
 	return CalculateHeight(species, &Var8005);;
-};
+}
 
 
 
@@ -1043,13 +1046,13 @@ void sp09C_OldManBattleModifier(void)
 	gMain.savedCallback = ReturnToFieldContinueScriptPlayMapMusic;
 	gBattleTypeFlags = BATTLE_TYPE_OLD_MAN;
 	CreateBattleStartTask(8, 0);
-};
+}
 
 /* 
 // in Assembly/script.s
 void sp18B_DisplayImagesFromTable(void) {
 	return;
-};
+}
 */
 
 //Battle Specials//
@@ -1058,39 +1061,56 @@ void sp18B_DisplayImagesFromTable(void) {
 
 void sp051_WildShinyBattle(void) {
 	return;
-};
+}
 
 void sp052_TemporaryStatusInducer(void) {
 	return;
-};
+}
 
 void sp053_TemporaryStatusCanceller(void) {
 	return;
-};
+}
 
 void sp054_PermanentStatusInducer(void) {
 	return;
-};
+}
 
 void sp055_PermanentStatusCanceller(void) {
 	return;
-};
+}
 
-void sp056_RoamChanger(void) {
-	return;
-};
 
-void sp057_RoamCanceller(void) {
-	return;
-};
+//@Details: Buffers the map name where there is currently a swarm to buffer1.
+void sp056_GetMapNameOfCurrentSwarm(void) 
+{
+	GetMapName(ScriptStringVars[0], VarGet(SWARM_MAP_NAME_VAR), 0);
+}
+
+//@Details: Buffers the map name where the given roamer can be found to buffer1.
+//@Inputs:
+//		Var8000: Species
+//@Returns: 0 to given var if species is not roaming. 1 if it is and the name was buffered.
+bool8 sp057_GetMapNameWithSpeciesRoaming(void) 
+{
+	u8 mapGroup;
+	u8 mapNum;
+	u16 species = Var8000;
+	
+	if (!IsSpeciesRoaming(species))
+		return FALSE;
+		
+	GetMapGroupAndMapNumOfRoamer(species, &mapGroup, &mapNum);	
+	GetMapName(ScriptStringVars[0], Overworld_GetMapHeaderByGroupAndId(mapGroup, mapNum)->regionMapSectionId, 0);
+	return TRUE;
+}
 
 void sp058_WildDataSwitch(void) {
 	return;
-};
+}
 
 void sp059_WildDataSwitchCanceller(void) {
 	return;
-};
+}
 
 void sp0AC_LoadTrainerBDefeatText(void)
 {

@@ -11,6 +11,14 @@ enum
 	ROCK_SMASH_MONS_HEADER,
 };
 
+#define TILE_FLAG_ENCOUNTER_TILE 1
+#define TILE_FLAG_SURFABLE 2
+#define TILE_FLAG_WILD_DOUBLE 4
+#define TILE_FLAG_SHAKING 8
+
+#define ENCOUNTER_TYPE_LAND 0
+#define ENCOUNTER_TYPE_WATER 1
+
 //Exported Functions
 void CreateWildMon(u16 species, u8 level, u8 monHeaderIndex, bool8 purgeParty);
 void FishingWildEncounter(u8 rod);

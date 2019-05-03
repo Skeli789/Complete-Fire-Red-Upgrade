@@ -26,6 +26,8 @@ struct ScriptContext
     u8 keypad_override_direction;	// Locks player movement.
 };
 
+#define ScriptStringVars ((u8**) 0x83A7294) //Text buffers
+
 //extern struct ScriptEnvironment gScriptEnv1;	//03000EB0
 //extern struct ScriptEnvironment gScriptEnv2;	//03000F28
 

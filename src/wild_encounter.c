@@ -10,15 +10,11 @@
 #include "../include/constants/vars.h"
 
 #include "../include/new/helper_functions.h"
+#include "../include/new/roamer.h"
 #include "../include/new/wild_encounter.h"
 
 //Do shaking grass/dust clouds/water ripples
 //Chain Fishing
-
-#define TILE_FLAG_ENCOUNTER_TILE 1
-#define TILE_FLAG_SURFABLE 2
-#define TILE_FLAG_WILD_DOUBLE 4
-#define TILE_FLAG_SHAKING 8
 
 struct EncounterRate
 {
@@ -485,9 +481,9 @@ bool8 StandardWildEncounter(u16 currMetaTileBehavior, u16 previousMetaTileBehavi
                 return FALSE;
 			}
 
-            if (TryStartRoamerEncounter() == TRUE)
+            if (TryStartRoamerEncounter(ENCOUNTER_TYPE_LAND))
             {
-                roamer = &gSaveBlock1->roamer;
+                roamer = &gRoamers[gLastSelectedRoamer];
                 if (!IsWildLevelAllowedByRepel(roamer->level))
                     return FALSE;
 
@@ -529,9 +525,9 @@ bool8 StandardWildEncounter(u16 currMetaTileBehavior, u16 previousMetaTileBehavi
             else if (DoWildEncounterRateTest(waterMonsInfo->encounterRate, FALSE) != TRUE)
                 return FALSE;
 
-            if (TryStartRoamerEncounter() == TRUE)
+            if (TryStartRoamerEncounter(ENCOUNTER_TYPE_WATER) == TRUE)
             {
-                roamer = &gSaveBlock1->roamer;
+                roamer = &gRoamers[gLastSelectedRoamer];
                 if (!IsWildLevelAllowedByRepel(roamer->level))
                     return FALSE;
 
@@ -621,7 +617,7 @@ bool8 SweetScentWildEncounter(void)
         if (landMonsInfo == NULL)
 			return FALSE;
 
-        if (TryStartRoamerEncounter() == TRUE)
+        if (TryStartRoamerEncounter(ENCOUNTER_TYPE_LAND) == TRUE)
         {
             BattleSetup_StartRoamerBattle();
             return TRUE;
@@ -637,7 +633,7 @@ bool8 SweetScentWildEncounter(void)
         if (waterMonsInfo == NULL)
 			return FALSE;
 
-        if (TryStartRoamerEncounter() == TRUE)
+        if (TryStartRoamerEncounter(ENCOUNTER_TYPE_WATER) == TRUE)
         {
             BattleSetup_StartRoamerBattle();
             return TRUE;
