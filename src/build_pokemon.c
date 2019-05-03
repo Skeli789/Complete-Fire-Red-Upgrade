@@ -768,12 +768,12 @@ static u8 GetOpenWorldBadgeCount(void)
 
 
 u32 CheckShinyMon(u32 pid) {
-	u16 numerator = 1;	//default 1/4096 rate
+	u16 chance = 1;	//default 1/4096 rate
 	
 	if (CheckBagHasItem(ITEM_SHINY_CHARM, 1) > 0)
-		numerator = 3;
+		chance = 3;
 	
-	if (RandRange(0,4097) < numerator)
+	if (RandRange(0,4097) < chance)
 	{
 		// make shiny
 		u8 shinyRange = RandRange(0,8);
@@ -800,9 +800,9 @@ void CreateBoxMon(struct BoxPokemon *boxMon, u16 species, u8 level, u8 fixedIV, 
     else
 		personality = Random32();
 	
-	personality = CheckShinyMon(personality);
+	personality = CheckShinyMon(personality);	// shiny charm
+	
     SetBoxMonData(boxMon, MON_DATA_PERSONALITY, &personality);
-
     //Determine original trainer ID
     if (otIdType == OT_ID_RANDOM_NO_SHINY) //Pokemon cannot be shiny
     {
