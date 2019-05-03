@@ -173,6 +173,8 @@ FishingWildEncounter 8082FB0 1
 CheckStandardWildEncounter 80833B0 1
 ScrCmd_setwildbattle 806C368 1
 sp138_StartLegendaryBattle 807F9D8 0
+GetLocalWildMon 8082FE8 1
+GetLocalWaterMon 8083074 0
 
 ##Save Expansion Hooks
 HandleWriteSector 80D9870 2

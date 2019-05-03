@@ -15,6 +15,7 @@
 
 #include "../include/new/build_pokemon.h"
 #include "../include/new/dexnav.h"
+#include "../include/new/wild_encounter.h"
 
 
 /*
@@ -25,16 +26,11 @@ Known BUGS:
 	-GUI gets messed up in dark, flashable rooms
 */
 
-extern void CreateWildMon(u16 species, u8 level, u8 monHeaderIndex, bool8 purgeParty);
-extern void DoStandardWildBattle(void);
 extern void DexNavGuiHandler(void);
 extern u8 ExecDexNav(void);
 extern void TransferPlttBuffer(void);
 
 extern u8 GetPlayerDistance(s16 x, s16 y);
-
-extern const struct WildPokemonHeader* GetCurrentMapWildMonHeaderId(void);
-extern const struct WildPokemonHeader* GetCurrentMapWildMonDaytimeHeader(void);
 
 extern u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
 
@@ -913,10 +909,8 @@ void DexNavManageHUD(u8 taskId)
 // ===================================== // 
 u8 GetEncounterLevel(u16 species, u8 environment)
 {
-    //u8 index = GetWildDataIndexForMap();
-	const struct WildPokemonHeader* header = GetCurrentMapWildMonHeaderId();
-    if (header == NULL)
-		return 0xFF;
+    const struct WildPokemonInfo* landMonsInfo = LoadProperMonsData(LAND_MONS_HEADER);
+    const struct WildPokemonInfo* waterMonsInfo = LoadProperMonsData(WATER_MONS_HEADER);
 	
 	u8 min = 100;
     u8 max = 0;
@@ -924,54 +918,27 @@ u8 GetEncounterLevel(u16 species, u8 environment)
 	switch (environment)
 	{
 		case 0:	// grass
-		RETRY_LAND_HEADER:
-			if (header->landMonsInfo == NULL)
-			{
-				#ifdef TIME_ENABLED
-					header = GetCurrentMapWildMonDaytimeHeader();
-					if (header->landMonsInfo == NULL)
-						return 22;
-					goto RETRY_LAND_HEADER;
-				#else
-					return 22; // Hidden pokemon should only appear on walkable tiles or surf tiles
-				#endif
-			}
+			if (landMonsInfo == NULL)
+				return 22; // Hidden pokemon should only appear on walkable tiles or surf tiles
 						
 			for (u8 i = 0; i < 12; ++i)
 			{
-				struct WildPokemon monData = header->landMonsInfo->wildPokemon[i];
-				//if (header->landMonsInfo->wildPokemon[i].species == species)
+				struct WildPokemon monData = landMonsInfo->wildPokemon[i];
 				if (monData.species == species)
 				{
-					//min = (min < header->landMonsInfo->wildPokemon[i].minLevel) ? min : header->landMonsInfo->wildPokemon[i].minLevel;
-					//max = (max < header->landMonsInfo->wildPokemon[i].maxLevel) ? max : header->landMonsInfo->wildPokemon[i].maxLevel;
 					min = (min < monData.minLevel) ? min : monData.minLevel;
 					max = (max > monData.maxLevel) ? max : monData.maxLevel;
 				}
 			}
 			break;
-			//struct WildPokemon MonData = header->landMonsInfo->wildPokemon;
-			//if (MonData == 0)
-			//	return 22;
-			//break;
 			
 		case 1:	//water
-		RETRY_WATER_HEADER:
-			if (header->waterMonsInfo == NULL)
-			{
-				#ifdef TIME_ENABLED
-					header = GetCurrentMapWildMonDaytimeHeader();
-					if (header->waterMonsInfo == NULL)
-						return 22;
-					goto RETRY_WATER_HEADER;
-				#else
-					return 22; // Hidden pokemon should only appear on walkable tiles or surf tiles
-				#endif
-			}
+			if (waterMonsInfo == NULL)
+				return 22; // Hidden pokemon should only appear on walkable tiles or surf tiles
 
 			for (u8 i = 0; i < 5; ++i)
 			{
-				struct WildPokemon monData = header->waterMonsInfo->wildPokemon[i];
+				struct WildPokemon monData = waterMonsInfo->wildPokemon[i];
 				if (monData.species == species)
 				{
 					min = (min < monData.minLevel) ? min : monData.minLevel;
@@ -979,22 +946,20 @@ u8 GetEncounterLevel(u16 species, u8 environment)
 				}
 			}
 			break;
+
 		default:
 			return 22;
 	}
 	
     if (max == 0)
-	{
-        // Free dexnav display message
-        return 0xFF;
-    }
+        return 0xFF; // Free dexnav display message
 
     // mod div by 0 edge case.
     if (min == max)
         return min;
+	
     return (min + (Random() % (max - min)));
 };
-
 
 
 u8 DexNavGenerateMonLevel(u16 species, u8 searchLevel, u8 environment)
@@ -1229,22 +1194,15 @@ void DexNavGenerateMoveset(u16 species, u8 searchLevel, u8 encounterLevel, u16* 
 	
 	// generate a wild mon and copy moveset
 	#ifdef TANOBY_RUINS_ENABLED
-		const struct WildPokemonHeader* header = GetCurrentMapWildMonHeaderId();
+		const struct WildPokemonInfo* landMonsInfo = LoadProperMonsData(LAND_MONS_HEADER);
+		const struct WildPokemonInfo* waterMonsInfo = LoadProperMonsData(WATER_MONS_HEADER);
 		u8 wildMonIndex = 0;
-		if (header->landMonsInfo != NULL)
+		
+		if (landMonsInfo != NULL)
 			wildMonIndex = ChooseWildMonIndex_Land();
-		else if (header->waterMonsInfo != NULL)
+		else if (waterMonsInfo != NULL)
 			wildMonIndex = ChooseWildMonIndex_WaterRock();
-		else
-		{
-			#ifdef TIME_ENABLED
-			header = GetCurrentMapWildMonDaytimeHeader();
-			if (header->landMonsInfo != NULL)
-				wildMonIndex = ChooseWildMonIndex_Land();
-			else if (header->waterMonsInfo != NULL)
-				wildMonIndex = ChooseWildMonIndex_WaterRock();
-			#endif
-		}
+
 		CreateWildMon(species, encounterLevel, wildMonIndex, FALSE);
 	#else
 		CreateWildMon(species, encounterLevel, 0, FALSE);
@@ -1916,28 +1874,30 @@ void DexNavPopulateEncounterList(void)
     u8 grassIndex = 0;
 	u8 sizeGrass = 12;
    
-   const struct WildPokemonHeader* header = GetCurrentMapWildMonHeaderId();
-   if (header != NULL && header->landMonsInfo != NULL)
-   {
-	   for (int i = 0; i < sizeGrass; ++i)
-	   {
-			if (!(SpeciesInArray(header->landMonsInfo->wildPokemon[i].species, sizeGrass)))
+	const struct WildPokemonInfo* landMonsInfo = LoadProperMonsData(LAND_MONS_HEADER);
+	const struct WildPokemonInfo* waterMonsInfo = LoadProperMonsData(WATER_MONS_HEADER);
+	
+	if (landMonsInfo != NULL)
+	{
+		for (int i = 0; i < sizeGrass; ++i)
+		{
+			if (!(SpeciesInArray(landMonsInfo->wildPokemon[i].species, sizeGrass)))
 			{
-				(*DNavState)->grassSpecies[grassIndex] = header->landMonsInfo->wildPokemon[i].species;
+				(*DNavState)->grassSpecies[grassIndex] = landMonsInfo->wildPokemon[i].species;
 				grassIndex++;
 			}
-	   }
-   }
+		}
+	}
    
    u8 waterIndex = 0;
    u8 sizeWater = 5;
-   if (header != NULL && header->waterMonsInfo != NULL)
+   if (waterMonsInfo != NULL)
    {
 	   for (int i = 0; i < sizeWater; ++i)
 	   {
-			if (!(SpeciesInArray(header->waterMonsInfo->wildPokemon[i].species, sizeWater)))
+			if (!(SpeciesInArray(waterMonsInfo->wildPokemon[i].species, sizeWater)))
 			{
-				(*DNavState)->waterSpecies[waterIndex] = header->waterMonsInfo->wildPokemon[i].species;
+				(*DNavState)->waterSpecies[waterIndex] = waterMonsInfo->wildPokemon[i].species;
 				waterIndex++;
 			}
 	   }
@@ -2256,10 +2216,3 @@ u8 PokeToolsFunc(void)
     CreateTask(ToolSelection, 0);
     return 1;
 }
-
-
-
-
-
-
-
