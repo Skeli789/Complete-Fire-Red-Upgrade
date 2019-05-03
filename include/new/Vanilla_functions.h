@@ -21,7 +21,7 @@ void __attribute__((long_call)) EmitSetMonData(u8 a, u8 request, u8 c, u8 bytes,
 void __attribute__((long_call)) ZeroPlayerPartyMons(void);
 void __attribute__((long_call)) ZeroEnemyPartyMons(void);
 void __attribute__((long_call)) CreateMon(struct Pokemon *mon, u16 species, u8 level, u8 fixedIV, u8 hasFixedPersonality, u32 fixedPersonality, u8 otIdType, u32 fixedOtId);
-void __attribute__((long_call)) CreateBoxMon(struct Pokemon *mon, u16 species, u8 level, u8 fixedIV, u8 hasFixedPersonality, u32 fixedPersonality, u8 otIdType, u32 fixedOtId);
+//void __attribute__((long_call)) CreateBoxMon(struct Pokemon *mon, u16 species, u8 level, u8 fixedIV, u8 hasFixedPersonality, u32 fixedPersonality, u8 otIdType, u32 fixedOtId);
 void __attribute__((long_call)) CreateMonWithNature(struct Pokemon *mon, u16 species, u8 level, u8 fixedIV, u8 nature);
 void __attribute__((long_call)) CreateMonWithGenderNatureLetter(struct Pokemon *mon, u16 species, u8 level, u8 fixedIV, u8 gender, u8 nature, u8 unownLetter);
 void __attribute__((long_call)) CalculateMonStats(pokemon_t *mon);

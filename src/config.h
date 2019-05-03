@@ -89,6 +89,7 @@ enum
 #define KANTO_DEX_COUNT 151
 #define NATIONAL_DEX_COUNT 386
 #define MAX_NUM_POKEMON SPECIES_EGG + 1
+#define EGG_HATCH_LEVEL 5
 
 #define MAX_LEVEL 100 //Also change this in the file “special_inserts.asm” found in the root
 #define NUM_TRAINER_CLASSES 107

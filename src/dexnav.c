@@ -13,6 +13,8 @@
 #include "../include/constants/species.h"
 #include "../include/constants/items.h"
 #include "../include/random.h"
+#include "../include/pokemon.h"
+
 
 #include "../include/new/build_pokemon.h"
 #include "../include/new/dexnav.h"
@@ -31,6 +33,7 @@ extern void DoStandardWildBattle(void);
 extern void DexNavGuiHandler(void);
 extern u8 ExecDexNav(void);
 extern void TransferPlttBuffer(void);
+extern void CreateBoxMon(struct Pokemon *boxMon, u16 species, u8 level, u8 fixedIV, u8 hasFixedPersonality, u32 fixedPersonality, u8 otIdType, u32 fixedOtId);
 
 extern u8 GetPlayerDistance(s16 x, s16 y);
 

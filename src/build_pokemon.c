@@ -9,6 +9,8 @@
 #include "../include/new/multi.h"
 #include "../include/random.h"
 #include "../include/constants/items.h"
+#include "../include/constants/maps.h"
+#include "../include/pokemon.h"
 
 #include "Tables/Trainers_With_EVs_Table.h"
 
@@ -17,6 +19,7 @@ extern u8 gClassPokeBalls[NUM_TRAINER_CLASSES];
 extern void GetFrontierTrainerName(u8* dst, u16 trainerId, u8 battlerNum);
 extern void MultiInitPokemonOrder(void);
 extern u16 RandRange(u16 min, u16 max);
+extern void GiveBoxMonInitialMoveset(struct BoxPokemon* boxMon);
 
 u8 CreateNPCTrainerParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, u8 side);
 u8 BuildFrontierParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, bool8 ForPlayer, u8 side);
@@ -31,6 +34,7 @@ bool8 PokemonTierBan(u16 species, u16 item, struct BattleTowerSpread* spread, po
 u8 GetHighestMonLevel(pokemon_t* party);
 u8 GetMonPokeBall(struct PokemonSubstruct0* data);
 void SetMonPokeBall(struct PokemonSubstruct0* data, u8 ballId);
+void CreateBoxMon(struct BoxPokemon *boxMon, u16 species, u8 level, u8 fixedIV, u8 hasFixedPersonality, u32 fixedPersonality, u8 otIdType, u32 fixedOtId);
 
 #ifdef OPEN_WORLD_TRAINERS
 
@@ -763,14 +767,8 @@ static u8 GetOpenWorldBadgeCount(void)
 #endif
 
 
-u32 CheckShinyMon(bool8 hasFixedPersonality, u32 personality) {
+u32 CheckShinyMon(u32 pid) {
 	u16 numerator = 1;	//default 1/4096 rate
-	u32 pid;
-	
-	if (hasFixedPersonality)
-		pid = personality;
-	else
-		pid = Random32();
 	
 	if (CheckBagHasItem(ITEM_SHINY_CHARM, 1) > 0)
 		numerator = 3;
@@ -787,4 +785,104 @@ u32 CheckShinyMon(bool8 hasFixedPersonality, u32 personality) {
 	}
 	return pid;
 };
+
+
+void CreateBoxMon(struct BoxPokemon *boxMon, u16 species, u8 level, u8 fixedIV, bool8 hasFixedPersonality, u32 fixedPersonality, u8 otIdType, u32 fixedOtId) {
+    u8 speciesName[POKEMON_NAME_LENGTH + 1];
+    u32 personality;
+    u32 value;
+    u16 checksum;
+
+    ZeroBoxMonData(boxMon);
+
+    if (hasFixedPersonality)
+        personality = fixedPersonality;
+    else
+		personality = Random32();
+	
+	personality = CheckShinyMon(personality);
+    SetBoxMonData(boxMon, MON_DATA_PERSONALITY, &personality);
+
+    //Determine original trainer ID
+    if (otIdType == OT_ID_RANDOM_NO_SHINY) //Pokemon cannot be shiny
+    {
+        u32 shinyValue;
+        do
+        {
+            value = Random32();
+            shinyValue = HIHALF(value) ^ LOHALF(value) ^ HIHALF(personality) ^ LOHALF(personality);
+        } while (shinyValue < 8);
+    }
+    else if (otIdType == OT_ID_PRESET) //Pokemon has a preset OT ID
+    {
+        value = fixedOtId;
+    }
+    else //Player is the OT
+    {
+        value = gSaveBlock2->playerTrainerId[0]
+              | (gSaveBlock2->playerTrainerId[1] << 8)
+              | (gSaveBlock2->playerTrainerId[2] << 16)
+              | (gSaveBlock2->playerTrainerId[3] << 24);
+    }
+
+    SetBoxMonData(boxMon, MON_DATA_OT_ID, &value);
+
+    checksum = CalculateBoxMonChecksum(boxMon);
+    SetBoxMonData(boxMon, MON_DATA_CHECKSUM, &checksum);
+    EncryptBoxMon(boxMon);
+    GetSpeciesName(speciesName, species);
+    SetBoxMonData(boxMon, MON_DATA_NICKNAME, speciesName);
+    SetBoxMonData(boxMon, MON_DATA_LANGUAGE, &gGameLanguage);
+    SetBoxMonData(boxMon, MON_DATA_OT_NAME, gSaveBlock2->playerName);
+    SetBoxMonData(boxMon, MON_DATA_SPECIES, &species);
+    SetBoxMonData(boxMon, MON_DATA_EXP, &gExperienceTables[gBaseStats[species].growthRate][level]);
+    SetBoxMonData(boxMon, MON_DATA_FRIENDSHIP, &gBaseStats[species].friendship);
+    value = GetCurrentRegionMapSectionId();
+    SetBoxMonData(boxMon, MON_DATA_MET_LOCATION, &value);
+    SetBoxMonData(boxMon, MON_DATA_MET_LEVEL, &level);
+    SetBoxMonData(boxMon, MON_DATA_MET_GAME, &gGameVersion);
+    value = ITEM_POKE_BALL;
+    SetBoxMonData(boxMon, MON_DATA_POKEBALL, &value);
+    SetBoxMonData(boxMon, MON_DATA_OT_GENDER, &gSaveBlock2->playerGender);
+
+    if (fixedIV < 32)
+    {
+        SetBoxMonData(boxMon, MON_DATA_HP_IV, &fixedIV);
+        SetBoxMonData(boxMon, MON_DATA_ATK_IV, &fixedIV);
+        SetBoxMonData(boxMon, MON_DATA_DEF_IV, &fixedIV);
+        SetBoxMonData(boxMon, MON_DATA_SPEED_IV, &fixedIV);
+        SetBoxMonData(boxMon, MON_DATA_SPATK_IV, &fixedIV);
+        SetBoxMonData(boxMon, MON_DATA_SPDEF_IV, &fixedIV);
+    }
+    else
+    {
+        u32 iv;
+        value = Random();
+
+        iv = value & 0x1F;
+        SetBoxMonData(boxMon, MON_DATA_HP_IV, &iv);
+        iv = (value & 0x3E0) >> 5;
+        SetBoxMonData(boxMon, MON_DATA_ATK_IV, &iv);
+        iv = (value & 0x7C00) >> 10;
+        SetBoxMonData(boxMon, MON_DATA_DEF_IV, &iv);
+
+        value = Random();
+
+        iv = value & 0x1F;
+        SetBoxMonData(boxMon, MON_DATA_SPEED_IV, &iv);
+        iv = (value & 0x3E0) >> 5;
+        SetBoxMonData(boxMon, MON_DATA_SPATK_IV, &iv);
+        iv = (value & 0x7C00) >> 10;
+        SetBoxMonData(boxMon, MON_DATA_SPDEF_IV, &iv);
+    }
+
+    if (gBaseStats[species].ability2)
+    {
+        value = personality & 1;
+        SetBoxMonData(boxMon, MON_DATA_ALT_ABILITY, &value);
+    }
+
+    GiveBoxMonInitialMoveset(boxMon);
+};
+
 

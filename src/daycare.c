@@ -346,13 +346,13 @@ void InheritIVs(struct Pokemon *egg, struct DayCare *daycare) {
 	
 /*			original routine
     // Initialize a list of IV indices.
-    for (i = 0; i < NUM_STATS; i++)
+    for (i = 0; i < NUM_STATS; ++i)
     {
         availableIVs[i] = i;
     }
 
     // Select the num IVs that will be inherited.
-    for (i = 0; i < ARRAY_COUNT(selectedIvs); i++)
+    for (i = 0; i < ARRAY_COUNT(selectedIvs); ++i)
     {
         // Randomly pick an IV from the available list.
         selectedIvs[i] = availableIVs[Random() % (NUM_STATS - i)];
@@ -362,7 +362,7 @@ void InheritIVs(struct Pokemon *egg, struct DayCare *daycare) {
     }
 
     // Determine which parent each of the selected IVs should inherit from.
-    for (i = 0; i < ARRAY_COUNT(selectedIvs); i++)
+    for (i = 0; i < ARRAY_COUNT(selectedIvs); ++i)
     {
         whichParent[i] = Random() % 2;
     }
@@ -561,34 +561,34 @@ void CreatedHatchedMon(struct Pokemon *egg, struct Pokemon *temp) {
     u32 ivs[NUM_STATS];
 
 
-    species = GetMonData(egg, MON_DATA_SPECIES);
+    species = GetMonData(egg, MON_DATA_SPECIES, NULL);
 
-    for (i = 0; i < 4; i++)
+    for (i = 0; i < 4; ++i)
     {
-        moves[i] = GetMonData(egg, MON_DATA_MOVE1 + i);
+        moves[i] = GetMonData(egg, MON_DATA_MOVE1 + i, NULL);
     }
 
-    personality = GetMonData(egg, MON_DATA_PERSONALITY);
+    personality = GetMonData(egg, MON_DATA_PERSONALITY, NULL);
 
-    for (i = 0; i < NUM_STATS; i++)
+    for (i = 0; i < NUM_STATS; ++i)
     {
-        ivs[i] = GetMonData(egg, MON_DATA_HP_IV + i);
+        ivs[i] = GetMonData(egg, MON_DATA_HP_IV + i, NULL);
     }
 
-    language = GetMonData(egg, MON_DATA_LANGUAGE);
-    gameMet = GetMonData(egg, MON_DATA_MET_GAME);
-    markings = GetMonData(egg, MON_DATA_MARKINGS);
-    pokerus = GetMonData(egg, MON_DATA_POKERUS);
-    obedience = GetMonData(egg, MON_DATA_OBEDIENCE);
+    language = GetMonData(egg, MON_DATA_LANGUAGE, NULL);
+    gameMet = GetMonData(egg, MON_DATA_MET_GAME, NULL);
+    markings = GetMonData(egg, MON_DATA_MARKINGS, NULL);
+    pokerus = GetMonData(egg, MON_DATA_POKERUS, NULL);
+    obedience = GetMonData(egg, MON_DATA_OBEDIENCE, NULL);
 
     CreateMon(temp, species, EGG_HATCH_LEVEL, 32, TRUE, personality, 0, 0);
 
-    for (i = 0; i < 4; i++)
+    for (i = 0; i < 4; ++i)
     {
         SetMonData(temp, MON_DATA_MOVE1 + i,  &moves[i]);
     }
 
-    for (i = 0; i < NUM_STATS; i++)
+    for (i = 0; i < NUM_STATS; ++i)
     {
         SetMonData(temp, MON_DATA_HP_IV + i,  &ivs[i]);
     }
@@ -604,8 +604,5 @@ void CreatedHatchedMon(struct Pokemon *egg, struct Pokemon *temp) {
     SetMonData(temp, MON_DATA_OBEDIENCE, &obedience);
 
     *egg = *temp;
-}
-
-
-
+};
 
