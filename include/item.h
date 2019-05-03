@@ -6,19 +6,19 @@ typedef void (*ItemUseFunc)(u8);
 struct Item
 {
     u8 name[14];
-    u16 itemId;
-    u16 price;
-    u8 holdEffect;
-    u8 holdEffectParam;
-    const u8 *description;
-    u8 importance;
-    u8 unk19;
-    u8 pocket;
-    u8 type;
-    ItemUseFunc fieldUseFunc;
-    u8 battleUsage;
-    ItemUseFunc battleUseFunc;
-    u8 secondaryId;
+    u16 itemId;	//0xE
+    u16 price;	//0x10
+    u8 holdEffect;	//0x12
+    u8 holdEffectParam;	//0x13
+    const u8 *description;	//0x14
+    u8 importance;	//0x18
+    u8 unk19;		//0x19
+    u8 pocket;		//0x1a
+    u8 type;		//0x1b
+    ItemUseFunc fieldUseFunc;	//0x1c
+    u8 battleUsage;	//0x20
+    ItemUseFunc battleUseFunc;	//0x24
+    u8 secondaryId;	//0x28
 };
 
 struct BagPocket

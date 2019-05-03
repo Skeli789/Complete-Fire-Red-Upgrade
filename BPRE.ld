@@ -10,6 +10,8 @@ sBattleIntroSlideFuncs = 0x83E7CD4;
 gUnownDistributionByChamber = 0x83CA71C;
 stepspeeds = 0x083A719C;
 stepspeed_seq_length = 0x083A71B0;
+//gTMHMLearnsets = 0x8252bc8;
+//gTMHMMoves = 0x0845A80C;
 
 gMapHeader = 0x2036DFC;
 gWeatherPtr = 0x2037F34;

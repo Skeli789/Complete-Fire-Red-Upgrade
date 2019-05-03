@@ -320,3 +320,7 @@ PokedexLoadAlternateWeightHook 08105A58 0
 
 ##Pokemon Hooks
 CreateBoxMon 0803DAC4 3
+
+##TM/HM Expansion
+#CanMonLearnTMHM 08043C2C 2
+#ItemIdToBattleMoveId 08125A78 1

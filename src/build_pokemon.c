@@ -773,7 +773,7 @@ u32 CheckShinyMon(u32 pid) {
 	if (CheckBagHasItem(ITEM_SHINY_CHARM, 1) > 0)
 		chance = 3;
 	
-	if (RandRange(0,4097) < chance)
+	if (RandRange(0,4097) < chance)		// nominal 1/4096
 	{
 		// make shiny
 		u8 shinyRange = RandRange(0,8);
