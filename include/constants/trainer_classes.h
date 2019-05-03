@@ -4,7 +4,7 @@ enum
 {
 	CLASS_PKMN_TRAINER_1,	//0x0
 	CLASS_PKMN_TRAINER_2,	//0x1
-	CLASS_AQUA_LEADER,		//0x2	
+	CLASS_AQUA_LEADER,		//0x2
 	CLASS_TEAM_AQUA,		//0x3
 	CLASS_AROMA_LADY_RS,	//0x4
 	CLASS_RUIN_MANIAC_RS,	//0x5
@@ -146,9 +146,8 @@ enum
 #define CLASS_ROUGHNECK 		0x47
 #define CLASS_BOSS 				0x53
 #define CLASS_SHADOW			0x55
-#define CLASS_SHADOW 			0x55
 #define CLASS_ACE_TRAINER 		0x56
 #define CLASS_MEDIUM 			0x5B
-#define CLASS_ACEDUO 			0x5D
+#define CLASS_ACE_DUO 			0x5D
 
 #endif

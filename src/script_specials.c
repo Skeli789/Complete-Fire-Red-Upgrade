@@ -2,19 +2,21 @@
 #include "../include/fieldmap.h"
 #include "../include/list_menu.h"
 
-#include "../include/new/helper_functions.h"
-#include "../include/new/catching.h"
-#include "../include/new/Vanilla_Functions.h"
-#include "../include/new/Vanilla_Functions_battle.h"
 #include "../include/pokemon_storage_system.h"
 #include "../include/new_menu_helpers.h"
 #include "../include/hall_of_fame.h"
-#include "../include/window.h"
 #include "../include/save.h"
+#include "../include/script.h"
 #include "../include/sound.h"
-#include "../include/text.h"
 #include "../include/string_util.h"
+#include "../include/text.h"
+#include "../include/window.h"
 #include "../include/constants/pokedex.h"
+
+#include "../include/new/helper_functions.h"
+#include "../include/new/catching.h"
+#include "../include/new/multi.h"
+#include "../include/new/Vanilla_Functions_battle.h"
 
 /*
 NOTES: 
@@ -33,6 +35,7 @@ TO DO:
 
 
 extern u8 AddPalRef(u8 Type, u16 PalTag);
+extern u8 BuildFrontierParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, bool8 ForPlayer, u8 side);
 
 
 //Pokemon Specials//
@@ -655,75 +658,116 @@ void sp09E_NicknamePokemon(void) {
 //Party Specials//
 ///////////////////////////////////////////////////////////////////////////////////
 
-// erase pokemon from party, or entire party
-void sp062_PokemonEraser(void) {
+//Erase pokemon from party, or entire party
+void sp062_PokemonEraser(void) 
+{
 	u8 slot = Var8004;
-	if (slot == 0xf)
+	if (slot == 0xF)
 		ZeroPlayerPartyMons();
 	else
 	{
 		PokemonSlotPurge(&gPlayerParty[slot]);
 		gPlayerPartyCount -= 1;
-		// shift later slots up one
-		for (u8 i = slot; i <= gPlayerPartyCount; ++i)
-		{
-			// copy slot+i+1 to slot+i up to numPokes - 2
-			CopyMon(&gPlayerParty[i],&gPlayerParty[i+1],100);
-		}
+		CompactPartySlots();
 	}
 };
 
 
-// check status of pokemon in slot var8004
-u8 sp063_StatusChecker(void) {
-	u8 slot = Var8004;	
-	return (GetMonData(&gPlayerParty[slot], MON_DATA_STATUS, 0));
+//Check status of pokemon in slot var8004
+u8 sp063_StatusChecker(void) 
+{
+	return gPlayerParty[Var8004].condition;
 };
 
 
+static void TryAssignStatusToMon(pokemon_t* mon, u32 status)
+{
+	if (status & STATUS1_SLEEP && CanPartyMonBePutToSleep(mon))
+		mon->condition = STATUS1_SLEEP;
+	else if (status & STATUS1_POISON && CanPartyMonBePoisoned(mon))
+		mon->condition = STATUS1_POISON;
+	else if (status & STATUS1_BURN && CanPartyMonBeBurned(mon))
+		mon->condition = STATUS1_BURN;
+	else if (status & STATUS1_FREEZE && CanPartyMonBeFrozen(mon))
+		mon->condition = STATUS1_FREEZE;
+	else if (status & STATUS1_PARALYSIS && CanPartyMonBeParalyzed(mon))
+		mon->condition = STATUS1_PARALYSIS;
+	else if (status & STATUS1_TOXIC_POISON && CanPartyMonBePoisoned(mon))
+		mon->condition = STATUS1_TOXIC_POISON;
+}
+
 // Inflict a status to affect a party member or entire party
-void sp064_InflictStatus(void) {
+void sp064_InflictStatus(void) 
+{
 	u8 slot = Var8004;
+	u8 status = Var8005;
 	u8 i;
-	if (Var8005 == 0xf)
-		for (i = 0; i <= gPlayerPartyCount-1; ++i)
+	
+	if (!Var8006)
+	{
+		if (slot == 0xF)
 		{
-			SetMonData(&gPlayerParty[i], MON_DATA_STATUS, &Var8005);
+			for (i = 0; i < gPlayerPartyCount; ++i)
+				gPlayerParty[i].condition = status;
 		}
-	else
-		SetMonData(&gPlayerParty[slot], MON_DATA_STATUS, &Var8005);
-	return;
+		else
+			gPlayerParty[slot].condition = status;
+	}
+	else //Only assign status if the mon can actually get that status condition.
+	{
+		if (slot == 0xF)
+		{
+			for (i = 0; i < gPlayerPartyCount; ++i)
+				TryAssignStatusToMon(&gPlayerParty[i], status);
+		}
+		else
+			TryAssignStatusToMon(&gPlayerParty[slot], status);
+	}
 };
 
 
 // check slot pokemon's HP
-u16 sp065_CheckMonHP(void) {
-	u8 slot = Var8004;
-	return GetMonData(&gPlayerParty[slot], MON_DATA_HP, 0);
+u16 sp065_CheckMonHP(void) 
+{
+	return gPlayerParty[Var8004].hp;
 };
 
+static void InflictPartyDamageOrHeal(pokemon_t* mon, u16 damage, u8 type)
+{
+	s32 currHP = mon->hp;
+	
+	if (type == 1) //Heal
+		currHP = currHP +  damage;
+	else
+		currHP = currHP -  damage;
+			
+	if (currHP < 0)
+		currHP = 0;
+	else if (currHP > mon->maxHP)
+		currHP = mon->maxHP;
+			
+	mon->hp = currHP;
+}
 
 // inflict damage on a party pokemon, or entire party
 void sp066_InflictPartyDamage(void) {
 	u8 slot = Var8004;
-	s16 dmg = Var8005;
+	u16 dmg = Var8005;
 	u8 switcher = Var8006;	//1 to heal, else damage
-	u16 currHP;
+	
 	if (slot == 0xf)
 	{
-		u8 i;
-		for (i = 0; i <= gPlayerPartyCount-1; ++i)
-		{
-			currHP = GetMonData(&gPlayerParty[slot], MON_DATA_HP, 0);
-			if (switcher == 1)
-				Var8006 = currHP + dmg;
-			else
-				Var8006 = currHP - dmg;
-			SetMonData(&gPlayerParty[slot], MON_DATA_HP, &Var8006);
-		}
+		for (int i = 0; i < gPlayerPartyCount; ++i)
+			InflictPartyDamageOrHeal(&gPlayerParty[i], dmg, switcher);
 	}
-	return;
+	else
+		InflictPartyDamageOrHeal(&gPlayerParty[slot], dmg, switcher);
 };
+
+void sp067_GenerateRandomBattleTowerTeam(void)
+{
+	BuildFrontierParty(gPlayerParty, 0, TRUE, TRUE, B_SIDE_PLAYER);
+}
 
 
 //Key Specials//
@@ -734,7 +778,8 @@ void sp066_InflictPartyDamage(void) {
 //0x1 if A pressed
 //0x2 if B pressed
 //0x3 if both are pressed
-u16 sp02B_CheckABButtons(void) {
+u16 sp02B_CheckABButtons(void) 
+{
 	return (~(gKeyReg) & 3);
 };
 
@@ -748,8 +793,8 @@ u16 sp02B_CheckABButtons(void) {
 //0x6 if up-right is pressed
 //0x7 if down-left is pressed
 //0x8 if down-right is pressed
-u16 sp02C_CheckDPad(void) {
-	
+u16 sp02C_CheckDPad(void) 
+{	
 	switch(~(gKeyReg) & 0xFF) {
 		case DPAD_UP:
 			return 1;
@@ -776,7 +821,8 @@ u16 sp02C_CheckDPad(void) {
 //0x1 if select is pressed
 //0x2 if start is pressed
 //0x3 if both are pressed
-u16 sp02D_CheckStartSelect(void) {
+u16 sp02D_CheckStartSelect(void) 
+{
 	return ((~(gKeyReg) >> 2) & 3);
 };
 
@@ -785,59 +831,59 @@ u16 sp02D_CheckStartSelect(void) {
 //0x1 if R is pressed
 //0x2 if L is pressed
 //0x3 if both are pressed
-u16 sp02E_CheckLRButtons(void) {
+u16 sp02E_CheckLRButtons(void) 
+{
 	return (~(gKeyReg) >> 8) & 3;
 };
 
-void sp02F_KeyDump(void) {
+void sp02F_KeyDump(void) 
+{
 	Var800D = ~(gKeyReg) & 0x3FF;
 };
 
 // Inputs:
 //		var8004: key(s) to force 
 //		var8005: num times to 'press'
-void sp0C9_ForceOneKeyInput(void) {
-	#ifdef SAVE_BLOCK_EXPANSION
-		gKeypadSetter->keyMapToForce = Var8004;
-		gKeypadSetter->keyForcingCounter = Var8005;
-		gKeypadSetter->keyFlags |= 1;
-	#else
-		return;
-	#endif
+void sp0C9_ForceOneKeyInput(void) 
+{
+#ifdef SAVE_BLOCK_EXPANSION
+	gKeypadSetter->keyMapToForce = Var8004;
+	gKeypadSetter->keyForcingCounter = Var8005;
+	gKeypadSetter->keyFlags |= 1;
+#endif
 };
 
-void sp0CA_IgnoreKeys(void) {
-	#ifdef SAVE_BLOCK_EXPANSION
-		gKeypadSetter->keysToIgnore = Var8004;
-		gKeypadSetter->keyFlags |= 2;
-	#else
-		return;
-	#endif
+void sp0CA_IgnoreKeys(void) 
+{
+#ifdef SAVE_BLOCK_EXPANSION
+	gKeypadSetter->keysToIgnore = Var8004;
+	gKeypadSetter->keyFlags |= 2;
+#endif
 };
 
-void sp0CB_PlaceKeyScript(void) {
-	#ifdef SAVE_BLOCK_EXPANSION
-		u16 key = Var8004;
-		gKeypadSetter->keyToRunScript = key;
-		if (key == 0)
-		{
-			gKeypadSetter->scriptToRun = (u32) 0;
-			gKeypadSetter->keyFlags &= (0xfb);
-		}
-		else
-		{
-			gKeypadSetter->scriptToRun = gLoadPointer;
-			gKeypadSetter->keyFlags |= 4;
-		}
-	#else
-		return;
-	#endif
+void sp0CB_PlaceKeyScript(void) 
+{
+#ifdef SAVE_BLOCK_EXPANSION
+	u16 key = Var8004;
+	gKeypadSetter->keyToRunScript = key;
+	if (key == 0)
+	{
+		gKeypadSetter->scriptToRun = 0;
+		gKeypadSetter->keyFlags &= 0xFB;
+	}
+	else
+	{
+		gKeypadSetter->scriptToRun = gLoadPointer;
+		gKeypadSetter->keyFlags |= 4;
+	}
+#endif
 };
 
 //Variable Math Specials//
 ///////////////////////////////////////////////////////////////////////////////////
 
-u16 sp03E_AddVariables(void) {
+u16 sp03E_AddVariables(void) 
+{
 	u16 var1 = Var8004; //Var contained in Var8004
 	u16 var2 = Var8005; //Var contained in Var8005
 	bool8 overflow = FALSE;
@@ -847,36 +893,40 @@ u16 sp03E_AddVariables(void) {
 	
 	u32 sum = var1 + var2;
 	
-	if (sum > 0xFFFF) {
+	if (sum > 0xFFFF) 
+	{
 		overflow = TRUE;
 		sum = 0xFFFF;
 	}
 	
-	VarSet(Var8004, sum); //Set var in Var8004
+	Var8004 = sum; //Set var in Var8004
 	return overflow;
 };
 
-u16 sp03F_SubtractVariables(void) {
+u16 sp03F_SubtractVariables(void) 
+{
 	u16 var1 = Var8004; //Var contained in Var8004
 	u16 var2 = Var8005; //Var contained in Var8005
-	bool8 overflow = FALSE;
+	bool8 underflow = FALSE;
 	u32 diff;
 	
 	var1 = VarGet(var1);
 	var2 = VarGet(var2);
 	
-	if (var2 > var1) {
-		overflow = TRUE;
+	if (var2 > var1) 
+	{
+		underflow = TRUE;
 		diff = 0;
 	}
 	else
 		diff = var1 - var2;
 	
-	VarSet(Var8004, diff); //Set var in Var8004
-	return overflow;
+	Var8004 = diff; //Set var in Var8004
+	return underflow;
 };
 
-u16 sp040_MultiplyVariables(void) {
+u16 sp040_MultiplyVariables(void) 
+{
 	u16 var1 = Var8004; //Var contained in Var8004
 	u16 var2 = Var8005; //Var contained in Var8005
 	bool8 overflow = FALSE;
@@ -887,7 +937,8 @@ u16 sp040_MultiplyVariables(void) {
 	
 	prod = var1 * var2;
 	
-	if (prod > 0xFFFF) {
+	if (prod > 0xFFFF) 
+	{
 		prod = 0xFFFF;
 		overflow = TRUE;
 	}
@@ -897,22 +948,26 @@ u16 sp040_MultiplyVariables(void) {
 };
 
 
-u16 sp041_DivideVariables(void) {
-	Var8004 = udivsi(Var8004, Var8005);
-	return (umodsi(Var8004, Var8005));
+u16 sp041_DivideVariables(void) 
+{
+	Var8004 = Var8004 / Var8005;
+	return Var8004 % Var8005; //Return remainder
 };
 
 
-u16 sp042_ANDVariables(void) {
-	return (Var8004 & Var8005);
+u16 sp042_ANDVariables(void) 
+{
+	return Var8004 & Var8005;
 };
 
-u16 sp043_ORVariables(void) {	
-	return (Var8004 | Var8005);
+u16 sp043_ORVariables(void) 
+{	
+	return Var8004 | Var8005;
 };
 
-u16 sp044_XORVariables(void) {
-	return (Var8004 ^ Var8005);
+u16 sp044_XORVariables(void) 
+{
+	return Var8004 ^ Var8005;
 };
 
 //Other Specials//
@@ -924,15 +979,13 @@ u16 sp044_XORVariables(void) {
 //		special 0x24
 // would load a multichoice pointer to 0x8905040
 // personally, special 0x25 is much better/easier to use
-void sp024_AddTextByVariable(void) {
+void sp024_AddTextByVariable(void) 
+{
 #ifdef SAVE_BLOCK_EXPANSION
 	u8 multiIndex = Var8006;
 	u32 stringPointer = ((Var8004 << 16) | Var8005);
-	if (multiIndex > 6)
-		return;
-	gMultiChoice[multiIndex].stringPointer = stringPointer;
-#else
-	return;
+	if (multiIndex <= 6)
+		gMultiChoice[multiIndex].stringPointer = stringPointer;
 #endif
 };
 
@@ -942,14 +995,12 @@ void sp024_AddTextByVariable(void) {
 //		setvar 0x8006 0x0
 //		loadpointer 0x0 @string
 //		special 0x25
-void sp025_AddTextByPointer(void) {
+void sp025_AddTextByPointer(void) 
+{
 #ifdef SAVE_BLOCK_EXPANSION
 	u8 multiIndex = Var8006;
-	if (multiIndex > 6)
-		return;
-	gMultiChoice[multiIndex].stringPointer = gLoadPointer;
-#else
-	return;
+	if (multiIndex <= 6)
+		gMultiChoice[multiIndex].stringPointer = gLoadPointer;
 #endif
 };
 
@@ -957,7 +1008,8 @@ void sp025_AddTextByPointer(void) {
 // special to buffer a pokemon species and size
 // Inputs: 	Var8005: variable to get measurements from/store to
 // 			Var8006: species to measure
-void sp075_MeasurePokemon1(void) {
+void sp075_MeasurePokemon1(void) 
+{
 	u16 species = Var8006;
 	BufferPokeNameSize(species, &Var8005);
 };
@@ -965,14 +1017,15 @@ void sp075_MeasurePokemon1(void) {
 
 // measure pokemon special
 // Inputs: 
-// 		var8005: variable the measurement was in (from special 0x75)
-// 		var8006: species
+// 		Var8005: Variable the measurement was in (from special 0x75)
+// 		Var8006: Species
 // Output:
 //		Returns 1 if the pokémon is not of the selected type
 //		Returns 2 if the pokémon is smaller
 //		Returns 3 if bigger, and also stores the biggest value in the variable
 //		Returns 4 if equal in length
-u8 sp076_MeasurePokemon2(void) {
+u8 sp076_MeasurePokemon2(void) 
+{
 	u16 species = Var8006;
 	return CalculateHeight(species, &Var8005);;
 };
@@ -983,7 +1036,8 @@ u8 sp076_MeasurePokemon2(void) {
 // Inputs:
 //		var8004: species
 //		var8005: level
-void sp09C_OldManBattleModifier(void) {
+void sp09C_OldManBattleModifier(void) 
+{
 	CreateMaleMon(&gEnemyParty[0], Var8004, Var8005);
 	ScriptContext2_Enable();
 	gMain.savedCallback = ReturnToFieldContinueScriptPlayMapMusic;
@@ -1038,12 +1092,18 @@ void sp059_WildDataSwitchCanceller(void) {
 	return;
 };
 
+void sp0AC_LoadTrainerBDefeatText(void)
+{
+	sTrainerDefeatSpeech_B = (u8*) gLoadPointer;
+}
+
 
 //Timer Specials//
 ///////////////////////////////////////////////////////////////////////////////////
 
 //@Details: Starts the timer
-void sp046_StartTimer(void) {
+void sp046_StartTimer(void) 
+{
 	gGbaTimer->init = 0xC000;
 	gGbaTimer->timerFlags = 0x83;
 	gGbaTimer->timerVal = 0;
@@ -1052,7 +1112,8 @@ void sp046_StartTimer(void) {
 };
 
 //@Details: Pauses the timer
-void sp047_HaltTimer(void) {
+void sp047_HaltTimer(void) 
+{
 	gGbaTimer->timerOn = 4;
 	gGbaTimer->timerFlags = 3;
 	return;
@@ -1060,7 +1121,8 @@ void sp047_HaltTimer(void) {
 
 
 //@Details: Unpauses the timer
-void sp048_ResumeTimer(void) {
+void sp048_ResumeTimer(void) 
+{
 	gGbaTimer->timerVal = gGbaTimer->timerVal;
 	gGbaTimer->timerOn = 0x84;
 	gGbaTimer->timerFlags = 0x83;
@@ -1069,7 +1131,8 @@ void sp048_ResumeTimer(void) {
 
 //@Details:	Stops the timer.
 //@Returns: The time on the timer.
-u16 sp049_StopTimer(void) {
+u16 sp049_StopTimer(void) 
+{
 	gGbaTimer->timerOn = 0;
 	gGbaTimer->timerFlags = 0;
 	u16 time = gGbaTimer->timerVal;
@@ -1079,13 +1142,15 @@ u16 sp049_StopTimer(void) {
 };
 
 //@Returns: The time on the timer.
-u16 sp04A_GetTimerValue(void) {
+u16 sp04A_GetTimerValue(void) 
+{
 	return gGbaTimer->timerVal;
 };
 
 
 
-void sp04C_UpdatePlaytime(void) {
+void sp04C_UpdatePlaytime(void) 
+{
 	u8 secs = gGbaTimer->timerVal + gSaveBlock2->playTimeSeconds;	
 	while (secs > 60)
 	{
@@ -1099,7 +1164,8 @@ void sp04C_UpdatePlaytime(void) {
 	}
 };
 
-void sp04B_StopAndUpdatePlaytime(void) {
+void sp04B_StopAndUpdatePlaytime(void) 
+{
 	gGbaTimer->init = 0;
 	gGbaTimer->timerFlags = 0;
 	gGbaTimer->timerOn = 0;
@@ -1111,7 +1177,8 @@ void sp04B_StopAndUpdatePlaytime(void) {
 //@Details: Checks if the timer has reached a value
 //			sorted in var 0x8010.
 //@Returns: True or False
-bool8 sp04D_TimerValueReached(void) {
+bool8 sp04D_TimerValueReached(void) 
+{
 	u16 timerVal = gGbaTimer->timerVal;
 	if (timerVal < Var8010)
 		return FALSE;
@@ -1121,32 +1188,35 @@ bool8 sp04D_TimerValueReached(void) {
 
 //@Details: Saves the value in the seconds timer to a 
 //			specific memory address.
-void sp04E_SaveTimerValue(void) {
-	#ifdef SAVE_BLOCK_EXPANSION
-		gTimerValue = sp049_StopTimer();
-	#endif
+void sp04E_SaveTimerValue(void) 
+{
+#ifdef SAVE_BLOCK_EXPANSION
+	gTimerValue = sp049_StopTimer();
+#endif
 };
 
 
 //@Details: Starts the timer with the value stored by
 //			Special 0x4E.
-void sp04F_StartTimerAtTime(void) {
-	#ifdef SAVE_BLOCK_EXPANSION
-		sp046_StartTimer();
-		gGbaTimer->timerOn = 0;
-		gGbaTimer->timerVal = gTimerValue;
-		gGbaTimer->timerOn = 0x84;
-	#endif
+void sp04F_StartTimerAtTime(void) 
+{
+#ifdef SAVE_BLOCK_EXPANSION
+	sp046_StartTimer();
+	gGbaTimer->timerOn = 0;
+	gGbaTimer->timerVal = gTimerValue;
+	gGbaTimer->timerOn = 0x84;
+#endif
 };
 
 
 //@Details: Stores the timer value stored by
 //			Special 0x4E.
 //@Returns: Var 0x8006 - Timer time.
-void sp050_StoreTimerToVariable(void) {
-	#ifdef SAVE_BLOCK_EXPANSION
-		VarSet(Var8006, gTimerValue);
-	#endif
+void sp050_StoreTimerToVariable(void) 
+{
+#ifdef SAVE_BLOCK_EXPANSION
+	VarSet(Var8006, gTimerValue);
+#endif
 };
 
 
@@ -1154,9 +1224,9 @@ void sp050_StoreTimerToVariable(void) {
 //			it to the saved timer.
 //@Input:	Var 0x8006 - Variable that is holding timer.
 void sp061_LoadTimerFromVariable(void) {
-	#ifdef SAVE_BLOCK_EXPANSION
-		gTimerValue = VarGet(Var8006);
-	#endif
+#ifdef SAVE_BLOCK_EXPANSION
+	gTimerValue = VarGet(Var8006);
+#endif
 };
 
 //Safari Specials//
@@ -1167,10 +1237,11 @@ void sp061_LoadTimerFromVariable(void) {
 //@Returns: 1. Var 0x8004 - Normal Safari Ball number.
 //		  2. Var 0x8005 - The extra ball slot number
 //		  3. To a given variable the number as a full integer. Max value is 0x63FF
-u16 sp086_GetSafariBalls(void) {
+u16 sp086_GetSafariBalls(void) 
+{
 	Var8004 = gSafariBallNumber;
 	Var8005 = *(&gSafariBallNumber + 1);
-	return (Var8004 + Var8005);
+	return Var8004 + Var8005;
 };
 
 
@@ -1180,7 +1251,8 @@ u16 sp086_GetSafariBalls(void) {
 //@Input: Var 0x8004 as the number to increase or decrease the balls by. 
 //	    0x1aa decreases the balls by aa, and 0x0aa increases them by aa. 
 //@Returns: None
-void sp087_ChangeSafariBalls(void) {
+void sp087_ChangeSafariBalls(void) 
+{
 	u16 input = Var8004;
 	s32 calc;
 	
@@ -1204,7 +1276,8 @@ void sp087_ChangeSafariBalls(void) {
 
 //@Details: The get safari pedometer special.
 //@Returns: To a given variable the number of remaining steps
-u16 sp088_GetSafariCounter(void) {
+u16 sp088_GetSafariCounter(void) 
+{
 	return gSafariSteps;
 };
 
@@ -1212,7 +1285,8 @@ u16 sp088_GetSafariCounter(void) {
 //	      It allows you to set a specific ammount of steps 
 //		  until the safari handler is called.
 //Input: Var 0x8004 is the amount of steps to place.
-void sp089_SetSafariCounter(void) {
+void sp089_SetSafariCounter(void) 
+{
 	u16 input = Var8004;
 	gSafariSteps = input;
 };

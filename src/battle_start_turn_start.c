@@ -848,6 +848,13 @@ u16 GetMUS_ForBattle(void)
 	
 	if (gWildSpeciesBasedBattleBGM[species])
 		return gWildSpeciesBasedBattleBGM[species];
+		
+	if (FlagGet(DOUBLE_WILD_BATTLE_FLAG)
+	&& gEnemyParty[1].species != SPECIES_NONE
+	&& gWildSpeciesBasedBattleBGM[gEnemyParty[1].species])
+	{
+		return gWildSpeciesBasedBattleBGM[gEnemyParty[1].species];
+	}
 	
 	#ifdef UNBOUND
 		return BGM_BATTLE_BORRIUS_WILD;

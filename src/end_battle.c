@@ -466,13 +466,8 @@ static void EndPartnerBattlePartyRestore(void) {
 	{
 		if (gSelectedOrderFromParty[0] == 0) 
 		{ 	//Special 0x2F was not used
-			for (i = 0; i < PARTY_SIZE; ++i) 
-			{
-				if (gPlayerParty[i].species == 0)
-					Memcpy(&gPlayerParty[i], &backup[counter++], sizeof(struct Pokemon));
-			}
+			Memcpy(&gPlayerParty[3], ExtensionState.partyBackup, sizeof(struct Pokemon) * 3);
 		}
-		
 		else 
 		{ 	//Special 0x2F was used
 			pokemon_t* foughtMons = Calloc(sizeof(struct Pokemon) * 3);
@@ -493,7 +488,7 @@ static void EndPartnerBattlePartyRestore(void) {
 					Memcpy(&gPlayerParty[i], &backup[counter++], sizeof(struct Pokemon));
 			}
 		}	
-		Free(backup);
+		Free(ExtensionState.partyBackup);
 	}
 }
 

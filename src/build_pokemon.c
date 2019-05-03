@@ -10,10 +10,11 @@
 
 #include "Tables/Trainers_With_EVs_Table.h"
 
-extern u8 gClassPokeBalls[NUM_TRAINER_CLASSES];
+extern const u8 gClassPokeBalls[NUM_TRAINER_CLASSES];
 
 extern void GetFrontierTrainerName(u8* dst, u16 trainerId, u8 battlerNum);
 extern void MultiInitPokemonOrder(void);
+extern u8 GiveMonToPlayer(pokemon_t* mon);
 
 u8 CreateNPCTrainerParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, u8 side);
 u8 BuildFrontierParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, bool8 ForPlayer, u8 side);
@@ -429,10 +430,6 @@ u8 BuildFrontierParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, bool
     return monsCount;
 }
 
-void BuildRandomPlayerTeam(void) {
-	BuildFrontierParty(gPlayerParty, 0, TRUE, TRUE, B_SIDE_PLAYER);
-}
-
 void SetWildMonHeldItem(void)
 {
 	u16 rnd = umodsi(Random(), 100);
@@ -681,15 +678,6 @@ void SetMonPokeBall(struct PokemonSubstruct0* data, u8 ballId)
 	data->pokeball = ballId;
 }
 
-void BattlePokemonScriptCommand_GiveHiddenAbility(pokemon_t* mon)
-{
-	if (FlagGet(HIDDEN_ABILITY_FLAG))
-	{
-		FlagClear(HIDDEN_ABILITY_FLAG);
-		mon->hiddenAbility = TRUE;
-	}
-}
-
 #ifdef OPEN_WORLD_TRAINERS
 
 static u8 GetOpenWorldTrainerMonAmount(void)
@@ -758,3 +746,37 @@ static u8 GetOpenWorldBadgeCount(void)
 }
 
 #endif
+
+//unused1 is used to hook in so don't use it for anything
+u8 ScriptGiveMon(u16 species, u8 level, u16 item, u32 unused1, u32 unused2, u8 ballType)
+{
+    u16 nationalDexNum;
+    int sentToPc;
+    struct Pokemon mon;
+
+    CreateMon(&mon, species, level, 32, 0, 0, 0, 0);
+    mon.item = item;
+	
+	#ifdef GIVEPOKEMON_BALL_HACK
+	if (ballType)
+		mon.pokeball = ballType;
+	#endif
+	
+	if (FlagGet(HIDDEN_ABILITY_FLAG))
+		mon.hiddenAbility = TRUE;
+	
+    sentToPc = GiveMonToPlayer(&mon);
+    nationalDexNum = SpeciesToNationalPokedexNum(species);
+
+    switch(sentToPc) {
+		case 0:
+		case 1:
+			GetSetPokedexFlag(nationalDexNum, FLAG_SET_SEEN);
+			GetSetPokedexFlag(nationalDexNum, FLAG_SET_CAUGHT);
+			break;
+    }
+	
+	unused1 += unused2 +=  ballType; //So the compiler doesn't complain
+	
+    return sentToPc;
+}

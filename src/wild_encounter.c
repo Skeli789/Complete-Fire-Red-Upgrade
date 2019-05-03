@@ -2,6 +2,7 @@
 #include "../include/event_object_movement.h"
 #include "../include/fieldmap.h"
 #include "../include/field_weather.h"
+#include "../include/script.h"
 #include "../include/wild_encounter.h"
 
 #include "../include/constants/flags.h"
@@ -56,6 +57,9 @@ bool8 IsAbilityAllowingEncounter(u8 level);
 bool8 TryGetRandomWildMonIndexByType(const struct WildPokemon* wildMon, u8 type, u8 numMon, u8* monIndex);
 bool8 TryGetAbilityInfluencedWildMonIndex(const struct WildPokemon* wildMon, u8 type, u8 ability, u8* monIndex);
 void DoStandardWildBattle(void);
+
+bool8 ScrCmd_setwildbattle(struct ScriptContext* ctx);
+static void CreateScriptedWildMon(u16 species, u8 level, u16 item, u16* specialMoves, bool8 firstMon);
 
 u8 ChooseWildMonLevel(const struct WildPokemon* wildPokemon)
 {
@@ -259,6 +263,17 @@ void CreateWildMon(u16 species, u8 level, u8 monHeaderIndex, bool8 purgeParty)
 	ASSIGN_HIDDEN_ABILITY:
 	if (FlagGet(HIDDEN_ABILITY_FLAG))
 		gEnemyParty[enemyMonIndex].hiddenAbility = TRUE;
+		
+	//Custom moves
+	if (FlagSet(WILD_CUSTOM_MOVES_FLAG))
+	{
+		u16* moves = (enemyMonIndex == 0) ? &Var8000 : &Var8004;
+		for (int i = 0; i < MAX_MON_MOVES; ++i)
+		{
+			if (moves[i] != 0xFFFF)
+				gEnemyParty[enemyMonIndex].moves[i] = moves[i];
+		}
+	}
 }
 
 enum
@@ -796,4 +811,94 @@ void DoStandardWildBattle(void)
     CreateBattleStartTask(GetWildBattleTransition(), GetMUS_ForBattle());
     IncrementGameStat(GAME_STAT_TOTAL_BATTLES);
     IncrementGameStat(GAME_STAT_WILD_BATTLES);
+}
+
+void sp138_StartLegendaryBattle(void)
+{
+	ScriptContext2_Enable();
+	gMain.savedCallback = CB2_EndScriptedWildBattle_2;
+	
+	gBattleTypeFlags = BATTLE_TYPE_SCRIPTED_WILD_1 | BATTLE_TYPE_SCRIPTED_WILD_3;
+	
+	if (FlagGet(DOUBLE_WILD_BATTLE_FLAG) 
+	&& gEnemyParty[1].species != SPECIES_NONE
+	&& ViableMonCount(gPlayerParty) > 1) //At least two alive Pokemon
+		gBattleTypeFlags |= BATTLE_TYPE_DOUBLE;
+	
+    CreateBattleStartTask(0, GetMUS_ForBattle());
+    IncrementGameStat(GAME_STAT_TOTAL_BATTLES);
+    IncrementGameStat(GAME_STAT_WILD_BATTLES);
+}
+
+//setwildbattle SPECIES LEVEL ITEM
+//setwildbattle 0xFFFF 0x0 0x0 0x0 SPECIES_1 LEVEL_1 ITEM_1 0x0 SPECIES_2 LEVEL2 ITEM_2
+bool8 ScrCmd_setwildbattle(struct ScriptContext* ctx)
+{
+	u16 species, item;
+	u8 level;
+	u16 specialMoves[MAX_MON_MOVES * 2];
+	int i;
+	
+	for (i = 0; i < MAX_MON_MOVES * 2; ++i)
+		specialMoves[i] = (&Var8000)[i];
+    
+	species = ScriptReadHalfword(ctx);
+	if (species == 0xFFFF) //Wild Double
+	{
+		species = ScriptReadByte(ctx); //Skip null values
+		species = ScriptReadHalfword(ctx); //Skip null values
+		species = ScriptReadByte(ctx); //Skip null values
+		FlagSet(DOUBLE_WILD_BATTLE_FLAG);
+		
+		for (i = 0; i < 2; ++i)
+		{
+			species = ScriptReadHalfword(ctx);
+			level = ScriptReadByte(ctx);
+			item = ScriptReadHalfword(ctx);
+			CreateScriptedWildMon(species, level, item, specialMoves, i == 0);
+			
+			if (i == 0)
+				species = ScriptReadByte(ctx); //Skip null values
+		}
+	}
+	else
+	{
+		FlagClear(DOUBLE_WILD_BATTLE_FLAG); //Singular mon
+		level = ScriptReadByte(ctx);
+		item = ScriptReadHalfword(ctx);
+		CreateScriptedWildMon(species, level, item, specialMoves, TRUE);
+	}
+    
+    return FALSE;
+}
+
+static void CreateScriptedWildMon(u16 species, u8 level, u16 item, u16* moves, bool8 firstMon)
+{	
+	u8 index = firstMon ? 0 : 1;
+	
+	if (firstMon)
+		ZeroEnemyPartyMons();
+	
+    CreateMon(&gEnemyParty[index], species, level, 0x20, 0, 0, 0, 0);
+    if (item)
+		gEnemyParty[index].item = item;
+	
+	if (FlagGet(WILD_CUSTOM_MOVES_FLAG))
+	{
+		moves = firstMon ? moves : &moves[4];
+		for (int i = 0; i < MAX_MON_MOVES; ++i)
+		{
+			if (moves[i] != 0xFFFF)
+				gEnemyParty[index].moves[i] = moves[i];
+		}
+	}
+	
+	if (FlagGet(HIDDEN_ABILITY_FLAG))
+		gEnemyParty[index].hiddenAbility = TRUE;
+}
+
+void TrySetWildDoubleBattleTypeScripted()
+{
+	if (FlagGet(DOUBLE_WILD_BATTLE_FLAG))
+		gBattleTypeFlags |= BATTLE_TYPE_DOUBLE;
 }

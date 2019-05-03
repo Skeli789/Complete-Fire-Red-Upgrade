@@ -717,6 +717,17 @@
 .word \trainerbattle11_cannotbattle2
 .endm
 
+@trainerbattle 0xC FOE_ID PARTNER_ID PARTNER_BACKSPRITE_ID 0x0 DEFEAT_TEXT_A
+.macro trainerbattle12 trainerbattle12_type trainerbattle12_foeindex trainerbattle12_partnerindex trainerbattle12_partnerbackspriteindex trainerbattle12_filler trainerbattle12_loss
+.byte 0x5C
+.byte 0xC
+.hword \trainerbattle12_foeindex
+.hword \trainerbattle12_partnerindex
+.hword \trainerbattle12_partnerbackspriteindex
+.hword \trainerbattle12_filler
+.word \trainerbattle12_loss
+.endm
+
 .macro repeattrainerbattle
 .byte 0x5D
 .endm

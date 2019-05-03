@@ -53,31 +53,6 @@
 .equ MULTI_HIT_COUNTER, 0x2023D72
 .equ TRIPLE_KICK_POWER, 0x2023FD6
 
-@Save Data Pointers
-.equ MapDMA, 0x03005008
-.equ TrainerDMA, 0x0300500c
-.equ BoxDMA, 0x03005010
-
-@Scriping
-.equ var8000, 0x020370b8
-.equ var8001, 0x020370ba
-.equ var8002, 0x020370bc
-.equ var8003, 0x020370be
-.equ var8004, 0x020370c0
-.equ var8005, 0x020370c2
-.equ var8006, 0x020370c4
-.equ var8007, 0x020370c6
-.equ var8008, 0x020370c8
-.equ var8009, 0x020370ca
-.equ var800a, 0x020370cc
-.equ var800b, 0x020370ce
-.equ var800d, 0x020370d0
-.equ var800f, 0x020370d2
-.equ var800c, 0x020370d4
-.equ var800e, 0x0203ad30
-.equ var8010, 0x020370d6
-.equ var8011, 0x020370d8
-
 .equ ACTIVE_BATTLER, 0x2023BC4
 .equ NUM_POKEMON, 0x2023BCC
 .equ TURN_ORDER, 0x2023BDE
@@ -105,6 +80,31 @@
 .equ MULTIHIT_STRING, 0x2023FCC
 .equ CMD49_STATE, 0x2023FD8
 .equ EXP_STATE, 0x2023FE0
+
+@Save Data Pointers
+.equ MapDMA, 0x03005008
+.equ TrainerDMA, 0x0300500c
+.equ BoxDMA, 0x03005010
+
+@Scripting
+.equ var8000, 0x020370b8
+.equ var8001, 0x020370ba
+.equ var8002, 0x020370bc
+.equ var8003, 0x020370be
+.equ var8004, 0x020370c0
+.equ var8005, 0x020370c2
+.equ var8006, 0x020370c4
+.equ var8007, 0x020370c6
+.equ var8008, 0x020370c8
+.equ var8009, 0x020370ca
+.equ var800a, 0x020370cc
+.equ var800b, 0x020370ce
+.equ var800d, 0x020370d0
+.equ var800f, 0x020370d2
+.equ var800c, 0x020370d4
+.equ var800e, 0x0203ad30
+.equ var8010, 0x020370d6
+.equ var8011, 0x020370d8
 
 @For BS Counter Commands
 .equ TELEKINESIS_TIMERS, 0
@@ -1514,6 +1514,9 @@
 .equ DECREASE_4, 0xC0
 .equ DECREASE_5, 0xD0
 .equ DECREASE_6, 0xE0
+
+@items
+.equ ITEM_SAFARI_BALL, 5
 
 @item effects
 .equ ITEM_EFFECT_ORANBERRY, 1
