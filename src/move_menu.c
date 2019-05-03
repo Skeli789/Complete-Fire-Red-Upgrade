@@ -208,6 +208,7 @@ void HandleInputChooseMove(void)
         EmitTwoReturnValues(1, 10, 0xFFFF);
         PlayerBufferExecCompleted();
 		ResetPaletteFadeControl();
+		BeginNormalPaletteFade(0xF0000, 0, 0, 0, 0x7FFF);
     }
     else if (gMain.newKeys & DPAD_LEFT)
     {
