@@ -686,6 +686,8 @@ void __attribute__((long_call)) EncryptBoxMon(struct BoxPokemon *boxMon);
 void __attribute__((long_call)) ZeroBoxMonData(struct BoxPokemon *boxMon);
 void __attribute__((long_call)) GetSpeciesName(u8 *name, u16 species);
 u16 __attribute__((long_call)) CalculateBoxMonChecksum(struct BoxPokemon *boxMon);
+bool8 __attribute__((long_call)) IsMonShiny(struct Pokemon *mon);
+bool8 __attribute__((long_call)) IsShinyOtIdPersonality(u32 otId, u32 personality);
 
 species_t __attribute__((long_call)) GetStarterChoice(void);
 
@@ -788,7 +790,6 @@ const struct CompressedSpritePalette *sub_806E794(struct Pokemon *mon);
 const struct CompressedSpritePalette *GetMonSpritePalStructFromOtIdPersonality(u16 species, u32 otId , u32 personality);
 bool32 IsHMMove2(u16 move);
 bool8 IsPokeSpriteNotFlipped(u16 species);
-bool8 IsMonShiny(struct Pokemon *mon);
 bool8 IsShinyOtIdPersonality(u32 otId, u32 personality);
 
 void MonGainEVs(struct Pokemon *mon, u16 defeatedSpecies);

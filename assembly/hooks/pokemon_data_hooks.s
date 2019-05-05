@@ -40,8 +40,15 @@ LinkOpponentHandleFormChange:
 
 @Hook at 0x0803DAD2 with r0
 CreateBoxMonHook:
-	add sp, sp, #0x20
+	ldr r0, [sp, #0x40 + 0x0] @hasFixedPersonality
+	str r0, [sp, #0x0]
+	ldr r0, [sp, #0x40 + 0x4] @fixedPersonality
+	str r0, [sp, #0x4]
+	ldr r0, [sp, #0x40 + 0x8] @otIdType
+	str r0, [sp, #0x8]
+	ldr r0, [sp, #0x40 + 0xC] @fixedOtId
+	str r0, [sp, #0xC]
 	mov r0, r7
 	bl CreateBoxMon
-	ldr r0, =0x803DD86 | 1
+	ldr r0, =0x803DD84 | 1
 	bx r0
