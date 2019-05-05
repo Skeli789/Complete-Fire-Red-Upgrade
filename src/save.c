@@ -5,7 +5,7 @@
 //extern void dprintf(const char * str, ...);
 
 // yes that's var 0x8000. It will be used for save index tracking.
-u8* ParasiteSizeIndex = (u8*)0x020370B8;
+u8* ParasiteSizeIndex = (u8*) 0x020370B8;
 
 // Each 4 KiB flash sector contains 3968 bytes of actual data followed by a 128 byte footer
 #define SECTOR_DATA_SIZE 0xFF0
@@ -17,7 +17,7 @@ u8* ParasiteSizeIndex = (u8*)0x020370B8;
 #define parasiteSize 0xEC4
 
 // old 0x080DA23C table changes
-struct SaveSectionOffset SaveSectionOffsets[] = {
+const struct SaveSectionOffset SaveSectionOffsets[] = {
     {SECTOR_DATA_SIZE * 0, 0xF24}, // saveblock2
     // 0xCC byes saved
 
@@ -40,7 +40,7 @@ struct SaveSectionOffset SaveSectionOffsets[] = {
 };
 
 /* Any save sector that isn't full, we'll plop our data of these sizes in there */
-u16 SaveBlockParasiteSizes[3] = {
+const u16 SaveBlockParasiteSizes[3] = {
         SECTOR_DATA_SIZE - 0xF24, // 0xCC
         SECTOR_DATA_SIZE - 0xD98, // 0x258
         SECTOR_DATA_SIZE - 0x450, // 0xBA0

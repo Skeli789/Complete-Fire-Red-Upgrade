@@ -1,7 +1,7 @@
 #include "..\\defines.h"
 #include "../../include/new/z_move_effects.h"
 
-struct BattleMove gBattleMoves[] = {
+const struct BattleMove gBattleMoves[] = {
 [MOVE_NONE] =
 	{
 		.effect = EFFECT_HIT,

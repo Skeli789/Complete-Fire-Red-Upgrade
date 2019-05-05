@@ -2054,7 +2054,7 @@ void DexNavGuiHandler(void)
 // ============================= //
 // ===== Overworld Effects ===== //
 // ============================= //
-struct SpriteSheet caveGfx[4] = {
+const struct SpriteSheet caveGfx[4] = {
 	{
 		.data = (const u8*)&gInterfaceGfx_caveSmokeTiles[128 * 0],
 		.size = 0x80,

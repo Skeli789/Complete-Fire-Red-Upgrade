@@ -39,7 +39,7 @@ extern u8 BattleScript_LostBattleTower[];
 
 extern u8 ConsumableItemEffectTable[];
 
-u16 gEndBattleFlagClearTable[] =
+const u16 gEndBattleFlagClearTable[] =
 {
 	INVERSE_FLAG,
 	SKY_BATTLE_FLAG,

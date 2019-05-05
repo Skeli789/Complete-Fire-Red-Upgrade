@@ -67,7 +67,7 @@ void PrepareStringBattle(u16 stringId, u8 bank) {
     MarkBufferBankForExecution(gActiveBattler);
 }
 
-struct BattleMsgData** gStringInfo = ((struct BattleMsgData**) 0x2039A34);
+const struct BattleMsgData** gStringInfo = ((const struct BattleMsgData**) 0x2039A34);
 
 void BufferStringBattle(u16 stringID) {
     int i;

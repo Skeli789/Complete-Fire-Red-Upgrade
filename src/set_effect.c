@@ -51,7 +51,7 @@ extern void BringDownMons(void);
 void SetMoveEffect(bool8 primary, u8 certainArg);
 
 
-u8 MoveEffectsThatIgnoreSubstitute[] = 
+const u8 MoveEffectsThatIgnoreSubstitute[] = 
 {
 	MOVE_EFFECT_PAYDAY,
 	MOVE_EFFECT_ION_DELUGE,
@@ -60,7 +60,7 @@ u8 MoveEffectsThatIgnoreSubstitute[] =
 	0xFF,
 };
 
-u8 ShieldDustIgnoredEffects[] = 
+const u8 ShieldDustIgnoredEffects[] = 
 {
 	MOVE_EFFECT_SLEEP,
 	MOVE_EFFECT_POISON,
