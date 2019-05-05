@@ -5,6 +5,8 @@
 #include "../include/constants/items.h"
 #include "../include/pokemon.h"
 #include "../include/pokemon_storage_system.h"
+#include "../include/new/catching.h"
+#include "../include/random.h"
 
 #define sHatchedEggFatherMoves ((u16*) 0x202455C)
 #define sHatchedEggMotherMoves ((u16*)0x2024580)
@@ -146,6 +148,7 @@ void BuildEggMoveset(struct Pokemon* egg, struct BoxPokemon* father, struct BoxP
 	}
 }
 
+
 s32 GetSlotToInheritNature(struct DayCare* daycare)
 {
 	int i;
@@ -273,9 +276,9 @@ u8 CheckPowerItem(u16 item) {
 
 
 void InheritIVs(struct Pokemon *egg, struct DayCare *daycare) {
-    u8 i, numIVs, iv;
+	u8 i, numIVs, iv;
 	u16 items[2];
-	
+
 	items[0] = GetBoxMonData(&daycare->mons[0].mon, MON_DATA_HELD_ITEM, NULL);
 	items[1] = GetBoxMonData(&daycare->mons[1].mon, MON_DATA_HELD_ITEM, NULL);
 		
@@ -284,10 +287,10 @@ void InheritIVs(struct Pokemon *egg, struct DayCare *daycare) {
 		numIVs = 5;
 	else
 		numIVs = 3;
-	
-    u8 selectedIvs[numIVs];
-    //u8 availableIVs[NUM_STATS];
-    u8 whichParent[numIVs];
+
+	u8 selectedIvs[numIVs];
+	//u8 availableIVs[NUM_STATS];
+	u8 whichParent[numIVs];
 		
 	// initiate first 1 or 2 IV slots with power items from either or both parents
 	u8 initVal = 0;
@@ -314,7 +317,7 @@ void InheritIVs(struct Pokemon *egg, struct DayCare *daycare) {
 			initVal++;
 		}
 	}
-	
+
 	// randomize the remaining IV indices with unique values
 	bool8 unique;
 	for (i = initVal; i < ARRAY_COUNT(selectedIvs); ++i)
@@ -343,13 +346,13 @@ void InheritIVs(struct Pokemon *egg, struct DayCare *daycare) {
 	
 /*			original routine
     // Initialize a list of IV indices.
-    for (i = 0; i < NUM_STATS; i++)
+    for (i = 0; i < NUM_STATS; ++i)
     {
         availableIVs[i] = i;
     }
 
     // Select the num IVs that will be inherited.
-    for (i = 0; i < ARRAY_COUNT(selectedIvs); i++)
+    for (i = 0; i < ARRAY_COUNT(selectedIvs); ++i)
     {
         // Randomly pick an IV from the available list.
         selectedIvs[i] = availableIVs[Random() % (NUM_STATS - i)];
@@ -359,7 +362,7 @@ void InheritIVs(struct Pokemon *egg, struct DayCare *daycare) {
     }
 
     // Determine which parent each of the selected IVs should inherit from.
-    for (i = 0; i < ARRAY_COUNT(selectedIvs); i++)
+    for (i = 0; i < ARRAY_COUNT(selectedIvs); ++i)
     {
         whichParent[i] = Random() % 2;
     }
@@ -468,6 +471,29 @@ void AlterEggSpeciesWithIncenseItem(u16 *species, struct DayCare *daycare) {
 };
 */
 
+
+void InheritPokeBall(struct Pokemon *egg, struct DayCare *daycare) {
+	u16 motherSpecies = GetBoxMonData(&daycare->mons[0].mon, MON_DATA_SPECIES, NULL);
+	u16 fatherSpecies = GetBoxMonData(&daycare->mons[1].mon, MON_DATA_SPECIES, NULL);
+	
+	u8 parent = 0;	// mother default
+	// gen 7 same species check
+	if (motherSpecies == fatherSpecies)
+		parent = Random() % 2;	// same parent species -> pokeball inherited randomly
+	
+	// get poke ball ID
+	u8 parentBall = GetBoxMonData(&daycare->mons[parent].mon, MON_DATA_POKEBALL, NULL);
+	
+	// master ball and cherish ball become poke ball
+	#ifndef INHERIT_MASTER_CHERISH_BALL
+	if (parentBall == BALL_TYPE_MASTER_BALL || parentBall == BALL_TYPE_CHERISH_BALL)
+		parentBall = BALL_TYPE_POKE_BALL;
+	#endif
+	
+	SetMonData(egg, MON_DATA_POKEBALL, &parentBall);	
+};
+
+
 // Decide features to inherit
 void GiveEggFromDaycare(struct DayCare *daycare) {
     struct Pokemon egg;
@@ -477,13 +503,10 @@ void GiveEggFromDaycare(struct DayCare *daycare) {
 
     species = DetermineEggSpeciesAndParentSlots(daycare, parentSlots);
     AlterEggSpeciesWithIncenseItem(&species, daycare);
-    SetInitialEggData(&egg, species, daycare);
+    SetInitialEggData(&egg, species, daycare);	// sets base data (ball, met level, lang, etc)
     InheritIVs(&egg, daycare);	// destiny knot check
+	InheritPokeBall(&egg, daycare);
     BuildEggMoveset(&egg, &daycare->mons[parentSlots[1]].mon, &daycare->mons[parentSlots[0]].mon);
-
-	// handled in BuildEggMoveset
-    //if (species == SPECIES_PICHU)
-    //    GiveVoltTackleIfLightBall(&egg, daycare);
 
     isEgg = TRUE;
     SetMonData(&egg, MON_DATA_IS_EGG, &isEgg);
@@ -495,5 +518,95 @@ void GiveEggFromDaycare(struct DayCare *daycare) {
 
 
 
+void TriggerPendingDaycareEgg(struct DayCare *daycare) {
+    s32 natureSlot;
+    s32 natureTries = 0;
 
+    SeedRng2(gMain.vblankCounter2);
+	
+    natureSlot = GetSlotToInheritNature(daycare);	// updated nature slot check
+
+    if (natureSlot < 0)
+    {
+        daycare->offspringPersonality = (Random2() << 0x10) | ((Random() % 0xfffe) + 1);
+    }
+    else
+    {
+        u8 wantedNature = GetNatureFromPersonality(GetBoxMonData(&daycare->mons[natureSlot].mon, MON_DATA_PERSONALITY, NULL));
+        u32 personality;
+
+        do
+        {
+            personality = (Random2() << 0x10) | (Random());
+            if (wantedNature == GetNatureFromPersonality(personality) && personality != 0)
+                break; // we found a personality with the same nature
+
+            natureTries++;
+        } while (natureTries <= 2400);
+
+        daycare->offspringPersonality = personality;
+    }
+
+    FlagSet(FLAG_PENDING_DAYCARE_EGG);
+};
+
+
+
+// ability inheritance
+void CreatedHatchedMon(struct Pokemon *egg, struct Pokemon *temp) {
+    u16 species;
+    u32 personality, pokerus;
+    u8 i, friendship, language, gameMet, markings, hidden;
+    u16 moves[4];
+    u32 ivs[NUM_STATS];
+
+
+    species = GetMonData(egg, MON_DATA_SPECIES, NULL);
+
+    for (i = 0; i < 4; ++i)
+    {
+        moves[i] = GetMonData(egg, MON_DATA_MOVE1 + i, NULL);
+    }
+
+    personality = GetMonData(egg, MON_DATA_PERSONALITY, NULL);
+
+    for (i = 0; i < NUM_STATS; ++i)
+    {
+        ivs[i] = GetMonData(egg, MON_DATA_HP_IV + i, NULL);
+    }
+
+    language = GetMonData(egg, MON_DATA_LANGUAGE, NULL);
+    gameMet = GetMonData(egg, MON_DATA_MET_GAME, NULL);
+    markings = GetMonData(egg, MON_DATA_MARKINGS, NULL);
+    pokerus = GetMonData(egg, MON_DATA_POKERUS, NULL);
+	
+    //obedience = GetMonData(egg, MON_DATA_OBEDIENCE, NULL);
+	hidden = GetMonData(egg, MON_DATA_ALT_ABILITY, NULL);
+
+    CreateMon(temp, species, EGG_HATCH_LEVEL, 32, TRUE, personality, 0, 0);
+
+    for (i = 0; i < 4; ++i)
+    {
+        SetMonData(temp, MON_DATA_MOVE1 + i,  &moves[i]);
+    }
+
+    for (i = 0; i < NUM_STATS; ++i)
+    {
+        SetMonData(temp, MON_DATA_HP_IV + i,  &ivs[i]);
+    }
+
+    language = GAME_LANGUAGE;
+    SetMonData(temp, MON_DATA_LANGUAGE, &language);
+    SetMonData(temp, MON_DATA_MET_GAME, &gameMet);
+    SetMonData(temp, MON_DATA_MARKINGS, &markings);
+
+    friendship = 120;
+    SetMonData(temp, MON_DATA_FRIENDSHIP, &friendship);
+    SetMonData(temp, MON_DATA_POKERUS, &pokerus);
+    
+	//SetMonData(temp, MON_DATA_OBEDIENCE, &obedience);
+	SetMonData(temp, MON_DATA_ALT_ABILITY, &hidden);
+
+    *egg = *temp;
+};
 

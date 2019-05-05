@@ -1,6 +1,7 @@
 #include "defines.h"
 #include "defines_battle.h"
 #include "../include/event_data.h"
+#include "../include/random.h"
 #include "../include/constants/trainer_classes.h"
 #include "../include/constants/songs.h"
 
@@ -80,11 +81,11 @@ void HandleEndTurn_BattleWon(void)
     {
         BattleStopLowHpSound();
         gBattlescriptCurrInstr = BattleScript_Victory;
-		
+
 		u16 id = gTrainerBattleOpponent_A;
 		u8 specialMus = FALSE;
 		u8 loop = FALSE;
-	
+
 	VICTORY_MUSIC_SELECTION:
         switch (gTrainers[id].trainerClass) {
 		#ifndef UNBOUND //Change this part
@@ -97,7 +98,7 @@ void HandleEndTurn_BattleWon(void)
 			default:
 				PlayBGM(BGM_VICTORY_TRAINER_BATTLE);
 				break;
-		
+
 		#else //For Pokemon Unbound
 			case CLASS_CHAMPION:
 				PlayBGM(BGM_VICTORY_CHAMPION);
@@ -130,7 +131,7 @@ void HandleEndTurn_BattleWon(void)
 				break;
 		#endif
         }
-		
+
 		if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS && !specialMus && !loop) {
 			id = VarGet(SECOND_OPPONENT_VAR);
 			loop = TRUE;
@@ -176,7 +177,7 @@ void HandleEndTurn_BattleLost(void)
 			gBattlescriptCurrInstr = BattleScript_LostMultiBattleTower;
 		else
 			gBattlescriptCurrInstr = BattleScript_LostBattleTower;
-			
+
         gBattleOutcome &= ~(B_OUTCOME_RAN);
 	}
     else if (gBattleTypeFlags & BATTLE_TYPE_TRAINER && sTrainerBattleMode == TRAINER_BATTLE_OAK_TUTORIAL)
@@ -185,11 +186,11 @@ void HandleEndTurn_BattleLost(void)
 			gBattleCommunication[MULTISTRING_CHOOSER] = 1;
 		else
 			gBattleCommunication[MULTISTRING_CHOOSER] = 2;
-		
+
 		gBankAttacker = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
 		gBattlescriptCurrInstr = BattleScript_LocalBattleLost;
-	}	
-    else 
+	}
+    else
 	{
 		gBattleCommunication[MULTISTRING_CHOOSER] = 0;
         gBattlescriptCurrInstr = BattleScript_LocalBattleLost;
@@ -238,10 +239,10 @@ u8 IsRunningFromBattleImpossible(void)
 
     if (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_FRONTIER))
         return FALSE;
-		
+
 	else if (FlagGet(NO_RUNNING_FLAG) || FlagGet(NO_CATCHING_AND_RUNNING_FLAG))
 		return TRUE;
-		
+
     else if (itemEffect == ITEM_EFFECT_CAN_ALWAYS_RUN)
         return FALSE;
     else if (gBattleMons[gActiveBattler].ability == ABILITY_RUNAWAY)
@@ -271,7 +272,7 @@ u8 IsRunningFromBattleImpossible(void)
             gBattleCommunication[MULTISTRING_CHOOSER] = 2;
             return ABILITY_PREVENTING_ESCAPE;
         }
-		
+
 		if (i != gActiveBattler
 		&& ABILITY(i) == ABILITY_MAGNETPULL
 		&& IsOfType(gActiveBattler, TYPE_STEEL))
@@ -282,14 +283,14 @@ u8 IsRunningFromBattleImpossible(void)
 			return ABILITY_PREVENTING_ESCAPE;
 		}
     }
-	
+
     if ((gBattleMons[gActiveBattler].status2 & (STATUS2_ESCAPE_PREVENTION | STATUS2_WRAPPED))
     || (gStatuses3[gActiveBattler] & STATUS3_SKY_DROP_TARGET))
     {
         gBattleCommunication[MULTISTRING_CHOOSER] = 0;
         return TRUE;
     }
-	
+
 	if (!gNewBS->TeleportBit)
 	{
 		if (gStatuses3[gActiveBattler] & STATUS3_ROOTED)
@@ -300,19 +301,19 @@ u8 IsRunningFromBattleImpossible(void)
 	}
 	else
 		gNewBS->TeleportBit = FALSE;
-	
+
 	if (gNewBS->FairyLockTimer)
 	{
 		gBattleCommunication[MULTISTRING_CHOOSER] = 0;
 		return TRUE;
 	}
-		
+
     if (gBattleTypeFlags & BATTLE_TYPE_OAK_TUTORIAL)
     {
         gBattleCommunication[MULTISTRING_CHOOSER] = 1;
         return TRUE;
     }
-	
+
     return 0;
 }
 
@@ -342,7 +343,7 @@ bool8 TryRunFromBattle(u8 bank)
         ++effect;
     }
 	#ifndef NO_GHOST_BATTLES
-	else if ((gBattleTypeFlags & (BATTLE_TYPE_SCRIPTED_WILD_1 | BATTLE_TYPE_GHOST)) == BATTLE_TYPE_GHOST) 
+	else if ((gBattleTypeFlags & (BATTLE_TYPE_SCRIPTED_WILD_1 | BATTLE_TYPE_GHOST)) == BATTLE_TYPE_GHOST)
 	{
 		if (SIDE(bank) == B_SIDE_PLAYER)
 			++effect;
@@ -372,7 +373,7 @@ bool8 TryRunFromBattle(u8 bank)
 		{
 			if (gBattleMons[BATTLE_OPPOSITE(bank)].hp)
 				goto SINGLE_FLEE_CALC;
-			
+
             if (gBattleMons[bank].speed < gBattleMons[PARTNER(BATTLE_OPPOSITE(bank))].speed)
             {
                 speedVar = udivsi((gBattleMons[bank].speed * 128), (gBattleMons[PARTNER(BATTLE_OPPOSITE(bank))].speed)) + (gBattleStruct->runTries * 30);
@@ -382,7 +383,7 @@ bool8 TryRunFromBattle(u8 bank)
             else // same speed or faster
             {
                 ++effect;
-            }		
+            }
 		}
 
         gBattleStruct->runTries++;
@@ -422,16 +423,16 @@ static void NaturalCureHeal(void)
 
 static void RestoreNonConsumableItems(void) {
 	u16* items = ExtensionState.itemBackup;
-	
+
 	if (ExtensionState.itemBackup != NULL) {
 		if (gBattleTypeFlags & BATTLE_TYPE_TRAINER) {
-			for (int i = 0; i < PARTY_SIZE; ++i) 
+			for (int i = 0; i < PARTY_SIZE; ++i)
 			{
 				if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER
 				||  items[i] == 0
 				||  !IsConsumable(items[i]))
 					gPlayerParty[i].item = items[i];
-				
+
 				else if (gPlayerParty[i].item != items[i] //The player consumed their item, and then picked up another one
 				&& IsConsumable(items[i]))
 					gPlayerParty[i].item = 0; //They don't get to keep the new item
@@ -442,7 +443,7 @@ static void RestoreNonConsumableItems(void) {
 }
 
 static void RecalcAllStats(void) {
-	for (int i = 0; i < PARTY_SIZE; ++i) 
+	for (int i = 0; i < PARTY_SIZE; ++i)
 		CalculateMonStats(&gPlayerParty[i]);
 }
 
@@ -461,33 +462,33 @@ static void EndPartnerBattlePartyRestore(void) {
 	int i;
 	u8 counter = 0;
 	pokemon_t* backup = ExtensionState.partyBackup;
-	
-	if (ExtensionState.partyBackup != NULL) 
+
+	if (ExtensionState.partyBackup != NULL)
 	{
-		if (gSelectedOrderFromParty[0] == 0) 
+		if (gSelectedOrderFromParty[0] == 0)
 		{ 	//Special 0x2F was not used
 			Memcpy(&gPlayerParty[3], ExtensionState.partyBackup, sizeof(struct Pokemon) * 3);
 		}
-		else 
+		else
 		{ 	//Special 0x2F was used
 			pokemon_t* foughtMons = Calloc(sizeof(struct Pokemon) * 3);
-			if (foughtMons != NULL) 
+			if (foughtMons != NULL)
 			{
 				Memcpy(foughtMons, gPlayerParty, sizeof(struct Pokemon) * 3);
 				Memset(gPlayerParty, 0x0, sizeof(struct Pokemon) * 6);
-				for (i = 0; i < 3; ++i) 
+				for (i = 0; i < 3; ++i)
 				{
 					if (gSelectedOrderFromParty[i] != 0)
 						Memcpy(&gPlayerParty[gSelectedOrderFromParty[i] - 1], &foughtMons[i], sizeof(struct Pokemon));
 				}
 			}
-			
-			for (i = 0; i < PARTY_SIZE; ++i) 
+
+			for (i = 0; i < PARTY_SIZE; ++i)
 			{
 				if (gPlayerParty[i].species == 0)
 					Memcpy(&gPlayerParty[i], &backup[counter++], sizeof(struct Pokemon));
 			}
-		}	
+		}
 		Free(ExtensionState.partyBackup);
 	}
 }
@@ -498,7 +499,7 @@ static void EndSkyBattlePartyRestore(void) {
 	int i;
 	u8 counter = 0;
 	pokemon_t* backup = ExtensionState.skyBattlePartyBackup;
-	
+
 	if (ExtensionState.skyBattlePartyBackup != NULL) {
 		for (i = 0; i < PARTY_SIZE; ++i) {
 			if (gPlayerParty[i].species == 0)
@@ -511,7 +512,7 @@ static void EndSkyBattlePartyRestore(void) {
 static void EndBattleFlagClear(void) {
 	for (u32 i = 0; i < ARRAY_COUNT(gEndBattleFlagClearTable); ++i)
 		FlagClear(gEndBattleFlagClearTable[i]);
-	
+
 	VarSet(TERRAIN_VAR, 0x0);
 	VarSet(BATTLE_TOWER_TRAINER_NAME, 0xFFFF);
 	Free(gNewBS->MegaData);
@@ -523,11 +524,11 @@ static void EndBattleFlagClear(void) {
 
 bool8 IsConsumable(u16 item) {
 	u8 effect = gItems[SanitizeItemId(item)].holdEffect;
-	
+
 	for (u32 i = 0; ConsumableItemEffectTable[i] != 0xFF; ++i) {
 		if (effect == ConsumableItemEffectTable[i])
 			return TRUE;
 	}
-	
+
 	return FALSE;
 }

@@ -14,6 +14,8 @@
 #define gText_Cancel ((u8*) 0x84161C1)
 #define MAX_LEARNABLE_MOVES 50
 
+void GiveBoxMonInitialMoveset(struct BoxPokemon* boxMon);
+
 void GiveBoxMonInitialMoveset(struct BoxPokemon* boxMon)
 {
     u16 species = GetBoxMonData(boxMon, MON_DATA_SPECIES, NULL);

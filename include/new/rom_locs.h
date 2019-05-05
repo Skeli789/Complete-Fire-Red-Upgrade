@@ -28,6 +28,7 @@ extern const u8 gAbilityNames[][ABILITY_NAME_LENGTH + 1];
 
 
 #define gGameVersion (*((u8*) 0x81E9F10))
+#define gGameLanguage (*((u8*) 0x81E9F11))
 
 #define gDummySpriteAffineAnimTable (const union AffineAnimCmd* const*) 0x8231CFC
 
@@ -37,4 +38,5 @@ extern u8 gUnownDistributionByChamber[7][12]; //[NUM_ROOMS][NUM_WILD_INDEXES]
 #define SafariZoneEndScript ((void*) 0x81bfbc5)
 
 #define sBasePaletteGammaTypes ((u8*) 0x83C2CC0)
+
 

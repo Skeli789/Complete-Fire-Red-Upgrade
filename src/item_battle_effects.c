@@ -3,6 +3,7 @@
 #include "../include/battle_string_ids.h"
 #include "../include/constants/items.h"
 #include "../include/new/helper_functions.h"
+#include "../include/random.h"
 
 #define BattleScript_ItemHealHP_Ret (u8*) 0x81D9622
 #define BattleScript_ItemHealHP_End2 (u8*) 0x81D961C

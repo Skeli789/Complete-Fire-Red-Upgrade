@@ -5,6 +5,7 @@
 #include "../include/event_data.h"
 #include "../include/new/helper_functions.h"
 #include "../include/new/mega.h"
+#include "../include/random.h"
 
 #define AI_CHOICE_FLEE 4
 #define AI_CHOICE_WATCH 5

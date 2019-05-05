@@ -3,6 +3,7 @@
 #include "../include/event_data.h"
 #include "../include/new/helper_functions.h"
 #include "../include/new/frontier.h"
+#include "../include/random.h"
 
 //Maybe add stuff in for Frontier brains
 

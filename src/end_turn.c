@@ -2,6 +2,7 @@
 #include "defines_battle.h"
 #include "../include/new/end_turn.h"
 #include "../include/new/helper_functions.h"
+#include "../include/random.h"
 
 extern u8 BattleScript_MysteriousAirCurrentContinues[];
 extern u8 BattleScript_FogEnded[];

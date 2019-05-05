@@ -315,11 +315,11 @@ typedef struct Pokemon
     u8 friendship;
 	u8 pokeball; //This is new
     u8 unknown;
-	
+
 //Substructure Attacks
     u16 moves[4];
     u8 pp[4];
-	
+
 //Substructure Condition
     u8 hpEv;
     u8 atkEv;
@@ -566,7 +566,7 @@ struct BaseStats
  /* 0x18 */ u8 safariZoneFleeRate;
  /* 0x19 */ u8 bodyColor : 7;
             u8 noFlip : 1;
- /* 0x1A */	u8 hiddenAbility;		
+ /* 0x1A */	u8 hiddenAbility;
 };
 
 struct SpindaSpot
@@ -631,7 +631,7 @@ enum EvolutionMethods
 	EVO_TYPE_IN_PARTY,	//specific type (param) in party after given level (unknown).
 	EVO_MAP, 	// specific map evolution. bank in param, map in unknown
 	EVO_MALE_LEVEL,		// above given level if male
-	EVO_FEMALE_LEVEL,	// above given level if female	
+	EVO_FEMALE_LEVEL,	// above given level if female
 	EVO_LEVEL_NIGHT,	// above given level at night
 	EVO_LEVEL_DAY,		// above given level during day
 	EVO_HOLD_ITEM_NIGHT,	// level up holding item at night (eg. sneasel)
@@ -680,22 +680,27 @@ void __attribute__((long_call)) DeleteFirstMoveAndGiveMoveToBoxMon(struct BoxPok
 u32 __attribute__((long_call)) GetBoxMonData(struct BoxPokemon *boxMon, s32 field, u8 *data);
 bool8 __attribute__((long_call)) MonHasMove(pokemon_t* mon, u16 move);
 u8 __attribute__((long_call)) CalculatePlayerPartyCount(void);
+u8 __attribute__((long_call)) GetNatureFromPersonality(u32 personality);
+void __attribute__((long_call)) SetBoxMonData(struct BoxPokemon *boxMon, s32 field, const void *data);
+void __attribute__((long_call)) EncryptBoxMon(struct BoxPokemon *boxMon);
+void __attribute__((long_call)) ZeroBoxMonData(struct BoxPokemon *boxMon);
+void __attribute__((long_call)) GetSpeciesName(u8 *name, u16 species);
+u16 __attribute__((long_call)) CalculateBoxMonChecksum(struct BoxPokemon *boxMon);
+
 species_t __attribute__((long_call)) GetStarterChoice(void);
 
 /*
-void ZeroBoxMonData(struct BoxPokemon *boxMon);
 void ZeroMonData(struct Pokemon *mon);
 void ZeroPlayerPartyMons(void);
 void ZeroEnemyPartyMons(void);
 void CreateMon(struct Pokemon *mon, u16 species, u8 level, u8 fixedIV, u8 hasFixedPersonality, u32 fixedPersonality, u8 otIdType, u32 fixedOtId);
-void CreateBoxMon(struct BoxPokemon *boxMon, u16 species, u8 level, u8 fixedIV, u8 hasFixedPersonality, u32 fixedPersonality, u8 otIdType, u32 fixedOtId);
+//void CreateBoxMon(struct BoxPokemon *boxMon, u16 species, u8 level, u8 fixedIV, u8 hasFixedPersonality, u32 fixedPersonality, u8 otIdType, u32 fixedOtId);
 void CreateMonWithNature(struct Pokemon *mon, u16 species, u8 level, u8 fixedIV, u8 nature);
 void CreateMonWithGenderNatureLetter(struct Pokemon *mon, u16 species, u8 level, u8 fixedIV, u8 gender, u8 nature, u8 unownLetter);
 void CreateMaleMon(struct Pokemon *mon, u16 species, u8 level);
 void CreateMonWithIVsPersonality(struct Pokemon *mon, u16 species, u8 level, u32 ivs, u32 personality);
 void CreateMonWithIVsOTID(struct Pokemon *mon, u16 species, u8 level, u8 *ivs, u32 otId);
 void CreateMonWithEVSpread(struct Pokemon *mon, u16 species, u8 level, u8 fixedIV, u8 evSpread);
-u16 CalculateBoxMonChecksum(struct BoxPokemon *boxMon);
 void CalculateMonStats(struct Pokemon *mon);
 u8 GetLevelFromMonExp(struct Pokemon *mon);
 u8 GetLevelFromBoxMonExp(struct BoxPokemon *boxMon);
@@ -733,7 +738,6 @@ u32 GetBoxMonData();
 #endif // IS_POKEMON_C
 
 void SetMonData(struct Pokemon *mon, s32 field, const void *data);
-void SetBoxMonData(struct BoxPokemon *boxMon, s32 field, const void *data);
 void CopyMon(void *dest, void *src, size_t size);
 u8 GiveMonToPlayer(struct Pokemon *mon);
 u8 SendMonToPC(struct Pokemon *mon);
@@ -747,7 +751,6 @@ u8 GetSecretBaseTrainerPicIndex(void);
 u8 GetSecretBaseTrainerNameIndex(void);
 bool8 IsPlayerPartyAndPokemonStorageFull(void);
 bool8 IsPokemonStorageFull(void);
-void GetSpeciesName(u8 *name, u16 species);
 u8 CalculatePPWithBonus(u16 move, u8 ppBonuses, u8 moveIndex);
 void RemoveMonPPBonus(struct Pokemon *mon, u8 moveIndex);
 void RemoveBattleMonPPBonus(struct BattlePokemon *mon, u8 moveIndex);

@@ -78,3 +78,5 @@
 #define MAP_ROUTE_25 	((3 << 8) | 67)
 
 #endif
+
+u8 __attribute__((long_call)) GetCurrentRegionMapSectionId(void);

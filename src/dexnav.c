@@ -12,6 +12,9 @@
 #include "../include/constants/moves.h"
 #include "../include/constants/species.h"
 #include "../include/constants/items.h"
+#include "../include/random.h"
+#include "../include/pokemon.h"
+
 
 #include "../include/new/build_pokemon.h"
 #include "../include/new/dexnav.h"
@@ -29,6 +32,7 @@ Known BUGS:
 extern void DexNavGuiHandler(void);
 extern u8 ExecDexNav(void);
 extern void TransferPlttBuffer(void);
+extern void CreateBoxMon(struct Pokemon *boxMon, u16 species, u8 level, u8 fixedIV, u8 hasFixedPersonality, u32 fixedPersonality, u8 otIdType, u32 fixedOtId);
 
 extern u8 GetPlayerDistance(s16 x, s16 y);
 
@@ -54,6 +58,7 @@ void ExecDexNavHUD(void);
 u8 ShakingGrass(u8 environment, u8 xSize, u8 ySize, bool8 smallScan);
 void DexNavLoadNames(u8 status);
 void OutlinedFontDraw(u8 objId, u8 tileNum, u16 size);
+u16 RandRange(u16 min, u16 max);
 
 void DestroyTaskCompletedTextbox(u8 tId)
 {

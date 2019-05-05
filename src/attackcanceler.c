@@ -5,6 +5,7 @@
 #include "../include/constants/items.h"
 #include "../include/new/helper_functions.h"
 #include "../include/new/attackcanceler.h"
+#include "../include/random.h"
 
 //Make sure Powder stops Inferno Overdrive
 

@@ -21,7 +21,7 @@ void __attribute__((long_call)) EmitSetMonData(u8 a, u8 request, u8 c, u8 bytes,
 void __attribute__((long_call)) ZeroPlayerPartyMons(void);
 void __attribute__((long_call)) ZeroEnemyPartyMons(void);
 void __attribute__((long_call)) CreateMon(struct Pokemon *mon, u16 species, u8 level, u8 fixedIV, u8 hasFixedPersonality, u32 fixedPersonality, u8 otIdType, u32 fixedOtId);
-void __attribute__((long_call)) CreateBoxMon(struct Pokemon *mon, u16 species, u8 level, u8 fixedIV, u8 hasFixedPersonality, u32 fixedPersonality, u8 otIdType, u32 fixedOtId);
+//void __attribute__((long_call)) CreateBoxMon(struct Pokemon *mon, u16 species, u8 level, u8 fixedIV, u8 hasFixedPersonality, u32 fixedPersonality, u8 otIdType, u32 fixedOtId);
 void __attribute__((long_call)) CreateMonWithNature(struct Pokemon *mon, u16 species, u8 level, u8 fixedIV, u8 nature);
 void __attribute__((long_call)) CreateMonWithGenderNatureLetter(struct Pokemon *mon, u16 species, u8 level, u8 fixedIV, u8 gender, u8 nature, u8 unownLetter);
 void __attribute__((long_call)) CalculateMonStats(pokemon_t *mon);
@@ -107,7 +107,7 @@ int __attribute__((long_call)) CountTrailingZeroBits(u32 value);
 void __attribute__((long_call)) IncrementGameStat(u8 gameStat);
 void __attribute__((long_call)) nullsub_8(void);
 s16 __attribute__((long_call)) Sine(s16 index, s16 amplitude);
-u16 __attribute__((long_call)) Random();
+//u16 __attribute__((long_call)) Random();
 
 void __attribute__((long_call)) PlayCry3(u16 species, s8 pan, u8 mode);
 void __attribute__((long_call)) PlayBGM(u16 songNum);

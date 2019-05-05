@@ -2,10 +2,7 @@
 #include "defines_battle.h"
 #include "../include/link.h"
 #include "../include/new/helper_functions.h"
-/*
-Dynamic Overworld Palettes
-	credit to Navenatox
-*/
+#include "../include/random.h"
 
 u16 GetBackspriteId(void);
 void LoadTrainerBackPal(u16 trainerPicId, u8 bank);

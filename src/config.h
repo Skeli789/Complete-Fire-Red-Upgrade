@@ -89,6 +89,7 @@ enum
 #define KANTO_DEX_COUNT 151
 #define NATIONAL_DEX_COUNT 386
 #define MAX_NUM_POKEMON SPECIES_EGG + 1
+#define EGG_HATCH_LEVEL 5
 
 #define MAX_LEVEL 100 //Also change this in the file “special_inserts.asm” found in the root
 #define NUM_TRAINER_CLASSES 107
@@ -153,6 +154,13 @@ enum
 #define FOSSIL_IMAGE_HACK  // comment this out if you don't want JPANs fossil image hack
 #define EVO_HOLD_ITEM_REMOVAL //Comment this out if you want leveling up/hold item evolution (eg. sneasel) to remove the item (like normal)
 #define EXPAND_MOVESETS //Comment this out if you're using the Dynamic Pokemon Expansion repo to expand the movesets
+//#define INHERIT_MASTER_CHERISH_BALL  // uncomment this if you want Master and Cherish balls to be inherited by daycare offspring
+
+/* Expanded TMs/HMs Options */
+#define EXPANDED_TMSHMS  // comment this out if you want to keep 50 tms/8 hms
+#define NUM_TMS 50
+#define NUM_HMS 8
+#define NUM_TMSHMS NUM_TMS+NUM_HMS // this must always be defined
 
 /* Misc Effect Options */
 //#define OLD_BURN_DAMAGE //Uncomment this line if you want burn damage to do 1/8 of max health instead of 1/16
