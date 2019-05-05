@@ -7,10 +7,11 @@
 #include "../include/new/frontier.h"
 #include "../include/new/build_pokemon.h"
 #include "../include/new/multi.h"
+#include "../include/pokemon.h"
+#include "../include/pokemon_storage_system.h"
 #include "../include/random.h"
 #include "../include/constants/items.h"
 #include "../include/constants/maps.h"
-#include "../include/pokemon.h"
 
 #include "Tables/Trainers_With_EVs_Table.h"
 
@@ -23,6 +24,8 @@ extern void MultiInitPokemonOrder(void);
 extern u8 GiveMonToPlayer(pokemon_t* mon);
 extern u16 RandRange(u16 min, u16 max);
 extern void GiveBoxMonInitialMoveset(struct BoxPokemon* boxMon);
+extern bool8 sp051_CanTeamParticipateInSkyBattle(void);
+extern bool8 CanMonParticipateInASkyBattle(struct Pokemon* mon);
 
 u8 CreateNPCTrainerParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, u8 side);
 u8 BuildFrontierParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, bool8 ForPlayer, u8 side);
@@ -80,9 +83,30 @@ void BuildTrainerPartySetup(void) {
 		else if (!(gBattleTypeFlags & (BATTLE_TYPE_POKE_DUDE | BATTLE_TYPE_SCRIPTED_WILD_1)))
 			SetWildMonHeldItem();
 	}
+	
+	if (FlagGet(SKY_BATTLE_FLAG))
+	{
+		if (sp051_CanTeamParticipateInSkyBattle())
+		{
+			ExtensionState.skyBattlePartyBackup = Calloc(sizeof(struct Pokemon) * PARTY_SIZE);
+			if (ExtensionState.skyBattlePartyBackup != NULL)
+			{
+				u8 counter = 0;
+				for (int i = 0; i < PARTY_SIZE; ++i)
+				{
+					if (!CanMonParticipateInASkyBattle(&gPlayerParty[i]))
+					{
+						(ExtensionState.skyBattlePartyBackup)[counter++] = gPlayerParty[i];
+						Memset(&gPlayerParty[i], 0x0, sizeof(struct Pokemon));
+					}
+				}
+				CompactPartySlots();
+			}
+		}
+	}
 
 	if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER && ViableMonCount(gEnemyParty) > 1) {
-		ExtensionState.partyBackup = Calloc(sizeof(struct Pokemon) * 6);
+		ExtensionState.partyBackup = Calloc(sizeof(struct Pokemon) * PARTY_SIZE);
 		if (ExtensionState.partyBackup == NULL)
 			return;
 
@@ -96,7 +120,7 @@ void BuildTrainerPartySetup(void) {
 			u8 mon3 = gSelectedOrderFromParty[2];
 			for (int i = 0; i < PARTY_SIZE; ++i) {
 				if (i + 1 != mon1 && i + 1 != mon2 && i + 1 != mon3) //Don't backup selected mons
-					Memcpy(&((pokemon_t*) ExtensionState.partyBackup)[counter++], &gPlayerParty[i], sizeof(struct Pokemon));
+					Memcpy(&((struct Pokemon*) ExtensionState.partyBackup)[counter++], &gPlayerParty[i], sizeof(struct Pokemon));
 			}
 			ReducePartyToThree(); //Well...sometimes can be less than 3
 		}
@@ -299,6 +323,13 @@ u8 CreateNPCTrainerParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, b
 
 			CalculateMonStats(&party[i]);
 			HealMon(&party[i]);
+			
+			//Status Inducers
+			if (VarGet(STATUS_INDUCER_VAR))
+			{
+				u8 status = VarGet(STATUS_INDUCER_VAR) & 0xFF; //Lowest byte is status
+				party[i].condition = status;
+			}
         }
 		#ifdef OPEN_WORLD_TRAINERS
 		if ((GetOpenWorldTrainerMonAmount() > 1 || trainer->doubleBattle)
@@ -790,13 +821,17 @@ u8 ScriptGiveMon(u16 species, u8 level, u16 item, u32 unused1, u32 unused2, u8 b
     return sentToPc;
 }
 
-u32 CheckShinyMon(u32 pid) {
-	u16 chance = 1;	//default 1/4096 rate
+static u32 CheckShinyMon(u32 pid) 
+{
+	u16 chance = 1;	//Default 1/4096 rate
 
 	if (CheckBagHasItem(ITEM_SHINY_CHARM, 1) > 0)
 		chance = 3;
+		
+	if (FlagGet(WILD_SHINY_BATTLE_FLAG))
+		chance = 4097;
 
-	if (RandRange(0,4097) < chance)		// nominal 1/4096
+	if (RandRange(0, 4097) < chance)		//Nominal 1/4096
 	{
 		// make shiny
 		u8 shinyRange = RandRange(0,8);
@@ -806,6 +841,7 @@ u32 CheckShinyMon(u32 pid) {
 		u16 tid = LOHALF(playerId);
 		pid = (((shinyRange ^ (sid ^ tid)) ^ LOHALF(pid)) << 16) | LOHALF(pid);
 	}
+	
 	return pid;
 };
 

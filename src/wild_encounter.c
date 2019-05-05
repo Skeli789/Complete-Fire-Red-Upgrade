@@ -267,6 +267,13 @@ void CreateWildMon(u16 species, u8 level, u8 monHeaderIndex, bool8 purgeParty)
 				gEnemyParty[enemyMonIndex].moves[i] = moves[i];
 		}
 	}
+	
+	//Status Inducers
+	if (VarGet(STATUS_INDUCER_VAR))
+	{
+		u8 status = VarGet(STATUS_INDUCER_VAR) & 0xFF; //Lowest byte is status
+		gEnemyParty[enemyMonIndex].condition = status;
+	}
 }
 
 enum

@@ -24,7 +24,7 @@
 
 /*
 NOTES: 
-	1. a lot of specials will not work unless you have chosen to expand the save block!
+	1. Many specials will not work unless you have chosen to expand the save block!
 	2. PC selection hack allows a lot all of the attribute getter/setter specials to reference boxed pokemon via var8003
 		-var8003 = 1: boxed pokemon (output from pc selection: box num in var8000, slot in var8001)
 		-else: menu pokemon (and slot in var8004, etc)
@@ -42,6 +42,7 @@ extern u8 AddPalRef(u8 Type, u16 PalTag);
 extern u8 BuildFrontierParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, bool8 ForPlayer, u8 side);
 
 extern const struct SwarmData gSwarmTable[];
+extern const species_t gSkyBattleBannedSpeciesList[];
 
 //Pokemon Specials//
 ///////////////////////////////////////////////////////////////////////////////////
@@ -1060,11 +1061,35 @@ void sp18B_DisplayImagesFromTable(void) {
 //Battle Specials//
 ///////////////////////////////////////////////////////////////////////////////////
 
-
-void sp051_WildShinyBattle(void) {
-	return;
+bool8 CanMonParticipateInASkyBattle(struct Pokemon* mon)
+{
+	u16 species = mon->species;
+		
+	if (GetMonData(mon, MON_DATA_IS_EGG, NULL)
+	||  mon->hp == 0
+	||  CheckTableForSpecies(species, gSkyBattleBannedSpeciesList))
+		return FALSE;
+		
+	if (gBaseStats[species].type1 == TYPE_FLYING
+	||  gBaseStats[species].type2 == TYPE_FLYING
+	||  GetPartyAbility(mon) == ABILITY_LEVITATE)
+		return TRUE;
+		
+	return FALSE;
 }
 
+bool8 sp051_CanTeamParticipateInSkyBattle(void) 
+{
+	for (int i = 0; i < PARTY_SIZE; ++i)
+	{
+		if (CanMonParticipateInASkyBattle(&gPlayerParty[i]))
+			return gSpecialVar_LastResult = TRUE;
+	}
+	
+	return gSpecialVar_LastResult = FALSE;
+}
+
+/*Done with vars
 void sp052_TemporaryStatusInducer(void) {
 	return;
 }
@@ -1080,7 +1105,7 @@ void sp054_PermanentStatusInducer(void) {
 void sp055_PermanentStatusCanceller(void) {
 	return;
 }
-
+*/
 
 //@Details: Buffers the map name where there is currently a swarm to buffer1,
 //			and the species name where there is currently a swarm to buffer2.

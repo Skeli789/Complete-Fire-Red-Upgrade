@@ -55,7 +55,7 @@ sp04D_TimerValueReached 0815FE94
 sp04E_SaveTimerValue 0815FE98
 sp04F_StartTimerAtTime 0815FE9C
 sp050_StoreTimerToVariable 0815FEA0
-#sp051_WildShinyBattle 0815FEA4
+sp051_CanTeamParticipateInSkyBattle 0815FEA4
 #sp052_TemporaryStatusInducer 0815FEA8
 #sp053_TemporaryStatusCanceller 0815FEAC
 #sp054_PermanentStatusInducer 0815FEB0
