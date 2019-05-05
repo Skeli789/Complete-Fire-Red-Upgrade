@@ -7,6 +7,8 @@
 #include "../include/constants/songs.h"
 #include "../include/constants/trainer_classes.h"
 #include "../include/event_data.h"
+#include "../include/map_scripts.h"
+#include "../include/script.h"
 
 #include "../include/constants/flags.h"
 #include "../include/constants/trainers.h"
@@ -14,6 +16,7 @@
 #include "../include/new/helper_functions.h"
 #include "../include/new/multi.h"
 #include "../include/new/frontier.h"
+#include "../include/new/wild_encounter.h"
 
 #define SCRCMD_TRAINERBATTLE 0x5C
 
@@ -62,7 +65,7 @@ void TrainerFaceFix(void);
 void FollowerPositionFix(void);
 
 // table full of pointers to custom walking scripts
-const u8* gDefaultWalkingScripts[] =
+const u8* const gDefaultWalkingScripts[] =
 {
 	(u32) 0,
 	(u32) 0,
@@ -893,7 +896,7 @@ bool8 TakeStep(void)
 		}
 	}
 	return FALSE;
-};
+}
 
 
 // Whiteout Hack
@@ -909,9 +912,25 @@ bool8 WhiteoutLogic(void) {
 #else
 	return TRUE;	// load from original table
 #endif
-};
+}
 
+bool8 TryRunOnFrameMapScript(void)
+{
+	TryUpdateSwarm();
+	
+	if (QuestLogMode != 3)
+	{
+		u8 *ptr = MapHeaderCheckScriptTable(MAP_SCRIPT_ON_FRAME_TABLE);
 
+		if (!ptr)
+			return FALSE;
+
+		ScriptContext1_SetupScript(ptr);
+		return TRUE;
+	}
+	
+	return FALSE;
+}
 
 
 //Follow Me Updates/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

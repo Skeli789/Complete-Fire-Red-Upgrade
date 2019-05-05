@@ -21,6 +21,7 @@ enum
 
 //Exported Functions
 void CreateWildMon(u16 species, u8 level, u8 monHeaderIndex, bool8 purgeParty);
+void TryUpdateSwarm(void);
 void FishingWildEncounter(u8 rod);
 bool8 DoesCurrentMapHaveFishingMons(void);
 bool8 StandardWildEncounter(u16 currMetaTileBehavior, u16 previousMetaTileBehavior);

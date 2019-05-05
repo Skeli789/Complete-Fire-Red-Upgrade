@@ -106,6 +106,7 @@ ItemId_GetName 809A8BC 1
 
 ##Overworld Hooks
 apply_map_tileset_palette 80599C8 3
+TryRunOnFrameMapScript 8069C74 0
 BattleSetup_ConfigureTrainerBattle 8080228 1
 SetTrainerFlags 80803FC 0
 BattleSetup_StartTrainerBattle 8080464 0

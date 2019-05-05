@@ -32,9 +32,11 @@ extern const struct WildPokemonHeader gWildMonMorningHeaders[];
 extern const struct WildPokemonHeader gWildMonEveningHeaders[];
 extern const struct WildPokemonHeader gWildMonNightHeaders[];
 extern const struct SwarmData gSwarmTable[];
+extern const u16 gSwarmTableLength;
 
 extern u16 GetMUS_ForBattle(void);
 extern void BuildTrainerPartySetup(void);
+extern bool8 CheckAndSetDailyEvent(u16 eventVar, bool8 setDailyEventVar);
 
 //This file's functions
 static u8 ChooseWildMonLevel(const struct WildPokemon* wildPokemon);
@@ -277,21 +279,26 @@ enum
 #define WILD_CHECK_REPEL    0x1
 #define WILD_CHECK_KEEN_EYE 0x2
 
+void TryUpdateSwarm(void)
+{
+	if (CheckAndSetDailyEvent(SWARM_DAILY_EVENT_VAR, TRUE))
+	{
+		u16 index = Random() % gSwarmTableLength;
+		VarSet(SWARM_INDEX_VAR, index);
+	}
+}
+
 static bool8 TryGenerateSwarmMon(u8 level, u8 wildMonIndex, bool8 purgeParty)
 {
-	int i;
+	u8 index = VarGet(SWARM_INDEX_VAR);
+	u8 mapName = gSwarmTable[index].mapName;
+	u16 species = gSwarmTable[index].species;
 	
-	if (VarGet(SWARM_MAP_NAME_VAR) == gCurrentMapName
-	&&  umodsi(Random(), 100) < SWARM_CHANCE)
+	if (mapName == gCurrentMapName
+	&&  Random() % 100 < SWARM_CHANCE)
 	{
-		for (i = 0; gSwarmTable[i].species != 0xFFFF; ++i)
-		{
-			if (gSwarmTable[i].mapName == gCurrentMapName)
-			{
-				CreateWildMon(VarGet(SWARM_SPECIES_VAR), level, wildMonIndex, purgeParty);
-				return TRUE;
-			}
-		}
+		CreateWildMon(species, level, wildMonIndex, purgeParty);
+		return TRUE;
 	}
 
 	return FALSE;
@@ -454,10 +461,11 @@ static bool8 DoWildEncounterRateDiceRoll(u16 encounterRate)
         return FALSE;
 }
 
-bool8 StandardWildEncounter(u16 currMetaTileBehavior, u16 previousMetaTileBehavior)
+bool8 StandardWildEncounter(const u16 currMetaTileBehavior, const u16 previousMetaTileBehavior)
 {
-    struct Roamer *roamer;
+    struct Roamer* roamer;
 	bool8 clearDoubleFlag = FALSE;
+	const u8 lowerByte = MetatileBehavior_GetLowerBytes(currMetaTileBehavior, 4);
 
     if (sWildEncountersDisabled == TRUE)
         return FALSE;
@@ -469,7 +477,7 @@ bool8 StandardWildEncounter(u16 currMetaTileBehavior, u16 previousMetaTileBehavi
         return FALSE;
     else
     {
-        if (MetatileBehavior_GetLowerBytes(currMetaTileBehavior, 4) & TILE_FLAG_ENCOUNTER_TILE)
+        if (lowerByte & TILE_FLAG_ENCOUNTER_TILE)
         {
             if (landMonsInfo == NULL)
 				return FALSE;
@@ -486,7 +494,7 @@ bool8 StandardWildEncounter(u16 currMetaTileBehavior, u16 previousMetaTileBehavi
                 roamer = &gRoamers[gLastSelectedRoamer];
                 if (!IsWildLevelAllowedByRepel(roamer->level))
                     return FALSE;
-
+				
                 BattleSetup_StartRoamerBattle();
                 return TRUE;
             }
@@ -495,7 +503,7 @@ bool8 StandardWildEncounter(u16 currMetaTileBehavior, u16 previousMetaTileBehavi
                 //Try a regular wild land encounter
 				if (!FlagGet(DOUBLE_WILD_BATTLE_FLAG) //Flag hasn't already been set by user
 				&&  ViableMonCount(gPlayerParty) >= 2
-				&&  MetatileBehavior_GetLowerBytes(currMetaTileBehavior, 4) & TILE_FLAG_WILD_DOUBLE
+				&&  (lowerByte & TILE_FLAG_WILD_DOUBLE)
 				&&  Random() % 100 < WILD_DOUBLE_RANDOM_CHANCE)
 				{
 					FlagSet(DOUBLE_WILD_BATTLE_FLAG);
@@ -512,10 +520,9 @@ bool8 StandardWildEncounter(u16 currMetaTileBehavior, u16 previousMetaTileBehavi
 					FlagClear(DOUBLE_WILD_BATTLE_FLAG); //Battle didn't start so restart the flag
 
 				IncrementEncounterProbabilityBonus(landMonsInfo->encounterRate);
-                return FALSE;
             }
         }
-        else if (MetatileBehavior_GetLowerBytes(currMetaTileBehavior, 4) & TILE_FLAG_SURFABLE
+        else if (lowerByte & TILE_FLAG_SURFABLE
              &&  TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
         {
             if (waterMonsInfo == NULL)
@@ -538,7 +545,7 @@ bool8 StandardWildEncounter(u16 currMetaTileBehavior, u16 previousMetaTileBehavi
             {
 				if (!FlagGet(DOUBLE_WILD_BATTLE_FLAG) //Flag hasn't already been set by user
 				&&  ViableMonCount(gPlayerParty) >= 2
-				&&  MetatileBehavior_GetLowerBytes(currMetaTileBehavior, 4) & TILE_FLAG_WILD_DOUBLE
+				&&  lowerByte & TILE_FLAG_WILD_DOUBLE
 				&&  Random() % 100 < WILD_DOUBLE_RANDOM_CHANCE)
 				{
 					FlagSet(DOUBLE_WILD_BATTLE_FLAG);
