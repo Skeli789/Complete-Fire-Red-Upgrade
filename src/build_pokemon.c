@@ -15,6 +15,8 @@
 #include "Tables/Trainers_With_EVs_Table.h"
 
 extern const u8 gClassPokeBalls[NUM_TRAINER_CLASSES];
+extern const species_t gRandomizerBanList[];
+extern const species_t gSetPerfectXIvList[];
 
 extern void GetFrontierTrainerName(u8* dst, u16 trainerId, u8 battlerNum);
 extern void MultiInitPokemonOrder(void);
@@ -810,9 +812,22 @@ u32 CheckShinyMon(u32 pid) {
 
 void CreateBoxMon(struct BoxPokemon* boxMon, u16 species, u8 level, u8 fixedIV, bool8 hasFixedPersonality, u32 fixedPersonality, u8 otIdType, u32 fixedOtId) 
 {
+	int i;
     u8 speciesName[POKEMON_NAME_LENGTH + 1];
     u32 personality;
     u32 value;
+	
+#ifdef UNBOUND
+	if (FlagGet(POKEMON_RANDOMIZER_FLAG))
+	{
+		u32 id = MathMax(1, T1_READ_32(gSaveBlock2->playerTrainerId)); //0 id would mean every Pokemon would crash the game
+		u32 newSpecies = species * id;
+		species = MathMax(SPECIES_BULBASAUR, newSpecies % MAX_NUM_POKEMON);
+		
+		while (CheckTableForSpecies(species, gRandomizerBanList))
+			species *= id;
+	}
+#endif
 
     ZeroBoxMonData(boxMon);
 
@@ -835,17 +850,10 @@ void CreateBoxMon(struct BoxPokemon* boxMon, u16 species, u8 level, u8 fixedIV, 
         } while (shinyValue < 8);
     }
     else if (otIdType == OT_ID_PRESET) //Pokemon has a preset OT ID
-    {
         value = fixedOtId;
-    }
     else //Player is the OT
-    {
-        value = gSaveBlock2->playerTrainerId[0]
-              | (gSaveBlock2->playerTrainerId[1] << 8)
-              | (gSaveBlock2->playerTrainerId[2] << 16)
-              | (gSaveBlock2->playerTrainerId[3] << 24);
-    }
-
+        value = T1_READ_32(gSaveBlock2->playerTrainerId);
+	
     SetBoxMonData(boxMon, MON_DATA_OT_ID, &value);
 
     GetSpeciesName(speciesName, species);
@@ -865,12 +873,8 @@ void CreateBoxMon(struct BoxPokemon* boxMon, u16 species, u8 level, u8 fixedIV, 
 
     if (fixedIV < 32)
     {
-        SetBoxMonData(boxMon, MON_DATA_HP_IV, &fixedIV);
-        SetBoxMonData(boxMon, MON_DATA_ATK_IV, &fixedIV);
-        SetBoxMonData(boxMon, MON_DATA_DEF_IV, &fixedIV);
-        SetBoxMonData(boxMon, MON_DATA_SPEED_IV, &fixedIV);
-        SetBoxMonData(boxMon, MON_DATA_SPATK_IV, &fixedIV);
-        SetBoxMonData(boxMon, MON_DATA_SPDEF_IV, &fixedIV);
+		for (i = 0; i < NUM_STATS; ++i)
+			SetBoxMonData(boxMon, MON_DATA_HP_IV + i, &fixedIV);
     }
     else
     {
@@ -892,14 +896,32 @@ void CreateBoxMon(struct BoxPokemon* boxMon, u16 species, u8 level, u8 fixedIV, 
         SetBoxMonData(boxMon, MON_DATA_SPATK_IV, &iv);
         iv = (value & 0x7C00) >> 10;
         SetBoxMonData(boxMon, MON_DATA_SPDEF_IV, &iv);
+		
+		#ifdef CREATE_WITH_X_PERFECT_IVS
+		{
+			if (CheckTableForSpecies(species, gSetPerfectXIvList))
+			{
+				u8 numPerfectStats = 0;
+				u8 perfect = 31;
+				bool8 perfectStats[NUM_STATS] = {0};
+				
+				while (numPerfectStats < MathMin(CREATE_WITH_X_PERFECT_IVS, NUM_STATS)) //Error prevention
+				{
+					u8 statId = Random() % NUM_STATS;
+					if (!perfectStats[statId]) //Must be unique
+					{
+						perfectStats[statId] = TRUE;
+						++numPerfectStats;
+						SetBoxMonData(boxMon, MON_DATA_HP_IV + statId, &perfect);
+					}
+				}
+			}
+		}
+		#endif
     }
 
-/*
-    if (gBaseStats[species].ability2)
-    {
-        value = personality & 1;
-        SetBoxMonData(boxMon, MON_DATA_ALT_ABILITY, &value);
-    }*/
+    value = 0;
+    SetBoxMonData(boxMon, MON_DATA_ALT_ABILITY, &value); //Set base hidden ability to 0
 
     GiveBoxMonInitialMoveset(boxMon);
 };

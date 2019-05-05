@@ -101,19 +101,6 @@ MaxLevelChange14:
 	.byte MAX_LEVEL - 1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@ Hidden Abilities - Generate Poke
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.org 0x03DD58, 0xFF
-HiddenAbilityPokemonGeneration:
-	mov r0, #0x0
-	str r0, [sp, #0x18]
-	mov r0, r7
-	mov r1, #0x2E
-	mov r2, r9
-	bl HiddenAbilityPokemonGeneration + 0x2778 @ set_pokemon_data_2
-	b HiddenAbilityPokemonGeneration + 0x26 @ 0x0803DD7E
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Max Level Limiters
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x3E806, 0xFF
