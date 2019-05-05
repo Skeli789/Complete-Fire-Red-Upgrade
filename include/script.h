@@ -26,13 +26,15 @@ struct ScriptContext
     u8 keypad_override_direction;	// Locks player movement.
 };
 
-#define ScriptStringVars ((u8**) 0x83A7294) //Text buffers
+#define sScriptStringVars ((u8**) *((u32*) 0x806BF38)) //Text buffers
 
 //extern struct ScriptEnvironment gScriptEnv1;	//03000EB0
 //extern struct ScriptEnvironment gScriptEnv2;	//03000F28
 
 #define ScriptReadByte(ctx) (*(ctx->scriptPtr++))
 u16 __attribute__((long_call)) ScriptReadHalfword(struct ScriptContext *ctx);
+u8* __attribute__((long_call)) MapHeaderCheckScriptTable(u8 tag);
+void __attribute__((long_call)) ScriptContext1_SetupScript(const u8* ptr);
 
 /*
 void InitScriptContext(struct ScriptContext *ctx, void *cmdTable, void *cmdTableEnd);

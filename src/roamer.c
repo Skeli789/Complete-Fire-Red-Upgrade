@@ -1,11 +1,14 @@
 #include "defines.h"
 
 #include "../include/event_data.h"
+#include "../include/event_object_movement.h"
 #include "../include/constants/maps.h"
 #include "../include/constants/species.h"
 #include "../include/new/roamer.h"
 #include "../include/new/wild_encounter.h"
 #include "../include/new/helper_functions.h"
+
+//Do Pokedex area screen / Get icons on the region map
 
 enum
 {
@@ -49,6 +52,8 @@ static const u8 sRoamerLocations[][NUM_MAPS_IN_SET] = //0x8466C58 in FR
 	{0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF},
 };
 
+extern u16 GetMUS_ForBattle(void);
+
 static void CreateInitialRoamerMon(u16 species, u8 level, bool8 allowedOnLand, bool8 allowedOnWater);
 static bool8 IsRoamerAt(u8 mapGroup, u8 mapNum, u8 id);
 static void CreateRoamerMonInstance(u8 id);
@@ -76,13 +81,20 @@ static void CreateInitialRoamerMon(u16 species, u8 level, bool8 allowedOnLand, b
 				species = SPECIES_RAIKOU;
 		}
 	}
+	
+	if (IsSpeciesRoaming(species)) //Only one of each species may roam at a time.
+	{
+		gSpecialVar_LastResult = 0;
+		return;
+	}
 
     CreateMon(&gEnemyParty[0], species, level, 0x20, 0, 0, 0, 0);
 	
 	#ifdef CREATE_ROAMER_WITH_X_PERFECT_IVS
+	{
 		u8 numPerfectStats = 0;
 		u8 perfect = 31;
-		bool8 perfectStats[NUM_STATS];
+		bool8 perfectStats[NUM_STATS] = {0};
 		
 		while (numPerfectStats < MathMin(CREATE_ROAMER_WITH_X_PERFECT_IVS, NUM_STATS)) //Error prevention
 		{
@@ -94,12 +106,14 @@ static void CreateInitialRoamerMon(u16 species, u8 level, bool8 allowedOnLand, b
 				SetMonData(&gEnemyParty[0], MON_DATA_HP_IV + statId, &perfect);
 			}
 		}
+	}
 	#endif
 	
     roamer.level = level;
     roamer.status = 0;
     roamer.ivs = GetMonData(&gEnemyParty[0], MON_DATA_IVS, NULL);
     roamer.personality = gEnemyParty[0].personality;
+	roamer.species = species;
     roamer.hp = gEnemyParty[0].hp;
 	roamer.canAppearOnLand = allowedOnLand;
 	roamer.canAppearOnWater = allowedOnWater;
@@ -116,14 +130,17 @@ static void CreateInitialRoamerMon(u16 species, u8 level, bool8 allowedOnLand, b
 	}
 	
 	if (i == MAX_NUM_ROAMERS)
-		gSpecialVar_LastResult = 1; //Too many roamers
+		gSpecialVar_LastResult = 0; //Too many roamers	
+	else
+		gSpecialVar_LastResult = 1; //Success
 }
 
 // Inputs:
 //		Var8000: Species
 //		Var8001: Level
-//		Var8002: Roamer Allowed On Land
-//		Var8003: Roamer Allowed On Water
+//		Var8002: 0x0 = Roamer Not Allowed On Land
+//		Var8003: 0x0 = Roamer Not Allowed On Water
+// Returns: To LastResult 0 if failed.
 void sp129_InitRoamer(void)
 {
 	#ifdef FRLG_ROAMING
@@ -171,7 +188,7 @@ void RoamersMoveToOtherLocationSet(void)
 				if (roamer->location[MAP_NUM] != mapNum)
 				{
 					roamer->location[MAP_NUM] = mapNum;
-					return;
+					break;
 				}
 			}
 		}
@@ -179,7 +196,7 @@ void RoamersMoveToOtherLocationSet(void)
 }
 
 void RoamersMove(void)
-{
+{	
     u8 locSet = 0;
 
     if ((Random() % 16) == 0)
@@ -296,8 +313,20 @@ void GetMapGroupAndMapNumOfRoamer(u16 species, u8* mapGroup, u8* mapNum)
 	{
 		if (gRoamers[i].species == species)
 		{
-			*mapGroup = gRoamers[Var8000].location[0];
-			*mapNum = gRoamers[Var8000].location[1];
+			*mapGroup = gRoamers[i].location[MAP_GRP];
+			*mapNum = gRoamers[i].location[MAP_NUM];
 		}
 	}
+}
+
+void BattleSetup_StartRoamerBattle(void)
+{
+    ScriptContext2_Enable();
+    FreezeEventObjects();
+    sub_805C780();
+    gMain.savedCallback = CB2_EndWildBattle;
+    gBattleTypeFlags = BATTLE_TYPE_ROAMER;
+    CreateBattleStartTask(GetWildBattleTransition(), GetMUS_ForBattle());
+    IncrementGameStat(GAME_STAT_TOTAL_BATTLES);
+    IncrementGameStat(GAME_STAT_WILD_BATTLES);
 }

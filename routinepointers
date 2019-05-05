@@ -60,8 +60,8 @@ sp050_StoreTimerToVariable 0815FEA0
 #sp053_TemporaryStatusCanceller 0815FEAC
 #sp054_PermanentStatusInducer 0815FEB0
 #sp055_PermanentStatusCanceller 0815FEB4
-#sp056_RoamChanger 0815FEB8
-#sp057_RoamCanceller 0815FEBC
+sp056_BufferSwarmText 0815FEB8
+sp057_BufferMapNameWithSpeciesRoaming 0815FEBC
 #sp058_WildDataSwitch 0815FEC0
 #sp059_WildDataSwitchCanceller 0815FEC4
 

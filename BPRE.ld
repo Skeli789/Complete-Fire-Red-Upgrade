@@ -526,7 +526,7 @@ IsDoubleBattle = 0x8075290 | 1;
 InitSpriteDataForLinearTranslation = 0x80754B8 | 1;
 StartAnimLinearTranslation = 0x8075590 | 1;
 GetBattlerSpriteSubpriority = 0x807685C | 1;
-BattleSetup_StartRoamerBattle = 0x807F78C | 1;
+/*BattleSetup_StartRoamerBattle = 0x807F78C | 1;*/
 BattleSetup_StartWildBattle = 0x807F704 | 1;
 CreateBattleStartTask = 0x807F690 | 1;
 StartTheBattle = 0x807F868 | 1;
@@ -668,7 +668,7 @@ IsWildLevelAllowedByRepel = 0x808310C | 1;
 ApplyFluteEncounterRateMod = 0x8083174 | 1;
 ApplyCleanseTagEncounterRateMod = 0x80831D8 | 1;
 IncrementEncounterProbabilityBonus = 0x8083410 | 1;
-TryStartRoamerEncounter = 0x8141FAC | 1;
+/*TryStartRoamerEncounter = 0x8141FAC | 1;*/
 
 /*Item Functions*/
 IsMail = 0x80980F8 | 1;
@@ -713,6 +713,7 @@ ScriptReadHalfword = 0x80698F8 | 1;
 ScriptContext2_Enable = 0x8069940 | 1;
 ScriptContext1_SetupScript = 0x8069AE4 | 1;
 ScriptContext1_Stop = 0x8069B28 | 1;
+MapHeaderCheckScriptTable = 0x8069BD8 | 1;
 PlayNewMapMusic = 0x8071A74 | 1;
 PatchObjectPalette = 0x0805F538 | 1;
 CurrMapHeightMismatch = 0x080681B0 | 1;
