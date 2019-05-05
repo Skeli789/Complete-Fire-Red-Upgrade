@@ -38,3 +38,10 @@ LinkOpponentHandleFormChange:
 	ldr r0, =0x803C32C | 1
 	bx r0
 
+@Hook at 0x0803DAD2 with r0
+CreateBoxMonHook:
+	add sp, sp, #0x20
+	mov r0, r7
+	bl CreateBoxMon
+	ldr r0, =0x803DD86 | 1
+	bx r0

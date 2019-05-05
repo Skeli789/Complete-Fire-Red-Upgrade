@@ -2,6 +2,7 @@
 
 #include "../include/event_data.h"
 #include "../include/event_object_movement.h"
+#include "../include/random.h"
 #include "../include/constants/maps.h"
 #include "../include/constants/species.h"
 #include "../include/new/roamer.h"

@@ -333,7 +333,7 @@ PokedexLoadAlternateWeightHook 08105A58 0
 #TriggerPendingDaycareEgg 080459F0 1
 
 ##Pokemon Hooks
-CreateBoxMon 0803DAC4 3
+CreateBoxMonHook 803DAD2 0
 
 ##TM/HM Expansion
 #CanMonLearnTMHM 08043C2C 2
