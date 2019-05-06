@@ -3,6 +3,8 @@
 #include "../include/constants/moves.h"
 #include "../include/constants/items.h"
 
+u8 ItemId_GetSecondaryId(u16 itemId);
+
 extern u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
 
 u8* ItemId_GetName(u16 itemId) {
@@ -21,80 +23,9 @@ u8 ItemId_GetSecondaryId(u16 itemId) {
 
 
 
-/*
-Expanded TMs/HMs
-	credit to ghoulslash
-	
-These use the items secondary id rather than item id to allow you to insert the TMs anywhere in the item data
-*/
-#define TMHM_LEARNSET(moves) {(u32)(moves), ((u64)(moves) >> 32)}
-#define TMHM(tmhm) ((u64)1 << (ITEM_##tmhm - ITEM_TM01_FOCUS_PUNCH))
-
 #ifdef EXPANDED_TMSHMS
-	const u32 gTMHMLearnsets[NUM_SPECIES][4];
-	const u16 gTMHMMoves[NUM_TMSHMS] = {
-		MOVE_FOCUSPUNCH,
-		MOVE_DRAGONCLAW,
-		MOVE_WATERPULSE,
-		MOVE_CALMMIND,
-		MOVE_ROAR,
-		MOVE_TOXIC,
-		MOVE_HAIL,
-		MOVE_BULKUP,
-		MOVE_BULLETSEED,
-		MOVE_HIDDENPOWER,
-		MOVE_SUNNYDAY,
-		MOVE_TAUNT,
-		MOVE_ICEBEAM,
-		MOVE_BLIZZARD,
-		MOVE_HYPERBEAM,
-		MOVE_LIGHTSCREEN,
-		MOVE_PROTECT,
-		MOVE_RAINDANCE,
-		MOVE_GIGADRAIN,
-		MOVE_SAFEGUARD,
-		MOVE_FRUSTRATION,
-		MOVE_SOLARBEAM,
-		MOVE_IRONTAIL,
-		MOVE_THUNDERBOLT,
-		MOVE_THUNDER,
-		MOVE_EARTHQUAKE,
-		MOVE_RETURN,
-		MOVE_DIG,
-		MOVE_PSYCHIC,
-		MOVE_SHADOWBALL,
-		MOVE_BRICKBREAK,
-		MOVE_DOUBLETEAM,
-		MOVE_REFLECT,
-		MOVE_SHOCKWAVE,
-		MOVE_FLAMETHROWER,
-		MOVE_SLUDGEBOMB,
-		MOVE_SANDSTORM,
-		MOVE_FIREBLAST,
-		MOVE_ROCKTOMB,
-		MOVE_AERIALACE,
-		MOVE_TORMENT,
-		MOVE_FACADE,
-		MOVE_SECRETPOWER,
-		MOVE_REST,
-		MOVE_ATTRACT,
-		MOVE_THIEF,
-		MOVE_STEELWING,
-		MOVE_SKILLSWAP,
-		MOVE_SNATCH,
-		MOVE_OVERHEAT,	//TM50
-		MOVE_POISONPOWDER, //TM51
-		MOVE_CUT,		//HM01
-		MOVE_FLY,
-		MOVE_SURF,
-		MOVE_STRENGTH,
-		MOVE_FLASH,
-		MOVE_FLAMETHROWER,
-		MOVE_WATERFALL,
-		MOVE_DIVE,
-		MOVE_REVERSAL,	//HM09
-		MOVE_REVENGE,
-	};	
+	extern const u32 gTMHMLearnsets[NUM_SPECIES][4];
+	extern const u16 gTMHMMoves[NUM_TMSHMS];	
 #else
 	const gTMHMLearnsets[][2];
 	const gTMHMMoves[];
