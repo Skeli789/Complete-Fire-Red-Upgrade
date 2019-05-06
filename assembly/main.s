@@ -90,6 +90,21 @@ script functions/specials in asm - hooks and returns
 @@ Evolution Method Extra Hooks
 .global RemoveEvoItem
 
+/*
+@@ Tm/Hm Expansion
+.global SortTmHms
+
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ TM/HM Expansion - Item Ordering
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+SortTmHms:
+	push {r3-r7}
+	bl RefineTmPositions
+	pop {r3-r7}
+	
+*/
+	
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Evolution Methods - Remove Evo Item

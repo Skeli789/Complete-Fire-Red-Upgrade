@@ -684,6 +684,7 @@ void __attribute__((long_call)) EncryptBoxMon(struct BoxPokemon *boxMon);
 void __attribute__((long_call)) ZeroBoxMonData(struct BoxPokemon *boxMon);
 void __attribute__((long_call)) GetSpeciesName(u8 *name, u16 species);
 u16 __attribute__((long_call)) CalculateBoxMonChecksum(struct BoxPokemon *boxMon);
+u16 __attribute__((long_call)) GetTutorMove(u8 tutor);
 
 /*
 void ZeroMonData(struct Pokemon *mon);

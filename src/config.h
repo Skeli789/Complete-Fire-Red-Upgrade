@@ -158,9 +158,11 @@ enum
 
 /* Expanded TMs/HMs Options */
 #define EXPANDED_TMSHMS  // comment this out if you want to keep 50 tms/8 hms
-#define NUM_TMS 50
-#define NUM_HMS 8
+#define NUM_TMS 51
+#define NUM_HMS 10
 #define NUM_TMSHMS NUM_TMS+NUM_HMS // this must always be defined
+//#define TMS_BEFORE_HMS  // uncomment this if you want the HMs to appear after the TMs in your bag
+//#define DELETABLE_HMS		// uncomment this if you want HMs to be deletable without the Move Deleter
 
 /* Misc Effect Options */
 //#define OLD_BURN_DAMAGE //Uncomment this line if you want burn damage to do 1/8 of max health instead of 1/16
