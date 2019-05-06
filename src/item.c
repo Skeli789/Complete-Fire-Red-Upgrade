@@ -1,6 +1,7 @@
 #include "defines.h"
 #include "../include/new/helper_functions.h"
 #include "../include/constants/moves.h"
+#include "../include/constants/items.h"
 
 extern u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
 
@@ -171,21 +172,21 @@ void SortBerriesOrTMHMs(struct BagPocket *bagPocket) {
 
 
 
-u8 RefineTmOrdering(void) {
+u16 RefineTmOrdering(void) {
 	#ifdef EXPANDED_TMSHMS
 		#ifdef TMS_BEFORE_HMS
 			return 0;
 		#else
-			return 0xA9;
+			return ITEM_TM50;
 		#endif
 	#else
-		return 0xA9;
+		return ITEM_TM50;
 	#endif
-}
+}	
 
 
 
-// function to fix move names that are full length
+// function to fix tm move names that are full length in the bag
 void StringAppendFullMoveName(u8 *dest, u8 *src) {
 	s8 i;
 	if (NUM_HMS >= 10)
@@ -196,7 +197,7 @@ void StringAppendFullMoveName(u8 *dest, u8 *src) {
     while (i < MOVE_NAME_LENGTH)
 	{
 		dest++;
-		++i;
+		i++;
 	}
 	
     StringCopy(dest, src);
@@ -262,8 +263,7 @@ void LoadTmHmName(u8 *dest, u16 itemId) {
 
 
 
-enum
-{
+enum {
     CAN_LEARN_MOVE,
     CANNOT_LEARN_MOVE,
     ALREADY_KNOWS_MOVE,
@@ -309,16 +309,6 @@ bool8 CheckIsHmMove(u16 move) {
 #ifdef DELETABLE_HMS
 	return FALSE;
 #else
-	/*
-    u16 i = NUM_TMS;
-    while (i < NUM_TMSHMS)
-    {
-		if (move == gTMHMMoves[i])
-			return TRUE;
-		
-		++i;
-    }
-	*/
 	for (u16 i = NUM_TMS; i < NUM_TMSHMS; ++i)
 	{
 		if (move == gTMHMMoves[i])

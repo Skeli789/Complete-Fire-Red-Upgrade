@@ -340,7 +340,7 @@ CreateBoxMonHook 803DAD2 0
 #CanMonLearnTMTutor 08120B20 3
 #ItemIdToBattleMoveId 08125A78 1
 #LoadTmHmName 08131D48 2
-#SortTmHms 0809A600 0
+#SortTmHms 0809A604 0
 #CheckIsHmMove 08125A90 1
 #CheckIsHmMove 080441b8 1
 
