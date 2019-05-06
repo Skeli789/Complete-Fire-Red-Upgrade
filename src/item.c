@@ -10,11 +10,12 @@ u8* ItemId_GetName(u16 itemId) {
 	if (name[3] == 0x8) //Expanded Item Names
 		name = T1_READ_PTR(name);
     return name;
-};
+}
+
 
 u8 ItemId_GetSecondaryId(u16 itemId) {
     return gItems[SanitizeItemId(itemId)].secondaryId;
-};
+}
 
 
 
@@ -131,7 +132,7 @@ u32 CanMonLearnTMHM(struct Pokemon *mon, u8 tm) {
 	#endif
 	else
 		return 0;
-};
+}
 
 
 // item ID to Tm number to Move ID
@@ -143,7 +144,7 @@ u16 ItemIdToBattleMoveId(u16 item) {
 		u16 tmNum = item - ITEM_TM01_FOCUS_PUNCH;
 	#endif
     return gTMHMMoves[tmNum];	
-};
+}
 
 
 
@@ -165,7 +166,7 @@ void SortBerriesOrTMHMs(struct BagPocket *bagPocket) {
             SwapItemSlots(&bagPocket->itemSlots[i], &bagPocket->itemSlots[j]);
         }
     }
-};
+}
 */
 
 
@@ -180,7 +181,7 @@ u8 RefineTmOrdering(void) {
 	#else
 		return 0xA9;
 	#endif
-};
+}
 
 
 
@@ -202,7 +203,7 @@ void StringAppendFullMoveName(u8 *dest, u8 *src) {
 	dest++;
 	u8 end = 0xFF;
 	StringAppend(dest, &end);
-};
+}
 
 
 void LoadTmHmName(u8 *dest, u16 itemId) {
@@ -239,7 +240,7 @@ void LoadTmHmName(u8 *dest, u16 itemId) {
 		StringAppend(&gStringVar4[0], gMoveNames[ItemIdToBattleMoveId(itemId)]);
 	
 	StringCopy(dest, &gStringVar4[0]);
-};	
+}
 
 
 
@@ -256,7 +257,7 @@ void LoadTmHmName(u8 *dest, u16 itemId) {
 		ConvertIntToDecimalStringN(gStringVar4, itemId-ITEM_TM01+1, 2, 2);
 		StringExpandPlaceholders(dest, gText_UnkF908Var1Clear7Var2);
 	}
-};	
+}
 */
 
 
@@ -298,7 +299,7 @@ u8 CanMonLearnTMTutor(struct Pokemon *mon, u16 item, u8 tutor) {
         return ALREADY_KNOWS_MOVE;
     else
         return CAN_LEARN_MOVE;
-};
+}
 
 
 
@@ -326,7 +327,7 @@ bool8 CheckIsHmMove(u16 move) {
 	
     return FALSE;
 #endif
-};
+}
 
 /*
 bool8 CheckIsHmMove(u16 move) {

@@ -16,6 +16,8 @@
 #define DEFAULT_WALKING_SCRIPT 0x500B  //Walking scripts from JPAN's engine. His engine used 0x407E.
 #define DEXNAV_VAR 0x500C
 
+#define SWARM_DAILY_EVENT_VAR 0x500D
+
 #define SECOND_OPPONENT_VAR 0x5010 //Set this to the var used to store the Trainer Id of the second opponent in Multi Battles (can be any free var)
 #define PARTNER_VAR 0x5011 //Set this to the var used to store the Trainer Id of your partner in Multi Battles (can be any free var)
 #define PARTNER_BACKSPRITE_VAR 0x5012 //Set this to the var used to store the backsprite number of your partner in Multi Battles (can be any free var)

@@ -285,13 +285,13 @@ void TryUpdateSwarm(void)
 	if (CheckAndSetDailyEvent(SWARM_DAILY_EVENT_VAR, TRUE))
 	{
 		u16 index = Random() % gSwarmTableLength;
-		VarSet(SWARM_INDEX_VAR, index);
+		VarSet(SWARM_SPECIES_VAR, index);
 	}
 }
 
 static bool8 TryGenerateSwarmMon(u8 level, u8 wildMonIndex, bool8 purgeParty)
 {
-	u8 index = VarGet(SWARM_INDEX_VAR);
+	u8 index = VarGet(SWARM_SPECIES_VAR);
 	u8 mapName = gSwarmTable[index].mapName;
 	u16 species = gSwarmTable[index].species;
 	
