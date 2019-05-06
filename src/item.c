@@ -151,7 +151,7 @@ u16 ItemIdToBattleMoveId(u16 item) {
 void SortBerriesOrTMHMs(struct BagPocket *bagPocket) {
     u16 i, j;
 
-    for (i = 0; i < bagPocket->capacity - 1; i++)
+    for (i = 0; i < bagPocket->capacity - 1; ++i)
     {
         for (j = i + 1; j < bagPocket->capacity; j++)
         {
@@ -195,7 +195,7 @@ void StringAppendFullMoveName(u8 *dest, u8 *src) {
     while (i < MOVE_NAME_LENGTH)
 	{
 		dest++;
-		i++;
+		++i;
 	}
 	
     StringCopy(dest, src);
@@ -269,26 +269,6 @@ enum
     CANNOT_LEARN_MOVE_IS_EGG
 };
 
-bool8 MonKnowsMove(struct Pokemon *mon, u16 move) {
-    u8 i;
-
-    for (i = 0; i < MAX_MON_MOVES; i++)
-    {
-        if (GetMonData(mon, MON_DATA_MOVE1 + i, NULL) == move)
-            return TRUE;
-    }
-    return FALSE;
-};
-
-
-bool8 CanLearnTutorMove(u16 species, u8 tutor) {
-    if (*sTutorLearnsets[species] & (1 << tutor))
-        return TRUE;
-    else
-        return FALSE;
-};
-
-
 u8 CanMonLearnTMTutor(struct Pokemon *mon, u16 item, u8 tutor) {
     u16 move;
 
@@ -335,7 +315,7 @@ bool8 CheckIsHmMove(u16 move) {
 		if (move == gTMHMMoves[i])
 			return TRUE;
 		
-		i++;
+		++i;
     }
 	*/
 	for (u16 i = NUM_TMS; i < NUM_TMSHMS; ++i)
@@ -353,7 +333,7 @@ bool8 CheckIsHmMove(u16 move) {
     u16 i = NUM_TMS;
     while (gTMHMMoves[i] != 0xFFFF)
 	{
-        if (sHMMoves[i++] == move)
+        if (sHMMoves[++i] == move)
             return TRUE;	
 	}
 	return FALSE;
