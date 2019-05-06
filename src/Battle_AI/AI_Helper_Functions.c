@@ -7,7 +7,7 @@ extern move_t IgnoreAirTable[];
 extern move_t IgnoreUndergoundTable[];
 extern move_t IgnoreUnderwaterTable[];
 extern move_t AlwaysHitRainTable[];
-extern const struct SpecialZMoves SpecialZMoveTable[];
+extern const struct SpecialZMoves gSpecialZMoveTable[];
 
 extern s8 PriorityCalc(u8 bank, u8 action, u16 move);
 extern s32 BracketCalc(u8 bank);
@@ -410,15 +410,15 @@ u16 ShouldAIUseZMove(u8 bank, u8 moveIndex, u16 move) {
 	if (gItems[SanitizeItemId(gBattleMons[bank].item)].holdEffect == ITEM_EFFECT_Z_CRYSTAL
 	||  ITEM(bank) == ITEM_ULTRA_NECROZIUM_Z) //The only "Mega Stone" that let's you use a Z-Move
 	{
-		for (i = 0; SpecialZMoveTable[i].species != 0xFFFF; ++i) 
+		for (i = 0; gSpecialZMoveTable[i].species != 0xFFFF; ++i) 
 		{
-			if (SpecialZMoveTable[i].item == ITEM(bank))
+			if (gSpecialZMoveTable[i].item == ITEM(bank))
 			{
 				isSpecialZCrystal = TRUE;
-				if (SpecialZMoveTable[i].species == SPECIES(bank)
-				&&  SpecialZMoveTable[i].move == move)
+				if (gSpecialZMoveTable[i].species == SPECIES(bank)
+				&&  gSpecialZMoveTable[i].move == move)
 				{
-					return SpecialZMoveTable[i].zmove;
+					return gSpecialZMoveTable[i].zmove;
 				}
 			}
 		}

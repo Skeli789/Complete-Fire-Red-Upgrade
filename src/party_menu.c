@@ -1,5 +1,5 @@
 #include "defines.h"
-#include "../include/songs.h"
+#include "../include/constants/songs.h"
 #include "../include/party_menu.h"
 #include "../include/new/Vanilla_functions.h"
 

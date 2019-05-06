@@ -2,6 +2,7 @@
 #include "../include/event_object_movement.h"
 #include "../include/fieldmap.h"
 #include "../include/field_weather.h"
+#include "../include/script.h"
 #include "../include/wild_encounter.h"
 #include "../include/random.h"
 
@@ -10,11 +11,8 @@
 #include "../include/constants/vars.h"
 
 #include "../include/new/helper_functions.h"
-
-#define TILE_FLAG_ENCOUNTER_TILE 1
-#define TILE_FLAG_SURFABLE 2
-#define TILE_FLAG_WILD_DOUBLE 4
-#define TILE_FLAG_SHAKING 8
+#include "../include/new/roamer.h"
+#include "../include/new/wild_encounter.h"
 
 //Do shaking grass/dust clouds/water ripples
 //Chain Fishing
@@ -35,30 +33,28 @@ extern const struct WildPokemonHeader gWildMonMorningHeaders[];
 extern const struct WildPokemonHeader gWildMonEveningHeaders[];
 extern const struct WildPokemonHeader gWildMonNightHeaders[];
 extern const struct SwarmData gSwarmTable[];
+extern const u16 gSwarmTableLength;
 
 extern u16 GetMUS_ForBattle(void);
 extern void BuildTrainerPartySetup(void);
+extern bool8 CheckAndSetDailyEvent(u16 eventVar, bool8 setDailyEventVar);
 
-u8 ChooseWildMonLevel(const struct WildPokemon* wildPokemon);
-const struct WildPokemonHeader* GetCurrentMapWildMonHeaderId(void);
-const struct WildPokemonHeader* GetCurrentMapWildMonDaytimeHeader(void);
-u8 PickWildMonNature(void);
-extern void CreateWildMon(u16 species, u8 level, u8 monHeaderIndex, bool8 purgeParty);
-bool8 TryGenerateWildMon(const struct WildPokemonInfo* wildMonInfo, u8 area, u8 flags);
+//This file's functions
+static u8 ChooseWildMonLevel(const struct WildPokemon* wildPokemon);
+static const struct WildPokemonHeader* GetCurrentMapWildMonHeader(void);
+static const struct WildPokemonHeader* GetCurrentMapWildMonDaytimeHeader(void);
+static u8 PickWildMonNature(void);
+static bool8 TryGenerateWildMon(const struct WildPokemonInfo* wildMonInfo, u8 area, u8 flags);
 static species_t GenerateFishingWildMon(const struct WildPokemonInfo* wildMonInfo, u8 rod);
-void FishingWildEncounter(u8 rod);
-bool8 DoesCurrentMapHaveFishingMons(void);
-bool8 DoWildEncounterRateTest(u32 encounterRate, bool8 ignoreAbility);
-bool8 StandardWildEncounter(u16 currMetaTileBehavior, u16 previousMetaTileBehavior);
-bool8 DoWildEncounterRateDiceRoll(u16 encounterRate);
-void RockSmashWildEncounter(void);
-bool8 SweetScentWildEncounter(void);
-bool8 IsAbilityAllowingEncounter(u8 level);
-bool8 TryGetRandomWildMonIndexByType(const struct WildPokemon* wildMon, u8 type, u8 numMon, u8* monIndex);
-bool8 TryGetAbilityInfluencedWildMonIndex(const struct WildPokemon* wildMon, u8 type, u8 ability, u8* monIndex);
-void DoStandardWildBattle(void);
+static bool8 DoWildEncounterRateTest(u32 encounterRate, bool8 ignoreAbility);
+static bool8 DoWildEncounterRateDiceRoll(u16 encounterRate);
+static bool8 IsAbilityAllowingEncounter(u8 level);
+static bool8 TryGetRandomWildMonIndexByType(const struct WildPokemon* wildMon, u8 type, u8 numMon, u8* monIndex);
+static bool8 TryGetAbilityInfluencedWildMonIndex(const struct WildPokemon* wildMon, u8 type, u8 ability, u8* monIndex);
+static void CreateScriptedWildMon(u16 species, u8 level, u16 item, u16* specialMoves, bool8 firstMon);
+static const struct WildPokemonInfo* LoadProperMonsPointer(const struct WildPokemonHeader* header, const u8 type);
 
-u8 ChooseWildMonLevel(const struct WildPokemon* wildPokemon)
+static u8 ChooseWildMonLevel(const struct WildPokemon* wildPokemon)
 {
     u8 min;
     u8 max;
@@ -120,7 +116,7 @@ u8 ChooseWildMonLevel(const struct WildPokemon* wildPokemon)
 
 #define MAP_ALTERING_CAVE ((1 << 8) | 122)
 
-const struct WildPokemonHeader* GetCurrentMapWildMonHeaderId(void)
+static const struct WildPokemonHeader* GetCurrentMapWildMonHeader(void)
 {
 	#ifdef TIME_ENABLED
 		u32 i;
@@ -148,7 +144,7 @@ const struct WildPokemonHeader* GetCurrentMapWildMonHeaderId(void)
 	return GetCurrentMapWildMonDaytimeHeader();
 }
 
-const struct WildPokemonHeader* GetCurrentMapWildMonDaytimeHeader(void)
+static const struct WildPokemonHeader* GetCurrentMapWildMonDaytimeHeader(void)
 {
 	u32 i;
 	
@@ -184,7 +180,7 @@ const struct WildPokemonHeader* GetCurrentMapWildMonDaytimeHeader(void)
 }
 
 
-u8 PickWildMonNature(void)
+static u8 PickWildMonNature(void)
 {
     //Check Synchronize for a pokemon with the same ability
     if (!GetMonData(&gPlayerParty[0], MON_DATA_IS_EGG, NULL)
@@ -260,6 +256,17 @@ void CreateWildMon(u16 species, u8 level, u8 monHeaderIndex, bool8 purgeParty)
 	ASSIGN_HIDDEN_ABILITY:
 	if (FlagGet(HIDDEN_ABILITY_FLAG))
 		gEnemyParty[enemyMonIndex].hiddenAbility = TRUE;
+		
+	//Custom moves
+	if (FlagSet(WILD_CUSTOM_MOVES_FLAG))
+	{
+		u16* moves = (enemyMonIndex == 0) ? &Var8000 : &Var8004;
+		for (int i = 0; i < MAX_MON_MOVES; ++i)
+		{
+			if (moves[i] != 0xFFFF)
+				gEnemyParty[enemyMonIndex].moves[i] = moves[i];
+		}
+	}
 }
 
 enum
@@ -273,27 +280,32 @@ enum
 #define WILD_CHECK_REPEL    0x1
 #define WILD_CHECK_KEEN_EYE 0x2
 
-bool8 TryGenerateSwarmMon(u8 level, u8 wildMonIndex, bool8 purgeParty)
+void TryUpdateSwarm(void)
 {
-	int i;
-	
-	if (VarGet(SWARM_MAP_NAME_VAR) == gCurrentMapName
-	&&  umodsi(Random(), 100) < SWARM_CHANCE)
+	if (CheckAndSetDailyEvent(SWARM_DAILY_EVENT_VAR, TRUE))
 	{
-		for (i = 0; gSwarmTable[i].species != 0xFFFF; ++i)
-		{
-			if (gSwarmTable[i].mapName == gCurrentMapName)
-			{
-				CreateWildMon(VarGet(SWARM_SPECIES_VAR), level, wildMonIndex, purgeParty);
-				return TRUE;
-			}
-		}
+		u16 index = Random() % gSwarmTableLength;
+		VarSet(SWARM_INDEX_VAR, index);
+	}
+}
+
+static bool8 TryGenerateSwarmMon(u8 level, u8 wildMonIndex, bool8 purgeParty)
+{
+	u8 index = VarGet(SWARM_INDEX_VAR);
+	u8 mapName = gSwarmTable[index].mapName;
+	u16 species = gSwarmTable[index].species;
+	
+	if (mapName == gCurrentMapName
+	&&  Random() % 100 < SWARM_CHANCE)
+	{
+		CreateWildMon(species, level, wildMonIndex, purgeParty);
+		return TRUE;
 	}
 
 	return FALSE;
 }
 
-bool8 TryGenerateWildMon(const struct WildPokemonInfo* wildMonInfo, u8 area, u8 flags)
+static bool8 TryGenerateWildMon(const struct WildPokemonInfo* wildMonInfo, u8 area, u8 flags)
 {
     u8 wildMonIndex = 0;
     u8 level;
@@ -377,39 +389,24 @@ static species_t GenerateFishingWildMon(const struct WildPokemonInfo* wildMonInf
 
 void FishingWildEncounter(u8 rod)
 {
-	const struct WildPokemonHeader* header = GetCurrentMapWildMonHeaderId();
+	const struct WildPokemonInfo* fishingMonsInfo = LoadProperMonsData(FISHING_MONS_HEADER); //Existence check done prior
 	
-	if (header->fishingMonsInfo == NULL)
-		header = GetCurrentMapWildMonDaytimeHeader(); //Existence check done prior
-	
-    GenerateFishingWildMon(header->fishingMonsInfo, rod);
+    GenerateFishingWildMon(fishingMonsInfo, rod);
     IncrementGameStat(GAME_STAT_FISHING_CAPTURES);
     BattleSetup_StartWildBattle();
 }
 
 bool8 DoesCurrentMapHaveFishingMons(void)
 {
-    const struct WildPokemonHeader* header = GetCurrentMapWildMonHeaderId();
+    const struct WildPokemonInfo* fishingMonsInfo = LoadProperMonsData(FISHING_MONS_HEADER);
 
-	if (header == NULL)
+	if (fishingMonsInfo == NULL)
 		return FALSE;
-	
-	if (header->fishingMonsInfo == NULL)
-	{
-		#ifdef TIME_ENABLED
-			header = GetCurrentMapWildMonDaytimeHeader();
-			if (header->fishingMonsInfo == NULL)
-				return FALSE;
-		#else
-			return FALSE;
-		#endif
-	}
 
     return TRUE;
 }
 
-
-bool8 DoWildEncounterRateTest(u32 encounterRate, bool8 ignoreAbility)
+static bool8 DoWildEncounterRateTest(u32 encounterRate, bool8 ignoreAbility)
 {
     encounterRate *= 16;
     if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_MACH_BIKE | PLAYER_AVATAR_FLAG_ACRO_BIKE))
@@ -457,7 +454,7 @@ bool8 DoWildEncounterRateTest(u32 encounterRate, bool8 ignoreAbility)
     return DoWildEncounterRateDiceRoll(encounterRate);
 }
 
-bool8 DoWildEncounterRateDiceRoll(u16 encounterRate)
+static bool8 DoWildEncounterRateDiceRoll(u16 encounterRate)
 {
     if (Random() % 2880 < encounterRate)
         return TRUE;
@@ -465,51 +462,40 @@ bool8 DoWildEncounterRateDiceRoll(u16 encounterRate)
         return FALSE;
 }
 
-bool8 StandardWildEncounter(u16 currMetaTileBehavior, u16 previousMetaTileBehavior)
+bool8 StandardWildEncounter(const u16 currMetaTileBehavior, const u16 previousMetaTileBehavior)
 {
-    const struct WildPokemonHeader* header;
-    struct Roamer *roamer;
+    struct Roamer* roamer;
 	bool8 clearDoubleFlag = FALSE;
+	const u8 lowerByte = MetatileBehavior_GetLowerBytes(currMetaTileBehavior, 4);
 
     if (sWildEncountersDisabled == TRUE)
         return FALSE;
 
-    header = GetCurrentMapWildMonHeaderId();
-    if (header == NULL
-	||  FlagGet(NO_RANDOM_WILD_ENCOUNTERS_FLAG))
-    {
+    const struct WildPokemonInfo* landMonsInfo = LoadProperMonsData(LAND_MONS_HEADER);
+    const struct WildPokemonInfo* waterMonsInfo = LoadProperMonsData(WATER_MONS_HEADER);
+	
+    if (FlagGet(NO_RANDOM_WILD_ENCOUNTERS_FLAG))
         return FALSE;
-    }
     else
     {
-        if (MetatileBehavior_GetLowerBytes(currMetaTileBehavior, 4) & TILE_FLAG_ENCOUNTER_TILE)
-        { 
-		RETRY_LAND_HEADER:
-            if (header->landMonsInfo == NULL)
-			{
-				#ifdef TIME_ENABLED
-					header = GetCurrentMapWildMonDaytimeHeader();
-					if (header->landMonsInfo == NULL)
-						return FALSE;
-					goto RETRY_LAND_HEADER;
-				#else
-					return FALSE;
-				#endif
-			}
+        if (lowerByte & TILE_FLAG_ENCOUNTER_TILE)
+        {
+            if (landMonsInfo == NULL)
+				return FALSE;
             else if (MetatileBehavior_GetLowerBytes(currMetaTileBehavior, 0) != previousMetaTileBehavior && !DoGlobalWildEncounterDiceRoll())
                 return FALSE;
-            else if (DoWildEncounterRateTest(header->landMonsInfo->encounterRate, FALSE) != TRUE)
+            else if (DoWildEncounterRateTest(landMonsInfo->encounterRate, FALSE) != TRUE)
 			{
-				IncrementEncounterProbabilityBonus(header->landMonsInfo->encounterRate);
+				IncrementEncounterProbabilityBonus(landMonsInfo->encounterRate);
                 return FALSE;
 			}
 
-            if (TryStartRoamerEncounter() == TRUE)
+            if (TryStartRoamerEncounter(ENCOUNTER_TYPE_LAND))
             {
-                roamer = &gSaveBlock1->roamer;
+                roamer = &gRoamers[gLastSelectedRoamer];
                 if (!IsWildLevelAllowedByRepel(roamer->level))
                     return FALSE;
-
+				
                 BattleSetup_StartRoamerBattle();
                 return TRUE;
             }
@@ -518,14 +504,14 @@ bool8 StandardWildEncounter(u16 currMetaTileBehavior, u16 previousMetaTileBehavi
                 //Try a regular wild land encounter
 				if (!FlagGet(DOUBLE_WILD_BATTLE_FLAG) //Flag hasn't already been set by user
 				&&  ViableMonCount(gPlayerParty) >= 2
-				&&  MetatileBehavior_GetLowerBytes(currMetaTileBehavior, 4) & TILE_FLAG_WILD_DOUBLE
+				&&  (lowerByte & TILE_FLAG_WILD_DOUBLE)
 				&&  Random() % 100 < WILD_DOUBLE_RANDOM_CHANCE)
 				{
 					FlagSet(DOUBLE_WILD_BATTLE_FLAG);
 					clearDoubleFlag = TRUE;
 				}
 				
-                if (TryGenerateWildMon(header->landMonsInfo, WILD_AREA_LAND, WILD_CHECK_REPEL | WILD_CHECK_KEEN_EYE) == TRUE)
+                if (TryGenerateWildMon(landMonsInfo, WILD_AREA_LAND, WILD_CHECK_REPEL | WILD_CHECK_KEEN_EYE) == TRUE)
                 {
                     BattleSetup_StartWildBattle();
                     return TRUE;
@@ -534,33 +520,22 @@ bool8 StandardWildEncounter(u16 currMetaTileBehavior, u16 previousMetaTileBehavi
 				if (clearDoubleFlag)
 					FlagClear(DOUBLE_WILD_BATTLE_FLAG); //Battle didn't start so restart the flag
 
-				IncrementEncounterProbabilityBonus(header->landMonsInfo->encounterRate);
-                return FALSE;
+				IncrementEncounterProbabilityBonus(landMonsInfo->encounterRate);
             }
         }
-        else if (MetatileBehavior_GetLowerBytes(currMetaTileBehavior, 4) & TILE_FLAG_SURFABLE
+        else if (lowerByte & TILE_FLAG_SURFABLE
              &&  TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
         {
-		RETRY_WATER_HEADER:
-            if (header->waterMonsInfo == NULL)
-			{
-                #ifdef TIME_ENABLED
-					header = GetCurrentMapWildMonDaytimeHeader();
-					if (header->waterMonsInfo == NULL)
-						return FALSE;
-					goto RETRY_WATER_HEADER;
-				#else
-					return FALSE;
-				#endif
-			}
+            if (waterMonsInfo == NULL)
+               return FALSE;
             else if (previousMetaTileBehavior != MetatileBehavior_GetLowerBytes(currMetaTileBehavior, 0) && !DoGlobalWildEncounterDiceRoll())
                 return FALSE;
-            else if (DoWildEncounterRateTest(header->waterMonsInfo->encounterRate, FALSE) != TRUE)
+            else if (DoWildEncounterRateTest(waterMonsInfo->encounterRate, FALSE) != TRUE)
                 return FALSE;
 
-            if (TryStartRoamerEncounter() == TRUE)
+            if (TryStartRoamerEncounter(ENCOUNTER_TYPE_WATER) == TRUE)
             {
-                roamer = &gSaveBlock1->roamer;
+                roamer = &gRoamers[gLastSelectedRoamer];
                 if (!IsWildLevelAllowedByRepel(roamer->level))
                     return FALSE;
 
@@ -571,14 +546,14 @@ bool8 StandardWildEncounter(u16 currMetaTileBehavior, u16 previousMetaTileBehavi
             {
 				if (!FlagGet(DOUBLE_WILD_BATTLE_FLAG) //Flag hasn't already been set by user
 				&&  ViableMonCount(gPlayerParty) >= 2
-				&&  MetatileBehavior_GetLowerBytes(currMetaTileBehavior, 4) & TILE_FLAG_WILD_DOUBLE
+				&&  lowerByte & TILE_FLAG_WILD_DOUBLE
 				&&  Random() % 100 < WILD_DOUBLE_RANDOM_CHANCE)
 				{
 					FlagSet(DOUBLE_WILD_BATTLE_FLAG);
 					clearDoubleFlag = TRUE;
 				}
 				
-                if (TryGenerateWildMon(header->waterMonsInfo, WILD_AREA_WATER, WILD_CHECK_REPEL | WILD_CHECK_KEEN_EYE) == TRUE)
+                if (TryGenerateWildMon(waterMonsInfo, WILD_AREA_WATER, WILD_CHECK_REPEL | WILD_CHECK_KEEN_EYE) == TRUE)
                 {
                     BattleSetup_StartWildBattle();
                     return TRUE;
@@ -611,47 +586,26 @@ bool8 CheckStandardWildEncounter(u16 metatileBehavior)
 
 void RockSmashWildEncounter(void)
 {
-    const struct WildPokemonHeader* header = GetCurrentMapWildMonHeaderId();
+    const struct WildPokemonInfo* wildPokemonInfo = LoadProperMonsData(ROCK_SMASH_MONS_HEADER);
 
-    if (header != NULL)
+    if (wildPokemonInfo == NULL)
+		gSpecialVar_LastResult = FALSE;
+    else if (DoWildEncounterRateTest(wildPokemonInfo->encounterRate, 1) == TRUE
+          && TryGenerateWildMon(wildPokemonInfo, 2, WILD_CHECK_REPEL | WILD_CHECK_KEEN_EYE) == TRUE)
     {
-        const struct WildPokemonInfo* wildPokemonInfo = header->rockSmashMonsInfo;
-		
-	RETRY_ROCK_HEADER:
-        if (wildPokemonInfo == NULL)
-        {
-			#ifdef TIME_ENABLED
-				header = GetCurrentMapWildMonDaytimeHeader();
-				if (header->rockSmashMonsInfo == NULL)
-					gSpecialVar_LastResult = FALSE;
-				else
-					goto RETRY_ROCK_HEADER;
-			#else
-				gSpecialVar_LastResult = FALSE;
-			#endif
-        }
-        else if (DoWildEncounterRateTest(wildPokemonInfo->encounterRate, 1) == TRUE
-              && TryGenerateWildMon(wildPokemonInfo, 2, WILD_CHECK_REPEL | WILD_CHECK_KEEN_EYE) == TRUE)
-        {
-            BattleSetup_StartWildBattle();
-            gSpecialVar_LastResult = TRUE;
-        }
-        else
-        {
-            gSpecialVar_LastResult = FALSE;
-        }
+        BattleSetup_StartWildBattle();
+        gSpecialVar_LastResult = TRUE;
     }
     else
-    {
         gSpecialVar_LastResult = FALSE;
-    }
 }
 
 bool8 SweetScentWildEncounter(void)
 {
     s16 x, y;
-	const struct WildPokemonHeader* header;
-
+	const struct WildPokemonInfo* landMonsInfo = LoadProperMonsData(LAND_MONS_HEADER);
+    const struct WildPokemonInfo* waterMonsInfo = LoadProperMonsData(WATER_MONS_HEADER);
+	
 	#ifdef SWEET_SCENT_ONLY_IN_CLEAR_WEATHER
 		switch (GetCurrentWeather()) {
 			case WEATHER_NONE:
@@ -666,66 +620,42 @@ bool8 SweetScentWildEncounter(void)
 	#endif
 
     PlayerGetDestCoords(&x, &y);
-    header = GetCurrentMapWildMonHeaderId();
-    if (header != NULL)
+    if (MapGridGetMetatileField(x, y, 4) & TILE_FLAG_ENCOUNTER_TILE)
     {
-        if (MapGridGetMetatileField(x, y, 4) == 1)
+        if (landMonsInfo == NULL)
+			return FALSE;
+
+        if (TryStartRoamerEncounter(ENCOUNTER_TYPE_LAND) == TRUE)
         {
-            if (header->landMonsInfo == NULL)
-            {
-			RETRY_LAND_HEADER:
-				#ifdef TIME_ENABLED
-					header = GetCurrentMapWildMonDaytimeHeader();
-					if (header->landMonsInfo == NULL)
-						return FALSE;
-					goto RETRY_LAND_HEADER;
-				#else
-					return FALSE;
-				#endif
-			}
+            BattleSetup_StartRoamerBattle();
+            return TRUE;
+		}
 
-            if (TryStartRoamerEncounter() == TRUE)
-            {
-                BattleSetup_StartRoamerBattle();
-                return TRUE;
-            }
+        TryGenerateWildMon(landMonsInfo, WILD_AREA_LAND, 0);
 
-            TryGenerateWildMon(header->landMonsInfo, WILD_AREA_LAND, 0);
+        BattleSetup_StartWildBattle();
+        return TRUE;
+    }
+    else if (MapGridGetMetatileField(x, y, 4) & TILE_FLAG_SURFABLE)
+    {
+        if (waterMonsInfo == NULL)
+			return FALSE;
 
-            BattleSetup_StartWildBattle();
+        if (TryStartRoamerEncounter(ENCOUNTER_TYPE_WATER) == TRUE)
+        {
+            BattleSetup_StartRoamerBattle();
             return TRUE;
         }
-        else if (MapGridGetMetatileField(x, y, 4) == 2)
-        {
-		RETRY_WATER_HEADER:
-            if (header->waterMonsInfo == NULL)
-            {
-                #ifdef TIME_ENABLED
-					header = GetCurrentMapWildMonDaytimeHeader();
-					if (header->waterMonsInfo == NULL)
-						return FALSE;
-					goto RETRY_WATER_HEADER;
-				#else
-					return FALSE;
-				#endif
-			}
 
-            if (TryStartRoamerEncounter() == TRUE)
-            {
-                BattleSetup_StartRoamerBattle();
-                return TRUE;
-            }
-
-            TryGenerateWildMon(header->waterMonsInfo, WILD_AREA_WATER, 0);
-            BattleSetup_StartWildBattle();
-            return TRUE;
-        }
+        TryGenerateWildMon(waterMonsInfo, WILD_AREA_WATER, 0);
+        BattleSetup_StartWildBattle();
+        return TRUE;
     }
 
     return FALSE;
 }
 
- bool8 IsAbilityAllowingEncounter(u8 level)
+static bool8 IsAbilityAllowingEncounter(u8 level)
 {
     u8 ability;
 
@@ -743,7 +673,7 @@ bool8 SweetScentWildEncounter(void)
     return TRUE;
 }
 
-bool8 TryGetRandomWildMonIndexByType(const struct WildPokemon* wildMon, u8 type, u8 numMon, u8* monIndex)
+static bool8 TryGetRandomWildMonIndexByType(const struct WildPokemon* wildMon, u8 type, u8 numMon, u8* monIndex)
 {
     u8 validIndexes[numMon]; // variable length array, an interesting feature
     u8 i, validMonCount;
@@ -764,7 +694,7 @@ bool8 TryGetRandomWildMonIndexByType(const struct WildPokemon* wildMon, u8 type,
     return TRUE;
 }
 
-bool8 TryGetAbilityInfluencedWildMonIndex(const struct WildPokemon* wildMon, u8 type, u8 ability, u8* monIndex)
+static bool8 TryGetAbilityInfluencedWildMonIndex(const struct WildPokemon* wildMon, u8 type, u8 ability, u8* monIndex)
 {
     if (GetMonData(&gPlayerParty[0], MON_DATA_IS_EGG, NULL))
         return FALSE;
@@ -797,4 +727,173 @@ void DoStandardWildBattle(void)
     CreateBattleStartTask(GetWildBattleTransition(), GetMUS_ForBattle());
     IncrementGameStat(GAME_STAT_TOTAL_BATTLES);
     IncrementGameStat(GAME_STAT_WILD_BATTLES);
+}
+
+void sp138_StartLegendaryBattle(void)
+{
+	ScriptContext2_Enable();
+	gMain.savedCallback = CB2_EndScriptedWildBattle_2;
+	
+	gBattleTypeFlags = BATTLE_TYPE_SCRIPTED_WILD_1 | BATTLE_TYPE_SCRIPTED_WILD_3;
+	
+	if (FlagGet(DOUBLE_WILD_BATTLE_FLAG) 
+	&& gEnemyParty[1].species != SPECIES_NONE
+	&& ViableMonCount(gPlayerParty) > 1) //At least two alive Pokemon
+		gBattleTypeFlags |= BATTLE_TYPE_DOUBLE;
+	
+    CreateBattleStartTask(0, GetMUS_ForBattle());
+    IncrementGameStat(GAME_STAT_TOTAL_BATTLES);
+    IncrementGameStat(GAME_STAT_WILD_BATTLES);
+}
+
+//setwildbattle SPECIES LEVEL ITEM
+//setwildbattle 0xFFFF 0x0 0x0 0x0 SPECIES_1 LEVEL_1 ITEM_1 0x0 SPECIES_2 LEVEL2 ITEM_2
+bool8 ScrCmd_setwildbattle(struct ScriptContext* ctx)
+{
+	u16 species, item;
+	u8 level;
+	u16 specialMoves[MAX_MON_MOVES * 2];
+	int i;
+	
+	for (i = 0; i < MAX_MON_MOVES * 2; ++i)
+		specialMoves[i] = (&Var8000)[i];
+    
+	species = ScriptReadHalfword(ctx);
+	if (species == 0xFFFF) //Wild Double
+	{
+		species = ScriptReadByte(ctx); //Skip null values
+		species = ScriptReadHalfword(ctx); //Skip null values
+		species = ScriptReadByte(ctx); //Skip null values
+		FlagSet(DOUBLE_WILD_BATTLE_FLAG);
+		
+		for (i = 0; i < 2; ++i)
+		{
+			species = ScriptReadHalfword(ctx);
+			level = ScriptReadByte(ctx);
+			item = ScriptReadHalfword(ctx);
+			CreateScriptedWildMon(species, level, item, specialMoves, i == 0);
+			
+			if (i == 0)
+				species = ScriptReadByte(ctx); //Skip null values
+		}
+	}
+	else
+	{
+		FlagClear(DOUBLE_WILD_BATTLE_FLAG); //Singular mon
+		level = ScriptReadByte(ctx);
+		item = ScriptReadHalfword(ctx);
+		CreateScriptedWildMon(species, level, item, specialMoves, TRUE);
+	}
+    
+    return FALSE;
+}
+
+static void CreateScriptedWildMon(u16 species, u8 level, u16 item, u16* moves, bool8 firstMon)
+{	
+	u8 index = firstMon ? 0 : 1;
+	
+	if (firstMon)
+		ZeroEnemyPartyMons();
+	
+    CreateMon(&gEnemyParty[index], species, level, 0x20, 0, 0, 0, 0);
+    if (item)
+		gEnemyParty[index].item = item;
+	
+	if (FlagGet(WILD_CUSTOM_MOVES_FLAG))
+	{
+		moves = firstMon ? moves : &moves[4];
+		for (int i = 0; i < MAX_MON_MOVES; ++i)
+		{
+			if (moves[i] != 0xFFFF)
+				gEnemyParty[index].moves[i] = moves[i];
+		}
+	}
+	
+	if (FlagGet(HIDDEN_ABILITY_FLAG))
+		gEnemyParty[index].hiddenAbility = TRUE;
+}
+
+void TrySetWildDoubleBattleTypeScripted()
+{
+	if (FlagGet(DOUBLE_WILD_BATTLE_FLAG))
+		gBattleTypeFlags |= BATTLE_TYPE_DOUBLE;
+}
+
+species_t GetLocalWildMon(bool8* isWaterMon)
+{
+    const struct WildPokemonInfo* landMonsInfo = LoadProperMonsData(LAND_MONS_HEADER);
+    const struct WildPokemonInfo* waterMonsInfo = LoadProperMonsData(WATER_MONS_HEADER);
+	*isWaterMon = FALSE;
+	
+    // Neither
+    if (landMonsInfo == NULL && waterMonsInfo == NULL)
+        return SPECIES_NONE;
+    // Land Pokemon
+    else if (landMonsInfo != NULL && waterMonsInfo == NULL)
+        return landMonsInfo->wildPokemon[ChooseWildMonIndex_Land()].species;
+    // Water Pokemon
+    else if (landMonsInfo == NULL && waterMonsInfo != NULL)
+    {
+        *isWaterMon = TRUE;
+        return waterMonsInfo->wildPokemon[ChooseWildMonIndex_WaterRock()].species;
+    }
+	
+    // Either land or water Pokemon
+    if ((Random() % 100) < 80)
+    {
+        return landMonsInfo->wildPokemon[ChooseWildMonIndex_Land()].species;
+    }
+    else
+    {
+        *isWaterMon = TRUE;
+        return waterMonsInfo->wildPokemon[ChooseWildMonIndex_WaterRock()].species;
+    }
+}
+
+u16 GetLocalWaterMon(void)
+{
+    const struct WildPokemonInfo* waterMonsInfo = LoadProperMonsData(WATER_MONS_HEADER);
+
+    if (waterMonsInfo)
+        return waterMonsInfo->wildPokemon[ChooseWildMonIndex_WaterRock()].species;
+
+    return SPECIES_NONE;
+}
+
+const struct WildPokemonInfo* LoadProperMonsData(u8 type)
+{
+	const struct WildPokemonInfo* monsInfo;
+	const struct WildPokemonHeader* header = GetCurrentMapWildMonHeader();
+
+	if (header == NULL) //No data whatsoever on this map
+		return NULL;
+		
+	monsInfo = LoadProperMonsPointer(header, type);
+	
+	if (monsInfo == NULL)
+	{
+		#ifdef TIME_ENABLED
+			header = GetCurrentMapWildMonDaytimeHeader();
+			if (header == NULL || LoadProperMonsPointer(header, type) == NULL)
+		#endif
+				return NULL;
+	}
+	
+	return monsInfo;
+}
+ 
+static const struct WildPokemonInfo* LoadProperMonsPointer(const struct WildPokemonHeader* header, const u8 type)
+{
+	switch (type) {
+		case LAND_MONS_HEADER:
+			return header->landMonsInfo;
+		case WATER_MONS_HEADER:
+			return header->waterMonsInfo;
+		case FISHING_MONS_HEADER:
+			return header->fishingMonsInfo;
+		case ROCK_SMASH_MONS_HEADER:
+			return header->rockSmashMonsInfo;
+		default:
+			return NULL;
+	}
 }

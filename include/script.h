@@ -16,9 +16,9 @@ struct ScriptContext
     u8 (*nativePtr)(void);
 	//ScrCmdFunc *scriptAsmPointer;
     const u8 *scriptPtr;
-    const u8 *stack[20];
-    ScrCmdFunc *cmdTable;
-    ScrCmdFunc *cmdTableEnd;
+    const u8* stack[20];
+    ScrCmdFunc* cmdTable;
+    ScrCmdFunc* cmdTableEnd;
     u32 data[4];
 	bool8 enabled;
 	u8 field_75;
@@ -26,10 +26,15 @@ struct ScriptContext
     u8 keypad_override_direction;	// Locks player movement.
 };
 
+#define sScriptStringVars ((u8**) *((u32*) 0x806BF38)) //Text buffers
+
 //extern struct ScriptEnvironment gScriptEnv1;	//03000EB0
 //extern struct ScriptEnvironment gScriptEnv2;	//03000F28
 
 #define ScriptReadByte(ctx) (*(ctx->scriptPtr++))
+u16 __attribute__((long_call)) ScriptReadHalfword(struct ScriptContext *ctx);
+u8* __attribute__((long_call)) MapHeaderCheckScriptTable(u8 tag);
+void __attribute__((long_call)) ScriptContext1_SetupScript(const u8* ptr);
 
 /*
 void InitScriptContext(struct ScriptContext *ctx, void *cmdTable, void *cmdTableEnd);

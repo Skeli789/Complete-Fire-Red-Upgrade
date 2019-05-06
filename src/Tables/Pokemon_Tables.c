@@ -5,7 +5,7 @@
 
 #define ALTERNATE_SIZE(species, height, weight) {species, height * 10, weight * 10}
 
-struct AlternateSize gAlternateSpeciesSizeTable[] =
+const struct AlternateSize gAlternateSpeciesSizeTable[] =
 {
 	ALTERNATE_SIZE(SPECIES_VENUSAUR_MEGA, 2.4, 155.5),
 	ALTERNATE_SIZE(SPECIES_CHARIZARD_MEGA_Y, 1.7, 100.5),
@@ -99,7 +99,7 @@ struct AlternateSize gAlternateSpeciesSizeTable[] =
 };
 
 //The move Telekinesis don't affect these Pokemon
-species_t TelekinesisBanList[] =
+const species_t TelekinesisBanList[] =
 {
 	SPECIES_DIGLETT,
 	SPECIES_DUGTRIO,
@@ -111,7 +111,7 @@ species_t TelekinesisBanList[] =
 };
 
 //For the purposes of the Beast Ball
-species_t UltraBeastTable[] =
+const species_t UltraBeastTable[] =
 {
 	SPECIES_NIHILEGO,
 	SPECIES_BUZZWOLE,
@@ -126,7 +126,7 @@ species_t UltraBeastTable[] =
 	SPECIES_BLACEPHALON,
 };
 
-species_t StandardSpeciesBanList[] = 
+const species_t StandardSpeciesBanList[] = 
 {
 	SPECIES_MEWTWO,
 	SPECIES_MEW,
@@ -205,7 +205,7 @@ species_t StandardSpeciesBanList[] =
 	SPECIES_TABLES_TERMIN
 };
 
-species_t OU_SpeciesBanList[] = 
+const species_t OU_SpeciesBanList[] = 
 {
 	SPECIES_AEGISLASH,
 	SPECIES_ARCEUS,
@@ -266,7 +266,7 @@ species_t OU_SpeciesBanList[] =
 	SPECIES_TABLES_TERMIN
 };
 
-ability_t OU_AbilityBanList[] = 
+const ability_t OU_AbilityBanList[] = 
 {
 	ABILITY_ARENATRAP,
 	ABILITY_SHADOWTAG,
@@ -276,7 +276,7 @@ ability_t OU_AbilityBanList[] =
 };
 
 
-item_t StandardItemBanList[] = 
+const item_t StandardItemBanList[] = 
 {
 	#ifdef OLD_SOUL_DEW_EFFECT
 	ITEM_SOUL_DEW,
@@ -284,7 +284,7 @@ item_t StandardItemBanList[] =
 	ITEM_TABLES_TERMIN
 };
 
-item_t OU_ItemBanList[] = 
+const item_t OU_ItemBanList[] = 
 {
 	ITEM_BLAZIKENITE,
 	ITEM_GENGARITE,
@@ -299,7 +299,7 @@ item_t OU_ItemBanList[] =
 	ITEM_TABLES_TERMIN
 };
 
-move_t SmogonMoveBanList[] = 
+const move_t SmogonMoveBanList[] = 
 {
 	MOVE_DOUBLETEAM,
 	MOVE_MINIMIZE,
@@ -311,7 +311,7 @@ move_t SmogonMoveBanList[] =
 	MOVE_TABLES_TERMIN
 };
 
-species_t LittleCup_SpeciesList[] = 
+const species_t LittleCup_SpeciesList[] = 
 {
 	SPECIES_ABRA,
 	SPECIES_AMAURA,
@@ -594,7 +594,7 @@ species_t LittleCup_SpeciesList[] =
 	SPECIES_TABLES_TERMIN
 };
 
-move_t LittleCup_MoveBanList[] = 
+const move_t LittleCup_MoveBanList[] = 
 {
 	MOVE_DRAGONRAGE,
 	MOVE_SONICBOOM,

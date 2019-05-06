@@ -4,9 +4,11 @@
 #include "../include/field_effect.h"
 #include "../include/metatile_behavior.h"
 #include "../include/safari_zone.h"
-#include "../include/songs.h"
-#include "../include/trainer_classes.h"
+#include "../include/constants/songs.h"
+#include "../include/constants/trainer_classes.h"
 #include "../include/event_data.h"
+#include "../include/map_scripts.h"
+#include "../include/script.h"
 
 #include "../include/constants/flags.h"
 #include "../include/constants/trainers.h"
@@ -14,6 +16,7 @@
 #include "../include/new/helper_functions.h"
 #include "../include/new/multi.h"
 #include "../include/new/frontier.h"
+#include "../include/new/wild_encounter.h"
 
 #define SCRCMD_TRAINERBATTLE 0x5C
 
@@ -62,7 +65,7 @@ void TrainerFaceFix(void);
 void FollowerPositionFix(void);
 
 // table full of pointers to custom walking scripts
-const u8* gDefaultWalkingScripts[] =
+const u8* const gDefaultWalkingScripts[] =
 {
 	(u32) 0,
 	(u32) 0,
@@ -110,7 +113,7 @@ const struct TrainerBattleParameter sTrainerBOrdinaryBattleParams[] =
 };
 
 //trainerbattle 0xA FOE_1_ID FOE_2_ID PARTNER_ID PARTNER_BACKSPRITE_ID 0x0 DEFEAT_TEXT_A DEFEAT_TEXT_B
-const struct TrainerBattleParameter sTagBattleParams[] =
+const struct TrainerBattleParameter sMultiBattleParams[] =
 {
     {&sTrainerBattleMode,           TRAINER_PARAM_LOAD_VAL_8BIT},
 
@@ -158,6 +161,31 @@ const struct TrainerBattleParameter sTwoOpponentBattleParams[] =
     {&sTrainerCannotBattleSpeech,    TRAINER_PARAM_LOAD_VAL_32BIT},
 	{&sTrainerCannotBattleSpeech_B,  TRAINER_PARAM_LOAD_VAL_32BIT},
 
+    {&sTrainerBattleScriptRetAddr,   TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerBattleScriptRetAddr_B, TRAINER_PARAM_CLEAR_VAL_32BIT},
+    {&sTrainerBattleEndScript,       TRAINER_PARAM_LOAD_SCRIPT_RET_ADDR},
+};
+
+//trainerbattle 0xC FOE_ID PARTNER_ID PARTNER_BACKSPRITE_ID 0x0 DEFEAT_TEXT_A
+const struct TrainerBattleParameter sTagBattleParams[] =
+{
+    {&sTrainerBattleMode,           TRAINER_PARAM_LOAD_VAL_8BIT},
+
+    {&gTrainerBattleOpponent_A,      TRAINER_PARAM_LOAD_VAL_16BIT},
+	{&gTrainerBattleOpponent_B,      TRAINER_PARAM_CLEAR_VAL_16BIT},
+	{&gTrainerBattlePartner,     	 TRAINER_PARAM_LOAD_VAL_16BIT},
+	{&sPartnerBackSpriteId,			 TRAINER_PARAM_LOAD_VAL_16BIT},
+
+    {&sTrainerEventObjectLocalId,    TRAINER_PARAM_LOAD_VAL_16BIT},
+    {&sTrainerIntroSpeech_A,         TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerIntroSpeech_B,       	 TRAINER_PARAM_CLEAR_VAL_32BIT},
+
+    {&sTrainerDefeatSpeech_A,        TRAINER_PARAM_LOAD_VAL_32BIT},
+	{&sTrainerDefeatSpeech_B, 		 TRAINER_PARAM_CLEAR_VAL_32BIT},
+
+    {&sTrainerVictorySpeech,         TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerVictorySpeech_B,       TRAINER_PARAM_CLEAR_VAL_32BIT},
+    {&sTrainerCannotBattleSpeech,    TRAINER_PARAM_CLEAR_VAL_32BIT},
     {&sTrainerBattleScriptRetAddr,   TRAINER_PARAM_CLEAR_VAL_32BIT},
 	{&sTrainerBattleScriptRetAddr_B, TRAINER_PARAM_CLEAR_VAL_32BIT},
     {&sTrainerBattleEndScript,       TRAINER_PARAM_LOAD_SCRIPT_RET_ADDR},
@@ -393,12 +421,13 @@ u8* BattleSetup_ConfigureTrainerBattle(const u8* data) {
 			TrainerBattleLoadArgs(sOakTutorialParams, data);
 			return EventScript_DoTrainerBattle;
 
-		case TRAINER_BATTLE_TAG:
-			TrainerBattleLoadArgs(sTagBattleParams, data);
+		case TRAINER_BATTLE_MULTI:
+			TrainerBattleLoadArgs(sMultiBattleParams, data);
 			VarSet(SECOND_OPPONENT_VAR, gTrainerBattleOpponent_B);
 			VarSet(PARTNER_VAR, gTrainerBattlePartner);
 			VarSet(PARTNER_BACKSPRITE_VAR, sPartnerBackSpriteId);
 			FlagSet(TAG_BATTLE_FLAG);
+			FlagSet(TWO_OPPONENT_FLAG);
 			return EventScript_DoTrainerBattle;
 
 		case TRAINER_BATTLE_TWO_OPPONENTS:
@@ -408,6 +437,13 @@ u8* BattleSetup_ConfigureTrainerBattle(const u8* data) {
 			FlagSet(TWO_OPPONENT_FLAG);
 			gApproachingTrainerId = 0;
 			return EventScript_TryDoTwoOpponentBattle;
+			
+		case TRAINER_BATTLE_TAG:
+			TrainerBattleLoadArgs(sTagBattleParams, data);
+			VarSet(PARTNER_VAR, gTrainerBattlePartner);
+			VarSet(PARTNER_BACKSPRITE_VAR, sPartnerBackSpriteId);
+			FlagSet(TAG_BATTLE_FLAG);
+			return EventScript_DoTrainerBattle;
 
 		default:
 			if (gApproachingTrainerId == 0) {
@@ -432,7 +468,7 @@ void InitTrainerBattleVariables(void)
         sTrainerBattleScriptRetAddr = 0;
 		sTrainerVictorySpeech = 0;
     }
-    else
+    else if (!FlagGet(TWO_OPPONENT_FLAG))
     {
         sTrainerIntroSpeech_B = 0;
         sTrainerDefeatSpeech_B = 0;
@@ -818,17 +854,17 @@ bool8 TakeStep(void)
 		gPedometers->alwaysActive += 1;
 
 	// check new pedometers
-	if ((FlagGet(FLAG_LONG_PEDOMETER)) && gPedometers->large != 0xFFFFFFFF)
+	if (FlagGet(FLAG_LONG_PEDOMETER) && gPedometers->large != 0xFFFFFFFF)
 		gPedometers->large += 1;
-	if ((FlagGet(FLAG_MED_PEDOMETER)) && gPedometers->medium != 0xFFFF)
+	if (FlagGet(FLAG_MED_PEDOMETER) && gPedometers->medium != 0xFFFF)
 		gPedometers->medium += 1;
-	if ((FlagGet(FLAG_SMALL_PEDOMETER_1)) && gPedometers->smallOne != 0xFF)
+	if (FlagGet(FLAG_SMALL_PEDOMETER_1) && gPedometers->smallOne != 0xFF)
 		gPedometers->smallOne += 1;
-	if ((FlagGet(FLAG_SMALL_PEDOMETER_2)) && gPedometers->smallTwo != 0xFF)
+	if (FlagGet(FLAG_SMALL_PEDOMETER_2) && gPedometers->smallTwo != 0xFF)
 		gPedometers->smallTwo += 1;
 
 	// check in safari zone
-	if ((GetSafariZoneFlag() == TRUE) && (gSafariSteps != 0))
+	if (GetSafariZoneFlag() && gSafariSteps != 0)
 	{
 		gSafariSteps -= 1;
 		if (gSafariSteps == 0)	// safari steps went to zero
@@ -860,7 +896,7 @@ bool8 TakeStep(void)
 		}
 	}
 	return FALSE;
-};
+}
 
 
 // Whiteout Hack
@@ -876,9 +912,25 @@ bool8 WhiteoutLogic(void) {
 #else
 	return TRUE;	// load from original table
 #endif
-};
+}
 
+bool8 TryRunOnFrameMapScript(void)
+{
+	TryUpdateSwarm();
+	
+	if (QuestLogMode != 3)
+	{
+		u8 *ptr = MapHeaderCheckScriptTable(MAP_SCRIPT_ON_FRAME_TABLE);
 
+		if (!ptr)
+			return FALSE;
+
+		ScriptContext1_SetupScript(ptr);
+		return TRUE;
+	}
+	
+	return FALSE;
+}
 
 
 //Follow Me Updates/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

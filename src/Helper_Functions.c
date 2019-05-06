@@ -10,7 +10,7 @@ extern move_t SheerForceTable[];
 extern move_t SoundMoveTable[];
 extern move_t MoldBreakerMoves[];
 extern move_t MovesThatChangePhysicality[];
-extern struct BattleMove gBattleMoves[];
+extern const struct BattleMove gBattleMoves[];
 
 extern u8 GetMoveTypeSpecial(bank_t, move_t);
 extern s8 PriorityCalc(u8 bank, u8 action, u16 move);

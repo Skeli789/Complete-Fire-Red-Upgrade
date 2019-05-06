@@ -100,11 +100,13 @@ ObjcShakerHook 804BEDC 2
 BatonPassEffects 08012850 0
 
 GiveMonToPlayer 8040B14 1
+ScriptGiveMon 80A011C 3
 
 ItemId_GetName 809A8BC 1
 
 ##Overworld Hooks
 apply_map_tileset_palette 80599C8 3
+TryRunOnFrameMapScript 8069C74 0
 BattleSetup_ConfigureTrainerBattle 8080228 1
 SetTrainerFlags 80803FC 0
 BattleSetup_StartTrainerBattle 8080464 0
@@ -170,6 +172,19 @@ SweetScentWildEncounter 8082EC0 0
 DoesCurrentMapHaveFishingMons 8082F78 0
 FishingWildEncounter 8082FB0 1
 CheckStandardWildEncounter 80833B0 1
+ScrCmd_setwildbattle 806C368 1
+sp138_StartLegendaryBattle 807F9D8 0
+GetLocalWildMon 8082FE8 1
+GetLocalWaterMon 8083074 0
+
+#Roamer Hooks
+ClearRoamersData 8141C54 0
+sp129_InitRoamer 8141D9C 0
+UpdateLocationHistoryForRoamers 8141DAC 0
+RoamersMoveToOtherLocationSet 8141DD4 0
+RoamersMove 8141E28 0
+UpdateFoughtRoamerHPStatus 8141FE8 1
+SetFoughtRoamerInactive 814201C 1
 
 ##Save Expansion Hooks
 HandleWriteSector 80D9870 2
@@ -180,7 +195,6 @@ ExpandedVarsHook 806E454 1
 ExpandedFlagsHook 806E5C0 1
 
 ##Other Hooks
-BattlePokemonScriptCommand_GiveHiddenAbilityHook 80A02EC 0
 DaycareInheritHiddenAbility 8046116 0
 
 ##DNS
@@ -319,7 +333,7 @@ PokedexLoadAlternateWeightHook 08105A58 0
 #TriggerPendingDaycareEgg 080459F0 1
 
 ##Pokemon Hooks
-CreateBoxMon 0803DAC4 3
+CreateBoxMonHook 803DAD2 0
 
 ##TM/HM Expansion
 #CanMonLearnTMHM 08043C2C 2

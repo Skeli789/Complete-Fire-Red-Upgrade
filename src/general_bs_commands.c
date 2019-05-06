@@ -3461,8 +3461,8 @@ void atkE5_pickupitemcalculation(void) {
 
 item_t ChoosePickupItem(u8 level) {
     u32 row_num = (level - 1) / 10;
-    item_t* common_row = pickup_common_items + row_num;
-    item_t* rare_row = pickup_rare_items + row_num;
+    const item_t* const common_row = sPickupCommonItems + row_num;
+    const item_t* const rare_row = sPickupRareItems + row_num;
 
     u16 k = Random();
 

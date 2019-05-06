@@ -97,7 +97,7 @@ enum
 	TRAINER_SLIDE_FIRST_DOWN,
 };
 
-extern struct BattleMove gBattleMoves[];
+extern const struct BattleMove gBattleMoves[];
 extern const u8 gTypeEffectiveness[124 * 3];
 #define BattleScript_MoveEnd (u8*) 0x81D694E
 #define BattleScript_Atk49 (u8*) 0x81D6954

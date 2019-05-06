@@ -1,7 +1,7 @@
 #include "../config.h"
 #include "../../include/global.h"
-#include "../../include/trainer_classes.h"
-#include "../../include/songs.h"
+#include "../../include/constants/trainer_classes.h"
+#include "../../include/constants/songs.h"
 #include "../../include/constants/species.h"
 
 //Finish Wild Songs for Unbound

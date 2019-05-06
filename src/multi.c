@@ -40,7 +40,7 @@ void PlayerPartnerHandleChooseMove(void);
 void PlayerPartnerHandlePrintSelectionString(void);
 void PlayerPartnerHandleChooseAction(void);
 void PlayerPartnerHandleChoosePokemon(void);
-void (*sPlayerPartnerBufferCommands[COMMAND_MAX])(void);
+void (*const sPlayerPartnerBufferCommands[COMMAND_MAX])(void);
 
 #ifdef OPEN_WORLD_TRAINERS
 
@@ -418,7 +418,7 @@ void PlayerPartnerHandleChoosePokemon(void)
  * Most of these are just reused from the player's command table to
  * save rewriting them all.
  */
-void (*sPlayerPartnerBufferCommands[COMMAND_MAX])(void) = {
+void (*const sPlayerPartnerBufferCommands[COMMAND_MAX])(void) = {
     WRAP_COMMAND_ADDRESS(0x8030B91), /* 00 */
     WRAP_COMMAND_ADDRESS(0x80313B1), /* 01 */
     WRAP_COMMAND_ADDRESS(0x8031439), /* 02 */

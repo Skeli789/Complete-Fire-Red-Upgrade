@@ -22,6 +22,7 @@ struct SpecificTilesetFade
 };
 
 //Change These
+//Overworld Palettes
 #define OW_BG_PAL_0 TRUE
 #define OW_BG_PAL_1 TRUE
 #define OW_BG_PAL_2 TRUE
@@ -56,6 +57,7 @@ struct SpecificTilesetFade
 #define OW_SPRITE_PAL_14 TRUE
 #define OW_SPRITE_PAL_15 TRUE
 
+//Battle Palettes
 #define BBG_PAL_0 FALSE
 #define BBG_PAL_1 FALSE
 #define BBG_PAL_2 TRUE
@@ -91,6 +93,7 @@ struct SpecificTilesetFade
 #define B_SPRITE_PAL_15 FALSE
 //The above values are set to only change the battle background.
 
+//DON"T TOUCH THESE
 #define OBG_SHI(num) (OW_BG_PAL_##num << num)
 #define OSP_SHI(num) (OW_SPRITE_PAL_##num << (num + 16))
 #define BBG_SHI(num) (BBG_PAL_##num << num)

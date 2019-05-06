@@ -12,6 +12,12 @@ extern const struct BallIdItemIdRelation BallIdItemIdRelations[];
 extern const struct CompressedSpriteSheet gBallSpriteSheets[];
 extern const struct CompressedSpritePalette gBallSpritePalettes[];
 
+#ifdef CAPTURE_EXPERIENCE
+	extern u8 BattleScript_SuccessBallThrow[];
+#else
+	#define BattleScript_SuccessBallThrow ((u8*) 0x81D9A42)
+#endif
+
 extern u8 gText_CantAimAtTwoTargets[];
 extern u8 gText_CantAimAtSemiInvulnerableTarget[];
 

@@ -315,11 +315,11 @@ typedef struct Pokemon
     u8 friendship;
 	u8 pokeball; //This is new
     u8 unknown;
-	
+
 //Substructure Attacks
     u16 moves[4];
     u8 pp[4];
-	
+
 //Substructure Condition
     u8 hpEv;
     u8 atkEv;
@@ -566,7 +566,7 @@ struct BaseStats
  /* 0x18 */ u8 safariZoneFleeRate;
  /* 0x19 */ u8 bodyColor : 7;
             u8 noFlip : 1;
- /* 0x1A */	u8 hiddenAbility;		
+ /* 0x1A */	u8 hiddenAbility;
 };
 
 struct SpindaSpot
@@ -631,7 +631,7 @@ enum EvolutionMethods
 	EVO_TYPE_IN_PARTY,	//specific type (param) in party after given level (unknown).
 	EVO_MAP, 	// specific map evolution. bank in param, map in unknown
 	EVO_MALE_LEVEL,		// above given level if male
-	EVO_FEMALE_LEVEL,	// above given level if female	
+	EVO_FEMALE_LEVEL,	// above given level if female
 	EVO_LEVEL_NIGHT,	// above given level at night
 	EVO_LEVEL_DAY,		// above given level during day
 	EVO_HOLD_ITEM_NIGHT,	// level up holding item at night (eg. sneasel)
@@ -639,6 +639,7 @@ enum EvolutionMethods
 	EVO_MOVE,	// knows a given move
 	EVO_OTHER_PARTY_MON,	//another poke in the party, arg is a specific species
 	EVO_LEVEL_SPECIFIC_TIME_RANGE, // above given level with a range (unknown is [start][end]. eg lycanroc -> 1700-1800 hrs -> 0x1112)
+	EVO_FLAG_SET, //If a certain flag is set. Can be used for touching the Mossy/Icy Rock for Leafeon/Glaceon evolutions
 };
 #define EVO_MEGA 0xFE
 
@@ -670,6 +671,7 @@ u8 CountAliveMons(u8 caseId);
 #define BATTLE_ALIVE_ATK_SIDE       1
 #define BATTLE_ALIVE_DEF_SIDE       2
 
+void __attribute__((long_call)) CreateMonWithIVsPersonality(struct Pokemon* mon, u16 species, u8 level, u32 ivs, u32 personality);
 u8 __attribute__((long_call)) GetLevelFromBoxMonExp(struct BoxPokemon *boxMon);
 u16 __attribute__((long_call)) GiveMoveToMon(struct Pokemon *mon, u16 move);
 u16 __attribute__((long_call)) GiveMoveToBoxMon(struct BoxPokemon *boxMon, u16 move);
@@ -685,6 +687,8 @@ void __attribute__((long_call)) ZeroBoxMonData(struct BoxPokemon *boxMon);
 void __attribute__((long_call)) GetSpeciesName(u8 *name, u16 species);
 u16 __attribute__((long_call)) CalculateBoxMonChecksum(struct BoxPokemon *boxMon);
 u16 __attribute__((long_call)) GetTutorMove(u8 tutor);
+
+species_t __attribute__((long_call)) GetStarterChoice(void);
 
 /*
 void ZeroMonData(struct Pokemon *mon);

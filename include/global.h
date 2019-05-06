@@ -178,6 +178,12 @@ struct UCoords16
     u16 y;
 };
 
+struct UCoords32
+{
+    u32 x;
+    u32 y;
+};
+
 struct Time
 {
     /*0x00*/ s16 days;
@@ -390,21 +396,22 @@ struct Pokeblock
     u8 feel;
 };
 
-struct Roamer
+struct RoamerOld
 {
-    /*0x00*/ u32 ivs;
-    /*0x04*/ u32 personality;
-    /*0x08*/ u16 species;
-    /*0x0A*/ u16 hp;
-    /*0x0C*/ u8 level;
-    /*0x0D*/ u8 status;
-    /*0x0E*/ u8 cool;
-    /*0x0F*/ u8 beauty;
-    /*0x10*/ u8 cute;
-    /*0x11*/ u8 smart;
-    /*0x12*/ u8 tough;
-    /*0x13*/ bool8 active;
-    /*0x14*/ u8 filler[0x8];
+    u32 ivs; //0x00
+    u32 personality; //0x04
+    u16 species; //0x08
+    u16 hp; //0x0A
+    u8 level; //0x0A
+    u8 status; //0x0D
+    u8 cool; //0x0E
+    u8 beauty; //0x0F
+    u8 cute; //0x10
+    u8 smart; //0x11
+    u8 tough; //0x12
+    bool8 active; //0x13
+    u8 filler[0x8]; //0x14
+	//SIZE = 0x1C
 };
 
 struct RamScriptData
@@ -680,7 +687,7 @@ struct SaveBlock1
     /*0x2F54*/ struct EasyChatPair easyChatPairs[5]; // unused
     /*0x2F80*/ struct DayCare daycare;
     /*0x309C*/ u8 giftRibbons[52];
-    /*0x30D0*/ struct Roamer roamer;
+    /*0x30D0*/ struct RoamerOld roamer;
     /*0x30EC*/ struct EnigmaBerry enigmaBerry;
     /*0x3120*/ u8 filler3120[0x340];
     /*0x3460*/ struct MysteryEventStruct unk_3460;

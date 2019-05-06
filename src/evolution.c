@@ -237,6 +237,10 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem) {
 							targetSpecies = gEvolutionTable[species][i].targetSpecies;
 					#endif
 					break;
+					
+				case EVO_FLAG_SET:
+					if (FlagGet(gEvolutionTable[species][i].param))
+						targetSpecies = gEvolutionTable[species][i].targetSpecies;
             }
         }
         break;
@@ -249,6 +253,7 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem) {
             case EVO_TRADE:
                 targetSpecies = gEvolutionTable[species][i].targetSpecies;
                 break;
+			#ifdef EVO_HOLD_ITEM_REMOVAL
             case EVO_TRADE_ITEM:
                 if (gEvolutionTable[species][i].param == heldItem)
                 {
@@ -257,6 +262,7 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem) {
                     targetSpecies = gEvolutionTable[species][i].targetSpecies;
                 }
                 break;
+			#endif
             }
         }
         break;

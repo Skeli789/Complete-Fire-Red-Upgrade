@@ -4,7 +4,7 @@
 #include "frontier_trainer_names.h"
 #include "../../include/new/frontier.h"
 #include "../../include/new/text.h"
-#include "../../include/trainer_classes.h"
+#include "../../include/constants/trainer_classes.h"
 
 /*struct BattleTowerTrainer
 {

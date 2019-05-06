@@ -531,11 +531,12 @@ IsDoubleBattle = 0x8075290 | 1;
 InitSpriteDataForLinearTranslation = 0x80754B8 | 1;
 StartAnimLinearTranslation = 0x8075590 | 1;
 GetBattlerSpriteSubpriority = 0x807685C | 1;
-BattleSetup_StartRoamerBattle = 0x807F78C | 1;
+/*BattleSetup_StartRoamerBattle = 0x807F78C | 1;*/
 BattleSetup_StartWildBattle = 0x807F704 | 1;
 CreateBattleStartTask = 0x807F690 | 1;
 StartTheBattle = 0x807F868 | 1;
 CB2_EndWildBattle = 0x807FB40 | 1;
+CB2_EndScriptedWildBattle_2 = 0x807FBA0 | 1;
 GetWildBattleTransition = 0x807FF34 | 1;
 GetTrainerALoseText = 0x80806EC | 1;
 GetTrainerAWinText = 0x8080710 | 1;
@@ -604,6 +605,7 @@ CalculateBoxMonChecksum = 0x0803E3E8 | 1;
 CreateMonWithNature = 0x803DD98 | 1;
 GetNatureFromPersonality = 0x08042EB4 | 1;
 CreateMonWithGenderNatureLetter = 0x803DE00  | 1;
+CreateMonWithIVsPersonality = 0x803DF68  | 1;
 CalculateMonStats = 0x0803E47C | 1;
 GetLevelFromBoxMonExp = 0x803E830 | 1;
 GiveMoveToMon = 0x803E89C | 1;
@@ -633,7 +635,9 @@ GetSetPokedexFlag = 0x8044898 | 1;
 GetPokedexHeightWeight = 0x8088E38 | 1;
 ReducePartyToThree = 0x80A03D8 | 1;
 pokemon_order_func = 0x8128030 | 1;
-GetEggMoves = 0x08045C28 | 1;
+GetEggMoves = 0x8045C28 | 1;
+
+GetStarterChoice = 0x80CBDB0 | 1;
 
 /*Daycare*/
 GetEggSpecies = 0x8045970 | 1;
@@ -675,7 +679,7 @@ IsWildLevelAllowedByRepel = 0x808310C | 1;
 ApplyFluteEncounterRateMod = 0x8083174 | 1;
 ApplyCleanseTagEncounterRateMod = 0x80831D8 | 1;
 IncrementEncounterProbabilityBonus = 0x8083410 | 1;
-TryStartRoamerEncounter = 0x8141FAC | 1;
+/*TryStartRoamerEncounter = 0x8141FAC | 1;*/
 
 /*Item Functions*/
 IsMail = 0x80980F8 | 1;
@@ -692,6 +696,7 @@ AddMoney = 0x809FDA0 | 1;
 
 /*Overworld Functions*/
 GetTrainerEncounterMusicId = 0x804367C | 1;
+Overworld_GetMapHeaderByGroupAndId = 0x8055238 | 1;
 Overworld_GetMapTypeOfSaveblockLocation = 0x8056188 | 1;
 GetCurrentRegionMapSectionId = 0x08056260 | 1;
 GetCurrentMapBattleScene = 0x8056288 | 1;
@@ -716,15 +721,20 @@ npc_apply_anim_looping = 0x8063554 | 1;
 npc_apply_direction = 0x8064678 | 1;
 npc_obj_ministep_stop_on_arrival = 0x8064788 | 1;
 FreezeEventObjects = 0x8068974 | 1;
+ScriptReadHalfword = 0x80698F8 | 1;
 ScriptContext2_Enable = 0x8069940 | 1;
 ScriptContext1_SetupScript = 0x8069AE4 | 1;
 ScriptContext1_Stop = 0x8069B28 | 1;
+MapHeaderCheckScriptTable = 0x8069BD8 | 1;
 PlayNewMapMusic = 0x8071A74 | 1;
 PatchObjectPalette = 0x0805F538 | 1;
 CurrMapHeightMismatch = 0x080681B0 | 1;	
 MapGridGetZCoordAt = 0x08058D44 | 1;
 
 CheckOpenSky = 0x080561FC | 1;
+
+/*Region Map Functions*/
+GetMapName = 0x80C4D78 | 1;
 
 /*Event Object Movement Functions*/
 TrySpawnEventObjectTemplate = 0x0805E72C | 1;

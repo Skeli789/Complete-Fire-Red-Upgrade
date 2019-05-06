@@ -45,29 +45,13 @@ const struct WildPokemonHeader gWildMonNightHeaders[] =
 
 const struct SwarmData gSwarmTable[] =
 {
-	{
+	/*{
 		.mapName = 0xFF,
 		.species = 0xFFFF,
-	},
+	},*/
 };
 
 #else //Below is for Pokemon Unbound. Feel free to remove.
-
-#define MAP_ROUTE_2			((3 << 8) | 69)
-#define MAP_ROUTE_3			((3 << 8) | 70)
-#define MAP_ROUTE_4			((3 << 8) | 72)
-#define MAP_GRIM_WOODS		((45 << 8) | 1)
-#define MAP_ROUTE_5			((3 << 8) | 73)
-#define MAP_ROUTE_6			((3 << 8) | 75)
-#define MAP_ROUTE_7			((3 << 8) | 76)
-#define MAP_ROUTE_8			((3 << 8) | 77)
-#define MAP_FROZEN_FOREST	((1 << 8) | 81)
-#define MAP_ROUTE_11		((3 << 8) | 85)
-#define MAP_ROUTE_12		((3 << 8) | 88)
-#define MAP_ROUTE_14_B		((3 << 8) | 96)
-#define MAP_ROUTE_14_C		((3 << 8) | 97)
-#define MAP_VIVILL_WOODS	((1 << 8) | 99)
-#define MAP_ROUTE_17		((3 << 8) | 104)
 
 #define MAP_NAME_ROUTE_1 0x65
 #define MAP_NAME_ROUTE_2 0x66
@@ -617,10 +601,8 @@ const struct SwarmData gSwarmTable[] =
 		.mapName = MAP_NAME_ROUTE_17,
 		.species = SPECIES_ILLUMISE,
 	},
-	{
-		.mapName = 0xFF,
-		.species = 0xFFFF,
-	},
 };
 
 #endif
+
+const u16 gSwarmTableLength = ARRAY_COUNT(gSwarmTable);

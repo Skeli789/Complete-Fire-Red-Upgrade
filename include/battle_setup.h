@@ -12,8 +12,9 @@
 #define TRAINER_BATTLE_REMATCH_DOUBLE                   7
 #define TRAINER_BATTLE_CONTINUE_SCRIPT_DOUBLE_NO_MUSIC  8
 #define TRAINER_BATTLE_OAK_TUTORIAL                     9
-#define TRAINER_BATTLE_TAG								10
+#define TRAINER_BATTLE_MULTI							10
 #define TRAINER_BATTLE_TWO_OPPONENTS					11
+#define TRAINER_BATTLE_TAG								12
 
 struct TrainerBattleParameter
 {

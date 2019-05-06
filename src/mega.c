@@ -32,7 +32,7 @@ bool8 IsUltraNecrozma(u8 bank);
 bool8 HasMegaSymbol(u8 bank);
 u8* GetTrainerName(u8 bank);
 
-item_t KeystoneTable[] = 
+const item_t KeystoneTable[] = 
 {
     ITEM_MEGA_RING,
 };
