@@ -141,6 +141,7 @@ enum
 #define CLASS_JOGGER			0x20
 #define CLASS_DRAGON_TAMER		0x21
 #define CLASS_NINJA_BOY			0x23
+#define CLASS_DEVELOPER			0x29
 #define CLASS_BOARDER			0x2A
 #define CLASS_COLLECTOR			0x2B
 #define CLASS_LOR_ADMIN 		0x2E

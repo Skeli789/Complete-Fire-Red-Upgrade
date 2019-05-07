@@ -1178,3 +1178,12 @@ No matter how fun the battle is, it\nwill always end sometime[.]
 
 #org @sFrontierText_Cynthia_PlayerLose
 You see? I didn't let up!
+
+#org @sFrontierText_Skeli_PreBattle
+Hey, there!\pI'm Skeli, one of the developers of\nPok\emon Unbound.\pI'm glad you took the time to come\nbattle here!\pNow, let's have a fun time!
+
+#org @sFrontierText_Skeli_PlayerWin
+Alright!\nThat was fun!
+
+#org @sFrontierText_Skeli_PlayerLose
+I'm looking forward to battling you\nagain in the future!

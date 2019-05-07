@@ -412,13 +412,17 @@ extern const u8 sFrontierText_Rancher_PlayerWin_6[];
 extern const u8 sFrontierText_Rancher_PlayerLose_6[];
 
 extern const u8 sTrainerName_Cynthia[];
+extern const u8 sTrainerName_Skeli[];
 extern const u8 sTrainerName_Palmer[];
 
 extern const u8 sFrontierText_Cynthia_PreBattle[];
 extern const u8 sFrontierText_Cynthia_PlayerWin[];
 extern const u8 sFrontierText_Cynthia_PlayerLose[];
-extern const struct BattleTowerSpread gSpecialTowerSpread_Cynthia[];
-		
+
+extern const u8 sFrontierText_Skeli_PreBattle[];
+extern const u8 sFrontierText_Skeli_PlayerWin[];
+extern const u8 sFrontierText_Skeli_PlayerLose[];
+
 #ifdef UNBOUND
 const struct BattleTowerTrainer gTowerTrainers[] = 
 {
@@ -1608,6 +1612,19 @@ const struct SpecialBattleTowerTrainer gSpecialTowerTrainers[] =
 		.spreads =			gSpecialTowerSpread_Cynthia,
 		.spreadSize = 		ARRAY_COUNT(gSpecialTowerSpread_Cynthia),
 		.songId = 			BGM_BATTLE_CYNTHIA,
+	},
+	{
+		.owNum = 			OW_SKELI,
+		.trainerClass = 	CLASS_DEVELOPER,
+		.trainerSprite = 	TRAINER_SPRITE_SKELI,
+		.gender = 			BATTLE_TOWER_MALE,
+		.name =				sTrainerName_Skeli,
+		.preBattleText = 	sFrontierText_Skeli_PreBattle,
+		.playerWinText = 	sFrontierText_Skeli_PlayerWin,
+		.playerLoseText = 	sFrontierText_Skeli_PlayerLose,
+		.spreads =			gSpecialTowerSpread_Skeli,
+		.spreadSize = 		ARRAY_COUNT(gSpecialTowerSpread_Skeli),
+		.songId = 			BGM_BATTLE_LOR_BOSS,
 	},
 };
 
