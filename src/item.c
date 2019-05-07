@@ -45,14 +45,15 @@ bool8 IsZCrystal(u16 item)
 	return ItemId_GetHoldEffect(item) == ITEM_EFFECT_Z_CRYSTAL;
 }
 
+//TM + HMs////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #ifdef EXPANDED_TMSHMS
-	extern const u32 gTMHMLearnsets[NUM_SPECIES][4];
-	extern const u16 gTMHMMoves[NUM_TMSHMS];
+	typedef u32 TM_HM_T[4]; //extern const u32 gTMHMLearnsets[NUM_SPECIES][4];
 #else
-	const gTMHMLearnsets[][2];
-	const gTMHMMoves[];
+	typedef u32 TM_HM_T[2]; //extern const u32 gTMHMLearnsets[NUM_SPECIES][2];
 #endif
 
+#define gTMHMLearnsets ((TM_HM_T*) *((u32*) 0x8043C68))
+#define gTMHMMoves ((const u16*) *((u32*) 0x8125A8C))
 
 u32 CanMonLearnTMHM(struct Pokemon* mon, u8 tm)
 {
@@ -96,7 +97,7 @@ u16 ItemIdToBattleMoveId(u16 item) {
 	#ifdef EXPANDED_TMSHMS
 		u16 tmNum = ItemId_GetSecondaryId(item);	// secondary id -> tm num
 	#else
-		u16 tmNum = item - ITEM_TM01_FOCUS_PUNCH;
+		u16 tmNum = item - ITEM_TM01;
 	#endif
     return gTMHMMoves[tmNum];
 }
