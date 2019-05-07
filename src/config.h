@@ -16,6 +16,8 @@
 #define DEFAULT_WALKING_SCRIPT 0x500B  //Walking scripts from JPAN's engine. His engine used 0x407E.
 #define DEXNAV_VAR 0x500C
 
+#define SWARM_DAILY_EVENT_VAR 0x500D
+
 #define SECOND_OPPONENT_VAR 0x5010 //Set this to the var used to store the Trainer Id of the second opponent in Multi Battles (can be any free var)
 #define PARTNER_VAR 0x5011 //Set this to the var used to store the Trainer Id of your partner in Multi Battles (can be any free var)
 #define PARTNER_BACKSPRITE_VAR 0x5012 //Set this to the var used to store the backsprite number of your partner in Multi Battles (can be any free var)
@@ -158,9 +160,11 @@ enum
 
 /* Expanded TMs/HMs Options */
 #define EXPANDED_TMSHMS  // comment this out if you want to keep 50 tms/8 hms
-#define NUM_TMS 50
-#define NUM_HMS 8
+#define NUM_TMS 51
+#define NUM_HMS 10
 #define NUM_TMSHMS NUM_TMS+NUM_HMS // this must always be defined
+//#define TMS_BEFORE_HMS  // uncomment this if you want the HMs to appear after the TMs in your bag
+//#define DELETABLE_HMS		// uncomment this if you want HMs to be deletable without the Move Deleter
 
 /* Misc Effect Options */
 //#define OLD_BURN_DAMAGE //Uncomment this line if you want burn damage to do 1/8 of max health instead of 1/16

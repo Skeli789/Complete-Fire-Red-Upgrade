@@ -688,6 +688,9 @@ void __attribute__((long_call)) GetSpeciesName(u8 *name, u16 species);
 u16 __attribute__((long_call)) CalculateBoxMonChecksum(struct BoxPokemon *boxMon);
 bool8 __attribute__((long_call)) IsMonShiny(struct Pokemon *mon);
 bool8 __attribute__((long_call)) IsShinyOtIdPersonality(u32 otId, u32 personality);
+u16 __attribute__((long_call)) GetTutorMove(u8 tutor);
+bool8 __attribute__((long_call)) MonKnowsMove(struct Pokemon *mon, u16 move);
+bool8 __attribute__((long_call)) CanLearnTutorMove(u16, u8);
 
 species_t __attribute__((long_call)) GetStarterChoice(void);
 

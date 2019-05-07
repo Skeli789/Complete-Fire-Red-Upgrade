@@ -1099,7 +1099,7 @@ bool8 sp051_CanTeamParticipateInSkyBattle(void)
 //			and the species name where there is currently a swarm to buffer2.
 void sp058_BufferSwarmText(void) 
 {
-	u8 index = VarGet(SWARM_INDEX_VAR);
+	u8 index = VarGet(SWARM_SPECIES_VAR);
 	u8 mapName = gSwarmTable[index].mapName;
 	u16 species = gSwarmTable[index].species;
 	

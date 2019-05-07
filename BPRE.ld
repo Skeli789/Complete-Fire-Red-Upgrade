@@ -115,7 +115,11 @@ rbox_get_id_something = 0x08003CE4|1;
 sub_812E5A4 = 0x0812E5A4|1;
 rboxid_get_field = 0x08004950|1;
 
-gf_strcat = 0x08008DA4 |1;
+StringAppend = 0x08008DA4 |1;
+//StringAppendN = 0x08008DBC | 1;
+GetTutorMove = 0x08120BA8 | 1;
+MonKnowsMove = 0x08125AC0 | 1;
+CanLearnTutorMove = 0x08120BE8 | 1;
 
 healthbar_draw_level = 0x08048398|1;
 GpuPalObjAllocTagAndApply = 0x08008928|1;
