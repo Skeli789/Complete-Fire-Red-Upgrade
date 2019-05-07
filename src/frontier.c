@@ -190,18 +190,25 @@ u16 sp052_GenerateTowerTrainer(void)
 //				 1 = Special Trainers
 void sp053_LoadFrontierIntroBattleMessage(void)
 {
+	u8 gender;
 	u16 id = VarGet(TOWER_TRAINER_ID_VAR + Var8000);
 	
 	const u8* text;
 	if (Var8001 == 0)
+	{
 		text = gTowerTrainers[id].preBattleText;
+		gender = gTowerTrainers[id].gender;
+	}
 	else
+	{
 		text = gSpecialTowerTrainers[id].preBattleText;
+		gender = gSpecialTowerTrainers[id].gender;
+	}
 	
 	gLoadPointer = text;
 	
 	//Change text colour
-	if (gTowerTrainers[id].gender == BATTLE_TOWER_MALE)
+	if (gender == BATTLE_TOWER_MALE)
 	{
 		gTextColourBackup = gTextColourCurrent;
 		gTextColourCurrent = 0; //Blue
