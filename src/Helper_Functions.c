@@ -604,31 +604,40 @@ bool8 IsUproarBeingMade(void) {
 }
 
 //Change to loop through battle modified party indexes
-pokemon_t* GetIllusionPartyData(u8 bank) {
+u8 GetIllusionPartyNumber(u8 bank)
+{
 	int i;
 	u8 firstMonId, lastMonId;
 	
-	if (!(gStatuses3[bank] & STATUS3_ILLUSION))
-		return GetBankPartyData(bank);
-	
-	//Wild Pokemon can't diguise themselves
-	if ((!(gBattleTypeFlags & BATTLE_TYPE_TRAINER) && SIDE(bank) == B_SIDE_OPPONENT))
-		return GetBankPartyData(bank);
+	if (gStatuses3[bank] & STATUS3_ILLUSION)
+	{
+		//Wild Pokemon can't diguise themselves
+		if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER) && SIDE(bank) == B_SIDE_OPPONENT)
+			return gBattlerPartyIndexes[bank];
 
-	pokemon_t* party = LoadPartyRange(bank, &firstMonId, &lastMonId);
-	
-	for (i = lastMonId - 1; i >= firstMonId; --i) { //Loop through party in reverse order
-		if (i == gBattlerPartyIndexes[bank]) //Finsihed checking mons after
-			return GetBankPartyData(bank);
-	
+		pokemon_t* party = LoadPartyRange(bank, &firstMonId, &lastMonId);
 		
-		if (party[i].species == SPECIES_NONE ||  party[i].hp == 0)
-			continue;
+		for (i = lastMonId - 1; i >= firstMonId; --i) //Loop through party in reverse order
+		{ 
+			if (i == gBattlerPartyIndexes[bank]) //Finsihed checking mons after
+				return gBattlerPartyIndexes[bank];
 		
-		return &party[i];
+			if (party[i].species == SPECIES_NONE ||  party[i].hp == 0)
+				continue;
+			
+			return i;
+		}
 	}
 	
-	return GetBankPartyData(bank);
+	return gBattlerPartyIndexes[bank];
+}
+
+pokemon_t* GetIllusionPartyData(u8 bank) 
+{
+	u8 firstMonId, lastMonId;
+	pokemon_t* party = LoadPartyRange(bank, &firstMonId, &lastMonId);
+	
+	return &party[GetIllusionPartyNumber(bank)];
 }
 
 bool8 BankMovedBefore(u8 bank1, u8 bank2) {

@@ -3,6 +3,7 @@
 #include "../include/link.h"
 #include "../include/new/helper_functions.h"
 #include "../include/random.h"
+#include "../include/constants/event_objects.h"
 
 u16 GetBackspriteId(void);
 void LoadTrainerBackPal(u16 trainerPicId, u8 bank);
@@ -62,10 +63,12 @@ typedef const struct EventObjectGraphicsInfo* NPCPtr;
 
 //npc_get_type hack for character customization
 //	hook at 0805F2C8 via r1
-NPCPtr GetEventObjectGraphicsInfo(u16 gfxId) {
-	u8 tableId = (gfxId >> 8) & 0xFF;	// upper byte
-	u8 spriteId = gfxId & 0xFF;		// lower byte
+NPCPtr GetEventObjectGraphicsInfo(u16 graphicsId) 
+{
 	u16 newId;
+	u8 tableId = (graphicsId >> 8) & 0xFF;	// upper byte
+	u8 spriteId = graphicsId & 0xFF;		// lower byte
+	
 	// check runtime changeable OWs
 	if (tableId == 0xFF && spriteId <= 0xF)
 	{
@@ -76,7 +79,7 @@ NPCPtr GetEventObjectGraphicsInfo(u16 gfxId) {
 	}
 	else
 	{
-		if ((tableId == 0) && spriteId > 239)
+		if (tableId == 0 && spriteId > 239)
 		{
 			newId = VarGetEventObjectGraphicsId(spriteId + 16);
 			tableId = (newId >> 8) & 0xFF;	// upper byte
@@ -97,6 +100,7 @@ NPCPtr GetEventObjectGraphicsInfo(u16 gfxId) {
 				newId = VarGet(VAR_PLAYER_FISHING);
 			else if ((spriteId == 6) || (spriteId == 0xD))
 				newId = VarGet(VAR_PLAYER_VS_SEEKER_ON_BIKE);
+			
 			// get updated table and sprite IDs
 			if (newId != 0)
 			{
@@ -105,13 +109,17 @@ NPCPtr GetEventObjectGraphicsInfo(u16 gfxId) {
 			}	// else, table and sprite ID stay the same
 		}	// runtime changeable
 	}
+	
 	NPCPtr spriteAddr;
-	if (gOverworldTableSwitcher[tableId] == 0)
+	if (tableId > ARRAY_COUNT(gOverworldTableSwitcher)
+	|| gOverworldTableSwitcher[tableId] == 0)
 		spriteAddr = gOverworldTableSwitcher[0][spriteId];
 	else
 		spriteAddr = gOverworldTableSwitcher[tableId][spriteId];
+	
 	if (spriteAddr == 0)
-		spriteAddr = gOverworldTableSwitcher[0][16];	// first non-player sprite in first table default
+		spriteAddr = gOverworldTableSwitcher[0][EVENT_OBJ_GFX_NINJA_BOY];	// first non-player sprite in first table default
+	
 	return spriteAddr;
 };
 

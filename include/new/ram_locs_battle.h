@@ -145,6 +145,7 @@ typedef u8 Buffer_t[0x200];
 		#define gAnimScriptCallback (*((u32*) 0x2037EDC))
 /*s8*/	#define gAnimFramesToWait (*((s8*) 0x2037EE0))
 /*s16*/ #define gBattleAnimArgs ((s16*) 0x2037F02)
+/*u16*/	#define sAnimMoveIndex (*((u16*) 0x2037F18))
 /*u8*/  #define gBattleAnimAttacker (*((u8*) 0x2037F1A))
 /*u8*/  #define gBattleAnimTarget (*((u8*) 0x2037F1B))
 

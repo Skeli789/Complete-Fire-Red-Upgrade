@@ -4,6 +4,7 @@
 #include "../../include/new/frontier.h"
 #include "../../include/new/text.h"
 #include "../../include/constants/trainer_classes.h"
+#include "../../include/constants/songs.h"
 
 #include "frontier_trainer_names.h"
 #include "frontier_spreads.h"
@@ -1606,6 +1607,7 @@ const struct SpecialBattleTowerTrainer gSpecialTowerTrainers[] =
 		.playerLoseText = 	sFrontierText_Cynthia_PlayerLose,
 		.spreads =			gSpecialTowerSpread_Cynthia,
 		.spreadSize = 		ARRAY_COUNT(gSpecialTowerSpread_Cynthia),
+		.songId = 			BGM_BATTLE_CYNTHIA,
 	},
 };
 

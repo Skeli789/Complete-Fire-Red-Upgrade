@@ -44,6 +44,7 @@ struct SpecialBattleTowerTrainer
 	const u8* playerLoseText;
 	const struct BattleTowerSpread* spreads;
 	u16 spreadSize;
+	u16 songId;
 };
 
 
@@ -57,6 +58,7 @@ struct FrontierBrain
 	const u8* name;
 	const struct BattleTowerSpread* spreads;
 	u16 spreadSize;
+	u16 songId;
 };
 
 extern const struct FrontierBrain gFrontierBrains[];
@@ -140,6 +142,13 @@ enum TierBanCheckingType
 	CHECK_PARTY_OFFSET,
 };
 
+enum BattlerIds
+{
+	FRONTIER_TRAINER_A,
+	FRONTIER_TRAINER_B,
+	FRONTIER_PARTNER,
+};
+
 extern u16 gBattleTowerStreaks[NUM_TOWER_BATTLE_TYPES][NUM_FORMATS][/*INVERSE*/ 2][/*LEVEL*/ 4][/*CURRENT_OR_MAX*/ 2]; //0x2026840
 
 extern const species_t StandardSpeciesBanList[];
@@ -156,4 +165,6 @@ void CopyFrontierTrainerName(u8* dst, u16 trainerId, u8 battlerNum);
 const u8* GetFrontierTrainerName(u16 trainerId, u8 battlerNum);
 void CopyFrontierTrainerText(u8 whichText, u16 trainerId, u8 battlerNum);
 u8 GetFrontierTrainerFrontSpriteId(u16 trainerId, u8 battlerNum);
+u16 TryGetSpecialFrontierTrainerMusic(u16 trainerId, u8 battlerNum);
+u32 GetAIFlagsInBattleFrontier(unusedArg u8 bank);
 u16 GetCurrentBattleTowerStreak(void);

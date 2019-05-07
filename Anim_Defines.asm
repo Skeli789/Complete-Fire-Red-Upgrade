@@ -11,6 +11,9 @@
 .equ side_attacker, 0x2
 .equ side_target, 0x3
 
+@For launchtemplate
+.equ TEMPLATE_TARGET, 0x80
+
 @background IDs
 .equ BG_DARK, 0x1
 .equ BG_GHOST, 0x2
@@ -411,6 +414,7 @@
 .equ AnimTask_SwaggerBulkUp, 0x80A84B5
 .equ AnimTask_flash_anim, 0x80BB661
 .equ AnimTask_RapidWhackSound, 0x80DD3DD
+.equ AnimTask_SetGrayscaleOrOriginalPalette, 0x80B8A75
 
 @launchtemplate
 

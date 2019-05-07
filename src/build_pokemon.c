@@ -513,6 +513,7 @@ static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerNum, const
 		party[i].metLocation = 0x3A; //Battle Tower RS
 		party[i].metLevel = level;
 		party[i].obedient = TRUE;
+		party[i].friendship = 255;
 
 		SET_IVS(spread);
 		SET_EVS(spread);

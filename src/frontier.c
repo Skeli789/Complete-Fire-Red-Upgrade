@@ -133,6 +133,18 @@ u8 GetFrontierTrainerFrontSpriteId(u16 trainerId, u8 battlerNum)
 	}
 }
 
+u16 TryGetSpecialFrontierTrainerMusic(u16 trainerId, u8 battlerNum)
+{
+	switch (trainerId) {
+		case BATTLE_TOWER_SPECIAL_TID:
+			return gSpecialTowerTrainers[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].songId;
+		case FRONTIER_BRAIN_TID:
+			return gFrontierBrains[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].songId;
+		default:
+			return 0;
+	}
+}
+
 u32 GetAIFlagsInBattleFrontier(unusedArg u8 bank) {
 	return AI_SCRIPT_CHECK_BAD_MOVE;
 }

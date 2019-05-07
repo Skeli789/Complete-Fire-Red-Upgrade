@@ -48,7 +48,7 @@ extern u8* gMaleFrontierNamesTable[];
 extern u8* gFemaleFrontierNamesTable[];
 
 extern u8* GetTrainerBLoseText(void);
-extern u8* GetTrainerName(u8 bank);
+extern const u8* GetTrainerName(u8 bank);
 
 void PrepareStringBattle(u16 stringId, u8 bank);
 void BufferStringBattle(u16 stringID);
@@ -874,7 +874,7 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
                     toCpy = sText_YourCaps;
 				break;
 			case B_TXT_SCRIPTING_TRAINER:
-				 toCpy = GetTrainerName(gBattleScripting->bank);
+				 toCpy = (u8*) GetTrainerName(gBattleScripting->bank);
 				 break;
             }
 

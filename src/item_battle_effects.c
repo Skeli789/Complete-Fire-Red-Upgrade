@@ -276,7 +276,9 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
 				
             case ITEM_EFFECT_LEFTOVERS:
 			LEFTOVERS_HEAL:
-                if (!moveTurn && gBattleMons[bank].hp < gBattleMons[bank].maxHP) {
+                if (!moveTurn && gBattleMons[bank].hp < gBattleMons[bank].maxHP
+				&&  !gNewBS->HealBlockTimers[bank])
+				{
                     gBattleMoveDamage = MathMax(1, gBattleMons[bank].maxHP / 16);
                     if (gBattleMons[bank].hp + gBattleMoveDamage > gBattleMons[bank].maxHP)
                         gBattleMoveDamage = gBattleMons[bank].maxHP - gBattleMons[bank].hp;
@@ -653,15 +655,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
 					effect = ITEM_STATS_CHANGE;
 				}
 				break;
-				
-			case ITEM_EFFECT_DESTINY_KNOT:
-				if (gBattleMons[bank].status2 & STATUS2_INFATUATION
-				&& (!AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, bank, ABILITY_AROMAVEIL, 0, 0) || !NO_MOLD_BREAKERS(gBankAttacker))) 
-				{
-				//TO DO
-				}
-				break;
-				
+			
 			case ITEM_EFFECT_ABSORB_BULB:
 				effect = RaiseStatsContactItem(bank, STAT_STAGE_SPATK, TYPE_WATER);
 				break;

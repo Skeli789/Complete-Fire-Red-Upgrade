@@ -1,13 +1,14 @@
 #include "defines.h"
 #include "defines_battle.h"
 #include "../include/event_data.h"
+#include "../include/random.h"
 #include "../include/constants/songs.h"
 
 #include "../include/new/battle_start_turn_start.h"
 #include "../include/new/helper_functions.h"
+#include "../include/new/frontier.h"
 #include "../include/new/multi.h"
 #include "../include/new/mega.h"
-#include "../include/random.h"
 
 extern void (* const sTurnActionsFuncsTable[])(void);
 extern void (* const sEndTurnFuncsTable[])(void);
@@ -830,14 +831,58 @@ u16 GetMUS_ForBattle(void)
 	}
 	
     if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
-    {
-		u8 trainerClass = gTrainers[gTrainerBattleOpponent_A].trainerClass;
+    {	
+		u16 song;
+		u8 trainerClass;
 		
-		if (gClassBasedBattleBGM[trainerClass])
-			return gClassBasedBattleBGM[trainerClass];
-		else if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER && VarGet(BATTLE_TOWER_SONG_OVERRIDE))
-			return VarGet(BATTLE_TOWER_SONG_OVERRIDE);
+		if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
+		{
+			//If either trainer is special, try to load their music
+			song = TryGetSpecialFrontierTrainerMusic(gTrainerBattleOpponent_A, FRONTIER_TRAINER_A);
+			if (song != 0)
+				return song;
+				
+			if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
+			{
+				song = TryGetSpecialFrontierTrainerMusic(gTrainerBattleOpponent_B, FRONTIER_TRAINER_B);
+				if (song != 0)
+					return song;
+			}
+			
+			//Then try to load class based music for either trainer
+			trainerClass = GetFrontierTrainerClassId(gTrainerBattleOpponent_A, FRONTIER_TRAINER_A);
+			
+			if (gClassBasedBattleBGM[trainerClass])
+				return gClassBasedBattleBGM[trainerClass];
+				
+			if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
+			{
+				trainerClass = GetFrontierTrainerClassId(gTrainerBattleOpponent_B, FRONTIER_TRAINER_B);
+			
+				if (gClassBasedBattleBGM[trainerClass])
+					return gClassBasedBattleBGM[trainerClass];
+			}
+			
+			//Then try loading the song override
+			song = VarGet(BATTLE_TOWER_SONG_OVERRIDE);
+			if (song != 0)
+				return song;
+		}
 		else
+		{
+			trainerClass = gTrainers[gTrainerBattleOpponent_A].trainerClass;
+
+			if (gClassBasedBattleBGM[trainerClass])
+				return gClassBasedBattleBGM[trainerClass];
+				
+			if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
+			{
+				trainerClass = gTrainers[gTrainerBattleOpponent_B].trainerClass;
+				if (gClassBasedBattleBGM[trainerClass])
+					return gClassBasedBattleBGM[trainerClass];
+			}
+		}
+
 		#ifdef UNBOUND
 			return BGM_BATTLE_BORRIUS_TRAINER;
 		#else

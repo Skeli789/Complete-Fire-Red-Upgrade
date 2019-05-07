@@ -31,7 +31,7 @@ bool8 IsBluePrimal(u8 bank);
 bool8 IsRedPrimal(u8 bank);
 bool8 IsUltraNecrozma(u8 bank);
 bool8 HasMegaSymbol(u8 bank);
-u8* GetTrainerName(u8 bank);
+const u8* GetTrainerName(u8 bank);
 
 const item_t KeystoneTable[] = 
 {
@@ -316,7 +316,7 @@ bool8 HasMegaSymbol(u8 bank)
 	return IsMega(bank) || IsBluePrimal(bank) || IsRedPrimal(bank) || IsUltraNecrozma(bank);
 }
 
-u8* GetTrainerName(u8 bank) {
+const u8* GetTrainerName(u8 bank) {
 	u8 battlerNum = 0;
 	u16 trainerId = 0xFFFF;
 	u8 multiplayerId = GetMultiplayerId();
