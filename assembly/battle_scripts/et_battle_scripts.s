@@ -519,7 +519,8 @@ BattleScript_LostMultiBattleTower:
 	waitstateatk
 	trainerslidein BANK_ATTACKER
 	waitstateatk
-	printstring 0x174 @STRINGID_TRAINER1WINTEXT
+	setword BATTLE_STRING_LOADER TrainerAWinString
+	printstring 0x184
 	callasm TrainerSlideOut+1
 	waitstateatk
 	trainerslidein 0x3
@@ -537,7 +538,8 @@ BattleScript_LostBattleTower:
 	waitstateatk
 	trainerslidein BANK_ATTACKER
 	waitstateatk
-	printstring 0x174 @STRINGID_TRAINER1WINTEXT
+	setword BATTLE_STRING_LOADER TrainerAWinString
+	printstring 0x184
 	flee
 	waitmessage DELAY_1SECOND
 	end2
@@ -586,6 +588,7 @@ ToMeteorString: .byte 0xFD, 0x0F, 0xB4, 0xE7, 0x00, 0xFD, 0x18, 0xFE, 0xD8, 0xD9
 TransformedString: .byte 0xFD, 0x13, 0x00, 0xE8, 0xE6, 0xD5, 0xE2, 0xE7, 0xDA, 0xE3, 0xE6, 0xE1, 0xD9, 0xD8, 0xAB, 0xFF
 TrainerBLoseString: .byte 0xFD, 0x30, 0xFF
 TrainerBVictoryString: .byte 0xFD, 0x31, 0xFF
+TrainerAWinString: .byte 0xFD, 0x25, 0xFF
 
 .align 2
 SeaOfFireDamageASM:

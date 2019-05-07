@@ -1,17 +1,19 @@
 #include "defines.h"
 #include "defines_battle.h"
-#include "../include/event_data.h"
 
-#include "../include/new/helper_functions.h"
-#include "../include/new/catching.h"
-#include "../include/new/frontier.h"
-#include "../include/new/build_pokemon.h"
-#include "../include/new/multi.h"
+#include "../include/event_data.h"
 #include "../include/pokemon.h"
 #include "../include/pokemon_storage_system.h"
 #include "../include/random.h"
 #include "../include/constants/items.h"
 #include "../include/constants/maps.h"
+
+#include "../include/new/build_pokemon.h"
+#include "../include/new/catching.h"
+#include "../include/new/frontier.h"
+#include "../include/new/helper_functions.h"
+#include "../include/new/item.h"
+#include "../include/new/multi.h"
 
 #include "Tables/Trainers_With_EVs_Table.h"
 
@@ -19,7 +21,6 @@ extern const u8 gClassPokeBalls[NUM_TRAINER_CLASSES];
 extern const species_t gRandomizerBanList[];
 extern const species_t gSetPerfectXIvList[];
 
-extern void GetFrontierTrainerName(u8* dst, u16 trainerId, u8 battlerNum);
 extern void MultiInitPokemonOrder(void);
 extern u8 GiveMonToPlayer(pokemon_t* mon);
 extern u16 RandRange(u16 min, u16 max);
@@ -27,20 +28,24 @@ extern void GiveBoxMonInitialMoveset(struct BoxPokemon* boxMon);
 extern bool8 sp051_CanTeamParticipateInSkyBattle(void);
 extern bool8 CanMonParticipateInASkyBattle(struct Pokemon* mon);
 
-u8 CreateNPCTrainerParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, u8 side);
-u8 BuildFrontierParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, bool8 ForPlayer, u8 side);
-void BuildRandomPlayerTeam(void);
-void SetWildMonHeldItem(void);
+void BuildTrainerPartySetup(void);
+void sp067_GenerateRandomBattleTowerTeam(void);
 void GiveMonNatureAndAbility(pokemon_t* mon, u8 nature, u8 abilityNum);
-bool8 SpeciesAlreadyOnTeam(u16 species, u8 partySize, species_t* speciesArray);
-bool8 ItemAlreadyOnTeam(u16 item, u8 partySize, item_t* itemArray);
-bool8 MegastoneAlreadyOnTeam(u16 item, u8 partySize, item_t* itemArray);
-bool8 ZCrystalAlreadyOnTeam(u16 item, u8 partySize, item_t* itemArray);
-bool8 PokemonTierBan(u16 species, u16 item, struct BattleTowerSpread* spread, pokemon_t* mon, u8 checkFromLocationType);
-u8 GetHighestMonLevel(pokemon_t* party);
 u8 GetMonPokeBall(struct PokemonSubstruct0* data);
 void SetMonPokeBall(struct PokemonSubstruct0* data, u8 ballId);
 void CreateBoxMon(struct BoxPokemon *boxMon, u16 species, u8 level, u8 fixedIV, u8 hasFixedPersonality, u32 fixedPersonality, u8 otIdType, u32 fixedOtId);
+
+static u8 CreateNPCTrainerParty(pokemon_t* const party, const u16 trainerNum, const bool8 firstTrainer, const bool8 side);
+static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerNum, const bool8 firstTrainer, const bool8 forPlayer, const u8 side);
+static void SetWildMonHeldItem(void);
+static u32 GetBaseStatsTotal(const u16 species);
+static bool8 BaseStatsTotalGEAlreadyOnTeam(const u16 toCheck, const u8 partySize, u16* speciesArray);
+static bool8 SpeciesAlreadyOnTeam(const u16 species, const u8 partySize, const species_t* const speciesArray);
+static bool8 ItemAlreadyOnTeam(const u16 item, const u8 partySize, const item_t* const itemArray);
+static bool8 MegastoneAlreadyOnTeam(const u16 item, const u8 partySize, const item_t* const itemArray);
+static bool8 ZCrystalAlreadyOnTeam(const u16 item, const u8 partySize, const item_t* const itemArray);
+static bool8 PokemonTierBan(const u16 species, const u16 item, const struct BattleTowerSpread* const spread, const pokemon_t* mon, const u8 checkFromLocationType);
+static u8 GetHighestMonLevel(const pokemon_t* const party);
 
 #ifdef OPEN_WORLD_TRAINERS
 
@@ -54,7 +59,8 @@ static u8 GetOpenWorldBadgeCount(void);
 
 #endif
 
-void BuildTrainerPartySetup(void) {
+void BuildTrainerPartySetup(void) 
+{
 	if (gBattleTypeFlags & (BATTLE_TYPE_TOWER_LINK_MULTI))
 	{
 		BuildFrontierParty(&gEnemyParty[0], gTrainerBattleOpponent_A, TRUE, FALSE, B_SIDE_OPPONENT);
@@ -132,8 +138,14 @@ void BuildTrainerPartySetup(void) {
 		gBattleTypeFlags &= ~(BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_DOUBLE);
 }
 
+void sp067_GenerateRandomBattleTowerTeam(void)
+{
+	BuildFrontierParty(gPlayerParty, 0, TRUE, TRUE, B_SIDE_PLAYER);
+}
+
 //Returns the number of Pokemon
-u8 CreateNPCTrainerParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, bool8 side) {
+static u8 CreateNPCTrainerParty(pokemon_t* const party, const u16 trainerNum, const bool8 firstTrainer, const bool8 side)
+{
     u32 nameHash = 0;
     u32 personalityValue;
     int i, j;
@@ -273,13 +285,13 @@ u8 CreateNPCTrainerParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, b
 				&& spreadNum != 0
 				&& spreadNum < ARRAY_COUNT(gTrainersWithEvsSpreads))
 				{
-					struct TrainersWithEvs spread = gTrainersWithEvsSpreads[spreadNum];
+					const struct TrainersWithEvs* spread = &gTrainersWithEvsSpreads[spreadNum];
 
 					SET_EVS(spread);
-					SET_IVS_SINGLE_VALUE(MathMin(31, spread.ivs));
+					SET_IVS_SINGLE_VALUE(MathMin(31, spread->ivs));
 
 					u8 ballType;
-					switch(spread.ball) {
+					switch(spread->ball) {
 						case TRAINER_EV_CLASS_BALL:
 						#ifdef TRAINER_CLASS_POKE_BALLS
 							ballType = gClassPokeBalls[trainer->trainerClass];
@@ -291,23 +303,23 @@ u8 CreateNPCTrainerParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, b
 							ballType = Random() % (NUM_BALLS + 1); //Set Random Ball
 							break;
 						default:
-							ballType = MathMin(NUM_BALLS, spread.ball);
+							ballType = MathMin(NUM_BALLS, spread->ball);
 					}
 
 					SetMonData(&party[i], REQ_POKEBALL, &ballType);
 
-					switch(spread.ability) {
+					switch(spread->ability) {
 						case Ability_Hidden:
 						TRAINER_WITH_EV_GIVE_HIDDEN_ABILITY:
-							GiveMonNatureAndAbility(&party[i], spread.nature, 0xFF); //Give Hidden Ability
+							GiveMonNatureAndAbility(&party[i], spread->nature, 0xFF); //Give Hidden Ability
 							break;
 						case Ability_1:
 						case Ability_2:
-							GiveMonNatureAndAbility(&party[i], spread.nature, MathMin(1, spread.ability - 1));
+							GiveMonNatureAndAbility(&party[i], spread->nature, MathMin(1, spread->ability - 1));
 							break;
 						case Ability_Random_1_2:
 						TRAINER_WITH_EV_GIVE_RANDOM_ABILITY:
-							GiveMonNatureAndAbility(&party[i], spread.nature, Random() % 2);
+							GiveMonNatureAndAbility(&party[i], spread->nature, Random() % 2);
 							break;
 						case Ability_RandomAll: ;
 							u8 random = Random() % 3;
@@ -351,106 +363,181 @@ u8 CreateNPCTrainerParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, b
 }
 
 //Returns the number of Pokemon
-u8 BuildFrontierParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, bool8 ForPlayer, u8 side) {
+static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerNum, const bool8 firstTrainer, const bool8 forPlayer, const u8 side) 
+{
     int i, j;
-    u8 monsCount;
+	u8 monsCount;
+	
+	u8 trainerGender = 0;
+	u8 tier = VarGet(BATTLE_TOWER_TIER);
+	u8 battleTowerPokeNum = VarGet(BATTLE_TOWER_POKE_NUM);
+	u16 tableId = VarGet(TOWER_TRAINER_ID_VAR + (firstTrainer ^ 1));
 	u32 otid = (Random() << 8) | Random();
 
-	if (!ForPlayer) {
+	if (!forPlayer) 
+	{
 		if (trainerNum == 0x400)
 			return 0;
-		else if (trainerNum != BATTLE_TOWER_TID)
+		else if (trainerNum != BATTLE_TOWER_TID 
+			  && trainerNum != BATTLE_TOWER_SPECIAL_TID
+			  && trainerNum != FRONTIER_BRAIN_TID)
+		{
 			return (CreateNPCTrainerParty(party, trainerNum, firstTrainer, side));
+		}
 	}
 
-	struct BattleTowerTrainer trainer = gTowerTrainers[VarGet(TOWER_TRAINER_ID_VAR + (firstTrainer ^ 1))];
-
-	if (ForPlayer)
+	//Two of the three variables here hold garbage data which is never called.
+	const struct BattleTowerTrainer* trainer = &gTowerTrainers[tableId];
+	const struct SpecialBattleTowerTrainer* specialTrainer = &gSpecialTowerTrainers[tableId];
+	const struct FrontierBrain* frontierBrain = &gFrontierBrains[tableId];
+	
+	switch (trainerNum) {
+		case BATTLE_TOWER_TID:
+			trainerGender = trainer->gender;
+			break;
+		case BATTLE_TOWER_SPECIAL_TID:
+			trainerGender = specialTrainer->gender;
+			break;
+		case FRONTIER_BRAIN_TID:
+			trainerGender = frontierBrain->gender;
+			break;
+	}
+	
+	if (forPlayer)
 		ZeroPlayerPartyMons();
 	else if (firstTrainer)
 		ZeroEnemyPartyMons();
 
-	if (ForPlayer)
+	if (forPlayer)
 		monsCount = PARTY_SIZE;
-	else if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS && VarGet(BATTLE_TOWER_POKE_NUM) > 3 && side == B_SIDE_OPPONENT)
-        monsCount = 3;
-	else if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER && VarGet(BATTLE_TOWER_POKE_NUM) > 3 && side == B_SIDE_PLAYER)
-        monsCount = 3;
-    else {
-        monsCount = MathMax(1, MathMin(PARTY_SIZE, VarGet(BATTLE_TOWER_POKE_NUM)));
-    }
+	else if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS && battleTowerPokeNum > 3 && side == B_SIDE_OPPONENT)
+		monsCount = 3;
+	else if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER && battleTowerPokeNum > 3 && side == B_SIDE_PLAYER)
+		monsCount = 3;
+	else
+		monsCount = MathMax(1, MathMin(PARTY_SIZE, battleTowerPokeNum));
 
-	species_t* speciesArray = Calloc(sizeof(species_t) * monsCount);
-	item_t* itemArray = Calloc(sizeof(item_t) * monsCount);
+	species_t speciesArray[monsCount];
+	item_t itemArray[monsCount];
+	
+	for (i = 0; i < monsCount; ++i)
+	{
+		speciesArray[i] = 0;
+		itemArray[i] = 0;
+	}
 
-    for (i = 0; i < monsCount; ++i) {
-
+    for (i = 0; i < monsCount; ++i) 
+	{
         u8 loop = 1;
-		struct BattleTowerSpread spread;
 		u16 species;
 		u16 item;
+		const struct BattleTowerSpread* spread;
 
-		do {
-        spread = gFrontierSpreads[umodsi(Random(), TOTAL_SPREADS)];
+		do 
+		{
+			switch (trainerNum) {
+				case BATTLE_TOWER_SPECIAL_TID:
+					spread = &specialTrainer->spreads[Random() % specialTrainer->spreadSize]; //Special trainers have preset spreads.
+					break;
+				case FRONTIER_BRAIN_TID:
+					spread = &frontierBrain->spreads[Random() % frontierBrain->spreadSize]; //Frontier Brains have preset spreads.
+					break;
+				default: //BATTLE_TOWER_TID and forPlayer
+					spread = &gFrontierSpreads[Random() % TOTAL_SPREADS];
+			}
 
-		species = spread.species;
-		item = spread.item;
+			species = spread->species;
+			item = spread->item;
+			
+			if (trainerNum == BATTLE_TOWER_TID && !forPlayer && tier == BATTLE_TOWER_STANDARD)
+			{
+				u16 streak = GetCurrentBattleTowerStreak();
+				
+				//Battles get more difficult the higher the streak.
+				if (streak < 10)
+				{
+					if (IsMegaStone(item)
+					||  IsZCrystal(item)
+					||  GetBaseStatsTotal(species) >= 540)
+						continue;
+				}
+				else if (streak < 20)
+				{
+					if (IsMegaStone(item)
+					||  GetBaseStatsTotal(species) >= 550)
+						continue;
+				}
+				else if (streak < 30)
+				{
+					if (GetBaseStatsTotal(species) >= 570)
+						continue;
+				}
+				else if (streak < 50)
+				{
+					if (BaseStatsTotalGEAlreadyOnTeam(570, monsCount, speciesArray))
+						continue;
+				}
+			}
 
-		//Prevent duplicate species and items
-		//Only allow one Mega Stone & Z-Crystal per team
-		if (!SpeciesAlreadyOnTeam(species, monsCount, speciesArray) &&
-			!ItemAlreadyOnTeam(item, monsCount, itemArray) &&
-			!MegastoneAlreadyOnTeam(item, monsCount, itemArray) &&
-			!ZCrystalAlreadyOnTeam(item, monsCount, itemArray) &&
-			!PokemonTierBan(species, item, &spread, 0, CHECK_BATTLE_TOWER_SPREADS)) {
+			//Prevent duplicate species and items
+			//Only allow one Mega Stone & Z-Crystal per team
+			if (!SpeciesAlreadyOnTeam(species, monsCount, speciesArray)
+			&& !ItemAlreadyOnTeam(item, monsCount, itemArray)
+			&& !MegastoneAlreadyOnTeam(item, monsCount, itemArray)
+			&& !ZCrystalAlreadyOnTeam(item, monsCount, itemArray)
+			&& !PokemonTierBan(species, item, spread, 0, CHECK_BATTLE_TOWER_SPREADS)) 
+			{
 				speciesArray[i] = species;
 				itemArray[i] = item;
 				loop = 0;
-		}
-
+			}
 		} while (loop == 1);
-
+		
 		u8 level;
-		if (VarGet(BATTLE_TOWER_TIER) == BATTLE_TOWER_LITTLE_CUP)
+		if (tier == BATTLE_TOWER_LITTLE_CUP)
 			level = 5;
 		else
 			level = MathMax(1, MathMin(MAX_LEVEL, VarGet(BATTLE_TOWER_POKE_LEVEL)));
 
-		if (ForPlayer)
-			CreateMon(&party[i], spread.species, level, 0, TRUE, 0, OT_ID_PLAYER_ID, otid);
+		if (forPlayer)
+			CreateMon(&party[i], spread->species, level, 0, TRUE, 0, OT_ID_PLAYER_ID, otid);
 
-		else {
-			CreateMon(&party[i], spread.species, level, 0, TRUE, 0, OT_ID_PRESET, otid);
+		else 
+		{
+			CreateMon(&party[i], spread->species, level, 0, TRUE, 0, OT_ID_PRESET, otid);
 
-			GetFrontierTrainerName((u8*) &party[i].otname, trainerNum, firstTrainer ^ 1);
-			party[i].otGender = trainer.gender;
+			CopyFrontierTrainerName((u8*) &party[i].otname, trainerNum, firstTrainer ^ 1);
+			party[i].otGender = trainerGender;
 		}
 
 		party[i].metLocation = 0x3A; //Battle Tower RS
-		party[i].metLevel = 50;
-		party[i].obedient = 1;
+		party[i].metLevel = level;
+		party[i].obedient = TRUE;
 
 		SET_IVS(spread);
 		SET_EVS(spread);
 
-		if (spread.ability > 0)
-			GiveMonNatureAndAbility(&party[i], spread.nature, spread.ability - 1);
-
-		else { //Hidden Ability
-			GiveMonNatureAndAbility(&party[i], spread.nature, 0xFF);
-			party[i].hiddenAbility = 1; //Hidden Ability Bit
+		if (spread->ability > 0)
+		{
+			GiveMonNatureAndAbility(&party[i], spread->nature, spread->ability - 1);
+		}
+		else //Hidden Ability
+		{ 
+			GiveMonNatureAndAbility(&party[i], spread->nature, 0xFF);
+			party[i].hiddenAbility = TRUE;
 		}
 
-        for (j = 0; j < MAX_MON_MOVES; j++) {
-			party[i].moves[j] = spread.moves[j];
-			party[i].pp[j] = gBattleMoves[spread.moves[j]].pp;
+        for (j = 0; j < MAX_MON_MOVES; j++) 
+		{
+			party[i].moves[j] = spread->moves[j];
+			party[i].pp[j] = gBattleMoves[spread->moves[j]].pp;
 		}
 
         party[i].item = item;
 
 		u8 ballType;
-		if (spread.ball)
-			ballType = MathMin(NUM_BALLS, spread.ball);
+		if (spread->ball)
+			ballType = MathMin(NUM_BALLS, spread->ball);
 		else
 			ballType = umodsi(Random(), NUM_BALLS + 1);
 		SetMonData(&party[i], REQ_POKEBALL, &ballType);
@@ -459,18 +546,17 @@ u8 BuildFrontierParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, bool
 		HealMon(&party[i]);
     }
 
-	Free(speciesArray);
-	Free(itemArray);
-
-	if (!ForPlayer) { //Probably best to put these checks somewhere else
-		if (VarGet(BATTLE_TOWER_BATTLE_TYPE) == BATTLE_TOWER_DOUBLE || VarGet(BATTLE_TOWER_BATTLE_TYPE) == BATTLE_TOWER_MULTI)
+	if (!forPlayer) //Probably best to put these checks somewhere else
+	{ 
+		u8 battleType = VarGet(BATTLE_TOWER_BATTLE_TYPE);
+		if (battleType == BATTLE_TOWER_DOUBLE || battleType == BATTLE_TOWER_MULTI)
 			gBattleTypeFlags |= BATTLE_TYPE_DOUBLE;
 	}
 
     return monsCount;
 }
 
-void SetWildMonHeldItem(void)
+static void SetWildMonHeldItem(void)
 {
 	u16 rnd = umodsi(Random(), 100);
 	u16 species;
@@ -478,7 +564,8 @@ void SetWildMonHeldItem(void)
     u16 var2 = 95;
 
     if (!GetMonData(&gPlayerParty[0], MON_DATA_IS_EGG, 0)
-    && GetPartyAbility(&gPlayerParty[0]) == ABILITY_COMPOUNDEYES) {
+    && GetPartyAbility(&gPlayerParty[0]) == ABILITY_COMPOUNDEYES) 
+	{
         var1 = 20;
         var2 = 80;
     }
@@ -495,11 +582,11 @@ void SetWildMonHeldItem(void)
 			if (gBaseStats[species].item1 == gBaseStats[species].item2 && gBaseStats[species].item1 != 0)
 			{
 				gEnemyParty[i].item = gBaseStats[species].item1;
-				return;
+				continue;
 			}
 
 			if (rnd < var1)
-				return;
+				continue;
 
 			if (rnd < var2)
 				gEnemyParty[i].item = gBaseStats[species].item1;
@@ -509,25 +596,52 @@ void SetWildMonHeldItem(void)
     }
 }
 
-void GiveMonNatureAndAbility(pokemon_t* mon, u8 nature, u8 abilityNum) {
+void GiveMonNatureAndAbility(pokemon_t* mon, u8 nature, u8 abilityNum)
+{
 	u32 personality;
 
-	while(1) {
-		personality = (Random() << 8) | Random(); //Sets the personality value to an random number
+	while(TRUE) 
+	{
+		personality = Random32();
 		personality &= ~(1);
 
 		if (abilityNum != 0xFF)
 			personality |= MathMin(1, abilityNum); //Either 0 or 1
 
-		if (umodsi(personality, NUM_NATURES) == nature) { //Compare nature from personality
+		if (GetNatureFromPersonality(personality) == nature) 
+		{
 			mon->personality = personality;
 			break;
 		}
 	}
 }
 
-bool8 SpeciesAlreadyOnTeam(u16 species, u8 partySize, species_t* speciesArray) {
-	for (int i = 0; i < partySize; ++i) {
+static u32 GetBaseStatsTotal(const u16 species)
+{
+	u32 sum = 0;
+	u8* ptr = &gBaseStats[species].baseHP;
+	
+	for (int i = 0; i < NUM_STATS; ++i)
+		sum += ptr[i];
+
+	return sum;
+}
+
+static bool8 BaseStatsTotalGEAlreadyOnTeam(const u16 toCheck, const u8 partySize, u16* speciesArray)
+{
+	for (int i = 0; i < partySize; ++i)
+	{
+		if (GetBaseStatsTotal(speciesArray[i]) >= toCheck)
+			return TRUE;
+	}
+	
+	return FALSE;
+}
+
+static bool8 SpeciesAlreadyOnTeam(const u16 species, const u8 partySize, const species_t* const speciesArray)
+{
+	for (int i = 0; i < partySize; ++i) 
+	{
 		if (SpeciesToNationalPokedexNum(speciesArray[i]) == SpeciesToNationalPokedexNum(species))
 			return TRUE;
 	}
@@ -535,11 +649,12 @@ bool8 SpeciesAlreadyOnTeam(u16 species, u8 partySize, species_t* speciesArray) {
 	return FALSE;
 }
 
-bool8 ItemAlreadyOnTeam(u16 item, u8 partySize, item_t* itemArray) {
+static bool8 ItemAlreadyOnTeam(const u16 item, const u8 partySize, const item_t* const itemArray)
+{
+	if (item == ITEM_NONE) return FALSE;
 
-	if (item == 0) return FALSE;
-
-	for (int i = 0; i < partySize; ++i) {
+	for (int i = 0; i < partySize; ++i) 
+	{
 		if (itemArray[i] == item)
 			return TRUE;
 	}
@@ -547,13 +662,14 @@ bool8 ItemAlreadyOnTeam(u16 item, u8 partySize, item_t* itemArray) {
 	return FALSE;
 }
 
-bool8 MegastoneAlreadyOnTeam(u16 item, u8 partySize, item_t* itemArray) {
-
-	if (ItemId_GetHoldEffect(item) != ITEM_EFFECT_MEGA_STONE)
+static bool8 MegastoneAlreadyOnTeam(const u16 item, const u8 partySize, const item_t* const itemArray)
+{
+	if (!IsMegaStone(item))
 		return FALSE;
 
-	for (int i = 0; i < partySize; ++i) {
-		if (ItemId_GetHoldEffect(itemArray[i]) == ITEM_EFFECT_MEGA_STONE)
+	for (int i = 0; i < partySize; ++i) 
+	{
+		if (IsMegaStone(itemArray[i]))
 			return TRUE;
 	}
 
@@ -561,23 +677,25 @@ bool8 MegastoneAlreadyOnTeam(u16 item, u8 partySize, item_t* itemArray) {
 }
 
 
-bool8 ZCrystalAlreadyOnTeam(u16 item, u8 partySize, item_t* itemArray) {
-
-	if (ItemId_GetHoldEffect(item) != ITEM_EFFECT_Z_CRYSTAL)
+static bool8 ZCrystalAlreadyOnTeam(const u16 item, const u8 partySize, const item_t* const itemArray)
+{
+	if (!IsZCrystal(item))
 		return FALSE;
 
-	for (int i = 0; i < partySize; ++i) {
-		if (ItemId_GetHoldEffect(itemArray[i]) == ITEM_EFFECT_Z_CRYSTAL)
+	for (int i = 0; i < partySize; ++i) 
+	{
+		if (IsZCrystal(itemArray[i]))
 			return TRUE;
 	}
 
 	return FALSE;
 }
 
-bool8 PokemonTierBan(u16 species, u16 item, struct BattleTowerSpread* spread, pokemon_t* mon, u8 checkFromLocationType) {
+static bool8 PokemonTierBan(const u16 species, const u16 item, const struct BattleTowerSpread* const spread, const pokemon_t* const mon, const u8 checkFromLocationType)
+{
 	u32 i;
 	u8 ability;
-	u16* moveLoc;
+	const u16* moveLoc;
 
 	if (species == SPECIES_EGG)
 		return 1;
@@ -687,7 +805,7 @@ bool8 PokemonTierBan(u16 species, u16 item, struct BattleTowerSpread* spread, po
 	return FALSE; //Not banned
 }
 
-u8 GetHighestMonLevel(pokemon_t* party)
+static u8 GetHighestMonLevel(const pokemon_t* const party)
 {
 	u8 max = party[0].level;
 

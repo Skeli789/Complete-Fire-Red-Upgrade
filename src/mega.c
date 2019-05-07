@@ -4,6 +4,7 @@
 #include "../include/constants/items.h"
 
 #include "../include/new/helper_functions.h"
+#include "../include/new/frontier.h"
 #include "../include/new/mega.h"
 
 #define TRAINER_ITEM_COUNT 4
@@ -316,6 +317,7 @@ bool8 HasMegaSymbol(u8 bank)
 }
 
 u8* GetTrainerName(u8 bank) {
+	u8 battlerNum = 0;
 	u16 trainerId = 0xFFFF;
 	u8 multiplayerId = GetMultiplayerId();
 	
@@ -332,6 +334,7 @@ u8* GetTrainerName(u8 bank) {
 			break;
 		
 		case B_POSITION_PLAYER_RIGHT:
+			battlerNum = 2;
 			if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
 				trainerId = VarGet(PARTNER_VAR);
 			else if (gBattleTypeFlags & BATTLE_TYPE_LINK && gBattleTypeFlags & BATTLE_TYPE_MULTI)
@@ -339,6 +342,7 @@ u8* GetTrainerName(u8 bank) {
 			break;
 		
 		case B_POSITION_OPPONENT_RIGHT:
+			battlerNum = 1;
 			if (gBattleTypeFlags & BATTLE_TYPE_LINK && gBattleTypeFlags & BATTLE_TYPE_MULTI)
 				trainerId = linkOpponent2;
 			else if (gBattleTypeFlags & BATTLE_TYPE_LINK)
@@ -360,22 +364,25 @@ u8* GetTrainerName(u8 bank) {
 	else if (gBattleTypeFlags & BATTLE_TYPE_LINK)
 		return gLinkPlayers[trainerId].name;
 		
-	else {
-	#ifdef UNBOUND
-		u8 class = gTrainers[trainerId].trainerClass;
-		if (class == 0x51 || class == 0x59)
-			return GetExpandedPlaceholder(ExpandPlaceholder_RivalName);
-		else
+	else 
+	{
+		#ifdef UNBOUND
+			u8 class = gTrainers[trainerId].trainerClass;
+			if (class == 0x51 || class == 0x59)
+				return GetExpandedPlaceholder(ExpandPlaceholder_RivalName);
+			else
+		#elif defined OVERWRITE_RIVAL
+			u8 class = gTrainers[trainerId].trainerClass;
+			if (class == 0x51 || class == 0x59 || class == 0x5A)
+				return GetExpandedPlaceholder(ExpandPlaceholder_RivalName);
+			else
+		#endif
+		{
+			if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
+				return GetFrontierTrainerName(trainerId, battlerNum);
+
 			return gTrainers[trainerId].trainerName;
-	#elif defined OVERWRITE_RIVAL
-		u8 class = gTrainers[trainerId].trainerClass;
-		if (class == 0x51 || class == 0x59 || class == 0x5A)
-			return GetExpandedPlaceholder(ExpandPlaceholder_RivalName);
-		else
-			return gTrainers[trainerId].trainerName;
-	#else
-		return gTrainers[trainerId].trainerName;
-	#endif
+		}
 	}
 }
 

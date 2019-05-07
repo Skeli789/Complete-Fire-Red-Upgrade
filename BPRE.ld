@@ -1,4 +1,5 @@
 /* New Things */
+gBattleTowerStreaks = 0x2026840;
 gFollowerState = 0x203B818;
 ExtensionState = 0x3000F28;
 
@@ -686,8 +687,8 @@ CopyItemName = 0x8099E90 | 1;
 CheckBagHasItem = 0x8099F40 | 1;
 AddBagItem = 0x809A084 | 1;
 SanitizeItemId = 0x809A8A4 | 1;
-ItemId_GetHoldEffect = 0x809A924 | 1;
-ItemId_GetHoldEffectParam = 0x809A948 | 1;
+//ItemId_GetHoldEffect = 0x809A924 | 1;
+//ItemId_GetHoldEffectParam = 0x809A948 | 1;
 ItemId_GetMystery2 = 0x809A9B4 | 1;
 GetPocketByItemId = 0x809A9D8 | 1;
 ItemId_GetType = 0x809A9FC | 1;

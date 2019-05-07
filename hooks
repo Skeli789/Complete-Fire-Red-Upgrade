@@ -224,7 +224,7 @@ TakeStep 080A0F0C 0
 
 ##Character Customization
 #TrainerCardSprite 0810c374 2
-GetEventObjectGraphicsInfo 0805F2C8 2
+GetEventObjectGraphicsInfo 0805F2C8 1
 NpcSizeFix 0805e510 1
 NewNpcInfo 0805e964 4
 NpcOffscreenFix 08067a12 5

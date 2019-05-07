@@ -40,22 +40,22 @@
 
 #define SET_IVS(structure)							\
 {													\
-    party[i].hpIV = structure.hpIv;					\
-	party[i].attackIV = structure.atkIv;			\
-	party[i].defenseIV = structure.defIv;			\
-	party[i].speedIV = structure.spdIv;				\
-	party[i].spAttackIV = structure.spAtkIv;		\
-	party[i].spDefenseIV = structure.spDefIv;		\
+    party[i].hpIV = structure->hpIv;				\
+	party[i].attackIV = structure->atkIv;			\
+	party[i].defenseIV = structure->defIv;			\
+	party[i].speedIV = structure->spdIv;			\
+	party[i].spAttackIV = structure->spAtkIv;		\
+	party[i].spDefenseIV = structure->spDefIv;		\
 }
 
 #define SET_EVS(structure)							\
 {													\
-    party[i].hpEv = structure.hpEv;					\
-	party[i].atkEv = structure.atkEv;				\
-	party[i].defEv = structure.defEv;				\
-	party[i].spdEv = structure.spdEv;				\
-	party[i].spAtkEv = structure.spAtkEv;			\
-	party[i].spDefEv = structure.spDefEv;			\
+    party[i].hpEv = structure->hpEv;				\
+	party[i].atkEv = structure->atkEv;				\
+	party[i].defEv = structure->defEv;				\
+	party[i].spdEv = structure->spdEv;				\
+	party[i].spAtkEv = structure->spAtkEv;			\
+	party[i].spDefEv = structure->spDefEv;			\
 }
 
 #define LOAD_TIER_CHECKING_ABILITY										\

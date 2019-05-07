@@ -39,7 +39,11 @@
 0803DC52 04 20
 #Remove Randomizer Hook
 0803DAD0 07 1C 10 9C 12 98 0E 25
-
+#Remove Previous Quest And Free Up Space
+08110F24 28 E0
+0811192A 04 20
+08110AEC 70 47
+081123BC 70 47
 
 ##Save Expansion
 080DA5E0 FF 20 70 47

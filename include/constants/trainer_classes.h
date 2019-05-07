@@ -117,8 +117,10 @@ enum
 #ifdef UNBOUND
 
 #define CLASS_LOR_LEADER 		0x2
+#define CLASS_WAITER			0x4
 #define CLASS_WAITRESS			0x5
 #define CLASS_CYCLIST			0x7
+#define CLASS_IDOL				0x8
 #define CLASS_NURSE				0xA
 #define CLASS_POKE_KID			0xC
 #define CLASS_TERROR_GRANBULL 	0xE
@@ -130,11 +132,13 @@ enum
 #define CLASS_BUG_MANIAC		0x14
 #define CLASS_POLICEMAN			0x15
 #define CLASS_BLACK_FERROTHORN 	0x16
+#define CLASS_RICH_GIRL			0x17
 #define CLASS_SUCCESSOR			0x18
 #define CLASS_SCHOOL_KID		0x19
 #define CLASS_EXPERT			0x1C
 #define CLASS_RANCHER			0x1D
-#define CLASS_JOGGER			0x1E
+#define CLASS_FRONTIER_BRAIN 	0x1E
+#define CLASS_JOGGER			0x20
 #define CLASS_DRAGON_TAMER		0x21
 #define CLASS_NINJA_BOY			0x23
 #define CLASS_BOARDER			0x2A

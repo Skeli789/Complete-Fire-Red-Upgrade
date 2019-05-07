@@ -27,6 +27,8 @@ struct ScriptContext
 };
 
 #define sScriptStringVars ((u8**) *((u32*) 0x806BF38)) //Text buffers
+#define gTextColourCurrent (*((u16*) 0x20370DA))
+#define gTextColourBackup (*((u16*) 0x20370DC))
 
 //extern struct ScriptEnvironment gScriptEnv1;	//03000EB0
 //extern struct ScriptEnvironment gScriptEnv2;	//03000F28

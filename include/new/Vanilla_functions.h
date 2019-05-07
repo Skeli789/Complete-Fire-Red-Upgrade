@@ -33,7 +33,7 @@ void __attribute__((long_call)) SetMonData(struct Pokemon *mon, s32 field, const
 void __attribute__((long_call)) SetMonData2(struct Pokemon *mon, s32 PokemonDataRequest, const void *data);
 void __attribute__((long_call)) CopyMon(void *dest, void *src, size_t size);
 u8 __attribute__((long_call)) SendMonToPC(struct Pokemon* mon);
-u8 __attribute__((long_call)) GetPartyAbility(pokemon_t*);
+u8 __attribute__((long_call)) GetPartyAbility(const pokemon_t* const);
 //u8 __attribute__((long_call)) CalculatePlayerPartyCount(void);
 u8 __attribute__((long_call)) CalculatePPWithBonus(u16 move, u8 ppBonuses, u8 moveIndex);
 u16 __attribute__((long_call)) SpeciesToNationalPokedexNum(u16 species);
@@ -99,7 +99,7 @@ void __attribute__((long_call)) ResetBgsAndClearDma3BusyFlags(u8 bg);	// in bg.h
 void __attribute__((long_call)) BgIdModOffsetX(u8 bgid, s32 delta, u8 dir);
 void __attribute__((long_call)) BgIdModOffsetY(u8 bgid, s32 delta, u8 dir);
 
-u8* __attribute__((long_call)) StringCopy(u8* dest, u8* src);
+u8* __attribute__((long_call)) StringCopy(u8* dest, const u8* src);
 u16 __attribute__((long_call)) StringLength(const u8 *str);
 u8* __attribute__((long_call)) ConvertIntToDecimalStringN(u8 *dest, s32 value, enum StringConvertMode mode, u8 n);
 

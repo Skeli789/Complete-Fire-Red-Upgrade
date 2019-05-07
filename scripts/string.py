@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: cp437 -*-
 
+import sys
+
 CharMap = "charmap.tbl"
 
 SpecialBuffers = {
@@ -25,10 +27,12 @@ def StringFileConverter(filename):
         maxLength = 0
         fillFF = False
         readingState = 0
+        lineNum = 0
         
         for line in file:
+            lineNum += 1
             line = line.rstrip("\n\r") #Remove only newline characters
-            if line == "" or line[:2] == "//": #Ignore blank lines and comment lines
+            if line.strip() == "" or line[:2] == "//": #Ignore blank lines and comment lines
                 continue
             
             if readingState == 0: #Only when the file starts
@@ -41,14 +45,16 @@ def StringFileConverter(filename):
                     try:
                         maxLength = int(line.split("=")[1])
                     except:
-                        print('Error reading max length in line: "' + line + '" in file: "' + filename + '"')
+                        print('Error reading max length on line ' + str(lineNum) + ' in file: "' + filename + '"')
+                        sys.exit(0)
                 elif "FILL_FF" in line and "=" in line:
                     try:
                         fillFF = bool(line.split("=")[1])
                     except:
-                        print('Error reading FF fill in line: "' + line + '" in file: "' + filename + '"') 
+                        print('Error reading FF fill on line ' + str(lineNum) + ' in file: "' + filename + '"')
+                        sys.exit(0)
                 else:
-                    print('Warning! Error with line: "' + line + '" in file: "' + filename + '"')
+                    print('Warning! Error on line ' + str(lineNum) + ' in file: "' + filename + '"')
                     
             elif readingState == 1:
                 if line[:6].upper() == "#ORG @" and line[6:] != "":
@@ -56,14 +62,14 @@ def StringFileConverter(filename):
                     title = line[6:]
                     stringToWrite += ".global " + title + "\n" + title + ":\n"
                 else:
-                    stringToWrite += ProcessString(line, maxLength, fillFF)
+                    stringToWrite += ProcessString(line, lineNum, maxLength, fillFF)
                     stringToWrite += "0xFF\n\n" #Only print line in everything went alright
 
     output = open(filename.split(".string")[0] + '.s', 'w') #Only open file once we know everything went okay.
     output.write(stringToWrite)
     output.close()
     
-def ProcessString(string, maxLength = 0, fillWithFF = False):
+def ProcessString(string, lineNum, maxLength = 0, fillWithFF = False):
     charMap = PokeByteTableMaker()
     stringToWrite = ".byte "
     buffer = False
@@ -104,8 +110,8 @@ def ProcessString(string, maxLength = 0, fillWithFF = False):
                 strLen += 1
 
             except KeyError:
-                print('Error parsing string: "' + string + '"')
-                break
+                print('Error parsing string: "' + string + '" (Line ' + str(lineNum) + ')')
+                sys.exit(0)
 
         else:
             try:
@@ -121,8 +127,8 @@ def ProcessString(string, maxLength = 0, fillWithFF = False):
                     stringToWrite += hex(charMap["\\" + char])
                     strLen += 1
                 else:
-                    print('Error parsing string: "' + string + '"' + ' at character "' + char + '".')
-                    break
+                    print('Error parsing string on line ' + str(lineNum) + ' at character "' + char + '".')
+                    sys.exit(0)
     
     if strLen < maxLength and fillWithFF:
         while strLen < maxLength:
@@ -145,7 +151,8 @@ def PokeByteTableMaker():
                         except:
                             pass
             dicty[' '] = 0
-    
+
+    dicty["’"] = 0xB4
     dicty["“"] = 0xB0
     dicty["”"] = 0xB1
     return dicty

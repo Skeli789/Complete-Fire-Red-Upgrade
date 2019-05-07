@@ -142,6 +142,7 @@ void HandleEndTurn_BattleWon(void)
     else
         gBattlescriptCurrInstr = BattleScript_PayDayMoneyAndPickUpItems;
 
+	gSpecialVar_LastResult = 0;
     gBattleMainFunc = (u32) HandleEndTurn_FinishBattle;
 }
 
@@ -197,6 +198,7 @@ void HandleEndTurn_BattleLost(void)
         gBattlescriptCurrInstr = BattleScript_LocalBattleLost;
     }
 
+	gSpecialVar_LastResult = 1;
     gBattleMainFunc = (u32) HandleEndTurn_FinishBattle;
 }
 
