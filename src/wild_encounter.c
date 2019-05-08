@@ -298,6 +298,9 @@ void TryUpdateSwarm(void)
 
 static bool8 TryGenerateSwarmMon(u8 level, u8 wildMonIndex, bool8 purgeParty)
 {
+	if (gSwarmTableLength == 0)
+		return FALSE;
+	
 	u8 index = VarGet(SWARM_INDEX_VAR);
 	u8 mapName = gSwarmTable[index].mapName;
 	u16 species = gSwarmTable[index].species;

@@ -168,7 +168,7 @@ struct Pedometers
 /*u8*/  #define gSelectedEventObject (*((u8*) 0x3005074))
 		//#define gTasks ((struct Task*) 0x3005090) //struct Task gTasks[ACTIVE_SENTINEL];
 		
-		#define gCurrentMapName *((u8*) 0x3005558)
+		#define gCurrentMapName gMapHeader.regionMapSectionId
 		
 		#define gGbaTimer ((struct GbaTimer*) 0x4000108)
 		#define gKeyReg (*((u16*) 0x4000130))
