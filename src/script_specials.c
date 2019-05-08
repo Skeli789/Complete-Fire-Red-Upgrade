@@ -49,35 +49,36 @@ extern const species_t gSkyBattleBannedSpeciesList[];
 ///////////////////////////////////////////////////////////////////////////////////
 
 
-
-struct FossilTable 
-{
-	struct SpriteSheet* data;
-	u16* palette;
-};
-
-#ifdef EXISTING_FOSSIL_IMAGE_TABLE_ADDRESS
-	#define gFossilImageTable ((struct FossilTable*) EXISTING_FOSSIL_IMAGE_TABLE_ADDRESS)
-#else 
-	//Create a 255 image table
-	struct FossilTable gFossilImageTable[] = 
+#ifdef FOSSIL_IMAGE_HACK
+	struct FossilTable 
 	{
-		[0] = //Kabutops (originally index 0x8D, now 0x0)
-			{
-				.data = (struct SpriteSheet*) 	0x83E17C0, 
-				.palette = (u16*) 				0x83E17A0,
-			},
-		[1] = 
-			{ //Aerodactyl (originally index 0x8e, now 0x1)
-				.data = (struct SpriteSheet*) 	0x83E17D0, 
-				.palette = (u16*) 				0x83E0F80,
-			},	
-		[2] =
-			{ //Start adding new data here
-				.data = (struct SpriteSheet*) 	0x8AAAAAA, 
-				.palette = (u16*) 				0x8AAAAAA,
-			},	
+		struct SpriteSheet* data;
+		u16* palette;
 	};
+
+	#ifdef EXISTING_FOSSIL_IMAGE_TABLE_ADDRESS
+		#define gFossilImageTable ((struct FossilTable*) EXISTING_FOSSIL_IMAGE_TABLE_ADDRESS)
+	#else 
+		//Create a 255 image table
+		struct FossilTable gFossilImageTable[] = 
+		{
+			[0] = //Kabutops (originally index 0x8D, now 0x0)
+				{
+					.data = (struct SpriteSheet*) 	0x83E17C0, 
+					.palette = (u16*) 				0x83E17A0,
+				},
+			[1] = 
+				{ //Aerodactyl (originally index 0x8e, now 0x1)
+					.data = (struct SpriteSheet*) 	0x83E17D0, 
+					.palette = (u16*) 				0x83E0F80,
+				},	
+			[2] =
+				{ //Start adding new data here
+					.data = (struct SpriteSheet*) 	0x8AAAAAA, 
+					.palette = (u16*) 				0x8AAAAAA,
+				},	
+		};
+	#endif
 #endif
 
 enum EVStatChecker
@@ -1556,15 +1557,39 @@ bool8 sp18B_ShowFossilImage(void) {
 	if (Var8004 > 255)
 		return FALSE;
 
-	
-
+	u8 pal;
+#ifdef FOSSIL_IMAGE_HACK
 	LoadSpriteSheets(gFossilImageTable[Var8004].data);
 
-	u8 pal = AddPalRef(5, Var8004);	// dynamic OW pals
+	pal = AddPalRef(5, Var8004);	// dynamic OW pals
 	if (pal == 0xFF)	
 		LoadPalette(gFossilImageTable[Var8004].palette, 0x1d0, 0x20);
 	else
 		DoLoadSpritePalette(gFossilImageTable[Var8004].palette, pal*16);
+	
+#else
+	if (Var8004 == 0x8D)
+	{
+		LoadSpriteSheets((void*) 0x83E17C0);
+		pal = AddPalRef(5, Var8004);	// dynamic OW pals
+		if (pal == 0xFF)	
+			LoadPalette((void*) 0x83E17A0, 0x1d0, 0x20);
+		else
+			DoLoadSpritePalette((void*) 0x83E17A0, pal*16);
+	}
+	else if (Var8004 == 0x8E)
+	{
+		LoadSpriteSheets((void*) 0x83E17D0);
+		pal = AddPalRef(5, Var8004);	// dynamic OW pals
+		if (pal == 0xFF)	
+			LoadPalette((void*) 0x83E0F80, 0x1d0, 0x20);
+		else
+			DoLoadSpritePalette((void*) 0x83E0F80, pal*16);
+	}
+	else
+		return FALSE;
+	
+#endif
 	
 	s16 x = ((Var8005 << 0x13) + 0x280000) >> 0x10;
 	s16 y = ((Var8006 << 0x13) + 0x280000) >> 0x10;
