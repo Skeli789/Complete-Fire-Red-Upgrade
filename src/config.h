@@ -117,8 +117,6 @@ enum
 #define CREATE_ROAMER_WITH_X_PERFECT_IVS 3 //Change this to the number of set 31 IVs you'd like roaming pokemon to have.
 #define EGG_HATCH_LEVEL 1
 
-#ifndef UNBOUND 
-//Change These
 #define BASE_OBEDIENCE_LEVEL	10
 #define BADGE_1_OBEDIENCE_LEVEL	10
 #define BADGE_2_OBEDIENCE_LEVEL 30
@@ -128,16 +126,9 @@ enum
 #define BADGE_6_OBEDIENCE_LEVEL 70
 #define BADGE_7_OBEDIENCE_LEVEL 70
 
-#else //For Pokemon Unbound
-#define BASE_OBEDIENCE_LEVEL	20
-#define BADGE_1_OBEDIENCE_LEVEL	30
-#define BADGE_2_OBEDIENCE_LEVEL 40
-#define BADGE_3_OBEDIENCE_LEVEL 50
-#define BADGE_4_OBEDIENCE_LEVEL 60
-#define BADGE_5_OBEDIENCE_LEVEL 70
-#define BADGE_6_OBEDIENCE_LEVEL 80
-#define BADGE_7_OBEDIENCE_LEVEL 90
-#endif
+#define TREE_DISGUISE_PAL_ID 0x1105 //The NPC palette id of the tree disguise movement permission.
+#define ROCK_DISGUISE_PAL_ID 0x1104 //The NPC palette id of the mountain disguise movement permission.
+#define WEIRD_DISGUISE_PAL_ID 0x1103 //The NPC palette id of the weird disguise movement permission.
 
 #define SEEN_DEX_FLAGS gSaveBlock2->pokedex.seen
 #define CAUGHT_DEX_FLAGS gSaveBlock2->pokedex.owned
@@ -167,6 +158,7 @@ enum
 #define SAVE_BLOCK_EXPANSION //Uncommenting this requires you to also manually remove Save Expansion Hooks found in hooks
 #define SELECT_FROM_PC //Comment this out to remove select-from-pc hack
 //#define SET_HEALING_PLACE_HACK  //Comment this out if you don't want custom map/bank whiteout respawn locations
+#define FOSSIL_IMAGE_HACK  //Comment this out if you don't want JPANs fossil image hack
 #define EVO_HOLD_ITEM_REMOVAL //Comment this out if you want leveling up/hold item evolution (eg. sneasel) to remove the item (like normal)
 #define EXPAND_MOVESETS //Comment this out if you're using the Dynamic Pokemon Expansion repo to expand the movesets
 /*FIX THIS*///#define FATHER_PASSES_TMS //Comment this out if you don't want TMs the father knows to be passed through breeding
