@@ -106,7 +106,7 @@ NPCPtr GetEventObjectGraphicsInfo(u16 graphicsId)
 	}
 	
 	NPCPtr spriteAddr;
-	if (tableId > ARRAY_COUNT(gOverworldTableSwitcher)
+	if (tableId >= ARRAY_COUNT(gOverworldTableSwitcher)
 	|| gOverworldTableSwitcher[tableId] == 0)
 		spriteAddr = gOverworldTableSwitcher[0][spriteId];
 	else
