@@ -187,8 +187,7 @@ struct Pedometers
 #define gWalkingScript (*((const u8**) 0x203B7C8))
 
 // Dynamic Overworld Palettes
-//#define PalRefs ((PalRef*)0x203FF00)
-#define PalRefs ((PalRef*)0x203B7D4)	// 16 sprites * 4 bytes each = 0x40 bytes
+//#define sPalRefs ((PalRef*) 0x203B7D4)	// 16 sprites * 4 bytes each = 0x40 bytes
 
 #define DEXNAV_SAVERAM 0x203B814
 //#define gFollowerState ((struct Follower*) 0x203B818) //Approximately ~20 bytes, use 24 to be safe

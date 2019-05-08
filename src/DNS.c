@@ -4,6 +4,7 @@
 
 #include "../include/new/dns.h"
 #include "../include/new/dns_data.h"
+#include "../include/new/dynamic_ow_pals.h"
 #include "../include/new/helper_functions.h"
 
 #define DNSHelper ((u8*) 0x2021691)
@@ -39,22 +40,11 @@ void TransferPlttBuffer(void)
 				break;
 			default:
 				if ((DNSHelper[0] == 0
-				/*#ifndef DNS_IN_BATTLE*/
-				&& DNSHelper[1] < 3 //Not in battle
-				/*#endif*/
-				)
-				|| DNSHelper[1] == 0x78 
-				|| DNSHelper[1] == 0x88 
-				|| DNSHelper[1] == 0x98) //The 0x78/0x88/0x98 is when a warp arrow appears
-				{	
-				/*
-					#ifdef DNS_IN_BATTLE
-						if (DNSHelper[1] > 2) //In Battles
-							break;//BlendFadedPalettes(BATTLE_DNS_PAL_FADE, gDNSNightFadingByTime[Clock->hour][Clock->minute / 10].amount, gDNSNightFadingByTime[Clock->hour][Clock->minute / 10].colour);
-						else
-					#endif
-				*/
-					
+				&& DNSHelper[1] < 3) //Not in battle
+				 || DNSHelper[1] == 0x78 
+				 || DNSHelper[1] == 0x88 
+				 || DNSHelper[1] == 0x98) //The 0x78/0x88/0x98 is when a warp arrow appears
+				{
 					BlendFadedPalettes(OW_DNS_BG_PAL_FADE, gDNSNightFadingByTime[Clock->hour][Clock->minute / 10].amount, gDNSNightFadingByTime[Clock->hour][Clock->minute / 10].colour);
 				}
 		}
@@ -66,6 +56,9 @@ void TransferPlttBuffer(void)
     }
 }
 
+/*u8*/  #define gPlttBufferUnfaded ((u16*) 0x20371F8)
+/*u8*/  #define gPlttBufferUnfaded2 ((u16*) 0x20373F8)
+
 static void BlendFadedPalettes(u32 selectedPalettes, u8 coeff, u32 color)
 {
     u16 paletteOffset;
@@ -73,7 +66,10 @@ static void BlendFadedPalettes(u32 selectedPalettes, u8 coeff, u32 color)
     for (paletteOffset = 0; selectedPalettes; paletteOffset += 16)
     {
         if (selectedPalettes & 1)
-            BlendFadedPalette(paletteOffset, 16, coeff, color, gIgnoredDNSPalIndices);
+		{
+			if (GetPalTypeByPaletteOffset(paletteOffset) != PalTypeOther) //Fade everything except Poke pics
+				BlendFadedPalette(paletteOffset, 16, coeff, color, gIgnoredDNSPalIndices);
+		}
         selectedPalettes >>= 1;
     }
 }
@@ -87,11 +83,11 @@ static void BlendFadedPalette(u16 palOffset, u16 numEntries, u8 coeff, u32 blend
 		if (ignoredIndices[palOffset / 16][i]) continue; //Don't fade this index.
 	
         u16 index = i + palOffset;
-        struct PlttData *data1 = (struct PlttData *)&gPlttBufferFaded[index];
+        struct PlttData *data1 = (struct PlttData *) &gPlttBufferFaded[index];
         s8 r = data1->r;
         s8 g = data1->g;
         s8 b = data1->b;
-        struct PlttData *data2 = (struct PlttData *)&blendColor;
+        struct PlttData *data2 = (struct PlttData *) &blendColor;
         ((u16*) 0x5000000)[index] = ((r + (((data2->r - r) * coeff) >> 4)) << 0)
 								  | ((g + (((data2->g - g) * coeff) >> 4)) << 5)
                                   | ((b + (((data2->b - b) * coeff) >> 4)) << 10);
