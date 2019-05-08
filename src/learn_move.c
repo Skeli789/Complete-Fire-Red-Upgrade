@@ -17,7 +17,10 @@
 #define MAX_LEARNABLE_MOVES 50
 
 void GiveBoxMonInitialMoveset(struct BoxPokemon* boxMon);
+
+#ifdef UNBOUND
 static move_t RandomizeMove(u16 move);
+#endif
 
 void GiveBoxMonInitialMoveset(struct BoxPokemon* boxMon)
 {
