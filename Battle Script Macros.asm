@@ -158,6 +158,20 @@
 	.byte 0x2
 	.endm
 
+	.macro copybyte destination source
+	.byte 0x31
+	.4byte \destination
+	.4byte \source
+	.byte 0x1
+	.endm
+
+	.macro copyword destination source
+	.byte 0x31
+	.4byte \destination
+	.4byte \source
+	.byte 0x4
+	.endm
+
 	.macro attackcanceler
 	.byte 0x00
 	.endm

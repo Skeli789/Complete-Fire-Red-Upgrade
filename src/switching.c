@@ -198,6 +198,8 @@ void atk4D_switchindataupdate(void) {
 			gNewBS->MagnetRiseTimers[gActiveBattler] = 0;
     }
 	
+    SwitchInClearSetData();
+	
 	if (ABILITY(gActiveBattler) == ABILITY_ILLUSION)
 	{
 		gStatuses3[gActiveBattler] |= STATUS3_ILLUSION;
@@ -210,12 +212,10 @@ void atk4D_switchindataupdate(void) {
 		else
 			gStatuses3[gActiveBattler] &= ~STATUS3_ILLUSION;
 	}
-	
-    SwitchInClearSetData();
 
     gBattleScripting->bank = gActiveBattler;
 
-    PREPARE_MON_NICK_BUFFER(gBattleTextBuff1, gActiveBattler, gBattlerPartyIndexes[gActiveBattler]);
+    PREPARE_MON_NICK_BUFFER(gBattleTextBuff1, gActiveBattler, GetIllusionPartyNumber(gActiveBattler));
 	
 	gBattleMons[gActiveBattler].type3 = TYPE_BLANK;
 

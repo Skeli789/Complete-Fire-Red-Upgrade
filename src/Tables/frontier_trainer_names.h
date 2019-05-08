@@ -202,7 +202,7 @@ extern const u8 sTrainerName_Reagan[];
 extern const u8 sTrainerName_Mackenzie[];
 extern const u8 sTrainerName_Madeline[];
 
-const u8* const gMaleFrontierNamesTable[NUM_MALE_NAMES] =
+const u8* const gMaleFrontierNamesTable[] =
 {
 	sTrainerName_Liam,
 	sTrainerName_Noah,
@@ -306,7 +306,7 @@ const u8* const gMaleFrontierNamesTable[NUM_MALE_NAMES] =
 	sTrainerName_Jameson,
 };
 
-const u8* const gFemaleFrontierNamesTable[NUM_FEMALE_NAMES] =
+const u8* const gFemaleFrontierNamesTable[] =
 {
 	sTrainerName_Emma,
 	sTrainerName_Olivia,
@@ -409,3 +409,6 @@ const u8* const gFemaleFrontierNamesTable[NUM_FEMALE_NAMES] =
 	sTrainerName_Mackenzie,
 	sTrainerName_Madeline,
 };
+
+const u16 gNumMaleFrontierTrainerNames = ARRAY_COUNT(gMaleFrontierNamesTable);
+const u16 gNumFemaleFrontierTrainerNames = ARRAY_COUNT(gFemaleFrontierNamesTable);

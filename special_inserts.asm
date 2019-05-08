@@ -101,19 +101,6 @@ MaxLevelChange14:
 	.byte MAX_LEVEL - 1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@ Hidden Abilities - Generate Poke
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.org 0x03DD58, 0xFF
-HiddenAbilityPokemonGeneration:
-	mov r0, #0x0
-	str r0, [sp, #0x18]
-	mov r0, r7
-	mov r1, #0x2E
-	mov r2, r9
-	bl HiddenAbilityPokemonGeneration + 0x2778 @ set_pokemon_data_2
-	b HiddenAbilityPokemonGeneration + 0x26 @ 0x0803DD7E
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Max Level Limiters
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x3E806, 0xFF
@@ -458,26 +445,7 @@ SummaryScreenExpDisplay2:
 	@ .word oei_1A_cave|1	@1d98a9
 .org 0x1d98ad, 0xff
 	.byte 0x4
-	
-@ extend animation frames for hidden water and cave
-.org 0x3a5b56, 0xff
-	.byte 0x8, 0, 1, 0
 
-.org 0x3a5b5a, 0xff
-	.byte 0x8, 0, 2, 0
-
-.org 0x3a5b5e, 0xff
-	.byte 0x8, 0, 3, 0
-
-.org 0x3a5b62, 0xff
-	.byte 0x8, 0, 2, 0
-
-.org 0x3a5b66, 0xff
-	.byte 0x8, 0, 1, 0
-
-.org 0x3a5b6a, 0xff
-	.byte 0x8
-	
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Multichoice Pointers
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

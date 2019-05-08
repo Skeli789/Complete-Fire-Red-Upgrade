@@ -545,7 +545,7 @@ AttackAnimationTable:
 .word ANIM_GYROBALL
 .word ANIM_HYPERSPACEFURY
 .word ANIM_ATTACKORDER
-.word ANIM_DEFENDANIMATIONORDER
+.word ANIM_DEFENDORDER
 .word ANIM_HEALORDER
 .word ANIM_CAPTIVATE
 .word ANIM_DEFOG
@@ -1316,7 +1316,6 @@ DRAGONBREATH_BREATH:
 
 .align 2
 DRAGONBREATH_BLUEFIRE: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_HYDRO_PUMP 0x83ACA98 0x83E7764 0x0 0x83E779C 0x80B741D
-
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -4186,20 +4185,19 @@ ANIM_THUNDERFANG:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
 ANIM_FLAREBLITZ:
-	loadparticle ANIM_TAG_FOCUS_ENERGY
 	loadparticle ANIM_TAG_IMPACT
 	loadparticle ANIM_TAG_SMALL_EMBER
-	loadparticle ANIM_TAG_WATER_GUN @Light Blue Colour
 	pokespritetoBG bank_target
 	setblends 0x80C
 	playsound2 0xA4 0x3f
-	call 0x81cb267 
-	pause 0x8 
-	launchtask AnimTask_pal_fade_complex 0x2 0x6 0x2 0x2 0x2 0x0 0xb 0x1f
+	call FLAME_BUFF 
+	pause 0x4
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_IMPACT 0x0 0x6 0x8 0x001F
+	launchtask AnimTask_pal_fade_complex 0x2 0x6 0x2 0x2 0x2 0x0 0xb 0x001F
 	launchtask AnimTask_move_bank_2 0x2 0x5 0x0 0x1 0x0 0x20 0x1 
-	call 0x81cb267 
-	pause 0x8 
-	call 0x81cb267
+	call FLAME_BUFF 
+	pause 0x4
+	call FLAME_BUFF
 	loadbg1 BG_FIRE
 	waitfortransparentbg
 	launchtask 0x80BB82D 0x5 0x4 0x1000 0x0 0x0 0xFFFF
@@ -4209,8 +4207,16 @@ ANIM_FLAREBLITZ:
 	pause 0xb 
 	launchtemplate 0x83d4e9c 0x2 0x5 0x0 0x1a 0x0 0x0 0x5 
 	pause 0x6
-	launchtemplate FLAREBLITZ_BLUEHIT 0x80 0x4 0x0 0x0 0x1 0x0
-	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x3 0x20 0x1  
+	soundcomplex 0x86 0xc0 0x2 0x4
+	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x3 0x20 0x1
+	launchtemplate Template_Hit 0x80 0x4 0xFFF0 0x10 0x1 0x0
+	pause 0x2
+	launchtemplate Template_Hit 0x80 0x4 0x10 0xFFF0 0x1 0x0
+	pause 0x2
+	launchtemplate Template_Hit 0x80 0x4 0xFFEA 0x3 0x1 0x0
+	pause 0x2
+	launchtemplate Template_Hit 0x80 0x4 0x0 0x8 0x1 0x0
+	pause 0x2
 	playsound2 0x8C 0x3f
 	call BURN_CHANCE_ANIM
 	waitanimation
@@ -4221,9 +4227,20 @@ ANIM_FLAREBLITZ:
 	call UNSET_SCROLLING_BG
 	endanimation
 
-.align 2
-FLAREBLITZ_BLUEHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_WATER_GUN 0x83ACB58 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+FLAME_BUFF:
+	launchtemplate FLAREBLITZ_BUFF 0x2 0x4 0x0 0xffe8 0x1a 0x2 
+	pause 0x4 
+	launchtemplate FLAREBLITZ_BUFF 0x2 0x4 0x0 0xe 0x1c 0x1 
+	pause 0x4 
+	launchtemplate FLAREBLITZ_BUFF 0x2 0x4 0x0 0xfffb 0xa 0x2 
+	pause 0x4 
+	launchtemplate FLAREBLITZ_BUFF 0x2 0x4 0x0 0x1c 0x1a 0x3 
+	pause 0x4 
+	launchtemplate FLAREBLITZ_BUFF 0x2 0x4 0x0 0xfff4 0x0 0x1
+	return
 
+.align 2
+FLAREBLITZ_BUFF: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_SMALL_EMBER 0x83AC9D8 0x8231CF0 0x0 0x8231CFC SpriteCB_FlareBlitzUpFlames
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
@@ -5741,18 +5758,19 @@ PURPLEHAND: objtemplate ANIM_TAG_ASSURANCE_HAND ANIM_TAG_ASSURANCE_HAND 0x83ACA3
 .pool     
 ANIM_DRAGONRUSH:
 	loadparticle ANIM_TAG_ROUND_SHADOW
-	loadparticle ANIM_TAG_SHADOW_BALL
 	loadparticle ANIM_TAG_ROCKS
 	loadparticle ANIM_TAG_IMPACT
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_ROUND_SHADOW 0x2 0x0 0xD 0x5CAE @;Purple
+	waitanimation
 	playsound2 0x97 0xc0 
-	launchtemplate DRAGONRUSH_FLYUP 0x2 0x4 0x0 0x0 0xd 0x150
+	launchtemplate 0x83E6BB8 0x2 0x4 0x0 0x0 0xd 0x150 @Fly up
 	waitanimation
 	loadBG1 0x10 @cosmic
 	waitfortransparentBG 
 	pokespritetoBG side_target 
 	setblends 0x80c 
 	playsound2 0xBA 0x3f 
-	launchtemplate DRAGONRUSH_BOUNCEDOWN 0x83 0x0  
+	launchtemplate 0x83E6CFC 0x83 0x0 @Bounce down 
 	pause 0x7 
 	playsound2 0x86 0x3f 
 	launchtemplate Template_Hit 0x82 0x4 0x0 0x0 0x1 0x0  
@@ -5764,11 +5782,7 @@ ANIM_DRAGONRUSH:
 	loaddefaultBG 
 	waitfortransparentBG 
 	endanimation
-
-.align 2
-DRAGONRUSH_FLYUP: 	objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_SHADOW_BALL 0x83ACAA0 0x8231CF0 0x0 0x83E6B8C 0x80B1BB1
-DRAGONRUSH_BOUNCEDOWN:	objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_SHADOW_BALL 0x83ACAA0 0x8231CF0 0x0 0x83E6CF8 0x80B2975
-
+	
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
 ANIM_DARKVOID:
@@ -6840,7 +6854,7 @@ ORDER_REDRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_VERTICAL_HEX 0x83ACBC0 0x
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
-ANIM_DEFENDANIMATIONORDER:
+ANIM_DEFENDORDER:
 	loadparticle ANIM_TAG_BEES
 	loadparticle ANIM_TAG_THIN_RING
 	loadparticle ANIM_TAG_VERTICAL_HEX
@@ -7052,13 +7066,11 @@ PRECIPICEBLADES_ROCKS: objtemplate ANIM_TAG_STEALTH_ROCK ANIM_TAG_STEALTH_ROCK 0
 .pool     
 @ Credits to Nuisance
 ANIM_STEAMERUPTION:
-	loadparticle ANIM_TAG_WATER_IMPACT
 	loadparticle ANIM_TAG_STEAM_ERUPTION @Steam Eruption Particle
-	setblends 0x80c
-	pokespritetoBG side_target 
 	launchtemplate Template_Pal_Fade 0x2 0x5 0x1 0x3 0x0 0x7 0x043D
 	pause 0x20
-	leftbankBG_over_partnerBG bank_target  
+	pokespritetoBG side_target
+	leftbankBG_over_partnerBG bank_target
 	playsoundpanchange 0x9d 0xc0 0x3f 0x2 0x0
 	call BreatheFire
 	call BreatheFire
@@ -7086,12 +7098,12 @@ ANIM_STEAMERUPTION:
 	waitanimation 
 	pokespritefromBG side_target
 	launchtemplate Template_Pal_Fade 0x2 0x5 0x1 0x3 0x7 0x0 0x043D
-	resetblends
+	waitanimation
 	endanimation
 
 BreatheFire:
 	launchtemplate BREATHEHYDRO 0x82 0x5 0x0 0x5 0x0 0x5 0x14
-	launchtemplate BREATHEHYDRO 0x82 0x5 0x0 0xFFEF 0x0 0xFFEF 0x14 
+	@launchtemplate BREATHEHYDRO 0x82 0x5 0x0 0xFFEF 0x0 0xFFEF 0x14 
 	pause 0x1
 	return
 
@@ -13889,7 +13901,27 @@ GUARD_SPLIT_SWAPPER2: objtemplate ANIM_TAG_BLUEGREEN_ORB ANIM_TAG_BLUEGREEN_ORB 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
 ANIM_HEALBLOCK:
-endanimation
+	loadparticle ANIM_TAG_SPARKLE_2
+	loadparticle ANIM_TAG_X_SIGN
+	pokespritetoBG bank_target
+	playsound2 0xDD 0xc0 
+	call HEAL_BLOCK_STARS
+	waitforsound
+	launchtask AnimTask_SetGrayscaleOrOriginalPalette 0x5 0x2 bank_target 0x0
+	launchtemplate 0x83FF6EC 0xc2 0x0  
+	playsound2 0xBA 0x3f
+	waitanimation
+	launchtask AnimTask_SetGrayscaleOrOriginalPalette 0x5 0x2 bank_target 0x1
+	waitanimation
+	pokespritefromBG bank_target
+	endanimation
+
+HEAL_BLOCK_STARS:
+	launchtemplate 0x83E33F4 0x2 0x6 0xfff1 0x0 bank_target 0x0 0x20 0x3c  
+	pause 0x8 
+	launchtemplate 0x83E33F4 0x2 0x6 0xc 0xfffb bank_target 0x0 0x20 0x3c  
+	pause 0x8 
+	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
@@ -14858,8 +14890,9 @@ ANIM_LIGHTOFRUIN:
 	loadparticle ANIM_TAG_ORBS @beam particles
 	loadparticle ANIM_TAG_ELECTRICITY @discharge
 	loadparticle ANIM_TAG_PINK_PETAL @pink color
-	loadparticle ANIM_TAG_PINK_HEART @pink color
 	loadparticle ANIM_TAG_EXPLOSION @explosion
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_ELECTRIC_ORBS 0x0 0x0 0xC 0x6DDE @;Pink
+	waitanimation
 	launchtask 0x80AE541 0x2 0x4 0x0 0x14 0x0 0x2   @Use pink particles for this launchtask (ANIM_TAG_PINK_PETAL or ANIM_TAG_PINK_HEART)
 	playsoundpanchange 0xc2 0xc0 0x3f 0x2 0x0
 	launchtemplate Template_Pal_Fade 0x2 0x5 0x1 0x3 0x0 0xF 0x6B1F
@@ -14917,23 +14950,15 @@ LOR_PINKAFTERMATH: objtemplate ANIM_TAG_SMALL_BUBBLES ANIM_TAG_PINK_PETAL 0x83AC
 LOR_PINKDISCHARGE: objtemplate ANIM_TAG_ELECTRICITY ANIM_TAG_PINK_PETAL 0x83AC9D8 0x83E6200 0x0 0x8231CFC 0x80AE775
 LOR_PINKEXPLOSION: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_PINK_PETAL 0x83AC9D8 0x83E3F90 0x0 0x8231CFC 0x8075D9D
 
-LOR_PINKCHARGE: objtemplate ANIM_TAG_ELECTRIC_ORBS ANIM_TAG_PINK_PETAL 0x83AC9C8 0x83E6118 0x0 0x8231CFC 0x800760D
 LOR_GRAYCHARGE: objtemplate ANIM_TAG_ELECTRIC_ORBS ANIM_TAG_GUST 0x83AC9C8 0x83E6118 0x0 0x8231CFC 0x800760D
 
 @ hook at 0xAE5EC via r0
 .align 2
 LIGHTOFRUIN_ASM:
-	bl IsAnimMoveLightOfRuin
-	cmp r0, #0x0
-	bne DoLightofRuin
 	bl IsAnimMoveFlashCannon
 	cmp r0, #0x0
 	bne DoFlashCannon
 	ldr r0, =0x83E6120
-	b ReturnLOR
-
-DoLightofRuin:
-	ldr r0, .LOR_Template
 	b ReturnLOR
 
 DoFlashCannon:
@@ -14946,7 +14971,6 @@ ReturnLOR:
 	bx r2
 
 .align 2
-.LOR_Template: .word LOR_PINKCHARGE
 .FlashCannonTemplate: .word LOR_GRAYCHARGE
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

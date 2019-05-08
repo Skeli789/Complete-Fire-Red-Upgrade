@@ -39,7 +39,11 @@
 0803DC52 04 20
 #Remove Randomizer Hook
 0803DAD0 07 1C 10 9C 12 98 0E 25
-
+#Remove Previous Quest And Free Up Space
+08110F24 28 E0
+0811192A 04 20
+08110AEC 70 47
+081123BC 70 47
 
 ##Save Expansion
 080DA5E0 FF 20 70 47
@@ -184,6 +188,14 @@
 ##Animations##
 ##Hydro Pump Particle Update
 083E595C 38 28 38 28
+
+##Dexnav##
+083A5B56 08
+083A5B5A 08
+083A5B5E 08
+083A5B62 08
+083A5B66 08
+083A5B6A 08
 
 ##Specific For Unbound, overrites a hook that shouldn't be there with vanilla data.##
 0803352C 00 68 24 0D

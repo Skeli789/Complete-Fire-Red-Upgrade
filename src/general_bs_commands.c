@@ -1,25 +1,23 @@
 #include "defines.h"
 #include "defines_battle.h"
-#include "../include/battle_string_ids.h"
 #include "../include/battle_anim.h"
+#include "../include/battle_string_ids.h"
 #include "../include/money.h"
+#include "../include/random.h"
 #include "../include/constants/items.h"
 
-#include "../include/new/helper_functions.h"
-#include "../include/new/pickup_items.h"
-#include "../include/new/general_bs_commands.h"
+#include "../include/new/ability_battle_scripts.h"
+#include "../include/new/ability_tables.h"
+#include "../include/new/accuracy_calc.h"
 #include "../include/new/attackcanceler.h"
-#include "../include/random.h"
-
-#define BattleScript_Pausex20 (u8*) 0x81D89F1
-#define BattleScript_MoveMissedPause (u8*) 0x81D695E
-#define BattleScript_HitFromCritCalc (u8*) 0x81D6930
-#define BattleScript_AlreadyAtFullHp (u8*) 0x81D7DD1
-#define BattleScript_PresentHealTarget (u8*) 0x81D7DB7
-#define BattleScript_DestinyBondTakesLife (u8*) 0x81D8C6C
-#define BattleScript_GrudgeTakesPp (u8*) 0x81D8FA3
-extern u8 BattleScript_ObliviousPrevents[];
-#define BattleScript_RestCantSleep (u8*) 0x81D6EB2
+#include "../include/new/battle_strings.h"
+#include "../include/new/battle_terrain.h"
+#include "../include/new/damage_calc.h"
+#include "../include/new/helper_functions.h"
+#include "../include/new/general_bs_commands.h"
+#include "../include/new/move_tables.h"
+#include "../include/new/move_battle_scripts.h"
+#include "../include/new/pickup_items.h"
 
 void TryContraryChangeStatAnim(u8 bank, u16* argumentPtr);
 bool8 UproarWakeUpCheck(bank_t);
@@ -28,12 +26,8 @@ item_t ChoosePickupItem(u8 level);
 void TransformPokemon(u8 bankAtk, u8 bankDef);
 u8 CastformDataTypeChange(u8 bank);
 
-extern void PrepareStringBattle(u16 stringId, u8 bank);
-extern u8 TypeCalc(move_t, u8 bankAtk, u8 bankDef, pokemon_t* party_data_atk, bool8 CheckParty);
-extern bool8 ProtectAffects(move_t, bank_t, bank_t, u8 set);
 extern void ClearSwitchBytes(u8 bank);
 extern void ClearSwitchBits(u8 bank);
-extern void JumpIfMoveFailed(u8 adder, u16 move);
 
 extern u8 BattleScript_Gems[];
 extern u8 BattleScript_AbilityChangedType[];
@@ -57,38 +51,7 @@ extern u8 BattleScript_TeamProtectedByFlowerVeil[];
 extern u8 BattleScript_TeamProtectedBySweetVeil[];
 extern u8 BattleScript_TargetStayedAwakeUsingAbility[];
 extern u8 BattleScript_ProtectedByAbility[];
-extern u8  BattleScript_ButItFailedAttackstring[];
-
-extern u8 StringEnduredHitWithSturdy[];
-extern u8 PrimalRainEndString[];
-extern u8 PrimalSunEndString[];
-extern u8 PrimalAirCurrentEndString[];
-extern u8 RemovedEntryHazardsString[];
-extern u8 RemovedEntryHazardsTargetSideString[];
-extern u8 SpikesLayString[];
-extern u8 StealthRockLayString[];
-extern u8 ToxicSpikesLayString[];
-extern u8 StickyWebLayString[];
-extern u8 CraftyShieldSetString[];
-extern u8 MatBlockSetString[];
-extern u8 QuickGuardSetString[];
-extern u8 WideGuardSetString[];
-extern u8 gText_ScreenRaisedStat[];
-
-extern move_t SkyBattleBanTable[];
-extern move_t GravityBanTable[];
-extern move_t SleepTalkBanTable[];
-extern move_t MovesThatCallOtherMovesTable[];
-extern move_t GemBanTable[];
-extern move_t MetronomeBanTable[];
-extern move_t AssistBanTable[];
-extern move_t MimicBanTable[];
-extern ability_t RolePlayBanTable[];
-extern ability_t SkillSwapBanTable[];
-extern ability_t ReceiverBanTable[];
-extern const struct TerrainTableStruct TerrainTable[];
-
-extern u8* gBattleScriptsForMoveEffects[];
+extern u8 BattleScript_ButItFailedAttackstring[];
 
 const u16 gMissStringIds[] =
 {
@@ -101,7 +64,8 @@ const u16 gMissStringIds[] =
 	0x184, //Wide Guard
 };
 
-void atk02_attackstring(void) {
+void atk02_attackstring(void)
+{
 	u8 moveType = gBattleStruct->dynamicMoveType;
 
     if (gBattleExecBuffer) return;
@@ -715,7 +679,7 @@ void atk19_tryfaintmon(void)
 			&& gBattlescriptCurrInstr[1] != BS_GET_SCRIPTING_BANK)
             {
                 gHitMarker &= ~(HITMARKER_DESTINYBOND);
-				u8* backupScript = gBattlescriptCurrInstr;
+				const u8* backupScript = gBattlescriptCurrInstr;
 				gBattlescriptCurrInstr = BattleScript_DestinyBondTakesLife;
                 BattleScriptPushCursor();
                 gBattleMoveDamage = gBattleMons[bank].hp;
@@ -1684,7 +1648,7 @@ void atk88_negativedamage(void) {
 	else
 		gBattleMoveDamage = (gHpDealt / 2);
 
-	if (ITEM_EFFECT(gBankAttacker) == ITEM_EFFECT_BIGROOT)
+	if (ITEM_EFFECT(gBankAttacker) == ITEM_EFFECT_BIG_ROOT)
 		gBattleMoveDamage = udivsi(130 * gHpDealt, 100);
 
 	gBattleMoveDamage *= -1;
@@ -3172,23 +3136,23 @@ void atkCC_callterrainattack(void) { //nature power
 
 	switch (TerrainType) {
 		case ELECTRIC_TERRAIN:
-			gCurrentMove = TerrainTable[0].naturePowerMove;
+			gCurrentMove = gTerrainTable[0].naturePowerMove;
 			break;
 
 		case GRASSY_TERRAIN:
-			gCurrentMove = TerrainTable[1].naturePowerMove;
+			gCurrentMove = gTerrainTable[1].naturePowerMove;
 			break;
 
 		case MISTY_TERRAIN:
-			gCurrentMove = TerrainTable[2].naturePowerMove;
+			gCurrentMove = gTerrainTable[2].naturePowerMove;
 			break;
 
 		case PSYCHIC_TERRAIN:
-			gCurrentMove = TerrainTable[3].naturePowerMove;
+			gCurrentMove = gTerrainTable[3].naturePowerMove;
 			break;
 
 		default:
-			gCurrentMove = TerrainTable[gBattleTerrain + 4].naturePowerMove;
+			gCurrentMove = gTerrainTable[gBattleTerrain + 4].naturePowerMove;
 	}
 
     gBankTarget = GetMoveTarget(gCurrentMove, 0);
@@ -3408,23 +3372,23 @@ void atkDE_asistattackselect(void)
 void atkE4_getsecretpowereffect(void) {
 	switch (TerrainType) {
 		case ELECTRIC_TERRAIN:
-			gBattleCommunication[MOVE_EFFECT_BYTE] = TerrainTable[0].secretPowerEffect;
+			gBattleCommunication[MOVE_EFFECT_BYTE] = gTerrainTable[0].secretPowerEffect;
 			break;
 
 		case GRASSY_TERRAIN:
-			gBattleCommunication[MOVE_EFFECT_BYTE] = TerrainTable[1].secretPowerEffect;
+			gBattleCommunication[MOVE_EFFECT_BYTE] = gTerrainTable[1].secretPowerEffect;
 			break;
 
 		case MISTY_TERRAIN:
-			gBattleCommunication[MOVE_EFFECT_BYTE] = TerrainTable[2].secretPowerEffect;
+			gBattleCommunication[MOVE_EFFECT_BYTE] = gTerrainTable[2].secretPowerEffect;
 			break;
 
 		case PSYCHIC_TERRAIN:
-			gBattleCommunication[MOVE_EFFECT_BYTE] = TerrainTable[3].secretPowerEffect;
+			gBattleCommunication[MOVE_EFFECT_BYTE] = gTerrainTable[3].secretPowerEffect;
 			break;
 
 		default:
-			gBattleCommunication[MOVE_EFFECT_BYTE] = TerrainTable[gBattleTerrain + 4].secretPowerEffect;
+			gBattleCommunication[MOVE_EFFECT_BYTE] = gTerrainTable[gBattleTerrain + 4].secretPowerEffect;
 	}
     gBattlescriptCurrInstr++;
 }
@@ -3600,23 +3564,23 @@ void atkEB_settypetoterrain(void) {
 
 	switch (TerrainType) {
 		case ELECTRIC_TERRAIN:
-			type = TerrainTable[0].camouflageType;
+			type = gTerrainTable[0].camouflageType;
 			break;
 
 		case GRASSY_TERRAIN:
-			type = TerrainTable[1].camouflageType;
+			type = gTerrainTable[1].camouflageType;
 			break;
 
 		case MISTY_TERRAIN:
-			type = TerrainTable[2].camouflageType;
+			type = gTerrainTable[2].camouflageType;
 			break;
 
 		case PSYCHIC_TERRAIN:
-			type = TerrainTable[3].camouflageType;
+			type = gTerrainTable[3].camouflageType;
 			break;
 
 		default:
-			type = TerrainTable[gBattleTerrain + 4].camouflageType;
+			type = gTerrainTable[gBattleTerrain + 4].camouflageType;
 	}
 
     if (gBattleMons[gBankAttacker].type1 != type

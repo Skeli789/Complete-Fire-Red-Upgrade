@@ -1,10 +1,33 @@
 #pragma once
 
-#include "../../src/defines.h"
-#include "../../src/defines_battle.h"
+#include "../global.h"
+#include "../pokemon.h"
 
-// The evolutionary type for Megas
-#define MEGA_EVOLUTION 0xFE
+//Exported Functions
+const struct Evolution* CanMegaEvolve(u8 bank, bool8 CheckUBInstead);
+const u8* DoMegaEvolution(u8 bank);
+const u8* DoPrimalReversion(u8 bank, u8 caseId);
+void MegaRevert(pokemon_t* mon);
+void TryRevertMega(pokemon_t* mon);
+bool8 MegaEvolutionEnabled(u8 bank);
+bool8 BankMegaEvolved(u8 bank, bool8 checkUB);
+bool8 IsMega(u8 bank);
+bool8 IsBluePrimal(u8 bank);
+bool8 IsRedPrimal(u8 bank);
+bool8 IsUltraNecrozma(u8 bank);
+const u8* GetTrainerName(u8 bank);
+void TryLoadIndicatorForEachBank(void);
+void TryLoadMegaTriggers(void);
+void DestroyMegaTriggers(void);
+
+//Functions Hooked In
+bool8 HasMegaSymbol(u8 bank);
+void MegaRetrieveData(void);
+void LoadMegaGraphics(u8 state);
+void CreateMegaIndicatorAfterAnim(void);
+
+//Exported Constants
+#define MEGA_EVOLUTION 0xFE // The evolutionary type for Megas
 
 enum MegaEvoVariants
 {

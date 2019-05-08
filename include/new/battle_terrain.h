@@ -1,10 +1,22 @@
 #pragma once
-#include "../../src/defines.h"
-#include "../../src/defines_battle.h"
 
-#define gBattleTerrainAnimTiles_Building (void*) 0x824E410
-#define gBattleTerrainAnimTilemap_Building (void*) 0x824E490
+#include "../global.h"
 
+/**
+ * \file battle_terrain.h
+ * \brief Contains functions relating to the battle background.
+ */
+
+//Exported Functions
+bool8 MetatileBehavior_IsIce(u8 metatileBehavior);
+
+//Hooked In Functions
+u8 BattleSetup_GetTerrainId(void);
+u8 LoadBattleBG_TerrainID(void);
+void LoadBattleBG_Background(u8 terrainId);
+void LoadBattleBG_EntryOverlay(u8 terrainId);
+
+//Exported Structs
 struct BattleBackground
 {
     const void* tileset;
@@ -14,15 +26,14 @@ struct BattleBackground
     const void* palette;
 };
 
-extern const u8 BG_Electric_TerrainTiles[];
-extern const u8 BG_Electric_TerrainMap[];
-extern const u8 BG_Electric_TerrainPal[];
-extern const u8 BG_Grassy_TerrainTiles[];
-extern const u8 BG_Grassy_TerrainMap[];
-extern const u8 BG_Grassy_TerrainPal[];
-extern const u8 BG_Misty_TerrainTiles[];
-extern const u8 BG_Misty_TerrainMap[];
-extern const u8 BG_Misty_TerrainPal[];
-extern const u8 BG_Psychic_TerrainTiles[];
-extern const u8 BG_Psychic_TerrainMap[];
-extern const u8 BG_Psychic_TerrainPal[];
+struct TerrainTableStruct
+{
+	u8 camouflageType;
+	u8 secretPowerEffect;
+	u16 secretPowerAnim;
+	u16 naturePowerMove;
+	u16 burmyForm;
+};
+
+extern const struct TerrainTableStruct gTerrainTable[];
+extern const u16 gCamouflageColours[];

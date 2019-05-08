@@ -55,6 +55,7 @@ const u16 gEndBattleFlagClearTable[] =
 	SMART_WILD_FLAG,
 	HIDDEN_ABILITY_FLAG,
 	DOUBLE_WILD_BATTLE_FLAG,
+	WILD_SHINY_BATTLE_FLAG,
 };
 
 void HandleEndTurn_BattleWon(void)
@@ -141,6 +142,7 @@ void HandleEndTurn_BattleWon(void)
     else
         gBattlescriptCurrInstr = BattleScript_PayDayMoneyAndPickUpItems;
 
+	gSpecialVar_LastResult = 0;
     gBattleMainFunc = (u32) HandleEndTurn_FinishBattle;
 }
 
@@ -196,6 +198,7 @@ void HandleEndTurn_BattleLost(void)
         gBattlescriptCurrInstr = BattleScript_LocalBattleLost;
     }
 
+	gSpecialVar_LastResult = 1;
     gBattleMainFunc = (u32) HandleEndTurn_FinishBattle;
 }
 
@@ -513,7 +516,19 @@ static void EndBattleFlagClear(void) {
 	for (u32 i = 0; i < ARRAY_COUNT(gEndBattleFlagClearTable); ++i)
 		FlagClear(gEndBattleFlagClearTable[i]);
 
-	VarSet(TERRAIN_VAR, 0x0);
+	u16 inducer = VarGet(STATUS_INDUCER_VAR);
+	if (inducer & 0xFF00) //Temporary status inducer
+	{
+		u8 status = inducer & 0xFF;
+		u8 amount = ((inducer & 0xFF00) >> 8) - 1; //Subtract num battles by 1
+		
+		if (amount == 0) //Time's up
+			VarSet(STATUS_INDUCER_VAR, 0);
+		else
+			VarSet(STATUS_INDUCER_VAR, status | (amount << 8));
+	}
+
+	VarSet(TERRAIN_VAR, 0);
 	VarSet(BATTLE_TOWER_TRAINER_NAME, 0xFFFF);
 	Free(gNewBS->MegaData);
 	Free(gNewBS->UltraData);

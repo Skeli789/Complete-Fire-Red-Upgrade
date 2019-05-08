@@ -2,14 +2,21 @@
 #include "defines_battle.h"
 #include "../include/battle_anim.h"
 #include "../include/event_data.h"
-#include "../include/new/helper_functions.h"
 #include "../include/random.h"
+
+#include "../include/new/battle_anims.h"
+#include "../include/new/battle_terrain.h"
+#include "../include/new/helper_functions.h"
 
 extern const struct CompressedSpriteSheet gBattleAnimPicTable[];
 extern const struct CompressedSpritePalette gBattleAnimPaletteTable[];
-extern const struct TerrainTableStruct TerrainTable[];
 extern u8* AttackAnimationTable[];
-extern const u16 gCamouflageColours[];
+
+//This file's functions:
+static void InitSpritePosToAnimTargetsCentre(struct Sprite *sprite, bool8 respectMonPicOffsets);
+static void InitSpritePosToAnimAttackersCentre(struct Sprite *sprite, bool8 respectMonPicOffsets);
+static void InitSpritePosToGivenTarget(struct Sprite* sprite, u8 target);
+static void SpriteCB_FlareBlitzUpFlamesP2(struct Sprite* sprite);
 
 bank_t LoadBattleAnimTarget(u8 arg)
 {
@@ -61,26 +68,6 @@ void ShinyAnimFix(void)
 	LoadCompressedSpriteSheetUsingHeap(&gBattleAnimPicTable[ANIM_TAG_GOLD_STARS - ANIM_SPRITES_START]);
     LoadCompressedSpritePaletteUsingHeap(&gBattleAnimPaletteTable[ANIM_TAG_GOLD_STARS - ANIM_SPRITES_START]);
 }
-
-/*
-void ScriptCmd_pokespritefromBGsingle(void)
-{
-    u8 animBattlerId;
-    u8 battlerId;
-    u8 taskId;
-
-    sBattleAnimScriptPtr++;
-    animBattlerId = LoadBattleAnimTarget(sBattleAnimScriptPtr[0]);
-
-    if (sMonAnimTaskIdArray[0] != 0xFF)
-        gSprites[gBattlerSpriteIds[animBattlerId]].invisible = FALSE;
-
-    taskId = CreateTask(sub_80A4980, 5);
-    gTasks[taskId].data[0] = animBattlerId;
-    gTasks[taskId].data[2] = animBattlerId;
-
-    sBattleAnimScriptPtr++;
-}*/
 
 void AnimTask_TechnoBlast(u8 taskId)
 {
@@ -152,7 +139,7 @@ void AnimTask_GetTrappedMoveAnimId(u8 taskId)
 
 bool8 ShadowSneakAnimHelper(void)
 {
-	switch (gBattleBufferA[gActiveBattler][1] | (gBattleBufferA[gActiveBattler][2] << 8)) {
+	switch (sAnimMoveIndex) {
 		case MOVE_SHADOWSNEAK:
 		case MOVE_HYPERSPACEHOLE:
 		case MOVE_SPECTRALTHIEF:
@@ -165,100 +152,79 @@ bool8 ShadowSneakAnimHelper(void)
 
 bool8 IsAnimMoveIonDeluge(void)
 {
-	u16 move = gBattleBufferA[gBattleAnimAttacker][1] | (gBattleBufferA[gBattleAnimAttacker][2] << 8);	
-	return gBattleBufferA[gBattleAnimAttacker][0] == CONTROLLER_MOVEANIMATION && move == MOVE_IONDELUGE;
+	return gBattleBufferA[gBattleAnimAttacker][0] == CONTROLLER_MOVEANIMATION && sAnimMoveIndex == MOVE_IONDELUGE;
 }
 
 bool8 IsAnimMoveTectnoicRage(void)
 {
-	u16 move = gBattleBufferA[gActiveBattler][1] | (gBattleBufferA[gActiveBattler][2] << 8);
-	return  move == MOVE_TECTONIC_RAGE_P || move == MOVE_TECTONIC_RAGE_S;
+	return  sAnimMoveIndex == MOVE_TECTONIC_RAGE_P || sAnimMoveIndex == MOVE_TECTONIC_RAGE_S;
 }
 
 bool8 IsAnimMoveBloomDoom(void)
 {
-	u16 move = gBattleBufferA[gActiveBattler][1] | (gBattleBufferA[gActiveBattler][2] << 8);
-	return  move == MOVE_BLOOM_DOOM_P || move == MOVE_BLOOM_DOOM_S;
+	return  sAnimMoveIndex == MOVE_BLOOM_DOOM_P || sAnimMoveIndex == MOVE_BLOOM_DOOM_S;
 }
 
 bool8 IsAnimMoveOceanicOperretta(void)
 {
-	u16 move = gBattleBufferA[gActiveBattler][1] | (gBattleBufferA[gActiveBattler][2] << 8);
-	return  move == MOVE_OCEANIC_OPERETTA;
+	return  sAnimMoveIndex == MOVE_OCEANIC_OPERETTA;
 }
 
 bool8 IsMoveNeverEndingNightmareOrDevastatingDrakeOrLightThatBurnsTheSky(void)
 {
-	u16 move = gBattleBufferA[gActiveBattler][1] | (gBattleBufferA[gActiveBattler][2] << 8);
-	return  move == MOVE_NEVER_ENDING_NIGHTMARE_P || move == MOVE_NEVER_ENDING_NIGHTMARE_S 
-		 || move == MOVE_DEVASTATING_DRAKE_P 	  || move == MOVE_DEVASTATING_DRAKE_S
-		 || move == MOVE_LIGHT_THAT_BURNS_THE_SKY;
+	return  sAnimMoveIndex == MOVE_NEVER_ENDING_NIGHTMARE_P || sAnimMoveIndex == MOVE_NEVER_ENDING_NIGHTMARE_S 
+		 || sAnimMoveIndex == MOVE_DEVASTATING_DRAKE_P 	    || sAnimMoveIndex == MOVE_DEVASTATING_DRAKE_S
+		 || sAnimMoveIndex == MOVE_LIGHT_THAT_BURNS_THE_SKY;
 }
 
 bool8 IsAnimMoveDestinyBond(void)
 {
-	u16 move = gBattleBufferA[gActiveBattler][1] | (gBattleBufferA[gActiveBattler][2] << 8);
-	return  move == MOVE_DESTINYBOND;
+	return  sAnimMoveIndex == MOVE_DESTINYBOND;
 }
 
 bool8 IsAnimMoveThunderWave(void)
 {
-	u16 move = gBattleBufferA[gActiveBattler][1] | (gBattleBufferA[gActiveBattler][2] << 8);
-	return  move == MOVE_THUNDERWAVE;
+	return  sAnimMoveIndex == MOVE_THUNDERWAVE;
 }
 
 bool8 IsAnimMoveGrudge(void)
 {
-	u16 move = gBattleBufferA[gActiveBattler][1] | (gBattleBufferA[gActiveBattler][2] << 8);
-	return  move == MOVE_GRUDGE;
+	return  sAnimMoveIndex == MOVE_GRUDGE;
 }
 
 bool8 IsAnimMoveFairyLock(void)
 {
-	u16 move = gBattleBufferA[gActiveBattler][1] | (gBattleBufferA[gActiveBattler][2] << 8);
-	return  move == MOVE_FAIRYLOCK;
-}
-
-bool8 IsAnimMoveLightOfRuin(void)
-{
-	u16 move = gBattleBufferA[gActiveBattler][1] | (gBattleBufferA[gActiveBattler][2] << 8);
-	return  move == MOVE_LIGHTOFRUIN;
+	return  sAnimMoveIndex == MOVE_FAIRYLOCK;
 }
 
 bool8 IsAnimMoveFlashCannon(void)
 {
-	u16 move = gBattleBufferA[gActiveBattler][1] | (gBattleBufferA[gActiveBattler][2] << 8);
-	return  move == MOVE_FLASHCANNON;
+	return  sAnimMoveIndex == MOVE_FLASHCANNON;
 }
 
 bool8 IsAnimMoveSkillSwap(void)
 {
-	u16 move = gBattleBufferA[gActiveBattler][1] | (gBattleBufferA[gActiveBattler][2] << 8);
-	return  move == MOVE_SKILLSWAP;
+	return  sAnimMoveIndex == MOVE_SKILLSWAP;
 }
 
 bool8 IsAnimMovePowerSwap(void)
 {
-	u16 move = gBattleBufferA[gActiveBattler][1] | (gBattleBufferA[gActiveBattler][2] << 8);
-	return  move == MOVE_POWERSWAP;
+	return  sAnimMoveIndex == MOVE_POWERSWAP;
 }
 
 bool8 IsAnimMoveHeartSwap(void)
 {
-	u16 move = gBattleBufferA[gActiveBattler][1] | (gBattleBufferA[gActiveBattler][2] << 8);
-	return  move == MOVE_HEARTSWAP;
+	return  sAnimMoveIndex == MOVE_HEARTSWAP;
 }
 
 bool8 IsAnimMoveMudBomb(void)
 {
-	u16 move = gBattleBufferA[gActiveBattler][1] | (gBattleBufferA[gActiveBattler][2] << 8);
-	return  move == MOVE_MUDBOMB;
+	return  sAnimMoveIndex == MOVE_MUDBOMB;
 }
 
 bool8 IsAnimMoveCoreEnforcer(void)
 {
-	u16 move = gBattleBufferA[gActiveBattler][1] | (gBattleBufferA[gActiveBattler][2] << 8);
-	return  move == MOVE_COREENFORCER;
+	return  sAnimMoveIndex == MOVE_COREENFORCER;
 }
 
 void AnimTask_ReloadAttackerSprite(u8 taskId)
@@ -316,19 +282,19 @@ void AnimTask_GetSecretPowerAnimation(u8 taskId)
 	
 	switch (TerrainType) {
 		case ELECTRIC_TERRAIN:
-			move = TerrainTable[0].secretPowerAnim;
+			move = gTerrainTable[0].secretPowerAnim;
 			break;
 		case GRASSY_TERRAIN:
-			move = TerrainTable[1].secretPowerAnim;
+			move = gTerrainTable[1].secretPowerAnim;
 			break;
 		case MISTY_TERRAIN:
-			move = TerrainTable[2].secretPowerAnim;
+			move = gTerrainTable[2].secretPowerAnim;
 			break;
 		case PSYCHIC_TERRAIN:
-			move = TerrainTable[3].secretPowerAnim;
+			move = gTerrainTable[3].secretPowerAnim;
 			break;
 		default:
-			move = TerrainTable[gBattleTerrain + 4].secretPowerAnim;
+			move = gTerrainTable[gBattleTerrain + 4].secretPowerAnim;
 	}
 	
 	sBattleAnimScriptPtr = AttackAnimationTable[move];
@@ -356,9 +322,9 @@ void AnimTask_SetCamouflageBlend(u8 taskId)
 	}
 	
 	if (entry)
-		gBattleAnimArgs[4] = gCamouflageColours[TerrainTable[entry].camouflageType];
+		gBattleAnimArgs[4] = gCamouflageColours[gTerrainTable[entry].camouflageType];
 	else
-		gBattleAnimArgs[4] = gCamouflageColours[TerrainTable[gBattleTerrain + 4].camouflageType];
+		gBattleAnimArgs[4] = gCamouflageColours[gTerrainTable[gBattleTerrain + 4].camouflageType];
 
 	StartBlendAnimSpriteColor(taskId, selectedPalettes);
 }
@@ -397,7 +363,7 @@ void SpriteCB_TranslateAnimSpriteToTargetMonLocationDoubles(struct Sprite* sprit
 	}
 }
 
-void InitSpritePosToAnimTargetsCentre(struct Sprite *sprite, bool8 respectMonPicOffsets)
+static void InitSpritePosToAnimTargetsCentre(struct Sprite *sprite, bool8 respectMonPicOffsets)
 {
 	if (!respectMonPicOffsets)
 	{
@@ -411,7 +377,7 @@ void InitSpritePosToAnimTargetsCentre(struct Sprite *sprite, bool8 respectMonPic
 	sprite->pos1.y += gBattleAnimArgs[1];
 }
 
-void InitSpritePosToAnimAttackersCentre(struct Sprite *sprite, bool8 respectMonPicOffsets)
+static void InitSpritePosToAnimAttackersCentre(struct Sprite *sprite, bool8 respectMonPicOffsets)
 {
 	if (!respectMonPicOffsets)
 	{
@@ -608,6 +574,38 @@ void CoreEnforcerLoadBeamTarget(struct Sprite* sprite)
 					+  GetBattlerSpriteCoord(PARTNER(gBattleAnimTarget), BATTLER_COORD_Y_PIC_OFFSET)) / 2;
 }
 
+
+void SpriteCB_FlareBlitzUpFlames(struct Sprite* sprite)
+{
+    if (gBattleAnimArgs[0] == 0)
+    {
+        sprite->pos1.x = GetBattlerSpriteCoord(gBattleAnimAttacker, 0) + gBattleAnimArgs[1];
+        sprite->pos1.y = GetBattlerSpriteCoord(gBattleAnimAttacker, 1) + gBattleAnimArgs[2];
+    }
+    else
+    {
+        sprite->pos1.x = GetBattlerSpriteCoord(gBattleAnimTarget, 0) + gBattleAnimArgs[1];
+        sprite->pos1.y = GetBattlerSpriteCoord(gBattleAnimTarget, 1) + gBattleAnimArgs[2];
+    }
+
+    sprite->data[0] = 0;
+    sprite->data[1] = gBattleAnimArgs[3];
+    sprite->callback = SpriteCB_FlareBlitzUpFlamesP2;
+}
+
+static void SpriteCB_FlareBlitzUpFlamesP2(struct Sprite* sprite)
+{
+    if (++sprite->data[0] > sprite->data[1])
+    {
+        sprite->data[0] = 0;
+        sprite->pos1.y -= 2;
+    }
+
+    sprite->pos1.y -= sprite->data[0];
+    if (sprite->pos1.y < 0)
+        DestroyAnimSprite(sprite);
+}
+
 void DoubleWildAnimBallThrowFix(void)
 {
 	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && !(gBattleTypeFlags & BATTLE_TYPE_TRAINER))
@@ -663,8 +661,7 @@ void UpdateOamPriorityInAllHealthboxes(u8 priority)
 	
 	switch (gBattleBufferA[gActiveBattler][0]) {
 		case CONTROLLER_MOVEANIMATION: ;
-			u16 move = (gBattleBufferA[gActiveBattler][1]) | (gBattleBufferA[gActiveBattler][2] << 8);
-			if (move == MOVE_TRANSFORM)
+			if (sAnimMoveIndex == MOVE_TRANSFORM)
 				goto DEFAULT_CASE;
 			#ifdef DONT_HIDE_HEALTHBOXES_ATTACKER_STATUS_MOVES
 			if (gBattleMoves[move].target & MOVE_TARGET_USER)

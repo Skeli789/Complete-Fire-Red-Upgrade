@@ -1,4 +1,5 @@
 /* New Things */
+gBattleTowerStreaks = 0x2026840;
 gFollowerState = 0x203B818;
 ExtensionState = 0x3000F28;
 
@@ -10,8 +11,6 @@ sBattleIntroSlideFuncs = 0x83E7CD4;
 gUnownDistributionByChamber = 0x83CA71C;
 stepspeeds = 0x083A719C;
 stepspeed_seq_length = 0x083A71B0;
-//gTMHMLearnsets = 0x8252bc8;
-//gTMHMMoves = 0x0845A80C;
 
 gMapHeader = 0x2036DFC;
 gWeatherPtr = 0x2037F34;
@@ -632,6 +631,8 @@ GetPokeFlavourRelation = 0x8044234 | 1;
 IsTradedMon = 0x804425C | 1;
 IsOtherTrainer = 0x8044288 | 1;
 MonRestorePP = 0x80442E4 | 1;
+IsMonShiny = 0x8044470 | 1;
+IsShinyOtIdPersonality = 0x804449C | 1;
 GetSetPokedexFlag = 0x8044898 | 1;
 GetPokedexHeightWeight = 0x8088E38 | 1;
 ReducePartyToThree = 0x80A03D8 | 1;
@@ -688,8 +689,8 @@ CopyItemName = 0x8099E90 | 1;
 CheckBagHasItem = 0x8099F40 | 1;
 AddBagItem = 0x809A084 | 1;
 SanitizeItemId = 0x809A8A4 | 1;
-ItemId_GetHoldEffect = 0x809A924 | 1;
-ItemId_GetHoldEffectParam = 0x809A948 | 1;
+//ItemId_GetHoldEffect = 0x809A924 | 1;
+//ItemId_GetHoldEffectParam = 0x809A948 | 1;
 ItemId_GetMystery2 = 0x809A9B4 | 1;
 GetPocketByItemId = 0x809A9D8 | 1;
 ItemId_GetType = 0x809A9FC | 1;

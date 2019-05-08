@@ -1,12 +1,22 @@
 #include "defines.h"
 #include "defines_battle.h"
 #include "../include/event_data.h"
-#include "../include/constants/items.h"
-#include "../include/new/helper_functions.h"
-#include "../include/new/catching.h"
 #include "../include/random.h"
+#include "../include/constants/items.h"
+
+#include "../include/new/catching.h"
+#include "../include/new/helper_functions.h"
+#include "../include/new/form_change.h"
+#include "../include/new/mega.h"
 
 #define gOpenPokeballGfx (u8*) 0x8D022E8
+
+#define BattleScript_TutorialThrow 		((u8*) 0x81D9A88)
+#define BattleScript_ShakeBallThrow 	((u8*) 0x81D9A93)
+#define BattleScript_TrainerBallBlock 	((u8*) 0x81D9AC1)
+#define BattleScript_DodgedBall 		((u8*) 0x81D9AD1)
+
+#define sBallCatchBonuses ((u8*) 0x8250892)
 
 extern const struct BallIdItemIdRelation BallIdItemIdRelations[];
 extern const struct CompressedSpriteSheet gBallSpriteSheets[];
@@ -24,20 +34,11 @@ extern u8 gText_CantAimAtSemiInvulnerableTarget[];
 extern species_t UltraBeastTable[];
 
 //This file's functions:
-void atkEF_handleballthrow(void);
 static u8 GetCatchingBattler(void);
 static bool8 CriticalCapture(u32 odds);
-u8 GiveMonToPlayer(pokemon_t* mon);
-u8 ItemIdToBallId(u16 ballItem);
-item_t BallIdToItemId(u8 ballId);
-u16 GetBattlerPokeballItemId(u8 bank);
-bool8 DoubleWildPokeBallItemUseFix(u8 taskId);
-pokemon_t* LoadTargetPartyData(void);
 
-extern void TryFormRevert(pokemon_t* mon);
-extern void TryRevertMega(pokemon_t* mon);
-
-void atkEF_handleballthrow(void) {
+void atkEF_handleballthrow(void)
+{
 	if (gBattleExecBuffer) return;
 	
     u8 ball_multiplier = 0;
@@ -342,14 +343,16 @@ void atkEF_handleballthrow(void) {
     }
 }
 
-static u8 GetCatchingBattler(void) {
+static u8 GetCatchingBattler(void)
+{
     if (IsBattlerAlive(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)))
         return GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
     else
         return GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
 }
 
-static bool8 CriticalCapture(u32 odds) {
+static bool8 CriticalCapture(u32 odds)
+{
 	#ifndef CRITICAL_CAPTURE
 		odds += 1; //So the compiler doesn't complain
 		return FALSE;
@@ -382,7 +385,8 @@ static bool8 CriticalCapture(u32 odds) {
 	#endif
 }
 
-u8 GiveMonToPlayer(pokemon_t* mon) { //Hook in
+u8 GiveMonToPlayer(pokemon_t* mon) //Hook in
+{
     int i;
 
 	TryFormRevert(mon);
@@ -470,15 +474,11 @@ u16 GetBattlerPokeballItemId(u8 bank)
 {
 	u8 ballId;
 
-    if (SIDE(bank) == B_SIDE_PLAYER)
-	{
-        ballId = GetMonData(&gPlayerParty[gBattlerPartyIndexes[bank]], MON_DATA_POKEBALL, 0);
-	}
-    else
-	{
-        ballId = GetMonData(&gEnemyParty[gBattlerPartyIndexes[bank]], MON_DATA_POKEBALL, 0);
-	}
-		
+	if (SIDE(bank) == B_SIDE_PLAYER)
+		ballId = GetMonData(&gPlayerParty[gBattlerPartyIndexes[bank]], MON_DATA_POKEBALL, 0);
+	else
+		ballId = GetMonData(&gEnemyParty[gBattlerPartyIndexes[bank]], MON_DATA_POKEBALL, 0);
+
 	return BallIdToItemId(ballId);
 }
 

@@ -1,50 +1,26 @@
 #include "defines.h"
 #include "defines_battle.h"
 #include "../include/event_data.h"
+#include "../include/random.h"
 #include "../include/constants/flags.h"
 #include "../include/constants/items.h"
-#include "../include/new/helper_functions.h"
+
+#include "../include/new/ability_tables.h"
+#include "../include/new/accuracy_calc.h"
 #include "../include/new/attackcanceler.h"
-#include "../include/random.h"
+#include "../include/new/attackcanceler_battle_scripts.h"
+#include "../include/new/damage_calc.h"
+#include "../include/new/helper_functions.h"
+#include "../include/new/move_tables.h"
 
-//Make sure Powder stops Inferno Overdrive
+//TODO: Make sure Powder stops Inferno Overdrive
 
-extern u8 BattleScript_MagicBounce[];
-extern u8 BattleScript_MoveUsedFlinched[]; //0x81D90B1
-extern u8 BattleScript_MoveUsedGravityPrevents[];
-extern u8 BattleScript_MoveUsedHealBlockPrevents[];
-extern u8 BattleScript_MoveUsedThroatChopPrevents[];
-extern u8 BattleScript_MoveUsedFailedPrimalWeather[];
-extern u8 BattleScript_MoveUsedPsychicTerrainPrevents[];
-extern u8 BattleScript_MoveUsedPowderPrevents[];
-extern u8 BattleScript_StanceChangeToBlade[];
-extern u8 BattleScript_StanceChangeToShield[];
-extern u8 BattleScript_ZMoveActivateStatus[];
-extern u8 BattleScript_ZMoveActivateDamaging[];
-extern u8 BattleScript_DarkTypePreventsPrankster[];
-extern u8 BattleScript_MoveUsedSkyBattlePrevents[];
-extern u8 BattleScript_DampStopsExplosion[];
-extern u8 BattleScript_TookAttack[];
-
-extern move_t GravityBanTable[];
-extern move_t ParentalBondBanList[];
-extern move_t TwoToFiveStrikesMoves[];
-extern move_t TwoStrikesMoves[];
-extern move_t ThreeStrikesMoves[];
-extern move_t MovesCanUnfreezeAttacker[];
-extern move_t SkyBattleBanTable[];
-extern move_t SpecialWholeFieldMoveTable[];
-extern ability_t MoldBreakerIgnoreAbilities[];
-
-extern bool8 ProtectAffects(u16 move, u8 bankAtk, u8 bankDef, bool8 set);
-extern s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* defender, u32 move, u16 sideStatus, u16 powerOverride, u8 effectivenessFlags, u8 typeOverride, u8 bankAtk, u8 bankDef, pokemon_t* party_data_atk, bool8 PartyCheck, bool8 IgnoreAttacker, bool8 CheckingConfusion);
-extern u8 TypeCalc(move_t, u8 bankAtk, u8 bankDef, pokemon_t* party_data_atk, bool8 CheckParty);
 extern s8 PriorityCalc(u8 bank, u8 action, u16 move);
 extern u8 CheckMoveLimitations(u8 bank, u8 unusableMoves, u8 check);
 
-void atk00_attackcanceler(void);
-u8 AtkCanceller_UnableToUseMove(void);
-u8 IsMonDisobedient(void);
+//This file's functions:
+static u8 AtkCanceller_UnableToUseMove(void);
+static u8 IsMonDisobedient(void);
 
 void atk00_attackcanceler(void)
 {
@@ -271,7 +247,7 @@ void atk00_attackcanceler(void)
     }
 }
 
-u8 AtkCanceller_UnableToUseMove(void)
+static u8 AtkCanceller_UnableToUseMove(void)
 {
 	int i;
     u8 effect = 0;
@@ -923,7 +899,7 @@ u8 AtkCanceller_UnableToUseMove(void)
     return effect;
 }
 
-u8 IsMonDisobedient(void)
+static u8 IsMonDisobedient(void)
 {
     s32 rnd;
     s32 calc;
@@ -1061,7 +1037,7 @@ u8 IsMonDisobedient(void)
         obedienceLevel = gBattleMons[gBankAttacker].level - obedienceLevel;
 
         calc = (Random() & 255);
-        if (calc < obedienceLevel && CanBePutToSleep(gBankAttacker))
+        if (calc < obedienceLevel && CanBePutToSleep(gBankAttacker, FALSE))
         {
             // try putting asleep
             int i;

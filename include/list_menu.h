@@ -5,12 +5,6 @@
 
 // Exported RAM declarations
 
-struct Multichoice 
-{
-	u32 stringPointer;
-	u32 boxSize;
-};
-
 //extern struct Multichoice gMultiChoice;
 
 struct ListMenu;

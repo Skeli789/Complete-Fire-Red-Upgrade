@@ -145,3 +145,6 @@ The Wide Guard protected\n[TARGET]!
 
 #org @gText_SetAuroraVeil
 [CURRENT_MOVE] protects [FD][36] team\nagainst physical and special moves!
+
+#org @gText_TauntWoreOff
+[SCRIPTING_BANK]'s Taunt\nwore off!

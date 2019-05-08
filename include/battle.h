@@ -307,6 +307,8 @@ struct BattleMove
 	u8 z_move_effect;
 };
 
+extern const struct BattleMove gBattleMoves[];
+
 #define FLAG_MAKES_CONTACT          0x1
 #define FLAG_PROTECT_AFFECTED       0x2
 #define FLAG_MAGIC_COAT_AFFECTED     0x4
@@ -1274,15 +1276,6 @@ struct PartyMenuViewing
 
 #define gPartyMenuView ((struct PartyMenuViewing*) 0x203B09C) //extern struct PartyMenuViewing gPartyMenuView;
 
-struct TerrainTableStruct
-{
-	u8 camouflageType;
-	u8 secretPowerEffect;
-	u16 secretPowerAnim;
-	u16 naturePowerMove;
-	u16 burmyForm;
-};
-
 enum EnduranceListings {ENUDRE_REG, ENDURE_STURDY, ENDURE_FOCUS_SASH};
 
 struct MegaData
@@ -1291,7 +1284,7 @@ struct MegaData
   u8 done[4];
   u8 state;
   u8 activeBank;
-  u8* script;
+  const u8* script;
   bool8 megaEvoInProgress : 1; //Used to tell the game whether or not the turn order should be recalculated
 };
 
@@ -1315,14 +1308,6 @@ struct ZMoveData
 	bool8 viewing : 1;
 	bool8 runningZEffect : 1;
 	bool8 viewingDetails : 1; //Not actually related to Z-Moves, I just felt like putting it here
-};
-
-struct SpecialZMoves
-{
-	u16 species;
-	u16 item;
-	u16 move;
-	u16 zmove;
 };
 
 extern struct BattleSpritesGfx* gMonSpritesGfx;

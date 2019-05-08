@@ -1,6 +1,8 @@
 #include "defines.h"
 #include "../include/list_menu.h"
 #include "../include/string_util.h"
+#include "../include/constants/moves.h"
+#include "../include/new/helper_functions.h"
 
 #ifdef EXPAND_MOVESETS
 	extern const struct LevelUpMove* const gLevelUpLearnsets[];
@@ -8,13 +10,14 @@
 	#define gLevelUpLearnsets ((struct LevelUpMove**) *((u32*) 0x8043E20)) //extern const struct LevelUpMove* const gLevelUpLearnsets[];
 #endif
 
-#define gMoveToLearn (*((u16*) 0x2024022))
+//#define gMoveToLearn (*((u16*) 0x2024022))
 #define sLearningMoveTableID (*((u8*) 0x2024028))
 #define sMoveRelearnerStruct ((struct MoveRelearner*) 0x203AAB4)
 #define gText_Cancel ((u8*) 0x84161C1)
 #define MAX_LEARNABLE_MOVES 50
 
 void GiveBoxMonInitialMoveset(struct BoxPokemon* boxMon);
+static move_t RandomizeMove(u16 move);
 
 void GiveBoxMonInitialMoveset(struct BoxPokemon* boxMon)
 {
@@ -26,12 +29,18 @@ void GiveBoxMonInitialMoveset(struct BoxPokemon* boxMon)
 			      && gLevelUpLearnsets[species][i].level == 0xFF); ++i)
     {
         struct LevelUpMove lvlUpMove = gLevelUpLearnsets[species][i];
+		u16 move = lvlUpMove.move;
+		
+		#ifdef UNBOUND
+		if (FlagGet(POKEMON_LEARNSET_RANDOMIZER_FLAG))
+			move = RandomizeMove(move);
+		#endif
 
         if (lvlUpMove.level > level)
             break;
 
-        if (GiveMoveToBoxMon(boxMon, lvlUpMove.move) == 0xFFFF)
-            DeleteFirstMoveAndGiveMoveToBoxMon(boxMon, lvlUpMove.move);
+        if (GiveMoveToBoxMon(boxMon, move) == 0xFFFF)
+            DeleteFirstMoveAndGiveMoveToBoxMon(boxMon, move);
     }
 }
 
@@ -64,6 +73,12 @@ u16 MonTryLearningNewMove(struct Pokemon* mon, bool8 firstMove)
     if (lvlUpMove.level == level)
     {
         gMoveToLearn = lvlUpMove.move;
+
+		#ifdef UNBOUND
+		if (FlagGet(POKEMON_LEARNSET_RANDOMIZER_FLAG))
+			gMoveToLearn = RandomizeMove(gMoveToLearn);
+		#endif
+
         ++sLearningMoveTableID;
         retVal = GiveMoveToMon(mon, gMoveToLearn);
     }
@@ -95,7 +110,13 @@ u16 MonTryLearningNewMoveAfterEvolution(struct Pokemon* mon, bool8 firstMove)
 	lvlUpMove = gLevelUpLearnsets[species][sLearningMoveTableID];
     if (lvlUpMove.level == level || lvlUpMove.level == 0)
     {
-        gMoveToLearn = lvlUpMove.move;
+		gMoveToLearn = lvlUpMove.move;
+		
+		#ifdef UNBOUND
+		if (FlagGet(POKEMON_LEARNSET_RANDOMIZER_FLAG))
+			gMoveToLearn = RandomizeMove(gMoveToLearn);
+		#endif
+        
         ++sLearningMoveTableID;
         retVal = GiveMoveToMon(mon, gMoveToLearn);
     }
@@ -148,7 +169,14 @@ u8 GetLevelUpMovesBySpecies(u16 species, u16* moves)
     for (i = 0; i < MAX_LEARNABLE_MOVES && !(gLevelUpLearnsets[species][i].level == 0 
 						&& gLevelUpLearnsets[species][i].level == 0xFF); ++i)
 	{
-         moves[numMoves++] = gLevelUpLearnsets[species][i].move;
+		u16 move = gLevelUpLearnsets[species][i].move;
+		
+		#ifdef UNBOUND
+		if (FlagGet(POKEMON_LEARNSET_RANDOMIZER_FLAG))
+			move = RandomizeMove(move);
+		#endif
+		
+		moves[numMoves++] = move;
 	}
 
     return numMoves;
@@ -186,3 +214,16 @@ void CreateLearnableMovesList(void)
     sMoveRelearnerStruct->numMenuChoices++;
     sMoveRelearnerStruct->numToShowAtOnce = LoadMoveRelearnerMovesList(sMoveRelearnerStruct->menuItems, sMoveRelearnerStruct->numMenuChoices);
 }*/
+
+#ifdef UNBOUND
+static move_t RandomizeMove(u16 move)
+{
+	move = (move * T1_READ_32(gSaveBlock2->playerTrainerId));
+	move %= NON_Z_MOVE_COUNT;
+	
+	if (move == MOVE_NONE || move == MOVE_STRUGGLE)
+		return move + 1;
+		
+	return move;
+}
+#endif

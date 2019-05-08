@@ -2,6 +2,7 @@
 #include "defines_battle.h"
 #include "../include/battle_string_ids.h"
 
+#include "../include/new/accuracy_calc.h"
 #include "../include/new/helper_functions.h"
 
 #define STAT_ANIM_PLUS1  15
@@ -16,7 +17,6 @@
 #define BattleScript_MistProtected (u8*) 0x81D8C3E
 
 extern void PrepareStringBattle(u16 stringId, u8 bank);
-extern bool8 JumpIfMoveAffectedByProtect(u16 move, u8 bankAtk, u8 bankDef);
 
 extern u8 BattleScript_AbilityNoStatLoss[];
 extern u8 BattleScript_AbilityNoSpecificStatLoss[];

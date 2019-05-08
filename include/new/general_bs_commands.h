@@ -56,7 +56,6 @@ extern u8 BattleScript_EnduredMsg[];
 #define BattleScript_SpikesFree (u8*) 0x81D8E0B
 extern u8 BattleScript_SideStatusWoreOffRet[];
 extern u8 BattleScript_StickyHoldActivates[];
-extern u8 BattleScript_CastformChange[];
 
 #define TEXT_BUFFER_SIDE_STATUS(move, status, side) 			\
 {																\

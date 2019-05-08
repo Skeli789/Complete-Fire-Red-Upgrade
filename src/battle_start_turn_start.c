@@ -1,57 +1,110 @@
 #include "defines.h"
 #include "defines_battle.h"
 #include "../include/event_data.h"
+#include "../include/random.h"
+#include "../include/constants/items.h"
 #include "../include/constants/songs.h"
 
 #include "../include/new/battle_start_turn_start.h"
+#include "../include/new/battle_start_turn_start_battle_scripts.h"
+#include "../include/new/cmd49.h"
+#include "../include/new/damage_calc.h"
 #include "../include/new/helper_functions.h"
+#include "../include/new/frontier.h"
 #include "../include/new/multi.h"
 #include "../include/new/mega.h"
-#include "../include/random.h"
+
+enum BattleBeginStates 
+{
+	GetTurnOrder,
+	ThirdTypeRemoval,
+	SwitchInAbilities,
+	Intimidate,
+	AmuletCoin_WhiteHerb,
+	AirBalloon,
+	TotemPokemon,
+	StartTurnEnd,
+};
+
+enum SpeedWarResults 
+{
+	FirstMon, 
+	SecondMon, 
+	SpeedTie,
+};
 
 extern void (* const sTurnActionsFuncsTable[])(void);
 extern void (* const sEndTurnFuncsTable[])(void);
 extern u8* const gBattleScriptsForMoveEffects[];
-extern const bank_t gTargetsByBank[4][4];
 extern const u16 gClassBasedBattleBGM[];
 extern const u16 gWildSpeciesBasedBattleBGM[];
 
-extern u8* DoMegaEvolution(u8 bank);
-extern u8* DoPrimalReversion(bank_t, u8 caseId);
-extern u8 GetMoveTypeSpecial(u8 bankAtk, move_t);
-extern bank_t GetNextMultiTarget(void) ;
-extern u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck);
-extern void CreateMegaIndicatorAfterAnim(void);
+const struct SpecialZMove gSpecialZMoveTable[] = 
+{
+	{SPECIES_RAICHU_A,				ITEM_ALORAICHUIUM_Z, 		MOVE_THUNDERBOLT, 		MOVE_STOKED_SPARKSURFER},
+	{SPECIES_DECIDUEYE,				ITEM_DECIDIUM_Z, 			MOVE_SPIRITSHACKLE,		MOVE_SINISTER_ARROW_RAID},
+	{SPECIES_EEVEE,					ITEM_EEVIUM_Z, 				MOVE_LASTRESORT,		MOVE_EXTREME_EVOBOOST},
+	{SPECIES_INCINEROAR,			ITEM_INCINIUM_Z, 			MOVE_DARKESTLARIAT,		MOVE_MALICIOUS_MOONSAULT},
+	{SPECIES_KOMMO_O,				ITEM_KOMMONIUM_Z,			MOVE_CLANGINGSCALES,	MOVE_CLANGOROUS_SOULBLAZE},
+	{SPECIES_LUNALA,				ITEM_LUNALIUM_Z,			MOVE_MOONGEISTBEAM,		MOVE_MENACING_MOONRAZE_MAELSTROM},
+	{SPECIES_NECROZMA_WINGS,		ITEM_LUNALIUM_Z,			MOVE_MOONGEISTBEAM,		MOVE_MENACING_MOONRAZE_MAELSTROM},
+	{SPECIES_LYCANROC,				ITEM_LYCANIUM_Z,			MOVE_STONEEDGE,			MOVE_SPLINTERED_STORMSHARDS},
+	{SPECIES_LYCANROC_N,			ITEM_LYCANIUM_Z,			MOVE_STONEEDGE,			MOVE_SPLINTERED_STORMSHARDS},
+	{SPECIES_LYCANROC_DUSK,			ITEM_LYCANIUM_Z,			MOVE_STONEEDGE,			MOVE_SPLINTERED_STORMSHARDS},
+	{SPECIES_MARSHADOW,				ITEM_MARSHADIUM_Z, 			MOVE_SPECTRALTHIEF,		MOVE_SOUL_STEALING_7_STAR_STRIKE},
+	{SPECIES_MEW,					ITEM_MEWNIUM_Z, 			MOVE_PSYCHIC,			MOVE_GENESIS_SUPERNOVA},
+	{SPECIES_MIMIKYU,				ITEM_MIMIKIUM_Z, 			MOVE_PLAYROUGH,			MOVE_LETS_SNUGGLE_FOREVER},
+	{SPECIES_MIMIKYU_BUSTED,		ITEM_MIMIKIUM_Z, 			MOVE_PLAYROUGH,			MOVE_LETS_SNUGGLE_FOREVER},
+	{SPECIES_PIKACHU,				ITEM_PIKANIUM_Z, 			MOVE_VOLTTACKLE,		MOVE_CATASTROPIKA},
+	{SPECIES_PIKACHU_CAP_ORIGINAL,	ITEM_PIKASHUNIUM_Z, 		MOVE_THUNDERBOLT,		MOVE_10000000_VOLT_THUNDERBOLT},
+	{SPECIES_PIKACHU_CAP_HOENN,		ITEM_PIKASHUNIUM_Z, 		MOVE_THUNDERBOLT,		MOVE_10000000_VOLT_THUNDERBOLT},
+	{SPECIES_PIKACHU_CAP_SINNOH,	ITEM_PIKASHUNIUM_Z, 		MOVE_THUNDERBOLT,		MOVE_10000000_VOLT_THUNDERBOLT},
+	{SPECIES_PIKACHU_CAP_UNOVA,		ITEM_PIKASHUNIUM_Z, 		MOVE_THUNDERBOLT,		MOVE_10000000_VOLT_THUNDERBOLT},
+	{SPECIES_PIKACHU_CAP_KALOS,		ITEM_PIKASHUNIUM_Z, 		MOVE_THUNDERBOLT,		MOVE_10000000_VOLT_THUNDERBOLT},
+	{SPECIES_PIKACHU_CAP_ALOLA,		ITEM_PIKASHUNIUM_Z, 		MOVE_THUNDERBOLT,		MOVE_10000000_VOLT_THUNDERBOLT},
+	{SPECIES_PIKACHU_CAP_PARTNER,	ITEM_PIKASHUNIUM_Z, 		MOVE_THUNDERBOLT,		MOVE_10000000_VOLT_THUNDERBOLT},
+	{SPECIES_PRIMARINA,				ITEM_PRIMARIUM_Z, 			MOVE_SPARKLINGARIA,		MOVE_OCEANIC_OPERETTA},
+	{SPECIES_SNORLAX,				ITEM_SNORLIUM_Z, 			MOVE_GIGAIMPACT,		MOVE_PULVERIZING_PANCAKE},
+	{SPECIES_SOLGALEO,				ITEM_SOLGANIUM_Z, 			MOVE_SUNSTEELSTRIKE,	MOVE_SEARING_SUNRAZE_SMASH},
+	{SPECIES_NECROZMA_MANE,			ITEM_SOLGANIUM_Z, 			MOVE_SUNSTEELSTRIKE,	MOVE_SEARING_SUNRAZE_SMASH},
+	{SPECIES_TAPU_KOKO,				ITEM_TAPUNIUM_Z, 			MOVE_NATURESMADNESS,	MOVE_GUARDIAN_OF_ALOLA},
+	{SPECIES_TAPU_BULU,				ITEM_TAPUNIUM_Z, 			MOVE_NATURESMADNESS,	MOVE_GUARDIAN_OF_ALOLA},
+	{SPECIES_TAPU_LELE,				ITEM_TAPUNIUM_Z, 			MOVE_NATURESMADNESS,	MOVE_GUARDIAN_OF_ALOLA},
+	{SPECIES_TAPU_FINI,				ITEM_TAPUNIUM_Z, 			MOVE_NATURESMADNESS,	MOVE_GUARDIAN_OF_ALOLA},
+	{SPECIES_NECROZMA_ULTRA,		ITEM_ULTRA_NECROZIUM_Z, 	MOVE_PHOTONGEYSER, 		MOVE_LIGHT_THAT_BURNS_THE_SKY},
+	{0xFFFF,						0xFFFF, 				0xFFFF,					0xFFFF}
+};
 
-extern u8 BattleScript_AirBalloonFloat[];
-extern u8 BattleScript_Totem[];
-extern u8 BattleScript_ElectricTerrainBattleBegin[];
-extern u8 BattleScript_GrassyTerrainBattleBegin[];
-extern u8 BattleScript_MistyTerrainBattleBegin[];
-extern u8 BattleScript_PsychicTerrainBattleBegin[];
-extern u8 BattleScript_BeakBlastSetUp[];
-extern u8 BattleScript_ShellTrapSetUp[];
-extern u8 BattleScript_FocusPunchSetUp[];
-extern u8 BattleScript_QuickClaw[];
-extern u8 BattleScript_NoTargetMoveFailed[];
+const u8 gStatStageRatios[][2] =
+{
+    {10, 40}, // -6
+    {10, 35}, // -5
+    {10, 30}, // -4
+    {10, 25}, // -3
+    {10, 20}, // -2
+    {10, 15}, // -1
+    {10, 10}, //  0
+    {15, 10}, //  1
+    {20, 10}, //  2
+    {25, 10}, //  3
+    {30, 10}, //  4
+    {35, 10}, //  5
+    {40, 10}  //  6
+};
 
-u16 GetMUS_ForBattle(void);
-u8 GetWhoStrikesFirst(bank_t, bank_t, bool8 ignoreMovePriorities);
-s8 PriorityCalc(u8 bank, u8 action, u16 move);
-s32 BracketCalc(u8 bank);
-u32 SpeedCalc(u8 bank);
-u32 SpeedCalcForParty(u8 side, pokemon_t*);
-
-void HandleNewBattleRamClearBeforeBattle(void) {
+void HandleNewBattleRamClearBeforeBattle(void) 
+{
 	gNewBS = Calloc(sizeof(struct NewBattleStruct));
 	gNewBS->MegaData = Calloc(sizeof(struct MegaData));
 	gNewBS->UltraData = Calloc(sizeof(struct UltraData));
 	gNewBS->ZMoveData = Calloc(sizeof(struct ZMoveData));
-	Memset((u8*) 0x203D800, 0x0, 0x100);
-	Memset((u8*) 0x203C020, 0x0, 0xE0);
+	Memset(FIRST_NEW_BATTLE_RAM_LOC, 0, (u32) LAST_NEW_BATTLE_RAM_LOC - (u32) FIRST_NEW_BATTLE_RAM_LOC);
+	//Memset((u8*) 0x203D800, 0x0, 0x100);
+	//Memset((u8*) 0x203C020, 0x0, 0xE0);
 }
 
-void SavePartyItems(void) {
+void SavePartyItems(void) 
+{
 	u16* items = ExtensionState.itemBackup = Malloc(sizeof(item_t) * PARTY_SIZE);
 	
 	if (ExtensionState.itemBackup != NULL) {
@@ -115,7 +168,7 @@ void BattleBeginFirstTurn(void)
 				
 				//Primal Reversion
 				while (*bank < gBattlersCount) {
-					u8* script = DoPrimalReversion(gBanksByTurnOrder[*bank], 0);
+					const u8* script = DoPrimalReversion(gBanksByTurnOrder[*bank], 0);
 					if(script) {
 						BattleScriptPushCursorAndCallback(script);
 						gBattleScripting->bank = gBanksByTurnOrder[*bank];
@@ -379,7 +432,7 @@ void RunTurnActionsFunctions(void)
 					u8 bank = gBanksByTurnOrder[i];
 					gActiveBattler = bank;
 					if (gNewBS->MegaData->chosen[bank] && !gNewBS->MegaData->done[bank] && !(gNewBS->ZMoveData->partyIndex[SIDE(bank)] & gBitTable[gBattlerPartyIndexes[bank]])) {
-						u8* script = DoMegaEvolution(bank);
+						const u8* script = DoMegaEvolution(bank);
 						if (script != NULL) 
 						{	
 							gNewBS->MegaData->chosen[bank] = 0;
@@ -403,7 +456,7 @@ void RunTurnActionsFunctions(void)
 						}
 					}
 					else if (gNewBS->UltraData->chosen[bank] && !gNewBS->UltraData->done[bank]) {
-						u8* script = DoMegaEvolution(bank);
+						const u8* script = DoMegaEvolution(bank);
 						if (script != NULL) 
 						{	
 							gNewBS->UltraData->chosen[bank] = 0;
@@ -812,7 +865,6 @@ void HandleAction_UseMove(void)
     gCurrentActionFuncId = ACTION_RUN_BATTLESCRIPT;
 }
 
-extern u32 PlayAnimationTable[];
 u16 GetMUS_ForBattle(void)
 {
     if (gBattleTypeFlags & BATTLE_TYPE_LINK)
@@ -830,14 +882,58 @@ u16 GetMUS_ForBattle(void)
 	}
 	
     if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
-    {
-		u8 trainerClass = gTrainers[gTrainerBattleOpponent_A].trainerClass;
+    {	
+		u16 song;
+		u8 trainerClass;
 		
-		if (gClassBasedBattleBGM[trainerClass])
-			return gClassBasedBattleBGM[trainerClass];
-		else if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER && VarGet(BATTLE_TOWER_SONG_OVERRIDE))
-			return VarGet(BATTLE_TOWER_SONG_OVERRIDE);
+		if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
+		{
+			//If either trainer is special, try to load their music
+			song = TryGetSpecialFrontierTrainerMusic(gTrainerBattleOpponent_A, FRONTIER_TRAINER_A);
+			if (song != 0)
+				return song;
+				
+			if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
+			{
+				song = TryGetSpecialFrontierTrainerMusic(gTrainerBattleOpponent_B, FRONTIER_TRAINER_B);
+				if (song != 0)
+					return song;
+			}
+			
+			//Then try to load class based music for either trainer
+			trainerClass = GetFrontierTrainerClassId(gTrainerBattleOpponent_A, FRONTIER_TRAINER_A);
+			
+			if (gClassBasedBattleBGM[trainerClass])
+				return gClassBasedBattleBGM[trainerClass];
+				
+			if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
+			{
+				trainerClass = GetFrontierTrainerClassId(gTrainerBattleOpponent_B, FRONTIER_TRAINER_B);
+			
+				if (gClassBasedBattleBGM[trainerClass])
+					return gClassBasedBattleBGM[trainerClass];
+			}
+			
+			//Then try loading the song override
+			song = VarGet(BATTLE_TOWER_SONG_OVERRIDE);
+			if (song != 0)
+				return song;
+		}
 		else
+		{
+			trainerClass = gTrainers[gTrainerBattleOpponent_A].trainerClass;
+
+			if (gClassBasedBattleBGM[trainerClass])
+				return gClassBasedBattleBGM[trainerClass];
+				
+			if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
+			{
+				trainerClass = gTrainers[gTrainerBattleOpponent_B].trainerClass;
+				if (gClassBasedBattleBGM[trainerClass])
+					return gClassBasedBattleBGM[trainerClass];
+			}
+		}
+
 		#ifdef UNBOUND
 			return BGM_BATTLE_BORRIUS_TRAINER;
 		#else
@@ -875,7 +971,7 @@ u16 LoadProperMusicForLinkBattles(void)
 // 0 = first mon moves first
 // 1 = second mon moves first
 // 2 = second mon moves first because it won a 50/50 roll
-u8 GetWhoStrikesFirst(bank_t bank1, bank_t bank2, bool8 ignoreMovePriorities) {
+u8 GetWhoStrikesFirst(u8 bank1, u8 bank2, bool8 ignoreMovePriorities) {
     s8 bank1_priority, bank2_priority;
 	s32 bank1_bracket, bank2_bracket;
 	u32 bank1_speed, bank2_speed;
@@ -1141,20 +1237,3 @@ u32 SpeedCalcForParty(u8 side, pokemon_t* party) {
 	}
     return speed;
 }
-
-const u8 gStatStageRatios[][2] =
-{
-    {10, 40}, // -6
-    {10, 35}, // -5
-    {10, 30}, // -4
-    {10, 25}, // -3
-    {10, 20}, // -2
-    {10, 15}, // -1
-    {10, 10}, //  0
-    {15, 10}, //  1
-    {20, 10}, //  2
-    {25, 10}, //  3
-    {30, 10}, //  4
-    {35, 10}, //  5
-    {40, 10}  //  6
-};

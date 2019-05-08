@@ -102,7 +102,6 @@ extern const u8 gTypeEffectiveness[124 * 3];
 #define BattleScript_MoveEnd (u8*) 0x81D694E
 #define BattleScript_Atk49 (u8*) 0x81D6954
 extern u8 BattleScript_ButItFailed[];
-#define gBattleTerrainTable ((struct BattleBackground*) *((u32*) 0x800F320))
 
 typedef u8 TrainerClassNames_t[13];
 #define gTrainerClassNames ((TrainerClassNames_t*) *((u32*) 0x811B4B4)) //0x823E558

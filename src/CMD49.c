@@ -1,10 +1,17 @@
 #include "defines.h"
 #include "defines_battle.h"
-#include "../include/constants/items.h"
-#include "../include/new/helper_functions.h"
-#include "../include/new/CMD49.h"
 #include "../include/random.h"
+#include "../include/constants/items.h"
 
+#include "../include/new/battle_start_turn_start.h"
+#include "../include/new/CMD49.h"
+#include "../include/new/cmd49_battle_scripts.h"
+#include "../include/new/form_change.h"
+#include "../include/new/helper_functions.h"
+#include "../include/new/move_battle_scripts.h"
+#include "../include/new/move_tables.h"
+
+//TODO:
 //Emergency Exit Spikes
 //Pickpocket Fix
 //Make sure there's no choice lock glitch
@@ -16,47 +23,7 @@ BattleScript_SpikesOnAttackerFainted
 BattleScript_SpikesOnTargetFainted
 */
 
-extern move_t MovesCanUnfreezeTarget[];
-extern move_t DanceMoveTable[];
-extern move_t TwoToFiveStrikesMoves[];
-extern move_t TwoStrikesMoves[];
-extern move_t Percent25RecoilMoves[];
-extern move_t Percent33RecoilMoves[];
-extern move_t Percent50RecoilMoves[];
-extern move_t Percent66RecoilMoves[];
-extern move_t Percent75RecoilMoves[];
-extern move_t Percent100RecoilMoves[];
-extern move_t SpecialWholeFieldMoveTable[];
-
-extern u8 BattleScript_PoisonTouch[];
-extern u8 BattleScript_KingsShield[];
-extern u8 BattleScript_SpikyShield[];
-extern u8 BattleScript_BanefulBunker[];
-extern u8 BattleScript_RageIsBuilding[];
-extern u8 BattleScript_BeakBlastBurn[];
-extern u8 BattleScript_Magician[];
-extern u8 BattleScript_Moxie[];
-extern u8 BattleScript_MindBlownDamage[];
-extern u8 BattleScript_LifeOrbDamage[];
-extern u8 BattleScript_Pickpocket[];
-extern u8 BattleScript_DancerActivated[];
-extern u8 BattleScript_MultiHitPrintStrings[];
-extern u8 BattleScript_FaintAttackerForExplosion[];
-extern u8 BattleScript_ExplosionAnim[];
-extern u8 BattleScript_PluckEat[];
-extern u8 BattleScript_EjectButton[];
-extern u8 BattleScript_RedCard[];
-extern u8 BattleScript_EmergencyExit[];
-extern u8 BattleScript_PrintCustomString[];
-extern u8 BattleScript_AbilityTransformed[];
-
-extern u8 FreedFromSkyDropString[];
-
-extern u32 SpeedCalc(u8 bank);
 extern bool8 SetMoveEffect2(void);
-extern void DoFormChange(u8 bank, u16 species, bool8 ReloadType, bool8 ReloadStats);
-
-extern u8* gBattleScriptsForMoveEffects[];
 
 enum
 {
@@ -114,10 +81,6 @@ enum
 	Force_Switch_Dragon_Tail,
 	Force_Switch_Red_Card
 };
-
-void atk49_moveend(void);
-bank_t GetNextMultiTarget(void);
-void SortBanksBySpeed(u8 banks[], bool8 slowToFast);
 
 void atk49_moveend(void) //All the effects that happen after a move is used
 {
@@ -191,7 +154,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 					case ABILITY_POISONTOUCH:
 						if (CheckContact(gCurrentMove, gBankAttacker)
 						&& ABILITY(gBankTarget) != ABILITY_SHIELDDUST
-						&& CanBePoisoned(gBankTarget, gBankAttacker)
+						&& CanBePoisoned(gBankTarget, gBankAttacker, TRUE)
 						&& umodsi(Random(), 100) < 30)
 						{
 							BattleScriptPushCursor();
@@ -233,7 +196,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			{
 				gProtectStructs[gBankTarget].banefulbunker_damage = 0;
 				if (gBattleMons[gBankAttacker].hp
-				&&  CanBePoisoned(gBankAttacker, gBankTarget)) //Target poisons Attacker
+				&&  CanBePoisoned(gBankAttacker, gBankTarget, TRUE)) //Target poisons Attacker
 				{
 					gBattleMons[gBankAttacker].status1 = STATUS_POISON;
 					gEffectBank = gActiveBattler = gBankAttacker;
@@ -282,7 +245,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			&& MOVE_HAD_EFFECT
 			&& TOOK_DAMAGE(gBankTarget)
 			&& gNewBS->BeakBlastByte & gBitTable[gBankTarget]
-			&& CanBeBurned(gBankAttacker))
+			&& CanBeBurned(gBankAttacker, TRUE))
 			{
 				BattleScriptPushCursor();
                 gBattlescriptCurrInstr = BattleScript_BeakBlastBurn;
@@ -1312,7 +1275,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
         gBattlescriptCurrInstr += 3;
 }
 
-const bank_t gTargetsByBank[4][4] = 
+static const bank_t gTargetsByBank[4][4] = 
 {
 	{B_POSITION_OPPONENT_LEFT, B_POSITION_OPPONENT_RIGHT, B_POSITION_PLAYER_RIGHT, 0xFF},	//Bank 0 - Player Left 
 	{B_POSITION_PLAYER_LEFT, B_POSITION_PLAYER_RIGHT, B_POSITION_OPPONENT_RIGHT, 0xFF}, 	//Bank 1 - Opponent Left

@@ -24,7 +24,7 @@
 
 /*
 NOTES: 
-	1. a lot of specials will not work unless you have chosen to expand the save block!
+	1. Many specials will not work unless you have chosen to expand the save block!
 	2. PC selection hack allows a lot all of the attribute getter/setter specials to reference boxed pokemon via var8003
 		-var8003 = 1: boxed pokemon (output from pc selection: box num in var8000, slot in var8001)
 		-else: menu pokemon (and slot in var8004, etc)
@@ -42,6 +42,7 @@ extern u8 AddPalRef(u8 Type, u16 PalTag);
 extern u8 BuildFrontierParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, bool8 ForPlayer, u8 side);
 
 extern const struct SwarmData gSwarmTable[];
+extern const species_t gSkyBattleBannedSpeciesList[];
 
 //Pokemon Specials//
 ///////////////////////////////////////////////////////////////////////////////////
@@ -769,11 +770,7 @@ void sp066_InflictPartyDamage(void) {
 		InflictPartyDamageOrHeal(&gPlayerParty[slot], dmg, switcher);
 }
 
-void sp067_GenerateRandomBattleTowerTeam(void)
-{
-	BuildFrontierParty(gPlayerParty, 0, TRUE, TRUE, B_SIDE_PLAYER);
-}
-
+//void sp067_GenerateRandomBattleTowerTeam(void) - In "src/build_pokemon.c"
 
 //Key Specials//
 ///////////////////////////////////////////////////////////////////////////////////
@@ -904,7 +901,7 @@ u16 sp03E_AddVariables(void)
 		sum = 0xFFFF;
 	}
 	
-	Var8004 = sum; //Set var in Var8004
+	VarSet(Var8004, sum); //Set var in Var8004
 	return overflow;
 }
 
@@ -926,7 +923,7 @@ u16 sp03F_SubtractVariables(void)
 	else
 		diff = var1 - var2;
 	
-	Var8004 = diff; //Set var in Var8004
+	VarSet(Var8004, diff); //Set var in Var8004
 	return underflow;
 }
 
@@ -955,8 +952,11 @@ u16 sp040_MultiplyVariables(void)
 
 u16 sp041_DivideVariables(void) 
 {
-	Var8004 = Var8004 / Var8005;
-	return Var8004 % Var8005; //Return remainder
+	u16 numerator = Var8004;
+	u16 denominator = Var8005;
+	
+	Var8004 = numerator / denominator;
+	return numerator % denominator; //Return remainder
 }
 
 
@@ -988,9 +988,9 @@ void sp024_AddTextByVariable(void)
 {
 #ifdef SAVE_BLOCK_EXPANSION
 	u8 multiIndex = Var8006;
-	u32 stringPointer = ((Var8004 << 16) | Var8005);
+	u8* stringPointer = (u8*) ((Var8004 << 16) | Var8005);
 	if (multiIndex <= 6)
-		gMultiChoice[multiIndex].stringPointer = stringPointer;
+		gMultiChoice[multiIndex].name = stringPointer;
 #endif
 }
 
@@ -1005,7 +1005,7 @@ void sp025_AddTextByPointer(void)
 #ifdef SAVE_BLOCK_EXPANSION
 	u8 multiIndex = Var8006;
 	if (multiIndex <= 6)
-		gMultiChoice[multiIndex].stringPointer = gLoadPointer;
+		gMultiChoice[multiIndex].name = gLoadPointer;
 #endif
 }
 
@@ -1060,33 +1060,46 @@ void sp18B_DisplayImagesFromTable(void) {
 //Battle Specials//
 ///////////////////////////////////////////////////////////////////////////////////
 
-
-void sp051_WildShinyBattle(void) {
-	return;
+bool8 CanMonParticipateInASkyBattle(struct Pokemon* mon)
+{
+	u16 species = mon->species;
+		
+	if (GetMonData(mon, MON_DATA_IS_EGG, NULL)
+	||  mon->hp == 0
+	||  CheckTableForSpecies(species, gSkyBattleBannedSpeciesList))
+		return FALSE;
+		
+	if (gBaseStats[species].type1 == TYPE_FLYING
+	||  gBaseStats[species].type2 == TYPE_FLYING
+	||  GetPartyAbility(mon) == ABILITY_LEVITATE)
+		return TRUE;
+		
+	return FALSE;
 }
 
-void sp052_TemporaryStatusInducer(void) {
-	return;
+bool8 sp051_CanTeamParticipateInSkyBattle(void) 
+{
+	for (int i = 0; i < PARTY_SIZE; ++i)
+	{
+		if (CanMonParticipateInASkyBattle(&gPlayerParty[i]))
+			return gSpecialVar_LastResult = TRUE;
+	}
+	
+	return gSpecialVar_LastResult = FALSE;
 }
 
-void sp053_TemporaryStatusCanceller(void) {
-	return;
-}
 
-void sp054_PermanentStatusInducer(void) {
-	return;
-}
-
-void sp055_PermanentStatusCanceller(void) {
-	return;
-}
-
+//u16 sp052_GenerateTowerTrainerId(void); //Code in "src/frontier.c"
+//void sp053_LoadFrontierIntroBattleMessage(void); //Code in "src/frontier.c"
+//void sp054_GetBattleTowerStreak(void) //Code in "src/frontier.c"
+//void sp055_UpdateBattleTowerStreak(void) //Code in "src/frontier.c"
+//void sp056_DetermineBattlePointsToGive(void) //Code in "src/frontier.c"
 
 //@Details: Buffers the map name where there is currently a swarm to buffer1,
 //			and the species name where there is currently a swarm to buffer2.
-void sp056_BufferSwarmText(void) 
+void sp058_BufferSwarmText(void) 
 {
-	u8 index = VarGet(SWARM_SPECIES_VAR);
+	u8 index = VarGet(SWARM_INDEX_VAR);
 	u8 mapName = gSwarmTable[index].mapName;
 	u16 species = gSwarmTable[index].species;
 	
@@ -1099,7 +1112,7 @@ void sp056_BufferSwarmText(void)
 //@Inputs:
 //		Var8000: Species
 //@Returns: 0 to given var if species is not roaming. 1 if it is and the name was buffered.
-bool8 sp057_BufferSpeciesRoamingText(void) 
+bool8 sp059_BufferSpeciesRoamingText(void) 
 {
 	u8 mapGroup;
 	u8 mapNum;
@@ -1114,11 +1127,11 @@ bool8 sp057_BufferSpeciesRoamingText(void)
 	return TRUE;
 }
 
-void sp058_WildDataSwitch(void) {
+void sp05A_WildDataSwitch(void) {
 	return;
 }
 
-void sp059_WildDataSwitchCanceller(void) {
+void sp05B_WildDataSwitchCanceller(void) {
 	return;
 }
 
@@ -1345,7 +1358,8 @@ u16 sp07E_GetTileNumber(void) {
 //@Returns: 1. Var 0x8004 - The tile's background byte
 //		  2. Var 0x8005 - The tile's behaviour bytes.
 //		  3. To a given variable the background byte.
-u16 sp07F_GetTileBehaviour(void) {
+u16 sp07F_GetTileBehaviour(void) 
+{
 	u16 x = Var8004;
 	u16 y = Var8005;
 	u32 field = MapGridGetMetatileField(x + 7, y + 7, 0xFF);

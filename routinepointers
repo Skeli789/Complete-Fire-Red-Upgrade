@@ -55,15 +55,17 @@ sp04D_TimerValueReached 0815FE94
 sp04E_SaveTimerValue 0815FE98
 sp04F_StartTimerAtTime 0815FE9C
 sp050_StoreTimerToVariable 0815FEA0
-#sp051_WildShinyBattle 0815FEA4
-#sp052_TemporaryStatusInducer 0815FEA8
-#sp053_TemporaryStatusCanceller 0815FEAC
-#sp054_PermanentStatusInducer 0815FEB0
-#sp055_PermanentStatusCanceller 0815FEB4
-sp056_BufferSwarmText 0815FEB8
-sp057_BufferSpeciesRoamingText 0815FEBC
-#sp058_WildDataSwitch 0815FEC0
-#sp059_WildDataSwitchCanceller 0815FEC4
+sp051_CanTeamParticipateInSkyBattle 0815FEA4
+sp052_GenerateTowerTrainer 0815FEA8
+sp053_LoadFrontierIntroBattleMessage 0815FEAC
+sp054_GetBattleTowerStreak 0815FEB0
+sp055_UpdateBattleTowerStreak 0815FEB4
+sp056_DetermineBattlePointsToGive 0815FEB8
+#0815FEBC
+sp058_BufferSwarmText 0815FEC0 
+sp059_BufferSpeciesRoamingText 0815FEC4 
+#sp05A_WildDataSwitch 0815FEC0
+#sp05B_WildDataSwitchCanceller 0815FEC4
 
 sp062_PokemonEraser 0815FEE8
 sp063_StatusChecker 0815FEEC

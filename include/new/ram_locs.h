@@ -2,7 +2,8 @@
 
 #include "../global.h"
 
-struct Clock {
+struct Clock 
+{
 	u16 year;
 	u8 dayOfWeek;
 	u8 month;
@@ -13,7 +14,8 @@ struct Clock {
 	u8 second;
 };
 
-struct GbaTimer {
+struct GbaTimer 
+{
 	u16 init;	// 4000108
 	u8 timerFlags;	// 400010A
 	u8 empty;		// 400010B
@@ -23,17 +25,19 @@ struct GbaTimer {
 };
 
 // keypad struct
-struct KeypadSetter {
+struct KeypadSetter 
+{
 	u16 keyMapToForce;	// key(s) to force
 	u16 keysToIgnore;		// key(s) to ignore
 	u8 keyForcingCounter;	// number of times to force said key(s)
 	u8 keyFlags;			// flags for specific key functions
 	u16 keyToRunScript;	// key to enable script to run
-	u32 scriptToRun;	// script to run from specified key
+	const u8* scriptToRun;	// script to run from specified key
 };
 
 // new pedometers
-struct Pedometers {
+struct Pedometers 
+{
 	u32 alwaysActive;
 	u32 large;
 	u16 medium;
@@ -147,7 +151,7 @@ struct Pedometers {
 
 		#define gScriptEnv1 ((struct ScriptContext*) 0x03000EB0)
 		#define gScriptEnv2 ((struct ScriptContext*) 0x03000F28)
-		#define gLoadPointer (*((u32*) 0x03000f14))
+		#define gLoadPointer (*((const u8**) 0x03000f14))
 		#define sScriptContext2Enabled (*((u8*) 0x3000F28))
 		#define gKeypadInitialCountdown ((*u16) 0x030030e0)
 		#define gMain (((struct Main*) 0x30030F0)[0])
@@ -171,13 +175,13 @@ struct Pedometers {
 #define gExpandedFlags ((u8*) 0x0203B174)
 #define gExpandedVars ((u16*) (0x0203B174 + 0x200))
 
-#define gMultiChoice ((struct Multichoice*) 0x203B774)	// up to 7 pointers, 8 bytes each
+#define gMultiChoice ((struct ListMenuItem*) 0x203B774)	// up to 7 pointers, 8 bytes each
 #define gPcSelectionTracker ((u8* 0x203B7AC)	// state tracker for pc selection
 #define gCreateSpriteTableSetter 0x203B7AD  // allow createsprite to load from a table as well
 #define gTimerValue (*(u16*) 0x203B7AE)
 #define gKeypadSetter ((struct KeypadSetter*) 0x203B7B0)	//12 bytes
 #define gPedometers ((struct Pedometers*) 0x203B7BC)		//12 bytes
-#define gWalkingScript (*(u32*) 0x203B7C8)
+#define gWalkingScript (*((const u8**) 0x203B7C8))
 
 // Dynamic Overworld Palettes
 //#define PalRefs ((PalRef*)0x203FF00)

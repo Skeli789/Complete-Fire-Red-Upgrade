@@ -8,60 +8,24 @@
 #include "../include/constants/flags.h"
 #include "../include/constants/trainers.h"
 
-#include "../include/new/helper_functions.h"
 #include "../include/new/battle_strings.h"
+#include "../include/new/battle_strings_2.h"
 #include "../include/new/frontier.h"
-
-#define EOS 0xFF
-
-//New Strings
-extern u8 BattleText_TwoTrainersWantToBattle[];
-extern u8 BattleText_ShadowWarriorAttacked[];
-extern u8 BattleText_InGamePartnerSentOutZGoN[];
-extern u8 BattleText_TwoTrainersSentPkmn[];
-extern u8 BattleText_Trainer2SentOutPkmn[];
-extern u8 BattleText_PartnerWithdrewPkmn[];
-extern u8 BattleText_PartnerSaysGo[];
-extern u8 BattleText_AttackerUsedZStatusMove[];
-extern u8 BattleText_TwoInGameTrainersDefeated[];
-extern u8 BattleText_PlayerLostToTwoInGameTrainers[];
-
-//Rewritten Strings
-extern u8 BattleText_TwoLinkTrainersWantToBattle[];
-extern u8 BattleText_Trainer1WantsToBattle[];
-extern u8 BattleText_LinkTrainerWantsToBattle[];
-extern u8 BattleText_WildPkmnAppeared6[];
-extern u8 BattleText_TwoWildPkmnAppeared[];
-extern u8 BattleText_WildPkmnAppearedPause[];
-extern u8 BattleText_WildPkmnAppeared[];
-extern u8 sText_FoePkmnPrefix2[];
-extern u8 sText_FoePkmnPrefix3[];
-extern u8 sText_FoePkmnPrefix4[];
-extern u8 sText_TheOpposingCapsNoSpace[];
-extern u8 sText_TheOpposingNoCaps[];
-extern u8 sText_Your[];
-extern u8 sText_YourCaps[];
+#include "../include/new/general_battle_strings.h"
+#include "../include/new/helper_functions.h"
+#include "../include/new/mega.h"
 
 extern u8* ZMoveNames[];
 extern u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
-extern u8* gMaleFrontierNamesTable[];
-extern u8* gFemaleFrontierNamesTable[];
 
-extern u8 GetFrontierTrainerClassId(u16 trainerId, u8 battlerNum);
-extern void GetFrontierTrainerName(u8* dst, u16 trainerId, u8 battlerNum);
-extern void CopyFrontierTrainerText(u8 whichText, u16 trainerId, u8 battlerNum);
 extern u8* GetTrainerBLoseText(void);
-extern u8* GetTrainerName(u8 bank);
-
-void PrepareStringBattle(u16 stringId, u8 bank);
-void BufferStringBattle(u16 stringID);
-void EmitPrintString(u8 bufferId, u16 stringID);
 
 #ifdef OPEN_WORLD_TRAINERS
-u8* GetOpenWorldTrainerName(bool8 female);
+static u8* GetOpenWorldTrainerName(bool8 female);
 #endif
 
-void PrepareStringBattle(u16 stringId, u8 bank) {
+void PrepareStringBattle(u16 stringId, u8 bank) 
+{
     gActiveBattler = bank;
     EmitPrintString(0, stringId);
     MarkBufferBankForExecution(gActiveBattler);
@@ -69,7 +33,8 @@ void PrepareStringBattle(u16 stringId, u8 bank) {
 
 const struct BattleMsgData** gStringInfo = ((const struct BattleMsgData**) 0x2039A34);
 
-void BufferStringBattle(u16 stringID) {
+void BufferStringBattle(u16 stringID) 
+{
     int i;
     const u8 *stringPtr = NULL;
 	
@@ -136,7 +101,8 @@ void BufferStringBattle(u16 stringID) {
 			if (gBattleTypeFlags & BATTLE_TYPE_SCRIPTED_WILD_1)
 				stringPtr = BattleText_WildPkmnAppeared6; //0x83FD297
 			#else
-            if (gBattleTypeFlags & BATTLE_TYPE_GHOST) {
+            if (gBattleTypeFlags & BATTLE_TYPE_GHOST) 
+			{
 				if (gBattleTypeFlags & BATTLE_TYPE_SCRIPTED_WILD_1)
 					stringPtr = BattleText_GhostAppeared; //0x83FD30D
 				else
@@ -405,7 +371,8 @@ void BufferStringBattle(u16 stringID) {
 
     default: // load a string from the table
 	DEFAULT_STRING_LOAD:
-        if (stringID >= BATTLESTRINGS_COUNT + BATTLESTRINGS_ID_ADDER) {
+        if (stringID >= BATTLESTRINGS_COUNT + BATTLESTRINGS_ID_ADDER) 
+		{
             gDisplayedStringBattle[0] = EOS;
             return;
         }
@@ -577,34 +544,19 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
                 toCpy = text;
                 break;
             case B_TXT_LAST_ABILITY: // last used ability
-                toCpy = gAbilityNames[gLastUsedAbility];
-				
-				if (toCpy[3] == 0x8 || toCpy[3] == 0x9) //Expanded Ability Names
-					toCpy = T2_READ_PTR(toCpy);
+                toCpy = GetAbilityName(gLastUsedAbility);
                 break;
             case B_TXT_ATK_ABILITY: // attacker ability
-                toCpy = gAbilityNames[gAbilitiesPerBank[gBankAttacker]];
-				
-				if (toCpy[3] == 0x8 || toCpy[3] == 0x9) //Expanded Ability Names
-					toCpy = T2_READ_PTR(toCpy);
+                toCpy = GetAbilityName(gAbilitiesPerBank[gBankAttacker]);
                 break;
             case B_TXT_DEF_ABILITY: // target ability
-                toCpy = gAbilityNames[gAbilitiesPerBank[gBattlerTarget]];
-				
-				if (toCpy[3] == 0x8 || toCpy[3] == 0x9) //Expanded Ability Names
-					toCpy = T2_READ_PTR(toCpy);
+                toCpy = GetAbilityName(gAbilitiesPerBank[gBattlerTarget]);
                 break;
             case B_TXT_SCR_ACTIVE_ABILITY: // scripting active ability
-                toCpy = gAbilityNames[gAbilitiesPerBank[gBattleScripting->bank]];
-				
-				if (toCpy[3] == 0x8 || toCpy[3] == 0x9) //Expanded Ability Names
-					toCpy = T2_READ_PTR(toCpy);
+                toCpy = GetAbilityName(gAbilitiesPerBank[gBattleScripting->bank]);
                 break;
             case B_TXT_EFF_ABILITY: // effect battlerId ability
-                toCpy = gAbilityNames[gAbilitiesPerBank[gEffectBank]];
-				
-				if (toCpy[3] == 0x8 || toCpy[3] == 0x9) //Expanded Ability Names
-					toCpy = T2_READ_PTR(toCpy);
+                toCpy = GetAbilityName(gAbilitiesPerBank[gEffectBank]);
                 break;
             case B_TXT_TRAINER1_CLASS: // trainer class name
                 if (gTrainerBattleOpponent_A == 0x400) //Lol Secret Bases
@@ -647,7 +599,7 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 				}
                 else if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
                 {
-                    GetFrontierTrainerName(text, gTrainerBattleOpponent_A, 0);
+                    CopyFrontierTrainerName(text, gTrainerBattleOpponent_A, 0);
                     toCpy = text;
                 }
                 else
@@ -698,7 +650,7 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
                     CopyTrainerTowerPlayerWonText(gStringVar4, 0);
                     toCpy = gStringVar4;
                 }
-                else if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER && gTrainerBattleOpponent_A == VarGet(BATTLE_TOWER_TID))
+                else if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
                 {
                     CopyFrontierTrainerText(FRONTIER_PLAYER_WON_TEXT, gTrainerBattleOpponent_A, 0);
                     toCpy = gStringVar4;
@@ -714,7 +666,7 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
                     CopyTrainerTowerPlayerLostText(gStringVar4, 0);
                     toCpy = gStringVar4;
                 }
-                if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER && gTrainerBattleOpponent_A == VarGet(BATTLE_TOWER_TID))
+                else if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
                 {
                     CopyFrontierTrainerText(FRONTIER_PLAYER_LOST_TEXT, gTrainerBattleOpponent_A, 0);
                     toCpy = gStringVar4;
@@ -795,7 +747,7 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
             case B_TXT_TRAINER2_NAME: //In FR, Lost to Trainer Tower Opponent Text / Trainer Tower Opponent Win Text
                 if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
                 {
-                    GetFrontierTrainerName(text, VarGet(SECOND_OPPONENT_VAR), 1);
+                    CopyFrontierTrainerName(text, VarGet(SECOND_OPPONENT_VAR), 1);
                     toCpy = text;
                 }
                 else if (gBattleTypeFlags & BATTLE_TYPE_TRAINER_TOWER)
@@ -849,7 +801,7 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
                 toCpy = gTrainerClassNames[GetFrontierTrainerClassId(VarGet(PARTNER_VAR), 2)];
                 break;
             case B_TXT_PARTNER_NAME:
-                GetFrontierTrainerName(text, VarGet(PARTNER_VAR), 2);
+                CopyFrontierTrainerName(text, VarGet(PARTNER_VAR), 2);
                 toCpy = text;
                 break;
 			case B_TXT_AFFECTS_TARGET_SIDE:
@@ -877,7 +829,7 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
                     toCpy = sText_YourCaps;
 				break;
 			case B_TXT_SCRIPTING_TRAINER:
-				 toCpy = GetTrainerName(gBattleScripting->bank);
+				 toCpy = (u8*) GetTrainerName(gBattleScripting->bank);
 				 break;
             }
 
@@ -977,8 +929,23 @@ void EmitPrintSelectionString(u8 bufferId, u16 stringID)
     PrepareBufferDataTransfer(bufferId, gBattleBuffersTransferData, sizeof(struct BattleMsgData) + 4);
 }
 
+const u8* GetAbilityName(u8 ability)
+{
+    const u8* ptr = gAbilityNames[ability];
+				
+	if (ptr[3] == 0x8 || ptr[3] == 0x9) //Expanded Ability Names
+		ptr = T1_READ_PTR(ptr);
+
+	return ptr;
+}
+
+void CopyAbilityName(u8* dst, const u8* src)
+{
+	StringCopy(dst, src);
+}
+
 #ifdef OPEN_WORLD_TRAINERS
-u8* GetOpenWorldTrainerName(bool8 female)
+static u8* GetOpenWorldTrainerName(bool8 female)
 {
 	u8 nameId = gSpecialVar_LastTalked * MathMax(1, gSaveBlock1->location.mapGroup) * MathMax(1, gSaveBlock1->location.mapNum);
 	

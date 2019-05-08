@@ -78,7 +78,7 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 			
 		case EFFECT_ABSORB:
 		AI_DRAIN_HP_CHECK: ;
-			if (atkItemEffect == ITEM_EFFECT_BIGROOT || GetHealthPercentage(bankAtk) <= 50)
+			if (atkItemEffect == ITEM_EFFECT_BIG_ROOT || GetHealthPercentage(bankAtk) <= 50)
 				viability += 5;
 			break;
 			
@@ -362,7 +362,7 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 				viability += 6;
 			else if (atkAbility == ABILITY_MERCILESS)
 				viability += 6;
-			else if (CanBePoisoned(bankDef, bankAtk))
+			else if (CanBePoisoned(bankDef, bankAtk, TRUE))
 				viability += 5;	//AI enjoys poisoning
 			break;
 			
@@ -374,13 +374,7 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 		case EFFECT_REST:
 			if (GetHealthPercentage(bankAtk) > 50)
 				break;
-			else if (atkAbility == ABILITY_LEAFGUARD && (gBattleWeather & WEATHER_SUN_ANY))
-				break;
-			else if (CheckGrounding(bankAtk) == GROUNDED && (gBattleTerrain == ELECTRIC_TERRAIN || gBattleTerrain == MISTY_TERRAIN))
-				break;
-			else if (IsUproarBeingMade())
-				break;
-			else if (!(CanBePutToSleep(bankAtk)))
+			else if (!(CanBePutToSleep(bankAtk, FALSE)))
 				break;
 			else if (atkItemEffect == ITEM_EFFECT_CURE_SLP || atkItemEffect == ITEM_EFFECT_CURE_STATUS)
 				viability += 5;
@@ -487,7 +481,7 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 				viability += 6;
 			else if (defStatus2 & (STATUS2_CONFUSION | STATUS2_INFATUATION))
 				viability += 6;
-			else if (CanBeParalyzed(bankDef))
+			else if (CanBeParalyzed(bankDef, TRUE))
 				viability += 5;
 			break;
 			
@@ -1056,7 +1050,7 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 			}
 			else if (STAT_STAGE(bankDef, STAT_STAGE_ATK) > STAT_STAGE(bankDef, STAT_STAGE_SPATK))
 				viability += 6;
-			else if (CanBeBurned(bankDef))
+			else if (CanBeBurned(bankDef, TRUE))
 				viability += 5;
 			break;
 			
@@ -1078,7 +1072,7 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 			
 		case EFFECT_INGRAIN:
 			// checks related to trapping self?
-			if (atkItemEffect == ITEM_EFFECT_BIGROOT)
+			if (atkItemEffect == ITEM_EFFECT_BIG_ROOT)
 				viability += 7;
 			else
 				viability += 6;
@@ -1352,7 +1346,7 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 			break;
 			
 		case EFFECT_RELIC_SONG:
-			if (CanBePutToSleep(bankDef))
+			if (CanBePutToSleep(bankDef, TRUE))
 				viability += 5;
 			break;
 			

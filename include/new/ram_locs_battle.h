@@ -70,7 +70,7 @@ typedef u8 Buffer_t[0x200];
 /*u8*/  #define gCritMultiplier (*((u8*) 0x2023D71))
 /*u8*/  #define gMultiHitCounter (*((u8*) 0x2023D72))
 //Padding 0x2023D73
-/*u32*/ #define gBattlescriptCurrInstr (*((u8**) 0x2023D74))
+/*u32*/ #define gBattlescriptCurrInstr (*((const u8**) 0x2023D74))
 //Padding 0x2023D78?
 /*u8*/  #define gActionForBanks ((u8*) 0x2023D7C)
 
@@ -145,6 +145,7 @@ typedef u8 Buffer_t[0x200];
 		#define gAnimScriptCallback (*((u32*) 0x2037EDC))
 /*s8*/	#define gAnimFramesToWait (*((s8*) 0x2037EE0))
 /*s16*/ #define gBattleAnimArgs ((s16*) 0x2037F02)
+/*u16*/	#define sAnimMoveIndex (*((u16*) 0x2037F18))
 /*u8*/  #define gBattleAnimAttacker (*((u8*) 0x2037F1A))
 /*u8*/  #define gBattleAnimTarget (*((u8*) 0x2037F1B))
 
@@ -173,3 +174,6 @@ typedef u8 Buffer_t[0x200];
 #define ShakerData (((u8*) 0x203F70C))
 #define ForceSwitchHelper (*((u8*) 0x203F70E))
 #define AbilityPopUpHelper (*((u8*) 0x203F70F))
+
+#define FIRST_NEW_BATTLE_RAM_LOC ((u8*) 0x203F700)
+#define LAST_NEW_BATTLE_RAM_LOC ((u8*) 0x203F710)

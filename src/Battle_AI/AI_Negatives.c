@@ -383,8 +383,7 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 		
 		case EFFECT_SLEEP:
 		AI_CHECK_SLEEP: ;
-			if (!CanBePutToSleep(bankDef)
-			|| (!CanBeGeneralStatused(bankDef))
+			if (!CanBePutToSleep(bankDef, TRUE)
 			|| (MoveBlockedBySubstitute(move, bankAtk, bankDef)))
 				viability -= 10;
 			break;
@@ -709,7 +708,7 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 			if (move == MOVE_TOXICTHREAD && STAT_STAGE(bankDef, STAT_STAGE_SPEED) > 0)
 				break;
 		AI_POISON_CHECK: ;
-			if (!CanBePoisoned(bankDef, bankAtk)
+			if (!CanBePoisoned(bankDef, bankAtk, TRUE)
 			|| MoveBlockedBySubstitute(move, bankAtk, bankDef))
 				viability -= 10;
 			break;
@@ -793,7 +792,7 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 		//case EFFECT_PARALYZE_HIT:
 		case EFFECT_PARALYZE:
 		AI_PARALYZE_CHECK: ;
-			if (!CanBeParalyzed(bankDef)
+			if (!CanBeParalyzed(bankDef, TRUE)
 			|| MoveBlockedBySubstitute(move, bankAtk, bankDef))
 				viability -= 10;
 			else if (move == MOVE_THUNDERWAVE
@@ -1245,7 +1244,7 @@ u8 AI_Script_Negatives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 		
 		case EFFECT_WILL_O_WISP:
 		AI_BURN_CHECK: ;
-			if (!CanBeBurned(bankDef)
+			if (!CanBeBurned(bankDef, TRUE)
 			|| MoveBlockedBySubstitute(move, bankAtk, bankDef))
 				viability -= 10;
 			break;

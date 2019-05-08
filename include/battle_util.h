@@ -1,5 +1,4 @@
-#ifndef GUARD_BATTLE_UTIL_H
-#define GUARD_BATTLE_UTIL_H
+#pragma once
 
 #include "global.h"
 
@@ -52,6 +51,7 @@
 #define BS_GET_OPPONENT2                14
 
 
+/*
 void __attribute__((long_call)) PressurePPLose(u8 bankDef, u8 bankAtk, u16 move);
 void __attribute__((long_call)) PressurePPLoseOnUsingPerishSong(u8 bankAtk);
 void __attribute__((long_call)) PressurePPLoseOnUsingImprision(u8 bankAtk);
@@ -88,5 +88,4 @@ void __attribute__((long_call)) HandleAction_RunBattleScript(void);
 u8 __attribute__((long_call)) GetMoveTarget(u16 move, u8 useMoveTarget);
 u8 __attribute__((long_call)) IsMonDisobedient(void);
 void __attribute__((long_call)) MarkBufferBankForExecution(u8 battlerId);
-
-#endif // GUARD_BATTLE_UTIL_H
+*/

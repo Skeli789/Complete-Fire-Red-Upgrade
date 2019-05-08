@@ -298,16 +298,16 @@ BattleScript_WeaknessPolicy:
 	
 WP_Atk:
 	setbyte 0x2023FDF 0x0
-	playstatchangeanimation BANK_ATTACKER STAT_ANIM_ATK | STAT_ANIM_SPATK  STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES
-	setbyte STAT_CHANGE_BYTE STAT_ATK | INCREASE_1
-	statbuffchange STAT_ATTACKER | STAT_BS_PTR WP_SpAtk
+	playstatchangeanimation BANK_TARGET STAT_ANIM_ATK | STAT_ANIM_SPATK  STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES | STAT_ANIM_BY_TWO
+	setstatchanger STAT_ATK | INCREASE_2
+	statbuffchange STAT_TARGET | STAT_BS_PTR WP_SpAtk
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 WP_SpAtk
 	printfromtable 0x83FE57C
 	waitmessage DELAY_1SECOND
 
 WP_SpAtk:
-	setbyte STAT_CHANGE_BYTE STAT_SP_ATK | INCREASE_1
-	statbuffchange STAT_ATTACKER | STAT_BS_PTR WP_Ret
+	setstatchanger STAT_SP_ATK | INCREASE_2
+	statbuffchange STAT_TARGET | STAT_BS_PTR WP_Ret
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 WP_Ret
 	printfromtable 0x83FE57C
 	waitmessage DELAY_1SECOND

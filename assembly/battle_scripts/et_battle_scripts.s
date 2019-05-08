@@ -10,6 +10,7 @@
 .global BattleScript_SeaOfFireDamage
 .global BattleScript_GrassyTerrainHeal
 .global BattleScript_AquaRing
+.global BattleScript_LeechSeedTurnDrain
 .global BattleScript_PoisonHeal
 .global BattleScript_MagnetRiseEnd
 .global BattleScript_TelekinesisEnd
@@ -43,6 +44,7 @@
 .global BattleScript_ShieldsDownToMeteor
 .global BattleScript_FlowerGift
 .global BattleScript_MonTookFutureAttack
+.global BattleScript_PrintCustomStringEnd2
 .global BattleScript_PrintCustomStringEnd3
 
 .global TrickRoomEndString
@@ -141,6 +143,33 @@ BattleScript_AquaRing:
 	setword BATTLE_STRING_LOADER AquaRingHealString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+	end2
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_LeechSeedTurnDrain:
+	playanimation BANK_ATTACKER, ANIM_LEECH_SEED_DRAIN, ANIM_ARG_1
+	orword HIT_MARKER, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_NON_ATTACK_DMG
+	graphicalhpupdate BANK_ATTACKER
+	datahpupdate BANK_ATTACKER
+	copyword DAMAGE_LOC HP_DEALT
+	callasm TryManipulateDamageForLeechSeedBigRoot
+	jumpifability BANK_ATTACKER, ABILITY_LIQUIDOOZE, BattleScript_LeechSeedTurnPrintLiquidOoze
+	manipulatedamage 0x0
+	setbyte MULTISTRING_CHOOSER, 0x3
+	goto BattleScript_LeechSeedTurnPrintAndUpdateHp
+
+BattleScript_LeechSeedTurnPrintLiquidOoze:
+	setbyte MULTISTRING_CHOOSER, 0x4
+
+BattleScript_LeechSeedTurnPrintAndUpdateHp:
+	orword HIT_MARKER, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_NON_ATTACK_DMG
+	graphicalhpupdate BANK_TARGET
+	datahpupdate BANK_TARGET
+	printfromtable 0x83FE558 @;gLeechSeedStringIds
+	waitmessage DELAY_1SECOND
+	faintpokemon BANK_ATTACKER 0x0 0x0
+	faintpokemon BANK_TARGET 0x0 0x0
 	end2
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -316,19 +345,23 @@ PrintTimerString:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_ToxicOrb:
-	setbyte POISONED_BY 0x3
-	orword HIT_MARKER 0x2100 @Ignore Safeguard and Substitute
-	setbyte EFFECT_BYTE 0x6
-	seteffecttarget
+	statusanimation BANK_EFFECT
+	setword BATTLE_STRING_LOADER ToxicOrbString
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	refreshhpbar BANK_EFFECT
+	waitstateatk
 	end2
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_FlameOrb:
-	setbyte POISONED_BY 0x3
-	orword HIT_MARKER 0x2100 @Ignore Safeguard and Substitute
-	setbyte EFFECT_BYTE 0x3
-	seteffecttarget
+	statusanimation BANK_EFFECT
+	setword BATTLE_STRING_LOADER FlameOrbString
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	refreshhpbar BANK_EFFECT
+	waitstateatk
 	end2
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -519,7 +552,8 @@ BattleScript_LostMultiBattleTower:
 	waitstateatk
 	trainerslidein BANK_ATTACKER
 	waitstateatk
-	printstring 0x174 @STRINGID_TRAINER1WINTEXT
+	setword BATTLE_STRING_LOADER TrainerAWinString
+	printstring 0x184
 	callasm TrainerSlideOut+1
 	waitstateatk
 	trainerslidein 0x3
@@ -537,12 +571,17 @@ BattleScript_LostBattleTower:
 	waitstateatk
 	trainerslidein BANK_ATTACKER
 	waitstateatk
-	printstring 0x174 @STRINGID_TRAINER1WINTEXT
+	setword BATTLE_STRING_LOADER TrainerAWinString
+	printstring 0x184
 	flee
 	waitmessage DELAY_1SECOND
 	end2
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_PrintCustomStringEnd2:
+	call BattleScript_PrintCustomString
+	end2
 
 BattleScript_PrintCustomStringEnd3:
 	call BattleScript_PrintCustomString
@@ -586,6 +625,7 @@ ToMeteorString: .byte 0xFD, 0x0F, 0xB4, 0xE7, 0x00, 0xFD, 0x18, 0xFE, 0xD8, 0xD9
 TransformedString: .byte 0xFD, 0x13, 0x00, 0xE8, 0xE6, 0xD5, 0xE2, 0xE7, 0xDA, 0xE3, 0xE6, 0xE1, 0xD9, 0xD8, 0xAB, 0xFF
 TrainerBLoseString: .byte 0xFD, 0x30, 0xFF
 TrainerBVictoryString: .byte 0xFD, 0x31, 0xFF
+TrainerAWinString: .byte 0xFD, 0x25, 0xFF
 
 .align 2
 SeaOfFireDamageASM:

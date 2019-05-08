@@ -1,29 +1,26 @@
 #include "defines.h"
-#include "../include/new/helper_functions.h"
 #include "../include/fieldmap.h"
 #include "../include/palette.h"
+
 #include "../include/new/dns.h"
+#include "../include/new/dns_data.h"
+#include "../include/new/helper_functions.h"
 
 #define DNSHelper ((u8*) 0x2021691)
 
 typedef bool8 IgnoredPalT[16];
 #define gIgnoredDNSPalIndices ((IgnoredPalT*) 0x203B830)
 
-extern void TransferPlttBuffer(void);
+static const u8 gDaysInAMonth[] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+
+
+//This file's functions:
 static void BlendFadedPalettes(u32 selectedPalettes, u8 coeff, u32 color);
 static void BlendFadedPalette(u16 palOffset, u16 numEntries, u8 coeff, u32 blendColor, bool8 ignoredIndices[32][16]);
-
 static bool8 IsDate1BeforeDate2(u32 y1, u32 m1, u32 d1, u32 y2, u32 m2, u32 d2);
 static bool8 IsLeapYear(u32 year);
 static bool8 IsLastDayInMonth(u32 year, u8 month, u8 day);
 static void IncreaseDateByOneDay(u32* year, u8* month, u8* day);
-u32 GetMinuteDifference(u32 startYear, u8 startMonth, u8 startDay, u8 startHour, u8 startMin, u32 endYear, u8 endMonth, u8 endDay, u8 endHour, u8 endMin);
-u32 GetHourDifference(u32 startYear, u8 startMonth, u8 startDay, u8 startHour, u32 endYear, u8 endMonth, u8 endDay, u8 endHour);
-u32 GetDayDifference(u32 startYear, u8 startMonth, u8 startDay, u32 endYear, u8 endMonth, u8 endDay);
-u32 GetMonthDifference(u32 startYear, u8 startMonth, u32 endYear, u8 endMonth);
-u32 GetYearDifference(u32 startYear, u32 endYear);
-
-const u8 gDaysInAMonth[] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
 void TransferPlttBuffer(void)
 {

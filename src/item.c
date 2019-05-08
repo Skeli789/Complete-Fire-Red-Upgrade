@@ -1,44 +1,68 @@
 #include "defines.h"
-#include "../include/new/helper_functions.h"
-#include "../include/constants/moves.h"
+#include "../include/constants/hold_effects.h"
 #include "../include/constants/items.h"
+#include "../include/constants/moves.h"
+
+#include "../include/new/helper_functions.h"
+#include "../include/new/item.h"
 
 u8 ItemId_GetSecondaryId(u16 itemId);
 
 extern u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
 
-u8* ItemId_GetName(u16 itemId) {
+u8* ItemId_GetName(u16 itemId)
+{
 	u8* name = gItems[SanitizeItemId(itemId)].name;
-	
+
 	if (name[3] == 0x8) //Expanded Item Names
 		name = T1_READ_PTR(name);
     return name;
 }
 
 
-u8 ItemId_GetSecondaryId(u16 itemId) {
+u8 ItemId_GetHoldEffect(u16 itemId)
+{
+    return gItems[SanitizeItemId(itemId)].holdEffect;
+}
+
+u8 ItemId_GetHoldEffectParam(u16 itemId)
+{
+    return gItems[SanitizeItemId(itemId)].holdEffectParam;
+}
+
+u8 ItemId_GetSecondaryId(u16 itemId)
+{
     return gItems[SanitizeItemId(itemId)].secondaryId;
 }
 
+bool8 IsMegaStone(u16 item)
+{
+	return ItemId_GetHoldEffect(item) == ITEM_EFFECT_MEGA_STONE;
+}
 
+bool8 IsZCrystal(u16 item)
+{
+	return ItemId_GetHoldEffect(item) == ITEM_EFFECT_Z_CRYSTAL;
+}
 
-
+//TM + HMs////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #ifdef EXPANDED_TMSHMS
-	extern const u32 gTMHMLearnsets[NUM_SPECIES][4];
-	extern const u16 gTMHMMoves[NUM_TMSHMS];	
+	typedef u32 TM_HM_T[4]; //extern const u32 gTMHMLearnsets[NUM_SPECIES][4];
 #else
-	const gTMHMLearnsets[][2];
-	const gTMHMMoves[];
+	typedef u32 TM_HM_T[2]; //extern const u32 gTMHMLearnsets[NUM_SPECIES][2];
 #endif
 
+#define gTMHMLearnsets ((TM_HM_T*) *((u32*) 0x8043C68))
+#define gTMHMMoves ((const u16*) *((u32*) 0x8125A8C))
 
-u32 CanMonLearnTMHM(struct Pokemon *mon, u8 tm) {
+u32 CanMonLearnTMHM(struct Pokemon* mon, u8 tm)
+{
     u16 species = GetMonData(mon, MON_DATA_SPECIES2, 0);
     if (species == SPECIES_EGG)
 	{
         return 0;
     }
-	
+
 	u32 mask;
 	if (tm < 32)
 	{
@@ -54,12 +78,12 @@ u32 CanMonLearnTMHM(struct Pokemon *mon, u8 tm) {
 	else if (tm >= 64 && tm < 96)
 	{
 		mask = 1 << (tm - 64);
-		return gTMHMLearnsets[species][2] & mask; 
+		return gTMHMLearnsets[species][2] & mask;
 	}
 	else if (tm >= 96 && tm < 128)
 	{
 		mask = 1 << (tm - 96);
-		return gTMHMLearnsets[species][3] & mask; 		
+		return gTMHMLearnsets[species][3] & mask;
 	}
 	#endif
 	else
@@ -73,9 +97,9 @@ u16 ItemIdToBattleMoveId(u16 item) {
 	#ifdef EXPANDED_TMSHMS
 		u16 tmNum = ItemId_GetSecondaryId(item);	// secondary id -> tm num
 	#else
-		u16 tmNum = item - ITEM_TM01_FOCUS_PUNCH;
+		u16 tmNum = item - ITEM_TM01;
 	#endif
-    return gTMHMMoves[tmNum];	
+    return gTMHMMoves[tmNum];
 }
 
 
@@ -113,7 +137,7 @@ u16 RefineTmOrdering(void) {
 	#else
 		return ITEM_TM50;
 	#endif
-}	
+}
 
 
 
@@ -124,13 +148,13 @@ void StringAppendFullMoveName(u8 *dest, u8 *src) {
 		i = -2;
 	else
 		i = -1;
-	
+
     while (i < MOVE_NAME_LENGTH)
 	{
 		dest++;
 		i++;
 	}
-	
+
     StringCopy(dest, src);
 	dest++;
 	u8 end = 0xFF;
@@ -141,7 +165,7 @@ void StringAppendFullMoveName(u8 *dest, u8 *src) {
 void LoadTmHmName(u8 *dest, u16 itemId) {
 	u16 tmNum = ItemId_GetSecondaryId(itemId);
 	StringCopy(&gStringVar4[0], (void*) 0x84166FF);
-	
+
 	if (tmNum >= NUM_TMS)
 	{
 		// HM
@@ -165,18 +189,18 @@ void LoadTmHmName(u8 *dest, u16 itemId) {
 	StringAppend(&gStringVar4[0], &gStringVar1[0]);
 	StringAppend(&gStringVar4[0], (void*) 0x846317C);
 	StringAppend(&gStringVar4[0], (void*) 0x8416703);
-	
+
 	if (StringLength(gMoveNames[ItemIdToBattleMoveId(itemId)]) == MOVE_NAME_LENGTH && tmNum >= NUM_TMS)
 		StringAppendFullMoveName(&gStringVar4[0], gMoveNames[ItemIdToBattleMoveId(itemId)]);
 	else
 		StringAppend(&gStringVar4[0], gMoveNames[ItemIdToBattleMoveId(itemId)]);
-	
+
 	StringCopy(dest, &gStringVar4[0]);
 }
 
 
 
-	
+
 /*
 	StringCopy(gStringVar4, gMoveNames[ItemIdToBattleMoveId(itemId)]);
 	if (itemId >= ITEM_HM01)
@@ -245,7 +269,7 @@ bool8 CheckIsHmMove(u16 move) {
 		if (move == gTMHMMoves[i])
 			return TRUE;
 	}
-	
+
     return FALSE;
 #endif
 }
@@ -256,12 +280,8 @@ bool8 CheckIsHmMove(u16 move) {
     while (gTMHMMoves[i] != 0xFFFF)
 	{
         if (sHMMoves[++i] == move)
-            return TRUE;	
+            return TRUE;
 	}
 	return FALSE;
-		
+
 */
-
-
-
-

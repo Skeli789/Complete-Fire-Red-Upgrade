@@ -1,9 +1,6 @@
 #pragma once
 
 //#define DEBUG_MEGA
-//#define DEBUG_UNBOUND_MUSIC
-
-//#define UNBOUND //Don't uncomment this line; it's for compiling specific aspects of Pokemon Unbound
 
 #define TERRAIN_VAR 0x5000
 #define TOTEM_VAR 0x5001 //to 0x5004
@@ -11,12 +8,11 @@
 #define OW_SPRITE_SWITCH_VAR 0x5006
 #define BACKSPRITE_SWITCH_VAR 0x5007 //This var can be set to a number to change the Player's backsprite
 #define BATTLE_BG_VAR 0x5008 //Set this var to a custom background id
-#define SWARM_SPECIES_VAR 0x5009
-#define SWARM_MAP_NAME_VAR 0x500A
-#define DEFAULT_WALKING_SCRIPT 0x500B  //Walking scripts from JPAN's engine. His engine used 0x407E.
-#define DEXNAV_VAR 0x500C
-
-#define SWARM_DAILY_EVENT_VAR 0x500D
+#define SWARM_INDEX_VAR 0x5009 //Set by the engine
+#define SWARM_DAILY_EVENT_VAR 0x500A //Set by the engine. Used to tell the game if a swarm has already been generated for the day. (Uses + 1 var also)
+#define DEFAULT_WALKING_SCRIPT 0x500C //Walking scripts from JPAN's engine. His engine used 0x407E.
+#define DEXNAV_VAR 0x500D
+#define STATUS_INDUCER_VAR 0x500E //Causes wild Pokemon to be spawned with the given status condition. Status + 0x100 clears var after battle.
 
 #define SECOND_OPPONENT_VAR 0x5010 //Set this to the var used to store the Trainer Id of the second opponent in Multi Battles (can be any free var)
 #define PARTNER_VAR 0x5011 //Set this to the var used to store the Trainer Id of your partner in Multi Battles (can be any free var)
@@ -40,6 +36,7 @@
 #define DOUBLE_WILD_BATTLE_FLAG 0x90F //If this flag is set, a wild battles will be against two Pokemon
 #define NO_RANDOM_WILD_ENCOUNTERS_FLAG 0x910 //If this is set, wild Pokemon won't appear when walking/surfing in grass, caves, water, etc.
 #define FLAG_REMOVE_EVO_ITEM 0x911  //Flag to toggle item removal after leveling up (set by the engine)
+#define WILD_SHINY_BATTLE_FLAG 0x912 //Flag to cause next battle to be against a shiny Pokemon
 
 //Pedometer Flags as in JPAN Engine
 #define FLAG_LONG_PEDOMETER 0x920	// 32 bit
@@ -53,7 +50,6 @@
 #define BATTLE_TOWER_POKE_LEVEL 0x5016 //Var
 #define BATTLE_TOWER_BATTLE_TYPE 0x5017 //Var
 #define BATTLE_TOWER_TIER 0x5018 //Var
-#define BATTLE_TOWER_TID 0x399 //Trainer Index
 #define BATTLE_TOWER_TRAINER_NAME 0x5019 //Empty var. Will be set to 0xFFFF after every battle.
 #define BATTLE_TOWER_SONG_OVERRIDE 0x501A //Set this var to the song id to be played during Link Battles and in the Battle Tower.
 
@@ -75,12 +71,19 @@ enum
 #define VAR_TRAINERCARD_FEMALE 0x5025		//Change trainer card image (female). 0x4061 in JPAN engine.
 
 #define VAR_RUNTIME_CHANGEABLE 0x5026		//'Secret Base' variables, save 15 consecutive variables for this. 0x4080 in JPAN engine.
-//#define EXISTING_OW_TABLE_ADDRESS 0x81a2000	//Uncomment if you want new overworld NPC tables to be generated.
 
 //Healing Place as in JPAN's Engine
 #define VAR_HEALINGMAP 0x5030 //0x405A in JPAN's Engine
 #define VAR_HEALING_XPOS 0x5031 //0x405B in JPAN's Engine
 #define VAR_HEALING_YPOS 0x5032 //0x405C in JPAN's Engine
+
+//Expanded TMs/HMs Options
+#define EXPANDED_TMSHMS  //Comment this out if you want to keep 50 tms/8 hms
+#define NUM_TMS 50
+#define NUM_HMS 8
+#define NUM_TMSHMS NUM_TMS + NUM_HMS //This must always be defined
+//#define TMS_BEFORE_HMS  //Uncomment this if you want the HMs to appear after the TMs in your bag
+//#define DELETABLE_HMS		//Uncomment this if you want HMs to be deletable without the Move Deleter
 
 //General Options
 #define TIME_MORNING_START 4		//4:00 AM -  4:00
@@ -91,18 +94,20 @@ enum
 #define KANTO_DEX_COUNT 151
 #define NATIONAL_DEX_COUNT 386
 #define MAX_NUM_POKEMON SPECIES_EGG + 1
-#define EGG_HATCH_LEVEL 5
 
 #define MAX_LEVEL 100 //Also change this in the file “special_inserts.asm” found in the root
 #define NUM_TRAINER_CLASSES 107
 #define EVOS_PER_MON 5
 #define EV_CAP 252
-#define DAYCARE_BREEDING_RATE 
+#define DAYCARE_BREEDING_RATE
 
 #define DUSK_BALL_MULTIPLIER 30 //Change this line to 35 to make the catch rate for the Dusk Ball 3.5x like before Gen 7
 #define STANDARD_IV 10 //Change this to be the number of IVs Pokemon owned by random trainers should have (all stats will have this number)
 #define SWARM_CHANCE 50 //Change this to the percentage that swarming Pokemon will appear if they can be found on the current route.
 #define WILD_DOUBLE_RANDOM_CHANCE 50 //Change this to the percentage that a wild double battle will be initiated if the player is in special grass.
+#define CREATE_WITH_X_PERFECT_IVS 3 //Change this to the number of set 31 IVs you'd like Pokemon defined in gSetPerfectXIvList to have.
+#define CREATE_ROAMER_WITH_X_PERFECT_IVS 3 //Change this to the number of set 31 IVs you'd like roaming pokemon to have.
+#define EGG_HATCH_LEVEL 1
 
 #ifndef UNBOUND 
 //Change These
@@ -129,6 +134,7 @@ enum
 #define SEEN_DEX_FLAGS gSaveBlock2->pokedex.seen
 #define CAUGHT_DEX_FLAGS gSaveBlock2->pokedex.owned
 #define EXISTING_FOSSIL_IMAGE_TABLE_ADDRESS 0x81a4600  //Comment this out if you've already inserted a fossil image table
+//#define EXISTING_OW_TABLE_ADDRESS 0x81a2000	//Uncomment if you want new overworld NPC tables to be generated.
 
 #define INVERSE_BATTLES //Comment this line to disable the possibility of having Inverse Battles
 #define TIME_ENABLED //Comment this line to disable time based features. All time dependent features will default in Daytime.
@@ -152,19 +158,14 @@ enum
 #define OBEDIENCE_BY_BADGE_AMOUNT //Determines obedience based on the number of badges the Player has, rather than which badges the player has
 #define SAVE_BLOCK_EXPANSION //Uncommenting this requires you to also manually remove Save Expansion Hooks found in hooks
 #define SELECT_FROM_PC //Comment this out to remove select-from-pc hack
-#define SET_HEALING_PLACE_HACK  // comment this out if you don't want custom map/bank whiteout respawn locations
-#define FOSSIL_IMAGE_HACK  // comment this out if you don't want JPANs fossil image hack
+//#define SET_HEALING_PLACE_HACK  //Comment this out if you don't want custom map/bank whiteout respawn locations
+//#define FOSSIL_IMAGE_HACK  //Comment this out if you don't want JPANs fossil image hack
 #define EVO_HOLD_ITEM_REMOVAL //Comment this out if you want leveling up/hold item evolution (eg. sneasel) to remove the item (like normal)
 #define EXPAND_MOVESETS //Comment this out if you're using the Dynamic Pokemon Expansion repo to expand the movesets
-//#define INHERIT_MASTER_CHERISH_BALL  // uncomment this if you want Master and Cherish balls to be inherited by daycare offspring
-
-/* Expanded TMs/HMs Options */
-#define EXPANDED_TMSHMS  // comment this out if you want to keep 50 tms/8 hms
-#define NUM_TMS 51
-#define NUM_HMS 10
-#define NUM_TMSHMS NUM_TMS+NUM_HMS // this must always be defined
-//#define TMS_BEFORE_HMS  // uncomment this if you want the HMs to appear after the TMs in your bag
-//#define DELETABLE_HMS		// uncomment this if you want HMs to be deletable without the Move Deleter
+/*FIX THIS*///#define FATHER_PASSES_TMS //Comment this out if you don't want TMs the father knows to be passed through breeding
+//#define GIVEPOKEMON_BALL_HACK //Allows Pokemon to be given with a custom ball by setting the last byte of the givepokemon scripting command
+#define FRLG_ROAMING //When a roaming Pokemon is created, it will either be a Entei, Raikou, or Suicune, depending on the player's starter choice
+//#define INHERIT_MASTER_CHERISH_BALL  //Uncomment this if you want Master and Cherish balls to be inherited by daycare offspring
 
 /* Misc Effect Options */
 //#define OLD_BURN_DAMAGE //Uncomment this line if you want burn damage to do 1/8 of max health instead of 1/16
@@ -204,6 +205,7 @@ enum
 //#define OLD_EXP_SPLIT //Uncomment this line to split the Exp amongst all participating pokemon (Pre Gen 6)
 //#define FLAT_EXP_FORMULA //Uncomment this line to use a Flat Exp calculation formula (Gens 2 - 4, 6)
 #define GEN_7_BASE_EXP_YIELD //Base Exp Yield is read from gBaseExpBySpecies to use larger values that match Gen 7
+#define CAPTURE_EXPERIENCE //Experience is awared upon capturing Pokemon.
 
 /* Other Options */
 //#define ACTIVATE_DOUBLE_BATTLE_FROM_FLAG //Uncommenting this line will allow you to set a flag to enable double battles if possible

@@ -3,27 +3,23 @@
 #include "Battle_AI/AI_Helper_Functions.h"
 
 #include "../include/event_data.h"
-#include "../include/new/helper_functions.h"
-#include "../include/new/mega.h"
 #include "../include/random.h"
 
-#define AI_CHOICE_FLEE 4
-#define AI_CHOICE_WATCH 5
+#include "../include/new/battle_controller_opponent.h"
+#include "../include/new/frontier.h"
+#include "../include/new/helper_functions.h"
+#include "../include/new/mega.h"
 
-//Update Acupressure Targeting
+//TODO: Update Acupressure Targeting
 
-extern u8 GetFrontierTrainerFrontSpriteId(u16 trainerId, u8 battlerNum);
 extern u8 GetMostSuitableMonToSwitchInto(void);
 extern void BattleAI_SetupAIData(u8 defaultScoreMoves);
 //extern BattleAI_ChooseMoveOrAction;
 extern u32 WildMonIsSmart(u8 bank);
 extern void EmitMoveChosen(u8 bufferId, u8 chosenMoveIndex, u8 target, u8 megaState, u8 ultraState, u8 zMoveState);
-extern const struct Evolution* CanMegaEvolve(u8 bank, bool8 CheckUBInstead);
 
-void OpponentHandleChooseMove(void);
-void OpponentHandleDrawTrainerPic(void);
-void OpponentHandleTrainerSlide(void);
-u8 LoadCorrectTrainerPicId(void);
+//This file's functions:
+static u8 LoadCorrectTrainerPicId(void);
 
 void OpponentHandleChooseMove(void)
 {
@@ -207,7 +203,7 @@ void OpponentHandleChoosePokemon(void)
     OpponentBufferExecCompleted();
 }
 
-u8 LoadCorrectTrainerPicId(void) {
+static u8 LoadCorrectTrainerPicId(void) {
 	u8 trainerPicId;
 	
     if (gTrainerBattleOpponent_A == 0x400) //Was Secret Base in Ruby

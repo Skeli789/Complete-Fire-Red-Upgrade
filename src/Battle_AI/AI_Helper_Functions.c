@@ -1,13 +1,15 @@
 #include "..\\defines.h"
-#include "../../include/new/helper_functions.h"
 #include "../../include/constants/items.h"
+
+#include "../../include/new/battle_start_turn_start.h"
+#include "../../include/new/helper_functions.h"
+#include "../../include/new/item.h"
 
 extern move_t MinimizeHitTable[];
 extern move_t IgnoreAirTable[];
 extern move_t IgnoreUndergoundTable[];
 extern move_t IgnoreUnderwaterTable[];
 extern move_t AlwaysHitRainTable[];
-extern const struct SpecialZMoves gSpecialZMoveTable[];
 
 extern s8 PriorityCalc(u8 bank, u8 action, u16 move);
 extern s32 BracketCalc(u8 bank);
@@ -407,7 +409,7 @@ u16 ShouldAIUseZMove(u8 bank, u8 moveIndex, u16 move) {
 		return FALSE;
 	}
 	
-	if (gItems[SanitizeItemId(gBattleMons[bank].item)].holdEffect == ITEM_EFFECT_Z_CRYSTAL
+	if (IsZCrystal(gBattleMons[bank].item)
 	||  ITEM(bank) == ITEM_ULTRA_NECROZIUM_Z) //The only "Mega Stone" that let's you use a Z-Move
 	{
 		for (i = 0; gSpecialZMoveTable[i].species != 0xFFFF; ++i) 

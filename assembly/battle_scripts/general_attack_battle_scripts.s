@@ -751,7 +751,7 @@ DragonTailBS:
 	jumpifmovehadnoeffect BS_MOVE_FAINT
 	jumpifspecialstatusflag BANK_TARGET STATUS3_ROOTED 0x0 0x81D8F27 @;BattleScript_PrintMonIsRooted
 	jumpifability BANK_TARGET ABILITY_SUCTIONCUPS BattleScript_AbilityPreventsPhasingOutSkipFail
-	jumpifcannotswitch BANK_ATTACKER BS_MOVE_FAINT
+	jumpifcannotswitch BANK_TARGET BS_MOVE_FAINT
 	setbyte CMD49_STATE 0x0
 	cmd49 BANK_TARGET 0x0
 	playanimation BANK_TARGET DRAGON_TAIL_BLOW_AWAY_ANIM 0x0

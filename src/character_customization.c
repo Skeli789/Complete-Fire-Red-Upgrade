@@ -1,11 +1,11 @@
 #include "defines.h"
 #include "defines_battle.h"
 #include "../include/link.h"
-#include "../include/new/helper_functions.h"
 #include "../include/random.h"
+#include "../include/constants/event_objects.h"
 
-u16 GetBackspriteId(void);
-void LoadTrainerBackPal(u16 trainerPicId, u8 bank);
+#include "../include/new/character_customization.h"
+#include "../include/new/helper_functions.h"
 
 #ifdef UNBOUND
 struct CharacterCustomizationPaletteSwitch
@@ -15,7 +15,7 @@ struct CharacterCustomizationPaletteSwitch
 	u8* backSpritePal;
 };
 
-const struct CharacterCustomizationPaletteSwitch CharacterPalSwitchTable[] = 
+static const struct CharacterCustomizationPaletteSwitch CharacterPalSwitchTable[] = 
 {
 	{262, (u8*) 0, (u8*) 0x8F08000},
 	{271, (u8*) 0, (u8*) 0x8F08030},
@@ -33,10 +33,8 @@ const struct CharacterCustomizationPaletteSwitch CharacterPalSwitchTable[] =
 	{379, (u8*) 0, (u8*) 0x8F08270},
 	{0xFFFF, (u8*) 0, (u8*) 0},
 };
-
 #endif
 
-typedef const struct EventObjectGraphicsInfo* NPCPtr;
 #ifdef EXISTING_OW_TABLE_ADDRESS
 	#define gOverworldTableSwitcher ((struct EventObjectGraphicsInfo***) EXISTING_OW_TABLE_ADDRESS)
 #elif defined UNBOUND //For Pokemon Unbound
@@ -58,14 +56,14 @@ typedef const struct EventObjectGraphicsInfo* NPCPtr;
 	};
 #endif
 
-
-
 //npc_get_type hack for character customization
-//	hook at 0805F2C8 via r1
-NPCPtr GetEventObjectGraphicsInfo(u16 gfxId) {
-	u8 tableId = (gfxId >> 8) & 0xFF;	// upper byte
-	u8 spriteId = gfxId & 0xFF;		// lower byte
+//hook at 0805F2C8 via r1
+NPCPtr GetEventObjectGraphicsInfo(u16 graphicsId)
+{
 	u16 newId;
+	u8 tableId = (graphicsId >> 8) & 0xFF;	// upper byte
+	u8 spriteId = graphicsId & 0xFF;		// lower byte
+	
 	// check runtime changeable OWs
 	if (tableId == 0xFF && spriteId <= 0xF)
 	{
@@ -76,7 +74,7 @@ NPCPtr GetEventObjectGraphicsInfo(u16 gfxId) {
 	}
 	else
 	{
-		if ((tableId == 0) && spriteId > 239)
+		if (tableId == 0 && spriteId > 239)
 		{
 			newId = VarGetEventObjectGraphicsId(spriteId + 16);
 			tableId = (newId >> 8) & 0xFF;	// upper byte
@@ -97,6 +95,7 @@ NPCPtr GetEventObjectGraphicsInfo(u16 gfxId) {
 				newId = VarGet(VAR_PLAYER_FISHING);
 			else if ((spriteId == 6) || (spriteId == 0xD))
 				newId = VarGet(VAR_PLAYER_VS_SEEKER_ON_BIKE);
+			
 			// get updated table and sprite IDs
 			if (newId != 0)
 			{
@@ -105,13 +104,17 @@ NPCPtr GetEventObjectGraphicsInfo(u16 gfxId) {
 			}	// else, table and sprite ID stay the same
 		}	// runtime changeable
 	}
+	
 	NPCPtr spriteAddr;
-	if (gOverworldTableSwitcher[tableId] == 0)
+	if (tableId > ARRAY_COUNT(gOverworldTableSwitcher)
+	|| gOverworldTableSwitcher[tableId] == 0)
 		spriteAddr = gOverworldTableSwitcher[0][spriteId];
 	else
 		spriteAddr = gOverworldTableSwitcher[tableId][spriteId];
+	
 	if (spriteAddr == 0)
-		spriteAddr = gOverworldTableSwitcher[0][16];	// first non-player sprite in first table default
+		spriteAddr = gOverworldTableSwitcher[0][EVENT_OBJ_GFX_NINJA_BOY];	// first non-player sprite in first table default
+	
 	return spriteAddr;
 };
 
@@ -177,7 +180,8 @@ void PlayerHandleTrainerSlide(void)
     gBattleBankFunc[gActiveBattler] = (u32) sub_802F768;
 }
 
-u16 GetBackspriteId(void) {
+u16 GetBackspriteId(void)
+{
 	u16 trainerPicId;
 	
 	if (gBattleTypeFlags & BATTLE_TYPE_LINK)
@@ -202,7 +206,8 @@ u16 GetBackspriteId(void) {
 	return trainerPicId;
 }
 
-void LoadTrainerBackPal(u16 trainerPicId, u8 paletteNum) {
+void LoadTrainerBackPal(u16 trainerPicId, u8 paletteNum)
+{
 	#ifdef UNBOUND
 	//Changes the skin tones of the player character in Unbound
 		if (VarGet(OW_SPRITE_SWITCH_VAR) && gActiveBattler == 0) {

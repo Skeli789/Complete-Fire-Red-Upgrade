@@ -1,12 +1,14 @@
 #include "defines.h"
 #include "defines_battle.h"
 #include "../include/battle_string_ids.h"
-#include "../include/constants/items.h"
-#include "../include/new/helper_functions.h"
-#include "../include/new/CMD49.h"
 #include "../include/random.h"
+#include "../include/constants/items.h"
 
-//Do Sleep Clause
+#include "../include/new/battle_strings.h"
+#include "../include/new/CMD49.h"
+#include "../include/new/helper_functions.h"
+
+//TODO: Sleep Clause
 
 extern void (* const gBattleScriptingCommandsTable[])(void);
 extern void (* const gBattleScriptingCommandsTable2[])(void);
@@ -910,7 +912,7 @@ void atkFE_prefaintmoveendeffects(void)
 					case ABILITY_POISONTOUCH:
 						if (CheckContact(gCurrentMove, gBankAttacker)
 						&& ABILITY(gBankTarget) != ABILITY_SHIELDDUST
-						&& CanBePoisoned(gBankTarget, gBankAttacker)
+						&& CanBePoisoned(gBankTarget, gBankAttacker, TRUE)
 						&& umodsi(Random(), 100) < 30)
 						{
 							BattleScriptPushCursor();
@@ -952,7 +954,7 @@ void atkFE_prefaintmoveendeffects(void)
 			{
 				gProtectStructs[gBankTarget].banefulbunker_damage = 0;
 				if (gBattleMons[gBankAttacker].hp
-				&&  CanBePoisoned(gBankAttacker, gBankTarget)) //Target poisons Attacker
+				&&  CanBePoisoned(gBankAttacker, gBankTarget, TRUE)) //Target poisons Attacker
 				{
 					gBattleMons[gBankAttacker].status1 = STATUS_POISON;
 					gEffectBank = gActiveBattler = gBankAttacker;
@@ -1001,7 +1003,7 @@ void atkFE_prefaintmoveendeffects(void)
 			&& MOVE_HAD_EFFECT
 			&& TOOK_DAMAGE(gBankTarget)
 			&& gNewBS->BeakBlastByte & gBitTable[gBankTarget]
-			&& CanBeBurned(gBankAttacker))
+			&& CanBeBurned(gBankAttacker, TRUE))
 			{
 				BattleScriptPushCursor();
                 gBattlescriptCurrInstr = BattleScript_BeakBlastBurn;
@@ -1076,7 +1078,7 @@ void atkFF23_faintpokemonaftermove(void)
 		&& gBattleMons[gBankAttacker].hp != 0)
         {
             gHitMarker &= ~(HITMARKER_DESTINYBOND);
-			u8* backupScript = gBattlescriptCurrInstr;
+			const u8* backupScript = gBattlescriptCurrInstr;
 			gBattlescriptCurrInstr = BattleScript_DestinyBondTakesLife;
             BattleScriptPushCursor();
             gBattleMoveDamage = gBattleMons[gBankAttacker].hp;

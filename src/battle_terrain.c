@@ -1,30 +1,22 @@
 #include "defines.h"
 #include "defines_battle.h"
-
 #include "../include/event_data.h"
 #include "../include/fieldmap.h"
 #include "../include/metatile_behavior.h"
 #include "../include/constants/metatile_behaviors.h"
 #include "../include/constants/trainer_classes.h"
 
-#include "../include/new/helper_functions.h"
 #include "../include/new/battle_terrain.h"
+#include "../include/new/dns.h"
+#include "../include/new/helper_functions.h"
 
-
+#define gBattleTerrainTable ((struct BattleBackground*) *((u32*) 0x800F320))
+#ifdef UNBOUND
 #define gBattleTerrainTableEvening ((struct BattleBackground*) 0x88C8720) //For Unbound
 #define gBattleTerrainTableNight ((struct BattleBackground*) 0x88C8A30) //For Unbound
+#endif
 
 extern const struct BattleBackground gAttackTerrainTable[];
-extern const struct TerrainTableStruct TerrainTable[];
-
-extern void DNSBattleBGPalFade(void);
-
-//This File's Functions
-u8 BattleSetup_GetTerrainId(void);
-u8 LoadBattleBG_TerrainID(void);
-void LoadBattleBG_Background(u8 terrainId);
-void LoadBattleBG_EntryOverlay(u8 terrainId);
-bool8 MetatileBehavior_IsIce(u8 metatileBehavior);
 
 u8 BattleSetup_GetTerrainId(void)
 {

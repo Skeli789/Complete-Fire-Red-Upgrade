@@ -1,36 +1,19 @@
 #include "defines.h"
 #include "defines_battle.h"
-#include "../include/new/helper_functions.h"
 #include "../include/random.h"
 
-extern s8 PriorityCalc(u8 bank, u8 action, u16 move);
-extern u8 TypeCalc(move_t, u8 bankAtk, u8 bankDef, pokemon_t* party_data_atk, bool8 CheckParty);
+#include "../include/new/accuracy_calc.h"
+#include "../include/new/damage_calc.h"
+#include "../include/new/helper_functions.h"
+#include "../include/new/move_tables.h"
+#include "../include/new/move_battle_scripts.h"
 
-extern move_t StatChangeIgnoreTable[];
-extern move_t MinimizeHitTable[];
-extern move_t IgnoreAirTable[];
-extern move_t IgnoreUndergoundTable[];
-extern move_t IgnoreUnderwaterTable[];
-extern move_t AlwaysHitRainTable[];
-extern move_t StatChangeIgnoreTable[];
+extern s8 PriorityCalc(u8 bank, u8 action, u16 move);
+
 extern const struct StatFractions gAccuracyStageRatios[];
 
-extern u8 CraftyShieldProtectedString[];
-extern u8 MatBlockProtectedString[];
-extern u8 QuickGuardProtectedString[];
-extern u8 WideGuardProtectedString[];
-
-void atk01_accuracycheck(void);
-bool8 JumpIfMoveAffectedByProtect(move_t, bank_t, bank_t);
-bool8 ProtectAffects(move_t, bank_t, bank_t, u8 set);
+//This file's functions:
 static bool8 AccuracyCalcHelper(move_t);
-u32 AccuracyCalc(move_t, bank_t, bank_t);
-u32 AccuracyCalcNoTarget(u16 move, u8 bankAtk);
-void JumpIfMoveFailed(u8 adder, u16 move);
-
-/*Other Necessary Functions:
-JumpIfMoveFailed
-*/
 
 void atk01_accuracycheck(void) {
     u16 move = T2_READ_16(gBattlescriptCurrInstr + 5);
@@ -404,7 +387,7 @@ u32 AccuracyCalcNoTarget(u16 move, u8 bankAtk) {
 
 void JumpIfMoveFailed(u8 adder, u16 move)
 {
-    u8* BS_ptr = gBattlescriptCurrInstr + adder;
+    const u8* BS_ptr = gBattlescriptCurrInstr + adder;
     if (gMoveResultFlags & MOVE_RESULT_NO_EFFECT)
     {
         gLastLandedMoves[gBankTarget] = 0;

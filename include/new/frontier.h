@@ -5,15 +5,19 @@
 
 #define TOTAL_SPREADS 0x4A0 //sizeof(gFrontierSpreads) / sizeof(struct BattleTowerSpreads)
 
-#define NUM_MALE_NAMES 100
-#define NUM_FEMALE_NAMES 100
+extern const u16 gNumMaleFrontierTrainerNames;
+extern const u16 gNumFemaleFrontierTrainerNames;
+extern const u16 gNumTowerTrainers;
+extern const u16 gNumSpecialTowerTrainers;
 
-enum 
-{
-	FRONTIER_BEFORE_TEXT,
-	FRONTIER_PLAYER_LOST_TEXT,
-	FRONTIER_PLAYER_WON_TEXT,
-};
+#define NUM_MALE_NAMES gNumMaleFrontierTrainerNames
+#define NUM_FEMALE_NAMES gNumFemaleFrontierTrainerNames
+#define NUM_TOWER_TRAINERS gNumTowerTrainers
+#define NUM_SPECIAL_TOWER_TRAINERS gNumSpecialTowerTrainers
+
+#define FRONTIER_BRAIN_TID 0x397 //Trainer Index
+#define BATTLE_TOWER_SPECIAL_TID 0x398 //Trainer Index
+#define BATTLE_TOWER_TID 0x399 //Trainer Index
 
 struct BattleTowerTrainer
 {
@@ -21,12 +25,43 @@ struct BattleTowerTrainer
 	u8 trainerClass;
 	u8 trainerSprite;
 	u8 gender;
-	u8* preBattleText;
-	u8* playerWinText;
-	u8* playerLoseText;
+	const u8* preBattleText;
+	const u8* playerWinText;
+	const u8* playerLoseText;
 };
 
 extern const struct BattleTowerTrainer gTowerTrainers[];
+
+struct SpecialBattleTowerTrainer
+{
+    u16 owNum;
+	u8 trainerClass;
+	u8 trainerSprite;
+	u8 gender;
+	const u8* name;
+	const u8* preBattleText;
+	const u8* playerWinText;
+	const u8* playerLoseText;
+	const struct BattleTowerSpread* spreads;
+	u16 spreadSize;
+	u16 songId;
+};
+
+
+extern const struct SpecialBattleTowerTrainer gSpecialTowerTrainers[];
+
+struct FrontierBrain
+{
+	u8 trainerClass;
+	u8 trainerSprite;
+	u8 gender;
+	const u8* name;
+	const struct BattleTowerSpread* spreads;
+	u16 spreadSize;
+	u16 songId;
+};
+
+extern const struct FrontierBrain gFrontierBrains[];
 
 struct BattleTowerSpread
 {
@@ -55,52 +90,81 @@ struct BattleTowerSpread
 extern const struct BattleTowerSpread gFrontierSpreads[];
 #define gFrontierSpreads ((const struct BattleTowerSpread*) 0x89DFA00)
 
+enum 
+{
+	FRONTIER_BEFORE_TEXT,
+	FRONTIER_PLAYER_LOST_TEXT,
+	FRONTIER_PLAYER_WON_TEXT,
+};
+
 enum BattleTowerBattleTypes
 {
-BATTLE_TOWER_SINGLE,
-BATTLE_TOWER_DOUBLE,
-BATTLE_TOWER_MULTI,
-BATTLE_TOWER_LINK_MULTI,
+	BATTLE_TOWER_SINGLE,
+	BATTLE_TOWER_DOUBLE,
+	BATTLE_TOWER_MULTI,
+	BATTLE_TOWER_LINK_MULTI,
 };
+
+#define NUM_TOWER_BATTLE_TYPES (BATTLE_TOWER_LINK_MULTI + 1)
 
 enum BattleTowerFormats
 {
-BATTLE_TOWER_STANDARD,
-BATTLE_TOWER_FREE_FOR_ALL,
-BATTLE_TOWER_OU,
-BATTLE_TOWER_UBER,
-BATTLE_TOWER_LITTLE_CUP,
-BATTLE_TOWER_MIDDLE_CUP,
+	BATTLE_TOWER_STANDARD,
+	BATTLE_TOWER_FREE_FOR_ALL,
+	BATTLE_TOWER_OU,
+	BATTLE_TOWER_UBER,
+	BATTLE_TOWER_LITTLE_CUP,
+	BATTLE_TOWER_MIDDLE_CUP,
 };
+
+#define NUM_FORMATS (BATTLE_TOWER_MIDDLE_CUP + 1)
 
 enum BattleTowerPartySizes
 {
-BATTLE_TOWER_SIZE_STANDARD,
-BATTLE_TOWER_SIZE_1V1,
-BATTLE_TOWER_SIZE_2V2,
-BATTLE_TOWER_SIZE_3V3,
-BATTLE_TOWER_SIZE_4V4,
-BATTLE_TOWER_SIZE_5V5,
-BATTLE_TOWER_SIZE_6V6,
+	BATTLE_TOWER_SIZE_STANDARD,
+	BATTLE_TOWER_SIZE_1V1,
+	BATTLE_TOWER_SIZE_2V2,
+	BATTLE_TOWER_SIZE_3V3,
+	BATTLE_TOWER_SIZE_4V4,
+	BATTLE_TOWER_SIZE_5V5,
+	BATTLE_TOWER_SIZE_6V6,
 };
 
 enum BattleTowerGenders
 {
-BATTLE_TOWER_MALE,
-BATTLE_TOWER_FEMALE
+	BATTLE_TOWER_MALE,
+	BATTLE_TOWER_FEMALE,
 };
 
 enum TierBanCheckingType 
 {
-CHECK_BATTLE_TOWER_SPREADS,
-CHECK_PARTY_OFFSET,
+	CHECK_BATTLE_TOWER_SPREADS,
+	CHECK_PARTY_OFFSET,
 };
- 
-extern species_t StandardSpeciesBanList[];
-extern species_t OU_SpeciesBanList[];
-extern species_t LittleCup_SpeciesList[];
-extern ability_t OU_AbilityBanList[];
-extern item_t StandardItemBanList[];
-extern item_t OU_ItemBanList[];
-extern move_t SmogonMoveBanList[];
-extern move_t LittleCup_MoveBanList[];
+
+enum BattlerIds
+{
+	FRONTIER_TRAINER_A,
+	FRONTIER_TRAINER_B,
+	FRONTIER_PARTNER,
+};
+
+extern u16 gBattleTowerStreaks[NUM_TOWER_BATTLE_TYPES][NUM_FORMATS][/*INVERSE*/ 2][/*LEVEL*/ 4][/*CURRENT_OR_MAX*/ 2]; //0x2026840
+
+extern const species_t StandardSpeciesBanList[];
+extern const species_t OU_SpeciesBanList[];
+extern const species_t LittleCup_SpeciesList[];
+extern const ability_t OU_AbilityBanList[];
+extern const item_t StandardItemBanList[];
+extern const item_t OU_ItemBanList[];
+extern const move_t SmogonMoveBanList[];
+extern const move_t LittleCup_MoveBanList[];
+
+u8 GetFrontierTrainerClassId(u16 trainerId, u8 battlerNum);
+void CopyFrontierTrainerName(u8* dst, u16 trainerId, u8 battlerNum);
+const u8* GetFrontierTrainerName(u16 trainerId, u8 battlerNum);
+void CopyFrontierTrainerText(u8 whichText, u16 trainerId, u8 battlerNum);
+u8 GetFrontierTrainerFrontSpriteId(u16 trainerId, u8 battlerNum);
+u16 TryGetSpecialFrontierTrainerMusic(u16 trainerId, u8 battlerNum);
+u32 GetAIFlagsInBattleFrontier(unusedArg u8 bank);
+u16 GetCurrentBattleTowerStreak(void);
