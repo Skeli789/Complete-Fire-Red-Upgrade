@@ -236,7 +236,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
         switch (sStatusFlagsForMoveEffects[gBattleCommunication[MOVE_EFFECT_BYTE]]) {
 			case STATUS1_SLEEP:
 				// check active uproar
-				if (CanBePutToSleep(gEffectBank))
+				if (CanBePutToSleep(gEffectBank, TRUE))
 				{
 					CancelMultiTurnMoves(gEffectBank);
 					statusChanged = TRUE;
@@ -245,17 +245,17 @@ void SetMoveEffect(bool8 primary, u8 certain)
 			
 			case STATUS1_POISON:
 			case STATUS1_TOXIC_POISON:
-				if (CanBePoisoned(gEffectBank, gBankAttacker))
+				if (CanBePoisoned(gEffectBank, gBankAttacker, TRUE))
 					statusChanged = TRUE;
 				break;
 				
 			case STATUS1_BURN:
-				if (CanBeBurned(gEffectBank))
+				if (CanBeBurned(gEffectBank, TRUE))
 					statusChanged = TRUE;
 				break;
 			
 			case STATUS1_FREEZE:
-				if (CanBeFrozen(gEffectBank))
+				if (CanBeFrozen(gEffectBank, TRUE))
 				{
 					CancelMultiTurnMoves(gEffectBank);
 					statusChanged = TRUE;
@@ -263,7 +263,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 				break;
 			
 			case STATUS1_PARALYSIS:
-				if (CanBeParalyzed(gEffectBank))
+				if (CanBeParalyzed(gEffectBank, TRUE))
 					statusChanged = TRUE;
 				break;
         }

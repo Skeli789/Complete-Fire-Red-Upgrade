@@ -1,0 +1,26 @@
+#pragma once
+
+#define BattleScript_ThrashConfuses (const u8*) 0x81D90C5
+#define BattleScript_DefrostedViaFireMove (const u8*) 0x81D9098
+#define BattleScript_Recoil (const u8*) 0x81D9243
+
+extern const u8 BattleScript_PoisonTouch[];
+extern const u8 BattleScript_KingsShield[];
+extern const u8 BattleScript_SpikyShield[];
+extern const u8 BattleScript_BanefulBunker[];
+extern const u8 BattleScript_RageIsBuilding[];
+extern const u8 BattleScript_BeakBlastBurn[];
+extern const u8 BattleScript_Magician[];
+extern const u8 BattleScript_Moxie[];
+extern const u8 BattleScript_MindBlownDamage[];
+extern const u8 BattleScript_LifeOrbDamage[];
+extern const u8 BattleScript_Pickpocket[];
+extern const u8 BattleScript_DancerActivated[];
+extern const u8 BattleScript_MultiHitPrintStrings[];
+extern const u8 BattleScript_FaintAttackerForExplosion[];
+extern const u8 BattleScript_ExplosionAnim[];
+extern const u8 BattleScript_PluckEat[];
+extern const u8 BattleScript_EjectButton[];
+extern const u8 BattleScript_RedCard[];
+extern const u8 BattleScript_EmergencyExit[];
+extern const u8 BattleScript_AbilityTransformed[];

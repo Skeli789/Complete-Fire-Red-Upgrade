@@ -1,12 +1,11 @@
 #include "defines.h"
 #include "defines_battle.h"
 #include "../include/link.h"
-#include "../include/new/helper_functions.h"
 #include "../include/random.h"
 #include "../include/constants/event_objects.h"
 
-u16 GetBackspriteId(void);
-void LoadTrainerBackPal(u16 trainerPicId, u8 bank);
+#include "../include/new/character_customization.h"
+#include "../include/new/helper_functions.h"
 
 #ifdef UNBOUND
 struct CharacterCustomizationPaletteSwitch
@@ -16,7 +15,7 @@ struct CharacterCustomizationPaletteSwitch
 	u8* backSpritePal;
 };
 
-const struct CharacterCustomizationPaletteSwitch CharacterPalSwitchTable[] = 
+static const struct CharacterCustomizationPaletteSwitch CharacterPalSwitchTable[] = 
 {
 	{262, (u8*) 0, (u8*) 0x8F08000},
 	{271, (u8*) 0, (u8*) 0x8F08030},
@@ -34,10 +33,8 @@ const struct CharacterCustomizationPaletteSwitch CharacterPalSwitchTable[] =
 	{379, (u8*) 0, (u8*) 0x8F08270},
 	{0xFFFF, (u8*) 0, (u8*) 0},
 };
-
 #endif
 
-typedef const struct EventObjectGraphicsInfo* NPCPtr;
 #ifdef EXISTING_OW_TABLE_ADDRESS
 	#define gOverworldTableSwitcher ((struct EventObjectGraphicsInfo***) EXISTING_OW_TABLE_ADDRESS)
 #elif defined UNBOUND //For Pokemon Unbound
@@ -59,11 +56,9 @@ typedef const struct EventObjectGraphicsInfo* NPCPtr;
 	};
 #endif
 
-
-
 //npc_get_type hack for character customization
-//	hook at 0805F2C8 via r1
-NPCPtr GetEventObjectGraphicsInfo(u16 graphicsId) 
+//hook at 0805F2C8 via r1
+NPCPtr GetEventObjectGraphicsInfo(u16 graphicsId)
 {
 	u16 newId;
 	u8 tableId = (graphicsId >> 8) & 0xFF;	// upper byte
@@ -185,7 +180,8 @@ void PlayerHandleTrainerSlide(void)
     gBattleBankFunc[gActiveBattler] = (u32) sub_802F768;
 }
 
-u16 GetBackspriteId(void) {
+u16 GetBackspriteId(void)
+{
 	u16 trainerPicId;
 	
 	if (gBattleTypeFlags & BATTLE_TYPE_LINK)
@@ -210,7 +206,8 @@ u16 GetBackspriteId(void) {
 	return trainerPicId;
 }
 
-void LoadTrainerBackPal(u16 trainerPicId, u8 paletteNum) {
+void LoadTrainerBackPal(u16 trainerPicId, u8 paletteNum)
+{
 	#ifdef UNBOUND
 	//Changes the skin tones of the player character in Unbound
 		if (VarGet(OW_SPRITE_SWITCH_VAR) && gActiveBattler == 0) {

@@ -1,5 +1,7 @@
 #include "..\\defines.h"
 #include "../../include/constants/items.h"
+
+#include "../../include/new/battle_start_turn_start.h"
 #include "../../include/new/helper_functions.h"
 #include "../../include/new/item.h"
 
@@ -8,7 +10,6 @@ extern move_t IgnoreAirTable[];
 extern move_t IgnoreUndergoundTable[];
 extern move_t IgnoreUnderwaterTable[];
 extern move_t AlwaysHitRainTable[];
-extern const struct SpecialZMoves gSpecialZMoveTable[];
 
 extern s8 PriorityCalc(u8 bank, u8 action, u16 move);
 extern s32 BracketCalc(u8 bank);

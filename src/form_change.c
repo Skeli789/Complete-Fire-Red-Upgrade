@@ -1,16 +1,24 @@
 #include "defines.h"
 #include "defines_battle.h"
+
+#include "../include/new/battle_terrain.h"
+#include "../include/new/form_change.h"
 #include "../include/new/helper_functions.h"
 
-extern const struct TerrainTableStruct TerrainTable[];
+const species_t gMiniorCores[] =
+{
+	SPECIES_MINIOR_RED,
+	SPECIES_MINIOR_BLUE,
+	SPECIES_MINIOR_ORANGE,
+	SPECIES_MINIOR_YELLOW,
+	SPECIES_MINIOR_INDIGO,
+	SPECIES_MINIOR_GREEN,
+	SPECIES_MINIOR_VIOLET,
+	SPECIES_TABLES_TERMIN
+};
 
-void DoFormChange(u8 bank, u16 species, bool8 ReloadType, bool8 ReloadStats);
-void SwitchOutFormsRevert(u8 bank);
-void FormsRevert(pokemon_t* party);
-void TryFormRevert(pokemon_t* mon);
-void UpdateBurmy(void);
-
-void DoFormChange(u8 bank, u16 species, bool8 ReloadType, bool8 ReloadStats) {
+void DoFormChange(u8 bank, u16 species, bool8 ReloadType, bool8 ReloadStats) 
+{
 	gActiveBattler = bank;
 	
 	pokemon_t* partydata = GetBankPartyData(bank);
@@ -29,7 +37,8 @@ void DoFormChange(u8 bank, u16 species, bool8 ReloadType, bool8 ReloadStats) {
 	
 	MarkBufferBankForExecution(gActiveBattler);
 	
-	if (ReloadType) {
+	if (ReloadType) 
+	{
 		gBattleMons[bank].type1 = gBaseStats[species].type1;
 		gBattleMons[bank].type2 = gBaseStats[species].type2;
 		gBattleMons[bank].type3 = TYPE_BLANK;
@@ -38,19 +47,60 @@ void DoFormChange(u8 bank, u16 species, bool8 ReloadType, bool8 ReloadStats) {
 	gStatuses3[bank] &= ~(STATUS3_SWITCH_IN_ABILITY_DONE | STATUS3_ILLUSION); //A Pokemon undergoing form change can't be hidden under Illusion
 }
 
-void SwitchOutFormsRevert(u8 bank) {
+//This function could have been much simpler if I didn't care about stupid people who
+//would give people the below mentioned species before battle.
+void SwitchOutFormsRevert(u8 bank) 
+{
+	struct Pokemon* mon = GetBankPartyData(bank);
+	u16 backupSpecies = mon->backupSpecies;
+	
 	switch (gBattleMons[bank].species) {
 		case SPECIES_CHERRIM_SUN:
+			if (backupSpecies != SPECIES_NONE)
+				DoFormChange(bank, backupSpecies, FALSE, TRUE);
+			else
+				DoFormChange(bank, SPECIES_CHERRIM, FALSE, TRUE);
+			break;
+
 		case SPECIES_DARMANITANZEN:
+			if (backupSpecies != SPECIES_NONE)
+				DoFormChange(bank, backupSpecies, FALSE, TRUE);
+			else
+				DoFormChange(bank, SPECIES_CHERRIM, FALSE, TRUE);
+			break;
+
 		case SPECIES_MELOETTA_PIROUETTE:
+			if (backupSpecies != SPECIES_NONE)
+				DoFormChange(bank, backupSpecies, FALSE, TRUE);
+			else
+				DoFormChange(bank, SPECIES_MELOETTA, FALSE, TRUE);
+			break;
+
 		case SPECIES_AEGISLASH_BLADE:
+			if (backupSpecies != SPECIES_NONE)
+				DoFormChange(bank, backupSpecies, FALSE, TRUE);
+			else
+				DoFormChange(bank, SPECIES_AEGISLASH, FALSE, TRUE);
+			break;
+
 		case SPECIES_WISHIWASHI_S:
+			if (backupSpecies != SPECIES_NONE)
+				DoFormChange(bank, backupSpecies, FALSE, TRUE);
+			else
+				DoFormChange(bank, SPECIES_WISHIWASHI, FALSE, TRUE);
+			break;
+
 		case SPECIES_MINIOR_SHIELD:
-			DoFormChange(bank, GetBankPartyData(bank)->backupSpecies, FALSE, TRUE);
+			if (backupSpecies != SPECIES_NONE)
+				DoFormChange(bank, backupSpecies, FALSE, TRUE);
+			else
+				DoFormChange(bank, GetMiniorCoreSpecies(mon), FALSE, TRUE);
+			break;
 	}
 }
 
-void FormsRevert(pokemon_t* party) {
+void FormsRevert(pokemon_t* party) 
+{
 	int i;
 	
 	for (i = 0; i < PARTY_SIZE; ++i)
@@ -78,9 +128,10 @@ void TryFormRevert(pokemon_t* mon)
 	}
 }
 
-void UpdateBurmy(void) {
+void UpdateBurmy(void)
+{
 	int i;
-	u16 form = TerrainTable[gBattleTerrain].burmyForm;
+	u16 form = gTerrainTable[gBattleTerrain].burmyForm;
 	
 	if (form != SPECIES_NONE)
 	{	
@@ -96,6 +147,11 @@ void UpdateBurmy(void) {
 			}
 		}
 	}
+}
+
+species_t GetMiniorCoreSpecies(struct Pokemon* mon)
+{
+	return gMiniorCores[mon->personality % (ARRAY_COUNT(gMiniorCores) - 1)];
 }
 
 void HandleFormChange(void)

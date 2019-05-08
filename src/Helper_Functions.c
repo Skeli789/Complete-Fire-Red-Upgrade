@@ -954,8 +954,9 @@ void ClearBankStatus(bank_t bank) {
 	MarkBufferBankForExecution(gActiveBattler);
 }
 
-bool8 CanBeGeneralStatused(u8 bank) {
-	if (GetBankPartyData(bank)->species == SPECIES_MINIOR_SHIELD) //Prevents Ditto from getting this benefit
+bool8 CanBeGeneralStatused(u8 bank, bool8 checkFlowerVeil) {
+	if (ABILITY(bank) == ABILITY_SHIELDSDOWN
+	&&  GetBankPartyData(bank)->species == SPECIES_MINIOR_SHIELD) //Prevents Ditto from getting this benefit
 		return FALSE;
 	
 	switch (ABILITY(bank)) {
@@ -968,25 +969,25 @@ bool8 CanBeGeneralStatused(u8 bank) {
 			break;
 			
 		case ABILITY_FLOWERVEIL:
-			if (IsOfType(bank, TYPE_GRASS))
+			if (checkFlowerVeil && IsOfType(bank, TYPE_GRASS))
 				return FALSE;
 	}
 	
-	if (ABILITY(PARTNER(bank)) == ABILITY_FLOWERVEIL && IsOfType(bank, TYPE_GRASS))
+	if (checkFlowerVeil && ABILITY(PARTNER(bank)) == ABILITY_FLOWERVEIL && IsOfType(bank, TYPE_GRASS))
 		return FALSE;
 	
 	if (TerrainType == MISTY_TERRAIN && CheckGrounding(bank))
 		return FALSE;
 		
-	if (gBattleMons[bank].status1)
+	if (gBattleMons[bank].status1 != STATUS1_NONE)
 		return FALSE;
 
 	return TRUE;
 }
 
 
-bool8 CanBePutToSleep(u8 bank) {
-	if (!CanBeGeneralStatused(bank))
+bool8 CanBePutToSleep(u8 bank, bool8 checkFlowerVeil) {
+	if (!CanBeGeneralStatused(bank, checkFlowerVeil))
 		return FALSE;
 	
 	switch (ABILITY(bank)) {
@@ -999,7 +1000,7 @@ bool8 CanBePutToSleep(u8 bank) {
 	if (TerrainType == ELECTRIC_TERRAIN && CheckGrounding(bank))
 		return FALSE;
 		
-	if (FlagGet(BATTLE_TOWER_FLAG)) //Sleep Clause
+	if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER) //Sleep Clause
 	{
 		switch (VarGet(BATTLE_TOWER_TIER)) {
 			case BATTLE_TOWER_OU:
@@ -1019,8 +1020,8 @@ bool8 CanBePutToSleep(u8 bank) {
 	return TRUE;
 }
 
-bool8 CanBePoisoned(u8 bankDef, u8 bankAtk) {
-	if (!CanBeGeneralStatused(bankDef))
+bool8 CanBePoisoned(u8 bankDef, u8 bankAtk, bool8 checkFlowerVeil) {
+	if (!CanBeGeneralStatused(bankDef, checkFlowerVeil))
 		return FALSE;
 	
 	switch (ABILITY(bankDef)) {
@@ -1036,8 +1037,8 @@ bool8 CanBePoisoned(u8 bankDef, u8 bankAtk) {
 	return TRUE;
 }
 
-bool8 CanBeParalyzed(u8 bank) {
-	if (!CanBeGeneralStatused(bank))
+bool8 CanBeParalyzed(u8 bank, bool8 checkFlowerVeil) {
+	if (!CanBeGeneralStatused(bank, checkFlowerVeil))
 		return FALSE;
 	
 	if (IsOfType(bank, TYPE_ELECTRIC))
@@ -1050,8 +1051,8 @@ bool8 CanBeParalyzed(u8 bank) {
 	return TRUE;
 }
 
-bool8 CanBeBurned(u8 bank) {
-	if (!CanBeGeneralStatused(bank))
+bool8 CanBeBurned(u8 bank, bool8 checkFlowerVeil) {
+	if (!CanBeGeneralStatused(bank, checkFlowerVeil))
 		return FALSE;
 	
 	if (IsOfType(bank, TYPE_FIRE))
@@ -1065,8 +1066,8 @@ bool8 CanBeBurned(u8 bank) {
 	return TRUE;
 }
 
-bool8 CanBeFrozen(u8 bank) {
-	if (!CanBeGeneralStatused(bank))
+bool8 CanBeFrozen(u8 bank, bool8 checkFlowerVeil) {
+	if (!CanBeGeneralStatused(bank, checkFlowerVeil))
 		return FALSE;
 
 	if (IsOfType(bank, TYPE_ICE))
@@ -1084,12 +1085,13 @@ bool8 CanBeFrozen(u8 bank) {
 }
 
 bool8 CanBeConfused(u8 bank) {
-	if (!CanBeGeneralStatused(bank))
+	if (TerrainType == MISTY_TERRAIN)
 		return FALSE;
-	else if (ABILITY(bank) == ABILITY_OWNTEMPO)
+		
+	if (ABILITY(bank) == ABILITY_OWNTEMPO)
 		return FALSE;
-	else
-		return TRUE;	
+
+	return TRUE;	
 }
 
 bool8 CanPartyMonBeGeneralStatused(pokemon_t* mon) {

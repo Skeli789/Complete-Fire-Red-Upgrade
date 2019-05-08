@@ -99,10 +99,6 @@ void __attribute__((long_call)) ResetBgsAndClearDma3BusyFlags(u8 bg);	// in bg.h
 void __attribute__((long_call)) BgIdModOffsetX(u8 bgid, s32 delta, u8 dir);
 void __attribute__((long_call)) BgIdModOffsetY(u8 bgid, s32 delta, u8 dir);
 
-u8* __attribute__((long_call)) StringCopy(u8* dest, const u8* src);
-u16 __attribute__((long_call)) StringLength(const u8 *str);
-u8* __attribute__((long_call)) ConvertIntToDecimalStringN(u8 *dest, s32 value, enum StringConvertMode mode, u8 n);
-
 int __attribute__((long_call)) CountTrailingZeroBits(u32 value);
 void __attribute__((long_call)) IncrementGameStat(u8 gameStat);
 void __attribute__((long_call)) nullsub_8(void);

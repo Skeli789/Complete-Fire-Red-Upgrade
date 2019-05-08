@@ -1,6 +1,5 @@
 #include "defines.h"
 #include "defines_battle.h"
-
 #include "../include/event_data.h"
 #include "../include/pokemon.h"
 #include "../include/pokemon_storage_system.h"
@@ -9,7 +8,9 @@
 #include "../include/constants/maps.h"
 
 #include "../include/new/build_pokemon.h"
+#include "../include/new/build_pokemon_2.h"
 #include "../include/new/catching.h"
+#include "../include/new/dexnav.h"
 #include "../include/new/frontier.h"
 #include "../include/new/helper_functions.h"
 #include "../include/new/item.h"
@@ -22,19 +23,11 @@ extern const species_t gRandomizerBanList[];
 extern const species_t gSetPerfectXIvList[];
 
 extern void MultiInitPokemonOrder(void);
-extern u8 GiveMonToPlayer(pokemon_t* mon);
-extern u16 RandRange(u16 min, u16 max);
 extern void GiveBoxMonInitialMoveset(struct BoxPokemon* boxMon);
 extern bool8 sp051_CanTeamParticipateInSkyBattle(void);
 extern bool8 CanMonParticipateInASkyBattle(struct Pokemon* mon);
 
-void BuildTrainerPartySetup(void);
-void sp067_GenerateRandomBattleTowerTeam(void);
-void GiveMonNatureAndAbility(pokemon_t* mon, u8 nature, u8 abilityNum);
-u8 GetMonPokeBall(struct PokemonSubstruct0* data);
-void SetMonPokeBall(struct PokemonSubstruct0* data, u8 ballId);
-void CreateBoxMon(struct BoxPokemon *boxMon, u16 species, u8 level, u8 fixedIV, u8 hasFixedPersonality, u32 fixedPersonality, u8 otIdType, u32 fixedOtId);
-
+//This file's functions:
 static u8 CreateNPCTrainerParty(pokemon_t* const party, const u16 trainerNum, const bool8 firstTrainer, const bool8 side);
 static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerNum, const bool8 firstTrainer, const bool8 forPlayer, const u8 side);
 static void SetWildMonHeldItem(void);

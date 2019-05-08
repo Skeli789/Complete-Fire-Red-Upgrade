@@ -1,15 +1,34 @@
 #pragma once
 
-#include "../../src/defines.h"
-#include "../../src/defines_battle.h"
+#include "../global.h"
 
-#define BattleScript_TutorialThrow 		((u8*) 0x81D9A88)
-#define BattleScript_ShakeBallThrow 	((u8*) 0x81D9A93)
-#define BattleScript_TrainerBallBlock 	((u8*) 0x81D9AC1)
-#define BattleScript_DodgedBall 		((u8*) 0x81D9AD1)
+/**
+ * \file catching.h
+ * \brief Contains functions relating to capturing Pokemon. Also contains
+ *		  details about Poke Ball types.
+ */
+ 
+//Exported Functions
+void atkEF_handleballthrow(void);
+pokemon_t* LoadTargetPartyData(void);
 
-#define sBallCatchBonuses ((u8*) 0x8250892)
+//Functions Hooked In
+u8 GiveMonToPlayer(pokemon_t* mon);
+u8 ItemIdToBallId(u16 ballItem);
+void LoadBallGfx(u8 ballId);
+item_t BallIdToItemId(u8 ballId);
+u16 GetBattlerPokeballItemId(u8 bank);
+bool8 CriticalCapturAnimUpdate(void);
+bool8 DoubleWildPokeBallItemUseFix(u8 taskId);
 
+//Exported Structs
+struct BallIdItemIdRelation
+{
+	u16 itemId;
+	u8 ballId;
+};
+
+//Exported Constants
 enum BallTypes 
 {
 	BALL_TYPE_MASTER_BALL = 1,
@@ -42,9 +61,3 @@ enum BallTypes
 };
 
 #define NUM_BALLS BALL_TYPE_DREAM_BALL
-
-struct BallIdItemIdRelation
-{
-	u16 itemId;
-	u8 ballId;
-};

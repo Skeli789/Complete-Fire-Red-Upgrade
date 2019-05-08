@@ -22,6 +22,9 @@
 .global BattleScript_MultiHitPrintStrings
 .global BattleScript_PluckEat
 
+.global ToxicOrbString
+.global FlameOrbString
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_PoisonTouch:

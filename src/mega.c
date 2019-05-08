@@ -6,34 +6,16 @@
 #include "../include/new/helper_functions.h"
 #include "../include/new/frontier.h"
 #include "../include/new/mega.h"
+#include "../include/new/mega_battle_scripts.h"
 
 #define TRAINER_ITEM_COUNT 4
 
-extern u8 BattleScript_Primal[];
-extern u8 BattleScript_PrimalSub[];
-extern u8 BattleScript_MegaEvolution[];
-extern u8 BattleScript_MegaWish[];
-extern u8 BattleScript_UltraBurst[];
+static bool8 IsItemKeystone(u16 item);
+static item_t FindTrainerKeystone(u16 trainerId);
+static item_t FindPlayerKeystone(void);
+static item_t FindBankKeystone(u8 bank);
 
-const struct Evolution* CanMegaEvolve(u8 bank, bool8 CheckUBInstead);
-u8* DoMegaEvolution(u8 bank);
-u8* DoPrimalReversion(u8 bank, u8 caseId);
-void MegaRevert(pokemon_t* mon);
-void TryRevertMega(pokemon_t* mon);
-bool8 IsItemKeystone(u16 item);
-item_t FindTrainerKeystone(u16 trainerId);
-item_t FindPlayerKeystone(void);
-item_t FindBankKeystone(u8 bank);
-bool8 MegaEvolutionEnabled(u8 bank);
-bool8 BankMegaEvolved(u8 bank, bool8 checkUB);
-bool8 IsMega(u8 bank);
-bool8 IsBluePrimal(u8 bank);
-bool8 IsRedPrimal(u8 bank);
-bool8 IsUltraNecrozma(u8 bank);
-bool8 HasMegaSymbol(u8 bank);
-const u8* GetTrainerName(u8 bank);
-
-const item_t KeystoneTable[] = 
+static const item_t KeystoneTable[] = 
 {
     ITEM_MEGA_RING,
 };
@@ -74,7 +56,7 @@ const struct Evolution* CanMegaEvolve(u8 bank, bool8 CheckUBInstead) {
 	#endif
 }
 
-u8* DoMegaEvolution(u8 bank) {
+const u8* DoMegaEvolution(u8 bank) {
 	const struct Evolution* evolutions = CanMegaEvolve(bank, FALSE);
 	
 	if (evolutions == NULL) //Check Ultra Burst if no Mega
@@ -103,7 +85,7 @@ u8* DoMegaEvolution(u8 bank) {
 }
 
 
-u8* DoPrimalReversion(u8 bank, u8 caseId) {
+const u8* DoPrimalReversion(u8 bank, u8 caseId) {
 	pokemon_t* mon = GetBankPartyData(bank);
 	const struct Evolution* evolutions = gEvolutionTable[mon->species];
 	u16 item = mon->item;
@@ -150,7 +132,7 @@ void TryRevertMega(pokemon_t* mon)
 	}
 }
 
-bool8 IsItemKeystone(u16 item)
+static bool8 IsItemKeystone(u16 item)
 {
     for (u8 i = 0; i < sizeof(KeystoneTable) / sizeof(item_t); ++i) {
         if (item == KeystoneTable[i]) {
@@ -160,7 +142,7 @@ bool8 IsItemKeystone(u16 item)
     return FALSE;
 }
 
-item_t FindTrainerKeystone(u16 trainerId)
+static item_t FindTrainerKeystone(u16 trainerId)
 {
 	if (gBattleTypeFlags & (BATTLE_TYPE_FRONTIER | BATTLE_TYPE_LINK))
 		return ITEM_MEGA_RING;
@@ -175,7 +157,7 @@ item_t FindTrainerKeystone(u16 trainerId)
 }
 
 
-item_t FindPlayerKeystone(void)
+static item_t FindPlayerKeystone(void)
 {
     for (u8 i = 0; i < sizeof(KeystoneTable) / sizeof(item_t); ++i) {
         if (CheckBagHasItem(KeystoneTable[i], 1)) {
@@ -186,7 +168,7 @@ item_t FindPlayerKeystone(void)
     return ITEM_NONE;
 }
 
-item_t FindBankKeystone(u8 bank)
+static item_t FindBankKeystone(u8 bank)
 {
 	if (gBattleTypeFlags & BATTLE_TYPE_LINK)
 		return ITEM_MEGA_RING; //You can always Mega Evolve in a link battle
@@ -406,10 +388,11 @@ extern u16 Mega_TriggerPal[];
 extern void HandleInputChooseMove(void);
 
 static bool8 IsIgnoredTriggerColour(u16 colour);
-u16 ConvertColorToGrayscale(u16 colour);
-u16 LightUpMegaSymbol(u16 clra);
-void MegaTriggerCallback(struct Sprite* self);
-void MegaIndicatorCallback(struct Sprite* self);
+static struct Sprite* GetHealthboxObjId(u8 bank) ;
+static u16 ConvertColorToGrayscale(u16 colour);
+static u16 LightUpMegaSymbol(u16 clra);
+static void MegaTriggerCallback(struct Sprite* self);
+static void MegaIndicatorCallback(struct Sprite* self);
 void LoadMegaGraphics(u8 state);
 void CreateMegaIndicatorAfterAnim(void);
 void TryLoadIndicatorForEachBank(void);
@@ -518,12 +501,12 @@ static bool8 IsIgnoredTriggerColour(u16 colour)
 	return FALSE;
 }
 
-struct Sprite* GetHealthboxObjId(u8 bank) 
+static struct Sprite* GetHealthboxObjId(u8 bank) 
 {
 	return &gSprites[gHealthboxIDs[bank]];
 }
 
-u16 ConvertColorToGrayscale(u16 colour) 
+static u16 ConvertColorToGrayscale(u16 colour) 
 {
 	s32 r = colour & 31;
 	s32 g = (colour >> 5) & 31;
@@ -532,7 +515,7 @@ u16 ConvertColorToGrayscale(u16 colour)
 	return RGB2(gray, gray, gray);
 }
 
-u16 LightUpMegaSymbol(u16 clra) 
+static u16 LightUpMegaSymbol(u16 clra) 
 {
 	u16 clrb = 0x7FFF;
 	
@@ -561,7 +544,7 @@ u16 LightUpMegaSymbol(u16 clra)
 #define TAG self->template->tileTag
 #define PAL_TAG self->template->paletteTag
 
-void MegaTriggerCallback(struct Sprite* self) 
+static void MegaTriggerCallback(struct Sprite* self) 
 {		
 	if (TAG == GFX_TAG_MEGA_TRIGGER) 
 	{
@@ -701,7 +684,7 @@ void MegaTriggerCallback(struct Sprite* self)
 
 #define OBJ_BANK self->data[0]
 
-void MegaIndicatorCallback(struct Sprite* self) {
+static void MegaIndicatorCallback(struct Sprite* self) {
 	// Visibility
 	
 	switch(TAG) {

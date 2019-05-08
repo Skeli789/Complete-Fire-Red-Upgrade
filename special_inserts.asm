@@ -445,26 +445,7 @@ SummaryScreenExpDisplay2:
 	@ .word oei_1A_cave|1	@1d98a9
 .org 0x1d98ad, 0xff
 	.byte 0x4
-	
-@ extend animation frames for hidden water and cave
-.org 0x3a5b56, 0xff
-	.byte 0x8, 0, 1, 0
 
-.org 0x3a5b5a, 0xff
-	.byte 0x8, 0, 2, 0
-
-.org 0x3a5b5e, 0xff
-	.byte 0x8, 0, 3, 0
-
-.org 0x3a5b62, 0xff
-	.byte 0x8, 0, 2, 0
-
-.org 0x3a5b66, 0xff
-	.byte 0x8, 0, 1, 0
-
-.org 0x3a5b6a, 0xff
-	.byte 0x8
-	
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Multichoice Pointers
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

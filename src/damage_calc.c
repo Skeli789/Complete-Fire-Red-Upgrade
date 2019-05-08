@@ -1,72 +1,39 @@
-//Update Type Calc to have an option to be fooled by Illusion
-
 #include "defines.h"
 #include "defines_battle.h"
 #include "../include/event_data.h"
 #include "../include/pokedex.h"
-#include "../include/constants/items.h"
-#include "../include/new/helper_functions.h"
 #include "../include/random.h"
+#include "../include/constants/items.h"
 
-extern u32 SpeedCalc(bank_t);
-extern u32 SpeedCalcForParty(u8 side, pokemon_t*);
-extern bool8 ProtectAffects(u16 move, u8 bankAtk, u8 bankDef, bool8 set);
+#include "../include/new/accuracy_calc.h"
+#include "../include/new/battle_start_turn_start.h"
+#include "../include/new/damage_calc.h"
+#include "../include/new/helper_functions.h"
+#include "../include/new/move_tables.h"
 
-extern move_t HighCritTable[];
-extern move_t AlwaysCritTable[];
-extern move_t RecklessTable[];
-extern move_t IronFistTable[];
-extern move_t SheerForceTable[];
-extern move_t MegaLauncherTable[];
-extern move_t StrongJawTable[];
-extern move_t TypeChangeExceptionTable[];
-extern move_t MoldBreakerMoves[];
-extern move_t PowderTable[];
-extern move_t MinimizeHitTable[];
-extern move_t TwoToFiveStrikesMoves[];
-extern move_t TwoStrikesMoves[];
-extern move_t ThreeStrikesMoves[];
-extern move_t StatChangeIgnoreTable[];
-extern move_t SpecialAttackPhysicalDamageMoves[];
+//TODO: Update Type Calc to have an option to be fooled by Illusion
 
 extern NaturalGiftStruct NaturalGiftTable[];
 extern FlingStruct FlingTable[];
 extern struct AlternateSize gAlternateSpeciesSizeTable[];
 
-const u16 Gen2_5CriticalHitChance[] = {16, 8, 4, 3, 2};
-const u16 Gen6CriticalHitChance[] = {16, 8, 2, 1, 1};
-const u16 Gen7CriticalHitChance[] = {24, 8, 2, 1, 1};
+#ifdef CRIT_CHANCE_GEN_6
+	static const u16 Gen6CriticalHitChance[] = {16, 8, 2, 1, 1};
+#elifdef CRIT_CHANCE_GEN_2_TO_5
+	static const u16 Gen2_5CriticalHitChance[] = {16, 8, 4, 3, 2};
+#else
+	static const u16 Gen7CriticalHitChance[] = {24, 8, 2, 1, 1};
+#endif
 
-void atk04_critcalc(void);
-u8 CalcPossibleCritChance(u8 bankAtk, u8 bankDef, u16 move, pokemon_t* atkMon, bool8 CheckParty);
-
-void atk06_typecalc(void);
-void atk4A_typecalc2(void);
-u8 TypeCalc(move_t, u8 bankAtk, u8 bankDef, pokemon_t* party_data_atk, bool8 CheckParty);
-u8 AI_TypeCalc(move_t, u8 bankAtk, pokemon_t* party_data_def);
-void TypeDamageModification(u8 atkAbility, u8 bankDef, move_t, u8 moveType, u8* flags);
-void ModulateDmgByType(u8 multiplier, const u16 move, const u8 moveType, const u8 defType, const u8 defBank, u8* flags, pokemon_t* party_data_def, bool8 CheckPartyDef);
-u8 GetMoveTypeSpecial(u8 bankAtk, move_t);
-u8 GetMoveTypeSpecialFromParty(pokemon_t* party_data, u16 move);
-bool8 AbilityCanChangeTypeAndBoost(u8 bankAtk, u16 move);
-u8 GetExceptionMoveType(u8 bankAtk, move_t);
-u8 GetExceptionMoveTypeFromParty(pokemon_t*, move_t);
-u8 GetSummaryScreenMoveType(u16 move, pokemon_t* mon);
-
-void atk05_damagecalc(void);
-void FutureSightDamageCalc(void);
-u32 AI_CalcDmg(u8 bankAtk, u8 bankDef, u16 move);
-u32 AI_CalcPartyDmg(u8 bankAtk, u8 bankDef, u16 move, pokemon_t* mon);
-s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* defender, u32 move, u16 sideStatus, u16 powerOverride, u8 effectivenessFlags, u8 typeOverride, u8 bankAtk, u8 bankDef, pokemon_t* party_data_atk, bool8 party, bool8 IgnoreAttacker, bool8 CheckingConfusion);
-u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 ability, u32 atkStatus1, u16 atk_hp, u16 atk_maxHP, u16 species, pokemon_t* party_data_atk, bool8 PartyCheck, bool8 menuCheck, bool8 ignoreDef);
-u16 GetZMovePower(u8 bank, u16 move);
-u16 CalcVisualBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 power, u8 moveType, bool8 ignoreDef);
-u16 AdjustWeight(u32 weight, ability_t, item_effect_t, bank_t, bool8 check_nimble);
-u8 GetFlingPower(ability_t, item_t, pokemon_t*, bank_t, bool8 PartyCheck);
-void AdjustDamage(bool8 CheckFalseSwipe);
-void ApplyRandomDmgMultiplier(void);
-u16 TryGetAlternateSpeciesSize(u16 species, u8 type);
-
+//This file's functions:
+static u8 CalcPossibleCritChance(u8 bankAtk, u8 bankDef, u16 move, pokemon_t* atkMon, bool8 CheckParty);
+static void ModulateDmgByType(u8 multiplier, const u16 move, const u8 moveType, const u8 defType, const u8 defBank, u8* flags, pokemon_t* party_data_def, bool8 CheckPartyDef);
+static bool8 AbilityCanChangeTypeAndBoost(u8 bankAtk, u16 move);
+static u16 GetZMovePower(u8 bank, u16 move);
+static u16 AdjustWeight(u32 weight, ability_t, item_effect_t, bank_t, bool8 check_nimble);
+static u8 GetFlingPower(ability_t, item_t, pokemon_t*, bank_t, bool8 PartyCheck);
+static void AdjustDamage(bool8 CheckFalseSwipe);
+static void ApplyRandomDmgMultiplier(void);
 
 void atk04_critcalc(void) {
     u8 atkEffect = ITEM_EFFECT(gBankAttacker);
@@ -127,7 +94,7 @@ void atk04_critcalc(void) {
     ++gBattlescriptCurrInstr;
 }
 
-u8 CalcPossibleCritChance(u8 bankAtk, u8 bankDef, u16 move, pokemon_t* atkMon, bool8 CheckParty) {
+static u8 CalcPossibleCritChance(u8 bankAtk, u8 bankDef, u16 move, pokemon_t* atkMon, bool8 CheckParty) {
     u8 atkAbility;
 	u8 defAbility = ABILITY(bankDef);
 	u8 atkEffect = 0;
@@ -690,7 +657,7 @@ void TypeDamageModification(u8 atkAbility, u8 bankDef, u16 move, u8 moveType, u8
 		}
 }
 
-void ModulateDmgByType(u8 multiplier, const u16 move, const u8 moveType, const u8 defType, const u8 defBank, u8* flags, pokemon_t* party_data_def, bool8 CheckPartyDef) {
+static void ModulateDmgByType(u8 multiplier, const u16 move, const u8 moveType, const u8 defType, const u8 defBank, u8* flags, pokemon_t* party_data_def, bool8 CheckPartyDef) {
 
 	#ifdef INVERSE_BATTLES
 		if (FlagGet(INVERSE_FLAG)) {
@@ -839,7 +806,7 @@ u8 GetMoveTypeSpecialFromParty(pokemon_t* party_data, u16 move) {
 	return moveType;
 }
 
-bool8 AbilityCanChangeTypeAndBoost(u8 bankAtk, u16 move) {
+static bool8 AbilityCanChangeTypeAndBoost(u8 bankAtk, u16 move) {
 	u8 atkAbility = ABILITY(bankAtk);
 	u8 moveType = gBattleMoves[move].type;
 
@@ -1703,16 +1670,16 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 		&& gBattleTypeFlags & BATTLE_TYPE_TRAINER
 		&& SIDE(bankAtk) == B_SIDE_PLAYER
 		&& gTrainerBattleOpponent != 0x400) {
-			if (FlagGet(FLAG_BADGE01_GET) && SIDE(bankAtk) == B_PLAYER_SIDE)
+			if (FlagGet(FLAG_BADGE01_GET) && SIDE(bankAtk) == B_SIDE_PLAYER)
 				attack = udivsi((110 * attack), 100);
 
-			if (FlagGet(FLAG_BADGE05_GET) && SIDE(bankDef) == B_PLAYER_SIDE)
+			if (FlagGet(FLAG_BADGE05_GET) && SIDE(bankDef) == B_SIDE_PLAYER)
 				defense = udivsi((110 * defense), 100);
 
-			if (FlagGet(FLAG_BADGE07_GET) && SIDE(bankAtk) == B_PLAYER_SIDE)
+			if (FlagGet(FLAG_BADGE07_GET) && SIDE(bankAtk) == B_SIDE_PLAYER)
 				spAttack = udivsi((110 * spAttack), 100);
 
-			if (FlagGet(FLAG_BADGE07_GET) && SIDE(bankDef) == B_PLAYER_SIDE)
+			if (FlagGet(FLAG_BADGE07_GET) && SIDE(bankDef) == B_SIDE_PLAYER)
 				spDefense = udivsi((110 * spDefense), 100);
 		}
 	#endif
@@ -2418,7 +2385,7 @@ u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 
 	return power;
 }
 
-u16 GetZMovePower(u8 bank, u16 move) {
+static u16 GetZMovePower(u8 bank, u16 move) {
 	u16 power = 1;
 
 	switch (move) {

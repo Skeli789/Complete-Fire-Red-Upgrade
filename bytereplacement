@@ -189,6 +189,14 @@
 ##Hydro Pump Particle Update
 083E595C 38 28 38 28
 
+##Dexnav##
+083A5B56 08
+083A5B5A 08
+083A5B5E 08
+083A5B62 08
+083A5B66 08
+083A5B6A 08
+
 ##Specific For Unbound, overrites a hook that shouldn't be there with vanilla data.##
 0803352C 00 68 24 0D
 08034750 00 B5 00 04 09 06 07 4A 40 0B 80 18 00 68 09 09 80 22 52 04 89 18 09 0C 20 22 3B F0 1D FE 01 BC

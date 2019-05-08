@@ -1,91 +1,19 @@
 #include "defines.h"
 #include "defines_battle.h"
+#include "../include/battle_anim.h"
 #include "../include/battle_string_ids.h"
 #include "../include/field_weather.h"
-#include "../include/battle_anim.h"
+#include "../include/random.h"
 #include "../include/window.h"
 #include "../include/constants/items.h"
+
+#include "../include/new/ability_battle_effects.h"
+#include "../include/new/ability_battle_scripts.h"
+#include "../include/new/ability_tables.h"
+#include "../include/new/battle_start_turn_start.h"
+#include "../include/new/damage_calc.h"
 #include "../include/new/helper_functions.h"
-#include "../include/random.h"
-
-#define BattleScript_OverworldWeatherStarts (u8*) 0x81D8B1F
-#define BattleScript_CastformChange (u8*) 0x81D92F8
-
-extern u8 BattleScript_NewWeatherAbilityActivates[];
-extern u8 BattleScript_IntimidateActivatesEnd3[];
-extern u8 BattleScript_TraceActivates[];
-extern u8 BattleScript_SwitchInAbilityMsg[];
-extern u8 BattleScript_AbilityCuredStatus[];
-extern u8 BattleScript_AbilityCuredStatusEnd3[];
-extern u8 BattleScript_StartedSchoolingEnd3[];
-extern u8 BattleScript_StoppedSchoolingEnd3[];
-extern u8 BattleScript_ShieldsDownToCoreEnd3[];
-extern u8 BattleScript_ShieldsDownToMeteorEnd3[];
-extern u8 BattleScript_TransformedEnd3[];
-extern u8 BattleScript_AttackerAbilityStatRaiseEnd3[];
-extern u8 BattleScript_ImposterActivates[];
-extern u8 BattleScript_TerrainFromAbility[];
-extern u8 BattleScript_RainDishActivates[];
-extern u8 BattleScript_DrySkinDamage[];
-extern u8 BattleScript_SolarPowerDamage[];
-extern u8 BattleScript_Healer[];
-extern u8 BattleScript_MoodySingleStat[];
-extern u8 BattleScript_MoodyRegular[];
-extern u8 BattleScript_BadDreams[];
-extern u8 BattleScript_Harvest[];
-extern u8 BattleScript_Pickup[];
-extern u8 BattleScript_PrintCustomStringEnd3[];
-extern u8 BattleScript_AttackerCantUseMove[];
-extern u8 BattleScript_FlashFireBoost[];
-extern u8 BattleScript_FlashFireBoost_PPLoss[];
-extern u8 BattleScript_MonMadeMoveUseless[];
-extern u8 BattleScript_MonMadeMoveUseless_PPLoss[];
-extern u8 BattleScript_MoveHPDrain[];
-extern u8 BattleScript_MoveHPDrain_PPLoss[];
-extern u8 BattleScript_MoveStatDrain[];
-extern u8 BattleScript_MoveStatDrain_PPLoss[];
-extern u8 BattleScript_AbilityApplySecondaryEffect[];
-extern u8 BattleScript_AbilityChangedTypeContact[];
-extern u8 BattleScript_RoughSkinActivates[];
-extern u8 BattleScript_CuteCharmActivates[];
-extern u8 BattleScript_TargetAbilityStatRaise[];
-extern u8 BattleScript_WeakArmorActivates[];
-extern u8 BattleScript_CursedBodyActivates[];
-extern u8 BattleScript_MummyActivates[];
-extern u8 BattleScript_AngerPointActivates[];
-extern u8 BattleScript_GooeyActivates[];
-extern u8 BattleScript_IllusionBroken[];
-extern u8 BattleScript_SynchronizeActivates_StatusesAttacker[];
-extern u8 BattleScript_SynchronizeActivates_StatusesTarget[];
-
-extern u8 gText_FogIsDeep[];
-extern u8 gText_SnowWarningActivate[];
-extern u8 gText_PrimordialSeaActivate[];
-extern u8 gText_DesolateLandActivate[];
-extern u8 gText_DeltaStream[];
-extern u8 gText_AirLockActivate[];
-extern u8 gText_PressureActivate[];
-extern u8 gText_MoldBreakerActivate[];
-extern u8 gText_TeravoltActivate[];
-extern u8 gText_TurboblazeActivate[];
-extern u8 gText_SlowStartActivate[];
-extern u8 gText_UnnerveActivate[];
-extern u8 gText_DarkAuraActivate[];
-extern u8 gText_FairyAuraActivate[];
-extern u8 gText_AuraBreakActivate[];
-extern u8 gText_ComatoseActivate[];
-extern u8 gText_AnticipationActivate[];
-extern u8 gText_ForewarnActivate[];
-extern u8 gText_FriskActivate[];
-extern u8 ElectricTerrainSetString[];
-extern u8 GrassyTerrainSetString[];
-extern u8 MistyTerrainSetString[];
-extern u8 PsychicTerrainSetString[];
-extern u8 gText_SlowStartEnd[];
-
-extern ability_t TraceBanTable[];
-extern move_t BallBombMoveTable[];
-extern move_t PowderTable[];
+#include "../include/new/move_tables.h"
 
 extern u8 gStatusConditionString_MentalState[];
 extern u8 gStatusConditionString_TauntProblem[];
@@ -115,18 +43,15 @@ const u16 gFlashFireStringIds[] =
     STRINGID_PKMNRAISEDFIREPOWERWITH, STRINGID_ITDOESNTAFFECT
 };
 
-extern u8 TypeCalc(move_t, u8 bankAtk, u8 bankDef, pokemon_t* party_data_atk, bool8 CheckParty);
-extern u8 GetExceptionMoveType(u8 bankAtk, move_t);
 extern u8 CastformDataTypeChange(u8 bank);
-extern s8 PriorityCalc(u8 bank, u8 action, u16 move);
 extern void TransformPokemon(u8 bankAtk, u8 bankDef);
 
-u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg);
+//This file's functions:
 static u8 CalcMovePowerForForewarn(u16 move);
 static u8 ActivateWeatherAbility(u16 flags, u16 item, u8 bank, u8 animArg, u8 stringIndex);
 static u8 TryActivateTerrainAbility(u8 terrain, u8 anim, u8 bank);
-bool8 ImmunityAbilityCheck(u8 bank, u32 status, u8* string);
-bool8 AllStatsButOneAreMinned(u8 bank);
+static bool8 ImmunityAbilityCheck(u8 bank, u32 status, u8* string);
+static bool8 AllStatsButOneAreMinned(u8 bank);
 
 u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 {
@@ -1249,7 +1174,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
                 && gBattleMons[gBankAttacker].hp
                 && gBankAttacker != bank 
                 && CheckContact(move, gBankAttacker)
-				&& CanBePoisoned(gBankAttacker, gBankTarget)
+				&& CanBePoisoned(gBankAttacker, gBankTarget, TRUE)
                 && umodsi(Random(), 3) == 0)
                 {
                     gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_POISON;
@@ -1266,7 +1191,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
                 && gBattleMons[gBankAttacker].hp
                 && gBankAttacker != bank 
                 && CheckContact(move, gBankAttacker)
-				&& CanBeParalyzed(gBankAttacker)
+				&& CanBeParalyzed(gBankAttacker, TRUE)
                 && umodsi(Random(), 3) == 0)
                 {
                     gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_PARALYSIS;
@@ -1283,7 +1208,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
                 && gBattleMons[gBankAttacker].hp
                 && gBankAttacker != bank 
                 && CheckContact(move, gBankAttacker)
-				&& CanBeBurned(gBankAttacker)
+				&& CanBeBurned(gBankAttacker, TRUE)
                 && umodsi(Random(), 3) == 0)
                 {
                     gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_BURN;
@@ -1894,7 +1819,7 @@ static u8 TryActivateTerrainAbility(u8 terrain, u8 anim, u8 bank)
 	return effect;
 }
 
-bool8 ImmunityAbilityCheck(u8 bank, u32 status, u8* string)
+static bool8 ImmunityAbilityCheck(u8 bank, u32 status, u8* string)
 {
 	
 	if (gBattleMons[bank].status1 & status)
@@ -1912,7 +1837,7 @@ bool8 ImmunityAbilityCheck(u8 bank, u32 status, u8* string)
 	return FALSE;
 }
 
-bool8 AllStatsButOneAreMinned(bank_t bank) {
+static bool8 AllStatsButOneAreMinned(bank_t bank) {
 	u8 counter = 0;
 	for (u8 i = 0; i < BATTLE_STATS_NO-1; ++i) {
 		if (gBattleMons[bank].statStages[i] > 0) {
@@ -1925,10 +1850,6 @@ bool8 AllStatsButOneAreMinned(bank_t bank) {
 }
 
 //Illusion Updates////////////////////////////////////////////////////////////////////////////////////
-extern u8 ItemIdToBallId(u16 ballItem);
-extern item_t BallIdToItemId(u8 ballId);
-extern void LoadBallGfx(u8 ballId);
-
 pokemon_t* UpdateNickForIllusion(pokemon_t* mon)
 {
 	u8 bank = GetBankFromPartyData(mon);

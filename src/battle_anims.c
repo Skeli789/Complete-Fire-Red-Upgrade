@@ -2,15 +2,20 @@
 #include "defines_battle.h"
 #include "../include/battle_anim.h"
 #include "../include/event_data.h"
-#include "../include/new/helper_functions.h"
 #include "../include/random.h"
+
+#include "../include/new/battle_anims.h"
+#include "../include/new/battle_terrain.h"
+#include "../include/new/helper_functions.h"
 
 extern const struct CompressedSpriteSheet gBattleAnimPicTable[];
 extern const struct CompressedSpritePalette gBattleAnimPaletteTable[];
-extern const struct TerrainTableStruct TerrainTable[];
 extern u8* AttackAnimationTable[];
-extern const u16 gCamouflageColours[];
 
+//This file's functions:
+static void InitSpritePosToAnimTargetsCentre(struct Sprite *sprite, bool8 respectMonPicOffsets);
+static void InitSpritePosToAnimAttackersCentre(struct Sprite *sprite, bool8 respectMonPicOffsets);
+static void InitSpritePosToGivenTarget(struct Sprite* sprite, u8 target);
 static void SpriteCB_FlareBlitzUpFlamesP2(struct Sprite* sprite);
 
 bank_t LoadBattleAnimTarget(u8 arg)
@@ -63,26 +68,6 @@ void ShinyAnimFix(void)
 	LoadCompressedSpriteSheetUsingHeap(&gBattleAnimPicTable[ANIM_TAG_GOLD_STARS - ANIM_SPRITES_START]);
     LoadCompressedSpritePaletteUsingHeap(&gBattleAnimPaletteTable[ANIM_TAG_GOLD_STARS - ANIM_SPRITES_START]);
 }
-
-/*
-void ScriptCmd_pokespritefromBGsingle(void)
-{
-    u8 animBattlerId;
-    u8 battlerId;
-    u8 taskId;
-
-    sBattleAnimScriptPtr++;
-    animBattlerId = LoadBattleAnimTarget(sBattleAnimScriptPtr[0]);
-
-    if (sMonAnimTaskIdArray[0] != 0xFF)
-        gSprites[gBattlerSpriteIds[animBattlerId]].invisible = FALSE;
-
-    taskId = CreateTask(sub_80A4980, 5);
-    gTasks[taskId].data[0] = animBattlerId;
-    gTasks[taskId].data[2] = animBattlerId;
-
-    sBattleAnimScriptPtr++;
-}*/
 
 void AnimTask_TechnoBlast(u8 taskId)
 {
@@ -297,19 +282,19 @@ void AnimTask_GetSecretPowerAnimation(u8 taskId)
 	
 	switch (TerrainType) {
 		case ELECTRIC_TERRAIN:
-			move = TerrainTable[0].secretPowerAnim;
+			move = gTerrainTable[0].secretPowerAnim;
 			break;
 		case GRASSY_TERRAIN:
-			move = TerrainTable[1].secretPowerAnim;
+			move = gTerrainTable[1].secretPowerAnim;
 			break;
 		case MISTY_TERRAIN:
-			move = TerrainTable[2].secretPowerAnim;
+			move = gTerrainTable[2].secretPowerAnim;
 			break;
 		case PSYCHIC_TERRAIN:
-			move = TerrainTable[3].secretPowerAnim;
+			move = gTerrainTable[3].secretPowerAnim;
 			break;
 		default:
-			move = TerrainTable[gBattleTerrain + 4].secretPowerAnim;
+			move = gTerrainTable[gBattleTerrain + 4].secretPowerAnim;
 	}
 	
 	sBattleAnimScriptPtr = AttackAnimationTable[move];
@@ -337,9 +322,9 @@ void AnimTask_SetCamouflageBlend(u8 taskId)
 	}
 	
 	if (entry)
-		gBattleAnimArgs[4] = gCamouflageColours[TerrainTable[entry].camouflageType];
+		gBattleAnimArgs[4] = gCamouflageColours[gTerrainTable[entry].camouflageType];
 	else
-		gBattleAnimArgs[4] = gCamouflageColours[TerrainTable[gBattleTerrain + 4].camouflageType];
+		gBattleAnimArgs[4] = gCamouflageColours[gTerrainTable[gBattleTerrain + 4].camouflageType];
 
 	StartBlendAnimSpriteColor(taskId, selectedPalettes);
 }
@@ -378,7 +363,7 @@ void SpriteCB_TranslateAnimSpriteToTargetMonLocationDoubles(struct Sprite* sprit
 	}
 }
 
-void InitSpritePosToAnimTargetsCentre(struct Sprite *sprite, bool8 respectMonPicOffsets)
+static void InitSpritePosToAnimTargetsCentre(struct Sprite *sprite, bool8 respectMonPicOffsets)
 {
 	if (!respectMonPicOffsets)
 	{
@@ -392,7 +377,7 @@ void InitSpritePosToAnimTargetsCentre(struct Sprite *sprite, bool8 respectMonPic
 	sprite->pos1.y += gBattleAnimArgs[1];
 }
 
-void InitSpritePosToAnimAttackersCentre(struct Sprite *sprite, bool8 respectMonPicOffsets)
+static void InitSpritePosToAnimAttackersCentre(struct Sprite *sprite, bool8 respectMonPicOffsets)
 {
 	if (!respectMonPicOffsets)
 	{
