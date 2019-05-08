@@ -42,7 +42,7 @@
 #define FLAG_SYS_BAG_GET 0x913	// toggle bag on/off. uncomment to always have on
 #define FLAG_SYS_PLAYER_GET 0x914	//toggle [player] on/off. uncomment to always have on
 #define FLAG_SYS_SAVE_GET 0x915	//toggle save on/off. uncomment to always have on
-//#define FLAG_SYS_DEXNAV 0x916	// flag to turn dexnav on/off in start menu (if undefined, this will eliminate dexnav from the start menu)
+#define FLAG_SYS_DEXNAV 0x916	// flag to turn dexnav on/off in start menu (if undefined, this will eliminate dexnav from the start menu)
 #define FLAG_POKETOOLS_MENU 0x917  // flag for poke tools start menu
 
 //Pedometer Flags as in JPAN Engine
