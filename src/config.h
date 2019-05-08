@@ -41,7 +41,7 @@
 // Start Menu/Poketools Flags
 #define FLAG_SYS_BAG_GET 0x913	// toggle bag on/off. uncomment to always have on
 #define FLAG_SYS_SAVE_GET 0x914	//toggle save on/off. uncomment to always have on
-#define FLAG_POKETOOLS 0x915	// flag to turn poketools on/off (if TOOL_DEXNAV is defined, otherwise useless)
+#define FLAG_SYS_DEXNAV 0x915	// flag to turn dexnav on/off in start menu (if undefined, this will eliminate dexnav from the start menu)
 
 //Pedometer Flags as in JPAN Engine
 #define FLAG_LONG_PEDOMETER 0x920	// 32 bit
@@ -92,7 +92,6 @@ enum
 
 //Start Menu Options
 #define DYNAMIC_START_MENU  //comment this line out if you want the start menu to remain fixed except for pokedex/pokemon (se FLAG_SYS_BAG_GET and more)
-#define TOOL_DEXNAV	//comment this line out to remove the dexnav feature (see documentation)
 
 //General Options
 #define TIME_MORNING_START 4		//4:00 AM -  4:00

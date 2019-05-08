@@ -833,6 +833,15 @@ InUnionRoom = 0x0811B0D0 | 1;
 BuildLinkModeStartMenu = 0x0806EE34 | 1;
 BuildUnionRoomStartMenu = 0x0806EE58 | 1;
 AddStartMenuAction = 0x0806ED94 | 1;
+StartMenuPokedexCallback = 0x0806F410 | 1;
+StartMenuPokemonCallback = 0x0806F44C | 1;
+StartMenuBagCallback = 0x0806F480 | 1;
+StartMenuPlayerNameCallback = 0x0806F4B4 | 1;
+StartMenuSaveCallback = 0x0806F4E8 | 1;
+StartMenuOptionCallback = 0x0806F4FC | 1;
+StartMenuExitCallback = 0x0806F540 | 1;
+StartMenuSafariZoneRetireCallback = 0x0806F554 | 1;
+StartMenuLinkModePlayerNameCallback = 0x0806F56C | 1;
 
 gText_MenuPokedex = 0x841627d;
 gText_MenuPokemon = 0x8415a66;
