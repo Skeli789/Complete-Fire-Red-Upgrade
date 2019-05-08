@@ -204,7 +204,6 @@ RealTimeClock 0800041E 3
 ##Script Specials
 sp156_GhostBattleSpecial 0807f92a 2
 
-
 ##Select-From-PC
 pcSelect_ClosingCheck 0808ebb2 0
 pcSelect_HackWithdrawBRM 08094982 0
@@ -332,7 +331,7 @@ PokedexLoadAlternateWeightHook 08105A58 0
 #GiveEggFromDaycare 080460D4 1
 #TriggerPendingDaycareEgg 080459F0 1
 
-##Pokemon Hooks
+##Shiny Charm
 CreateBoxMonHook 803DAD2 0
 
 ##TM/HM Expansion

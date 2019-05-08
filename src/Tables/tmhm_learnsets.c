@@ -14,14 +14,18 @@
 // Each entry is a 64-bit bit array spread across two 32-bit values, with
 // each bit corresponding to a .
 
+
+
+
 //temp
-const u16 gTMHMLearnsets[][4] = {
+const u32 gTMHMLearnsets[][4] = {
 	0,
 };
 /*
 
 #ifdef EXPANDED_TMSHMS
-const u32 gTMHMLearnsets[][2] = {
+// 4 words each
+const u32 gTMHMLearnsets[][4] = {
 	[SPECIES_NONE]        = TMHM_LEARNSET(TMHM(TM14_BLIZZARD)
 											| TMHM(HM01_CUT)
 											| TMHM(TM26_EARTHQUAKE)
