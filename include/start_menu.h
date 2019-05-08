@@ -11,8 +11,34 @@ extern const u8 gText_MenuSave[];
 extern const u8 gText_MenuOption[];
 extern const u8 gText_MenuExit[];
 extern const u8 gText_MenuRetire[];
+extern const u8 gText_PokeTools[];
+extern const u8 gText_DexNav[];
 
-extern u8 gText_PokeTools[];
+extern const u8 gText_PokedexDescription[];
+extern const u8 gText_PokemonDescription[];
+extern const u8 gText_BagDescription[];
+extern const u8 gText_PlayerDescription[];
+extern const u8 gText_SaveDescription[];
+extern const u8 gText_OptionDescription[];
+extern const u8 gText_ExitDescription[];
+extern const u8 gText_RetireDescription[];
+extern const u8 gText_PlayerDescription[];
+extern const u8 gText_ToolsDescription[];
+extern const u8 gText_DexNavDescription[];
+
+
+typedef void (*MainCallback)(void);
+
+struct StartMenu {
+	MainCallback activeContext;
+	u8 cursorPos;
+	u8 numItems;
+	u8 menuIndices[9];
+	u8 stateTracker;
+	u8 stateTracker2;
+	u8 safariZone;
+};
+
 
 enum
 {
@@ -26,6 +52,7 @@ enum
     MENU_ACTION_RETIRE_SAFARI,
     MENU_ACTION_PLAYER_LINK,
 	MENU_ACTION_POKETOOLS,
+	MENU_ACTION_DEXNAV,
 	NUM_START_MENU_OPTIONS,	// always have at end
 };
 
@@ -46,6 +73,8 @@ bool8 __attribute__((long_call)) StartMenuOptionCallback(void);
 bool8 __attribute__((long_call)) StartMenuExitCallback(void);
 bool8 __attribute__((long_call)) StartMenuSafariZoneRetireCallback(void);
 bool8 __attribute__((long_call)) StartMenuLinkModePlayerNameCallback(void);
+void __attribute__((long_call)) TaskStartMenu(u8 taskId);
+void __attribute__((long_call)) ShowStartMenu(void);
 
 
 #endif // GUARD_START_MENU_H

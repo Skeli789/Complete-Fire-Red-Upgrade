@@ -40,8 +40,10 @@
 
 // Start Menu/Poketools Flags
 #define FLAG_SYS_BAG_GET 0x913	// toggle bag on/off. uncomment to always have on
-#define FLAG_SYS_SAVE_GET 0x914	//toggle save on/off. uncomment to always have on
-#define FLAG_SYS_DEXNAV 0x915	// flag to turn dexnav on/off in start menu (if undefined, this will eliminate dexnav from the start menu)
+#define FLAG_SYS_PLAYER_GET 0x914	//toggle [player] on/off. uncomment to always have on
+#define FLAG_SYS_SAVE_GET 0x915	//toggle save on/off. uncomment to always have on
+//#define FLAG_SYS_DEXNAV 0x916	// flag to turn dexnav on/off in start menu (if undefined, this will eliminate dexnav from the start menu)
+#define FLAG_POKETOOLS_MENU 0x917  // flag for poke tools start menu
 
 //Pedometer Flags as in JPAN Engine
 #define FLAG_LONG_PEDOMETER 0x920	// 32 bit
@@ -89,9 +91,6 @@ enum
 #define NUM_TMSHMS NUM_TMS + NUM_HMS //This must always be defined
 //#define TMS_BEFORE_HMS  //Uncomment this if you want the HMs to appear after the TMs in your bag
 //#define DELETABLE_HMS		//Uncomment this if you want HMs to be deletable without the Move Deleter
-
-//Start Menu Options
-#define DYNAMIC_START_MENU  //comment this line out if you want the start menu to remain fixed except for pokedex/pokemon (se FLAG_SYS_BAG_GET and more)
 
 //General Options
 #define TIME_MORNING_START 4		//4:00 AM -  4:00
@@ -166,6 +165,7 @@ enum
 #define OBEDIENCE_BY_BADGE_AMOUNT //Determines obedience based on the number of badges the Player has, rather than which badges the player has
 #define SAVE_BLOCK_EXPANSION //Uncommenting this requires you to also manually remove Save Expansion Hooks found in hooks
 #define SELECT_FROM_PC //Comment this out to remove select-from-pc hack
+//#define FOSSIL_IMAGE_HACK   // uncommenting includes JPANs fossil image hack (see EXISTING_FOSSIL_IMAGE_TABLE_ADDRESS)
 //#define SET_HEALING_PLACE_HACK  //Comment this out if you don't want custom map/bank whiteout respawn locations
 #define EVO_HOLD_ITEM_REMOVAL //Comment this out if you want leveling up/hold item evolution (eg. sneasel) to remove the item (like normal)
 #define EXPAND_MOVESETS //Comment this out if you're using the Dynamic Pokemon Expansion repo to expand the movesets

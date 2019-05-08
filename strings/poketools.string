@@ -1,6 +1,13 @@
 #org @gText_DexNavText
 Pok\edex\nDexnav
 
+#org @gText_DexNav
+DEXNAV
+
+#org @gText_DexNavDescription
+Search for wild Pok\emon in the area\nwith potential special qualities!
+
+
 #org @gText_PokeTools
 TOOLS
 
@@ -31,5 +38,7 @@ That Pok\emon can't be searched!
 #org @gText_DexNav_Locked
 Pok\emon searchable via Select!
 
+#org @gText_ToolsDescription
+Tools to view your Pok\edex progress\nor search for specific species.
 
 

@@ -340,8 +340,8 @@ CreateBoxMonHook 803DAD2 0
 #CheckIsHmMove 080441b8 1
 
 ##Start Menu
-# BuildStartMenuActions 0806ed54 0
+BuildStartMenuActions 0806ed54 0
 CheckDexNavSelect 0810AD98 1
 PokeToolNoFade 0806F3A8 3
-
+FixStartMenuSize 080f78f4 0
 

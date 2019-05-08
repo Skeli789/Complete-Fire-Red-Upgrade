@@ -88,7 +88,7 @@ static void DexNavDrawHeldItem(u8* objidAddr);
 static void DexNavDrawIcons(void);
 static void InitDexNavHUD(u16 species, u8 environment);
 static void ExecDexNavHUD(void);
-static u8 ExecDexNav(void);
+//static u8 ExecDexNav(void);
 static void DexNavGuiSetup(void);
 static void DexNavLoadPokeIcons(void);
 static void UpdateCursorPosition(void);
@@ -99,8 +99,8 @@ static void DexNavGuiExitSearch(void);
 static void DexNavGuiExitNoSearch(void);
 static void DexNavPopulateEncounterList(void);
 static void DexNavGuiHandler(void);
-static void ToolSelection(u8 taskId);
-static void CloseStartMenu(void);
+void ToolSelection(u8 taskId);
+//static void CloseStartMenu(void);
 
 static void DestroyTaskCompletedTextbox(u8 tId)
 {
@@ -1584,7 +1584,7 @@ static void ExecDexNavHUD(void)
 }
 
 
-static u8 ExecDexNav(void)
+u8 ExecDexNav(void)
 {
     BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 16, 0x0000);
 	SetCallback1(DexNavGuiHandler);
@@ -2108,7 +2108,7 @@ u8 CheckRegisteredSelect(void)
 // ============================== //
 // ========= POKETOOLS ========== //
 // ============================== //
-static void ToolSelection(u8 taskId)
+void ToolSelection(u8 taskId)
 {    
     switch (priv0)
 	{
@@ -2156,18 +2156,3 @@ static void ToolSelection(u8 taskId)
     }
 };
 
-
-static void CloseStartMenu(void)
-{
-	CloseSafariStepsBox();	// void safari_stepscount_close(void) 0806EF18
-	CloseStartMenuDescriptionBox();	// void sm_close_description(void) 080F7998
-	HideStartMenu();		// void sm_close_menu(void) 0806FEA0
-}
-
-
-u8 PokeToolsFunc(void)
-{
-    CloseStartMenu();
-    CreateTask(ToolSelection, 0);
-    return 1;
-}
