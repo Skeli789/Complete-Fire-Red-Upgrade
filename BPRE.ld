@@ -828,6 +828,20 @@ CloseSafariStepsBox = 0x0806EF18 | 1;
 HideStartMenu = 0x0806FEA0 | 1;
 CloseStartMenuDescriptionBox = 0x080F7998 | 1;
 StartMenuPokedexFunc = 0x0806F410 | 1;
+IsUpdateLinkStateCBActive = 0x0805642C | 1;
+InUnionRoom = 0x0811B0D0 | 1;
+BuildLinkModeStartMenu = 0x0806EE34 | 1;
+BuildUnionRoomStartMenu = 0x0806EE58 | 1;
+AddStartMenuAction = 0x0806ED94 | 1;
+
+gText_MenuPokedex = 0x841627d;
+gText_MenuPokemon = 0x8415a66;
+gText_MenuBag = 0x8416285;
+gText_MenuPlayer = 0x841628e;
+gText_MenuSave = 0x8416291;
+gText_MenuOption = 0x8416296;
+gText_MenuExit = 0x841629d;
+gText_MenuRetire = 0x84162a2;
 
 /*Palette Functions*/
 BlendPalette = 0x8045274 | 1;

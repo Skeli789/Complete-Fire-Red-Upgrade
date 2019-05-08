@@ -130,6 +130,10 @@ struct BlockRequest
     void * address;
     u32 size;
 };
+
+
+bool32 __attribute__((long_call)) InUnionRoom(void);
+
 /*
 extern const struct BlockRequest sBlockRequestLookupTable[5];
 

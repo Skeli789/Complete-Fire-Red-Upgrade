@@ -8,6 +8,7 @@
 #include "../include/overworld.h"
 #include "../include/region_map.h"
 #include "../include/save.h"
+#include "../include/sprite.h"
 #include "../include/script.h"
 #include "../include/sound.h"
 #include "../include/string_util.h"
@@ -48,36 +49,35 @@ extern const species_t gSkyBattleBannedSpeciesList[];
 ///////////////////////////////////////////////////////////////////////////////////
 
 
-#ifdef FOSSIL_IMAGE_HACK
-	struct FossilTable 
-	{
-		struct SpriteSheet* data;
-		u16* palette;
-	};
 
-	#ifdef EXISTING_FOSSIL_IMAGE_TABLE_ADDRESS
-		#define gFossilImageTable ((struct FossilTable*) EXISTING_FOSSIL_IMAGE_TABLE_ADDRESS)
-	#else 
-		//Create a 255 image table
-		struct FossilTable gFossilImageTable[] = 
-		{
-			[0] = //Kabutops (originally index 0x8D, now 0x0)
-				{
-					.data = (struct SpriteSheet*) 	0x83E17C0, 
-					.palette = (u16*) 				0x83E17A0,
-				},
-			[1] = 
-				{ //Aerodactyl (originally index 0x8e, now 0x1)
-					.data = (struct SpriteSheet*) 	0x83E17D0, 
-					.palette = (u16*) 				0x83E0F80,
-				},	
-			[2] =
-				{ //Start adding new data here
-					.data = (struct SpriteSheet*) 	0x8AAAAAA, 
-					.palette = (u16*) 				0x8AAAAAA,
-				},	
-		};
-	#endif
+struct FossilTable 
+{
+	struct SpriteSheet* data;
+	u16* palette;
+};
+
+#ifdef EXISTING_FOSSIL_IMAGE_TABLE_ADDRESS
+	#define gFossilImageTable ((struct FossilTable*) EXISTING_FOSSIL_IMAGE_TABLE_ADDRESS)
+#else 
+	//Create a 255 image table
+	struct FossilTable gFossilImageTable[] = 
+	{
+		[0] = //Kabutops (originally index 0x8D, now 0x0)
+			{
+				.data = (struct SpriteSheet*) 	0x83E17C0, 
+				.palette = (u16*) 				0x83E17A0,
+			},
+		[1] = 
+			{ //Aerodactyl (originally index 0x8e, now 0x1)
+				.data = (struct SpriteSheet*) 	0x83E17D0, 
+				.palette = (u16*) 				0x83E0F80,
+			},	
+		[2] =
+			{ //Start adding new data here
+				.data = (struct SpriteSheet*) 	0x8AAAAAA, 
+				.palette = (u16*) 				0x8AAAAAA,
+			},	
+	};
 #endif
 
 enum EVStatChecker
@@ -1555,6 +1555,8 @@ bool8 sp18B_ShowFossilImage(void) {
 		return FALSE;
 	if (Var8004 > 255)
 		return FALSE;
+
+	
 
 	LoadSpriteSheets(gFossilImageTable[Var8004].data);
 

@@ -271,10 +271,6 @@ FindOrLoadPalette 08008928 1
 PaletteNeedsFogBrightening 0807A748 1
 LoadCloudOrSandstormPalette 0807ABC0 1
 
-## Dex Nav
-CheckDexNavSelect 0810AD98 1
-PokeToolNoFade 0806F3A8 3
-
 ## Whiteout Hack
 DynamicWhiteoutMap 080bfd54 0
 
@@ -342,4 +338,10 @@ CreateBoxMonHook 803DAD2 0
 #SortTmHms 0809A604 0
 #CheckIsHmMove 08125A90 1
 #CheckIsHmMove 080441b8 1
+
+##Start Menu
+#BuildStartMenuActions 0806ed54 0
+CheckDexNavSelect 0810AD98 1
+PokeToolNoFade 0806F3A8 3
+
 

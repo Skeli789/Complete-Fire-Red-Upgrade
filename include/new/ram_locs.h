@@ -73,7 +73,10 @@ struct Pedometers
 		
 		#define gPlayerAvatar ((struct PlayerAvatar*) 0x02037078)
 		
-		#define gBoxStatusAndType ((u8*) 0x0203709C)		
+		#define gBoxStatusAndType ((u8*) 0x0203709C)
+		
+		#define sNumStartMenuActions *((u8*) 0x020370F5)
+		
 
 /*u8*/  #define gUnknown_2024005 ((u8*) 0x2024005) //Length 0x3
 /*u8*/  #define gUnknown_2024008 ((u8*) 0x2024008) //Length 0x10

@@ -38,6 +38,11 @@
 #define FLAG_REMOVE_EVO_ITEM 0x911  //Flag to toggle item removal after leveling up (set by the engine)
 #define WILD_SHINY_BATTLE_FLAG 0x912 //Flag to cause next battle to be against a shiny Pokemon
 
+// Start Menu/Poketools Flags
+#define FLAG_SYS_BAG_GET 0x913	// toggle bag on/off. uncomment to always have on
+#define FLAG_SYS_SAVE_GET 0x914	//toggle save on/off. uncomment to always have on
+#define FLAG_POKETOOLS 0x915	// flag to turn poketools on/off (if TOOL_DEXNAV is defined, otherwise useless)
+
 //Pedometer Flags as in JPAN Engine
 #define FLAG_LONG_PEDOMETER 0x920	// 32 bit
 #define FLAG_MED_PEDOMETER 0x921	// 16 bit
@@ -84,6 +89,10 @@ enum
 #define NUM_TMSHMS NUM_TMS + NUM_HMS //This must always be defined
 //#define TMS_BEFORE_HMS  //Uncomment this if you want the HMs to appear after the TMs in your bag
 //#define DELETABLE_HMS		//Uncomment this if you want HMs to be deletable without the Move Deleter
+
+//Start Menu Options
+#define DYNAMIC_START_MENU  //comment this line out if you want the start menu to remain fixed except for pokedex/pokemon (se FLAG_SYS_BAG_GET and more)
+#define TOOL_DEXNAV	//comment this line out to remove the dexnav feature (see documentation)
 
 //General Options
 #define TIME_MORNING_START 4		//4:00 AM -  4:00
@@ -133,7 +142,7 @@ enum
 
 #define SEEN_DEX_FLAGS gSaveBlock2->pokedex.seen
 #define CAUGHT_DEX_FLAGS gSaveBlock2->pokedex.owned
-#define EXISTING_FOSSIL_IMAGE_TABLE_ADDRESS 0x81a4600  //Comment this out if you've already inserted a fossil image table
+//#define EXISTING_FOSSIL_IMAGE_TABLE_ADDRESS 0x81a4600  //Comment this out if you've already inserted a fossil image table
 //#define EXISTING_OW_TABLE_ADDRESS 0x81a2000	//Uncomment if you want new overworld NPC tables to be generated.
 
 #define INVERSE_BATTLES //Comment this line to disable the possibility of having Inverse Battles
@@ -159,7 +168,6 @@ enum
 #define SAVE_BLOCK_EXPANSION //Uncommenting this requires you to also manually remove Save Expansion Hooks found in hooks
 #define SELECT_FROM_PC //Comment this out to remove select-from-pc hack
 //#define SET_HEALING_PLACE_HACK  //Comment this out if you don't want custom map/bank whiteout respawn locations
-//#define FOSSIL_IMAGE_HACK  //Comment this out if you don't want JPANs fossil image hack
 #define EVO_HOLD_ITEM_REMOVAL //Comment this out if you want leveling up/hold item evolution (eg. sneasel) to remove the item (like normal)
 #define EXPAND_MOVESETS //Comment this out if you're using the Dynamic Pokemon Expansion repo to expand the movesets
 /*FIX THIS*///#define FATHER_PASSES_TMS //Comment this out if you don't want TMs the father knows to be passed through breeding

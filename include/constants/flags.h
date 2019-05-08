@@ -1292,25 +1292,25 @@
 #define CODE_FLAGS          (FLAG_TRAINER_FLAG_START + TRAINERS_FLAG_NO + 0x33) // 0x819
 
 // TODO: Find what these are
-#define FLAG_UNK820         0x820
-#define FLAG_UNK824         0x824
-#define FLAG_UNK826         0x826
+//#define FLAG_UNK820         0x820
+//#define FLAG_UNK824         0x824
+//#define FLAG_UNK826         0x826
 
 #define FLAG_UNK843         0x843
 
 // SYSTEM FLAGS
 
 // 0x860
-#define FLAG_SYS_POKEMON_GET     (CODE_FLAGS + 0)
-#define FLAG_SYS_POKEDEX_GET     (CODE_FLAGS + 1)
-#define FLAG_SYS_POKENAV_GET     (CODE_FLAGS + 2)
+//#define FLAG_SYS_POKEMON_GET     (CODE_FLAGS + 0)
+//#define FLAG_SYS_POKEDEX_GET     (CODE_FLAGS + 1)
+//#define FLAG_SYS_POKENAV_GET     (CODE_FLAGS + 2)
 // third one appears unused
-#define FLAG_SYS_GAME_CLEAR      (CODE_FLAGS + 4)
-#define FLAG_SYS_CHAT_USED       (CODE_FLAGS + 5)
-#define FLAG_SYS_HIPSTER_MEET    (CODE_FLAGS + 6)
+//#define FLAG_SYS_GAME_CLEAR      (CODE_FLAGS + 4)
+//#define FLAG_SYS_CHAT_USED       (CODE_FLAGS + 5)
+//#define FLAG_SYS_HIPSTER_MEET    (CODE_FLAGS + 6)
 
 // badges
-#define FLAG_BADGE01_GET         (CODE_FLAGS + 7)
+#define FLAG_BADGE01_GET         (CODE_FLAGS + 7)  //0x820
 #define FLAG_BADGE02_GET         (CODE_FLAGS + 8)
 #define FLAG_BADGE03_GET         (CODE_FLAGS + 9)
 #define FLAG_BADGE04_GET         (CODE_FLAGS + 0xA)
@@ -1318,6 +1318,8 @@
 #define FLAG_BADGE06_GET         (CODE_FLAGS + 0xC)
 #define FLAG_BADGE07_GET         (CODE_FLAGS + 0xD)
 #define FLAG_BADGE08_GET         (CODE_FLAGS + 0xE)
+#define FLAG_SYS_POKEMON_GET     (CODE_FLAGS + 0xF)
+#define FLAG_SYS_POKEDEX_GET     (CODE_FLAGS + 0x10)
 
 #define FLAG_ELITE4_BEAT		 (CODE_FLAGS + 0x13) //0x82C
 
