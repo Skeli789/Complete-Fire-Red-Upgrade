@@ -103,37 +103,9 @@ u16 ItemIdToBattleMoveId(u16 item) {
 }
 
 
-
-/*
-void SortBerriesOrTMHMs(struct BagPocket *bagPocket) {
-    u16 i, j;
-
-    for (i = 0; i < bagPocket->capacity - 1; ++i)
-    {
-        for (j = i + 1; j < bagPocket->capacity; j++)
-        {
-            if (GetBagItemQuantity(&bagPocket->itemSlots[i].quantity) != 0)
-            {
-                if (GetBagItemQuantity(&bagPocket->itemSlots[j].quantity) == 0)
-                    continue;
-                if (bagPocket->itemSlots[i].itemId <= bagPocket->itemSlots[j].itemId)
-                    continue;
-            }
-            SwapItemSlots(&bagPocket->itemSlots[i], &bagPocket->itemSlots[j]);
-        }
-    }
-}
-*/
-
-
-
 u16 RefineTmOrdering(void) {
-	#ifdef EXPANDED_TMSHMS
-		#ifdef TMS_BEFORE_HMS
-			return 0;
-		#else
-			return ITEM_TM50;
-		#endif
+	#ifdef TMS_BEFORE_HMS
+		return 0;
 	#else
 		return ITEM_TM50;
 	#endif
@@ -200,24 +172,6 @@ void LoadTmHmName(u8 *dest, u16 itemId) {
 
 
 
-
-/*
-	StringCopy(gStringVar4, gMoveNames[ItemIdToBattleMoveId(itemId)]);
-	if (itemId >= ITEM_HM01)
-	{
-		ConvertIntToDecimalStringN(gStringVar4, itemId-ITEM_HM01+1, 2, 1);
-		StringExpandPlaceholders(dest, gText_ClearTo11Var1Clear5Var2);
-	}
-	else
-	{
-		ConvertIntToDecimalStringN(gStringVar4, itemId-ITEM_TM01+1, 2, 2);
-		StringExpandPlaceholders(dest, gText_UnkF908Var1Clear7Var2);
-	}
-}
-*/
-
-
-
 enum {
     CAN_LEARN_MOVE,
     CANNOT_LEARN_MOVE,
@@ -274,14 +228,3 @@ bool8 CheckIsHmMove(u16 move) {
 #endif
 }
 
-/*
-bool8 CheckIsHmMove(u16 move) {
-    u16 i = NUM_TMS;
-    while (gTMHMMoves[i] != 0xFFFF)
-	{
-        if (sHMMoves[++i] == move)
-            return TRUE;
-	}
-	return FALSE;
-
-*/
