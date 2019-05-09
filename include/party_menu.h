@@ -34,12 +34,12 @@ struct MonSummaryData {
 
 void __attribute__((long_call)) sub_811FA78(u8 taskId);
 s8 __attribute__((long_call)) sub_812029C(s8 a, s8 b);
+u8 __attribute__((long_call)) pokemon_ailments_get_primary(u32 status);
 void __attribute__((long_call)) sub_8122D78(void);
 
 /*
 bool8 pokemon_has_move(struct Pokemon *, u16);
 void sub_81B58A8(void);
 void DoWallyTutorialBagMenu(void);
-u8 pokemon_ailments_get_primary(u32 status);
 u16 ItemIdToBattleMoveId(u16 itemId);
 */

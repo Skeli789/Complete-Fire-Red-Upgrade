@@ -9,14 +9,13 @@
 #include "../include/new/accuracy_calc.h"
 #include "../include/new/attackcanceler.h"
 #include "../include/new/attackcanceler_battle_scripts.h"
+#include "../include/new/battle_start_turn_start.h"
 #include "../include/new/damage_calc.h"
+#include "../include/new/general_bs_commands.h"
 #include "../include/new/helper_functions.h"
 #include "../include/new/move_tables.h"
 
 //TODO: Make sure Powder stops Inferno Overdrive
-
-extern s8 PriorityCalc(u8 bank, u8 action, u16 move);
-extern u8 CheckMoveLimitations(u8 bank, u8 unusableMoves, u8 check);
 
 //This file's functions:
 static u8 AtkCanceller_UnableToUseMove(void);

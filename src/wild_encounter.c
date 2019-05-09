@@ -10,6 +10,7 @@
 #include "../include/constants/maps.h"
 #include "../include/constants/vars.h"
 
+#include "../include/new/battle_start_turn_start.h"
 #include "../include/new/helper_functions.h"
 #include "../include/new/roamer.h"
 #include "../include/new/wild_encounter.h"
@@ -35,8 +36,6 @@ extern const struct WildPokemonHeader gWildMonNightHeaders[];
 extern const struct SwarmData gSwarmTable[];
 extern const u16 gSwarmTableLength;
 
-extern u16 GetMUS_ForBattle(void);
-extern void BuildTrainerPartySetup(void);
 extern bool8 CheckAndSetDailyEvent(u16 eventVar, bool8 setDailyEventVar);
 
 //This file's functions

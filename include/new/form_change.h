@@ -7,7 +7,7 @@
  * \file form_change.h
  * \brief Contains functions relating to Pokemon changing forms during battle,
  *		  as well as Pokemon reverting back to their original forms upon switch
- *		  out or battle end.
+ *		  out or battle end. Also contains a table of the various Minior forms.
  */
  
 //Exported Functions

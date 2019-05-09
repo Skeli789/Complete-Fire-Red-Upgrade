@@ -1,10 +1,12 @@
 #include "defines.h"
 #include "defines_battle.h"
 #include "../include/random.h"
+#include "../include/constants/songs.h"
 
 #include "../include/new/ability_tables.h"
 #include "../include/new/battle_start_turn_start_battle_scripts.h"
 #include "../include/new/bs_helper_functions.h"
+#include "../include/new/end_battle.h"
 #include "../include/new/helper_functions.h"
 #include "../include/new/move_battle_scripts.h"
 #include "../include/new/move_tables.h"
@@ -21,7 +23,6 @@ void CheckIfDarkVoidShouldFail(void)
 	&&  !gNewBS->MoveBounceInProgress)
 		gBattlescriptCurrInstr = BattleScript_DarkVoidFail - 5;
 }
-
 
 void SetTargetPartner(void)
 {
@@ -1462,4 +1463,55 @@ void TryManipulateDamageForLeechSeedBigRoot(void)
 {
 	if (ITEM_EFFECT(gBankTarget) == ITEM_EFFECT_BIG_ROOT)
 		gBattleMoveDamage = (gBattleMoveDamage * 130) / 100;
+}
+
+#define gText_BattleYesNoChoice (u8*) 0x83FE791
+void DisplayForfeitYesNoBox(void)
+{
+	if (gBattleExecBuffer)
+	{
+		gBattlescriptCurrInstr -= 5;
+		return;
+	}
+
+    HandleBattleWindow(0x17, 8, 0x1D, 0xD, 0);
+    BattlePutTextOnWindow(gText_BattleYesNoChoice, 0xE);
+    gBattleCommunication[CURSOR_POSITION] = 0;
+    BattleCreateYesNoCursorAt(0);
+}
+
+void HandleForfeitYesNoBox(void)
+{
+    if (gMain.newKeys & DPAD_UP && gBattleCommunication[CURSOR_POSITION] != 0)
+    {
+        PlaySE(SE_SELECT);
+        BattleDestroyYesNoCursorAt(gBattleCommunication[CURSOR_POSITION]);
+        gBattleCommunication[CURSOR_POSITION] = 0;
+        BattleCreateYesNoCursorAt(0);
+    }
+    if (gMain.newKeys & DPAD_DOWN && gBattleCommunication[CURSOR_POSITION] == 0)
+    {
+        PlaySE(SE_SELECT);
+        BattleDestroyYesNoCursorAt(gBattleCommunication[CURSOR_POSITION]);
+        gBattleCommunication[CURSOR_POSITION] = 1;
+        BattleCreateYesNoCursorAt(1);
+    }
+    if (gMain.newKeys & A_BUTTON)
+    {
+        PlaySE(SE_SELECT);
+
+        if (gBattleCommunication[1] == 0)
+			gBattleMainFunc = (u32) HandleEndTurn_RanFromBattle;
+
+        HandleBattleWindow(0x17, 0x8, 0x1D, 0xD, WINDOW_CLEAR);
+		return;
+    }
+    else if (gMain.newKeys & B_BUTTON)
+    {
+        PlaySE(SE_SELECT);
+        HandleBattleWindow(0x17, 0x8, 0x1D, 0xD, WINDOW_CLEAR);
+		return;
+    }
+	
+	gBattlescriptCurrInstr -= 5;
 }

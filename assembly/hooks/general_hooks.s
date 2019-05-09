@@ -298,5 +298,60 @@ ReturnPokedexWeight:
 	ldr r1, =0x8105A70 | 1
 bxr1:
 	bx r1
-.pool
 
+.pool
+@0x80146AC with r0
+ForfeitBattleTowerHook:
+	bl HandleRunActionFrontier
+	cmp r0, #0x0
+	bne ReturnPrintForfeitBattleTower
+	ldr r0, =BATTLE_TYPE
+	ldr r0, [r0]
+	mov r1, #BATTLE_TRAINER | BATTLE_WIRELESS
+	and r0, r1
+	ldr r1, =0x80146B4 | 1
+	bx r1
+
+ReturnPrintForfeitBattleTower:
+	ldr r0, =0x8014C4E | 1
+	bx r0
+
+.pool
+@0x805BA30 with r0
+AutoRunHook:
+	mov r0, #0x2 @B-Button
+	and r5, r0
+	cmp r5, #0x0
+	bne CheckIfRunningAllowed
+	bl IsAutoRunEnabled
+	cmp r0, #0x0
+	beq NoRunning
+
+CheckIfRunningAllowed:
+	ldr r2, .EventObjects
+	ldrb r1, [r6, #0x5] @NPC Id
+	lsl r0, r1, #0x3
+	add r0, r1
+	lsl r0, #0x2
+	add r0, r2
+	ldrb r0, [r0, #0x1E]
+	bl IsRunningDisallowed
+	cmp r0, #0x0
+	bne NoRunning
+	ldr r0, =0x805BA5A | 1
+	bx r0
+
+NoRunning:
+	ldr r0, =0x805BA8C | 1
+	bx r0
+
+.align 2
+.EventObjects: .word 0x2036E38
+
+.pool
+@0x8046390 with r1
+FlameBodyMagmaArmorEggHook:
+	mov r1, r4
+	bl SubtractEggSteps
+	ldr r0, =0x804639E | 1
+	bx r0

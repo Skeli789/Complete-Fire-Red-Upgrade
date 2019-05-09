@@ -1,12 +1,11 @@
 #include "defines.h"
 #include "defines_battle.h"
-#include "../include/event_data.h"
 #include "../include/battle_string_ids.h"
-#include "../include/new/helper_functions.h"
+#include "../include/event_data.h"
+#include "../include/constants/songs.h"
 
-#define SE_EXP 0x1B
-#define MUS_WILD_POKE_VICTORY 0x137
-#define BattleScript_LevelUp (u8*) 0x81D89F5
+#include "../include/new/battle_strings.h"
+#include "../include/new/helper_functions.h"
 
 enum
 {
@@ -26,23 +25,23 @@ enum
 	GiveExpViaExpShare,
 };
 
+#define BattleScript_LevelUp (u8*) 0x81D89F5
+
 extern const u16 gBaseExpBySpecies[];
 extern u8 String_TeamExpGain[];
 
-extern void PrepareStringBattle(u16 stringId, u8 bank);
+//This file's functions:
+static u32 ExpCalculator(u32 a, u32 t, u32 b, u32 e, u32 L, u32 Lp, u32 p, u32 f, u32 v, u32 s);
+static bool8 WasWholeTeamSentIn(u8 bank, u8 sentIn);
+static void EmitExpBarUpdate(u8 a, u8 b, u32 c);
+static void EmitExpTransferBack(u8 bufferId, u8 b, u8 *c);
+static void Task_GiveExpToMon(u8 taskId);
+static void Task_PrepareToGiveExpWithExpBar(u8 taskId);
+static void sub_80300F4(u8 taskId);
+static u32 GetExpToLevel(u8 toLevel, u8 growthRate);
 
-bool8 CouldHaveEvolved(pokemon_t* mon);
-u32 ExpCalculator(u32 a, u32 t, u32 b, u32 e, u32 L, u32 Lp, u32 p, u32 f, u32 v, u32 s);
-bool8 WasWholeTeamSentIn(u8 bank, u8 sentIn);
-void EmitExpBarUpdate(u8 a, u8 b, u32 c);
-void EmitExpTransferBack(u8 bufferId, u8 b, u8 *c);
-void PlayerHandleExpBarUpdate(void);
-void Task_GiveExpToMon(u8 taskId);
-void Task_PrepareToGiveExpWithExpBar(u8 taskId);
-void sub_80300F4(u8 taskId);
-u32 GetExpToLevel(u8 toLevel, u8 growthRate);
-
-void atk23_getexp(void) {
+void atk23_getexp(void)
+{
     u16 item = gPlayerParty[gBattleStruct->expGetterId].item;
 	u8 holdEffect = gItems[SanitizeItemId(item)].holdEffect;
     u32 i; // also used as stringId
@@ -242,7 +241,7 @@ void atk23_getexp(void) {
 			|| (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE) && gBattleMons[0].hp && gBattleMons[1].hp == 0))
 			{
 				BattleStopLowHpSound();
-				PlayBGM(MUS_WILD_POKE_VICTORY); //Wild PKMN Victory
+				PlayBGM(BGM_VICTORY_WILD_POKE); //Wild PKMN Victory
 				gBattleStruct->wildVictorySong++;
 				//gAbsentBattlerFlags |= gBitTable[gBankFainted];
 			}
@@ -433,7 +432,7 @@ void atk23_getexp(void) {
     }
 }
 
-u32 ExpCalculator(u32 a, u32 t, u32 b, u32 e, u32 L, u32 Lp, u32 p, u32 f, u32 v, u32 s) {
+static u32 ExpCalculator(u32 a, u32 t, u32 b, u32 e, u32 L, u32 Lp, u32 p, u32 f, u32 v, u32 s) {
 	u32 calculatedExp;
 	
 	#ifdef FLAT_EXP_FORMULA
@@ -460,7 +459,7 @@ u32 ExpCalculator(u32 a, u32 t, u32 b, u32 e, u32 L, u32 Lp, u32 p, u32 f, u32 v
 	return MathMin(1640000, calculatedExp);
 }
 
-bool8 WasWholeTeamSentIn(u8 bank, u8 sentIn) {
+static bool8 WasWholeTeamSentIn(u8 bank, u8 sentIn) {
 	u8 start, end;
 	int i;
 	
@@ -481,7 +480,7 @@ bool8 WasWholeTeamSentIn(u8 bank, u8 sentIn) {
 }
 
 
-void EmitExpBarUpdate(u8 a, u8 b, u32 c) //Changed the u16 to a u32 to allow for more exp gain
+static void EmitExpBarUpdate(u8 a, u8 b, u32 c) //Changed the u16 to a u32 to allow for more exp gain
 {
     gBattleBuffersTransferData[0] = 25;
     gBattleBuffersTransferData[1] = b;
@@ -492,7 +491,7 @@ void EmitExpBarUpdate(u8 a, u8 b, u32 c) //Changed the u16 to a u32 to allow for
     PrepareBufferDataTransfer(a, gBattleBuffersTransferData, 6);
 }
 
-void EmitExpTransferBack(u8 bufferId, u8 b, u8 *c)
+static void EmitExpTransferBack(u8 bufferId, u8 b, u8 *c)
 {
     s32 i;
 
@@ -531,7 +530,7 @@ void PlayerHandleExpBarUpdate(void)
     }
 }
 
-void Task_GiveExpToMon(u8 taskId)
+static void Task_GiveExpToMon(u8 taskId)
 {
     u32 pkmnIndex = (u8)gTasks[taskId].data[0];
     u8 bank = gTasks[taskId].data[2];
@@ -575,7 +574,7 @@ void Task_GiveExpToMon(u8 taskId)
         gTasks[taskId].func = Task_PrepareToGiveExpWithExpBar;
 }
 
-void Task_PrepareToGiveExpWithExpBar(u8 taskId)
+static void Task_PrepareToGiveExpWithExpBar(u8 taskId)
 {
     u8 pkmnIndex = gTasks[taskId].data[0];
     s32 gainedExp = gNewBS->expHelper[0] | (gNewBS->expHelper[1] << 0x8) | (gNewBS->expHelper[2] << 0x10) | (gNewBS->expHelper[3] << 0x18);
@@ -594,7 +593,7 @@ void Task_PrepareToGiveExpWithExpBar(u8 taskId)
     gTasks[taskId].func = sub_80300F4; //sub_802DB6C
 }
 
-void sub_80300F4(u8 taskId)
+static void sub_80300F4(u8 taskId)
 {
     if (gTasks[taskId].data[10] < 13)
         gTasks[taskId].data[10]++;
@@ -645,6 +644,7 @@ void sub_80300F4(u8 taskId)
     }
 }
 
-u32 GetExpToLevel(u8 toLevel, u8 growthRate) {
+static u32 GetExpToLevel(u8 toLevel, u8 growthRate)
+{
 	return gExperienceTables[growthRate][toLevel];
 }

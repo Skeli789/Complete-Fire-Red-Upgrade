@@ -1,9 +1,10 @@
 #include "defines.h"
-#include "../include/constants/songs.h"
 #include "../include/party_menu.h"
-#include "../include/new/Vanilla_functions.h"
+#include "../include/constants/songs.h"
 
 #include "../include/new/helper_functions.h"
+#include "../include/new/party_menu.h"
+#include "../include/new/Vanilla_functions.h"
 
 #define MENU_UP -1
 #define MENU_DOWN 1
@@ -337,8 +338,6 @@ void openSummary(u8 taskId)
 	sub_811FA78(taskId); //Replace this
 }
 
-
-
 // Summary Screen wraps around
 // Credit to Sagiri: https://github.com/Sagiri/sswa
 
@@ -369,9 +368,3 @@ u8 ChangeSummaryScreenMon(u8 delta)
 
     return result;
 };
-
-
-
-
-
-

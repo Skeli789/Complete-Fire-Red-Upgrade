@@ -79,3 +79,5 @@ void TrySuckerPunch(void);
 void DoProteanTypeChange(void);
 void HarvestActivateBerry(void);
 void TryManipulateDamageForLeechSeedBigRoot(void);
+void DisplayForfeitYesNoBox(void);
+void HandleForfeitYesNoBox(void);

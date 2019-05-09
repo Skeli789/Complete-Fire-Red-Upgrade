@@ -1,12 +1,14 @@
 #include "defines.h"
 #include "../include/daycare.h"
-#include "../include/constants/moves.h"
-#include "../include/constants/species.h"
-#include "../include/constants/items.h"
 #include "../include/pokemon.h"
 #include "../include/pokemon_storage_system.h"
-#include "../include/new/catching.h"
 #include "../include/random.h"
+#include "../include/constants/abilities.h"
+#include "../include/constants/items.h"
+#include "../include/constants/moves.h"
+#include "../include/constants/species.h"
+
+#include "../include/new/catching.h"
 
 #define sHatchedEggFatherMoves ((u16*) 0x202455C)
 #define sHatchedEggMotherMoves ((u16*)0x2024580)
@@ -19,6 +21,7 @@
 extern u8 GetLevelUpMovesBySpecies(u16 species, u16* moves);
 
 void BuildEggMoveset(struct Pokemon* egg, struct BoxPokemon* father, struct BoxPokemon* mother);
+static u8 GetEggStepsToSubtract(void);
 
 /*Priority: 
 1. Volt Tackle
@@ -610,3 +613,29 @@ void CreatedHatchedMon(struct Pokemon *egg, struct Pokemon *temp) {
     *egg = *temp;
 };
 
+void SubtractEggSteps(u32 steps, struct Pokemon* mon)
+{
+	u8 toSub = GetEggStepsToSubtract();
+	
+	if (steps >= toSub)
+		steps -= toSub;
+	else
+		steps -= 1;
+
+	mon->friendship = steps;
+}
+
+static u8 GetEggStepsToSubtract(void)
+{
+    u8 count, i;
+    for (count = CalculatePlayerPartyCount(), i = 0; i < count; ++i)
+    {
+        if (!GetMonData(&gPlayerParty[i], MON_DATA_SANITY_IS_EGG, NULL))
+        {
+            u8 ability = GetPartyAbility(&gPlayerParty[i]);
+            if (ability == ABILITY_MAGMAARMOR || ability == ABILITY_FLAMEBODY)
+                return 2;
+        }
+    }
+    return 1;
+}

@@ -9,14 +9,13 @@
 #include "../include/new/frontier.h"
 #include "../include/new/helper_functions.h"
 #include "../include/new/mega.h"
+#include "../include/new/move_menu.h"
+#include "../include/new/switching.h"
 
-//TODO: Update Acupressure Targeting
+//TODO: Update Acupressure Targeting for AI
 
-extern u8 GetMostSuitableMonToSwitchInto(void);
 extern void BattleAI_SetupAIData(u8 defaultScoreMoves);
-//extern BattleAI_ChooseMoveOrAction;
 extern u32 WildMonIsSmart(u8 bank);
-extern void EmitMoveChosen(u8 bufferId, u8 chosenMoveIndex, u8 target, u8 megaState, u8 ultraState, u8 zMoveState);
 
 //This file's functions:
 static u8 LoadCorrectTrainerPicId(void);

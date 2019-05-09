@@ -9,8 +9,9 @@
 extern u8* gMaleFrontierNamesTable[];
 extern u8* gFemaleFrontierNamesTable[];
 
-static void LoadProperStreakData(u8* currentOrMax, u8* battleStyle, u8* tier, u8* inverse, u8* level);
+//This file's functions:
 static u16 GetBattleTowerStreak(u8 currentOrMax, u16 battleStyle, u16 tier, u8 inverse, u8 level);
+static void LoadProperStreakData(u8* currentOrMax, u8* battleStyle, u8* tier, u8* inverse, u8* level);
 
 u8 GetFrontierTrainerClassId(u16 trainerId, u8 battlerNum) 
 {
@@ -145,7 +146,8 @@ u16 TryGetSpecialFrontierTrainerMusic(u16 trainerId, u8 battlerNum)
 	}
 }
 
-u32 GetAIFlagsInBattleFrontier(unusedArg u8 bank) {
+u32 GetAIFlagsInBattleFrontier(unusedArg u8 bank)
+{
 	return AI_SCRIPT_CHECK_BAD_MOVE;
 }
 

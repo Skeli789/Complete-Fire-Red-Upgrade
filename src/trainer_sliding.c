@@ -1,25 +1,9 @@
 #include "defines.h"
 #include "defines_battle.h"
+
 #include "../include/new/helper_functions.h"
-
-extern const TaskFunc sBattleIntroSlideFuncs[];
-
-extern u8 BattleScript_TrainerSlideMsgRet[];
-extern u8 BattleScript_TrainerSlideMsgEnd2[];
-
-extern u8 sText_VegaLastSwitchIn[];
-extern u8 sText_VegaLastLowHP[];
-extern u8 sText_VegaFirstMonDown[];
-
-void atk53_trainerslidein(void);
-void HandleIntroSlide(u8 terrain);
-u8 GetEnemyMonCount(bool8 onlyAlive);
-bool8 IsBankHpLow(u8 bank);
-bool8 ShouldDoTrainerSlide(u8 bank, u16 trainerId, u8 caseId);
-void CheckLastMonLowHPSlide(void);
-void atkFF1C_handletrainerslidemsg(void);
-void atkFF1D_trytrainerslidefirstdownmsg(void);
-void atkFF1E_trainerslideout(void);
+#include "../include/new/trainer_sliding.h"
+#include "../include/new/trainer_sliding_data.h"
 
 struct TrainerSlide
 {
@@ -35,7 +19,12 @@ static const struct TrainerSlide sTrainerSlides[] =
     {0x19F, sText_VegaFirstMonDown, sText_VegaLastSwitchIn, sText_VegaLastLowHP},
 };
 
-void atk53_trainerslidein(void) {
+//This file's functions:
+static bool8 IsBankHpLow(u8 bank);
+static u8 GetEnemyMonCount(bool8 onlyAlive);
+
+void atk53_trainerslidein(void)
+{
 	gActiveBattler = GetBattlerAtPosition(gBattlescriptCurrInstr[1]);
     EmitTrainerSlide(0);
     MarkBufferBankForExecution(gActiveBattler);
@@ -85,7 +74,7 @@ void HandleIntroSlide(u8 terrain)
     gTasks[taskId].data[6] = 0;
 }
 
-u8 GetEnemyMonCount(bool8 onlyAlive)
+static u8 GetEnemyMonCount(bool8 onlyAlive)
 {
     u8 i, count = 0;
 
@@ -101,7 +90,7 @@ u8 GetEnemyMonCount(bool8 onlyAlive)
     return count;
 }
 
-bool8 IsBankHpLow(u8 bank)
+static bool8 IsBankHpLow(u8 bank)
 {
     return udivsi((gBattleMons[bank].hp * 100), gBattleMons[bank].maxHP) < 25;
 }

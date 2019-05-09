@@ -59,6 +59,8 @@
 .global BattleScript_PrintPlayerForfeitedLinkBattle
 .global BattleScript_LostMultiBattleTower
 .global BattleScript_LostBattleTower
+.global BattleScript_AskIfWantsToForfeitMatch
+.global BattleScript_RanAwayUsingMonAbility
 
 .global AbilityActivatedString
 
@@ -532,12 +534,14 @@ CheckJumpLocForEndBattle:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_PrintPlayerForfeited:	
-	printstring 374 @STRINGID_FORFEITED_MATCH
-	waitmessage 0x40
+	setword BATTLE_STRING_LOADER sText_PlayerForfeitedMatch
+	printstring 0x184
+	waitmessage DELAY_1SECOND
 	end2
 	
 BattleScript_PrintPlayerForfeitedLinkBattle:
-	printstring 374 @STRINGID_FORFEITED_MATCH
+	setword BATTLE_STRING_LOADER sText_PlayerForfeitedMatch
+	printstring 0x184
 	waitmessage DELAY_1SECOND
 	flee
 	waitmessage DELAY_1SECOND
@@ -554,7 +558,7 @@ BattleScript_LostMultiBattleTower:
 	waitstateatk
 	setword BATTLE_STRING_LOADER TrainerAWinString
 	printstring 0x184
-	callasm TrainerSlideOut+1
+	callasm TrainerSlideOut
 	waitstateatk
 	trainerslidein 0x3
 	waitstateatk
@@ -579,9 +583,27 @@ BattleScript_LostBattleTower:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+BattleScript_AskIfWantsToForfeitMatch:
+	setword BATTLE_STRING_LOADER sText_QuestionForfeitMatch
+	printstring 0x184
+	callasm DisplayForfeitYesNoBox
+	callasm HandleForfeitYesNoBox
+	end2
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_RanAwayUsingMonAbility:
+	printstring 0x130 @;STRINGID_EMPTYSTRING3
+	call BattleScript_AbilityPopUp
+	printstring 0xDF @;STRINGID_GOTAWAYSAFELY
+	waitmessage DELAY_1SECOND
+	end2
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 BattleScript_PrintCustomStringEnd2:
 	call BattleScript_PrintCustomString
-	end2
+	end3
 
 BattleScript_PrintCustomStringEnd3:
 	call BattleScript_PrintCustomString

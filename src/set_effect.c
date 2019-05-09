@@ -4,9 +4,14 @@
 #include "../include/constants/items.h"
 #include "../include/random.h"
 
+#include "../include/new/ability_battle_scripts.h"
+#include "../include/new/bs_helper_functions.h"
 #include "../include/new/helper_functions.h"
+#include "../include/new/move_battle_scripts.h"
+#include "../include/new/set_effect.h"
+#include "../include/new/stat_buffs.h"
 
-//Update synchronize effect
+//TODO: Test synchronize effect
 
 #define INCREMENT_RESET_RETURN                  \
 {                                               \
@@ -22,35 +27,6 @@
 }
 
 #define sMoveEffectBS_Ptrs ((u8**) 0x825062C)
-#define BattleScript_AllStatsUp (u8*) 0x81D8D55
-#define BattleScript_RapidSpinAway (u8*) 0x81D8DF1
-#define BattleScript_TargetPRLZHeal (u8*) 0x81D9177
-#define BattleScript_AtkDefDown (u8*) 0x81D8F35
-#define BattleScript_KnockedOff (u8*) 0x81D8F86
-#define BattleScript_StatUp (u8*) 0x81D6BD1
-#define BattleScript_StatDown (u8*) 0x81D6C62
-#define BattleScript_SAtkDown2 (u8*) 0x81D8FEB
-#define ScreensShatteredString (u8*) 0x83FC646
-
-extern u8 BattleScript_PluckEat[];
-extern u8 BattleScript_TargetSleepHeal[];
-extern u8 BattleScript_TargetBurnHeal[];
-extern u8 BattleScript_ItemSteal[];
-extern u8 BattleScript_StickyHoldActivatesRet[];
-extern u8 BattleScript_PrintCustomString[];
-
-extern u8 IonDelugeShowerString[];
-extern u8 TargetStatsResetString[];
-extern u8 AbilitySuppressedString[];
-extern u8 TerrainEndString[];
-extern u8 RoastedBerryString[];
-extern u8 gText_TargetWasInfested[];
-
-extern u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, u8* BS_ptr);
-extern void BringDownMons(void);
-
-void SetMoveEffect(bool8 primary, u8 certainArg);
-
 
 const u8 MoveEffectsThatIgnoreSubstitute[] = 
 {
@@ -120,7 +96,8 @@ const u16 gWrappedStringIds[] =
 	0x184,
 };
 
-void atk15_seteffectwithchance(void) {
+void atk15_seteffectwithchance(void)
+{
     u32 PercentChance;
 	
 	if (CheckSoundMove(gCurrentMove) || ABILITY(gBankAttacker) == ABILITY_INFILTRATOR)
@@ -293,6 +270,15 @@ void SetMoveEffect(bool8 primary, u8 certain)
                 gBattleCommunication[MULTISTRING_CHOOSER] = 0;
             //}
 			
+            if (gBattleCommunication[MOVE_EFFECT_BYTE] == MOVE_EFFECT_POISON
+            || gBattleCommunication[MOVE_EFFECT_BYTE] == MOVE_EFFECT_TOXIC
+            || gBattleCommunication[MOVE_EFFECT_BYTE] == MOVE_EFFECT_PARALYSIS
+            || gBattleCommunication[MOVE_EFFECT_BYTE] == MOVE_EFFECT_BURN
+			|| gBattleCommunication[MOVE_EFFECT_BYTE] == MOVE_EFFECT_TOXIC)
+            {
+                gBattleStruct->synchronizeMoveEffect = gBattleCommunication[MOVE_EFFECT_BYTE];
+                gHitMarker |= HITMARKER_SYNCHRONISE_EFFECT;
+            }
             return;
         }
         else

@@ -19,6 +19,11 @@ SpecialBuffers = {
     "TARGET_ABILITY" : ["FD", "19"],
     "SCRIPTING_BANK_ABILITY" : ["FD", "1A"],
     "PLAYER_NAME" : ["FD", "23"],
+
+    "BLACK" : ["FC", "01", "02"],
+    "RED" : ["FC", "01", "04"],
+    "GREEN" : ["FC", "01", "06"],
+    "BLUE" : ["FC", "01", "08"],
 }
 
 def StringFileConverter(filename):

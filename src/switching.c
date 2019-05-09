@@ -1,10 +1,19 @@
 #include "defines.h"
 #include "defines_battle.h"
-#include "../include/party_menu.h"
-#include "../include/new/helper_functions.h"
 #include "../include/random.h"
+#include "../include/party_menu.h"
 
-//Do Illusion hooks
+#include "../include/new/ability_battle_scripts.h"
+#include "../include/new/damage_calc.h"
+#include "../include/new/form_change.h"
+#include "../include/new/helper_functions.h"
+#include "../include/new/item_battle_scripts.h"
+#include "../include/new/move_battle_scripts.h"
+#include "../include/new/mega.h"
+#include "../include/new/multi.h"
+#include "../include/new/switching.h"
+#include "../include/new/trainer_sliding.h"
+#include "../include/new/z_move_battle_scripts.h"
 
 enum SwitchInStates 
 {
@@ -23,40 +32,13 @@ enum SwitchInStates
 	SwitchIn_End
 };
 
-extern u8 BattleScript_HealingWishHeal[];
-extern u8 BattleScript_LunarDanceHeal[];
-extern u8 BattleScript_SpikesHurt[];
-extern u8 BattleScript_SRHurt[];
-extern u8 BattleScript_TSPoison[];
-extern u8 BattleScript_TSHarshPoison[];
-extern u8 BattleScript_TSAbsorb[];
-extern u8 BattleScript_StickyWebSpeedDrop[];
-extern u8 BattleScript_AirBalloonSub[];
-extern u8 BattleScript_PrimalWeatherEnd[];
-extern u8 BattleScript_SuccessForceOut[];
-extern u8 BattleScript_HealReplacementZMove[];
-extern u8 BattleScript_TrainerSlideMsgRet[];
+//This file's functions:
+static bool8 TryDoForceSwitchOut(void);
+static void sub_80571DC(u8 battlerId, u8 arg1);
+static bool8 PPIsMaxed(bank_t);
 
-extern u8 PrimalRainEndString[];
-extern u8 PrimalSunEndString[];
-extern u8 PrimalAirCurrentEndString[];
-
-extern void TypeDamageModification(u8 atkAbility, u8 bankDef, move_t, u8 move_type, u8* flags);
-extern u32 MathMin(u32, u32);
-extern void FormRevert(bank_t);
-extern u8* DoPrimalReversion(bank_t, u8 caseId);
-extern bool8 IsLinkDoubleBattle(void);
-extern void SwitchOutFormsRevert(u8 bank);
-extern bool8 ShouldDoTrainerSlide(u8 bank, u16 trainerId, u8 caseId);
-
-bool8 TryDoForceSwitchOut(void);
-void sub_80571DC(u8 battlerId, u8 arg1);
-void SwitchTimerClear(void);
-bool8 PPIsMaxed(bank_t);
-void ClearSwitchBytes(u8 bank);
-void ClearSwitchBits(u8 bank);
-
-void atkE2_switchoutabilities(void) {
+void atkE2_switchoutabilities(void)
+{
     gActiveBattler = GetBattleBank(T2_READ_8(gBattlescriptCurrInstr + 1));
 	
     switch (ABILITY(gActiveBattler)) {
@@ -76,44 +58,42 @@ void atkE2_switchoutabilities(void) {
     gBattlescriptCurrInstr += 2;
 }
 
-void atk61_drawpartystatussummary(void) {
+void atk61_drawpartystatussummary(void)
+{
     int i;
     pokemon_t* party;
-	bool8 DoWeatherLoop = FALSE;
     struct HpAndStatus hpStatus[6];
     if (gBattleExecBuffer)
         return;
 
     gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
 
+	BattleStringLoader = NULL;
     switch (ABILITY(gActiveBattler)) {	
 		case ABILITY_PRIMORDIALSEA:
-			if (gBattleWeather & WEATHER_RAIN_PRIMAL) {
+			if (gBattleWeather & WEATHER_RAIN_PRIMAL)
 				BattleStringLoader = PrimalRainEndString;
-				DoWeatherLoop = TRUE;
-			}
 			break;
 		case ABILITY_DESOLATELAND:
-			if (gBattleWeather & WEATHER_SUN_PRIMAL) {
+			if (gBattleWeather & WEATHER_SUN_PRIMAL)
 				BattleStringLoader = PrimalSunEndString;
-				DoWeatherLoop = TRUE;
-			}
 			break;
 		case ABILITY_DELTASTREAM:
-			if (gBattleWeather & WEATHER_AIR_CURRENT_PRIMAL) {
+			if (gBattleWeather & WEATHER_AIR_CURRENT_PRIMAL)
 				BattleStringLoader = PrimalAirCurrentEndString;
-				DoWeatherLoop = TRUE;
-			}
 	}
 	
-	if (DoWeatherLoop) {
+	if (BattleStringLoader != NULL)
+	{
 		
-		for (i = 0; i < gBattlersCount; ++i) {
+		for (i = 0; i < gBattlersCount; ++i)
+		{
 			if (i == gActiveBattler) continue;
 			if (ABILITY(i) == ABILITY(gActiveBattler)) break;
 		}
 		
-		if (i == gBattlersCount) {
+		if (i == gBattlersCount)
+		{
 			gBattleWeather = 0;
 			gWeatherCounter = 0;
 			BattleScriptPushCursor();
@@ -127,12 +107,15 @@ void atk61_drawpartystatussummary(void) {
     else
         party = gEnemyParty;
 
-    for (i = 0; i < 6; ++i) {
-        if (party[i].species == SPECIES_NONE || party[i].species == SPECIES_EGG) {
+    for (i = 0; i < 6; ++i)
+	{
+        if (party[i].species == SPECIES_NONE || party[i].species == SPECIES_EGG)
+		{
             hpStatus[i].hp = 0xFFFF;
             hpStatus[i].status = 0;
         }
-        else {
+        else
+		{
             hpStatus[i].hp = party[i].hp;
             hpStatus[i].status = party[i].condition;
         }
@@ -142,7 +125,8 @@ void atk61_drawpartystatussummary(void) {
     gBattlescriptCurrInstr += 2;
 }
 
-void atk4D_switchindataupdate(void) {
+void atk4D_switchindataupdate(void)
+{
     struct BattlePokemon oldData;
     u32 i;
     u8* monData;
@@ -222,7 +206,8 @@ void atk4D_switchindataupdate(void) {
     gBattlescriptCurrInstr += 2;
 }
 
-void atk4F_jumpifcantswitch(void) {
+void atk4F_jumpifcantswitch(void)
+{
     int i;
     u8 firstMonId, lastMonId;
     struct Pokemon *party;
@@ -233,15 +218,16 @@ void atk4F_jumpifcantswitch(void) {
 	&& !IsOfType(gActiveBattler, TYPE_GHOST)
 	&& ITEM_EFFECT(gActiveBattler) != ITEM_EFFECT_SHED_SHELL
     && ((gBattleMons[gActiveBattler].status2 & (STATUS2_WRAPPED | STATUS2_ESCAPE_PREVENTION)) || (gStatuses3[gActiveBattler] & STATUS3_ROOTED) || gNewBS->FairyLockTimer))
+	{
         gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
-		
+	}
     else if (gBattleTypeFlags & (BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_MULTI)
 	|| (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS && gBattleTypeFlags & BATTLE_TYPE_TRAINER && SIDE(gActiveBattler) == B_SIDE_OPPONENT)) 
-	{
-		
+	{	
 		party = LoadPartyRange(gActiveBattler, &firstMonId, &lastMonId);
 		
-        for (i = firstMonId; i < lastMonId; ++i) {
+        for (i = firstMonId; i < lastMonId; ++i)
+		{
             if (GetMonData(&party[i], MON_DATA_SPECIES, 0) != SPECIES_NONE
              && !GetMonData(&party[i], MON_DATA_IS_EGG, 0)
              && GetMonData(&party[i], MON_DATA_HP, 0) != 0
@@ -254,7 +240,6 @@ void atk4F_jumpifcantswitch(void) {
         else
             gBattlescriptCurrInstr += 6;
     }
-	
     else //Single Battle // Regular Double Battle // or Wild Double Battle
     {
         u8 battlerIn1, battlerIn2;
@@ -270,7 +255,7 @@ void atk4F_jumpifcantswitch(void) {
 
             party = gEnemyParty;
         }
-        else
+        else //B_SIDE_PLAYER
         {
             battlerIn1 = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
 
@@ -282,7 +267,8 @@ void atk4F_jumpifcantswitch(void) {
             party = gPlayerParty;
         }
 
-        for (i = 0; i < PARTY_SIZE; i++) {
+        for (i = 0; i < PARTY_SIZE; i++)
+		{
             if (GetMonData(&party[i], MON_DATA_HP, 0) != 0
              && GetMonData(&party[i], MON_DATA_SPECIES, 0) != SPECIES_NONE
              && !GetMonData(&party[i], MON_DATA_IS_EGG, 0)
@@ -290,14 +276,15 @@ void atk4F_jumpifcantswitch(void) {
                 break;
         }
 
-        if (i == 6)
+        if (i == PARTY_SIZE)
             gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
         else
             gBattlescriptCurrInstr += 6;
     }
 }
 
-void atk51_switchhandleorder(void) {
+void atk51_switchhandleorder(void)
+{
     int i;
     if (gBattleExecBuffer) return;
 
@@ -305,7 +292,8 @@ void atk51_switchhandleorder(void) {
 
     switch (gBattlescriptCurrInstr[2]) {
 		case 0:
-			for (i = 0; i < gBattlersCount; ++i) {
+			for (i = 0; i < gBattlersCount; ++i)
+			{
 				if (gBattleBufferB[i][0] == CONTROLLER_CHOSENMONRETURNVALUE)
 					gBattleStruct->monToSwitchIntoId[i] = gBattleBufferB[i][1];
 			}
@@ -343,7 +331,8 @@ void atk51_switchhandleorder(void) {
     gBattlescriptCurrInstr += 3;
 }
 
-void atk52_switchineffects(void) {
+void atk52_switchineffects(void)
+{
     int i;
 	u8 spikesDmg;
 
@@ -353,10 +342,10 @@ void atk52_switchineffects(void) {
     gSpecialStatuses[gActiveBattler].flag40 = 0;
 	u8 ability = ABILITY(gActiveBattler);
 	
-	if(gBattleMons[gActiveBattler].hp == 0)
+	if (gBattleMons[gActiveBattler].hp == 0)
 		goto SWITCH_IN_END;
 	
-	if (!(gSideAffecting[SIDE(gActiveBattler)] & SIDE_STATUS_SPIKES) 
+	if (!(gSideAffecting[SIDE(gActiveBattler)] & SIDE_STATUS_SPIKES) //Skip the entry hazards if there are none
 	&& gNewBS->SwitchInEffectsTracker >= SwitchIn_Spikes 
 	&& gNewBS->SwitchInEffectsTracker <= SwitchIn_StickyWeb)
 		gNewBS->SwitchInEffectsTracker = SwitchIn_PrimalReversion;
@@ -364,9 +353,11 @@ void atk52_switchineffects(void) {
 	switch (gNewBS->SwitchInEffectsTracker) {
 		case SwitchIn_HealingWish:
 			if (gBattleMons[gActiveBattler].hp != gBattleMons[gActiveBattler].maxHP
-			|| gBattleMons[gActiveBattler].status1) {
-				if (gNewBS->HealingWishLoc & (1 << gActiveBattler)) {
-					gNewBS->HealingWishLoc &= ~(1 << gActiveBattler);
+			|| gBattleMons[gActiveBattler].status1 != STATUS1_NONE)
+			{
+				if (gNewBS->HealingWishLoc & gBitTable[gActiveBattler])
+				{
+					gNewBS->HealingWishLoc &= ~gBitTable[gActiveBattler];
 					BattleScriptPushCursor();
 					gBattlescriptCurrInstr = BattleScript_HealingWishHeal;
 					gBattleMoveDamage = -1 * (gBattleMons[gActiveBattler].maxHP);
@@ -377,13 +368,15 @@ void atk52_switchineffects(void) {
 					++gNewBS->SwitchInEffectsTracker;
 					return;
 				}
-				else if (gNewBS->HealingWishLoc & (1 << gActiveBattler << 4)) {
+				else if (gNewBS->HealingWishLoc & gBitTable[gActiveBattler << 4])
+				{
 					goto LUNAR_DANCE_ACTIVATE;
 				}
 			}
-			else if (gNewBS->HealingWishLoc & (1 << gActiveBattler << 4) && !PPIsMaxed(gActiveBattler)) {
+			else if (gNewBS->HealingWishLoc & gBitTable[gActiveBattler << 4] && !PPIsMaxed(gActiveBattler))
+			{
 			LUNAR_DANCE_ACTIVATE:
-				gNewBS->HealingWishLoc &= ~(1 << gActiveBattler << 4);
+				gNewBS->HealingWishLoc &= ~gBitTable[gActiveBattler << 4];
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_LunarDanceHeal;
 				
@@ -392,7 +385,8 @@ void atk52_switchineffects(void) {
 				EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[gActiveBattler].status1);
 				
 				//Restore PP Only in Lunar Dance
-				for (int i = 0; i < 4; ++i) {
+				for (int i = 0; i < 4; ++i)
+				{
 					if (gBattleMons[gActiveBattler].moves[i] == 0) 
 						break;
 					
@@ -409,7 +403,8 @@ void atk52_switchineffects(void) {
 		__attribute__ ((fallthrough));	
 		
 		case SwitchIn_ZHealingWish:
-			if (gBattleMons[gActiveBattler].hp != gBattleMons[gActiveBattler].maxHP && gNewBS->ZMoveData->healReplacement) {
+			if (gBattleMons[gActiveBattler].hp != gBattleMons[gActiveBattler].maxHP && gNewBS->ZMoveData->healReplacement)
+			{
 				gNewBS->ZMoveData->healReplacement = FALSE;
 				gBattleMoveDamage = -1 * (gBattleMons[gActiveBattler].maxHP);
 				gBattleScripting->bank = gActiveBattler;
@@ -424,9 +419,9 @@ void atk52_switchineffects(void) {
 		__attribute__ ((fallthrough));	
 		
 		case SwitchIn_Spikes:
-			if (CheckGrounding(gActiveBattler) && ability != ABILITY_MAGICGUARD && gSideTimers[SIDE(gActiveBattler)].spikesAmount) {
+			if (CheckGrounding(gActiveBattler) && ability != ABILITY_MAGICGUARD && gSideTimers[SIDE(gActiveBattler)].spikesAmount)
+			{
 				spikesDmg = (5 - gSideTimers[SIDE(gActiveBattler)].spikesAmount) * 2;
-				gSideAffecting[SIDE(gActiveBattler)] |= SIDE_STATUS_SPIKES_DAMAGED;
 				gBattleMoveDamage = MathMax(1, udivsi(gBattleMons[gActiveBattler].maxHP, spikesDmg));
 
 				BattleScriptPushCursor();
@@ -441,7 +436,8 @@ void atk52_switchineffects(void) {
 		__attribute__ ((fallthrough));	
 		
 		case SwitchIn_StealthRock:
-			if (ability != ABILITY_MAGICGUARD && gSideTimers[SIDE(gActiveBattler)].srAmount) {
+			if (ability != ABILITY_MAGICGUARD && gSideTimers[SIDE(gActiveBattler)].srAmount)
+			{
 				u8 divisor = 8;
 				gBattleMoveDamage = 40;
 				u8 flags;
@@ -468,7 +464,7 @@ void atk52_switchineffects(void) {
 					case 320:
 						divisor = 1;
 				}
-				gBattleMoveDamage = MathMax(1, udivsi(gBattleMons[gActiveBattler].maxHP, divisor));
+				gBattleMoveDamage = MathMax(1, gBattleMons[gActiveBattler].maxHP / divisor);
 
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_SRHurt;								
@@ -482,20 +478,23 @@ void atk52_switchineffects(void) {
 		__attribute__ ((fallthrough));	
 		
 		case SwitchIn_ToxicSpikes:
-			if (CheckGrounding(gActiveBattler) && gSideTimers[SIDE(gActiveBattler)].tspikesAmount) {
-				
+			if (CheckGrounding(gActiveBattler) && gSideTimers[SIDE(gActiveBattler)].tspikesAmount)
+			{		
 				if (gBattleMons[gActiveBattler].type1 == TYPE_POISON 
 				||  gBattleMons[gActiveBattler].type2 == TYPE_POISON 
-				||  gBattleMons[gActiveBattler].type3 == TYPE_POISON) {
+				||  gBattleMons[gActiveBattler].type3 == TYPE_POISON)
+				{
 					gSideTimers[SIDE(gActiveBattler)].tspikesAmount = 0;
 					BattleScriptPushCursor();
 					gBattlescriptCurrInstr = BattleScript_TSAbsorb;
 				}
-				else if (gSideTimers[SIDE(gActiveBattler)].tspikesAmount == 1) {
+				else if (gSideTimers[SIDE(gActiveBattler)].tspikesAmount == 1)
+				{
 					BattleScriptPushCursor();
 					gBattlescriptCurrInstr = BattleScript_TSPoison;
 				}
-				else {
+				else
+				{
 					BattleScriptPushCursor();
 					gBattlescriptCurrInstr = BattleScript_TSHarshPoison;
 				}
@@ -509,22 +508,23 @@ void atk52_switchineffects(void) {
 		__attribute__ ((fallthrough));	
 		
 		case SwitchIn_StickyWeb:
-			if (CheckGrounding(gActiveBattler) && gSideTimers[SIDE(gActiveBattler)].stickyWeb) {
-					
-					BattleScriptPushCursor();
-					gBattlescriptCurrInstr = BattleScript_StickyWebSpeedDrop;
-					gSideAffecting[SIDE(gActiveBattler)] |= SIDE_STATUS_SPIKES_DAMAGED;
-					gBattleScripting->bank = gActiveBattler;
-					gBankTarget = gActiveBattler;
-					++gNewBS->SwitchInEffectsTracker;
-					return;
+			if (CheckGrounding(gActiveBattler) && gSideTimers[SIDE(gActiveBattler)].stickyWeb)
+			{		
+				BattleScriptPushCursor();
+				gBattlescriptCurrInstr = BattleScript_StickyWebSpeedDrop;
+				gSideAffecting[SIDE(gActiveBattler)] |= SIDE_STATUS_SPIKES_DAMAGED;
+				gBattleScripting->bank = gActiveBattler;
+				gBankTarget = gActiveBattler;
+				++gNewBS->SwitchInEffectsTracker;
+				return;
 			}
 			++gNewBS->SwitchInEffectsTracker;
 		__attribute__ ((fallthrough));	
 		
 		case SwitchIn_PrimalReversion:	;
-			u8* script = DoPrimalReversion(gActiveBattler, 1);
-			if(script) {
+			const u8* script = DoPrimalReversion(gActiveBattler, 1);
+			if(script)
+			{
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = script;
 				gBattleScripting->bank = gActiveBattler;
@@ -554,7 +554,8 @@ void atk52_switchineffects(void) {
 		__attribute__ ((fallthrough));
 		
 		case SwitchIn_AirBalloon:
-			if (ITEM_EFFECT(gActiveBattler) == ITEM_EFFECT_AIR_BALLOON) {
+			if (ITEM_EFFECT(gActiveBattler) == ITEM_EFFECT_AIR_BALLOON)
+			{
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_AirBalloonSub;
 				gBattleScripting->bank = gActiveBattler;
@@ -579,16 +580,17 @@ void atk52_switchineffects(void) {
 		SWITCH_IN_END:
             gSideAffecting[SIDE(gActiveBattler)] &= ~(SIDE_STATUS_SPIKES_DAMAGED);
 
-            for (i = 0; i < gBattlersCount; ++i) {
+            for (i = 0; i < gBattlersCount; ++i)
+			{
                 if (gBanksByTurnOrder[i] == gActiveBattler)
-                    gActionsByTurnOrder[i] = 0xC;
+                    gActionsByTurnOrder[i] = ACTION_FINISHED;
             }
 
-            for (i = 0; i < gBattlersCount; i++) {
+            for (i = 0; i < gBattlersCount; i++)
                 gBattleStruct->hpOnSwitchout[SIDE(i)] = gBattleMons[i].hp;
-            }
 
-            if (T2_READ_8(gBattlescriptCurrInstr + 1) == 5) {
+            if (T2_READ_8(gBattlescriptCurrInstr + 1) == 5)
+			{
                 u32 hitmark = gHitMarker >> 0x1C;
                 ++gBank1;
                 while (1)
@@ -607,14 +609,15 @@ void atk52_switchineffects(void) {
 }
 
 //Ripped from PokeEmerald
-void atk8F_forcerandomswitch(void) {
+void atk8F_forcerandomswitch(void)
+{
     int i;
     s32 battler1PartyId = 0;
     s32 battler2PartyId = 0;
     u8 lastMonId = 0; // + 1
     u8 firstMonId = 0;
     s32 monsCount = 0;
-    struct Pokemon *party = NULL;
+    struct Pokemon* party = NULL;
     s32 validMons = 0;
     s32 minNeeded = 0;
 
@@ -622,24 +625,31 @@ void atk8F_forcerandomswitch(void) {
     {
         party = LoadPartyRange(gBankTarget, &firstMonId, &lastMonId);
 
-        if (   (gBattleTypeFlags & BATTLE_TYPE_BATTLE_TOWER && gBattleTypeFlags & BATTLE_TYPE_LINK)
-            || (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
-			|| (gBattleTypeFlags & BATTLE_TYPE_MULTI && gBattleTypeFlags & BATTLE_TYPE_LINK))
+        if ((gBattleTypeFlags & BATTLE_TYPE_BATTLE_TOWER && gBattleTypeFlags & BATTLE_TYPE_LINK)
+        ||  (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
+		||  (gBattleTypeFlags & BATTLE_TYPE_MULTI && gBattleTypeFlags & BATTLE_TYPE_LINK))
         {
             monsCount = 3;
             minNeeded = 1;
             battler2PartyId = gBattlerPartyIndexes[gBankTarget];
             battler1PartyId = gBattlerPartyIndexes[gBankTarget ^ BIT_FLANK];
         }
-		
         else if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
         {
             if (SIDE(gBankTarget) == B_SIDE_PLAYER)
             {
-                monsCount = 6;
-                minNeeded = 2; // since there are two opponents, it has to be a double battle
+				if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
+				{
+					monsCount = 3;
+					minNeeded = 1;
+				}
+				else //Player Vs. 2 Trainers
+				{
+					monsCount = 6;
+					minNeeded = 2; // since there are two opponents, it has to be a double battle
+				}
             }
-            else //If Double Wild Battle, the following values will not be used
+            else //B_OPPONENT_SIDE - Player Vs. 2 Trainers
             {
                 monsCount = 3;
                 minNeeded = 1;
@@ -647,7 +657,21 @@ void atk8F_forcerandomswitch(void) {
             battler2PartyId = gBattlerPartyIndexes[gBankTarget];
             battler1PartyId = gBattlerPartyIndexes[gBankTarget ^ BIT_FLANK];
         }
-		
+		else if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
+		{
+			if (SIDE(gBankTarget) == B_SIDE_PLAYER)
+            {
+				monsCount = 3;
+				minNeeded = 1;
+			}
+			else
+            {
+				monsCount = 6;
+				minNeeded = 2; //If there were two opponents, it would have been checked for already
+			}
+            battler2PartyId = gBattlerPartyIndexes[gBankTarget];
+            battler1PartyId = gBattlerPartyIndexes[gBankTarget ^ BIT_FLANK];
+		}
         else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
         {
             monsCount = 6;
@@ -655,8 +679,7 @@ void atk8F_forcerandomswitch(void) {
             battler2PartyId = gBattlerPartyIndexes[gBankTarget];
             battler1PartyId = gBattlerPartyIndexes[gBankTarget ^ BIT_FLANK];
         }
-		
-        else
+        else //Single Battle
         {
             monsCount = 6;
             minNeeded = 1;
@@ -684,11 +707,11 @@ void atk8F_forcerandomswitch(void) {
                     i = umodsi(Random(), monsCount);
                     i += firstMonId;
                 }
-                while (   i == battler1PartyId
-                       || i == battler2PartyId
-                       || GetMonData(&party[i], MON_DATA_SPECIES, 0) == SPECIES_NONE
-                       || GetMonData(&party[i], MON_DATA_IS_EGG, 0) != FALSE
-                       || GetMonData(&party[i], MON_DATA_HP, 0) == 0);
+                while (i == battler1PartyId
+                    || i == battler2PartyId
+                    || GetMonData(&party[i], MON_DATA_SPECIES, 0) == SPECIES_NONE
+                    || GetMonData(&party[i], MON_DATA_IS_EGG, 0) != FALSE
+                    || GetMonData(&party[i], MON_DATA_HP, 0) == 0);
             }
             gBattleStruct->monToSwitchIntoId[gBankTarget] = i;
 
@@ -710,21 +733,25 @@ void atk8F_forcerandomswitch(void) {
         TryDoForceSwitchOut();
 }
 
-bool8 TryDoForceSwitchOut(void) {
-	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER) {
+static bool8 TryDoForceSwitchOut(void)
+{
+	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+	{
 		gBattleStruct->field_58[gBankTarget] = gBattlerPartyIndexes[gBankTarget];
 		gBattlescriptCurrInstr = BattleScript_SuccessForceOut;
 		return TRUE;
 	}
 	
 	//If Wild Battle
-	else if (gBattleMons[gBankAttacker].level < gBattleMons[gBankTarget].level) {
+	else if (gBattleMons[gBankAttacker].level < gBattleMons[gBankTarget].level)
+	{
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
         return FALSE;
 	}
 	
 	//Roar always fails in Wild Double Battles if used by the player
-	else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && SIDE(gBankAttacker) == B_SIDE_PLAYER) {
+	else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && SIDE(gBankAttacker) == B_SIDE_PLAYER)
+	{
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
         return FALSE;
 	}
@@ -734,7 +761,8 @@ bool8 TryDoForceSwitchOut(void) {
 	return TRUE;
 }
 
-void sub_80571DC(u8 battlerId, u8 arg1) { //0x8013F6C in FR
+static void sub_80571DC(u8 battlerId, u8 arg1)
+{ //0x8013F6C in FR
     if (SIDE(battlerId) != B_SIDE_OPPONENT)
     {
         s32 i;
@@ -751,9 +779,11 @@ void sub_80571DC(u8 battlerId, u8 arg1) { //0x8013F6C in FR
     }
 }
 
-bool8 PPIsMaxed(u8 bank) {
-	for (int i = 0; i < 4; ++i) {
-		if (gBattleMons[bank].moves[i] == 0) break;
+static bool8 PPIsMaxed(u8 bank)
+{
+	for (int i = 0; i < 4; ++i)
+	{
+		if (gBattleMons[bank].moves[i] == MOVE_NONE) break;
 		
 		if (gBattleMons[bank].pp[i] < CalculatePPWithBonus(gBattleMons[bank].moves[i], gBattleMons[bank].ppBonuses, i))
 			return FALSE;
@@ -766,10 +796,9 @@ bool8 HasNoMonsToSwitch(u8 battler)
     pokemon_t* party;
     u8 firstMonId, lastMonId, battlerIn1, battlerIn2;
     int i;
-
-    if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE)) {
-        return FALSE;
-	}
+	
+	if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE))
+		return FALSE;
 
 	party = LoadPartyRange(battler, &firstMonId, &lastMonId);
 	
@@ -789,10 +818,12 @@ bool8 HasNoMonsToSwitch(u8 battler)
 		&& i != gBattlerPartyIndexes[battlerIn2])
             break;
     }
+	
     return (i == lastMonId);	
 }
 
-void ClearSwitchBytes(u8 bank) {
+void ClearSwitchBytes(u8 bank)
+{
 	gNewBS->TelekinesisTimers[bank] = 0;
 	gNewBS->HealBlockTimers[bank] = 0;
 	gNewBS->LaserFocusTimers[bank] = 0;
@@ -808,7 +839,8 @@ void ClearSwitchBytes(u8 bank) {
 	gNewBS->usedMoveIndices[bank] = 0;
 }
 
-void ClearSwitchBits(u8 bank) {
+void ClearSwitchBits(u8 bank)
+{
 	gNewBS->PowderByte &= ~(gBitTable[bank]);
 	gNewBS->BeakBlastByte &= ~(gBitTable[bank]);
 	gNewBS->UnburdenBoosts &= ~(gBitTable[bank]);
@@ -825,15 +857,15 @@ void PartyMenuSwitchingUpdate(void)
 		goto SKIP_SWITCH_BLOCKING_CHECK;
 
 	gBattleStruct->field_58[gActiveBattler] = gBattlerPartyIndexes[gActiveBattler];
-	if (gBattleMons[gActiveBattler].status2 & (STATUS2_WRAPPED | STATUS2_ESCAPE_PREVENTION)
-	|| gStatuses3[gActiveBattler] & (STATUS3_ROOTED | STATUS3_SKY_DROP_TARGET)
+	if ((gBattleMons[gActiveBattler].status2 & (STATUS2_WRAPPED | STATUS2_ESCAPE_PREVENTION))
+	|| (gStatuses3[gActiveBattler] & (STATUS3_ROOTED | STATUS3_SKY_DROP_TARGET))
 	|| gNewBS->FairyLockTimer)
 	{
 		EmitChoosePokemon(0, PARTY_CANT_SWITCH, 6, ABILITY_NONE, gBattleStruct->field_60[gActiveBattler]);
 	}
 	else if (((i = ABILITY_ON_OPPOSING_FIELD(gActiveBattler, ABILITY_SHADOWTAG)) && ABILITY(gActiveBattler) != ABILITY_SHADOWTAG)
-		 || ((i = ABILITY_ON_OPPOSING_FIELD(gActiveBattler, ABILITY_ARENATRAP)) && CheckGrounding(gActiveBattler))
-	     || ((i = AbilityBattleEffects(ABILITYEFFECT_CHECK_FIELD_EXCEPT_BANK, gActiveBattler, ABILITY_MAGNETPULL, 0, 0))
+		 ||  ((i = ABILITY_ON_OPPOSING_FIELD(gActiveBattler, ABILITY_ARENATRAP)) && CheckGrounding(gActiveBattler))
+	     ||  ((i = AbilityBattleEffects(ABILITYEFFECT_CHECK_FIELD_EXCEPT_BANK, gActiveBattler, ABILITY_MAGNETPULL, 0, 0))
 				 && IsOfType(gActiveBattler, TYPE_STEEL)))
 	{
 		EmitChoosePokemon(0, ((i - 1) << 4) | PARTY_ABILITY_PREVENTS, 6, gLastUsedAbility, gBattleStruct->field_60[gActiveBattler]);
@@ -841,9 +873,9 @@ void PartyMenuSwitchingUpdate(void)
 	else
 	{
 	SKIP_SWITCH_BLOCKING_CHECK:
-		if (gActiveBattler == 2 && gActionForBanks[0] == ACTION_SWITCH)
+		if (gActiveBattler == B_POSITION_PLAYER_RIGHT && gActionForBanks[0] == ACTION_SWITCH)
 			EmitChoosePokemon(0, PARTY_CHOOSE_MON, gBattleStruct->monToSwitchIntoId[0], ABILITY_NONE, gBattleStruct->field_60[gActiveBattler]);
-		else if (gActiveBattler == 3 && gActionForBanks[1] == ACTION_SWITCH)
+		else if (gActiveBattler == B_POSITION_OPPONENT_RIGHT && gActionForBanks[1] == ACTION_SWITCH)
 			EmitChoosePokemon(0, PARTY_CHOOSE_MON, gBattleStruct->monToSwitchIntoId[1], ABILITY_NONE, gBattleStruct->field_60[gActiveBattler]);
 		else
 			EmitChoosePokemon(0, PARTY_CHOOSE_MON, 6, ABILITY_NONE, gBattleStruct->field_60[gActiveBattler]);

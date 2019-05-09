@@ -8,6 +8,7 @@ u16 __attribute__((long_call)) DetermineEggSpeciesAndParentSlots(struct DayCare 
 void __attribute__((long_call)) SetInitialEggData(struct Pokemon *mon, u16 species, struct DayCare *daycare);
 void __attribute__((long_call)) RemoveEggFromDayCare(struct DayCare *daycare);
 void __attribute__((long_call)) RemoveIVIndexFromList(u8 *ivs, u8 selectedIv);
+bool8 __attribute__((long_call)) ShouldEggHatch(void);
 
 /*
 #define EGG_HATCH_LEVEL 5
@@ -24,7 +25,6 @@ void TriggerPendingDaycareEgg(void);
 void RejectEggFromDayCare(void);
 void CreateEgg(struct Pokemon *mon, u16 species, bool8 setHotSpringsLocation);
 void GiveEggFromDaycare(void);
-bool8 DoEggActions_CheckHatch(void);
 u16 GetSelectedMonNickAndSpecies(void);
 void GetDaycareMonNicknames(void);
 u8 GetDaycareState(void);

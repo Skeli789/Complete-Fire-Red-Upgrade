@@ -1,14 +1,16 @@
 #include "defines.h"
 #include "defines_battle.h"
-
-#include "../include/constants/pokemon.h"	
-#include "../include/constants/items.h"
-#include "../include/constants/hold_effects.h"
-#include "../include/constants/species.h"
-#include "../include/field_weather.h"
 #include "../include/battle.h"
+#include "../include/field_weather.h"
+#include "../include/constants/hold_effects.h"
+#include "../include/constants/items.h"
+#include "../include/constants/pokemon.h"
+#include "../include/constants/species.h"
 
-u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem) {
+#include "../include/new/evolution.h"
+
+u16 GetEvolutionTargetSpecies(struct Pokemon* mon, u8 type, u16 evolutionItem)
+{
     int i, j;
     u16 targetSpecies = 0;
 	u32 personality = mon->personality;
@@ -59,19 +61,19 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem) {
 					
 				case EVO_LEVEL_ATK_GT_DEF:
 					if (gEvolutionTable[species][i].param <= level)
-						if (GetMonData(mon, MON_DATA_ATK, 0) > GetMonData(mon, MON_DATA_DEF, 0))
+						if (mon->attack > mon->defense)
 							targetSpecies = gEvolutionTable[species][i].targetSpecies;
 					break;
 					
 				case EVO_LEVEL_ATK_EQ_DEF:
 					if (gEvolutionTable[species][i].param <= level)
-						if (GetMonData(mon, MON_DATA_ATK, 0) == GetMonData(mon, MON_DATA_DEF, 0))
+						if (mon->attack == mon->defense)
 							targetSpecies = gEvolutionTable[species][i].targetSpecies;
 					break;
 					
 				case EVO_LEVEL_ATK_LT_DEF:
 					if (gEvolutionTable[species][i].param <= level)
-						if (GetMonData(mon, MON_DATA_ATK, 0) < GetMonData(mon, MON_DATA_DEF, 0))
+						if (mon->attack < mon->defense)
 							targetSpecies = gEvolutionTable[species][i].targetSpecies;
 					break;
 					
@@ -130,7 +132,7 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem) {
 						for (j = 0; j < gPlayerPartyCount; ++j)
 						{
 							if (gBaseStats[gPlayerParty[j].species].type1 == typeCheck
-							|| gBaseStats[gPlayerParty[j].species].type2 == typeCheck)
+							||  gBaseStats[gPlayerParty[j].species].type2 == typeCheck)
 							{
 								targetSpecies = gEvolutionTable[species][i].targetSpecies;
 								break;
@@ -284,8 +286,7 @@ u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem) {
     }
 
     return targetSpecies;
-};
-
+}
 
 void ItemEvolutionRemoval(pokemon_t* mon) 
 {
@@ -298,4 +299,4 @@ void ItemEvolutionRemoval(pokemon_t* mon)
 	#else
 		++mon; //So compiler doesn't complain
 	#endif
-};
+}

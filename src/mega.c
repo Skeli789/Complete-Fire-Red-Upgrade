@@ -10,6 +10,7 @@
 
 #define TRAINER_ITEM_COUNT 4
 
+//This file's functions:
 static bool8 IsItemKeystone(u16 item);
 static item_t FindTrainerKeystone(u16 trainerId);
 static item_t FindPlayerKeystone(void);

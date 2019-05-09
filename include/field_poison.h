@@ -1,5 +1,4 @@
-#ifndef GUARD_FIELD_POISON_H
-#define GUARD_FIELD_POISON_H
+#pragma once
 
 #include "global.h"
 
@@ -9,13 +8,14 @@
 
 // Exported ROM declarations
 
-enum {
+enum
+{
     FLDPSN_NONE,
     FLDPSN_PSN,
-    FLDPSN_FNT
+    FLDPSN_FNT,
 };
 
-void sub_80F972C(void);
-unsigned int overworld_poison(void);
-
-#endif //GUARD_FIELD_POISON_H
+/*
+void ExecuteWhiteOut(void);
+s32 DoPoisonFieldEffect(void);
+*/

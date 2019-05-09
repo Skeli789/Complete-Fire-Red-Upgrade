@@ -1,8 +1,9 @@
 #include "defines.h"
 #include "../include/script.h"
 #include "../include/field_weather.h"
+
 #include "../include/new/helper_functions.h"
-#include "../include/new/Vanilla_Functions.h"
+#include "../include/new/read_keys.h"
 
 //emulate JPANs keypad hack
 
@@ -25,42 +26,58 @@ void InitKeys(void)
 #define gKeyRepeatContinueDelay 5
 #define gKeyRepeatStartDelay 40
 
+extern const u8 SystemScript_EnableAutoRun[];
+extern const u8 SystemScript_DisableAutoRun[];
+
 #ifdef SAVE_BLOCK_EXPANSION
-void TryForcedScript(u8 keyFlag, u16 currKeys) {
+static void TryForcedScript(u8 keyFlag, u16 currKeys);
+static u16 TryForcedKey(u8 keyFlag, u16 currKeys);
+static u16 TryIgnoringKeys(u8 keyFlag, u16 currKeys);
+
+static void TryForcedScript(u8 keyFlag, u16 currKeys)
+{
 	if (!(keyFlag & 0x4))
 		return;	// flag not set
+
 	if (gScriptEnv2->enabled)
 		return;	// a script is already enabled
-	if (gTasks[0].func != (void*) Task_WeatherMain)
-		return;
-	if ((gKeypadSetter->keyToRunScript & currKeys))
-		return;
-	ScriptContext2_Enable();
-	ScriptContext1_SetupScript((void*) gKeypadSetter->scriptToRun);
-	return;
-};
 
-u16 TryForcedKey(u8 keyFlag, u16 currKeys) {
+	if (gTasks[0].func != Task_WeatherMain)
+		return;
+
+	if (gKeypadSetter->keyToRunScript & currKeys)
+		return;
+
+	ScriptContext2_Enable();
+	ScriptContext1_SetupScript(gKeypadSetter->scriptToRun);
+}
+
+static u16 TryForcedKey(u8 keyFlag, u16 currKeys)
+{
 	if (!(keyFlag & 0x1))
 		return currKeys;
+
 	u8 keyCounter = gKeypadSetter->keyForcingCounter;
 	if (keyCounter == 0)
 		return currKeys;
+
 	gKeypadSetter->keyForcingCounter -= 1;
 	return (~(gKeypadSetter->keyMapToForce) & currKeys);
-};
+}
 
-u16 TryIgnoringKeys(u8 keyFlag, u16 currKeys) {
+static u16 TryIgnoringKeys(u8 keyFlag, u16 currKeys)
+{
 	if (!(keyFlag & 0x2))
 		return currKeys;
+
 	return (currKeys | gKeypadSetter->keysToIgnore);
 };
 #endif
 
 
 // hook at 080005e8 via r0
-void ReadKeys(void) {
-	
+void ReadKeys(void)
+{	
 	#ifdef SAVE_BLOCK_EXPANSION
 		u16 currKeys = gKeyReg;
 		u8 tryKey = gKeypadSetter->keyFlags;
@@ -101,6 +118,28 @@ void ReadKeys(void) {
     gMain.heldKeysRaw = keyInput;
     gMain.heldKeys = gMain.heldKeysRaw;
 
+#ifdef AUTO_RUN_FLAG
+	if (gMain.newKeys & L_BUTTON
+	&& !gScriptEnv2->enabled
+	&& FuncIsActiveTask(Task_WeatherMain)) //In the overworld
+	{
+		const u8* script;
+		ScriptContext2_Enable();
+		
+		if (FlagGet(AUTO_RUN_FLAG))
+		{
+			FlagClear(AUTO_RUN_FLAG);
+			script = SystemScript_DisableAutoRun;
+		}
+		else
+		{
+			FlagSet(AUTO_RUN_FLAG);
+			script = SystemScript_EnableAutoRun;
+		}
+
+		ScriptContext1_SetupScript(script);
+	}
+#else
     // Remap L to A if the L=A option is enabled.
     if (gSaveBlock2->optionsButtonMode == 2)
     {
@@ -110,71 +149,8 @@ void ReadKeys(void) {
         if (gMain.heldKeys & L_BUTTON)
             gMain.heldKeys |= A_BUTTON;
     }
+#endif
 
     if (gMain.newKeys & gMain.watchedKeysMask)
         gMain.watchedKeysPressed = TRUE;
 }
-
-
-
-
-/*	OLD Port
-void LoadKeys(void) {
-	u16 currKeys = gKeyReg;
-	u8 tryKey = KeypadSetter->checkKey;
-	//u8 forcedKey = KeypadSetter;	//temp
-	
-	if (tryKey != 0)
-	{
-		tryForcedScript(tryKey, currKeys);
-		currKeys = tryForcedKey(tryKey, currKeys);
-		currKeys = tryIgnoringKeys(tryKey, currKeys);
-	}
-	u16 allKeys = 0x3FF;
-	u16 keyResult = allKeys ^ currKeys;	
-	u16 heldButtons = gMain.heldKeysRaw;
-	u16 newKeys = ~keyResult & heldButtons;
-	gMain.newKeysRaw = newKeys;
-	gMain.newKeys = newKeys;
-	gMain.newAndRepeatedKeys = newKeys;
-	
-	u16 loc;
-	if ((keyResult == 0) || (gMain.heldKeys != keyResult))
-		loc = gKeypadInitialCountdown;
-	else
-	{
-		gMain.keyRepeatCounter -= 1;
-		if (gMain.keyRepeatCounter << 16 == 0)
-		{
-			gMain.heldKeysRaw = keyResult;
-			loc = gKeypadFollowUpCountdown;		// b loc_8000636
-		}
-		// bne loc_800063A
-		
-	}
-	
-	if (keyResult != 0)
-	{
-		if (gMain.heldKeys == keyResult)
-		{
-			//u16 keyRepeatCounter = gMain->keyRepeatCounter;
-			//keyRepeatCounter -= 1;
-			//gMain->keyRepeatCounter = keyRepeatCounter;
-			
-			if (gMain.keyRepeatCounter == 0)
-			{
-				
-				
-			}
-		}
-	}
-	//loc_8000634
-	
-	
-	//loc_800063A
-	
-	
-};
-*/
-
-

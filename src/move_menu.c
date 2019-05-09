@@ -1,89 +1,34 @@
 #include "defines.h"
 #include "defines_battle.h"
 #include "Battle_AI/AI_Helper_Functions.h"
-
-#include "../include/new/helper_functions.h"
-#include "../include/new/mega.h"
 #include "../include/window.h"
+#include "../include/constants/songs.h"
+
+#include "../include/new/accuracy_calc.h"
+#include "../include/new/damage_calc.h"
+#include "../include/new/helper_functions.h"
+#include "../include/new/general_bs_commands.h"
+#include "../include/new/mega.h"
+#include "../include/new/move_menu.h"
+#include "../include/new/move_menu_battle_scripts.h"
+#include "../include/new/move_tables.h"
 #include "../include/new/z_move_effects.h"
 
-//Make The Z-Move Names change colour (look in SetPpNumbersPaletteInMoveSelection)
-
-#define TXT_PLUS 0x2E
-#define SE_SELECT 0x5
-#define gText_BattleSwitchWhich (u8*) 0x83FE7A0
-#define gText_TypeWord (u8*) 0x83FE76A
-#define gText_MoveInterfaceType (u8*) 0x83FE770
-#define Pal_PPDisplay (u16*) 0x8D2FBB4
-#define MOVE_LIMITATION_PP          (1 << 1)
-
-#define BattleScript_SelectingDisabledMove (u8*) 0x81D8C5A
-#define BattleScript_SelectingTormentedMove (u8*) 0x81D8EB7
-#define BattleScript_SelectingNotAllowedMoveTaunt (u8*) 0x81D8EC6
-#define BattleScript_SelectingImprisionedMove (u8*) 0x81D8F9F
-#define BattleScript_SelectingNotAllowedMoveChoiceItem (u8*) 0x81D963D
-#define BattleScript_SelectingMoveWithNoPP (u8*) 0x81D8EA4
-#define gText_WhatWillPkmnDo (u8*) 0x83FE6D5
-
-extern move_t SkyBattleBanTable[];
-extern move_t GravityBanTable[];
-
-extern u8 BattleScript_MustSelectEncoredMove[];
-extern u8 BattleScript_SelectingNotAllowedMoveAssaultVest[];
-extern u8 BattleScript_SelectingNotAllowedSkyBattle[];
-extern u8 BattleScript_SelectingNotAllowedGravity[];
-extern u8 BattleScript_SelectingNotAllowedThroatChop[];
-extern u8 BattleScript_SelectingNotAllowedHealBlock[];
+//TODO: Make The Z-Move Names change colour (look in SetPpNumbersPaletteInMoveSelection)
 
 extern u8* ZMoveNames[];
 extern u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
 extern u8 gTypeNames[][TYPE_NAME_LENGTH + 1];
 extern const u8 sTargetIdentities[];
 
-extern u8 StringNull[];
-extern u8 gText_Power[];
-extern u8 gText_Acc[];
-extern u8 gText_NoMiss[];
-extern u8 gText_Physical[];
-extern u8 gText_Special[];
-extern u8 gText_Status[];
-extern u8 gText_ResetStats[];
-extern u8 gText_StatsPlus[];
-extern u8 gText_CritHitsPlus[];
-extern u8 gText_FollowMe[];
-extern u8 gText_RecoverHP[];
-extern u8 gText_HealAllyHP[];
-extern u8 gText_BattleMenu[];
-extern u8 gText_BattleMenu2[];
-
-extern const struct Evolution* CanMegaEvolve(u8 bank, bool8 CheckUBInstead);
-extern bool8 MegaEvolutionEnabled(u8 bank);
-extern bool8 BankMegaEvolved(u8 bank, bool8 checkUB);
-extern u8 GetMoveTypeSpecial(u8 bankAtk, move_t);
-extern u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 ability, u32 atkStatus1, u16 atk_hp, u16 atk_maxHP, u16 species, pokemon_t* party_data_atk, bool8 PartyCheck, bool8 menuCheck, bool8 ignoreDef);
-extern u16 CalcVisualBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 power, u8 moveType, bool8 ignoreDef);
-extern u32 AccuracyCalc(u16 move, u8 bankAtk, u8 bankDef);
-extern u32 AccuracyCalcNoTarget(u16 move, u8 bankAtk);
-extern u8 CheckMoveLimitations(u8 bank, u8 unusableMoves, u8 check);
-extern bool8 IsMega(u8 bank);
-extern bool8 IsBluePrimal(u8 bank);
-extern bool8 IsRedPrimal(u8 bank);
-extern void TryLoadMegaTriggers(void);
-
-void InitMoveSelectionsVarsAndStrings(void);
-void HandleInputChooseMove(void);
-bool8 TriggerMegaEvolution(void);
-void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct ChooseMoveStruct *movePpData);
-void EmitMoveChosen(u8 bufferId, u8 chosenMoveIndex, u8 target, u8 megaState, u8 ultraState, u8 zMoveState);
-void MoveSelectionDisplayMoveType(void);
-bool8 MoveSelectionDisplayZMove(void);
-void ZMoveSelectionDisplayPpNumber(void);
-void ZMoveSelectionDisplayPower(void);
-void MoveSelectionDisplayDetails(void);
-void ReloadMoveNamesIfNecessary(void);
-void HandleInputChooseTarget(void);
-u8 TrySetCantSelectMoveBattleScript(void);
-void HandleInputChooseAction(void);
+//This file's functions:
+static bool8 TriggerMegaEvolution(void);
+static void MoveSelectionDisplayMoveType(void);
+static bool8 MoveSelectionDisplayZMove(void);
+static void ZMoveSelectionDisplayPpNumber(void);
+static void ZMoveSelectionDisplayPower(void);
+static void MoveSelectionDisplayDetails(void);
+static void ReloadMoveNamesIfNecessary(void);
 
 void InitMoveSelectionsVarsAndStrings(void)
 {
@@ -111,15 +56,18 @@ void HandleInputChooseMove(void)
 	
 	sub_8033AC8();
 
-    if (gMain.newKeys & A_BUTTON) {
+    if (gMain.newKeys & A_BUTTON)
+	{
         u8 moveTarget;
-		
-		if (gNewBS->ZMoveData->viewing) {
+	
+		if (gNewBS->ZMoveData->viewing)
+		{
 			gNewBS->ZMoveData->toBeUsed[gActiveBattler] = TRUE;
 			gNewBS->ZMoveData->viewing = FALSE;
 			gWindows[3].window.width = 8; //Restore Window Size from Z-Move mod
 			gWindows[3].window.height = 2;
-			if (gNewBS->ZMoveData->backupTilemap) {
+			if (gNewBS->ZMoveData->backupTilemap)
+			{
 				Free(gWindows[3].tileData);
 				gWindows[3].tileData = gNewBS->ZMoveData->backupTilemap;
 				gNewBS->ZMoveData->backupTilemap = NULL;
@@ -301,7 +249,8 @@ void HandleInputChooseMove(void)
 	}
 }
 
-bool8 TriggerMegaEvolution(void) {
+static bool8 TriggerMegaEvolution(void)
+{
 	#ifndef MEGA_EVOLUTION_FEATURE
 		return FALSE;
 	#else
@@ -310,14 +259,14 @@ bool8 TriggerMegaEvolution(void) {
 		return FALSE;
 		
 	if (moveInfo->megaVariance == MEGA_VARIANT_ULTRA_BURST) { //Ultra Burst
-		if (gNewBS->UltraData->chosen[gActiveBattler]) {
-			// Turn Off
+		if (gNewBS->UltraData->chosen[gActiveBattler])
+		{ // Turn Off
 			PlaySE(3);
 			gNewBS->UltraData->chosen[gActiveBattler] = FALSE;
 			return TRUE;
 		} 
-		else {
-			// Turn On
+		else
+		{ // Turn On
 			PlaySE(2);
 			gNewBS->UltraData->chosen[gActiveBattler] = TRUE;
 			return TRUE;
@@ -346,19 +295,16 @@ bool8 TriggerMegaEvolution(void) {
 void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct ChooseMoveStruct *movePpData)
 {
     u32 i;
-	
+
 	struct ChooseMoveStruct* tempMoveStruct = Calloc(sizeof(struct ChooseMoveStruct)); //Make space for new expanded data
 	Memcpy(tempMoveStruct, movePpData, sizeof(struct ChooseMoveStructOld)); //Copy the old data
 	tempMoveStruct->monType1 = gBattleMons[gActiveBattler].type1;
 	tempMoveStruct->monType2 = gBattleMons[gActiveBattler].type2;
 	tempMoveStruct->monType3 = gBattleMons[gActiveBattler].type3;
 	
-	u8* moveTypes = Calloc(sizeof(u8) * MAX_MON_MOVES);
-	u16* movePowers = Calloc(sizeof(u16) * MAX_MON_MOVES);
-	u16* moveAcc = Calloc(sizeof(u16) * MAX_MON_MOVES);
-	
 	gBattleScripting->dmgMultiplier = 1;
-	for (i = 0; i < MAX_MON_MOVES; ++i) {
+	for (i = 0; i < MAX_MON_MOVES; ++i)
+	{
 		tempMoveStruct->moveTypes[i] = GetMoveTypeSpecial(gActiveBattler, gBattleMons[gActiveBattler].moves[i]);
 
 		if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && CountAliveMons(1) + CountAliveMons(2) > 2) //Because target can vary, display only attacker's modifiers
@@ -386,19 +332,24 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 	}
 
 	tempMoveStruct->megaDone = gNewBS->MegaData->done[gActiveBattler];
-	if (!gNewBS->MegaData->done[gActiveBattler] && !IS_TRANSFORMED(gActiveBattler)) {
+	if (!gNewBS->MegaData->done[gActiveBattler] && !IS_TRANSFORMED(gActiveBattler))
+	{
 		const struct Evolution* evolutions = CanMegaEvolve(gActiveBattler, FALSE);
 		if (evolutions == NULL)
 			evolutions = CanMegaEvolve(gActiveBattler, TRUE); //Check Ultra Burst
 				
-		if (evolutions != NULL) {
-			if (evolutions->unknown == MEGA_VARIANT_ULTRA_BURST) {
-				if (!BankMegaEvolved(gActiveBattler, TRUE)) {
+		if (evolutions != NULL)
+		{
+			if (evolutions->unknown == MEGA_VARIANT_ULTRA_BURST)
+			{
+				if (!BankMegaEvolved(gActiveBattler, TRUE))
+				{
 					tempMoveStruct->canMegaEvolve = TRUE;
 					tempMoveStruct->megaVariance = evolutions->unknown;
 				}
 			}
-			else {
+			else
+			{
 				if (!BankMegaEvolved(gActiveBattler, FALSE) && MegaEvolutionEnabled(gActiveBattler) && !(gNewBS->ZMoveData->partyIndex[SIDE(gActiveBattler)] & gBitTable[gBattlerPartyIndexes[gActiveBattler]]))  //No Mega Evolving if you've used a Z-Move (*cough* *cough* Rayquaza)
 				{
 					tempMoveStruct->canMegaEvolve = TRUE;
@@ -426,9 +377,6 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
     PrepareBufferDataTransfer(bufferId, gBattleBuffersTransferData, sizeof(*tempMoveStruct) + 4);
 	
 	Free(tempMoveStruct);
-	Free(moveTypes);
-	Free(moveAcc);
-	Free(movePowers);
 }
 
 void EmitMoveChosen(u8 bufferId, u8 chosenMoveIndex, u8 target, u8 megaState, u8 ultraState, u8 zMoveState)
@@ -443,7 +391,7 @@ void EmitMoveChosen(u8 bufferId, u8 chosenMoveIndex, u8 target, u8 megaState, u8
     PrepareBufferDataTransfer(bufferId, gBattleBuffersTransferData, 7);
 }
 
-void MoveSelectionDisplayMoveType(void)
+static void MoveSelectionDisplayMoveType(void)
 {
     u8 *txtPtr;
     struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct*)(&gBattleBufferA[gActiveBattler][4]);
@@ -465,19 +413,23 @@ void MoveSelectionDisplayMoveType(void)
     BattlePutTextOnWindow(gDisplayedStringBattle, 8);
 }
 
-bool8 MoveSelectionDisplayZMove(void) {
+static bool8 MoveSelectionDisplayZMove(void)
+{
 	struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct*)(&gBattleBufferA[gActiveBattler][4]);
 	u16 zmove = moveInfo->possibleZMoves[gMoveSelectionCursor[gActiveBattler]];
 	u8 i;
 	
-	if (gNewBS->ZMoveData->viewing) {
+	if (gNewBS->ZMoveData->viewing)
+	{
 		ReloadMoveNamesIfNecessary();
 		PlaySE(3); //Turn Off
 		return TRUE;
 	}
 	
-	if (zmove) {
-		for (i = 0; i < MAX_MON_MOVES; ++i) {
+	if (zmove != MOVE_NONE)
+	{
+		for (i = 0; i < MAX_MON_MOVES; ++i)
+		{
 			MoveSelectionDestroyCursorAt(i);
 			StringCopy(gDisplayedStringBattle, StringNull);
 			BattlePutTextOnWindow(gDisplayedStringBattle, i + 3);
@@ -487,7 +439,8 @@ bool8 MoveSelectionDisplayZMove(void) {
 		{	
 			u8 zEffect = gBattleMoves[moveInfo->moves[gMoveSelectionCursor[gActiveBattler]]].z_move_effect;
 			
-			if (zEffect == Z_EFFECT_CURSE) {
+			if (zEffect == Z_EFFECT_CURSE)
+			{
 				if (moveInfo->monType1 == TYPE_GHOST || moveInfo->monType2 == TYPE_GHOST || moveInfo->monType3 == TYPE_GHOST)
 					zEffect = Z_EFFECT_RECOVER_HP;
 				else
@@ -593,7 +546,7 @@ bool8 MoveSelectionDisplayZMove(void) {
 	return FALSE;
 }
 
-void ZMoveSelectionDisplayPpNumber(void)
+static void ZMoveSelectionDisplayPpNumber(void)
 {
     u8 *txtPtr;
     const u16* palPtr = Pal_PPDisplay;
@@ -614,7 +567,8 @@ void ZMoveSelectionDisplayPpNumber(void)
     BattlePutTextOnWindow(gDisplayedStringBattle, 9);
 }
 
-void ZMoveSelectionDisplayPower(void) {
+void ZMoveSelectionDisplayPower(void)
+{
 	u8 *txtPtr;
 	struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct*)(&gBattleBufferA[gActiveBattler][4]);
 	u16 move = moveInfo->moves[gMoveSelectionCursor[gActiveBattler]];
@@ -643,20 +597,21 @@ void ZMoveSelectionDisplayPower(void) {
 		ConvertIntToDecimalStringN(txtPtr, power, STR_CONV_MODE_LEFT_ALIGN, 3);
 		BattlePutTextOnWindow(gDisplayedStringBattle, 8); //Where Move Type goes
 	}
-	else {
-	}
 }
 
-void MoveSelectionDisplayDetails(void) {
+static void MoveSelectionDisplayDetails(void)
+{
 	u8 *txtPtr;
 	struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct*)(&gBattleBufferA[gActiveBattler][4]);
 	
-	if (gNewBS->ZMoveData->viewingDetails) {
+	if (gNewBS->ZMoveData->viewingDetails)
+	{
 		ReloadMoveNamesIfNecessary();
 		return;
 	}
 	
-	for (int i = 0; i < MAX_MON_MOVES; ++i) {
+	for (int i = 0; i < MAX_MON_MOVES; ++i)
+	{
 		MoveSelectionDestroyCursorAt(i);
 		StringCopy(gDisplayedStringBattle, StringNull);
 		BattlePutTextOnWindow(gDisplayedStringBattle, i + 3);
@@ -707,13 +662,16 @@ void MoveSelectionDisplayDetails(void) {
 	gNewBS->ZMoveData->viewingDetails = TRUE;
 }
 
-void ReloadMoveNamesIfNecessary(void) {
-	if (gNewBS->ZMoveData->viewing) {
+static void ReloadMoveNamesIfNecessary(void)
+{
+	if (gNewBS->ZMoveData->viewing)
+	{
 		gNewBS->ZMoveData->viewing = FALSE;
 		gWindows[3].window.width = 8; //Restore Window Size from Z-Move mod
 		gWindows[3].window.height = 2;
 		
-		if (gNewBS->ZMoveData->backupTilemap) {
+		if (gNewBS->ZMoveData->backupTilemap)
+		{
 			Free(gWindows[3].tileData);
 			gWindows[3].tileData = gNewBS->ZMoveData->backupTilemap;
 			gNewBS->ZMoveData->backupTilemap = NULL;
@@ -725,7 +683,8 @@ void ReloadMoveNamesIfNecessary(void) {
 		MoveSelectionDisplayPpNumber();
 		MoveSelectionDisplayMoveType();
 	}
-	else if (gNewBS->ZMoveData->viewingDetails) {
+	else if (gNewBS->ZMoveData->viewingDetails)
+	{
 		gNewBS->ZMoveData->viewingDetails = FALSE;
 		MoveSelectionDestroyCursorAt(0);
 		MoveSelectionDisplayMoveNames();
@@ -735,7 +694,8 @@ void ReloadMoveNamesIfNecessary(void) {
 	}
 }
 
-void HandleMoveSwitchingUpdate(void) {
+void HandleMoveSwitchingUpdate(void)
+{
     u8 perMovePPBonuses[4];
     struct ChooseMoveStruct moveStruct;
     u8 totalPPBonuses;
@@ -852,7 +812,8 @@ void HandleInputChooseTarget(void)
 
     if (gBattlersCount != 0)
     {
-		for (i = 0; i < gBattlersCount; ++i) {
+		for (i = 0; i < gBattlersCount; ++i)
+		{
             if (i != gMultiUsePlayerCursor)
                 EndBounceEffect(i, BOUNCE_HEALTHBOX); //0x8012258
 		}
@@ -1020,32 +981,27 @@ u8 TrySetCantSelectMoveBattleScript(void)
         gSelectionBattleScripts[gActiveBattler] = BattleScript_MustSelectEncoredMove;
         ++limitations;
 	}
-
     else if (gDisableStructs[gActiveBattler].disabledMove == move && move != MOVE_NONE)
     {
         gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingDisabledMove;
         ++limitations;
     }
-
     else if (move == gLastUsedMoves[gActiveBattler] && move != MOVE_STRUGGLE && (gBattleMons[gActiveBattler].status2 & STATUS2_TORMENT))
     {
         CancelMultiTurnMoves(gActiveBattler);
         gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingTormentedMove;
         ++limitations;
     }
-
     else if (gDisableStructs[gActiveBattler].tauntTimer != 0 && SPLIT(move) == SPLIT_STATUS)
     {
         gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingNotAllowedMoveTaunt;
         limitations++;
     }
-
     else if (IsImprisoned(gActiveBattler, move))
     {
         gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingImprisionedMove;
         ++limitations;
     }
-
     else if (holdEffect == ITEM_EFFECT_CHOICE_BAND && *choicedMove != 0 && *choicedMove != 0xFFFF && *choicedMove != move)
     {
         gCurrentMove = *choicedMove;
@@ -1053,38 +1009,32 @@ u8 TrySetCantSelectMoveBattleScript(void)
         gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingNotAllowedMoveChoiceItem;
         ++limitations;
     }
-	
 	else if (holdEffect == ITEM_EFFECT_ASSAULT_VEST && SPLIT(move) == SPLIT_STATUS)
 	{
         gLastUsedItem = gBattleMons[gActiveBattler].item;
         gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingNotAllowedMoveAssaultVest;
         ++limitations;
 	}
-	
 	else if (FlagGet(SKY_BATTLE_FLAG) && CheckTableForMove(move, SkyBattleBanTable))
 	{
         gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingNotAllowedSkyBattle;
         ++limitations;
 	}
-	
 	else if (gNewBS->GravityTimer && CheckTableForMove(move, GravityBanTable))
 	{
         gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingNotAllowedGravity;
         ++limitations;
 	}
-	
 	else if (gNewBS->ThroatChopTimers[gActiveBattler] && CheckSoundMove(move))
 	{
         gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingNotAllowedThroatChop;
         ++limitations;
 	}
-	
 	else if (gNewBS->HealBlockTimers[gActiveBattler] && CheckHealingMove(move))
 	{
         gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingNotAllowedHealBlock;
         ++limitations;
 	}
-
     else if (gBattleMons[gActiveBattler].pp[gBattleBufferB[gActiveBattler][2]] == 0)
     {
         gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingMoveWithNoPP;

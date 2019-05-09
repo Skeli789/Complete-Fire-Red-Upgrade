@@ -5,6 +5,25 @@
 .equ MAX_LEVEL, 100
 .include "../asm_defines.s"
 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Game Speed Up
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x890, 0xFF
+main:
+	ldr r2, .SuperBits
+	ldrh r3, [r2]
+	mov r0, #1	
+	bic r3, r0
+	strh r3, [r2]
+loop_label:
+	swi #2
+	ldrh r3, [r2]
+	tst r3, r0
+	beq loop_label
+	bx lr
+
+.align 2
+.SuperBits: .word 0x0300310C
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Dynamic Overworld Palette - part of hook at 0x779c

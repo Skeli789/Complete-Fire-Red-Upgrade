@@ -9,6 +9,8 @@ bool8 __attribute__((long_call)) MetatileBehavior_IsLongGrass(u8 metatileBehavio
 bool8 __attribute__((long_call)) MetatileBehavior_IsIndoorEncounter(u8 metatileBehavior);
 bool8 __attribute__((long_call)) MetatileBehavior_IsMountain(u8 metatileBehavior);
 bool8 __attribute__((long_call)) MetatileBehavior_IsDeepOrOceanWater(u8 metatileBehavior);
+bool8 __attribute__((long_call)) MetatileBehavior_IsRunningDisallowed(u8);
+bool8 __attribute__((long_call)) MetatileBehavior_IsForcedMovementTile(u8 metatileBehavior);
 
 /*
 bool8 MetatileBehavior_UnusedReturnTrue(u8 metatileBehavior);
@@ -36,7 +38,6 @@ bool8 MetatileBehavior_IsWestArrowWarp(u8 metatileBehavior);
 bool8 MetatileBehavior_IsNorthArrowWarp(u8 metatileBehavior);
 bool8 MetatileBehavior_IsSouthArrowWarp(u8 metatileBehavior);
 bool8 MetatileBehavior_UnusedIsArrowWarp(u8 metatileBehavior);
-bool8 MetatileBehavior_IsForcedMovementTile(u8 metatileBehavior);
 bool8 MetatileBehavior_IsIce_2(u8 metatileBehavior);
 bool8 MetatileBehavior_IsUnknownMovement48(u8 metatileBehavior);
 bool8 MetatileBehavior_IsWalkNorth(u8 metatileBehavior);

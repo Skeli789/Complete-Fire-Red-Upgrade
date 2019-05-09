@@ -62,6 +62,12 @@
 	.byte 0xA
 	.endm
 
+	.macro forfeityesnobox bank
+	.byte 0x77
+	.byte \bank
+	.byte 0xD
+	.endm
+
 	.macro jumpifmove compare, rom_address
 	.byte 0x2a
 	.byte EQUALS

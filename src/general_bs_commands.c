@@ -13,45 +13,29 @@
 #include "../include/new/battle_strings.h"
 #include "../include/new/battle_terrain.h"
 #include "../include/new/damage_calc.h"
-#include "../include/new/helper_functions.h"
 #include "../include/new/general_bs_commands.h"
-#include "../include/new/move_tables.h"
+#include "../include/new/helper_functions.h"
+#include "../include/new/item_battle_scripts.h"
 #include "../include/new/move_battle_scripts.h"
+#include "../include/new/move_tables.h"
 #include "../include/new/pickup_items.h"
+#include "../include/new/switching.h"
 
-void TryContraryChangeStatAnim(u8 bank, u16* argumentPtr);
-bool8 UproarWakeUpCheck(bank_t);
-u8 CheckMoveLimitations(u8 bank, u8 unusableMoves, u8 check);
-item_t ChoosePickupItem(u8 level);
-void TransformPokemon(u8 bankAtk, u8 bankDef);
-u8 CastformDataTypeChange(u8 bank);
+#define TEXT_BUFFER_SIDE_STATUS(move, status, side) 			\
+{																\
+	gSideAffecting[side] &= ~status;							\
+    gBattleTextBuff1[0] = 0xFD;									\
+    gBattleTextBuff1[1] = 0x2;									\
+    gBattleTextBuff1[2] = (move & 0xFF);						\
+    gBattleTextBuff1[3] = move >> 8;							\
+    gBattleTextBuff1[4] = EOS;									\
+	BattleScriptPushCursor();									\
+	gBattlescriptCurrInstr = BattleScript_SideStatusWoreOffRet;	\
+}
 
-extern void ClearSwitchBytes(u8 bank);
-extern void ClearSwitchBits(u8 bank);
-
-extern u8 BattleScript_Gems[];
-extern u8 BattleScript_AbilityChangedType[];
-extern u8 BattleScript_WeaknessBerryActivate[];
-extern u8 BattleScript_MimikyuTookDamage[];
-extern u8 BattleScript_MimikyuTransform[];
-extern u8 BattleScript_HangedOnFocusSash[];
-extern u8 BattleScript_EnduredSturdy[];
-extern u8 BattleScript_Receiver[];
-extern u8 BattleScript_PrimalWeatherEnd[];
-extern u8 BattleScript_Symbiosis[];
-extern u8 BattleScript_PrintCustomString[];
-extern u8 BattleScript_FlowerGift[];
-extern u8 BattleScript_NoHealTargetAfterHealBlock[];
-extern u8 BattleScript_FaintAttacker[];
-extern u8 BattleScript_FaintTarget[];
-extern u8 BattleScript_FaintScriptingBank[];
-extern u8 BattleScript_SoulHeart[];
-extern u8 BattleScript_IllusionBrokenFaint[];
-extern u8 BattleScript_TeamProtectedByFlowerVeil[];
-extern u8 BattleScript_TeamProtectedBySweetVeil[];
-extern u8 BattleScript_TargetStayedAwakeUsingAbility[];
-extern u8 BattleScript_ProtectedByAbility[];
-extern u8 BattleScript_ButItFailedAttackstring[];
+//This file's functions:
+static void TryContraryChangeStatAnim(u8 bank, u16* argumentPtr);
+static item_t ChoosePickupItem(u8 level);
 
 const u16 gMissStringIds[] =
 {
@@ -62,6 +46,14 @@ const u16 gMissStringIds[] =
 	0x184, //Mat Block
 	0x184, //Quick Guard
 	0x184, //Wide Guard
+};
+
+const u8* const EntryHazardsStrings[] =
+{
+	SpikesLayString,
+	StealthRockLayString,
+	ToxicSpikesLayString,
+	StickyWebLayString,
 };
 
 void atk02_attackstring(void)
@@ -965,7 +957,7 @@ void atk42_jumpiftype2(void) //u8 bank, u8 type, *ptr
         gBattlescriptCurrInstr += 7;
 }
 
-void TryContraryChangeStatAnim(u8 bank, u16* argumentPtr)
+static void TryContraryChangeStatAnim(u8 bank, u16* argumentPtr)
 {
 	if (ABILITY(bank) == ABILITY_CONTRARY)
 	{
@@ -1209,7 +1201,6 @@ void atk70_recordlastability(void) {
     RecordAbilityBattle(gActiveBattler, gLastUsedAbility);
     gBattlescriptCurrInstr += 2;
 }
-
 
 void atk77_setprotect(void) {
     bool8 not_last_turn = TRUE;
@@ -1760,19 +1751,21 @@ void atk90_tryconversiontypechange(void) {
 	}
 }
 
-void atk91_givepaydaymoney(void) {
+void atk91_givepaydaymoney(void)
+{
 	int i;
 	u32 money = 0;
 
-    if (!(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_TRAINER_TOWER))) {
-
+    if (!(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_TRAINER_TOWER)))
+	{
 		for (i = 0; i < 6; ++i)
 			money += (gPlayerParty[i].level * 5) * gNewBS->PayDayByPartyIndices[i];
 
 		money *= gBattleStruct->moneyMultiplier;
 		money = MathMin(money, 0xFFFF);
 
-		if (money) {
+		if (money)
+		{
 			AddMoney(&gSaveBlock1->money, money);
 			PREPARE_HWORD_NUMBER_BUFFER(gBattleTextBuff1, 5, money);
 			BattleScriptPush(gBattlescriptCurrInstr + 1);
@@ -2412,14 +2405,6 @@ void atkA8_copymovepermanently(void) // sketch
     }
 }
 
-#define MOVE_LIMITATION_ZEROMOVE    (1 << 0)
-#define MOVE_LIMITATION_PP          (1 << 1)
-#define MOVE_LIMITATION_DISABLED    (1 << 2)
-#define MOVE_LIMITATION_TORMENTED   (1 << 3)
-#define MOVE_LIMITATION_TAUNT       (1 << 4)
-#define MOVE_LIMITATION_IMPRISION   (1 << 5)
-#define MOVE_LIMITATION_CHOICE		(1 << 6)
-
 void atkA9_trychoosesleeptalkmove(void) {
     u8 unusable_moves = 0;
     int i;
@@ -2613,7 +2598,7 @@ void atkB0_trysetspikes(void) {
 	}
 
 	if (stringcase != 0xFF)
-		BattleStringLoader = EntryHazardsStrings[stringcase];
+		BattleStringLoader = (u8*) EntryHazardsStrings[stringcase];
 }
 
 //Actual calc has been moved to GetBasePower function
@@ -2992,34 +2977,7 @@ void atkC3_trysetfutureattack(void) {
         gBattlescriptCurrInstr += 5;
     }
 }
-/*
-void atkC4_trydobeatup(void) //Not really needed anymore
-{
-    struct Pokemon* party;
 
-    if (SIDE(gBankAttacker) == B_SIDE_PLAYER)
-        party = gPlayerParty;
-    else
-        party = gEnemyParty;
-
-    for (;gBattleCommunication[0] < 6; ++gBattleCommunication[0])
-    {
-        if (GetMonData(&party[gBattleCommunication[0]], MON_DATA_HP, 0)
-        && GetMonData(&party[gBattleCommunication[0]], MON_DATA_SPECIES2, 0)
-        && GetMonData(&party[gBattleCommunication[0]], MON_DATA_SPECIES2, 0) != SPECIES_EGG
-        && !GetMonData(&party[gBattleCommunication[0]], MON_DATA_STATUS, 0))
-            break;
-    }
-
-	if (gBattleCommunication[0] < 6)
-    {
-        ++gBattleCommunication[0];
-		gBattlescriptCurrInstr += 5;
-    }
-	else
-		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
-}
-*/
 void atkC5_setsemiinvulnerablebit(void) {
     switch (gCurrentMove) {
 		case MOVE_FLY:
@@ -3191,20 +3149,6 @@ void atkD2_tryswapitems(void) { //Trick
         gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
 
     else {
-/* Should no longer be neccessary since Knock off now removes items
-        // you can't swap items if they were knocked off in regular battles
-        if (!(gBattleTypeFlags & (BATTLE_TYPE_LINK
-                             | BATTLE_TYPE_EREADER_TRAINER
-                             | BATTLE_TYPE_FRONTIER
-                             | BATTLE_TYPE_SECRET_BASE
-                             | BATTLE_TYPE_x2000000))
-            && (gWishFutureKnock->knockedOffMons[sideAtk] & gBitTable[gBattlerPartyIndexes[gBankAttacker]]
-                || gWishFutureKnock->knockedOffMons[sideDef] & gBitTable[gBattlerPartyIndexes[gBankTarget]]))
-        {
-            gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
-        }
-*/
-
         // can't swap if two pokemon don't have an item
         // or if either of them is a forbidden item
         if ((gBattleMons[gBankAttacker].item == 0 && gBattleMons[gBankTarget].item == 0)
@@ -3423,7 +3367,8 @@ void atkE5_pickupitemcalculation(void) {
     ++gBattlescriptCurrInstr;
 }
 
-item_t ChoosePickupItem(u8 level) {
+static item_t ChoosePickupItem(u8 level)
+{
     u32 row_num = (level - 1) / 10;
     const item_t* const common_row = sPickupCommonItems + row_num;
     const item_t* const rare_row = sPickupRareItems + row_num;

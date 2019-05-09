@@ -14,6 +14,7 @@
 #include "../include/new/frontier.h"
 #include "../include/new/helper_functions.h"
 #include "../include/new/item.h"
+#include "../include/new/learn_move.h"
 #include "../include/new/multi.h"
 
 #include "Tables/Trainers_With_EVs_Table.h"
@@ -22,8 +23,6 @@ extern const u8 gClassPokeBalls[NUM_TRAINER_CLASSES];
 extern const species_t gRandomizerBanList[];
 extern const species_t gSetPerfectXIvList[];
 
-extern void MultiInitPokemonOrder(void);
-extern void GiveBoxMonInitialMoveset(struct BoxPokemon* boxMon);
 extern bool8 sp051_CanTeamParticipateInSkyBattle(void);
 extern bool8 CanMonParticipateInASkyBattle(struct Pokemon* mon);
 

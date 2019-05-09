@@ -8,8 +8,7 @@
 #include "../include/new/end_turn_battle_scripts.h"
 #include "../include/new/form_change.h"
 #include "../include/new/helper_functions.h"
-
-extern bool8 HasNoMonsToSwitch(u8 battler);
+#include "../include/new/switching.h"
 
 enum EndTurnEffects
 {

@@ -130,7 +130,7 @@
 #define TYPE_BLANK	  0x14
 #define TYPE_FAIRY	  0x17
 
-#define NUMBER_OF_MON_TYPES     0x18
+#define NUMBER_OF_MON_TYPES (TYPE_FAIRY + 1)
 
 #define PARTY_SIZE 6
 #define MAX_TOTAL_EVS 510

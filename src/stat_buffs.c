@@ -1,38 +1,21 @@
 #include "defines.h"
 #include "defines_battle.h"
+#include "../include/battle_anim.h"
 #include "../include/battle_string_ids.h"
 
+#include "../include/new/ability_battle_scripts.h"
 #include "../include/new/accuracy_calc.h"
+#include "../include/new/battle_strings.h"
 #include "../include/new/helper_functions.h"
-
-#define STAT_ANIM_PLUS1  15
-#define STAT_ANIM_PLUS2  39
-#define STAT_ANIM_MINUS1 22
-#define STAT_ANIM_MINUS2 46
-#define STAT_ANIM_MULTIPLE_PLUS1 55
-#define STAT_ANIM_MULTIPLE_PLUS2 56
-#define STAT_ANIM_MULTIPLE_MINUS1 57
-#define STAT_ANIM_MULTIPLE_MINUS2 58
+#include "../include/new/stat_buffs.h"
 
 #define BattleScript_MistProtected (u8*) 0x81D8C3E
-
-extern void PrepareStringBattle(u16 stringId, u8 bank);
-
-extern u8 BattleScript_AbilityNoStatLoss[];
-extern u8 BattleScript_AbilityNoSpecificStatLoss[];
-extern u8 BattleScript_DefiantCompetitive[];
 
 extern u8 DrasticallyString[];
 extern u8 SeverelyString[];
 
-//This File's Functions
-void atk13_printfromtable(void);
-void atk20_jumpifstat(void);
-void atk48_playstatchangeanimation(void);
-void atk89_statbuffchange(void);
-u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, u8* BS_ptr);
-
-void atk13_printfromtable(void) {
+void atk13_printfromtable(void)
+{
     if (gBattleExecBuffer) return;
 
     u16* ptr = (u16*)T1_READ_PTR(gBattlescriptCurrInstr + 1);
@@ -42,8 +25,8 @@ void atk13_printfromtable(void) {
     gBattlescriptCurrInstr += 5;
     gBattleCommunication[MSG_DISPLAY] = 1;
 	
-	if (stringId == STRINGID_PKMNSSTATCHANGED4 && SIDE(gBankTarget) != SIDE(gBankAttacker)) { //Stat Fell From Enemy
-		
+	if (stringId == STRINGID_PKMNSSTATCHANGED4 && SIDE(gBankTarget) != SIDE(gBankAttacker))
+	{ //Stat Fell From Enemy
 		switch (ABILITY(gBankTarget)) {
 			case ABILITY_DEFIANT:
 				gBattleScripting->statChanger = INCREASE_2 | STAT_STAGE_ATK;
@@ -69,7 +52,8 @@ void atk20_jumpifstat(void)
     u8 value = gBattleMons[bank].statStages[gBattlescriptCurrInstr[3] - 1];
 	s8 comparison = gBattlescriptCurrInstr[4];
 	
-	if (ABILITY(bank) == ABILITY_CONTRARY) {
+	if (ABILITY(bank) == ABILITY_CONTRARY)
+	{
 		comparison -= 12;
 		comparison *= - 1;
 	}
@@ -205,7 +189,8 @@ void atk48_playstatchangeanimation(void)
         }
     }
 
-	if (gNewBS->SpectralThiefActive) {
+	if (gNewBS->SpectralThiefActive)
+	{
 		statAnimId = STAT_ANIM_MULTIPLE_MINUS1;
 		changeableStatsCount = 0xFF;
 	}

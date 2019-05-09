@@ -2,43 +2,15 @@
 #include "defines_battle.h"
 #include "../include/event_data.h"
 #include "../include/random.h"
-#include "../include/constants/trainer_classes.h"
 #include "../include/constants/songs.h"
+#include "../include/constants/trainer_classes.h"
 
+#include "../include/new/end_battle.h"
+#include "../include/new/end_battle_battle_scripts.h"
+#include "../include/new/form_change.h"
 #include "../include/new/helper_functions.h"
+#include "../include/new/mega.h"
 #include "../include/new/multi.h"
-
-#define BattleScript_LinkBattleWonOrLost (u8*) 0x81D88CC
-#define BattleScript_PayDayMoneyAndPickUpItems (u8*) 0x81D8803
-#define BattleScript_LocalBattleLost (u8*) 0x81D8806
-#define BattleScript_GotAwaySafely (u8*) 0x81D8916
-#define BattleScript_RanAwayUsingMonAbility (u8*) 0x81D890F
-#define BattleScript_SmokeBallEscape (u8*) 0x81D8901
-
-void HandleEndTurn_BattleWon(void);
-void HandleEndTurn_BattleLost(void);
-void HandleEndTurn_RanFromBattle(void);
-void EndOfBattleThings(void);
-static void NaturalCureHeal(void);
-static void RestoreNonConsumableItems(void);
-static void RecalcAllStats(void);
-static void BringBackTheDead(void);
-static void EndPartnerBattlePartyRestore(void);
-static void EndSkyBattlePartyRestore(void);
-static void EndBattleFlagClear(void);
-bool8 IsConsumable(u16 item);
-
-extern void FormsRevert(pokemon_t* party);
-extern void MegaRevert(pokemon_t* party);
-extern void UpdateBurmy(void);
-
-extern u8 BattleScript_Victory[];
-extern u8 BattleScript_PrintPlayerForfeited[];
-extern u8 BattleScript_PrintPlayerForfeitedLinkBattle[];
-extern u8 BattleScript_LostMultiBattleTower[];
-extern u8 BattleScript_LostBattleTower[];
-
-extern u8 ConsumableItemEffectTable[];
 
 const u16 gEndBattleFlagClearTable[] =
 {
@@ -57,6 +29,15 @@ const u16 gEndBattleFlagClearTable[] =
 	DOUBLE_WILD_BATTLE_FLAG,
 	WILD_SHINY_BATTLE_FLAG,
 };
+
+//This file's functions:
+static void NaturalCureHeal(void);
+static void RestoreNonConsumableItems(void);
+static void RecalcAllStats(void);
+static void BringBackTheDead(void);
+static void EndPartnerBattlePartyRestore(void);
+static void EndSkyBattlePartyRestore(void);
+static void EndBattleFlagClear(void);
 
 void HandleEndTurn_BattleWon(void)
 {
@@ -110,6 +91,7 @@ void HandleEndTurn_BattleWon(void)
 				specialMus = TRUE;
 				break;
 			case CLASS_LEADER:
+			case CLASS_FRONTIER_BRAIN:
 				PlayBGM(BGM_VICTORY_GYM);
 				specialMus = TRUE;
 				break;
@@ -209,7 +191,7 @@ void HandleEndTurn_RanFromBattle(void)
     if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER && gBattleTypeFlags & BATTLE_TYPE_TRAINER)
     {
         gBattlescriptCurrInstr = BattleScript_PrintPlayerForfeited;
-        gBattleOutcome = B_OUTCOME_FORFEITED;
+		gBattleOutcome = B_OUTCOME_LOST;
     }
     else
     {
@@ -218,6 +200,7 @@ void HandleEndTurn_RanFromBattle(void)
 				gBattlescriptCurrInstr = BattleScript_SmokeBallEscape; //0x81D8901
 				break;
 			case 2:
+				gBattleScripting->bank = gBankAttacker;
 				gBattlescriptCurrInstr = BattleScript_RanAwayUsingMonAbility; //0x81D890F
 				break;
 			default:
@@ -227,6 +210,22 @@ void HandleEndTurn_RanFromBattle(void)
     }
 
     gBattleMainFunc = (u32) HandleEndTurn_FinishBattle;
+}
+
+#define STATE_BEFORE_ACTION_CHOSEN 0
+
+bool8 HandleRunActionFrontier(void)
+{
+    if (gBattleTypeFlags & BATTLE_TYPE_TRAINER
+    && gBattleTypeFlags & BATTLE_TYPE_FRONTIER
+    && gBattleBufferB[gActiveBattler][1] == ACTION_RUN)
+    {
+		BattleScriptExecute(BattleScript_AskIfWantsToForfeitMatch);
+		gBattleCommunication[gActiveBattler] = STATE_BEFORE_ACTION_CHOSEN;
+        return TRUE;
+    }
+
+	return FALSE;
 }
 
 #define ABILITY_PREVENTING_ESCAPE 2
@@ -401,7 +400,8 @@ bool8 TryRunFromBattle(u8 bank)
     return effect;
 }
 
-void EndOfBattleThings(void) {
+void EndOfBattleThings(void)
+{
 	NaturalCureHeal();
 	RestoreNonConsumableItems();
 	FormsRevert(gPlayerParty);
@@ -424,11 +424,14 @@ static void NaturalCureHeal(void)
 	}
 }
 
-static void RestoreNonConsumableItems(void) {
+static void RestoreNonConsumableItems(void)
+{
 	u16* items = ExtensionState.itemBackup;
 
-	if (ExtensionState.itemBackup != NULL) {
-		if (gBattleTypeFlags & BATTLE_TYPE_TRAINER) {
+	if (ExtensionState.itemBackup != NULL)
+	{
+		if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+		{
 			for (int i = 0; i < PARTY_SIZE; ++i)
 			{
 				if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER
@@ -445,15 +448,20 @@ static void RestoreNonConsumableItems(void) {
 	}
 }
 
-static void RecalcAllStats(void) {
+static void RecalcAllStats(void)
+{
 	for (int i = 0; i < PARTY_SIZE; ++i)
 		CalculateMonStats(&gPlayerParty[i]);
 }
 
-static void BringBackTheDead(void) { //Used after Multi Battles that you lost, but your partner won
-	if (ViableMonCount(gPlayerParty) == 0) {
-		for (int i = 0; i < PARTY_SIZE; ++i) {
-			if (gPlayerParty[i].species != 0 && !GetMonData(&gPlayerParty[i], MON_DATA_IS_EGG, 0)) {
+static void BringBackTheDead(void)
+{ //Used after Multi Battles that you lost, but your partner won
+	if (ViableMonCount(gPlayerParty) == 0)
+	{
+		for (int i = 0; i < PARTY_SIZE; ++i)
+		{
+			if (gPlayerParty[i].species != 0 && !GetMonData(&gPlayerParty[i], MON_DATA_IS_EGG, 0))
+			{
 				gPlayerParty[i].hp = 1;
 				break;
 			}
@@ -461,7 +469,8 @@ static void BringBackTheDead(void) { //Used after Multi Battles that you lost, b
 	}
 }
 
-static void EndPartnerBattlePartyRestore(void) {
+static void EndPartnerBattlePartyRestore(void)
+{
 	int i;
 	u8 counter = 0;
 	pokemon_t* backup = ExtensionState.partyBackup;
@@ -498,12 +507,14 @@ static void EndPartnerBattlePartyRestore(void) {
 
 
 //TO DO, restore party order like above
-static void EndSkyBattlePartyRestore(void) {
+static void EndSkyBattlePartyRestore(void)
+{
 	int i;
 	u8 counter = 0;
 	pokemon_t* backup = ExtensionState.skyBattlePartyBackup;
 
-	if (ExtensionState.skyBattlePartyBackup != NULL) {
+	if (ExtensionState.skyBattlePartyBackup != NULL)
+	{
 		for (i = 0; i < PARTY_SIZE; ++i) {
 			if (gPlayerParty[i].species == 0)
 				Memcpy(&gPlayerParty[i], &backup[counter++], sizeof(struct Pokemon));
@@ -512,7 +523,8 @@ static void EndSkyBattlePartyRestore(void) {
 	}
 }
 
-static void EndBattleFlagClear(void) {
+static void EndBattleFlagClear(void)
+{
 	for (u32 i = 0; i < ARRAY_COUNT(gEndBattleFlagClearTable); ++i)
 		FlagClear(gEndBattleFlagClearTable[i]);
 
@@ -537,7 +549,8 @@ static void EndBattleFlagClear(void) {
 	Memset(&ExtensionState, 0x0, sizeof(struct BattleExtensionState));
 }
 
-bool8 IsConsumable(u16 item) {
+bool8 IsConsumable(u16 item)
+{
 	u8 effect = gItems[SanitizeItemId(item)].holdEffect;
 
 	for (u32 i = 0; ConsumableItemEffectTable[i] != 0xFF; ++i) {

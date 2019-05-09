@@ -22,7 +22,8 @@
 #define TYPE_ROOSTLESS 0x13
 #define TYPE_BLANK	  0x14
 #define TYPE_FAIRY	  0x17
-#define NUMBER_OF_MON_TYPES     0x18
+
+#define NUMBER_OF_MON_TYPES (TYPE_FAIRY + 1)
 
 #define TYPE_NAME_LENGTH 6
 

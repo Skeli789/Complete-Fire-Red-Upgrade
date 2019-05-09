@@ -51,6 +51,30 @@ extern u8 BattleScript_SynchronizeActivates_StatusesTarget[];
 extern u8 BattleScript_ObliviousPrevents[];
 extern u8 BattleScript_CastformChange[];
 
+extern u8 BattleScript_AbilityChangedType[];
+extern u8 BattleScript_MimikyuTookDamage[];
+extern u8 BattleScript_MimikyuTransform[];
+extern u8 BattleScript_EnduredSturdy[];
+extern u8 BattleScript_Receiver[];
+extern u8 BattleScript_PrimalWeatherEnd[];
+extern u8 BattleScript_Symbiosis[];
+extern u8 BattleScript_FlowerGift[];
+extern u8 BattleScript_SoulHeart[];
+extern u8 BattleScript_IllusionBrokenFaint[];
+extern u8 BattleScript_TeamProtectedByFlowerVeil[];
+extern u8 BattleScript_TeamProtectedBySweetVeil[];
+extern u8 BattleScript_TargetStayedAwakeUsingAbility[];
+extern u8 BattleScript_ProtectedByAbility[];
+extern u8 BattleScript_SturdyPreventsOHKO[];
+extern u8 BattleScript_StickyHoldActivates[];
+extern u8 BattleScript_StickyHoldActivatesRet[];
+
+extern u8 BattleScript_AbilityNoStatLoss[];
+extern u8 BattleScript_AbilityNoSpecificStatLoss[];
+extern u8 BattleScript_DefiantCompetitive[];
+
+extern u8 BattleScript_PrimalWeatherEnd[];
+
 //Strings
 extern u8 gText_FogIsDeep[];
 extern u8 gText_SnowWarningActivate[];
@@ -76,3 +100,6 @@ extern u8 GrassyTerrainSetString[];
 extern u8 MistyTerrainSetString[];
 extern u8 PsychicTerrainSetString[];
 extern u8 gText_SlowStartEnd[];
+extern u8 PrimalRainEndString[];
+extern u8 PrimalSunEndString[];
+extern u8 PrimalAirCurrentEndString[];

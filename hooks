@@ -15,6 +15,7 @@ TrainerSlidingEndTurnHook 08013D14 1
 IsRunningFromBattleImpossible 08013D54 0
 DoubleWildUseItemRunFixHook 80142D8 0
 PartyMenuSwitchingHook 8014450 0
+ForfeitBattleTowerHook 80146AC 0
 GetWhoStrikesFirst 8014CD8 3
 SetActionsAndBanksTurnOrder 80150A8 0
 RunTurnActionsFunctions 80155C8 0
@@ -106,14 +107,18 @@ ItemId_GetName 809A8BC 1
 
 ##Overworld Hooks
 apply_map_tileset_palette 80599C8 3
+AutoRunHook 805BA30 0
 TryRunOnFrameMapScript 8069C74 0
+TryStartStepCountScript 0806D698 1
 BattleSetup_ConfigureTrainerBattle 8080228 1
 SetTrainerFlags 80803FC 0
 BattleSetup_StartTrainerBattle 8080464 0
 SetUpTrainerEncounterMusic 8080628 0
 GetIntroSpeechOfApproachingTrainer 80806D8 0
 GetTrainerCantBattleSpeech 8080734 0
+DoPoisonFieldEffect 80A0618 0
 CheckForTrainersWantingBattle 8081B30 0
+IsRunningDisallowedByMetatile 80BD4B8 1
 
 ##Party Menu Hooks
 CursorCb_Summary 8122D4C 1
@@ -218,9 +223,6 @@ pcSelect_SwapDecision 0808ed8c 1
 ##Keypad
 ReadKeys 080005E8 0
 
-##Walking Scripts
-TakeStep 080A0F0C 0
-
 ##Character Customization
 #TrainerCardSprite 0810c374 2
 GetEventObjectGraphicsInfo 0805F2C8 1
@@ -322,10 +324,12 @@ GetNumberOfRelearnableMoves 08043E2C 1
 #Pokedex
 PokedexLoadAlternateHeightHook 081058DC 0
 PokedexLoadAlternateWeightHook 08105A58 0
+PokedexScreenStats 08106370 0
 
 ##Daycare
 #GiveEggFromDaycare 080460D4 1
 #TriggerPendingDaycareEgg 080459F0 1
+FlameBodyMagmaArmorEggHook 8046390 1
 
 ##Shiny Charm
 CreateBoxMonHook 803DAD2 0
@@ -343,5 +347,3 @@ CreateBoxMonHook 803DAD2 0
 # BuildStartMenuActions 0806ed54 0
 CheckDexNavSelect 0810AD98 1
 PokeToolNoFade 0806F3A8 3
-
-

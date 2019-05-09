@@ -1,20 +1,15 @@
 #include "defines.h"
 #include "defines_battle.h"
-#include "../include/new/mega.h"
-#include "../include/new/frontier.h"
+#include "../include/random.h"
 #include "../include/constants/items.h"
 #include "../include/constants/pokedex.h"
-#include "../include/random.h"
 
-extern move_t SheerForceTable[];
-extern move_t SoundMoveTable[];
-extern move_t MoldBreakerMoves[];
-extern move_t MovesThatChangePhysicality[];
-extern const struct BattleMove gBattleMoves[];
-
-extern u8 GetMoveTypeSpecial(bank_t, move_t);
-extern s8 PriorityCalc(u8 bank, u8 action, u16 move);
-extern u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg);
+#include "../include/new/battle_start_turn_start.h"
+#include "../include/new/damage_calc.h"
+#include "../include/new/frontier.h"
+#include "../include/new/helper_functions.h"
+#include "../include/new/mega.h"
+#include "../include/new/move_tables.h"
 
 bool8 CheckTableForMove (move_t move, const u16 table[]) {
 	for (u32 i = 0; table[i] != MOVE_TABLES_TERMIN; ++i) {

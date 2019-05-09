@@ -10,6 +10,7 @@
 #include "../include/new/helper_functions.h"
 #include "../include/new/move_battle_scripts.h"
 #include "../include/new/move_tables.h"
+#include "../include/new/set_effect.h"
 
 //TODO:
 //Emergency Exit Spikes
@@ -22,8 +23,6 @@
 BattleScript_SpikesOnAttackerFainted
 BattleScript_SpikesOnTargetFainted
 */
-
-extern bool8 SetMoveEffect2(void);
 
 enum
 {

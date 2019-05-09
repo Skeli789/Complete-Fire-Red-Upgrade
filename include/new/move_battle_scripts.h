@@ -16,6 +16,24 @@ extern const u8* gBattleScriptsForMoveEffects[];
 #define BattleScript_GrudgeTakesPp (u8*) 0x81D8FA3
 #define BattleScript_RestCantSleep (u8*) 0x81D6EB2
 
+#define BattleScript_SubstituteFade (u8*)  0x81D9526
+#define BattleScript_HangedOnMsg (u8*) 0x81D9641
+#define BattleScript_OneHitKOMsg (u8*) 0x81D8FE4
+#define BattleScript_PrintPayDayMoneyString (u8*) 0x81D911D
+#define BattleScript_WrapFree (u8*) 0x81D8DF3
+#define BattleScript_LeechSeedFree (u8*) 0x81D8E04
+#define BattleScript_SpikesFree (u8*) 0x81D8E0B
+
+#define BattleScript_AllStatsUp (u8*) 0x81D8D55
+#define BattleScript_RapidSpinAway (u8*) 0x81D8DF1
+#define BattleScript_TargetPRLZHeal (u8*) 0x81D9177
+#define BattleScript_AtkDefDown (u8*) 0x81D8F35
+#define BattleScript_KnockedOff (u8*) 0x81D8F86
+#define BattleScript_StatUp (u8*) 0x81D6BD1
+#define BattleScript_StatDown (u8*) 0x81D6C62
+#define BattleScript_SAtkDown2 (u8*) 0x81D8FEB
+#define ScreensShatteredString (u8*) 0x83FC646
+
 extern u8 BattleScript_DarkVoidFail[];
 extern u8 BattleScript_MagneticFluxStatBoost[];
 extern u8 BattleScript_GearUpStatBoost[];
@@ -25,6 +43,18 @@ extern u8 BattleScript_PledgeCombined[];
 extern u8 BattleScript_PledgeReady[];
 extern u8 BattleScript_PrintCustomString[];
 extern u8 BattleScript_SeedStatBoost[];
+
+extern u8 BattleScript_NoHealTargetAfterHealBlock[];
+extern u8 BattleScript_FaintAttacker[];
+extern u8 BattleScript_FaintTarget[];
+extern u8 BattleScript_FaintScriptingBank[];
+extern u8 BattleScript_ButItFailedAttackstring[];
+extern u8 BattleScript_EnduredMsg[];
+extern u8 BattleScript_SideStatusWoreOffRet[];
+
+extern u8 BattleScript_TargetSleepHeal[];
+extern u8 BattleScript_TargetBurnHeal[];
+extern u8 BattleScript_ItemSteal[];
 
 //Strings
 extern u8 CraftyShieldProtectedString[];
@@ -81,3 +111,39 @@ extern u8 MatBlockSetString[];
 extern u8 QuickGuardSetString[];
 extern u8 WideGuardSetString[];
 extern u8 gText_ScreenRaisedStat[];
+extern u8 RemovedEntryHazardsString[];
+extern u8 SpikesLayString[];
+extern u8 StealthRockLayString[];
+extern u8 ToxicSpikesLayString[];
+extern u8 StickyWebLayString[];
+
+extern u8 ElectricTerrainSetString[];
+extern u8 GrassyTerrainSetString[];
+extern u8 MistyTerrainSetString[];
+extern u8 PsychicTerrainSetString[];
+
+#define gText_TargetAlreadyAsleep (u8*) 0x83FB57C
+extern u8 gText_TargetAlreadyHasStatusCondition[];
+extern u8 gText_TargetWrappedInMistyTerrain[];
+extern u8 gText_TargetWrappedInElectricTerrain[];
+extern u8 gText_FlowerVeilProtects[];
+extern u8 gText_SweetVeilProtects[];
+#define gText_CantFallAsleepDuringUproar (u8*) 0x83FBDC4
+#define gText_TargetStayedAwakeUsingAbility (u8*) 0x83FBDE2
+
+extern u8 IonDelugeShowerString[];
+extern u8 TargetStatsResetString[];
+extern u8 TerrainEndString[];
+extern u8 RoastedBerryString[];
+extern u8 gText_TargetWasInfested[];
+
+extern u8 BattleScript_HealingWishHeal[];
+extern u8 BattleScript_LunarDanceHeal[];
+extern u8 BattleScript_SpikesHurt[];
+extern u8 BattleScript_SRHurt[];
+extern u8 BattleScript_TSPoison[];
+extern u8 BattleScript_TSHarshPoison[];
+extern u8 BattleScript_TSAbsorb[];
+extern u8 BattleScript_StickyWebSpeedDrop[];
+extern u8 BattleScript_SuccessForceOut[];
+extern u8 BattleScript_TrainerSlideMsgRet[];

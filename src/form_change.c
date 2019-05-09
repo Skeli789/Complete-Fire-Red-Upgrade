@@ -22,7 +22,7 @@ void DoFormChange(u8 bank, u16 species, bool8 ReloadType, bool8 ReloadStats)
 	gActiveBattler = bank;
 	
 	pokemon_t* partydata = GetBankPartyData(bank);
-	partydata->backupSpecies = partydata->species; //Figure out if Emit is needed for this
+	partydata->backupSpecies = partydata->species;
 	
 	gBattleMons[bank].species = species;
 	partydata->species = species; //Needed so the right stats, types, and abilities can be loaded
@@ -67,6 +67,11 @@ void SwitchOutFormsRevert(u8 bank)
 				DoFormChange(bank, backupSpecies, FALSE, TRUE);
 			else
 				DoFormChange(bank, SPECIES_CHERRIM, FALSE, TRUE);
+			break;
+
+		case SPECIES_KELDEO_RESOLUTE:
+			if (FindMovePositionInMoveset(MOVE_SECRETSWORD, bank) == MAX_MON_MOVES) //Doesn't know Secret Sword
+				DoFormChange(bank, SPECIES_KELDEO, FALSE, TRUE);
 			break;
 
 		case SPECIES_MELOETTA_PIROUETTE:
@@ -123,8 +128,23 @@ void TryFormRevert(pokemon_t* mon)
 	}
 	else if (mon->species == SPECIES_MINIOR_SHIELD) //Minior that has never had a colour yet (Eg. Wild)
 	{
-		mon->species = umodsi(mon->personality, 7); //Get Minior Colour
+		mon->species = GetMiniorCoreSpecies(mon); //Get Minior Colour
 		CalculateMonStats(mon);
+	}
+	else if (mon->species == SPECIES_KELDEO_RESOLUTE)
+	{
+		int i;
+		for (i = 0; i < MAX_MON_MOVES; ++i)
+		{
+			if (mon->moves[i] == MOVE_SECRETSWORD)
+				break;
+		}
+		
+		if (i == MAX_MON_MOVES) //Keldeo doesn't know Secret Sword
+		{
+			mon->species = SPECIES_KELDEO;
+			CalculateMonStats(mon);
+		}
 	}
 }
 

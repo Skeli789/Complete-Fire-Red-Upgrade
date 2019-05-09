@@ -3,12 +3,11 @@
 #include "../include/random.h"
 
 #include "../include/new/accuracy_calc.h"
+#include "../include/new/battle_start_turn_start.h"
 #include "../include/new/damage_calc.h"
 #include "../include/new/helper_functions.h"
 #include "../include/new/move_tables.h"
 #include "../include/new/move_battle_scripts.h"
-
-extern s8 PriorityCalc(u8 bank, u8 action, u16 move);
 
 extern const struct StatFractions gAccuracyStageRatios[];
 

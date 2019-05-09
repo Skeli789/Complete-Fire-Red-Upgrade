@@ -400,6 +400,7 @@ EmitTrainerSlideBack = 0x800E114 | 1;
 EmitBallThrowAnim = 0x800E194 | 1;
 EmitMoveAnimation = 0x800E1FC | 1;
 /*EmitPrintString = 0x800E2D4 | 1;*/
+EmitUnknownYesNoBox = 0x800E500 | 1;
 EmitChoosePokemon = 0x800E590 | 1;
 EmitHealthBarUpdate = 0x800E5EC | 1;
 /*EmitExpBarUpdate = 0x800E624 | 1;*/
@@ -421,6 +422,7 @@ SwitchInClearSetData = 0x8012760 | 1;
 UndoEffectsAfterFainting = 0x8012BC8 | 1;
 BattleIntroRecordMonsToDex = 0x801362C | 1;
 sub_8013F6C = 0x8013F6C | 1;
+HandleTurnActionSelectionState = 0x8014040 | 1;
 SwapTurnOrder = 0x8014CA4 | 1;
 TurnValuesCleanUp = 0x8015330 | 1;
 SpecialStatusesClear = 0x8015450 | 1;
@@ -452,6 +454,9 @@ CheckWonderGuardAndLevitate = 0x801EAB8 | 1;
 IsTwoTurnsMove = 0x802A1C0 | 1;
 //AttacksThisTurn = 0x802A224 | 1;
 TrySetDestinyBondToHappen = 0x802A3F8 | 1;
+HandleBattleWindow = 0x802DB7C | 1;
+BattleCreateYesNoCursorAt = 0x802DCB8 | 1;
+BattleDestroyYesNoCursorAt = 0x802DCF8 | 1;
 AdjustFriendshipOnBattleFaint = 0x802E228 | 1;
 SetControllerToPlayer = 0x802E314 | 1;
 PlayerBufferExecCompleted = 0x802E33C | 1;
@@ -643,16 +648,17 @@ GetStarterChoice = 0x80CBDB0 | 1;
 
 /*Daycare*/
 GetEggSpecies = 0x8045970 | 1;
-DetermineEggSpeciesAndParentSlots = 0x08046000 | 1;
-AlterEggSpeciesWithIncenseItem = 0x08045FA0 | 1;
-SetInitialEggData = 0x08046208 | 1;
-RemoveEggFromDayCare = 0x08045F70 | 1;
 RemoveIVIndexFromList = 0x08045A78 | 1;
-CompactPartySlots = 0x080937DC | 1;
+RemoveEggFromDayCare = 0x08045F70 | 1;
+AlterEggSpeciesWithIncenseItem = 0x08045FA0 | 1;
+DetermineEggSpeciesAndParentSlots = 0x08046000 | 1;
+SetInitialEggData = 0x08046208 | 1;
+ShouldEggHatch = 0x080463B8 | 1;
 
 /* Pokemon Storage */
 GetMonDataFromAnyBox = 0x808BA18 | 1;
 SetMonDataFromAnyBox = 0x808BA5C | 1;
+CompactPartySlots = 0x080937DC | 1;
 
 /*Pokemon Icon Functions*/
 CreateMonIcon = 0x8096E18 | 1;
@@ -700,40 +706,44 @@ AddMoney = 0x809FDA0 | 1;
 GetTrainerEncounterMusicId = 0x804367C | 1;
 Overworld_GetMapHeaderByGroupAndId = 0x8055238 | 1;
 Overworld_GetMapTypeOfSaveblockLocation = 0x8056188 | 1;
+CheckOpenSky = 0x080561FC | 1;
 GetCurrentRegionMapSectionId = 0x08056260 | 1;
 GetCurrentMapBattleScene = 0x8056288 | 1;
+MapGridGetZCoordAt = 0x08058D44 | 1;
 MetatileBehavior_GetLowerBytes = 0x8058F1C | 1;
 MapGridGetMetatileIdAt = 0x8058E48 | 1;
 MapGridGetMetatileField = 0x8058F48 | 1;
 MapGridGetMetatileBehaviorAt = 0x8058F78 | 1;
 ApplySpecialMapPalette = 0x80598CC | 1;
 MetatileBehavior_IsSandOrDeepSand = 0x8059B74 | 1;
+MetatileBehavior_IsForcedMovementTile = 0x8059D70 | 1;
 MetatileBehavior_IsSurfableWaterOrUnderwater = 0x8059CA4 | 1;
 MetatileBehavior_IsTallGrass = 0x8059F34 | 1;
 MetatileBehavior_IsLongGrass = 0x8059F4C | 1;
 MetatileBehavior_IsIndoorEncounter = 0x8059F88 | 1;
 MetatileBehavior_IsMountain = 0x8059F9C | 1;
 MetatileBehavior_IsDeepOrOceanWater = 0x805A01C | 1;
+MetatileBehavior_IsRunningDisallowed = 0x805A234 | 1;
 PlayerGetDestCoords = 0x805C538 | 1;
 TestPlayerAvatarFlags = 0x805C74C | 1;
 sub_805C780 = 0x805C780 | 1;
+PatchObjectPalette = 0x0805F538 | 1;
 GetEventObjectScriptPointerByEventObjectId = 0x805FC38 | 1;
 GetRunningDirectionAnimNum = 0x8063520 | 1;
 npc_apply_anim_looping = 0x8063554 | 1;
 npc_apply_direction = 0x8064678 | 1;
 npc_obj_ministep_stop_on_arrival = 0x8064788 | 1;
+CurrMapHeightMismatch = 0x080681B0 | 1;	
 FreezeEventObjects = 0x8068974 | 1;
 ScriptReadHalfword = 0x80698F8 | 1;
 ScriptContext2_Enable = 0x8069940 | 1;
 ScriptContext1_SetupScript = 0x8069AE4 | 1;
 ScriptContext1_Stop = 0x8069B28 | 1;
 MapHeaderCheckScriptTable = 0x8069BD8 | 1;
+UpdateHappinessStepCounter = 0x806D74C | 1;
+UpdatePoisonStepCounter = 0x806D79C | 1;
 PlayNewMapMusic = 0x8071A74 | 1;
-PatchObjectPalette = 0x0805F538 | 1;
-CurrMapHeightMismatch = 0x080681B0 | 1;	
-MapGridGetZCoordAt = 0x08058D44 | 1;
-
-CheckOpenSky = 0x080561FC | 1;
+CheckVSSeeker = 0x810C4EC | 1;
 
 /*Region Map Functions*/
 GetMapName = 0x80C4D78 | 1;
@@ -752,11 +762,12 @@ GetJumpSpecialMovementAction = 0x080641C0 | 1;
 UnfreezeEventObjects = 0x08068A5C|1;
 
 /*Field Effects Functions*/
-FieldEffectStart = 0x08083444 | 1;
-FieldEffectFreeGraphicsResources = 0x080836B4 | 1;
-FieldEffectStop = 0x080836D8 | 1;
-FldEff_SurfBlob = 0x080DC3D0|1;
-BindFieldEffectToSprite = 0x080DC44C | 1;
+FieldEffectStart = 0x8083444 | 1;
+FieldEffectFreeGraphicsResources = 0x80836B4 | 1;
+FieldEffectStop = 0x80836D8 | 1;
+FldEffPoison_Start =0x80A0E48 | 1;
+FldEff_SurfBlob = 0x80DC3D0|1;
+BindFieldEffectToSprite = 0x80DC44C | 1;
 
 /*Field Weather Functions*/
 Task_WeatherMain = 0x8079e0c | 1;
@@ -788,6 +799,7 @@ ResetSafariZoneFlag = 0x080A0EB4 | 1;
 /*Party Menu Functions*/
 sub_811FA78 = 0x811FA78 | 1;
 sub_812029C = 0x812029C | 1;
+pokemon_ailments_get_primary = 0x812085C | 1;
 sub_8122D78 = 0x8122D78 | 1;
 
 /*Window Functions*/

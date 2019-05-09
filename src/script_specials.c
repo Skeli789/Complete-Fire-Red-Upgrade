@@ -20,8 +20,19 @@
 #include "../include/new/helper_functions.h"
 #include "../include/new/catching.h"
 #include "../include/new/multi.h"
+#include "../include/new/overworld.h"
+#include "../include/new/read_keys.h"
 #include "../include/new/roamer.h"
 #include "../include/new/Vanilla_Functions_battle.h"
+
+struct GbaTimer
+{
+	u16 init;	// 4000108
+	u8 timerFlags;	// 400010A
+	u8 empty;		// 400010B
+	u16 timerVal;	// 400010C
+	u8 timerOn;	// 400010E
+};
 
 /*
 NOTES: 
@@ -38,6 +49,7 @@ TO DO:
 
 #define POKERUS_CURED 0x10
 
+#define gGbaTimer ((struct GbaTimer*) 0x4000108)
 
 extern u8 AddPalRef(u8 Type, u16 PalTag);
 extern u8 BuildFrontierParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, bool8 ForPlayer, u8 side);

@@ -2,7 +2,9 @@
 #include "../include/list_menu.h"
 #include "../include/string_util.h"
 #include "../include/constants/moves.h"
+
 #include "../include/new/helper_functions.h"
+#include "../include/new/learn_move.h"
 
 #ifdef EXPAND_MOVESETS
 	extern const struct LevelUpMove* const gLevelUpLearnsets[];
@@ -16,8 +18,7 @@
 #define gText_Cancel ((u8*) 0x84161C1)
 #define MAX_LEARNABLE_MOVES 50
 
-void GiveBoxMonInitialMoveset(struct BoxPokemon* boxMon);
-
+//This file's functions
 #ifdef UNBOUND
 static move_t RandomizeMove(u16 move);
 #endif

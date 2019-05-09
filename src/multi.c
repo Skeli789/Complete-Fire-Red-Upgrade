@@ -1,53 +1,30 @@
 #include "defines.h"
 #include "defines_battle.h"
 #include "Battle_AI/AI_Helper_Functions.h"
-
 #include "../include/event_data.h"
 
+#include "../include/new/frontier.h"
 #include "../include/new/helper_functions.h"
-#include "../include/new/multi.h"
 #include "../include/new/mega.h"
+#include "../include/new/move_menu.h"
+#include "../include/new/multi.h"
+#include "../include/new/switching.h"
 
 #define BANK_PLAYER_ALLY 2
 #define sBattler data[6]
-#define COMMAND_MAX 0x39
+
 #define Script_TrainerSpotted (u8*) 0x081A4EB4
 
-extern u8 GetMostSuitableMonToSwitchInto(void);
-extern void GetFrontierTrainerName(u8* dst, u16 trainerId, u8 battlerNum);
 extern void BattleAI_SetupAIData(u8 defaultScoreMoves);
-extern void EmitMoveChosen(u8 bufferId, u8 chosenMoveIndex, u8 target, u8 megaState, u8 ultraState, u8 zMoveState);
-extern const struct Evolution* CanMegaEvolve(u8 bank, bool8 CheckUBInstead);
 
-void BattleIntroOpponent1SendsOutMonAnimation(void);
-void BattleIntroOpponent2SendsOutMonAnimation(void);
-void MultiInitPokemonOrder(void);
-void MultiBattleAddSecondOpponent(void);
-void sub_8035C30Fix(void);
-u8* GetTrainerBLoseText(void);
-u32 MultiMoneyCalc(void);
-u32 CalcMultiMoneyForTrainer(u16 trainerId);
-bool8 IsMultiBattle(void);
-
-bool8 IsTagBattle(void);
-bool8 IsPartnerAttacker(void);
-u8* PartnerLoadName(void);
-u8 LoadPartnerBackspriteIndex(void);
-void SetControllerToPlayerPartner(void);
-void PlayerPartnerBufferExecComplete(void);
-void PlayerPartnerBufferRunCommand(void);
-void PlayerPartnerHandleChooseMove(void);
-void PlayerPartnerHandlePrintSelectionString(void);
-void PlayerPartnerHandleChooseAction(void);
-void PlayerPartnerHandleChoosePokemon(void);
-void (*const sPlayerPartnerBufferCommands[COMMAND_MAX])(void);
-
-#ifdef OPEN_WORLD_TRAINERS
-
-extern const u8 openWorldLevelRanges[NUM_BADGE_OPTIONS][2];
-u8 GetOpenWorldBadgeCount(void);
-
-#endif
+static void BattleIntroOpponent2SendsOutMonAnimation(void);
+static u32 CalcMultiMoneyForTrainer(u16 trainerId);
+static void PlayerPartnerBufferExecComplete(void);
+static void PlayerPartnerBufferRunCommand(void);
+static void PlayerPartnerHandleChooseMove(void);
+static void PlayerPartnerHandlePrintSelectionString(void);
+static void PlayerPartnerHandleChooseAction(void);
+static void PlayerPartnerHandleChoosePokemon(void);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -73,7 +50,7 @@ void BattleIntroOpponent1SendsOutMonAnimation(void)
     gBattleMainFunc = (u32) BattleIntroRecordMonsToDex;
 }
 
-void BattleIntroOpponent2SendsOutMonAnimation(void)
+static void BattleIntroOpponent2SendsOutMonAnimation(void)
 {
     for (gActiveBattler = 0; gActiveBattler < gBattlersCount; ++gActiveBattler)
     {
@@ -95,7 +72,8 @@ void MultiInitPokemonOrder(void)
      * to send out their first Pokemon, which corresponds to slot 0
      * and 3.
      */
-    if (gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_TWO_OPPONENTS)) {
+    if (gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_TWO_OPPONENTS))
+	{
         gBattlerPartyIndexes[B_POSITION_OPPONENT_LEFT] = 0;
         gBattlerPartyIndexes[B_POSITION_OPPONENT_RIGHT] = 3;
     }
@@ -106,16 +84,20 @@ void MultiInitPokemonOrder(void)
 
 void MultiBattleAddSecondOpponent(void)
 {
-    if (gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_TWO_OPPONENTS)) {
-        if (GetBattlerPosition(gActiveBattler) == 3) {
+    if (gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_TWO_OPPONENTS))
+	{
+        if (GetBattlerPosition(gActiveBattler) == 3)
+		{
             EmitDrawTrainerPic(0);
             MarkBufferBankForExecution(gActiveBattler);
         }
     }
 
     /* Send command to partner in case of tag team battle */
-    if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER) {
-        if (GetBattlerPosition(gActiveBattler) == 2) {
+    if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
+	{
+        if (GetBattlerPosition(gActiveBattler) == 2)
+		{
             EmitDrawTrainerPic(0);
             MarkBufferBankForExecution(gActiveBattler);
         }
@@ -184,7 +166,8 @@ void sub_8035C30Fix(void)
     }
 }
 
-u8* GetTrainerBLoseText(void) {
+u8* GetTrainerBLoseText(void)
+{
 	return sTrainerDefeatSpeech_B; //ExtensionState.trainerBDefeatSpeech
 }
 
@@ -199,7 +182,7 @@ u32 MultiMoneyCalc(void)
     return money;
 }
 
-u32 CalcMultiMoneyForTrainer(u16 trainerId)
+static u32 CalcMultiMoneyForTrainer(u16 trainerId)
 {
 	int i;
     struct Trainer trainer = gTrainers[trainerId];
@@ -220,13 +203,16 @@ u32 CalcMultiMoneyForTrainer(u16 trainerId)
 			level = trainer.party.NoItemDefaultMoves[lastMon].lvl;
 	#endif
     
-    for (i = 0; i < NUM_TRAINER_CLASSES; ++i) {
-        if (gTrainerMoneyTable[i].trainerClass == trainer.trainerClass) {
+    for (i = 0; i < NUM_TRAINER_CLASSES; ++i)
+	{
+        if (gTrainerMoneyTable[i].trainerClass == trainer.trainerClass)
+		{
 			rate = gTrainerMoneyTable[i].money;
 			break;
 		}
 		
-		if (gTrainerMoneyTable[i].trainerClass == 0xFF) {
+		if (gTrainerMoneyTable[i].trainerClass == 0xFF)
+		{
             rate = gTrainerMoneyTable[0].money;
             break;
         }
@@ -234,14 +220,14 @@ u32 CalcMultiMoneyForTrainer(u16 trainerId)
 
     u32 money = rate * level * gBattleStruct->moneyMultiplier * 4;
 
-    if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE) && !(gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_TWO_OPPONENTS))) {
+    if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE) && !(gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_TWO_OPPONENTS)))
         money *= 2;
-    }
 
     return money;
 }
 
-bool8 IsLinkDoubleBattle(void) {
+bool8 IsLinkDoubleBattle(void)
+{
 	u32 flags = (BATTLE_TYPE_MULTI | BATTLE_TYPE_TRAINER | BATTLE_TYPE_LINK | BATTLE_TYPE_DOUBLE);
 	
 	if ((gBattleTypeFlags & flags) == flags)
@@ -250,7 +236,8 @@ bool8 IsLinkDoubleBattle(void) {
         return FALSE;
 }
 
-bool8 IsMultiBattle(void) {
+bool8 IsMultiBattle(void)
+{
 	u32 flags = (BATTLE_TYPE_MULTI | BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_TRAINER | BATTLE_TYPE_DOUBLE);
 	u32 flags2 = (BATTLE_TYPE_MULTI | BATTLE_TYPE_TRAINER | BATTLE_TYPE_DOUBLE);
 	u32 flags3 = (BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_TRAINER | BATTLE_TYPE_DOUBLE);
@@ -267,7 +254,8 @@ bool8 IsMultiBattle(void) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-bool8 IsTagBattle(void) {
+bool8 IsTagBattle(void)
+{
 	u32 flags = (BATTLE_TYPE_DOUBLE | BATTLE_TYPE_INGAME_PARTNER);
 	
 	if ((gBattleTypeFlags & flags) == flags)
@@ -276,20 +264,24 @@ bool8 IsTagBattle(void) {
         return FALSE;
 }
 
-bool8 IsPartnerAttacker(void) {
+bool8 IsPartnerAttacker(void)
+{
 	return gBankAttacker == B_POSITION_PLAYER_RIGHT;
 }
 
-u8* PartnerLoadName(void) {
-	GetFrontierTrainerName(gStringVar4, VarGet(PARTNER_VAR), 2);
+u8* PartnerLoadName(void)
+{
+	CopyFrontierTrainerName(gStringVar4, VarGet(PARTNER_VAR), 2);
 	return gStringVar4;
 }
 
-u8 LoadPartnerBackspriteIndex(void) {
+u8 LoadPartnerBackspriteIndex(void)
+{
 	return VarGet(PARTNER_BACKSPRITE_VAR);
 }
 
-void ChooseProperPartnerController(void) {
+void ChooseProperPartnerController(void)
+{
 	gBanksBySide[0] = 0;
 	gBanksBySide[1] = 1;
 	gBanksBySide[3] = 3;
@@ -315,7 +307,7 @@ void SetControllerToPlayerPartner(void)
     gBattleBankFunc[gActiveBattler] = (u32) PlayerPartnerBufferRunCommand;
 }
 
-void PlayerPartnerBufferExecComplete(void)
+static void PlayerPartnerBufferExecComplete(void)
 {
     gBattleBankFunc[gActiveBattler] = (u32) PlayerPartnerBufferRunCommand;
     if (gBattleTypeFlags & BATTLE_TYPE_LINK)
@@ -331,7 +323,7 @@ void PlayerPartnerBufferExecComplete(void)
     }
 }
 
-void PlayerPartnerBufferRunCommand(void)
+static void PlayerPartnerBufferRunCommand(void)
 {
     if (gBattleExecBuffer & gBitTable[gActiveBattler]) 
 	{
@@ -344,7 +336,7 @@ void PlayerPartnerBufferRunCommand(void)
     }
 }
 
-void PlayerPartnerHandleChooseMove(void)
+static void PlayerPartnerHandleChooseMove(void)
 {
     u8 chosenMoveId;
     struct ChooseMoveStruct* moveInfo = (struct ChooseMoveStruct*)(&gBattleBufferA[gActiveBattler][4]);
@@ -372,18 +364,18 @@ void PlayerPartnerHandleChooseMove(void)
     PlayerPartnerBufferExecComplete();
 }
 
-void PlayerPartnerHandlePrintSelectionString(void)
+static void PlayerPartnerHandlePrintSelectionString(void)
 {
     PlayerPartnerBufferExecComplete();
 }
 
-void PlayerPartnerHandleChooseAction(void)
+static void PlayerPartnerHandleChooseAction(void)
 {
     AI_TrySwitchOrUseItem();
     PlayerPartnerBufferExecComplete();
 }
 
-void PlayerPartnerHandleChoosePokemon(void)
+static void PlayerPartnerHandleChoosePokemon(void)
 {
 	u8 firstId, lastId;
     s32 chosenMonId = GetMostSuitableMonToSwitchInto();
@@ -395,7 +387,7 @@ void PlayerPartnerHandleChoosePokemon(void)
 		
 		LoadPartyRange(gActiveBattler, &firstId, &lastId); //Because the AI can control the player in Mock Battles too
 		
-        for (chosenMonId = firstId; chosenMonId < lastId; chosenMonId++)
+        for (chosenMonId = firstId; chosenMonId < lastId; ++chosenMonId)
         {
             if (GetMonData(&gPlayerParty[chosenMonId], MON_DATA_HP, 0) != 0
                 && chosenMonId != gBattlerPartyIndexes[playerMonIdentity]
@@ -418,7 +410,8 @@ void PlayerPartnerHandleChoosePokemon(void)
  * Most of these are just reused from the player's command table to
  * save rewriting them all.
  */
-void (*const sPlayerPartnerBufferCommands[COMMAND_MAX])(void) = {
+void (*const sPlayerPartnerBufferCommands[COMMAND_MAX])(void) =
+{
     WRAP_COMMAND_ADDRESS(0x8030B91), /* 00 */
     WRAP_COMMAND_ADDRESS(0x80313B1), /* 01 */
     WRAP_COMMAND_ADDRESS(0x8031439), /* 02 */
@@ -436,12 +429,12 @@ void (*const sPlayerPartnerBufferCommands[COMMAND_MAX])(void) = {
     WRAP_COMMAND_ADDRESS(0x8032811), /* 0e */
     WRAP_COMMAND_ADDRESS(0x8032841), /* 0f */
     WRAP_COMMAND_ADDRESS(0x8032AFD), /* 10 */
-    PlayerPartnerHandlePrintSelectionString,           /* 11 */
-    PlayerPartnerHandleChooseAction,     /* 12 */
-    WRAP_COMMAND_ADDRESS(0x8032C49), /* 13 */
-    PlayerPartnerHandleChooseMove,         /* 14 */
-    WRAP_COMMAND_ADDRESS(0x8032CED), /* 15 */
-    PlayerPartnerHandleChoosePokemon,            /* 16 */
+    PlayerPartnerHandlePrintSelectionString,    /* 11 */
+    PlayerPartnerHandleChooseAction,     		/* 12 */
+    WRAP_COMMAND_ADDRESS(0x8032C49), 			/* 13 */
+    PlayerPartnerHandleChooseMove,         		/* 14 */
+    WRAP_COMMAND_ADDRESS(0x8032CED), 			/* 15 */
+    PlayerPartnerHandleChoosePokemon,           /* 16 */
     WRAP_COMMAND_ADDRESS(0x8032E29), /* 17 */
     WRAP_COMMAND_ADDRESS(0x8032E4D), /* 18 */
     WRAP_COMMAND_ADDRESS(0x8032F4D), /* 19 */

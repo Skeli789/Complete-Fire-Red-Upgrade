@@ -4,55 +4,31 @@
 #include "../include/random.h"
 #include "../include/constants/items.h"
 
+#include "../include/new/ability_battle_scripts.h"
 #include "../include/new/battle_strings.h"
+#include "../include/new/bs_helper_functions.h"
 #include "../include/new/CMD49.h"
+#include "../include/new/cmd49_battle_scripts.h"
 #include "../include/new/helper_functions.h"
+#include "../include/new/move_battle_scripts.h"
+#include "../include/new/move_tables.h"
+#include "../include/new/new_bs_commands.h"
 
 //TODO: Sleep Clause
 
 extern void (* const gBattleScriptingCommandsTable[])(void);
 extern void (* const gBattleScriptingCommandsTable2[])(void);
 
-extern move_t MovesThatCallOtherMovesTable[];
-
-#define BattleScript_DestinyBondTakesLife (u8*) 0x81D8C6C
-#define BattleScript_GrudgeTakesPp (u8*) 0x81D8FA3
-extern u8 BattleScript_FaintTarget[];
-extern u8 BattleScript_PoisonTouch[];
-extern u8 BattleScript_KingsShield[];
-extern u8 BattleScript_SpikyShield[];
-extern u8 BattleScript_BanefulBunker[];
-extern u8 BattleScript_RageIsBuilding[];
-extern u8 BattleScript_BeakBlastBurn[];
-extern u8 BattleScript_AbilityChangedType[];
-
-extern u8 ElectricTerrainSetString[];
-extern u8 GrassyTerrainSetString[];
-extern u8 MistyTerrainSetString[];
-extern u8 PsychicTerrainSetString[];
-
-#define gText_TargetAlreadyAsleep (u8*) 0x83FB57C
-extern u8 gText_TargetAlreadyHasStatusCondition[];
-extern u8 gText_TargetWrappedInMistyTerrain[];
-extern u8 gText_TargetWrappedInElectricTerrain[];
-extern u8 gText_FlowerVeilProtects[];
-extern u8 gText_SweetVeilProtects[];
-#define gText_CantFallAsleepDuringUproar (u8*) 0x83FBDC4
-#define gText_TargetStayedAwakeUsingAbility (u8*) 0x83FBDE2
-
-
-extern bool8 CheckCraftyShield(u8 bank);
-
 //callasm FUNCTION_OFFSET
-void atkF8_callasm(void) 
+void atkF8_callasm(void)
 {
     u32 ptr = (u32) T1_READ_PTR(gBattlescriptCurrInstr + 1);
 	ptr |= 1;
 	
-	void (*foo)(void) = (void (*)(void)) ptr; //The cast of doom
-	foo();
+	void (*func)(void) = (void (*)(void)) ptr; //The cast of doom
+	func();
 	
-    gBattlescriptCurrInstr += 5;
+    gBattlescriptCurrInstr += 5; //Ideally this should be before the function is called, but too late now lol
 }
 
 //sethalfword RAM_OFFSET HWORD
@@ -231,28 +207,6 @@ void atkFF07_jumpifhelditemeffect(void)
 	else
 		gBattlescriptCurrInstr += 7;
 }
-
-enum Counters
-{
-	Counters_Telekinesis,		//0
-	Counters_MagnetRise,		//1
-	Counters_HealBlock,			//2
-	Counters_LaserFocus,		//3
-	Counters_ThroatChop,		//4
-	Counters_Embargo,			//5
-	Counters_Electrify,			//6
-	Counters_SlowStart,			//7
-	Counters_Stakeout,			//8
-	Counters_StompingTantrum,	//9
-	Counters_Nimble,			//10
-	Counters_DestinyBond,		//11
-	Counters_Metronome,			//12
-	Counters_Incinerate,		//13
-	Counters_Powder,			//14
-	Counters_BeakBlast,			//15
-	Counters_AuroraVeil, 		//16
-};
-
 
 //counterclear BANK COUNTER_ID FAIL_OFFSET
 void atkFF08_counterclear(void)
@@ -767,23 +721,13 @@ void atkFF1A_jumpifabilitypresentattackerfield(void)
 		gBattlescriptCurrInstr += 6;
 }
 
+//tryactivateswitchinability
 void atkFF1B_tryactivateswitchinability(void)
 {
 	u8 bank = GetBattleBank(gBattlescriptCurrInstr[1]);
 	gBattlescriptCurrInstr += 2;
 	AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, bank, 0, 0, 0);
 }
-
-/*
-Doesn't Affect (Spore, Minior Shield etc.)
-Attack Misses
-Already Asleep
-Already Has Status (Failed)
-Misty Terrain / Electric Terrain
-Flower Veil
-Sweet Veil
-Ability Protects
-*/
 
 //atkFF1C - atkFF1E: Trainer Sliding
 
@@ -825,7 +769,7 @@ void atkFF20_jumpifprotectedbycraftyshield(void)
 }
 
 //tryspectralthiefsteal SUCCESS_ADDRESS
-void atkFF21_tryspectralthiefsteal(void) 
+void atkFF21_tryspectralthiefsteal(void)
 {
 	s8 increment = 1;
 	bool8 success = FALSE;
@@ -1189,8 +1133,19 @@ void atkFF27_tryactivateprotean(void)
 	gBattlescriptCurrInstr++;
 }
 
+/*
+Doesn't Affect (Spore, Minior Shield etc.)
+Attack Misses
+Already Asleep
+Already Has Status (Failed)
+Misty Terrain / Electric Terrain
+Flower Veil
+Sweet Veil
+Ability Protects
+*/
+
 //trysetsleep BANK FAIL_ADDRESS
-void atkFF26_trysetsleep(void)
+void atkFF28_trysetsleep(void)
 {
 	u8 bank = GetBattleBank(gBattlescriptCurrInstr[1]);
 	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 2);

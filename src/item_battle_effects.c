@@ -1,9 +1,14 @@
 #include "defines.h"
 #include "defines_battle.h"
 #include "../include/battle_string_ids.h"
-#include "../include/constants/items.h"
-#include "../include/new/helper_functions.h"
 #include "../include/random.h"
+#include "../include/constants/items.h"
+
+#include "../include/new/helper_functions.h"
+#include "../include/new/item_battle_effects.h"
+#include "../include/new/item_battle_scripts.h"
+#include "../include/new/move_tables.h"
+#include "../include/new/stat_buffs.h"
 
 #define BattleScript_ItemHealHP_Ret (u8*) 0x81D9622
 #define BattleScript_ItemHealHP_End2 (u8*) 0x81D961C
@@ -14,46 +19,6 @@ extern u8 gStatusConditionString_DisableProblem[];
 extern u8 gStatusConditionString_EncoreProblem[];
 extern u8 gStatusConditionString_MentalState[];
 extern u8 gStatusConditionString_TauntProblem[];
-
-extern u8 BattleScript_BerryConfuseHealRet[];
-extern u8 BattleScript_BerryConfuseHealEnd2[];
-extern u8 BattleScript_ItemHealHP_RemoveItemRet[];
-extern u8 BattleScript_ItemHealHP_RemoveItemEnd2[];
-extern u8 BattleScript_BerryPPHealRet[];
-extern u8 BattleScript_BerryPPHealEnd2[];
-extern u8 BattleScript_BerryFocusEnergyRet[];
-extern u8 BattleScript_BerryFocusEnergyEnd2[];
-extern u8 BattleScript_BerryStatRaiseRet[];
-extern u8 BattleScript_BerryStatRaiseEnd2[];
-extern u8 BattleScript_BerryCureParRet[];
-extern u8 BattleScript_BerryCurePrlzEnd2[];
-extern u8 BattleScript_BerryCurePsnRet[];
-extern u8 BattleScript_BerryCurePsnEnd2[];
-extern u8 BattleScript_BerryCureBrnRet[];
-extern u8 BattleScript_BerryCureBrnEnd2[];
-extern u8 BattleScript_BerryCureFrzRet[];
-extern u8 BattleScript_BerryCureFrzEnd2[];
-extern u8 BattleScript_BerryCureSlpRet[];
-extern u8 BattleScript_BerryCureSlpEnd2[];
-extern u8 BattleScript_BerryCureConfusionRet[];
-extern u8 BattleScript_BerryCureConfusionEnd2[];
-extern u8 BattleScript_BerryCureChosenStatusRet[];
-extern u8 BattleScript_BerryCureChosenStatusEnd2[];
-extern u8 BattleScript_HerbCureChosenStatusRet[];
-extern u8 BattleScript_HerbCureChosenStatusEnd2[];
-extern u8 BattleScript_RaiseStatsItem[];
-extern u8 BattleScript_RaiseStatsItemEnd2[];
-
-extern u8 BattleScript_AirBallooonPop[];
-extern u8 BattleScript_WeaknessPolicy[];
-extern u8 BattleScript_RockyHelmetDamage[];
-extern u8 BattleScript_JabocaRowapBerry[];
-extern u8 BattleScript_BlackSludgeHurt[];
-extern u8 BattleScript_MicleBerryRet[];
-extern u8 BattleScript_MicleBerryEnd2[];
-extern u8 BattleScript_StickyBarbTransfer[];
-
-extern move_t FlinchMoveTable[];
 
 enum
 {
@@ -74,12 +39,11 @@ enum
     FLAVOR_SOUR, // 4
 };
 
-extern u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, u8* BS_ptr);
-
-u8 ConfusionBerries(u8 bank, u8 flavour, bool8 moveTurn, bool8 DoPluck);
-u8 StatRaiseBerries(u8 bank, u8 stat, bool8 moveTurn, bool8 DoPluck);
-u8 RaiseStatsContactItem(u8 bank, u8 stat, bool8 DoPluck);
-u8 KeeMaranagaBerryFunc(u8 bank, u8 stat, u8 split, bool8 DoPluck);
+//This file's functions:
+static u8 ConfusionBerries(u8 bank, u8 flavour, bool8 moveTurn, bool8 DoPluck);
+static u8 StatRaiseBerries(u8 bank, u8 stat, bool8 moveTurn, bool8 DoPluck);
+static u8 RaiseStatsContactItem(u8 bank, u8 stat, bool8 DoPluck);
+static u8 KeeMaranagaBerryFunc(u8 bank, u8 stat, u8 split, bool8 DoPluck);
 
 u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
 {
@@ -805,7 +769,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
     return effect;
 }
 
-u8 ConfusionBerries(u8 bank, u8 flavour, bool8 moveTurn, bool8 DoPluck) {
+static u8 ConfusionBerries(u8 bank, u8 flavour, bool8 moveTurn, bool8 DoPluck) {
 	u8 effect = 0;
 	
 	#ifdef OLD_CONFUSION_HEAL_BERRIES
@@ -865,7 +829,7 @@ u8 ConfusionBerries(u8 bank, u8 flavour, bool8 moveTurn, bool8 DoPluck) {
 	return effect;
 }
 
-u8 StatRaiseBerries(u8 bank, u8 stat, bool8 moveTurn, bool8 DoPluck) {
+static u8 StatRaiseBerries(u8 bank, u8 stat, bool8 moveTurn, bool8 DoPluck) {
 	u8 effect = 0;
     if ((PINCH_BERRY_CHECK(bank) || DoPluck) && STAT_CAN_RISE(bank, stat)) {
 	
@@ -887,7 +851,7 @@ u8 StatRaiseBerries(u8 bank, u8 stat, bool8 moveTurn, bool8 DoPluck) {
 	return effect;
 }
 
-u8 RaiseStatsContactItem(u8 bank, u8 stat, u8 moveType) {
+static u8 RaiseStatsContactItem(u8 bank, u8 stat, u8 moveType) {
 	u8 effect = 0;
 	u8 backupUser = gBankAttacker;
 	gBankAttacker = bank;
@@ -913,7 +877,7 @@ u8 RaiseStatsContactItem(u8 bank, u8 stat, u8 moveType) {
 	return effect;
 }
 
-u8 KeeMaranagaBerryFunc(u8 bank, u8 stat, u8 split, bool8 DoPluck) {
+static u8 KeeMaranagaBerryFunc(u8 bank, u8 stat, u8 split, bool8 DoPluck) {
 	u8 effect = 0;
 	u8 backupUser = gBankAttacker;
 	gBankAttacker = bank;

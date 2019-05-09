@@ -14,37 +14,6 @@ struct Clock
 	u8 second;
 };
 
-struct GbaTimer 
-{
-	u16 init;	// 4000108
-	u8 timerFlags;	// 400010A
-	u8 empty;		// 400010B
-	u16 timerVal;	// 400010C
-	u8 timerOn;	// 400010E
-	
-};
-
-// keypad struct
-struct KeypadSetter 
-{
-	u16 keyMapToForce;	// key(s) to force
-	u16 keysToIgnore;		// key(s) to ignore
-	u8 keyForcingCounter;	// number of times to force said key(s)
-	u8 keyFlags;			// flags for specific key functions
-	u16 keyToRunScript;	// key to enable script to run
-	const u8* scriptToRun;	// script to run from specified key
-};
-
-// new pedometers
-struct Pedometers 
-{
-	u32 alwaysActive;
-	u32 large;
-	u16 medium;
-	u8 smallOne;
-	u8 smallTwo;
-};
-
 #define gSaveBlock1 ((struct SaveBlock1*) *((u32*) 0x3005008))
 #define gSaveBlock2 ((struct SaveBlock2*) *((u32*) 0x300500C))
 #define gSaveBlock3 ((struct SaveBlock3*) *((u32*) 0x3005010))
@@ -170,7 +139,7 @@ struct Pedometers
 		
 		#define gCurrentMapName gMapHeader.regionMapSectionId
 		
-		#define gGbaTimer ((struct GbaTimer*) 0x4000108)
+		//#define gGbaTimer ((struct GbaTimer*) 0x4000108)
 		#define gKeyReg (*((u16*) 0x4000130))
 				
 		extern struct MusicPlayerInfo gMPlay_BGM;
@@ -182,8 +151,8 @@ struct Pedometers
 #define gPcSelectionTracker ((u8* 0x203B7AC)	// state tracker for pc selection
 #define gCreateSpriteTableSetter 0x203B7AD  // allow createsprite to load from a table as well
 #define gTimerValue (*(u16*) 0x203B7AE)
-#define gKeypadSetter ((struct KeypadSetter*) 0x203B7B0)	//12 bytes
-#define gPedometers ((struct Pedometers*) 0x203B7BC)		//12 bytes
+//#define gKeypadSetter ((struct KeypadSetter*) 0x203B7B0)	//12 bytes
+//#define gPedometers ((struct Pedometers*) 0x203B7BC)		//12 bytes
 #define gWalkingScript (*((const u8**) 0x203B7C8))
 
 // Dynamic Overworld Palettes

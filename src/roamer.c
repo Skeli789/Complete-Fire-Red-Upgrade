@@ -1,15 +1,16 @@
 #include "defines.h"
-
 #include "../include/event_data.h"
 #include "../include/event_object_movement.h"
 #include "../include/random.h"
 #include "../include/constants/maps.h"
 #include "../include/constants/species.h"
+
+#include "../include/new/battle_start_turn_start.h"
+#include "../include/new/helper_functions.h"
 #include "../include/new/roamer.h"
 #include "../include/new/wild_encounter.h"
-#include "../include/new/helper_functions.h"
 
-//Do Pokedex area screen / Get icons on the region map
+//TODO: Do Pokedex area screen / Get icons on the region map
 
 enum
 {
@@ -53,8 +54,7 @@ static const u8 sRoamerLocations[][NUM_MAPS_IN_SET] = //0x8466C58 in FR
 	{0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF},
 };
 
-extern u16 GetMUS_ForBattle(void);
-
+//This file's functions:
 static void CreateInitialRoamerMon(u16 species, u8 level, bool8 allowedOnLand, bool8 allowedOnWater);
 static bool8 IsRoamerAt(u8 mapGroup, u8 mapNum, u8 id);
 static void CreateRoamerMonInstance(u8 id);

@@ -1,76 +1,52 @@
 #include "defines.h"
 #include "../include/battle_setup.h"
+#include "../include/daycare.h"
+#include "../include/event_data.h"
 #include "../include/event_object_movement.h"
 #include "../include/field_effect.h"
-#include "../include/metatile_behavior.h"
-#include "../include/safari_zone.h"
-#include "../include/constants/songs.h"
-#include "../include/constants/trainer_classes.h"
-#include "../include/event_data.h"
+#include "../include/field_poison.h"
+#include "../include/fldeff_misc.h"
+#include "../include/link.h"
 #include "../include/map_scripts.h"
+#include "../include/metatile_behavior.h"
+#include "../include/party_menu.h"
 #include "../include/script.h"
-
+#include "../include/safari_zone.h"
 #include "../include/constants/flags.h"
+#include "../include/constants/songs.h"
 #include "../include/constants/trainers.h"
+#include "../include/constants/trainer_classes.h"
 
+#include "../include/new/frontier.h"
 #include "../include/new/helper_functions.h"
 #include "../include/new/multi.h"
-#include "../include/new/frontier.h"
+#include "../include/new/overworld.h"
+#include "../include/new/overworld_data.h"
 #include "../include/new/wild_encounter.h"
-
-#define SCRCMD_TRAINERBATTLE 0x5C
-
-#define sOrdinaryBattleParams (struct TrainerBattleParameter*) 0x83C6900 //Battle Type 0 & 5
-#define sContinueScriptBattleParams (struct TrainerBattleParameter*) 0x83C6948 //Battle Type 1 & 2
-#define sOrdinaryNoIntroBattleParams (struct TrainerBattleParameter*) 0x83C69D8 //Battle Type 3
-#define sDoubleBattleParams (struct TrainerBattleParameter*) 0x83C6990 //Battle Type 4 & 7
-#define sContinueScriptDoubleBattleParams (struct TrainerBattleParameter*) 0x83C6A68 //Batttle Type 6 & 8
-#define sOakTutorialParams (struct TrainerBattleParameter*) 0x83C6A20 //Batttle Type 9
-
-#define EventScript_TryDoNormalTrainerBattle (u8*) 0x81A4EC1
-#define EventScript_DoTrainerBattle (u8*) 0x81A4F21
-#define EventScript_TryDoDoubleTrainerBattle (u8*) 0x81A4EE9
-#define EventScript_TryDoRematchBattle (u8*) 0x81A4F3E
-#define EventScript_TryDoDoubleRematchBattle (u8*) 0x81A4F73
 
 extern const u16 gClassBasedTrainerEncounterBGM[NUM_TRAINER_CLASSES];
 
-extern u8 Script_TrainerSpottedMulti[];
-extern u8 EventScript_DoTwoOpponentBattle[];
-extern u8 EventScript_TryDoTwoOpponentBattle[];
+//This file's functions:
+static bool8 CheckTrainerSpotting(u8 eventObjId);
+static bool8 GetTrainerFlagFromScriptPointer(const u8* data);
+static void Task_OverworldMultiTrainers(u8 id);
+static void ConfigureTwoTrainersBattle(u8 trainerEventObjId, const u8* trainerScript);
+static void SetUpTwoTrainersBattle(void);
+static void InitTrainerBattleVariables(void);
+static u8 GetPlayerMapObjId(void);
+static bool8 GetProperDirection(u16 currentX, u16 currentY, u16 toX, u16 toY);
+static void UpdateJPANStepCounters(void);
+static const u8* GetCustomWalkingScript(void);
+static bool8 SafariZoneTakeStep(void);
+static bool8 IsRunningDisabledByFlag(void);
 
-extern void CopyFrontierTrainerText(u8 whichText, u16 trainerId, u8 battlerNum);
-
-u8 CheckForTrainersWantingBattle(void);
-bool8 CheckTrainerSpotting(u8 eventObjId);
-bool8 GetTrainerFlagFromScriptPointer(const u8* data);
-void Task_OverworldMultiTrainers(u8 id);
-void ConfigureTwoTrainersBattle(u8 trainerEventObjId, const u8* trainerScript);
-void SetUpTwoTrainersBattle(void);
-u8* BattleSetup_ConfigureTrainerBattle(const u8* data);
-void InitTrainerBattleVariables(void);
-u8* GetIntroSpeechOfApproachingTrainer(void);
-const u8* GetTrainerCantBattleSpeech(void);
-void BattleSetup_StartTrainerBattle(void);
-void SetTrainerFlags(void);
-
-void AllowTrainerIncrementation(void);
-void PrepTrainerB(void);
-void MoveSecondNPCForTwoOpponentSighting(void);
-void LoadProperIntroSpeechForTwoOpponentSighting(void);
-void HasOneTrainerBeenDefeated(void);
-void MoveCameraToTrainerB(void);
-bool8 GetProperDirection(u16 currentX, u16 currentY, u16 toX, u16 toY);
-void TrainerFaceFix(void);
-void FollowerPositionFix(void);
-
-// table full of pointers to custom walking scripts
+//Table full of pointers to custom walking scripts
 const u8* const gDefaultWalkingScripts[] =
 {
-	(u32) 0,
-	(u32) 0,
-	(u32) 0,
-	(u32) 0,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	//etc
 };
 
@@ -191,27 +167,28 @@ const struct TrainerBattleParameter sTagBattleParams[] =
     {&sTrainerBattleEndScript,       TRAINER_PARAM_LOAD_SCRIPT_RET_ADDR},
 };
 
-u8 CheckForTrainersWantingBattle(void) {
+u8 CheckForTrainersWantingBattle(void)
+{
 	if (IsQuestLogActive())
 		return FALSE;
 
-	if (FuncIsActiveTask(Task_OverworldMultiTrainers)) {
+	if (FuncIsActiveTask(Task_OverworldMultiTrainers))
 		return FALSE;
-	}
 
 	if (ViableMonCount(gPlayerParty) == 0) //NPC's won't challenge you if, for some reason, you have no Pokemon
 		return FALSE;
 
     ExtensionState.spotted.count = 0;
 
-    for (u8 eventObjId = 0; eventObjId < MAP_OBJECTS_COUNT; ++eventObjId) {
-
+    for (u8 eventObjId = 0; eventObjId < MAP_OBJECTS_COUNT; ++eventObjId) //For each NPC on the map
+	{
 		if (!gEventObjects[eventObjId].active)
             continue;
         if (gEventObjects[eventObjId].trainerType != 1 && gEventObjects[eventObjId].trainerType != 3)
             continue;
 
-		if (CheckTrainerSpotting(eventObjId)) {
+		if (CheckTrainerSpotting(eventObjId))
+		{
             if (ViableMonCount(gPlayerParty) < 2)
                 break;
 
@@ -241,53 +218,52 @@ u8 CheckForTrainersWantingBattle(void) {
 			return TRUE;
 
 		case 2:
-			// TODO: reset state data
 			CreateTask(Task_OverworldMultiTrainers, 0x50);
 			return TRUE;
     }
+	
     return FALSE;
 }
 
-bool8 CheckTrainerSpotting(u8 eventObjId) //Or just CheckTrainer
+static bool8 CheckTrainerSpotting(u8 eventObjId) //Or just CheckTrainer
 {
     const u8* scriptPtr = GetEventObjectScriptPointerByEventObjectId(eventObjId); //Get NPC Script Pointer from its Object Id
+	u8 battleType = scriptPtr[1];
 
-	if (scriptPtr[1] == TRAINER_BATTLE_TWO_OPPONENTS
-	&&  (FlagGet(FLAG_TRAINER_FLAG_START + T1_READ_16(scriptPtr + 2)) || FlagGet(FLAG_TRAINER_FLAG_START + T1_READ_16(scriptPtr + 4))))
-		return FALSE;
+	if (battleType == TRAINER_BATTLE_TWO_OPPONENTS
+	&& (FlagGet(FLAG_TRAINER_FLAG_START + T1_READ_16(scriptPtr + 2)) || FlagGet(FLAG_TRAINER_FLAG_START + T1_READ_16(scriptPtr + 4))))
+		return FALSE; //If either trainer flag is set
 
-    else if (GetTrainerFlagFromScriptPointer(scriptPtr)) //Trainer has already been beaten
+    if (GetTrainerFlagFromScriptPointer(scriptPtr)) //Trainer has already been beaten
         return FALSE;
 
-    else
+    struct EventObject* trainerObj = &gEventObjects[eventObjId];
+    bool8 canApproach = TrainerCanApproachPlayer(trainerObj);
+
+    if (canApproach)
     {
-        struct MapObject* trainerObj = &gEventObjects[eventObjId];
-        bool8 canApproach = TrainerCanApproachPlayer(trainerObj);
-
-        if (canApproach)
-        {
-			if (scriptPtr[1] == TRAINER_BATTLE_DOUBLE
-            || scriptPtr[1] == TRAINER_BATTLE_REMATCH_DOUBLE
-            || scriptPtr[1] == TRAINER_BATTLE_CONTINUE_SCRIPT_DOUBLE
-			|| scriptPtr[1] == TRAINER_BATTLE_TWO_OPPONENTS)
-			{
-				if (ViableMonCount(gPlayerParty) < 2)
-					return FALSE;
-			}
-
-			if (scriptPtr[1] == TRAINER_BATTLE_TAG) //You can't be stopped by someone using the tag battle feature
+		if (battleType == TRAINER_BATTLE_DOUBLE
+        || battleType == TRAINER_BATTLE_REMATCH_DOUBLE
+        || battleType == TRAINER_BATTLE_CONTINUE_SCRIPT_DOUBLE
+		|| battleType == TRAINER_BATTLE_TWO_OPPONENTS)
+		{
+			if (ViableMonCount(gPlayerParty) < 2)
 				return FALSE;
+		}
 
-			struct TrainerSpotted trainer = {eventObjId, canApproach, (u8*) scriptPtr};
-			ExtensionState.spotted.trainers[ExtensionState.spotted.count++] = trainer;
-            return TRUE;
-        }
-        else
-            return FALSE;
+		if (battleType == TRAINER_BATTLE_TAG //You can't be stopped by someone using the tag battle feature
+		||  battleType == TRAINER_BATTLE_MULTI)
+			return FALSE;
+
+		struct TrainerSpotted trainer = {eventObjId, canApproach, (u8*) scriptPtr};
+		ExtensionState.spotted.trainers[ExtensionState.spotted.count++] = trainer;
+        return TRUE;
     }
+        
+    return FALSE;
 }
 
-bool8 GetTrainerFlagFromScriptPointer(const u8* data)
+static bool8 GetTrainerFlagFromScriptPointer(const u8* data)
 {
 	if (TrainerBattleLoadArg8(data) != SCRCMD_TRAINERBATTLE) //Prevents game from crashing if you are spotted by someone
 		return TRUE;							 			 //who's not a trainer
@@ -296,7 +272,7 @@ bool8 GetTrainerFlagFromScriptPointer(const u8* data)
     return FlagGet(FLAG_TRAINER_FLAG_START + flag);
 }
 
-void Task_OverworldMultiTrainers(u8 id)
+static void Task_OverworldMultiTrainers(u8 id)
 {
     struct Task* task = &gTasks[id];
 
@@ -352,20 +328,21 @@ void Task_OverworldMultiTrainers(u8 id)
 }
 
 //EventScript_TryDoNormalTrainerBattle
-void ConfigureTwoTrainersBattle(u8 trainerEventObjId, const u8* trainerScript)
+static void ConfigureTwoTrainersBattle(u8 trainerEventObjId, const u8* trainerScript)
 {
     gSelectedEventObject = trainerEventObjId;
     gSpecialVar_LastTalked = gEventObjects[trainerEventObjId].localId;
     BattleSetup_ConfigureTrainerBattle(trainerScript + 1);
 }
 
-void SetUpTwoTrainersBattle(void)
+static void SetUpTwoTrainersBattle(void)
 {
     ScriptContext1_SetupScript(Script_TrainerSpottedMulti);
     ScriptContext2_Enable();
 }
 
-u8* BattleSetup_ConfigureTrainerBattle(const u8* data) {
+const u8* BattleSetup_ConfigureTrainerBattle(const u8* data)
+{
     InitTrainerBattleVariables(); //0x8080110
     sTrainerBattleMode = TrainerBattleLoadArg8(data);
 
@@ -376,11 +353,13 @@ u8* BattleSetup_ConfigureTrainerBattle(const u8* data) {
 			return EventScript_TryDoNormalTrainerBattle;
 
 		case TRAINER_BATTLE_CONTINUE_SCRIPT:
-			if (gApproachingTrainerId == 0) {
+			if (gApproachingTrainerId == 0)
+			{
 				TrainerBattleLoadArgs(sContinueScriptBattleParams, data); //0x8080168
 				SetMapVarsToTrainer(); //0x80801F0
 			}
-			else {
+			else
+			{
 				TrainerBattleLoadArgs(sTrainerBContinueScriptBattleParams, data);
 				VarSet(SECOND_OPPONENT_VAR, gTrainerBattleOpponent_B);
 			}
@@ -396,8 +375,7 @@ u8* BattleSetup_ConfigureTrainerBattle(const u8* data) {
 			return EventScript_TryDoDoubleTrainerBattle;
 
 		case TRAINER_BATTLE_REMATCH:
-			QuestLogRemtachBattleStore();
-
+			//QuestLogRemtachBattleStore();
 			TrainerBattleLoadArgs(sOrdinaryBattleParams, data);
 			SetMapVarsToTrainer();
 			gTrainerBattleOpponent_A = GetRematchTrainerId(gTrainerBattleOpponent_A);
@@ -410,8 +388,7 @@ u8* BattleSetup_ConfigureTrainerBattle(const u8* data) {
 			return EventScript_TryDoDoubleTrainerBattle;
 
 		case TRAINER_BATTLE_REMATCH_DOUBLE:
-			QuestLogRemtachBattleStore();
-
+			//QuestLogRemtachBattleStore();
 			TrainerBattleLoadArgs(sDoubleBattleParams, data);
 			SetMapVarsToTrainer();
 			gTrainerBattleOpponent_A = GetRematchTrainerId(gTrainerBattleOpponent_A);
@@ -446,11 +423,13 @@ u8* BattleSetup_ConfigureTrainerBattle(const u8* data) {
 			return EventScript_DoTrainerBattle;
 
 		default:
-			if (gApproachingTrainerId == 0) {
+			if (gApproachingTrainerId == 0)
+			{
 				TrainerBattleLoadArgs(sOrdinaryBattleParams, data);
 				SetMapVarsToTrainer();
 			}
-			else {
+			else
+			{
 				TrainerBattleLoadArgs(sTrainerBOrdinaryBattleParams, data);
 				VarSet(SECOND_OPPONENT_VAR, gTrainerBattleOpponent_B);
 			}
@@ -458,7 +437,7 @@ u8* BattleSetup_ConfigureTrainerBattle(const u8* data) {
     }
 }
 
-void InitTrainerBattleVariables(void)
+static void InitTrainerBattleVariables(void)
 {
     sTrainerBattleMode = 0;
     if (ExtensionState.spotted.trainers == 0)
@@ -494,7 +473,7 @@ void BattleSetup_StartTrainerBattle(void)
 				gBattleTypeFlags |= (BATTLE_TYPE_DOUBLE | BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_INGAME_PARTNER);
 				break;
 			case BATTLE_TOWER_LINK_MULTI:
-				gBattleTypeFlags |= (BATTLE_TYPE_DOUBLE | BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_MULTI);
+				gBattleTypeFlags |= (BATTLE_TYPE_DOUBLE | BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_MULTI | BATTLE_TYPE_LINK);
 				break;
 		}
 	}
@@ -520,7 +499,8 @@ void BattleSetup_StartTrainerBattle(void)
 			#endif
 		#endif
 
-		if (FlagGet(ACTIVATE_TUTORIAL_FLAG)) {
+		if (FlagGet(ACTIVATE_TUTORIAL_FLAG))
+		{
 			gBattleTypeFlags |= BATTLE_TYPE_OAK_TUTORIAL;
 			sTrainerBattleMode = TRAINER_BATTLE_OAK_TUTORIAL;
 		}
@@ -532,9 +512,10 @@ void BattleSetup_StartTrainerBattle(void)
 }
 
 //Special 0x34
-u8* GetIntroSpeechOfApproachingTrainer(void)
+const u8* GetIntroSpeechOfApproachingTrainer(void)
 {
-	if (FlagGet(BATTLE_TOWER_FLAG)) {
+	if (FlagGet(BATTLE_TOWER_FLAG))
+	{
 		switch (Var8000) {
 			case 0:
 				CopyFrontierTrainerText(FRONTIER_BEFORE_TEXT, BATTLE_TOWER_TID, 0);
@@ -570,7 +551,8 @@ const u8* GetTrainerCantBattleSpeech(void)
 }
 
 //Special 0x38
-void SetUpTrainerEncounterMusic(void) {
+void SetUpTrainerEncounterMusic(void)
+{
     u16 trainerId;
     u16 music;
 
@@ -612,12 +594,14 @@ void SetUpTrainerEncounterMusic(void) {
 			if (music == 0)
 				music = BGM_EYE_BOY;
 		#endif
+		
         PlayNewMapMusic(music);
     }
 }
 
 //special 0x18F
-void SetTrainerFlags(void) {
+void SetTrainerFlags(void)
+{
 	if (gTrainerBattleOpponent_B)
 		FlagSet(FLAG_TRAINER_FLAG_START + gTrainerBattleOpponent_B);
 	FlagSet(FLAG_TRAINER_FLAG_START + gTrainerBattleOpponent_A);
@@ -626,10 +610,10 @@ void SetTrainerFlags(void) {
 //Script Callasms
 enum
 {
-GoDown,
-GoUp,
-GoLeft,
-GoRight
+	GoDown,
+	GoUp,
+	GoLeft,
+	GoRight
 };
 
 
@@ -638,7 +622,8 @@ void AllowTrainerIncrementation(void)
 	ExtensionState.multiTaskStateHelper = TRUE;
 }
 
-void MoveSecondNPCForTwoOpponentSighting(void) {
+void MoveSecondNPCForTwoOpponentSighting(void)
+{
 	u8 localId, obj;
 	if (gEventObjects[ExtensionState.spotted.trainers[0].id].localId == ExtensionState.spotted.firstTrainerNPCId)
 		localId = ExtensionState.spotted.secondTrainerNPCId;
@@ -679,14 +664,17 @@ void MoveSecondNPCForTwoOpponentSighting(void) {
 	}
 }
 
-void LoadProperIntroSpeechForTwoOpponentSighting(void) {
+void LoadProperIntroSpeechForTwoOpponentSighting(void)
+{
 	switch (Var8000) {
 		case 0:
-			if (gEventObjects[ExtensionState.spotted.trainers[0].id].localId != ExtensionState.spotted.firstTrainerNPCId) {
+			if (gEventObjects[ExtensionState.spotted.trainers[0].id].localId != ExtensionState.spotted.firstTrainerNPCId)
+			{
 				gSelectedEventObject = GetEventObjectIdByLocalId(ExtensionState.spotted.secondTrainerNPCId);
 				gApproachingTrainerId = 1;
 			}
-			else {
+			else
+			{
 				gSelectedEventObject = GetEventObjectIdByLocalId(ExtensionState.spotted.firstTrainerNPCId);
 				gApproachingTrainerId = 0;
 			}
@@ -707,14 +695,17 @@ void PrepTrainerB(void)
 		gSelectedEventObject = GetEventObjectIdByLocalId(ExtensionState.spotted.secondTrainerNPCId);
 	else
 		gSelectedEventObject = GetEventObjectIdByLocalId(ExtensionState.spotted.firstTrainerNPCId);
+
 	gApproachingTrainerId ^= 1;
 }
 
-void HasOneTrainerBeenDefeated(void) {
-	gSpecialVar_LastResult = FlagGet(FLAG_TRAINER_FLAG_START + gTrainerBattleOpponent_A) | FlagGet(FLAG_TRAINER_FLAG_START + gTrainerBattleOpponent_B);
+void HasOneTrainerBeenDefeated(void)
+{
+	gSpecialVar_LastResult = FlagGet(FLAG_TRAINER_FLAG_START + gTrainerBattleOpponent_A) || FlagGet(FLAG_TRAINER_FLAG_START + gTrainerBattleOpponent_B);
 }
 
-void MoveCameraToTrainerB(void) {
+void MoveCameraToTrainerB(void)
+{
 	u8 newObj;
 	if (gEventObjects[gSelectedEventObject].localId == ExtensionState.spotted.firstTrainerNPCId)
 		newObj = GetEventObjectIdByLocalId(ExtensionState.spotted.secondTrainerNPCId);
@@ -730,7 +721,7 @@ void MoveCameraToTrainerB(void) {
 	Var8005 = 0x7F; //Camera
 }
 
-u8 GetPlayerMapObjId(void)
+static u8 GetPlayerMapObjId(void)
 {
 	for (u8 eventObjId = 0; eventObjId < MAP_OBJECTS_COUNT; ++eventObjId)
 	{
@@ -753,10 +744,12 @@ void TrainerFaceFix(void)
 		gSpecialVar_LastResult = 0xFFFF;
 }
 
-bool8 GetProperDirection(u16 currentX, u16 currentY, u16 toX, u16 toY) {
+static bool8 GetProperDirection(u16 currentX, u16 currentY, u16 toX, u16 toY)
+{
 	u8 ret = FALSE;
 
-	if (currentX == toX) {
+	if (currentX == toX)
+	{
 		if (currentY < toY)
 			gSpecialVar_LastResult = GoDown;
 		else
@@ -764,7 +757,8 @@ bool8 GetProperDirection(u16 currentX, u16 currentY, u16 toX, u16 toY) {
 
 		ret = TRUE;
 	}
-	else if (currentY == toY) {
+	else if (currentY == toY)
+	{
 		if (currentX < toX)
 			gSpecialVar_LastResult = GoRight;
 		else
@@ -845,73 +839,94 @@ void FollowerPositionFix(void)
 	}
 }
 
-// hack safari step function to include custom walking scripts
-// hook at 080A0F0C via r0
-bool8 TakeStep(void)
+extern void __attribute__((long_call)) UpdateHappinessStepCounter(void);
+extern bool8 __attribute__((long_call)) CheckVSSeeker(void);
+extern bool8 __attribute__((long_call)) UpdatePoisonStepCounter(void);
+//Hack take step function to include custom walking scripts
+bool8 TryStartStepCountScript(u16 metatileBehavior)
+{
+    if (InUnionRoom() == TRUE
+	||  QuestLogMode == 2)
+        return FALSE;
+
+    UpdateHappinessStepCounter();
+	UpdateJPANStepCounters();
+    if (!(gPlayerAvatar->flags & PLAYER_AVATAR_FLAG_6) && !MetatileBehavior_IsForcedMovementTile(metatileBehavior))
+    {
+		if (CheckVSSeeker() == TRUE)
+		{
+            ScriptContext1_SetupScript(EventScript_VSSeeker);
+            return TRUE;
+		}
+        if (UpdatePoisonStepCounter() == TRUE)
+        {
+            ScriptContext1_SetupScript(EventScript_Poison);
+            return TRUE;
+        }
+        if (ShouldEggHatch())
+        {
+            IncrementGameStat(GAME_STAT_HATCHED_EGGS);
+            ScriptContext1_SetupScript(EventScript_EggHatch);
+            return TRUE;
+        }
+		
+		const u8* customWalkingScript = GetCustomWalkingScript();
+		if (customWalkingScript != NULL)
+		{
+            ScriptContext1_SetupScript(customWalkingScript);
+            return TRUE;
+		}
+    }
+
+    if (SafariZoneTakeStep() == TRUE)
+        return TRUE;
+
+    return FALSE;
+}
+
+static void UpdateJPANStepCounters(void)
 {
 	// increment new pedometer, always on
-	if (gPedometers->alwaysActive != 0xFFFFFFFF)
-		gPedometers->alwaysActive += 1;
+	if (gPedometers->alwaysActive < 0xFFFFFFFF)
+		++gPedometers->alwaysActive;
 
 	// check new pedometers
-	if (FlagGet(FLAG_LONG_PEDOMETER) && gPedometers->large != 0xFFFFFFFF)
-		gPedometers->large += 1;
-	if (FlagGet(FLAG_MED_PEDOMETER) && gPedometers->medium != 0xFFFF)
-		gPedometers->medium += 1;
-	if (FlagGet(FLAG_SMALL_PEDOMETER_1) && gPedometers->smallOne != 0xFF)
-		gPedometers->smallOne += 1;
-	if (FlagGet(FLAG_SMALL_PEDOMETER_2) && gPedometers->smallTwo != 0xFF)
-		gPedometers->smallTwo += 1;
+	if (FlagGet(FLAG_LONG_PEDOMETER) && gPedometers->large < 0xFFFFFFFF)
+		++gPedometers->large;
+	if (FlagGet(FLAG_MED_PEDOMETER) && gPedometers->medium < 0xFFFF)
+		++gPedometers->medium;
+	if (FlagGet(FLAG_SMALL_PEDOMETER_1) && gPedometers->smallOne < 0xFF)
+		++gPedometers->smallOne;
+	if (FlagGet(FLAG_SMALL_PEDOMETER_2) && gPedometers->smallTwo < 0xFF)
+		++gPedometers->smallTwo;
+}
 
+static const u8* GetCustomWalkingScript(void)
+{
+	if (gWalkingScript != NULL)
+		return gWalkingScript;
+	
+	u8 scriptInd = VarGet(DEFAULT_WALKING_SCRIPT);
+	if (scriptInd != 0 || scriptInd > ARRAY_COUNT(gDefaultWalkingScripts))
+		return gDefaultWalkingScripts[scriptInd - 1];
+
+	return NULL;
+}
+
+static bool8 SafariZoneTakeStep(void)
+{
 	// check in safari zone
 	if (GetSafariZoneFlag() && gSafariSteps != 0)
 	{
 		gSafariSteps -= 1;
 		if (gSafariSteps == 0)	// safari steps went to zero
 		{
-			ScriptContext1_SetupScript((void*) SafariZoneEndScript);
+			ScriptContext1_SetupScript(SafariZoneEndScript);
 			return TRUE;
 		}
     }
-	else
-	{
-		// check custom walking scripts
-		if (gWalkingScript != 0)
-		{
-			ScriptContext1_SetupScript((void*) gWalkingScript);
-			return TRUE;
-		}
-		else
-		{
-			u8 scriptInd = VarGet(DEFAULT_WALKING_SCRIPT);
-			if (scriptInd != 0 || scriptInd > ARRAY_COUNT(gDefaultWalkingScripts))
-			{
-				if (gDefaultWalkingScripts[scriptInd-1] == 0)
-					return FALSE;
-				ScriptContext1_SetupScript(gDefaultWalkingScripts[scriptInd-1]);
-				return TRUE;
-			}
-			else
-				return FALSE;
-		}
-	}
+	
 	return FALSE;
-}
-
-
-// Whiteout Hack
-bool8 WhiteoutLogic(void) {
-#ifdef SET_HEALING_PLACE_HACK
-	u16 loc = VarGet(VAR_HEALINGMAP);
-	gWarp1->mapNum = (loc >> 8) & 0xFF;	// upper byte
-	gWarp1->mapGroup = loc & 0xFF;	// lower byte
-	gWarp1->warpId = 0xFF;
-	gWarp1->x = VarGet(VAR_HEALING_XPOS);
-	gWarp1->y = VarGet(VAR_HEALING_YPOS);
-	return FALSE;
-#else
-	return TRUE;	// load from original table
-#endif
 }
 
 bool8 TryRunOnFrameMapScript(void)
@@ -932,26 +947,131 @@ bool8 TryRunOnFrameMapScript(void)
 	return FALSE;
 }
 
+// Whiteout Hack
+bool8 WhiteoutLogic(void)
+{
+#ifdef SET_HEALING_PLACE_HACK
+	u16 loc = VarGet(VAR_HEALINGMAP);
+	gWarp1->mapNum = (loc >> 8) & 0xFF;	// upper byte
+	gWarp1->mapGroup = loc & 0xFF;	// lower byte
+	gWarp1->warpId = 0xFF;
+	gWarp1->x = VarGet(VAR_HEALING_XPOS);
+	gWarp1->y = VarGet(VAR_HEALING_YPOS);
+	return FALSE;
+#else
+	return TRUE;	// load from original table
+#endif
+}
+
+bool8 IsAutoRunEnabled(void)
+{
+	#ifdef AUTO_RUN_FLAG
+		return FlagGet(AUTO_RUN_FLAG);
+	#else
+		return FALSE;
+	#endif
+}
+
+static bool8 IsRunningDisabledByFlag(void)
+{
+	#ifdef RUNNING_ENABLED_FLAG
+		return !FlagGet(RUNNING_ENABLED_FLAG);
+	#else
+		return FALSE;
+	#endif
+}
+
+bool8 IsRunningDisallowed(u8 tile)
+{
+    return IsRunningDisabledByFlag() || IsRunningDisallowedByMetatile(tile)
+#ifndef CAN_RUN_IN_BUILDINGS
+	|| gMapHeader.mapType == MAP_TYPE_INDOOR
+#endif
+    ;
+}
+
+bool8 IsRunningDisallowedByMetatile(u8 tile)
+{
+	return MetatileBehavior_IsRunningDisallowed(tile);
+}
+
+s32 DoPoisonFieldEffect(void)
+{
+#ifndef NO_POISON_IN_OW
+    int i;
+    u32 hp;
+    struct Pokemon* mon;
+    u32 numPoisoned = 0;
+    u32 numFainted = 0;
+	u32 numSurvived = 0;
+
+    for (i = 0; i < PARTY_SIZE; i++)
+    {
+		mon = &gPlayerParty[i];
+        if (GetMonData(mon, MON_DATA_SANITY_HAS_SPECIES, NULL) && pokemon_ailments_get_primary(mon->condition) == AILMENT_PSN)
+        {
+            hp = mon->hp;
+
+			#ifdef POISON_1_HP_SURVIVAL
+				if (hp == 1 || --hp == 1)
+				{
+					mon->condition = STATUS1_NONE;
+					++numSurvived;
+					ScriptContext1_SetupScript(SystemScript_PoisonSurvial);
+					Var8004 = i;
+					break;
+				}
+			#else
+				if (hp == 0 || --hp == 0)
+				{
+					numFainted++;
+				}
+			#endif
+
+            mon->hp = hp;
+            numPoisoned++;
+        }
+    }
+	if (numSurvived != 0)
+	{
+		return FLDPSN_NONE;
+	}
+    if (numFainted != 0 || numPoisoned != 0)
+    {
+        FldEffPoison_Start();
+    }
+    if (numFainted != 0)
+    {
+        return FLDPSN_FNT;
+    }
+    if (numPoisoned != 0)
+    {
+        return FLDPSN_PSN;
+    }
+#endif
+
+    return FLDPSN_NONE;
+}
 
 //Follow Me Updates/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /*
 static u8 GetFollowerMapObjId();
-void FollowMe(struct MapObject* npc, u8 state);
-static u8 FollowMe_DetermineDirection(struct MapObject* player, struct MapObject* follower);
-static void PlayerLogCoordinates(struct MapObject* player);
-bool8 FollowMe_CollisionExempt(struct MapObject* obstacle, struct MapObject* collider);
-void CopyPlayer_Ledges(struct MapObject* npc, struct Sprite* obj, u16* ledgeFramesTbl);
+void FollowMe(struct EventObject* npc, u8 state);
+static u8 FollowMe_DetermineDirection(struct EventObject* player, struct EventObject* follower);
+static void PlayerLogCoordinates(struct EventObject* player);
+bool8 FollowMe_CollisionExempt(struct EventObject* obstacle, struct EventObject* collider);
+void CopyPlayer_Ledges(struct EventObject* npc, struct Sprite* obj, u16* ledgeFramesTbl);
 static bool8 CopyPlayer_StateIsMovement(u8 state);
 static u8 CopyPlayer_ReturnDelayedState(u8 direction);
-static u8 DetermineFollowerState(struct MapObject* follower, u8 state, u8 direction);
+static u8 DetermineFollowerState(struct EventObject* follower, u8 state, u8 direction);
 void FollowMe_HandleBike();
 void FollowMe_HandleSprite();
 void FollowerToWater();
 void FollowerNoMoveSurf();
-static void SetSurfJump(struct MapObject* npc);
-static void FollowMe_SetSurf(struct MapObject* npc);
+static void SetSurfJump(struct EventObject* npc);
+static void FollowMe_SetSurf(struct EventObject* npc);
 static void Task_BindSurfBlobToFollower(u8 taskId);
-static void FollowMe_SetUpFieldEffect(struct MapObject* npc);
+static void FollowMe_SetUpFieldEffect(struct EventObject* npc);
 static void SetFollowerSprite(u8 spriteIndex);
 static u8 GetFollowerSprite();
 u8 GetFollowerLocalId(void);
@@ -988,9 +1108,9 @@ static u8 GetFollowerMapObjId()
 	return gFollowerState.objId;
 }
 
-void FollowMe(struct MapObject* npc, u8 state)
+void FollowMe(struct EventObject* npc, u8 state)
 {
-	struct MapObject* player = &gEventObjects[GetPlayerMapObjId()];
+	struct EventObject* player = &gEventObjects[GetPlayerMapObjId()];
 
 	if (player != npc) //Only when the player moves
 		return;
@@ -998,7 +1118,7 @@ void FollowMe(struct MapObject* npc, u8 state)
 	if (!gFollowerState.inProgress)
 		return;
 
-	struct MapObject* follower = &gEventObjects[GetFollowerMapObjId()];
+	struct EventObject* follower = &gEventObjects[GetFollowerMapObjId()];
 
 	// Check if state would cause movement
 	if (CopyPlayer_StateIsMovement(state) && gFollowerState.warpEnd)
@@ -1025,7 +1145,7 @@ RESET:
 	EventObjectClearHeldMovementIfFinished(follower);
 }
 
-static u8 FollowMe_DetermineDirection(struct MapObject* player, struct MapObject* follower)
+static u8 FollowMe_DetermineDirection(struct EventObject* player, struct EventObject* follower)
 {
 	s8 delta_x = follower->currentCoords.x - player->currentCoords.x;
 	s8 delta_y = follower->currentCoords.y - player->currentCoords.y;
@@ -1043,27 +1163,27 @@ static u8 FollowMe_DetermineDirection(struct MapObject* player, struct MapObject
 	return DIR_NONE;
 }
 
-static void PlayerLogCoordinates(struct MapObject* player)
+static void PlayerLogCoordinates(struct EventObject* player)
 {
 	gFollowerState.log.x = player->currentCoords.x;
 	gFollowerState.log.y = player->currentCoords.y;
 }
 
 
-//static bool8 PlayerMoved(struct MapObject* player)
+//static bool8 PlayerMoved(struct EventObject* player)
 //{
 //	return gFollowerState.log.x != player->currentCoords.x
 //		|| gFollowerState.log.y != player->currentCoords.y;
 //}
 
 
-bool8 FollowMe_CollisionExempt(struct MapObject* obstacle, struct MapObject* collider)
+bool8 FollowMe_CollisionExempt(struct EventObject* obstacle, struct EventObject* collider)
 {
 	if (!gFollowerState.inProgress)
 		return FALSE;
 
-	struct MapObject* follower = &gEventObjects[GetFollowerMapObjId()];
-	struct MapObject* player = &gEventObjects[GetPlayerMapObjId()];
+	struct EventObject* follower = &gEventObjects[GetFollowerMapObjId()];
+	struct EventObject* player = &gEventObjects[GetPlayerMapObjId()];
 
 	if (obstacle == follower && collider == player)
 		return TRUE;
@@ -1076,14 +1196,14 @@ bool8 FollowMe_CollisionExempt(struct MapObject* obstacle, struct MapObject* col
 extern void (**stepspeeds[5])(struct Sprite*, u8);
 extern const u16 stepspeed_seq_length[5];
 
-void CopyPlayer_Ledges(struct MapObject* npc, struct Sprite* obj, u16* ledgeFramesTbl)
+void CopyPlayer_Ledges(struct EventObject* npc, struct Sprite* obj, u16* ledgeFramesTbl)
 {
 	u8 speed;
 
 	if (!gFollowerState.inProgress)
 		return;
 
-	struct MapObject* follower = &gEventObjects[GetFollowerMapObjId()];
+	struct EventObject* follower = &gEventObjects[GetFollowerMapObjId()];
 
 	if (follower == npc)
 		speed = gPlayerAvatar->runningState ? 3 : 1;
@@ -1113,7 +1233,7 @@ static u8 CopyPlayer_ReturnDelayedState(u8 direction)
 	return newState + direction;
 }
 
-static u8 DetermineFollowerState(struct MapObject* follower, u8 state, u8 direction)
+static u8 DetermineFollowerState(struct EventObject* follower, u8 state, u8 direction)
 {
 	u8 newState = MOVEMENT_INVALID;
 
@@ -1235,7 +1355,7 @@ void FollowerNoMoveSurf()
 	FollowMe_SetSurf(&gEventObjects[GetFollowerMapObjId()]);
 }
 
-static void SetSurfJump(struct MapObject* npc)
+static void SetSurfJump(struct EventObject* npc)
 {
 	//reset NPC movement bits
 	EventObjectClearHeldMovement(npc);
@@ -1271,7 +1391,7 @@ static void SetSurfJump(struct MapObject* npc)
 	gTasks[taskId].data[0] = npc->localId;
 }
 
-static void FollowMe_SetSurf(struct MapObject* npc)
+static void FollowMe_SetSurf(struct EventObject* npc)
 {
 	FollowMe_SetUpFieldEffect(npc);
 	u8 surfBlobObjId = FieldEffectStart(FLDEFF_SURF_BLOB);
@@ -1283,7 +1403,7 @@ static void FollowMe_SetSurf(struct MapObject* npc)
 
 static void Task_BindSurfBlobToFollower(u8 taskId)
 {
-	struct MapObject* npc = &gEventObjects[GetFollowerMapObjId()];
+	struct EventObject* npc = &gEventObjects[GetFollowerMapObjId()];
 
 	//Wait animation
 	bool8 animStatus = EventObjectClearHeldMovementIfFinished(npc);
@@ -1297,7 +1417,7 @@ static void Task_BindSurfBlobToFollower(u8 taskId)
 	return;
 }
 
-static void FollowMe_SetUpFieldEffect(struct MapObject* npc)
+static void FollowMe_SetUpFieldEffect(struct EventObject* npc)
 {
 	//Set up gFieldEffectArguments for execution
 	gFieldEffectArguments[0] = npc->currentCoords.x; 	//effect_x
@@ -1313,7 +1433,7 @@ static void SetFollowerSprite(u8 spriteIndex)
 	// Save sprite
 	gFollowerState.currentSprite = spriteIndex;
 
-	struct MapObject* follower = &gEventObjects[GetFollowerMapObjId()];
+	struct EventObject* follower = &gEventObjects[GetFollowerMapObjId()];
 	EventObjectSetGraphicsId(follower, GetFollowerSprite());
 
 	// Update direction to prevent graphical glitches
@@ -1348,7 +1468,7 @@ void CreateFollowerAvatar()
 	//Create in-memory copy of constant data
 	Memcpy(&clone, npc, sizeof(struct EventObjectTemplate));
 
-	struct MapObject* player = &gEventObjects[GetPlayerMapObjId()];
+	struct EventObject* player = &gEventObjects[GetPlayerMapObjId()];
 	clone.x = player->currentCoords.x - 7;
 	clone.y = player->currentCoords.y - 7;
 	clone.graphicsId = gFollowerState.gfxId;
@@ -1373,8 +1493,8 @@ void StairsMoveFollower(struct Sprite* obj)
 
 void FollowMe_WarpSetEnd()
 {
-	struct MapObject* player = &gEventObjects[GetPlayerMapObjId()];
-	struct MapObject* follower = &gEventObjects[GetFollowerMapObjId()];
+	struct EventObject* player = &gEventObjects[GetPlayerMapObjId()];
+	struct EventObject* follower = &gEventObjects[GetFollowerMapObjId()];
 
 	gFollowerState.warpEnd = 1;
 	PlayerLogCoordinates(player);

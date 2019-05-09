@@ -72,6 +72,7 @@
 #define BGM_BATTLE_UB 0x0
 #define BGM_BATTLE_NECROZMA 0x0
 
+#define BGM_VICTORY_WILD_POKE 0x137
 #define BGM_VICTORY_GALACTIC 0x16D
 #define BGM_VICTORY_PLASMA 0x1B1
 #define BGM_VICTORY_CHAMPION 0x1B2
@@ -107,13 +108,12 @@
 #define SE_JYUNI 24
 #define SE_A 25
 #define SE_I 26
-#define SE_U 27
+#define SE_EXP 27
 #define SE_E 28
 #define SE_O 29
 #define SE_N 30
 #define SE_SEIKAI 31
 #define SE_HAZURE 32
-#define SE_EXP 33
 #define SE_JITE_PYOKO 34
 #define SE_MU_PACHI 35
 #define SE_TK_KASYA 36

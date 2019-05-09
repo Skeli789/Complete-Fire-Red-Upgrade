@@ -284,7 +284,7 @@ void __attribute__((long_call)) SetControllerToRecordedPlayer(void);
 void __attribute__((long_call)) SetControllerToOpponent(void);
 
 // player partner controller
-void __attribute__((long_call)) SetControllerToPlayerPartner(void);
+//void SetControllerToPlayerPartner(void);
 
 // safari controller
 void __attribute__((long_call)) SetControllerToSafari(void);

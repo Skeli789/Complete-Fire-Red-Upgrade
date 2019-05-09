@@ -14,11 +14,10 @@
 #include "../include/new/general_battle_strings.h"
 #include "../include/new/helper_functions.h"
 #include "../include/new/mega.h"
+#include "../include/new/multi.h"
 
 extern u8* ZMoveNames[];
 extern u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
-
-extern u8* GetTrainerBLoseText(void);
 
 #ifdef OPEN_WORLD_TRAINERS
 static u8* GetOpenWorldTrainerName(bool8 female);

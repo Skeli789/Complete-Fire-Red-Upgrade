@@ -175,3 +175,10 @@ It's no good! It's impossible to aim\nwhen there are two Pok\emon![FC][09]
 
 #org @gText_CantAimAtSemiInvulnerableTarget
 It's no good! It's impossible to aim\nat a Pok\emon that's not in sight![FC][09]
+
+#org @sText_QuestionForfeitMatch
+Would you like to forfeit the match\nand quit now?
+
+#org @sText_PlayerForfeitedMatch
+[PLAYER_NAME] forfeited the match!
+
