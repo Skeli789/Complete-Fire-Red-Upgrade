@@ -854,6 +854,8 @@ StartMenuOptionCallback = 0x0806F4FC | 1;
 StartMenuExitCallback = 0x0806F540 | 1;
 StartMenuSafariZoneRetireCallback = 0x0806F554 | 1;
 StartMenuLinkModePlayerNameCallback = 0x0806F56C | 1;
+TaskStartMenu = 0x0806F168 | 1;
+ShowStartMenu = 0x0806F258 | 1;
 
 gText_MenuPokedex = 0x841627d;
 gText_MenuPokemon = 0x8415a66;
@@ -863,6 +865,15 @@ gText_MenuSave = 0x8416291;
 gText_MenuOption = 0x8416296;
 gText_MenuExit = 0x841629d;
 gText_MenuRetire = 0x84162a2;
+gText_PokedexDescription = 0x8419F76;
+gText_PokemonDescription = 0x8419FBB;
+gText_BagDescription = 0x841A001;
+gText_PlayerDescription = 0x841A049;
+gText_SaveDescription = 0x841A06F;
+gText_OptionDescription = 0x841A0B7;
+gText_ExitDescription = 0x841A0F9;
+gText_RetireDescription = 0x841A111;
+
 
 /*Palette Functions*/
 BlendPalette = 0x8045274 | 1;

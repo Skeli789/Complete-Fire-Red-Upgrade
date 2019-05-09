@@ -40,8 +40,10 @@
 
 // Start Menu/Poketools Flags
 #define FLAG_SYS_BAG_GET 0x913	// toggle bag on/off. uncomment to always have on
-#define FLAG_SYS_SAVE_GET 0x914	//toggle save on/off. uncomment to always have on
-#define FLAG_SYS_DEXNAV 0x915	// flag to turn dexnav on/off in start menu (if undefined, this will eliminate dexnav from the start menu)
+#define FLAG_SYS_PLAYER_GET 0x914	//toggle [player] on/off. uncomment to always have on
+#define FLAG_SYS_SAVE_GET 0x915	//toggle save on/off. uncomment to always have on
+#define FLAG_SYS_DEXNAV 0x916	// flag to turn dexnav on/off in start menu (if undefined, this will eliminate dexnav from the start menu)
+#define FLAG_POKETOOLS_MENU 0x917  // flag for poke tools start menu
 
 //Pedometer Flags as in JPAN Engine
 #define FLAG_LONG_PEDOMETER 0x920	// 32 bit
@@ -90,9 +92,6 @@ enum
 //#define TMS_BEFORE_HMS  //Uncomment this if you want the HMs to appear after the TMs in your bag
 //#define DELETABLE_HMS		//Uncomment this if you want HMs to be deletable without the Move Deleter
 
-//Start Menu Options
-#define DYNAMIC_START_MENU  //comment this line out if you want the start menu to remain fixed except for pokedex/pokemon (se FLAG_SYS_BAG_GET and more)
-
 //General Options
 #define TIME_MORNING_START 4		//4:00 AM -  4:00
 #define TIME_DAY_START 8			//8:00 AM -  8:00
@@ -117,8 +116,6 @@ enum
 #define CREATE_ROAMER_WITH_X_PERFECT_IVS 3 //Change this to the number of set 31 IVs you'd like roaming pokemon to have.
 #define EGG_HATCH_LEVEL 1
 
-#ifndef UNBOUND 
-//Change These
 #define BASE_OBEDIENCE_LEVEL	10
 #define BADGE_1_OBEDIENCE_LEVEL	10
 #define BADGE_2_OBEDIENCE_LEVEL 30
@@ -128,16 +125,9 @@ enum
 #define BADGE_6_OBEDIENCE_LEVEL 70
 #define BADGE_7_OBEDIENCE_LEVEL 70
 
-#else //For Pokemon Unbound
-#define BASE_OBEDIENCE_LEVEL	20
-#define BADGE_1_OBEDIENCE_LEVEL	30
-#define BADGE_2_OBEDIENCE_LEVEL 40
-#define BADGE_3_OBEDIENCE_LEVEL 50
-#define BADGE_4_OBEDIENCE_LEVEL 60
-#define BADGE_5_OBEDIENCE_LEVEL 70
-#define BADGE_6_OBEDIENCE_LEVEL 80
-#define BADGE_7_OBEDIENCE_LEVEL 90
-#endif
+#define TREE_DISGUISE_PAL_ID 0x1105 //The NPC palette id of the tree disguise movement permission.
+#define ROCK_DISGUISE_PAL_ID 0x1104 //The NPC palette id of the mountain disguise movement permission.
+#define WEIRD_DISGUISE_PAL_ID 0x1103 //The NPC palette id of the weird disguise movement permission.
 
 #define SEEN_DEX_FLAGS gSaveBlock2->pokedex.seen
 #define CAUGHT_DEX_FLAGS gSaveBlock2->pokedex.owned
@@ -166,7 +156,9 @@ enum
 #define OBEDIENCE_BY_BADGE_AMOUNT //Determines obedience based on the number of badges the Player has, rather than which badges the player has
 #define SAVE_BLOCK_EXPANSION //Uncommenting this requires you to also manually remove Save Expansion Hooks found in hooks
 #define SELECT_FROM_PC //Comment this out to remove select-from-pc hack
+//#define FOSSIL_IMAGE_HACK   // uncommenting includes JPANs fossil image hack (see EXISTING_FOSSIL_IMAGE_TABLE_ADDRESS)
 //#define SET_HEALING_PLACE_HACK  //Comment this out if you don't want custom map/bank whiteout respawn locations
+#define FOSSIL_IMAGE_HACK  //Comment this out if you don't want JPANs fossil image hack
 #define EVO_HOLD_ITEM_REMOVAL //Comment this out if you want leveling up/hold item evolution (eg. sneasel) to remove the item (like normal)
 #define EXPAND_MOVESETS //Comment this out if you're using the Dynamic Pokemon Expansion repo to expand the movesets
 /*FIX THIS*///#define FATHER_PASSES_TMS //Comment this out if you don't want TMs the father knows to be passed through breeding

@@ -90,14 +90,42 @@ script functions/specials in asm - hooks and returns
 @@ Evolution Method Extra Hooks
 .global RemoveEvoItem
 
-
 @@ Tm/Hm Expansion
 .global SortTmHms
+
+@@ Start Menu Stuff
+.global FixStartMenuSize
+
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Increase Start Menu Height for Fewer Items
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.align 2
+.pool
+FixStartMenuSize:
+	push {r2}
+	mov r2, r1	@menu items
+	lsl r0, r1, #0x19
+	mov r1, #0xff
+	lsl r1, r1, #0x18	@FF000000
+	add r0, r0, r1
+	lsr r0, r0, #0x18
+	cmp r2, #0x5
+	bhi ReturnStartMenuHeight
+	add r0, #0x1
+	
+ReturnStartMenuHeight:
+	pop {r2}
+	str r0, [sp, #0x4]
+	ldr r0, =(0x080f7900 +1)
+	bx r0
 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ TM/HM Expansion - Item Ordering
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.align 2
+.pool
 SortTmHms:
 	push {r3-r7}
 	bl RefineTmOrdering
