@@ -38,8 +38,9 @@
 #define VAR_0x401D                 0x401D
 #define VAR_0x401E                 0x401E
 #define VAR_0x401F                 0x401F
-#define VAR_RECYCLE_GOODS          0x4020
-#define VAR_REPEL_STEP_COUNT       0x4021
+//#define VAR_RECYCLE_GOODS          0x4020
+//#define VAR_REPEL_STEP_COUNT       0x4021
+#define VAR_REPEL_STEP_COUNT	   0x4020
 #define VAR_ICE_STEP_COUNT         0x4022
 #define VAR_FIRST_POKE             0x4023
 #define VAR_MIRAGE_RND_H           0x4024

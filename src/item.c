@@ -7,8 +7,11 @@
 #include "../include/new/item.h"
 
 u8 ItemId_GetSecondaryId(u16 itemId);
+u8* ItemId_GetName(u16 itemId);
 
 extern u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
+
+
 
 u8* ItemId_GetName(u16 itemId)
 {

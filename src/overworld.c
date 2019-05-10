@@ -9,6 +9,9 @@
 #include "../include/event_data.h"
 #include "../include/map_scripts.h"
 #include "../include/script.h"
+#include "../include/new/Vanilla_functions.h"
+#include "../include/quest_log.h"
+#include "../include/sound.h"
 
 #include "../include/constants/flags.h"
 #include "../include/constants/trainers.h"
@@ -190,6 +193,62 @@ const struct TrainerBattleParameter sTagBattleParams[] =
 	{&sTrainerBattleScriptRetAddr_B, TRAINER_PARAM_CLEAR_VAL_32BIT},
     {&sTrainerBattleEndScript,       TRAINER_PARAM_LOAD_SCRIPT_RET_ADDR},
 };
+
+
+
+
+void TaskRepel(u8 taskId)
+{
+    if (!IsSEPlaying())
+    {
+		WriteQuestLog(4, 0, Var800E, 0xFFFF);
+		VarSet(VAR_REPEL_STEP_COUNT, ItemId_GetHoldEffectParam(Var800E));
+		#ifdef BW_REPEL_SYSTEM
+		gLastUsedRepel = Var800E;
+		#endif
+		RemoveUsedItem();
+		DisplayItemMessage(taskId, 1, gStringVar4, bag_menu_inits_lists_menu);
+		sub_8108E70(taskId, 2);
+    }
+};
+
+
+#define EventScript_RepelWoreOff ((u8*) 0x081BFB65)
+extern u8 EventScript_BwRepelWoreOff[];
+// Updated Repel - hook at 080830B8 via r1
+bool8 UpdateRepelCounter(void) {
+    u8 steps;
+	
+    steps = VarGet(VAR_REPEL_STEP_COUNT);	//0x4020
+
+    if (steps != 0)
+    {
+        steps--;
+        VarSet(VAR_REPEL_STEP_COUNT, steps);
+        if (steps == 0)
+        {
+			#ifdef BW_REPEL_SYSTEM
+				Var800E = gLastUsedRepel;
+				if (steps == 0)
+				{
+					ScriptContext1_SetupScript(EventScript_BwRepelWoreOff);
+					return TRUE;
+				}	
+			#else
+				if (steps == 0)
+				{
+					ScriptContext1_SetupScript(EventScript_RepelWoreOff);
+					return TRUE;
+				}			
+			#endif
+        }
+    }
+    return FALSE;
+}
+
+
+
+
 
 u8 CheckForTrainersWantingBattle(void) {
 	if (IsQuestLogActive())
@@ -574,7 +633,7 @@ void SetUpTrainerEncounterMusic(void) {
     u16 trainerId;
     u16 music;
 
-	if (QuestLogMode == 2 || QuestLogMode == 3)
+	if (gQuestLogMode == 2 || gQuestLogMode == 3)
 		return;
 
     if (gApproachingTrainerId == 0)
@@ -918,7 +977,7 @@ bool8 TryRunOnFrameMapScript(void)
 {
 	TryUpdateSwarm();
 	
-	if (QuestLogMode != 3)
+	if (gQuestLogMode != 3)
 	{
 		u8 *ptr = MapHeaderCheckScriptTable(MAP_SCRIPT_ON_FRAME_TABLE);
 

@@ -73,6 +73,7 @@ prepare_party_mail_to_give = 0x08097D38|1;
 bag_add_item = 0x0809A084|1;
 ScriptEnv2IsEnabled = 0x08069958 | 1;
 ScriptEnvDisable = 0x0806994C | 1;
+RemoveUsedItem = 0x080A1A44 | 1;
 
 /* move */
 teach_move_in_available_slot = 0x0803E8B0|1;
@@ -284,6 +285,7 @@ dp12_b_callback = 0x08087FE0|1;
 dp12_abort = 0x08087E64|1;
 pal_decompress_slice_to_faded_and_unfaded = 0x080703A8|1;
 get_bs_elem_env_index = 0x0800FC2C|1;
+WriteQuestLog = 0x080A2294 | 1;
 
 ResetSpriteData = 0x08006B10 | 1;
 
@@ -576,6 +578,7 @@ GetTrainerTowerTrainerPicIndex = 0x815DA3C | 1;
 CopyTrainerTowerPlayerLostText = 0x815DBF4 | 1;
 CopyTrainerTowerPlayerWonText = 0x815DC40 | 1;
 GetWildDataIndexForMap = 0x08082934 | 1;
+IsSEPlaying = 0x080723E0 | 1;
 
 GetCombinedOTID = 0x080CC1E4 | 1;
 

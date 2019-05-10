@@ -50,6 +50,7 @@ void sub_806E6FC(void);
 #define Var800D (*((u16*) 0x20370D0))
 #define Var8010 (*((u16*) 0x20370D6))
 #define Var800F (*((u16*) 0x20370d2))
+#define Var800E (*((u16*) 0x203ad30))
 
 
 #define gSpecialVar_LastResult (*((u16*) 0x20370D0)) //extern u16 gSpecialVar_Result;

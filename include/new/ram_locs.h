@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../global.h"
+#include "../list_menu.h"
 
 struct Clock 
 {
@@ -138,7 +139,7 @@ struct Pedometers
 		#define sHofFadingRelated (*((u32*) 0x0203AB34))
 		#define gHasHallOfFameRecords (*(u8*) 0x0203AB44)
 
-/*u8*/	#define QuestLogMode (*((u8*) 0x203ADFA))
+/*u8*/	#define gQuestLogMode (*((u8*) 0x203ADFA))
 		//#define gPartyMenuView ((struct PartyMenuViewing*) 0x203B09C)
 		#define gBrmData ((struct BrmData*)  ((u32*) 0x203b0a0))
 		#define gSelectedOrderFromParty ((u8*) 0x203B0D4)
@@ -193,5 +194,7 @@ struct Pedometers
 //#define gFollowerState ((struct Follower*) 0x203B818) //Approximately ~20 bytes, use 24 to be safe
 //extern bool8 gIgnoredDNSPalIndices[32][16] //0x203B830
 //extern struct Roamer* gRoamers[10] //0x203BA30
-//#define [FILL_IN_NEXT] 0x203BB20
 
+#define gLastUsedRepel (*(u8*) 0x203BB20)
+
+//#define [FILL_IN_NEXT] 0x203BB22
