@@ -230,11 +230,7 @@ MaxLevelChange13:
 
 .org 0x41B1E, 0xFF
 MaxLevelChange7:
-	.byte MAX_LEVEL
-
-.org 0x41B22, 0xFF
-MaxLevelChange8:
-	.byte MAX_LEVEL
+	.byte MAX_LEVEL, 0x29, 0x6, 0xD9, MAX_LEVEL
 
 .org 0x420E8, 0xFF
 MaxLevelChange9:
