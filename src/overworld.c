@@ -208,7 +208,6 @@ void TaskRepel(u8 taskId)
 		#endif
 		RemoveUsedItem();
 		DisplayItemMessage(taskId, 1, gStringVar4, bag_menu_inits_lists_menu);
-		sub_8108E70(taskId, 2);
     }
 };
 
