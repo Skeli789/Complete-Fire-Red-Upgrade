@@ -125,3 +125,6 @@ OeiCaveEffect 081d98a9
 ##Item Functions
 Task_ReturnToItemListAfterItemPurchase 0809BF64
 
+##Nicknaming
+KeyboardKeyHandler_Character 083E23D0
+

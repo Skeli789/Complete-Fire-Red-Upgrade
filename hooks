@@ -345,5 +345,8 @@ CheckDexNavSelect 0810AD98 1
 PokeToolNoFade 0806F3A8 3
 FixStartMenuSize 080f78f4 0
 
-UpdateRepelCounter 080830B8 1
+## Updated Repel System
+UpdateRepelCounter 080830B8 0
 TaskRepel 080A19E8 1
+
+

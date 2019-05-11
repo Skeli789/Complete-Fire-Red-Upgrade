@@ -48,6 +48,20 @@ party_player = 0x02024284;
 WritePokeAttacks = 0x0803EC40 | 1;
 
 NicknameMalloc = 0x0809D954 | 1;
+sub_809E518 = 0x809E518 | 1;
+NameChooserSelectLetter = 0x0809F75C | 1;
+sub_809EAA8 = 0x809EAA8 | 1;
+SetInputState = 0x0809F240 | 1;
+MainState_StartPageSwap = 0x0809E210 | 1;
+MainState_WaitPageSwap = 0x0809E250 | 1;
+GetKeyRoleAtCursorPos = 0x0809EB00 | 1;
+sub_809F1F0 = 0x809F1F0 | 1;
+MoveCursorToOKButton = 0x0809E9F8 | 1;
+DeleteTextCharacter = 0x0809F700 | 1;
+KeyboardKeyHandler_Page = 0x0809F168 | 1;
+KeyboardKeyHandler_Backspace = 0x0809F190 | 1;
+KeyboardKeyHandler_OK = 0x0809F1B4 | 1;
+GetInputEvent = 0x0809F21C | 1;
 
 calculate_stats_pokemon = 0x0803E47C|1;
 

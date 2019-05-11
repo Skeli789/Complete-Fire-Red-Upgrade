@@ -130,6 +130,7 @@ struct Pedometers
 
 /*u8*/  //#define gFieldEffectArguments ((struct FieldEffectArguments*) 0x20386E0)
 
+		#define gNamingScreenData ((struct NamingScreenData*) (*(u32*) 0x203998C))
 /*u8*/  #define gSafariBallNumber 	(*((u8*) 0x02039994))
 /*u16*/ #define gSafariSteps	   (*((u16*) 0x02039996))
 
