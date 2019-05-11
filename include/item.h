@@ -41,6 +41,7 @@ u8 __attribute__((long_call)) GetPocketByItemId(u16 item_id);
 u8 __attribute__((long_call)) ItemId_GetType(u16 item_id);
 void __attribute__((long_call)) RemoveUsedItem(void);
 
+
 /*
 void GetBerryCountString(u8* dst, const u8* berryName, u32 quantity);
 void CopyItemName(u16 itemId, u8 *string);

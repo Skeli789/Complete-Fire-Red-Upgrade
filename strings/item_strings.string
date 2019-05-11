@@ -3,3 +3,9 @@
 
 #org @gText_UsedVar2WildWeaker
 [FD][01] used the\n[FD][03].\pThe chance of encountering weak\nwild Pok\emon in this area increased.[FC][09]
+
+#org @gText_ThrowInOnePremierBall
+I'll throw in a PREMIER BALL, too. [FC][09]
+
+#org @gText_ThrowInPremierBalls
+I'll throw in [FD][02] PREMIER BALLs, too. [FC][09]

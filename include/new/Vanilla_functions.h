@@ -121,7 +121,6 @@ void __attribute__((long_call)) CpuFastSet(const void* src, void* dest, u32 mode
 u16 __attribute__((long_call)) Sqrt(u32);
 u32 __attribute__((long_call)) udivsi(u32, u32);
 u32 __attribute__((long_call)) umodsi(u32, u32);
-void __attribute__((long_call)) sub_8108E70(u8 taskId, u8 a2);
 
 void __attribute__((long_call)) ReturnToFieldContinueScriptPlayMapMusic(void);
 

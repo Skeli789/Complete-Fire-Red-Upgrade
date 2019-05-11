@@ -122,3 +122,6 @@ OeiCaveEffect 081d98a9
 ##Second Options Menu
 #CB2_InitQuestMenu 0806F534
 
+##Item Functions
+Task_ReturnToItemListAfterItemPurchase 0809BF64
+

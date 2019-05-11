@@ -74,6 +74,8 @@ bag_add_item = 0x0809A084|1;
 ScriptEnv2IsEnabled = 0x08069958 | 1;
 ScriptEnvDisable = 0x0806994C | 1;
 RemoveUsedItem = 0x080A1A44 | 1;
+BuyMenuReturnToItemList = 0x0809BF98 | 1;
+BuyMenuDisplayMessage = 0x0813F75C | 1;
 
 /* move */
 teach_move_in_available_slot = 0x0803E8B0|1;
