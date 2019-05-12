@@ -29,7 +29,7 @@ TrySetCantSelectMoveBattleScript 8017594 0
 CheckMoveLimitations 801779C 3
 TurnBasedEffects 08018258 0
 HandleFaintedMonActions 08018F90 0
-HasNoMonsToSwitch 0x8019C10 3
+HasNoMonsToSwitch 8019C10 3
 SetMoveEffect 801FF20 2
 
 HandleInputChooseAction 0802E438 0
@@ -348,3 +348,20 @@ BuildStartMenuActions 0806ed54 0
 CheckDexNavSelect 0810AD98 1
 PokeToolNoFade 0806F3A8 3
 FixStartMenuSize 080f78f4 0
+
+##Pokemon Storage System
+GetBoxMonDataAt 808BA18 3
+#SetBoxMonDataAt 808BA5C 4
+GetBoxMonNickAt 808BAE4 3
+SetBoxMonNickAt 808BB2C 3
+GetAndCopyBoxMonDataAtHook 808BB70 2
+SetBoxMonAt 808BBB4 3
+CopyBoxMonAt 808BBF4 3
+#CreateBoxMonAt 808BC34 - Doesn't need to be hooked in. No vanilla funcs call.
+ZeroBoxMonAt 808BCB4 2
+BoxMonAtToMon 808BCF0 3
+GetBoxedMonPtr 808BD30 2
+GetBoxNamePtr 0808BD6C 1
+GetBoxWallpaper 808BD94 1
+SetBoxWallpaper 808BDBC 2
+sub_80916F4 80916F4 1

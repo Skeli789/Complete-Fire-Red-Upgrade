@@ -288,11 +288,10 @@ struct BoxPokemon
     u16 checksum;
     u16 unknown;
 
-    union
-    {
-        u32 raw[12];
-        union PokemonSubstruct substructs[4];
-    } secure;
+    struct PokemonSubstruct0 substruct0;
+    struct PokemonSubstruct1 substruct1;
+    struct PokemonSubstruct2 substruct2;
+    struct PokemonSubstruct3 substruct3;
 };
 
 typedef struct Pokemon
@@ -691,6 +690,7 @@ bool8 __attribute__((long_call)) IsShinyOtIdPersonality(u32 otId, u32 personalit
 u16 __attribute__((long_call)) GetTutorMove(u8 tutor);
 bool8 __attribute__((long_call)) MonKnowsMove(struct Pokemon *mon, u16 move);
 bool8 __attribute__((long_call)) CanLearnTutorMove(u16, u8);
+void __attribute__((long_call)) BoxMonToMon(struct BoxPokemon *srcMon, struct Pokemon *dstMon);
 
 species_t __attribute__((long_call)) GetStarterChoice(void);
 
@@ -818,7 +818,6 @@ void sub_806A1C0(u16 arg0, u8 bankIdentity);
 void sub_806A12C(u16 trainerSpriteId, u8 bankIdentity);
 u8 GetSecretBaseTrainerPicIndex(void);
 bool8 TryIncrementMonLevel(struct Pokemon *mon);
-void BoxMonToMon(struct BoxPokemon *srcMon, struct Pokemon *dstMon);
 u8 GetLevelUpMovesBySpecies(u16 species, u16 *moves);
 bool8 HealStatusConditions(struct Pokemon *mon, u32 battlePartyId, u32 healMask, u8 battlerId);
 

@@ -355,3 +355,10 @@ FlameBodyMagmaArmorEggHook:
 	bl SubtractEggSteps
 	ldr r0, =0x804639E | 1
 	bx r0
+
+.pool 
+@0x808BB70 with r2
+GetAndCopyBoxMonDataAtHook:
+	mov r2, r5
+	bl GetAndCopyBoxMonDataAt
+	pop {r4-r6, pc}

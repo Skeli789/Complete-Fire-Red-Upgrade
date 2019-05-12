@@ -21,6 +21,7 @@
 #include "../include/new/catching.h"
 #include "../include/new/multi.h"
 #include "../include/new/overworld.h"
+#include "../include/new/pokemon_storage_system.h"
 #include "../include/new/read_keys.h"
 #include "../include/new/roamer.h"
 #include "../include/new/Vanilla_Functions_battle.h"
@@ -124,7 +125,7 @@ u32 GetMonDataFromVar8003(u8 dataRequest) {
 	u32 attr;
 	#ifdef SELECT_FROM_PC
 		if (Var8003 == 1)
-			attr = GetMonDataFromAnyBox(Var8000, Var8001, dataRequest);
+			attr = GetBoxMonDataAt(Var8000, Var8001, dataRequest);
 		else
 			attr = GetMonData(&gPlayerParty[Var8004], dataRequest, 0);
 	#else
@@ -136,7 +137,7 @@ u32 GetMonDataFromVar8003(u8 dataRequest) {
 void SetMonDataFromVar8003(u8 dataRequest) {
 	#ifdef SELECT_FROM_PC
 		if (Var8003 == 1)
-			SetMonDataFromAnyBox(Var8000, Var8001, dataRequest, &Var8005);
+			SetBoxMonDataAt(Var8000, Var8001, dataRequest, &Var8005);
 		else
 			SetMonData(&gPlayerParty[Var8004], dataRequest, &Var8005);
 	#else

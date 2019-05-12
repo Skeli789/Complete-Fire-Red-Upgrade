@@ -1,5 +1,5 @@
 /* New Things */
-gBattleTowerStreaks = 0x2026840;
+gBattleTowerStreaks = 0x20267E0;
 gFollowerState = 0x203B818;
 ExtensionState = 0x3000F28;
 
@@ -603,6 +603,7 @@ ZeroPlayerPartyMons = 0x0803DA14 |1;
 ZeroEnemyPartyMons = 0x803DA34 | 1;
 CreateMon = 0x803DA54 | 1;
 //CreateBoxMon = 0x803DAC4 | 1;
+BoxMonToMon = 0x803E774 | 1;
 EncryptBoxMon = 0x0803F8F8 | 1;
 GetSpeciesName = 0x08040FD0 | 1;
 ZeroBoxMonData = 0x0803D97C | 1;
@@ -656,6 +657,7 @@ SetInitialEggData = 0x08046208 | 1;
 ShouldEggHatch = 0x080463B8 | 1;
 
 /* Pokemon Storage */
+StorageGetCurrentBox = 0x808B9F4 | 1;
 GetMonDataFromAnyBox = 0x808BA18 | 1;
 SetMonDataFromAnyBox = 0x808BA5C | 1;
 CompactPartySlots = 0x080937DC | 1;

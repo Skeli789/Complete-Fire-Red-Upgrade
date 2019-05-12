@@ -161,7 +161,7 @@ typedef u8 Buffer_t[0x200];
 		#define sTrainerBattleOakTutorialHelper (*((u16*) 0x20386CC))
 		
 
-#define BattleStringLoader (*((u8**) 0x203C020)) //(*((u8**) 0x203F700))
+#define BattleStringLoader (*((u8**) 0x203F700))
 #define SeedHelper ((u8*) 0x203F704)
 #define TerrainType *((u8*) 0x203F708)
 #define FormCounter *((u8*) 0x203F709)

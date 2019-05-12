@@ -161,6 +161,12 @@ struct Clock
 #define DEXNAV_SAVERAM 0x203B814
 //#define gFollowerState ((struct Follower*) 0x203B818) //Approximately ~20 bytes, use 24 to be safe
 //extern bool8 gIgnoredDNSPalIndices[32][16] //0x203B830
-//extern struct Roamer* gRoamers[10] //0x203BA30
-//#define [FILL_IN_NEXT] 0x203BB20
+//extern struct Roamer gRoamers[10] //0x203BA30
+//extern struct BagItem gBagRegularItems[450] //0x203BB20
+//extern struct BagItem gBagKeyItems[75] //0x203C228
+//extern struct BagItem gBagBerries[75] //0x203C354
+//extern struct BagItem gBagPokeBalls[50] //0x203C480
+//#define [FILL_IN_NEXT] //0x203C548
+//extern struct BoxPokemon gBox18[30] //0x203CA00
+//extern struct BoxPokemon gBox19[30] //0x203D19E
 
