@@ -48,6 +48,20 @@ party_player = 0x02024284;
 WritePokeAttacks = 0x0803EC40 | 1;
 
 NicknameMalloc = 0x0809D954 | 1;
+sub_809E518 = 0x809E518 | 1;
+NameChooserSelectLetter = 0x0809F75C | 1;
+sub_809EAA8 = 0x809EAA8 | 1;
+SetInputState = 0x0809F240 | 1;
+MainState_StartPageSwap = 0x0809E210 | 1;
+MainState_WaitPageSwap = 0x0809E250 | 1;
+GetKeyRoleAtCursorPos = 0x0809EB00 | 1;
+sub_809F1F0 = 0x809F1F0 | 1;
+MoveCursorToOKButton = 0x0809E9F8 | 1;
+DeleteTextCharacter = 0x0809F700 | 1;
+KeyboardKeyHandler_Page = 0x0809F168 | 1;
+KeyboardKeyHandler_Backspace = 0x0809F190 | 1;
+KeyboardKeyHandler_OK = 0x0809F1B4 | 1;
+GetInputEvent = 0x0809F21C | 1;
 
 calculate_stats_pokemon = 0x0803E47C|1;
 
@@ -73,6 +87,9 @@ prepare_party_mail_to_give = 0x08097D38|1;
 bag_add_item = 0x0809A084|1;
 ScriptEnv2IsEnabled = 0x08069958 | 1;
 ScriptEnvDisable = 0x0806994C | 1;
+RemoveUsedItem = 0x080A1A44 | 1;
+BuyMenuReturnToItemList = 0x0809BF98 | 1;
+BuyMenuDisplayMessage = 0x0813F75C | 1;
 
 /* move */
 teach_move_in_available_slot = 0x0803E8B0|1;
@@ -284,6 +301,7 @@ dp12_b_callback = 0x08087FE0|1;
 dp12_abort = 0x08087E64|1;
 pal_decompress_slice_to_faded_and_unfaded = 0x080703A8|1;
 get_bs_elem_env_index = 0x0800FC2C|1;
+WriteQuestLog = 0x080A2294 | 1;
 
 ResetSpriteData = 0x08006B10 | 1;
 
@@ -581,6 +599,7 @@ GetTrainerTowerTrainerPicIndex = 0x815DA3C | 1;
 CopyTrainerTowerPlayerLostText = 0x815DBF4 | 1;
 CopyTrainerTowerPlayerWonText = 0x815DC40 | 1;
 GetWildDataIndexForMap = 0x08082934 | 1;
+IsSEPlaying = 0x080723E0 | 1;
 
 GetCombinedOTID = 0x080CC1E4 | 1;
 

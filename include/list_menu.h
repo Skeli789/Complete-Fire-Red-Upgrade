@@ -5,8 +5,6 @@
 
 // Exported RAM declarations
 
-//extern struct Multichoice gMultiChoice;
-
 struct ListMenu;
 
 struct ListMenuItem
@@ -14,6 +12,8 @@ struct ListMenuItem
     const u8* name;
     s32 id;
 };
+
+extern struct ListMenuItem gMultiChoice[7];
 
 struct ListMenuTemplate
 {

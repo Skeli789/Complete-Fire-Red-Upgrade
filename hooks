@@ -365,3 +365,7 @@ GetBoxNamePtr 0808BD6C 1
 GetBoxWallpaper 808BD94 1
 SetBoxWallpaper 808BDBC 2
 sub_80916F4 80916F4 1
+
+## Updated Repel System
+UpdateRepelCounter 080830B8 0
+TaskRepel 080A19E8 1

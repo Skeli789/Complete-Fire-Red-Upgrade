@@ -5,10 +5,17 @@
 
 #include "../include/new/helper_functions.h"
 #include "../include/new/item.h"
+#include "../include/shop.h"
+#include "../include/constants/songs.h"
 
 u8 ItemId_GetSecondaryId(u16 itemId);
+u8* ItemId_GetName(u16 itemId);
 
 extern u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
+extern u8 gText_ThrowInOnePremierBall[];
+extern u8 gText_ThrowInPremierBalls[];
+
+
 
 u8* ItemId_GetName(u16 itemId)
 {
@@ -227,4 +234,42 @@ bool8 CheckIsHmMove(u16 move) {
     return FALSE;
 #endif
 }
+
+
+
+
+// Premier Ball Bonus
+#define tItemCount data[1]
+#define tItemId data[5]
+void Task_ReturnToItemListAfterItemPurchase(u8 taskId)
+{
+    s16 *data = gTasks[taskId].data;
+
+    if (gMain.newKeys & (A_BUTTON | B_BUTTON))
+    {
+        PlaySE(SE_SELECT);
+		if (tItemId == ITEM_POKE_BALL)
+		{
+			u8 nPremier = tItemCount/10;
+			if (nPremier > 0 && AddBagItem(ITEM_PREMIER_BALL, nPremier) == TRUE)
+			{
+				ConvertIntToDecimalStringN(&gStringVar1[0], nPremier, 2, 1);
+				if (nPremier == 1)
+					BuyMenuDisplayMessage(taskId, gText_ThrowInOnePremierBall, BuyMenuReturnToItemList);
+				else
+					BuyMenuDisplayMessage(taskId, gText_ThrowInPremierBalls, BuyMenuReturnToItemList);
+			}
+			else
+			{
+				BuyMenuReturnToItemList(taskId);
+			}
+		}
+		else
+		{
+			BuyMenuReturnToItemList(taskId);
+		}
+    }
+}
+
+
 

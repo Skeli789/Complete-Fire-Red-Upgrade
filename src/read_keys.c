@@ -77,7 +77,7 @@ static u16 TryIgnoringKeys(u8 keyFlag, u16 currKeys)
 
 // hook at 080005e8 via r0
 void ReadKeys(void)
-{	
+{
 	#ifdef SAVE_BLOCK_EXPANSION
 		u16 currKeys = gKeyReg;
 		u8 tryKey = gKeypadSetter->keyFlags;
@@ -125,7 +125,7 @@ void ReadKeys(void)
 	{
 		const u8* script;
 		ScriptContext2_Enable();
-		
+
 		if (FlagGet(AUTO_RUN_FLAG))
 		{
 			FlagClear(AUTO_RUN_FLAG);

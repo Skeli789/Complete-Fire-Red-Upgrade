@@ -1,8 +1,9 @@
 #pragma once
 
 #include "../global.h"
+#include "../list_menu.h"
 
-struct Clock 
+struct Clock
 {
 	u16 year;
 	u8 dayOfWeek;
@@ -39,13 +40,13 @@ struct Clock
 		#define ColorFilter *((u8*)0x2036E28)
 
 		#define gWarp1 ((struct WarpData*) 0x2031dbc)
-		
+
 		#define gPlayerAvatar ((struct PlayerAvatar*) 0x02037078)
-		
+
 		#define gBoxStatusAndType ((u8*) 0x0203709C)
-	
+
 		#define gStartMenu ((struct StartMenu*) 0x020370F0)
-		
+
 
 /*u8*/  #define gUnknown_2024005 ((u8*) 0x2024005) //Length 0x3
 /*u8*/  #define gUnknown_2024008 ((u8*) 0x2024008) //Length 0x10
@@ -55,13 +56,13 @@ struct Clock
 /*u8*/  #define gEnemyPartyCount *((u8*) 0x202402A)
 
 /*u8*/  #define gMultiuseSpriteTemplate ((struct SpriteTemplate*) 0x20244DC)
-		
+
 		//SaveBlock1ActualLocation 0x202552C
 		extern struct MapHeader gMapHeader;
-		
+
 /*u8*/	#define FishingByte *((u8*) 0x2036E38)
 		#define gEventObjects ((struct MapObject*) 0x2036E38)
-/*		
+/*
 		#define Var8000 (*((u16*) 0x20370B8))
 		#define Var8001 (*((u16*) 0x20370BA))
 		#define Var8002 (*((u16*) 0x20370BC))
@@ -92,33 +93,34 @@ struct Clock
 		#define gWeatherPtr ((struct Weather*) 0x2037F34)
 
 /*u8*/  #define sPaletteGammaTypes ((u8*) 0x20386A4)
-		
+
 		//#define gEncounterRate ((struct EncounterRate*) 0x20386D0)
 		#define sWildEncountersDisabled (*((u8*) 0x20386DC))
 
 /*u8*/  //#define gFieldEffectArguments ((struct FieldEffectArguments*) 0x20386E0)
 
+		#define gNamingScreenData ((struct NamingScreenData*) (*(u32*) 0x203998C))
 /*u8*/  #define gSafariBallNumber 	(*((u8*) 0x02039994))
 /*u16*/ #define gSafariSteps	   (*((u16*) 0x02039996))
 
 /*u8*/  #define gAbilitiesPerBank ((u8*) 0x2039A30)
 		//#define gStringInfo ((struct BattleMsgData*) *((u32*) 0x2039A34))
-		
+
 		#define sHofFadingRelated (*((u32*) 0x0203AB34))
 		#define gHasHallOfFameRecords (*(u8*) 0x0203AB44)
 
-/*u8*/	#define QuestLogMode (*((u8*) 0x203ADFA))
+/*u8*/	#define gQuestLogMode (*((u8*) 0x203ADFA))
 		//#define gPartyMenuView ((struct PartyMenuViewing*) 0x203B09C)
 		#define gBrmData ((struct BrmData*)  ((u32*) 0x203b0a0))
 		#define gSelectedOrderFromParty ((u8*) 0x203B0D4)
 		#define gSummaryScreenData ((struct MonSummaryData*) *((u32*) 0x203B140))
 		#define gCurrentPartyIndex (*(u8*) 0x203B16C)
-		
+
 /*u8*/  #define gUnknown_0203B0DC ((u8*) 0x203B0DC)
 
 		#define AlphaBlendingCoeffA *((u8*)0x3000052)
 		#define PalTagsStart *((u8*)0x3003E58)
-		
+
 		#define PalTags ((u16*)0x3000DE8)
 
 		#define gScriptEnv1 ((struct ScriptContext*) 0x03000EB0)
@@ -136,12 +138,12 @@ struct Clock
 		#define gNumberOfMovesToChoose (*((u8*) 0x3004FF8))
 /*u8*/  #define gSelectedEventObject (*((u8*) 0x3005074))
 		//#define gTasks ((struct Task*) 0x3005090) //struct Task gTasks[ACTIVE_SENTINEL];
-		
+
 		#define gCurrentMapName gMapHeader.regionMapSectionId
-		
+
 		//#define gGbaTimer ((struct GbaTimer*) 0x4000108)
 		#define gKeyReg (*((u16*) 0x4000130))
-				
+
 		extern struct MusicPlayerInfo gMPlay_BGM;
 
 #define gExpandedFlags ((u8*) 0x0203B174)
@@ -166,7 +168,7 @@ struct Clock
 //extern struct BagItem gBagKeyItems[75] //0x203C228
 //extern struct BagItem gBagBerries[75] //0x203C354
 //extern struct BagItem gBagPokeBalls[50] //0x203C480
-//#define [FILL_IN_NEXT] //0x203C548
+#define gLastUsedRepel (*(u8*) 0x203C548)
+//#define [FILL_IN_NEXT] //0x203C54A
 //extern struct BoxPokemon gBox18[30] //0x203CA00
 //extern struct BoxPokemon gBox19[30] //0x203D19E
-

@@ -10,8 +10,11 @@
 #include "../include/map_scripts.h"
 #include "../include/metatile_behavior.h"
 #include "../include/party_menu.h"
-#include "../include/script.h"
+#include "../include/quest_log.h"
 #include "../include/safari_zone.h"
+#include "../include/script.h"
+#include "../include/sound.h"
+
 #include "../include/constants/flags.h"
 #include "../include/constants/songs.h"
 #include "../include/constants/trainers.h"
@@ -167,8 +170,62 @@ const struct TrainerBattleParameter sTagBattleParams[] =
     {&sTrainerBattleEndScript,       TRAINER_PARAM_LOAD_SCRIPT_RET_ADDR},
 };
 
-u8 CheckForTrainersWantingBattle(void)
+
+
+
+void TaskRepel(u8 taskId)
 {
+    if (!IsSEPlaying())
+    {
+		WriteQuestLog(4, 0, Var800E, 0xFFFF);
+		VarSet(VAR_REPEL_STEP_COUNT, ItemId_GetHoldEffectParam(Var800E));
+		#ifdef BW_REPEL_SYSTEM
+		gLastUsedRepel = Var800E;
+		#endif
+		RemoveUsedItem();
+		DisplayItemMessage(taskId, 1, gStringVar4, bag_menu_inits_lists_menu);
+    }
+};
+
+
+#define EventScript_RepelWoreOff ((u8*) 0x081BFB65)
+extern u8 EventScript_BwRepelWoreOff[];
+// Updated Repel - hook at 080830B8 via r1
+bool8 UpdateRepelCounter(void) {
+    u8 steps;
+
+    steps = VarGet(VAR_REPEL_STEP_COUNT);	//0x4020
+
+    if (steps != 0)
+    {
+        steps--;
+        VarSet(VAR_REPEL_STEP_COUNT, steps);
+        if (steps == 0)
+        {
+			#ifdef BW_REPEL_SYSTEM
+				Var800E = gLastUsedRepel;
+				if (steps == 0)
+				{
+					ScriptContext1_SetupScript(EventScript_BwRepelWoreOff);
+					return TRUE;
+				}
+			#else
+				if (steps == 0)
+				{
+					ScriptContext1_SetupScript(EventScript_RepelWoreOff);
+					return TRUE;
+				}
+			#endif
+        }
+    }
+    return FALSE;
+}
+
+
+
+
+
+u8 CheckForTrainersWantingBattle(void) {
 	if (IsQuestLogActive())
 		return FALSE;
 
@@ -221,7 +278,7 @@ u8 CheckForTrainersWantingBattle(void)
 			CreateTask(Task_OverworldMultiTrainers, 0x50);
 			return TRUE;
     }
-	
+
     return FALSE;
 }
 
@@ -259,7 +316,7 @@ static bool8 CheckTrainerSpotting(u8 eventObjId) //Or just CheckTrainer
 		ExtensionState.spotted.trainers[ExtensionState.spotted.count++] = trainer;
         return TRUE;
     }
-        
+
     return FALSE;
 }
 
@@ -414,7 +471,7 @@ const u8* BattleSetup_ConfigureTrainerBattle(const u8* data)
 			FlagSet(TWO_OPPONENT_FLAG);
 			gApproachingTrainerId = 0;
 			return EventScript_TryDoTwoOpponentBattle;
-			
+
 		case TRAINER_BATTLE_TAG:
 			TrainerBattleLoadArgs(sTagBattleParams, data);
 			VarSet(PARTNER_VAR, gTrainerBattlePartner);
@@ -556,7 +613,7 @@ void SetUpTrainerEncounterMusic(void)
     u16 trainerId;
     u16 music;
 
-	if (QuestLogMode == 2 || QuestLogMode == 3)
+	if (gQuestLogMode == 2 || gQuestLogMode == 3)
 		return;
 
     if (gApproachingTrainerId == 0)
@@ -594,7 +651,7 @@ void SetUpTrainerEncounterMusic(void)
 			if (music == 0)
 				music = BGM_EYE_BOY;
 		#endif
-		
+
         PlayNewMapMusic(music);
     }
 }
@@ -869,7 +926,7 @@ bool8 TryStartStepCountScript(u16 metatileBehavior)
             ScriptContext1_SetupScript(EventScript_EggHatch);
             return TRUE;
         }
-		
+
 		const u8* customWalkingScript = GetCustomWalkingScript();
 		if (customWalkingScript != NULL)
 		{
@@ -905,7 +962,7 @@ static const u8* GetCustomWalkingScript(void)
 {
 	if (gWalkingScript != NULL)
 		return gWalkingScript;
-	
+
 	u8 scriptInd = VarGet(DEFAULT_WALKING_SCRIPT);
 	if (scriptInd != 0 || scriptInd > ARRAY_COUNT(gDefaultWalkingScripts))
 		return gDefaultWalkingScripts[scriptInd - 1];
@@ -925,14 +982,14 @@ static bool8 SafariZoneTakeStep(void)
 			return TRUE;
 		}
     }
-	
+
 	return FALSE;
 }
 
 bool8 TryRunOnFrameMapScript(void)
 {
 	TryUpdateSwarm();
-	
+
 	if (QuestLogMode != 3)
 	{
 		u8 *ptr = MapHeaderCheckScriptTable(MAP_SCRIPT_ON_FRAME_TABLE);
@@ -943,7 +1000,7 @@ bool8 TryRunOnFrameMapScript(void)
 		ScriptContext1_SetupScript(ptr);
 		return TRUE;
 	}
-	
+
 	return FALSE;
 }
 
