@@ -344,7 +344,7 @@ static u8 CreateNPCTrainerParty(pokemon_t* const party, const u16 trainerNum, co
 		{
 			gBattleTypeFlags |= trainer->doubleBattle;
 
-			#ifdef ACTIVATE_DOUBLE_BATTLE_FROM_FLAG
+			#ifdef DOUBLE_BATTLE_FLAG
 				if (FlagGet(DOUBLE_BATTLE_FLAG))
 					gBattleTypeFlags |= BATTLE_TYPE_DOUBLE;
 			#endif

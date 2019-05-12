@@ -54,7 +54,7 @@ void atkEF_handleballthrow(void)
 	u8 ItemType = ItemId_GetType(gLastUsedItem);
 	
     if (gBattleTypeFlags & BATTLE_TYPE_TRAINER) {
-		#ifdef CATCH_TRAINERS_POKEMON
+		#ifdef CATCH_TRAINERS_POKEMON_FLAG
 			if (FlagGet(CATCH_TRAINERS_POKEMON_FLAG)) {
 				EmitBallThrowAnim(0, 4);
 				MarkBufferBankForExecution(gActiveBattler);
