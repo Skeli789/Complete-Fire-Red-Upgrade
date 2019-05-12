@@ -35,6 +35,8 @@ bool8 TryRunOnFrameMapScript(void);
 bool8 WhiteoutLogic(void);
 bool8 IsRunningDisallowedByMetatile(u8 tile);
 s32 DoPoisonFieldEffect(void);
+void TaskRepel(u8 taskId);
+bool8 UpdateRepelCounter(void);
 
 //Exported Data Structures
 struct Pedometers 

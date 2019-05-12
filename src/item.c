@@ -15,8 +15,6 @@ extern u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
 extern u8 gText_ThrowInOnePremierBall[];
 extern u8 gText_ThrowInPremierBalls[];
 
-
-
 u8* ItemId_GetName(u16 itemId)
 {
 	u8* name = gItems[SanitizeItemId(itemId)].name;
@@ -25,7 +23,6 @@ u8* ItemId_GetName(u16 itemId)
 		name = T1_READ_PTR(name);
     return name;
 }
-
 
 u8 ItemId_GetHoldEffect(u16 itemId)
 {
@@ -100,7 +97,8 @@ u32 CanMonLearnTMHM(struct Pokemon* mon, u8 tm)
 
 // item ID to Tm number to Move ID
 //		use secondary ID for tm indices if expanded
-u16 ItemIdToBattleMoveId(u16 item) {
+u16 ItemIdToBattleMoveId(u16 item)
+{
 	#ifdef EXPANDED_TMSHMS
 		u16 tmNum = ItemId_GetSecondaryId(item);	// secondary id -> tm num
 	#else
@@ -110,7 +108,8 @@ u16 ItemIdToBattleMoveId(u16 item) {
 }
 
 
-u16 RefineTmOrdering(void) {
+u16 RefineTmOrdering(void)
+{
 	#ifdef TMS_BEFORE_HMS
 		return 0;
 	#else
@@ -118,10 +117,9 @@ u16 RefineTmOrdering(void) {
 	#endif
 }
 
-
-
-// function to fix tm move names that are full length in the bag
-void StringAppendFullMoveName(u8 *dest, u8 *src) {
+//Function to fix tm move names that are full length in the bag
+void StringAppendFullMoveName(u8* dst, u8* src)
+{
 	s8 i;
 	if (NUM_HMS >= 10)
 		i = -2;
@@ -130,18 +128,19 @@ void StringAppendFullMoveName(u8 *dest, u8 *src) {
 
     while (i < MOVE_NAME_LENGTH)
 	{
-		dest++;
+		dst++;
 		i++;
 	}
 
-    StringCopy(dest, src);
-	dest++;
+    StringCopy(dst, src);
+	dst++;
 	u8 end = 0xFF;
-	StringAppend(dest, &end);
+	StringAppend(dst, &end);
 }
 
 
-void LoadTmHmName(u8 *dest, u16 itemId) {
+void LoadTmHmName(u8 *dst, u16 itemId)
+{
 	u16 tmNum = ItemId_GetSecondaryId(itemId);
 	StringCopy(&gStringVar4[0], (void*) 0x84166FF);
 
@@ -174,19 +173,19 @@ void LoadTmHmName(u8 *dest, u16 itemId) {
 	else
 		StringAppend(&gStringVar4[0], gMoveNames[ItemIdToBattleMoveId(itemId)]);
 
-	StringCopy(dest, &gStringVar4[0]);
+	StringCopy(dst, &gStringVar4[0]);
 }
 
-
-
-enum {
+enum
+{
     CAN_LEARN_MOVE,
     CANNOT_LEARN_MOVE,
     ALREADY_KNOWS_MOVE,
-    CANNOT_LEARN_MOVE_IS_EGG
+    CANNOT_LEARN_MOVE_IS_EGG,
 };
 
-u8 CanMonLearnTMTutor(struct Pokemon *mon, u16 item, u8 tutor) {
+u8 CanMonLearnTMTutor(struct Pokemon* mon, u16 item, u8 tutor)
+{
     u16 move;
 
     if (GetMonData(mon, MON_DATA_IS_EGG, NULL))
@@ -202,7 +201,7 @@ u8 CanMonLearnTMTutor(struct Pokemon *mon, u16 item, u8 tutor) {
             return CANNOT_LEARN_MOVE;
         //do {} while (0); // :morphon:
     }
-    else if (CanLearnTutorMove(GetMonData(mon, MON_DATA_SPECIES, NULL), tutor) == FALSE)
+    else if (!CanLearnTutorMove(mon->species, tutor))
     {
         return CANNOT_LEARN_MOVE;
     }
@@ -211,31 +210,28 @@ u8 CanMonLearnTMTutor(struct Pokemon *mon, u16 item, u8 tutor) {
         move = GetTutorMove(tutor);
     }
 
-    if (MonKnowsMove(mon, move) == TRUE)
+    if (MonKnowsMove(mon, move))
         return ALREADY_KNOWS_MOVE;
     else
         return CAN_LEARN_MOVE;
 }
 
-
-
 //08125a90
 //080441b8
-bool8 CheckIsHmMove(u16 move) {
-#ifdef DELETABLE_HMS
-	return FALSE;
-#else
-	for (u16 i = NUM_TMS; i < NUM_TMSHMS; ++i)
-	{
-		if (move == gTMHMMoves[i])
-			return TRUE;
-	}
+bool8 CheckIsHmMove(u16 move)
+{
+	#ifdef DELETABLE_HMS
+		return FALSE;
+	#else
+		for (u16 i = NUM_TMS; i < NUM_TMSHMS; ++i)
+		{
+			if (move == gTMHMMoves[i])
+				return TRUE;
+		}
 
-    return FALSE;
-#endif
+		return FALSE;
+	#endif
 }
-
-
 
 
 // Premier Ball Bonus
@@ -243,17 +239,23 @@ bool8 CheckIsHmMove(u16 move) {
 #define tItemId data[5]
 void Task_ReturnToItemListAfterItemPurchase(u8 taskId)
 {
-    s16 *data = gTasks[taskId].data;
+    s16* data = gTasks[taskId].data;
 
     if (gMain.newKeys & (A_BUTTON | B_BUTTON))
     {
         PlaySE(SE_SELECT);
 		if (tItemId == ITEM_POKE_BALL)
 		{
-			u8 nPremier = tItemCount/10;
-			if (nPremier > 0 && AddBagItem(ITEM_PREMIER_BALL, nPremier) == TRUE)
+			#ifdef MULTIPLE_PREMIER_BALLS_AT_ONCE
+			u8 nPremier = tItemCount / 10;
+			#else
+			u8 nPremier = 1;
+			#endif
+			if (nPremier > 0 && AddBagItem(ITEM_PREMIER_BALL, nPremier))
 			{
-				ConvertIntToDecimalStringN(&gStringVar1[0], nPremier, 2, 1);
+				ConvertIntToDecimalStringN(gStringVar1, nPremier, 2, 1);
+				StringCopy(gStringVar2, ItemId_GetName(ITEM_PREMIER_BALL));
+				
 				if (nPremier == 1)
 					BuyMenuDisplayMessage(taskId, gText_ThrowInOnePremierBall, BuyMenuReturnToItemList);
 				else
@@ -270,6 +272,3 @@ void Task_ReturnToItemListAfterItemPurchase(u8 taskId)
 		}
     }
 }
-
-
-

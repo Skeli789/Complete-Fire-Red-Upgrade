@@ -12,3 +12,18 @@
 
 #org @gText_PoisonSurvial
 [FD][02] survived the Poison.\nThe Poison faded away!
+
+#org @gText_ThrowInOnePremierBall
+You also get a [FD][03] as\nan added bonus.[FC][09]
+
+#org @gText_ThrowInPremierBalls
+You also get [FD][02] [FD][03]s as\nan added bonus.[FC][09]
+
+#org @gText_AskUseAnotherRepel
+The repellent's effect wore off!\nWould you like to use another one?
+
+#org @gText_UsedAnotherRepel
+[FD][01] used a [FD][04].
+
+#org @gText_RepelWoreOff
+The repellent's effect wore off!

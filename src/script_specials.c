@@ -59,6 +59,8 @@ extern u8 BuildFrontierParty(pokemon_t* party, u16 trainerNum, bool8 firstTraine
 extern const struct SwarmData gSwarmTable[];
 extern const species_t gSkyBattleBannedSpeciesList[];
 
+static u8 GetTextCaretPosition(void);
+
 //Pokemon Specials//
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -2006,23 +2008,8 @@ void HallOfFame_PrintMonInfo(struct HallofFameMon *currMon, unusedArg u8 a1, unu
     }
 }
 
-
-static u8 GetTextCaretPosition(void)
-{
-    u8 i;
-    for (i = 0; i < gNamingScreenData->template->maxChars; i++)
-    {
-        if (gNamingScreenData->textBuffer[i] == EOS)
-            return i;
-    }
-    return gNamingScreenData->template->maxChars - 1;
-}
-
-
-
-
-
-// pointer+1 at 083E23D0, orig func at 0809F11C
+//Naming Screen Special////////////////////////////////////////////////////////////////////////////
+//Pointer+1 at 083E23D0, orig func at 0809F11C
 bool8 KeyboardKeyHandler_Character(u8 event)
 {
     sub_809E518(3, 0, 0);
@@ -2038,65 +2025,20 @@ bool8 KeyboardKeyHandler_Character(u8 event)
         sub_809EAA8();
         if (var)
         {
-            SetInputState(INPUT_STATE_2);
+            SetInputState(INPUT_STATE_DISABLED); //In Emerald it's INPUT_STATE_2 for some reason
             gNamingScreenData->state = MAIN_STATE_MOVE_TO_OK_BUTTON;
         }
     }
     return FALSE;
 }
 
-
-/*
-bool8 KeyboardKeyHandler_Backspace(u8 event)
+static u8 GetTextCaretPosition(void)
 {
-    sub_80E3948(1, 1, 0);
-    if (event == KBEVENT_PRESSED_A)
-        DeleteTextCharacter();
-    return FALSE;
+    u8 i;
+    for (i = 0; i < gNamingScreenData->template->maxChars; i++)
+    {
+        if (gNamingScreenData->textBuffer[i] == EOS)
+            return i;
+    }
+    return gNamingScreenData->template->maxChars - 1;
 }
-*/
-
-/*
-// func at 0809F0CC
-bool8 HandleKeyboardEvent(void)
-{
-    u8 event = GetInputEvent();
-    u8 keyRole = GetKeyRoleAtCursorPos();
-
-    if (event == KBEVENT_PRESSED_SELECT)
-    {
-        return sub_809F1F0();
-    }
-    else if (event == KBEVENT_PRESSED_B)
-    {
-        DeleteTextCharacter();
-		
-		if (GetTextCaretPosition() == 0)
-		{
-			if (gNamingScreenData->currentPage == PAGE_LOWER)
-			{
-				//MainState_StartPageSwap();
-				//MainState_WaitPageSwap();
-				//MainState_StartPageSwap();
-				//MainState_WaitPageSwap();
-				gNamingScreenData->state = MAIN_STATE_START_PAGE_SWAP;
-			}
-			else if (gNamingScreenData->currentPage == PAGE_OTHERS)
-			{
-				gNamingScreenData->state = MAIN_STATE_START_PAGE_SWAP;
-			}
-		}
-		
-        return FALSE;
-    }
-    else if (event == KBEVENT_PRESSED_START)
-    {
-        MoveCursorToOKButton();
-        return FALSE;
-    }
-    else
-    {
-        return sKeyboardKeyHandlers[keyRole](event);
-    }
-}
-*/

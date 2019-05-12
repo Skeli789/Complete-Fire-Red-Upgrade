@@ -23,3 +23,5 @@ extern u8 Script_TrainerSpottedMulti[];
 extern u8 EventScript_DoTwoOpponentBattle[];
 extern u8 EventScript_TryDoTwoOpponentBattle[];
 extern u8 SystemScript_PoisonSurvial[];
+extern u8 EventScript_RepelWoreOff[];
+extern u8 EventScript_BwRepelWoreOff[];

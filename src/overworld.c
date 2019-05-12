@@ -170,61 +170,6 @@ const struct TrainerBattleParameter sTagBattleParams[] =
     {&sTrainerBattleEndScript,       TRAINER_PARAM_LOAD_SCRIPT_RET_ADDR},
 };
 
-
-
-
-void TaskRepel(u8 taskId)
-{
-    if (!IsSEPlaying())
-    {
-		WriteQuestLog(4, 0, Var800E, 0xFFFF);
-		VarSet(VAR_REPEL_STEP_COUNT, ItemId_GetHoldEffectParam(Var800E));
-		#ifdef BW_REPEL_SYSTEM
-		gLastUsedRepel = Var800E;
-		#endif
-		RemoveUsedItem();
-		DisplayItemMessage(taskId, 1, gStringVar4, bag_menu_inits_lists_menu);
-    }
-};
-
-
-#define EventScript_RepelWoreOff ((u8*) 0x081BFB65)
-extern u8 EventScript_BwRepelWoreOff[];
-// Updated Repel - hook at 080830B8 via r1
-bool8 UpdateRepelCounter(void) {
-    u8 steps;
-
-    steps = VarGet(VAR_REPEL_STEP_COUNT);	//0x4020
-
-    if (steps != 0)
-    {
-        steps--;
-        VarSet(VAR_REPEL_STEP_COUNT, steps);
-        if (steps == 0)
-        {
-			#ifdef BW_REPEL_SYSTEM
-				Var800E = gLastUsedRepel;
-				if (steps == 0)
-				{
-					ScriptContext1_SetupScript(EventScript_BwRepelWoreOff);
-					return TRUE;
-				}
-			#else
-				if (steps == 0)
-				{
-					ScriptContext1_SetupScript(EventScript_RepelWoreOff);
-					return TRUE;
-				}
-			#endif
-        }
-    }
-    return FALSE;
-}
-
-
-
-
-
 u8 CheckForTrainersWantingBattle(void) {
 	if (IsQuestLogActive())
 		return FALSE;
@@ -903,7 +848,7 @@ extern bool8 __attribute__((long_call)) UpdatePoisonStepCounter(void);
 bool8 TryStartStepCountScript(u16 metatileBehavior)
 {
     if (InUnionRoom() == TRUE
-	||  QuestLogMode == 2)
+	||  gQuestLogMode == 2)
         return FALSE;
 
     UpdateHappinessStepCounter();
@@ -990,7 +935,7 @@ bool8 TryRunOnFrameMapScript(void)
 {
 	TryUpdateSwarm();
 
-	if (QuestLogMode != 3)
+	if (gQuestLogMode != 3)
 	{
 		u8 *ptr = MapHeaderCheckScriptTable(MAP_SCRIPT_ON_FRAME_TABLE);
 
@@ -1072,6 +1017,7 @@ s32 DoPoisonFieldEffect(void)
 			#ifdef POISON_1_HP_SURVIVAL
 				if (hp == 1 || --hp == 1)
 				{
+					mon->hp = hp;
 					mon->condition = STATUS1_NONE;
 					++numSurvived;
 					ScriptContext1_SetupScript(SystemScript_PoisonSurvial);
@@ -1108,6 +1054,45 @@ s32 DoPoisonFieldEffect(void)
 #endif
 
     return FLDPSN_NONE;
+}
+
+void TaskRepel(u8 taskId)
+{
+    if (!IsSEPlaying())
+    {
+		//WriteQuestLog(4, 0, Var800E, 0xFFFF);
+		VarSet(VAR_REPEL_STEP_COUNT, ItemId_GetHoldEffectParam(Var800E));
+		#ifdef BW_REPEL_SYSTEM
+		gLastUsedRepel = Var800E;
+		#endif
+		RemoveUsedItem();
+		DisplayItemMessage(taskId, 1, gStringVar4, bag_menu_inits_lists_menu);
+    }
+};
+
+//Updated Repel - hook at 080830B8 via r1
+bool8 UpdateRepelCounter(void)
+{
+    u8 steps = VarGet(VAR_REPEL_STEP_COUNT); //0x4020
+
+    if (steps != 0)
+    {
+        steps--;
+        VarSet(VAR_REPEL_STEP_COUNT, steps);
+        if (steps == 0)
+        {
+			#ifdef BW_REPEL_SYSTEM
+				Var800E = gLastUsedRepel;
+				ScriptContext1_SetupScript(EventScript_BwRepelWoreOff);
+				return TRUE;
+			#else
+				if (steps == 0)
+				ScriptContext1_SetupScript(EventScript_RepelWoreOff);
+				return TRUE;
+			#endif
+        }
+    }
+    return FALSE;
 }
 
 //Follow Me Updates/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
