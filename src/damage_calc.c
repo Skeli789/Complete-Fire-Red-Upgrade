@@ -38,7 +38,7 @@ static void ApplyRandomDmgMultiplier(void);
 void atk04_critcalc(void) {
     u8 atkEffect = ITEM_EFFECT(gBankAttacker);
 	u16 critChance = 0;
-	bool8 ConfirmedCrit = FALSE;
+	bool8 confirmedCrit = FALSE;
     gStringBank = gBankAttacker;
 
 	u8 atkAbility = ABILITY(gBankAttacker);
@@ -47,14 +47,14 @@ void atk04_critcalc(void) {
     if (defAbility == ABILITY_BATTLEARMOR
 	||  defAbility == ABILITY_SHELLARMOR
     ||  gStatuses3[gBankAttacker] & STATUS3_CANT_SCORE_A_CRIT
-    ||  gBattleTypeFlags & (BATTLE_TYPE_OLD_MAN | BATTLE_TYPE_OAK_TUTORIAL)
+    ||  gBattleTypeFlags & (BATTLE_TYPE_OLD_MAN | BATTLE_TYPE_OAK_TUTORIAL | BATTLE_TYPE_POKE_DUDE)
 	||  gNewBS->LuckyChantTimers[SIDE(gBankTarget)])
-			ConfirmedCrit = FALSE;
+			confirmedCrit = FALSE;
 
 	else if ((atkAbility == ABILITY_MERCILESS && (gBattleMons[gBankTarget].status1 & STATUS_PSN_ANY))
 	|| gNewBS->LaserFocusTimers[gBankAttacker]
 	|| CheckTableForMove(gCurrentMove, AlwaysCritTable))
-		ConfirmedCrit = TRUE;
+		confirmedCrit = TRUE;
 
 	else {
 		critChance  = 2 * ((gBattleMons[gBankAttacker].status2 & STATUS2_FOCUS_ENERGY) != 0)
@@ -70,20 +70,20 @@ void atk04_critcalc(void) {
 
 		#ifdef CRIT_CHANCE_GEN_6
 			if (!(Random() % Gen6CriticalHitChance[critChance]))
-				ConfirmedCrit = TRUE;
+				confirmedCrit = TRUE;
 		#elifdef CRIT_CHANCE_GEN_2_TO_5
 			if (!(Random() % Gen2_5CriticalHitChance[critChance]))
-				ConfirmedCrit = TRUE;
+				confirmedCrit = TRUE;
 		#else
 			if (!(Random() % Gen7CriticalHitChance[critChance]))
-				ConfirmedCrit = TRUE;
+				confirmedCrit = TRUE;
 		#endif
 	}
 
 	gCritMultiplier = 100;
 
 	//These damages will be divded by 100 so really 2x and 1.5x
-	if (ConfirmedCrit) {
+	if (confirmedCrit) {
 		#ifdef OLD_CRIT_DAMAGE
 			gCritMultiplier = 200;
 		#else

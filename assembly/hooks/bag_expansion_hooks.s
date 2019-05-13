@@ -163,6 +163,21 @@ PokeDudeRestoreTMCaseHook:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+.pool
+@0x80143D4 wirh r0
+AreItemsDisabledHook:
+	bl IsBagDisabled
+	cmp r0, #0x0
+	beq CanUseItemsReturn
+	ldr r0, =0x80143E0 | 1
+	bx r0
+
+CanUseItemsReturn:
+	ldr r0, =0x8014428 | 1
+	bx r0
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 .align 2
 .PokeDudeItemBackupPtr: .word 0x203AD2C
 .SaveBlock1: .word 0x3005008

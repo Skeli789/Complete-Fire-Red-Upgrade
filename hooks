@@ -377,6 +377,7 @@ UpdateRepelCounter 080830B8 0
 TaskRepel 080A19E8 1
 
 ##Bag Expansion
+AreItemsDisabledHook 80143D4 0
 GetCurrentPocketItemAmountHook 8028760 0
 ExpandedBerriesFix1 806BDEC 0
 SetMemoryForBagStorage 8099E44 0

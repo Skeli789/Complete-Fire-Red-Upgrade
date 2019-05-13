@@ -1200,3 +1200,8 @@ bool8 CheckCantMoveThisTurn(void)
 	}
 	return FALSE;
 }
+
+bool8 IsBagDisabled(void)
+{
+	return FlagGet(DISABLE_BAG_FLAG) || (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_FRONTIER));
+}

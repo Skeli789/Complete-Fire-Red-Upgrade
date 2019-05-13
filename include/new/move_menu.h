@@ -13,6 +13,7 @@
 //Exported Functions
 void HandleInputChooseTarget(void);
 bool8 CheckCantMoveThisTurn(void);
+bool8 IsBagDisabled(void);
 
 //Functions Hooked In
 void InitMoveSelectionsVarsAndStrings(void);
