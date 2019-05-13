@@ -166,7 +166,7 @@ struct FrontierBrain
 
 extern const struct FrontierBrain gFrontierBrains[];
 
-extern u16 gBattleTowerStreaks[NUM_TOWER_BATTLE_TYPES][NUM_FORMATS][/*INVERSE*/ 2][/*LEVEL*/ 4][/*CURRENT_OR_MAX*/ 2]; //0x20267E0
+extern u16 gBattleTowerStreaks[NUM_TOWER_BATTLE_TYPES][NUM_FORMATS][/*INVERSE*/ 2][/*LEVEL*/ 4][/*CURRENT_OR_MAX*/ 2]; //0x2026840
 
 extern const species_t StandardSpeciesBanList[];
 extern const species_t OU_SpeciesBanList[];

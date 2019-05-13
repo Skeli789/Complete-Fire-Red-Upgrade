@@ -140,6 +140,7 @@ DoubleWildPokeBallItemUseFixEnd:
 
 RemoveBagItem:
 	ldr r3, =0x809A1D8 | 1
+bxr3:
 	bx r3
 
 @0x802D95C with r0
@@ -356,9 +357,75 @@ FlameBodyMagmaArmorEggHook:
 	ldr r0, =0x804639E | 1
 	bx r0
 
+.pool
+@0x808BA60 with r2
+SetBoxMonDataAtHook:
+	mov r2, r5
+	bl SetBoxMonDataAt
+	pop {r4-r6,pc}
+
 .pool 
 @0x808BB70 with r2
 GetAndCopyBoxMonDataAtHook:
 	mov r2, r5
 	bl GetAndCopyBoxMonDataAt
 	pop {r4-r6, pc}
+
+.pool
+@0x808BDF0 with r0
+sub_808BDE8Hook:
+	mov r0, r8
+	bl sub_808BDE8
+	pop {r3}
+	mov r8, r3
+	pop {r4-r7,pc}
+
+.pool
+@0x8093768 with r1
+CompressedStorageSummaryScreenUpdate1:
+	lsl r0, #0x18
+	lsr r0, #0x18
+	mov r1, #0x0
+	bl GetCompressedMonPtr
+	ldr r1, =0x8093772 | 1
+	bx r1
+
+.pool
+@0x8138BD2 with r1
+CompressedStorageSummaryScreenUpdate2:
+	bl SummaryScreenBoxMonMultiplier
+	add r0, r4
+	mov r1, r5
+	bl CompressedMonToMon
+	pop {r4-r5,pc}
+
+
+.pool
+@0x8139208 with r1
+SwapBoxMonMovesUpdate1:
+	lsr r0, #0x18
+	bl SummaryScreenBoxMonMultiplier
+	add r6, r0
+	ldr r0, =DAMAGE_LOC
+	str r6, [r0] @Use the damage loc as temporary storage
+
+	ldr r0, =BATTLE_DATA @Battle data is being used as a temporary mon
+	mov r1, r6
+	bl CreateBoxMonFromCompressedMon
+	ldr r6, =BATTLE_DATA
+	ldr r0, =0x8139212 | 1
+	bx r0
+
+.pool
+@0x8139304 with r0
+SwapBoxMonMovesUpdate2:
+	ldr r0, =BATTLE_DATA
+	ldr r1, =DAMAGE_LOC
+	ldr r1, [r1]
+	bl CreateCompressedMonFromBoxMon @Update the mon in the PC
+	add sp, #0xC
+	pop {r3-r5}
+	mov r8, r3
+	mov r9, r4
+	mov r10, r5
+	pop {r4-r7,pc}

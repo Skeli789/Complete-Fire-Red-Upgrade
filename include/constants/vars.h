@@ -64,8 +64,8 @@
 
 #define VAR_0x4034                 0x4034
 #define VAR_0x4035                 0x4035
-#define VAR_STORAGE_UNKNOWN        0x4036
-#define VAR_0x4037                 0x4037
+#define VAR_0x4036                 0x4036
+#define VAR_STORAGE_UNKNOWN        0x4037
 #define VAR_0x4038                 0x4038
 #define VAR_0x4039                 0x4039
 #define VAR_0x403A                 0x403A

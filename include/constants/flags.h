@@ -1422,28 +1422,12 @@
 
 #define FLAG_0x8C3               (CODE_FLAGS + 0x63)
 
-#define FLAG_SYS_TOWER_SILVER    (CODE_FLAGS + 0x64)
-#define FLAG_SYS_TOWER_GOLD      (CODE_FLAGS + 0x65)
-#define FLAG_SYS_DOME_SILVER     (CODE_FLAGS + 0x66)
-#define FLAG_SYS_DOME_GOLD       (CODE_FLAGS + 0x67)
-#define FLAG_SYS_PALACE_SILVER   (CODE_FLAGS + 0x68)
-#define FLAG_SYS_PALACE_GOLD     (CODE_FLAGS + 0x69)
-#define FLAG_SYS_ARENA_SILVER    (CODE_FLAGS + 0x6A)
-#define FLAG_SYS_ARENA_GOLD      (CODE_FLAGS + 0x6B)
-#define FLAG_SYS_FACTORY_SILVER  (CODE_FLAGS + 0x6C)
-#define FLAG_SYS_FACTORY_GOLD    (CODE_FLAGS + 0x6D)
-#define FLAG_SYS_PIKE_SILVER     (CODE_FLAGS + 0x6E)
-#define FLAG_SYS_PIKE_GOLD       (CODE_FLAGS + 0x6F)
-#define FLAG_SYS_PYRAMID_SILVER  (CODE_FLAGS + 0x70)
-#define FLAG_SYS_PYRAMID_GOLD    (CODE_FLAGS + 0x71)
-#define FLAG_SYS_FRONTIER_PASS   (CODE_FLAGS + 0x72)
-
 #define FLAG_0x8D3               (CODE_FLAGS + 0x73)
 #define FLAG_0x8D4               (CODE_FLAGS + 0x74)
 #define FLAG_0x8D5               (CODE_FLAGS + 0x75)
 #define FLAG_0x8D6               (CODE_FLAGS + 0x76)
 
-#define FLAG_SYS_STORAGE_UNKNOWN_FLAG    (CODE_FLAGS + 0x77)
+#define FLAG_SYS_STORAGE_UNKNOWN_FLAG    0x843
 
 #define FLAG_0x8D8                       (CODE_FLAGS + 0x78)
 #define FLAG_0x8D9                       (CODE_FLAGS + 0x79)

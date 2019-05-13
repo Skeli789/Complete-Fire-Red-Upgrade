@@ -4,7 +4,7 @@
 #include "pokemon.h"
 
 #define ORIGINAL_TOTAL_BOXES_COUNT 	14
-#define TOTAL_BOXES_COUNT       	22
+#define TOTAL_BOXES_COUNT       	24
 #define IN_BOX_ROWS             	6
 #define IN_BOX_COLUMNS          	5
 #define IN_BOX_COUNT            	(IN_BOX_ROWS * IN_BOX_COLUMNS)
@@ -30,3 +30,5 @@ struct PokemonStorage
 
 u8 __attribute__((long_call)) StorageGetCurrentBox(void);
 void __attribute__((long_call)) CompactPartySlots(void);
+u16 __attribute__((long_call)) get_unknown_box_id(void);
+void __attribute__((long_call)) set_unknown_box_id(u8 id);

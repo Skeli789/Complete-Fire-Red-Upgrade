@@ -1,5 +1,5 @@
 /* New Things */
-gBattleTowerStreaks = 0x20267E0;
+gBattleTowerStreaks = 0x2026840;
 gFollowerState = 0x203B818;
 ExtensionState = 0x3000F28;
 
@@ -646,7 +646,7 @@ GetBoxMonData = 0x803FD44 | 1;
 SetMonData = 0x0804037C | 1;
 SetMonData2 = 0x080404D0 | 1;
 CopyMon = 0x8040B08 | 1;
-SendMonToPC = 0x8040B90 | 1;
+//SendMonToPC = 0x8040B90 | 1;
 GetPartyAbility = 0x8040D38 | 1;
 CalculatePlayerPartyCount = 0x8040C3C | 1;
 CalculatePPWithBonus = 0x804101C | 1;
@@ -680,6 +680,8 @@ StorageGetCurrentBox = 0x808B9F4 | 1;
 GetMonDataFromAnyBox = 0x808BA18 | 1;
 SetMonDataFromAnyBox = 0x808BA5C | 1;
 CompactPartySlots = 0x080937DC | 1;
+set_unknown_box_id = 0x080CC79C | 1;
+get_unknown_box_id = 0x080CC7A8 | 1;
 
 /*Pokemon Icon Functions*/
 CreateMonIcon = 0x8096E18 | 1;
@@ -715,7 +717,7 @@ IsMail = 0x80980F8 | 1;
 CopyItemName = 0x8099E90 | 1;
 CheckBagHasItem = 0x8099F40 | 1;
 AddBagItem = 0x809A084 | 1;
-SanitizeItemId = 0x809A8A4 | 1;
+//SanitizeItemId = 0x809A8A4 | 1;
 //ItemId_GetHoldEffect = 0x809A924 | 1;
 //ItemId_GetHoldEffectParam = 0x809A948 | 1;
 ItemId_GetMystery2 = 0x809A9B4 | 1;
