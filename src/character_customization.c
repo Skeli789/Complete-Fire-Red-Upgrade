@@ -81,7 +81,7 @@ NPCPtr GetEventObjectGraphicsInfo(u16 graphicsId)
 			spriteId = (newId & 0xFF);		// lower byte
 		}
 		else if (tableId == 0)	// load sprite/table IDs from vars
-		{
+		{	
 			u16 newId = 0;
 			switch (spriteId) {
 				case 0:
@@ -110,7 +110,7 @@ NPCPtr GetEventObjectGraphicsInfo(u16 graphicsId)
 				case 13:
 					newId = VarGet(VAR_PLAYER_VS_SEEKER_ON_BIKE);
 					break;
-			}	
+			}
 
 			// get updated table and sprite IDs
 			if (newId != 0)
@@ -128,7 +128,7 @@ NPCPtr GetEventObjectGraphicsInfo(u16 graphicsId)
 	else
 		spriteAddr = gOverworldTableSwitcher[tableId][spriteId];
 	
-	if (spriteAddr == 0)
+	if (spriteAddr == NULL)
 		spriteAddr = gOverworldTableSwitcher[0][EVENT_OBJ_GFX_NINJA_BOY];	// first non-player sprite in first table default
 	
 	return spriteAddr;
