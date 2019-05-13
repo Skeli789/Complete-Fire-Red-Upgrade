@@ -38,6 +38,9 @@ struct AlternateSize
 	u16 weight;
 };
 
+#define SEEN_DEX_FLAGS 0x202583C //gSaveBlock2Ptr->pokedex.seen
+#define CAUGHT_DEX_FLAGS 0x20258B9 //gSaveBlock2Ptr->pokedex.owned
+
 /*
 void ResetPokedex(void);
 void CopyMonCategoryText(u16 species, u8 *dst);
