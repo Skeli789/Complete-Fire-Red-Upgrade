@@ -406,34 +406,46 @@ bool8 AllocateBerryPouchListBuffers(void)
 	return TRUE;
 }
 
-#define sPokeDudeItemBackupPtr (*((struct ItemSlot**) 0x203AD2C))
+#define sPokeDudeItemBackupPtr (*((struct ItemSlot***) 0x203AD2C))
 void PokeDudeBackupBag(void)
 {
-	sPokeDudeItemBackupPtr = Calloc((NUM_REGULAR_ITEMS + NUM_KEY_ITEMS + NUM_POKE_BALLS) * sizeof(struct ItemSlot));
-	Memcpy(sPokeDudeItemBackupPtr, sBagPocketArrangement.itemRam, (NUM_REGULAR_ITEMS + NUM_KEY_ITEMS + NUM_POKE_BALLS) * sizeof(struct ItemSlot));
+	struct ItemSlot* ptr = Calloc((NUM_REGULAR_ITEMS + NUM_KEY_ITEMS + NUM_POKE_BALLS + 1) * sizeof(struct ItemSlot));
+	sPokeDudeItemBackupPtr = Calloc(0x164);
+	*sPokeDudeItemBackupPtr = ptr;
+	Memcpy(ptr, sBagPocketArrangement.itemRam, (NUM_REGULAR_ITEMS + NUM_KEY_ITEMS + NUM_POKE_BALLS) * sizeof(struct ItemSlot));
 	Memset(sBagPocketArrangement.itemRam, 0, (NUM_REGULAR_ITEMS + NUM_KEY_ITEMS + NUM_POKE_BALLS) * sizeof(struct ItemSlot));
+	(ptr + NUM_REGULAR_ITEMS + NUM_KEY_ITEMS + NUM_POKE_BALLS)->itemId = gSaveBlock1->registeredItem; //Backup Select Item
 }
 
 void PokeDudeRestoreBag(void)
 {
-	Memcpy(sBagPocketArrangement.itemRam, sPokeDudeItemBackupPtr, (NUM_REGULAR_ITEMS + NUM_KEY_ITEMS + NUM_POKE_BALLS) * sizeof(struct ItemSlot));
+	struct ItemSlot* ptr = *sPokeDudeItemBackupPtr;
+	Memcpy(sBagPocketArrangement.itemRam, ptr, (NUM_REGULAR_ITEMS + NUM_KEY_ITEMS + NUM_POKE_BALLS) * sizeof(struct ItemSlot));
+	gSaveBlock1->registeredItem = (ptr + NUM_REGULAR_ITEMS + NUM_KEY_ITEMS + NUM_POKE_BALLS)->itemId;
+	Free(ptr);
 }
 
-#define sPokeDudeItemBackupPtr2 (*((struct ItemSlot**) 0x203B11C))
+#define sPokeDudeItemBackupPtr2 (*((struct ItemSlot***) 0x203B11C))
 void PokeDudeBackupKeyItemsTMs(void)
 {
-	sPokeDudeItemBackupPtr2 = Calloc((NUM_KEY_ITEMS + NUM_TMSHMS) * sizeof(struct ItemSlot));
-	Memcpy(sPokeDudeItemBackupPtr2, sBagPocketArrangement.keyItemRam, NUM_KEY_ITEMS * sizeof(struct ItemSlot));
-	Memcpy(sPokeDudeItemBackupPtr2 + NUM_KEY_ITEMS + NUM_POKE_BALLS, sBagPocketArrangement.tmRam, NUM_TMSHMS * sizeof(struct ItemSlot));
+	struct ItemSlot* ptr = Calloc((NUM_KEY_ITEMS + sBagPocketArrangement.tmAmount + 1) * sizeof(struct ItemSlot));
+	sPokeDudeItemBackupPtr2 = Calloc(0x164);
+	*sPokeDudeItemBackupPtr2 = ptr;
 	
+	Memcpy(ptr, sBagPocketArrangement.keyItemRam, NUM_KEY_ITEMS * sizeof(struct ItemSlot));
+	Memcpy(ptr + NUM_KEY_ITEMS, sBagPocketArrangement.tmRam, sBagPocketArrangement.tmAmount * sizeof(struct ItemSlot));
+		
 	Memset(sBagPocketArrangement.keyItemRam, 0, NUM_KEY_ITEMS * sizeof(struct ItemSlot));
-	Memset(sBagPocketArrangement.tmRam, 0, NUM_TMSHMS * sizeof(struct ItemSlot));
+	Memset(sBagPocketArrangement.tmRam, 0, sBagPocketArrangement.tmAmount * sizeof(struct ItemSlot));
 }
 
 void PokeDudeRestoreKeyItemsTMs(void)
 {
-	Memcpy(sBagPocketArrangement.keyItemRam, sPokeDudeItemBackupPtr2, NUM_KEY_ITEMS * sizeof(struct ItemSlot));
-	Memcpy(sBagPocketArrangement.tmRam, sPokeDudeItemBackupPtr2 + NUM_KEY_ITEMS + NUM_POKE_BALLS, NUM_TMSHMS * sizeof(struct ItemSlot));
+	struct ItemSlot* ptr = *sPokeDudeItemBackupPtr2;
+	Memcpy(sBagPocketArrangement.keyItemRam, ptr, NUM_KEY_ITEMS * sizeof(struct ItemSlot));
+	Memcpy(sBagPocketArrangement.tmRam, ptr + NUM_KEY_ITEMS, sBagPocketArrangement.tmAmount * sizeof(struct ItemSlot));
+	
+	Free(ptr);
 }
 
 void StoreBagItemCount(void)
@@ -441,10 +453,11 @@ void StoreBagItemCount(void)
 	struct ItemSlot* itemMem;
 	u16 itemAmount;
 	u16 checkLength;
-	bool8 tossed = FALSE;
+	bool8 tossed;
 	
 	for (u8 pocket = 0; pocket < 3; ++pocket)
 	{
+		tossed = FALSE;
 		switch (pocket) {
 			case 0:
 				itemMem = sBagPocketArrangement.itemRam;

@@ -369,10 +369,20 @@ const u8* GetTrainerName(u8 bank) {
 	}
 }
 
-void MegaRetrieveData(void) {
-	gNewBS->MegaData->chosen[gActiveBattler] |= gBattleBufferB[gActiveBattler][4];
-	gNewBS->UltraData->chosen[gActiveBattler] |= gBattleBufferB[gActiveBattler][5];
-	gNewBS->ZMoveData->toBeUsed[gActiveBattler] |= gBattleBufferB[gActiveBattler][6];
+void MegaRetrieveData(void)
+{
+	if (gBattleTypeFlags & (BATTLE_TYPE_POKE_DUDE | BATTLE_TYPE_OLD_MAN)) //Poke Dude's controller wasn't updated so these need to be manually set to 0
+	{
+		gNewBS->MegaData->chosen[gActiveBattler] = 0;
+		gNewBS->UltraData->chosen[gActiveBattler] = 0;
+		gNewBS->ZMoveData->toBeUsed[gActiveBattler] = 0;
+	}
+	else
+	{
+		gNewBS->MegaData->chosen[gActiveBattler] |= gBattleBufferB[gActiveBattler][4];
+		gNewBS->UltraData->chosen[gActiveBattler] |= gBattleBufferB[gActiveBattler][5];
+		gNewBS->ZMoveData->toBeUsed[gActiveBattler] |= gBattleBufferB[gActiveBattler][6];
+	}
 }
 
 //Graphics//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
