@@ -63,7 +63,7 @@ NPCPtr GetEventObjectGraphicsInfo(u16 graphicsId)
 	u16 newId;
 	u8 tableId = (graphicsId >> 8) & 0xFF;	// upper byte
 	u8 spriteId = graphicsId & 0xFF;		// lower byte
-	
+
 	// check runtime changeable OWs
 	if (tableId == 0xFF && spriteId <= 0xF)
 	{
@@ -80,22 +80,38 @@ NPCPtr GetEventObjectGraphicsInfo(u16 graphicsId)
 			tableId = (newId >> 8) & 0xFF;	// upper byte
 			spriteId = (newId & 0xFF);		// lower byte
 		}
-		else	// load sprite/table IDs from vars
+		else if (tableId == 0)	// load sprite/table IDs from vars
 		{
 			u16 newId = 0;
-			if ((spriteId == 0) || (spriteId == 7))
-				newId = VarGet(VAR_PLAYER_WALKRUN);
-			else if ((spriteId == 1) || (spriteId == 8))
-				newId = VarGet(VAR_PLAYER_BIKING);
-			else if ((spriteId == 2) || (spriteId == 9))
-				newId = VarGet(VAR_PLAYER_SURFING);
-			else if ((spriteId == 3) || (spriteId == 5) || (spriteId == 0xA) || (spriteId == 0xC))
-				newId = VarGet(VAR_PLAYER_VS_SEEKER);
-			else if ((spriteId == 4) || (spriteId == 0xB))
-				newId = VarGet(VAR_PLAYER_FISHING);
-			else if ((spriteId == 6) || (spriteId == 0xD))
-				newId = VarGet(VAR_PLAYER_VS_SEEKER_ON_BIKE);
-			
+			switch (spriteId) {
+				case 0:
+				case 7:
+					newId = VarGet(VAR_PLAYER_WALKRUN);
+					break;
+				case 1:
+				case 8:
+					newId = VarGet(VAR_PLAYER_BIKING);
+					break;
+				case 2:
+				case 9:
+					newId = VarGet(VAR_PLAYER_SURFING);
+					break;
+				case 3:
+				case 5:
+				case 10:
+				case 12:
+					newId = VarGet(VAR_PLAYER_VS_SEEKER);
+					break;
+				case 4:
+				case 11:
+					newId = VarGet(VAR_PLAYER_FISHING);
+					break;
+				case 6:
+				case 13:
+					newId = VarGet(VAR_PLAYER_VS_SEEKER_ON_BIKE);
+					break;
+			}	
+
 			// get updated table and sprite IDs
 			if (newId != 0)
 			{

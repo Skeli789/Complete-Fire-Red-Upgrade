@@ -128,3 +128,5 @@ Task_ReturnToItemListAfterItemPurchase 0809BF64
 ##Nicknaming
 KeyboardKeyHandler_Character 083E23D0
 
+##PSS Icons
+PhysicalSpecialSplitIconRoutine 0813A1A0

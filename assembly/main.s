@@ -96,6 +96,8 @@ script functions/specials in asm - hooks and returns
 @@ Start Menu Stuff
 .global FixStartMenuSize
 
+@@ Physical Special Split Icons
+.global PhysicalSpecialSplitIconRoutine
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Increase Start Menu Height for Fewer Items
@@ -1532,6 +1534,60 @@ BoxClosing:
 dp17_task_set_function:
 	ldr r1, =(0x0808cff8 +1)
 	bx r1
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Physical Special Split Icon Loading Routine
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.equ SUMMARY_SCREEN_DATA, 0x203B140
+
+.align 2
+.pool
+PhysicalSpecialSplitIconRoutine:
+	push {r0-r4}
+	ldr r0, =0x203B16D
+	ldrb r1, [r0]
+	lsl r1, #0x1
+	ldr r0, =SUMMARY_SCREEN_DATA
+	ldr r0, [r0]
+	ldr r3, .3258
+	add r0, r3
+	add r0, r1
+	ldrh r3, [r0]
+	cmp r3, #0x0
+	beq PSSIconRoutineEnd
+	lsl r0, r3, #0x1
+	add r0, r3
+	lsl r0, #0x2
+	ldr r1, =gBattleMoves
+	add r0, r1
+	ldrb r4, [r0, #0xA]
+	lsl r0, r4, #0x1
+	add r4, r0
+	lsl r4, #0x6
+	ldr r0, =PSSIconsTiles
+	add r0, r4
+	ldr r1, =0x6001800
+	mov r2, #0x30
+	swi 0xB
+	ldr r0, =PSSIconsTiles
+	add r0, r4
+	add r0, #0x60
+	ldr r1, =0x6001800
+	mov r2, #0x1E
+	lsl r2, #0x4
+	add r1, r2
+	mov r2, #0x30
+	swi 0xB
+
+PSSIconRoutineEnd:
+	pop {r0-r4}
+	ldr r4, =0x203B148
+	ldr r0, [r4]
+	ldr r1, =0x813A17C | 1
+	bx r1
+
+.align 2
+.3258: .word 0x3258
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Expanded PC BRM Table
