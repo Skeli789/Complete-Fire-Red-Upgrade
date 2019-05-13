@@ -37,13 +37,16 @@
 #define NO_RANDOM_WILD_ENCOUNTERS_FLAG 0x910 //If this is set, wild Pokemon won't appear when walking/surfing in grass, caves, water, etc.
 #define FLAG_REMOVE_EVO_ITEM 0x911  //Flag to toggle item removal after leveling up (set by the engine)
 #define WILD_SHINY_BATTLE_FLAG 0x912 //Flag to cause next battle to be against a shiny Pokemon
+#define AUTO_RUN_FLAG 0x913 //Flag to enable auto-run (toggled by L-button). If this feature is used, L=A will not work. Comment out this line for it to work again.
+#define RUNNING_ENABLED_FLAG 0x82F //The player can only run if this flag is set. If commented, the player will start the game with running shoes.
+#define DISABLE_BAG_FLAG 0x914 //The bag can't be used in-battle if this flag is set
 
 // Start Menu/Poketools Flags
-#define FLAG_SYS_BAG_GET 0x913	// toggle bag on/off. uncomment to always have on
-#define FLAG_SYS_PLAYER_GET 0x914	//toggle [player] on/off. uncomment to always have on
-#define FLAG_SYS_SAVE_GET 0x915	//toggle save on/off. uncomment to always have on
-#define FLAG_SYS_DEXNAV 0x916	// flag to turn dexnav on/off in start menu (if undefined, this will eliminate dexnav from the start menu)
-#define FLAG_POKETOOLS_MENU 0x917  // flag for poke tools start menu
+//#define FLAG_SYS_BAG_GET 0x915	//Toggle bag on/off. uncomment to always have on
+//#define FLAG_SYS_PLAYER_GET 0x916	//Toggle [player] on/off. uncomment to always have on
+//#define FLAG_SYS_SAVE_GET 0x917	//Toggle save on/off. uncomment to always have on
+#define FLAG_SYS_DEXNAV 0x918	//Flag to turn dexnav on/off in start menu (if undefined, this will eliminate dexnav from the start menu)
+#define FLAG_POKETOOLS_MENU 0x919  //Flag for Poke Tools on the start menu
 
 //Pedometer Flags as in JPAN Engine
 #define FLAG_LONG_PEDOMETER 0x920	// 32 bit
@@ -129,8 +132,6 @@ enum
 #define ROCK_DISGUISE_PAL_ID 0x1104 //The NPC palette id of the mountain disguise movement permission.
 #define WEIRD_DISGUISE_PAL_ID 0x1103 //The NPC palette id of the weird disguise movement permission.
 
-#define SEEN_DEX_FLAGS gSaveBlock2->pokedex.seen
-#define CAUGHT_DEX_FLAGS gSaveBlock2->pokedex.owned
 //#define EXISTING_FOSSIL_IMAGE_TABLE_ADDRESS 0x81a4600  //Comment this out if you've already inserted a fossil image table
 //#define EXISTING_OW_TABLE_ADDRESS 0x81a2000	//Uncomment if you want new overworld NPC tables to be generated.
 
@@ -156,17 +157,20 @@ enum
 #define OBEDIENCE_BY_BADGE_AMOUNT //Determines obedience based on the number of badges the Player has, rather than which badges the player has
 #define SAVE_BLOCK_EXPANSION //Uncommenting this requires you to also manually remove Save Expansion Hooks found in hooks
 #define SELECT_FROM_PC //Comment this out to remove select-from-pc hack
-//#define FOSSIL_IMAGE_HACK   // uncommenting includes JPANs fossil image hack (see EXISTING_FOSSIL_IMAGE_TABLE_ADDRESS)
 //#define SET_HEALING_PLACE_HACK  //Comment this out if you don't want custom map/bank whiteout respawn locations
-#define FOSSIL_IMAGE_HACK  //Comment this out if you don't want JPANs fossil image hack
+//#define FOSSIL_IMAGE_HACK   // uncommenting includes JPANs fossil image hack (see EXISTING_FOSSIL_IMAGE_TABLE_ADDRESS)
 #define EVO_HOLD_ITEM_REMOVAL //Comment this out if you want leveling up/hold item evolution (eg. sneasel) to remove the item (like normal)
 #define EXPAND_MOVESETS //Comment this out if you're using the Dynamic Pokemon Expansion repo to expand the movesets
 /*FIX THIS*///#define FATHER_PASSES_TMS //Comment this out if you don't want TMs the father knows to be passed through breeding
 //#define GIVEPOKEMON_BALL_HACK //Allows Pokemon to be given with a custom ball by setting the last byte of the givepokemon scripting command
 #define FRLG_ROAMING //When a roaming Pokemon is created, it will either be a Entei, Raikou, or Suicune, depending on the player's starter choice
 //#define INHERIT_MASTER_CHERISH_BALL  //Uncomment this if you want Master and Cherish balls to be inherited by daycare offspring
+#define CAN_RUN_IN_BUILDINGS //Comment this line out to prevent the player from running indoors.
+//#define NO_POISON_IN_OW //Uncommenting this line will stop Pokemon from taking Poison damage in the overworld.
+#define POISON_1_HP_SURVIVAL //Comment this line to allow Pokemon to faint from Poison in the overworld.
 #define BW_REPEL_SYSTEM  //keep this uncommented if you want the game to ask the user to re-use another repel when it runs out
 #define AUTO_NAMING_SCREEN_SWAP  //comment out if you don't want naming screens to auto-swap to lower-case after first upper-case letter
+#define MULTIPLE_PREMIER_BALLS_AT_ONCE //Comment out if you don't want the player received a Premier ball for every 10 Poke Balls purchased (only 1 no matter how many over 10 balls the player buys)
 
 /* Misc Effect Options */
 //#define OLD_BURN_DAMAGE //Uncomment this line if you want burn damage to do 1/8 of max health instead of 1/16
@@ -196,7 +200,6 @@ enum
 //#define OLD_PARENTAL_BOND_DAMAGE //Uncomment this line to make the second hit of Parental Bond do 50% of the original damage instead of 25%
 
 /* Capturing Pokemon Options */
-//#define CATCH_TRAINERS_POKEMON //Uncomment this line to allow the possibility of capturing trainer's Pokemon
 //#define NO_HARDER_WILD_DOUBLES //In Gen 5, Pokemon encountered in double wild battles were harder to catch (based on how many species are owned). Uncomment this line to remove the catch rate decrement.
 #define CRITICAL_CAPTURE //Uncomment this line to enable the Critical Capture feature
 
@@ -209,7 +212,6 @@ enum
 #define CAPTURE_EXPERIENCE //Experience is awared upon capturing Pokemon.
 
 /* Other Options */
-//#define ACTIVATE_DOUBLE_BATTLE_FROM_FLAG //Uncommenting this line will allow you to set a flag to enable double battles if possible
 //#define NO_GHOST_BATTLES //Uncomment this line to disable the Ghost battle feature from Pokemon Tower in Lavender town
 //#define GEN_4_PLAYER_RUNNING_FIX //Uncommmenting this line will increase the lag between frames as the player OW runs, to simulate a more accurate Gen 4 running effect
 //#define GEN4_PLUS_SELECTION_SCREEN //Uncommenting this line does not give you the Gen 4+ selection screen, it only adds features that supports it
