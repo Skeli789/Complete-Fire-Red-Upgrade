@@ -8,6 +8,7 @@
 #include "../include/new/helper_functions.h"
 #include "../include/new/form_change.h"
 #include "../include/new/mega.h"
+#include "../include/new/pokemon_storage_system.h"
 
 #define gOpenPokeballGfx (u8*) 0x8D022E8
 

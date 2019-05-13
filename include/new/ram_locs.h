@@ -166,9 +166,12 @@ struct Clock
 //extern struct Roamer gRoamers[10] //0x203BA30
 //extern struct BagItem gBagRegularItems[450] //0x203BB20
 //extern struct BagItem gBagKeyItems[75] //0x203C228
-//extern struct BagItem gBagBerries[75] //0x203C354
-//extern struct BagItem gBagPokeBalls[50] //0x203C480
-#define gLastUsedRepel (*(u8*) 0x203C548)
-//#define [FILL_IN_NEXT] //0x203C54A
+//extern struct BagItem gBagPokeBalls[50] //0x203C354
+//extern struct BagItem gBagTMHM[128] //0x203C41C
+//extern struct BagItem gBagBerries[75] //0x203C61C
+
+#define gLastUsedRepel (*(u8*) 0x203C748)
+//#define sBagItemAmounts ((u16*) 0x203C74A)
+//#define [FILL_IN_NEXT] //0x203C750
 //extern struct BoxPokemon gBox18[30] //0x203CA00
-//extern struct BoxPokemon gBox19[30] //0x203D19E
+//extern struct BoxPokemon gBox19[30] //0x203D0CC

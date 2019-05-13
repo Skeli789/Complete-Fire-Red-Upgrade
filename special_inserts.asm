@@ -378,9 +378,9 @@ MaxLevelChange1:
 .org 0x7f986, 0xff
 	.byte 0x10, 0xbd	
 
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Dynamic Overworld Palettes
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@	
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@	
 .org 0xdaec4, 0xff	@@don't auto-load NPC palettes into slot 0 or 0xA
 	.byte 0x70, 0x47
 	
@@ -389,7 +389,6 @@ MaxLevelChange1:
 	
 .org 0xdafb8, 0xff	@don't reset pal slot during player animation or reflection
 	.hword 0x0
-	
 	
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Max Level Hack - Rare Candies
@@ -428,7 +427,6 @@ HiddenAbilityChange7:
 	lsl r0, r0, #0x18
 	lsr r4, r0, #0x18
 	ldr r0, [r6]
-
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Max Level Hack - Summary Screen Exp Display

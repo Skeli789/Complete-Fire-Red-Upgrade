@@ -351,7 +351,7 @@ FixStartMenuSize 080f78f4 0
 
 ##Pokemon Storage System
 GetBoxMonDataAt 808BA18 3
-#SetBoxMonDataAt 808BA5C 4
+SetBoxMonDataAtHook 808BA60 2
 GetBoxMonNickAt 808BAE4 3
 SetBoxMonNickAt 808BB2C 3
 GetAndCopyBoxMonDataAtHook 808BB70 2
@@ -361,11 +361,41 @@ CopyBoxMonAt 808BBF4 3
 ZeroBoxMonAt 808BCB4 2
 BoxMonAtToMon 808BCF0 3
 GetBoxedMonPtr 808BD30 2
-GetBoxNamePtr 0808BD6C 1
+GetBoxNamePtr 808BD6C 1
+sub_808BDE8Hook 808BDF0 0
 GetBoxWallpaper 808BD94 1
 SetBoxWallpaper 808BDBC 2
 sub_80916F4 80916F4 1
+CompressedStorageSummaryScreenUpdate1 8093768 1
+CompressedStorageSummaryScreenUpdate2 8138BD2 1
+CompressedStorageSummaryScreenUpdate2 813936E 1
+SwapBoxMonMovesUpdate1 8139208 1
+SwapBoxMonMovesUpdate2 8139304 0
 
 ## Updated Repel System
 UpdateRepelCounter 080830B8 0
 TaskRepel 080A19E8 1
+
+##Bag Expansion
+GetCurrentPocketItemAmountHook 8028760 0
+ExpandedBerriesFix1 806BDEC 0
+SetMemoryForBagStorage 8099E44 0
+DoesBagHaveBerry 8099FAC 0
+SortBerriesOrTMHMs 809A720 1
+SanitizeItemId 809A8A4 1
+BerryIdFromItemId 809C8E4 1
+AllocateBagItemListBuffers 81083F4 0
+OpenBagBugFix1 8108A1C 1
+OpenBagBugFix2 8108A40 0
+OpenBagBugFix3 8108AC0 0
+CountItemsInBag 8108DC8 1
+PokeDudeBackupRegularBagHook 810ADDE 0
+GetSmallestItemAmount 8108E20 0
+PokeDudeBackupRegularBagClearHook 810AE78 0
+PokeDudeBackupBagRestoreHook 810AEDA 0
+PokeDudeBackupTMCaseHook 8132E76 1
+PokeDudeClearTMCaseHook 8132EB0 0
+PokeDudeRestoreTMCaseHook 813318C 0
+AllocateBerryPouchSpace 813D1C0 0
+GetBerryNameBerryIdFix 813D33C 0
+ExpandedBerriesFix2 814A490 0

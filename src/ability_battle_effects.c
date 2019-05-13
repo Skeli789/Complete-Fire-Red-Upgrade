@@ -66,7 +66,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
     u8 side;
     u8 target1;
 		
-    if (gBattleTypeFlags & BATTLE_TYPE_SAFARI)
+    if (gBattleTypeFlags & (BATTLE_TYPE_SAFARI | BATTLE_TYPE_OLD_MAN))
 		return FALSE;
 	
 	if (gBankAttacker >= gBattlersCount)
