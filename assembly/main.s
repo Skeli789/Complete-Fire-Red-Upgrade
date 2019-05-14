@@ -129,6 +129,20 @@ ReturnStartMenuHeight:
 .align 2
 .pool
 SortTmHms:
+	push {r2-r6}
+	add r1, r7, r0
+	ldrh r0, [r1]	@ bagPocket->itemSlots[i].itemId
+	bl CheckTmHmInFront
+	pop {r2-r6}
+	cmp r0, #0x1	@ true
+	beq SkipInternal
+	ldr r0, =(0x0809A63C +1)
+	bx r0
+SkipInternal:
+	ldr r0, =(0x0809A66A +1)
+	bx r0
+
+/*
 	push {r3-r7}
 	bl RefineTmOrdering
 	pop {r3-r7}
@@ -139,6 +153,7 @@ SortTmHms:
 	ldrh r0, [r2]
 	ldr r7, =(0x0809A60C+1)
 	bx r7	
+*/
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Evolution Methods - Remove Evo Item

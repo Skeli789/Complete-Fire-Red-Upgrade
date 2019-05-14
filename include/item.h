@@ -40,6 +40,7 @@ u8 __attribute__((long_call)) ItemId_GetMystery2(u16 item_id);
 u8 __attribute__((long_call)) GetPocketByItemId(u16 item_id);
 u8 __attribute__((long_call)) ItemId_GetType(u16 item_id);
 void __attribute__((long_call)) RemoveUsedItem(void);
+u16 __attribute__((long_call)) GetBagItemQuantity(u16 *quantity);
 
 
 /*

@@ -332,21 +332,21 @@ PokedexLoadAlternateWeightHook 08105A58 0
 PokedexScreenStats 08106370 0
 
 ##Daycare
-#GiveEggFromDaycare 080460D4 1
-#TriggerPendingDaycareEgg 080459F0 1
+GiveEggFromDaycare 080460D4 1
+TriggerPendingDaycareEgg 080459F0 1
 FlameBodyMagmaArmorEggHook 8046390 1
 
 ##Shiny Charm
 CreateBoxMonHook 803DAD2 0
 
 ##TM/HM Expansion
-#CanMonLearnTMHM 08043C2C 2
-#CanMonLearnTMTutor 08120B20 3
-#ItemIdToBattleMoveId 08125A78 1
-#LoadTmHmName 08131D48 2
-#SortTmHms 0809A604 0
-#CheckIsHmMove 08125A90 1
-#CheckIsHmMove 080441b8 1
+CanMonLearnTMHM 08043C2C 2
+CanMonLearnTMTutor 08120B20 3
+ItemIdToBattleMoveId 08125A78 1
+LoadTmHmName 08131D48 2
+SortTmHms 0809A624 1
+CheckIsHmMove 08125A90 1
+CheckIsHmMove 080441b8 1
 
 ##Start Menu
 BuildStartMenuActions 0806ed54 0
