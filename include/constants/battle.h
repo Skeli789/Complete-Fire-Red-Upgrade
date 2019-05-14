@@ -302,7 +302,7 @@
 #define MOVE_EFFECT_AFFECTS_USER        0x40
 #define MOVE_EFFECT_CERTAIN             0x80
 
-#define ABILITY_NAME_LENGTH 12
+#define ABILITY_NAME_LENGTH 16 //Was 12 in vanilla
 
 //Try making load new effect byte?
 

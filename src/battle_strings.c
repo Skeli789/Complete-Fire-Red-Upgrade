@@ -18,6 +18,7 @@
 
 extern u8* ZMoveNames[];
 extern u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
+extern const u8 gAbilityNames[][ABILITY_NAME_LENGTH + 1];
 
 #ifdef OPEN_WORLD_TRAINERS
 static u8* GetOpenWorldTrainerName(bool8 female);
@@ -928,7 +929,7 @@ void EmitPrintSelectionString(u8 bufferId, u16 stringID)
     PrepareBufferDataTransfer(bufferId, gBattleBuffersTransferData, sizeof(struct BattleMsgData) + 4);
 }
 
-const u8* GetAbilityName(u8 ability)
+const u8* GetAbilityName(const u8 ability)
 {
     const u8* ptr = gAbilityNames[ability];
 				
@@ -938,9 +939,9 @@ const u8* GetAbilityName(u8 ability)
 	return ptr;
 }
 
-void CopyAbilityName(u8* dst, const u8* src)
+void CopyAbilityName(u8* dst, const u8 ability)
 {
-	StringCopy(dst, src);
+	StringCopy(dst, GetAbilityName(ability));
 }
 
 #ifdef OPEN_WORLD_TRAINERS

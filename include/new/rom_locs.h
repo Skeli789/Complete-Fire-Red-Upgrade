@@ -3,8 +3,6 @@
 #include "../../src/defines.h"
 #include "../constants/species.h"
 
-#define ABILITY_NAME_LENGTH 12
-
 //#define gStatStageRatios ((u8**) 0x825DEAD)
 #define gBitTable ((u32*) 0x825E45C)
 
@@ -22,8 +20,6 @@ typedef struct Evolution EvolutionTableT[EVOS_PER_MON];
 //typedef u32 ExperienceTable_t[101];
 //#define gExperienceTables ((ExperienceTable_t*) 0x8253AE4)
 extern const u32 gExperienceTables[][255 + 1];
-
-extern const u8 gAbilityNames[][ABILITY_NAME_LENGTH + 1];
 
 #define gMonIconPaletteIndices ((u8*) (*((u32*) 0x0800013C)))
 

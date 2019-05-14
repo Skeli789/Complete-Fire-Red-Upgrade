@@ -11,6 +11,7 @@
 #include "../include/new/ability_battle_scripts.h"
 #include "../include/new/ability_tables.h"
 #include "../include/new/battle_start_turn_start.h"
+#include "../include/new/battle_strings.h"
 #include "../include/new/damage_calc.h"
 #include "../include/new/helper_functions.h"
 #include "../include/new/move_tables.h"
@@ -485,39 +486,57 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			break;
 		
 		case ABILITY_FOREWARN: ;
-			u16 strongestMove = 0;
+			u16 strongestMove = MOVE_NONE;
 			u8 maxPower = 0;
 			u8 strongestTarget = FOE(bank);
 			u16 power;
 				
 			for (i = 0; i < MAX_MON_MOVES; ++i)
 			{
-				if (gBattleMons[FOE(bank)].hp)
+				if (gBattleMons[FOE(bank)].hp != 0)
 				{
 					move = gBattleMons[FOE(bank)].moves[i];
-					power = CalcMovePowerForForewarn(move);
+					if (move != MOVE_NONE)
+					{	
+						power = CalcMovePowerForForewarn(move);
 
-					if (power > maxPower
-					|| (power == maxPower && Random() & 1))
-					{
-						maxPower = power;
-						strongestMove = move;
-						strongestTarget = FOE(bank);
-					}	
+						if (strongestMove == MOVE_NONE)
+						{
+							strongestMove = move;
+							maxPower = power;
+							strongestTarget = FOE(bank);
+						}
+						else if (power > maxPower
+						|| (power == maxPower && Random() & 1))
+						{
+							maxPower = power;
+							strongestMove = move;
+							strongestTarget = FOE(bank);
+						}
+					}
 				}
 					
 				if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE
 				&&  gBattleMons[PARTNER(FOE(bank))].hp)
 				{
 					move = gBattleMons[PARTNER(FOE(bank))].moves[i];
-					power = CalcMovePowerForForewarn(move);
-
-					if (power > maxPower
-					|| (power == maxPower && Random() & 1))
+					if (move != MOVE_NONE)
 					{
-						maxPower = power;
-						strongestMove = move;
-						strongestTarget = PARTNER(FOE(bank));
+						power = CalcMovePowerForForewarn(move);
+
+						if (strongestMove == MOVE_NONE)
+						{
+							strongestMove = move;
+							maxPower = power;
+							strongestTarget = PARTNER(FOE(bank));
+						}
+						else if (power > maxPower
+						|| (power == maxPower && Random() & 1))
+						{
+							maxPower = power;
+							strongestMove = move;
+							strongestTarget = PARTNER(FOE(bank));
+						}
 					}
 				}
 			}
@@ -2078,10 +2097,7 @@ static void PrintBattlerOnAbilityPopUp(u8 battlerId, u8 spriteId1, u8 spriteId2)
 
 static void PrintAbilityOnAbilityPopUp(u32 ability, u8 spriteId1, u8 spriteId2)
 {
-	const u8* abilityName = gAbilityNames[ability];
-	
-	if (abilityName[3] == 0x8) //Expanded Ability Name
-		abilityName = T2_READ_PTR(abilityName);
+	const u8* abilityName = GetAbilityName(ability);
 
     PrintOnAbilityPopUp(abilityName,
                         (void*)(OBJ_VRAM0) + (gSprites[spriteId1].oam.tileNum * 32) + 256,

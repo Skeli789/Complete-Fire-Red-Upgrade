@@ -261,7 +261,7 @@ void TryLoadZTrigger(void)
 	LoadCompressedSpriteSheetUsingHeap(&ZTriggerSpriteSheet);
 		
 	objid = CreateSprite(&ZTriggerTemplate, 130, 90, 1);
-	gSprites[objid].data[3] = 16;
+	gSprites[objid].data[3] = 24;
 	gSprites[objid].pos1.x = -32;
 	gSprites[objid].data[4] = gActiveBattler;
 }

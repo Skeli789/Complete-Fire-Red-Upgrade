@@ -1342,7 +1342,7 @@ static void DexNavDrawAbility(u8 ability, u8* objidAddr)
     gSprites[objId].pos1.x += ((8 * (len/2)) + (4 * (len % 2)));
 
     // Copy ability string from table using state id
-    CopyAbilityName(gStringVar4, GetAbilityName(ability));
+    CopyAbilityName(gStringVar4, ability);
 
     // format string so it's even length or if it's odd ends in two spaces
     len = StringLength(gStringVar4);
@@ -1742,7 +1742,7 @@ static void DexNavLoadNames(u8 status)
 
     // rbox commit hidden ability name
     if (gBaseStats[species].hiddenAbility != 0)
-        WindowPrint(3, 0, 0, 4, &DexNav_BlackText, 0, gAbilityNames[gBaseStats[species].hiddenAbility]);
+        WindowPrint(3, 0, 0, 4, &DexNav_BlackText, 0, GetAbilityName(gBaseStats[species].hiddenAbility));
     else
         WindowPrint(3, 0, 0, 4, &DexNav_BlackText, 0, &gText_DexNav_NoInfo[0]);
 

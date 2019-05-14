@@ -3341,14 +3341,13 @@ void atkE5_pickupitemcalculation(void) {
 	u16 item = 0;
 	u8 chance = 0;
 
-    for (int i = 0; i < 6; ++i) {
-
+    for (int i = 0; i < 6; ++i)
+	{
         if (gPlayerParty[i].species == SPECIES_NONE) break;
-		if (gPlayerParty[i].item) continue;
+		if (gPlayerParty[i].item != ITEM_NONE) continue;
         if (GetMonData(&gPlayerParty[i], MON_DATA_IS_EGG, 0)) continue;
 
 		u8 level = gPlayerParty[i].level;
-		u8 randomness = umodsi(Random(), 100);
 
 		switch (GetPartyAbility(&gPlayerParty[i])) {
 			case ABILITY_PICKUP:
@@ -3361,9 +3360,10 @@ void atkE5_pickupitemcalculation(void) {
 				item = ITEM_HONEY;
 		}
 
-		if (randomness < chance)
+		if (Random() % 100 < chance)
 			gPlayerParty[i].item = item;
     }
+
     ++gBattlescriptCurrInstr;
 }
 

@@ -457,3 +457,21 @@ SwapBoxMonMovesUpdate2:
 	mov r9, r4
 	mov r10, r5
 	pop {r4-r7,pc}
+
+.pool
+@0x80D860C with r0
+ExpandedAbilityNamesBattle2:
+	add r0, r5, r7
+	ldrb r0, [r0, #0x1]
+	bl GetAbilityName
+	mov r1, r0
+	ldr r0, =0x80D8618 | 1
+	bx r0
+
+.pool
+@0x8136714 with r1
+ExpandedAbilityNamesSummaryScreen:
+	mov r1, r4
+	bl CopyAbilityName
+	ldr r0, =0x8136720 | 1
+	bx r0
