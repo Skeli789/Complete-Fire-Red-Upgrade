@@ -1742,7 +1742,7 @@ static void DexNavLoadNames(u8 status)
 
     // rbox commit hidden ability name
     if (gBaseStats[species].hiddenAbility != 0)
-        WindowPrint(3, 0, 0, 4, &DexNav_BlackText, 0, gAbilityNames[gBaseStats[species].hiddenAbility]);
+        WindowPrint(3, 0, 0, 4, &DexNav_BlackText, 0, GetAbilityName(gBaseStats[species].hiddenAbility));
     else
         WindowPrint(3, 0, 0, 4, &DexNav_BlackText, 0, &gText_DexNav_NoInfo[0]);
 

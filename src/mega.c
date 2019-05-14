@@ -892,12 +892,12 @@ void TryLoadMegaTriggers(void)
 	LoadCompressedSpriteSheetUsingHeap(&UltraTriggerSpriteSheet);
 		
 	objid = CreateSprite(&MegaTriggerTemplate, 130, 90, 1);
-	gSprites[objid].data[3] = 16;
+	gSprites[objid].data[3] = 24;
 	gSprites[objid].pos1.x = -32;
 	gSprites[objid].data[4] = gActiveBattler;
 		
 	objid = CreateSprite(&UltraTriggerTemplate, 130, 90, 1);
-	gSprites[objid].data[3] = 16;
+	gSprites[objid].data[3] = 24;
 	gSprites[objid].pos1.x = -32;
 	gSprites[objid].data[4] = gActiveBattler;
 }

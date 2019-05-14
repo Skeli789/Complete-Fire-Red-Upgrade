@@ -11,6 +11,7 @@
 #include "../include/new/ability_battle_scripts.h"
 #include "../include/new/ability_tables.h"
 #include "../include/new/battle_start_turn_start.h"
+#include "../include/new/battle_strings.h"
 #include "../include/new/damage_calc.h"
 #include "../include/new/helper_functions.h"
 #include "../include/new/move_tables.h"
@@ -2078,10 +2079,7 @@ static void PrintBattlerOnAbilityPopUp(u8 battlerId, u8 spriteId1, u8 spriteId2)
 
 static void PrintAbilityOnAbilityPopUp(u32 ability, u8 spriteId1, u8 spriteId2)
 {
-	const u8* abilityName = gAbilityNames[ability];
-	
-	if (abilityName[3] == 0x8) //Expanded Ability Name
-		abilityName = T2_READ_PTR(abilityName);
+	const u8* abilityName = GetAbilityName(ability);
 
     PrintOnAbilityPopUp(abilityName,
                         (void*)(OBJ_VRAM0) + (gSprites[spriteId1].oam.tileNum * 32) + 256,
