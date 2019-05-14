@@ -11,7 +11,7 @@
 
 #define EOS 0xFF
 
-u8 ItemId_GetSecondaryId(u16 itemId);
+u8 ItemId_GetMystery2Id(u16 itemId);
 u8* ItemId_GetName(u16 itemId);
 
 extern u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
@@ -52,7 +52,7 @@ u8 ItemId_GetHoldEffectParam(u16 itemId)
     return gItems[SanitizeItemId(itemId)].holdEffectParam;
 }
 
-u8 ItemId_GetSecondaryId(u16 itemId)
+u8 ItemId_GetMystery2Id(u16 itemId)
 {
     return ItemId_GetMystery2(itemId);
 }
@@ -74,18 +74,28 @@ bool8 IsBerry(u16 item)
 
 u8 TMIdFromItemId(u16 itemId)
 {
-	u8 tmNum = ItemId_GetSecondaryId(itemId);
+	u8 tmNum = ItemId_GetMystery2Id(itemId);
+
+	if (itemId == ITEM_NONE)
+		return 255; //So blank items get put at the end
+	else if (tmNum == 0)
+		return (itemId - ITEM_TM01);
+	else
+		return (tmNum-1);
+	
+	/*
 	if (itemId == ITEM_NONE)
 		tmNum = 255; //So blank items get put at the end
 	else if (tmNum == 0)
 		tmNum = itemId - ITEM_TM01;
 
 	return tmNum;
+	*/
 }
 
 u8 BerryIdFromItemId(u16 item)
 {
-	u8 secondaryId = ItemId_GetSecondaryId(item);
+	u8 secondaryId = ItemId_GetMystery2Id(item);
 	if (secondaryId != 0)
 		return secondaryId;
 
@@ -158,6 +168,7 @@ u16 RefineTmOrdering(void)
 	#endif
 }
 
+
 //Function to fix tm move names that are full length in the bag
 void StringAppendFullMoveName(u8* dst, u8* src)
 {
@@ -182,13 +193,13 @@ void StringAppendFullMoveName(u8* dst, u8* src)
 
 void LoadTmHmName(u8 *dst, u16 itemId)
 {
-	u16 tmNum = ItemId_GetSecondaryId(itemId);
+	u16 tmNum = ItemId_GetMystery2Id(itemId);
 	StringCopy(&gStringVar4[0], (void*) 0x84166FF);
 
-	if (tmNum >= NUM_TMS)
+	if (tmNum > NUM_TMS)
 	{
 		// HM
-		u16 hmNum = tmNum - NUM_TMS + 1;
+		u16 hmNum = tmNum - NUM_TMS;
 		StringAppend(&gStringVar4[0], (void*) 0x8463178);
 		StringAppend(&gStringVar4[0], (void*) 0x8416226);
 		if (NUM_HMS < 10)
@@ -201,9 +212,9 @@ void LoadTmHmName(u8 *dst, u16 itemId)
 		// TM
 		StringAppend(&gStringVar4[0], (void*) 0x8416226);
 		if (NUM_TMS < 100)
-			ConvertIntToDecimalStringN(&gStringVar1[0], tmNum+1, 2, 2);
+			ConvertIntToDecimalStringN(&gStringVar1[0], tmNum, 2, 2);
 		else
-			ConvertIntToDecimalStringN(&gStringVar1[0], tmNum+1, 2, 3);
+			ConvertIntToDecimalStringN(&gStringVar1[0], tmNum, 2, 3);
 	}
 	StringAppend(&gStringVar4[0], &gStringVar1[0]);
 	StringAppend(&gStringVar4[0], (void*) 0x846317C);
@@ -236,7 +247,7 @@ u8 CanMonLearnTMTutor(struct Pokemon* mon, u16 item, u8 tutor)
 	if (GetPocketByItemId(item) == POCKET_TM_HM)
     {
         //if (CanMonLearnTMHM(mon, item - ITEM_TM01_FOCUS_PUNCH))
-		if (CanMonLearnTMHM(mon, ItemId_GetSecondaryId(item)))
+		if (CanMonLearnTMHM(mon, ItemId_GetMystery2Id(item)))
             move = ItemIdToBattleMoveId(item);
         else
             return CANNOT_LEARN_MOVE;
@@ -531,6 +542,27 @@ static s8 CompareTMs(u16 item1, u16 item2)
 {
 	u8 id1 = TMIdFromItemId(item1);
 	u8 id2 = TMIdFromItemId(item2);
+
+	#ifndef TMS_BEFORE_HMS
+	if (id1 <= NUM_TMS && id2 > NUM_TMS)
+		return -1;
+	else if (id2 <= NUM_TMS && id1 > NUM_TMS)
+		return 1;
+	#else
+	if (id2 <= NUM_TMS && id1 > NUM_TMS)
+		return -1;
+	else if (id1 <= NUM_TMS && id2 > NUM_TMS)
+		return 1;
+	#endif
+	else if (id1 < id2)
+		return -1;
+	else if (id2 > id1)
+		return 1;
+	return 0;
+	
+	/*
+	u8 id1 = TMIdFromItemId(item1);
+	u8 id2 = TMIdFromItemId(item2);
 	
 	#ifndef TMS_BEFORE_HMS
 		if (id1 > NUM_TMS)
@@ -552,6 +584,7 @@ static s8 CompareTMs(u16 item1, u16 item2)
 		return 1;
 
 	return 0;
+	*/
 }
 
 void SortBerriesOrTMHMs(struct BagPocket* bagPocket)
@@ -566,6 +599,77 @@ void SortBerriesOrTMHMs(struct BagPocket* bagPocket)
 		
 	MergeSort(bagPocket->itemSlots, 0, itemAmount - 1, func);
 }
+
+
+
+CheckTmHmInFront(u16 item)
+{
+	#ifdef TMS_BEFORE_HMS
+	if (TMIdFromItemId(item) > NUM_TMS)
+		return TRUE;
+	#else
+	if (TMIdFromItemId(item) < NUM_TMS)
+		return TRUE;
+	#endif
+	return FALSE;	
+}
+
+
+/*
+void SortTmHmCase(struct BagPocket* bagPocket)
+{
+	SortBerriesOrTMHMs(bagPocket);
+	
+	u16 numTmsHms = bagPocket->capacity;
+	u16 i,j;
+	if (numTmsHms > 0)
+	{
+		for (i = 0;	 i < numTmsHms; ++i)
+		{
+			if (bagPocket->itemSlots[i].itemId == 0 && GetBagItemQuantity(&bagPocket->itemSlots[i].quantity == 0))
+				return;
+			
+			if (bagPocket->itemSlots[i].itemId != 0)
+			{
+				
+				// this loop seems useless gamefreak...
+				if (bagPocket->itemSlots[i].itemId > ITEM_TM50 && GetBagItemQuantity(&bagPocket->itemSlots[i].quantity) != 0)
+				{
+					
+					for (j = 0; j < numTmsHms; ++j)
+					{
+						if (bagPocket->itemSlots[j].itemId != 0
+							continue;
+						else if (GetBagItemQuantity(&bagPocket->itemSlots[j].quantity) != 0)
+							continue;
+					}					
+				}
+				
+				else if (bagPocket->itemSlots[i].itemId > ITEM_TM50 || GetBagItemQuantity(&bagPocket->itemSlots[i].quantity) == 0)
+					continue;
+			}
+			
+			for (j = 0; j < numTmsHms-1; ++j)
+			{
+				bagPocket->itemSlots[numTmsHms - j].capacity = GetBagItemQuantity(&bagPocket->itemSlots[numTmsHms - j].quantity);
+			}
+			
+			(void*) addr = Calloc(4*numTmsHms);
+			
+			CpuSet(
+					
+			
+			
+		}
+		
+		
+	}
+	
+};
+*/
+
+
+
 
 static s8 CompareItemsAlphabetically(u16 item1, u16 item2)
 {

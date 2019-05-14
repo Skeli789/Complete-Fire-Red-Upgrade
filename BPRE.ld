@@ -21,8 +21,6 @@ gRamSaveSectionLocations = 0x030053B0;
 gFirstSaveSector = 0x03005380;
 gSaveCounter = 0x03005390;
 gFastSaveSection = 0x03005394;
-
-gIconPals = 0x0808AB40;
  
 /* Variables */
 var_8003 = 0x020370BE;
@@ -90,6 +88,7 @@ ScriptEnvDisable = 0x0806994C | 1;
 RemoveUsedItem = 0x080A1A44 | 1;
 BuyMenuReturnToItemList = 0x0809BF98 | 1;
 BuyMenuDisplayMessage = 0x0813F75C | 1;
+GetBagItemQuantity = 0x08099DA0 | 1;
 
 /* move */
 teach_move_in_available_slot = 0x0803E8B0|1;
@@ -617,7 +616,6 @@ PremierBallOpenParticleAnimation = 0x80F103C | 1;
 
 /*Pokemon Functions*/
 EmitSetMonData = 0x800DFF0 | 1;
-
 ZeroPlayerPartyMons = 0x0803DA14 |1;
 ZeroEnemyPartyMons = 0x803DA34 | 1;
 CreateMon = 0x803DA54 | 1;
@@ -683,7 +681,8 @@ CompactPartySlots = 0x080937DC | 1;
 set_unknown_box_id = 0x080CC79C | 1;
 get_unknown_box_id = 0x080CC7A8 | 1;
 
-/*Pokemon Icon Functions*/
+/*Pokemon Icons*/
+gIconPals = 0x0808AB40;
 CreateMonIcon = 0x8096E18 | 1;
 GetMonIconTiles = 0x8097028 | 1;
 LoadMonIconPalettes = 0x809707C | 1;
@@ -767,6 +766,9 @@ UpdateHappinessStepCounter = 0x806D74C | 1;
 UpdatePoisonStepCounter = 0x806D79C | 1;
 PlayNewMapMusic = 0x8071A74 | 1;
 CheckVSSeeker = 0x810C4EC | 1;
+OverworldCallback1 = 0x08056534 | 1;
+OverworldCallback2 = 0x080565B4 | 1;
+OverworldCallbackSwitchStartMenu = 0x080568A8 | 1;
 
 /*Region Map Functions*/
 GetMapName = 0x80C4D78 | 1;
@@ -1107,26 +1109,19 @@ umodsi = 0x81E4684 | 1;
 EnableInterrupts = 0x08000B68 | 1;
 DisableInterrupts = 0x08000B94 | 1;
 
-OverworldCallback1 = 0x08056534 | 1;
-OverworldCallback2 = 0x080565B4 | 1;
-OverworldCallbackSwitchStartMenu = 0x080568A8 | 1;
-
 MakeExclamationMark = 0x08066920 | 1;
 
 /*BG Functions*/
 BgIdSetTilemap = 0x08001FA0 | 1;
 BgIdMarkForSync = 0x080F67A4 | 1;
-
 InitBgsFromTemplates = 0x08001658|1;
 LoadBgTiles = 0x80017D0 | 1;
-
 ShowBg = 0x80019BC | 1;
 HideBg = 0x80019D0 | 1;
 SetBgAttribute = 0x80019E4 | 1;
 GetBgAttribute = 0x8001AA8 | 1;
 ChangeBgX = 0x8001B90 | 1;
 ChangeBgY = 0x8001D08 | 1;
-
 CopyBgTilemapBufferToVram = 0x80020BC | 1;
 FillBgTilemapBufferRect = 0x8002554 | 1;
 
@@ -1170,6 +1165,8 @@ MonHasMove = 0x08125AC0 | 1;
 
 SeedRng2 = 0x08044EE8 | 1;
 
+/* Hall of Fame Stuff */
+sHofMonPtr = 0x203AB38;
 InitHallOfFameScreen = 0x080F1DDC | 1;
 Task_Hof_SetMonDisplayTask = 0x080F2294 | 1;
 SaveLoadGameData = 0x080DA4FC | 1;
@@ -1192,6 +1189,4 @@ Task_HofPC_PrintDataIsCorrupted = 0x080F30A4 | 1;
 Task_Hof_PaletteFadeAndPrintWelcomeText = 0x080F2514 | 1;
 SpriteCB_GetOnScreenAndAnimate = 0x080F3870 | 1;
 Task_Hof_TrySaveData = 0x080F2220 | 1;
-
-sHofMonPtr = 0x203AB38;
 
