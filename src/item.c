@@ -23,6 +23,7 @@ static s8 CompareItemsAlphabetically(u16 item1, u16 item2);
 static s8 CompareItemsByType(u16 item1, u16 item2);
 static void MergeSort(struct ItemSlot* array, u32 low, u32 high, s8 (*comparator)(u16, u16));
 static void Merge(struct ItemSlot* arr, u32 l, u32 m, u32 r, s8 (*comparator)(u16, u16));
+u16 GetItemIdFromTmId(u8 tmId);
 
 //General Utility Functions
 u16 SanitizeItemId(u16 itemId)
@@ -150,6 +151,19 @@ u32 CanMonLearnTMHM(struct Pokemon* mon, u8 tm)
 	else
 		return 0;
 }
+
+
+u16 GetItemIdFromTmId(u8 tmId)
+{
+	for (u8 i = 0; i < sizeof(gItems); ++i)
+	{
+		if (ItemId_GetMystery2Id(gItems[i].itemId) == tmId)
+			return gItems[i].itemId;		
+	}
+	return 0;
+}
+
+
 
 // item ID to Tm number to Move ID
 //		use secondary ID for tm indices if expanded
@@ -321,13 +335,7 @@ u8 TmHMDiscPosition(unusedArg struct Sprite* disc, u8 tmId)
 {	
 	u8 num;
 	if (tmId <= NUM_TMS)
-	{
-		//#ifdef EXPANDED_TMSHMS
-		//	if (tmId >= 100)
-		//		tmId = 100;
-		//#endif
 		num = tmId + 8;
-	}
 	else
 		num = tmId - NUM_TMS;
 	
@@ -335,7 +343,7 @@ u8 TmHMDiscPosition(unusedArg struct Sprite* disc, u8 tmId)
 		num /= 2;
 	#endif
 	
-	return num;	
+	return num;
 }
 
 

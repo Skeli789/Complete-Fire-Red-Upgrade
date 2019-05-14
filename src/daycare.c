@@ -19,6 +19,7 @@
 #define EGG_MOVES_ARRAY_COUNT 50
 
 extern u8 GetLevelUpMovesBySpecies(u16 species, u16* moves);
+extern u16 GetItemIdFromTmId(u8 tmId);
 
 void BuildEggMoveset(struct Pokemon* egg, struct BoxPokemon* father, struct BoxPokemon* mother);
 static u8 GetEggStepsToSubtract(void);
@@ -87,23 +88,24 @@ void BuildEggMoveset(struct Pokemon* egg, struct BoxPokemon* father, struct BoxP
         }
     }
 
+
 #ifdef FATHER_PASSES_TMS
-	//Father TMs
     for (i = 0; i < MAX_MON_MOVES; ++i)
-    {
-        if (sHatchedEggFatherMoves[i] != MOVE_NONE)
-        {
-            for (j = 0; j < NUM_TECHNICAL_MACHINES + NUM_HIDDEN_MACHINES; ++j)
-            {
-                if (sHatchedEggFatherMoves[i] == ItemIdToBattleMoveId(ITEM_TM01_FOCUS_PUNCH + j) && CanMonLearnTMHM(egg, j))
-                {
-                    if (GiveMoveToMon(egg, sHatchedEggFatherMoves[i]) == 0xFFFF)
-                        DeleteFirstMoveAndGiveMoveToMon(egg, sHatchedEggFatherMoves[i]);
-                }
-            }
-        }
-    }
+    {	
+		if (sHatchedEggFatherMoves[i] != MOVE_NONE
+		{
+			for (j = 1; j <= NUM_TMSHMS; ++j)	//loop through tm indices
+			{
+				if (sHatchedEggFatherMoves[i] == ItemIdToBattleMoveId(GetItemIdFromTmId(j)) && CanMonLearnTMHM(egg, j)
+				{
+					if (GiveMoveToMon(egg, sHatchedEggFatherMoves[i]) == 0xFFFF)
+						DeleteFirstMoveAndGiveMoveToMon(egg, sHatchedEggFatherMoves[i]);								
+				}			
+			}
+		}
+	}
 #endif
+
 
 	//Father Egg Moves
     for (i = 0; i < MAX_MON_MOVES; ++i)
