@@ -356,6 +356,14 @@ u8 TmHMDiscPosition(unusedArg struct Sprite* disc, u8 tmId)
 }
 
 
+u8 FixTmHmType(u8 type)
+{
+	if (type == TYPE_FAIRY)
+		return TYPE_PSYCHIC;
+	else
+		return type;
+}
+
 
 // Premier Ball Bonus
 #define tItemCount data[1]
