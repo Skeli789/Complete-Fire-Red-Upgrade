@@ -1342,7 +1342,7 @@ static void DexNavDrawAbility(u8 ability, u8* objidAddr)
     gSprites[objId].pos1.x += ((8 * (len/2)) + (4 * (len % 2)));
 
     // Copy ability string from table using state id
-    CopyAbilityName(gStringVar4, GetAbilityName(ability));
+    CopyAbilityName(gStringVar4, ability);
 
     // format string so it's even length or if it's odd ends in two spaces
     len = StringLength(gStringVar4);

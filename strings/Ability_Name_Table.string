@@ -1,0 +1,717 @@
+MAX_LENGTH=16
+FILL_FF=True
+
+#org @gAbilityNames
+#org @NAME_ABILITY_NONE
+-------
+
+#org @NAME_STENCH
+Stench
+
+#org @NAME_DRIZZLE
+Drizzle
+
+#org @NAME_SPEED_BOOST
+Speed Boost
+
+#org @NAME_BATTLE_ARMOR
+Battle Armor
+
+#org @NAME_STURDY
+Sturdy
+
+#org @NAME_DAMP
+Damp
+
+#org @NAME_LIMBER
+Limber
+
+#org @NAME_SAND_VEIL
+Sand Veil
+
+#org @NAME_STATIC
+Static
+
+#org @NAME_VOLT_ABSORB
+Volt Absorb
+
+#org @NAME_WATER_ABSORB
+Water Absorb
+
+#org @NAME_OBLIVIOUS
+Oblivious
+
+#org @NAME_CLOUD_NINE
+Cloud Nine
+
+#org @NAME_COMPOUND_EYES
+Compound Eyes
+
+#org @NAME_INSOMNIA
+Insomnia
+
+#org @NAME_COLOR_CHANGE
+Color Change
+
+#org @NAME_IMMUNITY
+Immunity
+
+#org @NAME_FLASH_FIRE
+Flash Fire
+
+#org @NAME_SHIELD_DUST
+Shield Dust
+
+#org @NAME_OWN_TEMPO
+Own Tempo
+
+#org @NAME_SUCTION_CUPS
+Suction Cups
+
+#org @NAME_INTIMIDATE
+Intimidate
+
+#org @NAME_SHADOW_TAG
+Shadow Tag
+
+#org @NAME_ROUGH_SKIN
+Rough Skin
+
+#org @NAME_WONDER_GUARD
+Wonder Guard
+
+#org @NAME_LEVITATE
+Levitate
+
+#org @NAME_EFFECT_SPORE
+Effect Spore
+
+#org @NAME_SYNCHRONIZE
+Synchronize
+
+#org @NAME_CLEAR_BODY
+Clear Body
+
+#org @NAME_NATURAL_CURE
+Natural Cure
+
+#org @NAME_LIGHTNING_ROD
+Lightning Rod
+
+#org @NAME_SERENE_GRACE
+Serene Grace
+
+#org @NAME_SWIFT_SWIM
+Swift Swim
+
+#org @NAME_CHLOROPHYLL
+Chlorophyll
+
+#org @NAME_ILLUMINATE
+Illuminate
+
+#org @NAME_TRACE
+Trace
+
+#org @NAME_HUGE_POWER
+Huge Power
+
+#org @NAME_POISON_POINT
+Poison Point
+
+#org @NAME_INNER_FOCUS
+Inner Focus
+
+#org @NAME_MAGMA_ARMOR
+Magma Armor
+
+#org @NAME_WATER_VEIL
+Water Veil
+
+#org @NAME_MAGNET_PULL
+Magnet Pull
+
+#org @NAME_SOUNDPROOF
+Soundproof
+
+#org @NAME_RAIN_DISH
+Rain Dish
+
+#org @NAME_SAND_STREAM
+Sand Stream
+
+#org @NAME_PRESSURE
+Pressure
+
+#org @NAME_THICK_FAT
+Thick Fat
+
+#org @NAME_EARLY_BIRD
+Early Bird
+
+#org @NAME_FLAME_BODY
+Flame Body
+
+#org @NAME_RUN_AWAY
+Run Away
+
+#org @NAME_KEEN_EYE
+Keen Eye
+
+#org @NAME_HYPER_CUTTER
+Hyper Cutter
+
+#org @NAME_PICKUP
+Pickup
+
+#org @NAME_TRUANT
+Truant
+
+#org @NAME_HUSTLE
+Hustle
+
+#org @NAME_CUTE_CHARM
+Cute Charm
+
+#org @NAME_PLUS
+Plus
+
+#org @NAME_MINUS
+Minus
+
+#org @NAME_FORECAST
+Forecast
+
+#org @NAME_STICKY_HOLD
+Sticky Hold
+
+#org @NAME_SHED_SKIN
+Shed Skin
+
+#org @NAME_GUTS
+Guts
+
+#org @NAME_MARVEL_SCALE
+Marvel Scale
+
+#org @NAME_LIQUID_OOZE
+Liquid Ooze
+
+#org @NAME_OVERGROW
+Overgrow
+
+#org @NAME_BLAZE
+Blaze
+
+#org @NAME_TORRENT
+Torrent
+
+#org @NAME_SWARM
+Swarm
+
+#org @NAME_ROCK_HEAD
+Rock Head
+
+#org @NAME_DROUGHT
+Drought
+
+#org @NAME_ARENA_TRAP
+Arena Trap
+
+#org @NAME_VITAL_SPIRIT
+Vital Spirit
+
+#org @NAME_WHITE_SMOKE
+White Smoke
+
+#org @NAME_PURE_POWER
+Pure Power
+
+#org @NAME_SHELL_ARMOR
+Shell Armor
+
+#org @NAME_CACOPHONY
+Cacophony
+
+#org @NAME_AIR_LOCK
+Air Lock
+
+#org @NAME_SWEET_VEIL
+Sweet Veil
+
+#org @NAME_SKILL_LINK
+Skill Link
+
+#org @NAME_MOTOR_DRIVE
+Motor Drive
+
+#org @NAME_MULTISCALE
+Multiscale
+
+#org @NAME_TECHNICIAN
+Technician
+
+#org @NAME_SCRAPPY
+Scrappy
+
+#org @NAME_SUPER_LUCK
+Super Luck
+
+#org @NAME_SNIPER
+Sniper
+
+#org @NAME_REGENERATOR
+Regenerator
+
+#org @NAME_PRANKSTER
+Prankster
+
+#org @NAME_ADAPTABILITY
+Adaptability
+
+#org @NAME_BIG_PECKS
+Big Pecks
+
+#org @NAME_MAGIC_BOUNCE
+Magic Bounce
+
+#org @NAME_RECKLESS
+Reckless
+
+#org @NAME_SHEER_FORCE
+Sheer Force
+
+#org @NAME_IRON_FIST
+Iron Fist
+
+#org @NAME_RIVALRY
+Rivalry
+
+#org @NAME_SAND_FORCE
+Sand Force
+
+#org @NAME_SOLAR_POWER
+Solar Power
+
+#org @NAME_HEATPROOF
+Heatproof
+
+#org @NAME_DRY_SKIN
+Dry Skin
+
+#org @NAME_TINTED_LENS
+Tinted Lens
+
+#org @NAME_SOLID_ROCK
+Solid Rock
+
+#org @NAME_FILTER
+Filter
+
+#org @NAME_INFILTRATOR
+Infiltrator
+
+#org @NAME_DOWNLOAD
+Download
+
+#org @NAME_POISON_HEAL
+Poison Heal
+
+#org @NAME_ICE_BODY
+Ice Body
+
+#org @NAME_MOODY
+Moody
+
+#org @NAME_HYDRATION
+Hydration
+
+#org @NAME_HEALER
+Healer
+
+#org @NAME_SNOW_CLOAK
+Snow Cloak
+
+#org @NAME_TANGLED_FEET
+Tangled Feet
+
+#org @NAME_SNOW_WARNING
+Snow Warning
+
+#org @NAME_QUICK_FEET
+Quick Feet
+
+#org @NAME_SAP_SIPPER
+Sap Sipper
+
+#org @NAME_OVERCOAT
+Overcoat
+
+#org @NAME_MAGIC_GUARD
+Magic Guard
+
+#org @NAME_BULLETPROOF
+Bulletproof
+
+#org @NAME_GALE_WINGS
+Gale Wings
+
+#org @NAME_MOXIE
+Moxie
+
+#org @NAME_AFTERMATH
+Aftermath
+
+#org @NAME_CURSED_BODY
+Cursed Body
+
+#org @NAME_GOOEY
+Gooey
+
+#org @NAME_MUMMY
+Mummy
+
+#org @NAME_IRON_BARBS
+Iron Barbs
+
+#org @NAME_SAND_RUSH
+Sand Rush
+
+#org @NAME_ANALYTIC
+Analytic
+
+#org @NAME_NO_GUARD
+No Guard
+
+#org @NAME_MEGA_LAUNCHER
+Mega Launcher
+
+#org @NAME_TOUGH_CLAWS
+Tough Claws
+
+#org @NAME_STRONG_JAW
+Strong Jaw
+
+#org @NAME_VICTORY_STAR
+Victory Star
+
+#org @NAME_STORM_DRAIN
+Storm Drain
+
+#org @NAME_DARK_AURA
+Dark Aura
+
+#org @NAME_FAIRY_AURA
+Fairy Aura
+
+#org @NAME_AURA_BREAK
+Aura Break
+
+#org @NAME_REFRIGERATE
+Refrigerate
+
+#org @NAME_PIXILATE
+Pixilate
+
+#org @NAME_AERILATE
+Aerilate
+
+#org @NAME_NORMALIZE
+Normalize
+
+#org @NAME_UNBURDEN
+Unburden
+
+#org @NAME_SIMPLE
+Simple
+
+#org @NAME_UNAWARE
+Unaware
+
+#org @NAME_DEFIANT
+Defiant
+
+#org @NAME_COMPETITIVE
+Competitive
+
+#org @NAME_DEFEATIST
+Defeatist
+
+#org @NAME_SLOW_START
+Slow Start
+
+#org @NAME_TOXIC_BOOST
+Toxic Boost
+
+#org @NAME_FLARE_BOOST
+Flare Boost
+
+#org @NAME_FUR_COAT
+Fur Coat
+
+#org @NAME_WONDER_SKIN
+Wonder Skin
+
+#org @NAME_PROTEAN
+Protean
+
+#org @NAME_PARENTAL_BOND
+Parental Bond
+
+#org @NAME_MOLD_BREAKER
+Mold Breaker
+
+#org @NAME_TURBOBLAZE
+Turboblaze
+
+#org @NAME_TERAVOLT
+Teravolt
+
+#org @NAME_ZEN_MODE
+Zen Mode
+
+#org @NAME_BATTLE_BOND
+Battle Bond
+
+#org @NAME_BEAST_BOOST
+Beast Boost
+
+#org @NAME_CORROSION
+Corrosion
+
+#org @NAME_DISGUISE
+Disguise
+
+#org @NAME_EMERGENCY_EXIT
+Emergency Exit
+
+#org @NAME_FLUFFY
+Fluffy
+
+#org @NAME_FULL_METAL_BODY
+Full Metal Body
+
+#org @NAME_UNUSED_1
+UNUSED 1
+
+#org @NAME_UNUSED_2
+UNUSED 2
+
+#org @NAME_POWER_CONSTRUCT
+Power Construct
+
+#org @NAME_PRISM_ARMOR
+Prism Armor
+
+#org @NAME_RKS_SYSTEM
+RKS System
+
+#org @NAME_SCHOOLING
+Schooling
+
+#org @NAME_SHADOW_SHIELD
+Shadow Shield
+
+#org @NAME_SHIELDS_DOWN
+Shields Down
+
+#org @NAME_SLUSH_RUSH
+Slush Rush
+
+#org @NAME_SOULHEART
+Soul-Heart
+
+#org @NAME_STAMINA
+Stamina
+
+#org @NAME_STEELWORKER
+Steelworker
+
+#org @NAME_TANGLING_HAIR
+Tangling Hair
+
+#org @NAME_TRIAGE
+Triage
+
+#org @NAME_WATER_BUBBLE
+Water Bubble
+
+#org @NAME_WATER_COMPACTION
+Water Compaction
+
+#org @NAME_STALL
+Stall
+
+#org @NAME_MULTITYPE
+Multitype
+
+#org @NAME_ELECTRIC_SURGE
+Electric Surge
+
+#org @NAME_GRASSY_SURGE
+Grassy Surge
+
+#org @NAME_MISTY_SURGE
+Misty Surge
+
+#org @NAME_PSYCHIC_SURGE
+Psychic Surge
+
+#org @NAME_SURGE_SURFER
+Surge Surfer
+
+#org @NAME_GRASS_PELT
+Grass Pelt
+
+#org @NAME_ANGER_POINT
+Anger Point
+
+#org @NAME_ANTICIPATION
+Anticipation
+
+#org @NAME_FOREWARN
+Forewarn
+
+#org @NAME_FRISK
+Frisk
+
+#org @NAME_CONTRARY
+Contrary
+
+#org @NAME_UNNERVE
+Unnerve
+
+#org @NAME_WEAK_ARMOR
+Weak Armor
+
+#org @NAME_HEAVY_METAL
+Heavy Metal
+
+#org @NAME_LIGHT_METAL
+Light Metal
+
+#org @NAME_STEADFAST
+Steadfast
+
+#org @NAME_IMPOSTER
+Imposter
+
+#org @NAME_JUSTIFIED
+Justified
+
+#org @NAME_RATTLED
+Rattled
+
+#org @NAME_MERCILESS
+Merciless
+
+#org @NAME_AROMA_VEIL
+Aroma Veil
+
+#org @NAME_FLOWER_VEIL
+Flower Veil
+
+#org @NAME_LEAF_GUARD
+Leaf Guard
+
+#org @NAME_KLUTZ
+Klutz
+
+#org @NAME_FLOWER_GIFT
+Flower Gift
+
+#org @NAME_BAD_DREAMS
+Bad Dreams
+
+#org @NAME_PICKPOCKET
+Pickpocket
+
+#org @NAME_PORTAL_POWER
+Portal Power
+
+#org @NAME_POISON_TOUCH
+Poison Touch
+
+#org @NAME_MAGICIAN
+Magician
+
+#org @NAME_STANCE_CHANGE
+Stance Change
+
+#org @NAME_PRIMORDIAL_SEA
+Primordial Sea
+
+#org @NAME_DESOLATE_LAND
+Desolate Land
+
+#org @NAME_DELTA_STREAM
+Delta Stream
+
+#org @NAME_WIMP_OUT
+Wimp Out
+
+#org @NAME_BERSERK
+Berserk
+
+#org @NAME_LONG_REACH
+Long Reach
+
+#org @NAME_LIQUID_VOICE
+Liquid Voice
+
+#org @NAME_QUEENLY_MAJESTY
+Queenly Majesty
+
+#org @NAME_INNARDS_OUT
+Innards Out
+
+#org @NAME_DAZZLING
+Dazzling
+
+#org @NAME_GLUTTONY
+Gluttony
+
+#org @NAME_HONEY_GATHER
+Honey Gather
+
+#org @NAME_FRIEND_GUARD
+Friend Guard
+
+#org @NAME_HARVEST
+Harvest
+
+#org @NAME_TELEPATHY
+Telepathy
+
+#org @NAME_ILLUSION
+Illusion
+
+#org @NAME_CHEEK_POUCH
+Cheek Pouch
+
+#org @NAME_SYMBIOSIS
+Symbiosis
+
+#org @NAME_STAKEOUT
+Stakeout
+
+#org @NAME_COMATOSE
+Comatose
+
+#org @NAME_DANCER
+Dancer
+
+#org @NAME_BATTERY
+Battery
+
+#org @NAME_RECEIVER
+Receiver
+
+#org @NAME_POWER_OF_ALCHEMY
+Power of Alchemy
+
+#org @NAME_NEUROFORCE
+Neuroforce
+
+#org @NAME_GALVANIZE
+Galvanize

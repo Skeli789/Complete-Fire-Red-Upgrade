@@ -54,6 +54,7 @@ HandleIntroSlide 80BC3A0 1
 BufferStringBattle 080D7274 1
 BattleStringExpandPlaceholders 80D7868 2
 DisplayStatStageMessage 80D8486 0
+ExpandedAbilityNamesBattle2 80D860C 0
 
 ##Multi Hooks
 MultiEnemyPokeballReadoutHook 8049088 0
@@ -127,6 +128,7 @@ CursorCb_NoEntry 8124278 1
 LoadMaxNumPokemonChooseBattleTowerStringHook 8124184 0
 CursorCb_Enter 8124154 1
 IsMonAllowedInBattleTower 8127550 1
+ExpandedAbilityNamesSummaryScreen 8136714 1
 
 ##Battle Animation Hooks
 UpdateOamPriorityInAllHealthboxes 804828C 1

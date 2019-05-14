@@ -486,39 +486,57 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			break;
 		
 		case ABILITY_FOREWARN: ;
-			u16 strongestMove = 0;
+			u16 strongestMove = MOVE_NONE;
 			u8 maxPower = 0;
 			u8 strongestTarget = FOE(bank);
 			u16 power;
 				
 			for (i = 0; i < MAX_MON_MOVES; ++i)
 			{
-				if (gBattleMons[FOE(bank)].hp)
+				if (gBattleMons[FOE(bank)].hp != 0)
 				{
 					move = gBattleMons[FOE(bank)].moves[i];
-					power = CalcMovePowerForForewarn(move);
+					if (move != MOVE_NONE)
+					{	
+						power = CalcMovePowerForForewarn(move);
 
-					if (power > maxPower
-					|| (power == maxPower && Random() & 1))
-					{
-						maxPower = power;
-						strongestMove = move;
-						strongestTarget = FOE(bank);
-					}	
+						if (strongestMove == MOVE_NONE)
+						{
+							strongestMove = move;
+							maxPower = power;
+							strongestTarget = FOE(bank);
+						}
+						else if (power > maxPower
+						|| (power == maxPower && Random() & 1))
+						{
+							maxPower = power;
+							strongestMove = move;
+							strongestTarget = FOE(bank);
+						}
+					}
 				}
 					
 				if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE
 				&&  gBattleMons[PARTNER(FOE(bank))].hp)
 				{
 					move = gBattleMons[PARTNER(FOE(bank))].moves[i];
-					power = CalcMovePowerForForewarn(move);
-
-					if (power > maxPower
-					|| (power == maxPower && Random() & 1))
+					if (move != MOVE_NONE)
 					{
-						maxPower = power;
-						strongestMove = move;
-						strongestTarget = PARTNER(FOE(bank));
+						power = CalcMovePowerForForewarn(move);
+
+						if (strongestMove == MOVE_NONE)
+						{
+							strongestMove = move;
+							maxPower = power;
+							strongestTarget = PARTNER(FOE(bank));
+						}
+						else if (power > maxPower
+						|| (power == maxPower && Random() & 1))
+						{
+							maxPower = power;
+							strongestMove = move;
+							strongestTarget = PARTNER(FOE(bank));
+						}
 					}
 				}
 			}
