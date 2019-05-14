@@ -345,6 +345,9 @@ CanMonLearnTMTutor 08120B20 3
 ItemIdToBattleMoveId 08125A78 1
 LoadTmHmName 08131D48 2
 SortTmHms 0809A624 1
+FixTmHmDiscLoader 081336BC 0
+FixTmHmDiscLoader2 08133854 0
+FixTmHmDiscPos 08133798 2
 CheckIsHmMove 08125A90 1
 CheckIsHmMove 080441b8 1
 
