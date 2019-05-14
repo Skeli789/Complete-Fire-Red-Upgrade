@@ -12,6 +12,7 @@
 #include "../include/new/move_menu.h"
 #include "../include/new/move_menu_battle_scripts.h"
 #include "../include/new/move_tables.h"
+#include "../include/new/set_z_effect.h"
 #include "../include/new/z_move_effects.h"
 
 //TODO: Make The Z-Move Names change colour (look in SetPpNumbersPaletteInMoveSelection)
@@ -29,10 +30,12 @@ static void ZMoveSelectionDisplayPpNumber(void);
 static void ZMoveSelectionDisplayPower(void);
 static void MoveSelectionDisplayDetails(void);
 static void ReloadMoveNamesIfNecessary(void);
+static void CloseZMoveDetails(void);
 
 void InitMoveSelectionsVarsAndStrings(void)
 {
 	TryLoadMegaTriggers();
+	TryLoadZTrigger();
     MoveSelectionDisplayMoveNames();
     gMultiUsePlayerCursor = 0xFF;
     MoveSelectionCreateCursorAt(gMoveSelectionCursor[gActiveBattler], 0);
@@ -60,22 +63,6 @@ void HandleInputChooseMove(void)
 	{
         u8 moveTarget;
 	
-		if (gNewBS->ZMoveData->viewing)
-		{
-			gNewBS->ZMoveData->toBeUsed[gActiveBattler] = TRUE;
-			gNewBS->ZMoveData->viewing = FALSE;
-			gWindows[3].window.width = 8; //Restore Window Size from Z-Move mod
-			gWindows[3].window.height = 2;
-			if (gNewBS->ZMoveData->backupTilemap)
-			{
-				Free(gWindows[3].tileData);
-				gWindows[3].tileData = gNewBS->ZMoveData->backupTilemap;
-				gNewBS->ZMoveData->backupTilemap = NULL;
-			}
-		}
-		
-		gNewBS->ZMoveData->viewingDetails = FALSE;
-		
         PlaySE(SE_SELECT);
         if (moveInfo->moves[gMoveSelectionCursor[gActiveBattler]] == MOVE_CURSE)
         {
@@ -120,6 +107,7 @@ void HandleInputChooseMove(void)
 	
         if (!canSelectTarget)
         {
+			CloseZMoveDetails();
 			EmitMoveChosen(1, gMoveSelectionCursor[gActiveBattler], gMultiUsePlayerCursor, gNewBS->MegaData->chosen[gActiveBattler], gNewBS->UltraData->chosen[gActiveBattler], gNewBS->ZMoveData->toBeUsed[gActiveBattler]);
             PlayerBufferExecCompleted();
         }
@@ -567,7 +555,7 @@ static void ZMoveSelectionDisplayPpNumber(void)
     BattlePutTextOnWindow(gDisplayedStringBattle, 9);
 }
 
-void ZMoveSelectionDisplayPower(void)
+static void ZMoveSelectionDisplayPower(void)
 {
 	u8 *txtPtr;
 	struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct*)(&gBattleBufferA[gActiveBattler][4]);
@@ -694,6 +682,25 @@ static void ReloadMoveNamesIfNecessary(void)
 	}
 }
 
+static void CloseZMoveDetails(void)
+{
+	if (gNewBS->ZMoveData->viewing)
+	{
+		gNewBS->ZMoveData->toBeUsed[gActiveBattler] = TRUE;
+		gNewBS->ZMoveData->viewing = FALSE;
+		gWindows[3].window.width = 8; //Restore Window Size from Z-Move mod
+		gWindows[3].window.height = 2;
+		if (gNewBS->ZMoveData->backupTilemap)
+		{
+			Free(gWindows[3].tileData);
+			gWindows[3].tileData = gNewBS->ZMoveData->backupTilemap;
+			gNewBS->ZMoveData->backupTilemap = NULL;
+		}
+	}
+				
+	gNewBS->ZMoveData->viewingDetails = FALSE;
+}
+	
 void HandleMoveSwitchingUpdate(void)
 {
     u8 perMovePPBonuses[4];
@@ -824,7 +831,8 @@ void HandleInputChooseTarget(void)
         PlaySE(SE_SELECT);
         gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = sub_8012098; //sub_8039B2C in Emerald
 		EmitMoveChosen(1, gMoveSelectionCursor[gActiveBattler], gMultiUsePlayerCursor, gNewBS->MegaData->chosen[gActiveBattler], gNewBS->UltraData->chosen[gActiveBattler], gNewBS->ZMoveData->toBeUsed[gActiveBattler]);
-        EndBounceEffect(gMultiUsePlayerCursor, BOUNCE_HEALTHBOX);
+        CloseZMoveDetails();
+		EndBounceEffect(gMultiUsePlayerCursor, BOUNCE_HEALTHBOX);
         PlayerBufferExecCompleted();
     }
     else if (gMain.newKeys & B_BUTTON)
@@ -835,7 +843,10 @@ void HandleInputChooseTarget(void)
         DoBounceEffect(gActiveBattler, BOUNCE_HEALTHBOX, 7, 1);
         DoBounceEffect(gActiveBattler, BOUNCE_MON, 7, 1);
         EndBounceEffect(gMultiUsePlayerCursor, BOUNCE_HEALTHBOX);
+
+		ReloadMoveNamesIfNecessary();
 		TryLoadMegaTriggers();
+		TryLoadZTrigger();
     }
     else if (gMain.newKeys & (DPAD_LEFT | DPAD_UP))
     {
@@ -1047,6 +1058,8 @@ u8 TrySetCantSelectMoveBattleScript(void)
 void PlayerHandleChooseAction(void)
 {
     int i;
+	
+	gNewBS->ZMoveData->toBeUsed[gActiveBattler] = FALSE;
 	
 	u16 itemId = gBattleBufferA[gActiveBattler][2] | (gBattleBufferA[gActiveBattler][3] << 8);
 
