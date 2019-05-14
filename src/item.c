@@ -602,7 +602,7 @@ void SortBerriesOrTMHMs(struct BagPocket* bagPocket)
 
 
 
-CheckTmHmInFront(u16 item)
+bool8 CheckTmHmInFront(u16 item)
 {
 	#ifdef TMS_BEFORE_HMS
 	if (TMIdFromItemId(item) > NUM_TMS)
