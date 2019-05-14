@@ -23,6 +23,7 @@ static s8 CompareItemsAlphabetically(u16 item1, u16 item2);
 static s8 CompareItemsByType(u16 item1, u16 item2);
 static void MergeSort(struct ItemSlot* array, u32 low, u32 high, s8 (*comparator)(u16, u16));
 static void Merge(struct ItemSlot* arr, u32 l, u32 m, u32 r, s8 (*comparator)(u16, u16));
+u16 GetItemIdFromTmId(u8 tmId);
 
 //General Utility Functions
 u16 SanitizeItemId(u16 itemId)
@@ -151,6 +152,19 @@ u32 CanMonLearnTMHM(struct Pokemon* mon, u8 tm)
 		return 0;
 }
 
+
+u16 GetItemIdFromTmId(u8 tmId)
+{
+	for (u8 i = 0; i < sizeof(gItems); ++i)
+	{
+		if (ItemId_GetMystery2Id(gItems[i].itemId) == tmId)
+			return gItems[i].itemId;		
+	}
+	return 0;
+}
+
+
+
 // item ID to Tm number to Move ID
 //		use secondary ID for tm indices if expanded
 u16 ItemIdToBattleMoveId(u16 item)
@@ -173,11 +187,12 @@ u16 RefineTmOrdering(void)
 void StringAppendFullMoveName(u8* dst, u8* src)
 {
 	s8 i;
+	
 	if (NUM_HMS >= 10)
 		i = -2;
 	else
 		i = -1;
-
+	
     while (i < MOVE_NAME_LENGTH)
 	{
 		dst++;
@@ -224,7 +239,7 @@ void LoadTmHmName(u8 *dst, u16 itemId)
 		StringAppendFullMoveName(&gStringVar4[0], gMoveNames[ItemIdToBattleMoveId(itemId)]);
 	else
 		StringAppend(&gStringVar4[0], gMoveNames[ItemIdToBattleMoveId(itemId)]);
-
+	
 	StringCopy(dst, &gStringVar4[0]);
 }
 
@@ -280,10 +295,57 @@ bool8 CheckIsHmMove(u16 move)
 			if (move == gTMHMMoves[i])
 				return TRUE;
 		}
-
 		return FALSE;
 	#endif
 }
+
+
+bool8 CheckTmHmInFront(u16 item)
+{
+	#ifdef TMS_BEFORE_HMS
+	if (TMIdFromItemId(item) > NUM_TMS)
+		return TRUE;
+	#else
+	if (TMIdFromItemId(item) < NUM_TMS)
+		return TRUE;
+	#endif
+	return FALSE;	
+}
+
+
+u8 CheckDiscIsTmHm(struct Sprite* disc, u16 itemId)
+{
+	#ifdef EXPANDED_TMSHMS
+	if (TMIdFromItemId(itemId) >= NUM_TMS)
+		StartSpriteAnim(disc, 1);
+	else
+		StartSpriteAnim(disc, 0);
+	#else
+	if (itemId <= ITEM_TM50)
+		StartSpriteAnim(disc, 0);
+	else
+		StartSpriteAnim(disc, 1);
+	#endif
+	
+	return ItemId_GetMystery2Id(itemId);
+}
+
+
+u8 TmHMDiscPosition(unusedArg struct Sprite* disc, u8 tmId)
+{	
+	u8 num;
+	if (tmId <= NUM_TMS)
+		num = tmId + 8;
+	else
+		num = tmId - NUM_TMS;
+	
+	#ifdef EXPANDED_TMSHMS
+		num /= 2;
+	#endif
+	
+	return num;
+}
+
 
 
 // Premier Ball Bonus
@@ -600,19 +662,6 @@ void SortBerriesOrTMHMs(struct BagPocket* bagPocket)
 	MergeSort(bagPocket->itemSlots, 0, itemAmount - 1, func);
 }
 
-
-
-bool8 CheckTmHmInFront(u16 item)
-{
-	#ifdef TMS_BEFORE_HMS
-	if (TMIdFromItemId(item) > NUM_TMS)
-		return TRUE;
-	#else
-	if (TMIdFromItemId(item) < NUM_TMS)
-		return TRUE;
-	#endif
-	return FALSE;	
-}
 
 
 /*

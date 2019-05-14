@@ -142,19 +142,52 @@ SkipInternal:
 	ldr r0, =(0x0809A66A +1)
 	bx r0
 
-/*
-	push {r3-r7}
-	bl RefineTmOrdering
-	pop {r3-r7}
-	mov r6, r0
-	ldr r0, [r5]
-	lsl r1, r3, #0x2
-	add r2, r1, r0
-	ldrh r0, [r2]
-	ldr r7, =(0x0809A60C+1)
-	bx r7	
-*/
-
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ TM/HM Expansion - Disc Image Loader
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ 081336BC via r0
+.align 2
+.pool
+FixTmHmDiscLoader:
+	mov r0, r4	@sprite* disc
+	mov r1, r6	@ item id
+	bl CheckDiscIsTmHm
+	mov r5, r0	@tm Id
+	ldr r0, =(0x081336C4 +1)
+	bx r0
+	
+@ 08133854 via r0
+.align 2
+.pool
+FixTmHmDiscLoader2:
+	ldrh r1, [r5, #0x2e]	@ item id
+	mov r0, r5
+	bl CheckDiscIsTmHm
+	strh r0, [r5, #0x2e]	@ tm id
+	ldr r1, =(0x08133868 +1)
+	bx r1
+	
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ TM/HM Expansion - Disc Position
+@ 08133798
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.align 2
+.pool
+FixTmHmDiscPos:
+	cmp r4, #0xFF
+	beq EndOfCase
+	mov r1, r4	@tm id
+	bl TmHMDiscPosition
+	ldr r4, =(0x081337B4 +1)
+	bx r4	
+	
+EndOfCase:
+	mov r6, #27
+	mov r1, #54
+	ldr r0, =(0x081337A0 +1)
+	bx r0
+	
+	
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Evolution Methods - Remove Evo Item
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

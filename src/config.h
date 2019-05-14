@@ -88,12 +88,13 @@ enum
 #define VAR_HEALING_YPOS 0x5032 //0x405C in JPAN's Engine
 
 //Expanded TMs/HMs Options
-#define EXPANDED_TMSHMS  //Comment this out if you want to keep 50 tms/8 hms
-#define NUM_TMS 51
-#define NUM_HMS 9
+//#define EXPANDED_TMSHMS  //Comment this out if you want to keep 50 tms/8 hms
+#define NUM_TMS 50
+#define NUM_HMS 8
 #define NUM_TMSHMS NUM_TMS + NUM_HMS //This must always be defined
 //#define TMS_BEFORE_HMS  //Uncomment this if you want the HMs to appear after the TMs in your bag
 //#define DELETABLE_HMS		//Uncomment this if you want HMs to be deletable without the Move Deleter
+//#define REUSABLE_TMS	
 
 //General Options
 #define TIME_MORNING_START 4		//4:00 AM -  4:00
