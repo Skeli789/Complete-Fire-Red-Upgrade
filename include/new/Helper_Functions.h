@@ -14,6 +14,7 @@ bool8 CheckTableForMoveEffect(move_t move, const u8 table[]);
 bool8 CheckTableForSpecialMoveEffect(u8 effect, const u8 table[]);
 bool8 CheckTableForAbility(ability_t, const u8 table[]);
 bool8 CheckTableForSpecies(u16 species, const u16 table[]);
+bool8 CheckTableForItem(u16 item, const u16 table[]);
 ability_t BanksAbility(bank_t);
 bank_t GetPartnerBank(bank_t);
 bank_t GetFoeBank(bank_t);

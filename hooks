@@ -121,7 +121,12 @@ CheckForTrainersWantingBattle 8081B30 0
 IsRunningDisallowedByMetatile 80BD4B8 1
 
 ##Party Menu Hooks
+DisplayPartyPokemonSelectForBattle 811F388 1
 CursorCb_Summary 8122D4C 1
+CursorCb_NoEntry 8124278 1
+LoadMaxNumPokemonChooseBattleTowerStringHook 8124184 0
+CursorCb_Enter 8124154 1
+IsMonAllowedInBattleTower 8127550 1
 
 ##Battle Animation Hooks
 UpdateOamPriorityInAllHealthboxes 804828C 1

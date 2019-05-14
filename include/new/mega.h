@@ -19,6 +19,8 @@ const u8* GetTrainerName(u8 bank);
 void TryLoadIndicatorForEachBank(void);
 void TryLoadMegaTriggers(void);
 void DestroyMegaTriggers(void);
+bool8 IsIgnoredTriggerColour(u16 colour);
+u16 LightUpMegaSymbol(u16 clra);
 
 //Functions Hooked In
 bool8 HasMegaSymbol(u8 bank);
@@ -45,6 +47,7 @@ enum MegaGraphicsTags
 	GFX_TAG_ULTRA_INDICATOR,
 	GFX_TAG_MEGA_TRIGGER,
 	GFX_TAG_ULTRA_TRIGGER,
+	GFX_TAG_Z_TRIGGER,
 };
 
 enum

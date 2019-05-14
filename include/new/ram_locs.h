@@ -112,7 +112,7 @@ struct Clock
 /*u8*/	#define gQuestLogMode (*((u8*) 0x203ADFA))
 		//#define gPartyMenuView ((struct PartyMenuViewing*) 0x203B09C)
 		#define gBrmData ((struct BrmData*)  ((u32*) 0x203b0a0))
-		#define gSelectedOrderFromParty ((u8*) 0x203B0D4)
+		//#define gSelectedOrderFromParty ((u8*) 0x203B0D4)
 		#define gSummaryScreenData ((struct MonSummaryData*) *((u32*) 0x203B140))
 		#define gCurrentPartyIndex (*(u8*) 0x203B16C)
 
@@ -172,6 +172,7 @@ struct Clock
 
 #define gLastUsedRepel (*(u8*) 0x203C748)
 //#define sBagItemAmounts ((u16*) 0x203C74A)
-//#define [FILL_IN_NEXT] //0x203C750
+#define gSelectedOrderFromParty ((u8*) 0x203C750)
+//#define [FILL_IN_NEXT] //0x203C756
 //extern struct CompressedPokemon gBox20[30] //0x203CA00
 //extern struct CompressedPokemon gBox21[30] //0x203D0CC

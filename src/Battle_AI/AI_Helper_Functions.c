@@ -398,6 +398,7 @@ bool8 HasProtectionMoveInMoveset(u8 bank, bool8 AllKinds) {
 u16 ShouldAIUseZMove(u8 bank, u8 moveIndex, u16 move) {
 	int i;
 	bool8 isSpecialZCrystal = FALSE;
+	pokemon_t* mon = GetBankPartyData(bank);
 	
 	if (move == 0)
 		move = gBattleMons[bank].moves[moveIndex];
@@ -409,8 +410,8 @@ u16 ShouldAIUseZMove(u8 bank, u8 moveIndex, u16 move) {
 		return FALSE;
 	}
 	
-	if (IsZCrystal(gBattleMons[bank].item)
-	||  ITEM(bank) == ITEM_ULTRA_NECROZIUM_Z) //The only "Mega Stone" that let's you use a Z-Move
+	if (IsZCrystal(mon->item)
+	||  mon->item == ITEM_ULTRA_NECROZIUM_Z) //The only "Mega Stone" that let's you use a Z-Move
 	{
 		for (i = 0; gSpecialZMoveTable[i].species != 0xFFFF; ++i) 
 		{
@@ -425,7 +426,7 @@ u16 ShouldAIUseZMove(u8 bank, u8 moveIndex, u16 move) {
 			}
 		}
 		
-		if (gBattleMoves[move].type == ITEM_QUALITY(bank) && !isSpecialZCrystal) {
+		if (gBattleMoves[move].type == ItemId_GetHoldEffectParam(mon->item) && !isSpecialZCrystal) {
 			if (SPLIT(move) == SPLIT_STATUS)
 				return 0xFFFF;
 			else if (gBattleMoves[move].type < TYPE_FIRE)
@@ -434,6 +435,7 @@ u16 ShouldAIUseZMove(u8 bank, u8 moveIndex, u16 move) {
 				return MOVE_BREAKNECK_BLITZ_P + ((gBattleMoves[move].type - 1) * 2) + CalcMoveSplit(bank, move);
 		}
 	}
+
 	return FALSE;
 }
 

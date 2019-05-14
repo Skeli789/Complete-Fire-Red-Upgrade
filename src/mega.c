@@ -398,10 +398,8 @@ extern u16 Mega_TriggerPal[];
 
 extern void HandleInputChooseMove(void);
 
-static bool8 IsIgnoredTriggerColour(u16 colour);
 static struct Sprite* GetHealthboxObjId(u8 bank) ;
 static u16 ConvertColorToGrayscale(u16 colour);
-static u16 LightUpMegaSymbol(u16 clra);
 static void MegaTriggerCallback(struct Sprite* self);
 static void MegaIndicatorCallback(struct Sprite* self);
 void LoadMegaGraphics(u8 state);
@@ -501,7 +499,7 @@ static const u16 IgnoredColours[] =
 };
 
 /* Easy match function */
-static bool8 IsIgnoredTriggerColour(u16 colour) 
+bool8 IsIgnoredTriggerColour(u16 colour) 
 {
 	for (u32 i = 0; i < ARRAY_COUNT(IgnoredColours); ++i) 
 	{
@@ -526,7 +524,7 @@ static u16 ConvertColorToGrayscale(u16 colour)
 	return RGB2(gray, gray, gray);
 }
 
-static u16 LightUpMegaSymbol(u16 clra) 
+u16 LightUpMegaSymbol(u16 clra) 
 {
 	u16 clrb = 0x7FFF;
 	
@@ -622,7 +620,7 @@ static void MegaTriggerCallback(struct Sprite* self)
 	else if (gBattleBankFunc[TRIGGER_BANK] != (0x08032C90 | 1)  //PlayerHandleChooseMove
 	      && gBattleBankFunc[TRIGGER_BANK] != (0x08032C4C | 1)) //HandleChooseMoveAfterDma3
 	{
-		if (self->data[3] < 16)
+		if (self->data[3] < 24)
 			self->data[3] += 2;
 		else 
 		{
@@ -886,7 +884,7 @@ void TryLoadMegaTriggers(void)
 {
 	u8 objid;
 	
-	if (gBattleTypeFlags & BATTLE_TYPE_SAFARI)
+	if (gBattleTypeFlags & (BATTLE_TYPE_SAFARI | BATTLE_TYPE_POKE_DUDE | BATTLE_TYPE_OLD_MAN))
 		return;
 	
 	LoadSpritePalette(&MegaTriggerPalette);
@@ -902,7 +900,6 @@ void TryLoadMegaTriggers(void)
 	gSprites[objid].data[3] = 16;
 	gSprites[objid].pos1.x = -32;
 	gSprites[objid].data[4] = gActiveBattler;
-
 }
 
 void DestroyMegaTriggers(void)

@@ -1,7 +1,9 @@
 #include "defines.h"
 #include "../include/party_menu.h"
+#include "../include/text.h"
 #include "../include/constants/songs.h"
 
+#include "../include/new/build_pokemon.h"
 #include "../include/new/helper_functions.h"
 #include "../include/new/party_menu.h"
 #include "../include/new/Vanilla_functions.h"
@@ -11,28 +13,10 @@
 #define MENU_LEFT -2
 #define MENU_RIGHT 2
 
-void SetNewPartySelectTarget2(s8* highlightedMon, s8 movementDir);
-void CursorCb_Summary(u8 taskId);
-void openSummary(u8 taskId);
-
-/*
-struct PartyMenuViewing
-{
-    TaskFunc unk0;
-    MainCallback exitCallback;
-    u32 unk8_0:1;
-    u32 lastViewed:3; //The last mon you selected before going back to the left
-    u32 unk8_2:7;
-    u32 unk9_0:7;
-    u32 unkA_0:14;
-    u8 unkC[3]; //unkC[1] is highlighted mon
-    u8 unkF[8];
-    u8 unk17;
-    u16 palBuffer[0xB0];
-    u8 filler[0xA0];
-    s16 data[16];
-};
-*/
+//This file's functions:
+static void OpenSummary(u8 taskId);
+static void DisplayPartyPokemonSelectDataSpecial(u8 slot, u8 stringID);
+static void DisplayPartyPokemonPriorityText(u8 stringID, struct Struct203B0B4* ptr, u8 c);
 
 //*highlightedMon = 0 is Player's Pokemon out
 //*highlightedMon = 1 is Link Partner's Pokemon out
@@ -325,15 +309,15 @@ void SetNewPartySelectTarget2(s8* highlightedMon, s8 movementDir)
 void CursorCb_Summary(u8 taskId)
 {
     PlaySE(SE_SELECT);
-    ((u32*) gPartyMenuView->summaryCallback)[1] = (u32) sub_8122D78; //sub_81B3828 in Emerald
+    ((u32*) gPartyMenuView->unk0)[1] = (u32) sub_8122D78; //sub_81B3828 in Emerald
 
 	if (gMain.inBattle != 0)
-		openSummary(taskId);
+		OpenSummary(taskId);
 	else
 		sub_811FA78(taskId); //sub_81B12C0 in Emerald
 }
 
-void openSummary(u8 taskId)
+static void OpenSummary(u8 taskId)
 {
 	sub_811FA78(taskId); //Replace this
 }
@@ -368,3 +352,234 @@ u8 ChangeSummaryScreenMon(u8 delta)
 
     return result;
 };
+
+//Battle Tower Selection Updates//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+struct Struct203B0A0
+{
+    MainCallback exitCallback;
+    TaskFunc unk4;
+	u8 unk8;
+    //u8 unk8_0:4;
+    //u8 mode:2;
+    //u8 unk8_2:2;
+    s8 highlightedMon;
+    s8 unkA;
+    u8 unkB;
+    u16 unkC;
+    s16 unkE;
+    s16 unk10;
+};
+
+#define gUnknown_0203B0A0 ((struct Struct203B0A0*) 0x203B0A0) //gUnknown_0203CEC8 in Emerald
+#define gUnknown_0203B0B4 ((struct Struct203B0B4*) *((u32*) 0x203B0B4)) //gUnknown_0203CEDC in Emerald
+
+extern u8 gOtherText_NoMoreOnePoke[];
+#define gOtherText_NoMoreTwoPoke (u8*) 0x8416B3E
+#define gOtherText_NoMoreThreePoke (u8*) 0x8416B16
+extern u8 gOtherText_NoMoreFourPoke[];
+extern u8 gOtherText_NoMoreFivePoke[];
+
+extern u8 gText_First[];
+extern u8 gText_Second[];
+extern u8 gText_Third[];
+extern u8 gText_Fourth[];
+extern u8 gText_Fifth[];
+extern u8 gText_Sixth[];
+
+extern const u8 gUnknown_08459FFC[][3];
+
+static const u8* sChoosePokemonMaxStrings[PARTY_SIZE - 1] =
+{
+	gOtherText_NoMoreOnePoke,
+	gOtherText_NoMoreTwoPoke,
+	gOtherText_NoMoreThreePoke,
+	gOtherText_NoMoreFourPoke,
+	gOtherText_NoMoreFivePoke,
+};
+
+static const u8* const sOrderStrings[PARTY_SIZE] =
+{
+	gText_First,
+	gText_Second,
+	gText_Third,
+	gText_Fourth,
+	gText_Fifth,
+	gText_Sixth,
+};
+
+u8 ChoosePokemon_LoadMaxPKMNStr(const u8** strPtr, bool8 loadString)
+{
+	u8 max = MathMin(MathMax(1, VarGet(BATTLE_TOWER_POKE_NUM)), 6);
+
+	if (FlagGet(BATTLE_TOWER_FLAG))
+	{
+		if (loadString)
+		{
+			if (max < 6)
+				*strPtr = sChoosePokemonMaxStrings[max - 1];
+			else
+				*strPtr = sChoosePokemonMaxStrings[0]; //Can't select more than 6 anyways
+		}
+	}
+	else
+	{
+		max = 3;
+		
+		if (loadString)
+			*strPtr = gOtherText_NoMoreThreePoke;
+	}
+	
+	return max;
+}
+
+void CursorCb_Enter(u8 taskId)
+{
+	u8 max;
+	const u8* string = NULL;
+    int i;
+
+	if ((gUnknown_0203B0A0->unk8 & 0xC0) == 0x80)
+	{
+		max = 2;
+		string = sChoosePokemonMaxStrings[max - 1];
+	}
+	else
+		max = ChoosePokemon_LoadMaxPKMNStr(&string, TRUE);
+	
+    sub_8121CE4(&gPartyMenuView->unk0[0xC]);
+    sub_8121CE4(&gPartyMenuView->unk0[0xD]);
+
+	bool8 eligibleIndices[PARTY_SIZE] = {FALSE};
+	for (i = 0; i < PARTY_SIZE; ++i)
+		eligibleIndices[i] = IsMonAllowedInBattleTower(&gPlayerParty[i]); //Record who's currently eligible
+
+    for (i = 0; i < max; ++i)
+    {
+        if (gSelectedOrderFromParty[i] == 0)
+        {
+            PlaySE(SE_SELECT);
+            gSelectedOrderFromParty[i] = gUnknown_0203B0A0->highlightedMon + 1;
+            DisplayPartyPokemonPriorityText(i, &gUnknown_0203B0B4[gUnknown_0203B0A0->highlightedMon], 1);
+            
+			if (i == (max - 1))
+                sub_8124258();
+			
+            display_pokemon_menu_message(0);
+            gTasks[taskId].func = sub_811FB28;
+			
+			for (i = 0; i < PARTY_SIZE; ++i) //Reload everyone else's text if needed
+			{	
+				if (eligibleIndices[i] //Was eligible before the selection
+				&& !IsMonAllowedInBattleTower(&gPlayerParty[i])) //Mon is now ineligible
+					DisplayPartyPokemonSelectData(i, 6);  //Reload eligibility text
+			}
+
+            return;
+        }
+    }
+    
+	PlaySE(SE_HAZURE);
+	DisplayPartyMenuMsgBox(string, 1);
+    gTasks[taskId].func = sub_81203B8;
+}
+
+void CursorCb_NoEntry(u8 taskId)
+{
+    int i, j;
+	u8 max = ChoosePokemon_LoadMaxPKMNStr(NULL, FALSE);
+
+    PlaySE(SE_SELECT);
+    sub_8121CE4(&gPartyMenuView->unk0[0xC]);
+    sub_8121CE4(&gPartyMenuView->unk0[0xD]);
+    
+	bool8 eligibleIndices[PARTY_SIZE] = {FALSE};
+	for (i = 0; i < PARTY_SIZE; ++i)
+		eligibleIndices[i] = IsMonAllowedInBattleTower(&gPlayerParty[i]); //Record who's currently eligible
+	
+	for (i = 0; i < max; ++i) //Remove chosen mon
+    {
+        if (gSelectedOrderFromParty[i] == gUnknown_0203B0A0->highlightedMon + 1)
+        {
+            for (j = i; j < (max - 1); ++j)
+                gSelectedOrderFromParty[j] = gSelectedOrderFromParty[j + 1];
+
+            gSelectedOrderFromParty[j] = 0;
+            break;
+        }
+    }
+
+    DisplayPartyPokemonOtherText(1, &gUnknown_0203B0B4[gUnknown_0203B0A0->highlightedMon], 1);
+    for (i = 0; i < (max - 1); ++i) //Reload the order text
+    {
+        if (gSelectedOrderFromParty[i] != 0)
+            DisplayPartyPokemonPriorityText(i, &gUnknown_0203B0B4[gSelectedOrderFromParty[i] - 1], 1);
+    }
+	
+	for (i = 0; i < PARTY_SIZE; ++i) //Reload everyone else's text if needed
+	{	
+		if (!eligibleIndices[i] //Wasn't eligible before the cancel
+		&& IsMonAllowedInBattleTower(&gPlayerParty[i])) //Mon is now eligible
+			DisplayPartyPokemonSelectData(i, 1);  //Reload eligibility text
+	}
+
+    display_pokemon_menu_message(0);
+    gTasks[taskId].func = sub_811FB28;
+}
+
+void DisplayPartyPokemonSelectForBattle(u8 slot)
+{
+	u8 max;
+    struct Pokemon *mon = &gPlayerParty[slot];
+    u8* ptr = gSelectedOrderFromParty;
+	
+	if ((gUnknown_0203B0A0->unk8 & 0xC0) == 0x80)
+		max = 2;
+	else
+		max = ChoosePokemon_LoadMaxPKMNStr(NULL, FALSE);
+
+    if (!IsMonAllowedInBattleTower(mon))
+    {
+        DisplayPartyPokemonSelectData(slot, 6);
+        return;
+    }
+    else
+    {
+        for (int i = 0; i < max; i++)
+        {
+            if (ptr[i] != 0 && (ptr[i] - 1) == slot)
+            {
+                DisplayPartyPokemonSelectDataSpecial(slot, i);
+                return;
+            }
+        }
+        DisplayPartyPokemonSelectData(slot, 1);
+    }
+}
+
+static void DisplayPartyPokemonSelectDataSpecial(u8 slot, u8 stringID)
+{
+    struct Pokemon* mon = &gPlayerParty[slot];
+
+    gUnknown_0203B0B4[slot].unk0->unk0(gUnknown_0203B0B4[slot].windowId, 0, 0, 0, 0, 1);
+    DisplayPartyPokemonNickname(mon, &gUnknown_0203B0B4[slot], 0);
+    if (!GetMonData(mon, MON_DATA_IS_EGG, NULL))
+    {
+        DisplayPartyPokemonLevelCheck(mon, &gUnknown_0203B0B4[slot], 0);
+        DisplayPartyPokemonGenderNidoranCheck(mon, &gUnknown_0203B0B4[slot], 0);
+    }
+
+    DisplayPartyPokemonPriorityText(stringID, &gUnknown_0203B0B4[slot], 0);
+}
+
+static void DisplayPartyPokemonPriorityText(u8 stringID, struct Struct203B0B4* ptr, u8 c)
+{
+    if (c != 0)
+    {
+        int unk = ((ptr->unk0->unk1C % 8) + ptr->unk0->unk1E + 7) / 8;
+        int unk2 = ((ptr->unk0->unk1D % 8) + ptr->unk0->unk1F + 7) / 8;
+        ptr->unk0->unk0(ptr->windowId, ptr->unk0->unk1C >> 3, ptr->unk0->unk1D >> 3, unk, unk2, 1);
+    }
+    if (c != 2)
+        AddTextPrinterParameterized3(ptr->windowId, 1, ptr->unk0->unk1C, ptr->unk0->unk1D, gUnknown_08459FFC[0], 0, sOrderStrings[stringID]);
+}

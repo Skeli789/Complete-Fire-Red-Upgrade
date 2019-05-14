@@ -27,3 +27,32 @@ The repellent's effect wore off!\nWould you like to use another one?
 
 #org @gText_RepelWoreOff
 The repellent's effect wore off!
+
+//Battle Tower Pokemon Select
+
+#org @gOtherText_NoMoreOnePoke
+No more than one Pok\emon\nmay enter.[FC][09]
+
+#org @gOtherText_NoMoreFourPoke
+No more than four Pok\emon\nmay enter.[FC][09]
+
+#org @gOtherText_NoMoreFivePoke
+No more than five Pok\emon\nmay enter.[FC][09]
+
+#org @gText_First
+FIRST
+
+#org @gText_Second
+SECOND
+
+#org @gText_Third
+THIRD
+
+#org @gText_Fourth
+FOURTH
+
+#org @gText_Fifth
+FIFTH
+
+#org @gText_Sixth
+SIXTH
