@@ -318,6 +318,34 @@ ReturnPrintForfeitBattleTower:
 	bx r0
 
 .pool
+@0x811F3C8 with r2
+LoadMaxNumPokemonDisplaySelection:
+	and r0, r1
+	cmp r0, #0x80
+	bne LoadMaxNumPokemonDisplaySelectionMax
+	mov r3, #0x2
+	b LoadMaxNumPokemonDisplaySelectionReturn
+
+LoadMaxNumPokemonDisplaySelectionMax:
+	mov r1, #0x0
+	bl ChoosePokemon_LoadMaxPKMNStr
+	mov r3, r0
+
+LoadMaxNumPokemonDisplaySelectionReturn:
+	ldr r0, =0x811F3D2 | 1
+	bx r0
+
+.pool
+@0x8124184 with r0
+LoadMaxNumPokemonChooseBattleTowerStringHook:
+	mov r0, sp
+	mov r1, #0x1
+	bl ChoosePokemon_LoadMaxPKMNStr
+	mov r8, r0
+	ldr r0, =0x812418C | 1
+	bx r0
+
+.pool
 @0x805BA30 with r0
 AutoRunHook:
 	mov r0, #0x2 @B-Button

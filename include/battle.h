@@ -1256,26 +1256,6 @@ struct MonSpritesGfx
     void *field_17C;
 };
 
-typedef void (*TaskFunc)(u8 taskId);
-struct PartyMenuViewing
-{
-    TaskFunc summaryCallback;
-    MainCallback exitCallback;
-    u32 unk8_0:1;
-    u32 lastViewed:3; //The last mon you selected before going back to the left
-    u32 unk8_2:7;
-    u32 unk9_0:7;
-    u32 unkA_0:14;
-    u8 unkC[3]; //unkC[1] is highlighted mon
-    u8 unkF[8];
-    u8 unk17;
-    u16 palBuffer[0xB0];
-    u8 filler[0xA0];
-    s16 data[16];
-};
-
-#define gPartyMenuView ((struct PartyMenuViewing*) 0x203B09C) //extern struct PartyMenuViewing gPartyMenuView;
-
 enum EnduranceListings {ENUDRE_REG, ENDURE_STURDY, ENDURE_FOCUS_SASH};
 
 struct MegaData

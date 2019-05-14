@@ -36,7 +36,8 @@ static bool8 SpeciesAlreadyOnTeam(const u16 species, const u8 partySize, const s
 static bool8 ItemAlreadyOnTeam(const u16 item, const u8 partySize, const item_t* const itemArray);
 static bool8 MegastoneAlreadyOnTeam(const u16 item, const u8 partySize, const item_t* const itemArray);
 static bool8 ZCrystalAlreadyOnTeam(const u16 item, const u8 partySize, const item_t* const itemArray);
-static bool8 PokemonTierBan(const u16 species, const u16 item, const struct BattleTowerSpread* const spread, const pokemon_t* mon, const u8 checkFromLocationType);
+static bool8 PokemonTierBan(const u16 species, const u16 item, const struct BattleTowerSpread* const spread, const pokemon_t* const mon, const u8 checkFromLocationType);
+static u8 GetPartyIdFromPartyData(struct Pokemon* mon);
 static u8 GetHighestMonLevel(const pokemon_t* const party);
 
 #ifdef OPEN_WORLD_TRAINERS
@@ -130,9 +131,19 @@ void BuildTrainerPartySetup(void)
 		gBattleTypeFlags &= ~(BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_DOUBLE);
 }
 
+extern void SortItemsInBag(u8 pocket, u8 type);
 void sp067_GenerateRandomBattleTowerTeam(void)
 {
 	BuildFrontierParty(gPlayerParty, 0, TRUE, TRUE, B_SIDE_PLAYER);
+	
+	for (int i = 0; i < ITEMS_COUNT; ++i)
+	{
+		u8* name = ItemId_GetName(i);
+		if (name[0] != 0xAC && name[0] != 0xFF) //'?', ' '
+			AddBagItem(i, 1);
+	}
+	
+	SortItemsInBag(0, 0);
 }
 
 //Returns the number of Pokemon
@@ -697,26 +708,16 @@ static bool8 PokemonTierBan(const u16 species, const u16 item, const struct Batt
 
 	switch (tier) {
 		case BATTLE_TOWER_STANDARD:
-			for (i = 0; StandardSpeciesBanList[i] != SPECIES_TABLES_TERMIN; ++i) {
-				if (species == StandardSpeciesBanList[i])
-					return TRUE;
-			}
-			for (i = 0; StandardItemBanList[i] != ITEM_TABLES_TERMIN; ++i) {
-				if (item == StandardItemBanList[i])
-					return TRUE;
-			}
+			if (CheckTableForSpecies(species, StandardSpeciesBanList)
+			||  CheckTableForItem(item, StandardItemBanList))
+				return TRUE;
 			break;
 
 		case BATTLE_TOWER_OU:
 		//For OU, there's a species, item, ability, and move ban list
-			for (i = 0; OU_SpeciesBanList[i] != SPECIES_TABLES_TERMIN; ++i) {
-				if (species == OU_SpeciesBanList[i])
-					return TRUE;
-			}
-			for (i = 0; OU_ItemBanList[i] != ITEM_TABLES_TERMIN; ++i) {
-				if (item == OU_ItemBanList[i])
-					return TRUE;
-			}
+			if (CheckTableForSpecies(species, OU_SpeciesBanList)
+			||  CheckTableForItem(item, OU_ItemBanList))
+				return TRUE;
 
 			//Load correct ability and moves
 			switch (checkFromLocationType) {
@@ -768,16 +769,8 @@ static bool8 PokemonTierBan(const u16 species, const u16 item, const struct Batt
 			}
 			break;
 
-		case BATTLE_TOWER_LITTLE_CUP:	;
-			bool8 inSpeciesList = FALSE;
-
-			for (i = 0; LittleCup_SpeciesList[i] != SPECIES_TABLES_TERMIN; ++i) {
-				if (species == LittleCup_SpeciesList[i]) {
-					inSpeciesList = TRUE;
-					break;
-				}
-			}
-			if (!inSpeciesList)
+		case BATTLE_TOWER_LITTLE_CUP:
+			if (!CheckTableForSpecies(species, LittleCup_SpeciesList))
 				return TRUE; //Banned
 
 			if (checkFromLocationType == CHECK_BATTLE_TOWER_SPREADS)
@@ -795,7 +788,57 @@ static bool8 PokemonTierBan(const u16 species, const u16 item, const struct Batt
 			//To-Do
 			break;
 	}
+
 	return FALSE; //Not banned
+}
+
+bool8 IsMonAllowedInBattleTower(struct Pokemon* mon)
+{
+	if (FlagGet(BATTLE_TOWER_FLAG))
+	{
+		u16 species = mon->species;
+		u16 item = mon->item;
+
+		if (GetMonData(mon, MON_DATA_IS_EGG, NULL))
+			return FALSE;
+
+		if (PokemonTierBan(species, item, NULL, mon, CHECK_PARTY_OFFSET))
+			return FALSE;
+		
+		u8 tier = VarGet(BATTLE_TOWER_TIER);
+		if (tier != BATTLE_TOWER_FREE_FOR_ALL) //Free for all has no duplicate species or item restriction
+		{
+			u8 partySize = 0;
+			u8 partyId = GetPartyIdFromPartyData(mon);
+			u16 speciesArray[PARTY_SIZE] = {0};
+			u16 itemArray[PARTY_SIZE] = {0};
+			
+			for (int i = 0; gSelectedOrderFromParty[i] != 0 && i < 6; ++i, ++partySize)
+			{
+				if (gSelectedOrderFromParty[i] - 1 != partyId) //You can't ban yourself
+				{
+					speciesArray[i] = gPlayerParty[gSelectedOrderFromParty[i] - 1].species;
+					itemArray[i] = gPlayerParty[gSelectedOrderFromParty[i] - 1].item;
+				}
+			}
+			
+			if (SpeciesAlreadyOnTeam(mon->species, partySize, speciesArray)
+			|| (tier == BATTLE_TOWER_STANDARD && ItemAlreadyOnTeam(mon->item, partySize, itemArray)))
+				return FALSE;
+		}
+	}
+	else if (mon->hp == 0) //Regular multi battle probably
+		return FALSE;
+
+	return TRUE;
+}
+
+static u8 GetPartyIdFromPartyData(struct Pokemon* mon)
+{
+	u8 id;
+	for (id = 0; mon != gPlayerParty; --mon, ++id);
+	
+	return id;
 }
 
 static u8 GetHighestMonLevel(const pokemon_t* const party)

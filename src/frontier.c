@@ -1,10 +1,11 @@
 #include "defines.h"
 #include "defines_battle.h"
 #include "../include/event_data.h"
-#include "../include/new/helper_functions.h"
-#include "../include/new/frontier.h"
 #include "../include/random.h"
 #include "../include/script.h"
+
+#include "../include/new/helper_functions.h"
+#include "../include/new/frontier.h"
 
 extern u8* gMaleFrontierNamesTable[];
 extern u8* gFemaleFrontierNamesTable[];

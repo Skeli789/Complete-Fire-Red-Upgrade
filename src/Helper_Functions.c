@@ -51,6 +51,14 @@ bool8 CheckTableForSpecies(u16 species, const u16 table[]) {
 	return FALSE;
 }
 
+bool8 CheckTableForItem(u16 item, const u16 table[]) {
+	for (u32 i = 0; table[i] != ITEM_TABLES_TERMIN; ++i) {
+		if (item == table[i])
+			return TRUE;
+	}
+	return FALSE;
+}	
+
 ability_t BanksAbility(bank_t bank) {
 	if (gStatuses3[bank] & STATUS3_ABILITY_SUPPRESS)
 		return 0;

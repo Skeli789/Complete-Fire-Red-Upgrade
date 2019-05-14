@@ -11,6 +11,7 @@ sBattleIntroSlideFuncs = 0x83E7CD4;
 gUnownDistributionByChamber = 0x83CA71C;
 stepspeeds = 0x083A719C;
 stepspeed_seq_length = 0x083A71B0;
+gUnknown_08459FFC = 0x8459FFC;
 
 gMapHeader = 0x2036DFC;
 gWeatherPtr = 0x2037F34;
@@ -820,10 +821,21 @@ SetSafariZoneFlag = 0x080A0EA4 | 1;
 ResetSafariZoneFlag = 0x080A0EB4 | 1;
 
 /*Party Menu Functions*/
+DisplayPartyPokemonSelectData = 0x811F2FC | 1; 
 sub_811FA78 = 0x811FA78 | 1;
+sub_811FB28 = 0x811FB28 | 1;
 sub_812029C = 0x812029C | 1;
+DisplayPartyMenuMsgBox = 0x81202F8 | 1;
+sub_81203B8 = 0x81203B8 | 1;
+DisplayPartyPokemonNickname = 0x8121738 | 1;
+DisplayPartyPokemonLevelCheck = 0x8121790 | 1;
+DisplayPartyPokemonGenderNidoranCheck = 0x8121854 | 1;
 pokemon_ailments_get_primary = 0x812085C | 1;
+DisplayPartyPokemonOtherText = 0x8121C70 | 1;
+sub_8121CE4 = 0x8121CE4 | 1;
+display_pokemon_menu_message = 0x8121D0C | 1;
 sub_8122D78 = 0x8122D78 | 1;
+sub_8124258 = 0x8124258 | 1;
 
 /*Window Functions*/
 InitWindows = 0x8003B24 | 1;

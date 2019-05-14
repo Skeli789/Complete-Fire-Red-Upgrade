@@ -77,12 +77,6 @@ enum BattleTowerGenders
 	BATTLE_TOWER_FEMALE,
 };
 
-enum TierBanCheckingType 
-{
-	CHECK_BATTLE_TOWER_SPREADS,
-	CHECK_PARTY_OFFSET,
-};
-
 enum BattlerIds
 {
 	FRONTIER_TRAINER_A,
