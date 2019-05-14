@@ -75,14 +75,18 @@ bool8 IsBerry(u16 item)
 
 u8 TMIdFromItemId(u16 itemId)
 {
+	#ifdef EXPANDED_TMSHMS
 	u8 tmNum = ItemId_GetMystery2Id(itemId);
-
+	
 	if (itemId == ITEM_NONE)
 		return 255; //So blank items get put at the end
 	else if (tmNum == 0)
 		return (itemId - ITEM_TM01);
 	else
 		return (tmNum-1);
+	#else
+		return itemId - ITEM_TM01;
+	#endif
 	
 	/*
 	if (itemId == ITEM_NONE)
@@ -208,13 +212,18 @@ void StringAppendFullMoveName(u8* dst, u8* src)
 
 void LoadTmHmName(u8 *dst, u16 itemId)
 {
-	u16 tmNum = ItemId_GetMystery2Id(itemId);
+	#ifdef EXPANDED_TMSHMS
+	u8 tmNum = ItemId_GetMystery2Id(itemId);
+	#else
+	u8 tmNum = itemId - ITEM_TM01;
+	#endif
+	
 	StringCopy(&gStringVar4[0], (void*) 0x84166FF);
 
 	if (tmNum > NUM_TMS)
 	{
 		// HM
-		u16 hmNum = tmNum - NUM_TMS;
+		u8 hmNum = tmNum - NUM_TMS;
 		StringAppend(&gStringVar4[0], (void*) 0x8463178);
 		StringAppend(&gStringVar4[0], (void*) 0x8416226);
 		if (NUM_HMS < 10)
@@ -262,7 +271,7 @@ u8 CanMonLearnTMTutor(struct Pokemon* mon, u16 item, u8 tutor)
 	if (GetPocketByItemId(item) == POCKET_TM_HM)
     {
         //if (CanMonLearnTMHM(mon, item - ITEM_TM01_FOCUS_PUNCH))
-		if (CanMonLearnTMHM(mon, ItemId_GetMystery2Id(item)))
+		if (CanMonLearnTMHM(mon, TMIdFromItemId(item)))
             move = ItemIdToBattleMoveId(item);
         else
             return CANNOT_LEARN_MOVE;
