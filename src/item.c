@@ -297,6 +297,7 @@ u8 CanMonLearnTMTutor(struct Pokemon* mon, u16 item, u8 tutor)
 bool8 CheckIsHmMove(u16 move)
 {
 	#ifdef DELETABLE_HMS
+		++move; //So compiler doesn't complain
 		return FALSE;
 	#else
 		for (u16 i = NUM_TMS; i < NUM_TMSHMS; ++i)
