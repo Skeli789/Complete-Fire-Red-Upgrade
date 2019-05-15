@@ -9,6 +9,7 @@
 #include "../include/constants/species.h"
 
 #include "../include/new/catching.h"
+#include "../include/new/item.h"
 
 #define sHatchedEggFatherMoves ((u16*) 0x202455C)
 #define sHatchedEggMotherMoves ((u16*)0x2024580)

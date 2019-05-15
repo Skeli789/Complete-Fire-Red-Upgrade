@@ -357,12 +357,12 @@ u8 TmHMDiscPosition(unusedArg struct Sprite* disc, u8 tmId)
 }
 
 
-u8 FixTmHmType(u8 type)
+const void* FixTmHmDiscPalette(u8 type)
 {
 	if (type == TYPE_FAIRY)
-		return TYPE_PSYCHIC;
+		return &Fairy_TM_DiskPal[0];
 	else
-		return type;
+		return 0;
 }
 
 

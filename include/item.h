@@ -1,6 +1,7 @@
 #ifndef ITEM_H
 #define ITEM_H
 
+
 typedef void (*ItemUseFunc)(u8);
 
 struct Item
