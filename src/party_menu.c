@@ -2,6 +2,7 @@
 #include "../include/party_menu.h"
 #include "../include/text.h"
 #include "../include/constants/songs.h"
+#include "../include/window.h"
 
 #include "../include/new/build_pokemon.h"
 #include "../include/new/helper_functions.h"
@@ -387,7 +388,7 @@ extern u8 gText_Fourth[];
 extern u8 gText_Fifth[];
 extern u8 gText_Sixth[];
 
-extern const u8 gUnknown_08459FFC[][3];
+extern const struct TextColor gUnknown_08459FFC[];
 
 static const u8* sChoosePokemonMaxStrings[PARTY_SIZE - 1] =
 {
@@ -581,5 +582,5 @@ static void DisplayPartyPokemonPriorityText(u8 stringID, struct Struct203B0B4* p
         ptr->unk0->unk0(ptr->windowId, ptr->unk0->unk1C >> 3, ptr->unk0->unk1D >> 3, unk, unk2, 1);
     }
     if (c != 2)
-        AddTextPrinterParameterized3(ptr->windowId, 1, ptr->unk0->unk1C, ptr->unk0->unk1D, gUnknown_08459FFC[0], 0, sOrderStrings[stringID]);
+        WindowPrint(ptr->windowId, 1, ptr->unk0->unk1C, ptr->unk0->unk1D, (void*) 0x8459FFC, 0, sOrderStrings[stringID]);
 }

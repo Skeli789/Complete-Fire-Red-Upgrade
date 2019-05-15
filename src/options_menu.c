@@ -322,12 +322,12 @@ static void DrawMoreOptionsMenuTexts(void)
 static void DrawChoices(u8 taskId)
 {
 	s16* choices = gTasks[taskId].data;
-    AddTextPrinterParameterized3(WIN_OPTIONS, 2, 0x82, (0 * 16) + 1, (u8*) 0x83CC363, TEXT_SPEED_FF, sDifficultyOptionNames[choices[TD_DIFFICULTY]]);
-	AddTextPrinterParameterized3(WIN_OPTIONS, 2, 0x82, (1 * 16) + 1, (u8*) 0x83CC363, TEXT_SPEED_FF, sStoryModeNames[choices[TD_STORYMODE]]);
-	AddTextPrinterParameterized3(WIN_OPTIONS, 2, 0x82, (2 * 16) + 1, (u8*) 0x83CC363, TEXT_SPEED_FF, sOnOff[choices[TD_LEVELLIMIT]]);
-	AddTextPrinterParameterized3(WIN_OPTIONS, 2, 0x82, (3 * 16) + 1, (u8*) 0x83CC363, TEXT_SPEED_FF, sOnOff[choices[TD_FLAGTOTEST]]);
-	AddTextPrinterParameterized3(WIN_OPTIONS, 2, 0x82, (4 * 16) + 1, (u8*) 0x83CC363, TEXT_SPEED_FF, sOnOff[choices[TD_POKEDEXGIVEN]]);
-	AddTextPrinterParameterized3(WIN_OPTIONS, 2, 0x82, (5 * 16) + 1, (u8*) 0x83CC363, TEXT_SPEED_FF, sOnOff[choices[TD_WILDDOUBLESACTIVATED]]);
+    WindowPrint(WIN_OPTIONS, 2, 0x82, (0 * 16) + 1, (void*) 0x83CC363, TEXT_SPEED_FF, sDifficultyOptionNames[choices[TD_DIFFICULTY]]);
+	WindowPrint(WIN_OPTIONS, 2, 0x82, (1 * 16) + 1, (void*) 0x83CC363, TEXT_SPEED_FF, sStoryModeNames[choices[TD_STORYMODE]]);
+	WindowPrint(WIN_OPTIONS, 2, 0x82, (2 * 16) + 1, (void*) 0x83CC363, TEXT_SPEED_FF, sOnOff[choices[TD_LEVELLIMIT]]);
+	WindowPrint(WIN_OPTIONS, 2, 0x82, (3 * 16) + 1, (void*) 0x83CC363, TEXT_SPEED_FF, sOnOff[choices[TD_FLAGTOTEST]]);
+	WindowPrint(WIN_OPTIONS, 2, 0x82, (4 * 16) + 1, (void*) 0x83CC363, TEXT_SPEED_FF, sOnOff[choices[TD_POKEDEXGIVEN]]);
+	WindowPrint(WIN_OPTIONS, 2, 0x82, (5 * 16) + 1, (void*) 0x83CC363, TEXT_SPEED_FF, sOnOff[choices[TD_WILDDOUBLESACTIVATED]]);
 }
 
 static void sub_80BB154(void)

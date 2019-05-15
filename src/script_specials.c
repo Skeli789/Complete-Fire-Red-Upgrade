@@ -1963,7 +1963,7 @@ void HallOfFame_PrintMonInfo(struct HallofFameMon *currMon, unusedArg u8 a1, unu
             *(stringPtr)++ = CHAR_QUESTION_MARK;
         }
         stringPtr[0] = EOS;
-        AddTextPrinterParameterized3(0, 2, 0x10, 1, sUnknown_0840C23C, 0, text);
+        WindowPrint(0, 2, 0x10, 1, sUnknown_0840C23C, 0, text);
     }
 
     // nick, species names, gender and level
@@ -1971,11 +1971,11 @@ void HallOfFame_PrintMonInfo(struct HallofFameMon *currMon, unusedArg u8 a1, unu
     text[POKEMON_NAME_LENGTH] = EOS;
     if (currMon->species == SPECIES_EGG) {
         width = 128 - GetStringWidth(2, text, GetFontAttribute(2, 2)) / 2;
-        AddTextPrinterParameterized3(0, 2, width, 1, sUnknown_0840C23C, 0, text);
+        WindowPrint(0, 2, width, 1, sUnknown_0840C23C, 0, text);
         CopyWindowToVram(0, 3);
     } else {
         width = -128 - GetStringWidth(2, text, GetFontAttribute(2, 2));
-        AddTextPrinterParameterized3(0, 2, width, 1, sUnknown_0840C23C, 0, text);
+        WindowPrint(0, 2, width, 1, sUnknown_0840C23C, 0, text);
 
         text[0] = CHAR_SLASH;
         stringPtr = StringCopy(text + 1, gSpeciesNames[currMon->species]);
@@ -1994,15 +1994,15 @@ void HallOfFame_PrintMonInfo(struct HallofFameMon *currMon, unusedArg u8 a1, unu
         }
 
         stringPtr[0] = EOS;
-        AddTextPrinterParameterized3(0, 2, 0x80, 1, sUnknown_0840C23C, 0, text);
+        WindowPrint(0, 2, 0x80, 1, sUnknown_0840C23C, 0, text);
 
         stringPtr = StringCopy(text, gText_Level);
         ConvertIntToDecimalStringN(stringPtr, currMon->lvl, STR_CONV_MODE_LEFT_ALIGN, 3);
-        AddTextPrinterParameterized3(0, 2, 0x20, 0x11, sUnknown_0840C23C, 0, text);
+        WindowPrint(0, 2, 0x20, 0x11, sUnknown_0840C23C, 0, text);
 
         stringPtr = StringCopy(text, gText_IDNumber);
         ConvertIntToDecimalStringN(stringPtr, (u16)(currMon->tid), STR_CONV_MODE_LEADING_ZEROS, 5);
-        AddTextPrinterParameterized3(0, 2, 0x60, 0x11, sUnknown_0840C23C, 0, text);
+        WindowPrint(0, 2, 0x60, 0x11, sUnknown_0840C23C, 0, text);
 
         CopyWindowToVram(0, 3);
     }

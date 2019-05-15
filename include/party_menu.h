@@ -79,7 +79,7 @@ void __attribute__((long_call)) sub_811FB28(u8 taskId);
 s8 __attribute__((long_call)) sub_812029C(s8 a, s8 b);
 u8 __attribute__((long_call)) DisplayPartyMenuMsgBox(const u8* str, u8 b);
 void __attribute__((long_call)) sub_81203B8(u8 taskId);
-u8 __attribute__((long_call)) pokemon_ailments_get_primary(u32 status);
+u8 __attribute__((long_call)) GetMonPrimaryAilments(u32 status);
 void __attribute__((long_call)) DisplayPartyPokemonNickname(struct Pokemon* mon, struct Struct203B0B4* ptr, u8 c);
 void __attribute__((long_call)) DisplayPartyPokemonLevelCheck(struct Pokemon*, struct Struct203B0B4*, u8);
 void __attribute__((long_call)) DisplayPartyPokemonGenderNidoranCheck(struct Pokemon*, struct Struct203B0B4*, u8);

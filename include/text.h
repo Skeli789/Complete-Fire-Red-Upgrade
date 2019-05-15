@@ -188,9 +188,9 @@ struct __attribute__((packed)) TextColor
 };
 
 u16 __attribute__((long_call)) AddTextPrinterParameterized(u8 windowId, u8 fontId, const u8 *str, u8 x, u8 y, u8 speed, void (*callback)(struct TextSubPrinter *, u16));
-void __attribute__((long_call)) AddTextPrinterParameterized3(u8 windowId, u8 fontId, u8 left, u8 top, const u8 *color, s8 speed, const u8 *str);
 s32 __attribute__((long_call)) GetStringWidth(u8 fontId, const u8 *str, s16 letterSpacing);
 u8 __attribute__((long_call)) GetFontAttribute(u8 fontId, u8 attributeId);
+void __attribute__((long_call)) RunTextPrinters(void);
 
 /*
 extern u8 gStringVar1[];

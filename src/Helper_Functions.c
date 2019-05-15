@@ -151,8 +151,8 @@ bool8 PartyAlive (u8 bank) {
 		party = gEnemyParty;
 	
     for (int i = 0; i < 6; ++i) {
-        if (pokemon_getattr(&party[i], REQ_SPECIES) == SPECIES_NONE) break;
-        if (pokemon_getattr(&party[i], REQ_EGG) || pokemon_getattr(&party[i], REQ_CURRHP) == 0) continue;
+        if (GetMonData(&party[i], REQ_SPECIES, NULL) == SPECIES_NONE) break;
+        if (GetMonData(&party[i], REQ_EGG, NULL) || GetMonData(&party[i], REQ_CURRHP, NULL) == 0) continue;
 		
 		return 1;
     }

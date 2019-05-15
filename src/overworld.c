@@ -1010,7 +1010,7 @@ s32 DoPoisonFieldEffect(void)
     for (i = 0; i < PARTY_SIZE; i++)
     {
 		mon = &gPlayerParty[i];
-        if (GetMonData(mon, MON_DATA_SANITY_HAS_SPECIES, NULL) && pokemon_ailments_get_primary(mon->condition) == AILMENT_PSN)
+        if (GetMonData(mon, MON_DATA_SANITY_HAS_SPECIES, NULL) && GetMonPrimaryAilments(mon->condition) == AILMENT_PSN)
         {
             hp = mon->hp;
 

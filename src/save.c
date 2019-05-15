@@ -222,14 +222,14 @@ u8 HandleSavingData(u8 saveType)
         default:
         {
             SaveSerializedGame();
-            save_write_to_flash(0xFFFF, gRamSaveSectionLocations);
+            SaveWriteToFlash(0xFFFF, gRamSaveSectionLocations);
             break;
         }
         case SAVE_LINK: // _081532C4
         {
             SaveSerializedGame();
             for(u8 i = 0; i < 5; i++) {
-                save_write_to_flash(i, gRamSaveSectionLocations);
+                SaveWriteToFlash(i, gRamSaveSectionLocations);
             }
             break;
         }
@@ -241,7 +241,7 @@ u8 HandleSavingData(u8 saveType)
                 CallSomething(i, EraseFlashSector);
             }
             SaveSerializedGame();
-            save_write_to_flash(0xFFFF, gRamSaveSectionLocations);
+            SaveWriteToFlash(0xFFFF, gRamSaveSectionLocations);
             break;
         }
     };
