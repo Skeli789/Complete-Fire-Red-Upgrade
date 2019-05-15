@@ -87,10 +87,10 @@ enum
 #define VAR_HEALING_XPOS 0x5031 //0x405B in JPAN's Engine
 #define VAR_HEALING_YPOS 0x5032 //0x405C in JPAN's Engine
 
-//====TM/HM Options
-#define EXPANDED_TMSHMS  //Comment this out if you want to keep 50 tms/8 hms
-#define NUM_TMS 115	//keep this defined even if EXPANDED_TMSHMS is not!!
-#define NUM_HMS 9	//keep this defined even if EXPANDED_TMSHMS is not!!
+//====TM/HM Options (vastly improved from other versions!)
+//#define EXPANDED_TMSHMS  //Comment this out if you want to keep 50 tms/8 hms
+#define NUM_TMS 50	//keep this defined even if EXPANDED_TMSHMS is not!!
+#define NUM_HMS 8	//keep this defined even if EXPANDED_TMSHMS is not!!
 //#define TMS_BEFORE_HMS  //Uncomment this if you want the HMs to appear after the TMs in your bag
 //#define DELETABLE_HMS		//Uncomment this if you want HMs to be deletable without the Move Deleter
 //#define REUSABLE_TMS	
@@ -109,7 +109,6 @@ enum
 #define NUM_TRAINER_CLASSES 107
 #define EVOS_PER_MON 5
 #define EV_CAP 252
-#define DAYCARE_BREEDING_RATE
 
 #define DUSK_BALL_MULTIPLIER 30 //Change this line to 35 to make the catch rate for the Dusk Ball 3.5x like before Gen 7
 #define STANDARD_IV 10 //Change this to be the number of IVs Pokemon owned by random trainers should have (all stats will have this number)
