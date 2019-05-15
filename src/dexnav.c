@@ -218,7 +218,7 @@ static void Setup(void)
 static bool8 SpeciesInArray(u16 species, u8 indexCount)
 {
     // disallow species not seen
-    if (!GetIndexFromDexFlag(species, FLAG_GET_SEEN))
+    if (!GetSetPokedexFlag(species, FLAG_GET_SEEN))
         return TRUE;
     for (u8 i = 0; i < indexCount; ++i)
 	{
