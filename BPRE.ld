@@ -23,29 +23,78 @@ gFirstSaveSector = 0x03005380;
 gSaveCounter = 0x03005390;
 gFastSaveSection = 0x03005394;
  
-/* Variables */
-var_8003 = 0x020370BE;
-var_8004 = 0x020370C0;
-var_8005 = 0x020370C2;
-var_8006 = 0x020370C4;
-var_800D_lastresult = 0x20370D0;
-var_800E = 0x0203AD30;
-
+ 
+/* Math */
 __udivsi3 = 0x081E460C|1;
 __umodsi3 = 0x081E4684|1;
 __divsi3 = 0x081E4018|1;
 __modsi3 = 0x081E40F4|1;
-
-/* Attributes */
-GetAttr = 0x0803FBE8|1;
-SetAttr = 0x0804037C|1;
+Sqrt = 0x81E3B9C | 1;
+udivsi = 0x81E460C | 1;
+umodsi = 0x81E4684 | 1;
 
 /* Pokemon */
 PokemonSlotPurge = 0x0803D994|1;
-count_pokemon = 0x02024029;
-party_player = 0x02024284;
+gPlayerPartyCount = 0x02024029;
+gPlayerParty = 0x02024284;
 WritePokeAttacks = 0x0803EC40 | 1;
+GetAttr = 0x0803FBE8|1;
+SetAttr = 0x0804037C|1;
+EmitSetMonData = 0x800DFF0 | 1;
+ZeroPlayerPartyMons = 0x0803DA14 |1;
+ZeroEnemyPartyMons = 0x803DA34 | 1;
+CreateMon = 0x803DA54 | 1;
+//CreateBoxMon = 0x803DAC4 | 1;
+BoxMonToMon = 0x803E774 | 1;
+EncryptBoxMon = 0x0803F8F8 | 1;
+GetSpeciesName = 0x08040FD0 | 1;
+ZeroBoxMonData = 0x0803D97C | 1;
+CalculateBoxMonChecksum = 0x0803E3E8 | 1;
+CreateMonWithNature = 0x803DD98 | 1;
+GetNatureFromPersonality = 0x08042EB4 | 1;
+CreateMonWithGenderNatureLetter = 0x803DE00  | 1;
+CreateMonWithIVsPersonality = 0x803DF68  | 1;
+CalculateMonStats = 0x0803E47C | 1;
+GetLevelFromBoxMonExp = 0x803E830 | 1;
+GiveMoveToMon = 0x803E89C | 1;
+GiveMoveToBoxMon = 0x803E8B0 | 1;
+DeleteFirstMoveAndGiveMoveToMon = 0x803EB94 | 1;
+DeleteFirstMoveAndGiveMoveToBoxMon = 0x803EC40 | 1;
+GetMonGender = 0x803F720 | 1;
+GetBoxMonGender = 0x803F730 | 1;
+SetBoxMonData = 0x080404D0 | 1;
+GetGenderFromSpeciesAndPersonality = 0x803F78C | 1;
+GetMonData = 0x0803FBE8 | 1;
+GetBoxMonData = 0x803FD44 | 1;
+SetMonData = 0x0804037C | 1;
+SetMonData2 = 0x080404D0 | 1;
+CopyMon = 0x8040B08 | 1;
+//SendMonToPC = 0x8040B90 | 1;
+GetPartyAbility = 0x8040D38 | 1;
+CalculatePlayerPartyCount = 0x8040C3C | 1;
+CalculatePPWithBonus = 0x804101C | 1;
+SpeciesToNationalPokedexNum = 0x8043298 | 1; 
+MonGainEVs = 0x8043890 | 1;
+GetPokeFlavourRelation = 0x8044234 | 1;
+IsTradedMon = 0x804425C | 1;
+IsOtherTrainer = 0x8044288 | 1;
+MonRestorePP = 0x80442E4 | 1;
+IsMonShiny = 0x8044470 | 1;
+IsShinyOtIdPersonality = 0x804449C | 1;
+RecordDexEvent = 0x8044898 | 1;
+GetPokedexHeightWeight = 0x8088E38 | 1;
+ReducePartyToThree = 0x80A03D8 | 1;
+pokemon_order_func = 0x8128030 | 1;
+GetEggMoves = 0x8045C28 | 1;
+GetStarterChoice = 0x80CBDB0 | 1;
+GetSetPokedexFlag = 0x08088E74 | 1;
+PokedexCount = 0x8088E8C | 1;
+GetBaseSpecies = 0x08045970 | 1;
+BufferPokeNameSize = 0x080A08CC | 1;
+CalculateHeight = 0x080A082C | 1;
 
+
+/* Text Input Functions */
 NicknameMalloc = 0x0809D954 | 1;
 sub_809E518 = 0x809E518 | 1;
 NameChooserSelectLetter = 0x0809F75C | 1;
@@ -62,30 +111,10 @@ KeyboardKeyHandler_Backspace = 0x0809F190 | 1;
 KeyboardKeyHandler_OK = 0x0809F1B4 | 1;
 GetInputEvent = 0x0809F21C | 1;
 
-calculate_stats_pokemon = 0x0803E47C|1;
 
-get_poke_ability = 0x08040D46|1; 
-species_to_dex_index = 0x08043298|1;
-givepokemon = 0x080A011C|1;
-party_move_up_no_free_slots_in_between = 0x080937DC|1;
-GetIndexFromDexFlag = 0x08088E74 | 1;
-GetBaseSpecies = 0x08045970 | 1;
 
-BufferPokeNameSize = 0x080A08CC | 1;
-CalculateHeight = 0x080A082C | 1;
 
-/*items*/
-routine_to_run_after_graphics = 0x02039998;
-run_after_graphics = 0x080A103C|1;
-script_env_2_enable = 0x08069940|1;
-get_item_x12_battle_function = 0x0809A924|1;
-get_item_lastword = 0x0809AA8C|1;
-get_item_quality = 0x0809A949|1;
-item_is_mail = 0x080980F8|1;
-prepare_party_mail_to_give = 0x08097D38|1;
-bag_add_item = 0x0809A084|1;
-ScriptEnv2IsEnabled = 0x08069958 | 1;
-ScriptEnvDisable = 0x0806994C | 1;
+
 RemoveUsedItem = 0x080A1A44 | 1;
 BuyMenuReturnToItemList = 0x0809BF98 | 1;
 BuyMenuDisplayMessage = 0x0813F75C | 1;
@@ -615,56 +644,6 @@ RepeatBallOpenParticleAnimation = 0x80F0DB4 | 1;
 TimerBallOpenParticleAnimation = 0x80F0818 | 1;
 PremierBallOpenParticleAnimation = 0x80F103C | 1;
 
-/*Pokemon Functions*/
-EmitSetMonData = 0x800DFF0 | 1;
-ZeroPlayerPartyMons = 0x0803DA14 |1;
-ZeroEnemyPartyMons = 0x803DA34 | 1;
-CreateMon = 0x803DA54 | 1;
-//CreateBoxMon = 0x803DAC4 | 1;
-BoxMonToMon = 0x803E774 | 1;
-EncryptBoxMon = 0x0803F8F8 | 1;
-GetSpeciesName = 0x08040FD0 | 1;
-ZeroBoxMonData = 0x0803D97C | 1;
-CalculateBoxMonChecksum = 0x0803E3E8 | 1;
-CreateMonWithNature = 0x803DD98 | 1;
-GetNatureFromPersonality = 0x08042EB4 | 1;
-CreateMonWithGenderNatureLetter = 0x803DE00  | 1;
-CreateMonWithIVsPersonality = 0x803DF68  | 1;
-CalculateMonStats = 0x0803E47C | 1;
-GetLevelFromBoxMonExp = 0x803E830 | 1;
-GiveMoveToMon = 0x803E89C | 1;
-GiveMoveToBoxMon = 0x803E8B0 | 1;
-DeleteFirstMoveAndGiveMoveToMon = 0x803EB94 | 1;
-DeleteFirstMoveAndGiveMoveToBoxMon = 0x803EC40 | 1;
-GetMonGender = 0x803F720 | 1;
-GetBoxMonGender = 0x803F730 | 1;
-SetBoxMonData = 0x080404D0 | 1;
-GetGenderFromSpeciesAndPersonality = 0x803F78C | 1;
-GetMonData = 0x0803FBE8 | 1;
-GetBoxMonData = 0x803FD44 | 1;
-SetMonData = 0x0804037C | 1;
-SetMonData2 = 0x080404D0 | 1;
-CopyMon = 0x8040B08 | 1;
-//SendMonToPC = 0x8040B90 | 1;
-GetPartyAbility = 0x8040D38 | 1;
-CalculatePlayerPartyCount = 0x8040C3C | 1;
-CalculatePPWithBonus = 0x804101C | 1;
-SpeciesToNationalPokedexNum = 0x8043298 | 1; 
-MonGainEVs = 0x8043890 | 1;
-GetPokeFlavourRelation = 0x8044234 | 1;
-IsTradedMon = 0x804425C | 1;
-IsOtherTrainer = 0x8044288 | 1;
-MonRestorePP = 0x80442E4 | 1;
-IsMonShiny = 0x8044470 | 1;
-IsShinyOtIdPersonality = 0x804449C | 1;
-GetSetPokedexFlag = 0x8044898 | 1;
-GetPokedexHeightWeight = 0x8088E38 | 1;
-ReducePartyToThree = 0x80A03D8 | 1;
-pokemon_order_func = 0x8128030 | 1;
-GetEggMoves = 0x8045C28 | 1;
-
-GetStarterChoice = 0x80CBDB0 | 1;
-
 /*Daycare*/
 GetEggSpecies = 0x8045970 | 1;
 RemoveIVIndexFromList = 0x08045A78 | 1;
@@ -758,10 +737,6 @@ npc_apply_direction = 0x8064678 | 1;
 npc_obj_ministep_stop_on_arrival = 0x8064788 | 1;
 CurrMapHeightMismatch = 0x080681B0 | 1;	
 FreezeEventObjects = 0x8068974 | 1;
-ScriptReadHalfword = 0x80698F8 | 1;
-ScriptContext2_Enable = 0x8069940 | 1;
-ScriptContext1_SetupScript = 0x8069AE4 | 1;
-ScriptContext1_Stop = 0x8069B28 | 1;
 MapHeaderCheckScriptTable = 0x8069BD8 | 1;
 UpdateHappinessStepCounter = 0x806D74C | 1;
 UpdatePoisonStepCounter = 0x806D79C | 1;
@@ -771,7 +746,22 @@ OverworldCallback1 = 0x08056534 | 1;
 OverworldCallback2 = 0x080565B4 | 1;
 OverworldCallbackSwitchStartMenu = 0x080568A8 | 1;
 
-/*Region Map Functions*/
+/* Scripting */
+var_8003 = 0x020370BE;
+var_8004 = 0x020370C0;
+var_8005 = 0x020370C2;
+var_8006 = 0x020370C4;
+var_800D = 0x20370D0;
+var_800E = 0x0203AD30;
+ScriptReadHalfword = 0x80698F8 | 1;
+ScriptContext2_Enable = 0x8069940 | 1;
+ScriptContext1_SetupScript = 0x8069AE4 | 1;
+ScriptContext1_Stop = 0x8069B28 | 1;
+ScriptEnv2IsEnabled = 0x08069958 | 1;
+ScriptEnvDisable = 0x0806994C | 1;
+
+
+/* Map Functions */
 GetMapName = 0x80C4D78 | 1;
 
 /*Event Object Movement Functions*/
@@ -1114,9 +1104,7 @@ m4aMPlayContinue = 0x81DD26C | 1;
 m4aMPlayVolumeControl = 0x81DE0E0 | 1;
 CpuSet = 0x81E3B64 | 1;
 CpuFastSet = 0x081E3B60 | 1;
-Sqrt = 0x81E3B9C | 1;
-udivsi = 0x81E460C | 1;
-umodsi = 0x81E4684 | 1;
+
 
 EnableInterrupts = 0x08000B68 | 1;
 DisableInterrupts = 0x08000B94 | 1;
