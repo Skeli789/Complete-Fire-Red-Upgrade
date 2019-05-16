@@ -1,412 +1,250 @@
-/* New Things */
+/*==========================
+===========RAM==============
+==========================*/
+/* New RAM */
 gBattleTowerStreaks = 0x2026840;
 gFollowerState = 0x203B818;
+gFreeRam = 0x203F000;
 ExtensionState = 0x3000F28;
 
-gAccuracyStageRatios = 0x82504FC;
-sTurnActionsFuncsTable = 0x8250038;
-sEndTurnFuncsTable = 0x8250070;
-sTargetIdentities = 0x8250980;
-sBattleIntroSlideFuncs = 0x83E7CD4;
-gUnownDistributionByChamber = 0x83CA71C;
-stepspeeds = 0x083A719C;
-stepspeed_seq_length = 0x083A71B0;
-gUnknown_08459FFC = 0x8459FFC;
+/* Party RAM */
+gPlayerPartyCount = 0x2024029;
+gEnemyParty = 0x202402C;
+gPlayerParty = 0x2024284;
 
+/* Battle RAM */
+DisplayedStringBattle = 0x202298C;
+battle_data_ptrs = 0x203BFFC;
+battle_mallocd_resources = 0x203C000;
+
+/* NPC RAM */
+gNpcPlayerPtr = 0x2036E30;
+
+/* Sprite RAM */
+gSprites = 0x202063C;
+gObjIds = 0x2021800;
+gAffineCoefficients = 0x2021BCC;
+gMultiuseSpriteTemplate = 0x20244DC;
+template_0203AD40 = 0x203AD40;
+
+/* Script RAM */
+gStringVar1 = 0x2021CD0;
+gStringVar2 = 0x2021CF0;
+gStringVar3 = 0x2021D04;
+gStringVar4 = 0x2021D18;
+Var8000 = 0x20370b8;
+Var8001 = 0x20370BA;
+Var8002 = 0x20370bC;
+Var8003 = 0x20370BE;
+Var8004 = 0x20370C0;
+Var8005 = 0x20370C2;
+Var8006 = 0x20370C4;
+Var8007 = 0x20370c6;
+Var8008 = 0x20370c8;
+Var8009 = 0x20370ca;
+Var800A = 0x20370cc;
+Var800B = 0x20370ce;
+Var800D = 0x20370D0;
+Var800F = 0x20370D2;
+Var800C = 0x20370D4;
+Var8010 = 0x20370D6;
+Var8011 = 0x20370D8;
+Var800E = 0x203AD30;
+
+/* Text RAM */
+gTextflags = 0x3003E50;
+
+/* Save RAM */
+gSaveBlock1 = 0x3005008;
+gSaveBlock2 = 0x300500C;
+gSaveBlock3 = 0x3005010;
+gFirstSaveSector = 0x3005380;
+gSaveCounter = 0x3005390;
+gFastSaveSection = 0x3005394;
+gRamSaveSectionLocations = 0x30053B0;
+
+/* Palette RAM */
+gPaletteFade = 0x2037AB8;
+
+/* Map/Overworld RAM */
 gMapHeader = 0x2036DFC;
 gWeatherPtr = 0x2037F34;
 gEncounterRate = 0x20386D0;
+gFieldEffectArguments = 0x20386E0;
+FieldCallback = 0x3005020;
+
+/* Audio RAM */
 gMPlay_BGM = 0x3007300;
 
-gRamSaveSectionLocations = 0x030053B0;
-gFirstSaveSector = 0x03005380;
-gSaveCounter = 0x03005390;
-gFastSaveSection = 0x03005394;
- 
-/* Variables */
-var_8003 = 0x020370BE;
-var_8004 = 0x020370C0;
-var_8005 = 0x020370C2;
-var_8006 = 0x020370C4;
-var_800D_lastresult = 0x20370D0;
-var_800E = 0x0203AD30;
+/* Window RAM */
+gWindows = 0x20204B4;
 
-__udivsi3 = 0x081E460C|1;
-__umodsi3 = 0x081E4684|1;
-__divsi3 = 0x081E4018|1;
-__modsi3 = 0x081E40F4|1;
+/* Hall of Fame RAM */
+sHofMonPtr = 0x203AB38;
 
-/* Attributes */
-GetAttr = 0x0803FBE8|1;
-SetAttr = 0x0804037C|1;
+/* VBlank RAM */
+Battle_BG0_X = 0x2022974;
+Battle_BG0_Y = 0x2022976;
+vblank_cb_battle_BG1HOFS = 0x2022978;
+gBattle_BG1_Y = 0x202297A;
+vblank_cb_battle_BG2HOFS = 0x202297C;
+gBattle_BG2_Y = 0x202297E;
+vblank_cb_battle_BG3HOFS = 0x2022980;
+vblank_cb_battle_BG3VOFS = 0x2022982;
+gBattle_WIN0H = 0x2022984;
+vblank_cb_battle_WIN0V = 0x2022986;
+vblank_cb_battle_WIN1H = 0x2022988;
+vblank_cb_battle_WIN1V = 0x202298A;
+dp12_8700 = 0x2038700;
+dp12_config = 0x2039600;
 
-/* Pokemon */
-PokemonSlotPurge = 0x0803D994|1;
-count_pokemon = 0x02024029;
-party_player = 0x02024284;
-WritePokeAttacks = 0x0803EC40 | 1;
-
-NicknameMalloc = 0x0809D954 | 1;
-sub_809E518 = 0x809E518 | 1;
-NameChooserSelectLetter = 0x0809F75C | 1;
-sub_809EAA8 = 0x809EAA8 | 1;
-SetInputState = 0x0809F240 | 1;
-MainState_StartPageSwap = 0x0809E210 | 1;
-MainState_WaitPageSwap = 0x0809E250 | 1;
-GetKeyRoleAtCursorPos = 0x0809EB00 | 1;
-sub_809F1F0 = 0x809F1F0 | 1;
-MoveCursorToOKButton = 0x0809E9F8 | 1;
-DeleteTextCharacter = 0x0809F700 | 1;
-KeyboardKeyHandler_Page = 0x0809F168 | 1;
-KeyboardKeyHandler_Backspace = 0x0809F190 | 1;
-KeyboardKeyHandler_OK = 0x0809F1B4 | 1;
-GetInputEvent = 0x0809F21C | 1;
-
-calculate_stats_pokemon = 0x0803E47C|1;
-
-get_poke_ability = 0x08040D46|1; 
-species_to_dex_index = 0x08043298|1;
-givepokemon = 0x080A011C|1;
-party_move_up_no_free_slots_in_between = 0x080937DC|1;
-GetIndexFromDexFlag = 0x08088E74 | 1;
-GetBaseSpecies = 0x08045970 | 1;
-
-BufferPokeNameSize = 0x080A08CC | 1;
-CalculateHeight = 0x080A082C | 1;
-
-/*items*/
-routine_to_run_after_graphics = 0x02039998;
-run_after_graphics = 0x080A103C|1;
-script_env_2_enable = 0x08069940|1;
-get_item_x12_battle_function = 0x0809A924|1;
-get_item_lastword = 0x0809AA8C|1;
-get_item_quality = 0x0809A949|1;
-item_is_mail = 0x080980F8|1;
-prepare_party_mail_to_give = 0x08097D38|1;
-bag_add_item = 0x0809A084|1;
-ScriptEnv2IsEnabled = 0x08069958 | 1;
-ScriptEnvDisable = 0x0806994C | 1;
-RemoveUsedItem = 0x080A1A44 | 1;
-BuyMenuReturnToItemList = 0x0809BF98 | 1;
-BuyMenuDisplayMessage = 0x0813F75C | 1;
-GetBagItemQuantity = 0x08099DA0 | 1;
-
-/* move */
-teach_move_in_available_slot = 0x0803E8B0|1;
-Special_0DD_DeleteMove = 0x080BFBA8|1;
-
-/* Strings */
-str_cpy = 0x08008D84|1;
-
-/*
- * Data
- */
- 
-obj_set_rot = 0x08075858|1;
-sub_813A45C = 0x0813A45C|1;
-sub_80BF77C = 0x080BF77C|1;
-rboxes = 0x20204B4;
-ball_tiles = 0x0826056C;
-ball_palettes = 0x082605CC;
-gpu_pal_decompress_alloc_tag_and_upload = 0x0800F078|1;
-BuildOAMBuffer = 0x08006BA8 | 1;
-objc_ball_instanciate2_entry_804B9E8 = 0x0804B9E8|1;
-sub_804BF64 = 0x804BF64|1;
-super_sprites_delete_range = 0x080072E8|1;
-sub_8094AD8 = 0x08094AD8|1;
-affine_coefficients = 0x2021BCC;
-buffer1 = 0x02022100;
-buffer2 = 0x02021CD0;
-buffer3 = 0x02021CF0;
-buffer4 = 0x02021D04;
-string_buffer = 0x02021D18;
-format_name_and_gender_string = 0x080496C0|1;
-sub_8049D10 = 0x08049D10|1;
-healthbar_draw_hp = 0x08048440|1;
-pokemon_get_gender = 0x0803F720|1;
-sub_804A6D8 = 0x0804A6D8|1;
-sub_804A6E8 = 0x0804A6E8|1;
-rbox_get_id_something = 0x08003CE4|1;
-sub_812E5A4 = 0x0812E5A4|1;
-rboxid_get_field = 0x08004950|1;
-
-StringAppend = 0x08008DA4 |1;
-//StringAppendN = 0x08008DBC | 1;
-GetTutorMove = 0x08120BA8 | 1;
-MonKnowsMove = 0x08125AC0 | 1;
-CanLearnTutorMove = 0x08120BE8 | 1;
-
-healthbar_draw_level = 0x08048398|1;
-GpuPalObjAllocTagAndApply = 0x08008928|1;
-gpu_tile_obj_decompress_alloc_tag_and_upload = 0x0800F034|1;
-TemplateInstanciateReverseSearch = 0x08006FE0 | 1;
-palc_health_boxes = 0x08260260|1;
-tester_run = 0x080347A8|1;
-healthbar_draw_field_maybe = 0x08049D98|1;
-
-enemyYTable = 0x082349CC;
-playerYTable = 0x08235E6C;
-
-set_enemy_y = 0x08076494|1;
-
-pkmn_names_table = 0x08245EE0;
-move_names = 0x8247094;
-ability_names = 0x0824FC40;
-ai_trainer = 0x0823EAC8; /* trainer table */
-trainer_class_names = 0x0823E558;
-typenames = 0x0824F1A0;
-items = 0x083DB028;
-
-vblank_cb_battle_BG0HOFS = 0x02022974;
-vblank_cb_battle_BG0VOFS = 0x02022976;
-vblank_cb_battle_BG1HOFS = 0x02022978;
-vblank_cb_battle_BG1VOFS = 0x0202297A;
-vblank_cb_battle_BG2HOFS = 0x0202297C;
-vblank_cb_battle_BG2VOFS = 0x0202297E;
-vblank_cb_battle_BG3HOFS = 0x02022980;
-vblank_cb_battle_BG3VOFS = 0x02022982;
-vblank_cb_battle_WIN0H = 0x02022984;
-vblank_cb_battle_WIN0V = 0x02022986;
-vblank_cb_battle_WIN1H = 0x02022988;
-vblank_cb_battle_WIN1V = 0x0202298A;
-dp12_8700 = 0x02038700;
-
-dp12_config = 0x02039600;
-script_env_1 = 0x03000EB0;
-script_env_2 = 0x03000F28;
-pal_fade_control = 0x02037AB8;
-map_post_load_hook = 0x03005020;
-tasks = 0x03005090;
-objects = 0x0202063C;
-poke_oam_battle = 0x0824F018;
-anim_poke = 0x082349BC;
-rotscale_empty = 0x08231CFC;
-oac_nullsub = 0x0810BB89;
-obj_ids_to_display = 0x02021800;
-evolution_table = 0x08259754;
-pokemon_bank = 0x0202402C;
-base_stats = 0x08254784;
-dex_data = 0x0844E850;
-battle_env_table = 0x0824EE34;
-battle_data_ptrs = 0x0203BFFC;
-battle_load_global = 0x0203F000; /*Free RAM space*/
-superstate = 0x030030F0;
-
-textflags = 0x03003E50;
-saveblock2 = 0x0300500C;
-objt_pokemon = 0x020244DC;
-animtable1_pokemon = 0x082349BC|1;
-template_0203AD40 = 0x0203AD40;
-uns_table_pokemon_trainer = 0x0825DF50;
-meta_animtable_trainer = 0x08239F74;
-gfx_table_trainer_back = 0x08239FA4;
-gfx_table_trainer_front = 0x0823957C;
-gfx_table_pokemon_front = 0x082350AC;
-gfx_table_pokemon_back = 0x0823654C;
-backsprite_pals = 0x08239FD4;
-animtable1_front = 0x082390DC;
-animtable1_pokemon = 0x82349BC;
-oac_poke_opponent = 0x08011D64|1;
-oam_poke_ally = 0x0824F018;
-pal_table_nonshiny = 0x0823730C;
-pal_table_shiny = 0x082380CC;
-pal_table_trainer_front = 0x08239A1C;
-pal_table_trainer_back = 0x08239FD4;
-anim_082347F8 = 0x082347F8;
-ball_templates = 0x082606F4;
-enemy_y_table = 0x082349cc;
-altitude_table = 0x0823A004;
-gfx_altitude = 0x08E7BAD4;
-pal_altitude = 0x08D11B84;
+/* Data RAM */
+gTasks = 0x3005090;
+gMain = 0x30030F0;
 
 
-/*
-* Place holder data
-*/
-
-berries_t = 0x8740000;
-sheer_force_t = 0x8740000;
-mega_items_t = 0x8740000;
-megas = 0x8740000;
-type_chart = 0x8740000;
-battle_strings = 0x8740000;
-battle_mallocd_resources = 0x0203C000;
-
-obj_delete_and_free_associated_resources = 0x08007804|1;
-
-/*
- * Functions
- */
-
-bs_exec = 0x080123E4|1;
-b_setup_bx = 0x0800D30C|1;
-cpu_set = 0x081E3B64|1;
-load_battle_screen_elements2 = 0x0800F2AC|1;
-vblank_cb_battle = 0x080116F4|1;
-sub_8001960 = 0x08001960|1;
-sub_80357C8 = 0x080357C8|1;
-GpuPalApply = 0x080703EC|1;
-LogCoordsCameraRelative = 0x08063BC4 | 1;
-
-RemoBoxesUploadTilesets = 0x08002DE8|1;
-pal_fade_control_reset_maybe = 0x08070A84|1;
-fmt_int_10 = 0x08008E78|1;
-tasks_init = 0x080773BC|1;
-
-gpu_tile_obj_decompress_alloc_tag_and_upload = 0x0800F035;
-oac_nullsub_0 = 0x810BB88|1;
-rboxid_clear_pixels = 0x0800445C|1;
-rboxid_08003FA0 =  0x08003FA0|1;
-rboxid_to_vram = 0x08003F20|1;
-something_08050DE1 = 0x08050DE0|1;
-GpuTileObjAllocTagAndUpload = 0x080086DC|1;
-GpuPalObjAllocTagAndApply = 0x08008928|1;
-gpu_sync_bg_show = 0x080019BC | 1;
-something_08050969 = 0x08050968|1;
-WindowPrint = 0x0812E51C | 1;
-sub_0800F380 = 0x0800F380|1;
-sub_0800F34C = 0x0800F34C|1;
-sub_0800F420 = 0x0800F420|1;
-rboxid_tilemap_update = 0x08003FA0|1;
-rboxid_upload_a = 0x08003F20 | 1;
-sub_8002C48 = 0x08002C48|1;
-sub_8150048 = 0x08150048|1;
-battle_show_message = 0x080D87BC|1;
-remoid_a_pressed_maybe = 0x08002E64|1;
-
-CallbackOWandContinueScriptsMusic = 0x080568C4 | 1;
-FadeBgPalAndFillBlack = 0x0807DB38 |1;
-
-CleanupOverworldWindowsAndTilemaps = 0x080563F0 | 1;
-lcd_io_set = 0x08000A38|1;
-lcd_io_get = 0x08000AC4|1;
-SetVBlankCallback = 0x080006F4 | 1;
-SetHBlankCallback = 0x08000700 | 1;
-ResetBgsAndClearDma3BusyFlags = 0x08001618 | 1;
-bg_positions_reset = 0x0812D594|1;
-callback_clear_and_init = 0x080F4E24|1;
-bgid_nullify_tilemap = 0x08001FD4|1;
-mapldr_continue_scripts_restart_music = 0x0807DD24|1;
-c2_exit_to_overworld_2_switch = 0x080567DC|1;
-LoadOAM = 0x08007320|1;
-ProcessSpriteCopyRequests = 0x08007610 | 1;
-//TransferPlttBuffer = 0x08070474 | 1;
-SyncTilemaps = 0x080F67B8 | 1;
-bg_scroll_invert = 0x08087F54|1;
-dp12_reset_something = 0x08087EA4|1;
-dp12_something = 0x08087EE4|1;
-sub_8087EE4 = 0x08087EE4|1;
-dp12_update = 0x08087F54|1;
-dp12_b_callback = 0x08087FE0|1;
-dp12_abort = 0x08087E64|1;
-pal_decompress_slice_to_faded_and_unfaded = 0x080703A8|1;
-get_bs_elem_env_index = 0x0800FC2C|1;
-WriteQuestLog = 0x080A2294 | 1;
-
-ResetSpriteData = 0x08006B10 | 1;
-
-load_var_value = 0x0806E568|1;
-var_set_value = 0x0806E584|1;
-var_get_pointer = 0x0806E454|1;
-memcpy_ = 0x081E5E78|1;
-Memcpy = 0x081E5E78|1;
-malloc_ = 0x08002B9C|1;
-calloc_ = 0x8002BB0 | 1;
-AllocZeroed = 0x8002BB0 | 1;
-malloc_and_clear = 0x08002BB0|1;
-free_ = 0x08002BC4|1;
-CreateTask = 0x0807741C|1;
-task_delete = 0x08077508|1;
-SetCallback2 = 0x08000544 | 1;
-SetCallback1 = 0x080565E0 | 1;
-ReturnToFieldContinueScriptPlayMapMusic = 0x080568E0|1;
-fade_screen = 0x08070588|1;
-sp198_help_system_disable = 0x0812B478|1;
-malloc_and_LZ77UnComp = 0x080F6AA0|1;
-gpu_copy_to_tileset = 0x080017D0|1;
-gpu_copy_tilemap = 0x08002040|1;
-bgid_send_tilemap = 0x080020BC|1;
-gpu_pal_apply = 0x080703EC|1;
-LZ77UnCompVram = 0x081E3B6C | 1;
-LZ77UnCompWram = 0x081E3B70 | 1;
-
-trainer_card_reset = 0x08089D0C|1;
-
-task_exec = 0x08077578|1;
-textbox_something = 0x08002DE8|1;
-TextboxClose = 0x080694F4 | 1;
-TextboxFdecodeAutoAndCreateTask = 0x080694C8 | 1;
-DeactivateAllTextPrinters = 0x08002C28 | 1;
-ChoiceSetupSimple = 0x0810F7D8 | 1;
-
-decompress_with_fallback_maybe = 0x080F6878|1;
-GpuSyncBGShow = 0x080019BC | 1;
-GpuSyncBGHide = 0x080019D0|1;
-BgIdModOffsetX = 0x08001B90 | 1;
-BgIdModOffsetY = 0x08001D08 | 1;
-gpu_pal_alloc_new = 0x080089B8|1;
-
-memset_ = 0x081E5ED8|1;
-Memset = 0x081E5ED8|1;
-
-sub_08034750 = 0x08034750|1;
-template_build_for_pokemon_or_trainer = 0x0803F864|1;
-object_new_hidden_with_callback = 0x08044EF8|1;
-sub_8037A2A = 0x08038C80|1;
-sub_0804B908 = 0x0804B908|1;
-
-LoadPartyIconTiles = 0x08097054 | 1;
-
-CreatePokemon = 0x0803DD98|1;
-CreateMaleMon = 0x0803DF00 | 1;
-
-divmod_remainder = 0x081E4684|1;
-rand = 0x08044EC8|1;
-sub_8037A28 = 0x08037A28|1;
-species_to_dex_index = 0x08043298|1;
-
-strcpy_xFF_terminated = 0x08008D84|1;
-sub_080F6EE4 = 0x080F6EE4|1;
-box_related_one = 0x080F6CD0|1;
-sav2_get_text_speed = 0x080F78A8|1;
-rboxid_to_vram = 0x08003F20|1;
-sub_81220D4 = 0x081220D4|1;
-box_curved = 0x080F7768|1;
-sub_080F696C = 0x080F696C|1;
-sub_08002040 = 0x08002040|1;
-gpu_sync_bg_show = 0x80019BC|1;
-LZ77UnCompAnyRAM = 0x0800EC8C|1;
-oamt_spawn_poke_or_trainer_picture = 0x0810BDAC|1;
-uns_builder_assign_animtable1 = 0x0810BD80|1;
-ball_number_to_ball_processing_index = 0x080EF52C|1;
-ball_to_ram_setup = 0x0804BEF4|1;
-dp13_810BB8C = 0x0810BB8C|1;
-battle_load_health_boxes_unused = 0x080347A8|1;
-some_test_func = 0x080F1198|1;
-MallocInit = 0x08002B80 | 1;
+/*==========================
+===========ROM==============
+==========================*/
+/* Vanilla Data Addressses */
+gIconPals = 0x808AB40;
+gDummySpriteAffineAnimTable = 0x8231CFC;
+anim_082347F8 = 0x82347F8;
+gPokemonAnimTable = 0x82349BC;
+gMonFrontPicCoords = 0x82349CC;
+gMonFrontPicTable = 0x82350AC;
+gMonBackPicCoords = 0x8235E6C;
+gMonBackPicTable = 0x823654C;
+gMonPaletteTable = 0x823730C;
+gMonShinyPaletteTable = 0x82380CC;
+gFrontAnimTable = 0x82390DC;
+gTrainerFrontPicTable = 0x823957C;
+gTrainerFrontPicPaletteTable = 0x8239A1C;
+gTrainerAnimTable = 0x8239F74;
+gTrainerBackspriteTable = 0x8239FA4;
+//gTrainerBackPicPaletteTable = 0x8239FD4;
+gEnemyMonElevation = 0x823A004;
+//gTrainerClassNames = 0x823E558;
+//gTrainers = 0x823EAC8;
+gPokemonNames = 0x8245EE0;
+//gMoveNames = 0x8247094;
+gBattleBackgrounds = 0x824EE34;
+gPokeBattleOam = 0x824F018;
+gAllyPokemonOam = 0x824F018;
+//gTypeNames = 0x824F1A0;
+//gAbilityNames = 0x824FC40;
+sTurnActionsFuncsTable = 0x8250038;
+sEndTurnFuncsTable = 0x8250070;
+gAccuracyStageRatios = 0x82504FC;
+sTargetIdentities = 0x8250980;
+gBaseStats = 0x8254784;
+gEvolutionTable = 0x8259754;
+gUnkPokemonTrainerTable = 0x825DF50;
+gHealthbarPals = 0x8260260;
+gPokeBallTiles = 0x826056C;
+gPokeBallPals = 0x82605CC;
+BallSpriteTemplates = 0x82606F4;
+surfBlobPal = 0x835b968;
+surfBlobTiles = 0x8396b08;
+stepspeeds = 0x83A719C;
+stepspeed_seq_length = 0x83A71B0;
+gUnownDistributionByChamber = 0x83CA71C;
+sBattleIntroSlideFuncs = 0x83E7CD4;
+sHallOfFame_MonFullTeamPositions = 0x840C268;
+sHallOfFame_MonHalfTeamPositions = 0x840C298;
+gText_MenuPokemon = 0x8415a66;
+gText_MenuPokedex = 0x841627d;
+gText_MenuBag = 0x8416285;
+gText_MenuPlayer = 0x841628e;
+gText_MenuSave = 0x8416291;
+gText_MenuOption = 0x8416296;
+gText_MenuExit = 0x841629d;
+gText_MenuRetire = 0x84162a2;
+gText_PokedexDescription = 0x8419F76;
+gText_PokemonDescription = 0x8419FBB;
+gText_BagDescription = 0x841A001;
+gText_PlayerDescription = 0x841A049;
+gText_SaveDescription = 0x841A06F;
+gText_OptionDescription = 0x841A0B7;
+gText_ExitDescription = 0x841A0F9;
+gText_RetireDescription = 0x841A111;
+gPokedexEntries = 0x844E850;
+gUnknown_08459FFC = 0x8459FFC;
+MonHoverShadowPal = 0x8D11B84;
+MonHoverShadowSprite = 0x8E7BAD4;
 
 
-/*
- * IO
- */
+/* Pokemon Function */
+EmitSetMonData = 0x800DFF0 | 1;
+PokemonSlotPurge = 0x803D994 | 1;
+CreateMon = 0x803DA54 | 1;
+//CreateBoxMon = 0x803DAC4 | 1;
+CreateMonWithNature = 0x803DD98 | 1;
+CreateMonWithGenderNatureLetter = 0x803DE00 | 1;
+CreateMaleMon = 0x803DF00 | 1;
+CreateMonWithIVsPersonality = 0x803DF68 | 1;
+CalculateMonStats = 0x803E47C | 1;
+GetLevelFromBoxMonExp = 0x803E830 | 1;
+GiveMoveToMon = 0x803E89C | 1;
+DeleteFirstMoveAndGiveMoveToMon = 0x803EB94 | 1;
+WritePokeAttacks = 0x803EC40 | 1;
+DeleteFirstMoveAndGiveMoveToBoxMon = 0x803EC40 | 1;
+GetMonGender = 0x803F720 | 1;
+GetGenderFromSpeciesAndPersonality = 0x803F78C | 1;
+GetMonData = 0x803FBE8 | 1;
+SetMonData = 0x804037C | 1;
+SetMonData2 = 0x80404D0 | 1;
+CopyMon = 0x8040B08 | 1;
+CalculatePlayerPartyCount = 0x8040C3C | 1;
+GetPartyAbility = 0x8040D38 | 1;
+GetSpeciesName = 0x8040FD0 | 1;
+CalculatePPWithBonus = 0x804101C | 1;
+GetNatureFromPersonality = 0x8042EB4 | 1;
+SpeciesToNationalPokedexNum = 0x8043298 | 1;
+MonGainEVs = 0x8043890 | 1;
+GetPokeFlavourRelation = 0x8044234 | 1;
+IsTradedMon = 0x804425C | 1;
+IsOtherTrainer = 0x8044288 | 1;
+MonRestorePP = 0x80442E4 | 1;
+IsMonShiny = 0x8044470 | 1;
+IsShinyOtIdPersonality = 0x804449C | 1;
+RecordDexEvent = 0x8044898 | 1;
+GetBaseSpecies = 0x8045970 | 1;
+GetEggMoves = 0x8045C28 | 1;
+GetPokedexHeightWeight = 0x8088E38 | 1;
+GetSetPokedexFlag = 0x8088E74 | 1;
+PokedexCount = 0x8088E8C | 1;
+ReducePartyToThree = 0x80A03D8 | 1;
+CalculateHeight = 0x80A082C | 1;
+BufferPokeNameSize = 0x80A08CC | 1;
+Special_0DD_DeleteMove = 0x80BFBA8 | 1;
+GetStarterChoice = 0x80CBDB0 | 1;
+GetCombinedOTID = 0x80CC1E4 | 1;
+GetTutorMove = 0x8120BA8 | 1;
+CanLearnTutorMove = 0x8120BE8 | 1;
+MonKnowsMove = 0x8125AC0 | 1;
+pokemon_order_func = 0x8128030 | 1;
 
-BG3HOFS = 0x0400001C;
-DMA0_SRC = 0x040000B0;
-DMA0_DST = 0x040000B4;
-DMA0_CNT_L = 0x040000B8;
-DMA0_CNT_H = 0x040000BA;
 
-/*
- * Custom Data
- */
+/* Battle Setup Functions */
+SetEnemyElevation = 0x8076494 | 1;
+OpponentHandleIntroTrainerBallThrow = 0x8038C80 | 1;
+BattleIntroSlide2 = 0x80BC6C8 | 1;
+BattleIntroSlide3 = 0x80BC9D4 | 1;
+BattleIntroSlideLink = 0x80BCC4C | 1;
+b_setup_bx = 0x800D30C | 1;
+vblank_cb_battle = 0x80116F4 | 1;
+BattleIntroRecordMonsToDex = 0x801362C | 1;
+EmitIntroTrainerBallThrow = 0x800EA5C | 1;
+//BattleSetup_StartRoamerBattle = 0x807F78C | 1;
+BattleSetup_StartWildBattle = 0x807F704 | 1;
+CreateBattleStartTask = 0x807F690 | 1;
+StartTheBattle = 0x807F868 | 1;
+HandleOpponentPokeSlide = 0x8011D64 | 1;
 
-interpreter_state = 0x02036E30;
 
-/*PokeFireRed Function Names*/
-
-/*Battle Functions*/
-StringGetEnd10 = 0x8008D28 | 1;
-GetExpandedPlaceholder = 0x80091E0 | 1;
+/* Battle Functions */
+sub_8001960 = 0x8001960 | 1;
 GetMultiplayerId = 0x800A404 | 1;
 PrepareBufferDataTransfer = 0x800D8B0 | 1;
 PrepareBufferDataTransferLink = 0x800D9EC | 1;
@@ -415,30 +253,24 @@ EmitSetRawMonData = 0x800E030 | 1;
 EmitDrawTrainerPic = 0x800E0D4 | 1;
 EmitTrainerSlide = 0x800E0F4 | 1;
 EmitTrainerSlideBack = 0x800E114 | 1;
-EmitBallThrowAnim = 0x800E194 | 1;
-EmitMoveAnimation = 0x800E1FC | 1;
-/*EmitPrintString = 0x800E2D4 | 1;*/
+//EmitPrintString = 0x800E2D4 | 1;
 EmitUnknownYesNoBox = 0x800E500 | 1;
 EmitChoosePokemon = 0x800E590 | 1;
 EmitHealthBarUpdate = 0x800E5EC | 1;
-/*EmitExpBarUpdate = 0x800E624 | 1;*/
-EmitStatusAnimation = 0x800E6AC | 1;
+//EmitExpBarUpdate = 0x800E624 | 1;
 EmitDMA3Transfer = 0x800E750 | 1;
 EmitTwoReturnValues = 0x800E848 | 1;
 EmitChosenMonReturnValue = 0x800E874 | 1;
-EmitIntroTrainerBallThrow = 0x800EA5C | 1;
 EmitDrawPartyStatusSummary = 0x800EA7C | 1;
-EmitSpriteInvisibility = 0x800EB04 | 1;
-EmitBattleAnimation = 0x800EB28 | 1;
 EmitResetActionMoveSelection = 0x800EB74 | 1;
 LoadBattleBG_SpecialTerrainID = 0x800F238 | 1;
+load_battle_screen_elements2 = 0x800F2AC | 1;
+//LoadBattleBG_TerrainID = 0x800FC2C | 1;
 sub_8012044 = 0x8012044 | 1;
 sub_8012098 = 0x8012098 | 1;
-DoBounceEffect = 0x8012138 | 1;
-EndBounceEffect = 0x8012258 | 1;
+bs_exec = 0x80123E4 | 1;
 SwitchInClearSetData = 0x8012760 | 1;
 UndoEffectsAfterFainting = 0x8012BC8 | 1;
-BattleIntroRecordMonsToDex = 0x801362C | 1;
 sub_8013F6C = 0x8013F6C | 1;
 HandleTurnActionSelectionState = 0x8014040 | 1;
 SwapTurnOrder = 0x8014CA4 | 1;
@@ -459,16 +291,16 @@ BattleScriptPush = 0x8017520 | 1;
 BattleScriptPushCursor = 0x8017544 | 1;
 BattleScriptPop = 0x801756C | 1;
 IsImprisoned = 0x8017A64 | 1;
-GetBattlerTurnOrderNum = 0x801FEE8 | 1;
-/*HasNoMonsToSwitch = 0x8019C10 | 1;*/
-/*AbilityBattleEffects = 0x8019F18 | 1;*/
+//HasNoMonsToSwitch = 0x8019C10 | 1;
+//AbilityBattleEffects = 0x8019F18 | 1;
 BattleScriptExecute = 0x801BBE4 | 1;
 BattleScriptPushCursorAndCallback = 0x801BC24 | 1;
-/*ItemBattleEffects = 0x801BC68 | 1;*/
+//ItemBattleEffects = 0x801BC68 | 1;
 //JumpIfMoveFailed = 0x801DB10 | 1;
 CheckWonderGuardAndLevitate = 0x801EAB8 | 1;
-/*SetMoveEffect = 0x801FF20 | 1;*/
-/*MoveValuesCleanUp = 0x8022598 | 1;*/
+GetBattlerTurnOrderNum = 0x801FEE8 | 1;
+//SetMoveEffect = 0x801FF20 | 1;
+//MoveValuesCleanUp = 0x8022598 | 1;
 IsTwoTurnsMove = 0x802A1C0 | 1;
 //AttacksThisTurn = 0x802A224 | 1;
 TrySetDestinyBondToHappen = 0x802A3F8 | 1;
@@ -478,8 +310,8 @@ BattleDestroyYesNoCursorAt = 0x802DCF8 | 1;
 AdjustFriendshipOnBattleFaint = 0x802E228 | 1;
 SetControllerToPlayer = 0x802E314 | 1;
 PlayerBufferExecCompleted = 0x802E33C | 1;
-CompleteOnBankSpritePosX_0 = 0x0802E404 | 1;
-/*HandleInputChooseTarget = 0x802E674 | 1;*/
+CompleteOnBankSpritePosX_0 = 0x802E404 | 1;
+//HandleInputChooseTarget = 0x802E674 | 1;
 HandleMoveSwitching = 0x802EF58 | 1;
 sub_802F730 = 0x802F730 | 1;
 sub_802F768 = 0x802F768 | 1;
@@ -489,7 +321,7 @@ DestroyExpTaskAndCompleteOnInactiveTextPrinter = 0x8030350 | 1;
 MoveSelectionDisplayMoveNames = 0x8030830 | 1;
 MoveSelectionDisplayPpString = 0x80308A8 | 1;
 MoveSelectionDisplayPpNumber = 0x80308CC | 1;
-/*MoveSelectionDisplayMoveType = 0x8030940 | 1;*/
+//MoveSelectionDisplayMoveType = 0x8030940 | 1;
 MoveSelectionCreateCursorAt = 0x80309CC | 1;
 MoveSelectionDestroyCursorAt = 0x8030A14 | 1;
 ActionSelectionCreateCursorAt = 0x8030A54 | 1;
@@ -501,37 +333,67 @@ BattleLoadOpponentMonSpriteGfx = 0x8034320 | 1;
 BattleLoadPlayerMonSpriteGfx = 0x8034498 | 1;
 DecompressTrainerFrontPic = 0x80346C4 | 1;
 DecompressTrainerBackPic = 0x8034750 | 1;
+battle_load_health_boxes_unused = 0x80347A8 | 1;
 load_gfxc_health_bar = 0x8034964 | 1;
-LoadBattleMonGfxAndAnimate = 0x80351A8 | 1;
-HandleLowHpMusicChange = 0x8035244 | 1;
-BattleStopLowHpSound = 0x8035314 | 1;
+sub_80357C8 = 0x80357C8 | 1;
 SetControllerToOpponent = 0x8035A7D | 1;
-CompleteOnBattlerSpriteCallbackDummy = 0x8035AE8 | 1;
-CompleteOnBankSpriteCallbackDummy2 = 0x8035B20 | 1;
 sub_8035BE8 = 0x8035BE8 | 1;
 OpponentBufferExecCompleted = 0x8036530 | 1;
+sub_8037A28 = 0x8037A28 | 1;
 ShouldSwitchIfPerishSong = 0x8039188 | 1;
 AreStatsRaised = 0x80397E0 | 1;
-/*AI_TrySwitchOrUseItem = 0x8039C84 | 1;*/
 ModulateByTypeEffectiveness = 0x8039DB4 | 1;
 ShouldUseItem = 0x803A1F4 | 1;
 LinkOpponentBufferExecCompleted = 0x803B124 | 1;
 CountAliveMons = 0x803F5B4 | 1;
-GetDefaultMoveTarget = 0x803F6A0 | 1; /*REWRITE!************************************************/
+GetDefaultMoveTarget = 0x803F6A0 | 1;
 SetMultiuseSpriteTemplateToTrainerBack = 0x803F864 | 1;
-GetSecretBaseTrainerPicIndex = 0x8040EEC | 1;
-GetSecretBaseTrainerNameIndex = 0x8040F2C | 1;
-AdjustFriendship = 0x80436F8 | 1;
-sub_80447F0 = 0x80447F0 | 1;
 GetLinkTrainerFlankId = 0x8043620 | 1;
 GetBattlerMultiplayerId = 0x8043658 | 1;
+AdjustFriendship = 0x80436F8 | 1;
+sub_80447F0 = 0x80447F0 | 1;
 SetBattleBarStruct = 0x8048150 | 1;
-SwapHpBarsWithHpText = 0x8048A4C | 1;
 SetHealthboxSpriteVisible = 0x80481D4 | 1;
+HealthbarDrawLevel = 0x8048398 | 1;
+healthbar_draw_hp = 0x8048440 | 1;
+SwapHpBarsWithHpText = 0x8048A4C | 1;
+sub_8049D10 = 0x8049D10 | 1;
 UpdateHealthboxAttribute = 0x8049D98 | 1;
 MoveBattleBar = 0x8049FD8 | 1;
-SpriteCB_ReleaseMonFromBall = 0x804B268 | 1;
-IsCryPlayingOrClearCrySongs = 0x80721F0;
+GetBattlerSide = 0x80751C4 | 1;
+GetBattlerPosition = 0x80751D8 | 1;
+GetBattlerAtPosition = 0x80751E8 | 1;
+IsDoubleBattle = 0x8075290 | 1;
+CB2_EndWildBattle = 0x807FB40 | 1;
+CB2_EndScriptedWildBattle_2 = 0x807FBA0 | 1;
+GetWildBattleTransition = 0x807FF34 | 1;
+GetTrainerALoseText = 0x80806EC | 1;
+GetTrainerAWinText = 0x8080710 | 1;
+RecordAbilityBattle = 0x80C71D0 | 1;
+RecordItemBattle = 0x80C7208 | 1;
+BattleStringExpandPlaceholdersToDisplayedString = 0x80D77F4 | 1;
+TryGetStatusString = 0x80D7804 | 1;
+ExpandBattleTextBuffPlaceholders = 0x80D8418 | 1;
+ChooseTypeOfMoveUsedString = 0x80D8720 | 1;
+BattlePutTextOnWindow = 0x80D87BC | 1;
+SetPpNumbersPaletteInMoveSelection = 0x80D89DC | 1;
+sub_80EB2E0 = 0x80EB2E0 | 1;
+//IsLinkDoubleBattle = 0x811FA20 | 1;
+sub_8127EC4 = 0x8127EC4 | 1;
+sub_8127FF4 = 0x8127FF4 | 1;
+
+
+/* Battle Animation Functions */
+EmitBallThrowAnim = 0x800E194 | 1;
+EmitMoveAnimation = 0x800E1FC | 1;
+EmitStatusAnimation = 0x800E6AC | 1;
+EmitSpriteInvisibility = 0x800EB04 | 1;
+EmitBattleAnimation = 0x800EB28 | 1;
+DoBounceEffect = 0x8012138 | 1;
+EndBounceEffect = 0x8012258 | 1;
+LoadBattleMonGfxAndAnimate = 0x80351A8 | 1;
+CompleteOnBattlerSpriteCallbackDummy = 0x8035AE8 | 1;
+CompleteOnBankSpriteCallbackDummy2 = 0x8035B20 | 1;
 DestroyAnimSprite = 0x8072740 | 1;
 DestroyAnimVisualTask = 0x8072760 | 1;
 AddSpriteIndex = 0x8072798 | 1;
@@ -547,145 +409,92 @@ RunStoredCallbackWhenAffineAnimEnds = 0x8074F50 | 1;
 SetAnimSpriteInitialXOffset = 0x8074FF8 | 1;
 InitSpritePosToAnimTarget = 0x8075114 | 1;
 InitSpritePosToAnimAttacker = 0x8075160 | 1;
-GetBattlerSide = 0x80751C4 | 1;
-GetBattlerPosition = 0x80751D8 | 1;
-GetBattlerAtPosition = 0x80751E8 | 1;
-IsDoubleBattle = 0x8075290 | 1;
 InitSpriteDataForLinearTranslation = 0x80754B8 | 1;
 StartAnimLinearTranslation = 0x8075590 | 1;
 GetBattlerSpriteSubpriority = 0x807685C | 1;
-/*BattleSetup_StartRoamerBattle = 0x807F78C | 1;*/
-BattleSetup_StartWildBattle = 0x807F704 | 1;
-CreateBattleStartTask = 0x807F690 | 1;
-StartTheBattle = 0x807F868 | 1;
-CB2_EndWildBattle = 0x807FB40 | 1;
-CB2_EndScriptedWildBattle_2 = 0x807FBA0 | 1;
-GetWildBattleTransition = 0x807FF34 | 1;
-GetTrainerALoseText = 0x80806EC | 1;
-GetTrainerAWinText = 0x8080710 | 1;
 SpriteCB_AnimSolarbeamBigOrb = 0x80A23D8 | 1;
 AnimSpinningKickOrPunchFinish = 0x80B0D24 | 1;
 SpriteCB_SpiderWeb = 0x80B42C1 | 1;
 UnpackSelectedBattleAnimPalettes = 0x80B9A14 | 1;
 SpriteCB_80BA7BC = 0x80BA7BC | 1;
 StartBlendAnimSpriteColor = 0x80BAA4C | 1;
-BattleIntroSlide2 = 0x80BC6C8 | 1;
-BattleIntroSlide3 = 0x80BC9D4 | 1;
-BattleIntroSlideLink = 0x80BCC4C | 1;
-/*BattleAI_SetupAIData = 0x80C6DA0 | 1;*/
-BattleAI_ChooseMoveOrAction = 0x80C6F44 | 1;
-RecordAbilityBattle = 0x80C71D0 | 1;
-RecordItemBattle = 0x80C7208 | 1;
-BattleStringExpandPlaceholdersToDisplayedString = 0x80D77F4 | 1;
-TryGetStatusString = 0x80D7804 | 1;
-ExpandBattleTextBuffPlaceholders = 0x80D8418 | 1;
 ChooseMoveUsedParticle = 0x80D86C8 | 1;
-ChooseTypeOfMoveUsedString = 0x80D8720 | 1;
-BattlePutTextOnWindow = 0x80D87BC | 1;
-SetPpNumbersPaletteInMoveSelection = 0x80D89DC | 1;
-/*GetBattleTowerTrainerPicIndex = 0x80E6078 | 1; //Ruby Leftover*/
-/*GetBattleTowerTrainerClassId = 0x80E60E4 | 1; //Ruby Leftover*/
-/*GetBattleTowerTrainerName = 0x80E6150 | 1; //Ruby Leftover*/
-GetEreaderTrainerFrontSpriteId = 0x80E7420 | 1;
-GetEreaderTrainerClassId = 0x80E7440 | 1;
-GetEreaderTrainerName = 0x80E7460 | 1;
-sub_80EB2E0 = 0x80EB2E0 | 1;
-/*IsLinkDoubleBattle = 0x811FA20 | 1;*/
-sub_8127EC4 = 0x8127EC4 | 1;
-sub_8127FF4 = 0x8127FF4 | 1;
+uns_builder_assign_animtable1 = 0x810BD80 | 1;
+
+
+
+/* Battle AI Functions */
+//AI_TrySwitchOrUseItem = 0x8039C84 | 1;
+//BattleAI_SetupAIData = 0x80C6DA0 | 1;
+BattleAI_ChooseMoveOrAction = 0x80C6F44 | 1;
+
+/* Secret Base Functions */
+GetSecretBaseTrainerPicIndex = 0x8040EEC | 1;
+GetSecretBaseTrainerNameIndex = 0x8040F2C | 1;
+
+
+/* Trainer Tower Functions */
 GetTrainerTowerTrainerClassId = 0x815DA10 | 1;
 GetTrainerTowerTrainerName = 0x815DA28 | 1;
 GetTrainerTowerTrainerPicIndex = 0x815DA3C | 1;
 CopyTrainerTowerPlayerLostText = 0x815DBF4 | 1;
 CopyTrainerTowerPlayerWonText = 0x815DC40 | 1;
-GetWildDataIndexForMap = 0x08082934 | 1;
-IsSEPlaying = 0x080723E0 | 1;
 
-GetCombinedOTID = 0x080CC1E4 | 1;
+/* Battle Tower Functions */
 
-/*Poke Ball Functions*/
+/* Poke Ball Functions */
 SpriteCB_TestBallThrow = 0x804ABD4 | 1;
+SpriteCB_ReleaseMonFromBall = 0x804B268 | 1;
+CreatePokeballSpriteToReleaseMon = 0x804B908 | 1;
+objc_ball_instanciate2_entry_804B9E8 = 0x804B9E8 | 1;
+//LoadBallGfx = 0x804BEF4 | 1;
+FreeBallGfx = 0x804BF64 | 1;
+//ItemIdToBallId = 0x80EF52C | 1;
 PokeBallOpenParticleAnimation = 0x80F06A4 | 1;
-GreatBallOpenParticleAnimation = 0x80F0C28 | 1;
+TimerBallOpenParticleAnimation = 0x80F0818 | 1;
+DiveBallOpenParticleAnimation = 0x80F091C | 1;
 SafariBallOpenParticleAnimation = 0x80F0A20 | 1;
 UltraBallOpenParticleAnimation = 0x80F0B20 | 1;
-MasterBallOpenParticleAnimation = 0x80F0F10 | 1;
-DiveBallOpenParticleAnimation = 0x80F091C | 1;
+GreatBallOpenParticleAnimation = 0x80F0C28 | 1;
 RepeatBallOpenParticleAnimation = 0x80F0DB4 | 1;
-TimerBallOpenParticleAnimation = 0x80F0818 | 1;
+MasterBallOpenParticleAnimation = 0x80F0F10 | 1;
 PremierBallOpenParticleAnimation = 0x80F103C | 1;
+FreeBallTiles = 0x80F1198 | 1;
 
-/*Pokemon Functions*/
-EmitSetMonData = 0x800DFF0 | 1;
-ZeroPlayerPartyMons = 0x0803DA14 |1;
-ZeroEnemyPartyMons = 0x803DA34 | 1;
-CreateMon = 0x803DA54 | 1;
-//CreateBoxMon = 0x803DAC4 | 1;
-BoxMonToMon = 0x803E774 | 1;
-EncryptBoxMon = 0x0803F8F8 | 1;
-GetSpeciesName = 0x08040FD0 | 1;
-ZeroBoxMonData = 0x0803D97C | 1;
-CalculateBoxMonChecksum = 0x0803E3E8 | 1;
-CreateMonWithNature = 0x803DD98 | 1;
-GetNatureFromPersonality = 0x08042EB4 | 1;
-CreateMonWithGenderNatureLetter = 0x803DE00  | 1;
-CreateMonWithIVsPersonality = 0x803DF68  | 1;
-CalculateMonStats = 0x0803E47C | 1;
-GetLevelFromBoxMonExp = 0x803E830 | 1;
-GiveMoveToMon = 0x803E89C | 1;
-GiveMoveToBoxMon = 0x803E8B0 | 1;
-DeleteFirstMoveAndGiveMoveToMon = 0x803EB94 | 1;
-DeleteFirstMoveAndGiveMoveToBoxMon = 0x803EC40 | 1;
-GetMonGender = 0x803F720 | 1;
-GetBoxMonGender = 0x803F730 | 1;
-SetBoxMonData = 0x080404D0 | 1;
-GetGenderFromSpeciesAndPersonality = 0x803F78C | 1;
-GetMonData = 0x0803FBE8 | 1;
-GetBoxMonData = 0x803FD44 | 1;
-SetMonData = 0x0804037C | 1;
-SetMonData2 = 0x080404D0 | 1;
-CopyMon = 0x8040B08 | 1;
-//SendMonToPC = 0x8040B90 | 1;
-GetPartyAbility = 0x8040D38 | 1;
-CalculatePlayerPartyCount = 0x8040C3C | 1;
-CalculatePPWithBonus = 0x804101C | 1;
-SpeciesToNationalPokedexNum = 0x8043298 | 1; 
-MonGainEVs = 0x8043890 | 1;
-GetPokeFlavourRelation = 0x8044234 | 1;
-IsTradedMon = 0x804425C | 1;
-IsOtherTrainer = 0x8044288 | 1;
-MonRestorePP = 0x80442E4 | 1;
-IsMonShiny = 0x8044470 | 1;
-IsShinyOtIdPersonality = 0x804449C | 1;
-GetSetPokedexFlag = 0x8044898 | 1;
-GetPokedexHeightWeight = 0x8088E38 | 1;
-ReducePartyToThree = 0x80A03D8 | 1;
-pokemon_order_func = 0x8128030 | 1;
-GetEggMoves = 0x8045C28 | 1;
 
-GetStarterChoice = 0x80CBDB0 | 1;
-
-/*Daycare*/
+/* Daycare */
 GetEggSpecies = 0x8045970 | 1;
-RemoveIVIndexFromList = 0x08045A78 | 1;
-RemoveEggFromDayCare = 0x08045F70 | 1;
-AlterEggSpeciesWithIncenseItem = 0x08045FA0 | 1;
-DetermineEggSpeciesAndParentSlots = 0x08046000 | 1;
-SetInitialEggData = 0x08046208 | 1;
-ShouldEggHatch = 0x080463B8 | 1;
+RemoveIVIndexFromList = 0x8045A78 | 1;
+RemoveEggFromDayCare = 0x8045F70 | 1;
+AlterEggSpeciesWithIncenseItem = 0x8045FA0 | 1;
+DetermineEggSpeciesAndParentSlots = 0x8046000 | 1;
+SetInitialEggData = 0x8046208 | 1;
+ShouldEggHatch = 0x80463B8 | 1;
 
-/* Pokemon Storage */
+
+/* Pokemon Storage Functions */
+ZeroBoxMonData = 0x803D97C | 1;
+CalculateBoxMonChecksum = 0x803E3E8 | 1;
+BoxMonToMon = 0x803E774 | 1;
+GiveMoveToBoxMon = 0x803E8B0 | 1;
+GetBoxMonGender = 0x803F730 | 1;
+EncryptBoxMon = 0x803F8F8 | 1;
+GetBoxMonData = 0x803FD44 | 1;
+SetBoxMonData = 0x80404D0 | 1;
+//SendMonToPC = 0x8040B90 | 1;
 StorageGetCurrentBox = 0x808B9F4 | 1;
 GetMonDataFromAnyBox = 0x808BA18 | 1;
 SetMonDataFromAnyBox = 0x808BA5C | 1;
-CompactPartySlots = 0x080937DC | 1;
-set_unknown_box_id = 0x080CC79C | 1;
-get_unknown_box_id = 0x080CC7A8 | 1;
+CompactPartySlots = 0x80937DC | 1;
+sub_8094AD8 = 0x8094AD8 | 1;
+SetSomeBoxId = 0x80CC79C | 1;
+GetSomeBoxId = 0x80CC7A8 | 1;
 
-/*Pokemon Icons*/
-gIconPals = 0x0808AB40;
+
+/* Pokemon Icons */
 CreateMonIcon = 0x8096E18 | 1;
 GetMonIconTiles = 0x8097028 | 1;
+LoadPartyIconTiles = 0x8097054 | 1;
 LoadMonIconPalettes = 0x809707C | 1;
 SafeLoadMonIconPalette = 0x80970A0 | 1;
 LoadMonIconPalette = 0x80970E0 | 1;
@@ -698,22 +507,30 @@ GetValidMonIconPalIndex = 0x80971F8 | 1;
 GetSpeciesIconPaletteIndex = 0x8097218 | 1;
 UpdateMonIconFrame = 0x8097228 | 1;
 
-/*Wild Encounter Functions*/
+
+/* Wild Encounter Functions */
 ChooseWildMonIndex_Land = 0x808274C | 1;
 ChooseWildMonIndex_WaterRock = 0x8082808 | 1;
 ChooseWildMonIndex_Fishing = 0x808285C | 1;
+GetCurrentMapWildMonHeaderId = 0x8082934 | 1;
 CanEncounterUnownInTanobyRuins = 0x80829C0 | 1;
-GenerateUnownPersonality = 0x8082A88  | 1;
-/*DoWildEncounterRateDiceRoll = 0x8082BA0 | 1;*/
+GenerateUnownPersonality = 0x8082A88 | 1;
+//DoWildEncounterRateDiceRoll = 0x8082BA0 | 1;
 DoGlobalWildEncounterDiceRoll = 0x8082C98 | 1;
 IsWildLevelAllowedByRepel = 0x808310C | 1;
 ApplyFluteEncounterRateMod = 0x8083174 | 1;
 ApplyCleanseTagEncounterRateMod = 0x80831D8 | 1;
 IncrementEncounterProbabilityBonus = 0x8083410 | 1;
-/*TryStartRoamerEncounter = 0x8141FAC | 1;*/
+//TryStartRoamerEncounter = 0x8141FAC | 1;
 
-/*Item Functions*/
+
+/* Diploma Screen Functions */
+ClearAndInitDiploma = 0x80F4E24 | 1;
+
+
+/* Item Functions */
 IsMail = 0x80980F8 | 1;
+GetBagItemQuantity = 0x8099DA0 | 1;
 CopyItemName = 0x8099E90 | 1;
 CheckBagHasItem = 0x8099F40 | 1;
 AddBagItem = 0x809A084 | 1;
@@ -723,123 +540,216 @@ AddBagItem = 0x809A084 | 1;
 ItemId_GetMystery2 = 0x809A9B4 | 1;
 GetPocketByItemId = 0x809A9D8 | 1;
 ItemId_GetType = 0x809A9FC | 1;
+BuyMenuReturnToItemList = 0x809BF98 | 1;
 AddMoney = 0x809FDA0 | 1;
+RemoveUsedItem = 0x80A1A44 | 1;
+CheckVSSeeker = 0x810C4EC | 1;
+BuyMenuDisplayMessage = 0x813F75C | 1;
 
-/*Overworld Functions*/
-GetTrainerEncounterMusicId = 0x804367C | 1;
+
+/* Map Functions & Overworld Functions */
+EnableInterrupts = 0x8000B68 | 1;
+DisableInterrupts = 0x8000B94 | 1;
 Overworld_GetMapHeaderByGroupAndId = 0x8055238 | 1;
 Overworld_GetMapTypeOfSaveblockLocation = 0x8056188 | 1;
-CheckOpenSky = 0x080561FC | 1;
-GetCurrentRegionMapSectionId = 0x08056260 | 1;
+CheckOpenSky = 0x80561FC | 1;
+GetCurrentRegionMapSectionId = 0x8056260 | 1;
 GetCurrentMapBattleScene = 0x8056288 | 1;
-MapGridGetZCoordAt = 0x08058D44 | 1;
-MetatileBehavior_GetLowerBytes = 0x8058F1C | 1;
+CleanupOverworldWindowsAndTilemaps = 0x80563F0 | 1;
+OverworldCallback1 = 0x8056534 | 1;
+OverworldCallback2 = 0x80565B4 | 1;
+CB2_ReturnToField = 0x80567DC | 1;
+OverworldCallbackSwitchStartMenu = 0x80568A8 | 1;
+CallbackOWandContinueScriptsMusic = 0x80568C4 | 1;
+ReturnToFieldContinueScriptPlayMapMusic = 0x80568E0 | 1;
+MapGridGetZCoordAt = 0x8058D44 | 1;
 MapGridGetMetatileIdAt = 0x8058E48 | 1;
+MetatileBehavior_GetLowerBytes = 0x8058F1C | 1;
 MapGridGetMetatileField = 0x8058F48 | 1;
 MapGridGetMetatileBehaviorAt = 0x8058F78 | 1;
 ApplySpecialMapPalette = 0x80598CC | 1;
 MetatileBehavior_IsSandOrDeepSand = 0x8059B74 | 1;
-MetatileBehavior_IsForcedMovementTile = 0x8059D70 | 1;
 MetatileBehavior_IsSurfableWaterOrUnderwater = 0x8059CA4 | 1;
+MetatileBehavior_IsForcedMovementTile = 0x8059D70 | 1;
 MetatileBehavior_IsTallGrass = 0x8059F34 | 1;
 MetatileBehavior_IsLongGrass = 0x8059F4C | 1;
 MetatileBehavior_IsIndoorEncounter = 0x8059F88 | 1;
 MetatileBehavior_IsMountain = 0x8059F9C | 1;
 MetatileBehavior_IsDeepOrOceanWater = 0x805A01C | 1;
 MetatileBehavior_IsRunningDisallowed = 0x805A234 | 1;
-PlayerGetDestCoords = 0x805C538 | 1;
-TestPlayerAvatarFlags = 0x805C74C | 1;
 sub_805C780 = 0x805C780 | 1;
-PatchObjectPalette = 0x0805F538 | 1;
-GetEventObjectScriptPointerByEventObjectId = 0x805FC38 | 1;
-GetRunningDirectionAnimNum = 0x8063520 | 1;
-npc_apply_anim_looping = 0x8063554 | 1;
-npc_apply_direction = 0x8064678 | 1;
-npc_obj_ministep_stop_on_arrival = 0x8064788 | 1;
-CurrMapHeightMismatch = 0x080681B0 | 1;	
-FreezeEventObjects = 0x8068974 | 1;
-ScriptReadHalfword = 0x80698F8 | 1;
-ScriptContext2_Enable = 0x8069940 | 1;
-ScriptContext1_SetupScript = 0x8069AE4 | 1;
-ScriptContext1_Stop = 0x8069B28 | 1;
 MapHeaderCheckScriptTable = 0x8069BD8 | 1;
 UpdateHappinessStepCounter = 0x806D74C | 1;
 UpdatePoisonStepCounter = 0x806D79C | 1;
-PlayNewMapMusic = 0x8071A74 | 1;
-CheckVSSeeker = 0x810C4EC | 1;
-OverworldCallback1 = 0x08056534 | 1;
-OverworldCallback2 = 0x080565B4 | 1;
-OverworldCallbackSwitchStartMenu = 0x080568A8 | 1;
-
-/*Region Map Functions*/
+FieldCallback_ReturnToEventScript2 = 0x807DD24 | 1;
+FieldEffectActiveListRemove = 0x80837fc | 1;
 GetMapName = 0x80C4D78 | 1;
+BindObj = 0x80DC44C | 1;
+UpdateSurfBlobFieldEffect = 0x80DC4F8 | 1;
+
+
+/* Script Functions */
+ScriptReadHalfword = 0x80698F8 | 1;
+ScriptContext2_Enable = 0x8069940 | 1;
+ScriptEnvDisable = 0x806994C | 1;
+ScriptEnv2IsEnabled = 0x8069958 | 1;
+ScriptContext1_SetupScript = 0x8069AE4 | 1;
+ScriptContext1_Stop = 0x8069B28 | 1;
+VarGetAddress = 0x806E454 | 1;
+VarGet = 0x806E568 | 1;
+VarSet = 0x806E584 | 1;
+FlagSet = 0x806E680 | 1;
+FlagClear = 0x806E6A8 | 1;
+FlagGet = 0x806E6D0 | 1;
+HelpSystemDisableOnField = 0x812B478 | 1;
+
+
+
+/* Data Functions */
+MallocInit = 0x8002B80 | 1;
+Malloc = 0x8002B9C | 1;
+malloc_ = 0x8002B9C | 1;
+Calloc = 0x8002BB0 | 1;
+AllocZeroed = 0x8002BB0 | 1;
+calloc_ = 0x8002BB0 | 1;
+Free = 0x8002BC4 | 1;
+free_ = 0x8002BC4 | 1;
+LZDecompressVram = 0x800EBC0 | 1;
+LZ77UnCompAnyRAM = 0x800EC8C | 1;
+LoadCompressedSpriteSheetUsingHeap = 0x800F034 | 1;
+LoadCompressedSpritePaletteUsingHeap = 0x800F078 | 1;
+sub_080F696C = 0x80F696C | 1;
+malloc_and_LZ77UnComp = 0x80F6AA0 | 1;
+LZ77UnCompVram = 0x81E3B6C | 1;
+LZ77UnCompWram = 0x81E3B70 | 1;
+Memcpy = 0x81E5E78 | 1;
+memcpy_ = 0x81E5E78 | 1;
+Memset = 0x81E5ED8 | 1;
+memset_ = 0x81E5ED8 | 1;
+
+
+
+/* Text Functions */
+DeactivateAllTextPrinters = 0x8002C28 | 1;
+AddTextPrinterParameterized = 0x8002C48 | 1;
+RunTextPrinters = 0x8002DE8 | 1;
+IsTextPrinterActive = 0x8002E64 | 1;
+GetStringWidth = 0x8005ED4 | 1;
+StringCopy10 = 0x8008CF4 | 1;
+StringGetEnd10 = 0x8008D28 | 1;
+StringCopy = 0x8008D84 | 1;
+StringAppend = 0x8008DA4 | 1;
+StringAppendN = 0x8008DBC | 1;
+StringLength = 0x8008E08 | 1;
+ConvertIntToDecimalStringN = 0x8008E78 | 1;
+StringExpandPlaceholders = 0x8008FCC | 1;
+GetExpandedPlaceholder = 0x80091E0 | 1;
+TextboxFdecodeAutoAndCreateTask = 0x80694C8 | 1;
+TextboxClose = 0x80694F4 | 1;
+ReturnEmptyStringIfNull = 0x80806C8 | 1;
+GetTextSpeed = 0x80F78A8 | 1;
+ChoiceSetupSimple = 0x810F7D8 | 1;
+AddTextPrinterParameterized4 = 0x812E5A4 | 1;
+
+
+/* Task Functions */
+nullsub_8 = 0x802E310 | 1;
+ResetTasks = 0x80773BC | 1;
+CreateTask = 0x807741C | 1;
+InsertTask = 0x8077470 | 1;
+DestroyTask = 0x8077508 | 1;
+RunTasks = 0x8077578 | 1;
+FindFirstActiveTask = 0x80775A8 | 1;
+TaskDummy = 0x80775E4 | 1;
+SetTaskFuncWithFollowupFunc = 0x80775E8 | 1;
+SwitchTaskToFollowupFunc = 0x807761C | 1;
+FuncIsActiveTask = 0x8077650 | 1;
+FindTaskIdByFunc = 0x8077688 | 1;
+GetTaskCount = 0x80776B8 | 1;
+DisplayItemMessage = 0x8108E70 | 1;
+bag_menu_inits_lists_menu = 0x810A1F8 | 1;
+oac_nullsub_0 = 0x810BB88 | 1;
+CpuFastSet = 0x81E3B60 | 1;
+CpuSet = 0x81E3B64 | 1;
+
 
 /*Event Object Movement Functions*/
-TrySpawnEventObjectTemplate = 0x0805E72C | 1;
-EventObjectSetGraphicsId = 0x0805F060 | 1;
-EventObjectTurn = 0x0805F218 | 1;
-MoveEventObjectToMapCoords = 0x0805F724|1;
-EventObjectSetHeldMovement = 0x08063CA4 | 1;
-EventObjectClearHeldMovementIfActive = 0x08063D1C | 1;
-GetEventObjectTemplateByLocalIdAndMap = 0x0805FD5C|1;
-EventObjectClearHeldMovement = 0x08063D34 | 1;
-EventObjectClearHeldMovementIfFinished = 0x08063D7C | 1;
-GetJumpSpecialMovementAction = 0x080641C0 | 1;
-UnfreezeEventObjects = 0x08068A5C|1;
+TrySpawnEventObjectTemplate = 0x805E72C | 1;
+EventObjectSetGraphicsId = 0x805F060 | 1;
+EventObjectTurn = 0x805F218 | 1;
+MoveEventObjectToMapCoords = 0x805F724 | 1;
+GetEventObjectTemplateByLocalIdAndMap = 0x805FD5C | 1;
+EventObjectSetHeldMovement = 0x8063CA4 | 1;
+EventObjectClearHeldMovementIfActive = 0x8063D1C | 1;
+EventObjectClearHeldMovement = 0x8063D34 | 1;
+EventObjectClearHeldMovementIfFinished = 0x8063D7C | 1;
+GetJumpSpecialMovementAction = 0x80641C0 | 1;
+UnfreezeEventObjects = 0x8068A5C | 1;
+
 
 /*Field Effects Functions*/
 FieldEffectStart = 0x8083444 | 1;
 FieldEffectFreeGraphicsResources = 0x80836B4 | 1;
 FieldEffectStop = 0x80836D8 | 1;
-FldEffPoison_Start =0x80A0E48 | 1;
-FldEff_SurfBlob = 0x80DC3D0|1;
+FldEffPoison_Start = 0x80A0E48 | 1;
+FldEff_SurfBlob = 0x80DC3D0 | 1;
 BindFieldEffectToSprite = 0x80DC44C | 1;
+
 
 /*Field Weather Functions*/
 Task_WeatherMain = 0x8079e0c | 1;
 GetCurrentWeather = 0x807AF98 | 1;
 
-/*Start Trainer Battle Functions*/
-/*InitTrainerBattleVariables = 0x8080110 | 1;*/
-TrainerBattleLoadArgs = 0x8080168 | 1;
-SetMapVarsToTrainer = 0x80801F0 | 1;
+/* Trainerbattle Functions */
 TrainerBattleLoadArg16 = 0x80800A8 | 1;
 TrainerBattleLoadArg8 = 0x80800B4 | 1;
-/*BattleSetup_ConfigureTrainerBattle = 0x8080228 | 1;*/
+//InitTrainerBattleVariables = 0x8080110 | 1;
+TrainerBattleLoadArgs = 0x8080168 | 1;
+SetMapVarsToTrainer = 0x80801F0 | 1;
+//BattleSetup_ConfigureTrainerBattle = 0x8080228 | 1;
 TrainerWantsBattle = 0x8080334 | 1;
-/*GetTrainerFlagFromScriptPointer = 0x8080378 | 1;*/
+//GetTrainerFlagFromScriptPointer = 0x8080378 | 1;
 CB2_EndTrainerBattle = 0x80804AC | 1;
 TrainerCanApproachPlayer = 0x8081BEC | 1;
 TrainerApproachPlayer = 0x8081E68 | 1;
 GetRematchTrainerId = 0x810CE64 | 1;
 
-/*Quest Log*/
+
+/* Questlog Functions */
+WriteQuestLog = 0x80A2294 | 1;
 QuestLogRemtachBattleStore = 0x811231C | 1;
 IsQuestLogActive = 0x8111C2C | 1;
 
 /* Safari Zone Functions */
-GetSafariZoneFlag = 0x080A0E90 | 1;
-SetSafariZoneFlag = 0x080A0EA4 | 1;
-ResetSafariZoneFlag = 0x080A0EB4 | 1;
+GetSafariZoneFlag = 0x80A0E90 | 1;
+SetSafariZoneFlag = 0x80A0EA4 | 1;
+ResetSafariZoneFlag = 0x80A0EB4 | 1;
 
-/*Party Menu Functions*/
-DisplayPartyPokemonSelectData = 0x811F2FC | 1; 
+/* Party Menu Functions */
+ZeroPlayerPartyMons = 0x803DA14 | 1;
+ZeroEnemyPartyMons = 0x803DA34 | 1;
+CheckPartyPokerus = 0x8043A70 | 1;
+sub_80BF77C = 0x80BF77C | 1;
+DisplayPartyPokemonSelectData = 0x811F2FC | 1;
 sub_811FA78 = 0x811FA78 | 1;
 sub_811FB28 = 0x811FB28 | 1;
 sub_812029C = 0x812029C | 1;
 DisplayPartyMenuMsgBox = 0x81202F8 | 1;
 sub_81203B8 = 0x81203B8 | 1;
+GetMonPrimaryAilments = 0x812085C | 1;
+GetMonAilment = 0x81208A4 | 1;
 DisplayPartyPokemonNickname = 0x8121738 | 1;
 DisplayPartyPokemonLevelCheck = 0x8121790 | 1;
 DisplayPartyPokemonGenderNidoranCheck = 0x8121854 | 1;
-pokemon_ailments_get_primary = 0x812085C | 1;
 DisplayPartyPokemonOtherText = 0x8121C70 | 1;
 sub_8121CE4 = 0x8121CE4 | 1;
 display_pokemon_menu_message = 0x8121D0C | 1;
 sub_8122D78 = 0x8122D78 | 1;
 sub_8124258 = 0x8124258 | 1;
+sub_813A45C = 0x813A45C | 1;
 
-/*Window Functions*/
+
+/* Window Functions */
 InitWindows = 0x8003B24 | 1;
 AddWindow = 0x8003CE4 | 1;
 RemoveWindow = 0x8003E3C | 1;
@@ -860,106 +770,96 @@ CallWindowFunction = 0x800486C | 1;
 SetWindowAttribute = 0x80048BC | 1;
 GetWindowAttribute = 0x8004950 | 1;
 GetNumActiveWindowsOnBg = 0x8004A34 | 1;
-WindowOutline = 0x0810F2E8 | 1;
-RboxChoiceUpdate = 0x0810FA04 | 1;
-RboxIdClean = 0x0810F4D8 | 1;
-DeleteWindow = 0x080F6F54 | 1;
+InitWindowForSprite = 0x800F34C | 1;
+LoadBattleMenuWindowGfx = 0x800F380 | 1;
+LoadBattleTextboxAndBackground = 0x800F420 | 1;
+RemoveHealthbarWindow = 0x804A6D8 | 1;
+DrawHealthbar = 0x804A6E8 | 1;
+SyncTilemaps = 0x80F67B8 | 1;
+DeleteWindow = 0x80F6F54 | 1;
+SetStandardWindowBorderStyle = 0x80F7750 | 1;
+WindowCurved = 0x80F7768 | 1;
+WindowOutline = 0x810F2E8 | 1;
+RboxIdClean = 0x810F4D8 | 1;
+RboxChoiceUpdate = 0x810FA04 | 1;
+OakTutorialCreateWindow = 0x81220D4 | 1;
+WindowPrint = 0x812E51C | 1;
 
-/*Text Window Functions*/
+
+/* Text Input Functions */
+FormatNameAndGenderString = 0x80496C0 | 1;
+NicknameMalloc = 0x809D954 | 1;
+MainState_StartPageSwap = 0x809E210 | 1;
+MainState_WaitPageSwap = 0x809E250 | 1;
+sub_809E518 = 0x809E518 | 1;
+MoveCursorToOKButton = 0x809E9F8 | 1;
+sub_809EAA8 = 0x809EAA8 | 1;
+GetKeyRoleAtCursorPos = 0x809EB00 | 1;
+KeyboardKeyHandler_Page = 0x809F168 | 1;
+KeyboardKeyHandler_Backspace = 0x809F190 | 1;
+KeyboardKeyHandler_OK = 0x809F1B4 | 1;
+sub_809F1F0 = 0x809F1F0 | 1;
+GetInputEvent = 0x809F21C | 1;
+SetInputState = 0x809F240 | 1;
+DeleteTextCharacter = 0x809F700 | 1;
+NameChooserSelectLetter = 0x809F75C | 1;
+
+
+/* PicBox Functions */
+TaskDestroyPicBox = 0x809D494 | 1;
+PicBoxWindow = 0x809D654 | 1;
+PicBoxSetter = 0x809D6D4 | 1;
+BoxCreateTask = 0x81119D4 | 1;
+
+
+/* Text Window Functions */
+GetWindowFrameTilesPal = 0x8069788 | 1;
 LoadWindowGfx = 0x14FFC4 | 1;
 LoadUserWindowBorderGfx = 0x815001C | 1;
 DrawTextBorderOuter = 0x8150048 | 1;
 DrawTextBorderInner = 0x81501D0 | 1;
-GetWindowFrameTilesPal = 0x8069788 | 1;
+
 
 /* Start Menu Functions */
-CloseSafariStepsBox = 0x0806EF18 | 1;
-HideStartMenu = 0x0806FEA0 | 1;
-CloseStartMenuDescriptionBox = 0x080F7998 | 1;
-StartMenuPokedexFunc = 0x0806F410 | 1;
-IsUpdateLinkStateCBActive = 0x0805642C | 1;
-InUnionRoom = 0x0811B0D0 | 1;
-BuildLinkModeStartMenu = 0x0806EE34 | 1;
-BuildUnionRoomStartMenu = 0x0806EE58 | 1;
-AddStartMenuAction = 0x0806ED94 | 1;
-StartMenuPokedexCallback = 0x0806F410 | 1;
-StartMenuPokemonCallback = 0x0806F44C | 1;
-StartMenuBagCallback = 0x0806F480 | 1;
-StartMenuPlayerNameCallback = 0x0806F4B4 | 1;
-StartMenuSaveCallback = 0x0806F4E8 | 1;
-StartMenuOptionCallback = 0x0806F4FC | 1;
-StartMenuExitCallback = 0x0806F540 | 1;
-StartMenuSafariZoneRetireCallback = 0x0806F554 | 1;
-StartMenuLinkModePlayerNameCallback = 0x0806F56C | 1;
-TaskStartMenu = 0x0806F168 | 1;
-ShowStartMenu = 0x0806F258 | 1;
-
-gText_MenuPokedex = 0x841627d;
-gText_MenuPokemon = 0x8415a66;
-gText_MenuBag = 0x8416285;
-gText_MenuPlayer = 0x841628e;
-gText_MenuSave = 0x8416291;
-gText_MenuOption = 0x8416296;
-gText_MenuExit = 0x841629d;
-gText_MenuRetire = 0x84162a2;
-gText_PokedexDescription = 0x8419F76;
-gText_PokemonDescription = 0x8419FBB;
-gText_BagDescription = 0x841A001;
-gText_PlayerDescription = 0x841A049;
-gText_SaveDescription = 0x841A06F;
-gText_OptionDescription = 0x841A0B7;
-gText_ExitDescription = 0x841A0F9;
-gText_RetireDescription = 0x841A111;
+IsUpdateLinkStateCBActive = 0x805642C | 1;
+AddStartMenuAction = 0x806ED94 | 1;
+BuildLinkModeStartMenu = 0x806EE34 | 1;
+BuildUnionRoomStartMenu = 0x806EE58 | 1;
+CloseSafariStepsBox = 0x806EF18 | 1;
+TaskStartMenu = 0x806F168 | 1;
+ShowStartMenu = 0x806F258 | 1;
+StartMenuPokedexFunc = 0x806F410 | 1;
+StartMenuPokedexCallback = 0x806F410 | 1;
+StartMenuPokemonCallback = 0x806F44C | 1;
+StartMenuBagCallback = 0x806F480 | 1;
+StartMenuPlayerNameCallback = 0x806F4B4 | 1;
+StartMenuSaveCallback = 0x806F4E8 | 1;
+StartMenuOptionCallback = 0x806F4FC | 1;
+StartMenuExitCallback = 0x806F540 | 1;
+StartMenuSafariZoneRetireCallback = 0x806F554 | 1;
+StartMenuLinkModePlayerNameCallback = 0x806F56C | 1;
+HideStartMenu = 0x806FEA0 | 1;
+CloseStartMenuDescriptionBox = 0x80F7998 | 1;
+InUnionRoom = 0x811B0D0 | 1;
 
 
-/*Palette Functions*/
-BlendPalette = 0x8045274 | 1;
-LoadCompressedPalette = 0x80703A8 | 1;
-LoadPalette = 0x80703EC | 1;
-FillPalette = 0x8070424 | 1;
-UpdatePaletteFade = 0x80704D0 | 1;
-ResetPaletteFade = 0x8070528 | 1;
-ReadPlttIntoBuffers = 0x8070548 | 1;
-//BeginNormalPaletteFade = 0x8070588 | 1;
-ResetPaletteStructByUid = 0x8070A0C | 1;
-ResetPaletteStruct = 0x8070A28 | 1;
-ResetPaletteFadeControl = 0x8070A84 | 1;
-GetPaletteNumByUid = 0x8070B58 | 1;
-UpdateNormalPaletteFade = 0x8070B8C | 1;
-InvertPlttBuffer = 0x8070CCC | 1;
-TintPlttBuffer = 0x8070D14 | 1;
-UnfadePlttBuffer = 0x8070DE8 | 1;
-BeginFastPaletteFade = 0x8070E44 | 1;
-BeginFastPaletteFadeInternal = 0x8070E68 | 1;
-UpdateFastPaletteFade = 0x8070EEC | 1;
-BeginHardwarePaletteFade = 0x8071264 | 1;
-UpdateHardwarePaletteFade = 0x8071300 | 1;
-UpdateBlendRegisters = 0x807141C | 1;
-IsSoftwarePaletteFadeFinishing = 0x8071470 | 1;
-BlendPalettes = 0x80714D4 | 1;
-BlendPalettesUnfaded = 0x8071510 | 1;
-TintPalette_GrayScale = 0x8071544 | 1;
-TintPalette_GrayScale2 = 0x8071594 | 1;
-TintPalette_SepiaTone = 0x80715F4 | 1;
-TintPalette_CustomTone = 0x8071660 | 1;
+/* Save State Functions */
+SaveSerializedGame = 0x804C300 | 1;
+IncrementGameStat = 0x8054E90 | 1;
+GetGameStat = 0x8054EC4 | 1;
+LogCoordsCameraRelative = 0x8063BC4 | 1;
+ResetTrainerCard = 0x8089D0C | 1;
+SaveWriteToFlash = 0x80D97D0 | 1;
+TryWriteSector = 0x80D99D8 | 1;
+DoReadFlashWholeSection = 0x80DA190 | 1;
+CalculateChecksum = 0x80DA1A8 | 1;
+UpdateSaveAddresses = 0x80DA1D4 | 1;
 
-/*Save Functions*/
-SaveSerializedGame = 0x0804C300|1;
-UpdateSaveAddresses = 0x080DA1D4|1;
-CalculateChecksum = 0x080DA1A8|1;
-TryWriteSector = 0x080D99D8|1;
-save_write_to_flash = 0x080D97D0|1;
-DoReadFlashWholeSection = 0x080DA190|1;
-
-/*Other Functions*/
-Malloc = 0x8002B9C | 1;
-Calloc = 0x8002BB0 | 1;
-Free = 0x8002BC4 | 1;
-
-/*GPU Regs Functions*/
+/* GPU Regs Functions */
 SetGpuReg = 0x8000A38 | 1;
 
-/*Sprite Functions*/
+
+/* Sprite Functions */
 ResetSpriteData = 0x8006B10 | 1;
 AnimateSprites = 0x8006B5C | 1;
 BuildOamBuffer = 0x8006BA8 | 1;
@@ -970,7 +870,7 @@ CopyMatricesToOamBuffer = 0x8006EB8 | 1;
 AddSpritesToOamBuffer = 0x8006F04 | 1;
 CreateSprite = 0x8006F8C | 1;
 CreateSpriteAtEnd = 0x8006FE0 | 1;
-CreateInvisibleSprite =0x800704C | 1;
+CreateInvisibleSprite = 0x800704C | 1;
 CreateSpriteAt = 0x8007094 | 1;
 CreateSpriteAndAnimate = 0x80071EC | 1;
 DestroySprite = 0x8007280 | 1;
@@ -980,7 +880,7 @@ ClearSpriteCopyRequests = 0x8007350 | 1;
 ResetOamMatrices = 0x8007390 | 1;
 SetOamMatrix = 0x80073BC | 1;
 ResetSprite = 0x80073DC | 1;
-CalcCenterToCornerVec = 0x080073F0 | 1;
+CalcCenterToCornerVec = 0x80073F0 | 1;
 AllocSpriteTiles = 0x8007434 | 1;
 SpriteCallbackDummy = 0x800760C | 1;
 ProcessSpriteCopyRequests = 0x8007610 | 1;
@@ -1059,74 +959,66 @@ FreeSpritePaletteByTag = 0x8008A30 | 1;
 SetSubspriteTables = 0x8008A58 | 1;
 AddSpriteToOamBuffer = 0x8008A64 | 1;
 AddSubspritesToOamBuffer = 0x8008AD0 | 1;
-
-FieldEffectActiveListRemove = 0x080837fc | 1;
-gFieldEffectObjectTemplatePointers = 0x083a0010;
-UpdateSurfBlobFieldEffect = 0x80DC4F8 | 1;
-gFieldEffectArguments = 0x20386E0;
-surfBlobTiles = 0x8396b08;
-surfBlobPal = 0x835b968;
-BindObj = 0x080DC44C | 1;
-
-StringCopy10 = 0x8008CF4 | 1;
-StringCopy = 0x8008D84 | 1;
-StringLength = 0x8008E08 | 1;
-ConvertIntToDecimalStringN = 0x8008E78 | 1;
-LZDecompressVram = 0x800EBC0 | 1;
 LoadCompressedSpriteSheetUsingHeap = 0x800F034 | 1;
-LoadCompressedSpritePaletteUsingHeap = 0x800F078 | 1;
-nullsub_8 = 0x802E310 | 1;
-Sine = 0x8044E30 | 1;
-Random = 0x8044EC8 | 1;
-Random2 = 0x0808322C | 1;
-CountTrailingZeroBits = 0x8045190 | 1;
-IncrementGameStat = 0x8054E90 | 1;
+CreateHiddenSpriteWithCallback = 0x8044EF8 | 1;
+something_08050969 = 0x8050968 | 1;
+LoadSpriteSheetsForSummaryScreen = 0x8050DE0 | 1;
+PatchObjectPalette = 0x805F538 | 1;
+SetAffineData = 0x8075858 | 1;
+SpawnPokeOrTrainerPic = 0x810BDAC | 1;
+
+
+/* Palette Functions */
+BlendPalette = 0x8045274 | 1;
+LoadCompressedPalette = 0x80703A8 | 1;
+LoadPalette = 0x80703EC | 1;
+FillPalette = 0x8070424 | 1;
+UpdatePaletteFade = 0x80704D0 | 1;
+ResetPaletteFade = 0x8070528 | 1;
+ReadPlttIntoBuffers = 0x8070548 | 1;
+//BeginNormalPaletteFade = 0x8070588 | 1;
+ResetPaletteStructByUid = 0x8070A0C | 1;
+ResetPaletteStruct = 0x8070A28 | 1;
+ResetPaletteFadeControl = 0x8070A84 | 1;
+GetPaletteNumByUid = 0x8070B58 | 1;
+UpdateNormalPaletteFade = 0x8070B8C | 1;
+InvertPlttBuffer = 0x8070CCC | 1;
+TintPlttBuffer = 0x8070D14 | 1;
+UnfadePlttBuffer = 0x8070DE8 | 1;
+BeginFastPaletteFade = 0x8070E44 | 1;
+BeginFastPaletteFadeInternal = 0x8070E68 | 1;
+UpdateFastPaletteFade = 0x8070EEC | 1;
+BeginHardwarePaletteFade = 0x8071264 | 1;
+UpdateHardwarePaletteFade = 0x8071300 | 1;
+UpdateBlendRegisters = 0x807141C | 1;
+IsSoftwarePaletteFadeFinishing = 0x8071470 | 1;
+BlendPalettes = 0x80714D4 | 1;
+BlendPalettesUnfaded = 0x8071510 | 1;
+TintPalette_GrayScale = 0x8071544 | 1;
+TintPalette_GrayScale2 = 0x8071594 | 1;
+TintPalette_SepiaTone = 0x80715F4 | 1;
+TintPalette_CustomTone = 0x8071660 | 1;
+
+
+/* NPC Functions */
+PlayerGetDestCoords = 0x805C538 | 1;
+TestPlayerAvatarFlags = 0x805C74C | 1;
 GetEventObjectIdByLocalIdAndMapInternal = 0x805DFF4 | 1;
 GetEventObjectIdByLocalId = 0x805E044 | 1;
-FlagSet = 0x806E680 | 1;
-FlagClear = 0x806E6A8 | 1;
-FlagGet = 0x806E6D0 | 1;
-VarGet = 0x806E568 | 1;
-VarGetAddress = 0x806E454 | 1;
-VarSet = 0x806E584 | 1;
-VarGetEventObjectGraphicsId = 0x0806e5a4 | 1;
-LoadCompressedPalette = 0x80703A8 | 1;
-PlayCry3 = 0x8071E60 | 1;
-PlayBGM = 0x80722A0 | 1;
-PlaySE = 0x80722CC | 1;
-ResetTasks = 0x80773BC | 1;
-CreateTask = 0x807741C | 1;
-InsertTask = 0x8077470 | 1;
-DestroyTask = 0x8077508 | 1;
-RunTasks = 0x8077578 | 1;
-FindFirstActiveTask = 0x80775A8 | 1;
-TaskDummy = 0x80775E4 | 1;
-SetTaskFuncWithFollowupFunc = 0x80775E8 | 1;
-SwitchTaskToFollowupFunc = 0x807761C | 1;
-FuncIsActiveTask = 0x8077650 | 1;
-FindTaskIdByFunc = 0x8077688 | 1;
-GetTaskCount = 0x80776B8 | 1;
-ReturnEmptyStringIfNull = 0x80806C8 | 1;
-DisplayItemMessage = 0x8108E70 | 1;
-bag_menu_inits_lists_menu = 0x810A1F8 | 1;
-m4aSongNumStop = 0x81DD1C0 | 1;
-m4aMPlayContinue = 0x81DD26C | 1;
-m4aMPlayVolumeControl = 0x81DE0E0 | 1;
-CpuSet = 0x81E3B64 | 1;
-CpuFastSet = 0x081E3B60 | 1;
-Sqrt = 0x81E3B9C | 1;
-udivsi = 0x81E460C | 1;
-umodsi = 0x81E4684 | 1;
+GetEventObjectScriptPointerByEventObjectId = 0x805FC38 | 1;
+GetRunningDirectionAnimNum = 0x8063520 | 1;
+npc_apply_anim_looping = 0x8063554 | 1;
+npc_apply_direction = 0x8064678 | 1;
+npc_obj_ministep_stop_on_arrival = 0x8064788 | 1;
+MakeExclamationMark = 0x8066920 | 1;
+CurrMapHeightMismatch = 0x80681B0 | 1;
+FreezeEventObjects = 0x8068974 | 1;
+VarGetEventObjectGraphicsId = 0x806e5a4 | 1;
 
-EnableInterrupts = 0x08000B68 | 1;
-DisableInterrupts = 0x08000B94 | 1;
 
-MakeExclamationMark = 0x08066920 | 1;
-
-/*BG Functions*/
-BgIdSetTilemap = 0x08001FA0 | 1;
-BgIdMarkForSync = 0x080F67A4 | 1;
-InitBgsFromTemplates = 0x08001658|1;
+/* BG Functions */
+ResetBgsAndClearDma3BusyFlags = 0x8001618 | 1;
+InitBgsFromTemplates = 0x8001658 | 1;
 LoadBgTiles = 0x80017D0 | 1;
 ShowBg = 0x80019BC | 1;
 HideBg = 0x80019D0 | 1;
@@ -1134,71 +1026,96 @@ SetBgAttribute = 0x80019E4 | 1;
 GetBgAttribute = 0x8001AA8 | 1;
 ChangeBgX = 0x8001B90 | 1;
 ChangeBgY = 0x8001D08 | 1;
+BgIdSetTilemap = 0x8001FA0 | 1;
+UnsetBgTilemapBuffer = 0x8001FD4 | 1;
+CopyToBgTilemapBuffer = 0x8002040 | 1;
 CopyBgTilemapBufferToVram = 0x80020BC | 1;
 FillBgTilemapBufferRect = 0x8002554 | 1;
+FadeBgPalAndFillBlack = 0x807DB38 | 1;
+BgIdMarkForSync = 0x80F67A4 | 1;
+DecompressWithFallback = 0x80F6878 | 1;
+ResetBGs = 0x812D594 | 1;
 
-/*Scanline Effect Functions*/
+
+/* Scanline Effect Functions */
 ScanlineEffect_Stop = 0x8087E64 | 1;
 ScanlineEffect_Clear = 0x8087EA4 | 1;
 ScanlineEffect_SetParams = 0x8087EE4 | 1;
 ScanlineEffect_InitHBlankDmaTransfer = 0x8087F54 | 1;
+dp12_b_callback = 0x8087FE0 | 1;
 ScanlineEffect_InitWave = 0x8088230 | 1;
 
-/*Text Functions*/
-AddTextPrinterParameterized = 0x8002C48 | 1;
-GetStringWidth = 0x8005ED4 | 1;
+/* Callback Functions */
+SetMainCallback2 = 0x8000544 | 1;
+SetVBlankCallback = 0x80006F4 | 1;
+SetHBlankCallback = 0x8000700 | 1;
+SetMainCallback1 = 0x80565E0 | 1;
 
-/*The Deal Breaker*/
-break_func = 0x08416304 | 1;
+/* Audio Functions */
+HandleLowHpMusicChange = 0x8035244 | 1;
+BattleStopLowHpSound = 0x8035314 | 1;
+GetTrainerEncounterMusicId = 0x804367C | 1;
+PlayNewMapMusic = 0x8071A74 | 1;
+PlayCry1 = 0x8071DF0 | 1;
+PlayCry3 = 0x8071E60 | 1;
+StopCryAndClearCrySongs = 0x80721C4 | 1;
+IsCryPlayingOrClearCrySongs = 0x80721F0 | 1;
+PlayBGM = 0x80722A0 | 1;
+PlaySE = 0x80722CC | 1;
+IsSEPlaying = 0x80723E0 | 1;
+m4aSongNumStop = 0x81DD1C0 | 1;
+m4aMPlayContinue = 0x81DD26C | 1;
+m4aMPlayVolumeControl = 0x81DE0E0 | 1;
 
 
-get_wild_data_index_for_map = 0x08082934|1;
-gpu_sprites_upload = 0x08007320|1;
-copy_queue_process = 0x08007610|1;
-gpu_pal_upload = 0x08070474|1;
-process_palfade = 0x080704D0|1;
-tilemaps_sync = 0x080F67B8|1;
-RunTextPrinters = 0x08002DE8|1;
-SetMainCallback = 0x080565E0|1;
-SetMainCallback2 = 0x08000544|1;
-pal_fade_control_and_dead_struct_reset = 0x08070528|1;
-palette_bg_faded_fill_black = 0x0807DB38|1;
-gpu_pal_allocator_reset = 0x080088F0|1;
-AddTextPrinterParameterized3 = 0x812E51C | 1;
-AddTextPrinterParameterized4 = 0x812E5A4 | 1;
+/* Hall of Fame (HoF) Functions */
+SpeciesToPokedexNum = 0x8043F90 | 1;
+SaveLoadGameData = 0x80DA4FC | 1;
+InitHallOfFameScreen = 0x80F1DDC | 1;
+Task_Hof_TrySaveData = 0x80F2220 | 1;
+Task_Hof_SetMonDisplayTask = 0x80F2294 | 1;
+Task_Hof_PaletteFadeAndPrintWelcomeText = 0x80F2514 | 1;
+Task_HofPC_HandleInput = 0x80F2E8C | 1;
+Task_HofPC_PrintDataIsCorrupted = 0x80F30A4 | 1;
+SpriteCB_GetOnScreenAndAnimate = 0x80F3870 | 1;
+AddTextPrinterParameterized2 = 0x80F6CD0 | 1;
+NewMenuHelpers_DrawDialogueFrame = 0x80F6EE4 | 1;
+GetFontAttribute = 0x80F79D8 | 1;
+dp13_810BB8C = 0x810BB8C | 1;
+CreatePicSprite2 = 0x810C1CC | 1;
+HofPC_CreateWindow = 0x810F558 | 1;
+HofPC_PutText = 0x810F650 | 1;
+sub_8112450 = 0x8112450 | 1;
 
-PicBoxSetter = 0x809D6D4 | 1;
-BoxCreateTask = 0x81119D4 | 1;
-TaskDestroyPicBox = 0x809D494 | 1;
-PicBoxWindow = 0x0809D654 | 1;
-SetStandardWindowBorderStyle = 0x080F7750 | 1;
 
-MonHasMove = 0x08125AC0 | 1;
+/* Math Functions */
+Sine = 0x8044E30 | 1;
+Random = 0x8044EC8 | 1;
+SeedRng2 = 0x8044EE8 | 1;
+CountTrailingZeroBits = 0x8045190 | 1;
+Random2 = 0x808322C | 1;
+Sqrt = 0x81E3B9C | 1;
+__divsi3 = 0x81E4018 | 1;
+__modsi3 = 0x81E40F4 | 1;
+__udivsi3 = 0x81E460C | 1;
+udivsi = 0x81E460C | 1;
+__umodsi3 = 0x81E4684 | 1;
+umodsi = 0x81E4684 | 1;
 
-SeedRng2 = 0x08044EE8 | 1;
 
-/* Hall of Fame Stuff */
-sHofMonPtr = 0x203AB38;
-InitHallOfFameScreen = 0x080F1DDC | 1;
-Task_Hof_SetMonDisplayTask = 0x080F2294 | 1;
-SaveLoadGameData = 0x080DA4FC | 1;
-sub_8112450 = 0x08112450 | 1;
-NewMenuHelpers_DrawDialogueFrame = 0x080F6EE4 | 1;
-AddTextPrinterParameterized2 = 0x080F6CD0 | 1;
-sHallOfFame_MonFullTeamPositions = 0x0840C268;
-sHallOfFame_MonHalfTeamPositions = 0x0840C298;
-CreatePicSprite2 = 0x0810C1CC | 1;
-PlayCry1 = 0x08071DF0 | 1;
-StopCryAndClearCrySongs = 0x080721C4 | 1;
-GetGameStat = 0x08054EC4 | 1;
-StringExpandPlaceholders = 0x08008FCC | 1;
-Task_HofPC_HandleInput = 0x080F2E8C | 1;
-SpeciesToPokedexNum = 0x08043F90 | 1;
-GetFontAttribute = 0x080F79D8 | 1;
-HofPC_PutText = 0x0810F650 | 1;
-HofPC_CreateWindow = 0x0810F558 | 1;
-Task_HofPC_PrintDataIsCorrupted = 0x080F30A4 | 1;
-Task_Hof_PaletteFadeAndPrintWelcomeText = 0x080F2514 | 1;
-SpriteCB_GetOnScreenAndAnimate = 0x080F3870 | 1;
-Task_Hof_TrySaveData = 0x080F2220 | 1;
+/* The Deal Breaker */
+break_func = 0x8416304 | 1;
 
+
+/* EReader Functions */
+GetEreaderTrainerFrontSpriteId = 0x80E7420 | 1;
+GetEreaderTrainerClassId = 0x80E7440 | 1;
+GetEreaderTrainerName = 0x80E7460 | 1;
+
+
+/* IO */
+BG3HOFS = 0x400001C;
+DMA0_SRC = 0x40000B0;
+DMA0_DST = 0x40000B4;
+DMA0_CNT_L = 0x40000B8;
+DMA0_CNT_H = 0x40000BA;

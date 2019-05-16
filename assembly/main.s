@@ -92,6 +92,15 @@ script functions/specials in asm - hooks and returns
 
 @@ Tm/Hm Expansion
 .global SortTmHms
+.global FixTmHmDiscLoader
+.global FixTmHmDiscLoader2
+.global FixTmHmDiscPal
+.global FixTmHmDiscPos
+
+@@ Reusable TMs
+.global ReusableTMCheck1
+.global ReusableTMCheck2
+.global ReusableTMCheck3
 
 @@ Start Menu Stuff
 .global FixStartMenuSize
@@ -121,6 +130,56 @@ ReturnStartMenuHeight:
 	str r0, [sp, #0x4]
 	ldr r0, =(0x080f7900 +1)
 	bx r0
+
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Reusable TMs
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.align 2
+.pool
+ReusableTMCheck1:
+	mov r0, r1	@item ID
+	push {r1}
+	bl CheckReusableTMs
+	pop {r1}
+	cmp r0, #0x0
+	bne IsReusable1
+	mov r0, r1
+	ldr r1, =(0x08124EAA +1)
+	bx r1
+IsReusable1:
+	ldr r1, =(0x08124EB0 +1)
+	bx r1
+	
+.align 2
+.pool
+ReusableTMCheck2:
+	mov r0, r1	@item ID
+	push {r1}
+	bl CheckReusableTMs
+	pop {r1}
+	cmp r0, #0x0
+	bne IsReusable2
+	mov r0, r1
+	ldr r1, =(0x08124F76 +1)
+	bx r1
+IsReusable2:
+	ldr r1, =(0x08124F7C +1)
+	bx r1
+
+.align 2
+.pool
+ReusableTMCheck3:
+	mov r0, r4	@item id
+	bl CheckReusableTMs
+	cmp r0, #0x0
+	bne IsReusable3
+	mov r0, r4
+	ldr r1, =(0x08125C7E +1)
+	bx r1
+IsReusable3:
+	ldr r1, =(0x08125C84 +1)
+	bx r1
 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -165,6 +224,34 @@ FixTmHmDiscLoader2:
 	bl CheckDiscIsTmHm
 	strh r0, [r5, #0x2e]	@ tm id
 	ldr r1, =(0x08133868 +1)
+	bx r1
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ TM/HM Expansion - Disc Palette Loader
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.align 2
+.pool
+@ 08133748 via r1
+FixTmHmDiscPal:
+	push {r1-r3}
+	mov r0, r4	@move type
+	bl FixTmHmDiscPalette
+	pop {r1-r3}
+	cmp r0, #0x0
+	beq DiscPalFromTable
+	b ReturnDiscPal
+	
+DiscPalFromTable:
+	ldr r0, =(0x8463238)
+	lsl r4, r4, #0x1
+	add r4, r4, r0
+	ldrh r1, [r4]
+	lsl r1, r1, #0x1
+	ldr r0, [r2]
+	add r0, r0, r1
+	
+ReturnDiscPal:
+	ldr r1, =(0x08133754 +1)
 	bx r1
 	
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

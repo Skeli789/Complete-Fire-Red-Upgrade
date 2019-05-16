@@ -127,15 +127,29 @@ extern const u16 CursorPositions2[];
 extern const u16 CursorPositions1[];
 
 
+extern u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
+
+extern const u8 gText_DexNavText[];
+extern const u8 gText_PokeTools[];
+extern const u8 gText_GotAway[];
+extern const u8 gText_LostSignal[];
+extern const u8 gText_CannotBeFound[];
+extern const u8 gText_NotFoundNearby[];
+extern const u8 gText_DexNavBack[];
+extern const u8 gText_DexNav_NoInfo[];
+extern const u8 gText_DexNav_ChooseMon[];
+extern const u8 gText_DexNav_Invalid[];
+extern const u8 gText_DexNav_Locked[];
+
 // STRUCTS
 static u8* SearchLevels = (u8*)DEXNAV_SAVERAM;
-struct TextColor MenuTextBlack = {0, 2, 3};
-struct WindowTemplate Tbox = {0, 2, 2, 10, TOOL_COUNT << 1, 0xF, 0x130};
+const struct TextColor MenuTextBlack = {0, 2, 3};
+const struct WindowTemplate Tbox = {0, 2, 2, 10, TOOL_COUNT << 1, 0xF, 0x130};
 
-struct TextColor DexNav_BlackText = {0, 3, 4};
-struct TextColor DexNav_WhiteText = {0, 1, 2};
-struct TextColor DexNav_RedText = {0, 7, 8};
-struct TextColor DexNav_GreenText = {0, 5, 6};
+const struct TextColor DexNav_BlackText = {0, 3, 4};
+const struct TextColor DexNav_WhiteText = {0, 1, 2};
+const struct TextColor DexNav_RedText = {0, 7, 8};
+const struct TextColor DexNav_GreenText = {0, 5, 6};
 
 
 const u8* gIconPals[] = {
@@ -284,7 +298,7 @@ const u16 CursorPositions1[] = {
 };
 
 
-// GUI Rboxes
+// GUI Windows
 #define rgb5(r, g, b) (u16)((r >> 3) | ((g >> 3) << 5) | ((b >> 3) << 10))
 const u16 DexNavTextPal[] = {
 	rgb5(255, 0, 255), rgb5(248, 248, 248), rgb5(112, 112, 112), rgb5(96, 96, 96),

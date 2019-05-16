@@ -28,10 +28,7 @@ void __attribute__((long_call)) CalculateMonStats(pokemon_t *mon);
 u8 __attribute__((long_call)) GetMonGender(pokemon_t* mon);
 u8 __attribute__((long_call)) GetBoxMonGender(struct BoxPokemon* boxMon);
 u8 __attribute__((long_call)) GetGenderFromSpeciesAndPersonality(u16 species, u32 personality);
-u32 __attribute__((long_call)) GetMonData(struct Pokemon *, s32, const void *data);
-void __attribute__((long_call)) SetMonData(struct Pokemon *mon, s32 field, const void *data);
-void __attribute__((long_call)) SetMonData2(struct Pokemon *mon, s32 PokemonDataRequest, const void *data);
-void __attribute__((long_call)) CopyMon(void *dest, void *src, size_t size);
+
 //u8 __attribute__((long_call)) SendMonToPC(struct Pokemon* mon);
 u8 __attribute__((long_call)) GetPartyAbility(const pokemon_t* const);
 //u8 __attribute__((long_call)) CalculatePlayerPartyCount(void);
@@ -51,7 +48,7 @@ u8 __attribute__((long_call)) GetEggMoves(pokemon_t* poke, void* storageAddr);
 void __attribute__((long_call)) Special_0DD_DeleteMove();
 u8 __attribute__((long_call)) NicknameMalloc(u8 a1, void *name, u16 species, u8 gender, u16 PID, void (*callback));
 
-u8 __attribute__((long_call)) GetWildDataIndexForMap(void);
+//u8 __attribute__((long_call)) GetWildDataIndexForMap(void);
 
 void __attribute__((long_call)) BufferPokeNameSize(u16 species, void* varAddress);
 u8 __attribute__((long_call)) CalculateHeight(u16 species, void* varAddress);
@@ -79,15 +76,13 @@ bool8 __attribute__((long_call)) IsQuestLogActive(void);
 void __attribute__((long_call)) SyncTilemaps(void);
 void __attribute__((long_call)) SetVBlankCallback(void (*callback));
 void __attribute__((long_call)) SetHBlankCallback(void (*callback));
-void __attribute__((long_call)) SetCallback1(void* func);
-void __attribute__((long_call)) SetCallback2(void* func);
+
 void __attribute__((long_call)) OverworldCallback2(void);
 
 void __attribute__((long_call)) BuildOAMBuffer(void);
 void __attribute__((long_call)) AnimateSprites(void);
 void __attribute__((long_call)) BgIdSetTilemap(u8 layer, u8* space);
 void __attribute__((long_call)) BgIdMarkForSync(u8 bgid);
-void __attribute__((long_call)) GpuSyncBGShow(u8 layer);
 
 //Other Functions
 void* __attribute__((long_call)) Malloc(u32 size);
@@ -96,8 +91,6 @@ void __attribute__((long_call)) Free(void *pointer);
 
 void __attribute__((long_call)) CleanupOverworldWindowsAndTilemaps(void);
 void __attribute__((long_call)) ResetBgsAndClearDma3BusyFlags(u8 bg);	// in bg.h
-void __attribute__((long_call)) BgIdModOffsetX(u8 bgid, s32 delta, u8 dir);
-void __attribute__((long_call)) BgIdModOffsetY(u8 bgid, s32 delta, u8 dir);
 
 int __attribute__((long_call)) CountTrailingZeroBits(u32 value);
 void __attribute__((long_call)) IncrementGameStat(u8 gameStat);
@@ -126,19 +119,12 @@ void __attribute__((long_call)) ReturnToFieldContinueScriptPlayMapMusic(void);
 
 void __attribute__((long_call)) PatchObjectPalette(u16 PalTag, u8 PalSlot);
 
-void __attribute__((long_call)) GpuTileObjAllocTagAndUpload(const struct SpriteSheet* tile);
-u8 __attribute__((long_call)) GpuPalObjAllocTagAndApply(const struct SpritePalette* pal);
-void __attribute__((long_call)) GpuPalApply(void* pal, u16 offset, u16 size);
 void __attribute__((long_call)) LogCoordsCameraRelative(s32* x, s32* y, u8 size_x, u8 size_y);
 void __attribute__((long_call)) LoadOAM(void);
 void __attribute__((long_call)) ProcessSpriteCopyRequests(void);
-
-u8 __attribute__((long_call)) TemplateInstanciateReverseSearch(const struct SpriteTemplate* tmp, s16 x, s16 y, u8 height);
-
 // Textbox Stuff
 void __attribute__((long_call)) TextboxClose(void);
 void __attribute__((long_call)) TextboxFdecodeAutoAndCreateTask(const u8* text);
-void __attribute__((long_call)) RemoBoxesUploadTilesets(void);
 void __attribute__((long_call)) DeactivateAllTextPrinters(void);
 
 // Start Menu
@@ -151,7 +137,7 @@ void __attribute__((long_call)) MallocInit(void* memStart, u32 memSize);
 void __attribute__((long_call)) EnableInterrupts(u8 disable);
 void __attribute__((long_call)) DisableInterrupts(u8 disable);
 
-void __attribute__((long_call)) GpuSyncBGHide(u8 layer);
+
 void* __attribute__((long_call)) LoadPartyIconTiles(u16 species, u32 pid, bool8 isDeoxys);
 
 
@@ -176,5 +162,5 @@ u8* __attribute__((long_call)) StringExpandPlaceholders(u8 *dest, const u8 *src)
 u16 __attribute__((long_call)) SpeciesToPokedexNum(u16 species);
 
 //The Deal Breaker
-void __attribute__((long_call)) break_func(u32);
-u32 break_helper(u32 a);
+//void __attribute__((long_call)) break_func(u32);
+//u32 break_helper(u32 a);

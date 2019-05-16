@@ -1,5 +1,12 @@
 #pragma once
 
+#include "../global.h"
+#include "../../src/config.h"
+
+#define NUM_TMSHMS NUM_TMS + NUM_HMS	// never change this
+
+extern const u16 Fairy_TM_DiskPal[];
+
 u8* ItemId_GetName(u16 itemId);
 u8 ItemId_GetHoldEffect(u16 itemId);
 u8 ItemId_GetHoldEffectParam(u16 itemId);

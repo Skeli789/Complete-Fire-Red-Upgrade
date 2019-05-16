@@ -2,13 +2,13 @@
 
 #include "../include/global.h"
 
-typedef u8 pokemon_data_request_t;
+//typedef u8 pokemon_data_request_t;
 
-typedef void (*pokemon_setattr_t) (pokemon_t*, pokemon_data_request_t, void*);
-#define pokemon_setattr ((pokemon_setattr_t) (0x0804037C |1))
+//typedef void (*pokemon_setattr_t) (pokemon_t*, pokemon_data_request_t, void*);
+//#define pokemon_setattr ((pokemon_setattr_t) (0x0804037C |1))
 
-typedef u32 (*pokemon_getattr_t) (pokemon_t*, pokemon_data_request_t);
-#define pokemon_getattr ((pokemon_getattr_t) (0x0803FBE8 |1))
+//typedef u32 (*pokemon_getattr_t) (pokemon_t*, pokemon_data_request_t);
+//#define pokemon_getattr ((pokemon_getattr_t) (0x0803FBE8 |1))
 
 #define REQ_PERSONALITY         0
 #define REQ_OTID                1

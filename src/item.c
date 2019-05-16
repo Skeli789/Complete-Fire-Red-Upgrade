@@ -357,6 +357,30 @@ u8 TmHMDiscPosition(unusedArg struct Sprite* disc, u8 tmId)
 }
 
 
+bool8 CheckReusableTMs(u16 item)
+{
+	#ifdef REUSABLE_TMS
+		if (TMIdFromItemId(item) != 0)
+			return TRUE;
+		else
+			return FALSE;
+	#else
+		if (item > ITEM_TM50)
+			return TRUE;
+		else
+			return FALSE;
+	#endif
+}
+
+
+const void* FixTmHmDiscPalette(u8 type)
+{
+	if (type == TYPE_FAIRY)
+		return &Fairy_TM_DiskPal[0];
+	else
+		return 0;
+}
+
 
 // Premier Ball Bonus
 #define tItemCount data[1]

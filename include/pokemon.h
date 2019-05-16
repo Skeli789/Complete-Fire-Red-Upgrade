@@ -677,7 +677,6 @@ u16 __attribute__((long_call)) GiveMoveToBoxMon(struct BoxPokemon *boxMon, u16 m
 void __attribute__((long_call)) DeleteFirstMoveAndGiveMoveToMon(struct Pokemon *mon, u16 move);
 void __attribute__((long_call)) DeleteFirstMoveAndGiveMoveToBoxMon(struct BoxPokemon *boxMon, u16 move);
 u32 __attribute__((long_call)) GetBoxMonData(struct BoxPokemon *boxMon, s32 field, u8 *data);
-bool8 __attribute__((long_call)) MonHasMove(pokemon_t* mon, u16 move);
 u8 __attribute__((long_call)) CalculatePlayerPartyCount(void);
 u8 __attribute__((long_call)) GetNatureFromPersonality(u32 personality);
 void __attribute__((long_call)) SetBoxMonData(struct BoxPokemon *boxMon, s32 field, const void *data);
@@ -693,6 +692,11 @@ bool8 __attribute__((long_call)) CanLearnTutorMove(u16, u8);
 void __attribute__((long_call)) BoxMonToMon(struct BoxPokemon *srcMon, struct Pokemon *dstMon);
 
 species_t __attribute__((long_call)) GetStarterChoice(void);
+
+u32 __attribute__((long_call)) GetMonData(struct Pokemon *, s32, const void *data);
+void __attribute__((long_call)) SetMonData(struct Pokemon *mon, s32 field, const void *data);
+void __attribute__((long_call)) SetMonData2(struct Pokemon *mon, s32 PokemonDataRequest, const void *data);
+void __attribute__((long_call)) CopyMon(void *dest, void *src, size_t size);
 
 /*
 void ZeroMonData(struct Pokemon *mon);

@@ -1,24 +1,4 @@
 #include "defines.h"
-#include "../include/battle.h"
-#include "../include/bg.h"
-#include "../include/event_data.h"
-#include "../include/fieldmap.h"
-#include "../include/field_effect.h"
-#include "../include/palette.h"
-#include "../include/pokemon.h"
-#include "../include/pokemon_icon.h"
-#include "../include/random.h"
-#include "../include/wild_encounter.h"
-#include "../include/window.h"
-#include "../include/constants/abilities.h"
-#include "../include/constants/moves.h"
-#include "../include/constants/songs.h"
-#include "../include/constants/species.h"
-#include "../include/constants/items.h"
-#include "../include/gba/io_reg.h"
-
-#include "../include/new/battle_strings.h"
-#include "../include/new/build_pokemon.h"
 #include "../include/new/dexnav.h"
 #include "../include/new/dexnav_data.h"
 #include "../include/new/dns.h"
@@ -31,20 +11,6 @@ Simplified DexNav System
 Known BUGS:
 	-GUI gets messed up in dark, flashable rooms
 */
-
-extern u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
-
-extern u8 gText_DexNavText[];
-extern u8 gText_PokeTools[];
-extern u8 gText_GotAway[];
-extern u8 gText_LostSignal[];
-extern u8 gText_CannotBeFound[];
-extern u8 gText_NotFoundNearby[];
-extern u8 gText_DexNavBack[];
-extern u8 gText_DexNav_NoInfo[];
-extern u8 gText_DexNav_ChooseMon[];
-extern u8 gText_DexNav_Invalid[];
-extern u8 gText_DexNav_Locked[];
 
 static struct DexnavHudData** DNavState = (struct DexnavHudData**)(DEXNAV_SAVERAM + MAX_NUM_POKEMON);
 //static struct DexnavHudData** DNavState = (struct DexnavHudData**)(DEXNAV_SAVERAM + 40);
@@ -132,7 +98,7 @@ u16 RandRange(u16 min, u16 max)
 
 static void VblackCallbackSeq(void)
 {
-	LoadOAM();
+	LoadOam();
 	ProcessSpriteCopyRequests();
 	TransferPlttBuffer();
 }
@@ -151,19 +117,19 @@ static void ClearHandlers(void)
 {
 	SetVBlankCallback((void*) 0);
 	SetHBlankCallback((void*) 0);
-	SetCallback1((void*) 0);
-	SetCallback2((void*) 0);
+	SetMainCallback1((void*) 0);
+	SetMainCallback2((void*) 0);
 }
 
 static void DexNavGUICallback2(void)
 {
-    BuildOAMBuffer();
+    BuildOamBuffer();
     AnimateSprites();
     UpdatePaletteFade();
     RunTasks();
     SyncTilemaps();
     // merge textbox and text tile maps
-    RemoBoxesUploadTilesets();
+    RunTextPrinters();
 }
 
 
@@ -180,14 +146,14 @@ static void ResetBgSettings(void)
 {
 	CleanupOverworldWindowsAndTilemaps();
 	ResetBgsAndClearDma3BusyFlags(0);
-	BgIdModOffsetX(0, 0, 0);
-    BgIdModOffsetY(0, 0, 0);
-	BgIdModOffsetX(1, 0, 0);
-    BgIdModOffsetY(1, 0, 0);
-	BgIdModOffsetX(2, 0, 0);
-    BgIdModOffsetY(2, 0, 0);
-	BgIdModOffsetX(3, 0, 0);
-    BgIdModOffsetY(3, 0, 0);
+	ChangeBgX(0, 0, 0);
+    ChangeBgY(0, 0, 0);
+	ChangeBgX(1, 0, 0);
+    ChangeBgY(1, 0, 0);
+	ChangeBgX(2, 0, 0);
+    ChangeBgY(2, 0, 0);
+	ChangeBgX(3, 0, 0);
+    ChangeBgY(3, 0, 0);
 }
 
 
@@ -218,7 +184,7 @@ static void Setup(void)
 static bool8 SpeciesInArray(u16 species, u8 indexCount)
 {
     // disallow species not seen
-    if (!GetIndexFromDexFlag(species, FLAG_GET_SEEN))
+    if (!GetSetPokedexFlag(species, FLAG_GET_SEEN))
         return TRUE;
     for (u8 i = 0; i < indexCount; ++i)
 	{
@@ -1307,8 +1273,8 @@ static const struct SpriteTemplate fontTempSight =
 	
 static void DexNavDrawSight(u8 sight_lvl, u8* objidAddr)
 {
-    GpuTileObjAllocTagAndUpload(&sightTiles);
-    GpuPalObjAllocTagAndApply(&HeldPal);
+    LoadSpriteSheet(&sightTiles);
+    LoadSpritePalette(&HeldPal);
     u8 objId = CreateSprite(&fontTempSight, ICONX + 192, ICONY + 0x12, 0x0);
     *objidAddr = objId;
     gSprites[objId].oam.affineMode = 2;
@@ -1331,8 +1297,8 @@ static const struct SpriteTemplate FontTempAbility =
 
 static void DexNavDrawAbility(u8 ability, u8* objidAddr)
 {
-    GpuTileObjAllocTagAndUpload(&FontSpriteAbility);
-    GpuPalObjAllocTagAndApply(&HeldPal);
+    LoadSpriteSheet(&FontSpriteAbility);
+    LoadSpritePalette(&HeldPal);
     u8 objId = CreateSprite(&FontTempAbility, ICONX + 80, ICONY + 0x12, 0x0);
     *objidAddr = objId;
     gSprites[objId].oam.affineMode = 2;
@@ -1375,8 +1341,8 @@ static const struct SpriteTemplate FontTempMove =
 static void DexNavDrawMove(u16 move, u8 searchLevel, u8* objidAddr)
 {
 
-    GpuTileObjAllocTagAndUpload(&FontSpriteMove);
-    GpuPalObjAllocTagAndApply(&HeldPal);
+    LoadSpriteSheet(&FontSpriteMove);
+    LoadSpritePalette(&HeldPal);
     u8 objId = CreateSprite(&FontTempMove, ICONX + 80, ICONY + 0x12, 0x0);
     *objidAddr = objId;
     gSprites[objId].oam.affineMode = 2;
@@ -1441,9 +1407,9 @@ static const struct SpriteTemplate StarOffTemp =
 static void DexNavDrawPotential(u8 potential, u8* objidAddr)
 {
     // allocate both the lit and unlit star to VRAM
-    GpuTileObjAllocTagAndUpload(&StarIconLit);
-    GpuTileObjAllocTagAndUpload(&StarIconOff);
-    GpuPalObjAllocTagAndApply(&HeldPal);
+    LoadSpriteSheet(&StarIconLit);
+    LoadSpriteSheet(&StarIconOff);
+    LoadSpritePalette(&HeldPal);
 
     // create star objects and space them according to potential 0 - 3
     u8 objId;
@@ -1471,12 +1437,12 @@ void DexNavDrawSpeciesIcon(u16 species, u8* objIdAddr)
 	// check which palette the species icon uses
     u8 iconPal = gMonIconPaletteIndices[species];
 	struct SpritePalette bulbPal = {(void*) gIconPals[iconPal], 0x3139};
-	GpuPalObjAllocTagAndApply(&bulbPal);
+	LoadSpritePalette(&bulbPal);
 
     u32 pid = RandRange(0, 0xFFFF) | RandRange(0, 0xFFFF) << 16;
     void *IconGFX = LoadPartyIconTiles(species, pid, FALSE);
     struct SpriteSheet BulbIcon = {IconGFX, 4 * 8 * 32, 0x3139};
-    GpuTileObjAllocTagAndUpload(&BulbIcon);
+    LoadSpriteSheet(&BulbIcon);
 
     // create object
     u8 objId = CreateSprite(&BulbTemp, ICONX, ICONY, 0x0);
@@ -1502,8 +1468,8 @@ void DexNavDrawHeldItem(u8* objidAddr)
 {
     // create object for held item icon
 
-    GpuTileObjAllocTagAndUpload(&HeldIcon);
-    GpuPalObjAllocTagAndApply(&HeldPal);
+    LoadSpriteSheet(&HeldIcon);
+    LoadSpritePalette(&HeldPal);
     u8 objId = CreateSprite(&HeldTemp, ICONX + 0x8, ICONY + 0xC, 0x0);
     *objidAddr = objId;
     gSprites[objId].oam.affineMode = 2;
@@ -1578,7 +1544,7 @@ static void ExecDexNavHUD(void)
 {	
 	if (!gPaletteFade->active && !ScriptEnv2IsEnabled() && gMain.callback2 == OverworldCallback2)
 	{
-		SetCallback1(OverworldCallback1);
+		SetMainCallback1(OverworldCallback1);
         InitDexNavHUD(Var8000, Var8001);
     }
 }
@@ -1587,7 +1553,7 @@ static void ExecDexNavHUD(void)
 u8 ExecDexNav(void)
 {
     BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 16, 0x0000);
-	SetCallback1(DexNavGuiHandler);
+	SetMainCallback1(DexNavGuiHandler);
     gMain.state = 0;
     return TRUE;
 };
@@ -1598,17 +1564,17 @@ static void DexNavGuiSetup(void)
 {
     Setup();
     FreeAllWindowBuffers();
-	BgIdModOffsetX(0, 0, 0);
-    BgIdModOffsetY(0, 0, 0);
-    BgIdModOffsetX(1, 0, 0);
-    BgIdModOffsetY(1, 0, 0);
+	ChangeBgX(0, 0, 0);
+    ChangeBgY(0, 0, 0);
+    ChangeBgX(1, 0, 0);
+    ChangeBgY(1, 0, 0);
     ResetBgsAndClearDma3BusyFlags(0);
     InitBgsFromTemplates(0, (struct BgTemplate *)&BgConfigDexNavGUI, 4);
     u32 set = 0;	
     CpuFastSet((void*)&set, (void*)VRAM, CPUModeFS(0x10000, CPUFSSET));
-    GpuSyncBGHide(1);
-    GpuSyncBGHide(0);
-    SetCallback2(DexNavGUICallback2);
+    HideBg(1);
+    HideBg(0);
+    SetMainCallback2(DexNavGUICallback2);
     SetVBlankCallback(VblackCallbackSeq);
 };
 
@@ -1626,7 +1592,7 @@ static void DexNavLoadPokeIcons(void)
 		u16 gfxTag = ICON_GFX_TAG + i;
 		u16 palTag = ICON_PAL_TAG + gMonIconPaletteIndices[species];
 		struct SpriteSheet IconTiles = {IconGFX, 4 * 8 * 32, gfxTag};
-		GpuTileObjAllocTagAndUpload(&IconTiles);
+		LoadSpriteSheet(&IconTiles);
 		struct SpriteTemplate IconTemplate = {
 										.tileTag = gfxTag,
 										.paletteTag = palTag,
@@ -1649,7 +1615,7 @@ static void DexNavLoadPokeIcons(void)
             u16 gfxTag = ICON_GFX_TAG + i + 12;
             u16 palTag = ICON_PAL_TAG + gMonIconPaletteIndices[species];
             struct SpriteSheet IconTiles = {IconGFX, 4 * 8 * 32, gfxTag};
-            GpuTileObjAllocTagAndUpload(&IconTiles);
+            LoadSpriteSheet(&IconTiles);
             struct SpriteTemplate IconTemplate = {
                                             .tileTag = gfxTag,
                                             .paletteTag = palTag,
@@ -1699,8 +1665,8 @@ static const struct SpriteTemplate CursorTemp =
 static void SpawnPointerArrow(void)
 {
     // uncompressed
-    GpuTileObjAllocTagAndUpload(&CursorGFX);
-    GpuPalObjAllocTagAndApply(&CursorPal);
+    LoadSpriteSheet(&CursorGFX);
+    LoadSpritePalette(&CursorPal);
     (*DNavState)->cursorId = CreateSprite(&CursorTemp, 30, 48, 0);
     UpdateCursorPosition();
 };
@@ -1791,8 +1757,8 @@ static void DexNavGuiExitSearch(void)
             break;
         case 2:
             m4aMPlayVolumeControl(&gMPlay_BGM, 0xFFFF, 256);
-            SetCallback1(CallbackDexNavOW);
-            SetCallback2(CallbackOWandContinueScriptsMusic);
+            SetMainCallback1(CallbackDexNavOW);
+            SetMainCallback2(CallbackOWandContinueScriptsMusic);
             break;
 	}
 }
@@ -1816,8 +1782,8 @@ static void DexNavGuiExitNoSearch(void)
             break;
         case 2:
             m4aMPlayVolumeControl(&gMPlay_BGM, 0xFFFF, 256);
-            SetCallback1(OverworldCallback1);
-            SetCallback2(OverworldCallbackSwitchStartMenu);
+            SetMainCallback1(OverworldCallback1);
+            SetMainCallback2(OverworldCallbackSwitchStartMenu);
             break;
 	}
 }
@@ -1872,7 +1838,7 @@ static void DexNavGuiHandler(void)
             if (!gPaletteFade->active)
 			{
                 DexNavGuiSetup();
-                SetCallback1(DexNavGuiHandler);
+                SetMainCallback1(DexNavGuiHandler);
                 // allocate dexnav struct
                 *DNavState = (struct DexnavHudData*)Calloc(sizeof(struct DexnavHudData));
 				gMain.state += 1;
@@ -1908,8 +1874,8 @@ static void DexNavGuiHandler(void)
             //REG_BLDCNT = BLDALPHA_BUILD(BLDCNT_BG1_SRC | BLDCNT_BG2_SRC | BLDCNT_BG3_SRC | BLDCNT_SPRITES_SRC, 0);		
 		
             BeginNormalPaletteFade(0xFFFFFFFF, 0, 16, 0, 0x0000);
-            GpuSyncBGShow(0);
-            GpuSyncBGShow(1);
+            ShowBg(0);
+            ShowBg(1);
             DexNavLoadPokeIcons();
             SpawnPointerArrow();
             (*DNavState)->selectedArr = 0;
@@ -1933,7 +1899,7 @@ static void DexNavGuiHandler(void)
                             // species was valid, save and enter OW HUD mode
                             Var8000 = species;
                             Var8001 = (*DNavState)->selectedArr;
-                            SetCallback1(DexNavGuiExitSearch);
+                            SetMainCallback1(DexNavGuiExitSearch);
                             gMain.state = 0;
                             return;
                         } 
@@ -1947,7 +1913,7 @@ static void DexNavGuiHandler(void)
                         }
                     case B_BUTTON:
                         // exit to start menu
-                        SetCallback1(DexNavGuiExitNoSearch);
+                        SetMainCallback1(DexNavGuiExitNoSearch);
                         gMain.state = 0;
                         return;
                     case DPAD_DOWN:
@@ -2053,11 +2019,11 @@ static const struct SpritePalette caveSmoke =
 
 void OeiCaveEffect(void)
 {
-    GpuPalObjAllocTagAndApply((void*)&caveSmoke);
-    GpuPalApply((void*)&gInterfaceGfx_caveSmokePal, 29*16, 32);
+    LoadSpritePalette((void*)&caveSmoke);
+    LoadPalette((void*)&gInterfaceGfx_caveSmokePal, 29*16, 32);
     LogCoordsCameraRelative(&gFieldEffectArguments->effectPos.x, &gFieldEffectArguments->effectPos.y, 8, 8);
 	
-    u8 objId = TemplateInstanciateReverseSearch(&ObjtCave, gFieldEffectArguments->effectPos.x,
+    u8 objId = CreateSpriteAtEnd(&ObjtCave, gFieldEffectArguments->effectPos.x,
 		gFieldEffectArguments->effectPos.y, 0xFF);
     if (objId != 64)
 	{

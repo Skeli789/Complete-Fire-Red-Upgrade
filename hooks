@@ -351,8 +351,14 @@ SortTmHms 0809A624 1
 FixTmHmDiscLoader 081336BC 0
 FixTmHmDiscLoader2 08133854 0
 FixTmHmDiscPos 08133798 2
+FixTmHmDiscPal 08133748 1  
 CheckIsHmMove 08125A90 1
 CheckIsHmMove 080441b8 1
+
+##Reusable TMs
+ReusableTMCheck1 08124EA0 0
+ReusableTMCheck2 08124F6C 0
+ReusableTMCheck3 08125C74 0
 
 ##Start Menu
 BuildStartMenuActions 0806ed54 0

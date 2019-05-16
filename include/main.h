@@ -53,6 +53,7 @@ extern bool8 gLinkVSyncDisabled;
 extern const u8 gGameVersion;
 extern const u8 gGameLanguage;
 
+void __attribute__((long_call)) SetMainCallback1(MainCallback callback);
 void __attribute__((long_call)) SetMainCallback2(MainCallback callback);
 /*
 void AgbMain(void);
