@@ -108,6 +108,7 @@ script functions/specials in asm - hooks and returns
 .global SingleTmPurchaseFix
 .global AddSingleTmFix
 @.global AlreadyOwnTmFix
+.global UnbuyableTmFix
 
 @@ Start Menu Stuff
 .global FixStartMenuSize
@@ -215,6 +216,44 @@ AddTmToBag:
 BagAddItem:
 	ldr r2, =(0x809A084 +1)
 	bx r2
+	
+.align 2
+.pool
+UnbuyableTmFix:
+	mov r0, r4	@item id
+	mov r1, r6	@task id
+	bl CheckBuyableTm
+	cmp r0, #0x0
+	beq AskPurchaseQty
+	pop {r4-r7, pc}
+AskPurchaseQty:
+	ldr r1, =(0x0809BC7C +1)
+	bx r1
+	
+.align 2
+.pool
+UnsellableTmFix:
+	ldrh r0, [r6]	@item id
+	bl CheckSellTmHm
+	cmp r0, #0x0
+	beq Unsellable
+	ldr r0, =(0x8132968 +1)
+	bx r0
+	
+Unsellable:
+	ldr r0, =(0x08132928 +1)
+	bx r0
+	
+/*
+.align 2
+.pool
+FixBoughtTmPrice:
+	mov r0, r1
+	bl CheckTmPrice
+	mov r1, r0
+	ldr r0, =(0x0809B42C +1)
+	bx r0
+*/
 	
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ TM/HM Expansion - Fix Mart Listings

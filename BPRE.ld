@@ -543,14 +543,24 @@ ItemIsUnique = 0x809A990 | 1;
 ItemId_GetMystery2 = 0x809A9B4 | 1;
 GetPocketByItemId = 0x809A9D8 | 1;
 ItemId_GetType = 0x809A9FC | 1;
-Task_BuyHowManyDialogueInit = 0x809BCA0 | 1;
-BuyMenuConfirmPurchase = 0x809BE90 | 1;
-BuyMenuReturnToItemList = 0x809BF98 | 1;
+IsEnoughMoney = 0x809FD88 | 1;
 AddMoney = 0x809FDA0 | 1;
 RemoveUsedItem = 0x80A1A44 | 1;
 CheckVSSeeker = 0x810C4EC | 1;
 BuyMenuDisplayMessage = 0x813F75C | 1;
 
+/* PokeMart Functions */
+Task_ShopMenu = 0x809AC10 | 1;
+Task_ReturnToShopMenu = 0x809AD8C | 1;
+CB2_BuyMenu = 0x809ADE4 | 1;
+//Task_ReturnToItemListAfterItemPurchase = 0x809BF68 | 1;
+BuyMenuReturnToItemList = 0x809BF98 | 1;
+CB2_InitBuyMenu = 0x809AE14 | 1;
+InitShopData = 0x809AF6C | 1;
+BuyMenuBuildListMenuTemplate = 0x809B188 | 1;
+Task_BuyHowManyDialogueInit = 0x809BCA0 | 1;
+BuyMenuConfirmPurchase = 0x809BE90 | 1;
+BuyMenuInitWindows = 0x813F66C | 1;
 
 /* Map Functions & Overworld Functions */
 EnableInterrupts = 0x8000B68 | 1;

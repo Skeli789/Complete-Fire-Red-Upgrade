@@ -370,6 +370,7 @@ struct SecretBaseRecord
 #include "global.fieldmap.h"
 #include "global.berry.h"
 #include "pokemon.h"
+#include "shop.h"
 
 struct WarpData
 {

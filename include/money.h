@@ -3,11 +3,11 @@
 #include "global.h"
 
 void __attribute__((long_call)) AddMoney(u32* moneySaveblock, u32 to_give);
+bool8 __attribute__((long_call)) IsEnoughMoney(u32* moneyPtr, u32 cost);
 
 /*
 u32 GetMoney(u32* moneyPtr);
 void SetMoney(u32* moneyPtr, u32 newValue);
-bool8 IsEnoughMoney(u32* moneyPtr, u32 cost);
 void RemoveMoney(u32* moneyPtr, u32 toSub);
 bool8 IsEnoughForCostInVar0x8005(void);
 void SubtractMoneyFromVar0x8005(void);
