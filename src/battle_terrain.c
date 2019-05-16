@@ -181,9 +181,9 @@ void LoadBattleBG_Background(u8 terrainId) {
 	}
 	
 	#ifdef UNBOUND //Load different BGs depending on time of day
-		if (Clock->hour >= TIME_NIGHT_START || Clock->hour < TIME_MORNING_START)
+		if (IsNightTime())
 			table = gBattleTerrainTableNight;
-		else if (Clock->hour >= TIME_EVENING_START)
+		else if (IsEvening())
 			table = gBattleTerrainTableEvening;
 	#endif
 	
@@ -200,9 +200,9 @@ void LoadBattleBG_EntryOverlay(u8 terrainId)  {
 	struct BattleBackground* table = gBattleTerrainTable;
 
 	#ifdef UNBOUND //Load different BGs depending on time of day
-		if (Clock->hour >= TIME_NIGHT_START || Clock->hour < TIME_MORNING_START)
+		if (IsNightTime())
 			table = gBattleTerrainTableNight;
-		else if (Clock->hour >= TIME_EVENING_START)
+		else if (IsEvening())
 			table = gBattleTerrainTableEvening;
 	#endif
 	

@@ -11,6 +11,7 @@
 #include "../include/constants/vars.h"
 
 #include "../include/new/battle_start_turn_start.h"
+#include "../include/new/dns.h"
 #include "../include/new/helper_functions.h"
 #include "../include/new/roamer.h"
 #include "../include/new/wild_encounter.h"
@@ -122,11 +123,11 @@ static const struct WildPokemonHeader* GetCurrentMapWildMonHeader(void)
 		
 		const struct WildPokemonHeader* headerTable = NULL;
 		
-		if (Clock->hour >= TIME_NIGHT_START || Clock->hour < TIME_MORNING_START)
+		if (IsNightTime())
 			headerTable = gWildMonNightHeaders;
-		else if (Clock->hour < TIME_DAY_START)
+		else if (IsMorning())
 			headerTable = gWildMonMorningHeaders;
-		else if (Clock->hour >= TIME_EVENING_START)
+		else if (IsEvening())
 			headerTable = gWildMonEveningHeaders;
 			
 		if (headerTable != NULL) //Not Daytime

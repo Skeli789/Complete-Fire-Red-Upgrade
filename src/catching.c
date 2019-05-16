@@ -5,6 +5,7 @@
 #include "../include/constants/items.h"
 
 #include "../include/new/catching.h"
+#include "../include/new/dns.h"
 #include "../include/new/helper_functions.h"
 #include "../include/new/form_change.h"
 #include "../include/new/mega.h"
@@ -234,7 +235,7 @@ void atkEF_handleballthrow(void)
 						ball_multiplier = DUSK_BALL_MULTIPLIER;
 						
 					#ifdef TIME_ENABLED
-					else if (Clock->hour >= TIME_NIGHT_START || Clock->hour < TIME_MORNING_START)
+					else if (IsNightTime())
 						ball_multiplier = DUSK_BALL_MULTIPLIER;
 					#endif
 					break;

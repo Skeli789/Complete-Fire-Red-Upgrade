@@ -7,6 +7,7 @@
 #include "../include/constants/pokemon.h"
 #include "../include/constants/species.h"
 
+#include "../include/new/dns.h"
 #include "../include/new/evolution.h"
 
 u16 GetEvolutionTargetSpecies(struct Pokemon* mon, u8 type, u16 evolutionItem)
@@ -42,14 +43,14 @@ u16 GetEvolutionTargetSpecies(struct Pokemon* mon, u8 type, u16 evolutionItem)
 					
 				case EVO_FRIENDSHIP_DAY:
 				#ifdef TIME_ENABLED
-					if (Clock->hour >= TIME_MORNING_START && Clock->hour < TIME_NIGHT_START && friendship >= 220)
+					if (IsDayTime() && friendship >= 220)
 						targetSpecies = gEvolutionTable[species][i].targetSpecies;
 				#endif
 					break;
 					
 				case EVO_FRIENDSHIP_NIGHT:
 				#ifdef TIME_ENABLED
-					if (Clock->hour >= TIME_NIGHT_START && Clock->hour < TIME_MORNING_START && friendship >= 220)
+					if (IsNightTime() && friendship >= 220)
 						targetSpecies = gEvolutionTable[species][i].targetSpecies;
 				#endif
 					break;
@@ -158,8 +159,7 @@ u16 GetEvolutionTargetSpecies(struct Pokemon* mon, u8 type, u16 evolutionItem)
 
 				case EVO_LEVEL_NIGHT:
 					#ifdef TIME_ENABLED
-						if (gEvolutionTable[species][i].param <= level &&
-						(Clock->hour >= TIME_NIGHT_START && Clock->hour < TIME_MORNING_START))
+						if (gEvolutionTable[species][i].param <= level && IsNightTime())
 							targetSpecies = gEvolutionTable[species][i].targetSpecies;
 					#else  // regular level up check
 						if (gEvolutionTable[species][i].param <= level)
@@ -169,8 +169,7 @@ u16 GetEvolutionTargetSpecies(struct Pokemon* mon, u8 type, u16 evolutionItem)
 			
 				case EVO_LEVEL_DAY:
 					#ifdef TIME_ENABLED
-						if (gEvolutionTable[species][i].param <= level
-						&& (Clock->hour >= TIME_MORNING_START && Clock->hour < TIME_NIGHT_START))
+						if (gEvolutionTable[species][i].param <= level && IsDayTime())
 							targetSpecies = gEvolutionTable[species][i].targetSpecies;
 					#else  // regular level up check
 						if (gEvolutionTable[species][i].param <= level)
@@ -180,7 +179,7 @@ u16 GetEvolutionTargetSpecies(struct Pokemon* mon, u8 type, u16 evolutionItem)
 
 				case EVO_HOLD_ITEM_NIGHT:
 					#ifdef TIME_ENABLED
-					if (heldItem == gEvolutionTable[species][i].param)
+					if (heldItem == gEvolutionTable[species][i].param && IsNightTime())
 					{
 						targetSpecies = gEvolutionTable[species][i].targetSpecies;
 						#ifdef EVO_HOLD_ITEM_REMOVAL
@@ -193,8 +192,7 @@ u16 GetEvolutionTargetSpecies(struct Pokemon* mon, u8 type, u16 evolutionItem)
 				case EVO_HOLD_ITEM_DAY:
 					// hold item in param
 					#ifdef TIME_ENABLED
-					if ((Clock->hour >= TIME_MORNING_START && Clock->hour < TIME_NIGHT_START)
-					&& heldItem == gEvolutionTable[species][i].param)
+					if (heldItem == gEvolutionTable[species][i].param && IsDayTime())
 					{
 						targetSpecies = gEvolutionTable[species][i].targetSpecies;
 						#ifdef EVO_HOLD_ITEM_REMOVAL

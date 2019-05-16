@@ -17,6 +17,8 @@ static const u8 gDaysInAMonth[] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30
 //This file's functions:
 static void BlendFadedPalettes(u32 selectedPalettes, u8 coeff, u32 color);
 static void BlendFadedPalette(u16 palOffset, u16 numEntries, u8 coeff, u32 blendColor, bool8 ignoredIndices[32][16]);
+static u16 FadeColourForDNS(struct PlttData* blend, u8 coeff, s8 r, s8 g, s8 b);
+static void LoadIgnoredPaletteIndices(void);
 static bool8 IsDate1BeforeDate2(u32 y1, u32 m1, u32 d1, u32 y2, u32 m2, u32 d2);
 static bool8 IsLeapYear(u32 year);
 static bool8 IsLastDayInMonth(u32 year, u8 month, u8 day);
@@ -66,8 +68,16 @@ static void BlendFadedPalettes(u32 selectedPalettes, u8 coeff, u32 color)
     {
         if (selectedPalettes & 1)
 		{
-			if (GetPalTypeByPaletteOffset(paletteOffset) != PalTypeOther) //Fade everything except Poke pics
-				BlendFadedPalette(paletteOffset, 16, coeff, color, gIgnoredDNSPalIndices);
+			switch (GetPalTypeByPaletteOffset(paletteOffset)) {
+				case PalTypeUnused:
+					if (paletteOffset < 256) //The background
+						BlendFadedPalette(paletteOffset, 16, coeff, color, gIgnoredDNSPalIndices);
+					break;
+				case PalTypeOther: //Fade everything except Poke pics
+					break;
+				default:
+					BlendFadedPalette(paletteOffset, 16, coeff, color, gIgnoredDNSPalIndices);
+			}
 		}
         selectedPalettes >>= 1;
     }
@@ -82,20 +92,58 @@ static void BlendFadedPalette(u16 palOffset, u16 numEntries, u8 coeff, u32 blend
 		if (ignoredIndices[palOffset / 16][i]) continue; //Don't fade this index.
 	
         u16 index = i + palOffset;
-        struct PlttData *data1 = (struct PlttData *) &gPlttBufferFaded[index];
+		
+		if (gPlttBufferFaded[index] == RGB_BLACK) continue; //Don't fade black
+		
+        struct PlttData *data1 = (struct PlttData*) &gPlttBufferFaded[index];
         s8 r = data1->r;
         s8 g = data1->g;
         s8 b = data1->b;
-        struct PlttData *data2 = (struct PlttData *) &blendColor;
-        ((u16*) 0x5000000)[index] = ((r + (((data2->r - r) * coeff) >> 4)) << 0)
-								  | ((g + (((data2->g - g) * coeff) >> 4)) << 5)
-                                  | ((b + (((data2->b - b) * coeff) >> 4)) << 10);
+        struct PlttData* data2 = (struct PlttData*) &blendColor;
+        ((u16*) PLTT)[index] = FadeColourForDNS(data2, coeff, r, g, b);
     }
+}
+
+static u16 FadeColourForDNS(struct PlttData* blend, u8 coeff, s8 r, s8 g, s8 b)
+{
+	return ((r + (((blend->r - r) * coeff) >> 4)) << 0)
+		 | ((g + (((blend->g - g) * coeff) >> 4)) << 5)
+         | ((b + (((blend->b - b) * coeff) >> 4)) << 10);
+
+/*
+	u8 coeffMax = 128;
+
+	return (((r * (coeffMax - coeff) + (((r * blend->r) >> 5) * coeff)) >> 8) << 0)
+		 | (((g * (coeffMax - coeff) + (((g * blend->g) >> 5) * coeff)) >> 8) << 5)
+         | (((b * (coeffMax - coeff) + (((b * blend->b) >> 5) * coeff)) >> 8) << 10);
+*/
+}
+
+static void LoadIgnoredPaletteIndices(void)
+{
+	u32 i, j, row, column;
+		
+	if (IsNightTime())
+	{
+		for (i = 0; i < ARRAY_COUNT(gSpecificTilesetFades); ++i)
+		{
+			if ((u32) gMapHeader.mapData->primaryTileset == gSpecificTilesetFades[i].tilesetPointer
+			||  (u32) gMapHeader.mapData->secondaryTileset == gSpecificTilesetFades[i].tilesetPointer)
+			{
+				row = gSpecificTilesetFades[i].paletteNumToFade;
+				for (j = 0; gSpecificTilesetFades[i].paletteIndicesToFade[j].index != 0xFF; ++j)
+				{
+					column = gSpecificTilesetFades[i].paletteIndicesToFade[j].index;
+					gPlttBufferUnfaded[row * 16 + column] = gSpecificTilesetFades[i].paletteIndicesToFade[j].colour;
+					gIgnoredDNSPalIndices[row][column] = TRUE;
+				}
+			}
+		}
+	}
 }
 
 void apply_map_tileset_palette(struct Tileset const* tileset, u16 destOffset, u16 size)
 {
-	u32 i, j, row, column;
     u16 black = RGB_BLACK;
 	
     if (tileset)
@@ -118,29 +166,65 @@ void apply_map_tileset_palette(struct Tileset const* tileset, u16 destOffset, u1
         }
 		
 		Memset(gIgnoredDNSPalIndices, 0, sizeof(bool8) * 16 * 32);
-		if ((Clock->hour >= TIME_NIGHT_START || Clock->hour < TIME_MORNING_START))
-		{
-			for (i = 0; i < ARRAY_COUNT(gSpecificTilesetFades); ++i)
-			{
-				if ((u32) gMapHeader.mapData->primaryTileset == gSpecificTilesetFades[i].tilesetPointer
-				||  (u32) gMapHeader.mapData->secondaryTileset == gSpecificTilesetFades[i].tilesetPointer)
-				{
-					row = gSpecificTilesetFades[i].paletteNumToFade;
-					for (j = 0; gSpecificTilesetFades[i].paletteIndicesToFade[j].index != 0xFF; ++j)
-					{
-						column = gSpecificTilesetFades[i].paletteIndicesToFade[j].index;
-						gPlttBufferUnfaded[row * 16 + column] = gSpecificTilesetFades[i].paletteIndicesToFade[j].colour;
-						gIgnoredDNSPalIndices[row][column] = TRUE;
-					}
-				}
-			}
-		}
+		LoadIgnoredPaletteIndices();
+    }
+}
+
+bool8 BeginNormalPaletteFade(u32 selectedPalettes, s8 delay, u8 startY, u8 targetY, u16 blendColor)
+{
+    u8 temp;
+
+    if (gPaletteFade->active)
+        return FALSE;
+    else
+    {
+        gPaletteFade->deltaY = 2;
+
+        if (delay <0)
+        {
+            gPaletteFade->deltaY += (delay * -1);
+            delay = 0;
+        }
+
+        gPaletteFade_selectedPalettes = selectedPalettes;
+        gPaletteFade->delayCounter = delay;
+        gPaletteFade_delay = delay;
+        gPaletteFade->y = startY;
+        gPaletteFade->targetY = targetY;
+        gPaletteFade->blendColor = blendColor;
+        gPaletteFade->active = 1;
+        gPaletteFade->mode = NORMAL_FADE;
+
+        if (startY <targetY)
+            gPaletteFade->yDec = 0;
+        else
+            gPaletteFade->yDec = 1;
+
+        UpdatePaletteFade();
+
+        temp = gPaletteFade->bufferTransferDisabled;
+        gPaletteFade->bufferTransferDisabled = 0;
+//        TransferPlttBuffer(); //Commenting this line out fixes the DNS pal bug
+        
+        sPlttBufferTransferPending = 0;
+        if (gPaletteFade->mode == HARDWARE_FADE && gPaletteFade->active)
+            UpdateBlendRegisters();
+        gPaletteFade->bufferTransferDisabled = temp;
+        return TRUE;
     }
 }
 
 #ifdef DNS_IN_BATTLE
 void DNSBattleBGPalFade(void)
-{ 
+{
+	switch (gMapHeader.mapType) {
+		case MAP_TYPE_0:			//No fading in these areas
+		case MAP_TYPE_UNDERGROUND:
+		case MAP_TYPE_INDOOR:
+		case MAP_TYPE_SECRET_BASE:
+			return;
+	}
+
 	u16 i, palOffset;
 	u8 coeff = gDNSNightFadingByTime[Clock->hour][Clock->minute / 10].amount;
 	u32 blendColor = gDNSNightFadingByTime[Clock->hour][Clock->minute / 10].colour;
@@ -158,9 +242,7 @@ void DNSBattleBGPalFade(void)
 				s8 g = data1->g;
 				s8 b = data1->b;
 				struct PlttData *data2 = (struct PlttData *)&blendColor;
-				u16 color  = ((r + (((data2->r - r) * coeff) >> 4)) << 0)
-						   | ((g + (((data2->g - g) * coeff) >> 4)) << 5)
-			  			   | ((b + (((data2->b - b) * coeff) >> 4)) << 10);
+				u16 color = FadeColourForDNS(data2, coeff, r, g, b);
 				
 				gPlttBufferUnfaded[index] = color;
 				gPlttBufferFaded[index] = color;
@@ -170,6 +252,26 @@ void DNSBattleBGPalFade(void)
 	}
 }
 #endif
+ 
+bool8 IsDayTime()
+{
+	return Clock->hour >= TIME_MORNING_START && Clock->hour < TIME_NIGHT_START;
+}
+
+bool8 IsNightTime()
+{
+	return Clock->hour >= TIME_NIGHT_START || Clock->hour < TIME_MORNING_START;
+}
+
+bool8 IsMorning()
+{
+	return Clock->hour >= TIME_MORNING_START && Clock->hour < TIME_DAY_START;
+}
+
+bool8 IsEvening()
+{
+	return Clock->hour >= TIME_EVENING_START && Clock->hour < TIME_NIGHT_START;
+}
 
 static bool8 IsDate1BeforeDate2(u32 y1, u32 m1, u32 d1, u32 y2, u32 m2, u32 d2)
 {

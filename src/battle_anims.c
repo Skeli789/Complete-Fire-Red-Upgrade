@@ -6,6 +6,7 @@
 
 #include "../include/new/battle_anims.h"
 #include "../include/new/battle_terrain.h"
+#include "../include/new/dns.h"
 #include "../include/new/helper_functions.h"
 
 extern const struct CompressedSpriteSheet gBattleAnimPicTable[];
@@ -77,12 +78,12 @@ void AnimTask_TechnoBlast(u8 taskId)
 
 void AnimTask_GetTimeOfDay(u8 taskId)
 {
-	gBattleAnimArgs[0] = 0;
+	gBattleAnimArgs[0] = 0; //Daytime
 	
 	#ifdef TIME_ENABLED
-		if (Clock->hour >= TIME_NIGHT_START || Clock->hour < TIME_MORNING_START)
+		if (IsNightTime())
 			gBattleAnimArgs[0] = 1;
-		else if (Clock->hour >= TIME_EVENING_START)
+		else if (IsEvening())
 			gBattleAnimArgs[0] = 2;
 	#endif
 
