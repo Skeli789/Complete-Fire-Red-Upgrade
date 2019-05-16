@@ -75,8 +75,9 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 move, const
 			return viability - 20;
 	}
 	
-	#ifdef AI_TRY_TO_KILL
+	#ifdef AI_TRY_TO_KILL_RATE
 		if (GetAIFlags() == AI_SCRIPT_CHECK_BAD_MOVE //Only basic AI
+		&& Random() % 100 < AI_TRY_TO_KILL_RATE
 		&& DamagingMoveInMoveset(bankAtk))
 		{
 			if (MoveKnocksOut(move, bankAtk, bankDef)

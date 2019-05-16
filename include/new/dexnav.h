@@ -1,29 +1,6 @@
 #pragma once
 
-#include "battle_strings.h"
-#include "build_pokemon.h"
-
 #include "../global.h"
-#include "../pokemon.h"
-#include "../battle.h"
-#include "../bg.h"
-#include "../event_data.h"
-#include "../fieldmap.h"
-#include "../field_effect.h"
-#include "../palette.h"
-#include "../pokemon_icon.h"
-#include "../random.h"
-#include "../wild_encounter.h"
-#include "../window.h"
-#include "../sprite.h"
-#include "../text.h"
-#include "../main.h"
-#include "../constants/abilities.h"
-#include "../constants/moves.h"
-#include "../constants/songs.h"
-#include "../constants/species.h"
-#include "../constants/items.h"
-#include "../gba/io_reg.h"
 
 /**
  * \file dexnav.h
