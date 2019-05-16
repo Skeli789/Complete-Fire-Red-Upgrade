@@ -876,12 +876,14 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 move, const
 			}
 			break;
 		
+		case EFFECT_RAZOR_WIND:
 		case EFFECT_SKULL_BASH:
 		case EFFECT_SKY_ATTACK:
 			if (atkEffect == ITEM_EFFECT_POWER_HERB)
 				goto AI_STANDARD_DAMAGE;
 				
-			if (CanKnockOut(bankDef, bankAtk)) //Attacker can be knocked out
+			if (CanKnockOut(bankDef, bankAtk) //Attacker can be knocked out
+			&&  predictedMove != MOVE_NONE)
 				viability -= 4;
 			goto AI_STANDARD_DAMAGE;
 		
@@ -896,14 +898,21 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 move, const
 			break;
 		
 		case EFFECT_RECHARGE:
-			if (MoveKnocksOut(move, bankAtk, bankDef)
+			if (atkAbility != ABILITY_TRUANT
+			&& MoveKnocksOut(move, bankAtk, bankDef)
 			&& CanKnockOutWithoutMove(move, bankAtk, bankDef))
 				viability -= 1;
 			break;
 		
 		case EFFECT_SPITE:
 		case EFFECT_MIMIC:
-			if (gLastUsedMoves[bankDef] == MOVE_NONE)
+			if (MoveWouldHitFirst(move, bankAtk, bankDef))
+			{ 	
+				if (gLastUsedMoves[bankDef] == MOVE_NONE
+				||  gLastUsedMoves[bankDef] == 0xFFFF)
+					viability -= 10;
+			}
+			else if (predictedMove == MOVE_NONE)
 				viability -= 10;
 			break;
 		
@@ -918,28 +927,40 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 move, const
 			break;
 		
 		case EFFECT_DISABLE:
-			if (gDisableStructs[bankDef].disableTimer1)
-				viability -= 10;			
-			if (defEffect == ITEM_EFFECT_CURE_ATTRACT)
-				viability -= 6;
+			if (gDisableStructs[bankDef].disableTimer1 == 0
+			&&  defEffect != ITEM_EFFECT_CURE_ATTRACT)
+			{
+				if (MoveWouldHitFirst(move, bankAtk, bankDef))
+				{ 	
+					if (gLastUsedMoves[bankDef] == MOVE_NONE
+					|| gLastUsedMoves[bankDef] == 0xFFFF)
+						viability -= 10;
+				}
+				else if (predictedMove == MOVE_NONE)
+					viability -= 10;
+			}
+			else
+				viability -= 10;
 			break;
 			
 		//case COUNTER:
 			//Should now be handled in damage calc
 
 		case EFFECT_ENCORE:
-			//Check Encore Timer
-			if (gDisableStructs[gActiveBattler].encoreTimer != 0)
+			if (gDisableStructs[bankDef].encoreTimer == 0
+			&&  defEffect != ITEM_EFFECT_CURE_ATTRACT)
+			{
+				if (MoveWouldHitFirst(move, bankAtk, bankDef))
+				{ 	
+					if (gLastUsedMoves[bankDef] == MOVE_NONE
+					|| gLastUsedMoves[bankDef] == 0xFFFF)
+						viability -= 10;
+				}
+				else if (predictedMove == MOVE_NONE)
+					viability -= 10;
+			}
+			else
 				viability -= 10;
-			break;
-			
-			//Check Last Used Move
-			if (gLastUsedMoves[bankDef] == MOVE_NONE)
-				viability -= 10;
-				
-			//Check Mental Herb
-			if (defEffect == ITEM_EFFECT_CURE_ATTRACT)
-				viability -= 6;
 			break;
 		
 		case EFFECT_ENDEAVOR:
@@ -983,13 +1004,14 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 move, const
 			break;
 		
 		case EFFECT_DESTINY_BOND:
-			if (gNewBS->DestinyBondCounters[gBankAttacker] != 0
+			if (gNewBS->DestinyBondCounters[bankAtk] != 0
 			|| atkStatus2 & STATUS2_DESTINY_BOND)
 				viability -= 10;
 			break;
 		
 		case EFFECT_FALSE_SWIPE:
-			if (MoveKnocksOut(move, bankAtk, bankDef))
+			if (MoveKnocksOut(move, bankAtk, bankDef)
+			&&  CanKnockOutWithoutMove(move, bankAtk, bankDef))
 				viability -= 10;
 			break;
 		
@@ -1058,7 +1080,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 move, const
 					break;
 				
 				case MOVE_MATBLOCK:
-					if (!gDisableStructs[gBankAttacker].isFirstTurn)
+					if (!gDisableStructs[bankAtk].isFirstTurn)
 					{
 						viability -= 10;
 						decreased = TRUE;
@@ -1094,7 +1116,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 move, const
 				}
 			}
 			
-			if (gDisableStructs[gBankAttacker].protectUses > 0 && Random() % 100 < 50)
+			if (gDisableStructs[bankAtk].protectUses > 0 && Random() % 100 < 50)
 				viability -= 6;
 			break;
 
@@ -1498,8 +1520,8 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 move, const
 			break;
 		
 		case EFFECT_SKILL_SWAP:
-			atkAbility = *GetAbilityLocation(gBankAttacker); //Get actual abilities
-			defAbility = *GetAbilityLocation(gBankTarget);
+			atkAbility = *GetAbilityLocation(bankAtk); //Get actual abilities
+			defAbility = *GetAbilityLocation(bankDef);
 
 			switch (move) {
 				case MOVE_WORRYSEED:

@@ -874,6 +874,11 @@ u8 FindMovePositionInMoveset(u16 move, u8 bank) {
 	return i;
 }
 
+bool8 MoveInMoveset(u16 move, u8 bank)
+{
+	return FindMovePositionInMoveset(move, bank) < 4;
+}
+
 u8 AttacksThisTurn(u8 bank, u16 move) // Note: returns 1 if it's a charging turn, otherwise 2
 {
     // first argument is unused
