@@ -61,7 +61,7 @@ void __attribute__((long_call)) FillPalette(u16 value, u16 offset, u16 size);
 u8 __attribute__((long_call)) UpdatePaletteFade(void);
 void __attribute__((long_call)) ResetPaletteFade(void);
 void __attribute__((long_call)) ReadPlttIntoBuffers(void);
-bool8 BeginNormalPaletteFade(u32 selectedPalettes, s8 delay, u8 startY, u8 targetY, u16 blendColor);
+bool8 __attribute__((long_call)) BeginNormalPaletteFade(u32 selectedPalettes, s8 delay, u8 startY, u8 targetY, u16 blendColor);
 void __attribute__((long_call)) FadeBgPalAndFillBlack(void);
 void __attribute__((long_call)) ResetPaletteStructByUid(u16 a1);
 void __attribute__((long_call)) ResetPaletteStruct(u8 paletteNum);
