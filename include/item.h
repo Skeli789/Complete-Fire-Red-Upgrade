@@ -42,11 +42,15 @@ u8 __attribute__((long_call)) GetPocketByItemId(u16 item_id);
 u8 __attribute__((long_call)) ItemId_GetType(u16 item_id);
 void __attribute__((long_call)) RemoveUsedItem(void);
 u16 __attribute__((long_call)) GetBagItemQuantity(u16 *quantity);
-
+u8 __attribute__((long_call)) ItemIsUnique(u16 item);
+void __attribute__((long_call)) Task_BuyHowManyDialogueInit(u8 taskId);
+u16 __attribute__((long_call)) ItemId_GetPrice(u16 itemId);
+void __attribute__((long_call)) BuyMenuConfirmPurchase(u8 taskId);
+u8 __attribute__((long_call)) *ItemId_GetDescription(u16 itemId);
 
 /*
 void GetBerryCountString(u8* dst, const u8* berryName, u32 quantity);
-void CopyItemName(u16 itemId, u8 *string);
+
 void CopyItemNameHandlePlural(u16 itemId, u8 *string, u32 quantity);
 bool8 IsBagPocketNonEmpty(u8 pocket);
 bool8 CheckBagHasItem(u16 itemId, u16 count);
@@ -62,10 +66,8 @@ void RemovePCItem(u8 index, u16 count);
 void SwapRegisteredBike(void);
 const struct Item *ItemId_GetItem(u16 itemId);
 u16 ItemId_GetId(u16 itemId);
-u16 ItemId_GetPrice(u16 itemId);
 u8 ItemId_GetHoldEffect(u16 itemId);
 u8 ItemId_GetHoldEffectParam(u16 itemId);
-const u8 *ItemId_GetDescription(u16 itemId);
 bool32 ItemId_CopyDescription(u8 *a, u32 itemId, u32 c);
 u8 ItemId_GetImportance(u16 itemId);
 u8 ItemId_GetUnknownValue(u16 itemId);

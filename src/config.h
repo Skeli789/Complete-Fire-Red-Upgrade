@@ -93,7 +93,7 @@ enum
 #define NUM_HMS 8	//keep this defined even if EXPANDED_TMSHMS is not!!
 //#define TMS_BEFORE_HMS  //Uncomment this if you want the HMs to appear after the TMs in your bag
 //#define DELETABLE_HMS		//Uncomment this if you want HMs to be deletable without the Move Deleter
-//#define REUSABLE_TMS	
+//#define REUSABLE_TMS		//if defined, don't forget to give all TMs a Mystery byte of 1!
 
 //General Options
 #define TIME_MORNING_START 4		//4:00 AM -  4:00

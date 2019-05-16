@@ -252,6 +252,32 @@ void LoadTmHmName(u8 *dst, u16 itemId)
 	StringCopy(dst, &gStringVar4[0]);
 }
 
+
+// Assumes no HMs will be in the mart...
+void LoadTmHmNameInMart(u16 item)
+{
+	u8 tmNum = ItemId_GetMystery2Id(item);
+	#ifdef EXPANDED_TMSHMS
+		if (NUM_TMS < 100)
+			ConvertIntToDecimalStringN(&gStringVar1[0], tmNum, 2, 2);
+		else
+			ConvertIntToDecimalStringN(&gStringVar1[0], tmNum, 2, 3);
+	#else
+		ConvertIntToDecimalStringN(&gStringVar1[0], tmNum, 2, 2);
+	#endif
+}
+
+extern u8* AttackDescriptionTable[];
+void* LoadTmHmMartDescription(u16 item)
+{
+	if (GetPocketByItemId(item) == POCKET_TM_HM)
+		return AttackDescriptionTable[ItemIdToBattleMoveId(item)-1];
+	else
+		return ItemId_GetDescription(item);
+}
+
+
+
 enum
 {
     CAN_LEARN_MOVE,
@@ -369,6 +395,66 @@ bool8 CheckReusableTMs(u16 item)
 			return TRUE;
 		else
 			return FALSE;
+	#endif
+}
+
+
+u8 CheckHmSymbol(u16 item)
+{
+	#ifdef EXPANDED_TMSHMS
+		#ifdef REUSABLE_TMS
+			if (TMIdFromItemId(item) < NUM_TMS)
+				return 2;	//no HM symbol or quantity
+			else
+				return 0;	//HM symbol, no quantity
+		#else
+			if (TMIdFromItemId(item) < NUM_TMS)
+				return 1;	//no HM symbol, show quantity
+			else
+				return 0;	//HM symbol, no qty
+		#endif
+	#else
+		#ifdef REUSABLE_TMS
+			if (ItemIsUnique(item) > 0)
+				return 0;	//HM symbol, no quantity
+			else
+				return 2;	//no HM symbol or quantity
+		#else
+			if (ItemIsUnique(item) > 0)
+				return 0;	//HM symbol, no quantity
+			else
+				return 1;	//no HM symbol, show qty
+		#endif
+	#endif
+}
+
+
+extern const u8 gText_SingleTmBuy[];
+void CheckTmPurchase(u16 item, u8 taskId)
+{
+	CopyItemName(item, &gStringVar1[0]);
+	#ifdef REUSABLE_TMS
+		if (GetPocketByItemId(item) == POCKET_TM_HM)
+		{
+			ConvertIntToDecimalStringN(&gStringVar2[0], ItemId_GetPrice(item), 3, 8);
+			BuyMenuDisplayMessage(taskId, &gText_SingleTmBuy[0], BuyMenuConfirmPurchase);
+		}
+		else
+			BuyMenuDisplayMessage(taskId, (void*) 0x8416766, Task_BuyHowManyDialogueInit);
+	#else
+		BuyMenuDisplayMessage(taskId, (void*) 0x8416766, Task_BuyHowManyDialogueInit);
+	#endif
+}
+
+u8 CheckSingleBagTm(u16 item)
+{
+	#ifdef REUSABLE_TMS
+		if (GetPocketByItemId(item) == POCKET_TM_HM)
+			return 1;
+		else
+			return 0xFF;
+	#else
+		return 0xFF;
 	#endif
 }
 

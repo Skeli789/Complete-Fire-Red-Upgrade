@@ -96,11 +96,18 @@ script functions/specials in asm - hooks and returns
 .global FixTmHmDiscLoader2
 .global FixTmHmDiscPal
 .global FixTmHmDiscPos
+.global HmSymbolFix
+.global SelectedTmSymbolFix
+.global FixMartTmListing
+.global TmMartDescriptionFix
 
 @@ Reusable TMs
 .global ReusableTMCheck1
 .global ReusableTMCheck2
 .global ReusableTMCheck3
+.global SingleTmPurchaseFix
+.global AddSingleTmFix
+@.global AlreadyOwnTmFix
 
 @@ Start Menu Stuff
 .global FixStartMenuSize
@@ -180,8 +187,94 @@ ReusableTMCheck3:
 IsReusable3:
 	ldr r1, =(0x08125C84 +1)
 	bx r1
+		
+.align 2
+.pool
+SingleTmPurchaseFix:
+	mov r0, r4	@item id
+	mov r1, r6	@task id
+	bl CheckTmPurchase
+	pop {r4-r7, pc}
+	
+.align 2
+.pool
+AddSingleTmFix:
+	bl CheckSingleBagTm
+	cmp r0, #0xFF
+	beq AddTmToBag
+	strh r0, [r4, #0x2]
+AddTmToBag:
+	ldrh r0, [r4, #0xA]	@item
+	ldrh r1, [r4, #0x2]	@qty
+	bl BagAddItem
+	lsl r0, r0, #0x18
+	lsr r0, r0, #0x18
+	ldr r1, =(0x0809BEC6 +1)
+	bx r1	
+	
+BagAddItem:
+	ldr r2, =(0x809A084 +1)
+	bx r2
+	
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ TM/HM Expansion - Fix Mart Listings
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.align 2
+.pool
+@ 0809B4A4 via r0	
+FixMartTmListing:
+	mov r0, r7	@item id
+	bl LoadTmHmNameInMart
+	ldr r1, =(0x0809B4B2 +1)
+	bx r1
+	
+.align 2
+.pool
+TmMartDescriptionFix:
+	bl LoadTmHmMartDescription
+	mov r7, r0
+	ldr r0, =(0x0809B34A +1)
+	bx r0
+	
 
-
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ TM/HM Expansion - Fix Hm Symbol
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.align 2
+.pool
+@ 08131E96 via r1
+HmSymbolFix:
+	lsl r0, r0, #0x10
+	lsr r0, r0, #0x10	@item id
+	bl CheckHmSymbol
+	mov r5, r0
+	cmp r0, #0x0
+	beq MakeHmSymbol
+	cmp r0, #0x1
+	beq ShowQty
+SkipSymbolAndQty:
+	ldr r0, =(0x08131EFE +1)
+	bx r0
+MakeHmSymbol:
+	ldr r0, =(0x08131EF4 +1)
+	bx r0
+ShowQty:	
+	ldr r0, =(0x08131EA6 +1)
+	bx r0
+	
+.align 2
+.pool
+SelectedTmSymbolFix:
+	ldrh r0, [r6]	@item ID
+	bl CheckHmSymbol
+	cmp r0, #0x0
+	bne SkipHmSymbol
+	ldr r0, =(0x08132516 +1)
+	bx r0
+SkipHmSymbol:
+	ldr r0, =(0x08132528 +1)
+	bx r0
+	
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ TM/HM Expansion - Item Ordering
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
