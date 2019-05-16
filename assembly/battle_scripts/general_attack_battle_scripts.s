@@ -3401,6 +3401,9 @@ BS_178_RolePlay:
 	call BattleScript_AbilityPopUpRevert
 	printstring 0xB0 @;STRINGID_PKMNCOPIEDFOE
 	waitmessage DELAY_1SECOND
+	copybyte BATTLE_SCRIPTING_BANK USER_BANK
+	call BSTryRemoveIllusion
+	call 0x81D92DC @;Try to revert Cherrim and Castform
 	tryactivateswitchinability BANK_ATTACKER
 	goto BS_MOVE_END
 
@@ -4965,6 +4968,7 @@ BS_242_LastResortSkyDrop:
 	attackcanceler
 	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
 	jumpifspecialstatusflag EQUALS STATUS3_SEMI_INVULNERABLE 0x0 FAILED_PRE
+	jumpifweight BANK_TARGET GREATERTHAN 1999 FAILED_PRE @;199.9 kg
 	accuracycheck BS_MOVE_MISSED 0x0
 	attackstring
 	ppreduce

@@ -110,7 +110,6 @@ bank_t GetBankFromPartyData(pokemon_t* mon) {
 	return PARTY_SIZE;
 }
 
-enum {IN_AIR, GROUNDED};
 bool8 CheckGrounding(bank_t bank) {
 	if (gStatuses3[gEffectBank] & STATUS3_IN_AIR)
 		return IN_AIR;
@@ -162,7 +161,7 @@ bool8 PartyAlive (u8 bank) {
 u8 ViableMonCount(pokemon_t* party) {
 	u8 count = 0;
 	
-    for (int i = 0; i < 6; ++i) 
+    for (int i = 0; i < PARTY_SIZE; ++i) 
 	{
         if (party[i].species != SPECIES_NONE
         && !GetMonData(&party[i], REQ_EGG, NULL) 
@@ -177,6 +176,23 @@ u8 ViableMonCountFromBank(u8 bank) {
 		return ViableMonCount(gPlayerParty);
 	else
 		return ViableMonCount(gEnemyParty);
+}
+
+u8 ViableMonCountFromBankLoadPartyRange(u8 bank)
+{
+	u8 count = 0;
+	u8 firstMonId, lastMonId;
+	struct Pokemon* party = LoadPartyRange(bank, &firstMonId, &lastMonId);
+
+    for (int i = firstMonId; i < lastMonId; ++i) 
+	{
+        if (party[i].species != SPECIES_NONE
+        && !GetMonData(&party[i], REQ_EGG, NULL) 
+		&& party[i].hp != 0)
+			++count;
+    }
+
+	return count;
 }
 
 bool8 CheckContact(u16 move, u8 bank) {
@@ -211,10 +227,19 @@ bool8 SheerForceCheck(void) {
 }
 
 bool8 IsOfType(bank_t bank, u8 type) {
-	if (gBattleMons[bank].type1 == type ||
-		gBattleMons[bank].type2 == type ||
-		gBattleMons[bank].type3 == type)
-			return TRUE;
+	u8 type1 = gBattleMons[bank].type1;
+	u8 type2 = gBattleMons[bank].type2;
+	u8 type3 = gBattleMons[bank].type3;
+	
+	if (!IS_BLANK_TYPE(type1) && type1 == type)
+		return TRUE;
+
+	if (!IS_BLANK_TYPE(type2) && type2 == type)
+		return TRUE;
+
+	if (!IS_BLANK_TYPE(type3) && type3 == type)
+		return TRUE;
+
 	return FALSE;
 }
 
@@ -324,7 +349,7 @@ u8 GetMoveTarget(u16 move, u8 useMoveTarget) {
 				} while (bankDef == bankAtk || atkSide == SIDE(bankDef) || gAbsentBattlerFlags & gBitTable[bankDef]);
 			}
 			
-			if(NO_MOLD_BREAKERS(ABILITY(bankAtk)) && !CheckTableForMove(move, MoldBreakerMoves)) 
+			if (NO_MOLD_BREAKERS(ABILITY(bankAtk), move)) 
 			{
 				u8 moveType = GetMoveTypeSpecial(bankAtk, move);
 				switch (moveType) {
@@ -1088,6 +1113,9 @@ bool8 CanBeFrozen(u8 bank, bool8 checkFlowerVeil) {
 }
 
 bool8 CanBeConfused(u8 bank) {
+	if (gBattleMons[bank].status2 & STATUS2_CONFUSION)
+		return FALSE;
+
 	if (TerrainType == MISTY_TERRAIN)
 		return FALSE;
 		

@@ -1638,3 +1638,11 @@
 	.macro tryactivateprotean
 	.byte 0xFF, 0x27
 	.endm
+
+	.macro jumpifweight bank predicate weight rom_address
+	.byte 0xFF, 0x28
+	.byte \bank
+	.byte \predicate
+	.2byte \weight
+	.4byte \rom_address
+	.endm

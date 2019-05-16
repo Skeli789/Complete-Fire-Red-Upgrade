@@ -1,6 +1,7 @@
 #pragma once
 
 extern const ability_t RolePlayBanTable[];
+extern const ability_t RolePlayAttackerBanTable[];
 extern const ability_t SkillSwapBanTable[];
 extern const ability_t WorrySeedGastroAcidBanTable[];
 extern const ability_t EntrainmentBanTableAttacker[];

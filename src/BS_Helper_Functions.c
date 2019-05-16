@@ -1044,7 +1044,7 @@ void TryExecuteInstruct(void)
 	if (CheckTableForMove(move, InstructBanList)
 	||  CheckTableForMove(move, MovesThatRequireRecharging)
 	||  CheckTableForMove(move, MovesThatCallOtherMovesTable)
-	|| (move >= FIRST_Z_MOVE && move <= LAST_Z_MOVE)
+	|| (IsZMove(move))
 	|| (gLockedMoves[gBankTarget] != 0 && gLockedMoves[gBankTarget] != 0xFFFF)
 	|| gBattleMons[gBankTarget].status2 & STATUS2_MULTIPLETURNS
 	|| FindMovePositionInMoveset(move, gBankTarget) == 4 //No longer knows the move
@@ -1087,7 +1087,8 @@ void InitiateInstruct(void)
 
 void TrySetMagnetRise(void)
 {
-	if (gNewBS->GravityTimer
+	if (gNewBS->GravityTimer != 0
+	|| gNewBS->MagnetRiseTimers[gBankAttacker] != 0
 	|| gStatuses3[gBankAttacker] & (STATUS3_LEVITATING | STATUS3_SMACKED_DOWN | STATUS3_ROOTED)
 	|| ITEM_EFFECT(gBankAttacker) == ITEM_EFFECT_IRON_BALL)
 		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
@@ -1220,7 +1221,8 @@ void AbilityChangeBSFunc(void)
 			break;
 		
 		case MOVE_ENTRAINMENT:
-			if (CheckTableForAbility(atkAbility, EntrainmentBanTableAttacker)
+			if (atkAbility == ABILITY_NONE
+			||  CheckTableForAbility(atkAbility, EntrainmentBanTableAttacker)
 			||  CheckTableForAbility(defAbility, EntrainmentBanTableTarget))
 				gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
 			else
@@ -1335,23 +1337,31 @@ void SeedLooper(void)
 
 void LastResortFunc(void)
 {
-	int i;
+	if (!CanUseLastResort(gBankAttacker))
+		gBattlescriptCurrInstr = BattleScript_ButItFailed - 2 - 5;
+}
+
+bool8 CanUseLastResort(u8 bank)
+{
+	u32 i;
 	bool8 knowsLastResort = FALSE;
 	
-	for (i = 0; i < MAX_MON_MOVES && gBattleMons[gBankAttacker].moves[i] != 0; ++i)
+	for (i = 0; i < MAX_MON_MOVES && gBattleMons[bank].moves[i] != MOVE_NONE; ++i)
 	{
-		u16 move = gBattleMons[gBankAttacker].moves[i];
+		u16 move = gBattleMons[bank].moves[i];
 		
 		if (move == MOVE_LASTRESORT) 
 			knowsLastResort = TRUE; //Last Resort can't be called from other moves
 		
-		else if (!(gNewBS->usedMoveIndices[gBankAttacker] & gBitTable[i]))
-			gBattlescriptCurrInstr = BattleScript_ButItFailed - 2 - 5;
+		else if (!(gNewBS->usedMoveIndices[bank] & gBitTable[i]))
+			return FALSE;
 	}
 	
 	if (i == 1 //Attacker only knows Last Resort
 	|| !knowsLastResort)
-		gBattlescriptCurrInstr = BattleScript_ButItFailed - 2 - 5;
+		return FALSE;
+		
+	return TRUE;
 }
 
 void SynchronoiseFunc(void)

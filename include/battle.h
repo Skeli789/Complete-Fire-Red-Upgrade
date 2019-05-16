@@ -726,28 +726,28 @@ struct NewBattleStruct
 	u8 AuroraVeilTimers[2];
 	
 	//Personal Counters
-	u8 TelekinesisTimers[4];
-	u8 MagnetRiseTimers[4];
-	u8 HealBlockTimers[4]; 					//0x20175D4
-	u8 LaserFocusTimers[4];
-	u8 ThroatChopTimers[4];
-	u8 EmbargoTimers[4];
-	u8 ElectrifyTimers[4];
-	u8 SlowStartTimers[4];					//0x20175E8
-	u8 StakeoutCounters[4];
-	u8 StompingTantrumTimers[4];
-	u8 NimbleCounters[4];
-	u8 DestinyBondCounters[4];
-	u8 MetronomeCounter[4];
-	u8 IncinerateCounters[4];
-	u8 LastUsedTypes[4];
-	u8 lastTargeted[4];
-	u8 usedMoveIndices[4];
-	u8 DisabledMoldBreakerAbilities[4];
-	u8 SuppressedAbilities[4];
-	u8 skyDropAttackersTarget[4]; //skyDropAttackersTarget[gBankAttacker] = gBankTarget
-	u8 skyDropTargetsAttacker[4]; //skyDropTargetsAttacker[gBankTarget] = gBankAttacker
-	u8 pickupStack[4]; //0x2017620
+	u8 TelekinesisTimers[MAX_BATTLERS_COUNT];
+	u8 MagnetRiseTimers[MAX_BATTLERS_COUNT];
+	u8 HealBlockTimers[MAX_BATTLERS_COUNT]; 			//0x20175D4
+	u8 LaserFocusTimers[MAX_BATTLERS_COUNT];
+	u8 ThroatChopTimers[MAX_BATTLERS_COUNT];
+	u8 EmbargoTimers[MAX_BATTLERS_COUNT];
+	u8 ElectrifyTimers[MAX_BATTLERS_COUNT];
+	u8 SlowStartTimers[MAX_BATTLERS_COUNT];				//0x20175E8
+	u8 StakeoutCounters[MAX_BATTLERS_COUNT];
+	u8 StompingTantrumTimers[MAX_BATTLERS_COUNT];
+	u8 NimbleCounters[MAX_BATTLERS_COUNT];
+	u8 DestinyBondCounters[MAX_BATTLERS_COUNT];
+	u8 MetronomeCounter[MAX_BATTLERS_COUNT];
+	u8 IncinerateCounters[MAX_BATTLERS_COUNT];
+	u8 LastUsedTypes[MAX_BATTLERS_COUNT];
+	u8 lastTargeted[MAX_BATTLERS_COUNT];
+	u8 usedMoveIndices[MAX_BATTLERS_COUNT];
+	u8 DisabledMoldBreakerAbilities[MAX_BATTLERS_COUNT];
+	u8 SuppressedAbilities[MAX_BATTLERS_COUNT];
+	u8 skyDropAttackersTarget[MAX_BATTLERS_COUNT]; //skyDropAttackersTarget[gBankAttacker] = gBankTarget
+	u8 skyDropTargetsAttacker[MAX_BATTLERS_COUNT]; //skyDropTargetsAttacker[gBankTarget] = gBankAttacker
+	u8 pickupStack[MAX_BATTLERS_COUNT]; //0x2017620
 	
 	//Bit Fields for Banks
 	u8 MicleBerryBits;
@@ -816,14 +816,15 @@ struct NewBattleStruct
 	//Other
 	u16 LastUsedMove;
 	u16 NewWishHealthSave;
-	u8 DancerTurnOrder[4];
-	u8 PayDayByPartyIndices[6];
-	item_t SavedConsumedItems[6];
-	s32 DamageTaken[4]; //0x2017650
-	u8 ResultFlags[4];
-	u8 expHelper[4];
-	u8 megaIndicatorObjIds[4];
+	u8 DancerTurnOrder[MAX_BATTLERS_COUNT];
+	u8 PayDayByPartyIndices[PARTY_SIZE];
+	item_t SavedConsumedItems[PARTY_SIZE];
+	s32 DamageTaken[MAX_BATTLERS_COUNT]; //0x2017650
+	u8 ResultFlags[MAX_BATTLERS_COUNT];
+	u8 expHelper[MAX_BATTLERS_COUNT];
+	u8 megaIndicatorObjIds[MAX_BATTLERS_COUNT];
 	u8 abilityPopUpIds[2];
+	u16 movePredictions[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //movePredictions[bankAtk][bankDef]
 	
 	struct MegaData* MegaData;	 //0x2017688
 	struct UltraData* UltraData;

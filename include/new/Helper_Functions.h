@@ -27,6 +27,7 @@ bool8 CheckGroundingFromPartyData(pokemon_t* party);
 bool8 PartyAlive (bank_t);
 u8 ViableMonCount(pokemon_t* partydata);
 u8 ViableMonCountFromBank(u8 bank);
+u8 ViableMonCountFromBankLoadPartyRange(u8 bank);
 bool8 CheckContact(move_t, bank_t);
 bool8 CheckContactMove(move_t);
 bool8 CheckHealingMove(move_t);
@@ -101,3 +102,5 @@ enum ItemBattleEffectCases
 	ItemEffects_ContactTarget,
 	ItemEffects_ContactAttacker
 };
+
+enum {IN_AIR, GROUNDED};

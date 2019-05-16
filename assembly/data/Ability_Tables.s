@@ -7,6 +7,7 @@
 .equ ABILITY_TABLES_TERMIN, 0xFF
 
 .global RolePlayBanTable
+.global RolePlayAttackerBanTable
 .global SkillSwapBanTable
 .global WorrySeedGastroAcidBanTable
 .global EntrainmentBanTableAttacker
@@ -30,6 +31,21 @@ RolePlayBanTable:
 .byte ABILITY_STANCECHANGE
 .byte ABILITY_POWEROFALCHEMY
 .byte ABILITY_RECEIVER
+.byte ABILITY_SCHOOLING
+.byte ABILITY_COMATOSE
+.byte ABILITY_SHIELDSDOWN
+.byte ABILITY_DISGUISE
+.byte ABILITY_RKSSYSTEM
+.byte ABILITY_BATTLEBOND
+.byte ABILITY_POWERCONSTRUCT
+.byte ABILITY_TABLES_TERMIN
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+RolePlayAttackerBanTable:
+.byte ABILITY_MULTITYPE
+.byte ABILITY_ZENMODE
+.byte ABILITY_STANCECHANGE
 .byte ABILITY_SCHOOLING
 .byte ABILITY_COMATOSE
 .byte ABILITY_SHIELDSDOWN

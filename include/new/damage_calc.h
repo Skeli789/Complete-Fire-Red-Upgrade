@@ -25,12 +25,14 @@ u8 GetExceptionMoveTypeFromParty(struct Pokemon*, move_t);
 
 void atk05_damagecalc(void);
 void FutureSightDamageCalc(void);
-u32 AI_CalcDmg(u8 bankAtk, u8 bankDef, u16 move);
+u32 AI_CalcDmg(const u8 bankAtk, const u8 bankDef, const u16 move);
 u32 AI_CalcPartyDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* mon);
-s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* defender, u32 move, u16 sideStatus, u16 powerOverride, u8 effectivenessFlags, u8 typeOverride, u8 bankAtk, u8 bankDef, struct Pokemon* party_data_atk, bool8 party, bool8 IgnoreAttacker, bool8 CheckingConfusion);
+s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* defender, const u16 move, u16 sideStatus, u16 powerOverride, u8 effectivenessFlags, u8 typeOverride, u8 bankAtk, u8 bankDef, pokemon_t* party_data_atk, bool8 PartyCheck, bool8 IgnoreAttacker, bool8 CheckingConfusion);
 u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 ability, u32 atkStatus1, u16 atk_hp, u16 atk_maxHP, u16 species, struct Pokemon* party_data_atk, bool8 PartyCheck, bool8 menuCheck, bool8 ignoreDef);
 u16 CalcVisualBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 power, u8 moveType, bool8 ignoreDef);
 u16 TryGetAlternateSpeciesSize(u16 species, u8 type);
+
+u32 GetActualSpeciesWeight(u8 ability, u8 itemEffect, u8 bank, bool8 checkNimble);
 
 //Functions Hooked In
 u8 GetSummaryScreenMoveType(u16 move, struct Pokemon* mon);

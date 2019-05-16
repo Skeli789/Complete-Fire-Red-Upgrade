@@ -308,3 +308,4 @@ gBattleScriptingCommandsTable2:
 .word atkFF25_jumpifterrainandgrounded
 .word atkFF26_attackstringnoprotean
 .word atkFF27_tryactivateprotean
+.word atkFF28_jumpifweight

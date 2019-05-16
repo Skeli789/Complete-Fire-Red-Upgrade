@@ -1,14 +1,13 @@
-#include "..\\defines.h"
-#include "AI_Helper_Functions.h"
-#include "../../include/new/helper_functions.h"
-#include "../../include/constants/items.h"
+#include "../defines.h"
 #include "../../include/random.h"
+#include "../../include/constants/items.h"
+
+#include "../../include/new/AI_Helper_Functions.h"
+#include "../../include/new/damage_calc.h"
+#include "../../include/new/helper_functions.h"
 
 extern NaturalGiftStruct NaturalGiftTable[];
 
-extern u8 TypeCalc(move_t, u8 bankAtk, u8 bankDef, pokemon_t* party_data_atk, bool8 CheckParty);
-
-enum {IN_AIR, GROUNDED};
 u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 	u8 i;
 	

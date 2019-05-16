@@ -32,7 +32,7 @@
 #define EFFECT_MULTI_HIT 29
 #define EFFECT_CONVERSION 30 //+ Reflect Type
 #define EFFECT_FLINCH_HIT 31 //+ Thunder Fang + Fire Fang + Ice Fang
-#define EFFECT_RESTORE_HP 32
+#define EFFECT_RESTORE_HP 32 //+ Purify
 #define EFFECT_TOXIC 33
 #define EFFECT_PAY_DAY 34
 #define EFFECT_LIGHT_SCREEN 35
@@ -193,7 +193,7 @@
 #define EFFECT_BLANK_190 190
 #define EFFECT_SKILL_SWAP 191 //+ Worry Seed + Gastro Acid + Entrainment + Simple Beam + Core Enforcer
 #define EFFECT_IMPRISON 192
-#define EFFECT_REFRESH 193 //+ Psycho Boost
+#define EFFECT_REFRESH 193 //+ Psycho Shift
 #define EFFECT_GRUDGE 194
 #define EFFECT_SNATCH 195
 #define EFFECT_BLANK_196 196

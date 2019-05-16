@@ -9,6 +9,7 @@
 #include "../include/new/bs_helper_functions.h"
 #include "../include/new/CMD49.h"
 #include "../include/new/cmd49_battle_scripts.h"
+#include "../include/new/damage_calc.h"
 #include "../include/new/helper_functions.h"
 #include "../include/new/move_battle_scripts.h"
 #include "../include/new/move_tables.h"
@@ -1133,6 +1134,50 @@ void atkFF27_tryactivateprotean(void)
 	gBattlescriptCurrInstr++;
 }
 
+//jumpifweight BANK PREDICATE WEIGHT ROM_OFFSET
+void atkFF28_jumpifweight(void)
+{
+    bool8 ret = FALSE;
+    u8 bank = GetBattleBank(gBattlescriptCurrInstr[1]);
+	u8 predicate = gBattlescriptCurrInstr[2];
+    u16 value = T1_READ_16(gBattlescriptCurrInstr + 3);
+	const u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 5);
+
+	u32 weight = GetActualSpeciesWeight(ABILITY(bank), ITEM_EFFECT(bank), bank, TRUE);
+
+    switch (predicate) {
+		case CMP_EQUAL:
+			if (value == weight)
+				ret = TRUE;
+			break;
+		case CMP_NOT_EQUAL:
+			if (value != weight)
+				ret = TRUE;
+			break;
+		case CMP_GREATER_THAN:
+			if (value > weight)
+				ret = TRUE;
+			break;
+		case CMP_LESS_THAN:
+			if (value < weight)
+				ret = TRUE;
+			break;
+		case CMP_COMMON_BITS:
+			if (value & weight)
+				ret = TRUE;
+			break;
+		case CMP_NO_COMMON_BITS:
+			if (!(value & weight))
+				ret = TRUE;
+			break;
+    }
+	
+    if (ret)
+        gBattlescriptCurrInstr = ptr;
+    else
+        gBattlescriptCurrInstr += 9;
+}
+
 /*
 Doesn't Affect (Spore, Minior Shield etc.)
 Attack Misses
@@ -1145,7 +1190,7 @@ Ability Protects
 */
 
 //trysetsleep BANK FAIL_ADDRESS
-void atkFF28_trysetsleep(void)
+void atkFF29_trysetsleep(void)
 {
 	u8 bank = GetBattleBank(gBattlescriptCurrInstr[1]);
 	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 2);

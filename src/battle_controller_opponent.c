@@ -1,10 +1,10 @@
 #include "defines.h"
 #include "defines_battle.h"
-#include "Battle_AI/AI_Helper_Functions.h"
-
 #include "../include/event_data.h"
 #include "../include/random.h"
 
+#include "../include/new/AI_Helper_Functions.h"
+#include "../include/new/ai_master.h"
 #include "../include/new/battle_controller_opponent.h"
 #include "../include/new/frontier.h"
 #include "../include/new/helper_functions.h"
@@ -13,9 +13,6 @@
 #include "../include/new/switching.h"
 
 //TODO: Update Acupressure Targeting for AI
-
-extern void BattleAI_SetupAIData(u8 defaultScoreMoves);
-extern u32 WildMonIsSmart(u8 bank);
 
 //This file's functions:
 static u8 LoadCorrectTrainerPicId(void);

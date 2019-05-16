@@ -42,9 +42,10 @@
 #define MOVE_EFFECT_TABLES_TERMIN 0xFF
 
 #define ABILITY_PRESENT(ability) AbilityBattleEffects(ABILITYEFFECT_CHECK_ON_FIELD, 0, ability, 0, 0)
-#define NO_MOLD_BREAKERS(ability) (ability != ABILITY_MOLDBREAKER && ability != ABILITY_TERAVOLT && ability != ABILITY_TURBOBLAZE)
+#define NO_MOLD_BREAKERS(ability, move) (ability != ABILITY_MOLDBREAKER && ability != ABILITY_TERAVOLT && ability != ABILITY_TURBOBLAZE && !CheckTableForMove(move, MoldBreakerMoves))
 #define IS_BLANK_TYPE(type) (type == TYPE_MYSTERY || type == TYPE_ROOSTLESS || type == TYPE_BLANK)
 #define IS_TRANSFORMED(bank) (gBattleMons[bank].status2 & STATUS2_TRANSFORMED)
+#define IS_BEHIND_SUBSTITUTE(bank) (gBattleMons[bank].status2 & STATUS2_SUBSTITUTE)
 #define TOOK_DAMAGE(bank) (gSpecialStatuses[bank].moveturnLostHP_physical || gSpecialStatuses[bank].moveturnLostHP_special)
 #define MOVE_HAD_EFFECT (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT))
 #define PINCH_BERRY_CHECK(bank) (gBattleMons[bank].hp <= gBattleMons[bank].maxHP / 4 || (ABILITY(bank) == ABILITY_GLUTTONY && gBattleMons[bank].hp <= gBattleMons[bank].maxHP / 2))
@@ -56,9 +57,6 @@
 #define IS_Z_MOVE(move) (move >= FIRST_Z_MOVE && move <= LAST_Z_MOVE)
 
 #define STAT_STAGE(bank, stat) (gBattleMons[bank].statStages[stat - 1])
-
-#define AI_THINKING_STRUCT ((struct AI_ThinkingStruct*)(gBattleResources->ai))
-#define BATTLE_HISTORY ((struct BattleHistory*)(gBattleResources->battleHistory))
 
 #define RELOAD_BATTLE_STATS(bank, partydata)				\
 {															\

@@ -1,10 +1,10 @@
 #include "defines.h"
 #include "defines_battle.h"
-#include "Battle_AI/AI_Helper_Functions.h"
 #include "../include/window.h"
 #include "../include/constants/songs.h"
 
 #include "../include/new/accuracy_calc.h"
+#include "../include/new/AI_Helper_Functions.h"
 #include "../include/new/damage_calc.h"
 #include "../include/new/helper_functions.h"
 #include "../include/new/general_bs_commands.h"

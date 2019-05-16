@@ -1,35 +1,24 @@
-#include "..\\defines.h"
-#include "../../include/new/helper_functions.h"
-#include "AI_Helper_Functions.h"
+#include "../defines.h"
 #include "../../include/random.h"
 
-extern move_t MoldBreakerMoves[];
+#include "../../include/new/AI_Helper_Functions.h"
+#include "../../include/new/ai_master.h"
+#include "../../include/new/battle_start_turn_start.h"
+#include "../../include/new/damage_calc.h"
+#include "../../include/new/frontier.h"
+#include "../../include/new/general_bs_commands.h"
+#include "../../include/new/helper_functions.h"
+#include "../../include/new/mega.h"
+#include "../../include/new/move_tables.h"
 
-extern u8 TypeCalc(u16 move, u8 bankAtk, u8 bankDef, pokemon_t* party_data_atk, bool8 CheckParty);
-extern u8 AI_TypeCalc(move_t, u8 bankAtk, pokemon_t* party_data_def);
-extern u32 AI_CalcPartyDmg(u8 bankAtk, u8 bankDef, u16 move, pokemon_t* mon);
-extern u8 CheckMoveLimitations(u8 bank, u8 unusableMoves, u8 check);
-extern u32 GetAIFlagsInBattleFrontier(u8 bank);
-extern const struct Evolution* CanMegaEvolve(u8 bank, bool8 CheckUBInstead);
-
-void BattleAI_HandleItemUseBeforeAISetup(u8 defaultScoreMoves);
-void BattleAI_SetupAIData(u8 defaultScoreMoves);
-
-void AI_TrySwitchOrUseItem(void);
-bool8 ShouldSwitch(void);
-bool8 FindMonThatAbsorbsOpponentsMove(void);
-bool8 FindMonThatAbsorbsOpponentsMove(void);
-bool8 ShouldSwitchIfNaturalCureOrRegenerator(void);
-bool8 HasSuperEffectiveMoveAgainstOpponents(bool8 noRng);
-bool8 PassOnWish(void);
-bool8 SemiInvulnerableTroll(void);
-bool8 TheCalcForSemiInvulnerableTroll(u8 bankAtk, u8 flags, bool8 JustCheckLockedMoves);
-bool8 CanStopLockedMove(void);
-bool8 ShouldSwitchIfWonderGuard(void);
-bool8 IsYawned(void);
-bool8 FindMonWithFlagsAndSuperEffective(u8 flags, u8 moduloPercent);
-u8 GetMostSuitableMonToSwitchInto(void);
-u32 WildMonIsSmart(u8 bank);
+// AI states
+enum
+{
+    AIState_SettingUp,
+    AIState_Processing,
+    AIState_FinishedProcessing,
+    AIState_DoNotProcess,
+};
 
 struct SmartWildMons
 {
@@ -62,6 +51,35 @@ struct SmartWildMons SmartWildAITable[] =
 	{SPECIES_DEOXYS, AI_SCRIPT_CHECK_BAD_MOVE},
 	{0xFFFF, 0}
 };
+
+extern u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 move, const u8 originalViability);
+extern u8 AI_Script_Postives(const u8 bankAtk, const u8 bankDef, const u16 move, const u8 originalViability);
+extern u8 AI_Script_Roaming(const u8 bankAtk, const u8 bankDef, const u16 move, const u8 originalViability);
+extern u8 AI_Script_Safari(const u8 bankAtk, const u8 bankDef, const u16 move, const u8 originalViability);
+extern u8 AI_Script_FirstBattle(const u8 bankAtk, const u8 bankDef, const u16 move, const u8 originalViability);
+
+static u8 (*const sBattleAIScriptTable[])(const u8, const u8, const u16, const u8) =
+{
+	[0] = AI_Script_Negatives,
+	//[1] = AI_Script_Positives,
+	
+	[29] = AI_Script_Roaming,
+	[30] = AI_Script_Safari,
+	[31] = AI_Script_FirstBattle,
+};
+
+//This file's functions:
+static bool8 ShouldSwitch(void);
+static bool8 FindMonThatAbsorbsOpponentsMove(void);
+static bool8 ShouldSwitchIfNaturalCureOrRegenerator(void);
+static bool8 PassOnWish(void);
+static bool8 SemiInvulnerableTroll(void);
+static bool8 TheCalcForSemiInvulnerableTroll(u8 bankAtk, u8 flags, bool8 JustCheckLockedMoves);
+static bool8 CanStopLockedMove(void);
+static bool8 IsYawned(void);
+static bool8 ShouldSwitchIfWonderGuard(void);
+static void PredictMovesForBanks(void);
+static u32 GetMaxByteIndexInList(const u8 array[], const u32 size);
 
 void BattleAI_HandleItemUseBeforeAISetup(u8 defaultScoreMoves)
 {
@@ -136,29 +154,82 @@ void BattleAI_SetupAIData(u8 defaultScoreMoves)
         gBankTarget = gBankAttacker ^ BIT_SIDE;
 
     // Choose proper trainer ai scripts.
-    if (gBattleTypeFlags & BATTLE_TYPE_SAFARI)
-        AI_THINKING_STRUCT->aiFlags = AI_SCRIPT_SAFARI;
-    else if (gBattleTypeFlags & BATTLE_TYPE_ROAMER)
-        AI_THINKING_STRUCT->aiFlags = AI_SCRIPT_ROAMING | WildMonIsSmart(gActiveBattler);
-    else if (gBattleTypeFlags & BATTLE_TYPE_OAK_TUTORIAL)
-        AI_THINKING_STRUCT->aiFlags = AI_SCRIPT_FIRST_BATTLE;
-	else if (gBattleTypeFlags & (BATTLE_TYPE_FRONTIER))
-		AI_THINKING_STRUCT->aiFlags = GetAIFlagsInBattleFrontier(gActiveBattler);
-    else if (gBattleTypeFlags & (BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_TRAINER_TOWER) && gTrainerBattleOpponent_A != 0x400)
-        AI_THINKING_STRUCT->aiFlags = AI_SCRIPT_CHECK_BAD_MOVE | AI_SCRIPT_CHECK_VIABILITY | AI_SCRIPT_TRY_TO_FAINT;
-    else if (gBattleTypeFlags & BATTLE_TYPE_SCRIPTED_WILD_2) //No idea how these two work
-		AI_THINKING_STRUCT->aiFlags = AI_SCRIPT_CHECK_BAD_MOVE;
-	else if (gBattleTypeFlags & BATTLE_TYPE_SCRIPTED_WILD_3) 
-		AI_THINKING_STRUCT->aiFlags = AI_SCRIPT_CHECK_BAD_MOVE | AI_SCRIPT_CHECK_VIABILITY | AI_SCRIPT_TRY_TO_FAINT;
-	else if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
-        AI_THINKING_STRUCT->aiFlags = gTrainers[gTrainerBattleOpponent_A].aiFlags | gTrainers[VarGet(SECOND_OPPONENT_VAR)].aiFlags;
-    else
-       AI_THINKING_STRUCT->aiFlags = gTrainers[gTrainerBattleOpponent_A].aiFlags;
+	AI_THINKING_STRUCT->aiFlags = GetAIFlags();
 
     if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
         AI_THINKING_STRUCT->aiFlags |= AI_SCRIPT_DOUBLE_BATTLE; // act smart in doubles and don't attack your partner
 }
 
+u32 GetAIFlags(void)
+{
+	u32 flags;
+
+    if (gBattleTypeFlags & BATTLE_TYPE_SAFARI)
+        flags = AI_SCRIPT_SAFARI;
+    else if (gBattleTypeFlags & BATTLE_TYPE_ROAMER)
+        flags = AI_SCRIPT_ROAMING | WildMonIsSmart(gActiveBattler);
+    else if (gBattleTypeFlags & BATTLE_TYPE_OAK_TUTORIAL)
+        flags = AI_SCRIPT_FIRST_BATTLE;
+	else if (gBattleTypeFlags & (BATTLE_TYPE_FRONTIER))
+		flags = GetAIFlagsInBattleFrontier(gActiveBattler);
+    else if (gBattleTypeFlags & (BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_TRAINER_TOWER) && gTrainerBattleOpponent_A != 0x400)
+        flags = AI_SCRIPT_CHECK_BAD_MOVE | AI_SCRIPT_CHECK_VIABILITY | AI_SCRIPT_TRY_TO_FAINT;
+    else if (gBattleTypeFlags & BATTLE_TYPE_SCRIPTED_WILD_2) //No idea how these two work
+		flags = AI_SCRIPT_CHECK_BAD_MOVE;
+	else if (gBattleTypeFlags & BATTLE_TYPE_SCRIPTED_WILD_3) 
+		flags = AI_SCRIPT_CHECK_BAD_MOVE | AI_SCRIPT_CHECK_VIABILITY | AI_SCRIPT_TRY_TO_FAINT;
+	else if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
+        flags = gTrainers[gTrainerBattleOpponent_A].aiFlags | gTrainers[VarGet(SECOND_OPPONENT_VAR)].aiFlags;
+    else
+       flags = gTrainers[gTrainerBattleOpponent_A].aiFlags;
+
+	return flags;
+}
+
+void BattleAI_DoAIProcessing(void)
+{
+    while (AI_THINKING_STRUCT->aiState != AIState_FinishedProcessing)
+    {
+        switch (AI_THINKING_STRUCT->aiState)
+        {
+            case AIState_DoNotProcess: // Needed to match.
+                break;
+            case AIState_SettingUp:
+                if (gBattleMons[gBankAttacker].pp[AI_THINKING_STRUCT->movesetIndex] == 0)
+                    AI_THINKING_STRUCT->moveConsidered = MOVE_NONE;
+                else
+                    AI_THINKING_STRUCT->moveConsidered = gBattleMons[gBankAttacker].moves[AI_THINKING_STRUCT->movesetIndex];
+
+                AI_THINKING_STRUCT->aiState++;
+                break;
+
+            case AIState_Processing:
+                if (AI_THINKING_STRUCT->moveConsidered != MOVE_NONE
+				&&  AI_THINKING_STRUCT->aiLogicId < ARRAY_COUNT(sBattleAIScriptTable)
+				&&  sBattleAIScriptTable[AI_THINKING_STRUCT->aiLogicId] != NULL)
+                {
+                    AI_THINKING_STRUCT->score[AI_THINKING_STRUCT->movesetIndex] = 
+						sBattleAIScriptTable[AI_THINKING_STRUCT->aiLogicId](gBankAttacker, 
+																			gBankTarget, 
+																			AI_THINKING_STRUCT->moveConsidered, 
+																			AI_THINKING_STRUCT->score[AI_THINKING_STRUCT->movesetIndex]); //Run AI script
+                }
+                else
+                {
+                    AI_THINKING_STRUCT->score[AI_THINKING_STRUCT->movesetIndex] = 0;
+                }
+				
+				AI_THINKING_STRUCT->movesetIndex++;
+
+                if (AI_THINKING_STRUCT->movesetIndex < MAX_MON_MOVES && !(AI_THINKING_STRUCT->aiAction & AI_ACTION_DO_NOT_ATTACK))
+                    AI_THINKING_STRUCT->aiState = AIState_SettingUp;
+                else
+                    AI_THINKING_STRUCT->aiState++;
+
+			break;
+        }
+    }
+}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void AI_TrySwitchOrUseItem(void)
@@ -167,6 +238,7 @@ void AI_TrySwitchOrUseItem(void)
     u8 battlerIn1, battlerIn2;
     u8 firstId, lastId;
 
+	PredictMovesForBanks();
 	party = LoadPartyRange(gActiveBattler, &firstId, &lastId);
 
     if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
@@ -219,7 +291,7 @@ void AI_TrySwitchOrUseItem(void)
     EmitTwoReturnValues(1, ACTION_USE_MOVE, (gActiveBattler ^ BIT_SIDE) << 8);
 }
 
-bool8 ShouldSwitch(void)
+static bool8 ShouldSwitch(void)
 {
     u8 battlerIn1, battlerIn2;
     u8 firstId, lastId;
@@ -304,19 +376,15 @@ bool8 ShouldSwitch(void)
     return FALSE;
 }
 
-bool8 FindMonThatAbsorbsOpponentsMove(void)
+static bool8 FindMonThatAbsorbsOpponentsMove(void)
 {
     u8 battlerIn1, battlerIn2;
+	u8 foe1, foe2;
+	u16 predictedMove1, predictedMove2;
     u8 absorbingTypeAbility1, absorbingTypeAbility2, absorbingTypeAbility3;
     u8 firstId, lastId;
     struct Pokemon *party;
     int i;
-
-    if ((CanKillAFoe(gActiveBattler) && umodsi(Random(), 2) != 0)
-    || 	gLastLandedMoves[gActiveBattler] == 0
-    ||	gLastLandedMoves[gActiveBattler] == 0xFFFF
-    ||	gBattleMoves[gLastLandedMoves[gActiveBattler]].power == 0)
-        return FALSE;
 
     if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
     {
@@ -325,14 +393,40 @@ bool8 FindMonThatAbsorbsOpponentsMove(void)
             battlerIn2 = gActiveBattler;
         else
             battlerIn2 = PARTNER(gActiveBattler);
+			
+		if (gAbsentBattlerFlags & gBitTable[FOE(gActiveBattler)])
+			foe1 = foe2 = PARTNER(FOE(gActiveBattler));
+		else if (gAbsentBattlerFlags & gBitTable[PARTNER(FOE(gActiveBattler))])
+			foe1 = foe2 = FOE(gActiveBattler);
+		else
+		{
+			foe1 = FOE(gActiveBattler);
+			foe2 = PARTNER(FOE(gActiveBattler));
+		}
     }
     else
     {
         battlerIn1 = gActiveBattler;
         battlerIn2 = gActiveBattler;
+		foe1 = FOE(gActiveBattler);
+		foe2 = foe1;
     }
 
-	switch (gNewBS->LastUsedTypes[gLastHitBy[gActiveBattler]]) {
+	predictedMove1 = IsValidMovePrediction(foe1, gActiveBattler);
+	predictedMove2 = IsValidMovePrediction(foe2, gActiveBattler);
+
+	if ((CanKillAFoe(gActiveBattler) && (Random() & 1) != 0)
+	|| ((predictedMove1 == MOVE_NONE || predictedMove1 == 0xFFFF) && (predictedMove2 == MOVE_NONE || predictedMove2 == 0xFFFF))
+	|| (SPLIT(predictedMove1) == SPLIT_STATUS && SPLIT(predictedMove2) == SPLIT_STATUS))
+		return FALSE;
+
+	u8 moveType;
+	if (predictedMove1 != MOVE_NONE && predictedMove1 != 0xFFFF)
+		moveType = GetMoveTypeSpecial(foe1, predictedMove1);
+	else
+		moveType = GetMoveTypeSpecial(foe2, predictedMove2);
+
+	switch (moveType) {
 		case TYPE_FIRE:
 			absorbingTypeAbility1 = ABILITY_FLASHFIRE;
 			absorbingTypeAbility2 = ABILITY_FLASHFIRE;
@@ -392,7 +486,7 @@ bool8 FindMonThatAbsorbsOpponentsMove(void)
     return FALSE;
 }
 
-bool8 ShouldSwitchIfNaturalCureOrRegenerator(void)
+static bool8 ShouldSwitchIfNaturalCureOrRegenerator(void)
 {
 	switch (ABILITY(gActiveBattler)) {
 		case ABILITY_NATURALCURE:
@@ -421,23 +515,26 @@ bool8 ShouldSwitchIfNaturalCureOrRegenerator(void)
     return TRUE;
 }
 
-bool8 HasSuperEffectiveMoveAgainstOpponents(bool8 noRng) {
+bool8 HasSuperEffectiveMoveAgainstOpponents(bool8 noRng)
+{
     u8 opposingBattler;
     int i;
     u8 moveFlags;
     u16 move;
 
     opposingBattler = FOE(gActiveBattler);
-    if (!(gAbsentBattlerFlags & gBitTable[opposingBattler])) {
-	
-        for (i = 0; i < 4; i++) {
+    if (!(gAbsentBattlerFlags & gBitTable[opposingBattler]))
+	{
+        for (i = 0; i < MAX_MON_MOVES; ++i)
+		{
             move = gBattleMons[gActiveBattler].moves[i];
             if (move == MOVE_NONE || SPLIT(move) == SPLIT_STATUS)
                 continue;
 
             moveFlags = TypeCalc(move, gActiveBattler, opposingBattler, 0, FALSE);
             
-			if (moveFlags & MOVE_RESULT_SUPER_EFFECTIVE) {
+			if (moveFlags & MOVE_RESULT_SUPER_EFFECTIVE)
+			{
                 if (noRng)
                     return TRUE;
                 if (umodsi(Random(), 10) != 0)
@@ -450,16 +547,18 @@ bool8 HasSuperEffectiveMoveAgainstOpponents(bool8 noRng) {
         return FALSE;
 
     opposingBattler = PARTNER(FOE(gActiveBattler));
-    if (!(gAbsentBattlerFlags & gBitTable[opposingBattler])) {
-        
-		for (i = 0; i < 4; ++i) {
+    if (!(gAbsentBattlerFlags & gBitTable[opposingBattler]))
+	{    
+		for (i = 0; i < MAX_MON_MOVES; ++i)
+		{
             move = gBattleMons[gActiveBattler].moves[i];
             if (move == MOVE_NONE || SPLIT(move) == SPLIT_STATUS)
                 continue;
 
             moveFlags = TypeCalc(move, gActiveBattler, opposingBattler, 0, FALSE);
 			
-            if (moveFlags & MOVE_RESULT_SUPER_EFFECTIVE) {
+            if (moveFlags & MOVE_RESULT_SUPER_EFFECTIVE)
+			{
                 if (noRng)
                     return TRUE;
                 if (umodsi(Random(), 10) != 0)
@@ -471,7 +570,8 @@ bool8 HasSuperEffectiveMoveAgainstOpponents(bool8 noRng) {
     return FALSE;
 }
 
-bool8 PassOnWish(void) {
+static bool8 PassOnWish(void)
+{
 	pokemon_t* party;
 	u8 firstId, lastId;
 	u8 bank = gActiveBattler;
@@ -497,8 +597,8 @@ bool8 PassOnWish(void) {
         battlerIn2 = gActiveBattler;
     }
 		
-	if (gWishFutureKnock->wishCounter[bank]) {
-		
+	if (gWishFutureKnock->wishCounter[bank])
+	{	
 		//Don't switch if your health is less than half and you can survive an opponent's hit
 		if (gBattleMons[bank].hp < gBattleMons[bank].maxHP / 2
 		&& ((!CanKnockOut(opposingBattler1, bank) && !(gBattleTypeFlags & BATTLE_TYPE_DOUBLE && CanKnockOut(opposingBattler2, bank))) || HasProtectionMoveInMoveset(bank, FALSE)))
@@ -506,7 +606,8 @@ bool8 PassOnWish(void) {
 			
 		party = LoadPartyRange(gActiveBattler, &firstId, &lastId);
 		
-		for (i = firstId; i < lastId; ++i) {
+		for (i = firstId; i < lastId; ++i)
+		{
 			if (party[i].hp == 0
 			||  party[i].species == SPECIES_NONE
 			||	GetMonData(&party[i], MON_DATA_IS_EGG, 0)
@@ -516,7 +617,8 @@ bool8 PassOnWish(void) {
 			||	i == gBattleStruct->monToSwitchIntoId[battlerIn2])
 				continue;
 
-			if (party[i].hp < party[i].maxHP / 2) {
+			if (party[i].hp < party[i].maxHP / 2)
+			{
 				gBattleStruct->switchoutIndex[SIDE(bank)] = i;
                 EmitTwoReturnValues(1, ACTION_SWITCH, 0);
 				return TRUE;
@@ -526,19 +628,23 @@ bool8 PassOnWish(void) {
 	return FALSE;
 }
 
-bool8 SemiInvulnerableTroll(void) {
+static bool8 SemiInvulnerableTroll(void)
+{
 	u8 opposingBattler1, opposingBattler2;
 
-	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE) {
+	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	{
 		opposingBattler1 = FOE(gActiveBattler);
 		opposingBattler2 = PARTNER(opposingBattler1);
 	}
-	else {
+	else
+	{
 		opposingBattler1 = FOE(gActiveBattler);
 		opposingBattler2 = opposingBattler1;
 	}
 	
-	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE) {
+	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	{
 		if (!(gStatuses3[opposingBattler1] & STATUS3_SEMI_INVULNERABLE) && !(gStatuses3[opposingBattler2] & STATUS3_SEMI_INVULNERABLE))
 			return FALSE;
 		#ifndef REALLY_SMART_AI
@@ -561,7 +667,8 @@ bool8 SemiInvulnerableTroll(void) {
 	return FALSE;
 }
 
-bool8 TheCalcForSemiInvulnerableTroll(u8 bankAtk, u8 flags, bool8 JustCheckLockedMoves) {
+static bool8 TheCalcForSemiInvulnerableTroll(u8 bankAtk, u8 flags, bool8 JustCheckLockedMoves)
+{
 	u8 firstId, lastId;
 	u8 battlerIn1, battlerIn2;
 	int i;
@@ -583,11 +690,13 @@ bool8 TheCalcForSemiInvulnerableTroll(u8 bankAtk, u8 flags, bool8 JustCheckLocke
 	pokemon_t* party = LoadPartyRange(gActiveBattler, &firstId, &lastId);
 	
 	if (((gStatuses3[bankAtk] & STATUS3_SEMI_INVULNERABLE) || (JustCheckLockedMoves && gLockedMoves[bankAtk])) 
-	&&    gBattleStruct->moveTarget[bankAtk] == gActiveBattler) {
+	&&    gBattleStruct->moveTarget[bankAtk] == gActiveBattler)
+	{
 		if (TypeCalc(gLockedMoves[bankAtk], bankAtk, gActiveBattler, 0, FALSE) & flags)
 			return FALSE;
 			
-		for (i = firstId; i < lastId; ++i) {
+		for (i = firstId; i < lastId; ++i)
+		{
 			if (party[i].hp == 0
 			||  party[i].species == SPECIES_NONE
 			||	GetMonData(&party[i], MON_DATA_IS_EGG, 0)
@@ -597,7 +706,8 @@ bool8 TheCalcForSemiInvulnerableTroll(u8 bankAtk, u8 flags, bool8 JustCheckLocke
 			||	i == gBattleStruct->monToSwitchIntoId[battlerIn2])
 				continue;
 
-			if (AI_TypeCalc(gLockedMoves[bankAtk], bankAtk, &party[i]) & flags) {
+			if (AI_TypeCalc(gLockedMoves[bankAtk], bankAtk, &party[i]) & flags)
+			{
 				gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = i;
                 EmitTwoReturnValues(1, ACTION_SWITCH, 0);
 				return TRUE;
@@ -607,19 +717,23 @@ bool8 TheCalcForSemiInvulnerableTroll(u8 bankAtk, u8 flags, bool8 JustCheckLocke
 	return FALSE;
 }
 
-bool8 CanStopLockedMove(void) {
+static bool8 CanStopLockedMove(void)
+{
 	u8 opposingBattler1, opposingBattler2;
 
-	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE) {
+	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	{
 		opposingBattler1 = FOE(gActiveBattler);
 		opposingBattler2 = PARTNER(opposingBattler1);
 	}
-	else {
+	else
+	{
 		opposingBattler1 = FOE(gActiveBattler);
 		opposingBattler2 = opposingBattler1;
 	}
 	
-	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE) {
+	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	{
 		if (!(gLockedMoves[opposingBattler1] && SPLIT(gLockedMoves[opposingBattler1]) != SPLIT_STATUS) && !(gLockedMoves[opposingBattler2] && SPLIT(gLockedMoves[opposingBattler2]) != SPLIT_STATUS))
 			return FALSE;
 		#ifndef REALLY_SMART_AI
@@ -642,8 +756,12 @@ bool8 CanStopLockedMove(void) {
 	return FALSE;
 }
 
-bool8 IsYawned(void) {
-	if (ABILITY(gActiveBattler) != ABILITY_NATURALCURE && gStatuses3[gActiveBattler] & STATUS3_YAWN && gBattleMons[gActiveBattler].hp > gBattleMons[gActiveBattler].maxHP / 4) {
+static bool8 IsYawned(void)
+{
+	if (ABILITY(gActiveBattler) != ABILITY_NATURALCURE
+	&& gStatuses3[gActiveBattler] & STATUS3_YAWN
+	&& gBattleMons[gActiveBattler].hp > gBattleMons[gActiveBattler].maxHP / 4)
+	{
 		if (FindMonWithFlagsAndSuperEffective(MOVE_RESULT_DOESNT_AFFECT_FOE, 1))
 			return TRUE;
 		if (FindMonWithFlagsAndSuperEffective(MOVE_RESULT_NOT_VERY_EFFECTIVE, 1))
@@ -656,21 +774,14 @@ bool8 IsYawned(void) {
 	return FALSE;
 }
 
-bool8 FindMonWithFlagsAndSuperEffective(u8 flags, u8 moduloPercent) {
+bool8 FindMonWithFlagsAndSuperEffective(u8 flags, u8 moduloPercent)
+{
     u8 battlerIn1, battlerIn2;
+	u8 foe1, foe2;
     int i, j;
 	u8 start, end;
     u16 move;
     u8 moveFlags;
-
-    if (gLastLandedMoves[gActiveBattler] == 0)
-        return FALSE;
-    if (gLastLandedMoves[gActiveBattler] == 0xFFFF)
-        return FALSE;
-    if (gLastHitBy[gActiveBattler] == 0xFF)
-        return FALSE;
-    if (gBattleMoves[gLastLandedMoves[gActiveBattler]].power == 0)
-        return FALSE;
 
     if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
     {
@@ -679,37 +790,57 @@ bool8 FindMonWithFlagsAndSuperEffective(u8 flags, u8 moduloPercent) {
             battlerIn2 = gActiveBattler;
         else
             battlerIn2 = PARTNER(gActiveBattler);
+			
+		if (gAbsentBattlerFlags & gBitTable[FOE(gActiveBattler)])
+			foe1 = foe2 = PARTNER(FOE(gActiveBattler));
+		else if (gAbsentBattlerFlags & gBitTable[PARTNER(FOE(gActiveBattler))])
+			foe1 = foe2 = FOE(gActiveBattler);
+		else
+		{
+			foe1 = FOE(gActiveBattler);
+			foe2 = PARTNER(FOE(gActiveBattler));
+		}
     }
     else
     {
         battlerIn1 = gActiveBattler;
         battlerIn2 = gActiveBattler;
+		foe1 = FOE(gActiveBattler);
+		foe2 = foe1;
     }
+
+	u16 predictedMove1 = IsValidMovePrediction(foe1, gActiveBattler);
+	u16 predictedMove2 = IsValidMovePrediction(foe2, gActiveBattler);
+	
+	if (((predictedMove1 == MOVE_NONE || predictedMove1 == 0xFFFF) && (predictedMove2 == MOVE_NONE || predictedMove2 == 0xFFFF))
+    || (SPLIT(predictedMove1) == SPLIT_STATUS && SPLIT(predictedMove2) == SPLIT_STATUS))
+        return FALSE;
 
 	pokemon_t* party = LoadPartyRange(gActiveBattler, &start, &end);
 
-
 //Party Search			
-    for (i = start; i < end; ++i) {
-        if (party[i].hp == 0)
-            continue;
-        if (party[i].species == SPECIES_NONE)
-            continue;
-        if (GetMonData(&party[i], MON_DATA_IS_EGG, 0))
-            continue;
-        if (i == gBattlerPartyIndexes[battlerIn1])
-            continue;
-        if (i == gBattlerPartyIndexes[battlerIn2])
-            continue;
-        if (i == gBattleStruct->monToSwitchIntoId[battlerIn1])
-            continue;
-        if (i == gBattleStruct->monToSwitchIntoId[battlerIn2])
-            continue;
-					
-        moveFlags = AI_TypeCalc(gLastLandedMoves[gActiveBattler], gLastHitBy[gActiveBattler], &party[i]);
+    for (i = start; i < end; ++i)
+	{
+		if (party[i].hp == 0
+		|| party[i].species == SPECIES_NONE
+		|| GetMonData(&party[i], MON_DATA_IS_EGG, NULL)
+		|| i == gBattlerPartyIndexes[battlerIn1]
+		|| i == gBattlerPartyIndexes[battlerIn2]
+		|| i == gBattleStruct->monToSwitchIntoId[battlerIn1]
+		|| i == gBattleStruct->monToSwitchIntoId[battlerIn2])
+			continue;
+
+		if (predictedMove1 != MOVE_NONE && predictedMove1 != 0xFFFF)
+			moveFlags = AI_TypeCalc(predictedMove1, foe1, &party[i]);
+		else
+			moveFlags = AI_TypeCalc(predictedMove2, foe2, &party[i]);
 		
-        if (moveFlags & flags) {
-            battlerIn1 = gLastHitBy[gActiveBattler];
+        if (moveFlags & flags)
+		{
+			if (predictedMove1 != MOVE_NONE && predictedMove1 != 0xFFFF)
+				battlerIn1 = foe1;
+			else
+				battlerIn1 = foe2;
 
             for (j = 0; j < 4; j++) {
                 move = party[i].moves[j];
@@ -730,7 +861,8 @@ bool8 FindMonWithFlagsAndSuperEffective(u8 flags, u8 moduloPercent) {
     return FALSE;
 }
 
-bool8 ShouldSwitchIfWonderGuard(void) {
+static bool8 ShouldSwitchIfWonderGuard(void)
+{
 	u8 battlerIn1, battlerIn2;
     u8 opposingBattler;
     u8 moveFlags;
@@ -738,12 +870,12 @@ bool8 ShouldSwitchIfWonderGuard(void) {
 	u8 start, end;
 	opposingBattler = FOE(gActiveBattler);
 
-    if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
-        return FALSE;
+	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+		return FALSE;
 
-    if (ABILITY(opposingBattler) != ABILITY_WONDERGUARD)
-        { return FALSE; } //Curly braces are here becuase dumb compiler was giving me errors without them
-		
+	if (ABILITY(opposingBattler) != ABILITY_WONDERGUARD)
+		return FALSE;
+
 	if (ABILITY(gActiveBattler) == ABILITY_MOLDBREAKER
 	||  ABILITY(gActiveBattler) == ABILITY_TERAVOLT
 	||  ABILITY(gActiveBattler) == ABILITY_TURBOBLAZE)
@@ -763,7 +895,8 @@ bool8 ShouldSwitchIfWonderGuard(void) {
 	}
 
     //Check if pokemon has a super effective move or Mold Breaker Move
-    for (i = 0; i < 4; i++) {
+    for (i = 0; i < MAX_MON_MOVES; ++i)
+	{
         u16 move = gBattleMons[gActiveBattler].moves[i];
         if (move == MOVE_NONE)
             continue;
@@ -796,7 +929,8 @@ bool8 ShouldSwitchIfWonderGuard(void) {
 	pokemon_t* party = LoadPartyRange(gActiveBattler, &start, &end);
 	
     // find a pokemon in the party that has a super effective move
-    for (i = start; i < end; i++) {
+    for (i = start; i < end; ++i)
+	{
         if (party[i].hp == 0
             || party[i].species == SPECIES_NONE
             || GetMonData(&party[i], MON_DATA_IS_EGG, 0)
@@ -806,13 +940,14 @@ bool8 ShouldSwitchIfWonderGuard(void) {
             || i == gBattleStruct->monToSwitchIntoId[battlerIn2])
             continue;
 
-        for (j = 0; j < 4; j++) {
+        for (j = 0; j < MAX_MON_MOVES; j++) {
             u16 move = party[i].moves[j];
             if (move == MOVE_NONE || SPLIT(move) == SPLIT_STATUS)
                 continue;
 
             moveFlags = TypeCalc(move, gActiveBattler, opposingBattler, &party[i], TRUE);
-            if (moveFlags & MOVE_RESULT_SUPER_EFFECTIVE) {
+            if (moveFlags & MOVE_RESULT_SUPER_EFFECTIVE)
+			{
                 // we found a mon
                 gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = i;
                 EmitTwoReturnValues(1, ACTION_SWITCH, 0);
@@ -863,7 +998,8 @@ u8 GetMostSuitableMonToSwitchInto(void)
 	
 	//Check if point even running calcs
 	u8 count = 0, potentialMon = 0;
-	for (i = firstId; i < lastId; ++i) {
+	for (i = firstId; i < lastId; ++i)
+	{
 		if (party[i].species != SPECIES_NONE
 		&& !GetMonData(&party[i], MON_DATA_IS_EGG, 0)
         && party[i].hp
@@ -977,7 +1113,8 @@ u8 GetMostSuitableMonToSwitchInto(void)
     return bestMonId;
 }
 
-u32 WildMonIsSmart(u8 bank) {
+u32 WildMonIsSmart(u8 bank)
+{
 	#ifdef WILD_ALWAYS_SMART
 		bank++; //So no compiler errors
 		return TRUE;
@@ -991,64 +1128,67 @@ u32 WildMonIsSmart(u8 bank) {
 	#endif
 }
 
-/*
-u32 AIAnalyzeMoveset(u8 bank) {
-	u8* moveArray = gBattleMons[bank].moves;
-	u16 move;
-	u8 moveEffect;
-	u8 damagingMoves, statusyMoves, hazardMoves, healingMoves, statBoostingMoves, supportMoves;
-	u32 aiFlags;
-	int i;
-	
-	for (i = 0; i < MAX_MON_MOVES && moveArray[i] != 0 && moveArray[i] < MOVES_COUNT; ++i) 
-	{
-		move = moveArray[i];
-		moveEffect = gBattleMoves[move].effect;
-		
-		if (moveEffect == EFFECT_SPIKES)
-			aiFlags |= AI_SCRIPT_SET_HAZARDS;
-			
-		switch (moveEffect) {
-			case EFFECT_SLEEP:
-			case EFFECT_TOXIC:
-			case EFFECT_POISON:
-			case EFFECT_PARALYZE:
-			case EFFECT_LEECH_SEED:
-			case EFFECT_ATTRACT:
-			case EFFECT_WILL_O_WISP:
-				aiFlags |= AI_SCRIPT_SET_STATUS;
-		}
-		
-		switch (moveEffect) {
-			case EFFECT_ABSORB
-			case EFFECT_RESTORE_HP:
-			case EFFECT_REST:
-			case EFFECT_LEECH_SEED:
-			case EFFECT_MORNING_SUN:
-			case EFFECT_SOFTBOILED:
-			case EFFECT_WISH:
-			case EFFECT_INGRAIN:
-				aiFlags |= AI_SCRIPT_HEAL;
-		}
-		
-		if (gBattleMoveFlags & BATTLE_TYPE_DOUBLE) {
-			switch (moveEffect) {
-				case EFFECT_HELPING_HAND:
-				case EFFECT_HEAL_TARGET: //Includes Pollen Puff
-					aiFlags |= AI_SCRIPT_HELP_PARTNER;
-			}
-		}
-			case EFFECT_ATTACK_UP:
-			case EFFECT_DEFENSE_UP:
-			case EFFECT_SPEED_UP:
-			case EFFECT_SPECIAL_ATTACK_UP:
-			case EFFECT_SPECIAL_DEFENSE_UP:
-			case EFFECT_ACCURACY_UP:
-			case EFFECT_EVASION_UP:
-				
+static void PredictMovesForBanks(void)
+{
+	int i, j;
+	u8 viabilities[MAX_MON_MOVES] = {0};
+	u8 bestMoves[MAX_MON_MOVES] = {0};
 
+	for (u8 bankAtk = 0; bankAtk < gBattlersCount; ++bankAtk)
+	{
+		u32 moveLimitations = CheckMoveLimitations(bankAtk, 0, 0xFF);
+
+		for (u8 bankDef = 0; bankDef < gBattlersCount; ++bankDef)
+		{
+			if (bankAtk == bankDef) continue;
 			
+			if (gBattleMons[bankAtk].status2 & STATUS2_RECHARGE
+			||  gDisableStructs[bankAtk].truantCounter != 0
+			|| (!MoveEffectInMoveset(EFFECT_SLEEP_TALK, bankAtk) && !MoveEffectInMoveset(EFFECT_SNORE, bankAtk) 
+					&& gBattleMons[bankAtk].status1 & STATUS1_SLEEP && (gBattleMons[bankAtk].status1 & STATUS1_SLEEP) > 1)) //Check sleeping and can't use move
+			{
+				StoreMovePrediction(bankAtk, bankDef, MOVE_NONE);
+			}
+			else if (gBattleMons[bankAtk].status2 & STATUS2_MULTIPLETURNS
+			&& FindMovePositionInMoveset(gLockedMoves[bankAtk], bankAtk) < 4)
+				StoreMovePrediction(bankAtk, bankDef, gLockedMoves[bankAtk]);
+			else
+			{		
+				for (i = 0; i < MAX_MON_MOVES && gBattleMons[bankAtk].moves[i] != MOVE_NONE; ++i)
+				{
+					viabilities[i] = 0;
+					bestMoves[i] = 0;
+
+					if (gBitTable[i] & moveLimitations) continue;
+
+					u16 move = gBattleMons[bankAtk].moves[i];
+					viabilities[i] = AI_Script_Negatives(bankAtk, bankDef, move, 100);
+					//viabilities[i] = AI_Script_Positives(bankAtk, bankDef, move, viabilities[i]);
+				}
+				
+				bestMoves[j = 0] = GetMaxByteIndexInList(viabilities, MAX_MON_MOVES) + 1;
+				for (i = 0; i < MAX_MON_MOVES; ++i)
+				{
+					if (i + 1 != bestMoves[0] //i is not the index returned from GetMaxByteIndexInList
+					&& viabilities[i] == viabilities[bestMoves[j] - 1])
+						bestMoves[++j] = i + 1;
+				}
+
+				StoreMovePrediction(bankAtk, bankDef, gBattleMons[bankAtk].moves[bestMoves[Random() % (j + 1)] - 1]);
+			}
 		}
 	}
 }
-*/
+
+static u32 GetMaxByteIndexInList(const u8 array[], const u32 size)
+{
+	u8 maxIndex = 0;
+	
+	for (u32 i = 0; i < size; ++i)
+	{
+		if (array[i] > array[maxIndex])
+			maxIndex = i;
+	}
+
+	return maxIndex;
+}

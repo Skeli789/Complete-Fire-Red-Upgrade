@@ -21,6 +21,7 @@
 .global BattleScript_DarkTypePreventsPrankster
 .global BattleScript_MoveUsedSkyBattlePrevents
 
+.global BSTryRemoveIllusion
 .global AbilityRaisedStatString
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

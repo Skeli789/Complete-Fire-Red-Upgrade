@@ -1955,7 +1955,8 @@ void atk96_weatherdamage(void) {
 		&& !(gStatuses3[bank] & (STATUS3_UNDERGROUND | STATUS3_UNDERWATER | STATUS3_DISAPPEARED)))
 	{
 
-        if (gBattleWeather & WEATHER_SANDSTORM_ANY) {
+        if (gBattleWeather & WEATHER_SANDSTORM_ANY)
+		{
             if (!IsOfType(bank, TYPE_ROCK) && !IsOfType(bank, TYPE_GROUND) && !IsOfType(bank, TYPE_STEEL)
             && ability != ABILITY_SANDVEIL && ability != ABILITY_SANDRUSH && ability != ABILITY_SANDFORCE)
                 gBattleMoveDamage = MathMax(1, gBattleMons[bank].maxHP / 16);
@@ -1964,8 +1965,8 @@ void atk96_weatherdamage(void) {
                 gBattleMoveDamage = 0;
 			}
         }
-
-        if (gBattleWeather & WEATHER_HAIL_ANY) {
+        else if (gBattleWeather & WEATHER_HAIL_ANY)
+		{
             if (!IsOfType(bank, TYPE_ICE) && ability != ABILITY_ICEBODY && ability != ABILITY_SNOWCLOAK && ability != ABILITY_SLUSHRUSH)
 				gBattleMoveDamage = MathMax(1, gBattleMons[bank].maxHP / 16);
             else
@@ -2147,10 +2148,13 @@ void atk9E_metronome(void)
 
 void atkA0_psywavedamageeffect(void)
 {
-    s32 randDamage = umodsi(Random(), 100);
-
-    gBattleMoveDamage = MathMax(1, udivsi(gBattleMons[gBankAttacker].level * (randDamage + 50), 100));
+    gBattleMoveDamage = GetPsywaveDamage(Random() % 101);
     ++gBattlescriptCurrInstr;
+}
+
+s32 GetPsywaveDamage(u8 randDamage)
+{
+	return MathMax(1, (gBattleMons[gBankAttacker].level * (randDamage + 50)) / 100);
 }
 
 void atkA1_counterdamagecalculator(void) {
@@ -3092,31 +3096,40 @@ void atkCA_setforcedtarget(void) //Follow me
 void atkCC_callterrainattack(void) { //nature power
     gHitMarker &= ~(HITMARKER_ATTACKSTRING_PRINTED);
 
-	switch (TerrainType) {
-		case ELECTRIC_TERRAIN:
-			gCurrentMove = gTerrainTable[0].naturePowerMove;
-			break;
-
-		case GRASSY_TERRAIN:
-			gCurrentMove = gTerrainTable[1].naturePowerMove;
-			break;
-
-		case MISTY_TERRAIN:
-			gCurrentMove = gTerrainTable[2].naturePowerMove;
-			break;
-
-		case PSYCHIC_TERRAIN:
-			gCurrentMove = gTerrainTable[3].naturePowerMove;
-			break;
-
-		default:
-			gCurrentMove = gTerrainTable[gBattleTerrain + 4].naturePowerMove;
-	}
+	gCurrentMove = GetNaturePowerMove();
 
     gBankTarget = GetMoveTarget(gCurrentMove, 0);
 	gBattleStruct->atkCancellerTracker = CANCELLER_GRAVITY_2;
     BattleScriptPush(gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect]);
     gBattlescriptCurrInstr++;
+}
+
+u16 GetNaturePowerMove(void)
+{
+	u16 move;
+
+	switch (TerrainType) {
+		case ELECTRIC_TERRAIN:
+			move = gTerrainTable[0].naturePowerMove;
+			break;
+
+		case GRASSY_TERRAIN:
+			move = gTerrainTable[1].naturePowerMove;
+			break;
+
+		case MISTY_TERRAIN:
+			move = gTerrainTable[2].naturePowerMove;
+			break;
+
+		case PSYCHIC_TERRAIN:
+			move = gTerrainTable[3].naturePowerMove;
+			break;
+
+		default:
+			move = gTerrainTable[gBattleTerrain + 4].naturePowerMove;
+	}
+	
+	return move;
 }
 
 void atkCF_jumpifnodamage(void)
@@ -3216,7 +3229,10 @@ void atkD3_trycopyability(void) { //Role Play
 	atkAbility = *atkAbilityLoc;
 	defAbility = *defAbilityLoc;
 
-	if (atkAbility == defAbility || defAbility == 0 || CheckTableForAbility(defAbility, RolePlayBanTable))
+	if (atkAbility == defAbility
+	||  defAbility == ABILITY_NONE
+	||  CheckTableForAbility(atkAbility, RolePlayAttackerBanTable)
+	||  CheckTableForAbility(defAbility, RolePlayBanTable))
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
 
 	else
@@ -3240,7 +3256,7 @@ void atkDA_tryswapabilities(void) { //Skill Swap
 	atkAbility = *atkAbilityLoc;
 	defAbility = *defAbilityLoc;
 
-	if (atkAbility == 0 || defAbility == 0
+	if (atkAbility == ABILITY_NONE || defAbility == ABILITY_NONE
 	|| CheckTableForAbility(atkAbility, SkillSwapBanTable) || CheckTableForAbility(defAbility, SkillSwapBanTable)
 	|| gMoveResultFlags & MOVE_RESULT_NO_EFFECT)
 	{
@@ -3505,6 +3521,22 @@ void atkEA_tryrecycleitem(void) {
 }
 
 void atkEB_settypetoterrain(void) {
+	u8 type = GetCamouflageType();
+
+    if (!IsOfType(gBankAttacker, type))
+    {
+        gBattleMons[gBankAttacker].type1 = type;
+        gBattleMons[gBankAttacker].type2 = type;
+		gBattleMons[gBankAttacker].type3 = TYPE_BLANK;
+        PREPARE_TYPE_BUFFER(gBattleTextBuff1, type);
+        gBattlescriptCurrInstr += 5;
+    }
+    else
+        gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+}
+
+u8 GetCamouflageType(void)
+{
 	u8 type;
 
 	switch (TerrainType) {
@@ -3528,18 +3560,7 @@ void atkEB_settypetoterrain(void) {
 			type = gTerrainTable[gBattleTerrain + 4].camouflageType;
 	}
 
-    if (gBattleMons[gBankAttacker].type1 != type
-	&&  gBattleMons[gBankAttacker].type2 != type
-	&&  gBattleMons[gBankAttacker].type3 != type)
-    {
-        gBattleMons[gBankAttacker].type1 = type;
-        gBattleMons[gBankAttacker].type2 = type;
-		gBattleMons[gBankAttacker].type3 = TYPE_BLANK;
-        PREPARE_TYPE_BUFFER(gBattleTextBuff1, type);
-        gBattlescriptCurrInstr += 5;
-    }
-    else
-        gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+	return type;
 }
 
 void atkEE_removelightscreenreflect(void) { //Brick Break

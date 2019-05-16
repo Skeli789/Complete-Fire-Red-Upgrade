@@ -8,9 +8,12 @@
  */
  
 //Exported Functions
+s32 GetPsywaveDamage(u8 randDamage);
 u8 CheckMoveLimitations(u8 bank, u8 unusableMoves, u8 check);
 void TransformPokemon(u8 bankAtk, u8 bankDef);
 u8 CastformDataTypeChange(u8 bank);
+u16 GetNaturePowerMove(void);
+u8 GetCamouflageType(void);
 void BufferAttackerItem(void);
 void MoveValuesCleanUp(void);
 

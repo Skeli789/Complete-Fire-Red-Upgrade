@@ -475,3 +475,14 @@ ExpandedAbilityNamesSummaryScreen:
 	bl CopyAbilityName
 	ldr r0, =0x8136720 | 1
 	bx r0
+
+.pool
+@0x8070590 with r0
+BeginNormalPaletteFadeHook:
+	ldr r0, [sp, #0x18]
+	str r0, [sp]
+	mov r0, r4
+	bl BeginNormalPaletteFade
+	pop {r3}
+	mov r8, r3
+	pop {r4-r7, pc}

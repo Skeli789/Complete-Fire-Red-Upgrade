@@ -1,8 +1,9 @@
 #include "defines.h"
 #include "defines_battle.h"
-#include "Battle_AI/AI_Helper_Functions.h"
 #include "../include/event_data.h"
 
+#include "../include/new/AI_Helper_Functions.h"
+#include "../include/new/ai_master.h"
 #include "../include/new/frontier.h"
 #include "../include/new/helper_functions.h"
 #include "../include/new/mega.h"
@@ -15,8 +16,7 @@
 
 #define Script_TrainerSpotted (u8*) 0x081A4EB4
 
-extern void BattleAI_SetupAIData(u8 defaultScoreMoves);
-
+//This file's functions:
 static void BattleIntroOpponent2SendsOutMonAnimation(void);
 static u32 CalcMultiMoneyForTrainer(u16 trainerId);
 static void PlayerPartnerBufferExecComplete(void);

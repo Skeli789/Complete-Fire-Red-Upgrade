@@ -18,6 +18,7 @@
 #include "../include/new/multi.h"
 
 #include "Tables/Trainers_With_EVs_Table.h"
+//#include "Tables/battle_tower_spreads.h"
 
 extern const u8 gClassPokeBalls[NUM_TRAINER_CLASSES];
 extern const species_t gRandomizerBanList[];

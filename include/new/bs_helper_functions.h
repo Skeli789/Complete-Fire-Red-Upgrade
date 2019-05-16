@@ -68,6 +68,7 @@ void PluckBerryEat(void);
 void BurnUpFunc(void);
 void SeedLooper(void);
 void LastResortFunc(void);
+bool8 CanUseLastResort(u8 bank);
 void SynchronoiseFunc(void);
 void MakeScriptingBankInvisible(void);
 void TransferTerrainData(void);
