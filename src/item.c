@@ -5,6 +5,7 @@
 #include "../include/constants/items.h"
 #include "../include/constants/moves.h"
 #include "../include/constants/songs.h"
+#include "../include/money.h"
 
 #include "../include/new/helper_functions.h"
 #include "../include/new/item.h"
@@ -24,6 +25,7 @@ static s8 CompareItemsByType(u16 item1, u16 item2);
 static void MergeSort(struct ItemSlot* array, u32 low, u32 high, s8 (*comparator)(u16, u16));
 static void Merge(struct ItemSlot* arr, u32 l, u32 m, u32 r, s8 (*comparator)(u16, u16));
 u16 GetItemIdFromTmId(u8 tmId);
+void Task_ReturnToItemListAfterItemPurchase(u8 taskId);
 
 //General Utility Functions
 u16 SanitizeItemId(u16 itemId)
@@ -429,6 +431,28 @@ u8 CheckHmSymbol(u16 item)
 }
 
 
+bool8 CheckSellTmHm(u16 item)
+{
+	#ifdef REUSABLE_TMS
+		if (GetPocketByItemId(item) == POCKET_TM_HM)
+			return FALSE;
+		else
+		{
+			if (ItemId_GetPrice(item) == 0)
+				return FALSE;
+			else
+				return TRUE;
+		}
+	#else
+		if (ItemId_GetPrice(item) == 0)
+			return FALSE;
+		else
+			return TRUE;
+	#endif	
+}
+
+
+
 extern const u8 gText_SingleTmBuy[];
 void CheckTmPurchase(u16 item, u8 taskId)
 {
@@ -437,6 +461,7 @@ void CheckTmPurchase(u16 item, u8 taskId)
 		if (GetPocketByItemId(item) == POCKET_TM_HM)
 		{
 			ConvertIntToDecimalStringN(&gStringVar2[0], ItemId_GetPrice(item), 3, 8);
+			StringCopy(&gStringVar3[0], gMoveNames[ItemIdToBattleMoveId(item)]);
 			BuyMenuDisplayMessage(taskId, &gText_SingleTmBuy[0], BuyMenuConfirmPurchase);
 		}
 		else
@@ -445,6 +470,55 @@ void CheckTmPurchase(u16 item, u8 taskId)
 		BuyMenuDisplayMessage(taskId, (void*) 0x8416766, Task_BuyHowManyDialogueInit);
 	#endif
 }
+
+
+extern const u8 gText_AlreadyOwnTM[];
+bool8 CheckBuyableTm(u16 item, u8 taskId)
+{
+	#ifdef REUSABLE_TMS
+		if (GetPocketByItemId(item) == POCKET_TM_HM && CheckBagHasItem(item, 1))
+		{
+			BuyMenuDisplayMessage(taskId, &gText_AlreadyOwnTM[0], Task_ReturnToItemListAfterItemPurchase);
+			return TRUE;
+		}
+		else
+		{
+			u32 price = ItemId_GetPrice(item);
+			gShopDataPtr->itemPrice = price;
+			if (IsEnoughMoney(&gSaveBlock1->money, price))
+				return FALSE;
+			else
+			{
+				BuyMenuDisplayMessage(taskId, (void*) 0x8416842, Task_ReturnToItemListAfterItemPurchase);
+				return TRUE;
+			}
+		}
+	#else
+		u32 price = ItemId_GetPrice(item);
+		gShopDataPtr->itemPrice = price;
+		if (IsEnoughMoney(&gSaveBlock1->money, price))
+			return FALSE;
+		else
+		{
+			BuyMenuDisplayMessage(taskId, (void*) 0x8416842, Task_ReturnToItemListAfterItemPurchase);
+			return TRUE;
+		}
+	#endif
+}
+
+/*
+u16 CheckTmPrice(u16 item)
+{
+	#ifdef REUSABLE_TMS
+		if (GetPocketByItemId(item) == POCKET_TM_HM && CheckBagHasItem(item, 1))
+			return 0;
+		else
+			return ItemId_GetPrice(item);
+	#else
+		return ItemId_GetPrice(item);
+	#endif	
+}
+*/
 
 u8 CheckSingleBagTm(u16 item)
 {
