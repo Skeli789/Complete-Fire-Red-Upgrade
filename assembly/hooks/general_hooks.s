@@ -475,3 +475,51 @@ ExpandedAbilityNamesSummaryScreen:
 	bl CopyAbilityName
 	ldr r0, =0x8136720 | 1
 	bx r0
+
+
+.pool
+@0x8012850 with r0
+BatonPassEffects:
+	ldrb r1, [r3]
+	lsl r1, #0x2
+	add r1, r10
+	ldr r0, [r1]
+	ldr r2, =(STATUS3_SEEDED_RECOVERY | STATUS3_SEEDED | STATUS3_LOCKON | STATUS3_PERISH_SONG | STATUS3_ROOTED | STATUS3_LEVITATING | STATUS3_AQUA_RING | STATUS3_POWER_TRICK | STATUS3_ABILITY_SUPRESS)
+	and r0, r2
+	str r0, [r1]
+BatonPassReturnReturn:
+	ldr r0, =0x801285E | 1
+	bx r0
+
+.pool
+@x80D8486 with r0
+DisplayStatStageMessage:
+	ldr r0, .SeverelyIndex
+	cmp r0, r1
+	beq BufferSeverely
+	add r0, #0x1
+	cmp r0, r1
+	bne DisplayStatStageMessageNormal
+	ldr r1, .DrasticallyStringPtr
+	b DisplayStatStageMessageReturn
+
+BufferSeverely:
+	ldr r1, .SeverelyStringPtr
+	b DisplayStatStageMessageReturn
+
+DisplayStatStageMessageNormal:
+	ldr r0, .gBattleStringsTable
+	sub r1, #0xC
+	lsl r1, r1, #0x2
+	add r1, r1, r0
+	ldr r1, [r1]
+
+DisplayStatStageMessageReturn:
+	ldr r0, =0x080D868E | 1
+	bx r0
+	
+.align 2
+.SeverelyIndex: .word 0x185
+.gBattleStringsTable: .word 0x83FDF3C
+.DrasticallyStringPtr: .word DrasticallyString
+.SeverelyStringPtr: .word SeverelyString

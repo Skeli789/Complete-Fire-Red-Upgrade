@@ -82,3 +82,6 @@ void HarvestActivateBerry(void);
 void TryManipulateDamageForLeechSeedBigRoot(void);
 void DisplayForfeitYesNoBox(void);
 void HandleForfeitYesNoBox(void);
+void BadDreamsHurtFunc(void);
+void SeaOfFireDamageFunc(void);
+void GrassyTerrainHealFunc(void);

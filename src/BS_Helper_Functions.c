@@ -1525,3 +1525,18 @@ void HandleForfeitYesNoBox(void)
 	
 	gBattlescriptCurrInstr -= 5;
 }
+
+void BadDreamsHurtFunc(void)
+{
+	gBattleMoveDamage = MathMax(1, gBattleMons[gBankTarget].maxHP / 8);
+}
+
+void SeaOfFireDamageFunc(void)
+{
+	gBattleMoveDamage = MathMax(1, gBattleMons[gBankAttacker].maxHP / 8);
+}
+
+void GrassyTerrainHealFunc(void)
+{
+	gBattleMoveDamage = -1 * MathMax(1, gBattleMons[gBankAttacker].maxHP / 16);
+}

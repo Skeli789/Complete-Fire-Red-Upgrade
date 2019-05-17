@@ -28,6 +28,14 @@ The repellent's effect wore off!\nWould you like to use another one?
 #org @gText_RepelWoreOff
 The repellent's effect wore off!
 
+//Mart Strings
+
+#org @gText_SingleTmBuy
+[FD][02] [FD][04],\nThat will be \$[FD][03]. Okay?
+
+#org @gText_AlreadyOwnTM
+You already own that TM.[FC][09]
+
 //Battle Tower Pokemon Select
 
 #org @gOtherText_NoMoreOnePoke

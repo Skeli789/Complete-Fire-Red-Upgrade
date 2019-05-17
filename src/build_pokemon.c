@@ -987,7 +987,7 @@ static u32 CheckShinyMon(u32 pid)
 	if (CheckBagHasItem(ITEM_SHINY_CHARM, 1) > 0)
 		chance = 3;
 		
-	if (FlagGet(WILD_SHINY_BATTLE_FLAG))
+	if (FlagGet(SHINY_CREATION_FLAG))
 		chance = 4097;
 
 	if (RandRange(0, 4097) < chance)		//Nominal 1/4096

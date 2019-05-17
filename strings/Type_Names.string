@@ -1,9 +1,12 @@
+MAX_LENGTH=6
+FILL_FF=True
+
 #org @gTypeNames
 #org @NAME_NORMAL
 Normal
 
 #org @NAME_FIGHTING
-Fight[00]
+Fight
 
 #org @NAME_FLYING
 Flying
@@ -15,28 +18,28 @@ Poison
 Ground
 
 #org @NAME_ROCK
-Rock[00][00]
+Rock
 
 #org @NAME_BUG
-Bug[00][00][00]
+Bug
 
 #org @NAME_GHOST
-Ghost[00]
+Ghost
 
 #org @NAME_STEEL
-Steel[00]
+Steel
 
 #org @NAME_TYPELESS
-???[00][00][00]
+???
 
 #org @NAME_FIRE
-Fire[00][00]
+Fire
 
 #org @NAME_WATER
-Water[00]
+Water
 
 #org @NAME_GRASS
-Grass[00]
+Grass
 
 #org @NAME_ELECTRIC
 Electr
@@ -45,28 +48,28 @@ Electr
 Psychc
 
 #org @NAME_ICE
-Ice[00][00][00]
+Ice
 
 #org @NAME_DRAGON
 Dragon
 
 #org @NAME_DARK
-Dark[00][00]
+Dark
 
 #org @FAIRY_TYPE_ALIGNMENT_1
-[00][00][00][00][00][00]
+-
 
 #org @FAIRY_TYPE_ALIGNMENT_2
-[00][00][00][00][00][00]
+-
 
 #org @FAIRY_TYPE_ALIGNMENT_3
-[00][00][00][00][00][00]
+-
 
 #org @FAIRY_TYPE_ALIGNMENT_4
-[00][00][00][00][00][00]
+-
 
 #org @FAIRY_TYPE_ALIGNMENT_5
-[00][00][00][00][00][00]
+-
 
 #org @NAME_FAIRY
-Fairy[00]
+Fairy

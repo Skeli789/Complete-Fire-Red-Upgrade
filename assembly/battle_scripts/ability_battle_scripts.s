@@ -408,7 +408,7 @@ BadDreams_callhurt:
 
 BadDreams_hurt:
 	jumpifability BANK_TARGET ABILITY_MAGICGUARD BadDreams_return
-	callasm BadDreamsHurtASM+1
+	callasm BadDreamsHurtFunc
 	orword HIT_MARKER HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_NON_ATTACK_DMG
 	graphicalhpupdate BANK_TARGET
 	datahpupdate BANK_TARGET
@@ -959,20 +959,3 @@ LoadMoodyStatToLower:
 	orr r2, r0
 	strb r2, [r1]
 	bx lr
-
-
-BadDreamsHurtASM:
-	push {lr}
-	ldr r0, =USER_BANK
-	ldrb r0, [r0, #0x1]
-	bl GetCurrentHealth
-	ldrh r0, [r1, #0x4]
-	lsr r0, #0x2
-	cmp r0, #0x0
-	bne SetBDDamage
-	mov r0, #0x1
-
-SetBDDamage:
-	ldr r1, =DAMAGE_LOC
-	str r0, [r1]
-	pop {pc}

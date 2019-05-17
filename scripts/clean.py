@@ -3,19 +3,67 @@
 import os
 import sys
 import shutil
+import hashlib
 import glob, os.path
 
 ROM_NAME = "test.gba"
+SRC = './src'
+GRAPHICS = './graphics'
+ASSEMBLY = './assembly'
+STRINGS = './strings'
+BUILD = './build'
+
+def PutFileNameInRightFormat(filename):
+	filename = filename.split('/')
+	newFileName = ""
+	
+	if filename[0].upper() == "SRC":
+		newFileName = SRC
+	elif filename[0].upper() == "ASSEMBLY":
+		newFileName = ASSEMBLY
+	elif filename[0].upper() == "GRAPHICS":
+		newFileName = GRAPHICS
+	elif filename[0].upper() == "STRINGS":
+		newFileName = STRINGS
+		
+	for i in range(1, len(filename)):
+		newFileName += "\\" + filename[i]
+
+	return newFileName
 
 try:
 	os.remove(ROM_NAME)
 except:
 	pass
 
-try:
-	os.remove('generatedrepoints')
-except:
-	pass
+if len(sys.argv) > 1:
+	#Try removing specific file only.
+	if len(sys.argv) > 2 and sys.argv[1].upper() == 'FILE':
+		try:
+			filename = PutFileNameInRightFormat(sys.argv[2])
+			print(filename)
+			m = hashlib.md5()
+			m.update(filename.encode())
+			newfilename = os.path.join(BUILD, m.hexdigest() + '.o')
+	
+			os.remove(newfilename)
+			print('"Build for ' + sys.argv[2] + '" removed successfully!')
+			sys.exit(1)
+		except:
+			print('Error: Could not remove build for file "' + sys.argv[2] + '".')
+			sys.exit(1)
+	
+	#Don't remove generated repoints if the user only wants to remove the build.
+	elif sys.argv[1].upper() != 'BUILD':
+		try:
+			os.remove('generatedrepoints')
+		except:
+			pass
+else:
+	try:
+		os.remove('generatedrepoints')
+	except:
+		pass
 
 try:
 	os.remove('offsets.ini')

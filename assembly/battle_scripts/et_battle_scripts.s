@@ -111,7 +111,7 @@ BattleScript_FogContinues:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_SeaOfFireDamage:
-	callasm SeaOfFireDamageASM+1
+	callasm SeaOfFireDamageFunc
 	playanimation BANK_ATTACKER ANIM_SEA_OF_FIRE 0x0
 	orword HIT_MARKER 0x100
 	graphicalhpupdate BANK_ATTACKER
@@ -125,7 +125,7 @@ BattleScript_SeaOfFireDamage:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_GrassyTerrainHeal:
-	callasm GrassyTerrainHeal+1
+	callasm GrassyTerrainHealFunc
 	playanimation BANK_ATTACKER ANIM_GRASSY_TERRAIN_HEAL 0x0
 	orword HIT_MARKER 0x100
 	graphicalhpupdate BANK_ATTACKER
@@ -648,39 +648,3 @@ TransformedString: .byte 0xFD, 0x13, 0x00, 0xE8, 0xE6, 0xD5, 0xE2, 0xE7, 0xDA, 0
 TrainerBLoseString: .byte 0xFD, 0x30, 0xFF
 TrainerBVictoryString: .byte 0xFD, 0x31, 0xFF
 TrainerAWinString: .byte 0xFD, 0x25, 0xFF
-
-.align 2
-SeaOfFireDamageASM:
-	push {lr}
-	ldr r0, =USER_BANK
-	ldrb r0, [r0]
-	bl GetCurrentHealth
-	ldrh r0, [r1, #0x4]
-	lsr r0, #0x2
-	cmp r0, #0x0
-	bne SetSOFDamage
-	mov r0, #0x1
-
-SetSOFDamage:
-	ldr r1, =DAMAGE_LOC
-	str r0, [r1]
-	pop {pc}
-	
-
-GrassyTerrainHeal:
-	push {lr}
-	ldr r0, =USER_BANK
-	ldrb r0, [r0]
-	bl GetCurrentHealth
-	ldrh r0, [r1, #0x4]
-	lsr r0, #0x3
-	cmp r0, #0x0
-	bne SetGTHeal
-	mov r0, #0x1
-
-SetGTHeal:
-	ldr r1, =DAMAGE_LOC
-	neg r0, r0
-	str r0, [r1]
-	pop {pc}
-
