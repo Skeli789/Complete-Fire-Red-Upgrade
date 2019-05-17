@@ -10,7 +10,7 @@
 #define BATTLE_BG_VAR 0x5008 //Set this var to a custom background id
 #define SWARM_INDEX_VAR 0x5009 //Set by the engine
 #define SWARM_DAILY_EVENT_VAR 0x500A //Set by the engine. Used to tell the game if a swarm has already been generated for the day. (Uses + 1 var also)
-#define DEFAULT_WALKING_SCRIPT 0x500C //Walking scripts from JPAN's engine. His engine used 0x407E.
+#define DEFAULT_WALKING_SCRIPT_VAR 0x407E  //Walking scripts from JPAN's engine. His engine used 0x407E.
 #define DEXNAV_VAR 0x500D
 #define STATUS_INDUCER_VAR 0x500E //Causes wild Pokemon to be spawned with the given status condition. Status + 0x100 clears var after battle.
 
@@ -31,22 +31,23 @@
 #define ACTIVATE_TUTORIAL_FLAG 0x90A //Setting this flag will allow you to activate Oak's tutorial in any kind of battle (including doubles)
 #define WILD_CUSTOM_MOVES_FLAG 0x90B
 #define SMART_WILD_FLAG 0x90C //Set this flag is you don't want wild Pokemon to act randomly (useful for one time smarter wild battles). This is cleared at the end of the battle.
-#define SCALE_TRAINER_LEVELS_FLAG 0x90D //If this flag is set, all Trainer Pokemon levels will be set to the highest in your party
-#define HIDDEN_ABILITY_FLAG 0x90E //If this flag is set, generated wild Pokemon will have their hidden abilities
-#define DOUBLE_WILD_BATTLE_FLAG 0x90F //If this flag is set, a wild battles will be against two Pokemon
-#define NO_RANDOM_WILD_ENCOUNTERS_FLAG 0x910 //If this is set, wild Pokemon won't appear when walking/surfing in grass, caves, water, etc.
-#define FLAG_REMOVE_EVO_ITEM 0x911  //Flag to toggle item removal after leveling up (set by the engine)
-#define WILD_SHINY_BATTLE_FLAG 0x912 //Flag to cause next battle to be against a shiny Pokemon
-#define AUTO_RUN_FLAG 0x913 //Flag to enable auto-run (toggled by L-button). If this feature is used, L=A will not work. Comment out this line for it to work again.
+#define SCALE_WILD_POKEMON_LEVELS_FLAG 0x90D //If this flag is set, all random wild Pokemon (other than scripted ones) will have their level scaled to the lowest level in the player's party
+#define SCALE_TRAINER_LEVELS_FLAG 0x90E //If this flag is set, all Trainer Pokemon levels will be set to the highest in your party
+#define HIDDEN_ABILITY_FLAG 0x90F //If this flag is set, generated wild Pokemon will have their hidden abilities
+#define DOUBLE_WILD_BATTLE_FLAG 0x910 //If this flag is set, a wild battles will be against two Pokemon
+#define NO_RANDOM_WILD_ENCOUNTERS_FLAG 0x911 //If this is set, wild Pokemon won't appear when walking/surfing in grass, caves, water, etc.
+#define FLAG_REMOVE_EVO_ITEM 0x912  //Flag to toggle item removal after leveling up (set by the engine)
+#define SHINY_CREATION_FLAG 0x913 //Flag to cause next battle to be against a shiny Pokemon
+#define AUTO_RUN_FLAG 0x914 //Flag to enable auto-run (toggled by L-button). If this feature is used, L=A will not work. Comment out this line for it to work again.
 #define RUNNING_ENABLED_FLAG 0x82F //The player can only run if this flag is set. If commented, the player will start the game with running shoes.
-#define DISABLE_BAG_FLAG 0x914 //The bag can't be used in-battle if this flag is set
+#define DISABLE_BAG_FLAG 0x915 //The bag can't be used in-battle if this flag is set
 
 // Start Menu/Poketools Flags
-//#define FLAG_SYS_BAG_GET 0x915	//Toggle bag on/off. uncomment to always have on
-//#define FLAG_SYS_PLAYER_GET 0x916	//Toggle [player] on/off. uncomment to always have on
-//#define FLAG_SYS_SAVE_GET 0x917	//Toggle save on/off. uncomment to always have on
-#define FLAG_SYS_DEXNAV 0x918	//Flag to turn dexnav on/off in start menu (if undefined, this will eliminate dexnav from the start menu)
-#define FLAG_POKETOOLS_MENU 0x919  //Flag for Poke Tools on the start menu
+//#define FLAG_SYS_BAG_GET 0x916	//Toggle bag on/off. uncomment to always have on
+//#define FLAG_SYS_PLAYER_GET 0x917	//Toggle [player] on/off. uncomment to always have on
+//#define FLAG_SYS_SAVE_GET 0x918	//Toggle save on/off. uncomment to always have on
+#define FLAG_SYS_DEXNAV 0x919	//Flag to turn dexnav on/off in start menu (if undefined, this will eliminate dexnav from the start menu)
+#define FLAG_POKETOOLS_MENU 0x91A  //Flag for Poke Tools on the start menu
 
 //Pedometer Flags as in JPAN Engine
 #define FLAG_LONG_PEDOMETER 0x920	// 32 bit
@@ -83,12 +84,12 @@ enum
 #define VAR_RUNTIME_CHANGEABLE 0x5026		//'Secret Base' variables, save 15 consecutive variables for this. 0x4080 in JPAN engine.
 
 //Healing Place as in JPAN's Engine
-#define VAR_HEALINGMAP 0x5030 //0x405A in JPAN's Engine
-#define VAR_HEALING_XPOS 0x5031 //0x405B in JPAN's Engine
-#define VAR_HEALING_YPOS 0x5032 //0x405C in JPAN's Engine
+#define VAR_HEALINGMAP 0x5035 //0x405A in JPAN's Engine
+#define VAR_HEALING_XPOS 0x5036 //0x405B in JPAN's Engine
+#define VAR_HEALING_YPOS 0x5037 //0x405C in JPAN's Engine
 
 //====TM/HM Options (vastly improved from other versions!)
-//#define EXPANDED_TMSHMS  //Comment this out if you want to keep 50 tms/8 hms
+#define EXPANDED_TMSHMS  //Comment this out if you want to keep 50 tms/8 hms
 #define NUM_TMS 50	//keep this defined even if EXPANDED_TMSHMS is not!!
 #define NUM_HMS 8	//keep this defined even if EXPANDED_TMSHMS is not!!
 //#define TMS_BEFORE_HMS  //Uncomment this if you want the HMs to appear after the TMs in your bag
@@ -162,9 +163,9 @@ enum
 #define EVO_HOLD_ITEM_REMOVAL //Comment this out if you want leveling up/hold item evolution (eg. sneasel) to remove the item (like normal)
 #define EXPAND_MOVESETS //Comment this out if you're using the Dynamic Pokemon Expansion repo to expand the movesets
 /*FIX THIS*///#define FATHER_PASSES_TMS //Comment this out if you don't want TMs the father knows to be passed through breeding
+//#define INHERIT_MASTER_CHERISH_BALL  //Uncomment this if you want Master and Cherish balls to be inherited by daycare offspring
 //#define GIVEPOKEMON_BALL_HACK //Allows Pokemon to be given with a custom ball by setting the last byte of the givepokemon scripting command
 #define FRLG_ROAMING //When a roaming Pokemon is created, it will either be a Entei, Raikou, or Suicune, depending on the player's starter choice
-//#define INHERIT_MASTER_CHERISH_BALL  //Uncomment this if you want Master and Cherish balls to be inherited by daycare offspring
 #define CAN_RUN_IN_BUILDINGS //Comment this line out to prevent the player from running indoors.
 //#define NO_POISON_IN_OW //Uncommenting this line will stop Pokemon from taking Poison damage in the overworld.
 #define POISON_1_HP_SURVIVAL //Comment this line to allow Pokemon to faint from Poison in the overworld.
