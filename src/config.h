@@ -10,7 +10,7 @@
 #define BATTLE_BG_VAR 0x5008 //Set this var to a custom background id
 #define SWARM_INDEX_VAR 0x5009 //Set by the engine
 #define SWARM_DAILY_EVENT_VAR 0x500A //Set by the engine. Used to tell the game if a swarm has already been generated for the day. (Uses + 1 var also)
-#define DEFAULT_WALKING_SCRIPT_VAR 0x407E  //Walking scripts from JPAN's engine. His engine used 0x407E.
+#define DEFAULT_WALKING_SCRIPT_VAR 0x500C  //Walking scripts from JPAN's engine. His engine used 0x407E.
 #define DEXNAV_VAR 0x500D
 #define STATUS_INDUCER_VAR 0x500E //Causes wild Pokemon to be spawned with the given status condition. Status + 0x100 clears var after battle.
 
