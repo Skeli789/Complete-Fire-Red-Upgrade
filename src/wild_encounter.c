@@ -54,6 +54,10 @@ static bool8 TryGetAbilityInfluencedWildMonIndex(const struct WildPokemon* wildM
 static void CreateScriptedWildMon(u16 species, u8 level, u16 item, u16* specialMoves, bool8 firstMon);
 static const struct WildPokemonInfo* LoadProperMonsPointer(const struct WildPokemonHeader* header, const u8 type);
 
+#ifdef SCALE_WILD_POKEMON_LEVELS_FLAG
+static u8 GetLowestMonLevel(const struct Pokemon* const party);
+#endif
+
 static u8 ChooseWildMonLevel(const struct WildPokemon* wildPokemon)
 {
     u8 min;
@@ -62,7 +66,15 @@ static u8 ChooseWildMonLevel(const struct WildPokemon* wildPokemon)
     u8 rand;
 	u8 fluteBonus;
 
-    // Make sure minimum level is less than maximum level
+	#ifdef SCALE_WILD_POKEMON_LEVELS_FLAG
+	if (FlagGet(SCALE_WILD_POKEMON_LEVELS_FLAG))
+	{
+		min = GetLowestMonLevel(gPlayerParty);
+		max = GetLowestMonLevel(gPlayerParty);
+	}
+	else
+	#endif
+    //Make sure minimum level is less than maximum level
     if (wildPokemon->maxLevel >= wildPokemon->minLevel)
     {
         min = wildPokemon->minLevel;
@@ -97,7 +109,7 @@ static u8 ChooseWildMonLevel(const struct WildPokemon* wildPokemon)
 			min = 1;
 	}
 
-    // check ability for max level mon
+    //Check ability for max level mon
     if (!GetMonData(&gPlayerParty[0], MON_DATA_IS_EGG, NULL))
     {
         u8 ability = GetPartyAbility(&gPlayerParty[0]);
@@ -907,3 +919,25 @@ static const struct WildPokemonInfo* LoadProperMonsPointer(const struct WildPoke
 			return NULL;
 	}
 }
+
+#ifdef SCALE_WILD_POKEMON_LEVELS_FLAG
+static u8 GetLowestMonLevel(const struct Pokemon* const party)
+{
+	u8 min = party[0].level;
+
+	for (int i = 1; i < PARTY_SIZE; ++i)
+	{
+		if (min == 1
+		||  party[i].species == SPECIES_NONE)
+			return min;
+			
+		if (GetMonData(&party[i], MON_DATA_IS_EGG, NULL))
+			continue;
+
+		if (party[i].level < min)
+			min = party[i].level;
+	}
+
+	return min;
+}
+#endif

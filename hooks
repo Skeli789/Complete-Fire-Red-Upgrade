@@ -211,7 +211,6 @@ DaycareInheritHiddenAbility 8046116 0
 
 ##DNS
 TransferPlttBuffer 8070474 0
-BeginNormalPaletteFadeHook 8070590 0
 RealTimeClock 0800041E 3
 
 ##Script Specials

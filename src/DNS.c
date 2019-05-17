@@ -170,50 +170,6 @@ void apply_map_tileset_palette(struct Tileset const* tileset, u16 destOffset, u1
     }
 }
 
-bool8 BeginNormalPaletteFade(u32 selectedPalettes, s8 delay, u8 startY, u8 targetY, u16 blendColor)
-{
-    u8 temp;
-
-    if (gPaletteFade->active)
-        return FALSE;
-    else
-    {
-        gPaletteFade->deltaY = 2;
-
-        if (delay <0)
-        {
-            gPaletteFade->deltaY += (delay * -1);
-            delay = 0;
-        }
-
-        gPaletteFade_selectedPalettes = selectedPalettes;
-        gPaletteFade->delayCounter = delay;
-        gPaletteFade_delay = delay;
-        gPaletteFade->y = startY;
-        gPaletteFade->targetY = targetY;
-        gPaletteFade->blendColor = blendColor;
-        gPaletteFade->active = 1;
-        gPaletteFade->mode = NORMAL_FADE;
-
-        if (startY <targetY)
-            gPaletteFade->yDec = 0;
-        else
-            gPaletteFade->yDec = 1;
-
-        UpdatePaletteFade();
-
-        temp = gPaletteFade->bufferTransferDisabled;
-        gPaletteFade->bufferTransferDisabled = 0;
-//        TransferPlttBuffer(); //Commenting this line out fixes the DNS pal bug
-        
-        sPlttBufferTransferPending = 0;
-        if (gPaletteFade->mode == HARDWARE_FADE && gPaletteFade->active)
-            UpdateBlendRegisters();
-        gPaletteFade->bufferTransferDisabled = temp;
-        return TRUE;
-    }
-}
-
 #ifdef DNS_IN_BATTLE
 void DNSBattleBGPalFade(void)
 {

@@ -69,6 +69,7 @@ bool8 IsMockBattle(void);
 u8 CalcMoveSplit(u8 bank, u16 move);
 u8 CalcMoveSplitFromParty(pokemon_t* mon, u16 move);
 u8 FindMovePositionInMoveset(u16 move, u8 bank);
+bool8 MoveInMoveset(u16 move, u8 bank);
 u8 AttacksThisTurn(u8 bank, u16 move);
 bool8 IsZMove(const u16 move);
 void AddBankToPickupStack(const u8 bank);

@@ -842,14 +842,18 @@ static u8 GetPartyIdFromPartyData(struct Pokemon* mon)
 	return id;
 }
 
-static u8 GetHighestMonLevel(const pokemon_t* const party)
+static u8 GetHighestMonLevel(const struct Pokemon* const party)
 {
 	u8 max = party[0].level;
 
-	for (int i = 0; i < 6; ++i)
+	for (int i = 1; i < PARTY_SIZE; ++i)
 	{
-		if (max == MAX_LEVEL)
+		if (max == MAX_LEVEL
+		||  party[i].species == SPECIES_NONE)
 			return max;
+
+		if (GetMonData(&party[i], MON_DATA_IS_EGG, NULL))
+			continue;
 
 		if (party[i].level > max)
 			max = party[i].level;

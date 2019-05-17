@@ -162,5 +162,5 @@ u8* __attribute__((long_call)) StringExpandPlaceholders(u8 *dest, const u8 *src)
 u16 __attribute__((long_call)) SpeciesToPokedexNum(u16 species);
 
 //The Deal Breaker
-//void __attribute__((long_call)) break_func(u32);
+void __attribute__((long_call)) break_func(u32);
 //u32 break_helper(u32 a);

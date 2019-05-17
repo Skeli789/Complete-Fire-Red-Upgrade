@@ -8,11 +8,19 @@
 
 extern NaturalGiftStruct NaturalGiftTable[];
 
-u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
-	u8 i;
+/*
+u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 move, const u8 originalViability)
+{
+	u32 i;
+	u16 predictedMove = IsValidMovePrediction(bankDef, bankAtk); //The move the target is likely to make against the attacker
+	u8 viability = originalViability;
+	
+	struct FightingStyle fightStyle = PredictBankFightingStyle(bankAtk, style);
 	
 	// get relevant params
 	u8 moveEffect = gBattleMoves[move].effect;
+	u8 moveType = GetMoveTypeSpecial(bankAtk, move);
+	
 	u8 bankAtkPartner = PARTNER(bankAtk);
 	u8 bankDefPartner = PARTNER(bankDef);
 	
@@ -59,7 +67,16 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 	u16 defSpDef = gBattleMons[bankDef].spDefense;	
 	
 	u8 moveSplit = SPLIT(move);
-	
+
+	//Alternative targets
+	u8 foe1, foe2;
+	foe1 = FOE(bankAtk);
+				
+	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+		foe2 = PARTNER(FOE(bankAtk))
+	else
+		foe2 = foe1;
+				
 	switch (moveEffect) {
 		case EFFECT_HIT:
 			// to do
@@ -67,9 +84,10 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 		
 		case EFFECT_SLEEP:
 		case EFFECT_YAWN:
-			if (defItemEffect == ITEM_EFFECT_CURE_SLP || defItemEffect == ITEM_EFFECT_CURE_STATUS)
-				break;
-			else if (defAbility == ABILITY_EARLYBIRD || defAbility == ABILITY_SHEDSKIN)
+			if (defItemEffect == ITEM_EFFECT_CURE_SLP
+			|| defItemEffect == ITEM_EFFECT_CURE_STATUS
+			|| defAbility == ABILITY_EARLYBIRD
+			|| defAbility == ABILITY_SHEDSKIN)
 				break;
 			else
 				viability += 6;
@@ -77,50 +95,92 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 			
 		case EFFECT_ABSORB:
 		AI_DRAIN_HP_CHECK: ;
-			if (atkItemEffect == ITEM_EFFECT_BIG_ROOT || GetHealthPercentage(bankAtk) <= 50)
+			if (!CanFightStyleRecover(fightStyle) //Attacker has other means of recovery
+			&& (atkItemEffect == ITEM_EFFECT_BIG_ROOT|| GetHealthPercentage(bankAtk) <= 50))
 				viability += 5;
 			break;
-			
+		
+		case EFFECT_PARALYZE_HIT:
+			if (gBattleMoves[move].secondaryEffectChance >= 75)
+				goto AI_PARALYZE;
+		
 		case EFFECT_EXPLOSION:
-		case EFFECT_MEMENTO:
-			if (atkItemEffect == ITEM_EFFECT_GEM)
+			if (predictedMove != MOVE_NONE) //If foe isn't going to attack, don't kill yourself now
 			{
-				if (atkItemQuality == 0)
+				if (atkItemEffect == ITEM_EFFECT_GEM
+				&& ITEM_QUALITY(bankAtk) == moveType) //AI Was meant to explode
+				{	
 					viability += 6;
-				break;
-			}
-			else if (atkItemEffect == ITEM_EFFECT_CUSTAP_BERRY)
-			{
-				if (GetHealthPercentage(bankAtk) <= 25)
+				}
+				else if (atkItemEffect == ITEM_EFFECT_CUSTAP_BERRY
+				&& GetHealthPercentage(bankAtk) <= 25)
+				{
 					viability += 6;
-				break;
+				}
 			}
 			break;
 			
 		case EFFECT_DREAM_EATER:
-			if (defAbility == ABILITY_COMATOSE)
-				viability += 5;
-			else if (defStatus1 & STATUS1_SLEEP)
-				viability += 5;
-			goto AI_DRAIN_HP_CHECK;
+			if (defAbility == ABILITY_COMATOSE
+			||  defStatus1 & STATUS1_SLEEP)
+				goto AI_DRAIN_HP_CHECK;
+			break;
+			
+		case EFFECT_MIRROR_MOVE: //May cause issues with priority calcs?
+			switch (move) {
+				case MOVE_COPYCAT:	
+					if (MoveWouldHitFirst(move, bankAtk, bankDef))
+					{
+					COPYCAT_CHECK_LAST_MOVE:
+						if (gNewBS->LastUsedMove == MOVE_NONE
+						|| gNewBS->LastUsedMove == 0xFFFF
+						|| CheckTableForMove(gNewBS->LastUsedMove, CopycatBanTable)
+						|| FindMovePositionInMoveset(gNewBS->LastUsedMove, bankAtk) < 4) //If you have the move, use it directly
+							break;
+						else
+							return AI_Script_Positives(bankAtk, bankDef, gNewBS->LastUsedMove, originalViability);
+					}
+					else
+					{
+						if (predictedMove == MOVE_NONE)
+							goto COPYCAT_CHECK_LAST_MOVE;
+						else if (CheckTableForMove(predictedMove, CopycatBanTable)
+						     || FindMovePositionInMoveset(predictedMove, bankAtk) < 4)
+						{
+							break;
+						}
+						else
+							return AI_Script_Positives(bankAtk, bankDef, predictedMove, originalViability);
+					}
+					break;
+
+				default: //Mirror Move
+					if (gBattleStruct->lastTakenMoveFrom[bankAtk][bankDef] != MOVE_NONE)
+						return AI_Script_Positives(bankAtk, bankDef, gBattleStruct->lastTakenMoveFrom[bankAtk][bankDef], originalViability);
+			}
+			break;
 			
 		// increased stat effects
 		case EFFECT_ATTACK_UP:
 		case EFFECT_ATTACK_UP_2:
-		AI_ATTACK_PLUS: ;
-			if (move == MOVE_HONECLAWS)
-			{
-				if (STAT_STAGE(bankAtk,STAT_STAGE_ATK) > 7)
+			switch (move) {
+				case MOVE_HONECLAWS:
+					if (STAT_STAGE(bankAtk,STAT_STAGE_ATK) >= 8)
+						goto AI_ACCURACY_PLUS;
+					else if (PhysicalMoveInMoveset(bankAtk)
+					&& IsFightStyleSweeper(fightStyle)
+					&& (!CanKnockOut(bankDef, bankAtk) || predictedMove == MOVE_NONE))
+						viability += 6;
 					goto AI_ACCURACY_PLUS;
-				else if (PhysicalMoveInMoveset(bankAtk))
-					viability += 6;
-				goto AI_ACCURACY_PLUS;
-			}
-			else
-			{
-				if (STAT_STAGE(bankAtk,STAT_STAGE_ATK) > 7)
+					
+			default:
+			AI_ATTACK_PLUS:
+				if (STAT_STAGE(bankAtk,STAT_STAGE_ATK) >= 8)
 					break;
-				else if (PhysicalMoveInMoveset(bankAtk))
+				else if (PhysicalMoveInMoveset(bankAtk)
+				&& IsFightStyleSweeper(fightStyle)
+				&& (!CanKnockOut(bankDef, bankAtk) || predictedMove == MOVE_NONE)
+				&& atkAbility != ABILITY_CONTRARY)
 					viability += 6;
 				break;
 			}
@@ -128,45 +188,55 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 			
 		case EFFECT_DEFENSE_UP:
 		case EFFECT_DEFENSE_UP_2:
-		AI_DEFENSE_PLUS: ;
-			switch (move)
-			{
+		AI_DEFENSE_PLUS:
+			switch (move) {
 				case MOVE_FLOWERSHIELD:
-					if (IsOfType(bankAtkPartner, TYPE_GRASS))
+					if (IsFightStyleTeamHelper(fightStyle)
+					&& IsOfType(bankAtkPartner, TYPE_GRASS)
+					&& atkPartnerAbility != ABILITY_CONTRARY
+					&& STAT_STAGE(bankAtkPartner, STAT_STAGE_DEF) < 12
+					&& BATTLER_ALIVE(bankAtkPartner))
 					{
 						viability += 5;
-						break;
 					}
 					break;
 					
 				case MOVE_MAGNETICFLUX:
-					if (atkPartnerAbility == ABILITY_PLUS || atkPartnerAbility == ABILITY_MINUS)
+					if (IsFightStyleTeamHelper(fightStyle)
+					&& (atkPartnerAbility == ABILITY_PLUS || atkPartnerAbility == ABILITY_MINUS)
+					&& (STAT_STAGE(bankAtkPartner, STAT_STAGE_DEF) < 12 || STAT_STAGE(bankAtkPartner, STAT_STAGE_SPDEF) < 12))
+					&& BATTLER_ALIVE(bankAtkPartner)
 					{
 						viability += 5;
-						break;
 					}
-					else if (STAT_STAGE(bankDef,STAT_STAGE_ATK) > STAT_STAGE(bankDef,STAT_STAGE_SPATK))
+					else if (BankLikelyToUseMoveSplit(bankDef) == SPLIT_PHYSICAL)
 						break;
-					else
-						goto AI_SPDEF_PLUS;
+					
+					goto AI_SPDEF_PLUS;
 					
 				case MOVE_AROMATICMIST:
-					viability += 5;
+					if (IsFightStyleTeamHelper(fightStyle)
+					&& STAT_STAGE(bankAtkPartner, STAT_STAGE_SPDEF) < 12
+					&& BATTLER_ALIVE(bankAtkPartner)
+					&& atkPartnerAbility != ABILITY_CONTRARY)
+						viability += 5;
 					break;
 			}
-			// continue defense check
-			if (STAT_STAGE(bankAtk,STAT_STAGE_DEF) > 7)
-				break;
-			else if (STAT_STAGE(bankDef,STAT_STAGE_ATK) > STAT_STAGE(bankDef,STAT_STAGE_SPATK) && defAbility != ABILITY_CONTRARY)
+
+			//Continue defense check
+			if (IsFightingStyleWall(fightStyle)
+			&& STAT_STAGE(bankAtk, STAT_STAGE_DEF) < 12)
+			&& BankLikelyToUseMoveSplit(bankDef) == SPLIT_PHYSICAL
+			&& atkAbility != ABILITY_CONTRARY)
 				viability += 5;
 			break;	
 			
 		case EFFECT_SPEED_UP:
 		case EFFECT_SPEED_UP_2:
-		AI_SPEED_PLUS: ;
-			if (MoveWouldHitFirst(move, bankAtk, bankDef))
-				break;
-			else if (defAbility != ABILITY_CONTRARY)
+		AI_SPEED_PLUS:
+			if (IsFightStyleSpeedy(fightStyle)
+			&& !MoveWouldHitFirst(move, bankAtk, bankDef))
+			&& atkAbility != ABILITY_CONTRARY)
 				viability += 6;
 			break;
 			
@@ -174,12 +244,13 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 		case EFFECT_SPECIAL_ATTACK_UP_2:
 			switch (move)
 			{
+				case MOVE_GROWTH
 				case MOVE_WORKUP:
 					if (PhysicalMoveInMoveset(bankAtk))
 						goto AI_ATTACK_PLUS;
 					else if (SpecialMoveInMoveset(bankAtk))
-						break;
-					goto FUNCTION_RETURN;
+						goto AI_SP_ATTACK_PLUS;
+					break;
 					
 				case MOVE_ROTOTILLER:
 					if (IsOfType(bankAtkPartner,TYPE_GRASS))
@@ -201,20 +272,27 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 					else if (SpecialMoveInMoveset(bankAtk))
 						break;
 					goto FUNCTION_RETURN;
+					
+				default:
+				AI_SP_ATTACK_PLUS:
+					if (STAT_STAGE(bankAtk, STAT_STAGE_SPATK) >= 8)
+						break;
+					else if (SpecialMoveInMoveset(bankAtk)
+					&& IsFightStyleSweeper(fightStyle)
+					&& (!CanKnockOut(bankDef, bankAtk) || predictedMove == MOVE_NONE)
+					&& atkAbility != ABILITY_CONTRARY)
+						viability += 6;
+					break;
 			}
-			// continue spatk plus check
-			if (STAT_STAGE(bankAtk,STAT_STAGE_SPATK) > 7)
-				break;
-			else if (SpecialMoveInMoveset(bankAtk) && defAbility != ABILITY_CONTRARY)
-				viability += 6;
 			break;
 			
 		case EFFECT_SPECIAL_DEFENSE_UP:
 		case EFFECT_SPECIAL_DEFENSE_UP_2:
 		AI_SPDEF_PLUS: ;
-			if (STAT_STAGE(bankAtk,STAT_STAGE_SPDEF) > 7)
-				break;
-			else if (STAT_STAGE(bankDef,STAT_STAGE_SPATK) > STAT_STAGE(bankDef,STAT_STAGE_ATK) && defAbility != ABILITY_CONTRARY)
+			if (IsFightingStyleWall(fightStyle)
+			&& STAT_STAGE(bankAtk, STAT_STAGE_SPDEF) < 12)
+			&& BankLikelyToUseMoveSplit(bankDef) == SPLIT_SPECIAL
+			&& atkAbility != ABILITY_CONTRARY)
 				viability += 5;
 			break;
 			
@@ -222,13 +300,14 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 		case EFFECT_ACCURACY_UP_2:
 		case EFFECT_MINIMIZE:
 		AI_ACCURACY_PLUS: ;
-			if (STAT_STAGE(bankAtk,STAT_STAGE_ACC) < 6 && defAbility != ABILITY_CONTRARY)
+			if (MoveInMovesetWithAccuracyLessThan(bankAtk, 90))
+			&& defAbility != ABILITY_CONTRARY)
 				viability += 5;
 			break;
 			
 		case EFFECT_EVASION_UP:
 		case EFFECT_EVASION_UP_2:
-			if (defAbility != ABILITY_CONTRARY)
+			if (atkAbility != ABILITY_CONTRARY)
 				viability += 6;
 			break;
 			
@@ -287,11 +366,10 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 			else if (defAbility != ABILITY_CONTRARY)
 				viability += 3;
 			break;
-			
-		case EFFECT_ROAR:
+
 		case EFFECT_HAZE:
-			// if any stat buffs are below 6, increase viability
-			for (i = 0; i <= BATTLE_STATS_NO-1; ++i)
+			//If any stat buffs are below 6, increase viability
+			for (i = 0; i < BATTLE_STATS_NO - 1; ++i)
 			{
 				if (STAT_STAGE(bankAtk, i) < 6)
 				{	
@@ -299,43 +377,81 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 					break;
 				}
 			}
+			
+			if (IsFightStylesHazer(fightStyle))
+			{
+				for (i = 0; i < BATTLE_STATS_NO - 1; ++i)
+				{
+					if ((BATTLER_ALIVE(foe1) && STAT_STAGE(foe1, i) > 6)
+					||  (BATTLER_ALIVE(foe2) && STAT_STAGE(foe2, i) > 6))
+					{	
+						viability += 5;
+						break;
+					}
+				}
+			}
+			
 			break;
 			
 		case EFFECT_BIDE:
 			if (DamagingMoveInMoveset(bankAtk))
 				break;
-			else 
+			else if (IsFightStyleSweeper(fighStyle))
 				viability += 3;
 			break;
 			
 		case EFFECT_RAMPAGE:
-			if (atkItemEffect == ITEM_EFFECT_CURE_CONFUSION || atkItemEffect == ITEM_EFFECT_CURE_STATUS)
+			if (IsFightStyleSweeper(fightStyle)
+			&& !IsStrongestMove(move, bankAtk, bankDef)
+			&& !TeamHasMonResistantToMove(bankDef, move)
+			&& (atkItemEffect == ITEM_EFFECT_CURE_CONFUSION
+				|| atkItemEffect == ITEM_EFFECT_CURE_STATUS
+				|| atkAbility == ABILITY_OWNTEMPO))
+			{
 				viability += 5;
-			else if (atkAbility == ABILITY_OWNTEMPO)
+			}	
+			break;
+		
+		case EFFECT_ROAR:
+			if (IsFightStyleForceSwitcher(fightStyle)
+			&&  !CanKnockOut(bankAtk, bankDef))
+			{
+				if (EntryHazardsAreUpOnBanksSide(bankDef))
+					viability += 5;
+				
+				else
+				{
+					for (i = 0; i < BATTLE_STATS_NO - 1; ++i)
+					{
+						if (STAT_STAGE(foe1, i) > 6)
+						{	
+							viability += 5;
+							break;
+						}
+					}
+				}
+			}
+
+		case EFFECT_MULTI_HIT:
+			if (defStatus2 & STATUS2_SUBSTITUTE
+			||  atkItemEffect == ITEM_EFFECT_FLINCH)
 				viability += 5;
 			break;
 			
-		case EFFECT_MULTI_HIT:
-			if (atkAbility == ABILITY_SKILLLINK)
-				viability += 5;
-			else if (defStatus2 & STATUS2_SUBSTITUTE)
-				viability += 5;
-			else if (atkItemEffect == ITEM_EFFECT_FLINCH)
+		case EFFECT_CONVERSION:
+			if (IsOfType(bankAtk, gBattleMoves[gBattleMons[bankAtk].moves[0]].type)
+			&& IsFightStyleSweeper(fightStyle))
 				viability += 5;
 			break;
 			
 		case EFFECT_FLINCH_HIT:
 			if (defAbility == ABILITY_INNERFOCUS)
-				break;
-			else if (defStatus2 & STATUS2_SUBSTITUTE)
-				break;
-			else if (MoveWouldHitFirst(move, bankDef, bankAtk))
+			||  defStatus2 & STATUS2_SUBSTITUTE)
+			||  !MoveWouldHitFirst(move, bankAtk, bankDef))
 				break;
 			else if (atkAbility == ABILITY_SERENEGRACE)
-				viability += 5;
-			else if (defStatus1 & STATUS1_PARALYSIS)
-				viability += 5;
-			else if (defStatus2 & (STATUS2_INFATUATION | STATUS2_CONFUSION))
+			|| defStatus1 & STATUS1_PARALYSIS)
+			|| defStatus2 & (STATUS2_INFATUATION | STATUS2_CONFUSION))
 				viability += 5;
 			break;
 			
@@ -343,246 +459,394 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 		case EFFECT_MORNING_SUN:
 		case EFFECT_SWALLOW:
 		case EFFECT_WISH:
-			if (GetHealthPercentage(bankAtk) <= 50)
-				viability += 5;
+			if (!(IsFightStyleSweeper(fightStyle) && CanKillAFoe(bankAtk))
+			|| IsFightStyleWall)
+			{
+				if (MoveWouldHitFirst(move, bankAtk, foe1)
+				&& MoveWouldHitFirst(move, bankAtk, foe1)
+				&& GetHealthPercentage(bankAtk) <= 50)
+					viability += 5;
+				else if (GetHealthPercentage(bankAtk) <= 65
+				&& (PredictedMoveCanCauseDamage(foe1, bankAtk) || PredictedMoveCanCauseDamage(foe2, bankAtk)))
+					viability += 5;
+			}
 			break;
 			
 		case EFFECT_TOXIC:
 		case EFFECT_POISON:
-			if (defItemEffect == ITEM_EFFECT_CURE_PSN || defItemEffect == ITEM_EFFECT_CURE_STATUS)
+			if (!CanBePoisoned(bankDef, bankAtk, TRUE)
+			||  defItemEffect == ITEM_EFFECT_CURE_PSN
+			||  defItemEffect == ITEM_EFFECT_CURE_STATUS
+			||  defAbility == ABILITY_SHEDSKIN 
+			||  defAbility == ABILITY_TOXICBOOST
+			||  defAbility == ABILITY_POISONHEAL
+			||  atkAbility == ABILITY_POISONTOUCH)
 				break;
-			else if (defAbility == ABILITY_SHEDSKIN || defAbility == ABILITY_TOXICBOOST || defAbility == ABILITY_POISONHEAL )
-				break;
-			else if (atkAbility == ABILITY_POISONTOUCH)
-				break;
-			else if ((FindMovePositionInMoveset(MOVE_VENOSHOCK,bankAtk) != 4)
-			|| (FindMovePositionInMoveset(MOVE_HEX,bankAtk) != 4)
-			|| (FindMovePositionInMoveset(MOVE_VENOMDRENCH,bankAtk) != 4))
+			else if (MoveInMoveset(MOVE_VENOSHOCK, bankAtk)
+			|| MoveInMoveset(MOVE_HEX, bankAtk)
+			|| MoveInMoveset(MOVE_VENOMDRENCH, bankAtk)
+			|| atkAbility == ABILITY_MERCILESS)
 				viability += 6;
-			else if (atkAbility == ABILITY_MERCILESS)
-				viability += 6;
-			else if (CanBePoisoned(bankDef, bankAtk, TRUE))
+			else if (IsFightStyleStatuser(fightStyle))
 				viability += 5;	//AI enjoys poisoning
 			break;
 			
 		case EFFECT_LIGHT_SCREEN:
-			if (SpecialMoveInMoveset(bankDef))
+			if (!(gSideAffecting[SIDE(bankAtk)] & SIDE_STATUS_LIGHTSCREEN)
+			&& (IsFightStyleTeamHelper(fightStyle) || !CanKillAFoe(bankAtk))
+			&& (SpecialMoveInMoveset(foe1) || SpecialMoveInMoveset(foe2)))
 				viability += 5;
 			break;
 			
 		case EFFECT_REST:
-			if (GetHealthPercentage(bankAtk) > 50)
+			if (!(CanBePutToSleep(bankAtk, FALSE)
+			|| GetHealthPercentage(bankAtk) > 50
+			|| (IsFightStyleSweeper(fightStyle) && CanKillAFoe(bankAtk)))
 				break;
-			else if (!(CanBePutToSleep(bankAtk, FALSE)))
-				break;
-			else if (atkItemEffect == ITEM_EFFECT_CURE_SLP || atkItemEffect == ITEM_EFFECT_CURE_STATUS)
-				viability += 5;
-			else if ((FindMovePositionInMoveset(MOVE_SLEEPTALK, bankAtk) != 4) || (FindMovePositionInMoveset(MOVE_SNORE, bankAtk) != 4))
-				viability += 5;
-			else if (atkAbility == ABILITY_SHEDSKIN)
+			else if (atkItemEffect == ITEM_EFFECT_CURE_SLP 
+			|| atkItemEffect == ITEM_EFFECT_CURE_STATUS
+			|| MoveEffectInMoveset(EFFECT_SLEEPTALK, bankAtk) 
+			|| MoveEffectInMoveset(EFFECT_SNORE, bankAtk)
+			|| atkAbility == ABILITY_SHEDSKIN)
 				viability += 5;
 			else if ((gBattleWeather & WEATHER_RAIN_ANY) && atkAbility == ABILITY_HYDRATION)
 				viability += 4;
 			else if (atkAbility == ABILITY_EARLYBIRD)
 				viability += 3;
 			break;
-			
-		case EFFECT_0HKO:
-		#ifdef OKAY_WITH_AI_SUICIDE
-			if (atkAbility == ABILITY_NOGUARD || defAbility == ABILITY_NOGUARD)
-				viability += 5;
-			else if (atkStatus3 & (STATUS3_ALWAYS_HITS))
-				viability += 7;
-			break;
-		#endif
-			break;
-		
-		case EFFECT_SUPER_FANG:
-			if (GetHealthPercentage(bankAtk) > 70)
-				viability += 5;
-			break;
-			
+
 		case EFFECT_TRAP:
-			if (FindMovePositionInMoveset(MOVE_RAPIDSPIN, bankDef) != 4)
-				break;
-			else if (atkItemEffect == ITEM_EFFECT_BINDING_BAND || atkItemEffect == ITEM_EFFECT_GRIP_CLAW)
+			if (MoveInMoveset(MOVE_RAPIDSPIN, bankDef)
+			||  IsOfType(bankDef, TYPE_GHOST)
+			||  defStatus2 & (STATUS2_WRAPPED))
+			{
+				break; //Just a regular attacking move now
+			}
+			else if (atkItemEffect == ITEM_EFFECT_BINDING_BAND
+			|| atkItemEffect == ITEM_EFFECT_GRIP_CLAW)
 				viability += 5;
 			else
-				goto AI_TRAP_TARGET_CHECK;	// check conditions to trap target
+				goto AI_TRAP_TARGET_CHECK;	//Check other conditions to trap target
 			break;
-			
-		case EFFECT_HIGH_CRITICAL:
-			if (defAbility == ABILITY_SHELLARMOR || defAbility == ABILITY_BATTLEARMOR)
-				break;
-			else if (atkAbility == ABILITY_BATTLEARMOR || atkAbility == ABILITY_SNIPER)
-				viability += 5;
-			else if (atkItemEffect == ITEM_EFFECT_SCOPE_LENS)
-				viability += 5;
-			else if (atkSpecies == SPECIES_CHANSEY && atkItemEffect == ITEM_EFFECT_LUCKY_PUNCH)
-				viability += 5;
-			else if (atkSpecies == SPECIES_FARFETCHD && atkItemEffect == ITEM_EFFECT_STICK)
-				viability += 5;
-			else if (atkStatus2 & STATUS2_FOCUS_ENERGY)
-				break;
-			else if (move == MOVE_RAZORWIND)
-				goto AI_CHARGEUP_CHECK;
-			break;
-			
+
+		case EFFECT_TRIPLE_KICK:
 		case EFFECT_DOUBLE_HIT:
 			if (defStatus2 & STATUS2_SUBSTITUTE)
 				viability += 5;
 			break;
-			
+		
+		case EFFECT_MIST:
+			if (IsFightStyleTeamHelper(fightStyle)
+			&&  EnemiesHaveMovesWhichCanLowerStatsOrIntimidate(foe1, foe2))
+				viability += 5;
+		
 		case EFFECT_FOCUS_ENERGY:
-			if (defAbility == ABILITY_SHELLARMOR || defAbility == ABILITY_BATTLEARMOR)
-				break;
-			else if (atkAbility == ABILITY_SUPERLUCK || atkAbility == ABILITY_SNIPER)
-				viability += 6;
-			else if (atkItemEffect == ITEM_EFFECT_SCOPE_LENS)
+		AI_FOCUS_ENERGY:
+			if (atkAbility == ABILITY_SUPERLUCK
+			|| atkAbility == ABILITY_SNIPER)
+			|| atkItemEffect == ITEM_EFFECT_SCOPE_LENS)
 				viability += 6;
 			break;
-			
-		case EFFECT_RECOIL:
-			if (atkAbility == ABILITY_RECKLESS)
-				viability += 5;
-			else if (atkAbility == ABILITY_ROCKHEAD)
-				viability += 4;
-			break;
-			
+
 		case EFFECT_CONFUSE:
-		case EFFECT_FLATTER:
-		AI_CONFUSE_CHECK: ;				
-			if (atkAbility == ABILITY_SERENEGRACE)
-				viability += 6;
-			else if (defStatus1 & STATUS1_PARALYSIS)
-				viability += 6;
-			else if (defStatus2 & (STATUS2_INFATUATION))
-				viability += 6;
-			else if (CanBeConfused(bankDef) || (move == MOVE_TEETERDANCE && CanBeConfused(bankDefPartner)))
-				viability += 5;
+		AI_CONFUSE_CHECK:
+			if (CanBeConfused(bankDef) || (move == MOVE_TEETERDANCE && CanBeConfused(bankDefPartner)))
+			{
+				if (defStatus1 & STATUS1_PARALYSIS
+				|| defStatus2 & (STATUS2_INFATUATION)
+				|| (atkAbility == ABILITY_SERENEGRACE && FlinchingMoveInMoveset(bankAtk)))
+				{
+					viability += 6;
+					break;
+				}
+				else if (IsFightStyleStatuser(fightStyle))
+				{
+					viability += 5;
+					break;
+				}
+			}
+			
+			if (gBattleMoves[move].target & MOVE_TARGET_BOTH && CanBeConfused(bankDefPartner))
+			{
+				if (defPartnerStatus1 & STATUS1_PARALYSIS
+				|| defPartnerStatus2 & (STATUS2_INFATUATION)
+				|| (atkAbility == ABILITY_SERENEGRACE && FlinchingMoveInMoveset(bankAtk)))
+					viability += 6;
+				else if (IsFightStyleStatuser(fightStyle))
+					viability += 5;
+			}
 			break;
 		
 		case EFFECT_REFLECT:
-			if (move == MOVE_AURORAVEIL)
-				viability += 5;
-			else if (PhysicalMoveInMoveset(bankDef))
-				viability += 5;
+			switch (move) {
+				case MOVE_AURORAVEIL:
+					if (gNewBS->AuroraVeilTimers[SIDE(bankAtk)] != 0 && gBattleWeather & WEATHER_HAIL_ANY)
+					&& (IsFightStyleTeamHelper(fightStyle) || !CanKillAFoe(bankAtk))
+						viability += 5;
+					break;
+
+				default:
+					if (!(gSideAffecting[SIDE(bankAtk)] & SIDE_STATUS_REFLECT)
+					&& (IsFightStyleTeamHelper(fightStyle) || !CanKillAFoe(bankAtk))
+					&& (PhysicalMoveInMoveset(foe1) || PhysicalMoveInMoveset(foe2)))
+						viability += 5;
+			}
 			break;
 			
 		case EFFECT_PARALYZE:
-			if (defItemEffect == ITEM_EFFECT_CURE_PAR || defItemEffect == ITEM_EFFECT_CURE_STATUS)
-				break;
-			else if (defAbility == ABILITY_SHEDSKIN)
-				break;
-			else if (FindMovePositionInMoveset(MOVE_HEX, bankAtk) != 4)
-				viability += 6;
-			else if (MoveEffectInMoveset(EFFECT_FLINCH_HIT,bankAtk))
-				viability += 6;
-			else if (defStatus2 & (STATUS2_CONFUSION | STATUS2_INFATUATION))
-				viability += 6;
-			else if (CanBeParalyzed(bankDef, TRUE))
-				viability += 5;
+		AI_PARALYZE:
+			if (CanBeParalyzed(bankDef, TRUE))
+			{
+				if (defItemEffect == ITEM_EFFECT_CURE_PAR
+				|| defItemEffect == ITEM_EFFECT_CURE_STATUS)
+				|| defAbility == ABILITY_SHEDSKIN)
+					break;
+				else if (MoveInMoveset(MOVE_HEX, bankAtk)
+				|| FlinchingMoveInMoveset(bankAtk)
+				|| defStatus2 & (STATUS2_CONFUSION | STATUS2_INFATUATION))
+					viability += 6;
+				else if (IsFightStyleStatuser(fightStyle))
+					viability += 5;
+			}
+			break;
+
+		case EFFECT_ATTACK_DOWN_HIT:
+		case EFFECT_DEFENSE_DOWN_HIT:
+		case EFFECT_SPEED_DOWN_HIT:
+		case EFFECT_SPECIAL_ATTACK_DOWN_HIT:
+		case EFFECT_SPECIAL_DEFENSE_DOWN_HIT:
+		case EFFECT_ACCURACY_DOWN_HIT:
+		case EFFECT_EVASION_DOWN_HIT:
+			if (gBattleMoves[move].secondaryEffectChance >= 50
+			&&  DoesFightStyleLowerStats(fightStyle))
+				viability += 3;
 			break;
 			
-		case EFFECT_SKY_ATTACK:
-		case EFFECT_SKULL_BASH:
-		case EFFECT_SEMI_INVULNERABLE:
-		AI_CHARGEUP_CHECK: ;
-			if (atkItemEffect == ITEM_EFFECT_POWER_HERB)
-				viability += 5;
-			break;
-			
+		case EFFECT_CONFUSE_HIT:
+			if (gBattleMoves[move].secondaryEffectChance >= 75)
+				goto AI_CONFUSE;
+
 		case EFFECT_SUBSTITUTE:
-			if (GetHealthPercentage(bankAtk) > 50)
+			if (!IS_BEHIND_SUBSTITUTE(bankAtk)
+			&& (GetHealthPercentage(bankAtk) > 50 || (!IsDoubleBattle() && IsPredictedToSwitch(foe1)))
 				viability += 6;
 			break;
-			
-		case EFFECT_RECHARGE:
-			if (atkAbility == ABILITY_TRUANT)
-				viability += 7;
-			break;
-			
+
+		case EFFECT_MIMIC:
+			if (MoveWouldHitFirst(move, bankAtk, bankDef))
+			{ 	
+				if (gLastUsedMoves[bankDef] != MOVE_NONE
+				&& gLastUsedMoves[bankDef] != 0xFFFF
+				&& MoveKnocksOut(gLastUsedMoves[bankDef], bankAtk, bankDef))
+					viability += 5;
+			}
+			else if (predictedMove != MOVE_NONE
+			&& MoveKnocksOut(predictedMove, bankAtk, bankDef)) //Attacker can kill with mimicked move
+				viability += 5;
+		
 		case EFFECT_LEECH_SEED:
-			if (IsOfType(bankDef, TYPE_GRASS))
-				break;
-			else if (defStatus3 & STATUS3_LEECHSEED)
-				break;
-			else if (defStatus2 & STATUS2_SUBSTITUTE)
-				break;
-			else if (FindMovePositionInMoveset(MOVE_RAPIDSPIN, bankDef) != 4)
-				break;
-			else if (atkAbility == ABILITY_LIQUIDOOZE)
+			if (IsOfType(bankDef, TYPE_GRASS)
+			|| defStatus3 & STATUS3_LEECHSEED
+			|| MoveInMoveset(MOVE_RAPIDSPIN, bankDef))
+			|| defAbility == ABILITY_LIQUIDOOZE)
 				break;
 			else
-				viability += 6;
-			break;
-			
-		case EFFECT_ENCORE:
-			if (MoveWouldHitFirst(move, bankDef, bankAtk))
-				break;
-			else if (gBattleMoves[gLastUsedMoves[bankDef]].power == 0)
-				viability += 5;
-			break;
-			
-		case EFFECT_SNORE:
-		case EFFECT_SLEEP_TALK:
-			if ((atkStatus1 & STATUS1_SLEEP))
-				viability += 7;
-			break;
-			
-		case EFFECT_LOCK_ON:
-			if (MoveEffectInMoveset(EFFECT_0HKO, bankAtk))
 				viability += 6;
 			break;
 		
+		case EFFECT_SPLASH:
+			if (IsZCrystal(atkItem) && ITEM_QUALITY(atkItem) == moveType
+			&&  !IsSpecialZCrystal(atkItem))
+				viability += 9; //Z-Splash!
+				
+		case EFFECT_DISABLE:
+			if (gDisableStructs[bankDef].disableTimer1 == 0
+			&&  defEffect != ITEM_EFFECT_CURE_ATTRACT)
+			{
+				if (MoveWouldHitFirst(move, bankAtk, bankDef))
+				{ 	
+					if (gLastUsedMoves[bankDef] != MOVE_NONE
+					&& gLastUsedMoves[bankDef] != 0xFFFF
+					&& MoveKnocksOut(gLastUsedMoves[bankDef], bankDef, bankAtk))
+						viability += 5; //Disable move that can kill attacker
+				}
+				else if (predictedMove != MOVE_NONE
+				&& SPLIT(predictedMove) == SPLIT_STATUS)
+					viability += 4; //Disable annoying status moves
+			}
+			break;
+
+		case EFFECT_ENCORE:
+			if (gDisableStructs[bankDef].encoreTimer == 0
+			&&  defEffect != ITEM_EFFECT_CURE_ATTRACT)
+			{
+				if (MoveWouldHitFirst(move, bankAtk, bankDef))
+				{ 	
+					if (gLastUsedMoves[bankDef] != MOVE_NONE
+					&& gLastUsedMoves[bankDef] != 0xFFFF
+					&& SPLIT(gLastUsedMoves[bankDef]) == SPLIT_STATUS)
+						viability += 5; //Lock into status moves
+				}
+				else if (predictedMove != MOVE_NONE
+				&& SPLIT(predictedMove) == SPLIT_STATUS)
+					viability += 5; //Lock into status moves
+			}
+			break;
+
+		case EFFECT_PAIN_SPLIT: ;
+			//20 % health difference
+			defPercent = (GetHealthPercentage(bankDef)) < 20 ? 0 : GetHealthPercentage(bankDef);
+			
+			if (GetHealthPercentage(bankAtk) < defPercent)
+				goto AI_RECOVERY;
+			break;
+
+		case EFFECT_SNORE:
+		case EFFECT_SLEEP_TALK:
+			if (atkStatus1 & STATUS1_SLEEP)
+				viability += 8;
+			break;
+			
+		case EFFECT_LOCK_ON:
+			switch (move) {
+				case MOVE_LASERFOCUS:
+					goto AI_FOCUS_ENERGY;
+				
+				default:	
+					if (MoveEffectInMoveset(EFFECT_0HKO, bankAtk))
+						viability += 6;
+			}
+			break;
+		
+		case EFFECT_SPEED_UP_1_HIT:
+			if (gBattleMoves[move].secondaryEffectChance >= 75)
+				goto AI_SPEED_PLUS;
+		
 		case EFFECT_DESTINY_BOND:
-			if (MoveWouldHitFirst(move, bankDef, bankAtk))
-				break;
-			else if (GetHealthPercentage(bankAtk) > 25)
-				break;
-			else
+			if (MoveWouldHitFirst(move, bankAtk, bankDef)
+			&& (CanKnockOut(foe1, bankAtk) || CanKnockOut(foe2, bankAtk)))
 				viability += 7;
 			break;
 			
-		case EFFECT_HEAL_BELL:
-			if ((atkStatus1 & STATUS1_ANY) || (gBattleMons[bankAtkPartner].status1 & STATUS1_ANY))
+		case EFFECT_SPITE:
+			if (MoveWouldHitFirst(move, bankAtk, bankDef)
+			&&  predictedMove != MOVE_NONE
+			&&  gBattleMons[bankDef].pp[FindMoveSlotInMoveset(predictedMove)] <= 4)
 				viability += 5;
 			break;
 			
+		case EFFECT_HEAL_BELL:
+			if (IsFightStyleTeamHelper())
+			{
+				if (move == MOVE_HEALBELL)
+				{
+					if (PartyMemberStatused(bankAtk, TRUE)) //Check Soundproof
+						viability += 5;
+				}
+				else if (PartyMemberStatused(bankAtk, FALSE))
+					viability += 5;
+			}
+			break;
+		
+		case EFFECT_THIEF:
+			if (atkItem == ITEM_NONE
+			&& CanTransferItem(bankDef, defItem, GetBankPartyData(bankDef))
+			&& CanTransferItem(bankAtk, defItem, GetBankPartyData(bankAtk))
+			&& !MoveInMoveset(MOVE_ACROBATICS, bankAtk)
+			&& defAbility != ABILITY_STICKYHOLD)
+			{
+				switch (defItemEffect) {
+					case ITEM_EFFECT_CHOICE_BAND: ;
+						if (ITEM_QUALITY(bankDef) == SPLIT_STATUS //Choice scard
+						|| MoveSplitInMoveset(ITEM_QUALITY(bankDef), bankAtk)
+							viability += 4;
+						break;
+
+					case ITEM_EFFECT_TOXIC_ORB:
+						if (atkAbility == ABILITY_POISONHEAL
+						||  atkAbility == ABILITY_TOXICBOOST)
+							viability += 4;
+						break;
+					
+					case ITEM_EFFECT_FLAME_ORB:
+						if (atkAbility == ABILITY_FLAREBOOST)
+							viability += 4;
+					
+					case ITEM_EFFECT_BLACK_SLUDGE:
+						if (IsOfType(bankAtk, TYPE_POISON))
+							viability += 4;
+						break;
+					
+					case ITEM_EFFECT_IRON_BALL:
+						if (MoveInMoveset(MOVE_FLING, bankAtk))
+							viability += 4;
+						break;
+					
+					case ITEM_EFFECT_LAGGING_TAIL:
+					case ITEM_EFFECT_STICKY_BARB:
+						break;
+						
+					default:
+						viability += 2;
+				}
+			}
+		
 		case EFFECT_QUICK_ATTACK:
-			if (GetHealthPercentage(bankAtk) <= 20)
-				viability += 7;
-			else if (GetHealthPercentage(bankDef) <= 15)
+			if (SpeedCalc(bankAtk) < SpeedCalc(bankDef)
+			&& CanKnockOut(bankDef, bankAtk)
+			&& MoveWouldGoFirst(bankAtk, bankDef)) //Includes quick attack priority
 				viability += 7;
 			break;
 			
 		case EFFECT_MEAN_LOOK:
-		AI_TRAP_TARGET_CHECK: ;	
-			if (defStatus1 & STATUS1_ANY)	//better to trap statused target
+		AI_TRAP_TARGET_CHECK:
+			if (defStatus2 & STATUS2_ESCAPE_PREVENTION
+			|| (atkAbility == ABILITY_SHADOWTAG && defAbility != ABILITY_SHADOWTAG)
+			|| (atkAbility == ABILITY_ARENATRAP && CheckGrounding(bankDef) == GROUNDED)
+			|| (atkAbility == ABILITY_MAGNETPULL && IsOfType(bankDef, TYPE_STEEL))
+			||  defStatus3 & (STATUS3_ROOTED))
+				break; //Already trapped
+			
+			if (defStatus1 & STATUS1_ANY	//Better to trap statused target
+			|| defStatus2 & (STATUS2_INFATUATION)
+			|| defStatus3 & (STATUS3_LEECHSEED))
 			{
 				viability += 5;
 				break;
 			}
-			// better to trap target with low stats
-			for (i = 0; i <= BATTLE_STATS_NO-1; ++i)
+
+			//Better to trap target with low stats
+			for (i = 0; i < BATTLE_STATS_NO - 1; ++i)
 			{
 				if (STAT_STAGE(bankDef, i) < 6)
 				{
-					if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE))	// single battle
+					if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE)) //Single battle
 					{
 						if (i == STAT_STAGE_DEF && (PhysicalMoveInMoveset(bankAtk)))
+						{
 							viability += 5;
+							break;
+						}
 						else if (i == STAT_STAGE_SPDEF && (SpecialMoveInMoveset(bankAtk)))
+						{
 							viability += 5;
+							break;
+						}
 					}
 					else	// double battle
 					{
 						if ((i == STAT_STAGE_DEF) &&
 						(PhysicalMoveInMoveset(bankAtk) || PhysicalMoveInMoveset(bankAtkPartner)))
+						{
 							viability += 5;
+							break;
+						}
 						else if ((i == STAT_STAGE_SPDEF) &&
 						(SpecialMoveInMoveset(bankAtk) || SpecialMoveInMoveset(bankAtkPartner)))
+						{
 							viability += 5;
+							break;
+						}
 					}
 					break;
 				}
@@ -1386,21 +1650,10 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 					viability += 5;
 			}
 			break;
-			
-		/*
-		// handled in negative checks
-		case EFFECT_ATTACK_BLOCKERS:
-			switch (move)
-			{
-				case MOVE_HEALBLOCK:
-				case MOVE_POWDER:
-				case MOVE_TELEKINESIS:
-				case MOVE_EMBARGO:
-				case MOVE_THROATCHOP:
-				
-			}
-			break;
-		*/
+		
+		//case EFFECT_ATTACK_BLOCKERS:
+			// handled in negative checks
+
 			
 		//case EFFECT_TYPE_CHANGES:
 			//handled in negative checks
@@ -1486,8 +1739,6 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 			// happy hour no benefit
 			if (move == MOVE_FAIRYLOCK)
 			{
-				if (IsOfType(bankDef, TYPE_GHOST))
-					break;
 				goto AI_TRAP_TARGET_CHECK;
 			}
 			break;
@@ -1551,3 +1802,4 @@ u8 AI_Script_Positives(u8 bankAtk, u8 bankDef, u16 move, u8 viability) {
 	return viability;
 }
 
+*/

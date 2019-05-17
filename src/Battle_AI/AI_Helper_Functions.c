@@ -699,17 +699,71 @@ enum BoostingClasses
 	SET_UP_SUBSTITUTE,
 };
 
+enum PhazingClasses
+{
+	PHAZE_RESET_TARGET_STATS,
+	PHAZE_FORCE_SWITCH,
+	PHAZE_RESET_ALL_STATS,
+	PHAZE_LOWER_TARGET_STATS,
+};
+
 struct FightingStyle
 {
 	enum PrefixClasses prefixClass;
 	enum BaseClasses baseClass;
 	enum ItemClasses itemClass;
 	enum BoostingClasses boostingClass;
+	enum PhazingClasses phazerClass;
 	bool8 hazardClass;
 	bool8 statusClass;
 	bool8 clericClass;
 	bool8 recoveryClass;
 };
+
+bool8 IsFightStyleSpeedy(struct FightingStyle* fightStyle)
+{
+	return fightStyle->prefixClass == PREFIX_SPEEDY;
+}
+
+bool8 IsFightStyleSweeper(struct FightingStyle* fightStyle)
+{
+	return fightStyle->baseClass == BASE_SWEEPER;
+}
+
+bool8 IsFightStyleWall(struct FightingStyle* fightStyle)
+{
+	return fightStyle->baseClass == BASE_WALL;
+}
+
+bool8 CanFightStyleRecover(struct FightingStyle* fightStyle)
+{
+	return fightStyle->recoveryClass;
+}
+
+bool8 IsFightStyleTeamHelper(struct FightingStyle* fightStyle)
+{
+	return fightStyle->clericClass;
+}
+
+bool8 IsFightStyleHazer(struct FightingStyle* fightStyle)
+{
+	return fightStyle->phazerClass == PHAZE_RESET_ALL_STATS;
+}
+
+bool8 IsFightStyleForceSwitcher(struct FightingStyle* fightStyle)
+{
+	return fightStyle->phazerClass == PHAZE_FORCE_SWITCH;
+}
+
+bool8 DoesFightStyleLowerStats(struct FightingStyle* fightStyle)
+{
+	return fightStyle->phazerClass == PHAZE_LOWER_TARGET_STATS;
+}
+
+bool8 IsFightStyleStatuser(struct FightingStyle* fightStyle)
+{
+	return IsFightStyleWall(fightStyle) && fightStyle->statusClass;
+}
 
 /*
 void PredictBankFightingStyle(u8 bank, struct FightingStyle* style)
