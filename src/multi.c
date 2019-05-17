@@ -252,6 +252,14 @@ bool8 IsMultiBattle(void)
         return FALSE;
 }
 
+bool8 IsTwoOpponentBattle(void)
+{
+	if ((gBattleTypeFlags & (BATTLE_TYPE_DOUBLE | BATTLE_TYPE_TWO_OPPONENTS)) == (BATTLE_TYPE_DOUBLE | BATTLE_TYPE_TWO_OPPONENTS))
+		return TRUE;
+	
+	return FALSE;
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 bool8 IsTagBattle(void)

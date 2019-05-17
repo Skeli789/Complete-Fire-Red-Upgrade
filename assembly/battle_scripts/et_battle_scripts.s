@@ -43,6 +43,7 @@
 .global BattleScript_ShieldsDownToCore
 .global BattleScript_ShieldsDownToMeteor
 .global BattleScript_FlowerGift
+.global BattleScript_FlowerGiftEnd2
 .global BattleScript_MonTookFutureAttack
 .global BattleScript_PrintCustomStringEnd2
 .global BattleScript_PrintCustomStringEnd3
@@ -440,13 +441,27 @@ BattleScript_ShieldsDownToMeteorRet:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-BattleScript_FlowerGift:
+BattleScript_FlowerGiftRet:
+	jumpifability BANK_SCRIPTING ABILITY_FLOWERGIFT DoFlowerGiftChange
+	goto SkipFlowerGiftPopUp
+
+DoFlowerGiftChange:
 	call BattleScript_AbilityPopUp
-	playanimation BANK_ATTACKER ANIM_TRANSFORM 0x0
+
+SkipFlowerGiftPopUp:
+	playanimation BANK_SCRIPTING ANIM_TRANSFORM 0x0
 	setword BATTLE_STRING_LOADER TransformedString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
+	return
+
+BattleScript_FlowerGift:
+	call BattleScript_FlowerGiftRet
+	end3
+
+BattleScript_FlowerGiftEnd2:
+	call BattleScript_FlowerGiftRet
 	end2
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

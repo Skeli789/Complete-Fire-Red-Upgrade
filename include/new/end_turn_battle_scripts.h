@@ -60,6 +60,7 @@ extern u8 BattleScript_StoppedSchooling[];
 extern u8 BattleScript_ShieldsDownToCore[];
 extern u8 BattleScript_ShieldsDownToMeteor[];
 extern u8 BattleScript_FlowerGift[];
+extern u8 BattleScript_FlowerGiftEnd2[];
 extern u8 BattleScript_RaiseStatsItemEnd2[];
 extern u8 BattleScript_HandleFaintedMonDoublesInitial[];
 extern u8 BattleScript_HandleFaintedMonDoublesPart2[];

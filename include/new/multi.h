@@ -15,6 +15,7 @@
  u8* GetTrainerBLoseText(void);
  bool8 IsLinkDoubleBattle(void);
  bool8 IsMultiBattle(void);
+ bool8 IsTwoOpponentBattle(void);
  bool8 IsTagBattle(void);
  bool8 IsPartnerAttacker(void);
  u8* PartnerLoadName(void);

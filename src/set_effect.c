@@ -652,9 +652,9 @@ void SetMoveEffect(bool8 primary, u8 certain)
 					gNewBS->SuppressedAbilities[gEffectBank] = *defAbilityLoc;
 					*defAbilityLoc = 0;
 					
+					gBattleScripting->bank = gEffectBank;
 					BattleScriptPush(gBattlescriptCurrInstr + 1);
-					BattleStringLoader = AbilitySuppressedString;
-					gBattlescriptCurrInstr = BattleScript_PrintCustomString;
+					gBattlescriptCurrInstr = BattleScript_AbilityWasSuppressed;
 				}
 				else
 					gBattlescriptCurrInstr++;

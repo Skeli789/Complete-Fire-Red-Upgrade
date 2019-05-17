@@ -16,6 +16,7 @@ void AnimTask_DestroyAbilityPopUp(u8 taskId);
 void TransferAbilityPopUpHelper(void);
 void TransferAbilityPopUpHelperAsTrace(void);
 void TransferAbilityPopUpHelperAsImposter(void);
+void TransferAbilityPopUp(u8 bank, u8 ability);
 
 //Functions Hooked In
 pokemon_t* UpdateNickForIllusion(pokemon_t* mon);

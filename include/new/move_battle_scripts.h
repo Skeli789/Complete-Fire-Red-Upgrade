@@ -55,6 +55,7 @@ extern u8 BattleScript_SideStatusWoreOffRet[];
 extern u8 BattleScript_TargetSleepHeal[];
 extern u8 BattleScript_TargetBurnHeal[];
 extern u8 BattleScript_ItemSteal[];
+extern u8 BattleScript_AbilityWasSuppressed[];
 
 //Strings
 extern u8 CraftyShieldProtectedString[];

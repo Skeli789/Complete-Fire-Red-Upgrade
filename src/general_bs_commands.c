@@ -6,6 +6,7 @@
 #include "../include/random.h"
 #include "../include/constants/items.h"
 
+#include "../include/new/ability_battle_effects.h"
 #include "../include/new/ability_battle_scripts.h"
 #include "../include/new/ability_tables.h"
 #include "../include/new/accuracy_calc.h"
@@ -3218,7 +3219,10 @@ void atkD2_tryswapitems(void) { //Trick
     }
 }
 
-void atkD3_trycopyability(void) { //Role Play
+void atkD3_trycopyability(void) //Role Play
+{
+	if (gBattleExecBuffer) return;
+
 	u8* atkAbilityLoc, *defAbilityLoc;
 	u8 atkAbility, defAbility;
 
@@ -3238,7 +3242,9 @@ void atkD3_trycopyability(void) { //Role Play
 	else
 	{
 		*atkAbilityLoc = defAbility;
-        gLastUsedAbility = defAbility;
+        gLastUsedAbility = atkAbility; //To display what changed
+		TransferAbilityPopUp(gBankAttacker, gLastUsedAbility);
+
 		gNewBS->SlowStartTimers[gBankAttacker] = 0;
 		gStatuses3[gBankAttacker] &= ~(STATUS3_SWITCH_IN_ABILITY_DONE);
         gBattlescriptCurrInstr += 5;
@@ -3403,8 +3409,11 @@ static item_t ChoosePickupItem(u8 level)
     return ITEM_NONE;
 }
 
-void atkE7_trycastformdatachange(void) {
-    u8 form = FALSE;
+void atkE7_trycastformdatachange(void)
+{
+	if (gBattleExecBuffer) return;
+
+    u8 form;
 	u8 bank = gBattleScripting->bank;
 
     gBattlescriptCurrInstr++;
@@ -3412,7 +3421,8 @@ void atkE7_trycastformdatachange(void) {
 	switch (SPECIES(bank)) { //Not ability b/c you can lose ability
 		case SPECIES_CASTFORM:
 			form = CastformDataTypeChange(bank);
-			if (form) {
+			if (form)
+			{
 				BattleScriptPushCursorAndCallback(BattleScript_CastformChange);
 				gBattleStruct->castformToChangeInto = form - 1;
 			}
@@ -3420,24 +3430,21 @@ void atkE7_trycastformdatachange(void) {
 
 		case SPECIES_CHERRIM:
 			if (ABILITY(bank) == ABILITY_FLOWERGIFT && !IS_TRANSFORMED(bank)
-			&& WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY) {
+			&& WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
+			{
 				DoFormChange(bank, SPECIES_CHERRIM_SUN, FALSE, FALSE);
-				form = TRUE;
+				BattleScriptPushCursorAndCallback(BattleScript_FlowerGift);
 			}
 			break;
 
 		case SPECIES_CHERRIM_SUN:
 			if (ABILITY(bank) != ABILITY_FLOWERGIFT
-			|| !WEATHER_HAS_EFFECT || !(gBattleWeather & WEATHER_SUN_ANY)) {
+			|| !WEATHER_HAS_EFFECT || !(gBattleWeather & WEATHER_SUN_ANY))
+			{
 				DoFormChange(bank, SPECIES_CHERRIM, FALSE, FALSE);
-				form = TRUE;
+				BattleScriptPushCursorAndCallback(BattleScript_FlowerGift);
 			}
-
-		default:
-			return;
 	}
-
-	BattleScriptPushCursorAndCallback(BattleScript_FlowerGift);
 }
 
 u8 CastformDataTypeChange(u8 bank) {

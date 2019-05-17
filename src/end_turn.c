@@ -200,8 +200,7 @@ u8 TurnBasedEffects(void)
 					BattleScriptExecute(BattleScript_RainContinuesOrEnds);
 					effect++;
 				}
-				++gBattleStruct->turnEffectsTracker;
-				gBattleStruct->turnEffectsBank = 0;
+				gBattleStruct->turnEffectsBank = gBattlersCount;
 				break;
 			
 			case(ET_Sun):
@@ -220,8 +219,7 @@ u8 TurnBasedEffects(void)
 					BattleScriptExecute(gBattlescriptCurrInstr);
 					effect++;
 				}
-				++gBattleStruct->turnEffectsTracker;
-				gBattleStruct->turnEffectsBank = 0;
+				gBattleStruct->turnEffectsBank = gBattlersCount;
 				break;
 			
 			case(ET_Sandstorm):
@@ -243,8 +241,7 @@ u8 TurnBasedEffects(void)
 					BattleScriptExecute(gBattlescriptCurrInstr);
 					effect++;
 				}
-				++gBattleStruct->turnEffectsTracker;
-				gBattleStruct->turnEffectsBank = 0;
+				gBattleStruct->turnEffectsBank = gBattlersCount;
 				break;
 			
 			case(ET_Hail):
@@ -266,8 +263,7 @@ u8 TurnBasedEffects(void)
 					BattleScriptExecute(gBattlescriptCurrInstr);
 					effect++;
 				}
-				++gBattleStruct->turnEffectsTracker;
-				gBattleStruct->turnEffectsBank = 0;
+				gBattleStruct->turnEffectsBank = gBattlersCount;
 				break;
 			
 			case(ET_Air_Current):
@@ -276,8 +272,7 @@ u8 TurnBasedEffects(void)
 					BattleScriptExecute(BattleScript_MysteriousAirCurrentContinues);
 					effect++;
 				}
-				++gBattleStruct->turnEffectsTracker;
-				gBattleStruct->turnEffectsBank = 0;
+				gBattleStruct->turnEffectsBank = gBattlersCount;
 				break;
 			
 			case(ET_Fog):
@@ -296,8 +291,7 @@ u8 TurnBasedEffects(void)
 					BattleScriptExecute(gBattlescriptCurrInstr);
 					effect++;
 				}
-				++gBattleStruct->turnEffectsTracker;
-				gBattleStruct->turnEffectsBank = 0;
+				gBattleStruct->turnEffectsBank = gBattlersCount;
 				break;
 
 			case(ET_Weather_Health_Abilities):
@@ -310,6 +304,10 @@ u8 TurnBasedEffects(void)
 						case ABILITY_ICEBODY:
 						case ABILITY_SOLARPOWER:
 							if (AbilityBattleEffects(ABILITYEFFECT_ENDTURN, gActiveBattler, 0, 0, 0))
+								effect++;
+							break;
+						case ABILITY_FORECAST:
+							if (AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, gActiveBattler, 0, 0, 0))
 								effect++;
 					}
 				}
@@ -1259,7 +1257,7 @@ u8 TurnBasedEffects(void)
 							{
 								newSpecies = SPECIES_CHERRIM;
 								changedForm = TRUE;
-								battleScript = BattleScript_FlowerGift;
+								battleScript = BattleScript_FlowerGiftEnd2;
 							}
 					}
 					

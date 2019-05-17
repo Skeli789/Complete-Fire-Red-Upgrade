@@ -3,6 +3,7 @@
 #include "../include/random.h"
 #include "../include/constants/songs.h"
 
+#include "../include/new/ability_battle_effects.h"
 #include "../include/new/ability_tables.h"
 #include "../include/new/battle_start_turn_start_battle_scripts.h"
 #include "../include/new/bs_helper_functions.h"
@@ -1178,6 +1179,12 @@ void FinalGambitDamageCalc(void)
 
 void AbilityChangeBSFunc(void)
 {
+	if (gBattleExecBuffer)
+	{
+		gBattlescriptCurrInstr -= 5;
+		return;
+	}
+
 	u8* atkAbilityLoc, *defAbilityLoc;
 	u8 atkAbility, defAbility;
 
@@ -1195,8 +1202,7 @@ void AbilityChangeBSFunc(void)
 			else
 			{
 				*defAbilityLoc = ABILITY_INSOMNIA;
-				gLastUsedAbility = ABILITY_INSOMNIA;
-				RecordAbilityBattle(gBankTarget, gLastUsedAbility);
+				gLastUsedAbility = defAbility; //Original ability
 				gNewBS->SlowStartTimers[gBankTarget] = 0;
 				BattleStringLoader = WorrySeedString;
 			}
@@ -1213,10 +1219,10 @@ void AbilityChangeBSFunc(void)
 				gStatuses3[gBankTarget] |= STATUS3_ABILITY_SUPPRESS;
 				gNewBS->SuppressedAbilities[gBankTarget] = defAbility;
 				*defAbilityLoc = 0;
-				RecordAbilityBattle(gBankTarget, 0);
 				gNewBS->SlowStartTimers[gBankTarget] = 0;
 				gBattleScripting->bank = gBankTarget;
 				BattleStringLoader = AbilitySuppressedString;
+				return; //No transfer needed
 			}
 			break;
 		
@@ -1228,8 +1234,7 @@ void AbilityChangeBSFunc(void)
 			else
 			{
 				*defAbilityLoc = atkAbility;
-				gLastUsedAbility = atkAbility;
-				RecordAbilityBattle(gBankTarget, gLastUsedAbility);
+				gLastUsedAbility = defAbility; //Original ability
 				gNewBS->SlowStartTimers[gBankTarget] = 0;
 				BattleStringLoader = EntrainmentString;
 			}
@@ -1243,13 +1248,15 @@ void AbilityChangeBSFunc(void)
 			else
 			{
 				*defAbilityLoc = ABILITY_SIMPLE;
-				gLastUsedAbility = ABILITY_SIMPLE;
-				RecordAbilityBattle(gBankTarget, gLastUsedAbility);
+				gLastUsedAbility = defAbility; //Original ability
 				gNewBS->SlowStartTimers[gBankTarget] = 0;
 				BattleStringLoader = SimpleBeamString;
 			}
 			break;
 	}
+	
+	if (gBattlescriptCurrInstr != BattleScript_ButItFailed - 5)
+		TransferAbilityPopUp(gBankTarget, gLastUsedAbility);
 }
 
 void LoadStatustoPsychoShiftTransfer(void)

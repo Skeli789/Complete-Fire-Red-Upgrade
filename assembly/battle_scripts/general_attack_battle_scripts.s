@@ -3396,6 +3396,8 @@ BS_178_RolePlay:
 	attackanimation
 	waitanimation
 	copyarray BATTLE_SCRIPTING_BANK USER_BANK 0x1
+	playanimation BANK_SCRIPTING ANIM_LOAD_ABILITY_POP_UP 0x0
+	call BattleScript_AbilityPopUpRevert
 	call BattleScript_AbilityPopUp
 	pause DELAY_HALFSECOND
 	call BattleScript_AbilityPopUpRevert
@@ -3744,6 +3746,9 @@ GastroAcidBS:
 	waitanimation
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+	copybyte BATTLE_SCRIPTING_BANK TARGET_BANK
+	call BSTryRemoveIllusion
+	call 0x81D92DC @;Try to revert Cherrim and Castform
 	goto BS_MOVE_END
 
 WorrySeedBS:
@@ -3759,6 +3764,8 @@ SimpleBeamBS:
 	attackanimation
 	waitanimation
 
+	playanimation BANK_TARGET ANIM_LOAD_ABILITY_POP_UP 0x0
+	call BattleScript_AbilityPopUpRevert
 	copyarray BATTLE_SCRIPTING_BANK TARGET_BANK 0x1
 	call BattleScript_AbilityPopUp
 	pause DELAY_HALFSECOND
@@ -3766,6 +3773,9 @@ SimpleBeamBS:
 
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+	copyarray BATTLE_SCRIPTING_BANK TARGET_BANK 0x1
+	call BSTryRemoveIllusion
+	call 0x81D92DC @;Try to revert Cherrim and Castform
 	tryactivateswitchinability BANK_TARGET
 	goto BS_MOVE_END
 

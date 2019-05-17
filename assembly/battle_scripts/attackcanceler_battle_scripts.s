@@ -193,13 +193,11 @@ BSTryRemoveIllusion:
 	jumpifspecialstatusflag BANK_SCRIPTING STATUS3_ILLUSION 0x1 RemoveIllusionReturn
 	@;remove illusion counter
 	clearspecialstatusbit BANK_SCRIPTING STATUS3_ILLUSION
-	call BattleScript_AbilityPopUp
 	reloadhealthbar BANK_SCRIPTING
 	playanimation BANK_SCRIPTING ANIM_TRANSFORM 0x0
 	setword BATTLE_STRING_LOADER IllusionWoreOffString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
-	call BattleScript_AbilityPopUpRevert
 RemoveIllusionReturn:
 	return
 

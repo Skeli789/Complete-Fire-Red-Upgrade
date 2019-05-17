@@ -15,6 +15,7 @@
 #include "../include/new/damage_calc.h"
 #include "../include/new/helper_functions.h"
 #include "../include/new/move_tables.h"
+#include "../include/new/text.h"
 
 extern u8 gStatusConditionString_MentalState[];
 extern u8 gStatusConditionString_TauntProblem[];
@@ -112,7 +113,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
     {
     case ABILITYEFFECT_ON_SWITCHIN: // 0;
 		gBankAttacker = gBattleScripting->bank = bank;
-		
+
 		if (gStatuses3[bank] & STATUS3_SWITCH_IN_ABILITY_DONE
 		&& gLastUsedAbility != ABILITYEFFECT_SWITCH_IN_WEATHER)
 			break;
@@ -2063,6 +2064,7 @@ static void PrintOnAbilityPopUp(const u8* str, u8* spriteTileData1, u8* spriteTi
 static void PrintBattlerOnAbilityPopUp(u8 battlerId, u8 spriteId1, u8 spriteId2)
 {
 	int i;
+	u8 lastChar;
 	u8* textPtr;
 	u8 monName[POKEMON_NAME_LENGTH + 3] = {0};
 	u8* nick = GetIllusionPartyData(battlerId)->nickname;
@@ -2071,7 +2073,7 @@ static void PrintBattlerOnAbilityPopUp(u8 battlerId, u8 spriteId1, u8 spriteId2)
 	{
 		monName[i] = nick[i];
 		
-		if (nick[i] == 0xFF)
+		if (nick[i] == 0xFF || i + 1 == POKEMON_NAME_LENGTH) //End of string
 			break;
 	}
 			
@@ -2079,12 +2081,17 @@ static void PrintBattlerOnAbilityPopUp(u8 battlerId, u8 spriteId1, u8 spriteId2)
 	
 	if (*(textPtr - 1) == 0xFF)
 		--textPtr;
+		
+	lastChar = *(textPtr - 1);
 	
 	//Make the string say "[NAME]'s" instead of "[NAME]"
 	textPtr[0] = 0xB4; //'
 	++textPtr;
-	textPtr[0] = 0xE7; //s
-	++textPtr;
+	if (lastChar != PC_S && lastChar != PC_s) //Proper grammar for names ending in "s"
+	{
+		textPtr[0] = 0xE7; //s
+		++textPtr;
+	}
 	textPtr[0] = EOS;
 
     PrintOnAbilityPopUp((const u8*) monName,
@@ -2310,8 +2317,8 @@ static void SpriteCb_AbilityPopUp(struct Sprite* sprite)
     {
         if (sprite->tFrames == 0)
         {
-            if ((!sprite->tRightToLeft && (sprite->pos1.x += 4) >= sprite->tOriginalX + ABILITY_POP_UP_POS_X_SLIDE)
-            ||   (sprite->tRightToLeft && (sprite->pos1.x -= 4) <= sprite->tOriginalX - ABILITY_POP_UP_POS_X_SLIDE))
+            if ((!sprite->tRightToLeft && (sprite->pos1.x += 4) >= sprite->tOriginalX + ABILITY_POP_UP_POS_X_SLIDE + 16)
+            ||   (sprite->tRightToLeft && (sprite->pos1.x -= 4) <= sprite->tOriginalX - ABILITY_POP_UP_POS_X_SLIDE - 16))
             {
                 gNewBS->activeAbilityPopUps &= ~(gBitTable[sprite->tBattlerId]);
                 DestroySprite(sprite);
@@ -2349,12 +2356,8 @@ void TransferAbilityPopUpHelper(void)
 		return;
 	}
 	
-	gActiveBattler = gBattleScripting->bank;
-	AbilityPopUpHelper = CopyAbility(gActiveBattler);
+	TransferAbilityPopUp(gBattleScripting->bank, CopyAbility(gBattleScripting->bank));
 	gLastUsedAbility = AbilityPopUpHelper;
-	
-	EmitDataTransfer(0, &AbilityPopUpHelper, 1, &AbilityPopUpHelper);
-	MarkBufferBankForExecution(gActiveBattler);
 }
 
 void TransferAbilityPopUpHelperAsTrace(void)
@@ -2365,11 +2368,7 @@ void TransferAbilityPopUpHelperAsTrace(void)
 		return;
 	}
 	
-	gActiveBattler = gBattleScripting->bank;
-	AbilityPopUpHelper = ABILITY_TRACE;
-	
-	EmitDataTransfer(0, &AbilityPopUpHelper, 1, &AbilityPopUpHelper);
-	MarkBufferBankForExecution(gActiveBattler);
+	TransferAbilityPopUp(gBattleScripting->bank, ABILITY_TRACE);
 }
 
 void TransferAbilityPopUpHelperAsImposter(void)
@@ -2380,8 +2379,13 @@ void TransferAbilityPopUpHelperAsImposter(void)
 		return;
 	}
 	
-	gActiveBattler = gBattleScripting->bank;
-	AbilityPopUpHelper = ABILITY_IMPOSTER;
+	TransferAbilityPopUp(gBattleScripting->bank, ABILITY_IMPOSTER);
+}
+
+void TransferAbilityPopUp(u8 bank, u8 ability)
+{
+	gActiveBattler = bank;
+	AbilityPopUpHelper = ability;
 	
 	EmitDataTransfer(0, &AbilityPopUpHelper, 1, &AbilityPopUpHelper);
 	MarkBufferBankForExecution(gActiveBattler);

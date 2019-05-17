@@ -860,7 +860,13 @@ BattleScript_CastformChange:
 	end3
 
 BattleScript_CastformChangeRet:
+	jumpifability BANK_SCRIPTING ABILITY_FORECAST DoCastformTransform
+	goto CastformChangeSkipAbilityPopUp @;Reverting back b/c no longer has ability
+	
+DoCastformTransform:
 	call BattleScript_AbilityPopUp
+	
+CastformChangeSkipAbilityPopUp:
 	castformtransform
 	waitstateatk
 	printstring 0x13A @;STRINGID_PKMNTRANSFORMED
