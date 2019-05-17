@@ -265,7 +265,7 @@ static u16 GetBattleTowerStreak(u8 currentOrMax, u16 inputBattleStyle, u16 input
 	return gBattleTowerStreaks[battleStyle][tier][inverse][level][currentOrMax];
 }
 
-//@Details: Updates the streak for the requested Battle Tower format.
+//@Details: Updates the streak for the current Battle Tower format.
 //@Input:
 //		Var8000: 0 = Increment by 1
 //				 1 = Reset
@@ -295,6 +295,9 @@ void sp055_UpdateBattleTowerStreak(void)
 	}
 }
 
+//@Details: Determines the number of battle points to give for 
+//			the current Battle Tower format.
+//@Returns: The number of battle points to give.
 u16 sp056_DetermineBattlePointsToGive(void)
 {
 	u16 toGive;

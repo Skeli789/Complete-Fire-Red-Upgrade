@@ -2,7 +2,8 @@
 #include "../../include/new/pickup_items.h"
 #include "../../include/constants/items.h"
 
-const item_t sPickupCommonItems[PU_NUM_COMMON_ITEMS] = {
+const item_t sPickupCommonItems[PU_NUM_COMMON_ITEMS] =
+{
     ITEM_POTION,
     ITEM_ANTIDOTE,
     ITEM_SUPER_POTION,
@@ -23,7 +24,8 @@ const item_t sPickupCommonItems[PU_NUM_COMMON_ITEMS] = {
     ITEM_MAX_ELIXIR,
 };
 
-const item_t sPickupRareItems[PU_NUM_RARE_ITEMS] = {
+const item_t sPickupRareItems[PU_NUM_RARE_ITEMS] =
+{
     ITEM_HYPER_POTION,
     ITEM_NUGGET,
     ITEM_KINGS_ROCK,
@@ -37,7 +39,8 @@ const item_t sPickupRareItems[PU_NUM_RARE_ITEMS] = {
     ITEM_DESTINY_KNOT,
 };
 
-const u32 pickup_common_item_ceilings[PU_COMMON_PER_ROW] = {
+const u32 pickup_common_item_ceilings[PU_COMMON_PER_ROW] =
+{
     19661, 26214, 32768, 39322, 45875, 52429, 58982, 61604, 64225
 };
 

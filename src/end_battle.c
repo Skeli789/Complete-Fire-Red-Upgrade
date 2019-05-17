@@ -29,7 +29,7 @@ const u16 gEndBattleFlagClearTable[] =
 	SMART_WILD_FLAG,
 	HIDDEN_ABILITY_FLAG,
 	DOUBLE_WILD_BATTLE_FLAG,
-	WILD_SHINY_BATTLE_FLAG,
+	SHINY_CREATION_FLAG,
 };
 
 //This file's functions:

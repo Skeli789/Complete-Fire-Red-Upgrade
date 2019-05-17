@@ -8,7 +8,7 @@
 #define MAP_GROUP(map) (MAP_##map >> 8)
 #define MAP_NUM(map) (MAP_##map & 0xFF)
 
-#ifndef UNBOUND
+#ifndef UNBOUND //For Fire Red
 
 #define MAP_ROUTE_1  	((3 << 8) | 19)
 #define MAP_ROUTE_2  	((3 << 8) | 20)

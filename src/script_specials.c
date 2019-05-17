@@ -1106,7 +1106,7 @@ bool8 sp051_CanTeamParticipateInSkyBattle(void)
 }
 
 
-//u16 sp052_GenerateTowerTrainerId(void); //Code in "src/frontier.c"
+//u16 sp052_GenerateTowerTrainer(void); //Code in "src/frontier.c"
 //void sp053_LoadFrontierIntroBattleMessage(void); //Code in "src/frontier.c"
 //void sp054_GetBattleTowerStreak(void) //Code in "src/frontier.c"
 //void sp055_UpdateBattleTowerStreak(void) //Code in "src/frontier.c"

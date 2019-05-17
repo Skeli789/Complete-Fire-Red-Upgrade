@@ -908,7 +908,7 @@ static const u8* GetCustomWalkingScript(void)
 	if (gWalkingScript != NULL)
 		return gWalkingScript;
 
-	u8 scriptInd = VarGet(DEFAULT_WALKING_SCRIPT);
+	u8 scriptInd = VarGet(DEFAULT_WALKING_SCRIPT_VAR);
 	if (scriptInd != 0 || scriptInd > ARRAY_COUNT(gDefaultWalkingScripts))
 		return gDefaultWalkingScripts[scriptInd - 1];
 

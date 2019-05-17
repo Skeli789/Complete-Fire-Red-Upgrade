@@ -97,6 +97,12 @@ static void CreateInitialRoamerMon(u16 species, u8 level, bool8 allowedOnLand, b
 		u8 perfect = 31;
 		bool8 perfectStats[NUM_STATS] = {0};
 		
+		for (int i = 0; i < NUM_STATS; ++i)
+		{
+			u8 randIv = Random() % 32; //Counteract the effects of CREATE_WITH_X_PERFECT_IVS
+			SetMonData(&gEnemyParty[0], MON_DATA_HP_IV + i, &randIv);
+		}
+		
 		while (numPerfectStats < MathMin(CREATE_ROAMER_WITH_X_PERFECT_IVS, NUM_STATS)) //Error prevention
 		{
 			u8 statId = Random() % NUM_STATS;
