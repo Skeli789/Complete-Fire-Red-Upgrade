@@ -6,6 +6,7 @@
 #include "../include/constants/moves.h"
 #include "../include/constants/songs.h"
 #include "../include/money.h"
+#include "../include/window.h"
 
 #include "../include/new/helper_functions.h"
 #include "../include/new/item.h"
@@ -478,7 +479,7 @@ bool8 CheckBuyableTm(u16 item, u8 taskId)
 	#ifdef REUSABLE_TMS
 		if (GetPocketByItemId(item) == POCKET_TM_HM && CheckBagHasItem(item, 1))
 		{
-			BuyMenuDisplayMessage(taskId, &gText_AlreadyOwnTM[0], Task_ReturnToItemListAfterItemPurchase);
+			BuyMenuDisplayMessage(taskId, &gText_AlreadyOwnTM[0], BuyMenuReturnToItemList);
 			return TRUE;
 		}
 		else
@@ -489,7 +490,7 @@ bool8 CheckBuyableTm(u16 item, u8 taskId)
 				return FALSE;
 			else
 			{
-				BuyMenuDisplayMessage(taskId, (void*) 0x8416842, Task_ReturnToItemListAfterItemPurchase);
+				BuyMenuDisplayMessage(taskId, (void*) 0x8416842, BuyMenuConfirmPurchase);
 				return TRUE;
 			}
 		}
@@ -506,7 +507,7 @@ bool8 CheckBuyableTm(u16 item, u8 taskId)
 	#endif
 }
 
-/*
+
 u16 CheckTmPrice(u16 item)
 {
 	#ifdef REUSABLE_TMS
@@ -518,9 +519,12 @@ u16 CheckTmPrice(u16 item)
 		return ItemId_GetPrice(item);
 	#endif	
 }
-*/
 
+#ifdef REUSABLE_TMS
 u8 CheckSingleBagTm(u16 item)
+#else
+u8 CheckSingleBagTm(void)
+#endif	
 {
 	#ifdef REUSABLE_TMS
 		if (GetPocketByItemId(item) == POCKET_TM_HM)
