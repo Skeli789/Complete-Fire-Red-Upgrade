@@ -558,9 +558,12 @@ BuyMenuReturnToItemList = 0x809BF98 | 1;
 CB2_InitBuyMenu = 0x809AE14 | 1;
 InitShopData = 0x809AF6C | 1;
 BuyMenuBuildListMenuTemplate = 0x809B188 | 1;
+BuildMartStrings = 0x809B320 | 1;
+BuyMenuPrintPriceInList = 0x809B408 | 1;
 Task_BuyHowManyDialogueInit = 0x809BCA0 | 1;
 BuyMenuConfirmPurchase = 0x809BE90 | 1;
 BuyMenuInitWindows = 0x813F66C | 1;
+BuyMenuPrint = 0x813F6F4 | 1;
 
 /* Map Functions & Overworld Functions */
 EnableInterrupts = 0x8000B68 | 1;

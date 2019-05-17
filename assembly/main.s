@@ -239,12 +239,11 @@ UnsellableTmFix:
 	beq Unsellable
 	ldr r0, =(0x8132968 +1)
 	bx r0
-	
 Unsellable:
 	ldr r0, =(0x08132928 +1)
 	bx r0
 	
-/*
+
 .align 2
 .pool
 FixBoughtTmPrice:
@@ -253,7 +252,7 @@ FixBoughtTmPrice:
 	mov r1, r0
 	ldr r0, =(0x0809B42C +1)
 	bx r0
-*/
+
 	
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ TM/HM Expansion - Fix Mart Listings

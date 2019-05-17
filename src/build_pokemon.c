@@ -943,7 +943,7 @@ static u8 GetOpenWorldBadgeCount(void)
 #endif
 
 //unused1 is used to hook in so don't use it for anything
-u8 ScriptGiveMon(u16 species, u8 level, u16 item, u32 unused1, u32 unused2, u8 ballType)
+u8 ScriptGiveMon(u16 species, u8 level, u16 item, unusedArg u32 unused1, unusedArg u32 unused2, u8 ballType)
 {
     u16 nationalDexNum;
     int sentToPc;
