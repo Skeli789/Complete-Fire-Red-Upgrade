@@ -16,6 +16,7 @@
 #include "../include/text.h"
 #include "../include/window.h"
 #include "../include/wild_encounter.h"
+#include "../include/constants/items.h"
 #include "../include/constants/pokedex.h"
 
 #include "../include/new/helper_functions.h"
@@ -220,10 +221,12 @@ u8 sp008_PokemonIVChecker(void) {
 bool8 sp009_PokemonRibbonChecker(void) {
 	u16 mon = Var8004;
 	u16 ribbon = Var8005;
+
 	if (mon >= 6)
 		return FALSE;
 	else if (ribbon > 0x1F)
 		return FALSE;
+
 	return (GetMonDataFromVar8003(MON_DATA_RIBBONS) & ribbon);
 }
 
@@ -437,10 +440,13 @@ void sp015_ModifyHeldItem(void) {
 	if (mon >= 6)
 		return;
 	
-	if (GetMonDataFromVar8003(MON_DATA_HELD_ITEM) != 0)
+	if (GetMonDataFromVar8003(MON_DATA_HELD_ITEM) != ITEM_NONE)
 	{
 		if (Var8005 != 0)
 			return;	// cant change existing item
+			
+		Var8005 = ITEM_NONE;
+		SetMonDataFromVar8003(MON_DATA_HELD_ITEM); //Remove items
 	}
 	else
 	{

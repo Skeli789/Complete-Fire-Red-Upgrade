@@ -95,7 +95,7 @@ gBattle_WIN0H = 0x2022984;
 vblank_cb_battle_WIN0V = 0x2022986;
 vblank_cb_battle_WIN1H = 0x2022988;
 vblank_cb_battle_WIN1V = 0x202298A;
-dp12_8700 = 0x2038700;
+gScanlineEffectRegBuffers = 0x2038700;
 dp12_config = 0x2039600;
 
 /* Data RAM */
@@ -108,6 +108,7 @@ gMain = 0x30030F0;
 ==========================*/
 /* Vanilla Data Addressses */
 gIconPals = 0x808AB40;
+gDummySpriteAnimTable = 0x8231CF0;
 gDummySpriteAffineAnimTable = 0x8231CFC;
 anim_082347F8 = 0x82347F8;
 gPokemonAnimTable = 0x82349BC;
@@ -148,8 +149,12 @@ surfBlobPal = 0x835b968;
 surfBlobTiles = 0x8396b08;
 stepspeeds = 0x83A719C;
 stepspeed_seq_length = 0x83A71B0;
+sBattleTransitionTable_Trainer = 0x83C68F8;
 gUnownDistributionByChamber = 0x83CA71C;
+gNewGameBirchOamAttributes = 0x83CBE50;
 sBattleIntroSlideFuncs = 0x83E7CD4;
+sMugshotsOpponentRotationScales = 0x83FA49A;
+sMugshotsOpponentCoords = 0x83FA4AE;
 sHallOfFame_MonFullTeamPositions = 0x840C268;
 sHallOfFame_MonHalfTeamPositions = 0x840C298;
 gText_MenuPokemon = 0x8415a66;
@@ -227,6 +232,7 @@ pokemon_order_func = 0x8128030 | 1;
 
 
 /* Battle Setup Functions */
+HandleOpponentPokeSlide = 0x8011D64 | 1;
 SetEnemyElevation = 0x8076494 | 1;
 OpponentHandleIntroTrainerBallThrow = 0x8038C80 | 1;
 BattleIntroSlide2 = 0x80BC6C8 | 1;
@@ -240,8 +246,9 @@ EmitIntroTrainerBallThrow = 0x800EA5C | 1;
 BattleSetup_StartWildBattle = 0x807F704 | 1;
 CreateBattleStartTask = 0x807F690 | 1;
 StartTheBattle = 0x807F868 | 1;
-HandleOpponentPokeSlide = 0x8011D64 | 1;
-
+GetBattleTransitionTypeByMap = 0x807FD90 | 1;
+GetSumOfPlayerPartyLevel = 0x807FDF4 | 1;
+GetSumOfEnemyPartyLevel = 0x807FE54 | 1;
 
 /* Battle Functions */
 sub_8001960 = 0x8001960 | 1;
@@ -633,6 +640,8 @@ calloc_ = 0x8002BB0 | 1;
 Free = 0x8002BC4 | 1;
 free_ = 0x8002BC4 | 1;
 LZDecompressVram = 0x800EBC0 | 1;
+LoadCompressedSpriteSheetOverrideBuffer = 0x800EC00 | 1;
+LoadCompressedSpritePaletteOverrideBuffer = 0x800EC5C | 1;
 LZ77UnCompAnyRAM = 0x800EC8C | 1;
 LoadCompressedSpriteSheetUsingHeap = 0x800F034 | 1;
 LoadCompressedSpritePaletteUsingHeap = 0x800F078 | 1;
@@ -710,9 +719,18 @@ FieldEffectStart = 0x8083444 | 1;
 FieldEffectFreeGraphicsResources = 0x80836B4 | 1;
 FieldEffectStop = 0x80836D8 | 1;
 FldEffPoison_Start = 0x80A0E48 | 1;
-FldEff_SurfBlob = 0x80DC3D0 | 1;
 BindFieldEffectToSprite = 0x80DC44C | 1;
 
+/*Battle Transition Functions*/
+HBlankCB_Phase2_Mugshots = 0x80D2E6C | 1;
+SpiteCB_Mugshot = 0x80D301C | 1;
+sub_80D3120 = 0x80D3120 | 1;
+IncreaseMugshotFuncState = 0x80D3138 | 1;
+IsOpponentMugshotDoneSlidingRight = 0x80D3154 | 1;
+Phase2Task_WhiteFade = 0x80D33EC | 1;
+sub_80D3E28 = 0x80D3E28 | 1;
+sub_80D3E60 = 0x80D3E60 | 1;
+FldEff_SurfBlob = 0x80DC3D0 | 1;
 
 /*Field Weather Functions*/
 Task_WeatherMain = 0x8079e0c | 1;

@@ -95,6 +95,9 @@ static void BlendFadedPalette(u16 palOffset, u16 numEntries, u8 coeff, u32 blend
 		
 		if (gPlttBufferFaded[index] == RGB_BLACK) continue; //Don't fade black
 		
+		//Fixes an issue with pre-battle mugshots
+		if (gDontFadeWhite && !gMain.inBattle && gPlttBufferFaded[index] == RGB_WHITE) continue;
+		
         struct PlttData *data1 = (struct PlttData*) &gPlttBufferFaded[index];
         s8 r = data1->r;
         s8 g = data1->g;

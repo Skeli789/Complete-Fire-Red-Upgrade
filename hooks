@@ -231,12 +231,22 @@ pcSelect_SwapDecision 0808ed8c 1
 ReadKeys 080005E8 0
 
 ##Character Customization
-#TrainerCardSprite 0810c374 2
 GetEventObjectGraphicsInfo 0805F2C8 1
 NpcSizeFix 0805e510 1
 NewNpcInfo 0805e964 4
 NpcOffscreenFix 08067a12 5
 NpcWaterFix 08067f92 5
+CharacterCustomizationUpdateTrainerFrontPic2 810BD64 1
+PlayerGenderToFrontTrainerPicId 0810C374 2
+
+#Pre-Battle Mughots
+GetTrainerBattleTransition 807FF80 0
+Phase2_Mugshot_Func2 80D28A8 1
+Mugshots_CreateOpponentPlayerSprites 80D2EA4 1
+Phase2_Mugshot_Func4 80D2A54 1
+Phase2_Mugshot_Func5 80D2AD0 1
+Phase2_Mugshot_Func8 80D2C8C 1
+ShiftTrainerMugshotSprite 80D3094 1
 
 ##Dynamic Overworld Palettes
 SetPalFossilImage 0809d5a8 2

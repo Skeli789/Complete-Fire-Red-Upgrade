@@ -523,3 +523,10 @@ DisplayStatStageMessageReturn:
 .gBattleStringsTable: .word 0x83FDF3C
 .DrasticallyStringPtr: .word DrasticallyString
 .SeverelyStringPtr: .word SeverelyString
+	
+.pool
+@0x810BD64 with r1
+CharacterCustomizationUpdateTrainerFrontPic2:
+	mov r1, r4
+	bl TryUpdateTrainerPicPalTrainerCard
+	pop {r4-r5, pc}

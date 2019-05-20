@@ -2,36 +2,48 @@
 #include "defines_battle.h"
 #include "../include/link.h"
 #include "../include/random.h"
+#include "../include/sprite.h"
 #include "../include/constants/event_objects.h"
 
 #include "../include/new/character_customization.h"
 #include "../include/new/helper_functions.h"
 
 #ifdef UNBOUND
+typedef const u8* CustomPal;
+
+extern const u8 TS_Male_Player_White_Brunette_BlackPal[];
+extern const u8 TS_Male_Player_White_Silver_RedPal[];
+extern const u8 TS_Male_Player_White_Silver_BlackPal[];
+extern const u8 TS_Male_Player_Brown_Dark_RedPal[];
+extern const u8 TS_Male_Player_Brown_Dark_BlackPal[];
+extern const u8 TS_Male_Player_Brown_Silver_RedPal[];
+extern const u8 TS_Male_Player_Brown_Silver_BlackPal[];
+
 struct CharacterCustomizationPaletteSwitch
 {
 	u16 owNum;
-	u8* frontSpritePal;
-	u8* backSpritePal;
+	const u8* frontSpritePal;
+	const u8* backSpritePal;
 };
 
-static const struct CharacterCustomizationPaletteSwitch CharacterPalSwitchTable[] = 
+
+static const struct CharacterCustomizationPaletteSwitch sCharacterPalSwitchTable[] = 
 {
-	{262, (u8*) 0, (u8*) 0x8F08000},
-	{271, (u8*) 0, (u8*) 0x8F08030},
-	{280, (u8*) 0, (u8*) 0x8F08060},
-	{289, (u8*) 0, (u8*) 0x8F08090},
-	{298, (u8*) 0, (u8*) 0x8F080C0},
-	{307, (u8*) 0, (u8*) 0x8F080F0},
-	{316, (u8*) 0, (u8*) 0x8F08120},
-	{325, (u8*) 0, (u8*) 0x8F08150},
-	{334, (u8*) 0, (u8*) 0x8F08180},
-	{343, (u8*) 0, (u8*) 0x8F081B0},
-	{352, (u8*) 0, (u8*) 0x8F081E0},
-	{361, (u8*) 0, (u8*) 0x8F08210},
-	{370, (u8*) 0, (u8*) 0x8F08240},
-	{379, (u8*) 0, (u8*) 0x8F08270},
-	{0xFFFF, (u8*) 0, (u8*) 0},
+	{262, 		TS_Male_Player_White_Brunette_BlackPal, (CustomPal) 0x8F08000},
+	{271, 		TS_Male_Player_White_Silver_RedPal, (CustomPal) 0x8F08030},
+	{280, 		TS_Male_Player_White_Silver_BlackPal, (CustomPal) 0x8F08060},
+	{289, 		TS_Male_Player_Brown_Dark_RedPal, (CustomPal) 0x8F08090},
+	{298, 		TS_Male_Player_Brown_Dark_BlackPal, (CustomPal) 0x8F080C0},
+	{307, 		TS_Male_Player_Brown_Silver_RedPal, (CustomPal) 0x8F080F0},
+	{316, 		TS_Male_Player_Brown_Silver_BlackPal, (CustomPal) 0x8F08120},
+	{325, 		(CustomPal) 0, (CustomPal) 0x8F08150},
+	{334, 		(CustomPal) 0, (CustomPal) 0x8F08180},
+	{343, 		(CustomPal) 0, (CustomPal) 0x8F081B0},
+	{352, 		(CustomPal) 0, (CustomPal) 0x8F081E0},
+	{361, 		(CustomPal) 0, (CustomPal) 0x8F08210},
+	{370, 		(CustomPal) 0, (CustomPal) 0x8F08240},
+	{379, 		(CustomPal) 0, (CustomPal) 0x8F08270},
+	{0xFFFF, 	(CustomPal) 0, (CustomPal) 0},
 };
 #endif
 
@@ -49,11 +61,16 @@ static const struct CharacterCustomizationPaletteSwitch CharacterPalSwitchTable[
 	// create 255 OW tables
 	const struct EventObjectGraphicsInfo** const gOverworldTableSwitcher[255] = 
 	{
-		(NPCPtr*) 0x839fdb0,
+		(NPCPtr*) 0x839FDB0,
 		(NPCPtr*) 0x0,
 		// etc...
 		// please note that this method makes compatability with OW Manager challenging
 	};
+#endif
+
+//This file's functions:
+#ifdef UNBOUND
+static const u8* GetAlternateTrainerSpritePal(void);
 #endif
 
 //npc_get_type hack for character customization
@@ -134,18 +151,20 @@ NPCPtr GetEventObjectGraphicsInfo(u16 graphicsId)
 	return spriteAddr;
 };
 
-
-/*
 // load trainer card sprite based on variables
 // 	hook at 810c374 via r2
-void TrainerCardSprite(u8 gender, bool8 modify) {
+u8 PlayerGenderToFrontTrainerPicId(u8 gender, bool8 modify)
+{
 	if (modify != TRUE)
-		return;
+		return gender;
+
 	u16 trainerId = VarGet(VAR_TRAINERCARD_MALE + gender);
 	if (trainerId == 0)
-		trainerId = 0x87 + gender;	
+		trainerId = 0x87 + gender;
+	
+	return trainerId;
 };
-*/
+
 
 void PlayerHandleDrawTrainerPic(void)
 {
@@ -226,15 +245,20 @@ void LoadTrainerBackPal(u16 trainerPicId, u8 paletteNum)
 {
 	#ifdef UNBOUND
 	//Changes the skin tones of the player character in Unbound
-		if (VarGet(OW_SPRITE_SWITCH_VAR) && gActiveBattler == 0) {
-			for (int i = 0; CharacterPalSwitchTable[i].owNum != 0xFFFF; ++i) {
-				if (CharacterPalSwitchTable[i].owNum == VarGet(OW_SPRITE_SWITCH_VAR)) {
-					LoadCompressedPalette(CharacterPalSwitchTable[i].backSpritePal, 0x100 + paletteNum * 16, 32);
+		u16 owNum = VarGet(OW_SPRITE_SWITCH_VAR);
+		
+		if (VarGet(OW_SPRITE_SWITCH_VAR) && gActiveBattler == 0)
+		{
+			for (int i = 0; sCharacterPalSwitchTable[i].owNum != 0xFFFF; ++i)
+			{
+				if (sCharacterPalSwitchTable[i].owNum == owNum)
+				{
+					LoadCompressedPalette(sCharacterPalSwitchTable[i].backSpritePal, 0x100 + paletteNum * 16, 32);
 					break;
 				}
-				else if (CharacterPalSwitchTable[i].owNum == 0xFFFF)
+				else if (sCharacterPalSwitchTable[i].owNum == 0xFFFF)
 					DecompressTrainerBackPic(trainerPicId, paletteNum);
-			}			
+			}	
 		}
 		else {
 			DecompressTrainerBackPic(trainerPicId, paletteNum);
@@ -244,3 +268,43 @@ void LoadTrainerBackPal(u16 trainerPicId, u8 paletteNum)
 	#endif
 }
 
+void TryUpdateTrainerPicPalTrainerCard(u16 trainerPicId, u16 palOffset)
+{
+	LoadCompressedPalette(GetTrainerSpritePal(trainerPicId), palOffset * 0x10, 0x20);
+}
+
+const u8* GetTrainerSpritePal(u16 trainerPicId)
+{
+	#ifdef UNBOUND
+	const u8* palette;
+	if (VarGet(OW_SPRITE_SWITCH_VAR) != 0)
+	{
+		if ((gSaveBlock2->playerGender == FEMALE && VarGet(VAR_TRAINERCARD_FEMALE) == 0)
+		||  (gSaveBlock2->playerGender != FEMALE && VarGet(VAR_TRAINERCARD_MALE) == 0))
+		{
+			if (trainerPicId == 0x87 || trainerPicId == 0x88)
+			{
+				if ((palette = GetAlternateTrainerSpritePal()) != NULL)
+					return palette;
+			}
+		}
+	}
+	#endif
+
+	return gTrainerFrontPicPaletteTable[trainerPicId].data;
+}
+
+#ifdef UNBOUND
+static const u8* GetAlternateTrainerSpritePal(void)
+{
+	u16 owNum = VarGet(OW_SPRITE_SWITCH_VAR);
+
+	for (int i = 0; sCharacterPalSwitchTable[i].owNum != 0xFFFF; ++i)
+	{
+		if (sCharacterPalSwitchTable[i].owNum == owNum)
+			return sCharacterPalSwitchTable[i].frontSpritePal;
+	}
+	
+	return NULL;
+}
+#endif

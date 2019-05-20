@@ -163,8 +163,8 @@ def process_image(in_file):
 				cmd = [GR, in_file] + line.split() + ['-o', out_file]
 				break #only needs the first line
 	except FileNotFoundError:
-		print("No gritflags.txt found in directory with " + in_file)
-		return 0
+		print("Error: No gritflags.txt found in directory with " + in_file)
+		sys.exit(1)
 	
 	out_file_list = make_output_img_file(out_file)
 	new_out_file = out_file_list[0]

@@ -1,9 +1,13 @@
 #include "defines.h"
 #include "defines_battle.h"
+#include "../include/battle_transition.h"
+#include "../include/battle_setup.h"
 #include "../include/event_data.h"
 #include "../include/random.h"
 #include "../include/constants/items.h"
 #include "../include/constants/songs.h"
+#include "../include/constants/trainers.h"
+#include "../include/constants/trainer_classes.h"
 
 #include "../include/new/battle_start_turn_start.h"
 #include "../include/new/battle_start_turn_start_battle_scripts.h"
@@ -964,6 +968,62 @@ u16 LoadProperMusicForLinkBattles(void)
 {
 	gBattleTypeFlags |= BATTLE_TYPE_LINK;
 	return GetMUS_ForBattle();
+}
+
+extern const u8 sBattleTransitionTable_Trainer[][2];
+u8 GetTrainerBattleTransition(void)
+{
+    u8 minPartyCount;
+    u8 transitionType;
+    u8 enemyLevel;
+    u8 playerLevel;
+
+    if (gTrainerBattleOpponent_A == TRAINER_SECRET_BASE)
+        return B_TRANSITION_CHAMPION;
+		
+    if (sTrainerEventObjectLocalId != 0) //Used for mugshots
+        return B_TRANSITION_CHAMPION;
+
+	#ifdef FR_PRE_BATTLE_MUGSHOT_STYLE
+	if (gTrainers[gTrainerBattleOpponent_A].trainerClass == CLASS_CHAMPION)
+		return B_TRANSITION_CHAMPION;
+	
+    if (gTrainers[gTrainerBattleOpponent_A].trainerClass == CLASS_ELITE_FOUR)
+    {
+        if (gTrainerBattleOpponent_A == TRAINER_LORELEI
+		||  gTrainerBattleOpponent_A == TRAINER_LORELEI_REMATCH)
+            return B_TRANSITION_LORELEI;
+        if (gTrainerBattleOpponent_A == TRAINER_BRUNO
+		||  gTrainerBattleOpponent_A == TRAINER_BRUNO_REMATCH)
+            return B_TRANSITION_BRUNO;
+        if (gTrainerBattleOpponent_A == TRAINER_AGATHA
+		||  gTrainerBattleOpponent_A == TRAINER_AGATHA_REMATCH)
+            return B_TRANSITION_AGATHA;
+        if (gTrainerBattleOpponent_A == TRAINER_LANCE
+		||  gTrainerBattleOpponent_A == TRAINER_LANCE_REMATCH)
+            return B_TRANSITION_LANCE;
+
+        return B_TRANSITION_CHAMPION;
+    }
+	#endif
+
+    if ((gTrainers[gTrainerBattleOpponent_A].doubleBattle == TRUE
+	#ifdef DOUBLE_BATTLE_FLAG
+	|| FlagGet(DOUBLE_BATTLE_FLAG)
+	#endif
+	) && ViableMonCount(gPlayerParty) >= 2)
+        minPartyCount = 2; // double battles always at least have 2 pokemon.
+    else
+        minPartyCount = 1;
+
+    transitionType = GetBattleTransitionTypeByMap();
+    enemyLevel = GetSumOfEnemyPartyLevel(gTrainerBattleOpponent_A, minPartyCount);
+    playerLevel = GetSumOfPlayerPartyLevel(minPartyCount); //Really only gets the sum of the at most the first two Pokemon on the player's team
+
+    if (enemyLevel < playerLevel) //The player's first (or first two) Pokemon's level(s) is (are) >= than the opponent's first (or first two) Pokemon's level(s)
+        return sBattleTransitionTable_Trainer[transitionType][0];
+    else
+        return sBattleTransitionTable_Trainer[transitionType][1];
 }
 
 // Determines which of the two given mons will strike first in a battle.

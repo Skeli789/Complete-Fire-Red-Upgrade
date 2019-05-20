@@ -227,3 +227,16 @@ enum
 //#define DONT_HIDE_HEALTHBOXES_ATTACKER_STATUS_MOVES //Uncommenting this line doesn't hide the healthboxes when the attacker is using a status move that targets itself.
 //#define ENCOUNTER_MUSIC_BY_CLASS //Plays music when a trainer spots the player based on the trainer class rather than the value set in the trainer data.
 #define OKAY_WITH_AI_SUICIDE //The AI is allowed to use self-destructing moves
+
+//Don't modify these values!
+#define MUGSHOT_PLAYER 0 //Don't modify these values!
+#define MUGSHOT_VS_SYMBOL 1 //Don't modify these values!
+
+#define MUGSHOT_BIG 0 //Don't modify these values!
+#define MUGSHOT_DP 1 //Don't modify these values!
+#define MUGSHOT_TWO_BARS 2 //Don't modify these values!
+
+/* Pre-Battle Mugshot Options */
+#define MUGSHOT_SPRITE MUGSHOT_VS_SYMBOL //MUGSHOT_PLAYER for regular trainer sprites, MUGSHOT_VS_SYMBOL for VS symbol to be loaded instead of player (and partner in tag battles)
+#define MUGSHOT_STYLE MUGSHOT_TWO_BARS //MUGSHOT_TWO_BARS for original FR mugshot style, MUGSHOT_DP for Gen 4 mugshot style, MUGSHOT_BIG for new large style
+//#define LOAD_MUGSHOT_SPRITE_FROM_TABLE //Uncomment if you want to be able to load mugshots from a custom image table

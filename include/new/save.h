@@ -17,7 +17,3 @@ u8 HandleLoadSector(u16 a1, const struct SaveBlockChunk* chunks);
 u8 HandleWriteSector(u16 chunkId, const struct SaveBlockChunk* chunks);
 u8 HandleSavingData(u8 saveType);
 void NewGameWipeNewSaveData(void);
-
-//Exported Data Structures
-const u8* ParasiteSizeIndex;
-extern const struct SaveSectionOffset SaveSectionOffsets[];

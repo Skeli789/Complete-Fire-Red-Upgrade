@@ -2,12 +2,45 @@
 
 #include "global.h"
 
+//Exported Functions
+void __attribute__((long_call)) sub_80D3120(s16 spriteId, s16 value);
+void __attribute__((long_call)) IncreaseMugshotFuncState(s16 spriteId);
+s16 __attribute__((long_call)) IsOpponentMugshotDoneSlidingRight(s16 spriteId);
+void __attribute__((long_call)) HBlankCB_Phase2_Mugshots(void);
+void __attribute__((long_call)) sub_80D3E28(u16** a0, u16** a1);
+void __attribute__((long_call)) SpiteCB_Mugshot(struct Sprite* sprite);
+
+//Exported Data Structures
+struct TransitionData
+{
+    vu8 VBlank_DMA;
+    u16 WININ;
+    u16 WINOUT;
+    u16 WIN0H;
+    u16 WIN0V;
+    u16 field_A; // unused
+    u16 field_C; // unused
+    u16 BLDCNT;
+    u16 BLDALPHA;
+    u16 BLDY;
+    s16 field_14;
+    s16 field_16;
+    s16 BG0HOFS_1;
+    s16 BG0HOFS_2;
+    s16 BG0VOFS; // used but not set
+    s16 field_1E; // unused
+    s16 field_20;
+    s16 field_22; // unused
+    s16 data[11];
+};
+
+//Exported Constants
 enum // TRANSITION_MUGSHOT
 {
-    MUGSHOT_SYDNEY,
-    MUGSHOT_PHOEBE,
-    MUGSHOT_GLACIA,
-    MUGSHOT_DRAKE,
+    MUGSHOT_LORELEI,
+    MUGSHOT_BRUNO,
+    MUGSHOT_AGATHA,
+    MUGSHOT_LANCE,
     MUGSHOT_CHAMPION,
     MUGSHOTS_COUNT
 };
@@ -24,12 +57,13 @@ enum // TRANSITION_MUGSHOT
 #define B_TRANSITION_WHITEFADE              9
 #define B_TRANSITION_GRID_SQUARES           10
 #define B_TRANSITION_SHARDS                 11
-#define B_TRANSITION_LORLEI                 12
+#define B_TRANSITION_LORELEI                 12
 #define B_TRANSITION_BRUNO                  13
 #define B_TRANSITION_AGATHA                 14
 #define B_TRANSITION_LANCE                  15
 #define B_TRANSITION_CHAMPION               16
 #define B_TRANSITION_SPIRAL_OUTWARRDS       17
+#define B_TRANSITION_COUNT                  18
 
 // added in Emerald
 #define B_TRANSITION_AQUA                   17
@@ -57,4 +91,4 @@ enum // TRANSITION_MUGSHOT
 #define B_TRANSITION_39                     39
 #define B_TRANSITION_40                     40
 #define B_TRANSITION_41                     41
-#define B_TRANSITION_COUNT                  42
+//#define B_TRANSITION_COUNT                  42

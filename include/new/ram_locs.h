@@ -93,6 +93,7 @@ struct Clock
 		#define gWeatherPtr ((struct Weather*) 0x2037F34)
 
 /*u8*/  #define sPaletteGammaTypes ((u8*) 0x20386A4)
+		extern u16 gScanlineEffectRegBuffers[2][0x3C0];
 
 		//#define gEncounterRate ((struct EncounterRate*) 0x20386D0)
 		#define sWildEncountersDisabled (*((u8*) 0x20386DC))
@@ -172,9 +173,10 @@ struct Clock
 //extern struct ItemSlot gBagTMHM[128] //0x203C41C
 //extern struct ItemSlot gBagBerries[75] //0x203C61C
 
-#define gLastUsedRepel (*(u8*) 0x203C748)
+#define gLastUsedRepel (*(u16*) 0x203C748)
 //#define sBagItemAmounts ((u16*) 0x203C74A)
 #define gSelectedOrderFromParty ((u8*) 0x203C750)
-//#define [FILL_IN_NEXT] //0x203C756
+#define gDontFadeWhite (*((bool8*) 0x203C756))
+//#define [FILL_IN_NEXT] //0x203C757
 //extern struct CompressedPokemon gBox20[30] //0x203CA00
 //extern struct CompressedPokemon gBox21[30] //0x203D0CC

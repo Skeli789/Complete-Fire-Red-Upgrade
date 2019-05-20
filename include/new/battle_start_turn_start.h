@@ -9,6 +9,7 @@
  
 //Exported Functions
 u16 GetMUS_ForBattle(void);
+u8 GetTrainerBattleTransition(void);
 u8 GetWhoStrikesFirst(u8 bank1, u8 bank2, bool8 ignoreMovePriorities);
 s8 PriorityCalc(u8 bank, u8 action, u16 move);
 s32 BracketCalc(u8 bank);

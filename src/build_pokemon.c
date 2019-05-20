@@ -55,6 +55,8 @@ static u8 GetOpenWorldBadgeCount(void);
 
 void BuildTrainerPartySetup(void) 
 {
+	gDontFadeWhite = FALSE;
+	
 	if (gBattleTypeFlags & (BATTLE_TYPE_TOWER_LINK_MULTI))
 	{
 		BuildFrontierParty(&gEnemyParty[0], gTrainerBattleOpponent_A, TRUE, FALSE, B_SIDE_OPPONENT);

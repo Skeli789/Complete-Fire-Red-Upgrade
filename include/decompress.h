@@ -11,7 +11,8 @@ void __attribute__((long_call)) LZ77UnCompWram(const void *src, void *dest);
 void __attribute__((long_call)) LZ77UnCompVram(const void *src, void *dest);
 bool8 __attribute__((long_call)) LoadCompressedSpriteSheetUsingHeap(const struct CompressedSpriteSheet* src);
 bool8 __attribute__((long_call)) LoadCompressedSpritePaletteUsingHeap(const struct CompressedSpritePalette *src);
-
+void __attribute__((long_call)) LoadCompressedSpritePaletteOverrideBuffer(const struct CompressedSpritePalette *a, void *buffer);
+void __attribute__((long_call)) LoadCompressedSpriteSheetOverrideBuffer(const struct CompressedSpriteSheet *src, void *buffer);
 /*
 u16 LoadCompressedObjectPic(const struct CompressedSpriteSheet *src);
 void LoadCompressedObjectPicOverrideBuffer(const struct CompressedSpriteSheet *src, void *buffer);

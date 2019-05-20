@@ -439,6 +439,16 @@ const u8* BattleSetup_ConfigureTrainerBattle(const u8* data)
     }
 }
 
+bool8 IsTrainerBattleModeAgainstTwoOpponents(void)
+{
+	return sTrainerBattleMode == TRAINER_BATTLE_MULTI || sTrainerBattleMode == TRAINER_BATTLE_TWO_OPPONENTS || FlagGet(TWO_OPPONENT_FLAG);
+}
+
+bool8 IsTrainerBattleModeWithPartner(void)
+{
+	return sTrainerBattleMode == TRAINER_BATTLE_MULTI || sTrainerBattleMode == TRAINER_BATTLE_TAG || FlagGet(TAG_BATTLE_FLAG);
+}
+
 static void InitTrainerBattleVariables(void)
 {
     sTrainerBattleMode = 0;
@@ -905,7 +915,7 @@ static void UpdateJPANStepCounters(void)
 
 static const u8* GetCustomWalkingScript(void)
 {
-	if (gWalkingScript != NULL)
+	if (gWalkingScript >= (u8*) 0x8000000) //A real script
 		return gWalkingScript;
 
 	u8 scriptInd = VarGet(DEFAULT_WALKING_SCRIPT_VAR);
