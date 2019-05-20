@@ -158,7 +158,7 @@ u8 sp007_PokemonEVContestStatsChecker(void) {
 	u16 mon = Var8004;
 	u16 stat = Var8005;
 	
-	if (mon >= 6)
+	if (mon >= PARTY_SIZE)
 		return 0;
 	
 	switch(stat) {
@@ -222,12 +222,15 @@ bool8 sp009_PokemonRibbonChecker(void) {
 	u16 mon = Var8004;
 	u16 ribbon = Var8005;
 
-	if (mon >= 6)
+	if (mon >= PARTY_SIZE)
 		return FALSE;
 	else if (ribbon > 0x1F)
 		return FALSE;
+	
+	if (GetMonDataFromVar8003(MON_DATA_RIBBONS) & gBitTable[ribbon])
+		return TRUE;
 
-	return (GetMonDataFromVar8003(MON_DATA_RIBBONS) & ribbon);
+	return FALSE;
 }
 
 
@@ -280,43 +283,45 @@ item_t sp00E_CheckHeldItem(void) {
 void sp00F_EVAdderSubtracter(void) {
 	u16 mon = Var8004;
 	u16 stat = Var8005;
-	u16 amount = Var8006;
-	//u16 new;
+	s32 amount = Var8006;
 	
-	if (mon >= 6)
+	if (mon >= PARTY_SIZE)
 		return;	
 	
-	//u8 curr = sp007_PokemonEVContestStatsChecker();	// current val
+	s16 curr = sp007_PokemonEVContestStatsChecker();	//Current val
+
 	if (amount & 0x100) 
 	{
-		// subtracting
 		amount ^= 0x100;
-		Var8005 = Var8006 - amount;
+		amount *= -1;
+		if (amount < -EV_CAP)
+			amount = -255;
 	}
-	else 
-		Var8005 = Var8006 + amount;
-	// limit to [0,EV_CAP]
-	if (Var8005 > EV_CAP)
-		Var8005 = EV_CAP;
-	else if (Var8005 < 0)
-		Var8005 = 0;
+	else if (amount > EV_CAP)
+		amount = EV_CAP;
 	
-	// setter at Var8005
-	Var8006 = 0;
+	curr += amount;
+	if (curr < 0)
+		curr = 0;
+	else if (curr > EV_CAP)
+		curr = EV_CAP;
+	
+	Var8005 = curr;
+	
 	switch(stat)
 	{
-		case CheckIVs_HP:
-			return SetMonDataFromVar8003(MON_DATA_HP_IV);
-		case CheckIVs_Atk:
-			return SetMonDataFromVar8003(MON_DATA_ATK_IV);
-		case CheckIVs_Def:
-			return SetMonDataFromVar8003(MON_DATA_DEF_IV);
-		case CheckIVs_Spd:
-			return SetMonDataFromVar8003(MON_DATA_SPEED_IV);
-		case CheckIVs_SpAtk:
-			return SetMonDataFromVar8003(MON_DATA_SPATK_IV);
-		case CheckIVs_SpDef:
-			return SetMonDataFromVar8003(MON_DATA_SPDEF_IV);
+		case CheckEVs_HP:
+			return SetMonDataFromVar8003(MON_DATA_HP_EV);
+		case CheckEVs_Atk:
+			return SetMonDataFromVar8003(MON_DATA_ATK_EV);
+		case CheckEVs_Def:
+			return SetMonDataFromVar8003(MON_DATA_DEF_EV);
+		case CheckEVs_Spd:
+			return SetMonDataFromVar8003(MON_DATA_SPEED_EV);
+		case CheckEVs_SpAtk:
+			return SetMonDataFromVar8003(MON_DATA_SPATK_EV);
+		case CheckEVs_SpDef:
+			return SetMonDataFromVar8003(MON_DATA_SPDEF_EV);
 	}
 }
 
@@ -365,19 +370,24 @@ void sp010_IVSetter(void) {
 void sp011_RibbonSetterCleaner(void) {
 	u16 mon = Var8004;
 	u16 ribbon = Var8005;
-	//bool8 clear = FALSE;
+	u32* ribbonArray = (u32*) &(((u8*) 0x20242D0)[mon * sizeof(struct Pokemon)]);
 	
-	if (mon >= 6)
+	if (mon >= PARTY_SIZE)
 		return;
-	else if (ribbon > 0x1F)
-		return;
-	
-	// check set vs clear
+
 	if (ribbon & 0x100)
-		Var8005 = 0;
+	{
+		ribbon ^= 0x100;
+		*ribbonArray &= ~gBitTable[ribbon];
+	}
+	else if (ribbon > 0x1F)
+	{
+		return;
+	}
 	else
-		Var8005 = 1;
-	SetMonDataFromVar8003(MON_DATA_RIBBONS);
+	{
+		*ribbonArray |= gBitTable[ribbon];
+	}
 }
 
 void sp012_PokerusSetter(void) {

@@ -7,7 +7,7 @@ CreateSpriteLoadTable 0815fc5c
 ##Specials
 sp007_PokemonEVContestStatsChecker 0815FD7C
 sp008_PokemonIVChecker 0815FD80
-#sp009_PokemonRibbonChecker 0815FD84
+sp009_PokemonRibbonChecker 0815FD84
 sp00A_CheckPokerusTimer 0815FD88
 sp00B_CheckPokeball 0815FD8C
 sp00C_CheckCaptureLocation 0815FD90
