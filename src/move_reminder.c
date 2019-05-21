@@ -87,27 +87,7 @@ void InitMoveRelearnerMoveIDs(void)
 	}
 }
 
-/*
-u8 LoadMoveRelearnerMovesList(const struct ListMenuItem *items, u16 numChoices)
-{
-    //gMultiuseListMenuTemplate = sMoveRelearnerMovesListTemplate;
-	gMultiuseListMenuTemplate->moveCursorFunc = sMoveRelearnerMovesListTemplate;
-	
-	
-	gMultiuseListMenuTemplate->totalItems = numChoices;
-    gMultiuseListMenuTemplate->items = items;
 
-    if (numChoices < 6)
-    {
-        gMultiuseListMenuTemplate->maxShowed = numChoices;
-    }
-    else
-    {
-        gMultiuseListMenuTemplate->maxShowed = 6;
-    }
-    return gMultiuseListMenuTemplate->maxShowed;
-}
-*/
 
 u8 GetRelearnableMoves(pokemon_t* mon)
 {
@@ -134,23 +114,10 @@ u8 GetRelearnableMoves(pokemon_t* mon)
 	// buffer nickname
 	GetMonData(mon, MON_DATA_NICKNAME, &gStringVar1[0]);
 	
-	//gMoveRelearnerStruct->numToShowAtOnce = LoadMoveRelearnerMovesList(gMoveRelearnerStruct->menuItems, gMoveRelearnerStruct->numMenuChoices);
-	
-	//LoadMoveRelearnerMovesList(gMoveRelearnerStruct->menuItems, gMoveRelearnerStruct->numMenuChoices);
-	
-	//gMultiuseListMenuTemplate->totalItems = gMoveRelearnerStruct->numMenuChoices;
-	
 	return gMoveRelearnerStruct->numMenuChoices;	//total list count
 }
 
 
-
-/*
-void SetMoveReminderMultiTemplate(void)
-{
-	gMultiuseListMenuTemplate->items = &gMoveRelearnerStruct->menuItems[0];
-}
-*/
 
 
 extern const u8 gText_MoveRelearnerAskTeach[];
