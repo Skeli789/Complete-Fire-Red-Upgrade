@@ -527,6 +527,16 @@ IncrementEncounterProbabilityBonus = 0x8083410 | 1;
 /* Diploma Screen Functions */
 ClearAndInitDiploma = 0x80F4E24 | 1;
 
+/* Move Relearner Functions */
+Move_Relearner = 0x80E4634 | 1;
+Task_WaitForFadeOut = 0x80E4660 | 1;
+CB2_InitLearnMove = 0x80E478C | 1;
+CB2_MoveRelearnerMain = 0x80E4870 | 1;
+DoMoveRelearnerMain = 0x80E48F4 | 1;
+InitMoveRelearnerStruct = 0x80E4F54 | 1;
+GetNumMoveRelearnerMoves = 0x8043C84 | 1;
+MoveRelearnerCursorCallback = 0x80E553C | 1;
+
 
 /* Item Functions */
 IsMail = 0x80980F8 | 1;

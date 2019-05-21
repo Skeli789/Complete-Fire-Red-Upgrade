@@ -107,7 +107,7 @@ struct Clock
 
 /*u8*/  #define gAbilitiesPerBank ((u8*) 0x2039A30)
 		//#define gStringInfo ((struct BattleMsgData*) *((u32*) 0x2039A34))
-
+		
 		#define sHofFadingRelated (*((u32*) 0x0203AB34))
 		#define gHasHallOfFameRecords (*(u8*) 0x0203AB44)
 
@@ -124,7 +124,9 @@ struct Clock
 		#define PalTagsStart *((u8*)0x3003E58)
 
 		#define PalTags ((u16*)0x3000DE8)
-
+		
+		#define gMultiuseListMenuTemplate ((struct ListMenuTemplate*) ((u32*) 0x3005E70))
+		
 		#define gScriptEnv1 ((struct ScriptContext*) 0x03000EB0)
 		#define gScriptEnv2 ((struct ScriptContext*) 0x03000F28)
 		#define gLoadPointer (*((const u8**) 0x03000f14))

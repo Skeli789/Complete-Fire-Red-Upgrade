@@ -42,20 +42,20 @@
 #define RUNNING_ENABLED_FLAG 0x82F //The player can only run if this flag is set. If commented, the player will start the game with running shoes.
 #define DISABLE_BAG_FLAG 0x915 //The bag can't be used in-battle if this flag is set
 
-// Start Menu/Poketools Flags
+/*===== Start Menu/Poketools Flags =====*/
 //#define FLAG_SYS_BAG_GET 0x916	//Toggle bag on/off. uncomment to always have on
 //#define FLAG_SYS_PLAYER_GET 0x917	//Toggle [player] on/off. uncomment to always have on
 //#define FLAG_SYS_SAVE_GET 0x918	//Toggle save on/off. uncomment to always have on
 #define FLAG_SYS_DEXNAV 0x919	//Flag to turn dexnav on/off in start menu (if undefined, this will eliminate dexnav from the start menu)
-#define FLAG_POKETOOLS_MENU 0x91A  //Flag for Poke Tools on the start menu
+#define FLAG_POKETOOLS_MENU 0x91A  //Flag to create secondary, Poke Tools, start menu
 
-//Pedometer Flags as in JPAN Engine
+/*===== Pedometer Flags as in JPAN Engine =====*/
 #define FLAG_LONG_PEDOMETER 0x920	// 32 bit
 #define FLAG_MED_PEDOMETER 0x921	// 16 bit
 #define FLAG_SMALL_PEDOMETER_1 0x922	// 8 bit
 #define FLAG_SMALL_PEDOMETER_2 0x923	// 8 bit
 
-//Battle Tower Options
+/*===== Battle Tower Options =====*/
 #define BATTLE_TOWER_FLAG 0x930
 #define BATTLE_TOWER_POKE_NUM 0x5015 //Var
 #define BATTLE_TOWER_POKE_LEVEL 0x5016 //Var
@@ -71,7 +71,7 @@ enum
 	TOWER_TRAINER_ID_PARTNER_VAR, //0x501D	//If your partner is randomized, its Id would be found in this var
 };
 
-//Character Customization
+/*===== Character Customization =====*/
 #define VAR_PLAYER_WALKRUN 0x501E		//Change walking, running player sprite. 0x4054 in JPAN engine.
 #define VAR_PLAYER_BIKING 0x501F		//Change biking player sprite. 0x4055 in JPAN engine.
 #define VAR_PLAYER_SURFING 0x5020		//Change player surfing sprite. 0x4056 in JPAN engine.
@@ -83,12 +83,12 @@ enum
 
 #define VAR_RUNTIME_CHANGEABLE 0x5026		//'Secret Base' variables, save 15 consecutive variables for this. 0x4080 in JPAN engine.
 
-//Healing Place as in JPAN's Engine
+/*===== Healing Place as in JPAN's Engine =====*/
 #define VAR_HEALINGMAP 0x5035 //0x405A in JPAN's Engine
 #define VAR_HEALING_XPOS 0x5036 //0x405B in JPAN's Engine
 #define VAR_HEALING_YPOS 0x5037 //0x405C in JPAN's Engine
 
-//====TM/HM Options (vastly improved from other versions!)
+/*===== TM/HM Options (vastly improved from other versions!) =====*/
 #define EXPANDED_TMSHMS  //Comment this out if you want to keep 50 tms/8 hms
 #define NUM_TMS 50	//keep this defined even if EXPANDED_TMSHMS is not!!
 #define NUM_HMS 8	//keep this defined even if EXPANDED_TMSHMS is not!!
@@ -96,7 +96,11 @@ enum
 //#define DELETABLE_HMS		//Uncomment this if you want HMs to be deletable without the Move Deleter
 //#define REUSABLE_TMS		//if defined, don't forget to give all TMs a Mystery byte of 1!
 
-//General Options
+/*===== Move Relearner Options =====*/
+#define EXPAND_MOVE_REMINDER
+
+
+/*===== General Options =====*/
 #define TIME_MORNING_START 4		//4:00 AM -  4:00
 #define TIME_DAY_START 8			//8:00 AM -  8:00
 #define TIME_EVENING_START 17		//5:00 PM - 17:00
@@ -173,7 +177,7 @@ enum
 #define AUTO_NAMING_SCREEN_SWAP  //comment out if you don't want naming screens to auto-swap to lower-case after first upper-case letter
 #define MULTIPLE_PREMIER_BALLS_AT_ONCE //Comment out if you don't want the player received a Premier ball for every 10 Poke Balls purchased (only 1 no matter how many over 10 balls the player buys)
 
-/* Misc Effect Options */
+/*===== Misc Effect Options =====*/
 //#define OLD_BURN_DAMAGE //Uncomment this line if you want burn damage to do 1/8 of max health instead of 1/16
 //#define OLD_PARALYSIS_SPD_DROP //Uncomment this line if you want paralysis to lower Spd down to 1/4 instead of 1/2
 //#define OLD_CONFUSION_CHANCE //Uncomment this line if you want the chance that confusion will stop your attack to 50% instead of 33%
@@ -182,11 +186,11 @@ enum
 //#define NO_SHEER_COLD_NERF //Uncomment this line to remove all Gen 7 Sheer Cold nerfs
 //#define OLD_MOVE_SPLIT //Uncomment this line to use the Physical/Special split based on move types. Status moves are still set with the split byte.
 
-/* Ability Options */
+/*===== Ability Options =====*/
 //#define OLD_GALE_WINGS //Uncomment this line if you want Gale Wings to activate regardless of the user's HP
 //#define OLD_PRANKSTER //Uncomment this line if you want Prankster to be able to affect Dark-Types
 
-/* Damage Calculation Options */
+/*===== Damage Calculation Options =====*/
 //#define OLD_CRIT_DAMAGE //Uncomment this line if you want Critical hits to do 2x damage, and 3x with Sniper
 //#define CRIT_CHANCE_GEN_6 //Uncomment this line if you want the Gen 6 crit chance
 //#define CRIT_CHANCE_GEN_2_TO_5 //Uncomment this line if you want the Gens 2-5 crit chance
@@ -200,11 +204,11 @@ enum
 //#define OLD_SOUL_DEW_EFFECT //Uncomment this line if you want the Soul Dew to double Latios + Latias' Sp. Atk & Sp. Def
 //#define OLD_PARENTAL_BOND_DAMAGE //Uncomment this line to make the second hit of Parental Bond do 50% of the original damage instead of 25%
 
-/* Capturing Pokemon Options */
+/*===== Capturing Pokemon Options =====*/
 //#define NO_HARDER_WILD_DOUBLES //In Gen 5, Pokemon encountered in double wild battles were harder to catch (based on how many species are owned). Uncomment this line to remove the catch rate decrement.
 #define CRITICAL_CAPTURE //Uncomment this line to enable the Critical Capture feature
 
-/* Exp Gain Options */
+/*===== Exp Gain Options =====*/
 //#define OLD_EXP_SHARE //Uncomment this line to make the Exp. Share work like it did before Gen 6
 //#define TRAINER_EXP_BOOST // Uncomment this line to give the Exp boost for battling a Trainer's Pokemon (Pre Gen 7)
 //#define OLD_EXP_SPLIT //Uncomment this line to split the Exp amongst all participating pokemon (Pre Gen 6)
@@ -212,7 +216,7 @@ enum
 #define GEN_7_BASE_EXP_YIELD //Base Exp Yield is read from gBaseExpBySpecies to use larger values that match Gen 7
 #define CAPTURE_EXPERIENCE //Experience is awared upon capturing Pokemon.
 
-/* Other Options */
+/*===== Other Options =====*/
 //#define NO_GHOST_BATTLES //Uncomment this line to disable the Ghost battle feature from Pokemon Tower in Lavender town
 //#define GEN_4_PLAYER_RUNNING_FIX //Uncommmenting this line will increase the lag between frames as the player OW runs, to simulate a more accurate Gen 4 running effect
 //#define GEN4_PLUS_SELECTION_SCREEN //Uncommenting this line does not give you the Gen 4+ selection screen, it only adds features that supports it

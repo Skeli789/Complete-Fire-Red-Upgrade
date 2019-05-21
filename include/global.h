@@ -752,4 +752,6 @@ struct BrmBoxes {
 	/*0x17*/ u8 numBrmOpts;		// number of brm options
 };
 
+#define gText_Cancel ((u8*) 0x84161C1)
+
 #endif // GUARD_GLOBAL_H
