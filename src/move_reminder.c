@@ -50,15 +50,13 @@ extern const u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
 	};
 #endif
 
-
-struct MoveRelearner MoveRelearnerStruct;
-
-#define gMoveRelearnerStruct ((struct MoveRelearner*) (*(u32*) 0x203AAB4))
+#define gMoveRelearnerStruct (*((struct MoveRelearner**) 0x203AAB4))
 
 
 void InitLearnMoveFix(void)
 {
-	*sMoveRelearnerStructPtr = Calloc(sizeof(MoveRelearnerStruct));
+	//*sMoveRelearnerStructPtr = Calloc(sizeof(MoveRelearnerStruct));
+	gMoveRelearnerStruct = Calloc(sizeof(*gMoveRelearnerStruct));
 }
 
 

@@ -157,10 +157,6 @@ const struct WindowTemplate sMoveRelearnerWindowTemplates[] =
 };
 
 
-typedef u32* sMoveLearnPtr;
-#define sMoveRelearnerStructPtr ((sMoveLearnPtr*) 0x203AAB4)
-
-
 void __attribute__((long_call)) CB2_InitLearnMove(void);
 u8 __attribute__((long_call)) GetNumMoveRelearnerMoves(pokemon_t* mon, void *moveLocs);
 
