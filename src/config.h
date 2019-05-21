@@ -97,7 +97,8 @@ enum
 //#define REUSABLE_TMS		//if defined, don't forget to give all TMs a Mystery byte of 1!
 
 /*===== Move Relearner Options =====*/
-#define EXPAND_MOVE_REMINDER
+#define EXPAND_MOVE_REMINDER	//comment this out if you want the maximum number of moves for the move reminder to be 24
+#define EXPAND_MOVE_REMINDER_DESCRIPTION	//keep this defined to have 5 lines for the move description as opposed to 4 in the move reminder menu
 
 
 /*===== General Options =====*/

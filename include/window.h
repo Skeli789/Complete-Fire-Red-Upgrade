@@ -47,7 +47,7 @@ struct Window
     u8 *tileData;
 };
 
-void __attribute__((long_call)) InitWindows(const struct WindowTemplate* templates);
+bool16 __attribute__((long_call)) InitWindows(const struct WindowTemplate* templates);
 u16 __attribute__((long_call)) AddWindow(const struct WindowTemplate *template);
 void __attribute__((long_call)) RemoveWindow(u8 windowId);
 void __attribute__((long_call)) FreeAllWindowBuffers(void);

@@ -4,8 +4,10 @@
 
 #include "../include/constants/moves.h"
 
+#include "../include/new/learn_move.h"
+#include "../include/new/move_reminder.h"
+
 extern const u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
-extern u8 GetMoveRelearnerMoves(struct Pokemon* mon, u16* moves);
 
 // original structure
 #ifndef EXPAND_MOVE_REMINDER
@@ -159,5 +161,17 @@ const u8* CopyMoveReminderMoveName(u8 cursor)
 	GetMonData(&gPlayerParty[gMoveRelearnerStruct->partySlot], MON_DATA_NICKNAME, &gStringVar3[0]);
 	return &gText_MoveRelearnerAskTeach[0];
 }
+
+bool16 InitMoveRelearnerWindows(void)
+{
+	#ifdef EXPAND_MOVE_REMINDER_DESCRIPTION
+		return InitWindows(sMoveRelearnerExpandedTemplates);
+	#else
+		return InitWindows(sMoveRelearnerWindowTemplates);
+	#endif
+}
+
+
+
 
 

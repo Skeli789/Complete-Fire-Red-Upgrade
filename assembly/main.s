@@ -126,6 +126,7 @@ script functions/specials in asm - hooks and returns
 .global FixLoadMoveId5
 .global FixMoveNameLoading
 .global FixMoveReminderDataLoading
+.global FixWindowTemplates
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Move Reminder - fix move to load data from
@@ -164,17 +165,24 @@ FixNumRelearnableMoves:
 	ldr r2, =(0x080E51AA +1)
 	bx r2
 
-/*
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@ Move Reminder - fix multi use template
+@ 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .align 2
 .pool
-FixMultiUseTemplate:
-	bl SetMoveReminderMultiTemplate
-	ldr r3, =(0x080E51D6 +1)
-	bx r3
-*/
+FixWindowTemplates:
+	push {r1-r7}
+	bl InitMoveRelearnerWindows
+	pop {r1-r7}
+	lsl r0, r0, #0x10
+	cmp r0, #0x0
+	beq ExitMoveRelearnGuiInit
+	ldr r1, =(0x080E46C0 +1)
+	bx r1
+ExitMoveRelearnGuiInit:
+	ldr r1, =(0x80E476C +1)
+	bx r1
+	
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Move Reminder Calloc
