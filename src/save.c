@@ -4,9 +4,6 @@
 
 #include "../include/new/save.h"
 
-// yes that's var 0x8000. It will be used for save index tracking.
-const u8* ParasiteSizeIndex = (u8*) 0x020370B8;
-
 // Each 4 KiB flash sector contains 3968 bytes of actual data followed by a 128 byte footer
 #define SECTOR_DATA_SIZE 0xFF0
 #define SECTOR_FOOTER_SIZE 128

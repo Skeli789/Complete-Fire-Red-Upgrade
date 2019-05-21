@@ -81,6 +81,9 @@
 
 #endif
 
+#define SE_HAZURE 26
+#define SE_BT_START 97
+
 #define MUS_DUMMY 0
 #define SE_STOP 0
 #define SE_KAIFUKU 1
@@ -114,7 +117,6 @@
 #define SE_O 29
 #define SE_N 30
 #define SE_SEIKAI 31
-#define SE_HAZURE 32
 #define SE_JITE_PYOKO 34
 #define SE_MU_PACHI 35
 #define SE_TK_KASYA 36
@@ -185,7 +187,6 @@
 #define SE_C_PIKON 101
 #define SE_REAPOKE 102
 #define SE_OP_BASYU 103
-#define SE_BT_START 104
 #define SE_DENDOU 105
 #define SE_JIHANKI 106
 #define SE_TAMA 107

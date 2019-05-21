@@ -9,6 +9,7 @@ import textwrap
 import sys
 
 OFFSET_TO_PUT = 0xc12ff0
+SOURCE_ROM = "Pokemon Unbound.gba"
 
 from datetime import datetime
 
@@ -179,7 +180,7 @@ def bytereplace(rom, offset, data):
 				ar += 1
 
 starttime = datetime.now()
-shutil.copyfile("Pokemon Unbound.gba", ROM_NAME)
+shutil.copyfile(SOURCE_ROM, ROM_NAME)
 with open(ROM_NAME, 'rb+') as rom:
 		print("Inserting code.")
 		table = symbols(get_text_section())

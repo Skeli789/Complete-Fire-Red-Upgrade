@@ -34,7 +34,10 @@ void __attribute__((long_call)) CB2_EndTrainerBattle(void);
 bool8 __attribute__((long_call)) TrainerCanApproachPlayer(struct MapObject* trainerObj);
 void __attribute__((long_call)) TrainerApproachPlayer(struct MapObject* trainerObj, u8 range);
 u16 __attribute__((long_call)) GetRematchTrainerId(u16 opponentId);
-
+u8 __attribute__((long_call)) GetBattleTransitionTypeByMap(void);
+u16 __attribute__((long_call)) GetSumOfEnemyPartyLevel(u16 opponentId, u8 numMons);
+u16 __attribute__((long_call)) GetSumOfPlayerPartyLevel(u8 numMons);
+	
 /*
 void __attribute__((long_call)) BattleSetup_StartScriptedWildBattle(void);
 u8 __attribute__((long_call)) BattleSetup_GetTerrainId(void);

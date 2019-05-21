@@ -13,6 +13,15 @@
 #define TRAINER_STEVEN_PARTNER              3075
 #define TRAINER_CUSTOM_PARTNER              3076
 
+#define TRAINER_LORELEI				0x19A
+#define TRAINER_LORELEI_REMATCH		0x2DF
+#define TRAINER_BRUNO				0x19B
+#define TRAINER_BRUNO_REMATCH		0x2E0
+#define TRAINER_AGATHA				0x19C
+#define TRAINER_AGATHA_REMATCH		0x2E1
+#define TRAINER_LANCE				0x19D
+#define TRAINER_LANCE_REMATCH		0x2E2
+
 #ifndef UNBOUND //CHANGE THESE
 
 #define TRAINER_ENCOUNTER_MUSIC_MALE         0 // standard male encounter music

@@ -5,6 +5,7 @@
 #include "sprite.h"
 
 extern const struct SpriteTemplate *const gFieldEffectObjectTemplatePointers[36];
+extern const struct OamData gNewGameBirchOamAttributes;
 
 enum FieldEffectScriptIdx
 {

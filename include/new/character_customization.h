@@ -14,8 +14,11 @@ typedef const struct EventObjectGraphicsInfo* NPCPtr;
 //Exported Functions
 u16 GetBackspriteId(void);
 void LoadTrainerBackPal(u16 trainerPicId, u8 paletteNum);
+const u8* GetTrainerSpritePal(u16 trainerPicId);
 
 //Hooked In Functions
 NPCPtr GetEventObjectGraphicsInfo(u16 graphicsId);
+u8 PlayerGenderToFrontTrainerPicId(u8 gender, bool8 modify);
 void PlayerHandleDrawTrainerPic(void);
 void PlayerHandleTrainerSlide(void);
+void TryUpdateTrainerPicPalTrainerCard(u16 trainerPicId, u16 palOffset);

@@ -12,6 +12,8 @@
  
 //Exported Functions
 const u8* BattleSetup_ConfigureTrainerBattle(const u8* data);
+bool8 IsTrainerBattleModeAgainstTwoOpponents(void);
+bool8 IsTrainerBattleModeWithPartner(void);
 void AllowTrainerIncrementation(void);
 void MoveSecondNPCForTwoOpponentSighting(void);
 void LoadProperIntroSpeechForTwoOpponentSighting(void);

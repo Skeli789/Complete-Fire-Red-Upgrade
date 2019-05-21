@@ -9,7 +9,7 @@ import os
 ############
 
 ROM_NAME = "Pokemon Unbound.gba"  #the name of your rom
-OFFSET_TO_PUT = 0xc12ff0
+OFFSET_TO_PUT = 0xc12ff0 #0xc12ff0
 SEARCH_FREE_SPACE = False #Set to True if you want the script to search for free space;Set to False if you don't want to search for free space as you for example update the engine
 
 #############
@@ -61,6 +61,7 @@ def edit_linker(offset):
 	
 def edit_insert(offset):
 	file_change_line("./scripts/insert.py", 11, "OFFSET_TO_PUT = " + hex(offset) + '\n')
+	file_change_line("./scripts/insert.py", 12, 'SOURCE_ROM = "' + ROM_NAME + '"\n')
 		
 def build_code():
 	os.system("python scripts/build.py")
