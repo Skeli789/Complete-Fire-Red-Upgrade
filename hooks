@@ -435,3 +435,15 @@ PokeDudeRestoreTMCaseHook 813318C 0
 AllocateBerryPouchSpace 813D1C0 0
 GetBerryNameBerryIdFix 813D33C 0
 ExpandedBerriesFix2 814A490 0
+
+##Move Reminder
+FixReminderCalloc 080E47A4 0
+FixLoadMoveId1 080E4AA0 3
+FixLoadMoveId2 080E4CB2 6
+FixLoadMoveId3 080E4E0A 1
+FixLoadMoveId4 080E4E28 3
+FixLoadMoveId5 080E4F90 0
+FixNumRelearnableMoves 080E50E8 2
+FixMoveNameLoading 080E523E 2
+FixMoveReminderDataLoading 080E54D0 1
+FixWindowTemplates 080E46B4 0

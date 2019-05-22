@@ -84,7 +84,7 @@ struct CursorStruct
 };
 
 extern struct ScrollArrowsTemplate gTempScrollArrowTemplate;
-extern struct ListMenuTemplate gMultiuseListMenuTemplate;
+//extern struct ListMenuTemplate gMultiuseListMenuTemplate;
 
 // Exported ROM declarations
 /*

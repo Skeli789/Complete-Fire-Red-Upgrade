@@ -15,13 +15,14 @@
 //#define gMoveToLearn (*((u16*) 0x2024022))
 #define sLearningMoveTableID (*((u8*) 0x2024028))
 #define sMoveRelearnerStruct ((struct MoveRelearner*) 0x203AAB4)
-#define gText_Cancel ((u8*) 0x84161C1)
 #define MAX_LEARNABLE_MOVES 50
 
 //This file's functions
 #ifdef UNBOUND
 static move_t RandomizeMove(u16 move);
 #endif
+u8 GetMoveRelearnerMoves(struct Pokemon* mon, u16* moves);
+
 
 void GiveBoxMonInitialMoveset(struct BoxPokemon* boxMon)
 {
