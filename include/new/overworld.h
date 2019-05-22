@@ -24,6 +24,10 @@ void TrainerFaceFix(void);
 void FollowerPositionFix(void);
 bool8 IsAutoRunEnabled(void);
 bool8 IsRunningDisallowed(u8 tile);
+bool8 IsCurrentAreaVolcano(void);
+bool8 IsCurrentAreaAutumn(void);
+bool8 IsCurrentAreaWinter(void);
+bool8 IsCurrentAreaDarkerCave(void);
 
 //Functions Hooked In
 u8 CheckForTrainersWantingBattle(void);
@@ -36,6 +40,7 @@ bool8 TryStartStepCountScript(u16 metatileBehavior);
 bool8 TryRunOnFrameMapScript(void);
 bool8 WhiteoutLogic(void);
 bool8 IsRunningDisallowedByMetatile(u8 tile);
+bool8 Overworld_IsBikingAllowed(void);
 s32 DoPoisonFieldEffect(void);
 void TaskRepel(u8 taskId);
 bool8 UpdateRepelCounter(void);

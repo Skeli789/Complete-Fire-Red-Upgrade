@@ -1,6 +1,7 @@
 #include "defines.h"
 #include "defines_battle.h"
 #include "../include/event_data.h"
+#include "../include/overworld.h"
 #include "../include/random.h"
 #include "../include/constants/items.h"
 
@@ -112,7 +113,7 @@ void atkEF_handleballthrow(void)
 					break;
 					
 				case BALL_TYPE_DIVE_BALL:
-					if (Overworld_GetMapTypeOfSaveblockLocation() == MAP_TYPE_UNDERWATER
+					if (GetCurrentMapType() == MAP_TYPE_UNDERWATER
 					|| FishingByte || TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
 						ball_multiplier = 35;
 					else
@@ -231,7 +232,7 @@ void atkEF_handleballthrow(void)
 					break;
 				
 				case BALL_TYPE_DUSK_BALL:
-					if (Overworld_GetMapTypeOfSaveblockLocation() == MAP_TYPE_UNDERGROUND)
+					if (GetCurrentMapType() == MAP_TYPE_UNDERGROUND)
 						ball_multiplier = DUSK_BALL_MULTIPLIER;
 						
 					#ifdef TIME_ENABLED

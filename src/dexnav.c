@@ -1,31 +1,38 @@
 #include "defines.h"
-
-#include "../include/pokemon.h"
 #include "../include/battle.h"
 #include "../include/bg.h"
 #include "../include/event_data.h"
 #include "../include/fieldmap.h"
 #include "../include/field_effect.h"
+#include "../include/main.h"
+#include "../include/metatile_behavior.h"
+#include "../include/overworld.h"
 #include "../include/palette.h"
+#include "../include/pokemon.h"
 #include "../include/pokemon_icon.h"
 #include "../include/random.h"
-#include "../include/wild_encounter.h"
-#include "../include/window.h"
+#include "../include/region_map.h"
 #include "../include/sprite.h"
 #include "../include/text.h"
-#include "../include/main.h"
+#include "../include/wild_encounter.h"
+#include "../include/window.h"
 #include "../include/constants/abilities.h"
+#include "../include/constants/field_effects.h"
+#include "../include/constants/items.h"
+#include "../include/constants/maps.h"
 #include "../include/constants/moves.h"
 #include "../include/constants/songs.h"
 #include "../include/constants/species.h"
-#include "../include/constants/items.h"
 #include "../include/gba/io_reg.h"
 
 #include "../include/new/battle_strings.h"
 #include "../include/new/build_pokemon.h"
+#include "../include/new/daycare.h"
 #include "../include/new/dexnav.h"
 #include "../include/new/dexnav_data.h"
 #include "../include/new/dns.h"
+#include "../include/new/helper_functions.h"
+#include "../include/new/overworld.h"
 #include "../include/new/wild_encounter.h"
 
 /*
@@ -36,8 +43,12 @@ Known BUGS:
 	-GUI gets messed up in dark, flashable rooms
 */
 
-static struct DexnavHudData** DNavState = (struct DexnavHudData**)(DEXNAV_SAVERAM + MAX_NUM_POKEMON);
-//static struct DexnavHudData** DNavState = (struct DexnavHudData**)(DEXNAV_SAVERAM + 40);
+#define sDNavState (*((struct DexnavHudData**) DEXNAV_SAVERAM))
+
+#define ROW_LAND 0
+#define ROW_WATER 1
+
+#define SNEAKING_PROXIMITY 5
 
 //This file's functions:
 static void DestroyTaskCompletedTextbox(u8 tId);
@@ -54,7 +65,7 @@ static u8 GetPlayerDistance(s16 x, s16 y);
 static u8 PickTileScreen(u8 targetBehaviour, u8 areaX, u8 areaY, s16 *xBuff, s16 *yBuff, u8 smallScan);
 static u8 DexNavPickTile(u8 environment, u8 xSize, u8 ySize, bool8 smallScan);
 static u8 ShakingGrass(u8 environment, u8 xSize, u8 ySize, bool8 smallScan);
-static void DexHUDHBlank(void);
+//static void DexHUDHBlank(void);
 static void DexNavProximityUpdate(void);
 static void NullSubHBlank(void);
 static void DexNavFreeHUD(void);
@@ -69,6 +80,7 @@ static u16 DexNavGenerateHeldItem(u16 species, u8 searchLevel);
 static u8 DexNavGenerateHiddenAbility(u16 species, u8 searchLevel);
 static u8 DexNavGeneratePotential(u8 searchLevel);
 static void DexNavGenerateMoveset(u16 species, u8 searchLevel, u8 encounterLevel, u16* moveLoc);
+static void DexNavDrawBlackBars(u8* objidAddr);
 static void DexNavDrawSight(u8 sight_lvl, u8* objidAddr);
 static void DexNavDrawAbility(u8 ability, u8* objidAddr);
 static void DexNavDrawMove(u16 move, u8 searchLevel, u8* objidAddr);
@@ -76,19 +88,25 @@ static void DexNavDrawPotential(u8 potential, u8* objidAddr);
 static void DexNavDrawSpeciesIcon(u16 species, u8* objIdAddr);
 static void DexNavDrawHeldItem(u8* objidAddr);
 static void DexNavDrawIcons(void);
-static void InitDexNavHUD(u16 species, u8 environment);
+void InitDexNavHUD(u16 species, u8 environment);
 static void ExecDexNavHUD(void);
 //static u8 ExecDexNav(void);
 static void DexNavGuiSetup(void);
 static void DexNavLoadPokeIcons(void);
+static void CreateNoDataIcon(s16 x, s16 y);
 static void UpdateCursorPosition(void);
 static void SpawnPointerArrow(void);
+static void DexNavLoadAreaNames(void);
 static void DexNavLoadNames(u8 status);
+static void DexNavLoadCapturedAllSymbol(void);
 static void CallbackDexNavOW(void);
 static void DexNavGuiExitSearch(void);
 static void DexNavGuiExitNoSearch(void);
 static void DexNavPopulateEncounterList(void);
 static void DexNavGuiHandler(void);
+static void PrintDexNavError(void);
+static void FieldEff_CaveDust(void);
+static void FieldEff_Sparkles(void);
 void ToolSelection(u8 taskId);
 //static void CloseStartMenu(void);
 
@@ -101,6 +119,7 @@ static void DestroyTaskCompletedTextbox(u8 tId)
         ScriptEnvDisable();
     }
 }
+
 
 static void MsgNormal(const u8* str)
 {
@@ -126,15 +145,6 @@ static void VblackCallbackSeq(void)
 	ProcessSpriteCopyRequests();
 	TransferPlttBuffer();
 }
-
-
-/*
-static void PokeNavCallback2(void)
-{
-	SyncTilemaps();
-	ProcessSpriteCopyRequests();
-	TransferPlttBuffer();
-}*/
 
 
 static void ClearHandlers(void)
@@ -181,15 +191,6 @@ static void ResetBgSettings(void)
 }
 
 
-/*
-static void ResetBoxes(void)
-{
-	DeactivateAllTextPrinters();
-	FreeAllWindowBuffers();
-}
-*/
-
-
 static void Setup(void)
 {
     ClearHandlers();	// callbacks
@@ -207,19 +208,41 @@ static void Setup(void)
 
 static bool8 SpeciesInArray(u16 species, u8 indexCount)
 {
+	u16 dexNum = SpeciesToNationalPokedexNum(species);
+
     // disallow species not seen
-    if (!GetSetPokedexFlag(species, FLAG_GET_SEEN))
+    if (!GetSetPokedexFlag(dexNum, FLAG_GET_SEEN))
+	{
+		for (int i = 0; i < NUM_LAND_MONS; ++i)
+		{
+			if (sDNavState->hiddenSpecies[i] == SPECIES_TABLES_TERMIN)
+			{
+				sDNavState->hiddenSpecies[i] = dexNum;
+				sDNavState->hiddenSpecies[i + 1] = SPECIES_TABLES_TERMIN;
+				break;
+			}
+			else if (sDNavState->hiddenSpecies[i] == dexNum) //Already in array
+				return TRUE;
+		}
+			
+		if (indexCount == NUM_LAND_MONS)
+			sDNavState->numHiddenLandMons++; //Increase how many question marks to print
+		else
+			sDNavState->numHiddenWaterMons++;
+
         return TRUE;
+	}
+
     for (u8 i = 0; i < indexCount; ++i)
 	{
-        if (indexCount == 12)
+        if (indexCount == NUM_LAND_MONS)
 		{
-            if ((*DNavState)->grassSpecies[i] == species)
+            if (sDNavState->grassSpecies[i] == species)
                 return TRUE;
         } 
 		else 
 		{
-            if ((*DNavState)->waterSpecies[i] == species)
+            if (sDNavState->waterSpecies[i] == species)
                 return TRUE;
         }
     }
@@ -234,27 +257,22 @@ static bool8 SpeciesInArray(u16 species, u8 indexCount)
 
 void DexNavGetMon(u16 species, u8 potential, u8 level, u8 ability, u16* moves)
 {
-    //struct Pokemon* pkmn = party_opponent;
-	pokemon_t* pkmn = &gEnemyParty[0];
+	struct Pokemon* pkmn = &gEnemyParty[0];
 
-    // clear canvas
-    //Memset((void*)gEnemyParty, 0, 100);
+    //Clear canvas
 	PokemonSlotPurge(pkmn);
-
-    //CreateBoxMon(&gEnemyParty[0]->base, species, level, 0x0, 0, 0, 0, saveblock2->trainerid);
 	CreateMon(pkmn, species, level, 0, FALSE, 0, OT_ID_PLAYER_ID, 0);
 
-    // set IVs randomly
+    //Set IVs randomly
     u8 i;
     u8 currIv = MON_DATA_HP_IV;
-    for (i = 0; i < 6; ++i)
+    for (i = 0; i < NUM_STATS; ++i)
 	{
         u8 valIv = (Random() & 0x1F);
-        SetMonData2(pkmn, currIv, (void*) &valIv);
-        currIv++;
+        SetMonData(pkmn, currIv++, &valIv);
     }
 
-    // pick potential ivs to set to 31
+    //Pick potential ivs to set to 31
 	u8 iv[3];
 	iv[0] = Random() % 6;
 	iv[1] = Random() % 6;
@@ -263,29 +281,25 @@ void DexNavGetMon(u16 species, u8 potential, u8 level, u8 ability, u16* moves)
 	{
 		u8 perfectIv = 0x1F;
 		if (potential > 2)
-			SetMonData2(pkmn, MON_DATA_HP_IV + iv[2], (void*) &perfectIv);
+			SetMonData(pkmn, MON_DATA_HP_IV + iv[2], &perfectIv);
 		else if (potential > 1)
-			SetMonData2(pkmn, MON_DATA_HP_IV + iv[1], (void*) &perfectIv);
+			SetMonData(pkmn, MON_DATA_HP_IV + iv[1], &perfectIv);
 		else if (potential)
-			SetMonData2(pkmn, MON_DATA_HP_IV + iv[0], (void*) &perfectIv);
+			SetMonData(pkmn, MON_DATA_HP_IV + iv[0], &perfectIv);
 	}
 
-    // set ability
+    //Set ability
 	u8 onBit = (gBaseStats[species].hiddenAbility == ability) ? 1 : 0;
     pkmn->hiddenAbility = onBit;
 
-    // set moves
-	for (int i = 0; i < 4; ++i)
+    //Set moves
+	for (int i = 0; i < MAX_MON_MOVES; ++i)
 	{
-		//Var8006 = moves[i];	//020370c4
-		Var8006 = (*DNavState)->moveId[i];
+		Var8006 = sDNavState->moveId[i];
 		pkmn->moves[i] = Var8006;
 		pkmn->pp[i] = gBattleMoves[moves[i]].pp;
 	}
 
-    // pokerus
-    i = 0xFF;
-    SetMonData2(pkmn, MON_DATA_POKERUS, &i);
     CalculateMonStats(pkmn);
 }
 
@@ -333,39 +347,33 @@ static u8 PickTileScreen(u8 targetBehaviour, u8 areaX, u8 areaY, s16 *xBuff, s16
                 continue;
             }
 
-            // tile must be target behaviour (wild tile) and must be passable
-			// targetBehaviour = 1 grass, 2 water			
-            if ((targetBehaviour == blockProperties))
-			{// ) {
-                 // caves and water need to have their encounter values scaled higher
+            //Tile must be target behaviour (wild tile) and must be passable			
+            if (blockProperties & targetBehaviour)
+			{
+                //Caves and water need to have their encounter values scaled higher
                 u8 weight = 0;
-                if (targetBehaviour == 2)
+                if (targetBehaviour == TILE_FLAG_SURFABLE)
 				{
-                    // water
+                    //Water
                     u8 scale = 320 - (smallScan * 200) - (GetPlayerDistance(topX, topY) / 2);
 					u8 elevDiff = (CurrMapHeightMismatch((gEventObjects[gPlayerAvatar->spriteId].elevation << 4
 						| gEventObjects[gPlayerAvatar->spriteId].currentElevation), topX, topY));
 					
-					
-					
-                    weight = (((Random() % scale) <= 1) && elevDiff);
+                    weight = (Random() % scale <= 1 && elevDiff);
                 } 
-				else if (!CheckOpenSky(gMapHeader.mapType))
+				else if (!IsMapTypeOutdoors(gMapHeader.mapType))
 				{
-                    // cave basically needs another check to see if the tile is passable
+                    //Cave basically needs another check to see if the tile is passable
                     u8 scale = 440 - (smallScan * 200) - (GetPlayerDistance(topX, topY) / 2)  - (2 * (topX + topY));
                     Var8002 = scale;
                     weight = ((Random() % scale) < 1) && (!MetatileBehavior_GetLowerBytes(tileBehaviour, 6));
-
                 } 
-				else 
+				else //Grass land
 				{
-                    // grass
-                    u8 scale = 100 - (GetPlayerDistance(topX, topY) * 2);
-                    weight = ((Random() % scale) <= 5);
+					u8 scale = 100 - (GetPlayerDistance(topX, topY) * 2);
+					weight = ((Random() % scale) <= 5);
                 }
 
-				// 
                 if (weight > 0) 
 				{
                     *xBuff = topX;
@@ -378,104 +386,117 @@ static u8 PickTileScreen(u8 targetBehaviour, u8 areaX, u8 areaY, s16 *xBuff, s16
         topY += 1;
         topX = gSaveBlock1->pos.x - SCANSTART_X + (smallScan * 5);
     }
+
     return 0;
 }
 
 
 static u8 DexNavPickTile(u8 environment, u8 xSize, u8 ySize, bool8 smallScan)
 {
-    // Pick a specific tile based on environment
+    //Pick a specific tile based on environment
     u8 targetBehaviour = 0;
     switch (environment)
 	{
-        case 0:
-            targetBehaviour = 1; // grass
+        case ENCOUNTER_TYPE_LAND:
+            targetBehaviour = TILE_FLAG_ENCOUNTER_TILE; // grass
             break;
         default:
-            targetBehaviour = 2; // cave, water
+            targetBehaviour = TILE_FLAG_SURFABLE; // cave, water
             break;
     }
-    // tile pick chance is 5% + 1/5 search level
+    //Tile pick chance is 5% + 1/5 search level
     
-	//u8 searchLevel = (*DNavState)->searchLevel / 5;
+	//u8 searchLevel = sDNavState->searchLevel / 5;
     //u8 chance = searchLevel + 1;
-    return PickTileScreen(targetBehaviour, xSize, ySize, &((*DNavState)->tileX), &((*DNavState)->tileY), smallScan);
+    return PickTileScreen(targetBehaviour, xSize, ySize, &(sDNavState->tileX), &(sDNavState->tileY), smallScan);
 }
 
 
-static u8 ShakingGrass(u8 environment, u8 xSize, u8 ySize, bool8 smallScan)
+static bool8 ShakingGrass(u8 environment, u8 xSize, u8 ySize, bool8 smallScan)
 {
     if (DexNavPickTile(environment, xSize, ySize, smallScan))
 	{
-
-        gFieldEffectArguments->effectPos.x = (*DNavState)->tileX;
-        gFieldEffectArguments->effectPos.y = (*DNavState)->tileY;
+		u8 metatileBehaviour = MapGridGetMetatileField(sDNavState->tileX, sDNavState->tileY, 0xFF);
+        gFieldEffectArguments->effectPos.x = sDNavState->tileX;
+        gFieldEffectArguments->effectPos.y = sDNavState->tileY;
         gFieldEffectArguments->priority = 0xFF; // height.
         switch (environment)
 		{
-            case 0:
+            case ENCOUNTER_TYPE_LAND:
                 {
-					if (!CheckOpenSky(gMapHeader.mapType))
-						FieldEffectStart(OEI_CAVE);
+					if (!IsMapTypeOutdoors(gMapHeader.mapType))
+					{
+						if (MetatileBehavior_IsTallGrass(metatileBehaviour)) //Grass in cave
+							FieldEffectStart(FLDEFF_SHAKING_GRASS);
+						else if (MetatileBehavior_IsLongGrass(metatileBehaviour)) //Really tall grass
+							FieldEffectStart(FLDEFF_SHAKING_LONG_GRASS);
+						else if (MetatileBehavior_IsSandOrDeepSand(metatileBehaviour))
+							FieldEffectStart(FLDEFF_SAND_HOLE);						
+						else
+							FieldEffectStart(FLDEFF_CAVE_DUST); //Default in caves is dust
+					}
 					else
-						FieldEffectStart(OEI_GRASS);
+					{
+						if (MetatileBehavior_IsTallGrass(metatileBehaviour)) //Regular grass
+							FieldEffectStart(FLDEFF_SHAKING_GRASS);
+						else if (MetatileBehavior_IsLongGrass(metatileBehaviour)) //Really tall grass
+							FieldEffectStart(FLDEFF_SHAKING_LONG_GRASS);
+						else if (MetatileBehavior_IsSandOrDeepSand(metatileBehaviour)) //Desert Sand
+							FieldEffectStart(FLDEFF_SAND_HOLE);
+						else if (MetatileBehavior_IsMountain(metatileBehaviour)) //Rough Terrain
+							FieldEffectStart(FLDEFF_CAVE_DUST);
+						else //Flowers, etc.
+							FieldEffectStart(FLDEFF_REPEATING_SPARKLES); //Default on land is sparkles
+					}
 					break;
                 }
-            case 1:
-                FieldEffectStart(OEI_WATER);
+            case ENCOUNTER_TYPE_WATER:
+				if (IsCurrentAreaVolcano())
+					FieldEffectStart(FLDEFF_LAVA_BUBBLES);
+				else
+					FieldEffectStart(FLDEFF_SPLASHING_WATER);
                 break;
             default:
-                FieldEffectStart(0x31);
+                FieldEffectStart(FLDEFF_REPEATING_SPARKLES); //So the game doesn't crash on something useless
                 break;
-        };//FieldEffectStart(*d); //16 water, 13 grass
+        };
 
-        // get objid of shaking grass
-        u8 i;
-        for (i = 0; i < 64; ++i)
+        //Get objid of shaking grass
+        for (u32 i = 0; i < MAX_SPRITES; ++i)
 		{
             if (gSprites[i].callback == (SpriteCallback) 0x080DCD1D)
 			{
-                (*DNavState)->objIdShakingGrass = i;
-                return 1;
+                sDNavState->objIdShakingGrass = i;
+                return TRUE;
             }
         }
-        return 1;
+
+        return TRUE;
     }
-	else
-        return 0;	
-    return 0;
+	
+    return FALSE;
 };
 
-
+/* //Causes the game to lag due to interference from DNS :(
 static void DexHUDHBlank(void)
 {
-    if (REG_VCOUNT > (160 - 19))
-	{ // fill 19 pixels
-
-        //WRITE_REG_WININ(0x3F3F);
-        REG_WININ = WININ_BUILD(WIN_BG0 | WIN_BG1 | WIN_BG2 | WIN_BG3 | WIN_OBJ | WIN_BLD,  WIN_BG0 | WIN_BG1 | WIN_BG2 | WIN_BG3 | WIN_OBJ | WIN_BLD);
-
-        //WRITE_REG_BLDCNT(0x0FFE);
-        REG_BLDCNT = (BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 | BLDCNT_TGT1_OBJ | BLDCNT_TGT1_BD | BLDCNT_TGT2_BG0 | BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 | BLDCNT_EFFECT_DARKEN);
-        REG_BLDY = 0xC;
-
-
-    } 
-	else
+    if (REG_VCOUNT > (160 - 19)) //Fill 19 pixels
 	{
-        // default values from overworld
-        // WRITE_REG_WININ(0x1F1F);
-        REG_WININ = WININ_BUILD(WIN_BG0 | WIN_BG1 | WIN_BG2 | WIN_BG3 | WIN_OBJ, WIN_BG0 |
-                        WIN_BG1 | WIN_BG2 | WIN_BG3 | WIN_OBJ);
-        //WRITE_REG_BLDCNT(0x401E);
+		REG_BLDY = 0xC;
+        REG_WININ = WININ_BUILD(WIN_BG0 | WIN_BG1 | WIN_BG2 | WIN_BG3 | WIN_OBJ | WIN_BLD,  WIN_BG0 | WIN_BG1 | WIN_BG2 | WIN_BG3 | WIN_OBJ | WIN_BLD);
+        REG_BLDCNT = (BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 | BLDCNT_TGT1_OBJ | BLDCNT_TGT1_BD | BLDCNT_TGT2_BG0 | BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 | BLDCNT_EFFECT_DARKEN);  
+    } 
+	else //Default values from overworld
+	{
+        REG_WININ = WININ_BUILD(WIN_BG0 | WIN_BG1 | WIN_BG2 | WIN_BG3 | WIN_OBJ, WIN_BG0 | WIN_BG1 | WIN_BG2 | WIN_BG3 | WIN_OBJ);
         REG_BLDCNT = BLDALPHA_BLEND(BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 | BLDCNT_TGT1_OBJ, 0);
     }
 };
-
+*/
 
 static void DexNavProximityUpdate(void)
 {
-    (*DNavState)->proximity = GetPlayerDistance((*DNavState)->tileX, (*DNavState)->tileY);
+    sDNavState->proximity = GetPlayerDistance(sDNavState->tileX, sDNavState->tileY);
 };
 
 
@@ -484,56 +505,77 @@ static void NullSubHBlank(void)
 };
 
 
+#define sSpriteTileAllocBitmap ((u8*) 0x2021B48)
+#define FREE_SPRITE_TILE(n) (sSpriteTileAllocBitmap[(n) / 8] &= ~(1 << ((n) % 8)))
+
 static void DexNavFreeHUD(void)
 {
-	switch ((*DNavState)->environment)
+	switch (sDNavState->environment)
 	{
         case 0:
-            if (!CheckOpenSky(gMapHeader.mapType))
-                FieldEffectStop(&gSprites[(*DNavState)->objIdShakingGrass], 0x1A); //cave
+            if (!IsMapTypeOutdoors(gMapHeader.mapType))
+                FieldEffectStop(&gSprites[sDNavState->objIdShakingGrass], 0x1A); //cave
 			else 
-                FieldEffectStop(&gSprites[(*DNavState)->objIdShakingGrass], 0x13);
+                FieldEffectStop(&gSprites[sDNavState->objIdShakingGrass], 0x13);
             break;
         case 1:
-            FieldEffectStop(&gSprites[(*DNavState)->objIdShakingGrass], 0x13);
+            FieldEffectStop(&gSprites[sDNavState->objIdShakingGrass], 0x13);
             break;
     }
+
+	//Clear mon icon sprite
+	SafeFreeMonIconPalette(sDNavState->species);
+	u16 tile = gSprites[sDNavState->objIdSpecies].oam.tileNum;
+	u8* tiles = (u8*)((tile * TILE_SIZE) + SPRITE_RAM);
+	Memset(tiles, 0, 0x200);
+    
+	for (int i = tile; i < tile + 16; ++i)
+        FREE_SPRITE_TILE(i);
 	
-    FieldEffectFreeGraphicsResources(&gSprites[(*DNavState)->objIdSpecies]);
-    ResetSprite(&gSprites[(*DNavState)->objIdSpecies]);
+	ResetSprite(&gSprites[sDNavState->objIdSpecies]);
 
-    FieldEffectFreeGraphicsResources(&gSprites[(*DNavState)->objIdSight]);
-    ResetSprite(&gSprites[(*DNavState)->objIdSight]);
+	//Clear black bars
+    FieldEffectFreeGraphicsResources(&gSprites[sDNavState->objIdBlackBar[0]]);
+    ResetSprite(&gSprites[sDNavState->objIdBlackBar[0]]);
+	ResetSprite(&gSprites[sDNavState->objIdBlackBar[1]]);
+	ResetSprite(&gSprites[sDNavState->objIdBlackBar[2]]);
+	ResetSprite(&gSprites[sDNavState->objIdBlackBar[3]]);
 
-    FieldEffectFreeGraphicsResources(&gSprites[(*DNavState)->objIdAbility]);
-    ResetSprite(&gSprites[(*DNavState)->objIdAbility]);
+    FieldEffectFreeGraphicsResources(&gSprites[sDNavState->objIdSight]);
+    ResetSprite(&gSprites[sDNavState->objIdSight]);
 
-    FieldEffectFreeGraphicsResources(&gSprites[(*DNavState)->objIdMove]);
-    ResetSprite(&gSprites[(*DNavState)->objIdMove]);
+    FieldEffectFreeGraphicsResources(&gSprites[sDNavState->objIdAbility]);
+    ResetSprite(&gSprites[sDNavState->objIdAbility]);
 
-    FieldEffectFreeGraphicsResources(&gSprites[(*DNavState)->objIdItem]);
-    ResetSprite(&gSprites[(*DNavState)->objIdItem]);
+    FieldEffectFreeGraphicsResources(&gSprites[sDNavState->objIdMove]);
+    ResetSprite(&gSprites[sDNavState->objIdMove]);
 
-    FieldEffectFreeGraphicsResources(&gSprites[(*DNavState)->objIdPotential[0]]);
-    ResetSprite(&gSprites[(*DNavState)->objIdPotential[0]]);
+    FieldEffectFreeGraphicsResources(&gSprites[sDNavState->objIdItem]);
+    ResetSprite(&gSprites[sDNavState->objIdItem]);
 
-    FieldEffectFreeGraphicsResources(&gSprites[(*DNavState)->objIdPotential[1]]);
-    ResetSprite(&gSprites[(*DNavState)->objIdPotential[1]]);
+    FieldEffectFreeGraphicsResources(&gSprites[sDNavState->objIdPotential[0]]);
+    ResetSprite(&gSprites[sDNavState->objIdPotential[0]]);
 
-    FieldEffectFreeGraphicsResources(&gSprites[(*DNavState)->objIdPotential[2]]);
-    ResetSprite(&gSprites[(*DNavState)->objIdPotential[2]]);
+    FieldEffectFreeGraphicsResources(&gSprites[sDNavState->objIdPotential[1]]);
+    ResetSprite(&gSprites[sDNavState->objIdPotential[1]]);
 
-    FreeSpriteTilesByTag(0x4736);
+    FieldEffectFreeGraphicsResources(&gSprites[sDNavState->objIdPotential[2]]);
+    ResetSprite(&gSprites[sDNavState->objIdPotential[2]]);
+
+    //FreeSpriteTilesByTag(0x4736);
     FreeSpriteTilesByTag(0x61);
     FreeSpriteTilesByTag(0x2613);
     FreeSpriteTilesByTag(0x5424);
     FreeSpriteTilesByTag(0x8472);
-    FreeSpriteTilesByTag(0x3039);
-    FreeSpriteTilesByTag(0x1EE7);
+    FreeSpriteTilesByTag(0x1EE7); //Font Sprite
+	FreeSpriteTilesByTag(0xFDF1); //Black Bars
+	FreeSpriteTilesByTag(0x3039);
     FreeSpritePaletteByTag(0x8472);
-    FreeSpritePaletteByTag(0x3039);
+	FreeSpritePaletteByTag(0x3039);
 
-    Free((void*) *DNavState);
+	ResetSprite(&gSprites[sDNavState->objIdMove]);
+	
+    Free(sDNavState);
     DisableInterrupts(2);
     SetHBlankCallback(NullSubHBlank);
 
@@ -543,13 +585,13 @@ static void DexNavFreeHUD(void)
                             WIN_BG1 | WIN_BG2 | WIN_BG3 | WIN_OBJ);
     //WRITE_REG_BLDCNT(0x401E);
     REG_BLDCNT = BLDALPHA_BLEND(BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 | BLDCNT_TGT1_OBJ, 0);
-*/
+
 
 	// WRITE_REG_WININ(0x1F1F);
 	REG_WININ = WININ_BUILD(WIN_BG0 | WIN_BG1 | WIN_BG2 | WIN_BG3 | WIN_OBJ, WIN_BG0 |
 		WIN_BG1 | WIN_BG2 | WIN_BG3 | WIN_OBJ);
 	//WRITE_REG_BLDCNT(0x401E);
-	REG_BLDCNT = BLDALPHA_BLEND(BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 | BLDCNT_TGT1_OBJ, 0);
+	REG_BLDCNT = BLDALPHA_BLEND(BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 | BLDCNT_TGT1_OBJ, 0);*/
 }
 
 
@@ -558,14 +600,13 @@ static void DexNavShowMessage(u8 id)
     switch(id)
 	{
         case 0:
-            //extern void MsgNormal(pchar *);
-            //pchar empty_string[] = _("The Pokémon got away!\p");
-            MsgNormal(&gText_GotAway[0]);
+            MsgNormal(gText_GotAway);
             break;
         case 1:
-            //extern void MsgNormal(pchar *);
-            //pchar empty_string[] = _("There is no reaction.\nThe signal was lost!\p");
-            MsgNormal(&gText_LostSignal[0]);
+            MsgNormal(gText_LostSignal);
+            break;
+		case 2:
+            MsgNormal(gText_GotAwayShouldSneak);
             break;
     };
     return;
@@ -574,16 +615,17 @@ static void DexNavShowMessage(u8 id)
 
 static void OutlinedFontDraw(u8 objId, u8 tileNum, u16 size)
 {	
+	//return;
+
 	u8 tile = gSprites[objId].oam.tileNum + tileNum;
-    u8* toWrite = (u8*)((tile * TILE_SIZE) + (SPRITE_RAM));
+    u8* toWrite = (u8*)((tile * TILE_SIZE) + SPRITE_RAM);
     //u8* dst = (u8*)Malloc(size + TILE_SIZE);
     //u8* dst = &gEnemyParty[0];
 	
-	u8 *dst = (u8*) (&gEnemyParty[0]);
-	u8 *strPtr = gStringVar4;
-	
-	//gLoadPointer = ptr;
-	
+	u8* originalDst, *dst;
+	originalDst = dst = Calloc(size + TILE_SIZE);
+	u8* strPtr = gStringVar4;
+
     u8 counter = 1;
     u16 index = 320;
     u16 prevIndex;
@@ -592,6 +634,9 @@ static void OutlinedFontDraw(u8 objId, u8 tileNum, u16 size)
 	
 	u8 element = *strPtr;
 	//u8 i = 0;
+	
+	//if (objId == sDNavState->objIdAbility)
+		//break_func(gSprites[objId].oam.tileNum);
 	
     while (element != 0xFF)
 	{
@@ -673,11 +718,11 @@ static void OutlinedFontDraw(u8 objId, u8 tileNum, u16 size)
         if ((counter == 0) || (*(strPtr + 1) == 0xFF))
 		{
             // first or last pcharacters don't need pixel merging
-            Memcpy((void*)dst, (void*)(&gInterfaceGfx_dexnavStarsTiles[index]), TILE_SIZE);
+            Memcpy(dst, &gInterfaceGfx_dexnavStarsTiles[index], TILE_SIZE);
         }
 		else if ((element == 0x0))
 		{
-            Memcpy((void*)dst, (void*)(&gInterfaceGfx_dexnavStarsTiles[index]), TILE_SIZE);
+            Memcpy(dst, &gInterfaceGfx_dexnavStarsTiles[index], TILE_SIZE);
             u8 *prevLetter = (u8*)(&gInterfaceGfx_dexnavStarsTiles[prevIndex]);
             *(dst + 0) = *(prevLetter + 2);
             *(dst + 4) = *(prevLetter + 6);
@@ -691,7 +736,7 @@ static void OutlinedFontDraw(u8 objId, u8 tileNum, u16 size)
 		else if ((*(strPtr + 1) != 0xFF))
 		{
             // pcharacter in middle, if blank space fill blank with previous pcharacter's last pixel row IFF previous pchar's last pixel row non-empty
-            Memcpy((void*)dst, (void*)(&gInterfaceGfx_dexnavStarsTiles[index]), TILE_SIZE);
+            Memcpy((void*)dst, &gInterfaceGfx_dexnavStarsTiles[index], TILE_SIZE);
             u8 *prevLetter = (u8*)(&gInterfaceGfx_dexnavStarsTiles[prevIndex]);
             *(dst) |= (((*(prevLetter + 0) & 0xF) == 0) ? (*(dst + 0) & 0xF) : (*(prevLetter + 0) & 0xF));
             *(dst + 4) |= (((*(prevLetter + 4) & 0xF) == 0) ? (*(dst + 4) & 0xF) : (*(prevLetter + 4) & 0xF));
@@ -738,21 +783,21 @@ static void OutlinedFontDraw(u8 objId, u8 tileNum, u16 size)
 		element = *strPtr;
     }
 	
-    Memcpy((void*) toWrite, gEnemyParty, size);
-    Memset(gEnemyParty, 0x0, size + TILE_SIZE);
+    Memcpy((void*) toWrite, originalDst, size);
+    Free(originalDst);
 }
 
 
 static void DexNavSightUpdate(u8 sight)
 {
-    u8 objId = (*DNavState)->objIdSight;
+    u8 objId = sDNavState->objIdSight;
     // draw sight eye on first tile, takes up two tiles
     u8 tileid = gSprites[objId].oam.tileNum;
     u8* toWrite = (u8*)((tileid * 32) + (SPRITE_RAM));
-    Memcpy((void*)toWrite, (void*) &(gInterfaceGfx_dexnavStarsTiles[((19 * 4) + (7 - (2 * sight))) * 32]), 64);
+    Memcpy(toWrite, &gInterfaceGfx_dexnavStarsTiles[((19 * 4) + (7 - (2 * sight))) * 32], 64);
 
     // draw the B button tile
-    Memcpy((void*)(toWrite + 128), (void*) &(gInterfaceGfx_dexnavStarsTiles[((19 * 4) + 2) *32]), 64);
+    Memcpy(toWrite + 128, &gInterfaceGfx_dexnavStarsTiles[((19 * 4) + 2) *32], 64);
 
     // draw info text on the 5th tile
     //pchar back[] = _(" Back  ");
@@ -769,16 +814,16 @@ static void DexNavIconsVisionUpdate(u8 proximity, u8 searchLevel)
     // 	At search level 5, Potential is drawn
 
     // species and sight/info are always shown, regardless of proximity
-    gSprites[(*DNavState)->objIdSpecies].oam.affineMode = 0;
-    gSprites[(*DNavState)->objIdSight].oam.affineMode = 0;
+    gSprites[sDNavState->objIdSpecies].oam.affineMode = 0;
+    gSprites[sDNavState->objIdSight].oam.affineMode = 0;
 
     // hide everything at the start, and recalc what needs to be shown
-    gSprites[(*DNavState)->objIdMove].oam.affineMode = 2;
-    gSprites[(*DNavState)->objIdAbility].oam.affineMode = 2;
-    gSprites[(*DNavState)->objIdItem].oam.affineMode = 2;
-    gSprites[(*DNavState)->objIdPotential[0]].oam.affineMode = 2;
-    gSprites[(*DNavState)->objIdPotential[1]].oam.affineMode = 2;
-    gSprites[(*DNavState)->objIdPotential[2]].oam.affineMode = 2;
+    gSprites[sDNavState->objIdMove].oam.affineMode = 2;
+    gSprites[sDNavState->objIdAbility].oam.affineMode = 2;
+    gSprites[sDNavState->objIdItem].oam.affineMode = 2;
+    gSprites[sDNavState->objIdPotential[0]].oam.affineMode = 2;
+    gSprites[sDNavState->objIdPotential[1]].oam.affineMode = 2;
+    gSprites[sDNavState->objIdPotential[2]].oam.affineMode = 2;
 
     if (proximity < 3)
 	{
@@ -787,27 +832,27 @@ static void DexNavIconsVisionUpdate(u8 proximity, u8 searchLevel)
         if (searchLevel > 1)
 		{
             // show move, hide others
-            gSprites[(*DNavState)->objIdMove].oam.affineMode = 0;
+            gSprites[sDNavState->objIdMove].oam.affineMode = 0;
         }
         if (searchLevel > 2)
 		{
             // show ability, move, hide others
-            gSprites[(*DNavState)->objIdAbility].oam.affineMode = 0;
-            if ((*DNavState)->heldItem)
+            gSprites[sDNavState->objIdAbility].oam.affineMode = 0;
+            if (sDNavState->heldItem)
 			{
                 // toggle item view
-                gSprites[(*DNavState)->objIdItem].oam.affineMode = 0;
+                gSprites[sDNavState->objIdItem].oam.affineMode = 0;
             }
         }
         if (searchLevel > 4)
 		{
-            gSprites[(*DNavState)->objIdPotential[0]].oam.affineMode = 0;
-            gSprites[(*DNavState)->objIdPotential[1]].oam.affineMode = 0;
-            gSprites[(*DNavState)->objIdPotential[2]].oam.affineMode = 0;
+            gSprites[sDNavState->objIdPotential[0]].oam.affineMode = 0;
+            gSprites[sDNavState->objIdPotential[1]].oam.affineMode = 0;
+            gSprites[sDNavState->objIdPotential[2]].oam.affineMode = 0;
         }
 
     } 
-	else if (proximity < 6)
+	else if (proximity <= SNEAKING_PROXIMITY)
         DexNavSightUpdate(1); // Sneaking is required flag
 	else
         DexNavSightUpdate(2); // Sneaking is not required
@@ -816,7 +861,7 @@ static void DexNavIconsVisionUpdate(u8 proximity, u8 searchLevel)
 static void DexNavManageHUD(u8 taskId)
 {
     // check for out of range
-    if ((*DNavState)->proximity > 20)
+    if (sDNavState->proximity > 20)
 	{
         DestroyTask(taskId);
         DexNavFreeHUD();
@@ -826,13 +871,21 @@ static void DexNavManageHUD(u8 taskId)
 
     // check for timeout.
     gTasks[taskId].data[1]++;
-    if (gTasks[taskId].data[1] > (900))
+    if (gTasks[taskId].data[1] > 900)
 	{
         DestroyTask(taskId);
         DexNavFreeHUD();
         DexNavShowMessage(0);	//The pokemon got away!
         return;	
     }
+	
+	if (sDNavState->proximity <= SNEAKING_PROXIMITY && TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_DASH | PLAYER_AVATAR_FLAG_BIKE)) //If player is close and running then the Pokemon should flee
+	{
+        DestroyTask(taskId);
+        DexNavFreeHUD();
+        DexNavShowMessage(2);	//The pokemon got away!\nTry moving more slowly.
+        return;	
+	}
 
     // check if script just executed
     if (ScriptEnv2IsEnabled() == TRUE)
@@ -846,51 +899,52 @@ static void DexNavManageHUD(u8 taskId)
 	{
         DestroyTask(taskId);
         DexNavFreeHUD();
-		PlaySE(SE_PC_OFF);
+		PlaySE(SE_POKENAV_OFF);
         return;		
 	}
 
-    // caves and water the pokemon moves around
-    if ((((*DNavState)->environment == 1) || (!CheckOpenSky(gMapHeader.mapType)))
-    && ((*DNavState)->proximity < 2) && ((*DNavState)->movementTimes < 2))
+    //Caves and water the pokemon moves around
+    if ((sDNavState->environment == ENCOUNTER_TYPE_WATER || !IsMapTypeOutdoors(gMapHeader.mapType))
+    && sDNavState->proximity < 2
+	&& sDNavState->movementTimes < 2)
 	{
-        switch((*DNavState)->environment)
+        switch(sDNavState->environment)
 		{
-            case 0:
-                FieldEffectStop(&gSprites[(*DNavState)->objIdShakingGrass], OEI_CAVE); // 1a
+            case ENCOUNTER_TYPE_LAND:
+                FieldEffectStop(&gSprites[sDNavState->objIdShakingGrass], FLDEFF_CAVE_DUST); // 1a
                 break;
-            case 1:
-                FieldEffectStop(&gSprites[(*DNavState)->objIdShakingGrass], OEI_WATER);
+            case ENCOUNTER_TYPE_WATER:
+                FieldEffectStop(&gSprites[sDNavState->objIdShakingGrass], FLDEFF_SPLASHING_WATER);
                 break;
             default:
                 break;
         };
         
 		
-        while(!(ShakingGrass((*DNavState)->environment, 8, 8, 1)))
-		{
-            __asm__("mov r8, r8"); // nop...do I even need this?
-        }
-        (*DNavState)->movementTimes += 1;
+        while(!ShakingGrass(sDNavState->environment, 8, 8, 1))
+			__asm__("mov r8, r8");
 		
+        sDNavState->movementTimes += 1;
     }
 
     // check for encounter start
-    if ((*DNavState)-> proximity < 1)
+    if (sDNavState-> proximity < 1)
 	{
         //extern void DexNavGetMon(u16 species, u8 potential, u8 level, u8 ability, u16* moves);
-        DexNavGetMon((*DNavState)->species, (*DNavState)->potential, (*DNavState)->pokemonLevel,
-        (*DNavState)->ability, (*DNavState)->moveId);
+        DexNavGetMon(sDNavState->species, sDNavState->potential, sDNavState->pokemonLevel,
+        sDNavState->ability, sDNavState->moveId);
         DestroyTask(taskId);
 
         // increment the search level
-        if (SearchLevels[(*DNavState)->species] < 100)
-            SearchLevels[(*DNavState)->species] += 1;
+		u16 dexNum = SpeciesToNationalPokedexNum(sDNavState->species);
+        if (sSearchLevels[dexNum] < 100)
+            sSearchLevels[dexNum] += 1;
 
         // Freeing only the state, objects and hblank cleared on battle start.
-        Free((void *)*DNavState);
+        Free(sDNavState);
 
         // exclamation point animation over the player
+		PlaySE(SE_EXCLAIM);
         MakeExclamationMark(gEventObjects, &gSprites[gPlayerAvatar->spriteId]);
         FieldEffectStart(0x0);
 
@@ -898,13 +952,12 @@ static void DexNavManageHUD(u8 taskId)
         DoStandardWildBattle();
     };
 
-    // TODO : CHECK SNEAKING
     // HUD needs updating iff player has moved
     DexNavProximityUpdate();
-    if (!(gTasks[taskId].data[0] == (*DNavState)->proximity))
+    if (!(gTasks[taskId].data[0] == sDNavState->proximity))
 	{
-        DexNavIconsVisionUpdate((*DNavState)->proximity, (*DNavState)->searchLevel);
-        gTasks[taskId].data[0] = (*DNavState)->proximity;
+        DexNavIconsVisionUpdate(sDNavState->proximity, sDNavState->searchLevel);
+        gTasks[taskId].data[0] = sDNavState->proximity;
     }
 }
 
@@ -924,9 +977,9 @@ static u8 GetEncounterLevel(u16 species, u8 environment)
 	{
 		case 0:	// grass
 			if (landMonsInfo == NULL)
-				return 22; // Hidden pokemon should only appear on walkable tiles or surf tiles
+				return 22; //Hidden pokemon should only appear on walkable tiles or surf tiles
 						
-			for (u8 i = 0; i < 12; ++i)
+			for (u8 i = 0; i < NUM_LAND_MONS; ++i)
 			{
 				struct WildPokemon monData = landMonsInfo->wildPokemon[i];
 				if (monData.species == species)
@@ -939,9 +992,9 @@ static u8 GetEncounterLevel(u16 species, u8 environment)
 			
 		case 1:	//water
 			if (waterMonsInfo == NULL)
-				return 22; // Hidden pokemon should only appear on walkable tiles or surf tiles
+				return 22; //Hidden pokemon should only appear on walkable tiles or surf tiles
 
-			for (u8 i = 0; i < 5; ++i)
+			for (u8 i = 0; i < NUM_WATER_MONS; ++i)
 			{
 				struct WildPokemon monData = waterMonsInfo->wildPokemon[i];
 				if (monData.species == species)
@@ -957,9 +1010,9 @@ static u8 GetEncounterLevel(u16 species, u8 environment)
 	}
 	
     if (max == 0)
-        return 0xFF; // Free dexnav display message
+        return 0xFF; //Free dexnav display message
 
-    // mod div by 0 edge case.
+    //Mod div by 0 edge case.
     if (min == max)
         return min;
 	
@@ -970,19 +1023,19 @@ static u8 GetEncounterLevel(u16 species, u8 environment)
 static u8 DexNavGenerateMonLevel(u16 species, u8 searchLevel, u8 environment)
 {
     u8 levelBase = GetEncounterLevel(species, environment);
-    if (levelBase > 100)
+    if (levelBase > MAX_LEVEL)
         return 0;
 	
     u8 searchLevelBonus = 0;
-    if ((searchLevel >> 2) > 20)
+    if (searchLevel >> 2 > 20)
         searchLevelBonus = 20; 
 	else
-        searchLevelBonus = (searchLevel >> 2);
+        searchLevelBonus = searchLevel >> 2;
     
-    if ((searchLevelBonus + levelBase) > 100)
-        return 100;
+    if (searchLevelBonus + levelBase > MAX_LEVEL)
+        return MAX_LEVEL;
     else
-        return ((searchLevel >> 2) + (levelBase));
+        return searchLevelBonus + levelBase;
 }
 
 
@@ -997,17 +1050,17 @@ static u16 DexNavGenerateHeldItem(u16 species, u8 searchLevel)
     if (item1 == item2)
         return item1;
 
-    // if no items can be held, then yeah..no items
-    if ((item2 == ITEM_NONE) && (item1 == ITEM_NONE))
+    // if no items can be held, then yeah...no items
+    if (item2 == ITEM_NONE && item1 == ITEM_NONE)
         return ITEM_NONE;
 
     // if only one entry, 50% chance
-    if ((item2 == ITEM_NONE) && (item1 != ITEM_NONE))
+    if (item2 == ITEM_NONE && item1 != ITEM_NONE)
         return (randVal <= 50) ? item1 : ITEM_NONE;
 
     // if both are distinct item1 = 50% + srclvl/2; item2 = 5% + srchlvl/2
-    if (randVal < ((50 + searchLevelInfluence) + (5 + searchLevel)))
-        return (randVal > (5 + searchLevelInfluence)) ? item1 : item2;
+    if (randVal < (50 + searchLevelInfluence + 5 + searchLevel))
+        return (randVal > 5 + searchLevelInfluence) ? item1 : item2;
     else
         return ITEM_NONE;
 	
@@ -1050,8 +1103,9 @@ static u8 DexNavGenerateHiddenAbility(u16 species, u8 searchLevel)
 			genAbility = TRUE;
     }
 
-    if (genAbility && gBaseStats[species].hiddenAbility != ABILITY_NONE)
-        return gBaseStats[species].hiddenAbility; // should be ability when reworked
+    if (genAbility && gBaseStats[species].hiddenAbility != ABILITY_NONE
+	&& GetSetPokedexFlag(SpeciesToNationalPokedexNum(species), FLAG_GET_CAUGHT)) //Only give hidden ability if Pokemon has been caught before
+        return gBaseStats[species].hiddenAbility;
     else 
 	{
         //Pick a normal ability of that Pokemon
@@ -1160,7 +1214,7 @@ static void DexNavGenerateMoveset(u16 species, u8 searchLevel, u8 encounterLevel
     bool8 genMove = FALSE;
     u16 randVal = Random() % 100;
 	
-    // evaluate if Pokemon should get an egg move in first slot
+    //Evaluate if Pokemon should get an egg move in first slot
     if (searchLevel < 5)
 	{
         if (randVal <= SEARCHLEVEL0_MOVECHANCE)
@@ -1191,31 +1245,24 @@ static void DexNavGenerateMoveset(u16 species, u8 searchLevel, u8 encounterLevel
         if (randVal <= SEARCHLEVEL100_MOVECHANCE)
 			genMove = TRUE;
     }
-    // genMove = TRUE;
-    // get the species's egg move, if one exists
-    //u16 move[4] = {MOVE_NONE, MOVE_NONE, MOVE_NONE, MOVE_NONE};
-    
+
 	// generate a wild mon and copy moveset
-	
-	// generate a wild mon and copy moveset
+	u8 wildMonIndex = 0;
 	#ifdef TANOBY_RUINS_ENABLED
 		const struct WildPokemonInfo* landMonsInfo = LoadProperMonsData(LAND_MONS_HEADER);
 		const struct WildPokemonInfo* waterMonsInfo = LoadProperMonsData(WATER_MONS_HEADER);
-		u8 wildMonIndex = 0;
 		
 		if (landMonsInfo != NULL)
 			wildMonIndex = ChooseWildMonIndex_Land();
 		else if (waterMonsInfo != NULL)
 			wildMonIndex = ChooseWildMonIndex_WaterRock();
-
-		CreateWildMon(species, encounterLevel, wildMonIndex, FALSE);
-	#else
-		CreateWildMon(species, encounterLevel, 0, FALSE);
 	#endif
+	
+	CreateWildMon(species, encounterLevel, wildMonIndex, TRUE);
+	
 
-
-	// store generated mon moves into Dex Nav Struct
-	for (int i = 0; i < 4; ++i)
+	//Store generated mon moves into Dex Nav Struct
+	for (int i = 0; i < MAX_MON_MOVES; ++i)
 	{
 		moveLoc[i] = gEnemyParty[0].moves[i];
 	}
@@ -1223,82 +1270,56 @@ static void DexNavGenerateMoveset(u16 species, u8 searchLevel, u8 encounterLevel
 	// set first move slot to a random egg move if search level is good enough
 	if (genMove == TRUE)
 	{
-		u16 eggMoveBuffer[EGGMOVE_MAX];
+		u16 eggMoveBuffer[EGG_MOVES_ARRAY_COUNT];
 		u8 numEggMoves = GetEggMoves(&gEnemyParty[0], &eggMoveBuffer);
 		if (numEggMoves != 0)
 		{
-			u8 index = RandRange(0, EGGMOVE_MAX);
+			u8 index = RandRange(0, numEggMoves);
 			moveLoc[0] = eggMoveBuffer[index];
 		}
 	}
-
-	
-/*		OLD, keep for now
-	if (genMove)
-	{
-        u16 eggmoveBuff[EGGMOVE_MAX];
-        u16 eggSpecies = GetBaseSpecies(species);
-        PopulateEggMoveBuffer(eggSpecies, &eggmoveBuff[0]);
-        move[0] =  eggmoveBuff[Random() % CountEggMoves(&eggmoveBuff[0])];
-    }
-	else
-        genMove = FALSE;	// species has no egg moves
-
-
-
-    // calculate the normal moves
-    u16 thisMove = MOVE_NONE;
-
-    u8 i = 0;
-    u8 cMoveIndex = genMove;
-    while (thisMove < MOVES_COUNT)
-	{
-       struct LearnsetEntry learnable_move = pokemon_learnset[species][i];
-       thisMove = learnable_move.move;
-
-       // learnset is level ordered, so exit early
-       if (learnable_move.level > encounterLevel) {
-            break;
-       } else {
-            // if an eggmove is in the first slot, skip it and move to the next slot
-            if ((genMove) && (!(i % 4))) {
-                move[1] = thisMove;
-            } else {
-                move[cMoveIndex] = thisMove;
-            }
-       }
-       i += 1;
-       cMoveIndex += 1;
-
-    }
-
-    // assign moves to array
-    for (i = 0; i < 4; ++i)
-	{
-        moveLoc[i] = move[i];
-    }
-	
-*/
 }
 
+extern const u8 gInterfaceGfx_DexnavBarTiles[];
+static const struct CompressedSpriteSheet sBlackBarTiles = {gInterfaceGfx_DexnavBarTiles, 64 * 32 / 2, 0xFDF1};
+static const struct SpriteTemplate sBlackBarTemplate = 
+{
+	.tileTag = 0xFDF1,
+	.paletteTag = 0x8472,
+	.oam = &sBlackBarOAM,
+	.anims = gDummySpriteAnimTable, 
+	.images = NULL,
+	.affineAnims = gDummySpriteAffineAnimTable,
+	.callback = SpriteCallbackDummy,
+};
+
+static void DexNavDrawBlackBars(u8 objidAddr[4])
+{
+	LoadSpritePalette(&HeldPal);
+    LoadCompressedSpriteSheetUsingHeap(&sBlackBarTiles);
+    objidAddr[0] = CreateSprite(&sBlackBarTemplate, ICONX + 16, ICONY - 2, 0x0);	
+	objidAddr[1] = CreateSprite(&sBlackBarTemplate, ICONX + 16 + 64, ICONY - 2, 0x0);
+	objidAddr[2] = CreateSprite(&sBlackBarTemplate, ICONX + 16 + 64 + 64, ICONY - 2, 0x0);
+	objidAddr[3] = CreateSprite(&sBlackBarTemplate, ICONX + 16 + 64 + 64 + 64, ICONY - 2, 0x0);
+}
 
 // create empty object of size 64x32 to draw icons on
-static const struct SpriteSheet sightTiles = {(const u8*)(&gInterfaceGfx_emptyTiles), 0x800, 0x5424};
+static const struct CompressedSpriteSheet sightTiles = {(const u8*)(&gInterfaceGfx_emptyTiles), 0x800, 0x5424};
 static const struct SpriteTemplate fontTempSight = 
 {
 	.tileTag = 0x5424,
 	.paletteTag = 0x8472,
 	.oam = (struct OamData*) &FontOAM,
-	.anims = (const union AnimCmd* const*) 0x8231CF0, 
+	.anims = (const union AnimCmd* const*) gDummySpriteAnimTable, 
 	.images = NULL,
-	.affineAnims = (const union AffineAnimCmd* const*) 0x8231CFC,
+	.affineAnims = (const union AffineAnimCmd* const*) gDummySpriteAffineAnimTable,
 	.callback = SpriteCallbackDummy,
 };
 	
 static void DexNavDrawSight(u8 sight_lvl, u8* objidAddr)
 {
-    LoadSpriteSheet(&sightTiles);
     LoadSpritePalette(&HeldPal);
+	LoadCompressedSpriteSheetUsingHeap(&sightTiles);
     u8 objId = CreateSprite(&fontTempSight, ICONX + 192, ICONY + 0x12, 0x0);
     *objidAddr = objId;
     gSprites[objId].oam.affineMode = 2;
@@ -1306,29 +1327,29 @@ static void DexNavDrawSight(u8 sight_lvl, u8* objidAddr)
     gSprites[objId].oam.objMode = 1;
 };
 
-// create empty object of size 32x64 to draw font on
-static const struct SpriteSheet FontSpriteAbility = {(const u8*)(&gInterfaceGfx_emptyTiles), 0x800, 0x1EE7};
+// create empty object of size 64x32 to draw font on
+static const struct CompressedSpriteSheet FontSpriteAbility = {(const u8*)(&gInterfaceGfx_emptyTiles), 0x800, 0x1EE7};
 static const struct SpriteTemplate FontTempAbility =
 {
 	.tileTag = 0x1EE7, 
 	.paletteTag = 0x8472, 
 	.oam = (struct OamData*) &FontOAM, 
-	.anims = (const union AnimCmd* const*)0x8231CF0, 
+	.anims = (const union AnimCmd* const*)gDummySpriteAnimTable, 
 	.images = 0,
-	.affineAnims = (const union AffineAnimCmd* const*) 0x8231CFC,  
+	.affineAnims = (const union AffineAnimCmd* const*) gDummySpriteAffineAnimTable,  
 	.callback = SpriteCallbackDummy,
 };
 
 static void DexNavDrawAbility(u8 ability, u8* objidAddr)
 {
-    LoadSpriteSheet(&FontSpriteAbility);
     LoadSpritePalette(&HeldPal);
+	LoadCompressedSpriteSheetUsingHeap(&FontSpriteAbility);
     u8 objId = CreateSprite(&FontTempAbility, ICONX + 80, ICONY + 0x12, 0x0);
     *objidAddr = objId;
     gSprites[objId].oam.affineMode = 2;
 
     // ability name beside move name
-    u8 len = (*DNavState)->moveNameLength;
+    u8 len = sDNavState->moveNameLength;
     gSprites[objId].pos1.x += ((8 * (len/2)) + (4 * (len % 2)));
 
     // Copy ability string from table using state id
@@ -1349,41 +1370,39 @@ static void DexNavDrawAbility(u8 ability, u8* objidAddr)
     return;
 }
 
-    // create empty object of size 32x64 to draw font on
-static const struct SpriteSheet FontSpriteMove = {(u8*) gInterfaceGfx_emptyTiles, 0x800, 0x4736};
+    // create empty object of size 64x32 to draw font on
+static const struct CompressedSpriteSheet FontSpriteMove = {(u8*) gInterfaceGfx_emptyTiles, 0x800, 0x4736};
 static const struct SpriteTemplate FontTempMove =
 {
 	.tileTag = 0x4736,
 	.paletteTag = 0x8472,
 	.oam = (struct OamData*) &FontOAM,
-	.anims = (const union AnimCmd* const*) 0x8231CF0,
+	.anims = (const union AnimCmd* const*) gDummySpriteAnimTable,
 	.images = 0,
-    .affineAnims = (const union AffineAnimCmd* const*) 0x8231CFC,
+    .affineAnims = (const union AffineAnimCmd* const*) gDummySpriteAffineAnimTable,
 	.callback = SpriteCallbackDummy,
 };
 
 static void DexNavDrawMove(u16 move, u8 searchLevel, u8* objidAddr)
 {
-
-    LoadSpriteSheet(&FontSpriteMove);
-    LoadSpritePalette(&HeldPal);
+	LoadSpritePalette(&HeldPal);
+    LoadCompressedSpriteSheetUsingHeap(&FontSpriteMove);
     u8 objId = CreateSprite(&FontTempMove, ICONX + 80, ICONY + 0x12, 0x0);
     *objidAddr = objId;
     gSprites[objId].oam.affineMode = 2;
 
     // Copy move string from table using state id, add '/' character to the end of it
-    Memcpy(&gStringVar4[0], gMoveNames[move], MOVE_NAME_LENGTH);
-    //gStringVar4[MOVE_NAME_LENGTH + 1] = 0xFF;
-    u8 len = StringLength(&gStringVar4[0]);
+    u8* ptr = StringCopy(gStringVar4, gMoveNames[move]);
+    u8 len = StringLength(gStringVar4);
 
     if (searchLevel > 2) 
 	{
-        gStringVar4[len] = 0xBA;
+        *ptr = 0xBA;
         len += 1;
     }
 
     // record length of move with slash for ability name to be placed beside it
-    (*DNavState)->moveNameLength = len;
+    sDNavState->moveNameLength = len;
 
     // adjust string to be even chars, if odd end in two spaces
     if (!(len % 2)) 
@@ -1411,9 +1430,9 @@ static const struct SpriteTemplate StarLitTemp =
 	.tileTag = 0x61,
 	.paletteTag = 0x8472,
 	.oam = (struct OamData*) &HeldOAM,
-	.anims = (const union AnimCmd* const*) 0x8231CF0, 
+	.anims = (const union AnimCmd* const*) gDummySpriteAnimTable, 
 	.images = 0,
-    .affineAnims = (const union AffineAnimCmd* const*) 0x8231CFC, 
+    .affineAnims = (const union AffineAnimCmd* const*) gDummySpriteAffineAnimTable, 
 	.callback = SpriteCallbackDummy,
 };
     
@@ -1422,9 +1441,9 @@ static const struct SpriteTemplate StarOffTemp =
 	.tileTag = 0x2613,
 	.paletteTag = 0x8472,
 	.oam = (struct OamData*) &HeldOAM,
-	.anims = (const union AnimCmd* const*) 0x8231CF0, 
+	.anims = (const union AnimCmd* const*) gDummySpriteAnimTable, 
 	.images = 0,
-    .affineAnims = (const union AffineAnimCmd* const*) 0x8231CFC, 
+    .affineAnims = (const union AffineAnimCmd* const*) gDummySpriteAffineAnimTable, 
 	.callback = SpriteCallbackDummy,
 };
 
@@ -1453,23 +1472,14 @@ static void DexNavDrawPotential(u8 potential, u8* objidAddr)
 
 
 void DexNavDrawSpeciesIcon(u16 species, u8* objIdAddr)
-//void DexNavDrawSpeciesIcon(u16 species)
 {
-	//u32 pid = RandRange(0, 0xFFFF) | RandRange(0, 0xFFFF) << 16;
-	//CreateMonIcon(species, SpriteCB_PokeIcon, ICONX, ICONY, 0, pid, FALSE);
+	u32 pid = 0xFFFFFFFF;
 
-	// check which palette the species icon uses
-    u8 iconPal = gMonIconPaletteIndices[species];
-	struct SpritePalette bulbPal = {(void*) gIconPals[iconPal], 0x3139};
-	LoadSpritePalette(&bulbPal);
+	//Load which palette the species icon uses
+	LoadMonIconPalette(species);
 
-    u32 pid = RandRange(0, 0xFFFF) | RandRange(0, 0xFFFF) << 16;
-    void *IconGFX = LoadPartyIconTiles(species, pid, FALSE);
-    struct SpriteSheet BulbIcon = {IconGFX, 4 * 8 * 32, 0x3139};
-    LoadSpriteSheet(&BulbIcon);
-
-    // create object
-    u8 objId = CreateSprite(&BulbTemp, ICONX, ICONY, 0x0);
+	//Create the icon
+	u8 objId = CreateMonIcon(species, SpriteCB_PokeIcon, ICONX, ICONY, 0, pid, FALSE);
     *objIdAddr = objId;
 
     gSprites[objId].oam.affineMode = 2;
@@ -1482,9 +1492,9 @@ static const struct SpriteTemplate HeldTemp =
 	.tileTag = 0x8472,
 	.paletteTag = 0x8472,
 	.oam = (struct OamData*) &HeldOAM,
-	.anims = (const union AnimCmd* const*) 0x8231CF0, 
+	.anims = (const union AnimCmd* const*) gDummySpriteAnimTable, 
 	.images = 0,
-	.affineAnims = (const union AffineAnimCmd* const*) 0x8231CFC,
+	.affineAnims = (const union AffineAnimCmd* const*) gDummySpriteAffineAnimTable,
 	.callback = SpriteCallbackDummy,
 };
 
@@ -1503,30 +1513,30 @@ void DexNavDrawHeldItem(u8* objidAddr)
 
 static void DexNavDrawIcons(void)
 {
-	u8 searchLevel = (*DNavState)->searchLevel;
-    DexNavDrawSight((*DNavState)->proximity, &(*DNavState)->objIdSight);
-    DexNavDrawSpeciesIcon((*DNavState)->species, &(*DNavState)->objIdSpecies);
-	//DexNavDrawSpeciesIcon((*DNavState)->species);
-    DexNavDrawMove((*DNavState)->moveId[0], searchLevel, &(*DNavState)->objIdMove);
-    DexNavDrawAbility((*DNavState)->ability, &(*DNavState)->objIdAbility);
-    DexNavDrawHeldItem(&(*DNavState)->objIdItem);
-    DexNavDrawPotential((*DNavState)->potential, &(*DNavState)->objIdPotential[0]);
+	u8 searchLevel = sDNavState->searchLevel;
+	DexNavDrawBlackBars(sDNavState->objIdBlackBar);
+    DexNavDrawSight(sDNavState->proximity, &sDNavState->objIdSight);
+    DexNavDrawMove(sDNavState->moveId[0], searchLevel, &sDNavState->objIdMove);
+    DexNavDrawHeldItem(&sDNavState->objIdItem);
+	DexNavDrawAbility(sDNavState->ability, &sDNavState->objIdAbility);
+    DexNavDrawPotential(sDNavState->potential, &sDNavState->objIdPotential[0]);
+	DexNavDrawSpeciesIcon(sDNavState->species, &sDNavState->objIdSpecies);
 };
 
 
-static void InitDexNavHUD(u16 species, u8 environment)
+void InitDexNavHUD(u16 species, u8 environment)
 {	
-	*DNavState = Calloc(sizeof(struct DexnavHudData));
+	sDNavState = Calloc(sizeof(struct DexnavHudData));
     // assign non-objects to struct
-    (*DNavState)->species = species;
-    (*DNavState)->environment = environment;
-    u8 searchLevel = SearchLevels[species];
-    (*DNavState)->searchLevel = searchLevel;
-    (*DNavState)->pokemonLevel = DexNavGenerateMonLevel(species, searchLevel, environment);
+    sDNavState->species = species;
+    sDNavState->environment = environment;
+    u8 searchLevel = sSearchLevels[SpeciesToNationalPokedexNum(species)];
+    sDNavState->searchLevel = searchLevel;
+    sDNavState->pokemonLevel = DexNavGenerateMonLevel(species, searchLevel, environment);
 
-    if ((*DNavState)->pokemonLevel < 1)
+    if (sDNavState->pokemonLevel < 1)
 	{
-        Free((void*) *DNavState);
+        Free(sDNavState);
         MsgNormal(&gText_CannotBeFound[0]);
         return;
     }
@@ -1535,27 +1545,27 @@ static void InitDexNavHUD(u16 species, u8 environment)
     //extern u8 ShakingGrass(u8, u8, u8, bool8);
     if (!ShakingGrass(environment, 12, 12, 0))
 	{
-        Free((void*)*DNavState);
+        Free(sDNavState);
         MsgNormal(&gText_NotFoundNearby[0]);
         return;
     }
 
-    // Populate DNavState objects
-    DexNavGenerateMoveset(species, searchLevel, (*DNavState)->pokemonLevel, &(*DNavState)->moveId[0]);
-    (*DNavState)->heldItem = DexNavGenerateHeldItem(species, searchLevel);
-    (*DNavState)->ability = DexNavGenerateHiddenAbility(species, searchLevel);
-    (*DNavState)->potential = DexNavGeneratePotential(searchLevel);
+    //Populate sDNavState objects
+    DexNavGenerateMoveset(species, searchLevel, sDNavState->pokemonLevel, &sDNavState->moveId[0]);
+    sDNavState->heldItem = DexNavGenerateHeldItem(species, searchLevel);
+    sDNavState->ability = DexNavGenerateHiddenAbility(species, searchLevel);
+    sDNavState->potential = DexNavGeneratePotential(searchLevel);
     DexNavProximityUpdate();
 
-    // draw icons
+    //Draw icons
     DexNavDrawIcons();
 
-    // hide icons based on proximity and search level
-    DexNavIconsVisionUpdate((*DNavState)->proximity, searchLevel);
+    //Hide icons based on proximity and search level
+    DexNavIconsVisionUpdate(sDNavState->proximity, searchLevel);
 
-    // enable Hblank interrupt
-    EnableInterrupts(2);
-    SetHBlankCallback((SuperCallback)DexHUDHBlank);
+    //Enable Hblank interrupt
+    //EnableInterrupts(2);
+    //SetHBlankCallback(DexHUDHBlank);
 
     // task update HUD
     u8 taskId = CreateTask((TaskFunc)DexNavManageHUD, 0x1);
@@ -1566,9 +1576,9 @@ static void InitDexNavHUD(u16 species, u8 environment)
 // This is called via a c1 from the GUI, while waiting to return to the OW
 static void ExecDexNavHUD(void)
 {	
-	if (!gPaletteFade->active && !ScriptEnv2IsEnabled() && gMain.callback2 == OverworldCallback2)
+	if (!gPaletteFade->active && !ScriptEnv2IsEnabled() && gMain.callback2 == CB2_Overworld)
 	{
-		SetMainCallback1(OverworldCallback1);
+		SetMainCallback1(CB1_Overworld);
         InitDexNavHUD(Var8000, Var8001);
     }
 }
@@ -1602,73 +1612,91 @@ static void DexNavGuiSetup(void)
     SetVBlankCallback(VblackCallbackSeq);
 };
 
-
 static void DexNavLoadPokeIcons(void)
-{	
-	LoadMonIconPalettes();
+{
+	s16 x, y;
+	u32 pid = 0xFFFFFFFF;
+	u8 hiddenLandMons = sDNavState->numHiddenLandMons;
+	u8 hiddenWaterMons = sDNavState->numHiddenWaterMons;
 
-    for (u8 i = 0; i < 12; ++i)
-	{
-        u16 species = (*DNavState)->grassSpecies[i];
-        u32 pid = 0xFFFFFFFF;
-		
-		void *IconGFX = LoadPartyIconTiles(species, pid, FALSE);
-		u16 gfxTag = ICON_GFX_TAG + i;
-		u16 palTag = ICON_PAL_TAG + gMonIconPaletteIndices[species];
-		struct SpriteSheet IconTiles = {IconGFX, 4 * 8 * 32, gfxTag};
-		LoadSpriteSheet(&IconTiles);
-		struct SpriteTemplate IconTemplate = {
-										.tileTag = gfxTag,
-										.paletteTag = palTag,
-										.oam = (struct OamData*) &IconOAM,
-										.anims = (const union AnimCmd* const*) 0x8231CF0,
-										.images = (const struct SpriteFrameImage *) &IconTiles,
-										.affineAnims = (const union AffineAnimCmd* const*) 0x8231CFC,
-										.callback = (SpriteCallback) SpriteCallbackDummy,
-										};
-															// x and y pos of sprite
-		CreateSprite(&IconTemplate, 20 + (24 * (i % 6)), 92 + (i > 5 ? 28 : 0), 0);
-    }
+	LoadMonIconPalettes();
 	
-    for (u8 i = 0; i < 5; ++i)
+    for (u8 i = 0; i < NUM_LAND_MONS; ++i)
 	{
-        u16 species = (*DNavState)->waterSpecies[i];
-        u32 pid = 0xFFFFFFFF;
-        //if (species > 0) {
-            void *IconGFX = LoadPartyIconTiles(species, pid, FALSE);
-            u16 gfxTag = ICON_GFX_TAG + i + 12;
-            u16 palTag = ICON_PAL_TAG + gMonIconPaletteIndices[species];
-            struct SpriteSheet IconTiles = {IconGFX, 4 * 8 * 32, gfxTag};
-            LoadSpriteSheet(&IconTiles);
-            struct SpriteTemplate IconTemplate = {
-                                            .tileTag = gfxTag,
-                                            .paletteTag = palTag,
-                                            .oam = (struct OamData*) &IconOAM,
-                                            .anims = (const union AnimCmd* const*) 0x8231CF0,
-                                            .images = (const struct SpriteFrameImage *) &IconTiles,
-                                            .affineAnims = (const union AffineAnimCmd* const*) 0x8231CFC,
-                                            .callback = (SpriteCallback) SpriteCallbackDummy,
-                                            };
-                                                                // x and y pos of sprite
-            CreateSprite(&IconTemplate, 30 + 24 * i, 48, 0);
+        u16 species = sDNavState->grassSpecies[i];
+		x = 20 + (24 * (i % 6));
+		y = 92 + (i > 5 ? 28 : 0);
+
+		if (species == SPECIES_NONE)
+		{
+			if (hiddenLandMons == 0)
+			{
+				CreateNoDataIcon(x, y);	
+				continue;
+			}
+			else
+				hiddenLandMons--;
+		}
+		
+		CreateMonIcon(species, SpriteCB_PokeIcon, x, y, 0, pid, 0);
+	}
+	
+
+    for (u8 i = 0; i < NUM_WATER_MONS; ++i)
+	{
+		u16 species = sDNavState->waterSpecies[i];
+		x = 30 + 24 * i;
+		y = 48;
+
+		if (species == SPECIES_NONE)
+		{
+			if (hiddenWaterMons == 0)
+			{
+				CreateNoDataIcon(x, y);	
+				continue;
+			}
+			else
+				hiddenWaterMons--;
+		}
+		
+		CreateMonIcon(species, SpriteCB_PokeIcon, x, y, 0, pid, 0);
     }
 }
 
+extern struct OamData* sMonIconOamData;
+static struct CompressedSpriteSheet IconTiles = {gInterfaceGfx_DexNavNoDataSymbolTiles, 32 * 32, ICON_GFX_TAG};
+
+static void CreateNoDataIcon(s16 x, s16 y)
+{
+	LoadCompressedSpriteSheetUsingHeap(&IconTiles);
+	struct SpriteTemplate IconTemplate =
+	{
+		.tileTag = ICON_GFX_TAG,
+		.paletteTag = ICON_PAL_TAG,
+		.oam = (struct OamData*) &IconOAM,
+		.anims = (const union AnimCmd* const*) gDummySpriteAnimTable,
+		.images = NULL,
+		.affineAnims = (const union AffineAnimCmd* const*) gDummySpriteAffineAnimTable,
+		.callback = (SpriteCallback) SpriteCallbackDummy,
+	};
+
+	CreateSprite(&IconTemplate, x, y, 0);
+}
 
 static void UpdateCursorPosition(void)
 {
     // update cursor position
-    if ((*DNavState)->selectedArr)
+    if (sDNavState->selectedArr)
 	{
         // water
-        gSprites[(*DNavState)->cursorId].pos1.x = CursorPositions2[(*DNavState)->selectedIndex];
-        gSprites[(*DNavState)->cursorId].pos1.y = CursorPositions2[(*DNavState)->selectedIndex + 1];
+        gSprites[sDNavState->cursorId].pos1.x = CursorPositions2[sDNavState->selectedIndex];
+        gSprites[sDNavState->cursorId].pos1.y = CursorPositions2[sDNavState->selectedIndex + 1];
     }
 	else
 	{
         // grass
-        gSprites[(*DNavState)->cursorId].pos1.x = CursorPositions1[(*DNavState)->selectedIndex];
-        gSprites[(*DNavState)->cursorId].pos1.y = CursorPositions1[(*DNavState)->selectedIndex + 1];
+        gSprites[sDNavState->cursorId].pos1.x = CursorPositions1[sDNavState->selectedIndex];
+        gSprites[sDNavState->cursorId].pos1.y = CursorPositions1[sDNavState->selectedIndex + 1];
     }
 }
 
@@ -1680,82 +1708,202 @@ static const struct SpriteTemplate CursorTemp =
 	.tileTag = SELECTION_CURSOR_TAG,
 	.paletteTag = SELECTION_CURSOR_TAG,
 	.oam = (struct OamData*) &CursorOAM,
-    .anims = (const union AnimCmd* const*) 0x8231CF0,
+    .anims = (const union AnimCmd* const*) gDummySpriteAnimTable,
 	.images = (const struct SpriteFrameImage *) &CursorGFX,
-	.affineAnims = (const union AffineAnimCmd* const*) 0x8231CFC,
+	.affineAnims = (const union AffineAnimCmd* const*) gDummySpriteAffineAnimTable,
 	.callback = SpriteCallbackDummy,
 };
-	
+
+
 static void SpawnPointerArrow(void)
 {
     // uncompressed
     LoadSpriteSheet(&CursorGFX);
     LoadSpritePalette(&CursorPal);
-    (*DNavState)->cursorId = CreateSprite(&CursorTemp, 30, 48, 0);
+    sDNavState->cursorId = CreateSprite(&CursorTemp, 30, 48, 0);
     UpdateCursorPosition();
-};
+}
 
+
+#define MAP_IS(map) (gSaveBlock1->location.mapGroup == MAP_GROUP(map) && gSaveBlock1->location.mapNum == MAP_NUM(map))
+static void DexNavLoadAreaNames(void)
+{
+	const u8* landText;
+	const u8* waterText;
+
+	#ifdef UNBOUND
+	if (MAP_IS(FLOWER_PARADISE_A))
+	{
+		landText = gText_PinkFlowers;
+		waterText = gText_YellowFlowers;
+	}
+	else if (MAP_IS(FLOWER_PARADISE_B))
+	{
+		landText = gText_RedFlowers;
+		waterText = gText_BlueFlowers;
+	}
+	else if (MAP_IS(FLOWER_PARADISE_C))
+	{
+		landText = gText_PinkAndPurpleFlowers;
+		waterText = gText_BlueAndYellowFlowers;
+	}
+	else if (IsCurrentAreaVolcano())
+	{
+		landText = gText_DexNavLand;
+		waterText = gText_Magma;
+	}
+	else
+	#endif
+	{
+		landText = gText_DexNavLand;
+		waterText = gText_DexNavWater;
+	}
+	
+	WindowPrint(WINDOW_WATER, 1, 4, 6, &DexNav_WhiteText, 0, waterText);
+	WindowPrint(WINDOW_LAND, 1, 5, 6, &DexNav_WhiteText, 0, landText);
+}
 
 
 static void DexNavLoadNames(u8 status)
 {
     // clean boxes
-    for (int i = 0; i < 5; ++i)
+    for (int i = 0; i < WINDOW_COUNT; ++i)
 	{
         FillWindowPixelBuffer(i, 0);
     }
 	
-    // rbox commit species name
+    //Print species name
+    u16 species = sDNavState->selectedArr == ROW_WATER ? sDNavState->waterSpecies[sDNavState->selectedIndex >> 1] : sDNavState->grassSpecies[sDNavState->selectedIndex>>1];
+	u16 dexNum = SpeciesToNationalPokedexNum(species);
 
-    u16 species = (*DNavState)->selectedArr ? (*DNavState)->waterSpecies[(*DNavState)->selectedIndex >> 1] : (*DNavState)->grassSpecies		[(*DNavState)->selectedIndex>>1];
-	
-    if (species != 0)
-        WindowPrint(0, 0, 0, 4, &DexNav_BlackText, 0, gSpeciesNames[species]);
+    if (species != SPECIES_NONE)
+		WindowPrint(WINDOW_SPECIES, 0, 0, 4, &DexNav_BlackText, 0, gSpeciesNames[species]);
 	else
-	{
-        WindowPrint(0, 0, 0, 4, &DexNav_BlackText, 0, &gText_DexNav_NoInfo[0]);
-	}
+		WindowPrint(WINDOW_SPECIES, 0, 0, 4, &DexNav_BlackText, 0, gText_DexNav_NoInfo);
 	
-    // rbox commit search level
-    ConvertIntToDecimalStringN(gStringVar4, SearchLevels[species], 0, 4);
-    WindowPrint(1, 0, 0, 4, &DexNav_BlackText, 0, &gStringVar4[0]);
+    //Print search level
+    ConvertIntToDecimalStringN(gStringVar4, sSearchLevels[dexNum], 0, 4);
+	
+	if (species == SPECIES_NONE)
+		WindowPrint(WINDOW_SEARCH_LEVEL, 0, 0, 4, &DexNav_BlackText, 0, gText_DexNav_NoInfo);
+	else
+		WindowPrint(WINDOW_SEARCH_LEVEL, 0, 0, 4, &DexNav_BlackText, 0, gStringVar4);
 
-    // rbox commit level bonus
+    //Print level bonus
     u8 searchLevelBonus = 0;
-    if ((SearchLevels[species] >> 2) > 20)
+    if ((sSearchLevels[dexNum] >> 2) > 20)
         searchLevelBonus = 20;
     else
-        searchLevelBonus = (SearchLevels[species] >> 2);
+        searchLevelBonus = (sSearchLevels[dexNum] >> 2);
 	
     ConvertIntToDecimalStringN(gStringVar4, searchLevelBonus, 0, 4);
-    WindowPrint(2, 0, 0, 4, &DexNav_BlackText, 0, &gStringVar4[0]);
+	
+	if (species == SPECIES_NONE)
+		WindowPrint(WINDOW_LEVEL_BONUS, 0, 0, 4, &DexNav_BlackText, 0, gText_DexNav_NoInfo);
+	else
+		WindowPrint(WINDOW_LEVEL_BONUS, 0, 0, 4, &DexNav_BlackText, 0, gStringVar4);
 
-    // rbox commit hidden ability name
-    if (gBaseStats[species].hiddenAbility != 0)
-        WindowPrint(3, 0, 0, 4, &DexNav_BlackText, 0, GetAbilityName(gBaseStats[species].hiddenAbility));
-    else
-        WindowPrint(3, 0, 0, 4, &DexNav_BlackText, 0, &gText_DexNav_NoInfo[0]);
+    //Print hidden ability name
+	if (GetSetPokedexFlag(dexNum, FLAG_GET_CAUGHT) || species == SPECIES_NONE)
+	{
+		if (gBaseStats[species].hiddenAbility != ABILITY_NONE) //Only display hidden ability is Pokemon has been caught
+			WindowPrint(WINDOW_HIDDEN_ABILITY, 0, 0, 4, &DexNav_BlackText, 0, GetAbilityName(gBaseStats[species].hiddenAbility));
+		else
+			WindowPrint(WINDOW_HIDDEN_ABILITY, 0, 0, 4, &DexNav_BlackText, 0, gText_DexNav_NoInfo);
+	}
+	else
+		WindowPrint(WINDOW_HIDDEN_ABILITY, 0, 0, 4, &DexNav_BlackText, 0, gText_DexNav_CaptureToSee);
 
-    // rbox commit status message bar
+    //Print status message bar
     switch(status)
 	{
         case 0:
-            WindowPrint(4, 1, 0, 8, &DexNav_WhiteText, 0, &gText_DexNav_Invalid[0]);
+            WindowPrint(WINDOW_REPLY_TEXT, 1, 2, 8, &DexNav_WhiteText, 0, gText_DexNav_Invalid);
             break;
         case 1:
-            WindowPrint(4, 1, 0, 8, &DexNav_WhiteText, 0, &gText_DexNav_ChooseMon[0]);
+            WindowPrint(WINDOW_REPLY_TEXT, 1, 2, 8, &DexNav_WhiteText, 0, gText_DexNav_ChooseMon);
             break;
         case 2:
-            WindowPrint(4, 1, 0, 8, &DexNav_WhiteText, 0, &gText_DexNav_Locked[0]);
+            WindowPrint(WINDOW_REPLY_TEXT, 1, 2, 8, &DexNav_WhiteText, 0, gText_DexNav_Locked);
+			break;
+		case 3:
+            WindowPrint(WINDOW_REPLY_TEXT, 1, 2, 8, &DexNav_WhiteText, 0, gText_DexNav_NoDataForSlot);
+			break;
     }
+	
+	//Load area names
+	DexNavLoadAreaNames();
+
+	//Load map name
+	GetMapName(gStringVar4, GetCurrentRegionMapSectionId(), 0);
+	WindowPrint(WINDOW_MAP_NAME, 1, 2, 0, &DexNav_WhiteText, 0, gStringVar4);
+	
     // display committed gfx
-    for (u8 i = 0; i < 5; ++i)
+    for (u8 i = 0; i < WINDOW_COUNT; ++i)
 	{
         CopyWindowToVram(i, 3);
         PutWindowTilemap(i);
     }
 }
 
+
+static const struct CompressedSpriteSheet sCapturedAllPokemonSpriteSheet = {gInterfaceGfx_CapturedAllPokemonTiles, 8 * 8 / 2, 0xFDF2}; //Tag is from Mega Evo and not in use
+static const struct SpriteTemplate sCapturedAllPokemonSymbolTemplate = 
+{
+	.tileTag = 0xFDF2,
+	.paletteTag = SELECTION_CURSOR_TAG,
+	.oam = (struct OamData*) &sCapturedAllPokemonSymbolOAM,
+	.anims = (const union AnimCmd* const*) gDummySpriteAnimTable, 
+	.images = NULL,
+	.affineAnims = (const union AffineAnimCmd* const*) gDummySpriteAffineAnimTable,
+	.callback = SpriteCallbackDummy,
+};
+
+static void DexNavLoadCapturedAllSymbol(void)
+{
+	int i;
+	u8 num = 0;
+	u16 species;
+	const struct WildPokemonInfo* landMonsInfo = LoadProperMonsData(LAND_MONS_HEADER);
+	const struct WildPokemonInfo* waterMonsInfo = LoadProperMonsData(WATER_MONS_HEADER);
+
+	LoadCompressedSpriteSheetUsingHeap(&sCapturedAllPokemonSpriteSheet);
+
+	if (landMonsInfo != NULL)
+	{
+		for (i = 0; i < NUM_LAND_MONS; ++i)
+		{
+			species = landMonsInfo->wildPokemon[i].species;
+			if (species != SPECIES_NONE)
+			{
+				++num;
+				if (!GetSetPokedexFlag(SpeciesToNationalPokedexNum(species), FLAG_GET_CAUGHT))
+					break;
+			}
+		}
+		
+		if (i >= NUM_LAND_MONS && num > 0) //All land mons caught and there were land mons to catch
+			CreateSprite(&sCapturedAllPokemonSymbolTemplate,  154, 77, 0);
+	}
+
+	num = 0;
+	if (waterMonsInfo != NULL)
+	{
+		for (i = 0; i < NUM_WATER_MONS; ++i)
+		{
+			species = waterMonsInfo->wildPokemon[i].species;
+			if (species != SPECIES_NONE)
+			{
+				++num;
+				if (!GetSetPokedexFlag(SpeciesToNationalPokedexNum(species), FLAG_GET_CAUGHT))
+					break;
+			}
+		}
+		
+		if (i >= NUM_WATER_MONS && num > 0) //All water mons caught and there were water mons to catch
+			CreateSprite(&sCapturedAllPokemonSymbolTemplate,  140, 29, 0);
+	}	
+}
 
 static void CallbackDexNavOW(void)
 {
@@ -1769,20 +1917,20 @@ static void DexNavGuiExitSearch(void)
 	{
         case 0:
             BeginNormalPaletteFade(~0, 0, 0x0, 0x10, 0);
-            PlaySE(SE_PC_ON);
+            PlaySE(SE_POKENAV_SEARCHING);
             gMain.state += 1;
             break;
         case 1:
             if (!gPaletteFade->active)
 			{
-                Free((*DNavState)->backBuffer);
+                Free(sDNavState->backBuffer);
                 gMain.state += 1;
             }
             break;
         case 2:
             m4aMPlayVolumeControl(&gMPlay_BGM, 0xFFFF, 256);
             SetMainCallback1(CallbackDexNavOW);
-            SetMainCallback2(CallbackOWandContinueScriptsMusic);
+            SetMainCallback2(CB2_ReturnToFieldContinueScript);
             break;
 	}
 }
@@ -1799,15 +1947,15 @@ static void DexNavGuiExitNoSearch(void)
         case 1:
             if (!gPaletteFade->active)
 			{
-                Free((*DNavState)->backBuffer);
-                Free((void*) *DNavState);
+                Free(sDNavState->backBuffer);
+                Free(sDNavState);
                 gMain.state += 1;
             }
             break;
         case 2:
             m4aMPlayVolumeControl(&gMPlay_BGM, 0xFFFF, 256);
-            SetMainCallback1(OverworldCallback1);
-            SetMainCallback2(OverworldCallbackSwitchStartMenu);
+            SetMainCallback1(CB1_Overworld);
+            SetMainCallback2(CB2_ReturnToFieldWithOpenMenu);
             break;
 	}
 }
@@ -1816,43 +1964,54 @@ static void DexNavGuiExitNoSearch(void)
 static void DexNavPopulateEncounterList(void)
 {
     // nop struct data
-	Memset(&((*DNavState)->grassSpecies[0]), 0, 34);
+	Memset(sDNavState->grassSpecies, 0, 34);
    
 	// populate unique wild grass encounters
     u8 grassIndex = 0;
-	u8 sizeGrass = 12;
-   
+	u8 waterIndex = 0;
+	u16 species;
+
 	const struct WildPokemonInfo* landMonsInfo = LoadProperMonsData(LAND_MONS_HEADER);
 	const struct WildPokemonInfo* waterMonsInfo = LoadProperMonsData(WATER_MONS_HEADER);
 	
+	sDNavState->hiddenSpecies[0] = SPECIES_TABLES_TERMIN;
+	
 	if (landMonsInfo != NULL)
 	{
-		for (int i = 0; i < sizeGrass; ++i)
+		for (int i = 0; i < NUM_LAND_MONS; ++i)
 		{
-			if (!(SpeciesInArray(landMonsInfo->wildPokemon[i].species, sizeGrass)))
+			species = landMonsInfo->wildPokemon[i].species;
+			if (species != SPECIES_NONE && !SpeciesInArray(species, NUM_LAND_MONS))
 			{
-				(*DNavState)->grassSpecies[grassIndex] = landMonsInfo->wildPokemon[i].species;
-				grassIndex++;
+				sDNavState->grassSpecies[grassIndex++] = landMonsInfo->wildPokemon[i].species;
+			}
+		}
+	}
+
+	sDNavState->hiddenSpecies[0] = SPECIES_TABLES_TERMIN;
+
+	if (waterMonsInfo != NULL)
+	{
+		for (int i = 0; i < NUM_WATER_MONS; ++i)
+		{
+			species = waterMonsInfo->wildPokemon[i].species;
+			if (species != SPECIES_NONE && !SpeciesInArray(species, NUM_WATER_MONS))
+			{
+				sDNavState->waterSpecies[waterIndex++] = waterMonsInfo->wildPokemon[i].species;
 			}
 		}
 	}
    
-   u8 waterIndex = 0;
-   u8 sizeWater = 5;
-   if (waterMonsInfo != NULL)
-   {
-	   for (int i = 0; i < sizeWater; ++i)
-	   {
-			if (!(SpeciesInArray(waterMonsInfo->wildPokemon[i].species, sizeWater)))
-			{
-				(*DNavState)->waterSpecies[waterIndex] = waterMonsInfo->wildPokemon[i].species;
-				waterIndex++;
-			}
-	   }
-   }
-   
+	sDNavState->numGrassMons = grassIndex;
+	sDNavState->numWaterMons = waterIndex;
 };
 
+#define LAND_ROW_LENGTH (6 * 2)
+#define LAND_FIRST_ROW_LAST_INDEX (5 * 2)
+#define LAND_SECOND_ROW_LAST_INDEX (LAND_FIRST_ROW_LAST_INDEX + LAND_ROW_LENGTH)
+#define LAND_SECOND_ROW_FIRST_INDEX (6 * 2)
+#define WATER_ROW_LAST_INDEX (4 * 2)
+#define ROW_MON_LENGTH 2
 
 static void DexNavGuiHandler(void)
 {
@@ -1864,24 +2023,48 @@ static void DexNavGuiHandler(void)
                 DexNavGuiSetup();
                 SetMainCallback1(DexNavGuiHandler);
                 // allocate dexnav struct
-                *DNavState = (struct DexnavHudData*)Calloc(sizeof(struct DexnavHudData));
+                sDNavState = Calloc(sizeof(struct DexnavHudData));
 				gMain.state += 1;
 			}
             break;
-        case 1:
-			{
-				// load BG assets
-				void* DexNav_gbackBuffer = Malloc(0x800);
-				(*DNavState)->backBuffer = DexNav_gbackBuffer;
-				LoadPalette((void*) &DexNavTextPal, 15*16, 32);
-				LoadCompressedPalette((void*) gInterfaceGfx_dexnavGuiPal, 0, 32);				
-				LZ77UnCompWram((void*) gInterfaceGfx_dexnavGuiMap, (void*) DexNav_gbackBuffer);
-				LZ77UnCompVram((void*) gInterfaceGfx_dexnavGuiTiles, (void*) 0x06000000);
-				BgIdSetTilemap(1, DexNav_gbackBuffer);
-				BgIdMarkForSync(1);
-				BgIdMarkForSync(0);
-				gMain.state += 1;
-			}
+        case 1: ;
+			//Load BG assets
+			void* DexNav_gbackBuffer = Malloc(0x800);
+			sDNavState->backBuffer = DexNav_gbackBuffer;
+			LoadPalette(&DexNavTextPal, 15 * 16, 32);
+			const u8* palette;
+				
+			if (IsMapTypeIndoors(GetCurrentMapType()))
+				palette = gInterfaceGfx_DexNavGuiIndoorPal;
+			else if (IsCurrentAreaVolcano()) //Load special palette for volcanos
+				palette = gInterfaceGfx_DexNavGuiVolcanoPal;
+			#ifdef UNBOUND
+			else if (MAP_IS(FLOWER_PARADISE_A))
+				palette = gInterfaceGfx_DexNavGuiFlowerParadiseAPal;
+			else if (MAP_IS(FLOWER_PARADISE_B))
+				palette = gInterfaceGfx_DexNavGuiFlowerParadiseBPal;
+			else if (MAP_IS(FLOWER_PARADISE_C))
+				palette = gInterfaceGfx_DexNavGuiFlowerParadiseCPal;
+			#endif
+			else if (IsCurrentAreaDarkerCave())
+				palette = gInterfaceGfx_DexNavGuiDarkerCavePal;
+			else if (GetCurrentMapType() == MAP_TYPE_UNDERGROUND)
+				palette = gInterfaceGfx_DexNavGuiCavePal;
+			else if (IsCurrentAreaAutumn())
+				palette = gInterfaceGfx_DexNavGuiAutumnPal;
+			else if (IsCurrentAreaWinter())
+				palette = gInterfaceGfx_DexNavGuiWinterPal;
+			else
+				palette = gInterfaceGfx_dexnavGuiPal;
+				
+			LoadCompressedPalette(palette, 0, 32);
+
+			LZ77UnCompWram(gInterfaceGfx_dexnavGuiMap, DexNav_gbackBuffer);
+			LZ77UnCompVram(gInterfaceGfx_dexnavGuiTiles, (void*) 0x06000000);
+			BgIdSetTilemap(1, DexNav_gbackBuffer);
+			BgIdMarkForSync(1);
+			BgIdMarkForSync(0);
+			gMain.state += 1;
 			break;
 			
         case 2:
@@ -1902,8 +2085,9 @@ static void DexNavGuiHandler(void)
             ShowBg(1);
             DexNavLoadPokeIcons();
             SpawnPointerArrow();
-            (*DNavState)->selectedArr = 0;
-            (*DNavState)->selectedIndex = 0;
+			DexNavLoadCapturedAllSymbol();
+            sDNavState->selectedArr = 0;
+            sDNavState->selectedIndex = 0;
             gMain.state += 1;
             break;
 			
@@ -1911,77 +2095,121 @@ static void DexNavGuiHandler(void)
             if (!gPaletteFade->active)
 			{
                 switch (gMain.newAndRepeatedKeys &
-					(A_BUTTON | B_BUTTON | DPAD_DOWN | DPAD_UP | DPAD_LEFT | DPAD_RIGHT | SELECT_BUTTON))
+					(A_BUTTON | B_BUTTON | DPAD_DOWN | DPAD_UP | DPAD_LEFT | DPAD_RIGHT | R_BUTTON))
 				{
-                    case A_BUTTON:
-                        {
+                    case A_BUTTON: ;
                         // check selection is valid. Play sound if invalid
-                        u16 species = (*DNavState)->selectedArr ? (*DNavState)->waterSpecies[(*DNavState)->selectedIndex >> 1] : (*DNavState)->grassSpecies[(*DNavState)->selectedIndex>>1];
+                        u16 species = sDNavState->selectedArr == ROW_WATER ? sDNavState->waterSpecies[sDNavState->selectedIndex >> 1] : sDNavState->grassSpecies[sDNavState->selectedIndex>>1];
                         // if species is MISSINGNO then error
-                        if (species)
+                        if (species != SPECIES_NONE)
 						{
-                            // species was valid, save and enter OW HUD mode
+                            //Species was valid, save and enter OW HUD mode
                             Var8000 = species;
-                            Var8001 = (*DNavState)->selectedArr;
+                            Var8001 = sDNavState->selectedArr;
                             SetMainCallback1(DexNavGuiExitSearch);
                             gMain.state = 0;
                             return;
                         } 
 						else
 						{
-                            // beep and update
-                            DexNavLoadNames(0);
-                            PlaySE(SE_JITE_PYOKO);
+							PrintDexNavError();
                         }
                         break;
-                        }
+
                     case B_BUTTON:
                         // exit to start menu
                         SetMainCallback1(DexNavGuiExitNoSearch);
                         gMain.state = 0;
                         return;
                     case DPAD_DOWN:
+						if (sDNavState->selectedArr == ROW_LAND)
+						{
+							if (sDNavState->selectedIndex >= LAND_SECOND_ROW_FIRST_INDEX)
+							{
+								sDNavState->selectedIndex = MathMin(sDNavState->selectedIndex - LAND_ROW_LENGTH, WATER_ROW_LAST_INDEX);
+								sDNavState->selectedArr = ROW_WATER;
+							}
+							else
+							{
+								sDNavState->selectedIndex += LAND_ROW_LENGTH; //Move to second row of land
+							}
+						}
+						else //ROW_WATER
+						{
+							sDNavState->selectedArr = ROW_LAND; //Keep index the same
+						}
+						DexNavLoadNames(1);
+						PlaySE(SE_POKENAV_ONE_BEEP);
+						break;
+
                     case DPAD_UP:
-                        (*DNavState)->selectedArr = !(*DNavState)->selectedArr;
-                        (*DNavState)->selectedIndex = 0;
-                        DexNavLoadNames(1);
-                        break;
+						if (sDNavState->selectedArr == ROW_LAND)
+						{
+							if (sDNavState->selectedIndex >= LAND_SECOND_ROW_FIRST_INDEX)
+							{
+								sDNavState->selectedIndex -= LAND_ROW_LENGTH; //Move to first row of land	
+							}
+							else
+							{
+								sDNavState->selectedIndex = MathMin(sDNavState->selectedIndex, WATER_ROW_LAST_INDEX);
+								sDNavState->selectedArr = ROW_WATER;
+							}
+						}
+						else //ROW_WATER
+						{
+							sDNavState->selectedArr = ROW_LAND;
+							sDNavState->selectedIndex += LAND_ROW_LENGTH; //So be on the second row
+						}
+						DexNavLoadNames(1);
+						PlaySE(SE_POKENAV_ONE_BEEP);
+						break;
+
                     case DPAD_LEFT:
                         // wrap cursor around
-                        if ((*DNavState)->selectedArr)
-                            (*DNavState)->selectedIndex = (*DNavState)->selectedIndex == 0 ? 4 * 2 : (*DNavState)->selectedIndex - 2;
-						else
-                            (*DNavState)->selectedIndex = (*DNavState)->selectedIndex == 0 ? 11 * 2 : (*DNavState)->selectedIndex - 2;
+                        if (sDNavState->selectedArr == ROW_WATER)
+                            sDNavState->selectedIndex = (sDNavState->selectedIndex == 0) ? WATER_ROW_LAST_INDEX : sDNavState->selectedIndex - ROW_MON_LENGTH;
+						else //ROW_LAND
+						{
+							if (sDNavState->selectedIndex == 0 || sDNavState->selectedIndex == LAND_SECOND_ROW_FIRST_INDEX)
+								sDNavState->selectedIndex += LAND_FIRST_ROW_LAST_INDEX; //Wrap around
+							else
+								sDNavState->selectedIndex -= ROW_MON_LENGTH;
+						}
                         DexNavLoadNames(1);
+						PlaySE(SE_POKENAV_ONE_BEEP);
                         break;
                     case DPAD_RIGHT:
-                        if ((*DNavState)->selectedArr)
-                            // don't go past index 4 in water
-                            (*DNavState)->selectedIndex = (*DNavState)->selectedIndex == 4 * 2 ? 0 : (*DNavState)->selectedIndex + 2;
-						else
-                            // don't go past index 11 in grass
-                            (*DNavState)->selectedIndex = (*DNavState)->selectedIndex == 11 * 2 ? 0 : (*DNavState)->selectedIndex + 2;
+                        if (sDNavState->selectedArr == ROW_WATER)
+                            sDNavState->selectedIndex = (sDNavState->selectedIndex == WATER_ROW_LAST_INDEX) ? 0 : sDNavState->selectedIndex + ROW_MON_LENGTH;
+						else //ROW_LAND
+						{
+							if (sDNavState->selectedIndex == LAND_FIRST_ROW_LAST_INDEX || sDNavState->selectedIndex == LAND_SECOND_ROW_LAST_INDEX)
+								sDNavState->selectedIndex -= LAND_FIRST_ROW_LAST_INDEX; //Wrap around
+							else
+								sDNavState->selectedIndex += ROW_MON_LENGTH;
+						}
                         DexNavLoadNames(1);
+						PlaySE(SE_POKENAV_ONE_BEEP);
                         break;
-                    case SELECT_BUTTON:
+                    case R_BUTTON:
                     {
                         // check selection is valid. Play sound if invalid
-                        u16 species = (*DNavState)->selectedArr ? (*DNavState)->waterSpecies[(*DNavState)->selectedIndex >> 1] : (*DNavState)->grassSpecies[(*DNavState)->selectedIndex>>1];
+                        u16 species = sDNavState->selectedArr ? sDNavState->waterSpecies[sDNavState->selectedIndex >> 1] : sDNavState->grassSpecies[sDNavState->selectedIndex>>1];
                         // if species is MISSINGNO then error
-                        if (species)
+                        if (species != SPECIES_NONE)
 						{
                             // species was valid
                             DexNavLoadNames(2);
-                            PlaySE(SE_PC_ON);
+                            PlaySE(SE_POKENAV_SEARCHING);
                             // create value to store in a var
-                            u16 varStore = ((*DNavState)->selectedArr << 15) | species;
+                            u16 varStore = (sDNavState->selectedArr << 15) | species;
                             VarSet(DEXNAV_VAR, varStore);
                         } 
 						else
 						{
                             // beep and update
                             DexNavLoadNames(0);
-                            PlaySE(SE_JITE_PYOKO);
+                            PlaySE(SE_ERROR);
                         }
                         break;
                     }
@@ -1989,17 +2217,39 @@ static void DexNavGuiHandler(void)
                         return;
                 };
                 UpdateCursorPosition();
-                PlaySE(SE_SELECT);
             }
             break;
     }
 }
 
+static void PrintDexNavError(void)
+{
+	if (sDNavState->selectedArr == ROW_WATER
+	&&  sDNavState->selectedIndex >> 1 >= sDNavState->numWaterMons + sDNavState->numHiddenWaterMons)
+	{
+		//Print Pokemon can't be searched yet
+		DexNavLoadNames(3);
+		PlaySE(SE_ERROR);
+	}
+	else if (sDNavState->selectedArr == ROW_LAND
+	&&  sDNavState->selectedIndex >> 1 >= sDNavState->numGrassMons + sDNavState->numHiddenLandMons)
+	{
+		//Print Pokemon can't be searched yet
+		DexNavLoadNames(3);
+		PlaySE(SE_ERROR);
+	}
+	else //Selected unidentified Pokemon
+	{
+		//Print invalid Pokemon
+		DexNavLoadNames(0);
+		PlaySE(SE_ERROR);
+	}
+}
 
-// ============================= //
-// ===== Overworld Effects ===== //
-// ============================= //
-static const struct SpriteSheet caveGfx[4] =
+// =================================== //
+// ===== Overworld Field Effects ===== //
+// =================================== //
+static const struct SpriteSheet sCaveGfx[4] =
 {
 	{
 		.data = (const u8*)&gInterfaceGfx_caveSmokeTiles[128 * 0],
@@ -2029,71 +2279,188 @@ static const struct SpriteTemplate ObjtCave =
 	.paletteTag = SMOKE_TAG,
 	.oam = (struct OamData*) 0x83A36F0,
 	.anims = (const union AnimCmd* const*) 0x83A5B70,
-	.images = (const struct SpriteFrameImage *) &caveGfx[0],
-	.affineAnims = (const union AffineAnimCmd* const*) 0x8231CFC,
+	.images = (const struct SpriteFrameImage *) sCaveGfx,
+	.affineAnims = gDummySpriteAffineAnimTable,
 	.callback = (SpriteCallback) 0x80DCD1D,
 };
 
 
-static const struct SpritePalette caveSmoke =
+static const struct SpritePalette sCaveSmokePalTemplate =
 {
-	.data = (void*) &gInterfaceGfx_caveSmokePal,
+	.data = gInterfaceGfx_caveSmokePal,
 	.tag = SMOKE_TAG,
 };   
 
-void OeiCaveEffect(void)
+static void FieldEff_CaveDust(void)
 {
-    LoadSpritePalette((void*)&caveSmoke);
-    LoadPalette((void*)&gInterfaceGfx_caveSmokePal, 29*16, 32);
+    LoadSpritePalette(&sCaveSmokePalTemplate);
+    LoadPalette(gInterfaceGfx_caveSmokePal, 29 * 16, 32);
     LogCoordsCameraRelative(&gFieldEffectArguments->effectPos.x, &gFieldEffectArguments->effectPos.y, 8, 8);
 	
-    u8 objId = CreateSpriteAtEnd(&ObjtCave, gFieldEffectArguments->effectPos.x,
-		gFieldEffectArguments->effectPos.y, 0xFF);
-    if (objId != 64)
+    u8 objId = CreateSpriteAtEnd(&ObjtCave, gFieldEffectArguments->effectPos.x, gFieldEffectArguments->effectPos.y, 0xFF);
+    if (objId != MAX_SPRITES)
 	{
         gSprites[objId].coordOffsetEnabled = 1;
         gSprites[objId].data[0] = 22;
     }
 }
 
-struct oie_state_2 
+
+const union AnimCmd sFieldEffectObjectImageAnim_Sparkles[] =
 {
-    const struct SpritePalette* p;
-    SuperCallback s;
+    ANIMCMD_FRAME(0, 8),
+    ANIMCMD_FRAME(1, 8),
+    ANIMCMD_FRAME(2, 8),
+    ANIMCMD_FRAME(3, 8),
+    ANIMCMD_FRAME(4, 8),
+    ANIMCMD_FRAME(5, 8),
+    ANIMCMD_JUMP(0),
 };
 
-
-/*
-static const struct oie_state_2 cave_state =
+const union AnimCmd* const sFieldEffectObjectImageAnimTable_Sparkles[] =
 {
-	.p = (const struct SpritePalette*) 0x083A5348,
-	.s = (SuperCallback) OeiCaveEffect,
+    sFieldEffectObjectImageAnim_Sparkles,
 };
-*/
+
+static const struct SpriteFrameImage sFieldEffectObjectPicTable_Sparkles[] =
+{
+    overworld_frame(gInterfaceGfx_SparklesTiles, 2, 2, 0),
+    overworld_frame(gInterfaceGfx_SparklesTiles, 2, 2, 1),
+    overworld_frame(gInterfaceGfx_SparklesTiles, 2, 2, 2),
+    overworld_frame(gInterfaceGfx_SparklesTiles, 2, 2, 3),
+    overworld_frame(gInterfaceGfx_SparklesTiles, 2, 2, 4),
+    overworld_frame(gInterfaceGfx_SparklesTiles, 2, 2, 5),
+};
+
+static const struct SpriteTemplate sSpriteTemplateSparkles = 
+{
+	.tileTag = 0xFFFF,
+	.paletteTag = SMOKE_TAG,
+	.oam = (struct OamData*) 0x83A36F0,
+	.anims = sFieldEffectObjectImageAnimTable_Sparkles,
+	.images = sFieldEffectObjectPicTable_Sparkles,
+	.affineAnims = gDummySpriteAffineAnimTable,
+	.callback = (SpriteCallback) 0x80DCD1D,
+};
+
+static const struct SpritePalette sSparklesPalTemplate =
+{
+	.data = gInterfaceGfx_SparklesPal,
+	.tag = SMOKE_TAG,
+};   
+
+static void FieldEff_Sparkles(void)
+{
+    LoadSpritePalette(&sSparklesPalTemplate);
+    LoadPalette(gInterfaceGfx_SparklesPal, 29 * 16, 32);
+    LogCoordsCameraRelative(&gFieldEffectArguments->effectPos.x, &gFieldEffectArguments->effectPos.y, 8, 8);
+	
+    u8 objId = CreateSpriteAtEnd(&sSpriteTemplateSparkles, gFieldEffectArguments->effectPos.x, gFieldEffectArguments->effectPos.y, 0xFF);
+    if (objId != MAX_SPRITES)
+	{
+        gSprites[objId].coordOffsetEnabled = 1;
+        gSprites[objId].data[0] = 22;
+    }
+}
+
+
+static const struct SpriteFrameImage sFieldEffectObjectPicTable_LavaBubbles[] =
+{
+    overworld_frame(gInterfaceGfx_LavaBubblesTiles, 2, 2, 0),
+    overworld_frame(gInterfaceGfx_LavaBubblesTiles, 2, 2, 1),
+    overworld_frame(gInterfaceGfx_LavaBubblesTiles, 2, 2, 2),
+    overworld_frame(gInterfaceGfx_LavaBubblesTiles, 2, 2, 3),
+};
+
+static const struct SpriteTemplate sSpriteTemplateLavaBubbles = 
+{
+	.tileTag = 0xFFFF,
+	.paletteTag = SMOKE_TAG,
+	.oam = (struct OamData*) 0x83A36F0,
+	.anims = (const union AnimCmd* const*) 0x83A5B70,
+	.images = (const struct SpriteFrameImage *) sFieldEffectObjectPicTable_LavaBubbles,
+	.affineAnims = gDummySpriteAffineAnimTable,
+	.callback = (SpriteCallback) 0x80DCD1D,
+};
+
+static const struct SpritePalette sLavaBubblesPalTemplate =
+{
+	.data = gInterfaceGfx_LavaBubblesPal,
+	.tag = SMOKE_TAG,
+};   
+
+static void FieldEff_LavaBubbles(void)
+{
+    LoadSpritePalette(&sLavaBubblesPalTemplate);
+    LoadPalette(gInterfaceGfx_LavaBubblesPal, 29 * 16, 32);
+    LogCoordsCameraRelative(&gFieldEffectArguments->effectPos.x, &gFieldEffectArguments->effectPos.y, 8, 8);
+	
+    u8 objId = CreateSpriteAtEnd(&sSpriteTemplateLavaBubbles, gFieldEffectArguments->effectPos.x, gFieldEffectArguments->effectPos.y, 0xFF);
+    if (objId != MAX_SPRITES)
+	{
+        gSprites[objId].coordOffsetEnabled = 1;
+        gSprites[objId].data[0] = 22;
+    }
+}
+
+
+struct  __attribute__((packed)) FieldEffectScript
+{
+	u8 command;
+	void (*func)(void);
+	u8 endCommand;
+};
+
+#define CALLASM 3
+#define END 4
+const struct FieldEffectScript FieldEffectScript_CaveDust =
+{
+	CALLASM, FieldEff_CaveDust,
+	END,
+};
+
+const struct FieldEffectScript FieldEffectScript_Sparkles =
+{
+	CALLASM, FieldEff_Sparkles,
+	END,
+};
+
+const struct FieldEffectScript FieldEffectScript_LavaBubbles =
+{
+	CALLASM, FieldEff_LavaBubbles,
+	END,
+};
 
 // ========================================== //
 // ======== Check Select in Overworld ======= //
 // ========================================== //
+/*
 u8 SelectHookRestore(void)
 {
     ScriptContext1_SetupScript((void*) 0x81A77A0); // script that lets you know you can register item via select
     return 0;
 };
+*/
 
-
+/*Replaced with R-Button
 u8 CheckRegisteredSelect(void)
 {
     u16 varVal = VarGet(DEXNAV_VAR);
     if (varVal)
 	{
-        if (FuncIsActiveTask(DexNavManageHUD))
+        if ()
             return 0;	// don't redo the search...
         InitDexNavHUD(varVal & 0x7FFF, varVal >> 15);
         return 0;
     }
     return 1;
 };
+*/
 
+bool8 IsDexNavHudActive(void)
+{
+	return FuncIsActiveTask(DexNavManageHUD);
+}
 
 // ============================== //
 // ========= POKETOOLS ========== //

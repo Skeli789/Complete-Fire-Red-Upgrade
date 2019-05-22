@@ -152,6 +152,10 @@ stepspeed_seq_length = 0x83A71B0;
 sBattleTransitionTable_Trainer = 0x83C68F8;
 gUnownDistributionByChamber = 0x83CA71C;
 gNewGameBirchOamAttributes = 0x83CBE50;
+sMonIconOamData = 0x83D4068;
+sMonIconAnims = 0x83D40AC;
+sMonIconAffineAnims = 0x83D40E0;
+sPokemonIconSpriteImageSizes = 0x83D40E8;
 sBattleIntroSlideFuncs = 0x83E7CD4;
 sMugshotsOpponentRotationScales = 0x83FA49A;
 sMugshotsOpponentCoords = 0x83FA4AE;
@@ -556,6 +560,7 @@ RemoveUsedItem = 0x80A1A44 | 1;
 CheckVSSeeker = 0x810C4EC | 1;
 BuyMenuDisplayMessage = 0x813F75C | 1;
 
+
 /* PokeMart Functions */
 Task_ShopMenu = 0x809AC10 | 1;
 Task_ReturnToShopMenu = 0x809AD8C | 1;
@@ -572,20 +577,57 @@ BuyMenuConfirmPurchase = 0x809BE90 | 1;
 BuyMenuInitWindows = 0x813F66C | 1;
 BuyMenuPrint = 0x813F6F4 | 1;
 
+
 /* Map Functions & Overworld Functions */
 EnableInterrupts = 0x8000B68 | 1;
 DisableInterrupts = 0x8000B94 | 1;
 Overworld_GetMapHeaderByGroupAndId = 0x8055238 | 1;
-Overworld_GetMapTypeOfSaveblockLocation = 0x8056188 | 1;
-CheckOpenSky = 0x80561FC | 1;
+ResetInitialPlayerAvatarState = 0x80559E4 | 1;
+StoreInitialPlayerAvatarState = 0x8055A08 | 1;
+SetDefaultFlashLevel = 0x8055CB8 | 1;
+Overworld_SetFlashLevel = 0x8055D08 | 1;
+Overworld_GetFlashLevel = 0x8055D30 | 1;
+SetCurrentMapLayout = 0x8055D40 | 1;
+GetLocationMusic = 0x8055D6C | 1;
+GetCurrLocationDefaultMusic = 0x8055D8C | 1;
+GetWarpDestinationMusic = 0x8055DA4 | 1;
+Overworld_ResetMapMusic = 0x8055DB8 | 1;
+Overworld_PlaySpecialMapMusic = 0x8055DC4 | 1;
+Overworld_SetSavedMusic = 0x8055E78 | 1;
+Overworld_ClearSavedMusic = 0x8055E84 | 1;
+Overworld_ChangeMusicToDefault = 0x8055F1C | 1;
+Overworld_ChangeMusicTo = 0x8055F48 | 1;
+GetMapMusicFadeoutSpeed = 0x8055F68 | 1;
+TryFadeOutOldMapMusic = 0x8055F88 | 1;
+BGMusicStopped = 0x8055FC4 | 1;
+Overworld_FadeOutMapMusic = 0x8055FD4 | 1;
+UpdateAmbientCry = 0x8056078 | 1;
+CanMusicBeChangedOnMap = 0x8056124 | 1;
+GetMapTypeByGroupAndId = 0x8056158 | 1;
+GetMapTypeByWarpData = 0x8056170 | 1;
+GetCurrentMapType = 0x8056188 | 1;
+GetLastUsedWarpMapType = 0x80561A0 | 1;
+IsMapTypeOutdoors = 0x80561D8 | 1;
+Overworld_MapTypeAllowsTeleportAndFly = 0x80561FC | 1;
+IsMapTypeIndoors = 0x805621C | 1;
+GetSavedWarpRegionMapSectionId = 0x8056238 | 1;
 GetCurrentRegionMapSectionId = 0x8056260 | 1;
 GetCurrentMapBattleScene = 0x8056288 | 1;
 CleanupOverworldWindowsAndTilemaps = 0x80563F0 | 1;
-OverworldCallback1 = 0x8056534 | 1;
-OverworldCallback2 = 0x80565B4 | 1;
+IsUpdateLinkStateCBActive = 0x0805642C | 1;
+CB1_Overworld = 0x08056534 | 1;
+CB2_OverworldBasic = 0x080565A8 | 1;
+CB2_Overworld = 0x080565B4 | 1;
+SetMainCallback1 = 0x80565E0 | 1;
+CB2_NewGame = 0x8056644 | 1;
+CB2_WhiteOut = 0x80566A4 | 1;
+CB2_LoadMap = 0x805671C | 1;
 CB2_ReturnToField = 0x80567DC | 1;
-OverworldCallbackSwitchStartMenu = 0x80568A8 | 1;
-CallbackOWandContinueScriptsMusic = 0x80568C4 | 1;
+CB2_ReturnToFieldLocal = 0x8056808 | 1;
+CB2_ReturnToFieldLink = 0x8056854 | 1;
+CB2_ReturnToFieldFromMultiplayer = 0x8056854 | 1;
+CB2_ReturnToFieldWithOpenMenu = 0x80568A8 | 1;
+CB2_ReturnToFieldContinueScript = 0x80568C4 | 1;
 ReturnToFieldContinueScriptPlayMapMusic = 0x80568E0 | 1;
 MapGridGetZCoordAt = 0x8058D44 | 1;
 MapGridGetMetatileIdAt = 0x8058E48 | 1;
@@ -603,6 +645,9 @@ MetatileBehavior_IsMountain = 0x8059F9C | 1;
 MetatileBehavior_IsDeepOrOceanWater = 0x805A01C | 1;
 MetatileBehavior_IsRunningDisallowed = 0x805A234 | 1;
 sub_805C780 = 0x805C780 | 1;
+GetOppositeDirection = 0x8064480 | 1;
+FaceDirection = 0x80645F4 | 1;
+ScriptCall = 0x80698D4 | 1;
 MapHeaderCheckScriptTable = 0x8069BD8 | 1;
 UpdateHappinessStepCounter = 0x806D74C | 1;
 UpdatePoisonStepCounter = 0x806D79C | 1;
@@ -627,7 +672,6 @@ FlagSet = 0x806E680 | 1;
 FlagClear = 0x806E6A8 | 1;
 FlagGet = 0x806E6D0 | 1;
 HelpSystemDisableOnField = 0x812B478 | 1;
-
 
 
 /* Data Functions */

@@ -36,7 +36,7 @@ extern u8 gUnownDistributionByChamber[7][12]; //[NUM_ROOMS][NUM_WILD_INDEXES]
 
 #define sBasePaletteGammaTypes ((u8*) 0x83C2CC0)
 
-typedef int TutorLearnsets[NUM_SPECIES];
-#define sTutorLearnsets ((TutorLearnsets*) (*((u32*) 0x08120BE4)))
+//typedef int TutorLearnsets[NUM_SPECIES];
+//#define sTutorLearnsets ((TutorLearnsets*) (*((u32*) 0x08120BE4)))
 
 

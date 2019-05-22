@@ -9,6 +9,7 @@
 #include "../include/link.h"
 #include "../include/map_scripts.h"
 #include "../include/metatile_behavior.h"
+#include "../include/overworld.h"
 #include "../include/party_menu.h"
 #include "../include/quest_log.h"
 #include "../include/safari_zone.h"
@@ -16,6 +17,7 @@
 #include "../include/sound.h"
 
 #include "../include/constants/flags.h"
+#include "../include/constants/region_map_sections.h"
 #include "../include/constants/songs.h"
 #include "../include/constants/trainers.h"
 #include "../include/constants/trainer_classes.h"
@@ -32,11 +34,13 @@ extern const u16 gClassBasedTrainerEncounterBGM[NUM_TRAINER_CLASSES];
 //This file's functions:
 static bool8 CheckTrainerSpotting(u8 eventObjId);
 static bool8 GetTrainerFlagFromScriptPointer(const u8* data);
+static bool8 CheckNPCSpotting(u8 eventObjId);
 static void Task_OverworldMultiTrainers(u8 id);
 static void ConfigureTwoTrainersBattle(u8 trainerEventObjId, const u8* trainerScript);
 static void SetUpTwoTrainersBattle(void);
 static void InitTrainerBattleVariables(void);
 static u8 GetPlayerMapObjId(void);
+static u8 GetNPCDirectionFaceToPlayer(u8 eventObj);
 static bool8 GetProperDirection(u16 currentX, u16 currentY, u16 toX, u16 toY);
 static void UpdateJPANStepCounters(void);
 static const u8* GetCustomWalkingScript(void);
@@ -62,6 +66,21 @@ enum
     TRAINER_PARAM_CLEAR_VAL_16BIT,
     TRAINER_PARAM_CLEAR_VAL_32BIT,
     TRAINER_PARAM_LOAD_SCRIPT_RET_ADDR,
+};
+
+//An alternative to Oak's tutorial that allows mugshots to be used if ACTIVATE_TUTORIAL_FLAG is commented out
+const struct TrainerBattleParameter sContinueLostBattleParams[] =
+{
+    {&sTrainerBattleMode, 			 TRAINER_PARAM_LOAD_VAL_8BIT},
+    {&gTrainerBattleOpponent_A,      TRAINER_PARAM_LOAD_VAL_16BIT},
+    {&sTrainerEventObjectLocalId,    TRAINER_PARAM_LOAD_VAL_16BIT},
+    {&sTrainerIntroSpeech_A,         TRAINER_PARAM_CLEAR_VAL_32BIT},
+    {&sTrainerDefeatSpeech_A,        TRAINER_PARAM_LOAD_VAL_32BIT},
+    {&sTrainerVictorySpeech,         TRAINER_PARAM_CLEAR_VAL_32BIT},
+    {&sTrainerCannotBattleSpeech,    TRAINER_PARAM_CLEAR_VAL_32BIT},
+    {&sTrainerBattleScriptRetAddr,   TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerBattleScriptRetAddr_B, TRAINER_PARAM_CLEAR_VAL_32BIT},
+    {&sTrainerBattleEndScript,       TRAINER_PARAM_LOAD_SCRIPT_RET_ADDR},
 };
 
 const struct TrainerBattleParameter sTrainerBContinueScriptBattleParams[] =
@@ -186,8 +205,6 @@ u8 CheckForTrainersWantingBattle(void) {
 	{
 		if (!gEventObjects[eventObjId].active)
             continue;
-        if (gEventObjects[eventObjId].trainerType != 1 && gEventObjects[eventObjId].trainerType != 3)
-            continue;
 
 		if (CheckTrainerSpotting(eventObjId))
 		{
@@ -198,14 +215,28 @@ u8 CheckForTrainersWantingBattle(void) {
             if (ExtensionState.spotted.count > 1)
                 break;
 		}
+		else if (CheckNPCSpotting(eventObjId))
+		{
+			u16 flag = GetEventObjectTemplateByLocalIdAndMap(gEventObjects[eventObjId].localId, 
+															 gEventObjects[eventObjId].mapNum, 
+															 gEventObjects[eventObjId].mapGroup)->flagId2;
+			if (flag != 0)
+				FlagSet(flag); //Set this flag so the spotting only happens once
+			
+			u8 direction = GetNPCDirectionFaceToPlayer(eventObjId);
+			FaceDirection(&gEventObjects[eventObjId], &gSprites[gEventObjects[eventObjId].spriteId], direction);
+			gSelectedEventObject = eventObjId;
+			TrainerApproachPlayer(&gEventObjects[eventObjId], TrainerCanApproachPlayer(&gEventObjects[eventObjId]) - 1);
+			ScriptContext1_SetupScript(GetEventObjectScriptPointerByEventObjectId(eventObjId));
+			ScriptCall(gScriptEnv1, EventScript_SetUpNPCSpotting);
+			return TRUE;
+		}
     }
 
 	//These battle types have built in features
 	if (ExtensionState.spotted.trainers[0].script[1] == TRAINER_BATTLE_TWO_OPPONENTS
 	||  ExtensionState.spotted.trainers[1].script[1] == TRAINER_BATTLE_TWO_OPPONENTS)
 		ExtensionState.spotted.count = 1;
-
-	//Put extra logic here for Unbound's Claydol SQ
 
 	switch (ExtensionState.spotted.count) {
 		case 1: ;
@@ -272,6 +303,26 @@ static bool8 GetTrainerFlagFromScriptPointer(const u8* data)
 
     u16 flag = TrainerBattleLoadArg16(data + 2);
     return FlagGet(FLAG_TRAINER_FLAG_START + flag);
+}
+
+static bool8 CheckNPCSpotting(u8 eventObjId)
+{
+	#ifdef NON_TRAINER_SPOTTING
+	const u8* scriptPtr = GetEventObjectScriptPointerByEventObjectId(eventObjId); //Get NPC Script Pointer from its Object Id
+	u16 flag = GetEventObjectTemplateByLocalIdAndMap(gEventObjects[eventObjId].localId, 
+													 gEventObjects[eventObjId].mapNum, 
+													 gEventObjects[eventObjId].mapGroup)->flagId2; //Special flag just for this
+
+	if (scriptPtr != NULL && scriptPtr[0] != SCRCMD_TRAINERBATTLE //NPC has a regular script
+	&& (flag == 0 || !FlagGet(flag)))
+	{
+		return TrainerCanApproachPlayer(&gEventObjects[eventObjId]);
+	}
+	#else
+	++eventObjId;
+	#endif
+	
+	return FALSE;
 }
 
 static void Task_OverworldMultiTrainers(u8 id)
@@ -397,7 +448,12 @@ const u8* BattleSetup_ConfigureTrainerBattle(const u8* data)
 			return EventScript_TryDoDoubleRematchBattle;
 
 		case TRAINER_BATTLE_OAK_TUTORIAL:
-			TrainerBattleLoadArgs(sOakTutorialParams, data);
+			#ifdef TUTORIAL_BATTLES
+				if (Var8000 != 0xFEFE)
+					TrainerBattleLoadArgs(sOakTutorialParams, data);
+				else //Regular trainer battle 9
+			#endif
+					TrainerBattleLoadArgs(sContinueLostBattleParams, data);
 			return EventScript_DoTrainerBattle;
 
 		case TRAINER_BATTLE_MULTI:
@@ -499,23 +555,22 @@ void BattleSetup_StartTrainerBattle(void)
 		if (FlagGet(TAG_BATTLE_FLAG))
 			gBattleTypeFlags |= (BATTLE_TYPE_DOUBLE | BATTLE_TYPE_INGAME_PARTNER /* | BATTLE_TYPE_MULTI*/);
 
-		#ifdef CONTINUE_LOST_BATTLES
-			#ifdef TUTORIAL_BATTLES
-				if (Var8000 != 0xFEFE && sTrainerBattleMode == TRAINER_BATTLE_OAK_TUTORIAL && sTrainerBattleOakTutorialHelper & 3)
-					gBattleTypeFlags |= BATTLE_TYPE_OAK_TUTORIAL;
-			#endif
-		#else
-			#ifdef TUTORIAL_BATTLES
-				if (sTrainerBattleMode == TRAINER_BATTLE_OAK_TUTORIAL && sTrainerBattleOakTutorialHelper & 3)
-					gBattleTypeFlags |= BATTLE_TYPE_OAK_TUTORIAL;
-			#endif
+		#if (defined CONTINUE_LOST_BATTLES && defined TUTORIAL_BATTLES)
+			if (Var8000 != 0xFEFE && sTrainerBattleMode == TRAINER_BATTLE_OAK_TUTORIAL && sTrainerBattleOakTutorialHelper & 3)
+				gBattleTypeFlags |= BATTLE_TYPE_OAK_TUTORIAL;
+		#elif (defined TUTORIAL_BATTLES)
+			if (sTrainerBattleMode == TRAINER_BATTLE_OAK_TUTORIAL && sTrainerBattleOakTutorialHelper & 3)
+				gBattleTypeFlags |= BATTLE_TYPE_OAK_TUTORIAL;
 		#endif
 
+		#ifdef ACTIVATE_TUTORIAL_FLAG
 		if (FlagGet(ACTIVATE_TUTORIAL_FLAG))
 		{
 			gBattleTypeFlags |= BATTLE_TYPE_OAK_TUTORIAL;
 			sTrainerBattleMode = TRAINER_BATTLE_OAK_TUTORIAL;
+			sTrainerBattleOakTutorialHelper = 3;
 		}
+		#endif
 	}
 
     gMain.savedCallback = CB2_EndTrainerBattle;
@@ -742,6 +797,28 @@ static u8 GetPlayerMapObjId(void)
 	}
 
 	return 0;
+}
+
+static const u8 sMovementToDirection[] =
+{
+	[GoDown] = DIR_SOUTH,
+	[GoUp] = DIR_NORTH,
+	[GoLeft] = DIR_WEST,
+	[GoRight] = DIR_EAST,
+};
+
+static u8 GetNPCDirectionFaceToPlayer(u8 eventObj)
+{
+	u8 playerObjId = GetPlayerMapObjId();
+	u16 playerX = gEventObjects[playerObjId].currentCoords.x;
+	u16 playerY = gEventObjects[playerObjId].currentCoords.y;
+	u16 npcX = gEventObjects[eventObj].currentCoords.x;
+	u16 npcY = gEventObjects[eventObj].currentCoords.y;
+
+	if (GetProperDirection(playerX, playerY, npcX, npcY))
+		return GetOppositeDirection(sMovementToDirection[gSpecialVar_LastResult]);
+		
+	return DIR_SOUTH; //Error handling...sort of
 }
 
 void TrainerFaceFix(void)
@@ -1007,6 +1084,18 @@ bool8 IsRunningDisallowedByMetatile(u8 tile)
 	return MetatileBehavior_IsRunningDisallowed(tile);
 }
 
+bool8 Overworld_IsBikingAllowed(void)
+{
+	#ifdef BIKE_ON_ANY_NON_INSIDE_MAP
+		return !IsMapTypeIndoors(GetCurrentMapType());
+	#else
+    if (!(gMapHeader.flags & 1))
+        return FALSE;
+    else
+        return TRUE;
+	#endif
+}
+
 s32 DoPoisonFieldEffect(void)
 {
 #ifndef NO_POISON_IN_OW
@@ -1103,6 +1192,57 @@ bool8 UpdateRepelCounter(void)
         }
     }
     return FALSE;
+}
+
+bool8 IsCurrentAreaVolcano(void)
+{
+	#ifdef UNBOUND
+		return GetCurrentRegionMapSectionId() == MAPSEC_CINDER_VOLCANO;
+	#else
+		return FALSE;
+	#endif
+}
+
+bool8 IsCurrentAreaAutumn(void)
+{
+	#ifdef UNBOUND
+		u8 mapSec = GetCurrentRegionMapSectionId();
+		return mapSec == MAPSEC_TEHL_TOWN
+			|| mapSec == MAPSEC_ROUTE_9
+			|| mapSec == MAPSEC_ROUTE_10
+			|| mapSec == MAPSEC_AUBURN_WATERWAY;
+	#else
+		return FALSE;
+	#endif
+}
+
+bool8 IsCurrentAreaWinter(void)
+{
+	#ifdef UNBOUND
+		u8 mapSec = GetCurrentRegionMapSectionId();
+		return mapSec == MAPSEC_FROZEN_HEIGHTS
+			|| mapSec == MAPSEC_ROUTE_1
+			|| mapSec == MAPSEC_BELLIN_TOWN
+			|| mapSec == MAPSEC_ROUTE_8
+			|| mapSec == MAPSEC_BLIZZARD_CITY
+			|| mapSec == MAPSEC_FROZEN_FOREST;
+	#else
+		return FALSE;
+	#endif
+}
+
+bool8 IsCurrentAreaDarkerCave(void)
+{
+	#ifdef UNBOUND
+		u8 mapSec = GetCurrentRegionMapSectionId();
+		return mapSec == MAPSEC_ICICLE_CAVE
+			|| mapSec == MAPSEC_VALLEY_CAVE
+			|| mapSec == MAPSEC_FROST_MOUNTAIN
+			|| mapSec == MAPSEC_THUNDERCAP_MOUNTAIN
+			|| mapSec == MAPSEC_DISTORTION_WORLD;
+	#else
+		return FALSE;
+	#endif
 }
 
 //Follow Me Updates/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

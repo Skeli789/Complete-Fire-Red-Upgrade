@@ -172,6 +172,8 @@ enum
 #define BW_REPEL_SYSTEM  //keep this uncommented if you want the game to ask the user to re-use another repel when it runs out
 #define AUTO_NAMING_SCREEN_SWAP  //comment out if you don't want naming screens to auto-swap to lower-case after first upper-case letter
 #define MULTIPLE_PREMIER_BALLS_AT_ONCE //Comment out if you don't want the player received a Premier ball for every 10 Poke Balls purchased (only 1 no matter how many over 10 balls the player buys)
+#define NON_TRAINER_SPOTTING //Comment out if you don't want regular NPCs to be able to spot the player in the Oveworld (only trainers can)
+#define BIKE_ON_ANY_NON_INSIDE_MAP //Comment out if you still want biking to be determined by the map header.
 
 /* Misc Effect Options */
 //#define OLD_BURN_DAMAGE //Uncomment this line if you want burn damage to do 1/8 of max health instead of 1/16

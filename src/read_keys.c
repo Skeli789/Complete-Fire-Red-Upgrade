@@ -1,7 +1,9 @@
 #include "defines.h"
+#include "../include/link.h"
 #include "../include/script.h"
 #include "../include/field_weather.h"
 
+#include "../include/new/dexnav.h"
 #include "../include/new/helper_functions.h"
 #include "../include/new/read_keys.h"
 
@@ -150,6 +152,17 @@ void ReadKeys(void)
             gMain.heldKeys |= A_BUTTON;
     }
 #endif
+
+	u16 dexNavSpecies = VarGet(DEXNAV_VAR);
+	if (gMain.newKeys & R_BUTTON 
+	&& dexNavSpecies != SPECIES_NONE
+	&& !IsDexNavHudActive()
+	&& !InUnionRoom()
+	&& !gScriptEnv2->enabled
+	&& FuncIsActiveTask(Task_WeatherMain)) //In the overworld
+	{
+		InitDexNavHUD(dexNavSpecies & 0x7FFF, dexNavSpecies >> 15);
+	}
 
     if (gMain.newKeys & gMain.watchedKeysMask)
         gMain.watchedKeysPressed = TRUE;

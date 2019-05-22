@@ -1,5 +1,6 @@
 #include "defines.h"
 #include "../include/fieldmap.h"
+#include "../include/field_weather.h"
 #include "../include/palette.h"
 
 #include "../include/new/dns.h"
@@ -40,11 +41,7 @@ void TransferPlttBuffer(void)
 			case MAP_TYPE_SECRET_BASE:
 				break;
 			default:
-				if ((DNSHelper[0] == 0
-				&& DNSHelper[1] < 3) //Not in battle
-				 || DNSHelper[1] == 0x78 
-				 || DNSHelper[1] == 0x88 
-				 || DNSHelper[1] == 0x98) //The 0x78/0x88/0x98 is when a warp arrow appears
+				if (FuncIsActiveTask(Task_WeatherMain)) //In overworld
 				{
 					BlendFadedPalettes(OW_DNS_BG_PAL_FADE, gDNSNightFadingByTime[Clock->hour][Clock->minute / 10].amount, gDNSNightFadingByTime[Clock->hour][Clock->minute / 10].colour);
 				}

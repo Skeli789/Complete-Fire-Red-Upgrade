@@ -7,28 +7,65 @@
 extern const u8 gInterfaceGfx_dexnavGuiTiles[];
 extern const u8 gInterfaceGfx_dexnavGuiMap[];
 extern const u8 gInterfaceGfx_dexnavGuiPal[];
+extern const u8 gInterfaceGfx_DexNavGuiVolcanoPal[];
+extern const u8 gInterfaceGfx_DexNavGuiFlowerParadiseAPal[];
+extern const u8 gInterfaceGfx_DexNavGuiFlowerParadiseBPal[];
+extern const u8 gInterfaceGfx_DexNavGuiFlowerParadiseCPal[];
+extern const u8 gInterfaceGfx_DexNavGuiAutumnPal[];
+extern const u8 gInterfaceGfx_DexNavGuiWinterPal[];
+extern const u8 gInterfaceGfx_DexNavGuiCavePal[];
+extern const u8 gInterfaceGfx_DexNavGuiDarkerCavePal[];
+extern const u8 gInterfaceGfx_DexNavGuiIndoorPal[];
 extern const u8 gInterfaceGfx_dexnavStarsTiles[];
 extern const u8 gInterfaceGfx_dexnavStarsPal[];
 extern const u8 gInterfaceGfx_selectionCursorTiles[];
 extern const u8 gInterfaceGfx_selectionCursorPal[];
 extern const u8 gInterfaceGfx_emptyTiles[];
 extern const u8 gInterfaceGfx_emptyPal[];
+extern const u8 gInterfaceGfx_CapturedAllPokemonTiles[];
+extern const u8 gInterfaceGfx_CapturedAllPokemonPal[];
 extern const u8 gInterfaceGfx_caveSmokeTiles[];
-extern const u8 gInterfaceGfx_caveSmokePal[];
+extern const u16 gInterfaceGfx_caveSmokePal[];
+extern const u8 gInterfaceGfx_SparklesTiles[];
+extern const u16 gInterfaceGfx_SparklesPal[];
+extern const u8 gInterfaceGfx_LavaBubblesTiles[];
+extern const u16 gInterfaceGfx_LavaBubblesPal[];
+extern const u8 gInterfaceGfx_DexNavNoDataSymbolTiles[];
+
+// STRINGS
+extern const u8 gText_DexNavText[];
+extern const u8 gText_DexNavWater[];
+extern const u8 gText_DexNavLand[];
+extern const u8 gText_PinkFlowers[];
+extern const u8 gText_YellowFlowers[];
+extern const u8 gText_RedFlowers[];
+extern const u8 gText_BlueFlowers[];
+extern const u8 gText_PinkAndPurpleFlowers[];
+extern const u8 gText_BlueAndYellowFlowers[];
+extern const u8 gText_Magma[];
+extern const u8 gText_PokeTools[];
+extern const u8 gText_GotAway[];
+extern const u8 gText_LostSignal[];
+extern const u8 gText_GotAwayShouldSneak[];
+extern const u8 gText_CannotBeFound[];
+extern const u8 gText_NotFoundNearby[];
+extern const u8 gText_DexNavBack[];
+extern const u8 gText_DexNav_NoInfo[];
+extern const u8 gText_DexNav_CaptureToSee[];
+extern const u8 gText_DexNav_ChooseMon[];
+extern const u8 gText_DexNav_Invalid[];
+extern const u8 gText_DexNav_NoDataForSlot[];
+extern const u8 gText_DexNav_Locked[];
 
 // TYPEDEFS
 typedef void (*SuperCallback)(void);
 typedef void (*SpriteCallback)(struct Sprite* s);
 
 // DEFINES
+#define DEXNAV_SAVERAM 0x203C758
+
 #define TILE_SIZE 32
 #define SPRITE_RAM 0x6010000
-
-#define OEI_GRASS 0x13
-#define OEI_WATER 0x16
-#define OEI_CAVE 0x1A
-
-#define EGGMOVE_MAX 8
 
 #define TOOL_COUNT 2
 #define priv0 gTasks[taskId].data[0]
@@ -111,56 +148,33 @@ typedef void (*SpriteCallback)(struct Sprite* s);
 #define SEARCHLEVEL50_ITEM 6
 #define SEARCHLEVEL100_ITEM 12
 
-struct FieldEffectArguments {
+#define NUM_LAND_MONS 12
+#define NUM_WATER_MONS 5
+
+struct FieldEffectArguments
+{
     struct Coords32 effectPos;
     u32 priority;
 };
 
 #define gFieldEffectArguments ((struct FieldEffectArguments*) 0x20386E0)
 
-
-extern const u16 DexNavTextPal[];
-extern const struct OamData IconOAM;
-extern const struct OamData CursorOAM;
-extern const struct BgTemplate BgConfigDexNavGUI[4];
-extern const u16 CursorPositions2[];
-extern const u16 CursorPositions1[];
-
-
 extern u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
 
-extern const u8 gText_DexNavText[];
-extern const u8 gText_PokeTools[];
-extern const u8 gText_GotAway[];
-extern const u8 gText_LostSignal[];
-extern const u8 gText_CannotBeFound[];
-extern const u8 gText_NotFoundNearby[];
-extern const u8 gText_DexNavBack[];
-extern const u8 gText_DexNav_NoInfo[];
-extern const u8 gText_DexNav_ChooseMon[];
-extern const u8 gText_DexNav_Invalid[];
-extern const u8 gText_DexNav_Locked[];
-
 // STRUCTS
-static u8* SearchLevels = (u8*)DEXNAV_SAVERAM;
-const struct TextColor MenuTextBlack = {0, 2, 3};
-const struct WindowTemplate Tbox = {0, 2, 2, 10, TOOL_COUNT << 1, 0xF, 0x130};
+static u8* sSearchLevels = (u8*) (DEXNAV_SAVERAM + 4);
+static const struct TextColor MenuTextBlack = {0, 2, 3};
+static const struct WindowTemplate Tbox = {0, 2, 2, 10, TOOL_COUNT << 1, 0xF, 0x130};
 
-const struct TextColor DexNav_BlackText = {0, 3, 4};
-const struct TextColor DexNav_WhiteText = {0, 1, 2};
-const struct TextColor DexNav_RedText = {0, 7, 8};
-const struct TextColor DexNav_GreenText = {0, 5, 6};
+static const struct TextColor DexNav_BlackText = {0, 3, 4};
+static const struct TextColor DexNav_WhiteText = {0, 1, 2};
+static const struct TextColor DexNav_RedText = {0, 7, 8};
+static const struct TextColor DexNav_GreenText = {0, 5, 6};
 
-
-const u8* gIconPals[] = {
-	(void*) 0x83d3740, 
-	(void*) 0x83d3760,
-	(void*) 0x83d3780,
-}; 
-
-struct DexnavHudData {
+struct DexnavHudData
+{
     u16 species;
-    u16 moveId[4];
+    u16 moveId[MAX_MON_MOVES];
     u16 heldItem;
     u8 ability;
     u8 potential;
@@ -172,6 +186,7 @@ struct DexnavHudData {
     s16 tileX; // position of shaking grass
     s16 tileY;
     u8 objIdSpecies;
+    u8 objIdBlackBar[4];
     u8 objIdSight;
     u8 objIdAbility;
     u8 objIdMove;
@@ -181,8 +196,13 @@ struct DexnavHudData {
     u8 movementTimes;
 
     // GUI data
-    u16 grassSpecies[12];
-    u16 waterSpecies[5];
+    u16 grassSpecies[NUM_LAND_MONS];
+    u16 waterSpecies[NUM_WATER_MONS];
+	u16 hiddenSpecies[NUM_LAND_MONS + 1];
+	u8 numGrassMons;
+	u8 numWaterMons;
+	u8 numHiddenLandMons;
+	u8 numHiddenWaterMons;
     u8 cursorId;
     u8 objids[17];
     u8 selectedIndex;
@@ -198,8 +218,8 @@ struct OieState2
 };
 */
 
-extern const struct BgTemplate BgConfigDexNavGUI[4];
-const struct BgTemplate BgConfigDexNavGUI[4] = {
+static const struct BgTemplate BgConfigDexNavGUI[4] =
+{
     {
         .baseTile = 0,
         .priority = 2,
@@ -239,7 +259,25 @@ const struct BgTemplate BgConfigDexNavGUI[4] = {
 };
 
 
-const struct OamData IconOAM = {
+static const struct OamData sCapturedAllPokemonSymbolOAM =
+{
+    .y = 0,
+    .affineMode = 1,
+    .objMode = 0,
+    .mosaic = 0,
+    .bpp = 0,
+    .shape = SPRITE_SHAPE(8x8),
+    .x = 0,
+    .matrixNum = 0,
+    .size = SPRITE_SIZE(8x8),
+    .tileNum = 0,
+    .priority = 0, //Highest
+    .paletteNum = 0,
+    .affineParam = 0,
+};
+
+static const struct OamData IconOAM =
+{
     .y = 0,
     .affineMode = 1,
     .objMode = 0,
@@ -255,7 +293,8 @@ const struct OamData IconOAM = {
     .affineParam = 0,
 };
 
-const struct OamData CursorOAM = {
+static const struct OamData CursorOAM =
+{
     .y = 0,
     .affineMode = 0,
     .objMode = 0,
@@ -273,7 +312,8 @@ const struct OamData CursorOAM = {
 
 
 // cursor positions for water
-const u16 CursorPositions2[] = {
+static const u16 CursorPositions2[] =
+{
     30 + 24 * 0, 48,
     30 + 24 * 1, 48,
     30 + 24 * 2, 48,
@@ -282,7 +322,8 @@ const u16 CursorPositions2[] = {
 };
 
 // positions for grass
-const u16 CursorPositions1[] = {
+static const u16 CursorPositions1[] =
+{
     20 + 24 * 0, 92,
     20 + 24 * 1, 92,
     20 + 24 * 2, 92,
@@ -300,17 +341,34 @@ const u16 CursorPositions1[] = {
 
 // GUI Windows
 #define rgb5(r, g, b) (u16)((r >> 3) | ((g >> 3) << 5) | ((b >> 3) << 10))
-const u16 DexNavTextPal[] = {
+static const u16 DexNavTextPal[] =
+{
 	rgb5(255, 0, 255), rgb5(248, 248, 248), rgb5(112, 112, 112), rgb5(96, 96, 96),
 	rgb5(208, 208, 208), rgb5(76, 154, 38), rgb5(102, 194, 66), rgb5(168, 75, 76),
 	rgb5(224, 114, 75), rgb5(180, 124, 41), rgb5(241, 188, 60), rgb5(255, 0, 255),
 	rgb5(255, 0, 255), rgb5(255, 0, 255), rgb5(255, 133, 200), rgb5(64, 200, 248)
 };
 
+enum
+{
+	WINDOW_SPECIES,
+	WINDOW_SEARCH_LEVEL,
+	WINDOW_LEVEL_BONUS,
+	WINDOW_HIDDEN_ABILITY,
+	WINDOW_REPLY_TEXT,
+	WINDOW_WATER,
+	WINDOW_LAND,
+	WINDOW_MAP_NAME,
+	WINDOW_COUNT,
+};
+
+
 //extern const struct WindowTemplate sDexNavWindows[];
-const struct WindowTemplate sDexNavWindows[] = {
+static const struct WindowTemplate sDexNavWindows[] =
+{
+	[WINDOW_SPECIES] =
 	{
-        .bg = 0,		//Species 
+        .bg = 0,
         .tilemapLeft = 21,
         .tilemapTop = 6,
         .width = 9,
@@ -318,42 +376,85 @@ const struct WindowTemplate sDexNavWindows[] = {
         .paletteNum = 15,
         .baseBlock = 1,
 	},
+	
+	[WINDOW_SEARCH_LEVEL] =
     {
-        .bg = 0,		//Search level
+        .bg = 0,
         .tilemapLeft = 21,
         .tilemapTop = 9,
         .width = 9,
         .height = 2,
         .paletteNum = 15,
-        .baseBlock = 31,
+        .baseBlock = 19,
     },
+	
+	[WINDOW_LEVEL_BONUS] =
     {
-        .bg = 0,		//Level bonus
+        .bg = 0,
         .tilemapLeft = 21,
         .tilemapTop = 12,
-        .width = 3,
+        .width = 9,
         .height = 3,
         .paletteNum = 15,
-        .baseBlock = 61,
+        .baseBlock = 64,
     },
+	
+	[WINDOW_HIDDEN_ABILITY] =
     {
-        .bg = 0,		//Hidden Ability
+        .bg = 0,
         .tilemapLeft = 21,
         .tilemapTop = 15,
         .width = 12,
         .height = 3,
         .paletteNum = 15,
-        .baseBlock = 76,
+        .baseBlock = 91,
     },
+	
+	[WINDOW_REPLY_TEXT] =
     {
-        .bg = 0,		// Reply text
-        .tilemapLeft = 1,
+        .bg = 0,
+        .tilemapLeft = 0,
         .tilemapTop = 17,
-        .width = 22,
+        .width = 26,
         .height = 3,
         .paletteNum = 15,
-        .baseBlock = 136,
+        .baseBlock = 127,
     },
+	
+	[WINDOW_WATER] =
+	{
+        .bg = 0,
+        .tilemapLeft = 1,
+        .tilemapTop = 2,
+        .width = 19,
+        .height = 3,
+        .paletteNum = 15,
+        .baseBlock = 205,
+	},
+	
+	[WINDOW_LAND] =
+	{
+        .bg = 0,
+        .tilemapLeft = 0,
+        .tilemapTop = 8,
+        .width = 19,
+        .height = 3,
+        .paletteNum = 15,
+        .baseBlock = 262,
+	},
+	
+	[WINDOW_MAP_NAME] =
+	{
+        .bg = 0,
+        .tilemapLeft = 0,
+        .tilemapTop = 0,
+        .width = 12,
+        .height = 3,
+        .paletteNum = 15,
+        .baseBlock = 319,
+	},
+	
+	[WINDOW_COUNT] =
     {
         .bg = 0xFF, // marks the end of the tb array
     },
@@ -364,59 +465,85 @@ const struct WindowTemplate sDexNavWindows[] = {
 //const struct Frame (**nullframe)[] = (const struct Frame (**)[])0x8231CF0;
 //const struct AffineAnimCmd (**nullrsf)[] = (const struct AffineAnimCmd (**)[])0x8231CFC;
 
-// 32x64 oam with highest priority
-const struct OamData FontOAM = {    .y = ICONY,
-                                    .affineMode = 0,
-                                    .objMode = 0,
-                                    .mosaic = 0,
-                                    .bpp = 0,
-                                    .shape = 1,
-                                    .x = ICONX,
-                                    .matrixNum = 0,
-                                    .size = 3,
-                                    .tileNum = 0,
-                                    .priority = 0,
-                                    .paletteNum = 0,
-                                    .affineParam = 0
+//64x32 oam with second highest priority
+static const struct OamData sBlackBarOAM =
+{   
+	.y = ICONY,
+    .affineMode = 0,
+    .objMode = 0,
+    .mosaic = 0,
+    .bpp = 0,
+    .shape = SPRITE_SHAPE(64x32),
+    .x = ICONX,
+    .matrixNum = 0,
+    .size = SPRITE_SIZE(64x32),
+    .tileNum = 0,
+    .priority = 1,
+    .paletteNum = 0,
+    .affineParam = 0,
+};
+
+
+//64x32 oam with highest priority
+static const struct OamData FontOAM =
+{   
+	.y = ICONY,
+    .affineMode = 0,
+    .objMode = 0,
+    .mosaic = 0,
+    .bpp = 0,
+    .shape = SPRITE_SHAPE(64x32),
+    .x = ICONX,
+    .matrixNum = 0,
+    .size = SPRITE_SIZE(64x32),
+    .tileNum = 0,
+    .priority = 0,
+    .paletteNum = 0,
+    .affineParam = 0,
 };
 
 
 // 8x8 oam with highest priority
-const struct OamData HeldOAM = {   .y = ICONY,
-                                    .affineMode = 0,
-                                    .objMode = 0,
-                                    .mosaic = 0,
-                                    .bpp = 0,
-                                    .shape = 0,
-                                    .x = ICONX,
-                                    .matrixNum = 0,
-                                    .size = 0,
-                                    .tileNum = 0,
-                                    .priority = 0,
-                                    .paletteNum = 0,
-                                    .affineParam = 0
+static const struct OamData HeldOAM =
+{
+	.y = ICONY,
+    .affineMode = 0,
+    .objMode = 0,
+    .mosaic = 0,
+    .bpp = 0,
+    .shape = 0,
+    .x = ICONX,
+    .matrixNum = 0,
+    .size = 0,
+    .tileNum = 0,
+    .priority = 0,
+    .paletteNum = 0,
+    .affineParam = 0,
 };
 
 //#define gPalHeldItemIcon ((u32*) 0x0845A3EC) //Pal for held items. The yellow box and mail icon
-const struct SpritePalette HeldPal = {(void*) 0x0845A3EC, 0x8472};
+static const struct SpritePalette HeldPal = {(void*) 0x0845A3EC, 0x8472};
 
 // 32x32 object with priority 1, one less than held item which overlaps it
-const struct OamData PIconOAM = {  .y = ICONY,
-                                    .affineMode = 0,
-                                    .objMode = 0,
-                                    .mosaic = 0,
-                                    .bpp = 0,
-                                    .shape = 0,
-                                    .x = ICONX,
-                                    .matrixNum = 0,
-                                    .size = 2,
-                                    .tileNum = 0,
-                                    .priority = 1,
-                                    .paletteNum = 0,
-                                    .affineParam = 0
+static const struct OamData PIconOAM =
+{
+	.y = ICONY,
+	.affineMode = 0,
+    .objMode = 0,
+    .mosaic = 0,
+    .bpp = 0,
+    .shape = 0,
+    .x = ICONX,
+    .matrixNum = 0,
+    .size = 2,
+    .tileNum = 0,
+    .priority = 1,
+    .paletteNum = 0,
+    .affineParam = 0,
 };
 
-const struct SpriteTemplate BulbTemp = {
+static const struct SpriteTemplate BulbTemp =
+{
 	.tileTag = 0x3139, 
 	.paletteTag = 0x3139, 
 	.oam = (struct OamData*) &PIconOAM, 

@@ -78,7 +78,7 @@ typedef u8 BoxNameT[9];
 #define ORIGINAL_BOX_NAME_RAM ((BoxNameT*) (0x2029314 + 0x8344))
 #define ORIGINAL_BOX_WALLPAPER_RAM ((u8*) (0x2029314 + 0x83C2))
 
-#define BOX_20_RAM ((struct CompressedPokemon*) 0x203CA00)
+#define BOX_20_RAM ((struct CompressedPokemon*) 0x203CB44)
 #define BOX_21_RAM (BOX_20_RAM + 30)
 #define BOX_22_RAM ((struct CompressedPokemon*) (gBattleTowerStreaks + (2 * sizeof(u16))))
 #define BOX_23_RAM (BOX_22_RAM + 30)

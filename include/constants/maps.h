@@ -77,6 +77,10 @@
 #define MAP_ROUTE_24 	((3 << 8) | 67)
 #define MAP_ROUTE_25 	((3 << 8) | 67)
 
+#define MAP_FLOWER_PARADISE_A ((1 << 8) | 4)
+#define MAP_FLOWER_PARADISE_B ((1 << 8) | 5)
+#define MAP_FLOWER_PARADISE_C ((1 << 8) | 6)
+
 #endif
 
 u8 __attribute__((long_call)) GetCurrentRegionMapSectionId(void);

@@ -448,30 +448,12 @@ HiddenAbilityChange7:
 .org 0x13A9DC, 0xFF
 SummaryScreenExpDisplay2:
 	.byte MAX_LEVEL - 1, 0x2D, 0x0, 0xD9
-	
-	
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@ DexNav - overworld anim for caves
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@	
-.org 0x1D9714, 0xff		@ 0x081D96AC + 4 * 0x1A
-	.word 0x081d98a4
 
-	
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Dynamic Overworld Palettes
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@	
 .org 0x1d9895, 0xff		@don't load sand palette on healing
 	.byte 0x7, 0x9c, 0xbe, 0x3c, 0x8, 0x8d, 0x3b, 0x8, 0x8, 0x4
-	
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@ DexNav - overworld anim for caves
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@	
-.org 0x1d98a4, 0xff
-	.byte 0x7
-	.word 0x083A5348
-	@ .word oei_1A_cave|1	@1d98a9
-.org 0x1d98ad, 0xff
-	.byte 0x4
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Multichoice Pointers

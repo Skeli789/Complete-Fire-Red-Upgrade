@@ -31,7 +31,8 @@ SystemScript_DisableAutoRun:
 .global SystemScript_PoisonSurvial
 SystemScript_PoisonSurvial:
 	bufferpartypokemon 0x0 0x8004
-	msgbox gText_PoisonSurvial MSG_SIGN
+	msgbox gText_PoisonSurvial MSG_KEEPOPEN
+	closeonkeypress
 	end
 	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -83,7 +84,8 @@ FinishNewRepel:
 	
 EventScript_RepelWoreOff:
 	lock
-	msgbox gText_RepelWoreOff MSG_SIGN
+	msgbox gText_RepelWoreOff MSG_KEEPOPEN
+	closeonkeypress
 	
 EndScript:
 	release

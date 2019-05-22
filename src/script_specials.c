@@ -131,9 +131,9 @@ u32 GetMonDataFromVar8003(u8 dataRequest) {
 		if (Var8003 == 1)
 			attr = GetBoxMonDataAt(Var8000, Var8001, dataRequest);
 		else
-			attr = GetMonData(&gPlayerParty[Var8004], dataRequest, 0);
+			attr = GetMonData(&gPlayerParty[Var8004], dataRequest, NULL);
 	#else
-		attr = GetMonData(&gPlayerParty[Var8004], dataRequest, 0);
+		attr = GetMonData(&gPlayerParty[Var8004], dataRequest, NULL);
 	#endif
 	return attr;
 }
@@ -227,7 +227,7 @@ bool8 sp009_PokemonRibbonChecker(void) {
 	else if (ribbon > 0x1F)
 		return FALSE;
 	
-	if (GetMonDataFromVar8003(MON_DATA_RIBBONS) & gBitTable[ribbon])
+	if (GetMonData(&gPlayerParty[mon], MON_DATA_RIBBONS, NULL) & gBitTable[ribbon])
 		return TRUE;
 
 	return FALSE;

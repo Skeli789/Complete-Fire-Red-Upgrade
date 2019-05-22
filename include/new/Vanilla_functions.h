@@ -6,10 +6,10 @@
 
 bool8 __attribute__((long_call)) ScriptEnv2IsEnabled(void);
 void __attribute__((long_call)) ScriptEnvDisable(void);
-void* __attribute__((long_call)) memcpy_(void *dst, void *src, u8 size);
+void* __attribute__((long_call)) memcpy_(void *dst, const void* src, u8 size);
 void* __attribute__((long_call)) memset_(void *dst, u8 pattern, u8 size);
 
-void* __attribute__((long_call)) Memcpy(void *dst, void *src, u32 size);
+void* __attribute__((long_call)) Memcpy(void *dst, const void *src, u32 size);
 void* __attribute__((long_call)) Memset(void *dst, u8 pattern, u32 size);
 
 void __attribute__((long_call)) PokemonSlotPurge(pokemon_t* mon);
@@ -59,7 +59,6 @@ u16 __attribute__((long_call)) GetBaseSpecies(u16 species);
 
 /*Overworld Functions*/
 u8 __attribute__((long_call)) GetTrainerEncounterMusicId(u16 trainerOpponentId);
-u8 __attribute__((long_call)) Overworld_GetMapTypeOfSaveblockLocation(void);
 u8 __attribute__((long_call)) GetCurrentMapBattleScene(void);
 
 void __attribute__((long_call)) PlayerGetDestCoords(s16* x, s16* y);
@@ -140,12 +139,6 @@ void __attribute__((long_call)) DisableInterrupts(u8 disable);
 
 void* __attribute__((long_call)) LoadPartyIconTiles(u16 species, u32 pid, bool8 isDeoxys);
 
-
-void __attribute__((long_call)) CallbackOWandContinueScriptsMusic(void);
-bool8 __attribute__((long_call)) CheckOpenSky(u8 mapLight);
-
-void __attribute__((long_call)) OverworldCallback1(void);
-void __attribute__((long_call)) OverworldCallbackSwitchStartMenu(void);
 u8 __attribute__((long_call)) CurrMapHeightMismatch(u8 height, s16 x, s16 y);
 
 void __attribute__((long_call)) MakeExclamationMark(struct MapObject* npc, struct Sprite* s);

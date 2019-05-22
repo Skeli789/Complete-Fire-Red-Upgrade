@@ -37,6 +37,7 @@ struct ScriptContext
 u16 __attribute__((long_call)) ScriptReadHalfword(struct ScriptContext *ctx);
 u8* __attribute__((long_call)) MapHeaderCheckScriptTable(u8 tag);
 void __attribute__((long_call)) ScriptContext1_SetupScript(const u8* ptr);
+void __attribute__((long_call)) ScriptCall(struct ScriptContext *ctx, const u8 *ptr);
 
 /*
 void InitScriptContext(struct ScriptContext *ctx, void *cmdTable, void *cmdTableEnd);
@@ -47,7 +48,6 @@ bool8 RunScriptCommand(struct ScriptContext *ctx);
 u8 ScriptPush(struct ScriptContext *ctx, const u8 *ptr);
 const u8 *ScriptPop(struct ScriptContext *ctx);
 void ScriptJump(struct ScriptContext *ctx, const u8 *ptr);
-void ScriptCall(struct ScriptContext *ctx, const u8 *ptr);
 void ScriptReturn(struct ScriptContext *ctx);
 u16 ScriptReadHalfword(struct ScriptContext *ctx);
 u32 ScriptReadWord(struct ScriptContext *ctx);

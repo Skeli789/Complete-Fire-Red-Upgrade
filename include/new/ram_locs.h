@@ -163,7 +163,7 @@ struct Clock
 // Dynamic Overworld Palettes
 //#define sPalRefs ((PalRef*) 0x203B7D4)	// 16 sprites * 4 bytes each = 0x40 bytes
 
-#define DEXNAV_SAVERAM 0x203B814
+//#define [FILL_IN_NEXT] 0x203B814
 //#define gFollowerState ((struct Follower*) 0x203B818) //Approximately ~20 bytes, use 24 to be safe
 //extern bool8 gIgnoredDNSPalIndices[32][16] //0x203B830
 //extern struct Roamer gRoamers[10] //0x203BA30
@@ -178,5 +178,7 @@ struct Clock
 #define gSelectedOrderFromParty ((u8*) 0x203C750)
 #define gDontFadeWhite (*((bool8*) 0x203C756))
 //#define [FILL_IN_NEXT] //0x203C757
-//extern struct CompressedPokemon gBox20[30] //0x203CA00
-//extern struct CompressedPokemon gBox21[30] //0x203D0CC
+//#define sDexNavStatePtr //0x203C758
+//#define sDexNavSearchLevels //0x203C75C -999 slots
+//extern struct CompressedPokemon gBox20[30] //0x203CB44
+//extern struct CompressedPokemon gBox21[30] //0x203D210

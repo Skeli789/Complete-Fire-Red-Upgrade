@@ -496,24 +496,7 @@ NoHack:
 	add r2, #0x2
 	add r0, r0, r2
 	ldr r2, =(0x080bfd64|1)
-	bx r2
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.align 2
-.pool
-@ hook at 10AD98 via r1
-CheckDexNavSelect:
-    bl CheckRegisteredSelect
-    cmp r0, #0x0
-    bne RestoreSelect
-    ldr r1, =(0x810ADA0|1)
-    bx r1
-
-RestoreSelect:
-   bl SelectHookRestore
-   ldr r1, =(0x810ADA0|1)
-   bx r1
-   
+	bx r2   
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .align 2

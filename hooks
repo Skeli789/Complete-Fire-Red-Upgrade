@@ -380,7 +380,7 @@ UnsellableTmFix 0813291C 0
 
 ##Start Menu
 BuildStartMenuActions 0806ed54 0
-CheckDexNavSelect 0810AD98 1
+#CheckDexNavSelect 0810AD98 1 //Replaced with R-Button
 PokeToolNoFade 0806F3A8 3
 FixStartMenuSize 080f78f4 0
 

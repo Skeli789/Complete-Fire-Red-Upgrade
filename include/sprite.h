@@ -40,6 +40,7 @@ struct RotscaleFrame {
 };
 
 #define obj_frame_tiles(ptr) {.data = (u8 *)ptr, .size = sizeof ptr}
+#define overworld_frame(ptr, width, height, frame) {.data = (u8 *)ptr + (width * height * frame * 64)/2, .size = (width * height * 64)/2}
 
 struct SpritePalette
 {

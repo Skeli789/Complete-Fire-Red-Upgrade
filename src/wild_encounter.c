@@ -896,7 +896,8 @@ const struct WildPokemonInfo* LoadProperMonsData(u8 type)
 	{
 		#ifdef TIME_ENABLED
 			header = GetCurrentMapWildMonDaytimeHeader();
-			if (header == NULL || LoadProperMonsPointer(header, type) == NULL)
+			monsInfo = LoadProperMonsPointer(header, type);
+			if (header == NULL || monsInfo == NULL)
 		#endif
 				return NULL;
 	}
