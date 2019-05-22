@@ -490,7 +490,7 @@ bool8 CheckBuyableTm(u16 item, u8 taskId)
 				return FALSE;
 			else
 			{
-				BuyMenuDisplayMessage(taskId, (void*) 0x8416842, BuyMenuConfirmPurchase);
+				BuyMenuDisplayMessage(taskId, (void*) 0x8416842, BuyMenuReturnToItemList);
 				return TRUE;
 			}
 		}
@@ -501,7 +501,7 @@ bool8 CheckBuyableTm(u16 item, u8 taskId)
 			return FALSE;
 		else
 		{
-			BuyMenuDisplayMessage(taskId, (void*) 0x8416842, Task_ReturnToItemListAfterItemPurchase);
+			BuyMenuDisplayMessage(taskId, (void*) 0x8416842, BuyMenuReturnToItemList);
 			return TRUE;
 		}
 	#endif
