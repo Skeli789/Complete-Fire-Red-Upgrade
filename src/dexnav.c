@@ -2009,7 +2009,11 @@ static void DexNavGuiExitNoSearch(void)
         case 2:
             m4aMPlayVolumeControl(&gMPlay_BGM, 0xFFFF, 256);
             SetMainCallback1(CB1_Overworld);
-            SetMainCallback2(CB2_ReturnToFieldWithOpenMenu);
+            
+			#ifdef FLAG_POKETOOLS_MENU
+				FlagSet(FLAG_POKETOOLS_MENU);
+			#endif
+			SetMainCallback2(CB2_ReturnToFieldWithOpenMenu);
             break;
 	}
 }

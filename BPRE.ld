@@ -944,7 +944,6 @@ HideStartMenu = 0x806FEA0 | 1;
 CloseStartMenuDescriptionBox = 0x80F7998 | 1;
 InUnionRoom = 0x811B0D0 | 1;
 
-
 /* Save State Functions */
 SaveSerializedGame = 0x804C300 | 1;
 IncrementGameStat = 0x8054E90 | 1;
