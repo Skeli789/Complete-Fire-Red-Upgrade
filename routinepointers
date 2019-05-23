@@ -93,6 +93,7 @@ sp08A_ReadPedometerValue 0815FF88
 
 sp097_WildGroundBattle 0815FFBC
 sp098_WildSeaBattle 0815FFC0
+sp09A_StopSounds 0815FFC8
 sp09C_OldManBattleModifier 0815FFD0
 
 sp09E_NicknamePokemon 0815FFD8
@@ -102,6 +103,11 @@ sp0A1_UpdateTimeInVars 0815FFE4
 sp0A2_GetTimeDifference 0815FFE8
 
 sp0AC_LoadTrainerBDefeatText 08160010
+sp0AD_GetTimeOfDay 08160014
+sp0AE_ClearFlag 08160018
+sp0AF_DismountBicyle 0816001C
+sp0B0_LoadPartyPokemonTypes 08160020
+sp0B1_ChooseItemFromBag 08160024
 
 sp0C9_ForceOneKeyInput 08160084
 sp0CA_IgnoreKeys 08160088

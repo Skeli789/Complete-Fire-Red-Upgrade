@@ -102,6 +102,11 @@ dp12_config = 0x2039600;
 gTasks = 0x3005090;
 gMain = 0x30030F0;
 
+/* Audio RAM */
+gMPlayInfo_BGM = 0x3007300;
+gMPlayInfo_SE1 = 0x3007340;
+gMPlayInfo_SE2 = 0x3007380;
+gMPlayInfo_SE3 = 0x30073D0;
 
 /*==========================
 ===========ROM==============
@@ -568,7 +573,10 @@ ItemId_GetType = 0x809A9FC | 1;
 IsEnoughMoney = 0x809FD88 | 1;
 AddMoney = 0x809FDA0 | 1;
 RemoveUsedItem = 0x80A1A44 | 1;
+GoToBagMenu = 0x8107DB4 | 1;
 CheckVSSeeker = 0x810C4EC | 1;
+GoToTMMenu = 0x81317F8 | 1;
+GoToBerryMenu = 0x813CD50 | 1;
 BuyMenuDisplayMessage = 0x813F75C | 1;
 
 
@@ -656,6 +664,7 @@ MetatileBehavior_IsIndoorEncounter = 0x8059F88 | 1;
 MetatileBehavior_IsMountain = 0x8059F9C | 1;
 MetatileBehavior_IsDeepOrOceanWater = 0x805A01C | 1;
 MetatileBehavior_IsRunningDisallowed = 0x805A234 | 1;
+SetPlayerAvatarTransitionFlags = 0x805BDEC | 1;
 sub_805C780 = 0x805C780 | 1;
 GetOppositeDirection = 0x8064480 | 1;
 FaceDirection = 0x80645F4 | 1;
@@ -1158,6 +1167,7 @@ PlaySE = 0x80722CC | 1;
 IsSEPlaying = 0x80723E0 | 1;
 m4aSongNumStop = 0x81DD1C0 | 1;
 m4aMPlayContinue = 0x81DD26C | 1;
+m4aMPlayStop = 0x81DD93C | 1;
 m4aMPlayVolumeControl = 0x81DE0E0 | 1;
 
 

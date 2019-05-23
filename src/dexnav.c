@@ -4,6 +4,7 @@
 #include "../include/event_data.h"
 #include "../include/fieldmap.h"
 #include "../include/field_effect.h"
+#include "../include/m4a.h"
 #include "../include/main.h"
 #include "../include/metatile_behavior.h"
 #include "../include/overworld.h"

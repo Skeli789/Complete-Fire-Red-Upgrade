@@ -530,3 +530,38 @@ CharacterCustomizationUpdateTrainerFrontPic2:
 	mov r1, r4
 	bl TryUpdateTrainerPicPalTrainerCard
 	pop {r4-r5, pc}
+
+.pool
+@0x81090B8 with r0
+SelectItemFromBagCheck:
+	bl ShouldSelectItemFromBag
+	cmp r0, #0x0
+	bne SelectItemFromBagReturn
+	ldr r1, =0x3005090 @;Tasks
+	lsl r0, r6, #0x2
+	add r0, r6
+	lsl r0, #0x3
+	ldr r2, =0x81090C0 | 1
+	bx r2
+	
+SelectItemFromBagReturn:
+	ldr r1, =0x8109024 | 1
+	bx r1
+
+@0x81323B0 with r0
+SelectItemFromTMCaseCheck:
+	bl ShouldSelectItemFromTMCase
+	cmp r0, #0x0
+	bne SelectItemFromTMCaseReturn
+	ldr r0, =0x3005090 @;Tasks
+	lsl r1, r7, #0x2
+	add r1, r7
+	lsl r1, #0x3
+	ldr r2, =0x81323B8 | 1
+	bx r2
+	
+SelectItemFromTMCaseReturn:
+	ldr r0, =0x8132370 | 1
+	bx r0
+
+.pool

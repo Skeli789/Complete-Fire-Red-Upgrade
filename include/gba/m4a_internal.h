@@ -1,5 +1,4 @@
-#ifndef GUARD_M4A_INTERNAL_H
-#define GUARD_M4A_INTERNAL_H
+#pragma once
 
 #include "gba.h"
 
@@ -375,7 +374,7 @@ extern char gMaxLines[];
 
 #define NUM_MUSIC_PLAYERS ((u16)gNumMusicPlayers)
 #define MAX_LINES ((u32)gMaxLines)
-
+/*
 u32 umul3232H32(u32 multiplier, u32 multiplicand);
 void SoundMain(void);
 void SoundMainBTM(void);
@@ -463,5 +462,4 @@ void ply_xleng(struct MusicPlayerInfo *, struct MusicPlayerTrack *);
 void ply_xswee(struct MusicPlayerInfo *, struct MusicPlayerTrack *);
 void ply_xcmd_0C(struct MusicPlayerInfo *, struct MusicPlayerTrack *);
 void ply_xcmd_0D(struct MusicPlayerInfo *, struct MusicPlayerTrack *);
-
-#endif // GUARD_M4A_INTERNAL_H
+*/

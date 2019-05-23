@@ -1,26 +1,29 @@
 #include "defines.h"
+#include "../include/field_player_avatar.h"
 #include "../include/fieldmap.h"
-#include "../include/list_menu.h"
-
-#include "../include/pokemon_storage_system.h"
-#include "../include/new_menu_helpers.h"
-#include "../include/naming_screen.h"
 #include "../include/hall_of_fame.h"
+#include "../include/item_menu.h"
+#include "../include/list_menu.h"
+#include "../include/m4a.h"
+#include "../include/naming_screen.h"
 #include "../include/overworld.h"
+#include "../include/pokemon_storage_system.h"
 #include "../include/region_map.h"
 #include "../include/save.h"
-#include "../include/sprite.h"
 #include "../include/script.h"
 #include "../include/sound.h"
+#include "../include/sprite.h"
 #include "../include/string_util.h"
 #include "../include/text.h"
-#include "../include/window.h"
 #include "../include/wild_encounter.h"
+#include "../include/window.h"
 #include "../include/constants/items.h"
 #include "../include/constants/pokedex.h"
 
-#include "../include/new/helper_functions.h"
 #include "../include/new/catching.h"
+#include "../include/new/dns.h"
+#include "../include/new/helper_functions.h"
+#include "../include/new_menu_helpers.h"
 #include "../include/new/multi.h"
 #include "../include/new/overworld.h"
 #include "../include/new/pokemon_storage_system.h"
@@ -1455,11 +1458,6 @@ u32 sp08A_ReadPedometerValue(void) {
 //Other New Specials//
 ///////////////////////////////////////////////////////////////////////////////////
 
-u32 GetMinuteDifference(u32 startYear, u8 startMonth, u8 startDay, u8 startHour, u8 startMin, u32 endYear, u8 endMonth, u8 endDay, u8 endHour, u8 endMin);
-u32 GetHourDifference(u32 startYear, u8 startMonth, u8 startDay, u8 startHour, u32 endYear, u8 endMonth, u8 endDay, u8 endHour);
-u32 GetDayDifference(u32 startYear, u8 startMonth, u8 startDay, u32 endYear, u8 endMonth, u8 endDay);
-u32 GetMonthDifference(u32 startYear, u8 startMonth, u32 endYear, u8 endMonth);
-u32 GetYearDifference(u32 startYear, u32 endYear);
 bool8 CheckAndSetDailyEvent(u16 eventVar, bool8 setDailyEventVar);
 
 struct DailyEventVar
@@ -1516,8 +1514,8 @@ bool8 CheckAndSetDailyEvent(u16 eventVar, bool8 setDailyEventVar)
 }
 
 //@Details: Updates the time stored in a pair of vars.
-//@Input: Var 0x8000 - A var containing the daily event data. 
-//					   The var after this one is used as well.
+//@Input: Var 0x8000: A var containing the daily event data. 
+//					  The var after this one is used as well.
 void sp0A1_UpdateTimeInVars(void)
 {
 	u16 eventVar = Var8000; //Var contained in Var8000
@@ -1532,8 +1530,8 @@ void sp0A1_UpdateTimeInVars(void)
 }
 
 //@Details: Gets the time difference between the data stored in a var and the current time.
-//@Input: Var 0x8000 - A var containing the time data. 
-//					   The var after this one is used as well.
+//@Input: Var 0x8000: A var containing the time data. 
+//					  The var after this one is used as well.
 //@Input: Var 0x8001: 0 - Get minute difference
 //					  1 - Get hour difference.
 //					  2 - Get day difference. 
@@ -1573,9 +1571,112 @@ u32 sp0A2_GetTimeDifference(void)
 	return difference;
 }
 
+enum
+{
+	MORNING,
+	DAY,
+	EVENING,
+	NIGHT,
+};
 
+//@Details: Gets the time of day.
+//@Input: Var 0x8000: 1 = Merge morning, day, and evening.
+//@Returns: 0 = Morning, 1 = Day, 2 = Evening, 3 = Night
+u8 sp0AD_GetTimeOfDay(void)
+{
+	switch (Var8000) {
+		case 1:
+			if (IsMorning() || IsDayTime() || IsEvening())
+				return DAY;
+			else
+				return NIGHT;
+				
+		default:
+			if (IsMorning())
+				return MORNING;
+			else if (IsDayTime())
+				return DAY;
+			else if (IsEvening())
+				return EVENING;
+			else
+				return NIGHT;
+	}
+}
 
+//@Details: Gets the time of day.
+//@Input: Var 0x8000: Flag to clear.
+void sp0AE_ClearFlag(void)
+{
+	FlagClear(Var8000); //Flag contained in Var 0x8000
+}
 
+//@Details: Dismounts the player from the bicycle if they're on it.
+void sp0AF_DismountBicyle(void)
+{
+	if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_BIKE))
+		SetPlayerAvatarTransitionFlags(PLAYER_AVATAR_FLAG_ON_FOOT);
+}
+
+//@Details: Stops any sound effects from playing.
+void sp09A_StopSounds(void)
+{
+	m4aMPlayStop(&gMPlayInfo_SE1);
+	m4aMPlayStop(&gMPlayInfo_SE2);
+}
+
+//@Details: Gets the types of the requested party Pokemon.
+//@Input: Var 0x8000: Party Pokemon number
+//@Returns: Var 0x8000: Type 1
+//			Var 0x8001: Type 2
+void sp0B0_LoadPartyPokemonTypes(void)
+{
+	u8 mon = Var8000;
+	if (mon < PARTY_SIZE)
+	{
+		Var8000 = gBaseStats[gPlayerParty[mon].species].type1;
+		Var8001 = gBaseStats[gPlayerParty[mon].species].type2;
+	}
+}
+
+//@Details: Opens the bag and let's the player select an item.
+//@Input: 	Var 0x8000: 0 = Any Pocket, Open From Item's Pocket
+//						1 = Any Pocket, Open From Key Item's Pocket
+//						2 = Any Pocket, Open From Poke Ball Pocket
+//						3 = Any Pocket Open From Item's Pocket
+//						4 = Berry Pouch
+//						5 = TM Case
+//@Returns: Var 0x800E: The item the player chose. 0 if they chose nothing.
+void sp0B1_ChooseItemFromBag(void)
+{
+	switch (Var8000) {
+		case 0:
+		case 1:
+		case 2:
+		case 3:
+			GoToBagMenu(BAG_OPEN_SELECT_ITEM, Var8000, CB2_ReturnToFieldContinueScript);
+			break;
+		case 4:
+			GoToBerryMenu(BERRY_POUCH_CHOOSE_ITEM, CB2_ReturnToFieldContinueScript, 0);
+			break;
+		case 5:
+			GoToTMMenu(TM_CASE_SELECT_ITEM, CB2_ReturnToFieldContinueScript, 0);
+			break;
+		default:
+			GoToBagMenu(BAG_OPEN_SELECT_ITEM, 0, CB2_ReturnToFieldContinueScript);
+	}
+}
+
+#define gTMCasePositionStruct ((u8*) 0x203B10C)
+bool8 ShouldSelectItemFromTMCase(void)
+{
+	return gTMCasePositionStruct[4] == TM_CASE_SELECT_ITEM; //bagMenuType
+}
+
+#define gBagPositionStruct ((u8*) 0x203ACFC)
+bool8 ShouldSelectItemFromBag(void)
+{
+	return gBagPositionStruct[4] == BAG_OPEN_SELECT_ITEM; //bagMenuType
+}
 
 #define FossilTemplate ((struct SpriteTemplate*) 0x83E0768)
 bool8 sp18B_ShowFossilImage(void) {
