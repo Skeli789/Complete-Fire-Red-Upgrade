@@ -698,6 +698,8 @@ void __attribute__((long_call)) SetMonData(struct Pokemon *mon, s32 field, const
 void __attribute__((long_call)) SetMonData2(struct Pokemon *mon, s32 PokemonDataRequest, const void *data);
 void __attribute__((long_call)) CopyMon(void *dest, void *src, size_t size);
 
+u8 __attribute__((long_call)) CheckPartyHasHadPokerus(struct Pokemon *party, u8 selection);
+
 /*
 void ZeroMonData(struct Pokemon *mon);
 void ZeroPlayerPartyMons(void);
@@ -810,7 +812,6 @@ bool8 HasTwoFramesAnimation(u16 species);
 u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem);
 void RandomlyGivePartyPokerus(struct Pokemon *party);
 u8 CheckPartyPokerus(struct Pokemon *party, u8 selection);
-u8 CheckPartyHasHadPokerus(struct Pokemon *party, u8 selection);
 void UpdatePartyPokerusTime(u16 days);
 void PartySpreadPokerus(struct Pokemon *party);
 s8 GetMonFlavorRelation(struct Pokemon *mon, u8 a2);

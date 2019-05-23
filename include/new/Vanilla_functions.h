@@ -34,7 +34,7 @@ u8 __attribute__((long_call)) GetPartyAbility(const pokemon_t* const);
 //u8 __attribute__((long_call)) CalculatePlayerPartyCount(void);
 u8 __attribute__((long_call)) CalculatePPWithBonus(u16 move, u8 ppBonuses, u8 moveIndex);
 u16 __attribute__((long_call)) SpeciesToNationalPokedexNum(u16 species);
-void __attribute__((long_call)) MonGainEVs(struct Pokemon *mon, u16 defeatedSpecies);
+//void __attribute__((long_call)) MonGainEVs(struct Pokemon *mon, u16 defeatedSpecies);
 s8 __attribute__((long_call)) GetPokeFlavourRelation(u32 pid, u8 flavor);
 bool8 __attribute__((long_call)) IsTradedMon(struct Pokemon *mon);
 bool8 __attribute__((long_call)) IsOtherTrainer(u32 otId, u8* otName);

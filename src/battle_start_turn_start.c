@@ -1190,6 +1190,7 @@ u32 SpeedCalc(bank_t bank) {
 	}
 	
 	switch (item_effect) {
+		case ITEM_EFFECT_POWER_ITEM:
 		case ITEM_EFFECT_MACHO_BRACE:
 			speed /= 2;
 			break;			

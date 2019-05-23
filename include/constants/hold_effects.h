@@ -133,6 +133,8 @@
 #define ITEM_EFFECT_TYPE_BOOSTERS 129 //Quality = % Damage Boost
 #define ITEM_EFFECT_Z_CRYSTAL 130 //Quality = Move Type
 
+#define ITEM_EFFECT_POWER_ITEM 131
+
 //Focus Sash: Item Effect = ITEM_EFFECT_FOCUS_BAND, Item Quality = 100, Item Mystery 2 = 1
 
 enum ChoiceQualities 
@@ -146,4 +148,14 @@ enum OrbQualities
 {
 	QUALITY_RED_ORB,
 	QUALITY_BLUE_ORB,
+};
+
+enum PowerItemQualities
+{
+	QUALITY_POWER_WEIGHT,
+	QUALITY_POWER_BRACER,
+	QUALITY_POWER_BELT,
+	QUALITY_POWER_LENS,
+	QUALITY_POWER_BAND,
+	QUALITY_POWER_ANKLET,	
 };
