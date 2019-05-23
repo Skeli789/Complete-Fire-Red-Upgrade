@@ -4,6 +4,8 @@
 A complete upgrade for Fire Red, including an upgraded Battle Engine.
 
 ## Features:
+* Expanded Pokémon
+* Expanded PC Boxes (up to 24!)
 * Battle Engine Upgraded to Gen 7
   * All Moves, Abilities, Items, Weather effects, Terrain effects, mechanics, effects through Gen 7
   * Vastly improved AI system with decision-making skills for all new battle effects
