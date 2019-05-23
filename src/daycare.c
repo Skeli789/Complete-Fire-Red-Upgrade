@@ -7,8 +7,10 @@
 #include "../include/constants/items.h"
 #include "../include/constants/moves.h"
 #include "../include/constants/species.h"
+#include "../include/constants/pokedex.h"
 
 #include "../include/new/catching.h"
+#include "../include/new/daycare.h"
 #include "../include/new/item.h"
 
 #define sHatchedEggFatherMoves ((u16*) 0x202455C)
@@ -17,7 +19,7 @@
 #define sHatchedEggLevelUpMoves ((u16*) 0x20244F8)
 
 #define EGG_LVL_UP_MOVES_ARRAY_COUNT 50
-#define EGG_MOVES_ARRAY_COUNT 50
+#define gTMHMMoves ((const u16*) *((u32*) 0x8125A8C))
 
 extern u8 GetLevelUpMovesBySpecies(u16 species, u16* moves);
 extern u16 GetItemIdFromTmId(u8 tmId);
@@ -93,11 +95,11 @@ void BuildEggMoveset(struct Pokemon* egg, struct BoxPokemon* father, struct BoxP
 #ifdef FATHER_PASSES_TMS
     for (i = 0; i < MAX_MON_MOVES; ++i)
     {	
-		if (sHatchedEggFatherMoves[i] != MOVE_NONE
+		if (sHatchedEggFatherMoves[i] != MOVE_NONE)
 		{
-			for (j = 1; j <= NUM_TMSHMS; ++j)	//loop through tm indices
+			for (j = 0; j < NUM_TMSHMS; ++j)	//loop through tm indices
 			{
-				if (sHatchedEggFatherMoves[i] == ItemIdToBattleMoveId(GetItemIdFromTmId(j)) && CanMonLearnTMHM(egg, j)
+				if (sHatchedEggFatherMoves[i] == gTMHMMoves[j] && CanMonLearnTMHM(egg, j))
 				{
 					if (GiveMoveToMon(egg, sHatchedEggFatherMoves[i]) == 0xFFFF)
 						DeleteFirstMoveAndGiveMoveToMon(egg, sHatchedEggFatherMoves[i]);								
@@ -201,34 +203,22 @@ u16 DetermineEggSpeciesAndParentSlots(struct DayCare* daycare, u8* parentSlots)
     }
 
     eggSpecies = GetEggSpecies(species[parentSlots[0]]);
-	switch(eggSpecies) {
-		case SPECIES_NIDORAN_F:
+	switch(SpeciesToNationalPokedexNum(eggSpecies)) {
+		case NATIONAL_DEX_NIDORAN_F:
 			if (daycare->offspringPersonality & 0x8000)
 				eggSpecies = SPECIES_NIDORAN_M;
 			break;
-		case SPECIES_ILLUMISE:
+		case NATIONAL_DEX_ILLUMISE:
 			if (daycare->offspringPersonality & 0x8000)
 				eggSpecies = SPECIES_VOLBEAT;
 			break;
-		case SPECIES_MANAPHY:
+		case NATIONAL_DEX_MANAPHY:
 			eggSpecies = SPECIES_PHIONE;
 			break;
-		case SPECIES_ROTOM_HEAT:
-		case SPECIES_ROTOM_WASH:
-		case SPECIES_ROTOM_FROST:
-		case SPECIES_ROTOM_FAN:
-		case SPECIES_ROTOM_MOW:
+		case NATIONAL_DEX_ROTOM:
 			eggSpecies = SPECIES_ROTOM;
 			break;
-		case SPECIES_FURFROU_HEART:
-		case SPECIES_FURFROU_DIAMOND:
-		case SPECIES_FURFROU_STAR:
-		case SPECIES_FURFROU_PHAROAH:
-		case SPECIES_FURFROU_KABUKI:
-		case SPECIES_FURFROU_LA_REINE:
-		case SPECIES_FURFROU_MATRON:
-		case SPECIES_FURFROU_DANDY:
-		case SPECIES_FURFROU_DEBUTANTE:
+		case NATIONAL_DEX_FURFROU:
 			eggSpecies = SPECIES_FURFROU;
 	}
 

@@ -12,8 +12,8 @@ BattleLoadOpponentMonSpriteGfxHook:
 	mov r0, r1
 	bl GetIllusionPartyData
 	mov r4, r0
-	ldr r0, =0x8034334 | 1
-	bx r0
+	ldr r1, =0x8034334 | 1
+	bx r1
 	
 @0x80344A4 with r2
 BattleLoadPlayerMonSpriteGfxHook:
@@ -23,8 +23,8 @@ BattleLoadPlayerMonSpriteGfxHook:
 	mov r0, r1
 	bl GetIllusionPartyData
 	mov r6, r0
-	ldr r0, =0x80344AC | 1
-	bx r0
+	ldr r1, =0x80344AC | 1
+	bx r1
 
 @0x80496C8 with r2
 UpdateNickForIllusionHook:

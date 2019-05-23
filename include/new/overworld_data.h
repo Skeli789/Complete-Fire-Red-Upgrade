@@ -19,6 +19,7 @@
 #define EventScript_Poison (const u8*) 0x81A8DFD
 #define EventScript_EggHatch (const u8*) 0x81BF546
 
+extern u8 EventScript_SetUpNPCSpotting[];
 extern u8 Script_TrainerSpottedMulti[];
 extern u8 EventScript_DoTwoOpponentBattle[];
 extern u8 EventScript_TryDoTwoOpponentBattle[];

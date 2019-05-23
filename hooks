@@ -380,7 +380,7 @@ UnsellableTmFix 0813291C 0
 
 ##Start Menu
 BuildStartMenuActions 0806ed54 0
-CheckDexNavSelect 0810AD98 1
+#CheckDexNavSelect 0810AD98 1 //Replaced with R-Button
 PokeToolNoFade 0806F3A8 3
 FixStartMenuSize 080f78f4 0
 
@@ -411,7 +411,7 @@ SwapBoxMonMovesUpdate2 8139304 0
 UpdateRepelCounter 080830B8 0
 TaskRepel 080A19E8 1
 
-##Bag Expansion
+##Bag
 AreItemsDisabledHook 80143D4 0
 GetCurrentPocketItemAmountHook 8028760 0
 ExpandedBerriesFix1 806BDEC 0
@@ -427,8 +427,10 @@ OpenBagBugFix3 8108AC0 0
 CountItemsInBag 8108DC8 1
 PokeDudeBackupRegularBagHook 810ADDE 0
 GetSmallestItemAmount 8108E20 0
+SelectItemFromBagCheck 81090B8 0
 PokeDudeBackupRegularBagClearHook 810AE78 0
 PokeDudeBackupBagRestoreHook 810AEDA 0
+SelectItemFromTMCaseCheck 81323B0 0
 PokeDudeBackupTMCaseHook 8132E76 1
 PokeDudeClearTMCaseHook 8132EB0 0
 PokeDudeRestoreTMCaseHook 813318C 0

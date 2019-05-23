@@ -480,7 +480,7 @@ void CursorCb_Enter(u8 taskId)
         }
     }
     
-	PlaySE(SE_HAZURE);
+	PlaySE(SE_ERROR);
 	DisplayPartyMenuMsgBox(string, 1);
     gTasks[taskId].func = sub_81203B8;
 }

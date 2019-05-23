@@ -382,7 +382,7 @@ const struct TerrainTableStruct gTerrainTable[] =
 			.burmyForm = SPECIES_BURMY,
 		},
 		
-	[BATTLE_TERRAIN_AUTUMN_FIELD + 4] =
+	[BATTLE_TERRAIN_AUTUMN_PLAIN + 4] =
 		{
 			.camouflageType = TYPE_NORMAL,
 			.secretPowerEffect = MOVE_EFFECT_PARALYSIS,

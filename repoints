@@ -45,7 +45,10 @@ SaveSectionOffsets 080DA23C
 
 ##
 BattleScript_RainDishActivates 0801A4A0
-BattleScript_WildDoubleSwitchFix 0x81D86AE
+BattleScript_WildDoubleSwitchFix 081D86AE
+FieldEffectScript_CaveDust 081D9714
+FieldEffectScript_Sparkles 081D9718
+FieldEffectScript_LavaBubbles 081D9768
 
 ##Wild -> The Wild
 TheWildString 080D7B78

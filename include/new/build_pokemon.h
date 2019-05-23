@@ -15,12 +15,14 @@
 void sp067_GenerateRandomBattleTowerTeam(void);
 void GiveMonNatureAndAbility(pokemon_t* mon, u8 nature, u8 abilityNum);
 bool8 IsMonAllowedInBattleTower(struct Pokemon* mon);
+void TryStatusInducer(struct Pokemon* mon);
 
 //Functions Hooked In
 void BuildTrainerPartySetup(void);
 u8 GetMonPokeBall(struct PokemonSubstruct0* data);
 void SetMonPokeBall(struct PokemonSubstruct0* data, u8 ballId);
 void CreateBoxMon(struct BoxPokemon *boxMon, u16 species, u8 level, u8 fixedIV, u8 hasFixedPersonality, u32 fixedPersonality, u8 otIdType, u32 fixedOtId);
+void CreateMonWithNatureLetter(struct Pokemon* mon, u16 species, u8 level, u8 fixedIV, u8 nature, u8 unownLetter);
 
 //Exported Constants
 enum TierBanCheckingType 

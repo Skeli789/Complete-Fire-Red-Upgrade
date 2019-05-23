@@ -17021,7 +17021,7 @@ static const struct LevelUpMove sSpeciesLycanrocDuskLevelUpLearnset[] = {
 };
 */
 
-const struct LevelUpMove* const gLevelUpLearnsets[NUM_SPECIES] =
+const struct LevelUpMove* const gLevelUpLearnsets[] =
 {
 	[SPECIES_NONE] = sEmptyMoveset,
 	[SPECIES_BULBASAUR] = sSpeciesBulbasaurLevelUpLearnset,

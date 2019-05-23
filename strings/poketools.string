@@ -4,15 +4,44 @@ Pok\edex\nDexnav
 #org @gText_DexNav
 DEXNAV
 
+#org @gText_DexNavWater
+WATER
+
+#org @gText_DexNavLand
+LAND
+
+#org @gText_PinkFlowers
+PINK FLOWERS
+
+#org @gText_YellowFlowers
+YELLOW FLOWERS
+
+#org @gText_RedFlowers
+RED FLOWERS
+
+#org @gText_BlueFlowers
+BLUE FLOWERS
+
+#org @gText_PinkAndPurpleFlowers
+PINK-PURPLE FLOWERS
+
+#org @gText_BlueAndYellowFlowers
+BLUE-YELLOW FLOWERS
+
+#org @gText_Magma
+MAGMA
+
 #org @gText_DexNavDescription
 Search for wild Pok\emon in the area\nwith potential special qualities!
-
 
 #org @gText_PokeTools
 TOOLS
 
 #org @gText_GotAway
 The Pok\emon got away!\p
+
+#org @gText_GotAwayShouldSneak
+The Pok\emon got away!\nTry moving more slowly.\p
 
 #org @gText_LostSignal
 There is no reaction.\nThe signal was lost!\p
@@ -26,19 +55,23 @@ It couldn't be found nearby.\nTry looking in a different area!\p
 #org @gText_DexNavBack
  Back  
 
+#org @gText_DexNav_CaptureToSee
+Capture first!
+
 #org @gText_DexNav_NoInfo
 --------
 
 #org @gText_DexNav_ChooseMon
-Choose a Pok\emon
+Choose a Pok\emon.
 
 #org @gText_DexNav_Invalid
-That Pok\emon can't be searched!
+That Pok\emon can't be searched yet!
+
+#org @gText_DexNav_NoDataForSlot
+There's no data for that Pok\emon[.]
 
 #org @gText_DexNav_Locked
-Pok\emon searchable via Select!
+Pok\emon searchable via R-button!
 
 #org @gText_ToolsDescription
 Tools to view your Pok\edex progress\nor search for specific species.
-
-

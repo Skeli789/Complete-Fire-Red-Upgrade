@@ -3,11 +3,13 @@
 #include "../include/event_data.h"
 #include "../include/fieldmap.h"
 #include "../include/metatile_behavior.h"
+#include "../include/overworld.h"
 #include "../include/constants/metatile_behaviors.h"
 #include "../include/constants/trainer_classes.h"
 
 #include "../include/new/battle_terrain.h"
 #include "../include/new/dns.h"
+#include "../include/new/overworld.h"
 #include "../include/new/helper_functions.h"
 
 #define gBattleTerrainTable ((struct BattleBackground*) *((u32*) 0x800F320))
@@ -34,7 +36,14 @@ u8 BattleSetup_GetTerrainId(void)
 	{
 		//Maybe add check for fishing byte?
 		if (MetatileBehavior_IsTallGrass(tileBehavior))
-			terrain = BATTLE_TERRAIN_GRASS;
+		{
+			#ifdef UNBOUND
+			if (IsCurrentAreaAutumn())
+				terrain = BATTLE_TERRAIN_AUTUMN_GRASS;
+			else
+			#endif
+				terrain = BATTLE_TERRAIN_GRASS;
+		}
 		else if (tileBehavior == MB_VERY_TALL_GRASS) //The old useless function for this check just returns 0
 			terrain = BATTLE_TERRAIN_LONG_GRASS;
 		else if (MetatileBehavior_IsSandOrDeepSand(tileBehavior))
@@ -57,7 +66,7 @@ u8 BattleSetup_GetTerrainId(void)
 				terrain = BATTLE_TERRAIN_POND;
 		#endif
 
-		switch (gMapHeader.mapType) {
+		switch (GetCurrentMapType()) {
 			case MAP_TYPE_UNDERGROUND:
 				if (MetatileBehavior_IsIndoorEncounter(tileBehavior))
 				{
@@ -116,7 +125,10 @@ u8 BattleSetup_GetTerrainId(void)
 		
 		if (terrain == BATTLE_TERRAIN_SNOW_CAVE
 		&&  MetatileBehavior_IsIce(tileBehavior))
-			terrain = BATTLE_TERRAIN_ICE_IN_CAVE;	
+			terrain = BATTLE_TERRAIN_ICE_IN_CAVE;
+		else if (terrain == BATTLE_TERRAIN_PLAIN
+		&& IsCurrentAreaAutumn())
+			terrain = BATTLE_TERRAIN_AUTUMN_PLAIN;
 	#endif
 	
     return terrain;
@@ -164,6 +176,17 @@ u8 LoadBattleBG_TerrainID(void) {
 				terrain = LoadBattleBG_SpecialTerrainID(GetCurrentMapBattleScene());
 			}
 		#endif
+			else
+				terrain = gBattleTerrain;
+	}
+	else
+	{
+		if (GetCurrentMapBattleScene() != 0)
+		{
+			terrain = LoadBattleBG_SpecialTerrainID(GetCurrentMapBattleScene());
+		}
+		else
+			terrain = gBattleTerrain;
 	}
 	
 	return terrain;

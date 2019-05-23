@@ -17,6 +17,17 @@ TestScript:
 @trainerbattle12 0xC 0x177 0x26 0x6 0x0 0x87D6C37
 @trainerbattle3 0x3 0x177 0xF00 0x87D6C37
 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.global EventScript_SetUpNPCSpotting
+EventScript_SetUpNPCSpotting:
+	lock
+	checksound
+	sound 0x15 @Exclaim
+	special EndTrainerApproach
+	waitstate
+	call TrainerFaceFixScript
+	return
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 .global EventScript_TrainerSpottedInitiate
@@ -137,6 +148,7 @@ LookRightCall:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+.global FollowerPositionFixScript
 FollowerPositionFixScript:
 	setvar 0x8000 0x0
 	callasm FollowerPositionFix + 1

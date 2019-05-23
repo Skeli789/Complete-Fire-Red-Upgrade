@@ -8,8 +8,8 @@ import binascii
 import textwrap
 import sys
 
-OFFSET_TO_PUT = 0xc12ff0
-SOURCE_ROM = "Pokemon Unbound.gba"
+OFFSET_TO_PUT = 0x900000
+SOURCE_ROM = "BPRE0.gba"
 
 from datetime import datetime
 
@@ -180,7 +180,16 @@ def bytereplace(rom, offset, data):
 				ar += 1
 
 starttime = datetime.now()
-shutil.copyfile(SOURCE_ROM, ROM_NAME)
+
+try:
+	shutil.copyfile(SOURCE_ROM, ROM_NAME)
+except FileNotFoundError:
+	print('Error: Insertion could not be completed.\nCould not find source rom: "' + SOURCE_ROM + '".\nPlease make sure a rom with this name exists in the root.')
+	sys.exit(0)
+except PermissionError:
+	print('Error: Insertion could not be completed.\n"' + ROM_NAME + '" is currently in use by another application.\nPlease free it up before trying again.')
+	sys.exit(0)
+	
 with open(ROM_NAME, 'rb+') as rom:
 		print("Inserting code.")
 		table = symbols(get_text_section())
@@ -371,4 +380,3 @@ with open(ROM_NAME, 'rb+') as rom:
 					offset_file.write(fstr.format(key + ':', table[key] + 0x08000000) + '\n')
 		offset_file.close()
 		print('Inserted in ' + str(datetime.now() - starttime) + '.')
-

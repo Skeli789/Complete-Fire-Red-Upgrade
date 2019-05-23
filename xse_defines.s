@@ -21,6 +21,7 @@
 .equ walk_up, 0x11
 .equ walk_left, 0x12
 .equ walk_right, 0x13
+.equ exclaim, 0x62
 .equ end_m, 0xFE
 
 .equ EventScript_RevealTrainer, 0x81A4FBA

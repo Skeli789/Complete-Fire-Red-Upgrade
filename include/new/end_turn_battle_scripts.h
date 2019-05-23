@@ -5,7 +5,6 @@
 #define BattleScript_SunlightContinues (u8*) 0x81D8B0A
 #define BattleScript_SandStormHailEnds (u8*) 0x81D8B01
 #define BattleScript_DamagingWeatherContinues (u8*) 0x81D8A7F
-#define BattleScript_MonTookFutureAttack ((u8*) 0x81D8E12)
 #define BattleScript_WishComesTrue ((u8*) 0x81D8ED5)
 #define BattleScript_ShedSkinActivates ((u8*) 0x81D92D3) 
 #define BattleScript_IngrainTurnHeal ((u8*) 0x81D8F0C)
@@ -66,6 +65,7 @@ extern u8 BattleScript_HandleFaintedMonDoublesInitial[];
 extern u8 BattleScript_HandleFaintedMonDoublesPart2[];
 extern u8 BattleScript_HandleFaintedMonDoublesSwitchInEffects[];
 extern u8 BattleScript_PrintCustomStringEnd2[];
+extern u8 BattleScript_MonTookFutureAttack[];
 
 //Strings
 extern u8 gText_TauntWoreOff[];

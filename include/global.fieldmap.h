@@ -92,7 +92,7 @@ struct MapObjectTemplate
     /*0x0E*/ u16 trainerRange_berryTreeId;
     /*0x10*/ const u8 *script;
     /*0x14*/ u16 flagId;
-    /*0x16*/ u8 filler_16[2];
+    /*0x16*/ u16 flagId2;
 };  /*size = 0x18*/
 
 #define EventObjectTemplate MapObjectTemplate 
@@ -279,6 +279,8 @@ struct MapObjectGraphicsInfo
 #define PLAYER_AVATAR_FLAG_5         (1 << 5)
 #define PLAYER_AVATAR_FLAG_6         (1 << 6)
 #define PLAYER_AVATAR_FLAG_DASH      (1 << 7)
+
+#define PLAYER_AVATAR_FLAG_BIKE (PLAYER_AVATAR_FLAG_MACH_BIKE | PLAYER_AVATAR_FLAG_ACRO_BIKE)
 
 enum
 {

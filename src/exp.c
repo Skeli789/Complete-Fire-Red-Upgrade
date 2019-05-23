@@ -2,6 +2,7 @@
 #include "defines_battle.h"
 #include "../include/battle_string_ids.h"
 #include "../include/event_data.h"
+#include "../include/m4a.h"
 #include "../include/constants/songs.h"
 
 #include "../include/new/battle_strings.h"

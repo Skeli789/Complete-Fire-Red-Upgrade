@@ -26,7 +26,7 @@ struct SmartWildMons
 	u32 aiFlags;
 };
 
-struct SmartWildMons SmartWildAITable[] =
+struct SmartWildMons sSmartWildAITable[] =
 {
 	{SPECIES_ARTICUNO, AI_SCRIPT_CHECK_BAD_MOVE},
 	{SPECIES_ZAPDOS, AI_SCRIPT_CHECK_BAD_MOVE},
@@ -1120,9 +1120,9 @@ u32 WildMonIsSmart(u8 bank)
 		return TRUE;
 	#else
 		u16 species = gBattleMons[bank].species;
-		for (u32 i = 0; SmartWildAITable[i].species != 0xFFFF; ++i) {
-			if (SmartWildAITable[i].species == species)
-				return SmartWildAITable[i].aiFlags;
+		for (u32 i = 0; sSmartWildAITable[i].species != 0xFFFF; ++i) {
+			if (sSmartWildAITable[i].species == species)
+				return sSmartWildAITable[i].aiFlags;
 		}
 		return FALSE;
 	#endif

@@ -42,6 +42,7 @@ extern void (* const sEndTurnFuncsTable[])(void);
 extern u8* const gBattleScriptsForMoveEffects[];
 extern const u16 gClassBasedBattleBGM[];
 extern const u16 gWildSpeciesBasedBattleBGM[];
+extern const u16 gWildSpeciesBasedBattleBGMLength;
 
 const struct SpecialZMove gSpecialZMoveTable[] = 
 {
@@ -947,12 +948,14 @@ u16 GetMUS_ForBattle(void)
 	
 	u16 species = gEnemyParty[0].species;
 	
-	if (gWildSpeciesBasedBattleBGM[species])
+	if (species < gWildSpeciesBasedBattleBGMLength
+	&& gWildSpeciesBasedBattleBGM[species] != 0)
 		return gWildSpeciesBasedBattleBGM[species];
 		
 	if (FlagGet(DOUBLE_WILD_BATTLE_FLAG)
 	&& gEnemyParty[1].species != SPECIES_NONE
-	&& gWildSpeciesBasedBattleBGM[gEnemyParty[1].species])
+	&& gEnemyParty[1].species < gWildSpeciesBasedBattleBGMLength
+	&& gWildSpeciesBasedBattleBGM[gEnemyParty[1].species] != 0)
 	{
 		return gWildSpeciesBasedBattleBGM[gEnemyParty[1].species];
 	}
@@ -978,11 +981,16 @@ u8 GetTrainerBattleTransition(void)
     u8 enemyLevel;
     u8 playerLevel;
 
-    if (gTrainerBattleOpponent_A == TRAINER_SECRET_BASE)
-        return B_TRANSITION_CHAMPION;
-		
+	if (gTrainerBattleOpponent_A == TRAINER_SECRET_BASE)
+		return B_TRANSITION_CHAMPION;
+	
+	#ifdef TUTORIAL_BATTLES
+	if (Var8000 == 0xFEFE && sTrainerEventObjectLocalId != 0)
+		return B_TRANSITION_CHAMPION;
+	#else
     if (sTrainerEventObjectLocalId != 0) //Used for mugshots
         return B_TRANSITION_CHAMPION;
+	#endif
 
 	#ifdef FR_PRE_BATTLE_MUGSHOT_STYLE
 	if (gTrainers[gTrainerBattleOpponent_A].trainerClass == CLASS_CHAMPION)

@@ -50,7 +50,7 @@ static const struct MugshotTable sPreBattleMugshotSprites[147] =
 
 static const u16* const sAlternateMugshotsPals[] =
 {
-	[0x0] = NULL,
+	[0x0] = sMugshotsDefaultPal, //This is called as an error pal
 	[0x1] = sMugshotsDefaultPal, //0x100
 	[0x2] = sMugshotsDefaultPal, //0x200
 	[0x3] = Big_Mugshot_Yellow_GrayPal, //0x300

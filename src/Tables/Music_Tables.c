@@ -73,7 +73,7 @@ const u16 gClassBasedBattleBGM[NUM_TRAINER_CLASSES] =
 	[CLASS_ELITE_4] = BGM_BATTLE_GYM_LEADER,
 };
 
-const u16 gWildSpeciesBasedBattleBGM[MAX_NUM_POKEMON] =
+const u16 gWildSpeciesBasedBattleBGM[] =
 {
 	[SPECIES_ARTICUNO] = BGM_BATTLE_LEGENDARY_BIRDS,
 	[SPECIES_ZAPDOS] = BGM_BATTLE_LEGENDARY_BIRDS,
@@ -191,7 +191,7 @@ const u16 gClassBasedBattleBGM[NUM_TRAINER_CLASSES] =
 	[CLASS_FRONTIER_BRAIN] = BGM_BATTLE_FRONTIER_BRAIN,
 };
 
-const u16 gWildSpeciesBasedBattleBGM[MAX_NUM_POKEMON] =
+const u16 gWildSpeciesBasedBattleBGM[] =
 {
 	[SPECIES_ARTICUNO] = BGM_BATTLE_LEGENDARY_BIRDS,
 	[SPECIES_ZAPDOS] = BGM_BATTLE_LEGENDARY_BIRDS,
@@ -215,3 +215,5 @@ const u16 gWildSpeciesBasedBattleBGM[MAX_NUM_POKEMON] =
 };
 
 #endif
+
+const u16 gWildSpeciesBasedBattleBGMLength = ARRAY_COUNT(gWildSpeciesBasedBattleBGM);

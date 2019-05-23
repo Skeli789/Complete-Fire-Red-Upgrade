@@ -62,7 +62,7 @@ void __attribute__((long_call)) EventObjectClearHeldMovementIfActive(struct Even
 bool8 __attribute__((long_call)) EventObjectSetHeldMovement(struct EventObject *eventObject, u8 specialAnimId);
 u8 __attribute__((long_call)) EventObjectClearHeldMovementIfFinished(struct EventObject *);
 u8 __attribute__((long_call)) TrySpawnEventObjectTemplate(struct EventObjectTemplate *eventObjectTemplate, u8 mapNum, u8 mapGroup, s16 cameraX, s16 cameraY);
-struct __attribute__((long_call)) EventObjectTemplate *GetEventObjectTemplateByLocalIdAndMap(u8 localId, u8 mapNum, u8 mapGroup);
+struct EventObjectTemplate* __attribute__((long_call)) GetEventObjectTemplateByLocalIdAndMap(u8 localId, u8 mapNum, u8 mapGroup);
 void __attribute__((long_call)) MoveEventObjectToMapCoords(struct EventObject *eventObject, s16 x, s16 y);
 void __attribute__((long_call)) EventObjectSetGraphicsId(struct EventObject *eventObject, u8 graphicsId);
 void __attribute__((long_call)) EventObjectTurn(struct EventObject *eventObject, u8 direction);
@@ -78,7 +78,8 @@ bool8 __attribute__((long_call)) npc_obj_ministep_stop_on_arrival(struct MapObje
 void __attribute__((long_call)) sub_805C780(void);
 u8 __attribute__((long_call)) GetEventObjectIdByLocalIdAndMapInternal(u8 localId, u8 mapNum, u8 mapGroupId);
 u8 __attribute__((long_call)) GetEventObjectIdByLocalId(u8 localId);
-
+void __attribute__((long_call)) FaceDirection(struct EventObject *eventObject, struct Sprite *sprite, u8 direction);
+u8 __attribute__((long_call)) GetOppositeDirection(u8 direction);
 
 /*
 extern const struct SpriteFrameImage gEventObjectPicTable_PechaBerryTree[];
@@ -131,7 +132,6 @@ void sub_808F254(u8, u8, u8);
 void InitEventObjectPalettes(u8 palSlot);
 void UpdateEventObjectCurrentMovement(struct EventObject *, struct Sprite *, bool8(struct EventObject *, struct Sprite *));
 u8 EventObjectFaceOppositeDirection(struct EventObject *, u8);
-u8 GetOppositeDirection(u8);
 u8 GetWalkInPlaceFastestMovementAction(u32);
 u8 GetWalkInPlaceFastMovementAction(u32);
 u8 GetWalkInPlaceNormalMovementAction(u32);

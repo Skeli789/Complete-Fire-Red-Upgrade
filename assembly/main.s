@@ -41,7 +41,7 @@ script functions/specials in asm - hooks and returns
 @@ Physical Special Split Icons
 .global PhysicalSpecialSplitIconRoutine
 
-	
+
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Increase Start Menu Height for Fewer Items
@@ -59,14 +59,14 @@ FixStartMenuSize:
 	cmp r2, #0x5
 	bhi ReturnStartMenuHeight
 	add r0, #0x1
-	
+
 ReturnStartMenuHeight:
 	pop {r2}
 	str r0, [sp, #0x4]
 	ldr r0, =(0x080f7900 +1)
 	bx r0
-	
-	
+
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Evolution Methods - Remove Evo Item
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -107,8 +107,8 @@ WriteTypeHook:
 	bl GetSummaryScreenMoveType
 	ldr r1, =(0x0803098E +1)
 	bx r1
-	
-	
+
+
 .align 2
 .pool
 DisplayTypeHook:
@@ -116,7 +116,7 @@ DisplayTypeHook:
 	ldr r0, =(0x0203B140)	@pkmn_status_data
 	ldr r0, [r0]
 	ldr r1, .monLoc
-	add r1, r0, r1		@pokemon	
+	add r1, r0, r1		@pokemon
 	mov r0, r2	@move
 	bl GetSummaryScreenMoveType
 	pop {r3-r7}
@@ -124,7 +124,7 @@ DisplayTypeHook:
 	ldr r0, [r6]
 	ldr r2, =(0x081368D8 +1)
 	bx r2
-	
+
 .align 2
 .pool
 .monLoc: .word 0x00003290
@@ -137,7 +137,7 @@ SummaryScreenWrapAround:
 	push {r4-r7, lr}
 	bl ChangeSummaryScreenMon
 	pop {r4-r7, pc}
-	
+
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Whiteout Hack
@@ -160,27 +160,6 @@ NoHack:
 	ldr r2, =(0x080bfd64|1)
 	bx r2
 
-
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@ DexNav Hooks
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.align 2
-.pool
-@ hook at 10AD98 via r1
-CheckDexNavSelect:
-    bl CheckRegisteredSelect
-    cmp r0, #0x0
-    bne RestoreSelect
-    ldr r1, =(0x810ADA0|1)
-    bx r1
-
-RestoreSelect:
-   bl SelectHookRestore
-   ldr r1, =(0x810ADA0|1)
-   bx r1
-   
-
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .align 2
 .pool
@@ -198,10 +177,10 @@ CallViaR0:
     bx r0
 EndStartOptFadeCheck:
     pop {pc}
-	
 
 
-	
+
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ SPECIALS
 /*@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -220,7 +199,7 @@ sp097_WildGroundBattle:
 	lsr r4, r4, #0x18
 	ldr r1, =(0x0806cbe4|1)
 	bx r1
-	
+
 /*@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 Activate Wild Sea Battle
 	ptr+1 at 15ffc0
@@ -338,4 +317,3 @@ func_get_attr: .word 0x0803FBE8 + 1
 func_rand: .word 0x08044EC8 + 1
 func_set_attr: .word 0x0804037C + 1
 func_return: .word 0x08046120 + 1
-
