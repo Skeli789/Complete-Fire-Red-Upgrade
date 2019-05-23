@@ -114,3 +114,71 @@ SystemScript_StartDexNavBattle:
 
 PlayerExclaim:
 .byte exclaim, end_m
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global SystemScript_FindItemMessage
+SystemScript_FindItemMessage:
+	hidesprite LASTTALKED
+	callasm ShowItemSpriteOnFind
+	additem 0x8004 0x8005
+	special2 LASTRESULT 0x196
+	copyvar 0x8008 LASTRESULT
+	compare 0x8008 0x1
+	if equal _call 0x81A6821
+	compare 0x8008 0x0
+	if equal _call 0x81A6827
+	waitfanfare
+	waitmsg
+	msgbox 0x81A5218 MSG_KEEPOPEN 
+	callasm ClearItemSpriteAfterFind
+	return
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+SystemScript_ObtainItem:
+	copyvar 0x8013 0x8012
+	copyvar 0x8004 0x8000 @;Copy item to 0x8004
+	copyvar 0x8005 0x8001 @;Copy amount to 0x8005
+	textcolor BLACK
+	additem 0x8000 0x8001
+	copyvar 0x8007 LASTRESULT
+	call 0x81A6697
+	copyvar 0x8012 0x8013
+	return
+
+.global SystemScript_ObtainItemMessage
+SystemScript_ObtainItemMessage:
+	callasm ShowItemSpriteOnFind
+	compare 0x8005 1
+	if lessorequal _call ObtainedSingleItemMsg
+	compare 0x8005 1
+	if greaterthan _call ObtainedMultipleItemMsg
+	waitfanfare
+	waitmsg
+	callasm TryAppendSOntoEndOfItemString
+	msgbox 0x81A5218 MSG_KEEPOPEN @;[PLAYER] put the item in the...
+	setvar LASTRESULT 0x1
+	callasm ClearItemSpriteAfterFind
+	return
+
+ObtainedSingleItemMsg:
+	special2 LASTRESULT 0x196
+	compare LASTRESULT 0x0
+	if equal _call ObtainedRegularItem
+	compare LASTRESULT 0x1
+	if equal _call ObtainedTMHM
+	return
+
+ObtainedTMHM:
+	preparemsg gText_ObtainedTMHM
+	return
+
+ObtainedRegularItem:
+	preparemsg 0x81A51F6 @;Obtained the item!
+	return
+	
+ObtainedMultipleItemMsg:
+	buffernumber 0x0 0x8005
+	preparemsg gText_ObtainedMultipleItems
+	return

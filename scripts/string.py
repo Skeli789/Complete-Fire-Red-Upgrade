@@ -20,6 +20,8 @@ SpecialBuffers = {
     "SCRIPTING_BANK_ABILITY" : ["FD", "1A"],
     "PLAYER_NAME" : ["FD", "23"],
 
+    "PLAYER" : ["FD", "01"],
+    "RIVAL" : ["FD", "06"],
     "BLACK" : ["FC", "01", "02"],
     "RED" : ["FC", "01", "04"],
     "GREEN" : ["FC", "01", "06"],

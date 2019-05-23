@@ -76,6 +76,11 @@ bool8 IsBerry(u16 item)
 	return GetPocketByItemId(item) == POCKET_BERRY_POUCH;
 }
 
+bool8 IsTMHM(u16 item)
+{
+	return GetPocketByItemId(item) == POCKET_TM_CASE;
+}
+
 u8 TMIdFromItemId(u16 itemId)
 {
 	#ifdef EXPANDED_TMSHMS
@@ -170,7 +175,6 @@ u16 ItemIdToBattleMoveId(u16 item)
     return gTMHMMoves[TMIdFromItemId(item)];
 }
 
-
 u16 RefineTmOrdering(void)
 {
 	#ifdef TMS_BEFORE_HMS
@@ -203,8 +207,12 @@ void StringAppendFullMoveName(u8* dst, u8* src)
 	StringAppend(dst, &end);
 }
 
+void CopyTMName(u8* dst, u16 itemId)
+{
+	StringCopy(dst, gMoveNames[ItemIdToBattleMoveId(itemId)]);
+}
 
-void LoadTmHmName(u8 *dst, u16 itemId)
+void LoadTMNameWithNo(u8* dst, u16 itemId)
 {
 	#ifdef EXPANDED_TMSHMS
 	u8 tmNum = ItemId_GetMystery2Id(itemId);
@@ -212,14 +220,14 @@ void LoadTmHmName(u8 *dst, u16 itemId)
 	u8 tmNum = itemId - ITEM_TM01;
 	#endif
 	
-	StringCopy(&gStringVar4[0], (void*) 0x84166FF);
+	StringCopy(gStringVar4, (void*) 0x84166FF);
 
 	if (tmNum > NUM_TMS)
 	{
 		// HM
 		u8 hmNum = tmNum - NUM_TMS;
-		StringAppend(&gStringVar4[0], (void*) 0x8463178);
-		StringAppend(&gStringVar4[0], (void*) 0x8416226);
+		StringAppend(gStringVar4, (void*) 0x8463178);
+		StringAppend(gStringVar4, (void*) 0x8416226);
 		if (NUM_HMS < 10)
 			ConvertIntToDecimalStringN(&gStringVar1[0], hmNum, 2, 1);
 		else
@@ -228,22 +236,22 @@ void LoadTmHmName(u8 *dst, u16 itemId)
 	else
 	{
 		// TM
-		StringAppend(&gStringVar4[0], (void*) 0x8416226);
+		StringAppend(gStringVar4, (void*) 0x8416226);
 		if (NUM_TMS < 100)
-			ConvertIntToDecimalStringN(&gStringVar1[0], tmNum, 2, 2);
+			ConvertIntToDecimalStringN(gStringVar1, tmNum, 2, 2);
 		else
-			ConvertIntToDecimalStringN(&gStringVar1[0], tmNum, 2, 3);
+			ConvertIntToDecimalStringN(gStringVar1, tmNum, 2, 3);
 	}
-	StringAppend(&gStringVar4[0], &gStringVar1[0]);
-	StringAppend(&gStringVar4[0], (void*) 0x846317C);
-	StringAppend(&gStringVar4[0], (void*) 0x8416703);
+	StringAppend(gStringVar4, gStringVar1);
+	StringAppend(gStringVar4, (void*) 0x846317C);
+	StringAppend(gStringVar4, (void*) 0x8416703);
 
 	if (StringLength(gMoveNames[ItemIdToBattleMoveId(itemId)]) == MOVE_NAME_LENGTH && tmNum >= NUM_TMS)
-		StringAppendFullMoveName(&gStringVar4[0], gMoveNames[ItemIdToBattleMoveId(itemId)]);
+		StringAppendFullMoveName(gStringVar4, gMoveNames[ItemIdToBattleMoveId(itemId)]);
 	else
-		StringAppend(&gStringVar4[0], gMoveNames[ItemIdToBattleMoveId(itemId)]);
+		StringAppend(gStringVar4, gMoveNames[ItemIdToBattleMoveId(itemId)]);
 	
-	StringCopy(dst, &gStringVar4[0]);
+	StringCopy(dst, gStringVar4);
 }
 
 

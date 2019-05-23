@@ -28,6 +28,12 @@ The repellent's effect wore off!\nWould you like to use another one?
 #org @gText_RepelWoreOff
 The repellent's effect wore off!
 
+#org @gText_ObtainedMultipleItems
+Obtained [BUFFER][02] [BUFFER][03]s!
+
+#org @gText_ObtainedTMHM
+Obtained a [BUFFER][03]!\nIt contains [BUFFER][02].
+
 //Mart Strings
 
 #org @gText_SingleTmBuy

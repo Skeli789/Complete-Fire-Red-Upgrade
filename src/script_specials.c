@@ -23,12 +23,14 @@
 #include "../include/new/catching.h"
 #include "../include/new/dns.h"
 #include "../include/new/helper_functions.h"
+#include "../include/new/item.h"
 #include "../include/new_menu_helpers.h"
 #include "../include/new/multi.h"
 #include "../include/new/overworld.h"
 #include "../include/new/pokemon_storage_system.h"
 #include "../include/new/read_keys.h"
 #include "../include/new/roamer.h"
+#include "../include/new/text.h"
 #include "../include/new/Vanilla_Functions_battle.h"
 
 struct GbaTimer
@@ -2158,4 +2160,96 @@ static u8 GetTextCaretPosition(void)
             return i;
     }
     return gNamingScreenData->template->maxChars - 1;
+}
+
+//Item Find Show Picture Special (Really Callasm)
+#define ITEM_TAG 0xFDF3
+u8 __attribute__((long_call)) AddItemIconSprite(u16 tilesTag, u16 paletteTag, u16 itemId);
+void ShowItemSpriteOnFind(void)
+{
+#ifdef ITEM_PICTURE_ACQUIRE
+	s16 x, y;
+	u8 iconSpriteId = AddItemIconSprite(ITEM_TAG, ITEM_TAG, Var8004);
+
+    if (iconSpriteId != MAX_SPRITES)
+    {
+		u8 pocket = GetPocketByItemId(Var8004);
+		if (pocket == POCKET_KEY_ITEMS || pocket == POCKET_TM_CASE)
+		{ //Double the size of the item and place it in the centre of the screen
+			x = 96 + 16;
+			y = 48 + 16;
+			gSprites[iconSpriteId].oam.affineMode = ST_OAM_AFFINE_DOUBLE;
+			gSprites[iconSpriteId].oam.matrixNum = AllocOamMatrix();
+			SetOamMatrixRotationScaling(gSprites[iconSpriteId].oam.matrixNum, 512, 512, 0);
+		}
+		else
+		{ //Place the item in the bottom right hand corner of the textbox
+			x = 197 + 16;
+			y = 124 + 16;
+		}
+	
+        gSprites[iconSpriteId].pos2.x = x;
+        gSprites[iconSpriteId].pos2.y = y;
+		gSprites[iconSpriteId].oam.priority = 0; //Highest priority
+    }
+	
+	Var8006 = iconSpriteId;
+#endif
+}
+
+void ClearItemSpriteAfterFind(void)
+{
+#ifdef ITEM_PICTURE_ACQUIRE
+    FreeSpriteTilesByTag(ITEM_TAG);
+    FreeSpritePaletteByTag(ITEM_TAG);
+    FreeSpriteOamMatrix(&gSprites[Var8006]);
+    DestroySprite(&gSprites[Var8006]);
+#endif
+}
+
+bool8 sp196_TryCopyTMNameToBuffer1(void)
+{
+    if (IsTMHM(Var8004))
+    {
+        CopyTMName(gStringVar1, Var8004);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+void TryAppendSOntoEndOfItemString(void)
+{
+	if (Var8005 > 1)
+	{
+		u8 length = StringLength(gStringVar2);
+		
+		switch (gStringVar2[length - 1]) {
+			case PC_y:
+				gStringVar2[length + 0] = PC_i;
+				gStringVar2[length + 1] = PC_e;
+				gStringVar2[length + 2] = PC_s;
+				gStringVar2[length + 3] = EOS;
+				break;
+			case PC_Y:
+				gStringVar2[length + 0] = PC_I;
+				gStringVar2[length + 1] = PC_E;
+				gStringVar2[length + 2] = PC_S;
+				gStringVar2[length + 3] = EOS;
+				break;
+			case PC_X:
+				gStringVar2[length + 0] = PC_E;
+				gStringVar2[length + 1] = PC_S;
+				gStringVar2[length + 2] = EOS;
+				break;
+			case PC_x:
+				gStringVar2[length + 0] = PC_E;
+				gStringVar2[length + 1] = PC_S;
+				gStringVar2[length + 2] = EOS;
+				break;
+			default:
+				gStringVar2[length + 0] = PC_s;
+				gStringVar2[length + 1] = EOS;
+		}
+	}
 }

@@ -557,6 +557,7 @@ MoveRelearnerCursorCallback = 0x80E553C | 1;
 
 /* Item Functions */
 IsMail = 0x80980F8 | 1;
+AddItemIconSprite = 0x8098758 | 1;
 GetBagItemQuantity = 0x8099DA0 | 1;
 CopyItemName = 0x8099E90 | 1;
 CheckBagHasItem = 0x8099F40 | 1;

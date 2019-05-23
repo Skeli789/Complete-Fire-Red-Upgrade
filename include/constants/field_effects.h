@@ -60,11 +60,11 @@
 #define FLDEFF_NULL_57       			 57
 #define FLDEFF_CUT_GRASS                 58
 #define FLDEFF_FIELD_MOVE_SHOW_MON_INIT  59
-#define FLDEFF_USE_TOMB_PUZZLE_EFFECT    60
+#define FLDEFF_NULL_60    				 60
 #define FLDEFF_PCTURN_ON                 61
 #define FLDEFF_HALL_OF_FAME_RECORD       62
 #define FLDEFF_USE_TELEPORT              63
-#define FLDEFF_RAYQUAZA                  64
-#define FLDEFF_65                        65
-#define FLDEFF_MOVE_DEOXYS_ROCK          66
+#define FLDEFF_NULL_64                   64
+#define FLDEFF_VS_SEEKER                 65
+#define FLDEFF_SCREEN_FLASH              69
 

@@ -37,6 +37,13 @@
 0809FE52 09
 0809FE62 09
 0809FDD4 FF C9 9A 3B
+##Really Tall Grass & Micro Grass Fix
+08059F34 00 21 00 06 00 0e 02 28 01 d0 d1 28 01 d1 01 20 00 e0 00 20 00 21 70 47 03 28 f5 e7
+0805A0EC 0C 30 09 E0
+##Snowflake Fix
+0807C23E 4B E0
+0807BE56 20
+08079DBE 04 1C E1 F7 32 F8 0D 4A D9 21 C9 00 88 5C
 ##End of Optional Byte Changes##
 
 ##Remove Things##
@@ -107,6 +114,8 @@
 081090D0 30 AD 03 02
 0813DB18 98 46
 0813DB30 70 F3 03 02
+##Remove Old Item Picture Find Code
+080F6F08 03 D1 28 1C 03 21 0D F7
 
 
 ##Save Expansion

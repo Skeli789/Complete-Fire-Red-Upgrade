@@ -12,6 +12,7 @@
 
 .equ PLAYER, 0xFF
 .equ LASTRESULT, 0x800D
+.equ LASTTALKED, 0x800F
 
 .equ look_up, 0x1
 .equ look_left, 0x2
@@ -30,3 +31,5 @@
 
 .equ VAR_8006_LOC, 0x20370C4
 .equ SELECTED_EVENT_OBJECT, 0x3005074
+
+.equ BLACK, 0x3

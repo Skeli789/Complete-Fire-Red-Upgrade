@@ -1321,7 +1321,7 @@
 
 .macro textcolor textcolor_byte nopC7
 .byte 0xC7
-@.byte \textcolor_byte Uncomment if FR.
+.byte \textcolor_byte
 .endm
 
 .macro cmdC8 cmdC8_param

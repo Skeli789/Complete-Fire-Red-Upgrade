@@ -113,6 +113,8 @@ sp0C9_ForceOneKeyInput 08160084
 sp0CA_IgnoreKeys 08160088
 sp0CB_PlaceKeyScript 0816008C
 
+sp196_TryCopyTMNameToBuffer1 081603B8
+
 ## Fossil
 sp18B_ShowFossilImage 0816038C
 

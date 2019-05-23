@@ -43,12 +43,15 @@ gExperienceTables 08156C24
 
 SaveSectionOffsets 080DA23C
 
-##
+##Scripts
 BattleScript_RainDishActivates 0801A4A0
 BattleScript_WildDoubleSwitchFix 081D86AE
 FieldEffectScript_CaveDust 081D9714
 FieldEffectScript_Sparkles 081D9718
 FieldEffectScript_LavaBubbles 081D9768
+SystemScript_FindItemMessage 081A67DD
+SystemScript_ObtainItem 08160450
+SystemScript_ObtainItemMessage 081A66AC
 
 ##Wild -> The Wild
 TheWildString 080D7B78
