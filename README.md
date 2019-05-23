@@ -55,6 +55,7 @@ A complete upgrade for Fire Red, including an upgraded Battle Engine.
 * Configurable Start Menu
 * Follow Me
 * Secondary Options Menu
+* Expanded Pokemon in the Hall of Fame
 
 **NOTE** Personalized options are available in src/config.h. The options can be customized
 by commenting and uncommenting lines. **Before doing anything it is HIGHLY
