@@ -70,7 +70,6 @@ static u8 GetTextCaretPosition(void);
 //Pokemon Specials//
 ///////////////////////////////////////////////////////////////////////////////////
 
-
 #ifdef FOSSIL_IMAGE_HACK
 	struct FossilTable 
 	{
@@ -2253,3 +2252,68 @@ void TryAppendSOntoEndOfItemString(void)
 		}
 	}
 }
+
+
+
+///////////// EXPANDED TEXT BUFFERS //////////////////////////////////////////
+u32* sTextBufferRam[12] = {
+	(void*) gStringVar1,	//FD 02
+	(void*) gStringVar2,
+	(void*) gStringVar3,
+	(void*) 0,
+	(void*) 0,
+#ifdef EXPANDED_TEXT_BUFFERS
+	(void*) gStringVar7,	//FD 07, [buffer5] in XSE
+	(void*) gStringVar8,
+	(void*) gStringVar9,
+	(void*) gStringVarA,
+	(void*) gStringVarB,
+	(void*) gStringVarC,
+	(void*) gStringVarD,
+#else
+	(void*) 0x8415A2C,
+	(void*) 0x8415A36,
+	(void*) 0x8415A31,
+	(void*) 0x8415A43,
+	(void*) 0x8415A3C,
+	(void*) 0x8415A50,
+	(void*) 0x8415A49,
+#endif
+};
+
+void* LoadTextBuffer07(void)
+{
+	return sTextBufferRam[5];
+}
+
+void* LoadTextBuffer08(void)
+{
+	return sTextBufferRam[6];
+}
+
+void* LoadTextBuffer09(void)
+{
+	return sTextBufferRam[7];
+}
+
+void* LoadTextBuffer0A(void)
+{
+	return sTextBufferRam[8];
+}
+
+void* LoadTextBuffer0B(void)
+{
+	return sTextBufferRam[9];
+}
+
+void* LoadTextBuffer0C(void)
+{
+	return sTextBufferRam[10];
+}
+
+void* LoadTextBuffer0D(void)
+{
+	return sTextBufferRam[11];
+}
+
+

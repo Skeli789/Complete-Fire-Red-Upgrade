@@ -184,3 +184,13 @@ struct Clock
 //#define sDexNavSearchLevels //0x203C75C -999 slots
 //extern struct CompressedPokemon gBox20[30] //0x203CB44
 //extern struct CompressedPokemon gBox21[30] //0x203D210
+
+// expanded text buffers
+#define gStringVar7 ((u8*) 0x203D8DC)	//4 bytes
+#define gStringVar8 ((u8*) 0x203D8E0)	//4 bytes
+#define gStringVar9 ((u8*) 0x203D8E4)	//4 bytes
+#define gStringVarA ((u8*) 0x203D8E8)	//16 bytes
+#define gStringVarB ((u8*) 0x203D8F8)	//16 bytes
+#define gStringVarC ((u8*) 0x203D908)	//32 bytes
+#define gStringVarD ((u8*) 0x203D928)	//32 bytes
+// [FILL_IN_NEXT] = 0x203D948

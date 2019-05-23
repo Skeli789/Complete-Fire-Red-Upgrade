@@ -41,8 +41,6 @@ script functions/specials in asm - hooks and returns
 @@ Physical Special Split Icons
 .global PhysicalSpecialSplitIconRoutine
 
-
-
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Increase Start Menu Height for Fewer Items
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

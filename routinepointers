@@ -118,6 +118,15 @@ sp196_TryCopyTMNameToBuffer1 081603B8
 ## Fossil
 sp18B_ShowFossilImage 0816038C
 
+## Expanded Text Buffers
+LoadTextBuffer07 08231E8C
+LoadTextBuffer08 08231E90
+LoadTextBuffer09 08231E94
+LoadTextBuffer0A 08231E98
+LoadTextBuffer0B 08231E9C
+LoadTextBuffer0C 08231EA0
+LoadTextBuffer0D 08231EA4
+
 ## Character Customization
 NpcSpawnWithTemplate 0805e5f4
 LinkNpcFix 0805efe4

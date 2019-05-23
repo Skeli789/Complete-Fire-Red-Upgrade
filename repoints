@@ -130,5 +130,13 @@ pcSelect_newBrmTable 08094e48
 pcSelect_OperationsTable 0808fbc8
 pcSelect_OperationsTable 0808fce4
 
-## Dex Nav
-# gText_PokeTools 083A7344
+## Expanded Text Buffers
+sTextBufferRam 0806bcc0
+sTextBufferRam 0806bd08
+sTextBufferRam 0806bd54
+sTextBufferRam 0806bd8c
+sTextBufferRam 0806be88
+sTextBufferRam 0806bed0
+sTextBufferRam 0806bf0c
+sTextBufferRam 0806bf38
+

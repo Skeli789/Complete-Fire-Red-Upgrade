@@ -97,6 +97,9 @@ enum //These vars need to be one after the other (hence the enum)
 //#define DELETABLE_HMS //Uncomment this if you want HMs to be deletable without the Move Deleter
 //#define REUSABLE_TMS	//if defined, don't forget to give all TMs a Mystery byte of 1!
 
+/*===== Expanded Text Buffers =====*/
+#define EXPANDED_TEXT_BUFFERS	// keep commented to enable FD 07 through FD 0D to load dynamic text. See include/new/ram_locs.h for RAM defs
+
 /*===== Time of Day Options =====*/
 #define TIME_MORNING_START 4		//4:00 AM / 4:00
 #define TIME_DAY_START 8			//8:00 AM / 8:00
