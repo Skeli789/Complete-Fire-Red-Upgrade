@@ -8,8 +8,8 @@ import os
 #Options go here.
 ############
 
-ROM_NAME = "Pokemon Unbound.gba"  #the name of your rom
-OFFSET_TO_PUT = 0xc12ff0 #0xc12ff0
+ROM_NAME = "BPRE0.gba"  #the name of your rom
+OFFSET_TO_PUT = 0x900000
 SEARCH_FREE_SPACE = False #Set to True if you want the script to search for free space;Set to False if you don't want to search for free space as you for example update the engine
 
 #############
@@ -43,7 +43,7 @@ def find_offset_to_put(rom, needed_bytes, start_loc):
 	return offset
 	
 def file_change_line(file_path, line_to_change, replacement):
-	file = open(file_path, 'r+')
+	file = open(file_path, 'r')
 	copy = file.read()
 	file.seek(0x0)
 	line_no = 1
@@ -52,7 +52,9 @@ def file_change_line(file_path, line_to_change, replacement):
 			copy = copy.replace(line, replacement)
 			break
 		line_no += 1
-	file.seek(0x0)
+	file.close()
+	
+	file = open(file_path, 'w')
 	file.write(copy)
 	file.close()
 
@@ -78,13 +80,15 @@ def clear_from_to(rom, from_, to_):
 #Functions end here.
 ##############
 
-with open(ROM_NAME, 'rb+') as rom:
-	offset = OFFSET_TO_PUT
-	if SEARCH_FREE_SPACE == True:
-		offset = find_offset_to_put(rom, 0x50000, align_x100(offset))
-	edit_linker(offset)
-	edit_insert(offset)
-	build_code()
-	insert_code()
-	rom.close()
-		
+try:
+	with open(ROM_NAME, 'rb+') as rom:
+		offset = OFFSET_TO_PUT
+		if SEARCH_FREE_SPACE == True:
+			offset = find_offset_to_put(rom, 0x50000, align_x100(offset))
+		edit_linker(offset)
+		edit_insert(offset)
+		build_code()
+		insert_code()
+		rom.close()
+except:
+	print('Error: Could not find source rom: "' + ROM_NAME + '".\nPlease make sure a rom with this name exists in the root.')

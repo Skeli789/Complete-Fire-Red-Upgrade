@@ -981,11 +981,16 @@ u8 GetTrainerBattleTransition(void)
     u8 enemyLevel;
     u8 playerLevel;
 
-    if (gTrainerBattleOpponent_A == TRAINER_SECRET_BASE)
-        return B_TRANSITION_CHAMPION;
-		
+	if (gTrainerBattleOpponent_A == TRAINER_SECRET_BASE)
+		return B_TRANSITION_CHAMPION;
+	
+	#ifdef TUTORIAL_BATTLES
+	if (Var8000 == 0xFEFE && sTrainerEventObjectLocalId != 0)
+		return B_TRANSITION_CHAMPION;
+	#else
     if (sTrainerEventObjectLocalId != 0) //Used for mugshots
         return B_TRANSITION_CHAMPION;
+	#endif
 
 	#ifdef FR_PRE_BATTLE_MUGSHOT_STYLE
 	if (gTrainers[gTrainerBattleOpponent_A].trainerClass == CLASS_CHAMPION)

@@ -69,21 +69,20 @@ enum
 };
 
 //An alternative to Oak's tutorial that allows mugshots to be used if ACTIVATE_TUTORIAL_FLAG is commented out
-const struct TrainerBattleParameter sContinueLostBattleParams[] =
+static const struct TrainerBattleParameter sContinueLostBattleParams[] =
 {
     {&sTrainerBattleMode, 			 TRAINER_PARAM_LOAD_VAL_8BIT},
     {&gTrainerBattleOpponent_A,      TRAINER_PARAM_LOAD_VAL_16BIT},
     {&sTrainerEventObjectLocalId,    TRAINER_PARAM_LOAD_VAL_16BIT},
     {&sTrainerIntroSpeech_A,         TRAINER_PARAM_CLEAR_VAL_32BIT},
     {&sTrainerDefeatSpeech_A,        TRAINER_PARAM_LOAD_VAL_32BIT},
-    {&sTrainerVictorySpeech,         TRAINER_PARAM_CLEAR_VAL_32BIT},
+    {&sTrainerVictorySpeech,         TRAINER_PARAM_LOAD_VAL_32BIT},
     {&sTrainerCannotBattleSpeech,    TRAINER_PARAM_CLEAR_VAL_32BIT},
     {&sTrainerBattleScriptRetAddr,   TRAINER_PARAM_CLEAR_VAL_32BIT},
-	{&sTrainerBattleScriptRetAddr_B, TRAINER_PARAM_CLEAR_VAL_32BIT},
     {&sTrainerBattleEndScript,       TRAINER_PARAM_LOAD_SCRIPT_RET_ADDR},
 };
 
-const struct TrainerBattleParameter sTrainerBContinueScriptBattleParams[] =
+static const struct TrainerBattleParameter sTrainerBContinueScriptBattleParams[] =
 {
     {&sTrainerBattleMode,            TRAINER_PARAM_LOAD_VAL_8BIT},
     {&gTrainerBattleOpponent_B,      TRAINER_PARAM_LOAD_VAL_16BIT},
@@ -96,7 +95,7 @@ const struct TrainerBattleParameter sTrainerBContinueScriptBattleParams[] =
     {&sTrainerBattleEndScript,       TRAINER_PARAM_LOAD_SCRIPT_RET_ADDR},
 };
 
-const struct TrainerBattleParameter sTrainerBOrdinaryBattleParams[] =
+static const struct TrainerBattleParameter sTrainerBOrdinaryBattleParams[] =
 {
     {&sTrainerBattleMode,            TRAINER_PARAM_LOAD_VAL_8BIT},
     {&gTrainerBattleOpponent_B,      TRAINER_PARAM_LOAD_VAL_16BIT},
@@ -111,7 +110,7 @@ const struct TrainerBattleParameter sTrainerBOrdinaryBattleParams[] =
 };
 
 //trainerbattle 0xA FOE_1_ID FOE_2_ID PARTNER_ID PARTNER_BACKSPRITE_ID 0x0 DEFEAT_TEXT_A DEFEAT_TEXT_B
-const struct TrainerBattleParameter sMultiBattleParams[] =
+static const struct TrainerBattleParameter sMultiBattleParams[] =
 {
     {&sTrainerBattleMode,           TRAINER_PARAM_LOAD_VAL_8BIT},
 
@@ -136,7 +135,7 @@ const struct TrainerBattleParameter sMultiBattleParams[] =
 };
 
 //trainerbattle 0xB FOE_1_ID FOE_2_ID FOE_1_NPC_ID FOE_2_NPC_ID 0x0 INTRO_TEXT_A INTRO_TEXT_B DEFEAT_TEXT_A DEFEAT_TEXT_B CANNOT_BATTLE_TEXT
-const struct TrainerBattleParameter sTwoOpponentBattleParams[] =
+static const struct TrainerBattleParameter sTwoOpponentBattleParams[] =
 {
     {&sTrainerBattleMode,          	 TRAINER_PARAM_LOAD_VAL_8BIT},
 
@@ -165,7 +164,7 @@ const struct TrainerBattleParameter sTwoOpponentBattleParams[] =
 };
 
 //trainerbattle 0xC FOE_ID PARTNER_ID PARTNER_BACKSPRITE_ID 0x0 DEFEAT_TEXT_A
-const struct TrainerBattleParameter sTagBattleParams[] =
+static const struct TrainerBattleParameter sTagBattleParams[] =
 {
     {&sTrainerBattleMode,           TRAINER_PARAM_LOAD_VAL_8BIT},
 
@@ -203,7 +202,7 @@ u8 CheckForTrainersWantingBattle(void) {
 
     for (u8 eventObjId = 0; eventObjId < MAP_OBJECTS_COUNT; ++eventObjId) //For each NPC on the map
 	{
-		if (!gEventObjects[eventObjId].active)
+		if (!gEventObjects[eventObjId].active || gEventObjects[eventObjId].isPlayer)
             continue;
 
 		if (CheckTrainerSpotting(eventObjId))
@@ -234,9 +233,12 @@ u8 CheckForTrainersWantingBattle(void) {
     }
 
 	//These battle types have built in features
-	if (ExtensionState.spotted.trainers[0].script[1] == TRAINER_BATTLE_TWO_OPPONENTS
-	||  ExtensionState.spotted.trainers[1].script[1] == TRAINER_BATTLE_TWO_OPPONENTS)
-		ExtensionState.spotted.count = 1;
+	if (ExtensionState.spotted.count > 0)
+	{
+		if (ExtensionState.spotted.trainers[0].script[1] == TRAINER_BATTLE_TWO_OPPONENTS
+		||  ExtensionState.spotted.trainers[1].script[1] == TRAINER_BATTLE_TWO_OPPONENTS)
+			ExtensionState.spotted.count = 1;
+	}
 
 	switch (ExtensionState.spotted.count) {
 		case 1: ;
@@ -307,7 +309,7 @@ static bool8 GetTrainerFlagFromScriptPointer(const u8* data)
 
 static bool8 CheckNPCSpotting(u8 eventObjId)
 {
-	#ifdef NON_TRAINER_SPOTTING
+	#ifdef NON_TRAINER_SPOTTING	
 	const u8* scriptPtr = GetEventObjectScriptPointerByEventObjectId(eventObjId); //Get NPC Script Pointer from its Object Id
 	u16 flag = GetEventObjectTemplateByLocalIdAndMap(gEventObjects[eventObjId].localId, 
 													 gEventObjects[eventObjId].mapNum, 
@@ -319,7 +321,7 @@ static bool8 CheckNPCSpotting(u8 eventObjId)
 		return TrainerCanApproachPlayer(&gEventObjects[eventObjId]);
 	}
 	#else
-	++eventObjId;
+		++eventObjId;
 	#endif
 	
 	return FALSE;
@@ -508,7 +510,7 @@ bool8 IsTrainerBattleModeWithPartner(void)
 static void InitTrainerBattleVariables(void)
 {
     sTrainerBattleMode = 0;
-    if (ExtensionState.spotted.trainers == 0)
+    if (ExtensionState.spotted.count <= 1)
     {
         sTrainerIntroSpeech_A = 0;
         sTrainerDefeatSpeech_A = 0;
@@ -1074,7 +1076,7 @@ bool8 IsRunningDisallowed(u8 tile)
 {
     return IsRunningDisabledByFlag() || IsRunningDisallowedByMetatile(tile)
 #ifndef CAN_RUN_IN_BUILDINGS
-	|| gMapHeader.mapType == MAP_TYPE_INDOOR
+	|| GetCurrentMapType() == MAP_TYPE_INDOOR
 #endif
     ;
 }
@@ -1243,6 +1245,19 @@ bool8 IsCurrentAreaDarkerCave(void)
 	#else
 		return FALSE;
 	#endif
+}
+
+bool8 InTanobyRuins(void)
+{
+	#ifdef TANOBY_RUINS_ENABLED
+		if (FlagGet(FLAG_TANOBY_KEY))
+		{
+			u8 mapSec = GetCurrentRegionMapSectionId();
+			return mapSec >= MAPSEC_MONEAN_CHAMBER && mapSec <= MAPSEC_VIAPOIS_CHAMBER;
+		}
+	#endif
+	
+	return FALSE;
 }
 
 //Follow Me Updates/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -13,6 +13,8 @@ SystemScript_EnableAutoRun:
 	lock
 	checksound
 	sound 0x2
+	signmsg
+	msgboxsign
 	msgbox gText_AutoRunEnable MSG_SIGN
 	checksound
 	end
@@ -22,6 +24,7 @@ SystemScript_DisableAutoRun:
 	lock
 	checksound
 	sound 0x3
+	msgboxsign
 	msgbox gText_AutoRunDisable MSG_SIGN
 	checksound
 	end
@@ -31,6 +34,7 @@ SystemScript_DisableAutoRun:
 .global SystemScript_PoisonSurvial
 SystemScript_PoisonSurvial:
 	bufferpartypokemon 0x0 0x8004
+	msgboxsign
 	msgbox gText_PoisonSurvial MSG_KEEPOPEN
 	closeonkeypress
 	end
@@ -50,6 +54,7 @@ EventScript_BwRepelWoreOff:
 	
 AnotherRepel:
 	bufferitem 0x2 0x800E
+	msgboxsign
 	msgbox gText_AskUseAnotherRepel MSG_YESNO
 	compare LASTRESULT 0x1
 	if notequal _goto EndScript
@@ -79,14 +84,33 @@ UseAnotherMaxRepel:
 FinishNewRepel:
 	checksound
 	sound 0x29 @;Repel spray sound
+	msgboxsign
 	msgbox gText_UsedAnotherRepel MSG_SIGN
 	goto EndScript
 	
 EventScript_RepelWoreOff:
 	lock
+	msgboxsign
 	msgbox gText_RepelWoreOff MSG_KEEPOPEN
 	closeonkeypress
 	
 EndScript:
 	release
 	end
+	
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global SystemScript_StartDexNavBattle
+SystemScript_StartDexNavBattle:
+	lock
+	call FollowerPositionFixScript
+	checksound
+	sound 0x15 @;Exclaim
+	applymovement PLAYER PlayerExclaim
+	waitmovement 0x0
+	checksound
+	dowildbattle
+	end
+
+PlayerExclaim:
+.byte exclaim, end_m

@@ -245,9 +245,9 @@ void LoadTrainerBackPal(u16 trainerPicId, u8 paletteNum)
 {
 	#ifdef UNBOUND
 	//Changes the skin tones of the player character in Unbound
-		u16 owNum = VarGet(OW_SPRITE_SWITCH_VAR);
+		u16 owNum = VarGet(VAR_PLAYER_WALKRUN);
 		
-		if (VarGet(OW_SPRITE_SWITCH_VAR) && gActiveBattler == 0)
+		if (VarGet(VAR_PLAYER_WALKRUN) && gActiveBattler == 0)
 		{
 			for (int i = 0; sCharacterPalSwitchTable[i].owNum != 0xFFFF; ++i)
 			{
@@ -277,7 +277,7 @@ const u8* GetTrainerSpritePal(u16 trainerPicId)
 {
 	#ifdef UNBOUND
 	const u8* palette;
-	if (VarGet(OW_SPRITE_SWITCH_VAR) != 0)
+	if (VarGet(VAR_PLAYER_WALKRUN) != 0)
 	{
 		if ((gSaveBlock2->playerGender == FEMALE && VarGet(VAR_TRAINERCARD_FEMALE) == 0)
 		||  (gSaveBlock2->playerGender != FEMALE && VarGet(VAR_TRAINERCARD_MALE) == 0))
@@ -297,7 +297,7 @@ const u8* GetTrainerSpritePal(u16 trainerPicId)
 #ifdef UNBOUND
 static const u8* GetAlternateTrainerSpritePal(void)
 {
-	u16 owNum = VarGet(OW_SPRITE_SWITCH_VAR);
+	u16 owNum = VarGet(VAR_PLAYER_WALKRUN);
 
 	for (int i = 0; sCharacterPalSwitchTable[i].owNum != 0xFFFF; ++i)
 	{

@@ -109,14 +109,14 @@
 #define MAPSEC_RIXY_CHAMBER                 0xC1
 #define MAPSEC_VIAPOIS_CHAMBER              0xC2
 #define MAPSEC_EMBER_SPA                    0xC3
-#define MAPSEC_SPECIAL_AREA                 0xC4
+#define MAPSEC_CELADON_DEPT                 0xC4
 #define MAPSEC_NONE                         0xC5
 
 #define METLOC_SPECIAL_EGG                  0xFD
 #define METLOC_IN_GAME_TRADE                0xFE
 #define METLOC_FATEFUL_ENCOUNTER            0xFF
 
-#define KANTO_MAPSEC_COUNT (MAPSEC_SPECIAL_AREA - MAPSEC_DYNAMIC)
+#define KANTO_MAPSEC_COUNT (MAPSEC_CELADON_DEPT - MAPSEC_DYNAMIC)
 
 #ifdef UNBOUND //For Pokemon Unbound
 

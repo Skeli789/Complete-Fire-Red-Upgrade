@@ -4,6 +4,7 @@
 #include "../include/pokemon.h"
 #include "../include/pokemon_storage_system.h"
 #include "../include/random.h"
+#include "../include/wild_encounter.h"
 #include "../include/constants/items.h"
 #include "../include/constants/maps.h"
 
@@ -343,11 +344,7 @@ static u8 CreateNPCTrainerParty(pokemon_t* const party, const u16 trainerNum, co
 			HealMon(&party[i]);
 			
 			//Status Inducers
-			if (VarGet(STATUS_INDUCER_VAR))
-			{
-				u8 status = VarGet(STATUS_INDUCER_VAR) & 0xFF; //Lowest byte is status
-				party[i].condition = status;
-			}
+			TryStatusInducer(&party[i]);
         }
 		#ifdef OPEN_WORLD_TRAINERS
 		if ((GetOpenWorldTrainerMonAmount() > 1 || trainer->doubleBattle)
@@ -1019,7 +1016,7 @@ void CreateBoxMon(struct BoxPokemon* boxMon, u16 species, u8 level, u8 fixedIV, 
 	{
 		u32 id = MathMax(1, T1_READ_32(gSaveBlock2->playerTrainerId)); //0 id would mean every Pokemon would crash the game
 		u32 newSpecies = species * id;
-		species = MathMax(SPECIES_BULBASAUR, newSpecies % MAX_NUM_POKEMON);
+		species = MathMax(SPECIES_BULBASAUR, newSpecies % NUM_SPECIES);
 		
 		while (CheckTableForSpecies(species, gRandomizerBanList))
 			species *= id;
@@ -1121,4 +1118,38 @@ void CreateBoxMon(struct BoxPokemon* boxMon, u16 species, u8 level, u8 fixedIV, 
     SetBoxMonData(boxMon, MON_DATA_ALT_ABILITY, &value); //Set base hidden ability to 0
 
     GiveBoxMonInitialMoveset(boxMon);
-};
+}
+
+void CreateMonWithNatureLetter(struct Pokemon* mon, u16 species, u8 level, u8 fixedIV, u8 nature, u8 letter)
+{
+    u32 personality;
+	letter -= 1;
+
+    if ((u8)(letter) < 28)
+    {
+        u16 actualLetter;
+
+        do
+        {
+			personality = Random32();
+            actualLetter = GetUnownLetterFromPersonality(personality);
+        }
+        while (nature != GetNatureFromPersonality(personality) || actualLetter != letter);
+    }
+    else
+    {
+        CreateMonWithNature(mon, species, level, 32, nature);
+		return;
+    }
+
+    CreateMon(mon, species, level, fixedIV, TRUE, personality, OT_ID_PLAYER_ID, 0);
+}
+
+void TryStatusInducer(struct Pokemon* mon)
+{
+	if (VarGet(STATUS_INDUCER_VAR))
+	{
+		u8 status = VarGet(STATUS_INDUCER_VAR) & 0xFF; //Lowest byte is status
+		mon->condition = status;
+	}
+}

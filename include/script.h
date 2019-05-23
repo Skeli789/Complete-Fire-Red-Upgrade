@@ -38,7 +38,7 @@ u16 __attribute__((long_call)) ScriptReadHalfword(struct ScriptContext *ctx);
 u8* __attribute__((long_call)) MapHeaderCheckScriptTable(u8 tag);
 void __attribute__((long_call)) ScriptContext1_SetupScript(const u8* ptr);
 void __attribute__((long_call)) ScriptCall(struct ScriptContext *ctx, const u8 *ptr);
-
+void __attribute__((long_call)) SetTextboxSignpostDesign(void);
 /*
 void InitScriptContext(struct ScriptContext *ctx, void *cmdTable, void *cmdTableEnd);
 u8 SetupBytecodeScript(struct ScriptContext *ctx, const u8 *ptr);

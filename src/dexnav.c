@@ -12,6 +12,7 @@
 #include "../include/pokemon_icon.h"
 #include "../include/random.h"
 #include "../include/region_map.h"
+#include "../include/script.h"
 #include "../include/sprite.h"
 #include "../include/text.h"
 #include "../include/wild_encounter.h"
@@ -21,6 +22,7 @@
 #include "../include/constants/items.h"
 #include "../include/constants/maps.h"
 #include "../include/constants/moves.h"
+#include "../include/constants/pokedex.h"
 #include "../include/constants/songs.h"
 #include "../include/constants/species.h"
 #include "../include/gba/io_reg.h"
@@ -29,6 +31,7 @@
 #include "../include/new/build_pokemon.h"
 #include "../include/new/daycare.h"
 #include "../include/new/dexnav.h"
+#include "../include/new/dexnav_config.h"
 #include "../include/new/dexnav_data.h"
 #include "../include/new/dns.h"
 #include "../include/new/helper_functions.h"
@@ -48,7 +51,7 @@ Known BUGS:
 #define ROW_LAND 0
 #define ROW_WATER 1
 
-#define SNEAKING_PROXIMITY 5
+#define IS_NEWER_UNOWN_LETTER(species) (species >= SPECIES_UNOWN_B && species <= SPECIES_UNOWN_QUESTION)
 
 //This file's functions:
 static void DestroyTaskCompletedTextbox(u8 tId);
@@ -59,8 +62,9 @@ static void DexNavGUICallback2(void);
 static void ResetPalSettings(void);
 static void ResetBgSettings(void);
 static void Setup(void);
-static bool8 SpeciesInArray(u16 species, u8 indexCount);
+static bool8 SpeciesInArray(u16 species, u8 indexCount, u8 unownLetter);
 static void DexNavGetMon(u16 species, u8 potential, u8 level, u8 ability, u16* moves);
+static u8 FindHeaderIndexWithLetter(u16 species, u8 letter);
 static u8 GetPlayerDistance(s16 x, s16 y);
 static u8 PickTileScreen(u8 targetBehaviour, u8 areaX, u8 areaY, s16 *xBuff, s16 *yBuff, u8 smallScan);
 static u8 DexNavPickTile(u8 environment, u8 xSize, u8 ySize, bool8 smallScan);
@@ -85,7 +89,7 @@ static void DexNavDrawSight(u8 sight_lvl, u8* objidAddr);
 static void DexNavDrawAbility(u8 ability, u8* objidAddr);
 static void DexNavDrawMove(u16 move, u8 searchLevel, u8* objidAddr);
 static void DexNavDrawPotential(u8 potential, u8* objidAddr);
-static void DexNavDrawSpeciesIcon(u16 species, u8* objIdAddr);
+static void DexNavHudDrawSpeciesIcon(u16 species, u8* objIdAddr);
 static void DexNavDrawHeldItem(u8* objidAddr);
 static void DexNavDrawIcons(void);
 void InitDexNavHUD(u16 species, u8 environment);
@@ -125,7 +129,8 @@ static void MsgNormal(const u8* str)
 {
    TextboxFdecodeAutoAndCreateTask(str);
    *gBoxStatusAndType = 1;
-   CreateTask((TaskFunc)DestroyTaskCompletedTextbox, 0x1);
+   SetTextboxSignpostDesign();
+   CreateTask(DestroyTaskCompletedTextbox, 0x1);
    ScriptContext2_Enable();
    return;
 }
@@ -206,16 +211,21 @@ static void Setup(void)
 }
 
 
-static bool8 SpeciesInArray(u16 species, u8 indexCount)
+static bool8 SpeciesInArray(u16 species, u8 indexCount, u8 unownLetter)
 {
 	u16 dexNum = SpeciesToNationalPokedexNum(species);
 
-    // disallow species not seen
+    //Disallow species not seen
     if (!GetSetPokedexFlag(dexNum, FLAG_GET_SEEN))
 	{
 		for (int i = 0; i < NUM_LAND_MONS; ++i)
 		{
-			if (sDNavState->hiddenSpecies[i] == SPECIES_TABLES_TERMIN)
+			if (species == SPECIES_UNOWN && InTanobyRuins())
+			{
+				if (sDNavState->unownForms[i] == unownLetter) //Already in array
+					return TRUE;
+			}
+			else if (sDNavState->hiddenSpecies[i] == SPECIES_TABLES_TERMIN)
 			{
 				sDNavState->hiddenSpecies[i] = dexNum;
 				sDNavState->hiddenSpecies[i + 1] = SPECIES_TABLES_TERMIN;
@@ -224,7 +234,7 @@ static bool8 SpeciesInArray(u16 species, u8 indexCount)
 			else if (sDNavState->hiddenSpecies[i] == dexNum) //Already in array
 				return TRUE;
 		}
-			
+		
 		if (indexCount == NUM_LAND_MONS)
 			sDNavState->numHiddenLandMons++; //Increase how many question marks to print
 		else
@@ -237,15 +247,21 @@ static bool8 SpeciesInArray(u16 species, u8 indexCount)
 	{
         if (indexCount == NUM_LAND_MONS)
 		{
-            if (sDNavState->grassSpecies[i] == species)
+			if (species == SPECIES_UNOWN && InTanobyRuins()) //This Unown code is copied from above b/c either
+			{												 //all Unown are seen, or none at all
+				if (sDNavState->unownForms[i] == unownLetter) //Already in array
+					return TRUE;
+			}
+            else if (SpeciesToNationalPokedexNum(sDNavState->grassSpecies[i]) == dexNum)
                 return TRUE;
         } 
 		else 
 		{
-            if (sDNavState->waterSpecies[i] == species)
+			if (SpeciesToNationalPokedexNum(sDNavState->waterSpecies[i]) == dexNum)
                 return TRUE;
         }
     }
+
     return FALSE;
 }
 
@@ -259,18 +275,8 @@ void DexNavGetMon(u16 species, u8 potential, u8 level, u8 ability, u16* moves)
 {
 	struct Pokemon* pkmn = &gEnemyParty[0];
 
-    //Clear canvas
-	PokemonSlotPurge(pkmn);
-	CreateMon(pkmn, species, level, 0, FALSE, 0, OT_ID_PLAYER_ID, 0);
-
-    //Set IVs randomly
-    u8 i;
-    u8 currIv = MON_DATA_HP_IV;
-    for (i = 0; i < NUM_STATS; ++i)
-	{
-        u8 valIv = (Random() & 0x1F);
-        SetMonData(pkmn, currIv++, &valIv);
-    }
+    //Create standard wild
+	CreateWildMon(species, level, FindHeaderIndexWithLetter(species, sDNavState->unownLetter - 1), TRUE);
 
     //Pick potential ivs to set to 31
 	u8 iv[3];
@@ -304,6 +310,20 @@ void DexNavGetMon(u16 species, u8 potential, u8 level, u8 ability, u16* moves)
 }
 
 
+static u8 FindHeaderIndexWithLetter(u16 species, u8 letter)
+{
+	if (!InTanobyRuins())
+		return 0;
+		
+	for (u8 i = 0; i < NUM_LAND_MONS; ++i)
+	{
+		if (PickUnownLetter(species, i) == letter + 1)
+			return i;
+	}
+	
+	return 0;
+}
+
 // ===== Pokemon Field Tile ===== //
 static u8 GetPlayerDistance(s16 x, s16 y)
 {
@@ -313,7 +333,7 @@ static u8 GetPlayerDistance(s16 x, s16 y)
 }
 
 
-static u8 PickTileScreen(u8 targetBehaviour, u8 areaX, u8 areaY, s16 *xBuff, s16 *yBuff, u8 smallScan)
+static bool8 PickTileScreen(u8 targetBehaviour, u8 areaX, u8 areaY, s16 *xBuff, s16 *yBuff, u8 smallScan)
 {
     // area of map to cover starting from camera position {-7, -7}
     s16 topX = gSaveBlock1->pos.x - SCANSTART_X + (smallScan * 5);
@@ -331,7 +351,7 @@ static u8 PickTileScreen(u8 targetBehaviour, u8 areaX, u8 areaY, s16 *xBuff, s16
 			
 			Var8005 = tileBehaviour;	//020370c2
 
-            // check NPCs on tile
+            //Check NPCs on tile
             bool8 goNext = FALSE;
             for (u8 i = 0; i < MAX_NPCS; ++i)
 			{
@@ -359,26 +379,26 @@ static u8 PickTileScreen(u8 targetBehaviour, u8 areaX, u8 areaY, s16 *xBuff, s16
 					u8 elevDiff = (CurrMapHeightMismatch((gEventObjects[gPlayerAvatar->spriteId].elevation << 4
 						| gEventObjects[gPlayerAvatar->spriteId].currentElevation), topX, topY));
 					
-                    weight = (Random() % scale <= 1 && elevDiff);
+                    weight = (Random() % scale <= 1) && elevDiff && !MapGridIsImpassableAt(topX, topY);
                 } 
-				else if (!IsMapTypeOutdoors(gMapHeader.mapType))
+				else if (!IsMapTypeOutdoors(GetCurrentMapType()))
 				{
                     //Cave basically needs another check to see if the tile is passable
                     u8 scale = 440 - (smallScan * 200) - (GetPlayerDistance(topX, topY) / 2)  - (2 * (topX + topY));
                     Var8002 = scale;
-                    weight = ((Random() % scale) < 1) && (!MetatileBehavior_GetLowerBytes(tileBehaviour, 6));
+                    weight = ((Random() % scale) < 1) && !MapGridIsImpassableAt(topX, topY);
                 } 
 				else //Grass land
 				{
 					u8 scale = 100 - (GetPlayerDistance(topX, topY) * 2);
-					weight = ((Random() % scale) <= 5);
+					weight = (Random() % scale <= 5) && !MapGridIsImpassableAt(topX, topY);
                 }
 
                 if (weight > 0) 
 				{
                     *xBuff = topX;
                     *yBuff = topY;
-                    return 1;
+                    return TRUE;
                 }
             }
             topX += 1;
@@ -387,11 +407,11 @@ static u8 PickTileScreen(u8 targetBehaviour, u8 areaX, u8 areaY, s16 *xBuff, s16
         topX = gSaveBlock1->pos.x - SCANSTART_X + (smallScan * 5);
     }
 
-    return 0;
+    return FALSE;
 }
 
 
-static u8 DexNavPickTile(u8 environment, u8 xSize, u8 ySize, bool8 smallScan)
+static bool8 DexNavPickTile(u8 environment, u8 xSize, u8 ySize, bool8 smallScan)
 {
     //Pick a specific tile based on environment
     u8 targetBehaviour = 0;
@@ -424,7 +444,7 @@ static bool8 ShakingGrass(u8 environment, u8 xSize, u8 ySize, bool8 smallScan)
 		{
             case ENCOUNTER_TYPE_LAND:
                 {
-					if (!IsMapTypeOutdoors(gMapHeader.mapType))
+					if (!IsMapTypeOutdoors(GetCurrentMapType()))
 					{
 						if (MetatileBehavior_IsTallGrass(metatileBehaviour)) //Grass in cave
 							FieldEffectStart(FLDEFF_SHAKING_GRASS);
@@ -513,7 +533,7 @@ static void DexNavFreeHUD(void)
 	switch (sDNavState->environment)
 	{
         case 0:
-            if (!IsMapTypeOutdoors(gMapHeader.mapType))
+            if (!IsMapTypeOutdoors(GetCurrentMapType()))
                 FieldEffectStop(&gSprites[sDNavState->objIdShakingGrass], 0x1A); //cave
 			else 
                 FieldEffectStop(&gSprites[sDNavState->objIdShakingGrass], 0x13);
@@ -634,9 +654,6 @@ static void OutlinedFontDraw(u8 objId, u8 tileNum, u16 size)
 	
 	u8 element = *strPtr;
 	//u8 i = 0;
-	
-	//if (objId == sDNavState->objIdAbility)
-		//break_func(gSprites[objId].oam.tileNum);
 	
     while (element != 0xFF)
 	{
@@ -858,6 +875,7 @@ static void DexNavIconsVisionUpdate(u8 proximity, u8 searchLevel)
         DexNavSightUpdate(2); // Sneaking is not required
 }
 
+extern const u8 SystemScript_StartDexNavBattle[];
 static void DexNavManageHUD(u8 taskId)
 {
     // check for out of range
@@ -871,7 +889,7 @@ static void DexNavManageHUD(u8 taskId)
 
     // check for timeout.
     gTasks[taskId].data[1]++;
-    if (gTasks[taskId].data[1] > 900)
+    if (gTasks[taskId].data[1] > DEXNAV_TIMEOUT * 60)
 	{
         DestroyTask(taskId);
         DexNavFreeHUD();
@@ -904,7 +922,7 @@ static void DexNavManageHUD(u8 taskId)
 	}
 
     //Caves and water the pokemon moves around
-    if ((sDNavState->environment == ENCOUNTER_TYPE_WATER || !IsMapTypeOutdoors(gMapHeader.mapType))
+    if ((sDNavState->environment == ENCOUNTER_TYPE_WATER || !IsMapTypeOutdoors(GetCurrentMapType()))
     && sDNavState->proximity < 2
 	&& sDNavState->movementTimes < 2)
 	{
@@ -943,13 +961,15 @@ static void DexNavManageHUD(u8 taskId)
         // Freeing only the state, objects and hblank cleared on battle start.
         Free(sDNavState);
 
+		ScriptContext1_SetupScript(SystemScript_StartDexNavBattle);
+/*
         // exclamation point animation over the player
 		PlaySE(SE_EXCLAIM);
         MakeExclamationMark(gEventObjects, &gSprites[gPlayerAvatar->spriteId]);
         FieldEffectStart(0x0);
 
         // do battle
-        DoStandardWildBattle();
+        DoStandardWildBattle();*/
     };
 
     // HUD needs updating iff player has moved
@@ -1056,7 +1076,7 @@ static u16 DexNavGenerateHeldItem(u16 species, u8 searchLevel)
 
     // if only one entry, 50% chance
     if (item2 == ITEM_NONE && item1 != ITEM_NONE)
-        return (randVal <= 50) ? item1 : ITEM_NONE;
+        return (randVal < 50) ? item1 : ITEM_NONE;
 
     // if both are distinct item1 = 50% + srclvl/2; item2 = 5% + srchlvl/2
     if (randVal < (50 + searchLevelInfluence + 5 + searchLevel))
@@ -1074,33 +1094,45 @@ static u8 DexNavGenerateHiddenAbility(u16 species, u8 searchLevel)
     u16 randVal = Random() % 100;
     if (searchLevel < 5)
 	{
-        if (randVal <= SEARCHLEVEL0_ABILITYCHANCE)
+		#if (SEARCHLEVEL0_ABILITYCHANCE != 0)
+        if (randVal < SEARCHLEVEL0_ABILITYCHANCE)
 			genAbility = TRUE;
+		#endif
     } 
 	else if (searchLevel < 10)
 	{
-        if (randVal <= SEARCHLEVEL5_ABILITYCHANCE)
+		#if (SEARCHLEVEL5_ABILITYCHANCE != 0)
+        if (randVal < SEARCHLEVEL5_ABILITYCHANCE)
 			genAbility = TRUE;
+		#endif
     } 
 	else if (searchLevel < 25)
 	{
-        if (randVal <= SEARCHLEVEL10_ABILITYCHANCE)
+		#if (SEARCHLEVEL10_ABILITYCHANCE != 0)
+        if (randVal < SEARCHLEVEL10_ABILITYCHANCE)
 			genAbility = TRUE;
+		#endif
     } 
 	else if (searchLevel < 50)
 	{
-        if (randVal <= SEARCHLEVEL25_ABILITYCHANCE)
+		#if (SEARCHLEVEL25_ABILITYCHANCE != 0)
+        if (randVal < SEARCHLEVEL25_ABILITYCHANCE)
 			genAbility = TRUE;
+		#endif
     } 
 	else if (searchLevel < 100)
 	{
-        if (randVal <= SEARCHLEVEL50_ABILITYCHANCE)
+		#if (SEARCHLEVEL50_ABILITYCHANCE != 0)
+        if (randVal < SEARCHLEVEL50_ABILITYCHANCE)
 			genAbility = TRUE;
+		#endif
     } 
 	else
 	{
-        if (randVal <= SEARCHLEVEL100_ABILITYCHANCE)
+		#if (SEARCHLEVEL100_ABILITYCHANCE != 0)
+        if (randVal < SEARCHLEVEL100_ABILITYCHANCE)
 			genAbility = TRUE;
+		#endif
     }
 
     if (genAbility && gBaseStats[species].hiddenAbility != ABILITY_NONE
@@ -1116,19 +1148,20 @@ static u8 DexNavGenerateHiddenAbility(u16 species, u8 searchLevel)
     }
 }
 
-
+#pragma GCC diagnostic ignored "-Wtype-limits"
 static u8 DexNavGeneratePotential(u8 searchLevel)
 {
     u8 genChance = 0;
     u16 randVal = Random() % 100;
-    if (searchLevel < 5) {
+    if (searchLevel < 5)
+	{
         genChance = SEARCHLEVEL0_ONESTAR + SEARCHLEVEL0_TWOSTAR + SEARCHLEVEL0_THREESTAR;
-        if (randVal <= genChance)
+        if (randVal < genChance)
 		{
             // figure out which star it is
-            if (randVal <= SEARCHLEVEL0_ONESTAR)
+            if (randVal < SEARCHLEVEL0_ONESTAR)
                 return 1;
-            else if (randVal <= (SEARCHLEVEL0_ONESTAR + SEARCHLEVEL0_TWOSTAR))
+            else if (randVal < (SEARCHLEVEL0_ONESTAR + SEARCHLEVEL0_TWOSTAR))
                 return 2;
             else
                 return 3;
@@ -1137,12 +1170,12 @@ static u8 DexNavGeneratePotential(u8 searchLevel)
 	else if (searchLevel < 10)
 	{
         genChance = SEARCHLEVEL5_ONESTAR + SEARCHLEVEL5_TWOSTAR + SEARCHLEVEL5_THREESTAR;
-        if (randVal <= genChance)
+        if (randVal < genChance)
 		{
             // figure out which star it is
-            if (randVal <= SEARCHLEVEL5_ONESTAR)
+            if (randVal < SEARCHLEVEL5_ONESTAR)
                 return 1;
-            else if (randVal <= (SEARCHLEVEL5_ONESTAR + SEARCHLEVEL5_TWOSTAR))
+            else if (randVal < (SEARCHLEVEL5_ONESTAR + SEARCHLEVEL5_TWOSTAR))
                 return 2;
             else
                 return 3;
@@ -1151,12 +1184,12 @@ static u8 DexNavGeneratePotential(u8 searchLevel)
 	else if (searchLevel < 25)
 	{
         genChance = SEARCHLEVEL10_ONESTAR + SEARCHLEVEL10_TWOSTAR + SEARCHLEVEL10_THREESTAR;
-        if (randVal <= genChance)
+        if (randVal < genChance)
 		{
             // figure out which star it is
-            if (randVal <= SEARCHLEVEL10_ONESTAR)
+            if (randVal < SEARCHLEVEL10_ONESTAR)
                 return 1;
-            else if (randVal <= (SEARCHLEVEL10_ONESTAR + SEARCHLEVEL10_TWOSTAR))
+            else if (randVal < (SEARCHLEVEL10_ONESTAR + SEARCHLEVEL10_TWOSTAR))
                 return 2;
             else
                 return 3;
@@ -1165,12 +1198,12 @@ static u8 DexNavGeneratePotential(u8 searchLevel)
 	else if (searchLevel < 50)
 	{
         genChance = SEARCHLEVEL25_ONESTAR + SEARCHLEVEL25_TWOSTAR + SEARCHLEVEL25_THREESTAR;
-        if (randVal <= genChance)
+        if (randVal < genChance)
 		{
             // figure out which star it is
-            if (randVal <= SEARCHLEVEL25_ONESTAR)
+            if (randVal < SEARCHLEVEL25_ONESTAR)
                 return 1;
-            else if (randVal <= (SEARCHLEVEL25_ONESTAR + SEARCHLEVEL25_TWOSTAR))
+            else if (randVal < (SEARCHLEVEL25_ONESTAR + SEARCHLEVEL25_TWOSTAR))
                 return 2;
             else
                 return 3;
@@ -1179,12 +1212,12 @@ static u8 DexNavGeneratePotential(u8 searchLevel)
 	else if (searchLevel < 100)
 	{
         genChance = SEARCHLEVEL50_ONESTAR + SEARCHLEVEL50_TWOSTAR + SEARCHLEVEL50_THREESTAR;
-        if (randVal <= genChance)
+        if (randVal < genChance)
 		{
             // figure out which star it is
-            if (randVal <= SEARCHLEVEL50_ONESTAR)
+            if (randVal < SEARCHLEVEL50_ONESTAR)
                 return 1;
-            else if (randVal <= (SEARCHLEVEL50_ONESTAR + SEARCHLEVEL50_TWOSTAR))
+            else if (randVal < (SEARCHLEVEL50_ONESTAR + SEARCHLEVEL50_TWOSTAR))
                 return 2;
             else
                 return 3;
@@ -1193,12 +1226,12 @@ static u8 DexNavGeneratePotential(u8 searchLevel)
 	else
 	{
         genChance = SEARCHLEVEL100_ONESTAR + SEARCHLEVEL100_TWOSTAR + SEARCHLEVEL100_THREESTAR;
-        if (randVal <= genChance)
+        if (randVal < genChance)
 		{
             // figure out which star it is
-            if (randVal <= SEARCHLEVEL100_ONESTAR)
+            if (randVal < SEARCHLEVEL100_ONESTAR)
                 return 1;
-            else if (randVal <= (SEARCHLEVEL100_ONESTAR + SEARCHLEVEL100_TWOSTAR))
+            else if (randVal < (SEARCHLEVEL100_ONESTAR + SEARCHLEVEL100_TWOSTAR))
                 return 2;
             else
                 return 3;
@@ -1217,48 +1250,49 @@ static void DexNavGenerateMoveset(u16 species, u8 searchLevel, u8 encounterLevel
     //Evaluate if Pokemon should get an egg move in first slot
     if (searchLevel < 5)
 	{
-        if (randVal <= SEARCHLEVEL0_MOVECHANCE)
+		#if (SEARCHLEVEL0_MOVECHANCE != 0)
+        if (randVal < SEARCHLEVEL0_MOVECHANCE)
 			genMove = TRUE;
+		#endif
     }
 	else if (searchLevel < 10)
 	{
-        if (randVal <= SEARCHLEVEL5_MOVECHANCE)
+		#if (SEARCHLEVEL5_MOVECHANCE != 0)
+        if (randVal < SEARCHLEVEL5_MOVECHANCE)
 			genMove = TRUE;
+		#endif
     }
 	else if (searchLevel < 25)
 	{
-        if (randVal <= SEARCHLEVEL10_MOVECHANCE)
+		#if (SEARCHLEVEL10_MOVECHANCE != 0)
+        if (randVal < SEARCHLEVEL10_MOVECHANCE)
 			genMove = TRUE;
+		#endif
     }
 	else if (searchLevel < 50)
 	{
-        if (randVal <= SEARCHLEVEL25_MOVECHANCE)
+		#if (SEARCHLEVEL25_MOVECHANCE != 0)
+        if (randVal < SEARCHLEVEL25_MOVECHANCE)
 			genMove = TRUE;
+		#endif
     }
 	else if (searchLevel < 100)
 	{
-        if (randVal <= SEARCHLEVEL50_MOVECHANCE)
+		#if (SEARCHLEVEL50_MOVECHANCE != 0)
+        if (randVal < SEARCHLEVEL50_MOVECHANCE)
 			genMove = TRUE;
+		#endif
     }
 	else
 	{
-        if (randVal <= SEARCHLEVEL100_MOVECHANCE)
+		#if (SEARCHLEVEL100_MOVECHANCE != 0)
+        if (randVal < SEARCHLEVEL100_MOVECHANCE)
 			genMove = TRUE;
+		#endif
     }
 
-	// generate a wild mon and copy moveset
-	u8 wildMonIndex = 0;
-	#ifdef TANOBY_RUINS_ENABLED
-		const struct WildPokemonInfo* landMonsInfo = LoadProperMonsData(LAND_MONS_HEADER);
-		const struct WildPokemonInfo* waterMonsInfo = LoadProperMonsData(WATER_MONS_HEADER);
-		
-		if (landMonsInfo != NULL)
-			wildMonIndex = ChooseWildMonIndex_Land();
-		else if (waterMonsInfo != NULL)
-			wildMonIndex = ChooseWildMonIndex_WaterRock();
-	#endif
-	
-	CreateWildMon(species, encounterLevel, wildMonIndex, TRUE);
+	//Generate a wild mon and copy moveset	
+	CreateWildMon(species, encounterLevel, sDNavState->selectedIndex / 2, TRUE);
 	
 
 	//Store generated mon moves into Dex Nav Struct
@@ -1471,9 +1505,11 @@ static void DexNavDrawPotential(u8 potential, u8* objidAddr)
 }
 
 
-void DexNavDrawSpeciesIcon(u16 species, u8* objIdAddr)
+void DexNavHudDrawSpeciesIcon(u16 species, u8* objIdAddr)
 {
 	u32 pid = 0xFFFFFFFF;
+	if (species == SPECIES_UNOWN)		
+		pid = GenerateUnownPersonality(sDNavState->unownLetter - 1);
 
 	//Load which palette the species icon uses
 	LoadMonIconPalette(species);
@@ -1520,7 +1556,7 @@ static void DexNavDrawIcons(void)
     DexNavDrawHeldItem(&sDNavState->objIdItem);
 	DexNavDrawAbility(sDNavState->ability, &sDNavState->objIdAbility);
     DexNavDrawPotential(sDNavState->potential, &sDNavState->objIdPotential[0]);
-	DexNavDrawSpeciesIcon(sDNavState->species, &sDNavState->objIdSpecies);
+	DexNavHudDrawSpeciesIcon(sDNavState->species, &sDNavState->objIdSpecies);
 };
 
 
@@ -1529,6 +1565,15 @@ void InitDexNavHUD(u16 species, u8 environment)
 	sDNavState = Calloc(sizeof(struct DexnavHudData));
     // assign non-objects to struct
     sDNavState->species = species;
+
+	if (IS_NEWER_UNOWN_LETTER(species))
+	{
+		sDNavState->unownLetter = species - SPECIES_UNOWN_B + 2; //Because B is 1
+		sDNavState->species = species = SPECIES_UNOWN;
+	}
+	else //UNOWN A
+		sDNavState->unownLetter = 1;
+	
     sDNavState->environment = environment;
     u8 searchLevel = sSearchLevels[SpeciesToNationalPokedexNum(species)];
     sDNavState->searchLevel = searchLevel;
@@ -1537,7 +1582,7 @@ void InitDexNavHUD(u16 species, u8 environment)
     if (sDNavState->pokemonLevel < 1)
 	{
         Free(sDNavState);
-        MsgNormal(&gText_CannotBeFound[0]);
+        MsgNormal(gText_CannotBeFound);
         return;
     }
 
@@ -1546,7 +1591,7 @@ void InitDexNavHUD(u16 species, u8 environment)
     if (!ShakingGrass(environment, 12, 12, 0))
 	{
         Free(sDNavState);
-        MsgNormal(&gText_NotFoundNearby[0]);
+        MsgNormal(gText_NotFoundNearby);
         return;
     }
 
@@ -1575,7 +1620,7 @@ void InitDexNavHUD(u16 species, u8 environment)
 
 // This is called via a c1 from the GUI, while waiting to return to the OW
 static void ExecDexNavHUD(void)
-{	
+{
 	if (!gPaletteFade->active && !ScriptEnv2IsEnabled() && gMain.callback2 == CB2_Overworld)
 	{
 		SetMainCallback1(CB1_Overworld);
@@ -1615,6 +1660,7 @@ static void DexNavGuiSetup(void)
 static void DexNavLoadPokeIcons(void)
 {
 	s16 x, y;
+	u8 letter;
 	u32 pid = 0xFFFFFFFF;
 	u8 hiddenLandMons = sDNavState->numHiddenLandMons;
 	u8 hiddenWaterMons = sDNavState->numHiddenWaterMons;
@@ -1638,9 +1684,12 @@ static void DexNavLoadPokeIcons(void)
 				hiddenLandMons--;
 		}
 		
+		letter = sDNavState->unownFormsByDNavIndices[i];
+		if (letter > 0)
+			pid = GenerateUnownPersonality(sDNavState->unownFormsByDNavIndices[i] - 1);
+		
 		CreateMonIcon(species, SpriteCB_PokeIcon, x, y, 0, pid, 0);
 	}
-	
 
     for (u8 i = 0; i < NUM_WATER_MONS; ++i)
 	{
@@ -1658,7 +1707,11 @@ static void DexNavLoadPokeIcons(void)
 			else
 				hiddenWaterMons--;
 		}
-		
+
+		letter = PickUnownLetter(species, i);
+		if (letter > 0)
+			pid = GenerateUnownPersonality(letter - 1);
+
 		CreateMonIcon(species, SpriteCB_PokeIcon, x, y, 0, pid, 0);
     }
 }
@@ -1964,7 +2017,11 @@ static void DexNavGuiExitNoSearch(void)
 static void DexNavPopulateEncounterList(void)
 {
     // nop struct data
-	Memset(sDNavState->grassSpecies, 0, 34);
+	Memset(sDNavState->grassSpecies, 0, sizeof(sDNavState->grassSpecies) 
+									  + sizeof(sDNavState->waterSpecies) 
+									  + sizeof(sDNavState->hiddenSpecies)
+									  + sizeof(sDNavState->unownForms) 
+									  + sizeof(sDNavState->unownFormsByDNavIndices));
    
 	// populate unique wild grass encounters
     u8 grassIndex = 0;
@@ -1981,9 +2038,15 @@ static void DexNavPopulateEncounterList(void)
 		for (int i = 0; i < NUM_LAND_MONS; ++i)
 		{
 			species = landMonsInfo->wildPokemon[i].species;
-			if (species != SPECIES_NONE && !SpeciesInArray(species, NUM_LAND_MONS))
+			if (species != SPECIES_NONE && !SpeciesInArray(species, NUM_LAND_MONS, PickUnownLetter(species, i)))
 			{
 				sDNavState->grassSpecies[grassIndex++] = landMonsInfo->wildPokemon[i].species;
+				
+				if (InTanobyRuins())
+				{
+					sDNavState->unownForms[i] = PickUnownLetter(species, i);
+					sDNavState->unownFormsByDNavIndices[grassIndex - 1] = PickUnownLetter(species, i);
+				}
 			}
 		}
 	}
@@ -1995,13 +2058,30 @@ static void DexNavPopulateEncounterList(void)
 		for (int i = 0; i < NUM_WATER_MONS; ++i)
 		{
 			species = waterMonsInfo->wildPokemon[i].species;
-			if (species != SPECIES_NONE && !SpeciesInArray(species, NUM_WATER_MONS))
+			if (species != SPECIES_NONE && !SpeciesInArray(species, NUM_WATER_MONS, PickUnownLetter(species, i)))
 			{
 				sDNavState->waterSpecies[waterIndex++] = waterMonsInfo->wildPokemon[i].species;
 			}
 		}
 	}
-   
+
+	if (InTanobyRuins() && !GetSetPokedexFlag(NATIONAL_DEX_UNOWN, FLAG_GET_SEEN))
+	{ //This is so the right amount of ? appear for Unown in the different chambers
+		u16 unowns[NUM_LAND_MONS + 1];
+		unowns[0] = SPECIES_TABLES_TERMIN;
+	
+		sDNavState->numHiddenLandMons = 0;
+		for (int i = 0; i < NUM_LAND_MONS; ++i)
+		{
+			u8 letter = PickUnownLetter(SPECIES_UNOWN, i);
+			if (!CheckTableForSpecies(letter, unowns)) //Table with Unown letters treated like a species table
+			{
+				unowns[sDNavState->numHiddenLandMons++] = letter;
+				unowns[sDNavState->numHiddenLandMons] = SPECIES_TABLES_TERMIN; //Shift end down 1
+			}
+		}
+	}
+
 	sDNavState->numGrassMons = grassIndex;
 	sDNavState->numWaterMons = waterIndex;
 };
@@ -2099,10 +2179,17 @@ static void DexNavGuiHandler(void)
 				{
                     case A_BUTTON: ;
                         // check selection is valid. Play sound if invalid
-                        u16 species = sDNavState->selectedArr == ROW_WATER ? sDNavState->waterSpecies[sDNavState->selectedIndex >> 1] : sDNavState->grassSpecies[sDNavState->selectedIndex>>1];
+                        u16 species = sDNavState->selectedArr == ROW_WATER ? sDNavState->waterSpecies[sDNavState->selectedIndex / 2] : sDNavState->grassSpecies[sDNavState->selectedIndex / 2];
                         // if species is MISSINGNO then error
                         if (species != SPECIES_NONE)
 						{
+							if (species == SPECIES_UNOWN)
+							{
+								u8 letter = sDNavState->unownFormsByDNavIndices[sDNavState->selectedIndex / 2] - 1;
+								if (letter > 0)
+									species = SPECIES_UNOWN_B + letter - 1;
+							}
+							
                             //Species was valid, save and enter OW HUD mode
                             Var8000 = species;
                             Var8001 = sDNavState->selectedArr;
@@ -2194,10 +2281,17 @@ static void DexNavGuiHandler(void)
                     case R_BUTTON:
                     {
                         // check selection is valid. Play sound if invalid
-                        u16 species = sDNavState->selectedArr ? sDNavState->waterSpecies[sDNavState->selectedIndex >> 1] : sDNavState->grassSpecies[sDNavState->selectedIndex>>1];
+                        u16 species = sDNavState->selectedArr ? sDNavState->waterSpecies[sDNavState->selectedIndex / 2] : sDNavState->grassSpecies[sDNavState->selectedIndex / 2];
                         // if species is MISSINGNO then error
                         if (species != SPECIES_NONE)
 						{
+							if (species == SPECIES_UNOWN)
+							{
+								u8 letter = sDNavState->unownFormsByDNavIndices[sDNavState->selectedIndex / 2] - 1;
+								if (letter > 0)
+									species = SPECIES_UNOWN_B + letter - 1;
+							}
+							
                             // species was valid
                             DexNavLoadNames(2);
                             PlaySE(SE_POKENAV_SEARCHING);

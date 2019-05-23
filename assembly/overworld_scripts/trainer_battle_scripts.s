@@ -148,6 +148,7 @@ LookRightCall:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+.global FollowerPositionFixScript
 FollowerPositionFixScript:
 	setvar 0x8000 0x0
 	callasm FollowerPositionFix + 1

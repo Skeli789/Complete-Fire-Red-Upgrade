@@ -1,6 +1,7 @@
 #include "defines.h"
 #include "../include/fieldmap.h"
 #include "../include/field_weather.h"
+#include "../include/overworld.h"
 #include "../include/palette.h"
 
 #include "../include/new/dns.h"
@@ -34,7 +35,7 @@ void TransferPlttBuffer(void)
         DmaCopy16(3, src, dest, PLTT_SIZE);	
 
 		#ifdef TIME_ENABLED
-		switch (gMapHeader.mapType) {
+		switch (GetCurrentMapType()) {
 			case MAP_TYPE_0:			//No fading in these areas
 			case MAP_TYPE_UNDERGROUND:
 			case MAP_TYPE_INDOOR:
@@ -173,7 +174,7 @@ void apply_map_tileset_palette(struct Tileset const* tileset, u16 destOffset, u1
 #ifdef DNS_IN_BATTLE
 void DNSBattleBGPalFade(void)
 {
-	switch (gMapHeader.mapType) {
+	switch (GetCurrentMapType()) {
 		case MAP_TYPE_0:			//No fading in these areas
 		case MAP_TYPE_UNDERGROUND:
 		case MAP_TYPE_INDOOR:

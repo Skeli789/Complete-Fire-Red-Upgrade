@@ -11,13 +11,15 @@
 #include "../include/constants/vars.h"
 
 #include "../include/new/battle_start_turn_start.h"
+#include "../include/new/build_pokemon.h"
 #include "../include/new/dns.h"
 #include "../include/new/helper_functions.h"
 #include "../include/new/roamer.h"
 #include "../include/new/wild_encounter.h"
 
-//Do shaking grass/dust clouds/water ripples
 //Chain Fishing
+
+#define NUM_TANOBY_CHAMBERS 7
 
 struct EncounterRate
 {
@@ -31,6 +33,7 @@ struct EncounterRate
 
 extern struct EncounterRate gEncounterRate;
 
+extern u8 gUnownDistributionByChamber[NUM_TANOBY_CHAMBERS][12]; //[NUM_ROOMS][NUM_WILD_INDEXES]
 extern const struct WildPokemonHeader gWildMonMorningHeaders[];
 extern const struct WildPokemonHeader gWildMonEveningHeaders[];
 extern const struct WildPokemonHeader gWildMonNightHeaders[];
@@ -206,7 +209,6 @@ static u8 PickWildMonNature(void)
     return umodsi(Random(), 25);
 }
 
-#define NUM_TANOBY_CHAMBERS 7
 void CreateWildMon(u16 species, u8 level, u8 monHeaderIndex, bool8 purgeParty)
 {
     u8 enemyMonIndex = 0;
@@ -241,29 +243,12 @@ void CreateWildMon(u16 species, u8 level, u8 monHeaderIndex, bool8 purgeParty)
 		else //Genderless
 			goto REGULAR_NATURE_CREATION;
 
-		CreateMonWithGenderNatureLetter(&gEnemyParty[enemyMonIndex], species, level, 32, gender, PickWildMonNature(), 0);
+		CreateMonWithGenderNatureLetter(&gEnemyParty[enemyMonIndex], species, level, 32, gender, PickWildMonNature(), PickUnownLetter(species, monHeaderIndex));
 		goto ASSIGN_HIDDEN_ABILITY;
     }
 	REGULAR_NATURE_CREATION:
-	#ifdef TANOBY_RUINS_ENABLED
-		if (species == SPECIES_UNOWN)
-		{
-			u32 personality;
-			u8 room = gSaveBlock1->location.mapNum - 0x1B;
-			
-			if (room >= NUM_TANOBY_CHAMBERS)
-				personality = PickWildMonNature();
-			else
-				personality = GenerateUnownPersonality(gUnownDistributionByChamber[room][monHeaderIndex]);
-			
-			CreateMonWithNature(&gEnemyParty[enemyMonIndex], species, level, 32, personality);
-			goto ASSIGN_HIDDEN_ABILITY;
-		}
-	#else
-		++monHeaderIndex; //So the compiler doesn't complain
-	#endif
 
-	CreateMonWithNature(&gEnemyParty[enemyMonIndex], species, level, 32, PickWildMonNature());
+	CreateMonWithNatureLetter(&gEnemyParty[enemyMonIndex], species, level, 32, PickWildMonNature(), PickUnownLetter(species, monHeaderIndex));
 	
 	ASSIGN_HIDDEN_ABILITY:
 	if (FlagGet(HIDDEN_ABILITY_FLAG))
@@ -281,11 +266,24 @@ void CreateWildMon(u16 species, u8 level, u8 monHeaderIndex, bool8 purgeParty)
 	}
 	
 	//Status Inducers
-	if (VarGet(STATUS_INDUCER_VAR))
-	{
-		u8 status = VarGet(STATUS_INDUCER_VAR) & 0xFF; //Lowest byte is status
-		gEnemyParty[enemyMonIndex].condition = status;
-	}
+	TryStatusInducer(&gEnemyParty[enemyMonIndex]);
+}
+
+u8 PickUnownLetter(unusedArg u16 species, unusedArg u8 headerIndex)
+{
+	#ifdef TANOBY_RUINS_ENABLED
+		if (species == SPECIES_UNOWN)
+		{
+			u8 room = gSaveBlock1->location.mapNum - 0x1B;
+
+			if (room >= NUM_TANOBY_CHAMBERS)
+				return 0;
+			else
+				return gUnownDistributionByChamber[room][headerIndex] + 1;
+		}
+	#endif
+
+	return 0;
 }
 
 enum

@@ -28,6 +28,7 @@ bool8 IsCurrentAreaVolcano(void);
 bool8 IsCurrentAreaAutumn(void);
 bool8 IsCurrentAreaWinter(void);
 bool8 IsCurrentAreaDarkerCave(void);
+bool8 InTanobyRuins(void);
 
 //Functions Hooked In
 u8 CheckForTrainersWantingBattle(void);

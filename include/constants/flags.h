@@ -1429,6 +1429,8 @@
 
 #define FLAG_SYS_STORAGE_UNKNOWN_FLAG    0x843
 
+#define FLAG_TANOBY_KEY					 0x849
+
 #define FLAG_0x8D8                       (CODE_FLAGS + 0x78)
 #define FLAG_0x8D9                       (CODE_FLAGS + 0x79)
 #define FLAG_0x8DA                       (CODE_FLAGS + 0x7A)

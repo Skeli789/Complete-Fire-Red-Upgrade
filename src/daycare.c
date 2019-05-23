@@ -19,6 +19,7 @@
 #define sHatchedEggLevelUpMoves ((u16*) 0x20244F8)
 
 #define EGG_LVL_UP_MOVES_ARRAY_COUNT 50
+#define gTMHMMoves ((const u16*) *((u32*) 0x8125A8C))
 
 extern u8 GetLevelUpMovesBySpecies(u16 species, u16* moves);
 extern u16 GetItemIdFromTmId(u8 tmId);
@@ -94,11 +95,11 @@ void BuildEggMoveset(struct Pokemon* egg, struct BoxPokemon* father, struct BoxP
 #ifdef FATHER_PASSES_TMS
     for (i = 0; i < MAX_MON_MOVES; ++i)
     {	
-		if (sHatchedEggFatherMoves[i] != MOVE_NONE
+		if (sHatchedEggFatherMoves[i] != MOVE_NONE)
 		{
-			for (j = 1; j <= NUM_TMSHMS; ++j)	//loop through tm indices
+			for (j = 0; j < NUM_TMSHMS; ++j)	//loop through tm indices
 			{
-				if (sHatchedEggFatherMoves[i] == ItemIdToBattleMoveId(GetItemIdFromTmId(j)) && CanMonLearnTMHM(egg, j)
+				if (sHatchedEggFatherMoves[i] == gTMHMMoves[j] && CanMonLearnTMHM(egg, j))
 				{
 					if (GiveMoveToMon(egg, sHatchedEggFatherMoves[i]) == 0xFFFF)
 						DeleteFirstMoveAndGiveMoveToMon(egg, sHatchedEggFatherMoves[i]);								

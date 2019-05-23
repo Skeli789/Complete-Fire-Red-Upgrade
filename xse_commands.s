@@ -1337,7 +1337,15 @@
 .byte 0xCA
 .endm
 
+.macro msgboxsign
+.byte 0xCA
+.endm
+
 .macro normalmsg
+.byte 0xCB
+.endm
+
+.macro msgboxnormal
 .byte 0xCB
 .endm
 

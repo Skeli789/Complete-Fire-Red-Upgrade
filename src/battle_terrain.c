@@ -3,6 +3,7 @@
 #include "../include/event_data.h"
 #include "../include/fieldmap.h"
 #include "../include/metatile_behavior.h"
+#include "../include/overworld.h"
 #include "../include/constants/metatile_behaviors.h"
 #include "../include/constants/trainer_classes.h"
 
@@ -65,7 +66,7 @@ u8 BattleSetup_GetTerrainId(void)
 				terrain = BATTLE_TERRAIN_POND;
 		#endif
 
-		switch (gMapHeader.mapType) {
+		switch (GetCurrentMapType()) {
 			case MAP_TYPE_UNDERGROUND:
 				if (MetatileBehavior_IsIndoorEncounter(tileBehavior))
 				{
@@ -175,6 +176,17 @@ u8 LoadBattleBG_TerrainID(void) {
 				terrain = LoadBattleBG_SpecialTerrainID(GetCurrentMapBattleScene());
 			}
 		#endif
+			else
+				terrain = gBattleTerrain;
+	}
+	else
+	{
+		if (GetCurrentMapBattleScene() != 0)
+		{
+			terrain = LoadBattleBG_SpecialTerrainID(GetCurrentMapBattleScene());
+		}
+		else
+			terrain = gBattleTerrain;
 	}
 	
 	return terrain;
