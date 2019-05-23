@@ -243,17 +243,6 @@ MaxLevelChange10:
 .org 0x4274E, 0xFF
 MaxLevelChange11:
 	.byte MAX_LEVEL
-	
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@ EV Cap - Limiters
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.org 0x439FC, 0xFF
-ChangeEVCap1:
-	.byte EV_CAP
-	
-.org 0x43A02, 0xFF
-ChangeEVCap2:
-	.byte EV_CAP
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Max Level - Limiter

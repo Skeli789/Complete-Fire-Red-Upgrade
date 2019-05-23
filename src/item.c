@@ -90,15 +90,6 @@ u8 TMIdFromItemId(u16 itemId)
 	#else
 		return itemId - ITEM_TM01;
 	#endif
-	
-	/*
-	if (itemId == ITEM_NONE)
-		tmNum = 255; //So blank items get put at the end
-	else if (tmNum == 0)
-		tmNum = itemId - ITEM_TM01;
-
-	return tmNum;
-	*/
 }
 
 u8 BerryIdFromItemId(u16 item)
@@ -114,7 +105,7 @@ u8 BerryIdFromItemId(u16 item)
 	return item - ITEM_CHERI_BERRY;
 }
 
-//TM + HMs////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////TM + HMs////////////////////////////////////////////////
 #ifdef EXPANDED_TMSHMS
 	typedef u32 TM_HM_T[4]; //extern const u32 gTMHMLearnsets[NUM_SPECIES][4];
 #else
