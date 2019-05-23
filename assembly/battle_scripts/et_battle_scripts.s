@@ -468,7 +468,7 @@ BattleScript_FlowerGiftEnd2:
 
 BattleScript_MonTookFutureAttack:
 	printstring 0xA2 @;STRINGID_PKMNTOOKATTACK
-	waitmessage DELAY_1SECOND
+	waitmessage 0x10
 	jumpifmove MOVE_DOOMDESIRE BattleScript_CheckDoomDesireMiss
 	accuracycheck BattleScript_FutureAttackMiss MOVE_FUTURESIGHT
 	goto BattleScript_CalcDamage
