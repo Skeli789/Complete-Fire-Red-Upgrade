@@ -1,6 +1,5 @@
 Grit_Flags.docx
 *.ini
-*config.h
 *.gba
 build/*
 */Images/*.h
