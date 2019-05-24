@@ -122,6 +122,8 @@ enum //These vars need to be one after the other (hence the enum)
 #define EGG_HATCH_LEVEL 1 //The level eggs hatch at
 #define AI_TRY_TO_KILL_RATE 50 //In battles against a trainer with AI flags of 1, the AI will try to use a move to knock out the opponents XX percent of the time
 
+#define MAP_PLAYER_HOME ((4 << 8) | 0) //The map bank and map number of the player's home
+
 /*===== Badge Obedience Options =====*/
 #define BASE_OBEDIENCE_LEVEL	10
 #define BADGE_1_OBEDIENCE_LEVEL	10

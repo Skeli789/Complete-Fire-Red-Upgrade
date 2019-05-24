@@ -116,7 +116,8 @@
 0813DB30 70 F3 03 02
 ##Remove Old Item Picture Find Code
 080F6F08 03 D1 28 1C 03 21 0D F7
-
+##Remove Old Whiteout screen fix
+0807F53A 02 E0 54 B5 41 08 0D 49
 
 ##Save Expansion
 080DA5E0 FF 20 70 47

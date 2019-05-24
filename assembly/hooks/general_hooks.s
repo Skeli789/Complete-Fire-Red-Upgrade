@@ -608,3 +608,20 @@ SandFootstepNoiseHook:
 EndSandFootstepFieldEffect:
 	ldr r0, =0x080DB9FE | 1
 	bx r0
+
+.pool
+@0x807F542 with r0
+WhiteoutScreenFix:
+	mov r0, r1
+	bl LoadProperWhiteoutString
+	mov r1, r0
+	mov r0, r6
+	mov r2, #0x2
+	mov r3, #0x8
+	bl PrintWhiteoutTextScreen
+	ldr r1, =0x807F54C | 1
+	bx r1
+
+PrintWhiteoutTextScreen:
+	ldr r4, =0x807F3A4 | 1
+	bx r4

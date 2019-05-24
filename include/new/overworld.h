@@ -31,6 +31,7 @@ bool8 IsCurrentAreaDarkerCave(void);
 bool8 InTanobyRuins(void);
 void PlayGrassFootstepNoise(void);
 void PlaySandFootstepNoise(void);
+const u8* LoadProperWhiteoutString(const u8* string);
 
 //Functions Hooked In
 u8 CheckForTrainersWantingBattle(void);

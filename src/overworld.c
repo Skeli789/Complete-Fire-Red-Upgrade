@@ -18,6 +18,7 @@
 #include "../include/sound.h"
 
 #include "../include/constants/flags.h"
+#include "../include/constants/maps.h"
 #include "../include/constants/region_map_sections.h"
 #include "../include/constants/songs.h"
 #include "../include/constants/trainers.h"
@@ -1053,6 +1054,22 @@ bool8 WhiteoutLogic(void)
 #else
 	return TRUE;	// load from original table
 #endif
+}
+
+#define sText_ScurriedHome (const u8*) 0x841B5B6
+extern const u8 gText_ScurriedToNearestHealer[];
+
+const u8* LoadProperWhiteoutString(const u8* string)
+{
+#ifdef SET_HEALING_PLACE_HACK
+	if (string == sText_ScurriedHome)
+	{
+		if (gSaveBlock1->location.mapNum != MAP_NUM(PLAYER_HOME)
+		||  gSaveBlock1->location.mapGroup != MAP_GROUP(PLAYER_HOME))
+			string = gText_ScurriedToNearestHealer;
+	}		
+#endif
+	return string;
 }
 
 bool8 IsAutoRunEnabled(void)

@@ -2,6 +2,7 @@
 #include "defines_battle.h"
 #include "../include/battle.h"
 #include "../include/field_weather.h"
+#include "../include/overworld.h"
 #include "../include/constants/hold_effects.h"
 #include "../include/constants/items.h"
 #include "../include/constants/pokemon.h"
@@ -143,7 +144,7 @@ u16 GetEvolutionTargetSpecies(struct Pokemon* mon, u8 type, u16 evolutionItem)
 					break;
 				
 				case EVO_MAP:
-					if (gCurrentMapName == gEvolutionTable[species][i].param) //Based on map name
+					if (GetCurrentRegionMapSectionId() == gEvolutionTable[species][i].param) //Based on map name
 						targetSpecies = gEvolutionTable[species][i].targetSpecies;
 					break;
 
