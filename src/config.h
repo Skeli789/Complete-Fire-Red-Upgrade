@@ -111,7 +111,7 @@ enum //These vars need to be one after the other (hence the enum)
 #define NUM_TRAINER_CLASSES 107 //Vanilla FR has 107
 #define EVOS_PER_MON 5 //The number of maximum evolutions per Pokemon. Vanilla FR has 5
 #define EV_CAP 252 //Also change this in the file “asm_defines.s” found in the root
-#define POWER_ITEM_EV_YIELD 4	// set to 8 for Gen 7 mechanic 
+#define POWER_ITEM_EV_YIELD 8 //Set to 4 for older mechanic 
 
 #define DUSK_BALL_MULTIPLIER 30 //Change this line to 35 to make the catch rate for the Dusk Ball 3.5x like before Gen 7
 #define STANDARD_IV 10 //Change this to be the number of IVs Pokemon owned by random trainers should have (all stats will have this number)
