@@ -141,6 +141,9 @@ struct Clock
 		#define gHealthboxIDs ((u8*) 0x3004FF0)
 		#define gMultiUsePlayerCursor (*((u8*) 0x3004FF4))
 		#define gNumberOfMovesToChoose (*((u8*) 0x3004FF8))
+		
+		#define gOverworldTilemapBg3 (*((u32*) 0x300501C))
+		
 /*u8*/  #define gSelectedEventObject (*((u8*) 0x3005074))
 		//#define gTasks ((struct Task*) 0x3005090) //struct Task gTasks[ACTIVE_SENTINEL];
 

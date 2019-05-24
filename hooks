@@ -452,7 +452,7 @@ FixMoveReminderDataLoading 080E54D0 1
 FixWindowTemplates 080E46B4 0
 
 ##Triple Layer Blocks
-#DrawBlockHook 0805A9BC 1
+DrawBlockHook 0805A9B8 1
 
 ##Footstep Sounds
 GrassFootstepNoiseHook 80DB3C8 1
