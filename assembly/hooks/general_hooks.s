@@ -558,6 +558,7 @@ SelectItemFromTMCaseCheck:
 	add r1, r7
 	lsl r1, #0x3
 	ldr r2, =0x81323B8 | 1
+bxr2:
 	bx r2
 	
 SelectItemFromTMCaseReturn:
@@ -565,3 +566,45 @@ SelectItemFromTMCaseReturn:
 	bx r0
 
 .pool
+@0x80DB3C8 with r1
+GrassFootstepNoiseHook:
+	cmp r0, #0x0
+	beq DoGrassFootstepNoise
+	mov r0, r3
+	mov r1, #0x4
+DoSeekSpriteAnim:
+	ldr r2, =SeekSpriteAnim
+	bl bxr2
+	b EndGrassFootstepNoiseCheck
+	
+DoGrassFootstepNoise:
+	bl PlayGrassFootstepNoise
+EndGrassFootstepNoiseCheck:
+	mov r0, #0x0
+	add sp, sp, #0x4
+	pop {r4-r5, pc}
+
+.pool
+@0x80DB678 with r1
+VeryTallGrassFootstepNoiseHook:
+	cmp r0, #0x0
+	beq DoGrassFootstepNoise
+	mov r0, r3
+	mov r1, #0x6
+	b DoSeekSpriteAnim
+
+.pool
+@0x80DB9C4 with r1
+SandFootstepNoiseHook:
+	lsr r5, r0, #0x18
+	bl PlaySandFootstepNoise
+	mov r1, r5
+	cmp r1, #0x40
+	beq EndSandFootstepFieldEffect
+	lsl r0, r1, #0x4
+	ldr r3, =0x080DB9CC | 1
+	bx r3
+	
+EndSandFootstepFieldEffect:
+	ldr r0, =0x080DB9FE | 1
+	bx r0

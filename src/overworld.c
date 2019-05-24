@@ -7,6 +7,7 @@
 #include "../include/field_poison.h"
 #include "../include/fldeff_misc.h"
 #include "../include/link.h"
+#include "../include/m4a.h"
 #include "../include/map_scripts.h"
 #include "../include/metatile_behavior.h"
 #include "../include/overworld.h"
@@ -1258,6 +1259,24 @@ bool8 InTanobyRuins(void)
 	#endif
 	
 	return FALSE;
+}
+
+void PlayGrassFootstepNoise(void)
+{
+	#ifdef UNBOUND
+		PlaySE(SE_LEAVES);
+	#elif defined FOOTSTEP_NOISES
+		PlaySE(SE_LEAVES);
+	#endif
+}
+
+void PlaySandFootstepNoise(void)
+{
+	#ifdef UNBOUND
+		PlaySE(SE_MUD_SLAP);
+	#elif defined FOOTSTEP_NOISES
+		PlaySE(SE_MUD_SLAP);
+	#endif
 }
 
 //Follow Me Updates/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

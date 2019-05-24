@@ -131,3 +131,6 @@
 #define SE_POKENAV_ON 0x67
 #define SE_POKENAV_OFF 0x68
 #define SE_POKENAV_SEARCHING 0x69
+
+#define SE_MUD_SLAP 0xA1
+#define SE_LEAVES 0xA2

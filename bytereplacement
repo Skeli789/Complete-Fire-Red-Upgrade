@@ -355,6 +355,10 @@
 08108E0A A0 88
 08108E4C 70 BD
 
+##Helpers For Sand Footstep Noise
+080DB9A0 30 B5
+080DBA00 30 BC
+
 ##Expanded Pokedex RAM##
 08104B00 C0 46
 08104B02 C0 46

@@ -449,3 +449,8 @@ FixNumRelearnableMoves 080E50E8 2
 FixMoveNameLoading 080E523E 2
 FixMoveReminderDataLoading 080E54D0 1
 FixWindowTemplates 080E46B4 0
+
+##Footstep Sounds
+GrassFootstepNoiseHook 80DB3C8 1
+VeryTallGrassFootstepNoiseHook 80DB678 1
+SandFootstepNoiseHook 80DB9C4 1
