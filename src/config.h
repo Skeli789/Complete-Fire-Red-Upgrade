@@ -97,9 +97,6 @@ enum //These vars need to be one after the other (hence the enum)
 //#define DELETABLE_HMS //Uncomment this if you want HMs to be deletable without the Move Deleter
 //#define REUSABLE_TMS	//if defined, don't forget to give all TMs a Mystery byte of 1!
 
-/*===== Expanded Text Buffers =====*/
-#define EXPANDED_TEXT_BUFFERS	// keep commented to enable FD 07 through FD 0D to load dynamic text. See include/new/ram_locs.h for RAM defs
-
 /*===== Time of Day Options =====*/
 #define TIME_MORNING_START 4		//4:00 AM / 4:00
 #define TIME_DAY_START 8			//8:00 AM / 8:00
@@ -186,6 +183,7 @@ enum //These vars need to be one after the other (hence the enum)
 //#define GEN_4_PLAYER_RUNNING_FIX //Uncommmenting this line will increase the lag between frames as the player OW runs, to simulate a more accurate Gen 4 running effect
 #define EXPAND_MOVE_REMINDER_DESCRIPTION //Keep this defined to have 5 lines for the move description as opposed to 4 in the move reminder menu
 #define ITEM_PICTURE_ACQUIRE //Item images will be shown when the player finds or obtains an item.
+#define EXPANDED_TEXT_BUFFERS //Expands the number of scripting string buffers available. Comment out to keep original buffer text
 
 /*===== Misc Battle Effect Options =====*/
 //#define OLD_BURN_DAMAGE //Uncomment this line if you want burn damage to do 1/8 of max health instead of 1/16

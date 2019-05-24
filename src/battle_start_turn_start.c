@@ -104,7 +104,7 @@ void HandleNewBattleRamClearBeforeBattle(void)
 	gNewBS->UltraData = Calloc(sizeof(struct UltraData));
 	gNewBS->ZMoveData = Calloc(sizeof(struct ZMoveData));
 	Memset(FIRST_NEW_BATTLE_RAM_LOC, 0, (u32) LAST_NEW_BATTLE_RAM_LOC - (u32) FIRST_NEW_BATTLE_RAM_LOC);
-	//Memset((u8*) 0x203D800, 0x0, 0x100);
+	Memset(gBattleBufferA, 0x0, sizeof(Battle_Buffer_T) * MAX_BATTLERS_COUNT * 2); //Clear both battle buffers
 	//Memset((u8*) 0x203C020, 0x0, 0xE0);
 }
 

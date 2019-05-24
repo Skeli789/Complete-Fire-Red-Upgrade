@@ -151,6 +151,15 @@ struct Clock
 
 		extern struct MusicPlayerInfo gMPlay_BGM;
 
+		//Expanded text buffers					//Size					//buffercommand X	//String Arg
+/*u8*/  #define gStringVar7 ((u8*) 0x2022BC4)	//32 bytes					//Buffer 0x5 	//FD 07
+/*u8*/  #define gStringVar8 ((u8*) 0x2022BE4)	//32 bytes					//Buffer 0x6	//FD 08
+/*u8*/  #define gStringVar9 ((u8*) 0x2022C04)	//32 bytes					//Buffer 0x7	//FD 09
+/*u8*/  #define gStringVarA ((u8*) 0x2022C24)	//32 bytes					//Buffer 0x8	//FD 0A
+/*u8*/  #define gStringVarB ((u8*) 0x2022C44)	//32 bytes					//Buffer 0x9	//FD 0B
+/*u8*/  #define gStringVarC ((u8*) 0x2022C64)	//100 bytes					//Buffer 0xA	//FD 0C
+/*u8*/  #define gStringVarD ((u8*) 0x2022CC8)	//100 bytes (to 0x2022D2C)	//Buffer 0xB	//FD 0D
+
 #define gExpandedFlags ((u8*) 0x0203B174)
 #define gExpandedVars ((u16*) (0x0203B174 + 0x200))
 
@@ -185,12 +194,4 @@ struct Clock
 //extern struct CompressedPokemon gBox20[30] //0x203CB44
 //extern struct CompressedPokemon gBox21[30] //0x203D210
 
-// expanded text buffers
-#define gStringVar7 ((u8*) 0x203D8DC)	//4 bytes
-#define gStringVar8 ((u8*) 0x203D8E0)	//4 bytes
-#define gStringVar9 ((u8*) 0x203D8E4)	//4 bytes
-#define gStringVarA ((u8*) 0x203D8E8)	//16 bytes
-#define gStringVarB ((u8*) 0x203D8F8)	//16 bytes
-#define gStringVarC ((u8*) 0x203D908)	//32 bytes
-#define gStringVarD ((u8*) 0x203D928)	//32 bytes
-// [FILL_IN_NEXT] = 0x203D948
+// [FILL_IN_NEXT] = 0x203D8DC
