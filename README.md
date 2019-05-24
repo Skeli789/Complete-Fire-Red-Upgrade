@@ -112,6 +112,6 @@ That is your resultant file.
 ## Notes
 
 Anytime you make changes, the compiler will only compile the files you have changed.
-Any changes made to header files will require you to type 'python scripts//clean.py'
+Any changes made to header files will require you to type 'python scripts//clean.py build'
 in cmd and then rerun the build scripts. For more command line options, see "Engine
 Scripts" in the documentation.
