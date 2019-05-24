@@ -3,12 +3,16 @@
 ## What is this:
 A complete upgrade for Fire Red, including an upgraded Battle Engine.
 
+### Before doing anything it is HIGHLY recommended the documention be read thoroughly.
+
 ## Features:
 * Expanded Pokémon
 * Expanded PC Boxes (up to 24!)
 * Battle Engine Upgraded to Gen 7
-  * All Moves, Abilities, Items, Weather effects, Terrain effects, mechanics, effects through Gen 7
+  * All Moves, Abilities, Items, and Effects through Gen 7
   * Vastly improved AI system with decision-making skills for all new battle effects
+  * Z Moves
+  * Mega Evolution / Primal Reversion / Ultra Burst
   * Ability pop-ups
   * Hidden Abilities
   * Dissapearing HP-bars during Attack Animations
@@ -30,9 +34,7 @@ A complete upgrade for Fire Red, including an upgraded Battle Engine.
   * Level Scaling
   * Updated Exp. Share
   * Inverse Battles, Sky Battles
-  * Z Moves
   * Overworld trainer facing
-* Mega Evolution/Primal Reversion/Ultra Burst
 * Battle Frontier
 * Expanded Move Reminder (up to 50 moves)
 * Improved Tm/Hm Expansion, Reusable TMs
@@ -43,7 +45,7 @@ A complete upgrade for Fire Red, including an upgraded Battle Engine.
 * JPANs engine features ported and redesigned/improved in many ways
   * Character Customization
   * Lots of new scripting specials
-  * Whiteout hack
+  * Whiteout hack / text updates
   * And more!
 * Save-block expansion
 * DexNav and secondary PokéTools Start Menu
@@ -58,11 +60,14 @@ A complete upgrade for Fire Red, including an upgraded Battle Engine.
 * Follow Me
 * Secondary Options Menu
 * Expanded Pokemon in the Hall of Fame
+* Triple Layer Blocks
+* Expanded Text Buffers
+* Footstep noise in grass & on sand
+* Omnidirectional Jumping
+* Item Image on obtain
 
 **NOTE** Personalized options are available in src/config.h. The options can be customized
-by commenting and uncommenting lines. **Before doing anything it is HIGHLY
-recommended the documention be read.** It may be long, but it is imperative that at 
-least the configuration section be read before building the engine.
+by commenting and uncommenting lines.
 
 ## Installation Instructions:
 ```
