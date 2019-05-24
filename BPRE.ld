@@ -152,6 +152,7 @@ gPokeBallPals = 0x82605CC;
 BallSpriteTemplates = 0x82606F4;
 surfBlobPal = 0x835b968;
 surfBlobTiles = 0x8396b08;
+GetLedgeJumpFuncs = 0x83A705C;
 stepspeeds = 0x83A719C;
 stepspeed_seq_length = 0x83A71B0;
 sBattleTransitionTable_Trainer = 0x83C68F8;

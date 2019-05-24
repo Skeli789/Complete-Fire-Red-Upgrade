@@ -109,6 +109,7 @@ ItemId_GetName 809A8BC 1
 ##Overworld Hooks
 apply_map_tileset_palette 80599C8 3
 AutoRunHook 805BA30 0
+GetLedgeJumpDirection 80680F8 3
 TryRunOnFrameMapScript 8069C74 0
 TryStartStepCountScript 0806D698 1
 BattleSetup_ConfigureTrainerBattle 8080228 1

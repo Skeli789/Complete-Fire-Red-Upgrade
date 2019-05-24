@@ -5,6 +5,7 @@
 #include "../include/event_object_movement.h"
 #include "../include/field_effect.h"
 #include "../include/field_poison.h"
+#include "../include/fieldmap.h"
 #include "../include/fldeff_misc.h"
 #include "../include/link.h"
 #include "../include/m4a.h"
@@ -794,13 +795,7 @@ void MoveCameraToTrainerB(void)
 
 static u8 GetPlayerMapObjId(void)
 {
-	for (u8 eventObjId = 0; eventObjId < MAP_OBJECTS_COUNT; ++eventObjId)
-	{
-		if (gEventObjects[eventObjId].isPlayer)
-			return eventObjId;
-	}
-
-	return 0;
+	return gPlayerAvatar->eventObjectId;
 }
 
 static const u8 sMovementToDirection[] =
@@ -1294,6 +1289,33 @@ void PlaySandFootstepNoise(void)
 	#elif defined FOOTSTEP_NOISES
 		PlaySE(SE_MUD_SLAP);
 	#endif
+}
+
+extern bool8 (*const GetLedgeJumpFuncs[])(u8);
+u8 GetLedgeJumpDirection(s16 x, s16 y, u8 direction)
+{
+    u8 behaviour;
+
+    if (direction == 0)
+        return 0;
+    else if (direction > 4)
+        direction -= 4;
+
+    direction--;
+    behaviour = MapGridGetMetatileBehaviorAt(x, y);
+
+    if (GetLedgeJumpFuncs[direction](behaviour) == 1)
+        return direction + 1;
+	else if (behaviour == MB_OMNIDIRECTIONAL_JUMP
+	#ifdef CAN_ONLY_USE_OMNIDRECTIONAL_JUMP_ON_HEIGHT_2
+	&& gEventObjects[GetPlayerMapObjId()].currentElevation == 3 //Movement permission 0xC
+	#endif
+	)
+	{
+		return direction + 1;
+	}
+
+    return 0;
 }
 
 
