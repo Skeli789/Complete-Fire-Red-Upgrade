@@ -41,6 +41,19 @@ script functions/specials in asm - hooks and returns
 @@ Physical Special Split Icons
 .global PhysicalSpecialSplitIconRoutine
 
+@@ Triple Layer Blocks
+@.global DrawBlockHook
+
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Triple Layer Blocks
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.align 2
+.pool
+@DrawBlockHook:
+@	bl CheckBlockType
+
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Increase Start Menu Height for Fewer Items
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
