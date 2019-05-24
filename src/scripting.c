@@ -2256,64 +2256,65 @@ void TryAppendSOntoEndOfItemString(void)
 
 
 ///////////// EXPANDED TEXT BUFFERS //////////////////////////////////////////
-u32* sTextBufferRam[12] = {
-	(void*) gStringVar1,	//FD 02
-	(void*) gStringVar2,
-	(void*) gStringVar3,
-	(void*) 0,
-	(void*) 0,
+u8* sScriptStringVars[12] =
+{
+	gStringVar1,	//FD 02
+	gStringVar2,	//FD 03
+	gStringVar3,	//FD 04
+	0,
+	0,				//FD 06 is used for Rival name
 #ifdef EXPANDED_TEXT_BUFFERS
-	(void*) gStringVar7,	//FD 07, [buffer5] in XSE
-	(void*) gStringVar8,
-	(void*) gStringVar9,
-	(void*) gStringVarA,
-	(void*) gStringVarB,
-	(void*) gStringVarC,
-	(void*) gStringVarD,
+	gStringVar7,	//FD 07, [buffer5] in XSE
+	gStringVar8,	//FD 08
+	gStringVar9,	//FD 09
+	gStringVarA,	//FD 0A
+	gStringVarB,	//FD 0B
+	gStringVarC,	//FD 0C
+	gStringVarD,	//FD 0D
 #else
-	(void*) 0x8415A2C,
-	(void*) 0x8415A36,
-	(void*) 0x8415A31,
-	(void*) 0x8415A43,
-	(void*) 0x8415A3C,
-	(void*) 0x8415A50,
-	(void*) 0x8415A49,
+	(u8*) 0x8415A2C, //FD 07 = RUBY
+	(u8*) 0x8415A36, //FD 08 = MAGMA
+	(u8*) 0x8415A31, //FD 09 = AQUA
+	(u8*) 0x8415A43, //FD 0A = MAXIE
+	(u8*) 0x8415A3C, //FD 0B = ARCHIE
+	(u8*) 0x8415A50, //FD 0C = GROUDON
+	(u8*) 0x8415A49, //FD 0D = KYOGRE
 #endif
 };
 
-void* LoadTextBuffer07(void)
+u8* LoadTextBuffer07(void)
 {
-	return sTextBufferRam[5];
+	return sScriptStringVars[5];
 }
 
-void* LoadTextBuffer08(void)
+u8* LoadTextBuffer08(void)
 {
-	return sTextBufferRam[6];
+	return sScriptStringVars[6];
 }
 
-void* LoadTextBuffer09(void)
+u8* LoadTextBuffer09(void)
 {
-	return sTextBufferRam[7];
+	return sScriptStringVars[7];
 }
 
-void* LoadTextBuffer0A(void)
+u8* LoadTextBuffer0A(void)
 {
-	return sTextBufferRam[8];
+	return sScriptStringVars[8];
 }
 
-void* LoadTextBuffer0B(void)
+u8* LoadTextBuffer0B(void)
 {
-	return sTextBufferRam[9];
+	return sScriptStringVars[9];
 }
 
-void* LoadTextBuffer0C(void)
+u8* LoadTextBuffer0C(void)
 {
-	return sTextBufferRam[10];
+	return sScriptStringVars[10];
 }
 
-void* LoadTextBuffer0D(void)
+u8* LoadTextBuffer0D(void)
 {
-	return sTextBufferRam[11];
+	return sScriptStringVars[11];
 }
 
 

@@ -21,8 +21,13 @@ void __attribute__((long_call)) m4aMPlayFadeIn(struct MusicPlayerInfo *mplayInfo
 void __attribute__((long_call)) m4aMPlayImmInit(struct MusicPlayerInfo *mplayInfo);
 void __attribute__((long_call)) m4aMPlayVolumeControl(struct MusicPlayerInfo *mplayInfo, u16 trackBits, u16 volume);
 
+void __attribute__((long_call)) MPlayStart(struct MusicPlayerInfo *mplayInfo, const struct SongHeader *songHeader);
+
 extern struct MusicPlayerInfo gMPlayInfo_BGM;
 extern struct MusicPlayerInfo gMPlayInfo_SE1;
 extern struct MusicPlayerInfo gMPlayInfo_SE2;
 extern struct MusicPlayerInfo gMPlayInfo_SE3;
 extern struct SoundInfo gSoundInfo;
+
+#define gMPlayTable ((const struct MusicPlayer*) 0x84A329C)
+#define gSongTable ((const struct Song*) *((u32*) 0x81DD11C))

@@ -8,6 +8,7 @@
 #include "../include/constants/items.h"
 
 #include "../include/new/battle_strings.h"
+#include "../include/new/exp.h"
 #include "../include/new/helper_functions.h"
 
 enum
@@ -42,112 +43,8 @@ static void Task_GiveExpToMon(u8 taskId);
 static void Task_PrepareToGiveExpWithExpBar(u8 taskId);
 static void sub_80300F4(u8 taskId);
 static u32 GetExpToLevel(u8 toLevel, u8 growthRate);
-
-
-
-//////////////////// POWER ITEMS ////////////////////////////////
-void MonGainEVs(struct Pokemon *mon, u16 defeatedSpecies)
-{
-    u8 evs[NUM_STATS];
-    u16 evIncrease = 0;
-    u16 totalEVs = 0;
-    u16 heldItem;
-    u8 holdEffect;
-    int i;
-
-    for (i = 0; i < NUM_STATS; i++)
-    {
-        evs[i] = GetMonData(mon, MON_DATA_HP_EV + i, NULL);
-        totalEVs += evs[i];
-    }
-
-    for (i = 0; i < NUM_STATS; i++)
-    {
-        u8 hasHadPokerus;
-        int multiplier;
-
-        if (totalEVs >= MAX_TOTAL_EVS)
-            break;
-
-        hasHadPokerus = CheckPartyHasHadPokerus(mon, 0);
-
-        if (hasHadPokerus)
-            multiplier = 2;
-        else
-            multiplier = 1;
-
-		// get mon item hold effect
-		heldItem = GetMonData(mon, MON_DATA_HELD_ITEM, NULL);
-        if (heldItem == ITEM_ENIGMA_BERRY_OLD)
-        {
-            if (gMain.inBattle)
-                holdEffect = gEnigmaBerries[0].holdEffect;
-            else
-                holdEffect = gSaveBlock1->enigmaBerry.holdEffect;
-        }
-        else
-            holdEffect = ItemId_GetHoldEffect(heldItem);
-		
-		u8 itemQuality = ItemId_GetHoldEffectParam(heldItem);
-
-		// get EV yield
-        switch (i)
-        {
-			case 0:
-				evIncrease = gBaseStats[defeatedSpecies].evYield_HP;
-				if (holdEffect == ITEM_EFFECT_POWER_ITEM && itemQuality == QUALITY_POWER_WEIGHT)
-					evIncrease += POWER_ITEM_EV_YIELD;
-				break;
-			case 1:
-				evIncrease = gBaseStats[defeatedSpecies].evYield_Attack;
-				if (holdEffect == ITEM_EFFECT_POWER_ITEM && itemQuality == QUALITY_POWER_BRACER)
-					evIncrease += POWER_ITEM_EV_YIELD;
-				break;
-			case 2:
-				evIncrease = gBaseStats[defeatedSpecies].evYield_Defense;
-				if (holdEffect == ITEM_EFFECT_POWER_ITEM && itemQuality == QUALITY_POWER_BELT)
-					evIncrease += POWER_ITEM_EV_YIELD;
-				break;
-			case 3:
-				evIncrease = gBaseStats[defeatedSpecies].evYield_Speed;
-				if (holdEffect == ITEM_EFFECT_POWER_ITEM && itemQuality == QUALITY_POWER_LENS)
-					evIncrease += POWER_ITEM_EV_YIELD;
-				break;
-			case 4:
-				evIncrease = gBaseStats[defeatedSpecies].evYield_SpAttack;
-				if (holdEffect == ITEM_EFFECT_POWER_ITEM && itemQuality == QUALITY_POWER_BAND)
-					evIncrease += POWER_ITEM_EV_YIELD;
-				break;
-			case 5:
-				evIncrease = gBaseStats[defeatedSpecies].evYield_SpDefense;
-				if (holdEffect == ITEM_EFFECT_POWER_ITEM && itemQuality == QUALITY_POWER_ANKLET)
-					evIncrease += POWER_ITEM_EV_YIELD;
-				break;
-        }
-		
-		// pokerus
-		evIncrease *= multiplier;
-		
-		// check macho brace
-        if (holdEffect == ITEM_EFFECT_MACHO_BRACE)
-            evIncrease *= 2;
-
-        if (totalEVs + (s16)evIncrease > MAX_TOTAL_EVS)
-            evIncrease = ((s16)evIncrease + MAX_TOTAL_EVS) - (totalEVs + evIncrease);
-
-        if (evs[i] + (s16)evIncrease > 255)
-        {
-            int val1 = (s16)evIncrease + 255;
-            int val2 = evs[i] + evIncrease;
-            evIncrease = val1 - val2;
-        }
-
-        evs[i] += evIncrease;
-        totalEVs += evIncrease;
-        SetMonData(mon, MON_DATA_HP_EV + i, &evs[i]);
-    }
-}
-
+static void MonGainEVs(struct Pokemon *mon, u16 defeatedSpecies);
+static u16 GetTotalEVs(struct Pokemon* mon);
 
 ///////////////////// GAIN EXPERIENCE //////////////////////
 void atk23_getexp(void)
@@ -757,4 +654,96 @@ static void sub_80300F4(u8 taskId)
 static u32 GetExpToLevel(u8 toLevel, u8 growthRate)
 {
 	return gExperienceTables[growthRate][toLevel];
+}
+
+//////////////////// POWER ITEMS ////////////////////////////////
+static void MonGainEVs(struct Pokemon *mon, u16 defeatedSpecies)
+{
+	u8 multiplier;
+    u16 evIncrease;
+
+	u16 heldItem = GetMonData(mon, MON_DATA_HELD_ITEM, NULL);
+	u8 holdEffect = ItemId_GetHoldEffect(heldItem);
+	u8 itemQuality = ItemId_GetHoldEffectParam(heldItem);
+
+	if (GetTotalEVs(mon) >= MAX_TOTAL_EVS)
+		return;
+
+    for (u8 stat = 0; stat < NUM_STATS; ++stat)
+    {
+		if (GetMonData(mon, MON_DATA_HP_EV + stat, NULL) >= EV_CAP)
+			continue;
+
+		evIncrease = 0;
+        multiplier = (CheckPartyHasHadPokerus(mon, 0)) ? 2 : 1;
+
+		//Get EV yield
+        switch (stat)
+        {
+			case STAT_HP:
+				evIncrease = gBaseStats[defeatedSpecies].evYield_HP;
+				break;
+			case STAT_ATK:
+				evIncrease = gBaseStats[defeatedSpecies].evYield_Attack;
+				break;
+			case STAT_DEF:
+				evIncrease = gBaseStats[defeatedSpecies].evYield_Defense;
+				break;
+			case STAT_SPEED:
+				evIncrease = gBaseStats[defeatedSpecies].evYield_Speed;
+				break;
+			case STAT_SPATK:
+				evIncrease = gBaseStats[defeatedSpecies].evYield_SpAttack;
+				break;
+			case STAT_SPDEF:
+				evIncrease = gBaseStats[defeatedSpecies].evYield_SpDefense;
+				break;
+        }
+		
+		//Pokerus
+		evIncrease *= multiplier;
+		
+		//Check Macho Brace
+        if (holdEffect == ITEM_EFFECT_MACHO_BRACE && itemQuality == QUALITY_MACHO_BRACE)
+            evIncrease *= 2;
+	
+		AddEVs(mon, stat, evIncrease);
+
+		if (holdEffect == ITEM_EFFECT_MACHO_BRACE && itemQuality > 0 && itemQuality - 1 == stat)
+			AddEVs(mon, stat, POWER_ITEM_EV_YIELD); //Power items always add to requested stat
+    }
+}
+
+bool8 AddEVs(struct Pokemon* mon, u8 statId, u16 numToAdd)
+{
+	u8 currentEv = GetMonData(mon, MON_DATA_HP_EV + statId, NULL);
+	u16 totalEvs = GetTotalEVs(mon);
+
+	if (totalEvs < MAX_TOTAL_EVS
+	&&  currentEv < EV_CAP) //The EV can be added
+	{
+		if (totalEvs + numToAdd > MAX_TOTAL_EVS)
+			numToAdd = MAX_TOTAL_EVS - totalEvs; //Lower amount
+
+		if (currentEv + numToAdd > EV_CAP)
+			numToAdd = EV_CAP - currentEv; //Lower amount
+
+		currentEv += numToAdd;
+		SetMonData(mon, MON_DATA_HP_EV + statId, &currentEv);
+		
+		if (numToAdd > 0)
+			return TRUE; //Evs successfully added
+	}
+
+	return FALSE; //No EVs were added
+}
+
+static u16 GetTotalEVs(struct Pokemon* mon)
+{
+	u16 total = 0;
+
+	for (int i = 0; i < NUM_STATS; ++i)
+		total += GetMonData(mon, MON_DATA_HP_EV + i, NULL);
+
+	return total;
 }

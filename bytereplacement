@@ -116,7 +116,8 @@
 0813DB30 70 F3 03 02
 ##Remove Old Item Picture Find Code
 080F6F08 03 D1 28 1C 03 21 0D F7
-
+##Remove Old Whiteout screen fix
+0807F53A 02 E0 54 B5 41 08 0D 49
 
 ##Save Expansion
 080DA5E0 FF 20 70 47
@@ -354,6 +355,10 @@
 08108DEA A0 88
 08108E0A A0 88
 08108E4C 70 BD
+
+##Helpers For Sand Footstep Noise
+080DB9A0 30 B5
+080DBA00 30 BC
 
 ##Expanded Pokedex RAM##
 08104B00 C0 46

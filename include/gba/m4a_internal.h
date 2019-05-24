@@ -195,7 +195,7 @@ struct SongHeader
     u8 priority;
     u8 reverb;
     struct ToneData *tone;
-    u8 *part[1];
+    const u8* part[];
 };
 
 struct PokemonCrySong
@@ -325,7 +325,7 @@ struct MusicPlayer
 
 struct Song
 {
-    struct SongHeader *header;
+    const struct SongHeader *header;
     u16 ms;
     u16 me;
 };
@@ -383,7 +383,6 @@ void MPlayMain(void);
 void RealClearChain(void *x);
 
 void MPlayContinue(struct MusicPlayerInfo *mplayInfo);
-void MPlayStart(struct MusicPlayerInfo *mplayInfo, struct SongHeader *songHeader);
 void m4aMPlayStop(struct MusicPlayerInfo *mplayInfo);
 void FadeOutBody(struct MusicPlayerInfo *mplayInfo);
 void TrkVolPitSet(struct MusicPlayerInfo *mplayInfo, struct MusicPlayerTrack *track);

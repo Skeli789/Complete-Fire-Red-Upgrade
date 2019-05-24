@@ -7,6 +7,7 @@
 #include "../include/field_poison.h"
 #include "../include/fldeff_misc.h"
 #include "../include/link.h"
+#include "../include/m4a.h"
 #include "../include/map_scripts.h"
 #include "../include/metatile_behavior.h"
 #include "../include/overworld.h"
@@ -17,6 +18,7 @@
 #include "../include/sound.h"
 
 #include "../include/constants/flags.h"
+#include "../include/constants/maps.h"
 #include "../include/constants/region_map_sections.h"
 #include "../include/constants/songs.h"
 #include "../include/constants/trainers.h"
@@ -1054,6 +1056,22 @@ bool8 WhiteoutLogic(void)
 #endif
 }
 
+#define sText_ScurriedHome (const u8*) 0x841B5B6
+extern const u8 gText_ScurriedToNearestHealer[];
+
+const u8* LoadProperWhiteoutString(const u8* string)
+{
+#ifdef SET_HEALING_PLACE_HACK
+	if (string == sText_ScurriedHome)
+	{
+		if (gSaveBlock1->location.mapNum != MAP_NUM(PLAYER_HOME)
+		||  gSaveBlock1->location.mapGroup != MAP_GROUP(PLAYER_HOME))
+			string = gText_ScurriedToNearestHealer;
+	}		
+#endif
+	return string;
+}
+
 bool8 IsAutoRunEnabled(void)
 {
 	#ifdef AUTO_RUN_FLAG
@@ -1258,6 +1276,24 @@ bool8 InTanobyRuins(void)
 	#endif
 	
 	return FALSE;
+}
+
+void PlayGrassFootstepNoise(void)
+{
+	#ifdef UNBOUND
+		PlaySE(SE_LEAVES);
+	#elif defined FOOTSTEP_NOISES
+		PlaySE(SE_LEAVES);
+	#endif
+}
+
+void PlaySandFootstepNoise(void)
+{
+	#ifdef UNBOUND
+		PlaySE(SE_MUD_SLAP);
+	#elif defined FOOTSTEP_NOISES
+		PlaySE(SE_MUD_SLAP);
+	#endif
 }
 
 //Follow Me Updates/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

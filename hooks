@@ -290,8 +290,9 @@ FindOrLoadPalette 08008928 1
 PaletteNeedsFogBrightening 0807A748 1
 LoadCloudOrSandstormPalette 0807ABC0 1
 
-## Whiteout Hack
-DynamicWhiteoutMap 080bfd54 0
+##Whiteout Hack
+DynamicWhiteoutMap 080BFD54 0
+WhiteoutScreenFix 0807F542 0
 
 ## Summary Screen Changing
 SummaryScreenWrapAround 0813b20c 1
@@ -452,3 +453,8 @@ FixWindowTemplates 080E46B4 0
 
 ##Triple Layer Blocks
 #DrawBlockHook 0805A9BC 1
+
+##Footstep Sounds
+GrassFootstepNoiseHook 80DB3C8 1
+VeryTallGrassFootstepNoiseHook 80DB678 1
+SandFootstepNoiseHook 80DB9C4 1

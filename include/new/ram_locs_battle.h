@@ -31,9 +31,9 @@
 /*u32*/ #define gBattleTypeFlags 		*((u32*) 0x2022B4C)
 /*u8*/  #define gBattleTerrain			*((u8*) 0x2022B50)
 
-typedef u8 Buffer_t[0x200];
-/*u8*/  #define gBattleBufferA ((Buffer_t*) 0x2022BC4) //u8 gBattleBufferA[MAX_BATTLERS_COUNT][0x200];
-/*u8*/  #define gBattleBufferB ((Buffer_t*) 0x20233C4)
+typedef u8 Battle_Buffer_T[0x200];
+/*u8*/  #define gBattleBufferA ((Battle_Buffer_T*) 0x2022BC4) //u8 gBattleBufferA[MAX_BATTLERS_COUNT][0x200];
+/*u8*/  #define gBattleBufferB ((Battle_Buffer_T*) 0x20233C4)
 
 /*u8*/  #define gActiveBattler 			(*((u8*) 0x2023BC4))
 /*u32*/ #define gBattleExecBuffer 		(*((u32*) 0x2023BC8))

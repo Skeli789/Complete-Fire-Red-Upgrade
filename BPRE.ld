@@ -1168,6 +1168,7 @@ PlaySE = 0x80722CC | 1;
 IsSEPlaying = 0x80723E0 | 1;
 m4aSongNumStop = 0x81DD1C0 | 1;
 m4aMPlayContinue = 0x81DD26C | 1;
+MPlayStart = 0x81DD858 | 1;
 m4aMPlayStop = 0x81DD93C | 1;
 m4aMPlayVolumeControl = 0x81DE0E0 | 1;
 

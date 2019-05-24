@@ -111,7 +111,7 @@ enum //These vars need to be one after the other (hence the enum)
 #define NUM_TRAINER_CLASSES 107 //Vanilla FR has 107
 #define EVOS_PER_MON 5 //The number of maximum evolutions per Pokemon. Vanilla FR has 5
 #define EV_CAP 252 //Also change this in the file “asm_defines.s” found in the root
-#define POWER_ITEM_EV_YIELD 4	// set to 8 for Gen 7 mechanic 
+#define POWER_ITEM_EV_YIELD 8 //Set to 4 for older mechanic 
 
 #define DUSK_BALL_MULTIPLIER 30 //Change this line to 35 to make the catch rate for the Dusk Ball 3.5x like before Gen 7
 #define STANDARD_IV 10 //Change this to be the number of IVs Pokemon owned by random trainers should have (all stats will have this number)
@@ -121,6 +121,8 @@ enum //These vars need to be one after the other (hence the enum)
 #define CREATE_ROAMER_WITH_X_PERFECT_IVS 3 //Change this to the number of set 31 IVs you'd like roaming pokemon to have.
 #define EGG_HATCH_LEVEL 1 //The level eggs hatch at
 #define AI_TRY_TO_KILL_RATE 50 //In battles against a trainer with AI flags of 1, the AI will try to use a move to knock out the opponents XX percent of the time
+
+#define MAP_PLAYER_HOME ((4 << 8) | 0) //The map bank and map number of the player's home
 
 /*===== Badge Obedience Options =====*/
 #define BASE_OBEDIENCE_LEVEL	10
@@ -183,8 +185,10 @@ enum //These vars need to be one after the other (hence the enum)
 //#define GEN_4_PLAYER_RUNNING_FIX //Uncommmenting this line will increase the lag between frames as the player OW runs, to simulate a more accurate Gen 4 running effect
 #define EXPAND_MOVE_REMINDER_DESCRIPTION //Keep this defined to have 5 lines for the move description as opposed to 4 in the move reminder menu
 #define ITEM_PICTURE_ACQUIRE //Item images will be shown when the player finds or obtains an item.
-#define EXPANDED_TEXT_BUFFERS	// keep thid defined to enable FD 07 through FD 0D to load dynamic text. See include/new/ram_locs.h for RAM defs
 #define TRIPLE_LAYER_BLOCKS  // keep this defined to enable triple layer blocks
+
+#define EXPANDED_TEXT_BUFFERS //Expands the number of scripting string buffers available. Comment out to keep original buffer text
+#define FOOTSTEP_NOISES //Sounds will be played when any object moves through grass or across sand
 
 /*===== Misc Battle Effect Options =====*/
 //#define OLD_BURN_DAMAGE //Uncomment this line if you want burn damage to do 1/8 of max health instead of 1/16

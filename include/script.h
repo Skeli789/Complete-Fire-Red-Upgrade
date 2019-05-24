@@ -26,7 +26,7 @@ struct ScriptContext
     u8 keypad_override_direction;	// Locks player movement.
 };
 
-#define sScriptStringVars ((u8**) *((u32*) 0x806BF38)) //Text buffers
+extern u8* sScriptStringVars[]; //Text buffers
 #define gTextColourCurrent (*((u16*) 0x20370DA))
 #define gTextColourBackup (*((u16*) 0x20370DC))
 
