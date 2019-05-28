@@ -1,8 +1,8 @@
 #org @gText_UsedVar2WildStronger
-[FD][01] used the\n[FD][03].\pThe chance of encountering strong\nwild Pok\emon in this area increased.[FC][09]
+[BUFFER][01] used the\n[BUFFER][03].\pThe chance of encountering strong\nwild Pok\emon in this area increased.[FC][09]
 
 #org @gText_UsedVar2WildWeaker
-[FD][01] used the\n[FD][03].\pThe chance of encountering weak\nwild Pok\emon in this area increased.[FC][09]
+[BUFFER][01] used the\n[BUFFER][03].\pThe chance of encountering weak\nwild Pok\emon in this area increased.[FC][09]
 
 #org @gText_AutoRunEnable
 [GREEN]Auto-run[BLACK] has been [GREEN]enabled[BLACK].
@@ -11,19 +11,19 @@
 [GREEN]Auto-run[BLACK] has been [GREEN]disabled[BLACK].
 
 #org @gText_PoisonSurvial
-[FD][02] survived the Poison.\nThe Poison faded away!
+[BUFFER][02] survived the Poison.\nThe Poison faded away!
 
 #org @gText_ThrowInOnePremierBall
-You also get a [FD][03] as\nan added bonus.[FC][09]
+You also get a [BUFFER][03] as\nan added bonus.[FC][09]
 
 #org @gText_ThrowInPremierBalls
-You also get [FD][02] [FD][03]s as\nan added bonus.[FC][09]
+You also get [BUFFER][02] [BUFFER][03]s as\nan added bonus.[FC][09]
 
 #org @gText_AskUseAnotherRepel
 The repellent's effect wore off!\nWould you like to use another one?
 
 #org @gText_UsedAnotherRepel
-[FD][01] used a [FD][04].
+[BUFFER][01] used a [BUFFER][04].
 
 #org @gText_RepelWoreOff
 The repellent's effect wore off!
@@ -40,7 +40,7 @@ Obtained a [BUFFER][03]!\nIt contains [BUFFER][02].
 //Mart Strings
 
 #org @gText_SingleTmBuy
-[FD][02] [FD][04],\nThat will be \$[FD][03]. Okay?
+[BUFFER][02] [BUFFER][04],\nThat will be \$[BUFFER][03]. Okay?
 
 #org @gText_AlreadyOwnTM
 You already own that TM.[FC][09]

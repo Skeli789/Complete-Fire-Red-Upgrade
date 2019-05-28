@@ -1135,7 +1135,7 @@ s32 DoPoisonFieldEffect(void)
 					mon->condition = STATUS1_NONE;
 					++numSurvived;
 					ScriptContext1_SetupScript(SystemScript_PoisonSurvial);
-					Var8004 = i;
+					GetMonData(&gPlayerParty[i], MON_DATA_NICKNAME, gStringVar1);
 					break;
 				}
 			#else
