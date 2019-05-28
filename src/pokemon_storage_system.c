@@ -86,7 +86,7 @@ typedef u8 BoxNameT[9];
 
 //#define sPSSData ((struct PokemonStorageSystemData*) *((u32*) 0x20397B0))
 
-#define gDisposableBoxMon ((struct BoxPokemon*) 0x203F700)
+#define gDisposableBoxMon ((struct BoxPokemon*) 0x2023BE4) //Reuse Battle Data
 
 struct CompressedPokemon* const sPokemonBoxPtrs[TOTAL_BOXES_COUNT] =
 {
