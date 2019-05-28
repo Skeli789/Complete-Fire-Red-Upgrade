@@ -152,6 +152,11 @@ u32 GetAIFlagsInBattleFrontier(unusedArg u8 bank)
 	return AI_SCRIPT_CHECK_BAD_MOVE;
 }
 
+u8 GetNumMonsOnTeamInFrontier(void)
+{
+	return MathMin(MathMax(1, VarGet(BATTLE_TOWER_POKE_NUM)), PARTY_SIZE);
+}
+
 //@Details: Generates a tower trainer id and name for the requested trainer.
 //@Inputs:
 //		Var8000: 0 = Trainer Opponent A

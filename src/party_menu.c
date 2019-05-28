@@ -411,7 +411,7 @@ static const u8* const sOrderStrings[PARTY_SIZE] =
 
 u8 ChoosePokemon_LoadMaxPKMNStr(const u8** strPtr, bool8 loadString)
 {
-	u8 max = MathMin(MathMax(1, VarGet(BATTLE_TOWER_POKE_NUM)), 6);
+	u8 max = GetNumMonsOnTeamInFrontier();
 
 	if (FlagGet(BATTLE_TOWER_FLAG))
 	{
@@ -583,4 +583,38 @@ static void DisplayPartyPokemonPriorityText(u8 stringID, struct Struct203B0B4* p
     }
     if (c != 2)
         WindowPrint(ptr->windowId, 1, ptr->unk0->unk1C, ptr->unk0->unk1D, (void*) 0x8459FFC, 0, sOrderStrings[stringID]);
+}
+
+//Run when "Enter" is pressed
+u8 CanPokemonSelectedBeEnteredInBattleTower(void)
+{
+    u8 i, j;
+    u8 tier = VarGet(BATTLE_TOWER_TIER);
+    struct Pokemon* party = gPlayerParty;
+    u8 maxLength = GetNumMonsOnTeamInFrontier();
+
+    if (gSelectedOrderFromParty[maxLength - 1] == 0) //No mon's entered
+    {
+        if (maxLength == 1)
+            return 14;
+
+        ConvertIntToDecimalStringN(gStringVar1, maxLength, 0, 1);
+        return 17;
+    }
+
+    for (i = 0; i < maxLength - 1; ++i)
+    {
+        u16 species = GetMonData(&party[gSelectedOrderFromParty[i] - 1], MON_DATA_SPECIES, NULL);
+        u16 item = GetMonData(&party[gSelectedOrderFromParty[i] - 1], MON_DATA_HELD_ITEM, NULL);
+        for (j = i + 1; j < maxLength; j++)
+        {
+            if (species == GetMonData(&party[gSelectedOrderFromParty[j] - 1], MON_DATA_SPECIES, NULL))
+                return 18;
+            if (item != 0 && (tier == BATTLE_TOWER_STANDARD || tier == BATTLE_TOWER_MIDDLE_CUP)
+			&& item == GetMonData(&party[gSelectedOrderFromParty[j] - 1], MON_DATA_HELD_ITEM, NULL))
+                return 19;
+        }
+    }
+
+    return 0xFF;
 }

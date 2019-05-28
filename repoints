@@ -90,6 +90,8 @@ sText_BlackedOut 083FE4F0
 gText_UsedVar2WildStronger 080A1B3C
 gText_UsedVar2WildWeaker 080A1AEC
 
+gText_PokemonAreNeeded 0845A32C
+
 ##Gen 4 Player OW Running Fix
 gEventObjectImageAnim_RunSouth 083A3460
 gEventObjectImageAnim_RunNorth 083A3464

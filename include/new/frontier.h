@@ -10,6 +10,7 @@ void CopyFrontierTrainerText(u8 whichText, u16 trainerId, u8 battlerNum);
 u8 GetFrontierTrainerFrontSpriteId(u16 trainerId, u8 battlerNum);
 u16 TryGetSpecialFrontierTrainerMusic(u16 trainerId, u8 battlerNum);
 u32 GetAIFlagsInBattleFrontier(unusedArg u8 bank);
+u8 GetNumMonsOnTeamInFrontier(void);
 u16 GetCurrentBattleTowerStreak(void);
 
 //Functions Hooked In:

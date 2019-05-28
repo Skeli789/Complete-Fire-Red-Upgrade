@@ -22,6 +22,7 @@
 
 @azuril13's if command becuase it's nice
 .equ _goto,	0x06
+.equ _jump, 0x06
 .equ _call,	0x07
 
 .macro if condition goto_or_call script
@@ -87,6 +88,16 @@
 .byte 0x8
 .endm
 
+.macro multichoiceoption text num
+.byte 0x16 @setvar
+.2byte 0x8006
+.2byte \num
+.byte 0xF, 0 @loadpointer
+.4byte \text
+.byte 0x25 @special
+.2byte 0x25
+.endm
+
 @Commands
 .macro nop
 .byte 0x0
@@ -110,6 +121,11 @@
 .endm
 
 .macro goto goto_destination
+.byte 0x5
+.word \goto_destination
+.endm
+
+.macro jump goto_destination
 .byte 0x5
 .word \goto_destination
 .endm

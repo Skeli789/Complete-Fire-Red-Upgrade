@@ -206,7 +206,7 @@ void HandleInputChooseMove(void)
     }
     else if (gMain.newKeys & SELECT_BUTTON)
     {
-        if (gNumberOfMovesToChoose > 1 && !(gBattleTypeFlags & BATTLE_TYPE_LINK) && !gNewBS->ZMoveData->viewing && !gNewBS->ZMoveData->viewingDetails)
+        if (gNumberOfMovesToChoose > 1 && !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_FRONTIER)) && !gNewBS->ZMoveData->viewing && !gNewBS->ZMoveData->viewingDetails)
         {
             MoveSelectionCreateCursorAt(gMoveSelectionCursor[gActiveBattler], 29);
 
