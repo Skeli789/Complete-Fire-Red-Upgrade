@@ -184,7 +184,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 				gProtectStructs[gBankTarget].spikyshield_damage = 0;
 				if (gBattleMons[gBankAttacker].hp && ABILITY(gBankAttacker) != ABILITY_MAGICGUARD)
 				{
-					gBattleMoveDamage = MathMax(1, gBattleMons[gBankAttacker].hp / 8);
+					gBattleMoveDamage = MathMax(1, gBattleMons[gBankAttacker].maxHP / 8);
 					BattleScriptPushCursor();
 					gBattlescriptCurrInstr = BattleScript_SpikyShield;			
 					effect = 1;

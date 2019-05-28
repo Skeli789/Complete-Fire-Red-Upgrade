@@ -165,6 +165,9 @@ static item_t FindPlayerKeystone(void)
             return KeystoneTable[i];
         }
     }
+	
+	if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
+		return ITEM_MEGA_RING; //Give player Mega Ring in Frontier
 
     return ITEM_NONE;
 }
