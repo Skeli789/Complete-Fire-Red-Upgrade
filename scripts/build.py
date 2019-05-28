@@ -99,7 +99,7 @@ def process_assembly(in_file):
 		
 	except FileNotFoundError:
 		print('Error! The assembler could not be located.\nAre you sure you set up your path to devkitPro/devkitARM/bin correctly?')
-		sys.exit()
+		sys.exit(1)
 		
 	return out_file
 	
@@ -117,7 +117,7 @@ def process_c(in_file):
 
 	except FileNotFoundError:
 		print('Error! The C compiler could not be located.\nAre you sure you set up your path to devkitPro/devkitARM/bin correctly?')
-		sys.exit()
+		sys.exit(1)
 	
 	return out_file
 
@@ -214,8 +214,12 @@ def run_glob(globstr, fn):
 		return run_glob_strings(globstr, fn)
 	
 	if sys.version_info > (3, 4):
-		files = glob(os.path.join(SRC, globstr), recursive = True)
-		return map(fn, files)
+		try:
+			files = glob(os.path.join(SRC, globstr), recursive = True)
+			return map(fn, files)
+		except TypeError:
+			print("Error compiling. Please make sure Python has been updated to the latest version.")
+			sys.exit(1)
 	else:
 		files = Path(SRC).glob(globstr)
 		return map(fn, map(str, files))
