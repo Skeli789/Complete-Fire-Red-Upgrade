@@ -484,8 +484,8 @@ FreeBallTiles = 0x80F1198 | 1;
 GetEggSpecies = 0x8045970 | 1;
 RemoveIVIndexFromList = 0x8045A78 | 1;
 RemoveEggFromDayCare = 0x8045F70 | 1;
-AlterEggSpeciesWithIncenseItem = 0x8045FA0 | 1;
-DetermineEggSpeciesAndParentSlots = 0x8046000 | 1;
+//AlterEggSpeciesWithIncenseItem = 0x8045FA0 | 1;
+//DetermineEggSpeciesAndParentSlots = 0x8046000 | 1;
 SetInitialEggData = 0x8046208 | 1;
 ShouldEggHatch = 0x80463B8 | 1;
 
@@ -657,6 +657,7 @@ MapGridGetMetatileIdAt = 0x8058E48 | 1;
 MetatileBehavior_GetLowerBytes = 0x8058F1C | 1;
 MapGridGetMetatileField = 0x8058F48 | 1;
 MapGridGetMetatileBehaviorAt = 0x8058F78 | 1;
+save_serialize_map = 0x80590D8 | 1;
 ApplySpecialMapPalette = 0x80598CC | 1;
 MetatileBehavior_IsSandOrDeepSand = 0x8059B74 | 1;
 MetatileBehavior_IsSurfableWaterOrUnderwater = 0x8059CA4 | 1;
@@ -958,6 +959,7 @@ TryWriteSector = 0x80D99D8 | 1;
 DoReadFlashWholeSection = 0x80DA190 | 1;
 CalculateChecksum = 0x80DA1A8 | 1;
 UpdateSaveAddresses = 0x80DA1D4 | 1;
+TrySavingData = 0x80DA364 | 1;
 
 /* GPU Regs Functions */
 SetGpuReg = 0x8000A38 | 1;
