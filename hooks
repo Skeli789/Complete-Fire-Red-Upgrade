@@ -6,7 +6,7 @@ EmitChooseMoveHook 800E524 3
 ##Battle Terrain Functions
 LoadBattleBG_TerrainID 800FC2C 0
 LoadBattleBG_Background 800F260 1
-LoadBattleBG_EntryOverlay 800F2AC 1
+DrawBattleEntryBackground 800FAE0 0
 
 ##Other Battle Stuff
 BuildTrainerPartyHook 800FF7E 0
@@ -129,6 +129,7 @@ CursorCb_NoEntry 8124278 1
 LoadMaxNumPokemonChooseBattleTowerStringHook 8124184 0
 CursorCb_Enter 8124154 1
 IsMonAllowedInBattleTower 8127550 1
+CanPokemonSelectedBeEnteredInBattleTower 81275F8 0
 ExpandedAbilityNamesSummaryScreen 8136714 1
 
 ##Battle Animation Hooks

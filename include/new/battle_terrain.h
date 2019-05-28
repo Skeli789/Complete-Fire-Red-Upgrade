@@ -9,12 +9,13 @@
 
 //Exported Functions
 bool8 MetatileBehavior_IsIce(u8 metatileBehavior);
+bool8 IsTerrainMoveIndoors(void);
 
 //Hooked In Functions
 u8 BattleSetup_GetTerrainId(void);
 u8 LoadBattleBG_TerrainID(void);
 void LoadBattleBG_Background(u8 terrainId);
-void LoadBattleBG_EntryOverlay(u8 terrainId);
+void DrawBattleEntryBackground(void);
 
 //Exported Structs
 struct BattleBackground

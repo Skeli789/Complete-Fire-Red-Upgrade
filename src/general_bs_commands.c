@@ -3127,7 +3127,10 @@ u16 GetNaturePowerMove(void)
 			break;
 
 		default:
-			move = gTerrainTable[gBattleTerrain + 4].naturePowerMove;
+			if (IsTerrainMoveIndoors())
+				move = gTerrainTable[BATTLE_TERRAIN_INSIDE + 4].naturePowerMove;
+			else
+				move = gTerrainTable[gBattleTerrain + 4].naturePowerMove;
 	}
 	
 	return move;
@@ -3354,7 +3357,10 @@ void atkE4_getsecretpowereffect(void) {
 			break;
 
 		default:
-			gBattleCommunication[MOVE_EFFECT_BYTE] = gTerrainTable[gBattleTerrain + 4].secretPowerEffect;
+			if (IsTerrainMoveIndoors())
+				gBattleCommunication[MOVE_EFFECT_BYTE] = gTerrainTable[BATTLE_TERRAIN_INSIDE + 4].secretPowerEffect;
+			else
+				gBattleCommunication[MOVE_EFFECT_BYTE] = gTerrainTable[gBattleTerrain + 4].secretPowerEffect;
 	}
     gBattlescriptCurrInstr++;
 }
@@ -3564,7 +3570,10 @@ u8 GetCamouflageType(void)
 			break;
 
 		default:
-			type = gTerrainTable[gBattleTerrain + 4].camouflageType;
+			if (IsTerrainMoveIndoors())
+				type = gTerrainTable[BATTLE_TERRAIN_INSIDE + 4].camouflageType;
+			else
+				type = gTerrainTable[gBattleTerrain + 4].camouflageType;
 	}
 
 	return type;
