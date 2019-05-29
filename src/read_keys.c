@@ -54,18 +54,19 @@ static void TryForcedScript(u8 keyFlag, u16 currKeys)
 	ScriptContext1_SetupScript(gKeypadSetter->scriptToRun);
 }
 
+
 static u16 TryForcedKey(u8 keyFlag, u16 currKeys)
 {
 	if (!(keyFlag & 0x1))
 		return currKeys;
 
-	u8 keyCounter = gKeypadSetter->keyForcingCounter;
-	if (keyCounter == 0)
+	if (gKeypadSetter->keyForcingCounter == 0)
 		return currKeys;
 
 	gKeypadSetter->keyForcingCounter -= 1;
 	return (~(gKeypadSetter->keyMapToForce) & currKeys);
 }
+
 
 static u16 TryIgnoringKeys(u8 keyFlag, u16 currKeys)
 {
@@ -100,13 +101,12 @@ void ReadKeys(void)
     // BUG: Key repeat won't work when pressing L using L=A button mode
     // because it compares the raw key input with the remapped held keys.
     // Note that newAndRepeatedKeys is never remapped either.
-
-    if (keyInput != 0 && gMain.heldKeys == keyInput)
+	
+	if (keyInput != 0 && gMain.heldKeys == keyInput)
     {
-        gMain.keyRepeatCounter--;
-
+		gMain.keyRepeatCounter--;
         if (gMain.keyRepeatCounter == 0)
-        {
+        {			
             gMain.newAndRepeatedKeys = keyInput;
             gMain.keyRepeatCounter = gKeyRepeatContinueDelay;
         }
@@ -114,9 +114,9 @@ void ReadKeys(void)
     else
     {
         // If there is no input or the input has changed, reset the counter.
-        gMain.keyRepeatCounter = gKeyRepeatStartDelay;
-    }
-
+        gMain.keyRepeatCounter = gKeyRepeatStartDelay;	
+	}
+	
     gMain.heldKeysRaw = keyInput;
     gMain.heldKeys = gMain.heldKeysRaw;
 

@@ -13,14 +13,14 @@ DrawBlockHook:
 	lsl r2, r2, #0x10
 	lsr r2, r2, #0x10
 	cmp r0, #0x3
-	bhi SkipTilemap
+	bhi SkipTripleLayer
 	lsl r0, r0, #0x2
 	ldr r3, =sOverworldBlockFuncs
 	add r0, r0, r3
 	ldr r0, [r0]
 	mov pc, r0
 	
-SkipTilemap:
+SkipTripleLayer:
 	ldr r0, =(0x0805AABE +1)
 	bx r0
 		
