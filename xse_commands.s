@@ -977,7 +977,7 @@
 .macro bufferstring bufferstring_buffer bufferstring_pointer
 .byte 0x85
 .byte \bufferstring_buffer
-.hword \bufferstring_pointer
+.word \bufferstring_pointer
 .endm
 
 .macro pokemart pokemart_pointer

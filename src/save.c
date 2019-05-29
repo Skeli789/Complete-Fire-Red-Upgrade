@@ -7,7 +7,7 @@
 // Each 4 KiB flash sector contains 3968 bytes of actual data followed by a 128 byte footer
 #define SECTOR_DATA_SIZE 0xFF0
 #define SECTOR_FOOTER_SIZE 128
-#define NUM_SECTORS_PER_SAVE_SLOT 14
+#define SECTOR_SAVE_SLOT_LENGTH 14
 #define PLAYER_NAME_LENGTH 8
 #define FILE_SIGNATURE 0x08012025
 #define gSaveBlockParasite 0x0203B174
@@ -40,9 +40,9 @@ const struct SaveSectionOffset SaveSectionOffsets[] =
 /* Any save sector that isn't full, we'll plop our data of these sizes in there */
 static const u16 SaveBlockParasiteSizes[3] =
 {
-        SECTOR_DATA_SIZE - 0xF24, // 0xCC
-        SECTOR_DATA_SIZE - 0xD98, // 0x258
-        SECTOR_DATA_SIZE - 0x450, // 0xBA0
+    SECTOR_DATA_SIZE - 0xF24, // 0xCC
+    SECTOR_DATA_SIZE - 0xD98, // 0x258
+    SECTOR_DATA_SIZE - 0x450, // 0xBA0
 };
 
 
@@ -66,9 +66,9 @@ static void LoadSector30And31()
     DoReadFlashWholeSection(31, saveBuffer);
     startLoc += SECTOR_DATA_SIZE;
 	#ifdef UNBOUND
-    Memcpy((void*)(startLoc), saveBuffer, 0xBD8);
+    Memcpy((void*) startLoc, saveBuffer, 0xBD8);
 	#else
-	Memcpy((void*)(startLoc), saveBuffer, SECTOR_DATA_SIZE);
+	Memcpy((void*) startLoc, saveBuffer, SECTOR_DATA_SIZE);
 	#endif
 }
 
@@ -79,6 +79,7 @@ static void SaveSector30And31()
     u32 startLoc = gSaveBlockParasite + parasiteSize;
     Memcpy(saveBuffer->data, (void*)(startLoc), SECTOR_DATA_SIZE);
     TryWriteSector(30, saveBuffer->data);
+
     /* Write sector 31 */
     Memset(saveBuffer, 0, sizeof(struct SaveSection));
     startLoc += SECTOR_DATA_SIZE;
@@ -149,54 +150,66 @@ static void LoadParasite()
 }
 
 // 080D9E54
-u8 HandleLoadSector(u16 a1, const struct SaveBlockChunk* chunks)
+u8 HandleLoadSector(unusedArg u16 a1, const struct SaveSectionLocation* location)
 {
-	++a1; //So the compiler doesn't complain
-	
-    struct SaveSection* saveSection = gFastSaveSection;
-    u16 sector = NUM_SECTORS_PER_SAVE_SLOT * ((*gSaveCounter) % 2);
+	u16 id;
+    u16 sector = SECTOR_SAVE_SLOT_LENGTH * (gSaveCounter % 2);
     bool8 checksumStatus = FALSE;
-    for (u8 i = 0; i < NUM_SECTORS_PER_SAVE_SLOT; i++) {
-        DoReadFlashWholeSection(i + sector, saveSection);
-        u16 id = saveSection->id;
+
+    for (u8 i = 0; i < SECTOR_SAVE_SLOT_LENGTH; ++i)
+	{
+        DoReadFlashWholeSection(i + sector, gFastSaveSection);
+
+        id = gFastSaveSection->id;
         if (id == 0)
-            *gFirstSaveSector = i;
-        u16 checksum = CalculateChecksum(saveSection->data, chunks[id].size);
-        checksumStatus = checksum == saveSection->checksum;
-        checksumStatus = checksum && saveSection->signature == FILE_SIGNATURE;
-        if (checksumStatus) {
-            Memcpy(chunks[id].data, saveSection->data, chunks[id].size);
+            gLastWrittenSector = i;
+
+        u16 checksum = CalculateSaveChecksum(gFastSaveSection->data, location[id].size);
+        if (gFastSaveSection->security == FILE_SIGNATURE
+		&&  gFastSaveSection->checksum == checksum)
+		{
+            Memcpy(location[id].data, gFastSaveSection->data, location[id].size);
             LoadParasite();
+			checksumStatus = TRUE;
         }
     }
-    // start of the game don't load jibberish into block
+
+    //Start of the game don't load jibberish into block
     if (checksumStatus)
         LoadSector30And31();
+
     return 1;
 }
 
 // 080D9870
-u8 HandleWriteSector(u16 chunkId, const struct SaveBlockChunk* chunks)
+u8 HandleWriteSector(u16 chunkId, const struct SaveSectionLocation* location)
 {
-    struct SaveSection* saveSection = gFastSaveSection;
-    // get nonbackup sector slot
-    u16 sectorNum = chunkId + *gFirstSaveSector;
-    sectorNum %= NUM_SECTORS_PER_SAVE_SLOT;
-    sectorNum += NUM_SECTORS_PER_SAVE_SLOT * ((*gSaveCounter) % 2);
-    u8* chunkData = chunks[chunkId].data;
-    u16 chunkSize = chunks[chunkId].size;
+    u16 sector;
+    u8* data;
+    u16 size;
 
-    /* write to save section */
-    // clear
-    Memset(saveSection, 0, sizeof(struct SaveSection));
-    saveSection->id = chunkId;
-    saveSection->signature = FILE_SIGNATURE;
-    saveSection->counter = (*gSaveCounter);
-    Memcpy(saveSection->data, chunkData, chunkSize);
-    saveSection->checksum = CalculateChecksum(chunkData, chunkSize);
-    // write data to leftover save section
+    //Get nonbackup sector slot
+    sector = chunkId + gLastWrittenSector;
+    sector %= SECTOR_SAVE_SLOT_LENGTH;
+    sector += SECTOR_SAVE_SLOT_LENGTH * (gSaveCounter % 2);
+	
+    data = location[chunkId].data;
+    size = location[chunkId].size;
+
+	//Clear save section
+	Memset(gFastSaveSection, 0, sizeof(struct SaveSection));
+
+    gFastSaveSection->id = chunkId;
+    gFastSaveSection->security = FILE_SIGNATURE;
+    gFastSaveSection->counter = gSaveCounter;
+
+    Memcpy(gFastSaveSection->data, data, size);
+
+    gFastSaveSection->checksum = CalculateSaveChecksum(data, size);
+
+    //Write data to leftover save section
     SaveParasite();
-    u8 retVal = TryWriteSector(sectorNum, saveSection->data);
+    u8 retVal = TryWriteSector(sector, gFastSaveSection->data);
     SaveSector30And31();
     return retVal;
 }
@@ -214,7 +227,6 @@ u8 HandleSavingData(u8 saveType)
     gMain.vblankCounter1 = NULL;
     UpdateSaveAddresses();
     switch (saveType) {
-            // fallthrough
         case SAVE_NORMAL: // normal save. also called by overwriting your own save.
         default:
         {
@@ -224,15 +236,26 @@ u8 HandleSavingData(u8 saveType)
         }
         case SAVE_LINK: // _081532C4
         {
-            SaveSerializedGame();
-            for(u8 i = 0; i < 5; i++) {
-                SaveWriteToFlash(i, gRamSaveSectionLocations);
-            }
-            break;
+			SaveSerializedGame();
+			for(u8 i = 0; i < 5; i++)
+				SaveWriteToFlash(i, gRamSaveSectionLocations);
+			break;
         }
+		//case SAVE_EREADER:
+			//Removed for more save space
+		case SAVE_HALL_OF_FAME: // hall of fame.
+			if (GetGameStat(GAME_STAT_ENTERED_HOF) < 999)
+				IncrementGameStat(GAME_STAT_ENTERED_HOF);
+			SaveSerializedGame();
+			SaveWriteToFlash(0xFFFF, gRamSaveSectionLocations);
+			HandleWriteSectorNBytes(SECTOR_ID_HOF_1, gDecompressionBuffer, 0xF80);
+			HandleWriteSectorNBytes(SECTOR_ID_HOF_2, gDecompressionBuffer + 0xF80, 0xF80);
+			break;
+	
         case SAVE_OVERWRITE_DIFFERENT_FILE:
         {
-            for (u8 i = (14 * 2 + 0); i < 32; i++) {
+            for (u8 i = SECTOR_ID_HOF_1; i < SECTORS_COUNT; i++)
+			{
                 u32 *t = (u32*)0x03007430;
                 EraseFlash EraseFlashSector = (EraseFlash)(*t);
                 CallSomething(i, EraseFlashSector);
