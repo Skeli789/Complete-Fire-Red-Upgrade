@@ -625,3 +625,9 @@ WhiteoutScreenFix:
 PrintWhiteoutTextScreen:
 	ldr r4, =0x807F3A4 | 1
 	bx r4
+
+.pool
+@0x803401E with r4
+TryHandleLaunchBattleTableAnimationHook:
+	bl TryHandleLaunchBattleTableAnimation
+	pop {r4-r7,pc}

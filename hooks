@@ -133,6 +133,7 @@ CanPokemonSelectedBeEnteredInBattleTower 81275F8 0
 ExpandedAbilityNamesSummaryScreen 8136714 1
 
 ##Battle Animation Hooks
+TryHandleLaunchBattleTableAnimationHook 803401E 4
 UpdateOamPriorityInAllHealthboxes 804828C 1
 ScriptCmd_loadspritegfx 08072868 0
 ShinyAnimFixHook 080F1792 0

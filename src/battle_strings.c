@@ -15,8 +15,8 @@
 #include "../include/new/helper_functions.h"
 #include "../include/new/mega.h"
 #include "../include/new/multi.h"
+#include "../include/new/set_z_effect.h"
 
-extern u8* ZMoveNames[];
 extern u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
 extern const u8 gAbilityNames[][ABILITY_NAME_LENGTH + 1];
 
@@ -261,7 +261,7 @@ void BufferStringBattle(u16 stringID)
 			if (IsZMove(move)) 
 			{
 				//Load elongated move names for Z-Moves
-				StringCopy(gBattleTextBuff2, ZMoveNames[move - MOVE_BREAKNECK_BLITZ_P]);
+				StringCopy(gBattleTextBuff2, GetZMoveName(move));
 			}
 			else
 				StringCopy(gBattleTextBuff2, gMoveNames[move]);
@@ -524,10 +524,7 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 					if (gNewBS->ZMoveData->active && SPLIT((*gStringInfo)->currentMove) != SPLIT_STATUS) 
 					{
 						//Load elongated move names for Z-Moves
-						if ((*gStringInfo)->currentMove < MOVE_BREAKNECK_BLITZ_P) //Prevent accidental bugs
-							toCpy = ZMoveNames[0];
-						else
-							toCpy = ZMoveNames[(*gStringInfo)->currentMove - MOVE_BREAKNECK_BLITZ_P];
+						toCpy = GetZMoveName((*gStringInfo)->currentMove);
 					}
 					else
 						toCpy = gMoveNames[(*gStringInfo)->currentMove];

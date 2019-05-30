@@ -17,7 +17,6 @@
 
 //TODO: Make The Z-Move Names change colour (look in SetPpNumbersPaletteInMoveSelection)
 
-extern u8* ZMoveNames[];
 extern u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
 extern u8 gTypeNames[][TYPE_NAME_LENGTH + 1];
 extern const u8 sTargetIdentities[];
@@ -518,7 +517,7 @@ static bool8 MoveSelectionDisplayZMove(void)
 			gWindows[3].window.width = 17;
 			gWindows[3].window.height = 4; //Double the size to help super long Z-move names
 			ZMoveSelectionDisplayPower();
-			StringCopy(gDisplayedStringBattle, ZMoveNames[zmove - MOVE_BREAKNECK_BLITZ_P]);
+			StringCopy(gDisplayedStringBattle, GetZMoveName(zmove));
 		}
 		gNewBS->ZMoveData->backupTilemap = gWindows[3].tileData;
 		gWindows[3].tileData = Calloc(0x880); //Because of the size expansion of the tile map, new memory was necessary to display the Z-Move name

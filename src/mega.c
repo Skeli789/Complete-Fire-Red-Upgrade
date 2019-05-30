@@ -16,12 +16,13 @@ static item_t FindTrainerKeystone(u16 trainerId);
 static item_t FindPlayerKeystone(void);
 static item_t FindBankKeystone(u8 bank);
 
-static const item_t KeystoneTable[] = 
+static const item_t sKeystoneTable[] = 
 {
     ITEM_MEGA_RING,
 };
 
-const struct Evolution* CanMegaEvolve(u8 bank, bool8 CheckUBInstead) {
+const struct Evolution* CanMegaEvolve(u8 bank, bool8 CheckUBInstead)
+{
 	#ifndef MEGA_EVOLUTION_FEATURE
 		return NULL;
 	#else
@@ -34,17 +35,20 @@ const struct Evolution* CanMegaEvolve(u8 bank, bool8 CheckUBInstead) {
 	int i, j;
 	
 	for (i = 0; i < EVOS_PER_MON; ++i) {
-		if (evolutions[i].method == EVO_MEGA) {
-			// Ignore reversion information
+		if (evolutions[i].method == EVO_MEGA)
+		{
+			//Ignore reversion information
 			if (evolutions[i].param == 0) continue;
 			
-			// Check for held item
-			if ((!CheckUBInstead && evolutions[i].unknown == MEGA_VARIANT_STANDARD) || (CheckUBInstead && evolutions[i].unknown == MEGA_VARIANT_ULTRA_BURST)) {
+			//Check for held item
+			if ((!CheckUBInstead && evolutions[i].unknown == MEGA_VARIANT_STANDARD) || (CheckUBInstead && evolutions[i].unknown == MEGA_VARIANT_ULTRA_BURST))
+			{
 				if (evolutions[i].param == mon->item)
 					return &evolutions[i];	
 			} 
-			else if (evolutions[i].unknown == MEGA_VARIANT_WISH && !CheckUBInstead) {
-			// Check learned moves
+			else if (evolutions[i].unknown == MEGA_VARIANT_WISH && !CheckUBInstead)
+			{
+			//Check learned moves
 				for (j = 0; j < 4; ++j) {
 					if (evolutions[i].param == mon->moves[j])
 						return &evolutions[i];
@@ -57,18 +61,21 @@ const struct Evolution* CanMegaEvolve(u8 bank, bool8 CheckUBInstead) {
 	#endif
 }
 
-const u8* DoMegaEvolution(u8 bank) {
+const u8* DoMegaEvolution(u8 bank)
+{
+	struct Pokemon* mon = GetBankPartyData(bank);
 	const struct Evolution* evolutions = CanMegaEvolve(bank, FALSE);
 	
 	if (evolutions == NULL) //Check Ultra Burst if no Mega
 		evolutions = CanMegaEvolve(bank, TRUE);
 	
-	if (evolutions != NULL) {
-		u16 species = gBattleMons[bank].species;
+	if (evolutions != NULL)
+	{
+		u16 species = mon->species;
 		DoFormChange(bank, evolutions->targetSpecies, TRUE, TRUE);
 		gBattleMons[bank].ability = GetPartyAbility(GetBankPartyData(bank));
 		gBattleScripting->bank = bank;
-		gLastUsedItem = gBattleMons[bank].item;
+		gLastUsedItem = mon->item;
 		
 		//FD 00's FD 16 FE is reacting to FD 04's FD 01!
 		PREPARE_SPECIES_BUFFER(gBattleTextBuff1, species);
@@ -86,13 +93,16 @@ const u8* DoMegaEvolution(u8 bank) {
 }
 
 
-const u8* DoPrimalReversion(u8 bank, u8 caseId) {
+const u8* DoPrimalReversion(u8 bank, u8 caseId)
+{
 	pokemon_t* mon = GetBankPartyData(bank);
 	const struct Evolution* evolutions = gEvolutionTable[mon->species];
 	u16 item = mon->item;
 
-	for (u8 i = 0; i < EVOS_PER_MON; ++i) {
-		if (evolutions[i].method == EVO_MEGA && evolutions[i].unknown == MEGA_VARIANT_PRIMAL && evolutions[i].param == item) {
+	for (u8 i = 0; i < EVOS_PER_MON; ++i)
+	{
+		if (evolutions[i].method == EVO_MEGA && evolutions[i].unknown == MEGA_VARIANT_PRIMAL && evolutions[i].param == item)
+		{
 			DoFormChange(bank, evolutions[i].targetSpecies, TRUE, TRUE);
 			gBattleMons[bank].ability = GetPartyAbility(mon);
 			
@@ -111,12 +121,11 @@ const u8* DoPrimalReversion(u8 bank, u8 caseId) {
 //should take care of the reversion. This is to prevent bugs if the player
 //gives themselves a Mega or Primal to start the battle.
 void MegaRevert(pokemon_t* party) 
-{					  
-	int i;			  
-	
-	for (i = 0; i < PARTY_SIZE; ++i) {
+{			  
+	int i;
+
+	for (i = 0; i < PARTY_SIZE; ++i)
 		TryRevertMega(&party[i]);
-	}
 }
 
 void TryRevertMega(pokemon_t* mon)
@@ -135,10 +144,10 @@ void TryRevertMega(pokemon_t* mon)
 
 static bool8 IsItemKeystone(u16 item)
 {
-    for (u8 i = 0; i < sizeof(KeystoneTable) / sizeof(item_t); ++i) {
-        if (item == KeystoneTable[i]) {
-            return TRUE;
-        }
+    for (u8 i = 0; i < ARRAY_COUNT(sKeystoneTable); ++i)
+	{
+		if (item == sKeystoneTable[i])
+			return TRUE;
     }
     return FALSE;
 }
@@ -148,26 +157,26 @@ static item_t FindTrainerKeystone(u16 trainerId)
 	if (gBattleTypeFlags & (BATTLE_TYPE_FRONTIER | BATTLE_TYPE_LINK))
 		return ITEM_MEGA_RING;
 		
-    for (u8 i = 0; i < TRAINER_ITEM_COUNT; ++i) {
-        if (IsItemKeystone(gTrainers[trainerId].items[i])) {
-            return gTrainers[trainerId].items[i];
-        }
+    for (u8 i = 0; i < TRAINER_ITEM_COUNT; ++i)
+	{
+        if (IsItemKeystone(gTrainers[trainerId].items[i]))
+			return gTrainers[trainerId].items[i];
     }
 
     return ITEM_NONE;
 }
 
-
 static item_t FindPlayerKeystone(void)
 {
-    for (u8 i = 0; i < sizeof(KeystoneTable) / sizeof(item_t); ++i) {
-        if (CheckBagHasItem(KeystoneTable[i], 1)) {
-            return KeystoneTable[i];
-        }
+    for (u8 i = 0; i < ARRAY_COUNT(sKeystoneTable); ++i)
+	{
+		if (CheckBagHasItem(sKeystoneTable[i], 1))
+			return sKeystoneTable[i];
     }
 	
-	if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
-		return ITEM_MEGA_RING; //Give player Mega Ring in Frontier
+	#ifdef DEBUG_MEGA
+		return ITEM_MEGA_RING; //Give player Mega Ring if they have none
+	#endif
 
     return ITEM_NONE;
 }
@@ -182,8 +191,10 @@ static item_t FindBankKeystone(u8 bank)
 			return ITEM_MEGA_RING;
 	#endif
 		
-    if (SIDE(bank) == SIDE_OPPONENT) {
-		if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS) {
+    if (SIDE(bank) == SIDE_OPPONENT)
+	{
+		if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
+		{
 			if (GetBattlerPosition(bank) == B_POSITION_OPPONENT_LEFT)
 				return FindTrainerKeystone(gTrainerBattleOpponent_A);
 			else
@@ -192,8 +203,10 @@ static item_t FindBankKeystone(u8 bank)
 		else
 			return FindTrainerKeystone(gTrainerBattleOpponent_A);
 	}
-	else {
-		if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER) {
+	else //SIDE_PLAYER
+	{
+		if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
+		{
 			if (GetBattlerPosition(bank) == B_POSITION_PLAYER_RIGHT)
 				return FindTrainerKeystone(VarGet(PARTNER_VAR));
 			else
@@ -204,37 +217,37 @@ static item_t FindBankKeystone(u8 bank)
 	}
 }
 
-bool8 MegaEvolutionEnabled(u8 bank) {
-	if (gBattleTypeFlags & (BATTLE_TYPE_LINK 
-						  | BATTLE_TYPE_TRAINER_TOWER 
-						  | BATTLE_TYPE_FRONTIER
-						  | BATTLE_TYPE_EREADER_TRAINER))
-	{
+bool8 MegaEvolutionEnabled(u8 bank)
+{
+	if (gBattleTypeFlags & (BATTLE_TYPE_LINK))
 		return TRUE;
-	}
 
-	if (FindBankKeystone(bank) == ITEM_NONE) {
-	#ifdef DEBUG_MEGA
-		return TRUE;
-	#else
-		return FALSE;
-	#endif
+	if (FindBankKeystone(bank) == ITEM_NONE)
+	{
+		#ifdef DEBUG_MEGA
+			return TRUE;
+		#else
+			return FALSE;
+		#endif
 	}
 	else
 		return TRUE;
 }
 
-bool8 BankMegaEvolved(u8 bank, bool8 checkUB) {
+bool8 BankMegaEvolved(u8 bank, bool8 checkUB)
+{
 	if ((SIDE(bank) == B_SIDE_PLAYER && gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
 	||  (SIDE(bank) == B_SIDE_OPPONENT && gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS))
 	{
-		if (checkUB) {
+		if (checkUB)
+		{
 			if (gNewBS->UltraData->done[bank])
 				return TRUE;
 			else
 				return FALSE;
 		}
-		else {	
+		else
+		{	
 			if (gNewBS->MegaData->done[bank])
 				return TRUE;
 			else
@@ -242,11 +255,13 @@ bool8 BankMegaEvolved(u8 bank, bool8 checkUB) {
 		}
 	}
 	
-	if (checkUB) {
+	if (checkUB)
+	{
 		if (gNewBS->UltraData->done[bank] || gNewBS->UltraData->done[PARTNER(bank)])
 			return TRUE;
 	}
-	else {
+	else
+	{
 		if (gNewBS->MegaData->done[bank] || (gNewBS->MegaData->done[PARTNER(bank)]))
 			return TRUE;
 	}
@@ -302,7 +317,8 @@ bool8 HasMegaSymbol(u8 bank)
 	return IsMega(bank) || IsBluePrimal(bank) || IsRedPrimal(bank) || IsUltraNecrozma(bank);
 }
 
-const u8* GetTrainerName(u8 bank) {
+const u8* GetTrainerName(u8 bank)
+{
 	u8 battlerNum = 0;
 	u16 trainerId = 0xFFFF;
 	u8 multiplayerId = GetMultiplayerId();
@@ -340,7 +356,8 @@ const u8* GetTrainerName(u8 bank) {
 			break;
 	}
 	
-	if (trainerId == 0xFFFF) {
+	if (trainerId == 0xFFFF)
+	{
 		if (gBattleTypeFlags & BATTLE_TYPE_LINK)
 			return gLinkPlayers[multiplayerId].name;
 		else

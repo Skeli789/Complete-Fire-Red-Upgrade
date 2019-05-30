@@ -14,6 +14,7 @@ gPlayerParty = 0x2024284;
 
 /* Battle RAM */
 DisplayedStringBattle = 0x202298C;
+gAnimScriptCallback = 0x2037EDC;
 battle_data_ptrs = 0x203BFFC;
 battle_mallocd_resources = 0x203C000;
 
@@ -58,7 +59,7 @@ gTextflags = 0x3003E50;
 gSaveBlock1 = 0x3005008;
 gSaveBlock2 = 0x300500C;
 gSaveBlock3 = 0x3005010;
-gFirstSaveSector = 0x3005380;
+gLastWrittenSector = 0x3005380;
 gSaveCounter = 0x3005390;
 gFastSaveSection = 0x3005394;
 gRamSaveSectionLocations = 0x30053B0;
@@ -409,9 +410,12 @@ EmitSpriteInvisibility = 0x800EB04 | 1;
 EmitBattleAnimation = 0x800EB28 | 1;
 DoBounceEffect = 0x8012138 | 1;
 EndBounceEffect = 0x8012258 | 1;
+InitAndLaunchSpecialAnimation = 0x80341D8 | 1;
 LoadBattleMonGfxAndAnimate = 0x80351A8 | 1;
+ClearBehindSubstituteBit = 0x8035228 | 1;
 CompleteOnBattlerSpriteCallbackDummy = 0x8035AE8 | 1;
 CompleteOnBankSpriteCallbackDummy2 = 0x8035B20 | 1;
+LaunchBattleAnimation = 0x80725D4 | 1;
 DestroyAnimSprite = 0x8072740 | 1;
 DestroyAnimVisualTask = 0x8072760 | 1;
 AddSpriteIndex = 0x8072798 | 1;
@@ -955,9 +959,10 @@ GetGameStat = 0x8054EC4 | 1;
 LogCoordsCameraRelative = 0x8063BC4 | 1;
 ResetTrainerCard = 0x8089D0C | 1;
 SaveWriteToFlash = 0x80D97D0 | 1;
+HandleWriteSectorNBytes = 0x80D9960 | 1;
 TryWriteSector = 0x80D99D8 | 1;
 DoReadFlashWholeSection = 0x80DA190 | 1;
-CalculateChecksum = 0x80DA1A8 | 1;
+CalculateSaveChecksum = 0x80DA1A8 | 1;
 UpdateSaveAddresses = 0x80DA1D4 | 1;
 TrySavingData = 0x80DA364 | 1;
 

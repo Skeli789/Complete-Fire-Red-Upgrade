@@ -16,17 +16,6 @@ s32 BracketCalc(u8 bank);
 u32 SpeedCalc(u8 bank);
 u32 SpeedCalcForParty(u8 side, pokemon_t*);
 
-//Exported Structs
-struct SpecialZMove
-{
-	u16 species;
-	u16 item;
-	u16 move;
-	u16 zmove;
-};
-
-extern const struct SpecialZMove gSpecialZMoveTable[];
-
 //Hooked in Functions
 void HandleNewBattleRamClearBeforeBattle(void);
 void SavePartyItems(void);

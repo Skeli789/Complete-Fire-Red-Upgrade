@@ -1,5 +1,6 @@
 #include "defines.h"
 #include "defines_battle.h"
+#include "../include/battle_gfx_sfx_util.h"
 #include "../include/battle_anim.h"
 #include "../include/event_data.h"
 #include "../include/random.h"
@@ -11,13 +12,18 @@
 
 extern const struct CompressedSpriteSheet gBattleAnimPicTable[];
 extern const struct CompressedSpritePalette gBattleAnimPaletteTable[];
-extern u8* AttackAnimationTable[];
+extern const u8* const AttackAnimationTable[];
+extern const u8* const gBattleAnims_General[];
 
 //This file's functions:
 static void InitSpritePosToAnimTargetsCentre(struct Sprite *sprite, bool8 respectMonPicOffsets);
 static void InitSpritePosToAnimAttackersCentre(struct Sprite *sprite, bool8 respectMonPicOffsets);
 static void InitSpritePosToGivenTarget(struct Sprite* sprite, u8 target);
 static void SpriteCB_FlareBlitzUpFlamesP2(struct Sprite* sprite);
+static void Task_HandleSpecialBattleAnimation(u8 taskId);
+static bool8 ShouldAnimBeDoneRegardlessOfSubsitute(u8 animId);
+static bool8 ShouldSubstituteRecedeForSpecialBattleAnim(u8 animId);
+static void TrySwapBackupSpeciesWithSpecies(u8 activeBattler, u8 animId);
 
 bank_t LoadBattleAnimTarget(u8 arg)
 {
@@ -61,7 +67,7 @@ void ScriptCmd_loadspritegfx(void)
     sBattleAnimScriptPtr += 2;
     AddSpriteIndex(GET_TRUE_SPRITE_INDEX(index));
     gAnimFramesToWait = 1;
-    gAnimScriptCallback = (u32) WaitAnimFrameCount;
+    gAnimScriptCallback = WaitAnimFrameCount;
 }
 
 void ShinyAnimFix(void)
@@ -729,4 +735,162 @@ void UpdateOamPriorityInAllHealthboxes(u8 priority)
 
 HIDE_BOXES:
 	RESTORE_HIDDEN_HEALTHBOXES;
+}
+
+#define tBattlerId 	data[0]
+#define tAnimId 	data[1]
+#define tArgumentId	data[2]
+#define tState 		data[3]
+
+bool8 TryHandleLaunchBattleTableAnimation(u8 activeBattler, u8 bankAtk, u8 bankDef, u8 tableId, u16 argument)
+{
+    u8 taskId;
+
+	if (tableId == B_ANIM_CASTFORM_CHANGE && (argument & 0x80))
+	{
+		gBattleMonForms[activeBattler] = (argument & ~(0x80));
+		return TRUE;
+	}
+	if (gBattleSpritesDataPtr->bankData[activeBattler].behindSubstitute
+	&& !ShouldAnimBeDoneRegardlessOfSubsitute(tableId)
+	&& !ShouldSubstituteRecedeForSpecialBattleAnim(tableId))
+	{
+		return TRUE;
+	}
+	if (gBattleSpritesDataPtr->bankData[activeBattler].behindSubstitute
+	&& tableId == B_ANIM_SUBSTITUTE_FADE
+	&& gSprites[gBattlerSpriteIds[activeBattler]].invisible)
+	{
+		LoadBattleMonGfxAndAnimate(activeBattler, TRUE, gBattlerSpriteIds[activeBattler]);
+		ClearBehindSubstituteBit(activeBattler);
+		return TRUE;
+	}
+
+	gBattleAnimAttacker = bankAtk;
+	gBattleAnimTarget = bankDef;
+	taskId = CreateTask(Task_HandleSpecialBattleAnimation, 10);
+	gTasks[taskId].tBattlerId = activeBattler;
+	gTasks[taskId].tAnimId = tableId;
+	gTasks[taskId].tArgumentId = argument;
+	gBattleSpritesDataPtr->healthBoxesData[gTasks[taskId].tBattlerId].animFromTableActive = TRUE;
+
+    return FALSE;
+}
+
+static void Task_HandleSpecialBattleAnimation(u8 taskId)
+{
+	u8 activeBattler = gTasks[taskId].tBattlerId;
+	u8 animId = gTasks[taskId]. tAnimId;
+
+    gAnimScriptCallback();
+
+	switch (gTasks[taskId].tState) {
+		case 0:
+			if (gBattleSpritesDataPtr->bankData[activeBattler].behindSubstitute
+			&& !gBattleSpritesDataPtr->bankData[activeBattler].substituteOffScreen
+			&& ShouldSubstituteRecedeForSpecialBattleAnim(animId))
+			{
+				//Temporarily revert the Pokemon to its original form so the anim works properly.
+				//This change is done individually on both roms so there should be no issue in link
+				//battles.
+				TrySwapBackupSpeciesWithSpecies(activeBattler, animId);
+				gBattleSpritesDataPtr->bankData[activeBattler].substituteOffScreen = TRUE;
+				InitAndLaunchSpecialAnimation(activeBattler, activeBattler, activeBattler, B_ANIM_SUBSTITUTE_TO_MON);
+			}
+			++gTasks[taskId].tState;
+			break;
+			
+		case 1:
+			if (!gBattleSpritesDataPtr->healthBoxesData[activeBattler].specialAnimActive)
+			{
+				//Now restore the original species
+				if (gBattleSpritesDataPtr->bankData[activeBattler].behindSubstitute
+				&&  gBattleSpritesDataPtr->bankData[activeBattler].substituteOffScreen
+				&& ShouldSubstituteRecedeForSpecialBattleAnim(animId))
+					TrySwapBackupSpeciesWithSpecies(activeBattler, animId);
+
+				gBattleSpritesDataPtr->animationData->animArg = gTasks[taskId].tArgumentId;
+				LaunchBattleAnimation(gBattleAnims_General, animId, FALSE);
+				++gTasks[taskId].tState;
+			}
+			break;
+			
+		case 2:
+			if (!gAnimScriptActive)
+			{
+				if (gBattleSpritesDataPtr->bankData[activeBattler].behindSubstitute
+				&&  gBattleSpritesDataPtr->bankData[activeBattler].substituteOffScreen == TRUE)
+				{
+					InitAndLaunchSpecialAnimation(activeBattler, activeBattler, activeBattler, B_ANIM_MON_TO_SUBSTITUTE);
+					gBattleSpritesDataPtr->bankData[activeBattler].substituteOffScreen = FALSE;
+				}
+				++gTasks[taskId].tState;
+			}
+			break;
+			
+		case 3:
+			if (!gAnimScriptActive)
+			{
+				gBattleSpritesDataPtr->healthBoxesData[gTasks[taskId].tBattlerId].animFromTableActive = FALSE;
+				DestroyTask(taskId);
+			}
+	}
+}
+
+static bool8 ShouldAnimBeDoneRegardlessOfSubsitute(u8 animId)
+{
+    switch (animId) {
+		case B_ANIM_SUBSTITUTE_FADE:
+		case B_ANIM_SNATCH_MOVE:
+		case B_ANIM_LOAD_DEAFUALT_BG:
+		case B_ANIM_LOAD_ABILITY_POP_UP:
+		case B_ANIM_DESTROY_ABILITY_POP_UP:
+		case B_ANIM_RAIN_CONTINUES:
+		case B_ANIM_SUN_CONTINUES:
+		case B_ANIM_SANDSTORM_CONTINUES:
+		case B_ANIM_HAIL_CONTINUES:
+		case B_ANIM_STRONG_WINDS_CONTINUE:
+		case B_ANIM_FOG_CONTINUES:
+			return TRUE;
+		default:
+			return FALSE;
+    }
+}
+
+static bool8 ShouldSubstituteRecedeForSpecialBattleAnim(u8 animId)
+{
+    switch (animId) {
+		case B_ANIM_TRANSFORM:
+		case B_ANIM_WISHIWASHI_FISH:
+		case B_ANIM_ZYGARDE_CELL_SWIRL:
+		case B_ANIM_BLUE_PRIMAL_REVERSION:
+		case B_ANIM_RED_PRIMAL_REVERSION:
+		case B_ANIM_ZMOVE_ACTIVATE:
+		case B_ANIM_MEGA_EVOLUTION:
+		case B_ANIM_ULTRA_BURST:
+			return TRUE;
+		default:
+			return FALSE;
+    }
+}
+
+static void TrySwapBackupSpeciesWithSpecies(u8 activeBattler, u8 animId)
+{
+	struct Pokemon* animGuy = GetBankPartyData(activeBattler);
+
+	switch (animId) {
+		case B_ANIM_TRANSFORM:
+		case B_ANIM_WISHIWASHI_FISH:
+		case B_ANIM_ZYGARDE_CELL_SWIRL:
+		case B_ANIM_BLUE_PRIMAL_REVERSION:
+		case B_ANIM_RED_PRIMAL_REVERSION:
+		case B_ANIM_MEGA_EVOLUTION:
+		case B_ANIM_ULTRA_BURST:
+			if (animGuy->backupSpecies != SPECIES_NONE)
+			{
+				u16 backup = animGuy->species;
+				animGuy->species = animGuy->backupSpecies;
+				animGuy->backupSpecies = backup;
+			}
+	}
 }

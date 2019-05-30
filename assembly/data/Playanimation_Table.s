@@ -5,12 +5,12 @@
 .include "..\\Anim_Defines.asm"
 /*.include "..\\asm_defines.s" Don't Uncomment This!*/
 
-.global PlayAnimationTable	
+.global gBattleAnims_General	
 
 .equ RED_PRIMAL_TASK, AnimTask_ReloadAttackerSprite
 .equ RED_PRIMAL_TASK_2, AnimTask_PlayAttackerCry
 
-PlayAnimationTable:
+gBattleAnims_General:
 .word 0x81d5b88	@ ANIM_NOTHING		original 0x1c6ea8
 .word 0x81d5bbe	@ ANIM_STAT_BUFF
 .word 0x81d5bc7	@ ANIM_SUBSTITUTE_REMOVAL

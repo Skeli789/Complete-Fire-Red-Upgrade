@@ -141,9 +141,10 @@ typedef u8 Battle_Buffer_T[0x200];
 /*u16*/ #define gMoveToLearn *((u16*) 0x2024022)
 /*u8*/  #define gBattleMonForms ((u8*) 0x2024024)
 
-/*u32*/	#define sBattleAnimScriptPtr (*((u8**) 0x2037ED4))
-		#define gAnimScriptCallback (*((u32*) 0x2037EDC))
+/*u32*/	#define sBattleAnimScriptPtr (*((const u8**) 0x2037ED4))
+		extern void (*gAnimScriptCallback)(void); //0x2037EDC
 /*s8*/	#define gAnimFramesToWait (*((s8*) 0x2037EE0))
+/*u8*/	#define gAnimScriptActive (*((u8*) 0x2037EE1))
 /*s16*/ #define gBattleAnimArgs ((s16*) 0x2037F02)
 /*u16*/	#define sAnimMoveIndex (*((u16*) 0x2037F18))
 /*u8*/  #define gBattleAnimAttacker (*((u8*) 0x2037F1A))

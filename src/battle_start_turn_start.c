@@ -4,7 +4,6 @@
 #include "../include/battle_setup.h"
 #include "../include/event_data.h"
 #include "../include/random.h"
-#include "../include/constants/items.h"
 #include "../include/constants/songs.h"
 #include "../include/constants/trainers.h"
 #include "../include/constants/trainer_classes.h"
@@ -17,6 +16,7 @@
 #include "../include/new/frontier.h"
 #include "../include/new/multi.h"
 #include "../include/new/mega.h"
+#include "../include/new/set_z_effect.h"
 
 enum BattleBeginStates 
 {
@@ -43,42 +43,6 @@ extern u8* const gBattleScriptsForMoveEffects[];
 extern const u16 gClassBasedBattleBGM[];
 extern const u16 gWildSpeciesBasedBattleBGM[];
 extern const u16 gWildSpeciesBasedBattleBGMLength;
-
-const struct SpecialZMove gSpecialZMoveTable[] = 
-{
-	{SPECIES_RAICHU_A,				ITEM_ALORAICHUIUM_Z, 		MOVE_THUNDERBOLT, 		MOVE_STOKED_SPARKSURFER},
-	{SPECIES_DECIDUEYE,				ITEM_DECIDIUM_Z, 			MOVE_SPIRITSHACKLE,		MOVE_SINISTER_ARROW_RAID},
-	{SPECIES_EEVEE,					ITEM_EEVIUM_Z, 				MOVE_LASTRESORT,		MOVE_EXTREME_EVOBOOST},
-	{SPECIES_INCINEROAR,			ITEM_INCINIUM_Z, 			MOVE_DARKESTLARIAT,		MOVE_MALICIOUS_MOONSAULT},
-	{SPECIES_KOMMO_O,				ITEM_KOMMONIUM_Z,			MOVE_CLANGINGSCALES,	MOVE_CLANGOROUS_SOULBLAZE},
-	{SPECIES_LUNALA,				ITEM_LUNALIUM_Z,			MOVE_MOONGEISTBEAM,		MOVE_MENACING_MOONRAZE_MAELSTROM},
-	{SPECIES_NECROZMA_WINGS,		ITEM_LUNALIUM_Z,			MOVE_MOONGEISTBEAM,		MOVE_MENACING_MOONRAZE_MAELSTROM},
-	{SPECIES_LYCANROC,				ITEM_LYCANIUM_Z,			MOVE_STONEEDGE,			MOVE_SPLINTERED_STORMSHARDS},
-	{SPECIES_LYCANROC_N,			ITEM_LYCANIUM_Z,			MOVE_STONEEDGE,			MOVE_SPLINTERED_STORMSHARDS},
-	{SPECIES_LYCANROC_DUSK,			ITEM_LYCANIUM_Z,			MOVE_STONEEDGE,			MOVE_SPLINTERED_STORMSHARDS},
-	{SPECIES_MARSHADOW,				ITEM_MARSHADIUM_Z, 			MOVE_SPECTRALTHIEF,		MOVE_SOUL_STEALING_7_STAR_STRIKE},
-	{SPECIES_MEW,					ITEM_MEWNIUM_Z, 			MOVE_PSYCHIC,			MOVE_GENESIS_SUPERNOVA},
-	{SPECIES_MIMIKYU,				ITEM_MIMIKIUM_Z, 			MOVE_PLAYROUGH,			MOVE_LETS_SNUGGLE_FOREVER},
-	{SPECIES_MIMIKYU_BUSTED,		ITEM_MIMIKIUM_Z, 			MOVE_PLAYROUGH,			MOVE_LETS_SNUGGLE_FOREVER},
-	{SPECIES_PIKACHU,				ITEM_PIKANIUM_Z, 			MOVE_VOLTTACKLE,		MOVE_CATASTROPIKA},
-	{SPECIES_PIKACHU_CAP_ORIGINAL,	ITEM_PIKASHUNIUM_Z, 		MOVE_THUNDERBOLT,		MOVE_10000000_VOLT_THUNDERBOLT},
-	{SPECIES_PIKACHU_CAP_HOENN,		ITEM_PIKASHUNIUM_Z, 		MOVE_THUNDERBOLT,		MOVE_10000000_VOLT_THUNDERBOLT},
-	{SPECIES_PIKACHU_CAP_SINNOH,	ITEM_PIKASHUNIUM_Z, 		MOVE_THUNDERBOLT,		MOVE_10000000_VOLT_THUNDERBOLT},
-	{SPECIES_PIKACHU_CAP_UNOVA,		ITEM_PIKASHUNIUM_Z, 		MOVE_THUNDERBOLT,		MOVE_10000000_VOLT_THUNDERBOLT},
-	{SPECIES_PIKACHU_CAP_KALOS,		ITEM_PIKASHUNIUM_Z, 		MOVE_THUNDERBOLT,		MOVE_10000000_VOLT_THUNDERBOLT},
-	{SPECIES_PIKACHU_CAP_ALOLA,		ITEM_PIKASHUNIUM_Z, 		MOVE_THUNDERBOLT,		MOVE_10000000_VOLT_THUNDERBOLT},
-	{SPECIES_PIKACHU_CAP_PARTNER,	ITEM_PIKASHUNIUM_Z, 		MOVE_THUNDERBOLT,		MOVE_10000000_VOLT_THUNDERBOLT},
-	{SPECIES_PRIMARINA,				ITEM_PRIMARIUM_Z, 			MOVE_SPARKLINGARIA,		MOVE_OCEANIC_OPERETTA},
-	{SPECIES_SNORLAX,				ITEM_SNORLIUM_Z, 			MOVE_GIGAIMPACT,		MOVE_PULVERIZING_PANCAKE},
-	{SPECIES_SOLGALEO,				ITEM_SOLGANIUM_Z, 			MOVE_SUNSTEELSTRIKE,	MOVE_SEARING_SUNRAZE_SMASH},
-	{SPECIES_NECROZMA_MANE,			ITEM_SOLGANIUM_Z, 			MOVE_SUNSTEELSTRIKE,	MOVE_SEARING_SUNRAZE_SMASH},
-	{SPECIES_TAPU_KOKO,				ITEM_TAPUNIUM_Z, 			MOVE_NATURESMADNESS,	MOVE_GUARDIAN_OF_ALOLA},
-	{SPECIES_TAPU_BULU,				ITEM_TAPUNIUM_Z, 			MOVE_NATURESMADNESS,	MOVE_GUARDIAN_OF_ALOLA},
-	{SPECIES_TAPU_LELE,				ITEM_TAPUNIUM_Z, 			MOVE_NATURESMADNESS,	MOVE_GUARDIAN_OF_ALOLA},
-	{SPECIES_TAPU_FINI,				ITEM_TAPUNIUM_Z, 			MOVE_NATURESMADNESS,	MOVE_GUARDIAN_OF_ALOLA},
-	{SPECIES_NECROZMA_ULTRA,		ITEM_ULTRA_NECROZIUM_Z, 	MOVE_PHOTONGEYSER, 		MOVE_LIGHT_THAT_BURNS_THE_SKY},
-	{0xFFFF,						0xFFFF, 				0xFFFF,					0xFFFF}
-};
 
 const u8 gStatStageRatios[][2] =
 {
@@ -605,7 +569,6 @@ void HandleAction_UseMove(void)
 {
     u8 side;
 	u8 moveType;
-	int i;
 
     gBankAttacker = gBanksByTurnOrder[gCurrentTurnActionNumber];
 
@@ -694,33 +657,19 @@ void HandleAction_UseMove(void)
             gBattleResults->lastUsedMoveOpponent = gCurrentMove;
     }
 	
-	if (gNewBS->ZMoveData->toBeUsed[gBankAttacker]/* && !gNewBS->ZMoveData->used[gBankAttacker]*/) {
+	if (gNewBS->ZMoveData->toBeUsed[gBankAttacker]/* && !gNewBS->ZMoveData->used[gBankAttacker]*/)
+	{
 		gNewBS->ZMoveData->active = TRUE;
 		
 		if (SPLIT(gCurrentMove) != SPLIT_STATUS) 
 		{
-			for (i = 0; gSpecialZMoveTable[i].item != 0xFFFF; ++i) 
-			{
-				if (gSpecialZMoveTable[i].item == ITEM(gBankAttacker) //No need to check for correct species here as the check;
-				&&  gSpecialZMoveTable[i].move == gCurrentMove)		 //it should already have been carried out during move selection.
-				{
-					gCurrentMove = gSpecialZMoveTable[i].zmove;
-					goto SKIP_SELECT_REGULAR_Z_MOVE;
-				}
-			}
-							
-			if (gSpecialZMoveTable[i].item == 0xFFFF) { //No special Z-Move
-				u16 moveReplaced = gBattleMons[gBankAttacker].moves[gCurrMovePos];
-				u8 moveType = gBattleMoves[moveReplaced].type;
-				if (moveType < TYPE_FIRE)
-					gCurrentMove = MOVE_BREAKNECK_BLITZ_P + (moveType * 2) + SPLIT(moveReplaced);
-				else
-					gCurrentMove = MOVE_BREAKNECK_BLITZ_P + ((moveType - 1) * 2) + SPLIT(moveReplaced);
-			}
+			u16 zmove = GetSpecialZMove(gCurrentMove, SPECIES(gBankAttacker), ITEM(gBankAttacker));
+			if (zmove != MOVE_NONE && zmove != 0xFFFF) //There's a special Z-Move
+				gCurrentMove = zmove;
+			else //No need to check if special z-crystal. Check is carried out before
+				gCurrentMove = GetTypeBasedZMove(gBattleMons[gBankAttacker].moves[gCurrMovePos], gBankAttacker);
 		}
 	}
-	
-	SKIP_SELECT_REGULAR_Z_MOVE:
 	
 	gBattleStruct->dynamicMoveType = GetMoveTypeSpecial(gBankAttacker, gCurrentMove);
 	moveType = gBattleStruct->dynamicMoveType;

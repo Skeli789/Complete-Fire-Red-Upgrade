@@ -1,9 +1,9 @@
 .thumb
 .text
 .align 2
-.global ZMoveNames
+.global gZMoveNames
 
-ZMoveNames:
+gZMoveNames:
 .word NAME_BREAKNECK_BLITZ
 .word NAME_BREAKNECK_BLITZ
 .word NAME_ALL_OUT_PUMMELING

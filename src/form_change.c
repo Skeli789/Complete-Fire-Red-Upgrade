@@ -19,10 +19,11 @@ const species_t gMiniorCores[] =
 
 void DoFormChange(u8 bank, u16 species, bool8 ReloadType, bool8 ReloadStats) 
 {
+	u16 backup;
 	gActiveBattler = bank;
 	
 	pokemon_t* partydata = GetBankPartyData(bank);
-	partydata->backupSpecies = partydata->species;
+	backup = partydata->species;
 	
 	gBattleMons[bank].species = species;
 	partydata->species = species; //Needed so the right stats, types, and abilities can be loaded
@@ -45,6 +46,8 @@ void DoFormChange(u8 bank, u16 species, bool8 ReloadType, bool8 ReloadStats)
 	}
 	
 	gStatuses3[bank] &= ~(STATUS3_SWITCH_IN_ABILITY_DONE | STATUS3_ILLUSION); //A Pokemon undergoing form change can't be hidden under Illusion
+	
+	partydata->species = backup; //Backup species is written to by the form change handler
 }
 
 //This function could have been much simpler if I didn't care about stupid people who
@@ -178,7 +181,8 @@ void HandleFormChange(void)
 {
 	pokemon_t* mon = GetBankPartyData(gActiveBattler);
 	struct BattlePokemon* battleMon = (struct BattlePokemon*) &gBattleBufferA[gActiveBattler][3];
-	
+
+	mon->backupSpecies = mon->species;
 	mon->species = battleMon->species;
 	
 	mon->attack = battleMon->attack;

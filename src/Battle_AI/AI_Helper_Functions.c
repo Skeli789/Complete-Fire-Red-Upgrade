@@ -2,14 +2,15 @@
 #include "../../include/random.h"
 #include "../../include/constants/items.h"
 
-#include "../../include/new/battle_start_turn_start.h"
 #include "../../include/new/AI_Helper_Functions.h"
+#include "../../include/new/battle_start_turn_start.h"
 #include "../../include/new/damage_calc.h"
 #include "../../include/new/general_bs_commands.h"
 #include "../../include/new/helper_functions.h"
 #include "../../include/new/item.h"
 #include "../../include/new/mega.h"
 #include "../../include/new/move_tables.h"
+#include "../../include/new/set_z_effect.h"
 
 //This file's functions:
 static u32 CalcPredictedDamageForCounterMoves(u16 move, u8 bankAtk, u8 bankDef);
@@ -628,9 +629,8 @@ bool8 PartyMemberStatused(u8 bank, bool8 checkSoundproof)
 
 u16 ShouldAIUseZMove(u8 bank, u8 moveIndex, u16 move)
 {
-	int i;
-	bool8 isSpecialZCrystal = FALSE;
-	pokemon_t* mon = GetBankPartyData(bank);
+	struct Pokemon* mon = GetBankPartyData(bank);
+	u16 item = mon->item;
 
 	if (move == MOVE_NONE)
 		move = GetBattleMonMove(bank, moveIndex);
@@ -640,30 +640,19 @@ u16 ShouldAIUseZMove(u8 bank, u8 moveIndex, u16 move)
 	|| IsBluePrimal(bank))
 		return FALSE;
 
-	if (IsZCrystal(mon->item) || mon->item == ITEM_ULTRA_NECROZIUM_Z) //The only "Mega Stone" that let's you use a Z-Move
+	if (IsZCrystal(item) || item == ITEM_ULTRA_NECROZIUM_Z) //The only "Mega Stone" that let's you use a Z-Move
 	{
-		for (i = 0; gSpecialZMoveTable[i].species != 0xFFFF; ++i)
-		{
-			if (gSpecialZMoveTable[i].item == mon->item)
-			{
-				isSpecialZCrystal = TRUE;
-				if (gSpecialZMoveTable[i].species == SPECIES(bank)
-				&&  gSpecialZMoveTable[i].move == move)
-				{
-					return gSpecialZMoveTable[i].zmove;
-				}
-			}
-		}
+		u16 zmove = GetSpecialZMove(move, SPECIES(bank), item);
+		if (zmove != MOVE_NONE && zmove != 0xFFFF) //There's a special Z-Move
+			return zmove;
 
-		if (move != MOVE_NONE && !isSpecialZCrystal
-		&& gBattleMoves[move].type == ItemId_GetHoldEffectParam(mon->item))
+		if (move != MOVE_NONE && zmove != 0xFFFF //Special Z-Crystal
+		&& gBattleMoves[move].type == ItemId_GetHoldEffectParam(item))
 		{
 			if (SPLIT(move) == SPLIT_STATUS)
 				return 0xFFFF;
-			else if (gBattleMoves[move].type < TYPE_FIRE)
-				return MOVE_BREAKNECK_BLITZ_P + (gBattleMoves[move].type * 2) + CalcMoveSplit(bank, move);
 			else
-				return MOVE_BREAKNECK_BLITZ_P + ((gBattleMoves[move].type - 1) * 2) + CalcMoveSplit(bank, move);
+				return GetTypeBasedZMove(move, bank);
 		}
 	}
 

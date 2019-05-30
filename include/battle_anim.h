@@ -391,6 +391,8 @@ void __attribute__((long_call)) SpriteCB_AnimSolarbeamBigOrb(struct Sprite *spri
 
 void __attribute__((long_call)) StartAnimLinearTranslation(struct Sprite *sprite);
 
+void __attribute__((long_call)) LaunchBattleAnimation(const u8* const animsTable[], u16 tableId, bool8 isMoveAnim);
+
 // battle_anim_80A9C70.s
 void __attribute__((long_call)) LaunchStatusAnimation(u8 bank, u8 statusAnimId);
 

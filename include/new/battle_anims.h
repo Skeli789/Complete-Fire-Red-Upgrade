@@ -51,3 +51,4 @@ void ShinyAnimFix(void);
 bool8 ShadowSneakAnimHelper(void);
 void DoubleWildAnimBallThrowFix(void);
 void UpdateOamPriorityInAllHealthboxes(u8 priority);
+

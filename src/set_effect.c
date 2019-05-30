@@ -28,7 +28,7 @@
 
 #define sMoveEffectBS_Ptrs ((u8**) 0x825062C)
 
-const u8 MoveEffectsThatIgnoreSubstitute[] = 
+static const u8 sMoveEffectsThatIgnoreSubstitute[] = 
 {
 	MOVE_EFFECT_PAYDAY,
 	MOVE_EFFECT_ION_DELUGE,
@@ -37,7 +37,7 @@ const u8 MoveEffectsThatIgnoreSubstitute[] =
 	0xFF,
 };
 
-const u8 ShieldDustIgnoredEffects[] = 
+static const u8 sShieldDustIgnoredEffects[] = 
 {
 	MOVE_EFFECT_SLEEP,
 	MOVE_EFFECT_POISON,
@@ -163,7 +163,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
     if (ABILITY(gEffectBank) == ABILITY_SHIELDDUST 
 	&& !(gHitMarker & HITMARKER_IGNORE_SAFEGUARD) //Used by contact abilities and synchronize
     && !primary 
-	&& CheckTableForSpecialMoveEffect(gBattleCommunication[MOVE_EFFECT_BYTE], ShieldDustIgnoredEffects))
+	&& CheckTableForSpecialMoveEffect(gBattleCommunication[MOVE_EFFECT_BYTE], sShieldDustIgnoredEffects))
 	{
         ++gBattlescriptCurrInstr;
 		goto CLEAR_MOVE_EFFECT_BYTE;
@@ -190,7 +190,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 		goto CLEAR_MOVE_EFFECT_BYTE;
 	}
 
-	if (CheckTableForSpecialMoveEffect(gBattleCommunication[MOVE_EFFECT_BYTE], MoveEffectsThatIgnoreSubstitute))
+	if (CheckTableForSpecialMoveEffect(gBattleCommunication[MOVE_EFFECT_BYTE], sMoveEffectsThatIgnoreSubstitute))
 		goto SKIP_SUBSTITUTE_CHECK;
 	
     if (gBattleMons[gEffectBank].hp == 0)
@@ -199,7 +199,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 		goto CLEAR_MOVE_EFFECT_BYTE;
 	}
 
-    if (gBattleMons[gEffectBank].status2 & STATUS2_SUBSTITUTE 
+    if (MoveBlockedBySubstitute(gCurrentMove, gBattleScripting->bank, gEffectBank)
 	&& affectsUser != MOVE_EFFECT_AFFECTS_USER
 	&& !(gHitMarker & HITMARKER_IGNORE_SUBSTITUTE))
 	{
@@ -720,14 +720,14 @@ CLEAR_MOVE_EFFECT_BYTE:
 
 bool8 SetMoveEffect2(void)
 {
-	u8 affectsUser;
+	bool8 affectsUser = FALSE;
 	bool8 effect = FALSE;
 
     if (gBattleCommunication[MOVE_EFFECT_BYTE] & MOVE_EFFECT_AFFECTS_USER)
     {
         gEffectBank = gBankAttacker; // battlerId that effects get applied on
         gBattleCommunication[MOVE_EFFECT_BYTE] &= ~(MOVE_EFFECT_AFFECTS_USER);
-        affectsUser = MOVE_EFFECT_AFFECTS_USER;
+        affectsUser = TRUE;
         gBattleScripting->bank = gBankAttacker;
     }
     else
@@ -736,18 +736,18 @@ bool8 SetMoveEffect2(void)
         gBattleScripting->bank = gBankAttacker;
     }
 
-	if (CheckTableForSpecialMoveEffect(gBattleCommunication[MOVE_EFFECT_BYTE], MoveEffectsThatIgnoreSubstitute))
+	if (CheckTableForSpecialMoveEffect(gBattleCommunication[MOVE_EFFECT_BYTE], sMoveEffectsThatIgnoreSubstitute))
 		goto SKIP_SUBSTITUTE_CHECK;	
 	
     if (gBattleMons[gEffectBank].hp == 0
     && gBattleCommunication[MOVE_EFFECT_BYTE] != MOVE_EFFECT_STEAL_ITEM)
         RESET_RETURN
 	
-    if (gBattleMons[gEffectBank].status2 & STATUS2_SUBSTITUTE 
-	&& affectsUser != MOVE_EFFECT_AFFECTS_USER
+    if (MoveBlockedBySubstitute(gCurrentMove, gBattleScripting->bank, gEffectBank)
+	&& !affectsUser
 	&& !(gHitMarker & HITMARKER_IGNORE_SUBSTITUTE))
         RESET_RETURN
-	
+
 	SKIP_SUBSTITUTE_CHECK:
     switch (gBattleCommunication[MOVE_EFFECT_BYTE]) {
         case MOVE_EFFECT_STEAL_ITEM:

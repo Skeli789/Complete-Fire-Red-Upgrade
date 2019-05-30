@@ -73,6 +73,7 @@ sp064_InflictStatus 0815FEF0
 sp065_CheckMonHP 0815FEF4
 sp066_InflictPartyDamage 0815FEF8
 sp067_GenerateRandomBattleTowerTeam 0815FEFC
+sp068_GivePlayerFrontierMonGivenSpecies 0815FF00
 
 sp075_MeasurePokemon1 0815FF34
 sp076_MeasurePokemon2 0815FF38
