@@ -782,7 +782,8 @@ static void Task_HandleSpecialBattleAnimation(u8 taskId)
 	u8 activeBattler = gTasks[taskId].tBattlerId;
 	u8 animId = gTasks[taskId]. tAnimId;
 
-    gAnimScriptCallback();
+	if (gAnimScriptCallback != NULL)
+		gAnimScriptCallback();
 
 	switch (gTasks[taskId].tState) {
 		case 0:
