@@ -15,12 +15,12 @@ void ReadKeys(void);
 // keypad struct
 struct KeypadSetter 
 {
-	u16 keyMapToForce;	// key(s) to force
-	u16 keysToIgnore;		// key(s) to ignore
-	u8 keyForcingCounter;	// number of times to force said key(s)
-	u8 keyFlags;			// flags for specific key functions
-	u16 keyToRunScript;	// key to enable script to run
-	const u8* scriptToRun;	// script to run from specified key
+	/*0x0*/u16 keyMapToForce;	// key(s) to force
+	/*0x2*/u16 keysToIgnore;		// key(s) to ignore
+	/*0x4*/u8 keyForcingCounter;	// number of times to force said key(s)
+	/*0x5*/u8 keyFlags;			// flags for specific key functions
+	/*0x6*/u16 keyToRunScript;	// key to enable script to run
+	/*0x8*/const u8* scriptToRun;	// script to run from specified key
 };
 
 #define gKeypadSetter ((struct KeypadSetter*) 0x203B7B0)

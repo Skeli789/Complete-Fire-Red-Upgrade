@@ -90,9 +90,9 @@ enum //These vars need to be one after the other (hence the enum)
 #define VAR_HEALING_YPOS 0x5037 //0x405C in JPAN's Engine
 
 /*===== TM/HM Options (Vastly improved from other versions!) =====*/
-//#define EXPANDED_TMSHMS  //Comment this out if you want to keep 50 tms/8 hms
-#define NUM_TMS 50	//keep this defined even if EXPANDED_TMSHMS is not!!
-#define NUM_HMS 8	//keep this defined even if EXPANDED_TMSHMS is not!!
+#define EXPANDED_TMSHMS  //Comment this out if you want to keep 50 tms/8 hms
+#define NUM_TMS 115	//keep this defined even if EXPANDED_TMSHMS is not!!
+#define NUM_HMS 9	//keep this defined even if EXPANDED_TMSHMS is not!!
 //#define TMS_BEFORE_HMS  //Uncomment this if you want the HMs to appear after the TMs in your bag
 //#define DELETABLE_HMS //Uncomment this if you want HMs to be deletable without the Move Deleter
 //#define REUSABLE_TMS	//if defined, don't forget to give all TMs a Mystery byte of 1!
@@ -107,7 +107,7 @@ enum //These vars need to be one after the other (hence the enum)
 #define KANTO_DEX_COUNT 151
 #define NATIONAL_DEX_COUNT 386
 
-#define MAX_LEVEL 100 //Also change this in the file “special_inserts.asm” found in the root
+#define MAX_LEVEL 100 //Also change this in the file asm_defines.asm” found in the root
 #define NUM_TRAINER_CLASSES 107 //Vanilla FR has 107
 #define EVOS_PER_MON 5 //The number of maximum evolutions per Pokemon. Vanilla FR has 5
 #define EV_CAP 252 //Also change this in the file “asm_defines.s” found in the root

@@ -2,7 +2,6 @@
 .align 2
 .thumb
 
-.equ MAX_LEVEL, 100
 .include "../asm_defines.s"
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

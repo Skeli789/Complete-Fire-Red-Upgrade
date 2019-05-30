@@ -14,6 +14,7 @@ static const struct LevelUpMove sEmptyMoveset[] = {
 	LEVEL_UP_END,
 };
 
+
 static const struct LevelUpMove sSpeciesBulbasaurLevelUpLearnset[] = {
 	LEVEL_UP_MOVE( 1, MOVE_TACKLE),
 	LEVEL_UP_MOVE( 3, MOVE_GROWL),
@@ -31,7 +32,6 @@ static const struct LevelUpMove sSpeciesBulbasaurLevelUpLearnset[] = {
 	LEVEL_UP_MOVE(37, MOVE_SEEDBOMB),
 	LEVEL_UP_END,
 };
-
 
 static const struct LevelUpMove sSpeciesIvysaurLevelUpLearnset[] = {
 	LEVEL_UP_MOVE( 1, MOVE_TACKLE),

@@ -832,7 +832,7 @@ u16 sp02B_CheckABButtons(void)
 //0x6 if up-right is pressed
 //0x7 if down-left is pressed
 //0x8 if down-right is pressed
-u16 sp02C_CheckDPad(void) 
+u16 sp02C_CheckDPad(void)
 {	
 	switch(~(gKeyReg) & 0xFF) {
 		case DPAD_UP:
@@ -883,7 +883,7 @@ void sp02F_KeyDump(void)
 // Inputs:
 //		var8004: key(s) to force 
 //		var8005: num times to 'press'
-void sp0C9_ForceOneKeyInput(void) 
+void sp0C9_ForceOneKeyInput(void)
 {
 #ifdef SAVE_BLOCK_EXPANSION
 	gKeypadSetter->keyMapToForce = Var8004;
