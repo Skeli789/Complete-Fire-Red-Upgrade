@@ -90,9 +90,9 @@ enum //These vars need to be one after the other (hence the enum)
 #define VAR_HEALING_YPOS 0x5037 //0x405C in JPAN's Engine
 
 /*===== TM/HM Options (Vastly improved from other versions!) =====*/
-#define EXPANDED_TMSHMS  //Comment this out if you want to keep 50 tms/8 hms
-#define NUM_TMS 115	//keep this defined even if EXPANDED_TMSHMS is not!!
-#define NUM_HMS 9	//keep this defined even if EXPANDED_TMSHMS is not!!
+//#define EXPANDED_TMSHMS  //Comment this out if you want to keep 50 tms/8 hms
+#define NUM_TMS 50	//keep this defined even if EXPANDED_TMSHMS is not!!
+#define NUM_HMS 8	//keep this defined even if EXPANDED_TMSHMS is not!!
 //#define TMS_BEFORE_HMS  //Uncomment this if you want the HMs to appear after the TMs in your bag
 //#define DELETABLE_HMS //Uncomment this if you want HMs to be deletable without the Move Deleter
 //#define REUSABLE_TMS	//if defined, don't forget to give all TMs a Mystery byte of 1!
