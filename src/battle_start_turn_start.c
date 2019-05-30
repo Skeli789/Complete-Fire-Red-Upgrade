@@ -1066,40 +1066,46 @@ s8 PriorityCalc(u8 bank, u8 action, u16 move) {
 	return priority;
 }
 
-s32 BracketCalc(bank_t bank) {
-	item_effect_t item_effect = ITEM_EFFECT(bank);
-	u8 item_quality = ITEM_QUALITY(bank);
-	ability_t ability = BanksAbility(bank);
-	switch (item_effect) {
-		case ITEM_EFFECT_QUICK_CLAW:
-			if (umodsi(gRandomTurnNumber, 100) < item_quality) {
-				gNewBS->CustapQuickClawIndicator |= gBitTable[bank];
-				return 1;
-			}
-			break;
-		case ITEM_EFFECT_CUSTAP_BERRY:
-			if (!AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, bank, ABILITY_UNNERVE, 0, 0)
-			&& PINCH_BERRY_CHECK(bank))
-			{
-				gNewBS->CustapQuickClawIndicator |= gBitTable[bank];
-				return 1;
-			}
-			break;
-		case ITEM_EFFECT_LAGGING_TAIL:
-			return -2;
+s32 BracketCalc(u8 bank)
+{
+	u8 itemEffect = ITEM_EFFECT(bank);
+	u8 itemQuality = ITEM_QUALITY(bank);
+	u8 ability = ABILITY(bank);
+
+	if (BATTLER_ALIVE(bank))
+	{
+		switch (itemEffect) {
+			case ITEM_EFFECT_QUICK_CLAW:
+				if (gRandomTurnNumber % 100 < itemQuality)
+				{
+					gNewBS->CustapQuickClawIndicator |= gBitTable[bank];
+					return 1;
+				}
+				break;
+			case ITEM_EFFECT_CUSTAP_BERRY:
+				if (!AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, bank, ABILITY_UNNERVE, 0, 0)
+				&& PINCH_BERRY_CHECK(bank))
+				{
+					gNewBS->CustapQuickClawIndicator |= gBitTable[bank];
+					return 1;
+				}
+				break;
+			case ITEM_EFFECT_LAGGING_TAIL:
+				return -2;
+		}
+		
+		if (ability == ABILITY_STALL)
+			return -1;
 	}
-	
-	if (ability == ABILITY_STALL)
-		return -1;
 	
 	return 0;
 }
 
 u32 SpeedCalc(bank_t bank) {
 	u32 speed;
-	ability_t ability = BanksAbility(bank);
-	item_effect_t item_effect = ITEM_EFFECT(bank);
-	u8 item_quality = ITEM_QUALITY(bank);
+	ability_t ability = ABILITY(bank);
+	u8 itemEffect = ITEM_EFFECT(bank);
+	u8 itemQuality = ITEM_QUALITY(bank);
     // Calculate adjusted speed stat
     speed = udivsi((gBattleMons[bank].speed * gStatStageRatios[gBattleMons[bank].statStages[STAT_STAGE_SPEED-1]][0]), gStatStageRatios[gBattleMons[bank].statStages[STAT_STAGE_SPEED-1]][1]);
     // Check for abilities that boost speed in weather.
@@ -1138,12 +1144,12 @@ u32 SpeedCalc(bank_t bank) {
 				speed *= 2;
 	}
 	
-	switch (item_effect) {
+	switch (itemEffect) {
 		case ITEM_EFFECT_MACHO_BRACE:
 			speed /= 2;
 			break;			
 		case ITEM_EFFECT_CHOICE_BAND:
-			if (item_quality == QUALITY_CHOICE_SCARF)
+			if (itemQuality == QUALITY_CHOICE_SCARF)
 				speed = udivsi((speed * 150), 100);
 			break;
 		case ITEM_EFFECT_IRON_BALL:
@@ -1184,12 +1190,12 @@ u32 SpeedCalc(bank_t bank) {
 u32 SpeedCalcForParty(u8 side, pokemon_t* party) {
 	u32 speed = party->speed;
 	ability_t ability = GetPartyAbility(party);
-	item_effect_t item_effect;
+	u8 itemEffect;
 	if (ability != ABILITY_KLUTZ)
-		item_effect = ItemId_GetHoldEffect(party->item);
+		itemEffect = ItemId_GetHoldEffect(party->item);
 	else
-		item_effect = 0;
-	u8 item_quality = ItemId_GetHoldEffectParam(party->item);
+		itemEffect = 0;
+	u8 itemQuality = ItemId_GetHoldEffectParam(party->item);
 	
     // Check for abilities that boost speed in weather.
     if (WEATHER_HAS_EFFECT) {
@@ -1222,12 +1228,12 @@ u32 SpeedCalcForParty(u8 side, pokemon_t* party) {
 				speed *= 2;
 	}
 	
-	switch (item_effect) {
+	switch (itemEffect) {
 		case ITEM_EFFECT_MACHO_BRACE:
 			speed /= 2;
 			break;			
 		case ITEM_EFFECT_CHOICE_BAND:
-			if (item_quality == QUALITY_CHOICE_SCARF)
+			if (itemQuality == QUALITY_CHOICE_SCARF)
 				speed = udivsi((speed * 150), 100);
 			break;
 		case ITEM_EFFECT_IRON_BALL:

@@ -1059,7 +1059,7 @@ void AdjustDamage(bool8 CheckFalseSwipe) {
     u8 hold_effect = GetBankItemEffect(gBankTarget);
 	u8 quality = ItemId_GetHoldEffectParam(item);
 	u8 mystery = ItemId_GetMystery2(item);
-	u8 ability = BanksAbility(gBankTarget);
+	u8 ability = ABILITY(gBankTarget);
 	gStringBank = gBankTarget;
 
 	if (gNewBS->ZMoveData->active && ProtectsAgainstZMoves(gCurrentMove, gBankAttacker, gBankTarget))
@@ -1067,7 +1067,7 @@ void AdjustDamage(bool8 CheckFalseSwipe) {
 
     if (gBattleMons[gBankTarget].status2 & STATUS2_SUBSTITUTE
 	&& !CheckCurrentMoveSoundMove()
-	&& BanksAbility(gBankAttacker) != ABILITY_INFILTRATOR) {
+	&& ABILITY(gBankAttacker) != ABILITY_INFILTRATOR) {
         goto END;
 	}
 

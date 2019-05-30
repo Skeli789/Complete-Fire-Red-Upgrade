@@ -73,7 +73,11 @@ const u8* DoMegaEvolution(u8 bank)
 	{
 		u16 species = mon->species;
 		DoFormChange(bank, evolutions->targetSpecies, TRUE, TRUE);
-		gBattleMons[bank].ability = GetPartyAbility(GetBankPartyData(bank));
+
+		mon->species = evolutions->targetSpecies; //Temporarily set the mon to its mega form		
+		gBattleMons[bank].ability = GetPartyAbility(mon); //Get mega ability
+		mon->species = species; //Set species back
+		
 		gBattleScripting->bank = bank;
 		gLastUsedItem = mon->item;
 		
