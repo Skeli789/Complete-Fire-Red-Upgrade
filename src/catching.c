@@ -388,7 +388,7 @@ static bool8 CriticalCapture(u32 odds)
 	#endif
 }
 
-u8 GiveMonToPlayer(pokemon_t* mon) //Hook in
+u8 GiveMonToPlayer(struct Pokemon* mon) //Hook in
 {
     int i;
 
@@ -399,22 +399,26 @@ u8 GiveMonToPlayer(pokemon_t* mon) //Hook in
     SetMonData(mon, MON_DATA_OT_GENDER, &gSaveBlock2->playerGender);
     SetMonData(mon, MON_DATA_OT_ID, gSaveBlock2->playerTrainerId);
 	
-	if (ItemId_GetType(gLastUsedItem) == BALL_TYPE_HEAL_BALL)
-		HealMon(mon);
-	else if (ItemId_GetType(gLastUsedItem) == BALL_TYPE_FRIEND_BALL)
-		mon->friendship = 200;
+	if (gMain.inBattle)
+	{
+		if (ItemId_GetType(gLastUsedItem) == BALL_TYPE_HEAL_BALL)
+			HealMon(mon);
+		else if (ItemId_GetType(gLastUsedItem) == BALL_TYPE_FRIEND_BALL)
+			mon->friendship = 200;
+	}
 	
     i = 0;
 
-    while (i < 6 && gPlayerParty[i].species != SPECIES_NONE)
+    while (i < PARTY_SIZE && gPlayerParty[i].species != SPECIES_NONE)
         ++i;
 
-    if (i >= 6)
+    if (i >= PARTY_SIZE)
         return SendMonToPC(mon);
 
-    CopyMon(&gPlayerParty[i], mon, sizeof(*mon));
+    CopyMon(&gPlayerParty[i], mon, sizeof(struct Pokemon));
     gPlayerPartyCount = i + 1;
-    return 0;
+
+    return MON_GIVEN_TO_PARTY;
 }
 
 u8 ItemIdToBallId(u16 ballItem)

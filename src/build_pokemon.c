@@ -31,6 +31,7 @@ extern bool8 CanMonParticipateInASkyBattle(struct Pokemon* mon);
 //This file's functions:
 static u8 CreateNPCTrainerParty(pokemon_t* const party, const u16 trainerNum, const bool8 firstTrainer, const bool8 side);
 static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerNum, const bool8 firstTrainer, const bool8 forPlayer, const u8 side);
+static void CreateFrontierMon(struct Pokemon* mon, const u8 level, const struct BattleTowerSpread* spread, const u16 trainerId, const u8 trainerNum, const u8 trainerGender, const bool8 forPlayer);
 static void SetWildMonHeldItem(void);
 static u32 GetBaseStatsTotal(const u16 species);
 static bool8 BaseStatsTotalGEAlreadyOnTeam(const u16 toCheck, const u8 partySize, u16* speciesArray);
@@ -39,6 +40,8 @@ static bool8 ItemAlreadyOnTeam(const u16 item, const u8 partySize, const item_t*
 static bool8 MegastoneAlreadyOnTeam(const u16 item, const u8 partySize, const item_t* const itemArray);
 static bool8 ZCrystalAlreadyOnTeam(const u16 item, const u8 partySize, const item_t* const itemArray);
 static bool8 PokemonTierBan(const u16 species, const u16 item, const struct BattleTowerSpread* const spread, const pokemon_t* const mon, const u8 checkFromLocationType);
+static u16 GivePlayerFrontierMonGivenSpecies(const u16 species, const struct BattleTowerSpread* const spreadTable, const u16 numSpreads);
+const struct BattleTowerSpread* GetSpreadBySpecies(const u16 species, const struct BattleTowerSpread* const spreads, const u16 numSpreads);
 static u8 GetPartyIdFromPartyData(struct Pokemon* mon);
 static u8 GetHighestMonLevel(const pokemon_t* const party);
 
@@ -148,6 +151,27 @@ void sp067_GenerateRandomBattleTowerTeam(void)
 	}
 	
 	SortItemsInBag(0, 0);
+}
+
+//@Details: Add a Pokemon with the given species from the requested spreads to
+//			the player's party. If no space, then adds it to the PC.
+//@Inputs:
+//		Var8000: Species
+//		Va
+//@Returns: 0 to given var if species is not roaming. 1 if it is and the name was buffered.
+u16 sp068_GivePlayerFrontierMonGivenSpecies(void)
+{
+	u16 numSpreads;
+	const struct BattleTowerSpread* spreads;
+
+	switch (Var8001) {
+		case 0:
+		default:
+			numSpreads = TOTAL_SPREADS;
+			spreads = gFrontierSpreads;
+	}
+
+	return GivePlayerFrontierMonGivenSpecies(Var8000, spreads, numSpreads);
 }
 
 //Returns the number of Pokemon
@@ -368,14 +392,13 @@ static u8 CreateNPCTrainerParty(pokemon_t* const party, const u16 trainerNum, co
 //Returns the number of Pokemon
 static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerNum, const bool8 firstTrainer, const bool8 forPlayer, const u8 side) 
 {
-    int i, j;
+    int i;
 	u8 monsCount;
 	
 	u8 trainerGender = 0;
 	u8 tier = VarGet(BATTLE_TOWER_TIER);
 	u8 battleTowerPokeNum = VarGet(BATTLE_TOWER_POKE_NUM);
 	u16 tableId = VarGet(TOWER_TRAINER_ID_VAR + (firstTrainer ^ 1));
-	u32 otid = (Random() << 8) | Random();
 
 	if (!forPlayer) 
 	{
@@ -502,52 +525,8 @@ static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerNum, const
 		else
 			level = MathMax(1, MathMin(MAX_LEVEL, VarGet(BATTLE_TOWER_POKE_LEVEL)));
 
-		if (forPlayer)
-			CreateMon(&party[i], spread->species, level, 0, TRUE, 0, OT_ID_PLAYER_ID, otid);
 
-		else 
-		{
-			CreateMon(&party[i], spread->species, level, 0, TRUE, 0, OT_ID_PRESET, otid);
-
-			CopyFrontierTrainerName((u8*) &party[i].otname, trainerNum, firstTrainer ^ 1);
-			party[i].otGender = trainerGender;
-		}
-
-		party[i].metLocation = 0x3A; //Battle Tower RS
-		party[i].metLevel = level;
-		party[i].obedient = TRUE;
-		party[i].friendship = 255;
-
-		SET_IVS(spread);
-		SET_EVS(spread);
-
-		if (spread->ability > 0)
-		{
-			GiveMonNatureAndAbility(&party[i], spread->nature, spread->ability - 1);
-		}
-		else //Hidden Ability
-		{ 
-			GiveMonNatureAndAbility(&party[i], spread->nature, 0xFF);
-			party[i].hiddenAbility = TRUE;
-		}
-
-        for (j = 0; j < MAX_MON_MOVES; j++) 
-		{
-			party[i].moves[j] = spread->moves[j];
-			party[i].pp[j] = gBattleMoves[spread->moves[j]].pp;
-		}
-
-        party[i].item = item;
-
-		u8 ballType;
-		if (spread->ball)
-			ballType = MathMin(NUM_BALLS, spread->ball);
-		else
-			ballType = umodsi(Random(), NUM_BALLS + 1);
-		SetMonData(&party[i], REQ_POKEBALL, &ballType);
-
-		CalculateMonStats(&party[i]);
-		HealMon(&party[i]);
+		CreateFrontierMon(&party[i], level, spread, trainerNum, firstTrainer ^ 1, trainerGender, forPlayer);
     }
 
 	if (!forPlayer) //Probably best to put these checks somewhere else
@@ -558,6 +537,61 @@ static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerNum, const
 	}
 
     return monsCount;
+}
+
+static void CreateFrontierMon(struct Pokemon* mon, const u8 level, const struct BattleTowerSpread* spread, const u16 trainerId, const u8 trainerNum, const u8 trainerGender, const bool8 forPlayer)
+{
+	int i, j;
+
+	if (forPlayer)
+		CreateMon(mon, spread->species, level, 0, TRUE, 0, OT_ID_PLAYER_ID, 0);
+
+	else 
+	{
+		CreateMon(mon, spread->species, level, 0, TRUE, 0, OT_ID_PRESET, Random32());
+
+		CopyFrontierTrainerName((u8*) mon->otname, trainerId, trainerNum);
+		mon->otGender = trainerGender;
+	}
+
+	mon->metLocation = 0x3A; //Battle Tower RS
+	mon->metLevel = level;
+	mon->obedient = TRUE;
+	mon->friendship = 255;
+
+	i = 0;
+	struct Pokemon* party = mon;
+
+	SET_IVS(spread);
+	SET_EVS(spread);
+
+	if (spread->ability > 0)
+	{
+		GiveMonNatureAndAbility(mon, spread->nature, spread->ability - 1);
+	}
+	else //Hidden Ability
+	{ 
+		GiveMonNatureAndAbility(mon, spread->nature, 0xFF);
+		mon->hiddenAbility = TRUE;
+	}
+
+    for (j = 0; j < MAX_MON_MOVES; j++) 
+	{
+		mon->moves[j] = spread->moves[j];
+		mon->pp[j] = gBattleMoves[spread->moves[j]].pp;
+	}
+
+    mon->item = spread->item;
+
+	u8 ballType;
+	if (spread->ball)
+		ballType = MathMin(NUM_BALLS, spread->ball);
+	else
+		ballType = umodsi(Random(), NUM_BALLS + 1);
+	SetMonData(mon, REQ_POKEBALL, &ballType);
+
+	CalculateMonStats(mon);
+	HealMon(mon);
 }
 
 static void SetWildMonHeldItem(void)
@@ -790,6 +824,39 @@ static bool8 PokemonTierBan(const u16 species, const u16 item, const struct Batt
 	}
 
 	return FALSE; //Not banned
+}
+
+static u16 GivePlayerFrontierMonGivenSpecies(const u16 species, const struct BattleTowerSpread* const spreadTable, const u16 numSpreads)
+{
+	struct Pokemon mon;
+	const struct BattleTowerSpread* spread = GetSpreadBySpecies(species, spreadTable, numSpreads);
+	
+	if (spread == NULL)
+		return 0xFFFF;
+
+	CreateFrontierMon(&mon, 50, spread, 0, 0, 0, TRUE);
+	return GiveMonToPlayer(&mon);
+}
+
+const struct BattleTowerSpread* GetSpreadBySpecies(const u16 species, const struct BattleTowerSpread* const spreads, const u16 numSpreads)
+{
+	u32 i;
+
+	for (i = 0; i < numSpreads; ++i)
+	{
+		if (spreads[i].species == species)
+			break;
+	}
+	
+	if (i == numSpreads)
+		return NULL; //Species not found
+		
+	u8 offset = Random() % 5; //Max number of possible spreads for a given Pokemon
+
+	while (spreads[i + offset].species != species && offset != 0) //Overshot
+		--offset; //Decrement until reach proper species again
+		
+	return &spreads[i + offset];
 }
 
 bool8 IsMonAllowedInBattleTower(struct Pokemon* mon)
