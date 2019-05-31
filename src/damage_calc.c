@@ -621,6 +621,7 @@ u8 AI_TypeCalc(u16 move, u8 bankAtk, pokemon_t* party_data_def) {
         }
 		if (move == MOVE_FLYINGPRESS && moveType != TYPE_FLYING) {
 			moveType = TYPE_FLYING;
+			i = 0;
 			goto TYPE_LOOP_AI;
 		}
     }
@@ -677,6 +678,7 @@ void TypeDamageModification(u8 atkAbility, u8 bankDef, u16 move, u8 moveType, u8
         }
 		if (move == MOVE_FLYINGPRESS && moveType != TYPE_FLYING) {
 			moveType = TYPE_FLYING;
+			i = 0;
 			goto TYPE_LOOP;
 		}
 }
