@@ -40,6 +40,7 @@ static bool8 ItemAlreadyOnTeam(const u16 item, const u8 partySize, const item_t*
 static bool8 MegastoneAlreadyOnTeam(const u16 item, const u8 partySize, const item_t* const itemArray);
 static bool8 ZCrystalAlreadyOnTeam(const u16 item, const u8 partySize, const item_t* const itemArray);
 static bool8 PokemonTierBan(const u16 species, const u16 item, const struct BattleTowerSpread* const spread, const pokemon_t* const mon, const u8 checkFromLocationType);
+static bool8 IsPokemonBannedBasedOnStreak(u16 species, u16 item, u16* speciesArray, u8 monsCount, u16 trainerId, u8 tier, bool8 forPlayer);
 static u16 GivePlayerFrontierMonGivenSpecies(const u16 species, const struct BattleTowerSpread* const spreadTable, const u16 numSpreads);
 const struct BattleTowerSpread* GetSpreadBySpecies(const u16 species, const struct BattleTowerSpread* const spreads, const u16 numSpreads);
 static u8 GetPartyIdFromPartyData(struct Pokemon* mon);
@@ -143,22 +144,22 @@ void sp067_GenerateRandomBattleTowerTeam(void)
 {
 	BuildFrontierParty(gPlayerParty, 0, TRUE, TRUE, B_SIDE_PLAYER);
 	
-	for (int i = 0; i < ITEMS_COUNT; ++i)
+	/*for (int i = 0; i < ITEMS_COUNT; ++i)
 	{
 		u8* name = ItemId_GetName(i);
 		if (name[0] != 0xAC && name[0] != 0xFF) //'?', ' '
 			AddBagItem(i, 1);
 	}
 	
-	SortItemsInBag(0, 0);
+	SortItemsInBag(0, 0);*/
 }
 
-//@Details: Add a Pokemon with the given species from the requested spreads to
+//@Details: Adds a Pokemon with the given species from the requested spreads to
 //			the player's party. If no space, then adds it to the PC.
 //@Inputs:
 //		Var8000: Species
-//		Va
-//@Returns: 0 to given var if species is not roaming. 1 if it is and the name was buffered.
+//		Var8001: Spread Type
+//@Returns: If the Pokemon was added or not.
 u16 sp068_GivePlayerFrontierMonGivenSpecies(void)
 {
 	u16 numSpreads;
@@ -172,6 +173,34 @@ u16 sp068_GivePlayerFrontierMonGivenSpecies(void)
 	}
 
 	return GivePlayerFrontierMonGivenSpecies(Var8000, spreads, numSpreads);
+}
+
+//@Details: Add a random Pokemon battleable in the given tier.
+//@Inputs:
+//		Var8000: Tier
+//		Var8001: Spread Type
+//@Returns: If the Pokemon was added or not.
+u16 sp069_GivePlayerRandomFrontierMonByTier(void)
+{
+	u16 numSpreads;
+	struct Pokemon mon;
+	const struct BattleTowerSpread* spread;
+	const struct BattleTowerSpread* spreads;
+
+	switch (Var8001) {
+		case 0:
+		default:
+			numSpreads = TOTAL_SPREADS;
+			spreads = gFrontierSpreads;
+	}
+	
+	do
+	{
+		spread = &spreads[Random() % numSpreads];
+	} while (IsPokemonBannedBasedOnStreak(spread->species, spread->item, NULL, 0, 0, Var8000, TRUE));
+	
+	CreateFrontierMon(&mon, 50, spread, 0, 0, 0, TRUE);
+	return GiveMonToPlayer(&mon);
 }
 
 //Returns the number of Pokemon
@@ -474,40 +503,11 @@ static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerNum, const
 
 			species = spread->species;
 			item = spread->item;
-			
-			if (trainerNum == BATTLE_TOWER_TID && !forPlayer && tier == BATTLE_TOWER_STANDARD)
-			{
-				u16 streak = GetCurrentBattleTowerStreak();
-				
-				//Battles get more difficult the higher the streak.
-				if (streak < 10)
-				{
-					if (IsMegaStone(item)
-					||  IsZCrystal(item)
-					||  GetBaseStatsTotal(species) >= 540)
-						continue;
-				}
-				else if (streak < 20)
-				{
-					if (IsMegaStone(item)
-					||  GetBaseStatsTotal(species) >= 550)
-						continue;
-				}
-				else if (streak < 30)
-				{
-					if (GetBaseStatsTotal(species) >= 570)
-						continue;
-				}
-				else if (streak < 50)
-				{
-					if (BaseStatsTotalGEAlreadyOnTeam(570, monsCount, speciesArray))
-						continue;
-				}
-			}
 
 			//Prevent duplicate species and items
 			//Only allow one Mega Stone & Z-Crystal per team
-			if (!SpeciesAlreadyOnTeam(species, monsCount, speciesArray)
+			if (!IsPokemonBannedBasedOnStreak(species, item, speciesArray, monsCount, trainerNum, tier, forPlayer)
+			&& !SpeciesAlreadyOnTeam(species, monsCount, speciesArray)
 			&& !ItemAlreadyOnTeam(item, monsCount, itemArray)
 			&& !MegastoneAlreadyOnTeam(item, monsCount, itemArray)
 			&& !ZCrystalAlreadyOnTeam(item, monsCount, itemArray)
@@ -824,6 +824,67 @@ static bool8 PokemonTierBan(const u16 species, const u16 item, const struct Batt
 	}
 
 	return FALSE; //Not banned
+}
+
+static bool8 IsPokemonBannedBasedOnStreak(u16 species, u16 item, u16* speciesArray, u8 monsCount, u16 trainerId, u8 tier, bool8 forPlayer)
+{
+	u16 streak;
+	
+	if (!forPlayer && trainerId == BATTLE_TOWER_TID && tier == BATTLE_TOWER_STANDARD)
+	{
+		streak = GetCurrentBattleTowerStreak();
+				
+		//Battles get more difficult the higher the streak.
+		if (streak < 10)
+		{
+			if (IsMegaStone(item)
+			||  IsZCrystal(item)
+			||  GetBaseStatsTotal(species) >= 520)
+				return TRUE;
+		}
+		else if (streak < 20)
+		{
+			if (IsMegaStone(item)
+			||  GetBaseStatsTotal(species) >= 540)
+				return TRUE;
+		}
+		else if (streak < 30)
+		{
+			if (GetBaseStatsTotal(species) >= 570)
+				return TRUE;
+		}
+		else if (streak < 50)
+		{
+			if (BaseStatsTotalGEAlreadyOnTeam(570, monsCount, speciesArray))
+				return TRUE;
+		}
+	}
+	else if (forPlayer)
+	{
+		streak = GetMaxBattleTowerStreakForTier(tier);
+		
+		//Better Pokemon are given to the player the better the streak
+		if (streak < 10)
+		{
+			if (IsMegaStone(item)
+			||  IsZCrystal(item)
+			||  GetBaseStatsTotal(species) >= 540)
+				return TRUE;
+		}
+		else if (streak < 20)
+		{
+			if (IsMegaStone(item)
+			||  GetBaseStatsTotal(species) >= 550)
+				return TRUE;
+		}
+		else if (streak < 30)
+		{
+			if (GetBaseStatsTotal(species) >= 570)
+				return TRUE;
+		}
+	}
+	
+	return FALSE;
 }
 
 static u16 GivePlayerFrontierMonGivenSpecies(const u16 species, const struct BattleTowerSpread* const spreadTable, const u16 numSpreads)

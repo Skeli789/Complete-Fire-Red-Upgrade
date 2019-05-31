@@ -259,6 +259,30 @@ u16 GetCurrentBattleTowerStreak(void)
 	return GetBattleTowerStreak(CURR_STREAK, 0xFFFF, 0xFFFF, 2, 0);
 }
 
+u16 GetMaxBattleTowerStreakForTier(u8 tier)
+{
+	bool8 inverse;
+	u8 battleType, level;
+	u16 streak = 0;
+	u16 max = 0;
+	
+	for (battleType = 0; battleType < NUM_TOWER_BATTLE_TYPES; ++battleType)
+	{
+		for (level = 50; level <= 100; level += 50) 
+		{
+			for (inverse = FALSE; inverse <= TRUE; ++inverse)
+			{
+				streak = GetBattleTowerStreak(MAX_STREAK, battleType, tier, inverse, level);
+				
+				if (streak > max)
+					max = streak;
+			}	
+		}
+	}
+
+	return max;
+}
+
 static u16 GetBattleTowerStreak(u8 currentOrMax, u16 inputBattleStyle, u16 inputTier, u8 inverse, u8 level)
 {
 	u8 battleStyle = (inputBattleStyle == 0xFFFF) ? VarGet(BATTLE_TOWER_BATTLE_TYPE) : inputBattleStyle;

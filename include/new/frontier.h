@@ -12,6 +12,7 @@ u16 TryGetSpecialFrontierTrainerMusic(u16 trainerId, u8 battlerNum);
 u32 GetAIFlagsInBattleFrontier(unusedArg u8 bank);
 u8 GetNumMonsOnTeamInFrontier(void);
 u16 GetCurrentBattleTowerStreak(void);
+u16 GetMaxBattleTowerStreakForTier(u8 tier);
 
 //Functions Hooked In:
 u16 sp052_GenerateTowerTrainer(void);
