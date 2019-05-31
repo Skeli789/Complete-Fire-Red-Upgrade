@@ -67,10 +67,10 @@ gBattleAnims_General:
 .word ANIM_BERRY_EAT
 .word ANIM_FOG_CONTINUES
 .word ANIM_AQUA_RING_HEAL
-.word 0x0
-.word 0x0
-.word 0x0
-.word 0x0
+.word ELECTRIC_TERRAIN_ACTIVE_ANIM
+.word GRASSY_TERRAIN_ACTIVE_ANIM
+.word MISTY_TERRAIN_ACTIVE_ANIM
+.word PSYCHIC_TERRAIN_ACTIVE_ANIM
 .word BATON_PASS_ANIM
 .word DRAGON_TAIL_BLOW_AWAY_ANIM
 .word ANIM_ZMOVE_ACTIVATE
@@ -238,7 +238,8 @@ ANIM_ELECTRIC_SURGE:
 	launchtemplate ELECTRIC_SURGE_2 0x82 0x1 0xa0 
 	launchtemplate ELECTRIC_SURGE_2 0x82 0x1 0xc0 
 	launchtemplate ELECTRIC_SURGE_2 0x82 0x1 0xe0 
-	waitanimation 
+	waitanimation
+ELECTRIC_TERRAIN_ACTIVE_ANIM:
 	loaddefaultBG @At this point the new BG is in effect
 	waitfortransparentBG 
 	playsound2 0x70 0x3f 
@@ -276,6 +277,7 @@ ANIM_GRASSY_SURGE:
 	launchtemplate GRASSY_TERRAIN_1 0x82 0x1 0xc0 
 	launchtemplate GRASSY_TERRAIN_1 0x82 0x1 0xe0 
 	waitanimation 
+GRASSY_TERRAIN_ACTIVE_ANIM:
 	loaddefaultBG @At this point the new BG is in effect
 	waitfortransparentBG
 	playsoundpanchange2 0xc3 0xc0 0x3f 0x1 0x0 
@@ -312,6 +314,7 @@ ANIM_MISTY_SURGE:
 	launchtemplate MISTY_TERRAIN_1 0x82 0x1 0xc0 
 	launchtemplate MISTY_TERRAIN_1 0x82 0x1 0xe0 
 	waitanimation 
+MISTY_TERRAIN_ACTIVE_ANIM:
 	loaddefaultBG @At this point the new BG is in effect
 	waitfortransparentBG
 	playsound2 0xec 0xc0 
@@ -348,7 +351,8 @@ ANIM_PSYCHIC_SURGE:
 	launchtemplate PSYCHIC_TERRAIN_1 0x82 0x1 0xa0 
 	launchtemplate PSYCHIC_TERRAIN_1 0x82 0x1 0xc0 
 	launchtemplate PSYCHIC_TERRAIN_1 0x82 0x1 0xe0 
-	waitanimation 
+	waitanimation
+PSYCHIC_TERRAIN_ACTIVE_ANIM:
 	loaddefaultBG @At this point the new BG is in effect
 	waitfortransparentBG
 	soundcomplex 0xb1 0x3f 0xa 0x3 
@@ -823,3 +827,4 @@ ANIM_REMOVE_ABILITY_POP_UP:
 	launchtask AnimTask_DestroyAbilityPopUp 0x5 0x0
 	pause 0x20
 	endanimation
+	
