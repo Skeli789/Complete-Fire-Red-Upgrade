@@ -73,6 +73,7 @@
 .global BattleScript_StickyHoldActivates
 .global BattleScript_DampStopsExplosion
 .global BattleScript_TookAttack
+.global BattleScript_AvoidedMoveWithAbility
 
 .global BattleScript_AbilityPopUp
 .global BattleScript_AbilityPopUpRevert
@@ -917,6 +918,15 @@ BattleScript_TookAttack:
 	waitmessage DELAY_HALFSECOND
 	call BattleScript_AbilityPopUpRevert
 	orword HIT_MARKER HITMARKER_ATTACKSTRING_PRINTED
+	return
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_AvoidedMoveWithAbility:
+	call BattleScript_AbilityPopUp
+	printstring 0x1B @;STRINGID_ITDOESNTAFFECT
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
 	return
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

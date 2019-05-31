@@ -467,9 +467,21 @@ void atk0F_resultmessage(void) {
 
     if (gBattleExecBuffer) return;
 
-    if (gMoveResultFlags & MOVE_RESULT_MISSED && (!(gMoveResultFlags & MOVE_RESULT_DOESNT_AFFECT_FOE) || gBattleCommunication[6] > 2)) {
-        stringId = gMissStringIds[gBattleCommunication[6]];
-        gBattleCommunication[MSG_DISPLAY] = 1;
+    if (gMoveResultFlags & MOVE_RESULT_MISSED && (!(gMoveResultFlags & MOVE_RESULT_DOESNT_AFFECT_FOE) || gBattleCommunication[6] > 2))
+	{
+		if (gBattleCommunication[6] > 2) //Levitate + Wonder Guard
+		{
+			BattleScriptPush(gBattlescriptCurrInstr + 1);
+			gBattleScripting->bank = gBankTarget;
+			gBattlescriptCurrInstr = BattleScript_AvoidedMoveWithAbility;
+			gBattleCommunication[MSG_DISPLAY] = 0;
+			return;
+		}
+		else
+		{
+			stringId = gMissStringIds[gBattleCommunication[6]];
+			gBattleCommunication[MSG_DISPLAY] = 1;
+		}
     }
 
     else {

@@ -68,6 +68,7 @@ extern u8 BattleScript_ProtectedByAbility[];
 extern u8 BattleScript_SturdyPreventsOHKO[];
 extern u8 BattleScript_StickyHoldActivates[];
 extern u8 BattleScript_StickyHoldActivatesRet[];
+extern u8 BattleScript_AvoidedMoveWithAbility[];
 
 extern u8 BattleScript_AbilityNoStatLoss[];
 extern u8 BattleScript_AbilityNoSpecificStatLoss[];
