@@ -779,7 +779,7 @@ bool8 CanEvolve(pokemon_t* mon) {
 	int i;
 	const struct Evolution* evolutions = gEvolutionTable[mon->species];
 	
-	for (i = 0; i <= EVOS_PER_MON; ++i) 
+	for (i = 0; i < EVOS_PER_MON; ++i) 
 	{
 		if (evolutions[i].method != MEGA_EVOLUTION && evolutions[i].method != 0)
 			return TRUE;
@@ -791,7 +791,7 @@ bool8 CouldHaveEvolvedViaLevelUp(pokemon_t* mon) {
 	int i;
 	const struct Evolution* evolutions = gEvolutionTable[mon->species];
 	
-	for (i = 0; i <= EVOS_PER_MON; ++i) 
+	for (i = 0; i < EVOS_PER_MON; ++i) 
 	{
 		if (evolutions[i].method == EVO_LEVEL && mon->level >= evolutions[i].param)
 			return TRUE;
