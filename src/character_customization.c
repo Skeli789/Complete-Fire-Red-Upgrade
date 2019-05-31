@@ -1,5 +1,6 @@
 #include "defines.h"
 #include "defines_battle.h"
+#include "Tables/trainer_details.h"
 #include "../include/link.h"
 #include "../include/random.h"
 #include "../include/sprite.h"
@@ -85,7 +86,7 @@ NPCPtr GetEventObjectGraphicsInfo(u16 graphicsId)
 	if (tableId == 0xFF && spriteId <= 0xF)
 	{
 		//runtime changeable
-		newId = VarGet(VAR_RUNTIME_CHANGEABLE+spriteId);
+		newId = VarGet(VAR_RUNTIME_CHANGEABLE + spriteId);
 		tableId = (newId >> 8) & 0xFF;	// upper byte
 		spriteId = (newId & 0xFF);		// lower byte
 	}

@@ -57,7 +57,7 @@ SetSleepFinalChecks:
 	jumpifstatus BANK_TARGET STATUS_SLEEP 0x81D69B0
 	jumpifcannotsleep 0x81D69CC
 	jumpifstatus BANK_TARGET STATUS_ANY NOEFFECT
-	accuracycheck NOEFFECT 0x0
+	accuracycheck BS_MOVE_MISSED_PAUSE 0x0
 	jumpifsideaffecting BANK_TARGET SIDE_SAFEGUARD 0x81D8B39
 	attackanimation
 	waitanimation

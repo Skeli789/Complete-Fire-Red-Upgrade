@@ -86,7 +86,7 @@ typedef u8 BoxNameT[9];
 
 //#define sPSSData ((struct PokemonStorageSystemData*) *((u32*) 0x20397B0))
 
-#define gDisposableBoxMon ((struct BoxPokemon*) 0x2023BE4) //Reuse Battle Data
+#define gDisposableBoxMon ((struct BoxPokemon*) 0x2022BC4) //Reuse Battle Buffer A
 
 struct CompressedPokemon* const sPokemonBoxPtrs[TOTAL_BOXES_COUNT] =
 {
@@ -298,7 +298,7 @@ struct BoxPokemon* GetBoxedMonPtr(u8 boxId, u8 boxPosition)
 	{
 		struct CompressedPokemon* compMon = &sPokemonBoxPtrs[boxId][boxPosition];
 		CreateBoxMonFromCompressedMon(gDisposableBoxMon, compMon); //Use a static location in memory
-        return gDisposableBoxMon;
+		return gDisposableBoxMon;
 	}
     else
         return NULL;

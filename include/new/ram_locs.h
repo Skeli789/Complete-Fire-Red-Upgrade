@@ -6,8 +6,8 @@
 struct Clock
 {
 	u16 year;
-	u8 dayOfWeek;
 	u8 month;
+	u8 dayOfWeek;
 	u8 day;
 	u8 _;
 	u8 hour;
