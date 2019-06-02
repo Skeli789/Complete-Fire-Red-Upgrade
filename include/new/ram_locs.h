@@ -6,10 +6,10 @@
 struct Clock
 {
 	u16 year;
+	u8 _; //For some reason always set to 4
 	u8 month;
-	u8 dayOfWeek;
 	u8 day;
-	u8 _;
+	u8 dayOfWeek;
 	u8 hour;
 	u8 minute;
 	u8 second;
