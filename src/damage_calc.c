@@ -10,6 +10,7 @@
 #include "../include/new/damage_calc.h"
 #include "../include/new/general_bs_commands.h"
 #include "../include/new/helper_functions.h"
+#include "../include/new/item.h"
 #include "../include/new/move_tables.h"
 
 //TODO: Update Type Calc to have an option to be fooled by Illusion
@@ -866,7 +867,7 @@ static bool8 AbilityCanChangeTypeAndBoost(u8 bankAtk, u16 move) {
 u8 GetExceptionMoveType(u8 bankAtk, u16 move) {
 	int i;
 	u8 moveType = gBattleMoves[move].type;
-	u8 item = ITEM(bankAtk);
+	u16 item = ITEM(bankAtk);
 	u8 effect = ITEM_EFFECT(bankAtk);
 	u8 quality = ITEM_QUALITY(bankAtk);
 
@@ -900,9 +901,12 @@ u8 GetExceptionMoveType(u8 bankAtk, u16 move) {
 			break;
 
 		case MOVE_NATURALGIFT:
-			if (GetPocketByItemId(item) == POCKET_BERRY_POUCH) {
-				for (i = 0; NaturalGiftTable[i].berry != ITEM_TABLES_TERMIN; ++i) {
-					if (NaturalGiftTable[i].berry == item) {
+			if (IsBerry(item))
+			{
+				for (i = 0; NaturalGiftTable[i].berry != ITEM_TABLES_TERMIN; ++i)
+				{
+					if (NaturalGiftTable[i].berry == item)
+					{
 						moveType = NaturalGiftTable[i].type;
 						goto BREAK_NATURAL_GIFT;
 					}
@@ -962,7 +966,7 @@ u8 GetExceptionMoveTypeFromParty(pokemon_t* party_data, u16 move) {
 	int i;
 	u8 moveType = gBattleMoves[move].type;
 	u8 ability = GetPartyAbility(party_data);
-	u8 item = party_data->item;
+	u16 item = party_data->item;
 	u8 effect = ItemId_GetHoldEffect(item);
 	u8 quality = ItemId_GetHoldEffectParam(item);
 
@@ -996,17 +1000,21 @@ u8 GetExceptionMoveTypeFromParty(pokemon_t* party_data, u16 move) {
 			break;
 
 		case MOVE_NATURALGIFT:
-			if (GetPocketByItemId(item) == POCKET_BERRY_POUCH) {
-				for (i = 0; NaturalGiftTable[i].berry != ITEM_TABLES_TERMIN; ++i) {
-					if (NaturalGiftTable[i].berry == item) {
+			if (IsBerry(item))
+			{
+				for (i = 0; NaturalGiftTable[i].berry != ITEM_TABLES_TERMIN; ++i)
+				{
+					if (NaturalGiftTable[i].berry == item)
+					{
 						moveType = NaturalGiftTable[i].type;
-						break;
+						goto NATURAL_GIFT_BREAK;
 					}
 				}
 				moveType = TYPE_MYSTERY; //If the berry isn't in the table, it has no type
 			}
 			else
 				moveType = TYPE_MYSTERY; //If Natural Gift fails, it has no type
+		NATURAL_GIFT_BREAK:
 			break;
 
 		case MOVE_JUDGMENT:
@@ -2326,9 +2334,12 @@ u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 
 
 		case MOVE_NATURALGIFT:	;
 			power = 0;
-			if (GetPocketByItemId(item) == POCKET_BERRY_POUCH) {
-				for (i = 0; NaturalGiftTable[i].berry != ITEM_TABLES_TERMIN; ++i) {
-					if (NaturalGiftTable[i].berry == item) {
+			if (IsBerry(item))
+			{
+				for (i = 0; NaturalGiftTable[i].berry != ITEM_TABLES_TERMIN; ++i)
+				{
+					if (NaturalGiftTable[i].berry == item)
+					{
 						power = NaturalGiftTable[i].power;
 						break;
 					}
