@@ -398,16 +398,18 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 				if (gHitMarker & HITMARKER_OBEYS)
 				{
 					if (holdEffectAtk == ITEM_EFFECT_CHOICE_BAND
-					&&  gChosenMove != MOVE_STRUGGLE
-					&& (*choicedMoveAtk == 0 || *choicedMoveAtk == 0xFFFF))
+					&&  gChosenMove != MOVE_STRUGGLE)
 					{
-						if (gChosenMove == MOVE_BATONPASS && !(gMoveResultFlags & MOVE_RESULT_FAILED))
+						if (*choicedMoveAtk == 0 || *choicedMoveAtk == 0xFFFF)
 						{
-							gBattleScripting->atk49_state++;
-							break;
+							if (gChosenMove == MOVE_BATONPASS && !(gMoveResultFlags & MOVE_RESULT_FAILED))
+							{
+								gBattleScripting->atk49_state++;
+								break;
+							}
+							
+							*choicedMoveAtk = gChosenMove;
 						}
-						
-						*choicedMoveAtk = gChosenMove;
 					}
 					else //This should remove the choice lock glitch
 						*choicedMoveAtk = 0;

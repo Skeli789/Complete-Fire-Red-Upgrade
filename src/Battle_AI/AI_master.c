@@ -205,6 +205,7 @@ void BattleAI_DoAIProcessing(void)
 
             case AIState_Processing:
                 if (AI_THINKING_STRUCT->moveConsidered != MOVE_NONE
+				&&  AI_THINKING_STRUCT->score[AI_THINKING_STRUCT->movesetIndex] > 0
 				&&  AI_THINKING_STRUCT->aiLogicId < ARRAY_COUNT(sBattleAIScriptTable)
 				&&  sBattleAIScriptTable[AI_THINKING_STRUCT->aiLogicId] != NULL)
                 {
@@ -218,7 +219,7 @@ void BattleAI_DoAIProcessing(void)
                 {
                     AI_THINKING_STRUCT->score[AI_THINKING_STRUCT->movesetIndex] = 0;
                 }
-				
+
 				AI_THINKING_STRUCT->movesetIndex++;
 
                 if (AI_THINKING_STRUCT->movesetIndex < MAX_MON_MOVES && !(AI_THINKING_STRUCT->aiAction & AI_ACTION_DO_NOT_ATTACK))

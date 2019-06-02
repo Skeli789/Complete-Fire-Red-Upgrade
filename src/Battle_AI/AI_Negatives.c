@@ -2142,7 +2142,6 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 move, const
 			break;
 	} //Move effects switch
 
-
 	//Put Acc check here
 
 	return viability;
