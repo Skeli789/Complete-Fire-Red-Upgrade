@@ -296,10 +296,7 @@ void MetalBurstDamageCalculator(void)
 	
     if (gProtectStructs[gBankAttacker].physicalDmg && atkSide != defSide && gBattleMons[gProtectStructs[gBankAttacker].physicalBank].hp) 
 	{
-		if (!gSpecialStatuses[gBankAttacker].moveturnLostHP)
-			gBattleMoveDamage = 1; //Suffered physical damage, but negated damage
-		else
-			gBattleMoveDamage = udivsi(gProtectStructs[gBankAttacker].physicalDmg * 15, 10);
+		gBattleMoveDamage = (gProtectStructs[gBankAttacker].physicalDmg * 15) / 10;
 		
         if (gSideTimers[defSide].followmeTimer && gBattleMons[gSideTimers[defSide].followmeTarget].hp)
             gBankTarget = gSideTimers[defSide].followmeTarget;
@@ -308,10 +305,7 @@ void MetalBurstDamageCalculator(void)
     }
 	else if (gProtectStructs[gBankAttacker].specialDmg && atkSide != defSide2 && gBattleMons[gProtectStructs[gBankAttacker].specialBank].hp) 
 	{
-		if (!gSpecialStatuses[gBankAttacker].moveturnLostHP)
-			gBattleMoveDamage = 1; //Suffered special damage, but negated damage
-		else
-			gBattleMoveDamage = udivsi(gProtectStructs[gBankAttacker].specialDmg * 15, 10);
+		gBattleMoveDamage = (gProtectStructs[gBankAttacker].specialDmg * 15) / 10;
 		
         if (gSideTimers[defSide2].followmeTimer && gBattleMons[gSideTimers[defSide2].followmeTarget].hp)
             gBankTarget = gSideTimers[defSide2].followmeTarget;

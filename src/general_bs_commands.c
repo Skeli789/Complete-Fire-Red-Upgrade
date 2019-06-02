@@ -2174,8 +2174,8 @@ void atkA1_counterdamagecalculator(void) {
     u8 atkSide = SIDE(gBankAttacker);
     u8 defSide = SIDE(gProtectStructs[gBankAttacker].physicalBank);
 
-    if (gProtectStructs[gBankAttacker].physicalDmg && atkSide != defSide && gBattleMons[gProtectStructs[gBankAttacker].physicalBank].hp) {
-
+    if (gProtectStructs[gBankAttacker].physicalDmg && atkSide != defSide && gBattleMons[gProtectStructs[gBankAttacker].physicalBank].hp)
+	{
 		gBattleMoveDamage = gProtectStructs[gBankAttacker].physicalDmg * 2;
 
         if (gSideTimers[defSide].followmeTimer && gBattleMons[gSideTimers[defSide].followmeTarget].hp)
@@ -2184,8 +2184,8 @@ void atkA1_counterdamagecalculator(void) {
             gBankTarget = gProtectStructs[gBankAttacker].physicalBank;
         gBattlescriptCurrInstr += 5;
     }
-
-    else {
+    else 
+	{
         gSpecialStatuses[gBankAttacker].ppNotAffectedByPressure = 1;
         gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
     }
