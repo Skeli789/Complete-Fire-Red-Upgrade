@@ -1591,16 +1591,17 @@ u8 sp0AD_GetTimeOfDay(void)
 				return DAY;
 			else
 				return NIGHT;
-				
+
 		default:
-			if (IsMorning())
-				return MORNING;
-			else if (IsDayTime())
-				return DAY;
+			if (IsNightTime())
+				return NIGHT;
 			else if (IsEvening())
 				return EVENING;
+			else if (IsDayTime())
+				return DAY;
 			else
-				return NIGHT;
+				return MORNING;
+			
 	}
 }
 
