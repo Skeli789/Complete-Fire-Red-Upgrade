@@ -212,8 +212,12 @@ void DNSBattleBGPalFade(void)
  
 bool8 IsDayTime()
 {
-	//return Clock->hour >= TIME_MORNING_START && Clock->hour < TIME_NIGHT_START;
-	return Clock->hour >= TIME_MORNING_START && Clock->hour < TIME_EVENING_START;
+	return Clock->hour >= TIME_MORNING_START && Clock->hour < TIME_NIGHT_START;
+}
+
+bool8 IsOnlyDayTime()
+{
+	return Clock->hour >= TIME_DAY_START && Clock->hour < TIME_EVENING_START;
 }
 
 bool8 IsNightTime()

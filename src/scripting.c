@@ -1587,7 +1587,7 @@ u8 sp0AD_GetTimeOfDay(void)
 {
 	switch (Var8000) {
 		case 1:
-			if (IsMorning() || IsDayTime() || IsEvening())
+			if (IsDayTime()) //Combined with morning and evening
 				return DAY;
 			else
 				return NIGHT;
@@ -1597,7 +1597,7 @@ u8 sp0AD_GetTimeOfDay(void)
 				return NIGHT;
 			else if (IsEvening())
 				return EVENING;
-			else if (IsDayTime())
+			else if (IsOnlyDayTime())
 				return DAY;
 			else
 				return MORNING;

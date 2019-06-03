@@ -14,6 +14,7 @@ void TransferPlttBuffer(void);
 void DNSBattleBGPalFade(void);
 bool8 BeginNormalPaletteFade(u32 selectedPalettes, s8 delay, u8 startY, u8 targetY, u16 blendColor);
 bool8 IsDayTime();
+bool8 IsOnlyDayTime();
 bool8 IsNightTime();
 bool8 IsMorning();
 bool8 IsEvening();
