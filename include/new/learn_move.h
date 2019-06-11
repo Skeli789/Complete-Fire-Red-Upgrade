@@ -17,6 +17,8 @@ u8 GetLevelUpMovesBySpecies(u16 species, u16* moves);
 u16 MonTryLearningNewMove(struct Pokemon* mon, bool8 firstMove);
 u8 GetMoveRelearnerMoves(struct Pokemon* mon, u16* moves);
 u8 GetNumberOfRelearnableMoves(struct Pokemon* mon);
+u16 GiveMoveToBoxMon(struct BoxPokemon *boxMon, u16 move);
+void SetMonMoveSlot(struct Pokemon* mon, u16 move, u8 slot);
 void InitLearnMoveFix(void);
 bool8 CheckMoveRelearnerMoveLimit(u8 counter);
 u16 GetMoveIdFromRelearnerStruct(u8 index);

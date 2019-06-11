@@ -212,6 +212,31 @@ static move_t RandomizeMove(u16 move)
 }
 #endif
 
+u16 GiveMoveToBoxMon(struct BoxPokemon *boxMon, u16 move)
+{
+    for (int i = 0; i < MAX_MON_MOVES; i++)
+    {
+        u16 existingMove = GetBoxMonData(boxMon, MON_DATA_MOVE1 + i, NULL);
+        if (!existingMove)
+        {
+            SetBoxMonData(boxMon, MON_DATA_MOVE1 + i, &move);
+            SetBoxMonData(boxMon, MON_DATA_PP1 + i, &gBattleMoves[move].pp);
+            return move;
+        }
+
+        if (existingMove == move)
+            return -2;
+    }
+
+    return 0xFFFF;
+}
+
+void SetMonMoveSlot(struct Pokemon* mon, u16 move, u8 slot)
+{
+    SetMonData(mon, MON_DATA_MOVE1 + slot, &move);
+    SetMonData(mon, MON_DATA_PP1 + slot, &gBattleMoves[move].pp);
+}
+
 //Move Reminder//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #define MAX_MOVE_REMINDER_MOVES (MAX_LEARNABLE_MOVES + 1) //50 moves + cancel
