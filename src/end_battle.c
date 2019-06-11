@@ -550,7 +550,10 @@ static void EndBattleFlagClear(void)
 	Free(gNewBS->UltraData);
 	Free(gNewBS->ZMoveData);
 	Free(gNewBS);
+	
+	u16 backup = gTrainerBattleOpponent_B;
 	Memset(&ExtensionState, 0x0, sizeof(struct BattleExtensionState));
+	gTrainerBattleOpponent_B = backup;
 }
 
 bool8 IsConsumable(u16 item)
