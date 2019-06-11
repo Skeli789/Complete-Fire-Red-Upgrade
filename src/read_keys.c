@@ -120,28 +120,6 @@ void ReadKeys(void)
     gMain.heldKeysRaw = keyInput;
     gMain.heldKeys = gMain.heldKeysRaw;
 
-#ifdef AUTO_RUN_FLAG
-	if (gMain.newKeys & L_BUTTON
-	&& !gScriptEnv2->enabled
-	&& FuncIsActiveTask(Task_WeatherMain)) //In the overworld
-	{
-		const u8* script;
-		ScriptContext2_Enable();
-
-		if (FlagGet(AUTO_RUN_FLAG))
-		{
-			FlagClear(AUTO_RUN_FLAG);
-			script = SystemScript_DisableAutoRun;
-		}
-		else
-		{
-			FlagSet(AUTO_RUN_FLAG);
-			script = SystemScript_EnableAutoRun;
-		}
-
-		ScriptContext1_SetupScript(script);
-	}
-#else
     // Remap L to A if the L=A option is enabled.
     if (gSaveBlock2->optionsButtonMode == 2)
     {
@@ -151,6 +129,29 @@ void ReadKeys(void)
         if (gMain.heldKeys & L_BUTTON)
             gMain.heldKeys |= A_BUTTON;
     }
+
+#ifdef AUTO_RUN_FLAG
+	else if (gMain.newKeys & L_BUTTON //Can't be used if L=A
+	&& !gScriptEnv2->enabled
+	&& FuncIsActiveTask(Task_WeatherMain) //In the overworld
+#ifdef RUNNING_ENABLED_FLAG
+	&& FlagGet(RUNNING_ENABLED_FLAG) //Only toggle auto-run if can run in the first place
+#endif
+	)
+	{
+		ScriptContext2_Enable();
+
+		if (FlagGet(AUTO_RUN_FLAG))
+		{
+			FlagClear(AUTO_RUN_FLAG);
+			ScriptContext1_SetupScript(SystemScript_DisableAutoRun);
+		}
+		else
+		{
+			FlagSet(AUTO_RUN_FLAG);
+			ScriptContext1_SetupScript(SystemScript_EnableAutoRun);
+		}
+	}
 #endif
 
 	u16 dexNavSpecies = VarGet(DEXNAV_VAR);
