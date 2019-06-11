@@ -205,16 +205,18 @@ void BattleAI_DoAIProcessing(void)
 
             case AIState_Processing:
                 if (AI_THINKING_STRUCT->moveConsidered != MOVE_NONE
-				&&  AI_THINKING_STRUCT->score[AI_THINKING_STRUCT->movesetIndex] > 0
-				&&  AI_THINKING_STRUCT->aiLogicId < ARRAY_COUNT(sBattleAIScriptTable)
-				&&  sBattleAIScriptTable[AI_THINKING_STRUCT->aiLogicId] != NULL)
-                {
-                    AI_THINKING_STRUCT->score[AI_THINKING_STRUCT->movesetIndex] = 
-						sBattleAIScriptTable[AI_THINKING_STRUCT->aiLogicId](gBankAttacker, 
-																			gBankTarget, 
-																			AI_THINKING_STRUCT->moveConsidered, 
-																			AI_THINKING_STRUCT->score[AI_THINKING_STRUCT->movesetIndex]); //Run AI script
-                }
+				&&  AI_THINKING_STRUCT->score[AI_THINKING_STRUCT->movesetIndex] > 0)
+				{
+					if (AI_THINKING_STRUCT->aiLogicId < ARRAY_COUNT(sBattleAIScriptTable) //AI Script exists
+					&&  sBattleAIScriptTable[AI_THINKING_STRUCT->aiLogicId] != NULL)
+					{
+						AI_THINKING_STRUCT->score[AI_THINKING_STRUCT->movesetIndex] = 
+							sBattleAIScriptTable[AI_THINKING_STRUCT->aiLogicId](gBankAttacker, 
+																				gBankTarget, 
+																				AI_THINKING_STRUCT->moveConsidered, 
+																				AI_THINKING_STRUCT->score[AI_THINKING_STRUCT->movesetIndex]); //Run AI script
+					}
+				}
                 else
                 {
                     AI_THINKING_STRUCT->score[AI_THINKING_STRUCT->movesetIndex] = 0;
