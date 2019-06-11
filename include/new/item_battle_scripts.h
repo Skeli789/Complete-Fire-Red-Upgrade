@@ -30,8 +30,10 @@ extern u8 BattleScript_BerryCureChosenStatusRet[];
 extern u8 BattleScript_BerryCureChosenStatusEnd2[];
 extern u8 BattleScript_HerbCureChosenStatusRet[];
 extern u8 BattleScript_HerbCureChosenStatusEnd2[];
+extern u8 BattleScript_HerbCureChosenStatusFling[];
 extern u8 BattleScript_RaiseStatsItem[];
 extern u8 BattleScript_RaiseStatsItemEnd2[];
+extern u8 BattleScript_WhiteHerbFling[];
 
 extern u8 BattleScript_AirBallooonPop[];
 extern u8 BattleScript_AirBalloonSub[];

@@ -8,6 +8,7 @@
 #include "../include/new/damage_calc.h"
 #include "../include/new/frontier.h"
 #include "../include/new/helper_functions.h"
+#include "../include/new/item.h"
 #include "../include/new/mega.h"
 #include "../include/new/move_tables.h"
 
@@ -736,21 +737,25 @@ bool8 CanTransferItem(u16 species, u16 item, pokemon_t* party_data) {
 	}
 	return TRUE;
 }
-//TODO: Put Gems (or not) and Berry reduction in flash bs command
 
 //Make sure the input bank is any bank on the specific mon's side
-bool8 CanFling(u8 ability, u16 item, pokemon_t* party_data, u8 bank, bool8 PartyCheck) {
+bool8 CanFling(u8 ability, u16 item, struct Pokemon* mon, u8 bank, bool8 partyCheck)
+{
+	u8 itemEffect = ItemId_GetHoldEffect(item);
+
 	if (ability == ABILITY_KLUTZ
 	|| gNewBS->MagicRoomTimer
-	|| (!PartyCheck && gNewBS->EmbargoTimers[bank])
-	|| !CanTransferItem(party_data->species, item, party_data)
-	|| gItems[SanitizeItemId(item)].holdEffect == ITEM_EFFECT_PRIMAL_ORB
+	|| (!partyCheck && gNewBS->EmbargoTimers[bank])
+	|| !CanTransferItem(mon->species, item, mon)
+	|| itemEffect == ITEM_EFFECT_PRIMAL_ORB
+	|| itemEffect == ITEM_EFFECT_GEM
+	|| itemEffect == ITEM_EFFECT_ABILITY_CAPSULE
 	|| IsMail(item)
-	|| (GetPocketByItemId(item) == POCKET_BERRY_POUCH && AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, bank, ABILITY_UNNERVE, 0, 0))
+	|| (IsBerry(item) && AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, bank, ABILITY_UNNERVE, 0, 0))
 	|| GetPocketByItemId(item) == POCKET_POKE_BALLS
-	|| gItems[SanitizeItemId(item)].holdEffect == ITEM_EFFECT_GEM
-	|| item == ITEM_ABILITY_CAPSULE)
+	|| item == ITEM_NONE)
 		return FALSE;
+
 	return TRUE;
 }
 

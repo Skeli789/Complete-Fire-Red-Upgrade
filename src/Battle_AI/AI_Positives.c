@@ -6,7 +6,7 @@
 #include "../../include/new/damage_calc.h"
 #include "../../include/new/helper_functions.h"
 
-extern NaturalGiftStruct NaturalGiftTable[];
+extern const struct NaturalGiftStruct gNaturalGiftTable[];
 
 /*
 u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 move, const u8 originalViability)

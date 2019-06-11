@@ -15,8 +15,8 @@
 
 //TODO: Update Type Calc to have an option to be fooled by Illusion
 
-extern NaturalGiftStruct NaturalGiftTable[];
-extern FlingStruct FlingTable[];
+extern const struct NaturalGiftStruct gNaturalGiftTable[];
+extern const struct FlingStruct gFlingTable[];
 extern struct AlternateSize gAlternateSpeciesSizeTable[];
 
 #ifdef CRIT_CHANCE_GEN_6
@@ -903,11 +903,11 @@ u8 GetExceptionMoveType(u8 bankAtk, u16 move) {
 		case MOVE_NATURALGIFT:
 			if (IsBerry(item))
 			{
-				for (i = 0; NaturalGiftTable[i].berry != ITEM_TABLES_TERMIN; ++i)
+				for (i = 0; gNaturalGiftTable[i].berry != ITEM_TABLES_TERMIN; ++i)
 				{
-					if (NaturalGiftTable[i].berry == item)
+					if (gNaturalGiftTable[i].berry == item)
 					{
-						moveType = NaturalGiftTable[i].type;
+						moveType = gNaturalGiftTable[i].type;
 						goto BREAK_NATURAL_GIFT;
 					}
 				}
@@ -1002,11 +1002,11 @@ u8 GetExceptionMoveTypeFromParty(pokemon_t* party_data, u16 move) {
 		case MOVE_NATURALGIFT:
 			if (IsBerry(item))
 			{
-				for (i = 0; NaturalGiftTable[i].berry != ITEM_TABLES_TERMIN; ++i)
+				for (i = 0; gNaturalGiftTable[i].berry != ITEM_TABLES_TERMIN; ++i)
 				{
-					if (NaturalGiftTable[i].berry == item)
+					if (gNaturalGiftTable[i].berry == item)
 					{
-						moveType = NaturalGiftTable[i].type;
+						moveType = gNaturalGiftTable[i].type;
 						goto NATURAL_GIFT_BREAK;
 					}
 				}
@@ -2336,11 +2336,11 @@ u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 
 			power = 0;
 			if (IsBerry(item))
 			{
-				for (i = 0; NaturalGiftTable[i].berry != ITEM_TABLES_TERMIN; ++i)
+				for (i = 0; gNaturalGiftTable[i].berry != ITEM_TABLES_TERMIN; ++i)
 				{
-					if (NaturalGiftTable[i].berry == item)
+					if (gNaturalGiftTable[i].berry == item)
 					{
-						power = NaturalGiftTable[i].power;
+						power = gNaturalGiftTable[i].power;
 						break;
 					}
 				}
@@ -2795,14 +2795,11 @@ u32 GetActualSpeciesWeight(u8 ability, u8 itemEffect, u8 bank, bool8 checkNimble
 
 static u8 GetFlingPower(u8 ability, u16 item, pokemon_t* party_data, u8 bank, bool8 PartyCheck) {
 	u8 power = 0;
-	if (CanFling(ability, item, party_data, bank, PartyCheck)) {
-		power = 10;
-		for (int i = 0; FlingTable[i].item != ITEM_TABLES_TERMIN; ++i) {
-			if (FlingTable[i].item == item) {
-				power = FlingTable[i].power;
-				break;
-			}
-		}
+	if (CanFling(ability, item, party_data, bank, PartyCheck))
+	{
+		power = gFlingTable[item].power;
+		if (power == 0)
+			power = 30; //Default power is 30
 	}
 	return power;
 }

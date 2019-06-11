@@ -17,6 +17,7 @@ void AnimTask_ReloadAttackerSprite(u8 taskId);
 void AnimTask_PlayAttackerCry(u8 taskId);
 void AnimTask_GetSecretPowerAnimation(u8 taskId);
 void AnimTask_SetCamouflageBlend(u8 taskId);
+void AnimTask_CreateFlingItem(u8 taskId);
 
 void SpriteCB_TranslateAnimSpriteToTargetMonLocationDoubles(struct Sprite* sprite);
 void SpriteCB_SpriteToCentreOfSide(struct Sprite* sprite);

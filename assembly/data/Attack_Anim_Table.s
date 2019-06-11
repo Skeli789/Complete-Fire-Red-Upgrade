@@ -2144,9 +2144,9 @@ ANIM_DRAINPUNCH:
 	waitanimation
 	launchtemplate Template_Pal_Fade 0x2 0x5 0x1 0x1 0xa 0x0 0x171d 
 	call HEALING_ANIM 
-	waitanimation 
-	pokespritefromBG bank_target 
-	resetblends 
+	waitanimation
+	resetblends
+	pokespritefromBG bank_target
 	endanimation
 
 .align 2
@@ -13779,24 +13779,26 @@ BESTOW_ITEM: objtemplate ANIM_TAG_ITEM_BAG ANIM_TAG_ITEM_BAG 0x83ACA38 0x83E2E24
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
 ANIM_FLING:
-	loadparticle ANIM_TAG_ITEM_BAG
+	@;loadparticle ANIM_TAG_ITEM_BAG
 	loadparticle ANIM_TAG_IMPACT 
 	pokespritetoBG bank_target 
-	leftbankBG_over_partnerBG bank_target  
+	leftbankBG_over_partnerBG bank_target
 	setblends 0x80c
-	playsound2 0x25 0x3f 
-	launchtemplate FLING_ITEM 0x2 0x6 0x14 0xfff8 0xfff8 0xfff8 0x14 0xffe0  
+	playsound2 0x25 0x3f
+	launchtask AnimTask_CreateFlingItem 0x2 0x6 0x0 0x10 0xfff8 0xfff8 0x14 0xffe0
+	@;launchtemplate FLING_ITEM 0x2 0x6 0x14 0xfff8 0xfff8 0xfff8 0x14 0xffe0  
 	pause 0x13
 	playsound2 0x7f 0x3f 
 	launchtemplate Template_Hit 0x3 0x4 0xfff8 0xfff8 0x1 0x2  
 	launchtask AnimTask_move_bank_2 0x2 0x5 0x1 0x3 0x0 0x2 0x1  
 	waitanimation 
 	pokespritefromBG bank_target 
-	resetblends 
+	resetblends
+	unloadparticle ANIM_TAG_ITEM_BAG @;The generated item sprite uses this tag
 	endanimation
 
-.align 2
-FLING_ITEM: objtemplate ANIM_TAG_ITEM_BAG ANIM_TAG_ITEM_BAG 0x83ACA38 0x8231CF0 0x0 0x8231CFC 0x80B4495
+@;.align 2
+@;FLING_ITEM: objtemplate ANIM_TAG_ITEM_BAG ANIM_TAG_ITEM_BAG 0x83ACA38 0x8231CF0 0x0 0x8231CFC 0x80B4495
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     

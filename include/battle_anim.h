@@ -300,6 +300,8 @@
 
 #define ANIM_TAG_ABILITY_POP_UP				0x286E
 
+#define gAnimVisualTaskCount (*((u8*) 0x2037EE2))
+
 enum
 {
     ANIM_BANK_ATTACKER,

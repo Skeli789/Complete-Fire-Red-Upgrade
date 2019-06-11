@@ -86,3 +86,5 @@ void BadDreamsHurtFunc(void);
 void SeaOfFireDamageFunc(void);
 void GrassyTerrainHealFunc(void);
 void RestoreBanksFromSynchronize(void);
+void TrySetAlternateFlingEffect(void);
+void TransferLastUsedItem(void);

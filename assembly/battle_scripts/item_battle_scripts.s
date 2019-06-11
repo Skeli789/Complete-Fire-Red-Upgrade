@@ -32,8 +32,10 @@
 .global BattleScript_BerryCureChosenStatusEnd2
 .global BattleScript_HerbCureChosenStatusRet
 .global BattleScript_HerbCureChosenStatusEnd2
+.global BattleScript_HerbCureChosenStatusFling
 .global BattleScript_RaiseStatsItem
 .global BattleScript_RaiseStatsItemEnd2
+.global BattleScript_WhiteHerbFling
 
 .global BattleScript_AirBallooonPop
 .global BattleScript_WeaknessPolicy
@@ -234,49 +236,65 @@ DoCheekPouch:
 	jumpifbyte EQUALS FORM_COUNTER 0x0 CheeckPouchRet
 	setbyte FORM_COUNTER 0x0
 	call BattleScript_AbilityPopUp
-	playanimation 0xA ANIM_HEALING_SPARKLES 0x0
-	graphicalhpupdate 0xA
-	datahpupdate 0xA
+	playanimation BANK_SCRIPTING ANIM_HEALING_SPARKLES 0x0
+	graphicalhpupdate BANK_SCRIPTING
+	datahpupdate BANK_SCRIPTING
 	setword BATTLE_STRING_LOADER CheekPouchString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
 CheeckPouchRet:
-	removeitem 0xA
+	removeitem BANK_SCRIPTING
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_HerbCureChosenStatusRet:
-	playanimation 0xA ANIM_ITEM_USE 0x0
-	refreshhpbar 0xA
+	playanimation BANK_SCRIPTING ANIM_ITEM_USE 0x0
+	refreshhpbar BANK_SCRIPTING
 	printfromtable 0x83FE634
 	waitmessage DELAY_1SECOND
-	removeitem 0xA
+	removeitem BANK_SCRIPTING
 	return
 
 BattleScript_HerbCureChosenStatusEnd2:
 	call BattleScript_HerbCureChosenStatusRet
 	end2
+	
+BattleScript_HerbCureChosenStatusFling:
+	playanimation BANK_SCRIPTING ANIM_ITEM_USE 0x0
+	refreshhpbar BANK_SCRIPTING
+	printfromtable 0x83FE634
+	waitmessage DELAY_1SECOND
+	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_RaiseStatsItem:
-	playanimation 0xA ANIM_ITEM_USE 0x0
+	playanimation BANK_SCRIPTING ANIM_ITEM_USE 0x0
 	setbyte MULTISTRING_CHOOSER 0x4
 	call 0x81D6BD1
-	removeitem 0xA
+	removeitem BANK_SCRIPTING
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_RaiseStatsItemEnd2:
-	playanimation 0xA ANIM_ITEM_USE 0x0
+	playanimation BANK_SCRIPTING ANIM_ITEM_USE 0x0
 	statbuffchange STAT_TARGET | STAT_BS_PTR RaiseStatsItemPostBuffEnd2
 RaiseStatsItemPostBuffEnd2:
 	setbyte MULTISTRING_CHOOSER 0x4
-	removeitem 0xA
+	removeitem BANK_SCRIPTING
 	end2
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_WhiteHerbFling:
+	playanimation BANK_SCRIPTING ANIM_ITEM_USE 0x0
+	setword BATTLE_STRING_LOADER gText_WhiteHerbFling
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

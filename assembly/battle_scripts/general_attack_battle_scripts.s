@@ -4627,14 +4627,17 @@ BS_229_Fling:
 	attackstring
 	ppreduce
 	callasm TryFling
+	pause DELAY_HALFSECOND
 	setword BATTLE_STRING_LOADER FlingString
 	printstring 0x184
 	accuracycheck FlingMissBS 0x0
+	callasm TransferLastUsedItem
 	call STANDARD_DAMAGE
 	seteffectwithchancetarget
+	callasm TrySetAlternateFlingEffect
+	removeitem BANK_ATTACKER
 	prefaintmoveendeffects 0x0
 	faintpokemonaftermove
-	removeitem 0x1
 	goto BS_MOVE_END
 
 FlingMissBS:

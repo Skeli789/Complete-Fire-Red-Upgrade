@@ -148,3 +148,6 @@ The Wide Guard protected\n[TARGET]!
 
 #org @gText_TauntWoreOff
 [SCRIPTING_BANK]'s Taunt\nwore off!
+
+#org @gText_WhiteHerbFling
+The [LAST_ITEM] restored\n[SCRIPTING_BANK]'s status!

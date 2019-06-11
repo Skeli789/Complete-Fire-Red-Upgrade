@@ -225,13 +225,16 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
                     }
                 }
 				
-                if (effect) {
-                    gBattleScripting->bank = bank;
-                    gStringBank = bank;
-                    gActiveBattler = gBankAttacker = bank;
-					if (moveTurn) {
+                if (effect) 
+				{
+                    gBattleScripting->bank = gActiveBattler = gStringBank = bank;
+					if (moveTurn)
+					{
 						BattleScriptPushCursor();
-						gBattlescriptCurrInstr = BattleScript_WhiteHerbRet;
+						if (DoPluck) //Fling
+							gBattlescriptCurrInstr = BattleScript_WhiteHerbFling;
+						else
+							gBattlescriptCurrInstr = BattleScript_WhiteHerbRet;
 					}
 					else
 						BattleScriptExecute(BattleScript_WhiteHerbEnd2);
@@ -481,40 +484,50 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
 			//Find out what strings displays in S/M
             case ITEM_EFFECT_CURE_ATTRACT:
 				i = 0;
-                if (gBattleMons[bank].status2 & STATUS2_INFATUATION) {
+                if (gBattleMons[bank].status2 & STATUS2_INFATUATION)
+				{
                     gBattleMons[bank].status2 &= ~(STATUS2_INFATUATION);
                     StringCopy(gBattleTextBuff1, gStatusConditionString_Love);
 					++i;
 				}
-				if (gDisableStructs[bank].disabledMove) {
+				if (gDisableStructs[bank].disabledMove)
+				{
 					gDisableStructs[bank].disabledMove = 0;
 					gDisableStructs[bank].disableTimer1 = 0;
 					StringCopy(gBattleTextBuff1, gStatusConditionString_DisableProblem);
 					++i;
                 }
-				if (gDisableStructs[bank].encoredMove) {
+				if (gDisableStructs[bank].encoredMove)
+				{
 					gDisableStructs[bank].encoredMove = 0; //Same as end turn clear
 					gDisableStructs[bank].encoreTimer = 0;
 					StringCopy(gBattleTextBuff1, gStatusConditionString_EncoreProblem);
 					++i;
                 }
-				if (gDisableStructs[gActiveBattler].tauntTimer) {
-					gDisableStructs[gActiveBattler].tauntTimer = 0;
+				if (gDisableStructs[bank].tauntTimer) 
+				{
+					gDisableStructs[bank].tauntTimer = 0;
 					StringCopy(gBattleTextBuff1, gStatusConditionString_TauntProblem);
 					++i;
 				}
 				if (i == 0)
 					break;
 				
-				else if (i > 2)
+				else if (i >= 2)
 					StringCopy(gBattleTextBuff1, gStatusConditionString_MentalState);
 				
-				if (moveTurn) {
+				if (moveTurn)
+				{
 					BattleScriptPushCursor();
-					gBattlescriptCurrInstr = BattleScript_HerbCureChosenStatusRet;
+					
+					if (DoPluck) //Fling
+						gBattlescriptCurrInstr = BattleScript_HerbCureChosenStatusFling;
+					else
+						gBattlescriptCurrInstr = BattleScript_HerbCureChosenStatusRet;
 				}
 				else
 					BattleScriptExecute(BattleScript_HerbCureChosenStatusEnd2);
+
                 gBattleCommunication[MULTISTRING_CHOOSER] = 0;
                 effect = ITEM_EFFECT_OTHER;	
                 break;

@@ -14,8 +14,8 @@
 
 extern const u8* gBattleScriptsForMoveEffects[];
 
-extern species_t TelekinesisBanList[];
-extern FlingStruct FlingTable[];
+extern const species_t TelekinesisBanList[];
+extern const struct FlingStruct gFlingTable[];
 
 void CheckIfDarkVoidShouldFail(void)
 {
@@ -782,14 +782,7 @@ void TryFling(void)
 	else
 	{
 		gLastUsedItem = ITEM(gBankAttacker);
-		gBattleCommunication[MOVE_EFFECT_BYTE] = 0;
-		
-		for (int i = 0; FlingTable[i].item != ITEM_TABLES_TERMIN; ++i) {
-			if (FlingTable[i].item == gLastUsedItem) {
-				gBattleCommunication[MOVE_EFFECT_BYTE] = FlingTable[i].effect;
-				break;
-			}
-		} 
+		gBattleCommunication[MOVE_EFFECT_BYTE] = gFlingTable[gLastUsedItem].effect;
 	}
 }
 
@@ -1523,7 +1516,7 @@ void HandleForfeitYesNoBox(void)
         HandleBattleWindow(0x17, 0x8, 0x1D, 0xD, WINDOW_CLEAR);
 		return;
     }
-	
+
 	gBattlescriptCurrInstr -= 5;
 }
 
@@ -1546,4 +1539,28 @@ void RestoreBanksFromSynchronize(void)
 {
 	gBankAttacker = gNewBS->backupSynchronizeBanks[0];
 	gBankTarget = gNewBS->backupSynchronizeBanks[1];
+}
+
+void TrySetAlternateFlingEffect(void)
+{
+	u8 effect = ItemId_GetHoldEffect(ITEM(gBankAttacker));
+	
+	switch (effect) {
+		case ITEM_EFFECT_CURE_ATTRACT:
+		case ITEM_EFFECT_RESTORE_STATS:
+			if (ItemBattleEffects(ItemEffects_EndTurn, gBankTarget, TRUE, TRUE))
+				gBattlescriptCurrInstr -= 5;
+	}
+}
+
+void TransferLastUsedItem(void)
+{
+	if (gBattleExecBuffer)
+		gBattlescriptCurrInstr -= 5;
+	else
+	{
+		gActiveBattler = 0;
+		EmitDataTransfer(0, &gLastUsedItem, 2, &gLastUsedItem);
+		MarkBufferBankForExecution(gActiveBattler);
+	}
 }

@@ -618,6 +618,22 @@ static void SpriteCB_FlareBlitzUpFlamesP2(struct Sprite* sprite)
         DestroyAnimSprite(sprite);
 }
 
+#define ITEM_TAG ANIM_TAG_ITEM_BAG
+u8 __attribute__((long_call)) AddItemIconSprite(u16 tilesTag, u16 paletteTag, u16 itemId);
+void AnimTask_CreateFlingItem(u8 taskId)
+{
+	u8 iconSpriteId = AddItemIconSprite(ITEM_TAG, ITEM_TAG, gLastUsedItem);
+
+    if (iconSpriteId != MAX_SPRITES)
+    {
+		gSprites[iconSpriteId].oam.priority = 0; //Highest priority
+        gSprites[iconSpriteId].callback = (void*) 0x80B4495;
+		++gAnimVisualTaskCount;
+    }
+
+    DestroyAnimVisualTask(taskId);
+}
+
 void DoubleWildAnimBallThrowFix(void)
 {
 	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && !(gBattleTypeFlags & BATTLE_TYPE_TRAINER))

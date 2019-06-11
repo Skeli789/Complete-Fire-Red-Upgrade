@@ -874,21 +874,18 @@ struct BattleExtensionState //Clear After Battle
 
 extern struct BattleExtensionState ExtensionState;
 
-struct naturalGift {
+struct NaturalGiftStruct
+{
 	u16 berry;
 	u8 type;
 	u8 power;
 };
 
-typedef struct naturalGift NaturalGiftStruct;
-
-struct fling {
-	u16 item;
+struct FlingStruct
+{
 	u8 power;
 	u8 effect;
 };
-
-typedef struct fling FlingStruct;
 
 #define GET_MOVE_TYPE(move, typeArg)                        \
 {                                                           \
