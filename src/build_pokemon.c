@@ -7,6 +7,7 @@
 #include "../include/wild_encounter.h"
 #include "../include/constants/items.h"
 #include "../include/constants/maps.h"
+#include "../include/constants/trainers.h"
 
 #include "../include/new/build_pokemon.h"
 #include "../include/new/build_pokemon_2.h"
@@ -19,7 +20,9 @@
 #include "../include/new/multi.h"
 
 #include "Tables/Trainers_With_EVs_Table.h"
-//#include "Tables/battle_tower_spreads.h"
+#include "Tables/battle_tower_spreads.h"
+
+#define TOTAL_SPREADS ARRAY_COUNT(gFrontierSpreads)
 
 extern const u8 gClassPokeBalls[NUM_TRAINER_CLASSES];
 extern const species_t gRandomizerBanList[];
@@ -204,23 +207,23 @@ u16 sp069_GivePlayerRandomFrontierMonByTier(void)
 }
 
 //Returns the number of Pokemon
-static u8 CreateNPCTrainerParty(pokemon_t* const party, const u16 trainerNum, const bool8 firstTrainer, const bool8 side)
+static u8 CreateNPCTrainerParty(pokemon_t* const party, const u16 trainerId, const bool8 firstTrainer, const bool8 side)
 {
     u32 nameHash = 0;
     u32 personalityValue;
     int i, j;
     u8 monsCount = 1;
-	u32 otid = (Random() << 8) | Random();
+	u32 otid = Random32();
 
-    if (trainerNum == 0x400) return 0;
+    if (trainerId == TRAINER_SECRET_BASE) return 0;
 
-    struct Trainer* trainer = &gTrainers[trainerNum];
+    struct Trainer* trainer = &gTrainers[trainerId];
 
     if (((gBattleTypeFlags & (BATTLE_TYPE_TRAINER | BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_TRAINER_TOWER)) == BATTLE_TYPE_TRAINER)
 	||   (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER))
 	{
 		if (firstTrainer)
-			ZeroEnemyPartyMons(); //party_opponent_purge();
+			ZeroEnemyPartyMons();
 
 		if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS && side == B_SIDE_OPPONENT)
         {
@@ -266,8 +269,9 @@ static u8 CreateNPCTrainerParty(pokemon_t* const party, const u16 trainerNum, co
 		}
 
         u8 trainerNameLengthOddness = StringLength(trainer->trainerName) & 1;
-        for (i = 0; i < monsCount; ++i) {
-
+        for (i = 0; i < monsCount; ++i)
+		{
+			gBankAttacker = i + 1;
 			u8 genderOffset = 0x80;
 
 			if ((i + 1) % 3 == 0) //Every third Pokemon
@@ -306,7 +310,7 @@ static u8 CreateNPCTrainerParty(pokemon_t* const party, const u16 trainerNum, co
 			else
 			#endif
 			{
-				switch (gTrainers[trainerNum].partyFlags) {
+				switch (gTrainers[trainerId].partyFlags) {
 					case 0:
 						MAKE_POKEMON(trainer->party.NoItemDefaultMoves);
 						break;
@@ -328,6 +332,7 @@ static u8 CreateNPCTrainerParty(pokemon_t* const party, const u16 trainerNum, co
 						break;
 				}
 			}
+
 			u8 otGender = trainer->gender;
 			SetMonData(&party[i], REQ_OTGENDER, &otGender);
 			SetMonData(&party[i], REQ_OTNAME, &trainer->trainerName);
@@ -340,7 +345,7 @@ static u8 CreateNPCTrainerParty(pokemon_t* const party, const u16 trainerNum, co
 
 			#ifdef TRAINERS_WITH_EVS
 				u8 spreadNum = trainer->party.NoItemCustomMoves[i].iv;
-				if (gTrainers[trainerNum].partyFlags == (PARTY_FLAG_CUSTOM_MOVES | PARTY_FLAG_HAS_ITEM)
+				if (gTrainers[trainerId].partyFlags == (PARTY_FLAG_CUSTOM_MOVES | PARTY_FLAG_HAS_ITEM)
 				&& trainer->aiFlags > 1
 				&& spreadNum != 0
 				&& spreadNum < ARRAY_COUNT(gTrainersWithEvsSpreads))
@@ -398,6 +403,7 @@ static u8 CreateNPCTrainerParty(pokemon_t* const party, const u16 trainerNum, co
 			
 			//Status Inducers
 			TryStatusInducer(&party[i]);
+			gBankTarget = i + 1;
         }
 		#ifdef OPEN_WORLD_TRAINERS
 		if ((GetOpenWorldTrainerMonAmount() > 1 || trainer->doubleBattle)
@@ -419,7 +425,7 @@ static u8 CreateNPCTrainerParty(pokemon_t* const party, const u16 trainerNum, co
 }
 
 //Returns the number of Pokemon
-static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerNum, const bool8 firstTrainer, const bool8 forPlayer, const u8 side) 
+static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerId, const bool8 firstTrainer, const bool8 forPlayer, const u8 side) 
 {
     int i;
 	u8 monsCount;
@@ -431,13 +437,13 @@ static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerNum, const
 
 	if (!forPlayer) 
 	{
-		if (trainerNum == 0x400)
+		if (trainerId == 0x400)
 			return 0;
-		else if (trainerNum != BATTLE_TOWER_TID 
-			  && trainerNum != BATTLE_TOWER_SPECIAL_TID
-			  && trainerNum != FRONTIER_BRAIN_TID)
+		else if (trainerId != BATTLE_TOWER_TID 
+			  && trainerId != BATTLE_TOWER_SPECIAL_TID
+			  && trainerId != FRONTIER_BRAIN_TID)
 		{
-			return (CreateNPCTrainerParty(party, trainerNum, firstTrainer, side));
+			return (CreateNPCTrainerParty(party, trainerId, firstTrainer, side));
 		}
 	}
 
@@ -446,7 +452,7 @@ static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerNum, const
 	const struct SpecialBattleTowerTrainer* specialTrainer = &gSpecialTowerTrainers[tableId];
 	const struct FrontierBrain* frontierBrain = &gFrontierBrains[tableId];
 	
-	switch (trainerNum) {
+	switch (trainerId) {
 		case BATTLE_TOWER_TID:
 			trainerGender = trainer->gender;
 			break;
@@ -490,7 +496,7 @@ static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerNum, const
 
 		do 
 		{
-			switch (trainerNum) {
+			switch (trainerId) {
 				case BATTLE_TOWER_SPECIAL_TID:
 					spread = &specialTrainer->spreads[Random() % specialTrainer->spreadSize]; //Special trainers have preset spreads.
 					break;
@@ -506,7 +512,7 @@ static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerNum, const
 
 			//Prevent duplicate species and items
 			//Only allow one Mega Stone & Z-Crystal per team
-			if (!IsPokemonBannedBasedOnStreak(species, item, speciesArray, monsCount, trainerNum, tier, forPlayer)
+			if (!IsPokemonBannedBasedOnStreak(species, item, speciesArray, monsCount, trainerId, tier, forPlayer)
 			&& !SpeciesAlreadyOnTeam(species, monsCount, speciesArray)
 			&& !ItemAlreadyOnTeam(item, monsCount, itemArray)
 			&& !MegastoneAlreadyOnTeam(item, monsCount, itemArray)
@@ -526,7 +532,7 @@ static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerNum, const
 			level = MathMax(1, MathMin(MAX_LEVEL, VarGet(BATTLE_TOWER_POKE_LEVEL)));
 
 
-		CreateFrontierMon(&party[i], level, spread, trainerNum, firstTrainer ^ 1, trainerGender, forPlayer);
+		CreateFrontierMon(&party[i], level, spread, trainerId, firstTrainer ^ 1, trainerGender, forPlayer);
     }
 
 	if (!forPlayer) //Probably best to put these checks somewhere else
@@ -914,8 +920,8 @@ const struct BattleTowerSpread* GetSpreadBySpecies(const u16 species, const stru
 		
 	u8 offset = Random() % 5; //Max number of possible spreads for a given Pokemon
 
-	while (spreads[i + offset].species != species && offset != 0) //Overshot
-		--offset; //Decrement until reach proper species again
+	while (spreads[i + offset].species != species) //Overshot
+		offset = Random() % 5;
 		
 	return &spreads[i + offset];
 }
@@ -1158,8 +1164,8 @@ void CreateBoxMon(struct BoxPokemon* boxMon, u16 species, u8 level, u8 fixedIV, 
     else
 		personality = Random32();
 
-	personality = CheckShinyMon(personality);	// shiny charm
-    SetBoxMonData(boxMon, MON_DATA_PERSONALITY, &personality);
+	personality = CheckShinyMon(personality);	//Shiny charm
+    boxMon->personality = personality;
 	
     //Determine original trainer ID
     if (otIdType == OT_ID_RANDOM_NO_SHINY) //Pokemon cannot be shiny
@@ -1180,18 +1186,17 @@ void CreateBoxMon(struct BoxPokemon* boxMon, u16 species, u8 level, u8 fixedIV, 
 
     GetSpeciesName(speciesName, species);
     SetBoxMonData(boxMon, MON_DATA_NICKNAME, speciesName);
-    SetBoxMonData(boxMon, MON_DATA_LANGUAGE, &gGameLanguage);
+    ((struct Pokemon*) boxMon)->language = gGameLanguage;
     SetBoxMonData(boxMon, MON_DATA_OT_NAME, gSaveBlock2->playerName);
-    SetBoxMonData(boxMon, MON_DATA_SPECIES, &species);
-    SetBoxMonData(boxMon, MON_DATA_EXP, &gExperienceTables[gBaseStats[species].growthRate][level]);
+    ((struct Pokemon*) boxMon)->species  = species;
+    ((struct Pokemon*) boxMon)->experience = gExperienceTables[gBaseStats[species].growthRate][level];
     SetBoxMonData(boxMon, MON_DATA_FRIENDSHIP, &gBaseStats[species].friendship);
-    value = GetCurrentRegionMapSectionId();
-    SetBoxMonData(boxMon, MON_DATA_MET_LOCATION, &value);
-    SetBoxMonData(boxMon, MON_DATA_MET_LEVEL, &level);
-    SetBoxMonData(boxMon, MON_DATA_MET_GAME, &gGameVersion);
+    ((struct Pokemon*) boxMon)->metLocation = GetCurrentRegionMapSectionId();
+    ((struct Pokemon*) boxMon)->metLevel = level;
+    ((struct Pokemon*) boxMon)->metGame = gGameVersion;
     value = BALL_TYPE_POKE_BALL;
     SetBoxMonData(boxMon, MON_DATA_POKEBALL, &value);
-    SetBoxMonData(boxMon, MON_DATA_OT_GENDER, &gSaveBlock2->playerGender);
+    ((struct Pokemon*) boxMon)->otGender = gSaveBlock2->playerGender;
 
     if (fixedIV < 32)
     {
@@ -1242,8 +1247,7 @@ void CreateBoxMon(struct BoxPokemon* boxMon, u16 species, u8 level, u8 fixedIV, 
 		#endif
     }
 
-    value = 0;
-    SetBoxMonData(boxMon, MON_DATA_ALT_ABILITY, &value); //Set base hidden ability to 0
+    ((struct Pokemon*) boxMon)->hiddenAbility = FALSE; //Set base hidden ability to 0
 
     GiveBoxMonInitialMoveset(boxMon);
 }

@@ -3,24 +3,24 @@
 #include "../../src/defines.h"
 #include "../../src/defines_battle.h"
 
-#define MAKE_POKEMON(structure)																												\
-{																																			\
-	u16 speciesToCreate = structure[i].species;																								\
-	for (j = 0; gSpeciesNames[speciesToCreate][j] != EOS; ++j)																			\
-		nameHash += gSpeciesNames[speciesToCreate][j];																					\
-																																			\
-	personalityValue += nameHash << 8;																										\
-																																			\
-	u8 lvl = structure[i].lvl;																												\
-	if (FlagGet(SCALE_TRAINER_LEVELS_FLAG)																									\
-	|| (gBattleTypeFlags & BATTLE_TYPE_TRAINER_TOWER))																						\
-		lvl = GetHighestMonLevel(gPlayerParty);																								\
-																																			\
-	CreateMon(&party[i], speciesToCreate, lvl, STANDARD_IV, TRUE, personalityValue, OT_ID_PRESET, otid);								\
-	party[i].metLevel = structure[i].lvl;																									\
-}																																
+#define MAKE_POKEMON(structure)																				\
+{																											\
+	u16 speciesToCreate = structure[i].species;																\
+	for (j = 0; gSpeciesNames[speciesToCreate][j] != EOS; ++j)												\
+		nameHash += gSpeciesNames[speciesToCreate][j];														\
+																											\
+	personalityValue += nameHash << 8;																		\
+																											\
+	u8 lvl = structure[i].lvl;																				\
+	if (FlagGet(SCALE_TRAINER_LEVELS_FLAG)																	\
+	|| (gBattleTypeFlags & BATTLE_TYPE_TRAINER_TOWER))														\
+		lvl = GetHighestMonLevel(gPlayerParty);																\
+																											\
+	CreateMon(&party[i], speciesToCreate, lvl, STANDARD_IV, TRUE, personalityValue, OT_ID_PRESET, otid);	\
+	party[i].metLevel = structure[i].lvl;																	\
+}
 
-#define SET_MOVES(structure)													\
+#define SET_MOVES(structure)										\
 {																	\
 	for (j = 0; j < MAX_MON_MOVES; j++) {							\
 		party[i].moves[j] = structure[i].moves[j];					\

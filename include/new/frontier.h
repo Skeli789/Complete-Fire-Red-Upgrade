@@ -22,7 +22,7 @@ void sp055_UpdateBattleTowerStreak(void);
 u16 sp056_DetermineBattlePointsToGive(void);
 
 //Exported Constants
-#define TOTAL_SPREADS 0x4A0 //sizeof(gFrontierSpreads) / sizeof(struct BattleTowerSpreads)
+//#define TOTAL_SPREADS 0x4A0 //sizeof(gFrontierSpreads) / sizeof(struct BattleTowerSpreads)
 
 #define NUM_MALE_NAMES gNumMaleFrontierTrainerNames
 #define NUM_FEMALE_NAMES gNumFemaleFrontierTrainerNames
@@ -86,6 +86,13 @@ enum BattlerIds
 	FRONTIER_PARTNER,
 };
 
+enum FrontierSpreadAbilityNumbers
+{
+	FRONTIER_ABILITY_1,
+	FRONTIER_ABILITY_2,
+	FRONTIER_ABILITY_HIDDEN,
+};
+
 //Exported Data Structures
 extern const u16 gNumMaleFrontierTrainerNames;
 extern const u16 gNumFemaleFrontierTrainerNames;
@@ -117,7 +124,7 @@ struct BattleTowerSpread
 };
 
 extern const struct BattleTowerSpread gFrontierSpreads[];
-#define gFrontierSpreads ((const struct BattleTowerSpread*) 0x89DFA00)
+//#define gFrontierSpreads ((const struct BattleTowerSpread*) 0x89DFA00)
 
 struct BattleTowerTrainer
 {
