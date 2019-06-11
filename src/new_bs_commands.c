@@ -954,13 +954,13 @@ void atkFE_prefaintmoveendeffects(void)
                 gBattlescriptCurrInstr = BattleScript_BeakBlastBurn;
                 effect = TRUE;
 			}
-			else
-				gNewBS->preFaintEffectsTracker++;
+			
+			gNewBS->preFaintEffectsTracker++;
             break;
 			
 		case FAINT_SYNCHRONIZE_ATTACKER: // attacker synchronize
 		case FAINT_SYNCHRONIZE_ATTACKER_2:
-            if (AbilityBattleEffects(ABILITYEFFECT_ATK_SYNCHRONIZE, gBankAttacker, 0, 0, 0))
+            if (AbilityBattleEffects(ABILITYEFFECT_SYNCHRONIZE, gBankAttacker, 0, 0, 0))
                 effect = TRUE;
             gNewBS->preFaintEffectsTracker++;
             break;

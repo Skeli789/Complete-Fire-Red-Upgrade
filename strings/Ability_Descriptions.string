@@ -200,7 +200,7 @@ Sp. Atk rises when stats fall.
 Stats fall when HP goes below half.
 
 #org @DESC_SLOWSTART
-Temporarily halves Atk and Spd.\n
+Temporarily halves Atk and Spd.
 
 #org @DESC_TOXICBOOST
 Attack rises when poisoned.
@@ -230,13 +230,13 @@ Abilities don't affect moves.
 Abilities don't affect moves.
 
 #org @DESC_ZENMODE
-Changes the Pokemon into Zen Form
+Transform below half health.
 
 #org @DESC_BATTLEBOND
 KO a foe to tranform.
 
 #org @DESC_BEASTBOOST
-KO a foe to up the highest stat.
+KOing a foe ups highest stat.
 
 #org @DESC_CORROSION
 Poison Steel and Poison-types.
@@ -263,7 +263,7 @@ No special ability.
 Transform below half health.
 
 #org @DESC_PRISMARMOR
-Weakens Super Effective moves.
+Weakens Super-Effective moves.
 
 #org @DESC_RKS_SYSTEM
 Changes type to match Memory.

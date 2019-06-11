@@ -543,6 +543,7 @@ static u8 AtkCanceller_UnableToUseMove(void)
 							BattleScriptPushCursor();
 							gBattlescriptCurrInstr = BattleScript_StanceChangeToBlade;
 							gBattleScripting->bank = gBankAttacker;
+							effect = 1;
 						}
 						break;
 					
@@ -552,6 +553,7 @@ static u8 AtkCanceller_UnableToUseMove(void)
 							BattleScriptPushCursor();
 							gBattlescriptCurrInstr = BattleScript_StanceChangeToShield;
 							gBattleScripting->bank = gBankAttacker;
+							effect = 1;
 						}
 						break;
 				}

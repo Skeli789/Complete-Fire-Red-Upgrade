@@ -250,13 +250,13 @@ void atk49_moveend(void) //All the effects that happen after a move is used
                 gBattlescriptCurrInstr = BattleScript_BeakBlastBurn;
                 effect = TRUE;
 			}
-			else
-				gBattleScripting->atk49_state++;
+			
+			gBattleScripting->atk49_state++;
             break;
 			
 		case ATK49_SYNCHRONIZE_ATTACKER: // attacker synchronize
 		case ATK49_SYNCHRONIZE_ATTACKER_2:
-            if (AbilityBattleEffects(ABILITYEFFECT_ATK_SYNCHRONIZE, gBankAttacker, 0, 0, 0))
+            if (AbilityBattleEffects(ABILITYEFFECT_SYNCHRONIZE, gBankAttacker, 0, 0, 0))
                 effect = TRUE;
             gBattleScripting->atk49_state++;
             break;

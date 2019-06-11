@@ -166,7 +166,7 @@ typedef u8 Battle_Buffer_T[0x200];
 #define SeedHelper ((u8*) 0x203F704)
 #define TerrainType *((u8*) 0x203F708)
 #define FormCounter *((u8*) 0x203F709)
-#define PoisonedBy *((u8*) 0x203F70A)
+#define gPoisonedBy *((u8*) 0x203F70A)
 	// 0x1 = Poison Touch	/ 0x1 = Beak Blast Burn
 	// 0x2 = Toxic Spikes
 	// 0x3 = Toxic Orb		/ 0x3 = Flame Orb

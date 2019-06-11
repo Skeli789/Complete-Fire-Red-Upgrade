@@ -1541,3 +1541,9 @@ void GrassyTerrainHealFunc(void)
 {
 	gBattleMoveDamage = -1 * MathMax(1, gBattleMons[gBankAttacker].maxHP / 16);
 }
+
+void RestoreBanksFromSynchronize(void)
+{
+	gBankAttacker = gNewBS->backupSynchronizeBanks[0];
+	gBankTarget = gNewBS->backupSynchronizeBanks[1];
+}

@@ -742,19 +742,22 @@ void atk1B_cleareffectsonfaint(void) {
 				gNewBS->ZMoveData->toBeUsed[gActiveBattler] = 0; //Because you died before you could use the Z-Move
 
 				gBattleMons[gActiveBattler].type3 = TYPE_BLANK;
+				*SeedHelper = 0;
 				++gNewBS->FaintEffectsTracker;
 			__attribute__ ((fallthrough));
 
 			case Faint_SoulHeart:
 				for (; *SeedHelper < gBattlersCount; ++*SeedHelper)
 				{
-					if (ABILITY(*SeedHelper) == ABILITY_SOULHEART
-					&&  *SeedHelper != gActiveBattler
-					&&  gBattleMons[*SeedHelper].hp
-					&&  STAT_CAN_RISE(*SeedHelper, STAT_SPATK))
+					u8 bank = *SeedHelper;
+					if (ABILITY(bank) == ABILITY_SOULHEART
+					&&  bank != gActiveBattler
+					&&  gBattleMons[bank].hp != 0
+					&&  STAT_CAN_RISE(bank, STAT_SPATK)
+					&&  ViableMonCountFromBank(FOE(bank)) > 0) //Foe still has mons
 					{
-						++gBattleMons[*SeedHelper].statStages[STAT_SPATK - 1];
-						gBattleScripting->bank = gEffectBank = *SeedHelper;
+						++gBattleMons[bank].statStages[STAT_SPATK - 1];
+						gBattleScripting->bank = gEffectBank = bank;
 
 						PREPARE_STAT_BUFFER(gBattleTextBuff1, STAT_STAGE_SPATK);
 						PREPARE_STAT_ROSE(gBattleTextBuff2);
@@ -762,7 +765,6 @@ void atk1B_cleareffectsonfaint(void) {
 						gBattleScripting->animArg2 = 0;
 
 						gLastUsedAbility = ABILITY_SOULHEART;
-						RecordAbilityBattle(*SeedHelper, gLastUsedAbility);
 
 						BattleScriptPushCursor();
 						gBattlescriptCurrInstr = BattleScript_SoulHeart;

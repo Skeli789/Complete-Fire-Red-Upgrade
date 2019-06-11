@@ -748,6 +748,7 @@ struct NewBattleStruct
 	u8 skyDropAttackersTarget[MAX_BATTLERS_COUNT]; //skyDropAttackersTarget[gBankAttacker] = gBankTarget
 	u8 skyDropTargetsAttacker[MAX_BATTLERS_COUNT]; //skyDropTargetsAttacker[gBankTarget] = gBankAttacker
 	u8 pickupStack[MAX_BATTLERS_COUNT]; //0x2017620
+	u8 synchronizeTarget[MAX_BATTLERS_COUNT]; //Bank + 1 that statused given bank
 	
 	//Bit Fields for Banks
 	u8 MicleBerryBits;
@@ -824,6 +825,7 @@ struct NewBattleStruct
 	u8 expHelper[MAX_BATTLERS_COUNT];
 	u8 megaIndicatorObjIds[MAX_BATTLERS_COUNT];
 	u8 abilityPopUpIds[2];
+	u8 backupSynchronizeBanks[2];
 	u16 movePredictions[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //movePredictions[bankAtk][bankDef]
 	
 	struct MegaData* MegaData;	 //0x2017688

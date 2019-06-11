@@ -111,14 +111,11 @@ RageContraryBS: @;Rage says "Attack fell!" if the target has Contrary. Only the 
 
 BattleScript_BeakBlastBurn:
 	orword HIT_MARKER 0x2100
-	copyarray SEED_HELPER USER_BANK 0x1
-	copyarray USER_BANK TARGET_BANK 0x1
-	copyarray TARGET_BANK SEED_HELPER 0x1
+	swapattackerwithtarget
 	setbyte POISONED_BY 0x1
 	setbyte EFFECT_BYTE 0x3
 	seteffecttarget
-	copyarray TARGET_BANK USER_BANK 0x1
-	copyarray USER_BANK SEED_HELPER 0x1
+	swapattackerwithtarget
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

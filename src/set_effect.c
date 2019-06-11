@@ -276,8 +276,11 @@ void SetMoveEffect(bool8 primary, u8 certain)
             || gBattleCommunication[MOVE_EFFECT_BYTE] == MOVE_EFFECT_BURN
 			|| gBattleCommunication[MOVE_EFFECT_BYTE] == MOVE_EFFECT_TOXIC)
             {
-                gBattleStruct->synchronizeMoveEffect = gBattleCommunication[MOVE_EFFECT_BYTE];
-                gHitMarker |= HITMARKER_SYNCHRONISE_EFFECT;
+				if (gPoisonedBy != 0x2 && gPoisonedBy != 0x3) //Not Toxic Spikes or Toxic Orb / Flame Orb
+				{
+					gBattleStruct->synchronizeMoveEffect = gBattleCommunication[MOVE_EFFECT_BYTE];
+					gNewBS->synchronizeTarget[gEffectBank] = gBankAttacker + 1;
+				}
             }
             return;
         }

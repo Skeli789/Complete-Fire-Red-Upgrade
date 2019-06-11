@@ -1191,7 +1191,8 @@ u8 TurnBasedEffects(void)
 
 					switch(ability) {
 						case ABILITY_ZENMODE:
-							if (species == SPECIES_DARMANITAN) 
+							if (species == SPECIES_DARMANITAN
+							&& gBattleMons[gActiveBattler].hp <= gBattleMons[gActiveBattler].maxHP / 2)
 							{
 								newSpecies = SPECIES_DARMANITANZEN;
 								changedForm = TRUE;
@@ -1202,7 +1203,8 @@ u8 TurnBasedEffects(void)
 							break;
 
 						case ABILITY_POWERCONSTRUCT:
-							if (species == SPECIES_ZYGARDE || species == SPECIES_ZYGARDE_10) 
+							if ((species == SPECIES_ZYGARDE || species == SPECIES_ZYGARDE_10)
+							&& gBattleMons[gActiveBattler].hp <= gBattleMons[gActiveBattler].maxHP / 2)
 							{
 								newSpecies = SPECIES_ZYGARDE_COMPLETE;
 								changedForm = TRUE;

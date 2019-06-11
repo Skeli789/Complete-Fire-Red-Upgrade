@@ -46,8 +46,7 @@ extern u8 BattleScript_MummyActivates[];
 extern u8 BattleScript_AngerPointActivates[];
 extern u8 BattleScript_GooeyActivates[];
 extern u8 BattleScript_IllusionBroken[];
-extern u8 BattleScript_SynchronizeActivates_StatusesAttacker[];
-extern u8 BattleScript_SynchronizeActivates_StatusesTarget[];
+extern u8 BattleScript_SynchronizeActivates[];
 extern u8 BattleScript_ObliviousPrevents[];
 extern u8 BattleScript_CastformChange[];
 

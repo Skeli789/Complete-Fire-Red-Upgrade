@@ -1582,37 +1582,33 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
             }
             break;
         case ABILITYEFFECT_SYNCHRONIZE: // 7
-            if (gLastUsedAbility == ABILITY_SYNCHRONIZE && (gHitMarker & HITMARKER_SYNCHRONISE_EFFECT))
+            if (gLastUsedAbility == ABILITY_SYNCHRONIZE
+			&& gNewBS->synchronizeTarget[bank] > 0)
             {
-                gHitMarker &= ~(HITMARKER_SYNCHRONISE_EFFECT);
-                gBattleStruct->synchronizeMoveEffect &= ~(MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN);
-                if (gBattleStruct->synchronizeMoveEffect == MOVE_EFFECT_TOXIC)
-                    gBattleStruct->synchronizeMoveEffect = MOVE_EFFECT_TOXIC;
+				if (bank != gNewBS->synchronizeTarget[bank] - 1) //Didn't status itself
+				{
+					gHitMarker &= ~(HITMARKER_SYNCHRONISE_EFFECT);
+					gBattleStruct->synchronizeMoveEffect &= ~(MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN);
+					gBattleCommunication[MOVE_EFFECT_BYTE] = gBattleStruct->synchronizeMoveEffect;
+					gBattleScripting->bank = bank;
+					
+					gNewBS->backupSynchronizeBanks[0] = gBankAttacker;
+					gNewBS->backupSynchronizeBanks[1] = gBankTarget;
 
-                gBattleCommunication[MOVE_EFFECT_BYTE] = gBattleStruct->synchronizeMoveEffect + MOVE_EFFECT_AFFECTS_USER;
-                gBattleScripting->bank = gBankTarget;
-                BattleScriptPushCursor();
-                gBattlescriptCurrInstr = BattleScript_SynchronizeActivates_StatusesAttacker;
-                gHitMarker |= HITMARKER_IGNORE_SAFEGUARD;
-                effect++;
+					gBankAttacker = bank;
+					gBankTarget = gNewBS->synchronizeTarget[bank] - 1;
+					gNewBS->synchronizeTarget[bank] = 0;
+
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_SynchronizeActivates;
+					gHitMarker |= HITMARKER_IGNORE_SAFEGUARD;
+					effect++;
+				}
+
+				gNewBS->synchronizeTarget[bank] = 0;
             }
             break;
-        case ABILITYEFFECT_ATK_SYNCHRONIZE: // 8
-            if (gLastUsedAbility == ABILITY_SYNCHRONIZE && (gHitMarker & HITMARKER_SYNCHRONISE_EFFECT))
-            {
-                gHitMarker &= ~(HITMARKER_SYNCHRONISE_EFFECT);
-                gBattleStruct->synchronizeMoveEffect &= ~(MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN);
-                if (gBattleStruct->synchronizeMoveEffect == MOVE_EFFECT_TOXIC)
-                    gBattleStruct->synchronizeMoveEffect = MOVE_EFFECT_TOXIC;
 
-                gBattleCommunication[MOVE_EFFECT_BYTE] = gBattleStruct->synchronizeMoveEffect;
-                gBattleScripting->bank = gBankAttacker;
-                BattleScriptPushCursor();
-                gBattlescriptCurrInstr = BattleScript_SynchronizeActivates_StatusesTarget;
-                gHitMarker |= HITMARKER_IGNORE_SAFEGUARD;
-                effect++;
-            }
-            break;
         case ABILITYEFFECT_INTIMIDATE1: // 9
             break;
 		
