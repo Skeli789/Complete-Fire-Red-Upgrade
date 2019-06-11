@@ -59,11 +59,44 @@ struct ToneData
     u8 key;
     u8 length; // sound length (compatible sound)
     u8 pan_sweep; // pan or sweep (compatible sound ch. 1)
-    struct WaveData *wav;
+    const struct WaveData* wav;
     u8 attack;
     u8 decay;
     u8 sustain;
     u8 release;
+};
+
+struct SquareWave
+{
+    u8 type;
+    u8 key;
+    u8 blank1;
+    u8 sweep;
+    u8 pattern;
+	u8 blank2;
+	u8 blank3;
+	u8 blank4;
+    u8 attack;
+    u8 decay;
+    u8 sustain;
+    u8 release;
+};
+
+struct MultiSample
+{
+    u8 type;
+    u8 key;
+    u8 blank1;
+    u8 blank2;
+    const union VoiceType* wav;
+    const u8* keyData;
+};
+
+union VoiceType
+{
+	struct ToneData normal;
+	struct SquareWave square;
+	struct MultiSample multi;
 };
 
 struct CgbChannel
