@@ -347,28 +347,13 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			
         case ABILITY_CLOUDNINE:
         case ABILITY_AIRLOCK:
-            {
-                for (bank = 0; bank < gBattlersCount; ++bank)
-                {
-                    effect = CastformDataTypeChange(bank);
-                    if (effect != 0)
-                    {
-                        BattleScriptPushCursorAndCallback(BattleScript_CastformChange);
-                        gBattleStruct->castformToChangeInto = effect - 1;
-                        break;
-                    }
-                }
-				
-				BattleStringLoader = gText_AirLockActivate;
-	
-				BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
-				effect++;
-            }
+			BattleStringLoader = gText_AirLockActivate;
+			BattleScriptPushCursorAndCallback(BattleScript_AirLock);
+			effect++;
             break;
 		
 		case ABILITY_PRESSURE:
             BattleStringLoader = gText_PressureActivate;
-            
             BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
             effect++;
             break;

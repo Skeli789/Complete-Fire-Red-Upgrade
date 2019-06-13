@@ -3,6 +3,7 @@
 #define BattleScript_OverworldWeatherStarts (u8*) 0x81D8B1F
 
 extern u8 BattleScript_NewWeatherAbilityActivates[];
+extern u8 BattleScript_AirLock[];
 extern u8 BattleScript_IntimidateActivatesEnd3[];
 extern u8 BattleScript_TraceActivates[];
 extern u8 BattleScript_SwitchInAbilityMsg[];

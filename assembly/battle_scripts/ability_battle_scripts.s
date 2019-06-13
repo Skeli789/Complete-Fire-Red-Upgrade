@@ -6,6 +6,7 @@
 
 .global BattleScript_OverworldWeatherStarts
 .global BattleScript_NewWeatherAbilityActivates
+.global BattleScript_AirLock
 .global BattleScript_IntimidateActivatesEnd3
 .global BattleScript_TraceActivates
 .global BattleScript_TerrainFromAbility
@@ -92,6 +93,16 @@ BattleScript_NewWeatherAbilityActivates:
 	printfromtable gWeatherAbilityStrings
 	waitstateatk
 	playanimation2 BANK_ATTACKER ANIM_ARG_1 0x0
+	call BattleScript_AbilityPopUpRevert
+	call 0x81D92DC @;BattleScript_WeatherFormChanges
+	end3
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_AirLock:
+	call BattleScript_AbilityPopUp
+	printstring 0x184
+	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
 	call 0x81D92DC @;BattleScript_WeatherFormChanges
 	end3
