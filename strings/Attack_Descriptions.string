@@ -929,7 +929,7 @@ The user attacks\nwith electrically\ncharged fists. This\nchanges Normal- to\nEl
 If the target is\nelectrified before\nits move in the turn,\nthe target's move\nbecomes Electric.
 
 #org @DESC_EMBARGO
- 
+It prevents the\ntarget from using\nitems. Its Trainer\nalso can't use\nitems on it.
 
 #org @DESC_FAIRYLOCK
 By locking down the\nbattlefield, the\nuser keeps all\nPok\emon from fleeing\nduring the next turn.
@@ -953,19 +953,19 @@ The user suppresses\nthe target and makes\nits move go last.
 Using Happy Hour\ndoubles the amount\nof prize money\nreceived after\nbattle.
 
 #org @DESC_DOUBLEIRONBASH
- 
+The user centers\nits hex nut and\nstrikes twice with\nits arms. It may\ncause flinching.
 
 #org @DESC_LASTRESORT
-
+It can only be\nused after the\nuser has exhausted\nall other moves it\nknows in battle.
 
 #org @DESC_SKYDROP
-
+It takes the enemy\ninto the sky,\nwhere it can't\nattack. It is\ndropped next turn.
 
 #org @DESC_CELEBRATE
-
+The Pokémon\ncongratulates you\non your special\nday!
 
 #org @DESC_HOLDHANDS
-
+The user and an\nally hold hands.\nThis makes them\nvery happy.
 
 #org @DESC_BLANK
-.
+-
