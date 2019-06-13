@@ -3405,7 +3405,7 @@ void atkE5_pickupitemcalculation(void) {
 		}
 
 		if (Random() % 100 < chance)
-			gPlayerParty[i].item = item;
+			SetMonData(&gPlayerParty[i], MON_DATA_HELD_ITEM, &item);
     }
 
     ++gBattlescriptCurrInstr;

@@ -25,6 +25,8 @@
 
 #define EOS 0xFF
 
+#define ITEM_NONE 0
+
 #ifdef OPEN_WORLD_TRAINERS
 
 #define NUM_BADGE_OPTIONS 8 + 2

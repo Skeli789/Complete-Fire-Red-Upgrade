@@ -118,6 +118,9 @@
 080F6F08 03 D1 28 1C 03 21 0D F7
 ##Remove Old Whiteout screen fix
 0807F53A 02 E0 54 B5 41 08 0D 49
+##Remove Old Overworld Form Change
+081205C8 F0 B5 81 B0 06 1C 0D 04
+08120610 10 B5 81 B0 04 1C 0C 21
 
 ##Save Expansion
 080DA5E0 FF 20 70 47

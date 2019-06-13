@@ -817,7 +817,7 @@ static void CreateScriptedWildMon(u16 species, u8 level, u16 item, u16* moves, b
 	
     CreateMon(&gEnemyParty[index], species, level, 0x20, 0, 0, 0, 0);
     if (item)
-		gEnemyParty[index].item = item;
+		SetMonData(&gEnemyParty[index], MON_DATA_HELD_ITEM, &item);
 	
 	if (FlagGet(WILD_CUSTOM_MOVES_FLAG))
 	{

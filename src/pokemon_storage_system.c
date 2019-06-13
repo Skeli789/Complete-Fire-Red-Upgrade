@@ -5,6 +5,7 @@
 #include "../include/constants/vars.h"
 
 #include "../include/new/build_pokemon.h"
+#include "../include/new/form_change.h"
 #include "../include/new/frontier.h"
 #include "../include/new/pokemon_storage_system.h"
 
@@ -239,9 +240,11 @@ void SetBoxMonAt(u8 boxId, u8 boxPosition, struct BoxPokemon* src)
 {
     if (boxId < TOTAL_BOXES_COUNT && boxPosition < IN_BOX_COUNT)
 	{
+		HoopaShayminPCRevertCheck((struct Pokemon*) src);
+
 		struct CompressedPokemon mon;
 		CreateCompressedMonFromBoxMon(src, &mon);
-        sPokemonBoxPtrs[boxId][boxPosition] = mon;
+		sPokemonBoxPtrs[boxId][boxPosition] = mon;
 	}
 }
 

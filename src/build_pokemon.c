@@ -13,6 +13,7 @@
 #include "../include/new/build_pokemon_2.h"
 #include "../include/new/catching.h"
 #include "../include/new/dexnav.h"
+#include "../include/new/form_change.h"
 #include "../include/new/frontier.h"
 #include "../include/new/helper_functions.h"
 #include "../include/new/item.h"
@@ -322,13 +323,13 @@ static u8 CreateNPCTrainerParty(pokemon_t* const party, const u16 trainerId, con
 
 					case PARTY_FLAG_HAS_ITEM:
 						MAKE_POKEMON(trainer->party.ItemDefaultMoves);
-						party[i].item = trainer->party.ItemDefaultMoves[i].heldItem;
+						SetMonData(&party[i], MON_DATA_HELD_ITEM, &trainer->party.ItemDefaultMoves[i].heldItem);
 						break;
 
 					case PARTY_FLAG_CUSTOM_MOVES | PARTY_FLAG_HAS_ITEM:
 						MAKE_POKEMON(trainer->party.ItemCustomMoves);
 						SET_MOVES(trainer->party.ItemCustomMoves);
-						party[i].item = trainer->party.ItemCustomMoves[i].heldItem;
+						SetMonData(&party[i], MON_DATA_HELD_ITEM, &trainer->party.ItemCustomMoves[i].heldItem);
 						break;
 				}
 			}
@@ -587,7 +588,7 @@ static void CreateFrontierMon(struct Pokemon* mon, const u8 level, const struct 
 		mon->pp[j] = gBattleMoves[spread->moves[j]].pp;
 	}
 
-    mon->item = spread->item;
+	SetMonData(mon, MON_DATA_HELD_ITEM, &spread->item);
 
 	u8 ballType;
 	if (spread->ball)
@@ -625,7 +626,7 @@ static void SetWildMonHeldItem(void)
 
 			if (gBaseStats[species].item1 == gBaseStats[species].item2 && gBaseStats[species].item1 != 0)
 			{
-				gEnemyParty[i].item = gBaseStats[species].item1;
+				SetMonData(&gEnemyParty[i], MON_DATA_HELD_ITEM, &gBaseStats[species].item1);
 				continue;
 			}
 
@@ -633,9 +634,9 @@ static void SetWildMonHeldItem(void)
 				continue;
 
 			if (rnd < var2)
-				gEnemyParty[i].item = gBaseStats[species].item1;
+				SetMonData(&gEnemyParty[i], MON_DATA_HELD_ITEM, &gBaseStats[species].item1);
 			else
-				gEnemyParty[i].item = gBaseStats[species].item2;
+				SetMonData(&gEnemyParty[i], MON_DATA_HELD_ITEM, &gBaseStats[species].item2);
 		}
     }
 }
@@ -1010,6 +1011,12 @@ void SetMonPokeBall(struct PokemonSubstruct0* data, u8 ballId)
 	data->pokeball = ballId;
 }
 
+void SetMonHeldItem(struct PokemonSubstruct0* data, u16 item, struct Pokemon* mon)
+{
+	data->heldItem = item;
+	HoldItemFormChange(mon, item);
+}
+
 #ifdef OPEN_WORLD_TRAINERS
 
 static u8 GetOpenWorldTrainerMonAmount(void)
@@ -1087,7 +1094,7 @@ u8 ScriptGiveMon(u16 species, u8 level, u16 item, unusedArg u32 unused1, unusedA
     struct Pokemon mon;
 
     CreateMon(&mon, species, level, 32, 0, 0, 0, 0);
-    mon.item = item;
+	SetMonData(&mon, MON_DATA_HELD_ITEM, &item);
 
 	#ifdef GIVEPOKEMON_BALL_HACK
 	if (ballType)

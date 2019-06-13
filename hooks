@@ -211,6 +211,7 @@ ExpandedFlagsHook 806E5C0 1
 
 ##Other Hooks
 DaycareInheritHiddenAbility 8046116 0
+SetMonHeldItemHook 8040784 2
 
 ##DNS
 TransferPlttBuffer 8070474 0
@@ -407,6 +408,7 @@ sub_808BDE8Hook 808BDF0 0
 GetBoxWallpaper 808BD94 1
 SetBoxWallpaper 808BDBC 2
 sub_80916F4 80916F4 1
+PCFormChangeRevertHook 8092FF0 3
 CompressedStorageSummaryScreenUpdate1 8093768 1
 CompressedStorageSummaryScreenUpdate2 8138BD2 1
 CompressedStorageSummaryScreenUpdate2 813936E 1

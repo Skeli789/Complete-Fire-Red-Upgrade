@@ -17,9 +17,12 @@ void FormsRevert(pokemon_t* party);
 void TryFormRevert(pokemon_t* mon);
 void UpdateBurmy(void);
 species_t GetMiniorCoreSpecies(struct Pokemon* mon);
+void HoldItemFormChange(struct Pokemon* mon, u16 item);
+void HoopaShayminPCRevertCheck(struct Pokemon* mon);
 
 //Hooked In Functions
 void HandleFormChange(void);
+void HoopaShayminPCRevertLogic(struct Pokemon* dst, void* src);
 
 //Exported Structs
 extern const species_t gMiniorCores[];

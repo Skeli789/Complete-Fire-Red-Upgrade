@@ -194,3 +194,198 @@ void HandleFormChange(void)
 	mon->hp = battleMon->hp;
 	mon->maxHP = battleMon->maxHP;
 }
+
+//Overworld Form Change Functions////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+static u16 sTypeToArceusForm[NUMBER_OF_MON_TYPES] =
+{
+    [TYPE_NORMAL] =		0,
+    [TYPE_FIGHTING] =	SPECIES_ARCEUS_FIGHT,
+    [TYPE_FLYING] = 	SPECIES_ARCEUS_FLYING,
+    [TYPE_POISON] = 	SPECIES_ARCEUS_POISON,
+    [TYPE_GROUND] = 	SPECIES_ARCEUS_GROUND,
+    [TYPE_ROCK] =		SPECIES_ARCEUS_ROCK,
+    [TYPE_BUG] =		SPECIES_ARCEUS_BUG,
+    [TYPE_GHOST] =		SPECIES_ARCEUS_GHOST,
+    [TYPE_STEEL] =		SPECIES_ARCEUS_STEEL,
+    [TYPE_MYSTERY] =	0,
+    [TYPE_FIRE] =		SPECIES_ARCEUS_FIRE,
+    [TYPE_WATER] =		SPECIES_ARCEUS_WATER,
+    [TYPE_GRASS] =		SPECIES_ARCEUS_GRASS,
+    [TYPE_ELECTRIC] =	SPECIES_ARCEUS_ELECTRIC,
+    [TYPE_PSYCHIC] =	SPECIES_ARCEUS_PSYCHIC,
+    [TYPE_ICE] =		SPECIES_ARCEUS_ICE,
+    [TYPE_DRAGON] = 	SPECIES_ARCEUS_DRAGON,
+    [TYPE_DARK] =		SPECIES_ARCEUS_DARK,
+    [TYPE_ROOSTLESS] =	SPECIES_ARCEUS_FLYING, //This Arceus should stay in the proper form
+
+    [TYPE_FAIRY] =		SPECIES_ARCEUS_FAIRY
+};
+
+static u16 sTypeToSilvallyForm[NUMBER_OF_MON_TYPES] =
+{
+    [TYPE_NORMAL] = 	0,
+    [TYPE_FIGHTING] = 	SPECIES_SILVALLY_FIGHT,
+    [TYPE_FLYING] = 	SPECIES_SILVALLY_FLYING,
+    [TYPE_POISON] = 	SPECIES_SILVALLY_POISON,
+    [TYPE_GROUND] = 	SPECIES_SILVALLY_GROUND,
+    [TYPE_ROCK] = 		SPECIES_SILVALLY_ROCK,
+    [TYPE_BUG] = 		SPECIES_SILVALLY_BUG,
+    [TYPE_GHOST] =		SPECIES_SILVALLY_GHOST,
+    [TYPE_STEEL] =		SPECIES_SILVALLY_STEEL,
+    [TYPE_MYSTERY] = 	0,
+    [TYPE_FIRE] = 		SPECIES_SILVALLY_FIRE,
+    [TYPE_WATER] =		SPECIES_SILVALLY_WATER,
+    [TYPE_GRASS] =		SPECIES_SILVALLY_GRASS,
+    [TYPE_ELECTRIC] = 	SPECIES_SILVALLY_ELECTRIC,
+    [TYPE_PSYCHIC] = 	SPECIES_SILVALLY_PSYCHIC,
+    [TYPE_ICE] = 		SPECIES_SILVALLY_ICE,
+    [TYPE_DRAGON] = 	SPECIES_SILVALLY_DRAGON,
+    [TYPE_DARK] =		SPECIES_SILVALLY_DARK,
+    [TYPE_ROOSTLESS] =	SPECIES_SILVALLY_FLYING, //This Silvally should stay in the proper form
+
+    [TYPE_FAIRY] =		SPECIES_SILVALLY_FAIRY
+};
+
+void HoldItemFormChange(struct Pokemon* mon, u16 item)
+{
+	u16 targetSpecies = SPECIES_NONE;
+
+	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
+	u8 ability = GetPartyAbility(mon);
+	u8 itemEffect = ItemId_GetHoldEffect(item);
+	u8 type = ItemId_GetHoldEffectParam(item);
+
+	switch(species) {
+		case SPECIES_GIRATINA:
+			if (itemEffect == ITEM_EFFECT_GRISEOUS_ORB)
+				targetSpecies = SPECIES_GIRATINA_ORIGIN;
+			break;
+
+		case SPECIES_GIRATINA_ORIGIN:
+			if (itemEffect != ITEM_EFFECT_GRISEOUS_ORB)
+				targetSpecies = SPECIES_GIRATINA;
+			break;
+
+		case SPECIES_GENESECT:
+		case SPECIES_GENESECT_BURN:
+		case SPECIES_GENESECT_CHILL:
+		case SPECIES_GENESECT_DOUSE:
+		case SPECIES_GENESECT_SHOCK:
+			if (itemEffect == ITEM_EFFECT_DRIVE)
+			{
+				switch (type) {
+					case TYPE_WATER:
+						targetSpecies = SPECIES_GENESECT_DOUSE;
+						break;
+					case TYPE_FIRE:
+						targetSpecies = SPECIES_GENESECT_BURN;
+						break;
+					case TYPE_ICE:
+						targetSpecies = SPECIES_GENESECT_CHILL;
+						break;
+					case TYPE_ELECTRIC:
+						targetSpecies = SPECIES_GENESECT_SHOCK;
+						break;
+				}
+			}
+	
+			if (targetSpecies == SPECIES_NONE)
+				targetSpecies = SPECIES_GENESECT;
+			break;
+
+		case SPECIES_ARCEUS:
+		case SPECIES_ARCEUS_FIGHT:
+		case SPECIES_ARCEUS_FLYING:
+		case SPECIES_ARCEUS_POISON:
+		case SPECIES_ARCEUS_GROUND:
+		case SPECIES_ARCEUS_ROCK:
+		case SPECIES_ARCEUS_BUG:
+		case SPECIES_ARCEUS_GHOST:
+		case SPECIES_ARCEUS_STEEL:
+		case SPECIES_ARCEUS_FIRE:
+		case SPECIES_ARCEUS_WATER:
+		case SPECIES_ARCEUS_GRASS:
+		case SPECIES_ARCEUS_ELECTRIC:
+		case SPECIES_ARCEUS_PSYCHIC:
+		case SPECIES_ARCEUS_ICE:
+		case SPECIES_ARCEUS_DRAGON:
+		case SPECIES_ARCEUS_DARK:
+		case SPECIES_ARCEUS_FAIRY:
+			if (ability == ABILITY_MULTITYPE) //Only transform if set with proper ability
+			{
+				if (itemEffect == ITEM_EFFECT_PLATE)
+					targetSpecies = sTypeToArceusForm[type];
+
+				if (targetSpecies == SPECIES_NONE)
+					targetSpecies = SPECIES_ARCEUS;
+			}
+			break;
+	
+		case SPECIES_SILVALLY:
+		case SPECIES_SILVALLY_FIGHT:
+		case SPECIES_SILVALLY_FLYING:
+		case SPECIES_SILVALLY_POISON:
+		case SPECIES_SILVALLY_GROUND:
+		case SPECIES_SILVALLY_ROCK:
+		case SPECIES_SILVALLY_BUG:
+		case SPECIES_SILVALLY_GHOST:
+		case SPECIES_SILVALLY_STEEL:
+		case SPECIES_SILVALLY_FIRE:
+		case SPECIES_SILVALLY_WATER:
+		case SPECIES_SILVALLY_GRASS:
+		case SPECIES_SILVALLY_ELECTRIC:
+		case SPECIES_SILVALLY_PSYCHIC:
+		case SPECIES_SILVALLY_ICE:
+		case SPECIES_SILVALLY_DRAGON:
+		case SPECIES_SILVALLY_DARK:
+		case SPECIES_SILVALLY_FAIRY:
+			if (ability == ABILITY_RKS_SYSTEM) //Only transform if set with proper ability
+			{
+				if (itemEffect == ITEM_EFFECT_MEMORY)
+					targetSpecies = sTypeToSilvallyForm[type];
+
+				if (targetSpecies == SPECIES_NONE)
+					targetSpecies = SPECIES_SILVALLY;
+			}
+			break;
+    }
+	
+    if (targetSpecies != SPECIES_NONE && targetSpecies != species)
+    {
+        SetMonData(mon, MON_DATA_SPECIES, &targetSpecies);
+        CalculateMonStats(mon);
+    }
+}
+
+void HoopaShayminPCRevertLogic(struct Pokemon* dst, void* src)
+{
+	Memcpy(dst, src, sizeof(struct Pokemon));
+
+	HoopaShayminPCRevertCheck(dst);
+}
+
+void HoopaShayminPCRevertCheck(struct Pokemon* mon)
+{
+	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
+	u16 targetSpecies = SPECIES_NONE;
+
+	switch (species) {
+		case SPECIES_HOOPA_UNBOUND:
+		#ifdef HOOPA_CHANGE_IN_PC
+			targetSpecies = SPECIES_HOOPA;
+		#endif
+			break;
+		case SPECIES_SHAYMIN_SKY:
+		#ifdef SHAYMIN_CHANGE_IN_PC
+			targetSpecies = SPECIES_SHAYMIN;
+		#endif
+			break;
+	}
+
+	if (targetSpecies != SPECIES_NONE)
+	{
+		SetMonData(mon, MON_DATA_SPECIES, &targetSpecies);
+		CalculateMonStats(mon);
+	}
+}

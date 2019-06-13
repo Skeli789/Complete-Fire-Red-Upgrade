@@ -430,6 +430,7 @@ static void NaturalCureHeal(void)
 
 static void RestoreNonConsumableItems(void)
 {
+	u16 none = ITEM_NONE;
 	u16* items = ExtensionState.itemBackup;
 
 	if (ExtensionState.itemBackup != NULL)
@@ -441,11 +442,11 @@ static void RestoreNonConsumableItems(void)
 				if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER
 				||  items[i] == 0
 				||  !IsConsumable(items[i]))
-					gPlayerParty[i].item = items[i];
+					SetMonData(&gPlayerParty[i], MON_DATA_HELD_ITEM, &items[i]);
 
 				else if (gPlayerParty[i].item != items[i] //The player consumed their item, and then picked up another one
 				&& IsConsumable(items[i]))
-					gPlayerParty[i].item = 0; //They don't get to keep the new item
+					SetMonData(&gPlayerParty[i], MON_DATA_HELD_ITEM, &none);
 			}
 		}
 		Free(items);

@@ -258,9 +258,9 @@ u16 GetEvolutionTargetSpecies(struct Pokemon* mon, u8 type, u16 evolutionItem)
             case EVO_TRADE_ITEM:
                 if (gEvolutionTable[species][i].param == heldItem)
                 {
-                    heldItem = 0;
-                    mon->item = heldItem;
-                    targetSpecies = gEvolutionTable[species][i].targetSpecies;
+					heldItem = 0;
+					SetMonData(mon, MON_DATA_HELD_ITEM, &heldItem);
+					targetSpecies = gEvolutionTable[species][i].targetSpecies;
                 }
                 break;
 			#endif
@@ -292,7 +292,8 @@ void ItemEvolutionRemoval(pokemon_t* mon)
 	#ifdef EVO_HOLD_ITEM_REMOVAL
 		if (FlagGet(FLAG_REMOVE_EVO_ITEM))
 		{
-			mon->item = 0;
+			u16 none = 0;
+			SetMonData(mon, MON_DATA_HELD_ITEM, &none);
 			FlagClear(FLAG_REMOVE_EVO_ITEM);
 		}
 	#else

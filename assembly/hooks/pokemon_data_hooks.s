@@ -20,6 +20,16 @@ SetMonPokeBallHook:
 	ldr r0, =0x8040ADA | 1
 	bx r0
 
+@Hook at 0x08040784 with r2
+SetMonHeldItemHook:
+	lsl r0, #0x8
+	add r1, r0
+	mov r0, r8 @Substruct0
+	mov r2, r7 @struct Pokemon
+	bl SetMonHeldItem
+	ldr r0, =0x8040ADA | 1
+	bx r0
+
 @Hook at 0x8031E40 with r0
 PlayerHandleFormChange:
 	bl HandleFormChange
@@ -52,3 +62,11 @@ CreateBoxMonHook:
 	bl CreateBoxMon
 	ldr r0, =0x803DD84 | 1
 	bx r0
+
+@Hook at 0x8092FF0 with r0
+PCFormChangeRevertHook:
+	add r1, r2
+	bl HoopaShayminPCRevertLogic
+	ldr r3, =0x8093020 | 1
+	bx r3
+	
