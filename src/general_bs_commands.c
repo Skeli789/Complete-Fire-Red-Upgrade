@@ -1005,9 +1005,10 @@ void atk45_playanimation(void)
 	if (gBattlescriptCurrInstr[2] == B_ANIM_STATS_CHANGE)
 		TryContraryChangeStatAnim(gActiveBattler, argumentPtr);
 
-    if (gBattlescriptCurrInstr[2] == B_ANIM_STATS_CHANGE
-    || 	gBattlescriptCurrInstr[2] == B_ANIM_SNATCH_MOVE
-    || 	gBattlescriptCurrInstr[2] == B_ANIM_SUBSTITUTE_FADE
+	if (gBattlescriptCurrInstr[2] == B_ANIM_CASTFORM_CHANGE
+	||	gBattlescriptCurrInstr[2] == B_ANIM_STATS_CHANGE
+	|| 	gBattlescriptCurrInstr[2] == B_ANIM_SNATCH_MOVE
+	|| 	gBattlescriptCurrInstr[2] == B_ANIM_SUBSTITUTE_FADE
 	|| 	gBattlescriptCurrInstr[2] == B_ANIM_TRANSFORM
 	|| 	gBattlescriptCurrInstr[2] == B_ANIM_WISHIWASHI_FISH
 	|| 	gBattlescriptCurrInstr[2] == B_ANIM_ZYGARDE_CELL_SWIRL
@@ -1071,9 +1072,10 @@ void atk46_playanimation2(void) // animation Id is stored in the first pointer
 	if (*animationIdPtr == B_ANIM_STATS_CHANGE)
 		TryContraryChangeStatAnim(gActiveBattler, argumentPtr);
 
-    if (*animationIdPtr == B_ANIM_STATS_CHANGE
-    || 	*animationIdPtr == B_ANIM_SNATCH_MOVE
-    || 	*animationIdPtr == B_ANIM_SUBSTITUTE_FADE
+	if (*animationIdPtr == B_ANIM_CASTFORM_CHANGE
+	||	*animationIdPtr == B_ANIM_STATS_CHANGE
+	|| 	*animationIdPtr == B_ANIM_SNATCH_MOVE
+	|| 	*animationIdPtr == B_ANIM_SUBSTITUTE_FADE
 	|| 	*animationIdPtr == B_ANIM_TRANSFORM
 	|| 	*animationIdPtr == B_ANIM_WISHIWASHI_FISH
 	|| 	*animationIdPtr == B_ANIM_ZYGARDE_CELL_SWIRL
@@ -1086,7 +1088,7 @@ void atk46_playanimation2(void) // animation Id is stored in the first pointer
 	||  *animationIdPtr == B_ANIM_LOAD_DEAFUALT_BG
 	||  *animationIdPtr == B_ANIM_LOAD_ABILITY_POP_UP
 	||  *animationIdPtr == B_ANIM_DESTROY_ABILITY_POP_UP)
-    {
+	{
         EmitBattleAnimation(0, *animationIdPtr, *argumentPtr);
         MarkBufferBankForExecution(gActiveBattler);
         gBattlescriptCurrInstr += 10;
