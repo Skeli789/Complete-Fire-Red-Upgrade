@@ -245,17 +245,22 @@ enum //These vars need to be one after the other (hence the enum)
 #define OKAY_WITH_AI_SUICIDE //The AI is allowed to use self-destructing moves
 
 //Don't modify these values!
-#define MUGSHOT_PLAYER 0 //Don't modify these values!
-#define MUGSHOT_VS_SYMBOL 1 //Don't modify these values!
+//#define MUGSHOT_PLAYER 0 //Don't modify these values!
+//#define MUGSHOT_VS_SYMBOL 1 //Don't modify these values!
 
-#define MUGSHOT_BIG 0 //Don't modify these values!
-#define MUGSHOT_DP 1 //Don't modify these values!
-#define MUGSHOT_TWO_BARS 2 //Don't modify these values!
+//#define MUGSHOT_BIG 0 //Don't modify these values!
+//#define MUGSHOT_DP 1 //Don't modify these values!
+//#define MUGSHOT_TWO_BARS 2 //Don't modify these values!
 
 /* Pre-Battle Mugshot Options */
-#define MUGSHOT_SPRITE MUGSHOT_PLAYER //MUGSHOT_PLAYER for regular trainer sprites, MUGSHOT_VS_SYMBOL for VS symbol to be loaded instead of player (and partner in tag battles)
-#define MUGSHOT_STYLE MUGSHOT_TWO_BARS //MUGSHOT_TWO_BARS for original FR mugshot style, MUGSHOT_DP for Gen 4 mugshot style, MUGSHOT_BIG for new large style
+#define FR_PRE_BATTLE_MUGSHOT_STYLE
+//#define MUGSHOT_SPRITE MUGSHOT_VS_SYMBOL //MUGSHOT_PLAYER for regular trainer sprites, MUGSHOT_VS_SYMBOL for VS symbol to be loaded instead of player (and partner in tag battles)
+//#define MUGSHOT_STYLE MUGSHOT_TWO_BARS //MUGSHOT_TWO_BARS for original FR mugshot style, MUGSHOT_DP for Gen 4 mugshot style, MUGSHOT_BIG for new large style
 //#define LOAD_MUGSHOT_SPRITE_FROM_TABLE //Uncomment if you want to be able to load mugshots from a custom image table
+
+#define VAR_PRE_BATTLE_MUGSHOT_TYPE 0x5038
+#define VAR_PRE_BATTLE_MUGSHOT_SPRITE 0x5039
+#define FLAG_LOAD_MUGSHOT_SPRITE_FROM_TABLE 0x924	//Load custom mugshot for pre-battle transition
 
 /* DexNav Options */
 //See "include/new/dexnav_config.h"
