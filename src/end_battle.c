@@ -545,6 +545,12 @@ static void EndBattleFlagClear(void)
 			VarSet(STATUS_INDUCER_VAR, status | (amount << 8));
 	}
 
+	//Reset Totem Vars
+	VarSet(TOTEM_VAR + 0, 0);	//Bank B_POSITION_PLAYER_LEFT's Stat
+	VarSet(TOTEM_VAR + 1, 0);	//Bank B_POSITION_OPPONENT_LEFT's Stat
+	VarSet(TOTEM_VAR + 2, 0);	//Bank B_POSITION_PLAYER_RIGHT's Stat
+	VarSet(TOTEM_VAR + 3, 0);	//Bank B_POSITION_OPPONENT_RIGHT's Stat
+
 	VarSet(TERRAIN_VAR, 0);
 	VarSet(BATTLE_TOWER_TRAINER_NAME, 0xFFFF);
 	Free(gNewBS->MegaData);

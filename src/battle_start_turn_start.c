@@ -46,20 +46,24 @@ extern const u16 gWildSpeciesBasedBattleBGMLength;
 
 const u8 gStatStageRatios[][2] =
 {
-    {10, 40}, // -6
-    {10, 35}, // -5
-    {10, 30}, // -4
-    {10, 25}, // -3
-    {10, 20}, // -2
-    {10, 15}, // -1
-    {10, 10}, //  0
-    {15, 10}, //  1
-    {20, 10}, //  2
-    {25, 10}, //  3
-    {30, 10}, //  4
-    {35, 10}, //  5
-    {40, 10}  //  6
+	{10, 40}, // -6
+	{10, 35}, // -5
+	{10, 30}, // -4
+	{10, 25}, // -3
+	{10, 20}, // -2
+	{10, 15}, // -1
+	{10, 10}, //  0
+	{15, 10}, //  1
+	{20, 10}, //  2
+	{25, 10}, //  3
+	{30, 10}, //  4
+	{35, 10}, //  5
+	{40, 10}  //  6
 };
+
+//This file's functions:
+static u32 BoostSpeedInWeather(u8 ability, u32 speed);
+static u32 BoostSpeedByItemEffect(u8 itemEffect, u8 itemQuality, u16 species, u32 speed);
 
 void HandleNewBattleRamClearBeforeBattle(void) 
 {
@@ -84,13 +88,13 @@ void SavePartyItems(void)
 
 void BattleBeginFirstTurn(void)
 {
-    s32 i;
-    s32 j;
-    u8 effect = 0;
+	s32 i;
+	s32 j;
+	u8 effect = 0;
 	u8* state = &(gBattleStruct->switchInAbilitiesCounter);
 	u8* bank = &(gBattleStruct->switchInItemsCounter);
 	
-    if (!gBattleExecBuffer) { //Inlclude Safari Check Here?
+	if (!gBattleExecBuffer) { //Inlclude Safari Check Here?
 		switch(*state) {
 			case GetTurnOrder:
 				for (i = 0; i < gBattlersCount; ++i)
@@ -208,36 +212,23 @@ void BattleBeginFirstTurn(void)
 				++*state;
 				break;
 			
-			case TotemPokemon:	;
-				if (!(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_FRONTIER)))
+			case TotemPokemon: ;
+				if (!(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_TRAINER_TOWER | BATTLE_TYPE_POKE_DUDE | BATTLE_TYPE_OLD_MAN)))
 				{
-					u16 totem_var = VarGet(TOTEM_VAR);
-					u16 stat_to_raise = VarGet(TOTEM_VAR + 1 + *bank);
-					if (totem_var) {
-						while (*bank < gBattlersCount) {
-							u8 amount_to_raise = stat_to_raise & ~(0x7);
-							if ((totem_var & (1 << *bank)) && stat_to_raise > 0 && 
-								 stat_to_raise <= STAT_STAGE_EVASION && 
-								((amount_to_raise >= 0x10 && amount_to_raise <= 0x60) || 
-								 (amount_to_raise >= 0x90 && amount_to_raise <= 0xE0))) {
-									gStatChangeByte = stat_to_raise | amount_to_raise;
-									BattleScriptPushCursorAndCallback(BattleScript_Totem);
-									gBankAttacker = gBattleScripting->bank = *bank;
-									++effect;
-								}
+					while (*bank < gBattlersCount)
+					{
+						if (CanActivateTotemBoost(*bank))
+						{
+							BattleScriptPushCursorAndCallback(BattleScript_Totem);
+							gBankAttacker = gBattleScripting->bank = *bank;
 							++*bank;
-							
-							if (effect) return;
+							return;
 						}
+
+						++*bank;
 					}
-					
-					//Reset Totem Vars
-					VarSet(TOTEM_VAR, 0);		//Totem Banks
-					VarSet(TOTEM_VAR + 1, 0);	//Bank 0's Stat
-					VarSet(TOTEM_VAR + 2, 0);	//Bank 1's Stat
-					VarSet(TOTEM_VAR + 3, 0);	//Bank 2's Stat
-					VarSet(TOTEM_VAR + 4, 0);	//Bank 3's Stat
 				}
+
 				*bank = 0; //Reset Bank for next loop
 				++*state;
 				break;
@@ -272,107 +263,126 @@ void BattleBeginFirstTurn(void)
 				gRandomTurnNumber = Random();
 				*state = 0;
 		}
-    }
+	}
 }
 
+bool8 CanActivateTotemBoost(u8 bank)
+{
+	u16 stat = VarGet(TOTEM_VAR + bank) & 0x7;
+
+	if (stat != 0)
+	{
+		u8 raiseAmount = VarGet(TOTEM_VAR + bank) & ~(0xF);
+
+		if (stat <= STAT_STAGE_EVASION
+		&& ((raiseAmount >= INCREASE_1 && raiseAmount <= INCREASE_6)
+		 || (raiseAmount >= DECREASE_1 && raiseAmount <= DECREASE_6)))
+		{
+			gStatChangeByte = stat | raiseAmount;
+			return TRUE;
+		}
+	}
+	
+	return FALSE;
+}
 
 void SetActionsAndBanksTurnOrder(void)
 {
-    s32 turnOrderId = 0;
-    s32 i, j;
+	s32 turnOrderId = 0;
+	s32 i, j;
 
-    if (gBattleTypeFlags & BATTLE_TYPE_SAFARI)
-    {
-        for (gActiveBattler = 0; gActiveBattler < gBattlersCount; ++gActiveBattler) {
-            gActionsByTurnOrder[turnOrderId] = gActionForBanks[gActiveBattler];
-            gBanksByTurnOrder[turnOrderId] = gActiveBattler;
-            ++turnOrderId;
-        }
-    }
-    else
-    {
-        if (gBattleTypeFlags & BATTLE_TYPE_LINK)
-        {
-            for (gActiveBattler = 0; gActiveBattler < gBattlersCount; ++gActiveBattler) {
-                if (gActionForBanks[gActiveBattler] == ACTION_RUN)
-                {
-                    turnOrderId = 5;
-                    break;
-                }
-            }
-        }
-        else
-        {
-            if (gActionForBanks[0] == ACTION_RUN) {
-                gActiveBattler = 0;
-                turnOrderId = 5;
-            }
+	if (gBattleTypeFlags & BATTLE_TYPE_SAFARI)
+	{
+		for (gActiveBattler = 0; gActiveBattler < gBattlersCount; ++gActiveBattler) {
+			gActionsByTurnOrder[turnOrderId] = gActionForBanks[gActiveBattler];
+			gBanksByTurnOrder[turnOrderId] = gActiveBattler;
+			++turnOrderId;
+		}
+	}
+	else
+	{
+		if (gBattleTypeFlags & BATTLE_TYPE_LINK)
+		{
+			for (gActiveBattler = 0; gActiveBattler < gBattlersCount; ++gActiveBattler) {
+				if (gActionForBanks[gActiveBattler] == ACTION_RUN)
+				{
+					turnOrderId = 5;
+					break;
+				}
+			}
+		}
+		else
+		{
+			if (gActionForBanks[0] == ACTION_RUN) {
+				gActiveBattler = 0;
+				turnOrderId = 5;
+			}
 			
-            if (gActionForBanks[2] == ACTION_RUN) {
-                gActiveBattler = 2;
-                turnOrderId = 5;
-            }
-        }
+			if (gActionForBanks[2] == ACTION_RUN) {
+				gActiveBattler = 2;
+				turnOrderId = 5;
+			}
+		}
 
-        if (turnOrderId == 5)
-        {
-            gActionsByTurnOrder[0] = gActionForBanks[gActiveBattler];
-            gBanksByTurnOrder[0] = gActiveBattler;
-            turnOrderId = 1;
-            for (i = 0; i < gBattlersCount; i++)
-            {
-                if (i != gActiveBattler)
-                {
-                    gActionsByTurnOrder[turnOrderId] = gActionForBanks[i];
-                    gBanksByTurnOrder[turnOrderId] = i;
-                    ++turnOrderId;
-                }
-            }
-            gBattleMainFunc = (u32) CheckFocusPunch_ClearVarsBeforeTurnStarts;
-            gBattleStruct->focusPunchBank = 0;
-            return;
-        }
-        else
-        {
-            for (gActiveBattler = 0; gActiveBattler < gBattlersCount; ++gActiveBattler)
-            {
-                if (gActionForBanks[gActiveBattler] == ACTION_USE_ITEM || gActionForBanks[gActiveBattler] == ACTION_SWITCH)
-                {
-                    gActionsByTurnOrder[turnOrderId] = gActionForBanks[gActiveBattler];
-                    gBanksByTurnOrder[turnOrderId] = gActiveBattler;
-                    ++turnOrderId;
-                }
-            }
-            for (gActiveBattler = 0; gActiveBattler < gBattlersCount; gActiveBattler++)
-            {
-                if (gActionForBanks[gActiveBattler] != ACTION_USE_ITEM && gActionForBanks[gActiveBattler] != ACTION_SWITCH)
-                {
-                    gActionsByTurnOrder[turnOrderId] = gActionForBanks[gActiveBattler];
-                    gBanksByTurnOrder[turnOrderId] = gActiveBattler;
-                    ++turnOrderId;
-                }
-            }
-            for (i = 0; i < gBattlersCount - 1; i++)
-            {
-                for (j = i + 1; j < gBattlersCount; j++)
-                {
-                    u8 bank1 = gBanksByTurnOrder[i];
-                    u8 bank2 = gBanksByTurnOrder[j];
-                    if (gActionsByTurnOrder[i] != ACTION_USE_ITEM
-                        && gActionsByTurnOrder[j] != ACTION_USE_ITEM
-                        && gActionsByTurnOrder[i] != ACTION_SWITCH
-                        && gActionsByTurnOrder[j] != ACTION_SWITCH)
-                    {
-                        if (GetWhoStrikesFirst(bank1, bank2, FALSE))
-                            SwapTurnOrder(i, j);
-                    }
-                }
-            }
-        }
-    }
+		if (turnOrderId == 5)
+		{
+			gActionsByTurnOrder[0] = gActionForBanks[gActiveBattler];
+			gBanksByTurnOrder[0] = gActiveBattler;
+			turnOrderId = 1;
+			for (i = 0; i < gBattlersCount; i++)
+			{
+				if (i != gActiveBattler)
+				{
+					gActionsByTurnOrder[turnOrderId] = gActionForBanks[i];
+					gBanksByTurnOrder[turnOrderId] = i;
+					++turnOrderId;
+				}
+			}
+			gBattleMainFunc = (u32) CheckFocusPunch_ClearVarsBeforeTurnStarts;
+			gBattleStruct->focusPunchBank = 0;
+			return;
+		}
+		else
+		{
+			for (gActiveBattler = 0; gActiveBattler < gBattlersCount; ++gActiveBattler)
+			{
+				if (gActionForBanks[gActiveBattler] == ACTION_USE_ITEM || gActionForBanks[gActiveBattler] == ACTION_SWITCH)
+				{
+					gActionsByTurnOrder[turnOrderId] = gActionForBanks[gActiveBattler];
+					gBanksByTurnOrder[turnOrderId] = gActiveBattler;
+					++turnOrderId;
+				}
+			}
+			for (gActiveBattler = 0; gActiveBattler < gBattlersCount; gActiveBattler++)
+			{
+				if (gActionForBanks[gActiveBattler] != ACTION_USE_ITEM && gActionForBanks[gActiveBattler] != ACTION_SWITCH)
+				{
+					gActionsByTurnOrder[turnOrderId] = gActionForBanks[gActiveBattler];
+					gBanksByTurnOrder[turnOrderId] = gActiveBattler;
+					++turnOrderId;
+				}
+			}
+			for (i = 0; i < gBattlersCount - 1; i++)
+			{
+				for (j = i + 1; j < gBattlersCount; j++)
+				{
+					u8 bank1 = gBanksByTurnOrder[i];
+					u8 bank2 = gBanksByTurnOrder[j];
+					if (gActionsByTurnOrder[i] != ACTION_USE_ITEM
+						&& gActionsByTurnOrder[j] != ACTION_USE_ITEM
+						&& gActionsByTurnOrder[i] != ACTION_SWITCH
+						&& gActionsByTurnOrder[j] != ACTION_SWITCH)
+					{
+						if (GetWhoStrikesFirst(bank1, bank2, FALSE))
+							SwapTurnOrder(i, j);
+					}
+				}
+			}
+		}
+	}
 
-    gBattleMainFunc = (u32) CheckFocusPunch_ClearVarsBeforeTurnStarts;
-    gBattleStruct->focusPunchBank = 0;
+	gBattleMainFunc = (u32) CheckFocusPunch_ClearVarsBeforeTurnStarts;
+	gBattleStruct->focusPunchBank = 0;
 }
 
 enum MegaStates 
@@ -390,8 +400,8 @@ void RunTurnActionsFunctions(void)
 	int i, j;
 	u8* megaBank = &(gNewBS->MegaData->activeBank);
 	
-    if (gBattleOutcome != 0)
-        gCurrentActionFuncId = ACTION_FINISHED;
+	if (gBattleOutcome != 0)
+		gCurrentActionFuncId = ACTION_FINISHED;
 	
 	if (gCurrentActionFuncId == ACTION_USE_MOVE)
 	{
@@ -547,65 +557,65 @@ void RunTurnActionsFunctions(void)
 		}
 	}	
 	
-    gBattleStruct->savedTurnActionNumber = gCurrentTurnActionNumber;
-    sTurnActionsFuncsTable[gCurrentActionFuncId]();
+	gBattleStruct->savedTurnActionNumber = gCurrentTurnActionNumber;
+	sTurnActionsFuncsTable[gCurrentActionFuncId]();
 
-    if (gCurrentTurnActionNumber >= gBattlersCount) // everyone did their actions, turn finished
-    {
-        gHitMarker &= ~(HITMARKER_NON_ATTACK_DMG);
-        gBattleMainFunc = (u32) sEndTurnFuncsTable[gBattleOutcome & 0x7F];
-    }
-    else
-    {
-        if (gBattleStruct->savedTurnActionNumber != gCurrentTurnActionNumber) // action turn has been done, clear hitmarker bits for another bank
-        {
-            gHitMarker &= ~(HITMARKER_NO_ATTACKSTRING);
-            gHitMarker &= ~(HITMARKER_UNABLE_TO_USE_MOVE);
-        }
-    }
+	if (gCurrentTurnActionNumber >= gBattlersCount) // everyone did their actions, turn finished
+	{
+		gHitMarker &= ~(HITMARKER_NON_ATTACK_DMG);
+		gBattleMainFunc = (u32) sEndTurnFuncsTable[gBattleOutcome & 0x7F];
+	}
+	else
+	{
+		if (gBattleStruct->savedTurnActionNumber != gCurrentTurnActionNumber) // action turn has been done, clear hitmarker bits for another bank
+		{
+			gHitMarker &= ~(HITMARKER_NO_ATTACKSTRING);
+			gHitMarker &= ~(HITMARKER_UNABLE_TO_USE_MOVE);
+		}
+	}
 }
 
 void HandleAction_UseMove(void)
 {
-    u8 side;
+	u8 side;
 	u8 moveType;
 
-    gBankAttacker = gBanksByTurnOrder[gCurrentTurnActionNumber];
+	gBankAttacker = gBanksByTurnOrder[gCurrentTurnActionNumber];
 
-    if (gBattleStruct->field_91 & gBitTable[gBankAttacker])
-    {
-        gCurrentActionFuncId = ACTION_FINISHED;
-        return;
-    }
+	if (gBattleStruct->field_91 & gBitTable[gBankAttacker])
+	{
+		gCurrentActionFuncId = ACTION_FINISHED;
+		return;
+	}
 
-    gCritMultiplier = 100;
-    gBattleScripting->dmgMultiplier = 1;
-    gBattleStruct->atkCancellerTracker = 0;
-    gMoveResultFlags = 0;
-    gMultiHitCounter = 0;
+	gCritMultiplier = 100;
+	gBattleScripting->dmgMultiplier = 1;
+	gBattleStruct->atkCancellerTracker = 0;
+	gMoveResultFlags = 0;
+	gMultiHitCounter = 0;
 	gNewBS->OriginalAttackerTargetCount = 0;
 	gNewBS->ParentalBondOn = FALSE;
 	gNewBS->DancerInProgress = FALSE;
 	gNewBS->MoveBounceInProgress = FALSE;
 	gNewBS->ZMoveData->active = FALSE;
 	gBattleCommunication[MOVE_EFFECT_BYTE] = 0; //Remove secondary effects
-    gBattleCommunication[6] = 0;
-    gCurrMovePos = gChosenMovePos = gBattleStruct->chosenMovePositions[gBankAttacker];
+	gBattleCommunication[6] = 0;
+	gCurrMovePos = gChosenMovePos = gBattleStruct->chosenMovePositions[gBankAttacker];
 
 //Get Move to be Used
-    if (gProtectStructs[gBankAttacker].onlyStruggle)
-    {
-        gProtectStructs[gBankAttacker].onlyStruggle = 0;
-        gCurrentMove = gChosenMove = MOVE_STRUGGLE;
-        gHitMarker |= HITMARKER_NO_PPDEDUCT;
-        gBattleStruct->moveTarget[gBankAttacker] = GetMoveTarget(MOVE_STRUGGLE, 0);
-    }
+	if (gProtectStructs[gBankAttacker].onlyStruggle)
+	{
+		gProtectStructs[gBankAttacker].onlyStruggle = 0;
+		gCurrentMove = gChosenMove = MOVE_STRUGGLE;
+		gHitMarker |= HITMARKER_NO_PPDEDUCT;
+		gBattleStruct->moveTarget[gBankAttacker] = GetMoveTarget(MOVE_STRUGGLE, 0);
+	}
 	else if (gBattleMons[gBankAttacker].status2 & STATUS2_RECHARGE)
 	{
 		gCurrentMove = gChosenMove = gLockedMoves[gBankAttacker];
 	}
-    else if (gBattleMons[gBankAttacker].status2 & STATUS2_MULTIPLETURNS)
-    {
+	else if (gBattleMons[gBankAttacker].status2 & STATUS2_MULTIPLETURNS)
+	{
 		gCurrentMove = gChosenMove = gLockedMoves[gBankAttacker];
 		
 		if (FindMovePositionInMoveset(gLockedMoves[gBankAttacker], gBankAttacker) == 4) //The Pokemon doesn't know the move it's locked into
@@ -617,45 +627,45 @@ void HandleAction_UseMove(void)
 			gCurrentActionFuncId = ACTION_RUN_BATTLESCRIPT;
 			return;
 		}
-    }
-    // Encore forces you to use the same move
-    else if (gDisableStructs[gBankAttacker].encoredMove != MOVE_NONE
-          && gDisableStructs[gBankAttacker].encoredMove == gBattleMons[gBankAttacker].moves[gDisableStructs[gBankAttacker].encoredMovePos]
+	}
+	// Encore forces you to use the same move
+	else if (gDisableStructs[gBankAttacker].encoredMove != MOVE_NONE
+		  && gDisableStructs[gBankAttacker].encoredMove == gBattleMons[gBankAttacker].moves[gDisableStructs[gBankAttacker].encoredMovePos]
 		  && !gNewBS->ZMoveData->toBeUsed[gBankAttacker]) //If a Z-Move was chosen, it can still be used
-    {
-        gCurrentMove = gChosenMove = gDisableStructs[gBankAttacker].encoredMove;
-        gCurrMovePos = gChosenMovePos = gDisableStructs[gBankAttacker].encoredMovePos;
-        gBattleStruct->moveTarget[gBankAttacker] = GetMoveTarget(gCurrentMove, 0);
-    }
-    // Check if the encored move wasn't overwritten
-    else if (gDisableStructs[gBankAttacker].encoredMove != MOVE_NONE
-          && gDisableStructs[gBankAttacker].encoredMove != gBattleMons[gBankAttacker].moves[gDisableStructs[gBankAttacker].encoredMovePos]
+	{
+		gCurrentMove = gChosenMove = gDisableStructs[gBankAttacker].encoredMove;
+		gCurrMovePos = gChosenMovePos = gDisableStructs[gBankAttacker].encoredMovePos;
+		gBattleStruct->moveTarget[gBankAttacker] = GetMoveTarget(gCurrentMove, 0);
+	}
+	// Check if the encored move wasn't overwritten
+	else if (gDisableStructs[gBankAttacker].encoredMove != MOVE_NONE
+		  && gDisableStructs[gBankAttacker].encoredMove != gBattleMons[gBankAttacker].moves[gDisableStructs[gBankAttacker].encoredMovePos]
 		  && !gNewBS->ZMoveData->toBeUsed[gBankAttacker]) //If a Z-Move was chosen, it can still be used
-    {
-        gCurrMovePos = gChosenMovePos = gDisableStructs[gBankAttacker].encoredMovePos;
-        gCurrentMove = gChosenMove = gBattleMons[gBankAttacker].moves[gCurrMovePos];
-        gDisableStructs[gBankAttacker].encoredMove = MOVE_NONE;
-        gDisableStructs[gBankAttacker].encoredMovePos = 0;
-        gDisableStructs[gBankAttacker].encoreTimer = 0;
-        gBattleStruct->moveTarget[gBankAttacker] = GetMoveTarget(gCurrentMove, 0);
-    }
-    else if (gBattleMons[gBankAttacker].moves[gCurrMovePos] != gChosenMovesByBanks[gBankAttacker])
-    {
-        gCurrentMove = gChosenMove = gBattleMons[gBankAttacker].moves[gCurrMovePos];
-        gBattleStruct->moveTarget[gBankAttacker] = GetMoveTarget(gCurrentMove, 0);
-    }
-    else
-    {
-        gCurrentMove = gChosenMove = gBattleMons[gBankAttacker].moves[gCurrMovePos];
-    }
+	{
+		gCurrMovePos = gChosenMovePos = gDisableStructs[gBankAttacker].encoredMovePos;
+		gCurrentMove = gChosenMove = gBattleMons[gBankAttacker].moves[gCurrMovePos];
+		gDisableStructs[gBankAttacker].encoredMove = MOVE_NONE;
+		gDisableStructs[gBankAttacker].encoredMovePos = 0;
+		gDisableStructs[gBankAttacker].encoreTimer = 0;
+		gBattleStruct->moveTarget[gBankAttacker] = GetMoveTarget(gCurrentMove, 0);
+	}
+	else if (gBattleMons[gBankAttacker].moves[gCurrMovePos] != gChosenMovesByBanks[gBankAttacker])
+	{
+		gCurrentMove = gChosenMove = gBattleMons[gBankAttacker].moves[gCurrMovePos];
+		gBattleStruct->moveTarget[gBankAttacker] = GetMoveTarget(gCurrentMove, 0);
+	}
+	else
+	{
+		gCurrentMove = gChosenMove = gBattleMons[gBankAttacker].moves[gCurrMovePos];
+	}
 
-    if (gBattleMons[gBankAttacker].hp)
-    {
-        if (SIDE(gBankAttacker) == B_SIDE_PLAYER)
-            gBattleResults->lastUsedMovePlayer = gCurrentMove;
-        else
-            gBattleResults->lastUsedMoveOpponent = gCurrentMove;
-    }
+	if (gBattleMons[gBankAttacker].hp)
+	{
+		if (SIDE(gBankAttacker) == B_SIDE_PLAYER)
+			gBattleResults->lastUsedMovePlayer = gCurrentMove;
+		else
+			gBattleResults->lastUsedMoveOpponent = gCurrentMove;
+	}
 	
 	if (gNewBS->ZMoveData->toBeUsed[gBankAttacker]/* && !gNewBS->ZMoveData->used[gBankAttacker]*/)
 	{
@@ -675,22 +685,22 @@ void HandleAction_UseMove(void)
 	moveType = gBattleStruct->dynamicMoveType;
 	
 //Get Move Target
-    side = SIDE(gBankAttacker) ^ BIT_SIDE;
+	side = SIDE(gBankAttacker) ^ BIT_SIDE;
 	bank_t selectedTarget = gBattleStruct->moveTarget[gBankAttacker];
 	
-    if (gSideTimers[side].followmeTimer != 0
-    && gBattleMoves[gCurrentMove].target == MOVE_TARGET_SELECTED
-    && SIDE(gBankAttacker) != SIDE(gSideTimers[side].followmeTarget)
-    && gBattleMons[gSideTimers[side].followmeTarget].hp != 0
+	if (gSideTimers[side].followmeTimer != 0
+	&& gBattleMoves[gCurrentMove].target == MOVE_TARGET_SELECTED
+	&& SIDE(gBankAttacker) != SIDE(gSideTimers[side].followmeTarget)
+	&& gBattleMons[gSideTimers[side].followmeTarget].hp != 0
 	&& gCurrentMove != MOVE_SKYDROP)
-    {
-        gBankTarget = gSideTimers[side].followmeTarget;
-    }
-    else if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
-          &&  gSideTimers[side].followmeTimer == 0
-          && (SPLIT(gCurrentMove) != SPLIT_STATUS || gBattleMoves[gCurrentMove].target != MOVE_TARGET_USER)
+	{
+		gBankTarget = gSideTimers[side].followmeTarget;
+	}
+	else if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+		  &&  gSideTimers[side].followmeTimer == 0
+		  && (SPLIT(gCurrentMove) != SPLIT_STATUS || gBattleMoves[gCurrentMove].target != MOVE_TARGET_USER)
 		  && !(gBattleMoves[gCurrentMove].target & (MOVE_TARGET_ALL | MOVE_TARGET_BOTH)))
-    { //Try Ability Redirection
+	{ //Try Ability Redirection
 		switch (moveType) {
 			case TYPE_WATER:
 				if (ABILITY(selectedTarget) != ABILITY_STORMDRAIN) 
@@ -743,32 +753,32 @@ void HandleAction_UseMove(void)
 			else
 				goto CHOOSE_REGULAR_TARGET_DOUBLES;
 		}
-    }
-    else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE
-          && gBattleMoves[gChosenMove].target & MOVE_TARGET_RANDOM)
+	}
+	else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE
+		  && gBattleMoves[gChosenMove].target & MOVE_TARGET_RANDOM)
 	{
 	CHOOSE_RANDOM_TARGET_DOUBLES:
-        if (SIDE(gBankAttacker) == B_SIDE_PLAYER)
-        {
-            if (Random() & 1)
-                gBankTarget = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
-            else
-                gBankTarget = GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
-        }
-        else
-        {
-            if (Random() & 1)
-                gBankTarget = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
-            else
-                gBankTarget = GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT);
-        }
+		if (SIDE(gBankAttacker) == B_SIDE_PLAYER)
+		{
+			if (Random() & 1)
+				gBankTarget = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
+			else
+				gBankTarget = GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
+		}
+		else
+		{
+			if (Random() & 1)
+				gBankTarget = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
+			else
+				gBankTarget = GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT);
+		}
 
-        if (gAbsentBattlerFlags & gBitTable[gBankTarget]
-        && SIDE(gBankAttacker) != SIDE(gBankTarget))
-        {
-            gBankTarget = GetBattlerAtPosition(PARTNER(gBankTarget));
-        }
-    }
+		if (gAbsentBattlerFlags & gBitTable[gBankTarget]
+		&& SIDE(gBankAttacker) != SIDE(gBankTarget))
+		{
+			gBankTarget = GetBattlerAtPosition(PARTNER(gBankTarget));
+		}
+	}
 	else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE
 		 && gBattleMoves[gCurrentMove].target & MOVE_TARGET_ALL)
 	{
@@ -780,28 +790,28 @@ void HandleAction_UseMove(void)
 		if (gBankTarget == 0xFF) //No targets left
 			gBankTarget = FOE(gBankAttacker); //Doesn't matter who, as long as not attacker
 	}
-    else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
-    {
+	else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	{
 	CHOOSE_REGULAR_TARGET_DOUBLES:
-        gBankTarget = selectedTarget;
-        if (gAbsentBattlerFlags & gBitTable[gBankTarget])
-        {
-            if (SIDE(gBankAttacker) != SIDE(gBankTarget))
-            {
-                gBankTarget = PARTNER(gBankTarget);
-            }
-            else //Targeted Partner
-            {
-                gBankTarget = GetBattlerAtPosition(GetBattlerPosition(gBankAttacker) ^ BIT_SIDE);
-                if (gAbsentBattlerFlags & gBitTable[gBankTarget])
-                    gBankTarget = PARTNER(gBankTarget);
-            }
-        }
-    }
+		gBankTarget = selectedTarget;
+		if (gAbsentBattlerFlags & gBitTable[gBankTarget])
+		{
+			if (SIDE(gBankAttacker) != SIDE(gBankTarget))
+			{
+				gBankTarget = PARTNER(gBankTarget);
+			}
+			else //Targeted Partner
+			{
+				gBankTarget = GetBattlerAtPosition(GetBattlerPosition(gBankAttacker) ^ BIT_SIDE);
+				if (gAbsentBattlerFlags & gBitTable[gBankTarget])
+					gBankTarget = PARTNER(gBankTarget);
+			}
+		}
+	}
 	else
 		gBankTarget = selectedTarget;
 
-    // choose battlescript
+	// choose battlescript
 	if (gStatuses3[gBankAttacker] & STATUS3_SKY_DROP_ATTACKER
 	&& gBattleMons[gNewBS->skyDropAttackersTarget[gBankAttacker]].hp == 0)
 	{
@@ -813,15 +823,15 @@ void HandleAction_UseMove(void)
 	else if (gBattleMons[gBankTarget].hp == 0
 	&&  AttacksThisTurn(gBankAttacker, gCurrentMove) == 2) //Not charging move
 		gBattlescriptCurrInstr = BattleScript_NoTargetMoveFailed;
-    else
-        gBattlescriptCurrInstr = gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect];
+	else
+		gBattlescriptCurrInstr = gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect];
 
-    gCurrentActionFuncId = ACTION_RUN_BATTLESCRIPT;
+	gCurrentActionFuncId = ACTION_RUN_BATTLESCRIPT;
 }
 
 u16 GetMUS_ForBattle(void)
 {
-    if (gBattleTypeFlags & BATTLE_TYPE_LINK)
+	if (gBattleTypeFlags & BATTLE_TYPE_LINK)
 	{
 		if (VarGet(BATTLE_TOWER_SONG_OVERRIDE))
 			return VarGet(BATTLE_TOWER_SONG_OVERRIDE); //Play custom song
@@ -835,8 +845,8 @@ u16 GetMUS_ForBattle(void)
 		}
 	}
 	
-    if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
-    {	
+	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+	{	
 		u16 song;
 		u8 trainerClass;
 		
@@ -893,7 +903,7 @@ u16 GetMUS_ForBattle(void)
 		#else
 			return BGM_BATTLE_TRAINER;
 		#endif
-    }
+	}
 	
 	u16 species = gEnemyParty[0].species;
 	
@@ -925,10 +935,10 @@ u16 LoadProperMusicForLinkBattles(void)
 extern const u8 sBattleTransitionTable_Trainer[][2];
 u8 GetTrainerBattleTransition(void)
 {
-    u8 minPartyCount;
-    u8 transitionType;
-    u8 enemyLevel;
-    u8 playerLevel;
+	u8 minPartyCount;
+	u8 transitionType;
+	u8 enemyLevel;
+	u8 playerLevel;
 
 	if (gTrainerBattleOpponent_A == TRAINER_SECRET_BASE)
 		return B_TRANSITION_CHAMPION;
@@ -937,50 +947,50 @@ u8 GetTrainerBattleTransition(void)
 	if (Var8000 == 0xFEFE && sTrainerEventObjectLocalId != 0)
 		return B_TRANSITION_CHAMPION;
 	#else
-    if (sTrainerEventObjectLocalId != 0) //Used for mugshots
-        return B_TRANSITION_CHAMPION;
+	if (sTrainerEventObjectLocalId != 0) //Used for mugshots
+		return B_TRANSITION_CHAMPION;
 	#endif
 
 	#ifdef FR_PRE_BATTLE_MUGSHOT_STYLE
 	if (gTrainers[gTrainerBattleOpponent_A].trainerClass == CLASS_CHAMPION)
 		return B_TRANSITION_CHAMPION;
 	
-    if (gTrainers[gTrainerBattleOpponent_A].trainerClass == CLASS_ELITE_FOUR)
-    {
-        if (gTrainerBattleOpponent_A == TRAINER_LORELEI
+	if (gTrainers[gTrainerBattleOpponent_A].trainerClass == CLASS_ELITE_FOUR)
+	{
+		if (gTrainerBattleOpponent_A == TRAINER_LORELEI
 		||  gTrainerBattleOpponent_A == TRAINER_LORELEI_REMATCH)
-            return B_TRANSITION_LORELEI;
-        if (gTrainerBattleOpponent_A == TRAINER_BRUNO
+			return B_TRANSITION_LORELEI;
+		if (gTrainerBattleOpponent_A == TRAINER_BRUNO
 		||  gTrainerBattleOpponent_A == TRAINER_BRUNO_REMATCH)
-            return B_TRANSITION_BRUNO;
-        if (gTrainerBattleOpponent_A == TRAINER_AGATHA
+			return B_TRANSITION_BRUNO;
+		if (gTrainerBattleOpponent_A == TRAINER_AGATHA
 		||  gTrainerBattleOpponent_A == TRAINER_AGATHA_REMATCH)
-            return B_TRANSITION_AGATHA;
-        if (gTrainerBattleOpponent_A == TRAINER_LANCE
+			return B_TRANSITION_AGATHA;
+		if (gTrainerBattleOpponent_A == TRAINER_LANCE
 		||  gTrainerBattleOpponent_A == TRAINER_LANCE_REMATCH)
-            return B_TRANSITION_LANCE;
+			return B_TRANSITION_LANCE;
 
-        return B_TRANSITION_CHAMPION;
-    }
+		return B_TRANSITION_CHAMPION;
+	}
 	#endif
 
-    if ((gTrainers[gTrainerBattleOpponent_A].doubleBattle == TRUE
+	if ((gTrainers[gTrainerBattleOpponent_A].doubleBattle == TRUE
 	#ifdef DOUBLE_BATTLE_FLAG
 	|| FlagGet(DOUBLE_BATTLE_FLAG)
 	#endif
 	) && ViableMonCount(gPlayerParty) >= 2)
-        minPartyCount = 2; // double battles always at least have 2 pokemon.
-    else
-        minPartyCount = 1;
+		minPartyCount = 2; // double battles always at least have 2 pokemon.
+	else
+		minPartyCount = 1;
 
-    transitionType = GetBattleTransitionTypeByMap();
-    enemyLevel = GetSumOfEnemyPartyLevel(gTrainerBattleOpponent_A, minPartyCount);
-    playerLevel = GetSumOfPlayerPartyLevel(minPartyCount); //Really only gets the sum of the at most the first two Pokemon on the player's team
+	transitionType = GetBattleTransitionTypeByMap();
+	enemyLevel = GetSumOfEnemyPartyLevel(gTrainerBattleOpponent_A, minPartyCount);
+	playerLevel = GetSumOfPlayerPartyLevel(minPartyCount); //Really only gets the sum of the at most the first two Pokemon on the player's team
 
-    if (enemyLevel < playerLevel) //The player's first (or first two) Pokemon's level(s) is (are) >= than the opponent's first (or first two) Pokemon's level(s)
-        return sBattleTransitionTable_Trainer[transitionType][0];
-    else
-        return sBattleTransitionTable_Trainer[transitionType][1];
+	if (enemyLevel < playerLevel) //The player's first (or first two) Pokemon's level(s) is (are) >= than the opponent's first (or first two) Pokemon's level(s)
+		return sBattleTransitionTable_Trainer[transitionType][0];
+	else
+		return sBattleTransitionTable_Trainer[transitionType][1];
 }
 
 // Determines which of the two given mons will strike first in a battle.
@@ -989,7 +999,7 @@ u8 GetTrainerBattleTransition(void)
 // 1 = second mon moves first
 // 2 = second mon moves first because it won a 50/50 roll
 u8 GetWhoStrikesFirst(u8 bank1, u8 bank2, bool8 ignoreMovePriorities) {
-    s8 bank1_priority, bank2_priority;
+	s8 bank1_priority, bank2_priority;
 	s32 bank1_bracket, bank2_bracket;
 	u32 bank1_speed, bank2_speed;
 
@@ -1030,9 +1040,15 @@ u8 GetWhoStrikesFirst(u8 bank1, u8 bank2, bool8 ignoreMovePriorities) {
 	return SpeedTie;
 }
 
-s8 PriorityCalc(u8 bank, u8 action, u16 move) {
+s8 PriorityCalc(u8 bank, u8 action, u16 move)
+{
 	u8 priority = 0;
-	if (action == ACTION_USE_MOVE) {	
+	
+	if (!BATTLER_ALIVE(bank))
+		return 0;
+
+	if (action == ACTION_USE_MOVE)
+	{	
 		if (gProtectStructs[bank].onlyStruggle)
 			move = MOVE_STRUGGLE;
 		
@@ -1040,23 +1056,23 @@ s8 PriorityCalc(u8 bank, u8 action, u16 move) {
 		
 		if (move != MOVE_BIDE && gBattleMons[bank].status2 & STATUS2_BIDE)
 			priority = 1;
-		
-		ability_t ability = ABILITY(bank);
-		switch (ability) {
+
+		switch (ABILITY(bank)) {
 			case ABILITY_PRANKSTER:
-				if (gBattleMoves[move].split == SPLIT_STATUS)
+				if (SPLIT(move) == SPLIT_STATUS)
 					++priority;
 				break;
+
 			case ABILITY_GALEWINGS:
-				if (gBattleMoves[move].type == TYPE_FLYING) {
+				if (GetMoveTypeSpecial(bank, move) == TYPE_FLYING)
+				{
 					#ifndef OLD_GALE_WINGS
-						if (gBattleMons[bank].hp == gBattleMons[bank].maxHP)
-							++priority;
-					#else
-						++priority;
+						if (BATTLER_MAX_HP(bank))
 					#endif
+							++priority;
 				}
 				break;
+
 			case ABILITY_TRIAGE:
 				if (gBattleMoves[move].flags & FLAG_TRIAGE_AFFECTED)
 					priority += 3;
@@ -1082,6 +1098,7 @@ s32 BracketCalc(u8 bank)
 					return 1;
 				}
 				break;
+
 			case ITEM_EFFECT_CUSTAP_BERRY:
 				if (!AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, bank, ABILITY_UNNERVE, 0, 0)
 				&& PINCH_BERRY_CHECK(bank))
@@ -1090,6 +1107,7 @@ s32 BracketCalc(u8 bank)
 					return 1;
 				}
 				break;
+
 			case ITEM_EFFECT_LAGGING_TAIL:
 				return -2;
 		}
@@ -1101,15 +1119,9 @@ s32 BracketCalc(u8 bank)
 	return 0;
 }
 
-u32 SpeedCalc(bank_t bank) {
-	u32 speed;
-	ability_t ability = ABILITY(bank);
-	u8 itemEffect = ITEM_EFFECT(bank);
-	u8 itemQuality = ITEM_QUALITY(bank);
-    // Calculate adjusted speed stat
-    speed = udivsi((gBattleMons[bank].speed * gStatStageRatios[gBattleMons[bank].statStages[STAT_STAGE_SPEED-1]][0]), gStatStageRatios[gBattleMons[bank].statStages[STAT_STAGE_SPEED-1]][1]);
-    // Check for abilities that boost speed in weather.
-    if (WEATHER_HAS_EFFECT) {
+static u32 BoostSpeedInWeather(u8 ability, u32 speed)
+{
+	if (WEATHER_HAS_EFFECT) {
 		switch (ability) {
 			case ABILITY_SWIFTSWIM:
 				if (gBattleWeather & WEATHER_RAIN_ANY)
@@ -1129,10 +1141,52 @@ u32 SpeedCalc(bank_t bank) {
 				break;
 		}
 	}
+
+	return speed;
+}
+
+static u32 BoostSpeedByItemEffect(u8 itemEffect, u8 itemQuality, u16 species, u32 speed)
+{
+	switch (itemEffect) {
+		case ITEM_EFFECT_MACHO_BRACE:
+			speed /= 2;
+			break;			
+		case ITEM_EFFECT_CHOICE_BAND:
+			if (itemQuality == QUALITY_CHOICE_SCARF)
+				speed = (speed * 150) / 100;
+			break;
+		case ITEM_EFFECT_IRON_BALL:
+			speed /= 2;
+			break;			
+		case ITEM_EFFECT_QUICK_POWDER:
+			if (species == SPECIES_DITTO)
+				speed *= 2;
+	}
+
+
+	return speed;
+}
+
+u32 SpeedCalc(u8 bank)
+{
+	u32 speed;
+	
+	if (!BATTLER_ALIVE(bank))
+		return 0;
+
+	u8 ability = ABILITY(bank);
+	u8 itemEffect = ITEM_EFFECT(bank);
+	u8 itemQuality = ITEM_QUALITY(bank);
+
+	//Calculate adjusted speed stat
+	speed = (gBattleMons[bank].speed * gStatStageRatios[gBattleMons[bank].statStages[STAT_STAGE_SPEED-1]][0]) / gStatStageRatios[gBattleMons[bank].statStages[STAT_STAGE_SPEED-1]][1];
+
+	//Check for abilities that alter speed
+	speed = BoostSpeedInWeather(ability, speed);
 	
 	switch (ability) {
 		case ABILITY_UNBURDEN:
-			if (gNewBS->UnburdenBoosts & (1 << bank))
+			if (gNewBS->UnburdenBoosts & gBitTable[bank])
 				speed *= 2;
 			break;
 		case ABILITY_SLOWSTART:
@@ -1142,41 +1196,29 @@ u32 SpeedCalc(bank_t bank) {
 		case ABILITY_SURGESURFER:
 			if (TerrainType == ELECTRIC_TERRAIN)
 				speed *= 2;
-	}
-	
-	switch (itemEffect) {
-		case ITEM_EFFECT_MACHO_BRACE:
-			speed /= 2;
-			break;			
-		case ITEM_EFFECT_CHOICE_BAND:
-			if (itemQuality == QUALITY_CHOICE_SCARF)
-				speed = udivsi((speed * 150), 100);
 			break;
-		case ITEM_EFFECT_IRON_BALL:
-			speed /= 2;
-			break;			
-		case ITEM_EFFECT_QUICK_POWDER:
-			if (gBattleMons[bank].species == SPECIES_DITTO && !(gBattleMons[bank].status2 & STATUS2_TRANSFORMED))
-				speed *= 2;
 	}
+
+	speed = BoostSpeedByItemEffect(itemEffect, itemQuality, SPECIES(bank), speed);
 	
-	if (gNewBS->TailwindTimers[bank & 1])
+	if (gNewBS->TailwindTimers[SIDE(bank)])
 		speed *= 2;
-	if (gNewBS->SwampTimers[bank & 1])
+	if (gNewBS->SwampTimers[SIDE(bank)])
 		speed /= 4;
 	
 	#ifdef BADGE_BOOSTS
-		if (!(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_TRAINER_TOWER | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_EREADER_TRAINER)) 
+		if (!(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_TRAINER_TOWER | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_EREADER_TRAINER))
 		&& FlagGet(FLAG_BADGE03_GET)
 		&& gBattleTypeFlags & BATTLE_TYPE_TRAINER
 		&& SIDE(bank) == B_SIDE_PLAYER
 		&& gTrainerBattleOpponent != 0x400)
-			speed = udivsi((speed * 110), 100);
+			speed = (speed * 110) / 100;
 	#endif
 	
-	if ((gBattleMons[bank].status1 & STATUS_ANY) && ability == ABILITY_QUICKFEET)
+	if (gBattleMons[bank].status1 & STATUS_ANY && ability == ABILITY_QUICKFEET)
 		speed *= 2;
-	else if (gBattleMons[bank].status1 & STATUS_PARALYSIS) {
+	else if (gBattleMons[bank].status1 & STATUS_PARALYSIS)
+	{
 		#ifndef OLD_PARALYSIS_SPD_DROP
 			speed /= 2;
 		#else
@@ -1184,40 +1226,27 @@ u32 SpeedCalc(bank_t bank) {
 		#endif
 	}
 	
-    return speed;
+	return speed;
 }
 
-u32 SpeedCalcForParty(u8 side, pokemon_t* party) {
-	u32 speed = party->speed;
-	ability_t ability = GetPartyAbility(party);
+u32 SpeedCalcForParty(u8 side, struct Pokemon* mon)
+{
+	if (GetMonData(mon, MON_DATA_IS_EGG, NULL))
+		return 0;
+
 	u8 itemEffect;
+	u8 ability = GetPartyAbility(mon);
+	u32 speed = mon->speed;
+
 	if (ability != ABILITY_KLUTZ)
-		itemEffect = ItemId_GetHoldEffect(party->item);
+		itemEffect = ItemId_GetHoldEffect(mon->item);
 	else
 		itemEffect = 0;
-	u8 itemQuality = ItemId_GetHoldEffectParam(party->item);
+
+	u8 itemQuality = ItemId_GetHoldEffectParam(mon->item);
 	
-    // Check for abilities that boost speed in weather.
-    if (WEATHER_HAS_EFFECT) {
-		switch (ability) {
-			case ABILITY_SWIFTSWIM:
-				if (gBattleWeather & WEATHER_RAIN_ANY)
-					speed *= 2;
-				break;
-			case ABILITY_CHLOROPHYLL:
-				if (gBattleWeather & WEATHER_SUN_ANY)
-					speed *= 2;
-				break;
-			case ABILITY_SANDRUSH:
-				if (gBattleWeather & WEATHER_SANDSTORM_ANY)
-					speed *= 2;
-				break;
-			case ABILITY_SLUSHRUSH:
-				if (gBattleWeather & WEATHER_HAIL_ANY)
-					speed *= 2;
-				break;
-		}
-	}
+	//Check for abilities that alter speed
+	speed = BoostSpeedInWeather(ability, speed);
 	
 	switch (ability) {
 		case ABILITY_SLOWSTART:
@@ -1226,37 +1255,28 @@ u32 SpeedCalcForParty(u8 side, pokemon_t* party) {
 		case ABILITY_SURGESURFER:
 			if (TerrainType == ELECTRIC_TERRAIN)
 				speed *= 2;
-	}
-	
-	switch (itemEffect) {
-		case ITEM_EFFECT_MACHO_BRACE:
-			speed /= 2;
-			break;			
-		case ITEM_EFFECT_CHOICE_BAND:
-			if (itemQuality == QUALITY_CHOICE_SCARF)
-				speed = udivsi((speed * 150), 100);
 			break;
-		case ITEM_EFFECT_IRON_BALL:
-			speed /= 2;
-			break;			
-		case ITEM_EFFECT_QUICK_POWDER:
-			if (party->species == SPECIES_DITTO)
-				speed *= 2;
 	}
-	
+
+	//Check for items that alter speed
+	speed = BoostSpeedByItemEffect(itemEffect, itemQuality, mon->species, speed);
+
+	//Check other things that alter speed
 	if (gNewBS->TailwindTimers[side])
 		speed *= 2;
 	if (gNewBS->SwampTimers[side])
 		speed /= 4;
 	
-	if ((party->condition & STATUS_ANY) && ability == ABILITY_QUICKFEET)
+	if (mon->condition & STATUS_ANY && ability == ABILITY_QUICKFEET)
 		speed *= 2;
-	else if (party->condition & STATUS_PARALYSIS) {
+	else if (mon->condition & STATUS_PARALYSIS)
+	{
 		#ifndef OLD_PARALYSIS_SPD_DROP
 			speed /= 2;
 		#else
 			speed /= 4;
 		#endif
 	}
-    return speed;
+
+	return speed;
 }

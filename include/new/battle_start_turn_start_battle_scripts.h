@@ -2,6 +2,7 @@
 
 extern u8 BattleScript_AirBalloonFloat[];
 extern u8 BattleScript_Totem[];
+extern u8 BattleScript_TotemRet[];
 extern u8 BattleScript_ElectricTerrainBattleBegin[];
 extern u8 BattleScript_GrassyTerrainBattleBegin[];
 extern u8 BattleScript_MistyTerrainBattleBegin[];

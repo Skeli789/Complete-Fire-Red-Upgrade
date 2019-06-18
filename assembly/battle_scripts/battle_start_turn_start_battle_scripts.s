@@ -7,6 +7,7 @@
 .global BattleScript_AirBalloonFloat
 .global BattleScript_AirBalloonSub
 .global BattleScript_Totem
+.global BattleScript_TotemRet
 .global BattleScript_Primal
 .global BattleScript_PrimalSub
 .global BattleScript_ElectricTerrainBattleBegin
@@ -39,7 +40,11 @@ AirBalloonFloatEnd:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_Totem:
-	playanimation BANK_ATTACKER ANIM_FOCUS_PUNCH_PUMP 0x0
+	call BattleScript_TotemRet
+	end3
+
+BattleScript_TotemRet:
+	playanimation BANK_ATTACKER ANIM_TOTEM_BOOST 0x0
 	setword BATTLE_STRING_LOADER TotemAuraFlared
 	printstring 0x184
 	waitmessage DELAY_1SECOND
@@ -50,7 +55,7 @@ BattleScript_Totem:
 	printfromtable 0x83FE57C
 	waitmessage DELAY_1SECOND
 TotemEnd:
-	end3
+	return
 	
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

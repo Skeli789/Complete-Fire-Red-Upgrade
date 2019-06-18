@@ -46,7 +46,7 @@ void atk00_attackcanceler(void)
 		for (int i = 0; i < gBattlersCount; ++i) {
 			if (i == gBankAttacker) continue;
 			
-			if (CheckTableForAbility(ABILITY(i), MoldBreakerIgnoreAbilities)) {
+			if (gMoldBreakerIgnoredAbilities[ABILITY(i)]) {
 				gNewBS->DisabledMoldBreakerAbilities[i] = ABILITY(i); //Temporarily disable all relevant abilities on the field
 				gBattleMons[i].ability = 0;
 			}

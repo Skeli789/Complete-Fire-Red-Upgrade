@@ -79,6 +79,7 @@ gBattleAnims_General:
 .word ANIM_LOAD_DEFAULT_BG
 .word ANIM_LOAD_ABILITY_POP_UP
 .word ANIM_REMOVE_ABILITY_POP_UP
+.word ANIM_TOTEM_BOOST
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -828,3 +829,23 @@ ANIM_REMOVE_ABILITY_POP_UP:
 	pause 0x20
 	endanimation
 	
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+ANIM_TOTEM_BOOST:
+	loadparticle ANIM_TAG_FOCUS_ENERGY @focus energy
+	loadparticle ANIM_TAG_WHIP_HIT @green color
+	loadparticle ANIM_TAG_SWEAT_BEAD @blue color
+	loadparticle ANIM_TAG_PAW_PRINT @yellow color
+	pokespritetoBG bank_attacker
+	setblends 0x80c
+	playsound2 0xa4 0xc0 
+	launchtask AnimTask_pal_fade_complex 0x2 0x6 PAL_ATK 0x0 0x6 0x0 0xb 0x1f
+	call RAINBOW_BUFF
+	call RAINBOW_BUFF
+	call RAINBOW_BUFF
+	call RAINBOW_BUFF
+	call RAINBOW_BUFF
+	waitanimation
+	resetblends
+	pokespritefrombg bank_attacker
+	endanimation

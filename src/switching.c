@@ -4,6 +4,8 @@
 #include "../include/party_menu.h"
 
 #include "../include/new/ability_battle_scripts.h"
+#include "../include/new/battle_start_turn_start.h"
+#include "../include/new/battle_start_turn_start_battle_scripts.h"
 #include "../include/new/damage_calc.h"
 #include "../include/new/form_change.h"
 #include "../include/new/helper_functions.h"
@@ -28,6 +30,7 @@ enum SwitchInStates
 	SwitchIn_Abilities,
 	SwitchIn_Items,
 	SwitchIn_AirBalloon,
+	SwitchIn_TotemPokemon,
 	SwitchIn_TrainerMessage,
 	SwitchIn_End
 };
@@ -324,7 +327,7 @@ void atk51_switchhandleorder(void)
 			else
 				sub_8013F6C(gActiveBattler);
 
-			PREPARE_SPECIES_BUFFER(gBattleTextBuff1, gBattleMons[gBattlerAttacker].species)
+			PREPARE_SPECIES_BUFFER(gBattleTextBuff1, gBattleMons[gBankAttacker].species)
 			PREPARE_MON_NICK_BUFFER(gBattleTextBuff2, gActiveBattler, gBattleBufferB[gActiveBattler][1])
 			break;
 		}
@@ -528,7 +531,7 @@ void atk52_switchineffects(void)
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = script;
 				gBattleScripting->bank = gActiveBattler;
-				gBattlerAttacker = gActiveBattler;
+				gBankAttacker = gActiveBattler;
 				++gNewBS->SwitchInEffectsTracker;
 				return;
 			}
@@ -559,7 +562,19 @@ void atk52_switchineffects(void)
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_AirBalloonSub;
 				gBattleScripting->bank = gActiveBattler;
-				gBattlerAttacker = gActiveBattler;
+				gBankAttacker = gActiveBattler;
+				++gNewBS->SwitchInEffectsTracker;
+				return;
+			}
+			++gNewBS->SwitchInEffectsTracker;
+		__attribute__ ((fallthrough));
+		
+		case SwitchIn_TotemPokemon:
+			if (CanActivateTotemBoost(gActiveBattler))
+			{
+				BattleScriptPushCursor();
+				gBattlescriptCurrInstr = BattleScript_TotemRet;
+				gBankAttacker = gBattleScripting->bank = gActiveBattler;
 				++gNewBS->SwitchInEffectsTracker;
 				return;
 			}
@@ -837,6 +852,7 @@ void ClearSwitchBytes(u8 bank)
 	gNewBS->SuppressedAbilities[bank] = 0;
 	gNewBS->lastTargeted[bank] = 0;
 	gNewBS->usedMoveIndices[bank] = 0;
+	gNewBS->synchronizeTarget[bank] = 0;
 }
 
 void ClearSwitchBits(u8 bank)
