@@ -631,3 +631,71 @@ PrintWhiteoutTextScreen:
 TryHandleLaunchBattleTableAnimationHook:
 	bl TryHandleLaunchBattleTableAnimation
 	pop {r4-r7,pc}
+
+.pool
+@0x8077CD2 with r0
+ReshowBattleScreenMonSpriteHook1:
+	mov r0, r7
+	bl IsInMiddleOfEndTurnSwitchIn
+	cmp r0, #0x0
+	bne ReshowBattleScreenNoSprite
+	ldrh r0, [r6]
+	mov r1, r10
+	mul r0, r1
+	ldr r1, =0x8077CDA | 1
+	bx r1
+
+.pool
+@0x08077ECA with r0
+ReshowBattleScreenMonSpriteHook2:
+	mov r0, r7
+	bl IsInMiddleOfEndTurnSwitchIn
+	cmp r0, #0x0
+	bne ReshowBattleScreenNoSprite
+	ldrh r0, [r6]
+	mov r1, r10
+	mul r0, r1
+	add r0, r9
+	ldr r1, =0x8077ED4 | 1
+	bx r1
+
+ReshowBattleScreenNoSprite:
+	mov r0, #0x0
+	ldr r1, =0x8077FB4 | 1
+	bx r1
+
+.pool
+@0x8078104 with r0
+ReshowBattleScreenHealthboxSpriteHook:
+	mov r0, r5
+	bl IsInMiddleOfEndTurnSwitchIn
+	cmp r0, #0x0
+	bne ReshowBattleScreenNoHealthboxSprite
+	mov r0, r5
+	ldr r1, =GetBattlerSide
+	bl bxr1
+	lsl r0, #0x18
+	ldr r1, =0x807810C | 1
+	bx r1
+
+ReshowBattleScreenNoHealthboxSprite:
+	ldr r0, =0x8078128 | 1
+	bx r0
+
+.pool
+@0x8022400 with r0
+FrontierCheckBattleOverHook:
+	ldr r0, =0x2023BC8 @BattleControllerExecFlags
+	ldr r0, [r0]
+	cmp r0, #0x0
+	bne Atk24Return
+	bl TryUpdateOutcomeForFrontierBattle
+	cmp r0, #0x0
+	bne Atk24Return @Is Frontier Battle
+	ldr r0, =0x802240A | 1
+	bx r0
+
+Atk24Return:
+	ldr r0, =0x802258A | 1
+	bx r0
+	

@@ -123,7 +123,7 @@ u8 TurnBasedEffects(void)
 			__attribute__ ((fallthrough));
 			
 			case(ET_General_Counter_Decrement):
-				for (i = 0; i < 4; ++i) 
+				for (i = 0; i < MAX_BATTLERS_COUNT; ++i) 
 				{
 					if(gNewBS->LaserFocusTimers[i])
 						--gNewBS->LaserFocusTimers[i];
@@ -140,6 +140,7 @@ u8 TurnBasedEffects(void)
 					if (gNewBS->DestinyBondCounters[i])
 						--gNewBS->DestinyBondCounters[i];
 						
+					gNewBS->synchronizeTarget[i] = 0;
 					gBattleMons[i].status2 &= ~(STATUS2_FLINCHED);
 				}
 
@@ -454,8 +455,8 @@ u8 TurnBasedEffects(void)
 			case(ET_Leech_Seed):
                 if (gStatuses3[gActiveBattler] & STATUS3_LEECHSEED
 				&& gBattleMons[gActiveBattler].hp != 0
-				&& gBattleMons[gStatuses3[gActiveBattler] & STATUS3_LEECHSEED_BATTLER].hp != 0
-				&& gBattleMons[gStatuses3[gActiveBattler] & STATUS3_LEECHSEED_BATTLER].ability != ABILITY_MAGICGUARD) 
+				&& gBattleMons[gActiveBattler].ability != ABILITY_MAGICGUARD
+				&& gBattleMons[gStatuses3[gActiveBattler] & STATUS3_LEECHSEED_BATTLER].hp != 0) 
 				{	
                     gBankTarget = gStatuses3[gActiveBattler] & STATUS3_LEECHSEED_BATTLER; //funny how the 'target' is actually the bank that receives HP
                     gBattleMoveDamage = MathMax(1, gBattleMons[gActiveBattler].maxHP / 8);
@@ -1276,7 +1277,6 @@ u8 TurnBasedEffects(void)
 			case(ET_End):
 			    gBattleStruct->turnEffectsBank = gBattlersCount;
 				gNewBS->EndTurnDone = TRUE;
-				gAbsentBattlerFlags &= ~(gNewBS->AbsentBattlerHelper);
 				gNewBS->MegaData->state = 0;
 				
 				for (int i = 0; i < gBattlersCount; ++i)
@@ -1354,29 +1354,35 @@ bool8 HandleFaintedMonActions(void)
 				do
 				{
 					gBankFainted = gBankTarget = gBattleStruct->faintedActionsBank;
-					if (gBattleMons[gBattleStruct->faintedActionsBank].hp == 0
-					&& !(gAbsentBattlerFlags & gBitTable[gBattleStruct->faintedActionsBank]))
+
+					if (gBattleMons[gBattleStruct->faintedActionsBank].hp == 0)
 					{
-						if (gNewBS->EndTurnDone 
-						||  ViableMonCountFromBank(gBattleStruct->faintedActionsBank) == 0)
-						{
-							//Double battle that's not wild
-							//This allows the AI to know what you're sending out and react accordingly in regular Single Battles (ie send in a mon strong against you)
-							if (gBattleTypeFlags & BATTLE_TYPE_TRAINER && gBattleTypeFlags & (BATTLE_TYPE_DOUBLE | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_LINK))
-							{
-								gNewBS->handleDoublesSwitchIns |= gBitTable[gBattleStruct->faintedActionsBank];
-								BattleScriptExecute(BattleScript_HandleFaintedMonDoublesInitial);
-							}
-							else
-								BattleScriptExecute(BattleScript_HandleFaintedMon);
-							
-							gBattleStruct->faintedActionsState = 5;
-							return TRUE;
-						}
-						else
+						if (!(gAbsentBattlerFlags & gBitTable[gBattleStruct->faintedActionsBank])) //Bank was just emptied
 						{
 							gAbsentBattlerFlags |= gBitTable[gBattleStruct->faintedActionsBank]; //Makes the game realize the target is dead for now, so no attacking it
 							gNewBS->AbsentBattlerHelper |= gBitTable[gBattleStruct->faintedActionsBank]; //Record which Pokemon need replacements
+						}
+
+						if (gNewBS->AbsentBattlerHelper & gBitTable[gBattleStruct->faintedActionsBank])
+						{
+							if (gNewBS->EndTurnDone 
+							||  ViableMonCountFromBank(gBattleStruct->faintedActionsBank) == 0)
+							{
+								gAbsentBattlerFlags &= ~(gBitTable[gBattleStruct->faintedActionsBank]);
+
+								//Double battle that's not wild
+								//This allows the AI to know what you're sending out and react accordingly in regular Single Battles (ie send in a mon strong against you)
+								if (gBattleTypeFlags & BATTLE_TYPE_TRAINER && gBattleTypeFlags & (BATTLE_TYPE_DOUBLE | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_LINK))
+								{
+									gNewBS->handleDoublesSwitchIns |= gBitTable[gBattleStruct->faintedActionsBank];
+									BattleScriptExecute(BattleScript_HandleFaintedMonDoublesInitial);
+								}
+								else
+									BattleScriptExecute(BattleScript_HandleFaintedMon);
+								
+								gBattleStruct->faintedActionsState = 5;
+								return TRUE;
+							}
 						}
 					}
 				} while (++gBattleStruct->faintedActionsBank < gBattlersCount);
@@ -1412,6 +1418,7 @@ bool8 HandleFaintedMonActions(void)
 					if (gNewBS->handleDoublesSwitchIns & gBitTable[gBattleStruct->faintedActionsBank])
 					{
 						++gBattleStruct->faintedActionsBank;
+						gAbsentBattlerFlags &= ~(gBitTable[gBattleStruct->faintedActionsBank]);
 						BattleScriptExecute(BattleScript_HandleFaintedMonDoublesPart2);
 						return TRUE;
 					}
@@ -1419,7 +1426,12 @@ bool8 HandleFaintedMonActions(void)
 				
 				//Recalc turn order for switch-in abilities
 				for (i = 0; i < gBattlersCount; ++i)
+				{
+					if (!BATTLER_ALIVE(i))
+						gAbsentBattlerFlags |= gBitTable[i];
+
 					gBanksByTurnOrder[i] = i;
+				}
 				
 				for (i = 0; i < gBattlersCount - 1; ++i) 
 				{
@@ -1476,4 +1488,12 @@ u8 CountAliveMonsOnField(void)
 void RemoveSwitchInForFaintedBank(void)
 {
 	gNewBS->handleDoublesSwitchIns &= ~(gBitTable[gBankFainted]);
+}
+
+bool8 IsInMiddleOfEndTurnSwitchIn(u8 bank)
+{
+	if (gNewBS->handleDoublesSwitchIns & gBitTable[bank])
+		return TRUE;
+		
+	return FALSE;
 }

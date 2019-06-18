@@ -160,8 +160,9 @@ ForceSwitchRedCard:
 	switchineffects BANK_TARGET
 	callasm MoldBreakerRestoreAbilitiesOnForceSwitchIn
 	setbyte FORCE_SWITCH_HELPER 0x0
-	copyarray USER_BANK TARGET_BANK 0x1 @copies target into user
-	copyarray TARGET_BANK SEED_HELPER 0x1 @restores target	
+	copybyte TARGET_BANK SEED_HELPER
+	copybyte BATTLE_SCRIPTING_BANK, SEED_HELPER + 1
+	removeitem BANK_SCRIPTING
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

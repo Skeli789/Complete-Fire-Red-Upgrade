@@ -126,6 +126,9 @@
 #define BATTLE_TERRAIN_CHAMPION       	0x13
 
 //For Unbound
+#ifdef UNBOUND
+
+#define BATTLE_TERRAIN_BATTLE_TOWER			0xA
 #define BATTLE_TERRAIN_SNOW_FIELD			0x14
 #define BATTLE_TERRAIN_VOLCANO				0x15
 #define BATTLE_TERRAIN_DARK_CAVE_WATER		0x16
@@ -144,6 +147,8 @@
 #define BATTLE_TERRAIN_AUTUMN_GRASS			0x23
 #define BATTLE_TERRAIN_AUTUMN_PLAIN			0x24
 #define BATTLE_TERRAIN_SNOW_GRASS			0x25
+
+#endif
 
 enum 
 {
@@ -482,7 +487,7 @@ extern u8 gAbsentBattlerFlags;
 
 // script's table id to bit
 #define AI_SCRIPT_CHECK_BAD_MOVE (1 << 0)
-#define AI_SCRIPT_TRY_TO_FAINT (1 << 1)
+#define AI_SCRIPT_CHECK_GOOD_MOVE (1 << 1)
 #define AI_SCRIPT_CHECK_VIABILITY (1 << 2)
 #define AI_SCRIPT_SETUP_FIRST_TURN (1 << 3)
 #define AI_SCRIPT_RISKY (1 << 4)
@@ -757,7 +762,7 @@ struct NewBattleStruct
 	u8 playedFocusPunchMessage;
 	u8 playedShellTrapMessage;
 	u8 RoostCounter;
-	u8 CustapQuickClawIndicator;
+	u8 CustapQuickClawIndicator; //0x201762E
 	u8 HealingWishLoc;
 	u8 PowderByte;
 	u8 AbsentBattlerHelper;
@@ -787,6 +792,7 @@ struct NewBattleStruct
 	u8 blockTracker;
 	u8 preFaintEffectsTracker;
 	u8 savedObjId;
+	u8 lastFainted;
 	
 	//Booleans
 	bool8 MoveBounceInProgress : 2;
@@ -820,17 +826,17 @@ struct NewBattleStruct
 	u8 DancerTurnOrder[MAX_BATTLERS_COUNT];
 	u8 PayDayByPartyIndices[PARTY_SIZE];
 	item_t SavedConsumedItems[PARTY_SIZE];
-	s32 DamageTaken[MAX_BATTLERS_COUNT]; //0x2017650
+	s32 DamageTaken[MAX_BATTLERS_COUNT]; //0x2017668
 	u8 ResultFlags[MAX_BATTLERS_COUNT];
 	u8 expHelper[MAX_BATTLERS_COUNT];
 	u8 megaIndicatorObjIds[MAX_BATTLERS_COUNT];
 	u8 abilityPopUpIds[2];
 	u8 backupSynchronizeBanks[2];
-	u16 movePredictions[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //movePredictions[bankAtk][bankDef]
+	u16 movePredictions[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //movePredictions[bankAtk][bankDef] //0x2017688
 	
-	struct MegaData* MegaData;	 //0x2017688
+	struct MegaData* MegaData;
 	struct UltraData* UltraData;
-	struct ZMoveData* ZMoveData; //0x20176A8
+	struct ZMoveData* ZMoveData;
 };
 
 #define gNewBS (ExtensionState.newBattleStruct)
@@ -1032,6 +1038,7 @@ struct FlingStruct
 #define B_ANIM_LOAD_DEAFUALT_BG 0x41
 #define B_ANIM_LOAD_ABILITY_POP_UP 0x42
 #define B_ANIM_DESTROY_ABILITY_POP_UP 0x43
+#define B_ANIM_TOTEM_BOOST 0x44
 
 #define B_ANIM_TRANSFORM_MOVE 0xFF
 

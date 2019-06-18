@@ -1000,6 +1000,7 @@ void atkFF23_faintpokemonaftermove(void)
     if (!(gAbsentBattlerFlags & gBitTable[gActiveBattler])
     && gBattleMons[gActiveBattler].hp == 0)
     {
+		gNewBS->lastFainted = gActiveBattler;
         gHitMarker |= HITMARKER_FAINTED(gActiveBattler);
         BattleScriptPush(gBattlescriptCurrInstr + 3);
         gBattlescriptCurrInstr = BattleScript_FaintTarget;
