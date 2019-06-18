@@ -588,6 +588,7 @@ void HandleAction_UseMove(void)
 		return;
 	}
 
+	gHpDealt = 0;
 	gCritMultiplier = 100;
 	gBattleScripting->dmgMultiplier = 1;
 	gBattleStruct->atkCancellerTracker = 0;

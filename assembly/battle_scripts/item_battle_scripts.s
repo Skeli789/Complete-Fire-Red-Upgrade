@@ -434,14 +434,13 @@ BattleScript_RedCard:
 	waitmessage DELAY_1SECOND
 	jumpifspecialstatusflag BANK_ATTACKER STATUS3_ROOTED 0x0 RedCard_Ingrain
 	jumpifability BANK_ATTACKER ABILITY_SUCTIONCUPS RedCard_SuctionCups
-	copyarray SEED_HELPER TARGET_BANK 0x1  @backs up target	
-	copyarray TARGET_BANK USER_BANK 0x1  @copies user into target
+	copybyte SEED_HELPER TARGET_BANK
+	copybyte TARGET_BANK USER_BANK
 	playanimation BANK_TARGET DRAGON_TAIL_BLOW_AWAY_ANIM 0x0
 	forcerandomswitch RedCardSwapBanksBack
 
 RedCardSwapBanksBack:
-	copyarray USER_BANK TARGET_BANK 0x1 @copies target into user
-	copyarray TARGET_BANK SEED_HELPER 0x1 @restores target	
+	copybyte TARGET_BANK SEED_HELPER
 	
 RedCardEnd:
 	removeitem BANK_SCRIPTING

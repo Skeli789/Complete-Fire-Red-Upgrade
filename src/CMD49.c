@@ -1017,7 +1017,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			gBattleScripting->atk49_state++;
 			break;
 			
-		case ATK49_RED_CARD:
+		case ATK49_RED_CARD:			
 			if (gBattleMoves[gCurrentMove].effect != EFFECT_ROAR)
 			{
 				u8 banks[4] = {0, 1, 2, 3};
@@ -1037,7 +1037,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 						gNewBS->NoSymbiosisByte = TRUE;
 						ForceSwitchHelper = Force_Switch_Red_Card;
 						gBattlescriptCurrInstr = BattleScript_Atk49; //Cancel's U-Turn and Volt Switch
-						gActiveBattler = gBattleScripting->bank = banks[i];
+						gActiveBattler = gBattleScripting->bank = SeedHelper[1] = banks[i];
 						gLastUsedItem = ITEM(banks[i]);
 						BattleScriptPushCursor();
 						gBattlescriptCurrInstr = BattleScript_RedCard;
@@ -1153,7 +1153,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			else if (gMoveResultFlags & (MOVE_RESULT_DOESNT_AFFECT_FOE | MOVE_RESULT_FAILED))
 				gNewBS->StompingTantrumTimers[gBankAttacker]++;
 			
-			for (int i = 0; i < 4; ++i)
+			for (int i = 0; i < MAX_BATTLERS_COUNT; ++i)
 			{
 				gNewBS->DamageTaken[i] = 0;
 				gNewBS->ResultFlags[i] = 0;
