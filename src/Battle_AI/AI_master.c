@@ -14,10 +14,10 @@
 // AI states
 enum
 {
-    AIState_SettingUp,
-    AIState_Processing,
-    AIState_FinishedProcessing,
-    AIState_DoNotProcess,
+	AIState_SettingUp,
+	AIState_Processing,
+	AIState_FinishedProcessing,
+	AIState_DoNotProcess,
 };
 
 struct SmartWildMons
@@ -53,7 +53,7 @@ struct SmartWildMons sSmartWildAITable[] =
 };
 
 extern u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 move, const u8 originalViability);
-extern u8 AI_Script_Postives(const u8 bankAtk, const u8 bankDef, const u16 move, const u8 originalViability);
+extern u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 move, const u8 originalViability);
 extern u8 AI_Script_Roaming(const u8 bankAtk, const u8 bankDef, const u16 move, const u8 originalViability);
 extern u8 AI_Script_Safari(const u8 bankAtk, const u8 bankDef, const u16 move, const u8 originalViability);
 extern u8 AI_Script_FirstBattle(const u8 bankAtk, const u8 bankDef, const u16 move, const u8 originalViability);
@@ -61,7 +61,7 @@ extern u8 AI_Script_FirstBattle(const u8 bankAtk, const u8 bankDef, const u16 mo
 static u8 (*const sBattleAIScriptTable[])(const u8, const u8, const u16, const u8) =
 {
 	[0] = AI_Script_Negatives,
-	//[1] = AI_Script_Positives,
+	[1] = AI_Script_Positives,
 	
 	[29] = AI_Script_Roaming,
 	[30] = AI_Script_Safari,
@@ -83,128 +83,128 @@ static u32 GetMaxByteIndexInList(const u8 array[], const u32 size);
 
 void BattleAI_HandleItemUseBeforeAISetup(u8 defaultScoreMoves)
 {
-    u32 i;
-    u8 *data = (u8*)BATTLE_HISTORY;
+	u32 i;
+	u8 *data = (u8*)BATTLE_HISTORY;
 
-    for (i = 0; i < sizeof(struct BattleHistory); i++)
-        data[i] = 0;
+	for (i = 0; i < sizeof(struct BattleHistory); i++)
+		data[i] = 0;
 
-    // Items are allowed to use in ONLY trainer battles.
-    if ((gBattleTypeFlags & BATTLE_TYPE_TRAINER)
-        && !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_SAFARI | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_EREADER_TRAINER))
+	// Items are allowed to use in ONLY trainer battles.
+	if ((gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+		&& !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_SAFARI | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_EREADER_TRAINER))
 		&& gTrainerBattleOpponent_A != 0x400)
-    {
-        for (i = 0; i < 4; i++)
-        {
-            if (gTrainers[gTrainerBattleOpponent_A].items[i] != 0)
-            {
-                BATTLE_HISTORY->trainerItems[BATTLE_HISTORY->itemsNo] = gTrainers[gTrainerBattleOpponent_A].items[i];
-                BATTLE_HISTORY->itemsNo++;
-            }
-        }
-    }
+	{
+		for (i = 0; i < 4; i++)
+		{
+			if (gTrainers[gTrainerBattleOpponent_A].items[i] != 0)
+			{
+				BATTLE_HISTORY->trainerItems[BATTLE_HISTORY->itemsNo] = gTrainers[gTrainerBattleOpponent_A].items[i];
+				BATTLE_HISTORY->itemsNo++;
+			}
+		}
+	}
 
-    BattleAI_SetupAIData(defaultScoreMoves);
+	BattleAI_SetupAIData(defaultScoreMoves);
 }
 
 void BattleAI_SetupAIData(u8 defaultScoreMoves)
 {
-    u32 i;
-    u8* data = (u8*) AI_THINKING_STRUCT;
-    u8 moveLimitations;
+	u32 i;
+	u8* data = (u8*) AI_THINKING_STRUCT;
+	u8 moveLimitations;
 
-    // Clear AI data.
-    for (i = 0; i < sizeof(struct AI_ThinkingStruct); ++i)
-        data[i] = 0;
+	// Clear AI data.
+	for (i = 0; i < sizeof(struct AI_ThinkingStruct); ++i)
+		data[i] = 0;
 
-    // Conditional score reset, unlike Ruby.
-    for (i = 0; i < MAX_MON_MOVES; ++i)
-    {
-        if (defaultScoreMoves & 1)
-            AI_THINKING_STRUCT->score[i] = 100;
-        else
-            AI_THINKING_STRUCT->score[i] = 0;
+	// Conditional score reset, unlike Ruby.
+	for (i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		if (defaultScoreMoves & 1)
+			AI_THINKING_STRUCT->score[i] = 100;
+		else
+			AI_THINKING_STRUCT->score[i] = 0;
 
-        defaultScoreMoves >>= 1;
-    }
+		defaultScoreMoves >>= 1;
+	}
 
-    moveLimitations = CheckMoveLimitations(gActiveBattler, 0, 0xFF);
+	moveLimitations = CheckMoveLimitations(gActiveBattler, 0, 0xFF);
 
-    // Ignore moves that aren't possible to use.
-    for (i = 0; i < MAX_MON_MOVES; i++)
-    {
-        if (gBitTable[i] & moveLimitations)
-            AI_THINKING_STRUCT->score[i] = 0;
+	// Ignore moves that aren't possible to use.
+	for (i = 0; i < MAX_MON_MOVES; i++)
+	{
+		if (gBitTable[i] & moveLimitations)
+			AI_THINKING_STRUCT->score[i] = 0;
 
-        AI_THINKING_STRUCT->simulatedRNG[i] = 100 - umodsi(Random(), 16);
-    }
+		AI_THINKING_STRUCT->simulatedRNG[i] = 100 - umodsi(Random(), 16);
+	}
 
-    gBattleResources->AI_ScriptsStack->size = 0;
-    gBankAttacker = gActiveBattler;
+	gBattleResources->AI_ScriptsStack->size = 0;
+	gBankAttacker = gActiveBattler;
 
-    // Decide a random target battlerId in doubles.
-    if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
-    {
-        gBankTarget = (Random() & BIT_FLANK) + (GetBattlerSide(gActiveBattler) ^ BIT_SIDE);
-        if (gAbsentBattlerFlags & gBitTable[gBankTarget])
-            gBankTarget ^= BIT_FLANK;
-    }
-    // There's only one choice in single battles.
-    else
-        gBankTarget = gBankAttacker ^ BIT_SIDE;
+	// Decide a random target battlerId in doubles.
+	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	{
+		gBankTarget = (Random() & BIT_FLANK) + (GetBattlerSide(gActiveBattler) ^ BIT_SIDE);
+		if (gAbsentBattlerFlags & gBitTable[gBankTarget])
+			gBankTarget ^= BIT_FLANK;
+	}
+	// There's only one choice in single battles.
+	else
+		gBankTarget = gBankAttacker ^ BIT_SIDE;
 
-    // Choose proper trainer ai scripts.
+	// Choose proper trainer ai scripts.
 	AI_THINKING_STRUCT->aiFlags = GetAIFlags();
 
-    if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
-        AI_THINKING_STRUCT->aiFlags |= AI_SCRIPT_DOUBLE_BATTLE; // act smart in doubles and don't attack your partner
+	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+		AI_THINKING_STRUCT->aiFlags |= AI_SCRIPT_DOUBLE_BATTLE; // act smart in doubles and don't attack your partner
 }
 
 u32 GetAIFlags(void)
 {
 	u32 flags;
 
-    if (gBattleTypeFlags & BATTLE_TYPE_SAFARI)
-        flags = AI_SCRIPT_SAFARI;
-    else if (gBattleTypeFlags & BATTLE_TYPE_ROAMER)
-        flags = AI_SCRIPT_ROAMING | WildMonIsSmart(gActiveBattler);
-    else if (gBattleTypeFlags & BATTLE_TYPE_OAK_TUTORIAL)
-        flags = AI_SCRIPT_FIRST_BATTLE;
+	if (gBattleTypeFlags & BATTLE_TYPE_SAFARI)
+		flags = AI_SCRIPT_SAFARI;
+	else if (gBattleTypeFlags & BATTLE_TYPE_ROAMER)
+		flags = AI_SCRIPT_ROAMING | WildMonIsSmart(gActiveBattler);
+	else if (gBattleTypeFlags & BATTLE_TYPE_OAK_TUTORIAL)
+		flags = AI_SCRIPT_FIRST_BATTLE;
 	else if (gBattleTypeFlags & (BATTLE_TYPE_FRONTIER))
 		flags = GetAIFlagsInBattleFrontier(gActiveBattler);
-    else if (gBattleTypeFlags & (BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_TRAINER_TOWER) && gTrainerBattleOpponent_A != 0x400)
-        flags = AI_SCRIPT_CHECK_BAD_MOVE | AI_SCRIPT_CHECK_VIABILITY | AI_SCRIPT_TRY_TO_FAINT;
-    else if (gBattleTypeFlags & BATTLE_TYPE_SCRIPTED_WILD_2) //No idea how these two work
+	else if (gBattleTypeFlags & (BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_TRAINER_TOWER) && gTrainerBattleOpponent_A != 0x400)
+		flags = AI_SCRIPT_CHECK_BAD_MOVE | AI_SCRIPT_CHECK_GOOD_MOVE;
+	else if (gBattleTypeFlags & BATTLE_TYPE_SCRIPTED_WILD_2) //No idea how these two work
 		flags = AI_SCRIPT_CHECK_BAD_MOVE;
 	else if (gBattleTypeFlags & BATTLE_TYPE_SCRIPTED_WILD_3) 
-		flags = AI_SCRIPT_CHECK_BAD_MOVE | AI_SCRIPT_CHECK_VIABILITY | AI_SCRIPT_TRY_TO_FAINT;
+		flags = AI_SCRIPT_CHECK_BAD_MOVE | AI_SCRIPT_CHECK_GOOD_MOVE;
 	else if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
-        flags = gTrainers[gTrainerBattleOpponent_A].aiFlags | gTrainers[VarGet(SECOND_OPPONENT_VAR)].aiFlags;
-    else
-       flags = gTrainers[gTrainerBattleOpponent_A].aiFlags;
+		flags = gTrainers[gTrainerBattleOpponent_A].aiFlags | gTrainers[VarGet(SECOND_OPPONENT_VAR)].aiFlags;
+	else
+	   flags = gTrainers[gTrainerBattleOpponent_A].aiFlags;
 
 	return flags;
 }
 
 void BattleAI_DoAIProcessing(void)
 {
-    while (AI_THINKING_STRUCT->aiState != AIState_FinishedProcessing)
-    {
-        switch (AI_THINKING_STRUCT->aiState)
-        {
-            case AIState_DoNotProcess: // Needed to match.
-                break;
-            case AIState_SettingUp:
-                if (gBattleMons[gBankAttacker].pp[AI_THINKING_STRUCT->movesetIndex] == 0)
-                    AI_THINKING_STRUCT->moveConsidered = MOVE_NONE;
-                else
-                    AI_THINKING_STRUCT->moveConsidered = gBattleMons[gBankAttacker].moves[AI_THINKING_STRUCT->movesetIndex];
+	while (AI_THINKING_STRUCT->aiState != AIState_FinishedProcessing)
+	{
+		switch (AI_THINKING_STRUCT->aiState)
+		{
+			case AIState_DoNotProcess: // Needed to match.
+				break;
+			case AIState_SettingUp:
+				if (gBattleMons[gBankAttacker].pp[AI_THINKING_STRUCT->movesetIndex] == 0)
+					AI_THINKING_STRUCT->moveConsidered = MOVE_NONE;
+				else
+					AI_THINKING_STRUCT->moveConsidered = gBattleMons[gBankAttacker].moves[AI_THINKING_STRUCT->movesetIndex];
 
-                AI_THINKING_STRUCT->aiState++;
-                break;
+				AI_THINKING_STRUCT->aiState++;
+				break;
 
-            case AIState_Processing:
-                if (AI_THINKING_STRUCT->moveConsidered != MOVE_NONE
+			case AIState_Processing:
+				if (AI_THINKING_STRUCT->moveConsidered != MOVE_NONE
 				&&  AI_THINKING_STRUCT->score[AI_THINKING_STRUCT->movesetIndex] > 0)
 				{
 					if (AI_THINKING_STRUCT->aiLogicId < ARRAY_COUNT(sBattleAIScriptTable) //AI Script exists
@@ -217,149 +217,135 @@ void BattleAI_DoAIProcessing(void)
 																				AI_THINKING_STRUCT->score[AI_THINKING_STRUCT->movesetIndex]); //Run AI script
 					}
 				}
-                else
-                {
-                    AI_THINKING_STRUCT->score[AI_THINKING_STRUCT->movesetIndex] = 0;
-                }
+				else
+				{
+					AI_THINKING_STRUCT->score[AI_THINKING_STRUCT->movesetIndex] = 0;
+				}
 
 				AI_THINKING_STRUCT->movesetIndex++;
 
-                if (AI_THINKING_STRUCT->movesetIndex < MAX_MON_MOVES && !(AI_THINKING_STRUCT->aiAction & AI_ACTION_DO_NOT_ATTACK))
-                    AI_THINKING_STRUCT->aiState = AIState_SettingUp;
-                else
-                    AI_THINKING_STRUCT->aiState++;
+				if (AI_THINKING_STRUCT->movesetIndex < MAX_MON_MOVES && !(AI_THINKING_STRUCT->aiAction & AI_ACTION_DO_NOT_ATTACK))
+					AI_THINKING_STRUCT->aiState = AIState_SettingUp;
+				else
+					AI_THINKING_STRUCT->aiState++;
 
 			break;
-        }
-    }
+		}
+	}
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void AI_TrySwitchOrUseItem(void)
 {
-    struct Pokemon* party;
-    u8 battlerIn1, battlerIn2;
-    u8 firstId, lastId;
+	struct Pokemon* party;
+	u8 battlerIn1, battlerIn2;
+	u8 firstId, lastId;
 
 	PredictMovesForBanks();
 	party = LoadPartyRange(gActiveBattler, &firstId, &lastId);
 
-    if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
-    {
-        if (ShouldSwitch()) //0x8039A80
-        {
-            if (gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] == PARTY_SIZE)
-            {
-                u8 monToSwitchId = GetMostSuitableMonToSwitchInto();
-                if (monToSwitchId == PARTY_SIZE)
-                {
-                    if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE))
-                    {
-                        battlerIn1 = gActiveBattler;
-                        battlerIn2 = battlerIn1;
-                    }
-                    else
-                    {
-                        battlerIn1 = gActiveBattler;
+	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+	{
+		if (ShouldSwitch()) //0x8039A80
+		{
+			if (gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] == PARTY_SIZE)
+			{
+				u8 monToSwitchId = GetMostSuitableMonToSwitchInto();
+				if (monToSwitchId == PARTY_SIZE)
+				{
+					if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE))
+					{
+						battlerIn1 = gActiveBattler;
+						battlerIn2 = battlerIn1;
+					}
+					else
+					{
+						battlerIn1 = gActiveBattler;
 						if (gAbsentBattlerFlags & gBitTable[PARTNER(gActiveBattler)])
 							battlerIn2 = battlerIn1;
 						else
 							battlerIn2 = PARTNER(battlerIn1);
-                    }
+					}
 
-                    for (monToSwitchId = firstId; monToSwitchId < lastId; ++monToSwitchId)
-                    {
-                        if (party[monToSwitchId].hp == 0
+					for (monToSwitchId = firstId; monToSwitchId < lastId; ++monToSwitchId)
+					{
+						if (party[monToSwitchId].hp == 0
 						||  GetMonData(&party[monToSwitchId], MON_DATA_IS_EGG, 0)
 						||  monToSwitchId == gBattlerPartyIndexes[battlerIn1]
 						||	monToSwitchId == gBattlerPartyIndexes[battlerIn2]
 						||	monToSwitchId == gBattleStruct->monToSwitchIntoId[battlerIn1]
 						||	monToSwitchId == gBattleStruct->monToSwitchIntoId[battlerIn2])
-                            continue;
+							continue;
 						
-                        break;
-                    }
-                }
+						break;
+					}
+				}
 
-                gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = monToSwitchId;
-            }
+				gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = monToSwitchId;
+			}
 
-            gBattleStruct->monToSwitchIntoId[gActiveBattler] = gBattleStruct->switchoutIndex[SIDE(gActiveBattler)];				
-            return;
-        }
-        else if (ShouldUseItem()) //0x803A1F4
-            return;
-    }
+			gBattleStruct->monToSwitchIntoId[gActiveBattler] = gBattleStruct->switchoutIndex[SIDE(gActiveBattler)];				
+			return;
+		}
+		else if (ShouldUseItem()) //0x803A1F4
+			return;
+	}
 
-    EmitTwoReturnValues(1, ACTION_USE_MOVE, (gActiveBattler ^ BIT_SIDE) << 8);
+	EmitTwoReturnValues(1, ACTION_USE_MOVE, (gActiveBattler ^ BIT_SIDE) << 8);
 }
 
 static bool8 ShouldSwitch(void)
 {
-    u8 battlerIn1, battlerIn2;
-    u8 firstId, lastId;
+	u8 battlerIn1, battlerIn2;
+	u8 firstId, lastId;
 	u8 availableToSwitch;
-    struct Pokemon *party;
-    int i;
+	struct Pokemon *party;
+	int i;
 
-	if (!IsOfType(gActiveBattler, TYPE_GHOST) && ITEM_EFFECT(gActiveBattler) != ITEM_EFFECT_SHED_SHELL) {
-		if (gBattleMons[gActiveBattler].status2 & (STATUS2_WRAPPED | STATUS2_ESCAPE_PREVENTION))
-			return FALSE;
-		if (gStatuses3[gActiveBattler] & STATUS3_ROOTED)
-			return FALSE;
-		if (ABILITY_ON_OPPOSING_FIELD(gActiveBattler, ABILITY_SHADOWTAG) && ABILITY(gActiveBattler) != ABILITY_SHADOWTAG)
-			return FALSE;
-		if (ABILITY_ON_OPPOSING_FIELD(gActiveBattler, ABILITY_ARENATRAP) && CheckGrounding(gActiveBattler))
-			return FALSE;
-		if (ABILITY_ON_FIELD2(ABILITY_MAGNETPULL) && IsOfType(gActiveBattler, TYPE_STEEL))
-			return FALSE;
-		if (gNewBS->FairyLockTimer)
-			return FALSE;
-	}
-	if (gStatuses3[gActiveBattler] & STATUS3_SKY_DROP_TARGET)
+	if (IsTrapped(gActiveBattler, TRUE))
 		return FALSE;
 	
-    availableToSwitch = 0;
-    if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
-    {
-        battlerIn1 = gActiveBattler;
-        if (gAbsentBattlerFlags & gBitTable[GetBattlerAtPosition(GetBattlerPosition(gActiveBattler) ^ BIT_FLANK)])
-            battlerIn2 = gActiveBattler;
-        else
-            battlerIn2 = GetBattlerAtPosition(GetBattlerPosition(gActiveBattler) ^ BIT_FLANK);
-    }
-    else
-    {
-        battlerIn1 = gActiveBattler;
-        battlerIn2 = gActiveBattler;
-    }
+	availableToSwitch = 0;
+	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	{
+		battlerIn1 = gActiveBattler;
+		if (gAbsentBattlerFlags & gBitTable[GetBattlerAtPosition(GetBattlerPosition(gActiveBattler) ^ BIT_FLANK)])
+			battlerIn2 = gActiveBattler;
+		else
+			battlerIn2 = GetBattlerAtPosition(GetBattlerPosition(gActiveBattler) ^ BIT_FLANK);
+	}
+	else
+	{
+		battlerIn1 = gActiveBattler;
+		battlerIn2 = gActiveBattler;
+	}
 
-    party = LoadPartyRange(gActiveBattler, &firstId, &lastId);
+	party = LoadPartyRange(gActiveBattler, &firstId, &lastId);
 
-    for (i = firstId; i < lastId; ++i)
-    {
-        if (party[i].hp == 0
-        ||	GetMonData(&party[i], MON_DATA_SPECIES2, 0) == SPECIES_NONE
-        || 	GetMonData(&party[i], MON_DATA_IS_EGG, 0)
-        ||	i == gBattlerPartyIndexes[battlerIn1]
-        ||	i == gBattlerPartyIndexes[battlerIn2]
-        ||	i == gBattleStruct->monToSwitchIntoId[battlerIn1]
-        ||  i == gBattleStruct->monToSwitchIntoId[battlerIn2])
-            continue;
+	for (i = firstId; i < lastId; ++i)
+	{
+		if (party[i].hp == 0
+		||	GetMonData(&party[i], MON_DATA_SPECIES2, 0) == SPECIES_NONE
+		|| 	GetMonData(&party[i], MON_DATA_IS_EGG, 0)
+		||	i == gBattlerPartyIndexes[battlerIn1]
+		||	i == gBattlerPartyIndexes[battlerIn2]
+		||	i == gBattleStruct->monToSwitchIntoId[battlerIn1]
+		||  i == gBattleStruct->monToSwitchIntoId[battlerIn2])
+			continue;
 
-        ++availableToSwitch;
-    }
+		++availableToSwitch;
+	}
 	
-    if (availableToSwitch == 0)
-        return FALSE;
-    if (ShouldSwitchIfPerishSong())
-        return TRUE;
-    if (ShouldSwitchIfWonderGuard())
-        return TRUE;
-    if (FindMonThatAbsorbsOpponentsMove())
-        return TRUE;
-    if (ShouldSwitchIfNaturalCureOrRegenerator())
-      { return TRUE; }
+	if (availableToSwitch == 0)
+		return FALSE;
+	if (ShouldSwitchIfPerishSong())
+		return TRUE;
+	if (ShouldSwitchIfWonderGuard())
+		return TRUE;
+	if (FindMonThatAbsorbsOpponentsMove())
+		return TRUE;
+	if (ShouldSwitchIfNaturalCureOrRegenerator())
+	  { return TRUE; }
 	if (PassOnWish())
 		return TRUE;
 	if (SemiInvulnerableTroll())
@@ -368,34 +354,34 @@ static bool8 ShouldSwitch(void)
 		return TRUE;
 	if (IsYawned())
 		return TRUE;
-    if (CanKillAFoe(gActiveBattler))
-        return FALSE;
-    if (AreStatsRaised())
-        return FALSE;
-    if (FindMonWithFlagsAndSuperEffective(MOVE_RESULT_DOESNT_AFFECT_FOE, 1)
-    ||  FindMonWithFlagsAndSuperEffective(MOVE_RESULT_NOT_VERY_EFFECTIVE, 2))
-        return TRUE;
+	if (CanKillAFoe(gActiveBattler))
+		return FALSE;
+	if (AreStatsRaised())
+		return FALSE;
+	if (FindMonWithFlagsAndSuperEffective(MOVE_RESULT_DOESNT_AFFECT_FOE, 1)
+	||  FindMonWithFlagsAndSuperEffective(MOVE_RESULT_NOT_VERY_EFFECTIVE, 2))
+		return TRUE;
 
-    return FALSE;
+	return FALSE;
 }
 
 static bool8 FindMonThatAbsorbsOpponentsMove(void)
 {
-    u8 battlerIn1, battlerIn2;
+	u8 battlerIn1, battlerIn2;
 	u8 foe1, foe2;
 	u16 predictedMove1, predictedMove2;
-    u8 absorbingTypeAbility1, absorbingTypeAbility2, absorbingTypeAbility3;
-    u8 firstId, lastId;
-    struct Pokemon *party;
-    int i;
+	u8 absorbingTypeAbility1, absorbingTypeAbility2, absorbingTypeAbility3;
+	u8 firstId, lastId;
+	struct Pokemon *party;
+	int i;
 
-    if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
-    {
-        battlerIn1 = gActiveBattler;
-        if (gAbsentBattlerFlags & gBitTable[PARTNER(gActiveBattler)])
-            battlerIn2 = gActiveBattler;
-        else
-            battlerIn2 = PARTNER(gActiveBattler);
+	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	{
+		battlerIn1 = gActiveBattler;
+		if (gAbsentBattlerFlags & gBitTable[PARTNER(gActiveBattler)])
+			battlerIn2 = gActiveBattler;
+		else
+			battlerIn2 = PARTNER(gActiveBattler);
 			
 		if (gAbsentBattlerFlags & gBitTable[FOE(gActiveBattler)])
 			foe1 = foe2 = PARTNER(FOE(gActiveBattler));
@@ -406,14 +392,14 @@ static bool8 FindMonThatAbsorbsOpponentsMove(void)
 			foe1 = FOE(gActiveBattler);
 			foe2 = PARTNER(FOE(gActiveBattler));
 		}
-    }
-    else
-    {
-        battlerIn1 = gActiveBattler;
-        battlerIn2 = gActiveBattler;
+	}
+	else
+	{
+		battlerIn1 = gActiveBattler;
+		battlerIn2 = gActiveBattler;
 		foe1 = FOE(gActiveBattler);
 		foe2 = foe1;
-    }
+	}
 
 	predictedMove1 = IsValidMovePrediction(foe1, gActiveBattler);
 	predictedMove2 = IsValidMovePrediction(foe2, gActiveBattler);
@@ -461,32 +447,32 @@ static bool8 FindMonThatAbsorbsOpponentsMove(void)
 
 	party = LoadPartyRange(gActiveBattler, &firstId, &lastId);
 
-    for (i = firstId; i < lastId; i++)
-    {
-        u16 species = party[i].species;
-        u8 monAbility = GetPartyAbility(&party[i]);
+	for (i = firstId; i < lastId; i++)
+	{
+		u16 species = party[i].species;
+		u8 monAbility = GetPartyAbility(&party[i]);
 
-        if (party[i].hp == 0
-        ||  species == SPECIES_NONE
-        ||	GetMonData(&party[i], MON_DATA_IS_EGG, 0)
-        ||	i == gBattlerPartyIndexes[battlerIn1]
-        ||	i == gBattlerPartyIndexes[battlerIn2]
-        ||	i == gBattleStruct->monToSwitchIntoId[battlerIn1]
-        ||	i == gBattleStruct->monToSwitchIntoId[battlerIn2])
-            continue;
+		if (party[i].hp == 0
+		||  species == SPECIES_NONE
+		||	GetMonData(&party[i], MON_DATA_IS_EGG, 0)
+		||	i == gBattlerPartyIndexes[battlerIn1]
+		||	i == gBattlerPartyIndexes[battlerIn2]
+		||	i == gBattleStruct->monToSwitchIntoId[battlerIn1]
+		||	i == gBattleStruct->monToSwitchIntoId[battlerIn2])
+			continue;
 
-        if (monAbility == absorbingTypeAbility1
+		if (monAbility == absorbingTypeAbility1
 		||  monAbility == absorbingTypeAbility2
 		||  monAbility == absorbingTypeAbility3)
-        {
-            // we found a mon.
-            gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = i;
-            EmitTwoReturnValues(1, ACTION_SWITCH, 0);
-            return TRUE;
-        }
-    }
+		{
+			// we found a mon.
+			gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = i;
+			EmitTwoReturnValues(1, ACTION_SWITCH, 0);
+			return TRUE;
+		}
+	}
 
-    return FALSE;
+	return FALSE;
 }
 
 static bool8 ShouldSwitchIfNaturalCureOrRegenerator(void)
@@ -508,69 +494,69 @@ static bool8 ShouldSwitchIfNaturalCureOrRegenerator(void)
 			return FALSE;
 	}
 
-    if (FindMonWithFlagsAndSuperEffective(MOVE_RESULT_DOESNT_AFFECT_FOE, 1))
-        return TRUE;
-    if (FindMonWithFlagsAndSuperEffective(MOVE_RESULT_NOT_VERY_EFFECTIVE, 1))
-        return TRUE;
+	if (FindMonWithFlagsAndSuperEffective(MOVE_RESULT_DOESNT_AFFECT_FOE, 1))
+		return TRUE;
+	if (FindMonWithFlagsAndSuperEffective(MOVE_RESULT_NOT_VERY_EFFECTIVE, 1))
+		return TRUE;
 
-    gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = PARTY_SIZE;
-    EmitTwoReturnValues(1, ACTION_SWITCH, 0);
-    return TRUE;
+	gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = PARTY_SIZE;
+	EmitTwoReturnValues(1, ACTION_SWITCH, 0);
+	return TRUE;
 }
 
 bool8 HasSuperEffectiveMoveAgainstOpponents(bool8 noRng)
 {
-    u8 opposingBattler;
-    int i;
-    u8 moveFlags;
-    u16 move;
+	u8 opposingBattler;
+	int i;
+	u8 moveFlags;
+	u16 move;
 
-    opposingBattler = FOE(gActiveBattler);
-    if (!(gAbsentBattlerFlags & gBitTable[opposingBattler]))
+	opposingBattler = FOE(gActiveBattler);
+	if (!(gAbsentBattlerFlags & gBitTable[opposingBattler]))
 	{
-        for (i = 0; i < MAX_MON_MOVES; ++i)
-		{
-            move = gBattleMons[gActiveBattler].moves[i];
-            if (move == MOVE_NONE || SPLIT(move) == SPLIT_STATUS)
-                continue;
-
-            moveFlags = TypeCalc(move, gActiveBattler, opposingBattler, 0, FALSE);
-            
-			if (moveFlags & MOVE_RESULT_SUPER_EFFECTIVE)
-			{
-                if (noRng)
-                    return TRUE;
-                if (umodsi(Random(), 10) != 0)
-                    return TRUE;
-            }
-        }
-    }
-
-    if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE))
-        return FALSE;
-
-    opposingBattler = PARTNER(FOE(gActiveBattler));
-    if (!(gAbsentBattlerFlags & gBitTable[opposingBattler]))
-	{    
 		for (i = 0; i < MAX_MON_MOVES; ++i)
 		{
-            move = gBattleMons[gActiveBattler].moves[i];
-            if (move == MOVE_NONE || SPLIT(move) == SPLIT_STATUS)
-                continue;
+			move = gBattleMons[gActiveBattler].moves[i];
+			if (move == MOVE_NONE || SPLIT(move) == SPLIT_STATUS)
+				continue;
 
-            moveFlags = TypeCalc(move, gActiveBattler, opposingBattler, 0, FALSE);
+			moveFlags = TypeCalc(move, gActiveBattler, opposingBattler, 0, FALSE);
 			
-            if (moveFlags & MOVE_RESULT_SUPER_EFFECTIVE)
+			if (moveFlags & MOVE_RESULT_SUPER_EFFECTIVE)
 			{
-                if (noRng)
-                    return TRUE;
-                if (umodsi(Random(), 10) != 0)
-                    return TRUE;
-            }
-        }
-    }
+				if (noRng)
+					return TRUE;
+				if (umodsi(Random(), 10) != 0)
+					return TRUE;
+			}
+		}
+	}
 
-    return FALSE;
+	if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE))
+		return FALSE;
+
+	opposingBattler = PARTNER(FOE(gActiveBattler));
+	if (!(gAbsentBattlerFlags & gBitTable[opposingBattler]))
+	{	
+		for (i = 0; i < MAX_MON_MOVES; ++i)
+		{
+			move = gBattleMons[gActiveBattler].moves[i];
+			if (move == MOVE_NONE || SPLIT(move) == SPLIT_STATUS)
+				continue;
+
+			moveFlags = TypeCalc(move, gActiveBattler, opposingBattler, 0, FALSE);
+			
+			if (moveFlags & MOVE_RESULT_SUPER_EFFECTIVE)
+			{
+				if (noRng)
+					return TRUE;
+				if (umodsi(Random(), 10) != 0)
+					return TRUE;
+			}
+		}
+	}
+
+	return FALSE;
 }
 
 static bool8 PassOnWish(void)
@@ -582,23 +568,23 @@ static bool8 PassOnWish(void)
 	u8 opposingBattler1, opposingBattler2;
 	int i;
 	
-    if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
-    {
+	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	{
 		opposingBattler1 = FOE(bank);
 		opposingBattler2 = PARTNER(opposingBattler1);
-        battlerIn1 = gActiveBattler;
-        if (gAbsentBattlerFlags & gBitTable[PARTNER(gActiveBattler)])
-            battlerIn2 = gActiveBattler;
-        else
-            battlerIn2 = PARTNER(gActiveBattler);
-    }
-    else
-    {
+		battlerIn1 = gActiveBattler;
+		if (gAbsentBattlerFlags & gBitTable[PARTNER(gActiveBattler)])
+			battlerIn2 = gActiveBattler;
+		else
+			battlerIn2 = PARTNER(gActiveBattler);
+	}
+	else
+	{
 		opposingBattler1 = FOE(bank);
 		opposingBattler2 = opposingBattler1;
-        battlerIn1 = gActiveBattler;
-        battlerIn2 = gActiveBattler;
-    }
+		battlerIn1 = gActiveBattler;
+		battlerIn2 = gActiveBattler;
+	}
 		
 	if (gWishFutureKnock->wishCounter[bank])
 	{	
@@ -623,7 +609,7 @@ static bool8 PassOnWish(void)
 			if (party[i].hp < party[i].maxHP / 2)
 			{
 				gBattleStruct->switchoutIndex[SIDE(bank)] = i;
-                EmitTwoReturnValues(1, ACTION_SWITCH, 0);
+				EmitTwoReturnValues(1, ACTION_SWITCH, 0);
 				return TRUE;
 			}
 		}
@@ -676,24 +662,24 @@ static bool8 TheCalcForSemiInvulnerableTroll(u8 bankAtk, u8 flags, bool8 JustChe
 	u8 battlerIn1, battlerIn2;
 	int i;
 
-    if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
-    {
-        battlerIn1 = gActiveBattler;
-        if (gAbsentBattlerFlags & gBitTable[PARTNER(gActiveBattler)])
-            battlerIn2 = gActiveBattler;
-        else
-            battlerIn2 = PARTNER(gActiveBattler);
-    }
-    else
-    {
-        battlerIn1 = gActiveBattler;
-        battlerIn2 = gActiveBattler;
-    }
+	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	{
+		battlerIn1 = gActiveBattler;
+		if (gAbsentBattlerFlags & gBitTable[PARTNER(gActiveBattler)])
+			battlerIn2 = gActiveBattler;
+		else
+			battlerIn2 = PARTNER(gActiveBattler);
+	}
+	else
+	{
+		battlerIn1 = gActiveBattler;
+		battlerIn2 = gActiveBattler;
+	}
 	
 	pokemon_t* party = LoadPartyRange(gActiveBattler, &firstId, &lastId);
 	
 	if (((gStatuses3[bankAtk] & STATUS3_SEMI_INVULNERABLE) || (JustCheckLockedMoves && gLockedMoves[bankAtk])) 
-	&&    gBattleStruct->moveTarget[bankAtk] == gActiveBattler)
+	&&	gBattleStruct->moveTarget[bankAtk] == gActiveBattler)
 	{
 		if (TypeCalc(gLockedMoves[bankAtk], bankAtk, gActiveBattler, 0, FALSE) & flags)
 			return FALSE;
@@ -712,7 +698,7 @@ static bool8 TheCalcForSemiInvulnerableTroll(u8 bankAtk, u8 flags, bool8 JustChe
 			if (AI_TypeCalc(gLockedMoves[bankAtk], bankAtk, &party[i]) & flags)
 			{
 				gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = i;
-                EmitTwoReturnValues(1, ACTION_SWITCH, 0);
+				EmitTwoReturnValues(1, ACTION_SWITCH, 0);
 				return TRUE;
 			}
 		}
@@ -779,20 +765,20 @@ static bool8 IsYawned(void)
 
 bool8 FindMonWithFlagsAndSuperEffective(u8 flags, u8 moduloPercent)
 {
-    u8 battlerIn1, battlerIn2;
+	u8 battlerIn1, battlerIn2;
 	u8 foe1, foe2;
-    int i, j;
+	int i, j;
 	u8 start, end;
-    u16 move;
-    u8 moveFlags;
+	u16 move;
+	u8 moveFlags;
 
-    if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
-    {
-        battlerIn1 = gActiveBattler;
-        if (gAbsentBattlerFlags & gBitTable[PARTNER(gActiveBattler)])
-            battlerIn2 = gActiveBattler;
-        else
-            battlerIn2 = PARTNER(gActiveBattler);
+	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	{
+		battlerIn1 = gActiveBattler;
+		if (gAbsentBattlerFlags & gBitTable[PARTNER(gActiveBattler)])
+			battlerIn2 = gActiveBattler;
+		else
+			battlerIn2 = PARTNER(gActiveBattler);
 			
 		if (gAbsentBattlerFlags & gBitTable[FOE(gActiveBattler)])
 			foe1 = foe2 = PARTNER(FOE(gActiveBattler));
@@ -803,26 +789,26 @@ bool8 FindMonWithFlagsAndSuperEffective(u8 flags, u8 moduloPercent)
 			foe1 = FOE(gActiveBattler);
 			foe2 = PARTNER(FOE(gActiveBattler));
 		}
-    }
-    else
-    {
-        battlerIn1 = gActiveBattler;
-        battlerIn2 = gActiveBattler;
+	}
+	else
+	{
+		battlerIn1 = gActiveBattler;
+		battlerIn2 = gActiveBattler;
 		foe1 = FOE(gActiveBattler);
 		foe2 = foe1;
-    }
+	}
 
 	u16 predictedMove1 = IsValidMovePrediction(foe1, gActiveBattler);
 	u16 predictedMove2 = IsValidMovePrediction(foe2, gActiveBattler);
 	
 	if (((predictedMove1 == MOVE_NONE || predictedMove1 == 0xFFFF) && (predictedMove2 == MOVE_NONE || predictedMove2 == 0xFFFF))
-    || (SPLIT(predictedMove1) == SPLIT_STATUS && SPLIT(predictedMove2) == SPLIT_STATUS))
-        return FALSE;
+	|| (SPLIT(predictedMove1) == SPLIT_STATUS && SPLIT(predictedMove2) == SPLIT_STATUS))
+		return FALSE;
 
 	pokemon_t* party = LoadPartyRange(gActiveBattler, &start, &end);
 
 //Party Search			
-    for (i = start; i < end; ++i)
+	for (i = start; i < end; ++i)
 	{
 		if (party[i].hp == 0
 		|| party[i].species == SPECIES_NONE
@@ -838,38 +824,38 @@ bool8 FindMonWithFlagsAndSuperEffective(u8 flags, u8 moduloPercent)
 		else
 			moveFlags = AI_TypeCalc(predictedMove2, foe2, &party[i]);
 		
-        if (moveFlags & flags)
+		if (moveFlags & flags)
 		{
 			if (predictedMove1 != MOVE_NONE && predictedMove1 != 0xFFFF)
 				battlerIn1 = foe1;
 			else
 				battlerIn1 = foe2;
 
-            for (j = 0; j < 4; j++) {
-                move = party[i].moves[j];
-                if (move == 0 || SPLIT(move) == SPLIT_STATUS)
-                    continue;
+			for (j = 0; j < 4; j++) {
+				move = party[i].moves[j];
+				if (move == 0 || SPLIT(move) == SPLIT_STATUS)
+					continue;
 							
-                moveFlags = TypeCalc(move, gActiveBattler, battlerIn1, &party[i], TRUE);
+				moveFlags = TypeCalc(move, gActiveBattler, battlerIn1, &party[i], TRUE);
 				
-                if (moveFlags & MOVE_RESULT_SUPER_EFFECTIVE && umodsi(Random(), moduloPercent) == 0) {
-                    gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = i; //There was a GetBattlerPosition here but its a pretty useless function
-                    EmitTwoReturnValues(1, ACTION_SWITCH, 0);
-                    return TRUE;
-                }
-            }
-        }
-    }
+				if (moveFlags & MOVE_RESULT_SUPER_EFFECTIVE && umodsi(Random(), moduloPercent) == 0) {
+					gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = i; //There was a GetBattlerPosition here but its a pretty useless function
+					EmitTwoReturnValues(1, ACTION_SWITCH, 0);
+					return TRUE;
+				}
+			}
+		}
+	}
 
-    return FALSE;
+	return FALSE;
 }
 
 static bool8 ShouldSwitchIfWonderGuard(void)
 {
 	u8 battlerIn1, battlerIn2;
-    u8 opposingBattler;
-    u8 moveFlags;
-    int i, j;
+	u8 opposingBattler;
+	u8 moveFlags;
+	int i, j;
 	u8 start, end;
 	opposingBattler = FOE(gActiveBattler);
 
@@ -897,12 +883,12 @@ static bool8 ShouldSwitchIfWonderGuard(void)
 			return FALSE;
 	}
 
-    //Check if pokemon has a super effective move or Mold Breaker Move
-    for (i = 0; i < MAX_MON_MOVES; ++i)
+	//Check if pokemon has a super effective move or Mold Breaker Move
+	for (i = 0; i < MAX_MON_MOVES; ++i)
 	{
-        u16 move = gBattleMons[gActiveBattler].moves[i];
-        if (move == MOVE_NONE)
-            continue;
+		u16 move = gBattleMons[gActiveBattler].moves[i];
+		if (move == MOVE_NONE)
+			continue;
 			
 		if (CheckTableForMove(move, MoldBreakerMoves))
 			return FALSE;
@@ -910,92 +896,92 @@ static bool8 ShouldSwitchIfWonderGuard(void)
 		if (SPLIT(move) == SPLIT_STATUS)
 			continue;
 					
-        moveFlags = TypeCalc(move, gActiveBattler, opposingBattler, 0, 0);
-        if (moveFlags & MOVE_RESULT_SUPER_EFFECTIVE)
-            return FALSE;
-    }
+		moveFlags = TypeCalc(move, gActiveBattler, opposingBattler, 0, 0);
+		if (moveFlags & MOVE_RESULT_SUPER_EFFECTIVE)
+			return FALSE;
+	}
 
-    if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
-    {
-        battlerIn1 = gActiveBattler;
-        if (gAbsentBattlerFlags & gBitTable[PARTNER(gActiveBattler)])
-            battlerIn2 = gActiveBattler;
-        else
-            battlerIn2 = PARTNER(gActiveBattler);
-    }
-    else
-    {
-        battlerIn1 = gActiveBattler;
-        battlerIn2 = gActiveBattler;
-    }
+	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	{
+		battlerIn1 = gActiveBattler;
+		if (gAbsentBattlerFlags & gBitTable[PARTNER(gActiveBattler)])
+			battlerIn2 = gActiveBattler;
+		else
+			battlerIn2 = PARTNER(gActiveBattler);
+	}
+	else
+	{
+		battlerIn1 = gActiveBattler;
+		battlerIn2 = gActiveBattler;
+	}
 	
 	pokemon_t* party = LoadPartyRange(gActiveBattler, &start, &end);
 	
-    // find a pokemon in the party that has a super effective move
-    for (i = start; i < end; ++i)
+	// find a pokemon in the party that has a super effective move
+	for (i = start; i < end; ++i)
 	{
-        if (party[i].hp == 0
-            || party[i].species == SPECIES_NONE
-            || GetMonData(&party[i], MON_DATA_IS_EGG, 0)
-            || i == gBattlerPartyIndexes[battlerIn1]
+		if (party[i].hp == 0
+			|| party[i].species == SPECIES_NONE
+			|| GetMonData(&party[i], MON_DATA_IS_EGG, 0)
+			|| i == gBattlerPartyIndexes[battlerIn1]
 			|| i == gBattlerPartyIndexes[battlerIn2]
 			|| i == gBattleStruct->monToSwitchIntoId[battlerIn1]
-            || i == gBattleStruct->monToSwitchIntoId[battlerIn2])
-            continue;
+			|| i == gBattleStruct->monToSwitchIntoId[battlerIn2])
+			continue;
 
-        for (j = 0; j < MAX_MON_MOVES; j++) {
-            u16 move = party[i].moves[j];
-            if (move == MOVE_NONE || SPLIT(move) == SPLIT_STATUS)
-                continue;
+		for (j = 0; j < MAX_MON_MOVES; j++) {
+			u16 move = party[i].moves[j];
+			if (move == MOVE_NONE || SPLIT(move) == SPLIT_STATUS)
+				continue;
 
-            moveFlags = TypeCalc(move, gActiveBattler, opposingBattler, &party[i], TRUE);
-            if (moveFlags & MOVE_RESULT_SUPER_EFFECTIVE)
+			moveFlags = TypeCalc(move, gActiveBattler, opposingBattler, &party[i], TRUE);
+			if (moveFlags & MOVE_RESULT_SUPER_EFFECTIVE)
 			{
-                // we found a mon
-                gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = i;
-                EmitTwoReturnValues(1, ACTION_SWITCH, 0);
-                return TRUE;
-            }
-        }
-    }
+				// we found a mon
+				gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = i;
+				EmitTwoReturnValues(1, ACTION_SWITCH, 0);
+				return TRUE;
+			}
+		}
+	}
 
-    return FALSE; // at this point there is not a single pokemon in the party that has a super effective move against a pokemon with wonder guard
+	return FALSE; // at this point there is not a single pokemon in the party that has a super effective move against a pokemon with wonder guard
 }
 
 u8 GetMostSuitableMonToSwitchInto(void)
 {
-    u8 opposingBattler;
-    u32 bestDmg;
-    u8 bestMonId;
-    u8 battlerIn1, battlerIn2;
-    u8 firstId, lastId; // + 1
-    pokemon_t* party;
-    int i, j;
-    u8 invalidMons;
-    u16 move;
+	u8 opposingBattler;
+	u32 bestDmg;
+	u8 bestMonId;
+	u8 battlerIn1, battlerIn2;
+	u8 firstId, lastId; // + 1
+	pokemon_t* party;
+	int i, j;
+	u8 invalidMons;
+	u16 move;
 
-    if (gBattleStruct->monToSwitchIntoId[gActiveBattler] != PARTY_SIZE)
-        return gBattleStruct->monToSwitchIntoId[gActiveBattler];
+	if (gBattleStruct->monToSwitchIntoId[gActiveBattler] != PARTY_SIZE)
+		return gBattleStruct->monToSwitchIntoId[gActiveBattler];
 
-    if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
-    {
-        battlerIn1 = gActiveBattler;
-        if (gAbsentBattlerFlags & gBitTable[PARTNER(gActiveBattler)])
-            battlerIn2 = battlerIn1;
-        else
-            battlerIn2 = PARTNER(battlerIn1);
+	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	{
+		battlerIn1 = gActiveBattler;
+		if (gAbsentBattlerFlags & gBitTable[PARTNER(gActiveBattler)])
+			battlerIn2 = battlerIn1;
+		else
+			battlerIn2 = PARTNER(battlerIn1);
 		
 		opposingBattler = (Random() & BIT_FLANK) ^ SIDE(battlerIn1);
 			
-        if (gAbsentBattlerFlags & gBitTable[opposingBattler])
-            opposingBattler ^= BIT_FLANK;
-    }
-    else
-    {
+		if (gAbsentBattlerFlags & gBitTable[opposingBattler])
+			opposingBattler ^= BIT_FLANK;
+	}
+	else
+	{
 		opposingBattler = GetBattlerAtPosition(GetBattlerPosition(gActiveBattler) ^ BIT_SIDE);
-        battlerIn1 = gActiveBattler;
-        battlerIn2 = gActiveBattler;
-    }
+		battlerIn1 = gActiveBattler;
+		battlerIn2 = gActiveBattler;
+	}
 	
 	party = LoadPartyRange(gActiveBattler, &firstId, & lastId);
 	
@@ -1005,11 +991,11 @@ u8 GetMostSuitableMonToSwitchInto(void)
 	{
 		if (party[i].species != SPECIES_NONE
 		&& !GetMonData(&party[i], MON_DATA_IS_EGG, 0)
-        && party[i].hp
-        && gBattlerPartyIndexes[battlerIn1] != i
-        && gBattlerPartyIndexes[battlerIn2] != i
+		&& party[i].hp
+		&& gBattlerPartyIndexes[battlerIn1] != i
+		&& gBattlerPartyIndexes[battlerIn2] != i
 		&& i != gBattleStruct->monToSwitchIntoId[battlerIn1]
-        && i != gBattleStruct->monToSwitchIntoId[battlerIn2])
+		&& i != gBattleStruct->monToSwitchIntoId[battlerIn2])
 		{
 			++count;
 			potentialMon = i;
@@ -1021,99 +1007,99 @@ u8 GetMostSuitableMonToSwitchInto(void)
 	else if (count == 1) //Only one poke remaining
 		return potentialMon;
 	
-    invalidMons = 0;
+	invalidMons = 0;
 
-    while (invalidMons != 0x3F) // All mons are invalid.
-    {
-        bestDmg = 0;
-        bestMonId = PARTY_SIZE;
+	while (invalidMons != 0x3F) // All mons are invalid.
+	{
+		bestDmg = 0;
+		bestMonId = PARTY_SIZE;
 		
-        // Find the mon whose type is the most suitable offensively.
-        for (i = firstId; i < lastId; i++)
-        {
-            u16 species = party[i].species;
-            if (species != SPECIES_NONE
-                && party[i].hp != 0
-                && !(gBitTable[i] & invalidMons)
-                && gBattlerPartyIndexes[battlerIn1] != i
-                && gBattlerPartyIndexes[battlerIn2] != i
-                && i != gBattleStruct->monToSwitchIntoId[battlerIn1]
-                && i != gBattleStruct->monToSwitchIntoId[battlerIn2])
-            {
-                u8 type1 = gBaseStats[species].type1;
-                u8 type2 = gBaseStats[species].type2;
-                u8 typeDmg = 10;
-                ModulateByTypeEffectiveness(gBattleMons[opposingBattler].type1, type1, type2, &typeDmg);
-                ModulateByTypeEffectiveness(gBattleMons[opposingBattler].type2, type1, type2, &typeDmg);
+		// Find the mon whose type is the most suitable offensively.
+		for (i = firstId; i < lastId; i++)
+		{
+			u16 species = party[i].species;
+			if (species != SPECIES_NONE
+				&& party[i].hp != 0
+				&& !(gBitTable[i] & invalidMons)
+				&& gBattlerPartyIndexes[battlerIn1] != i
+				&& gBattlerPartyIndexes[battlerIn2] != i
+				&& i != gBattleStruct->monToSwitchIntoId[battlerIn1]
+				&& i != gBattleStruct->monToSwitchIntoId[battlerIn2])
+			{
+				u8 type1 = gBaseStats[species].type1;
+				u8 type2 = gBaseStats[species].type2;
+				u8 typeDmg = 10;
+				ModulateByTypeEffectiveness(gBattleMons[opposingBattler].type1, type1, type2, &typeDmg);
+				ModulateByTypeEffectiveness(gBattleMons[opposingBattler].type2, type1, type2, &typeDmg);
 				ModulateByTypeEffectiveness(gBattleMons[opposingBattler].type3, type1, type2, &typeDmg);
-                if (bestDmg < typeDmg)
-                {
-                    bestDmg = typeDmg;
-                    bestMonId = i;
-                }
-            }
-            else
-            {
-                invalidMons |= gBitTable[i];
-            }
-        }
+				if (bestDmg < typeDmg)
+				{
+					bestDmg = typeDmg;
+					bestMonId = i;
+				}
+			}
+			else
+			{
+				invalidMons |= gBitTable[i];
+			}
+		}
 
-        // Ok, we know the mon has the right typing but does it have at least one super effective move?
-        if (bestMonId != PARTY_SIZE)
-        {
-            for (i = 0; i < MAX_MON_MOVES; i++)
-            {
-                move = GetMonData(&party[bestMonId], MON_DATA_MOVE1 + i, 0);
-                if (move != MOVE_NONE 
+		// Ok, we know the mon has the right typing but does it have at least one super effective move?
+		if (bestMonId != PARTY_SIZE)
+		{
+			for (i = 0; i < MAX_MON_MOVES; i++)
+			{
+				move = GetMonData(&party[bestMonId], MON_DATA_MOVE1 + i, 0);
+				if (move != MOVE_NONE 
 				&& SPLIT(move) != SPLIT_STATUS 
 				&& TypeCalc(move, gActiveBattler, opposingBattler, &party[bestMonId], TRUE) & MOVE_RESULT_SUPER_EFFECTIVE)
-                    break;
-            }
+					break;
+			}
 
-            if (i != MAX_MON_MOVES)
-                return bestMonId; // Has both the typing and at least one super effective move.
+			if (i != MAX_MON_MOVES)
+				return bestMonId; // Has both the typing and at least one super effective move.
 
-            invalidMons |= gBitTable[bestMonId]; // Sorry buddy, we want something better.
-        }
-        else
-        {
-            invalidMons = 0x3F; // No viable mon to switch.
-        }
-    }
+			invalidMons |= gBitTable[bestMonId]; // Sorry buddy, we want something better.
+		}
+		else
+		{
+			invalidMons = 0x3F; // No viable mon to switch.
+		}
+	}
 
-    gMoveResultFlags = 0;
-    bestDmg = 0;
-    bestMonId = 6;
+	gMoveResultFlags = 0;
+	bestDmg = 0;
+	bestMonId = 6;
 
-    // If we couldn't find the best mon in terms of typing, find the one that deals most damage.
-    for (i = firstId; i < lastId; i++)
-    {
-        if (party[i].species == SPECIES_NONE
-        || party[i].hp == 0
-        || gBattlerPartyIndexes[battlerIn1] == i
-        || gBattlerPartyIndexes[battlerIn2] == i
-        || i == gBattleStruct->monToSwitchIntoId[battlerIn1]
-        || i == gBattleStruct->monToSwitchIntoId[battlerIn2])
-            continue;
+	// If we couldn't find the best mon in terms of typing, find the one that deals most damage.
+	for (i = firstId; i < lastId; i++)
+	{
+		if (party[i].species == SPECIES_NONE
+		|| party[i].hp == 0
+		|| gBattlerPartyIndexes[battlerIn1] == i
+		|| gBattlerPartyIndexes[battlerIn2] == i
+		|| i == gBattleStruct->monToSwitchIntoId[battlerIn1]
+		|| i == gBattleStruct->monToSwitchIntoId[battlerIn2])
+			continue;
 
-        for (j = 0; j < MAX_MON_MOVES; j++)
-        {
-            move = GetMonData(&party[i], MON_DATA_MOVE1 + j, 0);
-            gBattleMoveDamage = 0;
-            if (move != MOVE_NONE && SPLIT(move) != SPLIT_STATUS)
-            {	
+		for (j = 0; j < MAX_MON_MOVES; j++)
+		{
+			move = GetMonData(&party[i], MON_DATA_MOVE1 + j, 0);
+			gBattleMoveDamage = 0;
+			if (move != MOVE_NONE && SPLIT(move) != SPLIT_STATUS)
+			{	
 				gBattleMoveDamage = AI_CalcPartyDmg(gActiveBattler, opposingBattler, move, &party[i]);
 				TypeCalc(move, gActiveBattler, opposingBattler, &party[i], TRUE);
-            }
-            if (bestDmg < (u32) gBattleMoveDamage)
-            {
-                bestDmg = gBattleMoveDamage;
-                bestMonId = i;
-            }
-        }
-    }
+			}
+			if (bestDmg < (u32) gBattleMoveDamage)
+			{
+				bestDmg = gBattleMoveDamage;
+				bestMonId = i;
+			}
+		}
+	}
 
-    return bestMonId;
+	return bestMonId;
 }
 
 u32 WildMonIsSmart(u8 bank)
@@ -1156,7 +1142,10 @@ static void PredictMovesForBanks(void)
 			&& FindMovePositionInMoveset(gLockedMoves[bankAtk], bankAtk) < 4)
 				StoreMovePrediction(bankAtk, bankDef, gLockedMoves[bankAtk]);
 			else
-			{		
+			{	
+				u32 backupFlags = AI_THINKING_STRUCT->aiFlags; //Backup flags so killing in negatives is ignored
+				AI_THINKING_STRUCT->aiFlags = 7;
+				
 				for (i = 0; i < MAX_MON_MOVES && gBattleMons[bankAtk].moves[i] != MOVE_NONE; ++i)
 				{
 					viabilities[i] = 0;
@@ -1166,8 +1155,10 @@ static void PredictMovesForBanks(void)
 
 					u16 move = gBattleMons[bankAtk].moves[i];
 					viabilities[i] = AI_Script_Negatives(bankAtk, bankDef, move, 100);
-					//viabilities[i] = AI_Script_Positives(bankAtk, bankDef, move, viabilities[i]);
+					viabilities[i] = AI_Script_Positives(bankAtk, bankDef, move, viabilities[i]);
 				}
+
+				AI_THINKING_STRUCT->aiFlags = backupFlags;
 				
 				bestMoves[j = 0] = GetMaxByteIndexInList(viabilities, MAX_MON_MOVES) + 1;
 				for (i = 0; i < MAX_MON_MOVES; ++i)

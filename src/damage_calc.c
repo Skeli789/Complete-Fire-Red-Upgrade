@@ -36,6 +36,7 @@ static u32 AdjustWeight(u32 weight, ability_t, item_effect_t, bank_t, bool8 chec
 static u8 GetFlingPower(ability_t, item_t, pokemon_t*, bank_t, bool8 PartyCheck);
 static void AdjustDamage(bool8 CheckFalseSwipe);
 static void ApplyRandomDmgMultiplier(void);
+static bool8 IsBankHoldingFocusSash(u8 bank);
 
 void atk04_critcalc(void) {
     u8 atkEffect = ITEM_EFFECT(gBankAttacker);
@@ -233,6 +234,12 @@ u32 AI_CalcDmg(const u8 bankAtk, const u8 bankDef, const u16 move) {
 			if (gBattleMons[bankDef].hp <= gBattleMons[bankAtk].hp)
 				return 0;
 			return gBattleMons[bankDef].hp - gBattleMons[bankAtk].hp;
+		case EFFECT_PAIN_SPLIT: ;
+			u16 finalHp = MathMax(1, (gBattleMons[bankAtk].hp + gBattleMons[bankDef].hp) / 2);
+			
+			if (finalHp >= gBattleMons[bankDef].hp)
+				return 0;
+			return gBattleMons[bankDef].hp - finalHp;
 	}
 
 	gDynamicBasePower = 0;
@@ -261,11 +268,26 @@ u32 AI_CalcDmg(const u8 bankAtk, const u8 bankDef, const u16 move) {
 	gCritMultiplier = 100; //Reset
 
 	if (CheckTableForMove(move, TwoToFiveStrikesMoves) && ABILITY(bankAtk) == ABILITY_SKILLLINK)
+	{
 		damage *= 5;
+		return damage;
+	}
 	else if (CheckTableForMove(move, TwoStrikesMoves))
+	{
 		damage *= 2;
+		return damage;
+	}
 	else if (CheckTableForMove(move, ThreeStrikesMoves) || CheckTableForMove(move, TwoToFiveStrikesMoves)) //Three hits on average
+	{
 		damage *= 3;
+		return damage;
+	}
+	
+	//Multi hit moves skip these checks
+	if (gBattleMoves[move].effect == EFFECT_FALSE_SWIPE
+	|| (BATTLER_MAX_HP(bankDef) && ABILITY(bankDef) == ABILITY_STURDY && NO_MOLD_BREAKERS(ABILITY(bankAtk), move))
+	|| (BATTLER_MAX_HP(bankDef) && IsBankHoldingFocusSash(bankDef)))
+		damage = MathMin(damage, gBattleMons[bankDef].hp - 1);
 
 	return damage;
 }
@@ -1066,7 +1088,7 @@ void atk69_adjustsetdamage(void) {
 
 void AdjustDamage(bool8 CheckFalseSwipe) {
 	u16 item = gBattleMons[gBankTarget].item;
-    u8 hold_effect = GetBankItemEffect(gBankTarget);
+	u8 hold_effect = ITEM_EFFECT(gBankTarget);
 	u8 quality = ItemId_GetHoldEffectParam(item);
 	u8 mystery = ItemId_GetMystery2(item);
 	u8 ability = ABILITY(gBankTarget);
@@ -1075,22 +1097,24 @@ void AdjustDamage(bool8 CheckFalseSwipe) {
 	if (gNewBS->ZMoveData->active && ProtectsAgainstZMoves(gCurrentMove, gBankAttacker, gBankTarget))
 		gBattleMoveDamage = udivsi(gBattleMoveDamage  * 25, 100);
 
-    if (gBattleMons[gBankTarget].status2 & STATUS2_SUBSTITUTE
+	if (gBattleMons[gBankTarget].status2 & STATUS2_SUBSTITUTE
 	&& !CheckCurrentMoveSoundMove()
-	&& ABILITY(gBankAttacker) != ABILITY_INFILTRATOR) {
-        goto END;
-	}
+	&& ABILITY(gBankAttacker) != ABILITY_INFILTRATOR)
+		goto END;
 
-	if (ability == ABILITY_STURDY && gBattleMons[gBankTarget].hp == gBattleMons[gBankTarget].maxHP) {
+	if (ability == ABILITY_STURDY && gBattleMons[gBankTarget].hp == gBattleMons[gBankTarget].maxHP) 
+	{
 		RecordAbilityBattle(gBankTarget, ability);
 		gProtectStructs[gBankTarget].enduredSturdy = 1;
 		gNewBS->EnduranceHelper = ENDURE_STURDY;
 	}
-    else if (hold_effect == ITEM_EFFECT_FOCUS_BAND && umodsi(Random(), 100) < quality && !mystery) {
+    else if (hold_effect == ITEM_EFFECT_FOCUS_BAND && umodsi(Random(), 100) < quality && !mystery)
+	{
         RecordItemBattle(gBankTarget, hold_effect);
         gSpecialStatuses[gBankTarget].focusBanded = 1;
     }
-	else if (hold_effect == ITEM_EFFECT_FOCUS_BAND && mystery && (gBattleMons[gBankTarget].hp == gBattleMons[gBankTarget].maxHP)) {
+	else if (IsBankHoldingFocusSash(gBankTarget) && BATTLER_MAX_HP(gBankTarget))
+	{
         RecordItemBattle(gBankTarget, hold_effect);
         gSpecialStatuses[gBankTarget].focusBanded = 1;
 		gNewBS->EnduranceHelper = ENDURE_FOCUS_SASH;
@@ -2828,4 +2852,13 @@ u16 TryGetAlternateSpeciesSize(u16 species, u8 type)
 	}
 	
 	return 0;
+}
+
+static bool8 IsBankHoldingFocusSash(u8 bank)
+{
+	if (ITEM_EFFECT(bank) == ITEM_EFFECT_FOCUS_BAND
+	&& ItemId_GetMystery2(ITEM(bank)))
+		return TRUE;
+		
+	return FALSE;
 }

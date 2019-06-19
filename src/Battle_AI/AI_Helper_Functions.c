@@ -2,6 +2,7 @@
 #include "../../include/random.h"
 #include "../../include/constants/items.h"
 
+#include "../../include/new/accuracy_calc.h"
 #include "../../include/new/AI_Helper_Functions.h"
 #include "../../include/new/battle_start_turn_start.h"
 #include "../../include/new/damage_calc.h"
@@ -14,7 +15,6 @@
 
 //This file's functions:
 static u32 CalcPredictedDamageForCounterMoves(u16 move, u8 bankAtk, u8 bankDef);
-static u16 GetBattleMonMove(u8 bank, u8 i);
 
 bool8 CanKillAFoe(u8 bank)
 {
@@ -30,8 +30,8 @@ bool8 CanKillAFoe(u8 bank)
 
 bool8 CanKnockOut(u8 bankAtk, u8 bankDef)
 {
-	u16 move;
 	int i;
+	u16 move;
 
 	if (gAbsentBattlerFlags & (gBitTable[bankAtk] | gBitTable[bankDef]))
 		return FALSE;
@@ -47,11 +47,73 @@ bool8 CanKnockOut(u8 bankAtk, u8 bankDef)
 
 		if (!(gBitTable[i] & moveLimitations))
 		{
-			if (MoveKnocksOut(move, bankAtk, bankDef))
+			if (MoveKnocksOutXHits(move, bankAtk, bankDef, 1))
 				return TRUE;
 		}
 	}
 
+	return FALSE;
+}
+
+bool8 Can2HKO(u8 bankAtk, u8 bankDef)
+{
+	int i;
+	u16 move;
+
+	if (gAbsentBattlerFlags & (gBitTable[bankAtk] | gBitTable[bankDef]))
+		return FALSE;
+
+	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, 0xFF);
+
+	for (i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		move = GetBattleMonMove(bankAtk, i);
+
+		if (move == MOVE_NONE)
+			break;
+
+		if (!(gBitTable[i] & moveLimitations))
+		{
+			if (MoveKnocksOutXHits(move, bankAtk, bankDef, 2))
+				return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+bool8 CanKnockOutAfterHealing(u8 bankAtk, u8 bankDef, u16 healAmount, u8 numHits)
+{
+	int i;
+	u16 move;
+	
+	//Temporarily increase target's hp for calcs
+	u16 backupHp = gBattleMons[bankDef].hp;
+	gBattleMons[bankDef].hp = MathMin(backupHp + healAmount, gBattleMons[bankDef].maxHP);
+
+	if (gAbsentBattlerFlags & (gBitTable[bankAtk] | gBitTable[bankDef]))
+		return FALSE;
+
+	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, 0xFF);
+
+	for (i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		move = GetBattleMonMove(bankAtk, i);
+
+		if (move == MOVE_NONE)
+			break;
+
+		if (!(gBitTable[i] & moveLimitations))
+		{
+			if (MoveKnocksOutXHits(move, bankAtk, bankDef, numHits))
+			{
+				gBattleMons[bankDef].hp = backupHp;
+				return TRUE;
+			}
+		}
+	}
+
+	gBattleMons[bankDef].hp = backupHp;
 	return FALSE;
 }
 
@@ -76,7 +138,7 @@ bool8 CanKnockOutWithoutMove(const u16 ignoredMove, const u8 bankAtk, const u8 b
 
 		if (!(gBitTable[i] & moveLimitations))
 		{
-			if (MoveKnocksOut(move, bankAtk, bankDef))
+			if (MoveKnocksOutXHits(move, bankAtk, bankDef, 1))
 				return TRUE;
 		}
 	}
@@ -84,37 +146,115 @@ bool8 CanKnockOutWithoutMove(const u16 ignoredMove, const u8 bankAtk, const u8 b
 	return FALSE;
 }
 
-bool8 MoveKnocksOut(u16 move, u8 bankAtk, u8 bankDef)
+bool8 MoveKnocksOutGoesFirstWithBestAccuracy(u16 move, u8 bankAtk, u8 bankDef)
 {
-	u16 defHP = gBattleMons[bankDef].hp;
+	u16 currMove, currAcc;
+	
+	u8 bestMoveIndex = 0xFF;
+	u16 bestAcc = 0;
+	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, 0xFF);
 
-	if (SPLIT(move) == SPLIT_STATUS)
+	for (int i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		currMove = GetBattleMonMove(bankAtk, i);
+
+		if (currMove == MOVE_NONE)
+			break;
+
+		if (!(gBitTable[i] & moveLimitations))
+		{
+			currAcc = AccuracyCalc(currMove, bankAtk, bankDef);
+
+			if (MoveWouldHitFirst(currMove, bankAtk, bankDef)
+			&& MoveKnocksOutXHits(currMove, bankAtk, bankDef, 1)
+			&& (MoveWillHit(currMove, bankAtk, bankDef) || currAcc > bestAcc))
+			{
+				bestAcc = currAcc;
+				bestMoveIndex = i;
+			}
+		}
+	}
+
+	if (bestMoveIndex == 0xFF) //No moves knock out and go first
 		return FALSE;
+
+	if (gBattleMons[bankAtk].moves[bestMoveIndex] == move)
+		return TRUE;
+		
+	return FALSE;
+}
+
+bool8 StrongestMoveGoesFirst(u16 move, u8 bankAtk, u8 bankDef)
+{
+	u16 currMove; 
+	u32 currDmg;
+	
+	u8 bestMoveIndex = 0xFF;
+	u32 bestDmg = 0;
+	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, 0xFF);
+
+	for (int i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		currMove = GetBattleMonMove(bankAtk, i);
+
+		if (currMove == MOVE_NONE)
+			break;
+
+		if (!(gBitTable[i] & moveLimitations))
+		{
+			currDmg = CalcFinalAIMoveDamage(move, bankAtk, bankDef, 1);
+
+			if (MoveWouldHitFirst(currMove, bankAtk, bankDef)
+			&& (currDmg > bestDmg))
+			{
+				bestDmg = currDmg;
+				bestMoveIndex = i;
+			}
+		}
+	}
+
+	if (bestMoveIndex == 0xFF) //No moves knock out and go first
+		return FALSE;
+
+	if (gBattleMons[bankAtk].moves[bestMoveIndex] == move)
+		return TRUE;
+		
+	return FALSE;
+}
+
+
+bool8 MoveKnocksOutXHits(u16 move, u8 bankAtk, u8 bankDef, u8 numHits)
+{
+	if (CalcFinalAIMoveDamage(move, bankAtk, bankDef, numHits) >= gBattleMons[bankDef].hp)
+		return TRUE;
+
+	return FALSE;
+}
+
+u16 CalcFinalAIMoveDamage(u16 move, u8 bankAtk, u8 bankDef, u8 numHits)
+{
+	if (move == MOVE_NONE || SPLIT(move) == SPLIT_STATUS || gBattleMoves[move].power == 0)
+		return 0;
+		
+	if (gBattleMoves[move].effect == EFFECT_FAKE_OUT && !gDisableStructs[bankAtk].isFirstTurn)
+		return 0;
 
 	if (gBattleMoves[move].effect == EFFECT_0HKO)
 	{
 		if (gBattleMons[bankAtk].level <= gBattleMons[bankDef].level)
-			return FALSE;
+			return 0;
 		if (move == MOVE_SHEERCOLD && IsOfType(bankDef, TYPE_ICE))
-			return FALSE;
-		return TRUE;
+			return 0;
+
+		return gBattleMons[bankDef].hp;
 	}
 
 	if (gBattleMoves[move].effect == EFFECT_COUNTER || gBattleMoves[move].effect == EFFECT_MIRROR_COAT) //Includes Metal Burst
 	{
-		if (CalcPredictedDamageForCounterMoves(move, bankAtk, bankDef) >= defHP)
-			return TRUE;
-
-		return FALSE;
+		return CalcPredictedDamageForCounterMoves(move, bankAtk, bankDef);
 	}
 
-	if (gBattleMoves[move].power == 0)
-		return FALSE;
-
-	if (AI_CalcDmg(bankAtk, bankDef, move) >= defHP)
-		return TRUE;
-
-	return FALSE;
+	return MathMin(AI_CalcDmg(bankAtk, bankDef, move) * numHits, gBattleMons[bankDef].maxHP);
 }
 
 static u32 CalcPredictedDamageForCounterMoves(u16 move, u8 bankAtk, u8 bankDef)
@@ -230,9 +370,9 @@ bool8 MoveWillHit(u16 move, u8 bankAtk, u8 bankDef)
 		return TRUE;
 
 	if (((gStatuses3[bankDef] & (STATUS3_IN_AIR | STATUS3_SKY_DROP_ATTACKER | STATUS3_SKY_DROP_TARGET)) && !CheckTableForMove(move, IgnoreAirTable))
-    ||  ((gStatuses3[bankDef] & STATUS3_UNDERGROUND) && !CheckTableForMove(move, IgnoreUndergoundTable))
-    ||  ((gStatuses3[bankDef] & STATUS3_UNDERWATER) && !CheckTableForMove(move, IgnoreUnderwaterTable))
-    ||   (gStatuses3[bankDef] & STATUS3_DISAPPEARED))
+	||  ((gStatuses3[bankDef] & STATUS3_UNDERGROUND) && !CheckTableForMove(move, IgnoreUndergoundTable))
+	||  ((gStatuses3[bankDef] & STATUS3_UNDERWATER) && !CheckTableForMove(move, IgnoreUnderwaterTable))
+	||   (gStatuses3[bankDef] & STATUS3_DISAPPEARED))
 		return FALSE;
 
 	if ((move == MOVE_TOXIC && IsOfType(bankAtk, TYPE_POISON))
@@ -277,37 +417,18 @@ bool8 MoveWouldHitFirst(u16 move, u16 bankAtk, u16 bankDef)
 
 bool8 WillFaintFromWeatherSoon(u8 bank)
 {
-	u8 ability = ABILITY(bank);
-	u8 effect = ITEM_EFFECT(bank);
-
-	if (WEATHER_HAS_EFFECT
-	&& 	ability != ABILITY_MAGICGUARD
-	&&	ability != ABILITY_OVERCOAT
-	&&	effect  != ITEM_EFFECT_SAFETY_GOGGLES
-	&& !(gStatuses3[bank] & (STATUS3_UNDERGROUND | STATUS3_UNDERWATER | STATUS3_DISAPPEARED)))
+	if (TakesDamageFromSandstorm(bank) || TakesDamageFromHail(bank))
 	{
-        if (gBattleWeather & WEATHER_SANDSTORM_ANY)
-		{
-            if (!IsOfType(bank, TYPE_ROCK) && !IsOfType(bank, TYPE_GROUND) && !IsOfType(bank, TYPE_STEEL)
-            && ability != ABILITY_SANDVEIL && ability != ABILITY_SANDRUSH && ability != ABILITY_SANDFORCE
-			&& gBattleMons[bank].hp <= gBattleMons[bank].maxHP / 16)
-                return TRUE;
-        }
-        else if (gBattleWeather & WEATHER_HAIL_ANY)
-		{
-            if (!IsOfType(bank, TYPE_ICE) && ability != ABILITY_ICEBODY && ability != ABILITY_SNOWCLOAK && ability != ABILITY_SLUSHRUSH
-			&& gBattleMons[bank].hp <= gBattleMons[bank].maxHP / 16)
-				return TRUE;
-        }
-    }
+		return gBattleMons[bank].hp <= gBattleMons[bank].maxHP / 16;
+	}
 
-    return FALSE;
+	return FALSE;
 }
 
 u8 CountBanksPositiveStatStages(u8 bank)
 {
 	u8 positiveStages = 0;
-	for (int i = 0; i < BATTLE_STATS_NO - 1; ++i)
+	for (int i = STAT_STAGE_ATK; i < BATTLE_STATS_NO; ++i)
 	{
 		if (STAT_STAGE(bank, i) > 6)
 			++positiveStages;
@@ -319,7 +440,7 @@ u8 CountBanksPositiveStatStages(u8 bank)
 u8 CountBanksNegativeStatStages(u8 bank)
 {
 	u8 negativeStages = 0;
-	for (int i = 0; i < BATTLE_STATS_NO - 1; ++i)
+	for (int i = STAT_STAGE_ATK; i < BATTLE_STATS_NO; ++i)
 	{
 		if (STAT_STAGE(bank, i) < 6)
 			++negativeStages;
@@ -328,7 +449,28 @@ u8 CountBanksNegativeStatStages(u8 bank)
 	return negativeStages;
 }
 
-static u16 GetBattleMonMove(u8 bank, u8 i)
+u16 GetTeamSpeedAverage(u8 bank)
+{
+	u8 firstId, lastId;
+	struct Pokemon* party = LoadPartyRange(bank, &firstId, &lastId);
+	
+	u8 totalNum = 0;
+	u16 sum = 0;
+	
+	for (int i = 0; i < PARTY_SIZE; ++i)
+	{
+		if (party[i].species == SPECIES_NONE
+		|| GetMonData(&party[i], MON_DATA_IS_EGG, NULL))
+			continue;
+
+		++totalNum;
+		sum += GetMonData(&party[i], MON_DATA_SPEED, NULL);
+	}
+	
+	return sum / totalNum;
+}
+
+u16 GetBattleMonMove(u8 bank, u8 i)
 {
 	u16 move;
 
@@ -349,6 +491,60 @@ static u16 GetBattleMonMove(u8 bank, u8 i)
 	return move;
 }
 
+bool8 IsTrapped(u8 bank, bool8 switching)
+{
+	if (IsOfType(bank, TYPE_GHOST)
+	|| (switching && ITEM_EFFECT(bank) == ITEM_EFFECT_SHED_SHELL)
+	|| (!switching && ABILITY(bank) == ABILITY_RUNAWAY)
+	|| (!switching && ITEM_EFFECT(bank) == ITEM_EFFECT_CAN_ALWAYS_RUN))
+		return FALSE;
+	else
+	{
+		if (gBattleMons[bank].status2 & (STATUS2_ESCAPE_PREVENTION | STATUS2_WRAPPED)
+		|| (ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_SHADOWTAG) && ABILITY(bank) != ABILITY_SHADOWTAG)
+		|| (ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_ARENATRAP) && CheckGrounding(bank) == GROUNDED)
+		|| (ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_MAGNETPULL) && IsOfType(bank, TYPE_STEEL))
+		|| gStatuses3[bank] & (STATUS3_ROOTED | STATUS3_SKY_DROP_TARGET)
+		|| gNewBS->FairyLockTimer != 0)
+			return TRUE;
+	}
+	
+	return FALSE;
+}
+
+bool8 IsTakingSecondaryDamage(u8 bank)
+{
+	u8 ability = ABILITY(bank);
+
+	if (gStatuses3[bank] & STATUS3_PERISH_SONG)
+		return TRUE;
+		
+	if (ability != ABILITY_MAGICGUARD)
+	{
+		if (TakesDamageFromSandstorm(bank)
+		||  TakesDamageFromHail(bank)
+		||  gWishFutureKnock->futureSightCounter[bank] == 1
+		||  gStatuses3[bank] & STATUS3_LEECHSEED
+		||  (gBattleMons[bank].status1 & STATUS1_PSN_ANY && ability != ABILITY_POISONHEAL)
+		||  gBattleMons[bank].status1 & STATUS1_BURN
+		||  ((gBattleMons[bank].status1 & STATUS1_SLEEP) > 1 && gBattleMons[bank].status2 & STATUS2_NIGHTMARE)
+		||  gBattleMons[bank].status2 & (STATUS2_CURSED | STATUS2_WRAPPED))
+			return TRUE;
+	}
+	
+	return FALSE;
+}
+
+u16 CalcSecondaryEffectChance(u8 bank, u16 move)
+{
+	u16 chance = gBattleMoves[move].secondaryEffectChance;
+
+	if (ABILITY(bank) == ABILITY_SERENEGRACE || gNewBS->RainbowTimers[SIDE(bank)])
+		chance *= 2;
+
+	return chance;
+}
+
 move_t IsValidMovePrediction(u8 bankAtk, u8 bankDef)
 {
 	if (gNewBS->movePredictions[bankAtk][bankDef] == 0xFFFF)
@@ -357,9 +553,44 @@ move_t IsValidMovePrediction(u8 bankAtk, u8 bankDef)
 		return gNewBS->movePredictions[bankAtk][bankDef];
 }
 
+bool8 IsPredictedToSwitch(u8 bankAtk, u8 bankDef)
+{
+	return gNewBS->movePredictions[bankAtk][bankDef] == 0xFFFF;
+}
+
 void StoreMovePrediction(u8 bankAtk, u8 bankDef, u16 move)
 {
 	gNewBS->movePredictions[bankAtk][bankDef] = move;
+}
+
+bool8 IsMovePredictionSemiInvulnerable(u8 bankAtk, u8 bankDef)
+{
+	u16 move = IsValidMovePrediction(bankAtk, bankDef);
+
+	if (move != MOVE_NONE)
+	{
+		u8 effect = gBattleMoves[move].effect;
+		return effect == EFFECT_SEMI_INVULNERABLE;
+	
+	}
+	
+	return FALSE;
+}
+
+bool8 IsMovePredictionHealingMove(u8 bankAtk, u8 bankDef)
+{
+	u16 move = IsValidMovePrediction(bankAtk, bankDef);
+
+	if (move != MOVE_NONE)
+	{
+		u8 effect = gBattleMoves[move].effect;
+		return effect == EFFECT_RESTORE_HP
+			|| effect == EFFECT_MORNING_SUN
+			|| effect == EFFECT_SWALLOW
+			|| effect == EFFECT_WISH;
+	}
+	
+	return FALSE;
 }
 
 bool8 DamagingMoveInMoveset(u8 bank)
@@ -428,6 +659,18 @@ bool8 SpecialMoveInMoveset(u8 bank)
 		}
 	}
 	return FALSE;
+}
+
+bool8 MoveSplitInMoveset(u8 bank, u8 moveSplit)
+{
+	switch (moveSplit) {
+		case SPLIT_PHYSICAL:
+			return PhysicalMoveInMoveset(bank);
+		case SPLIT_SPECIAL:
+			return SpecialMoveInMoveset(bank);
+		default:
+			return !PhysicalMoveInMoveset(bank) && !SpecialMoveInMoveset(bank);
+	}
 }
 
 bool8 MagicCoatableMovesInMoveset(u8 bank)
@@ -499,7 +742,7 @@ bool8 MoveTypeInMoveset(u8 bank, u8 moveType)
 
 		if (!(gBitTable[i] & moveLimitations))
 		{
-			if (gBattleMoves[move].type == moveType)
+			if (GetMoveTypeSpecial(move, bank) == moveType)
 				return TRUE;
 		}
 	}
@@ -551,7 +794,7 @@ bool8 MoveEffectInMoveset(u8 moveEffect, u8 bank)
 	return FALSE;
 }
 
-// AI function to check if bank has a status move in their moveset
+//AI function to check if bank has a status move in their moveset
 bool8 StatusMoveInMoveset(u8 bank)
 {
 	u16 move;
@@ -569,6 +812,140 @@ bool8 StatusMoveInMoveset(u8 bank)
 				return TRUE;
 		}
 	}
+
+	return FALSE;
+}
+
+bool8 MoveInMovesetWithAccuracyLessThan(u8 bankAtk, u8 bankDef, u8 acc, bool8 ignoreStatusMoves)
+{
+	u16 move;
+	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, 0xFF);
+
+	for (int i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		move = GetBattleMonMove(bankAtk, i);
+		if (move == MOVE_NONE)
+			break;
+
+		if (!(gBitTable[i] & moveLimitations))
+		{
+			if (ignoreStatusMoves && SPLIT(move) == SPLIT_STATUS)
+				continue;
+			
+			if (gBattleMoves[move].accuracy == 0 //Always hits
+			||  gBattleMoves[move].target & (MOVE_TARGET_USER | MOVE_TARGET_OPPONENTS_FIELD))
+				continue;
+			
+			if (AccuracyCalc(move, bankAtk, bankDef) < acc)
+				return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+bool8 FlinchingMoveInMoveset(u8 bank)
+{
+	u16 move;
+	u8 moveLimitations = CheckMoveLimitations(bank, 0, 0xFF);
+
+	for (int i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		move = GetBattleMonMove(bank, i);
+		if (move == MOVE_NONE)
+			break;
+
+		if (!(gBitTable[i] & moveLimitations))
+		{
+			if (gBattleMoves[move].effect == EFFECT_FLINCH_HIT)
+				return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+bool8 HealingMoveInMoveset(u8 bank)
+{
+	u16 move;
+	u8 moveLimitations = CheckMoveLimitations(bank, 0, 0xFF);
+
+	for (int i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		move = GetBattleMonMove(bank, i);
+		if (move == MOVE_NONE)
+			break;
+
+		if (!(gBitTable[i] & moveLimitations))
+		{
+			u8 effect = gBattleMoves[move].effect;
+			if (effect == EFFECT_RESTORE_HP
+			||  effect == EFFECT_MORNING_SUN
+			||  effect == EFFECT_SWALLOW
+			||  effect == EFFECT_WISH)
+				return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+bool8 SoundMoveInMoveset(u8 bank)
+{
+	u16 move;
+	u8 moveLimitations = CheckMoveLimitations(bank, 0, 0xFF);
+
+	for (int i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		move = GetBattleMonMove(bank, i);
+		if (move == MOVE_NONE)
+			break;
+
+		if (!(gBitTable[i] & moveLimitations))
+		{
+			if (CheckSoundMove(move))
+				return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+bool8 MoveThatCanHelpAttacksHitInMoveset(u8 bank)
+{
+	u16 move;
+	u8 moveLimitations = CheckMoveLimitations(bank, 0, 0xFF);
+
+	for (int i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		move = GetBattleMonMove(bank, i);
+		if (move == MOVE_NONE)
+			break;
+
+		if (!(gBitTable[i] & moveLimitations))
+		{
+			switch (gBattleMoves[move].effect) {
+				case EFFECT_ACCURACY_UP:
+				case EFFECT_ACCURACY_UP_2:
+				case EFFECT_EVASION_DOWN:
+				case EFFECT_EVASION_DOWN_2:
+					return TRUE;
+					
+				case EFFECT_LOCK_ON:
+					if (move != MOVE_LASERFOCUS)
+						return TRUE;
+					break;
+			}
+			
+			switch (move) {
+				case MOVE_HONECLAWS:
+				case MOVE_COIL:
+				case MOVE_DEFOG:
+					return TRUE;
+			}
+		}
+	}
+
 	return FALSE;
 }
 
@@ -583,22 +960,22 @@ bool8 TeamFullyHealedMinusBank(u8 bank)
 
 	pokemon_t* party = LoadPartyRange(bank, &firstId, &lastId);
 
-    for (int i = firstId; i < lastId; ++i)
+	for (int i = firstId; i < lastId; ++i)
 	{
-        if (party[i].species == SPECIES_NONE
-        || GetMonData(&party[i], REQ_EGG, NULL)
+		if (party[i].species == SPECIES_NONE
+		|| GetMonData(&party[i], REQ_EGG, NULL)
 		|| i == gBattlerPartyIndexes[bank])
 			continue;
 
 		if (party[i].hp < party[i].maxHP)
 			return FALSE;
-    }
+	}
 	return TRUE;
 }
 
 bool8 AnyStatIsRaised(u8 bank)
 {
-	for (u8 statId = 0; statId < BATTLE_STATS_NO - 1; ++statId)
+	for (u8 statId = STAT_STAGE_ATK; statId < BATTLE_STATS_NO; ++statId)
 	{
 		if (STAT_STAGE(bank, statId) > 6)
 			return TRUE;
@@ -659,188 +1036,15 @@ u16 ShouldAIUseZMove(u8 bank, u8 moveIndex, u16 move)
 	return FALSE;
 }
 
-enum PrefixClasses
+void IncreaseViability(s16* viability, u8 amount)
 {
-	PREFIX_SPEEDY,
-	PREFIX_BULKY,
-};
-
-enum BaseClasses
-{
-	BASE_SWEEPER,
-	BASE_WALL
-};
-
-enum ItemClasses
-{
-	ITM_NONE,
-	ITM_TRICK,
-	ITM_CHOICE,
-};
-
-enum BoostingClasses
-{
-	NO_BOOST,
-	SUB_OFF_BOOST,
-	SUB_DEF_BOOST,
-	OFF_BOOST,
-	DEF_BOOST,
-	SET_UP_SUBSTITUTE,
-};
-
-enum PhazingClasses
-{
-	PHAZE_RESET_TARGET_STATS,
-	PHAZE_FORCE_SWITCH,
-	PHAZE_RESET_ALL_STATS,
-	PHAZE_LOWER_TARGET_STATS,
-};
-
-struct FightingStyle
-{
-	enum PrefixClasses prefixClass;
-	enum BaseClasses baseClass;
-	enum ItemClasses itemClass;
-	enum BoostingClasses boostingClass;
-	enum PhazingClasses phazerClass;
-	bool8 hazardClass;
-	bool8 statusClass;
-	bool8 clericClass;
-	bool8 recoveryClass;
-};
-
-bool8 IsFightStyleSpeedy(struct FightingStyle* fightStyle)
-{
-	return fightStyle->prefixClass == PREFIX_SPEEDY;
+	*viability = MathMin(*viability + amount, 255);
 }
 
-bool8 IsFightStyleSweeper(struct FightingStyle* fightStyle)
+void DecreaseViability(s16* viability, u8 amount)
 {
-	return fightStyle->baseClass == BASE_SWEEPER;
+	*viability -= amount;
+	
+	if (*viability < 0)
+		*viability = 0;
 }
-
-bool8 IsFightStyleWall(struct FightingStyle* fightStyle)
-{
-	return fightStyle->baseClass == BASE_WALL;
-}
-
-bool8 CanFightStyleRecover(struct FightingStyle* fightStyle)
-{
-	return fightStyle->recoveryClass;
-}
-
-bool8 IsFightStyleTeamHelper(struct FightingStyle* fightStyle)
-{
-	return fightStyle->clericClass;
-}
-
-bool8 IsFightStyleHazer(struct FightingStyle* fightStyle)
-{
-	return fightStyle->phazerClass == PHAZE_RESET_ALL_STATS;
-}
-
-bool8 IsFightStyleForceSwitcher(struct FightingStyle* fightStyle)
-{
-	return fightStyle->phazerClass == PHAZE_FORCE_SWITCH;
-}
-
-bool8 DoesFightStyleLowerStats(struct FightingStyle* fightStyle)
-{
-	return fightStyle->phazerClass == PHAZE_LOWER_TARGET_STATS;
-}
-
-bool8 IsFightStyleStatuser(struct FightingStyle* fightStyle)
-{
-	return IsFightStyleWall(fightStyle) && fightStyle->statusClass;
-}
-
-/*
-void PredictBankFightingStyle(u8 bank, struct FightingStyle* style)
-{
-	struct Pokemon* mon = GetBankPartyData(bank);
-	u16 offensiveEvs = mon->atkEv + mon->spAtkEv;
-	u16 defensiveEvs = mon->defEv + mon->spDefEv;
-
-	//Determine prefix class
-	if (mon->spdEv > mon->hpEv)
-		style->prefixClass = PREFIX_SPEEDY;
-	else
-		style->prefixClass = PREFIX_BULKY;
-
-	//Determine base class
-	if (offensiveEvs > defensiveEvs)
-		style->baseClass = BASE_SWEEPER;
-	else
-		style->baseClass = BASE_WALL;
-
-	//Determine item class
-	u8 itemEffect = ItemId_GetHoldEffect(ITEM(bank)); //Don't use ITEM_EFFECT b/c may not have an effect now, but will when tricked away
-
-	if (MoveEffectInMoveset(EFFECT_TRICK, bank)
-	&&  ITEM(bank) != ITEM_NONE
-	&&  CanTransferItem(SPECIES(bank), ITEM(bank), mon)
-	&&  (itemEffect == ITEM_EFFECT_CHOICE_BAND
-	 ||  itemEffect == ITEM_EFFECT_TOXIC_ORB
-	 ||  itemEffect == ITEM_EFFECT_FLAME_ORB
-	 ||  itemEffect == ITEM_EFFECT_BLACK_SLUDGE
-	 ||  itemEffect == ITEM_EFFECT_LAGGING_TAIL
-	 ||  itemEffect == ITEM_EFFECT_IRON_BALL
-	 ||  itemEffect == ITEM_EFFECT_STICKY_BARB))
-	{
-		style->itemClass = ITM_TRICK;
-	}
-	else if (itemEffect == ITEM_EFFECT_CHOICE_BAND)
-		style->itemClass = ITM_CHOICE;
-	else
-		style->itemClass = ITM_NONE;
-
-	//Determine boosting class
-	style->boostingClass = NO_BOOST;
-
-	if (IS_BEHIND_SUBSTITUTE(bank))
-	{
-		if (OffenseBoostingMoveEffectInMoveset(bank)
-			style->boostingClass = SUB_OFF_BOOST;
-		else if (DefensiveBoostingMoveEffect(bank))
-			style->boostingClass = SUB_DEF_BOOST;
-	}
-	else
-	{
-		if (MoveEffectInMoveset(EFFECT_SUBSTITUTE, bank)
-		&&  GetHealthPercentage(bank) > 49)
-			style->boostingClass = SET_UP_SUBSTITUTE;
-		else if (OffenseBoostingMoveEffectInMoveset(bank))
-			style->boostingClass = OFF_BOOST;
-		else if (DefensiveBoostingMoveEffectInMoveset(bank))
-			style->boostingClass = DEF_BOOST;
-	}
-
-	//Determine hazard class
-	if (CanSetUpHazard(bank))
-		style->hazardClass = TRUE;
-	else
-		style->hazardClass = FALSE;
-
-	//Determing status class
-	if (StatusSettingMoveInMoveset(bank))
-		style->statusClass = TRUE;
-	else
-		style->statusClass = FALSE
-
-	//Determine cleric class
-	if (MoveEffectInMoveset(EFFECT_HEAL_BELL, bank)
-	&& PartyMemberStatused(bank))
-		style->clericClass = TRUE;
-	else
-		style->clericClass = FALSE
-
-	//Determine recovery class
-	if (GetHealthPercentage(bank) < 50)
-		style->recoveryClass = TRUE;
-	else
-		style->recoveryClass = FALSE;
-
-	//Determine Clear Smog class
-	//if (!
-}
-*/
