@@ -439,7 +439,7 @@ void sp014_ChangeCapturedBall(void) {
 	
 	if (mon >= 6)
 		return;	
-	else if (ball > NUM_BALLS)
+	else if (ball >= NUM_BALLS)
 		return;
 	SetMonDataFromVar8003(MON_DATA_POKEBALL);	
 		

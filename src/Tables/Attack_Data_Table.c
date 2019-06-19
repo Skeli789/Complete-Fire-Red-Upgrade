@@ -8308,7 +8308,7 @@ const struct BattleMove gBattleMoves[] = {
 
 [MOVE_GUARDSWAP] =
 	{
-		.effect = EFFECT_STAT_SWAP_SPLT,
+		.effect = EFFECT_STAT_SWAP_SPLIT,
 		.power = 0,
 		.type = TYPE_PSYCHIC,
 		.accuracy = 0,
@@ -8372,7 +8372,7 @@ const struct BattleMove gBattleMoves[] = {
 
 [MOVE_POWERSWAP] =
 	{
-		.effect = EFFECT_STAT_SWAP_SPLT,
+		.effect = EFFECT_STAT_SWAP_SPLIT,
 		.power = 0,
 		.type = TYPE_PSYCHIC,
 		.accuracy = 0,
@@ -8388,7 +8388,7 @@ const struct BattleMove gBattleMoves[] = {
 
 [MOVE_POWERTRICK] =
 	{
-		.effect = EFFECT_STAT_SWAP_SPLT,
+		.effect = EFFECT_STAT_SWAP_SPLIT,
 		.power = 0,
 		.type = TYPE_PSYCHIC,
 		.accuracy = 0,
@@ -8660,7 +8660,7 @@ const struct BattleMove gBattleMoves[] = {
 
 [MOVE_HEARTSWAP] =
 	{
-		.effect = EFFECT_STAT_SWAP_SPLT,
+		.effect = EFFECT_STAT_SWAP_SPLIT,
 		.power = 0,
 		.type = TYPE_PSYCHIC,
 		.accuracy = 0,
@@ -9828,7 +9828,7 @@ const struct BattleMove gBattleMoves[] = {
 
 [MOVE_SPEEDSWAP] =
 	{
-		.effect = EFFECT_STAT_SWAP_SPLT,
+		.effect = EFFECT_STAT_SWAP_SPLIT,
 		.power = 0,
 		.type = TYPE_PSYCHIC,
 		.accuracy = 0,
@@ -10340,7 +10340,7 @@ const struct BattleMove gBattleMoves[] = {
 
 [MOVE_GUARDSPLIT] =
 	{
-		.effect = EFFECT_STAT_SWAP_SPLT,
+		.effect = EFFECT_STAT_SWAP_SPLIT,
 		.power = 0,
 		.type = TYPE_PSYCHIC,
 		.accuracy = 0,
@@ -10452,7 +10452,7 @@ const struct BattleMove gBattleMoves[] = {
 
 [MOVE_POWERSPLIT] =
 	{
-		.effect = EFFECT_STAT_SWAP_SPLT,
+		.effect = EFFECT_STAT_SWAP_SPLIT,
 		.power = 0,
 		.type = TYPE_PSYCHIC,
 		.accuracy = 0,

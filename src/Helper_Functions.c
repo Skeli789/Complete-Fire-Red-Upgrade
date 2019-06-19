@@ -697,6 +697,9 @@ bool8 CanTransferItem(u16 species, u16 item, pokemon_t* party_data) {
 	const struct Evolution* evolutions = gEvolutionTable[party_data->species];
 	int i;
 	
+	if (item == ITEM_NONE || IsMail(item))
+		return FALSE;
+	
 	switch (effect) {
 		case ITEM_EFFECT_Z_CRYSTAL:
 			return FALSE;
@@ -735,6 +738,7 @@ bool8 CanTransferItem(u16 species, u16 item, pokemon_t* party_data) {
 			||  (quality == QUALITY_RED_ORB && dexNum == NATIONAL_DEX_GROUDON))
 				return FALSE;
 	}
+
 	return TRUE;
 }
 
@@ -750,33 +754,31 @@ bool8 CanFling(u8 ability, u16 item, struct Pokemon* mon, u8 bank, bool8 partyCh
 	|| itemEffect == ITEM_EFFECT_PRIMAL_ORB
 	|| itemEffect == ITEM_EFFECT_GEM
 	|| itemEffect == ITEM_EFFECT_ABILITY_CAPSULE
-	|| IsMail(item)
 	|| (IsBerry(item) && AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, bank, ABILITY_UNNERVE, 0, 0))
-	|| GetPocketByItemId(item) == POCKET_POKE_BALLS
-	|| item == ITEM_NONE)
+	|| GetPocketByItemId(item) == POCKET_POKE_BALLS)
 		return FALSE;
 
 	return TRUE;
 }
 
-bool8 SymbiosisCanActivate(u8 bank_to_give, u8 bank_to_receive) {
-	item_t item = gBattleMons[bank_to_give].item;
+bool8 SymbiosisCanActivate(u8 giverBank, u8 receiverBank) {
+	u16 item = gBattleMons[giverBank].item;
 	
 	if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE) 
-	||  ABILITY(bank_to_give) != ABILITY_SYMBIOSIS
-	||  ITEM(bank_to_receive) != 0
-	|| !CanTransferItem(gBattleMons[bank_to_give].species, item, GetBankPartyData(bank_to_give)) 
-	|| !CanTransferItem(gBattleMons[bank_to_receive].species, item, GetBankPartyData(bank_to_receive)))
+	||  ABILITY(giverBank) != ABILITY_SYMBIOSIS
+	||  ITEM(receiverBank) != 0
+	|| !CanTransferItem(gBattleMons[giverBank].species, item, GetBankPartyData(giverBank)) 
+	|| !CanTransferItem(gBattleMons[receiverBank].species, item, GetBankPartyData(receiverBank)))
 		return FALSE;
 	return TRUE;
 }
 
 //Sticky Hold also, but the boost ignores it
-bool8 CanKnockOffItem(bank_t bank) {
-	item_t item = gBattleMons[bank].item;
-	if (!CanTransferItem(gBattleMons[bank].species, item, GetBankPartyData(bank))
-	|| IsMail(item))
+bool8 CanKnockOffItem(u8 bank)
+{
+	if (!CanTransferItem(SPECIES(bank), ITEM(bank), GetBankPartyData(bank)))
 		return FALSE;
+
 	return TRUE;
 }
 
@@ -881,7 +883,7 @@ u8 FindMovePositionInMoveset(u16 move, u8 bank) {
 
 bool8 MoveInMoveset(u16 move, u8 bank)
 {
-	return FindMovePositionInMoveset(move, bank) < 4;
+	return FindMovePositionInMoveset(move, bank) < MAX_MON_MOVES;
 }
 
 u8 AttacksThisTurn(u8 bank, u16 move) // Note: returns 1 if it's a charging turn, otherwise 2

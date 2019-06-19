@@ -421,10 +421,12 @@ BattleScript_ShieldsDownToCore:
 
 .global BattleScript_ShieldsDownToCoreRet
 BattleScript_ShieldsDownToCoreRet:
-	playanimation BANK_ATTACKER ANIM_TRANSFORM 0x0
+	call BattleScript_AbilityPopUp
+	playanimation BANK_SCRIPTING ANIM_TRANSFORM 0x0
 	setword BATTLE_STRING_LOADER ToCoreString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
 	return
 
 BattleScript_ShieldsDownToMeteor:
@@ -433,10 +435,12 @@ BattleScript_ShieldsDownToMeteor:
 
 .global BattleScript_ShieldsDownToMeteorRet
 BattleScript_ShieldsDownToMeteorRet:
+	call BattleScript_AbilityPopUp
 	playanimation BANK_ATTACKER ANIM_TRANSFORM 0x0
 	setword BATTLE_STRING_LOADER ToMeteorString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
 	return
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

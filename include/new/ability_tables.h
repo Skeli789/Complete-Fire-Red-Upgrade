@@ -9,4 +9,5 @@ extern const ability_t EntrainmentBanTableTarget[];
 extern const ability_t SimpleBeamBanTable[];
 extern const ability_t ReceiverBanTable[];
 extern const ability_t TraceBanTable[];
-extern const ability_t MoldBreakerIgnoreAbilities[];
+extern const bool8 gMoldBreakerIgnoredAbilities[];
+extern const bool8 gGoodAbilitiesToRemoveTable[];

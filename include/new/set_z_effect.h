@@ -15,4 +15,5 @@ void TryLoadZTrigger(void);
 void DestroyZTrigger(void);
 u16 GetTypeBasedZMove(u16 move, u8 bank);
 u16 GetSpecialZMove(u16 move, u16 species, u16 item);
+bool8 IsSpecialZCrystal(u16 item);
 const u8* GetZMoveName(u16 move);

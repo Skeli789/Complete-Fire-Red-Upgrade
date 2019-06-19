@@ -214,7 +214,7 @@
 #define EFFECT_CALM_MIND 211 //+ Quiver Dance + Geomancy
 #define EFFECT_DRAGON_DANCE 212 //+ Shift Gear + Shell Smash
 
-#define EFFECT_STAT_SWAP_SPLT 213
+#define EFFECT_STAT_SWAP_SPLIT 213
 #define EFFECT_BLANK_214 214
 #define EFFECT_BLANK_215 215
 #define EFFECT_BLANK_216 216

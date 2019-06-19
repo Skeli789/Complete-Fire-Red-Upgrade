@@ -10,6 +10,7 @@
 
 #include "../include/new/helper_functions.h"
 #include "../include/new/item.h"
+#include "../include/new/set_z_effect.h"
 
 #define EOS 0xFF
 
@@ -71,9 +72,19 @@ bool8 IsZCrystal(u16 item)
 	return ItemId_GetHoldEffect(item) == ITEM_EFFECT_Z_CRYSTAL;
 }
 
+bool8 IsTypeZCrystal(u16 item, u8 moveType)
+{
+	return IsZCrystal(item) && ItemId_GetHoldEffectParam(item) == moveType && !IsSpecialZCrystal(item);
+}
+
 bool8 IsBerry(u16 item)
 {
 	return GetPocketByItemId(item) == POCKET_BERRY_POUCH;
+}
+
+bool8 IsGem(u16 item)
+{
+	return ItemId_GetHoldEffect(item) == ITEM_EFFECT_GEM;
 }
 
 bool8 IsTMHM(u16 item)

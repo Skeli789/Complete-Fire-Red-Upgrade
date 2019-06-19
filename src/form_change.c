@@ -17,6 +17,20 @@ const species_t gMiniorCores[] =
 	SPECIES_TABLES_TERMIN
 };
 
+static const species_t sBannedBackupSpecies[] =
+{
+	SPECIES_CHERRIM_SUN,
+	SPECIES_DARMANITANZEN,
+	SPECIES_KELDEO_RESOLUTE,
+	SPECIES_MELOETTA_PIROUETTE,
+	SPECIES_AEGISLASH_BLADE,
+	SPECIES_WISHIWASHI_S,
+	SPECIES_MINIOR_SHIELD,
+};
+
+//This file's functions:
+static bool8 IsMinior(u16 species);
+
 void DoFormChange(u8 bank, u16 species, bool8 ReloadType, bool8 ReloadStats) 
 {
 	u16 backup;
@@ -117,22 +131,27 @@ void FormsRevert(pokemon_t* party)
 
 void TryFormRevert(pokemon_t* mon)
 {
+	u16 species = mon->species;
 	u16 oldHP;
 	
-	if (mon->backupSpecies) 
+	if (IsMinior(species))
+	{
+		mon->species = GetMiniorCoreSpecies(mon); //Get Minior Colour
+		CalculateMonStats(mon);
+	}
+	else if (CheckTableForSpecies(mon->backupSpecies, sBannedBackupSpecies)) //Forms the mon shouldn't revert to
+	{
+		mon->backupSpecies = SPECIES_NONE;
+	}
+	else if (mon->backupSpecies != SPECIES_NONE)
 	{
 		mon->species = mon->backupSpecies;
-		mon->backupSpecies = 0;
+		mon->backupSpecies = SPECIES_NONE;
 		oldHP = mon->hp;
 		CalculateMonStats(mon);
 			
 		if (mon->species == SPECIES_ZYGARDE || mon->species == SPECIES_ZYGARDE_10)
 			mon->hp = MathMin(mon->maxHP, oldHP);
-	}
-	else if (mon->species == SPECIES_MINIOR_SHIELD) //Minior that has never had a colour yet (Eg. Wild)
-	{
-		mon->species = GetMiniorCoreSpecies(mon); //Get Minior Colour
-		CalculateMonStats(mon);
 	}
 	else if (mon->species == SPECIES_KELDEO_RESOLUTE)
 	{
@@ -175,6 +194,11 @@ void UpdateBurmy(void)
 species_t GetMiniorCoreSpecies(struct Pokemon* mon)
 {
 	return gMiniorCores[mon->personality % (ARRAY_COUNT(gMiniorCores) - 1)];
+}
+
+static bool8 IsMinior(u16 species)
+{
+	return species == SPECIES_MINIOR_SHIELD || CheckTableForSpecies(species, gMiniorCores);
 }
 
 void HandleFormChange(void)

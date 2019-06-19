@@ -1,3 +1,4 @@
+#include "../config.h"
 #include "../../include/global.h"
 #include "../../include/battle.h"
 #include "../../include/constants/moves.h"

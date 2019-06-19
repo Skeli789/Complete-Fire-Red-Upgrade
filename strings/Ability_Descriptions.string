@@ -8,6 +8,7 @@ Multi-hit moves hit five times.
 Turns electricity into Speed.
 
 #org @DESC_MULTISCALE
+#org @DESC_FULLMETALBODY
 Reduces damage at full HP.
 
 #org @DESC_TECHNICIAN
@@ -65,10 +66,8 @@ Prefers the rain to heat.
 Boosts not very effective moves.
 
 #org @DESC_SOLIDROCK
-Weakens Super Effective moves.
-
 #org @DESC_FILTER
-Weakens Super Effective moves.
+Weakens super effective moves.
 
 #org @DESC_INFILTRATOR
 Passes through barriers.
@@ -128,6 +127,7 @@ Fainting damages the foe.
 May disable a foe's move.
 
 #org @DESC_GOOEY
+#org @DESC_TANGLINGHAIR
 Lowers the foe's Speed if hit.
 
 #org @DESC_MUMMY
@@ -221,13 +221,9 @@ Changes type to match move.
 Parent and child attack together.
 
 #org @DESC_MOLDBREAKER
-Abilities don't affect moves.
-
 #org @DESC_TURBOBLAZE
-Abilities don't affect moves.
-
 #org @DESC_TERAVOLT
-Abilities don't affect moves.
+Moves ignore abilities.
 
 #org @DESC_ZENMODE
 Transform below half health.
@@ -245,17 +241,13 @@ Poison Steel and Poison-types.
 Takes one hit with no damage.
 
 #org @DESC_EMERGENCYEXIT
+#org @DESC_WIMPOUT
 Switch out below half health.
 
 #org @DESC_FLUFFY
 Halves contact damage.
 
-#org @DESC_FULLMETALBODY
-Prevents stat reduction.
-
 #org @DESC_BROKEN_1
-No special ability.
-
 #org @DESC_BROKEN_2
 No special ability.
 
@@ -288,9 +280,6 @@ Taking a hit raises Defense.
 
 #org @DESC_STEELWORKER
 Powers up Steel-type moves.
-
-#org @DESC_TANGLINGHAIR
-Lowers the foe's Speed if hit.
 
 #org @DESC_TRIAGE
 Gives priority to healing moves.
@@ -408,9 +397,6 @@ Summons extremely harsh sunlight.
 
 #org @DESC_DELTASTREAM
 Summons a mysterious air current.
-
-#org @DESC_WIMPOUT
-Switch out below half health.
 
 #org @DESC_BERSERK
 Ups Sp. Atk when HP halves.

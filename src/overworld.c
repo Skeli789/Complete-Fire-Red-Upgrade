@@ -485,7 +485,7 @@ const u8* BattleSetup_ConfigureTrainerBattle(const u8* data)
 			FlagSet(TAG_BATTLE_FLAG);
 			return EventScript_DoTrainerBattle;
 
-		default:
+		default: //TRAINER_BATTLE_SINGLE
 			if (gApproachingTrainerId == 0)
 			{
 				TrainerBattleLoadArgs(sOrdinaryBattleParams, data);

@@ -1528,6 +1528,7 @@ Template_0x910040:
 ANIM_AQUAJET:
 	loadparticle ANIM_TAG_WATER_IMPACT 
 	loadparticle ANIM_TAG_SMALL_BUBBLES
+	pokespritetoBG bank_target
 	launchtask 0x80A917D 0x2 0x0  
 	playsound2 0x99 0xc0 
 	waitanimation
@@ -1543,6 +1544,7 @@ ANIM_AQUAJET:
 	launchtask 0x80A939D 0x2 0x0  
 	waitanimation
 	resetblends
+	pokespritefromBG bank_target 
 	endanimation 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -7612,18 +7614,18 @@ ANIM_FOULPLAY:
 	loadparticle ANIM_TAG_POISON_BUBBLE 
 	loadparticle ANIM_TAG_THIN_RING 
 	loadparticle ANIM_TAG_IMPACT 
+	loadparticle ANIM_TAG_HANDS_AND_FEET @Black colour
 	pokespritetoBG bank_target 
 	setblends 0x80c 
 	launchtemplate Template_HorizontalLunge 0x2 0x2 0x4 0x4 
 	pause 0x6 
-	launchtemplate Template_Hit 0x2 0x4 0x0 0x0 0x1 0x2 
+	launchtemplate FOUL_PLAY_HIT 0x2 0x4 0x0 0x0 0x1 0x1
 	launchtask AnimTask_move_bank 0x2 0x5 0x1 0x3 0x0 0x6 0x1 
-	playsound2 0x84 0x3f 
-	playsound2 0x5f 0xc0 
+	playsound2 0x73 0x3f 
 	launchtemplate Template_Pal_Fade 0x2 0x5 0x1f 0x3 0xa 0x0 0x0 
 	launchtemplate FOUL_PLAY_RING 0x3 0x4 0x0 0x0 0x100 0x0 
 	pause 0x8 
-	playsound2 0x5f 0xc0 
+	playsound2 0x84 0x3f 
 	launchtemplate Template_Pal_Fade 0x2 0x5 0x1f 0x3 0xa 0x0 0x0 
 	launchtemplate FOUL_PLAY_RING 0x3 0x4 0x0 0x0 0x100 0x0 
 	waitanimation 
@@ -7632,6 +7634,7 @@ ANIM_FOULPLAY:
 	endanimation 
 
 .align 2
+FOUL_PLAY_HIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_HANDS_AND_FEET 0x83ACB58 0x8231CF0 0x0 0x83E7BF8 0x80BA561
 FOUL_PLAY_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_POISON_BUBBLE 0x83ACAA0 0x8231CF0 0x0 0x83E4088 0x8075D9D 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

@@ -360,6 +360,17 @@ move_t GetSpecialZMove(u16 move, u16 species, u16 item)
 		return MOVE_NONE;
 }
 
+bool8 IsSpecialZCrystal(u16 item)
+{
+	for (u32 i = 0; i < ARRAY_COUNT(sSpecialZMoveTable); ++i)
+	{
+		if (sSpecialZMoveTable[i].item == item)
+			return TRUE;
+	}
+
+	return FALSE;
+}
+
 const u8* GetZMoveName(u16 move)
 {
 	if (!IsZMove(move))

@@ -14,8 +14,8 @@
 
 #define gBattleTerrainTable ((struct BattleBackground*) *((u32*) 0x800F320))
 #ifdef UNBOUND
-#define gBattleTerrainTableEvening ((struct BattleBackground*) 0x88C8720) //For Unbound
-#define gBattleTerrainTableNight ((struct BattleBackground*) 0x88C8A30) //For Unbound
+#define gBattleTerrainTableEvening ((struct BattleBackground*) *((u32*) 0x88288A0)) //For Unbound
+#define gBattleTerrainTableNight ((struct BattleBackground*) *((u32*) 0x88288A4)) //For Unbound
 #endif
 
 extern const struct BattleBackground gAttackTerrainTable[];
@@ -44,6 +44,8 @@ u8 BattleSetup_GetTerrainId(void)
 			#ifdef UNBOUND
 			if (IsCurrentAreaAutumn())
 				terrain = BATTLE_TERRAIN_AUTUMN_GRASS;
+			else if (IsCurrentAreaWinter())
+				terrain = BATTLE_TERRAIN_SNOW_GRASS;
 			else
 			#endif
 				terrain = BATTLE_TERRAIN_GRASS;
@@ -283,6 +285,15 @@ static u8 TryLoadAlternateAreaTerrain(u8 terrain)
 	else if (terrain == BATTLE_TERRAIN_PLAIN
 	&& IsCurrentAreaAutumn())
 		terrain = BATTLE_TERRAIN_AUTUMN_PLAIN;
+	else if (terrain == BATTLE_TERRAIN_PLAIN
+	&& IsCurrentAreaWinter())
+		terrain = BATTLE_TERRAIN_SNOW_FIELD;
+	else if (terrain == BATTLE_TERRAIN_GRASS
+	&& IsCurrentAreaWinter())
+		terrain = BATTLE_TERRAIN_SNOW_GRASS;
+	else if (terrain == BATTLE_TERRAIN_SNOW_FIELD
+	&& MetatileBehavior_IsTallGrass(tileBehavior))
+		terrain = BATTLE_TERRAIN_SNOW_GRASS;
 #endif
 
 	return terrain;

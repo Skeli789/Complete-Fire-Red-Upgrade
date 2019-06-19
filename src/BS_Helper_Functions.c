@@ -240,7 +240,8 @@ void MoldBreakerRemoveAbilitiesOnForceSwitchIn(void)
 	||  ABILITY(bank) == ABILITY_TURBOBLAZE
 	||  ABILITY(bank) == ABILITY_TERAVOLT)
 	{
-		if (CheckTableForAbility(ABILITY(gBankTarget), MoldBreakerIgnoreAbilities)) {
+		if (gMoldBreakerIgnoredAbilities[ABILITY(gBankTarget)])
+		{
 			gNewBS->DisabledMoldBreakerAbilities[gBankTarget] = ABILITY(gBankTarget);
 			gBattleMons[gBankTarget].ability = 0;
 		}
