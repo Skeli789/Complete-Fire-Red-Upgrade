@@ -88,9 +88,9 @@ enum BattlerIds
 
 enum FrontierSpreadAbilityNumbers
 {
+	FRONTIER_ABILITY_HIDDEN,
 	FRONTIER_ABILITY_1,
 	FRONTIER_ABILITY_2,
-	FRONTIER_ABILITY_HIDDEN,
 };
 
 //Exported Data Structures

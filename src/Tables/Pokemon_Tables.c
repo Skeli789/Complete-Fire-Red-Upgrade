@@ -236,6 +236,8 @@ const species_t StandardSpeciesBanList[] =
 	SPECIES_TABLES_TERMIN
 };
 
+const u8 gStandardSpeciesBanListSize = ARRAY_COUNT(StandardSpeciesBanList) - 1;
+
 const species_t OU_SpeciesBanList[] = 
 {
 	SPECIES_AEGISLASH,

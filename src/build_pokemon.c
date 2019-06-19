@@ -179,6 +179,8 @@ u16 sp068_GivePlayerFrontierMonGivenSpecies(void)
 	return GivePlayerFrontierMonGivenSpecies(Var8000, spreads, numSpreads);
 }
 
+extern const u8 gStandardSpeciesBanListSize;
+
 //@Details: Add a random Pokemon battleable in the given tier.
 //@Inputs:
 //		Var8000: Tier
@@ -186,7 +188,7 @@ u16 sp068_GivePlayerFrontierMonGivenSpecies(void)
 //@Returns: If the Pokemon was added or not.
 u16 sp069_GivePlayerRandomFrontierMonByTier(void)
 {
-	u16 numSpreads;
+	u16 numSpreads, species, val;
 	struct Pokemon mon;
 	const struct BattleTowerSpread* spread;
 	const struct BattleTowerSpread* spreads;
@@ -196,6 +198,19 @@ u16 sp069_GivePlayerRandomFrontierMonByTier(void)
 		default:
 			numSpreads = TOTAL_SPREADS;
 			spreads = gFrontierSpreads;
+			break;
+
+		case 1: //Legendary Pokemon
+			numSpreads = TOTAL_SPREADS;
+			spreads = gFrontierSpreads;
+
+			do
+			{
+				species = StandardSpeciesBanList[Random() % gStandardSpeciesBanListSize];
+				val = GivePlayerFrontierMonGivenSpecies(species, spreads, numSpreads);
+			} while (val == 0xFFFF);
+
+			return val;
 	}
 	
 	do
@@ -366,10 +381,10 @@ static u8 CreateNPCTrainerParty(pokemon_t* const party, const u16 trainerId, con
 						#endif
 							break;
 						case TRAINER_EV_RANDOM_BALL:
-							ballType = Random() % (NUM_BALLS + 1); //Set Random Ball
+							ballType = Random() % NUM_BALLS; //Set Random Ball
 							break;
 						default:
-							ballType = MathMin(NUM_BALLS, spread->ball);
+							ballType = MathMin(LAST_BALL_INDEX, spread->ball);
 					}
 
 					SetMonData(&party[i], REQ_POKEBALL, &ballType);
@@ -572,7 +587,7 @@ static void CreateFrontierMon(struct Pokemon* mon, const u8 level, const struct 
 	SET_IVS(spread);
 	SET_EVS(spread);
 
-	if (spread->ability > 0)
+	if (spread->ability > FRONTIER_ABILITY_HIDDEN)
 	{
 		GiveMonNatureAndAbility(mon, spread->nature, spread->ability - 1);
 	}
@@ -592,9 +607,9 @@ static void CreateFrontierMon(struct Pokemon* mon, const u8 level, const struct 
 
 	u8 ballType;
 	if (spread->ball)
-		ballType = MathMin(NUM_BALLS, spread->ball);
+		ballType = MathMin(LAST_BALL_INDEX, spread->ball);
 	else
-		ballType = umodsi(Random(), NUM_BALLS + 1);
+		ballType = umodsi(Random(), NUM_BALLS);
 	SetMonData(mon, REQ_POKEBALL, &ballType);
 
 	CalculateMonStats(mon);

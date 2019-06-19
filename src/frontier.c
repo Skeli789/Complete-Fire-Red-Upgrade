@@ -34,7 +34,7 @@ void CopyFrontierTrainerName(u8* dst, u16 trainerId, u8 battlerNum)
 	const u8* name = GetFrontierTrainerName(trainerId, battlerNum);
 	
 	for (i = 0; name[i] != EOS; ++i)
-        dst[i] = name[i];
+		dst[i] = name[i];
 		
 	dst[i] = EOS;
 }
@@ -70,7 +70,7 @@ const u8* GetFrontierTrainerName(u16 trainerId, u8 battlerNum)
 			name = gTrainers[trainerId].trainerName;
 	}
 
-    return name;
+	return name;
 }
 
 void CopyFrontierTrainerText(u8 whichText, u16 trainerId, u8 battlerNum)
@@ -149,12 +149,53 @@ u16 TryGetSpecialFrontierTrainerMusic(u16 trainerId, u8 battlerNum)
 
 u32 GetAIFlagsInBattleFrontier(unusedArg u8 bank)
 {
-	return AI_SCRIPT_CHECK_BAD_MOVE;
+	return AI_SCRIPT_CHECK_BAD_MOVE | AI_SCRIPT_CHECK_GOOD_MOVE;
 }
 
 u8 GetNumMonsOnTeamInFrontier(void)
 {
 	return MathMin(MathMax(1, VarGet(BATTLE_TOWER_POKE_NUM)), PARTY_SIZE);
+}
+
+bool8 TryUpdateOutcomeForFrontierBattle(void)
+{
+	u32 i;
+	u32 playerHPCount, enemyHPCount;
+	
+	if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
+	{
+	 
+		for (playerHPCount = 0, i = 0; i < PARTY_SIZE; ++i)
+		{
+			if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES, NULL) != SPECIES_NONE
+			&& !GetMonData(&gPlayerParty[i], MON_DATA_IS_EGG, NULL))
+				playerHPCount += GetMonData(&gPlayerParty[i], MON_DATA_HP, NULL);
+		}
+
+		for (enemyHPCount = 0, i = 0; i < PARTY_SIZE; ++i)
+		{
+			if (GetMonData(&gEnemyParty[i], MON_DATA_SPECIES, NULL) != SPECIES_NONE
+			&& !GetMonData(&gEnemyParty[i], MON_DATA_IS_EGG, NULL))
+				enemyHPCount += GetMonData(&gEnemyParty[i], MON_DATA_HP, NULL);
+		}
+
+		if (playerHPCount == 0 && enemyHPCount > 0)
+			gBattleOutcome |= B_OUTCOME_LOST;
+		else if (playerHPCount > 0 && enemyHPCount == 0)
+			gBattleOutcome |= B_OUTCOME_WON;
+		else if (playerHPCount == 0 && enemyHPCount == 0)
+		{
+			if (SIDE(gNewBS->lastFainted) == B_SIDE_PLAYER)
+				gBattleOutcome |= B_OUTCOME_WON;
+			else
+				gBattleOutcome |= B_OUTCOME_LOST;
+		}
+	
+		gBattlescriptCurrInstr += 5;
+		return TRUE;
+	}
+
+	return FALSE;
 }
 
 //@Details: Generates a tower trainer id and name for the requested trainer.

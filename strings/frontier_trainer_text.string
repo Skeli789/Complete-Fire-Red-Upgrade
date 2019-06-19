@@ -710,7 +710,7 @@ I[.] I'm not lying!
 It[.] It's true!
 
 #org @sFrontierText_Tuber_PreBattle_4
-The beach sand is so hot!\nIt makes me go, "Ouch, ouch,\louch!"
+The beach sand is so hot!\pIt makes me go, "Ouch, ouch,\nouch!\"
 
 #org @sFrontierText_Tuber_PlayerWin_4
 Ouch, ouch, ouch!
