@@ -51,8 +51,6 @@ SlideMonToOriginalPosHook:
 
 @0x0804AA1E with r1
 GetProperBallIdHook1:
-	bl BallIdToItemId
-	bl ItemIdToBallId
 	lsl r0, #0x18
 	lsr r0, #0x18
 	mov r5, r0
@@ -61,18 +59,22 @@ GetProperBallIdHook1:
 
 @0x080EF3A8 with r1
 GetProperBallIdHook2:
-	bl BallIdToItemId
-	bl ItemIdToBallId
 	lsl r0, #0x18
 	lsr r0, #0x18
 	ldr r1, =0x80EF3B0 | 1
 	bx r1
 
+@0x080EF964 with r0
+GetProperBallIdHook3:
+	ldr r0, =ITEM_BUFFER
+	ldrh r0, [r0]
+	bl ItemIdToBallId
+	ldr r1, =0x80EF96C | 1
+	bx r1
+
 @Summary Screen Poke Ball Hook
 @0x08139CDA with r1
-GetProperBallIdHook3:
-	bl BallIdToItemId
-	bl ItemIdToBallId
+GetProperBallIdHook4:
 	mov r4, r0
 	lsl r4, #0x18
 	lsr r4, #0x18

@@ -1,5 +1,6 @@
 #include "defines.h"
 #include "defines_battle.h"
+#include "../include/battle_anim.h"
 #include "../include/event_data.h"
 #include "../include/overworld.h"
 #include "../include/random.h"
@@ -21,9 +22,9 @@
 
 #define sBallCatchBonuses ((u8*) 0x8250892)
 
-extern const struct BallIdItemIdRelation BallIdItemIdRelations[];
 extern const struct CompressedSpriteSheet gBallSpriteSheets[];
 extern const struct CompressedSpritePalette gBallSpritePalettes[];
+extern const struct SpriteTemplate gBallSpriteTemplates[];
 
 #ifdef CAPTURE_EXPERIENCE
 	extern u8 BattleScript_SuccessBallThrow[];
@@ -423,23 +424,38 @@ u8 GiveMonToPlayer(struct Pokemon* mon) //Hook in
 
 u8 ItemIdToBallId(u16 ballItem)
 {
-	switch (ballItem) {
-		case ITEM_POKE_BALL:
-			return 0;
-		case ITEM_GREAT_BALL:
-			return 1;
-		case ITEM_SAFARI_BALL:
-			return 2;
-		case ITEM_ULTRA_BALL:
-			return 3;
-		case ITEM_MASTER_BALL:
-			return 4;
-		default:
-			if (ItemId_GetType(ballItem) > 0)
-				return ItemId_GetType(ballItem) - 1;
-			else
-				return 0;
-	}
+	return ItemId_GetType(ballItem);
+}
+
+void CreateThrowPokeBall(u8 taskId)
+{
+    u8 ballId = ItemIdToBallId(gLastUsedItem);
+    LoadBallGfx(ballId);
+    DestroyAnimVisualTask(taskId);
+}
+
+void __attribute__((long_call)) FreeBallGfx(u8 ballId);
+void DestroyThrowPokeBall(u8 taskId)
+{
+    u8 ballId = ItemIdToBallId(gLastUsedItem);
+    FreeBallGfx(ballId);
+    DestroyAnimVisualTask(taskId);
+}
+
+void StartPokeballThrowAnimation(u8 taskId)
+{
+    u8 ballId;
+    u8 spriteId;
+
+    ballId = ItemIdToBallId(gLastUsedItem);
+    spriteId = CreateSprite(&gBallSpriteTemplates[ballId], 32, 80, 29);
+    gSprites[spriteId].data[0] = 34;
+    gSprites[spriteId].data[1] = GetBattlerSpriteCoord(gBattleAnimTarget, 0);
+    gSprites[spriteId].data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, 1) - 16;
+    gSprites[spriteId].callback = (void*) 0x80EF8C1;
+    gBattleSpritesDataPtr->animationData->field_9_x2 = gSprites[gBattlerSpriteIds[gBattleAnimTarget]].invisible;
+    gTasks[taskId].data[0] = spriteId;
+    gTasks[taskId].func = (void*) 0x80EF699;
 }
 
 void LoadBallGfx(u8 ballId)
@@ -450,7 +466,7 @@ void LoadBallGfx(u8 ballId)
         LoadCompressedSpriteSheetUsingHeap(&gBallSpriteSheets[ballId]);
         LoadCompressedSpritePaletteUsingHeap(&gBallSpritePalettes[ballId]);
     }
-    switch (ballId + 1) {
+    switch (ballId) {
 		case BALL_TYPE_MASTER_BALL:
 		case BALL_TYPE_ULTRA_BALL:
 		case BALL_TYPE_GREAT_BALL:
@@ -466,17 +482,6 @@ void LoadBallGfx(u8 ballId)
     }
 }
 
-item_t BallIdToItemId(u8 ballId)
-{
-	for (int i = 0; i < NUM_BALLS; ++i)
-	{
-		if (BallIdItemIdRelations[i].ballId == ballId)
-			return BallIdItemIdRelations[i].itemId;
-	}
-	
-	return ITEM_NONE;
-}
-
 u16 GetBattlerPokeballItemId(u8 bank)
 {
 	u8 ballId;
@@ -486,7 +491,7 @@ u16 GetBattlerPokeballItemId(u8 bank)
 	else
 		ballId = GetMonData(&gEnemyParty[gBattlerPartyIndexes[bank]], MON_DATA_POKEBALL, 0);
 
-	return BallIdToItemId(ballId);
+	return ballId;
 }
 
 bool8 CriticalCapturAnimUpdate(void)
@@ -506,14 +511,14 @@ bool8 DoubleWildPokeBallItemUseFix(u8 taskId)
 			DisplayItemMessage(taskId, 2, gText_CantAimAtTwoTargets, bag_menu_inits_lists_menu);
 			effect = TRUE;
 		}
-		else if ((BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)) && BATTLER_SEMI_INVULERABLE(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)))
-		||       (BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT)) && BATTLER_SEMI_INVULERABLE(GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT))))
+		else if ((BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)) && BATTLER_SEMI_INVULNERABLE(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)))
+		||       (BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT)) && BATTLER_SEMI_INVULNERABLE(GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT))))
 		{
 			DisplayItemMessage(taskId, 2, gText_CantAimAtSemiInvulnerableTarget, bag_menu_inits_lists_menu);
 			effect = TRUE;
 		}
 	}
-	else if (BATTLER_SEMI_INVULERABLE(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)))
+	else if (BATTLER_SEMI_INVULNERABLE(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)))
 	{
 		DisplayItemMessage(taskId, 2, gText_CantAimAtSemiInvulnerableTarget, bag_menu_inits_lists_menu);
 		effect = TRUE;

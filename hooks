@@ -169,7 +169,11 @@ LoadBallGfx 0804BEF4 1
 GetBattlerPokeballItemId 0804BF90 1
 GetProperBallIdHook1 0804AA1E 1
 GetProperBallIdHook2 080EF3A8 1
-GetProperBallIdHook3 08139CDA 1
+GetProperBallIdHook3 080EF964 1
+GetProperBallIdHook4 08139CDA 1
+CreateThrowPokeBall 080EF490 1
+DestroyThrowPokeBall 080EF4B8 1
+StartPokeballThrowAnimation 0x80EF5AC 1
 ItemIdToBallId 080EF52C 1
 DoubleWildAnimBallThrowFixHook 080EF5F4 1
 DoubleWildPokeBallItemUseFixHook 080A1E2C 0

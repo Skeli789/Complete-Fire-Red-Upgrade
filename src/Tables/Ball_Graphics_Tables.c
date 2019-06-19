@@ -155,754 +155,750 @@ enum BallOpenParticleTags
 	TAG_BALL_OPEN_DREAM,
 };
 
-const struct BallIdItemIdRelation BallIdItemIdRelations[] =
-{
-	{ITEM_MASTER_BALL, 		BALL_TYPE_MASTER_BALL},
-	{ITEM_ULTRA_BALL, 		BALL_TYPE_ULTRA_BALL},
-	{ITEM_GREAT_BALL, 		BALL_TYPE_GREAT_BALL},
-	{ITEM_POKE_BALL, 		BALL_TYPE_POKE_BALL},
-	{ITEM_SAFARI_BALL, 		BALL_TYPE_SAFARI_BALL},
-	{ITEM_NET_BALL, 		BALL_TYPE_NET_BALL},
-	{ITEM_DIVE_BALL, 		BALL_TYPE_DIVE_BALL},
-	{ITEM_NEST_BALL, 		BALL_TYPE_NEST_BALL},
-	{ITEM_REPEAT_BALL, 		BALL_TYPE_REPEAT_BALL},
-	{ITEM_TIMER_BALL, 		BALL_TYPE_TIMER_BALL},
-	{ITEM_LUXURY_BALL, 		BALL_TYPE_LUXURY_BALL},
-	{ITEM_PREMIER_BALL, 	BALL_TYPE_PREMIER_BALL},
-	{ITEM_DUSK_BALL, 		BALL_TYPE_DUSK_BALL},
-	{ITEM_HEAL_BALL, 		BALL_TYPE_HEAL_BALL},
-	{ITEM_QUICK_BALL, 		BALL_TYPE_QUICK_BALL},
-	{ITEM_CHERISH_BALL, 	BALL_TYPE_CHERISH_BALL},
-	{ITEM_PARK_BALL, 		BALL_TYPE_PARK_BALL},
-	{ITEM_FAST_BALL, 		BALL_TYPE_FAST_BALL},
-	{ITEM_LEVEL_BALL, 		BALL_TYPE_LEVEL_BALL},
-	{ITEM_LURE_BALL, 		BALL_TYPE_LURE_BALL},
-	{ITEM_HEAVY_BALL, 		BALL_TYPE_HEAVY_BALL},
-	{ITEM_LOVE_BALL, 		BALL_TYPE_LOVE_BALL},
-	{ITEM_FRIEND_BALL, 		BALL_TYPE_FRIEND_BALL},
-	{ITEM_MOON_BALL, 		BALL_TYPE_MOON_BALL},
-	{ITEM_SPORT_BALL, 		BALL_TYPE_SPORT_BALL},
-	{ITEM_BEAST_BALL, 		BALL_TYPE_BEAST_BALL},
-	{ITEM_DREAM_BALL, 		BALL_TYPE_DREAM_BALL},
-};
-
-
 const struct CompressedSpriteSheet gBallSpriteSheets[POKEBALL_COUNT] =
 {
-    {gInterfaceGfx_PokeBall,    		(16 * 48) / 2, GFX_TAG_POKEBALL},
-    {gInterfaceGfx_GreatBall,   		(16 * 48) / 2, GFX_TAG_GREATBALL},
-    {gInterfaceGfx_SafariBall,  		(16 * 48) / 2, GFX_TAG_SAFARIBALL},
-    {gInterfaceGfx_UltraBall,   		(16 * 48) / 2, GFX_TAG_ULTRABALL},
-    {gInterfaceGfx_MasterBall,  		(16 * 48) / 2, GFX_TAG_MASTERBALL},
-    {gInterfaceGfx_NetBall,     		(16 * 48) / 2, GFX_TAG_NETBALL},
-    {gInterfaceGfx_DiveBall,    		(16 * 48) / 2, GFX_TAG_DIVEBALL},
-    {gInterfaceGfx_NestBall,    		(16 * 48) / 2, GFX_TAG_NESTBALL},
-    {gInterfaceGfx_RepeatBall,  		(16 * 48) / 2, GFX_TAG_REPEATBALL},
-    {gInterfaceGfx_TimerBall,   		(16 * 48) / 2, GFX_TAG_TIMERBALL},
-    {gInterfaceGfx_LuxuryBall,  		(16 * 48) / 2, GFX_TAG_LUXURYBALL},
-    {gInterfaceGfx_PremierBall, 		(16 * 48) / 2, GFX_TAG_PREMIERBALL},
-	{gInterfaceGfx_DuskBallTiles, 		(16 * 48) / 2, GFX_TAG_DUSKBALL},
-	{gInterfaceGfx_HealBallTiles, 		(16 * 48) / 2, GFX_TAG_HEALBALL},
-	{gInterfaceGfx_QuickBallTiles, 		(16 * 48) / 2, GFX_TAG_QUICKBALL},
-	{gInterfaceGfx_CherishBallTiles, 	(16 * 48) / 2, GFX_TAG_CHERISHBALL},
-	{gInterfaceGfx_ParkBallTiles, 		(16 * 48) / 2, GFX_TAG_PARKBALL},
-	{gInterfaceGfx_FastBallTiles, 		(16 * 48) / 2, GFX_TAG_FASTBALL},
-	{gInterfaceGfx_LevelBallTiles, 		(16 * 48) / 2, GFX_TAG_LEVELBALL},
-	{gInterfaceGfx_LureBallTiles, 		(16 * 48) / 2, GFX_TAG_LUREBALL},
-	{gInterfaceGfx_HeavyBallTiles, 		(16 * 48) / 2, GFX_TAG_HEAVYBALL},
-	{gInterfaceGfx_LoveBallTiles, 		(16 * 48) / 2, GFX_TAG_LOVEBALL},
-	{gInterfaceGfx_FriendBallTiles, 	(16 * 48) / 2, GFX_TAG_FRIENDBALL},
-	{gInterfaceGfx_MoonBallTiles, 		(16 * 48) / 2, GFX_TAG_MOONBALL},
-	{gInterfaceGfx_SportBallTiles, 		(16 * 48) / 2, GFX_TAG_SPORTBALL},
-	{gInterfaceGfx_BeastBallTiles, 		(16 * 48) / 2, GFX_TAG_BEASTBALL},
-	{gInterfaceGfx_DreamBallTiles, 		(16 * 48) / 2, GFX_TAG_DREAMBALL},
+	[BALL_TYPE_POKE_BALL] = 	{gInterfaceGfx_PokeBall,			(16 * 48) / 2, GFX_TAG_POKEBALL},
+	[BALL_TYPE_GREAT_BALL] = 	{gInterfaceGfx_GreatBall,   		(16 * 48) / 2, GFX_TAG_GREATBALL},
+	[BALL_TYPE_SAFARI_BALL] = 	{gInterfaceGfx_SafariBall,  		(16 * 48) / 2, GFX_TAG_SAFARIBALL},
+	[BALL_TYPE_ULTRA_BALL] = 	{gInterfaceGfx_UltraBall,   		(16 * 48) / 2, GFX_TAG_ULTRABALL},
+	[BALL_TYPE_MASTER_BALL] = 	{gInterfaceGfx_MasterBall,  		(16 * 48) / 2, GFX_TAG_MASTERBALL},
+	[BALL_TYPE_NET_BALL] = 		{gInterfaceGfx_NetBall,	 			(16 * 48) / 2, GFX_TAG_NETBALL},
+	[BALL_TYPE_DIVE_BALL] = 	{gInterfaceGfx_DiveBall,			(16 * 48) / 2, GFX_TAG_DIVEBALL},
+	[BALL_TYPE_NEST_BALL] = 	{gInterfaceGfx_NestBall,			(16 * 48) / 2, GFX_TAG_NESTBALL},
+	[BALL_TYPE_REPEAT_BALL] = 	{gInterfaceGfx_RepeatBall,  		(16 * 48) / 2, GFX_TAG_REPEATBALL},
+	[BALL_TYPE_TIMER_BALL] = 	{gInterfaceGfx_TimerBall,   		(16 * 48) / 2, GFX_TAG_TIMERBALL},
+	[BALL_TYPE_LUXURY_BALL] = 	{gInterfaceGfx_LuxuryBall,  		(16 * 48) / 2, GFX_TAG_LUXURYBALL},
+	[BALL_TYPE_PREMIER_BALL] = 	{gInterfaceGfx_PremierBall, 		(16 * 48) / 2, GFX_TAG_PREMIERBALL},
+	[BALL_TYPE_DUSK_BALL] = 	{gInterfaceGfx_DuskBallTiles, 		(16 * 48) / 2, GFX_TAG_DUSKBALL},
+	[BALL_TYPE_HEAL_BALL] = 	{gInterfaceGfx_HealBallTiles, 		(16 * 48) / 2, GFX_TAG_HEALBALL},
+	[BALL_TYPE_QUICK_BALL] = 	{gInterfaceGfx_QuickBallTiles, 		(16 * 48) / 2, GFX_TAG_QUICKBALL},
+	[BALL_TYPE_CHERISH_BALL] = 	{gInterfaceGfx_CherishBallTiles, 	(16 * 48) / 2, GFX_TAG_CHERISHBALL},
+	[BALL_TYPE_PARK_BALL] = 	{gInterfaceGfx_ParkBallTiles, 		(16 * 48) / 2, GFX_TAG_PARKBALL},
+	[BALL_TYPE_FAST_BALL] = 	{gInterfaceGfx_FastBallTiles, 		(16 * 48) / 2, GFX_TAG_FASTBALL},
+	[BALL_TYPE_LEVEL_BALL] = 	{gInterfaceGfx_LevelBallTiles, 		(16 * 48) / 2, GFX_TAG_LEVELBALL},
+	[BALL_TYPE_LURE_BALL] = 	{gInterfaceGfx_LureBallTiles, 		(16 * 48) / 2, GFX_TAG_LUREBALL},
+	[BALL_TYPE_HEAVY_BALL] = 	{gInterfaceGfx_HeavyBallTiles, 		(16 * 48) / 2, GFX_TAG_HEAVYBALL},
+	[BALL_TYPE_LOVE_BALL] = 	{gInterfaceGfx_LoveBallTiles, 		(16 * 48) / 2, GFX_TAG_LOVEBALL},
+	[BALL_TYPE_FRIEND_BALL] = 	{gInterfaceGfx_FriendBallTiles, 	(16 * 48) / 2, GFX_TAG_FRIENDBALL},
+	[BALL_TYPE_MOON_BALL] = 	{gInterfaceGfx_MoonBallTiles, 		(16 * 48) / 2, GFX_TAG_MOONBALL},
+	[BALL_TYPE_SPORT_BALL] = 	{gInterfaceGfx_SportBallTiles, 		(16 * 48) / 2, GFX_TAG_SPORTBALL},
+	[BALL_TYPE_BEAST_BALL] = 	{gInterfaceGfx_BeastBallTiles, 		(16 * 48) / 2, GFX_TAG_BEASTBALL},
+	[BALL_TYPE_DREAM_BALL] = 	{gInterfaceGfx_DreamBallTiles, 		(16 * 48) / 2, GFX_TAG_DREAMBALL},
 };
 
 const struct CompressedSpritePalette gBallSpritePalettes[POKEBALL_COUNT] =
 {
-    {gInterfacePal_PokeBall,    	GFX_TAG_POKEBALL},
-    {gInterfacePal_GreatBall,   	GFX_TAG_GREATBALL},
-    {gInterfacePal_SafariBall,  	GFX_TAG_SAFARIBALL},
-    {gInterfacePal_UltraBall,   	GFX_TAG_ULTRABALL},
-    {gInterfacePal_MasterBall,  	GFX_TAG_MASTERBALL},
-    {gInterfacePal_NetBall,     	GFX_TAG_NETBALL},
-    {gInterfacePal_DiveBall,    	GFX_TAG_DIVEBALL},
-    {gInterfacePal_NestBall,    	GFX_TAG_NESTBALL},
-    {gInterfacePal_RepeatBall,  	GFX_TAG_REPEATBALL},
-    {gInterfacePal_TimerBall,   	GFX_TAG_TIMERBALL},
-    {gInterfacePal_LuxuryBall,  	GFX_TAG_LUXURYBALL},
-    {gInterfacePal_PremierBall, 	GFX_TAG_PREMIERBALL},
-	{gInterfaceGfx_DuskBallPal, 	GFX_TAG_DUSKBALL},
-	{gInterfaceGfx_HealBallPal, 	GFX_TAG_HEALBALL},
-	{gInterfaceGfx_QuickBallPal, 	GFX_TAG_QUICKBALL},
-	{gInterfaceGfx_CherishBallPal, 	GFX_TAG_CHERISHBALL},
-	{gInterfaceGfx_ParkBallPal, 	GFX_TAG_PARKBALL},
-	{gInterfaceGfx_FastBallPal, 	GFX_TAG_FASTBALL},
-	{gInterfaceGfx_LevelBallPal, 	GFX_TAG_LEVELBALL},
-	{gInterfaceGfx_LureBallPal, 	GFX_TAG_LUREBALL},
-	{gInterfaceGfx_HeavyBallPal, 	GFX_TAG_HEAVYBALL},
-	{gInterfaceGfx_LoveBallPal, 	GFX_TAG_LOVEBALL},
-	{gInterfaceGfx_FriendBallPal, 	GFX_TAG_FRIENDBALL},
-	{gInterfaceGfx_MoonBallPal, 	GFX_TAG_MOONBALL},
-	{gInterfaceGfx_SportBallPal, 	GFX_TAG_SPORTBALL},
-	{gInterfaceGfx_BeastBallPal, 	GFX_TAG_BEASTBALL},
-	{gInterfaceGfx_DreamBallPal, 	GFX_TAG_DREAMBALL},
+	[BALL_TYPE_POKE_BALL] = 	{gInterfacePal_PokeBall,		GFX_TAG_POKEBALL},
+	[BALL_TYPE_GREAT_BALL] = 	{gInterfacePal_GreatBall,   	GFX_TAG_GREATBALL},
+	[BALL_TYPE_SAFARI_BALL] = 	{gInterfacePal_SafariBall,  	GFX_TAG_SAFARIBALL},
+	[BALL_TYPE_ULTRA_BALL] = 	{gInterfacePal_UltraBall,   	GFX_TAG_ULTRABALL},
+	[BALL_TYPE_MASTER_BALL] = 	{gInterfacePal_MasterBall,  	GFX_TAG_MASTERBALL},
+	[BALL_TYPE_NET_BALL] = 		{gInterfacePal_NetBall,	 		GFX_TAG_NETBALL},
+	[BALL_TYPE_DIVE_BALL] = 	{gInterfacePal_DiveBall,		GFX_TAG_DIVEBALL},
+	[BALL_TYPE_NEST_BALL] = 	{gInterfacePal_NestBall,		GFX_TAG_NESTBALL},
+	[BALL_TYPE_REPEAT_BALL] = 	{gInterfacePal_RepeatBall,  	GFX_TAG_REPEATBALL},
+	[BALL_TYPE_TIMER_BALL] = 	{gInterfacePal_TimerBall,   	GFX_TAG_TIMERBALL},
+	[BALL_TYPE_LUXURY_BALL] = 	{gInterfacePal_LuxuryBall,  	GFX_TAG_LUXURYBALL},
+	[BALL_TYPE_PREMIER_BALL] = 	{gInterfacePal_PremierBall, 	GFX_TAG_PREMIERBALL},
+	[BALL_TYPE_DUSK_BALL] = 	{gInterfaceGfx_DuskBallPal, 	GFX_TAG_DUSKBALL},
+	[BALL_TYPE_HEAL_BALL] = 	{gInterfaceGfx_HealBallPal, 	GFX_TAG_HEALBALL},
+	[BALL_TYPE_QUICK_BALL] = 	{gInterfaceGfx_QuickBallPal, 	GFX_TAG_QUICKBALL},
+	[BALL_TYPE_CHERISH_BALL] = 	{gInterfaceGfx_CherishBallPal, 	GFX_TAG_CHERISHBALL},
+	[BALL_TYPE_PARK_BALL] = 	{gInterfaceGfx_ParkBallPal, 	GFX_TAG_PARKBALL},
+	[BALL_TYPE_FAST_BALL] = 	{gInterfaceGfx_FastBallPal, 	GFX_TAG_FASTBALL},
+	[BALL_TYPE_LEVEL_BALL] = 	{gInterfaceGfx_LevelBallPal, 	GFX_TAG_LEVELBALL},
+	[BALL_TYPE_LURE_BALL] = 	{gInterfaceGfx_LureBallPal, 	GFX_TAG_LUREBALL},
+	[BALL_TYPE_HEAVY_BALL] = 	{gInterfaceGfx_HeavyBallPal, 	GFX_TAG_HEAVYBALL},
+	[BALL_TYPE_LOVE_BALL] = 	{gInterfaceGfx_LoveBallPal, 	GFX_TAG_LOVEBALL},
+	[BALL_TYPE_FRIEND_BALL] = 	{gInterfaceGfx_FriendBallPal, 	GFX_TAG_FRIENDBALL},
+	[BALL_TYPE_MOON_BALL] = 	{gInterfaceGfx_MoonBallPal, 	GFX_TAG_MOONBALL},
+	[BALL_TYPE_SPORT_BALL] = 	{gInterfaceGfx_SportBallPal, 	GFX_TAG_SPORTBALL},
+	[BALL_TYPE_BEAST_BALL] = 	{gInterfaceGfx_BeastBallPal, 	GFX_TAG_BEASTBALL},
+	[BALL_TYPE_DREAM_BALL] = 	{gInterfaceGfx_DreamBallPal, 	GFX_TAG_DREAMBALL},
 };
 
 const struct SpriteTemplate gBallSpriteTemplates[POKEBALL_COUNT] =
 {
-    {
-        .tileTag = GFX_TAG_POKEBALL,
-        .paletteTag = GFX_TAG_POKEBALL,
-        .oam = sBallOamData,
-        .anims = sBallAnimSequences,
-        .images = NULL,
-        .affineAnims = sBallAffineAnimSequences,
-        .callback = SpriteCB_TestBallThrow,
-    },
-    {
-        .tileTag = GFX_TAG_GREATBALL,
-        .paletteTag = GFX_TAG_GREATBALL,
-        .oam = sBallOamData,
-        .anims = sBallAnimSequences,
-        .images = NULL,
-        .affineAnims = sBallAffineAnimSequences,
-        .callback = SpriteCB_TestBallThrow,
-    },
-    {
-        .tileTag = GFX_TAG_SAFARIBALL,
-        .paletteTag = GFX_TAG_SAFARIBALL,
-        .oam = sBallOamData,
-        .anims = sBallAnimSequences,
-        .images = NULL,
-        .affineAnims = sBallAffineAnimSequences,
-        .callback = SpriteCB_TestBallThrow,
-    },
-    {
-        .tileTag = GFX_TAG_ULTRABALL,
-        .paletteTag = GFX_TAG_ULTRABALL,
-        .oam = sBallOamData,
-        .anims = sBallAnimSequences,
-        .images = NULL,
-        .affineAnims = sBallAffineAnimSequences,
-        .callback = SpriteCB_TestBallThrow,
-    },
-    {
-        .tileTag = GFX_TAG_MASTERBALL,
-        .paletteTag = GFX_TAG_MASTERBALL,
-        .oam = sBallOamData,
-        .anims = sBallAnimSequences,
-        .images = NULL,
-        .affineAnims = sBallAffineAnimSequences,
-        .callback = SpriteCB_TestBallThrow,
-    },
-    {
-        .tileTag = GFX_TAG_NETBALL,
-        .paletteTag = GFX_TAG_NETBALL,
-        .oam = sBallOamData,
-        .anims = sBallAnimSequences,
-        .images = NULL,
-        .affineAnims = sBallAffineAnimSequences,
-        .callback = SpriteCB_TestBallThrow,
-    },
-    {
-        .tileTag = GFX_TAG_DIVEBALL,
-        .paletteTag = GFX_TAG_DIVEBALL,
-        .oam = sBallOamData,
-        .anims = sBallAnimSequences,
-        .images = NULL,
-        .affineAnims = sBallAffineAnimSequences,
-        .callback = SpriteCB_TestBallThrow,
-    },
-    {
-        .tileTag = GFX_TAG_NESTBALL,
-        .paletteTag = GFX_TAG_NESTBALL,
-        .oam = sBallOamData,
-        .anims = sBallAnimSequences,
-        .images = NULL,
-        .affineAnims = sBallAffineAnimSequences,
-        .callback = SpriteCB_TestBallThrow,
-    },
-    {
-        .tileTag = GFX_TAG_REPEATBALL,
-        .paletteTag = GFX_TAG_REPEATBALL,
-        .oam = sBallOamData,
-        .anims = sBallAnimSequences,
-        .images = NULL,
-        .affineAnims = sBallAffineAnimSequences,
-        .callback = SpriteCB_TestBallThrow,
-    },
-    {
-        .tileTag = GFX_TAG_TIMERBALL,
-        .paletteTag = GFX_TAG_TIMERBALL,
-        .oam = sBallOamData,
-        .anims = sBallAnimSequences,
-        .images = NULL,
-        .affineAnims = sBallAffineAnimSequences,
-        .callback = SpriteCB_TestBallThrow,
-    },
-    {
-        .tileTag = GFX_TAG_LUXURYBALL,
-        .paletteTag = GFX_TAG_LUXURYBALL,
-        .oam = sBallOamData,
-        .anims = sBallAnimSequences,
-        .images = NULL,
-        .affineAnims = sBallAffineAnimSequences,
-        .callback = SpriteCB_TestBallThrow,
-    },
-    {
-        .tileTag = GFX_TAG_PREMIERBALL,
-        .paletteTag = GFX_TAG_PREMIERBALL,
-        .oam = sBallOamData,
-        .anims = sBallAnimSequences,
-        .images = NULL,
-        .affineAnims = sBallAffineAnimSequences,
-        .callback = SpriteCB_TestBallThrow,
-    },
-    {
-        .tileTag = GFX_TAG_DUSKBALL,
-        .paletteTag = GFX_TAG_DUSKBALL,
-        .oam = sBallOamData,
-        .anims = sBallAnimSequences,
-        .images = NULL,
-        .affineAnims = sBallAffineAnimSequences,
-        .callback = SpriteCB_TestBallThrow,
-    },
+	[BALL_TYPE_POKE_BALL] =
 	{
-        .tileTag = GFX_TAG_HEALBALL,
-        .paletteTag = GFX_TAG_HEALBALL,
-        .oam = sBallOamData,
-        .anims = sBallAnimSequences,
-        .images = NULL,
-        .affineAnims = sBallAffineAnimSequences,
-        .callback = SpriteCB_TestBallThrow,
-    },
+		.tileTag = GFX_TAG_POKEBALL,
+		.paletteTag = GFX_TAG_POKEBALL,
+		.oam = sBallOamData,
+		.anims = sBallAnimSequences,
+		.images = NULL,
+		.affineAnims = sBallAffineAnimSequences,
+		.callback = SpriteCB_TestBallThrow,
+	},
+	[BALL_TYPE_GREAT_BALL] =
 	{
-        .tileTag = GFX_TAG_QUICKBALL,
-        .paletteTag = GFX_TAG_QUICKBALL,
-        .oam = sBallOamData,
-        .anims = sBallAnimSequences,
-        .images = NULL,
-        .affineAnims = sBallAffineAnimSequences,
-        .callback = SpriteCB_TestBallThrow,
-    },
+		.tileTag = GFX_TAG_GREATBALL,
+		.paletteTag = GFX_TAG_GREATBALL,
+		.oam = sBallOamData,
+		.anims = sBallAnimSequences,
+		.images = NULL,
+		.affineAnims = sBallAffineAnimSequences,
+		.callback = SpriteCB_TestBallThrow,
+	},
+	[BALL_TYPE_SAFARI_BALL] =
 	{
-        .tileTag = GFX_TAG_CHERISHBALL,
-        .paletteTag = GFX_TAG_CHERISHBALL,
-        .oam = sBallOamData,
-        .anims = sBallAnimSequences,
-        .images = NULL,
-        .affineAnims = sBallAffineAnimSequences,
-        .callback = SpriteCB_TestBallThrow,
-    },
+		.tileTag = GFX_TAG_SAFARIBALL,
+		.paletteTag = GFX_TAG_SAFARIBALL,
+		.oam = sBallOamData,
+		.anims = sBallAnimSequences,
+		.images = NULL,
+		.affineAnims = sBallAffineAnimSequences,
+		.callback = SpriteCB_TestBallThrow,
+	},
+	[BALL_TYPE_ULTRA_BALL] =
 	{
-        .tileTag = GFX_TAG_PARKBALL,
-        .paletteTag = GFX_TAG_PARKBALL,
-        .oam = sBallOamData,
-        .anims = sBallAnimSequences,
-        .images = NULL,
-        .affineAnims = sBallAffineAnimSequences,
-        .callback = SpriteCB_TestBallThrow,
-    },
+		.tileTag = GFX_TAG_ULTRABALL,
+		.paletteTag = GFX_TAG_ULTRABALL,
+		.oam = sBallOamData,
+		.anims = sBallAnimSequences,
+		.images = NULL,
+		.affineAnims = sBallAffineAnimSequences,
+		.callback = SpriteCB_TestBallThrow,
+	},
+	[BALL_TYPE_MASTER_BALL] =
 	{
-        .tileTag = GFX_TAG_FASTBALL,
-        .paletteTag = GFX_TAG_FASTBALL,
-        .oam = sBallOamData,
-        .anims = sBallAnimSequences,
-        .images = NULL,
-        .affineAnims = sBallAffineAnimSequences,
-        .callback = SpriteCB_TestBallThrow,
-    },
+		.tileTag = GFX_TAG_MASTERBALL,
+		.paletteTag = GFX_TAG_MASTERBALL,
+		.oam = sBallOamData,
+		.anims = sBallAnimSequences,
+		.images = NULL,
+		.affineAnims = sBallAffineAnimSequences,
+		.callback = SpriteCB_TestBallThrow,
+	},
+	[BALL_TYPE_NET_BALL] =
 	{
-        .tileTag = GFX_TAG_LEVELBALL,
-        .paletteTag = GFX_TAG_LEVELBALL,
-        .oam = sBallOamData,
-        .anims = sBallAnimSequences,
-        .images = NULL,
-        .affineAnims = sBallAffineAnimSequences,
-        .callback = SpriteCB_TestBallThrow,
-    },
+		.tileTag = GFX_TAG_NETBALL,
+		.paletteTag = GFX_TAG_NETBALL,
+		.oam = sBallOamData,
+		.anims = sBallAnimSequences,
+		.images = NULL,
+		.affineAnims = sBallAffineAnimSequences,
+		.callback = SpriteCB_TestBallThrow,
+	},
+	[BALL_TYPE_DIVE_BALL] =
 	{
-        .tileTag = GFX_TAG_LUREBALL,
-        .paletteTag = GFX_TAG_LUREBALL,
-        .oam = sBallOamData,
-        .anims = sBallAnimSequences,
-        .images = NULL,
-        .affineAnims = sBallAffineAnimSequences,
-        .callback = SpriteCB_TestBallThrow,
-    },
+		.tileTag = GFX_TAG_DIVEBALL,
+		.paletteTag = GFX_TAG_DIVEBALL,
+		.oam = sBallOamData,
+		.anims = sBallAnimSequences,
+		.images = NULL,
+		.affineAnims = sBallAffineAnimSequences,
+		.callback = SpriteCB_TestBallThrow,
+	},
+	[BALL_TYPE_NEST_BALL] =
 	{
-        .tileTag = GFX_TAG_HEAVYBALL,
-        .paletteTag = GFX_TAG_HEAVYBALL,
-        .oam = sBallOamData,
-        .anims = sBallAnimSequences,
-        .images = NULL,
-        .affineAnims = sBallAffineAnimSequences,
-        .callback = SpriteCB_TestBallThrow,
-    },
+		.tileTag = GFX_TAG_NESTBALL,
+		.paletteTag = GFX_TAG_NESTBALL,
+		.oam = sBallOamData,
+		.anims = sBallAnimSequences,
+		.images = NULL,
+		.affineAnims = sBallAffineAnimSequences,
+		.callback = SpriteCB_TestBallThrow,
+	},
+	[BALL_TYPE_REPEAT_BALL] =
 	{
-        .tileTag = GFX_TAG_LOVEBALL,
-        .paletteTag = GFX_TAG_LOVEBALL,
-        .oam = sBallOamData,
-        .anims = sBallAnimSequences,
-        .images = NULL,
-        .affineAnims = sBallAffineAnimSequences,
-        .callback = SpriteCB_TestBallThrow,
-    },
+		.tileTag = GFX_TAG_REPEATBALL,
+		.paletteTag = GFX_TAG_REPEATBALL,
+		.oam = sBallOamData,
+		.anims = sBallAnimSequences,
+		.images = NULL,
+		.affineAnims = sBallAffineAnimSequences,
+		.callback = SpriteCB_TestBallThrow,
+	},
+	[BALL_TYPE_TIMER_BALL] =
 	{
-        .tileTag = GFX_TAG_FRIENDBALL,
-        .paletteTag = GFX_TAG_FRIENDBALL,
-        .oam = sBallOamData,
-        .anims = sBallAnimSequences,
-        .images = NULL,
-        .affineAnims = sBallAffineAnimSequences,
-        .callback = SpriteCB_TestBallThrow,
-    },
+		.tileTag = GFX_TAG_TIMERBALL,
+		.paletteTag = GFX_TAG_TIMERBALL,
+		.oam = sBallOamData,
+		.anims = sBallAnimSequences,
+		.images = NULL,
+		.affineAnims = sBallAffineAnimSequences,
+		.callback = SpriteCB_TestBallThrow,
+	},
+	[BALL_TYPE_LUXURY_BALL] =
 	{
-        .tileTag = GFX_TAG_MOONBALL,
-        .paletteTag = GFX_TAG_MOONBALL,
-        .oam = sBallOamData,
-        .anims = sBallAnimSequences,
-        .images = NULL,
-        .affineAnims = sBallAffineAnimSequences,
-        .callback = SpriteCB_TestBallThrow,
-    },
+		.tileTag = GFX_TAG_LUXURYBALL,
+		.paletteTag = GFX_TAG_LUXURYBALL,
+		.oam = sBallOamData,
+		.anims = sBallAnimSequences,
+		.images = NULL,
+		.affineAnims = sBallAffineAnimSequences,
+		.callback = SpriteCB_TestBallThrow,
+	},
+	[BALL_TYPE_PREMIER_BALL] =
 	{
-        .tileTag = GFX_TAG_SPORTBALL,
-        .paletteTag = GFX_TAG_SPORTBALL,
-        .oam = sBallOamData,
-        .anims = sBallAnimSequences,
-        .images = NULL,
-        .affineAnims = sBallAffineAnimSequences,
-        .callback = SpriteCB_TestBallThrow,
-    },
+		.tileTag = GFX_TAG_PREMIERBALL,
+		.paletteTag = GFX_TAG_PREMIERBALL,
+		.oam = sBallOamData,
+		.anims = sBallAnimSequences,
+		.images = NULL,
+		.affineAnims = sBallAffineAnimSequences,
+		.callback = SpriteCB_TestBallThrow,
+	},
+	[BALL_TYPE_DUSK_BALL] =
 	{
-        .tileTag = GFX_TAG_BEASTBALL,
-        .paletteTag = GFX_TAG_BEASTBALL,
-        .oam = sBallOamData,
-        .anims = sBallAnimSequences,
-        .images = NULL,
-        .affineAnims = sBallAffineAnimSequences,
-        .callback = SpriteCB_TestBallThrow,
-    },
+		.tileTag = GFX_TAG_DUSKBALL,
+		.paletteTag = GFX_TAG_DUSKBALL,
+		.oam = sBallOamData,
+		.anims = sBallAnimSequences,
+		.images = NULL,
+		.affineAnims = sBallAffineAnimSequences,
+		.callback = SpriteCB_TestBallThrow,
+	},
+	[BALL_TYPE_HEAL_BALL] =
 	{
-        .tileTag = GFX_TAG_DREAMBALL,
-        .paletteTag = GFX_TAG_DREAMBALL,
-        .oam = sBallOamData,
-        .anims = sBallAnimSequences,
-        .images = NULL,
-        .affineAnims = sBallAffineAnimSequences,
-        .callback = SpriteCB_TestBallThrow,
-    },
+		.tileTag = GFX_TAG_HEALBALL,
+		.paletteTag = GFX_TAG_HEALBALL,
+		.oam = sBallOamData,
+		.anims = sBallAnimSequences,
+		.images = NULL,
+		.affineAnims = sBallAffineAnimSequences,
+		.callback = SpriteCB_TestBallThrow,
+	},
+	[BALL_TYPE_QUICK_BALL] =
+	{
+		.tileTag = GFX_TAG_QUICKBALL,
+		.paletteTag = GFX_TAG_QUICKBALL,
+		.oam = sBallOamData,
+		.anims = sBallAnimSequences,
+		.images = NULL,
+		.affineAnims = sBallAffineAnimSequences,
+		.callback = SpriteCB_TestBallThrow,
+	},
+	[BALL_TYPE_CHERISH_BALL] =
+	{
+		.tileTag = GFX_TAG_CHERISHBALL,
+		.paletteTag = GFX_TAG_CHERISHBALL,
+		.oam = sBallOamData,
+		.anims = sBallAnimSequences,
+		.images = NULL,
+		.affineAnims = sBallAffineAnimSequences,
+		.callback = SpriteCB_TestBallThrow,
+	},
+	[BALL_TYPE_PARK_BALL] =
+	{
+		.tileTag = GFX_TAG_PARKBALL,
+		.paletteTag = GFX_TAG_PARKBALL,
+		.oam = sBallOamData,
+		.anims = sBallAnimSequences,
+		.images = NULL,
+		.affineAnims = sBallAffineAnimSequences,
+		.callback = SpriteCB_TestBallThrow,
+	},
+	[BALL_TYPE_FAST_BALL] =
+	{
+		.tileTag = GFX_TAG_FASTBALL,
+		.paletteTag = GFX_TAG_FASTBALL,
+		.oam = sBallOamData,
+		.anims = sBallAnimSequences,
+		.images = NULL,
+		.affineAnims = sBallAffineAnimSequences,
+		.callback = SpriteCB_TestBallThrow,
+	},
+	[BALL_TYPE_LEVEL_BALL] =
+	{
+		.tileTag = GFX_TAG_LEVELBALL,
+		.paletteTag = GFX_TAG_LEVELBALL,
+		.oam = sBallOamData,
+		.anims = sBallAnimSequences,
+		.images = NULL,
+		.affineAnims = sBallAffineAnimSequences,
+		.callback = SpriteCB_TestBallThrow,
+	},
+	[BALL_TYPE_LURE_BALL] =
+	{
+		.tileTag = GFX_TAG_LUREBALL,
+		.paletteTag = GFX_TAG_LUREBALL,
+		.oam = sBallOamData,
+		.anims = sBallAnimSequences,
+		.images = NULL,
+		.affineAnims = sBallAffineAnimSequences,
+		.callback = SpriteCB_TestBallThrow,
+	},
+	[BALL_TYPE_HEAVY_BALL] =
+	{
+		.tileTag = GFX_TAG_HEAVYBALL,
+		.paletteTag = GFX_TAG_HEAVYBALL,
+		.oam = sBallOamData,
+		.anims = sBallAnimSequences,
+		.images = NULL,
+		.affineAnims = sBallAffineAnimSequences,
+		.callback = SpriteCB_TestBallThrow,
+	},
+	[BALL_TYPE_LOVE_BALL] =
+	{
+		.tileTag = GFX_TAG_LOVEBALL,
+		.paletteTag = GFX_TAG_LOVEBALL,
+		.oam = sBallOamData,
+		.anims = sBallAnimSequences,
+		.images = NULL,
+		.affineAnims = sBallAffineAnimSequences,
+		.callback = SpriteCB_TestBallThrow,
+	},
+	[BALL_TYPE_FRIEND_BALL] =
+	{
+		.tileTag = GFX_TAG_FRIENDBALL,
+		.paletteTag = GFX_TAG_FRIENDBALL,
+		.oam = sBallOamData,
+		.anims = sBallAnimSequences,
+		.images = NULL,
+		.affineAnims = sBallAffineAnimSequences,
+		.callback = SpriteCB_TestBallThrow,
+	},
+	[BALL_TYPE_MOON_BALL] =
+	{
+		.tileTag = GFX_TAG_MOONBALL,
+		.paletteTag = GFX_TAG_MOONBALL,
+		.oam = sBallOamData,
+		.anims = sBallAnimSequences,
+		.images = NULL,
+		.affineAnims = sBallAffineAnimSequences,
+		.callback = SpriteCB_TestBallThrow,
+	},
+	[BALL_TYPE_SPORT_BALL] =
+	{
+		.tileTag = GFX_TAG_SPORTBALL,
+		.paletteTag = GFX_TAG_SPORTBALL,
+		.oam = sBallOamData,
+		.anims = sBallAnimSequences,
+		.images = NULL,
+		.affineAnims = sBallAffineAnimSequences,
+		.callback = SpriteCB_TestBallThrow,
+	},
+	[BALL_TYPE_BEAST_BALL] =
+	{
+		.tileTag = GFX_TAG_BEASTBALL,
+		.paletteTag = GFX_TAG_BEASTBALL,
+		.oam = sBallOamData,
+		.anims = sBallAnimSequences,
+		.images = NULL,
+		.affineAnims = sBallAffineAnimSequences,
+		.callback = SpriteCB_TestBallThrow,
+	},
+	[BALL_TYPE_DREAM_BALL] =
+	{
+		.tileTag = GFX_TAG_DREAMBALL,
+		.paletteTag = GFX_TAG_DREAMBALL,
+		.oam = sBallOamData,
+		.anims = sBallAnimSequences,
+		.images = NULL,
+		.affineAnims = sBallAffineAnimSequences,
+		.callback = SpriteCB_TestBallThrow,
+	},
 };
 
 const struct CompressedSpriteSheet gBallOpenParticleSpritesheets[] =
 {
-    {gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, 55020},
-    {gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, 55021},
-    {gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, 55022},
-    {gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, 55023},
-    {gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, 55024},
-    {gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, 55025},
-    {gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, 55026},
-    {gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, 55027},
-    {gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, 55028},
-    {gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, 55029},
-    {gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, 55030},
-    {gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, 55031},
-    {gBattleAnimSpriteSheet_ParticlesDuskBallTiles, 			(8 * 64) / 2, TAG_BALL_OPEN_DUSK},
-	{gBattleAnimSpriteSheet_ParticlesHealBallTiles, 			(8 * 64) / 2, TAG_BALL_OPEN_HEAL},
-	{gBattleAnimSpriteSheet_ParticlesQuickCherishBallTiles, 	(8 * 64) / 2, TAG_BALL_OPEN_QUICK},
-	{gBattleAnimSpriteSheet_ParticlesQuickCherishBallTiles, 	(8 * 64) / 2, TAG_BALL_OPEN_CHERISH},
-	{gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, TAG_BALL_OPEN_PARK},
-	{gBattleAnimSpriteSheet_ParticlesQuickCherishBallTiles, 	(8 * 64) / 2, TAG_BALL_OPEN_FAST},
-	{gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, TAG_BALL_OPEN_LEVEL},
-	{gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, TAG_BALL_OPEN_LURE},
-	{gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, TAG_BALL_OPEN_HEAVY},
-	{gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, TAG_BALL_OPEN_LOVE},
-	{gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, TAG_BALL_OPEN_FRIEND},
-	{gBattleAnimSpriteSheet_ParticlesHealBallTiles, 			(8 * 64) / 2, TAG_BALL_OPEN_MOON},
-	{gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, TAG_BALL_OPEN_SPORT},
-	{gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, TAG_BALL_OPEN_BEAST},
-	{gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, TAG_BALL_OPEN_DREAM},
+	[BALL_TYPE_POKE_BALL] =		{gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, 55020},
+	[BALL_TYPE_GREAT_BALL] =	{gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, 55021},
+	[BALL_TYPE_SAFARI_BALL] =	{gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, 55022},
+	[BALL_TYPE_ULTRA_BALL] =	{gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, 55023},
+	[BALL_TYPE_MASTER_BALL] =	{gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, 55024},
+	[BALL_TYPE_NET_BALL] =		{gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, 55025},
+	[BALL_TYPE_DIVE_BALL] =		{gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, 55026},
+	[BALL_TYPE_NEST_BALL] =		{gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, 55027},
+	[BALL_TYPE_REPEAT_BALL] =	{gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, 55028},
+	[BALL_TYPE_TIMER_BALL] =	{gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, 55029},
+	[BALL_TYPE_LUXURY_BALL] =	{gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, 55030},
+	[BALL_TYPE_PREMIER_BALL] =	{gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, 55031},
+	[BALL_TYPE_DUSK_BALL] =		{gBattleAnimSpriteSheet_ParticlesDuskBallTiles, 			(8 * 64) / 2, TAG_BALL_OPEN_DUSK},
+	[BALL_TYPE_HEAL_BALL] =		{gBattleAnimSpriteSheet_ParticlesHealBallTiles, 			(8 * 64) / 2, TAG_BALL_OPEN_HEAL},
+	[BALL_TYPE_QUICK_BALL] =	{gBattleAnimSpriteSheet_ParticlesQuickCherishBallTiles, 	(8 * 64) / 2, TAG_BALL_OPEN_QUICK},
+	[BALL_TYPE_CHERISH_BALL] =	{gBattleAnimSpriteSheet_ParticlesQuickCherishBallTiles, 	(8 * 64) / 2, TAG_BALL_OPEN_CHERISH},
+	[BALL_TYPE_PARK_BALL] =		{gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, TAG_BALL_OPEN_PARK},
+	[BALL_TYPE_FAST_BALL] =		{gBattleAnimSpriteSheet_ParticlesQuickCherishBallTiles, 	(8 * 64) / 2, TAG_BALL_OPEN_FAST},
+	[BALL_TYPE_LEVEL_BALL] =	{gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, TAG_BALL_OPEN_LEVEL},
+	[BALL_TYPE_LURE_BALL] =		{gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, TAG_BALL_OPEN_LURE},
+	[BALL_TYPE_HEAVY_BALL] =	{gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, TAG_BALL_OPEN_HEAVY},
+	[BALL_TYPE_LOVE_BALL] =		{gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, TAG_BALL_OPEN_LOVE},
+	[BALL_TYPE_FRIEND_BALL] =	{gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, TAG_BALL_OPEN_FRIEND},
+	[BALL_TYPE_MOON_BALL] =		{gBattleAnimSpriteSheet_ParticlesHealBallTiles, 			(8 * 64) / 2, TAG_BALL_OPEN_MOON},
+	[BALL_TYPE_SPORT_BALL] =	{gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, TAG_BALL_OPEN_SPORT},
+	[BALL_TYPE_BEAST_BALL] =	{gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, TAG_BALL_OPEN_BEAST},
+	[BALL_TYPE_DREAM_BALL] =	{gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, TAG_BALL_OPEN_DREAM},
 };
 
 const struct CompressedSpritePalette gBallOpenParticlePalettes[] =
 {
-    {gBattleAnimSpritePalette_136, 							55020},
-    {gBattleAnimSpritePalette_136, 							55021},
-    {gBattleAnimSpritePalette_136, 							55022},
-    {gBattleAnimSpritePalette_136, 							55023},
-    {gBattleAnimSpritePalette_136, 							55024},
-    {gBattleAnimSpritePalette_136, 							55025},
-    {gBattleAnimSpritePalette_136, 							55026},
-    {gBattleAnimSpritePalette_136, 							55027},
-    {gBattleAnimSpritePalette_136, 							55028},
-    {gBattleAnimSpritePalette_136, 							55029},
-    {gBattleAnimSpritePalette_136, 							55030},
-    {gBattleAnimSpritePalette_136, 							55031},
-    {gBattleAnimSpriteSheet_ParticlesDuskBallPal, 			TAG_BALL_OPEN_DUSK},
-	{gBattleAnimSpriteSheet_ParticlesHealBallPal, 			TAG_BALL_OPEN_HEAL},
-	{gBattleAnimSpriteSheet_ParticlesQuickCherishBallPal, 	TAG_BALL_OPEN_QUICK},
-	{gBattleAnimSpriteSheet_ParticlesQuickCherishBallPal, 	TAG_BALL_OPEN_CHERISH},
-	{gBattleAnimSpritePalette_136, 							TAG_BALL_OPEN_PARK},
-	{gBattleAnimSpriteSheet_ParticlesQuickCherishBallPal, 	TAG_BALL_OPEN_FAST},
-	{gBattleAnimSpritePalette_136, 							TAG_BALL_OPEN_LEVEL},
-	{gBattleAnimSpritePalette_136, 							TAG_BALL_OPEN_LURE},
-	{gBattleAnimSpritePalette_136, 							TAG_BALL_OPEN_HEAVY},
-	{gBattleAnimSpritePalette_136, 							TAG_BALL_OPEN_LOVE},
-	{gBattleAnimSpritePalette_136, 							TAG_BALL_OPEN_FRIEND},
-	{gBattleAnimSpriteSheet_ParticlesHealBallPal, 			TAG_BALL_OPEN_MOON},
-	{gBattleAnimSpritePalette_136, 							TAG_BALL_OPEN_SPORT},
-	{gBattleAnimSpritePalette_136, 							TAG_BALL_OPEN_BEAST},
-	{gBattleAnimSpritePalette_136, 							TAG_BALL_OPEN_DREAM},
+	[BALL_TYPE_POKE_BALL] = 	{gBattleAnimSpritePalette_136, 							55020},
+	[BALL_TYPE_GREAT_BALL] = 	{gBattleAnimSpritePalette_136, 							55021},
+	[BALL_TYPE_SAFARI_BALL] = 	{gBattleAnimSpritePalette_136, 							55022},
+	[BALL_TYPE_ULTRA_BALL] = 	{gBattleAnimSpritePalette_136, 							55023},
+	[BALL_TYPE_MASTER_BALL] = 	{gBattleAnimSpritePalette_136, 							55024},
+	[BALL_TYPE_NET_BALL] = 		{gBattleAnimSpritePalette_136, 							55025},
+	[BALL_TYPE_DIVE_BALL] = 	{gBattleAnimSpritePalette_136, 							55026},
+	[BALL_TYPE_NEST_BALL] = 	{gBattleAnimSpritePalette_136, 							55027},
+	[BALL_TYPE_REPEAT_BALL] = 	{gBattleAnimSpritePalette_136, 							55028},
+	[BALL_TYPE_TIMER_BALL] = 	{gBattleAnimSpritePalette_136, 							55029},
+	[BALL_TYPE_LUXURY_BALL] = 	{gBattleAnimSpritePalette_136, 							55030},
+	[BALL_TYPE_PREMIER_BALL] = 	{gBattleAnimSpritePalette_136, 							55031},
+	[BALL_TYPE_DUSK_BALL] = 	{gBattleAnimSpriteSheet_ParticlesDuskBallPal, 			TAG_BALL_OPEN_DUSK},
+	[BALL_TYPE_HEAL_BALL] = 	{gBattleAnimSpriteSheet_ParticlesHealBallPal, 			TAG_BALL_OPEN_HEAL},
+	[BALL_TYPE_QUICK_BALL] = 	{gBattleAnimSpriteSheet_ParticlesQuickCherishBallPal, 	TAG_BALL_OPEN_QUICK},
+	[BALL_TYPE_CHERISH_BALL] = 	{gBattleAnimSpriteSheet_ParticlesQuickCherishBallPal, 	TAG_BALL_OPEN_CHERISH},
+	[BALL_TYPE_PARK_BALL] = 	{gBattleAnimSpritePalette_136, 							TAG_BALL_OPEN_PARK},
+	[BALL_TYPE_FAST_BALL] = 	{gBattleAnimSpriteSheet_ParticlesQuickCherishBallPal, 	TAG_BALL_OPEN_FAST},
+	[BALL_TYPE_LEVEL_BALL] = 	{gBattleAnimSpritePalette_136, 							TAG_BALL_OPEN_LEVEL},
+	[BALL_TYPE_LURE_BALL] = 	{gBattleAnimSpritePalette_136, 							TAG_BALL_OPEN_LURE},
+	[BALL_TYPE_HEAVY_BALL] = 	{gBattleAnimSpritePalette_136, 							TAG_BALL_OPEN_HEAVY},
+	[BALL_TYPE_LOVE_BALL] = 	{gBattleAnimSpritePalette_136, 							TAG_BALL_OPEN_LOVE},
+	[BALL_TYPE_FRIEND_BALL] = 	{gBattleAnimSpritePalette_136, 							TAG_BALL_OPEN_FRIEND},
+	[BALL_TYPE_MOON_BALL] = 	{gBattleAnimSpriteSheet_ParticlesHealBallPal, 			TAG_BALL_OPEN_MOON},
+	[BALL_TYPE_SPORT_BALL] = 	{gBattleAnimSpritePalette_136, 							TAG_BALL_OPEN_SPORT},
+	[BALL_TYPE_BEAST_BALL] = 	{gBattleAnimSpritePalette_136, 							TAG_BALL_OPEN_BEAST},
+	[BALL_TYPE_DREAM_BALL] = 	{gBattleAnimSpritePalette_136, 							TAG_BALL_OPEN_DREAM},
 };
 
 const u8 gBallOpenParticleAnimNums[] =
 {
-    BALL_OPEN_STICKS, 			//Poke Ball
-    BALL_OPEN_STICKS, 			//Great Ball
-    BALL_OPEN_STICKS, 			//Safari Ball
-    BALL_OPEN_GREEN_BUBBLES, 	//Ultra Ball
-    BALL_OPEN_YELLOW_STARS, 	//Master Ball
-    BALL_OPEN_BLUE_BUBBLES, 	//Net Ball
-    BALL_OPEN_BLUE_BUBBLES, 	//Dive Ball
-    BALL_OPEN_HEARTS, 			//Nest Ball
-    BALL_OPEN_GREEN_BUBBLES, 	//Repeat Ball
-    BALL_OPEN_GREEN_BUBBLES, 	//Timer Ball
-    BALL_OPEN_GREEN_STARS, 		//Luxury Ball
-    BALL_OPEN_GREEN_STARS, 		//Premier Ball
-	BALL_OPEN_PURPLE_CIRCLES, 	//Dusk Ball
-	BALL_OPEN_WHITE_STARS, 		//Heal Ball
-	BALL_OPEN_YELLOW_CIRCLES, 	//Quick Ball
-	BALL_OPEN_RAINBOW_CIRCLES, 	//Cherish Ball
-	BALL_OPEN_YELLOW_STARS, 	//Park Ball
-	BALL_OPEN_YELLOW_CIRCLES, 	//Fast Ball
-	BALL_OPEN_STICKS, 			//Level Ball
-	BALL_OPEN_BLUE_BUBBLES, 	//Lure Ball
-	BALL_OPEN_BLUE_BUBBLES, 	//Heavy Ball
-	BALL_OPEN_HEARTS, 			//Love Ball
-	BALL_OPEN_HEARTS, 			//Friend Ball
-	BALL_OPEN_WHITE_STARS, 	    //Moon Ball
-	BALL_OPEN_STICKS, 			//Sport Ball
-	BALL_OPEN_BLUE_BUBBLES, 	//Beast Ball
-	BALL_OPEN_HEARTS, 			//Dream Ball
+	[BALL_TYPE_POKE_BALL] = 	BALL_OPEN_STICKS, 			//Poke Ball
+	[BALL_TYPE_GREAT_BALL] = 	BALL_OPEN_STICKS, 			//Great Ball
+	[BALL_TYPE_SAFARI_BALL] = 	BALL_OPEN_STICKS, 			//Safari Ball
+	[BALL_TYPE_ULTRA_BALL] = 	BALL_OPEN_GREEN_BUBBLES, 	//Ultra Ball
+	[BALL_TYPE_MASTER_BALL] = 	BALL_OPEN_YELLOW_STARS, 	//Master Ball
+	[BALL_TYPE_NET_BALL] = 		BALL_OPEN_BLUE_BUBBLES, 	//Net Ball
+	[BALL_TYPE_DIVE_BALL] = 	BALL_OPEN_BLUE_BUBBLES, 	//Dive Ball
+	[BALL_TYPE_NEST_BALL] = 	BALL_OPEN_HEARTS, 			//Nest Ball
+	[BALL_TYPE_REPEAT_BALL] = 	BALL_OPEN_GREEN_BUBBLES, 	//Repeat Ball
+	[BALL_TYPE_TIMER_BALL] = 	BALL_OPEN_GREEN_BUBBLES, 	//Timer Ball
+	[BALL_TYPE_LUXURY_BALL] = 	BALL_OPEN_GREEN_STARS, 		//Luxury Ball
+	[BALL_TYPE_PREMIER_BALL] = 	BALL_OPEN_GREEN_STARS, 		//Premier Ball
+	[BALL_TYPE_DUSK_BALL] = 	BALL_OPEN_PURPLE_CIRCLES, 	//Dusk Ball
+	[BALL_TYPE_HEAL_BALL] = 	BALL_OPEN_WHITE_STARS, 		//Heal Ball
+	[BALL_TYPE_QUICK_BALL] = 	BALL_OPEN_YELLOW_CIRCLES, 	//Quick Ball
+	[BALL_TYPE_CHERISH_BALL] = 	BALL_OPEN_RAINBOW_CIRCLES, 	//Cherish Ball
+	[BALL_TYPE_PARK_BALL] = 	BALL_OPEN_YELLOW_STARS, 	//Park Ball
+	[BALL_TYPE_FAST_BALL] = 	BALL_OPEN_YELLOW_CIRCLES, 	//Fast Ball
+	[BALL_TYPE_LEVEL_BALL] = 	BALL_OPEN_STICKS, 			//Level Ball
+	[BALL_TYPE_LURE_BALL] = 	BALL_OPEN_BLUE_BUBBLES, 	//Lure Ball
+	[BALL_TYPE_HEAVY_BALL] = 	BALL_OPEN_BLUE_BUBBLES, 	//Heavy Ball
+	[BALL_TYPE_LOVE_BALL] = 	BALL_OPEN_HEARTS, 			//Love Ball
+	[BALL_TYPE_FRIEND_BALL] = 	BALL_OPEN_HEARTS, 			//Friend Ball
+	[BALL_TYPE_MOON_BALL] = 	BALL_OPEN_WHITE_STARS, 		//Moon Ball
+	[BALL_TYPE_SPORT_BALL] = 	BALL_OPEN_STICKS, 			//Sport Ball
+	[BALL_TYPE_BEAST_BALL] = 	BALL_OPEN_BLUE_BUBBLES, 	//Beast Ball
+	[BALL_TYPE_DREAM_BALL] = 	BALL_OPEN_HEARTS, 			//Dream Ball
 };
 
 const TaskFunc gBallOpenParticleAnimationFuncs[] =
 {
-    PokeBallOpenParticleAnimation, //Poke Ball
-    GreatBallOpenParticleAnimation, //Great Ball
-    SafariBallOpenParticleAnimation, //Safari Ball
-    UltraBallOpenParticleAnimation, //Ultra Ball
-    MasterBallOpenParticleAnimation, //Master Ball
-    SafariBallOpenParticleAnimation, //Net Ball
-    DiveBallOpenParticleAnimation, //Dive Ball
-    UltraBallOpenParticleAnimation, //Nest Ball
-    RepeatBallOpenParticleAnimation, //Repeat Ball
-    TimerBallOpenParticleAnimation, //Timer Ball
-    GreatBallOpenParticleAnimation, //Luxury Ball
-    PremierBallOpenParticleAnimation, //Premier Ball
-	GreatBallOpenParticleAnimation, //Dusk Ball
-	SafariBallOpenParticleAnimation, //Heal Ball
-	UltraBallOpenParticleAnimation, //Quick Ball
-	DiveBallOpenParticleAnimation, //Cherish Ball
-	PokeBallOpenParticleAnimation, //Park Ball
-	TimerBallOpenParticleAnimation, //Fast Ball
-	SafariBallOpenParticleAnimation, //Level Ball
-	SafariBallOpenParticleAnimation, //Lure Ball
-	RepeatBallOpenParticleAnimation, //Heavy Ball
-	GreatBallOpenParticleAnimation, //Love Ball
-	PokeBallOpenParticleAnimation, //Friend Ball
-	DiveBallOpenParticleAnimation, //Moon Ball
-	PokeBallOpenParticleAnimation, //Sport Ball
-	MasterBallOpenParticleAnimation, //Beast Ball
-	RepeatBallOpenParticleAnimation, //Dream Ball
+	[BALL_TYPE_POKE_BALL] = 	PokeBallOpenParticleAnimation, //Poke Ball
+	[BALL_TYPE_GREAT_BALL] = 	GreatBallOpenParticleAnimation, //Great Ball
+	[BALL_TYPE_SAFARI_BALL] = 	SafariBallOpenParticleAnimation, //Safari Ball
+	[BALL_TYPE_ULTRA_BALL] = 	UltraBallOpenParticleAnimation, //Ultra Ball
+	[BALL_TYPE_MASTER_BALL] = 	MasterBallOpenParticleAnimation, //Master Ball
+	[BALL_TYPE_NET_BALL] = 		SafariBallOpenParticleAnimation, //Net Ball
+	[BALL_TYPE_DIVE_BALL] = 	DiveBallOpenParticleAnimation, //Dive Ball
+	[BALL_TYPE_NEST_BALL] = 	UltraBallOpenParticleAnimation, //Nest Ball
+	[BALL_TYPE_REPEAT_BALL] = 	RepeatBallOpenParticleAnimation, //Repeat Ball
+	[BALL_TYPE_TIMER_BALL] = 	TimerBallOpenParticleAnimation, //Timer Ball
+	[BALL_TYPE_LUXURY_BALL] = 	GreatBallOpenParticleAnimation, //Luxury Ball
+	[BALL_TYPE_PREMIER_BALL] = 	PremierBallOpenParticleAnimation, //Premier Ball
+	[BALL_TYPE_DUSK_BALL] = 	GreatBallOpenParticleAnimation, //Dusk Ball
+	[BALL_TYPE_HEAL_BALL] = 	SafariBallOpenParticleAnimation, //Heal Ball
+	[BALL_TYPE_QUICK_BALL] = 	UltraBallOpenParticleAnimation, //Quick Ball
+	[BALL_TYPE_CHERISH_BALL] = 	DiveBallOpenParticleAnimation, //Cherish Ball
+	[BALL_TYPE_PARK_BALL] = 	PokeBallOpenParticleAnimation, //Park Ball
+	[BALL_TYPE_FAST_BALL] = 	TimerBallOpenParticleAnimation, //Fast Ball
+	[BALL_TYPE_LEVEL_BALL] = 	SafariBallOpenParticleAnimation, //Level Ball
+	[BALL_TYPE_LURE_BALL] = 	SafariBallOpenParticleAnimation, //Lure Ball
+	[BALL_TYPE_HEAVY_BALL] = 	RepeatBallOpenParticleAnimation, //Heavy Ball
+	[BALL_TYPE_LOVE_BALL] = 	GreatBallOpenParticleAnimation, //Love Ball
+	[BALL_TYPE_FRIEND_BALL] = 	PokeBallOpenParticleAnimation, //Friend Ball
+	[BALL_TYPE_MOON_BALL] = 	DiveBallOpenParticleAnimation, //Moon Ball
+	[BALL_TYPE_SPORT_BALL] = 	PokeBallOpenParticleAnimation, //Sport Ball
+	[BALL_TYPE_BEAST_BALL] = 	MasterBallOpenParticleAnimation, //Beast Ball
+	[BALL_TYPE_DREAM_BALL] = 	RepeatBallOpenParticleAnimation, //Dream Ball
 };
 
 const u16 gBallOpenMonFadePal[] = //gUnknown_085E5310 in Emerald
 {
-    RGB(31, 22, 30), //Poke Ball - Pink
-    RGB(16, 23, 30), //Great Ball - Dull Light Blue
-    RGB(23, 30, 20), //Safari Ball - Light Green
-    RGB(31, 31, 15), //Ultra Ball - Yellow
-    RGB(23, 20, 28), //Master Ball - Violet
-    RGB(21, 31, 25), //Net Ball - Turquoise
-    RGB(12, 25, 30), //Dive Ball - Deep Sky Blue
-    RGB(30, 27, 10), //Nest Ball - Gold
-    RGB(31, 24, 16), //Repeat Ball - Light Orange
-    RGB(29, 30, 30), //Timer Ball - Light Gray
-    RGB(31, 17, 10), //Luxury Ball - Orange
-    RGB(31, 9, 10), //Premier Ball - Red
-	RGB(6, 0, 14), //Dusk Ball - Deep Purple
-	RGB(31, 25, 31), //Heal Ball - Pink
-	RGB(14, 20, 27), //Quick Ball - Dull Blue
-	RGB(31, 9, 10), //Cherish Ball - Red
-	RGB(27, 25, 5), //Park Ball - Gold
-	RGB(31, 25, 4), //Fast Ball - Light Orange
-	RGB(29, 23, 16), //Level Ball - Light Brown
-	RGB(12, 25, 7), //Lure Ball - Dull Green
-	RGB(12, 14, 15), //Heavy Ball - Darkish Gray
-	RGB(26, 16, 20), //Love Ball - Pink
-	RGB(15, 22, 11), //Friend Ball - Dull Green
-	RGB(9, 9, 11), //Moon Ball - Dark Gray
-	RGB(30, 17, 17), //Sport Ball - Pinkish Red
-	RGB(7, 12, 31), //Beast Ball - Royal Blue
-	RGB(31, 12, 20), //Dream Ball - Deep Pink
+	[BALL_TYPE_POKE_BALL] = 	RGB(31, 22, 30), //Poke Ball - Pink
+	[BALL_TYPE_GREAT_BALL] = 	RGB(16, 23, 30), //Great Ball - Dull Light Blue
+	[BALL_TYPE_SAFARI_BALL] = 	RGB(23, 30, 20), //Safari Ball - Light Green
+	[BALL_TYPE_ULTRA_BALL] = 	RGB(31, 31, 15), //Ultra Ball - Yellow
+	[BALL_TYPE_MASTER_BALL] = 	RGB(23, 20, 28), //Master Ball - Violet
+	[BALL_TYPE_NET_BALL] = 	RGB(21, 31, 25), //Net Ball - Turquoise
+	[BALL_TYPE_DIVE_BALL] = 	RGB(12, 25, 30), //Dive Ball - Deep Sky Blue
+	[BALL_TYPE_NEST_BALL] = 	RGB(30, 27, 10), //Nest Ball - Gold
+	[BALL_TYPE_REPEAT_BALL] = 	RGB(31, 24, 16), //Repeat Ball - Light Orange
+	[BALL_TYPE_TIMER_BALL] = 	RGB(29, 30, 30), //Timer Ball - Light Gray
+	[BALL_TYPE_LUXURY_BALL] = 	RGB(31, 17, 10), //Luxury Ball - Orange
+	[BALL_TYPE_PREMIER_BALL] = 	RGB(31, 9, 10), //Premier Ball - Red
+	[BALL_TYPE_DUSK_BALL] = 	RGB(6, 0, 14), //Dusk Ball - Deep Purple
+	[BALL_TYPE_HEAL_BALL] = 	RGB(31, 25, 31), //Heal Ball - Pink
+	[BALL_TYPE_QUICK_BALL] = 	RGB(14, 20, 27), //Quick Ball - Dull Blue
+	[BALL_TYPE_CHERISH_BALL] = 	RGB(31, 9, 10), //Cherish Ball - Red
+	[BALL_TYPE_PARK_BALL] = 	RGB(27, 25, 5), //Park Ball - Gold
+	[BALL_TYPE_FAST_BALL] = 	RGB(31, 25, 4), //Fast Ball - Light Orange
+	[BALL_TYPE_LEVEL_BALL] = 	RGB(29, 23, 16), //Level Ball - Light Brown
+	[BALL_TYPE_LURE_BALL] = 	RGB(12, 25, 7), //Lure Ball - Dull Green
+	[BALL_TYPE_HEAVY_BALL] = 	RGB(12, 14, 15), //Heavy Ball - Darkish Gray
+	[BALL_TYPE_LOVE_BALL] = 	RGB(26, 16, 20), //Love Ball - Pink
+	[BALL_TYPE_FRIEND_BALL] = 	RGB(15, 22, 11), //Friend Ball - Dull Green
+	[BALL_TYPE_MOON_BALL] = 	RGB(9, 9, 11), //Moon Ball - Dark Gray
+	[BALL_TYPE_SPORT_BALL] = 	RGB(30, 17, 17), //Sport Ball - Pinkish Red
+	[BALL_TYPE_BEAST_BALL] = 	RGB(7, 12, 31), //Beast Ball - Royal Blue
+	[BALL_TYPE_DREAM_BALL] = 	RGB(31, 12, 20), //Dream Ball - Deep Pink
 	
-    RGB(0, 0, 0), //No idea what these lower values are for
-    RGB(1, 16, 0),
-    RGB(3, 0, 1),
-    RGB(1, 8, 0),
-    RGB(0, 8, 0),
-    RGB(3, 8, 1),
-    RGB(6, 8, 1),
-    RGB(4, 0, 0),
+	RGB(0, 0, 0), //No idea what these lower values are for
+	RGB(1, 16, 0),
+	RGB(3, 0, 1),
+	RGB(1, 8, 0),
+	RGB(0, 8, 0),
+	RGB(3, 8, 1),
+	RGB(6, 8, 1),
+	RGB(4, 0, 0),
 };
 
 const struct SpriteTemplate gBallParticleSpriteTemplates[POKEBALL_COUNT] = //gUnknown_085E51F0 in Emerald
 {
-    { //GFX_TAG_POKEBALL
-        .tileTag = 55020,
-        .paletteTag = 55020,
-        .oam = gUnknown_083AC9C8, //gUnknown_08524904 in Emerald
-        .anims = gUnknown_0840C050, //gUnknown_085E519C in Emerald
-        .images = NULL,
-        .affineAnims = gDummySpriteAffineAnimTable,
-        .callback = SpriteCallbackDummy,
-    },
-    { //GFX_TAG_GREATBALL
-        .tileTag = 55021,
-        .paletteTag = 55021,
-        .oam = gUnknown_083AC9C8,
-        .anims = gUnknown_0840C050,
-        .images = NULL,
-        .affineAnims = gDummySpriteAffineAnimTable,
-        .callback = SpriteCallbackDummy,
-    },
-    { //GFX_TAG_SAFARIBALL
-        .tileTag = 55022,
-        .paletteTag = 55022,
-        .oam = gUnknown_083AC9C8,
-        .anims = gUnknown_0840C050,
-        .images = NULL,
-        .affineAnims = gDummySpriteAffineAnimTable,
-        .callback = SpriteCallbackDummy,
-    },
-    { //GFX_TAG_ULTRABALL
-        .tileTag = 55023,
-        .paletteTag = 55023,
-        .oam = gUnknown_083AC9C8,
-        .anims = gUnknown_0840C050,
-        .images = NULL,
-        .affineAnims = gDummySpriteAffineAnimTable,
-        .callback = SpriteCallbackDummy,
-    },
-    { //GFX_TAG_MASTERBALL
-        .tileTag = 55024,
-        .paletteTag = 55024,
-        .oam = gUnknown_083AC9C8,
-        .anims = gUnknown_0840C050,
-        .images = NULL,
-        .affineAnims = gDummySpriteAffineAnimTable,
-        .callback = SpriteCallbackDummy,
-    },
-    { //GFX_TAG_NETBALL
-        .tileTag = 55025,
-        .paletteTag = 55025,
-        .oam = gUnknown_083AC9C8,
-        .anims = gUnknown_0840C050,
-        .images = NULL,
-        .affineAnims = gDummySpriteAffineAnimTable,
-        .callback = SpriteCallbackDummy,
-    },
-    { //GFX_TAG_DIVEBALL
-        .tileTag = 55026,
-        .paletteTag = 55026,
-        .oam = gUnknown_083AC9C8,
-        .anims = gUnknown_0840C050,
-        .images = NULL,
-        .affineAnims = gDummySpriteAffineAnimTable,
-        .callback = SpriteCallbackDummy,
-    },
-    { //GFX_TAG_NESTBALL
-        .tileTag = 55027,
-        .paletteTag = 55027,
-        .oam = gUnknown_083AC9C8,
-        .anims = gUnknown_0840C050,
-        .images = NULL,
-        .affineAnims = gDummySpriteAffineAnimTable,
-        .callback = SpriteCallbackDummy,
-    },
-    { //GFX_TAG_REPEATBALL
-        .tileTag = 55028,
-        .paletteTag = 55028,
-        .oam = gUnknown_083AC9C8,
-        .anims = gUnknown_0840C050,
-        .images = NULL,
-        .affineAnims = gDummySpriteAffineAnimTable,
-        .callback = SpriteCallbackDummy,
-    },
-    { //GFX_TAG_TIMERBALL
-        .tileTag = 55029,
-        .paletteTag = 55029,
-        .oam = gUnknown_083AC9C8,
-        .anims = gUnknown_0840C050,
-        .images = NULL,
-        .affineAnims = gDummySpriteAffineAnimTable,
-        .callback = SpriteCallbackDummy,
-    },
-    { //GFX_TAG_LUXURYBALL
-        .tileTag = 55030,
-        .paletteTag = 55030,
-        .oam = gUnknown_083AC9C8,
-        .anims = gUnknown_0840C050,
-        .images = NULL,
-        .affineAnims = gDummySpriteAffineAnimTable,
-        .callback = SpriteCallbackDummy,
-    },
-    { //GFX_TAG_PREMIERBALL
-        .tileTag = 55031,
-        .paletteTag = 55031,
-        .oam = gUnknown_083AC9C8,
-        .anims = gUnknown_0840C050,
-        .images = NULL,
-        .affineAnims = gDummySpriteAffineAnimTable,
-        .callback = SpriteCallbackDummy,
-    },
+	{ //GFX_TAG_MASTERBALL
+		.tileTag = 55024,
+		.paletteTag = 55024,
+		.oam = gUnknown_083AC9C8,
+		.anims = gUnknown_0840C050,
+		.images = NULL,
+		.affineAnims = gDummySpriteAffineAnimTable,
+		.callback = SpriteCallbackDummy,
+	},
+	{ //GFX_TAG_ULTRABALL
+		.tileTag = 55023,
+		.paletteTag = 55023,
+		.oam = gUnknown_083AC9C8,
+		.anims = gUnknown_0840C050,
+		.images = NULL,
+		.affineAnims = gDummySpriteAffineAnimTable,
+		.callback = SpriteCallbackDummy,
+	},
+	{ //GFX_TAG_GREATBALL
+		.tileTag = 55021,
+		.paletteTag = 55021,
+		.oam = gUnknown_083AC9C8,
+		.anims = gUnknown_0840C050,
+		.images = NULL,
+		.affineAnims = gDummySpriteAffineAnimTable,
+		.callback = SpriteCallbackDummy,
+	},
+	{ //GFX_TAG_POKEBALL
+		.tileTag = 55020,
+		.paletteTag = 55020,
+		.oam = gUnknown_083AC9C8, //gUnknown_08524904 in Emerald
+		.anims = gUnknown_0840C050, //gUnknown_085E519C in Emerald
+		.images = NULL,
+		.affineAnims = gDummySpriteAffineAnimTable,
+		.callback = SpriteCallbackDummy,
+	},
+
+	{ //GFX_TAG_SAFARIBALL
+		.tileTag = 55022,
+		.paletteTag = 55022,
+		.oam = gUnknown_083AC9C8,
+		.anims = gUnknown_0840C050,
+		.images = NULL,
+		.affineAnims = gDummySpriteAffineAnimTable,
+		.callback = SpriteCallbackDummy,
+	},
+	{ //GFX_TAG_NETBALL
+		.tileTag = 55025,
+		.paletteTag = 55025,
+		.oam = gUnknown_083AC9C8,
+		.anims = gUnknown_0840C050,
+		.images = NULL,
+		.affineAnims = gDummySpriteAffineAnimTable,
+		.callback = SpriteCallbackDummy,
+	},
+	{ //GFX_TAG_DIVEBALL
+		.tileTag = 55026,
+		.paletteTag = 55026,
+		.oam = gUnknown_083AC9C8,
+		.anims = gUnknown_0840C050,
+		.images = NULL,
+		.affineAnims = gDummySpriteAffineAnimTable,
+		.callback = SpriteCallbackDummy,
+	},
+	{ //GFX_TAG_NESTBALL
+		.tileTag = 55027,
+		.paletteTag = 55027,
+		.oam = gUnknown_083AC9C8,
+		.anims = gUnknown_0840C050,
+		.images = NULL,
+		.affineAnims = gDummySpriteAffineAnimTable,
+		.callback = SpriteCallbackDummy,
+	},
+	{ //GFX_TAG_REPEATBALL
+		.tileTag = 55028,
+		.paletteTag = 55028,
+		.oam = gUnknown_083AC9C8,
+		.anims = gUnknown_0840C050,
+		.images = NULL,
+		.affineAnims = gDummySpriteAffineAnimTable,
+		.callback = SpriteCallbackDummy,
+	},
+	{ //GFX_TAG_TIMERBALL
+		.tileTag = 55029,
+		.paletteTag = 55029,
+		.oam = gUnknown_083AC9C8,
+		.anims = gUnknown_0840C050,
+		.images = NULL,
+		.affineAnims = gDummySpriteAffineAnimTable,
+		.callback = SpriteCallbackDummy,
+	},
+	{ //GFX_TAG_LUXURYBALL
+		.tileTag = 55030,
+		.paletteTag = 55030,
+		.oam = gUnknown_083AC9C8,
+		.anims = gUnknown_0840C050,
+		.images = NULL,
+		.affineAnims = gDummySpriteAffineAnimTable,
+		.callback = SpriteCallbackDummy,
+	},
+	{ //GFX_TAG_PREMIERBALL
+		.tileTag = 55031,
+		.paletteTag = 55031,
+		.oam = gUnknown_083AC9C8,
+		.anims = gUnknown_0840C050,
+		.images = NULL,
+		.affineAnims = gDummySpriteAffineAnimTable,
+		.callback = SpriteCallbackDummy,
+	},
 	{ //GFX_TAG_DUSKBALL
-        .tileTag = TAG_BALL_OPEN_DUSK,
-        .paletteTag = TAG_BALL_OPEN_DUSK,
-        .oam = gUnknown_083AC9C8,
-        .anims = gUnknown_0840C050,
-        .images = NULL,
-        .affineAnims = gDummySpriteAffineAnimTable,
-        .callback = SpriteCallbackDummy,
-    },
+		.tileTag = TAG_BALL_OPEN_DUSK,
+		.paletteTag = TAG_BALL_OPEN_DUSK,
+		.oam = gUnknown_083AC9C8,
+		.anims = gUnknown_0840C050,
+		.images = NULL,
+		.affineAnims = gDummySpriteAffineAnimTable,
+		.callback = SpriteCallbackDummy,
+	},
 	{ //GFX_TAG_HEALBALL
-        .tileTag = TAG_BALL_OPEN_HEAL,
-        .paletteTag = TAG_BALL_OPEN_HEAL,
-        .oam = gUnknown_083AC9C8,
-        .anims = gUnknown_0840C050,
-        .images = NULL,
-        .affineAnims = gDummySpriteAffineAnimTable,
-        .callback = SpriteCallbackDummy,
-    },
+		.tileTag = TAG_BALL_OPEN_HEAL,
+		.paletteTag = TAG_BALL_OPEN_HEAL,
+		.oam = gUnknown_083AC9C8,
+		.anims = gUnknown_0840C050,
+		.images = NULL,
+		.affineAnims = gDummySpriteAffineAnimTable,
+		.callback = SpriteCallbackDummy,
+	},
 	{ //GFX_TAG_QUICKBALL
-        .tileTag = TAG_BALL_OPEN_QUICK,
-        .paletteTag = TAG_BALL_OPEN_QUICK,
-        .oam = gUnknown_083AC9C8,
-        .anims = gUnknown_0840C050,
-        .images = NULL,
-        .affineAnims = gDummySpriteAffineAnimTable,
-        .callback = SpriteCallbackDummy,
-    },
+		.tileTag = TAG_BALL_OPEN_QUICK,
+		.paletteTag = TAG_BALL_OPEN_QUICK,
+		.oam = gUnknown_083AC9C8,
+		.anims = gUnknown_0840C050,
+		.images = NULL,
+		.affineAnims = gDummySpriteAffineAnimTable,
+		.callback = SpriteCallbackDummy,
+	},
 	{ //GFX_TAG_CHERISHBALL
-        .tileTag = TAG_BALL_OPEN_CHERISH,
-        .paletteTag = TAG_BALL_OPEN_CHERISH,
-        .oam = gUnknown_083AC9C8,
-        .anims = gUnknown_0840C050,
-        .images = NULL,
-        .affineAnims = gDummySpriteAffineAnimTable,
-        .callback = SpriteCallbackDummy,
-    },
+		.tileTag = TAG_BALL_OPEN_CHERISH,
+		.paletteTag = TAG_BALL_OPEN_CHERISH,
+		.oam = gUnknown_083AC9C8,
+		.anims = gUnknown_0840C050,
+		.images = NULL,
+		.affineAnims = gDummySpriteAffineAnimTable,
+		.callback = SpriteCallbackDummy,
+	},
 	{ //GFX_TAG_PARKBALL
-        .tileTag = TAG_BALL_OPEN_PARK,
-        .paletteTag = TAG_BALL_OPEN_PARK,
-        .oam = gUnknown_083AC9C8,
-        .anims = gUnknown_0840C050,
-        .images = NULL,
-        .affineAnims = gDummySpriteAffineAnimTable,
-        .callback = SpriteCallbackDummy,
-    },
+		.tileTag = TAG_BALL_OPEN_PARK,
+		.paletteTag = TAG_BALL_OPEN_PARK,
+		.oam = gUnknown_083AC9C8,
+		.anims = gUnknown_0840C050,
+		.images = NULL,
+		.affineAnims = gDummySpriteAffineAnimTable,
+		.callback = SpriteCallbackDummy,
+	},
 	{ //GFX_TAG_FASTBALL
-        .tileTag = TAG_BALL_OPEN_FAST,
-        .paletteTag = TAG_BALL_OPEN_FAST,
-        .oam = gUnknown_083AC9C8,
-        .anims = gUnknown_0840C050,
-        .images = NULL,
-        .affineAnims = gDummySpriteAffineAnimTable,
-        .callback = SpriteCallbackDummy,
-    },
+		.tileTag = TAG_BALL_OPEN_FAST,
+		.paletteTag = TAG_BALL_OPEN_FAST,
+		.oam = gUnknown_083AC9C8,
+		.anims = gUnknown_0840C050,
+		.images = NULL,
+		.affineAnims = gDummySpriteAffineAnimTable,
+		.callback = SpriteCallbackDummy,
+	},
 	{ //GFX_TAG_LEVELBALL
-        .tileTag = TAG_BALL_OPEN_LEVEL,
-        .paletteTag = TAG_BALL_OPEN_LEVEL,
-        .oam = gUnknown_083AC9C8,
-        .anims = gUnknown_0840C050,
-        .images = NULL,
-        .affineAnims = gDummySpriteAffineAnimTable,
-        .callback = SpriteCallbackDummy,
-    },
+		.tileTag = TAG_BALL_OPEN_LEVEL,
+		.paletteTag = TAG_BALL_OPEN_LEVEL,
+		.oam = gUnknown_083AC9C8,
+		.anims = gUnknown_0840C050,
+		.images = NULL,
+		.affineAnims = gDummySpriteAffineAnimTable,
+		.callback = SpriteCallbackDummy,
+	},
 	{ //GFX_TAG_LUREBALL
-        .tileTag = TAG_BALL_OPEN_LURE,
-        .paletteTag = TAG_BALL_OPEN_LURE,
-        .oam = gUnknown_083AC9C8,
-        .anims = gUnknown_0840C050,
-        .images = NULL,
-        .affineAnims = gDummySpriteAffineAnimTable,
-        .callback = SpriteCallbackDummy,
-    },
+		.tileTag = TAG_BALL_OPEN_LURE,
+		.paletteTag = TAG_BALL_OPEN_LURE,
+		.oam = gUnknown_083AC9C8,
+		.anims = gUnknown_0840C050,
+		.images = NULL,
+		.affineAnims = gDummySpriteAffineAnimTable,
+		.callback = SpriteCallbackDummy,
+	},
 	{ //GFX_TAG_HEAVYBALL
-        .tileTag = TAG_BALL_OPEN_HEAVY,
-        .paletteTag = TAG_BALL_OPEN_HEAVY,
-        .oam = gUnknown_083AC9C8,
-        .anims = gUnknown_0840C050,
-        .images = NULL,
-        .affineAnims = gDummySpriteAffineAnimTable,
-        .callback = SpriteCallbackDummy,
-    },
+		.tileTag = TAG_BALL_OPEN_HEAVY,
+		.paletteTag = TAG_BALL_OPEN_HEAVY,
+		.oam = gUnknown_083AC9C8,
+		.anims = gUnknown_0840C050,
+		.images = NULL,
+		.affineAnims = gDummySpriteAffineAnimTable,
+		.callback = SpriteCallbackDummy,
+	},
 	{ //GFX_TAG_LOVEBALL
-        .tileTag = TAG_BALL_OPEN_LOVE,
-        .paletteTag = TAG_BALL_OPEN_LOVE,
-        .oam = gUnknown_083AC9C8,
-        .anims = gUnknown_0840C050,
-        .images = NULL,
-        .affineAnims = gDummySpriteAffineAnimTable,
-        .callback = SpriteCallbackDummy,
-    },
+		.tileTag = TAG_BALL_OPEN_LOVE,
+		.paletteTag = TAG_BALL_OPEN_LOVE,
+		.oam = gUnknown_083AC9C8,
+		.anims = gUnknown_0840C050,
+		.images = NULL,
+		.affineAnims = gDummySpriteAffineAnimTable,
+		.callback = SpriteCallbackDummy,
+	},
 	{ //GFX_TAG_FRIENDBALL
-        .tileTag = TAG_BALL_OPEN_FRIEND,
-        .paletteTag = TAG_BALL_OPEN_FRIEND,
-        .oam = gUnknown_083AC9C8,
-        .anims = gUnknown_0840C050,
-        .images = NULL,
-        .affineAnims = gDummySpriteAffineAnimTable,
-        .callback = SpriteCallbackDummy,
-    },
+		.tileTag = TAG_BALL_OPEN_FRIEND,
+		.paletteTag = TAG_BALL_OPEN_FRIEND,
+		.oam = gUnknown_083AC9C8,
+		.anims = gUnknown_0840C050,
+		.images = NULL,
+		.affineAnims = gDummySpriteAffineAnimTable,
+		.callback = SpriteCallbackDummy,
+	},
 	{ //GFX_TAG_MOONBALL
-        .tileTag = TAG_BALL_OPEN_MOON,
-        .paletteTag = TAG_BALL_OPEN_MOON,
-        .oam = gUnknown_083AC9C8,
-        .anims = gUnknown_0840C050,
-        .images = NULL,
-        .affineAnims = gDummySpriteAffineAnimTable,
-        .callback = SpriteCallbackDummy,
-    },
+		.tileTag = TAG_BALL_OPEN_MOON,
+		.paletteTag = TAG_BALL_OPEN_MOON,
+		.oam = gUnknown_083AC9C8,
+		.anims = gUnknown_0840C050,
+		.images = NULL,
+		.affineAnims = gDummySpriteAffineAnimTable,
+		.callback = SpriteCallbackDummy,
+	},
 	{ //GFX_TAG_SPORTBALL
-        .tileTag = TAG_BALL_OPEN_SPORT,
-        .paletteTag = TAG_BALL_OPEN_SPORT,
-        .oam = gUnknown_083AC9C8,
-        .anims = gUnknown_0840C050,
-        .images = NULL,
-        .affineAnims = gDummySpriteAffineAnimTable,
-        .callback = SpriteCallbackDummy,
-    },
+		.tileTag = TAG_BALL_OPEN_SPORT,
+		.paletteTag = TAG_BALL_OPEN_SPORT,
+		.oam = gUnknown_083AC9C8,
+		.anims = gUnknown_0840C050,
+		.images = NULL,
+		.affineAnims = gDummySpriteAffineAnimTable,
+		.callback = SpriteCallbackDummy,
+	},
 	{ //GFX_TAG_BEASTBALL
-        .tileTag = TAG_BALL_OPEN_BEAST,
-        .paletteTag = TAG_BALL_OPEN_BEAST,
-        .oam = gUnknown_083AC9C8,
-        .anims = gUnknown_0840C050,
-        .images = NULL,
-        .affineAnims = gDummySpriteAffineAnimTable,
-        .callback = SpriteCallbackDummy,
-    },
+		.tileTag = TAG_BALL_OPEN_BEAST,
+		.paletteTag = TAG_BALL_OPEN_BEAST,
+		.oam = gUnknown_083AC9C8,
+		.anims = gUnknown_0840C050,
+		.images = NULL,
+		.affineAnims = gDummySpriteAffineAnimTable,
+		.callback = SpriteCallbackDummy,
+	},
 	{ //GFX_TAG_DREAMBALL
-        .tileTag = TAG_BALL_OPEN_DREAM,
-        .paletteTag = TAG_BALL_OPEN_DREAM,
-        .oam = gUnknown_083AC9C8,
-        .anims = gUnknown_0840C050,
-        .images = NULL,
-        .affineAnims = gDummySpriteAffineAnimTable,
-        .callback = SpriteCallbackDummy,
-    },
+		.tileTag = TAG_BALL_OPEN_DREAM,
+		.paletteTag = TAG_BALL_OPEN_DREAM,
+		.oam = gUnknown_083AC9C8,
+		.anims = gUnknown_0840C050,
+		.images = NULL,
+		.affineAnims = gDummySpriteAffineAnimTable,
+		.callback = SpriteCallbackDummy,
+	},
 };

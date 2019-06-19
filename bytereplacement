@@ -219,6 +219,9 @@
 ##Poke Ball Limiter Removal
 080EF972 C0 46
 080F02D6 C0 46
+##Other Poke Ball Stuff
+0804AC30 C0 46 C0 46
+0804B28C C0 46 C0 46
 
 ##Remove Old Mega Hooks
 080326C4 80 18 02 F0 BD FD 40 21
