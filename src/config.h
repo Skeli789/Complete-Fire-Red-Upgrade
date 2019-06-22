@@ -246,8 +246,7 @@ enum //These vars need to be one after the other (hence the enum)
 
 /* Pre-Battle Mugshot Options */
 #define FR_PRE_BATTLE_MUGSHOT_STYLE
-
-#define VAR_PRE_BATTLE_MUGSHOT_TYPE 0x5038
+#define VAR_PRE_BATTLE_MUGSHOT_STYLE 0x5038
 #define VAR_PRE_BATTLE_MUGSHOT_SPRITE 0x5039
 #define FLAG_LOAD_MUGSHOT_SPRITE_FROM_TABLE 0x924	//Load custom mugshot for pre-battle transition
 
