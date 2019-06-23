@@ -413,7 +413,12 @@ void Mugshots_CreateOpponentPlayerSprites(struct Task* task)
 	else if (mugshotSprite == MUGSHOT_VS_SYMBOL)
 	{
 		if (mugshotType == MUGSHOT_DP || mugshotType == MUGSHOT_TWO_BARS)
-			opponentSprite->oam.shape = SPRITE_SHAPE(64x32);
+		{
+			if (FlagGet(FLAG_LOAD_MUGSHOT_SPRITE_FROM_TABLE))
+				opponentSprite->oam.shape = SPRITE_SHAPE(64x64);
+			else
+				opponentSprite->oam.shape = SPRITE_SHAPE(64x32);
+		}
 		else if (FlagGet(FLAG_LOAD_MUGSHOT_SPRITE_FROM_TABLE))
 		{
 			if (IS_VALID_TABLE_SPRITE(trainerSpriteID))
