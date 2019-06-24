@@ -7,10 +7,6 @@
 #include "../../include/constants/items.h"
 #include "../../include/constants/trainer_classes.h"
 
-#define ABILITY_HIDDEN 0
-#define ABILITY_1 1
-#define ABILITY_2 2
-
 #ifdef UNBOUND
 const struct BattleTowerSpread gSpecialTowerSpread_Palmer1[] =
 {
@@ -26,7 +22,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Palmer1[] =
 		.hpEv = 252,
 		.defEv = 4,
 		.spAtkEv = 252,
-		.ability = ABILITY_HIDDEN, //Competitive
+		.ability = FRONTIER_ABILITY_HIDDEN, //Competitive
 		.item = ITEM_SHELL_BELL,
 		.moves =
 		{
@@ -49,7 +45,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Palmer1[] =
 		.hpEv = 252,
 		.defEv = 252,
 		.spDefEv = 4,
-		.ability = ABILITY_1, //Marvel Scale
+		.ability = FRONTIER_ABILITY_1, //Marvel Scale
 		.item = ITEM_LEFTOVERS,
 		.moves =
 		{
@@ -72,7 +68,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Palmer1[] =
 		.hpEv = 252,
 		.atkEv = 252,
 		.defEv = 4,
-		.ability = ABILITY_2, //Solid Rock
+		.ability = FRONTIER_ABILITY_2, //Solid Rock
 		.item = ITEM_FOCUS_SASH,
 		.moves =
 		{
@@ -95,7 +91,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Palmer1[] =
 		.hpEv = 4,
 		.atkEv = 252,
 		.spDefEv = 252,
-		.ability = ABILITY_2, //Solid Rock
+		.ability = FRONTIER_ABILITY_2, //Solid Rock
 		.item = ITEM_ROCKIUM_Z,
 		.moves =
 		{
@@ -118,7 +114,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Palmer1[] =
 		.hpEv = 4,
 		.atkEv = 252,
 		.spdEv = 252,
-		.ability = ABILITY_HIDDEN, //Multiscale
+		.ability = FRONTIER_ABILITY_HIDDEN, //Multiscale
 		.item = ITEM_DRAGONIUM_Z,
 		.moves =
 		{
@@ -141,7 +137,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Palmer1[] =
 		.hpEv = 4,
 		.spAtkEv = 252,
 		.spdEv = 252,
-		.ability = ABILITY_HIDDEN, //Multiscale
+		.ability = FRONTIER_ABILITY_HIDDEN, //Multiscale
 		.item = ITEM_SALAC_BERRY,
 		.moves =
 		{
@@ -164,7 +160,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Palmer1[] =
 		.hpEv = 252,
 		.atkEv = 4,
 		.spdEv = 252,
-		.ability = ABILITY_HIDDEN, //Reckless
+		.ability = FRONTIER_ABILITY_HIDDEN, //Reckless
 		.item = ITEM_CHOICE_SCARF,
 		.moves =
 		{
@@ -187,7 +183,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Palmer1[] =
 		.hpEv = 4,
 		.atkEv = 252,
 		.spdEv = 252,
-		.ability = ABILITY_HIDDEN, //Reckless
+		.ability = FRONTIER_ABILITY_HIDDEN, //Reckless
 		.item = ITEM_FLYINIUM_Z,
 		.moves =
 		{
@@ -210,7 +206,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Palmer1[] =
 		.hpEv = 252,
 		.defEv = 4,
 		.spDefEv = 252,
-		.ability = ABILITY_HIDDEN, //Unnerve
+		.ability = FRONTIER_ABILITY_HIDDEN, //Unnerve
 		.item = ITEM_QUICK_CLAW,
 		.moves =
 		{
@@ -233,7 +229,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Palmer1[] =
 		.hpEv = 252,
 		.defEv = 252,
 		.spDefEv = 4,
-		.ability = ABILITY_1, //Pressure
+		.ability = FRONTIER_ABILITY_1, //Pressure
 		.item = ITEM_NORMALIUM_Z,
 		.moves =
 		{
@@ -256,7 +252,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Palmer1[] =
 		.hpEv = 252,
 		.defEv = 4,
 		.spDefEv = 252,
-		.ability = ABILITY_2, //Heatproof
+		.ability = FRONTIER_ABILITY_2, //Heatproof
 		.item = ITEM_FLAME_ORB,
 		.moves =
 		{
@@ -279,7 +275,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Palmer1[] =
 		.hpEv = 252,
 		.defEv = 252,
 		.spDefEv = 4,
-		.ability = ABILITY_HIDDEN, //Heavy Metal
+		.ability = FRONTIER_ABILITY_HIDDEN, //Heavy Metal
 		.item = ITEM_LIGHT_CLAY,
 		.moves =
 		{
@@ -306,7 +302,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Palmer2[] =
 		.hpEv = 252,
 		.defEv = 252,
 		.spDefEv = 4,
-		.ability = ABILITY_1, //Slow Start
+		.ability = FRONTIER_ABILITY_1, //Slow Start
 		.item = ITEM_BRIGHT_POWDER,
 		.moves =
 		{
@@ -329,7 +325,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Palmer2[] =
 		.hpEv = 252,
 		.defEv = 4,
 		.spDefEv = 252,
-		.ability = ABILITY_1, //Slow Start
+		.ability = FRONTIER_ABILITY_1, //Slow Start
 		.item = ITEM_LEFTOVERS,
 		.moves =
 		{
@@ -352,7 +348,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Palmer2[] =
 		.hpEv = 4,
 		.spAtkEv = 252,
 		.spdEv = 252,
-		.ability = ABILITY_1, //Flash Fire
+		.ability = FRONTIER_ABILITY_1, //Flash Fire
 		.item = ITEM_FIRIUM_Z,
 		.moves =
 		{
@@ -375,7 +371,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Palmer2[] =
 		.hpEv = 252,
 		.spAtkEv = 4,
 		.spDefEv = 252,
-		.ability = ABILITY_1, //Flash Fire
+		.ability = FRONTIER_ABILITY_1, //Flash Fire
 		.item = ITEM_AIR_BALLOON,
 		.moves =
 		{
@@ -398,7 +394,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Palmer2[] =
 		.hpEv = 252,
 		.defEv = 252,
 		.spDefEv = 4,
-		.ability = ABILITY_1, //Levitate
+		.ability = FRONTIER_ABILITY_1, //Levitate
 		.item = ITEM_LIGHT_CLAY,
 		.moves =
 		{
@@ -421,7 +417,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Palmer2[] =
 		.hpEv = 4,
 		.defEv = 252,
 		.spAtkEv = 252,
-		.ability = ABILITY_1, //Levitate
+		.ability = FRONTIER_ABILITY_1, //Levitate
 		.item = ITEM_PSYCHIUM_Z,
 		.moves =
 		{
@@ -444,7 +440,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Palmer2[] =
 		.hpEv = 252,
 		.atkEv = 252,
 		.spDefEv = 4,
-		.ability = ABILITY_HIDDEN, //Unnerve
+		.ability = FRONTIER_ABILITY_HIDDEN, //Unnerve
 		.item = ITEM_CHOPLE_BERRY,
 		.moves =
 		{
@@ -467,7 +463,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Palmer2[] =
 		.hpEv = 4,
 		.atkEv = 252,
 		.spDefEv = 252,
-		.ability = ABILITY_1, //Sand Stream
+		.ability = FRONTIER_ABILITY_1, //Sand Stream
 		.item = ITEM_TYRANITARITE,
 		.moves =
 		{
@@ -490,7 +486,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Palmer2[] =
 		.hpEv = 252,
 		.defEv = 4,
 		.spDefEv = 252,
-		.ability = ABILITY_1, //Snow Warning
+		.ability = FRONTIER_ABILITY_1, //Snow Warning
 		.item = ITEM_BIG_ROOT,
 		.moves =
 		{
@@ -513,7 +509,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Palmer2[] =
 		.hpEv = 252,
 		.defEv = 4,
 		.spAtkEv = 252,
-		.ability = ABILITY_1, //Snow Warning
+		.ability = FRONTIER_ABILITY_1, //Snow Warning
 		.item = ITEM_ABOMASITE,
 		.moves =
 		{
@@ -536,7 +532,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Palmer2[] =
 		.hpEv = 252,
 		.atkEv = 252,
 		.spdEv = 4,
-		.ability = ABILITY_1, //Beast Boost
+		.ability = FRONTIER_ABILITY_1, //Beast Boost
 		.item = ITEM_ASSAULT_VEST,
 		.moves =
 		{
@@ -559,7 +555,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Palmer2[] =
 		.hpEv = 252,
 		.defEv = 252,
 		.spdEv = 4,
-		.ability = ABILITY_1, //Beast Boost
+		.ability = FRONTIER_ABILITY_1, //Beast Boost
 		.item = ITEM_FLYINIUM_Z,
 		.moves =
 		{
@@ -586,7 +582,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Cynthia[] =
 		.hpEv = 252,
 		.defEv = 4,
 		.spAtkEv = 252,
-		.ability = ABILITY_2, //Competitive
+		.ability = FRONTIER_ABILITY_2, //Competitive
 		.item = ITEM_WIDE_LENS,
 		.moves =
 		{
@@ -609,7 +605,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Cynthia[] =
 		.hpEv = 252,
 		.defEv = 4,
 		.spDefEv = 252,
-		.ability = ABILITY_1, //Marvel Scale
+		.ability = FRONTIER_ABILITY_1, //Marvel Scale
 		.item = ITEM_LEFTOVERS,
 		.moves =
 		{
@@ -632,7 +628,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Cynthia[] =
 		.atkEv = 252,
 		.defEv = 4,
 		.spdEv = 252,
-		.ability = ABILITY_HIDDEN, //Rough Skin
+		.ability = FRONTIER_ABILITY_HIDDEN, //Rough Skin
 		.item = ITEM_CHOICE_SCARF,
 		.moves =
 		{
@@ -655,7 +651,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Cynthia[] =
 		.hpEv = 252,
 		.atkEv = 4,
 		.defEv = 252,
-		.ability = ABILITY_1, //Sand Veil
+		.ability = FRONTIER_ABILITY_1, //Sand Veil
 		.item = ITEM_GARCHOMPITE,
 		.moves =
 		{
@@ -679,7 +675,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Cynthia[] =
 		.defEv = 128,
 		.spAtkEv = 252,
 		.spdEv = 128,
-		.ability = ABILITY_2, //Serene Grace
+		.ability = FRONTIER_ABILITY_2, //Serene Grace
 		.item = ITEM_KINGS_ROCK,
 		.moves =
 		{
@@ -702,7 +698,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Cynthia[] =
 		.hpEv = 4,
 		.spAtkEv = 252,
 		.spdEv = 252,
-		.ability = ABILITY_2, //Serene Grace
+		.ability = FRONTIER_ABILITY_2, //Serene Grace
 		.item = ITEM_EXPERT_BELT,
 		.moves =
 		{
@@ -725,7 +721,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Cynthia[] =
 		.hpEv = 252,
 		.defEv = 252,
 		.spDefEv = 4,
-		.ability = ABILITY_HIDDEN, //Infiltrator
+		.ability = FRONTIER_ABILITY_HIDDEN, //Infiltrator
 		.item = ITEM_LEFTOVERS,
 		.moves =
 		{
@@ -748,7 +744,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Cynthia[] =
 		.hpEv = 252,
 		.defEv = 4,
 		.spDefEv = 252,
-		.ability = ABILITY_HIDDEN, //Infiltrator
+		.ability = FRONTIER_ABILITY_HIDDEN, //Infiltrator
 		.item = ITEM_CUSTAP_BERRY,
 		.moves =
 		{
@@ -771,7 +767,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Cynthia[] =
 		.atkEv = 252,
 		.spDefEv = 4,
 		.spdEv = 252,
-		.ability = ABILITY_HIDDEN, //Justified
+		.ability = FRONTIER_ABILITY_HIDDEN, //Justified
 		.item = ITEM_LUCARIONITE,
 		.moves =
 		{
@@ -794,7 +790,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Cynthia[] =
 		.atkEv = 56,
 		.spAtkEv = 200,
 		.spdEv = 252,
-		.ability = ABILITY_2, //Inner Focus
+		.ability = FRONTIER_ABILITY_2, //Inner Focus
 		.item = ITEM_WEAKNESS_POLICY,
 		.moves =
 		{
@@ -817,7 +813,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Cynthia[] =
 		.atkEv = 252,
 		.defEv = 200,
 		.spAtkEv = 56,
-		.ability = ABILITY_1, //Levitate
+		.ability = FRONTIER_ABILITY_1, //Levitate
 		.item = ITEM_ROCKY_HELMET,
 		.moves =
 		{
@@ -840,7 +836,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Cynthia[] =
 		.spAtkEv = 252,
 		.spDefEv = 4,
 		.spdEv = 252,
-		.ability = ABILITY_1, //Natural Cure
+		.ability = FRONTIER_ABILITY_1, //Natural Cure
 		.item = ITEM_WHITE_HERB,
 		.moves =
 		{
@@ -850,6 +846,397 @@ const struct BattleTowerSpread gSpecialTowerSpread_Cynthia[] =
 			MOVE_SLEEPPOWDER,
 		},
 		.ball = BALL_TYPE_ULTRA_BALL,
+	},
+};
+
+const struct BattleTowerSpread gMiddleCupTowerSpread_Cynthia[] =
+{
+	{
+		.species = SPECIES_GABITE,
+		.nature = NATURE_JOLLY,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 0,
+		.spDefIv = 31,
+		.hpEv = 4,
+		.atkEv = 252,
+		.spdEv = 252,
+		.ability = FRONTIER_ABILITY_HIDDEN, //Rough Skin
+		.item = ITEM_CHOICE_BAND,
+		.moves =
+		{
+			MOVE_OUTRAGE,
+			MOVE_EARTHQUAKE,
+			MOVE_STONEEDGE,
+			MOVE_FIREFANG,
+		},
+		.ball = BALL_TYPE_ULTRA_BALL,
+	},
+	{
+		.species = SPECIES_TOGETIC,
+		.nature = NATURE_CALM,
+		.hpIv = 31,
+		.atkIv = 0,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.hpEv = 252,
+		.defEv = 4,
+		.spDefEv = 252,
+		.ability = FRONTIER_ABILITY_HIDDEN, //Super Luck
+		.item = ITEM_LEFTOVERS,
+		.moves =
+		{
+			MOVE_DAZZLINGGLEAM,
+			MOVE_YAWN,
+			MOVE_WISH,
+			MOVE_HEALBELL,
+		},
+		.ball = BALL_TYPE_ULTRA_BALL,
+	},
+	{
+		.species = SPECIES_EELEKTRIK,
+		.nature = NATURE_CALM,
+		.hpIv = 31,
+		.atkIv = 0,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.hpEv = 252,
+		.defEv = 4,
+		.spDefEv = 252,
+		.ability = FRONTIER_ABILITY_1, //Levitate
+		.item = ITEM_BINDING_BAND,
+		.moves =
+		{
+			MOVE_ACIDSPRAY,
+			MOVE_BIND,
+			MOVE_REST,
+			MOVE_TOXIC,	
+		},
+		.ball = BALL_TYPE_ULTRA_BALL,
+	},
+	{
+		.species = SPECIES_ROSELIA,
+		.nature = NATURE_CALM,
+		.hpIv = 31,
+		.atkIv = 0,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.hpEv = 248,
+		.spDefEv = 236,
+		.spdEv = 24,
+		.ability = FRONTIER_ABILITY_1, //Natural Cure
+		.item = ITEM_QUICK_CLAW,
+		.moves =
+		{
+			MOVE_GIGADRAIN,
+			MOVE_SLUDGEBOMB,
+			MOVE_SYNTHESIS,
+			MOVE_SPIKES,
+		},
+		.ball = BALL_TYPE_ULTRA_BALL,
+	},
+	{
+		.species = SPECIES_LUXIO,
+		.nature = NATURE_RELAXED,
+		.hpIv = 31,
+		.atkIv = 0,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.hpEv = 156,
+		.atkEv = 76,
+		.defEv = 244,
+		.spDefEv = 4,
+		.ability = FRONTIER_ABILITY_1, //Intimidate
+		.item = ITEM_SITRUS_BERRY,
+		.moves =
+		{
+			MOVE_WILDCHARGE,
+			MOVE_VOLTSWITCH,
+			MOVE_THUNDERWAVE,
+			MOVE_EERIEIMPULSE,
+		},
+		.ball = BALL_TYPE_ULTRA_BALL,
+	},
+	{
+		.species = SPECIES_DUSCLOPS,
+		.nature = NATURE_BOLD,
+		.hpIv = 31,
+		.atkIv = 0,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.hpEv = 252,
+		.defEv = 124,
+		.spAtkEv = 132,
+		.ability = FRONTIER_ABILITY_1, //Pressure
+		.item = ITEM_EVIOLITE,
+		.moves =
+		{
+			MOVE_DARKPULSE,
+			MOVE_WILLOWISP,
+			MOVE_CALMMIND,
+			MOVE_REST,
+		},
+		.ball = BALL_TYPE_ULTRA_BALL,
+	},
+};
+
+const struct BattleTowerSpread gLittleCupTowerSpread_Cynthia[] =
+{
+	{
+		.species = SPECIES_FEEBAS,
+		.nature = NATURE_TIMID,
+		.hpIv = 31,
+		.atkIv = 00,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.defEv = 40,
+		.spdEv = 196,
+		.spAtkEv = 196,
+		.spDefEv = 76,
+		.ability = FRONTIER_ABILITY_HIDDEN, //Adaptability
+		.item = ITEM_BRIGHT_POWDER,
+		.moves =
+		{
+			MOVE_BRINE,
+			MOVE_DRAGONPULSE,
+			MOVE_MIRRORCOAT,
+			MOVE_CONFUSERAY,
+		},
+	},
+	{
+		.species = SPECIES_FEEBAS,
+		.nature = NATURE_JOLLY,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 0,
+		.spDefIv = 31,
+		.atkEv = 236,
+		.spdEv = 196,
+		.spDefEv = 76,
+		.ability = FRONTIER_ABILITY_HIDDEN, //Adaptability
+		.item = ITEM_CHESTO_BERRY,
+		.moves =
+		{
+			MOVE_WATERFALL,
+			MOVE_DOUBLEEDGE,
+			MOVE_TOXIC,
+			MOVE_REST,
+		},
+	},
+	{
+		.species = SPECIES_GIBLE,
+		.nature = NATURE_ADAMANT,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 0,
+		.spDefIv = 31,
+		.atkEv = 196,
+		.defEv = 076,
+		.spDefEv = 236,
+		.ability = FRONTIER_ABILITY_HIDDEN, //Rough Skin
+		.item = ITEM_LIFE_ORB,
+		.moves =
+		{
+			MOVE_DRAGONCLAW,
+			MOVE_EARTHQUAKE,
+			MOVE_SLASH,
+			MOVE_PROTECT,
+		},
+	},
+	{
+		.species = SPECIES_GIBLE,
+		.nature = NATURE_JOLLY,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 0,
+		.spDefIv = 31,
+		.atkEv = 252,
+		.defEv = 4,
+		.spDefEv = 252,
+		.ability = FRONTIER_ABILITY_HIDDEN, //Rough Skin
+		.item = ITEM_ROCKY_HELMET,
+		.moves =
+		{
+			MOVE_OUTRAGE,
+			MOVE_BODYSLAM,
+			MOVE_IRONHEAD,
+			MOVE_STEALTHROCK,
+		},
+	},
+	{
+		.species = SPECIES_TOGEPI,
+		.nature = NATURE_CALM,
+		.hpIv = 31,
+		.atkIv = 0,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.defEv = 236,
+		.spAtkEv = 036,
+		.spDefEv = 236,
+		.ability = FRONTIER_ABILITY_2, //Serene Grace
+		.item = ITEM_IAPAPA_BERRY,
+		.moves =
+		{
+			MOVE_ANCIENTPOWER,
+			MOVE_STOREDPOWER,
+			MOVE_MORNINGSUN,
+			MOVE_PROTECT,
+		},
+	},
+	{
+		.species = SPECIES_TOGEPI,
+		.nature = NATURE_ADAMANT,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.hpEv = 252,
+		.atkEv = 252,
+		.spdEv = 4,
+		.ability = FRONTIER_ABILITY_HIDDEN, //Super Luck
+		.item = ITEM_ASSAULT_VEST,
+		.moves =
+		{
+			MOVE_RETURN,
+			MOVE_ZENHEADBUTT,
+			MOVE_ROLLOUT,
+			MOVE_PECK,
+		},
+	},
+	{
+		.species = SPECIES_EEVEE,
+		.nature = NATURE_ADAMANT,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 0,
+		.spDefIv = 31,
+		.atkEv = 252,
+		.spdEv = 20,
+		.spDefEv = 236,
+		.ability = FRONTIER_ABILITY_2,
+		.item = ITEM_NORMALIUM_Z,
+		.moves =
+		{
+			MOVE_DOUBLEEDGE,
+			MOVE_QUICKATTACK,
+			MOVE_REFLECT,
+			MOVE_WISH,
+		},
+	},
+	{
+		.species = SPECIES_EEVEE,
+		.nature = NATURE_LONELY,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.atkEv = 236,
+		.spdEv = 36,
+		.spDefEv = 236,
+		.ability = FRONTIER_ABILITY_2,
+		.item = ITEM_TOXIC_ORB,
+		.moves =
+		{
+			MOVE_FACADE,
+			MOVE_QUICKATTACK,
+			MOVE_SHADOWBALL,
+			MOVE_YAWN,
+		},
+	},
+	{
+		.species = SPECIES_RIOLU,
+		.nature = NATURE_ADAMANT,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 0,
+		.spDefIv = 31,
+		.atkEv = 252,
+		.spdEv = 60,
+		.spDefEv = 196,
+		.ability = FRONTIER_ABILITY_HIDDEN, //Prankster
+		.item = ITEM_WIKI_BERRY,
+		.moves =
+		{
+			MOVE_BRICKBREAK,
+			MOVE_BLAZEKICK,
+			MOVE_BULLETPUNCH,
+			MOVE_TOXIC,
+		},
+	},
+	{
+		.species = SPECIES_RIOLU,
+		.nature = NATURE_MODEST,
+		.hpIv = 31,
+		.atkIv = 30,
+		.defIv = 31,
+		.spdIv = 30,
+		.spAtkIv = 30,
+		.spDefIv = 31,
+		.hpEv = 36,
+		.defEv = 36,
+		.spAtkEv = 240,
+		.spDefEv = 196,
+		.ability = FRONTIER_ABILITY_HIDDEN, //Prankster
+		.item = ITEM_LIFE_ORB,
+		.moves =
+		{
+			MOVE_AURASPHERE,
+			MOVE_HIDDENPOWER, //Fire
+			MOVE_VACUUMWAVE,
+			MOVE_DOUBLETEAM,
+		},
+	},
+	{
+		.species = SPECIES_TYNAMO,
+		.nature = NATURE_LONELY,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.atkEv = 236,
+		.spAtkEv = 76,
+		.spDefEv = 196,
+		.ability = FRONTIER_ABILITY_1, //Levitate
+		.item = ITEM_LEFTOVERS,
+		.moves =
+		{
+			MOVE_CHARGEBEAM,
+			MOVE_TACKLE,
+			MOVE_SPARK,
+			MOVE_THUNDERWAVE,
+		},
 	},
 };
 
@@ -867,7 +1254,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Skeli[] =
 		.hpEv = 4,
 		.atkEv = 252,
 		.spdEv = 252,
-		.ability = ABILITY_HIDDEN, //Vital Spirit
+		.ability = FRONTIER_ABILITY_HIDDEN, //Vital Spirit
 		.item = ITEM_NORMALIUM_Z,
 		.moves =
 		{
@@ -890,7 +1277,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Skeli[] =
 		.defEv = 252,
 		.spAtkEv = 252,
 		.spdEv = 4,
-		.ability = ABILITY_HIDDEN, //Vital Spirit
+		.ability = FRONTIER_ABILITY_HIDDEN, //Vital Spirit
 		.item = ITEM_FIRIUM_Z,
 		.moves =
 		{
@@ -913,7 +1300,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Skeli[] =
 		.hpEv = 4,
 		.atkEv = 252,
 		.spdEv = 252,
-		.ability = ABILITY_HIDDEN, //Technician
+		.ability = FRONTIER_ABILITY_HIDDEN, //Technician
 		.item = ITEM_FOCUS_SASH,
 		.moves =
 		{
@@ -936,7 +1323,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Skeli[] =
 		.hpEv = 252,
 		.atkEv = 4,
 		.defEv = 252,
-		.ability = ABILITY_2, //Poison Heal
+		.ability = FRONTIER_ABILITY_2, //Poison Heal
 		.item = ITEM_TOXIC_ORB,
 		.moves =
 		{
@@ -959,7 +1346,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Skeli[] =
 		.atkEv = 252,
 		.defEv = 4,
 		.spdEv = 252,
-		.ability = ABILITY_HIDDEN, //Skill Link
+		.ability = FRONTIER_ABILITY_HIDDEN, //Skill Link
 		.item = ITEM_KINGS_ROCK,
 		.moves =
 		{
@@ -982,7 +1369,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Skeli[] =
 		.atkEv = 252,
 		.defEv = 4,
 		.spdEv = 252,
-		.ability = ABILITY_HIDDEN, //Skill Link
+		.ability = FRONTIER_ABILITY_HIDDEN, //Skill Link
 		.item = ITEM_CHOICE_BAND,
 		.moves =
 		{
@@ -1005,7 +1392,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Skeli[] =
 		.hpEv = 252,
 		.defEv = 4,
 		.spDefEv = 252,
-		.ability = ABILITY_2, //Sticky Hold
+		.ability = FRONTIER_ABILITY_2, //Sticky Hold
 		.item = ITEM_BLACK_SLUDGE,
 		.moves =
 		{
@@ -1028,7 +1415,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Skeli[] =
 		.hpEv = 252,
 		.defEv = 252,
 		.spDefEv = 4,
-		.ability = ABILITY_2, //Sticky Hold
+		.ability = FRONTIER_ABILITY_2, //Sticky Hold
 		.item = ITEM_BINDING_BAND,
 		.moves =
 		{
@@ -1051,7 +1438,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Skeli[] =
 		.hpEv = 252,
 		.defEv = 252,
 		.spDefEv = 4,
-		.ability = ABILITY_1, //Levitate
+		.ability = FRONTIER_ABILITY_1, //Levitate
 		.item = ITEM_LIGHT_CLAY,
 		.moves =
 		{
@@ -1074,7 +1461,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Skeli[] =
 		.hpEv = 252,
 		.defEv = 4,
 		.spDefEv = 252,
-		.ability = ABILITY_1, //Levitate
+		.ability = FRONTIER_ABILITY_1, //Levitate
 		.item = ITEM_COLBUR_BERRY,
 		.moves =
 		{
@@ -1097,7 +1484,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Skeli[] =
 		.atkEv = 252,
 		.defEv = 252,
 		.spDefEv = 4,
-		.ability = ABILITY_1, //Torrent
+		.ability = FRONTIER_ABILITY_1, //Torrent
 		.item = ITEM_LEFTOVERS,
 		.moves =
 		{
@@ -1120,7 +1507,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Skeli[] =
 		.atkEv = 252,
 		.spDefEv = 4,
 		.spdEv = 252,
-		.ability = ABILITY_HIDDEN, //Damp
+		.ability = FRONTIER_ABILITY_HIDDEN, //Damp
 		.item = ITEM_SWAMPERTITE,
 		.moves =
 		{
@@ -1143,7 +1530,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Skeli[] =
 		.atkEv = 252,
 		.spDefEv = 4,
 		.spdEv = 252,
-		.ability = ABILITY_1, //Swarm
+		.ability = FRONTIER_ABILITY_1, //Swarm
 		.item = ITEM_BEEDRILLITE,
 		.moves =
 		{
@@ -1166,7 +1553,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Skeli[] =
 		.atkEv = 252,
 		.spDefEv = 252,
 		.spdEv = 4,
-		.ability = ABILITY_1, //Swarm
+		.ability = FRONTIER_ABILITY_1, //Swarm
 		.item = ITEM_BEEDRILLITE,
 		.moves =
 		{
@@ -1189,7 +1576,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Skeli[] =
 		.atkEv = 252,
 		.defEv = 252,
 		.spdEv = 4,
-		.ability = ABILITY_1, //Magician
+		.ability = FRONTIER_ABILITY_1, //Magician
 		.item = ITEM_DARKINIUM_Z,
 		.moves =
 		{
@@ -1212,7 +1599,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Skeli[] =
 		.defEv = 4,
 		.spAtkEv = 252,
 		.spdEv = 252,
-		.ability = ABILITY_1, //Magician
+		.ability = FRONTIER_ABILITY_1, //Magician
 		.item = ITEM_CHOICE_SCARF,
 		.moves =
 		{
@@ -1224,4 +1611,1673 @@ const struct BattleTowerSpread gSpecialTowerSpread_Skeli[] =
 		.ball = BALL_TYPE_CHERISH_BALL,
 	},
 };
+
+const struct BattleTowerSpread gMiddleCupTowerSpread_Skeli[] =
+{
+	{
+		.species = SPECIES_MAGMAR,
+		.nature = NATURE_JOLLY,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 0,
+		.spDefIv = 31,
+		.hpEv = 4,
+		.atkEv = 252,
+		.spdEv = 252,
+		.ability = FRONTIER_ABILITY_HIDDEN, //Vital Spirit
+		.item = ITEM_NORMALIUM_Z,
+		.moves =
+		{
+			MOVE_FLAREBLITZ,
+			MOVE_THUNDERPUNCH,
+			MOVE_MACHPUNCH,
+			MOVE_BELLYDRUM,
+		},
+		.ball = BALL_TYPE_CHERISH_BALL,
+	},
+	{
+		.species = SPECIES_MAGMAR,
+		.nature = NATURE_MODEST,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 30,
+		.spDefIv = 31,
+		.defEv = 252,
+		.spAtkEv = 252,
+		.spdEv = 4,
+		.ability = FRONTIER_ABILITY_HIDDEN, //Vital Spirit
+		.item = ITEM_FIRIUM_Z,
+		.moves =
+		{
+			MOVE_FIREBLAST,
+			MOVE_FOCUSBLAST,
+			MOVE_PSYCHIC,
+			MOVE_HIDDENPOWER, //Electric
+		},
+		.ball = BALL_TYPE_CHERISH_BALL,
+	},
+	{
+		.species = SPECIES_MARSHTOMP,
+		.nature = NATURE_ADAMANT,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 0,
+		.spDefIv = 31,
+		.atkEv = 252,
+		.defEv = 252,
+		.spDefEv = 4,
+		.ability = FRONTIER_ABILITY_1, //Torrent
+		.item = ITEM_LEFTOVERS,
+		.moves =
+		{
+			MOVE_WATERFALL,
+			MOVE_EARTHQUAKE,
+			MOVE_AVALANCHE,
+			MOVE_SUBSTITUTE,
+		},
+		.ball = BALL_TYPE_CHERISH_BALL,
+	},
+	{
+		.species = SPECIES_MARSHTOMP,
+		.nature = NATURE_BOLD,
+		.hpIv = 31,
+		.atkIv = 0,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.hpEv = 252,
+		.defEv = 252,
+		.spDefEv = 4,
+		.ability = FRONTIER_ABILITY_HIDDEN, //Damp
+		.item = ITEM_BRIGHT_POWDER,
+		.moves =
+		{
+			MOVE_WHIRLPOOL,
+			MOVE_ANCIENTPOWER,
+			MOVE_YAWN,
+			MOVE_STEALTHROCK,
+		},
+		.ball = BALL_TYPE_CHERISH_BALL,
+	},
+	{
+		.species = SPECIES_KAKUNA,
+		.nature = NATURE_RELAXED,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.hpEv = 252,
+		.defEv = 252,
+		.spDefEv = 4,
+		.ability = FRONTIER_ABILITY_1, //Shed Skin
+		.item = ITEM_SITRUS_BERRY,
+		.moves =
+		{
+			MOVE_BUGBITE,
+			MOVE_ELECTROWEB,
+			MOVE_STRINGSHOT,
+			MOVE_IRONDEFENSE,
+		},
+		.ball = BALL_TYPE_CHERISH_BALL,
+	},
+	{
+		.species = SPECIES_FLOETTE_BLUE,
+		.nature = NATURE_CALM,
+		.hpIv = 31,
+		.atkIv = 0,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.hpEv = 252,
+		.defEv = 4,
+		.spDefEv = 252,
+		.ability = FRONTIER_ABILITY_1, //Flower Veil
+		.item = ITEM_QUICK_CLAW,
+		.moves =
+		{
+			MOVE_MOONBLAST,
+			MOVE_TOXIC,
+			MOVE_WISH,
+			MOVE_PROTECT,
+		},
+		.ball = BALL_TYPE_CHERISH_BALL,
+	},
+	{
+		.species = SPECIES_FLOETTE_YELLOW,
+		.nature = NATURE_CALM,
+		.hpIv = 31,
+		.atkIv = 0,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.hpEv = 252,
+		.defEv = 252,
+		.spDefEv = 4,
+		.ability = FRONTIER_ABILITY_1, //Flower Veil
+		.item = ITEM_EVIOLITE,
+		.moves =
+		{
+			MOVE_MOONBLAST,
+			MOVE_WISH,
+			MOVE_MISTYTERRAIN,
+			MOVE_LUCKYCHANT,
+		},
+		.ball = BALL_TYPE_CHERISH_BALL,
+	},
+	{
+		.species = SPECIES_MAGNETON,
+		.nature = NATURE_QUIET,
+		.hpIv = 31,
+		.atkIv = 30,
+		.defIv = 31,
+		.spdIv = 0,
+		.spAtkIv = 31,
+		.spDefIv = 30,
+		.hpEv = 252,
+		.defEv = 4,
+		.spAtkEv = 252,
+		.ability = FRONTIER_ABILITY_HIDDEN, //Analytic
+		.item = ITEM_ASSAULT_VEST,
+		.moves =
+		{
+			MOVE_THUNDERBOLT,
+			MOVE_FLASHCANNON,
+			MOVE_TRIATTACK,
+			MOVE_HIDDENPOWER, //Fire
+		},
+		.ball = BALL_TYPE_CHERISH_BALL,
+	},
+	{
+		.species = SPECIES_MAGNETON,
+		.nature = NATURE_BOLD,
+		.hpIv = 31,
+		.atkIv = 0,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.hpEv = 252,
+		.defEv = 252,
+		.spDefEv = 4,
+		.ability = FRONTIER_ABILITY_2, //Sturdy
+		.item = ITEM_LIGHT_CLAY,
+		.moves =
+		{
+			MOVE_DISCHARGE,
+			MOVE_THUNDERWAVE,
+			MOVE_REFLECT,
+			MOVE_LIGHTSCREEN,
+		},
+		.ball = BALL_TYPE_CHERISH_BALL,
+	},
+	{
+		.species = SPECIES_SHELGON,
+		.nature = NATURE_ADAMANT,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.hpEv = 4,
+		.atkEv = 252,
+		.defEv = 252,
+		.ability = FRONTIER_ABILITY_HIDDEN, //Overcoat
+		.item = ITEM_EXPERT_BELT,
+		.moves =
+		{
+			MOVE_DRAGONCLAW,
+			MOVE_ZENHEADBUTT,
+			MOVE_ROCKSLIDE,
+			MOVE_SHADOWCLAW,
+		},
+		.ball = BALL_TYPE_CHERISH_BALL,
+	},
+	{
+		.species = SPECIES_SHELGON,
+		.nature = NATURE_CAREFUL,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.hpEv = 252,
+		.defEv = 4,
+		.spDefEv = 252,
+		.ability = FRONTIER_ABILITY_HIDDEN, //Overcoat
+		.item = ITEM_EVIOLITE,
+		.moves =
+		{
+			MOVE_DRAGONRAGE,
+			MOVE_TOXIC,
+			MOVE_IRONDEFENSE,
+			MOVE_REST,
+		},
+		.ball = BALL_TYPE_CHERISH_BALL,
+	},
+};
+
+const struct BattleTowerSpread gLittleCupTowerSpread_Skeli[] =
+{
+	{
+		.species = SPECIES_MAGBY,
+		.nature = NATURE_JOLLY,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 0,
+		.spDefIv = 31,
+		.hpEv = 20,
+		.atkEv = 236,
+		.spdEv = 252,
+		.ability = FRONTIER_ABILITY_1, //Flame Body
+		.item = ITEM_CHOICE_BAND,
+		.moves =
+		{
+			MOVE_FIREPUNCH,
+			MOVE_THUNDERPUNCH,
+			MOVE_POWERUPPUNCH,
+			MOVE_BODYSLAM,
+		},
+	},
+	{
+		.species = SPECIES_MAGBY,
+		.nature = NATURE_TIMID,
+		.hpIv = 31,
+		.atkIv = 0,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.hpEv = 60,
+		.spdEv = 252,
+		.spAtkEv = 196,
+		.ability = FRONTIER_ABILITY_HIDDEN, //Vital Spirit
+		.item = ITEM_FIRIUM_Z,
+		.moves =
+		{
+			MOVE_FIREBLAST,
+			MOVE_PSYCHIC,
+			MOVE_SUBSTITUTE,
+			MOVE_REST,
+		},
+	},
+	{
+		.species = SPECIES_SHROOMISH,
+		.nature = NATURE_ADAMANT,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 0,
+		.spDefIv = 31,
+		.atkEv = 196,
+		.defEv = 116,
+		.spDefEv = 196,
+		.ability = FRONTIER_ABILITY_2, //Poison Heal
+		.item = ITEM_TOXIC_ORB,
+		.moves =
+		{
+			MOVE_BULLETSEED,
+			MOVE_DRAINPUNCH,
+			MOVE_SWORDSDANCE,
+			MOVE_SPORE,
+		},
+	},
+	{
+		.species = SPECIES_SHROOMISH,
+		.nature = NATURE_ADAMANT,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 0,
+		.spDefIv = 31,
+		.hpEv = 116,
+		.atkEv = 196,
+		.spDefEv = 36,
+		.spdEv = 156,
+		.ability = FRONTIER_ABILITY_HIDDEN, //Quick Feet
+		.item = ITEM_TOXIC_ORB,
+		.moves =
+		{
+			MOVE_SEEDBOMB,
+			MOVE_DOUBLEEDGE,
+			MOVE_RETURN,
+			MOVE_SUBSTITUTE,
+		},
+	},
+	{
+		.species = SPECIES_MINCCINO,
+		.nature = NATURE_JOLLY,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 0,
+		.spDefIv = 31,
+		.atkEv = 196,
+		.defEv = 036,
+		.spdEv = 236,
+		.spDefEv = 036,
+		.ability = FRONTIER_ABILITY_HIDDEN, //Skill Link
+		.item = ITEM_KINGS_ROCK,
+		.moves =
+		{
+			MOVE_TAILSLAP,
+			MOVE_AQUATAIL,
+			MOVE_KNOCKOFF,
+			MOVE_THUNDERWAVE,
+		},
+	},
+	{
+		.species = SPECIES_MINCCINO,
+		.nature = NATURE_ADAMANT,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 0,
+		.spDefIv = 31,
+		.atkEv = 196,
+		.defEv = 036,
+		.spdEv = 236,
+		.spDefEv = 036,
+		.ability = FRONTIER_ABILITY_1, //Cute Charm
+		.item = ITEM_ROCKY_HELMET,
+		.moves =
+		{
+			MOVE_RETURN,
+			MOVE_GUNKSHOT,
+			MOVE_UTURN,
+			MOVE_TOXIC,
+		},
+	},
+	{
+		.species = SPECIES_GULPIN,
+		.nature = NATURE_CALM,
+		.hpIv = 31,
+		.atkIv = 0,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.hpEv = 196,
+		.defEv = 12,
+		.spAtkEv = 12,
+		.spDefEv = 252,
+		.spdEv = 36,
+		.ability = FRONTIER_ABILITY_2, //Sticky Hold
+		.item = ITEM_BLACK_SLUDGE,
+		.moves =
+		{
+			MOVE_VENOSHOCK,
+			MOVE_PAINSPLIT,
+			MOVE_TOXIC,
+			MOVE_AMNESIA,
+		},
+	},
+	{
+		.species = SPECIES_GULPIN,
+		.nature = NATURE_SASSY,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.hpEv = 196,
+		.atkEv = 12,
+		.defEv = 12,
+		.spDefEv = 252,
+		.spdEv = 36,
+		.ability = FRONTIER_ABILITY_HIDDEN, //Gluttony
+		.item = ITEM_BINDING_BAND,
+		.moves =
+		{
+			MOVE_GUNKSHOT,
+			MOVE_INFESTATION,
+			MOVE_REST,
+			MOVE_PROTECT,
+		},
+	},
+	{
+		.species = SPECIES_BALTOY,
+		.nature = NATURE_IMPISH,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 0,
+		.spDefIv = 31,
+		.hpEv = 36,
+		.atkEv = 36,
+		.defEv = 236,
+		.spDefEv = 196,
+		.ability = FRONTIER_ABILITY_1, //Levitate
+		.item = ITEM_LIGHT_CLAY,
+		.moves =
+		{
+			MOVE_EARTHQUAKE,
+			MOVE_STEALTHROCK,
+			MOVE_REFLECT,
+			MOVE_LIGHTSCREEN,
+		},
+	},
+	{
+		.species = SPECIES_BALTOY,
+		.nature = NATURE_MODEST,
+		.hpIv = 31,
+		.atkIv = 0,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.hpEv = 36,
+		.spAtkEv = 196,
+		.spDefEv = 036,
+		.spdEv = 236,
+		.ability = FRONTIER_ABILITY_1, //Levitate
+		.item = ITEM_PSYCHIUM_Z,
+		.moves =
+		{
+			MOVE_EARTHPOWER,
+			MOVE_PSYCHIC,
+			MOVE_SHADOWBALL,
+			MOVE_ROCKPOLISH,
+		},
+	},
+	{
+		.species = SPECIES_MUDKIP,
+		.nature = NATURE_ADAMANT,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 0,
+		.spDefIv = 31,
+		.atkEv = 196,
+		.defEv = 196,
+		.spDefEv = 116,
+		.ability = FRONTIER_ABILITY_1, //Torrent
+		.item = ITEM_WATER_GEM,
+		.moves =
+		{
+			MOVE_AQUATAIL,
+			MOVE_AVALANCHE,
+			MOVE_RETURN,
+			MOVE_TOXIC,
+		},
+	},
+	{
+		.species = SPECIES_MUDKIP,
+		.nature = NATURE_CALM,
+		.hpIv = 31,
+		.atkIv = 0,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.hpEv = 196,
+		.spAtkEv = 116,
+		.spDefEv = 196,
+		.ability = FRONTIER_ABILITY_1, //Torent
+		.item = ITEM_LEFTOVERS,
+		.moves =
+		{
+			MOVE_SCALD,
+			MOVE_TOXIC,
+			MOVE_ATTRACT,
+			MOVE_SUBSTITUTE,
+		},
+	},
+};
+
+const struct BattleTowerSpread gSpecialTowerSpread_Golche[] =
+{
+	{
+		.species = SPECIES_GALVANTULA,
+		.nature = NATURE_TIMID,
+		.hpIv = 31,
+		.atkIv = 0,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.spAtkEv = 252,
+		.spDefEv = 4,
+		.spdEv = 252,
+		.ability = FRONTIER_ABILITY_1, //Compoundeyes
+		.item = ITEM_FOCUS_SASH,
+		.moves =
+		{
+			MOVE_THUNDER,
+			MOVE_BUGBUZZ,
+			MOVE_THUNDERWAVE,
+			MOVE_STICKYWEB,
+		},
+		.ball = BALL_TYPE_ULTRA_BALL,
+	},
+	{
+		.species = SPECIES_GALVANTULA,
+		.nature = NATURE_TIMID,
+		.hpIv = 30,
+		.atkIv = 30,
+		.defIv = 30,
+		.spdIv = 31,
+		.spAtkIv = 30,
+		.spDefIv = 31,
+		.spAtkEv = 252,
+		.spDefEv = 4,
+		.spdEv = 252,
+		.ability = FRONTIER_ABILITY_1, //Compoundeyes
+		.item = ITEM_CHOICE_SPECS,
+		.moves =
+		{
+			MOVE_THUNDER,
+			MOVE_BUGBUZZ,
+			MOVE_GIGADRAIN,
+			MOVE_HIDDENPOWER, //Water
+		},
+		.ball = BALL_TYPE_ULTRA_BALL,
+	},
+	{
+		.species = SPECIES_FERALIGATR,
+		.nature = NATURE_JOLLY,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 0,
+		.spDefIv = 31,
+		.atkEv = 252,
+		.spdEv = 252,
+		.spDefEv = 4,
+		.ability = FRONTIER_ABILITY_HIDDEN, //Sheer Force
+		.item = ITEM_LIFE_ORB,
+		.moves =
+		{
+			MOVE_WATERFALL,
+			MOVE_ICEPUNCH,
+			MOVE_EARTHQUAKE,
+			MOVE_DRAGONDANCE,
+		},
+		.ball = BALL_TYPE_POKE_BALL,
+	},
+	{
+		.species = SPECIES_FERALIGATR,
+		.nature = NATURE_BRAVE,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 0,
+		.spDefIv = 31,
+		.hpEv = 244,
+		.atkEv = 114,
+		.defEv = 148,
+		.ability = FRONTIER_ABILITY_HIDDEN, //Sheer Force
+		.item = ITEM_LUM_BERRY,
+		.moves =
+		{
+			MOVE_WATERFALL,
+			MOVE_AVALANCHE,
+			MOVE_SLEEPTALK,
+			MOVE_REST,
+		},
+		.ball = BALL_TYPE_POKE_BALL,
+	},
+	{
+		.species = SPECIES_GENGAR,
+		.nature = NATURE_TIMID,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.spAtkEv = 252,
+		.spDefEv = 4,
+		.spdEv = 252,
+		.ability = FRONTIER_ABILITY_1, //Levitate
+		.item = ITEM_FOCUS_SASH,
+		.moves =
+		{
+			MOVE_SHADOWBALL,
+			MOVE_SLUDGEBOMB,
+			MOVE_DISABLE,
+			MOVE_DESTINYBOND,
+		},
+		.ball = BALL_TYPE_DUSK_BALL,
+	},
+	{
+		.species = SPECIES_GENGAR,
+		.nature = NATURE_TIMID,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.spAtkEv = 252,
+		.spDefEv = 4,
+		.spdEv = 252,
+		.ability = FRONTIER_ABILITY_1, //Levitate
+		.item = ITEM_CHOICE_SPECS,
+		.moves =
+		{
+			MOVE_SHADOWBALL,
+			MOVE_SLUDGEBOMB,
+			MOVE_THUNDERBOLT,
+			MOVE_DAZZLINGGLEAM,
+		},
+		.ball = BALL_TYPE_DUSK_BALL,
+	},
+	{
+		.species = SPECIES_HYDREIGON,
+		.nature = NATURE_HASTY,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.atkEv = 252,
+		.spAtkEv = 4,
+		.spdEv = 252,
+		.ability = FRONTIER_ABILITY_1, //Levitate
+		.item = ITEM_DRAGONIUM_Z,
+		.moves =
+		{
+			MOVE_DRACOMETEOR,
+			MOVE_CRUNCH,
+			MOVE_DRAGONTAIL,
+			MOVE_HEADSMASH,
+		},
+		.ball = BALL_TYPE_DUSK_BALL,
+	},
+	{
+		.species = SPECIES_HYDREIGON,
+		.nature = NATURE_TIMID,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.spAtkEv = 252,
+		.spDefEv = 4,
+		.spdEv = 252,
+		.ability = FRONTIER_ABILITY_1, //Levitate
+		.item = ITEM_EXPERT_BELT,
+		.moves =
+		{
+			MOVE_DRAGONPULSE,
+			MOVE_DARKPULSE,
+			MOVE_FLASHCANNON,
+			MOVE_ROOST,
+		},
+		.ball = BALL_TYPE_DUSK_BALL,
+	},
+	{
+		.species = SPECIES_METAGROSS,
+		.nature = NATURE_ADAMANT,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 0,
+		.spDefIv = 31,
+		.atkEv = 252,
+		.defEv = 160,
+		.spdEv = 96,
+		.ability = FRONTIER_ABILITY_1, //Clear Body
+		.item = ITEM_AIR_BALLOON,
+		.moves =
+		{
+			MOVE_METEORMASH,
+			MOVE_ZENHEADBUTT,
+			MOVE_ICEPUNCH,
+			MOVE_AGILITY,
+		},
+		.ball = BALL_TYPE_ULTRA_BALL,
+	},
+	{
+		.species = SPECIES_METAGROSS,
+		.nature = NATURE_ADAMANT,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 0,
+		.spDefIv = 31,
+		.atkEv = 252,
+		.defEv = 160,
+		.spdEv = 96,
+		.ability = FRONTIER_ABILITY_1, //Clear Body
+		.item = ITEM_METAGROSSITE,
+		.moves =
+		{
+			MOVE_METEORMASH,
+			MOVE_ZENHEADBUTT,
+			MOVE_ICEPUNCH,
+			MOVE_AGILITY,
+		},
+		.ball = BALL_TYPE_ULTRA_BALL,
+	},
+	{
+		.species = SPECIES_METAGROSS,
+		.nature = NATURE_JOLLY,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 0,
+		.spDefIv = 31,
+		.atkEv = 252,
+		.spDefEv = 4,
+		.spdEv = 252,
+		.ability = FRONTIER_ABILITY_1, //Clear Body
+		.item = ITEM_METAGROSSITE,
+		.moves =
+		{
+			MOVE_METEORMASH,
+			MOVE_EARTHQUAKE,
+			MOVE_BULLETPUNCH,
+			MOVE_POWERUPPUNCH,
+		},
+		.ball = BALL_TYPE_ULTRA_BALL,
+	},
+	{
+		.species = SPECIES_CROBAT,
+		.nature = NATURE_JOLLY,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.atkEv = 252,
+		.spDefEv = 4,
+		.spdEv = 252,
+		.ability = FRONTIER_ABILITY_HIDDEN, //Infiltrator
+		.item = ITEM_CHOICE_BAND,
+		.moves =
+		{
+			MOVE_CROSSPOISON,
+			MOVE_BRAVEBIRD,
+			MOVE_DOUBLEEDGE,
+			MOVE_LEECHFANG,
+		},
+		.ball = BALL_TYPE_DUSK_BALL,
+	},
+	{
+		.species = SPECIES_CROBAT,
+		.nature = NATURE_JOLLY,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.atkEv = 252,
+		.spDefEv = 4,
+		.spdEv = 252,
+		.ability = FRONTIER_ABILITY_1, //Inner Focus
+		.item = ITEM_SCOPE_LENS,
+		.moves =
+		{
+			MOVE_CROSSPOISON,
+			MOVE_LEECHFANG,
+			MOVE_ZENHEADBUTT,
+			MOVE_TOXIC,
+		},
+		.ball = BALL_TYPE_DUSK_BALL,
+	},
+};
+
+const struct BattleTowerSpread gSpecialTowerSpread_Gail[] =
+{
+	{
+		.species = SPECIES_ARCANINE,
+		.nature = NATURE_JOLLY,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.atkEv = 252,
+		.spdEv = 252,
+		.spDefEv = 4,
+		.ability = FRONTIER_ABILITY_1,
+		.item = ITEM_FIRIUM_Z,
+		.moves =
+		{
+			MOVE_FLAREBLITZ,
+			MOVE_CLOSECOMBAT,
+			MOVE_EXTREMESPEED,
+			MOVE_OUTRAGE,
+		},
+	},
+	{
+		.species = SPECIES_ARCANINE,
+		.nature = NATURE_ADAMANT,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.atkEv = 252,
+		.spdEv = 252,
+		.spDefEv = 4,
+		.ability = FRONTIER_ABILITY_1,
+		.item = ITEM_EXPERT_BELT,
+		.moves =
+		{
+			MOVE_FLAMECHARGE,
+			MOVE_CRUNCH,
+			MOVE_IRONHEAD,
+			MOVE_WILDCHARGE,
+		},
+	},
+	{
+		.species = SPECIES_ZOROARK,
+		.nature = NATURE_TIMID,
+		.hpIv = 31,
+		.atkIv = 00,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.spdEv = 252,
+		.spAtkEv = 252,
+		.spDefEv = 4,
+		.ability = FRONTIER_ABILITY_1,
+		.item = ITEM_CHOICE_SPECS,
+		.moves =
+		{
+			MOVE_DARKPULSE,
+			MOVE_EXTRASENSORY,
+			MOVE_FLAMETHROWER,
+			MOVE_NONE,
+		},
+	},
+	{
+		.species = SPECIES_ZOROARK,
+		.nature = NATURE_MODEST,
+		.hpIv = 31,
+		.atkIv = 00,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.spdEv = 252,
+		.spAtkEv = 252,
+		.spDefEv = 4,
+		.ability = FRONTIER_ABILITY_1,
+		.item = ITEM_LIFE_ORB,
+		.moves =
+		{
+			MOVE_NIGHTDAZE,
+			MOVE_SLUDGEBOMB,
+			MOVE_SHADOWBALL,
+			MOVE_HYPERBEAM,
+		},
+	},
+	{
+		.species = SPECIES_HAXORUS,
+		.nature = NATURE_JOLLY,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.atkEv = 252,
+		.spdEv = 252,
+		.spDefEv = 4,
+		.ability = FRONTIER_ABILITY_2,
+		.item = ITEM_FOCUS_SASH,
+		.moves =
+		{
+			MOVE_OUTRAGE,
+			MOVE_AQUATAIL,
+			MOVE_EARTHQUAKE,
+			MOVE_SHADOWCLAW,
+		},
+	},
+	{
+		.species = SPECIES_HAXORUS,
+		.nature = NATURE_ADAMANT,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.atkEv = 252,
+		.spdEv = 252,
+		.spDefEv = 4,
+		.ability = FRONTIER_ABILITY_1,
+		.item = ITEM_DRAGONIUM_Z,
+		.moves =
+		{
+			MOVE_DRAGONCLAW,
+			MOVE_ROCKSLIDE,
+			MOVE_XSCISSOR,
+			MOVE_DRAGONDANCE,
+		},
+	},
+	{
+		.species = SPECIES_DELPHOX,
+		.nature = NATURE_TIMID,
+		.hpIv = 31,
+		.atkIv = 00,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.spdEv = 252,
+		.spAtkEv = 252,
+		.spDefEv = 4,
+		.ability = FRONTIER_ABILITY_HIDDEN,
+		.item = ITEM_NONE,
+		.moves =
+		{
+			MOVE_FIREBLAST,
+			MOVE_DAZZLINGGLEAM,
+			MOVE_SHADOWBALL,
+			MOVE_WILLOWISP,
+		},
+	},
+	{
+		.species = SPECIES_DELPHOX,
+		.nature = NATURE_MODEST,
+		.hpIv = 31,
+		.atkIv = 00,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.spdEv = 252,
+		.spAtkEv = 252,
+		.spDefEv = 4,
+		.ability = FRONTIER_ABILITY_HIDDEN,
+		.item = ITEM_PSYCHIC_GEM,
+		.moves =
+		{
+			MOVE_FLAMETHROWER,
+			MOVE_PSYSHOCK,
+			MOVE_SIGNALBEAM,
+			MOVE_SHOCKWAVE,
+		},
+	},
+	{
+		.species = SPECIES_AURORUS,
+		.nature = NATURE_CALM,
+		.hpIv = 31,
+		.atkIv = 00,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.hpEv = 252,
+		.spAtkEv = 4,
+		.spDefEv = 252,
+		.ability = FRONTIER_ABILITY_1,
+		.item = ITEM_LEFTOVERS,
+		.moves =
+		{
+			MOVE_ANCIENTPOWER,
+			MOVE_FROSTBREATH,
+			MOVE_TOXIC,
+			MOVE_STEALTHROCK,
+		},
+	},
+	{
+		.species = SPECIES_AURORUS,
+		.nature = NATURE_BOLD,
+		.hpIv = 31,
+		.atkIv = 00,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.hpEv = 252,
+		.defEv = 252,
+		.spAtkEv = 4,
+		.ability = FRONTIER_ABILITY_HIDDEN,
+		.item = ITEM_RED_CARD,
+		.moves =
+		{
+			MOVE_DISCHARGE,
+			MOVE_TOXIC,
+			MOVE_CALMMIND,
+			MOVE_SUBSTITUTE,
+		},
+	},
+	{
+		.species = SPECIES_BLASTOISE,
+		.nature = NATURE_MODEST,
+		.hpIv = 31,
+		.atkIv = 00,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.hpEv = 252,
+		.spAtkEv = 252,
+		.spDefEv = 4,
+		.ability = FRONTIER_ABILITY_HIDDEN,
+		.item = ITEM_DAMP_ROCK,
+		.moves =
+		{
+			MOVE_HYDROPUMP,
+			MOVE_AURASPHERE,
+			MOVE_RAINDANCE,
+			MOVE_SUBSTITUTE,
+		},
+	},
+	{
+		.species = SPECIES_BLASTOISE,
+		.nature = NATURE_MODEST,
+		.hpIv = 31,
+		.atkIv = 00,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.hpEv = 252,
+		.spAtkEv = 252,
+		.spDefEv = 4,
+		.ability = FRONTIER_ABILITY_1,
+		.item = ITEM_BLASTOISINITE,
+		.moves =
+		{
+			MOVE_SURF,
+			MOVE_AURASPHERE,
+			MOVE_DARKPULSE,
+			MOVE_FLASHCANNON,
+		},
+	},
+	{
+		.species = SPECIES_BLASTOISE,
+		.nature = NATURE_CALM,
+		.hpIv = 31,
+		.atkIv = 00,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.hpEv = 252,
+		.defEv = 4,
+		.spDefEv = 252,
+		.ability = FRONTIER_ABILITY_1,
+		.item = ITEM_BLASTOISINITE,
+		.moves =
+		{
+			MOVE_SCALD,
+			MOVE_TOXIC,
+			MOVE_IRONDEFENSE,
+			MOVE_REST,
+		},
+	},
+};
+
+const struct BattleTowerSpread gMiddleCupTowerSpread_Gail[] =
+{
+	{
+		.species = SPECIES_FRAXURE,
+		.nature = NATURE_ADAMANT,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.hpEv = 248,
+		.atkEv = 252,
+		.spDefEv = 8,
+		.ability = FRONTIER_ABILITY_1,
+		.item = ITEM_ASSAULT_VEST,
+		.moves =
+		{
+			MOVE_DRAGONCLAW,
+			MOVE_NIGHTSLASH,
+			MOVE_PAYBACK,
+			MOVE_STOMPINGTANTRUM,
+		},
+	},
+	{
+		.species = SPECIES_FRAXURE,
+		.nature = NATURE_ADAMANT,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.hpEv = 248,
+		.atkEv = 252,
+		.spDefEv = 8,
+		.ability = FRONTIER_ABILITY_2,
+		.item = ITEM_LIFE_ORB,
+		.moves =
+		{
+			MOVE_OUTRAGE,
+			MOVE_RETURN,
+			MOVE_XSCISSOR,
+			MOVE_SWORDSDANCE,
+		},
+	},
+	{
+		.species = SPECIES_BRAIXEN,
+		.nature = NATURE_TIMID,
+		.hpIv = 31,
+		.atkIv = 00,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.spdEv = 252,
+		.spAtkEv = 252,
+		.spDefEv = 4,
+		.ability = FRONTIER_ABILITY_HIDDEN,
+		.item = ITEM_NONE,
+		.moves =
+		{
+			MOVE_FIREBLAST,
+			MOVE_PSYCHIC,
+			MOVE_INCINERATE,
+			MOVE_SHOCKWAVE,
+		},
+	},
+	{
+		.species = SPECIES_BRAIXEN,
+		.nature = NATURE_CALM,
+		.hpIv = 31,
+		.atkIv = 00,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.hpEv = 252,
+		.spAtkEv = 4,
+		.spDefEv = 252,
+		.ability = FRONTIER_ABILITY_HIDDEN,
+		.item = ITEM_FIRE_GEM,
+		.moves =
+		{
+			MOVE_FLAMETHROWER,
+			MOVE_PSYCHIC,
+			MOVE_WILLOWISP,
+			MOVE_SWAGGER,
+		},
+	},
+	{
+		.species = SPECIES_WARTORTLE,
+		.nature = NATURE_ADAMANT,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.hpEv = 252,
+		.atkEv = 252,
+		.spDefEv = 4,
+		.ability = FRONTIER_ABILITY_1,
+		.item = ITEM_IRON_BALL,
+		.moves =
+		{
+			MOVE_AQUAJET,
+			MOVE_DOUBLEEDGE,
+			MOVE_FLING,
+			MOVE_SUBSTITUTE,
+		},
+	},
+	{
+		.species = SPECIES_WARTORTLE,
+		.nature = NATURE_CAREFUL,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.hpEv = 252,
+		.atkEv = 4,
+		.spDefEv = 252,
+		.ability = FRONTIER_ABILITY_1,
+		.item = ITEM_EVIOLITE,
+		.moves =
+		{
+			MOVE_AQUATAIL,
+			MOVE_TOXIC,
+			MOVE_IRONDEFENSE,
+			MOVE_AQUARING,
+		},
+	},
+	{
+		.species = SPECIES_METANG,
+		.nature = NATURE_ADAMANT,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.hpEv = 252,
+		.atkEv = 252,
+		.spDefEv = 4,
+		.ability = FRONTIER_ABILITY_1,
+		.item = ITEM_STEELIUM_Z,
+		.moves =
+		{
+			MOVE_METEORMASH,
+			MOVE_ZENHEADBUTT,
+			MOVE_BULLETPUNCH,
+			MOVE_THUNDERPUNCH,
+		},
+	},
+	{
+		.species = SPECIES_METANG,
+		.nature = NATURE_IMPISH,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.hpEv = 252,
+		.atkEv = 4,
+		.defEv = 252,
+		.ability = FRONTIER_ABILITY_1,
+		.item = ITEM_EVIOLITE,
+		.moves =
+		{
+			MOVE_BODYSLAM,
+			MOVE_TOXIC,
+			MOVE_STEALTHROCK,
+			MOVE_REST,
+		},
+	},
+	{
+		.species = SPECIES_SLIGGOO,
+		.nature = NATURE_MODEST,
+		.hpIv = 31,
+		.atkIv = 00,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.hpEv = 252,
+		.spAtkEv = 252,
+		.spDefEv = 4,
+		.ability = FRONTIER_ABILITY_HIDDEN,
+		.item = ITEM_LIFE_ORB,
+		.moves =
+		{
+			MOVE_DRAGONPULSE,
+			MOVE_ICEBEAM,
+			MOVE_SLUDGEBOMB,
+			MOVE_THUNDERBOLT,
+		},
+	},
+	{
+		.species = SPECIES_SLIGGOO,
+		.nature = NATURE_CALM,
+		.hpIv = 31,
+		.atkIv = 00,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.hpEv = 252,
+		.spAtkEv = 4,
+		.spDefEv = 252,
+		.ability = FRONTIER_ABILITY_HIDDEN,
+		.item = ITEM_STARF_BERRY,
+		.moves =
+		{
+			MOVE_DRACOMETEOR,
+			MOVE_ATTRACT,
+			MOVE_TOXIC,
+			MOVE_PROTECT,
+		},
+	},
+	{
+		.species = SPECIES_DOUBLADE,
+		.nature = NATURE_ADAMANT,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.hpEv = 252,
+		.atkEv = 252,
+		.spDefEv = 4,
+		.ability = FRONTIER_ABILITY_1,
+		.item = ITEM_WEAKNESS_POLICY,
+		.moves =
+		{
+			MOVE_IRONHEAD,
+			MOVE_SHADOWSNEAK,
+			MOVE_ROCKSLIDE,
+			MOVE_SACREDSWORD,
+		},
+	},
+	{
+		.species = SPECIES_DOUBLADE,
+		.nature = NATURE_ADAMANT,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.hpEv = 252,
+		.atkEv = 252,
+		.spDefEv = 4,
+		.ability = FRONTIER_ABILITY_1,
+		.item = ITEM_EXPERT_BELT,
+		.moves =
+		{
+			MOVE_IRONHEAD,
+			MOVE_SHADOWCLAW,
+			MOVE_NIGHTSLASH,
+			MOVE_AERIALACE,
+		},
+	},
+};
+
+const struct BattleTowerSpread gLittleCupTowerSpread_Gail[] =
+{
+	{
+		.species = SPECIES_GROWLITHE,
+		.nature = NATURE_ADAMANT,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 0,
+		.spDefIv = 31,
+		.hpEv = 4,
+		.atkEv = 252,
+		.spdEv = 252,
+		.ability = FRONTIER_ABILITY_1,
+		.item = ITEM_EXPERT_BELT,
+		.moves =
+		{
+			MOVE_FLAREBLITZ,
+			MOVE_CLOSECOMBAT,
+			MOVE_OUTRAGE,
+			MOVE_WILDCHARGE,
+		},
+	},
+	{
+		.species = SPECIES_GROWLITHE,
+		.nature = NATURE_ADAMANT,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 0,
+		.spDefIv = 31,
+		.hpEv = 4,
+		.atkEv = 252,
+		.spdEv = 252,
+		.ability = FRONTIER_ABILITY_1,
+		.item = ITEM_ASSAULT_VEST,
+		.moves =
+		{
+			MOVE_FLAREBLITZ,
+			MOVE_CRUNCH,
+			MOVE_RETURN,
+			MOVE_DOUBLEKICK,
+		},
+	},
+	{
+		.species = SPECIES_ZORUA,
+		.nature = NATURE_SERIOUS,
+		.hpIv = 31,
+		.atkIv = 0,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.hpEv = 4,
+		.spdEv = 252,
+		.spAtkEv = 252,
+		.ability = FRONTIER_ABILITY_1,
+		.item = ITEM_CHOICE_SPECS,
+		.moves =
+		{
+			MOVE_DARKPULSE,
+			MOVE_EXTRASENSORY,
+			MOVE_SHADOWBALL,
+			MOVE_HYPERVOICE,
+		},
+	},
+	{
+		.species = SPECIES_ZORUA,
+		.nature = NATURE_MODEST,
+		.hpIv = 30,
+		.atkIv = 31,
+		.defIv = 30,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.hpEv = 68,
+		.defEv = 040,
+		.spAtkEv = 200,
+		.spDefEv = 200,
+		.ability = FRONTIER_ABILITY_1,
+		.item = ITEM_LIFE_ORB,
+		.moves =
+		{
+			MOVE_SNARL,
+			MOVE_HIDDENPOWER,
+			MOVE_UPROAR,
+			MOVE_EXTRASENSORY,
+		},
+	},
+	{
+		.species = SPECIES_AXEW,
+		.nature = NATURE_SERIOUS,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 0,
+		.spDefIv = 31,
+		.atkEv = 252,
+		.defEv = 060,
+		.spDefEv = 196,
+		.ability = FRONTIER_ABILITY_2,
+		.item = ITEM_LIFE_ORB,
+		.moves =
+		{
+			MOVE_DRAGONCLAW,
+			MOVE_AQUATAIL,
+			MOVE_POISONJAB,
+			MOVE_XSCISSOR,
+		},
+	},
+	{
+		.species = SPECIES_AXEW,
+		.nature = NATURE_JOLLY,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.hpEv = 4,
+		.atkEv = 252,
+		.spdEv = 252,
+		.ability = FRONTIER_ABILITY_1,
+		.item = ITEM_DRAGON_GEM,
+		.moves =
+		{
+			MOVE_OUTRAGE,
+			MOVE_AERIALACE,
+			MOVE_GIGAIMPACT,
+			MOVE_IRONTAIL,
+		},
+	},
+	{
+		.species = SPECIES_FENNEKIN,
+		.nature = NATURE_CALM,
+		.hpIv = 31,
+		.atkIv = 00,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.hpEv = 036,
+		.spdEv = 036,
+		.spAtkEv = 020,
+		.spDefEv = 196,
+		.ability = FRONTIER_ABILITY_HIDDEN,
+		.item = ITEM_NONE,
+		.moves =
+		{
+			MOVE_FLAMETHROWER,
+			MOVE_PSYSHOCK,
+			MOVE_TOXIC,
+			MOVE_WISH,
+		},
+	},
+	{
+		.species = SPECIES_FENNEKIN,
+		.nature = NATURE_MODEST,
+		.hpIv = 30,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 30,
+		.spDefIv = 31,
+		.hpEv = 036,
+		.spdEv = 036,
+		.spAtkEv = 240,
+		.spDefEv = 196,
+		.ability = FRONTIER_ABILITY_1,
+		.item = ITEM_WEAKNESS_POLICY,
+		.moves =
+		{
+			MOVE_FLAMETHROWER,
+			MOVE_HIDDENPOWER,
+			MOVE_WILLOWISP,
+			MOVE_ATTRACT,
+		},
+	},
+	{
+		.species = SPECIES_AMAURA,
+		.nature = NATURE_MODEST,
+		.hpIv = 31,
+		.atkIv = 00,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.defEv = 036,
+		.spAtkEv = 220,
+		.spDefEv = 252,
+		.ability = FRONTIER_ABILITY_1,
+		.item = ITEM_SHUCA_BERRY,
+		.moves =
+		{
+			MOVE_ANCIENTPOWER,
+			MOVE_ICEBEAM,
+			MOVE_HYPERBEAM,
+			MOVE_SUBSTITUTE,
+		},
+	},
+	{
+		.species = SPECIES_AMAURA,
+		.nature = NATURE_CALM,
+		.hpIv = 31,
+		.atkIv = 00,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.hpEv = 252,
+		.defEv = 4,
+		.spDefEv = 252,
+		.ability = FRONTIER_ABILITY_HIDDEN,
+		.item = ITEM_ICY_ROCK,
+		.moves =
+		{
+			MOVE_ICYWIND,
+			MOVE_HAZE,
+			MOVE_THUNDERWAVE,
+			MOVE_STEALTHROCK,
+		},
+	},
+	{
+		.species = SPECIES_SQUIRTLE,
+		.nature = NATURE_MODEST,
+		.hpIv = 31,
+		.atkIv = 30,
+		.defIv = 31,
+		.spdIv = 30,
+		.spAtkIv = 30,
+		.spDefIv = 31,
+		.hpEv = 48,
+		.spdEv = 016,
+		.spAtkEv = 200,
+		.spDefEv = 244,
+		.ability = FRONTIER_ABILITY_HIDDEN,
+		.item = ITEM_DAMP_ROCK,
+		.moves =
+		{
+			MOVE_HYDROPUMP,
+			MOVE_AURASPHERE,
+			MOVE_HIDDENPOWER,
+			MOVE_RAINDANCE,
+		},
+	},
+	{
+		.species = SPECIES_SQUIRTLE,
+		.nature = NATURE_BOLD,
+		.hpIv = 31,
+		.atkIv = 00,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.hpEv = 016,
+		.defEv = 236,
+		.spdEv = 012,
+		.spDefEv = 244,
+		.ability = FRONTIER_ABILITY_1,
+		.item = ITEM_LEFTOVERS,
+		.moves =
+		{
+			MOVE_SCALD,
+			MOVE_TOXIC,
+			MOVE_YAWN,
+			MOVE_REFLECT,
+		},
+	},
+};
+
 #endif

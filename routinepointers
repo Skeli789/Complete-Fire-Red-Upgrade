@@ -61,7 +61,7 @@ sp053_LoadFrontierIntroBattleMessage 0815FEAC
 sp054_GetBattleTowerStreak 0815FEB0
 sp055_UpdateBattleTowerStreak 0815FEB4
 sp056_DetermineBattlePointsToGive 0815FEB8
-#0815FEBC
+sp057_ShowFrontierRecords 0815FEBC
 sp058_BufferSwarmText 0815FEC0 
 sp059_BufferSpeciesRoamingText 0815FEC4 
 #sp05A_WildDataSwitch 0815FEC0

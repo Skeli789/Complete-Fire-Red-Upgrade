@@ -80,7 +80,6 @@ void __attribute__((long_call)) OverworldCallback2(void);
 
 void __attribute__((long_call)) BuildOAMBuffer(void);
 void __attribute__((long_call)) AnimateSprites(void);
-void __attribute__((long_call)) BgIdSetTilemap(u8 layer, u8* space);
 void __attribute__((long_call)) BgIdMarkForSync(u8 bgid);
 
 //Other Functions

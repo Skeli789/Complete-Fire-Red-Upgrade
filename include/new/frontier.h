@@ -13,6 +13,7 @@ u32 GetAIFlagsInBattleFrontier(unusedArg u8 bank);
 u8 GetNumMonsOnTeamInFrontier(void);
 u16 GetCurrentBattleTowerStreak(void);
 u16 GetMaxBattleTowerStreakForTier(u8 tier);
+u16 GetBattleTowerStreak(u8 currentOrMax, u16 inputBattleStyle, u16 inputTier, u16 partySize, u8 level);
 
 //Functions Hooked In:
 u16 sp052_GenerateTowerTrainer(void);
@@ -53,7 +54,7 @@ enum BattleTowerBattleTypes
 enum BattleTowerFormats
 {
 	BATTLE_TOWER_STANDARD,
-	BATTLE_TOWER_FREE_FOR_ALL,
+	BATTLE_TOWER_NO_RESTRICTIONS,
 	BATTLE_TOWER_OU,
 	BATTLE_TOWER_UBER,
 	BATTLE_TOWER_LITTLE_CUP,
@@ -91,6 +92,12 @@ enum FrontierSpreadAbilityNumbers
 	FRONTIER_ABILITY_HIDDEN,
 	FRONTIER_ABILITY_1,
 	FRONTIER_ABILITY_2,
+};
+
+enum
+{
+	CURR_STREAK,
+	MAX_STREAK,
 };
 
 //Exported Data Structures
@@ -149,8 +156,12 @@ struct SpecialBattleTowerTrainer
 	const u8* preBattleText;
 	const u8* playerWinText;
 	const u8* playerLoseText;
-	const struct BattleTowerSpread* spreads;
-	u16 spreadSize;
+	const struct BattleTowerSpread* regularSpreads;
+	const struct BattleTowerSpread* middleCupSpreads;
+	const struct BattleTowerSpread* littleCupSpreads;
+	u16 regSpreadSize;
+	u16 mcSpreadSize;
+	u16 lcSpreadSize;
 	u16 songId;
 };
 
@@ -169,11 +180,12 @@ struct FrontierBrain
 
 extern const struct FrontierBrain gFrontierBrains[];
 
-extern u16 gBattleTowerStreaks[NUM_TOWER_BATTLE_TYPES][NUM_FORMATS][/*INVERSE*/ 2][/*LEVEL*/ 4][/*CURRENT_OR_MAX*/ 2]; //0x2026840
+extern u16 gBattleTowerStreaks[NUM_TOWER_BATTLE_TYPES][NUM_FORMATS][/*PARTY_SIZE*/ 2][/*LEVEL*/ 4][/*CURRENT_OR_MAX*/ 2]; //0x2026840
 
 extern const species_t StandardSpeciesBanList[];
 extern const species_t OU_SpeciesBanList[];
-extern const species_t LittleCup_SpeciesList[];
+extern const species_t gLittleCup_SpeciesList[];
+extern const species_t gMiddleCup_SpeciesList[];
 extern const ability_t OU_AbilityBanList[];
 extern const item_t StandardItemBanList[];
 extern const item_t OU_ItemBanList[];

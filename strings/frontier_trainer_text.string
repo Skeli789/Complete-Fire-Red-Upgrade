@@ -767,10 +767,10 @@ I've never been much of a battler,\nbut[.]
 I'll check how your Pok\emon have\ngrown for you.
 
 #org @sFrontierText_Pkmnbreeder_PlayerWin_4
-This is impressive!\nYou've raised your Pok\emon really\lthoroughly.
+This is impressive!\pYou've raised your Pok\emon really\nthoroughly.
 
 #org @sFrontierText_Pkmnbreeder_PlayerLose_4
-Not good enough!\nYour training style's not up to\lpar.
+Not good enough!\pYour training style's not up to\npar.
 
 #org @sFrontierText_Pkmnbreeder_PreBattle_5
 It's no good to be too harsh[.]\nBut pampering is also out[.]
@@ -1187,3 +1187,21 @@ Alright!\nThat was fun!
 
 #org @sFrontierText_Skeli_PlayerLose
 I'm looking forward to battling you\nagain in the future!
+
+#org @sFrontierText_Gail_PreBattle
+Don't think it'll be easy to beat\nme!\pYou're facing the legacy Pok\emon\nTrainer[.]Thanasis!
+
+#org @sFrontierText_Gail_PlayerWin
+I have to admit, you really are\nsomething special.
+
+#org @sFrontierText_Gail_PlayerLose
+It seems you're not ready to face\nme just yet!
+
+#org @sFrontierText_Golche_PreBattle
+Hey, there!\nI'm Golche!\pThe intelligence of the Trainers\nyou've faced[.]\pI helped create it!\pNow, let me show what true\nintellect can do!
+
+#org @sFrontierText_Golche_PlayerWin
+Looks like I need to refine the\nbattle strategies.
+
+#org @sFrontierText_Golche_PlayerLose
+Haha!\pNow you see what my intellect is\ntruly capable of.

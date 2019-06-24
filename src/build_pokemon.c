@@ -24,6 +24,10 @@
 #include "Tables/battle_tower_spreads.h"
 
 #define TOTAL_SPREADS ARRAY_COUNT(gFrontierSpreads)
+#define TOTAL_LEGENDARY_SPREADS ARRAY_COUNT(gFrontierLegendarySpreads)
+#define TOTAL_ARCEUS_SPREADS ARRAY_COUNT(gArceusSpreads)
+#define TOTAL_LITTLE_CUP_SPREADS ARRAY_COUNT(gLittleCupSpreads)
+#define TOTAL_MIDDLE_CUP_SPREADS ARRAY_COUNT(gMiddleCupSpreads)
 
 extern const u8 gClassPokeBalls[NUM_TRAINER_CLASSES];
 extern const species_t gRandomizerBanList[];
@@ -46,7 +50,8 @@ static bool8 ZCrystalAlreadyOnTeam(const u16 item, const u8 partySize, const ite
 static bool8 PokemonTierBan(const u16 species, const u16 item, const struct BattleTowerSpread* const spread, const pokemon_t* const mon, const u8 checkFromLocationType);
 static bool8 IsPokemonBannedBasedOnStreak(u16 species, u16 item, u16* speciesArray, u8 monsCount, u16 trainerId, u8 tier, bool8 forPlayer);
 static u16 GivePlayerFrontierMonGivenSpecies(const u16 species, const struct BattleTowerSpread* const spreadTable, const u16 numSpreads);
-const struct BattleTowerSpread* GetSpreadBySpecies(const u16 species, const struct BattleTowerSpread* const spreads, const u16 numSpreads);
+static const struct BattleTowerSpread* GetSpreadBySpecies(const u16 species, const struct BattleTowerSpread* const spreads, const u16 numSpreads);
+static const struct BattleTowerSpread* TryAdjustSpreadForSpecies(const struct BattleTowerSpread* originalSpread);
 static u8 GetPartyIdFromPartyData(struct Pokemon* mon);
 static u8 GetHighestMonLevel(const pokemon_t* const party);
 
@@ -174,6 +179,15 @@ u16 sp068_GivePlayerFrontierMonGivenSpecies(void)
 		default:
 			numSpreads = TOTAL_SPREADS;
 			spreads = gFrontierSpreads;
+			break;
+		case 1:
+			numSpreads = TOTAL_LITTLE_CUP_SPREADS;
+			spreads = gLittleCupSpreads;
+			break;
+		case 2:
+			numSpreads = TOTAL_MIDDLE_CUP_SPREADS;
+			spreads = gMiddleCupSpreads;
+			break;
 	}
 
 	return GivePlayerFrontierMonGivenSpecies(Var8000, spreads, numSpreads);
@@ -188,7 +202,8 @@ extern const u8 gStandardSpeciesBanListSize;
 //@Returns: If the Pokemon was added or not.
 u16 sp069_GivePlayerRandomFrontierMonByTier(void)
 {
-	u16 numSpreads, species, val;
+	u8 level, tier;
+	u16 numSpreads;
 	struct Pokemon mon;
 	const struct BattleTowerSpread* spread;
 	const struct BattleTowerSpread* spreads;
@@ -196,29 +211,40 @@ u16 sp069_GivePlayerRandomFrontierMonByTier(void)
 	switch (Var8001) {
 		case 0:
 		default:
+			level = 50;
 			numSpreads = TOTAL_SPREADS;
 			spreads = gFrontierSpreads;
+			tier = BATTLE_TOWER_STANDARD;
 			break;
 
 		case 1: //Legendary Pokemon
-			numSpreads = TOTAL_SPREADS;
-			spreads = gFrontierSpreads;
+			level = 50;
+			numSpreads = TOTAL_LEGENDARY_SPREADS;
+			spreads = gFrontierLegendarySpreads;
+			tier = BATTLE_TOWER_NO_RESTRICTIONS;
+			break;
+			
+		case 2: //Little Cup
+			level = 5;
+			numSpreads = TOTAL_LITTLE_CUP_SPREADS;
+			spreads = gLittleCupSpreads;
+			tier = BATTLE_TOWER_LITTLE_CUP;
+			break;
 
-			do
-			{
-				species = StandardSpeciesBanList[Random() % gStandardSpeciesBanListSize];
-				val = GivePlayerFrontierMonGivenSpecies(species, spreads, numSpreads);
-			} while (val == 0xFFFF);
-
-			return val;
+		case 3: //Middle Cup
+			level = 50;
+			numSpreads = TOTAL_MIDDLE_CUP_SPREADS;
+			spreads = gMiddleCupSpreads;
+			tier = BATTLE_TOWER_MIDDLE_CUP;
+			break;
 	}
 	
 	do
 	{
-		spread = &spreads[Random() % numSpreads];
-	} while (IsPokemonBannedBasedOnStreak(spread->species, spread->item, NULL, 0, 0, Var8000, TRUE));
+		spread = TryAdjustSpreadForSpecies(&spreads[Random() % numSpreads]);
+	} while (IsPokemonBannedBasedOnStreak(spread->species, spread->item, NULL, 0, 0, tier, TRUE));
 	
-	CreateFrontierMon(&mon, 50, spread, 0, 0, 0, TRUE);
+	CreateFrontierMon(&mon, level, spread, 0, 0, 0, TRUE);
 	return GiveMonToPlayer(&mon);
 }
 
@@ -508,18 +534,68 @@ static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerId, const 
         u8 loop = 1;
 		u16 species;
 		u16 item;
-		const struct BattleTowerSpread* spread;
+		const struct BattleTowerSpread* spread = NULL;
 
 		do 
 		{
 			switch (trainerId) {
 				case BATTLE_TOWER_SPECIAL_TID:
-					spread = &specialTrainer->spreads[Random() % specialTrainer->spreadSize]; //Special trainers have preset spreads.
+					switch (tier) {
+						case BATTLE_TOWER_LITTLE_CUP:
+							if (specialTrainer->littleCupSpreads != NULL)
+								spread = &specialTrainer->littleCupSpreads[Random() % specialTrainer->lcSpreadSize];
+							else
+								goto REGULAR_LC_SPREADS;
+							break;
+						case BATTLE_TOWER_MIDDLE_CUP:
+							if (specialTrainer->middleCupSpreads != NULL)
+								spread = &specialTrainer->middleCupSpreads[Random() % specialTrainer->mcSpreadSize];
+							else
+								goto REGULAR_MC_SPREADS;
+							break;
+						default:
+							if (specialTrainer->regularSpreads != NULL)
+								spread = &specialTrainer->regularSpreads[Random() % specialTrainer->regSpreadSize]; //Special trainers have preset spreads.
+							else
+								goto REGULAR_SPREADS;
+					}
 					break;
 				case FRONTIER_BRAIN_TID:
 					spread = &frontierBrain->spreads[Random() % frontierBrain->spreadSize]; //Frontier Brains have preset spreads.
 					break;
-				default: //BATTLE_TOWER_TID and forPlayer
+				case BATTLE_TOWER_TID:
+					switch (tier) {
+						case BATTLE_TOWER_UBER:
+						case BATTLE_TOWER_NO_RESTRICTIONS:
+							if (Random() % 100 < 5) //5% chance per mon of not being legendary
+								spread = &gFrontierSpreads[Random() % TOTAL_SPREADS];
+							else
+								spread = &gFrontierLegendarySpreads[Random() % TOTAL_LEGENDARY_SPREADS];
+							break;
+						case BATTLE_TOWER_LITTLE_CUP:
+						REGULAR_LC_SPREADS:
+							spread = &gLittleCupSpreads[Random() % TOTAL_LITTLE_CUP_SPREADS];
+							break;
+						case BATTLE_TOWER_MIDDLE_CUP:
+						REGULAR_MC_SPREADS:
+							spread = &gMiddleCupSpreads[Random() % TOTAL_MIDDLE_CUP_SPREADS];
+							break;
+						case BATTLE_TOWER_STANDARD: ;
+							u16 streak = GetCurrentBattleTowerStreak();
+							if (streak < 2)
+							{
+								spread = &gMiddleCupSpreads[Random() % TOTAL_MIDDLE_CUP_SPREADS]; //Load Middle Cup spreads for first two battles to make them easier
+								break;
+							}
+							__attribute__ ((fallthrough));
+						default:
+						REGULAR_SPREADS:
+							spread = &gFrontierSpreads[Random() % TOTAL_SPREADS];
+							break;
+					}
+					break;
+					
+				default: //forPlayer
 					spread = &gFrontierSpreads[Random() % TOTAL_SPREADS];
 			}
 
@@ -826,7 +902,7 @@ static bool8 PokemonTierBan(const u16 species, const u16 item, const struct Batt
 			break;
 
 		case BATTLE_TOWER_LITTLE_CUP:
-			if (!CheckTableForSpecies(species, LittleCup_SpeciesList))
+			if (!CheckTableForSpecies(species, gLittleCup_SpeciesList))
 				return TRUE; //Banned
 
 			if (checkFromLocationType == CHECK_BATTLE_TOWER_SPREADS)
@@ -841,7 +917,8 @@ static bool8 PokemonTierBan(const u16 species, const u16 item, const struct Batt
 			break;
 
 		case BATTLE_TOWER_MIDDLE_CUP:
-			//To-Do
+			if (!CheckTableForSpecies(species, gMiddleCup_SpeciesList))
+				return TRUE; //Banned
 			break;
 	}
 
@@ -850,12 +927,10 @@ static bool8 PokemonTierBan(const u16 species, const u16 item, const struct Batt
 
 static bool8 IsPokemonBannedBasedOnStreak(u16 species, u16 item, u16* speciesArray, u8 monsCount, u16 trainerId, u8 tier, bool8 forPlayer)
 {
-	u16 streak;
+	u16 streak = GetCurrentBattleTowerStreak();
 	
 	if (!forPlayer && trainerId == BATTLE_TOWER_TID && tier == BATTLE_TOWER_STANDARD)
 	{
-		streak = GetCurrentBattleTowerStreak();
-				
 		//Battles get more difficult the higher the streak.
 		if (streak < 10)
 		{
@@ -881,7 +956,7 @@ static bool8 IsPokemonBannedBasedOnStreak(u16 species, u16 item, u16* speciesArr
 				return TRUE;
 		}
 	}
-	else if (forPlayer)
+	else if (forPlayer && tier == BATTLE_TOWER_STANDARD)
 	{
 		streak = GetMaxBattleTowerStreakForTier(tier);
 		
@@ -905,6 +980,11 @@ static bool8 IsPokemonBannedBasedOnStreak(u16 species, u16 item, u16* speciesArr
 				return TRUE;
 		}
 	}
+	else if (trainerId == BATTLE_TOWER_SPECIAL_TID && streak < 20)
+	{
+		if (IsMegaStone(item)) //Special trainers aren't allowed to Mega Evolve
+			return TRUE;	   //before the player has beaten Palmer in the 20th battle.
+	}
 	
 	return FALSE;
 }
@@ -921,7 +1001,7 @@ static u16 GivePlayerFrontierMonGivenSpecies(const u16 species, const struct Bat
 	return GiveMonToPlayer(&mon);
 }
 
-const struct BattleTowerSpread* GetSpreadBySpecies(const u16 species, const struct BattleTowerSpread* const spreads, const u16 numSpreads)
+static const struct BattleTowerSpread* GetSpreadBySpecies(const u16 species, const struct BattleTowerSpread* const spreads, const u16 numSpreads)
 {
 	u32 i;
 
@@ -942,6 +1022,14 @@ const struct BattleTowerSpread* GetSpreadBySpecies(const u16 species, const stru
 	return &spreads[i + offset];
 }
 
+static const struct BattleTowerSpread* TryAdjustSpreadForSpecies(const struct BattleTowerSpread* originalSpread)
+{
+	if (originalSpread->species == SPECIES_ARCEUS)
+		return &gArceusSpreads[Random() % TOTAL_ARCEUS_SPREADS]; //There are more Arceus spreads than any other Pokemon,
+																   //so they're held seperately to keep things fresh.
+	return originalSpread;
+}
+
 bool8 IsMonAllowedInBattleTower(struct Pokemon* mon)
 {
 	if (FlagGet(BATTLE_TOWER_FLAG))
@@ -956,7 +1044,7 @@ bool8 IsMonAllowedInBattleTower(struct Pokemon* mon)
 			return FALSE;
 		
 		u8 tier = VarGet(BATTLE_TOWER_TIER);
-		if (tier != BATTLE_TOWER_FREE_FOR_ALL) //Free for all has no duplicate species or item restriction
+		if (tier != BATTLE_TOWER_NO_RESTRICTIONS) //Free for all has no duplicate species or item restriction
 		{
 			u8 partySize = 0;
 			u8 partyId = GetPartyIdFromPartyData(mon);

@@ -343,7 +343,7 @@ const move_t SmogonMoveBanList[] =
 	MOVE_TABLES_TERMIN
 };
 
-const species_t LittleCup_SpeciesList[] = 
+const species_t gLittleCup_SpeciesList[] = 
 {
 	SPECIES_ABRA,
 	SPECIES_AMAURA,

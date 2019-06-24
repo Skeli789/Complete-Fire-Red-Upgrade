@@ -182,8 +182,8 @@ extern TextFlags gTextFlags;
 
 struct __attribute__((packed)) TextColor
 {
-    u8 fgColor;
     u8 bgColor;
+    u8 fgColor;
     u8 shadowColor;
 };
 

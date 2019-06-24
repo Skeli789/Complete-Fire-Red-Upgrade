@@ -413,6 +413,8 @@ extern const u8 sFrontierText_Rancher_PlayerLose_6[];
 
 extern const u8 sTrainerName_Cynthia[];
 extern const u8 sTrainerName_Skeli[];
+extern const u8 sTrainerName_Golche[];
+extern const u8 sTrainerName_Gail[];
 extern const u8 sTrainerName_Palmer[];
 
 extern const u8 sFrontierText_Cynthia_PreBattle[];
@@ -422,6 +424,14 @@ extern const u8 sFrontierText_Cynthia_PlayerLose[];
 extern const u8 sFrontierText_Skeli_PreBattle[];
 extern const u8 sFrontierText_Skeli_PlayerWin[];
 extern const u8 sFrontierText_Skeli_PlayerLose[];
+
+extern const u8 sFrontierText_Golche_PreBattle[];
+extern const u8 sFrontierText_Golche_PlayerWin[];
+extern const u8 sFrontierText_Golche_PlayerLose[];
+
+extern const u8 sFrontierText_Gail_PreBattle[];
+extern const u8 sFrontierText_Gail_PlayerWin[];
+extern const u8 sFrontierText_Gail_PlayerLose[];
 
 #ifdef UNBOUND
 const struct BattleTowerTrainer gTowerTrainers[] = 
@@ -1609,8 +1619,12 @@ const struct SpecialBattleTowerTrainer gSpecialTowerTrainers[] =
 		.preBattleText = 	sFrontierText_Cynthia_PreBattle,
 		.playerWinText = 	sFrontierText_Cynthia_PlayerWin,
 		.playerLoseText = 	sFrontierText_Cynthia_PlayerLose,
-		.spreads =			gSpecialTowerSpread_Cynthia,
-		.spreadSize = 		ARRAY_COUNT(gSpecialTowerSpread_Cynthia),
+		.regularSpreads =	gSpecialTowerSpread_Cynthia,
+		.middleCupSpreads = gMiddleCupTowerSpread_Cynthia,
+		.littleCupSpreads = gLittleCupTowerSpread_Cynthia,
+		.regSpreadSize = 	ARRAY_COUNT(gSpecialTowerSpread_Cynthia),
+		.mcSpreadSize =		ARRAY_COUNT(gMiddleCupTowerSpread_Cynthia),
+		.lcSpreadSize =		ARRAY_COUNT(gLittleCupTowerSpread_Cynthia),
 		.songId = 			BGM_BATTLE_CYNTHIA,
 	},
 	{
@@ -1622,9 +1636,47 @@ const struct SpecialBattleTowerTrainer gSpecialTowerTrainers[] =
 		.preBattleText = 	sFrontierText_Skeli_PreBattle,
 		.playerWinText = 	sFrontierText_Skeli_PlayerWin,
 		.playerLoseText = 	sFrontierText_Skeli_PlayerLose,
-		.spreads =			gSpecialTowerSpread_Skeli,
-		.spreadSize = 		ARRAY_COUNT(gSpecialTowerSpread_Skeli),
+		.regularSpreads =	gSpecialTowerSpread_Skeli,
+		.middleCupSpreads = gMiddleCupTowerSpread_Skeli,
+		.littleCupSpreads = gLittleCupTowerSpread_Skeli,
+		.regSpreadSize = 	ARRAY_COUNT(gSpecialTowerSpread_Skeli),
+		.mcSpreadSize =		ARRAY_COUNT(gMiddleCupTowerSpread_Skeli),
+		.lcSpreadSize =		ARRAY_COUNT(gLittleCupTowerSpread_Skeli),
 		.songId = 			BGM_BATTLE_LOR_BOSS,
+	},
+	{
+		.owNum = 			OW_GOLCHE,
+		.trainerClass = 	CLASS_DEVELOPER,
+		.trainerSprite = 	TRAINER_SPRITE_GOLCHE,
+		.gender = 			BATTLE_TOWER_MALE,
+		.name =				sTrainerName_Golche,
+		.preBattleText = 	sFrontierText_Golche_PreBattle,
+		.playerWinText = 	sFrontierText_Golche_PlayerWin,
+		.playerLoseText = 	sFrontierText_Golche_PlayerLose,
+		.regularSpreads =	gSpecialTowerSpread_Golche,
+		//.middleCupSpreads = gMiddleCupTowerSpread_Golche,
+		//.littleCupSpreads = gLittleCupTowerSpread_Golche,
+		.regSpreadSize = 	ARRAY_COUNT(gSpecialTowerSpread_Golche),
+		//.mcSpreadSize =		ARRAY_COUNT(gMiddleCupTowerSpread_Golche),
+		//.lcSpreadSize =		ARRAY_COUNT(gLittleCupTowerSpread_Golche),
+		.songId = 			BGM_BATTLE_GALACTIC_BOSS,
+	},
+	{
+		.owNum = 			OW_GAIL,
+		.trainerClass = 	CLASS_PKMN_TRAINER_2,
+		.trainerSprite = 	TRAINER_SPRITE_GAIL,
+		.gender = 			BATTLE_TOWER_MALE,
+		.name =				sTrainerName_Gail,
+		.preBattleText = 	sFrontierText_Gail_PreBattle,
+		.playerWinText = 	sFrontierText_Gail_PlayerWin,
+		.playerLoseText = 	sFrontierText_Gail_PlayerLose,
+		.regularSpreads =	gSpecialTowerSpread_Gail,
+		.middleCupSpreads = gMiddleCupTowerSpread_Gail,
+		.littleCupSpreads = gLittleCupTowerSpread_Gail,
+		.regSpreadSize = 	ARRAY_COUNT(gSpecialTowerSpread_Gail),
+		.mcSpreadSize =		ARRAY_COUNT(gMiddleCupTowerSpread_Gail),
+		.lcSpreadSize =		ARRAY_COUNT(gLittleCupTowerSpread_Gail),
+		.songId = 			BGM_BATTLE_DIALGA_PALKIA,
 	},
 };
 

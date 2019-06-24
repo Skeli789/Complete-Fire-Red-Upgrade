@@ -11,8 +11,7 @@ extern u8* gMaleFrontierNamesTable[];
 extern u8* gFemaleFrontierNamesTable[];
 
 //This file's functions:
-static u16 GetBattleTowerStreak(u8 currentOrMax, u16 battleStyle, u16 tier, u8 inverse, u8 level);
-static void LoadProperStreakData(u8* currentOrMax, u8* battleStyle, u8* tier, u8* inverse, u8* level);
+static void LoadProperStreakData(u8* currentOrMax, u8* battleStyle, u8* tier, u8* partySize, u8* level);
 
 u8 GetFrontierTrainerClassId(u16 trainerId, u8 battlerNum) 
 {
@@ -111,11 +110,11 @@ void CopyFrontierTrainerText(u8 whichText, u16 trainerId, u8 battlerNum)
 					break;
 			
 				case FRONTIER_PLAYER_LOST_TEXT:
-					StringCopy(gStringVar4, GetTrainerALoseText());
+					StringCopy(gStringVar4, GetTrainerAWinText());
 					break;
 			
 				case FRONTIER_PLAYER_WON_TEXT:
-					StringCopy(gStringVar4, GetTrainerAWinText());
+					StringCopy(gStringVar4, GetTrainerALoseText());
 			}
 			break;		
 	}
@@ -269,13 +268,7 @@ void sp053_LoadFrontierIntroBattleMessage(void)
 	}
 }
 
-enum
-{
-	CURR_STREAK,
-	MAX_STREAK,
-};
-
-//u16 Streaks[BATTLE_STYLE (4)][TIER (6)][INVERSE (2)][LEVEL (4)][CURRENT_OR_MAX (2)]
+//u16 Streaks[BATTLE_STYLE (4)][TIER (6)][PARTY_SIZE (2)][LEVEL (4)][CURRENT_OR_MAX (2)]
 
 //@Details: Gets the streak for the requested Battle Tower format.
 //@Input:
@@ -285,9 +278,8 @@ enum
 //				 0+ = Given Style
 //		Var8002: 0xFFFF = Load Tier From Var
 //				 0+ = Given Tier
-//		Var8003: 0 = Not Inverse
-//				 1 = Inverse
-//				 2 = Load Inverse From Flag
+//		Var8003: 1 - 6 = Party Size (Options are split into 6 v 6 and NOT 6 v 6)
+//				 0xFFFF = Load Party Size From Var
 //		Var8004: 0 = Load level from var
 //				 1+ = Given Level
 u16 sp054_GetBattleTowerStreak(void)
@@ -297,13 +289,12 @@ u16 sp054_GetBattleTowerStreak(void)
 
 u16 GetCurrentBattleTowerStreak(void)
 {
-	return GetBattleTowerStreak(CURR_STREAK, 0xFFFF, 0xFFFF, 2, 0);
+	return GetBattleTowerStreak(CURR_STREAK, 0xFFFF, 0xFFFF, 0xFFFF, 0);
 }
 
 u16 GetMaxBattleTowerStreakForTier(u8 tier)
 {
-	bool8 inverse;
-	u8 battleType, level;
+	u8 battleType, level, partySize;
 	u16 streak = 0;
 	u16 max = 0;
 	
@@ -311,9 +302,9 @@ u16 GetMaxBattleTowerStreakForTier(u8 tier)
 	{
 		for (level = 50; level <= 100; level += 50) 
 		{
-			for (inverse = FALSE; inverse <= TRUE; ++inverse)
+			for (partySize = 3; partySize <= 6; partySize += 3) //3 represents one record, 6 represents another
 			{
-				streak = GetBattleTowerStreak(MAX_STREAK, battleType, tier, inverse, level);
+				streak = GetBattleTowerStreak(MAX_STREAK, battleType, tier, partySize, level);
 				
 				if (streak > max)
 					max = streak;
@@ -324,15 +315,15 @@ u16 GetMaxBattleTowerStreakForTier(u8 tier)
 	return max;
 }
 
-static u16 GetBattleTowerStreak(u8 currentOrMax, u16 inputBattleStyle, u16 inputTier, u8 inverse, u8 level)
+u16 GetBattleTowerStreak(u8 currentOrMax, u16 inputBattleStyle, u16 inputTier, u16 partySize, u8 level)
 {
 	u8 battleStyle = (inputBattleStyle == 0xFFFF) ? VarGet(BATTLE_TOWER_BATTLE_TYPE) : inputBattleStyle;
 	u8 tier = (inputTier == 0xFFFF) ? VarGet(BATTLE_TOWER_TIER) : inputTier;
-	inverse = (inverse == 2) ? FlagGet(INVERSE_FLAG) : inverse;	
+	u8 size = (partySize == 0xFFFF) ? VarGet(BATTLE_TOWER_POKE_NUM) : partySize;	
 	level = (level == 0) ? VarGet(BATTLE_TOWER_POKE_LEVEL) : level;
-	LoadProperStreakData(&currentOrMax, &battleStyle, &tier, &inverse, &level);
+	LoadProperStreakData(&currentOrMax, &battleStyle, &tier, &size, &level);
 
-	return gBattleTowerStreaks[battleStyle][tier][inverse][level][currentOrMax];
+	return gBattleTowerStreaks[battleStyle][tier][size][level][currentOrMax];
 }
 
 //@Details: Updates the streak for the current Battle Tower format.
@@ -344,12 +335,12 @@ void sp055_UpdateBattleTowerStreak(void)
 	u8 dummy = 0;
 	u8 battleStyle = VarGet(BATTLE_TOWER_BATTLE_TYPE);
 	u8 tier = VarGet(BATTLE_TOWER_TIER);
-	u8 inverse = FlagGet(INVERSE_FLAG);
+	u8 partySize = VarGet(BATTLE_TOWER_POKE_NUM);
 	u8 level = VarGet(BATTLE_TOWER_POKE_LEVEL);
-	LoadProperStreakData(&dummy, &battleStyle, &tier, &inverse, &level);
+	LoadProperStreakData(&dummy, &battleStyle, &tier, &partySize, &level);
 
-	u16* currentStreak = &gBattleTowerStreaks[battleStyle][tier][inverse][level][CURR_STREAK]; //Current Streak
-	u16* maxStreak = &gBattleTowerStreaks[battleStyle][tier][inverse][level][MAX_STREAK]; //Max Streak
+	u16* currentStreak = &gBattleTowerStreaks[battleStyle][tier][partySize][level][CURR_STREAK]; //Current Streak
+	u16* maxStreak = &gBattleTowerStreaks[battleStyle][tier][partySize][level][MAX_STREAK]; //Max Streak
 	
 	switch (Var8000) {
 		case 0:
@@ -378,7 +369,12 @@ u16 sp056_DetermineBattlePointsToGive(void)
 	else if (streakLength <= 19)
 		toGive = 3;
 	else if (streakLength == 20)
-		toGive = 20;
+	{
+		if (VarGet(BATTLE_TOWER_TIER) == BATTLE_TOWER_STANDARD)
+			toGive = 20; //Battle against frontier brain
+		else
+			toGive = 3; //Just a special trainer
+	}
 	else if (streakLength <= 30)
 		toGive = 4;
 	else if (streakLength <= 40)
@@ -386,18 +382,23 @@ u16 sp056_DetermineBattlePointsToGive(void)
 	else if (streakLength <= 49)
 		toGive = 6;
 	else if (streakLength == 50)
-		toGive = 50;
+	{
+		if (VarGet(BATTLE_TOWER_TIER) == BATTLE_TOWER_STANDARD)
+			toGive = 50; //Battle against frontier brain
+		else
+			toGive = 3; //Just a special trainer
+	}
 	else
 		toGive = 7;
 		
 	return toGive;
 }
 
-static void LoadProperStreakData(u8* currentOrMax, u8* battleStyle, u8* tier, u8* inverse, u8* level)
+static void LoadProperStreakData(u8* currentOrMax, u8* battleStyle, u8* tier, u8* partySize, u8* level)
 {
 	*currentOrMax = MathMin(*currentOrMax, 1);
 	*battleStyle = MathMin(*battleStyle, NUM_TOWER_BATTLE_TYPES);
 	*tier = MathMin(*tier, NUM_FORMATS);
-	*inverse = MathMin(*inverse, TRUE);
+	*partySize = (*partySize < 6) ? 0 : 1;
 	*level = (*level <= 25) ? 0 : (*level <= 50) ? 1 : (*level <= 75) ? 2 : 3;
 }
