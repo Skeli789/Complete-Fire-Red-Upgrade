@@ -681,7 +681,7 @@ static bool8 TheCalcForSemiInvulnerableTroll(u8 bankAtk, u8 flags, bool8 JustChe
 	if (((gStatuses3[bankAtk] & STATUS3_SEMI_INVULNERABLE) || (JustCheckLockedMoves && gLockedMoves[bankAtk])) 
 	&&	gBattleStruct->moveTarget[bankAtk] == gActiveBattler)
 	{
-		if (TypeCalc(gLockedMoves[bankAtk], bankAtk, gActiveBattler, 0, FALSE) & flags)
+		if (TypeCalc(gLockedMoves[bankAtk], bankAtk, gActiveBattler, NULL, FALSE) & flags)
 			return FALSE;
 			
 		for (i = firstId; i < lastId; ++i)

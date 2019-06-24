@@ -2146,7 +2146,7 @@ static void DexNavGuiHandler(void)
 
 			LZ77UnCompWram(gInterfaceGfx_dexnavGuiMap, DexNav_gbackBuffer);
 			LZ77UnCompVram(gInterfaceGfx_dexnavGuiTiles, (void*) 0x06000000);
-			BgIdSetTilemap(1, DexNav_gbackBuffer);
+			SetBgTilemapBuffer(1, DexNav_gbackBuffer);
 			BgIdMarkForSync(1);
 			BgIdMarkForSync(0);
 			gMain.state += 1;

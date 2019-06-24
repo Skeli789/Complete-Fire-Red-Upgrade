@@ -694,12 +694,12 @@
 .word \trainerbattle8_extra2
 .endm
 
-.macro trainerbattle9 trainerbattle9_type trainerbattle9_index trainerbattle9_filler trainerbattle9_intro trainerbattle9_loss
+.macro trainerbattle9 trainerbattle9_type trainerbattle9_index trainerbattle9_filler trainerbattle9_win trainerbattle9_loss
 .byte 0x5C
 .byte 0x9
 .hword \trainerbattle9_index
 .hword \trainerbattle9_filler
-.word \trainerbattle9_intro
+.word \trainerbattle9_win
 .word \trainerbattle9_loss
 .endm
 

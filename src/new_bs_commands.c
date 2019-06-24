@@ -1184,6 +1184,7 @@ Doesn't Affect (Spore, Minior Shield etc.)
 Attack Misses
 Already Asleep
 Already Has Status (Failed)
+Safeguard?
 Misty Terrain / Electric Terrain
 Flower Veil
 Sweet Veil
@@ -1197,14 +1198,25 @@ void atkFF29_trysetsleep(void)
 	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
 	bool8 fail = FALSE;
 	
-	if (gBattleMons[bank].status1 & STATUS1_SLEEP || ABILITY(bank) == ABILITY_COMATOSE)
+	if (CheckTableForMove(gCurrentMove, PowderTable) && TypeCalc(gCurrentMove, gBankAttacker, bank, NULL, FALSE) & MOVE_RESULT_DOESNT_AFFECT_FOE)
+	{
+		gMoveResultFlags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
+		gBattlescriptCurrInstr = BattleScript_PauseResultMessage;
+		return;
+	}
+	else if (gBattleMons[bank].status1 & STATUS1_SLEEP)
 	{
 		BattleStringLoader = gText_TargetAlreadyAsleep;
 		fail = TRUE;
 	}
-	else if (gBattleMons[bank].status1)
+	else if (gBattleMons[bank].status1 != STATUS1_NONE)
 	{
 		BattleStringLoader = gText_TargetAlreadyHasStatusCondition; //String not in official games; officially "But it failed!"
+		fail = TRUE;
+	}
+	else if (gSideAffecting[SIDE(bank)] & SIDE_STATUS_SAFEGUARD)
+	{
+		BattleStringLoader = gText_TeamProtectedBySafeguard;
 		fail = TRUE;
 	}
 	else if (CheckGrounding(bank) && TerrainType == MISTY_TERRAIN)
@@ -1220,26 +1232,26 @@ void atkFF29_trysetsleep(void)
 	else if (IsOfType(bank, TYPE_GRASS) && ABILITY(bank) == ABILITY_FLOWERVEIL)
 	{
 		gBattleScripting->bank = bank;
-		BattleStringLoader = gText_FlowerVeilProtects;
-		fail = TRUE;
+		gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
+		return;
 	}
 	else if (IsOfType(bank, TYPE_GRASS) && gBattleTypeFlags & BATTLE_TYPE_DOUBLE && ABILITY(PARTNER(bank)) == ABILITY_FLOWERVEIL)
 	{
 		gBattleScripting->bank = PARTNER(bank);
-		BattleStringLoader = gText_FlowerVeilProtects;
-		fail = TRUE;
+		gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
+		return;
 	}
 	else if (ABILITY(bank) == ABILITY_SWEETVEIL)
 	{
 		gBattleScripting->bank = bank;
-		BattleStringLoader = gText_SweetVeilProtects;
-		fail = TRUE;
+		gBattlescriptCurrInstr = BattleScript_TeamProtectedBySweetVeil;
+		return;
 	}
 	else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && ABILITY(PARTNER(bank)) == ABILITY_SWEETVEIL)
 	{
 		gBattleScripting->bank = PARTNER(bank);
-		BattleStringLoader = gText_SweetVeilProtects;
-		fail = TRUE;
+		gBattlescriptCurrInstr = BattleScript_TeamProtectedBySweetVeil;
+		return;
 	}
 	else if (IsUproarBeingMade())
 	{
@@ -1253,26 +1265,289 @@ void atkFF29_trysetsleep(void)
 		switch (ABILITY(bank)) {
 			case ABILITY_INSOMNIA:
 			case ABILITY_VITALSPIRIT:
-				BattleStringLoader = gText_TargetStayedAwakeUsingAbility;
-				fail = TRUE;
-				break;
+				gBattlescriptCurrInstr = BattleScript_TargetStayedAwakeUsingAbility;
+				return;
 			case ABILITY_LEAFGUARD:
 				if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
 				{
-					BattleStringLoader = gText_TargetStayedAwakeUsingAbility;
-					fail = TRUE;
+					gBattlescriptCurrInstr = BattleScript_ProtectedByAbility;
+					return;
 				}
 				break;
+			case ABILITY_COMATOSE:
+				gBattlescriptCurrInstr = BattleScript_ProtectedByAbility;
+				return;
 			case ABILITY_SHIELDSDOWN:
 				if (SPECIES(bank) == SPECIES_MINIOR_SHIELD)
 				{
-				
+					gBattlescriptCurrInstr = BattleScript_ProtectedByAbility;
+					return;
+				}
+		}
+		
+		if (!fail && DoesSleepClausePrevent(bank))
+		{
+			BattleStringLoader = gText_SleepClausePrevents;
+			fail = TRUE;
+		}
+	}
+
+	if (fail)
+	{
+		gMoveResultFlags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
+		gBattlescriptCurrInstr = ptr;
+	}
+	else
+		gBattlescriptCurrInstr += 6;	
+}
+
+//trysetparalysis BANK FAIL_ADDRESS
+void atkFF2A_trysetparalysis(void)
+{
+	u8 bank = GetBattleBank(gBattlescriptCurrInstr[1]);
+	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
+	bool8 fail = FALSE;
+	
+	if ((CheckTableForMove(gCurrentMove, PowderTable) || gCurrentMove == MOVE_THUNDERWAVE)
+	&& TypeCalc(gCurrentMove, gBankAttacker, bank, NULL, FALSE) & MOVE_RESULT_DOESNT_AFFECT_FOE)
+	{
+		gMoveResultFlags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
+		gBattlescriptCurrInstr = BattleScript_PauseResultMessage;
+		return;
+	}
+	else if (IsOfType(bank, TYPE_ELECTRIC))
+	{
+		gMoveResultFlags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
+		gBattlescriptCurrInstr = BattleScript_PauseResultMessage;
+		return;
+	}
+	else if (gBattleMons[bank].status1 & STATUS1_PARALYSIS)
+	{
+		BattleStringLoader = gText_TargetAlreadyParalyzed;
+		fail = TRUE;
+	}
+	else if (gBattleMons[bank].status1 != STATUS1_NONE)
+	{
+		BattleStringLoader = gText_TargetAlreadyHasStatusCondition; //String not in official games; officially "But it failed!"
+		fail = TRUE;
+	}
+	else if (gSideAffecting[SIDE(bank)] & SIDE_STATUS_SAFEGUARD)
+	{
+		BattleStringLoader = gText_TeamProtectedBySafeguard;
+		fail = TRUE;
+	}
+	else if (CheckGrounding(bank) && TerrainType == MISTY_TERRAIN)
+	{
+		BattleStringLoader = gText_TargetWrappedInMistyTerrain;
+		fail = TRUE;
+	}
+	else if (IsOfType(bank, TYPE_GRASS) && ABILITY(bank) == ABILITY_FLOWERVEIL)
+	{
+		gBattleScripting->bank = bank;
+		gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
+		return;
+	}
+	else if (IsOfType(bank, TYPE_GRASS) && gBattleTypeFlags & BATTLE_TYPE_DOUBLE && ABILITY(PARTNER(bank)) == ABILITY_FLOWERVEIL)
+	{
+		gBattleScripting->bank = PARTNER(bank);
+		gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
+		return;
+	}
+	
+	if (!fail)
+	{
+		switch (ABILITY(bank)) {
+			case ABILITY_LEAFGUARD:
+				if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
+				{
+					gBattlescriptCurrInstr = BattleScript_ProtectedByAbility;
+					return;
+				}
+				break;
+			case ABILITY_LIMBER:
+			case ABILITY_COMATOSE:
+				gBattlescriptCurrInstr = BattleScript_ProtectedByAbility;
+				return;
+			case ABILITY_SHIELDSDOWN:
+				if (SPECIES(bank) == SPECIES_MINIOR_SHIELD)
+				{
+					gBattlescriptCurrInstr = BattleScript_ProtectedByAbility;
+					return;
 				}
 		}
 	}
 
 	if (fail)
+	{
+		gMoveResultFlags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
 		gBattlescriptCurrInstr = ptr;
+	}
 	else
 		gBattlescriptCurrInstr += 6;	
+}
+
+//trysetburn BANK FAIL_ADDRESS
+void atkFF2B_trysetburn(void)
+{
+	u8 bank = GetBattleBank(gBattlescriptCurrInstr[1]);
+	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
+	bool8 fail = FALSE;
+	
+	if (IsOfType(bank, TYPE_FIRE))
+	{
+		gMoveResultFlags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
+		gBattlescriptCurrInstr = BattleScript_PauseResultMessage;
+		return;
+	}
+	else if (gBattleMons[bank].status1 & STATUS1_BURN)
+	{
+		BattleStringLoader = gText_TargetAlreadyBurned;
+		fail = TRUE;
+	}
+	else if (gBattleMons[bank].status1 != STATUS1_NONE)
+	{
+		BattleStringLoader = gText_TargetAlreadyHasStatusCondition; //String not in official games; officially "But it failed!"
+		fail = TRUE;
+	}
+	else if (gSideAffecting[SIDE(bank)] & SIDE_STATUS_SAFEGUARD)
+	{
+		BattleStringLoader = gText_TeamProtectedBySafeguard;
+		fail = TRUE;
+	}
+	else if (CheckGrounding(bank) && TerrainType == MISTY_TERRAIN)
+	{
+		BattleStringLoader = gText_TargetWrappedInMistyTerrain;
+		fail = TRUE;
+	}
+	else if (IsOfType(bank, TYPE_GRASS) && ABILITY(bank) == ABILITY_FLOWERVEIL)
+	{
+		gBattleScripting->bank = bank;
+		gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
+		return;
+	}
+	else if (IsOfType(bank, TYPE_GRASS) && gBattleTypeFlags & BATTLE_TYPE_DOUBLE && ABILITY(PARTNER(bank)) == ABILITY_FLOWERVEIL)
+	{
+		gBattleScripting->bank = PARTNER(bank);
+		gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
+		return;
+	}
+
+	if (!fail)
+	{
+		switch (ABILITY(bank)) {
+			case ABILITY_LEAFGUARD:
+				if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
+				{
+					gBattlescriptCurrInstr = BattleScript_ProtectedByAbility;
+					return;
+				}
+				break;
+			case ABILITY_WATERVEIL:
+			case ABILITY_WATERBUBBLE:
+			case ABILITY_COMATOSE:
+				gBattlescriptCurrInstr = BattleScript_ProtectedByAbility;
+				return;
+			case ABILITY_SHIELDSDOWN:
+				if (SPECIES(bank) == SPECIES_MINIOR_SHIELD)
+				{
+					gBattlescriptCurrInstr = BattleScript_ProtectedByAbility;
+					return;
+				}
+				break;
+		}
+	}
+
+	if (fail)
+	{
+		gMoveResultFlags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
+		gBattlescriptCurrInstr = ptr;
+	}
+	else
+		gBattlescriptCurrInstr += 6;	
+}
+
+//trysetpoison BANK FAIL_ADDRESS
+void atkFF2C_trysetpoison(void)
+{
+	u8 bank = GetBattleBank(gBattlescriptCurrInstr[1]);
+	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
+	bool8 fail = FALSE;
+	
+	if (ABILITY(gBankAttacker) != ABILITY_CORROSION
+	&& (IsOfType(bank, TYPE_POISON) || IsOfType(bank, TYPE_STEEL)))
+	{
+		gMoveResultFlags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
+		gBattlescriptCurrInstr = BattleScript_PauseResultMessage;
+		return;
+	}
+	else if (gBattleMons[bank].status1 & STATUS1_PSN_ANY)
+	{
+		BattleStringLoader = gText_TargetAlreadyPoisoned;
+		fail = TRUE;
+	}
+	else if (gBattleMons[bank].status1 != STATUS1_NONE)
+	{
+		BattleStringLoader = gText_TargetAlreadyHasStatusCondition; //String not in official games; officially "But it failed!"
+		fail = TRUE;
+	}
+	else if (gSideAffecting[SIDE(bank)] & SIDE_STATUS_SAFEGUARD)
+	{
+		BattleStringLoader = gText_TeamProtectedBySafeguard;
+		fail = TRUE;
+	}
+	else if (CheckGrounding(bank) && TerrainType == MISTY_TERRAIN)
+	{
+		BattleStringLoader = gText_TargetWrappedInMistyTerrain;
+		fail = TRUE;
+	}
+	else if (IsOfType(bank, TYPE_GRASS) && ABILITY(bank) == ABILITY_FLOWERVEIL)
+	{
+		gBattleScripting->bank = bank;
+		gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
+		return;
+	}
+	else if (IsOfType(bank, TYPE_GRASS) && gBattleTypeFlags & BATTLE_TYPE_DOUBLE && ABILITY(PARTNER(bank)) == ABILITY_FLOWERVEIL)
+	{
+		gBattleScripting->bank = PARTNER(bank);
+		gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
+		return;
+	}
+	
+	if (!fail)
+	{
+		switch (ABILITY(bank)) {
+			case ABILITY_LEAFGUARD:
+				if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
+				{
+					gBattlescriptCurrInstr = BattleScript_ProtectedByAbility;
+					return;
+				}
+				break;
+			case ABILITY_IMMUNITY:
+			case ABILITY_COMATOSE:
+				gBattlescriptCurrInstr = BattleScript_ProtectedByAbility;
+				return;
+			case ABILITY_SHIELDSDOWN:
+				if (SPECIES(bank) == SPECIES_MINIOR_SHIELD)
+				{
+					gBattlescriptCurrInstr = BattleScript_ProtectedByAbility;
+					return;
+				}
+		}
+	}
+
+	if (fail)
+	{
+		gMoveResultFlags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
+		gBattlescriptCurrInstr = ptr;
+	}
+	else
+		gBattlescriptCurrInstr += 6;
+}
+
+//addindicatorforplayerswitchineffects
+void atkFF2D_addindicatorforplayerswitchineffects(void)
+{
+	gNewBS->doPlayerSwitchInEffects = TRUE;
+	gBattlescriptCurrInstr += 1;
 }

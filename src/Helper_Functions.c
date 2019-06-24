@@ -61,8 +61,12 @@ bool8 CheckTableForItem(u16 item, const u16 table[]) {
 }	
 
 ability_t BanksAbility(bank_t bank) {
+	if (!BATTLER_ALIVE(bank))
+		return ABILITY_NONE;
+
 	if (gStatuses3[bank] & STATUS3_ABILITY_SUPPRESS)
-		return 0;
+		return ABILITY_NONE;
+
 	return gBattleMons[bank].ability;
 }
 
@@ -976,7 +980,8 @@ u8 GetTopOfPickupStackNotIncludingBank(const u8 bank)
 	return gNewBS->pickupStack[i - 1];
 }
 
-void ClearBankStatus(bank_t bank) {
+void ClearBankStatus(u8 bank)
+{
 	if (gBattleMons[bank].status1 & (STATUS_POISON | STATUS_TOXIC_POISON))
 		StringCopy(gBattleTextBuff1, gStatusConditionString_Poison);
 	else if (gBattleMons[bank].status1 & STATUS_SLEEP)
@@ -994,7 +999,32 @@ void ClearBankStatus(bank_t bank) {
 	MarkBufferBankForExecution(gActiveBattler);
 }
 
-bool8 CanBeGeneralStatused(u8 bank, bool8 checkFlowerVeil) {
+bool8 DoesSleepClausePrevent(u8 bank)
+{
+	if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
+	{
+		switch (VarGet(BATTLE_TOWER_TIER)) {
+			case BATTLE_TOWER_OU:
+			case BATTLE_TOWER_UBER:
+			case BATTLE_TOWER_LITTLE_CUP: ;
+				u8 firstId, lastId;
+				struct Pokemon* party = LoadPartyRange(bank, &firstId, &lastId);
+				
+				for (int i = 0; i < PARTY_SIZE; ++i)
+				{
+					if (GetMonData(&party[i], MON_DATA_HP, NULL) != 0
+					&& !GetMonData(&party[i], MON_DATA_IS_EGG, NULL)
+					&& GetMonData(&party[i], MON_DATA_STATUS, NULL) & STATUS_SLEEP) //Someone on team is already asleep
+						return TRUE;
+				}
+		}
+	}
+	
+	return FALSE;
+}
+
+bool8 CanBeGeneralStatused(u8 bank, bool8 checkFlowerVeil)
+{
 	if (ABILITY(bank) == ABILITY_SHIELDSDOWN
 	&&  GetBankPartyData(bank)->species == SPECIES_MINIOR_SHIELD) //Prevents Ditto from getting this benefit
 		return FALSE;
@@ -1025,8 +1055,8 @@ bool8 CanBeGeneralStatused(u8 bank, bool8 checkFlowerVeil) {
 	return TRUE;
 }
 
-
-bool8 CanBePutToSleep(u8 bank, bool8 checkFlowerVeil) {
+bool8 CanBePutToSleep(u8 bank, bool8 checkFlowerVeil)
+{
 	if (!CanBeGeneralStatused(bank, checkFlowerVeil))
 		return FALSE;
 	
@@ -1040,23 +1070,9 @@ bool8 CanBePutToSleep(u8 bank, bool8 checkFlowerVeil) {
 	if (TerrainType == ELECTRIC_TERRAIN && CheckGrounding(bank))
 		return FALSE;
 		
-	if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER) //Sleep Clause
-	{
-		switch (VarGet(BATTLE_TOWER_TIER)) {
-			case BATTLE_TOWER_OU:
-			case BATTLE_TOWER_UBER:
-			case BATTLE_TOWER_LITTLE_CUP: ;
-				u8 firstId, lastId;
-				pokemon_t* party = LoadPartyRange(bank, &firstId, &lastId);
-				
-				for (int i = firstId; i < lastId; ++i)
-				{
-					if (party[i].condition & STATUS1_SLEEP)
-						return FALSE; 
-				}
-		}
-	}
-
+	if (DoesSleepClausePrevent(bank))
+		return FALSE;	
+		
 	return TRUE;
 }
 

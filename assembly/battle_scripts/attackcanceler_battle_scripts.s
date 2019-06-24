@@ -149,6 +149,7 @@ SkipPowderDamage:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_StanceChangeToBlade:
+	call BS_FLUSH_MSGBOX
 	call BattleScript_AbilityPopUp
 	playanimation BANK_ATTACKER ANIM_TRANSFORM 0x0
 	setword BATTLE_STRING_LOADER String_SwitchedToBladeForm
@@ -158,6 +159,7 @@ BattleScript_StanceChangeToBlade:
 	return
 
 BattleScript_StanceChangeToShield:
+	call BS_FLUSH_MSGBOX
 	call BattleScript_AbilityPopUp
 	playanimation BANK_ATTACKER ANIM_TRANSFORM 0x0
 	setword BATTLE_STRING_LOADER String_SwitchedToShieldForm

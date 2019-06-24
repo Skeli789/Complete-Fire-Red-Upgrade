@@ -10,6 +10,7 @@
 .equ BS_MOVE_MISSED_PAUSE, 0x81D6960
 .equ BS_BUFF_ATK_STATS, 0x81D6B9E
 .equ BS_MOVE_WEATHER_CHANGE, 0x81D7A14
+.equ BS_FLUSH_MSGBOX, 0x81D96A8
 .equ BS_HIT_FROM_ATTACKSTRING, 0x81D692E
 .equ BS_HIT_FROM_DAMAGE_CALC, 0x81D6930
 .equ BS_HIT_FROM_ATTACKANIMATION, 0x81D6934
@@ -1645,4 +1646,32 @@
 	.byte \predicate
 	.2byte \weight
 	.4byte \rom_address
+	.endm
+
+	.macro trysetsleep bank rom_address
+	.byte 0xFF, 0x29
+	.byte \bank
+	.4byte \rom_address
+	.endm
+
+	.macro trysetparalysis bank rom_address
+	.byte 0xFF, 0x2A
+	.byte \bank
+	.4byte \rom_address
+	.endm
+
+	.macro trysetburn bank rom_address
+	.byte 0xFF, 0x2B
+	.byte \bank
+	.4byte \rom_address
+	.endm
+
+	.macro trysetpoison bank rom_address
+	.byte 0xFF, 0x2C
+	.byte \bank
+	.4byte \rom_address
+	.endm
+	
+	.macro addindicatorforplayerswitchineffects
+	.byte 0xFF, 0x2D
 	.endm

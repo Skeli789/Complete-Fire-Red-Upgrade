@@ -309,3 +309,9 @@ gBattleScriptingCommandsTable2:
 .word atkFF26_attackstringnoprotean
 .word atkFF27_tryactivateprotean
 .word atkFF28_jumpifweight
+.word atkFF29_trysetsleep
+.word atkFF2A_trysetparalysis
+.word atkFF2B_trysetburn
+.word atkFF2C_trysetpoison
+.word atkFF2D_addindicatorforplayerswitchineffects
+

@@ -27,12 +27,19 @@ enum EndTurnEffects
 	ET_Aqua_Ring,
 	ET_Ingrain,
 	ET_Leech_Seed,
+	ET_Item_Effects2,
 	ET_Poison,
+	ET_Item_Effects3,
 	ET_Toxic,
+	ET_Item_Effects4,
 	ET_Burn,
+	ET_Item_Effects5,
 	ET_Nightmare,
+	ET_Item_Effects6,
 	ET_Curse,
+	ET_Item_Effects7,
 	ET_Trap_Damage,
+	ET_Item_Effects8,
 	ET_Taunt_Timer,
 	ET_Encore_Timer,
 	ET_Disable_Timer,
@@ -466,7 +473,22 @@ u8 TurnBasedEffects(void)
                     effect++;
 				}
 				break;
-				
+			
+			//One item effect checked is done after each time the Pokemon receives damage
+			case ET_Item_Effects2:
+			case ET_Item_Effects3:
+			case ET_Item_Effects4:
+			case ET_Item_Effects5:
+			case ET_Item_Effects6:
+			case ET_Item_Effects7:
+			case ET_Item_Effects8:
+				if (BATTLER_ALIVE(gActiveBattler))
+				{
+					if (ItemBattleEffects(ItemEffects_EndTurn, gActiveBattler, FALSE, FALSE))
+						effect++;
+				}
+				break;
+			
 			case(ET_Poison):
                 if (gBattleMons[gActiveBattler].status1 & STATUS_POISON
 				&& gBattleMons[gActiveBattler].hp != 0
@@ -1181,14 +1203,14 @@ u8 TurnBasedEffects(void)
 			case(ET_Form_Change):
 				if (gBattleMons[gActiveBattler].hp != 0 && !IS_TRANSFORMED(gActiveBattler)) 
 				{
-					pokemon_t* mon = GetBankPartyData(gActiveBattler);
+					struct Pokemon* mon = GetBankPartyData(gActiveBattler);
 					u16 species = mon->species;
 					u16 newSpecies = 0;
 					u8 ability = ABILITY(gActiveBattler);
 					bool8 changedForm = FALSE; 
 					bool8 reloadType = FALSE;
 					bool8 reloadStats = FALSE;
-					const u8* battleScript;
+					const u8* battleScript = NULL;
 
 					switch(ability) {
 						case ABILITY_ZENMODE:
@@ -1276,11 +1298,14 @@ u8 TurnBasedEffects(void)
 						
 			case(ET_End):
 			    gBattleStruct->turnEffectsBank = gBattlersCount;
-				gNewBS->EndTurnDone = TRUE;
+				gNewBS->endTurnDone = TRUE;
 				gNewBS->MegaData->state = 0;
 				
 				for (int i = 0; i < gBattlersCount; ++i)
+				{
 					gNewBS->pickupStack[i] = 0xFF;
+					gNewBS->leftoverHealingDone[i] = FALSE;
+				}
 		}
 		gBattleStruct->turnEffectsBank++;
 		
@@ -1298,7 +1323,7 @@ u8 TurnBasedEffects(void)
     return 0;
 }
 
-#define FAINTED_ACTIONS_MAX_CASE 9
+#define FAINTED_ACTIONS_MAX_CASE 11
 
 bool8 HandleFaintedMonActions(void)
 {
@@ -1339,7 +1364,7 @@ bool8 HandleFaintedMonActions(void)
 			
 			case 2:
 				sub_8017434(gBankFainted);
-				if (++gBattleStruct->faintedActionsBank == gBattlersCount)
+				if (++gBattleStruct->faintedActionsBank >= gBattlersCount)
 					gBattleStruct->faintedActionsState = 3;
 				else
 					gBattleStruct->faintedActionsState = 1;
@@ -1365,16 +1390,16 @@ bool8 HandleFaintedMonActions(void)
 
 						if (gNewBS->AbsentBattlerHelper & gBitTable[gBattleStruct->faintedActionsBank])
 						{
-							if (gNewBS->EndTurnDone 
+							if (gNewBS->endTurnDone
 							||  ViableMonCountFromBank(gBattleStruct->faintedActionsBank) == 0)
 							{
 								gAbsentBattlerFlags &= ~(gBitTable[gBattleStruct->faintedActionsBank]);
 
-								//Double battle that's not wild
-								//This allows the AI to know what you're sending out and react accordingly in regular Single Battles (ie send in a mon strong against you)
+								//Not wild battle
+								//In a double or frontier battle, the player is not asked if they want to switch Pokemon
 								if (gBattleTypeFlags & BATTLE_TYPE_TRAINER && gBattleTypeFlags & (BATTLE_TYPE_DOUBLE | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_LINK))
 								{
-									gNewBS->handleDoublesSwitchIns |= gBitTable[gBattleStruct->faintedActionsBank];
+									gNewBS->handleSetSwitchIns |= gBitTable[gBattleStruct->faintedActionsBank];
 									BattleScriptExecute(BattleScript_HandleFaintedMonDoublesInitial);
 								}
 								else
@@ -1387,25 +1412,29 @@ bool8 HandleFaintedMonActions(void)
 					}
 				} while (++gBattleStruct->faintedActionsBank < gBattlersCount);
 				
-				if (gNewBS->handleDoublesSwitchIns)
+				if (gNewBS->handleSetSwitchIns)
 				{
 					gBattleStruct->faintedActionsBank = 0;
 					gBattleStruct->faintedActionsState = 6;
 				}
+				else if (gNewBS->doPlayerSwitchInEffects)
+					gBattleStruct->faintedActionsState = 7;
 				else
-					gBattleStruct->faintedActionsState = 8;
+					gBattleStruct->faintedActionsState = FAINTED_ACTIONS_MAX_CASE - 1;
 				break;
 			
 			case 5:
 				if (++gBattleStruct->faintedActionsBank >= gBattlersCount)
 				{
-					if (gNewBS->handleDoublesSwitchIns)
+					if (gNewBS->handleSetSwitchIns)
 					{
 						gBattleStruct->faintedActionsBank = 0;
 						gBattleStruct->faintedActionsState = 6;
 					}
+					else if (gNewBS->doPlayerSwitchInEffects)
+						gBattleStruct->faintedActionsState = 7;
 					else
-						gBattleStruct->faintedActionsState = 8;
+						gBattleStruct->faintedActionsState = FAINTED_ACTIONS_MAX_CASE - 1;
 				}
 				else
 					gBattleStruct->faintedActionsState = 4;
@@ -1415,7 +1444,7 @@ bool8 HandleFaintedMonActions(void)
 				do
 				{
 					gBankFainted = gBankTarget = gBattleStruct->faintedActionsBank;
-					if (gNewBS->handleDoublesSwitchIns & gBitTable[gBattleStruct->faintedActionsBank])
+					if (gNewBS->handleSetSwitchIns & gBitTable[gBattleStruct->faintedActionsBank])
 					{
 						++gBattleStruct->faintedActionsBank;
 						gAbsentBattlerFlags &= ~(gBitTable[gBattleStruct->faintedActionsBank]);
@@ -1423,7 +1452,15 @@ bool8 HandleFaintedMonActions(void)
 						return TRUE;
 					}
 				} while (++gBattleStruct->faintedActionsBank < gBattlersCount);
-				
+				__attribute__ ((fallthrough));
+
+			case 7:
+				if (gNewBS->doPlayerSwitchInEffects)
+				{
+					gNewBS->doPlayerSwitchInEffects = FALSE;
+					gNewBS->handleSetSwitchIns |= gBitTable[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)];
+				}
+
 				//Recalc turn order for switch-in abilities
 				for (i = 0; i < gBattlersCount; ++i)
 				{
@@ -1446,13 +1483,13 @@ bool8 HandleFaintedMonActions(void)
 				gBattleStruct->faintedActionsState++;
 				__attribute__ ((fallthrough));
 			
-			case 7:
+			case 8:
 				do
 					{
 						gBankFainted = gBankTarget = gBattleStruct->faintedActionsBank;
-						if (gNewBS->handleDoublesSwitchIns & gBitTable[gBattleStruct->faintedActionsBank])
+						if (gNewBS->handleSetSwitchIns & gBitTable[gBattleStruct->faintedActionsBank])
 						{
-							gNewBS->handleDoublesSwitchIns &= ~(gBitTable[gBattleStruct->faintedActionsBank]);
+							gNewBS->handleSetSwitchIns &= ~(gBitTable[gBattleStruct->faintedActionsBank]);
 							BattleScriptExecute(BattleScript_HandleFaintedMonDoublesSwitchInEffects);
 							return TRUE;
 						}
@@ -1460,8 +1497,18 @@ bool8 HandleFaintedMonActions(void)
 				gBattleStruct->faintedActionsState++;
 				__attribute__ ((fallthrough));
 			
-			case 8:
-				gNewBS->EndTurnDone = FALSE;
+			case 9: 
+				if (gNewBS->restartEndTurnSwitching) //Died from entry hazards
+				{	
+					gNewBS->restartEndTurnSwitching = FALSE;
+					gBattleStruct->faintedActionsState = 0;
+				}
+				else
+					gBattleStruct->faintedActionsState++;
+				break;
+			
+			case 10:
+				gNewBS->endTurnDone = FALSE;
 				gBattleStruct->faintedActionsState++;
 				break;
 			
@@ -1487,12 +1534,12 @@ u8 CountAliveMonsOnField(void)
 
 void RemoveSwitchInForFaintedBank(void)
 {
-	gNewBS->handleDoublesSwitchIns &= ~(gBitTable[gBankFainted]);
+	gNewBS->handleSetSwitchIns &= ~(gBitTable[gBankFainted]);
 }
 
 bool8 IsInMiddleOfEndTurnSwitchIn(u8 bank)
 {
-	if (gNewBS->handleDoublesSwitchIns & gBitTable[bank])
+	if (gNewBS->handleSetSwitchIns & gBitTable[bank])
 		return TRUE;
 		
 	return FALSE;

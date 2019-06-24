@@ -26,6 +26,8 @@
 .global BattleScript_HandleFaintedMonDoublesPart2
 .global BattleScript_HandleFaintedMonDoublesSwitchInEffects
 
+.global BattleScript_EntryHazardsHurtReturn
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_HealingWishHeal:
@@ -56,8 +58,16 @@ BattleScript_SpikesHurt:
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	faintpokemon BANK_TARGET 0x0 0x0
-	faintpokemon BANK_TARGET 0x1 0x81D8CDF
+	faintpokemon BANK_TARGET TRUE BattleScript_DmgHazardsOnAttackerFainted
 	return
+
+BattleScript_DmgHazardsOnAttackerFainted:
+	setbyte EXP_STATE, 0x0
+	getexp BANK_ATTACKER
+	setbyte CMD49_STATE, 0x0
+	cmd49 0x0, 0x0
+	callasm TryToStopNewMonFromSwitchingInAfterSRHurt
+	goto 0x81D869D @;BattleScript_HandleFaintedMon
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 	
@@ -69,7 +79,7 @@ BattleScript_SRHurt:
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	faintpokemon BANK_TARGET 0x0 0x0
-	faintpokemon BANK_TARGET 0x1 0x81D8CDF
+	faintpokemon BANK_TARGET TRUE BattleScript_DmgHazardsOnAttackerFainted
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -203,6 +213,7 @@ BattleScript_DoSwitchOut:
 	switchineffects BANK_ATTACKER
 	
 HandleActionSwitchEnd:
+BattleScript_EntryHazardsHurtReturn:
 	end2
 	
 BattleScript_PursuitDmgOnSwitchOut:
@@ -229,8 +240,8 @@ BattleScript_WildDoubleSwitchFix:
 	goto 0x81D86BB
 
 WildDoubleTrySwitchOut:
-	openpartyscreen 0x3 0x81D87B7
-	switchhandleorder 0x3 0x2
+	openpartyscreen BANK_FAINTED 0x81D87B7
+	switchhandleorder BANK_FAINTED 0x2
 	goto 0x81D8792
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -239,7 +250,7 @@ BattleScript_HandleFaintedMonDoublesInitial:
 	ifwildbattleend BattleScript_81D87B8
 	jumpifbyte NOTEQUALS BATTLE_OUTCOME 0 BattleScript_FaintedMonCancelSwitchIn
 	jumpifnoviablemonsleft BANK_TARGET BattleScript_FaintedMonCancelSwitchIn
-	openpartyscreen 0x3 BattleScript_FaintedMonCancelSwitchIn
+	openpartyscreen BANK_FAINTED BattleScript_FaintedMonCancelSwitchIn
 	switchhandleorder BANK_FAINTED 0x2
 	switch1 BANK_FAINTED
 	goto BattleScript_FaintedMonEnd
@@ -275,8 +286,19 @@ BattleScript_HandleFaintedMonDoublesPart2:
 	
 BattleScript_HandleFaintedMonDoublesSwitchInEffects:
 	switchineffects BANK_FAINTED
-	end2	
+	end2
 	
+BattleScript_FaintStealthRockHelper:
+	callasm ClearSwitchInEffectsTracker
+	end2
+
+.global BattleScript_DoPlayerAndFoeSwitchInEffects
+BattleScript_DoPlayerAndFoeSwitchInEffects:
+	setbyte USER_BANK 0x0
+	switchineffects BANK_ATTACKER
+	switchineffects BANK_FAINTED
+	end2
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 .align 2

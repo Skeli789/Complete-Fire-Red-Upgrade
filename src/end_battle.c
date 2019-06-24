@@ -157,6 +157,7 @@ void HandleEndTurn_BattleLost(void)
             gBankAttacker = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
             gBattlescriptCurrInstr = BattleScript_LinkBattleWonOrLost;
             gBattleOutcome &= ~(B_OUTCOME_LINK_BATTLE_RAN);
+			EndOfBattleThings();
         }
     }
 	else if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
@@ -167,6 +168,7 @@ void HandleEndTurn_BattleLost(void)
 			gBattlescriptCurrInstr = BattleScript_LostBattleTower;
 
         gBattleOutcome &= ~(B_OUTCOME_RAN);
+		EndOfBattleThings();
 	}
     else if (gBattleTypeFlags & BATTLE_TYPE_TRAINER && sTrainerBattleMode == TRAINER_BATTLE_OAK_TUTORIAL)
 	{
@@ -406,17 +408,20 @@ bool8 TryRunFromBattle(u8 bank)
 
 void EndOfBattleThings(void)
 {
-	NaturalCureHeal();
-	RestoreNonConsumableItems();
-	FormsRevert(gPlayerParty);
-	MegaRevert(gPlayerParty);
-	UpdateBurmy();
-	EndPartnerBattlePartyRestore();
-	EndSkyBattlePartyRestore();
-	RecalcAllStats();
-	BringBackTheDead();
-	EndBattleFlagClear();
-	TerrainType = 0; //Reset now b/c normal reset is after BG is loaded
+	if (gNewBS != NULL) //Hasn't been cleared yet
+	{
+		NaturalCureHeal();
+		RestoreNonConsumableItems();
+		FormsRevert(gPlayerParty);
+		MegaRevert(gPlayerParty);
+		UpdateBurmy();
+		EndPartnerBattlePartyRestore();
+		EndSkyBattlePartyRestore();
+		RecalcAllStats();
+		BringBackTheDead();
+		EndBattleFlagClear();
+		TerrainType = 0; //Reset now b/c normal reset is after BG is loaded
+	}
 }
 
 static void NaturalCureHeal(void)

@@ -1540,8 +1540,8 @@ void RestoreBanksFromSynchronize(void)
 {
 	gBankAttacker = gNewBS->backupSynchronizeBanks[0];
 	gBankTarget = gNewBS->backupSynchronizeBanks[1];
-}
-
+};
+ 
 void TrySetAlternateFlingEffect(void)
 {
 	u8 effect = ItemId_GetHoldEffect(ITEM(gBankAttacker));
@@ -1565,3 +1565,24 @@ void TransferLastUsedItem(void)
 		MarkBufferBankForExecution(gActiveBattler);
 	}
 }
+
+void TryToStopNewMonFromSwitchingInAfterSRHurt(void)
+{
+	if (gNewBS->endTurnDone)
+	{
+		gNewBS->restartEndTurnSwitching = TRUE;
+		gBattlescriptCurrInstr = BattleScript_EntryHazardsHurtReturn - 5; //Continue the switch in effects
+	}
+	
+	gNewBS->SwitchInEffectsTracker = 0;
+}
+
+extern u8 BattleScript_HandleFaintedMonDoublesSwitchInEffects[];
+void ClearSwitchInEffectsTracker(void)
+{
+	if (!gNewBS->endTurnDone)
+	{
+		gBattlescriptCurrInstr = BattleScript_HandleFaintedMonDoublesSwitchInEffects - 5;
+		gNewBS->SwitchInEffectsTracker = 0;
+	}
+};

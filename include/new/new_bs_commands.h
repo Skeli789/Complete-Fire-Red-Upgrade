@@ -127,6 +127,23 @@ void atkFF26_attackstringnoprotean(void);
 //tryactivateprotean
 void atkFF27_tryactivateprotean(void);
 
+//jumpifweight BANK PREDICATE WEIGHT ROM_OFFSET
+void atkFF28_jumpifweight(void);
+
+//trysetsleep BANK FAIL_ADDRESS
+void atkFF29_trysetsleep(void);
+
+//trysetparalysis BANK FAIL_ADDRESS
+void atkFF2A_trysetparalysis(void);
+
+//trysetburn BANK FAIL_ADDRESS
+void atkFF2B_trysetburn(void);
+
+//trysetpoison BANK FAIL_ADDRESS
+void atkFF2C_trysetpoison(void);
+
+//addindicatorforplayerswitchineffects
+void atkFF2D_addindicatorforplayerswitchineffects(void);
 
 //Exported Constants
 enum Counters

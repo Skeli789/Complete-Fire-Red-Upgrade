@@ -754,6 +754,7 @@ struct NewBattleStruct
 	u8 skyDropTargetsAttacker[MAX_BATTLERS_COUNT]; //skyDropTargetsAttacker[gBankTarget] = gBankAttacker
 	u8 pickupStack[MAX_BATTLERS_COUNT]; //0x2017620
 	u8 synchronizeTarget[MAX_BATTLERS_COUNT]; //Bank + 1 that statused given bank
+	u8 leftoverHealingDone[MAX_BATTLERS_COUNT]; //Leftovers already restored health this turn or Sticky Barb did damage
 	
 	//Bit Fields for Banks
 	u8 MicleBerryBits;
@@ -768,7 +769,7 @@ struct NewBattleStruct
 	u8 AbsentBattlerHelper;
 	u8 activeAbilityPopUps;
 	u8 NoMoreMovingThisTurn;
-	u8 handleDoublesSwitchIns;
+	u8 handleSetSwitchIns;
 	u8 brokeFreeMessage;
 	
 	//Bit Fields for Party
@@ -805,7 +806,7 @@ struct NewBattleStruct
 	bool8 GemHelper : 1;
 	bool8 fusionFlareUsedPrior : 1;
 	bool8 fusionBoltUsedPrior : 1;
-	bool8 EndTurnDone : 1;
+	bool8 endTurnDone : 1;
 	bool8 HappyHourByte : 1;
 	bool8 attackAnimationPlayed : 1;
 	bool8 DancerInProgress : 1;
@@ -819,6 +820,8 @@ struct NewBattleStruct
 	bool8 criticalCapture : 1;
 	bool8 trainerSlideLowHpMsgDone : 1;
 	bool8 TeleportBit : 1;
+	bool8 restartEndTurnSwitching : 1;
+	bool8 doPlayerSwitchInEffects : 1;
 	
 	//Other
 	u16 LastUsedMove;

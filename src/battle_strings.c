@@ -193,18 +193,15 @@ void BufferStringBattle(u16 stringID)
         {
 			if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER && GetBattlerPosition(gActiveBattler) == B_POSITION_PLAYER_RIGHT)
 				stringPtr = BattleText_PartnerWithdrewPkmn;
-			else {
-				if (gBattleStruct->hpScale == 0)
-					stringPtr = BattleText_PkmnThatsEnough; //0x83FD4CD
-				else if (gBattleStruct->hpScale == 1 || gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
-					stringPtr = BattleText_PkmnComeBack; //0x83FD4EB
-				else if (gBattleStruct->hpScale == 2)
-					stringPtr = BattleText_PkmnOkComeBack; //0x83FD4FA
-				else
-					stringPtr = BattleText_PkmnGoodComeBack; //0x83FD50D
-			}
+			else if (gBattleStruct->hpScale == 0)
+				stringPtr = BattleText_PkmnThatsEnough; //0x83FD4CD
+			else if (gBattleStruct->hpScale == 1 || gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+				stringPtr = BattleText_PkmnComeBack; //0x83FD4EB
+			else if (gBattleStruct->hpScale == 2)
+				stringPtr = BattleText_PkmnOkComeBack; //0x83FD4FA
+			else
+				stringPtr = BattleText_PkmnGoodComeBack; //0x83FD50D
         }
-		
         else //Opponent Withdraw Pokemon
         {
             if (gTrainerBattleOpponent_A == TRAINER_LINK_OPPONENT)
@@ -214,7 +211,10 @@ void BufferStringBattle(u16 stringID)
                 else
                     stringPtr = BattleText_LinkTrainer1WithdrewPkmn; //0x83FD535
             }
-            else
+            else if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS
+			&& GetBattlerPosition(gActiveBattler) == B_POSITION_OPPONENT_RIGHT)
+				stringPtr = BattleText_Trainer2WithdrewPkmn;
+			else
                 stringPtr = BattleText_Trainer1WithdrewPkmn; //0x83FD522
         }
         break;
@@ -233,14 +233,13 @@ void BufferStringBattle(u16 stringID)
             else
                 stringPtr = BattleText_YourFoesWeakGetEmPkmn; //0x83FD497
         }
-		
         else //Opponent Sent Out Poke
         {
             if (gBattleTypeFlags & BATTLE_TYPE_LINK)
             {
                 if (gBattleTypeFlags & BATTLE_TYPE_TOWER_LINK_MULTI)
                 {
-                    if (gActiveBattler == 1)
+                    if (GetBattlerPosition(gBattleScripting->bank) == B_POSITION_OPPONENT_LEFT)
                         stringPtr = BattleText_Trainer1SentOutPkmn2; //0x83FD3E4
                     else
                         stringPtr = BattleText_Trainer2SentOutPkmn; //NEED DATA
@@ -259,7 +258,7 @@ void BufferStringBattle(u16 stringID)
             {
                 if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
                 {
-                    if (gBattleScripting->bank == 1)
+                    if (GetBattlerPosition(gBattleScripting->bank) == B_POSITION_OPPONENT_LEFT)
                         stringPtr = BattleText_Trainer1SentOutPkmn2; //0x83FD3E4
                     else
                         stringPtr = BattleText_Trainer2SentOutPkmn; //NEED DATA

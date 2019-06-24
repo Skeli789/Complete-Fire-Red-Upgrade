@@ -1824,7 +1824,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
             }
             break;
         case ABILITYEFFECT_FORECAST: // 6
-            for (bank = 0; bank < gBattlersCount; bank++)
+            for (bank = 0; bank < gBattlersCount; ++bank)
             {
                 if (ABILITY(bank) == ABILITY_FORECAST)
                 {

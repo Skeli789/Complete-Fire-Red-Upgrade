@@ -12,11 +12,14 @@ The Shadow Warrior attacked!\p
 #org @BattleText_TwoTrainersSentPkmn
 [FD][1C] [FD][1D] sent\nout [FD][06]!\p[FD][2E] [FD][2F] sent\nout [FD][08]!
 
+#org @BattleText_Trainer2WithdrewPkmn
+[FD][2E] [FD][2F]\nwithdrew [FD][00]!
+
 #org @BattleText_Trainer2SentOutPkmn
 [FD][2E] [FD][2F] sent\nout [FD][00]!
 
 #org @BattleText_PartnerWithdrewPkmn
-[FD][32] [FD][33]\nwithdrew [FD][00]!
+[FD][32] [FD][33]\nwithdrew [FD][07]!
 
 #org @BattleText_PartnerSaysGo
 [FD][32] [FD][33] sent\nout [FD][07]!

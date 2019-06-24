@@ -3500,40 +3500,43 @@ void atkE7_trycastformdatachange(void)
 	}
 }
 
-u8 CastformDataTypeChange(u8 bank) {
+u8 CastformDataTypeChange(u8 bank)
+{
 	u8 formChange = 0;
-	if (gBattleMons[bank].species != SPECIES_CASTFORM || gBattleMons[bank].hp == 0)
+	if (SPECIES(bank) != SPECIES_CASTFORM || !BATTLER_ALIVE(bank))
 		return CASTFORM_NO_CHANGE;
 
-	if ((!WEATHER_HAS_EFFECT || ABILITY(bank) != ABILITY_FORECAST) && gBattleMonForms[bank] != CASTFORM_NORMAL) {
+	if ((!WEATHER_HAS_EFFECT || ABILITY(bank) != ABILITY_FORECAST) && gBattleMonForms[bank] != CASTFORM_NORMAL)
+	{
 		SET_BATTLER_TYPE(bank, TYPE_NORMAL);
 		return CASTFORM_TO_NORMAL;
 	}
-
-	if (WEATHER_HAS_EFFECT && ABILITY(bank) == ABILITY_FORECAST) {
-
-		if (!(gBattleWeather & (WEATHER_RAIN_ANY | WEATHER_SUN_ANY | WEATHER_HAIL_ANY)) && gBattleMonForms[bank] != CASTFORM_NORMAL) {
+	else if (WEATHER_HAS_EFFECT && ABILITY(bank) == ABILITY_FORECAST)
+	{
+		if (!(gBattleWeather & (WEATHER_RAIN_ANY | WEATHER_SUN_ANY | WEATHER_HAIL_ANY)) && gBattleMonForms[bank] != CASTFORM_NORMAL)
+		{
 			SET_BATTLER_TYPE(bank, TYPE_NORMAL);
 			formChange = CASTFORM_TO_NORMAL;
 		}
-
-		else if (gBattleWeather & WEATHER_SUN_ANY &&gBattleMonForms[bank] != CASTFORM_SUN) {
+		else if (gBattleWeather & WEATHER_SUN_ANY &&gBattleMonForms[bank] != CASTFORM_SUN)
+		{
 			SET_BATTLER_TYPE(bank, TYPE_FIRE);
 			formChange = CASTFORM_TO_FIRE;
 		}
-
-		else if (gBattleWeather & WEATHER_RAIN_ANY && gBattleMonForms[bank] != CASTFORM_RAIN) {
+		else if (gBattleWeather & WEATHER_RAIN_ANY && gBattleMonForms[bank] != CASTFORM_RAIN)
+		{
 			SET_BATTLER_TYPE(bank, TYPE_WATER);
 			formChange = CASTFORM_TO_WATER;
 		}
-
-		else if (gBattleWeather & WEATHER_HAIL_ANY && gBattleMonForms[bank] != CASTFORM_HAIL) {
+		else if (gBattleWeather & WEATHER_HAIL_ANY && gBattleMonForms[bank] != CASTFORM_HAIL)
+		{
 			SET_BATTLER_TYPE(bank, TYPE_ICE);
 			formChange = CASTFORM_TO_ICE;
 		}
 
 		return formChange;
 	}
+
 	return CASTFORM_NO_CHANGE;
 }
 

@@ -24,45 +24,19 @@ BS_001_SetSleep:
 	attackstring
 	ppreduce
 	callasm CheckIfDarkVoidShouldFail
-	jumpifbehindsubstitute BANK_TARGET NOEFFECT
-	jumpifability BANK_TARGET ABILITY_COMATOSE 0x81D69B0 @;Already Asleep
-	jumpifability BANK_TARGET ABILITY_INSOMNIA 0x81D824B
-	jumpifability BANK_TARGET ABILITY_VITALSPIRIT 0x81D824B
-	jumpifspecies BANK_TARGET SPECIES_MINIORSHIELD NOEFFECT
-	jumpifabilitypresent ABILITY_CLOUDNINE SLP_CheckVeils
-	jumpifabilitypresent ABILITY_AIRLOCK SLP_CheckVeils
-	jumpifability BANK_TARGET ABILITY_LEAFGUARD SLP_SunnyCheck
-
-SLP_CheckVeils:
-	jumpifabilitypresenttargetfield ABILITY_SWEETVEIL BattleScript_TeamProtectedBySweetVeil
-	jumpifabilitypresenttargetfield ABILITY_FLOWERVEIL SLP_GrassTypeCheck
-
-SLP_CheckTerrain:
-	jumpifbyte EQUALS TERRAIN_BYTE ELECTRIC_TERRAIN SLP_CheckGrounding
-	jumpifbyte EQUALS TERRAIN_BYTE MISTY_TERRAIN SLP_CheckGrounding
-	goto SetSleepFinalChecks
-
-SLP_SunnyCheck:
-	jumpifhalfword ANDS WEATHER_FLAGS WEATHER_SUN_ANY BattleScript_ProtectedByAbility
-	goto SLP_CheckVeils
-
-SLP_GrassTypeCheck:
-	jumpiftype BANK_TARGET TYPE_GRASS BattleScript_TeamProtectedByFlowerVeil
-	goto SLP_CheckTerrain
-
-SLP_CheckGrounding:
-	jumpifgrounded BANK_TARGET ProtectedByTerrainBS
-
-SetSleepFinalChecks:
-	jumpifstatus BANK_TARGET STATUS_SLEEP 0x81D69B0
-	jumpifcannotsleep 0x81D69CC
-	jumpifstatus BANK_TARGET STATUS_ANY NOEFFECT
+	jumpifbehindsubstitute BANK_TARGET FAILED
+	trysetsleep BANK_TARGET BS_StatusMoveFail
 	accuracycheck BS_MOVE_MISSED_PAUSE 0x0
-	jumpifsideaffecting BANK_TARGET SIDE_SAFEGUARD 0x81D8B39
 	attackanimation
 	waitanimation
 	setmoveeffect MOVE_EFFECT_SLEEP
 	seteffecttarget
+	goto BS_MOVE_END
+	
+BS_StatusMoveFail:
+	pause DELAY_HALFSECOND
+	printstring 0x184
+	waitmessage DELAY_1SECOND
 	goto BS_MOVE_END
 	
 ProtectedByTerrainBS:
@@ -120,6 +94,11 @@ BattleScript_DarkVoidFail:
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	goto BS_MOVE_END
+	
+.global BattleScript_PauseResultMessage
+BattleScript_PauseResultMessage:
+	pause DELAY_HALFSECOND
+	goto 0x81D6942 @;Resultmessage
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -908,38 +887,13 @@ BS_033_SetBadPoison:
 	attackstring
 	ppreduce
 	jumpifbehindsubstitute BANK_TARGET FAILED
-	jumpifability BANK_TARGET ABILITY_COMATOSE FAILED
-	jumpifspecies BANK_TARGET SPECIES_MINIORSHIELD FAILED
-	jumpifabilitypresent ABILITY_CLOUDNINE BadPSN_CheckFlowerVeil
-	jumpifabilitypresent ABILITY_AIRLOCK BadPSN_CheckFlowerVeil
-	jumpifability BANK_TARGET ABILITY_LEAFGUARD BadPSN_SunnyCheck
-
-BadPSN_CheckFlowerVeil:
-	jumpifabilitypresenttargetfield ABILITY_FLOWERVEIL BadPSN_GrassTypeCheck
-
-BadPSN_CheckTerrain:
-	jumpifbyte EQUALS TERRAIN_BYTE MISTY_TERRAIN BadPSN_CheckGrounding
-
-BadPSN_After:
-	jumpifability BANK_TARGET ABILITY_IMMUNITY 0x81D6E4F
-	jumpifstatus BANK_TARGET STATUS_POISON | STATUS_BAD_POISON 0x81D6E41 @;Already Poisoned
-	jumpifstatus BANK_TARGET STATUS_ANY FAILED
-	jumpifability BANK_ATTACKER ABILITY_CORROSION 0x81D6E20
-	jumpiftype BANK_TARGET TYPE_POISON NOEFFECT
-	jumpiftype BANK_TARGET TYPE_STEEL NOEFFECT
-	goto 0x81D6E20
-
-BadPSN_SunnyCheck:
-	jumpifhalfword ANDS WEATHER_FLAGS WEATHER_SUN_ANY BattleScript_ProtectedByAbility
-	goto BadPSN_CheckFlowerVeil
-
-BadPSN_GrassTypeCheck:
-	jumpiftype BANK_TARGET TYPE_GRASS BattleScript_TeamProtectedByFlowerVeil
-	goto BadPSN_CheckTerrain
-
-BadPSN_CheckGrounding:
-	jumpifgrounded BANK_TARGET ProtectedByTerrainBS
-	goto BadPSN_After
+	trysetpoison BANK_TARGET BS_StatusMoveFail
+	accuracycheck BS_MOVE_MISSED_PAUSE 0x0
+	attackanimation
+	waitanimation
+	setmoveeffect MOVE_EFFECT_TOXIC
+	seteffecttarget
+	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -1344,39 +1298,13 @@ BS_066_SetPoison:
 
 PoisonChecks:
 	jumpifbehindsubstitute BANK_TARGET FAILED
-	jumpifability BANK_TARGET ABILITY_COMATOSE FAILED
-	jumpifspecies BANK_TARGET SPECIES_MINIORSHIELD FAILED
-	jumpifabilitypresent ABILITY_CLOUDNINE PSN_CheckFlowerVeil
-	jumpifabilitypresent ABILITY_AIRLOCK PSN_CheckFlowerVeil
-	jumpifability BANK_TARGET ABILITY_LEAFGUARD PSN_SunnyCheck
-
-PSN_CheckFlowerVeil:
-	jumpifabilitypresenttargetfield ABILITY_FLOWERVEIL PSN_GrassTypeCheck
-
-PSN_CheckTerrain:
-	jumpifbyte EQUALS TERRAIN_BYTE MISTY_TERRAIN PSN_CheckGrounding
-
-PSN_After:
-	jumpifability BANK_TARGET ABILITY_IMMUNITY 0x81D6E4F
-	jumpifstatus BANK_TARGET STATUS_POISON 0x81D6E41 @;Already poisoned
-	jumpifstatus BANK_TARGET STATUS_BAD_POISON 0x81D6E41 @;Already poisoned
-	jumpifstatus BANK_TARGET STATUS_ANY FAILED
-	jumpifability BANK_ATTACKER ABILITY_CORROSION 0x81D71C1
-	jumpiftype BANK_TARGET TYPE_POISON NOEFFECT
-	jumpiftype BANK_TARGET TYPE_STEEL NOEFFECT
-	goto 0x81D71C1
-
-PSN_SunnyCheck:
-	jumpifhalfword ANDS WEATHER_FLAGS WEATHER_SUN_ANY BattleScript_ProtectedByAbility
-	goto PSN_CheckFlowerVeil
-
-PSN_GrassTypeCheck:
-	jumpiftype BANK_TARGET TYPE_GRASS BattleScript_TeamProtectedByFlowerVeil
-	goto PSN_CheckTerrain
-
-PSN_CheckGrounding:
-	jumpifgrounded BANK_TARGET ProtectedByTerrainBS
-	goto PSN_After
+	trysetpoison BANK_TARGET BS_StatusMoveFail
+	accuracycheck BS_MOVE_MISSED_PAUSE 0x0
+	attackanimation
+	waitanimation
+	setmoveeffect MOVE_EFFECT_POISON
+	seteffecttarget
+	goto BS_MOVE_END
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -1410,34 +1338,13 @@ BS_067_SetParalyze:
 	attackstring
 	ppreduce
 	jumpifbehindsubstitute BANK_TARGET FAILED
-	jumpifspecies BANK_TARGET SPECIES_MINIORSHIELD FAILED
-	jumpifability BANK_TARGET ABILITY_COMATOSE FAILED
-	jumpifstatus BANK_TARGET STATUS_PARALYSIS 0x81D7237 @;Already paralyzed
-	jumpifstatus BANK_TARGET STATUS_ANY FAILED
-	jumpifabilitypresent ABILITY_CLOUDNINE PRZ_CheckFlowerVeil
-	jumpifabilitypresent ABILITY_AIRLOCK PRZ_CheckFlowerVeil
-	jumpifability BANK_TARGET ABILITY_LEAFGUARD PRZ_SunnyCheck
-
-PRZ_CheckFlowerVeil:
-	jumpifabilitypresenttargetfield ABILITY_FLOWERVEIL PRZ_GrassTypeCheck
-
-PRZ_CheckTerrain:
-	jumpiftype BANK_TARGET TYPE_ELECTRIC NOEFFECT
-	jumpifterrainandgrounded MISTY_TERRAIN BANK_TARGET ProtectedByTerrainBS
-
-PRZ_After:
-	jumpifability BANK_TARGET ABILITY_LIMBER 0x81D7245
-	typecalc
-	jumpifmovehadnoeffect FAILED
-	goto 0x81D7216
-
-PRZ_SunnyCheck:
-	jumpifhalfword ANDS WEATHER_FLAGS WEATHER_SUN_ANY BattleScript_ProtectedByAbility
-	goto PRZ_CheckFlowerVeil
-
-PRZ_GrassTypeCheck:
-	jumpiftype BANK_TARGET TYPE_GRASS BattleScript_TeamProtectedByFlowerVeil
-	goto PRZ_CheckTerrain
+	trysetparalysis BANK_TARGET BS_StatusMoveFail
+	accuracycheck BS_MOVE_MISSED_PAUSE 0x0
+	attackanimation
+	waitanimation
+	setmoveeffect MOVE_EFFECT_PARALYSIS
+	seteffecttarget
+	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -3124,35 +3031,14 @@ BS_167_SetBurn:
 	attackcanceler
 	attackstring
 	ppreduce
-	jumpifspecies BANK_TARGET SPECIES_MINIORSHIELD FAILED
-	jumpifability BANK_TARGET ABILITY_COMATOSE FAILED
-	jumpifstatus BANK_TARGET STATUS_BURN 0x81D7F91 @;Already Burned
-	jumpifstatus BANK_TARGET STATUS_ANY FAILED
-	jumpiftype BANK_TARGET TYPE_FIRE NOEFFECT
-	jumpifability BANK_TARGET ABILITY_WATERVEIL 0x81D7F77
-	jumpifability BANK_TARGET ABILITY_WATERBUBBLE 0x81D7F77
-	jumpifabilitypresent ABILITY_CLOUDNINE BRN_CheckFlowerVeil
-	jumpifabilitypresent ABILITY_AIRLOCK BRN_CheckFlowerVeil
-	jumpifability BANK_TARGET ABILITY_LEAFGUARD BRN_SunnyCheck
-
-BRN_CheckFlowerVeil:
-	jumpifabilitypresenttargetfield ABILITY_FLOWERVEIL BRN_GrassTypeCheck
-
-BRN_CheckTerrain:
-	jumpifbyte EQUALS TERRAIN_BYTE MISTY_TERRAIN BRN_CheckGrounding
-	goto 0x81D7F5A
-
-BRN_SunnyCheck:
-	jumpifhalfword ANDS WEATHER_FLAGS WEATHER_SUN_ANY BattleScript_ProtectedByAbility
-	goto BRN_CheckFlowerVeil
-
-BRN_GrassTypeCheck:
-	jumpiftype BANK_TARGET TYPE_GRASS BattleScript_TeamProtectedByFlowerVeil
-	goto BRN_CheckTerrain
-
-BRN_CheckGrounding:
-	jumpifgrounded BANK_TARGET ProtectedByTerrainBS
-	goto 0x81D7F5A
+	jumpifbehindsubstitute BANK_TARGET FAILED
+	trysetburn BANK_TARGET BS_StatusMoveFail
+	accuracycheck BS_MOVE_MISSED_PAUSE 0x0
+	attackanimation
+	waitanimation
+	setmoveeffect MOVE_EFFECT_BURN
+	seteffecttarget
+	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

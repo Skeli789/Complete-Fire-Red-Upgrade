@@ -432,6 +432,7 @@ SetAnimSpriteInitialXOffset = 0x8074FF8 | 1;
 InitSpritePosToAnimTarget = 0x8075114 | 1;
 InitSpritePosToAnimAttacker = 0x8075160 | 1;
 InitSpriteDataForLinearTranslation = 0x80754B8 | 1;
+InitAnimLinearTranslation = 0x80754F8 | 1;
 StartAnimLinearTranslation = 0x8075590 | 1;
 GetBattlerSpriteSubpriority = 0x807685C | 1;
 SpriteCB_AnimSolarbeamBigOrb = 0x80A23D8 | 1;
@@ -1137,14 +1138,17 @@ SetBgAttribute = 0x80019E4 | 1;
 GetBgAttribute = 0x8001AA8 | 1;
 ChangeBgX = 0x8001B90 | 1;
 ChangeBgY = 0x8001D08 | 1;
-BgIdSetTilemap = 0x8001FA0 | 1;
+SetBgTilemapBuffer = 0x8001FA0 | 1;
 UnsetBgTilemapBuffer = 0x8001FD4 | 1;
 CopyToBgTilemapBuffer = 0x8002040 | 1;
 CopyBgTilemapBufferToVram = 0x80020BC | 1;
 FillBgTilemapBufferRect = 0x8002554 | 1;
 FadeBgPalAndFillBlack = 0x807DB38 | 1;
+clear_scheduled_bg_copies_to_vram = 0x80F6790 | 1;
 BgIdMarkForSync = 0x80F67A4 | 1;
-DecompressWithFallback = 0x80F6878 | 1;
+reset_temp_tile_data_buffers = 0x80F6808 | 1;
+free_temp_tile_data_buffers_if_possible = 0x80F682C | 1;
+decompress_and_copy_tile_data_to_vram = 0x80F6878 | 1;
 ResetBGs = 0x812D594 | 1;
 
 

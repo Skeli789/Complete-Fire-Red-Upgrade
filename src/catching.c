@@ -260,6 +260,9 @@ void atkEF_handleballthrow(void)
         else
             ball_multiplier = sBallCatchBonuses[ItemType - BALL_TYPE_ULTRA_BALL];
 		
+		if (CheckTableForSpecies(defSpecies, UltraBeastTable) && ItemType != BALL_TYPE_BEAST_BALL)
+			ball_multiplier = 1; //All balls except for Beast Ball have a hard time catching Ultra Beasts
+		
         odds = udivsi(((catch_rate * udivsi(ball_multiplier, 10)) * (gBattleMons[gBankTarget].maxHP * 3 - gBattleMons[gBankTarget].hp * 2)), (3 * gBattleMons[gBankTarget].maxHP));
 		
 		#ifndef NO_HARDER_WILD_DOUBLES

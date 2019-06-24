@@ -390,6 +390,7 @@ void __attribute__((long_call)) SpriteCB_SpiderWeb(struct Sprite* sprite);
 void __attribute__((long_call)) AnimSpinningKickOrPunchFinish(struct Sprite *sprite);
 void __attribute__((long_call)) SpriteCB_80BA7BC(struct Sprite *sprite);
 void __attribute__((long_call)) SpriteCB_AnimSolarbeamBigOrb(struct Sprite *sprite);
+void __attribute__((long_call)) InitAnimLinearTranslation(struct Sprite *sprite);
 
 void __attribute__((long_call)) StartAnimLinearTranslation(struct Sprite *sprite);
 

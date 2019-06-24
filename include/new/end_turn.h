@@ -18,3 +18,4 @@ u8 CountAliveMonsOnField(void);
 u8 TurnBasedEffects(void);
 bool8 HandleFaintedMonActions(void);
 void RemoveSwitchInForFaintedBank(void);
+bool8 IsInMiddleOfEndTurnSwitchIn(u8 bank);

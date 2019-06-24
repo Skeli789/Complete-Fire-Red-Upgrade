@@ -15,6 +15,7 @@ extern const u8* gBattleScriptsForMoveEffects[];
 #define BattleScript_DestinyBondTakesLife (u8*) 0x81D8C6C
 #define BattleScript_GrudgeTakesPp (u8*) 0x81D8FA3
 #define BattleScript_RestCantSleep (u8*) 0x81D6EB2
+#define BattleScript_ResultMessage (u8*) 0x81D6942
 
 #define BattleScript_SubstituteFade (u8*)  0x81D9526
 #define BattleScript_HangedOnMsg (u8*) 0x81D9641
@@ -34,6 +35,7 @@ extern const u8* gBattleScriptsForMoveEffects[];
 #define BattleScript_SAtkDown2 (u8*) 0x81D8FEB
 #define ScreensShatteredString (u8*) 0x83FC646
 
+extern u8 BattleScript_PauseResultMessage[];
 extern u8 BattleScript_DarkVoidFail[];
 extern u8 BattleScript_MagneticFluxStatBoost[];
 extern u8 BattleScript_GearUpStatBoost[];
@@ -124,13 +126,18 @@ extern u8 MistyTerrainSetString[];
 extern u8 PsychicTerrainSetString[];
 
 #define gText_TargetAlreadyAsleep (u8*) 0x83FB57C
+extern u8 gText_TeamProtectedBySafeguard[];
 extern u8 gText_TargetAlreadyHasStatusCondition[];
 extern u8 gText_TargetWrappedInMistyTerrain[];
 extern u8 gText_TargetWrappedInElectricTerrain[];
 extern u8 gText_FlowerVeilProtects[];
 extern u8 gText_SweetVeilProtects[];
+extern u8 gText_SleepClausePrevents[];
 #define gText_CantFallAsleepDuringUproar (u8*) 0x83FBDC4
-#define gText_TargetStayedAwakeUsingAbility (u8*) 0x83FBDE2
+
+#define gText_TargetAlreadyParalyzed (u8*) 0x83FB78A
+#define gText_TargetAlreadyBurned (u8*) 0x83FB67B
+#define gText_TargetAlreadyPoisoned (u8*) 0x83FB5F8
 
 extern u8 IonDelugeShowerString[];
 extern u8 TargetStatsResetString[];
@@ -140,6 +147,7 @@ extern u8 gText_TargetWasInfested[];
 
 extern u8 BattleScript_HealingWishHeal[];
 extern u8 BattleScript_LunarDanceHeal[];
+extern u8 BattleScript_EntryHazardsHurtReturn[];
 extern u8 BattleScript_SpikesHurt[];
 extern u8 BattleScript_SRHurt[];
 extern u8 BattleScript_TSPoison[];

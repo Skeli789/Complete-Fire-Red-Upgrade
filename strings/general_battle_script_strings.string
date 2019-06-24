@@ -107,6 +107,9 @@ The Wide Guard protected\n[TARGET]!
 #org @gText_TargetStaysAwake
 [TARGET] stays awake!
 
+#org @gText_TeamProtectedBySafeguard
+[TARGET]'s party is\nprotected by Safeguard!
+
 #org @gText_TargetWrappedInMistyTerrain
 [TARGET] surrounds\nitself in a protective mist!
 
@@ -124,6 +127,9 @@ The Wide Guard protected\n[TARGET]!
 
 #org @gText_AromaVeilProtects
 [TARGET] is protected\nby an aromatic veil!
+
+#org @gText_SleepClausePrevents
+The sleep clause prevents more\nPok\emon from being put to sleep!
 
 #org @gText_AbilityPreventsStatLoss
 [SCRIPTING_BANK]'s stats were\nnot lowered!

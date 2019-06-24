@@ -103,6 +103,7 @@ struct AffineAnimFrameCmd
     s16 yScale;
     u8 rotation;
     u8 duration;
+	u16 _;
 };
 
 struct AffineAnimLoopCmd

@@ -382,7 +382,7 @@ void atk06_typecalc(void) {
 				gMoveResultFlags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
 				gLastLandedMoves[gBankTarget] = 0;
 				gLastHitByType[gBankTarget] = 0xFF;
-				gBattleCommunication[6] = moveType;
+				gBattleCommunication[6] = 3;
 				RecordAbilityBattle(gBankTarget, gLastUsedAbility);
 			}
 			else if (defEffect == ITEM_EFFECT_SAFETY_GOGGLES) {

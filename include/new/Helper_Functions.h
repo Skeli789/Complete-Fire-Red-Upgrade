@@ -77,6 +77,7 @@ void RemoveBankFromPickupStack(const u8 bank);
 u8 GetTopOfPickupStackNotIncludingBank(const u8 bank);
 void ClearBankStatus(bank_t bank);
 
+bool8 DoesSleepClausePrevent(u8 bank);
 bool8 CanBeGeneralStatused(u8 bank, bool8 checkFlowerVeil);
 bool8 CanBePutToSleep(u8 bank, bool8 checkFlowerVeil);
 bool8 CanBePoisoned(u8 bankDef, u8 bankAtk, bool8 checkFlowerVeil);

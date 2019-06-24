@@ -2030,6 +2030,7 @@ ANIM_DISCHARGE:
 	launchtask AnimTask_pal_fade_complex 0x2 0x6 PAL_DEF | PAL_DEF_PARTNER | PAL_ATK_PARTNER 0x2 0x2 0x0 0xC 0x07FE 
 	call CENTRED_ELECTRICITY_ANIM
 	waitanimation
+	launchtemplate Template_Pal_Fade 0x2 0x5 0x1 PAL_ALL_BANKS | PAL_BG 0x0 0x0 0x0
 	pokespritefromBG bank_target
 	resetblends  
 	endanimation
@@ -2737,10 +2738,10 @@ POWERGEM_BLADES: objtemplate ANIM_TAG_PUNISHMENT_BLADES ANIM_TAG_AIR_WAVE_2 0x83
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
 ANIM_POWERWHIP:
+	loadparticle ANIM_TAG_UNUSED_VINE_2 @Vine
 	launchtemplate Template_Pal_Fade 0x2 0x5 0x1 0x3 0x0 0x10 0x02C0
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ALL_BANKS 0x2 0x0 0x10 0x0	
 	waitanimation
-	loadparticle ANIM_TAG_WHIP_HIT @Vine
 	call POWER_WHIP
 	call POWER_WHIP
 	call POWER_WHIP
@@ -2754,9 +2755,12 @@ ANIM_POWERWHIP:
 
 POWER_WHIP:
 	playsound2 0x94 0x3f 
-	launchtemplate 0x83E3160 0x82 0x2 0x0 0x0
+	launchtemplate POWER_WHIP_VINE 0x82 0x2 0x0 0x0
 	pause 0x7
 	return
+
+.align 2
+POWER_WHIP_VINE: objtemplate ANIM_TAG_UNUSED_VINE_2 ANIM_TAG_UNUSED_VINE_2 0x83AC9D8 gAnimCmdPowerWhip 0x0 0x8231CFC 0x80A4451
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool     
@@ -4199,7 +4203,7 @@ ANIM_FLAREBLITZ:
 	call FLAME_BUFF 
 	pause 0x4
 	call FLAME_BUFF
-	loadbg1 BG_FIRE
+	loadbg2 BG_FIRE
 	waitfortransparentbg
 	launchtask 0x80BB82D 0x5 0x4 0x1000 0x0 0x0 0xFFFF
 	playsound2 0x91 0xc0 
@@ -4223,8 +4227,8 @@ ANIM_FLAREBLITZ:
 	waitanimation
 	launchtemplate 0x83D4E84 0x2 0x3 0x0 0x0 0x5
 	waitanimation
-	pokespritefromBG bank_target
 	resetblends
+	pokespritefromBG bank_target
 	call UNSET_SCROLLING_BG
 	endanimation
 
@@ -11103,7 +11107,7 @@ ANIM_LIQUIDATION:
 	setblends 0x80c 
 	launchtemplate Template_HorizontalLunge 0x2 0x2 0x4 0x4 
 	pause 0x6 
-	launchtemplate Template_Hit 0x2 0x4 0x0 0x0 0x1 0x2 
+	launchtemplate Template_Hit 0x2 0x4 0x0 0x0 0x1 0x1
 	launchtask AnimTask_move_bank 0x2 0x5 0x1 0x3 0x0 0x6 0x1 
 	playsound2 0x84 0x3f 
 	waitanimation 
@@ -12663,8 +12667,6 @@ ANIM_SUNSTEELSTRIKE:
 	waitanimation
 	unloadparticle ANIM_TAG_ROUND_SHADOW @fly
 	unloadparticle ANIM_TAG_AIR_WAVE_2 @black color
-	loadparticle ANIM_TAG_DRAGON_ASCENT @Dragon Ascent
-	loadparticle ANIM_TAG_DRAGON_ASCENT_FOE @Dragon Ascent 2
 	loadparticle ANIM_TAG_METEOR @superpower
 	loadparticle ANIM_TAG_GOLD_RING @beam
 	loadparticle ANIM_TAG_SMALL_RED_EYE @red color
@@ -12684,17 +12686,11 @@ ANIM_SUNSTEELSTRIKE:
 	call SUNSTRIKE_BEAM
 	stopmusic
 	playsound2 0x86 0x3f
-	launchtask AnimTask_arg7_is_target_player 0x2 0x0  
-	jumpifargmatches 0x7 0x1 SUNSTRIKE_OPPONENT_ATTACK
-	launchtemplate SUNSTRIKE_BEFOREHIT 0x2 0x1 0x14
-
-SUNSTRIKE_AFTERHIT:
+	launchtemplate SUNSTRIKE_SUPERPOWER 0x82 0x1 0x14
 	pause 0x14
 	launchtemplate SUNSTRIKE_REDHIT 0x2 0x4 0x0 0x0 0x1 0x0
 	launchtask AnimTask_move_bank 0x5 0x5 bank_target 0x6 0x0 0x8 0x1
 	waitanimation
-	unloadparticle ANIM_TAG_DRAGON_ASCENT @Dragon Ascent
-	unloadparticle ANIM_TAG_DRAGON_ASCENT_FOE @Dragon Ascent 2
 	unloadparticle ANIM_TAG_METEOR @superpower
 	unloadparticle ANIM_TAG_GOLD_RING @beam
 	unloadparticle ANIM_TAG_SMALL_RED_EYE @red color
@@ -12707,8 +12703,10 @@ SUNSTRIKE_AFTERHIT:
 	makebankvisible bank_attacker
 	launchtemplate Template_Pal_Fade 0x2 0x5 PAL_BG | PAL_ATK 0x3 0xF 0x0 0x0
 	waitanimation
+	resetblends
 	pokespritefromBG bank_target
 	endanimation
+
 SUNSTRIKE_BEAM:
 	launchtemplate SUNSTRIKE_YELLOWBEAM 0x2 0x1 0x14
 	pause 0x1
@@ -12716,16 +12714,11 @@ SUNSTRIKE_BEAM:
 	pause 0x1
 	return
 
-SUNSTRIKE_OPPONENT_ATTACK:
-	launchtemplate SUNSTRIKE_BEFOREHIT2 0x2 0x1 0x14
-	goto SUNSTRIKE_AFTERHIT
-
 .align 2
 SUNSTRIKE_BLACKFLY: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_AIR_WAVE_2 0x83ACAA0 0x8231CF0 0x0 0x83E6B8C 0x80B1BB1
-SUNSTRIKE_BEFOREHIT: objtemplate ANIM_TAG_DRAGON_ASCENT ANIM_TAG_METEOR 0x83AC9E0 0x8231CF0 0x0 0x83E6BB0 0x80B1C3D
-SUNSTRIKE_BEFOREHIT2: objtemplate ANIM_TAG_DRAGON_ASCENT_FOE ANIM_TAG_METEOR 0x83AC9E0 0x8231CF0 0x0 0x83E6BB0 0x80B1C3D
-SUNSTRIKE_REDBEAM: objtemplate ANIM_TAG_GOLD_RING ANIM_TAG_SMALL_RED_EYE 0x83ACA18 0x8231CF0 0x0 0x83E6BB0 0x80B1C3D
-SUNSTRIKE_YELLOWBEAM: objtemplate ANIM_TAG_GOLD_RING ANIM_TAG_GOLD_RING 0x83ACA18 0x8231CF0 0x0 0x83E6BB0 0x80B1C3D
+SUNSTRIKE_SUPERPOWER: objtemplate ANIM_TAG_METEOR ANIM_TAG_METEOR sSunsteelStrikeBlastOAM 0x8231CF0 0x0 gSpriteAffineAnimTable_SunsteelStrikeBlast 0x80B1C3D
+SUNSTRIKE_REDBEAM: objtemplate ANIM_TAG_GOLD_RING ANIM_TAG_SMALL_RED_EYE 0x83ACA18 0x8231CF0 0x0 0x83E6BB0 SpriteCB_SunsteelStrikeRings
+SUNSTRIKE_YELLOWBEAM: objtemplate ANIM_TAG_GOLD_RING ANIM_TAG_GOLD_RING 0x83ACA18 0x8231CF0 0x0 0x83E6BB0 SpriteCB_SunsteelStrikeRings
 SUNSTRIKE_REDHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_SMALL_RED_EYE 0x83ACB58 0x8231CF0 0x0 0x83E7BF8 0x80BA561
 SUNSTRIKE_ROCKS: objtemplate ANIM_TAG_SMALL_ROCK ANIM_TAG_ROCKS 0x83ACA30 0x8231CF0 0x0 0x83E7990 0x80B7C89
 
@@ -15586,12 +15579,13 @@ ANIM_SUPERSONIC_SKYSTRIKE:
 	pause 0x19 	
 	loadBG1 BG_FLYING_BATTLE 
 	waitforBG
+	launchtask AnimTask_arg7_is_target_player 0x2 0x0
 	jumpifargmatches 0x7 0x1 BG_ON_PLAYER_SSSS
 BG_ON_OPPONENT_SSSS:
-	launchtask AnimTask_scroll_background 0x5 0x4 0xf800 0xf800 0x0 0xffff
+	launchtask AnimTask_scroll_background 0x5 0x4 0xf800 0x800 0x0 0xffff
 	goto finishBG_SSSS
 BG_ON_PLAYER_SSSS:
-	launchtask AnimTask_scroll_background 0x5 0x4 0x800 0x800 0x0 0xffff
+	launchtask AnimTask_scroll_background 0x5 0x4 0x800 0xf800 0x0 0xffff
 finishBG_SSSS:
 	waitfortransparentBG
 	waitanimation

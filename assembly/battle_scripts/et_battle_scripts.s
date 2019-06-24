@@ -73,18 +73,18 @@ EndBattleFlagClearHook: @Not really a BS but whatever
 	ldr r1, .BattleMainFunc
 	ldr r0, .CallbackReturnToOverworld
 	str r0, [r1]
-	ldr r1, .SomeFutureC2
-	ldr r0, .EndBattleFlagClearHookReturn
+	ldr r1, .CB2_AfterEvolution
+	ldr r0, =0x80159E4 | 1
 	bx r0
 
 .align 2
 .BattleMainFunc: .word 0x3004F84
 .CallbackReturnToOverworld: .word 0x8015A30 | 1
-.SomeFutureC2: .word 0x300537C
-.EndBattleFlagClearHookReturn: .word 0x80159E4 | 1
+.CB2_AfterEvolution: .word 0x300537C
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+.pool
 BattleScript_MysteriousAirCurrentContinues:
 	setword BATTLE_STRING_LOADER MysteriousAirCurrentContinuesString
 	printstring 0x184
