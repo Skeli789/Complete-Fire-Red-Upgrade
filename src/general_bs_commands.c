@@ -1997,6 +1997,26 @@ bool8 TakesDamageFromHail(u8 bank)
 	return FALSE;
 }
 
+u32 GetSandstormDamage(u8 bank)
+{
+	u32 damage = 0;
+
+	if (TakesDamageFromSandstorm(bank))
+		damage = MathMax(1, gBattleMons[bank].maxHP / 16);
+
+	return damage;
+}
+
+u32 GetHailDamage(u8 bank)
+{
+	u32 damage = 0;
+
+	if (TakesDamageFromHail(bank))
+		damage = MathMax(1, gBattleMons[bank].maxHP / 16);
+
+	return damage;
+}
+
 void atk96_weatherdamage(void)
 {
 	u8 bank = gBankAttacker;
@@ -2015,13 +2035,11 @@ void atk96_weatherdamage(void)
 	{
 		if (gBattleWeather & WEATHER_SANDSTORM_ANY)
 		{
-			if (TakesDamageFromSandstorm(bank))
-				gBattleMoveDamage = MathMax(1, gBattleMons[bank].maxHP / 16);
+			gBattleMoveDamage =GetSandstormDamage(bank);
 		}
 		else if (gBattleWeather & WEATHER_HAIL_ANY)
 		{
-			if (TakesDamageFromHail(bank))
-				gBattleMoveDamage = MathMax(1, gBattleMons[bank].maxHP / 16);
+			gBattleMoveDamage = GetHailDamage(bank);
 		}
 	}
 

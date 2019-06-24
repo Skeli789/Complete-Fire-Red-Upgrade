@@ -198,7 +198,7 @@ void atk05_damagecalc(void) {
     ++gBattlescriptCurrInstr;
 }
 
-void FutureSightDamageCalc(void)
+s32 FutureSightDamageCalc(void)
 {
 	gBattleStruct->dynamicMoveType = GetMoveTypeSpecial(gBankAttacker, gCurrentMove);
     u16 side_hword = gSideAffecting[SIDE(gBankTarget)];
@@ -208,6 +208,7 @@ void FutureSightDamageCalc(void)
                                             gBattleStruct->dynamicMoveType, gBankAttacker, gBankTarget,
 											GetBankPartyData(gBankAttacker), FALSE, TRUE, FALSE);
     gBattleMoveDamage = gBattleMoveDamage * udivsi(gCritMultiplier, 100);
+	return gBattleMoveDamage;
 }
 
 u32 AI_CalcDmg(const u8 bankAtk, const u8 bankDef, const u16 move) {

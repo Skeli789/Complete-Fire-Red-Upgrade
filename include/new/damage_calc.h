@@ -24,7 +24,7 @@ u8 GetExceptionMoveType(u8 bankAtk, move_t);
 u8 GetExceptionMoveTypeFromParty(struct Pokemon*, move_t);
 
 void atk05_damagecalc(void);
-void FutureSightDamageCalc(void);
+s32 FutureSightDamageCalc(void);
 u32 AI_CalcDmg(const u8 bankAtk, const u8 bankDef, const u16 move);
 u32 AI_CalcPartyDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* mon);
 s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* defender, const u16 move, u16 sideStatus, u16 powerOverride, u8 effectivenessFlags, u8 typeOverride, u8 bankAtk, u8 bankDef, pokemon_t* party_data_atk, bool8 PartyCheck, bool8 IgnoreAttacker, bool8 CheckingConfusion);

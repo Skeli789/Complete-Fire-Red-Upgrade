@@ -1971,7 +1971,16 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 move, const
 			INCREASE_VIABILITY(9);
 		}
 		else if (IsStrongestMove(move, bankAtk, bankDef))
-			INCREASE_VIABILITY(2);
+		{
+			//If the attacker is slower than the target and the target is going to die
+			//anyways, then do something else and let it die.
+			if (MoveWouldHitFirst(move, bankAtk, bankDef)
+			|| !WillFaintFromSecondaryDamage(bankDef)
+			|| IsMovePredictionHealingMove(bankDef, bankAtk)
+			|| atkAbility == ABILITY_MOXIE
+			|| atkAbility == ABILITY_BEASTBOOST)
+				INCREASE_VIABILITY(2);
+		}
 	}
 
 	return MathMin(viability, 255);

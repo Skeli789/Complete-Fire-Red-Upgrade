@@ -22,6 +22,7 @@ u16 GetTeamSpeedAverage(u8 bank);
 u16 GetBattleMonMove(u8 bank, u8 index);
 bool8 IsTrapped(u8 bank, bool8 switching);
 bool8 IsTakingSecondaryDamage(u8 bank);
+bool8 WillFaintFromSecondaryDamage(u8 bank);
 u16 CalcSecondaryEffectChance(u8 bank, u16 move);
 
 move_t IsValidMovePrediction(u8 bankAtk, u8 bankDef);

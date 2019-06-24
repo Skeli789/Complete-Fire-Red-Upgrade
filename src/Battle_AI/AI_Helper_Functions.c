@@ -3,9 +3,11 @@
 #include "../../include/constants/items.h"
 
 #include "../../include/new/accuracy_calc.h"
+#include "../../include/new/ai_advanced.h"
 #include "../../include/new/AI_Helper_Functions.h"
 #include "../../include/new/battle_start_turn_start.h"
 #include "../../include/new/damage_calc.h"
+#include "../../include/new/end_turn.h"
 #include "../../include/new/general_bs_commands.h"
 #include "../../include/new/helper_functions.h"
 #include "../../include/new/item.h"
@@ -529,6 +531,30 @@ bool8 IsTakingSecondaryDamage(u8 bank)
 		||  gBattleMons[bank].status1 & STATUS1_BURN
 		||  ((gBattleMons[bank].status1 & STATUS1_SLEEP) > 1 && gBattleMons[bank].status2 & STATUS2_NIGHTMARE)
 		||  gBattleMons[bank].status2 & (STATUS2_CURSED | STATUS2_WRAPPED))
+			return TRUE;
+	}
+	
+	return FALSE;
+}
+
+bool8 WillFaintFromSecondaryDamage(u8 bank)
+{
+	u8 hp = gBattleMons[bank].hp + GetAmountToRecoverBy(bank, 0, MOVE_PROTECT); //Assume leftover etc. healing first
+	u8 ability = ABILITY(bank);
+
+	if (gDisableStructs[bank].perishSongTimer == 0)
+		return TRUE;
+		
+	if (ability != ABILITY_MAGICGUARD)
+	{
+		if (GetSandstormDamage(bank) >= hp
+		||  GetHailDamage(bank) >= hp
+		||  GetLeechSeedDamage(bank) >= hp
+		||  GetPoisonDamage(bank) >= hp
+		||  GetBurnDamage(bank) >= hp
+		||  GetNightmareDamage(bank) >= hp
+		||  GetCurseDamage(bank) >= hp
+ 		||  GetTrapDamage(bank) >= hp)
 			return TRUE;
 	}
 	

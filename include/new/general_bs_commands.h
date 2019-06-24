@@ -12,6 +12,8 @@ s32 GetPsywaveDamage(u8 randDamage);
 u8 CheckMoveLimitations(u8 bank, u8 unusableMoves, u8 check);
 bool8 TakesDamageFromSandstorm(u8 bank);
 bool8 TakesDamageFromHail(u8 bank);
+u32 GetSandstormDamage(u8 bank);
+u32 GetHailDamage(u8 bank);
 void TransformPokemon(u8 bankAtk, u8 bankDef);
 u8 CastformDataTypeChange(u8 bank);
 u16 GetNaturePowerMove(void);

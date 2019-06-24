@@ -23,6 +23,7 @@ bool8 ShouldPhaze(u8 bankAtk, u8 bankDef, u16 move, u8 class);
 bool8 ShouldUseWishAromatherapy(u8 bankAtk, u8 bankDef, u16 move, u8 class);
 bool8 ShouldSetUpScreens(u8 bankAtk, u8 bankDef, u16 move, u8 class);
 u8 BankLikelyToUseMoveSplit(u8 bank, u8 class);
+u16 GetAmountToRecoverBy(u8 bankAtk, u8 bankDef, u16 move);
 
 void IncreaseStatusViability(s16* originalViability, u8 class, u8 boost, u8 bankAtk, u8 bankDef);
 void IncreaseStatViability(s16* originalViability, u8 class, u8 boost, u8 bankAtk, u8 bankDef, u16 move, u8 stat, u8 statLimit);

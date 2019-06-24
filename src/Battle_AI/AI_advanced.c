@@ -23,7 +23,6 @@ enum FightingClasses
 };
 
 //This file's functions:
-static u16 GetAmountToRecoverBy(u8 bankAtk, u8 bankDef, u16 move);
 static bool8 BankHoldingUsefulItemToProtectFor(u8 bank);
 static bool8 BankHasAbilityUsefulToProtectFor(u8 bankAtk, u8 bankDef);
 static bool8 MoveSplitOnTeam(u8 bank, u8 split);
@@ -218,7 +217,7 @@ bool8 ShouldTrap(u8 bankAtk, u8 bankDef, u16 move, u8 class)
 	return FALSE;
 }
 
-static u16 GetAmountToRecoverBy(u8 bankAtk, u8 bankDef, u16 move)
+u16 GetAmountToRecoverBy(u8 bankAtk, u8 bankDef, u16 move)
 {
 	if (gNewBS->HealBlockTimers[bankAtk] > 0)
 		return 0;
