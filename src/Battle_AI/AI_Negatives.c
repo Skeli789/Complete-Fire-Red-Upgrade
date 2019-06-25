@@ -984,7 +984,8 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 move, const
 		
 		case EFFECT_SNORE:
 		case EFFECT_SLEEP_TALK:
-			if (!(atkStatus1 & STATUS_SLEEP) && atkAbility != ABILITY_COMATOSE)
+			if (((atkStatus1 & STATUS_SLEEP) == 1 || !(atkStatus1 & STATUS_SLEEP))
+			&& atkAbility != ABILITY_COMATOSE)
 				viability -= 10;
 			break;
 		

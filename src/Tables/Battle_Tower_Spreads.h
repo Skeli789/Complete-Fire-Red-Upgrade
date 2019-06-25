@@ -30167,6 +30167,72 @@ const struct BattleTowerSpread gFrontierLegendarySpreads[] =
 			MOVE_TAUNT,
 		},
 	},
+	{
+		.species = SPECIES_MELMETAL,
+		.nature = NATURE_ADAMANT,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 0,
+		.spDefIv = 31,
+		.hpEv = 252,
+		.atkEv = 252,
+		.spDefEv = 4,
+		.ability = FRONTIER_ABILITY_1, //Iron Fist
+		.item = ITEM_EXPERT_BELT,
+		.moves =
+		{
+			MOVE_DOUBLEIRONBASH,
+			MOVE_ICEPUNCH,
+			MOVE_SUPERPOWER,
+			MOVE_THUNDERPUNCH,
+		},
+	},
+	{
+		.species = SPECIES_MELMETAL,
+		.nature = NATURE_ADAMANT,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 0,
+		.spDefIv = 31,
+		.hpEv = 252,
+		.atkEv = 252,
+		.spDefEv = 4,
+		.ability = FRONTIER_ABILITY_1, //Iron Fist
+		.item = ITEM_WEAKNESS_POLICY,
+		.moves =
+		{
+			MOVE_DOUBLEIRONBASH,
+			MOVE_MEGAPUNCH,
+			MOVE_ICEPUNCH,
+			MOVE_ACIDARMOR,
+		},
+	},
+	{
+		.species = SPECIES_MELMETAL,
+		.nature = NATURE_IMPISH,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 0,
+		.spDefIv = 31,
+		.hpEv = 252,
+		.atkEv = 4,
+		.defEv = 252,
+		.ability = FRONTIER_ABILITY_1, //Iron Fist
+		.item = ITEM_LEFTOVERS,
+		.moves =
+		{
+			MOVE_ICEPUNCH,
+			MOVE_TOXIC,
+			MOVE_THUNDERWAVE,
+			MOVE_REST,
+		},
+	},
 };
 
 const struct BattleTowerSpread gArceusSpreads[] =
@@ -37149,6 +37215,28 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 			MOVE_THUNDERWAVE,
 			MOVE_REFLECT,
 			MOVE_LIGHTSCREEN,
+		},
+	},
+	{
+		.species = SPECIES_MELTAN,
+		.nature = NATURE_BOLD,
+		.hpIv = 31,
+		.atkIv = 0,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.hpEv = 228,
+		.defEv = 236,
+		.spAtkEv = 46,
+		.ability = FRONTIER_ABILITY_1, //Magnet Pull
+		.item = ITEM_AIR_BALLOON,
+		.moves =
+		{
+			MOVE_FLASHCANNON,
+			MOVE_THUNDERBOLT,
+			MOVE_TOXIC,
+			MOVE_SUBSTITUTE,
 		},
 	},
 	{
