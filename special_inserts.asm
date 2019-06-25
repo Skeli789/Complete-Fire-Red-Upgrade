@@ -248,13 +248,15 @@ MaxLevelChange13:
 MaxLevelChange7:
 	.byte MAX_LEVEL, 0x29, 0x6, 0xD9, MAX_LEVEL
 
-.org 0x420E8, 0xFF
-MaxLevelChange9:
-	.byte MAX_LEVEL
+@These commented out values refer to stat boosting items,
+@NOT max level!
+@.org 0x420E8, 0xFF
+@MaxLevelChange9:
+@	.byte MAX_LEVEL
 
-.org 0x420EC, 0xFF
-MaxLevelChange10:
-	.byte MAX_LEVEL
+@.org 0x420EC, 0xFF
+@MaxLevelChange10:
+@	.byte MAX_LEVEL
 
 .org 0x4274E, 0xFF
 MaxLevelChange11:
