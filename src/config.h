@@ -144,6 +144,12 @@ enum //These vars need to be one after the other (hence the enum)
 //#define EXISTING_FOSSIL_IMAGE_TABLE_ADDRESS 0x81a4600 //Uncomment this if you've already inserted a fossil image table
 //#define EXISTING_OW_TABLE_ADDRESS 0x81a2000 //Uncomment if you don't want new overworld NPC tables to be generated.
 
+/*===== Pre-Battle Mugshot Offsets ====*/
+#define FR_PRE_BATTLE_MUGSHOT_STYLE
+#define VAR_PRE_BATTLE_MUGSHOT_STYLE 0x5038
+#define VAR_PRE_BATTLE_MUGSHOT_SPRITE 0x5039
+#define FLAG_LOAD_MUGSHOT_SPRITE_FROM_TABLE 0x924	//Load custom mugshot for pre-battle transition
+
 /*===== Other General Options =====*/
 #define INVERSE_BATTLES //Comment this line to disable the possibility of having Inverse Battles
 #define TIME_ENABLED //Comment this line to disable time based features. All time dependent features will default in Daytime.
@@ -245,12 +251,6 @@ enum //These vars need to be one after the other (hence the enum)
 //#define DONT_HIDE_HEALTHBOXES_ATTACKER_STATUS_MOVES //Uncommenting this line doesn't hide the healthboxes when the attacker is using a status move that targets itself.
 //#define ENCOUNTER_MUSIC_BY_CLASS //Plays music when a trainer spots the player based on the trainer class rather than the value set in the trainer data.
 #define OKAY_WITH_AI_SUICIDE //The AI is allowed to use self-destructing moves
-
-/* Pre-Battle Mugshot Options */
-#define FR_PRE_BATTLE_MUGSHOT_STYLE
-#define VAR_PRE_BATTLE_MUGSHOT_STYLE 0x5038
-#define VAR_PRE_BATTLE_MUGSHOT_SPRITE 0x5039
-#define FLAG_LOAD_MUGSHOT_SPRITE_FROM_TABLE 0x924	//Load custom mugshot for pre-battle transition
 
 /* DexNav Options */
 //See "include/new/dexnav_config.h"
