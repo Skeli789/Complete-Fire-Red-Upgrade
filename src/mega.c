@@ -942,3 +942,12 @@ void DestroyMegaTriggers(void)
 		}
 	}
 }
+
+void DestroyMegaIndicator(u8 bank)
+{
+	if (gNewBS->megaIndicatorObjIds[bank] > 0)
+	{
+		DestroySprite(&gSprites[gNewBS->megaIndicatorObjIds[bank] - 1]);
+		gNewBS->megaIndicatorObjIds[bank] = 0;
+	}
+}

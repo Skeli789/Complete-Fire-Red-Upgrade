@@ -1491,7 +1491,12 @@ bool8 HandleFaintedMonActions(void)
 									BattleScriptExecute(BattleScript_HandleFaintedMonDoublesInitial);
 								}
 								else
+								{
 									BattleScriptExecute(BattleScript_HandleFaintedMon);
+									gNewBS->handleSetSwitchIns |= gBitTable[gBattleStruct->faintedActionsBank];
+									gBattleStruct->faintedActionsState = 7;
+									return TRUE;
+								}
 								
 								gBattleStruct->faintedActionsState = 5;
 								return TRUE;

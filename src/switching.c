@@ -853,6 +853,7 @@ void ClearSwitchBytes(u8 bank)
 	gNewBS->lastTargeted[bank] = 0;
 	gNewBS->usedMoveIndices[bank] = 0;
 	gNewBS->synchronizeTarget[bank] = 0;
+	DestroyMegaIndicator(bank);
 }
 
 void ClearSwitchBits(u8 bank)

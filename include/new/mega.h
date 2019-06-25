@@ -21,6 +21,7 @@ void TryLoadMegaTriggers(void);
 void DestroyMegaTriggers(void);
 bool8 IsIgnoredTriggerColour(u16 colour);
 u16 LightUpMegaSymbol(u16 clra);
+void DestroyMegaIndicator(u8 bank);
 
 //Functions Hooked In
 bool8 HasMegaSymbol(u8 bank);
