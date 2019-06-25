@@ -1,26 +1,33 @@
 #pragma once
 
-#if (MUGSHOT_STYLE == MUGSHOT_BIG)
-	extern const u16 Big_MugshotTiles[];
-	extern const u16 Big_MugshotPal[];
-	extern const u16 Big_MugshotMap[];
+// Don't Modify These Values!
+// VAR_PRE_BATTLE_MUGSHOT_STYLE
+enum {
+    MUGSHOT_BIG = 0,
+    MUGSHOT_DP,
+    MUGSHOT_TWO_BARS,
+};
 
-	#define sMugshotsTiles Big_MugshotTiles
-	#define sMugshotsTilemap Big_MugshotMap
-	#define sMugshotsDefaultPal Big_MugshotPal
-#elif (MUGSHOT_STYLE == MUGSHOT_DP)
-	extern const u16 DP_MugshotTiles[];
-	extern const u16 DP_MugshotPal[];
-	extern const u16 DP_MugshotMap[];
+// VAR_PRE_BATTLE_MUGSHOT_SPRITE
+enum {
+    MUGSHOT_PLAYER = 0,
+    MUGSHOT_VS_SYMBOL,
+};
 
-	#define sMugshotsTiles DP_MugshotTiles
-	#define sMugshotsTilemap DP_MugshotMap
-	#define sMugshotsDefaultPal DP_MugshotPal
-#else //MUGSHOT_TWO_BARS
-	#define sMugshotsTiles ((const u16*) 0x83F8F60)
-	#define sMugshotsTilemap ((const u16*) 0x83FAC34)
-	#define sMugshotsDefaultPal ((const u16*) 0x83FA660)
-#endif
+//MUGSHOT_BIG tiles
+extern const u16 Big_MugshotTiles[];
+extern const u16 Big_MugshotPal[];
+extern const u16 Big_MugshotMap[];
+
+//MUGSHOT_DP Tiles
+extern const u16 DP_MugshotTiles[];
+extern const u16 DP_MugshotPal[];
+extern const u16 DP_MugshotMap[];
+
+//MUGSHOT_TWO_BARS Tiles
+#define TwoBars_MugshotTiles ((const u16*) 0x83F8F60)
+#define TwoBars_MugshotPal ((const u16*) 0x83FA660)
+#define TwoBars_MugshotMap ((const u16*) 0x83FAC34)
 
 
 #define sOpponentMugshotsPals ((const u16**) 0x83FA740)
