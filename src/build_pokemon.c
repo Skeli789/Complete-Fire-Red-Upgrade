@@ -7,6 +7,7 @@
 #include "../include/wild_encounter.h"
 #include "../include/constants/items.h"
 #include "../include/constants/maps.h"
+#include "../include/constants/pokedex.h"
 #include "../include/constants/trainers.h"
 
 #include "../include/new/build_pokemon.h"
@@ -32,6 +33,10 @@
 extern const u8 gClassPokeBalls[NUM_TRAINER_CLASSES];
 extern const species_t gRandomizerBanList[];
 extern const species_t gSetPerfectXIvList[];
+extern const species_t gVivillonForms[];
+extern const species_t gFurfrouForms[];
+extern const u8 gNumVivillonForms;
+extern const u8 gNumFurfrouForms;
 
 extern bool8 sp051_CanTeamParticipateInSkyBattle(void);
 extern bool8 CanMonParticipateInASkyBattle(struct Pokemon* mon);
@@ -52,6 +57,7 @@ static bool8 IsPokemonBannedBasedOnStreak(u16 species, u16 item, u16* speciesArr
 static u16 GivePlayerFrontierMonGivenSpecies(const u16 species, const struct BattleTowerSpread* const spreadTable, const u16 numSpreads);
 static const struct BattleTowerSpread* GetSpreadBySpecies(const u16 species, const struct BattleTowerSpread* const spreads, const u16 numSpreads);
 static const struct BattleTowerSpread* TryAdjustSpreadForSpecies(const struct BattleTowerSpread* originalSpread);
+static u16 TryAdjustAestheticSpecies(u16 species);
 static u8 GetPartyIdFromPartyData(struct Pokemon* mon);
 static u8 GetHighestMonLevel(const pokemon_t* const party);
 
@@ -584,7 +590,12 @@ static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerId, const 
 							u16 streak = GetCurrentBattleTowerStreak();
 							if (streak < 2)
 							{
-								spread = &gMiddleCupSpreads[Random() % TOTAL_MIDDLE_CUP_SPREADS]; //Load Middle Cup spreads for first two battles to make them easier
+								spread = &gLittleCupSpreads[Random() % TOTAL_LITTLE_CUP_SPREADS]; //Load Little Cup spreads for first two battles to make them easier
+								break;
+							}
+							else if (streak < 5)
+							{
+								spread = &gMiddleCupSpreads[Random() % TOTAL_MIDDLE_CUP_SPREADS]; //Load Middle Cup spreads for battles 3-5 to make them easier
 								break;
 							}
 							__attribute__ ((fallthrough));
@@ -598,6 +609,8 @@ static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerId, const 
 				default: //forPlayer
 					spread = &gFrontierSpreads[Random() % TOTAL_SPREADS];
 			}
+
+			spread = TryAdjustSpreadForSpecies(spread); //Update Arceus
 
 			species = spread->species;
 			item = spread->item;
@@ -616,7 +629,7 @@ static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerId, const 
 				loop = 0;
 			}
 		} while (loop == 1);
-		
+
 		u8 level;
 		if (tier == BATTLE_TOWER_LITTLE_CUP)
 			level = 5;
@@ -640,13 +653,16 @@ static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerId, const 
 static void CreateFrontierMon(struct Pokemon* mon, const u8 level, const struct BattleTowerSpread* spread, const u16 trainerId, const u8 trainerNum, const u8 trainerGender, const bool8 forPlayer)
 {
 	int i, j;
+	
+	u16 species = TryAdjustAestheticSpecies(spread->species);
 
 	if (forPlayer)
-		CreateMon(mon, spread->species, level, 0, TRUE, 0, OT_ID_PLAYER_ID, 0);
-
+	{
+		CreateMon(mon, species, level, 0, TRUE, 0, OT_ID_PLAYER_ID, 0);
+	}
 	else 
 	{
-		CreateMon(mon, spread->species, level, 0, TRUE, 0, OT_ID_PRESET, Random32());
+		CreateMon(mon, species, level, 0, TRUE, 0, OT_ID_PRESET, Random32());
 
 		CopyFrontierTrainerName((u8*) mon->otname, trainerId, trainerNum);
 		mon->otGender = trainerGender;
@@ -1028,6 +1044,22 @@ static const struct BattleTowerSpread* TryAdjustSpreadForSpecies(const struct Ba
 		return &gArceusSpreads[Random() % TOTAL_ARCEUS_SPREADS]; //There are more Arceus spreads than any other Pokemon,
 																   //so they're held seperately to keep things fresh.
 	return originalSpread;
+}
+
+static u16 TryAdjustAestheticSpecies(u16 species)
+{
+	u16 nationalDexNum = SpeciesToNationalPokedexNum(species);
+	
+	switch (nationalDexNum) {
+		case NATIONAL_DEX_VIVILLON:
+			species = gVivillonForms[Random() % gNumVivillonForms];
+			break;
+		case NATIONAL_DEX_FURFROU:
+			species = gFurfrouForms[Random() % gNumFurfrouForms];
+			break;
+	}
+	
+	return species;
 }
 
 bool8 IsMonAllowedInBattleTower(struct Pokemon* mon)
