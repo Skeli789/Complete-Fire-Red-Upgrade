@@ -283,7 +283,7 @@ SetPalFly 08087188 1
 SetPalFly2 08086D58 0
 SetPalShadow 080DB260 0
 RefreshFameCheckerNPCs 0812D2AC 0
-SetPalSSAnneWake 0815D4E8 2
+SetPalSSAnneWake 0815D4E8 0
 SetPalSSAnneSmoke 0815D600 2
 GetDarkeningType1 0807A2D0 0
 GetDarkeningType2 0807A428 0

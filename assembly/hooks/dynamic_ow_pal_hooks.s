@@ -461,10 +461,10 @@ CallByR4:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .align 2
 .pool	
-@ hook at 0x15D4E8 via r2
+@ hook at 0x15D4E8 via r0
 SetPalSSAnneWake: 
 	push {r1}
-	ldr r0, =0x1115
+	ldr r0, .PalSSAnneWake
 	bl FindOrLoadNPCPalette
 	pop {r1}
 	lsl r0, #4
@@ -482,11 +482,10 @@ SetPalSSAnneWake:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .align 2
-.pool
 @ hook at 0x15D600 via r2
 SetPalSSAnneSmoke: 
 	push {r0}
-	ldr r0, =0x1115
+	ldr r0, .PalSSAnneWake
 	bl FindOrLoadNPCPalette
 	lsl r1, r0, #4
 	pop {r0}
@@ -496,7 +495,10 @@ SetPalSSAnneSmoke:
 	orr r1, r2
 	ldr r2, =0x815D60A+1
 	bx r2	
-	
+
+.align 2
+.PalSSAnneWake: .word 0x1115
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .align 2
 .pool
