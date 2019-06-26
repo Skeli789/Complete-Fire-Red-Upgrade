@@ -43,3 +43,13 @@ extern const u8 Silver_MugshotTiles[];
 extern const u8 Silver_MugshotPal[];
 
 extern const u16 Big_Mugshot_Yellow_GrayPal[];
+
+
+struct MugshotTable
+{
+	const u8* sprite;
+	const u8* pal;
+	u16 size;
+	s16 x;
+	s16 y;
+};
