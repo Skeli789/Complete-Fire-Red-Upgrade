@@ -43,7 +43,7 @@ extern bool8 CanMonParticipateInASkyBattle(struct Pokemon* mon);
 
 //This file's functions:
 static u8 CreateNPCTrainerParty(pokemon_t* const party, const u16 trainerNum, const bool8 firstTrainer, const bool8 side);
-static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerNum, const bool8 firstTrainer, const bool8 forPlayer, const u8 side);
+static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerNum, const u8 tier, const bool8 firstTrainer, const bool8 forPlayer, const u8 side);
 static void CreateFrontierMon(struct Pokemon* mon, const u8 level, const struct BattleTowerSpread* spread, const u16 trainerId, const u8 trainerNum, const u8 trainerGender, const bool8 forPlayer);
 static void SetWildMonHeldItem(void);
 static u32 GetBaseStatsTotal(const u16 species);
@@ -79,18 +79,18 @@ void BuildTrainerPartySetup(void)
 	
 	if (gBattleTypeFlags & (BATTLE_TYPE_TOWER_LINK_MULTI))
 	{
-		BuildFrontierParty(&gEnemyParty[0], gTrainerBattleOpponent_A, TRUE, FALSE, B_SIDE_OPPONENT);
-		BuildFrontierParty(&gEnemyParty[3], VarGet(SECOND_OPPONENT_VAR), FALSE, FALSE, B_SIDE_OPPONENT);
+		BuildFrontierParty(&gEnemyParty[0], gTrainerBattleOpponent_A, VarGet(BATTLE_TOWER_TIER), TRUE, FALSE, B_SIDE_OPPONENT);
+		BuildFrontierParty(&gEnemyParty[3], VarGet(SECOND_OPPONENT_VAR), VarGet(BATTLE_TOWER_TIER), FALSE, FALSE, B_SIDE_OPPONENT);
 	}
 	else if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
 	{
 		if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
 		{
-			BuildFrontierParty(&gEnemyParty[0], gTrainerBattleOpponent_A, TRUE, FALSE, B_SIDE_OPPONENT);
-			BuildFrontierParty(&gEnemyParty[3], VarGet(SECOND_OPPONENT_VAR), FALSE, FALSE, B_SIDE_OPPONENT);
+			BuildFrontierParty(&gEnemyParty[0], gTrainerBattleOpponent_A, VarGet(BATTLE_TOWER_TIER), TRUE, FALSE, B_SIDE_OPPONENT);
+			BuildFrontierParty(&gEnemyParty[3], VarGet(SECOND_OPPONENT_VAR), VarGet(BATTLE_TOWER_TIER), FALSE, FALSE, B_SIDE_OPPONENT);
 		}
 		else
-			BuildFrontierParty(&gEnemyParty[0], gTrainerBattleOpponent_A, TRUE, FALSE, B_SIDE_OPPONENT);
+			BuildFrontierParty(&gEnemyParty[0], gTrainerBattleOpponent_A, VarGet(BATTLE_TOWER_TIER), TRUE, FALSE, B_SIDE_OPPONENT);
 	}
 	else if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
 	{
@@ -157,7 +157,29 @@ void BuildTrainerPartySetup(void)
 extern void SortItemsInBag(u8 pocket, u8 type);
 void sp067_GenerateRandomBattleTowerTeam(void)
 {
-	BuildFrontierParty(gPlayerParty, 0, TRUE, TRUE, B_SIDE_PLAYER);
+	u8 tier;
+
+	switch (Var8000) {
+		case 0:
+		default:
+			tier = BATTLE_TOWER_STANDARD;
+			break;
+
+		case 1: //Legendary Pokemon
+			tier = BATTLE_TOWER_NO_RESTRICTIONS;
+			break;
+			
+		case 2: //Little Cup
+			tier = BATTLE_TOWER_LITTLE_CUP;
+			break;
+
+		case 3: //Middle Cup
+			tier = BATTLE_TOWER_MIDDLE_CUP;
+			break;
+	}
+	
+	VarSet(BATTLE_TOWER_TIER, tier);
+	BuildFrontierParty(gPlayerParty, 0, tier, TRUE, TRUE, B_SIDE_PLAYER);
 	
 	/*for (int i = 0; i < ITEMS_COUNT; ++i)
 	{
@@ -473,13 +495,12 @@ static u8 CreateNPCTrainerParty(pokemon_t* const party, const u16 trainerId, con
 }
 
 //Returns the number of Pokemon
-static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerId, const bool8 firstTrainer, const bool8 forPlayer, const u8 side) 
+static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerId, const u8 tier, const bool8 firstTrainer, const bool8 forPlayer, const u8 side) 
 {
     int i;
 	u8 monsCount;
 	
 	u8 trainerGender = 0;
-	u8 tier = VarGet(BATTLE_TOWER_TIER);
 	u8 battleTowerPokeNum = VarGet(BATTLE_TOWER_POKE_NUM);
 	u16 tableId = VarGet(TOWER_TRAINER_ID_VAR + (firstTrainer ^ 1));
 
@@ -576,6 +597,7 @@ static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerId, const 
 							if (Random() % 100 < 5) //5% chance per mon of not being legendary
 								spread = &gFrontierSpreads[Random() % TOTAL_SPREADS];
 							else
+							REGULAR_LEGENDARY_SPREADS:
 								spread = &gFrontierLegendarySpreads[Random() % TOTAL_LEGENDARY_SPREADS];
 							break;
 						case BATTLE_TOWER_LITTLE_CUP:
@@ -607,7 +629,17 @@ static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerId, const 
 					break;
 					
 				default: //forPlayer
-					spread = &gFrontierSpreads[Random() % TOTAL_SPREADS];
+					switch (tier) {
+						case BATTLE_TOWER_UBER:
+						case BATTLE_TOWER_NO_RESTRICTIONS:
+							goto REGULAR_LEGENDARY_SPREADS;
+						case BATTLE_TOWER_LITTLE_CUP:
+							goto REGULAR_LC_SPREADS;
+						case BATTLE_TOWER_MIDDLE_CUP:
+							goto REGULAR_MC_SPREADS;
+						default:
+							goto REGULAR_SPREADS;
+					}
 			}
 
 			spread = TryAdjustSpreadForSpecies(spread); //Update Arceus
