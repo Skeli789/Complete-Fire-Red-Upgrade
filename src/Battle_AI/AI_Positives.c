@@ -1590,7 +1590,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 move, const
 			{
 				switch (move) {
 					case MOVE_SHELLSMASH:
-						if (atkItem == ITEM_EFFECT_POWER_HERB)
+						if (atkItemEffect == ITEM_EFFECT_POWER_HERB)
 							INCREASE_STAT_VIABILITY(STAT_STAGE_SPEED, STAT_STAGE_MAX, 3);
 						else if (SpeedCalc(bankAtk) <= SpeedCalc(bankDef) || IsClassBatonPass(class))
 							goto AI_SPEED_PLUS;
@@ -1599,12 +1599,14 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 move, const
 							goto AI_SPECIAL_ATTACK_PLUS;
 						else
 							goto AI_ATTACK_PLUS;
+						__attribute__ ((fallthrough));
 
 					default: //Dragon Dance + Shift Gear
 						if (SpeedCalc(bankAtk) <= SpeedCalc(bankDef) || IsClassBatonPass(class))
 							goto AI_SPEED_PLUS;
 						else
 							goto AI_ATTACK_PLUS;
+						break;
 				}
 			}
 			break;
