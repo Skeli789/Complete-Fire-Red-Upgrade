@@ -40807,4 +40807,16 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 	},
 };
 
+const struct BattleTowerSpread gFrontierLegendarySpreads[] =
+{
+	{
+	},
+};
+
+const struct BattleTowerSpread gArceusSpreads[] =
+{
+	{
+	},
+};
+
 #endif
