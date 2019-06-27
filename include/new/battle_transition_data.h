@@ -42,7 +42,37 @@ extern const u8 VS_SpritePal[];
 extern const u8 Silver_MugshotTiles[];
 extern const u8 Silver_MugshotPal[];
 
+// Big Mugshot Pals
+extern const u16 Big_Mugshot_BlackPal[];
+extern const u16 Big_Mugshot_Dark_GrayPal[];
+extern const u16 Big_Mugshot_Dark_PurplePal[];
+extern const u16 Big_Mugshot_GreenPal[];
+extern const u16 Big_Mugshot_Icy_BluePal[];
+extern const u16 Big_Mugshot_Light_BrownPal[];
+extern const u16 Big_Mugshot_Light_GreenPal[];
+extern const u16 Big_Mugshot_Pearly_WhitePal[];
+extern const u16 Big_Mugshot_PinkPal[];
+extern const u16 Big_Mugshot_PurplePal[];
+extern const u16 Big_Mugshot_Royal_BluePal[];
+extern const u16 Big_Mugshot_Sky_BluePal[];
+extern const u16 Big_Mugshot_Steel_GrayPal[];
 extern const u16 Big_Mugshot_Yellow_GrayPal[];
+
+// DP/Two Bars Pals
+extern const u16 DP_Mugshot_BlackPal[];
+extern const u16 DP_Mugshot_Dark_GrayPal[];
+extern const u16 DP_Mugshot_Dark_GreenPal[];
+extern const u16 DP_Mugshot_Dark_PurplePal[];
+extern const u16 DP_Mugshot_Dark_RedPal[];
+extern const u16 DP_Mugshot_Icy_BluePal[];
+extern const u16 DP_Mugshot_Light_BrownPal[];
+extern const u16 DP_Mugshot_Light_GreenPal[];
+extern const u16 DP_Mugshot_PinkPal[];
+extern const u16 DP_Mugshot_Royal_BluePal[];
+extern const u16 DP_Mugshot_Sky_BluePal[];
+extern const u16 DP_Mugshot_Steel_GrayPal[];
+extern const u16 DP_Mugshot_WhitePal[];
+extern const u16 DP_Mugshot_YellowPal[];
 
 
 struct MugshotTable
