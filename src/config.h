@@ -144,10 +144,11 @@ enum //These vars need to be one after the other (hence the enum)
 //#define EXISTING_FOSSIL_IMAGE_TABLE_ADDRESS 0x81a4600 //Uncomment this if you've already inserted a fossil image table
 //#define EXISTING_OW_TABLE_ADDRESS 0x81a2000 //Uncomment if you don't want new overworld NPC tables to be generated.
 
-/*===== Pre-Battle Mugshot Offsets ====*/
+/*===== Pre-Battle Mugshot Options ====*/
 #define FR_PRE_BATTLE_MUGSHOT_STYLE
 #define VAR_PRE_BATTLE_MUGSHOT_STYLE 0x5038
 #define VAR_PRE_BATTLE_MUGSHOT_SPRITE 0x5039
+#define VAR_MUGSHOT_PLAYER_PAL 0x503A	// used to change the player's tilemap palette in the Two Bar mugshot style
 #define FLAG_LOAD_MUGSHOT_SPRITE_FROM_TABLE 0x924	//Load custom mugshot for pre-battle transition
 
 /*===== Other General Options =====*/
