@@ -1675,3 +1675,7 @@
 	.macro addindicatorforplayerswitchineffects
 	.byte 0xFF, 0x2D
 	.endm
+	
+	.macro setmoveeffect2
+	.byte 0xFF, 0x2E
+	.endm	

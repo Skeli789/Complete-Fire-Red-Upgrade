@@ -314,4 +314,5 @@ gBattleScriptingCommandsTable2:
 .word atkFF2B_trysetburn
 .word atkFF2C_trysetpoison
 .word atkFF2D_addindicatorforplayerswitchineffects
+.word atkFF2E_setmoveeffect2
 

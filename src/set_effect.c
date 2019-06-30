@@ -766,12 +766,12 @@ bool8 SetMoveEffect2(void)
             {
                 break;
             }
-            else if (gBattleMons[gEffectBank].ability == ABILITY_STICKYHOLD && gBattleMons[gEffectBank].hp != 0)
+            else if (ABILITY(gEffectBank) == ABILITY_STICKYHOLD && gBattleMons[gEffectBank].hp != 0)
             {
                 BattleScriptPushCursor();
                 gBattlescriptCurrInstr = BattleScript_StickyHoldActivatesRet;
 
-                gLastUsedAbility = gBattleMons[gEffectBank].ability;
+                gLastUsedAbility = ABILITY(gEffectBank);
                 RecordAbilityBattle(gEffectBank, gLastUsedAbility);
 				effect = TRUE;
             }

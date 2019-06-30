@@ -1031,7 +1031,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 					&&  ITEM_EFFECT(banks[i]) == ITEM_EFFECT_RED_CARD
 					&&  !(gNewBS->ResultFlags[banks[i]] & MOVE_RESULT_NO_EFFECT)
 					&&  gNewBS->DamageTaken[banks[i]]
-					&&  !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, gBankTarget)
+					&&  !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, banks[i])
 					&&  ((gBattleTypeFlags & BATTLE_TYPE_TRAINER) || SIDE(gBankAttacker) == B_SIDE_PLAYER)) //Wild attackers can't activate
 					{
 						gNewBS->NoSymbiosisByte = TRUE;
@@ -1059,7 +1059,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 					&&  !SheerForceCheck()
 					&& (ABILITY(*SeedHelper) == ABILITY_WIMPOUT || ABILITY(*SeedHelper) == ABILITY_EMERGENCYEXIT)
 					&&  !(gNewBS->ResultFlags[*SeedHelper] & MOVE_RESULT_NO_EFFECT)
-					&&  !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, gBankTarget)
+					&&  !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, *SeedHelper)
 					&&  !(gStatuses3[*SeedHelper] & (STATUS3_SKY_DROP_ANY))
 					&&  gBattleMons[*SeedHelper].hp
 					&&  gBattleMons[*SeedHelper].hp < gBattleMons[*SeedHelper].maxHP / 2
@@ -1108,23 +1108,36 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			gBattleScripting->atk49_state++;
 			break;
 		
-		case ATK49_PICKPOCKET: //Move to before choose new target?
-			if (ABILITY(bankDef) == ABILITY_PICKPOCKET
-			&& CheckContact(gCurrentMove, bankAtk)
-			&& gBattleMons[bankDef].hp
-			&& gMultiHitCounter <= 1
-			&& ITEM(bankAtk)
-			&& ITEM(bankDef) == 0
-			&& (ABILITY(bankAtk) != ABILITY_STICKYHOLD || gBattleMons[bankAtk].hp == 0)
-			&& !MoveBlockedBySubstitute(gCurrentMove, bankAtk, bankDef)
-			&& TOOK_DAMAGE(bankDef)
-			&& MOVE_HAD_EFFECT)
+		case ATK49_PICKPOCKET: ;
+			u8 banks[4] = {0, 1, 2, 3};
+			SortBanksBySpeed(banks, FALSE);
+			
+			for (i = 0; i < gBattlersCount; ++i)
 			{
-				BattleScriptPushCursor();
-                gBattlescriptCurrInstr = BattleScript_Pickpocket;
-				effect = 1;
+				u8 bank = banks[i];
+			
+				if (bank != gBankAttacker
+				&&  !SheerForceCheck()
+				&&  ABILITY(bank) == ABILITY_PICKPOCKET
+				&&  !(gNewBS->ResultFlags[bank] & MOVE_RESULT_NO_EFFECT)
+				&&  TOOK_DAMAGE(bank)
+				&&  !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bank)
+				&&  gBattleMons[bank].hp != 0
+				&&  CheckContact(gCurrentMove, gBankAttacker)
+				&&  ITEM(gBankAttacker) != ITEM_NONE
+				&&  ITEM(bank) == ITEM_NONE
+				&& (ABILITY(gBankAttacker) != ABILITY_STICKYHOLD || gBattleMons[gBankAttacker].hp == 0))
+				{
+					gNewBS->NoSymbiosisByte = TRUE;
+					gLastUsedItem = ITEM(gBankAttacker);
+					gBankTarget = gActiveBattler = gBattleScripting->bank = bank;
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_Pickpocket;
+					effect = 1;
+					break; //Only fastest Pickpocket activates so exit loop.
+				}
 			}
-			gBattleScripting->atk49_state++;
+            gBattleScripting->atk49_state++;
 			break;
 
         case ATK49_SUBSTITUTE: // update substitute

@@ -28,6 +28,12 @@
 .equ walk_up, 0x11
 .equ walk_left, 0x12
 .equ walk_right, 0x13
+
+.equ walk_down_onspot, 0x25
+.equ walk_up_onspot, 0x26
+.equ walk_left_onspot, 0x27
+.equ walk_right_onspot, 0x28
+
 .equ exclaim, 0x62
 .equ end_m, 0xFE
 

@@ -14,8 +14,7 @@
 #include "../include/new/move_battle_scripts.h"
 #include "../include/new/move_tables.h"
 #include "../include/new/new_bs_commands.h"
-
-//TODO: Sleep Clause
+#include "../include/new/set_effect.h"
 
 extern void (* const gBattleScriptingCommandsTable[])(void);
 extern void (* const gBattleScriptingCommandsTable2[])(void);
@@ -1550,4 +1549,11 @@ void atkFF2D_addindicatorforplayerswitchineffects(void)
 {
 	gNewBS->doPlayerSwitchInEffects = TRUE;
 	gBattlescriptCurrInstr += 1;
+}
+
+//setmoveeffect2
+void atkFF2E_setmoveeffect2(void)
+{
+	gBattlescriptCurrInstr += 1;
+	SetMoveEffect2();
 }
