@@ -77,6 +77,7 @@ static bool8 SemiInvulnerableTroll(void);
 static bool8 TheCalcForSemiInvulnerableTroll(u8 bankAtk, u8 flags, bool8 JustCheckLockedMoves);
 static bool8 CanStopLockedMove(void);
 static bool8 IsYawned(void);
+static bool8 IsTakingAnnoyingSecondaryDamage(void);
 static bool8 ShouldSwitchIfWonderGuard(void);
 static void PredictMovesForBanks(void);
 static u32 GetMaxByteIndexInList(const u8 array[], const u32 size);
@@ -353,6 +354,8 @@ static bool8 ShouldSwitch(void)
 	if (CanStopLockedMove())
 		return TRUE;
 	if (IsYawned())
+		return TRUE;
+	if (IsTakingAnnoyingSecondaryDamage())
 		return TRUE;
 	if (CanKillAFoe(gActiveBattler))
 		return FALSE;
@@ -760,6 +763,30 @@ static bool8 IsYawned(void)
 		EmitTwoReturnValues(1, ACTION_SWITCH, 0);
 		return TRUE;
 	}
+	return FALSE;
+}
+
+static bool8 IsTakingAnnoyingSecondaryDamage(void)
+{
+	if (ABILITY(gActiveBattler) != ABILITY_MAGICGUARD
+	&& !CanKillAFoe(gActiveBattler)
+	&& AI_THINKING_STRUCT->aiFlags > AI_SCRIPT_CHECK_BAD_MOVE) //Has smart AI
+	{
+		if (gStatuses3[gActiveBattler] & STATUS3_LEECHSEED
+		|| ((gBattleMons[gActiveBattler].status1 & STATUS1_SLEEP) > 1 && gBattleMons[gActiveBattler].status2 & STATUS2_NIGHTMARE)
+		||  gBattleMons[gActiveBattler].status2 & (STATUS2_CURSED))
+		{
+			if (FindMonWithFlagsAndSuperEffective(MOVE_RESULT_DOESNT_AFFECT_FOE, 1))
+				return TRUE;
+			if (FindMonWithFlagsAndSuperEffective(MOVE_RESULT_NOT_VERY_EFFECTIVE, 1))
+				return TRUE;
+
+			gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = PARTY_SIZE;
+			EmitTwoReturnValues(1, ACTION_SWITCH, 0);
+			return TRUE;
+		}
+	}
+
 	return FALSE;
 }
 
