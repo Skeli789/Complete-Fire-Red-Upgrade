@@ -400,5 +400,5 @@ static void LoadProperStreakData(u8* currentOrMax, u8* battleStyle, u8* tier, u8
 	*battleStyle = MathMin(*battleStyle, NUM_TOWER_BATTLE_TYPES);
 	*tier = MathMin(*tier, NUM_FORMATS);
 	*partySize = (*partySize < 6) ? 0 : 1;
-	*level = (*level <= 25) ? 0 : (*level <= 50) ? 1 : (*level <= 75) ? 2 : 3;
+	*level = (*level < 100) ? 0 : 1;
 }

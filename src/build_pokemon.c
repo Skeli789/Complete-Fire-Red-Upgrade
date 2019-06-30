@@ -276,6 +276,15 @@ u16 sp069_GivePlayerRandomFrontierMonByTier(void)
 	return GiveMonToPlayer(&mon);
 }
 
+u16 sp06A_GivePlayerFrontierMonByLoadedSpread(void)
+{
+	struct Pokemon mon;
+	struct BattleTowerSpread* spread = (struct BattleTowerSpread*) gLoadPointer;
+
+	CreateFrontierMon(&mon, Var8000, spread, 0, 0, 0, TRUE);
+	return GiveMonToPlayer(&mon);
+}
+
 //Returns the number of Pokemon
 static u8 CreateNPCTrainerParty(pokemon_t* const party, const u16 trainerId, const bool8 firstTrainer, const bool8 side)
 {

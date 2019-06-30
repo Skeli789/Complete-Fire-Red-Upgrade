@@ -1188,6 +1188,15 @@ Alright!\nThat was fun!
 #org @sFrontierText_Skeli_PlayerLose
 I'm looking forward to battling you\nagain in the future!
 
+#org @sFrontierText_Golche_PreBattle
+Hey, there!\nI'm Golche!\pThe strategies of the trainers you\nfaced?\pI helped make them!\pLet's see what you can do against\nmy strategy!
+
+#org @sFrontierText_Golche_PlayerWin
+Hmm[.]\pLooks like I've got some refining\nto do[.]
+
+#org @sFrontierText_Golche_PlayerLose
+What a fun battle!\pI look forward to battling you\nagain with some new tricks!
+
 #org @sFrontierText_Gail_PreBattle
 Don't think it'll be easy to beat\nme!\pYou're facing the legacy Pok\emon\nTrainer[.]Thanasis!
 
@@ -1197,11 +1206,11 @@ I have to admit, you really are\nsomething special.
 #org @sFrontierText_Gail_PlayerLose
 It seems you're not ready to face\nme just yet!
 
-#org @sFrontierText_Golche_PreBattle
-Hey, there!\nI'm Golche!\pThe intelligence of the Trainers\nyou've faced[.]\pI helped create it!\pNow, let me show what true\nintellect can do!
+#org @sFrontierText_Lixdel_PreBattle
+What's up?\nI'm Lixdel!\pI created a large chunk of those\nbeautiful move animations you've\lbeen seeing.\pNow, prepare for a flurry of those\nanimations!
 
-#org @sFrontierText_Golche_PlayerWin
-Looks like I need to refine the\nbattle strategies.
+#org @sFrontierText_Lixdel_PlayerWin
+That battle was almost as beautiful\nas the animations!
 
-#org @sFrontierText_Golche_PlayerLose
-Haha!\pNow you see what my intellect is\ntruly capable of.
+#org @sFrontierText_Lixdel_PlayerLose
+Nice!\pThat battle was close to being as\nbeautiful as the animations!

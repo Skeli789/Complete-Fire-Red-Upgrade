@@ -415,6 +415,7 @@ extern const u8 sTrainerName_Cynthia[];
 extern const u8 sTrainerName_Skeli[];
 extern const u8 sTrainerName_Golche[];
 extern const u8 sTrainerName_Gail[];
+extern const u8 sTrainerName_Lixdel[];
 extern const u8 sTrainerName_Palmer[];
 
 extern const u8 sFrontierText_Cynthia_PreBattle[];
@@ -432,6 +433,10 @@ extern const u8 sFrontierText_Golche_PlayerLose[];
 extern const u8 sFrontierText_Gail_PreBattle[];
 extern const u8 sFrontierText_Gail_PlayerWin[];
 extern const u8 sFrontierText_Gail_PlayerLose[];
+
+extern const u8 sFrontierText_Lixdel_PreBattle[];
+extern const u8 sFrontierText_Lixdel_PlayerWin[];
+extern const u8 sFrontierText_Lixdel_PlayerLose[];
 
 #ifdef UNBOUND
 const struct BattleTowerTrainer gTowerTrainers[] = 
@@ -1654,11 +1659,11 @@ const struct SpecialBattleTowerTrainer gSpecialTowerTrainers[] =
 		.playerWinText = 	sFrontierText_Golche_PlayerWin,
 		.playerLoseText = 	sFrontierText_Golche_PlayerLose,
 		.regularSpreads =	gSpecialTowerSpread_Golche,
-		//.middleCupSpreads = gMiddleCupTowerSpread_Golche,
-		//.littleCupSpreads = gLittleCupTowerSpread_Golche,
+		.middleCupSpreads = gMiddleCupTowerSpread_Golche,
+		.littleCupSpreads = gLittleCupTowerSpread_Golche,
 		.regSpreadSize = 	ARRAY_COUNT(gSpecialTowerSpread_Golche),
-		//.mcSpreadSize =		ARRAY_COUNT(gMiddleCupTowerSpread_Golche),
-		//.lcSpreadSize =		ARRAY_COUNT(gLittleCupTowerSpread_Golche),
+		.mcSpreadSize =		ARRAY_COUNT(gMiddleCupTowerSpread_Golche),
+		.lcSpreadSize =		ARRAY_COUNT(gLittleCupTowerSpread_Golche),
 		.songId = 			BGM_BATTLE_GALACTIC_BOSS,
 	},
 	{
@@ -1677,6 +1682,23 @@ const struct SpecialBattleTowerTrainer gSpecialTowerTrainers[] =
 		.mcSpreadSize =		ARRAY_COUNT(gMiddleCupTowerSpread_Gail),
 		.lcSpreadSize =		ARRAY_COUNT(gLittleCupTowerSpread_Gail),
 		.songId = 			BGM_BATTLE_DIALGA_PALKIA,
+	},
+	{
+		.owNum = 			OW_ACE_TRAINER_M,
+		.trainerClass = 	CLASS_PKMN_TRAINER_2,
+		.trainerSprite = 	TRAINER_SPRITE_ACETRAINER_M,
+		.gender = 			BATTLE_TOWER_MALE,
+		.name =				sTrainerName_Lixdel,
+		.preBattleText = 	sFrontierText_Lixdel_PreBattle,
+		.playerWinText = 	sFrontierText_Lixdel_PlayerWin,
+		.playerLoseText = 	sFrontierText_Lixdel_PlayerLose,
+		.regularSpreads =	gSpecialTowerSpread_Lixdel,
+		.middleCupSpreads = gMiddleCupTowerSpread_Lixdel,
+		.littleCupSpreads = gLittleCupTowerSpread_Lixdel,
+		.regSpreadSize = 	ARRAY_COUNT(gSpecialTowerSpread_Lixdel),
+		.mcSpreadSize =		ARRAY_COUNT(gMiddleCupTowerSpread_Lixdel),
+		.lcSpreadSize =		ARRAY_COUNT(gLittleCupTowerSpread_Lixdel),
+		.songId = 			BGM_BATTLE_CHAMPION,
 	},
 };
 
