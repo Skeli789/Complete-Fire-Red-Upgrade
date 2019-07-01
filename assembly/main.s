@@ -41,7 +41,19 @@ script functions/specials in asm - hooks and returns
 @@ Physical Special Split Icons
 .global PhysicalSpecialSplitIconRoutine
 
+@@ Coin Expansion
+.global ExpandCoinIntConversion
 	
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Increase Integer Coin Conversion
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.align 2
+.pool
+ExpandCoinIntConversion:
+	mov r0, r1
+	bl ConvertCoinInt
+	ldr r1, =(0x080D06E0 +1)
+	bx r1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Increase Start Menu Height for Fewer Items

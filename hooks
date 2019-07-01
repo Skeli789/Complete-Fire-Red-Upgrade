@@ -474,3 +474,9 @@ GrassFootstepNoiseHook 80DB3C8 1
 VeryTallGrassFootstepNoiseHook 80DB678 1
 SandFootstepNoiseHook 80DB9C4 1
 
+##Expand Coins
+GetCoins 080D0554 0
+SetCoins 080D057C 1
+GiveCoins 080D05A4 1
+TakeCoins 080D05E4 1
+ExpandCoinIntConversion 080D06D6 2
