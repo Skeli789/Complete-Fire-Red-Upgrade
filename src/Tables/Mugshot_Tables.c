@@ -75,3 +75,25 @@ const u16* const sMugshotsTwoBarsPals[] =
 	[0xE] = DP_Mugshot_Sky_BluePal, //0xE00
 	[0xF] = DP_Mugshot_YellowPal, //0xF00
 };
+
+
+const u16* const sMugshotPlayerPals[] = 
+{
+	[0x0] = TwoBars_MugshotPal, //This is called as an error pal
+	[0x1] = TwoBars_MugshotPal,
+	[0x2] = DP_Mugshot_BlackPal,
+	[0x3] = DP_Mugshot_Dark_GrayPal,
+	[0x4] = DP_Mugshot_Dark_GreenPal,
+	[0x5] = DP_Mugshot_Dark_PurplePal,
+	[0x6] = DP_Mugshot_Dark_RedPal,
+	[0x7] = DP_Mugshot_Icy_BluePal,
+	[0x8] = DP_Mugshot_Light_GreenPal,
+	[0x9] = DP_Mugshot_Royal_BluePal,
+	[0xA] = DP_Mugshot_Steel_GrayPal,
+	[0xB] = DP_Mugshot_Light_BrownPal,
+	[0xC] = DP_Mugshot_PinkPal,
+	[0xD] = DP_Mugshot_WhitePal,
+	[0xE] = DP_Mugshot_Sky_BluePal,
+	[0xF] = DP_Mugshot_YellowPal,
+};
+

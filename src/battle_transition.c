@@ -30,6 +30,7 @@ extern const struct MugshotTable sPreBattleMugshotSprites[147];
 extern const u16* const sMugshotsBigPals[];
 extern const u16* const sMugshotsDpPals[];
 extern const u16* const sMugshotsTwoBarsPals[];
+extern const u16* const sMugshotPlayerPals[];
 
 #define IS_VALID_TABLE_SPRITE(trainerSpriteID) (trainerSpriteID < ARRAY_COUNT(sPreBattleMugshotSprites) \
 											 && sPreBattleMugshotSprites[trainerSpriteID].sprite != NULL \
@@ -172,8 +173,14 @@ bool8 Phase2_Mugshot_Func2(struct Task* task)
 	{
 		LoadPalette(sOpponentMugshotsPals[task->tMugshotId], 0xF0, 0x20);
 	}
-    
-    LoadPalette(sPlayerMugshotsPals[gSaveBlock2->playerGender], 0xFA, 0xC);
+	
+	u8 playerPal = VarGet(VAR_MUGSHOT_PLAYER_PAL);
+	if (mugshotStyle == MUGSHOT_TWO_BARS && playerPal > 0)
+		LoadPalette(sMugshotPlayerPals[playerPal] + 5, 0xFA, 0xA);
+	else
+		LoadPalette(sPlayerMugshotsPals[gSaveBlock2->playerGender], 0xFA, 0xC);
+	
+
     for (i = 0; i < 20; i++)
     {
         for (j = 0; j < 32; j++, MugshotsMap++)

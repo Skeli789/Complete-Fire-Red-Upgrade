@@ -29,7 +29,6 @@ extern const u16 DP_MugshotMap[];
 #define TwoBars_MugshotPal ((const u16*) 0x83FA660)
 #define TwoBars_MugshotMap ((const u16*) 0x83FAC34)
 
-
 #define sOpponentMugshotsPals ((const u16**) 0x83FA740)
 #define sPlayerMugshotsPals ((const u16**) 0x83FA754)
 #define sMugshotsTrainerPicIDsTable ((const u8*) 0x3FA494)
