@@ -2030,7 +2030,8 @@ ANIM_DISCHARGE:
 	launchtask AnimTask_pal_fade_complex 0x2 0x6 PAL_DEF | PAL_DEF_PARTNER | PAL_ATK_PARTNER 0x2 0x2 0x0 0xC 0x07FE 
 	call CENTRED_ELECTRICITY_ANIM
 	waitanimation
-	launchtemplate Template_Pal_Fade 0x2 0x5 0x1 PAL_ALL_BANKS | PAL_BG 0x0 0x0 0x0
+	launchtemplate Template_Pal_Fade 0x2 0x5 0x1 PAL_ALL 0x0 0x0 0x0
+	waitanimation
 	pokespritefromBG bank_target
 	resetblends  
 	endanimation
@@ -17784,7 +17785,8 @@ FINISH_DRAKE:
 	call DEVESTATING_DRAKE_GEYSER
 	pause 0x4
 	waitanimation
-	launchtemplate Template_Pal_Fade 0x0 0x5 PAL_DEF 0x2 0x10 0x0 0x40c0		@ fade from purple 
+	launchtemplate Template_Pal_Fade 0x0 0x5 PAL_DEF 0x2 0x10 0x0 0x40c0 @ fade from purple
+	launchtemplate Template_Pal_Fade 0x0 0x5 PAL_ALL 0x2 0x0 0x0 0x40c0 @ reset all colours
 	waitanimation
 	makebankvisible bank_attacker
 	makebankvisible attacker_partner
