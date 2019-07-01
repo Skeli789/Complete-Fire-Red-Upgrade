@@ -502,8 +502,8 @@ void atk0F_resultmessage(void) {
 			gBattleCommunication[MSG_DISPLAY] = 1;
 		}
 	}
-
-	else {
+	else
+	{
 		gBattleCommunication[MSG_DISPLAY] = 1;
 		switch (gMoveResultFlags & (u8)(~(MOVE_RESULT_MISSED))) {
 		case MOVE_RESULT_SUPER_EFFECTIVE:
@@ -555,6 +555,10 @@ void atk0F_resultmessage(void) {
 			return;
 
 		default:
+			gNewBS->EnduranceHelper = 0; //Clear these here for multi-hit moves that didn't KO target
+			gSpecialStatuses[gBankTarget].focusBanded = FALSE;
+			gProtectStructs[gBankTarget].enduredSturdy = FALSE;
+			
 			if (gMoveResultFlags & MOVE_RESULT_DOESNT_AFFECT_FOE)
 				stringId = STRINGID_ITDOESNTAFFECT;
 
