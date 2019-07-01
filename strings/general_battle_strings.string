@@ -125,11 +125,17 @@ You paid [B7][BUFFER][00] as the prize\nmoney[.]\p[.] [.] [.] [.]\pYou blacked o
 #org @sText_BlackedOut
 You blacked out![FC][09]
 
-#org @gText_BattleMenu 
+#org @gText_BattleMenu
 [FC][05][05][FC][04][0D][0E][0F]Fight[FC][13][38]Bag\nPok\emon[FC][13][38]Run
 
 #org @gText_BattleMenu2
 [FC][05][05][FC][04][0D][0E][0F]Fight[FC][13][38]Bag\nPok\emon[FC][13][38]Back
+
+#org @gText_UnboundBattleMenu
+[FC][05][05][FC][04][0D][0E][0F]Fight[FC][13][38]Cube\nPok\emon[FC][13][38]Run
+
+#org @gText_UnboundBattleMenu2
+[FC][05][05][FC][04][0D][0E][0F]Fight[FC][13][38]Cube\nPok\emon[FC][13][38]Back
 
 //Exp String
 

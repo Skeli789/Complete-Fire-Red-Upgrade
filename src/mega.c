@@ -108,8 +108,7 @@ const u8* DoPrimalReversion(u8 bank, u8 caseId)
 		if (evolutions[i].method == EVO_MEGA && evolutions[i].unknown == MEGA_VARIANT_PRIMAL && evolutions[i].param == item)
 		{
 			DoFormChange(bank, evolutions[i].targetSpecies, TRUE, TRUE);
-			gBattleMons[bank].ability = GetPartyAbility(mon);
-			
+
 			switch (caseId) {
 				case 0:
 					return BattleScript_Primal;

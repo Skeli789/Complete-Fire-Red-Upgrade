@@ -31,6 +31,8 @@ extern u8 gText_RecoverHP[];
 extern u8 gText_HealAllyHP[];
 extern u8 gText_BattleMenu[];
 extern u8 gText_BattleMenu2[];
+extern u8 gText_UnboundBattleMenu[];
+extern u8 gText_UnboundBattleMenu2[];
 
 #define TXT_PLUS 0x2E
 #define gText_BattleSwitchWhich (u8*) 0x83FE7A0

@@ -1586,3 +1586,8 @@ void ClearSwitchInEffectsTracker(void)
 		gNewBS->SwitchInEffectsTracker = 0;
 	}
 };
+
+void UpdatePrimalAbility(void)
+{
+	*GetAbilityLocation(gBankAttacker) = GetPartyAbility(GetBankPartyData(gBankAttacker));
+}

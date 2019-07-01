@@ -625,8 +625,8 @@ WeakArmorReturn:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_CursedBodyActivates:
-	call BattleScript_AbilityPopUp
 	disablelastusedattack BANK_ATTACKER CursedBodyReturn
+	call BattleScript_AbilityPopUp
 	setword BATTLE_STRING_LOADER CursedBodyString
 	printstring 0x184
 	waitmessage DELAY_1SECOND

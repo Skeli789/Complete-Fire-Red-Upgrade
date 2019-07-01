@@ -18007,7 +18007,9 @@ ANIM_BLACK_HOLE_ECLIPSE:
 	waitanimation
 	loaddefaultBG
 	pause 0x18
+	makebankinvisible bank_target
 	launchtask 0x8099981 0x2 0x4 0x1 0x0 bank_target 0x1	@ fix rotation
+	makebankinvisible bank_target
 	waitforBG
 	pause 0x1
 	waitanimation

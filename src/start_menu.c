@@ -1,11 +1,12 @@
 #include "defines.h"
-#include "../include/start_menu.h"
 #include "../include/link.h"
 #include "../include/menu.h"
-#include "../include/constants/flags.h"
-#include "../include/new/dexnav.h"
 #include "../include/safari_zone.h"
+#include "../include/start_menu.h"
+#include "../include/constants/flags.h"
 #include "../include/constants/songs.h"
+
+#include "../include/new/dexnav.h"
 
 u8 PokeToolsFunc(void);
 

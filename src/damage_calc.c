@@ -1091,7 +1091,6 @@ void AdjustDamage(bool8 CheckFalseSwipe) {
 	u16 item = gBattleMons[gBankTarget].item;
 	u8 hold_effect = ITEM_EFFECT(gBankTarget);
 	u8 quality = ItemId_GetHoldEffectParam(item);
-	u8 mystery = ItemId_GetMystery2(item);
 	u8 ability = ABILITY(gBankTarget);
 	gStringBank = gBankTarget;
 
@@ -1109,7 +1108,7 @@ void AdjustDamage(bool8 CheckFalseSwipe) {
 		gProtectStructs[gBankTarget].enduredSturdy = 1;
 		gNewBS->EnduranceHelper = ENDURE_STURDY;
 	}
-    else if (hold_effect == ITEM_EFFECT_FOCUS_BAND && umodsi(Random(), 100) < quality && !mystery)
+    else if (hold_effect == ITEM_EFFECT_FOCUS_BAND && umodsi(Random(), 100) < quality && !IsBankHoldingFocusSash(gBankTarget))
 	{
         RecordItemBattle(gBankTarget, hold_effect);
         gSpecialStatuses[gBankTarget].focusBanded = 1;

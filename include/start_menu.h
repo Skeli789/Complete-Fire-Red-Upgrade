@@ -5,7 +5,6 @@
 
 extern const u8 gText_MenuPokedex[];
 extern const u8 gText_MenuPokemon[];
-extern const u8 gText_MenuBag[];
 extern const u8 gText_MenuPlayer[];
 extern const u8 gText_MenuSave[];
 extern const u8 gText_MenuOption[];
@@ -13,6 +12,13 @@ extern const u8 gText_MenuExit[];
 extern const u8 gText_MenuRetire[];
 extern const u8 gText_PokeTools[];
 extern const u8 gText_DexNav[];
+
+#ifdef UNBOUND
+extern const u8 gText_MenuCube[];
+#define gText_MenuBag gText_MenuCube
+#else
+extern const u8 gText_MenuBag[];
+#endif
 
 extern const u8 gText_PokedexDescription[];
 extern const u8 gText_PokemonDescription[];

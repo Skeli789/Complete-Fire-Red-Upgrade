@@ -41,17 +41,17 @@ const u16* const sMugshotsDpPals[] =
 	[0x1] = DP_MugshotPal, //0x100
 	[0x2] = DP_Mugshot_BlackPal, //0x200
 	[0x3] = DP_Mugshot_Dark_GrayPal, //0x300
-	[0x4] = DP_Mugshot_Dark_GreenPal, //0x400
-	[0x5] = DP_Mugshot_Dark_PurplePal, //0x500
-	[0x6] = DP_Mugshot_Dark_RedPal, //0x600
-	[0x7] = DP_Mugshot_Icy_BluePal, //0x700
+	[0x4] = DP_Mugshot_Dark_PurplePal, //0x400
+	[0x5] = DP_Mugshot_Dark_GreenPal, //0x500
+	[0x6] = DP_Mugshot_Icy_BluePal, //0x600
+	[0x7] = DP_Mugshot_Light_BrownPal, //0x700
 	[0x8] = DP_Mugshot_Light_GreenPal, //0x800
-	[0x9] = DP_Mugshot_Royal_BluePal, //0x900
-	[0xA] = DP_Mugshot_Steel_GrayPal, //0xA00
-	[0xB] = DP_Mugshot_Light_BrownPal, //0xB00
-	[0xC] = DP_Mugshot_PinkPal, //0xC00
-	[0xD] = DP_Mugshot_WhitePal, //0xD00
-	[0xE] = DP_Mugshot_Sky_BluePal, //0xE00
+	[0x9] = DP_Mugshot_WhitePal, //0x900
+	[0xA] = DP_Mugshot_PinkPal, //0xA00
+	[0xB] = DP_Mugshot_Dark_RedPal, //0xB00
+	[0xC] = DP_Mugshot_Royal_BluePal, //0xC00
+	[0xD] = DP_Mugshot_Sky_BluePal, //0xD00
+	[0xE] = DP_Mugshot_Steel_GrayPal, //0xE00
 	[0xF] = DP_Mugshot_YellowPal, //0xF00
 };
 

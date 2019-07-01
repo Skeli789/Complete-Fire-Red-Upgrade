@@ -1090,9 +1090,15 @@ void PlayerHandleChooseAction(void)
 	&& !(gAbsentBattlerFlags & gBitTable[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)])
 	&& !(gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_INGAME_PARTNER))
 	&& gBattleBufferA[gActiveBattler][1] != ACTION_USE_ITEM) //Mon 1 didn't use item
+	#ifndef UNBOUND
 		BattlePutTextOnWindow(gText_BattleMenu2, 2);
 	else
 		BattlePutTextOnWindow(gText_BattleMenu, 2);
+	#else
+		BattlePutTextOnWindow(gText_UnboundBattleMenu2, 2);
+	else
+		BattlePutTextOnWindow(gText_UnboundBattleMenu, 2);	
+	#endif
 
     for (i = 0; i < 4; i++)
         ActionSelectionDestroyCursorAt(i);

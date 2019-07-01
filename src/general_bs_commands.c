@@ -555,10 +555,6 @@ void atk0F_resultmessage(void) {
 			return;
 
 		default:
-			gNewBS->EnduranceHelper = 0; //Clear these here for multi-hit moves that didn't KO target
-			gSpecialStatuses[gBankTarget].focusBanded = FALSE;
-			gProtectStructs[gBankTarget].enduredSturdy = FALSE;
-			
 			if (gMoveResultFlags & MOVE_RESULT_DOESNT_AFFECT_FOE)
 				stringId = STRINGID_ITDOESNTAFFECT;
 
@@ -609,6 +605,10 @@ void atk0F_resultmessage(void) {
 				gBattleCommunication[MSG_DISPLAY] = 0;
 			}
 		}
+		
+		gNewBS->EnduranceHelper = 0; //Clear these here for multi-hit moves that didn't KO target
+		gSpecialStatuses[gBankTarget].focusBanded = FALSE;
+		gProtectStructs[gBankTarget].enduredSturdy = FALSE;
 	}
 
 	if (stringId)
@@ -2293,7 +2293,7 @@ void atkA3_disablelastusedattack(void)
 
 	for (i = 0; i < MAX_MON_MOVES; i++)
 	{
-		if (gBattleMons[bankDef].moves[i] == gLastUsedMoves[bankDef])
+		if (gBattleMons[bankDef].moves[i] == gCurrentMove)
 			break;
 	}
 
