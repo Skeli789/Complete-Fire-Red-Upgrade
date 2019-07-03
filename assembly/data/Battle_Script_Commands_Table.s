@@ -3,7 +3,7 @@
 .align 2
 .global BattleScriptCommandsTable
 
-.include "..\\defines"
+.include "../defines"
 .equ NULL, 0x00000000
 
 .global gBattleScriptingCommandsTable

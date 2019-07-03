@@ -2,7 +2,7 @@
 #include "defines_battle.h"
 #include "../include/constants/items.h"
 
-#include "../include/new/helper_functions.h"
+#include "../include/new/Helper_Functions.h"
 #include "../include/new/mega.h"
 #include "../include/new/move_menu.h"
 #include "../include/new/set_z_effect.h"

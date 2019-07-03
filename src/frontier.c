@@ -4,7 +4,7 @@
 #include "../include/random.h"
 #include "../include/script.h"
 
-#include "../include/new/helper_functions.h"
+#include "../include/new/Helper_Functions.h"
 #include "../include/new/frontier.h"
 
 extern u8* gMaleFrontierNamesTable[];

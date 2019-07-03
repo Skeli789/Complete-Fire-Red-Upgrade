@@ -8,7 +8,7 @@
 #include "../include/new/battle_start_turn_start_battle_scripts.h"
 #include "../include/new/bs_helper_functions.h"
 #include "../include/new/end_battle.h"
-#include "../include/new/helper_functions.h"
+#include "../include/new/Helper_Functions.h"
 #include "../include/new/move_battle_scripts.h"
 #include "../include/new/move_tables.h"
 

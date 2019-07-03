@@ -2,43 +2,47 @@
 
 from glob import glob
 from pathlib import Path
-import os
-import itertools
-import hashlib
-import subprocess
-import sys
+import os, itertools, hashlib, subprocess, sys
 from datetime import datetime
 from string import StringFileConverter
 
-PathVar = os.environ.get('Path')
-Paths = PathVar.split(';')
-PATH = ""
-for candidatePath in Paths:
-    if "devkitARM" in candidatePath:
-        PATH = candidatePath
-        break
-if PATH == "":
-	print('DevKit does not exist in your Path variable.\nChecking default location.')
-	PATH = 'C://devkitPro//devkitARM//bin'
-	if os.path.isdir(PATH) == False:
-		print("...\nDevkit not found.")
-		sys.exit(1)
-	else:
-		print("Devkit found.")
+if sys.platform.startswith('win'):
+	PathVar = os.environ.get('Path')
+	Paths = PathVar.split(';')
+	PATH = ""
+	for candidatePath in Paths:
+		if "devkitARM" in candidatePath:
+			PATH = candidatePath
+			break
+	if PATH == "":
+		print('DevKit does not exist in your Path variable.\nChecking default location.')
+		PATH = 'C://devkitPro//devkitARM//bin'
+		if os.path.isdir(PATH) == False:
+			print("...\nDevkit not found.")
+			sys.exit(1)
+		else:
+			print("Devkit found.")
+	PREFIX = '/arm-none-eabi-'
+	AS = (PATH + PREFIX + 'as')
+	CC = (PATH + PREFIX + 'gcc')
+	LD = (PATH + PREFIX + 'ld')
+	GR = ("deps/grit.exe")
+	ARP = ('deps/armips.exe')
+	OBJCOPY = (PATH + PREFIX + 'objcopy')
+else:
+	PREFIX = 'arm-none-eabi-'
+	AS = (PREFIX + 'as')
+	CC = (PREFIX + 'gcc')
+	LD = (PREFIX + 'ld')
+	GR = ("grit")
+	ARP = ('armips')
+	OBJCOPY = (PREFIX + 'objcopy')
 
-PREFIX = '/arm-none-eabi-'
-AS = (PATH + PREFIX + 'as')
-CC = (PATH + PREFIX + 'gcc')
-LD = (PATH + PREFIX + 'ld')
-GR = ("deps/grit.exe")
-ARP = ('armips')
-OBJCOPY = (PATH + PREFIX + 'objcopy')
 SRC = './src'
 GRAPHICS = './graphics'
 ASSEMBLY = './assembly'
 STRINGS = './strings'
 BUILD = './build'
-IMAGES = '\Images'
 ASFLAGS = ['-mthumb', '-I', ASSEMBLY]
 LDFLAGS = ['BPRE.ld', '-T', 'linker.ld']
 CFLAGS = ['-mthumb', '-mno-thumb-interwork', '-mcpu=arm7tdmi', '-mtune=arm7tdmi',
@@ -122,28 +126,28 @@ def process_c(in_file):
 	return out_file
 
 def process_string(filename):
-    '''Build Strings'''
-    out_file = filename.split(".string")[0] + '.s'
-    object_file = make_output_file(out_file)[0]
+	'''Build Strings'''
+	out_file = filename.split(".string")[0] + '.s'
+	object_file = make_output_file(out_file)[0]
 
-    fileExists = os.path.isfile(object_file)
+	fileExists = os.path.isfile(object_file)
 
-    if fileExists and os.path.getmtime(object_file) > os.path.getmtime(filename): #If the .o file was created after the image was last modified
-        return make_output_file(out_file)[0]
+	if fileExists and os.path.getmtime(object_file) > os.path.getmtime(filename): #If the .o file was created after the image was last modified
+		return make_output_file(out_file)[0]
 
-    print ('Building Strings %s' % filename)
-    StringFileConverter(filename)
+	print ('Building Strings %s' % filename)
+	StringFileConverter(filename)
 
-    out_file_list = make_output_file(out_file)
-    new_out_file = out_file_list[0]
-    if out_file_list[1] == False:
-        os.remove(out_file)
-        return new_out_file	#No point in recompiling file
+	out_file_list = make_output_file(out_file)
+	new_out_file = out_file_list[0]
+	if out_file_list[1] == False:
+		os.remove(out_file)
+		return new_out_file #No point in recompiling file
 
-    cmd = [AS] + ASFLAGS + ['-c', out_file, '-o', new_out_file]
-    run_command(cmd)
-    os.remove(out_file)
-    return new_out_file
+	cmd = [AS] + ASFLAGS + ['-c', out_file, '-o', new_out_file]
+	run_command(cmd)
+	os.remove(out_file)
+	return new_out_file
 
 def process_image(in_file):
 	'''Compile Image'''
@@ -151,10 +155,14 @@ def process_image(in_file):
 		out_file = in_file.split('.bmp')[0] + '.s'
 	else:
 		out_file = in_file.split('.png')[0] + '.s'
-	
-	namelist = in_file.split("\\") #Get path of grit flags
-	namelist.pop(len(namelist) - 1)
-	flags = "".join(str(i) + "\\" for i in namelist)
+	if sys.platform.startswith('win'):
+		namelist = in_file.split("\\") #Get path of grit flags
+		namelist.pop(len(namelist) - 1)
+		flags = "".join(str(i) + "\\" for i in namelist)
+	else:
+		namelist = in_file.split("/") #Get path of grit flags
+		namelist.pop(len(namelist) - 1)
+		flags = "".join(str(i) + "//" for i in namelist)
 	flags += "gritflags.txt"
 	
 	try:
@@ -186,7 +194,7 @@ def process_image(in_file):
 	new_out_file = out_file_list[0]
 	if out_file_list[1] == False:
 		os.remove(out_file)
-		return new_out_file	#No point in recompiling file
+		return new_out_file #No point in recompiling file
 
 	cmd = [AS] + ASFLAGS + ['-c', out_file, '-o', new_out_file]
 	run_command(cmd)

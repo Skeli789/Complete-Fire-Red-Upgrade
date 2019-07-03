@@ -7,7 +7,7 @@
 #include "../include/new/end_turn.h"
 #include "../include/new/end_turn_battle_scripts.h"
 #include "../include/new/form_change.h"
-#include "../include/new/helper_functions.h"
+#include "../include/new/Helper_Functions.h"
 #include "../include/new/switching.h"
 
 enum EndTurnEffects

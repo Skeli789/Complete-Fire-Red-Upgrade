@@ -2,7 +2,7 @@
 .thumb
 .align 2
 
-.include "..\\defines"
+.include "../defines"
 
 @0x803432C with r2
 BattleLoadOpponentMonSpriteGfxHook:

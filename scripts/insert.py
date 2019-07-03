@@ -1,40 +1,40 @@
 #!/usr/bin/env python3
 
-import os
-import subprocess
-import sys
-import shutil
-import binascii
-import textwrap
-import sys
+import os, subprocess, sys, shutil, binascii, textwrap
+from datetime import datetime
 
 OFFSET_TO_PUT = 0x900000
 SOURCE_ROM = "BPRE0.gba"
-
-from datetime import datetime
-
-PathVar = os.environ.get('Path')
-Paths = PathVar.split(';')
-PATH = ""
-for candidatePath in Paths:
-	if "devkitARM" in candidatePath:
-		PATH = candidatePath
-		break
-if PATH == "":
-	PATH = 'C://devkitPro//devkitARM//bin'
-	if os.path.isdir(PATH) == False:
-		print('Devkit not found.')
-		sys.exit(1)
-		
 ROM_NAME = "test.gba"
 
-PREFIX = 'arm-none-eabi-'
-OBJCOPY = os.path.join(PATH, PREFIX + 'objcopy')
-OBJDUMP = os.path.join(PATH, PREFIX + 'objdump')
-NM = os.path.join(PATH, PREFIX + 'nm')
-AS = os.path.join(PATH, PREFIX + 'as')
-CC = os.path.join(PATH, PREFIX + 'gcc')
-CXX = os.path.join(PATH, PREFIX + 'g++')
+if sys.platform.startswith('win'):
+	PathVar = os.environ.get('Path')
+	Paths = PathVar.split(';')
+	PATH = ""
+	for candidatePath in Paths:
+		if "devkitARM" in candidatePath:
+			PATH = candidatePath
+			break
+	if PATH == "":
+		PATH = 'C://devkitPro//devkitARM//bin'
+		if os.path.isdir(PATH) == False:
+			print('Devkit not found.')
+			sys.exit(1)
+	PREFIX = 'arm-none-eabi-'
+	OBJCOPY = os.path.join(PATH, PREFIX + 'objcopy')
+	OBJDUMP = os.path.join(PATH, PREFIX + 'objdump')
+	NM = os.path.join(PATH, PREFIX + 'nm')
+	AS = os.path.join(PATH, PREFIX + 'as')
+	CC = os.path.join(PATH, PREFIX + 'gcc')
+	CXX = os.path.join(PATH, PREFIX + 'g++')
+else:
+	PREFIX = 'arm-none-eabi-'
+	AS = (PREFIX + 'as')
+	CC = (PREFIX + 'gcc')
+	CXX = (PREFIX + 'g++')
+	NM = (PREFIX + 'nm')
+	OBJCOPY = (PREFIX + 'objcopy')
+	OBJDUMP = (PREFIX + 'objdump')
 
 def ExtractPointer(listy):
 	pointer = 0

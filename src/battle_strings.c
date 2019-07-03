@@ -12,7 +12,7 @@
 #include "../include/new/battle_strings_2.h"
 #include "../include/new/frontier.h"
 #include "../include/new/general_battle_strings.h"
-#include "../include/new/helper_functions.h"
+#include "../include/new/Helper_Functions.h"
 #include "../include/new/mega.h"
 #include "../include/new/multi.h"
 #include "../include/new/set_z_effect.h"

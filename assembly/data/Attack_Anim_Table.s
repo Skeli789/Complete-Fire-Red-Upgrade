@@ -3,8 +3,8 @@
 .align 2
 .global AttackAnimationTable
 
-.include "..\\Anim_Defines.asm"
-.include "..\\asm_defines.s"
+.include "../Anim_Defines.asm"
+.include "../asm_defines.s"
 
 .global AttackAnimationTable
 .global ANIM_INFESTATION

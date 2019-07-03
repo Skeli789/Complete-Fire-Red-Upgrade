@@ -15,7 +15,7 @@
 #include "../include/new/battle_terrain.h"
 #include "../include/new/damage_calc.h"
 #include "../include/new/general_bs_commands.h"
-#include "../include/new/helper_functions.h"
+#include "../include/new/Helper_Functions.h"
 #include "../include/new/item_battle_scripts.h"
 #include "../include/new/move_battle_scripts.h"
 #include "../include/new/move_tables.h"

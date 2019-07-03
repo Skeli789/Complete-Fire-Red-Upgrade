@@ -7,7 +7,7 @@
 #include "../include/new/ai_master.h"
 #include "../include/new/battle_controller_opponent.h"
 #include "../include/new/frontier.h"
-#include "../include/new/helper_functions.h"
+#include "../include/new/Helper_Functions.h"
 #include "../include/new/mega.h"
 #include "../include/new/move_menu.h"
 #include "../include/new/switching.h"

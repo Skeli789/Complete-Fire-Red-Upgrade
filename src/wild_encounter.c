@@ -13,7 +13,7 @@
 #include "../include/new/battle_start_turn_start.h"
 #include "../include/new/build_pokemon.h"
 #include "../include/new/dns.h"
-#include "../include/new/helper_functions.h"
+#include "../include/new/Helper_Functions.h"
 #include "../include/new/roamer.h"
 #include "../include/new/wild_encounter.h"
 

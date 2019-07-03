@@ -2,7 +2,7 @@
 .thumb
 .align 2
 
-.include "..\\defines"
+.include "../defines"
 
 .global STANDARD_DAMAGE
 STANDARD_DAMAGE:

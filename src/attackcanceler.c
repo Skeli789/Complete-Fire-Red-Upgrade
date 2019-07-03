@@ -12,7 +12,7 @@
 #include "../include/new/battle_start_turn_start.h"
 #include "../include/new/damage_calc.h"
 #include "../include/new/general_bs_commands.h"
-#include "../include/new/helper_functions.h"
+#include "../include/new/Helper_Functions.h"
 #include "../include/new/move_tables.h"
 
 //TODO: Make sure Powder stops Inferno Overdrive

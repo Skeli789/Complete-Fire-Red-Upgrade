@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 
-import shutil
-import sys
-import os
+import shutil, sys, os
 
 ############
 #Options go here.
@@ -62,15 +60,9 @@ def edit_linker(offset):
 	file_change_line("linker.ld", 4, "\t\trom     : ORIGIN = (0x08000000 + " + hex(offset) + "), LENGTH = 32M\n")
 	
 def edit_insert(offset):
-	file_change_line("./scripts/insert.py", 11, "OFFSET_TO_PUT = " + hex(offset) + '\n')
-	file_change_line("./scripts/insert.py", 12, 'SOURCE_ROM = "' + ROM_NAME + '"\n')
+	file_change_line("./scripts/insert.py", 6, "OFFSET_TO_PUT = " + hex(offset) + '\n')
+	file_change_line("./scripts/insert.py", 7, 'SOURCE_ROM = "' + ROM_NAME + '"\n')
 		
-def build_code():
-	os.system("python scripts/build.py")
-	
-def insert_code():
-	os.system("python scripts/insert.py")
-	
 def clear_from_to(rom, from_, to_):
 	rom.seek(from_)
 	for i in range(0, to_ - from_):
@@ -87,8 +79,12 @@ try:
 			offset = find_offset_to_put(rom, 0x50000, align_x100(offset))
 		edit_linker(offset)
 		edit_insert(offset)
-		build_code()
-		insert_code()
+		if shutil.which('python3') is not None:
+			os.system("python3 scripts/build.py")
+			os.system("python3 scripts/insert.py")
+		else:
+			os.system("python scripts/build.py")
+			os.system("python scripts/insert.py")
 		rom.close()
 except:
 	print('Error: Could not find source rom: "' + ROM_NAME + '".\nPlease make sure a rom with this name exists in the root.')

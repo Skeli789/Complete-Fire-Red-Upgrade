@@ -6,7 +6,7 @@
 #include "../include/new/ability_battle_scripts.h"
 #include "../include/new/accuracy_calc.h"
 #include "../include/new/battle_strings.h"
-#include "../include/new/helper_functions.h"
+#include "../include/new/Helper_Functions.h"
 #include "../include/new/stat_buffs.h"
 
 #define BattleScript_MistProtected (u8*) 0x81D8C3E

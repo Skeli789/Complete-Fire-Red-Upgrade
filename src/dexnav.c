@@ -35,7 +35,7 @@
 #include "../include/new/dexnav_config.h"
 #include "../include/new/dexnav_data.h"
 #include "../include/new/dns.h"
-#include "../include/new/helper_functions.h"
+#include "../include/new/Helper_Functions.h"
 #include "../include/new/overworld.h"
 #include "../include/new/wild_encounter.h"
 

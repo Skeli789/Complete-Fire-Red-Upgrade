@@ -4,7 +4,7 @@
 #include "../include/field_weather.h"
 
 #include "../include/new/dexnav.h"
-#include "../include/new/helper_functions.h"
+#include "../include/new/Helper_Functions.h"
 #include "../include/new/read_keys.h"
 
 //emulate JPANs keypad hack
