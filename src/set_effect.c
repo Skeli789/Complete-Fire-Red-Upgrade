@@ -768,12 +768,16 @@ bool8 SetMoveEffect2(void)
             }
             else if (ABILITY(gEffectBank) == ABILITY_STICKYHOLD && gBattleMons[gEffectBank].hp != 0)
             {
+				//Handled in CMD49
+				/*
                 BattleScriptPushCursor();
                 gBattlescriptCurrInstr = BattleScript_StickyHoldActivatesRet;
 
                 gLastUsedAbility = ABILITY(gEffectBank);
                 RecordAbilityBattle(gEffectBank, gLastUsedAbility);
 				effect = TRUE;
+				*/
+				break;
             }
             else
             {
@@ -798,22 +802,21 @@ bool8 SetMoveEffect2(void)
             break;
 			
         case MOVE_EFFECT_KNOCK_OFF:
-            if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER) && SIDE(gBankAttacker) == B_SIDE_OPPONENT) //Wild mons can't knock off items
-            {
-                break;
-            }
-			else if (ITEM(gEffectBank) == 0
-			||  !CanTransferItem(gBattleMons[gEffectBank].species, ITEM(gEffectBank), GetBankPartyData(gEffectBank))
+            if (!CanKnockOffItem(gEffectBank)
 			||	gBattleMons[gBankAttacker].hp == 0)
             {
                 break;
             }
             else if (ABILITY(gEffectBank) == ABILITY_STICKYHOLD && gBattleMons[gEffectBank].hp)
             {
+				//Handled in CMD49
+				/*
                 gLastUsedAbility = ABILITY_STICKYHOLD;
                 gBattlescriptCurrInstr = BattleScript_StickyHoldActivatesRet;
                 gBattleScripting->bank = gEffectBank;
 				effect = TRUE;
+				*/
+				break;
             }
             else
             {

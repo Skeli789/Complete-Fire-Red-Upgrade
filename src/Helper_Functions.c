@@ -777,6 +777,9 @@ bool8 SymbiosisCanActivate(u8 giverBank, u8 receiverBank) {
 //Sticky Hold also, but the boost ignores it
 bool8 CanKnockOffItem(u8 bank)
 {
+	if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER) && SIDE(bank) == B_SIDE_PLAYER) //Wild mons can't knock off items
+		return FALSE;
+	
 	if (!CanTransferItem(SPECIES(bank), ITEM(bank), GetBankPartyData(bank)))
 		return FALSE;
 
