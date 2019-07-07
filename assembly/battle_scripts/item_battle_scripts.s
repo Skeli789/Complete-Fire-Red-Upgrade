@@ -34,7 +34,8 @@
 .global BattleScript_HerbCureChosenStatusEnd2
 .global BattleScript_HerbCureChosenStatusFling
 .global BattleScript_RaiseStatsItem
-.global BattleScript_RaiseStatsItemEnd2
+.global BattleScript_RaiseStatsSeedEnd2
+.global BattleScript_RaiseStatsSeedRet
 .global BattleScript_WhiteHerbFling
 
 .global BattleScript_AirBallooonPop
@@ -279,13 +280,20 @@ BattleScript_RaiseStatsItem:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-BattleScript_RaiseStatsItemEnd2:
-	playanimation BANK_SCRIPTING ANIM_ITEM_USE 0x0
-	statbuffchange STAT_TARGET | STAT_BS_PTR RaiseStatsItemPostBuffEnd2
-RaiseStatsItemPostBuffEnd2:
-	setbyte MULTISTRING_CHOOSER 0x4
-	removeitem BANK_SCRIPTING
+BattleScript_RaiseStatsSeedEnd2:
+	call BattleScript_RaiseStatsSeedRet
 	end2
+
+BattleScript_RaiseStatsSeedRet:
+	playanimation BANK_SCRIPTING ANIM_ITEM_USE 0x0
+	statbuffchange STAT_TARGET | STAT_BS_PTR RaiseStatsSeedReturn
+	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
+	setbyte MULTISTRING_CHOOSER 0x4
+	printfromtable 0x83FE57C
+	waitmessage DELAY_1SECOND
+	removeitem BANK_SCRIPTING
+RaiseStatsSeedReturn:
+	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

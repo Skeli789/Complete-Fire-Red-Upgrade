@@ -944,7 +944,7 @@ static bool8 PokemonTierBan(const u16 species, const u16 item, const struct Batt
 			break;
 
 		case BATTLE_TOWER_UBER:
-		//For Ubers ban Rayquaza with Dragon Ascent, Moody, and some moves
+		//For Ubers ban Rayquaza with Dragon Ascent (handled in mega.c), Moody, and some moves
 			switch (checkFromLocationType) {
 				case CHECK_BATTLE_TOWER_SPREADS:
 					moveLoc = spread->moves;
@@ -963,8 +963,6 @@ static bool8 PokemonTierBan(const u16 species, const u16 item, const struct Batt
 			//Check Banned Moves
 			for (i = 0; i < MAX_MON_MOVES; ++i) {
 				if (CheckTableForMove(moveLoc[i], SmogonMoveBanList))
-					return TRUE;
-				if (species == SPECIES_RAYQUAZA && moveLoc[i] == MOVE_DRAGONASCENT)
 					return TRUE;
 			}
 			break;

@@ -560,7 +560,7 @@ void atk52_switchineffects(void)
 		__attribute__ ((fallthrough));
 		
 		case SwitchIn_Items:
-			if (ItemBattleEffects(ItemEffects_SwitchIn, gActiveBattler, FALSE, FALSE))
+			if (ItemBattleEffects(ItemEffects_SwitchIn, gActiveBattler, TRUE, FALSE))
 				return;
 			++gNewBS->SwitchInEffectsTracker;
 		__attribute__ ((fallthrough));
@@ -626,7 +626,7 @@ void atk52_switchineffects(void)
 					++gBank1;
 				}
 			}
-			
+
 			gNewBS->SwitchInEffectsTracker = 0;
 			gBattlescriptCurrInstr += 2;
 	}
