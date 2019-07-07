@@ -3,6 +3,7 @@
 #include "../include/random.h"
 #include "../include/constants/items.h"
 
+#include "../include/new/ability_battle_scripts.h"
 #include "../include/new/battle_start_turn_start.h"
 #include "../include/new/CMD49.h"
 #include "../include/new/cmd49_battle_scripts.h"
@@ -14,7 +15,6 @@
 
 //TODO:
 //Emergency Exit Spikes
-//Pickpocket Fix
 //Make sure there's no choice lock glitch
 //Add check to see if AI move prediction was successful. If not, then if the same move is predicted, don't predict that same move again.
 //Remove the lines at the bottom?
@@ -48,6 +48,7 @@ enum
     ATK49_TARGET_VISIBLE,
 	ATK49_CHOICE_MOVE,
 	ATK49_PLUCK,
+	ATK49_STICKYHOLD,
 	ATK49_ITEM_EFFECTS_END_TURN_TARGET,
 	ATK49_ITEM_EFFECTS_CONTACT_ATTACKER,
 	ATK49_ITEM_EFFECTS_END_TURN_ATTACKER,	
@@ -448,9 +449,27 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			}
 			gBattleScripting->atk49_state++;
 			break;
+			
+		case ATK49_STICKYHOLD:
+			if (MOVE_HAD_EFFECT
+			&& TOOK_DAMAGE(gBankTarget)
+			&& (gBattleMoves[gCurrentMove].effect == EFFECT_KNOCK_OFF || gBattleMoves[gCurrentMove].effect == EFFECT_THIEF)
+			&& CanKnockOffItem(gBankTarget)
+			&& ABILITY(gBankTarget) == ABILITY_STICKYHOLD
+			&& BATTLER_ALIVE(gBankTarget))
+			{
+                BattleScriptPushCursor();
+                gBattlescriptCurrInstr = BattleScript_StickyHoldActivatesRet;
+				effect = TRUE;
+			}
+			gBattleScripting->atk49_state++;
+			break;
 
 		case ATK49_ITEM_EFFECTS_END_TURN_TARGET:
-			if (!(CanKnockOffItem(gBankTarget) && gBattleMoves[gCurrentMove].effect == EFFECT_KNOCK_OFF)) //Don't activate items that should be knocked off
+			if ((ABILITY(gBankTarget) == ABILITY_STICKYHOLD && BATTLER_ALIVE(gBankTarget))
+			||  !BATTLER_ALIVE(gBankAttacker)
+			||  !CanKnockOffItem(gBankTarget) 
+			||  gBattleMoves[gCurrentMove].effect != EFFECT_KNOCK_OFF) //Don't activate items that should be knocked off
 			{
 				if (ItemBattleEffects(ItemEffects_EndTurn, gBankTarget, TRUE, FALSE))
 					effect = TRUE;
