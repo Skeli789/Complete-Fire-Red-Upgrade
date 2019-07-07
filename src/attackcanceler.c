@@ -614,17 +614,24 @@ static u8 AtkCanceller_UnableToUseMove(void)
 				gNewBS->ZMoveData->used[gBankAttacker] = TRUE;
 				gNewBS->ZMoveData->toBeUsed[gBankAttacker] = 0;
 				gNewBS->ZMoveData->partyIndex[gBankAttacker] |= gBitTable[gBattlerPartyIndexes[gBankAttacker]]; //Stops Rayquaza from Mega Evolving
+
 				if (SIDE(gBankAttacker) == B_SIDE_PLAYER && !(gBattleTypeFlags & (BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_MULTI))) //In team Battles, both players can use Z-moves
 				{
-					gNewBS->ZMoveData->used[PARTNER(gBankAttacker)] = TRUE;
-					gNewBS->ZMoveData->toBeUsed[PARTNER(gBankAttacker)] = 0;
-					gNewBS->ZMoveData->partyIndex[SIDE(gBankAttacker)] |= gBitTable[gBattlerPartyIndexes[PARTNER(gBankAttacker)]]; //Stops Rayquaza from Mega Evolving
+					if (IsDoubleBattle())
+					{
+						gNewBS->ZMoveData->used[PARTNER(gBankAttacker)] = TRUE;
+						gNewBS->ZMoveData->toBeUsed[PARTNER(gBankAttacker)] = 0;
+						gNewBS->ZMoveData->partyIndex[SIDE(gBankAttacker)] |= gBitTable[gBattlerPartyIndexes[PARTNER(gBankAttacker)]]; //Stops Rayquaza from Mega Evolving
+					}
 				}
 				else if (SIDE(gBankAttacker) == B_SIDE_OPPONENT && !(gBattleTypeFlags & (BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_MULTI)))
 				{
-					gNewBS->ZMoveData->used[PARTNER(gBankAttacker)] = TRUE;
-					gNewBS->ZMoveData->toBeUsed[PARTNER(gBankAttacker)] = 0;
-					gNewBS->ZMoveData->partyIndex[SIDE(gBankAttacker)] |= gBitTable[gBattlerPartyIndexes[PARTNER(gBankAttacker)]]; //Stops Rayquaza from Mega Evolving
+					if (IsDoubleBattle())
+					{
+						gNewBS->ZMoveData->used[PARTNER(gBankAttacker)] = TRUE;
+						gNewBS->ZMoveData->toBeUsed[PARTNER(gBankAttacker)] = 0;
+						gNewBS->ZMoveData->partyIndex[SIDE(gBankAttacker)] |= gBitTable[gBattlerPartyIndexes[PARTNER(gBankAttacker)]]; //Stops Rayquaza from Mega Evolving
+					}
 				}
 				
 				gBattleScripting->bank = gBankAttacker;

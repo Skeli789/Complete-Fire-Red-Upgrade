@@ -407,10 +407,14 @@ void RunTurnActionsFunctions(void)
 	{
 		switch (gNewBS->MegaData->state) {
 			case Mega_Check:
-				for (i = *megaBank; i < gBattlersCount; ++i, ++*megaBank) {
+				for (i = *megaBank; i < gBattlersCount; ++i, ++*megaBank) 
+				{
 					u8 bank = gBanksByTurnOrder[i];
 					gActiveBattler = bank;
-					if (gNewBS->MegaData->chosen[bank] && !gNewBS->MegaData->done[bank] && !(gNewBS->ZMoveData->partyIndex[SIDE(bank)] & gBitTable[gBattlerPartyIndexes[bank]])) {
+					if (gNewBS->MegaData->chosen[bank]
+					&& !gNewBS->MegaData->done[bank]
+					&& !DoesZMoveUsageStopMegaEvolution(bank))
+					{
 						const u8* script = DoMegaEvolution(bank);
 						if (script != NULL) 
 						{	

@@ -15965,7 +15965,7 @@ ANIM_CONTINENTAL_CRUSH:
 	launchtemplate 0x83e7aac 0x2 0x6 0x0 0x1 0xc 0x4 0xfff0 0x12 
 	pause 0x30
 	launchtask AnimTask_GetTimeOfDay 0x2 0x0
-	jumpifargmatches 0x0 0x2 CONTINENTAL_CRUSH_DAY
+	jumpifargmatches 0x0 0x0 CONTINENTAL_CRUSH_DAY
 	jumpifargmatches 0x0 0x2 CONTINENTAL_CRUSH_AFTERNOON
 CONTINENTAL_CRUSH_NIGHT:
 	loadBG1 BG_BLUE_SKY_NIGHT
@@ -16012,7 +16012,12 @@ FINISH_C_CRUSH_BG:
 	launchtemplate CC_ROCK_ERUPTION 0x28 0x5 0x3c 0xffe0 0x50 0x46 0x1 
 	pause 0x16 
 	launchtask AnimTask_screen_shake 0x5 0x3 0x5 0x8 0x1c 
-	launchtask AnimTask_screen_shake 0x5 0x3 0x4 0x8 0x1c 
+	launchtask AnimTask_screen_shake 0x5 0x3 0x4 0x8 0x1c
+	unloadparticle ANIM_TAG_ROUND_SHADOW	@ fly
+	unloadparticle ANIM_TAG_MUD_SAND @ dig
+	unloadparticle ANIM_TAG_FOCUS_ENERGY @ focus energy
+	unloadparticle ANIM_TAG_IMPACT @ hit
+	loadparticle ANIM_TAG_REALLY_BIG_ROCK	
 	pause 0x30	
 	playsound2 0x80 0x3f 
 	launchtemplate BIGROCK_STOMP 0x83 0x3 0x0 0xffd0 0x1f 
@@ -18002,6 +18007,8 @@ ANIM_BLACK_HOLE_ECLIPSE:
 	pause 0x2
 	unloadparticle ANIM_TAG_SHADOW_BALL
 	unloadparticle ANIM_TAG_THIN_RING
+	unloadparticle ANIM_TAG_ICE_CHUNK
+	unloadparticle ANIM_TAG_BLACK_BALL_2
 	loadparticle ANIM_TAG_UNUSED_EXPLOSION_2
 	call BHE_EXPLODE
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x10 0x7fff	@ white pal to bg
@@ -18296,7 +18303,7 @@ ANIM_CATASTROPIKA:
 	unloadparticle ANIM_TAG_FOCUS_ENERGY
 	unloadparticle ANIM_TAG_ROUND_SHADOW
 	launchtask AnimTask_GetTimeOfDay 0x2 0x0
-	jumpifargmatches 0x0 0x1 CATASTROPIKA_DAY
+	jumpifargmatches 0x0 0x0 CATASTROPIKA_DAY
 	jumpifargmatches 0x0 0x2 CATASTROPIKA_AFTERNOON
 CATASTROPIKA_NIGHT:
 	loadBG1 BG_BLUE_SKY_NIGHT
@@ -18812,7 +18819,7 @@ ANIM_STOKED_SPARKSURFER:
 	waitanimation
 	unloadparticle ANIM_TAG_ROUND_SHADOW
 	launchtask AnimTask_GetTimeOfDay 0x2 0x0
-	jumpifargmatches 0x0 0x1 SPARKSURFER_DAY
+	jumpifargmatches 0x0 0x0 SPARKSURFER_DAY
 	jumpifargmatches 0x0 0x2 SPARKSURFER_AFTERNOON
 SPARKSURFER_NIGHT:
 	loadBG1 BG_BLUE_SKY_NIGHT

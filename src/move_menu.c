@@ -59,6 +59,8 @@ void HandleInputChooseMove(void)
 		
 	if (moveInfo->ultraDone)
 		gNewBS->UltraData->chosen[gActiveBattler] = FALSE;
+		
+	gNewBS->ZMoveData->partyIndex[SIDE(gActiveBattler)] = moveInfo->zPartyIndex;
 	
 	sub_8033AC8();
 
@@ -334,7 +336,7 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 			{
 				if (!BankMegaEvolved(gActiveBattler, FALSE)
 				&& MegaEvolutionEnabled(gActiveBattler)
-				&& !(gNewBS->ZMoveData->partyIndex[SIDE(gActiveBattler)] & gBitTable[gBattlerPartyIndexes[gActiveBattler]]))  //No Mega Evolving if you've used a Z-Move (*cough* *cough* Rayquaza)
+				&& !DoesZMoveUsageStopMegaEvolution(gActiveBattler)) //No Mega Evolving if you've used a Z-Move (*cough* *cough* Rayquaza)
 				{
 					tempMoveStruct->canMegaEvolve = TRUE;
 					tempMoveStruct->megaVariance = evolutions->unknown;
@@ -357,6 +359,7 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 	}
 	
 	tempMoveStruct->zMoveUsed = gNewBS->ZMoveData->used[gActiveBattler];
+	tempMoveStruct->zPartyIndex = gNewBS->ZMoveData->partyIndex[SIDE(gActiveBattler)];
 	
 	if (!gNewBS->ZMoveData->used[gActiveBattler] && !IsMega(gActiveBattler) && !IsBluePrimal(gActiveBattler) && !IsRedPrimal(gActiveBattler)) 
 	{

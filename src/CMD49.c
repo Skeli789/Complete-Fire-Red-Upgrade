@@ -395,33 +395,30 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 		case ATK49_CHOICE_MOVE: // update choice band move
 			if (arg1 != ARG_IN_FUTURE_ATTACK)
 			{
-				if (gHitMarker & HITMARKER_OBEYS)
+				if (gChosenMove != MOVE_STRUGGLE)
 				{
-					if (holdEffectAtk == ITEM_EFFECT_CHOICE_BAND
-					&&  gChosenMove != MOVE_STRUGGLE)
+					if (gHitMarker & HITMARKER_OBEYS)
 					{
-						if (*choicedMoveAtk == 0 || *choicedMoveAtk == 0xFFFF)
+						if (holdEffectAtk == ITEM_EFFECT_CHOICE_BAND)
 						{
-							if (gChosenMove == MOVE_BATONPASS && !(gMoveResultFlags & MOVE_RESULT_FAILED))
+							if (*choicedMoveAtk == 0 || *choicedMoveAtk == 0xFFFF)
 							{
-								gBattleScripting->atk49_state++;
-								break;
+								if (gChosenMove == MOVE_BATONPASS && !(gMoveResultFlags & MOVE_RESULT_FAILED))
+								{
+									gBattleScripting->atk49_state++;
+									break;
+								}
+									
+								*choicedMoveAtk = gChosenMove;
 							}
-							
-							*choicedMoveAtk = gChosenMove;
 						}
+						else //This should remove the choice lock glitch
+							*choicedMoveAtk = 0;
 					}
-					else //This should remove the choice lock glitch
+
+					if (!MoveInMoveset(*choicedMoveAtk, bankAtk))
 						*choicedMoveAtk = 0;
 				}
-				
-				for (i = 0; i < MAX_MON_MOVES; ++i)
-				{
-					if (gBattleMons[bankAtk].moves[i] == *choicedMoveAtk)
-						break;
-				}
-				if (i == MAX_MON_MOVES)
-					*choicedMoveAtk = 0;
 			}
             gBattleScripting->atk49_state++;
             break;

@@ -378,3 +378,11 @@ const u8* GetZMoveName(u16 move)
 	else
 		return gZMoveNames[move - MOVE_BREAKNECK_BLITZ_P];
 }
+
+bool8 DoesZMoveUsageStopMegaEvolution(u8 bank)
+{
+	if (gNewBS->ZMoveData->partyIndex[SIDE(bank)] & gBitTable[gBattlerPartyIndexes[bank]])
+		return TRUE;
+		
+	return FALSE;
+}

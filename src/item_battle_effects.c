@@ -101,7 +101,14 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
 					gBattleScripting->bank = bank;
 					gStringBank = bank;
 					gActiveBattler = gBankAttacker = bank;
-					BattleScriptExecute(BattleScript_WhiteHerbEnd2);
+					
+					if (moveTurn)
+					{
+						BattleScriptPushCursor();
+						gBattlescriptCurrInstr = BattleScript_WhiteHerbRet;
+					}
+					else
+						BattleScriptExecute(BattleScript_WhiteHerbEnd2);
 				}
 				break;
 				
@@ -136,7 +143,14 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
 						gBattleScripting->animArg1 = 0xE + stat;
 						gBattleScripting->animArg2 = 0;
 						gBattleScripting->bank = gBankTarget = gEffectBank = gActiveBattler = bank;
-						BattleScriptExecute(BattleScript_RaiseStatsItemEnd2);
+						
+						if (moveTurn)
+						{
+							BattleScriptPushCursor();
+							BattleScriptExecute(BattleScript_RaiseStatsSeedRet);
+						}
+						else
+							BattleScriptExecute(BattleScript_RaiseStatsSeedEnd2);
 					}
 				}
 		}

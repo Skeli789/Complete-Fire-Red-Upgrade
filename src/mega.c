@@ -7,6 +7,7 @@
 #include "../include/new/frontier.h"
 #include "../include/new/mega.h"
 #include "../include/new/mega_battle_scripts.h"
+#include "../include/new/set_z_effect.h"
 
 #define TRAINER_ITEM_COUNT 4
 
@@ -48,10 +49,13 @@ const struct Evolution* CanMegaEvolve(u8 bank, bool8 CheckUBInstead)
 			} 
 			else if (evolutions[i].unknown == MEGA_VARIANT_WISH && !CheckUBInstead)
 			{
-			//Check learned moves
-				for (j = 0; j < 4; ++j) {
-					if (evolutions[i].param == mon->moves[j])
-						return &evolutions[i];
+				if (!(gBattleTypeFlags & BATTLE_TYPE_FRONTIER) || VarGet(BATTLE_TOWER_TIER) == BATTLE_TOWER_NO_RESTRICTIONS)
+				{
+					//Check learned moves
+					for (j = 0; j < MAX_MON_MOVES; ++j) {
+						if (evolutions[i].param == mon->moves[j])
+							return &evolutions[i];
+					}
 				}
 			}
 		}
@@ -577,7 +581,7 @@ u16 LightUpMegaSymbol(u16 clra)
 #define PAL_TAG self->template->paletteTag
 
 static void MegaTriggerCallback(struct Sprite* self) 
-{		
+{	
 	if (TAG == GFX_TAG_MEGA_TRIGGER) 
 	{
 		if (!CanMegaEvolve(TRIGGER_BANK, FALSE) || gBattleSpritesDataPtr->bankData[TRIGGER_BANK].transformSpecies)
@@ -659,7 +663,7 @@ static void MegaTriggerCallback(struct Sprite* self)
 		evo = CanMegaEvolve(TRIGGER_BANK, FALSE);
 		if (evo->unknown != MEGA_VARIANT_ULTRA_BURST) 
 		{
-			if (gNewBS->MegaData->done[TRIGGER_BANK])
+			if (gNewBS->MegaData->done[TRIGGER_BANK] || DoesZMoveUsageStopMegaEvolution(TRIGGER_BANK))
 				PALETTE_STATE = MegaTriggerGrayscale;
 			else
 			{
