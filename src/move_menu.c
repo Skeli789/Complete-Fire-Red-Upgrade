@@ -49,12 +49,16 @@ void HandleInputChooseMove(void)
     struct ChooseMoveStruct* moveInfo = (struct ChooseMoveStruct*)(&gBattleBufferA[gActiveBattler][4]);
 	gNewBS->ZMoveData->used[gActiveBattler] = moveInfo->zMoveUsed; //So the link opponent's previous Z-selection can't be used
 	gNewBS->MegaData->done[gActiveBattler] = moveInfo->megaDone; //So the link opponent's previous Z-selection can't be used
+	gNewBS->UltraData->done[gActiveBattler] = moveInfo->ultraDone;
 	
 	if (moveInfo->zMoveUsed)
 		gNewBS->ZMoveData->toBeUsed[gActiveBattler] = FALSE;
 	
 	if (moveInfo->megaDone)
 		gNewBS->MegaData->chosen[gActiveBattler] = FALSE;
+		
+	if (moveInfo->ultraDone)
+		gNewBS->UltraData->chosen[gActiveBattler] = FALSE;
 	
 	sub_8033AC8();
 
@@ -282,6 +286,7 @@ static bool8 TriggerMegaEvolution(void)
 void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct ChooseMoveStruct *movePpData)
 {
     u32 i;
+	const struct Evolution* evolutions;
 
 	struct ChooseMoveStruct* tempMoveStruct = Calloc(sizeof(struct ChooseMoveStruct)); //Make space for new expanded data
 	Memcpy(tempMoveStruct, movePpData, sizeof(struct ChooseMoveStructOld)); //Copy the old data
@@ -319,30 +324,35 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 	}
 
 	tempMoveStruct->megaDone = gNewBS->MegaData->done[gActiveBattler];
-	if (!gNewBS->MegaData->done[gActiveBattler] && !IS_TRANSFORMED(gActiveBattler))
+	tempMoveStruct->ultraDone = gNewBS->UltraData->done[gActiveBattler];
+	if (!IS_TRANSFORMED(gActiveBattler))
 	{
-		const struct Evolution* evolutions = CanMegaEvolve(gActiveBattler, FALSE);
-		if (evolutions == NULL)
-			evolutions = CanMegaEvolve(gActiveBattler, TRUE); //Check Ultra Burst
-				
-		if (evolutions != NULL)
-		{
-			if (evolutions->unknown == MEGA_VARIANT_ULTRA_BURST)
+		if (!gNewBS->MegaData->done[gActiveBattler])
+		{	
+			evolutions = CanMegaEvolve(gActiveBattler, FALSE);
+			if (evolutions != NULL)
 			{
-				if (!BankMegaEvolved(gActiveBattler, TRUE))
+				if (!BankMegaEvolved(gActiveBattler, FALSE)
+				&& MegaEvolutionEnabled(gActiveBattler)
+				&& !(gNewBS->ZMoveData->partyIndex[SIDE(gActiveBattler)] & gBitTable[gBattlerPartyIndexes[gActiveBattler]]))  //No Mega Evolving if you've used a Z-Move (*cough* *cough* Rayquaza)
 				{
 					tempMoveStruct->canMegaEvolve = TRUE;
 					tempMoveStruct->megaVariance = evolutions->unknown;
 				}
 			}
-			else
+		}
+
+		if (!gNewBS->UltraData->done[gActiveBattler])
+		{
+			evolutions = CanMegaEvolve(gActiveBattler, TRUE); //Check Ultra Burst
+			if (evolutions != NULL)
 			{
-				if (!BankMegaEvolved(gActiveBattler, FALSE) && MegaEvolutionEnabled(gActiveBattler) && !(gNewBS->ZMoveData->partyIndex[SIDE(gActiveBattler)] & gBitTable[gBattlerPartyIndexes[gActiveBattler]]))  //No Mega Evolving if you've used a Z-Move (*cough* *cough* Rayquaza)
+				if (!BankMegaEvolved(gActiveBattler, TRUE)) //Check Ultra Burst
 				{
 					tempMoveStruct->canMegaEvolve = TRUE;
 					tempMoveStruct->megaVariance = evolutions->unknown;
 				}
-			}	
+			}
 		}
 	}
 	

@@ -222,74 +222,80 @@ bool8 IsAnimMoveIonDeluge(void)
 
 bool8 IsAnimMoveTectnoicRage(void)
 {
-	return  sAnimMoveIndex == MOVE_TECTONIC_RAGE_P || sAnimMoveIndex == MOVE_TECTONIC_RAGE_S;
+	return sAnimMoveIndex == MOVE_TECTONIC_RAGE_P || sAnimMoveIndex == MOVE_TECTONIC_RAGE_S;
 }
 
 bool8 IsAnimMoveBloomDoom(void)
 {
-	return  sAnimMoveIndex == MOVE_BLOOM_DOOM_P || sAnimMoveIndex == MOVE_BLOOM_DOOM_S;
+	return sAnimMoveIndex == MOVE_BLOOM_DOOM_P || sAnimMoveIndex == MOVE_BLOOM_DOOM_S;
 }
 
 bool8 IsAnimMoveOceanicOperretta(void)
 {
-	return  sAnimMoveIndex == MOVE_OCEANIC_OPERETTA;
+	return sAnimMoveIndex == MOVE_OCEANIC_OPERETTA;
 }
 
-bool8 IsMoveNeverEndingNightmareOrDevastatingDrakeOrLightThatBurnsTheSky(void)
+bool8 DoesMoveHaveGeyserOnTarget(void)
 {
-	return  sAnimMoveIndex == MOVE_NEVER_ENDING_NIGHTMARE_P || sAnimMoveIndex == MOVE_NEVER_ENDING_NIGHTMARE_S 
+	return sAnimMoveIndex == MOVE_NEVER_ENDING_NIGHTMARE_P || sAnimMoveIndex == MOVE_NEVER_ENDING_NIGHTMARE_S 
 		 || sAnimMoveIndex == MOVE_DEVASTATING_DRAKE_P 		|| sAnimMoveIndex == MOVE_DEVASTATING_DRAKE_S
+		 || sAnimMoveIndex == MOVE_GIGAVOLT_HAVOC_P 		|| sAnimMoveIndex == MOVE_GIGAVOLT_HAVOC_S
 		 || sAnimMoveIndex == MOVE_LIGHT_THAT_BURNS_THE_SKY;
 }
 
 bool8 IsAnimMoveDestinyBond(void)
 {
-	return  sAnimMoveIndex == MOVE_DESTINYBOND;
+	return sAnimMoveIndex == MOVE_DESTINYBOND;
 }
 
 bool8 IsAnimMoveThunderWave(void)
 {
-	return  sAnimMoveIndex == MOVE_THUNDERWAVE;
+	return sAnimMoveIndex == MOVE_THUNDERWAVE;
 }
 
 bool8 IsAnimMoveGrudge(void)
 {
-	return  sAnimMoveIndex == MOVE_GRUDGE;
+	return sAnimMoveIndex == MOVE_GRUDGE;
 }
 
 bool8 IsAnimMoveFairyLock(void)
 {
-	return  sAnimMoveIndex == MOVE_FAIRYLOCK;
+	return sAnimMoveIndex == MOVE_FAIRYLOCK;
 }
 
 bool8 IsAnimMoveFlashCannon(void)
 {
-	return  sAnimMoveIndex == MOVE_FLASHCANNON;
+	return sAnimMoveIndex == MOVE_FLASHCANNON;
 }
 
 bool8 IsAnimMoveSkillSwap(void)
 {
-	return  sAnimMoveIndex == MOVE_SKILLSWAP;
+	return sAnimMoveIndex == MOVE_SKILLSWAP;
 }
 
 bool8 IsAnimMovePowerSwap(void)
 {
-	return  sAnimMoveIndex == MOVE_POWERSWAP;
+	return sAnimMoveIndex == MOVE_POWERSWAP;
 }
 
 bool8 IsAnimMoveHeartSwap(void)
 {
-	return  sAnimMoveIndex == MOVE_HEARTSWAP;
+	return sAnimMoveIndex == MOVE_HEARTSWAP;
 }
 
 bool8 IsAnimMoveMudBomb(void)
 {
-	return  sAnimMoveIndex == MOVE_MUDBOMB;
+	return sAnimMoveIndex == MOVE_MUDBOMB;
 }
 
 bool8 IsAnimMoveCoreEnforcer(void)
 {
-	return  sAnimMoveIndex == MOVE_COREENFORCER;
+	return sAnimMoveIndex == MOVE_COREENFORCER;
+}
+
+bool8 IsAnimMoveBulletSeed(void)
+{
+	return sAnimMoveIndex == MOVE_BULLETSEED;
 }
 
 void AnimTask_ReloadAttackerSprite(u8 taskId)

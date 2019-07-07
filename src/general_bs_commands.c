@@ -374,8 +374,9 @@ void atk0C_datahpupdate(void) {
 				gBattleMons[gActiveBattler].hp -= gBattleMoveDamage;
 				if (gBattleMons[gActiveBattler].hp > gBattleMons[gActiveBattler].maxHP)
 					gBattleMons[gActiveBattler].hp = gBattleMons[gActiveBattler].maxHP;
+					
+				gHitMarker &= ~(HITMARKER_IGNORE_SUBSTITUTE);
 			}
-
 			else //HP goes down
 			{
 				if (gHitMarker & HITMARKER_x20)
@@ -645,7 +646,7 @@ void atk19_tryfaintmon(void)
 	if (gBattlescriptCurrInstr[2] != 0)
 	{
 		gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
-		if (gHitMarker & HITMARKER_FAINTED(gActiveBattler))
+		if (gHitMarker & HITMARKER_FAINTED(gActiveBattler) && gNewBS->endTurnDone) //To prevent things like Whirlwind from activating this
 		{
 			BS_ptr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
 
@@ -873,7 +874,7 @@ void atk1B_cleareffectsonfaint(void) {
 			__attribute__ ((fallthrough));
 
 			case Faint_FormsRevert:
-				if (mon->backupSpecies)
+				if (mon->backupSpecies != SPECIES_NONE && mon->backupSpecies < NUM_SPECIES)
 				{
 					EmitSetMonData(0, REQUEST_SPECIES_BATTLE, 0, 2, &mon->backupSpecies);
 					MarkBufferBankForExecution(gActiveBattler);
@@ -1151,6 +1152,12 @@ void atk46_playanimation2(void) // animation Id is stored in the first pointer
 	}
 }
 
+static void UpdateMoveStartValuesForCalledMove(void)
+{
+	gBattleStruct->atkCancellerTracker = CANCELLER_GRAVITY_2;
+	gBattleStruct->dynamicMoveType = GetMoveTypeSpecial(gBankAttacker, gCurrentMove);
+}
+
 void atk63_jumptocalledmove(void)
 {
 	if (gBattlescriptCurrInstr[1])
@@ -1159,7 +1166,8 @@ void atk63_jumptocalledmove(void)
 		gChosenMove = gCurrentMove = gRandomMove;
 
 	if (gBattlescriptCurrInstr[1] != 0xFF)
-		gBattleStruct->atkCancellerTracker = CANCELLER_GRAVITY_2;
+		UpdateMoveStartValuesForCalledMove();
+
 	gBattlescriptCurrInstr = gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect];
 }
 
@@ -1418,7 +1426,7 @@ void atk7C_trymirrormove(void)
 		gHitMarker &= ~(HITMARKER_ATTACKSTRING_PRINTED);
 		gCurrentMove = move;
 		gBankTarget = GetMoveTarget(gCurrentMove, 0);
-		gBattleStruct->atkCancellerTracker = CANCELLER_GRAVITY_2;
+		UpdateMoveStartValuesForCalledMove();
 		gBattlescriptCurrInstr = gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect];
 	}
 	else if (validMovesCount)
@@ -1427,7 +1435,7 @@ void atk7C_trymirrormove(void)
 		i = umodsi(Random(), validMovesCount);
 		gCurrentMove = movesArray[i];
 		gBankTarget = GetMoveTarget(gCurrentMove, 0);
-		gBattleStruct->atkCancellerTracker = CANCELLER_GRAVITY_2;
+		UpdateMoveStartValuesForCalledMove();
 		gBattlescriptCurrInstr = gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect];
 	}
 	else
@@ -2221,7 +2229,7 @@ void atk9E_metronome(void)
 			continue;
 
 		gHitMarker &= ~(HITMARKER_ATTACKSTRING_PRINTED);
-		gBattleStruct->atkCancellerTracker = CANCELLER_GRAVITY_2;
+		UpdateMoveStartValuesForCalledMove();
 		gBattlescriptCurrInstr = gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect];
 		gBankTarget = GetMoveTarget(gCurrentMove, 0);
 		return;
@@ -2854,7 +2862,7 @@ void atkBA_jumpifnopursuitswitchdmg(void) {
 		gCurrentMove = MOVE_PURSUIT;
 		gBattlescriptCurrInstr += 5;
 		gBattleScripting->animTurn = 1;
-		gHitMarker &= ~(HITMARKER_ATTACKSTRING_PRINTED);
+		gHitMarker &= ~(HITMARKER_ATTACKSTRING_PRINTED | HITMARKER_NO_ATTACKSTRING);
 	}
 	else
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
@@ -3181,7 +3189,7 @@ void atkCC_callterrainattack(void) { //nature power
 	gCurrentMove = GetNaturePowerMove();
 
 	gBankTarget = GetMoveTarget(gCurrentMove, 0);
-	gBattleStruct->atkCancellerTracker = CANCELLER_GRAVITY_2;
+	UpdateMoveStartValuesForCalledMove();
 	BattleScriptPush(gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect]);
 	gBattlescriptCurrInstr++;
 }

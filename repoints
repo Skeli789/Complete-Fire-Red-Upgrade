@@ -136,10 +136,12 @@ pcSelect_OperationsTable 0808fce4
 ## Expanded Text Buffers
 sScriptStringVars 0806bcc0
 sScriptStringVars 0806bd08
-sScriptStringVars 0806bd54
+sScriptStringVars 0806bd58
 sScriptStringVars 0806bd8c
 sScriptStringVars 0806be88
 sScriptStringVars 0806bed0
 sScriptStringVars 0806bf0c
 sScriptStringVars 0806bf38
 
+
+CheckHasSpeciesJump 803FDEC

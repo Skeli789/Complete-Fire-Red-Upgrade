@@ -4,6 +4,7 @@
 #include "../include/new/battle_terrain.h"
 #include "../include/new/form_change.h"
 #include "../include/new/helper_functions.h"
+#include "../include/new/set_z_effect.h"
 
 const species_t gMiniorCores[] =
 {
@@ -339,7 +340,8 @@ void HoldItemFormChange(struct Pokemon* mon, u16 item)
 		case SPECIES_ARCEUS_FAIRY:
 			if (ability == ABILITY_MULTITYPE) //Only transform if set with proper ability
 			{
-				if (itemEffect == ITEM_EFFECT_PLATE)
+				if (itemEffect == ITEM_EFFECT_PLATE
+				|| (itemEffect == ITEM_EFFECT_Z_CRYSTAL && !IsSpecialZCrystal(item)))
 					targetSpecies = sTypeToArceusForm[type];
 
 				if (targetSpecies == SPECIES_NONE)

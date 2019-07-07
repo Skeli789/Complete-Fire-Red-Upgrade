@@ -55,7 +55,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 move, const
 	u8 defGender = GetGenderFromSpeciesAndPersonality(defSpecies, gBattleMons[bankDef].personality);
 
 	u8 moveEffect = gBattleMoves[move].effect;
-	u8 moveSplit = SPLIT(move);
+	u8 moveSplit = CalcMoveSplit(bankAtk, move);
 	u8 moveTarget = gBattleMoves[move].target;
 	u8 moveType = GetMoveTypeSpecial(bankAtk, move);
 	u8 moveFlags = gBattleMoves[move].flags;
@@ -282,6 +282,16 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 move, const
 				if (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_SUN_ANY)
 				&& CheckTableForMoveEffect(move, SetStatusTable))
 					return viability - 10;
+				break;
+
+			#ifndef OLD_PRANKSTER
+			case ABILITY_PRANKSTER:
+				if (IsOfType(bankDef, TYPE_DARK)
+				&& moveSplit == SPLIT_STATUS
+				&& !(moveTarget & (MOVE_TARGET_OPPONENTS_FIELD | MOVE_TARGET_USER))) //Directly strikes target
+					return viability -= 10;
+				break;
+			#endif
 		}
 		
 		//Target Partner Ability Check
@@ -927,7 +937,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 move, const
 			}
 			else if (predictedMove == MOVE_NONE)
 				viability -= 10;
-			break;
+			goto AI_SUBSTITUTE_CHECK;
 		
 		case EFFECT_METRONOME:
 			break;
@@ -2151,7 +2161,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 move, const
 			default: //Sky Drop
 				if (WillFaintFromWeatherSoon(bankAtk)
 				||  MoveBlockedBySubstitute(move, bankAtk, bankDef)
-				||  GetActualSpeciesWeight(defAbility, defEffect, bankDef, TRUE) >= 2000) //200.0 kg
+				||  GetActualSpeciesWeight(defSpecies, defAbility, defEffect, bankDef, TRUE) >= 2000) //200.0 kg
 					viability -= 10;
 				else
 					goto AI_STANDARD_DAMAGE;

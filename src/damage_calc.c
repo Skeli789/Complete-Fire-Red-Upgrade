@@ -4,6 +4,7 @@
 #include "../include/pokedex.h"
 #include "../include/random.h"
 #include "../include/constants/items.h"
+#include "../include/constants/pokedex.h"
 
 #include "../include/new/accuracy_calc.h"
 #include "../include/new/battle_start_turn_start.h"
@@ -1524,8 +1525,8 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 				break;
 
 			case ITEM_EFFECT_LIGHT_BALL:
-				if (mon == SPECIES_PIKACHU) {
-					attack *=2 ;
+				if (SpeciesToNationalPokedexNum(mon) == NATIONAL_DEX_PIKACHU) {
+					attack *= 2;
 					spAttack *= 2;
 				}
 				break;
@@ -2118,8 +2119,7 @@ u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 
 		case MOVE_ROUND:
 			if (!menuCheck
 			&& !PartyCheck
-			&& gNewBS->LastUsedMove == MOVE_ROUND
-			&& !IsFirstAttacker(bankAtk))
+			&& gNewBS->roundUsed)
 				power *= 2;
 			break;
 
@@ -2227,7 +2227,7 @@ u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 
 		case MOVE_GRASSKNOT:	;
 			if (!ignoreDef)
 			{
-				u32 weight = GetActualSpeciesWeight(ABILITY(bankDef), ITEM_EFFECT(bankDef), bankDef, TRUE) / 10;
+				u32 weight = GetActualSpeciesWeight(SPECIES(bankDef), ABILITY(bankDef), ITEM_EFFECT(bankDef), bankDef, TRUE) / 10;
 
 				if (weight >= 200)
 					power = 120;
@@ -2250,10 +2250,15 @@ u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 
 			{
 				u32 atkWeight, defWeight, weightRatio;
 
-				defWeight = GetActualSpeciesWeight(ABILITY(bankDef), ITEM_EFFECT(bankDef), bankDef, TRUE);
-				atkWeight = GetActualSpeciesWeight(ability, item_effect, bankAtk, !PartyCheck);
+				defWeight = GetActualSpeciesWeight(SPECIES(bankDef), ABILITY(bankDef), ITEM_EFFECT(bankDef), bankDef, TRUE);
+				
+				if (PartyCheck)
+					atkWeight = GetActualSpeciesWeight(party_data_atk->species, ability, item_effect, bankAtk, FALSE);
+				else
+					atkWeight = GetActualSpeciesWeight(SPECIES(bankAtk), ability, item_effect, bankAtk, TRUE);
 
 				weightRatio = udivsi(atkWeight, defWeight);
+
 				switch (weightRatio) {
 					case 0:
 					case 1:
@@ -2808,11 +2813,11 @@ static u32 AdjustWeight(u32 weight, u8 ability, u8 item_effect, u8 bank, bool8 c
 	return weight;
 }
 
-u32 GetActualSpeciesWeight(u8 ability, u8 itemEffect, u8 bank, bool8 checkNimble)
+u32 GetActualSpeciesWeight(u16 species, u8 ability, u8 itemEffect, u8 bank, bool8 checkNimble)
 {
-	u32 weight = TryGetAlternateSpeciesSize(bank, PKDX_GET_WEIGHT); //Eg. Mega Form
+	u32 weight = TryGetAlternateSpeciesSize(species, PKDX_GET_WEIGHT); //Eg. Mega Form
 	if (weight == 0)
-		weight = GetPokedexHeightWeight(SpeciesToNationalPokedexNum(bank), 1);
+		weight = GetPokedexHeightWeight(SpeciesToNationalPokedexNum(species), 1);
 
 	return AdjustWeight(weight, ability, itemEffect, bank, checkNimble);
 }

@@ -30,6 +30,7 @@ bool8 IsPredictedToSwitch(u8 bankAtk, u8 bankDef);
 void StoreMovePrediction(u8 bankAtk, u8 bankDef, u16 move);
 bool8 IsMovePredictionSemiInvulnerable(u8 bankAtk, u8 bankDef);
 bool8 IsMovePredictionHealingMove(u8 bankAtk, u8 bankDef);
+bool8 IsPredictedToUsePursuitableMove(u8 bankAtk, u8 bankDef);
 
 bool8 DamagingMoveInMoveset(u8 bank);
 bool8 PhysicalMoveInMoveset(u8 bank);

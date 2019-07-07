@@ -117,6 +117,7 @@ struct ChooseMoveStruct
 	u8 megaVariance;
 	bool8 zMoveUsed : 1;
 	bool8 megaDone : 1;
+	bool8 ultraDone : 1;
 	bool8 bank : 8;
 	u16 possibleZMoves[MAX_MON_MOVES];
 };

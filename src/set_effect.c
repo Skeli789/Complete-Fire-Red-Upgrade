@@ -812,7 +812,7 @@ bool8 SetMoveEffect2(void)
             {
                 gLastUsedAbility = ABILITY_STICKYHOLD;
                 gBattlescriptCurrInstr = BattleScript_StickyHoldActivatesRet;
-                RecordAbilityBattle(gEffectBank, gLastUsedAbility);
+                gBattleScripting->bank = gEffectBank;
 				effect = TRUE;
             }
             else

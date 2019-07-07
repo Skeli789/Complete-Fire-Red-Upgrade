@@ -74,7 +74,9 @@ static bool8 FindMonThatAbsorbsOpponentsMove(void);
 static bool8 ShouldSwitchIfNaturalCureOrRegenerator(void);
 static bool8 PassOnWish(void);
 static bool8 SemiInvulnerableTroll(void);
-static bool8 TheCalcForSemiInvulnerableTroll(u8 bankAtk, u8 flags, bool8 JustCheckLockedMoves);
+static u8 GetBestPartyNumberForSemiInvulnerableLockedMoveCalcs(u8 opposingBattler1, u8 opposingBattler2, bool8 checkLockedMoves);
+static bool8 RunAllSemiInvulnerableLockedMoveCalcs(u8 opposingBattler1, u8 opposingBattler2, bool8 checkLockedMoves);
+static bool8 TheCalcForSemiInvulnerableTroll(u8 bankAtk, u8 flags, bool8 checkLockedMoves);
 static bool8 CanStopLockedMove(void);
 static bool8 IsYawned(void);
 static bool8 IsTakingAnnoyingSecondaryDamage(void);
@@ -647,19 +649,60 @@ static bool8 SemiInvulnerableTroll(void)
 	else if (!(gStatuses3[opposingBattler1] & STATUS3_SEMI_INVULNERABLE))
 		return FALSE;
 	
-	if (TheCalcForSemiInvulnerableTroll(opposingBattler1, MOVE_RESULT_DOESNT_AFFECT_FOE, FALSE))
-		return TRUE;
-	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && TheCalcForSemiInvulnerableTroll(opposingBattler2, MOVE_RESULT_DOESNT_AFFECT_FOE, FALSE))
-		return TRUE;
-	if (TheCalcForSemiInvulnerableTroll(opposingBattler1, MOVE_RESULT_NOT_VERY_EFFECTIVE, FALSE))
-		return TRUE;
-	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && TheCalcForSemiInvulnerableTroll(opposingBattler2, MOVE_RESULT_NOT_VERY_EFFECTIVE, FALSE))
+	if (RunAllSemiInvulnerableLockedMoveCalcs(opposingBattler1, opposingBattler2, FALSE))
 		return TRUE;
 	
 	return FALSE;
 }
 
-static bool8 TheCalcForSemiInvulnerableTroll(u8 bankAtk, u8 flags, bool8 JustCheckLockedMoves)
+static u8 GetBestPartyNumberForSemiInvulnerableLockedMoveCalcs(u8 opposingBattler1, u8 opposingBattler2, bool8 checkLockedMoves)
+{
+	u8 option1 = TheCalcForSemiInvulnerableTroll(opposingBattler1, MOVE_RESULT_DOESNT_AFFECT_FOE, checkLockedMoves);
+	if (option1 != PARTY_SIZE)
+	{
+		return option1;
+	}
+	
+	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	{
+		u8 option2 = TheCalcForSemiInvulnerableTroll(opposingBattler2, MOVE_RESULT_DOESNT_AFFECT_FOE, checkLockedMoves);
+		if (option2 != PARTY_SIZE)
+		{
+			return option2;
+		}	
+	}
+	
+	u8 option3 = TheCalcForSemiInvulnerableTroll(opposingBattler1, MOVE_RESULT_NOT_VERY_EFFECTIVE, checkLockedMoves);
+	if (option3 != PARTY_SIZE)
+	{
+		return option3;
+	}
+	
+	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	{
+		u8 option4 = TheCalcForSemiInvulnerableTroll(opposingBattler2, MOVE_RESULT_NOT_VERY_EFFECTIVE, checkLockedMoves);
+		if (option4 != PARTY_SIZE)
+		{
+			return option4;
+		}
+	}
+	
+	return PARTY_SIZE;
+}
+
+static bool8 RunAllSemiInvulnerableLockedMoveCalcs(u8 opposingBattler1, u8 opposingBattler2, bool8 checkLockedMoves)
+{
+	u8 option = GetBestPartyNumberForSemiInvulnerableLockedMoveCalcs(opposingBattler1, opposingBattler2, checkLockedMoves);
+	if (option != PARTY_SIZE)
+	{
+		gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = option;
+		EmitTwoReturnValues(1, ACTION_SWITCH, 0);
+	}
+
+	return FALSE;
+}
+
+static u8 TheCalcForSemiInvulnerableTroll(u8 bankAtk, u8 flags, bool8 checkLockedMoves)
 {
 	u8 firstId, lastId;
 	u8 battlerIn1, battlerIn2;
@@ -680,13 +723,17 @@ static bool8 TheCalcForSemiInvulnerableTroll(u8 bankAtk, u8 flags, bool8 JustChe
 	}
 	
 	pokemon_t* party = LoadPartyRange(gActiveBattler, &firstId, &lastId);
-	
-	if (((gStatuses3[bankAtk] & STATUS3_SEMI_INVULNERABLE) || (JustCheckLockedMoves && gLockedMoves[bankAtk])) 
+
+	if (((gStatuses3[bankAtk] & STATUS3_SEMI_INVULNERABLE) || (checkLockedMoves && gLockedMoves[bankAtk] != MOVE_NONE)) 
 	&&	gBattleStruct->moveTarget[bankAtk] == gActiveBattler)
 	{
-		if (TypeCalc(gLockedMoves[bankAtk], bankAtk, gActiveBattler, NULL, FALSE) & flags)
-			return FALSE;
-			
+		u8 newFlags = TypeCalc(gLockedMoves[bankAtk], bankAtk, gActiveBattler, NULL, FALSE);
+		if (BATTLER_ALIVE(gActiveBattler)) //Not end turn switch
+		{
+			if (newFlags & flags) //Target already has these type flags so why switch?
+				return PARTY_SIZE;
+		}
+
 		for (i = firstId; i < lastId; ++i)
 		{
 			if (party[i].hp == 0
@@ -700,13 +747,12 @@ static bool8 TheCalcForSemiInvulnerableTroll(u8 bankAtk, u8 flags, bool8 JustChe
 
 			if (AI_TypeCalc(gLockedMoves[bankAtk], bankAtk, &party[i]) & flags)
 			{
-				gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = i;
-				EmitTwoReturnValues(1, ACTION_SWITCH, 0);
-				return TRUE;
+				return i;
 			}
 		}
 	}
-	return FALSE;
+
+	return PARTY_SIZE;
 }
 
 static bool8 CanStopLockedMove(void)
@@ -735,16 +781,10 @@ static bool8 CanStopLockedMove(void)
 	}
 	else if (!(gLockedMoves[opposingBattler1] && SPLIT(gLockedMoves[opposingBattler1]) != SPLIT_STATUS))
 		return FALSE;
-		
-	if (TheCalcForSemiInvulnerableTroll(opposingBattler1, MOVE_RESULT_DOESNT_AFFECT_FOE, TRUE))
-		return TRUE;
-	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && TheCalcForSemiInvulnerableTroll(opposingBattler2, MOVE_RESULT_DOESNT_AFFECT_FOE, TRUE))
-		return TRUE;
-	if (TheCalcForSemiInvulnerableTroll(opposingBattler1, MOVE_RESULT_NOT_VERY_EFFECTIVE, TRUE))
-		return TRUE;
-	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && TheCalcForSemiInvulnerableTroll(opposingBattler2, MOVE_RESULT_NOT_VERY_EFFECTIVE, TRUE))
-		return TRUE;
 	
+	if (RunAllSemiInvulnerableLockedMoveCalcs(opposingBattler1, opposingBattler2, TRUE))
+		return TRUE;
+
 	return FALSE;
 }
 
@@ -1041,7 +1081,12 @@ u8 GetMostSuitableMonToSwitchInto(void)
 		bestDmg = 0;
 		bestMonId = PARTY_SIZE;
 		
-		// Find the mon whose type is the most suitable offensively.
+		//Try to counter a locked move
+		u8 option = GetBestPartyNumberForSemiInvulnerableLockedMoveCalcs(opposingBattler, opposingBattler, TRUE);
+		if (option != PARTY_SIZE)
+			return option;
+
+		//Find the mon whose type is the most suitable offensively.
 		for (i = firstId; i < lastId; i++)
 		{
 			u16 species = party[i].species;
@@ -1159,15 +1204,20 @@ static void PredictMovesForBanks(void)
 			if (bankAtk == bankDef) continue;
 			
 			if (gBattleMons[bankAtk].status2 & STATUS2_RECHARGE
-			||  gDisableStructs[bankAtk].truantCounter != 0
-			|| (!MoveEffectInMoveset(EFFECT_SLEEP_TALK, bankAtk) && !MoveEffectInMoveset(EFFECT_SNORE, bankAtk) 
-					&& gBattleMons[bankAtk].status1 & STATUS1_SLEEP && (gBattleMons[bankAtk].status1 & STATUS1_SLEEP) > 1)) //Check sleeping and can't use move
+			||  gDisableStructs[bankAtk].truantCounter != 0)
+			{
+				StoreMovePrediction(bankAtk, bankDef, MOVE_NONE);
+			}
+			else if (gBattleMons[bankAtk].status1 & STATUS1_SLEEP && gBattleMons[bankAtk].status1 > 1 //No attacking while asleep
+			&& !MoveEffectInMoveset(EFFECT_SLEEP_TALK, bankAtk) && !MoveEffectInMoveset(EFFECT_SNORE, bankAtk))
 			{
 				StoreMovePrediction(bankAtk, bankDef, MOVE_NONE);
 			}
 			else if (gBattleMons[bankAtk].status2 & STATUS2_MULTIPLETURNS
 			&& FindMovePositionInMoveset(gLockedMoves[bankAtk], bankAtk) < 4)
+			{
 				StoreMovePrediction(bankAtk, bankDef, gLockedMoves[bankAtk]);
+			}
 			else
 			{	
 				u32 backupFlags = AI_THINKING_STRUCT->aiFlags; //Backup flags so killing in negatives is ignored

@@ -315,12 +315,22 @@ u16 GetMaxBattleTowerStreakForTier(u8 tier)
 	return max;
 }
 
+static u8 AdjustLevelForTier(u8 level, u8 tier)
+{
+	if (tier == BATTLE_TOWER_LITTLE_CUP)
+		return 5;
+
+	return level;
+}
+
 u16 GetBattleTowerStreak(u8 currentOrMax, u16 inputBattleStyle, u16 inputTier, u16 partySize, u8 level)
 {
 	u8 battleStyle = (inputBattleStyle == 0xFFFF) ? VarGet(BATTLE_TOWER_BATTLE_TYPE) : inputBattleStyle;
 	u8 tier = (inputTier == 0xFFFF) ? VarGet(BATTLE_TOWER_TIER) : inputTier;
 	u8 size = (partySize == 0xFFFF) ? VarGet(BATTLE_TOWER_POKE_NUM) : partySize;	
 	level = (level == 0) ? VarGet(BATTLE_TOWER_POKE_LEVEL) : level;
+	level = AdjustLevelForTier(level, tier);
+	
 	LoadProperStreakData(&currentOrMax, &battleStyle, &tier, &size, &level);
 
 	return gBattleTowerStreaks[battleStyle][tier][size][level][currentOrMax];
@@ -336,7 +346,7 @@ void sp055_UpdateBattleTowerStreak(void)
 	u8 battleStyle = VarGet(BATTLE_TOWER_BATTLE_TYPE);
 	u8 tier = VarGet(BATTLE_TOWER_TIER);
 	u8 partySize = VarGet(BATTLE_TOWER_POKE_NUM);
-	u8 level = VarGet(BATTLE_TOWER_POKE_LEVEL);
+	u8 level = AdjustLevelForTier(VarGet(BATTLE_TOWER_POKE_LEVEL), tier);
 	LoadProperStreakData(&dummy, &battleStyle, &tier, &partySize, &level);
 
 	u16* currentStreak = &gBattleTowerStreaks[battleStyle][tier][partySize][level][CURR_STREAK]; //Current Streak
@@ -386,7 +396,7 @@ u16 sp056_DetermineBattlePointsToGive(void)
 		if (VarGet(BATTLE_TOWER_TIER) == BATTLE_TOWER_STANDARD)
 			toGive = 50; //Battle against frontier brain
 		else
-			toGive = 3; //Just a special trainer
+			toGive = 6; //Just a special trainer
 	}
 	else
 		toGive = 7;
