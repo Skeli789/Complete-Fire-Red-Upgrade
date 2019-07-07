@@ -183,6 +183,7 @@ u8 TurnBasedEffects(void)
 				gNewBS->NoMoreMovingThisTurn = 0;
 				gNewBS->fusionFlareUsedPrior = FALSE;
 				gNewBS->fusionBoltUsedPrior = FALSE;
+				gNewBS->roundUsed = FALSE;
 					
 				++gBattleStruct->turnEffectsTracker;
 			__attribute__ ((fallthrough));
@@ -525,7 +526,7 @@ u8 TurnBasedEffects(void)
 					{
 						if (!BATTLER_MAX_HP(gActiveBattler) && !gNewBS->HealBlockTimers[gActiveBattler])
 						{
-							gBattleMoveDamage = MathMax(1, gBattleMons[gActiveBattler].maxHP / 8) * -1;
+							gBattleMoveDamage *= -1;
 							gBattleScripting->bank = gActiveBattler;
 							BattleScriptExecute(BattleScript_PoisonHeal);
 						}
@@ -1335,6 +1336,8 @@ u32 GetPoisonDamage(u8 bank)
 			damage *= (gBattleMons[gActiveBattler].status1 & 0xF00) >> 8;
 		}
 	}
+	else if (ability == ABILITY_POISONHEAL)
+		damage = MathMax(1, gBattleMons[bank].maxHP / 8);
 	
 	return damage;
 }

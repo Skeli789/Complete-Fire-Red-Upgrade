@@ -217,10 +217,14 @@ static bool8 AccuracyCalcHelper(u16 move) {
 		doneStatus = TRUE;
     }
 	
-    else if (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_RAIN_ANY) && CheckTableForMove(move, AlwaysHitRainTable))
+    else if (WEATHER_HAS_EFFECT)
 	{
-		JumpIfMoveFailed(7, move);
-		doneStatus = TRUE;
+		if (((gBattleWeather & WEATHER_RAIN_ANY) && CheckTableForMove(move, AlwaysHitRainTable))
+		||  ((gBattleWeather & WEATHER_HAIL_ANY) && move == MOVE_BLIZZARD))
+		{
+			JumpIfMoveFailed(7, move);
+			doneStatus = TRUE;
+		}
     }
 	
     gHitMarker &= ~(HITMARKER_IGNORE_IN_AIR | HITMARKER_IGNORE_UNDERGROUND | HITMARKER_IGNORE_UNDERWATER);
@@ -380,6 +384,13 @@ u32 AccuracyCalcNoTarget(u16 move, u8 bankAtk) {
 		
 		if (gNewBS->MicleBerryBits & (1 << bankAtk))
 			calc = udivsi(calc * 120, 100); // 1.2 Micle Berry Boost
+			
+		if (WEATHER_HAS_EFFECT)
+		{
+			if (((gBattleWeather & WEATHER_RAIN_ANY) && CheckTableForMove(move, AlwaysHitRainTable))
+			||  ((gBattleWeather & WEATHER_HAIL_ANY) && move == MOVE_BLIZZARD))
+				calc = 0; //No Miss
+		}
 			
 	return calc;
 }

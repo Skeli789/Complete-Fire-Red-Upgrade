@@ -181,6 +181,16 @@ void sp067_GenerateRandomBattleTowerTeam(void)
 	VarSet(BATTLE_TOWER_TIER, tier);
 	BuildFrontierParty(gPlayerParty, 0, tier, TRUE, TRUE, B_SIDE_PLAYER);
 	
+	
+//////
+	/*for (u32 i = TOTAL_SPREADS / 2; i < TOTAL_SPREADS; ++i)
+	{	
+		struct Pokemon mon;
+		const struct BattleTowerSpread* spread = TryAdjustSpreadForSpecies(&gFrontierSpreads[i]);
+		*((u16*) 0x2023D6C) = spread->species;
+		CreateFrontierMon(&mon, 50, spread, 0, 0, 0, TRUE);
+		GiveMonToPlayer(&mon);
+	}*/
 	/*for (int i = 0; i < ITEMS_COUNT; ++i)
 	{
 		u8* name = ItemId_GetName(i);
@@ -705,7 +715,8 @@ static void CreateFrontierMon(struct Pokemon* mon, const u8 level, const struct 
 	{
 		CreateMon(mon, species, level, 0, TRUE, 0, OT_ID_PRESET, Random32());
 
-		CopyFrontierTrainerName((u8*) mon->otname, trainerId, trainerNum);
+		CopyFrontierTrainerName(gStringVar1, trainerId, trainerNum);
+		SetMonData(mon, MON_DATA_OT_NAME, gStringVar1);
 		mon->otGender = trainerGender;
 	}
 
@@ -1009,7 +1020,8 @@ static bool8 IsPokemonBannedBasedOnStreak(u16 species, u16 item, u16* speciesArr
 		}
 		else if (streak < 50)
 		{
-			if (BaseStatsTotalGEAlreadyOnTeam(570, monsCount, speciesArray))
+			if (GetBaseStatsTotal(species) >= 570
+			&& BaseStatsTotalGEAlreadyOnTeam(570, monsCount, speciesArray))
 				return TRUE;
 		}
 	}
@@ -1369,17 +1381,18 @@ void CreateBoxMon(struct BoxPokemon* boxMon, u16 species, u8 level, u8 fixedIV, 
 
     GetSpeciesName(speciesName, species);
     SetBoxMonData(boxMon, MON_DATA_NICKNAME, speciesName);
-    ((struct Pokemon*) boxMon)->language = gGameLanguage;
+    SetBoxMonData(boxMon, MON_DATA_LANGUAGE, &gGameLanguage);
     SetBoxMonData(boxMon, MON_DATA_OT_NAME, gSaveBlock2->playerName);
-    ((struct Pokemon*) boxMon)->species  = species;
-    ((struct Pokemon*) boxMon)->experience = gExperienceTables[gBaseStats[species].growthRate][level];
+    SetBoxMonData(boxMon, MON_DATA_SPECIES, &species);
+    SetBoxMonData(boxMon, MON_DATA_EXP, &gExperienceTables[gBaseStats[species].growthRate][level]);
     SetBoxMonData(boxMon, MON_DATA_FRIENDSHIP, &gBaseStats[species].friendship);
-    ((struct Pokemon*) boxMon)->metLocation = GetCurrentRegionMapSectionId();
-    ((struct Pokemon*) boxMon)->metLevel = level;
-    ((struct Pokemon*) boxMon)->metGame = gGameVersion;
+    value = GetCurrentRegionMapSectionId();
+    SetBoxMonData(boxMon, MON_DATA_MET_LOCATION, &value);
+    SetBoxMonData(boxMon, MON_DATA_MET_LEVEL, &level);
+    SetBoxMonData(boxMon, MON_DATA_MET_GAME, &gGameVersion);
     value = BALL_TYPE_POKE_BALL;
     SetBoxMonData(boxMon, MON_DATA_POKEBALL, &value);
-    ((struct Pokemon*) boxMon)->otGender = gSaveBlock2->playerGender;
+    SetBoxMonData(boxMon, MON_DATA_OT_GENDER, &gSaveBlock2->playerGender);
 
     if (fixedIV < 32)
     {
@@ -1467,4 +1480,9 @@ void TryStatusInducer(struct Pokemon* mon)
 		u8 status = VarGet(STATUS_INDUCER_VAR) & 0xFF; //Lowest byte is status
 		mon->condition = status;
 	}
+}
+
+bool8 GetAlternateHasSpecies(struct BoxPokemon* mon)
+{
+	return GetBoxMonData(mon, MON_DATA_SPECIES, NULL) != SPECIES_NONE;
 }

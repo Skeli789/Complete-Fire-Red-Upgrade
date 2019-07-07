@@ -61,9 +61,6 @@ bool8 CheckTableForItem(u16 item, const u16 table[]) {
 }	
 
 ability_t BanksAbility(bank_t bank) {
-	if (!BATTLER_ALIVE(bank))
-		return ABILITY_NONE;
-
 	if (gStatuses3[bank] & STATUS3_ABILITY_SUPPRESS)
 		return ABILITY_NONE;
 
@@ -696,7 +693,7 @@ bool8 IsFirstAttacker(u8 bank) {
 
 bool8 CanTransferItem(u16 species, u16 item, pokemon_t* party_data) {
 	u16 dexNum = SpeciesToNationalPokedexNum(species);
-	item_effect_t effect = gItems[SanitizeItemId(item)].holdEffect;
+	u8 effect = ItemId_GetHoldEffect(item);
 	u8 quality = ItemId_GetHoldEffectParam(item);
 	const struct Evolution* evolutions = gEvolutionTable[party_data->species];
 	int i;

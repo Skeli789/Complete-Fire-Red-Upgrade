@@ -91,4 +91,4 @@ void TransferLastUsedItem(void);
 void TryToStopNewMonFromSwitchingInAfterSRHurt(void);
 void ClearSwitchInEffectsTracker(void);
 void UpdatePrimalAbility(void);
-
+void ClearAttackerDidDamageOnce(void);

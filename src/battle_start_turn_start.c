@@ -544,7 +544,7 @@ void RunTurnActionsFunctions(void)
 		}
 		
 		//Ofiically this goes before the Mega, but I think this is better.
-		u8 atkBank = gBanksByTurnOrder[gCurrentTurnActionNumber];
+		u8 atkBank = gBanksByTurnOrder[gCurrentTurnActionNumber];		
 		if (gNewBS->CustapQuickClawIndicator & gBitTable[atkBank]) 
 		{
 			gNewBS->CustapQuickClawIndicator &= ~(gBitTable[atkBank]);
@@ -822,7 +822,8 @@ void HandleAction_UseMove(void)
 		gBattlescriptCurrInstr = BattleScript_NoTargetMoveFailed;
 	}
 	else if (gBattleMons[gBankTarget].hp == 0
-	&&  AttacksThisTurn(gBankAttacker, gCurrentMove) == 2) //Not charging move
+	&&  AttacksThisTurn(gBankAttacker, gCurrentMove) == 2 //Not charging move
+	&&  !(gBattleMoves[gCurrentMove].target & MOVE_TARGET_OPPONENTS_FIELD)) //Moves like Stealth Rock can still be used
 		gBattlescriptCurrInstr = BattleScript_NoTargetMoveFailed;
 	else
 		gBattlescriptCurrInstr = gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect];
@@ -1093,8 +1094,9 @@ s32 BracketCalc(u8 bank)
 	{
 		switch (itemEffect) {
 			case ITEM_EFFECT_QUICK_CLAW:
-				if (gRandomTurnNumber % 100 < itemQuality)
+				if (gRandomTurnNumber % 100 < itemQuality/* && !(gNewBS->activatedCustapQuickClaw & gBitTable[bank])*/)
 				{
+					//gNewBS->activatedCustapQuickClaw |= gBitTable[bank];
 					gNewBS->CustapQuickClawIndicator |= gBitTable[bank];
 					return 1;
 				}

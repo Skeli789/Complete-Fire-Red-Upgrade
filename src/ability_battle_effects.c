@@ -381,6 +381,24 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			}
 		}
 	#endif
+	
+	if (gNewBS->skipCertainSwitchInAbilities)
+	{
+		gNewBS->skipCertainSwitchInAbilities = FALSE;
+		
+		switch (gLastUsedAbility) {
+			case ABILITY_INTIMIDATE:
+			case ABILITY_DOWNLOAD:
+			case ABILITY_FOREWARN:
+			case ABILITY_IMPOSTER:
+			case ABILITY_ANTICIPATION:
+			case ABILITY_FRISK:
+				gStatuses3[bank] |= STATUS3_SWITCH_IN_ABILITY_DONE;
+				break;
+			case ABILITY_TRACE: //Trace is the only ability that activates after a U-Turn + faint switch-in
+				return FALSE;
+		}
+	}
 
     switch (caseID)
     {
@@ -554,6 +572,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			{
 				BattleScriptPushCursorAndCallback(BattleScript_IntimidateActivatesEnd3);
 				gBattleStruct->intimidateBank = bank;
+				gNewBS->intimidateActive = TRUE;
 				effect++;
 			}
             break;
@@ -1553,6 +1572,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			case ABILITY_WEAKARMOR:
 				if (MOVE_HAD_EFFECT
 				&& TOOK_DAMAGE(bank)
+				&& CalcMoveSplit(gBankAttacker, gCurrentMove) == SPLIT_PHYSICAL
 				&& gBattleMons[bank].hp
 				&& gBankAttacker != bank
 				&& (gBattleMons[bank].statStages[STAT_SPEED - 1] < 12 || gBattleMons[bank].statStages[STAT_DEF - 1] > 0))
@@ -2039,7 +2059,7 @@ static u8 ActivateWeatherAbility(u16 flags, u16 item, u8 bank, u8 animArg, u8 st
 		gWishFutureKnock->weatherDuration = 0;
 		++item; //So it compiles warning free
 	#else
-		gBattleWeather = flags;
+		gBattleWeather = (flags & ~(WEATHER_PERMANENT_ANY)); //Remove any weather permanence
 		if (ITEM_EFFECT(bank) == item)
 			gWishFutureKnock->weatherDuration = 8;
 		else
@@ -2532,8 +2552,8 @@ void AnimTask_LoadAbilityPopUp(u8 taskId)
         gSprites[spriteId2].tRightToLeft = FALSE;
     }
 
-	gNewBS->abilityPopUpIds[0] = spriteId1;
-	gNewBS->abilityPopUpIds[1] = spriteId2;
+	gNewBS->abilityPopUpIds[gBattleAnimAttacker][0] = spriteId1;
+	gNewBS->abilityPopUpIds[gBattleAnimAttacker][1] = spriteId2;
 	
     destroyerTaskId = CreateTask(Task_FreeAbilityPopUpGfx, 5);
     gTasks[destroyerTaskId].tSpriteId1 = spriteId1;
@@ -2587,8 +2607,10 @@ static void Task_FreeAbilityPopUpGfx(u8 taskId)
         && !gSprites[gTasks[taskId].tSpriteId2].inUse
         && !gNewBS->activeAbilityPopUps)
     {
-		gNewBS->abilityPopUpIds[0] = 0;
-		gNewBS->abilityPopUpIds[1] = 0;
+		u8 bank = gSprites[gTasks[taskId].tSpriteId1].tBattlerId;
+
+		gNewBS->abilityPopUpIds[bank][0] = 0;
+		gNewBS->abilityPopUpIds[bank][1] = 0;
         FreeSpriteTilesByTag(ANIM_TAG_ABILITY_POP_UP);
         FreeSpritePaletteByTag(ANIM_TAG_ABILITY_POP_UP);
         DestroyTask(taskId);
@@ -2597,8 +2619,8 @@ static void Task_FreeAbilityPopUpGfx(u8 taskId)
 
 void AnimTask_DestroyAbilityPopUp(u8 taskId)
 {
-	gSprites[gNewBS->abilityPopUpIds[0]].tFrames = 0;
-	gSprites[gNewBS->abilityPopUpIds[1]].tFrames = 0;
+	gSprites[gNewBS->abilityPopUpIds[gBattleAnimAttacker][0]].tFrames = 0;
+	gSprites[gNewBS->abilityPopUpIds[gBattleAnimAttacker][1]].tFrames = 0;
 	DestroyAnimVisualTask(taskId);
 }
 
@@ -2643,4 +2665,36 @@ void TransferAbilityPopUp(u8 bank, u8 ability)
 	
 	EmitDataTransfer(0, &AbilityPopUpHelper, 1, &AbilityPopUpHelper);
 	MarkBufferBankForExecution(gActiveBattler);
+}
+
+void TryRemoveIntimidateAbilityPopUp(void)
+{
+	if (gNewBS->intimidateActive > 0)
+	{
+		BattleScriptPushCursor();
+		gBattlescriptCurrInstr = BattleScript_AbilityPopUpRevert - 5;
+		gBattleScripting->bank = gNewBS->intimidateActive - 1;
+		gNewBS->intimidateActive = 0;
+	}
+}
+
+void RemoveIntimidateActive(void)
+{
+	gNewBS->intimidateActive = 0;
+}
+
+//Switch-in abilities that affect a knocked out target
+//after using U-Turn/Volt Switch are delayed until a 
+//new Pokemon is sent out.
+void SetSkipCertainSwitchInAbilities(void)
+{
+	if (BATTLER_ALIVE(FOE(gBankAttacker)))
+		return;
+		
+	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE
+	&& BATTLER_ALIVE(PARTNER(FOE(gBankAttacker))))
+		return;
+
+	//Only set the bit if no enemies are alive on the field
+	gNewBS->skipCertainSwitchInAbilities = TRUE;
 }

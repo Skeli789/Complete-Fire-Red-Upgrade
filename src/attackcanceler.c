@@ -40,9 +40,8 @@ void atk00_attackcanceler(void)
         return;
     }
 	
-	if (ABILITY(gBankAttacker) == ABILITY_MOLDBREAKER
-	||  ABILITY(gBankAttacker) == ABILITY_TERAVOLT
-	||  ABILITY(gBankAttacker) == ABILITY_TURBOBLAZE) {
+	if (!NO_MOLD_BREAKERS(ABILITY(gBankAttacker), gCurrentMove)) //There is a Mold Breaker 
+	{
 		for (int i = 0; i < gBattlersCount; ++i) {
 			if (i == gBankAttacker) continue;
 			
@@ -56,7 +55,8 @@ void atk00_attackcanceler(void)
     if (AtkCanceller_UnableToUseMove())
         return;
 	else if (gBattleMons[gBankTarget].hp == 0
-	&& AttacksThisTurn(gBankAttacker, gCurrentMove) == 2) //Not charging move
+	&& AttacksThisTurn(gBankAttacker, gCurrentMove) == 2 //Not charging move
+	&&  !(gBattleMoves[gCurrentMove].target & MOVE_TARGET_OPPONENTS_FIELD)) //Moves like Stealth Rock can still be used
 	{
 		gBattlescriptCurrInstr = BattleScript_ButItFailed - 2;
 		return;
@@ -414,6 +414,7 @@ static u8 AtkCanceller_UnableToUseMove(void)
                 gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
                 effect = 1;
             }
+
             gBattleStruct->atkCancellerTracker++;
             break;
 		

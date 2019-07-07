@@ -197,7 +197,7 @@ Attack rises when stats fall.
 Sp. Atk rises when stats fall.
 
 #org @DESC_DEFEATIST
-Stats fall when HP goes below half.
+Atk stats fall if HP below half.
 
 #org @DESC_SLOWSTART
 Temporarily halves Atk and Spd.
@@ -209,7 +209,7 @@ Attack rises when poisoned.
 Sp. Atk rises when burned.
 
 #org @DESC_FURCOAT
-Halves damage from physical moves.
+Half damage from physical moves.
 
 #org @DESC_WONDERSKIN
 Ups status move evasion.

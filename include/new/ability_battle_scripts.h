@@ -76,6 +76,8 @@ extern u8 BattleScript_DefiantCompetitive[];
 
 extern u8 BattleScript_PrimalWeatherEnd[];
 
+extern u8 BattleScript_AbilityPopUpRevert[];
+
 //Strings
 extern u8 gText_FogIsDeep[];
 extern u8 gText_SnowWarningActivate[];

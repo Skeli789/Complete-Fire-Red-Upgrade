@@ -619,6 +619,19 @@ bool8 IsMovePredictionHealingMove(u8 bankAtk, u8 bankDef)
 	return FALSE;
 }
 
+bool8 IsPredictedToUsePursuitableMove(u8 bankAtk, u8 bankDef)
+{
+	u16 move = IsValidMovePrediction(bankAtk, bankDef);
+
+	if (move != MOVE_NONE)
+	{
+		u8 effect = gBattleMoves[move].effect;
+		return effect == EFFECT_BATON_PASS && move != MOVE_BATONPASS;
+	}
+	
+	return FALSE;
+}
+
 bool8 DamagingMoveInMoveset(u8 bank)
 {
 	u16 move;

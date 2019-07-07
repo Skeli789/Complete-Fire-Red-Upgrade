@@ -453,8 +453,11 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			break;
 
 		case ATK49_ITEM_EFFECTS_END_TURN_TARGET:
-			if (ItemBattleEffects(ItemEffects_EndTurn, gBankTarget, TRUE, FALSE))
-                effect = TRUE;
+			if (!(CanKnockOffItem(gBankTarget) && gBattleMoves[gCurrentMove].effect == EFFECT_KNOCK_OFF)) //Don't activate items that should be knocked off
+			{
+				if (ItemBattleEffects(ItemEffects_EndTurn, gBankTarget, TRUE, FALSE))
+					effect = TRUE;
+			}
 			gBattleScripting->atk49_state++;
 			break;
 		
@@ -1018,7 +1021,8 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			break;
 			
 		case ATK49_RED_CARD:			
-			if (gBattleMoves[gCurrentMove].effect != EFFECT_ROAR)
+			if (gBattleMoves[gCurrentMove].effect != EFFECT_ROAR
+			&& BATTLER_ALIVE(gBankAttacker))
 			{
 				u8 banks[4] = {0, 1, 2, 3};
 				SortBanksBySpeed(banks, FALSE);
@@ -1026,7 +1030,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 				for (i = 0; i < gBattlersCount; ++i)
 				{
 					if (banks[i] != gBankAttacker
-					&&  gBattleMons[banks[i]].hp
+					&&  BATTLER_ALIVE(banks[i])
 					&&  !SheerForceCheck()
 					&&  ITEM_EFFECT(banks[i]) == ITEM_EFFECT_RED_CARD
 					&&  !(gNewBS->ResultFlags[banks[i]] & MOVE_RESULT_NO_EFFECT)

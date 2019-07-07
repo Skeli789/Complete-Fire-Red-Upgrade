@@ -536,7 +536,7 @@ void BattleSetup_StartTrainerBattle(void)
 {
 	if (FlagGet(BATTLE_TOWER_FLAG))
 	{
-		gBattleTypeFlags |= (BATTLE_TYPE_FRONTIER | BATTLE_TYPE_TRAINER);
+		gBattleTypeFlags = (BATTLE_TYPE_FRONTIER | BATTLE_TYPE_TRAINER);
 
 		switch (VarGet(BATTLE_TOWER_BATTLE_TYPE)) {
 			case BATTLE_TOWER_DOUBLE:

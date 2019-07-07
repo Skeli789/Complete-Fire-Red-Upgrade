@@ -155,6 +155,7 @@ IntimidateActivatesLoopIncrement:
 
 BattleScript_IntimidateActivatesReturn:
 	call BattleScript_AbilityPopUpRevert
+	callasm RemoveIntimidateActive
 	return
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -608,6 +609,7 @@ WeakArmorModDef:
 	waitmessage DELAY_1SECOND
 	
 WeakArmorModSpd:
+	jumpifstat BANK_TARGET EQUALS STAT_SPD STAT_MAX WeakArmorRevertPopUp
 	setstatchanger STAT_SPD | INCREASE_2
 	statbuffchange BANK_TARGET | STAT_CERTAIN WeakArmorRevertPopUp
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 WeakArmorRevertPopUp
@@ -816,6 +818,8 @@ BattleScript_DefiantCompetitiveCall:
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 DefiantReturn
 	pause DELAY_HALFSECOND
 	setbyte STAT_ANIM_PLAYED 0x0
+	callasm TryRemoveIntimidateAbilityPopUp
+	copybyte BATTLE_SCRIPTING_BANK TARGET_BANK
 	call BattleScript_AbilityPopUp
 	setgraphicalstatchangevalues
 	playanimation BANK_SCRIPTING ANIM_STAT_BUFF ANIM_ARG_1
@@ -841,8 +845,9 @@ BattleScript_SoulHeart:
 
 BattleScript_AbilityNoStatLoss:
 	pause 0x10
+	callasm TryRemoveIntimidateAbilityPopUp
+	copybyte BATTLE_SCRIPTING_BANK BATTLE_COMMUNICATION
 	call BattleScript_AbilityPopUp
-	copyarray BATTLE_SCRIPTING_BANK BATTLE_COMMUNICATION 0x1
 	printstring 0xCE
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
@@ -853,6 +858,9 @@ BattleScript_AbilityNoStatLoss:
 
 BattleScript_AbilityNoSpecificStatLoss:
 	pause 0x10
+	copybyte FORM_COUNTER BATTLE_SCRIPTING_BANK
+	callasm TryRemoveIntimidateAbilityPopUp
+	copybyte BATTLE_SCRIPTING_BANK FORM_COUNTER
 	call BattleScript_AbilityPopUp
 	printstring 0x135
 	waitmessage DELAY_1SECOND

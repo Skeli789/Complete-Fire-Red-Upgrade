@@ -175,6 +175,7 @@ typedef u8 Battle_Buffer_T[0x200];
 #define ShakerData (((u8*) 0x203F70C))
 #define ForceSwitchHelper (*((u8*) 0x203F70E))
 #define AbilityPopUpHelper (*((u8*) 0x203F70F))
+#define BackupHWord (*((u8*) 0x203F710))
 
 #define FIRST_NEW_BATTLE_RAM_LOC ((u8*) 0x203F700)
-#define LAST_NEW_BATTLE_RAM_LOC ((u8*) 0x203F710)
+#define LAST_NEW_BATTLE_RAM_LOC ((u8*) 0x203F712)

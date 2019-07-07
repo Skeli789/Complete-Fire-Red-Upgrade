@@ -249,7 +249,7 @@ WildDoubleTrySwitchOut:
 BattleScript_HandleFaintedMonDoublesInitial:
 	ifwildbattleend BattleScript_81D87B8
 	jumpifbyte NOTEQUALS BATTLE_OUTCOME 0 BattleScript_FaintedMonCancelSwitchIn
-	jumpifnoviablemonsleft BANK_TARGET BattleScript_FaintedMonCancelSwitchIn
+	jumpifnoviablemonsleft BANK_FAINTED BattleScript_FaintedMonCancelSwitchIn
 	openpartyscreen BANK_FAINTED BattleScript_FaintedMonCancelSwitchIn
 	switchhandleorder BANK_FAINTED 0x2
 	switch1 BANK_FAINTED

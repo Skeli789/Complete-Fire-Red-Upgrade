@@ -78,7 +78,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 move, const
 	u16 defSpAtk = gBattleMons[bankDef].spAttack;
 	u16 defSpDef = gBattleMons[bankDef].spDefense;	
 	
-	u8 moveSplit = SPLIT(move);
+	u8 moveSplit = CalcMoveSplit(bankAtk, move);
 
 	//Load Alternative targets
 	u8 foe1, foe2;
@@ -1052,9 +1052,13 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 move, const
 			break;
 		
 		case EFFECT_PURSUIT:
-			if (IsClassSweeper(class)
-			&& IsPredictedToSwitch(bankDef, bankAtk))
-				INCREASE_VIABILITY(3);
+			if (IsClassSweeper(class))
+			{
+				if (IsPredictedToSwitch(bankDef, bankAtk))
+					INCREASE_VIABILITY(3);
+				else if (IsPredictedToUsePursuitableMove(bankDef, bankAtk) && !MoveWouldHitFirst(move, bankAtk, bankDef)) //Pursuit against fast U-Turn
+					INCREASE_VIABILITY(3);
+			}
 			break;				
 		
 		case EFFECT_RAPID_SPIN:
@@ -1389,7 +1393,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 move, const
 					
 				case ITEM_EFFECT_BLACK_SLUDGE:
 					if (!IsOfType(bankDef, TYPE_POISON))
-						INCREASE_STATUS_VIABILITY(2);
+						INCREASE_STATUS_VIABILITY(3);
 					break;
 					
 				case ITEM_EFFECT_IRON_BALL:

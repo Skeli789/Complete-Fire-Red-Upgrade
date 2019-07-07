@@ -365,6 +365,7 @@ FlameBodyMagmaArmorEggHook 8046390 1
 
 ##Shiny Charm
 CreateBoxMonHook 803DAD2 0
+#CheckHasSpeciesHook 803FD94 0
 
 ##TM/HM Expansion
 CanMonLearnTMHM 08043C2C 2

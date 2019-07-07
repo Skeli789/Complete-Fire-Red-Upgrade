@@ -1143,7 +1143,7 @@ void atkFF28_jumpifweight(void)
     u16 value = T1_READ_16(gBattlescriptCurrInstr + 3);
 	const u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 5);
 
-	u32 weight = GetActualSpeciesWeight(ABILITY(bank), ITEM_EFFECT(bank), bank, TRUE);
+	u32 weight = GetActualSpeciesWeight(SPECIES(bank), ABILITY(bank), ITEM_EFFECT(bank), bank, TRUE);
 
     switch (predicate) {
 		case CMP_EQUAL:

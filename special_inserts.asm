@@ -146,7 +146,6 @@ MaxLevelChange4:
 MaxLevelChange5:
 	.byte MAX_LEVEL
 
-
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Hidden Abilities - Determine Ability Bit
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

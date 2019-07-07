@@ -372,6 +372,11 @@ void RoundBSFunction(void)
 	}
 }
 
+void SetRoundUsed(void)
+{
+	gNewBS->roundUsed = TRUE;
+}
+
 void EchoedVoiceFunc(void)
 {
 	switch (gNewBS->EchoedVoiceCounter) {
@@ -1590,4 +1595,9 @@ void ClearSwitchInEffectsTracker(void)
 void UpdatePrimalAbility(void)
 {
 	*GetAbilityLocation(gBankAttacker) = GetPartyAbility(GetBankPartyData(gBankAttacker));
+}
+
+void ClearAttackerDidDamageOnce(void)
+{
+	gNewBS->AttackerDidDamageAtLeastOnce = 0;
 }

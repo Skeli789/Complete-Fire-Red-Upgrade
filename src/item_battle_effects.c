@@ -611,7 +611,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
 		else
 			gBattleScripting->bank = bank = gBankTarget;
 		
-		if (SheerForceCheck())
+		if (SheerForceCheck() && bankHoldEffect != ITEM_EFFECT_AIR_BALLOON) //Air Balloon still pops
 			break;
 		
 		switch (bankHoldEffect) {
@@ -750,7 +750,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
 		break;
 	
 	case ItemEffects_ContactAttacker:
-		if (gBattleMoveDamage)
+		if (gBattleMoveDamage && !SheerForceCheck())
 		{
 			switch (atkHoldEffect)
 			{
