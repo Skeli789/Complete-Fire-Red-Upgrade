@@ -150,3 +150,8 @@ KeyboardKeyHandler_Character 083E23D0
 
 ##PSS Icons
 PhysicalSpecialSplitIconRoutine 0813A1A0
+
+##Expand Coins
+scrB3_CheckCoins 0815FC80
+scrB4_AddCoins 0815FC84
+scrB5_SubtractCoins 0815FC88
