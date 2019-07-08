@@ -1294,7 +1294,8 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			break;
 		
         case ABILITYEFFECT_ABSORBING: // 3
-            if (!move) break;
+            if (move == MOVE_NONE) break;
+
 			u8 statId = 0;
 			gBattleScripting->bank = bank;
             switch (gLastUsedAbility) {

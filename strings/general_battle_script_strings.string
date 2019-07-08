@@ -64,7 +64,7 @@ The Lucky Chant shielded\n[FD][36] team from critical hits!
 [TARGET]'s Ability\nwas suppressed!
 
 #org @TargetStatsResetString
-[FD][02]'s stat changes\nwere removed!
+[TARGET]'s stat changes\nwere removed!
 
 #org @RoastedBerryString
 [TARGET]'s [FD][16]\nwas burnt up!

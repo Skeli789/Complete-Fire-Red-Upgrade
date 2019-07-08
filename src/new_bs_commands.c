@@ -1197,7 +1197,11 @@ void atkFF29_trysetsleep(void)
 	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
 	bool8 fail = FALSE;
 	
-	if (CheckTableForMove(gCurrentMove, PowderTable) && TypeCalc(gCurrentMove, gBankAttacker, bank, NULL, FALSE) & MOVE_RESULT_DOESNT_AFFECT_FOE)
+	if (AbilityBattleEffects(ABILITYEFFECT_ABSORBING, gBankTarget, 0, 0, gCurrentMove))
+	{
+		return;
+	}
+	else if (CheckTableForMove(gCurrentMove, PowderTable) && TypeCalc(gCurrentMove, gBankAttacker, bank, NULL, FALSE) & MOVE_RESULT_DOESNT_AFFECT_FOE)
 	{
 		gMoveResultFlags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
 		gBattlescriptCurrInstr = BattleScript_PauseResultMessage;
@@ -1307,7 +1311,11 @@ void atkFF2A_trysetparalysis(void)
 	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
 	bool8 fail = FALSE;
 	
-	if ((CheckTableForMove(gCurrentMove, PowderTable) || gCurrentMove == MOVE_THUNDERWAVE)
+	if (AbilityBattleEffects(ABILITYEFFECT_ABSORBING, gBankTarget, 0, 0, gCurrentMove))
+	{
+		return;
+	}
+	else if ((CheckTableForMove(gCurrentMove, PowderTable) || gCurrentMove == MOVE_THUNDERWAVE)
 	&& TypeCalc(gCurrentMove, gBankAttacker, bank, NULL, FALSE) & MOVE_RESULT_DOESNT_AFFECT_FOE)
 	{
 		gMoveResultFlags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
@@ -1391,7 +1399,11 @@ void atkFF2B_trysetburn(void)
 	u8 bank = GetBattleBank(gBattlescriptCurrInstr[1]);
 	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
 	bool8 fail = FALSE;
-	
+
+	if (AbilityBattleEffects(ABILITYEFFECT_ABSORBING, gBankTarget, 0, 0, gCurrentMove))
+	{
+		return;
+	}
 	if (IsOfType(bank, TYPE_FIRE))
 	{
 		gMoveResultFlags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
@@ -1472,7 +1484,11 @@ void atkFF2C_trysetpoison(void)
 	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
 	bool8 fail = FALSE;
 	
-	if (ABILITY(gBankAttacker) != ABILITY_CORROSION
+	if (AbilityBattleEffects(ABILITYEFFECT_ABSORBING, gBankTarget, 0, 0, gCurrentMove))
+	{
+		return;
+	}
+	else if (ABILITY(gBankAttacker) != ABILITY_CORROSION
 	&& (IsOfType(bank, TYPE_POISON) || IsOfType(bank, TYPE_STEEL)))
 	{
 		gMoveResultFlags |= MOVE_RESULT_DOESNT_AFFECT_FOE;

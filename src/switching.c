@@ -180,10 +180,10 @@ void atk4D_switchindataupdate(void)
 			gBattleMons[gActiveBattler].attack = defense;
 			gBattleMons[gActiveBattler].defense = attack;
 		}
-		
-		if (!(gStatuses3[gActiveBattler] & STATUS3_LEVITATING))
-			gNewBS->MagnetRiseTimers[gActiveBattler] = 0;
 	}
+	
+	if (!(gStatuses3[gActiveBattler] & STATUS3_LEVITATING))
+		gNewBS->MagnetRiseTimers[gActiveBattler] = 0;
 	
 	SwitchInClearSetData();
 	

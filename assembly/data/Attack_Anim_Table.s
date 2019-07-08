@@ -9113,6 +9113,9 @@ ANIM_FELLSTINGER:
 	resetblends
 	launchtask AnimTask_pal_fade 0xA 0x5 PAL_DEF 0x0 0x10 0x0 0x0
 	launchtask AnimTask_pal_fade 0xA 0x5 PAL_BG 0x0 0x10 0x0 0x5917
+	waitanimation
+	launchtask AnimTask_pal_fade 0xA 0x5 PAL_ALL_BANKS 0x0 0x0 0x0 0x0
+	waitanimation
 	endanimation 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -21866,8 +21869,6 @@ ANIM_SOUL_STEALING_7_STAR_STRIKE:
 	call SOULSTEAL_BLUE_BUFF_EFFECT
 	pause 0x4
 	makebankvisible bank_target
-	makebankvisible attacker_partner
-	makebankvisible target_partner
 	waitanimation
 	unloadparticle ANIM_TAG_FIRE_PLUME
 	loadparticle ANIM_TAG_PAIN_SPLIT @pain split
@@ -21917,7 +21918,6 @@ ANIM_SOUL_STEALING_7_STAR_STRIKE:
 	unloadparticle ANIM_TAG_HANDS_AND_FEET
 	loadparticle ANIM_TAG_SPARK_2 @paralyze
 	loadparticle ANIM_TAG_SNORE_Z @z
-	pokespritetoBG bank_target
 	playsound2 0x80 0xc0 
 	launchtask 0x80E392D 0x2 0x0
 	pause 0x1c
@@ -21925,12 +21925,12 @@ ANIM_SOUL_STEALING_7_STAR_STRIKE:
 	pause 0x1
 	launchtemplate SOULSTEAL_ZSTAR 0x82 0x4 0x0 0x0 0x1 0x24
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x3 0x0 0x6 0x1  
-	launchtemplate 0x83e5ee4 0x2 0x1 0x0 
-	launchtemplate 0x83e5ee4 0x2 0x1 0x2a 
-	launchtemplate 0x83e5ee4 0x2 0x1 0x54 
-	launchtemplate 0x83e5ee4 0x2 0x1 0x7e 
-	launchtemplate 0x83e5ee4 0x2 0x1 0xa8 
-	launchtemplate 0x83e5ee4 0x2 0x1 0xd2 
+	launchtemplate 0x83e5ee4 0x82 0x1 0x0 
+	launchtemplate 0x83e5ee4 0x82 0x1 0x2a 
+	launchtemplate 0x83e5ee4 0x82 0x1 0x54 
+	launchtemplate 0x83e5ee4 0x82 0x1 0x7e 
+	launchtemplate 0x83e5ee4 0x82 0x1 0xa8 
+	launchtemplate 0x83e5ee4 0x82 0x1 0xd2 
 	playsound2 0x8a 0x3f
 	call SOULSTEAL_BLUE_PARALYSIS
 	call SOULSTEAL_BLUE_PARALYSIS
@@ -21945,16 +21945,17 @@ ANIM_SOUL_STEALING_7_STAR_STRIKE:
 	launchtask AnimTask_screen_shake 0x5 0x3 bank_target 0x8 0x20
 	call SOULSTEAL_EXPLODE
 	call SOULSTEAL_EXPLODE
-	launchtemplate Template_Pal_Fade 0x2 0x5 0x1f-PAL_DEF 0x0 0x0 0x10 0x0000	@everything to black
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ALL - PAL_DEF 0x2 0x0 0x10 0x0 @everything to black
 	call SOULSTEAL_EXPLODE
-	waitanimation
-	resetblends
-	pokespritefromBG bank_target
-	launchtemplate Template_Pal_Fade 0x2 0x5 0x1f 0x0 0x0 0x10 0x7fff
-	loaddefaultBG
 	waitanimation
 	makebankvisible attacker_partner
 	makebankvisible target_partner
+	resetblends
+	loaddefaultBG
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ALL 0x2 0x10 0x0 0x0 @everything from black
+	waitanimation
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ALL_BANKS 0x2 0x0 0x0 0x0
+	waitanimation
 	endanimation
 
 SOULSTEAL_BLUE_BUFF_EFFECT:
@@ -21990,19 +21991,19 @@ SOULSTEAL_BLUE_PARALYSIS:
 
 SOULSTEAL_EXPLODE:
 	playsound2 0xab 0xc0 
-	launchtemplate SOULSTEAL_EXPLOSION 0x3 0x4 0x0 0x0 bank_target 0x1 
+	launchtemplate SOULSTEAL_EXPLOSION 0x83 0x4 0x0 0x0 bank_target 0x1 
 	pause 0x6 
 	playsound2 0xab 0xc0 
-	launchtemplate SOULSTEAL_EXPLOSION 0x3 0x4 0x18 0xffe8 bank_target 0x1 
+	launchtemplate SOULSTEAL_EXPLOSION 0x83 0x4 0x18 0xffe8 bank_target 0x1 
 	pause 0x6 
 	playsound2 0xab 0xc0 
-	launchtemplate SOULSTEAL_EXPLOSION 0x3 0x4 0xfff0 0x10 bank_target 0x1 
+	launchtemplate SOULSTEAL_EXPLOSION 0x83 0x4 0xfff0 0x10 bank_target 0x1 
 	pause 0x6 
 	playsound2 0xab 0xc0 
-	launchtemplate SOULSTEAL_EXPLOSION 0x3 0x4 0xffe8 0xfff4 bank_target 0x1 
+	launchtemplate SOULSTEAL_EXPLOSION 0x83 0x4 0xffe8 0xfff4 bank_target 0x1 
 	pause 0x6 
 	playsound2 0xab 0xc0 
-	launchtemplate SOULSTEAL_EXPLOSION 0x3 0x4 0x10 0x10 bank_target 0x1 
+	launchtemplate SOULSTEAL_EXPLOSION 0x83 0x4 0x10 0x10 bank_target 0x1 
 	pause 0x6 
 	return 
 
@@ -22010,7 +22011,7 @@ SOULSTEAL_EXPLODE:
 SOULSTEAL_BLACK_FLY: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_HANDS_AND_FEET 0x83ACAA0 0x8231CF0 0x0 0x83E6B8C 0x80B1BB1
 SOULSTEAL_ICE_FOCUS: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_ICE_CRYSTALS 0x83ACA18 0x83E3600 0x0 0x8231CFC 0x80A5AD9
 SOULSTEAL_BLUE_FIST: objtemplate ANIM_TAG_HANDS_AND_FEET ANIM_TAG_ICE_CRYSTALS 0x83AC9D8 0x83E66CC 0x0 0x8231CFC 0x80B0929
-SOULSTEAL_BLUE_STAR: objtemplate ANIM_TAG_PAIN_SPLIT ANIM_TAG_ICE_CRYSTALS 0x83AC9D0 0x8231CF0 0x0 0x83E7910 0x80B7BD5
+SOULSTEAL_BLUE_STAR: objtemplate ANIM_TAG_PAIN_SPLIT ANIM_TAG_ICE_CRYSTALS 0x83AC9D0 0x8231CF0 0x0 0x83E7910 SpriteCB_SoulStealingStar
 SOULSTEAL_BLUE_PARALYZE: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_ICE_CRYSTALS 0x83AC9D0 0x8231CF0 0x0 0x8231CFC 0x80AE1A1 
 SOULSTEAL_TWINKLE_TARGET: objtemplate ANIM_TAG_SPARKLE_4 ANIM_TAG_WISP_FIRE 0x83AC9D8 0x83BF47C 0x0 0x8231CFC TWINKLE_ASM+1 
 SOULSTEAL_BLACK_BLASTBURN: objtemplate ANIM_TAG_FIRE_PLUME ANIM_TAG_WISP_FIRE 0x83AC9D8 0x83E5C50 0x0 0x8231CFC 0x80AC991

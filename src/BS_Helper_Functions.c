@@ -1306,33 +1306,19 @@ void BurnUpFunc(void)
 
 void SeedLooper(void)
 {
-	u8 stat = 0;
-	
-	switch (TerrainType) {
-		case ELECTRIC_TERRAIN:
-		case GRASSY_TERRAIN:
-			stat = STAT_STAGE_DEF;
-			break;
-		case MISTY_TERRAIN:
-		case PSYCHIC_TERRAIN:
-			stat = STAT_STAGE_SPDEF;
-	}
-	
 	for (; *SeedHelper < gBattlersCount; ++*SeedHelper) 
 	{
 		u8 bank = gBanksByTurnOrder[*SeedHelper];
-		if (ITEM_EFFECT(bank) == ITEM_EFFECT_SEEDS
-		&&  ITEM_QUALITY(bank) == TerrainType
-		&&  STAT_CAN_RISE(bank, stat))
-		{	
-			PREPARE_STAT_BUFFER(gBattleTextBuff1, stat);
-			gBattleScripting->statChanger = stat | INCREASE_1;
-			gBattleScripting->bank = gBankTarget = gEffectBank = bank;
-			gBattlescriptCurrInstr = BattleScript_SeedStatBoost;
+
+		if (ITEM_EFFECT(bank) == ITEM_EFFECT_SEEDS)
+		{
+			if (ItemBattleEffects(ItemEffects_SwitchIn, bank, TRUE, FALSE))
+			{
+				gBattlescriptCurrInstr -= 5;
+				return;
+			}
 		}
 	}
-	
-	gBankTarget = gBankAttacker;
 }
 
 void LastResortFunc(void)

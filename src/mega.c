@@ -5,6 +5,7 @@
 
 #include "../include/new/helper_functions.h"
 #include "../include/new/frontier.h"
+#include "../include/new/item.h"
 #include "../include/new/mega.h"
 #include "../include/new/mega_battle_scripts.h"
 #include "../include/new/set_z_effect.h"
@@ -47,7 +48,8 @@ const struct Evolution* CanMegaEvolve(u8 bank, bool8 CheckUBInstead)
 				if (evolutions[i].param == mon->item)
 					return &evolutions[i];	
 			} 
-			else if (evolutions[i].unknown == MEGA_VARIANT_WISH && !CheckUBInstead)
+			else if (evolutions[i].unknown == MEGA_VARIANT_WISH && !CheckUBInstead
+			&& !IsZCrystal(mon->item)) //If Mega Rayquaza holds a Z-Crystal it can't Mega Evolve
 			{
 				if (!(gBattleTypeFlags & BATTLE_TYPE_FRONTIER) || VarGet(BATTLE_TOWER_TIER) == BATTLE_TOWER_NO_RESTRICTIONS)
 				{

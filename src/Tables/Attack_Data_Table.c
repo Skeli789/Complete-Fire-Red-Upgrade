@@ -6841,7 +6841,7 @@ const struct BattleMove gBattleMoves[] = {
 		.type = TYPE_POISON,
 		.accuracy = 0,
 		.pp = 15,
-		.secondaryEffectChance = 0,
+		.secondaryEffectChance = 100,
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,
 		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
@@ -8039,7 +8039,7 @@ const struct BattleMove gBattleMoves[] = {
 		.effect = EFFECT_HIT,
 		.power = 80,
 		.type = TYPE_PSYCHIC,
-		.accuracy = 0,
+		.accuracy = 100,
 		.pp = 10,
 		.secondaryEffectChance = 100,
 		.target = MOVE_TARGET_SELECTED,
@@ -11422,7 +11422,7 @@ const struct BattleMove gBattleMoves[] = {
 		.priority = 0,
 		.flags = 0,
 		.z_move_power = 0,
-		.split = SPLIT_PHYSICAL,
+		.split = SPLIT_SPECIAL,
 		.z_move_effect = 0
 	},
 

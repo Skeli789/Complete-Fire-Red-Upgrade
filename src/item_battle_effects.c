@@ -142,12 +142,12 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
 						gBattleScripting->statChanger = INCREASE_1 | stat;
 						gBattleScripting->animArg1 = 0xE + stat;
 						gBattleScripting->animArg2 = 0;
-						gBattleScripting->bank = gBankTarget = gEffectBank = gActiveBattler = bank;
+						gBattleScripting->bank = gBankTarget = bank;
 						
 						if (moveTurn)
 						{
 							BattleScriptPushCursor();
-							BattleScriptExecute(BattleScript_RaiseStatsSeedRet);
+							gBattlescriptCurrInstr = BattleScript_RaiseStatsSeedRet;
 						}
 						else
 							BattleScriptExecute(BattleScript_RaiseStatsSeedEnd2);
