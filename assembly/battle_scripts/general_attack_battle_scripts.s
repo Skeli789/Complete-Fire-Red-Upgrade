@@ -730,7 +730,7 @@ DragonTailBS:
 	jumpifmovehadnoeffect BS_MOVE_FAINT
 	jumpifspecialstatusflag BANK_TARGET STATUS3_ROOTED 0x0 0x81D8F27 @;BattleScript_PrintMonIsRooted
 	jumpifability BANK_TARGET ABILITY_SUCTIONCUPS BattleScript_AbilityPreventsPhasingOutSkipFail
-	jumpifcannotswitch BANK_TARGET BS_MOVE_FAINT
+	jumpifcannotswitch BANK_TARGET | ATK4F_DONT_CHECK_STATUSES BS_MOVE_FAINT
 	setbyte CMD49_STATE 0x0
 	cmd49 BANK_TARGET 0x0
 	playanimation BANK_TARGET DRAGON_TAIL_BLOW_AWAY_ANIM 0x0
@@ -2335,7 +2335,7 @@ BS_126_Magnitude:
 BS_127_BatonPass:
 	jumpifnotmove MOVE_BATONPASS UTurnBS
 	attackcanceler
-	jumpifcannotswitch 0x81 FAILED_PRE
+	jumpifcannotswitch BANK_ATTACKER | ATK4F_DONT_CHECK_STATUSES FAILED_PRE
 	attackstring
 	ppreduce
 	attackanimation
@@ -2371,7 +2371,7 @@ UTurnBS:
 	cmd49 BANK_TARGET 0x0
 	
 UTurnCheckSwitchBS:
-	jumpifcannotswitch BANK_ATTACKER 0x81D6957
+	jumpifcannotswitch BANK_ATTACKER | ATK4F_DONT_CHECK_STATUSES 0x81D6957
 	jumpifnoviablemonsleft BANK_TARGET 0x81D6957
 	jumpiffainted BANK_TARGET UTurnGiveEXPBS
 
@@ -3138,7 +3138,7 @@ MementoFaintUser:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 HealingWishBS:
-	jumpifcannotswitch BANK_ATTACKER FAILED_PRE
+	jumpifcannotswitch BANK_ATTACKER | ATK4F_DONT_CHECK_STATUSES FAILED_PRE
 	attackstring
 	ppreduce
 	setuserhptozero
@@ -4476,26 +4476,10 @@ BS_226_Terrain:
 	waitanimation
 	printstring 0x184
 	waitmessage DELAY_1SECOND
-	call TerrainSeedCheck
+	setbyte SEED_HELPER 0
+	callasm SeedLooper
+	copybyte USER_BANK TARGET_BANK @;Restore original target
 	goto BS_MOVE_END
-	
-TerrainSeedCheck:
-	setword SEED_HELPER 0x0
-	callasm SeedLooper
-	return
-
-.global BattleScript_SeedStatBoost
-BattleScript_SeedStatBoost:
-	statbuffchange STAT_TARGET | STAT_BS_PTR | STAT_CERTAIN TerainSeedLoopBS
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 TerainSeedLoopBS
-	playanimation BANK_TARGET ANIM_ITEM_USE 0x0
-	setgraphicalstatchangevalues
-	setbyte MULTISTRING_CHOOSER 0x4
-	call 0x81D6BD1
-
-TerainSeedLoopBS:
-	callasm SeedLooper
-	return
 	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -4869,6 +4853,7 @@ MagnetRiseBS:
 	attackanimation
 	waitanimation
 	setword BATTLE_STRING_LOADER MagnetRiseSetString
+	printstring 0x184
 	waitmessage DELAY_1SECOND
 	goto BS_MOVE_END
 

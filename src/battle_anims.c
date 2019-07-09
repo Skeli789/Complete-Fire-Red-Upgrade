@@ -732,6 +732,16 @@ void DoubleWildAnimBallThrowFix(void)
 	}
 }
 
+void SpriteCB_SoulStealingStar(struct Sprite *sprite)
+{
+    sprite->pos1.x += gBattleAnimArgs[0];
+    sprite->pos1.y += gBattleAnimArgs[1];
+    sprite->data[0] = gBattleAnimArgs[3];
+    sprite->data[1] = gBattleAnimArgs[4];
+    sprite->data[2] = gBattleAnimArgs[5];
+    sprite->callback = (void*) 0x80B7C11;
+}
+
 #define RESTORE_HIDDEN_HEALTHBOXES									\
 {																	\
 	for (sprite = 0; sprite < MAX_SPRITES; ++sprite)				\

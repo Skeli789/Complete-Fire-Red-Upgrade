@@ -44,7 +44,6 @@ extern u8 BattleScript_DefogAdditionalEffects[];
 extern u8 BattleScript_PledgeCombined[];
 extern u8 BattleScript_PledgeReady[];
 extern u8 BattleScript_PrintCustomString[];
-extern u8 BattleScript_SeedStatBoost[];
 
 extern u8 BattleScript_NoHealTargetAfterHealBlock[];
 extern u8 BattleScript_FaintAttacker[];

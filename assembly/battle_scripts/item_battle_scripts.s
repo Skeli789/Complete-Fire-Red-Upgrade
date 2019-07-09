@@ -285,13 +285,13 @@ BattleScript_RaiseStatsSeedEnd2:
 	end2
 
 BattleScript_RaiseStatsSeedRet:
-	playanimation BANK_SCRIPTING ANIM_ITEM_USE 0x0
-	statbuffchange STAT_TARGET | STAT_BS_PTR RaiseStatsSeedReturn
+	statbuffchange STAT_TARGET | STAT_BS_PTR | STAT_CERTAIN RaiseStatsSeedReturn
+	playanimation BANK_TARGET ANIM_ITEM_USE 0x0
 	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
 	setbyte MULTISTRING_CHOOSER 0x4
 	printfromtable 0x83FE57C
 	waitmessage DELAY_1SECOND
-	removeitem BANK_SCRIPTING
+	removeitem BANK_TARGET
 RaiseStatsSeedReturn:
 	return
 
@@ -408,7 +408,7 @@ BattleScript_StickyBarbTransfer:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_EjectButton:
-	jumpifcannotswitch BANK_SCRIPTING EjectButtonEnd
+	jumpifcannotswitch BANK_SCRIPTING | ATK4F_DONT_CHECK_STATUSES EjectButtonEnd
 	playanimation BANK_SCRIPTING ANIM_ITEM_USE 0x0
 	setword BATTLE_STRING_LOADER EjectButtonString
 	printstring 0x184
@@ -435,7 +435,7 @@ EjectButtonEnd:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_RedCard:
-	jumpifcannotswitch BANK_ATTACKER RedCardRet
+	jumpifcannotswitch BANK_ATTACKER | ATK4F_DONT_CHECK_STATUSES RedCardRet
 	playanimation BANK_SCRIPTING ANIM_ITEM_USE 0x0
 	setword BATTLE_STRING_LOADER RedCardString
 	printstring 0x184

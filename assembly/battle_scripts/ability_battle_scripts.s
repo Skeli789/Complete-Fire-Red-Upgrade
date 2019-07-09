@@ -182,7 +182,8 @@ BattleScript_TerrainFromAbility:
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
-	call TerrainSeedCheck
+	setbyte SEED_HELPER 0
+	callasm SeedLooper
 	end3
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -292,7 +293,7 @@ EmergencyExitFleeBS:
 	end
 
 EmergencyExitSwitchBS:
-	jumpifcannotswitch BANK_SCRIPTING EmergencyExitReturn
+	jumpifcannotswitch BANK_SCRIPTING | ATK4F_DONT_CHECK_STATUSES EmergencyExitReturn
 	call BattleScript_AbilityPopUp
 	playanimation BANK_SCRIPTING ANIM_CALL_BACK_POKEMON 0x0
 	callasm MakeScriptingBankInvisible
@@ -546,9 +547,11 @@ BattleScript_TargetAbilityStatRaiseReturn:
 
 BattleScript_AbilityApplySecondaryEffect:
 	waitstateatk
+	copybyte FORM_COUNTER BATTLE_SCRIPTING_BANK
 	call BattleScript_AbilityPopUp
 	waitstateatk
 	seteffectuser
+	copybyte BATTLE_SCRIPTING_BANK FORM_COUNTER
 	call BattleScript_AbilityPopUpRevert
 	return
 
