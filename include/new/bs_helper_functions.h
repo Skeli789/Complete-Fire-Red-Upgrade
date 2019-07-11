@@ -92,3 +92,4 @@ void TryToStopNewMonFromSwitchingInAfterSRHurt(void);
 void ClearSwitchInEffectsTracker(void);
 void UpdatePrimalAbility(void);
 void ClearAttackerDidDamageOnce(void);
+void TryRemovePrimalWeatherOnForceSwitchout(void);

@@ -744,7 +744,6 @@ void atk19_tryfaintmon(void)
 }
 
 void atk1B_cleareffectsonfaint(void) {
-	int i;
 	gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
 	u8 partner = PARTNER(gActiveBattler);
 	pokemon_t* mon = GetBankPartyData(gActiveBattler);
@@ -833,43 +832,9 @@ void atk1B_cleareffectsonfaint(void) {
 			__attribute__ ((fallthrough));
 
 			case Faint_PrimalWeather:	;
-				bool8 DoWeatherLoop = FALSE;
+				if (TryRemovePrimalWeather(gActiveBattler, ABILITY(gActiveBattler)))
+					return;
 
-				switch (ABILITY(gActiveBattler)) {
-				case ABILITY_PRIMORDIALSEA:
-					if (gBattleWeather & WEATHER_RAIN_PRIMAL) {
-						BattleStringLoader = PrimalRainEndString;
-						DoWeatherLoop = TRUE;
-					}
-					break;
-				case ABILITY_DESOLATELAND:
-					if (gBattleWeather & WEATHER_SUN_PRIMAL) {
-						BattleStringLoader = PrimalSunEndString;
-						DoWeatherLoop = TRUE;
-					}
-					break;
-				case ABILITY_DELTASTREAM:
-					if (gBattleWeather & WEATHER_AIR_CURRENT_PRIMAL) {
-						BattleStringLoader = PrimalAirCurrentEndString;
-						DoWeatherLoop = TRUE;
-					}
-				}
-
-				if (DoWeatherLoop) {
-
-					for (i = 0; i < gBattlersCount; ++i) {
-						if (i == gActiveBattler) continue;
-						if (ABILITY(i) == ABILITY(gActiveBattler)) break;
-					}
-
-					if (i == gBattlersCount) {
-						gBattleWeather = 0;
-						gWeatherCounter = 0;
-						BattleScriptPushCursor();
-						gBattlescriptCurrInstr = BattleScript_PrimalWeatherEnd;
-						return;
-					}
-				}
 				++gNewBS->FaintEffectsTracker;
 			__attribute__ ((fallthrough));
 
@@ -2301,7 +2266,7 @@ void atkA3_disablelastusedattack(void)
 
 	for (i = 0; i < MAX_MON_MOVES; i++)
 	{
-		if (gBattleMons[bankDef].moves[i] == gCurrentMove)
+		if (gBattleMons[bankDef].moves[i] == gLastUsedMoves[gBankTarget])
 			break;
 	}
 
@@ -3279,11 +3244,11 @@ void atkD2_tryswapitems(void) { //Trick
 			oldItemAtk = gBattleMons[gBankAttacker].item;
 			*newItemAtk = gBattleMons[gBankTarget].item;
 
-			gBattleMons[gBankAttacker].item = 0;
+			gBattleMons[gBankAttacker].item = *newItemAtk;
 			gBattleMons[gBankTarget].item = oldItemAtk;
 
 			gActiveBattler = gBankAttacker;
-			EmitSetMonData(0, REQUEST_HELDITEM_BATTLE, 0, 2, newItemAtk);
+			EmitSetMonData(0, REQUEST_HELDITEM_BATTLE, 0, 2, &gBattleMons[gBankAttacker].item);
 			MarkBufferBankForExecution(gBankAttacker);
 
 			gActiveBattler = gBankTarget;

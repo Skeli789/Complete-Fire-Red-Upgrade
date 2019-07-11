@@ -59,6 +59,7 @@ BattleScript_AbilityWasSuppressed:
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	call BSTryRemoveIllusion
+	callasm TryRemovePrimalWeatherAfterAbilityChange
 	call 0x81D92DC @;Try to revert Cherrim and Castform
 	return
 

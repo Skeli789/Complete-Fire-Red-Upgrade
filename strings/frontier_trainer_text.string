@@ -1214,3 +1214,39 @@ That battle was almost as beautiful\nas the animations!
 
 #org @sFrontierText_Lixdel_PlayerLose
 Nice!\pThat battle was close to being as\nbeautiful as the animations!
+
+#org @sFrontierText_BigMo_PreBattle
+Ha ha ha ha!\nLook who I ran into again!\p[PLAYER]!\pI've been looking forward to\nanother battle with you!\pNow, let's what you can do to the\nkingpin of Antisis City!
+
+#org @sFrontierText_BigMo_PlayerWin
+Ha ha ha ha!\pThey should start calling you\nBig [PLAYER_NAME]!
+
+#org @sFrontierText_BigMo_PlayerLose
+Ha ha ha ha!\pLooks like I'm bigger an' better!
+
+#org @sFrontierText_Galavan_PreBattle
+Yo, wazzup, [PLAYER]?\pHowzit goin' these days?\pI'm sure ya had no problem makin'\nyour way to this point.\pWell, it's time to fret, 'cause I'm\nabout to end your streak!
+
+#org @sFrontierText_Galavan_PlayerWin
+Whoa, ya sure showed me how to\nbattle!
+
+#org @sFrontierText_Galavan_PlayerLose
+And you weren't even at any\ndisadvantage! Ha ha ha!
+
+#org @sFrontierText_Candice_PreBattle
+You're the opponent of Candice?\pSure thing!\nI was waiting for someone tough!\pBut I should tell you, I'm tough,\nbecause I know how to focus.\pPok\emon, fashion, romance[.]\nIt's all about focus!\pI'll show you just what I mean.\pGet ready to lose!
+
+#org @sFrontierText_Candice_PlayerWin
+You're mighty!\nYou're worthy of lots of respect.
+
+#org @sFrontierText_Candice_PlayerLose
+I sensed your will to win, but I\ndon't lose!
+
+#org @sFrontierText_Giovanni_PreBattle
+For your insolence, you will feel\na world of pain!
+
+#org @sFrontierText_Giovanni_PlayerWin
+What? Me, lose?!
+
+#org @sFrontierText_Giovanni_PlayerLose
+Ha!\nThat was a truly intense fight!

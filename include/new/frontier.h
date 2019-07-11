@@ -59,9 +59,11 @@ enum BattleTowerFormats
 	BATTLE_TOWER_UBER,
 	BATTLE_TOWER_LITTLE_CUP,
 	BATTLE_TOWER_MIDDLE_CUP,
+	BATTLE_TOWER_MONOTYPE,
 };
 
-#define NUM_FORMATS (BATTLE_TOWER_MIDDLE_CUP + 1)
+#define NUM_FORMATS (BATTLE_TOWER_MONOTYPE + 1)
+#define NUM_FORMATS_OLD (BATTLE_TOWER_MIDDLE_CUP + 1) //Monotype not included b/c wasn't included in Battle Tower Demo original release
 
 enum BattleTowerPartySizes
 {
@@ -124,7 +126,7 @@ struct BattleTowerSpread
 	u8 spDefEv;
 	u8 ability;
 	u16 item;
-	u16 moves[4];
+	u16 moves[MAX_MON_MOVES];
 	u8 ball;
     u8 _1; // 0x00
 	u32 _2; // 0x00000000
@@ -152,6 +154,7 @@ struct SpecialBattleTowerTrainer
 	u8 trainerClass;
 	u8 trainerSprite;
 	u8 gender;
+	u8 isMonotype;
 	const u8* name;
 	const u8* preBattleText;
 	const u8* playerWinText;
@@ -159,9 +162,11 @@ struct SpecialBattleTowerTrainer
 	const struct BattleTowerSpread* regularSpreads;
 	const struct BattleTowerSpread* middleCupSpreads;
 	const struct BattleTowerSpread* littleCupSpreads;
+	const struct BattleTowerSpread* legendarySpreads;
 	u16 regSpreadSize;
 	u16 mcSpreadSize;
 	u16 lcSpreadSize;
+	u16 legSpreadSize;
 	u16 songId;
 };
 
@@ -180,14 +185,18 @@ struct FrontierBrain
 
 extern const struct FrontierBrain gFrontierBrains[];
 
-extern u16 gBattleTowerStreaks[NUM_TOWER_BATTLE_TYPES][NUM_FORMATS][/*PARTY_SIZE*/ 2][/*LEVEL*/ 2][/*CURRENT_OR_MAX*/ 2]; //0x2026840
+extern u16 gBattleTowerStreaks[NUM_TOWER_BATTLE_TYPES][NUM_FORMATS_OLD][/*PARTY_SIZE*/ 2][/*LEVEL*/ 2][/*CURRENT_OR_MAX*/ 2]; //0x2026840
 
-extern const species_t StandardSpeciesBanList[];
-extern const species_t OU_SpeciesBanList[];
-extern const species_t gLittleCup_SpeciesList[];
+extern const species_t gBattleTowerStandardSpeciesBanList[];
+extern const species_t gSmogonOU_SpeciesBanList[];
+extern const species_t gSmogonLittleCup_SpeciesList[];
 extern const species_t gMiddleCup_SpeciesList[];
-extern const ability_t OU_AbilityBanList[];
-extern const item_t StandardItemBanList[];
-extern const item_t OU_ItemBanList[];
-extern const move_t SmogonMoveBanList[];
-extern const move_t LittleCup_MoveBanList[];
+extern const species_t gSmogonMonotype_SpeciesBanList[];
+extern const ability_t gSmogonOU_AbilityBanList[];
+extern const ability_t gSmogonMonotype_AbilityBanList[];
+extern const item_t gBattleTowerStandard_ItemBanList[];
+extern const item_t gSmogonOU_ItemBanList[];
+extern const item_t gSmogonLittleCup_ItemBanList[];
+extern const item_t gSmogonMonotype_ItemBanList[];
+extern const move_t gSmogon_MoveBanList[];
+extern const move_t gSmogonLittleCup_MoveBanList[];

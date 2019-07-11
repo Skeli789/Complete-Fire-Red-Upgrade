@@ -99,7 +99,7 @@ const struct AlternateSize gAlternateSpeciesSizeTable[] =
 };
 
 //The move Telekinesis don't affect these Pokemon
-const species_t TelekinesisBanList[] =
+const species_t gTelekinesisBanList[] =
 {
 	SPECIES_DIGLETT,
 	SPECIES_DUGTRIO,
@@ -138,10 +138,11 @@ const species_t gSkyBattleBannedSpeciesList[] =
 	SPECIES_SILVALLY_FLYING,
 	SPECIES_DODUO,
 	SPECIES_DODRIO,
+	SPECIES_TABLES_TERMIN
 };
 
 //For the purposes of the Beast Ball
-const species_t UltraBeastTable[] =
+const species_t gUltraBeastList[] =
 {
 	SPECIES_NIHILEGO,
 	SPECIES_BUZZWOLE,
@@ -201,7 +202,7 @@ const species_t gFurfrouForms[] =
 
 const u8 gNumFurfrouForms = ARRAY_COUNT(gFurfrouForms);
 
-const species_t StandardSpeciesBanList[] = 
+const species_t gBattleTowerStandardSpeciesBanList[] = 
 {
 	SPECIES_MEWTWO,
 	SPECIES_MEW,
@@ -282,9 +283,9 @@ const species_t StandardSpeciesBanList[] =
 	SPECIES_TABLES_TERMIN
 };
 
-const u8 gStandardSpeciesBanListSize = ARRAY_COUNT(StandardSpeciesBanList) - 1;
+const u8 gBattleTowerStandardSpeciesBanListSize = ARRAY_COUNT(gBattleTowerStandardSpeciesBanList) - 1;
 
-const species_t OU_SpeciesBanList[] = 
+const species_t gSmogonOU_SpeciesBanList[] = 
 {
 	SPECIES_AEGISLASH,
 	SPECIES_ARCEUS,
@@ -342,10 +343,11 @@ const species_t OU_SpeciesBanList[] =
 	SPECIES_XERNEAS,
 	SPECIES_YVELTAL,
 	SPECIES_ZEKROM,
+	SPECIES_ZYGARDE,
 	SPECIES_TABLES_TERMIN
 };
 
-const ability_t OU_AbilityBanList[] = 
+const ability_t gSmogonOU_AbilityBanList[] = 
 {
 	ABILITY_ARENATRAP,
 	ABILITY_SHADOWTAG,
@@ -354,7 +356,7 @@ const ability_t OU_AbilityBanList[] =
 	ABILITY_TABLES_TERMIN
 };
 
-const item_t StandardItemBanList[] = 
+const item_t gBattleTowerStandard_ItemBanList[] = 
 {
 	#ifdef OLD_SOUL_DEW_EFFECT
 	ITEM_SOUL_DEW,
@@ -362,11 +364,12 @@ const item_t StandardItemBanList[] =
 	ITEM_TABLES_TERMIN
 };
 
-const item_t OU_ItemBanList[] = 
+const item_t gSmogonOU_ItemBanList[] = 
 {
 	ITEM_BLAZIKENITE,
 	ITEM_GENGARITE,
 	ITEM_LUCARIONITE,
+	ITEM_KANGASKHANITE,
 	ITEM_METAGROSSITE,
 	ITEM_SALAMENCITE,
 	ITEM_RED_ORB,
@@ -377,7 +380,7 @@ const item_t OU_ItemBanList[] =
 	ITEM_TABLES_TERMIN
 };
 
-const move_t SmogonMoveBanList[] = 
+const move_t gSmogon_MoveBanList[] = 
 {
 	MOVE_DOUBLETEAM,
 	MOVE_MINIMIZE,
@@ -385,11 +388,10 @@ const move_t SmogonMoveBanList[] =
 	MOVE_GUILLOTINE,
 	MOVE_HORNDRILL,
 	MOVE_SHEERCOLD,
-	MOVE_SWAGGER,
 	MOVE_TABLES_TERMIN
 };
 
-const species_t gLittleCup_SpeciesList[] = 
+const species_t gSmogonLittleCup_SpeciesList[] = 
 {
 	SPECIES_ABRA,
 	SPECIES_AMAURA,
@@ -479,7 +481,6 @@ const species_t gLittleCup_SpeciesList[] =
 	SPECIES_FOMANTIS,
 	SPECIES_FOONGUS,
 	SPECIES_FRILLISH,
-	SPECIES_FRILLISH_F,
 	SPECIES_FROAKIE,
 	SPECIES_GASTLY,
 	SPECIES_GEODUDE,
@@ -497,7 +498,6 @@ const species_t gLittleCup_SpeciesList[] =
 	SPECIES_HAPPINY,
 	SPECIES_HELIOPTILE,
 	SPECIES_HIPPOPOTAS,
-	SPECIES_HIPPOPOTAS_F,
 	SPECIES_HONEDGE,
 	SPECIES_HOOTHOOT,
 	SPECIES_HOPPIP,
@@ -674,12 +674,18 @@ const species_t gLittleCup_SpeciesList[] =
 	SPECIES_TABLES_TERMIN
 };
 
-const move_t LittleCup_MoveBanList[] = 
+const move_t gSmogonLittleCup_MoveBanList[] = 
 {
 	MOVE_DRAGONRAGE,
 	MOVE_SONICBOOM,
 	MOVE_SWAGGER,
 	MOVE_TABLES_TERMIN
+};
+
+const item_t gSmogonLittleCup_ItemBanList[] = 
+{
+	ITEM_EEVIUM_Z,
+	ITEM_TABLES_TERMIN
 };
 
 const species_t gMiddleCup_SpeciesList[] =
@@ -785,6 +791,72 @@ const species_t gMiddleCup_SpeciesList[] =
 	SPECIES_COSMOEM,
 	SPECIES_GRAVELER_A,
 	SPECIES_TABLES_TERMIN
+};
+
+const species_t gSmogonMonotype_SpeciesBanList[] =
+{
+	SPECIES_AEGISLASH,
+	SPECIES_ARCEUS,
+	SPECIES_BLAZIKEN,
+	SPECIES_DARKRAI,
+	SPECIES_DEOXYS,
+	SPECIES_DEOXYS_ATTACK,
+	SPECIES_DIALGA,
+	SPECIES_GENESECT,
+	SPECIES_GIRATINA,
+	SPECIES_GROUDON,
+	SPECIES_HO_OH,
+	SPECIES_HOOPA_UNBOUND,
+	SPECIES_KARTANA,
+	SPECIES_KYOGRE,
+	SPECIES_KYUREM_WHITE,
+	SPECIES_LUGIA,
+	SPECIES_LUNALA,
+	SPECIES_MAGEARNA,
+	SPECIES_MARSHADOW,
+	SPECIES_MEWTWO,
+	SPECIES_NAGANADEL,
+	SPECIES_NECROZMA_WINGS,
+	SPECIES_NECROZMA_MANE,
+	SPECIES_PALKIA,
+	SPECIES_PHEROMOSA,
+	SPECIES_RAYQUAZA,
+	SPECIES_RESHIRAM,
+	SPECIES_SHAYMIN_SKY,
+	SPECIES_SOLGALEO,
+	SPECIES_TAPU_LELE,
+	SPECIES_XERNEAS,
+	SPECIES_YVELTAL,
+	SPECIES_ZEKROM,
+	SPECIES_ZYGARDE,
+	SPECIES_ZYGARDE_10,
+	SPECIES_TABLES_TERMIN
+};
+
+const ability_t gSmogonMonotype_AbilityBanList[] = 
+{
+	ABILITY_BATTLEBOND,
+	ABILITY_TABLES_TERMIN
+};
+
+const item_t gSmogonMonotype_ItemBanList[] = 
+{
+	ITEM_DAMP_ROCK,
+	ITEM_GENGARITE,
+	ITEM_KANGASKHANITE,
+	ITEM_LUCARIONITE,
+	ITEM_MAWILITE,
+	ITEM_MEDICHAMITE,
+	ITEM_METAGROSSITE,
+	ITEM_SALAMENCITE,
+	ITEM_SMOOTH_ROCK,
+	ITEM_TERRAIN_EXTENDER,
+	ITEM_RED_ORB,
+	ITEM_BLUE_ORB,
+	#ifdef OLD_SOUL_DEW_EFFECT
+	ITEM_SOUL_DEW,
+	#endif
+	ITEM_TABLES_TERMIN
 };
 
 #ifdef CREATE_WITH_X_PERFECT_IVS

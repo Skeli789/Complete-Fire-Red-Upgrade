@@ -9,25 +9,28 @@
 #include "../../include/new/battle_start_turn_start.h"
 #include "../../include/new/bs_helper_functions.h"
 #include "../../include/new/damage_calc.h"
-#include "../../include/new/Helper_Functions.h"
+#include "../../include/new/helper_functions.h"
+#include "../../include/new/item.h"
 #include "../../include/new/general_bs_commands.h"
 #include "../../include/new/move_tables.h"
 
 extern move_effect_t SetStatusTable[];
 extern move_effect_t StatLowerTable[];
 extern move_effect_t ConfusionTable[];
-extern species_t TelekinesisBanList[];
+extern species_t gTelekinesisBanList[];
 
 //This file's functions:
 static void AI_Flee(void);
 static void AI_Watch(void);
 
-u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 move, const u8 originalViability)
+u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMove, const u8 originalViability)
 {
 	u8 decreased;
 	u16 predictedMove = IsValidMovePrediction(bankDef, bankAtk); //The move the target is likely to make against the attacker
 	u32 i;
 	u8 viability = originalViability;
+	
+	u16 move = TryReplaceMoveWithZMove(bankAtk, originalMove);
 
 	u16 atkSpecies = SPECIES(bankAtk);
 	u16 defSpecies = SPECIES(bankDef);
@@ -454,6 +457,10 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 move, const
 			break;
 			
 		case EFFECT_SPLASH:
+			if (!IsTypeZCrystal(atkItem, moveType) || gNewBS->ZMoveData->used[bankAtk])
+				viability -= 10;
+			break;
+
 		case EFFECT_TELEPORT:
 			viability -= 10;
 			break;
@@ -1204,11 +1211,28 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 move, const
 			break;
 			
 		case EFFECT_PERISH_SONG:
-			if (!(gStatuses3[FOE(bankAtk)] & STATUS3_PERISH_SONG)
-			|| (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && !(gStatuses3[PARTNER(FOE(bankAtk))] & STATUS3_PERISH_SONG)))
-				break;
-
-			viability -= 10;
+			if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+			{
+				if (ViableMonCountFromBank(bankAtk) <= 2
+				&&  atkAbility != ABILITY_SOUNDPROOF
+				&&  atkPartnerAbility != ABILITY_SOUNDPROOF
+				&&  ViableMonCountFromBank(FOE(bankAtk)) >= 3)
+					viability -= 10; //Don't wipe your team if you're going to lose
+					
+				if ((!BATTLER_ALIVE(FOE(bankAtk)) || ABILITY(FOE(bankAtk)) == ABILITY_SOUNDPROOF || gStatuses3[FOE(bankAtk)] & STATUS3_PERISH_SONG)
+				&&  (!BATTLER_ALIVE(PARTNER(FOE(bankAtk))) || ABILITY(PARTNER(FOE(bankAtk))) == ABILITY_SOUNDPROOF || gStatuses3[PARTNER(FOE(bankAtk))] & STATUS3_PERISH_SONG))
+					viability -= 10; //Both enemies are perish songed
+			}
+			else
+			{
+				if (ViableMonCountFromBank(bankAtk) == 1
+				&&  atkAbility != ABILITY_SOUNDPROOF
+				&&  ViableMonCountFromBank(bankDef) >= 2)
+					viability -= 10;
+					
+				if (gStatuses3[FOE(bankAtk)] & STATUS3_PERISH_SONG || ABILITY(FOE(bankAtk)) == ABILITY_SOUNDPROOF)
+					viability -= 10;
+			}
 			break;
 			
 		case EFFECT_SANDSTORM:
@@ -1940,7 +1964,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 move, const
 					if (defStatus3 & (STATUS3_TELEKINESIS | STATUS3_ROOTED | STATUS3_SMACKED_DOWN)
 					||  gNewBS->GravityTimer != 0
 					||  defEffect == ITEM_EFFECT_IRON_BALL
-					||  CheckTableForSpecies(defSpecies, TelekinesisBanList))
+					||  CheckTableForSpecies(defSpecies, gTelekinesisBanList))
 						viability -= 10;
 					else
 						goto AI_SUBSTITUTE_CHECK;
@@ -2049,10 +2073,17 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 move, const
 											| BATTLE_TYPE_TRAINER_TOWER))
 					|| SIDE(bankAtk) != B_SIDE_PLAYER //Only increase money amount if will benefit player
 					|| gNewBS->HappyHourByte != 0) //Already used Happy Hour
-						viability -= 10;
+					{
+						if (!IsTypeZCrystal(atkItem, moveType) || gNewBS->ZMoveData->used[bankAtk])
+							viability -= 10;
+					}
 					break;
 
 				case MOVE_CELEBRATE:
+					if (!IsTypeZCrystal(atkItem, moveType) || gNewBS->ZMoveData->used[bankAtk])
+						viability -= 10;
+					break;
+
 				case MOVE_HOLDHANDS:
 					viability -= 10;
 				break;

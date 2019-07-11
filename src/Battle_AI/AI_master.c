@@ -1231,6 +1231,7 @@ static void PredictMovesForBanks(void)
 					if (gBitTable[i] & moveLimitations) continue;
 
 					u16 move = gBattleMons[bankAtk].moves[i];
+					move = TryReplaceMoveWithZMove(bankAtk, move);	
 					viabilities[i] = AI_Script_Negatives(bankAtk, bankDef, move, 100);
 					viabilities[i] = AI_Script_Positives(bankAtk, bankDef, move, viabilities[i]);
 				}

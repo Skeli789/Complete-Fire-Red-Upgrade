@@ -872,8 +872,13 @@ static u8 ConfusionBerries(u8 bank, u8 flavour, bool8 moveTurn, bool8 DoPluck) {
 
 static u8 StatRaiseBerries(u8 bank, u8 stat, bool8 moveTurn, bool8 DoPluck) {
 	u8 effect = 0;
-	if ((PINCH_BERRY_CHECK(bank) || DoPluck) && STAT_CAN_RISE(bank, stat)) {
+	u8 backupUser = gBankAttacker;
+	gBankAttacker = bank;
 	
+	if ((PINCH_BERRY_CHECK(bank) || DoPluck) && STAT_CAN_RISE(bank, stat)
+	&& BATTLER_ALIVE(bank)
+	&& !ChangeStatBuffs(SET_STAT_BUFF_VALUE(1), stat, MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN, 0))
+	{
 		PREPARE_STAT_BUFFER(gBattleTextBuff1, stat);
 		PREPARE_STRING_BUFFER(gBattleTextBuff2, STRINGID_STATROSE);
 
@@ -881,7 +886,8 @@ static u8 StatRaiseBerries(u8 bank, u8 stat, bool8 moveTurn, bool8 DoPluck) {
 		gBattleScripting->statChanger = INCREASE_1 | stat;
 		gBattleScripting->animArg1 = 0xE + stat;
 		gBattleScripting->animArg2 = 0;
-		if (moveTurn || DoPluck) {
+		if (moveTurn || DoPluck)
+		{
 			BattleScriptPushCursor();
 			gBattlescriptCurrInstr = BattleScript_BerryStatRaiseRet;
 		}
@@ -889,6 +895,8 @@ static u8 StatRaiseBerries(u8 bank, u8 stat, bool8 moveTurn, bool8 DoPluck) {
 			BattleScriptExecute(BattleScript_BerryStatRaiseEnd2);
 		effect = ITEM_STATS_CHANGE;
 	}
+
+	gBankAttacker = backupUser;
 	return effect;
 }
 
@@ -899,7 +907,7 @@ static u8 RaiseStatsContactItem(u8 bank, u8 stat, u8 moveType) {
 	
 	if (TOOK_DAMAGE(bank)
 	&& gBattleStruct->dynamicMoveType == moveType
-	&& gBattleMons[bank].hp
+	&& BATTLER_ALIVE(bank)
 	&& !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bank)
 	&& !ChangeStatBuffs(SET_STAT_BUFF_VALUE(1), stat, MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN, 0))
 	{
@@ -924,7 +932,7 @@ static u8 KeeMaranagaBerryFunc(u8 bank, u8 stat, u8 split, bool8 DoPluck) {
 	gBankAttacker = bank;
 	
 	if (((TOOK_DAMAGE(bank) && CalcMoveSplit(gBankAttacker, gCurrentMove) == split && !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bank)) || DoPluck)
-	&& gBattleMons[bank].hp 
+	&& BATTLER_ALIVE(bank)
 	&& !ChangeStatBuffs(SET_STAT_BUFF_VALUE(1), stat, MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN, 0)) 
 	{
 		gEffectBank = gBankAttacker;

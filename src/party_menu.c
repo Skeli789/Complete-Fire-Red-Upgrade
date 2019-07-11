@@ -470,9 +470,10 @@ void CursorCb_Enter(u8 taskId)
             gTasks[taskId].func = sub_811FB28;
 			
 			for (i = 0; i < PARTY_SIZE; ++i) //Reload everyone else's text if needed
-			{	
+			{
 				if (eligibleIndices[i] //Was eligible before the selection
-				&& !IsMonAllowedInBattleTower(&gPlayerParty[i])) //Mon is now ineligible
+				&& !IsMonAllowedInBattleTower(&gPlayerParty[i]) //Mon is now ineligible
+				&& GetMonData(&gPlayerParty[i], MON_DATA_SPECIES, NULL) != SPECIES_NONE)
 					DisplayPartyPokemonSelectData(i, 6);  //Reload eligibility text
 			}
 
@@ -520,7 +521,8 @@ void CursorCb_NoEntry(u8 taskId)
 	for (i = 0; i < PARTY_SIZE; ++i) //Reload everyone else's text if needed
 	{	
 		if (!eligibleIndices[i] //Wasn't eligible before the cancel
-		&& IsMonAllowedInBattleTower(&gPlayerParty[i])) //Mon is now eligible
+		&& IsMonAllowedInBattleTower(&gPlayerParty[i]) //Mon is now eligible
+		&& GetMonData(&gPlayerParty[i], MON_DATA_SPECIES, NULL) != SPECIES_NONE) //Legit Pokemon
 			DisplayPartyPokemonSelectData(i, 1);  //Reload eligibility text
 	}
 

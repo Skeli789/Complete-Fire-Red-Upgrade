@@ -159,9 +159,10 @@ bool8 MoveKnocksOutGoesFirstWithBestAccuracy(u16 move, u8 bankAtk, u8 bankDef)
 	for (int i = 0; i < MAX_MON_MOVES; ++i)
 	{
 		currMove = GetBattleMonMove(bankAtk, i);
-
 		if (currMove == MOVE_NONE)
 			break;
+		
+		currMove = TryReplaceMoveWithZMove(bankAtk, currMove);
 
 		if (!(gBitTable[i] & moveLimitations))
 		{
@@ -201,6 +202,8 @@ bool8 StrongestMoveGoesFirst(u16 move, u8 bankAtk, u8 bankDef)
 
 		if (currMove == MOVE_NONE)
 			break;
+		
+		currMove = TryReplaceMoveWithZMove(bankAtk, currMove);
 
 		if (!(gBitTable[i] & moveLimitations))
 		{
@@ -237,7 +240,7 @@ u16 CalcFinalAIMoveDamage(u16 move, u8 bankAtk, u8 bankDef, u8 numHits)
 {
 	if (move == MOVE_NONE || SPLIT(move) == SPLIT_STATUS || gBattleMoves[move].power == 0)
 		return 0;
-		
+
 	if (gBattleMoves[move].effect == EFFECT_FAKE_OUT && !gDisableStructs[bankAtk].isFirstTurn)
 		return 0;
 
@@ -308,6 +311,7 @@ bool8 IsStrongestMove(const u16 currentMove, const u8 bankAtk, const u8 bankDef)
 		move = gBattleMons[bankAtk].moves[i];
 		if (move == MOVE_NONE)
 			break;
+		move = TryReplaceMoveWithZMove(bankAtk, move);	
 
 		if (!(gBitTable[i] & moveLimitations))
 		{
@@ -381,7 +385,8 @@ bool8 MoveWillHit(u16 move, u8 bankAtk, u8 bankDef)
 	||  (CheckTableForMove(move, MinimizeHitTable) && gStatuses3[bankDef] & STATUS3_MINIMIZED)
 	|| ((gStatuses3[bankDef] & STATUS3_TELEKINESIS) && gBattleMoves[move].effect != EFFECT_0HKO)
 	||  gBattleMoves[move].accuracy == 0
-	|| (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_RAIN_ANY) && CheckTableForMove(move, AlwaysHitRainTable)))
+	|| (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_RAIN_ANY) && CheckTableForMove(move, AlwaysHitRainTable))
+	||  IsZMove(move))
 		return TRUE;
 
 	return FALSE;
@@ -988,6 +993,22 @@ bool8 MoveThatCanHelpAttacksHitInMoveset(u8 bank)
 	return FALSE;
 }
 
+u16 TryReplaceMoveWithZMove(u8 bankAtk, u16 move)
+{
+	if (!gNewBS->ZMoveData->used[bankAtk] && SPLIT(move) != SPLIT_STATUS)
+	{
+		u8 moveIndex = FindMovePositionInMoveset(move, bankAtk);
+		if (moveIndex < MAX_MON_MOVES)
+		{
+			u16 zMove = ShouldAIUseZMove(bankAtk, moveIndex, move);
+			if (zMove != MOVE_NONE)
+				move = zMove;
+		}
+	}
+
+	return move;
+}
+
 bool8 GetHealthPercentage(u8 bank)
 {
 	return (gBattleMons[bank].hp * 100) / gBattleMons[bank].maxHP;
@@ -1054,7 +1075,7 @@ u16 ShouldAIUseZMove(u8 bank, u8 moveIndex, u16 move)
 	if (IsMega(bank)
 	|| IsRedPrimal(bank)
 	|| IsBluePrimal(bank))
-		return FALSE;
+		return MOVE_NONE;
 
 	if (IsZCrystal(item) || item == ITEM_ULTRA_NECROZIUM_Z) //The only "Mega Stone" that let's you use a Z-Move
 	{
@@ -1072,7 +1093,7 @@ u16 ShouldAIUseZMove(u8 bank, u8 moveIndex, u16 move)
 		}
 	}
 
-	return FALSE;
+	return MOVE_NONE;
 }
 
 void IncreaseViability(s16* viability, u8 amount)

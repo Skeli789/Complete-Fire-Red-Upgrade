@@ -670,7 +670,8 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
                 else if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
                 {
                     CopyFrontierTrainerText(FRONTIER_PLAYER_WON_TEXT, gTrainerBattleOpponent_A, 0);
-                    toCpy = gStringVar4;
+					BattleStringExpandPlaceholders(gStringVar4, gStringVar3);
+                    toCpy = gStringVar3;
                 }
                 else
                 {
@@ -686,7 +687,8 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
                 else if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
                 {
                     CopyFrontierTrainerText(FRONTIER_PLAYER_LOST_TEXT, gTrainerBattleOpponent_A, 0);
-                    toCpy = gStringVar4;
+					BattleStringExpandPlaceholders(gStringVar4, gStringVar3);
+                    toCpy = gStringVar3;
                 }
                 else
                 {

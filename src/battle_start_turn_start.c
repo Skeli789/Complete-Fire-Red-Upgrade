@@ -42,6 +42,8 @@ extern void (* const sEndTurnFuncsTable[])(void);
 extern u8* const gBattleScriptsForMoveEffects[];
 extern const u16 gClassBasedBattleBGM[];
 extern const u16 gWildSpeciesBasedBattleBGM[];
+extern const u16 gRandomBattleMusicOptions[];
+extern const u8 gRandomBattleMusicOptionsLength;
 extern const u16 gWildSpeciesBasedBattleBGMLength;
 
 const u8 gStatStageRatios[][2] =
@@ -886,6 +888,14 @@ u16 GetMUS_ForBattle(void)
 			
 			//Then try loading the song override
 			song = VarGet(BATTLE_TOWER_SONG_OVERRIDE);
+			if (song == BGM_RANDOM_BATTLE_MUSIC)
+			{
+				do //Assumes table has legit music
+				{
+					song = gRandomBattleMusicOptions[Random() % gRandomBattleMusicOptionsLength];
+				} while (song == 0); //Song is not legit
+			}
+
 			if (song != 0)
 				return song;
 		}
@@ -1098,10 +1108,14 @@ s32 BracketCalc(u8 bank)
 	{
 		switch (itemEffect) {
 			case ITEM_EFFECT_QUICK_CLAW:
-				if (gRandomTurnNumber % 100 < itemQuality/* && !(gNewBS->activatedCustapQuickClaw & gBitTable[bank])*/)
+				if (gRandomTurnNumber % 100 < itemQuality)
 				{
-					//gNewBS->activatedCustapQuickClaw |= gBitTable[bank];
-					gNewBS->CustapQuickClawIndicator |= gBitTable[bank];
+					if (!(gNewBS->activatedCustapQuickClaw & gBitTable[bank])) //So the animation only plays at the beginning of the turn
+					{
+						gNewBS->activatedCustapQuickClaw |= gBitTable[bank];
+						gNewBS->CustapQuickClawIndicator |= gBitTable[bank];
+					}
+
 					return 1;
 				}
 				break;

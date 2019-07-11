@@ -141,6 +141,7 @@ SkipRoarAnim:
 	finishaction
 
 ForceSwitch:
+	callasm TryRemovePrimalWeatherOnForceSwitchout
 	switch1 BANK_TARGET
 	switch2 BANK_TARGET
 	switch3 BANK_TARGET 0x0

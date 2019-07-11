@@ -35,7 +35,7 @@ extern const struct SpriteTemplate gBallSpriteTemplates[];
 extern u8 gText_CantAimAtTwoTargets[];
 extern u8 gText_CantAimAtSemiInvulnerableTarget[];
 
-extern species_t UltraBeastTable[];
+extern species_t gUltraBeastList[];
 
 //This file's functions:
 static u8 GetCatchingBattler(void);
@@ -250,7 +250,7 @@ void atkEF_handleballthrow(void)
 					break;
 				
 				case BALL_TYPE_BEAST_BALL:
-					if (CheckTableForSpecies(defSpecies, UltraBeastTable))
+					if (CheckTableForSpecies(defSpecies, gUltraBeastList))
 						ball_multiplier = 50;
 					else
 						ball_multiplier = 1;
@@ -260,7 +260,7 @@ void atkEF_handleballthrow(void)
         else
             ball_multiplier = sBallCatchBonuses[ItemType - BALL_TYPE_ULTRA_BALL];
 		
-		if (CheckTableForSpecies(defSpecies, UltraBeastTable) && ItemType != BALL_TYPE_BEAST_BALL)
+		if (CheckTableForSpecies(defSpecies, gUltraBeastList) && ItemType != BALL_TYPE_BEAST_BALL)
 			ball_multiplier = 1; //All balls except for Beast Ball have a hard time catching Ultra Beasts
 		
         odds = udivsi(((catch_rate * udivsi(ball_multiplier, 10)) * (gBattleMons[gBankTarget].maxHP * 3 - gBattleMons[gBankTarget].hp * 2)), (3 * gBattleMons[gBankTarget].maxHP));

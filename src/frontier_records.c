@@ -111,6 +111,7 @@ extern const u8 gText_SmogonGen7OU[];
 extern const u8 gText_SmogonGen7Uber[];
 extern const u8 gText_SmogonLittleCup[];
 extern const u8 gText_MiddleCup[];
+extern const u8 gText_SmogonMonotype[];
 
 //This File's Static Functions
 static void CB2_ShowFrontierRecords(void);
@@ -181,7 +182,7 @@ static const struct WindowTemplate sFrontierRecordsWinTemplates[WINDOW_COUNT + 1
 		.bg = 0,
 		.tilemapLeft = 2,
 		.tilemapTop = 5,
-		.width = 5,
+		.width = 6,
 		.height = 2,
 		.paletteNum = 15,
 		.baseBlock = 82,
@@ -194,7 +195,7 @@ static const struct WindowTemplate sFrontierRecordsWinTemplates[WINDOW_COUNT + 1
 		.width = 4,
 		.height = 2,
 		.paletteNum = 15,
-		.baseBlock = 92,
+		.baseBlock = 94,
 	},
 	[WIN_6V6_LEVEL_50] =
 	{
@@ -204,7 +205,7 @@ static const struct WindowTemplate sFrontierRecordsWinTemplates[WINDOW_COUNT + 1
 		.width = 4,
 		.height = 2,
 		.paletteNum = 15,
-		.baseBlock = 100,
+		.baseBlock = 102,
 	},
 	[WIN_CURRENT_STREAK_LEVEL_50] =
 	{
@@ -214,7 +215,7 @@ static const struct WindowTemplate sFrontierRecordsWinTemplates[WINDOW_COUNT + 1
 		.width = 10,
 		.height = 2,
 		.paletteNum = 15,
-		.baseBlock = 108,
+		.baseBlock = 110,
 	},
 	[WIN_MAX_STREAK_LEVEL_50] =
 	{
@@ -224,7 +225,7 @@ static const struct WindowTemplate sFrontierRecordsWinTemplates[WINDOW_COUNT + 1
 		.width = 10,
 		.height = 2,
 		.paletteNum = 15,
-		.baseBlock = 128,
+		.baseBlock = 130,
 	},
 	[WIN_LEVEL_100] =
 	{
@@ -234,7 +235,7 @@ static const struct WindowTemplate sFrontierRecordsWinTemplates[WINDOW_COUNT + 1
 		.width = 6,
 		.height = 2,
 		.paletteNum = 15,
-		.baseBlock = 148,
+		.baseBlock = 150,
 	},
 	[WIN_3V3_LEVEL_100] =
 	{
@@ -244,7 +245,7 @@ static const struct WindowTemplate sFrontierRecordsWinTemplates[WINDOW_COUNT + 1
 		.width = 4,
 		.height = 2,
 		.paletteNum = 15,
-		.baseBlock = 160,
+		.baseBlock = 162,
 	},
 	[WIN_6V6_LEVEL_100] =
 	{
@@ -254,7 +255,7 @@ static const struct WindowTemplate sFrontierRecordsWinTemplates[WINDOW_COUNT + 1
 		.width = 4,
 		.height = 2,
 		.paletteNum = 15,
-		.baseBlock = 168,
+		.baseBlock = 170,
 	},
 	[WIN_CURRENT_STREAK_LEVEL_100] =
 	{
@@ -264,7 +265,7 @@ static const struct WindowTemplate sFrontierRecordsWinTemplates[WINDOW_COUNT + 1
 		.width = 10,
 		.height = 2,
 		.paletteNum = 15,
-		.baseBlock = 176,
+		.baseBlock = 178,
 	},
 	[WIN_MAX_STREAK_LEVEL_100] =
 	{
@@ -274,7 +275,7 @@ static const struct WindowTemplate sFrontierRecordsWinTemplates[WINDOW_COUNT + 1
 		.width = 10,
 		.height = 2,
 		.paletteNum = 15,
-		.baseBlock = 196,
+		.baseBlock = 198,
 	},
 	[WIN_TIER] =
 	{
@@ -284,7 +285,7 @@ static const struct WindowTemplate sFrontierRecordsWinTemplates[WINDOW_COUNT + 1
 		.width = 15,
 		.height = 2,
 		.paletteNum = 15,
-		.baseBlock = 216,
+		.baseBlock = 218,
 	},
 	
 	
@@ -297,7 +298,7 @@ static const struct WindowTemplate sFrontierRecordsWinTemplates[WINDOW_COUNT + 1
 		.width = 4,
 		.height = 2,
 		.paletteNum = 15,
-		.baseBlock = 246,
+		.baseBlock = 248,
 	},
 	[WIN_MAX_STREAK_3V3_LEVEL_50] =
 	{
@@ -307,7 +308,7 @@ static const struct WindowTemplate sFrontierRecordsWinTemplates[WINDOW_COUNT + 1
 		.width = 4,
 		.height = 2,
 		.paletteNum = 15,
-		.baseBlock = 254,
+		.baseBlock = 256,
 	},
 	[WIN_CURRENT_STREAK_6V6_LEVEL_50] =
 	{
@@ -317,7 +318,7 @@ static const struct WindowTemplate sFrontierRecordsWinTemplates[WINDOW_COUNT + 1
 		.width = 4,
 		.height = 2,
 		.paletteNum = 15,
-		.baseBlock = 262,
+		.baseBlock = 264,
 	},
 	[WIN_MAX_STREAK_6V6_LEVEL_50] =
 	{
@@ -327,7 +328,7 @@ static const struct WindowTemplate sFrontierRecordsWinTemplates[WINDOW_COUNT + 1
 		.width = 4,
 		.height = 2,
 		.paletteNum = 15,
-		.baseBlock = 270,
+		.baseBlock = 272,
 	},
 	[WIN_CURRENT_STREAK_3V3_LEVEL_100] =
 	{
@@ -337,7 +338,7 @@ static const struct WindowTemplate sFrontierRecordsWinTemplates[WINDOW_COUNT + 1
 		.width = 4,
 		.height = 2,
 		.paletteNum = 15,
-		.baseBlock = 278,
+		.baseBlock = 280,
 	},
 	[WIN_MAX_STREAK_3V3_LEVEL_100] =
 	{
@@ -347,7 +348,7 @@ static const struct WindowTemplate sFrontierRecordsWinTemplates[WINDOW_COUNT + 1
 		.width = 4,
 		.height = 2,
 		.paletteNum = 15,
-		.baseBlock = 286,
+		.baseBlock = 288,
 	},
 	[WIN_CURRENT_STREAK_6V6_LEVEL_100] =
 	{
@@ -357,7 +358,7 @@ static const struct WindowTemplate sFrontierRecordsWinTemplates[WINDOW_COUNT + 1
 		.width = 4,
 		.height = 2,
 		.paletteNum = 15,
-		.baseBlock = 294,
+		.baseBlock = 296,
 	},
 	[WIN_MAX_STREAK_6V6_LEVEL_100] =
 	{
@@ -367,7 +368,7 @@ static const struct WindowTemplate sFrontierRecordsWinTemplates[WINDOW_COUNT + 1
 		.width = 4,
 		.height = 2,
 		.paletteNum = 15,
-		.baseBlock = 302,
+		.baseBlock = 304,
 	},
 
 	DUMMY_WIN_TEMPLATE,
@@ -411,6 +412,7 @@ static const u8* const sBattleTowerTierNames[NUM_FORMATS] =
 	[BATTLE_TOWER_UBER] gText_SmogonGen7Uber,
 	[BATTLE_TOWER_LITTLE_CUP] = gText_SmogonLittleCup,
 	[BATTLE_TOWER_MIDDLE_CUP] = gText_MiddleCup,
+	[BATTLE_TOWER_MONOTYPE] = gText_SmogonMonotype,
 };
 
 static void MainCB2(void)
@@ -630,13 +632,15 @@ static void DisplayFrontierRecordsText(void)
 	//Print Level 50 General Text
 	if (tier == BATTLE_TOWER_LITTLE_CUP)
 		WindowPrint(WIN_LEVEL_50, 0, 0, 4, &levelColour, 0, gText_FrontierRecordLevel5);
+	else if (tier == BATTLE_TOWER_MONOTYPE)
+		WindowPrint(WIN_LEVEL_50, 0, 0, 4, &levelColour, 0, gText_FrontierRecordLevel100);
 	else
 		WindowPrint(WIN_LEVEL_50, 0, 0, 4, &levelColour, 0, gText_FrontierRecordLevel50);
 
 	WindowPrint(WIN_CURRENT_STREAK_LEVEL_50, 0, 0, 4, &generalColour, 0, gText_CurrentStreak);
 	WindowPrint(WIN_MAX_STREAK_LEVEL_50, 0, 0, 4, &generalColour, 0, gText_MaxStreak);
 
-	if (tier != BATTLE_TOWER_LITTLE_CUP) //Little Cup only has Lv. 5
+	if (tier != BATTLE_TOWER_LITTLE_CUP && tier != BATTLE_TOWER_MONOTYPE) //Little Cup only has Lv. 5, Monotype only has Lv. 100
 	{
 		//Print Level 100 Party Sizes Numbers
 		string = (sFrontierRecordsPtr->battleType == BATTLE_TOWER_SINGLE) ? gText_3v3 : gText_4v4;
@@ -656,6 +660,9 @@ static void DisplayFrontierRecordsText(void)
 		{
 			if (tier == BATTLE_TOWER_LITTLE_CUP)
 				level = 5;
+				
+			if (tier == BATTLE_TOWER_MONOTYPE)
+				level = 100;
 
 			u16 currStreak = GetBattleTowerStreak(CURR_STREAK, sFrontierRecordsPtr->battleType, sFrontierRecordsPtr->battleTier, partySize, level);
 			u16 maxStreak = GetBattleTowerStreak(MAX_STREAK, sFrontierRecordsPtr->battleType, sFrontierRecordsPtr->battleTier, partySize, level);
@@ -665,7 +672,7 @@ static void DisplayFrontierRecordsText(void)
 			
 			if (partySize == 3)
 			{
-				if (level <= 50) //3v3 Level 50
+				if (level <= 50 || tier == BATTLE_TOWER_MONOTYPE) //3v3 Level 50
 				{
 					WindowPrint(WIN_CURRENT_STREAK_3V3_LEVEL_50, 0, 0, 4, &generalColour, 0, gStringVar1);
 					WindowPrint(WIN_MAX_STREAK_3V3_LEVEL_50, 0, 0, 4, &generalColour, 0, gStringVar2);
@@ -680,7 +687,7 @@ static void DisplayFrontierRecordsText(void)
 			}
 			else
 			{
-				if (level <= 50) //6v6 Level 50
+				if (level <= 50 || tier == BATTLE_TOWER_MONOTYPE) //6v6 Level 50
 				{
 					WindowPrint(WIN_CURRENT_STREAK_6V6_LEVEL_50, 0, 0, 4, &generalColour, 0, gStringVar1);
 					WindowPrint(WIN_MAX_STREAK_6V6_LEVEL_50, 0, 0, 4, &generalColour, 0, gStringVar2);
@@ -695,8 +702,8 @@ static void DisplayFrontierRecordsText(void)
 			}
 		}
 		
-		if (tier == BATTLE_TOWER_LITTLE_CUP)
-			break; //Only one set of levels for LC
+		if (tier == BATTLE_TOWER_LITTLE_CUP || tier == BATTLE_TOWER_MONOTYPE)
+			break; //Only one set of levels for LC & Monotype
 	}
 	
 	//Display committed gfx

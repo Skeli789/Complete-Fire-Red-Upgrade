@@ -771,6 +771,7 @@ struct NewBattleStruct
 	u8 NoMoreMovingThisTurn;
 	u8 handleSetSwitchIns;
 	u8 brokeFreeMessage;
+	u8 activatedCustapQuickClaw;
 	
 	//Bit Fields for Party
 	u8 BelchCounters;
@@ -795,6 +796,7 @@ struct NewBattleStruct
 	u8 savedObjId;
 	u8 lastFainted;
 	u8 intimidateActive;
+	u8 backupAbility;
 	
 	//Booleans
 	bool8 MoveBounceInProgress : 2;
