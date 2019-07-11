@@ -16,7 +16,7 @@
 extern const struct NaturalGiftStruct gNaturalGiftTable[];
 extern const struct FlingStruct gFlingTable[];
 
-u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 move, const u8 originalViability)
+u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMove, const u8 originalViability)
 {
 	//Put check to call special script for attacking partner
 
@@ -26,9 +26,10 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 move, const
 	s16 viability = originalViability;
 
 	//Get relevant params
+	u16 move = TryReplaceMoveWithZMove(bankAtk, originalMove);	
 	u8 moveEffect = gBattleMoves[move].effect;
 	u8 moveType = GetMoveTypeSpecial(bankAtk, move);
-	
+
 	u8 bankAtkPartner = PARTNER(bankAtk);
 	u8 bankDefPartner = PARTNER(bankDef);
 	
@@ -639,7 +640,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 move, const
 			break;
 		
 		case EFFECT_SPLASH:
-			if (IsTypeZCrystal(atkItem, moveType))
+			if (IsTypeZCrystal(atkItem, moveType) && !gNewBS->ZMoveData->used[bankAtk])
 				INCREASE_VIABILITY(9); //Z-Splash!
 			break;
 
@@ -1365,10 +1366,10 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 move, const
 			break;
 			
 		case EFFECT_TRICK: //+ Bestwo
-			switch (ItemId_GetHoldEffect(ITEM(bankDef))) {
+			switch (atkItemEffect) {
 				case ITEM_EFFECT_CHOICE_BAND: ;
-					if (ITEM_QUALITY(bankAtk) == QUALITY_CHOICE_SCARF
-					|| !MoveSplitInMoveset(ITEM_QUALITY(bankAtk), bankDef)) //Target doens't have beneficial move for choice item
+					if (atkItemQuality == QUALITY_CHOICE_SCARF
+					|| !MoveSplitInMoveset(atkItemQuality, bankDef)) //Target doesn't have beneficial move for choice item
 						INCREASE_STATUS_VIABILITY(2);
 					break;
 	
@@ -1724,8 +1725,8 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 move, const
 				INCREASE_VIABILITY(3); //Increase past strongest move
 			else if (atkSpecies == SPECIES_MELOETTA_PIROUETTE && defSpDef < defDefense) //Change to Aria if can do more damage
 				INCREASE_VIABILITY(3); //Increase past strongest move
-			else
-				goto AI_SLEEP_CHECKS;
+//			else
+//				goto AI_SLEEP_CHECKS;
 			break;
 			
 		case EFFECT_SET_TERRAIN:
@@ -1893,9 +1894,10 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 move, const
 					}
 					break;
 
+				case MOVE_CELEBRATE:
 				case MOVE_HAPPYHOUR:
-					if (IsTypeZCrystal(atkItem, moveType))
-						INCREASE_VIABILITY(9); //Z-Happy Hour!
+					if (IsTypeZCrystal(atkItem, moveType) && !gNewBS->ZMoveData->used[bankAtk])
+						INCREASE_VIABILITY(9); //Z-Happy Hour! / Z-Celebrate
 					break;
 			}
 			break;
@@ -1975,6 +1977,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 move, const
 		&& StrongestMoveGoesFirst(move, bankAtk, bankDef)) //Use fastest move
 		{
 			INCREASE_VIABILITY(9);
+			
 		}
 		else if (IsStrongestMove(move, bankAtk, bankDef))
 		{

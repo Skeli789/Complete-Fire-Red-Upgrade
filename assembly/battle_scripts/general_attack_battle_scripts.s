@@ -1016,6 +1016,9 @@ BS_045_HighJumpKick:
 	jumpifability BANK_ATTACKER ABILITY_MAGICGUARD BS_STANDARD_HIT
 	attackcanceler
 	accuracycheck HighJumpKickMiss 0x0
+	typecalc2
+	bicbyte OUTCOME OUTCOME_SUPER_EFFECTIVE | OUTCOME_NOT_VERY_EFFECTIVE
+	jumpifmovehadnoeffect HighJumpKickMiss
 	goto BS_HIT_FROM_ATTACKSTRING
 
 HighJumpKickMiss:
@@ -2348,6 +2351,7 @@ BatonPassSwitchOutBS:
 	waitstateatk
 	switchhandleorder BANK_ATTACKER 0x2
 	returntoball BANK_ATTACKER
+	callasm TryRemovePrimalWeatherOnPivot
 	switch1 BANK_ATTACKER
 	switch2 BANK_ATTACKER
 	hpthresholds BANK_ATTACKER
@@ -3686,6 +3690,7 @@ GastroAcidBS:
 	waitmessage DELAY_1SECOND
 	copybyte BATTLE_SCRIPTING_BANK TARGET_BANK
 	call BSTryRemoveIllusion
+	callasm TryRemovePrimalWeatherAfterAbilityChange
 	call 0x81D92DC @;Try to revert Cherrim and Castform
 	goto BS_MOVE_END
 
@@ -3713,6 +3718,7 @@ SimpleBeamBS:
 	waitmessage DELAY_1SECOND
 	copyarray BATTLE_SCRIPTING_BANK TARGET_BANK 0x1
 	call BSTryRemoveIllusion
+	callasm TryRemovePrimalWeatherAfterAbilityChange
 	call 0x81D92DC @;Try to revert Cherrim and Castform
 	tryactivateswitchinability BANK_TARGET
 	goto BS_MOVE_END

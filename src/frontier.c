@@ -225,6 +225,12 @@ u16 sp052_GenerateTowerTrainer(void)
 	else
 	{
 		id %= NUM_SPECIAL_TOWER_TRAINERS;
+		while (VarGet(BATTLE_TOWER_TIER) == BATTLE_TOWER_MONOTYPE && !gSpecialTowerTrainers[id].isMonotype)
+		{
+			id = Random();
+			id %= NUM_SPECIAL_TOWER_TRAINERS;
+		}
+
 		VarSet(TOWER_TRAINER_ID_VAR + battler, id);
 		return gSpecialTowerTrainers[id].owNum;
 	}
@@ -319,6 +325,9 @@ static u8 AdjustLevelForTier(u8 level, u8 tier)
 {
 	if (tier == BATTLE_TOWER_LITTLE_CUP)
 		return 5;
+		
+	if (tier == BATTLE_TOWER_MONOTYPE)
+		return 100;
 
 	return level;
 }
@@ -332,7 +341,6 @@ u16 GetBattleTowerStreak(u8 currentOrMax, u16 inputBattleStyle, u16 inputTier, u
 	level = AdjustLevelForTier(level, tier);
 	
 	LoadProperStreakData(&currentOrMax, &battleStyle, &tier, &size, &level);
-
 	return gBattleTowerStreaks[battleStyle][tier][size][level][currentOrMax];
 }
 
@@ -406,6 +414,12 @@ u16 sp056_DetermineBattlePointsToGive(void)
 
 static void LoadProperStreakData(u8* currentOrMax, u8* battleStyle, u8* tier, u8* partySize, u8* level)
 {
+	if (*tier == BATTLE_TOWER_MONOTYPE)
+	{
+		*tier = BATTLE_TOWER_LITTLE_CUP; //Hijack Little Cup level 100 slot
+		*level = 100;
+	}
+
 	*currentOrMax = MathMin(*currentOrMax, 1);
 	*battleStyle = MathMin(*battleStyle, NUM_TOWER_BATTLE_TYPES);
 	*tier = MathMin(*tier, NUM_FORMATS);

@@ -47,6 +47,7 @@ bool8 FlinchingMoveInMoveset(u8 bank);
 bool8 HealingMoveInMoveset(u8 bank);
 bool8 SoundMoveInMoveset(u8 bank);
 bool8 MoveThatCanHelpAttacksHitInMoveset(u8 bank);
+u16 TryReplaceMoveWithZMove(u8 bankAtk, u16 move);
 
 bool8 GetHealthPercentage(u8 bank);
 bool8 TeamFullyHealedMinusBank(u8 bank);

@@ -11,10 +11,11 @@
 #include "../include/new/helper_functions.h"
 #include "../include/new/move_battle_scripts.h"
 #include "../include/new/move_tables.h"
+#include "../include/new/switching.h"
 
 extern const u8* gBattleScriptsForMoveEffects[];
 
-extern const species_t TelekinesisBanList[];
+extern const species_t gTelekinesisBanList[];
 extern const struct FlingStruct gFlingTable[];
 
 void CheckIfDarkVoidShouldFail(void)
@@ -799,7 +800,7 @@ void CheckTelekinesisFail(void)
 	if (gStatuses3[gBankTarget] & (STATUS3_TELEKINESIS | STATUS3_ROOTED | STATUS3_SMACKED_DOWN)
 	||  gNewBS->GravityTimer
 	||  ITEM_EFFECT(gBankTarget) == ITEM_EFFECT_IRON_BALL
-	||  CheckTableForSpecies(species, TelekinesisBanList))
+	||  CheckTableForSpecies(species, gTelekinesisBanList))
 	{
 		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5 - 2;
 	}
@@ -1187,6 +1188,8 @@ void AbilityChangeBSFunc(void)
 		
 	atkAbility = *atkAbilityLoc;
 	defAbility = *defAbilityLoc;
+
+	gNewBS->backupAbility = *defAbilityLoc;
 
 	switch (gCurrentMove) {
 		case MOVE_WORRYSEED:
@@ -1586,4 +1589,22 @@ void UpdatePrimalAbility(void)
 void ClearAttackerDidDamageOnce(void)
 {
 	gNewBS->AttackerDidDamageAtLeastOnce = 0;
+}
+
+void TryRemovePrimalWeatherOnPivot(void)
+{
+	if (TryRemovePrimalWeather(gBankAttacker, ABILITY(gBankAttacker)))
+		gBattlescriptCurrInstr -= 5;
+}
+
+void TryRemovePrimalWeatherOnForceSwitchout(void)
+{
+	if (TryRemovePrimalWeather(gBankTarget, ABILITY(gBankTarget)))
+		gBattlescriptCurrInstr -= 5;
+}
+
+void TryRemovePrimalWeatherAfterAbilityChange(void)
+{
+	if (TryRemovePrimalWeather(gBankTarget, gNewBS->backupAbility))
+		gBattlescriptCurrInstr -= 5;
 }

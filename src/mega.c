@@ -67,6 +67,35 @@ const struct Evolution* CanMegaEvolve(u8 bank, bool8 CheckUBInstead)
 	#endif
 }
 
+//Assumes Wish Evolution isn't important
+species_t GetMegaSpecies(u16 species, u16 item)
+{
+	#ifndef MEGA_EVOLUTION_FEATURE
+		return SPECIES_NONE;
+	#else
+	
+	const struct Evolution* evolutions = gEvolutionTable[species];
+	int i;
+	
+	for (i = 0; i < EVOS_PER_MON; ++i) {
+		if (evolutions[i].method == EVO_MEGA)
+		{
+			//Ignore reversion information
+			if (evolutions[i].param == 0) continue;
+			
+			//Check for held item
+			if (evolutions[i].unknown == MEGA_VARIANT_STANDARD)
+			{
+				if (evolutions[i].param == item)
+					return evolutions[i].targetSpecies;	
+			}
+		}
+	}
+	
+	return SPECIES_NONE;
+	#endif
+}
+
 const u8* DoMegaEvolution(u8 bank)
 {
 	struct Pokemon* mon = GetBankPartyData(bank);

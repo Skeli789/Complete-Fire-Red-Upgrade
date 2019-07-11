@@ -244,7 +244,7 @@ u32 AI_CalcDmg(const u8 bankAtk, const u8 bankDef, const u16 move) {
 			return gBattleMons[bankDef].hp - finalHp;
 	}
 
-	gDynamicBasePower = 0;
+	gDynamicBasePower = (IsZMove(move)) ? GetZMovePower(bankAtk, move) : 0;	
 	gBattleScripting->dmgMultiplier = 1;
 	gBattleStruct->dynamicMoveType = GetMoveTypeSpecial(bankAtk, move);
 	gCritMultiplier = CalcPossibleCritChance(bankAtk, bankDef, move, 0, FALSE); //Return 0 if none, 1 if always, 2 if 50%

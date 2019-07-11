@@ -61,18 +61,12 @@ void atkE2_switchoutabilities(void)
 	gBattlescriptCurrInstr += 2;
 }
 
-void atk61_drawpartystatussummary(void)
+bool8 TryRemovePrimalWeather(u8 bank, u8 ability)
 {
 	int i;
-	pokemon_t* party;
-	struct HpAndStatus hpStatus[6];
-	if (gBattleExecBuffer)
-		return;
-
-	gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
-
 	BattleStringLoader = NULL;
-	switch (ABILITY(gActiveBattler)) {	
+
+	switch (ability) {	
 		case ABILITY_PRIMORDIALSEA:
 			if (gBattleWeather & WEATHER_RAIN_PRIMAL)
 				BattleStringLoader = PrimalRainEndString;
@@ -85,14 +79,13 @@ void atk61_drawpartystatussummary(void)
 			if (gBattleWeather & WEATHER_AIR_CURRENT_PRIMAL)
 				BattleStringLoader = PrimalAirCurrentEndString;
 	}
-	
+
 	if (BattleStringLoader != NULL)
 	{
-		
 		for (i = 0; i < gBattlersCount; ++i)
 		{
-			if (i == gActiveBattler) continue;
-			if (ABILITY(i) == ABILITY(gActiveBattler)) break;
+			if (i == bank) continue;
+			if (ABILITY(i) == ability) break;
 		}
 		
 		if (i == gBattlersCount)
@@ -101,9 +94,25 @@ void atk61_drawpartystatussummary(void)
 			gWeatherCounter = 0;
 			BattleScriptPushCursor();
 			gBattlescriptCurrInstr = BattleScript_PrimalWeatherEnd;
-			return;
+			return TRUE;
 		}
 	}
+	
+	return FALSE;
+}
+
+void atk61_drawpartystatussummary(void)
+{
+	int i;
+	pokemon_t* party;
+	struct HpAndStatus hpStatus[6];
+	if (gBattleExecBuffer)
+		return;
+
+	gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
+
+	if (TryRemovePrimalWeather(gActiveBattler, ABILITY(gActiveBattler)))
+		return;
 	
 	if (SIDE(gActiveBattler) == 0)
 		party = gPlayerParty;
@@ -873,6 +882,7 @@ void ClearSwitchBits(u8 bank)
 	gNewBS->IllusionBroken &= ~(gBitTable[bank]);
 	gNewBS->brokeFreeMessage &= ~(gBitTable[bank]);
 	gNewBS->CustapQuickClawIndicator &= ~(gBitTable[bank]);
+	gNewBS->activatedCustapQuickClaw &= ~(gBitTable[bank]);
 }
 
 void PartyMenuSwitchingUpdate(void)

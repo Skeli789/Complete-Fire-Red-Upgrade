@@ -157,6 +157,7 @@ u8 TurnBasedEffects(void)
 				gNewBS->playedFocusPunchMessage = 0;
 				gNewBS->playedShellTrapMessage = 0;
 				gNewBS->CustapQuickClawIndicator = 0;
+				gNewBS->activatedCustapQuickClaw = 0;
 				gNewBS->criticalCapture = 0;
 				
 				if (gNewBS->RetaliateCounters[0])

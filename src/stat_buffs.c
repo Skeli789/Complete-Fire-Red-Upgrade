@@ -148,7 +148,7 @@ void atk48_playstatchangeanimation(void)
 			}
             statsToCheck >>= 1, ++currStat;
         }
-
+	
         if (changeableStatsCount > 1) // more than one stat, so the color is gray
         {
             if (flags & ATK48_STAT_BY_TWO)
@@ -191,8 +191,16 @@ void atk48_playstatchangeanimation(void)
 
 	if (gNewBS->SpectralThiefActive)
 	{
-		statAnimId = STAT_ANIM_MULTIPLE_MINUS1;
-		changeableStatsCount = 0xFF;
+		if (ABILITY(gActiveBattler) == ABILITY_CONTRARY)
+		{
+			statAnimId = STAT_ANIM_MULTIPLE_MINUS1; //Invert stat changes
+			changeableStatsCount = 0xFF;
+		}
+		else
+		{
+			statAnimId = STAT_ANIM_MULTIPLE_PLUS1;
+			changeableStatsCount = 0xFF;
+		}
 	}
 		
     if ((T2_READ_8(gBattlescriptCurrInstr + 3) & ATK48_ONLY_MULTIPLE && changeableStatsCount < 2)

@@ -7934,7 +7934,7 @@ const struct BattleMove gBattleMoves[] = {
 		.priority = 0,
 		.flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 		.z_move_power = 180,
-		.split = SPLIT_STATUS,
+		.split = SPLIT_SPECIAL,
 		.z_move_effect = 0
 	},
 

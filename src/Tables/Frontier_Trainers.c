@@ -29,6 +29,8 @@ extern const u8 sFrontierText_Youngster_PlayerLose_2[];
 extern const u8 sFrontierText_Youngster_PreBattle_3[];
 extern const u8 sFrontierText_Youngster_PlayerWin_3[];
 extern const u8 sFrontierText_Youngster_PlayerLose_3[];
+
+#ifdef UNBOUND
 extern const u8 sFrontierText_Bugcatcher_PreBattle_1[];
 extern const u8 sFrontierText_Bugcatcher_PlayerWin_1[];
 extern const u8 sFrontierText_Bugcatcher_PlayerLose_1[];
@@ -411,12 +413,16 @@ extern const u8 sFrontierText_Rancher_PreBattle_6[];
 extern const u8 sFrontierText_Rancher_PlayerWin_6[];
 extern const u8 sFrontierText_Rancher_PlayerLose_6[];
 
+extern const u8 sTrainerName_Palmer[];
 extern const u8 sTrainerName_Cynthia[];
 extern const u8 sTrainerName_Skeli[];
 extern const u8 sTrainerName_Golche[];
 extern const u8 sTrainerName_Gail[];
 extern const u8 sTrainerName_Lixdel[];
-extern const u8 sTrainerName_Palmer[];
+extern const u8 sTrainerName_BigMo[];
+extern const u8 sTrainerName_Galavan[];
+extern const u8 sTrainerName_Candice[];
+extern const u8 sTrainerName_Giovanni[];
 
 extern const u8 sFrontierText_Cynthia_PreBattle[];
 extern const u8 sFrontierText_Cynthia_PlayerWin[];
@@ -438,7 +444,22 @@ extern const u8 sFrontierText_Lixdel_PreBattle[];
 extern const u8 sFrontierText_Lixdel_PlayerWin[];
 extern const u8 sFrontierText_Lixdel_PlayerLose[];
 
-#ifdef UNBOUND
+extern const u8 sFrontierText_BigMo_PreBattle[];
+extern const u8 sFrontierText_BigMo_PlayerWin[];
+extern const u8 sFrontierText_BigMo_PlayerLose[];
+
+extern const u8 sFrontierText_Galavan_PreBattle[];
+extern const u8 sFrontierText_Galavan_PlayerWin[];
+extern const u8 sFrontierText_Galavan_PlayerLose[];
+
+extern const u8 sFrontierText_Candice_PreBattle[];
+extern const u8 sFrontierText_Candice_PlayerWin[];
+extern const u8 sFrontierText_Candice_PlayerLose[];
+
+extern const u8 sFrontierText_Giovanni_PreBattle[];
+extern const u8 sFrontierText_Giovanni_PlayerWin[];
+extern const u8 sFrontierText_Giovanni_PlayerLose[];
+
 const struct BattleTowerTrainer gTowerTrainers[] = 
 {
 	{
@@ -1627,10 +1648,13 @@ const struct SpecialBattleTowerTrainer gSpecialTowerTrainers[] =
 		.regularSpreads =	gSpecialTowerSpread_Cynthia,
 		.middleCupSpreads = gMiddleCupTowerSpread_Cynthia,
 		.littleCupSpreads = gLittleCupTowerSpread_Cynthia,
+		.legendarySpreads = gLegendaryTowerSpread_Cynthia,
 		.regSpreadSize = 	ARRAY_COUNT(gSpecialTowerSpread_Cynthia),
 		.mcSpreadSize =		ARRAY_COUNT(gMiddleCupTowerSpread_Cynthia),
 		.lcSpreadSize =		ARRAY_COUNT(gLittleCupTowerSpread_Cynthia),
+		.legSpreadSize = 	ARRAY_COUNT(gLegendaryTowerSpread_Cynthia),
 		.songId = 			BGM_BATTLE_CYNTHIA,
+		.isMonotype = 		FALSE,
 	},
 	{
 		.owNum = 			OW_SKELI,
@@ -1644,10 +1668,13 @@ const struct SpecialBattleTowerTrainer gSpecialTowerTrainers[] =
 		.regularSpreads =	gSpecialTowerSpread_Skeli,
 		.middleCupSpreads = gMiddleCupTowerSpread_Skeli,
 		.littleCupSpreads = gLittleCupTowerSpread_Skeli,
+		.legendarySpreads = gLegendaryTowerSpread_Skeli,
 		.regSpreadSize = 	ARRAY_COUNT(gSpecialTowerSpread_Skeli),
 		.mcSpreadSize =		ARRAY_COUNT(gMiddleCupTowerSpread_Skeli),
 		.lcSpreadSize =		ARRAY_COUNT(gLittleCupTowerSpread_Skeli),
+		.legSpreadSize =	ARRAY_COUNT(gLegendaryTowerSpread_Skeli),
 		.songId = 			BGM_BATTLE_LOR_BOSS,
+		.isMonotype = 		FALSE,
 	},
 	{
 		.owNum = 			OW_GOLCHE,
@@ -1661,10 +1688,13 @@ const struct SpecialBattleTowerTrainer gSpecialTowerTrainers[] =
 		.regularSpreads =	gSpecialTowerSpread_Golche,
 		.middleCupSpreads = gMiddleCupTowerSpread_Golche,
 		.littleCupSpreads = gLittleCupTowerSpread_Golche,
+		//.legendarySpreads = gLegendaryTowerSpread_Golche,
 		.regSpreadSize = 	ARRAY_COUNT(gSpecialTowerSpread_Golche),
 		.mcSpreadSize =		ARRAY_COUNT(gMiddleCupTowerSpread_Golche),
 		.lcSpreadSize =		ARRAY_COUNT(gLittleCupTowerSpread_Golche),
+		//.legSpreadSize =	ARRAY_COUNT(gLegendaryTowerSpread_Golche),
 		.songId = 			BGM_BATTLE_GALACTIC_BOSS,
+		.isMonotype = 		FALSE,
 	},
 	{
 		.owNum = 			OW_GAIL,
@@ -1678,10 +1708,13 @@ const struct SpecialBattleTowerTrainer gSpecialTowerTrainers[] =
 		.regularSpreads =	gSpecialTowerSpread_Gail,
 		.middleCupSpreads = gMiddleCupTowerSpread_Gail,
 		.littleCupSpreads = gLittleCupTowerSpread_Gail,
+		.legendarySpreads =	gLegendaryTowerSpread_Gail,
 		.regSpreadSize = 	ARRAY_COUNT(gSpecialTowerSpread_Gail),
 		.mcSpreadSize =		ARRAY_COUNT(gMiddleCupTowerSpread_Gail),
 		.lcSpreadSize =		ARRAY_COUNT(gLittleCupTowerSpread_Gail),
+		.legSpreadSize =	ARRAY_COUNT(gLegendaryTowerSpread_Gail),
 		.songId = 			BGM_BATTLE_DIALGA_PALKIA,
+		.isMonotype = 		FALSE,
 	},
 	{
 		.owNum = 			OW_ACE_TRAINER_M,
@@ -1695,10 +1728,93 @@ const struct SpecialBattleTowerTrainer gSpecialTowerTrainers[] =
 		.regularSpreads =	gSpecialTowerSpread_Lixdel,
 		.middleCupSpreads = gMiddleCupTowerSpread_Lixdel,
 		.littleCupSpreads = gLittleCupTowerSpread_Lixdel,
+		//.legendarySpreads = gLegendaryTowerSpread_Lixdel,
 		.regSpreadSize = 	ARRAY_COUNT(gSpecialTowerSpread_Lixdel),
 		.mcSpreadSize =		ARRAY_COUNT(gMiddleCupTowerSpread_Lixdel),
 		.lcSpreadSize =		ARRAY_COUNT(gLittleCupTowerSpread_Lixdel),
+		//.legSpreadSize =	ARRAY_COUNT(gLegendaryTowerSpread_Lixdel),
 		.songId = 			BGM_BATTLE_CHAMPION,
+		.isMonotype = 		FALSE,
+	},
+	{
+		.owNum = 			OW_BIG_MO,
+		.trainerClass = 	CLASS_PKMN_TRAINER_2,
+		.trainerSprite = 	TRAINER_SPRITE_BIG_MO,
+		.gender = 			BATTLE_TOWER_MALE,
+		.name =				sTrainerName_BigMo,
+		.preBattleText = 	sFrontierText_BigMo_PreBattle,
+		.playerWinText = 	sFrontierText_BigMo_PlayerWin,
+		.playerLoseText = 	sFrontierText_BigMo_PlayerLose,
+		.regularSpreads =	gSpecialTowerSpread_BigMo,
+		.middleCupSpreads = gMiddleCupTowerSpread_BigMo,
+		.littleCupSpreads = gLittleCupTowerSpread_BigMo,
+		.legendarySpreads = gLegendaryTowerSpread_BigMo,
+		.regSpreadSize = 	ARRAY_COUNT(gSpecialTowerSpread_BigMo),
+		.mcSpreadSize =		ARRAY_COUNT(gMiddleCupTowerSpread_BigMo),
+		.lcSpreadSize =		ARRAY_COUNT(gLittleCupTowerSpread_BigMo),
+		.legSpreadSize =	ARRAY_COUNT(gLegendaryTowerSpread_BigMo),
+		.songId = 			BGM_BATTLE_GYM_LEADER,
+		.isMonotype = 		TRUE,
+	},
+	{
+		.owNum = 			OW_GALAVAN,
+		.trainerClass = 	CLASS_PKMN_TRAINER_2,
+		.trainerSprite = 	TRAINER_SPRITE_GALAVAN,
+		.gender = 			BATTLE_TOWER_MALE,
+		.name =				sTrainerName_Galavan,
+		.preBattleText = 	sFrontierText_Galavan_PreBattle,
+		.playerWinText = 	sFrontierText_Galavan_PlayerWin,
+		.playerLoseText = 	sFrontierText_Galavan_PlayerLose,
+		.regularSpreads =	gSpecialTowerSpread_Galavan,
+		.middleCupSpreads = gMiddleCupTowerSpread_Galavan,
+		.littleCupSpreads = gLittleCupTowerSpread_Galavan,
+		.legendarySpreads = gLegendaryTowerSpread_Galavan,
+		.regSpreadSize = 	ARRAY_COUNT(gSpecialTowerSpread_Galavan),
+		.mcSpreadSize =		ARRAY_COUNT(gMiddleCupTowerSpread_Galavan),
+		.lcSpreadSize =		ARRAY_COUNT(gLittleCupTowerSpread_Galavan),
+		.legSpreadSize =	ARRAY_COUNT(gLegendaryTowerSpread_Galavan),
+		.songId = 			BGM_BATTLE_GYM_LEADER,
+		.isMonotype = 		TRUE,
+	},
+	{
+		.owNum = 			OW_CANDICE,
+		.trainerClass = 	CLASS_LEADER,
+		.trainerSprite = 	TRAINER_SPRITE_CANDICE,
+		.gender = 			BATTLE_TOWER_FEMALE,
+		.name =				sTrainerName_Candice,
+		.preBattleText = 	sFrontierText_Candice_PreBattle,
+		.playerWinText = 	sFrontierText_Candice_PlayerWin,
+		.playerLoseText = 	sFrontierText_Candice_PlayerLose,
+		.regularSpreads =	gSpecialTowerSpread_Candice,
+		.middleCupSpreads = gMiddleCupTowerSpread_Candice,
+		.littleCupSpreads = gLittleCupTowerSpread_Candice,
+		.legendarySpreads = gLegendaryTowerSpread_Candice,
+		.regSpreadSize = 	ARRAY_COUNT(gSpecialTowerSpread_Candice),
+		.mcSpreadSize =		ARRAY_COUNT(gMiddleCupTowerSpread_Candice),
+		.lcSpreadSize =		ARRAY_COUNT(gLittleCupTowerSpread_Candice),
+		.legSpreadSize =	ARRAY_COUNT(gLegendaryTowerSpread_Candice),
+		.songId = 			BGM_BATTLE_SINNOH_GYM_LEADER,
+		.isMonotype = 		TRUE,
+	},
+	{
+		.owNum = 			OW_GIOVANNI,
+		.trainerClass = 	CLASS_BOSS,
+		.trainerSprite = 	TRAINER_SPRITE_GIOVANNI,
+		.gender = 			BATTLE_TOWER_MALE,
+		.name =				sTrainerName_Giovanni,
+		.preBattleText = 	sFrontierText_Giovanni_PreBattle,
+		.playerWinText = 	sFrontierText_Giovanni_PlayerWin,
+		.playerLoseText = 	sFrontierText_Giovanni_PlayerLose,
+		.regularSpreads =	gSpecialTowerSpread_Giovanni,
+		.middleCupSpreads = gMiddleCupTowerSpread_Giovanni,
+		.littleCupSpreads = gLittleCupTowerSpread_Giovanni,
+		.legendarySpreads = gLegendaryTowerSpread_Giovanni,
+		.regSpreadSize = 	ARRAY_COUNT(gSpecialTowerSpread_Giovanni),
+		.mcSpreadSize =		ARRAY_COUNT(gMiddleCupTowerSpread_Giovanni),
+		.lcSpreadSize =		ARRAY_COUNT(gLittleCupTowerSpread_Giovanni),
+		.legSpreadSize =	ARRAY_COUNT(gLegendaryTowerSpread_Giovanni),
+		.songId = 			BGM_BATTLE_TEAM_ROCKET_GRUNT,
+		.isMonotype = 		TRUE,
 	},
 };
 

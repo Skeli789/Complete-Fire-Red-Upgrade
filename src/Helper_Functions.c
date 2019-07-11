@@ -1006,7 +1006,8 @@ bool8 DoesSleepClausePrevent(u8 bank)
 		switch (VarGet(BATTLE_TOWER_TIER)) {
 			case BATTLE_TOWER_OU:
 			case BATTLE_TOWER_UBER:
-			case BATTLE_TOWER_LITTLE_CUP: ;
+			case BATTLE_TOWER_LITTLE_CUP:
+			case BATTLE_TOWER_MONOTYPE: ;
 				u8 firstId, lastId;
 				struct Pokemon* party = LoadPartyRange(bank, &firstId, &lastId);
 				
