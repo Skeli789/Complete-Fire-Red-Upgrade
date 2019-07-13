@@ -43,6 +43,45 @@ script functions/specials in asm - hooks and returns
 
 @@ Coin Expansion
 .global ExpandCoinIntConversion
+
+@@ Safari Zone
+.global SetInitialSafariZoneParams
+.global FixSafariZoneWindow
+.global FixSafariZoneBattleWindow
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Safari Zone Steps/Ball Count
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.align 2
+.pool
+
+FixSafariZoneBattleWindow:
+	bl SafariZoneBallLabel
+	mov r1, r0
+	mov r0, sp
+	bl StringCopy
+	bl SafariZoneBattleBarCount
+	ldr r0, =(0x08049D2E +1)
+	bx r0
+	
+StringCopy:
+	ldr r2, =(0x08008D84 +1)
+	bx r2
+
+.align 2
+.pool
+FixSafariZoneWindow:
+	bl DisplaySafariZoneCounters
+	ldr r5, =(0x02021D18)
+	ldr r1, =(0x0806EEC4 +1)
+	bx r1
+
+.align 2
+.pool
+SetInitialSafariZoneParams:
+	bl SetSafariZone
+	pop {r0}
+	bx r0
 	
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Increase Integer Coin Conversion
@@ -209,7 +248,7 @@ sp097_WildGroundBattle:
 	ldr r0, =(0x01000202)	@grass block data
 	lsl r4, r0, #0x18
 	lsr r4, r4, #0x18
-	ldr r1, =(0x0806cbe4|1)
+	ldr r1, =(0x0806cbe4 +1)
 	bx r1
 
 /*@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -235,11 +274,11 @@ Ghost Battle Special 0x156
 	Inputs:
 		var8004: species
 		var8005: level
-		var8006: hold item
+		var8006: IVs
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@*/
 .align 2
 .pool
-sp156_GhostBattleSpecial:
+sp156_GhostBattleSpecial:	
 	mov r1, #0xfe
 	str r1, [sp]
 	mov r1, #0xc
@@ -255,13 +294,12 @@ sp156_GhostBattleSpecial:
 	bgt defaultGhost
 	cmp r2, #0x0
 	beq defaultGhost
-	ldrh r3, [r3, #0x4]	@hold item
-	ldr r4, =(0x0807f93c|1)
+	ldrh r3, [r3, #0x4]	@IVs
+	ldr r4, =(0x0807f93c +1)
 	bx r4
 defaultGhost:
-	ldr r1, =SPECIES_MAROWAK
-	ldr r2, =(0x0807f938|1)
-	bx r2
+	ldr r1, =(0x0807F936 +1)
+	bx r1
 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

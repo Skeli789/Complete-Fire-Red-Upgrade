@@ -103,7 +103,7 @@ struct Clock
 		#define gShopDataPtr ((struct ShopData*) 0x2039934)
 		
 		#define gNamingScreenData ((struct NamingScreenData*) (*(u32*) 0x203998C))
-/*u8*/  #define gSafariBallNumber 	(*((u8*) 0x02039994))
+/*u8*/ //#define gSafariBallNumber 	(*((u8*) 0x02039994))	// see src/scripting.c
 /*u16*/ #define gSafariSteps	   (*((u16*) 0x02039996))
 
 /*u8*/  #define gAbilitiesPerBank ((u8*) 0x2039A30)

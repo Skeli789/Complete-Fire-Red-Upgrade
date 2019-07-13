@@ -558,7 +558,8 @@ u8 sp019_CheckAttackPP(void) {
 // Outputs:
 //		Var800D: success (0) or failure (1)
 //
-void sp01A_CopyPartyData(void) {
+void sp01A_CopyPartyData(void)
+{
 #ifdef SELECT_FROM_PC
 	u8 slot = Var8005;
 	Var800D = 1;
@@ -1314,45 +1315,63 @@ void sp061_LoadTimerFromVariable(void) {
 ///////////////////////////////////////////////////////////////////////////////////
 
 
+#ifdef EXPAND_SAFARI_BALLS
+	#define gSafariBallNumber (*((u16*) 0x02039994))
+#else
+	#define gSafariBallNumber (*((u8*) 0x02039994))
+#endif
+#if MAX_SAFARI_BALLS < SAFARI_ZONE_BALL_START
+	#define MAX_SAFARI_BALLS SAFARI_ZONE_BALL_START
+#endif
 //@Details: The check Safari ball quantity. 
 //@Returns: 1. Var 0x8004 - Normal Safari Ball number.
 //		  2. Var 0x8005 - The extra ball slot number
 //		  3. To a given variable the number as a full integer. Max value is 0x63FF
 u16 sp086_GetSafariBalls(void) 
 {
+	/*
 	Var8004 = gSafariBallNumber;
 	Var8005 = *(&gSafariBallNumber + 1);
 	return Var8004 + Var8005;
+	*/
+	return gSafariBallNumber;
 }
 
 
 //@Details: An increase\decrease safari balls code.
-//		  This code doesn't allow people to go over 100 max balls 
-//		  as a safety measure.
+//		  This code doesn't allow people to add over 100 balls as a safety measure.
 //@Input: Var 0x8004 as the number to increase or decrease the balls by. 
 //	    0x1aa decreases the balls by aa, and 0x0aa increases them by aa. 
 //@Returns: None
 void sp087_ChangeSafariBalls(void) 
 {
-	u16 input = Var8004;
+	s32 input = Var8004;
 	s32 calc;
 	
 	if (input & 0x100)
 	{
 		input ^= 0x100;
-		input = MathMax(100, input);
+		input = MathMin(input, 100);	//limit to 100 balls at once
 		input *= -1;
 	}
 	else
-		input = MathMax(100, input);
+		MathMin(input, 100);	//limit to 100 balls at once
 	
 	calc = gSafariBallNumber + input;
+	
+	if (calc > MAX_SAFARI_BALLS)
+		calc = MAX_SAFARI_BALLS;
+	else if (calc < 0)
+		calc = 0;
+	gSafariBallNumber = calc;
+	
+	/*
 	if (calc > 100)
 		calc = 100;
 	else if (calc < 0)
 		calc = 0;
 	gSafariBallNumber = calc;
-	return;
+	*/
 }
 
 //@Details: The get safari pedometer special.
@@ -1369,7 +1388,61 @@ u16 sp088_GetSafariCounter(void)
 void sp089_SetSafariCounter(void) 
 {
 	u16 input = Var8004;
+	if (input > SAFARI_ZONE_MAX_STEPS)
+		input = SAFARI_ZONE_MAX_STEPS;
+	
 	gSafariSteps = input;
+}
+
+
+void SetSafariZone(void)
+{
+	gSafariSteps = SAFARI_ZONE_MAX_STEPS;
+	gSafariBallNumber = SAFARI_ZONE_BALL_START;
+}
+
+#if MAX_SAFARI_BALLS > 9999
+	#define SAFARI_BALL_DIGITS 5	//max of 0xFFFF or 65535
+#elif MAX_SAFARI_BALLS > 999
+	#define SAFARI_BALL_DIGITS 4
+#elif MAX_SAFARI_BALLS > 99
+	#define SAFARI_BALL_DIGITS 3
+#elif MAX_SAFARI_BALLS > 9
+	#define SAFARI_BALL_DIGITS 2
+#else
+	#define SAFARI_BALL_DIGITS 1
+#endif
+#if SAFARI_ZONE_MAX_STEPS > 9999	//max of 0xFFFF
+	#define SAFARI_STEP_DIGITS 5
+#elif SAFARI_ZONE_MAX_STEPS > 999
+	#define SAFARI_STEP_DIGITS 4
+#elif SAFARI_ZONE_MAX_STEPS > 99
+	#define SAFARI_STEP_DIGITS 3
+#elif SAFARI_ZONE_MAX_STEPS > 9
+	#define SAFARI_STEP_DIGITS 2
+#else
+	#define SAFARI_STEP_DIGITS 1
+#endif
+void DisplaySafariZoneCounters(void)
+{
+	ConvertIntToDecimalStringN(gStringVar1, gSafariSteps, 1, SAFARI_STEP_DIGITS);
+	ConvertIntToDecimalStringN(gStringVar2, SAFARI_ZONE_MAX_STEPS, 1, SAFARI_STEP_DIGITS);
+	ConvertIntToDecimalStringN(gStringVar3, gSafariBallNumber, 1, SAFARI_BALL_DIGITS);	
+}
+
+u8* SafariZoneBallLabel(void)
+{
+	#if (SAFARI_BALL_DIGITS < 3)
+		return (u8*) 0x83FE81C;
+	#else
+		return (u8*) 0x83FE825;
+	#endif
+}
+
+void SafariZoneBattleBarCount(u8* strPtr)
+{
+	
+	ConvertIntToDecimalStringN(strPtr, gSafariBallNumber, 0, SAFARI_BALL_DIGITS);
 }
 
 //Walking Specials//
@@ -1408,7 +1481,7 @@ u16 sp07F_GetTileBehaviour(void)
 
 
 
-/*	// in src/Assembly/script.s
+/*	// in src/Assembly/main.s
 void sp097_StartGroundBattle(void) {
 	return;
 }

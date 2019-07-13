@@ -202,6 +202,12 @@ enum //These vars need to be one after the other (hence the enum)
 #define HOOPA_CHANGE_IN_PC //Hoopa-Unbound will revert to confined form when placed in or withdrawn from a box
 #define SHAYMIN_CHANGE_IN_PC //Shaymin-Sky will revert to sky from when placed in or withdrawn from a box
 
+/*=====Safari Zone Options=====*/
+#define EXPAND_SAFARI_BALLS	//hold up to 0xFFFF safari balls
+#define SAFARI_ZONE_MAX_STEPS 600	//number of safari zone steps the player has
+#define SAFARI_ZONE_BALL_START 30	//number of safari balls the player starts with
+#define MAX_SAFARI_BALLS 30		// total safari balls player can get (maximum is 0xFFFF or 0xFF if EXPAND_SAFARI_BALLS is defined or not)
+
 /*===== Misc Battle Effect Options =====*/
 //#define OLD_BURN_DAMAGE //Uncomment this line if you want burn damage to do 1/8 of max health instead of 1/16
 //#define OLD_PARALYSIS_SPD_DROP //Uncomment this line if you want paralysis to lower Spd down to 1/4 instead of 1/2
