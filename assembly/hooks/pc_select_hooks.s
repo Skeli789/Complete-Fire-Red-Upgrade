@@ -111,29 +111,15 @@ CancelRegular:
 
 StoreSpeciesID:
 	push {r2,lr}
-	ldr r1, =(30*80)	@ size per box
-	ldr r0, =var8000
-	ldrh r0, [r0]	@box num
-	mul r0, r1
-	ldr r1, =BoxDMA
-	ldr r1, [r1]
-	add r1, #0x4	@start of box data	
-	add r0, r0, r1
-	ldr r1, =var8001
-	ldrh r1, [r1]	@ box entry num
-	mov r2, #80		@ size per entry
-	mul r1, r2
-	add r0, r0, r1	@ data of selected poke
-	mov r1, #0xb
-	bl GetAttr
-	ldr r1, =var8001
-	strh r0, [r1, #0x2]	@store species ID to var8002
+	ldr r2, =var8000
+	ldrh r0, [r2]
+	ldrh r1, [r2, #0x2]
+	mov r2, #REQ_SPECIES
+	bl GetBoxMonDataAt
+	ldr r2, =var8000
+	strh r0, [r2, #0x4]		@species to var8002
 	pop {r2,pc}
 	
-GetAttr:
-	ldr r2, =(0x0803fbe8 +1)
-	bx r2
-
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @Discern between closing box and Selection

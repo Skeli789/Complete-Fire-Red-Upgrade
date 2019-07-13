@@ -204,6 +204,7 @@ enum //These vars need to be one after the other (hence the enum)
 
 /*=====Safari Zone Options=====*/
 #define EXPAND_SAFARI_BALLS	//hold up to 0xFFFF safari balls
+#define SAFARI_ZONE_STEPS_START 600	// number of steps the player starts the safari zone with
 #define SAFARI_ZONE_MAX_STEPS 600	//number of safari zone steps the player has
 #define SAFARI_ZONE_BALL_START 30	//number of safari balls the player starts with
 #define MAX_SAFARI_BALLS 30		// total safari balls player can get (maximum is 0xFFFF or 0xFF if EXPAND_SAFARI_BALLS is defined or not)
