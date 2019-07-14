@@ -965,6 +965,9 @@ static bool8 TeamNotAllSameType(const u16 species, const u16 item, const u8 part
 	u8 type2 = gBaseStats[species].type2;
 	AdjustTypesForMegas(species, item, &type1, &type2);
 
+	//if (type1 != TYPE_FIGHTING && type2 != TYPE_FIGHTING) //For debugging
+	//	return TRUE;
+
 	for (int i = 0; i < partySize; ++i) 
 	{
 		if (speciesArray[i] == SPECIES_NONE)

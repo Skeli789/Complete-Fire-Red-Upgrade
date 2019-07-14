@@ -1110,9 +1110,9 @@ s32 BracketCalc(u8 bank)
 			case ITEM_EFFECT_QUICK_CLAW:
 				if (gRandomTurnNumber % 100 < itemQuality)
 				{
-					if (!(gNewBS->activatedCustapQuickClaw & gBitTable[bank])) //So the animation only plays at the beginning of the turn
+					if (!(gNewBS->activatedCustapQuickClaw)) //So the animation only plays at the beginning of the turn
 					{
-						gNewBS->activatedCustapQuickClaw |= gBitTable[bank];
+						gNewBS->activatedCustapQuickClaw = TRUE;
 						gNewBS->CustapQuickClawIndicator |= gBitTable[bank];
 					}
 

@@ -5528,7 +5528,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_BigMo[] =
 		{
 			MOVE_DYNAMICPUNCH,
 			MOVE_STONEEDGE,
-			MOVE_TOXIC,
+			MOVE_BULKUP,
 			MOVE_SUBSTITUTE,
 		},
 		.ball = BALL_TYPE_GREAT_BALL,

@@ -363,9 +363,13 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 	
 	if (!gNewBS->ZMoveData->used[gActiveBattler] && !IsMega(gActiveBattler) && !IsBluePrimal(gActiveBattler) && !IsRedPrimal(gActiveBattler)) 
 	{
+		u8 limitations = CheckMoveLimitations(gActiveBattler, 0, MOVE_LIMITATION_PP);
+
 		for (i = 0; i < MAX_MON_MOVES; ++i)
-			if (!(CheckMoveLimitations(gActiveBattler, 0, MOVE_LIMITATION_PP) & gBitTable[i])) //Don't display a Z-Move if the base move has no PP
+		{
+			if (!(limitations & gBitTable[i])) //Don't display a Z-Move if the base move has no PP
 				tempMoveStruct->possibleZMoves[i] = ShouldAIUseZMove(gActiveBattler, i, 0);
+		}
 	}
 	
     gBattleBuffersTransferData[0] = CONTROLLER_CHOOSEMOVE;
@@ -998,7 +1002,9 @@ u8 TrySetCantSelectMoveBattleScript(void)
 	gBattleScripting->bank = gActiveBattler;
 	gCurrentMove = move;
 
-	if (gDisableStructs[gActiveBattler].encoredMove && gDisableStructs[gActiveBattler].encoredMove != move)
+	if (gDisableStructs[gActiveBattler].encoredMove
+	&& gDisableStructs[gActiveBattler].encoredMove != move
+	&& !gNewBS->ZMoveData->toBeUsed[gActiveBattler]) //Can still use other Z-Moves even if encored
 	{
 		gCurrentMove = gDisableStructs[gActiveBattler].encoredMove;
         gSelectionBattleScripts[gActiveBattler] = BattleScript_MustSelectEncoredMove;

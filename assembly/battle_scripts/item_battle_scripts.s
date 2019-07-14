@@ -8,8 +8,8 @@
 .global BattleScript_BerryConfuseHealEnd2
 .global BattleScript_ItemHealHP_Ret
 .global BattleScript_ItemHealHP_End2
-.global BattleScript_ItemHealHP_RemoveItemRet
-.global BattleScript_ItemHealHP_RemoveItemEnd2
+.global BattleScript_BerryHealHP_RemoveBerryRet
+.global BattleScript_BerryHealHP_RemoveBerryEnd2
 .global BattleScript_BerryPPHealRet
 .global BattleScript_BerryPPHealEnd2
 .global BattleScript_BerryFocusEnergyRet
@@ -77,7 +77,7 @@ BattleScript_BerryConfuseHealEnd2:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-BattleScript_ItemHealHP_RemoveItemRet:
+BattleScript_BerryHealHP_RemoveBerryRet:
 	playanimation 0xA ANIM_BERRY_EAT 0x0
 	playanimation 0xA ANIM_HEALING_SPARKLES 0x0
 	orword HIT_MARKER 0x100
@@ -88,8 +88,8 @@ BattleScript_ItemHealHP_RemoveItemRet:
 	call DoCheekPouch
 	return
 
-BattleScript_ItemHealHP_RemoveItemEnd2:
-	call BattleScript_ItemHealHP_RemoveItemRet
+BattleScript_BerryHealHP_RemoveBerryEnd2:
+	call BattleScript_BerryHealHP_RemoveBerryRet
 	end2
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -445,6 +445,8 @@ BattleScript_RedCard:
 	copybyte SEED_HELPER TARGET_BANK
 	copybyte TARGET_BANK USER_BANK
 	playanimation BANK_TARGET DRAGON_TAIL_BLOW_AWAY_ANIM 0x0
+	callasm ClearAttackerDidDamageOnce
+	callasm TryRemovePrimalWeatherOnPivot
 	forcerandomswitch RedCardSwapBanksBack
 
 RedCardSwapBanksBack:

@@ -177,10 +177,10 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
 					if (moveTurn || DoPluck)
 					{
 						BattleScriptPushCursor();
-						gBattlescriptCurrInstr = BattleScript_ItemHealHP_RemoveItemRet;
+						gBattlescriptCurrInstr = BattleScript_BerryHealHP_RemoveBerryRet;
 					}
 					else
-							BattleScriptExecute(BattleScript_ItemHealHP_RemoveItemEnd2);
+							BattleScriptExecute(BattleScript_BerryHealHP_RemoveBerryEnd2);
 					effect = ITEM_HP_CHANGE;
 				}
 				break;
@@ -720,14 +720,15 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
 				if (!DoPluck
 				&& TOOK_DAMAGE(bank)
 				&& gMoveResultFlags == MOVE_RESULT_SUPER_EFFECTIVE
-				&& gBattleMons[bank].hp
+				&& BATTLER_ALIVE(bank)
 				&& !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bank)) 
 				{
 					gBattleMoveDamage = MathMax(1, gBattleMons[bank].maxHP / 4);
 					if (gBattleMons[bank].hp + gBattleMoveDamage > gBattleMons[bank].maxHP)
 						gBattleMoveDamage = gBattleMons[bank].maxHP - gBattleMons[bank].hp;
 					gBattleMoveDamage *= -1;
-					BattleScriptExecute(BattleScript_ItemHealHP_End2);
+					BattleScriptPushCursor();
+					BattleScriptExecute(BattleScript_BerryHealHP_RemoveBerryRet);
 					effect = ITEM_HP_CHANGE;
 				}
 				break;
@@ -783,22 +784,39 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
 				}
 				break;
 			case ITEM_EFFECT_SHELL_BELL:
-				if (MOVE_HAD_EFFECT
-				&& gSpecialStatuses[gBankTarget].moveturnLostHP != 0
-				&& gSpecialStatuses[gBankTarget].moveturnLostHP != 0xFFFF
-				&& gBankAttacker != gBankTarget
-				&& gBattleMons[gBankAttacker].hp != gBattleMons[gBankAttacker].maxHP
-				&& gBattleMons[gBankAttacker].hp)
+				if (gNewBS->totalDamageGiven > 0
+				&& bank != gBankTarget
+				&& BATTLER_ALIVE(bank)
+				&& !BATTLER_MAX_HP(bank)
+				&& !SheerForceCheck())
 				{
-					gLastUsedItem = atkItem;
-					gStringBank = gBankAttacker;
-					gBattleScripting->bank = gBankAttacker;
-					gBattleMoveDamage = udivsi(gSpecialStatuses[gBankTarget].moveturnLostHP, atkQuality) * -1;
-					if (gBattleMoveDamage == 0)
-						gBattleMoveDamage = -1;
-					gSpecialStatuses[gBankTarget].moveturnLostHP = 0;
+					gStringBank = bank;
+					gBattleScripting->bank = bank;
+					gBattleMoveDamage = MathMax(1, udivsi(gNewBS->totalDamageGiven, atkQuality)) * - 1;
 					BattleScriptPushCursor();
 					gBattlescriptCurrInstr = BattleScript_ItemHealHP_Ret;
+					effect++;
+				}
+				break;
+			case ITEM_EFFECT_LIFE_ORB: ;
+				u8 moveEffect = gBattleMoves[gCurrentMove].effect;
+
+				if (gNewBS->AttackerDidDamageAtLeastOnce
+				&& moveEffect != EFFECT_BIDE //Moves that deal direct damage aren't included
+				&& moveEffect != EFFECT_COUNTER
+				&& moveEffect != EFFECT_MIRROR_COAT
+				&& moveEffect != EFFECT_ENDEAVOR
+				&& moveEffect != EFFECT_SUPER_FANG
+				&& moveEffect != EFFECT_LEVEL_DAMAGE
+				&& moveEffect != EFFECT_PSYWAVE
+				&& gCurrentMove != MOVE_FINALGAMBIT
+				&& ABILITY(gBankAttacker) != ABILITY_MAGICGUARD
+				&& BATTLER_ALIVE(gBankAttacker)
+				&& !SheerForceCheck())
+				{
+					gBattleMoveDamage = MathMax(1, gBattleMons[gBankAttacker].maxHP / 10);
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_LifeOrbDamage;
 					effect++;
 				}
 				break;
@@ -831,13 +849,13 @@ static u8 ConfusionBerries(u8 bank, u8 flavour, bool8 moveTurn, bool8 DoPluck) {
 			if (GetPokeFlavourRelation(gBattleMons[bank].personality, flavour) < 0)
 				gBattlescriptCurrInstr = BattleScript_BerryConfuseHealRet;
 			else
-				gBattlescriptCurrInstr = BattleScript_ItemHealHP_RemoveItemRet
+				gBattlescriptCurrInstr = BattleScript_BerryHealHP_RemoveBerryRet
 		}
 		else
 			if (GetPokeFlavourRelation(gBattleMons[bank].personality, flavour) < 0)
 				BattleScriptExecute(BattleScript_BerryConfuseHealEnd2);
 			else
-				BattleScriptExecute(BattleScript_ItemHealHP_RemoveItemEnd2);
+				BattleScriptExecute(BattleScript_BerryHealHP_RemoveBerryEnd2);
 		effect = ITEM_HP_CHANGE;
 	}	
 	#else
@@ -857,13 +875,13 @@ static u8 ConfusionBerries(u8 bank, u8 flavour, bool8 moveTurn, bool8 DoPluck) {
 			if (GetPokeFlavourRelation(gBattleMons[bank].personality, flavour) < 0)
 				gBattlescriptCurrInstr = BattleScript_BerryConfuseHealRet;
 			else
-				gBattlescriptCurrInstr = BattleScript_ItemHealHP_RemoveItemRet;
+				gBattlescriptCurrInstr = BattleScript_BerryHealHP_RemoveBerryRet;
 		}
 		else
 			if (GetPokeFlavourRelation(gBattleMons[bank].personality, flavour) < 0)
 				BattleScriptExecute(BattleScript_BerryConfuseHealEnd2);
 			else
-				BattleScriptExecute(BattleScript_ItemHealHP_RemoveItemEnd2);
+				BattleScriptExecute(BattleScript_BerryHealHP_RemoveBerryEnd2);
 		effect = ITEM_HP_CHANGE;
 	}
 	#endif

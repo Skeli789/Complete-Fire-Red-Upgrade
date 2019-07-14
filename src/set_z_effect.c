@@ -82,8 +82,8 @@ void SetZEffect(void)
 			break;
 		
 		case Z_EFFECT_ALL_STATS_UP_1:
-			if (!StatsMaxed(gBankAttacker)) {
-				for (i = 0; i < BATTLE_STATS_NO-1; ++i) {
+			if (!MainStatsMaxed(gBankAttacker)) {
+				for (i = 0; i < STAT_ACC-1; ++i) { //Doesn't increase Acc or Evsn
 					if (gBattleMons[gBankAttacker].statStages[i] < 12)
 					++gBattleMons[gBankAttacker].statStages[i];
 				}

@@ -882,7 +882,6 @@ void ClearSwitchBits(u8 bank)
 	gNewBS->IllusionBroken &= ~(gBitTable[bank]);
 	gNewBS->brokeFreeMessage &= ~(gBitTable[bank]);
 	gNewBS->CustapQuickClawIndicator &= ~(gBitTable[bank]);
-	gNewBS->activatedCustapQuickClaw &= ~(gBitTable[bank]);
 }
 
 void PartyMenuSwitchingUpdate(void)

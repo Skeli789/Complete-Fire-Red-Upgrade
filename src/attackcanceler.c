@@ -24,6 +24,8 @@ static u8 IsMonDisobedient(void);
 void atk00_attackcanceler(void)
 {
     int i;
+	
+	gNewBS->activatedCustapQuickClaw = TRUE; //At this point Quick Claw calc should already be done so no more setting animation bit for banks.
 
     if (gBattleOutcome != 0)
     {
@@ -744,7 +746,6 @@ static u8 AtkCanceller_UnableToUseMove(void)
 				{
 					CancelMultiTurnMoves(gBankAttacker);
 					gBattlescriptCurrInstr = BattleScript_MoveUsedFailedPrimalWeather;
-					gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
 					effect = 1;
 				}
 			}
@@ -760,7 +761,6 @@ static u8 AtkCanceller_UnableToUseMove(void)
             {
                 CancelMultiTurnMoves(gBankAttacker);
 				gBattlescriptCurrInstr = BattleScript_MoveUsedPsychicTerrainPrevents;
-                gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
                 effect = 1;
             }
             gBattleStruct->atkCancellerTracker++;
@@ -770,13 +770,14 @@ static u8 AtkCanceller_UnableToUseMove(void)
 			#ifndef OLD_PRANKSTER
 			if (ABILITY(gBankAttacker) == ABILITY_PRANKSTER 
 			&& SPLIT(gCurrentMove) == SPLIT_STATUS
+			&& AttacksThisTurn(gBankAttacker, gCurrentMove) == 2
+			&& !(gBattleMoves[gCurrentMove].target & MOVE_TARGET_OPPONENTS_FIELD)
 			&& gBankAttacker != gBankTarget
 			&& IsOfType(gBankTarget, TYPE_DARK))
 			{
 				gBattleScripting->bank = gBankTarget;
 				CancelMultiTurnMoves(gBankAttacker);
 				gBattlescriptCurrInstr = BattleScript_DarkTypePreventsPrankster;
-                gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
                 effect = 1;
 			}
 			#endif

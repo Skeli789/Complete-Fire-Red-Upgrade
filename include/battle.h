@@ -771,7 +771,6 @@ struct NewBattleStruct
 	u8 NoMoreMovingThisTurn;
 	u8 handleSetSwitchIns;
 	u8 brokeFreeMessage;
-	u8 activatedCustapQuickClaw;
 	
 	//Bit Fields for Party
 	u8 BelchCounters;
@@ -797,6 +796,7 @@ struct NewBattleStruct
 	u8 lastFainted;
 	u8 intimidateActive;
 	u8 backupAbility;
+	u8 originalAttackerBackup;
 	
 	//Booleans
 	bool8 MoveBounceInProgress : 2;
@@ -827,10 +827,12 @@ struct NewBattleStruct
 	bool8 doPlayerSwitchInEffects : 1;
 	bool8 skipCertainSwitchInAbilities : 1;
 	bool8 roundUsed : 1;
+	bool8 activatedCustapQuickClaw : 1;
 	
 	//Other
 	u16 LastUsedMove;
 	u16 NewWishHealthSave;
+	u32 totalDamageGiven;
 	u8 DancerTurnOrder[MAX_BATTLERS_COUNT];
 	u8 PayDayByPartyIndices[PARTY_SIZE];
 	item_t SavedConsumedItems[PARTY_SIZE];

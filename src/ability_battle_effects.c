@@ -572,7 +572,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			{
 				BattleScriptPushCursorAndCallback(BattleScript_IntimidateActivatesEnd3);
 				gBattleStruct->intimidateBank = bank;
-				gNewBS->intimidateActive = TRUE;
+				gNewBS->intimidateActive = bank + 1;
 				effect++;
 			}
             break;
@@ -1445,24 +1445,39 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
                 && gBattleMons[gBankAttacker].hp
                 && gBankAttacker != bank 
                 && CheckContact(move, gBankAttacker)
-				&& ABILITY(gBankAttacker) != ABILITY_OVERCOAT
-				&& ITEM_EFFECT(gBankAttacker) != ITEM_EFFECT_SAFETY_GOGGLES
-				&& !IsOfType(gBankAttacker, TYPE_GRASS)
-                && umodsi(Random(), 10) == 0)
+				&& IsAffectedByPowder(gBankAttacker)
+                && Random() % 10 == 0)
                 {
                     do
                     {
                         gBattleCommunication[MOVE_EFFECT_BYTE] = Random() & 3;
                     } while (gBattleCommunication[MOVE_EFFECT_BYTE] == 0);
 
-                    if (gBattleCommunication[MOVE_EFFECT_BYTE] == MOVE_EFFECT_BURN)
-                        gBattleCommunication[MOVE_EFFECT_BYTE] += 2; // 5 MOVE_EFFECT_PARALYSIS
+					switch (gBattleCommunication[MOVE_EFFECT_BYTE]) {
+						case MOVE_EFFECT_SLEEP:
+							if (CanBePutToSleep(gBankAttacker, TRUE))
+								++effect;
+							break;
+						case MOVE_EFFECT_POISON:
+							if (CanBePoisoned(gBankAttacker, bank, TRUE))
+								++effect;
+							break;
+						case MOVE_EFFECT_BURN: //Gets changed to Paralysis
+							gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_PARALYSIS;
+							if (CanBeParalyzed(gBankAttacker, TRUE))
+								++effect;
+							break;
+					}
 
-                    gBattleCommunication[MOVE_EFFECT_BYTE] |= MOVE_EFFECT_AFFECTS_USER;
-                    BattleScriptPushCursor();
-                    gBattlescriptCurrInstr = BattleScript_AbilityApplySecondaryEffect;
-                    gHitMarker |= HITMARKER_IGNORE_SAFEGUARD;
-                    effect++;
+					if (effect)
+					{
+						gBattleCommunication[MOVE_EFFECT_BYTE] |= MOVE_EFFECT_AFFECTS_USER;
+						BattleScriptPushCursor();
+						gBattlescriptCurrInstr = BattleScript_AbilityApplySecondaryEffect;
+						gHitMarker |= HITMARKER_IGNORE_SAFEGUARD;
+					}
+					else
+						gBattleCommunication[MOVE_EFFECT_BYTE] = 0;
                 }
                 break;
 				
