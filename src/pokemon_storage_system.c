@@ -40,8 +40,8 @@ typedef u8 BoxNameT[9];
 
 #define BOX_20_RAM ((struct CompressedPokemon*) 0x203CB44)
 #define BOX_21_RAM (BOX_20_RAM + 30)
-#define BOX_22_RAM ((struct CompressedPokemon*) (gBattleTowerStreaks + (2 * sizeof(u16))))
-#define BOX_23_RAM (BOX_22_RAM + 30)
+#define BOX_22_RAM (BOX_21_RAM + 30) //Should end at 0x203DFA8
+#define BOX_23_RAM ((struct CompressedPokemon*) 0x2027434)
 #define BOX_24_RAM (BOX_23_RAM + 30)
 
 //#define sPSSData ((struct PokemonStorageSystemData*) *((u32*) 0x20397B0))

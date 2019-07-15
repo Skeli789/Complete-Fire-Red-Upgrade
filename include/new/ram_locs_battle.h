@@ -162,20 +162,20 @@ typedef u8 Battle_Buffer_T[0x200];
 		#define sTrainerBattleOakTutorialHelper (*((u16*) 0x20386CC))
 		
 
-#define BattleStringLoader (*((u8**) 0x203F700))
-#define SeedHelper ((u8*) 0x203F704)
-#define TerrainType *((u8*) 0x203F708)
-#define FormCounter *((u8*) 0x203F709)
-#define gPoisonedBy *((u8*) 0x203F70A)
+#define BattleStringLoader (*((u8**) 0x203E020))
+#define SeedHelper ((u8*) 0x203E024)
+#define TerrainType *((u8*) 0x203E028)
+#define FormCounter *((u8*) 0x203E029)
+#define gPoisonedBy *((u8*) 0x203E02A)
 	// 0x1 = Poison Touch	/ 0x1 = Beak Blast Burn
 	// 0x2 = Toxic Spikes
 	// 0x3 = Toxic Orb		/ 0x3 = Flame Orb
 	// 0x4 = Baneful Bunker
-#define MagicianHelper *((u8*) 0x203F70B)
-#define ShakerData (((u8*) 0x203F70C))
-#define ForceSwitchHelper (*((u8*) 0x203F70E))
-#define AbilityPopUpHelper (*((u8*) 0x203F70F))
-#define BackupHWord (*((u8*) 0x203F710))
+#define MagicianHelper *((u8*) 0x203E02B)
+#define ShakerData (((u8*) 0x203E02C))
+#define ForceSwitchHelper (*((u8*) 0x203E02E))
+#define AbilityPopUpHelper (*((u8*) 0x203E02F))
+#define BackupHWord (*((u8*) 0x203E030))
 
-#define FIRST_NEW_BATTLE_RAM_LOC ((u8*) 0x203F700)
-#define LAST_NEW_BATTLE_RAM_LOC ((u8*) 0x203F712)
+#define FIRST_NEW_BATTLE_RAM_LOC ((u8*) 0x203E020)
+#define LAST_NEW_BATTLE_RAM_LOC ((u8*) 0x203E032)
