@@ -10,29 +10,38 @@ import subprocess
 import sys
 from string import StringFileConverter
 
-PathVar = os.environ.get('Path')
-Paths = PathVar.split(';')
-PATH = ''
-for candidatePath in Paths:
-    if 'devkitARM' in candidatePath:
-        PATH = candidatePath
-        break
-if PATH == '':
-    print('DevKit does not exist in your Path variable.\nChecking default location.')
-    PATH = 'C://devkitPro//devkitARM//bin'
-    if os.path.isdir(PATH) is False:
-        print('...\nDevkit not found.')
-        sys.exit(1)
-    else:
-        print('Devkit found.')
+if sys.platform.startswith('win'):
+    PathVar = os.environ.get('Path')
+    Paths = PathVar.split(';')
+    PATH = ''
+    for candidatePath in Paths:
+        if 'devkitARM' in candidatePath:
+            PATH = candidatePath
+            break
+    if PATH == '':
+        print('DevKit does not exist in your Path variable.\nChecking default location.')
+        PATH = 'C://devkitPro//devkitARM//bin'
+        if os.path.isdir(PATH) is False:
+            print('...\nDevkit not found.')
+            sys.exit(1)
+        else:
+            print('Devkit found.')
 
-PREFIX = '/arm-none-eabi-'
-AS = (PATH + PREFIX + 'as')
-CC = (PATH + PREFIX + 'gcc')
-LD = (PATH + PREFIX + 'ld')
-GR = 'deps/grit.exe'
-ARP = 'armips'
-OBJCOPY = (PATH + PREFIX + 'objcopy')
+    PREFIX = '/arm-none-eabi-'
+    AS = PATH + PREFIX + 'as'
+    CC = PATH + PREFIX + 'gcc'
+    LD = PATH + PREFIX + 'ld'
+    GR = 'deps/grit.exe'
+    OBJCOPY = PATH + PREFIX + 'objcopy'
+
+else:  # Linux, OSX, etc.
+    PREFIX = 'arm-none-eabi-'
+    AS = PREFIX + 'as'
+    CC = PREFIX + 'gcc'
+    LD = PREFIX + 'ld'
+    GR = "grit"
+    OBJCOPY = PREFIX + 'objcopy'
+
 SRC = './src'
 GRAPHICS = './graphics'
 ASSEMBLY = './assembly'
@@ -163,9 +172,15 @@ def ProcessImage(imageFile: str) -> str:
     else:
         assemblyFile = imageFile.split('.png')[0] + '.s'
 
-    namelist = imageFile.split('\\')  # Get path of grit flags
-    namelist.pop(len(namelist) - 1)
-    flags = ''.join(str(i) + '\\' for i in namelist)
+    if sys.platform.startswith('win'):
+        nameList = imageFile.split('\\')  # Get path of grit flags
+        nameList.pop(len(nameList) - 1)
+        flags = ''.join(str(i) + '\\' for i in nameList)
+    else:  # Linux, OSX, etc.
+        nameList = imageFile.split('/')  # Get path of grit flags
+        nameList.pop(len(nameList) - 1)
+        flags = ''.join(str(i) + '//' for i in nameList)
+
     flags += 'gritflags.txt'
 
     try:

@@ -65,7 +65,7 @@
 #define BATTLE_TOWER_TRAINER_NAME 0x5019 //Empty var. Will be set to 0xFFFF after every battle.
 #define BATTLE_TOWER_SONG_OVERRIDE 0x501A //Set this var to the song id to be played during Link Battles and in the Battle Tower.
 
-enum //These vars need to be one after the other (hence the enum) 
+enum //These vars need to be one after the other (hence the enum)
 {
 	TOWER_TRAINER_ID_VAR = 0x501B, 			//An index in the gTowerTrainers table, not Trainer ID
 	TOWER_TRAINER_ID_2_VAR,	//0x501C		//Index of the second trainer for Multi Battlers in the gTowerTrainers table, the var should be 1 after the first one
@@ -107,11 +107,11 @@ enum //These vars need to be one after the other (hence the enum)
 #define KANTO_DEX_COUNT 151
 #define NATIONAL_DEX_COUNT 386
 
-#define MAX_LEVEL 100 //Also change this in the file asm_defines.asm” found in the root
+#define MAX_LEVEL 100 //Also change this in the file "asm_defines.asm" found in the root
 #define NUM_TRAINER_CLASSES 107 //Vanilla FR has 107
 #define EVOS_PER_MON 5 //The number of maximum evolutions per Pokemon. Vanilla FR has 5
-#define EV_CAP 252 //Also change this in the file “asm_defines.s” found in the root
-#define POWER_ITEM_EV_YIELD 8 //Set to 4 for older mechanic 
+#define EV_CAP 252 //Also change this in the file "asm_defines.s" found in the root
+#define POWER_ITEM_EV_YIELD 8 //Set to 4 for older mechanic
 
 #define DUSK_BALL_MULTIPLIER 30 //Change this line to 35 to make the catch rate for the Dusk Ball 3.5x like before Gen 7
 #define STANDARD_IV 10 //Change this to be the number of IVs Pokemon owned by random trainers should have (all stats will have this number)
@@ -126,7 +126,7 @@ enum //These vars need to be one after the other (hence the enum)
 #define MAP_PLAYER_HOME ((4 << 8) | 0) //The map bank and map number of the player's home
 
 /*===== Expanded Coins Options =====*/
-#define MAX_COINS_DIGITS 4	// max number of digits for game corner coins (eg. 4 = 9999, 9 = 999,999,999). maximum of 9
+#define MAX_COINS_DIGITS 4	//Max number of digits for game corner coins (eg. 4 = 9999, 9 = 999,999,999). maximum of 9
 
 /*===== Badge Obedience Options =====*/
 #define BASE_OBEDIENCE_LEVEL	10
@@ -143,16 +143,22 @@ enum //These vars need to be one after the other (hence the enum)
 #define ROCK_DISGUISE_PAL_ID 0x1104 //The NPC palette id of the mountain disguise movement permission.
 #define WEIRD_DISGUISE_PAL_ID 0x1103 //The NPC palette id of the weird disguise movement permission.
 
-/*===== Pre-existing Offsets =====*/
-//#define EXISTING_FOSSIL_IMAGE_TABLE_ADDRESS 0x81a4600 //Uncomment this if you've already inserted a fossil image table
-//#define EXISTING_OW_TABLE_ADDRESS 0x81a2000 //Uncomment if you don't want new overworld NPC tables to be generated.
-
 /*===== Pre-Battle Mugshot Options ====*/
 #define FR_PRE_BATTLE_MUGSHOT_STYLE
 #define VAR_PRE_BATTLE_MUGSHOT_STYLE 0x5038
 #define VAR_PRE_BATTLE_MUGSHOT_SPRITE 0x5039
 #define VAR_MUGSHOT_PLAYER_PAL 0x503A	// used to change the player's tilemap palette in the Two Bar mugshot style
 #define FLAG_LOAD_MUGSHOT_SPRITE_FROM_TABLE 0x924	//Load custom mugshot for pre-battle transition
+
+/*=====Safari Zone Options=====*/
+#define EXPAND_SAFARI_BALLS	//Hold up to 0xFFFF safari balls
+#define SAFARI_ZONE_MAX_STEPS 600	//Number of safari zone steps the player has
+#define SAFARI_ZONE_BALL_START 30	//Number of safari balls the player starts with
+#define MAX_SAFARI_BALLS 30		//Total safari balls player can get (maximum is 0xFFFF or 0xFF if EXPAND_SAFARI_BALLS is defined or not)
+
+/*===== Pre-existing Offsets =====*/
+//#define EXISTING_FOSSIL_IMAGE_TABLE_ADDRESS 0x81a4600 //Uncomment this if you've already inserted a fossil image table
+//#define EXISTING_OW_TABLE_ADDRESS 0x81a2000 //Uncomment if you don't want new overworld NPC tables to be generated.
 
 /*===== Other General Options =====*/
 #define INVERSE_BATTLES //Comment this line to disable the possibility of having Inverse Battles
@@ -202,13 +208,6 @@ enum //These vars need to be one after the other (hence the enum)
 #define HOOPA_CHANGE_IN_PC //Hoopa-Unbound will revert to confined form when placed in or withdrawn from a box
 #define SHAYMIN_CHANGE_IN_PC //Shaymin-Sky will revert to sky from when placed in or withdrawn from a box
 
-/*=====Safari Zone Options=====*/
-#define EXPAND_SAFARI_BALLS	//hold up to 0xFFFF safari balls
-#define SAFARI_ZONE_STEPS_START 600	// number of steps the player starts the safari zone with
-#define SAFARI_ZONE_MAX_STEPS 600	//number of safari zone steps the player has
-#define SAFARI_ZONE_BALL_START 30	//number of safari balls the player starts with
-#define MAX_SAFARI_BALLS 30		// total safari balls player can get (maximum is 0xFFFF or 0xFF if EXPAND_SAFARI_BALLS is defined or not)
-
 /*===== Misc Battle Effect Options =====*/
 //#define OLD_BURN_DAMAGE //Uncomment this line if you want burn damage to do 1/8 of max health instead of 1/16
 //#define OLD_PARALYSIS_SPD_DROP //Uncomment this line if you want paralysis to lower Spd down to 1/4 instead of 1/2
@@ -228,7 +227,7 @@ enum //These vars need to be one after the other (hence the enum)
 //#define CRIT_CHANCE_GEN_2_TO_5 //Uncomment this line if you want the Gens 2-5 crit chance
 //Uncommenting both of the above two lines will default in the Gen 6 crit chance
 //#define BADGE_BOOSTS //Uncomment this line to allow Badges to give stat boosts
-//#define OLD_ATE_BOOST //Uncomment this line to make 'ate' abilities give a 1.3 boost instead of 1.2 
+//#define OLD_ATE_BOOST //Uncomment this line to make 'ate' abilities give a 1.3 boost instead of 1.2
 //#define OLD_GEM_BOOST //Uncomment this line to make Gems give a 1.5 boost instead of 1.3
 //#define OLD_EXPLOSION_BOOST //Uncomment this line to make Exploding moves halve the target's defense
 //#define OLD_HIDDEN_POWER_BP //Uncomment this line for Hidden Power to have its Base Power calculated from the Pokemon's IVs

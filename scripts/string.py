@@ -2,6 +2,7 @@
 # -*- coding: cp437 -*-
 
 import sys
+from insert import TryProcessFileInclusion, TryProcessConditionalCompilation
 
 CharMap = "charmap.tbl"
 
@@ -29,17 +30,23 @@ SpecialBuffers = {
 }
 
 
-def StringFileConverter(filename):
+def StringFileConverter(fileName: str):
     stringToWrite = ".thumb\n.text\n.align 2\n\n"
-    with open(filename, 'r') as file:
+    with open(fileName, 'r') as file:
         maxLength = 0
         fillFF = False
         readingState = 0
         lineNum = 0
-        
+        definesDict = {}
+        conditionals = []
+
         for line in file:
             lineNum += 1
             line = line.rstrip("\n\r")  # Remove only newline characters
+            if TryProcessFileInclusion(line, definesDict):
+                continue
+            if TryProcessConditionalCompilation(line, definesDict, conditionals):
+                continue
             if line.strip() == "" or line[:2] == "//":  # Ignore blank lines and comment lines
                 continue
             
@@ -53,16 +60,16 @@ def StringFileConverter(filename):
                     try:
                         maxLength = int(line.split("=")[1])
                     except:
-                        print('Error reading max length on line ' + str(lineNum) + ' in file: "' + filename + '"')
+                        print('Error reading max length on line ' + str(lineNum) + ' in file: "' + fileName + '"')
                         sys.exit(0)
                 elif "FILL_FF" in line and "=" in line:
                     try:
                         fillFF = bool(line.split("=")[1])
                     except:
-                        print('Error reading FF fill on line ' + str(lineNum) + ' in file: "' + filename + '"')
+                        print('Error reading FF fill on line ' + str(lineNum) + ' in file: "' + fileName + '"')
                         sys.exit(0)
                 else:
-                    print('Warning! Error on line ' + str(lineNum) + ' in file: "' + filename + '"')
+                    print('Warning! Error on line ' + str(lineNum) + ' in file: "' + fileName + '"')
                     
             elif readingState == 1:
                 if line[:6].upper() == "#ORG @" and line[6:] != "":
@@ -73,12 +80,12 @@ def StringFileConverter(filename):
                     stringToWrite += ProcessString(line, lineNum, maxLength, fillFF)
                     stringToWrite += "0xFF\n\n"  # Only print line in everything went alright
 
-    output = open(filename.split(".string")[0] + '.s', 'w')  # Only open file once we know everything went okay.
+    output = open(fileName.split(".string")[0] + '.s', 'w')  # Only open file once we know everything went okay.
     output.write(stringToWrite)
     output.close()
 
 
-def ProcessString(string, lineNum, maxLength=0, fillWithFF=False):
+def ProcessString(string: str, lineNum: int, maxLength=0, fillWithFF=False) -> str:
     charMap = PokeByteTableMaker()
     stringToWrite = ".byte "
     buffer = False
@@ -91,7 +98,7 @@ def ProcessString(string, lineNum, maxLength=0, fillWithFF=False):
             print('Warning: The string "' + string + '" has exceeded the maximum length of '
                   + str(maxLength) + ' and has been truncated!')
             break
-        
+
         if buffer is True:
             if char == ']':
                 buffer = False
@@ -102,10 +109,10 @@ def ProcessString(string, lineNum, maxLength=0, fillWithFF=False):
                             print('Warning: The string buffer "' + bufferChars + '" has exceeded the maximum length of '
                                   + str(maxLength) + ' and has been truncated!')
                             break
-                        
+
                         stringToWrite += ("0x" + bufferChar + ", ")
                         strLen += 1
-                
+
                 else:
                     stringToWrite += ("0x" + bufferChars + ", ")
                     strLen += 1
@@ -139,13 +146,13 @@ def ProcessString(string, lineNum, maxLength=0, fillWithFF=False):
                     strLen += 1
                 else:
                     print('Error parsing string on line ' + str(lineNum) + ' at character "' + char + '".')
-                    sys.exit(0)
+                    sys.exit(1)
     
     if strLen < maxLength and fillWithFF:
         while strLen < maxLength:
             stringToWrite += "0xFF, "
             strLen += 1
-    
+
     return stringToWrite
 
 

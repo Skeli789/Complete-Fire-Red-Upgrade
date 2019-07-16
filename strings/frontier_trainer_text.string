@@ -1,3 +1,5 @@
+#include "src/config.h"
+
 #org @sFrontierText_Youngster_PreBattle_1
 Surprised to see someone my age?\nI promise you, I'm not weak.
 
@@ -1168,16 +1170,9 @@ This smell I have is the sweet\nscent of hay that Pok\emon surely\llove.
 #org @sFrontierText_Rancher_PlayerLose_6
 Whoa!
 
+#ifdef UNBOUND
+
 //Special Trainers
-
-#org @sFrontierText_Cynthia_PreBattle
-I, Cynthia, accept your challenge!\nThere won't be any letup from me!
-
-#org @sFrontierText_Cynthia_PlayerWin
-No matter how fun the battle is, it\nwill always end sometime[.]
-
-#org @sFrontierText_Cynthia_PlayerLose
-You see? I didn't let up!
 
 #org @sFrontierText_Skeli_PreBattle
 Hey, there!\pI'm Skeli, one of the developers of\nPok\emon Unbound.\pI'm glad you took the time to come\nbattle here!\pNow, let's have a fun time!
@@ -1215,6 +1210,20 @@ That battle was almost as beautiful\nas the animations!
 #org @sFrontierText_Lixdel_PlayerLose
 Nice!\pThat battle was close to being as\nbeautiful as the animations!
 
+#org @sFrontierText_Cynthia_PreBattle
+I, Cynthia, accept your challenge!\nThere won't be any letup from me!
+
+#org @sFrontierText_Cynthia_PlayerWin
+No matter how fun the battle is, it\nwill always end sometime[.]
+
+#org @sFrontierText_Cynthia_PlayerLose
+You see? I didn't let up!
+
+#org @sFrontierText_Red_PreBattle
+#org @sFrontierText_Red_PlayerWin
+#org @sFrontierText_Red_PlayerLose
+[.]
+
 #org @sFrontierText_BigMo_PreBattle
 Ha ha ha ha!\nLook who I ran into again!\p[PLAYER]!\pI've been looking forward to\nanother battle with you!\pNow, let's what you can do to the\nkingpin of Antisis City!
 
@@ -1250,3 +1259,5 @@ What? Me, lose?!
 
 #org @sFrontierText_Giovanni_PlayerLose
 Ha!\nThat was a truly intense fight!
+
+#endif
