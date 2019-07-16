@@ -114,8 +114,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		return viability = 0;
 
 	// Powder Move Checks (safety goggles, defender has grass type, overcoat, and powder move table)
-	if ((defEffect == ITEM_EFFECT_SAFETY_GOGGLES || IsOfType(bankDef, TYPE_GRASS) || defAbility == ABILITY_OVERCOAT)
-	&& CheckTableForMove(move, PowderTable))
+	if (CheckTableForMove(move, PowderTable) && !IsAffectedByPowder(bankDef))
 		viability -= 10; //No return b/c could be reduced further by absorb abilities
 		
 	//Target Ability Checks

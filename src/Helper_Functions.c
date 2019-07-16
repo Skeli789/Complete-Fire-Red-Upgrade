@@ -85,14 +85,14 @@ bool8 CheckAbilityTargetField(ability_t ability) {
 	return (AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, gBankAttacker, ability, 0, 0));
 }
 
-pokemon_t* GetBankPartyData(bank_t bank) {
+struct Pokemon* GetBankPartyData(bank_t bank) {
 	u8 index = gBattlerPartyIndexes[bank];
 	if (SIDE(bank) == B_SIDE_OPPONENT)
 		return &gEnemyParty[index];
 	return &gPlayerParty[index];
 }
 
-bank_t GetBankFromPartyData(pokemon_t* mon) {
+bank_t GetBankFromPartyData(struct Pokemon* mon) {
 
 	for (int i = 0; i < gBattlersCount; ++i)
 	{
@@ -131,7 +131,7 @@ bool8 CheckGrounding(bank_t bank) {
 	return GROUNDED;
 }
 
-bool8 CheckGroundingFromPartyData(pokemon_t* party) {
+bool8 CheckGroundingFromPartyData(struct Pokemon* party) {
 	if (gNewBS->GravityTimer 
 	|| (ItemId_GetHoldEffect(party->item) == ITEM_EFFECT_IRON_BALL && GetPartyAbility(party) != ABILITY_KLUTZ))
 		return GROUNDED;
@@ -144,7 +144,7 @@ bool8 CheckGroundingFromPartyData(pokemon_t* party) {
 }
 
 bool8 PartyAlive (u8 bank) {
-	pokemon_t* party;
+	struct Pokemon* party;
 	
 	if (GetBattlerSide(bank) == B_SIDE_PLAYER)
 		party = gPlayerParty;
@@ -160,7 +160,7 @@ bool8 PartyAlive (u8 bank) {
 	return 0;
 }
 
-u8 ViableMonCount(pokemon_t* party) {
+u8 ViableMonCount(struct Pokemon* party) {
 	u8 count = 0;
 	
     for (int i = 0; i < PARTY_SIZE; ++i) 
@@ -287,6 +287,14 @@ bool8 ProtectsAgainstZMoves(u16 move, u8 bankAtk, u8 bankDef) {
 
 bool8 StatsMaxed(bank_t bank) {
 	for (u8 i = 0; i < BATTLE_STATS_NO-1; ++i) {
+		if (gBattleMons[bank].statStages[i] < 12)
+			return FALSE;
+	}
+	return TRUE;
+}
+
+bool8 MainStatsMaxed(bank_t bank) {
+	for (u8 i = 0; i < STAT_ACC-1; ++i) {
 		if (gBattleMons[bank].statStages[i] < 12)
 			return FALSE;
 	}
@@ -454,7 +462,7 @@ u8 GetMoveTarget(u16 move, u8 useMoveTarget) {
     return bankDef;
 }
 
-void HealMon(pokemon_t* poke) {
+void HealMon(struct Pokemon* poke) {
 
     //Restore HP.
 	poke->hp = poke->maxHP;
@@ -513,8 +521,8 @@ bool8 CheckBattleTerrain(u8 caseID) {
 }
 */
 
-pokemon_t* LoadPartyRange(u8 bank, u8* FirstMonId, u8* lastMonId) {
-	pokemon_t* party;
+struct Pokemon* LoadPartyRange(u8 bank, u8* FirstMonId, u8* lastMonId) {
+	struct Pokemon* party;
 	
 	if (SIDE(bank) == B_SIDE_OPPONENT) {
         party = gEnemyParty;
@@ -645,7 +653,7 @@ u8 GetIllusionPartyNumber(u8 bank)
 		if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER) && SIDE(bank) == B_SIDE_OPPONENT)
 			return gBattlerPartyIndexes[bank];
 
-		pokemon_t* party = LoadPartyRange(bank, &firstMonId, &lastMonId);
+		struct Pokemon* party = LoadPartyRange(bank, &firstMonId, &lastMonId);
 		
 		for (i = lastMonId - 1; i >= firstMonId; --i) //Loop through party in reverse order
 		{ 
@@ -662,10 +670,10 @@ u8 GetIllusionPartyNumber(u8 bank)
 	return gBattlerPartyIndexes[bank];
 }
 
-pokemon_t* GetIllusionPartyData(u8 bank) 
+struct Pokemon* GetIllusionPartyData(u8 bank) 
 {
 	u8 firstMonId, lastMonId;
-	pokemon_t* party = LoadPartyRange(bank, &firstMonId, &lastMonId);
+	struct Pokemon* party = LoadPartyRange(bank, &firstMonId, &lastMonId);
 	
 	return &party[GetIllusionPartyNumber(bank)];
 }
@@ -691,7 +699,7 @@ bool8 IsFirstAttacker(u8 bank) {
 	return FALSE; //Should never be reached
 }
 
-bool8 CanTransferItem(u16 species, u16 item, pokemon_t* party_data) {
+bool8 CanTransferItem(u16 species, u16 item, struct Pokemon* party_data) {
 	u16 dexNum = SpeciesToNationalPokedexNum(species);
 	u8 effect = ItemId_GetHoldEffect(item);
 	u8 quality = ItemId_GetHoldEffectParam(item);
@@ -786,7 +794,7 @@ bool8 CanKnockOffItem(u8 bank)
 	return TRUE;
 }
 
-bool8 CanEvolve(pokemon_t* mon) {
+bool8 CanEvolve(struct Pokemon* mon) {
 	int i;
 	const struct Evolution* evolutions = gEvolutionTable[mon->species];
 	
@@ -798,7 +806,7 @@ bool8 CanEvolve(pokemon_t* mon) {
 	return FALSE;
 }
 
-bool8 CouldHaveEvolvedViaLevelUp(pokemon_t* mon) {
+bool8 CouldHaveEvolvedViaLevelUp(struct Pokemon* mon) {
 	int i;
 	const struct Evolution* evolutions = gEvolutionTable[mon->species];
 	
@@ -808,6 +816,13 @@ bool8 CouldHaveEvolvedViaLevelUp(pokemon_t* mon) {
 			return TRUE;
 	}
 	return FALSE;
+}
+
+bool8 IsAffectedByPowder(u8 bank)
+{
+	return ABILITY(bank) != ABILITY_OVERCOAT
+		&& ITEM_EFFECT(bank) != ITEM_EFFECT_SAFETY_GOGGLES
+		&& !IsOfType(bank, TYPE_GRASS);
 }
 
 u8 CountBoosts(bank_t bank) {
@@ -863,7 +878,7 @@ u8 CalcMoveSplit(u8 bank, u16 move) {
 	#endif
 }
 
-u8 CalcMoveSplitFromParty(pokemon_t* mon, u16 move) {
+u8 CalcMoveSplitFromParty(struct Pokemon* mon, u16 move) {
 	if (CheckTableForMove(move, MovesThatChangePhysicality))
 	{	
 		if (mon->spAttack >= mon->attack)
@@ -1154,7 +1169,7 @@ bool8 CanBeConfused(u8 bank) {
 	return TRUE;	
 }
 
-bool8 CanPartyMonBeGeneralStatused(pokemon_t* mon) {
+bool8 CanPartyMonBeGeneralStatused(struct Pokemon* mon) {
 	if (mon->species == SPECIES_MINIOR_SHIELD)
 		return FALSE;
 	
@@ -1171,7 +1186,7 @@ bool8 CanPartyMonBeGeneralStatused(pokemon_t* mon) {
 	return TRUE;
 }
 
-bool8 CanPartyMonBePutToSleep(pokemon_t* mon) {
+bool8 CanPartyMonBePutToSleep(struct Pokemon* mon) {
 	if (!CanPartyMonBeGeneralStatused(mon))
 		return FALSE;
 	
@@ -1185,7 +1200,7 @@ bool8 CanPartyMonBePutToSleep(pokemon_t* mon) {
 	return TRUE;
 }
 
-bool8 CanPartyMonBePoisoned(pokemon_t* mon) {
+bool8 CanPartyMonBePoisoned(struct Pokemon* mon) {
 	if (!CanPartyMonBeGeneralStatused(mon))
 		return FALSE;
 	
@@ -1203,7 +1218,7 @@ bool8 CanPartyMonBePoisoned(pokemon_t* mon) {
 	return TRUE;
 }
 
-bool8 CanPartyMonBeParalyzed(pokemon_t* mon) {
+bool8 CanPartyMonBeParalyzed(struct Pokemon* mon) {
 	if (!CanPartyMonBeGeneralStatused(mon))
 		return FALSE;
 
@@ -1219,7 +1234,7 @@ bool8 CanPartyMonBeParalyzed(pokemon_t* mon) {
 	return TRUE;
 }
 
-bool8 CanPartyMonBeBurned(pokemon_t* mon) {
+bool8 CanPartyMonBeBurned(struct Pokemon* mon) {
 	if (!CanPartyMonBeGeneralStatused(mon))
 		return FALSE;
 		
@@ -1236,7 +1251,7 @@ bool8 CanPartyMonBeBurned(pokemon_t* mon) {
 	return TRUE;
 }
 
-bool8 CanPartyMonBeFrozen(pokemon_t* mon) {
+bool8 CanPartyMonBeFrozen(struct Pokemon* mon) {
 	if (!CanPartyMonBeGeneralStatused(mon))
 		return FALSE;
 

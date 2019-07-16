@@ -13,7 +13,6 @@ extern const u8 BattleScript_BeakBlastBurn[];
 extern const u8 BattleScript_Magician[];
 extern const u8 BattleScript_Moxie[];
 extern const u8 BattleScript_MindBlownDamage[];
-extern const u8 BattleScript_LifeOrbDamage[];
 extern const u8 BattleScript_Pickpocket[];
 extern const u8 BattleScript_DancerActivated[];
 extern const u8 BattleScript_MultiHitPrintStrings[];

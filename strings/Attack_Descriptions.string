@@ -365,7 +365,7 @@ A worrying seed is\nplanted on the foe,\nmaking its ability\nInsomnia.
 Stomach acid is\nhurled onto the\nfoe, suppressing\nits ability.
 
 #org @DESC_GEOMANCY
-The user's Sp. Atk\nSp. Def. and\nSpeed stats rise\non the 2nd turn.
+The user's Sp. Atk\nSp. Def. and\nSpeed stats rise\nsharply on the\n2nd turn.
 
 #org @DESC_FLOWERSHIELD
 The Defense stat\nof all Grass-type\nPok\emon is raised\nby a strange power.
@@ -524,7 +524,7 @@ An odd psychic wave\nattacks the target.\nThis attack does\nphysical damage.
 The user sheds part\nof its body to make\nitself lighter and\nsharply raise its\nSpeed stat.
 
 #org @DESC_DIAMONDSTORM
-The user whips up a\nstorm of diamonds\nto damage the foes.\nThis may also raise\nthe user's Defens  
+The user whips up a\nstorm of diamonds\nto damage the foes.\nThis may also raise\nthe user's Defense. 
 
 #org @DESC_SLUDGEWAVE
 The area around the\nuser is swamped by\na giant sludge wave.\nIt may also poison\nthose hit.

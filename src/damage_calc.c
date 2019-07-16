@@ -552,8 +552,7 @@ u8 TypeCalc(u16 move, u8 bankAtk, u8 bankDef, pokemon_t* party_data_atk, bool8 C
 	&& move != MOVE_THOUSANDARROWS)
         flags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
 
-	else if (CheckTableForMove(move, PowderTable)
-	&& (defAbility == ABILITY_OVERCOAT || defEffect == ITEM_EFFECT_SAFETY_GOGGLES || IsOfType(bankDef, TYPE_GRASS)))
+	else if (CheckTableForMove(move, PowderTable) && !IsAffectedByPowder(bankDef))
 		flags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
 
 	else if (move == MOVE_SKYDROP && IsOfType(bankDef, TYPE_FLYING))

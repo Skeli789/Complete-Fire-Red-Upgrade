@@ -55,6 +55,16 @@ HiddenAbilityChange1:
 .org 0x13324, 0xFF
 .word BATTLE_WIRELESS | BATTLE_OLD_MAN | BATTLE_E_READER | BATTLE_GHOST | BATTLE_TRAINER_TOWER | BATTLE_FRONTIER
 
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Safari Zone Ball Count
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x16ADA, 0xFF
+	ldrh r0, [r1]
+	sub r0, #0x1
+	strh r0, [r1]
+
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Max Level Limiters
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -393,6 +403,14 @@ MaxLevelChange1:
 .org 0x9B86E, 0xFF
 	.byte 0x2f, 0xd0
 	
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Safari Zone Ball Count
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0xA0EF6, 0xFF
+	strh r0, [r1]
+	
+.org 0xA0F50, 0xFF
+	ldrh r0, [r0]
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Dynamic Overworld Palettes
@@ -498,12 +516,6 @@ SummaryScreenExpDisplay2:
 .word MULTICHOICE_STRING_LOADER
 .word 0x7	
 
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@ Ghost Battle Fix
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.org 0x3fd35b, 0xff
-.byte 0xfd, 0x6, 0xab, 0xfb, 0xfe, 0xff
 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

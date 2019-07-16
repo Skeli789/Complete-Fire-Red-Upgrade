@@ -44,11 +44,11 @@ const union AnimCmd *const gAnimCmdPowerWhip[] =
 
 const struct OamData sSunsteelStrikeBlastOAM =
 {
-    .affineMode = ST_OAM_AFFINE_DOUBLE,
-    .objMode = ST_OAM_OBJ_NORMAL,
-    .shape = SPRITE_SHAPE(64x64),
-    .size = SPRITE_SIZE(64x64),
-    .priority = 1, //Above sprites
+	.affineMode = ST_OAM_AFFINE_DOUBLE,
+	.objMode = ST_OAM_OBJ_NORMAL,
+	.shape = SPRITE_SHAPE(64x64),
+	.size = SPRITE_SIZE(64x64),
+	.priority = 1, //Above sprites
 };
 
 static const union AffineAnimCmd gSpriteAffineAnim_SunsteelStrikeBlastEnemySide[] =
@@ -73,11 +73,33 @@ const union AffineAnimCmd* const gSpriteAffineAnimTable_SunsteelStrikeBlast[] =
 	gSpriteAffineAnim_SunsteelStrikeBlastPlayerSide,
 };
 
+const struct OamData sHydroCannonBallOAM =
+{
+	.affineMode = ST_OAM_AFFINE_DOUBLE,
+	.objMode = ST_OAM_OBJ_NORMAL,
+	.shape = SPRITE_SHAPE(16x16),
+	.size = SPRITE_SIZE(16x16),
+	.priority = 1, //Above sprites
+};
+
+static const union AffineAnimCmd gSpriteAffineAnim_HydroCannonBallBothSides[] =
+{
+	AFFINEANIMCMD_FRAME(16, 16, 0, 30), //Double in size
+	AFFINEANIMCMD_END
+};
+
+const union AffineAnimCmd* const gSpriteAffineAnim_HydroCannonBall[] =
+{
+	gSpriteAffineAnim_HydroCannonBallBothSides,
+};
+
 //This file's functions:
 static void InitSpritePosToAnimTargetsCentre(struct Sprite *sprite, bool8 respectMonPicOffsets);
 static void InitSpritePosToAnimAttackersCentre(struct Sprite *sprite, bool8 respectMonPicOffsets);
 static void InitSpritePosToGivenTarget(struct Sprite* sprite, u8 target);
 static void SpriteCB_FlareBlitzUpFlamesP2(struct Sprite* sprite);
+static void AnimMindBlownBallStep(struct Sprite *sprite);
+static u8 GetProperCentredCoord(u8 bank, u8 coordType);
 static void Task_HandleSpecialBattleAnimation(u8 taskId);
 static bool8 ShouldAnimBeDoneRegardlessOfSubsitute(u8 animId);
 static bool8 ShouldSubstituteRecedeForSpecialBattleAnim(u8 animId);
@@ -343,7 +365,7 @@ void AnimTask_ReloadAttackerSprite(u8 taskId)
 
 void AnimTask_PlayAttackerCry(u8 taskId)
 {
-	PlayCry3(GetBankPartyData(gBattleAnimAttacker)->species, 0, 0);
+	PlayCry3(GetBankPartyData(gBattleAnimAttacker)->species, 0, 2); //Higher Pitch
 	DestroyAnimVisualTask(taskId);
 }
 
@@ -700,25 +722,156 @@ void AnimTask_CreateFlingItem(u8 taskId)
 
 void SpriteCB_SunsteelStrikeRings(struct Sprite* sprite)
 {
-    if (GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER)
-    {
-        sprite->pos1.x = 272;
-        sprite->pos1.y = -32;
-    }
+	if (GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER)
+	{
+		sprite->pos1.x = 272;
+		sprite->pos1.y = -32;
+	}
+	else
+	{
+		sprite->pos1.x = -32;
+		sprite->pos1.y = -32;
+	}
+
+	sprite->data[0] = gBattleAnimArgs[0];
+	sprite->data[1] = sprite->pos1.x;
+	sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2);
+	sprite->data[3] = sprite->pos1.y;
+	sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET);
+
+	InitAnimLinearTranslation(sprite);
+	sprite->callback = (void*) 0x80B1CC1;
+}
+
+//Spins a sprite towards the target, pausing in the middle.
+//Used in Mind Blown.
+//arg 0: duration step 1 (attacker -> center)
+//arg 1: duration step 2 (spin center)
+//arg 2: duration step 3 (center -> target)
+void SpriteCB_MindBlownBall(struct Sprite *sprite)
+{
+	s16 oldPosX = sprite->pos1.x;
+	s16 oldPosY = sprite->pos1.y;
+	sprite->pos1.x = GetBattlerSpriteCoord(gBattleAnimAttacker, 2);
+	sprite->pos1.y = GetBattlerSpriteCoord(gBattleAnimAttacker, 3);
+	sprite->data[0] = 0;
+	sprite->data[1] = gBattleAnimArgs[0];
+	sprite->data[2] = gBattleAnimArgs[1];
+	sprite->data[3] = gBattleAnimArgs[2];
+	sprite->data[4] = sprite->pos1.x << 4;
+	sprite->data[5] = sprite->pos1.y << 4;
+	sprite->data[6] = ((oldPosX - sprite->pos1.x) << 4) / (gBattleAnimArgs[0] << 1);
+	sprite->data[7] = ((oldPosY - sprite->pos1.y) << 4) / (gBattleAnimArgs[0] << 1);
+	sprite->callback = AnimMindBlownBallStep;
+}
+
+static u8 GetProperCentredCoord(u8 bank, u8 coordType)
+{
+	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	{
+		return (GetBattlerSpriteCoord2(bank, coordType)
+			  +  GetBattlerSpriteCoord2(PARTNER(bank), coordType)) / 2;
+	}
+
+	return GetBattlerSpriteCoord(bank, coordType);
+}
+
+static void AnimMindBlownBallStep(struct Sprite *sprite)
+{
+	switch (sprite->data[0])
+	{
+	case 0:
+		sprite->data[4] += sprite->data[6];
+		sprite->data[5] += sprite->data[7];
+		sprite->pos1.x = sprite->data[4] >> 4;
+		sprite->pos1.y = sprite->data[5] >> 4;
+		sprite->data[1] -= 1;
+		if (sprite->data[1] > 0)
+			break;
+		sprite->data[0] += 1;
+		break;
+	case 1:
+		sprite->data[2] -= 1;
+		if (sprite->data[2] > 0)
+			break;
+			
+		sprite->data[1] = GetProperCentredCoord(gBattleAnimTarget, BATTLER_COORD_X_2);
+		sprite->data[2] = GetProperCentredCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET);
+		sprite->data[4] = sprite->pos1.x << 4;
+		sprite->data[5] = sprite->pos1.y << 4;
+		sprite->data[6] = ((sprite->data[1] - sprite->pos1.x) << 4) / sprite->data[3];
+		sprite->data[7] = ((sprite->data[2] - sprite->pos1.y) << 4) / sprite->data[3];
+		sprite->data[0] += 1;
+		break;
+	case 2:
+		sprite->data[4] += sprite->data[6];
+		sprite->data[5] += sprite->data[7];
+		sprite->pos1.x = sprite->data[4] >> 4;
+		sprite->pos1.y = sprite->data[5] >> 4;
+		sprite->data[3] -= 1;
+		if (sprite->data[3] > 0)
+			break;
+		sprite->pos1.x = GetProperCentredCoord(gBattleAnimTarget, BATTLER_COORD_X_2);
+		sprite->pos1.y = GetProperCentredCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET);
+		sprite->data[0] += 1;
+		break;
+	case 3:
+		DestroySpriteAndMatrix(sprite);
+		break;
+	}
+}
+
+void SpriteCB_MindBlownExplosion(struct Sprite* sprite)
+{
+	u8 a;
+	u8 b;
+	u16 x;
+	u16 y;
+
+	if (gBattleAnimArgs[4] == 0)
+	{
+		DestroyAnimSprite(sprite);
+	}
+	else
+	{
+		a = GetProperCentredCoord(gBattleAnimTarget, BATTLER_COORD_X_2);
+		b = GetProperCentredCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET);
+
+		sprite->data[0] = gBattleAnimArgs[4];
+		if (gBattleAnimArgs[1] == 0)
+		{
+			sprite->pos1.x = gBattleAnimArgs[2] + a;
+			sprite->pos1.y = gBattleAnimArgs[3] + b;
+			sprite->data[5] = a;
+			sprite->data[6] = b;
+		}
+		else
+		{
+			sprite->pos1.x = a;
+			sprite->pos1.y = b;
+			sprite->data[5] = gBattleAnimArgs[2] + a;
+			sprite->data[6] = gBattleAnimArgs[3] + b;
+		}
+
+		x = sprite->pos1.x;
+		sprite->data[1] = x * 16;
+		y = sprite->pos1.y;
+		sprite->data[2] = y * 16;
+		sprite->data[3] = (sprite->data[5] - sprite->pos1.x) * 16 / gBattleAnimArgs[4];
+		sprite->data[4] = (sprite->data[6] - sprite->pos1.y) * 16 / gBattleAnimArgs[4];
+
+		sprite->callback = (void*) 0x80A43A1;
+	}
+}
+
+void SpriteCB_HydroCannonImpact(struct Sprite *sprite)
+{
+    if (gBattleAnimArgs[2] == 0)
+        InitSpritePosToAnimAttacker(sprite, 1);
     else
-    {
-        sprite->pos1.x = -32;
-        sprite->pos1.y = -32;
-    }
+        InitSpritePosToAnimTarget(sprite, TRUE);
 
-    sprite->data[0] = gBattleAnimArgs[0];
-    sprite->data[1] = sprite->pos1.x;
-    sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2);
-    sprite->data[3] = sprite->pos1.y;
-    sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET);
-
-    InitAnimLinearTranslation(sprite);
-    sprite->callback = (void*) 0x80B1CC1;
+    sprite->callback = DestroyAnimSprite;
 }
 
 void DoubleWildAnimBallThrowFix(void)
@@ -734,12 +887,12 @@ void DoubleWildAnimBallThrowFix(void)
 
 void SpriteCB_SoulStealingStar(struct Sprite *sprite)
 {
-    sprite->pos1.x += gBattleAnimArgs[0];
-    sprite->pos1.y += gBattleAnimArgs[1];
-    sprite->data[0] = gBattleAnimArgs[3];
-    sprite->data[1] = gBattleAnimArgs[4];
-    sprite->data[2] = gBattleAnimArgs[5];
-    sprite->callback = (void*) 0x80B7C11;
+	sprite->pos1.x += gBattleAnimArgs[0];
+	sprite->pos1.y += gBattleAnimArgs[1];
+	sprite->data[0] = gBattleAnimArgs[3];
+	sprite->data[1] = gBattleAnimArgs[4];
+	sprite->data[2] = gBattleAnimArgs[5];
+	sprite->callback = (void*) 0x80B7C11;
 }
 
 #define RESTORE_HIDDEN_HEALTHBOXES									\

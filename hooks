@@ -226,7 +226,7 @@ TransferPlttBuffer 8070474 0
 RealTimeClock 0800041E 3
 
 ##Script Specials
-sp156_GhostBattleSpecial 0807f92a 2
+sp156_GhostBattleSpecial 0807F92A 1
 
 ##Select-From-PC
 pcSelect_ClosingCheck 0808ebb2 0
@@ -481,3 +481,8 @@ SetCoins 080D057C 1
 GiveCoins 080D05A4 1
 TakeCoins 080D05E4 1
 ExpandCoinIntConversion 080D06D6 2
+
+##Safari Zone
+SetInitialSafariZoneParams 080A0ED0 1
+FixSafariZoneWindow 0806EE98 0
+FixSafariZoneBattleWindow 08049D1A 1

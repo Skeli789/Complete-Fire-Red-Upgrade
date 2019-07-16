@@ -30,48 +30,7 @@ enum
     WALLPAPER_COUNT
 };
 
-struct __attribute__((packed)) CompressedPokemonSubstruct0
-{
-    u16 species;
-    u16 heldItem;
-    u32 experience;
-    u8 ppBonuses;
-    u8 friendship;
-	u8 pokeball;
-	//u8 unknown; //Removed to save space for box mon
-};
 
-struct __attribute__((packed)) CompressedPokemon
-{
-	u32 personality;
-	u32 otid;
-	u8 nickname[10];
-	u8 language;
-	u8 sanity;
-	u8 otname[7];	
-	u8 markings;
-
-//Substructure Growth
-    struct CompressedPokemonSubstruct0 substruct0;
-	u32 move1 : 10;
-	u32 move2 : 10;
-	u32 move3 : 10;
-	u16 move4 : 10;
-
-//Substructure Condition
-    u8 hpEv;
-    u8 atkEv;
-    u8 defEv;
-    u8 spdEv;
-    u8 spAtkEv;
-    u8 spDefEv;
-
-//Substructure Misc
- /* 0x00 */ u8 pokerus;
- /* 0x01 */	u8 metLocation;
- /* 0x02 */ u16 metInfo; //Met level, met game, OT gender
- /* 0x04 */ u32 ivs;
-}; //SIZE = 0x3A / 58 bytes
 
 typedef u8 BoxNameT[9];
 
@@ -451,6 +410,24 @@ u8 SendMonToPC(struct Pokemon* mon)
 
     return MON_CANT_GIVE;
 }
+
+
+bool8 SendMonToBoxPos(struct Pokemon* mon, u8 boxNo, u8 boxPos)
+{
+	if (boxNo > TOTAL_BOXES_COUNT || boxPos > IN_BOX_COUNT)
+		return TRUE;
+	
+	struct CompressedPokemon* checkingMon = GetCompressedMonPtr(boxNo, boxPos);
+	CreateCompressedMonFromBoxMon((struct BoxPokemon*) mon, checkingMon);
+	gSpecialVar_MonBoxId = boxNo;
+	gSpecialVar_MonBoxPos = boxPos;
+	if (GetSomeBoxId() != boxNo)
+		FlagClear(FLAG_SYS_STORAGE_UNKNOWN_FLAG);
+	VarSet(VAR_STORAGE_UNKNOWN, boxNo);
+	return FALSE;
+
+}
+
 
 u32 SummaryScreenBoxMonMultiplier(u8 index)
 {

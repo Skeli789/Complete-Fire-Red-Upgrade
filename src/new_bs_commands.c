@@ -833,6 +833,7 @@ void atkFE_prefaintmoveendeffects(void)
 			else
 				gNewBS->DamageTaken[gBankTarget] = gHpDealt;
 			
+			gNewBS->totalDamageGiven += gHpDealt;
 			gNewBS->ResultFlags[gBankTarget] = gMoveResultFlags;
 			gNewBS->preFaintEffectsTracker++;
             break;

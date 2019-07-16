@@ -391,6 +391,8 @@ void __attribute__((long_call)) AnimSpinningKickOrPunchFinish(struct Sprite *spr
 void __attribute__((long_call)) SpriteCB_80BA7BC(struct Sprite *sprite);
 void __attribute__((long_call)) SpriteCB_AnimSolarbeamBigOrb(struct Sprite *sprite);
 void __attribute__((long_call)) InitAnimLinearTranslation(struct Sprite *sprite);
+u16 __attribute__((long_call)) ArcTan2Neg(s16 a, s16 b);
+void __attribute__((long_call)) TrySetSpriteRotScale(struct Sprite *sprite, bool8 a2, s16 xScale, s16 yScale, u16 rotation);
 
 void __attribute__((long_call)) StartAnimLinearTranslation(struct Sprite *sprite);
 

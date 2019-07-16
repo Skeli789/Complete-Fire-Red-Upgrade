@@ -6,8 +6,8 @@ extern u8 BattleScript_HangedOnFocusSash[];
 
 extern u8 BattleScript_BerryConfuseHealRet[];
 extern u8 BattleScript_BerryConfuseHealEnd2[];
-extern u8 BattleScript_ItemHealHP_RemoveItemRet[];
-extern u8 BattleScript_ItemHealHP_RemoveItemEnd2[];
+extern u8 BattleScript_BerryHealHP_RemoveBerryRet[];
+extern u8 BattleScript_BerryHealHP_RemoveBerryEnd2[];
 extern u8 BattleScript_BerryPPHealRet[];
 extern u8 BattleScript_BerryPPHealEnd2[];
 extern u8 BattleScript_BerryFocusEnergyRet[];
@@ -35,6 +35,7 @@ extern u8 BattleScript_RaiseStatsItem[];
 extern u8 BattleScript_RaiseStatsSeedEnd2[];
 extern u8 BattleScript_RaiseStatsSeedRet[];
 extern u8 BattleScript_WhiteHerbFling[];
+extern u8 BattleScript_ItemHealHP_RemoveItemRet[];
 
 extern u8 BattleScript_AirBallooonPop[];
 extern u8 BattleScript_AirBalloonSub[];
@@ -45,3 +46,4 @@ extern u8 BattleScript_BlackSludgeHurt[];
 extern u8 BattleScript_MicleBerryRet[];
 extern u8 BattleScript_MicleBerryEnd2[];
 extern u8 BattleScript_StickyBarbTransfer[];
+extern const u8 BattleScript_LifeOrbDamage[];

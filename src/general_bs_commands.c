@@ -2498,7 +2498,7 @@ u8 CheckMoveLimitations(u8 bank, u8 unusableMoves, u8 check) {
 	int i;
 
 	gStringBank = bank;
-	for (i = 0; i < 4; i++) {
+	for (i = 0; i < MAX_MON_MOVES; i++) {
 		u16 move = gBattleMons[bank].moves[i];
 		if (move == 0 && check & MOVE_LIMITATION_ZEROMOVE)
 			unusableMoves |= gBitTable[i];
@@ -2512,7 +2512,7 @@ u8 CheckMoveLimitations(u8 bank, u8 unusableMoves, u8 check) {
 			unusableMoves |= gBitTable[i];
 		else if (IsImprisoned(bank, move) && check & MOVE_LIMITATION_IMPRISION)
 			unusableMoves |= gBitTable[i];
-		else if (gDisableStructs[bank].encoreTimer && gDisableStructs[bank].encoredMove != move)
+		else if (gDisableStructs[bank].encoreTimer && gDisableStructs[bank].encoredMove != move && check & MOVE_LIMITATION_ENCORE)
 			unusableMoves |= gBitTable[i];
 		else if (holdEffect == ITEM_EFFECT_CHOICE_BAND && choicedMove != 0 && choicedMove != 0xFFFF && choicedMove != move && check & MOVE_LIMITATION_CHOICE)
 			unusableMoves |= gBitTable[i];

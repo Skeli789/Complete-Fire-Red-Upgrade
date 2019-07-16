@@ -29,6 +29,7 @@ void MoveValuesCleanUp(void);
 #define MOVE_LIMITATION_TAUNT       (1 << 4)
 #define MOVE_LIMITATION_IMPRISION   (1 << 5)
 #define MOVE_LIMITATION_CHOICE		(1 << 6)
+#define MOVE_LIMITATION_ENCORE		(1 << 7)
 
 enum FaintEffectsStates
 {
