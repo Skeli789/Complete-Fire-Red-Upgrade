@@ -1,298 +1,292 @@
 #!/usr/bin/env python3
 
-from glob import glob
-from pathlib import Path
-import os, itertools, hashlib, subprocess, sys
 from datetime import datetime
+from glob import glob
+import hashlib
+import itertools
+import os
+from pathlib import Path
+import subprocess
+import sys
 from string import StringFileConverter
 
 if sys.platform.startswith('win'):
-	PathVar = os.environ.get('Path')
-	Paths = PathVar.split(';')
-	PATH = ""
-	for candidatePath in Paths:
-		if "devkitARM" in candidatePath:
-			PATH = candidatePath
-			break
-	if PATH == "":
-		print('DevKit does not exist in your Path variable.\nChecking default location.')
-		PATH = 'C://devkitPro//devkitARM//bin'
-		if os.path.isdir(PATH) == False:
-			print("...\nDevkit not found.")
-			sys.exit(1)
-		else:
-			print("Devkit found.")
-	PREFIX = '/arm-none-eabi-'
-	AS = (PATH + PREFIX + 'as')
-	CC = (PATH + PREFIX + 'gcc')
-	LD = (PATH + PREFIX + 'ld')
-	GR = ("deps/grit.exe")
-	ARP = ('deps/armips.exe')
-	OBJCOPY = (PATH + PREFIX + 'objcopy')
-else:
-	PREFIX = 'arm-none-eabi-'
-	AS = (PREFIX + 'as')
-	CC = (PREFIX + 'gcc')
-	LD = (PREFIX + 'ld')
-	GR = ("grit")
-	ARP = ('armips')
-	OBJCOPY = (PREFIX + 'objcopy')
+    PathVar = os.environ.get('Path')
+    Paths = PathVar.split(';')
+    PATH = ''
+    for candidatePath in Paths:
+        if 'devkitARM' in candidatePath:
+            PATH = candidatePath
+            break
+    if PATH == '':
+        print('DevKit does not exist in your Path variable.\nChecking default location.')
+        PATH = 'C://devkitPro//devkitARM//bin'
+        if os.path.isdir(PATH) is False:
+            print('...\nDevkit not found.')
+            sys.exit(1)
+        else:
+            print('Devkit found.')
+
+    PREFIX = '/arm-none-eabi-'
+    AS = PATH + PREFIX + 'as'
+    CC = PATH + PREFIX + 'gcc'
+    LD = PATH + PREFIX + 'ld'
+    GR = 'deps/grit.exe'
+    OBJCOPY = PATH + PREFIX + 'objcopy'
+
+else:  # Linux, OSX, etc.
+    PREFIX = 'arm-none-eabi-'
+    AS = PREFIX + 'as'
+    CC = PREFIX + 'gcc'
+    LD = PREFIX + 'ld'
+    GR = "grit"
+    OBJCOPY = PREFIX + 'objcopy'
 
 SRC = './src'
 GRAPHICS = './graphics'
 ASSEMBLY = './assembly'
 STRINGS = './strings'
 BUILD = './build'
+IMAGES = './Images'
 ASFLAGS = ['-mthumb', '-I', ASSEMBLY]
 LDFLAGS = ['BPRE.ld', '-T', 'linker.ld']
 CFLAGS = ['-mthumb', '-mno-thumb-interwork', '-mcpu=arm7tdmi', '-mtune=arm7tdmi',
-'-mno-long-calls', '-march=armv4t', '-Wall', '-Wextra','-Os', '-fira-loop-pressure', '-fipa-pta']
+          '-mno-long-calls', '-march=armv4t', '-Wall', '-Wextra', '-Os', '-fira-loop-pressure', '-fipa-pta']
 
-PrintedCompilingImages = False #Used to tell the script whether or not the string "Compiling Images" has been printed
 
-def run_command(cmd):
-	try:
-		subprocess.check_output(cmd)
-	except subprocess.CalledProcessError as e:
-		print(e.output.decode(), file = sys.stderr)
-		sys.exit(1)
+class Master:
+    @staticmethod
+    def init():
+        Master.printedCompilingImages = False
 
-def make_output_file(filename):
-	'''Return hash of filename to use as object filename'''
-	m = hashlib.md5()
-	m.update(filename.encode())
-	newfilename = os.path.join(BUILD, m.hexdigest() + '.o')
-	
-	if not os.path.isfile(filename):
-		return [newfilename, False]
-	
-	fileExists = os.path.isfile(newfilename)
-	
-	if fileExists and os.path.getmtime(newfilename) > os.path.getmtime(filename): #If the object file was created after the file was last modified
-		return [newfilename, False]
-	
-	return [newfilename, True]
+    @staticmethod
+    def printCompilingImages():
+        if not Master.printedCompilingImages:
+            # Used to tell the script whether or not the string 'Compiling Images' has been printed
+            Master.printedCompilingImages = True
+            print('Compiling Images')
 
-def make_output_img_file(filename):
-	'''Return "IMG" + hash of filename to use as object filename'''
-	m = hashlib.md5()
-	m.update(filename.encode())
-	newfilename = os.path.join(BUILD, 'IMG_' + m.hexdigest() + '.o')
-	
-	if not os.path.isfile(filename):
-		return [newfilename, False]
-	
-	fileExists = os.path.isfile(newfilename)
-	
-	if fileExists and os.path.getmtime(newfilename) > os.path.getmtime(filename): #If the object file was created after the file was last modified
-		return [newfilename, False]
-	
-	return [newfilename, True]
 
-def process_assembly(in_file):
-	'''Assemble'''
-	out_file_list = make_output_file(in_file)
-	out_file = out_file_list[0]
-	if out_file_list[1] is False:
-		return out_file #No point in recompiling file
-	
-	try:
-		print ('Assembling %s' % in_file)
-		cmd = [AS] + ASFLAGS + ['-c', in_file, '-o', out_file]
-		run_command(cmd)
-		
-	except FileNotFoundError:
-		print('Error! The assembler could not be located.\nAre you sure you set up your path to devkitPro/devkitARM/bin correctly?')
-		sys.exit(1)
-		
-	return out_file
-	
-def process_c(in_file):
-	'''Compile C'''
-	out_file_list = make_output_file(in_file)
-	out_file = out_file_list[0]
-	if out_file_list[1] is False:
-		return out_file #No point in recompiling file
-	
-	try:
-		print ('Compiling %s' % in_file)
-		cmd = [CC] + CFLAGS + ['-c', in_file, '-o', out_file]
-		run_command(cmd)
+def RunCommand(cmd: [str]):
+    """Runs the command line command."""
+    try:
+        subprocess.check_output(cmd)
+    except subprocess.CalledProcessError as e:
+        print(e.output.decode(), file=sys.stderr)
+        sys.exit(1)
 
-	except FileNotFoundError:
-		print('Error! The C compiler could not be located.\nAre you sure you set up your path to devkitPro/devkitARM/bin correctly?')
-		sys.exit(1)
-	
-	return out_file
 
-def process_string(filename):
-	'''Build Strings'''
-	out_file = filename.split(".string")[0] + '.s'
-	object_file = make_output_file(out_file)[0]
+def CreateOutputFile(fileName: str, newFileName: str) -> [str, bool]:
+    """Helper function to produce object file output."""
+    if not os.path.isfile(fileName):
+        return [newFileName, False]
 
-	fileExists = os.path.isfile(object_file)
+    fileExists = os.path.isfile(newFileName)
 
-	if fileExists and os.path.getmtime(object_file) > os.path.getmtime(filename): #If the .o file was created after the image was last modified
-		return make_output_file(out_file)[0]
+    # If the object file was created after the file was last modified
+    if fileExists and os.path.getmtime(newFileName) > os.path.getmtime(fileName):
+        return [newFileName, False]
 
-	print ('Building Strings %s' % filename)
-	StringFileConverter(filename)
+    return [newFileName, True]
 
-	out_file_list = make_output_file(out_file)
-	new_out_file = out_file_list[0]
-	if out_file_list[1] == False:
-		os.remove(out_file)
-		return new_out_file #No point in recompiling file
 
-	cmd = [AS] + ASFLAGS + ['-c', out_file, '-o', new_out_file]
-	run_command(cmd)
-	os.remove(out_file)
-	return new_out_file
+def MakeGeneralOutputFile(fileName: str) -> [str, bool]:
+    """Return hash of filename to use as object filename."""
+    m = hashlib.md5()
+    m.update(fileName.encode())
+    newFileName = os.path.join(BUILD, m.hexdigest() + '.o')
 
-def process_image(in_file):
-	'''Compile Image'''
-	if '.bmp' in in_file:
-		out_file = in_file.split('.bmp')[0] + '.s'
-	else:
-		out_file = in_file.split('.png')[0] + '.s'
-	if sys.platform.startswith('win'):
-		namelist = in_file.split("\\") #Get path of grit flags
-		namelist.pop(len(namelist) - 1)
-		flags = "".join(str(i) + "\\" for i in namelist)
-	else:
-		namelist = in_file.split("/") #Get path of grit flags
-		namelist.pop(len(namelist) - 1)
-		flags = "".join(str(i) + "//" for i in namelist)
-	flags += "gritflags.txt"
-	
-	try:
-		with open(flags, 'r') as file:
-			for line in file:
-				cmd = [GR, in_file] + line.split() + ['-o', out_file]
-				break #only needs the first line
-	except FileNotFoundError:
-		print("Error: No gritflags.txt found in directory with " + in_file)
-		sys.exit(1)
-	
-	out_file_list = make_output_img_file(out_file)
-	new_out_file = out_file_list[0]
-	try:
-		if os.path.getmtime(new_out_file) > os.path.getmtime(in_file): #If the .o file was created after the image was last modified
-			return new_out_file
-		else:
-			run_command(cmd)
-	
-	except FileNotFoundError:
-		run_command(cmd) #No .o file has been created
+    return CreateOutputFile(fileName, newFileName)
 
-	global PrintedCompilingImages
-	if (PrintedCompilingImages is False):
-		print ('Compiling Images')
-		PrintedCompilingImages = True
-	
-	out_file_list = make_output_img_file(out_file)
-	new_out_file = out_file_list[0]
-	if out_file_list[1] == False:
-		os.remove(out_file)
-		return new_out_file #No point in recompiling file
 
-	cmd = [AS] + ASFLAGS + ['-c', out_file, '-o', new_out_file]
-	run_command(cmd)
-	os.remove(out_file)
-	return new_out_file
+def MakeOutputImageFile(fileName: str) -> [str, bool]:
+    """Return 'IMG_' + hash of filename to use as object filename."""
+    m = hashlib.md5()
+    m.update(fileName.encode())
+    newFileName = os.path.join(BUILD, 'IMG_' + m.hexdigest() + '.o')
 
-def link(objects):
-	'''Link objects into one binary'''
-	linked = 'build/linked.o'
-	cmd = [LD] + LDFLAGS + ['-o', linked] + list(objects)
-	run_command(cmd)
-	return linked
-	
-def objcopy(binary):
-	cmd = [OBJCOPY, '-O', 'binary', binary, 'build/output.bin']
-	run_command(cmd)
-	
-def run_glob(globstr, fn):
-	'''Glob recursively and run the processor function on each file in result'''
-	if globstr == '**/*.png' or globstr == '**/*.bmp': #Search the graphics location
-		return run_glob_graphics(globstr, fn)
-	elif globstr == '**/*.s':
-		return run_glob_assembly(globstr, fn)
-	elif globstr == '**/*.string':
-		return run_glob_strings(globstr, fn)
-	
-	if sys.version_info > (3, 4):
-		try:
-			files = glob(os.path.join(SRC, globstr), recursive = True)
-			return map(fn, files)
-		except TypeError:
-			print("Error compiling. Please make sure Python has been updated to the latest version.")
-			sys.exit(1)
-	else:
-		files = Path(SRC).glob(globstr)
-		return map(fn, map(str, files))
+    return CreateOutputFile(fileName, newFileName)
 
-def run_glob_assembly(globstr, fn):
-	'''Glob recursively and run the processor function on each file in result'''
-	if sys.version_info > (3, 4):
-		files = glob(os.path.join(ASSEMBLY, globstr), recursive = True)
-		return map(fn, files)
-	else:
-		files = Path(ASSEMBLY).glob(globstr)
-		return map(fn, map(str, files))
 
-def run_glob_strings(globstr, fn):
-	'''Glob recursively and run the processor function on each file in result'''
-	if sys.version_info > (3, 4):
-		files = glob(os.path.join(STRINGS, globstr), recursive = True)
-		return map(fn, files)
-	else:
-		files = Path(STRINGS).glob(globstr)
-		return map(fn, map(str, files))
+def ProcessAssembly(assemblyFile: str) -> str:
+    """Assemble."""
+    objectFile, regenerateObjectFile = MakeGeneralOutputFile(assemblyFile)
+    if regenerateObjectFile is False:
+        return objectFile  # No point in recompiling file
 
-def run_glob_graphics(globstr, fn):
-	'''Glob recursively and run the processor function on each file in result'''
-	if sys.version_info > (3, 4):
-		files = glob(os.path.join(GRAPHICS, globstr), recursive = True)
-		return map(fn, files)
-	else:
-		files = Path(GRAPHICS).glob(globstr)
-		return map(fn, map(str, files))
-		
+    try:
+        print('Assembling %s' % assemblyFile)
+        cmd = [AS] + ASFLAGS + ['-c', assemblyFile, '-o', objectFile]
+        RunCommand(cmd)
+
+    except FileNotFoundError:
+        print('Error! The assembler could not be located.\n'
+              + 'Are you sure you set up your path to devkitPro/devkitARM/bin correctly?')
+        sys.exit(1)
+
+    return objectFile
+
+
+def ProcessC(cFile: str) -> str:
+    """Compile C."""
+    objectFile, regenerateObjectFile = MakeGeneralOutputFile(cFile)
+    if regenerateObjectFile is False:
+        return objectFile  # No point in recompiling file
+
+    try:
+        print('Compiling %s' % cFile)
+        cmd = [CC] + CFLAGS + ['-c', cFile, '-o', objectFile]
+        RunCommand(cmd)
+
+    except FileNotFoundError:
+        print('Error! The C compiler could not be located.\n'
+              + 'Are you sure you set up your path to devkitPro/devkitARM/bin correctly?')
+        sys.exit(1)
+
+    return objectFile
+
+
+def ProcessString(stringFile: str) -> str:
+    """Build and assemble strings."""
+    assemblyFile = stringFile.split('.string')[0] + '.s'
+    objectFile = MakeGeneralOutputFile(assemblyFile)[0]
+    fileExists = os.path.isfile(objectFile)
+
+    if fileExists and os.path.getmtime(objectFile) > os.path.getmtime(stringFile):
+        # If the .o file was created after the string file was last modified
+        return objectFile
+
+    print('Building Strings %s' % stringFile)
+    StringFileConverter(stringFile)
+
+    cmd = [AS] + ASFLAGS + ['-c', assemblyFile, '-o', objectFile]
+    RunCommand(cmd)
+    os.remove(assemblyFile)
+    return objectFile
+
+
+def ProcessImage(imageFile: str) -> str:
+    """Compile image."""
+    if '.bmp' in imageFile:
+        assemblyFile = imageFile.split('.bmp')[0] + '.s'
+    else:
+        assemblyFile = imageFile.split('.png')[0] + '.s'
+
+    if sys.platform.startswith('win'):
+        nameList = imageFile.split('\\')  # Get path of grit flags
+        nameList.pop(len(nameList) - 1)
+        flags = ''.join(str(i) + '\\' for i in nameList)
+    else:  # Linux, OSX, etc.
+        nameList = imageFile.split('/')  # Get path of grit flags
+        nameList.pop(len(nameList) - 1)
+        flags = ''.join(str(i) + '//' for i in nameList)
+
+    flags += 'gritflags.txt'
+
+    try:
+        with open(flags, 'r') as file:
+            line = file.readline()  # Only needs the first line
+            cmd = [GR, imageFile] + line.split() + ['-o', assemblyFile]
+
+    except FileNotFoundError:
+        print('Error: No gritflags.txt found in directory with ' + imageFile + '.')
+        sys.exit(1)
+
+    objectFile = MakeOutputImageFile(assemblyFile)[0]
+    fileExists = os.path.isfile(objectFile)
+
+    if fileExists and os.path.getmtime(objectFile) > os.path.getmtime(imageFile):
+        # If the .o file was created after the image was last modified
+        return objectFile
+    else:
+        Master.printCompilingImages()
+        RunCommand(cmd)
+
+    regenerateObjectFile = MakeOutputImageFile(assemblyFile)[1]
+    if regenerateObjectFile is False:
+        os.remove(assemblyFile)
+        return objectFile  # No point in recompiling file
+
+    cmd = [AS] + ASFLAGS + ['-c', assemblyFile, '-o', objectFile]
+    RunCommand(cmd)
+    os.remove(assemblyFile)
+    return objectFile
+
+
+def LinkObjects(objects: itertools.chain) -> str:
+    """Link objects into one binary."""
+    linked = 'build/linked.o'
+    cmd = [LD] + LDFLAGS + ['-o', linked] + list(objects)
+    RunCommand(cmd)
+    return linked
+
+
+def Objcopy(binary: str):
+    """Run the objcopy."""
+    cmd = [OBJCOPY, '-O', 'binary', binary, 'build/output.bin']
+    RunCommand(cmd)
+
+
+def RunGlob(globString: str, fn) -> map:
+    """Glob recursively and run the processor function on each file in result."""
+    if globString == '**/*.png' or globString == '**/*.bmp':  # Search the GRAPHICS location
+        directory = GRAPHICS
+    elif globString == '**/*.s':
+        directory = ASSEMBLY
+    elif globString == '**/*.string':
+        directory = STRINGS
+    else:
+        directory = SRC
+
+    if sys.version_info > (3, 4):
+        try:
+            files = glob(os.path.join(directory, globString), recursive=True)
+            return map(fn, files)
+
+        except TypeError:
+            print('Error compiling. Please make sure Python has been updated to the latest version.')
+            sys.exit(1)
+    else:
+        files = Path(directory).glob(globString)
+        return map(fn, map(str, files))
+
+
 def main():
-	starttime = datetime.now()
-	globs = {
-			'**/*.s': process_assembly,
-			'**/*.c': process_c,
-			'**/*.string': process_string,
-			'**/*.png': process_image,
-			'**/*.bmp': process_image
-	}
-		
-	# Create output directory
-	try:
-		os.makedirs(BUILD)
-	except FileExistsError:
-		pass
-		
-	# Gather source files and process them
-	objects = itertools.starmap(run_glob, globs.items())
-	
-	# Link and extract raw binary
-	linked = link(itertools.chain.from_iterable(objects))
-	objcopy(linked)
-	
-	#Build special_inserts.asm
-	if not os.path.isfile('build/special_inserts.bin') or os.path.getmtime('build/special_inserts.bin') < os.path.getmtime('special_inserts.asm'): #If the binary file was created after the file was last modified):
-		cmd = cmd = [AS] + ASFLAGS + ['-c', 'special_inserts.asm', '-o', 'build/special_inserts.o']
-		run_command(cmd)
-		
-		cmd = [OBJCOPY, '-O', 'binary', 'build/special_inserts.o', 'build/special_inserts.bin']
-		run_command(cmd)
-		
-		print ('Assembling special_inserts.asm')
-	
-	print('Built in ' + str(datetime.now() - starttime) + '.')
-	
+    Master.init()
+    startTime = datetime.now()
+    globs = {
+            '**/*.s': ProcessAssembly,
+            '**/*.c': ProcessC,
+            '**/*.string': ProcessString,
+            '**/*.png': ProcessImage,
+            '**/*.bmp': ProcessImage,
+    }
+
+    # Create output directory
+    try:
+        os.makedirs(BUILD)
+    except FileExistsError:
+        pass
+
+    # Gather source files and process them
+    objects = itertools.starmap(RunGlob, globs.items())
+
+    # Link and extract raw binary
+    linked = LinkObjects(itertools.chain.from_iterable(objects))
+    Objcopy(linked)
+
+    # Build special_inserts.asm
+    if not os.path.isfile('build/special_inserts.bin') \
+            or os.path.getmtime('build/special_inserts.bin') < os.path.getmtime('special_inserts.asm'):
+        print('Assembling special_inserts.asm')
+        cmd = [AS] + ASFLAGS + ['-c', 'special_inserts.asm', '-o', 'build/special_inserts.o']
+        RunCommand(cmd)
+
+        cmd = [OBJCOPY, '-O', 'binary', 'build/special_inserts.o', 'build/special_inserts.bin']
+        RunCommand(cmd)
+
+    print('Built in ' + str(datetime.now() - startTime) + '.')
+
+
 if __name__ == '__main__':
-	main()
+    main()

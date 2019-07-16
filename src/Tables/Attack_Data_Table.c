@@ -5828,7 +5828,7 @@ const struct BattleMove gBattleMoves[] = {
 
 [MOVE_CHARGEBEAM] =
 	{
-		.effect = EFFECT_UNUSED_6E,
+		.effect = EFFECT_SPECIAL_ATTACK_UP_CHANCE,
 		.power = 50,
 		.type = TYPE_ELECTRIC,
 		.accuracy = 90,
@@ -6820,7 +6820,7 @@ const struct BattleMove gBattleMoves[] = {
 
 [MOVE_FIERYDANCE] =
 	{
-		.effect = EFFECT_UNUSED_6E,
+		.effect = EFFECT_SPECIAL_ATTACK_UP_CHANCE,
 		.power = 80,
 		.type = TYPE_FIRE,
 		.accuracy = 100,

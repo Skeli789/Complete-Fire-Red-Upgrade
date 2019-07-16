@@ -65,11 +65,7 @@ static void LoadSector30And31()
     Memset(saveBuffer, 0, sizeof(struct SaveSection));
     DoReadFlashWholeSection(31, saveBuffer);
     startLoc += SECTOR_DATA_SIZE;
-	#ifdef UNBOUND
-    Memcpy((void*) startLoc, saveBuffer, 0xBD8);
-	#else
 	Memcpy((void*) startLoc, saveBuffer, SECTOR_DATA_SIZE);
-	#endif
 }
 
 static void SaveSector30And31()
@@ -271,11 +267,7 @@ u8 HandleSavingData(u8 saveType)
 
 void NewGameWipeNewSaveData(void)
 {
-	#ifdef UNBOUND
-		Memset((void*) gSaveBlockParasite, 0, 0x2A8C);
-	#else
-		Memset((void*) gSaveBlockParasite, 0, 0x2EA4);
-	#endif
+	Memset((void*) gSaveBlockParasite, 0, 0x2EA4);
 }
 
 u8* GetExpandedFlagPointer(u16 id)

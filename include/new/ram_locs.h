@@ -196,6 +196,7 @@ struct Clock
 //#define sDexNavSearchLevels //0x203C75C -999 slots
 //extern struct CompressedPokemon gBox20[30] //0x203CB44
 //extern struct CompressedPokemon gBox21[30] //0x203D210
+//extern struct CompressedPokemon gBox22[30] //0x203D8DC
 
-#define gPlayerCoins (*(u32*) 0x203D8DC)	//4 bytes, maximum 999,999,999 coins
-// [FILL_IN_NEXT] = 0x203D8E0
+#define gPlayerCoins (*(u32*) 0x203DFA8)	//4 bytes, maximum 999,999,999 coins
+// [FILL_IN_NEXT] = 0x203DFAC

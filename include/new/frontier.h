@@ -186,6 +186,7 @@ struct FrontierBrain
 extern const struct FrontierBrain gFrontierBrains[];
 
 extern u16 gBattleTowerStreaks[NUM_TOWER_BATTLE_TYPES][NUM_FORMATS_OLD][/*PARTY_SIZE*/ 2][/*LEVEL*/ 2][/*CURRENT_OR_MAX*/ 2]; //0x2026840
+//FREE SPACE FROM SLIDESHOW 0x202682C - 0x2027434
 
 extern const species_t gBattleTowerStandardSpeciesBanList[];
 extern const species_t gSmogonOU_SpeciesBanList[];
@@ -194,9 +195,11 @@ extern const species_t gMiddleCup_SpeciesList[];
 extern const species_t gSmogonMonotype_SpeciesBanList[];
 extern const ability_t gSmogonOU_AbilityBanList[];
 extern const ability_t gSmogonMonotype_AbilityBanList[];
+extern const ability_t gMiddleCup_AbilityBanList[];
 extern const item_t gBattleTowerStandard_ItemBanList[];
 extern const item_t gSmogonOU_ItemBanList[];
 extern const item_t gSmogonLittleCup_ItemBanList[];
 extern const item_t gSmogonMonotype_ItemBanList[];
+extern const item_t gMiddleCup_ItemBanList[];
 extern const move_t gSmogon_MoveBanList[];
 extern const move_t gSmogonLittleCup_MoveBanList[];

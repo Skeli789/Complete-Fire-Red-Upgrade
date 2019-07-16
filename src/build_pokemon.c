@@ -28,6 +28,7 @@
 #define TOTAL_SPREADS ARRAY_COUNT(gFrontierSpreads)
 #define TOTAL_LEGENDARY_SPREADS ARRAY_COUNT(gFrontierLegendarySpreads)
 #define TOTAL_ARCEUS_SPREADS ARRAY_COUNT(gArceusSpreads)
+#define TOTAL_PIKACHU_SPREADS ARRAY_COUNT(gPikachuSpreads)
 #define TOTAL_LITTLE_CUP_SPREADS ARRAY_COUNT(gLittleCupSpreads)
 #define TOTAL_MIDDLE_CUP_SPREADS ARRAY_COUNT(gMiddleCupSpreads)
 
@@ -36,8 +37,10 @@ extern const species_t gRandomizerBanList[];
 extern const species_t gSetPerfectXIvList[];
 extern const species_t gVivillonForms[];
 extern const species_t gFurfrouForms[];
+extern const species_t gPikachuCapForms[];
 extern const u8 gNumVivillonForms;
 extern const u8 gNumFurfrouForms;
+extern const u8 gNumPikachuCapForms;
 
 extern bool8 sp051_CanTeamParticipateInSkyBattle(void);
 extern bool8 CanMonParticipateInASkyBattle(struct Pokemon* mon);
@@ -1076,8 +1079,25 @@ static bool8 PokemonTierBan(const u16 species, const u16 item, const struct Batt
 			break;
 
 		case BATTLE_TOWER_MIDDLE_CUP:
-			if (!CheckTableForSpecies(species, gMiddleCup_SpeciesList))
+			if (!CheckTableForSpecies(species, gMiddleCup_SpeciesList)
+			||   CheckTableForItem(item, gMiddleCup_ItemBanList))
 				return TRUE; //Banned
+				
+			//Load correct ability and moves
+			switch (checkFromLocationType) {
+				case CHECK_BATTLE_TOWER_SPREADS:
+					moveLoc = spread->moves;
+					LOAD_TIER_CHECKING_ABILITY;
+					break;
+
+				default:
+					moveLoc = mon->moves;
+					ability = GetPartyAbility(mon);
+			}
+
+			//Check Banned Abilities
+			if (CheckTableForAbility(ability, gMiddleCup_AbilityBanList))
+				return TRUE;
 			break;
 			
 		case BATTLE_TOWER_MONOTYPE:
@@ -1216,9 +1236,14 @@ static const struct BattleTowerSpread* GetSpreadBySpecies(const u16 species, con
 
 static const struct BattleTowerSpread* TryAdjustSpreadForSpecies(const struct BattleTowerSpread* originalSpread)
 {
-	if (originalSpread->species == SPECIES_ARCEUS)
+	u16 species = originalSpread->species;
+
+	if (species == SPECIES_ARCEUS)
 		return &gArceusSpreads[Random() % TOTAL_ARCEUS_SPREADS]; //There are more Arceus spreads than any other Pokemon,
-																   //so they're held seperately to keep things fresh.
+																 //so they're held seperately to keep things fresh.
+	else if (species == SPECIES_PIKACHU)
+		return &gPikachuSpreads[Random() % TOTAL_PIKACHU_SPREADS]; //Sooo many different forms of Pikachu
+
 	return originalSpread;
 }
 
@@ -1233,6 +1258,9 @@ static u16 TryAdjustAestheticSpecies(u16 species)
 		case NATIONAL_DEX_FURFROU:
 			species = gFurfrouForms[Random() % gNumFurfrouForms];
 			break;
+		default:
+			if (species == SPECIES_PIKACHU_CAP_ORIGINAL)
+				species = gPikachuCapForms[Random() % gNumPikachuCapForms];
 	}
 	
 	return species;

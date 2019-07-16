@@ -1,3 +1,5 @@
+#include "src/config.h"
+
 #org @sTrainerName_Liam
 Liam
 
@@ -598,12 +600,11 @@ Mackenzie
 #org @sTrainerName_Madeline
 Madeline
 
+#ifdef UNBOUND
+
 //Special Trainers
 #org @sTrainerName_Palmer
 Palmer
-
-#org @sTrainerName_Cynthia
-Cynthia
 
 #org @sTrainerName_Skeli
 Skeli
@@ -617,6 +618,12 @@ Thanasis
 #org @sTrainerName_Lixdel
 Lixdel
 
+#org @sTrainerName_Cynthia
+Cynthia
+
+#org @sTrainerName_Red
+Red
+
 #org @sTrainerName_BigMo
 Big Mo
 
@@ -629,3 +636,4 @@ Candice
 #org @sTrainerName_Giovanni
 Giovanni
 
+#endif
