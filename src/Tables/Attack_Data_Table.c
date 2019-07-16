@@ -1,4 +1,4 @@
-#include "..\\defines.h"
+#include "../defines.h"
 #include "../../include/new/z_move_effects.h"
 
 const struct BattleMove gBattleMoves[] = {

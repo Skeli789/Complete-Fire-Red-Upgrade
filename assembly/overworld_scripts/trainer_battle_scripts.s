@@ -2,8 +2,8 @@
 .thumb
 .align 2
 
-.include "..\\xse_commands.s"
-.include "..\\xse_defines.s"
+.include "../xse_commands.s"
+.include "../xse_defines.s"
 
 @;trainerbattle11 0xA 0x90 0x7A 0x7 0x9 0x0 0x8188ED9 0x87C0E2F 0x8188EFA 0x87C0E61 0x8188F0A 0x8188F53
 

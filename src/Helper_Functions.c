@@ -7,7 +7,7 @@
 #include "../include/new/battle_start_turn_start.h"
 #include "../include/new/damage_calc.h"
 #include "../include/new/frontier.h"
-#include "../include/new/helper_functions.h"
+#include "../include/new/Helper_Functions.h"
 #include "../include/new/item.h"
 #include "../include/new/mega.h"
 #include "../include/new/move_tables.h"

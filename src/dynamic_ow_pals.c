@@ -2,7 +2,7 @@
 #include "../include/field_weather.h"
 
 #include "../include/new/dynamic_ow_pals.h"
-#include "../include/new/helper_functions.h"
+#include "../include/new/Helper_Functions.h"
 
 //Credit to Navenatox
 

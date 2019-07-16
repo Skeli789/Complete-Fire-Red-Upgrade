@@ -17,3 +17,9 @@ Multi Target Moves Plan.txt
 generatedrepoints
 *__pycache__
 *.idea
+
+# generated temporary files
+.fuse*
+
+# pycache files
+*.pyc

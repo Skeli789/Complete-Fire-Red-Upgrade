@@ -7,7 +7,7 @@
 #include "../include/new/battle_transition.h"
 #include "../include/new/battle_transition_data.h"
 #include "../include/new/character_customization.h"
-#include "../include/new/helper_functions.h"
+#include "../include/new/Helper_Functions.h"
 #include "../include/new/frontier.h"
 #include "../include/new/multi.h"
 #include "../include/new/overworld.h"

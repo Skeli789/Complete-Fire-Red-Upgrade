@@ -3,7 +3,7 @@
 #include "../include/link.h"
 #include "../include/constants/items.h"
 
-#include "../include/new/helper_functions.h"
+#include "../include/new/Helper_Functions.h"
 #include "../include/new/frontier.h"
 #include "../include/new/item.h"
 #include "../include/new/mega.h"

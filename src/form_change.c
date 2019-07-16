@@ -3,7 +3,7 @@
 
 #include "../include/new/battle_terrain.h"
 #include "../include/new/form_change.h"
-#include "../include/new/helper_functions.h"
+#include "../include/new/Helper_Functions.h"
 #include "../include/new/set_z_effect.h"
 
 const species_t gMiniorCores[] =

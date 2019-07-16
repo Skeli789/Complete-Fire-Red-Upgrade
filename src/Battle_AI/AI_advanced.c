@@ -6,7 +6,7 @@
 #include "../../include/new/AI_Helper_Functions.h"
 #include "../../include/new/battle_start_turn_start.h"
 #include "../../include/new/damage_calc.h"
-#include "../../include/new/helper_functions.h"
+#include "../../include/new/Helper_Functions.h"
 
 enum FightingClasses
 {

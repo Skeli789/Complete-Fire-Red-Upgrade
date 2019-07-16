@@ -8,7 +8,7 @@
 #include "../include/new/battle_start_turn_start_battle_scripts.h"
 #include "../include/new/damage_calc.h"
 #include "../include/new/form_change.h"
-#include "../include/new/helper_functions.h"
+#include "../include/new/Helper_Functions.h"
 #include "../include/new/item_battle_scripts.h"
 #include "../include/new/move_battle_scripts.h"
 #include "../include/new/mega.h"

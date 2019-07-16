@@ -9,7 +9,7 @@
 
 #include "../include/new/battle_strings.h"
 #include "../include/new/exp.h"
-#include "../include/new/helper_functions.h"
+#include "../include/new/Helper_Functions.h"
 
 enum
 {

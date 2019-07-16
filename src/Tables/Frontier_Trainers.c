@@ -7,7 +7,7 @@
 #include "../../include/constants/songs.h"
 
 #include "frontier_trainer_names.h"
-#include "frontier_spreads.h"
+#include "Frontier_Spreads.h"
 
 /*struct BattleTowerTrainer
 {
