@@ -3,7 +3,7 @@
 ## What is this:
 A complete upgrade for Fire Red, including an upgraded Battle Engine.
 
-### Before doing anything it is HIGHLY recommended the documention be read thoroughly.
+**Before doing anything it is HIGHLY recommended the documentation be read thoroughly.**
 
 ## Features:
 * Expanded Pokémon
@@ -66,52 +66,65 @@ A complete upgrade for Fire Red, including an upgraded Battle Engine.
 * Omnidirectional Jumping
 * Item Image on obtain
 
-**NOTE** Personalized options are available in src/config.h. The options can be customized
+**NOTE** Personalized options are available in *src/config.h*. The options can be customized
 by commenting and uncommenting lines.
 
 ## Installation Instructions:
-```
-1. Download devkitpro. Follow the instructions.
-(Note: you can only install devkitARM)
-For Windows users, follows steps 4-6 from this tutorial:
-https://www.pokecommunity.com/showpost.php?p=8825585&postcount=96
+### Windows:
+1. Download and install Devkitpro. You can follows steps 4-6 from [this tutorial](https://www.pokecommunity.com/showpost.php?p=8825585&postcount=96). 
 
-2. Download the latest version of python (3.7.2).
-After downloading and before proceeding to install make sure that the 'add to path' 
-checkbox is ticked, otherwise you'll have to add the python path in the environment 
-variables manually.
+2. Download the latest version of Python (3.7.3).
+After downloading and before proceeding to install, make sure that the **add to path** checkbox is ticked, otherwise you'll have to add the Python path in the environment variables manually. If you have installed multiple Python versions, please make sure that Python 3.6+ can be explicitly called with command `python3`.
 
-**NOTE**: If a python version lower than 3.6 is installed, you'll need to uninstall it and manually
-remove it from your path before installing the newer version of Python.
+3. Download (or clone) the master folder from this github page.
+(Click 'Clone or Download', then 'Download Zip')
 
-3. Download the master folder from this github page.
-(click 'Clone or Download', then 'Download Zip')
+4. Extract the zipped file in the root called **deps.rar** somewhere convenient and add that folder to your path (same steps as shown in the tutorial found in step 1).
 
-4. Extract the zipped file in the root called "deps.rar" somewhere convenient and add that
-folder to your path (same steps as shown in the tutorial found in step 1).
-
-5. Get your ROM, rename it BPRE0.gba and 
-place it the main (master) folder.
+5. Get your ROM, rename it to **BPRE0.gba** and place it the main (master) folder.
 
 6. To decide the offsets where you want to insert the code:
+In 'scripts/make.py' change `OFFSET_TO_PUT=YYY` to the location you want to insert the data. Don't worry about changing *insert.py* because *make.py* automatically updates *insert.py* and *linker.ld*.
 
-a) In the 'make.py' file in the folder 'scripts' change OFFSET_TO_PUT=YYY to the location 
-   you want to insert the data (let it be X). Don't worry about changing 'insert.py' also.
-   'make.py' automatically updates the 'insert.py' file and linker file.
- 
-7. Run cmd.exe in the main folder. You can do this by typing 'cmd' and hitting enter in the 
-url address or selecting 'run command prompt from here' from right clciking on empty space 
-while holding the shift key.
+7. Run **cmd.exe** in the main folder. You can do this by typing `cmd` and hitting enter in the 
+url address or selecting *Open command window here* from right clicking on empty space while holding the shift key.
 
-8. In command prompt window, type 'python scripts//make.py'
-  
-A new gba file will appear named as test.gba and an offsets.ini file.
-That is your resultant file.
+8. In the command prompt window, type `python scripts//make.py` (or `python3 scripts//make.py` if you've installed multiple python versions).
+
+A new gba file will appear named as **test.gba** and an **offsets.ini** file.
+Those are your resultant files.
+
+### UNIX-like OS (Linux, MacOS, ...): 
+1. Install devkitPro with instructions [here](https://devkitpro.org/wiki/Getting_Started). 
+
+2. Export `${DEVKITARM}/bin/` to your `PATH` variable. 
+
+3. Make sure you've installed python 3.6+ and it can be called directly via either `python` or `python3`. 
+
+4. Clone the repo and go inside:   
+```bash
+git clone https://github.com/Skeli789/Complete-Fire-Red-Upgrade
+cd Complete-Fire-Red-Upgrade
 ```
+
+5. Get your ROM into the current directory and rename it to **BPRE0.gba**.
+
+6. Configure the offset you want to insert the code: 
+In *scripts/make.py* change `OFFSET_TO_PUT=YYY` to the location you want to insert the data. 
+
+7. Run `python scripts/make.py` (or `python3 scripts/make.py` if you’ve installed multiple python versions). 
+
+A new gba file will appear named as **test.gba** and an **offsets.ini** file.
+Those are your resultant files.
 
 ## Notes
 
 Anytime you make changes, the compiler will only compile the files you have changed.
-Any changes made to header files will require you to type 'python scripts//clean.py build'
+
+### Specific to Windows
+Any changes made to header files will require you to type ``python scripts//clean.py build``
 in cmd and then rerun the build scripts. For more command line options, see "Engine
 Scripts" in the documentation.
+
+### Specific to UNIX-like OS (linux, macOS, ...): 
+Any changes made to header files will require you to clean everything in *build/* and then rerun the build scripts.
