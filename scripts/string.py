@@ -6,27 +6,28 @@ import sys
 CharMap = "charmap.tbl"
 
 SpecialBuffers = {
-    "." : ["B0"],
-    "BUFFER" : ["FD"],
-    "ATTACKER" : ["FD", "0F"],
-    "TARGET" : ["FD", "10"],
-    "EFFECT_BANK" : ["FD", "11"],
-    "SCRIPTING_BANK" : ["FD", "13"],
-    "CURRENT_MOVE" : ["FD", "14"],
-    "LAST_ITEM" : ["FD", "16"],
-    "LAST_ABILITY" : ["FD", "17"],
-    "ATTACKER_ABILITY" : ["FD", "18"],
-    "TARGET_ABILITY" : ["FD", "19"],
-    "SCRIPTING_BANK_ABILITY" : ["FD", "1A"],
-    "PLAYER_NAME" : ["FD", "23"],
+    ".": ["B0"],
+    "BUFFER": ["FD"],
+    "ATTACKER": ["FD", "0F"],
+    "TARGET": ["FD", "10"],
+    "EFFECT_BANK": ["FD", "11"],
+    "SCRIPTING_BANK": ["FD", "13"],
+    "CURRENT_MOVE": ["FD", "14"],
+    "LAST_ITEM": ["FD", "16"],
+    "LAST_ABILITY": ["FD", "17"],
+    "ATTACKER_ABILITY": ["FD", "18"],
+    "TARGET_ABILITY": ["FD", "19"],
+    "SCRIPTING_BANK_ABILITY": ["FD", "1A"],
+    "PLAYER_NAME": ["FD", "23"],
 
-    "PLAYER" : ["FD", "01"],
-    "RIVAL" : ["FD", "06"],
-    "BLACK" : ["FC", "01", "02"],
-    "RED" : ["FC", "01", "04"],
-    "GREEN" : ["FC", "01", "06"],
-    "BLUE" : ["FC", "01", "08"],
+    "PLAYER": ["FD", "01"],
+    "RIVAL": ["FD", "06"],
+    "BLACK": ["FC", "01", "02"],
+    "RED": ["FC", "01", "04"],
+    "GREEN": ["FC", "01", "06"],
+    "BLUE": ["FC", "01", "08"],
 }
+
 
 def StringFileConverter(filename):
     stringToWrite = ".thumb\n.text\n.align 2\n\n"
@@ -38,11 +39,11 @@ def StringFileConverter(filename):
         
         for line in file:
             lineNum += 1
-            line = line.rstrip("\n\r") #Remove only newline characters
-            if line.strip() == "" or line[:2] == "//": #Ignore blank lines and comment lines
+            line = line.rstrip("\n\r")  # Remove only newline characters
+            if line.strip() == "" or line[:2] == "//":  # Ignore blank lines and comment lines
                 continue
             
-            if readingState == 0: #Only when the file starts
+            if readingState == 0:  # Only when the file starts
                 line = line.strip()
                 if line[:6].upper() == "#ORG @" and line[6:] != "":
                     title = line[6:]
@@ -70,13 +71,14 @@ def StringFileConverter(filename):
                     stringToWrite += ".global " + title + "\n" + title + ":\n"
                 else:
                     stringToWrite += ProcessString(line, lineNum, maxLength, fillFF)
-                    stringToWrite += "0xFF\n\n" #Only print line in everything went alright
+                    stringToWrite += "0xFF\n\n"  # Only print line in everything went alright
 
-    output = open(filename.split(".string")[0] + '.s', 'w') #Only open file once we know everything went okay.
+    output = open(filename.split(".string")[0] + '.s', 'w')  # Only open file once we know everything went okay.
     output.write(stringToWrite)
     output.close()
-    
-def ProcessString(string, lineNum, maxLength = 0, fillWithFF = False):
+
+
+def ProcessString(string, lineNum, maxLength=0, fillWithFF=False):
     charMap = PokeByteTableMaker()
     stringToWrite = ".byte "
     buffer = False
@@ -85,8 +87,9 @@ def ProcessString(string, lineNum, maxLength = 0, fillWithFF = False):
     strLen = 0
 
     for char in string:
-        if maxLength > 0 and strLen >= maxLength:
-            print('Warning: The string "' + string + '" has exceeded the maximum length of ' + str(maxLength) + ' and has been truncated!')
+        if 0 < maxLength <= strLen:
+            print('Warning: The string "' + string + '" has exceeded the maximum length of '
+                  + str(maxLength) + ' and has been truncated!')
             break
         
         if buffer is True:
@@ -95,8 +98,9 @@ def ProcessString(string, lineNum, maxLength = 0, fillWithFF = False):
 
                 if bufferChars in SpecialBuffers:
                     for bufferChar in SpecialBuffers[bufferChars]:
-                        if maxLength > 0 and strLen >= maxLength: #End buffer in middle
-                            print('Warning: The string buffer "' + bufferChars + '" has exceeded the maximum length of ' + str(maxLength) + ' and has been truncated!')
+                        if 0 < maxLength <= strLen:  # End buffer in middle
+                            print('Warning: The string buffer "' + bufferChars + '" has exceeded the maximum length of '
+                                  + str(maxLength) + ' and has been truncated!')
                             break
                         
                         stringToWrite += ("0x" + bufferChar + ", ")
@@ -126,9 +130,9 @@ def ProcessString(string, lineNum, maxLength = 0, fillWithFF = False):
                 strLen += 1
 
             except KeyError:
-                if (char == '['):
+                if char == '[':
                     buffer = True
-                elif (char == '\\'):
+                elif char == '\\':
                     escapeChar = True
                 elif char == '"':
                     stringToWrite += hex(charMap["\\" + char])
@@ -144,22 +148,23 @@ def ProcessString(string, lineNum, maxLength = 0, fillWithFF = False):
     
     return stringToWrite
 
-def PokeByteTableMaker():
-    dicty = {}
-    with open(CharMap) as file:
-            for line in file:
-                if line.strip() != "/FF" and line.strip() != "":
-                    if (line[2] == '=' and line[3] != ""):
-                        try:
-                            if line[3] == '\\':
-                                dicty[line[3] + line[4]] = int(line.split('=')[0], 16)
-                            else:
-                                dicty[line[3]] = int(line.split('=')[0], 16)
-                        except:
-                            pass
-            dicty[' '] = 0
 
-    dicty["’"] = 0xB4
-    dicty["“"] = 0xB0
-    dicty["”"] = 0xB1
-    return dicty
+def PokeByteTableMaker():
+    dictionary = {}
+    with open(CharMap) as file:
+        for line in file:
+            if line.strip() != "/FF" and line.strip() != "":
+                if line[2] == '=' and line[3] != "":
+                    try:
+                        if line[3] == '\\':
+                            dictionary[line[3] + line[4]] = int(line.split('=')[0], 16)
+                        else:
+                            dictionary[line[3]] = int(line.split('=')[0], 16)
+                    except:
+                        pass
+        dictionary[' '] = 0
+
+    dictionary["’"] = 0xB4
+    dictionary["“"] = 0xB0
+    dictionary["”"] = 0xB1
+    return dictionary
