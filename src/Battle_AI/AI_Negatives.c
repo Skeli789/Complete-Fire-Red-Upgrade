@@ -46,7 +46,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 	u16 defItem = ITEM(bankDef);
 	u16 atkItem = ITEM(bankAtk);
 
-	//u8 atkQuality = ITEM_QUALITY(bankAtk);	//unused
+	u8 atkQuality = ITEM_QUALITY(bankAtk);
 	//u8 defQuality = ITEM_QUALITY(bankDef);	//unused
 	u32 atkStatus1 = gBattleMons[bankAtk].status1;
 	u32 defStatus1 = gBattleMons[bankDef].status1;
@@ -2079,13 +2079,12 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 					break;
 
 				case MOVE_CELEBRATE:
-					if (!IsTypeZCrystal(atkItem, moveType) || gNewBS->ZMoveData->used[bankAtk])
+				case MOVE_HOLDHANDS:
+					if (!IsTypeZCrystal(atkItem, moveType)
+					|| atkQuality != moveType
+					|| gNewBS->ZMoveData->used[bankAtk])
 						viability -= 10;
 					break;
-
-				case MOVE_HOLDHANDS:
-					viability -= 10;
-				break;
 			}
 			break;
 	

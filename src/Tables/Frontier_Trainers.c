@@ -414,19 +414,16 @@ extern const u8 sFrontierText_Rancher_PlayerWin_6[];
 extern const u8 sFrontierText_Rancher_PlayerLose_6[];
 
 extern const u8 sTrainerName_Palmer[];
-extern const u8 sTrainerName_Cynthia[];
 extern const u8 sTrainerName_Skeli[];
 extern const u8 sTrainerName_Golche[];
 extern const u8 sTrainerName_Gail[];
 extern const u8 sTrainerName_Lixdel[];
+extern const u8 sTrainerName_Cynthia[];
+extern const u8 sTrainerName_Red[];
 extern const u8 sTrainerName_BigMo[];
 extern const u8 sTrainerName_Galavan[];
 extern const u8 sTrainerName_Candice[];
 extern const u8 sTrainerName_Giovanni[];
-
-extern const u8 sFrontierText_Cynthia_PreBattle[];
-extern const u8 sFrontierText_Cynthia_PlayerWin[];
-extern const u8 sFrontierText_Cynthia_PlayerLose[];
 
 extern const u8 sFrontierText_Skeli_PreBattle[];
 extern const u8 sFrontierText_Skeli_PlayerWin[];
@@ -443,6 +440,14 @@ extern const u8 sFrontierText_Gail_PlayerLose[];
 extern const u8 sFrontierText_Lixdel_PreBattle[];
 extern const u8 sFrontierText_Lixdel_PlayerWin[];
 extern const u8 sFrontierText_Lixdel_PlayerLose[];
+
+extern const u8 sFrontierText_Cynthia_PreBattle[];
+extern const u8 sFrontierText_Cynthia_PlayerWin[];
+extern const u8 sFrontierText_Cynthia_PlayerLose[];
+
+extern const u8 sFrontierText_Red_PreBattle[];
+extern const u8 sFrontierText_Red_PlayerWin[];
+extern const u8 sFrontierText_Red_PlayerLose[];
 
 extern const u8 sFrontierText_BigMo_PreBattle[];
 extern const u8 sFrontierText_BigMo_PlayerWin[];
@@ -1637,26 +1642,6 @@ const struct BattleTowerTrainer gTowerTrainers[] =
 const struct SpecialBattleTowerTrainer gSpecialTowerTrainers[] =
 {
 	{
-		.owNum = 			OW_CYNTHIA,
-		.trainerClass = 	CLASS_CHAMPION,
-		.trainerSprite = 	TRAINER_SPRITE_CYNTHIA,
-		.gender = 			BATTLE_TOWER_FEMALE,
-		.name =				sTrainerName_Cynthia,
-		.preBattleText = 	sFrontierText_Cynthia_PreBattle,
-		.playerWinText = 	sFrontierText_Cynthia_PlayerWin,
-		.playerLoseText = 	sFrontierText_Cynthia_PlayerLose,
-		.regularSpreads =	gSpecialTowerSpread_Cynthia,
-		.middleCupSpreads = gMiddleCupTowerSpread_Cynthia,
-		.littleCupSpreads = gLittleCupTowerSpread_Cynthia,
-		.legendarySpreads = gLegendaryTowerSpread_Cynthia,
-		.regSpreadSize = 	ARRAY_COUNT(gSpecialTowerSpread_Cynthia),
-		.mcSpreadSize =		ARRAY_COUNT(gMiddleCupTowerSpread_Cynthia),
-		.lcSpreadSize =		ARRAY_COUNT(gLittleCupTowerSpread_Cynthia),
-		.legSpreadSize = 	ARRAY_COUNT(gLegendaryTowerSpread_Cynthia),
-		.songId = 			BGM_BATTLE_CYNTHIA,
-		.isMonotype = 		FALSE,
-	},
-	{
 		.owNum = 			OW_SKELI,
 		.trainerClass = 	CLASS_DEVELOPER,
 		.trainerSprite = 	TRAINER_SPRITE_SKELI,
@@ -1734,6 +1719,46 @@ const struct SpecialBattleTowerTrainer gSpecialTowerTrainers[] =
 		.lcSpreadSize =		ARRAY_COUNT(gLittleCupTowerSpread_Lixdel),
 		//.legSpreadSize =	ARRAY_COUNT(gLegendaryTowerSpread_Lixdel),
 		.songId = 			BGM_BATTLE_CHAMPION,
+		.isMonotype = 		FALSE,
+	},
+	{
+		.owNum = 			OW_CYNTHIA,
+		.trainerClass = 	CLASS_CHAMPION,
+		.trainerSprite = 	TRAINER_SPRITE_CYNTHIA,
+		.gender = 			BATTLE_TOWER_FEMALE,
+		.name =				sTrainerName_Cynthia,
+		.preBattleText = 	sFrontierText_Cynthia_PreBattle,
+		.playerWinText = 	sFrontierText_Cynthia_PlayerWin,
+		.playerLoseText = 	sFrontierText_Cynthia_PlayerLose,
+		.regularSpreads =	gSpecialTowerSpread_Cynthia,
+		.middleCupSpreads = gMiddleCupTowerSpread_Cynthia,
+		.littleCupSpreads = gLittleCupTowerSpread_Cynthia,
+		.legendarySpreads = gLegendaryTowerSpread_Cynthia,
+		.regSpreadSize = 	ARRAY_COUNT(gSpecialTowerSpread_Cynthia),
+		.mcSpreadSize =		ARRAY_COUNT(gMiddleCupTowerSpread_Cynthia),
+		.lcSpreadSize =		ARRAY_COUNT(gLittleCupTowerSpread_Cynthia),
+		.legSpreadSize = 	ARRAY_COUNT(gLegendaryTowerSpread_Cynthia),
+		.songId = 			BGM_BATTLE_CYNTHIA,
+		.isMonotype = 		FALSE,
+	},
+	{
+		.owNum = 			OW_RED,
+		.trainerClass = 	CLASS_PKMN_TRAINER_2,
+		.trainerSprite = 	TRAINER_SPRITE_RED,
+		.gender = 			BATTLE_TOWER_MALE,
+		.name =				sTrainerName_Red,
+		.preBattleText = 	sFrontierText_Red_PreBattle,
+		.playerWinText = 	sFrontierText_Red_PlayerWin,
+		.playerLoseText = 	sFrontierText_Red_PlayerLose,
+		.regularSpreads =	gSpecialTowerSpread_Red,
+		.middleCupSpreads = gMiddleCupTowerSpread_Red,
+		.littleCupSpreads = gLittleCupTowerSpread_Red,
+		.legendarySpreads = gLegendaryTowerSpread_Red,
+		.regSpreadSize = 	ARRAY_COUNT(gSpecialTowerSpread_Red),
+		.mcSpreadSize =		ARRAY_COUNT(gMiddleCupTowerSpread_Red),
+		.lcSpreadSize =		ARRAY_COUNT(gLittleCupTowerSpread_Red),
+		.legSpreadSize = 	ARRAY_COUNT(gLegendaryTowerSpread_Red),
+		.songId = 			BGM_BATTLE_RED,
 		.isMonotype = 		FALSE,
 	},
 	{

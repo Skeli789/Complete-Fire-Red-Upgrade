@@ -1470,22 +1470,18 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 				case MOVE_WORRYSEED:
 				case MOVE_GASTROACID:
 				case MOVE_SIMPLEBEAM:
-					if (gGoodAbilitiesToRemoveTable[defAbility])
+					if (gAbilityRatings[defAbility] >= 5)
 						INCREASE_STATUS_VIABILITY(2);
 					break;
 
 				case MOVE_ENTRAINMENT:
-					if (atkAbility == ABILITY_TRUANT
-					||  atkAbility == ABILITY_DEFEATIST
-					||  atkAbility == ABILITY_SLOWSTART)
-						INCREASE_STATUS_VIABILITY(3);
-					else if (gGoodAbilitiesToRemoveTable[defAbility])
+					if (gAbilityRatings[defAbility] >= 5
+					||  gAbilityRatings[atkAbility] <= 0)
 						INCREASE_STATUS_VIABILITY(2);
 					break;
 
 				case MOVE_SKILLSWAP:
-					if (gGoodAbilitiesToRemoveTable[defAbility]
-					&& !gGoodAbilitiesToRemoveTable[atkAbility])
+					if (gAbilityRatings[defAbility] > gAbilityRatings[atkAbility])
 						INCREASE_STATUS_VIABILITY(1);
 					break;
 			}
@@ -1895,6 +1891,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 					break;
 
 				case MOVE_CELEBRATE:
+				case MOVE_HOLDHANDS:
 				case MOVE_HAPPYHOUR:
 					if (IsTypeZCrystal(atkItem, moveType) && !gNewBS->ZMoveData->used[bankAtk])
 						INCREASE_VIABILITY(9); //Z-Happy Hour! / Z-Celebrate
