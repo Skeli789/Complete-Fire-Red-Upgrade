@@ -9,6 +9,8 @@ I guess dropping out of school\nwasn't so smart[.]
 #org @sFrontierText_Youngster_PlayerLose_1
 Heh, I told you I wasn't a\npushover!
 
+#ifdef UNBOUND
+
 #org @sFrontierText_Youngster_PreBattle_2
 I left school to be here[.]\pI won't let you stand between me\nand greatness!
 
@@ -1169,8 +1171,6 @@ This smell I have is the sweet\nscent of hay that Pok\emon surely\llove.
 
 #org @sFrontierText_Rancher_PlayerLose_6
 Whoa!
-
-#ifdef UNBOUND
 
 //Special Trainers
 
