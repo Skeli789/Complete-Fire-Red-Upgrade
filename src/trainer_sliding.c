@@ -1,7 +1,7 @@
 #include "defines.h"
 #include "defines_battle.h"
 
-#include "../include/new/helper_functions.h"
+#include "../include/new/Helper_Functions.h"
 #include "../include/new/trainer_sliding.h"
 #include "../include/new/trainer_sliding_data.h"
 

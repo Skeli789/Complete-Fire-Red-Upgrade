@@ -4,7 +4,7 @@
 #include "../include/random.h"
 #include "../include/constants/items.h"
 
-#include "../include/new/helper_functions.h"
+#include "../include/new/Helper_Functions.h"
 #include "../include/new/item_battle_effects.h"
 #include "../include/new/item_battle_scripts.h"
 #include "../include/new/move_tables.h"

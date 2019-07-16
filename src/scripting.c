@@ -23,7 +23,7 @@
 
 #include "../include/new/catching.h"
 #include "../include/new/dns.h"
-#include "../include/new/helper_functions.h"
+#include "../include/new/Helper_Functions.h"
 #include "../include/new/item.h"
 #include "../include/new_menu_helpers.h"
 #include "../include/new/multi.h"
@@ -32,7 +32,7 @@
 #include "../include/new/read_keys.h"
 #include "../include/new/roamer.h"
 #include "../include/new/text.h"
-#include "../include/new/Vanilla_Functions_battle.h"
+#include "../include/new/Vanilla_functions_battle.h"
 
 struct GbaTimer
 {

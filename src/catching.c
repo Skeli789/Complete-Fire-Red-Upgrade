@@ -8,7 +8,7 @@
 
 #include "../include/new/catching.h"
 #include "../include/new/dns.h"
-#include "../include/new/helper_functions.h"
+#include "../include/new/Helper_Functions.h"
 #include "../include/new/form_change.h"
 #include "../include/new/mega.h"
 #include "../include/new/pokemon_storage_system.h"

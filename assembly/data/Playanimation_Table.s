@@ -2,8 +2,8 @@
 .text
 .align 2
 
-.include "..\\Anim_Defines.asm"
-/*.include "..\\asm_defines.s" Don't Uncomment This!*/
+.include "../Anim_Defines.asm"
+/*.include "../asm_defines.s" Don't Uncomment This!*/
 
 .global gBattleAnims_General	
 

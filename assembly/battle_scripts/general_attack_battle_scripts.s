@@ -4,7 +4,7 @@
 .thumb
 .align 2
 
-.include "..\\defines"
+.include "../defines"
 
 .global GuardSwapString
 .global SpeedSwapString

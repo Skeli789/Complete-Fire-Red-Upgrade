@@ -2,7 +2,7 @@
 .text
 .align 2
 
-.include "..\\defines"
+.include "../defines"
 
 .equ MOVE_TABLES_TERMIN, 0xFEFE
 

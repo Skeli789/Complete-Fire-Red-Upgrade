@@ -1,4 +1,4 @@
-#include "..\\config.h"
+#include "../config.h"
 #include "../../include/global.h"
 #include "../../include/constants/species.h"
 

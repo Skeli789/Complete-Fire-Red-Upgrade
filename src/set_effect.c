@@ -6,7 +6,7 @@
 
 #include "../include/new/ability_battle_scripts.h"
 #include "../include/new/bs_helper_functions.h"
-#include "../include/new/helper_functions.h"
+#include "../include/new/Helper_Functions.h"
 #include "../include/new/move_battle_scripts.h"
 #include "../include/new/set_effect.h"
 #include "../include/new/stat_buffs.h"

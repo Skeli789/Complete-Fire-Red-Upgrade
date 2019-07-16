@@ -8,7 +8,7 @@
 #include "../include/money.h"
 #include "../include/window.h"
 
-#include "../include/new/helper_functions.h"
+#include "../include/new/Helper_Functions.h"
 #include "../include/new/item.h"
 #include "../include/new/set_z_effect.h"
 

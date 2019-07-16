@@ -4,7 +4,7 @@
 #include "../include/string_util.h"
 #include "../include/constants/moves.h"
 
-#include "../include/new/helper_functions.h"
+#include "../include/new/Helper_Functions.h"
 #include "../include/new/learn_move.h"
 #include "../include/new/move_reminder_data.h"
 

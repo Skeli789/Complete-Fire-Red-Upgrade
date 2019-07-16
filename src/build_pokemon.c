@@ -16,14 +16,14 @@
 #include "../include/new/dexnav.h"
 #include "../include/new/form_change.h"
 #include "../include/new/frontier.h"
-#include "../include/new/helper_functions.h"
+#include "../include/new/Helper_Functions.h"
 #include "../include/new/item.h"
 #include "../include/new/learn_move.h"
 #include "../include/new/mega.h"
 #include "../include/new/multi.h"
 
 #include "Tables/Trainers_With_EVs_Table.h"
-#include "Tables/battle_tower_spreads.h"
+#include "Tables/Battle_Tower_Spreads.h"
 
 #define TOTAL_SPREADS ARRAY_COUNT(gFrontierSpreads)
 #define TOTAL_LEGENDARY_SPREADS ARRAY_COUNT(gFrontierLegendarySpreads)
@@ -429,7 +429,7 @@ static u8 CreateNPCTrainerParty(pokemon_t* const party, const u16 trainerId, con
 			{
 				u16 speciesToCreate = gGeneralTrainerSpreads[trainer->trainerClass][GetOpenWorldBadgeCount()][openWorldSpeciesIndex];
 
-				if (FlagGet(SCALE_TRAINER_LEVELS_FLAG) || (gBattleTypeFlags & BATTLE_TYPE_TRAINER_TOWER))																					\
+				if (FlagGet(SCALE_TRAINER_LEVELS_FLAG) || (gBattleTypeFlags & BATTLE_TYPE_TRAINER_TOWER))																					//
 					openWorldLevel = GetHighestMonLevel(gPlayerParty);
 
 				CreateMon(&party[i], speciesToCreate, openWorldLevel, STANDARD_IV, TRUE, personalityValue, OT_ID_PRESET, otid);

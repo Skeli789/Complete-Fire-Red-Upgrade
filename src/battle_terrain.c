@@ -10,7 +10,7 @@
 #include "../include/new/battle_terrain.h"
 #include "../include/new/dns.h"
 #include "../include/new/overworld.h"
-#include "../include/new/helper_functions.h"
+#include "../include/new/Helper_Functions.h"
 
 #define gBattleTerrainTable ((struct BattleBackground*) *((u32*) 0x800F320))
 #ifdef UNBOUND

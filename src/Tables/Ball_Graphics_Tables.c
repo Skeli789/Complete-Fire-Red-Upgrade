@@ -1,4 +1,4 @@
-#include "..\\defines.h"
+#include "../defines.h"
 #include "../../include/new/catching.h"
 #include "../../include/constants/items.h"
 

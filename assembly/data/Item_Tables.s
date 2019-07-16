@@ -1,7 +1,7 @@
 .thumb
 .global AbilityDamageListTable
 
-.include "..\\defines"
+.include "../defines"
 
 .equ ITEM_TABLES_TERMIN, 0xFEFE
 

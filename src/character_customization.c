@@ -7,7 +7,7 @@
 #include "../include/constants/event_objects.h"
 
 #include "../include/new/character_customization.h"
-#include "../include/new/helper_functions.h"
+#include "../include/new/Helper_Functions.h"
 
 #ifdef UNBOUND
 typedef const u8* CustomPal;
