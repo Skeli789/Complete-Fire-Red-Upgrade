@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+import shutil
 
 ############
 # Options go here.
@@ -72,11 +73,17 @@ def EditInsert(offset: int):
 
 
 def BuildCode():
-    os.system("python scripts/build.py")
+    if shutil.which('python3') is not None:
+        os.system("python3 scripts/build.py")
+    else:
+        os.system("python scripts/build.py")
 
 
 def InsertCode():
-    os.system("python scripts/insert.py")
+    if shutil.which('python3') is not None:
+        os.system("python3 scripts/insert.py")
+    else:
+        os.system("python scripts/insert.py")
 
 
 def ClearFromTo(rom, from_: int, to_: int):
