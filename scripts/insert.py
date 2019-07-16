@@ -9,6 +9,7 @@ import _io
 
 OFFSET_TO_PUT = 0x900000
 SOURCE_ROM = "BPRE0.gba"
+ROM_NAME = "test.gba"
 
 if sys.platform.startswith('win'):
     PathVar = os.environ.get('Path')
@@ -23,8 +24,6 @@ if sys.platform.startswith('win'):
         if os.path.isdir(PATH) is False:
             print('Devkit not found.')
             sys.exit(1)
-
-    ROM_NAME = "test.gba"
 
     PREFIX = 'arm-none-eabi-'
     OBJDUMP = os.path.join(PATH, PREFIX + 'objdump')
