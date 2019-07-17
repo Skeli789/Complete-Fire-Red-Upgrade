@@ -231,15 +231,27 @@ def TryProcessFileInclusion(line: str, definesDict: dict) -> bool:
 
 
 def TryProcessConditionalCompilation(line: str, definesDict: dict, conditionals: [(str, bool)]) -> bool:
-    if line.upper().startswith('#IFDEF ') and len(line.strip().split()) > 1:
+    line = line.strip()
+    upperLine = line.upper()
+    numWordsOnLine = len(line.split())
+
+    if upperLine.startswith('#IFDEF ') and numWordsOnLine > 1:
         condition = line.strip().split()[1]
         conditionals.insert(0, (condition, True))  # Insert at front
         return True
-    elif line.upper().startswith('#IFNDEF ') and len(line.strip().split()) > 1:
+    elif upperLine.startswith('#INFDEF ') and numWordsOnLine > 1:
         condition = line.strip().split()[1]
         conditionals.insert(0, (condition, False))  # Insert at front
         return True
-    elif line.strip().upper() == '#ENDIF':
+    elif upperLine == '#ELSE':
+        if len(conditionals) >= 1:  # At least one statement was pushed before
+            condition = conditionals.pop(0)
+            if condition[1] is True:
+                conditionals.insert(0, (condition[0], False))  # Invert old statement
+            else:
+                conditionals.insert(0, (condition[0], True))  # Invert old statement
+            return True
+    elif upperLine == '#ENDIF':
         conditionals.pop(0)  # Remove first element (last pushed)
         return True
     else:
@@ -247,10 +259,10 @@ def TryProcessConditionalCompilation(line: str, definesDict: dict, conditionals:
             definedType = condition[1]
             condition = condition[0]
 
-            if definedType is True:
+            if definedType is True:  # From #ifdef
                 if condition not in definesDict:
                     return True  # If something isn't defined then skip the line
-            else:
+            else:  # From #ifndef
                 if condition in definesDict:
                     return True  # If something is defined then skip the line
 

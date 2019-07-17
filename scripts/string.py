@@ -22,11 +22,17 @@ SpecialBuffers = {
     "PLAYER_NAME": ["FD", "23"],
 
     "PLAYER": ["FD", "01"],
+    "BUFFER1": ["FD", "02"],
+    "BUFFER2": ["FD", "03"],
+    "BUFFER3": ["FD", "04"],
     "RIVAL": ["FD", "06"],
     "BLACK": ["FC", "01", "02"],
     "RED": ["FC", "01", "04"],
     "GREEN": ["FC", "01", "06"],
     "BLUE": ["FC", "01", "08"],
+
+    "ALIGN": ["FC", "13"],
+    "SHRINK": ["FC", "06", "00"]
 }
 
 
@@ -113,6 +119,10 @@ def ProcessString(string: str, lineNum: int, maxLength=0, fillWithFF=False) -> s
                         stringToWrite += ("0x" + bufferChar + ", ")
                         strLen += 1
 
+                elif len(bufferChars) > 2:  # Unrecognized buffer
+                    print('Warning: The string buffer "' + bufferChars + '" is not recognized!')
+                    stringToWrite += "0x0, "  # Place whitespace where the buffer should have gone
+                    strLen += 1
                 else:
                     stringToWrite += ("0x" + bufferChars + ", ")
                     strLen += 1
