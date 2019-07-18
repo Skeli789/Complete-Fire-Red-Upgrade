@@ -14,7 +14,7 @@
 void DoFormChange(u8 bank, u16 species, bool8 ReloadType, bool8 ReloadStats);
 void SwitchOutFormsRevert(u8 bank);
 void FormsRevert(pokemon_t* party);
-void TryFormRevert(pokemon_t* mon);
+bool8 TryFormRevert(pokemon_t* mon);
 void UpdateBurmy(void);
 species_t GetMiniorCoreSpecies(struct Pokemon* mon);
 void HoldItemFormChange(struct Pokemon* mon, u16 item);

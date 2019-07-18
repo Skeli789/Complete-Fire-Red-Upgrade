@@ -14,6 +14,7 @@
 #include "../include/new/battle_strings.h"
 #include "../include/new/battle_terrain.h"
 #include "../include/new/damage_calc.h"
+#include "../include/new/form_change.h"
 #include "../include/new/general_bs_commands.h"
 #include "../include/new/Helper_Functions.h"
 #include "../include/new/item_battle_scripts.h"
@@ -839,11 +840,11 @@ void atk1B_cleareffectsonfaint(void) {
 			__attribute__ ((fallthrough));
 
 			case Faint_FormsRevert:
-				if (mon->backupSpecies != SPECIES_NONE && mon->backupSpecies < NUM_SPECIES)
+				if (TryFormRevert(mon))
 				{
-					EmitSetMonData(0, REQUEST_SPECIES_BATTLE, 0, 2, &mon->backupSpecies);
+					EmitSetMonData(0, REQUEST_SPECIES_BATTLE, 0, 2, &mon->species);
 					MarkBufferBankForExecution(gActiveBattler);
-					mon->backupSpecies = 0;
+					mon->backupSpecies = SPECIES_NONE;
 					++gNewBS->FaintEffectsTracker;
 					return;
 				}

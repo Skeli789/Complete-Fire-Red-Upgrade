@@ -131,7 +131,7 @@ void FormsRevert(pokemon_t* party)
 		TryFormRevert(&party[i]);
 }
 
-void TryFormRevert(pokemon_t* mon)
+bool8 TryFormRevert(pokemon_t* mon)
 {
 	u16 species = mon->species;
 	u16 oldHP;
@@ -140,12 +140,13 @@ void TryFormRevert(pokemon_t* mon)
 	{
 		mon->species = GetMiniorCoreSpecies(mon); //Get Minior Colour
 		CalculateMonStats(mon);
+		return TRUE;
 	}
 	else if (CheckTableForSpecies(mon->backupSpecies, sBannedBackupSpecies)) //Forms the mon shouldn't revert to
 	{
 		mon->backupSpecies = SPECIES_NONE;
 	}
-	else if (mon->backupSpecies != SPECIES_NONE)
+	else if (mon->backupSpecies != SPECIES_NONE && mon->backupSpecies < NUM_SPECIES)
 	{
 		mon->species = mon->backupSpecies;
 		mon->backupSpecies = SPECIES_NONE;
@@ -154,6 +155,8 @@ void TryFormRevert(pokemon_t* mon)
 			
 		if (mon->species == SPECIES_ZYGARDE || mon->species == SPECIES_ZYGARDE_10)
 			mon->hp = MathMin(mon->maxHP, oldHP);
+			
+		return TRUE;
 	}
 	else if (mon->species == SPECIES_KELDEO_RESOLUTE)
 	{
@@ -168,8 +171,11 @@ void TryFormRevert(pokemon_t* mon)
 		{
 			mon->species = SPECIES_KELDEO;
 			CalculateMonStats(mon);
+			return TRUE;
 		}
 	}
+	
+	return FALSE;
 }
 
 void UpdateBurmy(void)
