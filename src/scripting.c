@@ -34,15 +34,6 @@
 #include "../include/new/text.h"
 #include "../include/new/Vanilla_functions_battle.h"
 
-struct GbaTimer
-{
-	u16 init;	// 4000108
-	u8 timerFlags;	// 400010A
-	u8 empty;		// 400010B
-	u16 timerVal;	// 400010C
-	u8 timerOn;	// 400010E
-};
-
 /*
 NOTES: 
 	1. Many specials will not work unless you have chosen to expand the save block!
@@ -50,15 +41,10 @@ NOTES:
 		-var8003 = 1: boxed pokemon (output from pc selection: box num in var8000, slot in var8001)
 		-else: menu pokemon (and slot in var8004, etc)
 		-Be sure to always set var8003 for data manipulation specials!
-		
-TO DO:
-	-battle specials
 	
 */
 
 #define POKERUS_CURED 0x10
-
-#define gGbaTimer ((struct GbaTimer*) 0x4000108)
 
 extern u8 AddPalRef(u8 Type, u16 PalTag);
 extern u8 BuildFrontierParty(pokemon_t* party, u16 trainerNum, bool8 firstTrainer, bool8 ForPlayer, u8 side);
@@ -1194,6 +1180,26 @@ void sp0AC_LoadTrainerBDefeatText(void)
 //Timer Specials//
 ///////////////////////////////////////////////////////////////////////////////////
 
+struct GbaTimers
+{
+	/*0x0*/u16 init;	// 4000108			TM2CNT_L -> Timer 2
+	/*0x2*/u16 timerFlags;	// 400010A			TM2CNT_H - Timer 2 Control (R/W)
+	/*0x4*/u16 timerVal;	// 400010C		TM3CNT_L -> Timer 3
+	/*0x6*/u16 timerOn;	// 400010E				TM3CNT_H - Timer 3 Control
+};
+#define gGbaTimer ((struct GbaTimers*) 0x4000108)
+
+/* timer control
+  Bit   Expl.	
+  0-1   Prescaler Selection (0=F/1, 1=F/64, 2=F/256, 3=F/1024)							0x1,0x2
+  2     Count-up Timing   (0=Normal, 1=See below)  ;Not used in TM0CNT_H				0x4
+  3-5   Not used																		0x8,0x10,0x20
+  6     Timer IRQ Enable  (0=Disable, 1=IRQ on Timer overflow)							0x40
+  7     Timer Start/Stop  (0=Stop, 1=Operate)											0x80
+  8-15  Not used
+When Count-up Timing is enabled, the prescaler value is ignored, instead the time is incremented each time when the previous counter overflows. This function cannot be used for Timer 0 (as it is the first timer).
+ */
+
 //@Details: Starts the timer
 void sp046_StartTimer(void) 
 {
@@ -1201,25 +1207,27 @@ void sp046_StartTimer(void)
 	gGbaTimer->timerFlags = 0x83;
 	gGbaTimer->timerVal = 0;
 	gGbaTimer->timerOn = 0x84;
-	return;
 }
 
 //@Details: Pauses the timer
 void sp047_HaltTimer(void) 
 {
-	gGbaTimer->timerOn = 4;
-	gGbaTimer->timerFlags = 3;
-	return;
+	#ifdef SAVE_BLOCK_EXPANSION
+		gTimerValue = gGbaTimer->timerVal;
+	#endif
+	gGbaTimer->timerOn ^= 0x80;
+	gGbaTimer->timerFlags ^= 0x80;
 }
 
-
 //@Details: Unpauses the timer
-void sp048_ResumeTimer(void) 
+//Without save block expansion, the timer will reset
+void sp048_ResumeTimer(void)
 {
-	gGbaTimer->timerVal = gGbaTimer->timerVal;
-	gGbaTimer->timerOn = 0x84;
-	gGbaTimer->timerFlags = 0x83;
-	return;
+	#ifdef SAVE_BLOCK_EXPANSION
+		gGbaTimer->timerVal = gTimerValue;
+	#endif
+	gGbaTimer->timerOn |= 0x80;
+	gGbaTimer->timerFlags |= 0x80;
 }
 
 //@Details:	Stops the timer.
@@ -1229,6 +1237,7 @@ u16 sp049_StopTimer(void)
 	gGbaTimer->timerOn = 0;
 	gGbaTimer->timerFlags = 0;
 	u16 time = gGbaTimer->timerVal;
+	
 	gGbaTimer->init = time;
 	gGbaTimer->timerVal = time;
 	return time;
@@ -1244,7 +1253,9 @@ u16 sp04A_GetTimerValue(void)
 
 void sp04C_UpdatePlaytime(void) 
 {
-	u8 secs = gGbaTimer->timerVal + gSaveBlock2->playTimeSeconds;	
+	u8 secs = gGbaTimer->timerVal + gSaveBlock2->playTimeSeconds;
+	
+	// subtract from hrs/mins until mins/secs < 60, respectively
 	while (secs > 60)
 	{
 		secs -= 60;
