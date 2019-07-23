@@ -156,8 +156,8 @@ void BattleAI_SetupAIData(u8 defaultScoreMoves)
 	// Choose proper trainer ai scripts.
 	AI_THINKING_STRUCT->aiFlags = GetAIFlags();
 
-	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
-		AI_THINKING_STRUCT->aiFlags |= AI_SCRIPT_DOUBLE_BATTLE; // act smart in doubles and don't attack your partner
+	//if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+		//AI_THINKING_STRUCT->aiFlags |= AI_SCRIPT_DOUBLE_BATTLE; // act smart in doubles and don't attack your partner
 }
 
 u32 GetAIFlags(void)
@@ -640,7 +640,7 @@ static bool8 PassOnWish(void)
 	{	
 		//Don't switch if your health is less than half and you can survive an opponent's hit
 		if (gBattleMons[bank].hp < gBattleMons[bank].maxHP / 2
-		&& ((!CanKnockOut(opposingBattler1, bank) && !(gBattleTypeFlags & BATTLE_TYPE_DOUBLE && CanKnockOut(opposingBattler2, bank))) || HasProtectionMoveInMoveset(bank, FALSE)))
+		&& ((!CanKnockOut(opposingBattler1, bank) && !(gBattleTypeFlags & BATTLE_TYPE_DOUBLE && CanKnockOut(opposingBattler2, bank))) || HasProtectionMoveInMoveset(bank, CHECK_MAT_BLOCK)))
 			return FALSE;
 			
 		party = LoadPartyRange(gActiveBattler, &firstId, &lastId);

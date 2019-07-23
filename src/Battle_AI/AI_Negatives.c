@@ -97,11 +97,18 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		&& Random() % 100 < AI_TRY_TO_KILL_RATE
 		&& DamagingMoveInMoveset(bankAtk))
 		{
-			if (MoveKnocksOutGoesFirstWithBestAccuracy(move, bankAtk, bankDef))
-				viability += 7;
+			if (!IsDoubleBattle())
+			{
+				if (MoveKnocksOutGoesFirstWithBestAccuracy(move, bankAtk, bankDef))
+					INCREASE_VIABILITY(7);
 
-			else if (IsStrongestMove(move, bankAtk, bankDef))
-				viability += 2;
+				else if (IsStrongestMove(move, bankAtk, bankDef, FALSE))
+					INCREASE_VIABILITY(2);
+			}
+			else //Double Battle
+			{
+				INCREASE_VIABILITY(GetBestDoubleKillingMoveScore(move, bankAtk, bankDef, bankAtkPartner, bankDefPartner));
+			}
 		}
 	#endif
 

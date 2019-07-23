@@ -302,7 +302,7 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 	{
 		tempMoveStruct->moveTypes[i] = GetMoveTypeSpecial(gActiveBattler, gBattleMons[gActiveBattler].moves[i]);
 
-		if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && CountAliveMons(1) + CountAliveMons(2) > 2) //Because target can vary, display only attacker's modifiers
+		if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, gActiveBattler, FOE(gActiveBattler)) >= 2) //Because target can vary, display only attacker's modifiers
 		{
 			tempMoveStruct->movePowers[i] = GetBasePower(gActiveBattler, FOE(gActiveBattler), gBattleMons[gActiveBattler].moves[i], 
 									 gBattleMons[gActiveBattler].item, ITEM_EFFECT(gActiveBattler), ABILITY(gActiveBattler), 

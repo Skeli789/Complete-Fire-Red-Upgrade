@@ -76,16 +76,19 @@ void atk00_attackcanceler(void)
 	&& gBattleMoves[gCurrentMove].effect != EFFECT_DOUBLE_HIT
 	&& !(gAbsentBattlerFlags & gBitTable[gBankTarget]))
 	{
-		if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE) {
+		if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+		{
 			switch (gBattleMoves[gCurrentMove].target) {
 				case MOVE_TARGET_BOTH:
-					if (CountAliveMons(2) <= 1) { //Check for single target
+					if (CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, gBankAttacker, FOE(gBankAttacker)) <= 1) //Check for single target
+					{
 						gNewBS->ParentalBondOn = 2;
 						gMultiHitCounter = 2;			
 					}
 					break;
 				case MOVE_TARGET_FOES_AND_ALLY:
-					if (CountAliveMons(1) +  CountAliveMons(2) <= 2) { //Count mons on both sides; ignore attacker
+					if (CountAliveMonsInBattle(BATTLE_ALIVE_EXCEPT_ACTIVE, gBankAttacker, 0) <= 1) //Count mons on both sides; ignore attacker
+					{
 						gNewBS->ParentalBondOn = 2;
 						gMultiHitCounter = 2;			
 					}
@@ -95,8 +98,8 @@ void atk00_attackcanceler(void)
 					gMultiHitCounter = 2;
 			}
 		}
-		
-		else {
+		else
+		{
 			gNewBS->ParentalBondOn = 2;
 			gMultiHitCounter = 2;
 		}

@@ -228,6 +228,130 @@ bool8 StrongestMoveGoesFirst(u16 move, u8 bankAtk, u8 bankDef)
 	return FALSE;
 }
 
+/*
+	One Target/Two Targets							Three Targets
+12: Hit 2 Foes, KO 2 Foes
+11: Hit 2 Foes, KO 1 Foe, Strongest Move 1 Foe
+10: Hit 2 Foes, KO 1 Foe/Strongest Move 2 Foes
+9: Hit 2 Foes, Strongest Move 1 Foe					Hit 2 Foes, KO 2 Foes, Hurt Partner
+8: Hit 2 Foes										Hit 2 Foes, KO 1 Foe, Strongest Move 1 Foe, Hurt Partner
+6: Hit 1 Foe, KO 1 Foe								Hit 2 Foes, KO 1 Foe/Strongest Move 2 Foes, Hurt Partner
+5: Hit 1 Foe, Strongest Move 1 Foe					Hit 2 Foes, Strongest Move 1 Foe, Hurt Partner
+4: Hit 1 Foe										Hit 2 Foes, Hurt Partner						
+*/
+
+#define DOUBLES_INCREASE_HIT_FOE 4
+#define DOUBLES_INCREASE_KO_FOE 2
+#define DOUBLES_INCREASE_STRONGEST_MOVE 1
+
+#define DOUBLES_DECREASE_HIT_PARTNER 3
+
+u8 GetBestDoubleKillingMoveScore(u16 checkMove, u8 bankAtk, u8 bankDef, u8 bankAtkPartner, u8 bankDefPartner)
+{
+	u16 move;
+	s8 moveScores[MAX_MON_MOVES] = {0};
+	
+	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, 0xFF);
+	for (int i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		move = GetBattleMonMove(bankAtk, i);
+	
+		if (move == MOVE_NONE)
+			break;
+			
+		if (SPLIT(move) == SPLIT_STATUS)
+			continue;
+			
+		move = TryReplaceMoveWithZMove(bankAtk, move);
+		if (!(gBitTable[i] & moveLimitations))
+		{
+			if (BATTLER_ALIVE(bankDef))
+			{
+				if (!(AI_SpecialTypeCalc(move, bankAtk, bankDef) & MOVE_RESULT_NO_EFFECT))
+				{
+					moveScores[i] += DOUBLES_INCREASE_HIT_FOE; //Hit one enemy
+			
+					if (MoveKnocksOutXHits(move, bankAtk, bankDef, 1))
+						moveScores[i] += DOUBLES_INCREASE_KO_FOE; //KO enemy
+					else if (IsStrongestMove(move, bankAtk, bankDef, FALSE))
+						moveScores[i] += DOUBLES_INCREASE_STRONGEST_MOVE;
+				}
+			}
+
+			if (BATTLER_ALIVE(bankDefPartner))
+			{
+				if (gBattleMoves[move].target & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL)
+				&& !(AI_SpecialTypeCalc(move, bankAtk, bankDefPartner) & MOVE_RESULT_NO_EFFECT))
+				{
+					moveScores[i] += DOUBLES_INCREASE_HIT_FOE; //Hit second enemy
+					
+					if (MoveKnocksOutXHits(move, bankAtk, bankDefPartner, 1))
+						moveScores[i] += DOUBLES_INCREASE_KO_FOE; //KO second enemy
+					else if (IsStrongestMove(move, bankAtk, bankDef, TRUE))
+						moveScores[i] += DOUBLES_INCREASE_STRONGEST_MOVE;
+				}
+			}
+
+			if (BATTLER_ALIVE(bankAtkPartner)
+			&& ABILITY(bankAtkPartner) != ABILITY_TELEPATHY
+			&& gBattleMoves[move].target & MOVE_TARGET_ALL
+			&& !(BATTLER_SEMI_INVULNERABLE(bankAtkPartner) && MoveWouldHitFirst(move, bankAtk, bankAtkPartner)) //Target will still be semi-invulnerable when attack hits
+			&& !(AI_SpecialTypeCalc(move, bankAtk, bankAtkPartner) & MOVE_RESULT_NO_EFFECT)) //Move has effect
+			{
+				u8 status1 = gBattleMons[bankAtkPartner].status1;
+				if ((status1 & STATUS1_SLEEP) <= 1 //Partner will be awake to use move
+				&& !(status1 & STATUS1_FREEZE))
+				{
+					u16 partnerMove = gChosenMovesByBanks[bankAtkPartner];
+					if (partnerMove != MOVE_NONE) //Partner has chosen a move
+					{
+						u8 moveEffect = gBattleMoves[partnerMove].effect;
+
+						if (moveEffect == EFFECT_PROTECT
+						&&  partnerMove != MOVE_QUICKGUARD
+						&&  partnerMove != MOVE_CRAFTYSHIELD
+						&& (partnerMove != MOVE_MATBLOCK || gDisableStructs[bankAtkPartner].isFirstTurn))
+						{
+							//Partner is protecting so use the spread move
+						}
+						else if (moveEffect == EFFECT_SEMI_INVULNERABLE && !MoveWouldHitFirst(move, bankAtk, bankAtkPartner))
+						{
+						}
+						else
+							moveScores[i] -= DOUBLES_DECREASE_HIT_PARTNER; //Hitting partner is bad
+					}
+					else if (!HasProtectionMoveInMoveset(bankAtkPartner, CHECK_WIDE_GUARD | CHECK_MAT_BLOCK) //Ally can't protect against attack
+					|| (gBattleMoves[gLastResultingMoves[bankAtkPartner]].effect == EFFECT_PROTECT && gDisableStructs[bankAtkPartner].protectUses >= 1)) //Don't rely on double protect
+					{
+						moveScores[i] -= DOUBLES_DECREASE_HIT_PARTNER; //Hitting partner is bad
+					}
+				}
+				else
+					moveScores[i] -= DOUBLES_DECREASE_HIT_PARTNER; //Hitting partner is bad
+			}
+		}
+	}
+	
+	u8 bestIndex = 0;
+	for (int i = 1; i < MAX_MON_MOVES; ++i)
+	{
+		if (moveScores[i] > moveScores[bestIndex])
+			bestIndex = i;
+	}
+
+	if (gBattleMons[bankAtk].moves[bestIndex] == checkMove)
+	{
+		
+		if (moveScores[bestIndex] >= 12)
+			return 9;
+		else if (moveScores[bestIndex] >= 9)
+			return 2;
+		else if (moveScores[bestIndex] >= 5)
+			return 1;
+	}
+	
+	return 0;
+}
 
 bool8 MoveKnocksOutXHits(u16 move, u8 bankAtk, u8 bankDef, u8 numHits)
 {
@@ -272,10 +396,6 @@ static u32 CalcPredictedDamageForCounterMoves(u16 move, u8 bankAtk, u8 bankDef)
 	{
 		predictedDamage = AI_CalcDmg(bankDef, bankAtk, predictedMove); //The damage the enemy will do to the AI
 
-		gBattleMoveDamage = predictedDamage;
-		AI_SpecialTypeCalc(move, bankAtk, bankDef);
-		predictedDamage = gBattleMoveDamage;
-
 		switch (move) {
 			case MOVE_COUNTER:
 				if (CalcMoveSplit(bankDef, predictedMove) == SPLIT_PHYSICAL)
@@ -297,7 +417,7 @@ static u32 CalcPredictedDamageForCounterMoves(u16 move, u8 bankAtk, u8 bankDef)
 	return predictedDamage;
 }
 
-bool8 IsStrongestMove(const u16 currentMove, const u8 bankAtk, const u8 bankDef)
+bool8 IsStrongestMove(const u16 currentMove, const u8 bankAtk, const u8 bankDef, const bool8 onlySpreadMoves)
 {
 	u16 move;
 	u16 strongestMove = gBattleMons[bankAtk].moves[0];
@@ -317,7 +437,8 @@ bool8 IsStrongestMove(const u16 currentMove, const u8 bankAtk, const u8 bankDef)
 		if (!(gBitTable[i] & moveLimitations))
 		{
 			if (SPLIT(move) == SPLIT_STATUS
-			||  gBattleMoves[move].power == 0)
+			||  gBattleMoves[move].power == 0
+			||  (onlySpreadMoves && !(gBattleMoves[move].target & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL))))
 				continue;
 
 			if (gBattleMoves[move].effect == EFFECT_COUNTER || gBattleMoves[move].effect == EFFECT_MIRROR_COAT) //Includes Metal Burst
@@ -799,7 +920,7 @@ bool8 MagicCoatableMovesInMoveset(u8 bank)
 	return FALSE;
 }
 
-bool8 HasProtectionMoveInMoveset(u8 bank, bool8 AllKinds)
+bool8 HasProtectionMoveInMoveset(u8 bank, u8 checkType)
 {
 	u16 move;
 	u8 moveLimitations = CheckMoveLimitations(bank, 0, 0xFF);
@@ -821,11 +942,25 @@ bool8 HasProtectionMoveInMoveset(u8 bank, bool8 AllKinds)
 						return TRUE;
 
 					case MOVE_QUICKGUARD:
-					case MOVE_WIDEGUARD:
-					case MOVE_CRAFTYSHIELD:
-					case MOVE_MATBLOCK:
-						if (AllKinds)
+						if (checkType & CHECK_QUICK_GUARD)
 							return TRUE;
+						break;
+					
+					case MOVE_WIDEGUARD:
+						if (checkType & CHECK_WIDE_GUARD)
+							return TRUE;
+						break;
+
+					case MOVE_CRAFTYSHIELD:
+						if (checkType & CHECK_CRAFTY_SHIELD)
+							return TRUE;
+						break;
+
+					case MOVE_MATBLOCK:
+						if (checkType & CHECK_MAT_BLOCK
+						&&  gDisableStructs[bank].isFirstTurn)
+							return TRUE;
+						break;
 				}
 			}
 		}

@@ -1924,7 +1924,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 				&& gCritMultiplier <= 100
 				&& !(atkAbility == ABILITY_INFILTRATOR
 				&& !IgnoreAttacker)) {
-					if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE) && CountAliveMons(2) == 2)
+					if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE) && CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, bankAtk, bankDef) >= 2)
 						damage = udivsi((damage * 2), 3);
 					else
 						damage /= 2;
@@ -1939,7 +1939,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 				&& gCritMultiplier <= 100
 				&& !(atkAbility == ABILITY_INFILTRATOR
 				&& !IgnoreAttacker)) {
-					if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE) && CountAliveMons(2) == 2)
+					if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE) && CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, bankAtk, bankDef) >= 2)
 						damage = udivsi((damage * 2), 3);
 					else
 						damage /= 2;
@@ -2082,16 +2082,17 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 	#endif
 	}
 
-	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE) {
-		if (gBattleMoves[move].target & (MOVE_TARGET_BOTH) && CountAliveMons(2) > 1)
-			damage = udivsi((damage * 75), 100);
+	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	{
+		if (gBattleMoves[move].target & MOVE_TARGET_BOTH && CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, bankAtk, bankDef) >= 2)
+			damage = (damage * 75) / 100;
 
-		else if (gBattleMoves[move].target & (MOVE_TARGET_FOES_AND_ALLY) && CountAliveMons(0) > 1)
-			damage = udivsi((damage * 75), 100);
+		else if (gBattleMoves[move].target & MOVE_TARGET_FOES_AND_ALLY && CountAliveMonsInBattle(BATTLE_ALIVE_EXCEPT_ACTIVE, bankAtk, bankDef) >= 2)
+			damage = (damage * 75) / 100;
 	}
 
 	if (!IgnoreAttacker && gProtectStructs[bankAtk].helpingHand)
-		damage = udivsi((damage * 150), 100);
+		damage = (damage * 150) / 100;
 
 	if (damage == 0)
 		damage = 1;
@@ -2927,4 +2928,37 @@ static bool8 IsBankHoldingFocusSash(u8 bank)
 		return TRUE;
 		
 	return FALSE;
+}
+
+u8 CountAliveMonsInBattle(u8 caseId, u8 bankAtk, u8 bankDef)
+{
+    s32 i;
+    u8 retVal = 0;
+
+    switch (caseId)
+    {
+    case BATTLE_ALIVE_EXCEPT_ACTIVE:
+        for (i = 0; i < gBattlersCount; ++i)
+        {
+            if (i != bankAtk && !(gAbsentBattlerFlags & gBitTable[i]) && BATTLER_ALIVE(i))
+                retVal++;
+        }
+        break;
+    case BATTLE_ALIVE_ATK_SIDE:
+        for (i = 0; i < gBattlersCount; ++i)
+        {
+            if (SIDE(i) == SIDE(bankAtk) && !(gAbsentBattlerFlags & gBitTable[i]) && BATTLER_ALIVE(i))
+                retVal++;
+        }
+        break;
+    case BATTLE_ALIVE_DEF_SIDE:
+        for (i = 0; i < gBattlersCount; ++i)
+        {
+            if (SIDE(i) == SIDE(bankDef) && !(gAbsentBattlerFlags & gBitTable[i]) && BATTLER_ALIVE(i))
+                retVal++;
+        }
+        break;
+    }
+
+    return retVal;
 }

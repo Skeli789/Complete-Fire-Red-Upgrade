@@ -32,8 +32,17 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 ability, u32 atkStatus1, u16 atk_hp, u16 atk_maxHP, u16 species, struct Pokemon* party_data_atk, bool8 PartyCheck, bool8 menuCheck, bool8 ignoreDef);
 u16 CalcVisualBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 power, u8 moveType, bool8 ignoreDef);
 u16 TryGetAlternateSpeciesSize(u16 species, u8 type);
+u8 CountAliveMonsInBattle(u8 caseId, u8 bankAtk, u8 bankDef);
 
 u32 GetActualSpeciesWeight(u16 species, u8 ability, u8 itemEffect, u8 bank, bool8 checkNimble);
 
 //Functions Hooked In
 u8 GetSummaryScreenMoveType(u16 move, struct Pokemon* mon);
+
+//Exported Constants
+/*enum
+{
+	BATTLE_ALIVE_EXCEPT_ACTIVE,
+	BATTLE_ALIVE_ATK_SIDE,
+	BATTLE_ALIVE_DEF_SIDE,
+};*/

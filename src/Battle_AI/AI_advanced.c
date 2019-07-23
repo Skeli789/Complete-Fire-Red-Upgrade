@@ -438,25 +438,44 @@ enum ProtectQueries ShouldProtect(u8 bankAtk, u8 bankDef, u16 move)
 	|| (predictedMoveEffect == EFFECT_SEMI_INVULNERABLE && BATTLER_SEMI_INVULNERABLE(bankDef))) //Foe coming down
 		return USE_PROTECT;
 
-	u32 healAmount = GetAmountToRecoverBy(bankAtk, bankDef, move);
-	
-	if (CanKnockOut(bankDef, bankAtk)) //Foe can kill
+	if (!IsDoubleBattle())
 	{
-		if (!CanKnockOutAfterHealing(bankDef, bankAtk, healAmount, 1))
-			return USE_PROTECT;
-		else if (IsTakingSecondaryDamage(bankDef))
-			return USE_PROTECT;
-		else
-			return USE_STATUS_THEN_PROTECT;
+		u32 healAmount = GetAmountToRecoverBy(bankAtk, bankDef, move);
+		
+		if (CanKnockOut(bankDef, bankAtk)) //Foe can kill
+		{
+			if (!CanKnockOutAfterHealing(bankDef, bankAtk, healAmount, 1))
+				return USE_PROTECT;
+			else if (IsTakingSecondaryDamage(bankDef))
+				return USE_PROTECT;
+			else
+				return USE_STATUS_THEN_PROTECT;
+		}
+		else if (Can2HKO(bankDef, bankAtk))
+		{
+			if (!CanKnockOutAfterHealing(bankDef, bankAtk, healAmount, 2))
+				return USE_PROTECT;
+			else if (IsTakingSecondaryDamage(bankDef))
+				return USE_PROTECT;
+			else
+				return USE_STATUS_THEN_PROTECT;
+		}
 	}
-	else if (Can2HKO(bankDef, bankAtk))
+	else //Double Battle
 	{
-		if (!CanKnockOutAfterHealing(bankDef, bankAtk, healAmount, 2))
-			return USE_PROTECT;
-		else if (IsTakingSecondaryDamage(bankDef))
-			return USE_PROTECT;
-		else
-			return USE_STATUS_THEN_PROTECT;
+		u8 partner = PARTNER(bankAtk);
+
+		if (BATTLER_ALIVE(partner)
+		&& ABILITY(bankAtk) != ABILITY_TELEPATHY)
+		{
+			u16 partnerMove = gChosenMovesByBanks[partner];
+			if (partnerMove != MOVE_NONE
+			&&  gBattleMoves[partnerMove].target & MOVE_TARGET_ALL
+			&& !(AI_SpecialTypeCalc(partnerMove, partner, bankAtk) & MOVE_RESULT_NO_EFFECT))
+			{
+				return USE_PROTECT; //Protect if partner is going to use a move that affects the whole field
+			}
+		}
 	}
 
 	return DONT_PROTECT;

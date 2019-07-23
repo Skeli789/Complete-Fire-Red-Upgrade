@@ -10,9 +10,10 @@ bool8 CanKnockOutAfterHealing(u8 bankAtk, u8 bankDef, u16 healAmount, u8 numHits
 bool8 CanKnockOutWithoutMove(const u16 ignoredMove, const u8 bankAtk, const u8 bankDef);
 bool8 MoveKnocksOutGoesFirstWithBestAccuracy(u16 move, u8 bankAtk, u8 bankDef);
 bool8 StrongestMoveGoesFirst(u16 move, u8 bankAtk, u8 bankDef);
+u8 GetBestDoubleKillingMoveScore(u16 checkMove, u8 bankAtk, u8 bankDef, u8 bankAtkPartner, u8 bankDefPartner);
 bool8 MoveKnocksOutXHits(u16 move, u8 bankAtk, u8 bankDef, u8 numHits);
 u16 CalcFinalAIMoveDamage(u16 move, u8 bankAtk, u8 bankDef, u8 numHits);
-bool8 IsStrongestMove(const u16 currentMove, const u8 bankAtk, const u8 bankDef);
+bool8 IsStrongestMove(const u16 currentMove, const u8 bankAtk, const u8 bankDef, const bool8 onlySpreadMoves);
 bool8 MoveWillHit(u16 move, u8 bankAtk, u8 bankDef);
 bool8 MoveWouldHitFirst(u16 move, u16 bankAtk, u16 bankDef);
 bool8 WillFaintFromWeatherSoon(u8 bank);
@@ -41,7 +42,7 @@ bool8 PhysicalMoveInMoveset(u8 bank);
 bool8 SpecialMoveInMoveset(u8 bank);
 bool8 MoveSplitInMoveset(u8 bank, u8 moveSplit);
 bool8 MagicCoatableMovesInMoveset(u8 bank);
-bool8 HasProtectionMoveInMoveset(u8 bank, bool8 AllKinds);
+bool8 HasProtectionMoveInMoveset(u8 bank, u8 checkType);
 bool8 MoveTypeInMoveset(u8 bank, u8 moveType);
 bool8 DamagingMoveTypeInMoveset(u8 bank, u8 moveType);
 bool8 DamagingAllHitMoveTypeInMoveset(u8 bank, u8 moveType);
@@ -71,3 +72,10 @@ void DecreaseViability(s16* viability, u8 amount);
 #define INCREASE_VIABILITY(x) (IncreaseViability(&viability, x))
 #define DECREASE_VIABILITY(x) (DecreaseViability(&viability, x))
 #define MOVE_PREDICTION_SWITCH 0xFFFF
+
+#define CHECK_NO_SPECIAL_PROTECTION 0x0
+#define CHECK_QUICK_GUARD 0x1
+#define CHECK_WIDE_GUARD 0x2
+#define CHECK_CRAFTY_SHIELD 0x4
+#define CHECK_MAT_BLOCK 0x8
+

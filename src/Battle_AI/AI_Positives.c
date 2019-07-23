@@ -392,7 +392,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		case EFFECT_TRIPLE_KICK:
 		case EFFECT_DOUBLE_HIT:
 			if (IsClassSweeper(class)
-			&& !IsStrongestMove(move, bankAtk, bankDef)
+			&& !IsStrongestMove(move, bankAtk, bankDef, FALSE)
 			&& (MoveBlockedBySubstitute(move, bankAtk, bankDef) //Attack has to hit substitute to break it
 			 || atkItemEffect == ITEM_EFFECT_FLINCH))
 				INCREASE_VIABILITY(3); //Move past strongest move
@@ -623,7 +623,8 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			break;
 			
 		case EFFECT_CONFUSE_HIT:
-			if (CalcSecondaryEffectChance(bankAtk, move) >= 75)
+			if (CalcSecondaryEffectChance(bankAtk, move) >= 75
+			&&  MoveWillHit(move, bankAtk, bankDef))
 				goto AI_CONFUSE_CHECK;
 			break;
 
@@ -2031,32 +2032,39 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 
 	if (moveSplit != SPLIT_STATUS)
 	{
-		//Every spread type has the same viability increases for these two
-		if (MoveKnocksOutGoesFirstWithBestAccuracy(move, bankAtk, bankDef))
+		if (!IsDoubleBattle())
 		{
-			//If the AI's best killing move has a low accuracy, then
-			//try to make it's chance of hitting higher.
-			if (AccuracyCalc(move, bankAtk, bankDef) >= 70
-			|| !MoveThatCanHelpAttacksHitInMoveset(bankAtk)
-			|| CanKnockOut(bankDef, bankAtk)) //Just use the move if you'll die anyways
+			//Every spread type has the same viability increases for these two
+			if (MoveKnocksOutGoesFirstWithBestAccuracy(move, bankAtk, bankDef))
+			{
+				//If the AI's best killing move has a low accuracy, then
+				//try to make it's chance of hitting higher.
+				if (AccuracyCalc(move, bankAtk, bankDef) >= 70
+				|| !MoveThatCanHelpAttacksHitInMoveset(bankAtk)
+				|| CanKnockOut(bankDef, bankAtk)) //Just use the move if you'll die anyways
+					INCREASE_VIABILITY(9);
+			}
+			else if (IsClassSweeper(class)
+			&& MoveKnocksOutXHits(predictedMove, bankDef, bankAtk, 1) //Foe can kill attacker
+			&& StrongestMoveGoesFirst(move, bankAtk, bankDef)) //Use fastest move
+			{
 				INCREASE_VIABILITY(9);
+			}
+			else if (IsStrongestMove(move, bankAtk, bankDef, FALSE))
+			{
+				//If the attacker is slower than the target and the target is going to die
+				//anyways, then do something else and let it die.
+				if (MoveWouldHitFirst(move, bankAtk, bankDef)
+				|| !WillFaintFromSecondaryDamage(bankDef)
+				|| IsMovePredictionHealingMove(bankDef, bankAtk)
+				|| atkAbility == ABILITY_MOXIE
+				|| atkAbility == ABILITY_BEASTBOOST)
+					INCREASE_VIABILITY(2);
+			}
 		}
-		else if (IsClassSweeper(class)
-		&& MoveKnocksOutXHits(predictedMove, bankDef, bankAtk, 1) //Foe can kill attacker
-		&& StrongestMoveGoesFirst(move, bankAtk, bankDef)) //Use fastest move
+		else //Double Battle
 		{
-			INCREASE_VIABILITY(9);
-		}
-		else if (IsStrongestMove(move, bankAtk, bankDef))
-		{
-			//If the attacker is slower than the target and the target is going to die
-			//anyways, then do something else and let it die.
-			if (MoveWouldHitFirst(move, bankAtk, bankDef)
-			|| !WillFaintFromSecondaryDamage(bankDef)
-			|| IsMovePredictionHealingMove(bankDef, bankAtk)
-			|| atkAbility == ABILITY_MOXIE
-			|| atkAbility == ABILITY_BEASTBOOST)
-				INCREASE_VIABILITY(2);
+			INCREASE_VIABILITY(GetBestDoubleKillingMoveScore(move, bankAtk, bankDef, bankAtkPartner, bankDefPartner));
 		}
 	}
 
