@@ -93,3 +93,4 @@ void ClearSwitchInEffectsTracker(void);
 void UpdatePrimalAbility(void);
 void ClearAttackerDidDamageOnce(void);
 void TryRemovePrimalWeatherOnForceSwitchout(void);
+void TryLoadSecondFriskTargetDoubles(void);

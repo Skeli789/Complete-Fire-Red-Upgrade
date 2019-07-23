@@ -17,6 +17,7 @@ void atk06_typecalc(void);
 void atk4A_typecalc2(void);
 u8 TypeCalc(move_t, u8 bankAtk, u8 bankDef, struct Pokemon* party_data_atk, bool8 CheckParty);
 u8 AI_TypeCalc(move_t, u8 bankAtk, struct Pokemon* party_data_def);
+u8 AI_SpecialTypeCalc(u16 move, u8 bankAtk, u8 bankDef);
 void TypeDamageModification(u8 atkAbility, u8 bankDef, move_t, u8 moveType, u8* flags);
 u8 GetMoveTypeSpecial(u8 bankAtk, move_t);
 u8 GetMoveTypeSpecialFromParty(struct Pokemon* party_data, u16 move);

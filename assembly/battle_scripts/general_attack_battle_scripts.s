@@ -2377,6 +2377,7 @@ UTurnBS:
 UTurnCheckSwitchBS:
 	jumpifcannotswitch BANK_ATTACKER | ATK4F_DONT_CHECK_STATUSES 0x81D6957
 	jumpifnoviablemonsleft BANK_TARGET 0x81D6957
+	jumpiffainted BANK_ATTACKER 0x81D6957
 	jumpiffainted BANK_TARGET UTurnGiveEXPBS
 
 UTurnSwitchBS:

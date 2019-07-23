@@ -121,6 +121,7 @@ struct ChooseMoveStruct
 	bool8 bank : 8;
 	u8 zPartyIndex;
 	u16 possibleZMoves[MAX_MON_MOVES];
+	u8 ability;
 };
 
 

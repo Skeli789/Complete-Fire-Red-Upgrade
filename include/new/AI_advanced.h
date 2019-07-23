@@ -17,11 +17,11 @@ bool8 IsClassPhazer(u8 class);
 u8 PredictBankFightingStyle(u8 bank);
 
 bool8 ShouldTrap(u8 bankAtk, u8 bankDef, u16 move, u8 class);
-bool8 ShouldRecover(u8 bankAtk, u8 bankDef, u16 move, u8 class);
-u8 ShouldProtect(u8 bankAtk, u8 bankDef, u16 move, u8 class);
+bool8 ShouldRecover(u8 bankAtk, u8 bankDef, u16 move);
+u8 ShouldProtect(u8 bankAtk, u8 bankDef, u16 move);
 bool8 ShouldPhaze(u8 bankAtk, u8 bankDef, u16 move, u8 class);
 bool8 ShouldUseWishAromatherapy(u8 bankAtk, u8 bankDef, u16 move, u8 class);
-bool8 ShouldSetUpScreens(u8 bankAtk, u8 bankDef, u16 move, u8 class);
+bool8 ShouldSetUpScreens(u8 bankAtk, u8 bankDef, u16 move);
 u8 BankLikelyToUseMoveSplit(u8 bank, u8 class);
 u16 GetAmountToRecoverBy(u8 bankAtk, u8 bankDef, u16 move);
 

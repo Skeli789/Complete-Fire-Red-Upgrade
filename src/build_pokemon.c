@@ -50,6 +50,7 @@ static u8 CreateNPCTrainerParty(pokemon_t* const party, const u16 trainerNum, co
 static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerNum, const u8 tier, const bool8 firstTrainer, const bool8 forPlayer, const u8 side);
 static void CreateFrontierMon(struct Pokemon* mon, const u8 level, const struct BattleTowerSpread* spread, const u16 trainerId, const u8 trainerNum, const u8 trainerGender, const bool8 forPlayer);
 static void SetWildMonHeldItem(void);
+static u8 ConvertFrontierAbilityNumToAbility(const u8 abilityNum, const u16 species);
 static u32 GetBaseStatsTotal(const u16 species);
 static bool8 BaseStatsTotalGEAlreadyOnTeam(const u16 toCheck, const u8 partySize, u16* speciesArray);
 static bool8 SpeciesAlreadyOnTeam(const u16 species, const u8 partySize, const species_t* const speciesArray);
@@ -60,6 +61,7 @@ static void AdjustTypesForMegas(const u16 species, const u16 item, u8* const typ
 static bool8 TeamNotAllSameType(const u16 species, const u16 item, const u8 partySize, const species_t* const speciesArray, const item_t* const itemArray);
 static bool8 PokemonTierBan(const u16 species, const u16 item, const struct BattleTowerSpread* const spread, const pokemon_t* const mon, const u8 checkFromLocationType);
 static bool8 IsPokemonBannedBasedOnStreak(u16 species, u16 item, u16* speciesArray, u8 monsCount, u16 trainerId, u8 tier, bool8 forPlayer);
+static bool8 TeamAbilitiesDontHaveSynergy(u8 ability, u8* abilityArray, u8 monsCount);
 static u16 GivePlayerFrontierMonGivenSpecies(const u16 species, const struct BattleTowerSpread* const spreadTable, const u16 numSpreads);
 static const struct BattleTowerSpread* GetSpreadBySpecies(const u16 species, const struct BattleTowerSpread* const spreads, const u16 numSpreads);
 static const struct BattleTowerSpread* TryAdjustSpreadForSpecies(const struct BattleTowerSpread* originalSpread);
@@ -81,27 +83,31 @@ static u8 GetOpenWorldBadgeCount(void);
 
 void BuildTrainerPartySetup(void) 
 {
+	u8 towerTier = VarGet(BATTLE_TOWER_TIER);
 	gDontFadeWhite = FALSE;
 	
 	if (gBattleTypeFlags & (BATTLE_TYPE_TOWER_LINK_MULTI))
 	{
-		BuildFrontierParty(&gEnemyParty[0], gTrainerBattleOpponent_A, VarGet(BATTLE_TOWER_TIER), TRUE, FALSE, B_SIDE_OPPONENT);
-		BuildFrontierParty(&gEnemyParty[3], VarGet(SECOND_OPPONENT_VAR), VarGet(BATTLE_TOWER_TIER), FALSE, FALSE, B_SIDE_OPPONENT);
+		BuildFrontierParty(&gEnemyParty[0], gTrainerBattleOpponent_A, towerTier, TRUE, FALSE, B_SIDE_OPPONENT);
+		BuildFrontierParty(&gEnemyParty[3], VarGet(SECOND_OPPONENT_VAR), towerTier, FALSE, FALSE, B_SIDE_OPPONENT);
 	}
 	else if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
 	{
 		if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
 		{
-			BuildFrontierParty(&gEnemyParty[0], gTrainerBattleOpponent_A, VarGet(BATTLE_TOWER_TIER), TRUE, FALSE, B_SIDE_OPPONENT);
-			BuildFrontierParty(&gEnemyParty[3], VarGet(SECOND_OPPONENT_VAR), VarGet(BATTLE_TOWER_TIER), FALSE, FALSE, B_SIDE_OPPONENT);
+			BuildFrontierParty(&gEnemyParty[0], gTrainerBattleOpponent_A, towerTier, TRUE, FALSE, B_SIDE_OPPONENT);
+			BuildFrontierParty(&gEnemyParty[3], SECOND_OPPONENT, towerTier, FALSE, FALSE, B_SIDE_OPPONENT);
 		}
 		else
-			BuildFrontierParty(&gEnemyParty[0], gTrainerBattleOpponent_A, VarGet(BATTLE_TOWER_TIER), TRUE, FALSE, B_SIDE_OPPONENT);
+			BuildFrontierParty(&gEnemyParty[0], gTrainerBattleOpponent_A, towerTier, TRUE, FALSE, B_SIDE_OPPONENT);
+			
+		if (IsRandomBattleTowerBattle())
+			BuildFrontierParty(gPlayerParty, 0, towerTier, TRUE, TRUE + 1, B_SIDE_PLAYER);
 	}
 	else if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
 	{
 		CreateNPCTrainerParty(&gEnemyParty[0], gTrainerBattleOpponent_A, TRUE, B_SIDE_OPPONENT);
-		CreateNPCTrainerParty(&gEnemyParty[3], VarGet(SECOND_OPPONENT_VAR), FALSE, B_SIDE_OPPONENT);
+		CreateNPCTrainerParty(&gEnemyParty[3], SECOND_OPPONENT, FALSE, B_SIDE_OPPONENT);
 	}
 	else if (!(gBattleTypeFlags & BATTLE_TYPE_LINK))
 	{
@@ -133,27 +139,35 @@ void BuildTrainerPartySetup(void)
 		}
 	}
 
-	if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER && ViableMonCount(gEnemyParty) > 1) {
-		ExtensionState.partyBackup = Calloc(sizeof(struct Pokemon) * PARTY_SIZE);
-		if (ExtensionState.partyBackup == NULL)
-			return;
-
-		if (gSelectedOrderFromParty[0] == 0)
-			Memcpy(ExtensionState.partyBackup, &gPlayerParty[3], sizeof(struct Pokemon) * 3); //Special 0x2F was not used
-		else //Special 0x2F was used
+	if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER && ViableMonCount(gEnemyParty) > 1)
+	{
+		if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
 		{
-			u8 counter = 0;
-			u8 mon1 = gSelectedOrderFromParty[0];
-			u8 mon2 = gSelectedOrderFromParty[1];
-			u8 mon3 = gSelectedOrderFromParty[2];
-			for (int i = 0; i < PARTY_SIZE; ++i) {
-				if (i + 1 != mon1 && i + 1 != mon2 && i + 1 != mon3) //Don't backup selected mons
-					Memcpy(&((struct Pokemon*) ExtensionState.partyBackup)[counter++], &gPlayerParty[i], sizeof(struct Pokemon));
-			}
-			ReducePartyToThree(); //Well...sometimes can be less than 3
+			BuildFrontierParty(&gPlayerParty[3], VarGet(PARTNER_VAR), towerTier, FALSE, FALSE, B_SIDE_PLAYER);
 		}
-		Memset(&gPlayerParty[3], 0x0, sizeof(struct Pokemon) * 3);
-		CreateNPCTrainerParty(&gPlayerParty[3], VarGet(PARTNER_VAR), FALSE, B_SIDE_PLAYER);
+		else
+		{
+			ExtensionState.partyBackup = Calloc(sizeof(struct Pokemon) * PARTY_SIZE);
+			if (ExtensionState.partyBackup == NULL)
+				return;
+
+			if (gSelectedOrderFromParty[0] == 0)
+				Memcpy(ExtensionState.partyBackup, &gPlayerParty[3], sizeof(struct Pokemon) * 3); //Special 0x2F was not used
+			else //Special 0x2F was used
+			{
+				u8 counter = 0;
+				u8 mon1 = gSelectedOrderFromParty[0];
+				u8 mon2 = gSelectedOrderFromParty[1];
+				u8 mon3 = gSelectedOrderFromParty[2];
+				for (int i = 0; i < PARTY_SIZE; ++i) {
+					if (i + 1 != mon1 && i + 1 != mon2 && i + 1 != mon3) //Don't backup selected mons
+						Memcpy(&((struct Pokemon*) ExtensionState.partyBackup)[counter++], &gPlayerParty[i], sizeof(struct Pokemon));
+				}
+				ReducePartyToThree(); //Well...sometimes can be less than 3
+			}
+			Memset(&gPlayerParty[3], 0x0, sizeof(struct Pokemon) * 3);
+			CreateNPCTrainerParty(&gPlayerParty[3], VarGet(PARTNER_VAR), FALSE, B_SIDE_PLAYER);
+		}
 	}
 
 	if (ViableMonCount(gEnemyParty) <= 1) //Error prevention
@@ -595,7 +609,7 @@ static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerId, const 
 	else if (firstTrainer)
 		ZeroEnemyPartyMons();
 
-	if (forPlayer)
+	if (forPlayer == TRUE) //Excludes random battles
 		monsCount = PARTY_SIZE;
 	else if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS && battleTowerPokeNum > 3 && side == B_SIDE_OPPONENT)
 		monsCount = 3;
@@ -606,18 +620,20 @@ static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerId, const 
 
 	species_t speciesArray[monsCount];
 	item_t itemArray[monsCount];
+	ability_t abilityArray[monsCount];
 	
 	for (i = 0; i < monsCount; ++i)
 	{
 		speciesArray[i] = 0;
 		itemArray[i] = 0;
+		abilityArray[i] = 0;
 	}
 
     for (i = 0; i < monsCount; ++i) 
 	{
         u8 loop = 1;
-		u16 species;
-		u16 item;
+		u16 species, item;
+		u8 ability;
 		const struct BattleTowerSpread* spread = NULL;
 
 		do 
@@ -710,6 +726,7 @@ static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerId, const 
 
 			species = spread->species;
 			item = spread->item;
+			ability = ConvertFrontierAbilityNumToAbility(spread->ability, species);
 
 			//Prevent duplicate species and items
 			//Only allow one Mega Stone & Z-Crystal per team
@@ -719,10 +736,12 @@ static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerId, const 
 			&& !MegastoneAlreadyOnTeam(item, monsCount, itemArray)
 			&& !ZCrystalAlreadyOnTeam(item, monsCount, itemArray)
 			&& !PokemonTierBan(species, item, spread, 0, CHECK_BATTLE_TOWER_SPREADS)
-			&& !(tier == BATTLE_TOWER_MONOTYPE && TeamNotAllSameType(species, item, monsCount, speciesArray, itemArray)))
+			&& !(tier == BATTLE_TOWER_MONOTYPE && TeamNotAllSameType(species, item, monsCount, speciesArray, itemArray))
+			&& !((trainerId == BATTLE_TOWER_TID || forPlayer) && TeamAbilitiesDontHaveSynergy(ability, abilityArray, monsCount)))
 			{
 				speciesArray[i] = species;
 				itemArray[i] = item;
+				abilityArray[i] = ConvertFrontierAbilityNumToAbility(ability, species);
 				loop = 0;
 			}
 		} while (loop == 1);
@@ -742,7 +761,7 @@ static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerId, const 
 	if (!forPlayer) //Probably best to put these checks somewhere else
 	{ 
 		u8 battleType = VarGet(BATTLE_TOWER_BATTLE_TYPE);
-		if (battleType == BATTLE_TOWER_DOUBLE || battleType == BATTLE_TOWER_MULTI)
+		if (IsFrontierDoubles(battleType) || IsFrontierMulti(battleType))
 			gBattleTypeFlags |= BATTLE_TYPE_DOUBLE;
 	}
 
@@ -866,6 +885,28 @@ void GiveMonNatureAndAbility(pokemon_t* mon, u8 nature, u8 abilityNum)
 			break;
 		}
 	}
+}
+
+static u8 ConvertFrontierAbilityNumToAbility(const u8 abilityNum, const u16 species)
+{
+	u8 ability = ABILITY_NONE;
+
+	switch (abilityNum) {
+		case FRONTIER_ABILITY_1:
+			ability = gBaseStats[species].ability1;
+			break;
+		case FRONTIER_ABILITY_2:
+			ability = gBaseStats[species].ability2;
+			break;
+		case FRONTIER_ABILITY_HIDDEN:
+			ability = gBaseStats[species].hiddenAbility;
+			break;
+	}
+			
+	if (ability == ABILITY_NONE)
+		ability = gBaseStats[species].ability1;
+		
+	return ability;
 }
 
 static u32 GetBaseStatsTotal(const u16 species)
@@ -1200,6 +1241,65 @@ static bool8 IsPokemonBannedBasedOnStreak(u16 species, u16 item, u16* speciesArr
 	return FALSE;
 }
 
+static bool8 TeamAbilitiesDontHaveSynergy(u8 ability, u8* abilityArray, u8 monsCount)
+{
+	bool8 hasRainSetter;
+	bool8 hasSunSetter;
+	bool8 hasSandSetter;
+	bool8 hasHailSetter;
+	bool8 hasWonderGuard;
+	
+	for (int i = 0; i < monsCount; ++i)
+	{
+		if (abilityArray[i] == ABILITY_DRIZZLE)
+			hasRainSetter = TRUE;
+
+		else if (abilityArray[i] == ABILITY_DROUGHT)
+			hasSunSetter = TRUE;
+			
+		else if (abilityArray[i] == ABILITY_SANDSTREAM)
+			hasSandSetter = TRUE;
+			
+		else if (abilityArray[i] == ABILITY_SNOWWARNING)
+			hasHailSetter = TRUE;
+			
+		else if (abilityArray[i] == ABILITY_WONDERGUARD)
+			hasWonderGuard = TRUE;
+	}
+	
+	//Team should have max 1 weather setting ability
+	switch (ability) {
+		case ABILITY_DRIZZLE:
+			if (hasSunSetter || hasSandSetter || hasHailSetter)
+				return TRUE;
+			break;
+			
+		case ABILITY_DROUGHT:
+			if (hasRainSetter || hasSandSetter || hasHailSetter)
+				return TRUE;
+			break;
+
+		case ABILITY_SANDSTREAM:
+			if (hasSunSetter || hasRainSetter || hasHailSetter || hasWonderGuard)
+				return TRUE;
+			break;
+			
+		case ABILITY_SNOWWARNING:
+			if (hasSunSetter || hasRainSetter || hasSandSetter || hasWonderGuard)
+				return TRUE;
+			break;
+			
+		case ABILITY_WONDERGUARD:
+			if (hasSandSetter || hasHailSetter) //Weather abilities like these knock of Shedinja
+				return TRUE;
+			break;
+	}
+
+	return FALSE;
+}
+
+
+
 static u16 GivePlayerFrontierMonGivenSpecies(const u16 species, const struct BattleTowerSpread* const spreadTable, const u16 numSpreads)
 {
 	struct Pokemon mon;
@@ -1491,7 +1591,7 @@ void CreateBoxMon(struct BoxPokemon* boxMon, u16 species, u8 level, u8 fixedIV, 
     u8 speciesName[POKEMON_NAME_LENGTH + 1];
     u32 personality;
     u32 value;
-	
+
 #ifdef UNBOUND
 	if (FlagGet(POKEMON_RANDOMIZER_FLAG))
 	{
@@ -1505,7 +1605,6 @@ void CreateBoxMon(struct BoxPokemon* boxMon, u16 species, u8 level, u8 fixedIV, 
 #endif
 
     ZeroBoxMonData(boxMon);
-
     if (hasFixedPersonality)
         personality = fixedPersonality;
     else

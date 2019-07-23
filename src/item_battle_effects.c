@@ -738,8 +738,8 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
 				&& MOVE_HAD_EFFECT
 				&& CheckContact(gCurrentMove, gBankAttacker)
 				&& !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bank)
-				&& gBattleMons[gBankAttacker].hp
-				&& gBattleMons[gBankAttacker].item == 0) 
+				&& gBattleMons[gBankAttacker].hp != 0
+				&& gBattleMons[gBankAttacker].item == ITEM_NONE) 
 				{
 					BattleScriptPushCursor();
 					gBattlescriptCurrInstr = BattleScript_StickyBarbTransfer;

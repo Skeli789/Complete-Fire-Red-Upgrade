@@ -179,7 +179,9 @@ ForceSwitchRedCard:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_ActionSwitch:
+	call BS_FLUSH_MESSAGE_BOX
 	hpthresholds2 BANK_ATTACKER
+	atknameinbuff1
 	printstring 0x2 @;STRINGID_RETURNMON
 	setbyte DMG_MULTIPLIER 0x2
 	jumpifbattletype BATTLE_DOUBLE BattleScript_PursuitSwitchDmgSetMultihit
@@ -224,14 +226,14 @@ BattleScript_PursuitDmgOnSwitchOut:
 	faintpokemonaftermove
 	setbyte CMD49_STATE, 0x0
 	cmd49 0x4 0x0
-	various BANK_TARGET 4
-	jumpifbyte EQUALS BATTLE_COMMUNICATION 0x0 BattleScript_PursuitDmgOnSwitchOutRet
+	jumpiffainted BANK_TARGET BattleScript_PursuitGiveExp
+	return
+
+BattleScript_PursuitGiveExp:
 	setbyte EXP_STATE 0x0
 	getexp BANK_TARGET
+	swapattackerwithtarget
 	goto HandleActionSwitchEnd
-	
-BattleScript_PursuitDmgOnSwitchOutRet:
-	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

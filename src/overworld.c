@@ -540,9 +540,11 @@ void BattleSetup_StartTrainerBattle(void)
 
 		switch (VarGet(BATTLE_TOWER_BATTLE_TYPE)) {
 			case BATTLE_TOWER_DOUBLE:
+			case BATTLE_TOWER_DOUBLE_RANDOM:
 				gBattleTypeFlags |= BATTLE_TYPE_DOUBLE;
 				break;
 			case BATTLE_TOWER_MULTI:
+			case BATTLE_TOWER_MULTI_RANDOM:
 				gBattleTypeFlags |= (BATTLE_TYPE_DOUBLE | BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_INGAME_PARTNER);
 				break;
 			case BATTLE_TOWER_LINK_MULTI:

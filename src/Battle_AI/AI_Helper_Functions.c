@@ -5,6 +5,7 @@
 #include "../../include/new/accuracy_calc.h"
 #include "../../include/new/AI_advanced.h"
 #include "../../include/new/AI_Helper_Functions.h"
+#include "../../include/new/AI_scripts.h"
 #include "../../include/new/battle_start_turn_start.h"
 #include "../../include/new/damage_calc.h"
 #include "../../include/new/end_turn.h"
@@ -272,7 +273,7 @@ static u32 CalcPredictedDamageForCounterMoves(u16 move, u8 bankAtk, u8 bankDef)
 		predictedDamage = AI_CalcDmg(bankDef, bankAtk, predictedMove); //The damage the enemy will do to the AI
 
 		gBattleMoveDamage = predictedDamage;
-		TypeCalc(move, bankAtk, bankDef, 0, FALSE);
+		AI_SpecialTypeCalc(move, bankAtk, bankDef);
 		predictedDamage = gBattleMoveDamage;
 
 		switch (move) {
@@ -498,6 +499,28 @@ u16 GetBattleMonMove(u8 bank, u8 i)
 	return move;
 }
 
+u8 GetAIAbility(u8 bankAtk, u8 bankDef, u16 move)
+{
+	u8 ability = ABILITY_NONE;
+	
+	if (!ShouldAIDelayMegaEvolution(bankAtk, bankDef, move))
+		ability = GetBankMegaFormAbility(bankAtk);
+	
+	if (ability == ABILITY_NONE)
+		return ABILITY(bankAtk);
+
+	return ability;
+}
+
+u8 GetPredictedAIAbility(u8 bankAtk, u8 bankDef)
+{
+	u16 predictedUserMove = IsValidMovePrediction(bankAtk, bankDef);
+	if (predictedUserMove != MOVE_NONE)
+		return GetAIAbility(bankAtk, bankDef, predictedUserMove);
+	else
+		return ABILITY(bankAtk);
+}
+
 bool8 IsTrapped(u8 bank, bool8 switching)
 {
 	if (IsOfType(bank, TYPE_GHOST)
@@ -547,7 +570,8 @@ bool8 WillFaintFromSecondaryDamage(u8 bank)
 	u8 hp = gBattleMons[bank].hp + GetAmountToRecoverBy(bank, 0, MOVE_PROTECT); //Assume leftover etc. healing first
 	u8 ability = ABILITY(bank);
 
-	if (gDisableStructs[bank].perishSongTimer == 0)
+	if (gStatuses3[bank] & STATUS3_PERISH_SONG
+	&&  gDisableStructs[bank].perishSongTimer == 0)
 		return TRUE;
 		
 	if (ability != ABILITY_MAGICGUARD)
@@ -576,9 +600,42 @@ u16 CalcSecondaryEffectChance(u8 bank, u16 move)
 	return chance;
 }
 
+bool8 ShouldAIDelayMegaEvolution(u8 bankAtk, u8 bankDef, u16 move)
+{
+	u8 atkAbility = ABILITY(bankAtk);
+	u8 megaAbility = GetBankMegaFormAbility(bankAtk);
+
+	if (atkAbility == megaAbility //Ability isn't changing
+	||  megaAbility == ABILITY_NONE) //Can't Mega evolve or ability suppressed
+		return FALSE;
+
+	switch (atkAbility) {
+		case ABILITY_SPEEDBOOST:
+		case ABILITY_MOODY:
+			switch (move) {
+				case MOVE_PROTECT:
+				case MOVE_DETECT:
+				case MOVE_SPIKYSHIELD:
+				case MOVE_KINGSSHIELD:
+					return TRUE; //Delay Mega Evolution if using Protect for Speed Boost benefits
+			}
+			break;
+
+		case ABILITY_MOXIE:
+		case ABILITY_BEASTBOOST:
+		case ABILITY_SOULHEART: ;
+			if (MoveWouldHitFirst(move, bankAtk, bankDef)
+			&&  MoveKnocksOutXHits(move, bankAtk, bankDef, 1))
+				return TRUE; //Get that Moxie boost
+			break;
+	}
+
+	return FALSE;
+}
+
 move_t IsValidMovePrediction(u8 bankAtk, u8 bankDef)
 {
-	if (gNewBS->movePredictions[bankAtk][bankDef] == 0xFFFF)
+	if (gNewBS->movePredictions[bankAtk][bankDef] == MOVE_PREDICTION_SWITCH)
 		return MOVE_NONE;
 	else
 		return gNewBS->movePredictions[bankAtk][bankDef];
@@ -586,12 +643,17 @@ move_t IsValidMovePrediction(u8 bankAtk, u8 bankDef)
 
 bool8 IsPredictedToSwitch(u8 bankAtk, u8 bankDef)
 {
-	return gNewBS->movePredictions[bankAtk][bankDef] == 0xFFFF;
+	return gNewBS->movePredictions[bankAtk][bankDef] == MOVE_PREDICTION_SWITCH;
 }
 
 void StoreMovePrediction(u8 bankAtk, u8 bankDef, u16 move)
 {
 	gNewBS->movePredictions[bankAtk][bankDef] = move;
+}
+
+void StoreSwitchPrediction(u8 bankAtk, u8 bankDef)
+{
+	gNewBS->movePredictions[bankAtk][bankDef] = MOVE_PREDICTION_SWITCH;
 }
 
 bool8 IsMovePredictionSemiInvulnerable(u8 bankAtk, u8 bankDef)
@@ -786,7 +848,52 @@ bool8 MoveTypeInMoveset(u8 bank, u8 moveType)
 
 		if (!(gBitTable[i] & moveLimitations))
 		{
-			if (GetMoveTypeSpecial(move, bank) == moveType)
+			if (GetMoveTypeSpecial(bank, move) == moveType)
+				return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+bool8 DamagingMoveTypeInMoveset(u8 bank, u8 moveType)
+{
+	u16 move;
+	u8 moveLimitations = CheckMoveLimitations(bank, 0, 0xFF);
+
+	for (int i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		move = GetBattleMonMove(bank, i);
+		if (move == MOVE_NONE)
+			break;
+
+		if (!(gBitTable[i] & moveLimitations))
+		{
+			if (GetMoveTypeSpecial(bank, move) == moveType
+			&&  SPLIT(move) != SPLIT_STATUS)
+				return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+bool8 DamagingAllHitMoveTypeInMoveset(u8 bank, u8 moveType)
+{
+	u16 move;
+	u8 moveLimitations = CheckMoveLimitations(bank, 0, 0xFF);
+
+	for (int i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		move = GetBattleMonMove(bank, i);
+		if (move == MOVE_NONE)
+			break;
+
+		if (!(gBitTable[i] & moveLimitations))
+		{
+			if (GetMoveTypeSpecial(bank, move) == moveType
+			&&  SPLIT(move) != SPLIT_STATUS
+			&&  gBattleMoves[move].target & MOVE_TARGET_ALL)
 				return TRUE;
 		}
 	}
@@ -991,6 +1098,29 @@ bool8 MoveThatCanHelpAttacksHitInMoveset(u8 bank)
 	}
 
 	return FALSE;
+}
+
+bool8 OnlyBadMovesLeftInMoveset(u8 bankAtk, u8 bankDef)
+{
+	u8 viability;
+	u8 moveLimitations = CheckMoveLimitations(gActiveBattler, 0, 0xFF);
+
+	for (int i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		u16 move = GetBattleMonMove(bankAtk, i);
+
+		if (move == MOVE_NONE)
+			break;
+
+		if (!(gBitTable[i] & moveLimitations))
+		{
+			viability = AI_Script_Negatives(bankAtk, bankDef, move, 100);
+			if (viability >= 100)
+				return FALSE;
+		}
+	}
+	
+	return TRUE;
 }
 
 u16 TryReplaceMoveWithZMove(u8 bankAtk, u16 move)

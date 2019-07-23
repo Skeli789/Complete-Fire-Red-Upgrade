@@ -622,7 +622,7 @@ struct BattleStruct
     u8 field_52;
     u8 sentInPokes;
     bool8 selectionScriptFinished[BATTLE_BANKS_COUNT];
-    u8 field_58[4];
+    u8 switchoutPartyIndex[BATTLE_BANKS_COUNT];
     u8 monToSwitchIntoId[BATTLE_BANKS_COUNT];
     u8 field_60[4][3];
     u8 runTries;

@@ -11,6 +11,10 @@ u8 GetFrontierTrainerFrontSpriteId(u16 trainerId, u8 battlerNum);
 u16 TryGetSpecialFrontierTrainerMusic(u16 trainerId, u8 battlerNum);
 u32 GetAIFlagsInBattleFrontier(unusedArg u8 bank);
 u8 GetNumMonsOnTeamInFrontier(void);
+bool8 IsFrontierSingles(u8 battleType);
+bool8 IsFrontierDoubles(u8 battleType);
+bool8 IsFrontierMulti(u8 battleType);
+bool8 IsRandomBattleTowerBattle();
 u16 GetCurrentBattleTowerStreak(void);
 u16 GetMaxBattleTowerStreakForTier(u8 tier);
 u16 GetBattleTowerStreak(u8 currentOrMax, u16 inputBattleStyle, u16 inputTier, u16 partySize, u8 level);
@@ -47,9 +51,12 @@ enum BattleTowerBattleTypes
 	BATTLE_TOWER_DOUBLE,
 	BATTLE_TOWER_MULTI,
 	BATTLE_TOWER_LINK_MULTI,
+	BATTLE_TOWER_SINGLE_RANDOM,
+	BATTLE_TOWER_DOUBLE_RANDOM,
+	BATTLE_TOWER_MULTI_RANDOM,
 };
 
-#define NUM_TOWER_BATTLE_TYPES (BATTLE_TOWER_LINK_MULTI + 1)
+#define NUM_TOWER_BATTLE_TYPES (BATTLE_TOWER_MULTI_RANDOM + 1)
 
 enum BattleTowerFormats
 {

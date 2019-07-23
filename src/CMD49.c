@@ -104,7 +104,11 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 
     holdEffectAtk = ITEM_EFFECT(gBankAttacker);
 
-    choicedMoveAtk = &gBattleStruct->choicedMove[gBankAttacker];
+	if (gNewBS->MoveBounceInProgress)
+		choicedMoveAtk = &gBattleStruct->choicedMove[gBankTarget];
+	else
+		choicedMoveAtk = &gBattleStruct->choicedMove[gBankAttacker];
+
     moveType = gBattleStruct->dynamicMoveType;
 	
 	if (gHitMarker & HITMARKER_UNABLE_TO_USE_MOVE)
@@ -513,7 +517,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 				break;
 			}
 			
-            if (gHitMarker & HITMARKER_SWAP_ATTACKER_TARGET)
+            if (gHitMarker & HITMARKER_SWAP_ATTACKER_TARGET && arg1 != ARG_IN_PURSUIT)
             {
                 bankDef = gBankAttacker;
 				gBankAttacker = gBankTarget;

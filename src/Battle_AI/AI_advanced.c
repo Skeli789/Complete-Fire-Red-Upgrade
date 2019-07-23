@@ -95,6 +95,7 @@ u8 PredictBankFightingStyle(u8 bank)
 	u8 class = FIGHT_CLASS_NONE;
 	u8 attackMoveNum = 0;
 	u8 entryHazardNum = 0;
+	u8 statusMoveNum = 0;
 	bool8 boostingMove = FALSE;
 
 	u8 itemEffect = ITEM_EFFECT(bank);
@@ -120,6 +121,11 @@ u8 PredictBankFightingStyle(u8 bank)
 				case EFFECT_WISH:
 				case EFFECT_HEAL_BELL:
 					class = FIGHT_CLASS_TEAM_SUPPORT_CLERIC;
+					break;
+					
+				case EFFECT_HEAL_TARGET:
+					if (IsDoubleBattle())
+						class = FIGHT_CLASS_TEAM_SUPPORT_CLERIC;
 					break;
 					
 				case EFFECT_REFLECT:
@@ -174,25 +180,29 @@ u8 PredictBankFightingStyle(u8 bank)
 			case EFFECT_SPIKES:
 				++entryHazardNum;
 				break;
-		} 
-		
-		if (attackMoveNum >= 2)
-		{
-			if (boostingMove)
-				class = FIGHT_CLASS_SWEEPER_SETUP_STATS;
-			else if (SPLIT(move) == SPLIT_STATUS)
-				class = FIGHT_CLASS_SWEEPER_SETUP_STATUS;
+				
+			default:
+				if (SPLIT(move) == SPLIT_STATUS)
+					++statusMoveNum;
 		}
-		else if (attackMoveNum >= 3)
-			class = FIGHT_CLASS_SWEEPER_KILL;
-		else if (entryHazardNum >= 2)
-			class = FIGHT_CLASS_ENTRY_HAZARDS;
-			
-		if (class != FIGHT_CLASS_NONE && class != FIGHT_CLASS_STALL) break; //Specific class was chosen so leave loop
 	}
 
 	if (class == FIGHT_CLASS_NONE)
-		return FIGHT_CLASS_STALL; //Returns STALL by default
+	{
+		if (entryHazardNum >= 2)
+			class = FIGHT_CLASS_ENTRY_HAZARDS;
+		else if (attackMoveNum >= 3)
+			class = FIGHT_CLASS_SWEEPER_KILL;
+		else if (attackMoveNum >= 2)
+		{
+			if (boostingMove)
+				class = FIGHT_CLASS_SWEEPER_SETUP_STATS;
+			else if (statusMoveNum)
+				class = FIGHT_CLASS_SWEEPER_SETUP_STATUS;
+		}
+
+		class = FIGHT_CLASS_STALL; //Returns STALL by default
+	}
 
 	return class; 
 }
@@ -350,29 +360,26 @@ u16 GetAmountToRecoverBy(u8 bankAtk, u8 bankDef, u16 move)
 	return MathMin(amountToRecover, maxHp - curHp);
 }
 
-bool8 ShouldRecover(u8 bankAtk, u8 bankDef, u16 move, u8 class)
+bool8 ShouldRecover(u8 bankAtk, u8 bankDef, u16 move)
 {
 	u32 healAmount = GetAmountToRecoverBy(bankAtk, bankDef, move);
 
-	if (IsClassStall(class))
+	if (MoveWouldHitFirst(move, bankAtk, bankDef)) //Attacker goes first
 	{
-		if (MoveWouldHitFirst(move, bankAtk, bankDef)) //Attacker goes first
+		if (CanKnockOut(bankDef, bankAtk)
+		&& !CanKnockOutAfterHealing(bankDef, bankAtk, healAmount, 1))
+			return TRUE;
+	}
+	else //Opponent Goes First
+	{
+		if (!CanKnockOut(bankDef, bankAtk)) //Enemy can't kill attacker
 		{
-			if (CanKnockOut(bankDef, bankAtk)
-			&& !CanKnockOutAfterHealing(bankDef, bankAtk, healAmount, 1))
+			if (Can2HKO(bankDef, bankAtk)
+			&& !CanKnockOutAfterHealing(bankDef, bankAtk, healAmount, 2))
 				return TRUE;
 		}
-		else //Opponent Goes First
-		{
-			if (!CanKnockOut(bankDef, bankAtk)) //Enemy can't kill attacker
-			{
-				if (Can2HKO(bankDef, bankAtk)
-				&& !CanKnockOutAfterHealing(bankDef, bankAtk, healAmount, 2))
-					return TRUE;
-			}
-		}
 	}
-	
+
 	return FALSE;
 }
 
@@ -421,7 +428,7 @@ static bool8 BankHasAbilityUsefulToProtectFor(u8 bankAtk, u8 bankDef)
 	return FALSE;
 }
 
-enum ProtectQueries ShouldProtect(u8 bankAtk, u8 bankDef, u16 move, u8 class)
+enum ProtectQueries ShouldProtect(u8 bankAtk, u8 bankDef, u16 move)
 {
 	u8 predictedMoveEffect = gBattleMoves[IsValidMovePrediction(bankDef, bankAtk)].effect;
 
@@ -430,36 +437,28 @@ enum ProtectQueries ShouldProtect(u8 bankAtk, u8 bankDef, u16 move, u8 class)
 	||  predictedMoveEffect == EFFECT_EXPLOSION
 	|| (predictedMoveEffect == EFFECT_SEMI_INVULNERABLE && BATTLER_SEMI_INVULNERABLE(bankDef))) //Foe coming down
 		return USE_PROTECT;
+
+	u32 healAmount = GetAmountToRecoverBy(bankAtk, bankDef, move);
 	
-	if (IsClassStall(class))
+	if (CanKnockOut(bankDef, bankAtk)) //Foe can kill
 	{
-		u32 healAmount = GetAmountToRecoverBy(bankAtk, bankDef, move);
-		
-		if (CanKnockOut(bankDef, bankAtk)) //Foe can kill
-		{
-			if (CanKnockOut(bankDef, bankAtk)
-			&& !CanKnockOutAfterHealing(bankDef, bankAtk, healAmount, 1))
-				return USE_PROTECT;
-			else if (IsTakingSecondaryDamage(bankDef))
-				return USE_PROTECT;
-			else
-				return USE_STATUS_THEN_PROTECT;
-		}
+		if (!CanKnockOutAfterHealing(bankDef, bankAtk, healAmount, 1))
+			return USE_PROTECT;
+		else if (IsTakingSecondaryDamage(bankDef))
+			return USE_PROTECT;
 		else
-		{
-			if (Can2HKO(bankDef, bankAtk))
-			{
-				if (Can2HKO(bankDef, bankAtk)
-				&& !CanKnockOutAfterHealing(bankDef, bankAtk, healAmount, 2))
-					return USE_PROTECT;
-				else if (IsTakingSecondaryDamage(bankDef))
-					return USE_PROTECT;
-				else
-					return USE_STATUS_THEN_PROTECT;
-			}
-		}
+			return USE_STATUS_THEN_PROTECT;
 	}
-	
+	else if (Can2HKO(bankDef, bankAtk))
+	{
+		if (!CanKnockOutAfterHealing(bankDef, bankAtk, healAmount, 2))
+			return USE_PROTECT;
+		else if (IsTakingSecondaryDamage(bankDef))
+			return USE_PROTECT;
+		else
+			return USE_STATUS_THEN_PROTECT;
+	}
+
 	return DONT_PROTECT;
 }
 
@@ -574,13 +573,13 @@ static bool8 MoveSplitOnTeam(u8 bank, u8 split)
 	return FALSE;
 }
 
-bool8 ShouldSetUpScreens(u8 bankAtk, u8 bankDef, u16 move, u8 class)
+bool8 ShouldSetUpScreens(u8 bankAtk, u8 bankDef, u16 move)
 {
-	if (IsClassScreener(class)
-	&& !gNewBS->AuroraVeilTimers[SIDE(bankAtk)])
+	if (!gNewBS->AuroraVeilTimers[SIDE(bankAtk)])
 	{
 		if (move == MOVE_AURORAVEIL
-		&& gBattleWeather & WEATHER_HAIL_ANY)	
+		&& gBattleWeather & WEATHER_HAIL_ANY
+		&& !((gSideAffecting[bankAtk] & (SIDE_STATUS_REFLECT | SIDE_STATUS_LIGHTSCREEN)) == (SIDE_STATUS_REFLECT | SIDE_STATUS_LIGHTSCREEN)))
 			return TRUE;
 		else
 		{
@@ -719,11 +718,13 @@ void IncreaseStatViability(s16* originalViability, u8 class, u8 boost, u8 bankAt
 			break;
 			
 		case FIGHT_CLASS_SWEEPER_SETUP_STATUS:
-			INCREASE_STATUS_VIABILITY(1); //Treat like a low-priority status move
+			if (ShouldTryToSetUpStat(bankAtk, bankDef, move, stat, statLimit))
+				INCREASE_STATUS_VIABILITY(1); //Treat like a low-priority status move
 			break;
 		
 		case FIGHT_CLASS_STALL:
-			INCREASE_STATUS_VIABILITY(1); //Treat like a low-priority status move
+			if (ShouldTryToSetUpStat(bankAtk, bankDef, move, stat, statLimit))
+				INCREASE_STATUS_VIABILITY(1); //Treat like a low-priority status move
 			break;
 		
 		case FIGHT_CLASS_TEAM_SUPPORT_BATON_PASS:
@@ -752,20 +753,24 @@ void IncreaseStatViability(s16* originalViability, u8 class, u8 boost, u8 bankAt
 			break;
 
 		case FIGHT_CLASS_TEAM_SUPPORT_CLERIC:
-			INCREASE_STATUS_VIABILITY(1); //Treat like a low-priority status move
+			if (ShouldTryToSetUpStat(bankAtk, bankDef, move, stat, statLimit))
+				INCREASE_STATUS_VIABILITY(1); //Treat like a low-priority status move
 			break;
 
 		case FIGHT_CLASS_TEAM_SUPPORT_SCREENS:
-			INCREASE_STATUS_VIABILITY(1); //Treat like a low-priority status move
+			if (ShouldTryToSetUpStat(bankAtk, bankDef, move, stat, statLimit))
+				INCREASE_STATUS_VIABILITY(1); //Treat like a low-priority status move
 			break;
 		
 		case FIGHT_CLASS_TEAM_SUPPORT_PHAZING:
-			if (!MoveEffectInMoveset(EFFECT_HAZE, bankAtk)) //Don't boost stats if can haze them away
+			if (!MoveEffectInMoveset(EFFECT_HAZE, bankAtk) //Don't boost stats if can haze them away
+			&&  ShouldTryToSetUpStat(bankAtk, bankDef, move, stat, statLimit))
 				INCREASE_STATUS_VIABILITY(1); //Treat like a low-priority status move
 			break;
 		
 		case FIGHT_CLASS_ENTRY_HAZARDS:
-			INCREASE_STATUS_VIABILITY(1); //Treat like a low-priority status move
+			if (ShouldTryToSetUpStat(bankAtk, bankDef, move, stat, statLimit))
+				INCREASE_STATUS_VIABILITY(1); //Treat like a low-priority status move
 			break;
 	}
 	

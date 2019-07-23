@@ -47,12 +47,12 @@ void atkE2_switchoutabilities(void)
 	switch (ABILITY(gActiveBattler)) {
 		case ABILITY_NATURALCURE:
 			gBattleMons[gActiveBattler].status1 = 0;
-			EmitSetMonData(0, REQUEST_STATUS_BATTLE, gBitTable[gBattleStruct->field_58[gActiveBattler]], 4, &gBattleMons[gActiveBattler].status1);
+			EmitSetMonData(0, REQUEST_STATUS_BATTLE, gBitTable[gBattleStruct->switchoutPartyIndex[gActiveBattler]], 4, &gBattleMons[gActiveBattler].status1);
 			MarkBufferBankForExecution(gActiveBattler);
 			break;
 		case ABILITY_REGENERATOR:
 			gBattleMons[gActiveBattler].hp = MathMin(gBattleMons[gActiveBattler].maxHP, gBattleMons[gActiveBattler].hp + udivsi(gBattleMons[gActiveBattler].maxHP, 3));
-			EmitSetMonData(0, REQUEST_HP_BATTLE, gBitTable[gBattleStruct->field_58[gActiveBattler]], 4, &gBattleMons[gActiveBattler].hp);
+			EmitSetMonData(0, REQUEST_HP_BATTLE, gBitTable[gBattleStruct->switchoutPartyIndex[gActiveBattler]], 4, &gBattleMons[gActiveBattler].hp);
 			MarkBufferBankForExecution(gActiveBattler);
 	}
 	
@@ -770,7 +770,7 @@ static bool8 TryDoForceSwitchOut(void)
 {
 	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
 	{
-		gBattleStruct->field_58[gBankTarget] = gBattlerPartyIndexes[gBankTarget];
+		gBattleStruct->switchoutPartyIndex[gBankTarget] = gBattlerPartyIndexes[gBankTarget];
 		gBattlescriptCurrInstr = BattleScript_SuccessForceOut;
 		return TRUE;
 	}
@@ -789,7 +789,7 @@ static bool8 TryDoForceSwitchOut(void)
 		return FALSE;
 	}
 
-	gBattleStruct->field_58[gBankTarget] = gBattlerPartyIndexes[gBankTarget];
+	gBattleStruct->switchoutPartyIndex[gBankTarget] = gBattlerPartyIndexes[gBankTarget];
 	gBattlescriptCurrInstr = BattleScript_SuccessForceOut;
 	return TRUE;
 }
@@ -892,7 +892,7 @@ void PartyMenuSwitchingUpdate(void)
 	||  ITEM_EFFECT(gActiveBattler) == ITEM_EFFECT_SHED_SHELL)
 		goto SKIP_SWITCH_BLOCKING_CHECK;
 
-	gBattleStruct->field_58[gActiveBattler] = gBattlerPartyIndexes[gActiveBattler];
+	gBattleStruct->switchoutPartyIndex[gActiveBattler] = gBattlerPartyIndexes[gActiveBattler];
 	if ((gBattleMons[gActiveBattler].status2 & (STATUS2_WRAPPED | STATUS2_ESCAPE_PREVENTION))
 	|| (gStatuses3[gActiveBattler] & (STATUS3_ROOTED | STATUS3_SKY_DROP_TARGET))
 	|| gNewBS->FairyLockTimer)

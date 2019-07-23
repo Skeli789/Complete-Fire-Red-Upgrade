@@ -9,6 +9,8 @@
 .global BattleScript_AirLock
 .global BattleScript_IntimidateActivatesEnd3
 .global BattleScript_TraceActivates
+.global BattleScript_Frisk
+.global BattleScript_FriskEnd
 .global BattleScript_TerrainFromAbility
 .global BattleScript_ImposterActivates
 .global BattleScript_AttackerAbilityStatRaiseEnd3
@@ -171,6 +173,21 @@ BattleScript_TraceActivates:
 	call BattleScript_AbilityPopUpRevert
 	tryactivateswitchinability BANK_SCRIPTING
 	end3
+	
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_Frisk:
+	call BattleScript_AbilityPopUp
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	callasm TryLoadSecondFriskTargetDoubles
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	
+BattleScript_FriskEnd:
+	call BattleScript_AbilityPopUpRevert
+	end3	
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

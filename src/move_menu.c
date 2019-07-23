@@ -295,6 +295,7 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 	tempMoveStruct->monType1 = gBattleMons[gActiveBattler].type1;
 	tempMoveStruct->monType2 = gBattleMons[gActiveBattler].type2;
 	tempMoveStruct->monType3 = gBattleMons[gActiveBattler].type3;
+	tempMoveStruct->ability = ABILITY(gActiveBattler);
 	
 	gBattleScripting->dmgMultiplier = 1;
 	for (i = 0; i < MAX_MON_MOVES; ++i)
@@ -395,11 +396,41 @@ void EmitMoveChosen(u8 bufferId, u8 chosenMoveIndex, u8 target, u8 megaState, u8
     PrepareBufferDataTransfer(bufferId, gBattleBuffersTransferData, 7);
 }
 
+u8 sText_StabMoveInterfaceType[] = {0xFC, 0x05, 0x05, 0xFC, 0x04, 0x08, 0x0E, 0x09, 0xFF};
+
 static void MoveSelectionDisplayMoveType(void)
 {
     u8 *txtPtr;
+	u8* stabFormating;
     struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct*)(&gBattleBufferA[gActiveBattler][4]);
+	
+	#ifdef DISPLAY_REAL_MOVE_TYPE_ON_MENU
+		u8 moveType = moveInfo->moveTypes[gMoveSelectionCursor[gActiveBattler]];
+	#else
+		u8 moveType = gBattleMoves[moveInfo->moves[gMoveSelectionCursor[gActiveBattler]]].type;
+	#endif
 
+	//Update Palette Fading for STAB
+	const u16* palPtr = Pal_PPDisplay;
+	if (SPLIT(moveInfo->moves[gMoveSelectionCursor[gActiveBattler]]) != SPLIT_STATUS
+	&&	(moveType == moveInfo->monType1
+	  || moveType == moveInfo->monType2
+	  || moveType == moveInfo->monType3))
+	{	
+		gPlttBufferUnfaded[88] = palPtr[(2 * 2) + 0];
+		gPlttBufferUnfaded[89] = palPtr[(2 * 2) + 1];
+		stabFormating = sText_StabMoveInterfaceType;
+	}
+	else
+	{
+		gPlttBufferUnfaded[88] = gPlttBufferUnfaded[93];
+		gPlttBufferUnfaded[89] = gPlttBufferUnfaded[95];
+		stabFormating = gText_MoveInterfaceType;
+	}
+	
+	CpuCopy16(&gPlttBufferUnfaded[88], &gPlttBufferFaded[88], sizeof(u16));
+	CpuCopy16(&gPlttBufferUnfaded[89], &gPlttBufferFaded[89], sizeof(u16));
+	
     txtPtr = StringCopy(gDisplayedStringBattle, gText_TypeWord);
     txtPtr[0] = EXT_CTRL_CODE_BEGIN;
     txtPtr++;
@@ -407,13 +438,9 @@ static void MoveSelectionDisplayMoveType(void)
     txtPtr++;
     txtPtr[0] = 1;
     txtPtr++;
-	txtPtr = StringCopy(txtPtr, gText_MoveInterfaceType);
-	
-	#ifdef DISPLAY_REAL_MOVE_TYPE_ON_MENU
-		StringCopy(txtPtr, gTypeNames[moveInfo->moveTypes[gMoveSelectionCursor[gActiveBattler]]]);
-	#else
-		StringCopy(txtPtr, gTypeNames[gBattleMoves[moveInfo->moves[gMoveSelectionCursor[gActiveBattler]]].type]);
-	#endif
+	txtPtr = StringCopy(txtPtr, stabFormating);
+
+	StringCopy(txtPtr, gTypeNames[moveType]);
     BattlePutTextOnWindow(gDisplayedStringBattle, 8);
 }
 

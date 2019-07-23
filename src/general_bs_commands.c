@@ -1960,7 +1960,7 @@ static bool8 TakesGeneralWeatherDamage(u8 bank)
 		&& !(gStatuses3[bank] & (STATUS3_UNDERGROUND | STATUS3_UNDERWATER | STATUS3_DISAPPEARED));
 }
 
-bool8 TakesDamageFromSandstorm(u8 bank)
+bool8 SandstormHurts(u8 bank)
 {
 	u8 ability = ABILITY(bank);
 
@@ -1974,7 +1974,18 @@ bool8 TakesDamageFromSandstorm(u8 bank)
 	return FALSE;
 }
 
-bool8 TakesDamageFromHail(u8 bank)
+bool8 TakesDamageFromSandstorm(u8 bank)
+{
+	if (WEATHER_HAS_EFFECT
+	&&  gBattleWeather & WEATHER_SANDSTORM_ANY)
+	{
+		return SandstormHurts(bank);
+	}
+
+	return FALSE;
+}
+
+bool8 HailHurts(u8 bank)
 {
 	u8 ability = ABILITY(bank);
 
@@ -1982,6 +1993,17 @@ bool8 TakesDamageFromHail(u8 bank)
 	{
 		if (!IsOfType(bank, TYPE_ICE) && ability != ABILITY_ICEBODY && ability != ABILITY_SNOWCLOAK && ability != ABILITY_SLUSHRUSH)
 			return TRUE;
+	}
+
+	return FALSE;
+}
+
+bool8 TakesDamageFromHail(u8 bank)
+{
+	if (WEATHER_HAS_EFFECT
+	&&  gBattleWeather & WEATHER_HAIL_ANY)
+	{
+		return HailHurts(bank);
 	}
 
 	return FALSE;

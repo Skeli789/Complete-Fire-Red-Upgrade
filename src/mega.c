@@ -96,6 +96,28 @@ species_t GetMegaSpecies(u16 species, u16 item)
 	#endif
 }
 
+ability_t GetBankMegaFormAbility(u8 bank)
+{
+	const struct Evolution* evos;
+
+	if (!(gStatuses3[bank] & STATUS3_ABILITY_SUPPRESS))
+	{
+		evos = CanMegaEvolve(bank, FALSE);
+		if (evos != NULL)
+		{
+			return gBaseStats[evos->targetSpecies].ability1; //Megas can only have 1 ability
+		}
+
+		evos = CanMegaEvolve(bank, TRUE);
+		if (evos != NULL)
+		{
+			return gBaseStats[evos->targetSpecies].ability1; //Ultra Necrozma only has 1 ability
+		}
+	}
+	
+	return ABILITY_NONE;
+}
+
 const u8* DoMegaEvolution(u8 bank)
 {
 	struct Pokemon* mon = GetBankPartyData(bank);

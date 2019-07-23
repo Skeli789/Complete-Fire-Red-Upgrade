@@ -10,6 +10,15 @@ Multi Battle Record
 #org @gText_LinkMultiBattleRecord
 Link Multi Battle Record
 
+#org @gText_SingleRandomBattleRecord
+Rand Sng Battle Record
+
+#org @gText_DoubleRandomBattleRecord
+Rand Dbl Battle Record
+
+#org @gText_MultiRandomBattleRecord
+Rand Multi Battle Record
+
 #org @gText_FrontierRecordLevel5
 Level 5
 

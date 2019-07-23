@@ -49,8 +49,8 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 	//u8 defItemPocket = ITEM_POCKET(bankDef);
 	//u8 defPartnerItemPocket = ITEM_POCKET(bankDefPartner);
 	
-	u8 atkAbility = ABILITY(bankAtk);
-	u8 defAbility = ABILITY(bankDef);
+	u8 atkAbility = GetAIAbility(bankAtk, bankDef, move);
+	u8 defAbility = GetAIAbility(bankDef, bankAtk, predictedMove);
 	u8 atkPartnerAbility = ABILITY(bankAtkPartner);
 	//u8 defPartnerAbility = ABILITY(bankDefPartner);
 
@@ -108,10 +108,15 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		case EFFECT_ABSORB:
 		case EFFECT_DREAM_EATER:
 		AI_DRAIN_HP_CHECK: ;
-			if (ShouldRecover(bankAtk, bankDef, move, class))
-				INCREASE_VIABILITY(6);
+			if (ShouldRecover(bankAtk, bankDef, move))
+			{
+				if (IsClassStall(class))
+					INCREASE_VIABILITY(6);
+				else
+					INCREASE_VIABILITY(3); //Past strongest move
+			}
 			break;
-		
+
 		case EFFECT_PARALYZE_HIT:
 			if (CalcSecondaryEffectChance(bankAtk, move) >= 75)
 				goto AI_PARALYZE_CHECKS;
@@ -415,16 +420,26 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		case EFFECT_MORNING_SUN:
 		case EFFECT_SWALLOW:
 		AI_RECOVER:
-			if (BATTLER_ALIVE(foe1) && ShouldRecover(bankAtk, foe1, move, class))
-				INCREASE_VIABILITY(4);
-			else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE
-			&& BATTLER_ALIVE(foe2)
-			&& ShouldRecover(bankAtk, foe2, move, class))
+			if (BATTLER_ALIVE(foe1) && ShouldRecover(bankAtk, foe1, move))
 			{
-				INCREASE_VIABILITY(4);
+				if (IsClassStall(class))
+					INCREASE_VIABILITY(4);
+				else
+					INCREASE_STATUS_VIABILITY(3);
+			}
+			else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+			{
+				if (BATTLER_ALIVE(foe2)
+				&& ShouldRecover(bankAtk, foe2, move))
+				{
+					if (IsClassStall(class))
+						INCREASE_VIABILITY(4);
+					else
+						INCREASE_STATUS_VIABILITY(3);
+				}
 			}
 			break;
-			
+
 		case EFFECT_TOXIC:
 		case EFFECT_POISON:
 		AI_POISON_CHECKS:
@@ -447,7 +462,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			break;
 			
 		case EFFECT_LIGHT_SCREEN:
-			if (ShouldSetUpScreens(bankAtk, bankDef, move, class))
+			if (ShouldSetUpScreens(bankAtk, bankDef, move))
 				INCREASE_VIABILITY(7);
 			break;
 			
@@ -462,15 +477,17 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			|| atkAbility == ABILITY_EARLYBIRD
 			|| ((gBattleWeather & WEATHER_RAIN_ANY && gWishFutureKnock->weatherDuration > 1) && atkAbility == ABILITY_HYDRATION))
 			{
-				if (BATTLER_ALIVE(foe1) && ShouldRecover(bankAtk, foe1, move, class))
+				if (BATTLER_ALIVE(foe1) && ShouldRecover(bankAtk, foe1, move))
 				{
 					INCREASE_STATUS_VIABILITY(1);
 				}
-				else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE
-				&& BATTLER_ALIVE(foe2)
-				&& ShouldRecover(bankAtk, foe2, move, class))
+				else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
 				{
-					INCREASE_STATUS_VIABILITY(1);
+					if (BATTLER_ALIVE(foe2)
+					&& ShouldRecover(bankAtk, foe2, move))
+					{
+						INCREASE_STATUS_VIABILITY(1);
+					}
 				}
 			}
 			else
@@ -532,13 +549,23 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		case EFFECT_REFLECT:
 			switch (move) {
 				case MOVE_AURORAVEIL:
-					if (ShouldSetUpScreens(bankAtk, bankDef, move, class))
-						INCREASE_VIABILITY(8);
+					if (ShouldSetUpScreens(bankAtk, bankDef, move))
+					{
+						if (IsClassScreener(class))
+							INCREASE_VIABILITY(8);
+						else
+							INCREASE_STATUS_VIABILITY(2);
+					}
 					break;
 
 				default:
-					if (ShouldSetUpScreens(bankAtk, bankDef, move, class))
-						INCREASE_VIABILITY(7);
+					if (ShouldSetUpScreens(bankAtk, bankDef, move))
+					{
+						if (IsClassScreener(class))
+							INCREASE_VIABILITY(7);
+						else
+							INCREASE_STATUS_VIABILITY(2);
+					}
 			}
 			break;
 			
@@ -672,7 +699,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 				{ 	
 					if (gLastUsedMoves[bankDef] != MOVE_NONE
 					&& gLastUsedMoves[bankDef] != 0xFFFF
-					&& (SPLIT(gLastUsedMoves[bankDef]) == SPLIT_STATUS || TypeCalc(gLastUsedMoves[bankDef], bankDef, bankAtk, NULL, FALSE) & MOVE_RESULT_DOESNT_AFFECT_FOE))
+					&& (SPLIT(gLastUsedMoves[bankDef]) == SPLIT_STATUS || AI_SpecialTypeCalc(gLastUsedMoves[bankDef], bankDef, bankAtk) & MOVE_RESULT_DOESNT_AFFECT_FOE))
 						INCREASE_STATUS_VIABILITY(3); //Lock into status moves
 				}
 				else if (predictedMove != MOVE_NONE && SPLIT(predictedMove) == SPLIT_STATUS)
@@ -835,7 +862,8 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 				case MOVE_QUICKGUARD:
 					if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
 					{
-						if (PriorityCalc(foe1, ACTION_USE_MOVE, firstOpponentMove) > 0)
+						if (firstOpponentMove != MOVE_NONE
+						&& PriorityCalc(foe1, ACTION_USE_MOVE, firstOpponentMove) > 0)
 							INCREASE_STATUS_VIABILITY(3);
 						else if (secondOpponentMove != MOVE_NONE
 						&& PriorityCalc(foe1, ACTION_USE_MOVE, secondOpponentMove) > 0)
@@ -846,7 +874,8 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 				case MOVE_WIDEGUARD:
 					if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
 					{
-						if (gBattleMoves[firstOpponentMove].target & (MOVE_TARGET_ALL | MOVE_TARGET_BOTH))
+						if (firstOpponentMove != MOVE_NONE
+						&& gBattleMoves[firstOpponentMove].target & (MOVE_TARGET_ALL | MOVE_TARGET_BOTH))
 							INCREASE_STATUS_VIABILITY(3);
 						else if (secondOpponentMove != MOVE_NONE
 						&& gBattleMoves[secondOpponentMove].target & (MOVE_TARGET_ALL | MOVE_TARGET_BOTH))
@@ -857,10 +886,11 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 				case MOVE_CRAFTYSHIELD:
 					if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
 					{
-						if (SPLIT(firstOpponentMove) == SPLIT_STATUS && gBattleMoves[firstOpponentMove].target & MOVE_TARGET_SELECTED)
+						if (firstOpponentMove != MOVE_NONE
+						&& SPLIT(firstOpponentMove) == SPLIT_STATUS && !(gBattleMoves[firstOpponentMove].target & MOVE_TARGET_USER))
 							INCREASE_STATUS_VIABILITY(3);
 						else if (secondOpponentMove != MOVE_NONE
-						&& SPLIT(secondOpponentMove) == SPLIT_STATUS && gBattleMoves[secondOpponentMove].target & MOVE_TARGET_SELECTED)
+						&& SPLIT(secondOpponentMove) == SPLIT_STATUS && !(gBattleMoves[secondOpponentMove].target & MOVE_TARGET_USER))
 							INCREASE_STATUS_VIABILITY(3);
 					}
 					break;
@@ -870,7 +900,8 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 					{
 						if (gDisableStructs[bankAtk].isFirstTurn)
 						{
-							if (SPLIT(firstOpponentMove) != SPLIT_STATUS && !(gBattleMoves[firstOpponentMove].target & MOVE_TARGET_USER))
+							if (firstOpponentMove != MOVE_NONE
+							&& SPLIT(firstOpponentMove) != SPLIT_STATUS && !(gBattleMoves[firstOpponentMove].target & MOVE_TARGET_USER))
 								INCREASE_STATUS_VIABILITY(3);
 							else if (secondOpponentMove != MOVE_NONE
 							&& SPLIT(secondOpponentMove) != SPLIT_STATUS && !(gBattleMoves[secondOpponentMove].target & MOVE_TARGET_USER))
@@ -880,11 +911,21 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 					__attribute__ ((fallthrough));
 
 				default:
-					if (ShouldProtect(bankAtk, foe1, move, class))
-						INCREASE_VIABILITY(3);
+					if (ShouldProtect(bankAtk, foe1, move) == USE_PROTECT)
+					{
+						if (IsClassStall(class))
+							INCREASE_VIABILITY(3);
+						else
+							INCREASE_STATUS_VIABILITY(3);
+					}
 					else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE
-					&& ShouldProtect(bankAtk, foe2, move, class))
-						INCREASE_VIABILITY(3);
+					&& ShouldProtect(bankAtk, foe2, move)  == USE_PROTECT)
+					{
+						if (IsClassStall(class))
+							INCREASE_VIABILITY(3);
+						else
+							INCREASE_STATUS_VIABILITY(3);
+					}
 			}
 			break;
 
@@ -1071,7 +1112,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 					(SIDE_STATUS_REFLECT | SIDE_STATUS_LIGHTSCREEN | SIDE_STATUS_SAFEGUARD | SIDE_STATUS_MIST)
 				|| gNewBS->AuroraVeilTimers[SIDE(bankDef)] != 0)
 					INCREASE_STATUS_VIABILITY(3);
-				else
+				else if (!(gSideAffecting[SIDE(bankDef)] & SIDE_STATUS_SPIKES)) //Don't blow away hazards if you set them up
 					goto AI_EVASION_MINUS; //If no other reason to use Defog, use it for the Evasion lowering
 			}
 			else //Rapid Spin
@@ -1862,7 +1903,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		case EFFECT_TOPSY_TURVY_ELECTRIFY:
 			switch (move) {
 				case MOVE_ELECTRIFY:
-					if (GetMoveTypeSpecial(bankDef, predictedMove) == TYPE_ELECTRIC
+					if (GetMoveTypeSpecial(bankDef, predictedMove) == TYPE_NORMAL
 					&& (atkAbility == ABILITY_VOLTABSORB
 					 || atkAbility == ABILITY_MOTORDRIVE
 					 || atkAbility == ABILITY_LIGHTNINGROD))
@@ -1924,15 +1965,45 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 					break;
 					
 				case MOVE_MAGNETRISE:
-					if (CheckGrounding(bankAtk) == GROUNDED)
-						INCREASE_STATUS_VIABILITY(1);
+					if (!IsDoubleBattle())
+					{
+						if (CheckGrounding(bankAtk) == GROUNDED
+						&& DamagingMoveTypeInMoveset(foe1, TYPE_GROUND)
+						&& !(AI_SpecialTypeCalc(MOVE_EARTHQUAKE, foe1, bankAtk) & (MOVE_RESULT_DOESNT_AFFECT_FOE | MOVE_RESULT_NOT_VERY_EFFECTIVE))) //Doesn't resist ground move
+						{
+							if (MoveWouldHitFirst(move, bankAtk, bankDef) //Attacker goes first
+							&&  GetMoveTypeSpecial(foe1, predictedMove) == TYPE_GROUND)
+							{
+								INCREASE_STATUS_VIABILITY(3); //Cause the enemy's move to fail
+							}
+							else //Opponent Goes First
+							{
+								if (GetMoveTypeSpecial(foe1, predictedMove) == TYPE_GROUND)
+									INCREASE_STATUS_VIABILITY(2); //If he's using it now, he'll probably use it again later
+								else
+									INCREASE_STATUS_VIABILITY(1);
+							}
+						}
+					}
+					else //Double Battle
+					{
+						if (CheckGrounding(bankAtk) == GROUNDED
+						&& !(AI_SpecialTypeCalc(MOVE_EARTHQUAKE, foe1, bankAtk) & (MOVE_RESULT_DOESNT_AFFECT_FOE | MOVE_RESULT_NOT_VERY_EFFECTIVE)) //Doesn't resist ground move
+						&& (DamagingMoveTypeInMoveset(foe1, TYPE_GROUND)
+						 || DamagingMoveTypeInMoveset(foe2, TYPE_GROUND)
+						 || DamagingAllHitMoveTypeInMoveset(bankAtkPartner, TYPE_GROUND)))
+						{
+							INCREASE_STATUS_VIABILITY(2); //Fix more later
+						}
+					}
+					break;
 			}
 			break;
 			
 		case EFFECT_CAMOUFLAGE:
 			if (MoveWouldHitFirst(move, bankAtk, bankDef)
 			&& SPLIT(move) != SPLIT_STATUS
-			&& !(TypeCalc(predictedMove, bankDef, bankAtk, NULL, FALSE) & MOVE_RESULT_DOESNT_AFFECT_FOE))
+			&& !(AI_SpecialTypeCalc(predictedMove, bankDef, bankAtk) & MOVE_RESULT_DOESNT_AFFECT_FOE))
 				INCREASE_STATUS_VIABILITY(1);
 			break;
 			
@@ -1966,7 +2037,8 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			//If the AI's best killing move has a low accuracy, then
 			//try to make it's chance of hitting higher.
 			if (AccuracyCalc(move, bankAtk, bankDef) >= 70
-			|| !MoveThatCanHelpAttacksHitInMoveset(bankAtk))
+			|| !MoveThatCanHelpAttacksHitInMoveset(bankAtk)
+			|| CanKnockOut(bankDef, bankAtk)) //Just use the move if you'll die anyways
 				INCREASE_VIABILITY(9);
 		}
 		else if (IsClassSweeper(class)
@@ -1974,7 +2046,6 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		&& StrongestMoveGoesFirst(move, bankAtk, bankDef)) //Use fastest move
 		{
 			INCREASE_VIABILITY(9);
-			
 		}
 		else if (IsStrongestMove(move, bankAtk, bankDef))
 		{

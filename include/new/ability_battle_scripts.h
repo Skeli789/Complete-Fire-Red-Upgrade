@@ -6,6 +6,8 @@ extern u8 BattleScript_NewWeatherAbilityActivates[];
 extern u8 BattleScript_AirLock[];
 extern u8 BattleScript_IntimidateActivatesEnd3[];
 extern u8 BattleScript_TraceActivates[];
+extern u8 BattleScript_Frisk[];
+extern u8 BattleScript_FriskEnd[];
 extern u8 BattleScript_SwitchInAbilityMsg[];
 extern u8 BattleScript_AbilityCuredStatus[];
 extern u8 BattleScript_AbilityCuredStatusEnd3[];

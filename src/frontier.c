@@ -156,6 +156,34 @@ u8 GetNumMonsOnTeamInFrontier(void)
 	return MathMin(MathMax(1, VarGet(BATTLE_TOWER_POKE_NUM)), PARTY_SIZE);
 }
 
+bool8 IsFrontierSingles(u8 battleType)
+{
+	return battleType == BATTLE_TOWER_SINGLE
+		|| battleType == BATTLE_TOWER_SINGLE_RANDOM;
+}
+
+bool8 IsFrontierDoubles(u8 battleType)
+{
+	return battleType == BATTLE_TOWER_DOUBLE
+		|| battleType == BATTLE_TOWER_DOUBLE_RANDOM; 
+}
+
+bool8 IsFrontierMulti(u8 battleType)
+{
+	return battleType == BATTLE_TOWER_MULTI
+		|| battleType == BATTLE_TOWER_MULTI_RANDOM
+		|| battleType == BATTLE_TOWER_LINK_MULTI;
+}
+
+bool8 IsRandomBattleTowerBattle()
+{
+	u8 battleType = VarGet(BATTLE_TOWER_BATTLE_TYPE);
+	
+	return battleType == BATTLE_TOWER_SINGLE_RANDOM
+		|| battleType == BATTLE_TOWER_DOUBLE_RANDOM
+		|| battleType == BATTLE_TOWER_MULTI_RANDOM;
+}
+
 bool8 TryUpdateOutcomeForFrontierBattle(void)
 {
 	u32 i;

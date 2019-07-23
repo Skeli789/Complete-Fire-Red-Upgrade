@@ -125,6 +125,8 @@
 08120610 10 B5 81 B0 04 1C 0C 21
 ##Remove Old End Battle Sky Battle Revert
 080159E4 06 48 08 60 19 E0 00 00
+##Remove JPAN Ststus Inducer
+0804039C 24 04 04 08
 
 ##Save Expansion
 080DA5E0 FF 20 70 47

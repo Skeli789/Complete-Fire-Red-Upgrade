@@ -861,11 +861,22 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
             break;
 		
 		case ABILITY_FRISK: ;
-            u8 foe = (SIDE(bank) ^ BIT_SIDE) | (Random() & BIT_FLANK);
-			if (ITEM(foe))
+            u8 foe = SIDE(bank) ^ BIT_SIDE;
+			u8 partner = PARTNER(foe);
+
+			if (BATTLER_ALIVE(foe) && ITEM(foe))
 			{
 				gLastUsedItem = ITEM(foe);
 				gBankTarget = foe;
+				gBattleScripting->bank = bank;
+				BattleStringLoader = gText_FriskActivate; 
+				BattleScriptPushCursorAndCallback(BattleScript_Frisk);
+				effect++;
+			}
+			else if (IsDoubleBattle() && BATTLER_ALIVE(partner) && ITEM(partner))
+			{
+				gLastUsedItem = ITEM(partner);
+				gBankTarget = partner;
 				gBattleScripting->bank = bank;
 				BattleStringLoader = gText_FriskActivate; 
 				BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
@@ -1141,9 +1152,9 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 					break;
 				
                 case ABILITY_SPEEDBOOST:
-                    if (gBattleMons[bank].statStages[STAT_SPEED] < STAT_STAGE_MAX && gDisableStructs[bank].isFirstTurn != 2)
+                    if (STAT_STAGE(bank, STAT_SPEED) < STAT_STAGE_MAX && gDisableStructs[bank].isFirstTurn != 2)
                     {
-					    gBattleMons[bank].statStages[STAT_SPEED]++;
+					    gBattleMons[bank].statStages[STAT_SPEED - 1]++;
 						gBattleScripting->statChanger = STAT_SPEED | INCREASE_1;
                         gBattleScripting->animArg1 = 0x11;
                         gBattleScripting->animArg2 = 0;

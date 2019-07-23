@@ -42,10 +42,12 @@ void OpponentHandleChooseMove(void)
 				EmitTwoReturnValues(1, 15, gBankTarget);
 				break;
 			
-			default:
-				if (gBattleMoves[moveInfo->moves[chosenMoveId]].target & (MOVE_TARGET_USER_OR_SELECTED | MOVE_TARGET_USER))
+			default: ;
+				u16 chosenMove = moveInfo->moves[chosenMoveId];
+
+				if (gBattleMoves[chosenMove].target & (MOVE_TARGET_USER_OR_SELECTED | MOVE_TARGET_USER))
 					gBankTarget = gActiveBattler;
-				if (gBattleMoves[moveInfo->moves[chosenMoveId]].target & MOVE_TARGET_BOTH)
+				if (gBattleMoves[chosenMove].target & MOVE_TARGET_BOTH)
 				{
 					if (SIDE(gActiveBattler) == B_SIDE_PLAYER) {
 						gBankTarget = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
@@ -58,12 +60,17 @@ void OpponentHandleChooseMove(void)
 							gBankTarget = GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT);
 					}
 				}
+				
+				
 				if (moveInfo->possibleZMoves[chosenMoveId])
 					gNewBS->ZMoveData->toBeUsed[gActiveBattler] = TRUE;
-				else if (moveInfo->canMegaEvolve && moveInfo->megaVariance != MEGA_VARIANT_ULTRA_BURST)
-					gNewBS->MegaData->chosen[gActiveBattler] = TRUE;
-				else if (moveInfo->canMegaEvolve && moveInfo->megaVariance == MEGA_VARIANT_ULTRA_BURST)
-					gNewBS->UltraData->chosen[gActiveBattler] = TRUE;
+				else if (!ShouldAIDelayMegaEvolution(gActiveBattler, gBankTarget, chosenMove))
+				{
+					if (moveInfo->canMegaEvolve && moveInfo->megaVariance != MEGA_VARIANT_ULTRA_BURST)
+						gNewBS->MegaData->chosen[gActiveBattler] = TRUE;
+					else if (moveInfo->canMegaEvolve && moveInfo->megaVariance == MEGA_VARIANT_ULTRA_BURST)
+						gNewBS->UltraData->chosen[gActiveBattler] = TRUE;
+				}
 				EmitMoveChosen(1, chosenMoveId, gBankTarget, gNewBS->MegaData->chosen[gActiveBattler], gNewBS->UltraData->chosen[gActiveBattler], gNewBS->ZMoveData->toBeUsed[gActiveBattler]);
 				break;
         }

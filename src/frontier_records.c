@@ -97,6 +97,9 @@ extern const u8 gText_SingleBattleRecord[];
 extern const u8 gText_DoubleBattleRecord[];
 extern const u8 gText_MultiBattleRecord[];
 extern const u8 gText_LinkMultiBattleRecord[];
+extern const u8 gText_SingleRandomBattleRecord[];
+extern const u8 gText_DoubleRandomBattleRecord[];
+extern const u8 gText_MultiRandomBattleRecord[];
 extern const u8 gText_FrontierRecordLevel5[];
 extern const u8 gText_FrontierRecordLevel50[];
 extern const u8 gText_FrontierRecordLevel100[];
@@ -402,6 +405,9 @@ static const u8* const sBattleTypeStrings[NUM_TOWER_BATTLE_TYPES] =
 	gText_DoubleBattleRecord,
 	gText_MultiBattleRecord,
 	gText_LinkMultiBattleRecord,
+	gText_SingleRandomBattleRecord,
+	gText_DoubleRandomBattleRecord,
+	gText_MultiRandomBattleRecord,
 };
 
 static const u8* const sBattleTowerTierNames[NUM_FORMATS] =
@@ -625,7 +631,7 @@ static void DisplayFrontierRecordsText(void)
 	WindowPrint(WIN_TIER, 0, 0, 4, &tierNameColour, 0, string);
 
 	//Print Level 50 Party Sizes Numbers
-	string = (sFrontierRecordsPtr->battleType == BATTLE_TOWER_SINGLE) ? gText_3v3 : gText_4v4;
+	string = (IsFrontierSingles(sFrontierRecordsPtr->battleType)) ? gText_3v3 : gText_4v4;
 	WindowPrint(WIN_3V3_LEVEL_50, 0, 0, 4, &partySizeColour, 0, string);
 	WindowPrint(WIN_6V6_LEVEL_50, 0, 0, 4, &partySizeColour, 0, gText_6v6);
 
@@ -643,7 +649,7 @@ static void DisplayFrontierRecordsText(void)
 	if (tier != BATTLE_TOWER_LITTLE_CUP && tier != BATTLE_TOWER_MONOTYPE) //Little Cup only has Lv. 5, Monotype only has Lv. 100
 	{
 		//Print Level 100 Party Sizes Numbers
-		string = (sFrontierRecordsPtr->battleType == BATTLE_TOWER_SINGLE) ? gText_3v3 : gText_4v4;
+		string = (IsFrontierSingles(sFrontierRecordsPtr->battleType)) ? gText_3v3 : gText_4v4;
 		WindowPrint(WIN_3V3_LEVEL_100, 0, 0, 4, &partySizeColour, 0, string);
 		WindowPrint(WIN_6V6_LEVEL_100, 0, 0, 4, &partySizeColour, 0, gText_6v6);
 

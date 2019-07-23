@@ -4,6 +4,7 @@
 #include "../include/constants/songs.h"
 
 #include "../include/new/ability_battle_effects.h"
+#include "../include/new/ability_battle_scripts.h"
 #include "../include/new/ability_tables.h"
 #include "../include/new/battle_start_turn_start_battle_scripts.h"
 #include "../include/new/bs_helper_functions.h"
@@ -1607,4 +1608,18 @@ void TryRemovePrimalWeatherAfterAbilityChange(void)
 {
 	if (TryRemovePrimalWeather(gBankTarget, gNewBS->backupAbility))
 		gBattlescriptCurrInstr -= 5;
+}
+
+void TryLoadSecondFriskTargetDoubles(void)
+{
+	u8 partner = PARTNER(gBankTarget);
+
+	if (IsDoubleBattle() && BATTLER_ALIVE(partner) && ITEM(partner))
+	{
+		gLastUsedItem = ITEM(partner);
+		gBankTarget = partner;
+		return;
+	}
+
+	gBattlescriptCurrInstr = BattleScript_FriskEnd - 5;
 }
