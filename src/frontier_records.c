@@ -175,7 +175,7 @@ static const struct WindowTemplate sFrontierRecordsWinTemplates[WINDOW_COUNT + 1
 		.bg = 0,
 		.tilemapLeft = 12,
 		.tilemapTop = 0,
-		.width = 17,
+		.width = 18,
 		.height = 3,
 		.paletteNum = 15,
 		.baseBlock = 31,
@@ -188,7 +188,7 @@ static const struct WindowTemplate sFrontierRecordsWinTemplates[WINDOW_COUNT + 1
 		.width = 6,
 		.height = 2,
 		.paletteNum = 15,
-		.baseBlock = 82,
+		.baseBlock = 85,
 	},
 	[WIN_3V3_LEVEL_50] =
 	{
@@ -198,7 +198,7 @@ static const struct WindowTemplate sFrontierRecordsWinTemplates[WINDOW_COUNT + 1
 		.width = 4,
 		.height = 2,
 		.paletteNum = 15,
-		.baseBlock = 94,
+		.baseBlock = 97,
 	},
 	[WIN_6V6_LEVEL_50] =
 	{
@@ -208,7 +208,7 @@ static const struct WindowTemplate sFrontierRecordsWinTemplates[WINDOW_COUNT + 1
 		.width = 4,
 		.height = 2,
 		.paletteNum = 15,
-		.baseBlock = 102,
+		.baseBlock = 105,
 	},
 	[WIN_CURRENT_STREAK_LEVEL_50] =
 	{
@@ -218,7 +218,7 @@ static const struct WindowTemplate sFrontierRecordsWinTemplates[WINDOW_COUNT + 1
 		.width = 10,
 		.height = 2,
 		.paletteNum = 15,
-		.baseBlock = 110,
+		.baseBlock = 113,
 	},
 	[WIN_MAX_STREAK_LEVEL_50] =
 	{
@@ -228,7 +228,7 @@ static const struct WindowTemplate sFrontierRecordsWinTemplates[WINDOW_COUNT + 1
 		.width = 10,
 		.height = 2,
 		.paletteNum = 15,
-		.baseBlock = 130,
+		.baseBlock = 133,
 	},
 	[WIN_LEVEL_100] =
 	{
@@ -238,7 +238,7 @@ static const struct WindowTemplate sFrontierRecordsWinTemplates[WINDOW_COUNT + 1
 		.width = 6,
 		.height = 2,
 		.paletteNum = 15,
-		.baseBlock = 150,
+		.baseBlock = 153,
 	},
 	[WIN_3V3_LEVEL_100] =
 	{
@@ -248,7 +248,7 @@ static const struct WindowTemplate sFrontierRecordsWinTemplates[WINDOW_COUNT + 1
 		.width = 4,
 		.height = 2,
 		.paletteNum = 15,
-		.baseBlock = 162,
+		.baseBlock = 165,
 	},
 	[WIN_6V6_LEVEL_100] =
 	{
@@ -258,7 +258,7 @@ static const struct WindowTemplate sFrontierRecordsWinTemplates[WINDOW_COUNT + 1
 		.width = 4,
 		.height = 2,
 		.paletteNum = 15,
-		.baseBlock = 170,
+		.baseBlock = 173,
 	},
 	[WIN_CURRENT_STREAK_LEVEL_100] =
 	{
@@ -268,7 +268,7 @@ static const struct WindowTemplate sFrontierRecordsWinTemplates[WINDOW_COUNT + 1
 		.width = 10,
 		.height = 2,
 		.paletteNum = 15,
-		.baseBlock = 178,
+		.baseBlock = 181,
 	},
 	[WIN_MAX_STREAK_LEVEL_100] =
 	{
@@ -278,7 +278,7 @@ static const struct WindowTemplate sFrontierRecordsWinTemplates[WINDOW_COUNT + 1
 		.width = 10,
 		.height = 2,
 		.paletteNum = 15,
-		.baseBlock = 198,
+		.baseBlock = 201,
 	},
 	[WIN_TIER] =
 	{
@@ -288,7 +288,7 @@ static const struct WindowTemplate sFrontierRecordsWinTemplates[WINDOW_COUNT + 1
 		.width = 15,
 		.height = 2,
 		.paletteNum = 15,
-		.baseBlock = 218,
+		.baseBlock = 221,
 	},
 	
 	
@@ -301,7 +301,7 @@ static const struct WindowTemplate sFrontierRecordsWinTemplates[WINDOW_COUNT + 1
 		.width = 4,
 		.height = 2,
 		.paletteNum = 15,
-		.baseBlock = 248,
+		.baseBlock = 251,
 	},
 	[WIN_MAX_STREAK_3V3_LEVEL_50] =
 	{
@@ -311,7 +311,7 @@ static const struct WindowTemplate sFrontierRecordsWinTemplates[WINDOW_COUNT + 1
 		.width = 4,
 		.height = 2,
 		.paletteNum = 15,
-		.baseBlock = 256,
+		.baseBlock = 259,
 	},
 	[WIN_CURRENT_STREAK_6V6_LEVEL_50] =
 	{
@@ -321,7 +321,7 @@ static const struct WindowTemplate sFrontierRecordsWinTemplates[WINDOW_COUNT + 1
 		.width = 4,
 		.height = 2,
 		.paletteNum = 15,
-		.baseBlock = 264,
+		.baseBlock = 267,
 	},
 	[WIN_MAX_STREAK_6V6_LEVEL_50] =
 	{
@@ -331,7 +331,7 @@ static const struct WindowTemplate sFrontierRecordsWinTemplates[WINDOW_COUNT + 1
 		.width = 4,
 		.height = 2,
 		.paletteNum = 15,
-		.baseBlock = 272,
+		.baseBlock = 275,
 	},
 	[WIN_CURRENT_STREAK_3V3_LEVEL_100] =
 	{
@@ -341,7 +341,7 @@ static const struct WindowTemplate sFrontierRecordsWinTemplates[WINDOW_COUNT + 1
 		.width = 4,
 		.height = 2,
 		.paletteNum = 15,
-		.baseBlock = 280,
+		.baseBlock = 283,
 	},
 	[WIN_MAX_STREAK_3V3_LEVEL_100] =
 	{
@@ -351,7 +351,7 @@ static const struct WindowTemplate sFrontierRecordsWinTemplates[WINDOW_COUNT + 1
 		.width = 4,
 		.height = 2,
 		.paletteNum = 15,
-		.baseBlock = 288,
+		.baseBlock = 291,
 	},
 	[WIN_CURRENT_STREAK_6V6_LEVEL_100] =
 	{
@@ -361,7 +361,7 @@ static const struct WindowTemplate sFrontierRecordsWinTemplates[WINDOW_COUNT + 1
 		.width = 4,
 		.height = 2,
 		.paletteNum = 15,
-		.baseBlock = 296,
+		.baseBlock = 299,
 	},
 	[WIN_MAX_STREAK_6V6_LEVEL_100] =
 	{
@@ -371,7 +371,7 @@ static const struct WindowTemplate sFrontierRecordsWinTemplates[WINDOW_COUNT + 1
 		.width = 4,
 		.height = 2,
 		.paletteNum = 15,
-		.baseBlock = 304,
+		.baseBlock = 307,
 	},
 
 	DUMMY_WIN_TEMPLATE,

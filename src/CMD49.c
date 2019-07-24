@@ -678,7 +678,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			switch (ABILITY(gBankAttacker)) {
 				case ABILITY_MAGICIAN:
 					if (ITEM(gBankAttacker) == 0
-					&& ITEM(bankDef)
+					&& ITEM(bankDef) != 0
 					&& gBattleMons[gBankAttacker].hp
 					&& !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bankDef)
 					&& TOOK_DAMAGE(bankDef)

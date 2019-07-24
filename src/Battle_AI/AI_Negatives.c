@@ -1517,15 +1517,17 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		case EFFECT_TRICK:
 			switch (move) {
 				case MOVE_BESTOW:
-					if (!CanTransferItem(bankAtk, atkItem, GetBankPartyData(bankAtk)))
+					if (atkItem == ITEM_NONE
+					|| !CanTransferItem(bankAtk, atkItem, GetBankPartyData(bankAtk)))
 						DECREASE_VIABILITY(10);
 					break;
 					
 				default: //Trick
-					if ((!CanTransferItem(bankAtk, atkItem, GetBankPartyData(bankAtk))
-					  && !CanTransferItem(bankAtk, defItem, GetBankPartyData(bankAtk))
-					  && !CanTransferItem(bankDef, atkItem, GetBankPartyData(bankDef))
-					  && !CanTransferItem(bankDef, defItem, GetBankPartyData(bankDef)))
+					if ((atkItem == ITEM_NONE && defItem == ITEM_NONE)
+					|| !CanTransferItem(bankAtk, atkItem, GetBankPartyData(bankAtk))
+					|| !CanTransferItem(bankAtk, defItem, GetBankPartyData(bankAtk))
+					|| !CanTransferItem(bankDef, atkItem, GetBankPartyData(bankDef))
+					|| !CanTransferItem(bankDef, defItem, GetBankPartyData(bankDef))
 					|| (defAbility == ABILITY_STICKYHOLD))
 						DECREASE_VIABILITY(10);
 					break;

@@ -531,16 +531,17 @@ void RunTurnActionsFunctions(void)
 			&& !(gProtectStructs[gActiveBattler].onlyStruggle)) //or onlyStruggle in Emerald
 			{
 				gBankAttacker = gBattleScripting->bank = gActiveBattler;
-				if (chosenMove == MOVE_BEAKBLAST) {
+				if (chosenMove == MOVE_BEAKBLAST && !(gNewBS->BeakBlastByte & gBitTable[gActiveBattler]))
+				{
 					gNewBS->BeakBlastByte |= gBitTable[gActiveBattler];
 					BattleScriptExecute(BattleScript_BeakBlastSetUp);
 				}
-				else if (chosenMove == MOVE_SHELLTRAP)
+				else if (chosenMove == MOVE_SHELLTRAP && !(gNewBS->playedShellTrapMessage & gBitTable[gActiveBattler]))
 				{
 					gNewBS->playedShellTrapMessage |= gBitTable[gActiveBattler];
 					BattleScriptExecute(BattleScript_ShellTrapSetUp);
 				}
-				else
+				else if (!(gNewBS->playedFocusPunchMessage & gBitTable[gActiveBattler]))
 				{
 					gNewBS->playedFocusPunchMessage |= gBitTable[gActiveBattler];
 					BattleScriptExecute(BattleScript_FocusPunchSetUp);

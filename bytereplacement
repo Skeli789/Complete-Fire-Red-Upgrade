@@ -125,8 +125,9 @@
 08120610 10 B5 81 B0 04 1C 0C 21
 ##Remove Old End Battle Sky Battle Revert
 080159E4 06 48 08 60 19 E0 00 00
-##Remove JPAN Ststus Inducer
+##Remove Old JPAN Engine
 0804039C 24 04 04 08
+08040568 AC 06 04 08 C4 06 04 08
 
 ##Save Expansion
 080DA5E0 FF 20 70 47
@@ -447,6 +448,6 @@
 ##Unbound Give All Pokes Guy##
 08740F45 16 C2 50 32 00 16 00 80 00 00 25 67 00 02
 ##Battle BG
-##087803A5 00
+087803A5 17
 
 #endif

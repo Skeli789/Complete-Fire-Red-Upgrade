@@ -350,24 +350,24 @@ u16 sp06A_GivePlayerFrontierMonByLoadedSpread(void)
 //Returns the number of Pokemon
 static u8 CreateNPCTrainerParty(pokemon_t* const party, const u16 trainerId, const bool8 firstTrainer, const bool8 side)
 {
-    u32 nameHash = 0;
-    u32 personalityValue;
-    int i, j;
-    u8 monsCount = 1;
+	u32 nameHash = 0;
+	u32 personalityValue;
+	int i, j;
+	u8 monsCount = 1;
 	u32 otid = Random32();
 
-    if (trainerId == TRAINER_SECRET_BASE) return 0;
+	if (trainerId == TRAINER_SECRET_BASE) return 0;
 
-    struct Trainer* trainer = &gTrainers[trainerId];
+	struct Trainer* trainer = &gTrainers[trainerId];
 
-    if (((gBattleTypeFlags & (BATTLE_TYPE_TRAINER | BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_TRAINER_TOWER)) == BATTLE_TYPE_TRAINER)
+	if (((gBattleTypeFlags & (BATTLE_TYPE_TRAINER | BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_TRAINER_TOWER)) == BATTLE_TYPE_TRAINER)
 	||   (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER))
 	{
 		if (firstTrainer)
 			ZeroEnemyPartyMons();
 
 		if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS && side == B_SIDE_OPPONENT)
-        {
+		{
 			#ifdef OPEN_WORLD_TRAINERS
 			if ((firstTrainer && gTrainerBattleOpponent_A < DYNAMIC_TRAINER_LIMIT)
 			||  (!firstTrainer && VarGet(SECOND_OPPONENT_VAR) < DYNAMIC_TRAINER_LIMIT))
@@ -386,14 +386,14 @@ static u8 CreateNPCTrainerParty(pokemon_t* const party, const u16 trainerId, con
 				else
 					monsCount = trainer->partySize;
 			}
-        }
-        else if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER && side == B_SIDE_PLAYER)
-        {
-            if (trainer->partySize > 3)
-                monsCount = 3;
-            else
-                monsCount = trainer->partySize;
-        }
+		}
+		else if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER && side == B_SIDE_PLAYER)
+		{
+			if (trainer->partySize > 3)
+				monsCount = 3;
+			else
+				monsCount = trainer->partySize;
+		}
 		else
 		{
 			#ifdef OPEN_WORLD_TRAINERS
@@ -409,8 +409,8 @@ static u8 CreateNPCTrainerParty(pokemon_t* const party, const u16 trainerId, con
 				monsCount = trainer->partySize;
 		}
 
-        u8 trainerNameLengthOddness = StringLength(trainer->trainerName) & 1;
-        for (i = 0; i < monsCount; ++i)
+		u8 trainerNameLengthOddness = StringLength(trainer->trainerName) & 1;
+		for (i = 0; i < monsCount; ++i)
 		{
 			gBankAttacker = i + 1;
 			u8 genderOffset = 0x80;
@@ -545,7 +545,7 @@ static u8 CreateNPCTrainerParty(pokemon_t* const party, const u16 trainerId, con
 			//Status Inducers
 			TryStatusInducer(&party[i]);
 			gBankTarget = i + 1;
-        }
+		}
 		#ifdef OPEN_WORLD_TRAINERS
 		if ((GetOpenWorldTrainerMonAmount() > 1 || trainer->doubleBattle)
 		#else
@@ -561,14 +561,14 @@ static u8 CreateNPCTrainerParty(pokemon_t* const party, const u16 trainerId, con
 			#endif
 		}
 
-    }
-    return monsCount;
+	}
+	return monsCount;
 }
 
 //Returns the number of Pokemon
 static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerId, const u8 tier, const bool8 firstTrainer, const bool8 forPlayer, const u8 side) 
 {
-    int i;
+	int i;
 	u8 monsCount;
 	
 	u8 trainerGender = 0;
@@ -629,9 +629,9 @@ static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerId, const 
 		abilityArray[i] = 0;
 	}
 
-    for (i = 0; i < monsCount; ++i) 
+	for (i = 0; i < monsCount; ++i) 
 	{
-        u8 loop = 1;
+		u8 loop = 1;
 		u16 species, item;
 		u8 ability;
 		const struct BattleTowerSpread* spread = NULL;
@@ -756,7 +756,7 @@ static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerId, const 
 
 
 		CreateFrontierMon(&party[i], level, spread, trainerId, firstTrainer ^ 1, trainerGender, forPlayer);
-    }
+	}
 
 	if (!forPlayer) //Probably best to put these checks somewhere else
 	{ 
@@ -765,7 +765,7 @@ static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerId, const 
 			gBattleTypeFlags |= BATTLE_TYPE_DOUBLE;
 	}
 
-    return monsCount;
+	return monsCount;
 }
 
 static void CreateFrontierMon(struct Pokemon* mon, const u8 level, const struct BattleTowerSpread* spread, const u16 trainerId, const u8 trainerNum, const u8 trainerGender, const bool8 forPlayer)
@@ -808,7 +808,7 @@ static void CreateFrontierMon(struct Pokemon* mon, const u8 level, const struct 
 		mon->hiddenAbility = TRUE;
 	}
 
-    for (j = 0; j < MAX_MON_MOVES; j++) 
+	for (j = 0; j < MAX_MON_MOVES; j++) 
 	{
 		mon->moves[j] = spread->moves[j];
 		mon->pp[j] = gBattleMoves[spread->moves[j]].pp;
@@ -831,18 +831,18 @@ static void SetWildMonHeldItem(void)
 {
 	u16 rnd = umodsi(Random(), 100);
 	u16 species;
-    u16 var1 = 45;
-    u16 var2 = 95;
+	u16 var1 = 45;
+	u16 var2 = 95;
 
-    if (!GetMonData(&gPlayerParty[0], MON_DATA_IS_EGG, 0)
-    && GetPartyAbility(&gPlayerParty[0]) == ABILITY_COMPOUNDEYES) 
+	if (!GetMonData(&gPlayerParty[0], MON_DATA_IS_EGG, 0)
+	&& GetPartyAbility(&gPlayerParty[0]) == ABILITY_COMPOUNDEYES) 
 	{
-        var1 = 20;
-        var2 = 80;
-    }
+		var1 = 20;
+		var2 = 80;
+	}
 
-    if (!(gBattleTypeFlags & (BATTLE_TYPE_POKE_DUDE | BATTLE_TYPE_SCRIPTED_WILD_1 | BATTLE_TYPE_TRAINER)))
-    {
+	if (!(gBattleTypeFlags & (BATTLE_TYPE_POKE_DUDE | BATTLE_TYPE_SCRIPTED_WILD_1 | BATTLE_TYPE_TRAINER)))
+	{
 		for (int i = 0; i < 2; ++i) //Two possible wild opponents
 		{
 			if (i > 0 && !(gBattleTypeFlags & BATTLE_TYPE_DOUBLE))
@@ -864,7 +864,7 @@ static void SetWildMonHeldItem(void)
 			else
 				SetMonData(&gEnemyParty[i], MON_DATA_HELD_ITEM, &gBaseStats[species].item2);
 		}
-    }
+	}
 }
 
 void GiveMonNatureAndAbility(pokemon_t* mon, u8 nature, u8 abilityNum)
@@ -1529,11 +1529,11 @@ static u8 GetOpenWorldBadgeCount(void)
 //unused1 is used to hook in so don't use it for anything
 u8 ScriptGiveMon(u16 species, u8 level, u16 item, unusedArg u32 unused1, unusedArg u32 unused2, u8 ballType)
 {
-    u16 nationalDexNum;
-    int sentToPc;
-    struct Pokemon mon;
+	u16 nationalDexNum;
+	int sentToPc;
+	struct Pokemon mon;
 
-    CreateMon(&mon, species, level, 32, 0, 0, 0, 0);
+	CreateMon(&mon, species, level, 32, 0, 0, 0, 0);
 	SetMonData(&mon, MON_DATA_HELD_ITEM, &item);
 
 	#ifdef GIVEPOKEMON_BALL_HACK
@@ -1544,20 +1544,20 @@ u8 ScriptGiveMon(u16 species, u8 level, u16 item, unusedArg u32 unused1, unusedA
 	if (FlagGet(HIDDEN_ABILITY_FLAG))
 		mon.hiddenAbility = TRUE;
 
-    sentToPc = GiveMonToPlayer(&mon);
-    nationalDexNum = SpeciesToNationalPokedexNum(species);
+	sentToPc = GiveMonToPlayer(&mon);
+	nationalDexNum = SpeciesToNationalPokedexNum(species);
 
-    switch(sentToPc) {
+	switch(sentToPc) {
 		case 0:
 		case 1:
 			GetSetPokedexFlag(nationalDexNum, FLAG_SET_SEEN);
 			GetSetPokedexFlag(nationalDexNum, FLAG_SET_CAUGHT);
 			break;
-    }
+	}
 
 	unused1 += unused2 +=  ballType; //So the compiler doesn't complain
 
-    return sentToPc;
+	return sentToPc;
 }
 
 static u32 CheckShinyMon(u32 pid) 
@@ -1588,9 +1588,9 @@ static u32 CheckShinyMon(u32 pid)
 void CreateBoxMon(struct BoxPokemon* boxMon, u16 species, u8 level, u8 fixedIV, bool8 hasFixedPersonality, u32 fixedPersonality, u8 otIdType, u32 fixedOtId) 
 {
 	int i;
-    u8 speciesName[POKEMON_NAME_LENGTH + 1];
-    u32 personality;
-    u32 value;
+	u8 speciesName[POKEMON_NAME_LENGTH + 1];
+	u32 personality;
+	u32 value;
 
 #ifdef UNBOUND
 	if (FlagGet(POKEMON_RANDOMIZER_FLAG))
@@ -1604,72 +1604,72 @@ void CreateBoxMon(struct BoxPokemon* boxMon, u16 species, u8 level, u8 fixedIV, 
 	}
 #endif
 
-    ZeroBoxMonData(boxMon);
-    if (hasFixedPersonality)
-        personality = fixedPersonality;
-    else
+	ZeroBoxMonData(boxMon);
+	if (hasFixedPersonality)
+		personality = fixedPersonality;
+	else
 		personality = Random32();
 
 	personality = CheckShinyMon(personality);	//Shiny charm
-    boxMon->personality = personality;
+	boxMon->personality = personality;
 	
-    //Determine original trainer ID
-    if (otIdType == OT_ID_RANDOM_NO_SHINY) //Pokemon cannot be shiny
-    {
-        u32 shinyValue;
-        do
-        {
-            value = Random32();
-            shinyValue = HIHALF(value) ^ LOHALF(value) ^ HIHALF(personality) ^ LOHALF(personality);
-        } while (shinyValue < 8);
-    }
-    else if (otIdType == OT_ID_PRESET) //Pokemon has a preset OT ID
-        value = fixedOtId;
-    else //Player is the OT
-        value = T1_READ_32(gSaveBlock2->playerTrainerId);
-	
-    SetBoxMonData(boxMon, MON_DATA_OT_ID, &value);
+	//Determine original trainer ID
+	if (otIdType == OT_ID_RANDOM_NO_SHINY) //Pokemon cannot be shiny
+	{
+		u32 shinyValue;
+		do
+		{
+			value = Random32();
+			shinyValue = HIHALF(value) ^ LOHALF(value) ^ HIHALF(personality) ^ LOHALF(personality);
+		} while (shinyValue < 8);
+	}
+	else if (otIdType == OT_ID_PRESET) //Pokemon has a preset OT ID
+		value = fixedOtId;
+	else //Player is the OT
+		value = T1_READ_32(gSaveBlock2->playerTrainerId);
 
-    GetSpeciesName(speciesName, species);
-    SetBoxMonData(boxMon, MON_DATA_NICKNAME, speciesName);
-    SetBoxMonData(boxMon, MON_DATA_LANGUAGE, &gGameLanguage);
-    SetBoxMonData(boxMon, MON_DATA_OT_NAME, gSaveBlock2->playerName);
-    SetBoxMonData(boxMon, MON_DATA_SPECIES, &species);
-    SetBoxMonData(boxMon, MON_DATA_EXP, &gExperienceTables[gBaseStats[species].growthRate][level]);
-    SetBoxMonData(boxMon, MON_DATA_FRIENDSHIP, &gBaseStats[species].friendship);
-    value = GetCurrentRegionMapSectionId();
-    SetBoxMonData(boxMon, MON_DATA_MET_LOCATION, &value);
-    SetBoxMonData(boxMon, MON_DATA_MET_LEVEL, &level);
-    SetBoxMonData(boxMon, MON_DATA_MET_GAME, &gGameVersion);
-    value = BALL_TYPE_POKE_BALL;
-    SetBoxMonData(boxMon, MON_DATA_POKEBALL, &value);
-    SetBoxMonData(boxMon, MON_DATA_OT_GENDER, &gSaveBlock2->playerGender);
+	SetBoxMonData(boxMon, MON_DATA_OT_ID, &value);
 
-    if (fixedIV < 32)
-    {
+	GetSpeciesName(speciesName, species);
+	SetBoxMonData(boxMon, MON_DATA_NICKNAME, speciesName);
+	SetBoxMonData(boxMon, MON_DATA_LANGUAGE, &gGameLanguage);
+	SetBoxMonData(boxMon, MON_DATA_OT_NAME, gSaveBlock2->playerName);
+	SetBoxMonData(boxMon, MON_DATA_SPECIES, &species);
+	SetBoxMonData(boxMon, MON_DATA_EXP, &gExperienceTables[gBaseStats[species].growthRate][level]);
+	SetBoxMonData(boxMon, MON_DATA_FRIENDSHIP, &gBaseStats[species].friendship);
+	value = GetCurrentRegionMapSectionId();
+	SetBoxMonData(boxMon, MON_DATA_MET_LOCATION, &value);
+	SetBoxMonData(boxMon, MON_DATA_MET_LEVEL, &level);
+	SetBoxMonData(boxMon, MON_DATA_MET_GAME, &gGameVersion);
+	value = BALL_TYPE_POKE_BALL;
+	SetBoxMonData(boxMon, MON_DATA_POKEBALL, &value);
+	SetBoxMonData(boxMon, MON_DATA_OT_GENDER, &gSaveBlock2->playerGender);
+
+	if (fixedIV < 32)
+	{
 		for (i = 0; i < NUM_STATS; ++i)
 			SetBoxMonData(boxMon, MON_DATA_HP_IV + i, &fixedIV);
-    }
-    else
-    {
-        u32 iv;
-        value = Random();
+	}
+	else
+	{
+		u32 iv;
+		value = Random();
 
-        iv = value & 0x1F;
-        SetBoxMonData(boxMon, MON_DATA_HP_IV, &iv);
-        iv = (value & 0x3E0) >> 5;
-        SetBoxMonData(boxMon, MON_DATA_ATK_IV, &iv);
-        iv = (value & 0x7C00) >> 10;
-        SetBoxMonData(boxMon, MON_DATA_DEF_IV, &iv);
+		iv = value & 0x1F;
+		SetBoxMonData(boxMon, MON_DATA_HP_IV, &iv);
+		iv = (value & 0x3E0) >> 5;
+		SetBoxMonData(boxMon, MON_DATA_ATK_IV, &iv);
+		iv = (value & 0x7C00) >> 10;
+		SetBoxMonData(boxMon, MON_DATA_DEF_IV, &iv);
 
-        value = Random();
+		value = Random();
 
-        iv = value & 0x1F;
-        SetBoxMonData(boxMon, MON_DATA_SPEED_IV, &iv);
-        iv = (value & 0x3E0) >> 5;
-        SetBoxMonData(boxMon, MON_DATA_SPATK_IV, &iv);
-        iv = (value & 0x7C00) >> 10;
-        SetBoxMonData(boxMon, MON_DATA_SPDEF_IV, &iv);
+		iv = value & 0x1F;
+		SetBoxMonData(boxMon, MON_DATA_SPEED_IV, &iv);
+		iv = (value & 0x3E0) >> 5;
+		SetBoxMonData(boxMon, MON_DATA_SPATK_IV, &iv);
+		iv = (value & 0x7C00) >> 10;
+		SetBoxMonData(boxMon, MON_DATA_SPDEF_IV, &iv);
 		
 		#ifdef CREATE_WITH_X_PERFECT_IVS
 		{
@@ -1692,36 +1692,36 @@ void CreateBoxMon(struct BoxPokemon* boxMon, u16 species, u8 level, u8 fixedIV, 
 			}
 		}
 		#endif
-    }
+	}
 
-    ((struct Pokemon*) boxMon)->hiddenAbility = FALSE; //Set base hidden ability to 0
+	((struct Pokemon*) boxMon)->hiddenAbility = FALSE; //Set base hidden ability to 0
 
-    GiveBoxMonInitialMoveset(boxMon);
+	GiveBoxMonInitialMoveset(boxMon);
 }
 
 void CreateMonWithNatureLetter(struct Pokemon* mon, u16 species, u8 level, u8 fixedIV, u8 nature, u8 letter)
 {
-    u32 personality;
+	u32 personality;
 	letter -= 1;
 
-    if ((u8)(letter) < 28)
-    {
-        u16 actualLetter;
+	if ((u8)(letter) < 28)
+	{
+		u16 actualLetter;
 
-        do
-        {
+		do
+		{
 			personality = Random32();
-            actualLetter = GetUnownLetterFromPersonality(personality);
-        }
-        while (nature != GetNatureFromPersonality(personality) || actualLetter != letter);
-    }
-    else
-    {
-        CreateMonWithNature(mon, species, level, 32, nature);
+			actualLetter = GetUnownLetterFromPersonality(personality);
+		}
+		while (nature != GetNatureFromPersonality(personality) || actualLetter != letter);
+	}
+	else
+	{
+		CreateMonWithNature(mon, species, level, 32, nature);
 		return;
-    }
+	}
 
-    CreateMon(mon, species, level, fixedIV, TRUE, personality, OT_ID_PLAYER_ID, 0);
+	CreateMon(mon, species, level, fixedIV, TRUE, personality, OT_ID_PLAYER_ID, 0);
 }
 
 void TryStatusInducer(struct Pokemon* mon)

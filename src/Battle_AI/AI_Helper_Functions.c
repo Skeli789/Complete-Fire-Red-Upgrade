@@ -300,7 +300,8 @@ u8 GetBestDoubleKillingMoveScore(u16 checkMove, u8 bankAtk, u8 bankDef, u8 bankA
 			{
 				u8 status1 = gBattleMons[bankAtkPartner].status1;
 				if ((status1 & STATUS1_SLEEP) <= 1 //Partner will be awake to use move
-				&& !(status1 & STATUS1_FREEZE))
+				&& !(status1 & STATUS1_FREEZE)
+				&& !gDisableStructs[bankAtkPartner].truantCounter)
 				{
 					u16 partnerMove = gChosenMovesByBanks[bankAtkPartner];
 					if (partnerMove != MOVE_NONE) //Partner has chosen a move

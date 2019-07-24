@@ -262,6 +262,7 @@ struct MapObjectGraphicsInfo
              u8 inanimate:1;
              u8 disableReflectionPaletteLoad:1;
     /*0x0D*/ u8 tracks;
+	/*0x0E*/ u8 gender;
     /*0x10*/ const struct OamData *oam;
     /*0x14*/ const struct SubspriteTable *subspriteTables;
     /*0x18*/ const union AnimCmd *const *anims;

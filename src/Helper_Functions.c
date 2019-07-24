@@ -706,7 +706,7 @@ bool8 CanTransferItem(u16 species, u16 item, struct Pokemon* party_data) {
 	const struct Evolution* evolutions = gEvolutionTable[party_data->species];
 	int i;
 	
-	if (item == ITEM_NONE || IsMail(item))
+	if (IsMail(item))
 		return FALSE;
 	
 	switch (effect) {
@@ -756,7 +756,8 @@ bool8 CanFling(u8 ability, u16 item, struct Pokemon* mon, u8 bank, bool8 partyCh
 {
 	u8 itemEffect = ItemId_GetHoldEffect(item);
 
-	if (ability == ABILITY_KLUTZ
+	if (item == ITEM_NONE
+	|| ability == ABILITY_KLUTZ
 	|| gNewBS->MagicRoomTimer
 	|| (!partyCheck && gNewBS->EmbargoTimers[bank])
 	|| !CanTransferItem(mon->species, item, mon)
@@ -775,16 +776,21 @@ bool8 SymbiosisCanActivate(u8 giverBank, u8 receiverBank) {
 	
 	if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE) 
 	||  ABILITY(giverBank) != ABILITY_SYMBIOSIS
-	||  ITEM(receiverBank) != 0
+	||  ITEM(receiverBank) != ITEM_NONE
+	||  ITEM(giverBank) == ITEM_NONE
 	|| !CanTransferItem(gBattleMons[giverBank].species, item, GetBankPartyData(giverBank)) 
 	|| !CanTransferItem(gBattleMons[receiverBank].species, item, GetBankPartyData(receiverBank)))
 		return FALSE;
+
 	return TRUE;
 }
 
 //Sticky Hold also, but the boost ignores it
 bool8 CanKnockOffItem(u8 bank)
 {
+	if (ITEM(bank) == ITEM_NONE)
+		return FALSE;
+
 	if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER) && SIDE(bank) == B_SIDE_PLAYER) //Wild mons can't knock off items
 		return FALSE;
 	

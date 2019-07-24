@@ -411,7 +411,7 @@ void DefogHelperFunc(void)
 void ClearBeakBlastBit(void)
 {
 	if (!(gNewBS->BeakBlastByte & gBitTable[gBankAttacker])) //Forced by Encore
-		gBattlescriptCurrInstr = BattleScript_NoTargetMoveFailed;
+		gBattlescriptCurrInstr = BattleScript_NoTargetMoveFailed - 5;
 	else
 		gNewBS->BeakBlastByte &= ~(gBitTable[gBankAttacker]);
 }

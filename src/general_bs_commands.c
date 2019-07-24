@@ -1188,7 +1188,7 @@ void atk6A_removeitem(void) {
 	&& ABILITY(partner) == ABILITY_SYMBIOSIS
 	&& (!gNewBS->IncinerateCounters[bank] || oldItemEffect == ITEM_EFFECT_AIR_BALLOON) //Air Balloons can't be restored by Recycle, but they trigger Symbiosis
 	&& !(gWishFutureKnock->knockedOffPokes[SIDE(bank)] & gBitTable[gBattlerPartyIndexes[bank]])
-	&& gBattleMons[partner].item
+	&& partnerItem != ITEM_NONE
 	&& CanTransferItem(gBattleMons[bank].species, partnerItem, GetBankPartyData(bank))
 	&& CanTransferItem(gBattleMons[partner].species, partnerItem, GetBankPartyData(bank))) {
 		gBattleMons[bank].item = partnerItem;

@@ -761,7 +761,7 @@ bool8 SetMoveEffect2(void)
                 break;
             }	
 			else if (ITEM(gEffectBank) == 0
-			||  ITEM(gBankAttacker)
+			||  ITEM(gBankAttacker) != 0
 			||  !CanTransferItem(gBattleMons[gEffectBank].species, ITEM(gEffectBank), GetBankPartyData(gEffectBank))
 			||  !CanTransferItem(gBattleMons[gBankAttacker].species, ITEM(gEffectBank), GetBankPartyData(gBankAttacker))
 			||	gBattleMons[gBankAttacker].hp == 0)
