@@ -3615,7 +3615,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Lixdel[] =
 		},
 	},
 	{
-		.species = SPECIES_LANDORUS,
+		.species = SPECIES_LANDORUS_THERIAN,
 		.nature = NATURE_ADAMANT,
 		.hpIv = 31,
 		.atkIv = 31,
@@ -5454,7 +5454,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Red[] =
 		.spAtkEv = 252,
 		.spdEv = 4,
 		.ability = FRONTIER_ABILITY_HIDDEN, //Chlorophyll
-		.item = ITEM_VENUSAURITE,
+		.item = ITEM_LIFE_ORB,
 		.moves =
 		{
 			MOVE_GIGADRAIN,
