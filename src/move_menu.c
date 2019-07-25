@@ -20,6 +20,8 @@
 extern u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
 extern u8 gTypeNames[][TYPE_NAME_LENGTH + 1];
 extern const u8 sTargetIdentities[];
+extern const u16 gUserInterfaceGfx_TypeHighlightingPal[];
+extern const u8 gNoWeaknessResistanceTable[];
 
 //This file's functions:
 static bool8 TriggerMegaEvolution(void);
@@ -300,29 +302,42 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 	gBattleScripting->dmgMultiplier = 1;
 	for (i = 0; i < MAX_MON_MOVES; ++i)
 	{
-		tempMoveStruct->moveTypes[i] = GetMoveTypeSpecial(gActiveBattler, gBattleMons[gActiveBattler].moves[i]);
+		u16 move = gBattleMons[gActiveBattler].moves[i];
+
+		tempMoveStruct->moveTypes[i] = GetMoveTypeSpecial(gActiveBattler, move);
 
 		if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, gActiveBattler, FOE(gActiveBattler)) >= 2) //Because target can vary, display only attacker's modifiers
 		{
-			tempMoveStruct->movePowers[i] = GetBasePower(gActiveBattler, FOE(gActiveBattler), gBattleMons[gActiveBattler].moves[i], 
+			tempMoveStruct->movePowers[i] = GetBasePower(gActiveBattler, FOE(gActiveBattler), move, 
 									 gBattleMons[gActiveBattler].item, ITEM_EFFECT(gActiveBattler), ABILITY(gActiveBattler), 
 									 gBattleMons[gActiveBattler].status1, gBattleMons[gActiveBattler].hp, gBattleMons[gActiveBattler].maxHP, 
 									 gBattleMons[gActiveBattler].species, GetBankPartyData(gActiveBattler), FALSE, TRUE, TRUE);
 			tempMoveStruct->movePowers[i] = CalcVisualBasePower(gActiveBattler, gActiveBattler, 
-																gBattleMons[gActiveBattler].moves[i], tempMoveStruct->movePowers[i], 
+																move, tempMoveStruct->movePowers[i], 
 																tempMoveStruct->moveTypes[i], TRUE);
-			tempMoveStruct->moveAcc[i] = AccuracyCalcNoTarget(gBattleMons[gActiveBattler].moves[i], gActiveBattler);
+			tempMoveStruct->moveAcc[i] = AccuracyCalcNoTarget(move, gActiveBattler);
+			tempMoveStruct->moveResults[i] = 0;
 		}
 		else
 		{
-			tempMoveStruct->movePowers[i] = GetBasePower(gActiveBattler, FOE(gActiveBattler), gBattleMons[gActiveBattler].moves[i], 
+			tempMoveStruct->movePowers[i] = GetBasePower(gActiveBattler, FOE(gActiveBattler), move, 
 									 gBattleMons[gActiveBattler].item, ITEM_EFFECT(gActiveBattler), ABILITY(gActiveBattler), 
 									 gBattleMons[gActiveBattler].status1, gBattleMons[gActiveBattler].hp, gBattleMons[gActiveBattler].maxHP, 
 									 gBattleMons[gActiveBattler].species, GetBankPartyData(gActiveBattler), FALSE, TRUE, FALSE);
 			tempMoveStruct->movePowers[i] = CalcVisualBasePower(gActiveBattler, FOE(gActiveBattler), 
-																gBattleMons[gActiveBattler].moves[i], tempMoveStruct->movePowers[i], 
+																move, tempMoveStruct->movePowers[i], 
 																tempMoveStruct->moveTypes[i], FALSE);
-			tempMoveStruct->moveAcc[i] = AccuracyCalc(gBattleMons[gActiveBattler].moves[i], gActiveBattler, FOE(gActiveBattler));
+			tempMoveStruct->moveAcc[i] = AccuracyCalc(move, gActiveBattler, FOE(gActiveBattler));
+			
+			if (SPLIT(move) != SPLIT_STATUS)
+			{
+				u8 moveResult = TypeCalc(move, gActiveBattler, FOE(gActiveBattler), NULL, FALSE);
+				if (!(moveResult & MOVE_RESULT_NO_EFFECT) && CheckTableForMoveEffect(move, gNoWeaknessResistanceTable))
+					moveResult = 0; //These moves can have no effect, but are neither super nor not very effective
+				tempMoveStruct->moveResults[i] = moveResult;
+			}
+			else
+				tempMoveStruct->moveResults[i] = 0;
 		}
 	}
 
@@ -396,12 +411,16 @@ void EmitMoveChosen(u8 bufferId, u8 chosenMoveIndex, u8 target, u8 megaState, u8
     PrepareBufferDataTransfer(bufferId, gBattleBuffersTransferData, 7);
 }
 
-u8 sText_StabMoveInterfaceType[] = {0xFC, 0x05, 0x05, 0xFC, 0x04, 0x08, 0x0E, 0x09, 0xFF};
+u8 sText_StabMoveInterfaceType[] = {0xFC, 0x05, 0x05, 0xFC, 0x04, 0x09, 0x0E, 0x08, 0xFF};
 
+#define SUPER_EFFECTIVE_COLOURS 0
+#define NOT_VERY_EFFECTIVE_COLOURS 4
+#define NO_EFFECT_COLOURS 8
+#define REGULAR_COLOURS 12
 static void MoveSelectionDisplayMoveType(void)
 {
     u8 *txtPtr;
-	u8* stabFormating;
+	u8* formatting;
     struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct*)(&gBattleBufferA[gActiveBattler][4]);
 	
 	#ifdef DISPLAY_REAL_MOVE_TYPE_ON_MENU
@@ -410,24 +429,47 @@ static void MoveSelectionDisplayMoveType(void)
 		u8 moveType = gBattleMoves[moveInfo->moves[gMoveSelectionCursor[gActiveBattler]]].type;
 	#endif
 
-	//Update Palette Fading for STAB
-	const u16* palPtr = Pal_PPDisplay;
-	if (SPLIT(moveInfo->moves[gMoveSelectionCursor[gActiveBattler]]) != SPLIT_STATUS
-	&&	(moveType == moveInfo->monType1
-	  || moveType == moveInfo->monType2
-	  || moveType == moveInfo->monType3))
-	{	
-		gPlttBufferUnfaded[88] = palPtr[(2 * 2) + 0];
-		gPlttBufferUnfaded[89] = palPtr[(2 * 2) + 1];
-		stabFormating = sText_StabMoveInterfaceType;
-	}
-	else
-	{
-		gPlttBufferUnfaded[88] = gPlttBufferUnfaded[93];
-		gPlttBufferUnfaded[89] = gPlttBufferUnfaded[95];
-		stabFormating = gText_MoveInterfaceType;
-	}
-	
+	//Update Palette Fading for Effectiveness
+	#ifdef DISPLAY_EFFECTIVENESS_ON_MENU
+		u8 stab = 0;
+		const u16* palPtr = gUserInterfaceGfx_TypeHighlightingPal;
+		if (SPLIT(moveInfo->moves[gMoveSelectionCursor[gActiveBattler]]) != SPLIT_STATUS
+		&&	(moveType == moveInfo->monType1
+		  || moveType == moveInfo->monType2
+		  || moveType == moveInfo->monType3))
+		{	
+			stab = 2;
+		}
+
+		u8 moveResult = moveInfo->moveResults[gMoveSelectionCursor[gActiveBattler]];
+		if (moveResult & MOVE_RESULT_SUPER_EFFECTIVE)
+		{
+			gPlttBufferUnfaded[88] = palPtr[SUPER_EFFECTIVE_COLOURS + stab + 0];
+			gPlttBufferUnfaded[89] = palPtr[SUPER_EFFECTIVE_COLOURS + stab + 1];
+			formatting = sText_StabMoveInterfaceType;
+		}
+		else if (moveResult & MOVE_RESULT_NOT_VERY_EFFECTIVE)
+		{
+			gPlttBufferUnfaded[88] = palPtr[NOT_VERY_EFFECTIVE_COLOURS + stab + 0];
+			gPlttBufferUnfaded[89] = palPtr[NOT_VERY_EFFECTIVE_COLOURS + stab + 1];
+			formatting = sText_StabMoveInterfaceType;
+		}
+		else if (moveResult & MOVE_RESULT_NO_EFFECT)
+		{
+			gPlttBufferUnfaded[88] = palPtr[NO_EFFECT_COLOURS + 0]; //No STAB for moves with no effect
+			gPlttBufferUnfaded[89] = palPtr[NO_EFFECT_COLOURS + 1];
+			formatting = sText_StabMoveInterfaceType;
+		}
+		else //Nothing special about move
+		{
+			gPlttBufferUnfaded[88] = palPtr[REGULAR_COLOURS + stab + 0];
+			gPlttBufferUnfaded[89] = palPtr[REGULAR_COLOURS + stab + 1];
+			formatting = sText_StabMoveInterfaceType;
+		}
+	#else
+		formatting = gText_MoveInterfaceType;
+	#endif
+
 	CpuCopy16(&gPlttBufferUnfaded[88], &gPlttBufferFaded[88], sizeof(u16));
 	CpuCopy16(&gPlttBufferUnfaded[89], &gPlttBufferFaded[89], sizeof(u16));
 	
@@ -438,7 +480,7 @@ static void MoveSelectionDisplayMoveType(void)
     txtPtr++;
     txtPtr[0] = 1;
     txtPtr++;
-	txtPtr = StringCopy(txtPtr, stabFormating);
+	txtPtr = StringCopy(txtPtr, formatting);
 
 	StringCopy(txtPtr, gTypeNames[moveType]);
     BattlePutTextOnWindow(gDisplayedStringBattle, 8);

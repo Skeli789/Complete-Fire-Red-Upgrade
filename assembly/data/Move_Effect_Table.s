@@ -8,6 +8,7 @@
 .global SetStatusTable
 .global StatLowerTable
 .global ConfusionTable
+.global gNoWeaknessResistanceTable
 
 gBattleScriptsForMoveEffects:
 .word 0x81D6926		@EFFECT_HIT
@@ -304,4 +305,20 @@ ConfusionTable:
 .byte EFFECT_SWAGGER
 .byte EFFECT_FLATTER
 .byte EFFECT_TEETER_DANCE
+.byte MOVE_EFFECT_TABLES_TERMIN
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+gNoWeaknessResistanceTable:
+.byte EFFECT_BIDE
+.byte EFFECT_SUPER_FANG
+.byte EFFECT_DRAGON_RAGE
+.byte EFFECT_SONICBOOM
+.byte EFFECT_LEVEL_DAMAGE
+.byte EFFECT_PSYWAVE
+.byte EFFECT_MEMENTO @Final Gambit
+.byte EFFECT_ENDEAVOR
+.byte EFFECT_PAIN_SPLIT
+.byte EFFECT_COUNTER
+.byte EFFECT_MIRROR_COAT
 .byte MOVE_EFFECT_TABLES_TERMIN

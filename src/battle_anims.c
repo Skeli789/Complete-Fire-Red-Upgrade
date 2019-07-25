@@ -720,6 +720,27 @@ void AnimTask_CreateFlingItem(u8 taskId)
 	DestroyAnimVisualTask(taskId);
 }
 
+void AnimTask_CreateStealItem(u8 taskId)
+{
+	u8 iconSpriteId = AddItemIconSprite(ITEM_TAG, ITEM_TAG, gLastUsedItem);
+
+	if (iconSpriteId != MAX_SPRITES)
+	{
+		gSprites[iconSpriteId].oam.priority = 2;
+		gSprites[iconSpriteId].affineAnims = (void*) 0x83E2E80;
+		gSprites[iconSpriteId].callback = (void*) 0x80A36B5;
+		++gAnimVisualTaskCount;
+	}
+	DestroyAnimVisualTask(taskId);
+}
+
+void UpdatedAnimStealItemFinalCallback(struct Sprite* sprite)
+{
+    sprite->data[0]++;
+    if (sprite->data[0] > 50)
+        DestroyAnimSprite(sprite);
+}
+
 void SpriteCB_SunsteelStrikeRings(struct Sprite* sprite)
 {
 	if (GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER)

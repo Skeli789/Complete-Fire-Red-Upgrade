@@ -27,7 +27,7 @@ gBattleAnims_General:
 .word 0x81d5fe2	@ ANIM_HAIL
 .word 0x81d5fe7	@ ANIM_LEECH_SEED_HEAL
 .word 0x81d5ff5	@ ANIM_HIT
-.word 0x81d6026	@ ANIM_STEAL_ITEM
+.word ANIM_STEAL_ITEM
 .word 0x81d604b	@ ANIM_WIGGLE
 .word 0x81d60a9	@ ANIM_FUTURE_SIGHT_HIT
 .word 0x81d6108	@ ANIM_DOOM_DESIRE_HIT
@@ -82,9 +82,10 @@ gBattleAnims_General:
 .word ANIM_TOTEM_BOOST
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 .pool
 ANIM_USEITEM:
-	loadparticle ANIM_TAG_THIN_RING 
+	loadparticle ANIM_TAG_THIN_RING
 	loadparticle ANIM_TAG_SPARKLE_2 
 	pause 0x0
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x2 0x0 0x9 0x7FFF
@@ -98,6 +99,19 @@ ANIM_USEITEM:
 	launchtemplate 0x83E7B24 0x2 0x5 0x2 0x3 0x7 0x0 0x67f1  
 	launchtemplate 0x83E4094 0x3 0x4 0x0 0x0 0x0 0x0	 
 	waitanimation 
+	endanimation
+
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.pool
+ANIM_STEAL_ITEM:
+	launchtask 0x80BC0FD 0x2 0x0
+	launchtask 0x80F1701 0x2 0x0
+	pause 0x1
+	launchtask AnimTask_CreateStealItem 0x2 0x5 0x0 0xFFFB 0xA 0x2 0xFFFF
+	waitanimation
+	unloadparticle ANIM_TAG_ITEM_BAG @;The generated item sprite uses this tag
 	endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

@@ -155,3 +155,6 @@ PhysicalSpecialSplitIconRoutine 0813A1A0
 scrB3_CheckCoins 0815FC80
 scrB4_AddCoins 0815FC84
 scrB5_SubtractCoins 0815FC88
+
+##Animations
+UpdatedAnimStealItemFinalCallback 80A37B8

@@ -741,6 +741,19 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
 				&& gBattleMons[gBankAttacker].hp != 0
 				&& gBattleMons[gBankAttacker].item == ITEM_NONE) 
 				{
+					gEffectBank = bank;
+				
+					gBattleMons[bank].item = 0;
+					gBattleMons[gBankAttacker].item = gLastUsedItem;
+
+					gActiveBattler = gBankAttacker;
+					EmitSetMonData(0, REQUEST_HELDITEM_BATTLE, 0, 2, &gLastUsedItem);
+					MarkBufferBankForExecution(gActiveBattler);
+
+					gActiveBattler = bank;
+					EmitSetMonData(0, REQUEST_HELDITEM_BATTLE, 0, 2, &gBattleMons[gActiveBattler].item);
+					MarkBufferBankForExecution(gActiveBattler);
+					
 					BattleScriptPushCursor();
 					gBattlescriptCurrInstr = BattleScript_StickyBarbTransfer;
 					gActiveBattler = gBankAttacker;

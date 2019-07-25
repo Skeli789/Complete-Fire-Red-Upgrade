@@ -3173,6 +3173,10 @@ FinalGambitBS:
 	waitstateatk
 	graphicalhpupdate BANK_TARGET
 	datahpupdate BANK_TARGET
+	critmessage
+	waitmessage DELAY_1SECOND
+	resultmessage
+	waitmessage DELAY_1SECOND
 	seteffectwithchancetarget
 	prefaintmoveendeffects 0x0
 	faintpokemonaftermove

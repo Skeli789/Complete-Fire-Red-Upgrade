@@ -274,14 +274,14 @@ BattleScript_ItemSteal:
 ThiefStealBS:
 	jumpifbyte EQUALS MAGICIAN_HELPER 0x1 MagicianStealBS
 	jumpifbyte EQUALS MAGICIAN_HELPER 0x2 PickpocketStealBS
-	playanimation BANK_TARGET 0x10 0x0
+	playanimation BANK_TARGET ANIM_STEAL_ITEM 0x0
 	printstring 0x8E
 	waitmessage 0x40
 	return
 
 MagicianStealBS:
 	setbyte MAGICIAN_HELPER 0x0
-	playanimation BANK_TARGET 0x10 0x0
+	playanimation BANK_TARGET ANIM_STEAL_ITEM 0x0
 	setword BATTLE_STRING_LOADER MagicianStealString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
@@ -291,7 +291,7 @@ PickpocketStealBS:
 	setbyte MAGICIAN_HELPER 0x0
 	copybyte BATTLE_SCRIPTING_BANK USER_BANK
 	call BattleScript_AbilityPopUp
-	playanimation BANK_TARGET 0x10 0x0
+	playanimation BANK_TARGET ANIM_STEAL_ITEM 0x0
 	setword BATTLE_STRING_LOADER PickpocketStealString
 	printstring 0x184
 	waitmessage DELAY_1SECOND

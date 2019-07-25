@@ -4714,8 +4714,8 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.item = ITEM_DAMP_ROCK,
 		.moves =
 		{
-			MOVE_LIQUIDATION,
 			MOVE_STONEEDGE,
+			MOVE_LIQUIDATION,
 			MOVE_SUPERPOWER,
 			MOVE_RAINDANCE,
 		},
@@ -4736,8 +4736,8 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.item = ITEM_FOCUS_SASH,
 		.moves =
 		{
-			MOVE_LIQUIDATION,
 			MOVE_ROCKSLIDE,
+			MOVE_LIQUIDATION,
 			MOVE_AQUAJET,
 			MOVE_SWORDSDANCE,
 		},

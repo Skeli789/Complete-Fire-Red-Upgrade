@@ -106,12 +106,15 @@ struct ChooseMoveStruct
     u16 moves[MAX_MON_MOVES];
     u8 currentPp[MAX_MON_MOVES];
     u8 maxPp[MAX_MON_MOVES];
-	u8 moveTypes[MAX_MON_MOVES];
-	u16 movePowers[MAX_MON_MOVES];
-	u16 moveAcc[MAX_MON_MOVES];
     u16 species;
     u8 monType1;
     u8 monType2;
+	
+//New Data - Old data is memcpy so don't touch
+	u8 moveTypes[MAX_MON_MOVES];
+	u8 moveResults[MAX_MON_MOVES];
+	u16 movePowers[MAX_MON_MOVES];
+	u16 moveAcc[MAX_MON_MOVES];
 	u8 monType3;
 	bool8 canMegaEvolve;
 	u8 megaVariance;

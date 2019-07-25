@@ -398,7 +398,8 @@ BattleScript_MicleBerryEnd2:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_StickyBarbTransfer:
-	playanimation 0xA ANIM_STEAL_ITEM 0x0
+	callasm TransferLastUsedItem
+	playanimation BANK_SCRIPTING ANIM_STEAL_ITEM 0x0
 	setword BATTLE_STRING_LOADER StickyBarbString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
