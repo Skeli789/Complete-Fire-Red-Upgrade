@@ -172,6 +172,7 @@ enum //These vars need to be one after the other (hence the enum)
 #define DISPLAY_REAL_MOVE_TYPE_ON_MENU //If this line remains uncommented, the "true" move type will be displayed (such as Hidden Power, Weather Ball in Weather, etc.)
 #define DISPLAY_REAL_ACCURACY_ON_MENU //If this line remains uncommented, the "true" move accuracy will be displayed (Eg. The move Psychic on a Pokemon with Compound Eyes will have its accuracy appear as 130)
 #define DISPLAY_REAL_POWER_ON_MENU //If this line remains uncommented, the "true" move power will be displayed (Eg. Moves like Fury Cutter will show their correct power)
+#define DISPLAY_EFFECTIVENESS_ON_MENU //If this line remains uncommented, move types will have their effectiveness indicated on the move menu by highlighting the move type
 //#define CUSTOM_BATTLE_BACKGROUNDS //If this line remains uncommented, setting BATTLE_BG_VAR will allow custom backgrounds to be loaded in battles
 #define OVERWRITE_BG_FOR_LEADER_CHAMPION //If this remains uncommented, special Battle Background palettes will be loaded in for battles against Gym Leaders and the Champion
 #define BRIDGE_FIX //If this remains uncommented, the water battle background will only be loaded if the player's surfing sprite is shown

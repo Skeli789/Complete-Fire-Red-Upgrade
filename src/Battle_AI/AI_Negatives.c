@@ -413,10 +413,39 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		case EFFECT_EXPLOSION:
 		#ifdef OKAY_WITH_AI_SUICIDE
 			if (NO_MOLD_BREAKERS(atkAbility, move) && ABILITY_PRESENT(ABILITY_DAMP))
+			{
 				DECREASE_VIABILITY(10);
-			else if (ViableMonCountFromBank(bankDef) > 1	//If the Target only has one PKMN left,
-			|| !MoveKnocksOutXHits(move, bankAtk, bankDef, 1))		//and the AI can knock out the target,
-				DECREASE_VIABILITY(4);								//then the AI can use Explosion to win the battle
+			}
+			else if (ViableMonCountFromBank(bankDef) == 1 //If the Target only has one PKMN left
+			&& MoveKnocksOutXHits(move, bankAtk, bankDef, 1)) //The AI can knock out the target
+			{
+				//Good to use move
+			}
+			else if (IsDoubleBattle())
+			{
+				if (ViableMonCountFromBank(bankDef) == 2 //If the Target has both Pokemon remaining in doubles
+				&& MoveKnocksOutXHits(move, bankAtk, bankDef, 1)
+				&& MoveKnocksOutXHits(move, bankAtk, bankDefPartner, 1))
+				{
+					//Good to use move
+				}
+
+				DECREASE_VIABILITY(4);			
+			}
+			else //Single Battle
+			{
+				if (MoveKnocksOutXHits(move, bankAtk, bankDef, 1)) //The AI can knock out the target
+				{
+					if (ViableMonCountFromBank(bankDef) == 1) //If the Target only has one PKMN left
+					{
+						//Good to use move
+					}
+					else if (CanKnockOutWithoutMove(move, bankAtk, bankDef))
+						DECREASE_VIABILITY(4); //Better to use a different move to knock out
+				}
+				else
+					DECREASE_VIABILITY(4);
+			}
 		#else
 			DECREASE_VIABILITY(10);
 		#endif
