@@ -67,6 +67,7 @@ sp059_BufferSpeciesRoamingText 0815FEC4
 #sp05A_WildDataSwitch 0815FEC0
 #sp05B_WildDataSwitchCanceller 0815FEC4
 
+sp061_LoadTimerFromVariable 0815FEE4
 sp062_PokemonEraser 0815FEE8
 sp063_StatusChecker 0815FEEC
 sp064_InflictStatus 0815FEF0

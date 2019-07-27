@@ -1209,8 +1209,8 @@ void sp046_StartTimer(void)
 	gGbaTimer->timerOn = 0x84;
 }
 
-//@Details: Pauses the timer
-void sp047_HaltTimer(void) 
+//@Details: Pauses the timer, saves val to gTimerValue
+void sp047_HaltTimer(void)
 {
 	#ifdef SAVE_BLOCK_EXPANSION
 		gTimerValue = gGbaTimer->timerVal;
@@ -1234,17 +1234,14 @@ void sp048_ResumeTimer(void)
 //@Returns: The time on the timer.
 u16 sp049_StopTimer(void) 
 {
-	gGbaTimer->timerOn = 0;
-	gGbaTimer->timerFlags = 0;
-	u16 time = gGbaTimer->timerVal;
-	
-	gGbaTimer->init = time;
-	gGbaTimer->timerVal = time;
-	return time;
+	gGbaTimer->timerOn ^= 0x80;
+	gGbaTimer->timerFlags ^= 0x80;
+	return gGbaTimer->timerVal;
+
 }
 
 //@Returns: The time on the timer.
-u16 sp04A_GetTimerValue(void) 
+u16 sp04A_GetTimerValue(void)
 {
 	return gGbaTimer->timerVal;
 }
@@ -1301,21 +1298,20 @@ void sp04E_SaveTimerValue(void)
 
 
 //@Details: Starts the timer with the value stored by
-//			Special 0x4E.
-void sp04F_StartTimerAtTime(void) 
+//			Special 0x4E
+//		or manually write start time at gTimerValue
+// redundant after fixes.
+void sp04F_StartTimerAtTime(void)
 {
 #ifdef SAVE_BLOCK_EXPANSION
-	sp046_StartTimer();
-	gGbaTimer->timerOn = 0;
-	gGbaTimer->timerVal = gTimerValue;
-	gGbaTimer->timerOn = 0x84;
+	sp048_ResumeTimer();
 #endif
 }
 
 
 //@Details: Stores the timer value stored by
 //			Special 0x4E.
-//@Returns: Var 0x8006 - Timer time.
+//@Returns: Var inside var 0x8006 - Timer time.
 void sp050_StoreTimerToVariable(void) 
 {
 #ifdef SAVE_BLOCK_EXPANSION
@@ -1327,7 +1323,8 @@ void sp050_StoreTimerToVariable(void)
 //@Details: Loads the value at a given variable and stores
 //			it to the saved timer.
 //@Input:	Var 0x8006 - Variable that is holding timer.
-void sp061_LoadTimerFromVariable(void) {
+void sp061_LoadTimerFromVariable(void)
+{
 #ifdef SAVE_BLOCK_EXPANSION
 	gTimerValue = VarGet(Var8006);
 #endif
