@@ -20641,7 +20641,7 @@ ANIM_LETS_SNUGGLE_FOREVER:
 	launchtemplate SNUGGLE_EYES 0xd 0x2 0xfff6 0xfff2
 	pause 0x20
 	launchtemplate Template_Pal_Fade 0x2 0x5 PAL_DEF 0x1 0x0 0x10 0x579D
-	launchtask 0x80a7fb1 0x5 0x0
+	launchtask AnimTask_GrowTarget 0x5 0x0
 	pause 0x5
 	loadparticle ANIM_TAG_IMPACT @hit
 	loadparticle ANIM_TAG_PAIN_SPLIT @painsplit
@@ -20681,15 +20681,18 @@ ANIM_LETS_SNUGGLE_FOREVER:
 	stopmusic
 	waitanimation
 	pause 0x10
-	launchtemplate Template_Pal_Fade 0xa 0x5 PAL_ALL 0x0 0x0 0x10 0x7fff
-	pause 0x0
-	loaddefaultBG
-	pause 0x18
-	waitfortransparentBG
 	makebankvisible bank_attacker
 	makebankvisible bank_target
 	makebankvisible attacker_partner
 	makebankvisible target_partner
+	loaddefaultBG
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ALL 0x2 0x10 0x10 0x0 @everything to black
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ALL 0x2 0x10 0x0 0x0 @everything from black
+	setarg 0x7 0xffff
+	waitfortransparentBG
+	waitanimation
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ALL_BANKS 0x2 0x0 0x0 0x0
+	waitanimation
 	endanimation
 	
 SNUGGLE_TEARS:

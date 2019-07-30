@@ -104,6 +104,7 @@ static void Task_HandleSpecialBattleAnimation(u8 taskId);
 static bool8 ShouldAnimBeDoneRegardlessOfSubsitute(u8 animId);
 static bool8 ShouldSubstituteRecedeForSpecialBattleAnim(u8 animId);
 static void TrySwapBackupSpeciesWithSpecies(u8 activeBattler, u8 animId);
+static void AnimTask_GrowStep(u8 taskId);
 
 bank_t LoadBattleAnimTarget(u8 arg)
 {
@@ -895,6 +896,39 @@ void SpriteCB_HydroCannonImpact(struct Sprite *sprite)
     sprite->callback = DestroyAnimSprite;
 }
 
+void SpriteCB_SoulStealingStar(struct Sprite *sprite)
+{
+	sprite->pos1.x += gBattleAnimArgs[0];
+	sprite->pos1.y += gBattleAnimArgs[1];
+	sprite->data[0] = gBattleAnimArgs[3];
+	sprite->data[1] = gBattleAnimArgs[4];
+	sprite->data[2] = gBattleAnimArgs[5];
+	sprite->callback = (void*) 0x80B7C11;
+}
+
+// Scales up the target mon sprite
+// Used in Let's Snuggle Forever
+// No args.
+#define ANIM_TARGET 1
+void AnimTask_GrowTarget(u8 taskId)
+{
+    u8 spriteId = GetAnimBattlerSpriteId(ANIM_TARGET);
+    PrepareBattlerSpriteForRotScale(spriteId, ST_OAM_OBJ_BLEND);
+    SetSpriteRotScale(spriteId, 0xD0, 0xD0, 0);
+    gTasks[taskId].data[0] = 120;
+    gTasks[taskId].func = AnimTask_GrowStep;
+}
+
+static void AnimTask_GrowStep(u8 taskId)
+{
+    if (--gTasks[taskId].data[0] == -1)
+    {
+        u8 spriteId = GetAnimBattlerSpriteId(ANIM_TARGET);
+        ResetSpriteRotScale(spriteId);
+        DestroyAnimVisualTask(taskId);
+    }
+}
+
 void DoubleWildAnimBallThrowFix(void)
 {
 	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && !(gBattleTypeFlags & BATTLE_TYPE_TRAINER))
@@ -904,16 +938,6 @@ void DoubleWildAnimBallThrowFix(void)
 		else
 			gBattleAnimTarget = GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
 	}
-}
-
-void SpriteCB_SoulStealingStar(struct Sprite *sprite)
-{
-	sprite->pos1.x += gBattleAnimArgs[0];
-	sprite->pos1.y += gBattleAnimArgs[1];
-	sprite->data[0] = gBattleAnimArgs[3];
-	sprite->data[1] = gBattleAnimArgs[4];
-	sprite->data[2] = gBattleAnimArgs[5];
-	sprite->callback = (void*) 0x80B7C11;
 }
 
 #define RESTORE_HIDDEN_HEALTHBOXES									\

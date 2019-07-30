@@ -393,6 +393,10 @@ void __attribute__((long_call)) SpriteCB_AnimSolarbeamBigOrb(struct Sprite *spri
 void __attribute__((long_call)) InitAnimLinearTranslation(struct Sprite *sprite);
 u16 __attribute__((long_call)) ArcTan2Neg(s16 a, s16 b);
 void __attribute__((long_call)) TrySetSpriteRotScale(struct Sprite *sprite, bool8 a2, s16 xScale, s16 yScale, u16 rotation);
+void __attribute__((long_call)) PrepareBattlerSpriteForRotScale(u8 spriteId, u8 objMode);
+void __attribute__((long_call)) ResetSpriteRotScale(u8 spriteId);
+void __attribute__((long_call)) SetSpriteRotScale(u8 spriteId, s16 xScale, s16 yScale, u16 rotation);
+u8 __attribute__((long_call)) GetAnimBattlerSpriteId(u8 wantedBattler);
 
 void __attribute__((long_call)) StartAnimLinearTranslation(struct Sprite *sprite);
 
