@@ -536,18 +536,53 @@ static bool8 FindMonThatAbsorbsOpponentsMove(void)
 
 static bool8 ShouldSwitchIfNaturalCureOrRegenerator(void)
 {
+	u8 battlerIn1, battlerIn2;
+	u8 foe1, foe2;
+	u16 aiMovePrediction;
+	u16 foe1MovePrediction, foe2MovePrediction;
+
+	LoadBattlersAndFoes(&battlerIn1, &battlerIn2, &foe1, &foe2);
+
 	switch (ABILITY(gActiveBattler)) {
 		case ABILITY_NATURALCURE:
 			if (gBattleMons[gActiveBattler].status1 & (STATUS1_SLEEP | STATUS1_FREEZE))
 				break;
-			if (gBattleMons[gActiveBattler].hp < gBattleMons[gActiveBattler].maxHP / 2)
-				return FALSE;
-			break;
-		//Try switch if less than half health
+			if (gBattleMons[gActiveBattler].status1 //Has regular status and over half health
+			&& gBattleMons[gActiveBattler].hp >= gBattleMons[gActiveBattler].maxHP / 2)
+				break;
+			return FALSE;
+
+		//Try switch if less than half health, enemy can kill, and mon can't kill enemy first
 		case ABILITY_REGENERATOR:
 			if (gBattleMons[gActiveBattler].hp > gBattleMons[gActiveBattler].maxHP / 2)
 				return FALSE;
-			break;
+				
+			foe1MovePrediction = IsValidMovePrediction(foe1, gActiveBattler);
+			foe2MovePrediction = IsValidMovePrediction(foe2, gActiveBattler);
+
+			if ((BATTLER_ALIVE(foe1) && foe1MovePrediction != MOVE_NONE && MoveKnocksOutXHits(foe1MovePrediction, foe1, gActiveBattler, 1)) //Foe can kill AI
+			|| (IsDoubleBattle() && BATTLER_ALIVE(foe2) && foe2MovePrediction != MOVE_NONE && MoveKnocksOutXHits(foe2MovePrediction, foe2, gActiveBattler, 1)))
+			{
+				if (BATTLER_ALIVE(foe1))
+				{
+					aiMovePrediction = IsValidMovePrediction(gActiveBattler, foe1);
+					if (aiMovePrediction != MOVE_NONE && MoveWouldHitFirst(aiMovePrediction, gActiveBattler, foe1) && MoveKnocksOutXHits(aiMovePrediction, gActiveBattler, foe1, 1))
+						return FALSE; //Don't switch if can knock out enemy first or enemy can't kill
+					else
+						break;
+				}
+
+				if (IsDoubleBattle() && BATTLER_ALIVE(foe2))
+				{
+					aiMovePrediction = IsValidMovePrediction(gActiveBattler, foe2);
+					if (aiMovePrediction != MOVE_NONE && MoveWouldHitFirst(aiMovePrediction, gActiveBattler, foe2) && MoveKnocksOutXHits(aiMovePrediction, gActiveBattler, foe2, 1))
+						return FALSE; //Don't switch if can knock out enemy first or enemy can't kill
+					else
+						break;
+				}
+			}
+
+			return FALSE;
 		
 		default:
 			return FALSE;

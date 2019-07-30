@@ -1271,11 +1271,15 @@ bool8 MoveThatCanHelpAttacksHitInMoveset(u8 bank)
 bool8 OnlyBadMovesLeftInMoveset(u8 bankAtk, u8 bankDef)
 {
 	u8 viability;
+	u16 move;
+	u32 dmg;
+	u8 numDamageMoves = 0;
+
 	u8 moveLimitations = CheckMoveLimitations(gActiveBattler, 0, 0xFF);
 
 	for (int i = 0; i < MAX_MON_MOVES; ++i)
 	{
-		u16 move = GetBattleMonMove(bankAtk, i);
+		move = GetBattleMonMove(bankAtk, i);
 
 		if (move == MOVE_NONE)
 			break;
@@ -1284,11 +1288,51 @@ bool8 OnlyBadMovesLeftInMoveset(u8 bankAtk, u8 bankDef)
 		{
 			viability = AI_Script_Negatives(bankAtk, bankDef, move, 100);
 			if (viability >= 100)
-				return FALSE;
+			{
+				if (SPLIT(move) == SPLIT_STATUS)
+					return FALSE; //Has viable status move
+
+				++numDamageMoves; //By default can't be a status move here
+			}
 		}
 	}
 	
-	return TRUE;
+	if (IsDoubleBattle() || !MoveEffectInMoveset(EFFECT_PROTECT, bankAtk)) //Single battle protector usually protect to stall
+	{
+		if (numDamageMoves == 0)
+		{
+			return TRUE; //Legit no moves left
+		}
+		else if (!MoveEffectInMoveset(EFFECT_BATON_PASS, bankAtk) //U-Turn/Volt Switch switch on their own
+		&& numDamageMoves == 1) //Only 1 viable damaging move left
+		{
+			//This is meant to help the Pokemon with a single attacking move
+			//and a bunch of setup moves to know they should switch out instead
+			//of trying to attack the enemy with their weak move.
+
+			move = gNewBS->strongestMove[bankAtk][bankDef]; //Assume the usuable damage move is the strongest move
+			dmg = CalcFinalAIMoveDamage(move, bankAtk, bankDef, 1);
+
+			if (dmg < gBattleMons[bankDef].hp) //Move doesn't KO
+			{
+				if (HealingMoveInMoveset(bankDef) //Target can heal itself with move
+				||  GetAmountToRecoverBy(bankDef, bankAtk, MOVE_PROTECT)) //Target can heal itself with ability/item
+				{
+					if (dmg >= gBattleMons[bankDef].maxHP / 2) //Damage deals half or more of max health
+						return FALSE;
+				}
+				else
+				{
+					if (dmg >= gBattleMons[bankDef].maxHP / 3) //Damage deals a third or more of max health
+						return FALSE;
+				}
+			}
+
+			return TRUE;
+		}
+	}
+	
+	return FALSE; //Has some moves to use
 }
 
 u16 TryReplaceMoveWithZMove(u8 bankAtk, u16 move)

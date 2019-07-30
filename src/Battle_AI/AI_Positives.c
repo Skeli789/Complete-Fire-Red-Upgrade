@@ -915,7 +915,8 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 				case MOVE_ENDURE:
 					if (CanKnockOut(bankDef, bankAtk))
 					{
-						if (MoveEffectInMoveset(EFFECT_FLAIL, bankAtk))
+						if (MoveEffectInMoveset(EFFECT_FLAIL, bankAtk)
+						||  MoveEffectInMoveset(EFFECT_ENDEAVOR, bankAtk))
 							INCREASE_STATUS_VIABILITY(3);
 							
 						if (IsPinchBerryItemEffect(atkItemEffect))
@@ -1429,11 +1430,16 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 	
 				case ITEM_EFFECT_TOXIC_ORB:
 					if (CanBePoisoned(bankDef, bankDef, FALSE)
-					&& !(atkAbility = ABILITY_POISONHEAL
+					&& !(atkAbility == ABILITY_POISONHEAL
 					 || atkAbility == ABILITY_TOXICBOOST
 					 || atkAbility == ABILITY_QUICKFEET
 					 || atkAbility == ABILITY_MAGICGUARD
-					 || MoveInMoveset(MOVE_FACADE, bankAtk)))
+					 || MoveInMoveset(MOVE_FACADE, bankAtk))
+					&& !(defAbility == ABILITY_POISONHEAL
+					 || defAbility == ABILITY_TOXICBOOST
+					 || defAbility == ABILITY_QUICKFEET
+					 || defAbility == ABILITY_MAGICGUARD
+					 || MoveInMoveset(MOVE_FACADE, bankDef)))
 						INCREASE_STATUS_VIABILITY(2);
 					break;
 					
@@ -1442,7 +1448,11 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 					&& !(atkAbility == ABILITY_GUTS
 					 || atkAbility == ABILITY_FLAREBOOST
 					 || atkAbility == ABILITY_MAGICGUARD
-					 || MoveInMoveset(MOVE_FACADE, bankAtk)))
+					 || MoveInMoveset(MOVE_FACADE, bankAtk))
+					&& !(defAbility == ABILITY_GUTS
+					 || defAbility == ABILITY_FLAREBOOST
+					 || defAbility == ABILITY_MAGICGUARD
+					 || MoveInMoveset(MOVE_FACADE, bankDef)))
 						INCREASE_STATUS_VIABILITY(2);
 					break;
 					
@@ -1463,7 +1473,48 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 						
 				default:
 					if (move != MOVE_BESTOW && atkItem == ITEM_NONE)
-						INCREASE_STATUS_VIABILITY(1);
+					{
+						switch (defItemEffect) {
+							case ITEM_EFFECT_CHOICE_BAND:
+								break;
+				
+							case ITEM_EFFECT_TOXIC_ORB:
+								if (CanBePoisoned(bankAtk, bankAtk, FALSE)
+								&& (atkAbility == ABILITY_POISONHEAL
+								 || atkAbility == ABILITY_TOXICBOOST
+								 || atkAbility == ABILITY_QUICKFEET
+								 || atkAbility == ABILITY_MAGICGUARD
+								 || MoveInMoveset(MOVE_FACADE, bankAtk)))
+									INCREASE_STATUS_VIABILITY(2);
+								break;
+								
+							case ITEM_EFFECT_FLAME_ORB:
+								if (CanBeBurned(bankAtk, FALSE)
+								&& (atkAbility == ABILITY_GUTS
+								 || atkAbility == ABILITY_FLAREBOOST
+								 || atkAbility == ABILITY_MAGICGUARD
+								 || MoveInMoveset(MOVE_FACADE, bankAtk)))
+									INCREASE_STATUS_VIABILITY(2);
+								break;
+								
+							case ITEM_EFFECT_BLACK_SLUDGE:
+								if (IsOfType(bankAtk, TYPE_POISON))
+									INCREASE_STATUS_VIABILITY(3);
+								break;
+								
+							case ITEM_EFFECT_IRON_BALL:
+								if (MoveInMoveset(MOVE_FLING, bankAtk))
+									INCREASE_STATUS_VIABILITY(2);
+								break;
+								
+							case ITEM_EFFECT_LAGGING_TAIL:
+							case ITEM_EFFECT_STICKY_BARB:
+								break;
+								
+							default:
+								INCREASE_STATUS_VIABILITY(1);
+						}
+					}
 			}
 			break;
 		

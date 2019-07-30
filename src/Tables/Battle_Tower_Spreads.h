@@ -27504,7 +27504,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.defEv = 104,
 		.spDefEv = 156,
 		.ability = FRONTIER_ABILITY_1,
-		.item = ITEM_IRON_BALL,
+		.item = ITEM_MACHO_BRACE,
 		.moves =
 		{
 			MOVE_GYROBALL,
@@ -29959,7 +29959,7 @@ const struct BattleTowerSpread gFrontierLegendarySpreads[] =
 		.defEv = 4,
 		.spDefEv = 252,
 		.ability = FRONTIER_ABILITY_1,
-		.item = ITEM_IRON_BALL,
+		.item = ITEM_MACHO_BRACE,
 		.moves =
 		{
 			MOVE_SHADOWBALL,

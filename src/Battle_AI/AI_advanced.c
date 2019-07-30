@@ -71,12 +71,12 @@ bool8 IsClassBatonPass(u8 class)
 
 bool8 IsClassScreener(u8 class)
 {
-	return class == FIGHT_CLASS_TEAM_SUPPORT_CLERIC;
+	return class == FIGHT_CLASS_TEAM_SUPPORT_SCREENS;
 }
 
 bool8 IsClassCleric(u8 class)
 {
-	return class == FIGHT_CLASS_TEAM_SUPPORT_SCREENS;
+	return class == FIGHT_CLASS_TEAM_SUPPORT_CLERIC;
 }
 
 bool8 IsClassPhazer(u8 class)
@@ -91,10 +91,10 @@ bool8 IsClassEntryHazards(u8 class)
 
 u8 PredictBankFightingStyle(u8 bank)
 {
-	return PredictFightingStyle(gBattleMons[bank].moves, ITEM_EFFECT(bank));
+	return PredictFightingStyle(gBattleMons[bank].moves, ITEM_EFFECT(bank), bank);
 }
 
-u8 PredictFightingStyle(const u16* const moves, const u8 itemEffect)
+u8 PredictFightingStyle(const u16* const moves, const u8 itemEffect, const u8 bank)
 {
 	int i;
 	u8 class = FIGHT_CLASS_NONE;
@@ -108,12 +108,22 @@ u8 PredictFightingStyle(const u16* const moves, const u8 itemEffect)
 		u16 move = moves[i];
 		u8 moveEffect = gBattleMoves[move].effect;
 
-		if (move == MOVE_BATONPASS
-		&& ((!IsDoubleBattle() && ViableMonCountFromBank(bank) > 1)
-		  || (IsDoubleBattle() && ViableMonCountFromBank(bank) > 2)))
-			class = FIGHT_CLASS_TEAM_SUPPORT_BATON_PASS;
+		if (move == MOVE_BATONPASS)
+		{
+			if (bank != 0xFF)
+			{
+				if ((!IsDoubleBattle() && ViableMonCountFromBank(bank) > 1)
+				  || (IsDoubleBattle() && ViableMonCountFromBank(bank) > 2))
+					class = FIGHT_CLASS_TEAM_SUPPORT_BATON_PASS;
+				else
+					goto MOVE_EFFECT_SWITCH;
+			}
+			else
+				class = FIGHT_CLASS_TEAM_SUPPORT_BATON_PASS;
+		}
 		else
 		{
+		MOVE_EFFECT_SWITCH:
 			switch (moveEffect) {
 				case EFFECT_ROAR:
 				case EFFECT_HAZE:

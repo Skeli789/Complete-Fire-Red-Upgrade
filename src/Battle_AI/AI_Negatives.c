@@ -391,6 +391,12 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			goto AI_STANDARD_DAMAGE;
 
 		case EFFECT_SLEEP:
+			if (AI_SpecialTypeCalc(move, bankAtk, bankDef) & MOVE_RESULT_NO_EFFECT)
+			{
+				DECREASE_VIABILITY(10);
+				break;
+			}
+
 		AI_CHECK_SLEEP: ;
 			if (!CanBePutToSleep(bankDef, TRUE)
 			|| (MoveBlockedBySubstitute(move, bankAtk, bankDef)))
@@ -832,6 +838,12 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			&& STAT_STAGE(bankDef, STAT_STAGE_SPEED) > STAT_STAGE_MIN
 			&& defAbility != ABILITY_CONTRARY)
 				break;
+			
+			if (AI_SpecialTypeCalc(move, bankAtk, bankDef) & MOVE_RESULT_NO_EFFECT)
+			{
+				DECREASE_VIABILITY(10);
+				break;
+			}
 		
 		AI_POISON_CHECK: ;
 			if (!CanBePoisoned(bankDef, bankAtk, TRUE)
@@ -945,7 +957,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			|| MoveBlockedBySubstitute(move, bankAtk, bankDef))
 				DECREASE_VIABILITY(10);
 			else if (move != MOVE_GLARE
-				&& AI_SpecialTypeCalc(move, bankAtk, bankDef) & (MOVE_RESULT_NO_EFFECT | MOVE_RESULT_MISSED))
+				&& AI_SpecialTypeCalc(move, bankAtk, bankDef) & MOVE_RESULT_NO_EFFECT)
 			{
 				DECREASE_VIABILITY(10);
 			}
@@ -1338,7 +1350,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			{
 				//Check Substitute, Aqua Ring, Magnet Rise, Ingrain, and stats
 				if (atkStatus2 & STATUS2_SUBSTITUTE
-				|| (atkStatus3 & (STATUS3_ROOTED | STATUS3_AQUA_RING | STATUS3_LEVITATING))
+				|| (atkStatus3 & (STATUS3_ROOTED | STATUS3_AQUA_RING | STATUS3_LEVITATING | STATUS3_POWER_TRICK))
 				|| AnyStatIsRaised(bankAtk))
 					break;
 					

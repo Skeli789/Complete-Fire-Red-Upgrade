@@ -15,3 +15,15 @@ The entry hazards around\n[FD][36] side were blown away!
 
 #org @RemovedEntryHazardsTargetSideString
 The entry hazards around\n[FD][35] side were blown away!
+
+#org @gText_HurtBySpikes
+[TARGET] is hurt\nby the Spikes!
+
+#org @gText_HurtByStealthRock
+Pointed stones dug into\n[TARGET]!
+
+#org @gText_AbsorbedToxicSpikes
+The Toxic Spikes disappeared from\naround [TARGET]'s feet!
+
+#org @gText_CaughtInStickyWeb
+[TARGET] was caught\nin a Sticky Web!
