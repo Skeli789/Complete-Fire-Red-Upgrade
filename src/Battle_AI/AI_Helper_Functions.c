@@ -246,7 +246,7 @@ bool8 StrongestMoveGoesFirst(u16 move, u8 bankAtk, u8 bankDef)
 
 #define DOUBLES_DECREASE_HIT_PARTNER 3
 
-u8 GetBestDoubleKillingMoveScore(u16 checkMove, u8 bankAtk, u8 bankDef, u8 bankAtkPartner, u8 bankDefPartner)
+u8 GetBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner, u8 bankDefPartner, u16* bestMove)
 {
 	u16 move;
 	s8 moveScores[MAX_MON_MOVES] = {0};
@@ -287,16 +287,13 @@ u8 GetBestDoubleKillingMoveScore(u16 checkMove, u8 bankAtk, u8 bankDef, u8 bankA
 					
 					if (MoveKnocksOutXHits(move, bankAtk, bankDefPartner, 1))
 						moveScores[i] += DOUBLES_INCREASE_KO_FOE; //KO second enemy
-					else if (IsStrongestMove(move, bankAtk, bankDef, TRUE))
+					else if (IsStrongestMove(move, bankAtk, bankDefPartner, TRUE))
 						moveScores[i] += DOUBLES_INCREASE_STRONGEST_MOVE;
 				}
 			}
 
-			if (BATTLER_ALIVE(bankAtkPartner)
-			&& ABILITY(bankAtkPartner) != ABILITY_TELEPATHY
-			&& gBattleMoves[move].target & MOVE_TARGET_ALL
-			&& !(BATTLER_SEMI_INVULNERABLE(bankAtkPartner) && MoveWouldHitFirst(move, bankAtk, bankAtkPartner)) //Target will still be semi-invulnerable when attack hits
-			&& !(AI_SpecialTypeCalc(move, bankAtk, bankAtkPartner) & MOVE_RESULT_NO_EFFECT)) //Move has effect
+			if (gBattleMoves[move].target & MOVE_TARGET_ALL
+			&&  RangeMoveCanHurtPartner(move, bankAtk, bankAtkPartner))
 			{
 				u8 status1 = gBattleMons[bankAtkPartner].status1;
 				if ((status1 & STATUS1_SLEEP) <= 1 //Partner will be awake to use move
@@ -332,26 +329,59 @@ u8 GetBestDoubleKillingMoveScore(u16 checkMove, u8 bankAtk, u8 bankDef, u8 bankA
 			}
 		}
 	}
-	
+
 	u8 bestIndex = 0;
 	for (int i = 1; i < MAX_MON_MOVES; ++i)
 	{
 		if (moveScores[i] > moveScores[bestIndex])
 			bestIndex = i;
+		else if (moveScores[i] == moveScores[bestIndex])
+		{
+			u8 currentBestRange = gBattleMoves[gBattleMons[bankAtk].moves[bestIndex]].target;
+			u8 checkBestRange = gBattleMoves[gBattleMons[bankAtk].moves[i]].target;
+		
+			if (currentBestRange & MOVE_TARGET_ALL
+			&& !(checkBestRange & MOVE_TARGET_ALL)
+			&& checkBestRange & MOVE_TARGET_BOTH
+			&& RangeMoveCanHurtPartner(gBattleMons[bankAtk].moves[bestIndex], bankAtk, bankAtkPartner))
+				bestIndex = i; //If an all-hitting move and a both foes move have the same score, use the one that only hits both foes
+		
+		}
 	}
 
-	if (gBattleMons[bankAtk].moves[bestIndex] == checkMove)
+	*bestMove = gBattleMons[bankAtk].moves[bestIndex];
+
+	if (moveScores[bestIndex] >= 12)
+		return 9;
+	else if (moveScores[bestIndex] >= 9)
+		return 2;
+	else if (moveScores[bestIndex] >= 5)
+		return 1;
+
+	return 0;
+}
+
+u8 GetDoubleKillingScore(u16 move, u8 bankAtk, u8 bankDef)
+{
+	if (gBattleMoves[move].target & MOVE_TARGET_ALL
+	&&  gChosenMovesByBanks[PARTNER(bankAtk)] != MOVE_NONE)
 	{
-		
-		if (moveScores[bestIndex] >= 12)
-			return 9;
-		else if (moveScores[bestIndex] >= 9)
-			return 2;
-		else if (moveScores[bestIndex] >= 5)
-			return 1;
+		//Recalculate as partner has chosen a move
+		gNewBS->bestDoublesKillingScores[bankAtk][bankDef] = GetBestDoubleKillingMoveScore(bankAtk, bankDef, PARTNER(bankAtk), PARTNER(bankDef), &gNewBS->bestDoublesKillingMoves[bankAtk][bankDef]);
 	}
 	
+	if (move == gNewBS->bestDoublesKillingMoves[bankAtk][bankDef])
+		return gNewBS->bestDoublesKillingScores[bankAtk][bankDef];
+	
 	return 0;
+}
+
+bool8 RangeMoveCanHurtPartner(u16 move, u8 bankAtk, u8 bankAtkPartner)
+{
+	return BATTLER_ALIVE(bankAtkPartner)
+		&& ABILITY(bankAtkPartner) != ABILITY_TELEPATHY
+		&& !(BATTLER_SEMI_INVULNERABLE(bankAtkPartner) && MoveWouldHitFirst(move, bankAtk, bankAtkPartner)) //Target will still be semi-invulnerable when attack hits
+		&& !(AI_SpecialTypeCalc(move, bankAtk, bankAtkPartner) & MOVE_RESULT_NO_EFFECT); //Move has effect
 }
 
 bool8 MoveKnocksOutXHits(u16 move, u8 bankAtk, u8 bankDef, u8 numHits)
@@ -418,7 +448,7 @@ static u32 CalcPredictedDamageForCounterMoves(u16 move, u8 bankAtk, u8 bankDef)
 	return predictedDamage;
 }
 
-bool8 IsStrongestMove(const u16 currentMove, const u8 bankAtk, const u8 bankDef, const bool8 onlySpreadMoves)
+move_t GetStrongestMove(const u8 bankAtk, const u8 bankDef, const bool8 onlySpreadMoves)
 {
 	u16 move;
 	u16 strongestMove = gBattleMons[bankAtk].moves[0];
@@ -457,14 +487,11 @@ bool8 IsStrongestMove(const u16 currentMove, const u8 bankAtk, const u8 bankDef,
 					continue;
 				if (move == MOVE_SHEERCOLD && IsOfType(bankDef, TYPE_ICE))
 					continue;
+				if (ABILITY(bankDef) == ABILITY_STURDY)
+					continue;
 				if (MoveWillHit(move, bankAtk, bankDef))
 				{
-					strongestMove = move;
-					highestDamage = 0xFFFFFFFF;
-
-					if (currentMove == strongestMove)
-						return TRUE;
-					//Keep going because user may have another 0HKO move to be checked that could be strongest
+					return move; //No stronger move that OHKO move that can kill
 				}
 			}
 			else
@@ -478,11 +505,16 @@ bool8 IsStrongestMove(const u16 currentMove, const u8 bankAtk, const u8 bankDef,
 			}
 		}
 	}
+	
+	return strongestMove;
+}
 
-	if (strongestMove == currentMove)
-		return TRUE;
-
-	return FALSE;
+bool8 IsStrongestMove(const u16 currentMove, const u8 bankAtk, const u8 bankDef, const bool8 onlySpreadMoves)
+{
+	if (onlySpreadMoves)
+		return gNewBS->strongestSpreadMove[bankAtk][bankDef] == currentMove;
+		
+	return gNewBS->strongestMove[bankAtk][bankDef] == currentMove;
 }
 
 bool8 MoveWillHit(u16 move, u8 bankAtk, u8 bankDef)

@@ -79,6 +79,8 @@ static bool8 IsYawned(void);
 static bool8 IsTakingAnnoyingSecondaryDamage(void);
 static bool8 ShouldSwitchIfWonderGuard(void);
 static void PredictMovesForBanks(void);
+static void UpdateStrongestMoves(void);
+static void UpdateBestDoublesKillingMoves(void);
 static u32 GetMaxByteIndexInList(const u8 array[], const u32 size);
 
 void BattleAI_HandleItemUseBeforeAISetup(u8 defaultScoreMoves)
@@ -241,7 +243,14 @@ void AI_TrySwitchOrUseItem(void)
 	u8 battlerIn1, battlerIn2;
 	u8 firstId, lastId;
 
-	PredictMovesForBanks();
+	if (!gNewBS->calculatedAIPredictions) //Only calculate these things once per turn
+	{
+		UpdateStrongestMoves();
+		UpdateBestDoublesKillingMoves();
+		PredictMovesForBanks();
+		gNewBS->calculatedAIPredictions = TRUE;
+	}
+	
 	party = LoadPartyRange(gActiveBattler, &firstId, &lastId);
 
 	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
@@ -1422,6 +1431,47 @@ static void PredictMovesForBanks(void)
 					StoreSwitchPrediction(bankAtk, bankDef);
 				else
 					StoreMovePrediction(bankAtk, bankDef, gBattleMons[bankAtk].moves[bestMoves[Random() % (j + 1)] - 1]);
+			}
+		}
+	}
+}
+
+static void UpdateStrongestMoves(void)
+{
+	u8 bankAtk, bankDef;
+
+	for (bankAtk = 0; bankAtk < gBattlersCount; ++bankAtk)
+	{
+		for (bankDef = 0; bankDef < gBattlersCount; ++bankDef)
+		{
+			if (bankAtk == bankDef || bankDef == PARTNER(bankAtk))
+				continue; //Don't bother calculating for these Pokemon. Never used
+
+			gNewBS->strongestMove[bankAtk][bankDef] = GetStrongestMove(bankAtk, bankDef, FALSE);
+			
+			if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+				gNewBS->strongestSpreadMove[bankAtk][bankDef] = GetStrongestMove(bankAtk, bankDef, FALSE);
+		}
+	}
+}
+
+static void UpdateBestDoublesKillingMoves(void)
+{
+	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	{
+		u8 bankAtk, bankDef;
+
+		for (bankAtk = 0; bankAtk < gBattlersCount; ++bankAtk)
+		{
+			for (bankDef = 0; bankDef < gBattlersCount; ++bankDef)
+			{
+				if (bankAtk == bankDef || bankDef == PARTNER(bankAtk))
+					continue; //Don't bother calculating for these Pokemon. Never used
+
+				gNewBS->bestDoublesKillingScores[bankAtk][bankDef] = GetBestDoubleKillingMoveScore(bankAtk, bankDef, PARTNER(bankAtk), PARTNER(bankDef), &gNewBS->bestDoublesKillingMoves[bankAtk][bankDef]);
+				
+				if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+					gNewBS->strongestSpreadMove[bankAtk][bankDef] = GetStrongestMove(bankAtk, bankDef, FALSE);
 			}
 		}
 	}

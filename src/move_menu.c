@@ -95,6 +95,9 @@ void HandleInputChooseMove(void)
         }
         else // double battle
         {
+			if (gNewBS->ZMoveData->viewing)
+				moveTarget = gBattleMoves[TryReplaceMoveWithZMove(moveInfo->moves[gMoveSelectionCursor[gActiveBattler]], gActiveBattler)].target;
+
             if (!(moveTarget & (MOVE_TARGET_RANDOM | MOVE_TARGET_BOTH | MOVE_TARGET_DEPENDS | MOVE_TARGET_FOES_AND_ALLY | MOVE_TARGET_OPPONENTS_FIELD | MOVE_TARGET_USER)))
                 canSelectTarget++; // either selected or user
 

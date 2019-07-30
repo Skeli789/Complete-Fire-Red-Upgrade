@@ -118,9 +118,9 @@ BattleScript_IntimidateActivatesEnd3:
 BattleScript_PauseIntimidateActivates:
 	call BattleScript_AbilityPopUp
 	setbyte TARGET_BANK 0x0
-	setstatchanger STAT_ATK | DECREASE_1
 
 BS_IntimidateActivatesLoop:
+	setstatchanger STAT_ATK | DECREASE_1
 	trygetintimidatetarget BattleScript_IntimidateActivatesReturn
 	jumpifbehindsubstitute BANK_TARGET IntimidateActivatesLoopIncrement
 	statbuffchange STAT_TARGET | STAT_NOT_PROTECT_AFFECTED | STAT_BS_PTR IntimidateActivatesLoopIncrement

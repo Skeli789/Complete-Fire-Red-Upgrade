@@ -91,6 +91,11 @@ bool8 IsClassEntryHazards(u8 class)
 
 u8 PredictBankFightingStyle(u8 bank)
 {
+	return PredictFightingStyle(gBattleMons[bank].moves, ITEM_EFFECT(bank));
+}
+
+u8 PredictFightingStyle(const u16* const moves, const u8 itemEffect)
+{
 	int i;
 	u8 class = FIGHT_CLASS_NONE;
 	u8 attackMoveNum = 0;
@@ -98,11 +103,9 @@ u8 PredictBankFightingStyle(u8 bank)
 	u8 statusMoveNum = 0;
 	bool8 boostingMove = FALSE;
 
-	u8 itemEffect = ITEM_EFFECT(bank);
-
 	for (i = 0; i < MAX_MON_MOVES; ++i)
 	{
-		u16 move = GetBattleMonMove(bank, i);
+		u16 move = moves[i];
 		u8 moveEffect = gBattleMoves[move].effect;
 
 		if (move == MOVE_BATONPASS
@@ -469,13 +472,19 @@ enum ProtectQueries ShouldProtect(u8 bankAtk, u8 bankDef, u16 move)
 		&& ABILITY(bankAtk) != ABILITY_TELEPATHY)
 		{
 			u16 partnerMove = gChosenMovesByBanks[partner];
+			if (partnerMove == MOVE_NONE)
+				partnerMove = IsValidMovePrediction(partner, bankDef);
+
 			if (partnerMove != MOVE_NONE
 			&&  gBattleMoves[partnerMove].target & MOVE_TARGET_ALL
 			&& !(AI_SpecialTypeCalc(partnerMove, partner, bankAtk) & MOVE_RESULT_NO_EFFECT))
 			{
-				return USE_PROTECT; //Protect if partner is going to use a move that affects the whole field
+				return USE_PROTECT; //Protect if partner is going to use a move that damages the whole field
 			}
 		}
+		
+		// if (predictedMoveEffect == EFFECT_FAKE_OUT)
+			// return USE_PROTECT;
 	}
 
 	return DONT_PROTECT;

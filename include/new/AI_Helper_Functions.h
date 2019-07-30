@@ -10,9 +10,12 @@ bool8 CanKnockOutAfterHealing(u8 bankAtk, u8 bankDef, u16 healAmount, u8 numHits
 bool8 CanKnockOutWithoutMove(const u16 ignoredMove, const u8 bankAtk, const u8 bankDef);
 bool8 MoveKnocksOutGoesFirstWithBestAccuracy(u16 move, u8 bankAtk, u8 bankDef);
 bool8 StrongestMoveGoesFirst(u16 move, u8 bankAtk, u8 bankDef);
-u8 GetBestDoubleKillingMoveScore(u16 checkMove, u8 bankAtk, u8 bankDef, u8 bankAtkPartner, u8 bankDefPartner);
+u8 GetBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner, u8 bankDefPartner, u16* bestMove);
+u8 GetDoubleKillingScore(u16 move, u8 bankAtk, u8 bankDef);
+bool8 RangeMoveCanHurtPartner(u16 move, u8 bankAtk, u8 bankAtkPartner);
 bool8 MoveKnocksOutXHits(u16 move, u8 bankAtk, u8 bankDef, u8 numHits);
 u16 CalcFinalAIMoveDamage(u16 move, u8 bankAtk, u8 bankDef, u8 numHits);
+move_t GetStrongestMove(const u8 bankAtk, const u8 bankDef, const bool8 onlySpreadMoves);
 bool8 IsStrongestMove(const u16 currentMove, const u8 bankAtk, const u8 bankDef, const bool8 onlySpreadMoves);
 bool8 MoveWillHit(u16 move, u8 bankAtk, u8 bankDef);
 bool8 MoveWouldHitFirst(u16 move, u16 bankAtk, u16 bankDef);

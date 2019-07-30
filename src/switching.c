@@ -548,8 +548,8 @@ void atk52_switchineffects(void)
 		__attribute__ ((fallthrough));	
 		
 		case SwitchIn_Truant:
-			//if (ABILITY(gActiveBattler) == ABILITY_TRUANT)
-			//	gDisableStructs[gActiveBattler].truantCounter = 1;
+			if (ABILITY(gActiveBattler) == ABILITY_TRUANT)
+				gDisableStructs[gActiveBattler].truantCounter = 1;
 			++gNewBS->SwitchInEffectsTracker;
 		__attribute__ ((fallthrough));	
 		

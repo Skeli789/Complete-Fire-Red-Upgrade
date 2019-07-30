@@ -1267,6 +1267,7 @@ u8 TurnBasedEffects(void)
 				gBattleStruct->turnEffectsBank = gBattlersCount;
 				gNewBS->endTurnDone = TRUE;
 				gNewBS->MegaData->state = 0;
+				gNewBS->calculatedAIPredictions = FALSE;
 				
 				for (int i = 0; i < gBattlersCount; ++i)
 				{

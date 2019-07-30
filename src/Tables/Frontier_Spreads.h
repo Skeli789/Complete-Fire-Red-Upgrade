@@ -2023,6 +2023,274 @@ const struct BattleTowerSpread gSpecialTowerSpread_Golche[] =
 	},
 };
 
+const struct BattleTowerSpread gLegendaryTowerSpread_Golche[] =
+{
+	{
+		.species = SPECIES_ARCEUS,
+		.nature = NATURE_ADAMANT,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 0,
+		.spDefIv = 31,
+		.hpEv = 252,
+		.atkEv = 252,
+		.spDefEv = 4,
+		.ability = FRONTIER_ABILITY_1, //Multitype
+		.item = ITEM_SILK_SCARF,
+		.moves =
+		{
+			MOVE_EXTREMESPEED,
+			MOVE_SHADOWCLAW,
+			MOVE_SWORDSDANCE,
+			MOVE_RECOVER,
+		},
+	},
+	{
+		.species = SPECIES_ARCEUS,
+		.nature = NATURE_MODEST,
+		.hpIv = 31,
+		.atkIv = 00,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.hpEv = 252,
+		.spAtkEv = 252,
+		.spDefEv = 4,
+		.ability = FRONTIER_ABILITY_1, //Multitype
+		.item = ITEM_ASSAULT_VEST,
+		.moves =
+		{
+			MOVE_JUDGMENT,
+			MOVE_SPACIALREND,
+			MOVE_PSYSHOCK,
+			MOVE_GIGADRAIN,
+		},
+	},
+	{
+		.species = SPECIES_METAGROSS,
+		.nature = NATURE_ADAMANT,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 0,
+		.spDefIv = 31,
+		.atkEv = 252,
+		.spdEv = 252,
+		.spDefEv = 4,
+		.ability = FRONTIER_ABILITY_1, //Clear Body
+		.item = ITEM_METAGROSSITE,
+		.moves =
+		{
+			MOVE_METEORMASH,
+			MOVE_ZENHEADBUTT,
+			MOVE_EXPLOSION,
+			MOVE_AGILITY,
+		},
+	},
+	{
+		.species = SPECIES_METAGROSS,
+		.nature = NATURE_JOLLY,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 0,
+		.spDefIv = 31,
+		.atkEv = 252,
+		.spdEv = 252,
+		.spDefEv = 4,
+		.ability = FRONTIER_ABILITY_1, //Clear Body
+		.item = ITEM_METAGROSSITE,
+		.moves =
+		{
+			MOVE_METEORMASH,
+			MOVE_ZENHEADBUTT,
+			MOVE_EARTHQUAKE,
+			MOVE_POWERUPPUNCH,
+		},
+	},
+	{
+		.species = SPECIES_LUGIA,
+		.nature = NATURE_BOLD,
+		.hpIv = 31,
+		.atkIv = 00,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.hpEv = 252,
+		.defEv = 252,
+		.spAtkEv = 4,
+		.ability = FRONTIER_ABILITY_HIDDEN, //Multiscale
+		.item = ITEM_LEFTOVERS,
+		.moves =
+		{
+			MOVE_AEROBLAST,
+			MOVE_PSYSHOCK,
+			MOVE_CALMMIND,
+			MOVE_ROOST,
+		},
+	},
+	{
+		.species = SPECIES_LUGIA,
+		.nature = NATURE_TIMID,
+		.hpIv = 31,
+		.atkIv = 00,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.hpEv = 248,
+		.spdEv = 252,
+		.spAtkEv = 8,
+		.ability = FRONTIER_ABILITY_HIDDEN, //Multiscale
+		.item = ITEM_LIGHT_CLAY,
+		.moves =
+		{
+			MOVE_AEROBLAST,
+			MOVE_DEFOG,
+			MOVE_REFLECT,
+			MOVE_LIGHTSCREEN,
+		},
+	},
+	{
+		.species = SPECIES_SHAYMIN_SKY,
+		.nature = NATURE_MODEST,
+		.hpIv = 31,
+		.atkIv = 00,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.hpEv = 248,
+		.spAtkEv = 252,
+		.spDefEv = 8,
+		.ability = FRONTIER_ABILITY_1, //Serene Grace
+		.item = ITEM_BIG_ROOT,
+		.moves =
+		{
+			MOVE_SEEDFLARE,
+			MOVE_AIRSLASH,
+			MOVE_GIGADRAIN,
+			MOVE_LEECHSEED,
+		},
+	},
+	{
+		.species = SPECIES_SHAYMIN_SKY,
+		.nature = NATURE_TIMID,
+		.hpIv = 31,
+		.atkIv = 00,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.atkEv = 4,
+		.spdEv = 252,
+		.spAtkEv = 252,
+		.ability = FRONTIER_ABILITY_1, //Serene Grace
+		.item = ITEM_MICLE_BERRY,
+		.moves =
+		{
+			MOVE_SEEDFLARE,
+			MOVE_AIRSLASH,
+			MOVE_EARTHPOWER,
+			MOVE_NATURALGIFT,
+		},
+	},
+	{
+		.species = SPECIES_GROUDON,
+		.nature = NATURE_JOLLY,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 0,
+		.spDefIv = 31,
+		.atkEv = 252,
+		.spdEv = 252,
+		.spDefEv = 4,
+		.ability = FRONTIER_ABILITY_1, //Drought
+		.item = ITEM_RED_ORB,
+		.moves =
+		{	
+			MOVE_PRECIPICEBLADES,
+			MOVE_STONEEDGE,
+			MOVE_STEALTHROCK,
+			MOVE_SWORDSDANCE,
+		},
+	},
+	{
+		.species = SPECIES_GROUDON, //Drought
+		.nature = NATURE_LAX,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.hpEv = 252,
+		.atkEv = 4,
+		.defEv = 252,
+		.ability = FRONTIER_ABILITY_1, //Drought
+		.item = ITEM_RED_ORB,
+		.moves =
+		{
+			MOVE_PRECIPICEBLADES,
+			MOVE_OVERHEAT,
+			MOVE_TOXIC,
+			MOVE_STEALTHROCK,
+		},
+	},
+	{
+		.species = SPECIES_XERNEAS,
+		.nature = NATURE_MODEST,
+		.hpIv = 31,
+		.atkIv = 0,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.hpEv = 248,
+		.spAtkEv = 252,
+		.spDefEv = 8,
+		.ability = FRONTIER_ABILITY_1, //Fairy Aura
+		.item = ITEM_POWER_HERB,
+		.moves =
+		{
+			MOVE_MOONBLAST,
+			MOVE_FOCUSBLAST,
+			MOVE_PSYSHOCK,
+			MOVE_GEOMANCY,
+		},
+	},
+	{
+		.species = SPECIES_XERNEAS,
+		.nature = NATURE_NAUGHTY,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spdIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.hpEv = 248,
+		.atkEv = 252,
+		.spDefEv = 8,
+		.ability = FRONTIER_ABILITY_1, //Fairy Aura
+		.item = ITEM_POWER_HERB,
+		.moves =
+		{
+			MOVE_MOONBLAST,
+			MOVE_CLOSECOMBAT,
+			MOVE_HORNLEECH,
+			MOVE_GEOMANCY,
+		},
+	},
+};
+
 const struct BattleTowerSpread gMiddleCupTowerSpread_Golche[] =
 {
 	{

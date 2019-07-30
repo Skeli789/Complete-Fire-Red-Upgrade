@@ -184,6 +184,15 @@ bool8 IsRandomBattleTowerBattle()
 		|| battleType == BATTLE_TOWER_MULTI_RANDOM;
 }
 
+bool8 DuplicateItemsAreBannedInTier(u8 tier, u8 battleType)
+{
+	if (tier == BATTLE_TOWER_STANDARD
+	||  tier == BATTLE_TOWER_MIDDLE_CUP)
+		return TRUE;
+		
+	return !IsFrontierSingles(battleType) && tier == BATTLE_TOWER_GS_CUP;
+}
+
 bool8 TryUpdateOutcomeForFrontierBattle(void)
 {
 	u32 i;

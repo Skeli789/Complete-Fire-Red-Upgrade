@@ -2416,6 +2416,7 @@ BattleScript_DoSwitchOutUTurn:
 	
 BattleScript_UTurnSwitchOutAnim:
 	playanimation BANK_ATTACKER ANIM_CALL_BACK_POKEMON 0x0
+	copybyte BATTLE_SCRIPTING_BANK USER_BANK
 	callasm MakeScriptingBankInvisible @;So the sprite stays hidden
 	copyarray CURRENT_MOVE BACKUP_HWORD 2
 	goto BatonPassSwitchOutBS

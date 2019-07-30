@@ -1,4 +1,5 @@
 #include "src/config.h"
+#include "include/new/catching.h"
 
 ##Optional Byte Changes##
 ##Don't Count Eggs Healing PKMN Centre
@@ -231,6 +232,11 @@
 ##Other Poke Ball Stuff
 0804AC30 C0 46 C0 46
 0804B28C C0 46 C0 46
+0804B5AA 1A
+080EF970 1A
+080F02D4 1A
+080F0E58 1A
+080F11F2 1A
 
 ##Remove Old Mega Hooks
 080326C4 80 18 02 F0 BD FD 40 21

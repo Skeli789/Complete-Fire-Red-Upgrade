@@ -2835,16 +2835,28 @@ void atkBA_jumpifnopursuitswitchdmg(void) {
 				gBankTarget = GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT);
 	}
 
+	u8 toDoAction = 0;
+	for (i = 0; i < gBattlersCount; i++)
+	{
+		if (gBanksByTurnOrder[i] == gBankTarget)
+		{
+			toDoAction = gActionsByTurnOrder[i];
+			break;
+		}
+	}
 
 	if (gActionForBanks[gBankTarget] == ACTION_USE_MOVE
+	&& toDoAction == ACTION_USE_MOVE
 	&& gChosenMovesByBanks[gBankTarget] == MOVE_PURSUIT
 	//&& gBankAttacker == gBattleStruct->moveTarget[gBankTarget] //Used pre Gen 4
 	&& !(gBattleMons[gBankTarget].status1 & (STATUS_SLEEP | STATUS_FREEZE))
-	&& gBattleMons[gBankAttacker].hp
-	&& !gDisableStructs[gBankTarget].truantCounter) {
-		for (i = 0; i < gBattlersCount; i++) {
+	&& BATTLER_ALIVE(gBankAttacker)
+	&& !gDisableStructs[gBankTarget].truantCounter)
+	{
+		for (i = 0; i < gBattlersCount; i++)
+		{
 			if (gBanksByTurnOrder[i] == gBankTarget)
-				gActionsByTurnOrder[i] = 11;
+				gActionsByTurnOrder[i] = ACTION_TRY_FINISH;
 		}
 
 		gCurrentMove = MOVE_PURSUIT;

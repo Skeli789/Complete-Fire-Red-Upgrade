@@ -15,6 +15,7 @@ bool8 IsFrontierSingles(u8 battleType);
 bool8 IsFrontierDoubles(u8 battleType);
 bool8 IsFrontierMulti(u8 battleType);
 bool8 IsRandomBattleTowerBattle();
+bool8 DuplicateItemsAreBannedInTier(u8 tier, u8 battleType);
 u16 GetCurrentBattleTowerStreak(void);
 u16 GetMaxBattleTowerStreakForTier(u8 tier);
 u16 GetBattleTowerStreak(u8 currentOrMax, u16 inputBattleStyle, u16 inputTier, u16 partySize, u8 level);
@@ -71,6 +72,8 @@ enum BattleTowerFormats
 
 #define NUM_FORMATS (BATTLE_TOWER_MONOTYPE + 1)
 #define NUM_FORMATS_OLD (BATTLE_TOWER_MIDDLE_CUP + 1) //Monotype not included b/c wasn't included in Battle Tower Demo original release
+
+#define BATTLE_TOWER_GS_CUP BATTLE_TOWER_MIDDLE_CUP //Replaces Middle Cup in Doubles
 
 enum BattleTowerPartySizes
 {
@@ -196,17 +199,22 @@ extern u16 gBattleTowerStreaks[NUM_TOWER_BATTLE_TYPES][NUM_FORMATS_OLD][/*PARTY_
 //FREE SPACE FROM SLIDESHOW 0x202682C - 0x2027434
 
 extern const species_t gBattleTowerStandardSpeciesBanList[];
+extern const species_t gGSCup_LegendarySpeciesList[];
 extern const species_t gSmogonOU_SpeciesBanList[];
+extern const species_t gSmogonOUDoubles_SpeciesBanList[];
 extern const species_t gSmogonLittleCup_SpeciesList[];
 extern const species_t gMiddleCup_SpeciesList[];
 extern const species_t gSmogonMonotype_SpeciesBanList[];
 extern const ability_t gSmogonOU_AbilityBanList[];
+extern const ability_t gSmogonOUDoubles_AbilityBanList[];
 extern const ability_t gSmogonMonotype_AbilityBanList[];
 extern const ability_t gMiddleCup_AbilityBanList[];
 extern const item_t gBattleTowerStandard_ItemBanList[];
 extern const item_t gSmogonOU_ItemBanList[];
+extern const item_t gSmogonOUDoubles_ItemBanList[];
 extern const item_t gSmogonLittleCup_ItemBanList[];
 extern const item_t gSmogonMonotype_ItemBanList[];
 extern const item_t gMiddleCup_ItemBanList[];
 extern const move_t gSmogon_MoveBanList[];
+extern const move_t gSmogonOUDoubles_MoveBanList[];
 extern const move_t gSmogonLittleCup_MoveBanList[];

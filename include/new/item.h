@@ -15,6 +15,7 @@ bool8 IsMegaStone(u16 item);
 bool8 IsZCrystal(u16 item);
 bool8 IsTypeZCrystal(u16 item, u8 moveType);
 bool8 IsBerry(u16 item);
+bool8 IsPinchBerryItemEffect(u8 itemEffect);
 bool8 IsGem(u16 item);
 bool8 IsTMHM(u16 item);
 void CopyTMName(u8* dst, u16 itemId);

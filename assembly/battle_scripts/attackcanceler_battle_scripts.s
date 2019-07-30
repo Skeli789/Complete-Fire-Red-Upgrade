@@ -8,6 +8,7 @@
 .global BattleScript_QuickClaw
 .global BattleScript_MagicBounce
 .global BattleScript_MoveUsedFlinched
+.global BattleScript_MoveUsedLoafingAround
 .global BattleScript_MoveUsedGravityPrevents
 .global BattleScript_MoveUsedHealBlockPrevents
 .global BattleScript_MoveUsedThroatChopPrevents
@@ -68,7 +69,24 @@ SteadfastBoost:
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
 	goto BS_MOVE_END
-	
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_MoveUsedLoafingAround:
+	call BS_FLUSH_MESSAGE_BOX
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x4 BattleScript_TruantLoafingAround
+	printfromtable 0x83FE61A @;gInobedientStringIds
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
+
+BattleScript_TruantLoafingAround:
+	setbyte MULTISTRING_CHOOSER 0x0
+	call BattleScript_AbilityPopUp
+	printfromtable 0x83FE61A @;gInobedientStringIds
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	goto BS_MOVE_END
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_MoveUsedGravityPrevents:

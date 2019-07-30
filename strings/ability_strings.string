@@ -68,7 +68,7 @@ The power of [SCRIPTING_BANK]'s\nFire-type moves rose!
 [EFFECT_BANK] was cured of\nits [BUFFER][00] problem!
 
 #org @gText_MagicBounce
-[TARGET] bounced the\n[CURRENT_MOVE] back!
+[SCRIPTING_BANK] bounced the\n[CURRENT_MOVE] back!
 
 #org @gText_StartedSchooling
 [SCRIPTING_BANK] started\nschooling!

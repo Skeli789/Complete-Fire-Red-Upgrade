@@ -1055,6 +1055,7 @@ bool8 TryHandleLaunchBattleTableAnimation(u8 activeBattler, u8 bankAtk, u8 bankD
 
 	gBattleAnimAttacker = bankAtk;
 	gBattleAnimTarget = bankDef;
+	gAnimScriptCallback = NULL;
 	taskId = CreateTask(Task_HandleSpecialBattleAnimation, 10);
 	gTasks[taskId].tBattlerId = activeBattler;
 	gTasks[taskId].tAnimId = tableId;

@@ -115,6 +115,7 @@ extern const u8 gText_SmogonGen7Uber[];
 extern const u8 gText_SmogonLittleCup[];
 extern const u8 gText_MiddleCup[];
 extern const u8 gText_SmogonMonotype[];
+extern const u8 gText_GSCup[];
 
 //This File's Static Functions
 static void CB2_ShowFrontierRecords(void);
@@ -628,6 +629,8 @@ static void DisplayFrontierRecordsText(void)
 
 	//Print Tier Name
 	string = sBattleTowerTierNames[tier];
+	if (tier == BATTLE_TOWER_MIDDLE_CUP && !IsFrontierSingles(sFrontierRecordsPtr->battleType))
+		string = gText_GSCup;
 	WindowPrint(WIN_TIER, 0, 0, 4, &tierNameColour, 0, string);
 
 	//Print Level 50 Party Sizes Numbers

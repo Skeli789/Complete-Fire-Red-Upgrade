@@ -4,6 +4,7 @@
 
 #include "../../include/new/ability_tables.h"
 #include "../../include/new/accuracy_calc.h"
+#include "../../include/new/AI_advanced.h"
 #include "../../include/new/AI_Helper_Functions.h"
 #include "../../include/new/ai_master.h"
 #include "../../include/new/battle_start_turn_start.h"
@@ -80,18 +81,18 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		foe2 = foe1;
 
 	//Affects User Check
-	if (moveTarget & MOVE_TARGET_USER || moveTarget & MOVE_TARGET_ALL)
+	if (moveTarget & MOVE_TARGET_USER)
 		goto MOVESCR_CHECK_0;
 	
 	//Ranged Move Check
-	if (moveTarget & (MOVE_TARGET_BOTH | MOVE_TARGET_FOES_AND_ALLY))
+	if (moveTarget & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL))
 	{
 		if (moveType == TYPE_ELECTRIC && ABILITY_ON_OPPOSING_FIELD(bankAtk, ABILITY_LIGHTNINGROD))
 			return viability - 20;
 		else if (moveType == TYPE_WATER && ABILITY_ON_OPPOSING_FIELD(bankAtk, ABILITY_STORMDRAIN))
 			return viability - 20;
 	}
-	
+
 	#ifdef AI_TRY_TO_KILL_RATE
 		if (AI_THINKING_STRUCT->aiFlags == AI_SCRIPT_CHECK_BAD_MOVE //Only basic AI
 		&& Random() % 100 < AI_TRY_TO_KILL_RATE
@@ -107,7 +108,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			}
 			else //Double Battle
 			{
-				INCREASE_VIABILITY(GetBestDoubleKillingMoveScore(move, bankAtk, bankDef, bankAtkPartner, bankDefPartner));
+				INCREASE_VIABILITY(GetDoubleKillingScore(move, bankAtk, bankDef));
 			}
 		}
 	#endif
@@ -1192,6 +1193,15 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 					DECREASE_VIABILITY(6);
 				else if (gDisableStructs[bankAtk].protectUses >= 2)
 					DECREASE_VIABILITY(10);
+			}
+			
+			if (AI_THINKING_STRUCT->aiFlags == AI_SCRIPT_CHECK_BAD_MOVE //Only basic AI
+			&& gBattleTypeFlags & BATTLE_TYPE_DOUBLE) //Make the regular AI know how to use Protect minimally in Doubles
+			{
+				if (ShouldProtect(bankAtk, foe1, move) == USE_PROTECT)
+					INCREASE_VIABILITY(3);
+				else if (ShouldProtect(bankAtk, foe2, move) == USE_PROTECT)
+					INCREASE_VIABILITY(3);
 			}
 			break;
 

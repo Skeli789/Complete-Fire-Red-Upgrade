@@ -828,6 +828,7 @@ struct NewBattleStruct
 	bool8 skipCertainSwitchInAbilities : 1;
 	bool8 roundUsed : 1;
 	bool8 activatedCustapQuickClaw : 1;
+	bool8 calculatedAIPredictions : 1;
 	
 	//Other
 	u16 LastUsedMove;
@@ -843,7 +844,11 @@ struct NewBattleStruct
 	u8 abilityPopUpIds[MAX_BATTLERS_COUNT][2];
 	u8 backupSynchronizeBanks[2];
 	u16 movePredictions[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //movePredictions[bankAtk][bankDef] //0x2017688
-	
+	u16 strongestMove[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //strongestMove[bankAtk][bankDef]
+	u16 strongestSpreadMove[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //strongestSpreadMove[bankAtk][bankDef]
+	u16 bestDoublesKillingMoves[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //bestDoublesKillingMoves[bankAtk][bankDef]
+	u8 bestDoublesKillingScores[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //bestDoublesKillingScores[bankAtk][bankDef]
+
 	struct MegaData* MegaData;
 	struct UltraData* UltraData;
 	struct ZMoveData* ZMoveData;

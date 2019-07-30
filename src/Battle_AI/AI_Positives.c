@@ -911,6 +911,17 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 						}
 					}
 					__attribute__ ((fallthrough));
+					
+				case MOVE_ENDURE:
+					if (CanKnockOut(bankDef, bankAtk))
+					{
+						if (MoveEffectInMoveset(EFFECT_FLAIL, bankAtk))
+							INCREASE_STATUS_VIABILITY(3);
+							
+						if (IsPinchBerryItemEffect(atkItemEffect))
+							INCREASE_STATUS_VIABILITY(3);
+					}
+					break;
 
 				default:
 					if (ShouldProtect(bankAtk, foe1, move) == USE_PROTECT)
@@ -921,7 +932,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 							INCREASE_STATUS_VIABILITY(3);
 					}
 					else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE
-					&& ShouldProtect(bankAtk, foe2, move)  == USE_PROTECT)
+					&& ShouldProtect(bankAtk, foe2, move) == USE_PROTECT)
 					{
 						if (IsClassStall(class))
 							INCREASE_VIABILITY(3);
@@ -2065,7 +2076,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		}
 		else //Double Battle
 		{
-			INCREASE_VIABILITY(GetBestDoubleKillingMoveScore(move, bankAtk, bankDef, bankAtkPartner, bankDefPartner));
+			INCREASE_VIABILITY(GetDoubleKillingScore(move, bankAtk, bankDef));
 		}
 	}
 

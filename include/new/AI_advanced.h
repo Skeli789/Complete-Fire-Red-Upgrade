@@ -15,6 +15,7 @@ bool8 IsClassScreener(u8 class);
 bool8 IsClassCleric(u8 class);
 bool8 IsClassPhazer(u8 class);
 u8 PredictBankFightingStyle(u8 bank);
+u8 PredictFightingStyle(const u16* const moves, const u8 itemEffect);
 
 bool8 ShouldTrap(u8 bankAtk, u8 bankDef, u16 move, u8 class);
 bool8 ShouldRecover(u8 bankAtk, u8 bankDef, u16 move);

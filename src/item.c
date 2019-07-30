@@ -82,6 +82,24 @@ bool8 IsBerry(u16 item)
 	return GetPocketByItemId(item) == POCKET_BERRY_POUCH;
 }
 
+bool8 IsPinchBerryItemEffect(u8 itemEffect)
+{
+	switch (itemEffect) {
+		case ITEM_EFFECT_ATTACK_UP:
+		case ITEM_EFFECT_DEFENSE_UP:
+		case ITEM_EFFECT_SPEED_UP:
+		case ITEM_EFFECT_SP_ATTACK_UP:
+		case ITEM_EFFECT_SP_DEFENSE_UP:
+		case ITEM_EFFECT_CRITICAL_UP:
+		case ITEM_EFFECT_RANDOM_STAT_UP:
+		case ITEM_EFFECT_CUSTAP_BERRY:
+		case ITEM_EFFECT_MICLE_BERRY:
+			return TRUE;
+	}
+	
+	return FALSE;
+}
+
 bool8 IsGem(u16 item)
 {
 	return ItemId_GetHoldEffect(item) == ITEM_EFFECT_GEM;

@@ -61,4 +61,4 @@ enum BallTypes
 };
 
 #define LAST_BALL_INDEX BALL_TYPE_DREAM_BALL
-#define NUM_BALLS (BALL_TYPE_DREAM_BALL + 1)
+#define NUM_BALLS (BALL_TYPE_DREAM_BALL + 1) //Make sure to update 0804B5AA in bytereplacement!

@@ -20,7 +20,7 @@
 extern u8 gStatusConditionString_MentalState[];
 extern u8 gStatusConditionString_TauntProblem[];
 
-const s8 gAbilityRatings[NUM_ABILITIES] =
+const s8 gAbilityRatings[ABILITIES_COUNT] =
 {
 	[ABILITY_ADAPTABILITY] = 8,
 	[ABILITY_AFTERMATH] = 5,

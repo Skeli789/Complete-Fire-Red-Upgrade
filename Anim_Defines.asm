@@ -415,6 +415,7 @@
 .equ AnimTask_flash_anim, 0x80BB661
 .equ AnimTask_RapidWhackSound, 0x80DD3DD
 .equ AnimTask_SetGrayscaleOrOriginalPalette, 0x80B8A75
+.equ AnimTask_ShakeMonInPlace, 0x8098CD1
 
 @launchtemplate
 
