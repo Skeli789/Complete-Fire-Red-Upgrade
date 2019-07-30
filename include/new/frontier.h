@@ -138,7 +138,7 @@ struct BattleTowerSpread
 	u16 item;
 	u16 moves[MAX_MON_MOVES];
 	u8 ball;
-    u8 _1; // 0x00
+    u8 dblSpreadType; // 0x00
 	u32 _2; // 0x00000000
 };
 

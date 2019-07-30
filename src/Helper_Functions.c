@@ -898,17 +898,52 @@ u8 CalcMoveSplitFromParty(struct Pokemon* mon, u16 move) {
 
 u8 FindMovePositionInMoveset(u16 move, u8 bank) {
 	int i;
+
 	for (i = 0; i < MAX_MON_MOVES; ++i)
 	{
 		if (gBattleMons[bank].moves[i] == move)
 			break;
 	}
+
 	return i;
 }
 
 bool8 MoveInMoveset(u16 move, u8 bank)
 {
 	return FindMovePositionInMoveset(move, bank) < MAX_MON_MOVES;
+}
+
+u8 FindMovePositionInMonMoveset(u16 move, struct Pokemon* mon)
+{
+	int i;
+
+	for (i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		if (GetMonData(mon, MON_DATA_MOVE1 + i, NULL) == move)
+			break;
+	}
+
+	return i;
+}
+
+bool8 MoveInMonMoveset(u16 move, struct Pokemon* mon)
+{
+	return FindMovePositionInMonMoveset(move, mon) < MAX_MON_MOVES;
+}
+
+bool8 AllHittingMoveWithTypeInMonMoveset(struct Pokemon* mon, u8 moveType)
+{
+	int i;
+
+	for (i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		u16 move = GetMonData(mon, MON_DATA_MOVE1 + i, NULL);
+		if (gBattleMoves[move].target & MOVE_TARGET_ALL
+		&& GetMoveTypeSpecialFromParty(mon, move) == moveType)
+			return TRUE;
+	}
+
+	return FALSE;
 }
 
 u8 AttacksThisTurn(u8 bank, u16 move) // Note: returns 1 if it's a charging turn, otherwise 2

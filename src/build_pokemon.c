@@ -49,6 +49,7 @@ enum
 	WATER_IMMUNITY,
 	GRASS_IMMUNITY,
 	ELECTRIC_IMMUNITY,
+	SOUND_IMMUNITY,
 	JUSTIFIED_BOOSTED,
 	NUM_INDEX_CHECKS
 };
@@ -67,6 +68,23 @@ struct TeamBuilder
 	u8 battleType;
 	u8 monsCount;
 	u8 numStalls;
+};
+
+struct Immunity
+{
+	u8 index;
+	u8 type;
+};
+
+static struct Immunity sImmunities[] =
+{
+	{NORMAL_IMMUNITY, TYPE_NORMAL},
+	{POISON_IMMUNITY, TYPE_POISON},
+	{GROUND_IMMUNITY, TYPE_GROUND},
+	{FIRE_IMMUNITY, TYPE_FIRE},
+	{WATER_IMMUNITY, TYPE_WATER},
+	{GRASS_IMMUNITY, TYPE_GRASS},
+	{ELECTRIC_IMMUNITY, TYPE_ELECTRIC},
 };
 
 extern const u8 gClassPokeBalls[NUM_TRAINER_CLASSES];
@@ -239,7 +257,7 @@ void sp067_GenerateRandomBattleTowerTeam(void)
 	}
 	
 	VarSet(BATTLE_TOWER_TIER, tier);
-	BuildFrontierParty(gPlayerParty, 0, BATTLE_TOWER_MONOTYPE, TRUE, TRUE, B_SIDE_PLAYER);
+	BuildFrontierParty(gPlayerParty, 0, tier, TRUE, TRUE, B_SIDE_PLAYER);
 	
 	
 //////
@@ -606,7 +624,7 @@ static u8 CreateNPCTrainerParty(pokemon_t* const party, const u16 trainerId, con
 //Returns the number of Pokemon
 static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerId, const u8 tier, const bool8 firstTrainer, const bool8 forPlayer, const u8 side) 
 {
-	int i, j;
+	u32 i, j;
 	u8 monsCount;
 	
 	u8 trainerGender = 0;
@@ -815,7 +833,7 @@ static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerId, const 
 				builder->speciesOnTeam[dexNum] = TRUE;
 				for (j = 0; j < MAX_MON_MOVES; ++j)
 					builder->moveOnTeam[spread->moves[j]] = TRUE;
-				
+
 				if (spread->spdEv >= 20)
 					builder->partyIndex[FAST_MON] = i;
 					
@@ -833,6 +851,56 @@ static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerId, const 
 				else if (IsClassEntryHazards(class))
 					builder->partyIndex[HAZARDS_SETUP] = i;
 
+				if (!IsFrontierSingles(battleType)) //Doubles or Multi
+				{
+					switch (ability) {
+						case ABILITY_VOLTABSORB:
+						case ABILITY_MOTORDRIVE:
+						case ABILITY_LIGHTNINGROD:
+							builder->partyIndex[ELECTRIC_IMMUNITY] = i;
+							break;
+						
+						case ABILITY_WATERABSORB:
+						case ABILITY_DRYSKIN:
+						case ABILITY_STORMDRAIN:
+							builder->partyIndex[WATER_IMMUNITY] = i;
+							break;
+
+						case ABILITY_FLASHFIRE:
+							builder->partyIndex[FIRE_IMMUNITY] = i;
+							break;
+
+						case ABILITY_SAPSIPPER:
+							builder->partyIndex[GRASS_IMMUNITY] = i;
+							break;
+
+						case ABILITY_LEVITATE:
+							if (itemEffect != ITEM_EFFECT_IRON_BALL)
+								builder->partyIndex[GROUND_IMMUNITY] = i;
+							break;
+
+						case ABILITY_SOUNDPROOF:
+							builder->partyIndex[SOUND_IMMUNITY] = i;
+							break;
+
+						case ABILITY_JUSTIFIED:
+							builder->partyIndex[JUSTIFIED_BOOSTED] = i;
+							break;
+					}
+					
+					u8 typeDmg;
+					u8 defType1 = gBaseStats[species].type1;
+					u8 defType2 = gBaseStats[species].type2;
+
+					for (j = 0; j < ARRAY_COUNT(sImmunities); ++j)
+					{
+						typeDmg = 10;
+						ModulateByTypeEffectiveness(sImmunities[j].type, defType1, defType2, &typeDmg);
+						if (typeDmg == 0 && builder->partyIndex[sImmunities[j].index] == 0xFF)
+							builder->partyIndex[sImmunities[j].index] = i;
+					}
+				}
+
 				loop = 0;
 			}
 		} while (loop == 1);
@@ -848,7 +916,7 @@ static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerId, const 
 
 		CreateFrontierMon(&party[i], level, spread, trainerId, firstTrainer ^ 1, trainerGender, forPlayer);
 	}
-	
+
 	if (forPlayer)
 		PostProcessTeam(gPlayerParty, builder);
 	else
@@ -1669,11 +1737,50 @@ static void SwapMons(struct Pokemon* party, u8 i, u8 j)
 	Memcpy(&party[j], &tempMon, sizeof(struct Pokemon));
 }
 
+struct DoubleReplacementMoves
+{
+	u16 oldMove;
+	u16 replacementMove;
+	u8 learnType;
+	u8 other;
+	u8 noIfImmunity;
+	u8 yesIfImmunity;
+};
+
+enum
+{
+	LEARN_TYPE_LEVEL_UP,
+	LEARN_TYPE_TM,
+	LEARN_TYPE_TUTOR,
+};
+
+#ifdef UNBOUND
+
+#define TM36_SLUDGE_BOMB 36
+#define TM80_ROCK_SLIDE 80
+#define TM102_DAZZLING_GLEAM 102
+
+#define TUTOR51_HEAT_WAVE 51
+
+static struct DoubleReplacementMoves sDoubleSpreadReplacementMoves[] =
+{
+	{MOVE_STONEEDGE, MOVE_ROCKSLIDE, LEARN_TYPE_TM, TM80_ROCK_SLIDE, 0, 0},
+	{MOVE_MOONBLAST, MOVE_DAZZLINGGLEAM, LEARN_TYPE_TM, TM102_DAZZLING_GLEAM, 0, 0},
+	{MOVE_SLUDGEWAVE, MOVE_SLUDGEBOMB, LEARN_TYPE_TM, TM36_SLUDGE_BOMB, POISON_IMMUNITY, 0},
+	{MOVE_FLAMETHROWER, MOVE_HEATWAVE, LEARN_TYPE_TUTOR, TUTOR51_HEAT_WAVE, 0, 0},
+	{MOVE_FIREBLAST, MOVE_HEATWAVE, LEARN_TYPE_TUTOR, TUTOR51_HEAT_WAVE, 0, 0},
+	{MOVE_SURF, MOVE_MUDDYWATER, LEARN_TYPE_LEVEL_UP, 0, WATER_IMMUNITY, 0},
+	{MOVE_THUNDERBOLT, MOVE_DISCHARGE, LEARN_TYPE_LEVEL_UP, 0, 0, ELECTRIC_IMMUNITY},
+	{MOVE_HYPERVOICE, MOVE_BOOMBURST, LEARN_TYPE_LEVEL_UP, 0, 0, SOUND_IMMUNITY},
+};
+
+#endif
+
 static void PostProcessTeam(struct Pokemon* party, struct TeamBuilder* builder)
 {
-	int i, j;
+	u32 i, j, k;
 
-	if (IsFrontierSingles(VarGet(BATTLE_TOWER_BATTLE_TYPE)))
+	if (IsFrontierSingles(builder->battleType))
 	{
 		if (builder->partyIndex[HAZARDS_SETUP] != 0xFF)
 		{
@@ -1769,6 +1876,80 @@ static void PostProcessTeam(struct Pokemon* party, struct TeamBuilder* builder)
 				SwapMons(party, 0, sleepIndex);
 			else if (sleepIndex != 0xFF)
 				SwapMons(party, 0, yawnIndex);
+		}
+	}
+	else //Doubles or Multi
+	{
+		for (i = 0; i < PARTY_SIZE; ++i)
+		{
+			if (builder->spreads[i]->dblSpreadType == 0)
+			{
+				#ifdef UNBOUND
+					u16 levelUpMoves[MAX_LEARNABLE_MOVES] = {MOVE_NONE};
+					GetLevelUpMovesBySpecies(GetMonData(&party[i], MON_DATA_SPECIES, NULL), levelUpMoves);
+
+					for (j = 0; j < ARRAY_COUNT(sDoubleSpreadReplacementMoves); ++j)
+					{
+						u8 pos = FindMovePositionInMonMoveset(sDoubleSpreadReplacementMoves[j].oldMove, &party[i]);
+						u16 newMove = sDoubleSpreadReplacementMoves[j].replacementMove;
+
+						if (pos < MAX_MON_MOVES)
+						{
+							if (sDoubleSpreadReplacementMoves[j].noIfImmunity != 0
+							&&  builder->partyIndex[sDoubleSpreadReplacementMoves[j].noIfImmunity])
+								continue;
+								
+							if (sDoubleSpreadReplacementMoves[j].yesIfImmunity == 0
+							||  builder->partyIndex[sDoubleSpreadReplacementMoves[j].yesIfImmunity])
+							{		
+								switch (sDoubleSpreadReplacementMoves[j].learnType) {
+									case LEARN_TYPE_TM:
+										if (CanMonLearnTMTutor(&party[i], sDoubleSpreadReplacementMoves[j].other, 0))
+											SetMonData(&party[i], MON_DATA_MOVE1 + pos, &newMove);
+										break;
+										
+									case LEARN_TYPE_TUTOR:
+										if (CanMonLearnTMTutor(&party[i], 0, sDoubleSpreadReplacementMoves[j].other))
+											SetMonData(&party[i], MON_DATA_MOVE1 + pos, &newMove);
+										break;
+										
+									case LEARN_TYPE_LEVEL_UP:
+										for (k = 0; k < MAX_LEARNABLE_MOVES && levelUpMoves[k] != MOVE_NONE; ++k)
+										{
+											if (levelUpMoves[k] == newMove)
+											{
+												SetMonData(&party[i], MON_DATA_MOVE1 + pos, &newMove);
+												break;
+											}
+										}
+										break;
+								}
+							}
+						}
+					}
+				#endif
+			}
+		}
+
+		for (i = 0; i < ARRAY_COUNT(sImmunities); ++i)
+		{
+			u8 partyIndex = builder->partyIndex[sImmunities[i].index];
+			if (partyIndex != 0xFF)
+			{
+				if (partyIndex != 0 && partyIndex != 1)
+				{
+					if (AllHittingMoveWithTypeInMonMoveset(&party[0], sImmunities[i].type))
+					{
+						SwapMons(party, 1, partyIndex); //Replace the second Pokemon
+						break;
+					}
+					else if (AllHittingMoveWithTypeInMonMoveset(&party[1], sImmunities[i].type))
+					{
+						SwapMons(party, 0, partyIndex); //Replace the first Pokemon
+						break;
+					}
+				}
+			}
 		}
 	}
 }

@@ -16364,10 +16364,10 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.item = ITEM_LIFE_ORB,
 		.moves =
 		{
-			MOVE_NASTYPLOT,
+			MOVE_TRIATTACK,
 			MOVE_ICEBEAM,
 			MOVE_THUNDERBOLT,
-			MOVE_TRIATTACK,
+			MOVE_NASTYPLOT,
 		},
 	},
 	{
@@ -16386,10 +16386,10 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.item = ITEM_CHOICE_SCARF,
 		.moves =
 		{
+			MOVE_TRIATTACK,
 			MOVE_DARKPULSE,
 			MOVE_ICEBEAM,
 			MOVE_THUNDERBOLT,
-			MOVE_TRIATTACK,
 		},
 	},
 	{
@@ -16410,8 +16410,8 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		{
 			MOVE_TRIATTACK,
 			MOVE_DARKPULSE,
-			MOVE_THUNDERBOLT,
 			MOVE_ICEBEAM,
+			MOVE_THUNDERBOLT,
 		},
 	},
 	{

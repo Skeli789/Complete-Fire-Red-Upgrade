@@ -19,7 +19,6 @@ extern const u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
 //#define gMoveToLearn (*((u16*) 0x2024022))
 #define sLearningMoveTableID (*((u8*) 0x2024028))
 #define sMoveRelearnerStruct ((struct MoveRelearner*) 0x203AAB4)
-#define MAX_LEARNABLE_MOVES 50
 
 //This file's functions
 #ifdef UNBOUND

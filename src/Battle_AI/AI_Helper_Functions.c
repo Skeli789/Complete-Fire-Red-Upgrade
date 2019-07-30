@@ -1327,6 +1327,8 @@ bool8 OnlyBadMovesLeftInMoveset(u8 bankAtk, u8 bankDef)
 						return FALSE;
 				}
 			}
+			else
+				return FALSE;
 
 			return TRUE;
 		}

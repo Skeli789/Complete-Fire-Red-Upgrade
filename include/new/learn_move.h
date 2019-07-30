@@ -26,3 +26,6 @@ void InitMoveRelearnerMoveIDs(void);
 u8 GetRelearnableMoves(struct Pokemon* mon);
 const u8* CopyMoveReminderMoveName(u8 cursor);
 bool16 InitMoveRelearnerWindows(void);
+
+//Exported Constants
+#define MAX_LEARNABLE_MOVES 50

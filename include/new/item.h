@@ -21,3 +21,4 @@ bool8 IsTMHM(u16 item);
 void CopyTMName(u8* dst, u16 itemId);
 
 u32 CanMonLearnTMHM(struct Pokemon* mon, u8 tm);
+u8 CanMonLearnTMTutor(struct Pokemon* mon, u16 item, u8 tutor);
