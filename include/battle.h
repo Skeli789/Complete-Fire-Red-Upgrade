@@ -763,7 +763,7 @@ struct NewBattleStruct
 	u8 playedFocusPunchMessage;
 	u8 playedShellTrapMessage;
 	u8 RoostCounter;
-	u8 CustapQuickClawIndicator; //0x201762E
+	u8 CustapQuickClawIndicator; //0x2017632
 	u8 HealingWishLoc;
 	u8 PowderByte;
 	u8 AbsentBattlerHelper;
@@ -826,7 +826,7 @@ struct NewBattleStruct
 	bool8 restartEndTurnSwitching : 1;
 	bool8 doPlayerSwitchInEffects : 1;
 	bool8 skipCertainSwitchInAbilities : 1;
-	bool8 roundUsed : 1;
+	bool8 roundUsed : 1; //0x2017653
 	bool8 activatedCustapQuickClaw : 1;
 	bool8 calculatedAIPredictions : 1;
 	
@@ -843,7 +843,7 @@ struct NewBattleStruct
 	u8 megaIndicatorObjIds[MAX_BATTLERS_COUNT];
 	u8 abilityPopUpIds[MAX_BATTLERS_COUNT][2];
 	u8 backupSynchronizeBanks[2];
-	u16 movePredictions[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //movePredictions[bankAtk][bankDef] //0x2017688
+	u16 movePredictions[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //movePredictions[bankAtk][bankDef] //0x201769A
 	u16 strongestMove[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //strongestMove[bankAtk][bankDef]
 	u16 strongestSpreadMove[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //strongestSpreadMove[bankAtk][bankDef]
 	u16 bestDoublesKillingMoves[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //bestDoublesKillingMoves[bankAtk][bankDef]

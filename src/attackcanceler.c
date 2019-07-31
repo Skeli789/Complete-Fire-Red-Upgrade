@@ -24,8 +24,6 @@ static u8 IsMonDisobedient(void);
 void atk00_attackcanceler(void)
 {
     int i;
-	
-	gNewBS->activatedCustapQuickClaw = TRUE; //At this point Quick Claw calc should already be done so no more setting animation bit for banks.
 
     if (gBattleOutcome != 0)
     {

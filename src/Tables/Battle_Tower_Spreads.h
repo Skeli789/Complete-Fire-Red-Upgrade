@@ -26338,7 +26338,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		},
 	},
 	{
-		.species = SPECIES_MINIOR_BLUE,
+		.species = SPECIES_MINIOR_SHIELD,
 		.nature = NATURE_ADAMANT,
 		.hpIv = 31,
 		.atkIv = 31,
@@ -26360,7 +26360,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		},
 	},
 	{
-		.species = SPECIES_MINIOR_GREEN,
+		.species = SPECIES_MINIOR_SHIELD,
 		.nature = NATURE_MODEST,
 		.hpIv = 31,
 		.atkIv = 0,
@@ -26382,7 +26382,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		},
 	},
 	{
-		.species = SPECIES_MINIOR_YELLOW,
+		.species = SPECIES_MINIOR_SHIELD,
 		.nature = NATURE_JOLLY,
 		.hpIv = 31,
 		.atkIv = 31,

@@ -55,6 +55,7 @@
 #define BATTLER_MAX_HP(bank) (gBattleMons[bank].hp == gBattleMons[bank].maxHP)
 #define BATTLER_SEMI_INVULNERABLE(bank) (gStatuses3[bank] & STATUS3_SEMI_INVULNERABLE)
 #define IS_Z_MOVE(move) (move >= FIRST_Z_MOVE && move <= LAST_Z_MOVE)
+#define IS_DOUBLE_BATTLE (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
 
 #define STAT_STAGE(bank, stat) (gBattleMons[bank].statStages[stat - 1])
 

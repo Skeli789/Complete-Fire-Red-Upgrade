@@ -19,6 +19,7 @@ move_t GetStrongestMove(const u8 bankAtk, const u8 bankDef, const bool8 onlySpre
 bool8 IsStrongestMove(const u16 currentMove, const u8 bankAtk, const u8 bankDef, const bool8 onlySpreadMoves);
 bool8 MoveWillHit(u16 move, u8 bankAtk, u8 bankDef);
 bool8 MoveWouldHitFirst(u16 move, u16 bankAtk, u16 bankDef);
+bool8 MoveWouldHitBeforeOtherMove(u16 moveAtk, u8 bankAtk, u16 moveDef, u8 bankDef);
 bool8 WillFaintFromWeatherSoon(u8 bank);
 u8 CountBanksPositiveStatStages(u8 bank);
 u8 CountBanksNegativeStatStages(u8 bank);

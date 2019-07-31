@@ -3427,6 +3427,29 @@ void atkDE_asistattackselect(void)
 	}
 }
 
+void atkE1_trygetintimidatetarget(void)
+{
+    u8 side;
+
+    gBattleScripting->bank = gBattleStruct->intimidateBank;
+    side = SIDE(gBattleScripting->bank);
+
+    PREPARE_ABILITY_BUFFER(gBattleTextBuff1, ABILITY(gBattleScripting->bank))
+
+    for (; gBankTarget < gBattlersCount; ++gBankTarget)
+    {
+        if (SIDE(gBankTarget) == side)
+            continue;
+        if (!(gAbsentBattlerFlags & gBitTable[gBankTarget]) && BATTLER_ALIVE(gBankTarget))
+            break;
+    }
+
+    if (gBankTarget >= gBattlersCount)
+        gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+    else
+        gBattlescriptCurrInstr += 5;
+}
+
 void atkE4_getsecretpowereffect(void) {
 	switch (TerrainType) {
 		case ELECTRIC_TERRAIN:

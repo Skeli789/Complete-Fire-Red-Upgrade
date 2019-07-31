@@ -547,18 +547,32 @@ bool8 MoveWillHit(u16 move, u8 bankAtk, u8 bankDef)
 	return FALSE;
 }
 
-//Add section for move prediction
 bool8 MoveWouldHitFirst(u16 move, u16 bankAtk, u16 bankDef)
+{
+	//Use move prediction
+	u16 defMovePrediction = IsValidMovePrediction(bankDef, bankAtk);
+	return MoveWouldHitBeforeOtherMove(move, bankAtk, defMovePrediction, bankDef);
+}
+
+bool8 MoveWouldHitBeforeOtherMove(u16 moveAtk, u8 bankAtk, u16 moveDef, u8 bankDef)
 {
 	u32 temp;
 	u32 bankAtkSpeed, bankDefSpeed;
 
 //Priority Calc
-	if (PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > 0)
-		return TRUE;
+	if (moveDef == MOVE_NONE)
+	{
+		if (PriorityCalc(bankAtk, ACTION_USE_MOVE, moveAtk) > 0)
+			return TRUE;
+	}
+	else
+	{
+		if (PriorityCalc(bankAtk, ACTION_USE_MOVE, moveAtk) > PriorityCalc(bankDef, ACTION_USE_MOVE, moveDef))
+			return TRUE;
+	}
 
 //BracketCalc
-	if (BracketCalc(bankAtk) > BracketCalc(bankDef))
+	if (BracketCalc(bankAtk) > BracketCalc(bankDef)) //Hehehe...AI knows when its Quick Claw activates
 		return TRUE;
 
 //SpeedCalc

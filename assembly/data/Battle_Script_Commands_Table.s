@@ -235,7 +235,7 @@ gBattleScriptingCommandsTable:
 .word atkDE_asistattackselect
 .word 0x802cae5				@setmagiccoat
 .word 0x802cb69				@setstealstatchange
-.word 0x802cbe5				@atke1
+.word atkE1_trygetintimidatetarget
 .word atkE2_switchoutabilities
 .word 0x802cd3d				@jumpiffainted
 .word atkE4_getsecretpowereffect	@secretpower

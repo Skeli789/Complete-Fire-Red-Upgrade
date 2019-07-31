@@ -2,6 +2,7 @@
 #include "defines_battle.h"
 
 #include "../include/new/battle_terrain.h"
+#include "../include/new/dns.h"
 #include "../include/new/form_change.h"
 #include "../include/new/Helper_Functions.h"
 #include "../include/new/set_z_effect.h"
@@ -21,6 +22,7 @@ const species_t gMiniorCores[] =
 static const species_t sBannedBackupSpecies[] =
 {
 	SPECIES_CHERRIM_SUN,
+	SPECIES_SHAYMIN_SKY,
 	SPECIES_DARMANITANZEN,
 	SPECIES_KELDEO_RESOLUTE,
 	SPECIES_MELOETTA_PIROUETTE,
@@ -133,6 +135,7 @@ void FormsRevert(pokemon_t* party)
 
 bool8 TryFormRevert(pokemon_t* mon)
 {
+	int i;
 	u16 species = mon->species;
 	u16 oldHP;
 
@@ -158,9 +161,32 @@ bool8 TryFormRevert(pokemon_t* mon)
 			
 		return TRUE;
 	}
+	else if (mon->species == SPECIES_SHAYMIN_SKY)
+	{
+		if (IsNightTime())
+		{
+			mon->species = SPECIES_SHAYMIN; //Shaymin reverts to normal form at night
+			CalculateMonStats(mon);
+			return TRUE;
+		}
+	}
+	else if (mon->species == SPECIES_KELDEO)
+	{
+		for (i = 0; i < MAX_MON_MOVES; ++i)
+		{
+			if (mon->moves[i] == MOVE_SECRETSWORD)
+				break;
+		}
+		
+		if (i != MAX_MON_MOVES) //Keldeo knows Secret Sword
+		{
+			mon->species = SPECIES_KELDEO_RESOLUTE;
+			CalculateMonStats(mon);
+			return TRUE;
+		}
+	}
 	else if (mon->species == SPECIES_KELDEO_RESOLUTE)
 	{
-		int i;
 		for (i = 0; i < MAX_MON_MOVES; ++i)
 		{
 			if (mon->moves[i] == MOVE_SECRETSWORD)

@@ -13,6 +13,7 @@
 #include "../include/new/CMD49.h"
 #include "../include/new/damage_calc.h"
 #include "../include/new/Helper_Functions.h"
+#include "../include/new/form_change.h"
 #include "../include/new/frontier.h"
 #include "../include/new/multi.h"
 #include "../include/new/mega.h"
@@ -76,6 +77,8 @@ void HandleNewBattleRamClearBeforeBattle(void)
 	Memset(FIRST_NEW_BATTLE_RAM_LOC, 0, (u32) LAST_NEW_BATTLE_RAM_LOC - (u32) FIRST_NEW_BATTLE_RAM_LOC);
 	Memset(gBattleBufferA, 0x0, sizeof(Battle_Buffer_T) * MAX_BATTLERS_COUNT * 2); //Clear both battle buffers
 	//Memset((u8*) 0x203C020, 0x0, 0xE0);
+	
+	FormsRevert(gPlayerParty); //Try to reset all forms before battle
 }
 
 void SavePartyItems(void) 
@@ -549,20 +552,28 @@ void RunTurnActionsFunctions(void)
 				return;
 			}
 		}
-		
+
 		//Ofiically this goes before the Mega, but I think this is better.
-		u8 atkBank = gBanksByTurnOrder[gCurrentTurnActionNumber];		
-		if (gNewBS->CustapQuickClawIndicator & gBitTable[atkBank]) 
+		if (!gNewBS->activatedCustapQuickClaw)
 		{
-			gNewBS->CustapQuickClawIndicator &= ~(gBitTable[atkBank]);
-			gBattleScripting->bank = atkBank;
-			gLastUsedItem = gBattleMons[atkBank].item;
-			if (ITEM_EFFECT(atkBank) != ITEM_EFFECT_CUSTAP_BERRY)
-				RecordItemBattle(atkBank, ITEM_EFFECT(atkBank));
-			BattleScriptExecute(BattleScript_QuickClaw);
-			return;
+			for (i = 0; i < gBattlersCount; ++i) //Loop through all battlers and play Quick Claw anim for each
+			{
+				if (gNewBS->CustapQuickClawIndicator & gBitTable[i]) 
+				{
+					gNewBS->CustapQuickClawIndicator &= ~(gBitTable[i]);
+					gBattleScripting->bank = i;
+					gLastUsedItem = ITEM(i);
+					if (ITEM_EFFECT(i) != ITEM_EFFECT_CUSTAP_BERRY)
+						RecordItemBattle(i, ITEM_EFFECT(i));
+
+					BattleScriptExecute(BattleScript_QuickClaw);
+					return;
+				}
+			}
 		}
-	}	
+		
+		gNewBS->activatedCustapQuickClaw = TRUE; //So the animation only plays once
+	}
 	
 	gBattleStruct->savedTurnActionNumber = gCurrentTurnActionNumber;
 	sTurnActionsFuncsTable[gCurrentActionFuncId]();
@@ -643,7 +654,7 @@ void HandleAction_UseMove(void)
 	{
 		gCurrentMove = gChosenMove = gDisableStructs[gBankAttacker].encoredMove;
 		gCurrMovePos = gChosenMovePos = gDisableStructs[gBankAttacker].encoredMovePos;
-		gBattleStruct->moveTarget[gBankAttacker] = GetMoveTarget(gCurrentMove, 0);
+		// gBattleStruct->moveTarget[gBankAttacker] = GetMoveTarget(gCurrentMove, 0); //Player can choose own target now
 	}
 	// Check if the encored move wasn't overwritten
 	else if (gDisableStructs[gBankAttacker].encoredMove != MOVE_NONE
@@ -1111,13 +1122,12 @@ s32 BracketCalc(u8 bank)
 			case ITEM_EFFECT_QUICK_CLAW:
 				if (gRandomTurnNumber % 100 < itemQuality)
 				{
-					if (!(gNewBS->activatedCustapQuickClaw)) //So the animation only plays at the beginning of the turn
-					{
-						gNewBS->activatedCustapQuickClaw = TRUE;
-						gNewBS->CustapQuickClawIndicator |= gBitTable[bank];
-					}
-
+					gNewBS->CustapQuickClawIndicator |= gBitTable[bank];
 					return 1;
+				}
+				else
+				{
+					gNewBS->CustapQuickClawIndicator &= ~(gBitTable[bank]);
 				}
 				break;
 
@@ -1127,6 +1137,10 @@ s32 BracketCalc(u8 bank)
 				{
 					gNewBS->CustapQuickClawIndicator |= gBitTable[bank];
 					return 1;
+				}
+				else
+				{
+					gNewBS->CustapQuickClawIndicator &= ~(gBitTable[bank]);
 				}
 				break;
 

@@ -70,6 +70,8 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 	u8 bankDefPartner = (IsDoubleBattle()) ? PARTNER(bankDef) : bankDef;
 	u8 atkPartnerAbility = (IsDoubleBattle()) ? ABILITY(bankAtkPartner) : ABILITY_NONE;
 	u8 defPartnerAbility = (IsDoubleBattle()) ? ABILITY(bankDefPartner) : ABILITY_NONE;
+	
+	u16 partnerMove = (gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE) ? gChosenMovesByBanks[bankAtkPartner] : IsValidMovePrediction(bankAtkPartner, FOE(bankAtk));
 
 	//Load Alternative targets
 	u8 foe1, foe2;
@@ -1366,7 +1368,17 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 				|| gNewBS->AuroraVeilTimers[SIDE(bankDef)] != 0
 				|| gSideAffecting[SIDE(bankAtk)] & SIDE_STATUS_SPIKES) 
 					break;
-				
+
+				if (IS_DOUBLE_BATTLE)
+				{
+					if (gBattleMoves[partnerMove].effect == EFFECT_SPIKES //Partner is going to set up hazards
+					&& !MoveWouldHitBeforeOtherMove(move, bankAtk, partnerMove, bankAtkPartner)) //Partner is going to set up before the potential Defog
+					{
+						DECREASE_VIABILITY(10);
+						break; //Don't use Defog if partner is going to set up hazards
+					}
+				}
+
 				goto AI_LOWER_EVASION;
 			}
 			else if ((atkStatus2 & STATUS2_WRAPPED) || (atkStatus3 & STATUS3_LEECHSEED))
@@ -1520,10 +1532,10 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		case EFFECT_FOCUS_PUNCH: ;
 			switch (move) {
 				case MOVE_SHELLTRAP: ;
-					u16 partnerMove = IsValidMovePrediction(bankDefPartner, bankAtk);
+					u16 defPartnerMove = IsValidMovePrediction(bankDefPartner, bankAtk);
 
 					if (!CheckContact(predictedMove, foe1)
-					&&  !CheckContact(partnerMove, foe2))
+					&&  !CheckContact(defPartnerMove, foe2))
 						DECREASE_VIABILITY(4); //Probably better not to use it
 					break;
 					
@@ -1965,7 +1977,6 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE
 			&&  gBattleMons[bankAtkPartner].hp > 0)
 			{
-				u16 partnerMove = gChosenMovesByBanks[bankAtkPartner];
 				if (partnerMove != MOVE_NONE
 				&&  gBattleMoves[partnerMove].effect == EFFECT_PLEDGE
 				&&  move != partnerMove) //Different pledge moves

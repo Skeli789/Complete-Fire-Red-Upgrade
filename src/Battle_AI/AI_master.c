@@ -1435,7 +1435,7 @@ static void PredictMovesForBanks(void)
 				StoreMovePrediction(bankAtk, bankDef, gLockedMoves[bankAtk]);
 			}
 			else
-			{	
+			{
 				u32 backupFlags = AI_THINKING_STRUCT->aiFlags; //Backup flags so killing in negatives is ignored
 				AI_THINKING_STRUCT->aiFlags = 7;
 				
@@ -1466,6 +1466,8 @@ static void PredictMovesForBanks(void)
 					StoreSwitchPrediction(bankAtk, bankDef);
 				else
 					StoreMovePrediction(bankAtk, bankDef, gBattleMons[bankAtk].moves[bestMoves[Random() % (j + 1)] - 1]);
+					
+				Memset(viabilities, 0, sizeof(viabilities));
 			}
 		}
 	}

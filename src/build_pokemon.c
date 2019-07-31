@@ -988,6 +988,7 @@ static void CreateFrontierMon(struct Pokemon* mon, const u8 level, const struct 
 		ballType = umodsi(Random(), NUM_BALLS);
 	SetMonData(mon, REQ_POKEBALL, &ballType);
 
+	TryFormRevert(mon); //To fix Minior forms
 	CalculateMonStats(mon);
 	HealMon(mon);
 }
@@ -1010,7 +1011,7 @@ static void SetWildMonHeldItem(void)
 	{
 		for (int i = 0; i < 2; ++i) //Two possible wild opponents
 		{
-			if (i > 0 && !(gBattleTypeFlags & BATTLE_TYPE_DOUBLE))
+			if (i > 0 && !IS_DOUBLE_BATTLE)
 				break;
 
 			species = gEnemyParty[i].species;
@@ -1892,6 +1893,7 @@ static void PostProcessTeam(struct Pokemon* party, struct TeamBuilder* builder)
 					{
 						u8 pos = FindMovePositionInMonMoveset(sDoubleSpreadReplacementMoves[j].oldMove, &party[i]);
 						u16 newMove = sDoubleSpreadReplacementMoves[j].replacementMove;
+						u8 newPP = gBattleMoves[newMove].pp;
 
 						if (pos < MAX_MON_MOVES)
 						{
@@ -1905,12 +1907,18 @@ static void PostProcessTeam(struct Pokemon* party, struct TeamBuilder* builder)
 								switch (sDoubleSpreadReplacementMoves[j].learnType) {
 									case LEARN_TYPE_TM:
 										if (CanMonLearnTMTutor(&party[i], sDoubleSpreadReplacementMoves[j].other, 0))
+										{
 											SetMonData(&party[i], MON_DATA_MOVE1 + pos, &newMove);
+											SetMonData(&party[i], MON_DATA_PP1 + pos, &newPP);
+										}
 										break;
 										
 									case LEARN_TYPE_TUTOR:
 										if (CanMonLearnTMTutor(&party[i], 0, sDoubleSpreadReplacementMoves[j].other))
+										{
 											SetMonData(&party[i], MON_DATA_MOVE1 + pos, &newMove);
+											SetMonData(&party[i], MON_DATA_PP1 + pos, &newPP);
+										}
 										break;
 										
 									case LEARN_TYPE_LEVEL_UP:
@@ -1919,6 +1927,7 @@ static void PostProcessTeam(struct Pokemon* party, struct TeamBuilder* builder)
 											if (levelUpMoves[k] == newMove)
 											{
 												SetMonData(&party[i], MON_DATA_MOVE1 + pos, &newMove);
+												SetMonData(&party[i], MON_DATA_PP1 + pos, &newPP);
 												break;
 											}
 										}
