@@ -160,6 +160,14 @@
 	.word \rom_address
 	.endm
 	
+	.macro jumpifnotbattletype battle_type rom_address
+	.byte 0x2B
+	.byte NOTANDS
+	.word BATTLE_TYPE
+	.word \battle_type
+	.word \rom_address
+	.endm	
+	
 	.macro getifcantrunfrombattle bank
 	.byte 0x76
 	.byte \bank
@@ -1554,13 +1562,14 @@
 	.2byte \halver
 	.endm
 	
-	.macro formchange bank original_species target_species reload_type reload_stats rom_address
+	.macro formchange bank original_species target_species reload_type reload_stats reload_ability rom_address
 	.byte 0xFF, 0x19
 	.byte \bank
 	.2byte \original_species
 	.2byte \target_species
 	.byte \reload_type
 	.byte \reload_stats
+	.byte \reload_ability
 	.4byte \rom_address
 	.endm
 	

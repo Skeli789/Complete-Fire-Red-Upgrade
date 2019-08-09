@@ -1,8 +1,9 @@
 #include "../defines.h"
 #include "../../include/new/z_move_effects.h"
 
-const struct BattleMove gBattleMoves[] = {
-[MOVE_NONE] =
+const struct BattleMove gBattleMoves[] =
+{
+	[MOVE_NONE] =
 	{
 		.effect = EFFECT_HIT,
 		.power = 40,
@@ -4990,7 +4991,7 @@ const struct BattleMove gBattleMoves[] = {
 		.priority = 0,
 		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 		.z_move_power = 160,
-		.split = SPLIT_PHYSICAL,
+		.split = SPLIT_SPECIAL,
 		.z_move_effect = 0
 	},
 
@@ -9086,7 +9087,7 @@ const struct BattleMove gBattleMoves[] = {
 		.priority = 4,
 		.flags = 0,
 		.z_move_power = 0,
-		.split = SPLIT_PHYSICAL,
+		.split = SPLIT_STATUS,
 		.z_move_effect = Z_EFFECT_DEF_UP_1
 	},
 

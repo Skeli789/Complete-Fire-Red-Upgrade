@@ -54,6 +54,7 @@
 .global SpecialAttackPhysicalDamageMoves
 .global SpecialWholeFieldMoveTable
 .global AromaVeilTable
+.global MovesThatLiftProtectTable
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -952,3 +953,11 @@ AromaVeilTable:
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+MovesThatLiftProtectTable:
+.hword MOVE_FEINT
+.hword MOVE_HYPERSPACEFURY
+.hword MOVE_HYPERSPACEHOLE
+.hword MOVE_PHANTOMFORCE
+.hword MOVE_SHADOWFORCE
+.hword MOVE_TABLES_TERMIN

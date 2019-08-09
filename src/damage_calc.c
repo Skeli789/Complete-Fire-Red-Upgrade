@@ -30,12 +30,12 @@ extern struct AlternateSize gAlternateSpeciesSizeTable[];
 #endif
 
 //This file's functions:
-static u8 CalcPossibleCritChance(u8 bankAtk, u8 bankDef, u16 move, pokemon_t* atkMon, bool8 CheckParty);
-static void ModulateDmgByType(u8 multiplier, const u16 move, const u8 moveType, const u8 defType, const u8 defBank, u8* flags, pokemon_t* party_data_def, bool8 CheckPartyDef);
+static u8 CalcPossibleCritChance(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* atkMon, bool8 CheckParty);
+static void ModulateDmgByType(u8 multiplier, const u16 move, const u8 moveType, const u8 defType, const u8 defBank, u8* flags, struct Pokemon* monDef, bool8 CheckPartyDef);
 static bool8 AbilityCanChangeTypeAndBoost(u8 bankAtk, u16 move);
-static u16 GetZMovePower(u8 bank, u16 move);
+static u16 GetZMovePower(u16 zMove);
 static u32 AdjustWeight(u32 weight, ability_t, item_effect_t, bank_t, bool8 check_nimble);
-static u8 GetFlingPower(ability_t, item_t, pokemon_t*, bank_t, bool8 PartyCheck);
+static u8 GetFlingPower(ability_t, item_t, struct Pokemon*, bank_t, bool8 PartyCheck);
 static void AdjustDamage(bool8 CheckFalseSwipe);
 static void ApplyRandomDmgMultiplier(void);
 static bool8 IsBankHoldingFocusSash(u8 bank);
@@ -99,7 +99,7 @@ void atk04_critcalc(void) {
 	++gBattlescriptCurrInstr;
 }
 
-static u8 CalcPossibleCritChance(u8 bankAtk, u8 bankDef, u16 move, pokemon_t* atkMon, bool8 CheckParty) {
+static u8 CalcPossibleCritChance(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* atkMon, bool8 CheckParty) {
 	u8 atkAbility;
 	u8 defAbility = ABILITY(bankDef);
 	u8 atkEffect = 0;
@@ -245,7 +245,8 @@ u32 AI_CalcDmg(const u8 bankAtk, const u8 bankDef, const u16 move) {
 			return gBattleMons[bankDef].hp - finalHp;
 	}
 
-	gDynamicBasePower = (IsZMove(move)) ? GetZMovePower(bankAtk, move) : 0;	
+	gDynamicBasePower = (IsZMove(move)) ? GetZMovePower(move) : 0;
+
 	gBattleScripting->dmgMultiplier = 1;
 	gBattleStruct->dynamicMoveType = GetMoveTypeSpecial(bankAtk, move);
 	gCritMultiplier = CalcPossibleCritChance(bankAtk, bankDef, move, 0, FALSE); //Return 0 if none, 1 if always, 2 if 50%
@@ -295,15 +296,46 @@ u32 AI_CalcDmg(const u8 bankAtk, const u8 bankDef, const u16 move) {
 	return damage;
 }
 
-u32 AI_CalcPartyDmg(u8 bankAtk, u8 bankDef, u16 move, pokemon_t* mon) {
+u32 AI_CalcPartyDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* mon) {
 	u32 damage = 0;
-	gDynamicBasePower = 0;
+	u8 resultFlags = TypeCalc(move, bankAtk, bankDef, mon, TRUE);
+	
+	if (SPLIT(move) == SPLIT_STATUS || resultFlags & MOVE_RESULT_NO_EFFECT)
+		return 0;
+	
+	switch (gBattleMoves[move].effect) {
+		case EFFECT_SUPER_FANG:
+			return gBattleMons[bankDef].hp / 2;
+		case EFFECT_DRAGON_RAGE:
+			return 40;
+		case EFFECT_SONICBOOM:
+			return 20;
+		case EFFECT_LEVEL_DAMAGE:
+			return mon->level;
+		case EFFECT_PSYWAVE:
+			return GetPsywaveDamage(50); //On average, 50 will be selected as the random number	
+		case EFFECT_MEMENTO: //Final Gambit
+			return mon->hp;	
+		case EFFECT_ENDEAVOR:
+			if (gBattleMons[bankDef].hp <= mon->hp)
+				return 0;
+			return gBattleMons[bankDef].hp - mon->hp;
+		case EFFECT_PAIN_SPLIT: ;
+			u16 finalHp = MathMax(1, (mon->hp + gBattleMons[bankDef].hp) / 2);
+			
+			if (finalHp >= gBattleMons[bankDef].hp)
+				return 0;
+			return gBattleMons[bankDef].hp - finalHp;
+	}
+
+	gDynamicBasePower = (IsZMove(move)) ? GetZMovePower(move) : 0;
+
 	gBattleScripting->dmgMultiplier = 1;
 	gBattleStruct->dynamicMoveType = GetMoveTypeSpecialFromParty(mon, move);
 	u16 side_hword = gSideAffecting[SIDE(bankDef)];
 	gCritMultiplier = CalcPossibleCritChance(bankAtk, bankDef, move, mon, TRUE); //Return 0 if none, 1 if always, 2 if 50%
 	damage = CalculateBaseDamage(&gBattleMons[0], &gBattleMons[bankDef], move,
-											side_hword, gDynamicBasePower,
+											side_hword, resultFlags,
 											TypeCalc(move, bankAtk, bankDef, mon, TRUE),
 											gBattleStruct->dynamicMoveType, bankAtk, bankDef,
 											mon, TRUE, FALSE, FALSE);
@@ -323,11 +355,26 @@ u32 AI_CalcPartyDmg(u8 bankAtk, u8 bankDef, u16 move, pokemon_t* mon) {
 	gCritMultiplier = 100; //Reset
 
 	if (CheckTableForMove(move, TwoToFiveStrikesMoves) && GetPartyAbility(mon) == ABILITY_SKILLLINK)
+	{
 		damage *= 5;
+		return damage;
+	}
 	else if (CheckTableForMove(move, TwoStrikesMoves))
+	{
 		damage *= 2;
+		return damage;
+	}
 	else if (CheckTableForMove(move, ThreeStrikesMoves) || CheckTableForMove(move, TwoToFiveStrikesMoves)) //Three hits on average
+	{
 		damage *= 3;
+		return damage;
+	}
+
+	//Multi hit moves skip these checks
+	if (gBattleMoves[move].effect == EFFECT_FALSE_SWIPE
+	|| (BATTLER_MAX_HP(bankDef) && ABILITY(bankDef) == ABILITY_STURDY && NO_MOLD_BREAKERS(GetPartyAbility(mon), move))
+	|| (BATTLER_MAX_HP(bankDef) && IsBankHoldingFocusSash(bankDef)))
+		damage = MathMin(damage, gBattleMons[bankDef].hp - 1);
 
 	return damage;
 }
@@ -513,7 +560,7 @@ void atk4A_typecalc2(void) {
 
 //This is the type calc that is callable as a function
 //This calc now also contains the calc the AI uses with its party pokemon to help with switching
-u8 TypeCalc(u16 move, u8 bankAtk, u8 bankDef, pokemon_t* party_data_atk, bool8 CheckParty) {
+u8 TypeCalc(u16 move, u8 bankAtk, u8 bankDef, struct Pokemon* monAtk, bool8 CheckParty) {
 	u8 moveType;
 	u8 defAbility = ABILITY(bankDef);
 	u8 defEffect = ITEM_EFFECT(bankDef);
@@ -524,11 +571,11 @@ u8 TypeCalc(u16 move, u8 bankAtk, u8 bankDef, pokemon_t* party_data_atk, bool8 C
 		return 0;
 
 	if (CheckParty) {
-		atkAbility = GetPartyAbility(party_data_atk);
-		atkType1 = gBaseStats[party_data_atk->species].type1;
-		atkType2 = gBaseStats[party_data_atk->species].type2;
+		atkAbility = GetPartyAbility(monAtk);
+		atkType1 = gBaseStats[monAtk->species].type1;
+		atkType2 = gBaseStats[monAtk->species].type2;
 		atkType3 = TYPE_BLANK;
-		moveType = GetMoveTypeSpecialFromParty(party_data_atk, move);
+		moveType = GetMoveTypeSpecialFromParty(monAtk, move);
 	}
 	else {
 		atkAbility = ABILITY(bankAtk);
@@ -577,15 +624,13 @@ u8 TypeCalc(u16 move, u8 bankAtk, u8 bankDef, pokemon_t* party_data_atk, bool8 C
 }
 
 //The function allows the AI to do type calculations from a move onto one of their partied mons
-u8 AI_TypeCalc(u16 move, u8 bankAtk, pokemon_t* party_data_def) {
-	int i = 0;
+u8 AI_TypeCalc(u16 move, u8 bankAtk, struct Pokemon* monDef) {
 	u8 flags = 0;
-	u8 table_atk, table_def, table_mult;
 
-	u8 defAbility = GetPartyAbility(party_data_def);
-	u8 defEffect = ItemId_GetHoldEffectParam(party_data_def->item);
-	u8 defType1 = gBaseStats[party_data_def->species].type1;
-	u8 defType2 = gBaseStats[party_data_def->species].type2;
+	u8 defAbility = GetPartyAbility(monDef);
+	u8 defEffect = ItemId_GetHoldEffectParam(monDef->item);
+	u8 defType1 = gBaseStats[monDef->species].type1;
+	u8 defType2 = gBaseStats[monDef->species].type2;
 
 	u8 atkAbility = ABILITY(bankAtk);
 	u8 atkType1 = gBattleMons[bankAtk].type1;
@@ -608,7 +653,7 @@ u8 AI_TypeCalc(u16 move, u8 bankAtk, pokemon_t* party_data_def) {
 
 	//Check Special Ground Immunities
 	if (moveType == TYPE_GROUND
-	&& !CheckGroundingFromPartyData(party_data_def)
+	&& !CheckGroundingFromPartyData(monDef)
 	&& ((defAbility == ABILITY_LEVITATE && NO_MOLD_BREAKERS(atkAbility, move)) || (defEffect == ITEM_EFFECT_AIR_BALLOON && defAbility != ABILITY_KLUTZ))
 	&& move != MOVE_THOUSANDARROWS)
 		flags = MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE;
@@ -620,37 +665,8 @@ u8 AI_TypeCalc(u16 move, u8 bankAtk, pokemon_t* party_data_def) {
 	else if (move == MOVE_SKYDROP && (defType1 == TYPE_FLYING || defType2 == TYPE_FLYING))
 		flags |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
 
-	else {
-	TYPE_LOOP_AI:
-		while (gTypeEffectiveness[i] != TYPE_ENDTABLE) {
-				table_atk = gTypeEffectiveness[i];
-				table_def = gTypeEffectiveness[i + 1];
-				table_mult = gTypeEffectiveness[i + 2];
-
-			if (gTypeEffectiveness[i] == TYPE_FORESIGHT) {
-				if (atkAbility == ABILITY_SCRAPPY)
-					break;
-				i += 3;
-				continue;
-			}
-
-			if (table_atk == moveType) {
-				//check type1
-				if (table_def == defType1)
-					ModulateDmgByType(table_mult, move, table_atk, table_def, 0, &flags, party_data_def, TRUE);
-
-				//check type2
-				if (table_def == defType2 && defType1 != defType2)
-					ModulateDmgByType(table_mult, move, table_atk, table_def, 0, &flags, party_data_def, TRUE);
-			}
-			i += 3;
-		}
-		if (move == MOVE_FLYINGPRESS && moveType != TYPE_FLYING) {
-			moveType = TYPE_FLYING;
-			i = 0;
-			goto TYPE_LOOP_AI;
-		}
-	}
+	else
+		TypeDamageModificationPartyMon(atkAbility, monDef, move, moveType, &flags);
 
 	if (defAbility == ABILITY_WONDERGUARD
 	 && (!(flags & MOVE_RESULT_SUPER_EFFECTIVE) || ((flags & (MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE)) == (MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE)))
@@ -721,43 +737,43 @@ u8 AI_SpecialTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 
 void TypeDamageModification(u8 atkAbility, u8 bankDef, u16 move, u8 moveType, u8* flags) {
 	int i = 0;
-	u8 table_atk;
-	u8 table_def;
-	u8 table_mult;
+	u8 tableAtk;
+	u8 tableDef;
+	u8 tableMult;
 	u8 defType1 = gBattleMons[bankDef].type1;
 	u8 defType2 = gBattleMons[bankDef].type2;
 	u8 defType3 = gBattleMons[bankDef].type3;
 
 	TYPE_LOOP:
 		while (gTypeEffectiveness[i] != TYPE_ENDTABLE) {
-			table_atk = gTypeEffectiveness[i];
-			table_def = gTypeEffectiveness[i + 1];
-			table_mult = gTypeEffectiveness[i + 2];
+			tableAtk = gTypeEffectiveness[i];
+			tableDef = gTypeEffectiveness[i + 1];
+			tableMult = gTypeEffectiveness[i + 2];
 
-			if (table_atk == TYPE_FORESIGHT) {
+			if (tableAtk == TYPE_FORESIGHT) {
 				if (gBattleMons[bankDef].status2 & STATUS2_FORESIGHT || atkAbility == ABILITY_SCRAPPY)
 					break;
 				i += 3;
 				continue;
 			}
 
-			else if (table_atk == moveType) {
-				if (table_atk == TYPE_PSYCHIC && table_def == TYPE_DARK && (gStatuses3[bankDef] & STATUS3_MIRACLE_EYED)) {
+			else if (tableAtk == moveType) {
+				if (tableAtk == TYPE_PSYCHIC && tableDef == TYPE_DARK && (gStatuses3[bankDef] & STATUS3_MIRACLE_EYED)) {
 						i += 3;
 						continue;
 				}
 
 				//check type1
-				if (table_def == defType1)
-					ModulateDmgByType(table_mult, move, table_atk, table_def, bankDef, flags, 0, FALSE);
+				if (tableDef == defType1)
+					ModulateDmgByType(tableMult, move, tableAtk, tableDef, bankDef, flags, 0, FALSE);
 
 				//check type2
-				if (table_def == defType2 && defType1 != defType2)
-					ModulateDmgByType(table_mult, move, table_atk, table_def, bankDef, flags, 0, FALSE);
+				if (tableDef == defType2 && defType1 != defType2)
+					ModulateDmgByType(tableMult, move, tableAtk, tableDef, bankDef, flags, 0, FALSE);
 
 				//check type3
-				if (table_def == defType3 && defType3 != defType1 && defType3 != defType2)
-					ModulateDmgByType(table_mult, move, table_atk, table_def, bankDef, flags, 0, FALSE);
+				if (tableDef == defType3 && defType3 != defType1 && defType3 != defType2)
+					ModulateDmgByType(tableMult, move, tableAtk, tableDef, bankDef, flags, 0, FALSE);
 
 			}
 			i += 3;
@@ -769,7 +785,55 @@ void TypeDamageModification(u8 atkAbility, u8 bankDef, u16 move, u8 moveType, u8
 		}
 }
 
-static void ModulateDmgByType(u8 multiplier, const u16 move, const u8 moveType, const u8 defType, const u8 defBank, u8* flags, pokemon_t* party_data_def, bool8 CheckPartyDef) {
+
+void TypeDamageModificationPartyMon(u8 atkAbility, struct Pokemon* monDef, u16 move, u8 moveType, u8* flags)
+{
+	int i = 0;
+	u8 tableAtk;
+	u8 tableDef;
+	u8 tableMult;
+	u8 defType1 = gBaseStats[monDef->species].type1;
+	u8 defType2 = gBaseStats[monDef->species].type2;
+
+TYPE_LOOP_AI:
+	while (gTypeEffectiveness[i] != TYPE_ENDTABLE)
+	{
+		tableAtk = gTypeEffectiveness[i];
+		tableDef = gTypeEffectiveness[i + 1];
+		tableMult = gTypeEffectiveness[i + 2];
+
+		if (gTypeEffectiveness[i] == TYPE_FORESIGHT)
+		{
+			if (atkAbility == ABILITY_SCRAPPY)
+				break;
+
+			i += 3;
+			continue;
+		}
+
+		if (tableAtk == moveType)
+		{
+			//check type1
+			if (tableDef == defType1)
+				ModulateDmgByType(tableMult, move, tableAtk, tableDef, 0, flags, monDef, TRUE);
+
+			//check type2
+			if (tableDef == defType2 && defType1 != defType2)
+				ModulateDmgByType(tableMult, move, tableAtk, tableDef, 0, flags, monDef, TRUE);
+		}
+
+		i += 3;
+	}
+
+	if (move == MOVE_FLYINGPRESS && moveType != TYPE_FLYING)
+	{
+		moveType = TYPE_FLYING;
+		i = 0;
+		goto TYPE_LOOP_AI;
+	}
+}
+
+static void ModulateDmgByType(u8 multiplier, const u16 move, const u8 moveType, const u8 defType, const u8 defBank, u8* flags, struct Pokemon* monDef, bool8 CheckPartyDef) {
 
 	#ifdef INVERSE_BATTLES
 		if (FlagGet(INVERSE_FLAG)) {
@@ -793,11 +857,11 @@ static void ModulateDmgByType(u8 multiplier, const u16 move, const u8 moveType, 
 		multiplier = TYPE_MUL_SUPER_EFFECTIVE;
 
 	if (CheckPartyDef) {
-		if (multiplier == TYPE_MUL_NO_EFFECT && ItemId_GetHoldEffectParam(party_data_def->item) == ITEM_EFFECT_RING_TARGET
-		&& GetPartyAbility(party_data_def) != ABILITY_KLUTZ)
+		if (multiplier == TYPE_MUL_NO_EFFECT && ItemId_GetHoldEffectParam(monDef->item) == ITEM_EFFECT_RING_TARGET
+		&& GetPartyAbility(monDef) != ABILITY_KLUTZ)
 			multiplier = TYPE_MUL_NORMAL;
 		else if (multiplier == TYPE_MUL_NO_EFFECT && moveType == TYPE_GROUND
-		&& (CheckGroundingFromPartyData(party_data_def) || move == MOVE_THOUSANDARROWS))
+		&& (CheckGroundingFromPartyData(monDef) || move == MOVE_THOUSANDARROWS))
 			multiplier = TYPE_MUL_NORMAL;
 	}
 	else {
@@ -883,12 +947,12 @@ u8 GetMoveTypeSpecial(u8 bankAtk, u16 move) {
 	return moveType;
 }
 
-u8 GetMoveTypeSpecialFromParty(pokemon_t* party_data, u16 move) {
-	u8 atkAbility = GetPartyAbility(party_data);
+u8 GetMoveTypeSpecialFromParty(struct Pokemon* mon, u16 move) {
+	u8 atkAbility = GetPartyAbility(mon);
 	u8 moveType = gBattleMoves[move].type;
 
 	if (CheckTableForMove(move, TypeChangeExceptionTable))
-		return GetExceptionMoveTypeFromParty(party_data, move);
+		return GetExceptionMoveTypeFromParty(mon, move);
 
 //Change Normal-type Moves
 	if (moveType == TYPE_NORMAL) {
@@ -1047,22 +1111,22 @@ u8 GetExceptionMoveType(u8 bankAtk, u16 move) {
 	return moveType;
 }
 
-u8 GetExceptionMoveTypeFromParty(pokemon_t* party_data, u16 move) {
+u8 GetExceptionMoveTypeFromParty(struct Pokemon* mon, u16 move) {
 	int i;
 	u8 moveType = gBattleMoves[move].type;
-	u8 ability = GetPartyAbility(party_data);
-	u16 item = party_data->item;
+	u8 ability = GetPartyAbility(mon);
+	u16 item = mon->item;
 	u8 effect = ItemId_GetHoldEffect(item);
 	u8 quality = ItemId_GetHoldEffectParam(item);
 
 	switch (move) {
 		case MOVE_HIDDENPOWER:
-			moveType = ((party_data->hpIV & 1)) |
-						((party_data->attackIV & 1) << 1) |
-						((party_data->defenseIV & 1) << 2) |
-						((party_data->speedIV & 1) << 3) |
-						((party_data->spAttackIV & 1) << 4) |
-						((party_data->spDefenseIV & 1) << 5);
+			moveType = ((mon->hpIV & 1)) |
+						((mon->attackIV & 1) << 1) |
+						((mon->defenseIV & 1) << 2) |
+						((mon->speedIV & 1) << 3) |
+						((mon->spAttackIV & 1) << 4) |
+						((mon->spDefenseIV & 1) << 5);
 
 			moveType = udivsi((15 * moveType), 63) + 1;
 			if (moveType >= TYPE_MYSTERY)
@@ -1117,14 +1181,14 @@ u8 GetExceptionMoveTypeFromParty(pokemon_t* party_data, u16 move) {
 			break;
 
 		case MOVE_REVELATIONDANCE:
-			moveType = gBaseStats[party_data->species].type1;
+			moveType = gBaseStats[mon->species].type1;
 	}
 
 	return moveType;
 }
 
 // Unhidden Power function
-u8 GetSummaryScreenMoveType(u16 move, pokemon_t* mon) {
+u8 GetSummaryScreenMoveType(u16 move, struct Pokemon* mon) {
 #ifdef DISPLAY_REAL_MOVE_TYPE_ON_MENU
 	return GetMoveTypeSpecialFromParty(mon, move);
 #else
@@ -1215,7 +1279,7 @@ void AdjustDamage(bool8 CheckFalseSwipe) {
 		++gBattlescriptCurrInstr;
 }
 
-s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* defender, const u16 move, u16 sideStatus, u16 powerOverride, u8 effectivenessFlags, u8 typeOverride, u8 bankAtk, u8 bankDef, pokemon_t* party_data_atk, bool8 PartyCheck, bool8 IgnoreAttacker, bool8 CheckingConfusion) {
+s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* defender, const u16 move, u16 sideStatus, u16 powerOverride, u8 effectivenessFlags, u8 typeOverride, u8 bankAtk, u8 bankDef, struct Pokemon* monAtk, bool8 PartyCheck, bool8 IgnoreAttacker, bool8 CheckingConfusion) {
 	u16 mon;
 	u32 damage = 0;  //Damage is usually signed, but is set as unsigned here to help prevent overflow just in case it happens (although it's unlikely)
 	u8 type;
@@ -1237,19 +1301,19 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 	defSpecies = defender->species;
 
 	if (PartyCheck) { //Load data from elsewhere if we're calculating damage for a partied mon
-		atkAbility = GetPartyAbility(party_data_atk);
+		atkAbility = GetPartyAbility(monAtk);
 		atkPartner_ability = 0;
-		attacker_hp = party_data_atk->hp;
-		attacker_maxHP = party_data_atk->maxHP;
-		attackerStatus1 = party_data_atk->condition;
-		attacker_item = party_data_atk->item;
+		attacker_hp = monAtk->hp;
+		attacker_maxHP = monAtk->maxHP;
+		attackerStatus1 = monAtk->condition;
+		attacker_item = monAtk->item;
 		if (atkAbility != ABILITY_KLUTZ)
-			atkEffect = ItemId_GetHoldEffect(party_data_atk->item);
+			atkEffect = ItemId_GetHoldEffect(monAtk->item);
 		else
 			atkEffect = 0;
-		atkQuality = ItemId_GetHoldEffectParam(party_data_atk->item);
-		atkSpecies = party_data_atk->species;
-		moveSplit = CalcMoveSplitFromParty(party_data_atk, move);
+		atkQuality = ItemId_GetHoldEffectParam(monAtk->item);
+		atkSpecies = monAtk->species;
+		moveSplit = CalcMoveSplitFromParty(monAtk, move);
 	}
 	else {
 		atkAbility = ABILITY(bankAtk);
@@ -1266,9 +1330,14 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 
 //Load Correct Power and Type
 	if (gNewBS->ZMoveData->active)
-		gBattleMovePower = GetZMovePower(bankAtk, move);
+	{
+		if (gNewBS->aiZMoveHelper == MOVE_NONE) //Would be set by moves like Mirror Move & Me First
+			gNewBS->aiZMoveHelper = gBattleMons[bankAtk].moves[gBattleStruct->chosenMovePositions[bankAtk]];
+
+		gBattleMovePower = GetZMovePower(move);
+	}
 	else if (!powerOverride)
-		gBattleMovePower = GetBasePower(bankAtk, bankDef, move, attacker_item, atkEffect, atkAbility, attackerStatus1, attacker_hp, attacker_maxHP, atkSpecies, party_data_atk, PartyCheck, FALSE, FALSE);
+		gBattleMovePower = GetBasePower(bankAtk, bankDef, move, attacker_item, atkEffect, atkAbility, attackerStatus1, attacker_hp, attacker_maxHP, atkSpecies, monAtk, PartyCheck, FALSE, FALSE);
 	else
 		gBattleMovePower = powerOverride;
 
@@ -1284,8 +1353,8 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 	}
 	else {
 		if (PartyCheck) {
-			attack = party_data_atk->attack;
-			spAttack = party_data_atk->spAttack;
+			attack = monAtk->attack;
+			spAttack = monAtk->spAttack;
 		}
 		else {
 			attack = attacker->attack;
@@ -1392,7 +1461,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 				u8 targetGender = GetGenderFromSpeciesAndPersonality(defSpecies, defender->personality);
 
 				if (PartyCheck)
-					attackerGender = GetGenderFromSpeciesAndPersonality(atkSpecies, party_data_atk->personality);
+					attackerGender = GetGenderFromSpeciesAndPersonality(atkSpecies, monAtk->personality);
 				else
 					attackerGender = GetGenderFromSpeciesAndPersonality(atkSpecies, attacker->personality);
 
@@ -1728,7 +1797,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 	switch (TerrainType) {
 		case ELECTRIC_TERRAIN:
 			if (PartyCheck) {
-				if (CheckGroundingFromPartyData(party_data_atk) && type == TYPE_ELECTRIC) {
+				if (CheckGroundingFromPartyData(monAtk) && type == TYPE_ELECTRIC) {
 					attack = udivsi(attack * 150, 100);
 					spAttack = udivsi(spAttack * 150, 100);
 				}
@@ -1743,7 +1812,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 
 		case GRASSY_TERRAIN:
 			if (PartyCheck) {
-				if (CheckGroundingFromPartyData(party_data_atk) && type == TYPE_GRASS) {
+				if (CheckGroundingFromPartyData(monAtk) && type == TYPE_GRASS) {
 					attack = udivsi(attack * 150, 100);
 					spAttack = udivsi(spAttack * 150, 100);
 				}
@@ -1770,7 +1839,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 
 		case PSYCHIC_TERRAIN:
 			if (PartyCheck) {
-				if (CheckGroundingFromPartyData(party_data_atk) && type == TYPE_PSYCHIC) {
+				if (CheckGroundingFromPartyData(monAtk) && type == TYPE_PSYCHIC) {
 					attack = udivsi(attack * 150, 100);
 					spAttack = udivsi(spAttack * 150, 100);
 				}
@@ -1888,7 +1957,11 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 	}
 
 //Actual Calculation
-	damage = udivsi(2 * attacker->level, 5) + 2;
+	if (PartyCheck)
+		damage = (2 * GetMonData(monAtk, MON_DATA_LEVEL, NULL)) / 5 + 2;
+	else
+		damage = (2 * attacker->level) / 5 + 2;
+
 	damage *= gBattleMovePower;
 
 	if (CheckTableForMove(move, SpecialAttackPhysicalDamageMoves)) {
@@ -2103,7 +2176,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 }
 
 //Banks need to be accurate, even if just checking party data (for side checking)
-u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 ability, u32 atkStatus1, u16 atk_hp, u16 atk_maxHP, u16 species, pokemon_t* party_data_atk, bool8 PartyCheck, bool8 menuCheck, bool8 ignoreDef) {
+u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 ability, u32 atkStatus1, u16 atk_hp, u16 atk_maxHP, u16 species, struct Pokemon* monAtk, bool8 PartyCheck, bool8 menuCheck, bool8 ignoreDef) {
 	u16 power = gBattleMoves[move].power;
 	int i;
 
@@ -2253,7 +2326,7 @@ u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 
 			if (!ignoreDef)
 			{
 				if (PartyCheck)
-					ratio = udivsi(SpeedCalcForParty(SIDE(bankAtk), party_data_atk), SpeedCalc(bankDef));
+					ratio = udivsi(SpeedCalcForParty(SIDE(bankAtk), monAtk), SpeedCalc(bankDef));
 				else
 					ratio = udivsi(SpeedCalc(bankAtk), SpeedCalc(bankDef));
 
@@ -2273,7 +2346,7 @@ u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 
 			{
 				u32 def_spd = 25 * SpeedCalc(bankDef);
 				if (PartyCheck)
-					power = udivsi(def_spd, SpeedCalcForParty(SIDE(bankAtk), party_data_atk));
+					power = udivsi(def_spd, SpeedCalcForParty(SIDE(bankAtk), monAtk));
 				else
 					power = udivsi(def_spd, SpeedCalc(bankAtk));
 
@@ -2315,7 +2388,7 @@ u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 
 				defWeight = GetActualSpeciesWeight(SPECIES(bankDef), ABILITY(bankDef), ITEM_EFFECT(bankDef), bankDef, TRUE);
 				
 				if (PartyCheck)
-					atkWeight = GetActualSpeciesWeight(party_data_atk->species, ability, item_effect, bankAtk, FALSE);
+					atkWeight = GetActualSpeciesWeight(monAtk->species, ability, item_effect, bankAtk, FALSE);
 				else
 					atkWeight = GetActualSpeciesWeight(SPECIES(bankAtk), ability, item_effect, bankAtk, TRUE);
 
@@ -2348,7 +2421,7 @@ u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 
 			break;
 
 		case MOVE_FLING:	;
-			power = GetFlingPower(ability, item, party_data_atk, bankAtk, PartyCheck);
+			power = GetFlingPower(ability, item, monAtk, bankAtk, PartyCheck);
 			break;
 
 		case MOVE_ERUPTION:
@@ -2392,11 +2465,11 @@ u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 
 					index = 0xFF;
 					break;
 				}
-				if (party_data_atk->moves[index] == MOVE_TRUMPCARD)
+				if (monAtk->moves[index] == MOVE_TRUMPCARD)
 					break;
 			}
 			if (index < 4) {
-				pp = party_data_atk->pp[index];
+				pp = monAtk->pp[index];
 				if (pp > 0) {
 					switch (pp-1) {
 						case 0:
@@ -2447,7 +2520,7 @@ u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 
 			if (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_TRAINER_TOWER | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_EREADER_TRAINER))
 				power = udivsi(10 * 255, 25);
 			else if (PartyCheck)
-				power = udivsi(10 * (party_data_atk->friendship), 25);
+				power = udivsi(10 * (monAtk->friendship), 25);
 			else
 				power = udivsi(10 * (gBattleMons[bankAtk].friendship), 25);
 			break;
@@ -2456,7 +2529,7 @@ u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 
 			if (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_TRAINER_TOWER | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_EREADER_TRAINER))
 				power = udivsi(10 * 255, 25);
 			else if (PartyCheck)
-				power = udivsi(10 * (255 - party_data_atk->friendship), 25);
+				power = udivsi(10 * (255 - monAtk->friendship), 25);
 			else
 				power = udivsi(10 * (255 - gBattleMons[bankAtk].friendship), 25);
 			break;
@@ -2466,7 +2539,7 @@ u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 
 				power = udivsi(gBaseStats[species].baseAttack, 10) + 5;
 			else
 			{
-				pokemon_t* party;
+				struct Pokemon* party;
 				if (SIDE(bankAtk) == B_SIDE_PLAYER)
 					party = gPlayerParty;
 				else
@@ -2479,12 +2552,12 @@ u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 
 		case MOVE_HIDDENPOWER:
 		#ifdef OLD_HIDDEN_POWER_BP
 			if (PartyCheck) {
-				power = ((party_data_atk->hpIV & 2) >> 1) |
-						((party_data_atk->attackIV & 2)) |
-						((party_data_atk->defenseIV & 2) << 1) |
-						((party_data_atk->speedIV & 2) << 2) |
-						((party_data_atk->spAttackIV & 2) << 3) |
-						((party_data_atk->spDefenseIV & 2) << 4);
+				power = ((monAtk->hpIV & 2) >> 1) |
+						((monAtk->attackIV & 2)) |
+						((monAtk->defenseIV & 2) << 1) |
+						((monAtk->speedIV & 2) << 2) |
+						((monAtk->spAttackIV & 2) << 3) |
+						((monAtk->spDefenseIV & 2) << 4);
 			}
 			else {
 				power = ((gBattleMons[bankAtk].hpIV & 2) >> 1) |
@@ -2507,10 +2580,11 @@ u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 
 	return power;
 }
 
-static u16 GetZMovePower(u8 bank, u16 move) {
+//Requires that the base move be loaded into gNewBS->aiZMoveHelper
+static u16 GetZMovePower(u16 zMove) {
 	u16 power = 1;
 
-	switch (move) {
+	switch (zMove) {
 		case MOVE_CATASTROPIKA:
 		case MOVE_10000000_VOLT_THUNDERBOLT:
 		case MOVE_STOKED_SPARKSURFER:
@@ -2528,10 +2602,12 @@ static u16 GetZMovePower(u8 bank, u16 move) {
 		case MOVE_MENACING_MOONRAZE_MAELSTROM:
 		case MOVE_LIGHT_THAT_BURNS_THE_SKY:
 		case MOVE_SOUL_STEALING_7_STAR_STRIKE:
-			power = gBattleMoves[move].power;
+			power = gBattleMoves[zMove].power;
 			break;
 		default:
-			power = gBattleMoves[gBattleMons[bank].moves[gBattleStruct->chosenMovePositions[bank]]].z_move_power;
+			//An issue arose in the case of the AI calculating Z-Move power. To fix this, 
+			//gNewBS->aiZMoveHelper stores the original move to helper turn it into a Z-Move.
+			power = gBattleMoves[gNewBS->aiZMoveHelper].z_move_power;
 	}
 
 	return power;
@@ -2884,9 +2960,9 @@ u32 GetActualSpeciesWeight(u16 species, u8 ability, u8 itemEffect, u8 bank, bool
 	return AdjustWeight(weight, ability, itemEffect, bank, checkNimble);
 }
 
-static u8 GetFlingPower(u8 ability, u16 item, pokemon_t* party_data, u8 bank, bool8 PartyCheck) {
+static u8 GetFlingPower(u8 ability, u16 item, struct Pokemon* mon, u8 bank, bool8 PartyCheck) {
 	u8 power = 0;
-	if (CanFling(ability, item, party_data, bank, PartyCheck))
+	if (CanFling(ability, item, mon, bank, PartyCheck))
 	{
 		power = gFlingTable[item].power;
 		if (power == 0)

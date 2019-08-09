@@ -14,7 +14,9 @@ u8 GetNumMonsOnTeamInFrontier(void);
 bool8 IsFrontierSingles(u8 battleType);
 bool8 IsFrontierDoubles(u8 battleType);
 bool8 IsFrontierMulti(u8 battleType);
+bool8 IsGSCupBattle();
 bool8 IsRandomBattleTowerBattle();
+bool8 RayquazaCanMegaEvolveInFrontierBattle();
 bool8 DuplicateItemsAreBannedInTier(u8 tier, u8 battleType);
 u16 GetCurrentBattleTowerStreak(void);
 u16 GetMaxBattleTowerStreakForTier(u8 tier);
@@ -112,6 +114,20 @@ enum
 	MAX_STREAK,
 };
 
+enum
+{
+	DOUBLES_ANY_TEAM,
+	DOUBLES_SUN_TEAM,
+	DOUBLES_SAND_TEAM,
+	DOUBLES_RAIN_TEAM,
+	DOUBLES_HAIL_TEAM,
+	DOUBLES_ELECTRIC_TERRAIN_TEAM,
+	DOUBLES_TRICK_ROOM_TEAM,
+	DOUBLES_TAILWIND_TEAM,
+	DOUBLES_HYPER_OFFENSE_TEAM,
+	DOUBLES_JUSTIFIED_TEAM,
+};
+
 //Exported Data Structures
 extern const u16 gNumMaleFrontierTrainerNames;
 extern const u16 gNumFemaleFrontierTrainerNames;
@@ -122,24 +138,27 @@ struct BattleTowerSpread
 {
     u16 species;
 	u8 nature;
-	u8 hpIv;
-	u8 atkIv;
-	u8 defIv;
-	u8 spdIv;
-	u8 spAtkIv;
-	u8 spDefIv;
+	u8 ball;
+	u32 hpIv : 5;
+	u32 atkIv : 5;
+	u32 defIv : 5;
+	u32 spdIv : 5;
+	u32 spAtkIv : 5;
+	u32 spDefIv : 5;
 	u8 hpEv;
 	u8 atkEv;
 	u8 defEv;
 	u8 spdEv;
 	u8 spAtkEv;
 	u8 spDefEv;
-	u8 ability;
 	u16 item;
 	u16 moves[MAX_MON_MOVES];
-	u8 ball;
-    u8 dblSpreadType; // 0x00
-	u32 _2; // 0x00000000
+	u8 specificTeamType;
+	u8 shiny : 1;
+	u8 forSingles : 1;
+	u8 forDoubles : 1;
+	u8 modifyMovesDoubles : 1;
+	u8 ability : 2;
 };
 
 extern const struct BattleTowerSpread gFrontierSpreads[];

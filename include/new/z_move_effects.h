@@ -3,7 +3,7 @@
 #include "../../src/defines.h"
 #include "../../src/defines_battle.h"
 
-#define Z_EFFECT_NONE
+#define Z_EFFECT_NONE 0
 #define Z_EFFECT_RESET_STATS 1
 #define Z_EFFECT_ALL_STATS_UP_1 2
 #define Z_EFFECT_BOOST_CRITS 3

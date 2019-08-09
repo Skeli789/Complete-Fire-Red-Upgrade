@@ -119,7 +119,7 @@ BS_003_DrainHP:
 
 DrainHPBSP2:
 	orword HIT_MARKER HITMARKER_IGNORE_SUBSTITUTE
-	jumpifability BANK_TARGET ABILITY_LIQUIDOOZE 0x81D6A23
+	jumpifability BANK_TARGET ABILITY_LIQUIDOOZE BattleScript_AbsorbLiquidOoze
 	setbyte MULTISTRING_CHOOSER 0x0
 	goto 0x81D6A2B
 	
@@ -140,6 +140,22 @@ StrengthSapBS:
 	printfromtable 0x83FE588
 	waitmessage DELAY_1SECOND
 	goto DrainHPBSP2
+
+BattleScript_AbsorbLiquidOoze:
+	jumpifmovehadnoeffect BS_MOVE_FAINT
+	copybyte BATTLE_SCRIPTING_BANK TARGET_BANK
+	call BattleScript_AbilityPopUp
+	manipulatedamage 0x0 @;ATK80_DMG_CHANGE_SIGN
+	setbyte MULTISTRING_CHOOSER, 0x1
+	graphicalhpupdate BANK_ATTACKER
+	datahpupdate BANK_ATTACKER
+	printfromtable 0x83FE5DC @;gLeechSeedDrainStringIds
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	faintpokemon BANK_ATTACKER 0x0 0x0
+	prefaintmoveendeffects 0x0
+	faintpokemonaftermove
+	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -193,7 +209,7 @@ EatTheDreams:
 	jumpifmovehadnoeffect BS_MOVE_FAINT
 	negativedamage
 	orword HIT_MARKER HITMARKER_IGNORE_SUBSTITUTE
-	jumpifability BANK_TARGET ABILITY_LIQUIDOOZE 0x81D6A23
+	jumpifability BANK_TARGET ABILITY_LIQUIDOOZE BattleScript_AbsorbLiquidOoze
 	graphicalhpupdate BANK_ATTACKER
 	datahpupdate BANK_ATTACKER
 	printstring 0x3C
@@ -735,9 +751,10 @@ DragonTailBS:
 	cmd49 BANK_TARGET 0x0
 	playanimation BANK_TARGET DRAGON_TAIL_BLOW_AWAY_ANIM 0x0
 	setbyte FORCE_SWITCH_HELPER 0x1
-	forcerandomswitch DragonTailResetForceSwitchHelper
+	forcerandomswitch BattleScript_DragonTailResetForceSwitchHelper
 
-DragonTailResetForceSwitchHelper:
+.global BattleScript_DragonTailResetForceSwitchHelper
+BattleScript_DragonTailResetForceSwitchHelper:
 	setbyte FORCE_SWITCH_HELPER 0x0
 	goto 0x81D6957
 	
@@ -2343,6 +2360,7 @@ BS_127_BatonPass:
 	ppreduce
 	attackanimation
 	waitanimation
+	callasm SetBatonPassSwitchingBit
 
 BatonPassSwitchOutBS:
 	callasm ClearAttackerDidDamageOnce
@@ -2359,6 +2377,7 @@ BatonPassSwitchOutBS:
 	switch3 BANK_ATTACKER 0x1
 	waitstateatk
 	switchineffects BANK_ATTACKER
+	callasm ClearBatonPassSwitchingBit
 	jumpifnotmove MOVE_BATONPASS 0x81D6957
 	goto BS_MOVE_END
 
@@ -2678,7 +2697,15 @@ BS_142_BellyDrum:
 	waitanimation
 	graphicalhpupdate BANK_ATTACKER
 	datahpupdate BANK_ATTACKER
+	playanimation BANK_ATTACKER ANIM_STAT_BUFF ANIM_ARG_1
+	jumpifability BANK_ATTACKER ABILITY_CONTRARY BattleScript_PrintContraryBellyDrumLoweredAttack
 	printstring 0x9B
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
+	
+BattleScript_PrintContraryBellyDrumLoweredAttack:
+	setword BATTLE_STRING_LOADER gText_BellyDrumMinimizedAttack
+	printstring 0x184
 	waitmessage DELAY_1SECOND
 	goto BS_MOVE_END
 
@@ -4443,14 +4470,14 @@ TransformToPirouetteBS:
 	setbyte CMD49_STATE 0x0
 	cmd49 0x0 0x0
 	jumpiffainted BANK_ATTACKER RelicSongEndBS
-	formchange BANK_ATTACKER SPECIES_MELOETTA SPECIES_MELOETTA_PIROUETTE TRUE TRUE RelicSongEndBS
+	formchange BANK_ATTACKER SPECIES_MELOETTA SPECIES_MELOETTA_PIROUETTE TRUE TRUE FALSE RelicSongEndBS
 	goto MeloettaTransformAnim
 
 TransformToAriaBS:
 	setbyte CMD49_STATE 0x0
 	cmd49 0x0 0x0
 	jumpiffainted BANK_ATTACKER RelicSongEndBS
-	formchange BANK_ATTACKER SPECIES_MELOETTA_PIROUETTE SPECIES_MELOETTA TRUE TRUE RelicSongEndBS
+	formchange BANK_ATTACKER SPECIES_MELOETTA_PIROUETTE SPECIES_MELOETTA TRUE TRUE FALSE RelicSongEndBS
 	
 MeloettaTransformAnim:
 	playanimation BANK_ATTACKER ANIM_TRANSFORM 0x0

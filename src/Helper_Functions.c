@@ -77,7 +77,15 @@ bank_t GetFoeBank(bank_t bank) {
 
 item_effect_t GetBankItemEffect(bank_t bank) {
 	if (gBattleMons[bank].ability != ABILITY_KLUTZ && !(gNewBS->EmbargoTimers[bank]) && !gNewBS->MagicRoomTimer)
-		return ItemId_GetHoldEffect(gBattleMons[bank].item);
+		return ItemId_GetHoldEffect(ITEM(bank));
+
+	return 0;
+}
+
+item_effect_t GetMonItemEffect(struct Pokemon* mon) {
+	if (GetPartyAbility(mon) != ABILITY_KLUTZ && !gNewBS->MagicRoomTimer)
+		return ItemId_GetHoldEffect(GetMonData(mon, MON_DATA_HELD_ITEM, NULL));
+
 	return 0;
 }
 
@@ -702,7 +710,6 @@ bool8 IsFirstAttacker(u8 bank) {
 bool8 CanTransferItem(u16 species, u16 item, struct Pokemon* party_data) {
 	u16 dexNum = SpeciesToNationalPokedexNum(species);
 	u8 effect = ItemId_GetHoldEffect(item);
-	u8 quality = ItemId_GetHoldEffectParam(item);
 	const struct Evolution* evolutions = gEvolutionTable[party_data->species];
 	int i;
 	
@@ -743,9 +750,13 @@ bool8 CanTransferItem(u16 species, u16 item, struct Pokemon* party_data) {
 			break;
 		
 		case ITEM_EFFECT_PRIMAL_ORB:
-			if ((quality == QUALITY_BLUE_ORB && dexNum == NATIONAL_DEX_KYOGRE)
-			||  (quality == QUALITY_RED_ORB && dexNum == NATIONAL_DEX_GROUDON))
-				return FALSE;
+			for (i = 0; i < EVOS_PER_MON; ++i) 
+			{
+				if ((evolutions[i].method == MEGA_EVOLUTION && evolutions[i].unknown == MEGA_VARIANT_PRIMAL && evolutions[i].param == item) //Can Primal Evolve
+				||  (evolutions[i].method == MEGA_EVOLUTION && evolutions[i].unknown == MEGA_VARIANT_PRIMAL && evolutions[i].param == 0)) //Is Primal
+					return FALSE;
+			}
+			break;
 	}
 
 	return TRUE;
@@ -840,18 +851,22 @@ u8 CountBoosts(bank_t bank) {
 	return sum;
 }
 
-bool8 MoveBlockedBySubstitute(u16 move, u8 atkBank, u8 defBank) {
-	if (!(gBattleMons[defBank].status2 & STATUS2_SUBSTITUTE)
-	|| CheckSoundMove(move)
-	|| ABILITY(atkBank) == ABILITY_INFILTRATOR)
-		return FALSE;
-	
-	return TRUE;
+bool8 MoveIgnoresSubstitutes(u16 move, u8 bankAtk)
+{
+	return CheckSoundMove(move)
+	    || ABILITY(bankAtk) == ABILITY_INFILTRATOR;
+}
+
+bool8 MoveBlockedBySubstitute(u16 move, u8 bankAtk, u8 bankDef)
+{
+	return gBattleMons[bankDef].status2 & STATUS2_SUBSTITUTE
+	    && !MoveIgnoresSubstitutes(move, bankAtk);
 }
 
 bool8 IsMockBattle(void) {
 	if (gBattleTypeFlags & BATTLE_TYPE_MOCK_BATTLE)
 		return TRUE;
+
 	return FALSE;
 }
 
@@ -1107,6 +1122,9 @@ bool8 CanBeGeneralStatused(u8 bank, bool8 checkFlowerVeil)
 		return FALSE;
 		
 	if (gBattleMons[bank].status1 != STATUS1_NONE)
+		return FALSE;
+		
+	if (gSideAffecting[SIDE(bank)] & SIDE_STATUS_SAFEGUARD)
 		return FALSE;
 
 	return TRUE;

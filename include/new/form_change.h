@@ -11,7 +11,7 @@
  */
  
 //Exported Functions
-void DoFormChange(u8 bank, u16 species, bool8 ReloadType, bool8 ReloadStats);
+void DoFormChange(u8 bank, u16 species, bool8 reloadType, bool8 reloadStats, bool8 reloadAbility);
 void SwitchOutFormsRevert(u8 bank);
 void FormsRevert(pokemon_t* party);
 bool8 TryFormRevert(pokemon_t* mon);

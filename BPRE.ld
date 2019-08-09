@@ -269,6 +269,7 @@ PrepareBufferDataTransfer = 0x800D8B0 | 1;
 PrepareBufferDataTransferLink = 0x800D9EC | 1;
 BtlController_EmitSetMonData = 0x800DFF0 | 1;
 EmitSetRawMonData = 0x800E030 | 1;
+EmitReturnMonToBall = 0x800E0B4 | 1;
 EmitDrawTrainerPic = 0x800E0D4 | 1;
 EmitTrainerSlide = 0x800E0F4 | 1;
 EmitTrainerSlideBack = 0x800E114 | 1;
@@ -442,6 +443,7 @@ TrySetSpriteRotScale = 0x8075A1C | 1;
 ArcTan2Neg = 0x8075B30 | 1;
 SetGreyscaleOrOriginalPalette = 0x8075B48 | 1;
 GetBattlerSpriteSubpriority = 0x807685C | 1;
+GetBattlerSpriteBGPriority = 0x8076884 | 1;
 SpriteCB_AnimSolarbeamBigOrb = 0x80A23D8 | 1;
 AnimSpinningKickOrPunchFinish = 0x80B0D24 | 1;
 SpriteCB_SpiderWeb = 0x80B42C1 | 1;
@@ -456,7 +458,7 @@ uns_builder_assign_animtable1 = 0x810BD80 | 1;
 /* Battle AI Functions */
 //AI_TrySwitchOrUseItem = 0x8039C84 | 1;
 //BattleAI_SetupAIData = 0x80C6DA0 | 1;
-BattleAI_ChooseMoveOrAction = 0x80C6F44 | 1;
+RecordLastUsedMoveByTarget = 0x80C7164 | 1;
 
 /* Secret Base Functions */
 GetSecretBaseTrainerPicIndex = 0x8040EEC | 1;

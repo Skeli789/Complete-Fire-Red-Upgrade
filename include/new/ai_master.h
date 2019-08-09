@@ -10,7 +10,13 @@
 //Exported Functions
 void BattleAI_SetupAIData(u8 defaultScoreMoves);
 u32 GetAIFlags(void);
+u8 BattleAI_ChooseMoveOrAction(void);
 u8 GetMostSuitableMonToSwitchInto(void);
+u8 GetMostSuitableMonToSwitchIntoScore(void);
+u8 CalcMostSuitableMonToSwitchInto(void);
+void UpdateBestDoublesKillingScore(u8 bankAtk, u8 bankDef);
+void ResetBestMonToSwitchInto(u8 bank);
+void RemoveBestMonToSwitchInto(u8 bank);
 u32 WildMonIsSmart(u8 bank);
 
 //Functions Hooked In
@@ -28,3 +34,5 @@ bool8 FindMonWithFlagsAndSuperEffective(u8 flags, u8 moduloPercent);
 #define AI_ACTION_UNK6          0x0020
 #define AI_ACTION_UNK7          0x0040
 #define AI_ACTION_UNK8          0x0080
+
+#define SWITCHING_INCREASE_HAS_SUPER_EFFECTIVE_MOVE 1

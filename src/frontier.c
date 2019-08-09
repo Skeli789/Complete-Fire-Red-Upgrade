@@ -184,6 +184,14 @@ bool8 IsRandomBattleTowerBattle()
 		|| battleType == BATTLE_TOWER_MULTI_RANDOM;
 }
 
+bool8 IsGSCupBattle()
+{
+	u8 battleType = VarGet(BATTLE_TOWER_BATTLE_TYPE);
+
+	return (IsFrontierDoubles(battleType) || IsFrontierMulti(battleType))
+	    &&  VarGet(BATTLE_TOWER_TIER) == BATTLE_TOWER_GS_CUP;
+}
+
 bool8 DuplicateItemsAreBannedInTier(u8 tier, u8 battleType)
 {
 	if (tier == BATTLE_TOWER_STANDARD
@@ -191,6 +199,12 @@ bool8 DuplicateItemsAreBannedInTier(u8 tier, u8 battleType)
 		return TRUE;
 		
 	return !IsFrontierSingles(battleType) && tier == BATTLE_TOWER_GS_CUP;
+}
+
+bool8 RayquazaCanMegaEvolveInFrontierBattle()
+{
+	return IsGSCupBattle()
+	    || VarGet(BATTLE_TOWER_TIER) == BATTLE_TOWER_NO_RESTRICTIONS;
 }
 
 bool8 TryUpdateOutcomeForFrontierBattle(void)
@@ -443,8 +457,16 @@ u16 sp056_DetermineBattlePointsToGive(void)
 		else
 			toGive = 6; //Just a special trainer
 	}
-	else
+	else if (streakLength <= 70)
 		toGive = 7;
+	else if (streakLength <= 80)
+		toGive = 8;
+	else if (streakLength <= 99)
+		toGive = 9;
+	else if (streakLength == 100)
+		toGive = 100;
+	else
+		toGive = 10;
 		
 	return toGive;
 }

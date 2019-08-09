@@ -20,6 +20,7 @@ enum FightingClasses
 	FIGHT_CLASS_TEAM_SUPPORT_SCREENS,
 	FIGHT_CLASS_TEAM_SUPPORT_PHAZING,
 	FIGHT_CLASS_ENTRY_HAZARDS,
+	FIGHT_CLASS_DOUBLES_TEAM_SUPPORT,
 };
 
 //This file's functions:
@@ -61,7 +62,8 @@ bool8 IsClassTeamSupport(u8 class)
 	return class == FIGHT_CLASS_TEAM_SUPPORT_BATON_PASS
 		|| class == FIGHT_CLASS_TEAM_SUPPORT_CLERIC
 		|| class == FIGHT_CLASS_TEAM_SUPPORT_SCREENS
-		|| class == FIGHT_CLASS_TEAM_SUPPORT_PHAZING;
+		|| class == FIGHT_CLASS_TEAM_SUPPORT_PHAZING
+		|| class == FIGHT_CLASS_DOUBLES_TEAM_SUPPORT;
 }
 
 bool8 IsClassBatonPass(u8 class)
@@ -89,6 +91,11 @@ bool8 IsClassEntryHazards(u8 class)
 	return class == FIGHT_CLASS_ENTRY_HAZARDS;
 }
 
+bool8 IsClassDoublesTeamSupport(u8 class)
+{
+	return class == FIGHT_CLASS_DOUBLES_TEAM_SUPPORT;
+}
+
 u8 PredictBankFightingStyle(u8 bank)
 {
 	return PredictFightingStyle(gBattleMons[bank].moves, ITEM_EFFECT(bank), bank);
@@ -100,8 +107,10 @@ u8 PredictFightingStyle(const u16* const moves, const u8 itemEffect, const u8 ba
 	u8 class = FIGHT_CLASS_NONE;
 	u8 attackMoveNum = 0;
 	u8 entryHazardNum = 0;
+	u8 reflectionNum = 0;
 	u8 statusMoveNum = 0;
 	bool8 boostingMove = FALSE;
+	bool8 healingMove = FALSE;
 
 	for (i = 0; i < MAX_MON_MOVES; ++i)
 	{
@@ -135,15 +144,18 @@ u8 PredictFightingStyle(const u16* const moves, const u8 itemEffect, const u8 ba
 				case EFFECT_HEAL_BELL:
 					class = FIGHT_CLASS_TEAM_SUPPORT_CLERIC;
 					break;
-					
+				
+				case EFFECT_HELPING_HAND:
 				case EFFECT_HEAL_TARGET:
-					if (IsDoubleBattle())
-						class = FIGHT_CLASS_TEAM_SUPPORT_CLERIC;
+				case EFFECT_INSTRUCT_AFTER_YOU_QUASH:
+				case EFFECT_FOLLOW_ME:
+					if (IsDoubleBattle() && move != MOVE_POLLENPUFF)
+						class = FIGHT_CLASS_DOUBLES_TEAM_SUPPORT;
 					break;
 					
 				case EFFECT_REFLECT:
 				case EFFECT_LIGHT_SCREEN:
-					class = FIGHT_CLASS_TEAM_SUPPORT_SCREENS;
+					++reflectionNum;
 					break;
 					
 				case EFFECT_TRAP:
@@ -158,7 +170,7 @@ u8 PredictFightingStyle(const u16* const moves, const u8 itemEffect, const u8 ba
 						  || moveEffect == EFFECT_MORNING_SUN
 						  || moveEffect == EFFECT_SWALLOW)
 					{
-						class = FIGHT_CLASS_STALL;
+						healingMove = TRUE;
 					}
 			}
 		}
@@ -202,6 +214,8 @@ u8 PredictFightingStyle(const u16* const moves, const u8 itemEffect, const u8 ba
 
 	if (class == FIGHT_CLASS_NONE)
 	{
+		if (reflectionNum >= 2)
+			class = FIGHT_CLASS_TEAM_SUPPORT_SCREENS;
 		if (entryHazardNum >= 2)
 			class = FIGHT_CLASS_ENTRY_HAZARDS;
 		else if (attackMoveNum >= 3)
@@ -213,6 +227,8 @@ u8 PredictFightingStyle(const u16* const moves, const u8 itemEffect, const u8 ba
 			else if (statusMoveNum)
 				class = FIGHT_CLASS_SWEEPER_SETUP_STATUS;
 		}
+		else if (healingMove)
+			class = FIGHT_CLASS_STALL;
 
 		class = FIGHT_CLASS_STALL; //Returns STALL by default
 	}
@@ -443,12 +459,14 @@ static bool8 BankHasAbilityUsefulToProtectFor(u8 bankAtk, u8 bankDef)
 
 enum ProtectQueries ShouldProtect(u8 bankAtk, u8 bankDef, u16 move)
 {
-	u8 predictedMoveEffect = gBattleMoves[IsValidMovePrediction(bankDef, bankAtk)].effect;
+	u16 predictedMove = IsValidMovePrediction(bankDef, bankAtk);
+	u8 predictedMoveEffect = gBattleMoves[predictedMove].effect;
 
 	if (BankHoldingUsefulItemToProtectFor(bankAtk)
 	||  BankHasAbilityUsefulToProtectFor(bankAtk, bankDef)
 	||  predictedMoveEffect == EFFECT_EXPLOSION
-	|| (predictedMoveEffect == EFFECT_SEMI_INVULNERABLE && BATTLER_SEMI_INVULNERABLE(bankDef))) //Foe coming down
+	|| (predictedMoveEffect == EFFECT_SEMI_INVULNERABLE && BATTLER_SEMI_INVULNERABLE(bankDef) //Foe coming down
+	   && gBattleMoves[predictedMove].flags & FLAG_PROTECT_AFFECTED))
 		return USE_PROTECT;
 
 	if (!IsDoubleBattle())
@@ -493,6 +511,8 @@ enum ProtectQueries ShouldProtect(u8 bankAtk, u8 bankDef, u16 move)
 			}
 		}
 		
+		//Put logic here for not protecting when partner uses Follow Me, Heal Pulse, Helping Hand, Quash, etc.
+
 		// if (predictedMoveEffect == EFFECT_FAKE_OUT)
 			// return USE_PROTECT;
 	}
@@ -621,19 +641,76 @@ bool8 ShouldSetUpScreens(u8 bankAtk, u8 bankDef, u16 move)
 			return TRUE;
 		else
 		{
+			bool8 defPhysicalMoveInMoveset = MoveSplitInMoveset(bankDef, SPLIT_PHYSICAL);
+			bool8 defSpecialMoveInMoveset = MoveSplitInMoveset(bankDef, SPLIT_SPECIAL);
+
 			switch (gBattleMoves[move].effect) {
 				case EFFECT_REFLECT:
 					if (MoveSplitOnTeam(bankDef, SPLIT_PHYSICAL))
-						return TRUE;
+					{
+						if (!defPhysicalMoveInMoveset && !defSpecialMoveInMoveset)
+							return TRUE; //Target has no attacking moves so no point in doing Light Screen check
+					
+						if (defPhysicalMoveInMoveset
+						|| !MoveInMoveset(MOVE_LIGHTSCREEN, bankAtk) || !defSpecialMoveInMoveset)
+							return TRUE;
+					}
 					break;
 
 				case EFFECT_LIGHT_SCREEN:
 					if (MoveSplitOnTeam(bankDef, SPLIT_SPECIAL))
-						return TRUE;
+					{
+						if (!defPhysicalMoveInMoveset && !defSpecialMoveInMoveset)
+							return TRUE; //Target has no attacking moves so no point in doing Light Screen check
+					
+						if (defSpecialMoveInMoveset
+						|| !MoveInMoveset(MOVE_REFLECT, bankAtk) || !defPhysicalMoveInMoveset)
+							return TRUE;
+					}
+					break;
 			}
 		}
 	}
 	
+	return FALSE;
+}
+
+bool8 ShouldUseFakeOut(u8 bankAtk, u8 bankDef)
+{
+	if (gDisableStructs[bankAtk].isFirstTurn
+	&& IsUsefulToFlinchTarget(bankDef)
+	&& ABILITY(bankDef) != ABILITY_INNERFOCUS
+	&& !MoveBlockedBySubstitute(MOVE_FAKEOUT, bankAtk, bankDef))
+	{
+		if (IS_DOUBLE_BATTLE)
+		{
+			if (!CanMovePredictionProtectAgainstMove(bankDef, bankAtk, MOVE_FAKEOUT))
+			{
+				if (ITEM_EFFECT(bankAtk) == ITEM_EFFECT_CHOICE_BAND  //Don't lock the attacker into Fake Out
+				&& ViableMonCountFromBank(bankAtk) <= 2) 	 		 //if they can't switch out afterwards.
+				{
+					if (ViableMonCountFromBank(bankDef) == 1
+					&&  MoveKnocksOutXHits(MOVE_FAKEOUT, bankAtk, bankDef, 1))
+						return TRUE; //If the opponent also only has one Pokemon left, then kill it to win the battle
+				}
+				else
+					return TRUE;
+			}
+		}
+		else //Single Battle
+		{
+			if (ITEM_EFFECT(bankAtk) == ITEM_EFFECT_CHOICE_BAND  //Don't lock the attacker into Fake Out
+			&& ViableMonCountFromBank(bankAtk) <= 1) 			 //if they can't switch out afterwards.
+			{
+				if (ViableMonCountFromBank(bankDef) == 1
+				&&  MoveKnocksOutXHits(MOVE_FAKEOUT, bankAtk, bankDef, 1))
+					return TRUE; //If the opponent also only has one Pokemon left, then kill it to win the battle
+			}
+			else
+				return TRUE;
+		}
+	}
+
 	return FALSE;
 }
 
@@ -699,6 +776,10 @@ void IncreaseStatusViability(s16* originalViability, u8 class, u8 boost, u8 bank
 			
 		case FIGHT_CLASS_ENTRY_HAZARDS:
 			INCREASE_VIABILITY(3);
+			break;
+			
+		case FIGHT_CLASS_DOUBLES_TEAM_SUPPORT:
+			INCREASE_VIABILITY(2 + boost);
 			break;
 	}
 	
@@ -810,6 +891,11 @@ void IncreaseStatViability(s16* originalViability, u8 class, u8 boost, u8 bankAt
 			if (ShouldTryToSetUpStat(bankAtk, bankDef, move, stat, statLimit))
 				INCREASE_STATUS_VIABILITY(1); //Treat like a low-priority status move
 			break;
+			
+		case FIGHT_CLASS_DOUBLES_TEAM_SUPPORT:
+			if (ShouldTryToSetUpStat(bankAtk, bankDef, move, stat, statLimit))
+				INCREASE_STATUS_VIABILITY(1); //Treat like a low-priority status move
+			break;
 	}
 	
 	*originalViability = MathMin(viability, 255);
@@ -817,15 +903,24 @@ void IncreaseStatViability(s16* originalViability, u8 class, u8 boost, u8 bankAt
 
 static bool8 ShouldUseSubstitute(u8 bankAtk, u8 bankDef)
 {
-	if (MoveWouldHitFirst(MOVE_SUBSTITUTE, bankAtk, bankDef)) //Attacker goes first
+	u16 defPrediction = IsValidMovePrediction(bankDef, bankAtk);
+
+	if (defPrediction != MOVE_NONE)
 	{
-		if (CalcFinalAIMoveDamage(IsValidMovePrediction(bankDef, bankAtk), bankDef, bankAtk, 1) < MathMax(1, gBattleMons[bankAtk].maxHP / 4))
-			return TRUE;
-	}
-	else
-	{
-		if (IsPredictedToSwitch(bankDef, bankAtk))
-			return TRUE;
+		if (MoveWouldHitFirst(MOVE_SUBSTITUTE, bankAtk, bankDef)) //Attacker goes first
+		{
+			if (CalcFinalAIMoveDamage(defPrediction, bankDef, bankAtk, 1) < MathMax(1, gBattleMons[bankAtk].maxHP / 4))
+				return TRUE;
+		}
+		else //Substitute would go second
+		{
+			if (IsPredictedToSwitch(bankDef, bankAtk))
+				return TRUE;
+				
+			s32 hp = gBattleMons[bankAtk].hp - CalcFinalAIMoveDamage(defPrediction, bankDef, bankAtk, 1);
+			if (hp > gBattleMons[bankAtk].maxHP / 4) //After being struck a substitute can still be made
+				return TRUE;
+		}
 	}
 	
 	return FALSE;
@@ -877,6 +972,11 @@ void IncreaseSubstituteViability(s16* originalViability, u8 class, u8 bankAtk, u
 				break;
 
 			case FIGHT_CLASS_ENTRY_HAZARDS:
+				if (ShouldUseSubstitute(bankAtk, bankDef))
+					INCREASE_STATUS_VIABILITY(1);
+				break;
+				
+			case FIGHT_CLASS_DOUBLES_TEAM_SUPPORT:
 				if (ShouldUseSubstitute(bankAtk, bankDef))
 					INCREASE_STATUS_VIABILITY(1);
 				break;
@@ -951,6 +1051,10 @@ void IncreaseEntryHazardsViability(s16* originalViability, u8 class, u8 bankAtk,
 					INCREASE_VIABILITY(4);
 					break;
 			}
+			break;
+			
+		case FIGHT_CLASS_DOUBLES_TEAM_SUPPORT:
+			INCREASE_STATUS_VIABILITY(2); //Treat like a middle-priority status move
 			break;
 	}
 	

@@ -358,7 +358,7 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, u8* BS_ptr)
             return STAT_CHANGE_DIDNT_WORK;
         }
 
-        else if ((ability == ABILITY_SHIELDDUST || SheerForceCheck()) && flags == 0)
+        else if ((ability == ABILITY_SHIELDDUST || SheerForceCheck()) && !(gHitMarker & HITMARKER_IGNORE_SUBSTITUTE) && flags == 0)
             return STAT_CHANGE_DIDNT_WORK;
         
         else // try to decrease

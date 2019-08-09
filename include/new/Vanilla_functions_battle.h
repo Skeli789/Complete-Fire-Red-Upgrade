@@ -128,7 +128,7 @@ void __attribute__((long_call)) BattleIntroSlide2(u8 taskId);
 void __attribute__((long_call)) BattleIntroSlide3(u8 taskId);
 void __attribute__((long_call)) BattleIntroSlideLink(u8 taskId);
 //void __attribute__((long_call)) BattleAI_SetupAIData(u8 defaultScoreMoves);
-u8 __attribute__((long_call)) BattleAI_ChooseMoveOrAction(void);
+//u8 __attribute__((long_call)) BattleAI_ChooseMoveOrAction(void);
 void __attribute__((long_call)) RecordAbilityBattle(u8 bank, u8 ability);
 void __attribute__((long_call)) RecordItemBattle(u8 bank, u8 item_effect);
 //void __attribute__((long_call)) BattleStringExpandPlaceholdersToDisplayedString(const u8* textPtr);

@@ -31,6 +31,8 @@
 #define TOTAL_LEGENDARY_SPREADS ARRAY_COUNT(gFrontierLegendarySpreads)
 #define TOTAL_ARCEUS_SPREADS ARRAY_COUNT(gArceusSpreads)
 #define TOTAL_PIKACHU_SPREADS ARRAY_COUNT(gPikachuSpreads)
+#define TOTAL_WORMADAM_SPREADS ARRAY_COUNT(gWormadamSpreads)
+#define TOTAL_ROTOM_SPREADS ARRAY_COUNT(gRotomSpreads)
 #define TOTAL_LITTLE_CUP_SPREADS ARRAY_COUNT(gLittleCupSpreads)
 #define TOTAL_MIDDLE_CUP_SPREADS ARRAY_COUNT(gMiddleCupSpreads)
 
@@ -92,8 +94,14 @@ extern const species_t gRandomizerBanList[];
 extern const species_t gSetPerfectXIvList[];
 extern const species_t gVivillonForms[];
 extern const species_t gFurfrouForms[];
+extern const species_t gFlabebeForms[];
+extern const species_t gFloetteForms[];
+extern const species_t gFlorgesForms[];
 extern const species_t gPikachuCapForms[];
 extern const u8 gNumVivillonForms;
+extern const u8 gNumFlabebeForms;
+extern const u8 gNumFloetteForms;
+extern const u8 gNumFlorgesForms;
 extern const u8 gNumFurfrouForms;
 extern const u8 gNumPikachuCapForms;
 
@@ -388,7 +396,8 @@ u16 sp069_GivePlayerRandomFrontierMonByTier(void)
 	do
 	{
 		spread = TryAdjustSpreadForSpecies(&spreads[Random() % numSpreads]);
-	} while (IsPokemonBannedBasedOnStreak(spread->species, spread->item, NULL, 0, 0, tier, TRUE));
+	} while (IsPokemonBannedBasedOnStreak(spread->species, spread->item, NULL, 0, 0, tier, TRUE)
+		  || PokemonTierBan(spread->species, spread->item, spread, NULL, tier, CHECK_BATTLE_TOWER_SPREADS));
 	
 	CreateFrontierMon(&mon, level, spread, 0, 0, 0, TRUE);
 	return GiveMonToPlayer(&mon);
@@ -762,6 +771,13 @@ static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerId, const 
 						REGULAR_MC_SPREADS:
 							spread = &gMiddleCupSpreads[Random() % TOTAL_MIDDLE_CUP_SPREADS];
 							break;
+						case BATTLE_TOWER_OU: ;
+						case BATTLE_TOWER_MONOTYPE: ;
+							//50% chance of using a legend allowed in these tiers
+							if ((Random() & 1) == 0)
+								goto REGULAR_LEGENDARY_SPREADS;
+								
+							goto REGULAR_SPREADS;
 						case BATTLE_TOWER_STANDARD: ;
 							u16 streak = GetCurrentBattleTowerStreak();
 							if (streak < 2)
@@ -808,6 +824,17 @@ static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerId, const 
 			species = spread->species;
 			dexNum = SpeciesToNationalPokedexNum(species);
 			item = spread->item;
+			
+			if (IsFrontierSingles(battleType))
+			{
+				if (!spread->forSingles) //Certain spreads are only for double battles
+					continue;
+			}
+			else //Double Battle
+			{
+				if (!spread->forDoubles) //Certain spreads are only for single battles
+					continue;
+			}
 
 			//Prevent duplicate species and items
 			//Only allow one Mega Stone & Z-Crystal per team
@@ -982,7 +1009,7 @@ static void CreateFrontierMon(struct Pokemon* mon, const u8 level, const struct 
 	SetMonData(mon, MON_DATA_HELD_ITEM, &spread->item);
 
 	u8 ballType;
-	if (spread->ball)
+	if (spread->ball != BALL_TYPE_RANDOM)
 		ballType = MathMin(LAST_BALL_INDEX, spread->ball);
 	else
 		ballType = umodsi(Random(), NUM_BALLS);
@@ -1526,22 +1553,56 @@ static bool8 TeamDoesntHaveSynergy(const struct BattleTowerSpread* const spread,
 {
 	int i;
 
-	bool8 hasRainSetter;
-	bool8 hasSunSetter;
-	bool8 hasSandSetter;
-	bool8 hasHailSetter;
-	bool8 hasWonderGuard;
-	
 	u8 ability = ConvertFrontierAbilityNumToAbility(spread->ability, spread->species);
 	u8 itemEffect = (ability != ABILITY_KLUTZ) ? ItemId_GetHoldEffect(spread->item) : 0;
+
 	bool8 hasTailwinder = builder->moveOnTeam[MOVE_TAILWIND];
 	bool8 hasTrickRoomer = builder->moveOnTeam[MOVE_TRICKROOM];
+	bool8 hasRainSetter = builder->abilityOnTeam[ABILITY_DRIZZLE] || builder->moveOnTeam[MOVE_RAINDANCE];
+	bool8 hasSunSetter = builder->abilityOnTeam[ABILITY_DROUGHT] || builder->moveOnTeam[MOVE_SUNNYDAY];
+	bool8 hasSandSetter = builder->abilityOnTeam[ABILITY_SANDSTREAM] || builder->moveOnTeam[MOVE_SANDSTORM];
+	bool8 hasHailSetter = builder->abilityOnTeam[ABILITY_SNOWWARNING] || builder->moveOnTeam[MOVE_HAIL];
+	bool8 hasElectricTerrainSetter = builder->abilityOnTeam[ABILITY_ELECTRICSURGE] || builder->moveOnTeam[MOVE_ELECTRICTERRAIN];
+	bool8 hasWonderGuard = builder->abilityOnTeam[ABILITY_WONDERGUARD];
 	
 	if (builder->partyIndex[BAD_ABILITY] != 0xFF && gAbilityRatings[ability] < 0)
 		return TRUE; //Only stick at most 1 Pokemon with a sucky ability on a team
 
 	if (builder->tier != BATTLE_TOWER_MONOTYPE && hasTrickRoomer && spread->spdEv >= 20)
 		return TRUE; //Don't stick a fast Pokemon on a Trick Room team
+	
+	switch (spread->specificTeamType) {
+		case DOUBLES_SUN_TEAM:
+			if (!hasSunSetter)
+				return TRUE; //These Pokemon need a sun setter on the team to function
+			break;
+		case DOUBLES_SAND_TEAM:
+			if (!hasSandSetter)
+				return TRUE; //These Pokemon need a sand setter on the team to function
+			break;
+		case DOUBLES_RAIN_TEAM:
+			if (!hasRainSetter)
+				return TRUE; //These Pokemon need a rain setter on the team to function
+			break;
+		case DOUBLES_HAIL_TEAM:
+			if (!hasHailSetter) //These Pokemon need a hail setter on the team to function
+				return TRUE;
+			break;
+		case DOUBLES_ELECTRIC_TERRAIN_TEAM:
+			if (!hasElectricTerrainSetter) //These Pokemon need Electric Terrain to function
+				return TRUE;
+			break;
+		case DOUBLES_TRICK_ROOM_TEAM:
+			if (!hasTrickRoomer) //These Pokemon need a Trick Room setter on the team to function
+				return TRUE;
+			break;
+		case DOUBLES_TAILWIND_TEAM:
+			if (!hasTailwinder)
+				return TRUE; //These Pokemon need a Tailwind setter on the team to function
+			break;
+		case DOUBLES_HYPER_OFFENSE_TEAM:
+			break;
+	}
 
 	for (i = 0; i < MAX_MON_MOVES; ++i)
 	{
@@ -1558,21 +1619,6 @@ static bool8 TeamDoesntHaveSynergy(const struct BattleTowerSpread* const spread,
 		}
 	}
 
-	if (builder->abilityOnTeam[ABILITY_DRIZZLE] || builder->moveOnTeam[MOVE_RAINDANCE])
-		hasRainSetter = TRUE;
-
-	if (builder->abilityOnTeam[ABILITY_DROUGHT] || builder->moveOnTeam[MOVE_SUNNYDAY])
-		hasRainSetter = TRUE;
-
-	if (builder->abilityOnTeam[ABILITY_SANDSTREAM] || builder->moveOnTeam[MOVE_SANDSTORM])
-		hasSandSetter = TRUE;
-
-	if (builder->abilityOnTeam[ABILITY_SNOWWARNING] || builder->moveOnTeam[MOVE_HAIL])
-		hasHailSetter = TRUE;
-		
-	if (builder->abilityOnTeam[ABILITY_WONDERGUARD])
-		hasWonderGuard = TRUE;
-	
 	//Team should have max 1 weather type
 	switch (ability) {
 		case ABILITY_DRIZZLE:
@@ -1701,11 +1747,20 @@ static const struct BattleTowerSpread* TryAdjustSpreadForSpecies(const struct Ba
 {
 	u16 species = originalSpread->species;
 
-	if (species == SPECIES_ARCEUS)
-		return &gArceusSpreads[Random() % TOTAL_ARCEUS_SPREADS]; //There are more Arceus spreads than any other Pokemon,
-																 //so they're held seperately to keep things fresh.
-	else if (species == SPECIES_PIKACHU)
-		return &gPikachuSpreads[Random() % TOTAL_PIKACHU_SPREADS]; //Sooo many different forms of Pikachu
+	switch (species) {
+		case SPECIES_PIKACHU:
+			return &gPikachuSpreads[Random() % TOTAL_PIKACHU_SPREADS]; //Sooo many different forms of Pikachu
+
+		case SPECIES_WORMADAM:
+			return &gWormadamSpreads[Random() % TOTAL_WORMADAM_SPREADS];
+
+		case SPECIES_ROTOM:
+			return &gRotomSpreads[Random() % TOTAL_ROTOM_SPREADS]; //All the Rotom forms
+
+		case SPECIES_ARCEUS:
+			return &gArceusSpreads[Random() % TOTAL_ARCEUS_SPREADS]; //There are more Arceus spreads than any other Pokemon,
+																	 //so they're held seperately to keep things fresh.
+	}
 
 	return originalSpread;
 }
@@ -1717,6 +1772,16 @@ static u16 TryAdjustAestheticSpecies(u16 species)
 	switch (nationalDexNum) {
 		case NATIONAL_DEX_VIVILLON:
 			species = gVivillonForms[Random() % gNumVivillonForms];
+			break;
+		case NATIONAL_DEX_FLABEBE:
+			species = gFlabebeForms[Random() % gNumFlabebeForms];
+			break;
+		case NATIONAL_DEX_FLOETTE:
+			if (species != SPECIES_FLOETTE_ETERNAL) //Floette Eternal gets its own spreads
+				species = gFloetteForms[Random() % gNumFloetteForms];
+			break;
+		case NATIONAL_DEX_FLORGES:
+			species = gFlorgesForms[Random() % gNumFlorgesForms];
 			break;
 		case NATIONAL_DEX_FURFROU:
 			species = gFurfrouForms[Random() % gNumFurfrouForms];
@@ -1762,6 +1827,7 @@ enum
 #define TM102_DAZZLING_GLEAM 102
 
 #define TUTOR51_HEAT_WAVE 51
+#define TUTOR52_HYPER_VOICE 52
 
 static struct DoubleReplacementMoves sDoubleSpreadReplacementMoves[] =
 {
@@ -1770,6 +1836,7 @@ static struct DoubleReplacementMoves sDoubleSpreadReplacementMoves[] =
 	{MOVE_SLUDGEWAVE, MOVE_SLUDGEBOMB, LEARN_TYPE_TM, TM36_SLUDGE_BOMB, POISON_IMMUNITY, 0},
 	{MOVE_FLAMETHROWER, MOVE_HEATWAVE, LEARN_TYPE_TUTOR, TUTOR51_HEAT_WAVE, 0, 0},
 	{MOVE_FIREBLAST, MOVE_HEATWAVE, LEARN_TYPE_TUTOR, TUTOR51_HEAT_WAVE, 0, 0},
+	{MOVE_BOOMBURST, MOVE_HYPERVOICE, LEARN_TYPE_TUTOR, TUTOR52_HYPER_VOICE, SOUND_IMMUNITY, 0},
 	{MOVE_SURF, MOVE_MUDDYWATER, LEARN_TYPE_LEVEL_UP, 0, WATER_IMMUNITY, 0},
 	{MOVE_THUNDERBOLT, MOVE_DISCHARGE, LEARN_TYPE_LEVEL_UP, 0, 0, ELECTRIC_IMMUNITY},
 	{MOVE_HYPERVOICE, MOVE_BOOMBURST, LEARN_TYPE_LEVEL_UP, 0, 0, SOUND_IMMUNITY},
@@ -1780,7 +1847,87 @@ static struct DoubleReplacementMoves sDoubleSpreadReplacementMoves[] =
 static void PostProcessTeam(struct Pokemon* party, struct TeamBuilder* builder)
 {
 	u32 i, j, k;
+	
+	u8 tailwindTRIndex = 0xFF;
+	u8 hazardsIndex = 0xFF;
+	u8 screensIndex = 0xFF;
+	u8 weatherIndex = 0xFF;
+	u8 terrainIndex = 0xFF;
+	u8 defiantIndex = 0xFF;
+	u8 intimidateIndex = 0xFF;
+	u8 sleepIndex = 0xFF;
+	u8 yawnIndex = 0xFF;
+	u8 illusionIndex = 0xFF;
+	u8 followMeIndex = 0xFF;
+	
+	for (i = 0; i < builder->monsCount; ++i)
+	{
+		if (builder->spreads[i] == NULL)
+			break;
 
+		for (j = 0; j < MAX_MON_MOVES; ++j)
+		{
+			u16 move = builder->spreads[i]->moves[j];
+			u8 moveEffect = gBattleMoves[move].effect;
+
+			if (move == MOVE_TAILWIND || move == MOVE_TRICKROOM)
+				tailwindTRIndex = i;
+
+			switch (moveEffect) {
+				case EFFECT_SPIKES:
+					hazardsIndex = i;
+					break;
+				case EFFECT_REFLECT: 
+				case EFFECT_LIGHT_SCREEN:
+					screensIndex = i;
+					break;
+				case EFFECT_RAIN_DANCE:
+				case EFFECT_SUNNY_DAY:
+				case EFFECT_SANDSTORM: 
+				case EFFECT_HAIL:
+					weatherIndex = i;
+					break;
+				case EFFECT_SET_TERRAIN:
+					terrainIndex = i;
+					break;
+				case EFFECT_SLEEP:
+					sleepIndex = i;
+					break;
+				case EFFECT_YAWN:
+					yawnIndex = i;
+					break;
+				case EFFECT_FOLLOW_ME:
+					followMeIndex = i;
+					break;
+			}
+		}
+		
+		switch (ConvertFrontierAbilityNumToAbility(builder->spreads[i]->ability, builder->spreads[i]->species)) {
+			case ABILITY_DRIZZLE:
+			case ABILITY_DROUGHT:
+			case ABILITY_SANDSTREAM:
+			case ABILITY_SNOWWARNING:
+				weatherIndex = i;
+				break;
+			case ABILITY_ELECTRICSURGE:
+			case ABILITY_GRASSYSURGE:
+			case ABILITY_MISTYSURGE:
+			case ABILITY_PSYCHICSURGE:
+				terrainIndex = i;
+				break;
+			case ABILITY_DEFIANT:
+			case ABILITY_COMPETITIVE:
+				defiantIndex = i;
+				break;
+			case ABILITY_INTIMIDATE:
+				intimidateIndex = i;
+				break;
+			case ABILITY_ILLUSION:
+				illusionIndex = i;
+				break;
+		}
+	}
+	
 	if (IsFrontierSingles(builder->battleType))
 	{
 		if (builder->partyIndex[HAZARDS_SETUP] != 0xFF)
@@ -1795,69 +1942,6 @@ static void PostProcessTeam(struct Pokemon* party, struct TeamBuilder* builder)
 		}
 		else //Try to stick a mon with Tailwind/Trick Room or entry hazards at the front
 		{
-			u8 tailwindTRIndex = 0xFF;
-			u8 hazardsIndex = 0xFF;
-			u8 screensIndex = 0xFF;
-			u8 weatherIndex = 0xFF;
-			u8 terrainIndex = 0xFF;
-			u8 sleepIndex = 0xFF;
-			u8 yawnIndex = 0xFF;
-			
-			for (i = 0; i < builder->monsCount; ++i)
-			{
-				if (builder->spreads[i] == NULL)
-					break;
-
-				for (j = 0; j < MAX_MON_MOVES; ++j)
-				{
-					u16 move = builder->spreads[i]->moves[j];
-					u8 moveEffect = gBattleMoves[move].effect;
-
-					if (move == MOVE_TAILWIND || move == MOVE_TRICKROOM)
-						tailwindTRIndex = i;
-
-					switch (moveEffect) {
-						case EFFECT_SPIKES:
-							hazardsIndex = i;
-							break;
-						case EFFECT_REFLECT: 
-						case EFFECT_LIGHT_SCREEN:
-							screensIndex = i;
-							break;
-						case EFFECT_RAIN_DANCE:
-						case EFFECT_SUNNY_DAY:
-						case EFFECT_SANDSTORM: 
-						case EFFECT_HAIL:
-							weatherIndex = i;
-							break;
-						case EFFECT_SET_TERRAIN:
-							terrainIndex = i;
-							break;
-						case EFFECT_SLEEP:
-							sleepIndex = i;
-							break;
-						case EFFECT_YAWN:
-							yawnIndex = i;
-							break;
-					}
-				}
-				
-				switch (ConvertFrontierAbilityNumToAbility(builder->spreads[i]->ability, builder->spreads[i]->species)) {
-					case ABILITY_DRIZZLE:
-					case ABILITY_DROUGHT:
-					case ABILITY_SANDSTREAM:
-					case ABILITY_SNOWWARNING:
-						weatherIndex = i;
-						break;
-					case ABILITY_ELECTRICSURGE:
-					case ABILITY_GRASSYSURGE:
-					case ABILITY_MISTYSURGE:
-					case ABILITY_PSYCHICSURGE:
-						terrainIndex = i;
-						break;
-				}
-			}
-			
 			if (tailwindTRIndex != 0xFF)
 				SwapMons(party, 0, tailwindTRIndex);
 			else if (hazardsIndex != 0xFF)
@@ -1873,17 +1957,21 @@ static void PostProcessTeam(struct Pokemon* party, struct TeamBuilder* builder)
 				SwapMons(party, 0, terrainIndex);
 			else if (weatherIndex != 0xFF)
 				SwapMons(party, 0, weatherIndex);
+			else if (defiantIndex != 0xFF && party == gEnemyParty && GetPartyAbility(&gPlayerParty[0]) == ABILITY_INTIMIDATE)
+				SwapMons(party, 0, defiantIndex); //Stick Pokemon with Defiant/Competitive up front to absorb the Intimidate
 			else if (sleepIndex != 0xFF)
 				SwapMons(party, 0, sleepIndex);
-			else if (sleepIndex != 0xFF)
+			else if (yawnIndex != 0xFF)
 				SwapMons(party, 0, yawnIndex);
+			else if (illusionIndex != 0xFF)
+				SwapMons(party, 0, illusionIndex);
 		}
 	}
 	else //Doubles or Multi
 	{
 		for (i = 0; i < PARTY_SIZE; ++i)
 		{
-			if (builder->spreads[i]->dblSpreadType == 0)
+			if (builder->spreads[i]->modifyMovesDoubles)
 			{
 				#ifdef UNBOUND
 					u16 levelUpMoves[MAX_LEARNABLE_MOVES] = {MOVE_NONE};
@@ -1891,18 +1979,19 @@ static void PostProcessTeam(struct Pokemon* party, struct TeamBuilder* builder)
 
 					for (j = 0; j < ARRAY_COUNT(sDoubleSpreadReplacementMoves); ++j)
 					{
-						u8 pos = FindMovePositionInMonMoveset(sDoubleSpreadReplacementMoves[j].oldMove, &party[i]);
+						u16 oldMove = sDoubleSpreadReplacementMoves[j].oldMove;
 						u16 newMove = sDoubleSpreadReplacementMoves[j].replacementMove;
+						u8 pos = FindMovePositionInMonMoveset(oldMove, &party[i]);
 						u8 newPP = gBattleMoves[newMove].pp;
 
 						if (pos < MAX_MON_MOVES)
 						{
 							if (sDoubleSpreadReplacementMoves[j].noIfImmunity != 0
-							&&  builder->partyIndex[sDoubleSpreadReplacementMoves[j].noIfImmunity])
+							&&  builder->partyIndex[sDoubleSpreadReplacementMoves[j].noIfImmunity] != i)
 								continue;
 								
 							if (sDoubleSpreadReplacementMoves[j].yesIfImmunity == 0
-							||  builder->partyIndex[sDoubleSpreadReplacementMoves[j].yesIfImmunity])
+							||  builder->partyIndex[sDoubleSpreadReplacementMoves[j].yesIfImmunity] != i) //There's an immunity on some other Pokemon
 							{		
 								switch (sDoubleSpreadReplacementMoves[j].learnType) {
 									case LEARN_TYPE_TM:
@@ -1959,6 +2048,52 @@ static void PostProcessTeam(struct Pokemon* party, struct TeamBuilder* builder)
 					}
 				}
 			}
+		}
+		
+		#define INDEX_CHECK(partyId) (index < 2 && partyId > index && partyId != 0xFF)
+		
+		if (i == ARRAY_COUNT(sImmunities)) //The two Pokemon up front aren't meant to work off of each other
+		{
+			u8 index = 0;
+		
+			if (INDEX_CHECK(builder->partyIndex[HAZARDS_SETUP]))
+				SwapMons(party, index++, builder->partyIndex[HAZARDS_SETUP]);
+
+			if (INDEX_CHECK(tailwindTRIndex))
+				SwapMons(party, index++, tailwindTRIndex);
+			
+			if (INDEX_CHECK(builder->partyIndex[SCREENER]))
+			{
+				if (builder->partyIndex[SCREENER] != 0) //Screener isn't already at lead
+					SwapMons(party, index++, builder->partyIndex[SCREENER]);
+			}
+			else if (INDEX_CHECK(screensIndex))
+				SwapMons(party, index++, screensIndex);
+			
+			if (INDEX_CHECK(terrainIndex))
+				SwapMons(party, index++, terrainIndex);
+			
+			if (INDEX_CHECK(weatherIndex))
+				SwapMons(party, index++, weatherIndex);
+
+			if (INDEX_CHECK(intimidateIndex))
+				SwapMons(party, index++, intimidateIndex);
+				
+			if (INDEX_CHECK(followMeIndex))
+				SwapMons(party, index++, followMeIndex);
+			
+			if (INDEX_CHECK(defiantIndex) && party == gEnemyParty
+			&& (GetPartyAbility(&gPlayerParty[0]) == ABILITY_INTIMIDATE || GetPartyAbility(&gPlayerParty[1]) == ABILITY_INTIMIDATE))
+				SwapMons(party, index++, defiantIndex); //Stick Pokemon with Defiant/Competitive up front to absorb the Intimidate
+
+			if (INDEX_CHECK(sleepIndex))
+				SwapMons(party, index++, sleepIndex);
+
+			if (INDEX_CHECK(yawnIndex))
+				SwapMons(party, index++, yawnIndex);
+				
+			if (INDEX_CHECK(hazardsIndex))
+				SwapMons(party, index++, hazardsIndex);
 		}
 	}
 }

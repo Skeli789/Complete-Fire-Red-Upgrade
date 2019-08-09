@@ -571,7 +571,7 @@ BattleScript_PrintPlayerForfeitedLinkBattle:
 BattleScript_LostMultiBattleTower:
 	returnopponentmon1toball BANK_ATTACKER
 	waitstateatk
-	returnopponentmon2toball BANK_ATTACKER
+	callasm ReturnOpponentMon2
 	waitstateatk
 	trainerslidein BANK_ATTACKER
 	waitstateatk
@@ -591,6 +591,8 @@ BattleScript_LostMultiBattleTower:
 
 BattleScript_LostBattleTower:
 	returnopponentmon1toball BANK_ATTACKER
+	waitstateatk
+	callasm ReturnOpponentMon2
 	waitstateatk
 	trainerslidein BANK_ATTACKER
 	waitstateatk

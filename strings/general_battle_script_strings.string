@@ -157,3 +157,7 @@ The sleep clause prevents more\nPok\emon from being put to sleep!
 
 #org @gText_WhiteHerbFling
 The [LAST_ITEM] restored\n[SCRIPTING_BANK]'s status!
+
+#org @gText_BellyDrumMinimizedAttack
+[ATTACKER] cut its own HP\nand minimized Attack!
+

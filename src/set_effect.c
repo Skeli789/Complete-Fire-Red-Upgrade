@@ -168,7 +168,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
         ++gBattlescriptCurrInstr;
 		goto CLEAR_MOVE_EFFECT_BYTE;
 	}
-	
+
     if (gSideAffecting[SIDE(gEffectBank)] & SIDE_STATUS_SAFEGUARD 
 	&& !(gHitMarker & HITMARKER_IGNORE_SAFEGUARD)
 	&& ABILITY(gBankAttacker) != ABILITY_INFILTRATOR
@@ -180,7 +180,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
         ++gBattlescriptCurrInstr;
 		goto CLEAR_MOVE_EFFECT_BYTE;
 	}
-	
+
 	if (IsOfType(gEffectBank, TYPE_GRASS)
 	&& (ABILITY(gEffectBank) == ABILITY_FLOWERVEIL || (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && ABILITY(PARTNER(gEffectBank)) == ABILITY_FLOWERVEIL))
 	&& gEffectBank != gBankAttacker
@@ -192,7 +192,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 
 	if (CheckTableForSpecialMoveEffect(gBattleCommunication[MOVE_EFFECT_BYTE], sMoveEffectsThatIgnoreSubstitute))
 		goto SKIP_SUBSTITUTE_CHECK;
-	
+
     if (gBattleMons[gEffectBank].hp == 0)
 	{
         ++gBattlescriptCurrInstr;
@@ -205,8 +205,8 @@ void SetMoveEffect(bool8 primary, u8 certain)
 	{
         ++gBattlescriptCurrInstr;
 		goto CLEAR_MOVE_EFFECT_BYTE;
-	}
-		
+	}	
+
 	SKIP_SUBSTITUTE_CHECK:
     if (gBattleCommunication[MOVE_EFFECT_BYTE] <= 6) // status change
     {

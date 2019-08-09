@@ -14,7 +14,6 @@
 #include "../include/new/set_effect.h"
 
 //TODO:
-//Emergency Exit Spikes
 //Make sure there's no choice lock glitch
 //Add check to see if AI move prediction was successful. If not, then if the same move is predicted, don't predict that same move again.
 //Remove the lines at the bottom?
@@ -126,7 +125,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 		gNewBS->originalAttackerBackup = gBankAttacker;
 		gBattleScripting->atk49_state = ATK49_UNDO_SKY_DROP;
 	}
-	
+
     do
     {
         switch (gBattleScripting->atk49_state)
@@ -700,7 +699,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 					&& TOOK_DAMAGE(bankDef)
 					&& MOVE_HAD_EFFECT
 					&& STAT_CAN_RISE(gBankAttacker, STAT_STAGE_ATK)
-					&& PartyAlive(bankDef))
+					&& ViableMonCountFromBank(FOE(gBankAttacker)) > 0) //Use FOE so as to not get boost when KOing partner last after enemy has no mons left
 					{
 						PREPARE_STAT_BUFFER(gBattleTextBuff1, STAT_STAGE_ATK);
 						
@@ -722,7 +721,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 					&& gBattleMons[gBankAttacker].hp
 					&& TOOK_DAMAGE(bankDef)
 					&& MOVE_HAD_EFFECT
-					&& PartyAlive(bankDef))
+					&& ViableMonCountFromBank(FOE(gBankAttacker)) > 0) //Use FOE so as to not get boost when KOing partner last after enemy has no mons left
 					{
 						u16 temp;
 						u16 max;
@@ -786,10 +785,10 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 					&& gBattleMons[gBankAttacker].hp
 					&& TOOK_DAMAGE(bankDef)
 					&& MOVE_HAD_EFFECT
-					&& PartyAlive(bankDef)
+					&& ViableMonCountFromBank(FOE(gBankAttacker)) > 0 //Use FOE so as to not get boost when KOing partner last after enemy has no mons left
 					&& !IS_TRANSFORMED(gBankAttacker))
 					{
-						DoFormChange(gBankAttacker, SPECIES_ASHGRENINJA, TRUE, TRUE);
+						DoFormChange(gBankAttacker, SPECIES_ASHGRENINJA, TRUE, TRUE, FALSE);
 						
 						BattleScriptPushCursor();
 						gBattlescriptCurrInstr = BattleScript_AbilityTransformed;
@@ -952,7 +951,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 				&& !ABILITY_PRESENT(ABILITY_DAMP))
 				{
 					BattleScriptPushCursor();
-					
+
 					if (gNewBS->AttackerDidDamageAtLeastOnce)
 						gBattlescriptCurrInstr = BattleScript_FaintAttackerForExplosion;
 					else
@@ -1094,7 +1093,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 					&&  !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, *SeedHelper)
 					&&  !(gStatuses3[*SeedHelper] & (STATUS3_SKY_DROP_ANY))
 					&&  gBattleMons[*SeedHelper].hp
-					&&  gBattleMons[*SeedHelper].hp < gBattleMons[*SeedHelper].maxHP / 2
+					&&  gBattleMons[*SeedHelper].hp <= gBattleMons[*SeedHelper].maxHP / 2
 					&&  gBattleMons[*SeedHelper].hp + gNewBS->DamageTaken[*SeedHelper] > gBattleMons[*SeedHelper].maxHP / 2) //Fell this turn
 					{
 						if (gBattleMoves[gCurrentMove].effect == EFFECT_BATON_PASS)
@@ -1225,6 +1224,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			gNewBS->InstructInProgress = FALSE;
 			gNewBS->bypassSubstitute = FALSE;
 			gNewBS->preFaintEffectsTracker = 0;
+			gNewBS->MeFirstByte = FALSE;
 			gBattleScripting->atk49_state++;
 			break;
 		

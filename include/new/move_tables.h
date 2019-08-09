@@ -48,3 +48,5 @@ extern const move_t AlwaysHitRainTable[];
 extern const move_t SpecialAttackPhysicalDamageMoves[];
 extern const move_t SpecialWholeFieldMoveTable[];
 extern const move_t AromaVeilTable[];
+extern const move_t MovesThatLiftProtectTable[];
+

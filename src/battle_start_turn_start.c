@@ -463,6 +463,7 @@ void RunTurnActionsFunctions(void)
 								gNewBS->UltraData->chosen[PARTNER(bank)] = 0;
 								gNewBS->UltraData->done[PARTNER(bank)] = TRUE;
 							}
+
 							BattleScriptExecute(gNewBS->MegaData->script);
 							return;
 						}
@@ -617,9 +618,16 @@ void HandleAction_UseMove(void)
 	gNewBS->DancerInProgress = FALSE;
 	gNewBS->MoveBounceInProgress = FALSE;
 	gNewBS->ZMoveData->active = FALSE;
+	gNewBS->batonPassing = FALSE;
 	gBattleCommunication[MOVE_EFFECT_BYTE] = 0; //Remove secondary effects
 	gBattleCommunication[6] = 0;
 	gCurrMovePos = gChosenMovePos = gBattleStruct->chosenMovePositions[gBankAttacker];
+	
+	for (int i = 0; i < MAX_BATTLERS_COUNT; ++i)
+	{
+		gNewBS->DamageTaken[i] = 0;
+		gNewBS->ResultFlags[i] = 0;
+	}
 
 //Get Move to be Used
 	if (gProtectStructs[gBankAttacker].onlyStruggle)
@@ -1026,15 +1034,17 @@ u8 GetTrainerBattleTransition(void)
 // 0 = first mon moves first
 // 1 = second mon moves first
 // 2 = second mon moves first because it won a 50/50 roll
-u8 GetWhoStrikesFirst(u8 bank1, u8 bank2, bool8 ignoreMovePriorities) {
+u8 GetWhoStrikesFirst(u8 bank1, u8 bank2, bool8 ignoreMovePriorities)
+{
 	s8 bank1_priority, bank2_priority;
 	s32 bank1_bracket, bank2_bracket;
 	u32 bank1_speed, bank2_speed;
 
 //Priority Calc
-	if(!ignoreMovePriorities) {
-		bank1_priority = PriorityCalc(bank1, gActionForBanks[bank1], gBattleMons[bank1].moves[gBattleStruct->chosenMovePositions[bank1]]);
-		bank2_priority = PriorityCalc(bank2, gActionForBanks[bank2], gBattleMons[bank2].moves[gBattleStruct->chosenMovePositions[bank2]]);		
+	if(!ignoreMovePriorities)
+	{
+		bank1_priority = PriorityCalc(bank1, gActionForBanks[bank1], ReplaceWithZMoveRuntime(bank1, gBattleMons[bank1].moves[gBattleStruct->chosenMovePositions[bank1]]));
+		bank2_priority = PriorityCalc(bank2, gActionForBanks[bank2], ReplaceWithZMoveRuntime(bank2, gBattleMons[bank2].moves[gBattleStruct->chosenMovePositions[bank2]]));		
 		if (bank1_priority > bank2_priority)
 			return FirstMon;
 		else if (bank1_priority < bank2_priority)
@@ -1054,17 +1064,18 @@ u8 GetWhoStrikesFirst(u8 bank1, u8 bank2, bool8 ignoreMovePriorities) {
 	bank1_speed = SpeedCalc(bank1);
 	bank2_speed = SpeedCalc(bank2);
 	u32 temp;
-	if (gNewBS->TrickRoomTimer) {
+	if (gNewBS->TrickRoomTimer)
+	{
 		temp = bank2_speed;
 		bank2_speed = bank1_speed;
 		bank1_speed = temp;
 	}
+
 	if (bank1_speed > bank2_speed)
 		return FirstMon;
-	else if (bank1_speed < bank2_speed) {
+	else if (bank1_speed < bank2_speed)
 		return SecondMon;
-	}
-		
+
 	return SpeedTie;
 }
 
@@ -1110,12 +1121,43 @@ s8 PriorityCalc(u8 bank, u8 action, u16 move)
 	return priority;
 }
 
+s8 PriorityCalcForParty(struct Pokemon* mon, u16 move)
+{
+	u8 priority = 0;
+
+	priority = gBattleMoves[move].priority;
+
+	switch (GetPartyAbility(mon)) {
+		case ABILITY_PRANKSTER:
+			if (SPLIT(move) == SPLIT_STATUS)
+				++priority;
+			break;
+
+		case ABILITY_GALEWINGS:
+			if (GetMoveTypeSpecialFromParty(mon, move) == TYPE_FLYING)
+			{
+				#ifndef OLD_GALE_WINGS
+					if (GetMonData(mon, MON_DATA_HP, NULL) == GetMonData(mon, MON_DATA_MAX_HP, NULL))
+				#endif
+						++priority;
+			}
+			break;
+
+		case ABILITY_TRIAGE:
+			if (gBattleMoves[move].flags & FLAG_TRIAGE_AFFECTED)
+				priority += 3;
+	}
+	
+	return priority;
+}
+
 s32 BracketCalc(u8 bank)
 {
 	u8 itemEffect = ITEM_EFFECT(bank);
 	u8 itemQuality = ITEM_QUALITY(bank);
 	u8 ability = ABILITY(bank);
 
+	gNewBS->CustapQuickClawIndicator &= ~(gBitTable[bank]); //Reset the Quick Claw counter just in case
 	if (BATTLER_ALIVE(bank))
 	{
 		switch (itemEffect) {
@@ -1125,10 +1167,6 @@ s32 BracketCalc(u8 bank)
 					gNewBS->CustapQuickClawIndicator |= gBitTable[bank];
 					return 1;
 				}
-				else
-				{
-					gNewBS->CustapQuickClawIndicator &= ~(gBitTable[bank]);
-				}
 				break;
 
 			case ITEM_EFFECT_CUSTAP_BERRY:
@@ -1137,10 +1175,6 @@ s32 BracketCalc(u8 bank)
 				{
 					gNewBS->CustapQuickClawIndicator |= gBitTable[bank];
 					return 1;
-				}
-				else
-				{
-					gNewBS->CustapQuickClawIndicator &= ~(gBitTable[bank]);
 				}
 				break;
 

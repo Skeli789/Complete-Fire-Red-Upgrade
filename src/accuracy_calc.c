@@ -182,6 +182,40 @@ bool8 ProtectAffects(u16 move, u8 bankAtk, u8 bankDef, bool8 set) {
 	return effect;
 }
 
+bool8 DoesProtectionMoveBlockMove(u8 bankAtk, u8 bankDef, u16 atkMove, u16 protectMove)
+{
+    u8 protectFlag = gBattleMoves[atkMove].flags & FLAG_PROTECT_AFFECTED;
+    u8 split = SPLIT(atkMove);
+    u8 target = gBattleMoves[atkMove].target;
+	
+	if (!CheckTableForMove(atkMove, MovesThatLiftProtectTable))
+	{
+		switch (protectMove) {
+			case MOVE_PROTECT:
+			case MOVE_SPIKYSHIELD:
+			case MOVE_BANEFULBUNKER:
+				return protectFlag != 0;
+				
+			case MOVE_KINGSSHIELD:
+				return protectFlag && split != SPLIT_STATUS;
+
+			case MOVE_MATBLOCK:
+				return gDisableStructs[bankDef].isFirstTurn && protectFlag && split != SPLIT_STATUS;
+				
+			case MOVE_CRAFTYSHIELD:
+				return target != MOVE_TARGET_USER && split == SPLIT_STATUS;
+				
+			case MOVE_QUICKGUARD:
+				return protectFlag && PriorityCalc(bankAtk, ACTION_USE_MOVE, atkMove) > 0;
+				
+			case MOVE_WIDEGUARD:
+				return protectFlag && target & (MOVE_TARGET_BOTH | MOVE_TARGET_FOES_AND_ALLY);
+		}
+	}
+
+	return FALSE;
+}
+
 static bool8 AccuracyCalcHelper(u16 move) {
     u8 doneStatus = FALSE;
 	if (ABILITY(gBankAttacker) != ABILITY_NOGUARD 

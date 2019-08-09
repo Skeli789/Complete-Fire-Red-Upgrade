@@ -1,5 +1,4 @@
-#pragma once
-
+#pragma once 
 #define MOVE_NAME_LENGTH 12
 
 #define MOVE_NONE 0x0

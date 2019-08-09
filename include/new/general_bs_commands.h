@@ -10,6 +10,7 @@
 //Exported Functions
 s32 GetPsywaveDamage(u8 randDamage);
 u8 CheckMoveLimitations(u8 bank, u8 unusableMoves, u8 check);
+u8 CheckMoveLimitationsFromParty(struct Pokemon* mon, u8 unusableMoves, u8 check);
 bool8 SandstormHurts(u8 bank);
 bool8 HailHurts(u8 bank);
 bool8 TakesDamageFromSandstorm(u8 bank);

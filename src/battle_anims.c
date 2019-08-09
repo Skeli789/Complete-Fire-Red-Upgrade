@@ -93,6 +93,36 @@ const union AffineAnimCmd* const gSpriteAffineAnim_HydroCannonBall[] =
 	gSpriteAffineAnim_HydroCannonBallBothSides,
 };
 
+const struct OamData sGrowingSuperpowerOAM =
+{
+    .affineMode = ST_OAM_AFFINE_DOUBLE,
+    .objMode = ST_OAM_OBJ_NORMAL,
+	.shape = SPRITE_SHAPE(64x64),
+	.size = SPRITE_SIZE(64x64),
+    .priority = 2,
+};
+
+static const union AffineAnimCmd gSpriteAffineAnim_GrowingSuperpowerEnemyAttack[] =
+{
+	AFFINEANIMCMD_FRAME(0, 0, 128, 1), //180 degree turn
+	AFFINEANIMCMD_FRAME(0, 0, 0, 2), //Pause
+	AFFINEANIMCMD_FRAME(16, 16, 0, 15), //Double in size
+	AFFINEANIMCMD_END
+};
+
+static const union AffineAnimCmd gSpriteAffineAnim_GrowingSuperpowerPlayerAttack[] =
+{
+	AFFINEANIMCMD_FRAME(0, 0, 0, 2), //Pause
+	AFFINEANIMCMD_FRAME(16, 16, 0, 15), //Double in size
+	AFFINEANIMCMD_END
+};
+
+const union AffineAnimCmd* const gSpriteAffineAnimTable_GrowingSuperpower[] =
+{
+	gSpriteAffineAnim_GrowingSuperpowerPlayerAttack,
+	gSpriteAffineAnim_GrowingSuperpowerEnemyAttack,
+};
+
 //This file's functions:
 static void InitSpritePosToAnimTargetsCentre(struct Sprite *sprite, bool8 respectMonPicOffsets);
 static void InitSpritePosToAnimAttackersCentre(struct Sprite *sprite, bool8 respectMonPicOffsets);
@@ -904,6 +934,37 @@ void SpriteCB_SoulStealingStar(struct Sprite *sprite)
 	sprite->data[1] = gBattleAnimArgs[4];
 	sprite->data[2] = gBattleAnimArgs[5];
 	sprite->callback = (void*) 0x80B7C11;
+}
+
+void SpriteCB_GrowingSuperpower(struct Sprite *sprite)
+{
+    u8 battler;
+
+    if (gBattleAnimArgs[0] == 0)
+    {
+        sprite->pos1.x = GetBattlerSpriteCoord(gBattlerAttacker, 2);
+        sprite->pos1.y = GetBattlerSpriteCoord(gBattlerAttacker, 3);
+        battler = gBattleAnimTarget;
+        sprite->oam.priority = GetBattlerSpriteBGPriority(gBattleAnimAttacker);
+    }
+    else
+    {
+        battler = gBattleAnimAttacker;
+        sprite->oam.priority = GetBattlerSpriteBGPriority(gBattleAnimTarget);
+    }
+
+    if (SIDE(gBattleAnimAttacker) == B_SIDE_OPPONENT)
+		StartSpriteAffineAnim(sprite, 1);
+
+    sprite->data[0] = 16;
+    sprite->data[1] = sprite->pos1.x;
+    sprite->data[2] = GetBattlerSpriteCoord(battler, 2);
+    sprite->data[3] = sprite->pos1.y;
+    sprite->data[4] = GetBattlerSpriteCoord(battler, 3);
+
+    InitAnimLinearTranslation(sprite);
+    StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
+    sprite->callback = (void*) 0x807563D;
 }
 
 // Scales up the target mon sprite

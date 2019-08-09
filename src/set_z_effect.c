@@ -3,6 +3,7 @@
 #include "../include/constants/items.h"
 
 #include "../include/new/Helper_Functions.h"
+#include "../include/new/item.h"
 #include "../include/new/mega.h"
 #include "../include/new/move_menu.h"
 #include "../include/new/set_z_effect.h"
@@ -386,3 +387,51 @@ bool8 DoesZMoveUsageStopMegaEvolution(u8 bank)
 		
 	return FALSE;
 }
+
+move_t CanUseZMove(u8 bank, u8 moveIndex, u16 move)
+{
+	struct Pokemon* mon = GetBankPartyData(bank);
+	u16 item = GetMonData(mon, MON_DATA_HELD_ITEM, NULL);
+
+	if (move == MOVE_NONE)
+		move = gBattleMons[bank].moves[moveIndex];
+
+	if (IsMega(bank)
+	|| IsRedPrimal(bank)
+	|| IsBluePrimal(bank))
+		return MOVE_NONE;
+
+	if (IsZCrystal(item) || item == ITEM_ULTRA_NECROZIUM_Z) //The only "Mega Stone" that let's you use a Z-Move
+	{
+		u16 zMove = GetSpecialZMove(move, SPECIES(bank), item);
+		if (zMove != MOVE_NONE && zMove != 0xFFFF) //There's a special Z-Move
+			return zMove;
+
+		if (move != MOVE_NONE && zMove != 0xFFFF //Special Z-Crystal
+		&& gBattleMoves[move].type == ItemId_GetHoldEffectParam(item))
+		{
+			if (SPLIT(move) == SPLIT_STATUS)
+				return 0xFFFF;
+			else
+				return GetTypeBasedZMove(move, bank);
+		}
+	}
+
+	return MOVE_NONE;
+}
+
+
+u16 ReplaceWithZMoveRuntime(u8 bankAtk, u16 move)
+{
+	if (gNewBS->ZMoveData->toBeUsed[bankAtk]
+	&& !gNewBS->ZMoveData->used[bankAtk]
+	&& SPLIT(move) != SPLIT_STATUS)
+	{
+		u16 zMove = CanUseZMove(bankAtk, 0xFF, move);
+		if (zMove != MOVE_NONE)	
+			move = zMove;
+	}
+
+	return move;
+}
+

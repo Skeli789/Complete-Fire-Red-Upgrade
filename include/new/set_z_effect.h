@@ -18,3 +18,5 @@ u16 GetSpecialZMove(u16 move, u16 species, u16 item);
 bool8 IsSpecialZCrystal(u16 item);
 const u8* GetZMoveName(u16 move);
 bool8 DoesZMoveUsageStopMegaEvolution(u8 bank);
+move_t CanUseZMove(u8 bank, u8 moveIndex, u16 move);
+move_t ReplaceWithZMoveRuntime(u8 bankAtk, u16 move);

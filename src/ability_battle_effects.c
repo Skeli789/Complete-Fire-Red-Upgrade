@@ -13,6 +13,7 @@
 #include "../include/new/battle_start_turn_start.h"
 #include "../include/new/battle_strings.h"
 #include "../include/new/damage_calc.h"
+#include "../include/new/form_change.h"
 #include "../include/new/Helper_Functions.h"
 #include "../include/new/move_tables.h"
 #include "../include/new/text.h"
@@ -967,7 +968,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				if (SPECIES(bank) == SPECIES_WISHIWASHI && gBattleMons[bank].level >= 20 
 				&&  gBattleMons[bank].hp > (gBattleMons[bank].maxHP / 4)) 
 				{
-					DoFormChange(bank, SPECIES_WISHIWASHI_S, FALSE, TRUE);
+					DoFormChange(bank, SPECIES_WISHIWASHI_S, FALSE, TRUE, FALSE);
 					BattleScriptPushCursorAndCallback(BattleScript_StartedSchoolingEnd3);
 					++effect;
 				}
@@ -975,7 +976,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				&& (gBattleMons[bank].level < 20 || 
 					gBattleMons[bank].hp <= (gBattleMons[bank].maxHP / 4))) 
 				{
-					DoFormChange(bank, SPECIES_WISHIWASHI, FALSE, TRUE);
+					DoFormChange(bank, SPECIES_WISHIWASHI, FALSE, TRUE, FALSE);
 					BattleScriptPushCursorAndCallback(BattleScript_StoppedSchoolingEnd3);
 					++effect;
 				}
@@ -988,7 +989,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				if (SPECIES(bank) == SPECIES_MINIOR_SHIELD 
 				&& gBattleMons[bank].hp <= (gBattleMons[bank].maxHP / 2)) 
 				{
-					DoFormChange(bank, umodsi(GetBankPartyData(bank)->personality, 7), FALSE, TRUE); //Get Minior Colour
+					DoFormChange(bank, umodsi(GetBankPartyData(bank)->personality, 7), FALSE, TRUE, FALSE); //Get Minior Colour
 					BattleScriptPushCursorAndCallback(BattleScript_ShieldsDownToCoreEnd3);
 					++effect;
 				}
@@ -1001,7 +1002,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 						  SPECIES(bank) == SPECIES_MINIOR_VIOLET) 
 				&& gBattleMons[bank].hp > (gBattleMons[bank].maxHP / 2)) 
 				{
-					DoFormChange(bank, SPECIES_MINIOR_SHIELD, FALSE, TRUE);
+					DoFormChange(bank, SPECIES_MINIOR_SHIELD, FALSE, TRUE, FALSE);
 					BattleScriptPushCursorAndCallback(BattleScript_ShieldsDownToMeteorEnd3);
 					++effect;
 				}
@@ -1016,7 +1017,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 					case SPECIES_CHERRIM:
 						if (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_SUN_ANY))
 						{
-							DoFormChange(bank, SPECIES_CHERRIM_SUN, FALSE, FALSE);
+							DoFormChange(bank, SPECIES_CHERRIM_SUN, FALSE, FALSE, FALSE);
 							BattleScriptPushCursorAndCallback(BattleScript_TransformedEnd3);
 							++effect;
 						}
@@ -1025,7 +1026,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 					case SPECIES_CHERRIM_SUN:
 						if (!WEATHER_HAS_EFFECT || !(gBattleWeather & WEATHER_SUN_ANY))
 						{
-							DoFormChange(bank, SPECIES_CHERRIM, FALSE, FALSE);
+							DoFormChange(bank, SPECIES_CHERRIM, FALSE, FALSE, FALSE);
 							BattleScriptPushCursorAndCallback(BattleScript_TransformedEnd3);
 							++effect;
 						}
@@ -1223,7 +1224,10 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 					break;
 					
                 case ABILITY_TRUANT:
-                    gDisableStructs[gBankAttacker].truantCounter ^= 1;
+					if (!(gBattleMons[bank].status1 & STATUS1_SLEEP))
+						gDisableStructs[bank].truantCounter ^= 1;
+					else
+						gDisableStructs[bank].truantCounter = 0; //Being asleep resets the Truant counter
                     break;
 					
 				case ABILITY_HARVEST:
@@ -1260,10 +1264,10 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 					break;
 				
 				case ABILITY_SLOWSTART:
-					if (gNewBS->SlowStartTimers[bank] && gBattleMons[bank].hp && --gNewBS->SlowStartTimers[bank] == 0) 
+					if (gNewBS->SlowStartTimers[bank] != 0 && gBattleMons[bank].hp != 0 && --gNewBS->SlowStartTimers[bank] == 0) 
 					{
 						BattleStringLoader = gText_SlowStartEnd;
-						BattleScriptPushCursorAndCallback(BattleScript_PrintCustomStringEnd3);
+						BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
 						++effect;
 					}
                 }

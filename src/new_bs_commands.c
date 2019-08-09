@@ -10,6 +10,7 @@
 #include "../include/new/CMD49.h"
 #include "../include/new/cmd49_battle_scripts.h"
 #include "../include/new/damage_calc.h"
+#include "../include/new/form_change.h"
 #include "../include/new/Helper_Functions.h"
 #include "../include/new/move_battle_scripts.h"
 #include "../include/new/move_tables.h"
@@ -689,7 +690,7 @@ void atkFF18_clearsidestatus(void)
 	gBattlescriptCurrInstr += 3;
 }
 
-//formchange BANK ORIGIN_SPECIES TARGET_SPECIES RELOAD_TYPE RELOAD_STATS ROM_ADDRESS
+//formchange BANK ORIGIN_SPECIES TARGET_SPECIES RELOAD_TYPE RELOAD_STATS RELOAD_ABILITY ROM_ADDRESS
 void atkFF19_formchange(void)
 {
 	if (gBattleExecBuffer) return;
@@ -699,13 +700,15 @@ void atkFF19_formchange(void)
 	u16 targetSpecies = T1_READ_16(gBattlescriptCurrInstr + 4);
 	bool8 reloadType = T2_READ_8(gBattlescriptCurrInstr + 6);
 	bool8 reloadStats = T2_READ_8(gBattlescriptCurrInstr + 7);
+	bool8 reloadAbility = T2_READ_8(gBattlescriptCurrInstr + 8);
+	
 	
 	if (gBattleMons[bank].species != originalSpecies || gBattleMons[bank].hp == 0)
-		gBattlescriptCurrInstr = T2_READ_PTR(gBattlescriptCurrInstr + 8);
+		gBattlescriptCurrInstr = T2_READ_PTR(gBattlescriptCurrInstr + 9);
 	else
 	{
-		DoFormChange(bank, targetSpecies, reloadType, reloadStats);
-		gBattlescriptCurrInstr += 12;
+		DoFormChange(bank, targetSpecies, reloadType, reloadStats, reloadAbility);
+		gBattlescriptCurrInstr += 13;
 	}
 }
 

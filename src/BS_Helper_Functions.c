@@ -8,6 +8,7 @@
 #include "../include/new/ability_tables.h"
 #include "../include/new/battle_start_turn_start_battle_scripts.h"
 #include "../include/new/bs_helper_functions.h"
+#include "../include/new/damage_calc.h"
 #include "../include/new/end_battle.h"
 #include "../include/new/Helper_Functions.h"
 #include "../include/new/move_battle_scripts.h"
@@ -554,7 +555,10 @@ void MeFirstFunc(void)
 		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;	
 	}
 	else
+	{
+		gNewBS->MeFirstByte = TRUE;
 		gRandomMove = move;
+	}
 
 }
 
@@ -1009,13 +1013,16 @@ void QuashFunc(void)
 {
 	int i;
 	
+	u8 numPokemonOnField = CountAliveMonsInBattle(BATTLE_ALIVE_ATK_SIDE, gBankAttacker, gBankTarget)
+						 + CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, gBankAttacker, gBankTarget);
+	
 	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE
 	&&  GetBattlerTurnOrderNum(gBankTarget) > gCurrentTurnActionNumber) //Attacker moved before target
 	{
 		int k = 0;
 		u8 newTurnOrder[] = {0xFF, 0xFF, 0xFF, 0xFF};
 		
-		for (i = 0; i < gBattlersCount; ++i)
+		for (i = 0; i < numPokemonOnField; ++i)
 		{
 			if (gBanksByTurnOrder[i] != gBankTarget)
 				newTurnOrder[k++] = gBanksByTurnOrder[i];
@@ -1023,7 +1030,7 @@ void QuashFunc(void)
 		
 		newTurnOrder[k] = gBankTarget;
 		
-		for (i = 0; i < gBattlersCount; ++i)
+		for (i = 0; i < numPokemonOnField; ++i)
 		{
 			if (newTurnOrder[i] != 0xFF)
 				gBanksByTurnOrder[i] = newTurnOrder[i];
@@ -1234,6 +1241,9 @@ void AbilityChangeBSFunc(void)
 				gLastUsedAbility = defAbility; //Original ability
 				gNewBS->SlowStartTimers[gBankTarget] = 0;
 				BattleStringLoader = EntrainmentString;
+
+				if (gLastUsedAbility == ABILITY_TRUANT)
+					gDisableStructs[gBankTarget].truantCounter = 0; //Reset counter
 			}
 			break;
 		
@@ -1623,3 +1633,40 @@ void TryLoadSecondFriskTargetDoubles(void)
 
 	gBattlescriptCurrInstr = BattleScript_FriskEnd - 5;
 }
+
+void RestoreAllOriginalMoveData(void)
+{
+	gCurrentMove = gChosenMove;
+	
+	gBankAttacker = gNewBS->originalAttackerBackup;
+	gBankTarget = gNewBS->originalTargetBackup;
+}
+
+void SetBatonPassSwitchingBit(void)
+{
+	gNewBS->batonPassing = TRUE;
+}
+
+void ClearBatonPassSwitchingBit(void)
+{
+	gNewBS->batonPassing = FALSE;
+}
+
+void ReturnOpponentMon2(void)
+{
+	if (gBattleExecBuffer)
+	{
+		gBattlescriptCurrInstr -= 5;
+		return;
+	}
+
+	gActiveBattler = GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
+
+	if (IS_DOUBLE_BATTLE
+	&& BATTLER_ALIVE(gActiveBattler))
+	{
+		EmitReturnMonToBall(0, 0);
+        MarkBufferBankForExecution(gActiveBattler);
+	}
+}
+

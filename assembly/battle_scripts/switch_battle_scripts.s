@@ -86,15 +86,19 @@ BattleScript_SRHurt:
 	
 BattleScript_TSPoison:
 	setbyte POISONED_BY 0x2 @To-Do, modify PSN set script
+	orword HIT_MARKER HITMARKER_IGNORE_SAFEGUARD | HITMARKER_IGNORE_SUBSTITUTE @;Ignore Shield Dust
 	setbyte EFFECT_BYTE 0x2
 	seteffecttarget
+	bicword HIT_MARKER HITMARKER_IGNORE_SAFEGUARD | HITMARKER_IGNORE_SUBSTITUTE
 	setbyte POISONED_BY 0x0
 	return
 	
 BattleScript_TSHarshPoison:
 	setbyte POISONED_BY 0x2
+	orword HIT_MARKER HITMARKER_IGNORE_SAFEGUARD | HITMARKER_IGNORE_SUBSTITUTE @;Ignore Shield Dust
 	setbyte EFFECT_BYTE 0x6
 	seteffecttarget
+	bicword HIT_MARKER HITMARKER_IGNORE_SAFEGUARD | HITMARKER_IGNORE_SUBSTITUTE
 	setbyte POISONED_BY 0x0
 	return
 
@@ -111,8 +115,10 @@ BattleScript_StickyWebSpeedDrop:
 	setword BATTLE_STRING_LOADER gText_CaughtInStickyWeb
 	printstring 0x184
 	waitmessage DELAY_HALFSECOND
+	orword HIT_MARKER HITMARKER_IGNORE_SAFEGUARD | HITMARKER_IGNORE_SUBSTITUTE @;Ignore Shield Dust
 	setbyte EFFECT_BYTE 0x18
 	seteffecttarget
+	bicword HIT_MARKER HITMARKER_IGNORE_SAFEGUARD | HITMARKER_IGNORE_SUBSTITUTE
 	return
 	
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -149,8 +155,11 @@ ForceSwitch:
 	printstring 0x154
 	callasm MoldBreakerRemoveAbilitiesOnForceSwitchIn
 	switchineffects BANK_TARGET
+	callasm RestoreAllOriginalMoveData
+	jumpifmove MOVE_DRAGONTAIL BattleScript_DragonTailResetForceSwitchHelper
+	jumpifmove MOVE_CIRCLETHROW BattleScript_DragonTailResetForceSwitchHelper
 	setbyte FORCE_SWITCH_HELPER 0x0
-	goto 0x81D694E
+	goto BS_MOVE_END
 
 RedCardForceSwitch:
 	switchoutabilities BANK_TARGET

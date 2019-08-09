@@ -14,6 +14,11 @@ bool8 HasNoMonsToSwitch(u8 battler);
 bool8 TryRemovePrimalWeather(u8 bank, u8 ability);
 void ClearSwitchBytes(u8 bank);
 void ClearSwitchBits(u8 bank);
+u32 CalcSpikesDamage(u8 bank);
+u32 CalcSpikesDamagePartyMon(struct Pokemon* mon, u8 side);
+u32 CalcStealthRockDamage(u8 bank);
+u32 CalcStealthRockDamagePartyMon(struct Pokemon* mon);
+bool8 WillFaintFromEntryHazards(struct Pokemon* mon, u8 side);
 
 //Functions Hooked In
 void atkE2_switchoutabilities(void);

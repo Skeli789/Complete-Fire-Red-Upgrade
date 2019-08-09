@@ -4,6 +4,7 @@
 #include "../include/constants/items.h"
 
 #include "../include/new/Helper_Functions.h"
+#include "../include/new/form_change.h"
 #include "../include/new/frontier.h"
 #include "../include/new/item.h"
 #include "../include/new/mega.h"
@@ -36,7 +37,8 @@ const struct Evolution* CanMegaEvolve(u8 bank, bool8 CheckUBInstead)
 	const struct Evolution* evolutions = gEvolutionTable[mon->species];
 	int i, j;
 	
-	for (i = 0; i < EVOS_PER_MON; ++i) {
+	for (i = 0; i < EVOS_PER_MON; ++i)
+	{
 		if (evolutions[i].method == EVO_MEGA)
 		{
 			//Ignore reversion information
@@ -51,10 +53,12 @@ const struct Evolution* CanMegaEvolve(u8 bank, bool8 CheckUBInstead)
 			else if (evolutions[i].unknown == MEGA_VARIANT_WISH && !CheckUBInstead
 			&& !IsZCrystal(mon->item)) //If Mega Rayquaza holds a Z-Crystal it can't Mega Evolve
 			{
-				if (!(gBattleTypeFlags & BATTLE_TYPE_FRONTIER) || VarGet(BATTLE_TOWER_TIER) == BATTLE_TOWER_NO_RESTRICTIONS)
+				if (!(gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
+				|| RayquazaCanMegaEvolveInFrontierBattle())
 				{
 					//Check learned moves
-					for (j = 0; j < MAX_MON_MOVES; ++j) {
+					for (j = 0; j < MAX_MON_MOVES; ++j)
+					{
 						if (evolutions[i].param == mon->moves[j])
 							return &evolutions[i];
 					}
@@ -129,12 +133,8 @@ const u8* DoMegaEvolution(u8 bank)
 	if (evolutions != NULL)
 	{
 		u16 species = mon->species;
-		DoFormChange(bank, evolutions->targetSpecies, TRUE, TRUE);
+		DoFormChange(bank, evolutions->targetSpecies, TRUE, TRUE, TRUE);
 
-		mon->species = evolutions->targetSpecies; //Temporarily set the mon to its mega form		
-		gBattleMons[bank].ability = GetPartyAbility(mon); //Get mega ability
-		mon->species = species; //Set species back
-		
 		gBattleScripting->bank = bank;
 		gLastUsedItem = mon->item;
 		
@@ -164,7 +164,7 @@ const u8* DoPrimalReversion(u8 bank, u8 caseId)
 	{
 		if (evolutions[i].method == EVO_MEGA && evolutions[i].unknown == MEGA_VARIANT_PRIMAL && evolutions[i].param == item)
 		{
-			DoFormChange(bank, evolutions[i].targetSpecies, TRUE, TRUE);
+			DoFormChange(bank, evolutions[i].targetSpecies, TRUE, TRUE, TRUE);
 
 			switch (caseId) {
 				case 0:

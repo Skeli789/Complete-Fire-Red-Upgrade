@@ -122,7 +122,7 @@ u8 TurnBasedEffects(void)
 				{
 					for (j = i + 1; j < gBattlersCount; ++j)
 					{
-						if (GetWhoStrikesFirst(gBanksByTurnOrder[i], gBanksByTurnOrder[j], 0))
+						if (GetWhoStrikesFirst(gBanksByTurnOrder[i], gBanksByTurnOrder[j], TRUE))
 							SwapTurnOrder(i, j);
 					}
 				}
@@ -1177,6 +1177,7 @@ u8 TurnBasedEffects(void)
 					bool8 changedForm = FALSE; 
 					bool8 reloadType = FALSE;
 					bool8 reloadStats = FALSE;
+					bool8 reloadAbility = FALSE;
 					const u8* battleScript = NULL;
 
 					switch(ability) {
@@ -1256,7 +1257,7 @@ u8 TurnBasedEffects(void)
 					if (changedForm) 
 					{
 						gBattleScripting->bank = gActiveBattler;
-						DoFormChange(gActiveBattler, newSpecies, reloadType, reloadStats);
+						DoFormChange(gActiveBattler, newSpecies, reloadType, reloadStats, reloadAbility);
 						BattleScriptExecute(battleScript);
 						++effect;
 					}
@@ -1268,11 +1269,13 @@ u8 TurnBasedEffects(void)
 				gNewBS->endTurnDone = TRUE;
 				gNewBS->MegaData->state = 0;
 				gNewBS->calculatedAIPredictions = FALSE;
+				gNewBS->batonPassing = FALSE;
 				
 				for (int i = 0; i < gBattlersCount; ++i)
 				{
 					gNewBS->pickupStack[i] = 0xFF;
 					gNewBS->leftoverHealingDone[i] = FALSE;
+					gNewBS->calculatedAISwitchings[i] = FALSE;
 				}
 		}
 		gBattleStruct->turnEffectsBank++;
@@ -1481,6 +1484,19 @@ bool8 HandleFaintedMonActions(void)
 								{
 									BattleScriptExecute(BattleScript_HandleFaintedMon);
 									gNewBS->handleSetSwitchIns |= gBitTable[gBattleStruct->faintedActionsBank];
+									
+									for (i = 0; i < gBattlersCount; ++i)
+									{
+										if (gNewBS->AbsentBattlerHelper & gBitTable[i]
+										&&  !(gNewBS->handleSetSwitchIns & gBitTable[i])
+										&&  HITMARKER_FAINTED(i))
+										{
+											if (++gBattleStruct->faintedActionsBank >= gBattlersCount)
+												gBattleStruct->faintedActionsState = 7;
+											return TRUE; //Still more Pokemon that need to switch in (eg after Explosion)
+										}
+									}
+
 									gBattleStruct->faintedActionsState = 7;
 									return TRUE;
 								}
@@ -1491,7 +1507,7 @@ bool8 HandleFaintedMonActions(void)
 						}
 					}
 				} while (++gBattleStruct->faintedActionsBank < gBattlersCount);
-				
+
 				if (gNewBS->handleSetSwitchIns)
 				{
 					gBattleStruct->faintedActionsBank = 0;
@@ -1569,6 +1585,9 @@ bool8 HandleFaintedMonActions(void)
 						gBankFainted = gBankTarget = gBattleStruct->faintedActionsBank;
 						if (gNewBS->handleSetSwitchIns & gBitTable[gBattleStruct->faintedActionsBank])
 						{
+							if (ABILITY(gBattleStruct->faintedActionsBank) == ABILITY_TRUANT)
+								gDisableStructs[gBattleStruct->faintedActionsBank].truantCounter = 1; //So it gets unset during the switch in effects
+				
 							gNewBS->handleSetSwitchIns &= ~(gBitTable[gBattleStruct->faintedActionsBank]);
 							BattleScriptExecute(BattleScript_HandleFaintedMonDoublesSwitchInEffects);
 							return TRUE;

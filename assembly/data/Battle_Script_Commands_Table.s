@@ -198,7 +198,7 @@ gBattleScriptingCommandsTable:
 .word atkB9_magnitudedamagecalculation
 .word atkBA_jumpifnopursuitswitchdmg
 .word atkBB_setsunny
-.word 0x802b32d				@maxattackhalvehp
+.word atkBC_maxattackhalvehp
 .word 0x802b3ad				@copyfoestats
 .word atkBE_rapidspinfree		@breakfree
 .word 0x802b541				@setcurled

@@ -15,11 +15,12 @@
 //TODO: Update Acupressure Targeting for AI
 
 //This file's functions:
+static void TryRechoosePartnerMove(u16 chosenMove);
 static u8 LoadCorrectTrainerPicId(void);
 
 void OpponentHandleChooseMove(void)
 {
-    u8 chosenMoveId;
+	u8 chosenMoveId;
     struct ChooseMoveStruct* moveInfo = (struct ChooseMoveStruct*)(&gBattleBufferA[gActiveBattler][4]);
 
     if ((gBattleTypeFlags & (BATTLE_TYPE_TRAINER | BATTLE_TYPE_OAK_TUTORIAL | BATTLE_TYPE_SAFARI | BATTLE_TYPE_ROAMER))
@@ -60,10 +61,12 @@ void OpponentHandleChooseMove(void)
 							gBankTarget = GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT);
 					}
 				}
-				
-				
+
 				if (moveInfo->possibleZMoves[chosenMoveId])
-					gNewBS->ZMoveData->toBeUsed[gActiveBattler] = TRUE;
+				{
+					if (ShouldAIUseZMove(gActiveBattler, gBankTarget, moveInfo->moves[chosenMoveId]))
+						gNewBS->ZMoveData->toBeUsed[gActiveBattler] = TRUE;
+				}
 				else if (!ShouldAIDelayMegaEvolution(gActiveBattler, gBankTarget, chosenMove))
 				{
 					if (moveInfo->canMegaEvolve && moveInfo->megaVariance != MEGA_VARIANT_ULTRA_BURST)
@@ -71,12 +74,19 @@ void OpponentHandleChooseMove(void)
 					else if (moveInfo->canMegaEvolve && moveInfo->megaVariance == MEGA_VARIANT_ULTRA_BURST)
 						gNewBS->UltraData->chosen[gActiveBattler] = TRUE;
 				}
+
+				//This is handled again later, but it's only here to help with the case of choosing Helping Hand when the partner is switching out.
+				gBattleStruct->chosenMovePositions[gActiveBattler] = chosenMoveId;
+				gBattleStruct->moveTarget[gActiveBattler] = gBankTarget;
+				gChosenMovesByBanks[gActiveBattler] = chosenMove;
+				
 				EmitMoveChosen(1, chosenMoveId, gBankTarget, gNewBS->MegaData->chosen[gActiveBattler], gNewBS->UltraData->chosen[gActiveBattler], gNewBS->ZMoveData->toBeUsed[gActiveBattler]);
+				TryRechoosePartnerMove(moveInfo->moves[chosenMoveId]);
 				break;
         }
+
         OpponentBufferExecCompleted();
     }
-	
     else
     {
         u16 move;
@@ -95,6 +105,29 @@ void OpponentHandleChooseMove(void)
 
         OpponentBufferExecCompleted();
     }
+}
+
+#define STATE_BEFORE_ACTION_CHOSEN 0
+static void TryRechoosePartnerMove(u16 chosenMove)
+{
+	if (GetBattlerPosition(gActiveBattler) & BIT_FLANK) //Second to choose action on either side
+	{
+		switch (gChosenMovesByBanks[PARTNER(gActiveBattler)]) {
+			case MOVE_HELPINGHAND:
+				if (chosenMove == MOVE_NONE || SPLIT(chosenMove) == SPLIT_STATUS)
+				{
+					struct ChooseMoveStruct moveInfo;
+					gChosenMovesByBanks[gActiveBattler] = chosenMove;
+					
+					u8 backup = gActiveBattler;
+					gActiveBattler = PARTNER(gActiveBattler);
+					EmitChooseMove(0, (gBattleTypeFlags & BATTLE_TYPE_DOUBLE) != 0, FALSE, &moveInfo); //Rechoose partner move
+					MarkBufferBankForExecution(gActiveBattler);
+					gActiveBattler = backup;
+				}
+				break;
+		}
+	}
 }
 
 void OpponentHandleDrawTrainerPic(void)
@@ -162,6 +195,9 @@ void OpponentHandleChoosePokemon(void)
 	
     if (gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] == PARTY_SIZE)
     {
+		if (gNewBS->bestMonIdToSwitchInto[gActiveBattler][0] == PARTY_SIZE)
+			CalcMostSuitableMonToSwitchInto();
+
         chosenMonId = GetMostSuitableMonToSwitchInto();
 		
         if (chosenMonId == PARTY_SIZE)
@@ -201,9 +237,11 @@ void OpponentHandleChoosePokemon(void)
         gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = PARTY_SIZE;
     }
 
+	RemoveBestMonToSwitchInto(gActiveBattler);
     gBattleStruct->monToSwitchIntoId[gActiveBattler] = chosenMonId;
     EmitChosenMonReturnValue(1, chosenMonId, 0);
     OpponentBufferExecCompleted();
+	TryRechoosePartnerMove(MOVE_NONE);
 }
 
 static u8 LoadCorrectTrainerPicId(void) {

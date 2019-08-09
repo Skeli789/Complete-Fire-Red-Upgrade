@@ -15,6 +15,7 @@ bool8 IsClassScreener(u8 class);
 bool8 IsClassCleric(u8 class);
 bool8 IsClassPhazer(u8 class);
 bool8 IsClassEntryHazards(u8 class);
+bool8 IsClassDoublesTeamSupport(u8 class);
 u8 PredictBankFightingStyle(u8 bank);
 u8 PredictFightingStyle(const u16* const moves, const u8 itemEffect, const u8 bank);
 
@@ -24,6 +25,7 @@ u8 ShouldProtect(u8 bankAtk, u8 bankDef, u16 move);
 bool8 ShouldPhaze(u8 bankAtk, u8 bankDef, u16 move, u8 class);
 bool8 ShouldUseWishAromatherapy(u8 bankAtk, u8 bankDef, u16 move, u8 class);
 bool8 ShouldSetUpScreens(u8 bankAtk, u8 bankDef, u16 move);
+bool8 ShouldUseFakeOut(u8 bankAtk, u8 bankDef);
 u8 BankLikelyToUseMoveSplit(u8 bank, u8 class);
 u16 GetAmountToRecoverBy(u8 bankAtk, u8 bankDef, u16 move);
 

@@ -722,13 +722,13 @@ struct NewBattleStruct
 	u8 TerrainTimer;
 	
 	//Team Counters
-	u8 SeaOfFireTimers[2];
-	u8 SwampTimers[2];
-	u8 RainbowTimers[2];
-	u8 RetaliateCounters[2];
-	u8 LuckyChantTimers[2];
-	u8 TailwindTimers[2];
-	u8 AuroraVeilTimers[2];
+	u8 SeaOfFireTimers[NUM_BATTLE_SIDES];
+	u8 SwampTimers[NUM_BATTLE_SIDES];
+	u8 RainbowTimers[NUM_BATTLE_SIDES];
+	u8 RetaliateCounters[NUM_BATTLE_SIDES];
+	u8 LuckyChantTimers[NUM_BATTLE_SIDES];
+	u8 TailwindTimers[NUM_BATTLE_SIDES];
+	u8 AuroraVeilTimers[NUM_BATTLE_SIDES];
 	
 	//Personal Counters
 	u8 TelekinesisTimers[MAX_BATTLERS_COUNT];
@@ -796,7 +796,8 @@ struct NewBattleStruct
 	u8 lastFainted;
 	u8 intimidateActive;
 	u8 backupAbility;
-	u8 originalAttackerBackup;
+	u8 originalAttackerBackup : 2;
+	u8 originalTargetBackup : 2;
 	
 	//Booleans
 	bool8 MoveBounceInProgress : 2;
@@ -829,6 +830,7 @@ struct NewBattleStruct
 	bool8 roundUsed : 1; //0x2017653
 	bool8 activatedCustapQuickClaw : 1;
 	bool8 calculatedAIPredictions : 1;
+	bool8 batonPassing : 1;
 	
 	//Other
 	u16 LastUsedMove;
@@ -836,6 +838,7 @@ struct NewBattleStruct
 	u32 totalDamageGiven;
 	u8 DancerTurnOrder[MAX_BATTLERS_COUNT];
 	u8 PayDayByPartyIndices[PARTY_SIZE];
+	u16 aiZMoveHelper;
 	item_t SavedConsumedItems[PARTY_SIZE];
 	s32 DamageTaken[MAX_BATTLERS_COUNT]; //0x2017668
 	u8 ResultFlags[MAX_BATTLERS_COUNT];
@@ -848,6 +851,11 @@ struct NewBattleStruct
 	u16 strongestSpreadMove[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //strongestSpreadMove[bankAtk][bankDef]
 	u16 bestDoublesKillingMoves[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //bestDoublesKillingMoves[bankAtk][bankDef]
 	u8 bestDoublesKillingScores[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //bestDoublesKillingScores[bankAtk][bankDef]
+	bool8 canKnockOut[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //canKnockOut[bankAtk][bankDef]
+	bool8 can2HKO[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //can2HKO[bankAtk][bankDef]
+	u8 bestMonIdToSwitchInto[MAX_BATTLERS_COUNT][2]; //bestMonIdToSwitchInto[bankAtk][first or second choice]
+	s8 bestMonIdToSwitchIntoScores[MAX_BATTLERS_COUNT][2];//bestMonIdToSwitchIntoScores[bankAtk][first or second choice]
+	u8 calculatedAISwitchings[MAX_BATTLERS_COUNT];
 
 	struct MegaData* MegaData;
 	struct UltraData* UltraData;

@@ -36,7 +36,7 @@ static const species_t sBannedBackupSpecies[] =
 //This file's functions:
 static bool8 IsMinior(u16 species);
 
-void DoFormChange(u8 bank, u16 species, bool8 ReloadType, bool8 ReloadStats) 
+void DoFormChange(u8 bank, u16 species, bool8 ReloadType, bool8 ReloadStats, bool8 reloadAbility) 
 {
 	u16 backup;
 	gActiveBattler = bank;
@@ -52,6 +52,9 @@ void DoFormChange(u8 bank, u16 species, bool8 ReloadType, bool8 ReloadStats)
 		CalculateMonStats(mon);
 		RELOAD_BATTLE_STATS(bank, mon);
 	}
+	
+	if (reloadAbility)
+		*GetAbilityLocation(bank) = GetPartyAbility(mon);
 	
 	EmitSetMonData(0, REQUEST_FORM_CHANGE_BATTLE, 0, sizeof(struct BattlePokemon), &gBattleMons[bank]);
 	MarkBufferBankForExecution(gActiveBattler);
@@ -78,49 +81,49 @@ void SwitchOutFormsRevert(u8 bank)
 	switch (gBattleMons[bank].species) {
 		case SPECIES_CHERRIM_SUN:
 			if (backupSpecies != SPECIES_NONE)
-				DoFormChange(bank, backupSpecies, FALSE, TRUE);
+				DoFormChange(bank, backupSpecies, FALSE, TRUE, FALSE);
 			else
-				DoFormChange(bank, SPECIES_CHERRIM, FALSE, TRUE);
+				DoFormChange(bank, SPECIES_CHERRIM, FALSE, TRUE, FALSE);
 			break;
 
 		case SPECIES_DARMANITANZEN:
 			if (backupSpecies != SPECIES_NONE)
-				DoFormChange(bank, backupSpecies, FALSE, TRUE);
+				DoFormChange(bank, backupSpecies, FALSE, TRUE, FALSE);
 			else
-				DoFormChange(bank, SPECIES_CHERRIM, FALSE, TRUE);
+				DoFormChange(bank, SPECIES_CHERRIM, FALSE, TRUE, FALSE);
 			break;
 
 		case SPECIES_KELDEO_RESOLUTE:
 			if (FindMovePositionInMoveset(MOVE_SECRETSWORD, bank) == MAX_MON_MOVES) //Doesn't know Secret Sword
-				DoFormChange(bank, SPECIES_KELDEO, FALSE, TRUE);
+				DoFormChange(bank, SPECIES_KELDEO, FALSE, TRUE, FALSE);
 			break;
 
 		case SPECIES_MELOETTA_PIROUETTE:
 			if (backupSpecies != SPECIES_NONE)
-				DoFormChange(bank, backupSpecies, FALSE, TRUE);
+				DoFormChange(bank, backupSpecies, FALSE, TRUE, FALSE);
 			else
-				DoFormChange(bank, SPECIES_MELOETTA, FALSE, TRUE);
+				DoFormChange(bank, SPECIES_MELOETTA, FALSE, TRUE, FALSE);
 			break;
 
 		case SPECIES_AEGISLASH_BLADE:
 			if (backupSpecies != SPECIES_NONE)
-				DoFormChange(bank, backupSpecies, FALSE, TRUE);
+				DoFormChange(bank, backupSpecies, FALSE, TRUE, FALSE);
 			else
-				DoFormChange(bank, SPECIES_AEGISLASH, FALSE, TRUE);
+				DoFormChange(bank, SPECIES_AEGISLASH, FALSE, TRUE, FALSE);
 			break;
 
 		case SPECIES_WISHIWASHI_S:
 			if (backupSpecies != SPECIES_NONE)
-				DoFormChange(bank, backupSpecies, FALSE, TRUE);
+				DoFormChange(bank, backupSpecies, FALSE, TRUE, FALSE);
 			else
-				DoFormChange(bank, SPECIES_WISHIWASHI, FALSE, TRUE);
+				DoFormChange(bank, SPECIES_WISHIWASHI, FALSE, TRUE, FALSE);
 			break;
 
 		case SPECIES_MINIOR_SHIELD:
 			if (backupSpecies != SPECIES_NONE)
-				DoFormChange(bank, backupSpecies, FALSE, TRUE);
+				DoFormChange(bank, backupSpecies, FALSE, TRUE, FALSE);
 			else
-				DoFormChange(bank, GetMiniorCoreSpecies(mon), FALSE, TRUE);
+				DoFormChange(bank, GetMiniorCoreSpecies(mon), FALSE, TRUE, FALSE);
 			break;
 	}
 }

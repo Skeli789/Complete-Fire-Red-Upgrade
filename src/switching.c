@@ -6,6 +6,7 @@
 #include "../include/new/ability_battle_scripts.h"
 #include "../include/new/battle_start_turn_start.h"
 #include "../include/new/battle_start_turn_start_battle_scripts.h"
+#include "../include/new/cmd49_battle_scripts.h"
 #include "../include/new/damage_calc.h"
 #include "../include/new/form_change.h"
 #include "../include/new/Helper_Functions.h"
@@ -25,6 +26,7 @@ enum SwitchInStates
 	SwitchIn_StealthRock,
 	SwitchIn_ToxicSpikes,
 	SwitchIn_StickyWeb,
+	SwitchIn_EmergencyExit,
 	SwitchIn_PrimalReversion,
 	SwitchIn_Truant,
 	SwitchIn_Abilities,
@@ -39,6 +41,7 @@ enum SwitchInStates
 static bool8 TryDoForceSwitchOut(void);
 static void sub_80571DC(u8 battlerId, u8 arg1);
 static bool8 PPIsMaxed(bank_t);
+static u8 GetStealthRockDivisor(void);
 
 void atkE2_switchoutabilities(void)
 {
@@ -346,7 +349,6 @@ void atk51_switchhandleorder(void)
 void atk52_switchineffects(void)
 {
 	int i;
-	u8 spikesDmg;
 
 	gActiveBattler = GetBattleBank(T2_READ_8(gBattlescriptCurrInstr + 1));
 	sub_80174B8(gActiveBattler);
@@ -427,14 +429,15 @@ void atk52_switchineffects(void)
 			else
 				gNewBS->ZMoveData->healReplacement = FALSE;
 			
+			gNewBS->DamageTaken[gActiveBattler] = 0;
 			++gNewBS->SwitchInEffectsTracker;
 		__attribute__ ((fallthrough));	
 		
 		case SwitchIn_Spikes:
 			if (CheckGrounding(gActiveBattler) && ability != ABILITY_MAGICGUARD && gSideTimers[SIDE(gActiveBattler)].spikesAmount)
 			{
-				spikesDmg = (5 - gSideTimers[SIDE(gActiveBattler)].spikesAmount) * 2;
-				gBattleMoveDamage = MathMax(1, udivsi(gBattleMons[gActiveBattler].maxHP, spikesDmg));
+				gBattleMoveDamage = CalcSpikesDamage(gActiveBattler);
+				gNewBS->DamageTaken[gActiveBattler] += gBattleMoveDamage;
 
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_SpikesHurt;								
@@ -450,33 +453,8 @@ void atk52_switchineffects(void)
 		case SwitchIn_StealthRock:
 			if (ability != ABILITY_MAGICGUARD && gSideTimers[SIDE(gActiveBattler)].srAmount)
 			{
-				u8 divisor = 8;
-				gBattleMoveDamage = 40;
-				u8 flags;
-				TypeDamageModification(0, gActiveBattler, MOVE_STEALTHROCK, TYPE_ROCK, &flags);
-				switch (gBattleMoveDamage) {
-					case 5:
-						divisor = 64;
-						break;
-					case 10:
-						divisor = 32;
-						break;
-					case 20:
-						divisor = 16;
-						break;
-					case 40:
-						divisor = 8;
-						break;
-					case 80:
-						divisor = 4;
-						break;
-					case 160:
-						divisor = 2;
-						break;
-					case 320:
-						divisor = 1;
-				}
-				gBattleMoveDamage = MathMax(1, gBattleMons[gActiveBattler].maxHP / divisor);
+				gBattleMoveDamage = CalcStealthRockDamage(gActiveBattler);
+				gNewBS->DamageTaken[gActiveBattler] += gBattleMoveDamage;
 
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_SRHurt;								
@@ -531,7 +509,23 @@ void atk52_switchineffects(void)
 				return;
 			}
 			++gNewBS->SwitchInEffectsTracker;
-		__attribute__ ((fallthrough));	
+		__attribute__ ((fallthrough));
+		
+		case SwitchIn_EmergencyExit:
+			if (ABILITY(gActiveBattler) == ABILITY_EMERGENCYEXIT
+			||  ABILITY(gActiveBattler) == ABILITY_WIMPOUT)
+			{
+				if (gBattleMons[gActiveBattler].hp > 0
+				&&  gBattleMons[gActiveBattler].hp <= gBattleMons[gActiveBattler].maxHP / 2
+				&&  gBattleMons[gActiveBattler].hp + gNewBS->DamageTaken[gActiveBattler] > gBattleMons[gActiveBattler].maxHP / 2)
+				{
+					BattleScriptPush(gBattlescriptCurrInstr + 2);
+					gBattlescriptCurrInstr = BattleScript_EmergencyExit;
+					return;
+				}
+			}
+			++gNewBS->SwitchInEffectsTracker;
+		__attribute__ ((fallthrough));
 		
 		case SwitchIn_PrimalReversion:	;
 			const u8* script = DoPrimalReversion(gActiveBattler, 1);
@@ -549,7 +543,7 @@ void atk52_switchineffects(void)
 		
 		case SwitchIn_Truant:
 			if (ABILITY(gActiveBattler) == ABILITY_TRUANT)
-				gDisableStructs[gActiveBattler].truantCounter = 1;
+				gDisableStructs[gActiveBattler].truantCounter ^= 1;
 			++gNewBS->SwitchInEffectsTracker;
 		__attribute__ ((fallthrough));	
 		
@@ -570,6 +564,9 @@ void atk52_switchineffects(void)
 		
 		case SwitchIn_Items:
 			if (ItemBattleEffects(ItemEffects_SwitchIn, gActiveBattler, TRUE, FALSE))
+				return;
+				
+			if (ItemBattleEffects(ItemEffects_EndTurn, gActiveBattler, TRUE, FALSE))
 				return;
 			++gNewBS->SwitchInEffectsTracker;
 		__attribute__ ((fallthrough));
@@ -652,7 +649,7 @@ void atk8F_forcerandomswitch(void)
 	s32 monsCount = 0;
 	struct Pokemon* party = NULL;
 	s32 validMons = 0;
-	s32 minNeeded = 0;
+	s32 minNeeded = 1;
 
 	if (gBattleTypeFlags & (BATTLE_TYPE_TRAINER | BATTLE_TYPE_DOUBLE)) //Trainer Battle or Wild Double Battle
 	{
@@ -663,7 +660,6 @@ void atk8F_forcerandomswitch(void)
 		||  (gBattleTypeFlags & BATTLE_TYPE_MULTI && gBattleTypeFlags & BATTLE_TYPE_LINK))
 		{
 			monsCount = 3;
-			minNeeded = 1;
 			battler2PartyId = gBattlerPartyIndexes[gBankTarget];
 			battler1PartyId = gBattlerPartyIndexes[gBankTarget ^ BIT_FLANK];
 		}
@@ -674,18 +670,15 @@ void atk8F_forcerandomswitch(void)
 				if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
 				{
 					monsCount = 3;
-					minNeeded = 1;
 				}
 				else //Player Vs. 2 Trainers
 				{
 					monsCount = 6;
-					minNeeded = 2; // since there are two opponents, it has to be a double battle
 				}
 			}
 			else //B_OPPONENT_SIDE - Player Vs. 2 Trainers
 			{
 				monsCount = 3;
-				minNeeded = 1;
 			}
 			battler2PartyId = gBattlerPartyIndexes[gBankTarget];
 			battler1PartyId = gBattlerPartyIndexes[gBankTarget ^ BIT_FLANK];
@@ -695,12 +688,10 @@ void atk8F_forcerandomswitch(void)
 			if (SIDE(gBankTarget) == B_SIDE_PLAYER)
 			{
 				monsCount = 3;
-				minNeeded = 1;
 			}
 			else
 			{
 				monsCount = 6;
-				minNeeded = 2; //If there were two opponents, it would have been checked for already
 			}
 			battler2PartyId = gBattlerPartyIndexes[gBankTarget];
 			battler1PartyId = gBattlerPartyIndexes[gBankTarget ^ BIT_FLANK];
@@ -708,14 +699,12 @@ void atk8F_forcerandomswitch(void)
 		else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
 		{
 			monsCount = 6;
-			minNeeded = 2;
 			battler2PartyId = gBattlerPartyIndexes[gBankTarget];
 			battler1PartyId = gBattlerPartyIndexes[gBankTarget ^ BIT_FLANK];
 		}
 		else //Single Battle
 		{
 			monsCount = 6;
-			minNeeded = 1;
 			battler2PartyId = gBattlerPartyIndexes[gBankTarget]; // there is only one pokemon out in single battles
 			battler1PartyId = gBattlerPartyIndexes[gBankTarget];
 		}
@@ -724,12 +713,16 @@ void atk8F_forcerandomswitch(void)
 		{
 			if (GetMonData(&party[i], MON_DATA_SPECIES, 0) != SPECIES_NONE
 			&& !GetMonData(&party[i], MON_DATA_IS_EGG, 0)
-			&&  GetMonData(&party[i], MON_DATA_HP, 0) != 0)
+			&&  GetMonData(&party[i], MON_DATA_HP, 0) != 0
+			&& i != gBattlerPartyIndexes[battler1PartyId]
+			&& i != gBattlerPartyIndexes[battler2PartyId])
 				validMons++;
 		}
 
-		if (validMons <= minNeeded)
+		if (validMons < minNeeded)
+		{
 			gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+		}
 		
 		else
 		{
@@ -917,4 +910,90 @@ void PartyMenuSwitchingUpdate(void)
 			EmitChoosePokemon(0, PARTY_CHOOSE_MON, 6, ABILITY_NONE, gBattleStruct->field_60[gActiveBattler]);
 	}
 	MarkBufferBankForExecution(gActiveBattler);
+}
+
+u32 CalcSpikesDamage(u8 bank)
+{
+	u32 dmg = (5 - gSideTimers[SIDE(bank)].spikesAmount) * 2;
+	return MathMax(1, gBattleMons[bank].maxHP / dmg);
+}
+
+u32 CalcSpikesDamagePartyMon(struct Pokemon* mon, u8 side)
+{
+	u32 dmg = (5 - gSideTimers[side].spikesAmount) * 2;
+	return MathMax(1, GetMonData(mon, MON_DATA_MAX_HP, NULL) / dmg);
+}
+
+u32 CalcStealthRockDamage(u8 bank)
+{
+	u8 flags;
+	u8 divisor = 8;
+	gBattleMoveDamage = 40;
+
+	TypeDamageModification(0, bank, MOVE_STEALTHROCK, TYPE_ROCK, &flags);
+	divisor = GetStealthRockDivisor();
+
+	return MathMax(1, gBattleMons[bank].maxHP / divisor);
+}
+
+u32 CalcStealthRockDamagePartyMon(struct Pokemon* mon)
+{
+	u8 flags;
+	u8 divisor = 8;
+	gBattleMoveDamage = 40;
+
+	TypeDamageModificationPartyMon(0, mon, MOVE_STEALTHROCK, TYPE_ROCK, &flags);
+	divisor = GetStealthRockDivisor();
+
+	return MathMax(1, GetMonData(mon, MON_DATA_MAX_HP, NULL) / divisor);
+}
+
+static u8 GetStealthRockDivisor(void)
+{
+	u8 divisor = 1;
+	
+	switch (gBattleMoveDamage) {
+		case 5:
+			divisor = 64;
+			break;
+		case 10:
+			divisor = 32;
+			break;
+		case 20:
+			divisor = 16;
+			break;
+		case 40:
+			divisor = 8;
+			break;
+		case 80:
+			divisor = 4;
+			break;
+		case 160:
+			divisor = 2;
+			break;
+		case 320:
+			divisor = 1;
+	}
+
+	return divisor;
+}
+
+bool8 WillFaintFromEntryHazards(struct Pokemon* mon, u8 side)
+{
+	u16 hp = GetMonData(mon, MON_DATA_HP, NULL);
+	u32 dmg = 0;
+
+	if (gSideAffecting[side] & SIDE_STATUS_SPIKES)
+	{
+		if (gSideTimers[side].srAmount > 0)
+			dmg += CalcStealthRockDamagePartyMon(mon);
+
+		if (gSideTimers[side].spikesAmount > 0)
+			dmg += CalcSpikesDamagePartyMon(mon, side);
+
+		if (dmg >= hp)
+			return TRUE;
+	}
+
+	return FALSE;
 }

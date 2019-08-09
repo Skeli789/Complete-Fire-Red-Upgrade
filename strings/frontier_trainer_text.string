@@ -501,7 +501,7 @@ In victory, roar!\nRoar with your dragon!
 See it! Feel it! The ultimate\npower[.]\pProbably!
 
 #org @sFrontierText_Tamer_PlayerWin_2
-The title of the ultimate\nprobably!\lI confer it on you!
+The title of the ultimate\nprobably!\pI confer it on you!
 
 #org @sFrontierText_Tamer_PlayerLose_2
 There is no defeat for me, the\nultimate[.]\pProbably!
@@ -1131,7 +1131,7 @@ Little boy? Little girl?\nDoesn't matter which, but sorry.
 All right, take a run at me!\nMy barrel chest can take it!
 
 #org @sFrontierText_Rancher_PlayerWin_2
-Ooh[.] Ow[.] That hurt[.]\nIt's like you broke my barrel\lchest[.]
+Ooh[.] Ow[.] That hurt[.]\pIt's like you broke my barrel\nchest[.]
 
 #org @sFrontierText_Rancher_PlayerLose_2
 What? That's all you've got?\nYou can take a harder run at me!

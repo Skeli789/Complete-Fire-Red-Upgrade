@@ -22,6 +22,7 @@
 #include "../include/new/move_tables.h"
 #include "../include/new/pickup_items.h"
 #include "../include/new/switching.h"
+#include "../include/new/set_z_effect.h"
 
 #define TEXT_BUFFER_SIDE_STATUS(move, status, side)				\
 {																\
@@ -41,8 +42,10 @@ static item_t ChoosePickupItem(u8 level);
 
 const u16 gMissStringIds[] =
 {
-	STRINGID_PKMNAVOIDEDATTACK, STRINGID_PKMNPROTECTEDITSELF,
-	STRINGID_PKMNAVOIDEDATTACK, STRINGID_AVOIDEDDAMAGE,
+	STRINGID_PKMNAVOIDEDATTACK,
+	STRINGID_PKMNPROTECTEDITSELF,
+	STRINGID_PKMNAVOIDEDATTACK,
+	STRINGID_AVOIDEDDAMAGE,
 	STRINGID_PKMNMAKESGROUNDMISS,
 	0x184, //Crafty Shield
 	0x184, //Mat Block
@@ -362,7 +365,7 @@ void atk0C_datahpupdate(void) {
 			}
 
 			gBattleScripting->bank = gActiveBattler;
-			DoFormChange(gActiveBattler, SPECIES_MIMIKYU_BUSTED, TRUE, FALSE);
+			DoFormChange(gActiveBattler, SPECIES_MIMIKYU_BUSTED, TRUE, FALSE, FALSE);
 			gBattlescriptCurrInstr += 2;
 			BattleScriptPushCursor();
 			gBattlescriptCurrInstr = BattleScript_MimikyuTransform;
@@ -490,7 +493,7 @@ void atk0F_resultmessage(void) {
 
 	if (gMoveResultFlags & MOVE_RESULT_MISSED && (!(gMoveResultFlags & MOVE_RESULT_DOESNT_AFFECT_FOE) || gBattleCommunication[6] > 2))
 	{
-		if (gBattleCommunication[6] > 2) //Levitate + Wonder Guard
+		if (gBattleCommunication[6] == 3 || gBattleCommunication[6] == 4) //Levitate + Wonder Guard
 		{
 			BattleScriptPush(gBattlescriptCurrInstr + 1);
 			gBattleScripting->bank = gBankTarget;
@@ -1122,6 +1125,16 @@ static void UpdateMoveStartValuesForCalledMove(void)
 {
 	gBattleStruct->atkCancellerTracker = CANCELLER_GRAVITY_2;
 	gBattleStruct->dynamicMoveType = GetMoveTypeSpecial(gBankAttacker, gCurrentMove);
+	gHitMarker &= ~(HITMARKER_ATTACKSTRING_PRINTED);
+}
+
+static void TryUpdateCalledMoveWithZMove(void)
+{
+	if (gNewBS->ZMoveData->active)
+	{
+		gNewBS->aiZMoveHelper = gCurrentMove;
+		gCurrentMove = GetTypeBasedZMove(gCurrentMove, gBankAttacker);
+	}
 }
 
 void atk63_jumptocalledmove(void)
@@ -1131,8 +1144,11 @@ void atk63_jumptocalledmove(void)
 	else
 		gChosenMove = gCurrentMove = gRandomMove;
 
+	TryUpdateCalledMoveWithZMove();
 	if (gBattlescriptCurrInstr[1] != 0xFF)
 		UpdateMoveStartValuesForCalledMove();
+	
+	gHitMarker &= ~(HITMARKER_ATTACKSTRING_PRINTED);
 
 	gBattlescriptCurrInstr = gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect];
 }
@@ -1389,18 +1405,18 @@ void atk7C_trymirrormove(void)
 
 	if (move != 0 && move != 0xFFFF)
 	{
-		gHitMarker &= ~(HITMARKER_ATTACKSTRING_PRINTED);
 		gCurrentMove = move;
 		gBankTarget = GetMoveTarget(gCurrentMove, 0);
+		TryUpdateCalledMoveWithZMove();
 		UpdateMoveStartValuesForCalledMove();
 		gBattlescriptCurrInstr = gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect];
 	}
 	else if (validMovesCount)
 	{
-		gHitMarker &= ~(HITMARKER_ATTACKSTRING_PRINTED);
 		i = umodsi(Random(), validMovesCount);
 		gCurrentMove = movesArray[i];
 		gBankTarget = GetMoveTarget(gCurrentMove, 0);
+		TryUpdateCalledMoveWithZMove();
 		UpdateMoveStartValuesForCalledMove();
 		gBattlescriptCurrInstr = gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect];
 	}
@@ -2216,7 +2232,7 @@ void atk9E_metronome(void)
 		if (CheckTableForMove(gCurrentMove, MetronomeBanTable))
 			continue;
 
-		gHitMarker &= ~(HITMARKER_ATTACKSTRING_PRINTED);
+		TryUpdateCalledMoveWithZMove();
 		UpdateMoveStartValuesForCalledMove();
 		gBattlescriptCurrInstr = gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect];
 		gBankTarget = GetMoveTarget(gCurrentMove, 0);
@@ -2521,7 +2537,8 @@ u8 CheckMoveLimitations(u8 bank, u8 unusableMoves, u8 check) {
 	int i;
 
 	gStringBank = bank;
-	for (i = 0; i < MAX_MON_MOVES; i++) {
+	for (i = 0; i < MAX_MON_MOVES; ++i)
+	{
 		u16 move = gBattleMons[bank].moves[i];
 		if (move == 0 && check & MOVE_LIMITATION_ZEROMOVE)
 			unusableMoves |= gBitTable[i];
@@ -2551,6 +2568,29 @@ u8 CheckMoveLimitations(u8 bank, u8 unusableMoves, u8 check) {
 		else if (gNewBS->HealBlockTimers[bank] && CheckHealingMove(move))
 			unusableMoves |= gBitTable[i];
 	}
+	return unusableMoves;
+}
+
+u8 CheckMoveLimitationsFromParty(struct Pokemon* mon, u8 unusableMoves, u8 check)
+{
+	u8 holdEffect = GetMonItemEffect(mon);
+
+	for (int i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		u16 move = GetMonData(mon, MON_DATA_MOVE1 + i, NULL);
+
+		if (move == MOVE_NONE && check & MOVE_LIMITATION_ZEROMOVE)
+			unusableMoves |= gBitTable[i];
+		else if (GetMonData(mon, MON_DATA_PP1 + i, NULL) == 0 && check & MOVE_LIMITATION_PP)
+			unusableMoves |= gBitTable[i];
+		else if (holdEffect == ITEM_EFFECT_ASSAULT_VEST && SPLIT(move) == SPLIT_STATUS)
+			unusableMoves |= gBitTable[i];
+		else if (FlagGet(SKY_BATTLE_FLAG) && CheckTableForMove(move, SkyBattleBanTable))
+			unusableMoves |= gBitTable[i];
+		else if (gNewBS->GravityTimer && CheckTableForMove(move, GravityBanTable))
+			unusableMoves |= gBitTable[i];
+	}
+
 	return unusableMoves;
 }
 
@@ -2896,18 +2936,26 @@ void atkBC_maxattackhalvehp(void)
 		halfHp = 1;
 	}
 
-	if (ABILITY(gBankAttacker) == ABILITY_CONTRARY
-	&& gBattleMons[gBankAttacker].statStages[STAT_ATK-1] > 0
-	&& gBattleMons[gBankAttacker].hp > halfHp)
+	gBattleScripting->statChanger = INCREASE_2 | STAT_STAGE_ATK;
+	gBattleScripting->animArg1 = 0xE + STAT_STAGE_ATK;
+	gBattleScripting->animArg2 = 0;
+
+	if (ABILITY(gBankAttacker) == ABILITY_CONTRARY)
 	{
-		gBattleMons[gBankAttacker].statStages[STAT_ATK-1] = 0;
-		gBattleMoveDamage = MathMax(1, gBattleMons[gBankAttacker].maxHP / 2);
-		gBattlescriptCurrInstr += 5;
+		if (STAT_STAGE(gBankAttacker, STAT_STAGE_ATK) > STAT_STAGE_MIN
+		&& gBattleMons[gBankAttacker].hp > halfHp)
+		{	
+			gBattleMons[gBankAttacker].statStages[STAT_STAGE_ATK - 1] = STAT_STAGE_MIN;
+			gBattleMoveDamage = MathMax(1, gBattleMons[gBankAttacker].maxHP / 2);
+			gBattlescriptCurrInstr += 5;
+		}
+		else
+			gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
 	}
-	if (gBattleMons[gBankAttacker].statStages[STAT_ATK-1] < 12
+	else if (STAT_STAGE(gBankAttacker, STAT_STAGE_ATK) < STAT_STAGE_MAX
 	&& gBattleMons[gBankAttacker].hp > halfHp)
 	{
-		gBattleMons[gBankAttacker].statStages[STAT_ATK-1] = 12;
+		gBattleMons[gBankAttacker].statStages[STAT_STAGE_ATK - 1] = STAT_STAGE_MAX;
 		gBattleMoveDamage = MathMax(1, gBattleMons[gBankAttacker].maxHP / 2);
 		gBattlescriptCurrInstr += 5;
 	}
@@ -3184,11 +3232,10 @@ void atkCA_setforcedtarget(void) //Follow me
 }
 
 void atkCC_callterrainattack(void) { //nature power
-	gHitMarker &= ~(HITMARKER_ATTACKSTRING_PRINTED);
-
 	gCurrentMove = GetNaturePowerMove();
 
 	gBankTarget = GetMoveTarget(gCurrentMove, 0);
+	TryUpdateCalledMoveWithZMove();
 	UpdateMoveStartValuesForCalledMove();
 	BattleScriptPush(gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect]);
 	gBattlescriptCurrInstr++;
@@ -3368,6 +3415,13 @@ void atkDA_tryswapabilities(void) { //Skill Swap
 		gNewBS->SlowStartTimers[gBankTarget] = 0;
 		gStatuses3[gBankAttacker] &= ~(STATUS3_SWITCH_IN_ABILITY_DONE);
 		gStatuses3[gBankTarget] &= ~(STATUS3_SWITCH_IN_ABILITY_DONE);
+		
+		if (*atkAbilityLoc == ABILITY_TRUANT)
+			gDisableStructs[gBankAttacker].truantCounter = 0; //Reset counter
+			
+		if (*defAbilityLoc == ABILITY_TRUANT)
+			gDisableStructs[gBankTarget].truantCounter = 0; //Reset counter
+				
 		gBattlescriptCurrInstr += 5;
 	}
 }
@@ -3550,7 +3604,7 @@ void atkE7_trycastformdatachange(void)
 			if (ABILITY(bank) == ABILITY_FLOWERGIFT && !IS_TRANSFORMED(bank)
 			&& WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
 			{
-				DoFormChange(bank, SPECIES_CHERRIM_SUN, FALSE, FALSE);
+				DoFormChange(bank, SPECIES_CHERRIM_SUN, FALSE, FALSE, FALSE);
 				BattleScriptPushCursorAndCallback(BattleScript_FlowerGift);
 			}
 			break;
@@ -3559,7 +3613,7 @@ void atkE7_trycastformdatachange(void)
 			if (ABILITY(bank) != ABILITY_FLOWERGIFT
 			|| !WEATHER_HAS_EFFECT || !(gBattleWeather & WEATHER_SUN_ANY))
 			{
-				DoFormChange(bank, SPECIES_CHERRIM, FALSE, FALSE);
+				DoFormChange(bank, SPECIES_CHERRIM, FALSE, FALSE, FALSE);
 				BattleScriptPushCursorAndCallback(BattleScript_FlowerGift);
 			}
 	}

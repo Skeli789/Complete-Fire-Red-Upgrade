@@ -4,7 +4,6 @@
 #include "../include/constants/songs.h"
 
 #include "../include/new/accuracy_calc.h"
-#include "../include/new/AI_Helper_Functions.h"
 #include "../include/new/damage_calc.h"
 #include "../include/new/Helper_Functions.h"
 #include "../include/new/general_bs_commands.h"
@@ -95,8 +94,8 @@ void HandleInputChooseMove(void)
         }
         else // double battle
         {
-			if (gNewBS->ZMoveData->viewing)
-				moveTarget = gBattleMoves[TryReplaceMoveWithZMove(moveInfo->moves[gMoveSelectionCursor[gActiveBattler]], gActiveBattler)].target;
+			if (gNewBS->ZMoveData->viewing && SPLIT(moveInfo->moves[gMoveSelectionCursor[gActiveBattler]]) != SPLIT_STATUS) //Status moves keep original targets
+				moveTarget = gBattleMoves[CanUseZMove(gActiveBattler, 0xFF, moveInfo->moves[gMoveSelectionCursor[gActiveBattler]])].target;
 
             if (!(moveTarget & (MOVE_TARGET_RANDOM | MOVE_TARGET_BOTH | MOVE_TARGET_DEPENDS | MOVE_TARGET_FOES_AND_ALLY | MOVE_TARGET_OPPONENTS_FIELD | MOVE_TARGET_USER)))
                 canSelectTarget++; // either selected or user
@@ -307,6 +306,7 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 	{
 		u16 move = gBattleMons[gActiveBattler].moves[i];
 
+		tempMoveStruct->moves[i] = move;
 		tempMoveStruct->moveTypes[i] = GetMoveTypeSpecial(gActiveBattler, move);
 
 		if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, gActiveBattler, FOE(gActiveBattler)) >= 2) //Because target can vary, display only attacker's modifiers
@@ -387,7 +387,7 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 		for (i = 0; i < MAX_MON_MOVES; ++i)
 		{
 			if (!(limitations & gBitTable[i])) //Don't display a Z-Move if the base move has no PP
-				tempMoveStruct->possibleZMoves[i] = ShouldAIUseZMove(gActiveBattler, i, 0);
+				tempMoveStruct->possibleZMoves[i] = CanUseZMove(gActiveBattler, i, 0);
 		}
 	}
 	
