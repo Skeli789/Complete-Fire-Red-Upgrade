@@ -1846,7 +1846,7 @@ static struct DoubleReplacementMoves sDoubleSpreadReplacementMoves[] =
 
 static void PostProcessTeam(struct Pokemon* party, struct TeamBuilder* builder)
 {
-	u32 i, j, k;
+	u32 i, j;
 	
 	u8 tailwindTRIndex = 0xFF;
 	u8 hazardsIndex = 0xFF;
@@ -1974,6 +1974,7 @@ static void PostProcessTeam(struct Pokemon* party, struct TeamBuilder* builder)
 			if (builder->spreads[i]->modifyMovesDoubles)
 			{
 				#ifdef UNBOUND
+					u32 k;
 					u16 levelUpMoves[MAX_LEARNABLE_MOVES] = {MOVE_NONE};
 					GetLevelUpMovesBySpecies(GetMonData(&party[i], MON_DATA_SPECIES, NULL), levelUpMoves);
 
