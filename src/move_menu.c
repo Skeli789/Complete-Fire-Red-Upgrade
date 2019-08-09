@@ -1156,7 +1156,8 @@ void PlayerHandleChooseAction(void)
 	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
 	{
 		//Running or using balls cancels the second mon's attack
-		if (gBattleBufferA[gActiveBattler][1] == ACTION_USE_ITEM //If mon 1 used a ball, then
+		if (!IsBagDisabled()
+		&&  gBattleBufferA[gActiveBattler][1] == ACTION_USE_ITEM //If mon 1 used a ball, then
 		&&  GetPocketByItemId(itemId) == POCKET_POKEBALLS)		 //mon 2 doesn't get to do anything.
 		{
 			gNewBS->NoMoreMovingThisTurn |= gBitTable[gActiveBattler];
