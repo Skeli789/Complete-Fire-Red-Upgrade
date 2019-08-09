@@ -714,8 +714,8 @@ void atk8F_forcerandomswitch(void)
 			if (GetMonData(&party[i], MON_DATA_SPECIES, 0) != SPECIES_NONE
 			&& !GetMonData(&party[i], MON_DATA_IS_EGG, 0)
 			&&  GetMonData(&party[i], MON_DATA_HP, 0) != 0
-			&& i != gBattlerPartyIndexes[battler1PartyId]
-			&& i != gBattlerPartyIndexes[battler2PartyId])
+			&& i != battler1PartyId
+			&& i != battler2PartyId)
 				validMons++;
 		}
 
@@ -723,7 +723,6 @@ void atk8F_forcerandomswitch(void)
 		{
 			gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
 		}
-		
 		else
 		{
 			if (TryDoForceSwitchOut())
