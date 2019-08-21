@@ -309,9 +309,19 @@ def main():
                         continue
                     if line.strip().startswith('#') or line.strip() == '':
                         continue
-
+ 
                     offset = int(line[:8], 16) - 0x08000000
-                    ReplaceBytes(rom, offset, line[9:].strip())
+                    try:
+                        ReplaceBytes(rom, offset, line[9:].strip())
+                    except ValueError: #Try loading from the defines dict if unrecognizable character
+                        newNumber = definesDict[line[9:].strip()]
+                        try:
+                            newNumber = int(newNumber)
+                        except ValueError:
+                            newNumber = int(newNumber, 16)
+
+                        newNumber = str(hex(newNumber)).split('0x')[1]
+                        ReplaceBytes(rom, offset, newNumber) 
 
         # Do Special Inserts
         if os.path.isfile(SPECIAL_INSERTS) and os.path.isfile(SPECIAL_INSERTS_OUT):

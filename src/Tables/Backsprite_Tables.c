@@ -112,6 +112,8 @@ static const struct SpriteFrameImage sTrainerBackPicTable_May[] =
     {gTrainerBackPic_MayTiles + 0x1800, 	0x800, 0},
 };
 
+#ifdef UNBOUND
+
 static const struct SpriteFrameImage sTrainerBackPicTable_Marlon[] =
 {
     {gTrainerBackPic_MarlonTiles, 			0x800, 0},
@@ -135,6 +137,8 @@ static const struct SpriteFrameImage sTrainerBackPicTable_Rival[] =
     {gTrainerBackPic_RivalTiles + 0x1000, 	0x800, 0},
     {gTrainerBackPic_RivalTiles + 0x1800, 	0x800, 0},
 };
+
+#endif
 
 const struct SpriteTemplate gSpriteTemplateTable_TrainerBackSprites[] =
 {

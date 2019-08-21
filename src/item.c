@@ -282,7 +282,7 @@ u16 GetExpandedTutorMove(u8 tutorId)
 
 #endif
 
-u8 TryHandleExcuseForDracoMeteorTutor(struct Pokemon* mon)
+u8 TryHandleExcuseForDracoMeteorTutor(unusedArg struct Pokemon* mon)
 {
 #ifdef EXPANDED_MOVE_TUTORS
 	u8 tutorId = Var8005;

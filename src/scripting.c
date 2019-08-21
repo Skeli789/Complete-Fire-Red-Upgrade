@@ -1489,12 +1489,12 @@ u16 sp07E_GetTileNumber(void) {
 //@Returns: 1. Var 0x8004 - The tile's background byte
 //		  2. Var 0x8005 - The tile's behaviour bytes.
 //		  3. To a given variable the background byte.
-u16 sp07F_GetTileBehaviour(void) 
+u16 sp07F_GetTileBehaviour(void)
 {
 	u16 x = Var8004;
 	u16 y = Var8005;
 	u32 field = MapGridGetMetatileField(x + 7, y + 7, 0xFF);
-	Var8004 = (field & 0xFF000000) >> 0x18;
+	Var8004 = (field & 0xFFFF0000) >> 24;
 	Var8005 = (field & 0xFFFF);
 	return Var8004 & 3;
 }

@@ -42,13 +42,14 @@
 #define AUTO_RUN_FLAG 0x914 //Flag to enable auto-run (toggled by L-button). If this feature is used, L=A will not work. Comment out this line for it to work again.
 #define RUNNING_ENABLED_FLAG 0x82F //The player can only run if this flag is set. If commented, the player will start the game with running shoes.
 #define DISABLE_BAG_FLAG 0x915 //The bag can't be used in-battle if this flag is set
+#define EGG_MOVE_RELEARNER_FLAG 0x916 //When set, the move learner loads egg moves instead
 
 /*===== Start Menu/Poketools Flags =====*/
-//#define FLAG_SYS_BAG_GET 0x916	//Toggle bag on/off. Uncomment to always have on
-//#define FLAG_SYS_PLAYER_GET 0x917	//Toggle [player] on/off. Uncomment to always have on
-//#define FLAG_SYS_SAVE_GET 0x918	//Toggle save on/off. Uncomment to always have on
-#define FLAG_SYS_DEXNAV 0x919		//Flag to turn dexnav on/off in start menu (if undefined, this will eliminate dexnav from the start menu)
-#define FLAG_POKETOOLS_MENU 0x91A  	//Flag to create secondary, Poke Tools, start menu
+//#define FLAG_SYS_BAG_GET 0x917	//Toggle bag on/off. Uncomment to always have on
+//#define FLAG_SYS_PLAYER_GET 0x918	//Toggle [player] on/off. Uncomment to always have on
+//#define FLAG_SYS_SAVE_GET 0x919	//Toggle save on/off. Uncomment to always have on
+#define FLAG_SYS_DEXNAV 0x91A		//Flag to turn dexnav on/off in start menu (if undefined, this will eliminate dexnav from the start menu)
+#define FLAG_POKETOOLS_MENU 0x91B  	//Flag to create secondary, Poke Tools, start menu
 
 /*===== Pedometer Flags as in JPAN Engine =====*/
 #define FLAG_LONG_PEDOMETER 0x920		//32 bit / 4 bytes / Max 4 294 967 295 steps
@@ -62,37 +63,43 @@
 #define BATTLE_TOWER_POKE_LEVEL 0x5016 //Var
 #define BATTLE_TOWER_BATTLE_TYPE 0x5017 //Var
 #define BATTLE_TOWER_TIER 0x5018 //Var
-#define BATTLE_TOWER_TRAINER_NAME 0x5019 //Empty var. Will be set to 0xFFFF after every battle.
-#define BATTLE_TOWER_SONG_OVERRIDE 0x501A //Set this var to the song id to be played during Link Battles and in the Battle Tower.
+#define BATTLE_TOWER_TRAINER1_NAME 0x5019 //Empty var. Will be set to 0xFFFF after every battle.
+#define BATTLE_TOWER_TRAINER2_NAME 0x501A //Empty var. Will be set to 0xFFFF after every battle.
+#define BATTLE_TOWER_SONG_OVERRIDE 0x501B //Set this var to the song id to be played during Link Battles and in the Battle Tower.
 
 enum //These vars need to be one after the other (hence the enum)
 {
-	TOWER_TRAINER_ID_VAR = 0x501B, 			//An index in the gTowerTrainers table, not Trainer ID
-	TOWER_TRAINER_ID_2_VAR,	//0x501C		//Index of the second trainer for Multi Battlers in the gTowerTrainers table, the var should be 1 after the first one
-	TOWER_TRAINER_ID_PARTNER_VAR, //0x501D	//If your partner is randomized, its Id would be found in this var
+	TOWER_TRAINER_ID_VAR = 0x501C, 			//An index in the gTowerTrainers table, not Trainer ID
+	TOWER_TRAINER_ID_2_VAR,	//0x501D		//Index of the second trainer for Multi Battlers in the gTowerTrainers table, the var should be 1 after the first one
+	TOWER_TRAINER_ID_PARTNER_VAR, //0x501E	//If your partner is randomized, its Id would be found in this var
 };
 
-/*===== Character Customization Vars =====*/
-#define VAR_PLAYER_WALKRUN 0x501E			//Change walking, running player sprite. 0x4054 in JPAN engine.
-#define VAR_PLAYER_BIKING 0x501F			//Change biking player sprite. 0x4055 in JPAN engine.
-#define VAR_PLAYER_SURFING 0x5020			//Change player surfing sprite. 0x4056 in JPAN engine.
-#define VAR_PLAYER_VS_SEEKER 0x5021			//Change vs seeker usage sprite. 0x4057 in JPAN engine.
-#define VAR_PLAYER_FISHING 0x5022			//Change fishing sprite. 0x4058 in JPAN engine.
-#define VAR_PLAYER_VS_SEEKER_ON_BIKE 0x5023	//Change vs seeker on bike sprite. 0x4059 in JPAN engine.
-#define VAR_TRAINERCARD_MALE 0x5024			//Change trainer card image (male). 0x4060 in JPAN engine.
-#define VAR_TRAINERCARD_FEMALE 0x5025		//Change trainer card image (female). 0x4061 in JPAN engine.
+#define BATTLE_SANDS_CURRENT_STREAK_VAR 0x800A //A disposable var meant to hold the current streak in the Battle Sands.
 
-#define VAR_RUNTIME_CHANGEABLE 0x5026	//'Secret Base' variables, save 15 consecutive variables for this. 0x4080 in JPAN engine.
+/*===== Character Customization Vars =====*/
+#define VAR_PLAYER_WALKRUN 0x501F			//Change walking, running player sprite. 0x4054 in JPAN engine.
+#define VAR_PLAYER_BIKING 0x5020			//Change biking player sprite. 0x4055 in JPAN engine.
+#define VAR_PLAYER_SURFING 0x5021			//Change player surfing sprite. 0x4056 in JPAN engine.
+#define VAR_PLAYER_VS_SEEKER 0x5022			//Change vs seeker usage sprite. 0x4057 in JPAN engine.
+#define VAR_PLAYER_FISHING 0x5023			//Change fishing sprite. 0x4058 in JPAN engine.
+#define VAR_PLAYER_VS_SEEKER_ON_BIKE 0x5024	//Change vs seeker on bike sprite. 0x4059 in JPAN engine.
+#define VAR_TRAINERCARD_MALE 0x5025			//Change trainer card image (male). 0x4060 in JPAN engine.
+#define VAR_TRAINERCARD_FEMALE 0x5026		//Change trainer card image (female). 0x4061 in JPAN engine.
+
+#define VAR_RUNTIME_CHANGEABLE 0x5027	//'Secret Base' variables, save 15 consecutive variables for this. 0x4080 in JPAN engine.
 
 /*===== Healing Place as in JPAN's Engine =====*/
-#define VAR_HEALINGMAP 0x5035 //0x405A in JPAN's Engine
-#define VAR_HEALING_XPOS 0x5036 //0x405B in JPAN's Engine
-#define VAR_HEALING_YPOS 0x5037 //0x405C in JPAN's Engine
+#define VAR_HEALINGMAP 0x5036 //0x405A in JPAN's Engine
+#define VAR_HEALING_XPOS 0x5037 //0x405B in JPAN's Engine
+#define VAR_HEALING_YPOS 0x5038 //0x405C in JPAN's Engine
 
-/*===== TM/HM Options (Vastly improved from other versions!) =====*/
+/*===== TM/HM/Tutor Options (Vastly improved from other versions!) =====*/
 //#define EXPANDED_TMSHMS  //Comment this out if you want to keep 50 tms/8 hms
+//#define EXPANDED_MOVE_TUTORS //Comment this out if you want to keep 16 move tutors and the ultimate elemental moves being exclusive to Kantonian starters
 #define NUM_TMS 50	//keep this defined even if EXPANDED_TMSHMS is not!!
 #define NUM_HMS 8	//keep this defined even if EXPANDED_TMSHMS is not!!
+#define NUM_MOVE_TUTORS 16 //keep this defined even if EXPANDED_MOVE_TUTORS is not!!
+#define LAST_TOTAL_TUTOR_NUM 23 //Should be equal to (NUM_MOVE_TUTORS - 1) + 8. Must be set to an actual integer or the compilation will not work.
 //#define TMS_BEFORE_HMS  //Uncomment this if you want the HMs to appear after the TMs in your bag
 //#define DELETABLE_HMS //Uncomment this if you want HMs to be deletable without the Move Deleter
 //#define REUSABLE_TMS	//if defined, don't forget to give all TMs a Mystery byte of 1!
@@ -126,7 +133,7 @@ enum //These vars need to be one after the other (hence the enum)
 #define MAP_PLAYER_HOME ((4 << 8) | 0) //The map bank and map number of the player's home
 
 /*===== Expanded Coins Options =====*/
-#define MAX_COINS_DIGITS 4	//Max number of digits for game corner coins (eg. 4 = 9999, 9 = 999,999,999). maximum of 9
+#define MAX_COINS_DIGITS 9	//Max number of digits for game corner coins (eg. 4 = 9999, 9 = 999,999,999). maximum of 9
 
 /*===== Badge Obedience Options =====*/
 #define BASE_OBEDIENCE_LEVEL	10
@@ -145,9 +152,9 @@ enum //These vars need to be one after the other (hence the enum)
 
 /*===== Pre-Battle Mugshot Options ====*/
 #define FR_PRE_BATTLE_MUGSHOT_STYLE
-#define VAR_PRE_BATTLE_MUGSHOT_STYLE 0x5038
-#define VAR_PRE_BATTLE_MUGSHOT_SPRITE 0x5039
-#define VAR_MUGSHOT_PLAYER_PAL 0x503A	// used to change the player's tilemap palette in the Two Bar mugshot style
+#define VAR_PRE_BATTLE_MUGSHOT_STYLE 0x5039
+#define VAR_PRE_BATTLE_MUGSHOT_SPRITE 0x503A
+#define VAR_MUGSHOT_PLAYER_PAL 0x503B	// used to change the player's tilemap palette in the Two Bar mugshot style
 #define FLAG_LOAD_MUGSHOT_SPRITE_FROM_TABLE 0x924	//Load custom mugshot for pre-battle transition
 
 /*=====Safari Zone Options=====*/
@@ -208,6 +215,7 @@ enum //These vars need to be one after the other (hence the enum)
 #define CAN_ONLY_USE_OMNIDRECTIONAL_JUMP_ON_HEIGHT_2 //The omnidirectional jump tiles can only be used if the player is standing on a tile of height 2 (movement permission 0xC in AdvanceMap)
 #define HOOPA_CHANGE_IN_PC //Hoopa-Unbound will revert to confined form when placed in or withdrawn from a box
 #define SHAYMIN_CHANGE_IN_PC //Shaymin-Sky will revert to sky from when placed in or withdrawn from a box
+#define HIGH_PITCH_MEGA_PRIMAL_CRY //Mega Pokemon cries will be higher pitched. This is useful if you're using the base form cries for Mega Evolutions
 
 /*===== Misc Battle Effect Options =====*/
 //#define OLD_BURN_DAMAGE //Uncomment this line if you want burn damage to do 1/8 of max health instead of 1/16
