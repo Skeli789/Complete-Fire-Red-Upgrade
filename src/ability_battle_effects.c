@@ -628,19 +628,19 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
             target2 = GetBattlerAtPosition(side + BIT_FLANK);
             if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
             {
-                if (gBattleMons[target1].ability != 0 && gBattleMons[target1].hp != 0
-                && gBattleMons[target2].ability != 0 && gBattleMons[target2].hp != 0)
+                if (*GetAbilityLocation(target1) != ABILITY_NONE && gBattleMons[target1].hp != 0
+                && *GetAbilityLocation(target2) != ABILITY_NONE && gBattleMons[target2].hp != 0)
                 {
                     gActiveBattler = GetBattlerAtPosition(((Random() & 1) * 2) | side);
                     effect++;
                 }
-                else if (gBattleMons[target1].ability != 0 && gBattleMons[target1].hp != 0)
+                else if (*GetAbilityLocation(target1) != ABILITY_NONE && gBattleMons[target1].hp != 0)
                 {
                     gActiveBattler = target1;
 
                     effect++;
                 }
-                else if (gBattleMons[target2].ability != 0 && gBattleMons[target2].hp != 0)
+                else if (*GetAbilityLocation(target2) != ABILITY_NONE && gBattleMons[target2].hp != 0)
                 {
                     gActiveBattler = target2;
                     effect++;
@@ -648,7 +648,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
             }
             else //Single Battle
             {
-                if (gBattleMons[target1].ability && gBattleMons[target1].hp)
+                if (*GetAbilityLocation(target1) && gBattleMons[target1].hp)
                 {
                     gActiveBattler = target1;
                     effect++;
@@ -1671,7 +1671,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				&& gBankAttacker != bank
                 && CheckContact(move, gBankAttacker))
 				{
-					switch (gBattleMons[gBankAttacker].ability) {
+					switch (ABILITY(gBankAttacker)) {
 						case ABILITY_MUMMY:
 						case ABILITY_BATTLEBOND:
 						case ABILITY_COMATOSE:

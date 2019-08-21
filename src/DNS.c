@@ -20,7 +20,7 @@ static const u8 gDaysInAMonth[] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30
 static void BlendFadedPalettes(u32 selectedPalettes, u8 coeff, u32 color);
 static void BlendFadedPalette(u16 palOffset, u16 numEntries, u8 coeff, u32 blendColor, bool8 ignoredIndices[32][16]);
 static u16 FadeColourForDNS(struct PlttData* blend, u8 coeff, s8 r, s8 g, s8 b);
-static void LoadIgnoredPaletteIndices(void);
+static void LoadIgnoredPaletteIndices(bool8 copyToFaded);
 static bool8 IsDate1BeforeDate2(u32 y1, u32 m1, u32 d1, u32 y2, u32 m2, u32 d2);
 static bool8 IsLeapYear(u32 year);
 static bool8 IsLastDayInMonth(u32 year, u8 month, u8 day);
@@ -44,6 +44,10 @@ void TransferPlttBuffer(void)
 			default:
 				if (FuncIsActiveTask(Task_WeatherMain)) //In overworld
 				{
+					if ((IsNightTime() && !gWindowsLitUp)
+					|| (!IsNightTime() && gWindowsLitUp))
+						LoadIgnoredPaletteIndices(TRUE); //Load/remove the palettes to fade once during the day and night
+					
 					BlendFadedPalettes(OW_DNS_BG_PAL_FADE, gDNSNightFadingByTime[Clock->hour][Clock->minute / 10].amount, gDNSNightFadingByTime[Clock->hour][Clock->minute / 10].colour);
 				}
 		}
@@ -120,7 +124,9 @@ static u16 FadeColourForDNS(struct PlttData* blend, u8 coeff, s8 r, s8 g, s8 b)
 */
 }
 
-static void LoadIgnoredPaletteIndices(void)
+//This function gets called once when the map is loaded,
+//and once again when the game transitions between day & night.
+static void LoadIgnoredPaletteIndices(bool8 copyToFaded)
 {
 	u32 i, j, row, column;
 		
@@ -128,18 +134,34 @@ static void LoadIgnoredPaletteIndices(void)
 	{
 		for (i = 0; i < ARRAY_COUNT(gSpecificTilesetFades); ++i)
 		{
-			if ((u32) gMapHeader.mapData->primaryTileset == gSpecificTilesetFades[i].tilesetPointer
-			||  (u32) gMapHeader.mapData->secondaryTileset == gSpecificTilesetFades[i].tilesetPointer)
+			if ((u32) gMapHeader.mapLayout->primaryTileset == gSpecificTilesetFades[i].tilesetPointer
+			||  (u32) gMapHeader.mapLayout->secondaryTileset == gSpecificTilesetFades[i].tilesetPointer)
 			{
 				row = gSpecificTilesetFades[i].paletteNumToFade;
 				for (j = 0; gSpecificTilesetFades[i].paletteIndicesToFade[j].index != 0xFF; ++j)
 				{
 					column = gSpecificTilesetFades[i].paletteIndicesToFade[j].index;
 					gPlttBufferUnfaded[row * 16 + column] = gSpecificTilesetFades[i].paletteIndicesToFade[j].colour;
+					
+					if (copyToFaded)
+						gPlttBufferFaded[row * 16 + column] = gSpecificTilesetFades[i].paletteIndicesToFade[j].colour;
+					
 					gIgnoredDNSPalIndices[row][column] = TRUE;
 				}
 			}
 		}
+
+		gWindowsLitUp = TRUE;
+	}
+	else
+	{
+		if (copyToFaded)
+		//Even though this could cause a recursive loop, it won't because copyToFaded is always set
+		//false when it is called from within the below function.
+			apply_map_tileset1_tileset2_palette(gMapHeader.mapLayout);
+
+		Memset(gIgnoredDNSPalIndices, 0, sizeof(bool8) * 16 * 32); //Don't ignore colours during day
+		gWindowsLitUp = FALSE;
 	}
 }
 
@@ -167,7 +189,7 @@ void apply_map_tileset_palette(struct Tileset const* tileset, u16 destOffset, u1
         }
 		
 		Memset(gIgnoredDNSPalIndices, 0, sizeof(bool8) * 16 * 32);
-		LoadIgnoredPaletteIndices();
+		LoadIgnoredPaletteIndices(FALSE);
     }
 }
 

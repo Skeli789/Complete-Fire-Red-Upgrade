@@ -21,4 +21,10 @@ bool8 IsTMHM(u16 item);
 void CopyTMName(u8* dst, u16 itemId);
 
 u32 CanMonLearnTMHM(struct Pokemon* mon, u8 tm);
+bool8 CanMonLearnTutorMove(struct Pokemon* mon, u8 tutorId);
+u16 GetExpandedTutorMove(u8 tutorId);
 u8 CanMonLearnTMTutor(struct Pokemon* mon, u16 item, u8 tutor);
+
+//Hooked in Functions:
+u8 TryHandleExcuseForDracoMeteorTutor(struct Pokemon* mon);
+u8 TryHandleExcuseForDracoMeteorTutorAlreadyKnow(void);

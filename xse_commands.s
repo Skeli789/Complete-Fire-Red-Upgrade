@@ -98,6 +98,18 @@
 .2byte 0x25
 .endm
 
+.macro comparehour hour
+.byte 0x1F @comparefarbytetobyte 
+.4byte 0x3005542
+.byte \hour
+.endm
+
+.macro comparedayofweek day
+.byte 0x1F @comparefarbytetobyte 
+.4byte 0x3005541
+.byte \day
+.endm
+
 @Commands
 .macro nop
 .byte 0x0
@@ -606,6 +618,12 @@
 .byte 0x5A
 .endm
 
+.macro spriteface personId direction
+.byte 0x5B
+.hword \personId
+.byte \direction
+.endm
+
 .macro trainerbattle0 trainerbattle0_type trainerbattle0_index trainerbattle0_filler trainerbattle0_intro trainerbattle0_loss
 .byte 0x5C
 .byte 0x0
@@ -784,10 +802,10 @@
 .hword \moveoffscreen_person
 .endm
 
-.macro spritebehave spritebehave_person spritebehave_behaviour
+.macro spritebehave npcId behavior
 .byte 0x65
-.hword \spritebehave_person
-.byte \spritebehave_behavior
+.hword \npcId
+.byte \behavior
 .endm
 
 .macro waitmsg

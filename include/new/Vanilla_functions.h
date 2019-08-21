@@ -34,7 +34,6 @@ u8 __attribute__((long_call)) GetPartyAbility(const pokemon_t* const);
 //u8 __attribute__((long_call)) CalculatePlayerPartyCount(void);
 u8 __attribute__((long_call)) CalculatePPWithBonus(u16 move, u8 ppBonuses, u8 moveIndex);
 u16 __attribute__((long_call)) SpeciesToNationalPokedexNum(u16 species);
-//void __attribute__((long_call)) MonGainEVs(struct Pokemon *mon, u16 defeatedSpecies);
 s8 __attribute__((long_call)) GetPokeFlavourRelation(u32 pid, u8 flavor);
 bool8 __attribute__((long_call)) IsTradedMon(struct Pokemon *mon);
 bool8 __attribute__((long_call)) IsOtherTrainer(u32 otId, u8* otName);
@@ -46,7 +45,6 @@ u8 __attribute__((long_call)) pokemon_order_func(u8 a);
 bool8 __attribute__((long_call)) GetIndexFromDexFlag(u16 index, u8 dexFlag);
 u8 __attribute__((long_call)) GetEggMoves(pokemon_t* poke, void* storageAddr);
 void __attribute__((long_call)) Special_0DD_DeleteMove();
-u8 __attribute__((long_call)) NicknameMalloc(u8 a1, void *name, u16 species, u8 gender, u16 PID, void (*callback));
 
 //u8 __attribute__((long_call)) GetWildDataIndexForMap(void);
 

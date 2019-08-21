@@ -22,6 +22,14 @@
 #define TRAINER_LANCE				0x19D
 #define TRAINER_LANCE_REMATCH		0x2E2
 
+//Backsprites
+#define TRAINER_BACK_PIC_RED              	0
+#define TRAINER_BACK_PIC_LEAF             	1
+#define TRAINER_BACK_PIC_BRENDAN          	2
+#define TRAINER_BACK_PIC_MAY              	3
+#define TRAINER_BACK_PIC_POKE_DUDE        	4
+#define TRAINER_BACK_PIC_OLD_MAN 			5
+
 #ifndef UNBOUND //CHANGE THESE
 
 #define TRAINER_ENCOUNTER_MUSIC_MALE         0 // standard male encounter music
@@ -56,6 +64,10 @@
 #define TRAINER_ENCOUNTER_LOR 					12
 #define TRAINER_ENCOUNTER_ELITE_4        		13
 #define TRAINER_ENCOUNTER_CYNTHIA				14
+
+#define TRAINER_BACK_PIC_MARLON				6
+#define TRAINER_BACK_PIC_POKE_KID			7
+#define TRAINER_BACK_PIC_RIVAL				8
 
 #endif
 

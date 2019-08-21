@@ -69,6 +69,8 @@ void ZeroBoxMonAt(u8 boxId, u8 boxPosition);
 void BoxMonAtToMon(u8 boxId, u8 boxPosition, struct Pokemon *dst);
 struct BoxPokemon* GetBoxedMonPtr(u8 boxId, u8 boxPosition);
 u8 SendMonToBoxPos(struct Pokemon* mon, u8 boxNo, u8 boxPos);
+void BackupPartyToTempTeam(u8 backupNum, u8 firstId, u8 numPokes);
+void RestorePartyFromTempTeam(u8 backupNum, u8 firstId, u8 numPokes);
 
 //Functions Hooked In
 u8* GetBoxNamePtr(u8 boxId);

@@ -177,7 +177,7 @@ struct Clock
 // Dynamic Overworld Palettes
 //#define sPalRefs ((PalRef*) 0x203B7D4)	// 16 sprites * 4 bytes each = 0x40 bytes
 
-//#define [FILL_IN_NEXT] 0x203B814
+#define gPlayerCoins (*((u32*) 0x203B814))
 //#define gFollowerState ((struct Follower*) 0x203B818) //Approximately ~20 bytes, use 24 to be safe
 //extern bool8 gIgnoredDNSPalIndices[32][16] //0x203B830
 //extern struct Roamer gRoamers[10] //0x203BA30
@@ -191,12 +191,15 @@ struct Clock
 //#define sBagItemAmounts ((u16*) 0x203C74A)
 #define gSelectedOrderFromParty ((u8*) 0x203C750)
 #define gDontFadeWhite (*((bool8*) 0x203C756))
-//#define [FILL_IN_NEXT] //0x203C757
+#define gWindowsLitUp (*((bool8*) 0x203C757))
 //#define sDexNavStatePtr //0x203C758
 //#define sDexNavSearchLevels //0x203C75C -999 slots
 //extern struct CompressedPokemon gBox20[30] //0x203CB44
 //extern struct CompressedPokemon gBox21[30] //0x203D210
 //extern struct CompressedPokemon gBox22[30] //0x203D8DC
+//extern struct CompressedPokemon gTempTeamBackup1[6] //0x203E048
+//extern struct CompressedPokemon gTempTeamBackup2[6] //0x203E1A4
 
-#define gPlayerCoins (*(u32*) 0x203DFA8)	//4 bytes, maximum 999,999,999 coins
-// [FILL_IN_NEXT] = 0x203DFAC
+// [FILL_IN_NEXT] = 
+
+#define gPokeBackupPtr (*((struct Pokemon**) 0x203E034))

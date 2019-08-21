@@ -31,6 +31,11 @@ SpecialBuffers = {
     "GREEN": ["FC", "01", "06"],
     "BLUE": ["FC", "01", "08"],
 
+    "ARROW_UP": ["79"],
+    "ARROW_DOWN": ["7A"],
+    "ARROW_LEFT": ["7B"],
+    "ARROW_RIGHT": ["7C"],
+
     "ALIGN": ["FC", "13"],
     "SHRINK": ["FC", "06", "00"]
 }

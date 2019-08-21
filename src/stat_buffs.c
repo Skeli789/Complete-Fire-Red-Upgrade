@@ -24,7 +24,7 @@ void atk13_printfromtable(void)
     PrepareStringBattle(stringId, gBankAttacker);
     gBattlescriptCurrInstr += 5;
     gBattleCommunication[MSG_DISPLAY] = 1;
-	
+
 	if (stringId == STRINGID_PKMNSSTATCHANGED4 && SIDE(gBankTarget) != SIDE(gBankAttacker))
 	{ //Stat Fell From Enemy
 		switch (ABILITY(gBankTarget)) {
@@ -399,6 +399,7 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, u8* BS_ptr)
             else
                 gBattleCommunication[MULTISTRING_CHOOSER] = (gBankTarget == gActiveBattler);
 
+			gNewBS->statFellThisTurn[gActiveBattler] = TRUE;
         }
     }
 	

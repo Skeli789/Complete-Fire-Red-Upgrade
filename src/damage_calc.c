@@ -10,6 +10,7 @@
 #include "../include/new/AI_Helper_Functions.h"
 #include "../include/new/battle_start_turn_start.h"
 #include "../include/new/damage_calc.h"
+#include "../include/new/frontier.h"
 #include "../include/new/general_bs_commands.h"
 #include "../include/new/Helper_Functions.h"
 #include "../include/new/item.h"
@@ -31,6 +32,7 @@ extern struct AlternateSize gAlternateSpeciesSizeTable[];
 
 //This file's functions:
 static u8 CalcPossibleCritChance(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* atkMon, bool8 CheckParty);
+static void TypeDamageModificationByDefTypes(u8 atkAbility, u8 bankDef, u16 move, u8 moveType, u8* flags, u8 defType1, u8 defType2, u8 defType3);
 static void ModulateDmgByType(u8 multiplier, const u16 move, const u8 moveType, const u8 defType, const u8 defBank, u8* flags, struct Pokemon* monDef, bool8 CheckPartyDef);
 static bool8 AbilityCanChangeTypeAndBoost(u8 bankAtk, u16 move);
 static u16 GetZMovePower(u16 zMove);
@@ -414,7 +416,7 @@ void atk06_typecalc(void) {
 				gMoveResultFlags |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
 				gLastLandedMoves[gBankTarget] = 0;
 				gLastHitByType[gBankTarget] = 0;
-				RecordItemBattle(gBankTarget, defEffect);
+				RecordItemEffectBattle(gBankTarget, defEffect);
 			}
 			else if (gStatuses3[gBankTarget] & (STATUS3_LEVITATING | STATUS3_TELEKINESIS)) {
 				gMoveResultFlags |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
@@ -439,7 +441,7 @@ void atk06_typecalc(void) {
 				gMoveResultFlags |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
 				gLastLandedMoves[gBankTarget] = 0;
 				gLastHitByType[gBankTarget] = 0xFF;
-				RecordItemBattle(gBankTarget, defEffect);
+				RecordItemEffectBattle(gBankTarget, defEffect);
 			}
 			else if (IsOfType(gBankTarget, TYPE_GRASS)) {
 				gMoveResultFlags |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
@@ -498,7 +500,7 @@ void atk4A_typecalc2(void) {
 		else if (defEffect == ITEM_EFFECT_AIR_BALLOON) {
 			gMoveResultFlags |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
 			gLastLandedMoves[gBankTarget] = 0;
-			RecordItemBattle(gBankTarget, defEffect);
+			RecordItemEffectBattle(gBankTarget, defEffect);
 		}
 		else if (gStatuses3[gBankTarget] & (STATUS3_LEVITATING | STATUS3_TELEKINESIS)) {
 			gMoveResultFlags |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
@@ -519,7 +521,7 @@ void atk4A_typecalc2(void) {
 		else if (defEffect == ITEM_EFFECT_SAFETY_GOGGLES) {
 			gMoveResultFlags |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
 			gLastLandedMoves[gBankTarget] = 0;
-			RecordItemBattle(gBankTarget, defEffect);
+			RecordItemEffectBattle(gBankTarget, defEffect);
 		}
 		else if (IsOfType(gBankTarget, TYPE_GRASS)) {
 			gMoveResultFlags |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
@@ -572,8 +574,8 @@ u8 TypeCalc(u16 move, u8 bankAtk, u8 bankDef, struct Pokemon* monAtk, bool8 Chec
 
 	if (CheckParty) {
 		atkAbility = GetPartyAbility(monAtk);
-		atkType1 = gBaseStats[monAtk->species].type1;
-		atkType2 = gBaseStats[monAtk->species].type2;
+		atkType1 = (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) ? GetCamomonsTypeByMon(monAtk, 0) : gBaseStats[monAtk->species].type1;
+		atkType2 = (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) ? GetCamomonsTypeByMon(monAtk, 1) : gBaseStats[monAtk->species].type2;
 		atkType3 = TYPE_BLANK;
 		moveType = GetMoveTypeSpecialFromParty(monAtk, move);
 	}
@@ -629,8 +631,8 @@ u8 AI_TypeCalc(u16 move, u8 bankAtk, struct Pokemon* monDef) {
 
 	u8 defAbility = GetPartyAbility(monDef);
 	u8 defEffect = ItemId_GetHoldEffectParam(monDef->item);
-	u8 defType1 = gBaseStats[monDef->species].type1;
-	u8 defType2 = gBaseStats[monDef->species].type2;
+	u8 defType1 = (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) ? GetCamomonsTypeByMon(monDef, 0) : gBaseStats[monDef->species].type1;
+	u8 defType2 = (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) ? GetCamomonsTypeByMon(monDef, 1) : gBaseStats[monDef->species].type2;
 
 	u8 atkAbility = ABILITY(bankAtk);
 	u8 atkType1 = gBattleMons[bankAtk].type1;
@@ -735,14 +737,78 @@ u8 AI_SpecialTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 	return flags;
 }
 
-void TypeDamageModification(u8 atkAbility, u8 bankDef, u16 move, u8 moveType, u8* flags) {
+//The TypeCalc for showing move effectiveness on the move menu
+u8 VisualTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
+{
+	u8 moveType;
+	u8 defAbility = GetRecordedAbility(bankDef);
+	u8 defEffect = GetRecordedItemEffect(bankDef);
+	u8 atkAbility, defType1, defType2, defType3;
+	u8 flags = 0;
+
+	if (move == MOVE_STRUGGLE)
+		return 0;
+
+	atkAbility = ABILITY(bankAtk);
+	moveType = GetMoveTypeSpecial(bankAtk, move);
+	
+	struct Pokemon* monIllusion = GetIllusionPartyData(bankDef);
+	if (monIllusion != GetBankPartyData(bankDef)) //Under illusion
+	{
+		u16 species = GetMonData(monIllusion, MON_DATA_SPECIES, NULL);
+		defType1 = (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) ? GetCamomonsTypeByMon(monIllusion, 0) : gBaseStats[species].type1;
+		defType2 = (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) ? GetCamomonsTypeByMon(monIllusion, 0) : gBaseStats[species].type2;
+		defType3 = TYPE_BLANK;
+	}
+	else
+	{
+		defType1 = gBattleMons[bankDef].type1;
+		defType2 = gBattleMons[bankDef].type2;
+		defType3 = gBattleMons[bankDef].type3;
+	}
+
+	//Check Special Ground Immunities
+	if (moveType == TYPE_GROUND
+	&& !NonInvasiveCheckGrounding(bankDef)
+	&& ((defAbility == ABILITY_LEVITATE && NO_MOLD_BREAKERS(atkAbility, move)) || defEffect == ITEM_EFFECT_AIR_BALLOON || (gStatuses3[bankDef] & (STATUS3_LEVITATING | STATUS3_TELEKINESIS)))
+	&& move != MOVE_THOUSANDARROWS)
+	{
+		flags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
+	}
+	else if (CheckTableForMove(move, PowderTable) && !IsAffectedByPowder(bankDef))
+	{
+		flags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
+	}
+	else if (move == MOVE_SKYDROP && IsOfType(bankDef, TYPE_FLYING))
+	{
+		flags |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
+	}
+	else //Regular Type Calc
+		TypeDamageModificationByDefTypes(atkAbility, bankDef, move, moveType, &flags, defType1, defType2, defType3);
+
+	//Wonder Guard Check
+	if (defAbility == ABILITY_WONDERGUARD
+	&& NO_MOLD_BREAKERS(atkAbility, move)
+	&& !(flags & MOVE_RESULT_MISSED)
+	&& (!(flags & MOVE_RESULT_SUPER_EFFECTIVE) || ((flags & (MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE)) == (MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE)))
+	&& gBattleMoves[move].power
+	&& SPLIT(move) != SPLIT_STATUS)
+		flags |= MOVE_RESULT_MISSED;
+
+	return flags;
+}
+
+void TypeDamageModification(u8 atkAbility, u8 bankDef, u16 move, u8 moveType, u8* flags)
+{
+	return TypeDamageModificationByDefTypes(atkAbility, bankDef, move, moveType, flags, gBattleMons[bankDef].type1, gBattleMons[bankDef].type2, gBattleMons[bankDef].type3);
+}
+
+static void TypeDamageModificationByDefTypes(u8 atkAbility, u8 bankDef, u16 move, u8 moveType, u8* flags, u8 defType1, u8 defType2, u8 defType3)
+{
 	int i = 0;
 	u8 tableAtk;
 	u8 tableDef;
 	u8 tableMult;
-	u8 defType1 = gBattleMons[bankDef].type1;
-	u8 defType2 = gBattleMons[bankDef].type2;
-	u8 defType3 = gBattleMons[bankDef].type3;
 
 	TYPE_LOOP:
 		while (gTypeEffectiveness[i] != TYPE_ENDTABLE) {
@@ -792,8 +858,8 @@ void TypeDamageModificationPartyMon(u8 atkAbility, struct Pokemon* monDef, u16 m
 	u8 tableAtk;
 	u8 tableDef;
 	u8 tableMult;
-	u8 defType1 = gBaseStats[monDef->species].type1;
-	u8 defType2 = gBaseStats[monDef->species].type2;
+	u8 defType1 = (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) ? GetCamomonsTypeByMon(monDef, 0) : gBaseStats[monDef->species].type1;
+	u8 defType2 = (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) ? GetCamomonsTypeByMon(monDef, 1) : gBaseStats[monDef->species].type2;
 
 TYPE_LOOP_AI:
 	while (gTypeEffectiveness[i] != TYPE_ENDTABLE)
@@ -1181,7 +1247,7 @@ u8 GetExceptionMoveTypeFromParty(struct Pokemon* mon, u16 move) {
 			break;
 
 		case MOVE_REVELATIONDANCE:
-			moveType = gBaseStats[mon->species].type1;
+			moveType = (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) ? GetCamomonsTypeByMon(mon, 0) : gBaseStats[mon->species].type1;
 	}
 
 	return moveType;
@@ -1236,12 +1302,12 @@ void AdjustDamage(bool8 CheckFalseSwipe) {
 	}
 	else if (hold_effect == ITEM_EFFECT_FOCUS_BAND && umodsi(Random(), 100) < quality && !IsBankHoldingFocusSash(gBankTarget))
 	{
-		RecordItemBattle(gBankTarget, hold_effect);
+		RecordItemEffectBattle(gBankTarget, hold_effect);
 		gSpecialStatuses[gBankTarget].focusBanded = 1;
 	}
 	else if (IsBankHoldingFocusSash(gBankTarget) && BATTLER_MAX_HP(gBankTarget))
 	{
-		RecordItemBattle(gBankTarget, hold_effect);
+		RecordItemEffectBattle(gBankTarget, hold_effect);
 		gSpecialStatuses[gBankTarget].focusBanded = 1;
 		gNewBS->EnduranceHelper = ENDURE_FOCUS_SASH;
 	}

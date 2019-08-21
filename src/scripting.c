@@ -20,6 +20,7 @@
 #include "../include/event_data.h"
 #include "../include/constants/items.h"
 #include "../include/constants/pokedex.h"
+#include "../include/constants/songs.h"
 
 #include "../include/new/catching.h"
 #include "../include/new/dns.h"
@@ -692,7 +693,7 @@ void sp09E_NicknamePokemon(void) {
 	u16 species = GetMonData(src, MON_DATA_SPECIES, 0);
 	u8 gender = GetMonGender(src);
 	u16 PID = GetMonData(src, MON_DATA_PERSONALITY, 0);
-	NicknameMalloc(3, gStringVar2, species, gender, PID, (void*) NicknameFunc);
+	DoNamingScreen(3, gStringVar2, species, gender, PID, (void*) NicknameFunc);
 	return;
 }
 
@@ -701,7 +702,7 @@ void sp09E_NicknamePokemon(void) {
 ///////////////////////////////////////////////////////////////////////////////////
 
 //Erase pokemon from party, or entire party
-void sp062_PokemonEraser(void) 
+void sp062_PokemonEraser(void)
 {
 	u8 slot = Var8004;
 	if (slot == 0xF)
@@ -1761,6 +1762,67 @@ void sp0B1_ChooseItemFromBag(void)
 	}
 }
 
+//@Details: Checks if any Pokemon in the player's party is of the given type.
+//@Input: 	Var 0x8000: Pokemon type.
+//@Returns: LastResult: If the type was found in the party.
+void sp0B2_PokemonTypeInParty(void)
+{
+	u8 type = Var8000;
+
+	for (int i = 0; i < PARTY_SIZE; ++i)
+	{
+		u16 species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES, NULL);
+
+		if (species != SPECIES_NONE
+		&& !GetMonData(&gPlayerParty[i], MON_DATA_IS_EGG, NULL)) //Don't count Egg types
+		{
+			if (type == gBaseStats[species].type1
+			||  type == gBaseStats[species].type2)
+			{
+				gSpecialVar_LastResult = TRUE;
+				return;
+			}
+		}
+	}
+	
+	gSpecialVar_LastResult = FALSE;
+}
+
+//@Details: Checks if any Pokemon in the player's party can learn Draco Meteor.
+//			Does not include a friendship check. That is handled in the tutor part.
+//@Returns: LastResult: 1 if any Pokemon can learn Draco Meteor. 0 otherwise.
+void sp0CC_CanLearnDracoMeteorInParty(void)
+{
+	int i, j;
+
+	for (i = 0; i < PARTY_SIZE; ++i)
+	{
+		u16 species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES, NULL);
+
+		if (species != SPECIES_NONE
+		&& !GetMonData(&gPlayerParty[i], MON_DATA_IS_EGG, NULL)) //Don't count Egg types
+		{
+			if (gBaseStats[species].type1 == TYPE_DRAGON
+			||  gBaseStats[species].type2 == TYPE_DRAGON)
+			{
+				for (j = 0; j < MAX_MON_MOVES; ++j)
+				{
+					if (GetMonData(&gPlayerParty[i], MON_DATA_MOVE1 + j, NULL) == MOVE_DRACOMETEOR)
+						break;
+				}
+				
+				if (j != MAX_MON_MOVES)
+					continue; //If the Pokemon already knows Draco Meteor then skip it
+
+				gSpecialVar_LastResult = TRUE;
+				return;
+			}
+		}
+	}
+	
+	gSpecialVar_LastResult = FALSE;
+}
+
 #define gTMCasePositionStruct ((u8*) 0x203B10C)
 bool8 ShouldSelectItemFromTMCase(void)
 {
@@ -2227,7 +2289,22 @@ bool8 KeyboardKeyHandler_Character(u8 event)
     sub_809E518(3, 0, 0);
     if (event == KBEVENT_PRESSED_A)
     {
-        bool8 var = NameChooserSelectLetter();
+		if (gNamingScreenData->templateNum == NAMING_SCREEN_CHOOSE_NUMBER)
+		{
+			u8 character;
+			s16 x, y;
+			
+			NamingScreen_GetCursorPos(&x, &y);
+			character = NamingScreen_GetCharAtKeyboardPos(x, y);
+
+			if (character < PC_0 || character > PC_9)
+			{
+				PlaySE(SE_ERROR);
+				return FALSE; //Only can select numbers
+			}
+		}
+
+        bool8 atMaxChars = NameChooserSelectLetter();
 
 		#ifdef AUTO_NAMING_SCREEN_SWAP
         if (gNamingScreenData->currentPage == PAGE_UPPER && GetTextCaretPosition() == 1)
@@ -2235,12 +2312,16 @@ bool8 KeyboardKeyHandler_Character(u8 event)
 		#endif
 
         sub_809EAA8();
-        if (var)
+        if (atMaxChars)
         {
             SetInputState(INPUT_STATE_DISABLED); //In Emerald it's INPUT_STATE_2 for some reason
             gNamingScreenData->state = MAIN_STATE_MOVE_TO_OK_BUTTON;
         }
     }
+	
+	if (gNamingScreenData->templateNum == NAMING_SCREEN_CHOOSE_NUMBER && gNamingScreenData->currentPage != PAGE_OTHERS)
+		gNamingScreenData->state = MAIN_STATE_START_PAGE_SWAP; //Jump immediately to numbers page
+	
     return FALSE;
 }
 
@@ -2254,6 +2335,75 @@ static u8 GetTextCaretPosition(void)
     }
     return gNamingScreenData->template->maxChars - 1;
 }
+
+#define sPlayerNamingScreenTemplate (const struct NamingScreenTemplate*) 0x83E245C
+#define sPCBoxNamingTemplate (const struct NamingScreenTemplate*) 0x83E2468
+#define sMonNamingScreenTemplate (const struct NamingScreenTemplate*) 0x83E2474
+#define sRivalNamingScreenTemplate (const struct NamingScreenTemplate*) 0x83E2480
+
+static void ConvertNumberEntryToInteger(void)
+{
+	u8 numDigits = StringLength(gStringVar1);
+	u32 val = 0;
+	
+	if (numDigits == 0)
+		val = 0xFFFF;
+	else
+	{
+		for (int i = 0; i < numDigits; ++i)
+		{
+			if (gStringVar1[i] >= PC_0 && gStringVar1[i] <= PC_9)
+				val = (val * 10) + (gStringVar1[i] - PC_0);
+			else
+			{
+				val = 0xFFFF;
+				break;
+			}
+		}
+	}
+
+	gSpecialVar_LastResult = val;
+	ReturnToFieldContinueScriptPlayMapMusic();
+}
+
+void sp0B3_DoChooseNumberScreen(void)
+{
+	DoNamingScreen(NAMING_SCREEN_CHOOSE_NUMBER, gStringVar1, 0, 0, 0, (void*) ConvertNumberEntryToInteger);
+}
+
+
+extern const u8 gText_EnterNumber[];
+static const struct NamingScreenTemplate sChooseNumberNamingScreenTemplate =
+{
+    .copyExistingString = 0,
+    .maxChars = 4, //Max 9999 - should be preloaded
+    .iconFunction = 0,
+    .addGenderIcon = 0,
+    .initialPage = 1,
+    .unused = 35,
+    .title = gText_EnterNumber,
+};
+
+const struct NamingScreenTemplate* const sNamingScreenTemplates[] =
+{
+    sPlayerNamingScreenTemplate,
+    sPCBoxNamingTemplate,
+    sMonNamingScreenTemplate,
+    sMonNamingScreenTemplate,
+    sRivalNamingScreenTemplate,
+	&sChooseNumberNamingScreenTemplate,
+};
+
+void (*const sNamingScreenTitlePrintingFuncs[])(void) =
+{
+    (void*) (0x809F49C | 1),
+    (void*) (0x809F49C | 1),
+    (void*) (0x809F4F0 | 1),
+    (void*) (0x809F4F0 | 1),
+    (void*) (0x809F49C | 1),
+	(void*) (0x809F49C | 1),
+};
+
 
 //Item Find Show Picture Special (Really Callasm)
 #define ITEM_TAG 0xFDF3

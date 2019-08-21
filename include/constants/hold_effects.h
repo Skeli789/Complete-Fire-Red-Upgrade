@@ -133,6 +133,8 @@
 #define ITEM_EFFECT_TYPE_BOOSTERS 129 //Quality = % Damage Boost
 #define ITEM_EFFECT_Z_CRYSTAL 130 //Quality = Move Type
 #define ITEM_EFFECT_ABILITY_CAPSULE 131
+#define ITEM_EFFECT_EJECT_PACK 132
+#define ITEM_EFFECT_ROOM_SERVICE 133
 
 //Focus Sash: Item Effect = ITEM_EFFECT_FOCUS_BAND, Item Quality = 100, Item Mystery 2 = 1
 //Power Items: Item Effect = ITEM_EFFECT_MACHO_BRACE Item Quality = See Below

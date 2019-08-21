@@ -66,7 +66,7 @@ void AbilityChangeBSFunc(void);
 void LoadStatustoPsychoShiftTransfer(void);
 void PluckBerryEat(void);
 void BurnUpFunc(void);
-void SeedLooper(void);
+void SeedRoomServiceLooper(void);
 void LastResortFunc(void);
 bool8 CanUseLastResort(u8 bank);
 void SynchronoiseFunc(void);

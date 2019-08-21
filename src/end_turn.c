@@ -634,6 +634,7 @@ u8 TurnBasedEffects(void)
 					
 					if (gDisableStructs[gActiveBattler].tauntTimer == 0)
 					{
+						gBattleScripting->bank = gActiveBattler;
 						BattleStringLoader = gText_TauntWoreOff;
 						BattleScriptExecute(BattleScript_PrintCustomStringEnd2);
 						effect++;
@@ -1118,7 +1119,7 @@ u8 TurnBasedEffects(void)
 							&& CanBePoisoned(gActiveBattler, gActiveBattler, FALSE))
 							{
 								gLastUsedItem = ITEM(gActiveBattler);
-								RecordItemBattle(gActiveBattler, itemEffect);
+								RecordItemEffectBattle(gActiveBattler, itemEffect);
 								gBattleMons[gActiveBattler].status1 |= STATUS1_TOXIC_POISON;
 								EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[gActiveBattler].status1);
 								MarkBufferBankForExecution(gActiveBattler);
@@ -1131,7 +1132,7 @@ u8 TurnBasedEffects(void)
 							&& CanBeBurned(gActiveBattler, FALSE))
 							{
 								gLastUsedItem = ITEM(gActiveBattler);
-								RecordItemBattle(gActiveBattler, itemEffect);
+								RecordItemEffectBattle(gActiveBattler, itemEffect);
 								gBattleMons[gActiveBattler].status1 |= STATUS1_BURN;
 								EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[gActiveBattler].status1);
 								MarkBufferBankForExecution(gActiveBattler);
@@ -1276,6 +1277,7 @@ u8 TurnBasedEffects(void)
 					gNewBS->pickupStack[i] = 0xFF;
 					gNewBS->leftoverHealingDone[i] = FALSE;
 					gNewBS->calculatedAISwitchings[i] = FALSE;
+					gNewBS->recalculatedBestDoublesKillingScores[i] = FALSE;
 				}
 		}
 		gBattleStruct->turnEffectsBank++;

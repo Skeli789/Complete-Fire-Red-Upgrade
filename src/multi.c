@@ -261,6 +261,14 @@ bool8 IsTwoOpponentBattle(void)
 	return FALSE;
 }
 
+bool8 BankSideHasTwoTrainers(u8 bank)
+{
+	u8 side = SIDE(bank);
+	
+	return ((side == B_SIDE_OPPONENT && IsTwoOpponentBattle())
+	     || (side == B_SIDE_PLAYER && IsTagBattle()));
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 bool8 IsTagBattle(void)
@@ -348,14 +356,23 @@ static void PlayerPartnerBufferRunCommand(void)
 static void PlayerPartnerHandleChooseMove(void)
 {
     u8 chosenMoveId;
+	u16 chosenMove;
     struct ChooseMoveStruct* moveInfo = (struct ChooseMoveStruct*)(&gBattleBufferA[gActiveBattler][4]);
 
     BattleAI_SetupAIData(0xF);
     chosenMoveId = BattleAI_ChooseMoveOrAction();
+	chosenMove = moveInfo->moves[chosenMoveId];
 
-    if (gBattleMoves[moveInfo->moves[chosenMoveId]].target & (MOVE_TARGET_USER | MOVE_TARGET_USER_OR_SELECTED))
+    if (gBattleMoves[chosenMove].target & MOVE_TARGET_USER)
+	{
         gBankTarget = gActiveBattler;
-    if (gBattleMoves[moveInfo->moves[chosenMoveId]].target & MOVE_TARGET_BOTH)
+	}
+	else if (gBattleMoves[chosenMove].target & MOVE_TARGET_USER_OR_PARTNER)
+	{
+		if (SIDE(gBankTarget) != SIDE(gActiveBattler))
+			gBankTarget = gActiveBattler;
+	}
+    else if (gBattleMoves[chosenMove].target & MOVE_TARGET_BOTH)
     {
         gBankTarget = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
         if (gAbsentBattlerFlags & gBitTable[gBankTarget])
@@ -368,7 +385,13 @@ static void PlayerPartnerHandleChooseMove(void)
 		gNewBS->UltraData->chosen[gActiveBattler] = TRUE;
 	else if (moveInfo->possibleZMoves[chosenMoveId])
 		gNewBS->ZMoveData->toBeUsed[gActiveBattler] = TRUE;
-		
+	
+	//This is handled again later, but it's only here to help with the case of choosing Helping Hand when the partner is switching out.
+	gBattleStruct->chosenMovePositions[gActiveBattler] = chosenMoveId;
+	gBattleStruct->moveTarget[gActiveBattler] = gBankTarget;
+	gChosenMovesByBanks[gActiveBattler] = chosenMove;
+	TryRemoveDoublesKillingScore(gActiveBattler, gBankTarget, chosenMove);
+
 	EmitMoveChosen(1, chosenMoveId, gBankTarget, gNewBS->MegaData->chosen[gActiveBattler], gNewBS->UltraData->chosen[gActiveBattler], gNewBS->ZMoveData->toBeUsed[gActiveBattler]);
     PlayerPartnerBufferExecComplete();
 }

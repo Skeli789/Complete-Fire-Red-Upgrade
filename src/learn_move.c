@@ -1,4 +1,5 @@
 #include "defines.h"
+#include "../include/daycare.h"
 #include "../include/list_menu.h"
 #include "../include/move_reminder.h"
 #include "../include/string_util.h"
@@ -137,6 +138,16 @@ u8 GetMoveRelearnerMoves(struct Pokemon* mon, u16* moves)
     u16 species = mon->species;
     u8 level = mon->level;
     int i, j, k;
+	
+#ifdef EGG_MOVE_RELEARNER_FLAG
+	if (FlagGet(EGG_MOVE_RELEARNER_FLAG))
+	{
+		struct Pokemon dummyMon = {0};
+		u16 eggSpecies = GetEggSpecies(species);
+		SetMonData(&dummyMon, MON_DATA_SPECIES, &eggSpecies);
+		return GetEggMoves(&dummyMon, moves);
+	}
+#endif
 
     for (i = 0; i < MAX_MON_MOVES; ++i)
         learnedMoves[i] = mon->moves[i];
@@ -220,6 +231,13 @@ u16 GiveMoveToBoxMon(struct BoxPokemon *boxMon, u16 move)
         {
             SetBoxMonData(boxMon, MON_DATA_MOVE1 + i, &move);
             SetBoxMonData(boxMon, MON_DATA_PP1 + i, &gBattleMoves[move].pp);
+
+			if (move == MOVE_SECRETSWORD && GetBoxMonData(boxMon, MON_DATA_SPECIES, NULL) == SPECIES_KELDEO)
+			{
+				u16 resolute = SPECIES_KELDEO_RESOLUTE;
+				SetBoxMonData(boxMon, MON_DATA_SPECIES, &resolute);
+			}
+
             return move;
         }
 
@@ -232,8 +250,24 @@ u16 GiveMoveToBoxMon(struct BoxPokemon *boxMon, u16 move)
 
 void SetMonMoveSlot(struct Pokemon* mon, u16 move, u8 slot)
 {
+	u16 form;
+
+	if (GetMonData(mon, MON_DATA_MOVE1 + slot, NULL) == MOVE_SECRETSWORD
+	&& move != MOVE_SECRETSWORD
+	&& GetMonData(mon, MON_DATA_SPECIES, NULL) == SPECIES_KELDEO_RESOLUTE)
+	{
+		form = SPECIES_KELDEO; //Keldeo reverts if it forgets Secret Sword
+		SetMonData(mon, MON_DATA_SPECIES, &form);
+	}
+
     SetMonData(mon, MON_DATA_MOVE1 + slot, &move);
     SetMonData(mon, MON_DATA_PP1 + slot, &gBattleMoves[move].pp);
+
+	if (move == MOVE_SECRETSWORD && GetMonData(mon, MON_DATA_SPECIES, NULL) == SPECIES_KELDEO)
+	{
+		form = SPECIES_KELDEO_RESOLUTE; //Keldeo transforms if it learns Secret Sword
+		SetMonData(mon, MON_DATA_SPECIES, &form);
+	}
 }
 
 //Move Reminder//////////////////////////////////////////////////////////////////////////////////////////////////////////////////

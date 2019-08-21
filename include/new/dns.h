@@ -45,3 +45,16 @@ struct SpecificTilesetFade
 	u8 paletteNumToFade;
 	struct IndexPalFade paletteIndicesToFade[16 + 1];
 };
+
+//Exported Constants
+enum
+{
+	SUNDAY,
+	MONDAY,
+	TUESDAY,
+	WEDNESDAY,
+	THURSDAY,
+	FRIDAY,
+	SATURDAY,
+	NUM_DAYS_IN_WEEK,
+};

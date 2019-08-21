@@ -4,7 +4,9 @@
 #include "../include/constants/hold_effects.h"
 #include "../include/constants/items.h"
 #include "../include/constants/moves.h"
+#include "../include/constants/pokedex.h"
 #include "../include/constants/songs.h"
+#include "../include/constants/tutors.h"
 #include "../include/money.h"
 #include "../include/window.h"
 
@@ -146,8 +148,16 @@ u8 BerryIdFromItemId(u16 item)
 	typedef u32 TM_HM_T[2]; //extern const u32 gTMHMLearnsets[NUM_SPECIES][2];
 #endif
 
+#if (NUM_MOVE_TUTORS > 64)
+	typedef u32 ExpandedTutor_T[4]; //extern const u32 gTutorMoves[NUM_SPECIES][4];
+#else
+	typedef u32 ExpandedTutor_T[2]; //extern const u32 gTutorMoves[NUM_SPECIES][2];
+#endif
+
 #define gTMHMLearnsets ((TM_HM_T*) *((u32*) 0x8043C68))
+#define gTutorLearnsets ((ExpandedTutor_T*) *((u32*) 0x8120C30))
 #define gTMHMMoves ((const u16*) *((u32*) 0x8125A8C))
+#define gTutorMoves ((const u16*) *((u32*) 0x8120BE4))
 
 u32 CanMonLearnTMHM(struct Pokemon* mon, u8 tm)
 {
@@ -161,29 +171,159 @@ u32 CanMonLearnTMHM(struct Pokemon* mon, u8 tm)
 	if (tm < 32)
 	{
 		mask = 1 << tm;
-		return gTMHMLearnsets[species][0] & mask;
+		return (gTMHMLearnsets[species][0] & mask) != 0 ? TRUE : FALSE;
 	}
 	else if (tm >= 32 && tm < 64)
 	{
 		mask = 1 << (tm - 32);
-		return gTMHMLearnsets[species][1] & mask;
+		return (gTMHMLearnsets[species][1] & mask) != 0 ? TRUE : FALSE;
 	}
 	#ifdef EXPANDED_TMSHMS
 	else if (tm >= 64 && tm < 96)
 	{
 		mask = 1 << (tm - 64);
-		return gTMHMLearnsets[species][2] & mask;
+		return (gTMHMLearnsets[species][2] & mask) != 0 ? TRUE : FALSE;
 	}
 	else if (tm >= 96 && tm < 128)
 	{
 		mask = 1 << (tm - 96);
-		return gTMHMLearnsets[species][3] & mask;
+		return (gTMHMLearnsets[species][3] & mask) != 0 ? TRUE : FALSE;
 	}
 	#endif
 	else
 		return 0;
 }
 
+#ifdef EXPANDED_MOVE_TUTORS
+
+bool8 CanMonLearnTutorMove(struct Pokemon* mon, u8 tutorId)
+{
+	u32 mask;
+	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
+
+	if (tutorId < NUM_MOVE_TUTORS)
+	{
+		if (tutorId < 32)
+		{
+			mask = 1 << tutorId;
+			return (gTutorLearnsets[species][0] & mask) != 0 ? TRUE : FALSE;
+		}
+		else if (tutorId >= 32 && tutorId < 64)
+		{
+			mask = 1 << (tutorId - 32);
+			return (gTutorLearnsets[species][1] & mask) != 0 ? TRUE : FALSE;
+		}
+	#if (NUM_MOVE_TUTORS > 64)
+		else if (tutorId >= 64 && tutorId < 96)
+		{
+			mask = 1 << (tutorId - 64);
+			return (gTutorLearnsets[species][2] & mask) != 0 ? TRUE : FALSE;
+		}
+		else if (tutorId >= 96 && tutorId < 128)
+		{
+			mask = 1 << (tutorId - 96);
+			return (gTutorLearnsets[species][3] & mask) != 0 ? TRUE : FALSE;
+		}
+	#endif
+	}
+	
+	//Special move tutors not stored in a table
+	u16 dexNum = SpeciesToNationalPokedexNum(species);
+	switch (tutorId) {
+		case TUTOR_SPECIAL_DRACO_METEOR:
+			if (GetMonData(mon, MON_DATA_FRIENDSHIP, NULL) >= MAX_FRIENDSHIP
+			&& (gBaseStats[species].type1 == TYPE_DRAGON
+			 || gBaseStats[species].type2 == TYPE_DRAGON))
+				return TRUE;
+			break;
+		case TUTOR_SPECIAL_SECRET_SWORD:
+			return dexNum == NATIONAL_DEX_KELDEO;
+		case TUTOR_SPECIAL_RELIC_SONG:
+			return dexNum == NATIONAL_DEX_MELOETTA;
+		case TUTOR_SPECIAL_VOLT_TACKLE:
+			return dexNum == NATIONAL_DEX_PIKACHU;
+		case TUTOR_SPECIAL_DRAGON_ASCENT:
+			return dexNum == NATIONAL_DEX_RAYQUAZA;
+		case TUTOR_SPECIAL_THOUSAND_ARROWS:
+		case TUTOR_SPECIAL_THOUSAND_WAVES:
+		case TUTOR_SPECIAL_CORE_ENFORCER:
+			return dexNum == NATIONAL_DEX_ZYGARDE;
+	}
+		
+	return FALSE;
+}
+
+u16 GetExpandedTutorMove(u8 tutorId)
+{
+	switch (tutorId) {
+		case TUTOR_SPECIAL_DRACO_METEOR:
+			return MOVE_DRACOMETEOR;
+		case TUTOR_SPECIAL_SECRET_SWORD:
+			return MOVE_SECRETSWORD;
+		case TUTOR_SPECIAL_RELIC_SONG:
+			return MOVE_RELICSONG;
+		case TUTOR_SPECIAL_VOLT_TACKLE:
+			return MOVE_VOLTTACKLE;
+		case TUTOR_SPECIAL_DRAGON_ASCENT:
+			return MOVE_DRAGONASCENT;
+		case TUTOR_SPECIAL_THOUSAND_ARROWS:
+			return MOVE_THOUSANDARROWS;
+		case TUTOR_SPECIAL_THOUSAND_WAVES:
+			return MOVE_THOUSANDWAVES;
+		case TUTOR_SPECIAL_CORE_ENFORCER:
+			return MOVE_COREENFORCER;
+		default:
+			if (tutorId >= NUM_MOVE_TUTORS)
+				return MOVE_NONE;
+			else
+				return gTutorMoves[tutorId];
+	}
+}
+
+#endif
+
+u8 TryHandleExcuseForDracoMeteorTutor(struct Pokemon* mon)
+{
+#ifdef EXPANDED_MOVE_TUTORS
+	u8 tutorId = Var8005;
+	
+	if (tutorId == TUTOR_SPECIAL_DRACO_METEOR)
+	{
+		u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
+		Var8005 = 1;
+
+		if (gBaseStats[species].type1 != TYPE_DRAGON
+		&&  gBaseStats[species].type2 != TYPE_DRAGON)
+			Var8005 = 3;
+		else if (GetMonData(mon, MON_DATA_FRIENDSHIP, NULL) < MAX_FRIENDSHIP) //Dragon-type not at max friendship
+			Var8005 = 4;
+
+		return 1;
+	}
+#endif
+
+	return 0;
+}
+
+u8 TryHandleExcuseForDracoMeteorTutorAlreadyKnow(void)
+{
+#ifdef EXPANDED_MOVE_TUTORS
+	u8 tutorId = Var8005;
+	
+	if (tutorId == TUTOR_SPECIAL_DRACO_METEOR)
+	{
+		Var8005 = 2;
+		return 1;
+	}
+#endif
+
+	return 0;
+}
+
+void CancelPartyMenuLearnTutor(u8 taskId)
+{
+	gTasks[taskId].func = (void*) 0x81255BD;
+}
 
 u16 GetItemIdFromTmId(u8 tmId)
 {
@@ -194,7 +334,6 @@ u16 GetItemIdFromTmId(u8 tmId)
 	}
 	return 0;
 }
-
 
 
 // item ID to Tm number to Move ID
@@ -334,6 +473,16 @@ u8 CanMonLearnTMTutor(struct Pokemon* mon, u16 item, u8 tutor)
             return CANNOT_LEARN_MOVE;
         //do {} while (0); // :morphon:
     }
+	#ifdef EXPANDED_MOVE_TUTORS
+    else if (!CanMonLearnTutorMove(mon, tutor))
+    {
+        return CANNOT_LEARN_MOVE;
+    }
+	else
+	{
+		move = GetExpandedTutorMove(tutor);
+	}
+	#else
     else if (!CanLearnTutorMove(mon->species, tutor))
     {
         return CANNOT_LEARN_MOVE;
@@ -342,6 +491,7 @@ u8 CanMonLearnTMTutor(struct Pokemon* mon, u16 item, u8 tutor)
     {
         move = GetTutorMove(tutor);
     }
+	#endif
 
     if (MonKnowsMove(mon, move))
         return ALREADY_KNOWS_MOVE;

@@ -77,6 +77,9 @@ sp067_GenerateRandomBattleTowerTeam 0815FEFC
 sp068_GivePlayerFrontierMonGivenSpecies 0815FF00
 sp069_GivePlayerRandomFrontierMonByTier 0815FF04
 sp06A_GivePlayerFrontierMonByLoadedSpread 0815FF08
+sp06B_ReplacePlayerTeamWithMultiTrainerTeam 0815FF0C
+sp06C_SpliceFrontierTeamWithPlayerTeam 0815FF10
+sp06D_LoadFrontierMultiTrainerById 0815FF14
 
 sp075_MeasurePokemon1 0815FF34
 sp076_MeasurePokemon2 0815FF38
@@ -112,10 +115,13 @@ sp0AE_ClearFlag 08160018
 sp0AF_DismountBicyle 0816001C
 sp0B0_LoadPartyPokemonTypes 08160020
 sp0B1_ChooseItemFromBag 08160024
+sp0B2_PokemonTypeInParty 08160028
+sp0B3_DoChooseNumberScreen 0816002C
 
 sp0C9_ForceOneKeyInput 08160084
 sp0CA_IgnoreKeys 08160088
 sp0CB_PlaceKeyScript 0816008C
+sp0CC_CanLearnDracoMeteorInParty 08160090
 
 sp196_TryCopyTMNameToBuffer1 081603B8
 

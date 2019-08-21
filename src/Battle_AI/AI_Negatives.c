@@ -10,6 +10,7 @@
 #include "../../include/new/battle_start_turn_start.h"
 #include "../../include/new/bs_helper_functions.h"
 #include "../../include/new/damage_calc.h"
+#include "../../include/new/end_turn.h"
 #include "../../include/new/Helper_Functions.h"
 #include "../../include/new/item.h"
 #include "../../include/new/general_bs_commands.h"
@@ -31,6 +32,10 @@
 #define PARTNER_MOVE_IS_SAME_NO_TARGET (IS_DOUBLE_BATTLE \
 										&& gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE \
 										&& move == partnerMove)
+										
+//Doubles is now defined as being a non 1v1 Double Battle
+#undef IS_DOUBLE_BATTLE
+#define IS_DOUBLE_BATTLE (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && ((BATTLER_ALIVE(foe1) && BATTLER_ALIVE(foe2)) || BATTLER_ALIVE(bankAtkPartner)))
 
 extern move_effect_t SetStatusTable[];
 extern move_effect_t StatLowerTable[];
@@ -84,20 +89,20 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 	u16 moveAcc = AccuracyCalc(move, bankAtk, bankDef);
 
 	//Load partner data
-	u8 bankAtkPartner = (IsDoubleBattle()) ? PARTNER(bankAtk) : bankAtk;
-	u8 bankDefPartner = (IsDoubleBattle()) ? PARTNER(bankDef) : bankDef;
-	u8 atkPartnerAbility = (IsDoubleBattle()) ? ABILITY(bankAtkPartner) : ABILITY_NONE;
-	u8 defPartnerAbility = (IsDoubleBattle()) ? ABILITY(bankDefPartner) : ABILITY_NONE;
+	u8 bankAtkPartner = (gBattleTypeFlags & BATTLE_TYPE_DOUBLE) ? PARTNER(bankAtk) : bankAtk;
+	u8 bankDefPartner = (gBattleTypeFlags & BATTLE_TYPE_DOUBLE) ? PARTNER(bankDef) : bankDef;
+	u8 atkPartnerAbility = (gBattleTypeFlags & BATTLE_TYPE_DOUBLE) ? ABILITY(bankAtkPartner) : ABILITY_NONE;
+	u8 defPartnerAbility = (gBattleTypeFlags & BATTLE_TYPE_DOUBLE) ? ABILITY(bankDefPartner) : ABILITY_NONE;
 	
 	u16 partnerMove = MOVE_NONE;
 	if (!IsBankIncapacitated(bankAtkPartner))
-		partnerMove = (gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE) ? gChosenMovesByBanks[bankAtkPartner] : IsValidMovePrediction(bankAtkPartner, FOE(bankAtk));
+		partnerMove = (gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE) ? gChosenMovesByBanks[bankAtkPartner] : IsValidMovePrediction(bankAtkPartner, bankAtk);
 
 	//Load Alternative targets
 	u8 foe1, foe2;
 	foe1 = FOE(bankAtk);
 				
-	if IS_DOUBLE_BATTLE
+	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
 		foe2 = PARTNER(FOE(bankAtk));
 	else
 		foe2 = foe1;
@@ -111,10 +116,12 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 	&&  !IsBankIncapacitated(bankAtkPartner)
 	&&  gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE //Partner actually selected a move
 	&&  gBattleStruct->moveTarget[bankAtkPartner] == bankDef
+	&&  gBattleMoves[gChosenMovesByBanks[bankAtkPartner]].target & MOVE_TARGET_SELECTED //Partner isn't using spread move
 	&&  CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, bankAtk, bankDef) >= 2 //With one target left, both Pokemon should aim for the same target
-	&&  MoveKnocksOutXHits(gChosenMovesByBanks[bankAtkPartner], bankAtkPartner, gBattleStruct->moveTarget[bankAtkPartner], 1))
+	&&  MoveKnocksOutXHits(gChosenMovesByBanks[bankAtkPartner], bankAtkPartner, gBattleStruct->moveTarget[bankAtkPartner], 1)
+	&&  SPLIT(move) == SPLIT_STATUS)
 	{
-		DECREASE_VIABILITY(10); //Don't attack the mon who the Partner is set to KO
+		DECREASE_VIABILITY(9); //Don't use a status move on the mon who the Partner is set to KO
 		return viability;
 	}
 	
@@ -139,20 +146,17 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		&& DamagingMoveInMoveset(bankAtk)
 		&& !TARGETING_PARTNER)
 		{
-			if (!IsDoubleBattle())
+			if (IS_SINGLE_BATTLE || CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, bankAtk, bankDef) == 1) //Single Battle or only 1 target left
 			{
 				if (MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(move, bankAtk, bankDef, TRUE)) //Check going first
 					INCREASE_VIABILITY(7);
 
-				else if (IsStrongestMove(move, bankAtk, bankDef, FALSE))
+				else if (IsStrongestMove(move, bankAtk, bankDef))
 					INCREASE_VIABILITY(2);
 			}
 			else //Double Battle
 			{
-				if (gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE) //Partner has officialy chosen a move so we need a recalc
-					UpdateBestDoublesKillingScore(bankAtk, bankDef);
-				
-				INCREASE_VIABILITY(GetDoubleKillingScore(move, bankAtk, bankDef));
+				IncreaseDoublesDamageViability(&viability, 0xFF, bankAtk, bankDef, move);
 			}
 		}
 	#endif
@@ -494,15 +498,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 					return viability;
 				}
 				break;
-			
-			case GRASSY_TERRAIN:
-				if (move == MOVE_BULLDOZE || move == MOVE_EARTHQUAKE || move == MOVE_MAGNITUDE)
-				{
-					DECREASE_VIABILITY(10);
-					return viability;
-				}
-				break;
-			
+
 			case MISTY_TERRAIN:
 				if (CheckTableForMoveEffect(move, SetStatusTable) || CheckTableForMoveEffect(move, ConfusionTable))
 				{
@@ -587,7 +583,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			{
 				//Good to use move
 			}
-			else if (IsDoubleBattle())
+			else if (IS_DOUBLE_BATTLE)
 			{
 				if (ViableMonCountFromBank(bankDef) == 2 //If the Target has both Pokemon remaining in doubles
 				&& MoveKnocksOutXHits(move, bankAtk, bankDef, 1)
@@ -700,7 +696,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 					if (atkAbility == ABILITY_PLUS || atkAbility == ABILITY_MINUS)
 						goto AI_COSMIC_POWER;
 
-					if IS_DOUBLE_BATTLE
+					if (IS_DOUBLE_BATTLE)
 					{
 						if (atkPartnerAbility == ABILITY_PLUS || atkPartnerAbility == ABILITY_MINUS)
 						{
@@ -743,7 +739,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 					break;
 				
 				case MOVE_ROTOTILLER:
-					if IS_DOUBLE_BATTLE
+					if (IS_DOUBLE_BATTLE)
 					{
 						if (!(IsOfType(bankAtk, TYPE_GRASS) 
 							  && CheckGrounding(bankAtk) 
@@ -770,7 +766,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 					if (atkAbility == ABILITY_PLUS || atkAbility == ABILITY_MINUS)
 						goto AI_WORK_UP_CHECK;
 					
-					if IS_DOUBLE_BATTLE
+					if (IS_DOUBLE_BATTLE)
 					{
 						if (atkPartnerAbility == ABILITY_PLUS || atkPartnerAbility == ABILITY_MINUS)
 						{
@@ -951,22 +947,34 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 				break; //Don't blow out the same Pokemon twice
 			}
 			
+			//Don't blow out a Pokemon that'll faint this turn or is taking
+			//bad secondary damage.
+			if (WillFaintFromSecondaryDamage(bankDef)
+			||  GetLeechSeedDamage(bankDef) > 0
+			||  GetNightmareDamage(bankDef) > 0
+			||  GetCurseDamage(bankDef) > 0
+			||  GetTrapDamage(bankDef) > 0
+			||  GetPoisonDamage(bankDef) >= gBattleMons[bankDef].maxHP / 4)
+				DECREASE_VIABILITY(10);
+			
 			switch (move) {
 				case MOVE_DRAGONTAIL:
 				case MOVE_CIRCLETHROW:
 					goto AI_STANDARD_DAMAGE;
 				
 				default:
-					if IS_DOUBLE_BATTLE
+					if (IS_DOUBLE_BATTLE)
 					{
 						if (ViableMonCountFromBankLoadPartyRange(bankDef) <= 2
-						||  defAbility == ABILITY_SUCTIONCUPS)
+						||  defAbility == ABILITY_SUCTIONCUPS
+						||  defStatus3 & STATUS3_ROOTED)
 							DECREASE_VIABILITY(10);
 					}
 					else
 					{
 						if (ViableMonCountFromBankLoadPartyRange(bankDef) <= 1
-						||  defAbility == ABILITY_SUCTIONCUPS)
+						||  defAbility == ABILITY_SUCTIONCUPS
+						||  defStatus3 & STATUS3_ROOTED)
 							DECREASE_VIABILITY(10);
 					}
 			}
@@ -1158,8 +1166,8 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			if (atkStatus2 & STATUS2_SUBSTITUTE
 			|| GetHealthPercentage(bankAtk) <= 25)
 				DECREASE_VIABILITY(10);
-			else if (ABILITY(FOE(bankAtk)) == ABILITY_INFILTRATOR 
-			|| (IS_DOUBLE_BATTLE && ABILITY(PARTNER(FOE(bankAtk))) == ABILITY_INFILTRATOR))
+			else if (ABILITY(bankDef) == ABILITY_INFILTRATOR
+			|| SoundMoveInMoveset(bankDef))
 				DECREASE_VIABILITY(8);
 			break;
 		
@@ -1364,7 +1372,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 					break;
 					
 				case MOVE_ENDURE:
-					if (gBattleMons[bankAtk].hp == 1)
+					if (gBattleMons[bankAtk].hp == 1 || IsTakingSecondaryDamage(bankAtk)) //Don't use Endure if you'll die after using it
 					{
 						DECREASE_VIABILITY(10);
 						decreased = TRUE;
@@ -1374,28 +1382,30 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			if (decreased)
 				break;
 			
-			if IS_DOUBLE_BATTLE
+			if (gBattleMons[bankDef].status2 & STATUS2_RECHARGE)
 			{
-				if (gBattleMons[FOE(bankAtk)].status2 & STATUS2_RECHARGE
-				&&  gBattleMons[PARTNER(FOE(bankAtk))].status2 & STATUS2_RECHARGE)
-				{
-					DECREASE_VIABILITY(10);
-					break;
-				}
-			}
-			else //Single Battle
-			{
-				if (gBattleMons[FOE(bankAtk)].status2 & STATUS2_RECHARGE)
-				{
-					DECREASE_VIABILITY(10);
-					break;
-				}
+				DECREASE_VIABILITY(10);
+				break;
 			}
 			
-			if (gBattleMoves[gLastResultingMoves[bankAtk]].effect == EFFECT_PROTECT)
+			if (gBattleMoves[gLastResultingMoves[bankAtk]].effect == EFFECT_PROTECT
+			&&  move != MOVE_QUICKGUARD
+			&&  move != MOVE_WIDEGUARD
+			&&  move != MOVE_CRAFTYSHIELD) //These moves have infinite usage
 			{
-				if (gDisableStructs[bankAtk].protectUses == 1 && Random() % 100 < 50)
-					DECREASE_VIABILITY(6);
+				if (WillFaintFromSecondaryDamage(bankAtk)
+				&&  defAbility != ABILITY_MOXIE
+				&&  defAbility != ABILITY_BEASTBOOST)
+				{
+					DECREASE_VIABILITY(10); //Don't protect if you're going to faint after protecting
+				}
+				else if (gDisableStructs[bankAtk].protectUses == 1 && Random() % 100 < 50)
+				{
+					if (IS_SINGLE_BATTLE)
+						DECREASE_VIABILITY(6);
+					else
+						DECREASE_VIABILITY(10); //Don't try double protecting in doubles
+				}
 				else if (gDisableStructs[bankAtk].protectUses >= 2)
 					DECREASE_VIABILITY(10);
 			}
@@ -1403,15 +1413,16 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			if (AI_THINKING_STRUCT->aiFlags == AI_SCRIPT_CHECK_BAD_MOVE //Only basic AI
 			&& IS_DOUBLE_BATTLE) //Make the regular AI know how to use Protect minimally in Doubles
 			{
-				if (ShouldProtect(bankAtk, foe1, move) == USE_PROTECT)
-					INCREASE_VIABILITY(3);
-				else if (ShouldProtect(bankAtk, foe2, move) == USE_PROTECT)
-					INCREASE_VIABILITY(3);
+				u8 shouldProtect = ShouldProtect(bankAtk, bankDef, move);
+				if (shouldProtect == USE_PROTECT || shouldProtect == PROTECT_FROM_FOES)
+					IncreaseFoeProtectionViability(&viability, 0xFF, bankAtk, bankDef); 
+				else if (shouldProtect == PROTECT_FROM_ALLIES)
+					IncreaseAllyProtectionViability(&viability, 0xFF);
 			}
 			break;
 
 		case EFFECT_SPIKES:
-			if IS_DOUBLE_BATTLE
+			if (IS_DOUBLE_BATTLE)
 			{
 				if (ViableMonCountFromBank(bankDef) <= 2)
 				{
@@ -1485,7 +1496,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			break;
 			
 		case EFFECT_PERISH_SONG:
-			if IS_DOUBLE_BATTLE
+			if (IS_DOUBLE_BATTLE)
 			{
 				if (ViableMonCountFromBank(bankAtk) <= 2
 				&&  atkAbility != ABILITY_SOUNDPROOF
@@ -1581,6 +1592,12 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 						break;
 					}
 				}
+				
+				if (gSideAffecting[SIDE(bankDef)] & SIDE_STATUS_SPIKES)
+				{
+					DECREASE_VIABILITY(10); //Don't blow away opposing spikes
+					break;
+				}
 
 				if (IS_DOUBLE_BATTLE)
 				{
@@ -1667,7 +1684,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 				{
 					if (IS_DOUBLE_BATTLE)
 					{
-						if (ViableMonCountFromBank(bankAtk) <= 2)
+						if (ViableMonCountFromBankLoadPartyRange(bankAtk) <= 2)
 							DECREASE_VIABILITY(10); //Don't lock the attacker into Fake Out if they can't switch out afterwards.
 					}
 					else //Single Battle
@@ -1735,7 +1752,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			break;
 		
 		case EFFECT_MEMENTO:
-			if (ViableMonCountFromBank(bankAtk) <= 1
+			if (ViableMonCountFromBankLoadPartyRange(bankAtk) <= 1
 			|| PARTNER_MOVE_EFFECT_IS_SAME)
 			{
 				DECREASE_VIABILITY(10);
@@ -2122,7 +2139,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 					break;
 					
 				case MOVE_SPEEDSWAP:
-					if (gNewBS->TrickRoomTimer)
+					if (IsTrickRoomActive())
 					{
 						if (gBattleMons[bankAtk].speed <= gBattleMons[bankDef].speed)
 							DECREASE_VIABILITY(10);
@@ -2239,7 +2256,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 					if (PARTNER_MOVE_IS_SAME_NO_TARGET)
 						DECREASE_VIABILITY(10);
 						
-					if (gNewBS->TrickRoomTimer > 0) //Trick Room Up
+					if (IsTrickRoomActive()) //Trick Room Up
 					{
 						if (GetPokemonOnSideSpeedAverage(bankAtk) < GetPokemonOnSideSpeedAverage(bankDef)) //Attacker side slower than target side
 							DECREASE_VIABILITY(10); //Keep the Trick Room up
@@ -2486,7 +2503,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 					||  gBattleMons[bankDef].status2 & STATUS2_MULTIPLETURNS
 					||  PARTNER_MOVE_IS_SAME)
 						DECREASE_VIABILITY(10);
-					else if IS_DOUBLE_BATTLE
+					else if (IS_DOUBLE_BATTLE)
 					{
 						if (!TARGETING_PARTNER)
 							DECREASE_VIABILITY(10);
@@ -2597,7 +2614,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			if (moveSplit != SPLIT_STATUS && !TARGETING_PARTNER)
 			{
 				if (AI_SpecialTypeCalc(move, bankAtk, bankDef) & (MOVE_RESULT_NO_EFFECT | MOVE_RESULT_MISSED))
-					DECREASE_VIABILITY(10);
+					DECREASE_VIABILITY(15);
 			}
 			break;
 	} //Move effects switch

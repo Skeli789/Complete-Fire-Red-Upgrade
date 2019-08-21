@@ -150,7 +150,7 @@ void atk03_ppreduce(void) {
 				break;
 
 			default:
-				if (gBankAttacker != gBankTarget && gBattleMons[gBankTarget].ability == ABILITY_PRESSURE)
+				if (gBankAttacker != gBankTarget && ABILITY(gBankTarget) == ABILITY_PRESSURE)
 					ppToDeduct++;
 				break;
 		}
@@ -812,9 +812,8 @@ void atk1B_cleareffectsonfaint(void) {
 				&& (partnerAbility == ABILITY_RECEIVER || partnerAbility == ABILITY_POWEROFALCHEMY)
 				&& !CheckTableForAbility(CopyAbility(gActiveBattler), ReceiverBanTable))
 				{
-					//Put Ability Activation Here Eventually
 					gLastUsedAbility = partnerAbility;
-					gBattleMons[partner].ability = CopyAbility(gActiveBattler);
+					*GetAbilityLocation(partner) = CopyAbility(gActiveBattler);
 					gEffectBank = gActiveBattler;
 					gBattleScripting->bank = partner;
 					gNewBS->ReceiverActivated = TRUE;
@@ -1883,12 +1882,12 @@ void atk93_tryKO(void) {
 
 		if (chance) {
 			if (defEffect == ITEM_EFFECT_FOCUS_BAND && !mystery && umodsi(Random(), 100) < defQuality) {
-				RecordItemBattle(bankDef, defEffect);
+				RecordItemEffectBattle(bankDef, defEffect);
 				gSpecialStatuses[bankDef].focusBanded = 1;
 			}
 			//Focus Sash
 			else if (defEffect == ITEM_EFFECT_FOCUS_BAND && mystery && (gBattleMons[bankDef].hp == gBattleMons[bankDef].maxHP)) {
-				RecordItemBattle(bankDef, defEffect);
+				RecordItemEffectBattle(bankDef, defEffect);
 				gSpecialStatuses[bankDef].focusBanded = 1;
 				gNewBS->EnduranceHelper = ENDURE_FOCUS_SASH;
 			}
@@ -1973,7 +1972,7 @@ static bool8 TakesGeneralWeatherDamage(u8 bank)
 		&& 	ability != ABILITY_MAGICGUARD
 		&&	ability != ABILITY_OVERCOAT
 		&&	effect  != ITEM_EFFECT_SAFETY_GOGGLES
-		&& !(gStatuses3[bank] & (STATUS3_UNDERGROUND | STATUS3_UNDERWATER | STATUS3_DISAPPEARED));
+		&& !(gStatuses3[bank] & (STATUS3_UNDERGROUND | STATUS3_UNDERWATER)); //For some strange reason, Pokemon using Shadow/Phantom Force still take weather damage
 }
 
 bool8 SandstormHurts(u8 bank)
@@ -3314,7 +3313,7 @@ void atkD2_tryswapitems(void) { //Trick
 		// check if ability prevents swapping
 		else if (ABILITY(gBankTarget) == ABILITY_STICKYHOLD)  {
 			gBattlescriptCurrInstr = BattleScript_StickyHoldActivates;
-			gLastUsedAbility = gBattleMons[gBankTarget].ability;
+			gLastUsedAbility = ABILITY(gBankTarget);
 			RecordAbilityBattle(gBankTarget, gLastUsedAbility);
 		}
 

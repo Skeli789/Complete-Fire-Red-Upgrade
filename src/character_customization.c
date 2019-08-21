@@ -7,6 +7,7 @@
 #include "../include/constants/event_objects.h"
 
 #include "../include/new/character_customization.h"
+#include "../include/new/multi.h"
 #include "../include/new/Helper_Functions.h"
 
 #ifdef UNBOUND
@@ -228,10 +229,14 @@ u16 GetBackspriteId(void)
         else
             trainerPicId = gLinkPlayers[GetMultiplayerId()].gender + BACK_PIC_BRENDAN;
     }
-	
 	else if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER && gActiveBattler == 2)
-		trainerPicId = VarGet(PARTNER_BACKSPRITE_VAR);
-		
+	{
+		trainerPicId = LoadPartnerBackspriteIndex();
+	}
+	else if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_SANDS)
+	{
+		trainerPicId = LoadPartnerBackspriteIndex(); //The trainer's backsprite for the Battle Sands is stored in the multi partner var
+	}
     else 
 	{
 		if (VarGet(BACKSPRITE_SWITCH_VAR))

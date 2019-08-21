@@ -700,4 +700,55 @@ FrontierCheckBattleOverHook:
 Atk24Return:
 	ldr r0, =0x802258A | 1
 	bx r0
+
+.pool
+@0x8126E6C with r0
+DracoMeteorMoveTutorHook:
+	mov r0, r5
+	bl TryHandleExcuseForDracoMeteorTutor
+	cmp r0, #0x0
+	beq LoadCantLearnMoveString
 	
+DracoMeteorSkipPrintString:
+	mov r0, r6
+	bl CancelPartyMenuLearnTutor
+	ldr r0, =0x8126E98 | 1 @Print messages in overworld instead
+	bx r0
+
+LoadCantLearnMoveString:
+	ldr r1, =0x8416DC2
+	b PrintCantLearnMoveExcuseString
+
+@0x8126E74 with r0
+DracoMeteorMoveTutorHook2:
+	mov r0, r5
+	bl TryHandleExcuseForDracoMeteorTutorAlreadyKnow
+	cmp r0, #0x0
+	beq LoadAlreadyKnowsMoveString
+	b DracoMeteorSkipPrintString
+	
+LoadAlreadyKnowsMoveString:
+	ldr r1, =0x8416F10
+
+PrintCantLearnMoveExcuseString:
+	mov r0, r6
+	ldr r2, =0x8125B14 | 1
+	bl bxr2
+	ldr r1, =0x8126E98 | 1
+	bx r1
+
+@0x8071F8E with r1
+ModifyMegaCryHook:
+	lsl r2, #0x18
+	lsr r2, #0x18
+	lsl r3, #0x18
+	lsr r3, #0x18
+	str r3, [sp]
+	push {r0,r2}
+	lsr r0, #0x10 @species
+	mov r1, r4 @mode
+	bl ModifyMegaCries
+	mov r4, r0
+	pop {r0,r2}
+	ldr r3, =0x8071F98 | 1
+	bx r3

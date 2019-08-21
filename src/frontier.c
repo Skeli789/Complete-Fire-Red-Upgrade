@@ -6,11 +6,47 @@
 
 #include "../include/new/Helper_Functions.h"
 #include "../include/new/frontier.h"
+#include "../include/new/mega.h"
+#include "../include/new/pokemon_storage_system.h"
 
 extern u8* gMaleFrontierNamesTable[];
 extern u8* gFemaleFrontierNamesTable[];
 
+const u8 gBattleTowerTiers[] =
+{
+	BATTLE_TOWER_STANDARD,
+	BATTLE_TOWER_NO_RESTRICTIONS,
+	BATTLE_TOWER_OU,
+	BATTLE_TOWER_UBER,
+	BATTLE_TOWER_LITTLE_CUP,
+	BATTLE_TOWER_MIDDLE_CUP,
+	BATTLE_TOWER_MONOTYPE,
+};
+
+const u8 gNumBattleTowerTiers = ARRAY_COUNT(gBattleTowerTiers);
+
+const u8 gBattleMineTiers[] =
+{
+	BATTLE_TOWER_OU,
+	BATTLE_TOWER_CAMOMONS,
+};
+
+const u8 gNumBattleMineTiers = ARRAY_COUNT(gBattleMineTiers);
+
+const u8 gBattleCircusTiers[] =
+{
+	BATTLE_TOWER_STANDARD,
+	BATTLE_TOWER_NO_RESTRICTIONS,
+	BATTLE_TOWER_LITTLE_CUP,
+	BATTLE_TOWER_MIDDLE_CUP,
+	BATTLE_TOWER_SCALEMONS,
+	BATTLE_TOWER_MONOTYPE,
+};
+
+const u8 gNumBattleCircusTiers = ARRAY_COUNT(gBattleCircusTiers);
+
 //This file's functions:
+static u8 AdjustLevelForTier(u8 level, u8 tier);
 static void LoadProperStreakData(u8* currentOrMax, u8* battleStyle, u8* tier, u8* partySize, u8* level);
 
 u8 GetFrontierTrainerClassId(u16 trainerId, u8 battlerNum) 
@@ -22,6 +58,8 @@ u8 GetFrontierTrainerClassId(u16 trainerId, u8 battlerNum)
 			return gSpecialTowerTrainers[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].trainerClass;
 		case FRONTIER_BRAIN_TID:
 			return gFrontierBrains[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].trainerClass;
+		case BATTLE_TOWER_MULTI_TRAINER_TID:
+			return gFrontierMultiBattleTrainers[VarGet(TOWER_TRAINER_ID_PARTNER_VAR)].trainerClass;
 		default:
 			return gTrainers[trainerId].trainerClass;
 	}	
@@ -43,21 +81,28 @@ const u8* GetFrontierTrainerName(u16 trainerId, u8 battlerNum)
 	const u8* name;
 	
 	switch (trainerId) {
-		case BATTLE_TOWER_TID:
+		case BATTLE_TOWER_TID: ;
+			u16 nameId = (battlerNum == 0) ? VarGet(BATTLE_TOWER_TRAINER1_NAME) : VarGet(BATTLE_TOWER_TRAINER2_NAME);
+
 			if (gTowerTrainers[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].gender == BATTLE_TOWER_MALE)
 			{
-				if (VarGet(BATTLE_TOWER_TRAINER_NAME) == 0xFFFF)
-					VarSet(BATTLE_TOWER_TRAINER_NAME, umodsi(MathMin(Random(), NUM_MALE_NAMES), 0xFFFE));
+				if (nameId == 0xFFFF)
+					nameId = Random() % NUM_MALE_NAMES;
 				
-				name = gMaleFrontierNamesTable[VarGet(BATTLE_TOWER_TRAINER_NAME)];
+				name = gMaleFrontierNamesTable[nameId];
 			}
 			else
 			{
-				if (VarGet(BATTLE_TOWER_TRAINER_NAME) == 0xFFFF)
-					VarSet(BATTLE_TOWER_TRAINER_NAME, umodsi(MathMin(Random(), NUM_FEMALE_NAMES), 0xFFFE));
-				
-				name = gFemaleFrontierNamesTable[VarGet(BATTLE_TOWER_TRAINER_NAME)];
+				if (nameId == 0xFFFF)
+					nameId = Random() % NUM_FEMALE_NAMES;
+
+				name = gFemaleFrontierNamesTable[nameId];
 			}
+			
+			if (battlerNum == 0)
+				VarSet(BATTLE_TOWER_TRAINER1_NAME, nameId);
+			else
+				VarSet(BATTLE_TOWER_TRAINER2_NAME, nameId);
 			break;
 		case BATTLE_TOWER_SPECIAL_TID:
 			name = gSpecialTowerTrainers[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].name;
@@ -65,11 +110,18 @@ const u8* GetFrontierTrainerName(u16 trainerId, u8 battlerNum)
 		case FRONTIER_BRAIN_TID:
 			name = gFrontierBrains[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].name;
 			break;
+		case BATTLE_TOWER_MULTI_TRAINER_TID: ;
+			u16 partnerId = VarGet(TOWER_TRAINER_ID_PARTNER_VAR);
+			name = TryGetRivalNameByTrainerClass(gFrontierMultiBattleTrainers[partnerId].trainerClass);
+			
+			if (name == NULL) //Rival name isn't tied to a trainer class
+				name = gFrontierMultiBattleTrainers[partnerId].name;
+			break;
 		default:
 			name = gTrainers[trainerId].trainerName;
 	}
 
-	return name;
+	return ReturnEmptyStringIfNull(name);
 }
 
 void CopyFrontierTrainerText(u8 whichText, u16 trainerId, u8 battlerNum)
@@ -207,6 +259,52 @@ bool8 RayquazaCanMegaEvolveInFrontierBattle()
 	    || VarGet(BATTLE_TOWER_TIER) == BATTLE_TOWER_NO_RESTRICTIONS;
 }
 
+u8 GetBattleTowerLevel(u8 tier)
+{
+	return AdjustLevelForTier(VarGet(BATTLE_TOWER_POKE_LEVEL), tier);
+}
+
+void UpdateTypesForCamomons(u8 bank)
+{
+	gBattleMons[bank].type1 = gBattleMoves[gBattleMons[bank].moves[0]].type;
+
+	if (gBattleMons[bank].moves[1] != MOVE_NONE)
+		gBattleMons[bank].type2 = gBattleMoves[gBattleMons[bank].moves[1]].type;
+	else
+		gBattleMons[bank].type2 = gBattleMons[bank].type1;
+}
+
+u8 GetCamomonsTypeByMon(struct Pokemon* mon, u8 whichType)
+{
+	if (whichType == 0)
+	{
+		return gBattleMoves[GetMonData(mon, MON_DATA_MOVE1, NULL)].type;
+	}
+	else
+	{
+		u16 move2 = GetMonData(mon, MON_DATA_MOVE2, NULL);
+		if (move2 != MOVE_NONE)
+			return gBattleMoves[move2].type;
+		
+		return gBattleMoves[GetMonData(mon, MON_DATA_MOVE1, NULL)].type;
+	}
+}
+
+u8 GetCamomonsTypeBySpread(const struct BattleTowerSpread* spread, u8 whichType)
+{
+	if (whichType == 0)
+	{
+		return gBattleMoves[spread->moves[0]].type;
+	}
+	else
+	{
+		if (spread->moves[1] != MOVE_NONE)
+			return gBattleMoves[spread->moves[1]].type;
+		
+		return gBattleMoves[spread->moves[0]].type;
+	}
+}
+
 bool8 TryUpdateOutcomeForFrontierBattle(void)
 {
 	u32 i;
@@ -267,10 +365,20 @@ u16 sp052_GenerateTowerTrainer(void)
 		VarSet(TOWER_TRAINER_ID_VAR + battler, id);
 		
 		if (gTowerTrainers[id].gender == BATTLE_TOWER_MALE)
-			VarSet(BATTLE_TOWER_TRAINER_NAME, Random() % NUM_MALE_NAMES);
+		{
+			if (battler == 0)
+				VarSet(BATTLE_TOWER_TRAINER1_NAME, Random() % NUM_MALE_NAMES);
+			else
+				VarSet(BATTLE_TOWER_TRAINER2_NAME, Random() % NUM_MALE_NAMES);
+		}
 		else
-			VarSet(BATTLE_TOWER_TRAINER_NAME, Random() % NUM_FEMALE_NAMES);
-		
+		{
+			if (battler == 0)
+				VarSet(BATTLE_TOWER_TRAINER1_NAME, Random() % NUM_FEMALE_NAMES);
+			else
+				VarSet(BATTLE_TOWER_TRAINER2_NAME, Random() % NUM_FEMALE_NAMES);
+		}
+
 		return gTowerTrainers[id].owNum;
 	}
 	else
@@ -346,6 +454,9 @@ u16 sp054_GetBattleTowerStreak(void)
 
 u16 GetCurrentBattleTowerStreak(void)
 {
+	if (BATTLE_FACILITY_NUM == IN_BATTLE_SANDS)
+		return VarGet(BATTLE_SANDS_CURRENT_STREAK_VAR);
+
 	return GetBattleTowerStreak(CURR_STREAK, 0xFFFF, 0xFFFF, 0xFFFF, 0);
 }
 
@@ -478,10 +589,58 @@ static void LoadProperStreakData(u8* currentOrMax, u8* battleStyle, u8* tier, u8
 		*tier = BATTLE_TOWER_LITTLE_CUP; //Hijack Little Cup level 100 slot
 		*level = 100;
 	}
+	
+	if (IsFrontierMulti(*battleStyle))
+		*partySize *= 2; //Each player gets half the team
 
 	*currentOrMax = MathMin(*currentOrMax, 1);
 	*battleStyle = MathMin(*battleStyle, NUM_TOWER_BATTLE_TYPES);
 	*tier = MathMin(*tier, NUM_FORMATS);
 	*partySize = (*partySize < 6) ? 0 : 1;
 	*level = (*level < 100) ? 0 : 1;
+}
+
+//@Details: To be used after sp06B. Merges the player's choice of partner Pokemon onto their team.
+void sp06C_SpliceFrontierTeamWithPlayerTeam(void)
+{
+	struct Pokemon partnerPokes[3];
+	Memset(partnerPokes, 0, sizeof(struct Pokemon) * 3);
+
+	for (int i = 0; i < 3; ++i)
+	{
+		if (gSelectedOrderFromParty[i] != 0)
+			partnerPokes[i] = gPlayerParty[i]; //Player's party has already been remodeled by the special so call indices directly
+	}
+
+	RestorePartyFromTempTeam(0, 0, 3);
+	Memcpy(&gPlayerParty[3], partnerPokes, sizeof(struct Pokemon) * 3); //Fill second half of team with multi mons
+	
+	//Recalculate party count the special way because there may be a gap in the party
+	gPlayerPartyCount = 0;
+	for (int i = 0; i < PARTY_SIZE; ++i)
+	{
+		if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES, NULL) != SPECIES_NONE)
+			++gPlayerPartyCount;
+	}
+}
+
+//@Details: Loads any relevant multi trainer data by the given Id value.
+//@Inputs:
+//		Var8000: 0xFF - Random Id.
+//				 0-0xFE - Given Id.
+//@Returns: The OW id of the trainer.
+u16 sp06D_LoadFrontierMultiTrainerById(void)
+{
+	u16 id = Var8000;
+	
+	if (id == 0xFF)
+		id = Random() % gNumFrontierMultiTrainers;
+	else if (id > 0xFF) //Invalid value
+		id = 0;
+
+	VarSet(TOWER_TRAINER_ID_PARTNER_VAR, id);
+	VarSet(PARTNER_VAR, BATTLE_TOWER_MULTI_TRAINER_TID);
+	VarSet(PARTNER_BACKSPRITE_VAR, gFrontierMultiBattleTrainers[id].backSpriteId);
+
+	return gFrontierMultiBattleTrainers[id].owNum;
 }

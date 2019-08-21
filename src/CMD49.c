@@ -9,6 +9,7 @@
 #include "../include/new/cmd49_battle_scripts.h"
 #include "../include/new/form_change.h"
 #include "../include/new/Helper_Functions.h"
+#include "../include/new/item_battle_scripts.h"
 #include "../include/new/move_battle_scripts.h"
 #include "../include/new/move_tables.h"
 #include "../include/new/set_effect.h"
@@ -64,6 +65,7 @@ enum
 	ATK49_MOVE_RECOIL,
 	ATK49_EJECT_BUTTON,
 	ATK49_RED_CARD,
+	ATK49_EJECT_PACK,
 	ATK49_SWITCH_OUT_ABILITIES,
 	ATK49_SHELL_BELL_LIFE_ORB_RECOIL,
 	ATK49_RESTORE_ABILITIES,
@@ -231,7 +233,6 @@ void atk49_moveend(void) //All the effects that happen after a move is used
             && SPLIT(gCurrentMove) != SPLIT_STATUS 
 			&& STAT_CAN_RISE(gBankTarget, STAT_ATK))
             {
-                gBattleMons[gBankTarget].statStages[STAT_ATK - 1]++;
                 BattleScriptPushCursor();
                 gBattlescriptCurrInstr = BattleScript_RageIsBuilding;
                 effect = TRUE;
@@ -1079,6 +1080,27 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			*SeedHelper = 0; //For Later
 			gBattleScripting->atk49_state++;
 			break;
+			
+		case ATK49_EJECT_PACK:
+			gBankAttacker = gNewBS->originalAttackerBackup;
+			for (i = 0; i < gBattlersCount; ++i)
+			{
+				if (BATTLER_ALIVE(i)
+				&&  ITEM_EFFECT(i) == ITEM_EFFECT_EJECT_PACK
+				&&  gNewBS->statFellThisTurn[i])
+				{
+					gNewBS->statFellThisTurn[i] = FALSE;
+					gNewBS->NoSymbiosisByte = TRUE;
+					gActiveBattler = gBattleScripting->bank = i;
+					gLastUsedItem = ITEM(i);
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_EjectPackCMD49;
+					effect = 1;
+					return;
+				}
+			}
+			gBattleScripting->atk49_state++;
+			break;
 
 		case ATK49_SWITCH_OUT_ABILITIES:
 			gBankAttacker = gNewBS->originalAttackerBackup;
@@ -1198,6 +1220,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			{
 				gNewBS->DamageTaken[i] = 0;
 				gNewBS->ResultFlags[i] = 0;
+				gNewBS->statFellThisTurn[i] = 0;
 			}
 			
 			gNewBS->totalDamageGiven = 0;

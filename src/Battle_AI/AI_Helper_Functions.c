@@ -305,22 +305,18 @@ bool8 CanKnockOutFromParty(struct Pokemon* monAtk, u8 bankDef)
 4: Hit 1 Foe										Hit 2 Foes, Hurt Partner						
 */
 
-#define DOUBLES_INCREASE_HIT_FOE 4
-#define DOUBLES_INCREASE_KO_FOE 2
-#define DOUBLES_INCREASE_STRONGEST_MOVE 1
-
-#define DOUBLES_DECREASE_HIT_PARTNER 3
-#define DOUBLES_DECREASE_DESTINY_BOND 2
-
-u8 GetBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner, u8 bankDefPartner, u16* bestMove)
+void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner, u8 bankDefPartner, s8 bestMoveScores[MAX_BATTLERS_COUNT], u16* bestMove)
 {
 	int i, j;
 	u8 currTarget;
 	u16 move;
-	s8 moveScores[MAX_MON_MOVES] = {0};
+	s8 moveScores[MAX_MON_MOVES][MAX_BATTLERS_COUNT] = {0};
+
 	u16 partnerMove = gChosenMovesByBanks[bankAtkPartner];
 	u16 partnerTarget = gBattleStruct->moveTarget[bankAtkPartner];
-	
+	bool8 partnerIncapacitated = IsBankIncapacitated(bankAtkPartner);
+	bool8 partnerKnocksOut = MoveKnocksOutXHits(partnerMove, bankAtkPartner, partnerTarget, 1);
+
 	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, 0xFF);
 	for (i = 0; i < MAX_MON_MOVES; ++i)
 	{
@@ -339,25 +335,25 @@ u8 GetBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner, u8 b
 		
 			for (j = 0, currTarget = foes[j]; j < gBattlersCount / 2; ++j)
 			{
-				if (BATTLER_ALIVE(currTarget)
+				if (BATTLER_ALIVE(currTarget) && (j == 0 || gBattleMoves[move].target & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL)) //Only can hit second foe with spread move
 				&& (partnerMove == MOVE_NONE
 				 || partnerTarget != currTarget
-				 || IsBankIncapacitated(bankAtkPartner)
-				 || !MoveKnocksOutXHits(partnerMove, bankAtkPartner, partnerTarget, 1))) //Don't count the target if the partner is already taking care of it
+				 || partnerIncapacitated
+				 || !partnerKnocksOut)) //Don't count the target if the partner is already taking care of it
 				{
 					if (!(AI_SpecialTypeCalc(move, bankAtk, currTarget) & MOVE_RESULT_NO_EFFECT))
 					{
-						moveScores[i] += DOUBLES_INCREASE_HIT_FOE; //Hit one enemy
+						moveScores[i][currTarget] += DOUBLES_INCREASE_HIT_FOE; //Hit one enemy
 				
 						if (MoveKnocksOutXHits(move, bankAtk, currTarget, 1))
 						{
-							moveScores[i] += DOUBLES_INCREASE_KO_FOE; //KO enemy
+							moveScores[i][currTarget] += DOUBLES_INCREASE_KO_FOE; //KO enemy
 
 							if (gBattleMons[currTarget].status2 & STATUS2_DESTINY_BOND)
-								moveScores[i] -= DOUBLES_DECREASE_DESTINY_BOND;
+								moveScores[i][currTarget] -= DOUBLES_DECREASE_DESTINY_BOND;
 						}
-						else if (IsStrongestMove(move, bankAtk, currTarget, FALSE))
-							moveScores[i] += DOUBLES_INCREASE_STRONGEST_MOVE;
+						else if (IsStrongestMove(move, bankAtk, currTarget))
+							moveScores[i][currTarget] += DOUBLES_INCREASE_STRONGEST_MOVE;
 						else
 						{
 							switch (gBattleMoves[move].effect) {
@@ -376,10 +372,10 @@ u8 GetBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner, u8 b
 								case EFFECT_SPEED_UP_1_HIT:
 								case EFFECT_ATTACK_UP_HIT:
 									break; //These move effects are good even if they do minimal damage
-								
+
 								default:
 									if (CalcFinalAIMoveDamage(move, bankAtk, currTarget, 1) < gBattleMons[currTarget].maxHP / 4)
-										moveScores[i] -= (DOUBLES_INCREASE_HIT_FOE - 1); //Count it as if you basically don't do damage to the enemy
+										moveScores[i][currTarget] -= (DOUBLES_INCREASE_HIT_FOE - 1); //Count it as if you basically don't do damage to the enemy
 							}
 						}
 					}
@@ -410,16 +406,16 @@ u8 GetBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner, u8 b
 						{
 						}
 						else
-							moveScores[i] -= DOUBLES_DECREASE_HIT_PARTNER; //Hitting partner is bad
+							moveScores[i][bankAtkPartner] -= DOUBLES_DECREASE_HIT_PARTNER; //Hitting partner is bad
 					}
 					else if (!HasProtectionMoveInMoveset(bankAtkPartner, CHECK_WIDE_GUARD | CHECK_MAT_BLOCK) //Ally can't protect against attack
 					|| (gBattleMoves[gLastResultingMoves[bankAtkPartner]].effect == EFFECT_PROTECT && gDisableStructs[bankAtkPartner].protectUses >= 1)) //Don't rely on double protect
 					{
-						moveScores[i] -= DOUBLES_DECREASE_HIT_PARTNER; //Hitting partner is bad
+						moveScores[i][bankAtkPartner] -= DOUBLES_DECREASE_HIT_PARTNER; //Hitting partner is bad
 					}
 				}
 				else
-					moveScores[i] -= DOUBLES_DECREASE_HIT_PARTNER; //Hitting partner is bad
+					moveScores[i][bankAtkPartner] -= DOUBLES_DECREASE_HIT_PARTNER; //Hitting partner is bad
 			}
 		}
 	}
@@ -427,49 +423,79 @@ u8 GetBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner, u8 b
 	u8 bestIndex = 0;
 	for (int i = 1; i < MAX_MON_MOVES; ++i)
 	{
-		if (moveScores[i] > moveScores[bestIndex])
+		u8 currScore = moveScores[i][bankDef]
+					 + moveScores[i][bankDefPartner]
+					 + moveScores[i][bankAtkPartner];
+
+		u8 bestScore = moveScores[bestIndex][bankDef]
+					 + moveScores[bestIndex][bankDefPartner]
+					 + moveScores[bestIndex][bankAtkPartner];
+	
+		if (currScore > bestScore)
 			bestIndex = i;
-		else if (moveScores[i] == moveScores[bestIndex])
+		else if (currScore == bestScore)
 		{
 			u8 currentBestRange = gBattleMoves[gBattleMons[bankAtk].moves[bestIndex]].target;
 			u8 checkBestRange = gBattleMoves[gBattleMons[bankAtk].moves[i]].target;
-		
+
 			if (currentBestRange & MOVE_TARGET_ALL
 			&& !(checkBestRange & MOVE_TARGET_ALL)
 			&& checkBestRange & MOVE_TARGET_BOTH
 			&& RangeMoveCanHurtPartner(gBattleMons[bankAtk].moves[bestIndex], bankAtk, bankAtkPartner))
 				bestIndex = i; //If an all-hitting move and a both foes move have the same score, use the one that only hits both foes
-		
 		}
 	}
 
+	bestMoveScores[bankDef] = moveScores[bestIndex][bankDef];
+	bestMoveScores[bankDefPartner] = moveScores[bestIndex][bankDefPartner];
+	bestMoveScores[bankAtkPartner] = moveScores[bestIndex][bankAtkPartner];
 	*bestMove = gBattleMons[bankAtk].moves[bestIndex];
-
-	if (moveScores[bestIndex] >= 12)
-		return 9;
-	else if (moveScores[bestIndex] >= 9)
-		return 3;
-	else if (moveScores[bestIndex] >= 6)
-		return 2;
-	else if (moveScores[bestIndex] >= 5)
-		return 1;
-
-	return 0;
 }
 
 u8 GetDoubleKillingScore(u16 move, u8 bankAtk, u8 bankDef)
 {
 	if (gBattleMoves[move].target & MOVE_TARGET_ALL
-	&&  gChosenMovesByBanks[PARTNER(bankAtk)] != MOVE_NONE)
+	&&  gBattleMoves[gChosenMovesByBanks[PARTNER(bankAtk)]].effect == EFFECT_PROTECT
+	&& !gNewBS->recalculatedBestDoublesKillingScores[bankAtk])
 	{
-		//Recalculate as partner has chosen a move
-		gNewBS->bestDoublesKillingScores[bankAtk][bankDef] = GetBestDoubleKillingMoveScore(bankAtk, bankDef, PARTNER(bankAtk), PARTNER(bankDef), &gNewBS->bestDoublesKillingMoves[bankAtk][bankDef]);
+		//Recalculate as partner has chosen to protect from spread move
+		gNewBS->recalculatedBestDoublesKillingScores[bankAtk] = TRUE;
+		UpdateBestDoubleKillingMoveScore(bankAtk, bankDef, PARTNER(bankAtk), PARTNER(bankDef), gNewBS->bestDoublesKillingScores[bankAtk][bankDef], &gNewBS->bestDoublesKillingMoves[bankAtk][bankDef]);
 	}
-	
+
 	if (move == gNewBS->bestDoublesKillingMoves[bankAtk][bankDef])
-		return gNewBS->bestDoublesKillingScores[bankAtk][bankDef];
-	
+	{
+		return gNewBS->bestDoublesKillingScores[bankAtk][bankDef][bankDef]
+		     + gNewBS->bestDoublesKillingScores[bankAtk][bankDef][PARTNER(bankDef)]
+			 + gNewBS->bestDoublesKillingScores[bankAtk][bankDef][PARTNER(bankAtk)];
+	}
+
 	return 0;
+}
+
+static void RemoveDoublesKillingScore(u8 bankAtk, u8 bankDef)
+{
+	//Reset the points received by attacking bankDef for both foes
+	UpdateBestDoubleKillingMoveScore(bankAtk, bankDef, PARTNER(bankAtk), PARTNER(bankDef), gNewBS->bestDoublesKillingScores[bankAtk][bankDef], &gNewBS->bestDoublesKillingMoves[bankAtk][bankDef]);
+}
+
+void TryRemoveDoublesKillingScore(u8 bankAtk, u8 bankDef, u16 chosenMove)
+{
+	u8 partner = PARTNER(bankAtk);
+
+	if (IS_DOUBLE_BATTLE && BATTLER_ALIVE(partner))
+	{
+		u16 partnerKillingMove = gNewBS->bestDoublesKillingMoves[partner][bankDef];
+
+		if (!(bankAtk & BIT_FLANK) //Don't bother with reseting scores if no Pokemon are going to choose moves after this
+		&& !IsBankIncapacitated(bankAtk) //Not actually going to hit a target this turn
+		&& SIDE(bankAtk) != SIDE(bankDef) //No scores are calculated for hitting partners
+		&& (CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, bankAtk, bankDef) >= 2 //Two targets that can be hit on enemy side
+		 || MoveWouldHitFirst(chosenMove, bankAtk, bankDef) //This mon is going to hit the enemy before it can attack
+		 || !MoveWouldHitFirst(partnerKillingMove, partner, bankDef)) //The partner won't hit the enemy before it can attack
+		&& MoveKnocksOutXHits(chosenMove, bankAtk, bankDef, 1))
+			RemoveDoublesKillingScore(partner, bankDef); //This mon's got it covered
+	}
 }
 
 bool8 RangeMoveCanHurtPartner(u16 move, u8 bankAtk, u8 bankAtkPartner)
@@ -661,11 +687,8 @@ move_t GetStrongestMove(const u8 bankAtk, const u8 bankDef, const bool8 onlySpre
 	return strongestMove;
 }
 
-bool8 IsStrongestMove(const u16 currentMove, const u8 bankAtk, const u8 bankDef, const bool8 onlySpreadMoves)
+bool8 IsStrongestMove(const u16 currentMove, const u8 bankAtk, const u8 bankDef)
 {
-	if (onlySpreadMoves)
-		return gNewBS->strongestSpreadMove[bankAtk][bankDef] == currentMove;
-		
 	return gNewBS->strongestMove[bankAtk][bankDef] == currentMove;
 }
 
@@ -730,7 +753,7 @@ bool8 MoveWouldHitBeforeOtherMove(u16 moveAtk, u8 bankAtk, u16 moveDef, u8 bankD
 //SpeedCalc
 	bankAtkSpeed = SpeedCalc(bankAtk);
 	bankDefSpeed = SpeedCalc(bankDef);
-	if (gNewBS->TrickRoomTimer)
+	if (IsTrickRoomActive())
 	{
 		temp = bankDefSpeed;
 		bankDefSpeed = bankAtkSpeed;
@@ -790,14 +813,16 @@ bool8 WillFaintFromWeatherSoon(u8 bank)
 bool8 WillTakeSignificantDamageFromEntryHazards(u8 bank, u8 healthFraction)
 {
 	u32 dmg = 0;
-
+	
 	if (gSideAffecting[SIDE(bank)] & SIDE_STATUS_SPIKES)
 	{
+		struct Pokemon* mon = GetBankPartyData(bank);
+	
 		if (gSideTimers[SIDE(bank)].srAmount > 0)
-			dmg += CalcStealthRockDamage(bank);
+			dmg += CalcStealthRockDamagePartyMon(mon);
 
 		if (gSideTimers[SIDE(bank)].spikesAmount > 0)
-			dmg += CalcSpikesDamage(bank);
+			dmg += CalcSpikesDamagePartyMon(mon, SIDE(bank));
 
 		if (dmg >= gBattleMons[bank].maxHP / healthFraction) //More or equal than a quarter of max health
 			return TRUE;
@@ -1323,6 +1348,28 @@ bool8 DamagingAllHitMoveTypeInMoveset(u8 bank, u8 moveType)
 	return FALSE;
 }
 
+bool8 DamagingSpreadMoveInMoveset(u8 bank)
+{
+	u16 move;
+	u8 moveLimitations = CheckMoveLimitations(bank, 0, 0xFF);
+
+	for (int i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		move = GetBattleMonMove(bank, i);
+		if (move == MOVE_NONE)
+			break;
+
+		if (!(gBitTable[i] & moveLimitations))
+		{
+			if (SPLIT(move) != SPLIT_STATUS
+			&&  gBattleMoves[move].target & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL))
+				return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
 // AI Function to check if bank has a snatchable move in moveset
 bool8 HasSnatchableMove(u8 bank)
 {
@@ -1589,6 +1636,11 @@ bool8 OnlyBadMovesLeftInMoveset(u8 bankAtk, u8 bankDef)
 	{
 		if (numDamageMoves == 0)
 		{
+			if (IS_BEHIND_SUBSTITUTE(bankAtk)
+			&& !DamagingMoveThaCanBreakThroughSubstituteInMoveset(bankDef, bankAtk)
+			&& IsTakingSecondaryDamage(bankDef))
+				return FALSE; //Don't switch out on a foe who's taking damage even if you literally have no good moves
+
 			return TRUE; //Legit no moves left
 		}
 		else if (IS_BEHIND_SUBSTITUTE(bankAtk)
@@ -1675,7 +1727,7 @@ bool8 TeamFullyHealedMinusBank(u8 bank)
 {
 	u8 firstId, lastId;
 
-	pokemon_t* party = LoadPartyRange(bank, &firstId, &lastId);
+	struct Pokemon* party = LoadPartyRange(bank, &firstId, &lastId);
 
 	for (int i = firstId; i < lastId; ++i)
 	{
@@ -1731,6 +1783,9 @@ u16 ShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move)
 	{
 		if (zMove != 0xFFFF) //Damaging Z-Move
 		{
+			if (IS_DOUBLE_BATTLE && bankDef == PARTNER(bankAtk))
+				return FALSE; //No need to waste a Z-Move on your partner
+		
 			if (move == MOVE_FAKEOUT && ShouldUseFakeOut(bankAtk, bankDef))
 				return FALSE; //Prefer actual Fake Out over Breakneck Blitz
 			
@@ -1852,10 +1907,13 @@ void IncreaseViability(s16* viability, u8 amount)
 	*viability = MathMin(*viability + amount, 255);
 }
 
-void DecreaseViability(s16* viability, u8 amount)
+void DecreaseViability(s16* viability, u16 amount)
 {
-	*viability -= amount;
-	
-	if (*viability < 0)
+	if (IS_DOUBLE_BATTLE) //Double decreases in doubles
+		amount *= 2; //Assumes amount won't be too big to cause overflow
+
+	if (amount > *viability)
 		*viability = 0;
+	else
+		*viability -= amount;
 }

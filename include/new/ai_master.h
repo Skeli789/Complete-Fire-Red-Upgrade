@@ -14,7 +14,6 @@ u8 BattleAI_ChooseMoveOrAction(void);
 u8 GetMostSuitableMonToSwitchInto(void);
 u8 GetMostSuitableMonToSwitchIntoScore(void);
 u8 CalcMostSuitableMonToSwitchInto(void);
-void UpdateBestDoublesKillingScore(u8 bankAtk, u8 bankDef);
 void ResetBestMonToSwitchInto(u8 bank);
 void RemoveBestMonToSwitchInto(u8 bank);
 u32 WildMonIsSmart(u8 bank);

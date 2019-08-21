@@ -9,6 +9,9 @@
 #define IN_BOX_COLUMNS          	5
 #define IN_BOX_COUNT            	(IN_BOX_ROWS * IN_BOX_COLUMNS)
 
+//So bytereplacement can call a constant
+#define TOTAL_BOXES_COUNT_1_LESS	23
+
 /*
             ROWS
 COLUMNS     0   1   2   3   4   5

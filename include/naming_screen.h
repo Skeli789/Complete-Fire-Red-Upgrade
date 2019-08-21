@@ -15,8 +15,11 @@ enum
     NAMING_SCREEN_PLAYER,
     NAMING_SCREEN_BOX,
     NAMING_SCREEN_CAUGHT_MON,
-    NAMING_SCREEN_3,
-    NAMING_SCREEN_WALDA,
+    NAMING_SCREEN_HATCHED_MON,
+    NAMING_SCREEN_RIVAL,
+	
+	//New
+    NAMING_SCREEN_CHOOSE_NUMBER,
 };
 
 
@@ -86,7 +89,7 @@ enum
     INPUT_STATE_2,
 };
 
-//void DoNamingScreen(u8 caseId, u8* dst, u16 monSpecies, u8 monGender, u32 monPersonality, void (*callback)(void));
+u8 __attribute__((long_call)) DoNamingScreen(u8 caseId, u8* dst, u16 monSpecies, u8 monGender, u32 monPersonality, void (*callback)(void));
 void __attribute__((long_call)) sub_809E518(u8, u8, u8);
 bool8 __attribute__((long_call)) NameChooserSelectLetter(void);
 void __attribute__((long_call)) sub_809EAA8(void);
@@ -101,5 +104,7 @@ bool8 __attribute__((long_call)) KeyboardKeyHandler_Backspace(u8);
 bool8 __attribute__((long_call)) KeyboardKeyHandler_OK(u8);
 u8 __attribute__((long_call)) GetInputEvent(void);
 bool8 __attribute__((long_call)) MainState_WaitPageSwap(void);
+void __attribute__((long_call)) NamingScreen_GetCursorPos(s16 *x, s16 *y);
+u8 __attribute__((long_call)) NamingScreen_GetCharAtKeyboardPos(s16 x, s16 y);
 
 #endif // GUARD_NAMING_SCREEN_H

@@ -9,6 +9,7 @@
 #include "../include/new/cmd49_battle_scripts.h"
 #include "../include/new/damage_calc.h"
 #include "../include/new/form_change.h"
+#include "../include/new/frontier.h"
 #include "../include/new/Helper_Functions.h"
 #include "../include/new/item_battle_scripts.h"
 #include "../include/new/move_battle_scripts.h"
@@ -155,8 +156,16 @@ void atk4D_switchindataupdate(void)
 	for (i = 0; i < sizeof(struct BattlePokemon); ++i)
 		monData[i] = gBattleBufferB[gActiveBattler][4 + i];
 
-	gBattleMons[gActiveBattler].type1 = gBaseStats[gBattleMons[gActiveBattler].species].type1;
-	gBattleMons[gActiveBattler].type2 = gBaseStats[gBattleMons[gActiveBattler].species].type2;
+	if (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) //The Pokemon takes on the types of its first two moves
+	{
+		UpdateTypesForCamomons(gActiveBattler);
+	}
+	else
+	{
+		gBattleMons[gActiveBattler].type1 = gBaseStats[gBattleMons[gActiveBattler].species].type1;
+		gBattleMons[gActiveBattler].type2 = gBaseStats[gBattleMons[gActiveBattler].species].type2;
+	}
+
 	gBattleMons[gActiveBattler].ability = GetPartyAbility(GetBankPartyData(gActiveBattler));
 	
 	CONSUMED_ITEMS(gActiveBattler) = 0;
@@ -526,7 +535,7 @@ void atk52_switchineffects(void)
 			}
 			++gNewBS->SwitchInEffectsTracker;
 		__attribute__ ((fallthrough));
-		
+	
 		case SwitchIn_PrimalReversion:	;
 			const u8* script = DoPrimalReversion(gActiveBattler, 1);
 			if(script)
@@ -655,7 +664,7 @@ void atk8F_forcerandomswitch(void)
 	{
 		party = LoadPartyRange(gBankTarget, &firstMonId, &lastMonId);
 
-		if ((gBattleTypeFlags & BATTLE_TYPE_BATTLE_TOWER && gBattleTypeFlags & BATTLE_TYPE_LINK)
+		if ((gBattleTypeFlags & BATTLE_TYPE_FRONTIER && gBattleTypeFlags & BATTLE_TYPE_LINK)
 		||  (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
 		||  (gBattleTypeFlags & BATTLE_TYPE_MULTI && gBattleTypeFlags & BATTLE_TYPE_LINK))
 		{
@@ -743,7 +752,7 @@ void atk8F_forcerandomswitch(void)
 			if (!IsLinkDoubleBattle())
 				sub_8013F6C(gBankTarget);
 
-			if ((gBattleTypeFlags & BATTLE_TYPE_LINK && gBattleTypeFlags & BATTLE_TYPE_BATTLE_TOWER)
+			if ((gBattleTypeFlags & BATTLE_TYPE_LINK && gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
 				|| (gBattleTypeFlags & BATTLE_TYPE_LINK && gBattleTypeFlags & BATTLE_TYPE_MULTI))
 			{
 				sub_8127EC4(gBankTarget, i, 0);
@@ -863,7 +872,10 @@ void ClearSwitchBytes(u8 bank)
 	gNewBS->lastTargeted[bank] = 0;
 	gNewBS->usedMoveIndices[bank] = 0;
 	gNewBS->synchronizeTarget[bank] = 0;
+	gNewBS->statFellThisTurn[bank] = FALSE;
 	DestroyMegaIndicator(bank);
+	ClearBattlerAbilityHistory(bank);
+	ClearBattlerItemEffectHistory(bank);
 }
 
 void ClearSwitchBits(u8 bank)

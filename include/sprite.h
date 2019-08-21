@@ -24,6 +24,7 @@ struct SpriteFrameImage
 {
     const u8 *data;
     u16 size;
+	u16 _;
 };
 
 struct Frame {

@@ -53,8 +53,8 @@ void atk00_attackcanceler(void)
 			
 			if (gMoldBreakerIgnoredAbilities[ABILITY(i)])
 			{
-				gNewBS->DisabledMoldBreakerAbilities[i] = ABILITY(i); //Temporarily disable all relevant abilities on the field
-				gBattleMons[i].ability = 0;
+				gNewBS->DisabledMoldBreakerAbilities[i] = gBattleMons[i].ability; //Temporarily disable all relevant abilities on the field
+				gBattleMons[i].ability = ABILITY_NONE;
 			}
 		}
 	}
@@ -343,7 +343,7 @@ static u8 AtkCanceller_UnableToUseMove(void)
 			break;
 
 		case CANCELLER_TRUANT: // truant
-			if (gBattleMons[gBankAttacker].ability == ABILITY_TRUANT && gDisableStructs[gBankAttacker].truantCounter)
+			if (ABILITY(gBankAttacker) == ABILITY_TRUANT && gDisableStructs[gBankAttacker].truantCounter)
 			{
 				CancelMultiTurnMoves(gBankAttacker);
 				gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
@@ -553,7 +553,7 @@ static u8 AtkCanceller_UnableToUseMove(void)
 		
 		case CANCELLER_STANCE_CHANGE:
 		case CANCELLER_STANCE_CHANGE_2:
-			if (gBattleMons[gBankAttacker].ability == ABILITY_STANCECHANGE && !(gBattleMons[gBankAttacker].status2 & STATUS2_TRANSFORMED)) {
+			if (ABILITY(gBankAttacker) == ABILITY_STANCECHANGE && !(gBattleMons[gBankAttacker].status2 & STATUS2_TRANSFORMED)) {
 				switch (gBattleMons[gBankAttacker].species) {
 					case SPECIES_AEGISLASH:
 						if (SPLIT(gCurrentMove) != SPLIT_STATUS) {

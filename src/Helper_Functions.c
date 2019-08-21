@@ -4,6 +4,7 @@
 #include "../include/constants/items.h"
 #include "../include/constants/pokedex.h"
 
+#include "../include/new/AI_Helper_Functions.h"
 #include "../include/new/battle_start_turn_start.h"
 #include "../include/new/damage_calc.h"
 #include "../include/new/frontier.h"
@@ -67,6 +68,38 @@ ability_t BanksAbility(bank_t bank) {
 	return gBattleMons[bank].ability;
 }
 
+ability_t GetRecordedAbility(u8 bank)
+{
+	if (gStatuses3[bank] & STATUS3_ABILITY_SUPPRESS)
+		return ABILITY_NONE;
+
+	if (BATTLE_HISTORY->abilities[bank] != ABILITY_NONE)
+		return BATTLE_HISTORY->abilities[bank];
+
+	u16 species = species;
+	u8 ability1 = gBaseStats[species].ability1;
+	u8 ability2 = gBaseStats[species].ability2;
+	u8 hiddenAbility = gBaseStats[species].hiddenAbility;
+
+	if (ability1 == ability2 && hiddenAbility == ABILITY_NONE)
+		return ability1;
+
+	if (ability1 == ability2 && ability1 == hiddenAbility)
+		return ability1;
+
+	return ABILITY_NONE; //We don't know which ability the target has
+}
+
+void RecordAbilityBattle(u8 battlerId, u8 abilityId)
+{
+    BATTLE_HISTORY->abilities[battlerId] = abilityId;
+}
+
+void ClearBattlerAbilityHistory(u8 battlerId)
+{
+    BATTLE_HISTORY->abilities[battlerId] = ABILITY_NONE;
+}
+
 bank_t GetPartnerBank(bank_t bank) {
 	return bank ^ BIT_FLANK;
 }
@@ -75,8 +108,8 @@ bank_t GetFoeBank(bank_t bank) {
 	return (bank ^ BIT_SIDE) & BIT_SIDE;
 }
 
-item_effect_t GetBankItemEffect(bank_t bank) {
-	if (gBattleMons[bank].ability != ABILITY_KLUTZ && !(gNewBS->EmbargoTimers[bank]) && !gNewBS->MagicRoomTimer)
+item_effect_t GetBankItemEffect(u8 bank) {
+	if (ABILITY(bank) != ABILITY_KLUTZ && !(gNewBS->EmbargoTimers[bank]) && !gNewBS->MagicRoomTimer)
 		return ItemId_GetHoldEffect(ITEM(bank));
 
 	return 0;
@@ -87,6 +120,26 @@ item_effect_t GetMonItemEffect(struct Pokemon* mon) {
 		return ItemId_GetHoldEffect(GetMonData(mon, MON_DATA_HELD_ITEM, NULL));
 
 	return 0;
+}
+
+item_effect_t GetRecordedItemEffect(u8 bank)
+{
+	if (GetRecordedAbility(bank) != ABILITY_KLUTZ
+	&& !gNewBS->EmbargoTimers[bank]
+	&& !gNewBS->MagicRoomTimer)
+		return BATTLE_HISTORY->itemEffects[bank];
+
+	return 0;
+}
+
+void RecordItemEffectBattle(u8 battlerId, u8 itemEffect)
+{
+    BATTLE_HISTORY->itemEffects[battlerId] = itemEffect;
+}
+
+void ClearBattlerItemEffectHistory(u8 battlerId)
+{
+    BATTLE_HISTORY->itemEffects[battlerId] = 0;
 }
 
 bool8 CheckAbilityTargetField(ability_t ability) {
@@ -121,21 +174,43 @@ bank_t GetBankFromPartyData(struct Pokemon* mon) {
 }
 
 bool8 CheckGrounding(bank_t bank) {
-	if (gStatuses3[gEffectBank] & STATUS3_IN_AIR)
+	if (gStatuses3[bank] & STATUS3_IN_AIR)
 		return IN_AIR;
 
-	if (gNewBS->GravityTimer || GetBankItemEffect(bank) == ITEM_EFFECT_IRON_BALL ||
-		(gStatuses3[bank] & (STATUS3_SMACKED_DOWN | STATUS3_ROOTED)))
-			return GROUNDED;
+	if (gNewBS->GravityTimer > 0
+	|| GetBankItemEffect(bank) == ITEM_EFFECT_IRON_BALL
+	|| (gStatuses3[bank] & (STATUS3_SMACKED_DOWN | STATUS3_ROOTED)))
+		return GROUNDED;
 			
 	else if ((gStatuses3[bank] & (STATUS3_LEVITATING | STATUS3_TELEKINESIS | STATUS3_IN_AIR)) 
 		   || ITEM_EFFECT(bank) == ITEM_EFFECT_AIR_BALLOON
-		   || gBattleMons[bank].ability == ABILITY_LEVITATE 
+		   || ABILITY(bank) == ABILITY_LEVITATE 
 		   || gBattleMons[bank].type3 == TYPE_FLYING
 		   || gBattleMons[bank].type1 == TYPE_FLYING
 		   || gBattleMons[bank].type2 == TYPE_FLYING)
 				return IN_AIR;
 	
+	return GROUNDED;
+}
+
+bool8 NonInvasiveCheckGrounding(u8 bank)
+{
+	if (gStatuses3[bank] & STATUS3_IN_AIR)
+		return IN_AIR;
+
+	if (gNewBS->GravityTimer > 0
+	|| GetRecordedItemEffect(bank) == ITEM_EFFECT_IRON_BALL
+	|| (gStatuses3[bank] & (STATUS3_SMACKED_DOWN | STATUS3_ROOTED)))
+		return GROUNDED;
+
+	else if ((gStatuses3[bank] & (STATUS3_LEVITATING | STATUS3_TELEKINESIS | STATUS3_IN_AIR)) 
+		   || GetRecordedItemEffect(bank) == ITEM_EFFECT_AIR_BALLOON
+		   || GetRecordedAbility(bank) == ABILITY_LEVITATE 
+		   || gBattleMons[bank].type3 == TYPE_FLYING
+		   || gBattleMons[bank].type1 == TYPE_FLYING
+		   || gBattleMons[bank].type2 == TYPE_FLYING)
+				return IN_AIR;
+
 	return GROUNDED;
 }
 
@@ -208,7 +283,7 @@ u8 ViableMonCountFromBankLoadPartyRange(u8 bank)
 bool8 CheckContact(u16 move, u8 bank) {
 	if (!(gBattleMoves[move].flags & FLAG_MAKES_CONTACT) ||
 		ITEM_EFFECT(bank) == ITEM_EFFECT_PROTECTIVE_PADS ||
-		gBattleMons[bank].ability == ABILITY_LONGREACH)
+		ABILITY(bank) == ABILITY_LONGREACH)
 			return FALSE;
 	return TRUE;
 }
@@ -315,6 +390,17 @@ bool8 StatsMinned(bank_t bank) {
 			return FALSE;
 	}
 	return TRUE;
+}
+
+bool8 AnyStatGreaterThan(bank_t bank, u8 amount)
+{
+	for (u8 i = STAT_STAGE_ATK; i < BATTLE_STATS_NO; ++i)
+	{
+		if (STAT_STAGE(bank, i) > amount)
+			return TRUE;
+	}
+
+	return FALSE;
 }
 
 u32 MathMax (u32 num1, u32 num2) {
@@ -1049,6 +1135,11 @@ u8 GetTopOfPickupStackNotIncludingBank(const u8 bank)
 		return gNewBS->pickupStack[i - 2];
 	
 	return gNewBS->pickupStack[i - 1];
+}
+
+bool8 IsTrickRoomActive(void)
+{
+	return gNewBS->TrickRoomTimer != 0;
 }
 
 void ClearBankStatus(u8 bank)

@@ -52,18 +52,15 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 	{
 		//Electric
 		case ABILITY_VOLTABSORB:
-			if (moveType == TYPE_ELECTRIC
-			&&  gBattleMons[bankAtkPartner].hp < gBattleMons[bankAtkPartner].maxHP / 2)
-			{
-				INCREASE_VIABILITY(1);
-			}
+			if (moveType == TYPE_ELECTRIC)
+				IncreaseHealPartnerViability(&viability, class, bankAtkPartner);
 			break;
 		case ABILITY_MOTORDRIVE:
 			if (moveType == TYPE_ELECTRIC
 			&&  SpecialMoveInMoveset(bankAtkPartner)
 			&&  STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPEED))
 			{
-				INCREASE_VIABILITY(1);
+				IncreaseHelpingHandViability(&viability, class);
 			}
 			break;
 		case ABILITY_LIGHTNINGROD:
@@ -71,25 +68,22 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 			&&  SpecialMoveInMoveset(bankAtkPartner)
 			&&  STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPATK))
 			{
-				INCREASE_VIABILITY(1);
+				IncreaseHelpingHandViability(&viability, class);
 			}
 			break;
 
 		// Water
 		case ABILITY_WATERABSORB:
 		case ABILITY_DRYSKIN:
-			if (moveType == TYPE_WATER
-			&&  gBattleMons[bankAtkPartner].hp < gBattleMons[bankAtkPartner].maxHP / 2)
-			{
-				INCREASE_VIABILITY(1);
-			}
+			if (moveType == TYPE_WATER)
+				IncreaseHealPartnerViability(&viability, class, bankAtkPartner);
 			break;
 		case ABILITY_STORMDRAIN:
 			if (moveType == TYPE_WATER
 			&&  SpecialMoveInMoveset(bankAtkPartner)
 			&&  STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPATK))
 			{
-				INCREASE_VIABILITY(1);
+				IncreaseHelpingHandViability(&viability, class);
 			}
 			break;
 		
@@ -104,7 +98,7 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 			&&  MoveTypeInMoveset(bankAtkPartner, TYPE_FIRE)
 			&&  !(gBattleResources->flags->flags[bankAtkPartner] & RESOURCE_FLAG_FLASH_FIRE))
 			{
-				INCREASE_VIABILITY(1);
+				IncreaseHelpingHandViability(&viability, class);
 			}
 			break;
 
@@ -114,7 +108,7 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 			&&  PhysicalMoveInMoveset(bankAtkPartner)
 			&&  STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_ATK))
 			{
-				INCREASE_VIABILITY(1);
+				IncreaseHelpingHandViability(&viability, class);
 			}
 			break;
 
@@ -126,7 +120,7 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 			&&  STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_ATK)
 			&&  !MoveKnocksOutXHits(move, bankAtk, bankAtkPartner, 1))
 			{
-				INCREASE_VIABILITY(1);
+				IncreaseHelpingHandViability(&viability, class);
 			}
 			break;
 
@@ -137,7 +131,7 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 			&&  STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPEED)
 			&&  !MoveKnocksOutXHits(move, bankAtk, bankAtkPartner, 1))
 			{
-				INCREASE_VIABILITY(1);
+				IncreaseHelpingHandViability(&viability, class);
 			}
 			break;
 		
@@ -145,7 +139,7 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 		case ABILITY_CONTRARY:
 			if (CheckTableForMoveEffect(move, StatLowerTable))
 			{
-				INCREASE_VIABILITY(1);
+				IncreaseHelpingHandViability(&viability, class);
 			}
 			break;
 	
@@ -153,19 +147,24 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 			if (CheckTableForMoveEffect(move, StatLowerTable)
 			&&  STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_ATK))
 			{
-				INCREASE_VIABILITY(1);
+				IncreaseHelpingHandViability(&viability, class);
 			}
 			break;
 		case ABILITY_COMPETITIVE:
 			if (CheckTableForMoveEffect(move, StatLowerTable)
 			&&  STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPATK))
 			{
-				INCREASE_VIABILITY(1);
+				IncreaseHelpingHandViability(&viability, class);
 			}
 			break;
 	}
 	
 	switch (moveEffect) {
+		case EFFECT_EVASION_UP:
+			if (move == MOVE_ACUPRESSURE)
+				IncreaseHelpingHandViability(&viability, class);
+			break;
+		
 		case EFFECT_SANDSTORM:
 			if (atkPartnerAbility == ABILITY_SANDVEIL
 			|| atkPartnerAbility == ABILITY_SANDRUSH
@@ -178,7 +177,12 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 			|| IsOfType(bankAtkPartner, TYPE_GROUND)
 			|| MoveInMoveset(MOVE_SHOREUP, bankAtkPartner)
 			|| MoveInMoveset(MOVE_WEATHERBALL, bankAtkPartner))
-				INCREASE_STATUS_VIABILITY(2);
+			{
+				if (IsClassDoublesTeamSupport(class))
+					INCREASE_VIABILITY(17);
+				else
+					INCREASE_STATUS_VIABILITY(2);
+			}
 			break;
 			
 		case EFFECT_RAIN_DANCE:
@@ -193,7 +197,12 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 			|| MoveEffectInMoveset(EFFECT_THUNDER, bankAtkPartner) //Includes Hurricane
 			|| MoveInMoveset(MOVE_WEATHERBALL, bankAtkPartner)
 			|| MoveTypeInMoveset(TYPE_WATER, bankAtkPartner))
-				INCREASE_STATUS_VIABILITY(2);
+			{
+				if (IsClassDoublesTeamSupport(class))
+					INCREASE_VIABILITY(17);
+				else
+					INCREASE_STATUS_VIABILITY(2);
+			}
 			break;
 			
 		case EFFECT_SUNNY_DAY:
@@ -208,7 +217,12 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 			|| MoveInMoveset(MOVE_WEATHERBALL, bankAtkPartner)
 			|| MoveInMoveset(MOVE_GROWTH, bankAtkPartner)
 			|| MoveTypeInMoveset(TYPE_FIRE, bankAtkPartner))
-				INCREASE_STATUS_VIABILITY(2);
+			{
+				if (IsClassDoublesTeamSupport(class))
+					INCREASE_VIABILITY(17);
+				else
+					INCREASE_STATUS_VIABILITY(2);
+			}
 			break;
 			
 		case EFFECT_HAIL:
@@ -221,28 +235,27 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 			|| MoveInMoveset(MOVE_BLIZZARD, bankAtkPartner)
 			|| MoveInMoveset(MOVE_AURORAVEIL, bankAtkPartner)
 			|| MoveInMoveset(MOVE_WEATHERBALL, bankAtkPartner))
-				INCREASE_STATUS_VIABILITY(2);
+			{
+				if (IsClassDoublesTeamSupport(class))
+					INCREASE_VIABILITY(17);
+				else
+					INCREASE_STATUS_VIABILITY(2);
+			}
 			break;
 	
 		case EFFECT_HELPING_HAND:
 			if (partnerMove != MOVE_NONE
 			&&  SPLIT(partnerMove) != SPLIT_STATUS)
 			{
-				if (IsClassDoublesTeamSupport(class))
-					INCREASE_VIABILITY(6);
-				else
-					INCREASE_STATUS_VIABILITY(1);
+				IncreaseHelpingHandViability(&viability, class);
 				break;
 			}
 			break;
 
 		case EFFECT_HEAL_TARGET:
-			if (!IsClassSweeper(class)
-			&&  gBattleMons[bankAtkPartner].hp < gBattleMons[bankAtkPartner].maxHP / 2
-			&&  !IsMovePredictionHealingMove(bankAtkPartner, foe1))
-				INCREASE_STATUS_VIABILITY(2);
+			IncreaseHealPartnerViability(&viability, class, bankAtkPartner);
 			break;
-			
+
 		case EFFECT_FIELD_EFFECTS:
 			switch (move) {
 				case MOVE_IONDELUGE: ;
@@ -275,13 +288,14 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 		case EFFECT_INSTRUCT_AFTER_YOU_QUASH:
 			switch (move) {
 				case MOVE_AFTERYOU:
-					if (!MoveWouldHitFirst(move, bankAtkPartner, foe1)
-					||  !MoveWouldHitFirst(move, bankAtkPartner, foe2))
+					if (!MoveWouldHitFirst(partnerMove, bankAtkPartner, foe1)
+					||  !MoveWouldHitFirst(partnerMove, bankAtkPartner, foe2))
 					{
-						if (IsClassDoublesTeamSupport(class))
-							INCREASE_VIABILITY(7);
-						else
-							INCREASE_STATUS_VIABILITY(1);
+						if (gBattleMoves[partnerMove].effect == EFFECT_COUNTER
+						||  gBattleMoves[partnerMove].effect == EFFECT_MIRROR_COAT)
+							break; //These moves need to go last
+					
+						IncreaseHelpingHandViability(&viability, class);
 					}
 					break;
 
@@ -296,10 +310,7 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 					&& SPLIT(instructedMove) != SPLIT_STATUS
 					&&  gBattleMoves[instructedMove].target & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL)) //Use instruct on multi-target moves
 					{
-						if (IsClassDoublesTeamSupport(class))
-							INCREASE_VIABILITY(8);
-						else
-							INCREASE_STATUS_VIABILITY(1);
+						IncreaseHelpingHandViability(&viability, class);
 					}
 					break;
 			}

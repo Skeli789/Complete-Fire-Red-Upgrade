@@ -81,8 +81,12 @@ static const struct CompressedSpritePalette sGoldStarSpritePalette = {Frontier_R
 struct FrontierRecords
 {
 	u8* tilemapPtr;
+	const u8* tierList;
 	u8 battleType;
 	u8 battleTier;
+	u8 battleTierId;
+	u8 numTiers;
+	u8 facilityNum;
 	u8 starObjIds[NUM_STAR_OBJS];
 };
 
@@ -446,6 +450,23 @@ static void CB2_ShowFrontierRecords(void)
 			{
 				sFrontierRecordsPtr = Calloc(sizeof(struct FrontierRecords));
 				sFrontierRecordsPtr->battleType = Var8000;
+				sFrontierRecordsPtr->facilityNum = BATTLE_FACILITY_NUM;
+
+				switch (sFrontierRecordsPtr->facilityNum) {
+					case IN_BATTLE_MINE:
+						sFrontierRecordsPtr->numTiers = gNumBattleMineTiers;
+						sFrontierRecordsPtr->tierList = gBattleMineTiers;
+						break;
+					case IN_BATTLE_CIRCUS:
+						sFrontierRecordsPtr->numTiers = gNumBattleCircusTiers;
+						sFrontierRecordsPtr->tierList = gBattleCircusTiers;
+						break;
+					default: //Battle Tower + Battle Sands
+						sFrontierRecordsPtr->numTiers = gNumBattleTowerTiers;
+						sFrontierRecordsPtr->tierList = gBattleTowerTiers;
+						break;
+				}
+
 				gMain.state += 1;
 			}
 			break;
@@ -513,10 +534,11 @@ static void Task_FrontierRecordsWaitForKeyPress(u8 taskId)
 	}
 	else if (gMain.newKeys & DPAD_LEFT)
 	{
-		if (sFrontierRecordsPtr->battleTier == 0)
-			sFrontierRecordsPtr->battleTier = NUM_FORMATS; //Wrap around
+		if (sFrontierRecordsPtr->battleTierId == 0)
+			sFrontierRecordsPtr->battleTierId = sFrontierRecordsPtr->numTiers; //Wrap around
 
-		--sFrontierRecordsPtr->battleTier;
+		--sFrontierRecordsPtr->battleTierId;
+
 		SetMainCallback2(CB2_ShowFrontierRecords);
 		gMain.state = 1;
 		FreeReusableThings(taskId);
@@ -524,15 +546,18 @@ static void Task_FrontierRecordsWaitForKeyPress(u8 taskId)
 	}
 	else if (gMain.newKeys & DPAD_RIGHT)
 	{
-		if (sFrontierRecordsPtr->battleTier == NUM_FORMATS - 1)
-			sFrontierRecordsPtr->battleTier = 0; //Wrap around
+		if (sFrontierRecordsPtr->battleTierId == sFrontierRecordsPtr->numTiers - 1)
+			sFrontierRecordsPtr->battleTierId = 0; //Wrap around
 		else
-			++sFrontierRecordsPtr->battleTier;
+			++sFrontierRecordsPtr->battleTierId;
+
 		SetMainCallback2(CB2_ShowFrontierRecords);
 		gMain.state = 1;
 		FreeReusableThings(taskId);
 		//DisplayFrontierRecordsText();
 	}
+	
+	sFrontierRecordsPtr->battleTier = sFrontierRecordsPtr->tierList[sFrontierRecordsPtr->battleTierId];
 }
 
 static void Task_FrontierRecordsFadeOut(u8 taskId)
@@ -611,6 +636,8 @@ static void DisplayFrontierRecordsText(void)
 	{
 		FillWindowPixelBuffer(i, 0);
 	}
+	
+	VarSet(BATTLE_TOWER_BATTLE_TYPE, BATTLE_TOWER_SINGLE); //So the records get loaded correctly
 
 	//Load Stars
 	LoadCompressedSpriteSheetUsingHeap(&sStarsSpriteSheet);
@@ -665,7 +692,7 @@ static void DisplayFrontierRecordsText(void)
 	//Get Streaks
 	for (u8 level = 50; level <= 100; level += 50) 
 	{
-		for (u8 partySize = 3; partySize <= 6; partySize += 3) //3 represents one record, 6 represents another
+		for (u8 partySize = 1; partySize <= 6; partySize += 5) //1 represents one record, 6 represents another
 		{
 			if (tier == BATTLE_TOWER_LITTLE_CUP)
 				level = 5;
@@ -679,7 +706,7 @@ static void DisplayFrontierRecordsText(void)
 			ConvertIntToDecimalStringN(gStringVar1, currStreak, 0, 5);
 			ConvertIntToDecimalStringN(gStringVar2, maxStreak, 0, 5);
 			
-			if (partySize == 3)
+			if (partySize < 6)
 			{
 				if (level <= 50 || tier == BATTLE_TOWER_MONOTYPE) //3v3 Level 50
 				{

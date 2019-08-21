@@ -273,7 +273,7 @@ void Mugshots_CreateOpponentPlayerSprites(struct Task* task)
 	//Load Opponent B
 	if (IsTrainerBattleModeAgainstTwoOpponents())
 	{
-		trainerSpriteID2 = GetFrontierTrainerFrontSpriteId(gTrainerBattleOpponent_B, 1);
+		trainerSpriteID2 = GetFrontierTrainerFrontSpriteId(VarGet(SECOND_OPPONENT_VAR), 1);
 		task->tOpponentSpriteId2 = CreateMugshotTrainerSprite(trainerSpriteID2,
 															sMugshotsOpponentCoords[mugshotId][0] - x1 - 50,
 															sMugshotsOpponentCoords[mugshotId][1] + y1,

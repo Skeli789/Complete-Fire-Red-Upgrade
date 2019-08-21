@@ -103,7 +103,7 @@ void atk15_seteffectwithchance(void)
 	if (CheckSoundMove(gCurrentMove) || ABILITY(gBankAttacker) == ABILITY_INFILTRATOR)
 		gHitMarker |= HITMARKER_IGNORE_SUBSTITUTE;
 
-    if (gBattleMons[gBankAttacker].ability == ABILITY_SERENEGRACE || gNewBS->RainbowTimers[SIDE(gBankAttacker)])
+    if (ABILITY(gBankAttacker) == ABILITY_SERENEGRACE || gNewBS->RainbowTimers[SIDE(gBankAttacker)])
 	{
         PercentChance = gBattleMoves[gCurrentMove].secondaryEffectChance * 2;
 	}

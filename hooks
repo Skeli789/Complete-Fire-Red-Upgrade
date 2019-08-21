@@ -1,3 +1,5 @@
+#include "src/config.h"
+
 ##Emit Functions
 EmitPrintString 800E2D4 2
 EmitPrintSelectionString 800E3EC 2
@@ -139,6 +141,7 @@ ExpandedAbilityNamesSummaryScreen 8136714 1
 ##Battle Animation Hooks
 TryHandleLaunchBattleTableAnimationHook 803401E 4
 UpdateOamPriorityInAllHealthboxes 804828C 1
+ModifyMegaCryHook 8071F8E 1
 ScriptCmd_loadspritegfx 08072868 0
 ShinyAnimFixHook 080F1792 0
 SlideMonToOriginalPosHook 080991BA 0
@@ -367,7 +370,7 @@ FlameBodyMagmaArmorEggHook 8046390 1
 CreateBoxMonHook 803DAD2 0
 #CheckHasSpeciesHook 803FD94 0
 
-##TM/HM Expansion
+##TM/HM/Tutor Expansion
 CanMonLearnTMHM 08043C2C 2
 CanMonLearnTMTutor 08120B20 3
 ItemIdToBattleMoveId 08125A78 1
@@ -381,6 +384,12 @@ CheckIsHmMove 08125A90 1
 CheckIsHmMove 080441b8 1
 FixMartTmListing 0809B4A4 0
 TmMartDescriptionFix 0809B340 1
+
+#ifdef EXPANDED_MOVE_TUTORS
+GetExpandedTutorMove 08120BA8 1
+DracoMeteorMoveTutorHook 8126E6C 0
+DracoMeteorMoveTutorHook2 8126E74 0
+#endif
 
 ##Reusable TMs
 ReusableTMCheck1 08124EA0 0

@@ -245,7 +245,7 @@ void MoldBreakerRemoveAbilitiesOnForceSwitchIn(void)
 	{
 		if (gMoldBreakerIgnoredAbilities[ABILITY(gBankTarget)])
 		{
-			gNewBS->DisabledMoldBreakerAbilities[gBankTarget] = ABILITY(gBankTarget);
+			gNewBS->DisabledMoldBreakerAbilities[gBankTarget] = gBattleMons[gBankTarget].ability;
 			gBattleMons[gBankTarget].ability = 0;
 		}
 	}
@@ -682,7 +682,7 @@ void DoFieldEffect(void)
 {
 	switch (gCurrentMove) {
 		case MOVE_TRICKROOM:
-			if (gNewBS->TrickRoomTimer)
+			if (gNewBS->TrickRoomTimer > 0)
 			{
 				gNewBS->TrickRoomTimer = 0;
 				BattleStringLoader = TrickRoomEndString;
@@ -1318,13 +1318,13 @@ void BurnUpFunc(void)
 		gBattleMons[gBankAttacker].type3 = TYPE_BLANK;
 }
 
-void SeedLooper(void)
+void SeedRoomServiceLooper(void)
 {
 	for (; *SeedHelper < gBattlersCount; ++*SeedHelper) 
 	{
 		u8 bank = gBanksByTurnOrder[*SeedHelper];
 
-		if (ITEM_EFFECT(bank) == ITEM_EFFECT_SEEDS)
+		if (ITEM_EFFECT(bank) == ITEM_EFFECT_SEEDS || ITEM_EFFECT(bank) == ITEM_EFFECT_ROOM_SERVICE)
 		{
 			if (ItemBattleEffects(ItemEffects_SwitchIn, bank, TRUE, FALSE))
 			{

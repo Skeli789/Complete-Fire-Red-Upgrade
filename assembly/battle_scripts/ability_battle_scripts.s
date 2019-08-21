@@ -200,7 +200,7 @@ BattleScript_TerrainFromAbility:
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
 	setbyte SEED_HELPER 0
-	callasm SeedLooper
+	callasm SeedRoomServiceLooper
 	end3
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

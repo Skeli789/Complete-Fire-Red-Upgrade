@@ -501,6 +501,54 @@ const struct SpecificTilesetFade gSpecificTilesetFades[] =
 			TILESET_PAL_FADE_END
 		},
 	},
+	{ //Battle Tower
+		.tilesetPointer = 0x82D4E3C, //Tileset 39
+		.paletteNumToFade = 7,
+		.paletteIndicesToFade =
+		{
+			{1,  RGB(31, 27, 5)},
+			{2,  RGB(29, 24, 5)},
+			{3,  RGB(29, 22, 5)},
+			{4,  RGB(26, 20, 3)},
+			{5,  RGB(23, 18, 2)},
+			{6,  RGB(15, 11, 2)},
+			TILESET_PAL_FADE_END
+		},
+	},
+	{ //Battle Frontier Lamps
+		.tilesetPointer = 0x82D4E3C, //Tileset 39
+		.paletteNumToFade = 8,
+		.paletteIndicesToFade =
+		{
+			{1,  RGB(31, 31, 14)},
+			{2,  RGB(31, 30, 0)},
+			TILESET_PAL_FADE_END
+		},
+	},
+	{ //Battle Tent
+		.tilesetPointer = 0x82D4E3C, //Tileset 39
+		.paletteNumToFade = 10,
+		.paletteIndicesToFade =
+		{
+			{7,  RGB(29, 25, 0)},
+			{8,  RGB(23, 20, 0)},
+			{10,  RGB(24, 15, 5)},
+			{10,  RGB(19, 11, 2)},
+			TILESET_PAL_FADE_END
+		},
+	},
+	{ //Battle Frontier Sliding Doors
+		.tilesetPointer = 0x82D4E3C, //Tileset 39
+		.paletteNumToFade = 12,
+		.paletteIndicesToFade =
+		{
+			{10,  RGB(31, 27, 5)},
+			{12,  RGB(29, 24, 5)},
+			{13,  RGB(29, 22, 5)},
+			{14,  RGB(26, 20, 3)},
+			TILESET_PAL_FADE_END
+		},
+	},
 	//Do Antisis City and all skipped things
 };
 

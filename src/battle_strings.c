@@ -108,7 +108,10 @@ void BufferStringBattle(u16 stringID)
 				if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
                     stringPtr = BattleText_TwoTrainersWantToBattle; //NEED DATA
 				
-                else
+                else if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_SANDS)
+					stringPtr = BattleText_Trainer1WantsToBattle_BattleSands;
+				
+				else
                     stringPtr = BattleText_Trainer1WantsToBattle; //0x83FD366
             }
         }
@@ -153,9 +156,14 @@ void BufferStringBattle(u16 stringID)
                     stringPtr = BattleText_GoTwoPkmn; //0x83FD466
                 else if (gBattleTypeFlags & BATTLE_TYPE_MULTI)
                     stringPtr = BattleText_LinkPartnerSentOutPkmnGoPkmn; //0x83FD4B5
+				else if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_SANDS)
+					stringPtr = BattleText_GoTwoPkmn_BattleSands;
                 else
                     stringPtr = BattleText_GoTwoPkmn; //0x83FD466
             }
+			//Single Battle
+			else if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_SANDS)
+				stringPtr = BattleText_GoPkmn_BattleSands;
             else //Single Battle
                 stringPtr = BattleText_GoPkmn; //0x83FD45E
         }
@@ -193,6 +201,8 @@ void BufferStringBattle(u16 stringID)
         {
 			if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER && GetBattlerPosition(gActiveBattler) == B_POSITION_PLAYER_RIGHT)
 				stringPtr = BattleText_PartnerWithdrewPkmn;
+			else if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_SANDS)
+				stringPtr = BattleText_PartnerWithdrewPkmn;
 			else if (gBattleStruct->hpScale == 0)
 				stringPtr = BattleText_PkmnThatsEnough; //0x83FD4CD
 			else if (gBattleStruct->hpScale == 1 || gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
@@ -223,6 +233,8 @@ void BufferStringBattle(u16 stringID)
         if (SIDE(gBattleScripting->bank) == B_SIDE_PLAYER)
         {
 			if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER && GetBattlerPosition(gBattleScripting->bank) == B_POSITION_PLAYER_RIGHT)
+				stringPtr = BattleText_PartnerSaysGo;
+			else if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_SANDS)
 				stringPtr = BattleText_PartnerSaysGo;
             else if (gBattleStruct->hpScale == 0 || gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
                 stringPtr = BattleText_GoPkmn2;  //0x83FD475
@@ -820,7 +832,7 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
                 toCpy = gTrainerClassNames[GetFrontierTrainerClassId(VarGet(PARTNER_VAR), 2)];
                 break;
             case B_TXT_PARTNER_NAME:
-                CopyFrontierTrainerName(text, VarGet(PARTNER_VAR), 2);
+				CopyFrontierTrainerName(text, VarGet(PARTNER_VAR), 2);
                 toCpy = text;
                 break;
 			case B_TXT_AFFECTS_TARGET_SIDE:

@@ -32,8 +32,8 @@ extern u8 BattleScript_HerbCureChosenStatusRet[];
 extern u8 BattleScript_HerbCureChosenStatusEnd2[];
 extern u8 BattleScript_HerbCureChosenStatusFling[];
 extern u8 BattleScript_RaiseStatsItem[];
-extern u8 BattleScript_RaiseStatsSeedEnd2[];
-extern u8 BattleScript_RaiseStatsSeedRet[];
+extern u8 BattleScript_ItemStatChangeEnd2[];
+extern u8 BattleScript_ItemStatChangeRet[];
 extern u8 BattleScript_WhiteHerbFling[];
 extern u8 BattleScript_ItemHealHP_RemoveItemRet[];
 
@@ -47,3 +47,6 @@ extern u8 BattleScript_MicleBerryRet[];
 extern u8 BattleScript_MicleBerryEnd2[];
 extern u8 BattleScript_StickyBarbTransfer[];
 extern const u8 BattleScript_LifeOrbDamage[];
+extern const u8 BattleScript_EjectPackEnd2[];
+extern const u8 BattleScript_EjectPackRet[];
+extern const u8 BattleScript_EjectPackCMD49[];

@@ -2,6 +2,7 @@
 #include "defines_battle.h"
 #include "../include/link.h"
 #include "../include/constants/items.h"
+#include "../include/constants/trainer_classes.h"
 
 #include "../include/new/Helper_Functions.h"
 #include "../include/new/form_change.h"
@@ -329,10 +330,9 @@ bool8 BankMegaEvolved(u8 bank, bool8 checkUB)
 	return FALSE;
 }
 
-bool8 IsMega(u8 bank)
+bool8 IsMegaSpecies(u16 species)
 {
-	pokemon_t* mon = GetBankPartyData(bank);
-	const struct Evolution* evolutions = gEvolutionTable[mon->species];
+	const struct Evolution* evolutions = gEvolutionTable[species];
 
 	for (u8 i = 0; i < EVOS_PER_MON; ++i) 
 	{
@@ -346,16 +346,29 @@ bool8 IsMega(u8 bank)
 }
 
 //No better way to check for these next two
+bool8 IsBluePrimalSpecies(u16 species)
+{
+	return species == SPECIES_KYOGRE_PRIMAL;
+}
+
+bool8 IsRedPrimalSpecies(u16 species)
+{
+	return species == SPECIES_GROUDON_PRIMAL;
+}
+
+bool8 IsMega(u8 bank)
+{
+	return(IsMegaSpecies(GetBankPartyData(bank)->species));
+}
+
 bool8 IsBluePrimal(u8 bank)
 {
-	u16 species = GetBankPartyData(bank)->species;
-	return species == SPECIES_KYOGRE_PRIMAL;
+	return IsBluePrimalSpecies(GetBankPartyData(bank)->species);
 }
 
 bool8 IsRedPrimal(u8 bank)
 {
-	u16 species = GetBankPartyData(bank)->species;
-	return species == SPECIES_GROUDON_PRIMAL;
+	return IsRedPrimalSpecies(GetBankPartyData(bank)->species);
 }
 
 bool8 IsUltraNecrozma(u8 bank)
@@ -398,7 +411,9 @@ const u8* GetTrainerName(u8 bank)
 		case B_POSITION_PLAYER_RIGHT:
 			battlerNum = 2;
 			if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
+			{
 				trainerId = VarGet(PARTNER_VAR);
+			}
 			else if (gBattleTypeFlags & BATTLE_TYPE_LINK && gBattleTypeFlags & BATTLE_TYPE_MULTI)
 				trainerId = linkPartner;
 			break;
@@ -423,30 +438,39 @@ const u8* GetTrainerName(u8 bank)
 		else
 			return gSaveBlock2->playerName;
 	}
-	
 	else if (gBattleTypeFlags & BATTLE_TYPE_LINK)
+	{
 		return gLinkPlayers[trainerId].name;
-		
+	}
 	else 
 	{
-		#ifdef UNBOUND
-			u8 class = gTrainers[trainerId].trainerClass;
-			if (class == 0x51 || class == 0x59)
-				return GetExpandedPlaceholder(ExpandPlaceholder_RivalName);
-			else
-		#elif defined OVERWRITE_RIVAL
-			u8 class = gTrainers[trainerId].trainerClass;
-			if (class == 0x51 || class == 0x59 || class == 0x5A)
-				return GetExpandedPlaceholder(ExpandPlaceholder_RivalName);
-			else
-		#endif
+		u8 class = gTrainers[trainerId].trainerClass;
+		u8* name = TryGetRivalNameByTrainerClass(class);
+		
+		if (name == NULL)
 		{
 			if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
 				return GetFrontierTrainerName(trainerId, battlerNum);
 
 			return gTrainers[trainerId].trainerName;
 		}
+		
+		return name;
 	}
+}
+
+u8* TryGetRivalNameByTrainerClass(u8 class)
+{
+	#ifdef UNBOUND
+		if (class == CLASS_RIVAL|| class == CLASS_RIVAL_2)
+			return GetExpandedPlaceholder(ExpandPlaceholder_RivalName);
+		else
+	#elif defined OVERWRITE_RIVAL
+		if (class == CLASS_RIVAL || class == CLASS_RIVAL_2 || class == CLASS_CHAMPION)
+			return GetExpandedPlaceholder(ExpandPlaceholder_RivalName);
+		else
+	#endif
+			return NULL;
 }
 
 void MegaRetrieveData(void)

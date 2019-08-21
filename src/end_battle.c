@@ -42,6 +42,7 @@ static void BringBackTheDead(void);
 static void EndPartnerBattlePartyRestore(void);
 static void EndSkyBattlePartyRestore(void);
 static void EndBattleFlagClear(void);
+static void HealPokemonInFrontier(void);
 
 void HandleEndTurn_BattleWon(void)
 {
@@ -420,6 +421,7 @@ void EndOfBattleThings(void)
 		RecalcAllStats();
 		BringBackTheDead();
 		EndBattleFlagClear();
+		HealPokemonInFrontier();
 		TerrainType = 0; //Reset now b/c normal reset is after BG is loaded
 	}
 }
@@ -557,7 +559,8 @@ static void EndBattleFlagClear(void)
 	VarSet(TOTEM_VAR + 3, 0);	//Bank B_POSITION_OPPONENT_RIGHT's Stat
 
 	VarSet(TERRAIN_VAR, 0);
-	VarSet(BATTLE_TOWER_TRAINER_NAME, 0xFFFF);
+	VarSet(BATTLE_TOWER_TRAINER1_NAME, 0xFFFF);
+	VarSet(BATTLE_TOWER_TRAINER2_NAME, 0xFFFF);
 	Free(gNewBS->MegaData);
 	Free(gNewBS->UltraData);
 	Free(gNewBS->ZMoveData);
@@ -566,6 +569,21 @@ static void EndBattleFlagClear(void)
 	u16 backup = gTrainerBattleOpponent_B;
 	Memset(&ExtensionState, 0x0, sizeof(struct BattleExtensionState));
 	gTrainerBattleOpponent_B = backup;
+}
+
+static void HealPokemonInFrontier(void)
+{
+	//This helps with the issue of multi battle teams in the Battle Tower are not healed
+	if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
+	{
+		for (int i = 0; i < PARTY_SIZE; ++i)
+		{
+			struct Pokemon* mon = &gPlayerParty[i];
+
+			if (GetMonData(mon, MON_DATA_SPECIES, NULL) != SPECIES_NONE)
+				HealMon(mon);
+		}
+	}
 }
 
 bool8 IsConsumable(u16 item)

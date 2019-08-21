@@ -15,7 +15,7 @@ enum {
 	ExpandPlaceholder_StringVar1,
 	ExpandPlaceholder_StringVar2,
 	ExpandPlaceholder_StringVar3,
-	ExpandPlaceholder_KunChan,
+	ExpandPlaceholder_RubySapphire,
 	ExpandPlaceholder_RivalName,
 	ExpandPlaceholder_Version,
 	ExpandPlaceholder_Aqua,

@@ -8,6 +8,7 @@
 #include "../include/constants/trainers.h"
 #include "../include/constants/trainer_classes.h"
 
+#include "../include/new/ai_master.h"
 #include "../include/new/battle_start_turn_start.h"
 #include "../include/new/battle_start_turn_start_battle_scripts.h"
 #include "../include/new/CMD49.h"
@@ -103,7 +104,11 @@ void BattleBeginFirstTurn(void)
 		switch(*state) {
 			case GetTurnOrder:
 				for (i = 0; i < gBattlersCount; ++i)
+				{
 					gBanksByTurnOrder[i] = i;
+					ResetBestMonToSwitchInto(i);
+				}
+
 				for (i = 0; i < gBattlersCount - 1; ++i) {
 					for (j = i + 1; j < gBattlersCount; ++j) {
 						if (GetWhoStrikesFirst(gBanksByTurnOrder[i], gBanksByTurnOrder[j], 1))
@@ -162,8 +167,13 @@ void BattleBeginFirstTurn(void)
 			
 			case ThirdTypeRemoval:
 				for (*bank = 0; *bank < gBattlersCount; ++*bank)
+				{
 					gBattleMons[*bank].type3 =  TYPE_BLANK;
 					
+					if (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) //The Pokemon takes on the types of its first two moves
+						UpdateTypesForCamomons(*bank);
+				}
+
 				*bank = 0;
 				++*state;
 			
@@ -256,6 +266,7 @@ void BattleBeginFirstTurn(void)
 				{
 					gBattleMons[i].status2 &= ~8;
 					gNewBS->pickupStack[i] = 0xFF;
+					gNewBS->statFellThisTurn[i] = FALSE;
 				}
 				gBattleStruct->turnEffectsTracker = 0;
 				gBattleStruct->turnEffectsBank = 0;
@@ -565,7 +576,7 @@ void RunTurnActionsFunctions(void)
 					gBattleScripting->bank = i;
 					gLastUsedItem = ITEM(i);
 					if (ITEM_EFFECT(i) != ITEM_EFFECT_CUSTAP_BERRY)
-						RecordItemBattle(i, ITEM_EFFECT(i));
+						RecordItemEffectBattle(i, ITEM_EFFECT(i));
 
 					BattleScriptExecute(BattleScript_QuickClaw);
 					return;
@@ -627,6 +638,7 @@ void HandleAction_UseMove(void)
 	{
 		gNewBS->DamageTaken[i] = 0;
 		gNewBS->ResultFlags[i] = 0;
+		gNewBS->statFellThisTurn[i] = FALSE;
 	}
 
 //Get Move to be Used
@@ -1064,7 +1076,7 @@ u8 GetWhoStrikesFirst(u8 bank1, u8 bank2, bool8 ignoreMovePriorities)
 	bank1_speed = SpeedCalc(bank1);
 	bank2_speed = SpeedCalc(bank2);
 	u32 temp;
-	if (gNewBS->TrickRoomTimer)
+	if (IsTrickRoomActive())
 	{
 		temp = bank2_speed;
 		bank2_speed = bank1_speed;

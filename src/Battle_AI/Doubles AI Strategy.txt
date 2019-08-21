@@ -1,0 +1,159 @@
+Trick Room Attackers:
+-Trick Room not up and partner can set up Trick Room -> Protect/Fake Out
+
++19 - Use Trick Room
++18 - 12: Hit 2 Foes, KO 2 Foes
++17 - Fake Out
++16 - 11: Hit 2 Foes, KO 1 Foe, Strongest Move 1 Foe
++15 - 10: Hit 2 Foes, KO 1 Foe/Strongest Move 2 Foes
++14 - 9: Hit 2 Foes, Strongest Move 1 Foe / Hit 2 Foes, KO 2 Foes, Hurt Partner
++13 - Stealth Rock Only
++12 - Protect from Allies
++11 - 8: Hit 2 Foes / Hit 2 Foes, KO 1 Foe, Strongest Move 1 Foe, Hurt Partner
++10 - 6: Hit 1 Foe, KO 1 Foe / Hit 2 Foes, KO 1 Foe/Strongest Move 2 Foes, Hurt Partner
++09 - 5: Hit 1 Foe, Strongest Move 1 Foe / Hit 2 Foes, Strongest Move 1 Foe, Hurt Partner
++08 - Status Moves
++07 - "
++06 - "
++05 - "
++04 - Protect from Foes
++03 - Wide Guard/Quick Guard, 4: Hit 1 Foe / Hit 2 Foes, Hurt Partner
++02 - Heal Partner
++01 - Helping Hand/Acupressure/After You/Rapid Spin/Defog
+
+
+Trick Room Setup:
+-Trick Room in moveset
+-1 damaging move in moveset
+
++19 - Use Trick Room
++18 - 12: Hit 2 Foes, KO 2 Foes
++17 - Fake Out
++16 - Recovery
++15 - Helping Hand/Acupressure/After You/Rapid Spin/Defog
++14 - Protect from Allies
++13 - Wide Guard/Quick Guard/Mat Block
++12 - Heal Partner
++11 - Status Moves
++10 - "
++09 - "
++08 - "
++07 - Protect from Foes
++06 - 11: Hit 2 Foes, KO 1 Foe, Strongest Move 1 Foe
++05 - 10: Hit 2 Foes, KO 1 Foe/Strongest Move 2 Foes
++04 - 9: Hit 2 Foes, Strongest Move 1 Foe/Hit 2 Foes, KO 2 Foes, Hurt Partner
++03 - 8: Hit 2 Foes / Hit 2 Foes, KO 1 Foe, Strongest Move 1 Foe, Hurt Partner
++02 - 6: Hit 1 Foe, KO 1 Foe / Hit 2 Foes, KO 1 Foe/Strongest Move 2 Foes, Hurt Partner
++01 - 5: Hit 1 Foe, Strongest Move 1 Foe / Hit 2 Foes, Strongest Move 1 Foe, Hurt Partner
+
+
+Utility:
+-Has Rage Powder/Follow Me
+-Intimidate + Fake Out
+
++19 - Fake Out
++18 - 12: Hit 2 Foes, KO 2 Foes
++17 - Sleep
++16 - Redirection/Pivot for Intimidate
++15 - Heal Partner
++14 - Protect from Allies
++13 - Helping Hand/Acupressure/After You/Rapid Spin/Defog
++12 - Wide Guard/Quick Guard/Mat Block
++11 - Speed Control/Tailwind/Will-o-Wisp
++10 - Protect from Foes
++09 - 11: Hit 2 Foes, KO 1 Foe, Strongest Move 1 Foe
++08 - 10: Hit 2 Foes, KO 1 Foe/Strongest Move 2 Foes
++07 - Status Moves
++06 - "
++05 - "
++04 - "
++03 - 9: Hit 2 Foes, Strongest Move 1 Foe / Hit 2 Foes, KO 2 Foes, Hurt Partner
++02 - 8: Hit 2 Foes / Hit 2 Foes, KO 1 Foe, Strongest Move 1 Foe, Hurt Partner
++01 - 6: Hit 1 Foe, KO 1 Foe / Hit 2 Foes, KO 1 Foe/Strongest Move 2 Foes, Hurt Partner
+
+
+Phazers:
++19 - Fake Out
++18 - 12: Hit 2 Foes, KO 2 Foes
++17 - Hazards
++16 - Clear Smog/Roar/Dragon Tail (only if can't KO)
++15 - Haze (if not detrimental to partner)
++14 - Protect from Allies
++13 - Protect from Foes
++12 - Status Moves
++11 - "
++10 - "
++09 - "
++08 - 11: Hit 2 Foes, KO 1 Foe, Strongest Move 1 Foe
++07 - 10: Hit 2 Foes, KO 1 Foe/Strongest Move 2 Foes
++06 - 9: Hit 2 Foes, Strongest Move 1 Foe / Hit 2 Foes, KO 2 Foes, Hurt Partner
++05 - 8: Hit 2 Foes / Hit 2 Foes, KO 1 Foe, Strongest Move 1 Foe, Hurt Partner
++04 - 6: Hit 1 Foe, KO 1 Foe / Hit 2 Foes, KO 1 Foe/Strongest Move 2 Foes, Hurt Partner
++03 - Wide Guard/Quick Guard
++02 - Heal Partner
++01 - Helping Hand/Acupressure/After You/Rapid Spin/Defog
+
+
+General Team Support:
++19 - Aurora Veil
++18 - Tailwind
++17 - Weather Setup, Fake Out
++16 - 12: Hit 2 Foes, KO 2 Foes
++15 - Reflect/Light Screen
++14 - Protect from Allies
++13 - Heal Partner
++12 - Wide Guard/Quick Guard
++11 - Speed Control/Will-o-Wisp
++10 - Helping Hand/Acupressure/After You/Rapid Spin/Defog
++09 - 11: Hit 2 Foes, KO 1 Foe, Strongest Move 1 Foe
++08 - Safeguard/Mist/Lucky Chant
++07 - 10: Hit 2 Foes, KO 1 Foe/Strongest Move 2 Foes
++06 - Status Moves
++05 - "
++04 - "
++03 - "
++02 - 9: Hit 2 Foes, Strongest Move 1 Foe / Hit 2 Foes, KO 2 Foes, Hurt Partner
++01 - Protect from Foes
+
+
+Set-Up Attacker:
+-3 Attacking Moves + Boosting Move
+-2 Attacking Moves + Boosting Move + Protect
++19 - 12: Hit 2 Foes, KO 2 Foes
++18 - Tailwind (if necessary)
++17 - 1 Offsensive Boost
++16 - 11: Hit 2 Foes, KO 1 Foe, Strongest Move 1 Foe
++15 - 10: Hit 2 Foes, KO 1 Foe/Strongest Move 2 Foes
++14 - Protect from Allies
++13 - 9: Hit 2 Foes, Strongest Move 1 Foe/Hit 2 Foes, KO 2 Foes, Hurt Partner
++12 - 8: Hit 2 Foes / Hit 2 Foes, KO 1 Foe, Strongest Move 1 Foe, Hurt Partner
++11 - 6: Hit 1 Foe, KO 1 Foe / Hit 2 Foes, KO 1 Foe/Strongest Move 2 Foes, Hurt Partner
++10 - Protect from Foes
++09 - 5: Hit 1 Foe, Strongest Move 1 Foe / Hit 2 Foes, Strongest Move 1 Foe, Hurt Partner
++08 - Status Moves
++07 - "
++06 - "
++05 - "
++04 - 4: Hit 1 Foe / Hit 2 Foes, Hurt Partner
++03 - Wide Guard/Quick Guard
++02 - Heal Partner
++01 - Helping Hand/Acupressure/After You/Rapid Spin/Defog
+
+
+All-Out Attacker:
+-Has 4 Attacking Moves/3 Attacking Moves + Protect
+
++19 - 12: Hit 2 Foes, KO 2 Foes
++18 - Intimidate Pivot
++17 - 11: Hit 2 Foes, KO 1 Foe, Strongest Move 1 Foe
++16 - 10: Hit 2 Foes, KO 1 Foe/Strongest Move 2 Foes
++15 - Protect from Allies
++14 - 9: Hit 2 Foes, Strongest Move 1 Foe/Hit 2 Foes, KO 2 Foes, Hurt Partner
++13 - 8: Hit 2 Foes / Hit 2 Foes, KO 1 Foe, Strongest Move 1 Foe, Hurt Partner
++12 - Protect from Foes
++11 - 6: Hit 1 Foe, KO 1 Foe / Hit 2 Foes, KO 1 Foe/Strongest Move 2 Foes, Hurt Partner
++10 - 5: Hit 1 Foe, Strongest Move 1 Foe / Hit 2 Foes, Strongest Move 1 Foe, Hurt Partner
++09 - 4: Hit 1 Foe / Hit 2 Foes, Hurt Partner
++08 - Wide Guard/Quick Guard
++07 - Heal Partner
++06 - Raise Partner Stats

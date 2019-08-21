@@ -536,7 +536,28 @@ void BattleSetup_StartTrainerBattle(void)
 {
 	if (FlagGet(BATTLE_TOWER_FLAG))
 	{
-		gBattleTypeFlags = (BATTLE_TYPE_FRONTIER | BATTLE_TYPE_TRAINER);
+		gBattleTypeFlags = BATTLE_TYPE_TRAINER;
+		
+		switch (BATTLE_FACILITY_NUM) {
+			case IN_BATTLE_SANDS:
+				gBattleTypeFlags |= BATTLE_TYPE_BATTLE_SANDS;
+				break;
+			case IN_BATTLE_MINE:
+				gBattleTypeFlags |= BATTLE_TYPE_BATTLE_MINE;
+				break;
+			case IN_BATTLE_CIRCUS:
+				gBattleTypeFlags |= BATTLE_TYPE_BATTLE_CIRCUS;
+				break;
+			default:
+				gBattleTypeFlags |= BATTLE_TYPE_BATTLE_TOWER;
+				break;
+		}
+
+		u16 tier = VarGet(BATTLE_TOWER_TIER);
+		if (tier == BATTLE_TOWER_CAMOMONS)
+			gBattleTypeFlags |= BATTLE_TYPE_CAMOMONS;
+		else if (tier == BATTLE_TOWER_SCALEMONS)
+			gBattleTypeFlags |= BATTLE_TYPE_SCALEMONS;
 
 		switch (VarGet(BATTLE_TOWER_BATTLE_TYPE)) {
 			case BATTLE_TOWER_DOUBLE:
@@ -545,10 +566,16 @@ void BattleSetup_StartTrainerBattle(void)
 				break;
 			case BATTLE_TOWER_MULTI:
 			case BATTLE_TOWER_MULTI_RANDOM:
-				gBattleTypeFlags |= (BATTLE_TYPE_DOUBLE | BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_INGAME_PARTNER);
+				if (gTrainerBattleOpponent_A == FRONTIER_BRAIN_TID) //Frontier Brains fight alone
+					gBattleTypeFlags |= (BATTLE_TYPE_DOUBLE | BATTLE_TYPE_INGAME_PARTNER /* | BATTLE_TYPE_MULTI*/);
+				else
+					gBattleTypeFlags |= (BATTLE_TYPE_DOUBLE | BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_INGAME_PARTNER);
 				break;
 			case BATTLE_TOWER_LINK_MULTI:
-				gBattleTypeFlags |= (BATTLE_TYPE_DOUBLE | BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_MULTI | BATTLE_TYPE_LINK);
+				if (gTrainerBattleOpponent_A == FRONTIER_BRAIN_TID) //Frontier Brains fight alone
+					gBattleTypeFlags |= (BATTLE_TYPE_DOUBLE | BATTLE_TYPE_MULTI | BATTLE_TYPE_LINK);
+				else
+					gBattleTypeFlags |= (BATTLE_TYPE_DOUBLE | BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_MULTI | BATTLE_TYPE_LINK);
 				break;
 		}
 	}

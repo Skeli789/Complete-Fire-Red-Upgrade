@@ -18103,8 +18103,8 @@ const struct LevelUpMove* const gLevelUpLearnsets[] =
 	[SPECIES_STAKATAKA] = sStakatakaLevelUpLearnset,
 	[SPECIES_BLACEPHALON] = sBlacephalonLevelUpLearnset,
 	[SPECIES_ZERAORA] = sZeraoraLevelUpLearnset,
-	[SPECIES_NECROZMA_MANE] = sNecrozmaLevelUpLearnset,
-	[SPECIES_NECROZMA_WINGS] = sNecrozmaLevelUpLearnset,
+	[SPECIES_NECROZMA_DUSK_MANE] = sNecrozmaLevelUpLearnset,
+	[SPECIES_NECROZMA_DAWN_WINGS] = sNecrozmaLevelUpLearnset,
 	[SPECIES_NECROZMA_ULTRA] = sNecrozmaLevelUpLearnset,
 	[SPECIES_LYCANROC_DUSK] = sLycanrocDuskLevelUpLearnset,
 */

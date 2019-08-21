@@ -44,7 +44,6 @@ static void Task_PrepareToGiveExpWithExpBar(u8 taskId);
 static void sub_80300F4(u8 taskId);
 static u32 GetExpToLevel(u8 toLevel, u8 growthRate);
 static void MonGainEVs(struct Pokemon *mon, u16 defeatedSpecies);
-static u16 GetTotalEVs(struct Pokemon* mon);
 
 ///////////////////// GAIN EXPERIENCE //////////////////////
 void atk23_getexp(void)
@@ -666,7 +665,7 @@ static void MonGainEVs(struct Pokemon *mon, u16 defeatedSpecies)
 	u8 holdEffect = ItemId_GetHoldEffect(heldItem);
 	u8 itemQuality = ItemId_GetHoldEffectParam(heldItem);
 
-	if (GetTotalEVs(mon) >= MAX_TOTAL_EVS)
+	if (GetMonEVCount(mon) >= MAX_TOTAL_EVS)
 		return;
 
     for (u8 stat = 0; stat < NUM_STATS; ++stat)
@@ -717,7 +716,7 @@ static void MonGainEVs(struct Pokemon *mon, u16 defeatedSpecies)
 bool8 AddEVs(struct Pokemon* mon, u8 statId, u16 numToAdd)
 {
 	u8 currentEv = GetMonData(mon, MON_DATA_HP_EV + statId, NULL);
-	u16 totalEvs = GetTotalEVs(mon);
+	u16 totalEvs = GetMonEVCount(mon);
 
 	if (totalEvs < MAX_TOTAL_EVS
 	&&  currentEv < EV_CAP) //The EV can be added
@@ -736,14 +735,4 @@ bool8 AddEVs(struct Pokemon* mon, u8 statId, u16 numToAdd)
 	}
 
 	return FALSE; //No EVs were added
-}
-
-static u16 GetTotalEVs(struct Pokemon* mon)
-{
-	u16 total = 0;
-
-	for (int i = 0; i < NUM_STATS; ++i)
-		total += GetMonData(mon, MON_DATA_HP_EV + i, NULL);
-
-	return total;
 }

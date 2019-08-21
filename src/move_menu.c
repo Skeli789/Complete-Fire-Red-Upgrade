@@ -3,6 +3,7 @@
 #include "../include/window.h"
 #include "../include/constants/songs.h"
 
+#include "../include/new/AI_Helper_Functions.h"
 #include "../include/new/accuracy_calc.h"
 #include "../include/new/damage_calc.h"
 #include "../include/new/Helper_Functions.h"
@@ -68,34 +69,30 @@ void HandleInputChooseMove(void)
     if (gMain.newKeys & A_BUTTON)
 	{
         u8 moveTarget;
+		u16 chosenMove = moveInfo->moves[gMoveSelectionCursor[gActiveBattler]];
 	
         PlaySE(SE_SELECT);
-        if (moveInfo->moves[gMoveSelectionCursor[gActiveBattler]] == MOVE_CURSE)
+        if (chosenMove == MOVE_CURSE)
         {
             if (moveInfo->monType1 != TYPE_GHOST && moveInfo->monType2 != TYPE_GHOST && moveInfo->monType3 != TYPE_GHOST)
                 moveTarget = MOVE_TARGET_USER;
             else
                 moveTarget = MOVE_TARGET_SELECTED;
         }
-		else if (moveInfo->moves[gMoveSelectionCursor[gActiveBattler]] == MOVE_ACUPRESSURE && !(gBattleTypeFlags & BATTLE_TYPE_DOUBLE))
+		else if (chosenMove == MOVE_ACUPRESSURE && !(gBattleTypeFlags & BATTLE_TYPE_DOUBLE))
 			moveTarget = MOVE_TARGET_USER; //Only can target yourself in singles
         else
-            moveTarget = gBattleMoves[moveInfo->moves[gMoveSelectionCursor[gActiveBattler]]].target;
+            moveTarget = gBattleMoves[chosenMove].target;
 		
         if (moveTarget & MOVE_TARGET_USER)
             gMultiUsePlayerCursor = gActiveBattler;
         else
             gMultiUsePlayerCursor = GetBattlerAtPosition((GetBattlerPosition(gActiveBattler) & BIT_SIDE) ^ BIT_SIDE);
 
-        if (!gBattleBufferA[gActiveBattler][1]) // not a double battle
+        if (gBattleBufferA[gActiveBattler][1]) // double battle
         {
-            if (moveTarget & MOVE_TARGET_USER_OR_SELECTED && !gBattleBufferA[gActiveBattler][2])
-                canSelectTarget++;
-        }
-        else // double battle
-        {
-			if (gNewBS->ZMoveData->viewing && SPLIT(moveInfo->moves[gMoveSelectionCursor[gActiveBattler]]) != SPLIT_STATUS) //Status moves keep original targets
-				moveTarget = gBattleMoves[CanUseZMove(gActiveBattler, 0xFF, moveInfo->moves[gMoveSelectionCursor[gActiveBattler]])].target;
+			if (gNewBS->ZMoveData->viewing && SPLIT(chosenMove) != SPLIT_STATUS) //Status moves keep original targets
+				moveTarget = gBattleMoves[CanUseZMove(gActiveBattler, 0xFF, chosenMove)].target;
 
             if (!(moveTarget & (MOVE_TARGET_RANDOM | MOVE_TARGET_BOTH | MOVE_TARGET_DEPENDS | MOVE_TARGET_FOES_AND_ALLY | MOVE_TARGET_OPPONENTS_FIELD | MOVE_TARGET_USER)))
                 canSelectTarget++; // either selected or user
@@ -104,7 +101,7 @@ void HandleInputChooseMove(void)
             {
                 canSelectTarget = FALSE;
             }
-            else if (!(moveTarget & (MOVE_TARGET_USER | MOVE_TARGET_USER_OR_SELECTED)) && CountAliveMons(BATTLE_ALIVE_EXCEPT_ACTIVE) <= 1)
+            else if (!(moveTarget & (MOVE_TARGET_USER | MOVE_TARGET_USER_OR_PARTNER)) && CountAliveMons(BATTLE_ALIVE_EXCEPT_ACTIVE) <= 1)
             {
                 gMultiUsePlayerCursor = GetDefaultMoveTarget(gActiveBattler); //0x803F6A0
                 canSelectTarget = FALSE;
@@ -117,6 +114,7 @@ void HandleInputChooseMove(void)
         if (!canSelectTarget)
         {
 			CloseZMoveDetails();
+			TryRemoveDoublesKillingScore(gActiveBattler, gMultiUsePlayerCursor, chosenMove);
 			EmitMoveChosen(1, gMoveSelectionCursor[gActiveBattler], gMultiUsePlayerCursor, gNewBS->MegaData->chosen[gActiveBattler], gNewBS->UltraData->chosen[gActiveBattler], gNewBS->ZMoveData->toBeUsed[gActiveBattler]);
             PlayerBufferExecCompleted();
         }
@@ -124,7 +122,7 @@ void HandleInputChooseMove(void)
         {
             gBattleBankFunc[gActiveBattler] = (u32) HandleInputChooseTarget;
 
-            if (moveTarget & (MOVE_TARGET_USER | MOVE_TARGET_USER_OR_SELECTED))
+            if (moveTarget & (MOVE_TARGET_USER | MOVE_TARGET_USER_OR_PARTNER))
                 gMultiUsePlayerCursor = gActiveBattler;
             else if (gAbsentBattlerFlags & gBitTable[GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)])
                 gMultiUsePlayerCursor = GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
@@ -334,7 +332,9 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 			
 			if (SPLIT(move) != SPLIT_STATUS)
 			{
-				u8 moveResult = TypeCalc(move, gActiveBattler, FOE(gActiveBattler), NULL, FALSE);
+				u8 foe = (IS_DOUBLE_BATTLE && !BATTLER_ALIVE(FOE(gActiveBattler))) ? PARTNER(FOE(gActiveBattler)) : FOE(gActiveBattler);
+				u8 moveResult = VisualTypeCalc(move, gActiveBattler, foe);
+
 				if (!(moveResult & MOVE_RESULT_NO_EFFECT) && CheckTableForMoveEffect(move, gNoWeaknessResistanceTable))
 					moveResult = 0; //These moves can have no effect, but are neither super nor not very effective
 				tempMoveStruct->moveResults[i] = moveResult;
@@ -918,6 +918,7 @@ void HandleInputChooseTarget(void)
     {
         PlaySE(SE_SELECT);
         gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = sub_8012098; //sub_8039B2C in Emerald
+		TryRemoveDoublesKillingScore(gActiveBattler, gMultiUsePlayerCursor, moveInfo->moves[gMoveSelectionCursor[gActiveBattler]]);
 		EmitMoveChosen(1, gMoveSelectionCursor[gActiveBattler], gMultiUsePlayerCursor, gNewBS->MegaData->chosen[gActiveBattler], gNewBS->UltraData->chosen[gActiveBattler], gNewBS->ZMoveData->toBeUsed[gActiveBattler]);
         CloseZMoveDetails();
 		EndBounceEffect(gMultiUsePlayerCursor, BOUNCE_HEALTHBOX);
@@ -984,7 +985,7 @@ void HandleInputChooseTarget(void)
 				case B_POSITION_PLAYER_RIGHT:
 					if (gActiveBattler != gMultiUsePlayerCursor)
 						i++;
-					else if (gBattleMoves[move].target & MOVE_TARGET_USER_OR_SELECTED)
+					else if (gBattleMoves[move].target & MOVE_TARGET_USER_OR_PARTNER)
 						i++;
 					break;
 				case B_POSITION_OPPONENT_LEFT:
@@ -1047,7 +1048,7 @@ void HandleInputChooseTarget(void)
 				case B_POSITION_PLAYER_RIGHT:
 					if (gActiveBattler != gMultiUsePlayerCursor)
 						i++;
-					else if (gBattleMoves[move].target & MOVE_TARGET_USER_OR_SELECTED)
+					else if (gBattleMoves[move].target & MOVE_TARGET_USER_OR_PARTNER)
 						i++;
 					break;
 				case B_POSITION_OPPONENT_LEFT:

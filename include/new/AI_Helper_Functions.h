@@ -13,15 +13,16 @@ bool8 CanKnockOutWithoutMove(const u16 ignoredMove, const u8 bankAtk, const u8 b
 bool8 MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(u16 move, u8 bankAtk, u8 bankDef, bool8 checkGoingFirst);
 bool8 StrongestMoveGoesFirst(u16 move, u8 bankAtk, u8 bankDef);
 bool8 CanKnockOutFromParty(struct Pokemon* monAtk, u8 bankDef);
-u8 GetBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner, u8 bankDefPartner, u16* bestMove);
+void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner, u8 bankDefPartner, s8 bestMoveScores[MAX_BATTLERS_COUNT], u16* bestMove);
 u8 GetDoubleKillingScore(u16 move, u8 bankAtk, u8 bankDef);
+void TryRemoveDoublesKillingScore(u8 bankAtk, u8 bankDef, u16 chosenMove);
 bool8 RangeMoveCanHurtPartner(u16 move, u8 bankAtk, u8 bankAtkPartner);
 bool8 MoveKnocksOutXHits(u16 move, u8 bankAtk, u8 bankDef, u8 numHits);
 bool8 MoveKnocksOutXHitsFromParty(u16 move, struct Pokemon* monAtk, u8 bankDef, u8 numHits);
 u16 CalcFinalAIMoveDamage(u16 move, u8 bankAtk, u8 bankDef, u8 numHits);
 u16 CalcFinalAIMoveDamageFromParty(u16 move, struct Pokemon* monAtk, u8 bankDef, u8 numHits);
 move_t GetStrongestMove(const u8 bankAtk, const u8 bankDef, const bool8 onlySpreadMoves);
-bool8 IsStrongestMove(const u16 currentMove, const u8 bankAtk, const u8 bankDef, const bool8 onlySpreadMoves);
+bool8 IsStrongestMove(const u16 currentMove, const u8 bankAtk, const u8 bankDef);
 bool8 MoveWillHit(u16 move, u8 bankAtk, u8 bankDef);
 bool8 MoveWouldHitFirst(u16 move, u16 bankAtk, u16 bankDef);
 bool8 MoveWouldHitBeforeOtherMove(u16 moveAtk, u8 bankAtk, u16 moveDef, u8 bankDef);
@@ -61,6 +62,7 @@ bool8 HasProtectionMoveInMoveset(u8 bank, u8 checkType);
 bool8 MoveTypeInMoveset(u8 bank, u8 moveType);
 bool8 DamagingMoveTypeInMoveset(u8 bank, u8 moveType);
 bool8 DamagingAllHitMoveTypeInMoveset(u8 bank, u8 moveType);
+bool8 DamagingSpreadMoveInMoveset(u8 bank);
 bool8 HasSnatchableMove(u8 bank);
 bool8 MoveEffectInMoveset(u8 moveEffect, u8 bank);
 bool8 StatusMoveInMoveset(u8 bank);
@@ -80,7 +82,7 @@ bool8 PartyMemberStatused(u8 bank, bool8 checkSoundproof);
 move_t ShouldAIUseZMove(u8 bank, u8 moveIndex, u16 move);
 
 void IncreaseViability(s16* viability, u8 amount);
-void DecreaseViability(s16* viability, u8 amount);
+void DecreaseViability(s16* viability, u16 amount);
 
 //Exported Constants
 #define AI_THINKING_STRUCT ((struct AI_ThinkingStruct*) (gBattleResources->ai))
@@ -95,3 +97,12 @@ void DecreaseViability(s16* viability, u8 amount);
 #define CHECK_CRAFTY_SHIELD 0x4
 #define CHECK_MAT_BLOCK 0x8
 
+
+#define DOUBLES_INCREASE_HIT_FOE 4
+#define DOUBLES_INCREASE_KO_FOE 2
+#define DOUBLES_INCREASE_STRONGEST_MOVE 1
+
+#define DOUBLES_DECREASE_HIT_PARTNER 3
+#define DOUBLES_DECREASE_DESTINY_BOND 2
+
+#define BEST_DOUBLES_KO_SCORE (DOUBLES_INCREASE_HIT_FOE + DOUBLES_INCREASE_HIT_FOE + DOUBLES_INCREASE_KO_FOE + DOUBLES_INCREASE_KO_FOE)

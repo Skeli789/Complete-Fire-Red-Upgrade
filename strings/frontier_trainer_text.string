@@ -282,7 +282,7 @@ I'm taking it to a zone beyond\nspeed!
 Kaboom!
 
 #org @sFrontierText_Cyclist_PreBattle_2
-Come on!\nWe'll run!\lTogether!
+Come on!\pWe'll run!\pTogether!
 
 #org @sFrontierText_Cyclist_PlayerWin_2
 Wait! Don't leave me behind!
@@ -390,7 +390,7 @@ You're beautiful[.]
 You weren't ready for my beauty.
 
 #org @sFrontierText_Beauty_PreBattle_2
-This may hurt a little bit, but\nwe'll be done quick.\lHold still!
+This may hurt a little bit, but\nwe'll be done quick.\pHold still!
 
 #org @sFrontierText_Beauty_PlayerWin_2
 Ooh, no!\nThat hurts!
@@ -579,7 +579,7 @@ It's inconceivable[.]\pHow could the power of science be\ndefeated?
 Did you see? Were you amazed?\nThat's the power of science!
 
 #org @sFrontierText_Scientist_PreBattle_2
-Charge, my Pok\emon!\nDemonstrate the fruits of our\lexperimentation!
+Charge, my Pok\emon!\pDemonstrate the fruits of our\nexperimentation!
 
 #org @sFrontierText_Scientist_PlayerWin_2
 What kind of experiments?\nThat's classified.
@@ -1119,10 +1119,10 @@ Gasp! My ankle!\nI rolled my ankle!
 Run! Faster!
 
 #org @sFrontierText_Rancher_PreBattle_1
-Little boy? Little girl?\nDoesn't matter which. Let's do\lthis!
+Little boy? Little girl?\nDoesn't matter which.\pLet's do this!
 
 #org @sFrontierText_Rancher_PlayerWin_1
-Little boy? Little girl?\nDoesn't matter which, but you're\lsure tough!
+Little boy? Little girl?\pDoesn't matter which, but you're\nsure tough!
 
 #org @sFrontierText_Rancher_PlayerLose_1
 Little boy? Little girl?\nDoesn't matter which, but sorry.

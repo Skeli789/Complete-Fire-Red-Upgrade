@@ -4,6 +4,7 @@
 #include "../include/new/battle_terrain.h"
 #include "../include/new/dns.h"
 #include "../include/new/form_change.h"
+#include "../include/new/frontier.h"
 #include "../include/new/Helper_Functions.h"
 #include "../include/new/set_z_effect.h"
 
@@ -61,8 +62,14 @@ void DoFormChange(u8 bank, u16 species, bool8 ReloadType, bool8 ReloadStats, boo
 	
 	if (ReloadType) 
 	{
-		gBattleMons[bank].type1 = gBaseStats[species].type1;
-		gBattleMons[bank].type2 = gBaseStats[species].type2;
+		if (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) //The Pokemon takes on the types of its first two moves
+			UpdateTypesForCamomons(bank);
+		else
+		{
+			gBattleMons[bank].type1 = gBaseStats[species].type1;
+			gBattleMons[bank].type2 = gBaseStats[species].type2;
+		}
+
 		gBattleMons[bank].type3 = TYPE_BLANK;
 	}
 	

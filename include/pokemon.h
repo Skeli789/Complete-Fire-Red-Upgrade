@@ -140,6 +140,8 @@
 
 #define MAX_MON_MOVES 4
 
+#define MAX_FRIENDSHIP 255
+
 enum
 {
     EGG_GROUP_NONE,
@@ -699,6 +701,7 @@ void __attribute__((long_call)) SetMonData2(struct Pokemon *mon, s32 PokemonData
 void __attribute__((long_call)) CopyMon(void *dest, void *src, size_t size);
 
 u8 __attribute__((long_call)) CheckPartyHasHadPokerus(struct Pokemon *party, u8 selection);
+u16 __attribute__((long_call)) GetMonEVCount(struct Pokemon* mon);
 
 /*
 void ZeroMonData(struct Pokemon *mon);
@@ -793,7 +796,6 @@ const u8 *GetFrontSpritePalFromSpeciesAndPersonality(u16, u32, u32);
 const struct CompressedSpritePalette *sub_80409C8(u16, u32, u32);
 bool8 IsOtherTrainer(u32, u8 *);
 void SetWildMonHeldItem(void);
-u16 GetMonEVCount(struct Pokemon *);
 
 const struct CompressedSpritePalette *sub_806E794(struct Pokemon *mon);
 const struct CompressedSpritePalette *GetMonSpritePalStructFromOtIdPersonality(u16 species, u32 otId , u32 personality);

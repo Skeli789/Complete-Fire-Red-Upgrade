@@ -1,5 +1,6 @@
 #include "defines.h"
 #include "defines_battle.h"
+#include "../include/battle_anim.h"
 #include "../include/battle_string_ids.h"
 #include "../include/random.h"
 #include "../include/constants/items.h"
@@ -147,12 +148,51 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
 						if (moveTurn)
 						{
 							BattleScriptPushCursor();
-							gBattlescriptCurrInstr = BattleScript_RaiseStatsSeedRet;
+							gBattlescriptCurrInstr = BattleScript_ItemStatChangeRet;
 						}
 						else
-							BattleScriptExecute(BattleScript_RaiseStatsSeedEnd2);
+							BattleScriptExecute(BattleScript_ItemStatChangeEnd2);
 					}
 				}
+				break;
+				
+			case ITEM_EFFECT_EJECT_PACK:
+				if (gNewBS->statFellThisTurn[bank])
+				{
+					gNewBS->statFellThisTurn[bank] = FALSE;
+					gNewBS->NoSymbiosisByte = TRUE;
+					gActiveBattler = gBattleScripting->bank = bank;
+					effect = ITEM_STATS_CHANGE;
+					
+					if (moveTurn)
+					{
+						BattleScriptPushCursor();
+						gBattlescriptCurrInstr = BattleScript_EjectPackRet;
+					}
+					else
+						BattleScriptExecute(BattleScript_EjectPackEnd2);
+				}
+				break;
+				
+			case ITEM_EFFECT_ROOM_SERVICE:
+				if (IsTrickRoomActive() && STAT_CAN_FALL(bank, STAT_STAGE_SPEED))
+				{
+					PREPARE_STAT_BUFFER(gBattleTextBuff1, STAT_STAGE_SPEED);
+					gBattleScripting->statChanger = DECREASE_1 | STAT_STAGE_SPEED;
+					gBattleScripting->animArg1 = STAT_ANIM_MINUS1 + STAT_STAGE_SPEED - 1;
+					gBattleScripting->animArg2 = 0;
+					gBattleScripting->bank = gBankTarget = bank;
+					effect = ITEM_STATS_CHANGE;
+					
+					if (moveTurn)
+					{
+						BattleScriptPushCursor();
+						gBattlescriptCurrInstr = BattleScript_ItemStatChangeRet;
+					}
+					else
+						BattleScriptExecute(BattleScript_ItemStatChangeEnd2);
+				}
+				break;
 		}
 		break;
 	
@@ -273,7 +313,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
 					gBattleMoveDamage *= -1;
 					BattleScriptExecute(BattleScript_ItemHealHP_End2);
 					effect = ITEM_HP_CHANGE;
-					RecordItemBattle(bank, bankHoldEffect);
+					RecordItemEffectBattle(bank, bankHoldEffect);
 					gNewBS->leftoverHealingDone[bank] = TRUE;
 				}
 				break;
@@ -640,7 +680,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
 					gBattleMoveDamage = MathMax(1, udivsi(gBattleMons[gBankAttacker].maxHP, 6));
 					BattleScriptPushCursor();
 					gBattlescriptCurrInstr = BattleScript_RockyHelmetDamage;
-					RecordItemBattle(bank, bankHoldEffect);
+					RecordItemEffectBattle(bank, bankHoldEffect);
 					gActiveBattler = gBankAttacker;
 					effect = ITEM_HP_CHANGE;
 				}

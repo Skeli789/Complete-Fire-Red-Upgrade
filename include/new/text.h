@@ -67,3 +67,15 @@
 #define PC_y 0xED
 #define PC_z 0xEE
 
+//Numbers
+#define PC_0 0xA1
+#define PC_1 0xA2
+#define PC_2 0xA3
+#define PC_3 0xA4
+#define PC_4 0xA5
+#define PC_5 0xA6
+#define PC_6 0xA7
+#define PC_7 0xA8
+#define PC_8 0xA9
+#define PC_9 0xAA
+

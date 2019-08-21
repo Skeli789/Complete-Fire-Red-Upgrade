@@ -174,7 +174,7 @@ PSYCHIC_TERRAIN
 
 #define MOVE_TARGET_SELECTED        0x0
 #define MOVE_TARGET_DEPENDS         0x1
-#define MOVE_TARGET_USER_OR_SELECTED    0x2
+#define MOVE_TARGET_USER_OR_PARTNER    0x2
 #define MOVE_TARGET_RANDOM          0x4
 #define MOVE_TARGET_BOTH            0x8
 #define MOVE_TARGET_USER            0x10
@@ -755,6 +755,8 @@ struct NewBattleStruct
 	u8 pickupStack[MAX_BATTLERS_COUNT]; //0x2017620
 	u8 synchronizeTarget[MAX_BATTLERS_COUNT]; //Bank + 1 that statused given bank
 	u8 leftoverHealingDone[MAX_BATTLERS_COUNT]; //Leftovers already restored health this turn or Sticky Barb did damage
+	u8 statFellThisTurn[MAX_BATTLERS_COUNT];
+	u8 recalculatedBestDoublesKillingScores[MAX_BATTLERS_COUNT];
 	
 	//Bit Fields for Banks
 	u8 MicleBerryBits;
@@ -848,9 +850,8 @@ struct NewBattleStruct
 	u8 backupSynchronizeBanks[2];
 	u16 movePredictions[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //movePredictions[bankAtk][bankDef] //0x201769A
 	u16 strongestMove[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //strongestMove[bankAtk][bankDef]
-	u16 strongestSpreadMove[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //strongestSpreadMove[bankAtk][bankDef]
 	u16 bestDoublesKillingMoves[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //bestDoublesKillingMoves[bankAtk][bankDef]
-	u8 bestDoublesKillingScores[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //bestDoublesKillingScores[bankAtk][bankDef]
+	s8 bestDoublesKillingScores[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //bestDoublesKillingScores[bankAtk][bankDef][bankDef / bankDefPartner / bankAtkPartner]
 	bool8 canKnockOut[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //canKnockOut[bankAtk][bankDef]
 	bool8 can2HKO[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //can2HKO[bankAtk][bankDef]
 	u8 bestMonIdToSwitchInto[MAX_BATTLERS_COUNT][2]; //bestMonIdToSwitchInto[bankAtk][first or second choice]

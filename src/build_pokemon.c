@@ -8,6 +8,7 @@
 #include "../include/constants/items.h"
 #include "../include/constants/maps.h"
 #include "../include/constants/pokedex.h"
+#include "../include/constants/region_map_sections.h"
 #include "../include/constants/trainers.h"
 
 #include "../include/new/ability_tables.h"
@@ -23,6 +24,7 @@
 #include "../include/new/learn_move.h"
 #include "../include/new/mega.h"
 #include "../include/new/multi.h"
+#include "../include/new/pokemon_storage_system.h"
 
 #include "Tables/Trainers_With_EVs_Table.h"
 #include "Tables/Battle_Tower_Spreads.h"
@@ -33,6 +35,7 @@
 #define TOTAL_PIKACHU_SPREADS ARRAY_COUNT(gPikachuSpreads)
 #define TOTAL_WORMADAM_SPREADS ARRAY_COUNT(gWormadamSpreads)
 #define TOTAL_ROTOM_SPREADS ARRAY_COUNT(gRotomSpreads)
+#define TOTAL_ORICORIO_SPREADS ARRAY_COUNT(gOricorioSpreads)
 #define TOTAL_LITTLE_CUP_SPREADS ARRAY_COUNT(gLittleCupSpreads)
 #define TOTAL_MIDDLE_CUP_SPREADS ARRAY_COUNT(gMiddleCupSpreads)
 
@@ -109,8 +112,9 @@ extern bool8 sp051_CanTeamParticipateInSkyBattle(void);
 extern bool8 CanMonParticipateInASkyBattle(struct Pokemon* mon);
 
 //This file's functions:
-static u8 CreateNPCTrainerParty(pokemon_t* const party, const u16 trainerNum, const bool8 firstTrainer, const bool8 side);
-static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerNum, const u8 tier, const bool8 firstTrainer, const bool8 forPlayer, const u8 side);
+static u8 CreateNPCTrainerParty(struct Pokemon* const party, const u16 trainerNum, const bool8 firstTrainer, const bool8 side);
+static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerNum, const u8 tier, const bool8 firstTrainer, const bool8 forPlayer, const u8 side);
+static void BuildFrontierMultiParty(u8 multiId);
 static void CreateFrontierMon(struct Pokemon* mon, const u8 level, const struct BattleTowerSpread* spread, const u16 trainerId, const u8 trainerNum, const u8 trainerGender, const bool8 forPlayer);
 static void SetWildMonHeldItem(void);
 static u8 ConvertFrontierAbilityNumToAbility(const u8 abilityNum, const u16 species);
@@ -123,7 +127,7 @@ static bool8 ZCrystalAlreadyOnTeam(const u16 item, const u8 partySize, const ite
 static void AdjustTypesForMegas(const u16 species, const u16 item, u8* const type1, u8* const type2);
 static bool8 TeamNotAllSameType(const u16 species, const u16 item, const u8 partySize, const species_t* const speciesArray, const item_t* const itemArray);
 static bool8 TooManyLegendariesOnGSCupTeam(const u16 species, const u8 partySize, const species_t* const speciesArray);
-static bool8 PokemonTierBan(const u16 species, const u16 item, const struct BattleTowerSpread* const spread, const pokemon_t* const mon, const u8 tier, const u8 checkFromLocationType);
+static bool8 PokemonTierBan(const u16 species, const u16 item, const struct BattleTowerSpread* const spread, const struct Pokemon* const mon, const u8 tier, const u8 checkFromLocationType);
 static bool8 IsPokemonBannedBasedOnStreak(u16 species, u16 item, u16* speciesArray, u8 monsCount, u16 trainerId, u8 tier, bool8 forPlayer);
 static bool8 TeamDoesntHaveSynergy(const struct BattleTowerSpread* const spread, const struct TeamBuilder* const builder);
 static u16 GivePlayerFrontierMonGivenSpecies(const u16 species, const struct BattleTowerSpread* const spreadTable, const u16 numSpreads);
@@ -133,7 +137,7 @@ static u16 TryAdjustAestheticSpecies(u16 species);
 static void SwapMons(struct Pokemon* party, u8 i, u8 j);
 static void PostProcessTeam(struct Pokemon* party, struct TeamBuilder* builder);
 static u8 GetPartyIdFromPartyData(struct Pokemon* mon);
-static u8 GetHighestMonLevel(const pokemon_t* const party);
+static u8 GetHighestMonLevel(const struct Pokemon* const party);
 
 #ifdef OPEN_WORLD_TRAINERS
 
@@ -209,7 +213,9 @@ void BuildTrainerPartySetup(void)
 	{
 		if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
 		{
-			BuildFrontierParty(&gPlayerParty[3], VarGet(PARTNER_VAR), towerTier, FALSE, FALSE, B_SIDE_PLAYER);
+			if (IsRandomBattleTowerBattle()
+			|| GetMonData(&gPlayerParty[3], MON_DATA_SPECIES, NULL) == SPECIES_NONE) //Ideally the partner's Pokemon should be prepared beforehand. This is a backup measure
+				BuildFrontierParty(&gPlayerParty[3], VarGet(PARTNER_VAR), towerTier, 3, FALSE, B_SIDE_PLAYER);
 		}
 		else
 		{
@@ -412,8 +418,19 @@ u16 sp06A_GivePlayerFrontierMonByLoadedSpread(void)
 	return GiveMonToPlayer(&mon);
 }
 
+//@Details: Temporily replaces the player's team with the the team of the given multi
+//			battle trainer to allow the player to choose which Pokemon they want the
+//			partner to use.
+//@Inputs:
+//		Var8000: Given Id.
+void sp06B_ReplacePlayerTeamWithMultiTrainerTeam(void)
+{
+	BackupPartyToTempTeam(0, 0, 3);
+	BuildFrontierMultiParty(Var8000);
+}
+
 //Returns the number of Pokemon
-static u8 CreateNPCTrainerParty(pokemon_t* const party, const u16 trainerId, const bool8 firstTrainer, const bool8 side)
+static u8 CreateNPCTrainerParty(struct Pokemon* const party, const u16 trainerId, const bool8 firstTrainer, const bool8 side)
 {
 	u32 nameHash = 0;
 	u32 personalityValue;
@@ -582,15 +599,15 @@ static u8 CreateNPCTrainerParty(pokemon_t* const party, const u16 trainerId, con
 					switch(spread->ability) {
 						case Ability_Hidden:
 						TRAINER_WITH_EV_GIVE_HIDDEN_ABILITY:
-							GiveMonNatureAndAbility(&party[i], spread->nature, 0xFF); //Give Hidden Ability
+							GiveMonNatureAndAbility(&party[i], spread->nature, 0xFF, FALSE); //Give Hidden Ability
 							break;
 						case Ability_1:
 						case Ability_2:
-							GiveMonNatureAndAbility(&party[i], spread->nature, MathMin(1, spread->ability - 1));
+							GiveMonNatureAndAbility(&party[i], spread->nature, MathMin(1, spread->ability - 1), FALSE);
 							break;
 						case Ability_Random_1_2:
 						TRAINER_WITH_EV_GIVE_RANDOM_ABILITY:
-							GiveMonNatureAndAbility(&party[i], spread->nature, Random() % 2);
+							GiveMonNatureAndAbility(&party[i], spread->nature, Random() % 2, FALSE);
 							break;
 						case Ability_RandomAll: ;
 							u8 random = Random() % 3;
@@ -631,7 +648,7 @@ static u8 CreateNPCTrainerParty(pokemon_t* const party, const u16 trainerId, con
 }
 
 //Returns the number of Pokemon
-static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerId, const u8 tier, const bool8 firstTrainer, const bool8 forPlayer, const u8 side) 
+static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, const u8 tier, const bool8 firstTrainer, const bool8 forPlayer, const u8 side) 
 {
 	u32 i, j;
 	u8 monsCount;
@@ -639,6 +656,7 @@ static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerId, const 
 	u8 trainerGender = 0;
 	u8 battleTowerPokeNum = VarGet(BATTLE_TOWER_POKE_NUM);
 	u8 battleType = VarGet(BATTLE_TOWER_BATTLE_TYPE);
+	u8 level = GetBattleTowerLevel(tier);
 	u16 tableId = VarGet(TOWER_TRAINER_ID_VAR + (firstTrainer ^ 1));
 
 	if (!forPlayer) 
@@ -647,7 +665,8 @@ static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerId, const 
 			return 0;
 		else if (trainerId != BATTLE_TOWER_TID 
 			  && trainerId != BATTLE_TOWER_SPECIAL_TID
-			  && trainerId != FRONTIER_BRAIN_TID)
+			  && trainerId != FRONTIER_BRAIN_TID
+			  && trainerId != BATTLE_TOWER_MULTI_TRAINER_TID)
 		{
 			return (CreateNPCTrainerParty(party, trainerId, firstTrainer, side));
 		}
@@ -657,6 +676,7 @@ static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerId, const 
 	const struct BattleTowerTrainer* trainer = &gTowerTrainers[tableId];
 	const struct SpecialBattleTowerTrainer* specialTrainer = &gSpecialTowerTrainers[tableId];
 	const struct FrontierBrain* frontierBrain = &gFrontierBrains[tableId];
+	const struct MultiBattleTowerTrainer* multiPartner = &gFrontierMultiBattleTrainers[tableId];
 	
 	switch (trainerId) {
 		case BATTLE_TOWER_TID:
@@ -672,7 +692,7 @@ static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerId, const 
 	
 	if (forPlayer)
 		ZeroPlayerPartyMons();
-	else if (firstTrainer)
+	else if (firstTrainer && firstTrainer != 3) //Clear if not multi partner
 		ZeroEnemyPartyMons();
 
 	if (forPlayer == TRUE) //Excludes random battles
@@ -683,6 +703,9 @@ static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerId, const 
 		monsCount = 3;
 	else
 		monsCount = MathMax(1, MathMin(PARTY_SIZE, battleTowerPokeNum));
+		
+	if (IsFrontierMulti(battleType) && trainerId == FRONTIER_BRAIN_TID)
+		monsCount = MathMin(PARTY_SIZE, monsCount * 2); //Frontier brains fight alone so double the amount of pokes they can use in Multi battles
 
 	struct TeamBuilder* builder = Calloc(sizeof(struct TeamBuilder));
 	builder->tier = tier;
@@ -728,7 +751,7 @@ static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerId, const 
 							}
 							else //Doubles - GS Cup
 							{
-								if ((Random() & 1) == 0)
+								if ((Random() & 1) == 0) //50% chance of pulling legendary
 									goto SPECIAL_TRAINER_LEGENDARY_SPREADS;
 							
 								goto SPECIAL_TRAINER_REGULAR_SPREADS;
@@ -745,7 +768,48 @@ static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerId, const 
 				case FRONTIER_BRAIN_TID:
 					spread = &frontierBrain->spreads[Random() % frontierBrain->spreadSize]; //Frontier Brains have preset spreads.
 					break;
+				case BATTLE_TOWER_MULTI_TRAINER_TID: //This will only get called if the Player's party was not set up properly beforehand
+					if (IsRandomBattleTowerBattle())
+						goto GENERIC_RANDOM_SPREADS; //Generate random Pokemon for the partner in random battles
+
+					switch (tier) {
+						case BATTLE_TOWER_UBER:
+						case BATTLE_TOWER_NO_RESTRICTIONS:
+						MULTI_PARTNER_LEGENDARY_SPREADS:
+							if (multiPartner->legendarySpreads != NULL)
+								spread = &multiPartner->legendarySpreads[Random() % multiPartner->legSpreadSize];
+							else
+								goto REGULAR_LEGENDARY_SPREADS;
+							break;
+						case BATTLE_TOWER_LITTLE_CUP:
+							if (multiPartner->littleCupSpreads != NULL)
+								spread = &multiPartner->littleCupSpreads[Random() % multiPartner->lcSpreadSize];
+							else
+								goto REGULAR_LC_SPREADS;
+							break;
+						case BATTLE_TOWER_MIDDLE_CUP:
+							if (IsFrontierSingles(battleType))
+							{
+								goto REGULAR_MC_SPREADS; //Middle Cup doesn't exist in Multi Battles so this is error prevention for something
+							}
+							else //Doubles - GS Cup
+							{
+								if ((Random() & 1) == 0) //50% chance of pulling legendary
+									goto MULTI_PARTNER_LEGENDARY_SPREADS;
+							
+								goto MULTI_PARTNER_REGULAR_SPREADS;
+							}
+							break;
+						default:
+						MULTI_PARTNER_REGULAR_SPREADS:
+							if (multiPartner->regularSpreads != NULL)
+								spread = &multiPartner->regularSpreads[Random() % multiPartner->regSpreadSize]; //Multi trainers have preset spreads.
+							else
+								goto REGULAR_SPREADS;
+					}
+					break;
 				case BATTLE_TOWER_TID:
+				GENERIC_RANDOM_SPREADS:
 					switch (tier) {
 						case BATTLE_TOWER_UBER:
 						case BATTLE_TOWER_NO_RESTRICTIONS:
@@ -773,12 +837,15 @@ static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerId, const 
 							break;
 						case BATTLE_TOWER_OU: ;
 						case BATTLE_TOWER_MONOTYPE: ;
-							//50% chance of using a legend allowed in these tiers
-							if ((Random() & 1) == 0)
+							//25% chance of trying to use a legend allowed in these tiers
+							if ((Random() & 3) == 0)
 								goto REGULAR_LEGENDARY_SPREADS;
 								
 							goto REGULAR_SPREADS;
-						case BATTLE_TOWER_STANDARD: ;
+						case BATTLE_TOWER_STANDARD:
+							if (trainerId != BATTLE_TOWER_TID) //Multi partner team
+								goto REGULAR_SPREADS;
+						
 							u16 streak = GetCurrentBattleTowerStreak();
 							if (streak < 2)
 							{
@@ -846,7 +913,7 @@ static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerId, const 
 			&& !PokemonTierBan(species, item, spread, NULL, tier, CHECK_BATTLE_TOWER_SPREADS)
 			&& !(tier == BATTLE_TOWER_MONOTYPE && TeamNotAllSameType(species, item, monsCount, builder->speciesArray, builder->itemArray))
 			&& !(tier == BATTLE_TOWER_GS_CUP && !IsFrontierSingles(battleType) && TooManyLegendariesOnGSCupTeam(species, monsCount, builder->speciesArray))
-			&& !((trainerId == BATTLE_TOWER_TID || forPlayer) && TeamDoesntHaveSynergy(spread, builder)))
+			&& !((trainerId == BATTLE_TOWER_TID || forPlayer || (trainerId == BATTLE_TOWER_MULTI_TRAINER_TID && IsRandomBattleTowerBattle())) && TeamDoesntHaveSynergy(spread, builder)))
 			{
 				ability = ConvertFrontierAbilityNumToAbility(spread->ability, species);
 				itemEffect = (ability != ABILITY_KLUTZ) ? ItemId_GetHoldEffect(spread->item) : 0;
@@ -916,8 +983,8 @@ static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerId, const 
 					}
 					
 					u8 typeDmg;
-					u8 defType1 = gBaseStats[species].type1;
-					u8 defType2 = gBaseStats[species].type2;
+					u8 defType1 = (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) ? GetCamomonsTypeBySpread(spread, 0) : gBaseStats[species].type1;
+					u8 defType2 = (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) ? GetCamomonsTypeBySpread(spread, 1) : gBaseStats[species].type2;
 
 					for (j = 0; j < ARRAY_COUNT(sImmunities); ++j)
 					{
@@ -931,15 +998,6 @@ static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerId, const 
 				loop = 0;
 			}
 		} while (loop == 1);
-
-		u8 level;
-		if (tier == BATTLE_TOWER_LITTLE_CUP)
-			level = 5;
-		else if (tier == BATTLE_TOWER_MONOTYPE)
-			level = 100;
-		else
-			level = MathMax(1, MathMin(MAX_LEVEL, VarGet(BATTLE_TOWER_POKE_LEVEL)));
-
 
 		CreateFrontierMon(&party[i], level, spread, trainerId, firstTrainer ^ 1, trainerGender, forPlayer);
 	}
@@ -960,11 +1018,84 @@ static u8 BuildFrontierParty(pokemon_t* const party, const u16 trainerId, const 
 	return monsCount;
 }
 
+static void BuildFrontierMultiParty(u8 multiId)
+{	
+	int i;
+	u8 numRegMonsOnTeam = 0;
+	u8 tier = VarGet(BATTLE_TOWER_TIER);
+	const struct BattleTowerSpread* spread = NULL;
+	const struct MultiBattleTowerTrainer* multiPartner = &gFrontierMultiBattleTrainers[multiId];
+	u8 idOnTeam[multiPartner->regSpreadSize];
+	
+	//Clear Values
+	for (i = 0; i < multiPartner->regSpreadSize; ++i)
+		idOnTeam[i] = FALSE;
+
+	ZeroPlayerPartyMons();
+
+	//Build Team
+	for (int i = 0; i < PARTY_SIZE; ++i)
+	{
+		switch (tier) {
+			case BATTLE_TOWER_UBER:
+			case BATTLE_TOWER_NO_RESTRICTIONS:
+				if (multiPartner->legendarySpreads != NULL && i < multiPartner->legSpreadSize)
+					spread = &multiPartner->legendarySpreads[i];
+				else
+					return; //No Pokemon data to load
+				break;
+			case BATTLE_TOWER_LITTLE_CUP:
+				if (multiPartner->littleCupSpreads != NULL && i < multiPartner->lcSpreadSize)
+					spread = &multiPartner->littleCupSpreads[i];
+				else
+					return; //No Pokemon data to load
+				break;
+			case BATTLE_TOWER_MIDDLE_CUP:
+				if (IsGSCupBattle()) //Middle Cup doesn't exist in Multi Battles; just GS Cup
+				{
+					if (i < 2 && multiPartner->legendarySpreads != NULL && i < multiPartner->legSpreadSize)
+						spread = &multiPartner->legendarySpreads[i]; //Pull the first 2 Pokemon from the legendary spreads
+					else
+					{
+						if (multiPartner->regularSpreads != NULL && numRegMonsOnTeam < multiPartner->regSpreadSize)
+						{
+							u8 id;
+							do
+							{
+								id = Random() % multiPartner->regSpreadSize;
+							} while (idOnTeam[id]);
+
+							idOnTeam[id] = TRUE;
+							++numRegMonsOnTeam;
+							spread = &multiPartner->regularSpreads[id];
+						}
+						else
+							return; //No Pokemon data to load
+					}
+				}
+				break;
+			default:
+				if (multiPartner->regularSpreads != NULL && i < multiPartner->regSpreadSize)
+					spread = &multiPartner->regularSpreads[i];
+				else
+					return; //No Pokemon data to load
+		}
+
+		CreateFrontierMon(&gPlayerParty[i], GetBattleTowerLevel(tier), spread, BATTLE_TOWER_MULTI_TRAINER_TID, 2, multiPartner->gender, FALSE);
+	}
+}
+
 static void CreateFrontierMon(struct Pokemon* mon, const u8 level, const struct BattleTowerSpread* spread, const u16 trainerId, const u8 trainerNum, const u8 trainerGender, const bool8 forPlayer)
 {
 	int i, j;
 	
 	u16 species = TryAdjustAestheticSpecies(spread->species);
+	u32 otId;
+	
+	if (trainerId == BATTLE_TOWER_MULTI_TRAINER_TID)
+		otId = gFrontierMultiBattleTrainers[VarGet(TOWER_TRAINER_ID_PARTNER_VAR)].otId;
+	else
+		otId = Random32();
 
 	if (forPlayer)
 	{
@@ -972,14 +1103,19 @@ static void CreateFrontierMon(struct Pokemon* mon, const u8 level, const struct 
 	}
 	else 
 	{
-		CreateMon(mon, species, level, 0, TRUE, 0, OT_ID_PRESET, Random32());
+		CreateMon(mon, species, level, 0, TRUE, 0, OT_ID_PRESET, otId);
 
 		CopyFrontierTrainerName(gStringVar1, trainerId, trainerNum);
 		SetMonData(mon, MON_DATA_OT_NAME, gStringVar1);
 		mon->otGender = trainerGender;
 	}
 
-	mon->metLocation = 0x3A; //Battle Tower RS
+	#ifdef UNBOUND
+		mon->metLocation = MAPSEC_TRAINER_TOWER_2; //Battle Tower Unbound
+	#else
+		mon->metLocation = MAPSEC_TRAINER_TOWER;
+	#endif
+
 	mon->metLevel = level;
 	mon->obedient = TRUE;
 	mon->friendship = 255;
@@ -992,11 +1128,11 @@ static void CreateFrontierMon(struct Pokemon* mon, const u8 level, const struct 
 
 	if (spread->ability > FRONTIER_ABILITY_HIDDEN)
 	{
-		GiveMonNatureAndAbility(mon, spread->nature, spread->ability - 1);
+		GiveMonNatureAndAbility(mon, spread->nature, spread->ability - 1, spread->shiny);
 	}
 	else //Hidden Ability
 	{ 
-		GiveMonNatureAndAbility(mon, spread->nature, 0xFF);
+		GiveMonNatureAndAbility(mon, spread->nature, 0xFF, spread->shiny);
 		mon->hiddenAbility = TRUE;
 	}
 
@@ -1060,24 +1196,31 @@ static void SetWildMonHeldItem(void)
 	}
 }
 
-void GiveMonNatureAndAbility(pokemon_t* mon, u8 nature, u8 abilityNum)
+void GiveMonNatureAndAbility(struct Pokemon* mon, u8 nature, u8 abilityNum, bool8 forceShiny)
 {
 	u32 personality;
+	u32 trainerId = GetMonData(mon, MON_DATA_OT_ID, NULL);
+	u16 sid = HIHALF(trainerId);
+	u16 tid = LOHALF(trainerId);
 
-	while(TRUE) 
+	do
 	{
 		personality = Random32();
-		personality &= ~(1);
+		if (forceShiny)
+		{
+			u8 shinyRange = RandRange(0,8);
+			personality = (((shinyRange ^ (sid ^ tid)) ^ LOHALF(personality)) << 16) | LOHALF(personality);
+		}
 
 		if (abilityNum != 0xFF)
-			personality |= MathMin(1, abilityNum); //Either 0 or 1
-
-		if (GetNatureFromPersonality(personality) == nature) 
 		{
-			mon->personality = personality;
-			break;
+			personality &= ~(1);
+			personality |= MathMin(1, abilityNum); //Either 0 or 1
 		}
-	}
+
+	} while (GetNatureFromPersonality(personality) != nature);
+	
+	mon->personality = personality;
 }
 
 static u8 ConvertFrontierAbilityNumToAbility(const u8 abilityNum, const u16 species)
@@ -1250,6 +1393,7 @@ static bool8 TeamNotAllSameType(const u16 species, const u16 item, const u8 part
 static bool8 TooManyLegendariesOnGSCupTeam(const u16 species, const u8 partySize, const species_t* const speciesArray)
 {
 	u8 legendCount = 0;
+	bool8 isMulti = IsFrontierMulti(VarGet(BATTLE_TOWER_BATTLE_TYPE));
 
 	if (!CheckTableForSpecies(species, gGSCup_LegendarySpeciesList))
 		return FALSE; //Allowed normally so we don't care
@@ -1262,6 +1406,9 @@ static bool8 TooManyLegendariesOnGSCupTeam(const u16 species, const u8 partySize
 		if (CheckTableForSpecies(speciesArray[i], gGSCup_LegendarySpeciesList))
 			++legendCount;
 
+		if (isMulti && legendCount >= 1) //1 legendary per multi trainer
+			return TRUE;
+
 		if (legendCount >= 2) //2 Legendaries allowed at most
 			return TRUE;
 	}
@@ -1269,7 +1416,7 @@ static bool8 TooManyLegendariesOnGSCupTeam(const u16 species, const u8 partySize
 	return FALSE;
 }
 
-static bool8 PokemonTierBan(const u16 species, const u16 item, const struct BattleTowerSpread* const spread, const pokemon_t* const mon, const u8 tier, const u8 checkFromLocationType)
+static bool8 PokemonTierBan(const u16 species, const u16 item, const struct BattleTowerSpread* const spread, const struct Pokemon* const mon, const u8 tier, const u8 checkFromLocationType)
 {
 	u32 i;
 	u8 ability;
@@ -1516,7 +1663,7 @@ static bool8 IsPokemonBannedBasedOnStreak(u16 species, u16 item, u16* speciesArr
 				return TRUE;
 		}
 	}
-	else if (forPlayer && tier == BATTLE_TOWER_STANDARD)
+	else if ((forPlayer || trainerId == BATTLE_TOWER_MULTI_TRAINER_TID) && tier == BATTLE_TOWER_STANDARD)
 	{
 		streak = GetMaxBattleTowerStreakForTier(tier);
 		
@@ -1760,6 +1907,9 @@ static const struct BattleTowerSpread* TryAdjustSpreadForSpecies(const struct Ba
 		case SPECIES_ARCEUS:
 			return &gArceusSpreads[Random() % TOTAL_ARCEUS_SPREADS]; //There are more Arceus spreads than any other Pokemon,
 																	 //so they're held seperately to keep things fresh.
+		
+		case SPECIES_ORICORIO:
+			return &gOricorioSpreads[Random() % TOTAL_ORICORIO_SPREADS];
 	}
 
 	return originalSpread;
@@ -1822,7 +1972,11 @@ enum
 
 #ifdef UNBOUND
 
+#define TM02_DRAGON_CLAW 2
+#define TM17_PROTECT 17
+#define TM27_RETURN 27
 #define TM36_SLUDGE_BOMB 36
+#define TM53_ENERGY_BALL 53
 #define TM80_ROCK_SLIDE 80
 #define TM102_DAZZLING_GLEAM 102
 
@@ -1831,6 +1985,9 @@ enum
 
 static struct DoubleReplacementMoves sDoubleSpreadReplacementMoves[] =
 {
+	{MOVE_OUTRAGE, MOVE_DRAGONCLAW, LEARN_TYPE_TM, TM02_DRAGON_CLAW, 0, 0},
+	{MOVE_SUBSTITUTE, MOVE_PROTECT, LEARN_TYPE_TM, TM17_PROTECT, 0, 0},
+	{MOVE_THRASH, MOVE_RETURN, LEARN_TYPE_TM, TM27_RETURN, 0, 0},
 	{MOVE_STONEEDGE, MOVE_ROCKSLIDE, LEARN_TYPE_TM, TM80_ROCK_SLIDE, 0, 0},
 	{MOVE_MOONBLAST, MOVE_DAZZLINGGLEAM, LEARN_TYPE_TM, TM102_DAZZLING_GLEAM, 0, 0},
 	{MOVE_SLUDGEWAVE, MOVE_SLUDGEBOMB, LEARN_TYPE_TM, TM36_SLUDGE_BOMB, POISON_IMMUNITY, 0},

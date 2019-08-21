@@ -153,7 +153,7 @@ void BattleAI_SetupAIData(u8 defaultScoreMoves)
 	gBankAttacker = gActiveBattler;
 
 	// Decide a random target battlerId in doubles.
-	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	if (IS_DOUBLE_BATTLE)
 	{
 		gBankTarget = (Random() & BIT_FLANK) + (SIDE(gActiveBattler) ^ BIT_SIDE);
 		if (gAbsentBattlerFlags & gBitTable[gBankTarget])
@@ -166,7 +166,7 @@ void BattleAI_SetupAIData(u8 defaultScoreMoves)
 	// Choose proper trainer ai scripts.
 	AI_THINKING_STRUCT->aiFlags = GetAIFlags();
 
-	//if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	//if (IS_DOUBLE_BATTLE)
 		//AI_THINKING_STRUCT->aiFlags |= AI_SCRIPT_DOUBLE_BATTLE; // act smart in doubles and don't attack your partner
 }
 
@@ -201,7 +201,7 @@ u8 BattleAI_ChooseMoveOrAction(void)
 	u16 savedCurrentMove = gCurrentMove;
 	u8 ret;
 
-	if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE))
+	if (!(IS_DOUBLE_BATTLE))
 		ret = ChooseMoveOrAction_Singles();
 	else
 		ret = ChooseMoveOrAction_Doubles();
@@ -325,7 +325,7 @@ static u8 ChooseMoveOrAction_Doubles(void)
 				mostViableMovesNo = 1;
 				for (j = 1; j < MAX_MON_MOVES; j++)
 				{
-					if (gBattleMons[gBankAttacker].moves[j] != 0)
+					if (gBattleMons[gBankAttacker].moves[j] != MOVE_NONE)
 					{
 						if (mostViableMovesScores[0] == AI_THINKING_STRUCT->score[j])
 						{
@@ -357,15 +357,43 @@ static u8 ChooseMoveOrAction_Doubles(void)
 	mostMovePoints = bestMovePointsForTarget[0];
 	mostViableTargetsArray[0] = 0;
 	mostViableTargetsNo = 1;
+	
+	bool8 statusMoveOption = FALSE;
+	u32 mostDamage = (actionOrMoveIndex[0] < MAX_MON_MOVES && SPLIT(actionOrMoveIndex[0]) != SPLIT_STATUS) ?
+		CalcFinalAIMoveDamage(actionOrMoveIndex[0], gBankAttacker, mostViableTargetsArray[0], 1) : 0;
 
-	for (i = 1; i < MAX_MON_MOVES; i++)
+	for (i = 1; i < MAX_BATTLERS_COUNT; i++)
 	{
-		if (mostMovePoints == bestMovePointsForTarget[i])
+		if (bestMovePointsForTarget[i] == mostMovePoints)
 		{
+			u16 move = actionOrMoveIndex[i];
+			u16 pastMove = actionOrMoveIndex[i - 1];
+			u32 thisDamage = 0;
+			statusMoveOption = move < MAX_MON_MOVES && SPLIT(move) == SPLIT_STATUS;
+
+			if (move < MAX_MON_MOVES //Move was chosen
+			&&  pastMove < MAX_MON_MOVES
+			&&  SPLIT(move) != SPLIT_STATUS
+			&&  SPLIT(pastMove) != SPLIT_STATUS)
+			{
+				//Choose the target which the most damage can be done to
+				thisDamage = CalcFinalAIMoveDamage(move, gBankAttacker, i, 1);
+				if (thisDamage <= mostDamage)
+					continue; //Don't store this target if less damage can be done to it
+				
+				if (!statusMoveOption)
+				{
+					mostViableTargetsArray[0] = i;
+					mostViableTargetsNo = 1;
+					mostDamage = thisDamage;
+					continue;
+				}
+			}
+
 			mostViableTargetsArray[mostViableTargetsNo] = i;
 			mostViableTargetsNo++;
 		}
-		if (mostMovePoints < bestMovePointsForTarget[i])
+		else if (bestMovePointsForTarget[i] > mostMovePoints)
 		{
 			mostMovePoints = bestMovePointsForTarget[i];
 			mostViableTargetsArray[0] = i;
@@ -440,16 +468,27 @@ void AI_TrySwitchOrUseItem(void)
 		PredictMovesForBanks();
 		
 		gNewBS->calculatedAIPredictions = TRUE;
-	}
-
-	if (!gNewBS->calculatedAISwitchings[gActiveBattler]) //So Multi Battles still work properly
-	{
-		CalcMostSuitableMonToSwitchInto();
-		gNewBS->calculatedAISwitchings[gActiveBattler] = TRUE;
 		
-		if ((SIDE(gActiveBattler) == B_SIDE_OPPONENT && !IsTwoOpponentBattle())
-		||  (SIDE(gActiveBattler) == B_SIDE_PLAYER && !IsTagBattle()))
-			gNewBS->calculatedAISwitchings[PARTNER(gActiveBattler)] = TRUE;
+		u8 backupBattler = gActiveBattler;
+		for (int i = 0; i < gBattlersCount; ++i)
+		{
+			if (GetBattlerPosition(i) == B_POSITION_PLAYER_LEFT && !(gBattleTypeFlags & BATTLE_TYPE_MOCK_BATTLE))
+				continue; //Only calculate for player if player not in control
+				
+			if (GetBattlerPosition(i) == B_POSITION_PLAYER_RIGHT && !IsTagBattle())
+				continue;
+		
+			if (!gNewBS->calculatedAISwitchings[i] && BATTLER_ALIVE(i)) //So Multi Battles still work properly
+			{		
+				gActiveBattler = i;
+				CalcMostSuitableMonToSwitchInto();
+				gNewBS->calculatedAISwitchings[gActiveBattler] = TRUE;
+				
+				if (!BankSideHasTwoTrainers(gActiveBattler))
+					gNewBS->calculatedAISwitchings[PARTNER(gActiveBattler)] = TRUE;
+			}
+		}
+		gActiveBattler = backupBattler;
 	}
 
 	party = LoadPartyRange(gActiveBattler, &firstId, &lastId);
@@ -463,7 +502,7 @@ void AI_TrySwitchOrUseItem(void)
 				u8 monToSwitchId = GetMostSuitableMonToSwitchInto();
 				if (monToSwitchId == PARTY_SIZE)
 				{
-					if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE))
+					if (!(IS_DOUBLE_BATTLE))
 					{
 						battlerIn1 = gActiveBattler;
 						battlerIn2 = battlerIn1;
@@ -516,7 +555,7 @@ static bool8 ShouldSwitch(void)
 		return FALSE;
 	
 	availableToSwitch = 0;
-	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	if (IS_DOUBLE_BATTLE)
 	{
 		battlerIn1 = gActiveBattler;
 		if (gAbsentBattlerFlags & gBitTable[GetBattlerAtPosition(GetBattlerPosition(gActiveBattler) ^ BIT_FLANK)])
@@ -578,7 +617,7 @@ static bool8 ShouldSwitch(void)
 
 static void LoadBattlersAndFoes(u8* battlerIn1, u8* battlerIn2, u8* foe1, u8* foe2)
 {
-	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	if (IS_DOUBLE_BATTLE)
 	{
 		*battlerIn1 = gActiveBattler;
 		if (gAbsentBattlerFlags & gBitTable[PARTNER(gActiveBattler)])
@@ -611,7 +650,7 @@ static bool8 ShouldSwitchIfOnlyBadMovesLeft(void)
 	u8 foe1, foe2;
 	LoadBattlersAndFoes(&battlerIn1, &battlerIn2, &foe1, &foe2);
 
-	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	if (IS_DOUBLE_BATTLE)
 	{
 		if ((!BATTLER_ALIVE(foe1) || OnlyBadMovesLeftInMoveset(battlerIn1, foe1))
 		&&  (!BATTLER_ALIVE(foe2) || OnlyBadMovesLeftInMoveset(battlerIn1, foe2)))
@@ -649,8 +688,43 @@ static bool8 FindMonThatAbsorbsOpponentsMove(void)
 	predictedMove1 = IsValidMovePrediction(foe1, gActiveBattler);
 	predictedMove2 = IsValidMovePrediction(foe2, gActiveBattler);
 
-	if ((CanKillAFoe(gActiveBattler) && (Random() & 1) != 0)
-	|| ((predictedMove1 == MOVE_NONE || predictedMove1 == MOVE_PREDICTION_SWITCH) && (predictedMove2 == MOVE_NONE || predictedMove2 == MOVE_PREDICTION_SWITCH))
+	if (IS_SINGLE_BATTLE)
+	{
+		if (!MoveWouldHitFirst(predictedMove1, foe2, gActiveBattler)) //AI goes first
+		{
+			if (CanKnockOut(gActiveBattler, foe1))
+				return FALSE; //Just KO the opponent and don't worry about switching out
+		}
+		else
+		{
+			if (!CanKnockOut(foe1, gActiveBattler) //The enemy can't KO you first
+			&&   CanKnockOut(gActiveBattler, foe1)
+			&&   AnyStatGreaterThan(gActiveBattler, 6 + 0)) //Has stat boosts +7 or more
+				return FALSE; //Just KO the opponent and don't worry about switching out if you're boosted up
+		}
+
+		if (!CanKnockOut(foe1, gActiveBattler) //The enemy can't KO you
+		&& AnyStatGreaterThan(gActiveBattler, 6 + 1)) //AI is invested in stat boosts +8 or more
+			return FALSE;
+	}
+	else //Double Battle
+	{
+		u16 bestMove1 = gNewBS->bestDoublesKillingMoves[gActiveBattler][foe1];
+		u16 bestMove2 = gNewBS->bestDoublesKillingMoves[gActiveBattler][foe2];
+		if (GetDoubleKillingScore(bestMove1, gActiveBattler, foe1) >= BEST_DOUBLES_KO_SCORE - 2 //10: Hit 2 Foes, KO 1 Foe/Strongest Move 2 Foes
+		||  GetDoubleKillingScore(bestMove2, gActiveBattler, foe2) >= BEST_DOUBLES_KO_SCORE - 2) //10: Hit 2 Foes, KO 1 Foe/Strongest Move 2 Foes
+			return FALSE; //Don't switch if this mon can do some major damage to the enemy side
+
+		if (AnyStatGreaterThan(gActiveBattler, 6 + 1) //AI is invested in stat boosts +8 or more
+		&& (GetDoubleKillingScore(bestMove1, gActiveBattler, foe1) >= BEST_DOUBLES_KO_SCORE / 2 //6: Hit 1 Foe, KO 1 Foe
+		 || GetDoubleKillingScore(bestMove2, gActiveBattler, foe2) >= BEST_DOUBLES_KO_SCORE / 2)) //6: Hit 1 Foe, KO 1 Foe
+			return FALSE;
+	}
+
+	if (STAT_STAGE(gActiveBattler, STAT_STAGE_EVASION) >= 6 + 3)
+		return FALSE; //Invested in Evasion so don't switch
+
+	if (((predictedMove1 == MOVE_NONE || predictedMove1 == MOVE_PREDICTION_SWITCH) && (predictedMove2 == MOVE_NONE || predictedMove2 == MOVE_PREDICTION_SWITCH))
 	|| (SPLIT(predictedMove1) == SPLIT_STATUS && SPLIT(predictedMove2) == SPLIT_STATUS))
 		return FALSE;
 
@@ -815,7 +889,7 @@ bool8 HasSuperEffectiveMoveAgainstOpponents(bool8 noRng)
 		}
 	}
 
-	if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE))
+	if (!(IS_DOUBLE_BATTLE))
 		return FALSE;
 
 	opposingBattler = PARTNER(FOE(gActiveBattler));
@@ -851,7 +925,7 @@ static bool8 PassOnWish(void)
 	u8 opposingBattler1, opposingBattler2;
 	int i;
 	
-	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	if (IS_DOUBLE_BATTLE)
 	{
 		opposingBattler1 = FOE(bank);
 		opposingBattler2 = PARTNER(opposingBattler1);
@@ -873,7 +947,7 @@ static bool8 PassOnWish(void)
 	{	
 		//Don't switch if your health is less than half and you can survive an opponent's hit
 		if (gBattleMons[bank].hp < gBattleMons[bank].maxHP / 2
-		&& ((!CanKnockOut(opposingBattler1, bank) && !(gBattleTypeFlags & BATTLE_TYPE_DOUBLE && CanKnockOut(opposingBattler2, bank))) || HasProtectionMoveInMoveset(bank, CHECK_MAT_BLOCK)))
+		&& ((!CanKnockOut(opposingBattler1, bank) && !(IS_DOUBLE_BATTLE && CanKnockOut(opposingBattler2, bank))) || HasProtectionMoveInMoveset(bank, CHECK_MAT_BLOCK)))
 			return FALSE;
 			
 		party = LoadPartyRange(gActiveBattler, &firstId, &lastId);
@@ -904,7 +978,7 @@ static bool8 SemiInvulnerableTroll(void)
 {
 	u8 opposingBattler1, opposingBattler2;
 
-	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	if (IS_DOUBLE_BATTLE)
 	{
 		opposingBattler1 = FOE(gActiveBattler);
 		opposingBattler2 = PARTNER(opposingBattler1);
@@ -915,7 +989,7 @@ static bool8 SemiInvulnerableTroll(void)
 		opposingBattler2 = opposingBattler1;
 	}
 	
-	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	if (IS_DOUBLE_BATTLE)
 	{
 		if (!(gStatuses3[opposingBattler1] & STATUS3_SEMI_INVULNERABLE) && !(gStatuses3[opposingBattler2] & STATUS3_SEMI_INVULNERABLE))
 			return FALSE;
@@ -941,7 +1015,7 @@ static u8 GetBestPartyNumberForSemiInvulnerableLockedMoveCalcs(u8 opposingBattle
 		return option1;
 	}
 	
-	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	if (IS_DOUBLE_BATTLE)
 	{
 		u8 option2 = TheCalcForSemiInvulnerableTroll(opposingBattler2, MOVE_RESULT_DOESNT_AFFECT_FOE, checkLockedMoves);
 		if (option2 != PARTY_SIZE)
@@ -956,7 +1030,7 @@ static u8 GetBestPartyNumberForSemiInvulnerableLockedMoveCalcs(u8 opposingBattle
 		return option3;
 	}
 	
-	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	if (IS_DOUBLE_BATTLE)
 	{
 		u8 option4 = TheCalcForSemiInvulnerableTroll(opposingBattler2, MOVE_RESULT_NOT_VERY_EFFECTIVE, checkLockedMoves);
 		if (option4 != PARTY_SIZE)
@@ -986,7 +1060,7 @@ static u8 TheCalcForSemiInvulnerableTroll(u8 bankAtk, u8 flags, bool8 checkLocke
 	u8 battlerIn1, battlerIn2;
 	int i;
 
-	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	if (IS_DOUBLE_BATTLE)
 	{
 		battlerIn1 = gActiveBattler;
 		if (gAbsentBattlerFlags & gBitTable[PARTNER(gActiveBattler)])
@@ -1037,7 +1111,7 @@ static bool8 CanStopLockedMove(void)
 {
 	u8 opposingBattler1, opposingBattler2;
 
-	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	if (IS_DOUBLE_BATTLE)
 	{
 		opposingBattler1 = FOE(gActiveBattler);
 		opposingBattler2 = PARTNER(opposingBattler1);
@@ -1048,7 +1122,7 @@ static bool8 CanStopLockedMove(void)
 		opposingBattler2 = opposingBattler1;
 	}
 	
-	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	if (IS_DOUBLE_BATTLE)
 	{
 		if (!(gLockedMoves[opposingBattler1] && SPLIT(gLockedMoves[opposingBattler1]) != SPLIT_STATUS) && !(gLockedMoves[opposingBattler2] && SPLIT(gLockedMoves[opposingBattler2]) != SPLIT_STATUS))
 			return FALSE;
@@ -1073,17 +1147,89 @@ static bool8 IsYawned(void)
 	&& CanBePutToSleep(gActiveBattler, FALSE) //Could have been yawned and then afflicted with another status condition
 	&& gBattleMons[gActiveBattler].hp > gBattleMons[gActiveBattler].maxHP / 4)
 	{
+		u8 battlerIn1, battlerIn2;
+		u8 foe1, foe2;
+		LoadBattlersAndFoes(&battlerIn1, &battlerIn2, &foe1, &foe2);
+	
+		//Don't switch if one foe left and you can KO it
+		if (ViableMonCountFromBank(foe1) <= 1)
+		{
+			if (BATTLER_ALIVE(foe1))
+			{
+				if (CanKnockOut(gActiveBattler, foe1))
+					return FALSE;
+			}
+
+			if (BATTLER_ALIVE(foe2))
+			{
+				if (CanKnockOut(gActiveBattler, foe2))
+					return FALSE;
+			}
+		}
+	
+		//Don't switch if there's an enemy taking trap damage from this mon
+		u8 activeSide = SIDE(gActiveBattler);
 		for (int i = 0; i < gBattlersCount; ++i)
 		{
-			if (SIDE(i) != SIDE(gActiveBattler))
+			if (SIDE(i) != activeSide)
 			{
 				if (gBattleMons[i].status2 & STATUS2_WRAPPED
 				&& ABILITY(i) != ABILITY_MAGICGUARD //Taking trap damage
 				&& gBattleStruct->wrappedBy[i] == gActiveBattler)
-					return FALSE; //Don't switch if there's an enemy taking trap damage from this mon
+					return FALSE;
 			}
 		}
-	
+
+		//Don't switch if invested in Evasion and it'll hold up
+		if (STAT_STAGE(gActiveBattler, STAT_STAGE_EVASION) >= 6 + 3
+		&& !ABILITY_ON_OPPOSING_FIELD(gActiveBattler, ABILITY_UNAWARE)
+		&& !ABILITY_ON_OPPOSING_FIELD(gActiveBattler, ABILITY_KEENEYE))
+			return FALSE;
+
+		//Don't switch if you can fight through the sleep
+		u8 ability = ABILITY(gActiveBattler);
+		u8 itemEffect = ITEM_EFFECT(gActiveBattler);
+		if (itemEffect == ITEM_EFFECT_CURE_SLP
+		|| itemEffect == ITEM_EFFECT_CURE_STATUS
+		|| ability == ABILITY_EARLYBIRD
+		|| ability == ABILITY_SHEDSKIN
+		|| MoveEffectInMoveset(EFFECT_SNORE, gActiveBattler)
+		|| MoveEffectInMoveset(EFFECT_SLEEP_TALK, gActiveBattler)
+		|| (CheckGrounding(gActiveBattler)
+		 && (MoveInMoveset(MOVE_ELECTRICTERRAIN, gActiveBattler) || MoveInMoveset(MOVE_MISTYTERRAIN, gActiveBattler))))
+			return FALSE;
+
+		//Check if can do major damage instead of switching
+		if (IS_SINGLE_BATTLE)
+		{
+			u16 foePrediction = IsValidMovePrediction(foe1, gActiveBattler);
+
+			if (!IsPredictedToSwitch(foe1, gActiveBattler) //Enemy isn't going to switch
+			&&  gBattleMoves[foePrediction].effect != EFFECT_PROTECT //Enemy isn't going to protect
+			&& (gBattleMoves[foePrediction].effect != EFFECT_SEMI_INVULNERABLE || !MoveWouldHitFirst(foePrediction, foe1, gActiveBattler))) //Enemy isn't going to dodge attack first with Fly etc.
+			{
+				if (!MoveWouldHitFirst(foePrediction, foe2, gActiveBattler)) //AI goes first
+				{
+					if (CanKnockOut(gActiveBattler, foe1))
+						return FALSE; //You're going to fall asleep, but at least take down the enemy with you
+				}
+				else
+				{
+					if (!CanKnockOut(foe1, gActiveBattler) //The enemy can't KO you first
+					&&  CanKnockOut(gActiveBattler, foe1))
+						return FALSE; //You're going to fall asleep, but at least take down the enemy with you
+				}
+			}
+		}
+		else //Double Battle
+		{
+			u16 bestMove1 = gNewBS->bestDoublesKillingMoves[gActiveBattler][foe1];
+			u16 bestMove2 = gNewBS->bestDoublesKillingMoves[gActiveBattler][foe2];
+			if (GetDoubleKillingScore(bestMove1, gActiveBattler, foe1) >= BEST_DOUBLES_KO_SCORE
+			||  GetDoubleKillingScore(bestMove2, gActiveBattler, foe2) >= BEST_DOUBLES_KO_SCORE)
+				return FALSE; //Don't switch if this mon can do some major damage to the enemy side
+		}
+
 		gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = PARTY_SIZE;
 		EmitTwoReturnValues(1, ACTION_SWITCH, 0);
 		return TRUE;
@@ -1097,13 +1243,17 @@ static bool8 IsTakingAnnoyingSecondaryDamage(void)
 	&& !CanKillAFoe(gActiveBattler)
 	&& AI_THINKING_STRUCT->aiFlags > AI_SCRIPT_CHECK_BAD_MOVE) //Has smart AI
 	{
-		if (gStatuses3[gActiveBattler] & STATUS3_LEECHSEED
+		if ((gStatuses3[gActiveBattler] & STATUS3_LEECHSEED && (Random() & 3) == 0) //25% chance to switch out when seeded
 		|| ((gBattleMons[gActiveBattler].status1 & STATUS1_SLEEP) > 1 && gBattleMons[gActiveBattler].status2 & STATUS2_NIGHTMARE)
-		||  gBattleMons[gActiveBattler].status2 & (STATUS2_CURSED))
+		||  gBattleMons[gActiveBattler].status2 & (STATUS2_CURSED)
+		||  (gBattleMons[gActiveBattler].status1 & STATUS1_TOXIC_COUNTER) > 0x600) //Been sitting with toxic for 6 turns
 		{
-			gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = PARTY_SIZE;
-			EmitTwoReturnValues(1, ACTION_SWITCH, 0);
-			return TRUE;
+			if (!WillTakeSignificantDamageFromEntryHazards(gActiveBattler, 4)) //Don't switch out if you'll take a lot of damage of switch in
+			{
+				gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = PARTY_SIZE;
+				EmitTwoReturnValues(1, ACTION_SWITCH, 0);
+				return TRUE;
+			}
 		}
 	}
 
@@ -1121,7 +1271,7 @@ bool8 FindMonWithFlagsAndSuperEffective(u8 flags, u8 moduloPercent)
 	u16 move;
 	u8 moveFlags;
 
-	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	if (IS_DOUBLE_BATTLE)
 	{
 		battlerIn1 = gActiveBattler;
 		if (gAbsentBattlerFlags & gBitTable[PARTNER(gActiveBattler)])
@@ -1208,7 +1358,7 @@ static bool8 ShouldSwitchIfWonderGuard(void)
 	u8 start, end;
 	opposingBattler = FOE(gActiveBattler);
 
-	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	if (IS_DOUBLE_BATTLE)
 		return FALSE;
 
 	if (ABILITY(opposingBattler) != ABILITY_WONDERGUARD)
@@ -1457,6 +1607,15 @@ u8 GetMostSuitableMonToSwitchInto(void)
 	
 	u8 option1 = gNewBS->bestMonIdToSwitchInto[gActiveBattler][0];
 	u8 option2 = gNewBS->bestMonIdToSwitchInto[gActiveBattler][1];
+
+	if (option1 == PARTY_SIZE)
+	{
+		CalcMostSuitableMonToSwitchInto();
+		gNewBS->calculatedAISwitchings[gActiveBattler] = TRUE;
+
+		if (!BankSideHasTwoTrainers(gActiveBattler))
+			gNewBS->calculatedAISwitchings[PARTNER(gActiveBattler)] = TRUE;
+	}
 
 	if (option1 == gBattleStruct->monToSwitchIntoId[battlerIn1]
 	||  option1 == gBattleStruct->monToSwitchIntoId[battlerIn2])
@@ -1747,22 +1906,16 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 					{
 						gNewBS->bestMonIdToSwitchIntoScores[gActiveBattler][0] = SWITCHING_INCREASE_CAN_REMOVE_HAZARDS * 2;
 						
-						if ((SIDE(gActiveBattler) == B_SIDE_OPPONENT && !IsTwoOpponentBattle())
-						||  (SIDE(gActiveBattler) == B_SIDE_PLAYER && !IsTagBattle()))
-						{
+						if (!BankSideHasTwoTrainers(gActiveBattler))
 							gNewBS->bestMonIdToSwitchIntoScores[PARTNER(gActiveBattler)][0] = SWITCHING_INCREASE_CAN_REMOVE_HAZARDS * 2;
-						}
 					}
 					else
 						gNewBS->bestMonIdToSwitchIntoScores[gActiveBattler][0] = SWITCHING_INCREASE_CAN_REMOVE_HAZARDS;
 
 					gNewBS->bestMonIdToSwitchInto[gActiveBattler][0] = i;
-					if ((SIDE(gActiveBattler) == B_SIDE_OPPONENT && !IsTwoOpponentBattle())
-					||  (SIDE(gActiveBattler) == B_SIDE_PLAYER && !IsTagBattle()))
-					{
+					if (!BankSideHasTwoTrainers(gActiveBattler))
 						gNewBS->bestMonIdToSwitchInto[PARTNER(gActiveBattler)][0] = i;
-					}
-					
+
 					if (IS_SINGLE_BATTLE)
 						return i; //Just send out the Pokemon that can remove the hazards
 					else
@@ -1782,8 +1935,7 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 			gNewBS->bestMonIdToSwitchIntoScores[gActiveBattler][0] = scores[bestMonId];
 			gNewBS->bestMonIdToSwitchIntoScores[gActiveBattler][1] = scores[secondBestMonId];
 			
-			if ((SIDE(gActiveBattler) == B_SIDE_OPPONENT && !IsTwoOpponentBattle())
-			||  (SIDE(gActiveBattler) == B_SIDE_PLAYER && !IsTagBattle()))
+			if (!BankSideHasTwoTrainers(gActiveBattler)) //Store data for second mon too
 			{
 				gNewBS->bestMonIdToSwitchInto[PARTNER(gActiveBattler)][0] = bestMonId;
 				gNewBS->bestMonIdToSwitchInto[PARTNER(gActiveBattler)][1] = secondBestMonId;
@@ -1807,8 +1959,7 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 	gNewBS->bestMonIdToSwitchIntoScores[gActiveBattler][0] = 0;
 	gNewBS->bestMonIdToSwitchInto[gActiveBattler][0] = secondLastValidMon;
 	
-	if ((SIDE(gActiveBattler) == B_SIDE_OPPONENT && !IsTwoOpponentBattle())
-	||  (SIDE(gActiveBattler) == B_SIDE_PLAYER && !IsTagBattle()))
+	if (!BankSideHasTwoTrainers(gActiveBattler)) //Store data for second mon too
 	{
 		gNewBS->bestMonIdToSwitchIntoScores[PARTNER(gActiveBattler)][0] = 0;
 		gNewBS->bestMonIdToSwitchInto[PARTNER(gActiveBattler)][0] = lastValidMon;
@@ -1826,8 +1977,7 @@ void ResetBestMonToSwitchInto(u8 bank)
 	gNewBS->bestMonIdToSwitchIntoScores[bank][1] = 0;
 	gNewBS->bestMonIdToSwitchInto[bank][1] = PARTY_SIZE;
 	
-	if ((SIDE(bank) == B_SIDE_OPPONENT && !IsTwoOpponentBattle())
-	||  (SIDE(bank) == B_SIDE_PLAYER && !IsTagBattle()))
+	if (!BankSideHasTwoTrainers(bank)) //Store data for second mon too
 	{
 		gNewBS->bestMonIdToSwitchIntoScores[PARTNER(bank)][0] = 0;
 		gNewBS->bestMonIdToSwitchInto[PARTNER(bank)][0] = PARTY_SIZE;
@@ -1839,14 +1989,13 @@ void ResetBestMonToSwitchInto(u8 bank)
 void RemoveBestMonToSwitchInto(u8 bank)
 {
 	//secondBestMonId -> bestMonId
-	gNewBS->bestMonIdToSwitchIntoScores[SIDE(bank)][0] = gNewBS->bestMonIdToSwitchIntoScores[SIDE(bank)][1];
-	gNewBS->bestMonIdToSwitchInto[SIDE(bank)][0] = gNewBS->bestMonIdToSwitchInto[SIDE(bank)][1];
+	gNewBS->bestMonIdToSwitchIntoScores[bank][0] = gNewBS->bestMonIdToSwitchIntoScores[bank][1];
+	gNewBS->bestMonIdToSwitchInto[bank][0] = gNewBS->bestMonIdToSwitchInto[bank][1];
 
-	gNewBS->bestMonIdToSwitchIntoScores[SIDE(bank)][1] = 0;
-	gNewBS->bestMonIdToSwitchInto[SIDE(bank)][1] = PARTY_SIZE;
+	gNewBS->bestMonIdToSwitchIntoScores[bank][1] = 0;
+	gNewBS->bestMonIdToSwitchInto[bank][1] = PARTY_SIZE;
 	
-	if ((SIDE(bank) == B_SIDE_OPPONENT && !IsTwoOpponentBattle())
-	||  (SIDE(bank) == B_SIDE_PLAYER && !IsTagBattle()))
+	if (!BankSideHasTwoTrainers(bank)) //Store data for second mon too
 	{
 		gNewBS->bestMonIdToSwitchIntoScores[PARTNER(bank)][0] = gNewBS->bestMonIdToSwitchIntoScores[PARTNER(bank)][1];
 		gNewBS->bestMonIdToSwitchInto[PARTNER(bank)][0] = gNewBS->bestMonIdToSwitchInto[PARTNER(bank)][1];
@@ -1954,16 +2103,13 @@ static void UpdateStrongestMoves(void)
 			gNewBS->canKnockOut[bankAtk][bankDef] = MoveKnocksOutXHits(gNewBS->strongestMove[bankAtk][bankDef], bankAtk, bankDef, 1);
 			gNewBS->can2HKO[bankAtk][bankDef] = (gNewBS->canKnockOut[bankAtk][bankDef]) ? TRUE
 												: MoveKnocksOutXHits(gNewBS->strongestMove[bankAtk][bankDef], bankAtk, bankDef, 2); //If you can KO in 1 hit you can KO in 2
-
-			if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
-				gNewBS->strongestSpreadMove[bankAtk][bankDef] = GetStrongestMove(bankAtk, bankDef, FALSE);
 		}
 	}
 }
 
 static void UpdateBestDoublesKillingMoves(void)
 {
-	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	if (IS_DOUBLE_BATTLE)
 	{
 		u8 bankAtk, bankDef;
 
@@ -1974,19 +2120,10 @@ static void UpdateBestDoublesKillingMoves(void)
 				if (bankAtk == bankDef || bankDef == PARTNER(bankAtk))
 					continue; //Don't bother calculating for these Pokemon. Never used
 
-				UpdateBestDoublesKillingScore(bankAtk, bankDef);
-				
-				if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
-					gNewBS->strongestSpreadMove[bankAtk][bankDef] = GetStrongestMove(bankAtk, bankDef, FALSE);
+				UpdateBestDoubleKillingMoveScore(bankAtk, bankDef, PARTNER(bankAtk), PARTNER(bankDef), gNewBS->bestDoublesKillingScores[bankAtk][bankDef], &gNewBS->bestDoublesKillingMoves[bankAtk][bankDef]);
 			}
 		}
 	}
-}
-
-
-void UpdateBestDoublesKillingScore(u8 bankAtk, u8 bankDef)
-{
-	gNewBS->bestDoublesKillingScores[bankAtk][bankDef] = GetBestDoubleKillingMoveScore(bankAtk, bankDef, PARTNER(bankAtk), PARTNER(bankDef), &gNewBS->bestDoublesKillingMoves[bankAtk][bankDef]);
 }
 
 static u32 GetMaxByteIndexInList(const u8 array[], const u32 size)

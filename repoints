@@ -13,7 +13,7 @@ gBattleScriptingCommandsTable 08015C6C
 gBattleScriptingCommandsTable 08015C98
 gBattleScriptingCommandsTable 0801D054
 
-TrainerBackspritesTable 0803F8A0
+gSpriteTemplateTable_TrainerBackSprites 0803F8A0
 gTrainerBackAnimsPtrTable 0803F8A4
 gTrainerBackPicPaletteTable 08034774
 gTrainerBackPicPaletteTable 080D6EA4
@@ -143,5 +143,8 @@ sScriptStringVars 0806bed0
 sScriptStringVars 0806bf0c
 sScriptStringVars 0806bf38
 
-
 CheckHasSpeciesJump 803FDEC
+
+##New Naming Screen
+sNamingScreenTemplates 809DB58
+sNamingScreenTitlePrintingFuncs 0809F588

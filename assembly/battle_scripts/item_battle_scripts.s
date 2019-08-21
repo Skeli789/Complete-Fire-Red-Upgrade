@@ -34,8 +34,10 @@
 .global BattleScript_HerbCureChosenStatusEnd2
 .global BattleScript_HerbCureChosenStatusFling
 .global BattleScript_RaiseStatsItem
-.global BattleScript_RaiseStatsSeedEnd2
-.global BattleScript_RaiseStatsSeedRet
+.global BattleScript_ItemStatChangeEnd2
+.global BattleScript_ItemStatChangeRet
+.global BattleScript_RoomServiceEnd2
+.global BattleScript_RoomServiceRet
 .global BattleScript_WhiteHerbFling
 
 .global BattleScript_AirBallooonPop
@@ -47,6 +49,9 @@
 .global BattleScript_MicleBerryEnd2
 .global BattleScript_StickyBarbTransfer
 .global BattleScript_EjectButton
+.global BattleScript_EjectPackEnd2
+.global BattleScript_EjectPackRet
+.global BattleScript_EjectPackCMD49
 .global BattleScript_RedCard
 .global BattleScript_TypeResistBerry
 .global BattleScript_HangedOnFocusSash
@@ -280,19 +285,19 @@ BattleScript_RaiseStatsItem:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-BattleScript_RaiseStatsSeedEnd2:
-	call BattleScript_RaiseStatsSeedRet
+BattleScript_ItemStatChangeEnd2:
+	call BattleScript_ItemStatChangeRet
 	end2
 
-BattleScript_RaiseStatsSeedRet:
-	statbuffchange STAT_TARGET | STAT_BS_PTR | STAT_CERTAIN RaiseStatsSeedReturn
+BattleScript_ItemStatChangeRet:
+	statbuffchange STAT_TARGET | STAT_BS_PTR | STAT_CERTAIN ItemStatChangeReturn
 	playanimation BANK_TARGET ANIM_ITEM_USE 0x0
 	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
 	setbyte MULTISTRING_CHOOSER 0x4
 	printfromtable 0x83FE57C
 	waitmessage DELAY_1SECOND
 	removeitem BANK_TARGET
-RaiseStatsSeedReturn:
+ItemStatChangeReturn:
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -432,6 +437,26 @@ BattleScript_EjectButton:
 
 EjectButtonEnd:
 	return
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_EjectPackEnd2:
+	call BattleScript_EjectPackRet
+	end2
+	
+BattleScript_EjectPackRet:
+	goto BattleScript_EjectButton
+
+BattleScript_EjectPackCMD49:
+	jumpifcannotswitch BANK_SCRIPTING | ATK4F_DONT_CHECK_STATUSES EjectButtonEnd
+	jumpiffainted BANK_TARGET BattleScript_EjectPackGiveEXP
+	goto BattleScript_EjectPackRet
+	
+BattleScript_EjectPackGiveEXP:
+	setbyte EXP_STATE 0x0
+	getexp 0x0
+	callasm SetSkipCertainSwitchInAbilities
+	goto BattleScript_EjectPackRet
 	
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

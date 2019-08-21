@@ -46,9 +46,16 @@ void OpponentHandleChooseMove(void)
 			default: ;
 				u16 chosenMove = moveInfo->moves[chosenMoveId];
 
-				if (gBattleMoves[chosenMove].target & (MOVE_TARGET_USER_OR_SELECTED | MOVE_TARGET_USER))
+				if (gBattleMoves[chosenMove].target & MOVE_TARGET_USER)
+				{
 					gBankTarget = gActiveBattler;
-				if (gBattleMoves[chosenMove].target & MOVE_TARGET_BOTH)
+				}
+				else if (gBattleMoves[chosenMove].target & MOVE_TARGET_USER_OR_PARTNER)
+				{
+					if (SIDE(gBankTarget) != SIDE(gActiveBattler))
+						gBankTarget = gActiveBattler;
+				}
+				else if (gBattleMoves[chosenMove].target & MOVE_TARGET_BOTH)
 				{
 					if (SIDE(gActiveBattler) == B_SIDE_PLAYER) {
 						gBankTarget = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
@@ -79,7 +86,8 @@ void OpponentHandleChooseMove(void)
 				gBattleStruct->chosenMovePositions[gActiveBattler] = chosenMoveId;
 				gBattleStruct->moveTarget[gActiveBattler] = gBankTarget;
 				gChosenMovesByBanks[gActiveBattler] = chosenMove;
-				
+				TryRemoveDoublesKillingScore(gActiveBattler, gBankTarget, chosenMove);
+
 				EmitMoveChosen(1, chosenMoveId, gBankTarget, gNewBS->MegaData->chosen[gActiveBattler], gNewBS->UltraData->chosen[gActiveBattler], gNewBS->ZMoveData->toBeUsed[gActiveBattler]);
 				TryRechoosePartnerMove(moveInfo->moves[chosenMoveId]);
 				break;
@@ -96,7 +104,7 @@ void OpponentHandleChooseMove(void)
             move = moveInfo->moves[chosenMoveId];
         } while (move == MOVE_NONE);
 
-        if (gBattleMoves[move].target & (MOVE_TARGET_USER_OR_SELECTED | MOVE_TARGET_USER))
+        if (gBattleMoves[move].target & (MOVE_TARGET_USER_OR_PARTNER | MOVE_TARGET_USER))
 			EmitMoveChosen(1, chosenMoveId, gActiveBattler, 0, 0, 0);
         else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
 			EmitMoveChosen(1, chosenMoveId, GetBattlerAtPosition(Random() & 2), 0, 0, 0);

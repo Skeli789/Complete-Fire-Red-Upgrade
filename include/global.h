@@ -439,7 +439,17 @@ struct EasyChatPair
     u16 words[2];
 }; /*size = 0x8*/
 
-struct MailStruct
+struct __attribute__((packed)) MailStruct
+{
+    /*0x00*/ u16 words[9];
+    /*0x12*/ u8 playerName[8];
+    /*0x1A*/ u8 trainerId[4];
+    /*0x1E*/ u16 species;
+    /*0x20*/ u16 itemId;
+	/*0x22*/ u16 _;
+};
+
+struct MailStructDaycare
 {
     /*0x00*/ u16 words[9];
     /*0x12*/ u8 playerName[8];
@@ -483,7 +493,7 @@ typedef union OldMan
     struct UnkMauvilleOldManStruct oldMan1;
     struct UnkMauvilleOldManStruct2 oldMan2;
     struct MauvilleOldManTrader trader;
-    u8 filler[0x40];
+    u8 filler[0x3C];
 } OldMan;
 
 struct RecordMixing_UnknownStructSub
@@ -527,7 +537,7 @@ struct ContestWinner
 
 struct DayCareMail
 {
-    struct MailStruct message;
+    struct MailStructDaycare message;
     u8 OT_name[PLAYER_NAME_LENGTH + 1];
     u8 monName[POKEMON_NAME_LENGTH + 1];
     u8 gameLanguage:4;
@@ -546,7 +556,7 @@ struct DaycareMon
 struct DayCare
 {
     struct DaycareMon mons[DAYCARE_MON_COUNT];
-    u32 offspringPersonality;
+    u16 offspringPersonality; //For some reason in FR this is a 16
     u8 stepCounter;
 };
 
@@ -641,7 +651,7 @@ struct FameCheckerSaveData
 #define MAIL_COUNT         16
 
 #define NUM_EASY_CHAT_EXTRA_PHRASES 33
-#define EASY_CHAT_EXTRA_PHRASES_SIZE ((NUM_EASY_CHAT_EXTRA_PHRASES >> 3) + (NUM_EASY_CHAT_EXTRA_PHRASES % 8 ? 1 : 0))
+#define EASY_CHAT_EXTRA_PHRASES_SIZE 8
 
 struct SaveBlock1
 {
@@ -686,6 +696,7 @@ struct SaveBlock1
     /*0x2F10*/ u8 additionalPhrases[EASY_CHAT_EXTRA_PHRASES_SIZE];
     /*0x2F18*/ OldMan oldMan; // unused
     /*0x2F54*/ struct EasyChatPair easyChatPairs[5]; // unused
+    /*0x2F7C*/ u32 _;
     /*0x2F80*/ struct DayCare daycare;
     /*0x309C*/ u8 giftRibbons[52];
     /*0x30D0*/ struct RoamerOld roamer;

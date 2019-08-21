@@ -3983,6 +3983,9 @@ CosmicPower_SpDef:
 
 .global BS_207_ExtremeEvoBoost @;Was Sky Uppercut
 BS_207_ExtremeEvoBoost:
+	attackcanceler
+	attackstring
+	ppreduce
 	jumpifstat BANK_ATTACKER LESSTHAN STAT_ATK STAT_MAX ExtremeEvoboost_Atk
 	jumpifstat BANK_ATTACKER LESSTHAN STAT_DEF STAT_MAX ExtremeEvoboost_Atk
 	jumpifstat BANK_ATTACKER LESSTHAN STAT_SPD STAT_MAX ExtremeEvoboost_Atk
@@ -4516,7 +4519,7 @@ BS_226_Terrain:
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	setbyte SEED_HELPER 0
-	callasm SeedLooper
+	callasm SeedRoomServiceLooper
 	copybyte USER_BANK TARGET_BANK @;Restore original target
 	goto BS_MOVE_END
 	
@@ -4568,6 +4571,9 @@ BS_228_FieldEffects:
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	jumpifmove MOVE_GRAVITY GravityBringDownBS
+	setbyte SEED_HELPER 0
+	callasm SeedRoomServiceLooper
+	copybyte USER_BANK TARGET_BANK @;Restore original target
 	goto BS_MOVE_END
 	
 GravityBringDownBS:

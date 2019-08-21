@@ -9,6 +9,8 @@ extern const u8 BattleText_InGamePartnerSentOutZGoN[];
 extern const u8 BattleText_TwoTrainersSentPkmn[];
 extern const u8 BattleText_Trainer2WithdrewPkmn[];
 extern const u8 BattleText_Trainer2SentOutPkmn[];
+extern const u8 BattleText_GoTwoPkmn_BattleSands[];
+extern const u8 BattleText_GoPkmn_BattleSands[];
 extern const u8 BattleText_PartnerWithdrewPkmn[];
 extern const u8 BattleText_PartnerSaysGo[];
 extern const u8 BattleText_AttackerUsedZStatusMove[];
@@ -21,6 +23,7 @@ extern const u8 TheWildString[];
 //Rewritten Strings
 extern const u8 BattleText_TwoLinkTrainersWantToBattle[];
 extern const u8 BattleText_Trainer1WantsToBattle[];
+extern const u8 BattleText_Trainer1WantsToBattle_BattleSands[];
 extern const u8 BattleText_LinkTrainerWantsToBattle[];
 extern const u8 BattleText_WildPkmnAppeared6[];
 extern const u8 BattleText_TwoWildPkmnAppeared[];

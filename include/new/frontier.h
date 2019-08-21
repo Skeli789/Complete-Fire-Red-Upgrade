@@ -17,6 +17,10 @@ bool8 IsFrontierMulti(u8 battleType);
 bool8 IsGSCupBattle();
 bool8 IsRandomBattleTowerBattle();
 bool8 RayquazaCanMegaEvolveInFrontierBattle();
+u8 GetBattleTowerLevel(u8 tier);
+void UpdateTypesForCamomons(u8 bank);
+u8 GetCamomonsTypeByMon(struct Pokemon* mon, u8 whichType);
+//u8 GetCamomonsTypeBySpread(struct BattleTowerSpread* spread, u8 whichType); - Defined further down
 bool8 DuplicateItemsAreBannedInTier(u8 tier, u8 battleType);
 u16 GetCurrentBattleTowerStreak(void);
 u16 GetMaxBattleTowerStreakForTier(u8 tier);
@@ -37,9 +41,23 @@ u16 sp056_DetermineBattlePointsToGive(void);
 #define NUM_TOWER_TRAINERS gNumTowerTrainers
 #define NUM_SPECIAL_TOWER_TRAINERS gNumSpecialTowerTrainers
 
+#define BATTLE_TOWER_MULTI_TRAINER_TID 0x396 //Trainer Index
 #define FRONTIER_BRAIN_TID 0x397 //Trainer Index
 #define BATTLE_TOWER_SPECIAL_TID 0x398 //Trainer Index
 #define BATTLE_TOWER_TID 0x399 //Trainer Index
+
+
+enum BattleFacilities
+{
+	IN_BATTLE_TOWER,
+	IN_BATTLE_SANDS,
+	IN_BATTLE_MINE,
+	IN_BATTLE_CIRCUS,
+	IN_ISLE_CHALLENGE,
+	NUM_BATTLE_FACILITIES,
+};
+
+#define BATTLE_FACILITY_NUM VarGet(0x403A) //Temp Var
 
 enum 
 {
@@ -68,8 +86,10 @@ enum BattleTowerFormats
 	BATTLE_TOWER_OU,
 	BATTLE_TOWER_UBER,
 	BATTLE_TOWER_LITTLE_CUP,
-	BATTLE_TOWER_MIDDLE_CUP,
+	BATTLE_TOWER_MIDDLE_CUP, //GS Cup in Doubles
 	BATTLE_TOWER_MONOTYPE,
+	BATTLE_TOWER_CAMOMONS,
+	BATTLE_TOWER_SCALEMONS,
 };
 
 #define NUM_FORMATS (BATTLE_TOWER_MONOTYPE + 1)
@@ -201,6 +221,25 @@ struct SpecialBattleTowerTrainer
 
 extern const struct SpecialBattleTowerTrainer gSpecialTowerTrainers[];
 
+struct MultiBattleTowerTrainer
+{
+	u16 owNum;
+	u8 trainerClass;
+	u8 backSpriteId;
+	u8 gender;
+	const u8* name;
+	u32 otId;
+	const struct BattleTowerSpread* regularSpreads;
+	const struct BattleTowerSpread* legendarySpreads;
+	const struct BattleTowerSpread* littleCupSpreads;
+	u16 regSpreadSize;
+	u16 legSpreadSize;
+	u16 lcSpreadSize;
+};
+
+extern const struct MultiBattleTowerTrainer gFrontierMultiBattleTrainers[];
+extern const u8 gNumFrontierMultiTrainers;
+
 struct FrontierBrain
 {
 	u8 trainerClass;
@@ -216,6 +255,15 @@ extern const struct FrontierBrain gFrontierBrains[];
 
 extern u16 gBattleTowerStreaks[NUM_TOWER_BATTLE_TYPES][NUM_FORMATS_OLD][/*PARTY_SIZE*/ 2][/*LEVEL*/ 2][/*CURRENT_OR_MAX*/ 2]; //0x2026840
 //FREE SPACE FROM SLIDESHOW 0x202682C - 0x2027434
+
+extern const u8 gBattleTowerTiers[];
+extern const u8 gBattleMineTiers[];
+extern const u8 gBattleCircusTiers[];
+#define gBattleSandsTiers gBattleTowerTiers //Battle Sands & Battle Tower have same tiers
+extern const u8 gNumBattleTowerTiers;
+extern const u8 gNumBattleMineTiers;
+extern const u8 gNumBattleCircusTiers;
+#define gNumBattleSandsTiers gNumBattleTowerTiers
 
 extern const species_t gBattleTowerStandardSpeciesBanList[];
 extern const species_t gGSCup_LegendarySpeciesList[];
@@ -237,3 +285,5 @@ extern const item_t gMiddleCup_ItemBanList[];
 extern const move_t gSmogon_MoveBanList[];
 extern const move_t gSmogonOUDoubles_MoveBanList[];
 extern const move_t gSmogonLittleCup_MoveBanList[];
+
+u8 GetCamomonsTypeBySpread(const struct BattleTowerSpread* spread, u8 whichType);
