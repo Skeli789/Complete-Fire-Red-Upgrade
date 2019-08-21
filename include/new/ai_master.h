@@ -12,7 +12,7 @@ void BattleAI_SetupAIData(u8 defaultScoreMoves);
 u32 GetAIFlags(void);
 u8 BattleAI_ChooseMoveOrAction(void);
 u8 GetMostSuitableMonToSwitchInto(void);
-u8 GetMostSuitableMonToSwitchIntoScore(void);
+s8 GetMostSuitableMonToSwitchIntoScore(void);
 u8 CalcMostSuitableMonToSwitchInto(void);
 void ResetBestMonToSwitchInto(u8 bank);
 void RemoveBestMonToSwitchInto(u8 bank);

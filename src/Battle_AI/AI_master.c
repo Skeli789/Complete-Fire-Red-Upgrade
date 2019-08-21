@@ -1624,7 +1624,7 @@ u8 GetMostSuitableMonToSwitchInto(void)
 	return option1;
 }
 
-u8 GetMostSuitableMonToSwitchIntoScore(void)
+s8 GetMostSuitableMonToSwitchIntoScore(void)
 {
 	u8 battlerIn1, battlerIn2;
 	u8 foe1, foe2;

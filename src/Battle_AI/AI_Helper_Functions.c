@@ -1604,7 +1604,6 @@ bool8 OnlyBadMovesLeftInMoveset(u8 bankAtk, u8 bankDef)
 		return FALSE; //The dumb AI doesn't get to switch like this
 
 	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, 0xFF);
-
 	for (i = 0; i < MAX_MON_MOVES; ++i)
 	{
 		move = GetBattleMonMove(bankAtk, i);
@@ -1662,15 +1661,16 @@ bool8 OnlyBadMovesLeftInMoveset(u8 bankAtk, u8 bankDef)
 
 			if (dmg < gBattleMons[bankDef].hp) //Move doesn't KO
 			{
-				if (HealingMoveInMoveset(bankDef) //Target can heal itself with move
-				||  GetAmountToRecoverBy(bankDef, bankAtk, MOVE_PROTECT)) //Target can heal itself with ability/item
+				u16 leftoversRecovery = GetAmountToRecoverBy(bankDef, bankAtk, MOVE_PROTECT);
+				if (leftoversRecovery != 0  //Target can heal itself with ability/item
+				||  HealingMoveInMoveset(bankDef)) //Target can heal itself with move
 				{
-					if (dmg >= gBattleMons[bankDef].maxHP / 2) //Damage deals half or more of max health
+					if (dmg * 3 >= gBattleMons[bankDef].hp + ((u32) leftoversRecovery * 2)) //Damage deals a third or more of max health after leftovers recovery
 						return FALSE; //Don't switch if can 2-3HKO
 				}
 				else
 				{
-					if (dmg >= gBattleMons[bankDef].maxHP / 3) //Damage deals a third or more of max health
+					if (dmg * 3 >= gBattleMons[bankDef].maxHP) //Damage deals a third or more of max health
 						return FALSE; //Don't switch if can 3HKO
 				}
 				
