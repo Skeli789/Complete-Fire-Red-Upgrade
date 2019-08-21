@@ -220,6 +220,7 @@ SpeciesToNationalPokedexNum = 0x8043298 | 1;
 //MonGainEVs = 0x8043890 | 1;
 GetMonEVCount = 0x8043A40 | 1;
 CheckPartyHasHadPokerus = 0x8043AD8 | 1;
+GetMonSpritePalStructFromOtIdPersonality = 0x8044180 | 1;
 GetPokeFlavourRelation = 0x8044234 | 1;
 IsTradedMon = 0x804425C | 1;
 IsOtherTrainer = 0x8044288 | 1;
@@ -932,8 +933,9 @@ NameChooserSelectLetter = 0x809F75C | 1;
 
 
 /* PicBox Functions */
+Task_PokemonPicWindow = 0x809D288 | 1;
 TaskDestroyPicBox = 0x809D494 | 1;
-PicBoxWindow = 0x809D654 | 1;
+CreateWindowFromRect = 0x809D654 | 1;
 PicBoxSetter = 0x809D6D4 | 1;
 BoxCreateTask = 0x81119D4 | 1;
 
@@ -1125,6 +1127,7 @@ TintPalette_GrayScale = 0x8071544 | 1;
 TintPalette_GrayScale2 = 0x8071594 | 1;
 TintPalette_SepiaTone = 0x80715F4 | 1;
 TintPalette_CustomTone = 0x8071660 | 1;
+PreservePaletteInWeather = 0x807B084 | 1;
 
 
 /* NPC Functions */

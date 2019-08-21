@@ -702,6 +702,7 @@ void __attribute__((long_call)) CopyMon(void *dest, void *src, size_t size);
 
 u8 __attribute__((long_call)) CheckPartyHasHadPokerus(struct Pokemon *party, u8 selection);
 u16 __attribute__((long_call)) GetMonEVCount(struct Pokemon* mon);
+const struct CompressedSpritePalette* __attribute__((long_call)) GetMonSpritePalStructFromOtIdPersonality(u16 species, u32 otId , u32 personality);
 
 /*
 void ZeroMonData(struct Pokemon *mon);
@@ -798,7 +799,6 @@ bool8 IsOtherTrainer(u32, u8 *);
 void SetWildMonHeldItem(void);
 
 const struct CompressedSpritePalette *sub_806E794(struct Pokemon *mon);
-const struct CompressedSpritePalette *GetMonSpritePalStructFromOtIdPersonality(u16 species, u32 otId , u32 personality);
 bool32 IsHMMove2(u16 move);
 bool8 IsPokeSpriteNotFlipped(u16 species);
 bool8 IsShinyOtIdPersonality(u32 otId, u32 personality);

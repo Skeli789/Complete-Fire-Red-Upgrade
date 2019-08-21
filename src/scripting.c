@@ -11,6 +11,7 @@
 #include "../include/region_map.h"
 #include "../include/save.h"
 #include "../include/script.h"
+#include "../include/script_menu.h"
 #include "../include/sound.h"
 #include "../include/sprite.h"
 #include "../include/string_util.h"
@@ -1889,7 +1890,7 @@ bool8 sp18B_ShowFossilImage(void) {
 	gSprites[objId].oam.paletteNum |= pal;
 		
 	u8 taskId = CreateTask(TaskDestroyPicBox, 0x50);
-	u8 windowId = PicBoxWindow(Var8005, Var8006, 8, 8);
+	u8 windowId = CreateWindowFromRect(Var8005, Var8006, 8, 8);
 	gTasks[taskId].data[5] = windowId;
 	gTasks[taskId].data[0] = 0;
 	gTasks[taskId].data[2] = objId;
