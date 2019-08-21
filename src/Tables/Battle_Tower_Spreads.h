@@ -14609,7 +14609,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
-		.spAtkIv = 0,
+		.spAtkIv = 31,
 		.spDefIv = 31,
 		.spdIv = 31,
 		.hpEv = 128,
@@ -14619,7 +14619,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.item = ITEM_HEAT_ROCK,
 		.moves =
 		{
-			MOVE_LEAFSTORM,
+			MOVE_SOLARBEAM,
 			MOVE_ROCKSLIDE,
 			MOVE_SUNNYDAY,
 			MOVE_BEATUP,

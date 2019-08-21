@@ -241,8 +241,8 @@ const struct BattleTowerSpread gMultiLegendaryTowerSpread_Milo[] =
 		{
 			MOVE_UTURN,
 			MOVE_IRONHEAD,
+			MOVE_TECHNOBLAST,
 			MOVE_ICEBEAM,
-			MOVE_ELECTROWEB,
 		},
 		.ball = BALL_TYPE_QUICK_BALL,
 		.forSingles = TRUE,
