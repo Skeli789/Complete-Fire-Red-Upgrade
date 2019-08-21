@@ -45,9 +45,9 @@
 #define EGG_MOVE_RELEARNER_FLAG 0x916 //When set, the move learner loads egg moves instead
 
 /*===== Start Menu/Poketools Flags =====*/
-//#define FLAG_SYS_BAG_GET 0x917	//Toggle bag on/off. Uncomment to always have on
-//#define FLAG_SYS_PLAYER_GET 0x918	//Toggle [player] on/off. Uncomment to always have on
-//#define FLAG_SYS_SAVE_GET 0x919	//Toggle save on/off. Uncomment to always have on
+#define FLAG_SYS_BAG_HIDE 0x917		//Toggle bag off
+#define FLAG_SYS_PLAYER_HIDE 0x918	//Toggle [player] off
+#define FLAG_SYS_SAVE_HIDE 0x919	//Toggle save off
 #define FLAG_SYS_DEXNAV 0x91A		//Flag to turn dexnav on/off in start menu (if undefined, this will eliminate dexnav from the start menu)
 #define FLAG_POKETOOLS_MENU 0x91B  	//Flag to create secondary, Poke Tools, start menu
 

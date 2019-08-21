@@ -62,6 +62,11 @@
 .equ BOY, 0x0
 .equ GIRL, 0x1
 
+.equ DOWN, 0x1
+.equ UP, 0x2
+.equ LEFT, 0x3
+.equ RIGHT, 0x4
+
 .equ PARTY_SIZE, 0x6
 .equ MAX_MON_MOVES, 0x4
 .equ NUM_STATS, 0x6

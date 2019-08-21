@@ -57,22 +57,22 @@ void BuildNormalStartMenu() {
 	if (FlagGet(FLAG_SYS_POKEMON_GET))
 		AddStartMenuAction(MENU_ACTION_POKEMON);
 	
-	#ifdef FLAG_SYS_BAG_GET
-		if (FlagGet(FLAG_SYS_BAG_GET))
+	#ifdef FLAG_SYS_BAG_HIDE
+		if (!FlagGet(FLAG_SYS_BAG_HIDE))
 			AddStartMenuAction(MENU_ACTION_BAG);
 	#else
 		AddStartMenuAction(MENU_ACTION_BAG);
 	#endif
 	
-	#ifdef FLAG_SYS_PLAYER_GET
-		if (FlagGet(FLAG_SYS_PLAYER_GET))
+	#ifdef FLAG_SYS_PLAYER_HIDE
+		if (!FlagGet(FLAG_SYS_PLAYER_HIDE))
 			AddStartMenuAction(MENU_ACTION_PLAYER);
 	#else
 		AddStartMenuAction(MENU_ACTION_PLAYER);
 	#endif
 	
-	#ifdef FLAG_SYS_SAVE_GET
-		if (FlagGet(FLAG_SYS_SAVE_GET))
+	#ifdef FLAG_SYS_SAVE_HIDE
+		if (!FlagGet(FLAG_SYS_SAVE_HIDE))
 			AddStartMenuAction(MENU_ACTION_SAVE);
 	#else
 		AddStartMenuAction(MENU_ACTION_SAVE);
