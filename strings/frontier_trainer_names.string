@@ -636,4 +636,14 @@ Candice
 #org @sTrainerName_Giovanni
 Giovanni
 
+//Multi Trainers
+#org @sTrainerName_Milo
+Milo
+
+#org @sTrainerName_Marlon
+Marlon
+
+#org @sTrainerName_Jax
+Jax
+
 #endif

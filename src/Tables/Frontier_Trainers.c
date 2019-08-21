@@ -4,10 +4,12 @@
 #include "../../include/new/frontier.h"
 #include "../../include/new/text.h"
 #include "../../include/constants/trainer_classes.h"
+#include "../../include/constants/trainers.h"
 #include "../../include/constants/songs.h"
 
 #include "frontier_trainer_names.h"
-#include "Frontier_Spreads.h"
+#include "frontier_special_trainer_spreads.h"
+#include "frontier_multi_spreads.h"
 
 /*struct BattleTowerTrainer
 {
@@ -1530,7 +1532,7 @@ const struct BattleTowerTrainer gTowerTrainers[] =
 		.playerLoseText = 	sFrontierText_Idol_PlayerLose_3,
 	},
 	{
-		.owNum = 			OW_POKEKID,
+		.owNum = 			OW_POKE_KID,
 		.trainerClass = 	CLASS_POKE_KID,
 		.trainerSprite = 	TRAINER_SPRITE_POKE_KID,
 		.gender = 			BATTLE_TOWER_MALE,
@@ -1539,7 +1541,7 @@ const struct BattleTowerTrainer gTowerTrainers[] =
 		.playerLoseText = 	sFrontierText_Pokekid_PlayerLose_1,
 	},
 	{
-		.owNum = 			OW_POKEKID,
+		.owNum = 			OW_POKE_KID,
 		.trainerClass = 	CLASS_POKE_KID,
 		.trainerSprite = 	TRAINER_SPRITE_POKE_KID,
 		.gender = 			BATTLE_TOWER_MALE,
@@ -1548,7 +1550,7 @@ const struct BattleTowerTrainer gTowerTrainers[] =
 		.playerLoseText = 	sFrontierText_Pokekid_PlayerLose_2,
 	},
 	{
-		.owNum = 			OW_POKEKID,
+		.owNum = 			OW_POKE_KID,
 		.trainerClass = 	CLASS_POKE_KID,
 		.trainerSprite = 	TRAINER_SPRITE_POKE_KID,
 		.gender = 			BATTLE_TOWER_MALE,
@@ -1865,6 +1867,68 @@ const struct FrontierBrain gFrontierBrains[] =
 		},
 };
 
+const struct MultiBattleTowerTrainer gFrontierMultiBattleTrainers[] =
+{
+	{
+		.owNum = OW_POKE_KID,
+		.trainerClass = CLASS_POKE_KID,
+		.backSpriteId = TRAINER_BACK_PIC_POKE_KID,
+		.gender = MALE,
+		.name = sTrainerName_Milo,
+		.otId = 0x3E16ECA,
+		.regularSpreads = gMultiTowerSpread_Milo,
+		.legendarySpreads = gMultiLegendaryTowerSpread_Milo,
+		.littleCupSpreads = gMultiLittleCupTowerSpread_Milo,
+		.regSpreadSize = ARRAY_COUNT(gMultiTowerSpread_Milo),
+		.legSpreadSize = ARRAY_COUNT(gMultiLegendaryTowerSpread_Milo),
+		.lcSpreadSize = ARRAY_COUNT(gMultiLittleCupTowerSpread_Milo),
+	},
+	{
+		.owNum = OW_MARLON,
+		.trainerClass = CLASS_SHADOW_ADMIN,
+		.backSpriteId = TRAINER_BACK_PIC_MARLON,
+		.gender = MALE,
+		.name = sTrainerName_Marlon,
+		.otId = 0x4156010,
+		.regularSpreads = gMultiTowerSpread_Marlon,
+		.legendarySpreads = gMultiLegendaryTowerSpread_Marlon,
+		.littleCupSpreads = gMultiLittleCupTowerSpread_Marlon,
+		.regSpreadSize = ARRAY_COUNT(gMultiTowerSpread_Marlon),
+		.legSpreadSize = ARRAY_COUNT(gMultiLegendaryTowerSpread_Marlon),
+		.lcSpreadSize = ARRAY_COUNT(gMultiLittleCupTowerSpread_Marlon),
+	},
+	{
+		.owNum = OW_JAX,
+		.trainerClass = CLASS_PKMN_TRAINER_2,
+		.backSpriteId = BACKSPRITE_JAX,
+		.gender = MALE,
+		.name = sTrainerName_Jax,
+		.otId = 0x95746426,
+		.regularSpreads = gMultiTowerSpread_Jax,
+		.legendarySpreads = gMultiLegendaryTowerSpread_Jax,
+		.littleCupSpreads = gMultiLittleCupTowerSpread_Jax,
+		.regSpreadSize = ARRAY_COUNT(gMultiTowerSpread_Jax),
+		.legSpreadSize = ARRAY_COUNT(gMultiLegendaryTowerSpread_Jax),
+		.lcSpreadSize = ARRAY_COUNT(gMultiLittleCupTowerSpread_Jax),
+	},
+	{
+		.owNum = OW_RIVAL,
+		.trainerClass = CLASS_RIVAL,
+		.backSpriteId = TRAINER_BACK_PIC_RIVAL,
+		.gender = MALE,
+		.name = NULL, //Predefined ingame
+		.otId = 0xECBAA1AD,
+		.regularSpreads = gMultiTowerSpread_Rival,
+		.legendarySpreads = gMultiLegendaryTowerSpread_Rival,
+		.littleCupSpreads = gMultiLittleCupTowerSpread_Rival,
+		.regSpreadSize = ARRAY_COUNT(gMultiTowerSpread_Rival),
+		.legSpreadSize = ARRAY_COUNT(gMultiLegendaryTowerSpread_Rival),
+		.lcSpreadSize = ARRAY_COUNT(gMultiLittleCupTowerSpread_Rival),
+	},
+};
+
+const u8 gNumFrontierMultiTrainers = ARRAY_COUNT(gFrontierMultiBattleTrainers);
+
 #else
 	const struct BattleTowerTrainer gTowerTrainers[] =
 	{
@@ -1886,6 +1950,12 @@ const struct FrontierBrain gFrontierBrains[] =
 	const struct FrontierBrain gFrontierBrains[] =
 	{
 	};
+	
+	const struct MultiBattleTowerTrainer gFrontierMultiBattleTrainers[] =
+	{
+	};
+	
+	const u8 gNumFrontierMultiTrainers = ARRAY_COUNT(gFrontierMultiBattleTrainers);
 #endif
 
 const u16 gNumTowerTrainers = ARRAY_COUNT(gTowerTrainers);
