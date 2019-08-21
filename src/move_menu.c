@@ -302,14 +302,15 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 	gBattleScripting->dmgMultiplier = 1;
 	for (i = 0; i < MAX_MON_MOVES; ++i)
 	{
+		u8 foe = (IS_DOUBLE_BATTLE && !BATTLER_ALIVE(FOE(gActiveBattler))) ? PARTNER(FOE(gActiveBattler)) : FOE(gActiveBattler);
 		u16 move = gBattleMons[gActiveBattler].moves[i];
 
 		tempMoveStruct->moves[i] = move;
 		tempMoveStruct->moveTypes[i] = GetMoveTypeSpecial(gActiveBattler, move);
 
-		if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, gActiveBattler, FOE(gActiveBattler)) >= 2) //Because target can vary, display only attacker's modifiers
+		if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, gActiveBattler, foe) >= 2) //Because target can vary, display only attacker's modifiers
 		{
-			tempMoveStruct->movePowers[i] = GetBasePower(gActiveBattler, FOE(gActiveBattler), move, 
+			tempMoveStruct->movePowers[i] = GetBasePower(gActiveBattler, foe, move, 
 									 gBattleMons[gActiveBattler].item, ITEM_EFFECT(gActiveBattler), ABILITY(gActiveBattler), 
 									 gBattleMons[gActiveBattler].status1, gBattleMons[gActiveBattler].hp, gBattleMons[gActiveBattler].maxHP, 
 									 gBattleMons[gActiveBattler].species, GetBankPartyData(gActiveBattler), FALSE, TRUE, TRUE);
@@ -321,18 +322,17 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 		}
 		else
 		{
-			tempMoveStruct->movePowers[i] = GetBasePower(gActiveBattler, FOE(gActiveBattler), move, 
+			tempMoveStruct->movePowers[i] = GetBasePower(gActiveBattler, foe, move, 
 									 gBattleMons[gActiveBattler].item, ITEM_EFFECT(gActiveBattler), ABILITY(gActiveBattler), 
 									 gBattleMons[gActiveBattler].status1, gBattleMons[gActiveBattler].hp, gBattleMons[gActiveBattler].maxHP, 
 									 gBattleMons[gActiveBattler].species, GetBankPartyData(gActiveBattler), FALSE, TRUE, FALSE);
-			tempMoveStruct->movePowers[i] = CalcVisualBasePower(gActiveBattler, FOE(gActiveBattler), 
+			tempMoveStruct->movePowers[i] = CalcVisualBasePower(gActiveBattler, foe, 
 																move, tempMoveStruct->movePowers[i], 
 																tempMoveStruct->moveTypes[i], FALSE);
-			tempMoveStruct->moveAcc[i] = AccuracyCalc(move, gActiveBattler, FOE(gActiveBattler));
+			tempMoveStruct->moveAcc[i] = AccuracyCalc(move, gActiveBattler, foe);
 			
 			if (SPLIT(move) != SPLIT_STATUS)
 			{
-				u8 foe = (IS_DOUBLE_BATTLE && !BATTLER_ALIVE(FOE(gActiveBattler))) ? PARTNER(FOE(gActiveBattler)) : FOE(gActiveBattler);
 				u8 moveResult = VisualTypeCalc(move, gActiveBattler, foe);
 
 				if (!(moveResult & MOVE_RESULT_NO_EFFECT) && CheckTableForMoveEffect(move, gNoWeaknessResistanceTable))

@@ -376,7 +376,7 @@ u32 AccuracyCalcNoTarget(u16 move, u8 bankAtk) {
 		u8 acc;
         u32 calc;
 		u8 atkEffect  = ITEM_EFFECT(bankAtk);
-		u8 atkQuality = ITEM_QUALITY(gBattleMons[bankAtk].item);
+		u8 atkQuality = ITEM_QUALITY(bankAtk);
 		u8 atkAbility = ABILITY(bankAtk);
 		u8 moveSplit = SPLIT(move);
 		
