@@ -141,10 +141,12 @@ NPCPtr GetEventObjectGraphicsInfo(u16 graphicsId)
 	}
 	
 	NPCPtr spriteAddr;
+	#ifndef EXISTING_OW_TABLE_ADDRESS
 	if (tableId >= ARRAY_COUNT(gOverworldTableSwitcher)
 	|| gOverworldTableSwitcher[tableId] == 0)
 		spriteAddr = gOverworldTableSwitcher[0][spriteId];
 	else
+	#endif
 		spriteAddr = gOverworldTableSwitcher[tableId][spriteId];
 	
 	if (spriteAddr == NULL)
