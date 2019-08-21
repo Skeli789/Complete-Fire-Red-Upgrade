@@ -446,16 +446,6 @@ void* LoadTmHmMartDescription(u16 item)
 		return ItemId_GetDescription(item);
 }
 
-
-
-enum
-{
-    CAN_LEARN_MOVE,
-    CANNOT_LEARN_MOVE,
-    ALREADY_KNOWS_MOVE,
-    CANNOT_LEARN_MOVE_IS_EGG,
-};
-
 u8 CanMonLearnTMTutor(struct Pokemon* mon, u16 item, u8 tutor)
 {
     u16 move;

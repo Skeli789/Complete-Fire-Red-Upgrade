@@ -3,8 +3,6 @@
 #include "../global.h"
 #include "../../src/config.h"
 
-#define NUM_TMSHMS NUM_TMS + NUM_HMS	// never change this
-
 extern const u16 Fairy_TM_DiskPal[];
 
 u8* ItemId_GetName(u16 itemId);
@@ -28,3 +26,14 @@ u8 CanMonLearnTMTutor(struct Pokemon* mon, u16 item, u8 tutor);
 //Hooked in Functions:
 u8 TryHandleExcuseForDracoMeteorTutor(struct Pokemon* mon);
 u8 TryHandleExcuseForDracoMeteorTutorAlreadyKnow(void);
+
+//Exported Constants
+enum
+{
+    CAN_LEARN_MOVE,
+    CANNOT_LEARN_MOVE,
+    ALREADY_KNOWS_MOVE,
+    CANNOT_LEARN_MOVE_IS_EGG,
+};
+
+#define NUM_TMSHMS NUM_TMS + NUM_HMS	// never change this

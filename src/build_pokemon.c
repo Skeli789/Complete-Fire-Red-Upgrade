@@ -2153,7 +2153,7 @@ static void PostProcessTeam(struct Pokemon* party, struct TeamBuilder* builder)
 							{		
 								switch (sDoubleSpreadReplacementMoves[j].learnType) {
 									case LEARN_TYPE_TM:
-										if (CanMonLearnTMTutor(&party[i], sDoubleSpreadReplacementMoves[j].other, 0))
+										if (CanMonLearnTMTutor(&party[i], sDoubleSpreadReplacementMoves[j].other, 0) == CAN_LEARN_MOVE)
 										{
 											SetMonData(&party[i], MON_DATA_MOVE1 + pos, &newMove);
 											SetMonData(&party[i], MON_DATA_PP1 + pos, &newPP);
@@ -2161,7 +2161,7 @@ static void PostProcessTeam(struct Pokemon* party, struct TeamBuilder* builder)
 										break;
 										
 									case LEARN_TYPE_TUTOR:
-										if (CanMonLearnTMTutor(&party[i], 0, sDoubleSpreadReplacementMoves[j].other))
+										if (CanMonLearnTMTutor(&party[i], 0, sDoubleSpreadReplacementMoves[j].other) == CAN_LEARN_MOVE)
 										{
 											SetMonData(&party[i], MON_DATA_MOVE1 + pos, &newMove);
 											SetMonData(&party[i], MON_DATA_PP1 + pos, &newPP);
