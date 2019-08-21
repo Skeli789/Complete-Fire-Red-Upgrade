@@ -7,6 +7,7 @@
 
 #include "../include/new/battle_anims.h"
 #include "../include/new/battle_terrain.h"
+#include "../include/new/mega.h"
 #include "../include/new/dns.h"
 #include "../include/new/Helper_Functions.h"
 
@@ -293,6 +294,7 @@ bool8 DoesMoveHaveGeyserOnTarget(void)
 	return sAnimMoveIndex == MOVE_NEVER_ENDING_NIGHTMARE_P || sAnimMoveIndex == MOVE_NEVER_ENDING_NIGHTMARE_S 
 		 || sAnimMoveIndex == MOVE_DEVASTATING_DRAKE_P 		|| sAnimMoveIndex == MOVE_DEVASTATING_DRAKE_S
 		 || sAnimMoveIndex == MOVE_GIGAVOLT_HAVOC_P 		|| sAnimMoveIndex == MOVE_GIGAVOLT_HAVOC_S
+		 || sAnimMoveIndex == MOVE_GUARDIAN_OF_ALOLA
 		 || sAnimMoveIndex == MOVE_LIGHT_THAT_BURNS_THE_SKY;
 }
 
@@ -396,8 +398,21 @@ void AnimTask_ReloadAttackerSprite(u8 taskId)
 
 void AnimTask_PlayAttackerCry(u8 taskId)
 {
-	PlayCry3(GetBankPartyData(gBattleAnimAttacker)->species, 0, 2); //Higher Pitch
+	PlayCry3(GetBankPartyData(gBattleAnimAttacker)->species, 0, 1);
 	DestroyAnimVisualTask(taskId);
+}
+
+u8 ModifyMegaCries(u16 species, u8 mode)
+{
+	if (mode <= 1
+	&& (IsMegaSpecies(species) || IsBluePrimalSpecies(species) || IsRedPrimalSpecies(species)))
+	{
+		#ifdef HIGH_PITCH_MEGA_PRIMAL_CRY
+			mode = 3;
+		#endif
+	}
+	
+	return mode;
 }
 
 void AnimTask_GetSecretPowerAnimation(u8 taskId)
@@ -988,6 +1003,49 @@ static void AnimTask_GrowStep(u8 taskId)
         ResetSpriteRotScale(spriteId);
         DestroyAnimVisualTask(taskId);
     }
+}
+
+void AnimTask_AllBanksInvisible(u8 taskId)
+{
+	for (int i = 0; i < gBattlersCount; ++i)
+	{
+		u8 spriteId = gBattlerSpriteIds[i];
+		
+		if (spriteId != 0xFF)
+			gSprites[spriteId].invisible = TRUE;
+	}
+	
+	DestroyAnimVisualTask(taskId);
+}
+
+void AnimTask_AllBanksVisible(u8 taskId)
+{
+	for (int i = 0; i < gBattlersCount; ++i)
+	{
+		u8 spriteId = gBattlerSpriteIds[i];
+		
+		if (spriteId != 0xFF)
+			gSprites[spriteId].invisible = FALSE;
+	}
+	
+	DestroyAnimVisualTask(taskId);
+}
+
+void AnimTask_AllBanksInvisibleExceptAttackerAndTarget(u8 taskId)
+{
+	for (int i = 0; i < gBattlersCount; ++i)
+	{
+		u8 spriteId = gBattlerSpriteIds[i];
+		
+		if (spriteId == GetAnimBattlerSpriteId(ANIM_BANK_ATTACKER)
+		||  spriteId == GetAnimBattlerSpriteId(ANIM_BANK_TARGET))
+			continue;
+		
+		if (spriteId != 0xFF)
+			gSprites[spriteId].invisible = TRUE;
+	}
+	
+	DestroyAnimVisualTask(taskId);
 }
 
 void DoubleWildAnimBallThrowFix(void)
