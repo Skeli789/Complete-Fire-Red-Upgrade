@@ -48,3 +48,5 @@ u8 GetSummaryScreenMoveType(u16 move, struct Pokemon* mon);
 	BATTLE_ALIVE_ATK_SIDE,
 	BATTLE_ALIVE_DEF_SIDE,
 };*/
+
+#define BASE_CRIT_MULTIPLIER 100

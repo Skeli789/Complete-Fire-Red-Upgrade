@@ -478,7 +478,7 @@ void atk0C_datahpupdate(void) {
 
 void atk0D_critmessage(void) {
 	if (!gBattleExecBuffer) {
-		if (gCritMultiplier > 100 && !(gMoveResultFlags & MOVE_RESULT_NO_EFFECT)) {
+		if (gCritMultiplier > BASE_CRIT_MULTIPLIER && !(gMoveResultFlags & MOVE_RESULT_NO_EFFECT)) {
 			PrepareStringBattle(STRINGID_CRITICALHIT, gBankAttacker);
 			gBattleCommunication[MSG_DISPLAY] = 1;
 		}
@@ -928,7 +928,7 @@ void MoveValuesCleanUp(void)
 {
 	gMoveResultFlags = 0;
 	gBattleScripting->dmgMultiplier = 1;
-	gCritMultiplier = 100;
+	gCritMultiplier = BASE_CRIT_MULTIPLIER;
 	gBattleCommunication[MOVE_EFFECT_BYTE] = 0;
 	gNewBS->backupMoveEffect = 0;
 	gBattleCommunication[6] = 0;

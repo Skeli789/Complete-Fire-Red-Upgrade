@@ -1695,7 +1695,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			case ABILITY_ANGERPOINT:
 				if (MOVE_HAD_EFFECT
 				&& TOOK_DAMAGE(bank)
-				&& gCritMultiplier > 100
+				&& gCritMultiplier > BASE_CRIT_MULTIPLIER
 				&& gBattleMons[bank].hp
 				&& gBattleMons[bank].statStages[STAT_ATK - 1] < 12)
 				{

@@ -619,7 +619,7 @@ void HandleAction_UseMove(void)
 	}
 
 	gHpDealt = 0;
-	gCritMultiplier = 100;
+	gCritMultiplier = BASE_CRIT_MULTIPLIER;
 	gBattleScripting->dmgMultiplier = 1;
 	gBattleStruct->atkCancellerTracker = 0;
 	gMoveResultFlags = 0;

@@ -30,6 +30,13 @@ extern struct AlternateSize gAlternateSpeciesSizeTable[];
 	static const u16 Gen7CriticalHitChance[] = {24, 8, 2, 1, 1};
 #endif
 
+#define BASE_CRIT_MULTIPLIER 100
+#ifdef OLD_CRIT_DAMAGE
+	#define CRIT_MULTIPLIER 200
+#else //Gen 6+ crit damage
+	#define CRIT_MULTIPLIER 150
+#endif
+
 //This file's functions:
 static u8 CalcPossibleCritChance(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* atkMon, bool8 CheckParty);
 static void TypeDamageModificationByDefTypes(u8 atkAbility, u8 bankDef, u16 move, u8 moveType, u8* flags, u8 defType1, u8 defType2, u8 defType3);
@@ -87,16 +94,11 @@ void atk04_critcalc(void) {
 		#endif
 	}
 
-	gCritMultiplier = 100;
+	gCritMultiplier = BASE_CRIT_MULTIPLIER;
 
 	//These damages will be divded by 100 so really 2x and 1.5x
-	if (confirmedCrit) {
-		#ifdef OLD_CRIT_DAMAGE
-			gCritMultiplier = 200;
-		#else
-			gCritMultiplier = 150;	//Gen 6+ crit damage
-		#endif
-	}
+	if (confirmedCrit)
+		gCritMultiplier = CRIT_MULTIPLIER;
 
 	++gBattlescriptCurrInstr;
 }
@@ -198,7 +200,7 @@ void atk05_damagecalc(void) {
 												GetBankPartyData(gBankAttacker), FALSE, FALSE, FALSE);
 	}
 
-	gBattleMoveDamage = gBattleMoveDamage * udivsi(gCritMultiplier, 100);
+	gBattleMoveDamage = gBattleMoveDamage * (gCritMultiplier / BASE_CRIT_MULTIPLIER);
 	++gBattlescriptCurrInstr;
 }
 
@@ -211,7 +213,7 @@ s32 FutureSightDamageCalc(void)
 											TypeCalc(gCurrentMove, gBankAttacker, gBankTarget, 0, FALSE),
 											gBattleStruct->dynamicMoveType, gBankAttacker, gBankTarget,
 											GetBankPartyData(gBankAttacker), FALSE, TRUE, FALSE);
-	gBattleMoveDamage = gBattleMoveDamage * udivsi(gCritMultiplier, 100);
+	gBattleMoveDamage = gBattleMoveDamage * (gCritMultiplier / BASE_CRIT_MULTIPLIER);
 	return gBattleMoveDamage;
 }
 
@@ -251,7 +253,13 @@ u32 AI_CalcDmg(const u8 bankAtk, const u8 bankDef, const u16 move) {
 
 	gBattleScripting->dmgMultiplier = 1;
 	gBattleStruct->dynamicMoveType = GetMoveTypeSpecial(bankAtk, move);
-	gCritMultiplier = CalcPossibleCritChance(bankAtk, bankDef, move, 0, FALSE); //Return 0 if none, 1 if always, 2 if 50%
+
+	gCritMultiplier = CalcPossibleCritChance(bankAtk, bankDef, move, 0, FALSE); //Return 0 if none, 1 if always, 2 if 50%	
+	if (gCritMultiplier != 0 && Random() % gCritMultiplier == 0)
+		gCritMultiplier = CRIT_MULTIPLIER;
+	else
+		gCritMultiplier = BASE_CRIT_MULTIPLIER;
+	
 	u16 side_hword = gSideAffecting[SIDE(bankDef)];
 	damage = CalculateBaseDamage(&gBattleMons[bankAtk], &gBattleMons[bankDef], move,
 											side_hword, gDynamicBasePower,
@@ -262,16 +270,10 @@ u32 AI_CalcDmg(const u8 bankAtk, const u8 bankDef, const u16 move) {
 	gBattleMoveDamage = MathMin(0x7FFFFFFF, damage);
 	AI_SpecialTypeCalc(move, bankAtk, bankDef);
 	damage = gBattleMoveDamage;
-
-	if (gCritMultiplier && umodsi(Random(), gCritMultiplier) == 0) {
-		#ifdef OLD_CRIT_DAMAGE
-			damage *= 2;
-		#else //Gen 6+ crit damage
-			damage = udivsi(damage * 15, 10);
-		#endif
-	}
-
-	gCritMultiplier = 100; //Reset
+	damage *= (gCritMultiplier / BASE_CRIT_MULTIPLIER);
+	gCritMultiplier = BASE_CRIT_MULTIPLIER; //Reset
+	
+	damage = (damage * 93) / 100; //Roll 93% damage - about halfway between min & max damage
 
 	if (CheckTableForMove(move, TwoToFiveStrikesMoves) && ABILITY(bankAtk) == ABILITY_SKILLLINK)
 	{
@@ -336,6 +338,12 @@ u32 AI_CalcPartyDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* mon) {
 	gBattleStruct->dynamicMoveType = GetMoveTypeSpecialFromParty(mon, move);
 	u16 side_hword = gSideAffecting[SIDE(bankDef)];
 	gCritMultiplier = CalcPossibleCritChance(bankAtk, bankDef, move, mon, TRUE); //Return 0 if none, 1 if always, 2 if 50%
+
+	if (gCritMultiplier != 0 && Random() % gCritMultiplier == 0)
+		gCritMultiplier = CRIT_MULTIPLIER;
+	else
+		gCritMultiplier = BASE_CRIT_MULTIPLIER;
+
 	damage = CalculateBaseDamage(&gBattleMons[0], &gBattleMons[bankDef], move,
 											side_hword, resultFlags,
 											TypeCalc(move, bankAtk, bankDef, mon, TRUE),
@@ -345,16 +353,10 @@ u32 AI_CalcPartyDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* mon) {
 	gBattleMoveDamage = damage;
 	TypeCalc(move, bankAtk, bankDef, mon, TRUE);
 	damage = gBattleMoveDamage;
+	damage *= (gCritMultiplier / BASE_CRIT_MULTIPLIER);
+	gCritMultiplier = BASE_CRIT_MULTIPLIER; //Reset
 	
-	if (gCritMultiplier && umodsi(Random(), gCritMultiplier) == 0) {
-		#ifdef OLD_CRIT_DAMAGE
-			damage *= 2;
-		#else //Gen 6+ crit damage
-			damage = udivsi(damage * 15, 10);
-		#endif
-	}
-
-	gCritMultiplier = 100; //Reset
+	damage = (damage * 96) / 100; //Roll 96% damage with party mons - be more idealistic
 
 	if (CheckTableForMove(move, TwoToFiveStrikesMoves) && GetPartyAbility(mon) == ABILITY_SKILLLINK)
 	{
@@ -1981,7 +1983,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 		buffedAttack = attack;
 		buffedSpAttack = spAttack;
 	}
-	else if (gCritMultiplier > 100) {
+	else if (gCritMultiplier > BASE_CRIT_MULTIPLIER) {
 		if (attacker->statStages[STAT_STAGE_ATK-1] > 6) {
 			APPLY_STAT_MOD(buffedAttack, attacker, attack, STAT_STAGE_ATK);
 		}
@@ -2004,7 +2006,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 		buffedDefense = defense;
 		buffedSpDefense = spDefense;
 	}
-	else if (gCritMultiplier > 100) {
+	else if (gCritMultiplier > BASE_CRIT_MULTIPLIER) {
 		if (defender->statStages[STAT_STAGE_DEF-1] < 6) {
 			APPLY_STAT_MOD(buffedDefense, defender, defense, STAT_STAGE_DEF);
 		}
@@ -2060,7 +2062,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 		switch (moveSplit) {
 			case SPLIT_PHYSICAL:
 				if ((sideStatus & SIDE_STATUS_REFLECT || gNewBS->AuroraVeilTimers[SIDE(bankDef)])
-				&& gCritMultiplier <= 100
+				&& gCritMultiplier <= BASE_CRIT_MULTIPLIER
 				&& !(atkAbility == ABILITY_INFILTRATOR
 				&& !IgnoreAttacker)) {
 					if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE) && CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, bankAtk, bankDef) >= 2)
@@ -2075,7 +2077,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 
 			case SPLIT_SPECIAL:
 				if ((sideStatus & SIDE_STATUS_LIGHTSCREEN || gNewBS->AuroraVeilTimers[SIDE(bankDef)])
-				&& gCritMultiplier <= 100
+				&& gCritMultiplier <= BASE_CRIT_MULTIPLIER
 				&& !(atkAbility == ABILITY_INFILTRATOR
 				&& !IgnoreAttacker)) {
 					if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE) && CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, bankAtk, bankDef) >= 2)
@@ -2125,9 +2127,9 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 				break;
 
 			case ABILITY_SNIPER:
-				if (gCritMultiplier > 100) {
+				if (gCritMultiplier > BASE_CRIT_MULTIPLIER)
 					damage = udivsi((damage * 150), 100);
-				}
+				break;
 		}
 	}
 
@@ -3040,7 +3042,7 @@ static u8 GetFlingPower(u8 ability, u16 item, struct Pokemon* mon, u8 bank, bool
 static void ApplyRandomDmgMultiplier(void) {
 	u16 rando = 100 - (Random() & 15);
 	if (gBattleMoveDamage)
-		gBattleMoveDamage = MathMax(1, udivsi((gBattleMoveDamage * rando), 100));
+		gBattleMoveDamage = MathMax(1, (gBattleMoveDamage * rando) / 100);
 }
 
 //Some species have alternate forms with different sizes (like Megas)
