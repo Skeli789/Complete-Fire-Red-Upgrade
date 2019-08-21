@@ -346,6 +346,11 @@ bool8 TryUpdateOutcomeForFrontierBattle(void)
 	return FALSE;
 }
 
+bool8 ShouldDisablePartyMenuItemsBattleTower(void)
+{
+	return FlagGet(BATTLE_TOWER_FLAG);
+}
+
 //@Details: Generates a tower trainer id and name for the requested trainer.
 //@Inputs:
 //		Var8000: 0 = Trainer Opponent A

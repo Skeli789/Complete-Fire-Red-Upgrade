@@ -130,6 +130,7 @@ IsRunningDisallowedByMetatile 80BD4B8 1
 
 ##Party Menu Hooks
 DisplayPartyPokemonSelectForBattle 811F388 1
+DisablePartyMenuListItemsBattleSalon 8122A9A 0
 CursorCb_Summary 8122D4C 1
 CursorCb_NoEntry 8124278 1
 LoadMaxNumPokemonChooseBattleTowerStringHook 8124184 0
