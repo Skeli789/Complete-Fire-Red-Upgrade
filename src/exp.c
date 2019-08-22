@@ -88,7 +88,8 @@ void atk23_getexp(void)
         break;
 	
     case GetExp_CheckCurrentMonDeserving: //Check if Current mon deserves EXP
-		if (gPlayerParty[gBattleStruct->expGetterId].hp == 0
+		if (GetMonData(&gPlayerParty[gBattleStruct->expGetterId], MON_DATA_SPECIES, NULL) == SPECIES_NONE
+		||  GetMonData(&gPlayerParty[gBattleStruct->expGetterId], MON_DATA_HP, NULL) == 0
 		||  GetMonData(&gPlayerParty[gBattleStruct->expGetterId], MON_DATA_IS_EGG, 0))
         {
             gBattleStruct->sentInPokes >>= 1; //One less pokemon to distribute exp to
@@ -271,7 +272,7 @@ void atk23_getexp(void)
             else
                 i = STRINGID_EMPTYSTRING4;
 
-            // get exp getter bank
+            //Get exp getter bank
             if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
             {
                 if (gBattlerPartyIndexes[B_POSITION_PLAYER_RIGHT] == gBattleStruct->expGetterId && !(gAbsentBattlerFlags & gBitTable[B_POSITION_PLAYER_RIGHT]))

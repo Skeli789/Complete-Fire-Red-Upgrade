@@ -463,7 +463,11 @@ static void RestoreNonConsumableItems(void)
 static void RecalcAllStats(void)
 {
 	for (int i = 0; i < PARTY_SIZE; ++i)
-		CalculateMonStats(&gPlayerParty[i]);
+	{
+		if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES, NULL) != SPECIES_NONE
+		&& !GetMonData(&gPlayerParty[i], MON_DATA_IS_EGG, NULL))
+			CalculateMonStats(&gPlayerParty[i]); //Only recalc Pokemon that need to be recalced
+	}
 }
 
 static void BringBackTheDead(void)
