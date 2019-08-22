@@ -53,7 +53,7 @@ extern u16 gPlttBufferUnfaded[PLTT_BUFFER_SIZE];
 extern u16 gPlttBufferFaded[PLTT_BUFFER_SIZE];
 */
 
-void BlendPalette(u16 palOffset, u16 numEntries, u8 coeff, u16 blendColor);
+void __attribute__((long_call)) BlendPalette(u16 palOffset, u16 numEntries, u8 coeff, u16 blendColor);
 void __attribute__((long_call)) LoadCompressedPalette(const void* src, u16 offset, u16 size);
 void __attribute__((long_call)) LoadPalette(const void *src, u16 offset, u16 size);
 void __attribute__((long_call)) FillPalette(u16 value, u16 offset, u16 size);

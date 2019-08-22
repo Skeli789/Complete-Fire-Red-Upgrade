@@ -122,7 +122,9 @@ static u16 TintColor(u16 color)
 
 u8 PaletteNeedsFogBrightening(u8 palSlot) // hook at 0x7A748
 {
-	return sPalRefs[palSlot - 16].Type == PalTypeAnimation; // only brighten animations
+	return sPalRefs[palSlot - 16].Type == PalTypeNPC
+		|| sPalRefs[palSlot - 16].Type == PalTypeReflection
+		|| sPalRefs[palSlot - 16].Type == PalTypeAnimation;
 }
 
 static u8 GetPalTypeByPalTag(u16 palTag)
