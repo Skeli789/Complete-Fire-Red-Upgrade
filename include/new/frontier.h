@@ -22,6 +22,7 @@ void UpdateTypesForCamomons(u8 bank);
 u8 GetCamomonsTypeByMon(struct Pokemon* mon, u8 whichType);
 //u8 GetCamomonsTypeBySpread(struct BattleTowerSpread* spread, u8 whichType); - Defined further down
 bool8 DuplicateItemsAreBannedInTier(u8 tier, u8 battleType);
+bool8 InBattleSands(void);
 u16 GetCurrentBattleTowerStreak(void);
 u16 GetMaxBattleTowerStreakForTier(u8 tier);
 u16 GetBattleTowerStreak(u8 currentOrMax, u16 inputBattleStyle, u16 inputTier, u16 partySize, u8 level);
@@ -253,6 +254,19 @@ struct FrontierBrain
 
 extern const struct FrontierBrain gFrontierBrains[];
 
+struct BattleSandsStreak
+{
+	/*0x0*/ u16 tier : 10;
+	/*0x1*/ u16 format : 4;
+	/*0x1*/ u16 level : 1;
+	/*0x1*/ u16 inverse : 1;
+	/*0x2*/ u16 species1;
+	/*0x4*/ u16 species2;
+	/*0x6*/ u16 species3;
+	/*0x8*/ u16 streakLength;
+}; /*SIZE = 0xA*/
+
+extern struct BattleSandsStreak gBattleSandsStreaks[2 /*PREVIOUS_OR_MAX*/]; //0x202682C
 extern u16 gBattleTowerStreaks[NUM_TOWER_BATTLE_TYPES][NUM_FORMATS_OLD][/*PARTY_SIZE*/ 2][/*LEVEL*/ 2][/*CURRENT_OR_MAX*/ 2]; //0x2026840
 //FREE SPACE FROM SLIDESHOW 0x202682C - 0x2027434
 

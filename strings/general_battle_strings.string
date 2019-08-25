@@ -19,7 +19,7 @@ The Shadow Warrior attacked!\p
 [FD][2E] [FD][2F] sent\nout [FD][00]!
 
 #org @BattleText_GoTwoPkmn_BattleSands
-[FD][32] [FD][33]\nsent out [FD][05]\land[FD][07]!
+[FD][32] [FD][33]\nsent out [FD][05]\land [FD][07]!
 
 #org @BattleText_GoPkmn_BattleSands
 [FD][32] [FD][33]\nsent out [FD][05]!
@@ -48,7 +48,7 @@ You are challenged by\n[FD][20] and [FD][21]!\p
 You are challenged by\n[FD][1C] [FD][1D]!\p
 
 #org @BattleText_Trainer1WantsToBattle_BattleSands
-[FD][32] [FD][33]\pis challenged by\l[FD][1C] [FD][1D]!\p
+[FD][32] [FD][33] is challenged by\n[FD][1C] [FD][1D]!\p
 
 #org @BattleText_LinkTrainerWantsToBattle
 You are challenged by\n[FD][20]!\p

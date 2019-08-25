@@ -1,5 +1,3 @@
-//Many Pokemon need Foul Play IVs fixed from Venusaur - up to Sceptile
-
 #ifdef UNBOUND 
 /*These spreads will not be compiled for your hack.
 If you'd like to use these spreads, either remove
@@ -6438,7 +6436,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.item = ITEM_ICY_ROCK,
 		.moves =
 		{
-			MOVE_ICEBEAM,
+			MOVE_BLIZZARD,
 			MOVE_LOVELYKISS,
 			MOVE_REFLECT,
 			MOVE_HAIL,
@@ -55222,24 +55220,25 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 	},
 	{
 		.species = SPECIES_MAGIKARP,
-		.nature = NATURE_NAUGHTY,
+		.nature = NATURE_JOLLY,
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
-		.spAtkIv = 31,
+		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.atkEv = 252,
-		.spAtkEv = 4,
-		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_SWIFTSWIM
-		.item = ITEM_CHOICE_BAND,
+		.hpEv = 36,
+		.atkEv = 196,
+		.defEv = 76,
+		.spdEv = 196,
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_RATTLED
+		.item = ITEM_NORMALIUM_Z,
 		.moves =
 		{
-			MOVE_HYDROPUMP,
 			MOVE_BOUNCE,
-			MOVE_FLAIL,
 			MOVE_TACKLE,
+			MOVE_FLAIL,
+			MOVE_SPLASH,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,

@@ -1,6 +1,7 @@
 #include "defines.h"
 #include "defines_battle.h"
 #include "../include/event_data.h"
+#include "../include/field_weather.h"
 #include "../include/random.h"
 #include "../include/constants/songs.h"
 #include "../include/constants/trainer_classes.h"
@@ -423,6 +424,11 @@ void EndOfBattleThings(void)
 		EndBattleFlagClear();
 		HealPokemonInFrontier();
 		TerrainType = 0; //Reset now b/c normal reset is after BG is loaded
+		
+		#ifdef UNBOUND
+		if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_SANDS && GetCurrentWeather() != WEATHER_NONE)
+			SetSav1Weather(WEATHER_RAIN_LIGHT); //Reset weather in Battle Sands
+		#endif
 	}
 }
 

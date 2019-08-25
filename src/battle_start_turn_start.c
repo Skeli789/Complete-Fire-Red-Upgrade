@@ -13,6 +13,7 @@
 #include "../include/new/battle_start_turn_start_battle_scripts.h"
 #include "../include/new/CMD49.h"
 #include "../include/new/damage_calc.h"
+#include "../include/new/dexnav.h"
 #include "../include/new/Helper_Functions.h"
 #include "../include/new/form_change.h"
 #include "../include/new/frontier.h"
@@ -66,6 +67,7 @@ const u8 gStatStageRatios[][2] =
 };
 
 //This file's functions:
+static void TryPrepareTotemBoostInBattleSands(void);
 static u32 BoostSpeedInWeather(u8 ability, u32 speed);
 static u32 BoostSpeedByItemEffect(u8 itemEffect, u8 itemQuality, u16 species, u32 speed);
 
@@ -190,11 +192,12 @@ void BattleBeginFirstTurn(void)
 				break;
 				
 			case Intimidate:
+			/*
 				if (AbilityBattleEffects(ABILITYEFFECT_INTIMIDATE1, 0, 0, 0, 0))
 					return;
 				if (AbilityBattleEffects(ABILITYEFFECT_INTIMIDATE2, 0, 0, 0, 0))
 					return;
-					
+			*/
 				*bank = 0; //Reset Bank for next loop
 				++*state;
 				break;
@@ -224,11 +227,13 @@ void BattleBeginFirstTurn(void)
 					if (effect) return;
 				}
 				*bank = 0; //Reset Bank for next loop
+				TryPrepareTotemBoostInBattleSands();
 				++*state;
 				break;
 			
 			case TotemPokemon: ;
-				if (!(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_TRAINER_TOWER | BATTLE_TYPE_POKE_DUDE | BATTLE_TYPE_OLD_MAN)))
+				if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_SANDS //The only battle facility to utilize totem boosts
+				|| !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_TRAINER_TOWER | BATTLE_TYPE_POKE_DUDE | BATTLE_TYPE_OLD_MAN)))
 				{
 					while (*bank < gBattlersCount)
 					{
@@ -249,7 +254,7 @@ void BattleBeginFirstTurn(void)
 				break;
 				
 			case StartTurnEnd:
-				for (i = 0; i < 4; i++)
+				for (i = 0; i < MAX_BATTLERS_COUNT; i++)
 				{
 					gBattleStruct->monToSwitchIntoId[i] = 6;
 					gActionForBanks[i] = 0xFF;
@@ -286,7 +291,7 @@ bool8 CanActivateTotemBoost(u8 bank)
 {
 	u16 stat = VarGet(TOTEM_VAR + bank) & 0x7;
 
-	if (stat != 0)
+	if (bank < gBattlersCount && stat != 0)
 	{
 		u8 raiseAmount = VarGet(TOTEM_VAR + bank) & ~(0xF);
 
@@ -295,11 +300,49 @@ bool8 CanActivateTotemBoost(u8 bank)
 		 || (raiseAmount >= DECREASE_1 && raiseAmount <= DECREASE_6)))
 		{
 			gStatChangeByte = stat | raiseAmount;
+			if (InBattleSands())
+				VarSet(TOTEM_VAR + bank, 0); //Only first Pokemon gets boost in battle sands
 			return TRUE;
 		}
 	}
 	
 	return FALSE;
+}
+
+static void TryPrepareTotemBoostInBattleSands(void)
+{
+	if (InBattleSands())
+	{
+		u8 playerId = 0;
+		u8 enemyId = 1;
+		u8 playerStat = RandRange(1, BATTLE_STATS_NO - 1);
+		u8 enemyStat = RandRange(1, BATTLE_STATS_NO - 1);
+		u8 increaseMax;
+		
+		if (IS_DOUBLE_BATTLE)
+		{
+			playerId |= (Random() & BIT_FLANK);
+			enemyId |= (Random() & BIT_FLANK);
+		}
+		
+		//The farther the "player" gets, the higher chance a stat will be raised more than 1
+		u8 currStreak = GetCurrentBattleTowerStreak();
+		if (currStreak < 10)
+			increaseMax = 1;
+		else if (currStreak < 20)
+			increaseMax = 2;
+		else if (currStreak < 30)
+			increaseMax = 3;
+		else if (currStreak < 60)
+			increaseMax = 4;
+		else if (currStreak < 50)
+			increaseMax = 5;
+		else
+			increaseMax = 6;
+
+		VarSet(TOTEM_VAR + playerId, playerStat | (increaseMax * 0x10));
+		VarSet(TOTEM_VAR + enemyId, enemyStat | (increaseMax * 0x10));
+	}
 }
 
 void SetActionsAndBanksTurnOrder(void)
@@ -450,11 +493,13 @@ void RunTurnActionsFunctions(void)
 								gNewBS->MegaData->chosen[PARTNER(bank)] = 0;
 								gNewBS->MegaData->done[PARTNER(bank)] = TRUE;
 							}
+							RecordItemEffectBattle(bank, ITEM_EFFECT_MEGA_STONE);
 							BattleScriptExecute(gNewBS->MegaData->script);
 							return;
 						}
 					}
-					else if (gNewBS->UltraData->chosen[bank] && !gNewBS->UltraData->done[bank]) {
+					else if (gNewBS->UltraData->chosen[bank] && !gNewBS->UltraData->done[bank])
+					{
 						const u8* script = DoMegaEvolution(bank);
 						if (script != NULL) 
 						{	
@@ -474,7 +519,7 @@ void RunTurnActionsFunctions(void)
 								gNewBS->UltraData->chosen[PARTNER(bank)] = 0;
 								gNewBS->UltraData->done[PARTNER(bank)] = TRUE;
 							}
-
+							RecordItemEffectBattle(bank, ITEM_EFFECT_MEGA_STONE);
 							BattleScriptExecute(gNewBS->MegaData->script);
 							return;
 						}
@@ -728,7 +773,7 @@ void HandleAction_UseMove(void)
 	bank_t selectedTarget = gBattleStruct->moveTarget[gBankAttacker];
 	
 	if (gSideTimers[side].followmeTimer != 0
-	&& gBattleMoves[gCurrentMove].target == MOVE_TARGET_SELECTED
+	&& gBattleMoves[gCurrentMove].target & (MOVE_TARGET_SELECTED | MOVE_TARGET_RANDOM)
 	&& SIDE(gBankAttacker) != SIDE(gSideTimers[side].followmeTarget)
 	&& gBattleMons[gSideTimers[side].followmeTarget].hp != 0
 	&& gCurrentMove != MOVE_SKYDROP)
@@ -1268,7 +1313,7 @@ u32 SpeedCalc(u8 bank)
 	
 	switch (ability) {
 		case ABILITY_UNBURDEN:
-			if (gNewBS->UnburdenBoosts & gBitTable[bank])
+			if (gNewBS->UnburdenBoosts & gBitTable[bank] && ITEM(bank) == ITEM_NONE)
 				speed *= 2;
 			break;
 		case ABILITY_SLOWSTART:

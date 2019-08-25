@@ -351,7 +351,13 @@ bool8 ShouldDisablePartyMenuItemsBattleTower(void)
 	return FlagGet(BATTLE_TOWER_FLAG);
 }
 
+bool8 InBattleSands(void)
+{
+	return (gBattleTypeFlags & BATTLE_TYPE_BATTLE_SANDS) != 0;
+}
+
 //@Details: Generates a tower trainer id and name for the requested trainer.
+//			Also buffers the trainer name to gStringVar1 (BUFFER1).
 //@Inputs:
 //		Var8000: 0 = Trainer Opponent A
 //				 1 = Trainer Opponent B
@@ -383,7 +389,8 @@ u16 sp052_GenerateTowerTrainer(void)
 			else
 				VarSet(BATTLE_TOWER_TRAINER2_NAME, Random() % NUM_FEMALE_NAMES);
 		}
-
+		
+		StringCopy(gStringVar1, GetFrontierTrainerName(BATTLE_TOWER_TID, battler));
 		return gTowerTrainers[id].owNum;
 	}
 	else
@@ -396,6 +403,7 @@ u16 sp052_GenerateTowerTrainer(void)
 		}
 
 		VarSet(TOWER_TRAINER_ID_VAR + battler, id);
+		StringCopy(gStringVar1, GetFrontierTrainerName(BATTLE_TOWER_SPECIAL_TID, battler));
 		return gSpecialTowerTrainers[id].owNum;
 	}
 }
@@ -459,9 +467,6 @@ u16 sp054_GetBattleTowerStreak(void)
 
 u16 GetCurrentBattleTowerStreak(void)
 {
-	if (BATTLE_FACILITY_NUM == IN_BATTLE_SANDS)
-		return VarGet(BATTLE_SANDS_CURRENT_STREAK_VAR);
-
 	return GetBattleTowerStreak(CURR_STREAK, 0xFFFF, 0xFFFF, 0xFFFF, 0);
 }
 
@@ -508,7 +513,14 @@ u16 GetBattleTowerStreak(u8 currentOrMax, u16 inputBattleStyle, u16 inputTier, u
 	level = AdjustLevelForTier(level, tier);
 	
 	LoadProperStreakData(&currentOrMax, &battleStyle, &tier, &size, &level);
-	return gBattleTowerStreaks[battleStyle][tier][size][level][currentOrMax];
+	
+	switch (BATTLE_FACILITY_NUM) {
+		case IN_BATTLE_TOWER:
+		default:
+			return gBattleTowerStreaks[battleStyle][tier][size][level][currentOrMax];
+		case IN_BATTLE_SANDS:
+			return gBattleSandsStreaks[currentOrMax].streakLength;
+	}
 }
 
 //@Details: Updates the streak for the current Battle Tower format.
@@ -524,8 +536,21 @@ void sp055_UpdateBattleTowerStreak(void)
 	u8 level = AdjustLevelForTier(VarGet(BATTLE_TOWER_POKE_LEVEL), tier);
 	LoadProperStreakData(&dummy, &battleStyle, &tier, &partySize, &level);
 
-	u16* currentStreak = &gBattleTowerStreaks[battleStyle][tier][partySize][level][CURR_STREAK]; //Current Streak
-	u16* maxStreak = &gBattleTowerStreaks[battleStyle][tier][partySize][level][MAX_STREAK]; //Max Streak
+	u16* currentStreak, *maxStreak; 
+	bool8 inBattleSands = FALSE;
+	
+	switch (BATTLE_FACILITY_NUM) {
+		case IN_BATTLE_TOWER:
+		default:
+			currentStreak = &gBattleTowerStreaks[battleStyle][tier][partySize][level][CURR_STREAK]; //Current Streak
+			maxStreak = &gBattleTowerStreaks[battleStyle][tier][partySize][level][MAX_STREAK]; //Max Streak
+			break;
+		case IN_BATTLE_SANDS:
+			currentStreak = &gBattleSandsStreaks[CURR_STREAK].streakLength;
+			maxStreak = &gBattleSandsStreaks[MAX_STREAK].streakLength;
+			inBattleSands = TRUE;
+			break;
+	}
 	
 	switch (Var8000) {
 		case 0:
@@ -533,11 +558,36 @@ void sp055_UpdateBattleTowerStreak(void)
 				*currentStreak += 1;
 			
 			if (*maxStreak < *currentStreak)
+			{
 				*maxStreak = *currentStreak;
+				
+				if (inBattleSands)
+				{
+					gBattleSandsStreaks[MAX_STREAK].tier = tier;
+					gBattleSandsStreaks[MAX_STREAK].format = battleStyle;
+					gBattleSandsStreaks[MAX_STREAK].level = level;
+					gBattleSandsStreaks[MAX_STREAK].inverse = FlagGet(INVERSE_FLAG);
+					gBattleSandsStreaks[MAX_STREAK].species1 = GetMonData(&gPlayerParty[0], MON_DATA_SPECIES, NULL);
+					gBattleSandsStreaks[MAX_STREAK].species2 = GetMonData(&gPlayerParty[1], MON_DATA_SPECIES, NULL);
+					gBattleSandsStreaks[MAX_STREAK].species3 = GetMonData(&gPlayerParty[2], MON_DATA_SPECIES, NULL);
+				}
+			}
 			break;
 			
 		case 1:
 			*currentStreak = 0; //Rest current streak
+
+			if (inBattleSands)
+			{
+				gBattleSandsStreaks[CURR_STREAK].tier = tier;
+				gBattleSandsStreaks[CURR_STREAK].format = battleStyle;
+				gBattleSandsStreaks[CURR_STREAK].level = level;
+				gBattleSandsStreaks[CURR_STREAK].inverse = FlagGet(INVERSE_FLAG);
+				gBattleSandsStreaks[CURR_STREAK].species1 = GetMonData(&gPlayerParty[0], MON_DATA_SPECIES, NULL);
+				gBattleSandsStreaks[CURR_STREAK].species2 = GetMonData(&gPlayerParty[1], MON_DATA_SPECIES, NULL);
+				gBattleSandsStreaks[CURR_STREAK].species3 = GetMonData(&gPlayerParty[2], MON_DATA_SPECIES, NULL);
+			}
+			break;
 	}
 }
 
@@ -630,6 +680,7 @@ void sp06C_SpliceFrontierTeamWithPlayerTeam(void)
 }
 
 //@Details: Loads any relevant multi trainer data by the given Id value.
+//			Also byffers the multi trainer name to gStringVar2 ([BUFFER2] / bufferstring 0x1).
 //@Inputs:
 //		Var8000: 0xFF - Random Id.
 //				 0-0xFE - Given Id.
@@ -647,5 +698,6 @@ u16 sp06D_LoadFrontierMultiTrainerById(void)
 	VarSet(PARTNER_VAR, BATTLE_TOWER_MULTI_TRAINER_TID);
 	VarSet(PARTNER_BACKSPRITE_VAR, gFrontierMultiBattleTrainers[id].backSpriteId);
 
+	StringCopy(gStringVar2, GetFrontierTrainerName(BATTLE_TOWER_MULTI_TRAINER_TID, 0));
 	return gFrontierMultiBattleTrainers[id].owNum;
 }

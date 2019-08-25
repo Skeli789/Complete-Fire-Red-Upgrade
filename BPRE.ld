@@ -2,6 +2,7 @@
 ===========RAM==============
 ==========================*/
 /* New RAM */
+gBattleSandsStreaks = 0x202682C;
 gBattleTowerStreaks = 0x2026840;
 gFollowerState = 0x203B818;
 gFreeRam = 0x203F000;
@@ -824,6 +825,7 @@ FldEff_SurfBlob = 0x80DC3D0 | 1;
 /*Field Weather Functions*/
 Task_WeatherMain = 0x8079e0c | 1;
 GetCurrentWeather = 0x807AF98 | 1;
+SetSav1Weather = 0x807B100 | 1;
 
 /* Trainerbattle Functions */
 TrainerBattleLoadArg16 = 0x80800A8 | 1;

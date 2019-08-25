@@ -540,7 +540,7 @@ void BattleSetup_StartTrainerBattle(void)
 		
 		switch (BATTLE_FACILITY_NUM) {
 			case IN_BATTLE_SANDS:
-				gBattleTypeFlags |= BATTLE_TYPE_BATTLE_SANDS;
+				gBattleTypeFlags |= (BATTLE_TYPE_BATTLE_SANDS | BATTLE_TYPE_MOCK_BATTLE);
 				break;
 			case IN_BATTLE_MINE:
 				gBattleTypeFlags |= BATTLE_TYPE_BATTLE_MINE;

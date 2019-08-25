@@ -2506,7 +2506,7 @@ u8* sScriptStringVars[12] =
 	gStringVar1,	//FD 02
 	gStringVar2,	//FD 03
 	gStringVar3,	//FD 04
-	0,
+	0,				//FD 05
 	0,				//FD 06 is used for Rival name
 #ifdef EXPANDED_TEXT_BUFFERS
 	gStringVar7,	//FD 07, [buffer5] in XSE

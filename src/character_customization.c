@@ -5,6 +5,7 @@
 #include "../include/random.h"
 #include "../include/sprite.h"
 #include "../include/constants/event_objects.h"
+#include "../include/constants/trainers.h"
 
 #include "../include/new/character_customization.h"
 #include "../include/new/multi.h"
@@ -255,7 +256,7 @@ void LoadTrainerBackPal(u16 trainerPicId, u8 paletteNum)
 	//Changes the skin tones of the player character in Unbound
 		u16 owNum = VarGet(VAR_PLAYER_WALKRUN);
 		
-		if (VarGet(VAR_PLAYER_WALKRUN) && gActiveBattler == 0)
+		if (VarGet(VAR_PLAYER_WALKRUN) && gActiveBattler == 0 && (trainerPicId == TRAINER_BACK_PIC_RED || trainerPicId == TRAINER_BACK_PIC_LEAF))
 		{
 			for (int i = 0; sCharacterPalSwitchTable[i].owNum != 0xFFFF; ++i)
 			{
@@ -264,13 +265,10 @@ void LoadTrainerBackPal(u16 trainerPicId, u8 paletteNum)
 					LoadCompressedPalette(sCharacterPalSwitchTable[i].backSpritePal, 0x100 + paletteNum * 16, 32);
 					break;
 				}
-				else if (sCharacterPalSwitchTable[i].owNum == 0xFFFF)
-					DecompressTrainerBackPic(trainerPicId, paletteNum);
 			}	
 		}
-		else {
+		else
 			DecompressTrainerBackPic(trainerPicId, paletteNum);
-		}
 	#else
 		DecompressTrainerBackPic(trainerPicId, paletteNum);
 	#endif
