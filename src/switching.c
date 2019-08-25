@@ -4,6 +4,7 @@
 #include "../include/party_menu.h"
 
 #include "../include/new/ability_battle_scripts.h"
+#include "../include/new/ai_master.h"
 #include "../include/new/battle_start_turn_start.h"
 #include "../include/new/battle_start_turn_start_battle_scripts.h"
 #include "../include/new/cmd49_battle_scripts.h"
@@ -35,7 +36,9 @@ enum SwitchInStates
 	SwitchIn_AirBalloon,
 	SwitchIn_TotemPokemon,
 	SwitchIn_TrainerMessage,
-	SwitchIn_End
+	SwitchIn_PreEnd,
+	SwitchIn_EjectPack,
+	SwitchIn_End,
 };
 
 //This file's functions:
@@ -234,9 +237,12 @@ void atk4F_jumpifcantswitch(void)
 {
 	int i;
 	u8 firstMonId, lastMonId;
-	struct Pokemon *party;
+	u8 battlerIn1, battlerIn2;
+	u8 foe1, foe2;
 
 	gActiveBattler = GetBattleBank(T2_READ_8(gBattlescriptCurrInstr + 1) & ~(ATK4F_DONT_CHECK_STATUSES));
+	LoadBattlersAndFoes(&battlerIn1, &battlerIn2, &foe1, &foe2);
+	struct Pokemon* party = LoadPartyRange(gActiveBattler, &firstMonId, &lastMonId);
 
 	if (!(T2_READ_8(gBattlescriptCurrInstr + 1) & ATK4F_DONT_CHECK_STATUSES)
 	&& !IsOfType(gActiveBattler, TYPE_GHOST)
@@ -245,62 +251,19 @@ void atk4F_jumpifcantswitch(void)
 	{
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
 	}
-	else if (gBattleTypeFlags & (BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_MULTI)
-	|| (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS && gBattleTypeFlags & BATTLE_TYPE_TRAINER && SIDE(gActiveBattler) == B_SIDE_OPPONENT)) 
-	{	
-		party = LoadPartyRange(gActiveBattler, &firstMonId, &lastMonId);
-		
+	else
+	{
 		for (i = firstMonId; i < lastMonId; ++i)
 		{
-			if (GetMonData(&party[i], MON_DATA_SPECIES, 0) != SPECIES_NONE
-			 && !GetMonData(&party[i], MON_DATA_IS_EGG, 0)
-			 && GetMonData(&party[i], MON_DATA_HP, 0) != 0
-			 && gBattlerPartyIndexes[gActiveBattler] != i)
+			if (GetMonData(&party[i], MON_DATA_HP, 0) != 0
+			&& GetMonData(&party[i], MON_DATA_SPECIES, 0) != SPECIES_NONE
+			&& !GetMonData(&party[i], MON_DATA_IS_EGG, 0)
+			&& i != gBattlerPartyIndexes[battlerIn1]
+			&& i != gBattlerPartyIndexes[battlerIn2])
 				break;
 		}
 
 		if (i == lastMonId)
-			gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
-		else
-			gBattlescriptCurrInstr += 6;
-	}
-	else //Single Battle // Regular Double Battle // or Wild Double Battle
-	{
-		u8 battlerIn1, battlerIn2;
-
-		if (SIDE(gActiveBattler) == B_SIDE_OPPONENT)
-		{
-			battlerIn1 = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
-
-			if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
-				battlerIn2 = GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
-			else
-				battlerIn2 = battlerIn1;
-
-			party = gEnemyParty;
-		}
-		else //B_SIDE_PLAYER
-		{
-			battlerIn1 = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
-
-			if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
-				battlerIn2 = GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT);
-			else
-				battlerIn2 = battlerIn1;
-
-			party = gPlayerParty;
-		}
-
-		for (i = 0; i < PARTY_SIZE; i++)
-		{
-			if (GetMonData(&party[i], MON_DATA_HP, 0) != 0
-			 && GetMonData(&party[i], MON_DATA_SPECIES, 0) != SPECIES_NONE
-			 && !GetMonData(&party[i], MON_DATA_IS_EGG, 0)
-			 && i != gBattlerPartyIndexes[battlerIn1] && i != gBattlerPartyIndexes[battlerIn2])
-				break;
-		}
-
-		if (i == PARTY_SIZE)
 			gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
 		else
 			gBattlescriptCurrInstr += 6;
@@ -372,7 +335,7 @@ void atk52_switchineffects(void)
 	&& gNewBS->SwitchInEffectsTracker >= SwitchIn_Spikes 
 	&& gNewBS->SwitchInEffectsTracker <= SwitchIn_StickyWeb)
 		gNewBS->SwitchInEffectsTracker = SwitchIn_PrimalReversion;
-	
+
 	switch (gNewBS->SwitchInEffectsTracker) {
 		case SwitchIn_HealingWish:
 			if (gBattleMons[gActiveBattler].hp != gBattleMons[gActiveBattler].maxHP
@@ -453,6 +416,7 @@ void atk52_switchineffects(void)
 				gSideAffecting[SIDE(gActiveBattler)] |= SIDE_STATUS_SPIKES_DAMAGED;
 				gBattleScripting->bank = gActiveBattler;
 				gBankTarget = gActiveBattler;
+				//gBankAttacker = FOE(gActiveBattler); //For EXP
 				++gNewBS->SwitchInEffectsTracker;
 				return;
 			}
@@ -470,6 +434,7 @@ void atk52_switchineffects(void)
 				gSideAffecting[SIDE(gActiveBattler)] |= SIDE_STATUS_SPIKES_DAMAGED;
 				gBattleScripting->bank = gActiveBattler;
 				gBankTarget = gActiveBattler;
+				//gBankAttacker = FOE(gActiveBattler); //For EXP
 				++gNewBS->SwitchInEffectsTracker;
 				return;
 			}
@@ -500,6 +465,7 @@ void atk52_switchineffects(void)
 				gSideAffecting[SIDE(gActiveBattler)] |= SIDE_STATUS_SPIKES_DAMAGED;
 				gBattleScripting->bank = gActiveBattler;
 				gBankTarget = gActiveBattler;
+				//gBankAttacker = FOE(gActiveBattler); //For EXP
 				++gNewBS->SwitchInEffectsTracker;
 				return;
 			}
@@ -514,6 +480,7 @@ void atk52_switchineffects(void)
 				gSideAffecting[SIDE(gActiveBattler)] |= SIDE_STATUS_SPIKES_DAMAGED;
 				gBattleScripting->bank = gActiveBattler;
 				gBankTarget = gActiveBattler;
+				//gBankAttacker = FOE(gActiveBattler); //For EXP
 				++gNewBS->SwitchInEffectsTracker;
 				return;
 			}
@@ -574,14 +541,14 @@ void atk52_switchineffects(void)
 		case SwitchIn_Items:
 			if (ItemBattleEffects(ItemEffects_SwitchIn, gActiveBattler, TRUE, FALSE))
 				return;
-				
+
 			if (ItemBattleEffects(ItemEffects_EndTurn, gActiveBattler, TRUE, FALSE))
 				return;
 			++gNewBS->SwitchInEffectsTracker;
 		__attribute__ ((fallthrough));
 		
 		case SwitchIn_AirBalloon:
-			if (ITEM_EFFECT(gActiveBattler) == ITEM_EFFECT_AIR_BALLOON)
+			if (gActiveBattler < gBattlersCount && ITEM_EFFECT(gActiveBattler) == ITEM_EFFECT_AIR_BALLOON)
 			{
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_AirBalloonSub;
@@ -592,7 +559,7 @@ void atk52_switchineffects(void)
 			}
 			++gNewBS->SwitchInEffectsTracker;
 		__attribute__ ((fallthrough));
-		
+
 		case SwitchIn_TotemPokemon:
 			if (CanActivateTotemBoost(gActiveBattler))
 			{
@@ -606,16 +573,16 @@ void atk52_switchineffects(void)
 		__attribute__ ((fallthrough));
 	
 		case SwitchIn_TrainerMessage:
-			++gNewBS->SwitchInEffectsTracker;
 			if (ShouldDoTrainerSlide(gActiveBattler, gTrainerBattleOpponent_A, TRAINER_SLIDE_LAST_SWITCHIN))
 			{
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_TrainerSlideMsgRet;
 				return;
 			}
+			++gNewBS->SwitchInEffectsTracker;
 		__attribute__ ((fallthrough));
 		
-		case SwitchIn_End:
+		case SwitchIn_PreEnd:
 		SWITCH_IN_END:
 			gSideAffecting[SIDE(gActiveBattler)] &= ~(SIDE_STATUS_SPIKES_DAMAGED);
 
@@ -641,9 +608,22 @@ void atk52_switchineffects(void)
 					++gBank1;
 				}
 			}
+			++gNewBS->SwitchInEffectsTracker;
+		__attribute__ ((fallthrough));
 
+		case SwitchIn_EjectPack:
 			gNewBS->SwitchInEffectsTracker = 0;
 			gBattlescriptCurrInstr += 2;
+
+			for (i = 0; i < gBattlersCount; ++i)
+			{
+				if (ITEM_EFFECT(i) == ITEM_EFFECT_EJECT_PACK && ItemBattleEffects(ItemEffects_SwitchIn, i, TRUE, FALSE))  //Try to trigger Eject Packs after Intimidate
+					return;
+			}
+		__attribute__ ((fallthrough));
+
+		case SwitchIn_End:
+			break;
 	}
 }
 

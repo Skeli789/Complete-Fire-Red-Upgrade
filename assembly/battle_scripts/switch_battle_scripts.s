@@ -31,34 +31,34 @@
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_HealingWishHeal:
-	playanimation BANK_ATTACKER ANIM_HEALING_WISH_HEAL 0x0
+	playanimation BANK_SCRIPTING ANIM_HEALING_WISH_HEAL 0x0
 	setword BATTLE_STRING_LOADER HealingWishHealString
 	goto Sparkles
 
 BattleScript_LunarDanceHeal:
-	playanimation BANK_ATTACKER ANIM_LUNAR_DANCE_HEAL 0x0
+	playanimation BANK_SCRIPTING ANIM_LUNAR_DANCE_HEAL 0x0
 	setword BATTLE_STRING_LOADER LunarDanceHealString
 
 Sparkles:
 	printstring 0x184
 	waitmessage DELAY_1SECOND
-	playanimation BANK_ATTACKER ANIM_HEALING_SPARKLES 0x0
-	graphicalhpupdate BANK_ATTACKER
-	datahpupdate BANK_ATTACKER
-	refreshhpbar BANK_ATTACKER
+	playanimation BANK_SCRIPTING ANIM_HEALING_SPARKLES 0x0
+	graphicalhpupdate BANK_SCRIPTING
+	datahpupdate BANK_SCRIPTING
+	refreshhpbar BANK_SCRIPTING
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_SpikesHurt:
 	orword HIT_MARKER 0x100100
-	graphicalhpupdate BANK_TARGET
-	datahpupdate BANK_TARGET
+	graphicalhpupdate BANK_SCRIPTING
+	datahpupdate BANK_SCRIPTING
 	setword BATTLE_STRING_LOADER gText_HurtBySpikes
 	printstring 0x184
 	waitmessage DELAY_1SECOND
-	faintpokemon BANK_TARGET 0x0 0x0
-	faintpokemon BANK_TARGET TRUE BattleScript_DmgHazardsOnAttackerFainted
+	faintpokemon BANK_SCRIPTING 0x0 0x0
+	faintpokemon BANK_SCRIPTING TRUE BattleScript_DmgHazardsOnAttackerFainted
 	return
 
 BattleScript_DmgHazardsOnAttackerFainted:
@@ -73,13 +73,13 @@ BattleScript_DmgHazardsOnAttackerFainted:
 	
 BattleScript_SRHurt:
 	orword HIT_MARKER 0x100100
-	graphicalhpupdate BANK_TARGET
-	datahpupdate BANK_TARGET
+	graphicalhpupdate BANK_SCRIPTING
+	datahpupdate BANK_SCRIPTING
 	setword BATTLE_STRING_LOADER gText_HurtByStealthRock
 	printstring 0x184
 	waitmessage DELAY_1SECOND
-	faintpokemon BANK_TARGET 0x0 0x0
-	faintpokemon BANK_TARGET TRUE BattleScript_DmgHazardsOnAttackerFainted
+	faintpokemon BANK_SCRIPTING 0x0 0x0
+	faintpokemon BANK_SCRIPTING TRUE BattleScript_DmgHazardsOnAttackerFainted
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
