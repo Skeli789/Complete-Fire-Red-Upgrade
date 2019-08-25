@@ -22,6 +22,8 @@ bool8 IsClassDoublesTrickRoomer(u8 class);
 bool8 IsClassDoublesUtility(u8 class);
 bool8 IsClassDoublesTeamSupport(u8 class);
 bool8 IsClassDoublesSpecific(u8 class);
+bool8 IsClassDoublesAttacker(u8 class);
+bool8 IsClassDamager(u8 class);
 u8 PredictBankFightingStyle(u8 bank);
 u8 PredictFightingStyle(const u16* const moves, const u8 itemEffect, const u8 bank);
 
@@ -32,6 +34,7 @@ bool8 ShouldPhaze(u8 bankAtk, u8 bankDef, u16 move, u8 class);
 bool8 ShouldUseWishAromatherapy(u8 bankAtk, u8 bankDef, u16 move, u8 class);
 bool8 ShouldSetUpScreens(u8 bankAtk, u8 bankDef, u16 move);
 bool8 ShouldUseFakeOut(u8 bankAtk, u8 bankDef);
+bool8 ShouldPivot(u8 bankAtk, u8 bankDef, u16 move, u8 class);
 u8 BankLikelyToUseMoveSplit(u8 bank, u8 class);
 u16 GetAmountToRecoverBy(u8 bankAtk, u8 bankDef, u16 move);
 bool8 MoveSplitOnTeam(u8 bank, u8 split);
@@ -41,6 +44,7 @@ void IncreaseStatViability(s16* viability, u8 class, u8 boost, u8 bankAtk, u8 ba
 void IncreaseSubstituteViability(s16* viability, u8 class, u8 bankAtk, u8 bankDef);
 void IncreaseEntryHazardsViability(s16* viability, u8 class, u8 bankAtk, u8 bankDef, u16 move);
 void IncreaseFakeOutViability(s16* viability, u8 class, u8 bankAtk, u8 bankDef, u16 move);
+void IncreasePivotViability(s16* viability, u8 class, u8 bankAtk, u8 bankDef);
 void IncreaseFoeProtectionViability(s16* viability, u8 class, u8 bankAtk, u8 bankDef);
 void IncreaseAllyProtectionViability(s16* viability, u8 class);
 void IncreaseTeamProtectionViability(s16* viability, u8 class);

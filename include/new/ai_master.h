@@ -17,6 +17,7 @@ u8 CalcMostSuitableMonToSwitchInto(void);
 void ResetBestMonToSwitchInto(u8 bank);
 void RemoveBestMonToSwitchInto(u8 bank);
 u32 WildMonIsSmart(u8 bank);
+void LoadBattlersAndFoes(u8* battlerIn1, u8* battlerIn2, u8* foe1, u8* foe2);
 
 //Functions Hooked In
 void BattleAI_HandleItemUseBeforeAISetup(u8 defaultScoreMoves);
@@ -34,4 +35,13 @@ bool8 FindMonWithFlagsAndSuperEffective(u8 flags, u8 moduloPercent);
 #define AI_ACTION_UNK7          0x0040
 #define AI_ACTION_UNK8          0x0080
 
+#define SWITCHING_INCREASE_KO_FOE 4
+#define SWITCHING_INCREASE_RESIST_ALL_MOVES 4
+#define SWITCHING_INCREASE_REVENGE_KILL 2 //Can only happen if can KO in the first place
+#define SWITCHING_INCREASE_WALLS_FOE 2 //Can only wall if no Super-Effective moves against foe
 #define SWITCHING_INCREASE_HAS_SUPER_EFFECTIVE_MOVE 1
+#define SWITCHING_INCREASE_CAN_REMOVE_HAZARDS 10
+
+#define SWITCHING_DECREASE_WEAK_TO_MOVE 1
+
+#define SWITCHING_SCORE_MAX (SWITCHING_INCREASE_KO_FOE + SWITCHING_INCREASE_RESIST_ALL_MOVES + SWITCHING_INCREASE_REVENGE_KILL)

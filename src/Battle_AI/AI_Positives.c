@@ -194,6 +194,9 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		//Increased stat effects
 		case EFFECT_ATTACK_UP:
 		case EFFECT_ATTACK_UP_2:
+			if (IsMovePredictionPhazingMove(bankDef, bankAtk))
+				break;
+
 			switch (move) {
 				case MOVE_HONECLAWS:	
 					if (STAT_STAGE(bankAtk,STAT_STAGE_ATK) >= 8)
@@ -202,6 +205,9 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 
 				default:
 				AI_ATTACK_PLUS:
+					if (IsMovePredictionPhazingMove(bankDef, bankAtk))
+						break;
+
 					if (PhysicalMoveInMoveset(bankAtk) && atkAbility != ABILITY_CONTRARY)
 						INCREASE_STAT_VIABILITY(STAT_STAGE_ATK, 8, 2);
 					break;
@@ -211,6 +217,9 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		case EFFECT_DEFENSE_UP:
 		case EFFECT_DEFENSE_UP_2:
 		AI_DEFENSE_PLUS:
+		if (IsMovePredictionPhazingMove(bankDef, bankAtk))
+			break;
+
 		/*
 			switch (move) {
 				case MOVE_FLOWERSHIELD:
@@ -254,12 +263,16 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		case EFFECT_SPEED_UP:
 		case EFFECT_SPEED_UP_2:
 		AI_SPEED_PLUS:
+			if (IsMovePredictionPhazingMove(bankDef, bankAtk))
+				break;
 			if (atkAbility != ABILITY_CONTRARY)
 				INCREASE_STAT_VIABILITY(STAT_STAGE_SPEED, 8, 3);
 			break;
 			
 		case EFFECT_SPECIAL_ATTACK_UP:
 		case EFFECT_SPECIAL_ATTACK_UP_2:
+			if (IsMovePredictionPhazingMove(bankDef, bankAtk))
+				break;
 			switch (move)
 			{
 				case MOVE_GROWTH:
@@ -294,6 +307,8 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 
 				default:
 				AI_SPECIAL_ATTACK_PLUS:
+					if (IsMovePredictionPhazingMove(bankDef, bankAtk))
+						break;
 					if (SpecialMoveInMoveset(bankAtk) && atkAbility != ABILITY_CONTRARY)
 						INCREASE_STAT_VIABILITY(STAT_STAGE_SPATK, 8, 2);
 					break;
@@ -303,6 +318,8 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		case EFFECT_SPECIAL_DEFENSE_UP:
 		case EFFECT_SPECIAL_DEFENSE_UP_2:
 		AI_SPECIAL_DEFENSE_PLUS: ;
+			if (IsMovePredictionPhazingMove(bankDef, bankAtk))
+				break;
 			if (BankLikelyToUseMoveSplit(bankDef, class) == SPLIT_SPECIAL && atkAbility != ABILITY_CONTRARY)
 				INCREASE_STAT_VIABILITY(STAT_STAGE_SPDEF, 10, 1);
 			break;
@@ -310,6 +327,8 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		case EFFECT_ACCURACY_UP:
 		case EFFECT_ACCURACY_UP_2:
 		AI_ACCURACY_PLUS: ;
+			if (IsMovePredictionPhazingMove(bankDef, bankAtk))
+				break;
 			if (MoveInMovesetWithAccuracyLessThan(bankAtk, bankDef, 90, TRUE) && defAbility != ABILITY_CONTRARY)
 				INCREASE_STAT_VIABILITY(STAT_STAGE_ACC, STAT_STAGE_MAX, 2);
 			break;
@@ -317,6 +336,8 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		case EFFECT_EVASION_UP:
 		case EFFECT_EVASION_UP_2:
 		case EFFECT_MINIMIZE:
+			if (IsMovePredictionPhazingMove(bankDef, bankAtk))
+				break;
 			if (move != MOVE_ACUPRESSURE)
 			{
 				if (atkAbility != ABILITY_CONTRARY)
@@ -1181,19 +1202,15 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 				case MOVE_UTURN:
 				case MOVE_VOLTSWITCH:
 					PIVOT_CHECK:
-					if (WillTakeSignificantDamageFromEntryHazards(bankAtk, 4)) //Don't switch out if you'll do a quarter or more damage to yourself on switch in
-						break;
-
 					if (IS_SINGLE_BATTLE)
 					{
-						if (ViableMonCountFromBank(bankAtk) <= 1)
-							break; //Can't switch
-					
-						if (gWishFutureKnock->wishCounter[bankAtk] > 0
-						&& ShouldUseWishAromatherapy(bankAtk, bankDef, MOVE_WISH, class))
+						if (ShouldPivot(bankAtk, bankDef, move, class) == 2)
+							IncreasePivotViability(&viability, class, bankAtk, bankDef);
+						else if (gWishFutureKnock->wishCounter[bankAtk] > 0
+							  && ShouldUseWishAromatherapy(bankAtk, bankDef, MOVE_WISH, class))
+						{
 							INCREASE_VIABILITY(7);
-						else if (atkItemEffect == ITEM_EFFECT_CHOICE_BAND)
-							INCREASE_VIABILITY(3); //Past strongest move
+						}
 					}
 					else //Double Battle
 					{

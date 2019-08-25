@@ -4,9 +4,11 @@
 
 #include "../../include/new/AI_advanced.h"
 #include "../../include/new/AI_Helper_Functions.h"
+#include "../../include/new/ai_master.h"
 #include "../../include/new/battle_start_turn_start.h"
 #include "../../include/new/damage_calc.h"
 #include "../../include/new/Helper_Functions.h"
+#include "../../include/new/item.h"
 #include "../../include/new/multi.h"
 
 enum FightingClasses
@@ -262,6 +264,18 @@ bool8 IsClassDoublesSpecific(u8 class)
 	    || class == FIGHT_CLASS_DOUBLES_UTILITY
 	    || class == FIGHT_CLASS_DOUBLES_PHAZING
 	    || class == FIGHT_CLASS_DOUBLES_TEAM_SUPPORT;
+}
+
+bool8 IsClassDoublesAttacker(u8 class)
+{
+	return class == FIGHT_CLASS_DOUBLES_TRICK_ROOM_ATTACKER
+			     || FIGHT_CLASS_DOUBLES_SETUP_ATTACKER
+				 || FIGHT_CLASS_DOUBLES_TRICK_ROOM_ATTACKER;
+}
+
+bool8 IsClassDamager(u8 class)
+{
+	return IsClassSweeper(class) ||  IsClassDoublesAttacker(class);
 }
 
 u8 PredictBankFightingStyle(u8 bank)
@@ -864,7 +878,7 @@ bool8 ShouldPhaze(u8 bankAtk, u8 bankDef, u16 move, u8 class)
 			{
 				if (CanKnockOut(bankDef, bankAtk)) //Foe can kill
 				{
-					if (AnyStatIsRaised(bankDef))
+					if (AnyUsefulStatIsRaised(bankDef))
 						return TRUE;
 				}
 				else
@@ -874,7 +888,7 @@ bool8 ShouldPhaze(u8 bankAtk, u8 bankDef, u16 move, u8 class)
 			{
 				if (Can2HKO(bankDef, bankAtk))
 				{
-					if (AnyStatIsRaised(bankDef))
+					if (AnyUsefulStatIsRaised(bankDef))
 						return TRUE;
 				}
 				else
@@ -884,11 +898,11 @@ bool8 ShouldPhaze(u8 bankAtk, u8 bankDef, u16 move, u8 class)
 					{
 						case EFFECT_ROAR:
 							if (gSideAffecting[SIDE(bankDef)] & SIDE_STATUS_SPIKES
-							||  AnyStatIsRaised(bankDef))
+							||  AnyUsefulStatIsRaised(bankDef))
 								return TRUE;
 							break;
 						default:
-							if (AnyStatIsRaised(bankDef))
+							if (AnyUsefulStatIsRaised(bankDef))
 								return TRUE;
 					}
 				}
@@ -902,15 +916,15 @@ bool8 ShouldPhaze(u8 bankAtk, u8 bankDef, u16 move, u8 class)
 				{
 					case EFFECT_ROAR:
 						if (gSideAffecting[SIDE(bankDef)] & SIDE_STATUS_SPIKES
-						||  AnyStatIsRaised(bankDef))
+						||  AnyUsefulStatIsRaised(bankDef))
 							return TRUE;
 						break;
 					case EFFECT_HAZE:
-						if ((BATTLER_ALIVE(PARTNER(bankAtk)) && AnyStatIsRaised(PARTNER(bankAtk))))
+						if ((BATTLER_ALIVE(PARTNER(bankAtk)) && AnyUsefulStatIsRaised(PARTNER(bankAtk))))
 							return FALSE; //Don't Haze if partner will lose benefits
 						break;
 					default:
-						if (AnyStatIsRaised(bankDef))
+						if (AnyUsefulStatIsRaised(bankDef))
 							return TRUE;
 				}
 			}
@@ -1085,6 +1099,181 @@ bool8 ShouldUseFakeOut(u8 bankAtk, u8 bankDef)
 
 	return FALSE;
 }
+
+enum PivotQueries
+{
+	DONT_PIVOT,
+	CAN_TRY_PIVOT,
+	PIVOT,
+};
+
+bool8 ShouldPivot(u8 bankAtk, u8 bankDef, u16 move, u8 class)
+{
+	bool8 hasUsefulStatBoost = (AnyUsefulOffseniveStatIsRaised(bankAtk) && IsClassDamager(class))
+							|| STAT_STAGE(bankDef, STAT_STAGE_EVASION) >= 6 + 4; //Significant boost in evasion for any class
+
+	u8 backupBattler = gActiveBattler;
+	gActiveBattler = bankAtk;
+	u8 switchScore = GetMostSuitableMonToSwitchIntoScore();
+	gActiveBattler = backupBattler;
+	
+	if (WillTakeSignificantDamageFromEntryHazards(bankAtk, 4)) //Don't switch out if you'll do a quarter or more damage to yourself on switch in
+		return DONT_PIVOT;
+
+	if (IS_SINGLE_BATTLE)
+	{
+		if (ViableMonCountFromBankLoadPartyRange(bankAtk) <= 1)
+			return CAN_TRY_PIVOT; //Can't switch
+
+		if (IsPredictedToSwitch(bankDef, bankAtk) && !hasUsefulStatBoost)
+			return PIVOT; //Try pivoting so you can switch to a better matchup to counter your new opponent
+	
+		if (MoveWouldHitFirst(move, bankAtk, bankDef)) //Attacker goes first
+		{
+			if (!CanKnockOutWithoutMove(move, bankAtk, bankDef)) //Can't KO foe otherwise
+			{				
+				if (CanKnockOut(bankAtk, bankDef))
+				{
+					//If this clears, it's because this move is the only KO move. As such,
+					//it'll be trated like one in the best damaging move calc later.
+					return CAN_TRY_PIVOT;
+				}
+				else if (IsClassDamager(class) && Can2HKO(bankAtk, bankDef)) //Two more hits KOs the foe
+				{
+					if (CanKnockOut(bankDef, bankAtk)) //Won't get the chance to 2HKO
+						return PIVOT;
+						
+					if (IsClassDamager(class)
+					&& (switchScore >= SWITCHING_INCREASE_RESIST_ALL_MOVES + SWITCHING_INCREASE_KO_FOE //Or remove hazards
+					 || (IsBankHoldingFocusSash(bankDef) && BATTLER_MAX_HP(bankDef)))) //Pivot to break the sash
+						return PIVOT;
+				}
+				else if (!hasUsefulStatBoost) //3HKO+ the foe
+				{
+					if (IsClassDamager(class)
+					&& (IsBankHoldingFocusSash(bankDef) && BATTLER_MAX_HP(bankDef))) //Pivot to break the sash
+						return PIVOT;
+
+					if (IsClassDamager(class) && switchScore >= SWITCHING_INCREASE_WALLS_FOE)
+						return PIVOT;
+						
+					if (gSideAffecting[bankAtk] & SIDE_STATUS_SPIKES && switchScore >= SWITCHING_INCREASE_CAN_REMOVE_HAZARDS)
+							return PIVOT;
+
+					if (WillFaintFromSecondaryDamage(bankAtk) && switchScore >= SWITCHING_INCREASE_WALLS_FOE)
+						return PIVOT;
+
+					if (IsClassDamager(class) && switchScore >= SWITCHING_INCREASE_HAS_SUPER_EFFECTIVE_MOVE)
+					{
+						bool8 physMoveInMoveset = PhysicalMoveInMoveset(bankAtk);
+						bool8 specMoveInMoveset = SpecialMoveInMoveset(bankAtk);
+					
+						//Pivot if attacking stats are bad
+						if (physMoveInMoveset && !specMoveInMoveset)
+						{
+							if (STAT_STAGE_ATK < 6)
+								return PIVOT;
+						}
+						else if (!physMoveInMoveset && specMoveInMoveset)
+						{
+							if (STAT_STAGE_SPATK < 6)
+								return PIVOT;
+						}
+						else if (physMoveInMoveset && specMoveInMoveset)
+						{
+							if (STAT_STAGE_ATK < 6 && STAT_STAGE_SPATK < 6)
+								return PIVOT;
+						}
+
+						return CAN_TRY_PIVOT;
+					}
+				}
+			}
+		}
+		else //Opponent Goes First
+		{
+			if (CanKnockOut(bankDef, bankAtk))
+			{
+				return CAN_TRY_PIVOT; //You're probably going to faint anyways so if for some reason you don't, better switch
+			}
+			if (Can2HKO(bankDef, bankAtk)) //Foe can 2HKO AI
+			{
+				if (CanKnockOut(bankAtk, bankDef))
+				{
+					if (!CanKnockOutWithoutMove(move, bankAtk, bankDef))
+						return CAN_TRY_PIVOT; //Use this move to KO if you must
+				}
+				else //Can't KO the foe
+				{
+					if (IsClassDamager(class) && switchScore >= SWITCHING_INCREASE_WALLS_FOE)
+						return PIVOT;
+				}
+			}
+			else //Foe can 3HKO+ AI
+			{
+				if (CanKnockOut(bankAtk, bankDef))
+				{
+					if (!CanKnockOutWithoutMove(move, bankAtk, bankDef) //This is the only move that can KO
+					&&  !hasUsefulStatBoost) //You're not wasting a valuable stat boost
+					{
+						return CAN_TRY_PIVOT;
+					}
+				}
+				else if (Can2HKO(bankAtk, bankDef))
+				{
+					if (IsClassDamager(class)
+					&& (switchScore >= SWITCHING_INCREASE_RESIST_ALL_MOVES + SWITCHING_INCREASE_KO_FOE //remove hazards
+					 || (IsBankHoldingFocusSash(bankDef) && BATTLER_MAX_HP(bankDef)))) //Pivot to break the sash
+						return PIVOT;
+					
+					//Otherwise try to get foe hp down to where the CanKnockOut check is reached
+				}
+				else
+				{
+					if (IsClassDamager(class) && switchScore >= SWITCHING_INCREASE_KO_FOE)
+						return PIVOT; //Only switch if way better matchup
+						
+					if (!hasUsefulStatBoost)
+					{
+						if (gSideAffecting[bankAtk] & SIDE_STATUS_SPIKES && switchScore >= SWITCHING_INCREASE_CAN_REMOVE_HAZARDS)
+							return PIVOT;
+							
+						if (WillFaintFromSecondaryDamage(bankAtk) && switchScore >= SWITCHING_INCREASE_HAS_SUPER_EFFECTIVE_MOVE)
+							return PIVOT;
+
+						if (IsClassDamager(class) && switchScore >= SWITCHING_INCREASE_HAS_SUPER_EFFECTIVE_MOVE)
+						{
+							bool8 physMoveInMoveset = PhysicalMoveInMoveset(bankAtk);
+							bool8 specMoveInMoveset = SpecialMoveInMoveset(bankAtk);
+							
+							//Pivot if attacking stats are bad
+							if (physMoveInMoveset && !specMoveInMoveset)
+							{
+								if (STAT_STAGE_ATK < 6)
+									return PIVOT;
+							}
+							else if (!physMoveInMoveset && specMoveInMoveset)
+							{
+								if (STAT_STAGE_SPATK < 6)
+									return PIVOT;
+							}
+							else if (physMoveInMoveset && specMoveInMoveset)
+							{
+								if (STAT_STAGE_ATK < 6 && STAT_STAGE_SPATK < 6)
+									return PIVOT;
+							}
+						}
+
+						return CAN_TRY_PIVOT; //You're going to hit second so it can't hurt to Pivot. But do what does the most damage
+					}
+				}
+			}
+		}
+	}
+
+	return DONT_PIVOT;
+}
+
 
 u8 BankLikelyToUseMoveSplit(u8 bank, u8 class)
 {
@@ -1454,15 +1643,24 @@ void IncreaseEntryHazardsViability(s16* originalViability, u8 class, u8 bankAtk,
 			break;
 
 		case FIGHT_CLASS_SWEEPER_SETUP_STATS:
-			INCREASE_STATUS_VIABILITY(2); //Treat like a middle-priority status move
+			if (ViableMonCountFromBank(bankDef) == 2) //Only two mons left
+				break; //Don't bother
+			else
+				INCREASE_STATUS_VIABILITY(2); //Treat like a middle-priority status move
 			break;
 			
 		case FIGHT_CLASS_SWEEPER_SETUP_STATUS:
-			INCREASE_STATUS_VIABILITY(2); //Treat like a middle-priority status move
+			if (ViableMonCountFromBank(bankDef) == 2) //Only two mons left
+				break; //Don't bother
+			else
+				INCREASE_STATUS_VIABILITY(2); //Treat like a middle-priority status move
 			break;
 		
 		case FIGHT_CLASS_STALL:
-			INCREASE_STATUS_VIABILITY(2); //Treat like a middle-priority status move
+			if (ViableMonCountFromBank(bankDef) == 2) //Only two mons left
+				INCREASE_STATUS_VIABILITY(1); //Treat like a low-priority status move
+			else
+				INCREASE_STATUS_VIABILITY(2); //Treat like a middle-priority status move
 			break;
 		
 		case FIGHT_CLASS_TEAM_SUPPORT_BATON_PASS:
@@ -1484,15 +1682,24 @@ void IncreaseEntryHazardsViability(s16* originalViability, u8 class, u8 bankAtk,
 			break;
 
 		case FIGHT_CLASS_TEAM_SUPPORT_CLERIC:
-			INCREASE_STATUS_VIABILITY(2); //Treat like a middle-priority status move
+			if (ViableMonCountFromBank(bankDef) == 2) //Only two mons left
+				INCREASE_STATUS_VIABILITY(1); //Treat like a low-priority status move
+			else
+				INCREASE_STATUS_VIABILITY(2); //Treat like a middle-priority status move
 			break;
 
 		case FIGHT_CLASS_TEAM_SUPPORT_SCREENS:
-			INCREASE_STATUS_VIABILITY(2); //Treat like a middle-priority status move
+			if (ViableMonCountFromBank(bankDef) == 2) //Only two mons left
+				INCREASE_STATUS_VIABILITY(1); //Treat like a low-priority status move
+			else
+				INCREASE_STATUS_VIABILITY(2); //Treat like a middle-priority status move
 			break;
 		
 		case FIGHT_CLASS_TEAM_SUPPORT_PHAZING:
-			INCREASE_STATUS_VIABILITY(3);
+			if (ViableMonCountFromBank(bankDef) == 2) //Only two mons left
+				INCREASE_STATUS_VIABILITY(2); //Treat like a middle-priority status move
+			else
+				INCREASE_STATUS_VIABILITY(3);
 			break;
 			
 		case FIGHT_CLASS_ENTRY_HAZARDS:
@@ -1614,6 +1821,90 @@ void IncreaseFakeOutViability(s16* originalViability, u8 class, u8 bankAtk, u8 b
 			INCREASE_VIABILITY(8);
 	}
 
+	*originalViability = MathMin(viability, 255);
+}
+
+void IncreasePivotViability(s16* originalViability, u8 class, u8 bankAtk, unusedArg u8 bankDef)
+{
+	s16 viability = *originalViability;
+	
+	if (IS_SINGLE_BATTLE)
+	{
+		if (class == 0xFF) //Dumb AI
+			class = FIGHT_CLASS_SWEEPER_KILL;
+	}
+	else //Double Battle
+	{
+		if (class == 0xFF) //Dumb AI
+			class = FIGHT_CLASS_DOUBLES_ALL_OUT_ATTACKER;
+	}
+
+	switch (class) {
+		case FIGHT_CLASS_SWEEPER_KILL:
+			INCREASE_VIABILITY(3);
+			break;
+
+		case FIGHT_CLASS_SWEEPER_SETUP_STATS:
+			INCREASE_VIABILITY(9);
+			break;
+			
+		case FIGHT_CLASS_SWEEPER_SETUP_STATUS:
+			INCREASE_VIABILITY(9);
+			break;
+		
+		case FIGHT_CLASS_STALL:
+			INCREASE_VIABILITY(9);
+			break;
+		
+		case FIGHT_CLASS_TEAM_SUPPORT_BATON_PASS:
+			INCREASE_VIABILITY(9);
+			break;
+
+		case FIGHT_CLASS_TEAM_SUPPORT_CLERIC:
+			INCREASE_VIABILITY(7);
+			break;
+
+		case FIGHT_CLASS_TEAM_SUPPORT_SCREENS:
+			INCREASE_VIABILITY(7);
+			break;
+		
+		case FIGHT_CLASS_TEAM_SUPPORT_PHAZING:
+			INCREASE_VIABILITY(4);
+			break;
+			
+		case FIGHT_CLASS_ENTRY_HAZARDS:
+			INCREASE_VIABILITY(3);
+			break;
+
+		case FIGHT_CLASS_DOUBLES_ALL_OUT_ATTACKER:
+			INCREASE_VIABILITY(18);
+			break;
+
+		case FIGHT_CLASS_DOUBLES_SETUP_ATTACKER:
+			INCREASE_VIABILITY(18);
+			break;
+
+		case FIGHT_CLASS_DOUBLES_TRICK_ROOM_ATTACKER:
+			INCREASE_VIABILITY(16);
+			break;
+
+		case FIGHT_CLASS_DOUBLES_TRICK_ROOM_SETUP:
+			INCREASE_VIABILITY(16);
+			break;
+
+		case FIGHT_CLASS_DOUBLES_UTILITY:
+			INCREASE_VIABILITY(16);
+			break;
+
+		case FIGHT_CLASS_DOUBLES_PHAZING:
+			INCREASE_VIABILITY(14);
+			break;
+
+		case FIGHT_CLASS_DOUBLES_TEAM_SUPPORT:
+			INCREASE_VIABILITY(15);
+			break;
+	}
+	
 	*originalViability = MathMin(viability, 255);
 }
 

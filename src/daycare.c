@@ -422,10 +422,15 @@ static void InheritIVs(struct Pokemon *egg, struct DayCare *daycare)
 };
 
 
-static void AlterEggSpeciesWithIncenseItem(u16 *species, struct DayCare *daycare) {
+static void AlterEggSpeciesWithIncenseItem(u16 *species, struct DayCare *daycare)
+{
 	u16 motherItem = GetBoxMonData(&daycare->mons[0].mon, MON_DATA_HELD_ITEM, NULL);
 	u16 fatherItem = GetBoxMonData(&daycare->mons[1].mon, MON_DATA_HELD_ITEM, NULL);   
-	
+	AlterSpeciesWithIncenseItems(species, motherItem, fatherItem);
+}
+
+void AlterSpeciesWithIncenseItems(u16* species, u16 motherItem, u16 fatherItem)
+{
 	// if neither parent holding incense, force 2nd evo species
 	switch (*species)
 	{

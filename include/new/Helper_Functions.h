@@ -73,6 +73,7 @@ bool8 CanKnockOffItem(bank_t);
 bool8 CanEvolve(pokemon_t*);
 bool8 CouldHaveEvolvedViaLevelUp(pokemon_t* mon);
 bool8 IsAffectedByPowder(u8 bank);
+bool8 IsAffectedByPowderByDetails(u8 type1, u8 type2, u8 type3, u8 ability, u8 itemEffect);
 u8 CountBoosts(bank_t);
 bool8 MoveIgnoresSubstitutes(u16 move, u8 bankAtk);
 bool8 MoveBlockedBySubstitute(u16 move, u8 atkBank, u8 defBank);

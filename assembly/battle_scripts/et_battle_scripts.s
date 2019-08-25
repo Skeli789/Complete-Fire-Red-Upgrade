@@ -529,7 +529,7 @@ BattleScript_Victory:
 BeatTwoPeeps:
 	setword BATTLE_STRING_LOADER BattleText_TwoInGameTrainersDefeated
 	printstring 0x184
-	
+
 PostBeatString:
 	trainerslidein 0x1
 	waitstateatk
@@ -544,7 +544,7 @@ PostBeatString:
 	printstring 0x184
 
 CheckJumpLocForEndBattle:
-	jumpifword ANDS BATTLE_TYPE BATTLE_TOWER 0x81D8900 @No Money Give
+	jumpifword ANDS BATTLE_TYPE BATTLE_FRONTIER 0x81D8900 @No Money Give
 	jumpifword NOTANDS BATTLE_TYPE BATTLE_TRAINER_TOWER 0x81D87F8 @Give Money
 	jumpifword NOTANDS BATTLE_TYPE BATTLE_DOUBLE 0x81D88FF @Just Pickup Calc
 	printstring 0x177 @Buffer Trainer Tower Win Text

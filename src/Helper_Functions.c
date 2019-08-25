@@ -126,7 +126,8 @@ item_effect_t GetRecordedItemEffect(u8 bank)
 {
 	if (GetRecordedAbility(bank) != ABILITY_KLUTZ
 	&& !gNewBS->EmbargoTimers[bank]
-	&& !gNewBS->MagicRoomTimer)
+	&& !gNewBS->MagicRoomTimer
+	&& ITEM(bank) != ITEM_NONE) //Can't have an effect if you have no item
 		return BATTLE_HISTORY->itemEffects[bank];
 
 	return 0;
@@ -428,7 +429,7 @@ u8 GetMoveTarget(u16 move, u8 useMoveTarget) {
         moveTarget = gBattleMoves[move].target;
 
     switch (moveTarget) {
-    case 0:
+    case MOVE_TARGET_SELECTED:
         defSide = SIDE(bankAtk) ^ BIT_SIDE;
         if (gSideTimers[defSide].followmeTimer && gBattleMons[gSideTimers[defSide].followmeTarget].hp && move != MOVE_SKYDROP)
             bankDef = gSideTimers[defSide].followmeTarget;
@@ -507,17 +508,17 @@ u8 GetMoveTarget(u16 move, u8 useMoveTarget) {
 			}
         }
         break;
-	
-    case 1:
-    case 8:
-    case 32:
-    case 64:
+
+	case MOVE_TARGET_DEPENDS:
+	case MOVE_TARGET_BOTH:
+    case MOVE_TARGET_FOES_AND_ALLY:
+    case MOVE_TARGET_OPPONENTS_FIELD:
         bankDef = GetBattlerAtPosition((GetBattlerPosition(bankAtk) & BIT_SIDE) ^ BIT_SIDE);
         if (gAbsentBattlerFlags & gBitTable[bankDef])
             bankDef ^= BIT_FLANK;
         break;
 	
-    case 4:
+    case MOVE_TARGET_RANDOM:
         defSide = SIDE(bankAtk) ^ BIT_SIDE;
         if (gSideTimers[defSide].followmeTimer && gBattleMons[gSideTimers[defSide].followmeTarget].hp)
             bankDef = gSideTimers[defSide].followmeTarget;
@@ -542,17 +543,16 @@ u8 GetMoveTarget(u16 move, u8 useMoveTarget) {
         else
             bankDef = GetBattlerAtPosition((GetBattlerPosition(bankAtk) & BIT_SIDE) ^ BIT_SIDE);
         break;
-	
-    case 2:
-		//Put something for Acupressure here
-    case 16:
+
+    case MOVE_TARGET_USER_OR_PARTNER:
+    case MOVE_TARGET_USER:
         bankDef = bankAtk;
         break;
     }
-	
+
 	if (!gNewBS->DancerInProgress && !gNewBS->InstructInProgress)
 		gBattleStruct->moveTarget[bankAtk] = bankDef;
-	
+
     return bankDef;
 }
 
@@ -923,9 +923,16 @@ bool8 CouldHaveEvolvedViaLevelUp(struct Pokemon* mon) {
 
 bool8 IsAffectedByPowder(u8 bank)
 {
-	return ABILITY(bank) != ABILITY_OVERCOAT
-		&& ITEM_EFFECT(bank) != ITEM_EFFECT_SAFETY_GOGGLES
-		&& !IsOfType(bank, TYPE_GRASS);
+	return IsAffectedByPowderByDetails(gBattleMons[bank].type1, gBattleMons[bank].type2, gBattleMons[bank].type3, ABILITY(bank), ITEM_EFFECT(bank));
+}
+
+bool8 IsAffectedByPowderByDetails(u8 type1, u8 type2, u8 type3, u8 ability, u8 itemEffect)
+{
+	return ability != ABILITY_OVERCOAT
+		&& itemEffect != ITEM_EFFECT_SAFETY_GOGGLES
+		&& type1 != TYPE_GRASS
+		&& type2 != TYPE_GRASS
+		&& type3 != TYPE_GRASS;
 }
 
 u8 CountBoosts(bank_t bank) {

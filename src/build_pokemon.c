@@ -2142,7 +2142,7 @@ static void PostProcessTeam(struct Pokemon* party, struct TeamBuilder* builder)
 						u8 pos = FindMovePositionInMonMoveset(oldMove, &party[i]);
 						u8 newPP = gBattleMoves[newMove].pp;
 
-						if (pos < MAX_MON_MOVES)
+						if (pos < MAX_MON_MOVES && !MoveInMonMoveset(newMove, &party[i]))
 						{
 							if (sDoubleSpreadReplacementMoves[j].noIfImmunity != 0
 							&&  builder->partyIndex[sDoubleSpreadReplacementMoves[j].noIfImmunity] != i)
@@ -2153,21 +2153,21 @@ static void PostProcessTeam(struct Pokemon* party, struct TeamBuilder* builder)
 							{		
 								switch (sDoubleSpreadReplacementMoves[j].learnType) {
 									case LEARN_TYPE_TM:
-										if (CanMonLearnTMTutor(&party[i], sDoubleSpreadReplacementMoves[j].other, 0) == CAN_LEARN_MOVE)
+										if (CanMonLearnTMTutor(&party[i], sDoubleSpreadReplacementMoves[j].other, 0))
 										{
 											SetMonData(&party[i], MON_DATA_MOVE1 + pos, &newMove);
 											SetMonData(&party[i], MON_DATA_PP1 + pos, &newPP);
 										}
 										break;
-										
+
 									case LEARN_TYPE_TUTOR:
-										if (CanMonLearnTMTutor(&party[i], 0, sDoubleSpreadReplacementMoves[j].other) == CAN_LEARN_MOVE)
+										if (CanMonLearnTMTutor(&party[i], 0, sDoubleSpreadReplacementMoves[j].other))
 										{
 											SetMonData(&party[i], MON_DATA_MOVE1 + pos, &newMove);
 											SetMonData(&party[i], MON_DATA_PP1 + pos, &newPP);
 										}
 										break;
-										
+
 									case LEARN_TYPE_LEVEL_UP:
 										for (k = 0; k < MAX_LEARNABLE_MOVES && levelUpMoves[k] != MOVE_NONE; ++k)
 										{

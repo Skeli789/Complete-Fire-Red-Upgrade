@@ -201,7 +201,10 @@ bool8 MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(u16 move, u8 bankAtk, u8 ba
 
 		if (!(gBitTable[i] & moveLimitations))
 		{
-			currAcc = AccuracyCalc(currMove, bankAtk, bankDef);
+			if (gBattleMoves[move].effect == EFFECT_RECHARGE)
+				currAcc = 49; //Set recharge moves to a pretty low number only higher than OHKO moves
+			else
+				currAcc = AccuracyCalc(currMove, bankAtk, bankDef);
 
 			if ((!checkGoingFirst || MoveWouldHitFirst(currMove, bankAtk, bankDef))
 			&& MoveKnocksOutXHits(currMove, bankAtk, bankDef, 1)
@@ -624,7 +627,7 @@ static u32 CalcPredictedDamageForCounterMoves(u16 move, u8 bankAtk, u8 bankDef)
 	return predictedDamage;
 }
 
-move_t GetStrongestMove(const u8 bankAtk, const u8 bankDef, const bool8 onlySpreadMoves)
+move_t CalcStrongestMove(const u8 bankAtk, const u8 bankDef, const bool8 onlySpreadMoves)
 {
 	u16 move;
 	u16 strongestMove = gBattleMons[bankAtk].moves[0];
@@ -690,6 +693,11 @@ move_t GetStrongestMove(const u8 bankAtk, const u8 bankDef, const bool8 onlySpre
 bool8 IsStrongestMove(const u16 currentMove, const u8 bankAtk, const u8 bankDef)
 {
 	return gNewBS->strongestMove[bankAtk][bankDef] == currentMove;
+}
+
+bool8 GetStrongestMove(const u8 bankAtk, const u8 bankDef)
+{
+	return gNewBS->strongestMove[bankAtk][bankDef];
 }
 
 bool8 MoveWillHit(u16 move, u8 bankAtk, u8 bankDef)
@@ -1114,6 +1122,19 @@ bool8 IsPredictedToUsePursuitableMove(u8 bankAtk, u8 bankDef)
 	{
 		u8 effect = gBattleMoves[move].effect;
 		return effect == EFFECT_BATON_PASS && move != MOVE_BATONPASS;
+	}
+	
+	return FALSE;
+}
+
+bool8 IsMovePredictionPhazingMove(u8 bankAtk, u8 bankDef)
+{
+	u16 move = IsValidMovePrediction(bankAtk, bankDef);
+
+	if (move != MOVE_NONE)
+	{
+		u8 effect = gBattleMoves[move].effect;
+		return effect == EFFECT_ROAR || effect == EFFECT_HAZE || effect == EFFECT_REMOVE_TARGET_STAT_CHANGES;
 	}
 	
 	return FALSE;
@@ -1748,6 +1769,69 @@ bool8 AnyStatIsRaised(u8 bank)
 	{
 		if (STAT_STAGE(bank, statId) > 6)
 			return TRUE;
+	}
+
+	return FALSE;
+}
+
+bool8 AnyUsefulStatIsRaised(u8 bank)
+{
+	bool8 storedPowerInMoveset = MoveInMoveset(MOVE_STOREDPOWER, bank) || MoveInMoveset(MOVE_STOREDPOWER, bank);
+
+	for (u8 statId = STAT_STAGE_ATK; statId < BATTLE_STATS_NO; ++statId)
+	{
+		if (STAT_STAGE(bank, statId) > 6)
+		{
+			if (storedPowerInMoveset)
+				return TRUE;
+				
+			switch (statId) {
+				case STAT_STAGE_ATK:
+					if (PhysicalMoveInMoveset(bank))
+						return TRUE;
+					break;
+				case STAT_STAGE_DEF:
+					if (MoveSplitOnTeam(FOE(bank), SPLIT_PHYSICAL))
+						return TRUE;
+					break;
+				case STAT_STAGE_SPATK:
+					if (SpecialMoveInMoveset(bank))
+						return TRUE;
+					break;
+				case STAT_STAGE_SPDEF:
+					if (MoveSplitOnTeam(FOE(bank), SPLIT_SPECIAL))
+						return TRUE;
+					break;
+				case STAT_STAGE_SPEED:
+				case STAT_STAGE_ACC:
+				case STAT_STAGE_EVASION:
+					return TRUE;	
+			}
+		}
+	}
+
+	return FALSE;
+}
+
+bool8 AnyUsefulOffseniveStatIsRaised(u8 bank)
+{
+	for (u8 statId = STAT_STAGE_ATK; statId < BATTLE_STATS_NO; ++statId)
+	{
+		if (STAT_STAGE(bank, statId) > 6)
+		{
+			switch (statId) {
+				case STAT_STAGE_ATK:
+					if (PhysicalMoveInMoveset(bank))
+						return TRUE;
+					break;
+				case STAT_STAGE_SPATK:
+					if (SpecialMoveInMoveset(bank))
+						return TRUE;
+					break;
+				case STAT_STAGE_SPEED:
+					return TRUE;	
+			}
+		}
 	}
 
 	return FALSE;

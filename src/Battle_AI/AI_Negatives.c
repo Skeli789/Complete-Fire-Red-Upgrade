@@ -1066,7 +1066,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			if (atkAbility == ABILITY_MAGICGUARD || atkAbility == ABILITY_ROCKHEAD)
 				goto AI_STANDARD_DAMAGE;
 				
-			u32 dmg = AI_CalcDmg(bankAtk, bankDef, move);
+			u32 dmg = CalcFinalAIMoveDamage(move, bankAtk, bankDef, 1);
 
 			if (CheckTableForMove(move, Percent25RecoilMoves))
 				dmg = MathMax(1, dmg / 4);
@@ -1082,9 +1082,15 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 				dmg = MathMax(1, dmg);
 			else if (move == MOVE_MINDBLOWN)
 				dmg = MathMax(1, gBattleMons[bankAtk].maxHP / 2);
-			
-			if (dmg > gBattleMons[bankAtk].hp) //Recoil kills attacker
-				DECREASE_VIABILITY(4);
+
+			if (dmg >= gBattleMons[bankAtk].hp //Recoil kills attacker
+			&&  ViableMonCountFromBank(bankDef) > 1) //Foe has more than 1 target left
+			{
+				if (dmg >= gBattleMons[bankDef].hp && !CanKnockOutWithoutMove(move, bankAtk, bankDef))
+					break; //If it's the only KO move then just use it
+				else
+					DECREASE_VIABILITY(4); //Not as good to use move if you'll faint and not win
+			}
 			else
 				goto AI_STANDARD_DAMAGE;
 			break;
@@ -1175,7 +1181,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			if (atkAbility != ABILITY_TRUANT
 			&& MoveKnocksOutXHits(move, bankAtk, bankDef, 1)
 			&& CanKnockOutWithoutMove(move, bankAtk, bankDef))
-				DECREASE_VIABILITY(1);
+				DECREASE_VIABILITY(9); //Never use move as finisher if you don't have to
 			break;
 		
 		case EFFECT_SPITE:
@@ -1559,8 +1565,13 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		
 		case EFFECT_BATON_PASS:
 			if (move == MOVE_UTURN || move == MOVE_VOLTSWITCH)
-				goto AI_STANDARD_DAMAGE;
-
+			{
+				PIVOT_CHECK:
+				if (!ShouldPivot(bankAtk, bankDef, move, 0xFF))
+					DECREASE_VIABILITY(10); //Bad idea to use this move
+				else
+					goto AI_STANDARD_DAMAGE;
+			}
 			else if (ViableMonCountFromBankLoadPartyRange(bankAtk) <= 1)
 			{
 				DECREASE_VIABILITY(10);
@@ -1898,6 +1909,10 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		case EFFECT_SUPERPOWER:
 			if (move == MOVE_HYPERSPACEFURY && atkSpecies != SPECIES_HOOPA_UNBOUND)
 				DECREASE_VIABILITY(10);
+			else if (move != MOVE_HYPERSPACEHOLE && atkEffect == ITEM_EFFECT_EJECT_PACK)
+				goto PIVOT_CHECK;
+			break;
+
 			break;
 
 		case EFFECT_MAGIC_COAT:
@@ -1922,6 +1937,16 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 				DECREASE_VIABILITY(10);
 			else
 				goto AI_CHECK_SLEEP;
+			break;
+			
+		case EFFECT_KNOCK_OFF:
+			if (defEffect == ITEM_EFFECT_ASSAULT_VEST
+			|| (defEffect == ITEM_EFFECT_CHOICE_BAND && gBattleStruct->choicedMove[bankDef]))
+			{
+				if (GetStrongestMove(bankDef, bankAtk) == MOVE_NONE
+				|| AI_SpecialTypeCalc(GetStrongestMove(bankDef, bankAtk), bankDef, bankAtk) & (MOVE_RESULT_NO_EFFECT | MOVE_RESULT_MISSED))
+					DECREASE_VIABILITY(9); //Don't use Knock Off is the enemy's only moves don't affect the AI
+			}
 			break;
 		
 		case EFFECT_SKILL_SWAP:
@@ -2553,7 +2578,8 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			switch (move) {
 				case MOVE_TAILWIND:
 					if (gNewBS->TailwindTimers[SIDE(bankAtk)] != 0
-					||  PARTNER_MOVE_IS_SAME_NO_TARGET)
+					||  PARTNER_MOVE_IS_SAME_NO_TARGET
+					||  (IsTrickRoomActive() && gNewBS->TrickRoomTimer != 1)) //Trick Room active and not ending this turn
 						DECREASE_VIABILITY(10);
 					break;
 	

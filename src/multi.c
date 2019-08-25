@@ -409,26 +409,53 @@ static void PlayerPartnerHandleChooseAction(void)
 
 static void PlayerPartnerHandleChoosePokemon(void)
 {
-	u8 firstId, lastId;
-    s32 chosenMonId = GetMostSuitableMonToSwitchInto();
-
-    if (chosenMonId == 6) // just switch to the next mon
+    u8 chosenMonId;
+	
+    if (gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] == PARTY_SIZE)
     {
-        u8 playerMonIdentity = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
-        u8 selfIdentity = GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT);
+		if (gNewBS->bestMonIdToSwitchInto[gActiveBattler][0] == PARTY_SIZE)
+			CalcMostSuitableMonToSwitchInto();
+
+        chosenMonId = GetMostSuitableMonToSwitchInto();
 		
-		LoadPartyRange(gActiveBattler, &firstId, &lastId); //Because the AI can control the player in Mock Battles too
-		
-        for (chosenMonId = firstId; chosenMonId < lastId; ++chosenMonId)
+        if (chosenMonId == PARTY_SIZE)
         {
-            if (GetMonData(&gPlayerParty[chosenMonId], MON_DATA_HP, 0) != 0
-                && chosenMonId != gBattlerPartyIndexes[playerMonIdentity]
-                && chosenMonId != gBattlerPartyIndexes[selfIdentity])
+            u8 battlerIn1, battlerIn2, firstId, lastId;
+			
+			pokemon_t* party = LoadPartyRange(gActiveBattler, &firstId, &lastId);
+
+			if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+			{
+				battlerIn1 = gActiveBattler;
+				if (gAbsentBattlerFlags & gBitTable[PARTNER(gActiveBattler)])
+					battlerIn2 = gActiveBattler;
+				else
+					battlerIn2 = PARTNER(battlerIn1);
+			}
+			else
+			{
+				battlerIn1 = gActiveBattler;
+				battlerIn2 = gActiveBattler;
+			}
+				
+            for (chosenMonId = firstId; chosenMonId < lastId; ++chosenMonId)
             {
-                break;
+                if (party[chosenMonId].species != SPECIES_NONE
+				&& party[chosenMonId].hp != 0
+				&& !GetMonData(&party[chosenMonId], MON_DATA_IS_EGG, 0)
+                && chosenMonId != gBattlerPartyIndexes[battlerIn1]
+                && chosenMonId != gBattlerPartyIndexes[battlerIn2])
+                    break;
             }
         }
     }
+    else
+    {
+        chosenMonId = gBattleStruct->switchoutIndex[SIDE(gActiveBattler)];
+        gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = PARTY_SIZE;
+    }
+
+	RemoveBestMonToSwitchInto(gActiveBattler);
 
     /* Perform switchout */
     gBattleStruct->monToSwitchIntoId[gActiveBattler] = chosenMonId;

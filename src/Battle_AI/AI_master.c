@@ -71,7 +71,6 @@ static u8 ChooseMoveOrAction_Singles(void);
 static u8 ChooseMoveOrAction_Doubles(void);
 static void BattleAI_DoAIProcessing(void);
 static bool8 ShouldSwitch(void);
-static void LoadBattlersAndFoes(u8* battlerIn1, u8* battlerIn2, u8* foe1, u8* foe2);
 static bool8 ShouldSwitchIfOnlyBadMovesLeft(void);
 static bool8 FindMonThatAbsorbsOpponentsMove(void);
 static bool8 ShouldSwitchIfNaturalCureOrRegenerator(void);
@@ -476,7 +475,7 @@ void AI_TrySwitchOrUseItem(void)
 				continue; //Only calculate for player if player not in control
 				
 			if (GetBattlerPosition(i) == B_POSITION_PLAYER_RIGHT && !IsTagBattle())
-				continue;
+				continue; //Only calculate for player if player not in control
 		
 			if (!gNewBS->calculatedAISwitchings[i] && BATTLER_ALIVE(i)) //So Multi Battles still work properly
 			{		
@@ -615,7 +614,7 @@ static bool8 ShouldSwitch(void)
 	return FALSE;
 }
 
-static void LoadBattlersAndFoes(u8* battlerIn1, u8* battlerIn2, u8* foe1, u8* foe2)
+void LoadBattlersAndFoes(u8* battlerIn1, u8* battlerIn2, u8* foe1, u8* foe2)
 {
 	if (IS_DOUBLE_BATTLE)
 	{
@@ -705,6 +704,10 @@ static bool8 FindMonThatAbsorbsOpponentsMove(void)
 
 		if (!CanKnockOut(foe1, gActiveBattler) //The enemy can't KO you
 		&& AnyStatGreaterThan(gActiveBattler, 6 + 1)) //AI is invested in stat boosts +8 or more
+			return FALSE;
+			
+		if (IS_BEHIND_SUBSTITUTE(gActiveBattler) //Make use of your substitute before switching
+		&& !DamagingMoveThaCanBreakThroughSubstituteInMoveset(foe1, gActiveBattler))
 			return FALSE;
 	}
 	else //Double Battle
@@ -1587,17 +1590,6 @@ static bool8 ShouldSwitchIfWonderGuard(void)
 1.  Has Super-Effective Move
 */
 
-#define SWITCHING_INCREASE_KO_FOE 4 //If changing these 4's, make sure to modify the corresponding value in OnlyBadMovesLeftInMoveset
-#define SWITCHING_INCREASE_RESIST_ALL_MOVES 4
-#define SWITCHING_INCREASE_REVENGE_KILL 2 //Can only happen if can KO in the first place
-#define SWITCHING_INCREASE_WALLS_FOE 2 //Can only wall if no Super-Effective moves against foe
-//#define SWITCHING_INCREASE_HAS_SUPER_EFFECTIVE_MOVE 1
-#define SWITCHING_INCREASE_CAN_REMOVE_HAZARDS 10
-
-#define SWITCHING_DECREASE_WEAK_TO_MOVE 1
-
-#define SWITCHING_SCORE_MAX (SWITCHING_INCREASE_KO_FOE + SWITCHING_INCREASE_RESIST_ALL_MOVES + SWITCHING_INCREASE_REVENGE_KILL)
-
 //Add logic about switching in a partner to resist spread move in doubles
 u8 GetMostSuitableMonToSwitchInto(void)
 {
@@ -2099,7 +2091,7 @@ static void UpdateStrongestMoves(void)
 			if (bankAtk == bankDef || bankDef == PARTNER(bankAtk))
 				continue; //Don't bother calculating for these Pokemon. Never used
 
-			gNewBS->strongestMove[bankAtk][bankDef] = GetStrongestMove(bankAtk, bankDef, FALSE);
+			gNewBS->strongestMove[bankAtk][bankDef] = CalcStrongestMove(bankAtk, bankDef, FALSE);
 			gNewBS->canKnockOut[bankAtk][bankDef] = MoveKnocksOutXHits(gNewBS->strongestMove[bankAtk][bankDef], bankAtk, bankDef, 1);
 			gNewBS->can2HKO[bankAtk][bankDef] = (gNewBS->canKnockOut[bankAtk][bankDef]) ? TRUE
 												: MoveKnocksOutXHits(gNewBS->strongestMove[bankAtk][bankDef], bankAtk, bankDef, 2); //If you can KO in 1 hit you can KO in 2

@@ -47,7 +47,6 @@ static u32 AdjustWeight(u32 weight, ability_t, item_effect_t, bank_t, bool8 chec
 static u8 GetFlingPower(ability_t, item_t, struct Pokemon*, bank_t, bool8 PartyCheck);
 static void AdjustDamage(bool8 CheckFalseSwipe);
 static void ApplyRandomDmgMultiplier(void);
-static bool8 IsBankHoldingFocusSash(u8 bank);
 
 void atk04_critcalc(void) {
 	u8 atkEffect = ITEM_EFFECT(gBankAttacker);
@@ -679,14 +678,14 @@ u8 AI_TypeCalc(u16 move, u8 bankAtk, struct Pokemon* monDef) {
 	return flags;
 }
 
-//This calc takes into account things like Pokemon Mega Evolving
+//This calc takes into account things like Pokemon Mega Evolving and Illusion
 u8 AI_SpecialTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 {
 	u8 moveType;
 	u8 atkAbility = GetAIAbility(bankAtk, bankDef, move);
 	u8 defAbility = GetAIAbility(bankDef, bankAtk, IsValidMovePrediction(bankDef, bankAtk));
 	u8 defEffect = ITEM_EFFECT(bankDef);
-	u8 atkType1, atkType2, atkType3;
+	u8 atkType1, atkType2, atkType3, defType1, defType2, defType3;
 	u8 flags = 0;
 
 	if (move == MOVE_STRUGGLE)
@@ -696,6 +695,21 @@ u8 AI_SpecialTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 	atkType2 = gBattleMons[bankAtk].type2;
 	atkType3 = gBattleMons[bankAtk].type3;
 	moveType = GetMoveTypeSpecial(bankAtk, move);
+	
+	if (gStatuses3[bankDef] & STATUS3_ILLUSION && gDisableStructs[bankDef].isFirstTurn) //Under illusion and haven't figured it out yet
+	{
+		struct Pokemon* illusionMon = GetIllusionPartyData(bankDef);
+		u16 fakeSpecies = GetMonData(illusionMon, MON_DATA_SPECIES, NULL);
+		defAbility = GetPartyAbility(illusionMon);
+		defType1 = gBaseStats[fakeSpecies].type1;
+		defType2 = gBaseStats[fakeSpecies].type2;
+	}
+	else
+	{
+		defType1 = gBattleMons[bankDef].type1;
+		defType2 = gBattleMons[bankDef].type2;
+	}
+	defType3 = gBattleMons[bankDef].type3; //Same type 3 - eg switched in on Forest's curse
 
 	//Check STAB
 	if (atkType1 == moveType || atkType2 == moveType || atkType3 == moveType)
@@ -713,15 +727,15 @@ u8 AI_SpecialTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 	&& move != MOVE_THOUSANDARROWS)
 		flags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
 
-	else if (CheckTableForMove(move, PowderTable) && !IsAffectedByPowder(bankDef))
+	else if (CheckTableForMove(move, PowderTable) && !IsAffectedByPowderByDetails(defType1, defType2, defType3, defAbility, defEffect))
 		flags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
 
-	else if (move == MOVE_SKYDROP && IsOfType(bankDef, TYPE_FLYING))
+	else if (move == MOVE_SKYDROP && (defType1 == TYPE_FLYING || defType2 == TYPE_FLYING || defType3 == TYPE_FLYING))
 		flags |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
 
 	//Regular Type Calc
 	else
-		TypeDamageModification(atkAbility, bankDef, move, moveType, &flags);
+		TypeDamageModificationByDefTypes(atkAbility, bankDef, move, moveType, &flags, defType1, defType2, defType3);
 
 	//Wonder Guard Check
 	if (defAbility == ABILITY_WONDERGUARD
@@ -777,11 +791,11 @@ u8 VisualTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 	{
 		flags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
 	}
-	else if (CheckTableForMove(move, PowderTable) && !IsAffectedByPowder(bankDef))
+	else if (CheckTableForMove(move, PowderTable) && !IsAffectedByPowderByDetails(defType1, defType2, defType3, defAbility, defEffect))
 	{
 		flags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
 	}
-	else if (move == MOVE_SKYDROP && IsOfType(bankDef, TYPE_FLYING))
+	else if (move == MOVE_SKYDROP && (defType1 == TYPE_FLYING || defType2 == TYPE_FLYING || defType3 == TYPE_FLYING))
 	{
 		flags |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
 	}
@@ -3065,7 +3079,7 @@ u16 TryGetAlternateSpeciesSize(u16 species, u8 type)
 	return 0;
 }
 
-static bool8 IsBankHoldingFocusSash(u8 bank)
+bool8 IsBankHoldingFocusSash(u8 bank)
 {
 	if (ITEM_EFFECT(bank) == ITEM_EFFECT_FOCUS_BAND
 	&& ItemId_GetMystery2(ITEM(bank)))

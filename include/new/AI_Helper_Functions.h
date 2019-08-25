@@ -21,8 +21,9 @@ bool8 MoveKnocksOutXHits(u16 move, u8 bankAtk, u8 bankDef, u8 numHits);
 bool8 MoveKnocksOutXHitsFromParty(u16 move, struct Pokemon* monAtk, u8 bankDef, u8 numHits);
 u16 CalcFinalAIMoveDamage(u16 move, u8 bankAtk, u8 bankDef, u8 numHits);
 u16 CalcFinalAIMoveDamageFromParty(u16 move, struct Pokemon* monAtk, u8 bankDef, u8 numHits);
-move_t GetStrongestMove(const u8 bankAtk, const u8 bankDef, const bool8 onlySpreadMoves);
+move_t CalcStrongestMove(const u8 bankAtk, const u8 bankDef, const bool8 onlySpreadMoves);
 bool8 IsStrongestMove(const u16 currentMove, const u8 bankAtk, const u8 bankDef);
+bool8 GetStrongestMove(const u8 bankAtk, const u8 bankDef);
 bool8 MoveWillHit(u16 move, u8 bankAtk, u8 bankDef);
 bool8 MoveWouldHitFirst(u16 move, u16 bankAtk, u16 bankDef);
 bool8 MoveWouldHitBeforeOtherMove(u16 moveAtk, u8 bankAtk, u16 moveDef, u8 bankDef);
@@ -51,6 +52,7 @@ void StoreSwitchPrediction(u8 bankAtk, u8 bankDef);
 bool8 IsMovePredictionSemiInvulnerable(u8 bankAtk, u8 bankDef);
 bool8 IsMovePredictionHealingMove(u8 bankAtk, u8 bankDef);
 bool8 IsPredictedToUsePursuitableMove(u8 bankAtk, u8 bankDef);
+bool8 IsMovePredictionPhazingMove(u8 bankAtk, u8 bankDef);
 bool8 CanMovePredictionProtectAgainstMove(u8 bankAtk, u8 bankDef, u16 move);
 
 bool8 DamagingMoveInMoveset(u8 bank);
@@ -78,6 +80,8 @@ u16 TryReplaceMoveWithZMove(u8 bankAtk, u8 bankDef, u16 move);
 bool8 GetHealthPercentage(u8 bank);
 bool8 TeamFullyHealedMinusBank(u8 bank);
 bool8 AnyStatIsRaised(u8 bank);
+bool8 AnyUsefulStatIsRaised(u8 bank);
+bool8 AnyUsefulOffseniveStatIsRaised(u8 bank);
 bool8 PartyMemberStatused(u8 bank, bool8 checkSoundproof);
 move_t ShouldAIUseZMove(u8 bank, u8 moveIndex, u16 move);
 

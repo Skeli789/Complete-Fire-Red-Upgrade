@@ -5,6 +5,7 @@
 #include "../include/string_util.h"
 #include "../include/constants/moves.h"
 
+#include "../include/new/daycare.h"
 #include "../include/new/Helper_Functions.h"
 #include "../include/new/learn_move.h"
 #include "../include/new/move_reminder_data.h"
@@ -145,7 +146,37 @@ u8 GetMoveRelearnerMoves(struct Pokemon* mon, u16* moves)
 		struct Pokemon dummyMon = {0};
 		u16 eggSpecies = GetEggSpecies(species);
 		SetMonData(&dummyMon, MON_DATA_SPECIES, &eggSpecies);
-		return GetEggMoves(&dummyMon, moves);
+		u16 eggMovesBuffer[EGG_MOVES_ARRAY_COUNT];
+		u8 numEggMoves = GetEggMoves(&dummyMon, eggMovesBuffer);
+		
+		bool8 moveInList[MOVES_COUNT] = {FALSE};
+		
+		//Filter out any egg moves the Pokemon already knows
+		for (i = 0, j = 0; i < numEggMoves; ++i)
+		{
+			if (!MoveInMonMoveset(eggMovesBuffer[i], mon))
+			{
+				moves[j++] = eggMovesBuffer[i];
+				moveInList[eggMovesBuffer[i]] = TRUE;
+			}
+		}
+		
+		u16 eggSpecies2 = eggSpecies;
+		AlterSpeciesWithIncenseItems(&eggSpecies2, 0, 0);
+		if (eggSpecies2 != eggSpecies) //Different baby; eg. Marill + Azurill
+		{
+			SetMonData(&dummyMon, MON_DATA_SPECIES, &eggSpecies2);
+			numEggMoves = GetEggMoves(&dummyMon, eggMovesBuffer);
+			
+			//Filter out any egg moves the Pokemon already knows
+			for (i = 0; i < numEggMoves && j < EGG_MOVES_ARRAY_COUNT; ++i)
+			{
+				if (!moveInList[eggMovesBuffer[i]] && !MoveInMonMoveset(eggMovesBuffer[i], mon))
+					moves[j++] = eggMovesBuffer[i];
+			}
+		}
+
+		return j; 
 	}
 #endif
 
