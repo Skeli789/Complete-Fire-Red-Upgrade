@@ -628,6 +628,7 @@ static u8 AtkCanceller_UnableToUseMove(void)
 		case CANCELLER_Z_MOVES:
 			if (gNewBS->ZMoveData->active) 
 			{
+				RecordItemEffectBattle(gBankAttacker, ITEM_EFFECT_Z_CRYSTAL);
 				gNewBS->ZMoveData->used[gBankAttacker] = TRUE;
 				gNewBS->ZMoveData->toBeUsed[gBankAttacker] = 0;
 				gNewBS->ZMoveData->partyIndex[gBankAttacker] |= gBitTable[gBattlerPartyIndexes[gBankAttacker]]; //Stops Rayquaza from Mega Evolving

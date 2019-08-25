@@ -870,7 +870,8 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				gLastUsedItem = ITEM(foe);
 				gBankTarget = foe;
 				gBattleScripting->bank = bank;
-				BattleStringLoader = gText_FriskActivate; 
+				BattleStringLoader = gText_FriskActivate;
+				RecordItemEffectBattle(foe, ITEM_EFFECT(foe));
 				BattleScriptPushCursorAndCallback(BattleScript_Frisk);
 				effect++;
 			}
@@ -879,7 +880,8 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				gLastUsedItem = ITEM(partner);
 				gBankTarget = partner;
 				gBattleScripting->bank = bank;
-				BattleStringLoader = gText_FriskActivate; 
+				BattleStringLoader = gText_FriskActivate;
+				RecordItemEffectBattle(partner, ITEM_EFFECT(partner));
 				BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
 				effect++;
 			}
@@ -1256,6 +1258,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 							MarkBufferBankForExecution(bank);
 							gLastUsedItem = CONSUMED_ITEMS(itemBank);
 							CONSUMED_ITEMS(itemBank) = 0;
+							RecordItemEffectBattle(bank, ITEM_EFFECT(bank));
 							BattleScriptPushCursorAndCallback(BattleScript_Pickup);
 							++effect;
 							break;

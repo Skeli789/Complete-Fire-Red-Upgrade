@@ -317,7 +317,7 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 			tempMoveStruct->movePowers[i] = CalcVisualBasePower(gActiveBattler, gActiveBattler, 
 																move, tempMoveStruct->movePowers[i], 
 																tempMoveStruct->moveTypes[i], TRUE);
-			tempMoveStruct->moveAcc[i] = AccuracyCalcNoTarget(move, gActiveBattler);
+			tempMoveStruct->moveAcc[i] = VisualAccuracyCalc_NoTarget(move, gActiveBattler);
 			tempMoveStruct->moveResults[i] = 0;
 		}
 		else
@@ -329,7 +329,7 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 			tempMoveStruct->movePowers[i] = CalcVisualBasePower(gActiveBattler, foe, 
 																move, tempMoveStruct->movePowers[i], 
 																tempMoveStruct->moveTypes[i], FALSE);
-			tempMoveStruct->moveAcc[i] = AccuracyCalc(move, gActiveBattler, foe);
+			tempMoveStruct->moveAcc[i] = VisualAccuracyCalc(move, gActiveBattler, foe);
 			
 			if (SPLIT(move) != SPLIT_STATUS)
 			{
