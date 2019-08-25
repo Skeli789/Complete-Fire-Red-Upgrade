@@ -845,10 +845,10 @@ The user protects\nitself and its\nallies from status\nmoves with a\nmysterious 
 Using a pulled-up\nmat as a shield,\nthe user protects\nitself and its allies\nfrom damaging moves.
 
 #org @DESC_QUICKGUARD
-The user protects\nitself and its\nallies from priority\nmoves. It may fail if\nused in succession.
+The user protects\nitself and its\nallies from priority\nmoves.
 
 #org @DESC_WIDEGUARD
-The user's side is\nprotected from\nwide-ranging attack.\nIt may fail if used\nin succession.
+The user's side is\nprotected from\nwide-ranging attack.
 
 #org @DESC_AQUARING
 The user envelops\nitself in a veil\nmade of water. It\nregains some HP\nevery turn.

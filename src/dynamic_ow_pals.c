@@ -20,6 +20,9 @@
 
 #define CpuSetFill (1 << 24)
 
+#define FOG_FADE_COLOUR TintColor(RGB(28, 31, 28))
+#define FOG_BRIGHTEN_INTENSITY 12
+
 struct PalRef
 {
 	u8 Type;
@@ -305,6 +308,7 @@ u8 FindOrLoadNPCPalette(u16 palTag)
 		return PalRefIncreaseCount(0);
 
 	LoadNPCPalette(palTag, palSlot);
+	FogBrightenPalettes(FOG_BRIGHTEN_INTENSITY);
 	MaskPaletteIfFadingIn(palSlot);
 	return PalRefIncreaseCount(palSlot);
 }
@@ -350,18 +354,14 @@ void FogBrightenPalettes(u16 brightenIntensity)
 {
 	if (GetFadeTypeByWeather(gWeatherPtr->currWeather) != 2)
 		return; //Only brighten if there is fog weather
-	
-	u16 BrightenColor = TintColor(RGB(28, 31, 28));
-	//BlendPalettes(0xFFFF0000, brightenIntensity, BrightenColor); //Uncomment to fade player on weather fade out
-	
+
 	if (gWeatherPtr->palProcessingState != 3)
 		return; // don't brighten while fading
-	
-	//u16 BrightenColor = TintColor(RGB(28, 31, 28));
+
 	for (int i = 16; i < 32; i++)
 	{
 		if (PaletteNeedsFogBrightening(i)) 
-			BlendPalette(i * 16, 16, brightenIntensity, BrightenColor);
+			BlendPalette(i * 16, 16, brightenIntensity, FOG_FADE_COLOUR);
 	}
 }
 
