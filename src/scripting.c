@@ -35,6 +35,7 @@
 #include "../include/new/roamer.h"
 #include "../include/new/text.h"
 #include "../include/new/Vanilla_functions_battle.h"
+#include "../include/new/scrolling_multichoice.h"
 
 /*
 NOTES: 
@@ -2701,3 +2702,98 @@ void ConvertCoinInt(u32 coinAmount)
 {
     ConvertIntToDecimalStringN(gStringVar1, coinAmount, STR_CONV_MODE_RIGHT_ALIGN, MAX_COINS_DIGITS);
 }
+
+
+
+
+//////////////////////////////////
+///// Scrolling Multichoice //////
+//////////////////////////////////
+//Var8000 - set index
+//Var8001 - num choices showed at once
+//special 0x158
+//waitstate
+const u8* sSet1[] = {
+    sExampleText_1,
+    sExampleText_2,
+    sExampleText_3,
+    sExampleText_4,
+    sExampleText_5,
+    sExampleText_6,
+    sExampleText_7,
+    sExampleText_8,
+    sExampleText_9,
+	sExampleText_10,
+};
+const u8* sSet2[] = {
+    sExampleText_1,
+    sExampleText_2,
+    sExampleText_3,
+    sExampleText_4,
+    sExampleText_5,
+    sExampleText_6,
+    sExampleText_7,
+    sExampleText_8,
+    sExampleText_9,
+	sExampleText_10,
+};
+
+
+const struct ScrollingMulti sScrollingSets[] = 
+{
+	{sSet1, ARRAY_COUNT(sSet1)},
+	{sSet2, ARRAY_COUNT(sSet2)},
+};
+
+// link number of opts shown at once to the box height
+struct ScrollingSizePerOpts {
+	u8 maxShowed;
+	u8 height;
+};
+
+const struct ScrollingSizePerOpts sScrollingSizes[] = {
+	{.maxShowed = 2, .height = 3},
+	{.maxShowed = 3, .height = 5},
+	{.maxShowed = 4, .height = 7},
+	{.maxShowed = 5, .height = 9},
+	{.maxShowed = 6, .height = 11},
+	{.maxShowed = 7, .height = 13},
+	{.maxShowed = 8, .height = 14},
+	{.maxShowed = 9, .height = 16},
+};
+
+void SetScrollingListSize(u8 taskId)
+{
+	u8 maxShowed = Var8001;
+	if (maxShowed < MIN_NUM_SHOWED || maxShowed > MAX_NUM_SHOWED)
+		maxShowed = 4;
+
+	gTasks[taskId].tMaxShowed = maxShowed;
+	
+	for (u8 i = 0; i < ARRAY_COUNT(sScrollingSizes); ++i)
+	{
+		if (sScrollingSizes[i].maxShowed == gTasks[taskId].tMaxShowed)
+		{
+			gTasks[taskId].tHeight = sScrollingSizes[i].height;
+			break;
+		}
+	}
+	gTasks[taskId].data[1] = 9;
+	gTasks[taskId].data[2] = 1;	//x
+	gTasks[taskId].data[3] = 1;	//y
+	gTasks[taskId].data[4] = 0xC;	//width?
+}
+
+int GetSizeOfMultiList(void)
+{
+	return sScrollingSets[Var8000].count;
+}
+
+
+const u8** GetScrollingMultiList(void)
+{
+	return sScrollingSets[Var8000].set;
+}
+
+
+
