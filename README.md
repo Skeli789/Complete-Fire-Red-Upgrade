@@ -78,17 +78,15 @@ After downloading and before proceeding to install, make sure that the **add to 
 3. Download (or clone) the master folder from this github page.
 (Click 'Clone or Download', then 'Download Zip')
 
-4. Extract the zipped file in the root called **deps.rar** somewhere convenient and add that folder to your path (same steps as shown in the tutorial found in step 1).
+4. Get your ROM, rename it to **BPRE0.gba** and place it the main (master) folder.
 
-5. Get your ROM, rename it to **BPRE0.gba** and place it the main (master) folder.
-
-6. To decide the offsets where you want to insert the code:
+5. To decide the offsets where you want to insert the code:
 In 'scripts/make.py' change `OFFSET_TO_PUT=YYY` to the location you want to insert the data. Don't worry about changing *insert.py* because *make.py* automatically updates *insert.py* and *linker.ld*.
 
-7. Run **cmd.exe** in the main folder. You can do this by typing `cmd` and hitting enter in the
+6. Run **cmd.exe** in the main folder. You can do this by typing `cmd` and hitting enter in the
 url address or selecting *Open command window here* from right clicking on empty space while holding the shift key.
 
-8. In the command prompt window, type `python scripts//make.py` (or `python3 scripts//make.py` if you've installed multiple python versions).
+7. In the command prompt window, type `python scripts//make.py` (or `python3 scripts//make.py` if you've installed multiple python versions).
 
 A new gba file will appear named as **test.gba** and an **offsets.ini** file.
 Those are your resultant files.
