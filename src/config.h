@@ -42,14 +42,15 @@
 #define AUTO_RUN_FLAG 0x914 //Flag to enable auto-run (toggled by L-button). If this feature is used, L=A will not work. Comment out this line for it to work again.
 #define RUNNING_ENABLED_FLAG 0x82F //The player can only run if this flag is set. If commented, the player will start the game with running shoes.
 #define DISABLE_BAG_FLAG 0x915 //The bag can't be used in-battle if this flag is set
-#define EGG_MOVE_RELEARNER_FLAG 0x916 //When set, the move learner loads egg moves instead
+#define MOVE_RELEARNER_IGNORE_LEVEL_FLAG 0x916 //When set, the move relearner shows all level-up moves up to MAX_LEVEL
+#define EGG_MOVE_RELEARNER_FLAG 0x917 //When set, the move learner loads egg moves instead
 
 /*===== Start Menu/Poketools Flags =====*/
-#define FLAG_SYS_BAG_HIDE 0x917		//Toggle bag off
-#define FLAG_SYS_PLAYER_HIDE 0x918	//Toggle [player] off
-#define FLAG_SYS_SAVE_HIDE 0x919	//Toggle save off
-#define FLAG_SYS_DEXNAV 0x91A		//Flag to turn dexnav on/off in start menu (if undefined, this will eliminate dexnav from the start menu)
-#define FLAG_POKETOOLS_MENU 0x91B  	//Flag to create secondary, Poke Tools, start menu
+#define FLAG_SYS_BAG_HIDE 0x91B		//Toggle bag off
+#define FLAG_SYS_PLAYER_HIDE 0x91C	//Toggle [player] off
+#define FLAG_SYS_SAVE_HIDE 0x91D	//Toggle save off
+#define FLAG_SYS_DEXNAV 0x91E		//Flag to turn dexnav on/off in start menu (if undefined, this will eliminate dexnav from the start menu)
+#define FLAG_POKETOOLS_MENU 0x91F  	//Flag to create secondary, Poke Tools, start menu
 
 /*===== Pedometer Flags as in JPAN Engine =====*/
 #define FLAG_LONG_PEDOMETER 0x920		//32 bit / 4 bytes / Max 4 294 967 295 steps

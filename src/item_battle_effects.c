@@ -6,6 +6,7 @@
 #include "../include/constants/items.h"
 
 #include "../include/new/Helper_Functions.h"
+#include "../include/new/item.h"
 #include "../include/new/item_battle_effects.h"
 #include "../include/new/item_battle_scripts.h"
 #include "../include/new/move_tables.h"
@@ -217,10 +218,18 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
 					if (moveTurn || DoPluck)
 					{
 						BattleScriptPushCursor();
-						gBattlescriptCurrInstr = BattleScript_BerryHealHP_RemoveBerryRet;
+						if (IsBerry(gLastUsedItem))
+							gBattlescriptCurrInstr = BattleScript_BerryHealHP_RemoveBerryRet;
+						else
+							gBattlescriptCurrInstr = BattleScript_ItemHealHP_RemoveItemRet; //Berry Juice
 					}
 					else
+					{
+						if (IsBerry(gLastUsedItem))
 							BattleScriptExecute(BattleScript_BerryHealHP_RemoveBerryEnd2);
+						else
+							BattleScriptExecute(BattleScript_ItemHealHP_RemoveItemEnd2);
+					}
 					effect = ITEM_HP_CHANGE;
 				}
 				break;

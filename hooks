@@ -224,6 +224,7 @@ ExpandedFlagsHook 806E5C0 1
 ##Other Hooks
 DaycareInheritHiddenAbility 8046116 0
 SetMonHeldItemHook 8040784 2
+CalculateMonStatsNew 803E47C 1
 
 ##DNS
 TransferPlttBuffer 8070474 0

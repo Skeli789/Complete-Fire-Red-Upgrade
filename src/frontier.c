@@ -12,6 +12,29 @@
 extern u8* gMaleFrontierNamesTable[];
 extern u8* gFemaleFrontierNamesTable[];
 
+extern const u8 gText_SingleBattle[];
+extern const u8 gText_DoubleBattle[];
+extern const u8 gText_MultiBattle[];
+extern const u8 gText_LinkMultiBattle[];
+extern const u8 gText_RandomSingleBattle[];
+extern const u8 gText_RandomDoubleBattle[];
+extern const u8 gText_RandomMultiBattle[];
+
+extern const u8 gText_BattleTowerStandard[];
+extern const u8 gText_NoRestrictions[];
+extern const u8 gText_SmogonGen7OU[];
+extern const u8 gText_SmogonGen7Uber[];
+extern const u8 gText_SmogonLittleCup[];
+extern const u8 gText_MiddleCup[];
+extern const u8 gText_SmogonMonotype[];
+extern const u8 gText_GSCup[];
+
+extern const u8 gText_On[];
+extern const u8 gText_Off[];
+extern const u8 gText_Previous[];
+extern const u8 gText_Max[];
+extern const u8 gText_None[];
+
 const u8 gBattleTowerTiers[] =
 {
 	BATTLE_TOWER_STANDARD,
@@ -44,6 +67,28 @@ const u8 gBattleCircusTiers[] =
 };
 
 const u8 gNumBattleCircusTiers = ARRAY_COUNT(gBattleCircusTiers);
+
+const u8* const gBattleFrontierTierNames[NUM_FORMATS] =
+{
+	[BATTLE_TOWER_STANDARD] = gText_BattleTowerStandard,
+	[BATTLE_TOWER_NO_RESTRICTIONS] = gText_NoRestrictions,
+	[BATTLE_TOWER_OU] = gText_SmogonGen7OU,
+	[BATTLE_TOWER_UBER] gText_SmogonGen7Uber,
+	[BATTLE_TOWER_LITTLE_CUP] = gText_SmogonLittleCup,
+	[BATTLE_TOWER_MIDDLE_CUP] = gText_MiddleCup,
+	[BATTLE_TOWER_MONOTYPE] = gText_SmogonMonotype,
+};
+
+const u8* const gBattleFrontierFormats[NUM_TOWER_BATTLE_TYPES] =
+{
+	[BATTLE_TOWER_SINGLE] = gText_SingleBattle,
+	[BATTLE_TOWER_DOUBLE] = gText_DoubleBattle,
+	[BATTLE_TOWER_MULTI] = gText_MultiBattle,
+	[BATTLE_TOWER_LINK_MULTI] = gText_LinkMultiBattle,
+	[BATTLE_TOWER_SINGLE_RANDOM] = gText_RandomSingleBattle,
+	[BATTLE_TOWER_DOUBLE_RANDOM] = gText_RandomDoubleBattle,
+	[BATTLE_TOWER_MULTI_RANDOM] = gText_RandomMultiBattle,
+};
 
 //This file's functions:
 static u8 AdjustLevelForTier(u8 level, u8 tier);
@@ -159,14 +204,22 @@ void CopyFrontierTrainerText(u8 whichText, u16 trainerId, u8 battlerNum)
 		default:
 			switch (whichText) {
 				case FRONTIER_BEFORE_TEXT:
+					if (gFrontierBrains[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].preBattleText != NULL)
+						StringCopy(gStringVar4, gFrontierBrains[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].preBattleText);
 					break;
 			
 				case FRONTIER_PLAYER_LOST_TEXT:
-					StringCopy(gStringVar4, GetTrainerAWinText());
+					if (gFrontierBrains[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].playerLoseText != NULL)
+						StringCopy(gStringVar4, (gFrontierBrains[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].playerLoseText));
+					else //Frontier Brain text can be loaded from the OW
+						StringCopy(gStringVar4, GetTrainerAWinText());
 					break;
 			
 				case FRONTIER_PLAYER_WON_TEXT:
-					StringCopy(gStringVar4, GetTrainerALoseText());
+					if (gFrontierBrains[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].playerWinText != NULL)
+						StringCopy(gStringVar4, (gFrontierBrains[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].playerWinText));
+					else //Frontier Brain text can be loaded from the OW
+						StringCopy(gStringVar4, GetTrainerALoseText());
 			}
 			break;		
 	}
@@ -256,7 +309,8 @@ bool8 DuplicateItemsAreBannedInTier(u8 tier, u8 battleType)
 bool8 RayquazaCanMegaEvolveInFrontierBattle()
 {
 	return IsGSCupBattle()
-	    || VarGet(BATTLE_TOWER_TIER) == BATTLE_TOWER_NO_RESTRICTIONS;
+	    || VarGet(BATTLE_TOWER_TIER) == BATTLE_TOWER_NO_RESTRICTIONS
+		|| IsScaleMonsBattle();
 }
 
 u8 GetBattleTowerLevel(u8 tier)
@@ -351,9 +405,39 @@ bool8 ShouldDisablePartyMenuItemsBattleTower(void)
 	return FlagGet(BATTLE_TOWER_FLAG);
 }
 
+const u8* GetFrontierTierName(u8 tier, u8 format)
+{
+	const u8* string = gBattleFrontierTierNames[tier];
+
+	if (tier == BATTLE_TOWER_MIDDLE_CUP && !IsFrontierSingles(format))
+		string = gText_GSCup;
+		
+	return string;
+}
+
 bool8 InBattleSands(void)
 {
 	return (gBattleTypeFlags & BATTLE_TYPE_BATTLE_SANDS) != 0;
+}
+
+bool8 IsAverageMonsBattle(void)
+{
+	return FlagGet(BATTLE_TOWER_FLAG) && VarGet(BATTLE_TOWER_TIER) == BATTLE_TOWER_AVERAGE_MONS;
+}
+
+bool8 Is350CupBattle(void)
+{
+	return FlagGet(BATTLE_TOWER_FLAG) && VarGet(BATTLE_TOWER_TIER) == BATTLE_TOWER_350_CUP;
+}
+
+bool8 IsScaleMonsBattle(void)
+{
+	return FlagGet(BATTLE_TOWER_FLAG) && VarGet(BATTLE_TOWER_TIER) == BATTLE_TOWER_SCALEMONS;
+}
+
+bool8 IsBenjaminButterfreeBattle(void)
+{
+	return (gBattleTypeFlags & BATTLE_TYPE_BENJAMIN_BUTTERFREE) != 0;
 }
 
 //@Details: Generates a tower trainer id and name for the requested trainer.
@@ -364,6 +448,8 @@ bool8 InBattleSands(void)
 //				 2 = Partner Trainer
 //		Var8001: 0 = Regular Trainers
 //				 1 = Special Trainers
+//				 2 = Frontier Brain
+//		Var8002: If Var8001 == Frontier Brain: Frontier Brain Id
 //@Returns: To given var OW sprite num of generated trainer.
 u16 sp052_GenerateTowerTrainer(void)
 {
@@ -393,7 +479,7 @@ u16 sp052_GenerateTowerTrainer(void)
 		StringCopy(gStringVar1, GetFrontierTrainerName(BATTLE_TOWER_TID, battler));
 		return gTowerTrainers[id].owNum;
 	}
-	else
+	else if (Var8001 == 1)
 	{
 		id %= NUM_SPECIAL_TOWER_TRAINERS;
 		while (VarGet(BATTLE_TOWER_TIER) == BATTLE_TOWER_MONOTYPE && !gSpecialTowerTrainers[id].isMonotype)
@@ -406,6 +492,13 @@ u16 sp052_GenerateTowerTrainer(void)
 		StringCopy(gStringVar1, GetFrontierTrainerName(BATTLE_TOWER_SPECIAL_TID, battler));
 		return gSpecialTowerTrainers[id].owNum;
 	}
+	else
+	{
+		id = Var8002;
+		VarSet(TOWER_TRAINER_ID_VAR + battler, id);
+		StringCopy(gStringVar1, GetFrontierTrainerName(FRONTIER_BRAIN_TID, battler));
+		return gFrontierBrains[id].owNum;
+	}
 }
 
 //@Details: Loads the battle intro message of the requested trainer.
@@ -414,6 +507,7 @@ u16 sp052_GenerateTowerTrainer(void)
 //				 1 = Trainer Opponent B
 //		Var8001: 0 = Regular Trainers
 //				 1 = Special Trainers
+//				 2 = Frontier Brain
 void sp053_LoadFrontierIntroBattleMessage(void)
 {
 	u8 gender;
@@ -425,10 +519,15 @@ void sp053_LoadFrontierIntroBattleMessage(void)
 		text = gTowerTrainers[id].preBattleText;
 		gender = gTowerTrainers[id].gender;
 	}
-	else
+	else if (Var8001 == 1)
 	{
 		text = gSpecialTowerTrainers[id].preBattleText;
 		gender = gSpecialTowerTrainers[id].gender;
+	}
+	else
+	{
+		text = gFrontierBrains[id].preBattleText;
+		gender = gFrontierBrains[id].gender;
 	}
 	
 	gLoadPointer = text;
@@ -563,7 +662,7 @@ void sp055_UpdateBattleTowerStreak(void)
 				
 				if (inBattleSands)
 				{
-					gBattleSandsStreaks[MAX_STREAK].tier = tier;
+					gBattleSandsStreaks[MAX_STREAK].tier = VarGet(BATTLE_TOWER_TIER); //Actual Tier
 					gBattleSandsStreaks[MAX_STREAK].format = battleStyle;
 					gBattleSandsStreaks[MAX_STREAK].level = level;
 					gBattleSandsStreaks[MAX_STREAK].inverse = FlagGet(INVERSE_FLAG);
@@ -579,7 +678,7 @@ void sp055_UpdateBattleTowerStreak(void)
 
 			if (inBattleSands)
 			{
-				gBattleSandsStreaks[CURR_STREAK].tier = tier;
+				gBattleSandsStreaks[CURR_STREAK].tier = VarGet(BATTLE_TOWER_TIER); //Actual Tier
 				gBattleSandsStreaks[CURR_STREAK].format = battleStyle;
 				gBattleSandsStreaks[CURR_STREAK].level = level;
 				gBattleSandsStreaks[CURR_STREAK].inverse = FlagGet(INVERSE_FLAG);
@@ -605,10 +704,19 @@ u16 sp056_DetermineBattlePointsToGive(void)
 		toGive = 3;
 	else if (streakLength == 20)
 	{
-		if (VarGet(BATTLE_TOWER_TIER) == BATTLE_TOWER_STANDARD)
-			toGive = 20; //Battle against frontier brain
-		else
-			toGive = 3; //Just a special trainer
+		toGive = 3; //Just a special trainer
+
+		switch (BATTLE_FACILITY_NUM) {
+			case IN_BATTLE_TOWER:
+				if (VarGet(BATTLE_TOWER_TIER) != BATTLE_TOWER_MONOTYPE)
+					toGive = 20; //Battle against frontier brain
+				break;
+				
+			case IN_BATTLE_SANDS:
+				if (VarGet(BATTLE_TOWER_TIER) != BATTLE_TOWER_MONOTYPE)
+					toGive = 20; //Battle against frontier brain
+				break;
+		}
 	}
 	else if (streakLength <= 30)
 		toGive = 4;
@@ -618,10 +726,19 @@ u16 sp056_DetermineBattlePointsToGive(void)
 		toGive = 6;
 	else if (streakLength == 50)
 	{
-		if (VarGet(BATTLE_TOWER_TIER) == BATTLE_TOWER_STANDARD)
-			toGive = 50; //Battle against frontier brain
-		else
-			toGive = 6; //Just a special trainer
+		toGive = 6; //Just a special trainer
+
+		switch (BATTLE_FACILITY_NUM) {
+			case IN_BATTLE_TOWER:
+				if (VarGet(BATTLE_TOWER_TIER) != BATTLE_TOWER_MONOTYPE)
+					toGive = 50; //Battle against frontier brain
+				break;
+				
+			case IN_BATTLE_SANDS:
+				if (VarGet(BATTLE_TOWER_TIER) != BATTLE_TOWER_MONOTYPE)
+					toGive = 50; //Battle against frontier brain
+				break;
+		}
 	}
 	else if (streakLength <= 70)
 		toGive = 7;
@@ -700,4 +817,48 @@ u16 sp06D_LoadFrontierMultiTrainerById(void)
 
 	StringCopy(gStringVar2, GetFrontierTrainerName(BATTLE_TOWER_MULTI_TRAINER_TID, 0));
 	return gFrontierMultiBattleTrainers[id].owNum;
+}
+
+//@Details: Buffers text relating to battle sands records.
+//@Inputs:
+//		Var8000: 0 = Previous Streak
+//				 1 = Max Streak
+//@Returns: LastResult: TRUE if the requested record exists.
+//			gStringVar1: Tier name.
+//			gStringVar2: Battle format name.
+//			gStringVar3: Level.
+//			gStringVar7: Inverse on or off.
+//			gStringVar8: Species 1.
+//			gStringVar9: Species 2.
+//			gStringVarA: Species 3.
+//			gStringVarB: Streak length.
+//			gStringVarC: "previous" or "max"
+void sp06E_BufferBattleSandsRecords(void)
+{
+	static const u8* const requestStrings[] =
+	{
+		gText_Previous,
+		gText_Max,
+	};
+
+	gSpecialVar_LastResult = FALSE;
+
+	struct BattleSandsStreak* streak = (Var8000 == 0) ? &gBattleSandsStreaks[CURR_STREAK] : &gBattleSandsStreaks[MAX_STREAK];
+	if (streak->species1 != SPECIES_NONE)
+	{
+		StringCopy(gStringVar1, GetFrontierTierName(streak->tier, streak->format));
+		StringCopy(gStringVar2, gBattleFrontierFormats[streak->format]);
+		ConvertIntToDecimalStringN(gStringVar3, (streak->level == 0) ? 50 : 100, 0, 3);
+		StringCopy(gStringVar7, (streak->inverse) ? gText_On : gText_Off);
+		GetSpeciesName(gStringVar8, streak->species1);
+		GetSpeciesName(gStringVar9, streak->species2);
+		if (IsFrontierSingles(streak->format))
+			StringCopy(gStringVarA, gText_None);
+		else
+			GetSpeciesName(gStringVarA, streak->species3);
+		ConvertIntToDecimalStringN(gStringVarB, streak->streakLength, 0, 5);
+		StringCopy(gStringVarC, requestStrings[(Var8000 == 0) ? 0 : 1]);
+
+		gSpecialVar_LastResult = TRUE;
+	}
 }

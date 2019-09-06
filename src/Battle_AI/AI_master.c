@@ -13,6 +13,7 @@
 #include "../../include/new/mega.h"
 #include "../../include/new/multi.h"
 #include "../../include/new/move_tables.h"
+#include "../../include/new/set_z_effect.h"
 #include "../../include/new/switching.h"
 
 // AI states
@@ -69,6 +70,8 @@ static u8 (*const sBattleAIScriptTable[])(const u8, const u8, const u16, const u
 //This file's functions:
 static u8 ChooseMoveOrAction_Singles(void);
 static u8 ChooseMoveOrAction_Doubles(void);
+static void TryTempMegaEvolveBank(u8 bank, struct BattlePokemon* backupMon, u16* backupSpecies, u8* backupAbility);
+static void TryRevertTempMegaEvolveBank(u8 bank, struct BattlePokemon* backupMon, u16* backupSpecies, u8* backupAbility);
 static void BattleAI_DoAIProcessing(void);
 static bool8 ShouldSwitch(void);
 static bool8 ShouldSwitchIfOnlyBadMovesLeft(void);
@@ -82,6 +85,7 @@ static bool8 TheCalcForSemiInvulnerableTroll(u8 bankAtk, u8 flags, bool8 checkLo
 static bool8 CanStopLockedMove(void);
 static bool8 IsYawned(void);
 static bool8 IsTakingAnnoyingSecondaryDamage(void);
+static bool8 ShouldSwitchToAvoidDeath(void);
 static bool8 ShouldSwitchIfWonderGuard(void);
 static void PredictMovesForBanks(void);
 static void UpdateStrongestMoves(void);
@@ -195,18 +199,73 @@ u32 GetAIFlags(void)
 	return flags;
 }
 
+#define NUM_COPY_STATS STAT_SPDEF
 u8 BattleAI_ChooseMoveOrAction(void)
 {
 	u16 savedCurrentMove = gCurrentMove;
 	u8 ret;
 
+	struct BattlePokemon backupMonAtk, backupMonDef;
+	u8 backupAbilityAtk = ABILITY_NONE; u8 backupAbilityDef = ABILITY_NONE;
+	u16 backupSpeciesAtk = SPECIES_NONE; u16 backupSpeciesDef = SPECIES_NONE;
+	
+	TryTempMegaEvolveBank(gBankAttacker, &backupMonAtk, &backupSpeciesAtk, &backupAbilityAtk);
+
 	if (!(IS_DOUBLE_BATTLE))
+	{
+		TryTempMegaEvolveBank(gBankTarget, &backupMonDef, &backupSpeciesDef, &backupAbilityDef);
 		ret = ChooseMoveOrAction_Singles();
+	}
 	else
 		ret = ChooseMoveOrAction_Doubles();
 
+	TryRevertTempMegaEvolveBank(gBankAttacker, &backupMonAtk, &backupSpeciesAtk, &backupAbilityAtk);
+	TryRevertTempMegaEvolveBank(gBankTarget, &backupMonDef, &backupSpeciesDef, &backupAbilityDef);
+
 	gCurrentMove = savedCurrentMove;
 	return ret;
+}
+
+static void TryTempMegaEvolveBank(u8 bank, struct BattlePokemon* backupMon, u16* backupSpecies, u8* backupAbility)
+{
+	if (gNewBS->aiMegaPotential[bank] != NULL) //Mon will probably mega evolve
+	{
+		struct Pokemon* mon = GetBankPartyData(bank);
+		*backupSpecies = mon->species;
+		*backupAbility = *GetAbilityLocation(bank);
+		Memcpy(backupMon, &gBattleMons[bank], sizeof(gBattleMons[bank]));
+
+		mon->species = ((struct Evolution*) gNewBS->aiMegaPotential[bank])->targetSpecies;
+		CalculateMonStats(mon); //Temporarily mega evolve mon
+		Memcpy(&gBattleMons[bank].attack, &mon->attack, sizeof(u16) * NUM_COPY_STATS);
+		*GetAbilityLocation(bank) = GetPartyAbility(mon);
+		if (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS)
+		{
+			UpdateTypesForCamomons(bank);
+		}
+		else
+		{
+			gBattleMons[bank].type1 = gBaseStats[mon->species].type1;
+			gBattleMons[bank].type2 = gBaseStats[mon->species].type2;
+		}
+	}
+	else
+	{
+		*backupSpecies = SPECIES_NONE;
+		*backupAbility = ABILITY_NONE;
+	}
+}
+
+static void TryRevertTempMegaEvolveBank(u8 bank, struct BattlePokemon* backupMon, u16* backupSpecies, u8* backupAbility)
+{
+	if (*backupSpecies != SPECIES_NONE)
+	{
+		struct Pokemon* mon = GetBankPartyData(bank);
+		mon->species = *backupSpecies;
+		CalculateMonStats(mon); //Revert from temp mega
+		*GetAbilityLocation(bank) = *backupAbility;
+		Memcpy(&gBattleMons[bank], backupMon, sizeof(gBattleMons[bank]));
+	}
 }
 
 static u8 ChooseMoveOrAction_Singles(void)
@@ -458,6 +517,11 @@ void AI_TrySwitchOrUseItem(void)
 	struct Pokemon* party;
 	u8 battlerIn1, battlerIn2;
 	u8 firstId, lastId;
+	bool8 ret = FALSE;
+
+	struct BattlePokemon backupMonAtk;
+	u8 backupAbilityAtk = ABILITY_NONE;
+	u16 backupSpeciesAtk = SPECIES_NONE;
 
 	//Calulate everything important now to save as much processing time as possible later
 	if (!gNewBS->calculatedAIPredictions) //Only calculate these things once per turn
@@ -494,6 +558,8 @@ void AI_TrySwitchOrUseItem(void)
 
 	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
 	{
+		TryTempMegaEvolveBank(gActiveBattler, &backupMonAtk, &backupSpeciesAtk, &backupAbilityAtk);
+
 		if (ShouldSwitch()) //0x8039A80
 		{
 			if (gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] == PARTY_SIZE)
@@ -533,10 +599,13 @@ void AI_TrySwitchOrUseItem(void)
 			}
 
 			gBattleStruct->monToSwitchIntoId[gActiveBattler] = gBattleStruct->switchoutIndex[SIDE(gActiveBattler)];				
-			return;
+			ret = TRUE;
 		}
 		else if (ShouldUseItem()) //0x803A1F4
-			return;
+			ret = TRUE;
+		
+		TryRevertTempMegaEvolveBank(gActiveBattler, &backupMonAtk, &backupSpeciesAtk, &backupAbilityAtk);
+		if (ret) return;
 	}
 
 	EmitTwoReturnValues(1, ACTION_USE_MOVE, (gActiveBattler ^ BIT_SIDE) << 8);
@@ -583,7 +652,7 @@ static bool8 ShouldSwitch(void)
 
 		++availableToSwitch;
 	}
-	
+
 	if (availableToSwitch == 0)
 		return FALSE;
 	if (ShouldSwitchIfOnlyBadMovesLeft())
@@ -605,6 +674,8 @@ static bool8 ShouldSwitch(void)
 	if (IsYawned())
 		return TRUE;
 	if (IsTakingAnnoyingSecondaryDamage())
+		return TRUE;
+	if (ShouldSwitchToAvoidDeath())
 		return TRUE;
 	//if (CanKillAFoe(gActiveBattler))
 	//	return FALSE;
@@ -1263,6 +1334,38 @@ static bool8 IsTakingAnnoyingSecondaryDamage(void)
 	return FALSE;
 }
 
+static bool8 ShouldSwitchToAvoidDeath(void)
+{
+	if (IS_SINGLE_BATTLE
+	&& AI_THINKING_STRUCT->aiFlags > AI_SCRIPT_CHECK_BAD_MOVE) //Has smart AI
+	{
+		u16 atkMove = IsValidMovePrediction(gActiveBattler, FOE(gActiveBattler));
+		u16 defMove = IsValidMovePrediction(FOE(gActiveBattler), gActiveBattler);
+	
+		if (defMove != MOVE_NONE //Foe going to attack
+		&& (atkMove == MOVE_NONE || !MoveWouldHitFirst(atkMove, gActiveBattler, FOE(gActiveBattler))) //Attacker wouldn't go first
+		&& (!IS_BEHIND_SUBSTITUTE(gActiveBattler) || !MoveBlockedBySubstitute(defMove, FOE(gActiveBattler), gActiveBattler))
+		&&  MoveKnocksOutXHits(defMove, FOE(gActiveBattler), gActiveBattler, 1) //Foe will kill
+		&& !WillTakeSignificantDamageFromEntryHazards(gActiveBattler, 2)) //50% health loss
+		{
+			u8 firstId, lastId;
+			struct Pokemon* party = LoadPartyRange(gActiveBattler, &firstId, &lastId);
+			u8 bestMon = GetMostSuitableMonToSwitchInto();
+			u32 resultFlags = AI_TypeCalc(defMove, FOE(gActiveBattler), &party[bestMon]);
+
+			if ((resultFlags & MOVE_RESULT_NO_EFFECT && GetMostSuitableMonToSwitchIntoScore() >= SWITCHING_INCREASE_HAS_SUPER_EFFECTIVE_MOVE) //Has some sort of followup
+			||  (resultFlags & MOVE_RESULT_NOT_VERY_EFFECTIVE && GetMostSuitableMonToSwitchIntoScore() >= SWITCHING_INCREASE_WALLS_FOE))
+			{
+				gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = PARTY_SIZE;
+				EmitTwoReturnValues(1, ACTION_SWITCH, 0);
+				return TRUE;
+			}
+		}	
+	}
+
+	return FALSE;
+}
+
 //Most likely this function won't get used anymore. GetMostSuitableMonToSwitchInto
 //now handles all of the switching checks.
 bool8 FindMonWithFlagsAndSuperEffective(u8 flags, u8 moduloPercent)
@@ -1595,12 +1698,15 @@ u8 GetMostSuitableMonToSwitchInto(void)
 {
 	u8 battlerIn1, battlerIn2;
 	u8 foe1, foe2;
+	u8 firstId, lastId;
 	LoadBattlersAndFoes(&battlerIn1, &battlerIn2, &foe1, &foe2);
-	
+	struct Pokemon* party = LoadPartyRange(gActiveBattler, &firstId, & lastId);
+
 	u8 option1 = gNewBS->bestMonIdToSwitchInto[gActiveBattler][0];
 	u8 option2 = gNewBS->bestMonIdToSwitchInto[gActiveBattler][1];
 
-	if (option1 == PARTY_SIZE)
+	if (option1 == PARTY_SIZE
+	||  GetMonData(&party[option1], MON_DATA_HP, NULL) == 0) //Best mon is dead
 	{
 		CalcMostSuitableMonToSwitchInto();
 		gNewBS->calculatedAISwitchings[gActiveBattler] = TRUE;
@@ -1769,9 +1875,9 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 							&&  gSideAffecting[SIDE(gActiveBattler)] & SIDE_STATUS_SPIKES)
 							{
 								if (!IS_DOUBLE_BATTLE) //Single Battle
-									canRemoveHazards[i]= ViableMonCountFromBank(gActiveBattler) >= 2; //There's a point in removing the hazards
+									canRemoveHazards[i] = ViableMonCountFromBank(gActiveBattler) >= 2; //There's a point in removing the hazards
 								else //Double Battle
-									canRemoveHazards[i]= ViableMonCountFromBank(gActiveBattler) >= 3; //There's a point in removing the hazards								
+									canRemoveHazards[i] = ViableMonCountFromBank(gActiveBattler) >= 3; //There's a point in removing the hazards								
 							}
 
 							if (move != MOVE_NONE 
@@ -1786,6 +1892,8 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 					}
 
 					//Check Defensive Capabilities
+					bool8 physMoveInMoveset = FALSE;
+					bool8 specMoveInMoveset = FALSE;
 					u8 foeMoveLimitations = CheckMoveLimitations(foe, 0, 0xFF);
 					for (k = 0; k < MAX_MON_MOVES; ++k)
 					{
@@ -1798,9 +1906,14 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 						&&  MoveInMoveset(gLockedMoves[foe], foe)
 						&&  move != gLockedMoves[foe])
 							continue; //Skip non-locked moves
-							
-						if (SPLIT(move) == SPLIT_STATUS)
-							continue;
+						
+						u8 split = CalcMoveSplit(foe, move);
+						if (split == SPLIT_PHYSICAL)
+							physMoveInMoveset = TRUE;
+						else if (split == SPLIT_SPECIAL)
+							specMoveInMoveset = TRUE;
+						else
+							continue; //Skip status moves
 
 						if (!(gBitTable[k] & foeMoveLimitations))
 						{
@@ -1819,10 +1932,19 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 					else if (!isNormalEffectiveness) //Foe has no Super-Effective or Normal-Effectiveness moves
 						scores[i] += SWITCHING_INCREASE_RESIST_ALL_MOVES;
 					else
-					{
-						//Wall checks
-					
-					
+					{	
+						bool8 cantWall = FALSE;
+						u32 attack, spAttack;
+						APPLY_STAT_MOD(attack, &gBattleMons[foe], gBattleMons[foe].attack, STAT_STAGE_ATK);
+						APPLY_STAT_MOD(spAttack, &gBattleMons[foe], gBattleMons[foe].spAttack, STAT_STAGE_SPATK);
+
+						if (physMoveInMoveset && GetMonData(&party[i], MON_DATA_DEF, NULL) <= attack)
+							cantWall = TRUE;
+						else if (specMoveInMoveset && GetMonData(&party[i], MON_DATA_SPDEF, NULL) <= spAttack)
+							cantWall = TRUE;
+
+						if (!cantWall)
+							scores[i] += SWITCHING_INCREASE_WALLS_FOE;
 					}
 				}
 			}
@@ -2017,6 +2139,14 @@ static void PredictMovesForBanks(void)
 	int i, j;
 	u8 viabilities[MAX_MON_MOVES] = {0};
 	u8 bestMoves[MAX_MON_MOVES] = {0};
+	
+	for (u8 bankAtk = 0; bankAtk < gBattlersCount; ++bankAtk)
+	{
+		for (u8 bankDef = 0; bankDef < gBattlersCount; ++bankDef)
+		{
+			StoreMovePrediction(bankAtk, bankDef, MOVE_NONE); //Clear old move predictions
+		}
+	}
 
 	for (u8 bankAtk = 0; bankAtk < gBattlersCount; ++bankAtk)
 	{
@@ -2086,16 +2216,42 @@ static void UpdateStrongestMoves(void)
 
 	for (bankAtk = 0; bankAtk < gBattlersCount; ++bankAtk)
 	{
+		struct BattlePokemon backupMonAtk;
+		u8 backupAbilityAtk = ABILITY_NONE; 
+		u16 backupSpeciesAtk = SPECIES_NONE; 
+
+		if (!IS_TRANSFORMED(bankAtk)
+		&& !BankMegaEvolved(bankAtk, FALSE)
+		&&  MegaEvolutionEnabled(bankAtk)
+		&& !DoesZMoveUsageStopMegaEvolution(bankAtk))
+		{
+			gNewBS->aiMegaPotential[bankAtk] = CanMegaEvolve(bankAtk, FALSE);
+			
+			if (gNewBS->aiMegaPotential[bankAtk] == NULL)
+				gNewBS->aiMegaPotential[bankAtk] = CanMegaEvolve(bankAtk, TRUE); //Check Ultra Burst
+		}
+		
+		TryTempMegaEvolveBank(bankAtk, &backupMonAtk, &backupSpeciesAtk, &backupAbilityAtk);
+
 		for (bankDef = 0; bankDef < gBattlersCount; ++bankDef)
 		{
 			if (bankAtk == bankDef || bankDef == PARTNER(bankAtk))
 				continue; //Don't bother calculating for these Pokemon. Never used
 
+			struct BattlePokemon backupMonDef;
+			u8 backupAbilityDef = ABILITY_NONE;
+			u16 backupSpeciesDef = SPECIES_NONE;
+			TryTempMegaEvolveBank(bankDef, &backupMonDef, &backupSpeciesDef, &backupAbilityDef);
+
 			gNewBS->strongestMove[bankAtk][bankDef] = CalcStrongestMove(bankAtk, bankDef, FALSE);
 			gNewBS->canKnockOut[bankAtk][bankDef] = MoveKnocksOutXHits(gNewBS->strongestMove[bankAtk][bankDef], bankAtk, bankDef, 1);
 			gNewBS->can2HKO[bankAtk][bankDef] = (gNewBS->canKnockOut[bankAtk][bankDef]) ? TRUE
 												: MoveKnocksOutXHits(gNewBS->strongestMove[bankAtk][bankDef], bankAtk, bankDef, 2); //If you can KO in 1 hit you can KO in 2
+
+			TryRevertTempMegaEvolveBank(bankDef, &backupMonDef, &backupSpeciesDef, &backupAbilityDef);
 		}
+		
+		TryRevertTempMegaEvolveBank(bankAtk, &backupMonAtk, &backupSpeciesAtk, &backupAbilityAtk);
 	}
 }
 

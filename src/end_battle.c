@@ -426,7 +426,11 @@ void EndOfBattleThings(void)
 		TerrainType = 0; //Reset now b/c normal reset is after BG is loaded
 		
 		#ifdef UNBOUND
-		if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_SANDS && GetCurrentWeather() != WEATHER_NONE)
+		u8 weather = GetCurrentWeather();
+		if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_SANDS
+		&& weather != WEATHER_NONE
+		&& weather != WEATHER_CLOUDS
+		&& weather != WEATHER_SUNNY)
 			SetSav1Weather(WEATHER_RAIN_LIGHT); //Reset weather in Battle Sands
 		#endif
 	}
@@ -600,8 +604,8 @@ bool8 IsConsumable(u16 item)
 {
 	u8 effect = gItems[SanitizeItemId(item)].holdEffect;
 
-	for (u32 i = 0; ConsumableItemEffectTable[i] != 0xFF; ++i) {
-		if (effect == ConsumableItemEffectTable[i])
+	for (u32 i = 0; gConsumableItemEffects[i] != 0xFF; ++i) {
+		if (effect == gConsumableItemEffects[i])
 			return TRUE;
 	}
 

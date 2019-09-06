@@ -108,6 +108,28 @@ bool8 TryRemovePrimalWeather(u8 bank, u8 ability)
 	return FALSE;
 }
 
+bool8 TryActivateFlowerGift(u8 leavingBank)
+{
+	u32 i = 0;
+
+	if (ABILITY(leavingBank) == ABILITY_AIRLOCK
+	||  ABILITY(leavingBank) == ABILITY_CLOUDNINE)
+		gBattleMons[leavingBank].ability = ABILITY_NONE; //Remove ability because we can't have these anymore
+
+	for (u8 bank = gBanksByTurnOrder[i]; i < gBattlersCount; ++i, bank = gBanksByTurnOrder[i])
+	{
+		if ((ABILITY(bank) == ABILITY_FLOWERGIFT ||  ABILITY(bank) == ABILITY_FORECAST)) //Just in case someone with Air Lock/Cloud Nine switches out
+		{
+			gStatuses3[bank] &= ~STATUS3_SWITCH_IN_ABILITY_DONE;
+		
+			if (AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, bank, 0, 0, 0))
+				return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
 void atk61_drawpartystatussummary(void)
 {
 	int i;
@@ -120,6 +142,11 @@ void atk61_drawpartystatussummary(void)
 
 	if (TryRemovePrimalWeather(gActiveBattler, ABILITY(gActiveBattler)))
 		return;
+
+	if (TryActivateFlowerGift(gActiveBattler))
+		return;
+	
+	gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
 	
 	if (SIDE(gActiveBattler) == 0)
 		party = gPlayerParty;
@@ -321,8 +348,11 @@ void atk51_switchhandleorder(void)
 void atk52_switchineffects(void)
 {
 	int i;
+	u8 arg = T2_READ_8(gBattlescriptCurrInstr + 1);
+	if (arg == BS_GET_SCRIPTING_BANK)
+		gBattleScripting->bank = gNewBS->SentInBackup; //Restore scripting backup b/c can get changed
 
-	gActiveBattler = GetBattleBank(T2_READ_8(gBattlescriptCurrInstr + 1));
+	gActiveBattler = GetBattleBank(arg);
 	sub_80174B8(gActiveBattler);
 	gHitMarker &= ~(HITMARKER_FAINTED(gActiveBattler));
 	gSpecialStatuses[gActiveBattler].flag40 = 0;
@@ -531,7 +561,7 @@ void atk52_switchineffects(void)
 				&& AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, i, 0, 0, 0))
 					return;
 			}
-		
+
 			if (AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, gActiveBattler, 0, 0, 0))
 				return;
 
@@ -729,7 +759,7 @@ void atk8F_forcerandomswitch(void)
 			}
 			gBattleStruct->monToSwitchIntoId[gBankTarget] = i;
 
-			if (!IsLinkDoubleBattle())
+			if (!IsLinkDoubleBattle() && !IsTagBattle())
 				sub_8013F6C(gBankTarget);
 
 			if ((gBattleTypeFlags & BATTLE_TYPE_LINK && gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
@@ -739,7 +769,7 @@ void atk8F_forcerandomswitch(void)
 				sub_8127EC4(gBankTarget ^ BIT_FLANK, i, 1);
 			}
 
-			if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
+			if (IsTagBattle())
 				sub_80571DC(gBankTarget, i);
 		}
 	}
@@ -784,12 +814,12 @@ static void sub_80571DC(u8 battlerId, u8 arg1)
 		// gBattleStruct->field_60[0][i]
 
 		for (i = 0; i < 3; i++)
-			gUnknown_0203B0DC[i] = *(0 * 3 + i + (u8*)(gBattleStruct->field_60));
+			gUnknown_0203B0DC[i] = gBattleStruct->field_60[0][i];
 
 		sub_8127FF4(pokemon_order_func(gBattlerPartyIndexes[battlerId]), pokemon_order_func(arg1)); //In Emerald: sub_81B8FB0
 
 		for (i = 0; i < 3; i++)
-			*(0 * 3 + i + (u8*)(gBattleStruct->field_60)) = gUnknown_0203B0DC[i];
+			gBattleStruct->field_60[0][i] = gUnknown_0203B0DC[i];
 	}
 }
 

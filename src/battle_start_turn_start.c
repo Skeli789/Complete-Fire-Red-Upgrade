@@ -317,7 +317,7 @@ static void TryPrepareTotemBoostInBattleSands(void)
 		u8 enemyId = 1;
 		u8 playerStat = RandRange(1, BATTLE_STATS_NO - 1);
 		u8 enemyStat = RandRange(1, BATTLE_STATS_NO - 1);
-		u8 increaseMax;
+		u8 increaseMax, increase;
 		
 		if (IS_DOUBLE_BATTLE)
 		{
@@ -339,9 +339,15 @@ static void TryPrepareTotemBoostInBattleSands(void)
 			increaseMax = 5;
 		else
 			increaseMax = 6;
+			
+		//Makes it so Contrary has no effect on the stat boost
+		u8 contraryShiftPlayer = (ABILITY(playerId) == ABILITY_CONTRARY) ? 0x80 : 0;
+		u8 contraryShiftEnemy = (ABILITY(enemyId) == ABILITY_CONTRARY) ? 0x80 : 0;
 
-		VarSet(TOTEM_VAR + playerId, playerStat | (increaseMax * 0x10));
-		VarSet(TOTEM_VAR + enemyId, enemyStat | (increaseMax * 0x10));
+		increase = (Random() % increaseMax) + 1;
+		VarSet(TOTEM_VAR + playerId, playerStat | (increase * 0x10 + contraryShiftPlayer));
+		increase = (Random() % increaseMax) + 1;
+		VarSet(TOTEM_VAR + enemyId, enemyStat | (increase * 0x10 + contraryShiftEnemy));
 	}
 }
 
@@ -588,7 +594,7 @@ void RunTurnActionsFunctions(void)
 			if ((chosenMove == MOVE_FOCUSPUNCH || chosenMove == MOVE_BEAKBLAST || chosenMove == MOVE_SHELLTRAP)
 			&& !(gBattleMons[gActiveBattler].status1 & STATUS1_SLEEP)
 			&& !(gDisableStructs[gActiveBattler].truantCounter)
-			&& !(gProtectStructs[gActiveBattler].onlyStruggle)) //or onlyStruggle in Emerald
+			&& !(gProtectStructs[gActiveBattler].onlyStruggle))
 			{
 				gBankAttacker = gBattleScripting->bank = gActiveBattler;
 				if (chosenMove == MOVE_BEAKBLAST && !(gNewBS->BeakBlastByte & gBitTable[gActiveBattler]))
@@ -760,8 +766,22 @@ void HandleAction_UseMove(void)
 			u16 zmove = GetSpecialZMove(gCurrentMove, SPECIES(gBankAttacker), ITEM(gBankAttacker));
 			if (zmove != MOVE_NONE && zmove != 0xFFFF) //There's a special Z-Move
 				gCurrentMove = zmove;
-			else //No need to check if special z-crystal. Check is carried out before
+			else if (zmove != 0xFFFF) //This check is needed b/c in Benjamin Butterfree you can select a special Z-Move but then lose it before it activates
 				gCurrentMove = GetTypeBasedZMove(gBattleMons[gBankAttacker].moves[gCurrMovePos], gBankAttacker);
+			else
+			{
+				gNewBS->ZMoveData->active = FALSE;
+				gNewBS->ZMoveData->toBeUsed[gBankAttacker] = FALSE;
+			}
+		}
+		else
+		{
+			//This check is needed b/c in Benjamin Butterfree you can select a special Z-Move but then lose it before it activates
+			if (GetSpecialZMove(gCurrentMove, SPECIES(gBankAttacker), ITEM(gBankAttacker)) == 0xFFFF)
+			{
+				gNewBS->ZMoveData->active = FALSE;
+				gNewBS->ZMoveData->toBeUsed[gBankAttacker] = FALSE;
+			}
 		}
 	}
 	
@@ -773,7 +793,7 @@ void HandleAction_UseMove(void)
 	bank_t selectedTarget = gBattleStruct->moveTarget[gBankAttacker];
 	
 	if (gSideTimers[side].followmeTimer != 0
-	&& gBattleMoves[gCurrentMove].target & (MOVE_TARGET_SELECTED | MOVE_TARGET_RANDOM)
+	&& (gBattleMoves[gCurrentMove].target == MOVE_TARGET_SELECTED || gBattleMoves[gCurrentMove].target == MOVE_TARGET_RANDOM)
 	&& SIDE(gBankAttacker) != SIDE(gSideTimers[side].followmeTarget)
 	&& gBattleMons[gSideTimers[side].followmeTarget].hp != 0
 	&& gCurrentMove != MOVE_SKYDROP)

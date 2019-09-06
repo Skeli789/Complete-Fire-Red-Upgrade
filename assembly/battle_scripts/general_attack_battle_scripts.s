@@ -3757,7 +3757,7 @@ SimpleBeamBS:
 	goto BS_MOVE_END
 
 CoreEnforcerBS:
-	setmoveeffect MOVE_EFFECT_SUPPRESS_ABILITY
+	setmoveeffect MOVE_EFFECT_SUPPRESS_ABILITY | MOVE_EFFECT_CERTAIN
 	goto BS_STANDARD_HIT
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -4407,11 +4407,11 @@ BS_218_MeFirst:
 .global BS_219_DestroyBerry
 BS_219_DestroyBerry:
 	jumpifmove MOVE_INCINERATE IncinerateBS
-	setmoveeffect MOVE_EFFECT_EAT_BERRY
+	setmoveeffect MOVE_EFFECT_EAT_BERRY | MOVE_EFFECT_CERTAIN
 	goto BS_STANDARD_HIT
 	
 IncinerateBS:
-	setmoveeffect MOVE_EFFECT_BURN_BERRY
+	setmoveeffect MOVE_EFFECT_BURN_BERRY | MOVE_EFFECT_CERTAIN
 	goto BS_STANDARD_HIT
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -4449,7 +4449,7 @@ BS_221_SmackDown:
 
 .global BS_222_DamageResetTargetStatChanges
 BS_222_DamageResetTargetStatChanges:
-	setmoveeffect MOVE_EFFECT_RESET_STAT_CHANGES
+	setmoveeffect MOVE_EFFECT_RESET_STAT_CHANGES | MOVE_EFFECT_CERTAIN
 	goto BS_STANDARD_HIT
 	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -4581,7 +4581,7 @@ GravityBringDownBS:
 	goto BS_MOVE_END
 	
 PlasmaFistsBS:
-	setmoveeffect MOVE_EFFECT_ION_DELUGE
+	setmoveeffect MOVE_EFFECT_ION_DELUGE | MOVE_EFFECT_CERTAIN
 	goto BS_STANDARD_HIT
 	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

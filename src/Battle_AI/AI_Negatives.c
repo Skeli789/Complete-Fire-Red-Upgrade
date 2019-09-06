@@ -24,6 +24,28 @@
 #define PARTNER_MOVE_EFFECT_IS_SAME_NO_TARGET (IS_DOUBLE_BATTLE \
 									&& gBattleMoves[move].effect == gBattleMoves[partnerMove].effect \
 									&& gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE)
+#define PARTNER_MOVE_EFFECT_IS_STATUS_SAME_TARGET (IS_DOUBLE_BATTLE \
+									&& gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE \
+									&& gBattleStruct->moveTarget[bankAtkPartner] == bankDef \
+									&& (gBattleMoves[partnerMove].effect == EFFECT_SLEEP \
+									 || gBattleMoves[partnerMove].effect == EFFECT_POISON \
+									 || gBattleMoves[partnerMove].effect == EFFECT_TOXIC \
+									 || gBattleMoves[partnerMove].effect == EFFECT_PARALYZE \
+									 || gBattleMoves[partnerMove].effect == EFFECT_WILL_O_WISP \
+									 || gBattleMoves[partnerMove].effect == EFFECT_YAWN))
+
+#define PARTNER_MOVE_EFFECT_IS_WEATHER (IS_DOUBLE_BATTLE \
+									&& gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE \
+									&& (gBattleMoves[partnerMove].effect == EFFECT_SUNNY_DAY \
+									 || gBattleMoves[partnerMove].effect == EFFECT_RAIN_DANCE \
+									 || gBattleMoves[partnerMove].effect == EFFECT_SANDSTORM \
+									 || gBattleMoves[partnerMove].effect == EFFECT_HAIL))
+#define PARTNER_MOVE_EFFECT_IS_TERRAIN (IS_DOUBLE_BATTLE \
+									&& gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE \
+									&& gBattleMoves[partnerMove].effect == EFFECT_SET_TERRAIN)
+#define PARTNER_MOVE_IS_TAILWIND_TRICKROOM (IS_DOUBLE_BATTLE \
+									&& gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE \
+									&& (partnerMove == MOVE_TAILWIND || partnerMove == MOVE_TRICKROOM))
 
 #define PARTNER_MOVE_IS_SAME (IS_DOUBLE_BATTLE \
 							  && move == partnerMove \
@@ -554,7 +576,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		AI_CHECK_SLEEP: ;
 			if (!CanBePutToSleep(bankDef, TRUE)
 			|| (MoveBlockedBySubstitute(move, bankAtk, bankDef))
-			|| PARTNER_MOVE_EFFECT_IS_SAME)
+			|| PARTNER_MOVE_EFFECT_IS_STATUS_SAME_TARGET)
 				DECREASE_VIABILITY(10);
 			break;
 
@@ -1029,7 +1051,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		AI_POISON_CHECK: ;
 			if (!CanBePoisoned(bankDef, bankAtk, TRUE)
 			|| MoveBlockedBySubstitute(move, bankAtk, bankDef)
-			|| PARTNER_MOVE_EFFECT_IS_SAME)
+			|| PARTNER_MOVE_EFFECT_IS_STATUS_SAME_TARGET)
 				DECREASE_VIABILITY(10);
 			break;
 		
@@ -1147,7 +1169,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		AI_PARALYZE_CHECK: ;
 			if (!CanBeParalyzed(bankDef, TRUE)
 			|| MoveBlockedBySubstitute(move, bankAtk, bankDef)
-			|| PARTNER_MOVE_EFFECT_IS_SAME)
+			|| PARTNER_MOVE_EFFECT_IS_STATUS_SAME_TARGET)
 				DECREASE_VIABILITY(10);
 			else if (move != MOVE_GLARE
 				&& AI_SpecialTypeCalc(move, bankAtk, bankDef) & MOVE_RESULT_NO_EFFECT)
@@ -1531,14 +1553,14 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			
 		case EFFECT_SANDSTORM:
 			if (gBattleWeather & (WEATHER_SANDSTORM_ANY | WEATHER_PRIMAL_ANY)
-			|| PARTNER_MOVE_EFFECT_IS_SAME)
+			|| PARTNER_MOVE_EFFECT_IS_WEATHER)
 				DECREASE_VIABILITY(10);
 			break;
 			
 		case EFFECT_SWAGGER:
 			if (bankDef == bankAtkPartner)
 			{
-				if (STAT_STAGE(bankDef, STAT_STAGE_ATK) > 10 || defAbility == ABILITY_CONTRARY)
+				if (defAbility == ABILITY_CONTRARY)
 					DECREASE_VIABILITY(10);
 			}
 			else
@@ -1566,11 +1588,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		case EFFECT_BATON_PASS:
 			if (move == MOVE_UTURN || move == MOVE_VOLTSWITCH)
 			{
-				PIVOT_CHECK:
-				if (!ShouldPivot(bankAtk, bankDef, move, 0xFF))
-					DECREASE_VIABILITY(10); //Bad idea to use this move
-				else
-					goto AI_STANDARD_DAMAGE;
+				goto AI_STANDARD_DAMAGE;
 			}
 			else if (ViableMonCountFromBankLoadPartyRange(bankAtk) <= 1)
 			{
@@ -1632,13 +1650,13 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		
 		case EFFECT_RAIN_DANCE:
 			if (gBattleWeather & (WEATHER_RAIN_ANY | WEATHER_PRIMAL_ANY)
-			|| PARTNER_MOVE_EFFECT_IS_SAME_NO_TARGET)
+			|| PARTNER_MOVE_EFFECT_IS_WEATHER)
 				DECREASE_VIABILITY(10);
 			break;
 		
 		case EFFECT_SUNNY_DAY:
 			if (gBattleWeather & (WEATHER_SUN_ANY | WEATHER_PRIMAL_ANY)
-			|| PARTNER_MOVE_EFFECT_IS_SAME_NO_TARGET)
+			|| PARTNER_MOVE_EFFECT_IS_WEATHER)
 				DECREASE_VIABILITY(10);
 			break;
 		
@@ -1729,7 +1747,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		
 		case EFFECT_HAIL:
 			if (gBattleWeather & (WEATHER_HAIL_ANY | WEATHER_PRIMAL_ANY)
-			|| PARTNER_MOVE_EFFECT_IS_SAME_NO_TARGET)
+			|| PARTNER_MOVE_EFFECT_IS_WEATHER)
 				DECREASE_VIABILITY(10);
 			break;
 
@@ -1747,7 +1765,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		case EFFECT_FLATTER:
 			if (bankDef == bankAtkPartner)
 			{
-				if (STAT_STAGE(bankDef, STAT_STAGE_SPATK) > 10 || defAbility == ABILITY_CONTRARY)
+				if (defAbility == ABILITY_CONTRARY)
 					DECREASE_VIABILITY(10);
 			}
 			else
@@ -1758,7 +1776,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		AI_BURN_CHECK: ;
 			if (!CanBeBurned(bankDef, TRUE)
 			|| MoveBlockedBySubstitute(move, bankAtk, bankDef)
-			|| PARTNER_MOVE_EFFECT_IS_SAME)
+			|| PARTNER_MOVE_EFFECT_IS_STATUS_SAME_TARGET)
 				DECREASE_VIABILITY(10);
 			break;
 		
@@ -1909,8 +1927,6 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		case EFFECT_SUPERPOWER:
 			if (move == MOVE_HYPERSPACEFURY && atkSpecies != SPECIES_HOOPA_UNBOUND)
 				DECREASE_VIABILITY(10);
-			else if (move != MOVE_HYPERSPACEHOLE && atkEffect == ITEM_EFFECT_EJECT_PACK)
-				goto PIVOT_CHECK;
 			break;
 
 			break;
@@ -2234,7 +2250,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			break;
 
 		case EFFECT_SET_TERRAIN:
-			if (PARTNER_MOVE_EFFECT_IS_SAME_NO_TARGET)
+			if (PARTNER_MOVE_EFFECT_IS_TERRAIN)
 			{
 				DECREASE_VIABILITY(10);
 				break;
@@ -2278,7 +2294,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		case EFFECT_FIELD_EFFECTS:
 			switch (move) {
 				case MOVE_TRICKROOM:
-					if (PARTNER_MOVE_IS_SAME_NO_TARGET)
+					if (PARTNER_MOVE_IS_TAILWIND_TRICKROOM)
 						DECREASE_VIABILITY(10);
 						
 					if (IsTrickRoomActive()) //Trick Room Up
@@ -2566,19 +2582,24 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			break;
 
 		case EFFECT_SUCKER_PUNCH: ;
-			if (predictedMove == MOVE_NONE
-			||  SPLIT(predictedMove) == SPLIT_STATUS
-			|| !MoveWouldHitFirst(move, bankAtk, bankDef))
-				DECREASE_VIABILITY(10);
-			else
-				goto AI_STANDARD_DAMAGE;
-			break;
+			if (predictedMove != MOVE_NONE)
+			{
+				if (SPLIT(predictedMove) == SPLIT_STATUS
+				|| !MoveWouldHitFirst(move, bankAtk, bankDef))
+				{
+					DECREASE_VIABILITY(10);
+					break;
+				}
+			}
+
+			//If the foe has move prediction, assume damage move for now.
+			goto AI_STANDARD_DAMAGE;
 
 		case EFFECT_TEAM_EFFECTS:
 			switch (move) {
 				case MOVE_TAILWIND:
 					if (gNewBS->TailwindTimers[SIDE(bankAtk)] != 0
-					||  PARTNER_MOVE_IS_SAME_NO_TARGET
+					||  PARTNER_MOVE_IS_TAILWIND_TRICKROOM
 					||  (IsTrickRoomActive() && gNewBS->TrickRoomTimer != 1)) //Trick Room active and not ending this turn
 						DECREASE_VIABILITY(10);
 					break;

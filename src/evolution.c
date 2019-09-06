@@ -300,3 +300,50 @@ void ItemEvolutionRemoval(pokemon_t* mon)
 		++mon; //So compiler doesn't complain
 	#endif
 }
+
+u16 GetMonDevolution(struct Pokemon* mon)
+{
+    int j, k;
+    bool8 found;
+	bool8 checkingBackupSpecies = FALSE;
+	u16 originalSpecies = GetMonData(mon, MON_DATA_SPECIES, NULL);
+
+	SEARCH_START: ;
+	u16 species = originalSpecies;
+	found = FALSE;
+	for (j = 1; j < NUM_SPECIES; ++j)
+	{
+		for (k = 0; k < EVOS_PER_MON; ++k)
+		{
+			if (gEvolutionTable[j][k].method == EVO_MEGA)
+			{
+				if (gEvolutionTable[j][k].targetSpecies == species && gEvolutionTable[j][k].param != ITEM_NONE)
+				{
+					originalSpecies = j;
+					goto SEARCH_START; //Find base form for Mega and then actually look
+				}
+			}
+			else if (gEvolutionTable[j][k].targetSpecies == species)
+			{
+				species = j;
+				found = TRUE;
+				break;
+			}
+		}
+
+		if (found)
+			break;
+	}
+	
+	if (species != originalSpecies)
+		return species;
+		
+	if (mon->backupSpecies != SPECIES_NONE && !checkingBackupSpecies) //Only check once
+	{
+		checkingBackupSpecies = TRUE;
+		originalSpecies = mon->backupSpecies;
+		goto SEARCH_START;
+	}
+
+    return SPECIES_NONE;
+}

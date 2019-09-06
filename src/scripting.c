@@ -2413,7 +2413,14 @@ void ShowItemSpriteOnFind(void)
 {
 #ifdef ITEM_PICTURE_ACQUIRE
 	s16 x, y;
-	u8 iconSpriteId = AddItemIconSprite(ITEM_TAG, ITEM_TAG, Var8004);
+	u8 iconSpriteId;
+
+	#ifdef UNBOUND
+		if (Var8004 == ITEM_TM59_DRAGON_PULSE)
+			iconSpriteId = AddItemIconSprite(ITEM_TAG, ITEM_TAG, ITEM_TM02_DRAGON_CLAW); //Replace the close bag arrow with a Dragon TM sprite
+		else
+	#endif
+			iconSpriteId = AddItemIconSprite(ITEM_TAG, ITEM_TAG, Var8004);
 
     if (iconSpriteId != MAX_SPRITES)
     {

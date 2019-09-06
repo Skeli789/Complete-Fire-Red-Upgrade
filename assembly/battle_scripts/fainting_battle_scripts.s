@@ -8,6 +8,7 @@
 .global BattleScript_FaintTarget
 .global BattleScript_FaintScriptingBank
 .global BattleScript_SuccessBallThrow
+.global BattleScript_BenjaminButterfreeDevolution
 
 BattleScript_FaintAttacker:
 	pokemonfaintcry BANK_ATTACKER
@@ -52,6 +53,22 @@ BattleScript_PrintCaughtMonInfo:
 	getexp BANK_TARGET
 	@;sethword gBattle_BG2_X, 0x0
 	goto 0x81D9A53
+	
+BattleScript_BenjaminButterfreeDevolution:
+	callasm RestoreEffectBankHPStatsAndRemoveBackupSpecies
+	reloadhealthbar BANK_EFFECT
+	playanimation BANK_EFFECT ANIM_TRANSFORM 0x0
+	pokemonfaintcry BANK_EFFECT
+	setword BATTLE_STRING_LOADER gText_Devolved
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	cureprimarystatus BANK_EFFECT 0x0
+	reloadhealthbar BANK_EFFECT
+	setword BATTLE_STRING_LOADER gText_DevolutionsStatsReset
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	tryactivateswitchinability BANK_EFFECT
+	return
 
 .align 2
 ScriptingBankFainted: .byte 0xFD, 0x13, 0xFE, 0xDA, 0xD5, 0xDD, 0xE2, 0xE8, 0xD9, 0xD8, 0xAB, 0xFA, 0xFF

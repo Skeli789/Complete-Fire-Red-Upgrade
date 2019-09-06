@@ -20,6 +20,8 @@ extern const u8 gTrainerBackPic_PokeKidPal[];
 #define gTrainerPalette_PokeKid gTrainerBackPic_PokeKidPal
 extern const u8 gTrainerBackPic_RivalPal[];
 #define gTrainerPalette_Rival gTrainerBackPic_RivalPal
+extern const u8 gTrainerBackPic_JaxPal[];
+#define gTrainerPalette_Jax gTrainerBackPic_JaxPal
 
 const struct CompressedSpritePalette gTrainerBackPicPaletteTable[] = 
 {
@@ -34,6 +36,7 @@ const struct CompressedSpritePalette gTrainerBackPicPaletteTable[] =
     [TRAINER_BACK_PIC_MARLON] =		{gTrainerPalette_Marlon, 		TRAINER_BACK_PIC_MARLON},
     [TRAINER_BACK_PIC_POKE_KID] =	{gTrainerPalette_PokeKid, 		TRAINER_BACK_PIC_POKE_KID},
     [TRAINER_BACK_PIC_RIVAL] =		{gTrainerPalette_Rival, 		TRAINER_BACK_PIC_RIVAL},
+	[TRAINER_BACK_PIC_JAX] =		{gTrainerPalette_Jax, 			TRAINER_BACK_PIC_JAX},
 #endif
 };
 
@@ -46,6 +49,7 @@ const struct CompressedSpritePalette gTrainerBackPicPaletteTable[] =
 #define gTrainerBackAnims_Marlon (const union AnimCmd* const*) 0x8239F54
 #define gTrainerBackAnims_PokeKid (const union AnimCmd* const*)0x8239F54
 #define gTrainerBackAnims_Rival (const union AnimCmd* const*) 0x8239F54
+#define gTrainerBackAnims_Jax (const union AnimCmd* const*) 0x8239F44
 
 const union AnimCmd* const* const gTrainerBackAnimsPtrTable[] =
 {
@@ -60,6 +64,7 @@ const union AnimCmd* const* const gTrainerBackAnimsPtrTable[] =
 	[TRAINER_BACK_PIC_MARLON] = gTrainerBackAnims_Marlon,
 	[TRAINER_BACK_PIC_POKE_KID] = gTrainerBackAnims_PokeKid,
 	[TRAINER_BACK_PIC_RIVAL] = gTrainerBackAnims_Rival,	
+	[TRAINER_BACK_PIC_JAX] = gTrainerBackAnims_Jax,
 #endif
 };
 
@@ -76,6 +81,7 @@ const struct MonCoords gTrainerBackPicCoords[] =
     [TRAINER_BACK_PIC_MARLON] = 	{.coords = 8, .y_offset = 4},
     [TRAINER_BACK_PIC_POKE_KID] = 	{.coords = 8, .y_offset = 4},
     [TRAINER_BACK_PIC_RIVAL] = 		{.coords = 8, .y_offset = 4},
+	[TRAINER_BACK_PIC_JAX] = 		{.coords = 8, .y_offset = 4},
 #endif
 };
 
@@ -95,6 +101,7 @@ extern const u8 gTrainerBackPic_MayTiles[];
 extern const u8 gTrainerBackPic_MarlonTiles[];
 extern const u8 gTrainerBackPic_PokeKidTiles[];
 extern const u8 gTrainerBackPic_RivalTiles[];
+extern const u8 gTrainerBackPic_JaxTiles[];
 
 static const struct SpriteFrameImage sTrainerBackPicTable_Brendan[] =
 {
@@ -136,6 +143,15 @@ static const struct SpriteFrameImage sTrainerBackPicTable_Rival[] =
     {gTrainerBackPic_RivalTiles + 0x0800, 	0x800, 0},
     {gTrainerBackPic_RivalTiles + 0x1000, 	0x800, 0},
     {gTrainerBackPic_RivalTiles + 0x1800, 	0x800, 0},
+};
+
+static const struct SpriteFrameImage sTrainerBackPicTable_Jax[] =
+{
+    {gTrainerBackPic_JaxTiles, 				0x800, 0},
+    {gTrainerBackPic_JaxTiles + 0x0800, 	0x800, 0},
+    {gTrainerBackPic_JaxTiles + 0x1000, 	0x800, 0},
+    {gTrainerBackPic_JaxTiles + 0x1800, 	0x800, 0},
+	{gTrainerBackPic_JaxTiles + 0x2000, 	0x800, 0},
 };
 
 #endif
@@ -231,6 +247,16 @@ const struct SpriteTemplate gSpriteTemplateTable_TrainerBackSprites[] =
         .oam = gOamData_TrainerBacksprite,
         .anims = NULL,
         .images = sTrainerBackPicTable_Rival,
+        .affineAnims = gAffineAnims_TrainerBacksprite,
+        .callback = gSpriteCB_TrainerBacksprite,
+    },
+	[TRAINER_BACK_PIC_JAX] =
+    {
+        .tileTag = 0xFFFF,
+        .paletteTag = 0,
+        .oam = gOamData_TrainerBacksprite,
+        .anims = NULL,
+        .images = sTrainerBackPicTable_Jax,
         .affineAnims = gAffineAnims_TrainerBacksprite,
         .callback = gSpriteCB_TrainerBacksprite,
     },

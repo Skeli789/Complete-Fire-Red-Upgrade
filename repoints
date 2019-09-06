@@ -1,3 +1,5 @@
+#include "src/config.h"
+
 ##Tables
 AttackDescriptionTable 080E5440
 AttackDescriptionTable 08137BC8

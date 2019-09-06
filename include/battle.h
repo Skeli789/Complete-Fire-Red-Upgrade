@@ -773,6 +773,7 @@ struct NewBattleStruct
 	u8 NoMoreMovingThisTurn;
 	u8 handleSetSwitchIns;
 	u8 brokeFreeMessage;
+	u8 doSwitchInEffects;
 	
 	//Bit Fields for Party
 	u8 BelchCounters;
@@ -827,7 +828,6 @@ struct NewBattleStruct
 	bool8 trainerSlideLowHpMsgDone : 1;
 	bool8 TeleportBit : 1;
 	bool8 restartEndTurnSwitching : 1;
-	bool8 doPlayerSwitchInEffects : 1;
 	bool8 skipCertainSwitchInAbilities : 1;
 	bool8 roundUsed : 1; //0x2017653
 	bool8 activatedCustapQuickClaw : 1;
@@ -857,6 +857,7 @@ struct NewBattleStruct
 	u8 bestMonIdToSwitchInto[MAX_BATTLERS_COUNT][2]; //bestMonIdToSwitchInto[bankAtk][first or second choice] //0x2017762
 	s8 bestMonIdToSwitchIntoScores[MAX_BATTLERS_COUNT][2];//bestMonIdToSwitchIntoScores[bankAtk][first or second choice]
 	u8 calculatedAISwitchings[MAX_BATTLERS_COUNT];
+	const void* aiMegaPotential[MAX_BATTLERS_COUNT]; //aiMegaPotential[bankAtk] - stores evolution data of attacker
 
 	struct MegaData* MegaData;
 	struct UltraData* UltraData;
@@ -1087,9 +1088,9 @@ struct FlingStruct
 #define B_ANIM_STATUS_NIGHTMARE         0x8
 #define B_ANIM_STATUS_WRAPPED           0x9
 
-#define GET_STAT_BUFF_ID(n)((n & 0xF))              // first four bits 0x1, 0x2, 0x4, 0x8
-#define GET_STAT_BUFF_VALUE2(n)((n & 0xF0))
-#define GET_STAT_BUFF_VALUE(n)(((n >> 4) & 7))      // 0x10, 0x20, 0x40
+#define GET_STAT_BUFF_ID(n)((n & 7))              // first three bits 0x1, 0x2, 0x4
+#define GET_STAT_BUFF_VALUE_WITH_SIGN(n)((n & 0xF8))
+#define GET_STAT_BUFF_VALUE(n)(((n >> 4) & 7))      // 0x8, 0x10, 0x20, 0x40
 #define STAT_BUFF_NEGATIVE 0x80                     // 0x80, the sign bit
 
 #define SET_STAT_BUFF_VALUE(n)(((s8)(((s8)(n) << 4)) & 0xF0))

@@ -49,6 +49,7 @@ extern u8 BattleScript_NoHealTargetAfterHealBlock[];
 extern u8 BattleScript_FaintAttacker[];
 extern u8 BattleScript_FaintTarget[];
 extern u8 BattleScript_FaintScriptingBank[];
+extern u8 BattleScript_BenjaminButterfreeDevolution[];
 extern u8 BattleScript_ButItFailedAttackstring[];
 extern u8 BattleScript_EnduredMsg[];
 extern u8 BattleScript_SideStatusWoreOffRet[];

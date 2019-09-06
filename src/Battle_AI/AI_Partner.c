@@ -13,6 +13,10 @@
 #include "../../include/new/item.h"
 #include "../../include/new/move_tables.h"
 
+#define PARTNER_MOVE_EFFECT_IS_SKILL_SWAP (gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE \
+										&& gBattleStruct->moveTarget[bankAtkPartner] == bankAtk \
+										&& gBattleMoves[partnerMove].effect == EFFECT_SKILL_SWAP)
+
 extern move_effect_t StatLowerTable[];
 extern const struct NaturalGiftStruct gNaturalGiftTable[];
 extern const struct FlingStruct gFlingTable[];
@@ -47,124 +51,181 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 		atkPartnerAbility = ABILITY_NONE;
 
 	u8 moveSplit = CalcMoveSplit(bankAtk, move);
+	bool8 partnerProtects = DoesProtectionMoveBlockMove(bankAtk, bankAtkPartner, move, partnerMove);
+	bool8 onlyHitsBothFoes = gBattleMoves[move].target == MOVE_TARGET_BOTH;
 
-	switch (atkPartnerAbility) //Type-specific ability checks - primordial weather handled separately
+	if (!partnerProtects && !onlyHitsBothFoes)
 	{
-		//Electric
-		case ABILITY_VOLTABSORB:
-			if (moveType == TYPE_ELECTRIC)
-				IncreaseHealPartnerViability(&viability, class, bankAtkPartner);
-			break;
-		case ABILITY_MOTORDRIVE:
-			if (moveType == TYPE_ELECTRIC
-			&&  SpecialMoveInMoveset(bankAtkPartner)
-			&&  STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPEED))
-			{
-				IncreaseHelpingHandViability(&viability, class);
-			}
-			break;
-		case ABILITY_LIGHTNINGROD:
-			if (moveType == TYPE_ELECTRIC
-			&&  SpecialMoveInMoveset(bankAtkPartner)
-			&&  STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPATK))
-			{
-				IncreaseHelpingHandViability(&viability, class);
-			}
-			break;
+		switch (atkPartnerAbility) //Type-specific ability checks - primordial weather handled separately
+		{
+			//Electric
+			case ABILITY_VOLTABSORB:
+				if (moveType == TYPE_ELECTRIC)
+					IncreaseHealPartnerViability(&viability, class, bankAtkPartner);
+				break;
+			case ABILITY_MOTORDRIVE:
+				if (moveType == TYPE_ELECTRIC
+				&&  SpecialMoveInMoveset(bankAtkPartner)
+				&&  STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPEED))
+				{
+					IncreaseHelpingHandViability(&viability, class);
+				}
+				break;
+			case ABILITY_LIGHTNINGROD:
+				if (moveType == TYPE_ELECTRIC
+				&&  SpecialMoveInMoveset(bankAtkPartner)
+				&&  STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPATK))
+				{
+					IncreaseHelpingHandViability(&viability, class);
+				}
+				break;
 
-		// Water
-		case ABILITY_WATERABSORB:
-		case ABILITY_DRYSKIN:
-			if (moveType == TYPE_WATER)
-				IncreaseHealPartnerViability(&viability, class, bankAtkPartner);
-			break;
-		case ABILITY_STORMDRAIN:
-			if (moveType == TYPE_WATER
-			&&  SpecialMoveInMoveset(bankAtkPartner)
-			&&  STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPATK))
-			{
-				IncreaseHelpingHandViability(&viability, class);
-			}
-			break;
+			// Water
+			case ABILITY_WATERABSORB:
+			case ABILITY_DRYSKIN:
+				if (moveType == TYPE_WATER)
+					IncreaseHealPartnerViability(&viability, class, bankAtkPartner);
+				break;
+			case ABILITY_STORMDRAIN:
+				if (moveType == TYPE_WATER
+				&&  SpecialMoveInMoveset(bankAtkPartner)
+				&&  STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPATK))
+				{
+					IncreaseHelpingHandViability(&viability, class);
+				}
+				break;
+			
+			//case ABILITY_WATERCOMPACTION:
+			//	if (moveType == TYPE_WATER)
+			//		return viability - 10;
+			//	break;
+
+			// Fire	
+			case ABILITY_FLASHFIRE:
+				if (moveType == TYPE_FIRE
+				&&  MoveTypeInMoveset(bankAtkPartner, TYPE_FIRE)
+				&&  !(gBattleResources->flags->flags[bankAtkPartner] & RESOURCE_FLAG_FLASH_FIRE))
+				{
+					IncreaseHelpingHandViability(&viability, class);
+				}
+				break;
+
+			// Grass
+			case ABILITY_SAPSIPPER:
+				if (moveType == TYPE_GRASS
+				&&  PhysicalMoveInMoveset(bankAtkPartner)
+				&&  STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_ATK))
+				{
+					IncreaseHelpingHandViability(&viability, class);
+				}
+				break;
+
+			// Dark
+			case ABILITY_JUSTIFIED:
+				if (moveType == TYPE_DARK
+				&&  moveSplit != SPLIT_STATUS
+				&&  PhysicalMoveInMoveset(bankAtkPartner)
+				&&  STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_ATK)
+				&&  !MoveKnocksOutXHits(move, bankAtk, bankAtkPartner, 1))
+				{
+					IncreaseHelpingHandViability(&viability, class);
+				}
+				break;
+
+			//Multiple move types
+			case ABILITY_RATTLED:
+				if (moveSplit != SPLIT_STATUS
+				&& (moveType == TYPE_DARK || moveType == TYPE_GHOST || moveType == TYPE_BUG)
+				&&  STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPEED)
+				&&  !MoveKnocksOutXHits(move, bankAtk, bankAtkPartner, 1))
+				{
+					IncreaseHelpingHandViability(&viability, class);
+				}
+				break;
+			
+			//Move category checks
+			case ABILITY_CONTRARY:
+				if (CheckTableForMoveEffect(move, StatLowerTable))
+				{
+					IncreaseHelpingHandViability(&viability, class);
+				}
+				break;
 		
-		//case ABILITY_WATERCOMPACTION:
-		//	if (moveType == TYPE_WATER)
-		//		return viability - 10;
-		//	break;
+			case ABILITY_DEFIANT:
+				if (CheckTableForMoveEffect(move, StatLowerTable)
+				&&  STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_ATK))
+				{
+					IncreaseHelpingHandViability(&viability, class);
+				}
+				break;
+			case ABILITY_COMPETITIVE:
+				if (CheckTableForMoveEffect(move, StatLowerTable)
+				&&  STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPATK))
+				{
+					IncreaseHelpingHandViability(&viability, class);
+				}
+				break;
+				
+			//Mummy
+			case ABILITY_MUMMY: ;
+				u8 atkSpd = SpeedCalc(bankAtk);
+				if (SpeedCalc(foe1) < atkSpd) //Attacker is faster than foe 1
+				{
+					if (CanKnockOut(foe1, bankAtk)) //Foe 1 will KO before benefit can be used
+						break;
+				}
+				else //Attacker is slower than foe 1
+				{
+					if (Can2HKO(foe1, bankAtk)) //Foe 1 will KO before benefit can be used
+						break;
+				}
+				
+				if (SpeedCalc(foe2) < atkSpd) //Attacker is faster than foe 2
+				{
+					if (CanKnockOut(foe2, bankAtk)) //Foe 2 will KO before benefit can be used
+						break;
+				}
+				else //Attacker is slower than foe 2
+				{
+					if (Can2HKO(foe2, bankAtk)) //Foe 2 will KO before benefit can be used
+						break;
+				}
 
-		// Fire	
-		case ABILITY_FLASHFIRE:
-			if (moveType == TYPE_FIRE
-			&&  MoveTypeInMoveset(bankAtkPartner, TYPE_FIRE)
-			&&  !(gBattleResources->flags->flags[bankAtkPartner] & RESOURCE_FLAG_FLASH_FIRE))
-			{
-				IncreaseHelpingHandViability(&viability, class);
-			}
-			break;
-
-		// Grass
-		case ABILITY_SAPSIPPER:
-			if (moveType == TYPE_GRASS
-			&&  PhysicalMoveInMoveset(bankAtkPartner)
-			&&  STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_ATK))
-			{
-				IncreaseHelpingHandViability(&viability, class);
-			}
-			break;
-
-		// Dark
-		case ABILITY_JUSTIFIED:
-			if (moveType == TYPE_DARK
-			&&  moveSplit != SPLIT_STATUS
-			&&  PhysicalMoveInMoveset(bankAtkPartner)
-			&&  STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_ATK)
-			&&  !MoveKnocksOutXHits(move, bankAtk, bankAtkPartner, 1))
-			{
-				IncreaseHelpingHandViability(&viability, class);
-			}
-			break;
-
-		//Multiple move types
-		case ABILITY_RATTLED:
-			if (moveSplit != SPLIT_STATUS
-			&& (moveType == TYPE_DARK || moveType == TYPE_GHOST || moveType == TYPE_BUG)
-			&&  STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPEED)
-			&&  !MoveKnocksOutXHits(move, bankAtk, bankAtkPartner, 1))
-			{
-				IncreaseHelpingHandViability(&viability, class);
-			}
-			break;
-		
-		//Move category checks
-		case ABILITY_CONTRARY:
-			if (CheckTableForMoveEffect(move, StatLowerTable))
-			{
-				IncreaseHelpingHandViability(&viability, class);
-			}
-			break;
-	
-		case ABILITY_DEFIANT:
-			if (CheckTableForMoveEffect(move, StatLowerTable)
-			&&  STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_ATK))
-			{
-				IncreaseHelpingHandViability(&viability, class);
-			}
-			break;
-		case ABILITY_COMPETITIVE:
-			if (CheckTableForMoveEffect(move, StatLowerTable)
-			&&  STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPATK))
-			{
-				IncreaseHelpingHandViability(&viability, class);
-			}
-			break;
+				if (atkAbility == ABILITY_TRUANT //Try to get rid of these abilities
+				||  atkAbility == ABILITY_SLOWSTART
+				||  atkAbility == ABILITY_DEFEATIST)
+				{
+					if (CheckContact(move, bankAtk) //Mummy will transfer
+					&& !PARTNER_MOVE_EFFECT_IS_SKILL_SWAP
+					&& !(TypeCalc(move, bankAtk, bankAtkPartner, NULL, FALSE) & MOVE_RESULT_NO_EFFECT) //Move has effect
+					&& IsWeakestContactMoveWithBestAccuracy(move, bankAtk, bankAtkPartner)) //Hit partner with weakest move
+						IncreaseDoublesDamageViabilityToScore(&viability, class, BEST_DOUBLES_KO_SCORE, bankAtk, bankAtkPartner); //Best move to use
+				}
+		}
 	}
 	
 	switch (moveEffect) {
 		case EFFECT_EVASION_UP:
-			if (move == MOVE_ACUPRESSURE)
+			if (move == MOVE_ACUPRESSURE && !partnerProtects)
+				IncreaseHelpingHandViability(&viability, class);
+			break;
+			
+		case EFFECT_SWAGGER:
+			if (STAT_STAGE(bankAtkPartner, STAT_STAGE_ATK) < STAT_STAGE_MAX
+			&& (!CanBeConfused(bankAtkPartner)
+			 || atkPartnerItemEffect == ITEM_EFFECT_CURE_CONFUSION
+			 || atkPartnerItemEffect == ITEM_EFFECT_CURE_STATUS))
 				IncreaseHelpingHandViability(&viability, class);
 			break;
 		
+		case EFFECT_FLATTER:
+			if (STAT_STAGE(bankAtkPartner, STAT_STAGE_SPATK) < STAT_STAGE_MAX
+			&& (!CanBeConfused(bankAtkPartner)
+			 || atkPartnerItemEffect == ITEM_EFFECT_CURE_CONFUSION
+			 || atkPartnerItemEffect == ITEM_EFFECT_CURE_STATUS))
+				IncreaseHelpingHandViability(&viability, class);
+			break;
+
 		case EFFECT_SANDSTORM:
 			if (atkPartnerAbility == ABILITY_SANDVEIL
 			|| atkPartnerAbility == ABILITY_SANDRUSH
@@ -242,18 +303,78 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 					INCREASE_STATUS_VIABILITY(2);
 			}
 			break;
+			
+		case EFFECT_BEAT_UP:
+			if (atkPartnerAbility == ABILITY_JUSTIFIED
+			&&  moveType == TYPE_DARK
+			&&  moveSplit != SPLIT_STATUS
+			&&  PhysicalMoveInMoveset(bankAtkPartner)
+			&&  STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_ATK)
+			&&  !MoveKnocksOutXHits(move, bankAtk, bankAtkPartner, 1))
+				INCREASE_VIABILITY(1); //1 past the previous boost
+			break;
 	
 		case EFFECT_HELPING_HAND:
 			if (partnerMove != MOVE_NONE
+			&& !partnerProtects
 			&&  SPLIT(partnerMove) != SPLIT_STATUS)
 			{
 				IncreaseHelpingHandViability(&viability, class);
-				break;
+			}
+			break;
+			
+		case EFFECT_SKILL_SWAP:
+		case EFFECT_ROLE_PLAY:
+			atkAbility = *GetAbilityLocation(bankAtk); //Get actual abilities
+
+			bool8 attackerHasBadAbility = atkAbility == ABILITY_TRUANT
+									   || atkAbility == ABILITY_SLOWSTART
+									   || atkAbility == ABILITY_DEFEATIST;
+
+			bool8 partnerHasBadAbility = atkPartnerAbility == ABILITY_TRUANT
+									  || atkPartnerAbility == ABILITY_SLOWSTART
+									  || atkPartnerAbility == ABILITY_DEFEATIST;
+
+			switch (move) {
+				case MOVE_WORRYSEED:
+				case MOVE_GASTROACID:
+				case MOVE_SIMPLEBEAM:
+					if (!partnerProtects && partnerHasBadAbility)
+						IncreaseHelpingHandViability(&viability, class);
+					break;
+	
+				case MOVE_ENTRAINMENT:
+					if (!partnerProtects && partnerHasBadAbility && gAbilityRatings[atkAbility] >= 0)
+						IncreaseHelpingHandViability(&viability, class);
+					break;
+
+				case MOVE_SKILLSWAP:
+					if (!partnerProtects && !attackerHasBadAbility && partnerHasBadAbility)
+						IncreaseHelpingHandViability(&viability, class); //Give ability and then switch
+					break;
+
+				case MOVE_ROLEPLAY:
+					if (!partnerProtects && attackerHasBadAbility && !partnerHasBadAbility)
+						IncreaseDoublesDamageViabilityToScore(&viability, class, BEST_DOUBLES_KO_SCORE, bankAtk, bankAtkPartner); //Best move to use
+					break;
+			}
+			break;
+
+		case EFFECT_TYPE_CHANGES:
+			if (move == MOVE_SOAK
+			&& !partnerProtects
+			&&  atkPartnerAbility == ABILITY_WONDERGUARD
+			&& (gBattleMons[bankAtkPartner].type1 != TYPE_WATER
+			 || gBattleMons[bankAtkPartner].type2 != TYPE_WATER
+			 || gBattleMons[bankAtkPartner].type3 != TYPE_WATER))
+			{
+				IncreaseHelpingHandViability(&viability, class); //Make Pokemon with Wonder Guard the water type for less weaknesses
 			}
 			break;
 
 		case EFFECT_HEAL_TARGET:
-			IncreaseHealPartnerViability(&viability, class, bankAtkPartner);
+			if (!partnerProtects)
+				IncreaseHealPartnerViability(&viability, class, bankAtkPartner);
 			break;
 
 		case EFFECT_FIELD_EFFECTS:
@@ -266,8 +387,11 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 					|| atkPartnerAbility == ABILITY_MOTORDRIVE
 					|| atkPartnerAbility == ABILITY_LIGHTNINGROD)
 					{
-						if ((foe1Move != MOVE_NONE && GetMoveTypeSpecial(foe1, foe1Move) == TYPE_NORMAL)
-						||  (foe2Move != MOVE_NONE && GetMoveTypeSpecial(foe2, foe2Move) == TYPE_NORMAL))
+						if (foe1Move != MOVE_NONE && GetMoveTypeSpecial(foe1, foe1Move) == TYPE_NORMAL
+						&& !DoesProtectionMoveBlockMove(foe1, bankAtkPartner, foe1Move, partnerMove))
+							INCREASE_STATUS_VIABILITY(2);
+						else if (foe2Move != MOVE_NONE && GetMoveTypeSpecial(foe2, foe2Move) == TYPE_NORMAL
+						&& !DoesProtectionMoveBlockMove(foe2, bankAtkPartner, foe2Move, partnerMove))
 							INCREASE_STATUS_VIABILITY(2);
 					}
 					break;
@@ -286,33 +410,36 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 			break;
 			
 		case EFFECT_INSTRUCT_AFTER_YOU_QUASH:
-			switch (move) {
-				case MOVE_AFTERYOU:
-					if (!MoveWouldHitFirst(partnerMove, bankAtkPartner, foe1)
-					||  !MoveWouldHitFirst(partnerMove, bankAtkPartner, foe2))
-					{
-						if (gBattleMoves[partnerMove].effect == EFFECT_COUNTER
-						||  gBattleMoves[partnerMove].effect == EFFECT_MIRROR_COAT)
-							break; //These moves need to go last
-					
-						IncreaseHelpingHandViability(&viability, class);
-					}
-					break;
+			if (!partnerProtects)
+			{
+				switch (move) {
+					case MOVE_AFTERYOU:
+						if (!MoveWouldHitFirst(partnerMove, bankAtkPartner, foe1)
+						||  !MoveWouldHitFirst(partnerMove, bankAtkPartner, foe2))
+						{
+							if (gBattleMoves[partnerMove].effect == EFFECT_COUNTER
+							||  gBattleMoves[partnerMove].effect == EFFECT_MIRROR_COAT)
+								break; //These moves need to go last
+						
+							IncreaseHelpingHandViability(&viability, class);
+						}
+						break;
 
-				case MOVE_INSTRUCT: ;
-					u16 instructedMove;
-					if (!MoveWouldHitFirst(move, bankAtk, bankAtkPartner))
-						instructedMove = partnerMove;
-					else
-						instructedMove = gLastPrintedMoves[bankAtkPartner];
+					case MOVE_INSTRUCT: ;
+						u16 instructedMove;
+						if (!MoveWouldHitFirst(move, bankAtk, bankAtkPartner))
+							instructedMove = partnerMove;
+						else
+							instructedMove = gLastPrintedMoves[bankAtkPartner];
 
-					if (instructedMove != MOVE_NONE
-					&& SPLIT(instructedMove) != SPLIT_STATUS
-					&&  gBattleMoves[instructedMove].target & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL)) //Use instruct on multi-target moves
-					{
-						IncreaseHelpingHandViability(&viability, class);
-					}
-					break;
+						if (instructedMove != MOVE_NONE
+						&& SPLIT(instructedMove) != SPLIT_STATUS
+						&&  gBattleMoves[instructedMove].target & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL)) //Use instruct on multi-target moves
+						{
+							IncreaseHelpingHandViability(&viability, class);
+						}
+						break;
+				}
 			}
 	}
 

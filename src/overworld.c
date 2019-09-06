@@ -542,9 +542,9 @@ void BattleSetup_StartTrainerBattle(void)
 			case IN_BATTLE_SANDS:
 				gBattleTypeFlags |= (BATTLE_TYPE_BATTLE_SANDS | BATTLE_TYPE_MOCK_BATTLE);
 				break;
-			case IN_BATTLE_MINE:
-				gBattleTypeFlags |= BATTLE_TYPE_BATTLE_MINE;
-				break;
+			//case IN_BATTLE_MINE:
+			//	gBattleTypeFlags |= BATTLE_TYPE_BATTLE_MINE;
+			//	break;
 			case IN_BATTLE_CIRCUS:
 				gBattleTypeFlags |= BATTLE_TYPE_BATTLE_CIRCUS;
 				break;
@@ -556,8 +556,8 @@ void BattleSetup_StartTrainerBattle(void)
 		u16 tier = VarGet(BATTLE_TOWER_TIER);
 		if (tier == BATTLE_TOWER_CAMOMONS)
 			gBattleTypeFlags |= BATTLE_TYPE_CAMOMONS;
-		else if (tier == BATTLE_TOWER_SCALEMONS)
-			gBattleTypeFlags |= BATTLE_TYPE_SCALEMONS;
+		else if (tier == BATTLE_TOWER_BENJAMIN_BUTTERFREE)
+			gBattleTypeFlags |= BATTLE_TYPE_BENJAMIN_BUTTERFREE;
 
 		switch (VarGet(BATTLE_TOWER_BATTLE_TYPE)) {
 			case BATTLE_TOWER_DOUBLE:

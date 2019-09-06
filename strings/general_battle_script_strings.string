@@ -161,3 +161,8 @@ The [LAST_ITEM] restored\n[SCRIPTING_BANK]'s status!
 #org @gText_BellyDrumMinimizedAttack
 [ATTACKER] cut its own HP\nand minimized Attack!
 
+#org @gText_Devolved
+[EFFECT_BANK] has devolved\ninto [BUFFER][00]!
+
+#org @gText_DevolutionsStatsReset
+[EFFECT_BANK]'s stats\nand status were reset!

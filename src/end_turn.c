@@ -50,6 +50,7 @@ enum EndTurnEffects
 	ET_Heal_Block_Timer,
 	ET_Embargo_Timer,
 	ET_Yawn,
+	ET_Item_Effects9,
 	ET_Perish_Song,
 	ET_Roost,
 	ET_Reflect,
@@ -484,6 +485,7 @@ u8 TurnBasedEffects(void)
 			case ET_Item_Effects6:
 			case ET_Item_Effects7:
 			case ET_Item_Effects8:
+			case ET_Item_Effects9:
 				if (BATTLER_ALIVE(gActiveBattler))
 				{
 					if (ItemBattleEffects(ItemEffects_EndTurn, gActiveBattler, FALSE, FALSE))
@@ -1278,6 +1280,7 @@ u8 TurnBasedEffects(void)
 					gNewBS->leftoverHealingDone[i] = FALSE;
 					gNewBS->calculatedAISwitchings[i] = FALSE;
 					gNewBS->recalculatedBestDoublesKillingScores[i] = FALSE;
+					gNewBS->aiMegaPotential[i] = NULL;
 				}
 		}
 		gBattleStruct->turnEffectsBank++;
@@ -1485,12 +1488,12 @@ bool8 HandleFaintedMonActions(void)
 								else
 								{
 									BattleScriptExecute(BattleScript_HandleFaintedMon);
-									gNewBS->handleSetSwitchIns |= gBitTable[gBattleStruct->faintedActionsBank];
-									
+									gNewBS->doSwitchInEffects |= gBitTable[gBattleStruct->faintedActionsBank];
+
 									for (i = 0; i < gBattlersCount; ++i)
 									{
 										if (gNewBS->AbsentBattlerHelper & gBitTable[i]
-										&&  !(gNewBS->handleSetSwitchIns & gBitTable[i])
+										&&  !(gNewBS->doSwitchInEffects & gBitTable[i])
 										&&  HITMARKER_FAINTED(i))
 										{
 											if (++gBattleStruct->faintedActionsBank >= gBattlersCount)
@@ -1515,7 +1518,7 @@ bool8 HandleFaintedMonActions(void)
 					gBattleStruct->faintedActionsBank = 0;
 					gBattleStruct->faintedActionsState = 6;
 				}
-				else if (gNewBS->doPlayerSwitchInEffects)
+				else if (gNewBS->doSwitchInEffects)
 					gBattleStruct->faintedActionsState = 7;
 				else
 					gBattleStruct->faintedActionsState = FAINTED_ACTIONS_MAX_CASE - 1;
@@ -1529,7 +1532,7 @@ bool8 HandleFaintedMonActions(void)
 						gBattleStruct->faintedActionsBank = 0;
 						gBattleStruct->faintedActionsState = 6;
 					}
-					else if (gNewBS->doPlayerSwitchInEffects)
+					else if (gNewBS->doSwitchInEffects)
 						gBattleStruct->faintedActionsState = 7;
 					else
 						gBattleStruct->faintedActionsState = FAINTED_ACTIONS_MAX_CASE - 1;
@@ -1553,20 +1556,18 @@ bool8 HandleFaintedMonActions(void)
 				__attribute__ ((fallthrough));
 
 			case 7:
-				if (gNewBS->doPlayerSwitchInEffects)
-				{
-					gNewBS->doPlayerSwitchInEffects = FALSE;
-					gNewBS->handleSetSwitchIns |= gBitTable[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)];
-				}
-
 				//Recalc turn order for switch-in abilities
 				for (i = 0; i < gBattlersCount; ++i)
 				{
+					if (gNewBS->doSwitchInEffects & gBitTable[i])
+						gNewBS->handleSetSwitchIns |= gBitTable[i];
+	
 					if (!BATTLER_ALIVE(i))
 						gAbsentBattlerFlags |= gBitTable[i];
 
 					gBanksByTurnOrder[i] = i;
 				}
+				gNewBS->doSwitchInEffects = FALSE;
 				
 				for (i = 0; i < gBattlersCount - 1; ++i) 
 				{
@@ -1585,12 +1586,12 @@ bool8 HandleFaintedMonActions(void)
 				do
 					{
 						gBankFainted = gBankTarget = gBattleStruct->faintedActionsBank;
-						if (gNewBS->handleSetSwitchIns & gBitTable[gBattleStruct->faintedActionsBank])
+						if (gNewBS->handleSetSwitchIns & gBitTable[gBankFainted])
 						{
-							if (ABILITY(gBattleStruct->faintedActionsBank) == ABILITY_TRUANT)
-								gDisableStructs[gBattleStruct->faintedActionsBank].truantCounter = 1; //So it gets unset during the switch in effects
+							if (ABILITY(gBankFainted) == ABILITY_TRUANT)
+								gDisableStructs[gBankFainted].truantCounter = 1; //So it gets unset during the switch in effects
 				
-							gNewBS->handleSetSwitchIns &= ~(gBitTable[gBattleStruct->faintedActionsBank]);
+							gNewBS->handleSetSwitchIns &= ~(gBitTable[gBankFainted]);
 							BattleScriptExecute(BattleScript_HandleFaintedMonDoublesSwitchInEffects);
 							return TRUE;
 						}

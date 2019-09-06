@@ -7,11 +7,10 @@
 #include "../include/new/ability_battle_scripts.h"
 #include "../include/new/bs_helper_functions.h"
 #include "../include/new/Helper_Functions.h"
+#include "../include/new/item.h"
 #include "../include/new/move_battle_scripts.h"
 #include "../include/new/set_effect.h"
 #include "../include/new/stat_buffs.h"
-
-//TODO: Test synchronize effect
 
 #define INCREMENT_RESET_RETURN                  \
 {                                               \
@@ -101,8 +100,9 @@ void atk15_seteffectwithchance(void)
     u32 PercentChance;
 	
 	if (CheckSoundMove(gCurrentMove) || ABILITY(gBankAttacker) == ABILITY_INFILTRATOR)
+	{
 		gHitMarker |= HITMARKER_IGNORE_SUBSTITUTE;
-
+	}
     if (ABILITY(gBankAttacker) == ABILITY_SERENEGRACE || gNewBS->RainbowTimers[SIDE(gBankAttacker)])
 	{
         PercentChance = gBattleMoves[gCurrentMove].secondaryEffectChance * 2;
@@ -111,26 +111,25 @@ void atk15_seteffectwithchance(void)
 	{
         PercentChance = gBattleMoves[gCurrentMove].secondaryEffectChance;
 	}
-	
-	if (!SheerForceCheck()) {
-		if ((gBattleCommunication[MOVE_EFFECT_BYTE] & 0x80) && !(gMoveResultFlags & MOVE_RESULT_NO_EFFECT))
+
+	if (!SheerForceCheck())
+	{
+		if ((gBattleCommunication[MOVE_EFFECT_BYTE] & MOVE_EFFECT_CERTAIN) && MOVE_HAD_EFFECT)
 		{
 			gBattleCommunication[MOVE_EFFECT_BYTE] &= 0x7F;
-			SetMoveEffect(0, 0x80);
+			SetMoveEffect(0, MOVE_EFFECT_CERTAIN);
 		}
-		
-		else if (umodsi(Random(), 100) <= PercentChance && gBattleCommunication[MOVE_EFFECT_BYTE] != 0 && !(gMoveResultFlags & MOVE_RESULT_NO_EFFECT))
+		else if (Random() % 100 <= PercentChance && gBattleCommunication[MOVE_EFFECT_BYTE] != 0 && MOVE_HAD_EFFECT)
 		{
 			if (PercentChance >= 100)
 			{
-				SetMoveEffect(FALSE, 0x80);
+				SetMoveEffect(FALSE, MOVE_EFFECT_CERTAIN);
 			}
 			else
 			{
 				SetMoveEffect(FALSE, 0);
 			}
 		}
-		
 		else
 			gBattlescriptCurrInstr++;
 	}
@@ -140,7 +139,6 @@ void atk15_seteffectwithchance(void)
     gBattleCommunication[MOVE_EFFECT_BYTE] = 0;
     gBattleScripting->multihitMoveEffect = 0;
 }
-
 
 void SetMoveEffect(bool8 primary, u8 certain)
 {
@@ -612,7 +610,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
                 break;
 			
 			case MOVE_EFFECT_BURN_BERRY:
-				if ((ITEM_POCKET(gEffectBank) == POCKET_BERRY_POUCH || ITEM_EFFECT(gEffectBank) == ITEM_EFFECT_GEM)
+				if ((IsBerry(ITEM(gEffectBank)) || ITEM_EFFECT(gEffectBank) == ITEM_EFFECT_GEM)
 				&&  ABILITY(gEffectBank) != ABILITY_STICKYHOLD)
 				{
 					gNewBS->IncinerateCounters[gEffectBank] = TRUE;
@@ -905,12 +903,10 @@ bool8 SetMoveEffect2(void)
 			SMACK_TGT_DOWN:
 				gStatuses3[gEffectBank] |= STATUS3_SMACKED_DOWN;
 				gNewBS->targetsToBringDown |= gBitTable[gEffectBank];
-				gBattlescriptCurrInstr += 1;
 				BringDownMons();
 				gBattlescriptCurrInstr = BattleScript_PrintCustomString;
 				effect = TRUE;
 			}
-					
 			break;
 		
 		case MOVE_EFFECT_ION_DELUGE:

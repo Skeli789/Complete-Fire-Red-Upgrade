@@ -22,7 +22,14 @@ void UpdateTypesForCamomons(u8 bank);
 u8 GetCamomonsTypeByMon(struct Pokemon* mon, u8 whichType);
 //u8 GetCamomonsTypeBySpread(struct BattleTowerSpread* spread, u8 whichType); - Defined further down
 bool8 DuplicateItemsAreBannedInTier(u8 tier, u8 battleType);
+bool8 ShouldDisablePartyMenuItemsBattleTower(void);
+const u8* GetFrontierTierName(u8 tier, u8 format);
 bool8 InBattleSands(void);
+bool8 IsAverageMonsBattle(void);
+bool8 Is350CupBattle(void);
+bool8 IsScaleMonsBattle(void);
+bool8 IsBenjaminButterfreeBattle(void);
+bool8 IsBenjaminButterfreeBattle(void);
 u16 GetCurrentBattleTowerStreak(void);
 u16 GetMaxBattleTowerStreakForTier(u8 tier);
 u16 GetBattleTowerStreak(u8 currentOrMax, u16 inputBattleStyle, u16 inputTier, u16 partySize, u8 level);
@@ -91,6 +98,9 @@ enum BattleTowerFormats
 	BATTLE_TOWER_MONOTYPE,
 	BATTLE_TOWER_CAMOMONS,
 	BATTLE_TOWER_SCALEMONS,
+	BATTLE_TOWER_350_CUP,
+	BATTLE_TOWER_AVERAGE_MONS,
+	BATTLE_TOWER_BENJAMIN_BUTTERFREE,
 };
 
 #define NUM_FORMATS (BATTLE_TOWER_MONOTYPE + 1)
@@ -198,7 +208,7 @@ struct BattleTowerTrainer
 
 extern const struct BattleTowerTrainer gTowerTrainers[];
 
-struct SpecialBattleTowerTrainer
+struct SpecialBattleFrontierTrainer //Also for Frontier Brains
 {
     u16 owNum;
 	u8 trainerClass;
@@ -220,7 +230,8 @@ struct SpecialBattleTowerTrainer
 	u16 songId;
 };
 
-extern const struct SpecialBattleTowerTrainer gSpecialTowerTrainers[];
+extern const struct SpecialBattleFrontierTrainer gSpecialTowerTrainers[];
+extern const struct SpecialBattleFrontierTrainer gFrontierBrains[];
 
 struct MultiBattleTowerTrainer
 {
@@ -240,19 +251,6 @@ struct MultiBattleTowerTrainer
 
 extern const struct MultiBattleTowerTrainer gFrontierMultiBattleTrainers[];
 extern const u8 gNumFrontierMultiTrainers;
-
-struct FrontierBrain
-{
-	u8 trainerClass;
-	u8 trainerSprite;
-	u8 gender;
-	const u8* name;
-	const struct BattleTowerSpread* spreads;
-	u16 spreadSize;
-	u16 songId;
-};
-
-extern const struct FrontierBrain gFrontierBrains[];
 
 struct BattleSandsStreak
 {
@@ -278,6 +276,7 @@ extern const u8 gNumBattleTowerTiers;
 extern const u8 gNumBattleMineTiers;
 extern const u8 gNumBattleCircusTiers;
 #define gNumBattleSandsTiers gNumBattleTowerTiers
+extern const u8* const gBattleFrontierTierNames[NUM_FORMATS];
 
 extern const species_t gBattleTowerStandardSpeciesBanList[];
 extern const species_t gGSCup_LegendarySpeciesList[];
@@ -286,18 +285,30 @@ extern const species_t gSmogonOUDoubles_SpeciesBanList[];
 extern const species_t gSmogonLittleCup_SpeciesList[];
 extern const species_t gMiddleCup_SpeciesList[];
 extern const species_t gSmogonMonotype_SpeciesBanList[];
+extern const species_t gSmogonCamomons_SpeciesBanList[];
+extern const species_t gSmogonAverageMons_SpeciesBanList[];
+extern const species_t gSmogon350Cup_SpeciesBanList[];
+extern const species_t gSmogonScalemons_SpeciesBanList[];
+extern const species_t gSmogonBenjaminButterfree_SpeciesBanList[];
 extern const ability_t gSmogonOU_AbilityBanList[];
 extern const ability_t gSmogonOUDoubles_AbilityBanList[];
 extern const ability_t gSmogonMonotype_AbilityBanList[];
 extern const ability_t gMiddleCup_AbilityBanList[];
+extern const ability_t gSmogonAverageMons_AbilityBanList[];
+extern const ability_t gSmogon350Cup_AbilityBanList[];
+extern const ability_t gSmogonScalemons_AbilityBanList[];
 extern const item_t gBattleTowerStandard_ItemBanList[];
 extern const item_t gSmogonOU_ItemBanList[];
 extern const item_t gSmogonOUDoubles_ItemBanList[];
 extern const item_t gSmogonLittleCup_ItemBanList[];
 extern const item_t gSmogonMonotype_ItemBanList[];
 extern const item_t gMiddleCup_ItemBanList[];
+extern const item_t gSmogonAverageMons_ItemBanList[];
+extern const item_t gSmogon350Cup_ItemBanList[];
+extern const item_t gSmogonScalemons_ItemBanList[];
 extern const move_t gSmogon_MoveBanList[];
 extern const move_t gSmogonOUDoubles_MoveBanList[];
 extern const move_t gSmogonLittleCup_MoveBanList[];
+extern const move_t gSmogonAverageMons_MoveBanList[];
 
 u8 GetCamomonsTypeBySpread(const struct BattleTowerSpread* spread, u8 whichType);

@@ -700,7 +700,7 @@ static void MoveSelectionDisplayDetails(void)
 //Display Move Accuracy
 	txtPtr = StringCopy(gDisplayedStringBattle, gText_Acc);
 	#ifdef DISPLAY_REAL_ACCURACY_ON_MENU
-		if (moveInfo->moveAcc[gMoveSelectionCursor[gActiveBattler]] == 0)
+		if (moveInfo->moveAcc[gMoveSelectionCursor[gActiveBattler]] == 0xFFFF)
 			StringCopy(txtPtr, gText_NoMiss);
 		else
 			ConvertIntToDecimalStringN(txtPtr, moveInfo->moveAcc[gMoveSelectionCursor[gActiveBattler]], STR_CONV_MODE_LEFT_ALIGN, 3);

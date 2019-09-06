@@ -753,12 +753,14 @@ static u8 AtkCanceller_UnableToUseMove(void)
 			break;
 		
 		case CANCELLER_PRIMAL_WEATHER:
-			if (WEATHER_HAS_EFFECT) {
+			if (WEATHER_HAS_EFFECT && SPLIT(gCurrentMove) != SPLIT_STATUS) //Damaging moves only
+			{
 				if ((gBattleStruct->dynamicMoveType == TYPE_FIRE && gBattleWeather & WEATHER_RAIN_PRIMAL)
 				||  (gBattleStruct->dynamicMoveType == TYPE_WATER && gBattleWeather & WEATHER_SUN_PRIMAL))
 				{
 					CancelMultiTurnMoves(gBankAttacker);
 					gBattlescriptCurrInstr = BattleScript_MoveUsedFailedPrimalWeather;
+					gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
 					effect = 1;
 				}
 			}
@@ -772,7 +774,8 @@ static u8 AtkCanceller_UnableToUseMove(void)
 			&& PriorityCalc(gBankAttacker, ACTION_USE_MOVE, gCurrentMove) > 0
 			&& gBankAttacker != gBankTarget)
 			{
-				CancelMultiTurnMoves(gBankAttacker);
+				if (IS_SINGLE_BATTLE || !(gBattleMoves[gCurrentMove].target & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL))) //Don't cancel moves that can hit two targets b/c one target might not be protected
+					CancelMultiTurnMoves(gBankAttacker);
 				gBattlescriptCurrInstr = BattleScript_MoveUsedPsychicTerrainPrevents;
 				effect = 1;
 			}
@@ -789,8 +792,9 @@ static u8 AtkCanceller_UnableToUseMove(void)
 			&& IsOfType(gBankTarget, TYPE_DARK)
 			&& gCurrentMove != MOVE_GRAVITY)
 			{
+				if (IS_SINGLE_BATTLE || !(gBattleMoves[gCurrentMove].target & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL))) //Don't cancel moves that can hit two targets b/c one target might not be protected
+					CancelMultiTurnMoves(gBankAttacker);
 				gBattleScripting->bank = gBankTarget;
-				CancelMultiTurnMoves(gBankAttacker);
 				gBattlescriptCurrInstr = BattleScript_DarkTypePreventsPrankster;
 				effect = 1;
 			}

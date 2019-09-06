@@ -678,7 +678,7 @@ u8 AI_TypeCalc(u16 move, u8 bankAtk, struct Pokemon* monDef) {
 	return flags;
 }
 
-//This calc takes into account things like Pokemon Mega Evolving and Illusion
+//This calc takes into account things like Pokemon Mega Evolving, Protean, & Illusion
 u8 AI_SpecialTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 {
 	u8 moveType;
@@ -695,7 +695,10 @@ u8 AI_SpecialTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 	atkType2 = gBattleMons[bankAtk].type2;
 	atkType3 = gBattleMons[bankAtk].type3;
 	moveType = GetMoveTypeSpecial(bankAtk, move);
-	
+
+	if (atkAbility == ABILITY_PROTEAN)
+		atkType1 = atkType2 = atkType3 = moveType;
+
 	if (gStatuses3[bankDef] & STATUS3_ILLUSION && gDisableStructs[bankDef].isFirstTurn) //Under illusion and haven't figured it out yet
 	{
 		struct Pokemon* illusionMon = GetIllusionPartyData(bankDef);

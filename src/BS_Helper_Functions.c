@@ -9,8 +9,11 @@
 #include "../include/new/battle_start_turn_start_battle_scripts.h"
 #include "../include/new/bs_helper_functions.h"
 #include "../include/new/damage_calc.h"
+#include "../include/new/daycare.h"
 #include "../include/new/end_battle.h"
 #include "../include/new/Helper_Functions.h"
+#include "../include/new/item.h"
+#include "../include/new/learn_move.h"
 #include "../include/new/move_battle_scripts.h"
 #include "../include/new/move_tables.h"
 #include "../include/new/switching.h"
@@ -1606,17 +1609,26 @@ void TryRemovePrimalWeatherOnPivot(void)
 {
 	if (TryRemovePrimalWeather(gBankAttacker, ABILITY(gBankAttacker)))
 		gBattlescriptCurrInstr -= 5;
+		
+	if (TryActivateFlowerGift(gBankAttacker))
+		gBattlescriptCurrInstr -= 5;
 }
 
 void TryRemovePrimalWeatherOnForceSwitchout(void)
 {
 	if (TryRemovePrimalWeather(gBankTarget, ABILITY(gBankTarget)))
 		gBattlescriptCurrInstr -= 5;
+		
+	if (TryActivateFlowerGift(gBankTarget))
+		gBattlescriptCurrInstr -= 5;
 }
 
 void TryRemovePrimalWeatherAfterAbilityChange(void)
 {
 	if (TryRemovePrimalWeather(gBankTarget, gNewBS->backupAbility))
+		gBattlescriptCurrInstr -= 5;
+		
+	if (TryActivateFlowerGift(gBankTarget))
 		gBattlescriptCurrInstr -= 5;
 }
 
@@ -1670,3 +1682,100 @@ void ReturnOpponentMon2(void)
 	}
 }
 
+void BackupScriptingBank(void)
+{
+	gNewBS->SentInBackup = gBattleScripting->bank;
+}
+
+//For Benjamin Butterfree
+void RestoreEffectBankHPStatsAndRemoveBackupSpecies(void)
+{
+	u32 i, j;
+
+	if (gBattleExecBuffer)
+	{
+		gBattlescriptCurrInstr -= 5;
+		return;
+	}
+
+	//Update Moveset
+	struct Pokemon* mon = GetBankPartyData(gEffectBank);
+	bool8 canLearnMove[MAX_MON_MOVES] = {FALSE};
+	u16 moves[MAX_LEARNABLE_MOVES + EGG_MOVES_ARRAY_COUNT + EGG_MOVES_ARRAY_COUNT + NUM_TMSHMS + (LAST_TOTAL_TUTOR_NUM + 1)] = {MOVE_NONE};
+	u16 numMoves = BuildLearnableMoveset(mon, moves);
+
+	for (i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		u16 move = GetMonData(mon, MON_DATA_MOVE1 + i, NULL);
+		if (move == MOVE_NONE)
+			continue;
+
+		for (j = 0; j < numMoves; ++j)
+		{
+			if (moves[j] == move)
+				break;
+		}
+
+		if (j < numMoves)
+			canLearnMove[i] = TRUE;
+	}
+
+	u16 newMoves[MAX_MON_MOVES] = {0};
+	u16 newPP[MAX_MON_MOVES] = {0};
+	u8 counter = 0;
+	for (i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		if (canLearnMove[i])
+		{
+			newMoves[counter] = GetMonData(mon, MON_DATA_MOVE1 + i, NULL);
+			newPP[counter++] = GetMonData(mon, MON_DATA_PP1 + i, NULL);
+		}
+	}
+	
+	if (newMoves[0] == MOVE_NONE)
+		gProtectStructs[gEffectBank].onlyStruggle = TRUE; //No moves left so struggle
+
+	for (i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		SetMonData(mon, MON_DATA_MOVE1 + i, &newMoves[i]); //Don't care about Emit as this isn't link compatible anyways
+		SetMonData(mon, MON_DATA_PP1 + i, &newPP[i]);
+		gBattleMons[gEffectBank].moves[i] = newMoves[i];
+		gBattleMons[gEffectBank].pp[i] = newPP[i];
+	}
+	
+	//Check if chosen move is still in moveset
+	u8 originalMovePos = FindMovePositionInMoveset(gChosenMovesByBanks[gEffectBank], gEffectBank);
+	if (originalMovePos < MAX_MON_MOVES)
+	{
+		gBattleStruct->chosenMovePositions[gEffectBank] = originalMovePos;
+		gMoveSelectionCursor[gEffectBank] = originalMovePos;
+	}
+	else if (counter >= 1)
+	{
+		//Choose a random move to use instead
+		gBattleStruct->chosenMovePositions[gEffectBank] = Random() % counter;
+		gChosenMovesByBanks[gEffectBank] = gBattleMons[gEffectBank].moves[gBattleStruct->chosenMovePositions[gEffectBank]];
+		gMoveSelectionCursor[gEffectBank] = 0; //Reset selection so can't select null move
+	}
+
+	gActiveBattler = gEffectBank;
+	GetBankPartyData(gActiveBattler)->backupSpecies = SPECIES_NONE; //There's no going back from a Benjamin Butterfree
+
+	//Reset all stats
+	for (i = STAT_STAGE_ATK; i < BATTLE_STATS_NO; ++i)
+	{
+		STAT_STAGE(gActiveBattler, i) = 6;
+	}
+
+	gBattleMons[gActiveBattler].status2 &= ~(STATUS2_CONFUSION);
+	gStatuses3[gActiveBattler] &= ~(STATUS3_SWITCH_IN_ABILITY_DONE);
+	gBattleMons[gActiveBattler].hp = gBattleMons[gActiveBattler].maxHP;
+	EmitSetMonData(0, REQUEST_HP_BATTLE, 0, 2, &gBattleMons[gActiveBattler].hp);
+	MarkBufferBankForExecution(gActiveBattler);
+}
+
+void TryActivateTargetEndTurnItemEffect(void)
+{
+	if (ItemBattleEffects(ItemEffects_EndTurn, gBankTarget, TRUE, FALSE))
+		gBattlescriptCurrInstr -= 5;
+}

@@ -131,6 +131,7 @@
 #define TYPE_FAIRY	  0x17
 
 #define NUMBER_OF_MON_TYPES (TYPE_FAIRY + 1)
+#define NUM_HIDDEN_POWER_TYPES 16
 
 #define PARTY_SIZE 6
 #define MAX_TOTAL_EVS 510
@@ -189,6 +190,7 @@ enum
     NATURE_SASSY,
     NATURE_CAREFUL,
     NATURE_QUIRKY,
+	NUM_NATURES,
 };
 
 struct PokemonSubstruct0
@@ -680,6 +682,7 @@ void __attribute__((long_call)) DeleteFirstMoveAndGiveMoveToMon(struct Pokemon *
 void __attribute__((long_call)) DeleteFirstMoveAndGiveMoveToBoxMon(struct BoxPokemon *boxMon, u16 move);
 u32 __attribute__((long_call)) GetBoxMonData(struct BoxPokemon *boxMon, s32 field, u8 *data);
 u8 __attribute__((long_call)) CalculatePlayerPartyCount(void);
+u8 __attribute__((long_call)) GetNature(struct Pokemon *mon);
 u8 __attribute__((long_call)) GetNatureFromPersonality(u32 personality);
 void __attribute__((long_call)) SetBoxMonData(struct BoxPokemon *boxMon, s32 field, const void *data);
 void __attribute__((long_call)) EncryptBoxMon(struct BoxPokemon *boxMon);
@@ -702,6 +705,8 @@ void __attribute__((long_call)) CopyMon(void *dest, void *src, size_t size);
 
 u8 __attribute__((long_call)) CheckPartyHasHadPokerus(struct Pokemon *party, u8 selection);
 u16 __attribute__((long_call)) GetMonEVCount(struct Pokemon* mon);
+u8 __attribute__((long_call)) GetLevelFromMonExp(struct Pokemon *mon);
+u16 __attribute__((long_call)) ModifyStatByNature(u8 nature, u16 n, u8 statIndex);
 const struct CompressedSpritePalette* __attribute__((long_call)) GetMonSpritePalStructFromOtIdPersonality(u16 species, u32 otId , u32 personality);
 
 /*
@@ -717,7 +722,6 @@ void CreateMonWithIVsPersonality(struct Pokemon *mon, u16 species, u8 level, u32
 void CreateMonWithIVsOTID(struct Pokemon *mon, u16 species, u8 level, u8 *ivs, u32 otId);
 void CreateMonWithEVSpread(struct Pokemon *mon, u16 species, u8 level, u8 fixedIV, u8 evSpread);
 void CalculateMonStats(struct Pokemon *mon);
-u8 GetLevelFromMonExp(struct Pokemon *mon);
 u8 GetLevelFromBoxMonExp(struct BoxPokemon *boxMon);
 u16 GiveMoveToMon(struct Pokemon *mon, u16 move);
 u16 GiveMoveToBoxMon(struct BoxPokemon *boxMon, u16 move);

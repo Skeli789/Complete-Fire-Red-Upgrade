@@ -1023,7 +1023,7 @@ bool8 MoveInMoveset(u16 move, u8 bank)
 
 u8 FindMovePositionInMonMoveset(u16 move, struct Pokemon* mon)
 {
-	int i;
+	u8 i;
 
 	for (i = 0; i < MAX_MON_MOVES; ++i)
 	{

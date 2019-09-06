@@ -21,4 +21,4 @@ bool8 TryRunFromBattle(u8 bank);
 void EndOfBattleThings(void);
 
 //Exported Data Structures
-extern u8 ConsumableItemEffectTable[];
+extern u8 gConsumableItemEffects[];

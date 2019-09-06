@@ -112,14 +112,6 @@ extern const u8 gText_MaxStreak[];
 extern const u8 gText_3v3[];
 extern const u8 gText_4v4[];
 extern const u8 gText_6v6[];
-extern const u8 gText_BattleTowerStandard[];
-extern const u8 gText_NoRestrictions[];
-extern const u8 gText_SmogonGen7OU[];
-extern const u8 gText_SmogonGen7Uber[];
-extern const u8 gText_SmogonLittleCup[];
-extern const u8 gText_MiddleCup[];
-extern const u8 gText_SmogonMonotype[];
-extern const u8 gText_GSCup[];
 
 //This File's Static Functions
 static void CB2_ShowFrontierRecords(void);
@@ -415,17 +407,6 @@ static const u8* const sBattleTypeStrings[NUM_TOWER_BATTLE_TYPES] =
 	gText_MultiRandomBattleRecord,
 };
 
-static const u8* const sBattleTowerTierNames[NUM_FORMATS] =
-{
-	[BATTLE_TOWER_STANDARD] = gText_BattleTowerStandard,
-	[BATTLE_TOWER_NO_RESTRICTIONS] = gText_NoRestrictions,
-	[BATTLE_TOWER_OU] = gText_SmogonGen7OU,
-	[BATTLE_TOWER_UBER] gText_SmogonGen7Uber,
-	[BATTLE_TOWER_LITTLE_CUP] = gText_SmogonLittleCup,
-	[BATTLE_TOWER_MIDDLE_CUP] = gText_MiddleCup,
-	[BATTLE_TOWER_MONOTYPE] = gText_SmogonMonotype,
-};
-
 static void MainCB2(void)
 {
 	RunTasks();
@@ -655,9 +636,7 @@ static void DisplayFrontierRecordsText(void)
 	WindowPrint(WIN_BATTLE_TYPE, 1, leftShift, 6, &titleColour, 0, string);
 
 	//Print Tier Name
-	string = sBattleTowerTierNames[tier];
-	if (tier == BATTLE_TOWER_MIDDLE_CUP && !IsFrontierSingles(sFrontierRecordsPtr->battleType))
-		string = gText_GSCup;
+	string = GetFrontierTierName(tier, sFrontierRecordsPtr->battleType);
 	WindowPrint(WIN_TIER, 0, 0, 4, &tierNameColour, 0, string);
 
 	//Print Level 50 Party Sizes Numbers

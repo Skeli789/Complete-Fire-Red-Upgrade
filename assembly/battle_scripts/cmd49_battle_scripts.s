@@ -181,6 +181,7 @@ BattleScript_Pickpocket:
 	swapattackerwithtarget
 	setmoveeffect2
 	swapattackerwithtarget
+	callasm TryActivateTargetEndTurnItemEffect
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

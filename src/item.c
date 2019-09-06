@@ -156,8 +156,6 @@ u8 BerryIdFromItemId(u16 item)
 
 #define gTMHMLearnsets ((TM_HM_T*) *((u32*) 0x8043C68))
 #define gTutorLearnsets ((ExpandedTutor_T*) *((u32*) 0x8120C30))
-#define gTMHMMoves ((const u16*) *((u32*) 0x8125A8C))
-#define gTutorMoves ((const u16*) *((u32*) 0x8120BE4))
 
 u32 CanMonLearnTMHM(struct Pokemon* mon, u8 tm)
 {

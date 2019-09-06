@@ -10,6 +10,8 @@
 .global BattleScript_ItemHealHP_End2
 .global BattleScript_BerryHealHP_RemoveBerryRet
 .global BattleScript_BerryHealHP_RemoveBerryEnd2
+.global BattleScript_ItemHealHP_RemoveItemRet
+.global BattleScript_ItemHealHP_RemoveItemEnd2
 .global BattleScript_BerryPPHealRet
 .global BattleScript_BerryPPHealEnd2
 .global BattleScript_BerryFocusEnergyRet
@@ -84,6 +86,8 @@ BattleScript_BerryConfuseHealEnd2:
 
 BattleScript_BerryHealHP_RemoveBerryRet:
 	playanimation 0xA ANIM_BERRY_EAT 0x0
+	
+BattleScript_ItemHealHP_RemoveItem_SkipAnim:
 	playanimation 0xA ANIM_HEALING_SPARKLES 0x0
 	orword HIT_MARKER 0x100
 	graphicalhpupdate 0xA
@@ -95,6 +99,16 @@ BattleScript_BerryHealHP_RemoveBerryRet:
 
 BattleScript_BerryHealHP_RemoveBerryEnd2:
 	call BattleScript_BerryHealHP_RemoveBerryRet
+	end2
+	
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_ItemHealHP_RemoveItemRet:
+	playanimation 0xA ANIM_ITEM_USE 0x0
+	goto BattleScript_ItemHealHP_RemoveItem_SkipAnim
+
+BattleScript_ItemHealHP_RemoveItemEnd2:
+	call BattleScript_ItemHealHP_RemoveItemRet
 	end2
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -433,6 +447,7 @@ BattleScript_EjectButton:
 	printstring 0x3
 	switch3 BANK_SCRIPTING 0x1
 	waitstateatk
+	callasm BackupScriptingBank
 	switchineffects BANK_SCRIPTING
 
 EjectButtonEnd:

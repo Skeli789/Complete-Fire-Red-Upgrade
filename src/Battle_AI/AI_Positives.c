@@ -10,6 +10,7 @@
 #include "../../include/new/AI_scripts.h"
 #include "../../include/new/battle_start_turn_start.h"
 #include "../../include/new/damage_calc.h"
+#include "../../include/new/frontier.h"
 #include "../../include/new/general_bs_commands.h"
 #include "../../include/new/Helper_Functions.h"
 #include "../../include/new/item.h"
@@ -111,16 +112,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		case EFFECT_SLEEP:
 		case EFFECT_YAWN:
 		AI_SLEEP_CHECKS:
-			if (defItemEffect != ITEM_EFFECT_CURE_SLP
-			&& defItemEffect != ITEM_EFFECT_CURE_STATUS
-			&& defAbility != ABILITY_EARLYBIRD
-			&& defAbility != ABILITY_SHEDSKIN)
-			{
-				if (IsClassDoublesUtility(class))
-					INCREASE_VIABILITY(17);
-				else
-					INCREASE_STATUS_VIABILITY(3);
-			}
+			IncreaseSleepViability(&viability, class, bankAtk, bankDef, move);
 			break;
 			
 		case EFFECT_ABSORB:
@@ -505,30 +497,23 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		case EFFECT_TOXIC:
 		case EFFECT_POISON:
 		AI_POISON_CHECKS:
-			if (!CanBePoisoned(bankDef, bankAtk, TRUE)
-			||  defItemEffect == ITEM_EFFECT_CURE_PSN
-			||  defItemEffect == ITEM_EFFECT_CURE_STATUS
-			||  defAbility == ABILITY_SHEDSKIN 
-			||  defAbility == ABILITY_TOXICBOOST
-			||  defAbility == ABILITY_POISONHEAL
-			||  defAbility == ABILITY_MAGICGUARD
-			||  defAbility == ABILITY_GUTS
-			||  atkAbility == ABILITY_POISONTOUCH)
-				break;
-			else if (MoveInMoveset(MOVE_VENOSHOCK, bankAtk)
-			|| MoveInMoveset(MOVE_HEX, bankAtk)
-			|| MoveInMoveset(MOVE_VENOMDRENCH, bankAtk)
-			|| atkAbility == ABILITY_MERCILESS)
-				INCREASE_STATUS_VIABILITY(2);
-			else
-				INCREASE_STATUS_VIABILITY(1); //AI enjoys poisoning
+			if (!BadIdeaToPoison(bankDef, bankAtk))
+			{
+				if (MoveInMoveset(MOVE_VENOSHOCK, bankAtk)
+				||  MoveInMoveset(MOVE_HEX, bankAtk)
+				||  MoveInMoveset(MOVE_VENOMDRENCH, bankAtk)
+				||  atkAbility == ABILITY_MERCILESS)
+					INCREASE_STATUS_VIABILITY(2);
+				else
+					INCREASE_STATUS_VIABILITY(1); //AI enjoys poisoning
+			}
 			break;
-			
+
 		case EFFECT_LIGHT_SCREEN:
 			if (ShouldSetUpScreens(bankAtk, bankDef, move))
 				INCREASE_VIABILITY(7);
 			break;
-			
+
 		case EFFECT_REST:
 			if (!(CanBePutToSleep(bankAtk, FALSE)))
 				break;
@@ -538,7 +523,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			|| MoveEffectInMoveset(EFFECT_SNORE, bankAtk)
 			|| atkAbility == ABILITY_SHEDSKIN
 			|| atkAbility == ABILITY_EARLYBIRD
-			|| ((gBattleWeather & WEATHER_RAIN_ANY && gWishFutureKnock->weatherDuration > 1) && atkAbility == ABILITY_HYDRATION))
+			|| (gBattleWeather & WEATHER_RAIN_ANY && gWishFutureKnock->weatherDuration != 1 && atkAbility == ABILITY_HYDRATION))
 			{
 				if (ShouldRecover(bankAtk, bankDef, move))
 					INCREASE_STATUS_VIABILITY(1);
@@ -582,9 +567,10 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			break;
 
 		case EFFECT_CONFUSE:
-		case EFFECT_FLATTER:
 		AI_CONFUSE_CHECK:
-			if (CanBeConfused(bankDef))
+			if (CanBeConfused(bankDef)
+			&&  defItemEffect != ITEM_EFFECT_CURE_CONFUSION
+			&&  defItemEffect != ITEM_EFFECT_CURE_STATUS)
 			{
 				if (defStatus1 & STATUS1_PARALYSIS
 				|| defStatus2 & (STATUS2_INFATUATION)
@@ -631,23 +617,21 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			
 		case EFFECT_PARALYZE:
 		AI_PARALYZE_CHECKS:
-			if (CanBeParalyzed(bankDef, TRUE))
+			if (!BadIdeaToParalyze(bankDef, bankAtk))
 			{
-				if (defItemEffect == ITEM_EFFECT_CURE_PAR
-				||  defItemEffect == ITEM_EFFECT_CURE_STATUS
-				||  defAbility == ABILITY_SHEDSKIN
-				||  defAbility == ABILITY_GUTS
-				||  IncreaseViabilityForSpeedControl(&viability, class, bankAtk, bankDef))
+				u8 atkSpeedCalc = SpeedCalc(bankAtk);
+				u8 defSpeedCalc = SpeedCalc(bankDef);
+			
+				if (IncreaseViabilityForSpeedControl(&viability, class, bankAtk, bankDef))
 					break;
 
-				else if (MoveInMoveset(MOVE_HEX, bankAtk)
+				else if ((defSpeedCalc >= atkSpeedCalc && defSpeedCalc / 2 < atkSpeedCalc) //You'll go first after paralyzing foe
+				|| MoveInMoveset(MOVE_HEX, bankAtk)
 				|| FlinchingMoveInMoveset(bankAtk)
 				|| defStatus2 & (STATUS2_CONFUSION | STATUS2_INFATUATION))
 					INCREASE_STATUS_VIABILITY(2);
 				else
 					INCREASE_STATUS_VIABILITY(1);
-					
-				
 			}
 			break;
 
@@ -855,21 +839,12 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 						break;
 	
 					case ITEM_EFFECT_TOXIC_ORB:
-						if (CanBePoisoned(bankAtk, bankAtk, FALSE)
-						&& (atkAbility == ABILITY_POISONHEAL
-						 || atkAbility == ABILITY_TOXICBOOST
-						 || atkAbility == ABILITY_QUICKFEET
-						 || atkAbility == ABILITY_MAGICGUARD
-						 || MoveInMoveset(MOVE_FACADE, bankAtk)))
+						if (GoodIdeaToPoisonSelf(bankAtk))
 							INCREASE_STATUS_VIABILITY(2);
 						break;
 					
 					case ITEM_EFFECT_FLAME_ORB:
-						if (CanBeBurned(bankAtk, FALSE)
-						&& (atkAbility == ABILITY_GUTS
-						 || atkAbility == ABILITY_FLAREBOOST
-						 || atkAbility == ABILITY_MAGICGUARD
-						 || MoveInMoveset(MOVE_FACADE, bankAtk)))
+						if (GoodIdeaToBurnSelf(bankAtk))
 							INCREASE_STATUS_VIABILITY(2);
 						break;
 					
@@ -978,7 +953,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 							IncreaseTeamProtectionViability(&viability, class);
 					}
 					break;
-				
+
 				case MOVE_MATBLOCK:
 					if (gDisableStructs[bankAtk].isFirstTurn && predictedMove != MOVE_NONE && SPLIT(predictedMove) != SPLIT_STATUS && !(gBattleMoves[predictedMove].target & MOVE_TARGET_USER))
 					{
@@ -991,7 +966,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 							IncreaseTeamProtectionViability(&viability, class);
 					}
 					break;
-					
+
 				case MOVE_ENDURE:
 					if (CanKnockOut(bankDef, bankAtk))
 					{
@@ -1009,7 +984,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 						}
 					}
 					break;
-					
+
 				case MOVE_KINGSSHIELD:
 					if (atkAbility == ABILITY_STANCECHANGE //Special logic for Aegislash
 					&&  atkSpecies == SPECIES_AEGISLASH_BLADE
@@ -1028,7 +1003,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 				default:
 				PROTECT_CHECKS: ;
 					u8 shouldProtect = ShouldProtect(bankAtk, bankDef, move);
-			
+	
 					if (shouldProtect == USE_PROTECT || shouldProtect == PROTECT_FROM_FOES)
 					{
 						IncreaseFoeProtectionViability(&viability, class, bankAtk, bankDef); 
@@ -1047,7 +1022,6 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 					
 			switch (move) {
 				case MOVE_STICKYWEB:
-
 					for (i = 0; i < PARTY_SIZE; ++i) //Loop through attacker party
 					{
 						for (j = 0; j < PARTY_SIZE; ++j) //Loop through target party
@@ -1060,6 +1034,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 							&&  !GetMonData(&defParty[j], MON_DATA_IS_EGG, NULL)
 							&&  j != gBattlerPartyIndexes[foe1]
 							&&  j != gBattlerPartyIndexes[foe2]
+							&&  CheckGroundingFromPartyData(&defParty[j]) == GROUNDED //Affected by Sticky Web
 							&&  SpeedCalcForParty(SIDE(bankAtk), &atkParty[i]) < SpeedCalcForParty(SIDE(bankDef), &defParty[j]))
 							{
 								IncreaseEntryHazardsViability(&viability, class, bankAtk, bankDef, move);
@@ -1068,30 +1043,51 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 						}
 					}
 					break;
-					
+
 				case MOVE_STEALTHROCK:
 					IncreaseEntryHazardsViability(&viability, class, bankAtk, bankDef, move);
 					break;
-					
+
 				case MOVE_TOXICSPIKES:
 					for (i = 0; i < PARTY_SIZE; ++i)
 					{
-						if (GetMonData(&defParty[i], MON_DATA_HP, NULL) > 0
+						if (GetMonData(&defParty[i], MON_DATA_SPECIES, NULL) != SPECIES_NONE
+						&& !GetMonData(&defParty[i], MON_DATA_IS_EGG, NULL)
+						&&  GetMonData(&defParty[i], MON_DATA_HP, NULL) > 0
 						&&  i != gBattlerPartyIndexes[foe1]
 						&&  i != gBattlerPartyIndexes[foe2]
-						&&  CanPartyMonBePoisoned(&defParty[i]))
+						&&  CheckGroundingFromPartyData(&defParty[i]) == GROUNDED)
 						{
-							IncreaseEntryHazardsViability(&viability, class, bankAtk, bankDef, move);
-							break;
+							u8 type1 = (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) ? GetCamomonsTypeByMon(&defParty[i], 0) : gBaseStats[defParty[i].species].type1;
+							u8 type2 = (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) ? GetCamomonsTypeByMon(&defParty[i], 1) : gBaseStats[defParty[i].species].type2;
+							if (type1 == TYPE_POISON || type2 == TYPE_POISON)
+								break; //Don't set up Toxic spikes if someone in party who can just remove them
+
+							if (CanPartyMonBePoisoned(&defParty[i]))
+							{
+								IncreaseEntryHazardsViability(&viability, class, bankAtk, bankDef, move);
+								break;
+							}
 						}
 					}
 					break;
-					
+
 				default: //Spikes
-					IncreaseEntryHazardsViability(&viability, class, bankAtk, bankDef, move);
+					for (i = 0; i < PARTY_SIZE; ++i)
+					{
+						if (GetMonData(&defParty[i], MON_DATA_SPECIES, NULL) != SPECIES_NONE
+						&& !GetMonData(&defParty[i], MON_DATA_IS_EGG, NULL)
+						&&  GetMonData(&defParty[i], MON_DATA_HP, NULL) > 0
+						&&  i != gBattlerPartyIndexes[foe1]
+						&&  i != gBattlerPartyIndexes[foe2]
+						&&  CheckGroundingFromPartyData(&defParty[i]) == GROUNDED)
+						{
+							IncreaseEntryHazardsViability(&viability, class, bankAtk, bankDef, move);
+						}
+					}
 					break;
 			}
-			
+
 		END_ENTRY_HAZARDS:
 			break;
 			
@@ -1158,14 +1154,22 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			&& atkStatus2 & STATUS2_DEFENSE_CURL)
 				INCREASE_VIABILITY(8);
 			break;
-			
+
 		case EFFECT_SWAGGER:
-			if (MoveInMoveset(MOVE_FOULPLAY, bankAtk))
+			if (MoveInMoveset(MOVE_FOULPLAY, bankAtk)
+			||  MoveEffectInMoveset(EFFECT_PSYCH_UP, bankAtk)) //Includes Spectral Thief
 				INCREASE_STATUS_VIABILITY(2);
 			else
 				goto AI_CONFUSE_CHECK;
 			break;
-			
+
+		case EFFECT_FLATTER:
+			if (MoveEffectInMoveset(EFFECT_PSYCH_UP, bankAtk)) //Includes Spectral Thief
+				INCREASE_STATUS_VIABILITY(2);
+			else
+				goto AI_CONFUSE_CHECK;
+			break;
+
 		case EFFECT_FURY_CUTTER:
 			if (IS_SINGLE_BATTLE
 			&& IsClassSweeper(class)
@@ -1174,6 +1178,11 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			break;
 			
 		case EFFECT_ATTRACT:
+			if (IS_SINGLE_BATTLE
+			&&  WillFaintFromSecondaryDamage(bankDef)
+			&& !MoveWouldHitFirst(move, bankAtk, bankDef))
+				break; //Don't use if the attract will never get a chance to proc
+		
 			if (atkStatus1 & STATUS1_ANY
 			|| atkStatus2 & STATUS2_CONFUSION
 			|| IsTrapped(bankDef, TRUE))
@@ -1201,11 +1210,15 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			{
 				case MOVE_UTURN:
 				case MOVE_VOLTSWITCH:
+				case MOVE_PARTINGSHOT:
 					PIVOT_CHECK:
 					if (IS_SINGLE_BATTLE)
 					{
-						if (ShouldPivot(bankAtk, bankDef, move, class) == 2)
+						u8 shouldPivot = ShouldPivot(bankAtk, bankDef, move, class);
+						if (shouldPivot == PIVOT)
 							IncreasePivotViability(&viability, class, bankAtk, bankDef);
+						else if (shouldPivot == DONT_PIVOT)
+							DECREASE_VIABILITY(10); //Bad idea to use this move
 						else if (gWishFutureKnock->wishCounter[bankAtk] > 0
 							  && ShouldUseWishAromatherapy(bankAtk, bankDef, MOVE_WISH, class))
 						{
@@ -1507,18 +1520,9 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 	
 		case EFFECT_WILL_O_WISP:
 		AI_BURN_CHECKS:
-			if (CanBeBurned(bankDef, TRUE))
+			if (!BadIdeaToBurn(bankDef, bankAtk))
 			{
-				if (defItemEffect == ITEM_EFFECT_CURE_BRN
-				|| defItemEffect == ITEM_EFFECT_CURE_STATUS
-				|| defAbility == ABILITY_SHEDSKIN
-				|| defAbility == ABILITY_FLAREBOOST
-				|| defAbility == ABILITY_MAGICGUARD
-				|| defAbility == ABILITY_GUTS
-				|| defAbility == ABILITY_MAGICGUARD)
-					break;
-
-				else if (CalcMoveSplit(bankDef, predictedMove) == SPLIT_PHYSICAL
+				if (CalcMoveSplit(bankDef, predictedMove) == SPLIT_PHYSICAL
 				&& MoveKnocksOutXHits(predictedMove, bankDef, bankAtk, 1))
 					INCREASE_STATUS_VIABILITY(3); //If the enemy can kill with a physical move, try burning them so they can't anymore
 
@@ -1590,33 +1594,15 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 					break;
 	
 				case ITEM_EFFECT_TOXIC_ORB:
-					if (CanBePoisoned(bankDef, bankDef, FALSE)
-					&& !(atkAbility == ABILITY_POISONHEAL
-					 || atkAbility == ABILITY_TOXICBOOST
-					 || atkAbility == ABILITY_QUICKFEET
-					 || atkAbility == ABILITY_MAGICGUARD
-					 || MoveInMoveset(MOVE_FACADE, bankAtk))
-					&& !(defAbility == ABILITY_POISONHEAL
-					 || defAbility == ABILITY_TOXICBOOST
-					 || defAbility == ABILITY_QUICKFEET
-					 || defAbility == ABILITY_MAGICGUARD
-					 || MoveInMoveset(MOVE_FACADE, bankDef)))
+					if (!GoodIdeaToPoisonSelf(bankAtk) && !BadIdeaToPoison(bankDef, bankAtk))
 						INCREASE_STATUS_VIABILITY(2);
 					break;
-					
+
 				case ITEM_EFFECT_FLAME_ORB:
-					if (CanBeBurned(bankDef, FALSE)
-					&& !(atkAbility == ABILITY_GUTS
-					 || atkAbility == ABILITY_FLAREBOOST
-					 || atkAbility == ABILITY_MAGICGUARD
-					 || MoveInMoveset(MOVE_FACADE, bankAtk))
-					&& !(defAbility == ABILITY_GUTS
-					 || defAbility == ABILITY_FLAREBOOST
-					 || defAbility == ABILITY_MAGICGUARD
-					 || MoveInMoveset(MOVE_FACADE, bankDef)))
+					if (!GoodIdeaToBurnSelf(bankAtk) && !BadIdeaToBurn(bankDef, bankAtk))
 						INCREASE_STATUS_VIABILITY(2);
 					break;
-					
+
 				case ITEM_EFFECT_BLACK_SLUDGE:
 					if (!IsOfType(bankDef, TYPE_POISON))
 						INCREASE_STATUS_VIABILITY(3);
@@ -1640,21 +1626,12 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 								break;
 				
 							case ITEM_EFFECT_TOXIC_ORB:
-								if (CanBePoisoned(bankAtk, bankAtk, FALSE)
-								&& (atkAbility == ABILITY_POISONHEAL
-								 || atkAbility == ABILITY_TOXICBOOST
-								 || atkAbility == ABILITY_QUICKFEET
-								 || atkAbility == ABILITY_MAGICGUARD
-								 || MoveInMoveset(MOVE_FACADE, bankAtk)))
+								if (GoodIdeaToPoisonSelf(bankAtk))
 									INCREASE_STATUS_VIABILITY(2);
 								break;
 								
 							case ITEM_EFFECT_FLAME_ORB:
-								if (CanBeBurned(bankAtk, FALSE)
-								&& (atkAbility == ABILITY_GUTS
-								 || atkAbility == ABILITY_FLAREBOOST
-								 || atkAbility == ABILITY_MAGICGUARD
-								 || MoveInMoveset(MOVE_FACADE, bankAtk)))
+								if (GoodIdeaToBurnSelf(bankAtk))
 									INCREASE_STATUS_VIABILITY(2);
 								break;
 								
@@ -1686,6 +1663,8 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		case EFFECT_WISH:
 			if (ShouldUseWishAromatherapy(bankAtk, bankDef, move, class))
 				INCREASE_VIABILITY(8);
+			else
+				goto AI_RECOVER;
 			break;
 
 		case EFFECT_INGRAIN: //+ Aqua Ring
@@ -1697,6 +1676,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			
 		case EFFECT_SUPERPOWER:
 			if (move != MOVE_HYPERSPACEHOLE
+			&&  atkAbility != ABILITY_CONTRARY
 			&& atkItemEffect == ITEM_EFFECT_EJECT_PACK)
 				goto PIVOT_CHECK;
 			break;
@@ -2080,10 +2060,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 					goto AI_POISON_CHECKS;
 					
 				case MOVE_EFFECT_FREEZE:
-					if (defItemEffect != ITEM_EFFECT_CURE_FRZ
-					&& defItemEffect != ITEM_EFFECT_CURE_STATUS
-					&& defAbility != ABILITY_MAGMAARMOR
-					&& !IsOfType(bankDef, TYPE_ICE))
+					if (!BadIdeaToFreeze(bankDef, bankAtk))
 						INCREASE_STATUS_VIABILITY(3); //Freeze the sucker
 					break;
 			}
@@ -2288,37 +2265,29 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 
 	if (moveSplit != SPLIT_STATUS)
 	{
-		if (IS_SINGLE_BATTLE
-		|| !DamagingSpreadMoveInMoveset(bankAtk) //Attacker only has single target moves
-		|| CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, bankAtk, bankDef) == 1) //Single Battle or only 1 target left
+		if (IS_SINGLE_BATTLE) //Single Battle or only 1 target left
 		{
 			//Every spread type has the same viability increases for these two
-			if (MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(move, bankAtk, bankDef, TRUE)) //Check Going First
+			if (MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(move, bankAtk, bankDef, TRUE) //Check Going First
+			&& (AccuracyCalc(move, bankAtk, bankDef) >= 70 //If the AI's best killing move has a low accuracy, then
+			 || !MoveThatCanHelpAttacksHitInMoveset(bankAtk) //try to make it's chance of hitting higher.
+			 || CanKnockOut(bankDef, bankAtk))) //Just use the move if you'll die anyways
 			{
-				//If the AI's best killing move has a low accuracy, then
-				//try to make it's chance of hitting higher.
-				if (AccuracyCalc(move, bankAtk, bankDef) >= 70
-				|| !MoveThatCanHelpAttacksHitInMoveset(bankAtk)
-				|| CanKnockOut(bankDef, bankAtk)) //Just use the move if you'll die anyways
-					INCREASE_VIABILITY(9);
+				INCREASE_VIABILITY(9);
 			}
 			else if (!MoveEffectInMoveset(EFFECT_PROTECT, bankAtk)
 			&& !MoveWouldHitFirst(move, bankAtk, bankDef) //Attacker wouldn't hit first
 			&& Can2HKO(bankDef, bankAtk) //Foe can kill attacker in at least two hits
 			&& MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(move, bankAtk, bankDef, FALSE)) //Don't check going first
 			{
-				INCREASE_VIABILITY(9); //Use the killing move with the best accuracy
+				INCREASE_VIABILITY(8); //Use the killing move with the best accuracy
 			}
-			else if (IS_SINGLE_BATTLE //Skip this check in doubles
-			&& !MoveEffectInMoveset(EFFECT_PROTECT, bankAtk)
-			&& MoveKnocksOutXHits(predictedMove, bankDef, bankAtk, 1)) //Foe can kill attacker
+			else if (!MoveEffectInMoveset(EFFECT_PROTECT, bankAtk)
+			&& MoveKnocksOutXHits(predictedMove, bankDef, bankAtk, 1) //Foe can kill attacker
+			&& StrongestMoveGoesFirst(move, bankAtk, bankDef) //Use strongest fast move
+			&& (!MoveInMoveset(MOVE_FAKEOUT, bankAtk) || !ShouldUseFakeOut(bankAtk, bankDef))) //Prefer Fake Out if it'll do something
 			{
-				if (StrongestMoveGoesFirst(move, bankAtk, bankDef)) //Use strongest fast move
-				{
-					if (!MoveInMoveset(MOVE_FAKEOUT, bankAtk)
-					||  !ShouldUseFakeOut(bankAtk, bankDef)) //Prefer Fake Out if it'll do something
-						INCREASE_VIABILITY(9);
-				}
+				INCREASE_VIABILITY(9);
 			}
 			else if (IsStrongestMove(move, bankAtk, bankDef))
 			{

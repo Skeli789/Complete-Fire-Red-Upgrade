@@ -375,6 +375,9 @@ static u32 AccuracyCalcPassDefAbilityItemEffect(u16 move, u8 bankAtk, u8 bankDef
 		if (gNewBS->MicleBerryBits & gBitTable[bankAtk])
 			calc = udivsi(calc * 120, 100); // 1.2 Micle Berry Boost
 
+		if (gBattleMoves[move].accuracy == 0) //Always hit
+			calc = 0xFFFF;
+
 	return calc;
 }
 
@@ -441,6 +444,9 @@ u32 VisualAccuracyCalc_NoTarget(u16 move, u8 bankAtk)
 		||  ((gBattleWeather & WEATHER_HAIL_ANY) && move == MOVE_BLIZZARD))
 			calc = 0; //No Miss
 	}
+	
+	if (gBattleMoves[move].accuracy == 0) //Always hit
+		calc = 0xFFFF;
 
 	return calc;
 }

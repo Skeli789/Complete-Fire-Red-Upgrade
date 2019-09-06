@@ -14,7 +14,9 @@
 #include "../include/new/battle_strings.h"
 #include "../include/new/battle_terrain.h"
 #include "../include/new/damage_calc.h"
+#include "../include/new/evolution.h"
 #include "../include/new/form_change.h"
+#include "../include/new/frontier.h"
 #include "../include/new/general_bs_commands.h"
 #include "../include/new/Helper_Functions.h"
 #include "../include/new/item_battle_scripts.h"
@@ -686,6 +688,9 @@ void atk19_tryfaintmon(void)
 			BS_ptr = BattleScript_FaintTarget;
 		}
 		
+		if (TryDoBenjaminButterfree(7))
+			return;
+
 		if (!(gAbsentBattlerFlags & gBitTable[gActiveBattler])
 		&& gBattleMons[gActiveBattler].hp == 0)
 		{
@@ -745,6 +750,25 @@ void atk19_tryfaintmon(void)
 			gBattlescriptCurrInstr += 7;
 		}
 	}
+}
+
+bool8 TryDoBenjaminButterfree(u8 scriptOffset)
+{
+	if (IsBenjaminButterfreeBattle() && !IS_TRANSFORMED(gActiveBattler) && !BATTLER_ALIVE(gActiveBattler))
+	{
+		u16 devolutionSpecies = GetMonDevolution(GetBankPartyData(gActiveBattler));
+		if (devolutionSpecies != SPECIES_NONE)
+		{
+			PREPARE_SPECIES_BUFFER(gBattleTextBuff1, devolutionSpecies)
+			DoFormChange(gActiveBattler, devolutionSpecies, TRUE, TRUE, TRUE);
+			gEffectBank = gActiveBattler;
+			BattleScriptPush(gBattlescriptCurrInstr + scriptOffset);
+			gBattlescriptCurrInstr = BattleScript_BenjaminButterfreeDevolution;
+			return TRUE;
+		}
+	}
+
+	return FALSE;
 }
 
 void atk1B_cleareffectsonfaint(void) {
@@ -836,6 +860,9 @@ void atk1B_cleareffectsonfaint(void) {
 
 			case Faint_PrimalWeather:	;
 				if (TryRemovePrimalWeather(gActiveBattler, ABILITY(gActiveBattler)))
+					return;
+					
+				if (TryActivateFlowerGift(gActiveBattler))
 					return;
 
 				++gNewBS->FaintEffectsTracker;
@@ -971,17 +998,41 @@ static void TryContraryChangeStatAnim(u8 bank, u16* argumentPtr)
 	if (ABILITY(bank) == ABILITY_CONTRARY)
 	{
 		u8 value = 0;
-		switch (GET_STAT_BUFF_VALUE2(gBattleScripting->statChanger)) {
+		switch (GET_STAT_BUFF_VALUE_WITH_SIGN(gBattleScripting->statChanger)) {
 			case SET_STAT_BUFF_VALUE(1): // +1
 				value = STAT_ANIM_MINUS1;
 				break;
 			case SET_STAT_BUFF_VALUE(2): // +2
 				value = STAT_ANIM_MINUS2;
 				break;
+			case SET_STAT_BUFF_VALUE(3): // +3
+				value = STAT_ANIM_MINUS2;
+				break;
+			case SET_STAT_BUFF_VALUE(4): // +4
+				value = STAT_ANIM_MINUS2;
+				break;
+			case SET_STAT_BUFF_VALUE(5): // +5
+				value = STAT_ANIM_MINUS2;
+				break;
+			case SET_STAT_BUFF_VALUE(6): // +6
+				value = STAT_ANIM_MINUS2;
+				break;
 			case SET_STAT_BUFF_VALUE(1) | STAT_BUFF_NEGATIVE: // -1
-				value = STAT_ANIM_PLUS1;
+				value = STAT_ANIM_PLUS2;
 				break;
 			case SET_STAT_BUFF_VALUE(2) | STAT_BUFF_NEGATIVE: // -2
+				value = STAT_ANIM_PLUS2;
+				break;
+			case SET_STAT_BUFF_VALUE(3) | STAT_BUFF_NEGATIVE: // -3
+				value = STAT_ANIM_PLUS2;
+				break;
+			case SET_STAT_BUFF_VALUE(4) | STAT_BUFF_NEGATIVE: // -1
+				value = STAT_ANIM_PLUS2;
+				break;
+			case SET_STAT_BUFF_VALUE(5) | STAT_BUFF_NEGATIVE: // -2
+				value = STAT_ANIM_PLUS2;
+				break;
+			case SET_STAT_BUFF_VALUE(6) | STAT_BUFF_NEGATIVE: // -3
 				value = STAT_ANIM_PLUS2;
 				break;
 		}
@@ -1118,6 +1169,54 @@ void atk46_playanimation2(void) // animation Id is stored in the first pointer
 		MarkBufferBankForExecution(gActiveBattler);
 		gBattlescriptCurrInstr += 10;
 	}
+}
+
+void atk47_setgraphicalstatchangevalues(void)
+{
+    u8 value = 0;
+    switch (GET_STAT_BUFF_VALUE_WITH_SIGN(gBattleScripting->statChanger))
+    {
+		case SET_STAT_BUFF_VALUE(1): // +1
+			value = STAT_ANIM_PLUS1;
+			break;
+		case SET_STAT_BUFF_VALUE(2): // +2
+			value = STAT_ANIM_PLUS2;
+			break;
+		case SET_STAT_BUFF_VALUE(3): // +3
+			value = STAT_ANIM_PLUS2;
+			break;
+		case SET_STAT_BUFF_VALUE(4): // +4
+			value = STAT_ANIM_PLUS2;
+			break;
+		case SET_STAT_BUFF_VALUE(5): // +5
+			value = STAT_ANIM_PLUS2;
+			break;
+		case SET_STAT_BUFF_VALUE(6): // +6
+			value = STAT_ANIM_PLUS2;
+			break;
+		case SET_STAT_BUFF_VALUE(1) | STAT_BUFF_NEGATIVE: // -1
+			value = STAT_ANIM_MINUS1;
+			break;
+		case SET_STAT_BUFF_VALUE(2) | STAT_BUFF_NEGATIVE: // -2
+			value = STAT_ANIM_MINUS2;
+			break;
+		case SET_STAT_BUFF_VALUE(3) | STAT_BUFF_NEGATIVE: // -3
+			value = STAT_ANIM_MINUS2;
+			break;
+		case SET_STAT_BUFF_VALUE(4) | STAT_BUFF_NEGATIVE: // -1
+			value = STAT_ANIM_MINUS2;
+			break;
+		case SET_STAT_BUFF_VALUE(5) | STAT_BUFF_NEGATIVE: // -2
+			value = STAT_ANIM_MINUS2;
+			break;
+		case SET_STAT_BUFF_VALUE(6) | STAT_BUFF_NEGATIVE: // -3
+			value = STAT_ANIM_MINUS2;
+			break;
+    }
+
+    gBattleScripting->animArg1 = GET_STAT_BUFF_ID(gBattleScripting->statChanger) + value - 1;
+    gBattleScripting->animArg2 = 0;
+    gBattlescriptCurrInstr++;
 }
 
 static void UpdateMoveStartValuesForCalledMove(void)

@@ -19,6 +19,27 @@ Rand Double Btl Record
 #org @gText_MultiRandomBattleRecord
 Rand Multi Btl Record
 
+#org @gText_SingleBattle
+Single Battle
+
+#org @gText_DoubleBattle
+Double Battle
+
+#org @gText_MultiBattle
+Multi Battle
+
+#org @gText_LinkMultiBattle
+Link Multi Battle
+
+#org @gText_RandomSingleBattle
+Random Single Battle
+
+#org @gText_RandomDoubleBattle
+Random Double Battle
+
+#org @gText_RandomMultiBattle
+Random Multi Battle
+
 #org @gText_FrontierRecordLevel5
 Level 5
 
@@ -66,3 +87,19 @@ Smogon Monotype
 
 #org @gText_GSCup
 GS Cup
+
+#org @gText_On
+on
+
+#org @gText_Off
+off
+
+#org @gText_Previous
+Previous
+
+#org @gText_Max
+Max
+
+#org @gText_None
+None
+

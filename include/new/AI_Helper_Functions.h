@@ -11,6 +11,7 @@ bool8 GetCan2HKO(u8 bankAtk, u8 bankDef);
 bool8 CanKnockOutAfterHealing(u8 bankAtk, u8 bankDef, u16 healAmount, u8 numHits);
 bool8 CanKnockOutWithoutMove(const u16 ignoredMove, const u8 bankAtk, const u8 bankDef);
 bool8 MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(u16 move, u8 bankAtk, u8 bankDef, bool8 checkGoingFirst);
+bool8 IsWeakestContactMoveWithBestAccuracy(u16 move, u8 bankAtk, u8 bankDef);
 bool8 StrongestMoveGoesFirst(u16 move, u8 bankAtk, u8 bankDef);
 bool8 CanKnockOutFromParty(struct Pokemon* monAtk, u8 bankDef);
 void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner, u8 bankDefPartner, s8 bestMoveScores[MAX_BATTLERS_COUNT], u16* bestMove);
@@ -43,7 +44,17 @@ bool8 IsTrapped(u8 bank, bool8 switching);
 bool8 IsTakingSecondaryDamage(u8 bank);
 bool8 WillFaintFromSecondaryDamage(u8 bank);
 u16 CalcSecondaryEffectChance(u8 bank, u16 move);
+u16 CalcAIAccuracy(u16 move, u8 bankAtk, u8 bankDef);
 bool8 ShouldAIDelayMegaEvolution(u8 bankAtk, u8 bankDef, u16 move);
+
+bool8 BadIdeaToPutToSleep(u8 bankDef, u8 bankAtk);
+bool8 BadIdeaToPoison(u8 bankDef, u8 bankAtk);
+bool8 GoodIdeaToPoisonSelf(u8 bankAtk);
+bool8 BadIdeaToParalyze(u8 bankDef, u8 bankAtk);
+bool8 GoodIdeaToParalyzeSelf(u8 bankAtk);
+bool8 BadIdeaToBurn(u8 bankDef, u8 bankAtk);
+bool8 GoodIdeaToBurnSelf(u8 bankAtk);
+bool8 BadIdeaToFreeze(u8 bankDef, u8 bankAtk);
 
 move_t IsValidMovePrediction(u8 bankAtk, u8 bankDef);
 bool8 IsPredictedToSwitch(u8 bankAtk, u8 bankDef);
@@ -74,6 +85,8 @@ bool8 HealingMoveInMoveset(u8 bank);
 bool8 SoundMoveInMoveset(u8 bank);
 bool8 MoveThatCanHelpAttacksHitInMoveset(u8 bank);
 bool8 DamagingMoveThaCanBreakThroughSubstituteInMoveset(u8 bankAtk, u8 bankDef);
+bool8 ContactMovesThatAffectTargetInMoveset(u8 bankAtk, u8 bankDef);
+bool8 UnfreezingMoveInMoveset(u8 bank);
 bool8 OnlyBadMovesLeftInMoveset(u8 bankAtk, u8 bankDef);
 u16 TryReplaceMoveWithZMove(u8 bankAtk, u8 bankDef, u16 move);
 
@@ -87,6 +100,9 @@ move_t ShouldAIUseZMove(u8 bank, u8 moveIndex, u16 move);
 
 void IncreaseViability(s16* viability, u8 amount);
 void DecreaseViability(s16* viability, u16 amount);
+
+#define CAN_SWITCH_OUT(bank) (!IsTrapped(bank, TRUE) && ((IS_SINGLE_BATTLE && ViableMonCountFromBankLoadPartyRange(bank) >= 2) \
+													  || (IS_DOUBLE_BATTLE && ViableMonCountFromBankLoadPartyRange(bank) >= 3)))
 
 //Exported Constants
 #define AI_THINKING_STRUCT ((struct AI_ThinkingStruct*) (gBattleResources->ai))

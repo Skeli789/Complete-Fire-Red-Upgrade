@@ -81,7 +81,7 @@ gBattleScriptingCommandsTable:
 .word 0x8022e19				@endselectionscript
 .word atk45_playanimation
 .word atk46_playanimation2
-.word 0x8022fc1				@setgraphicalstatchangevalues
+.word atk47_setgraphicalstatchangevalues
 .word atk48_playstatchangeanimation
 .word atk49_moveend			@cmd49
 .word atk4A_typecalc2			@damagecalc2
