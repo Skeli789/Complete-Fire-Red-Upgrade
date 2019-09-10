@@ -79,7 +79,7 @@ void HandleInputChooseMove(void)
             else
                 moveTarget = MOVE_TARGET_SELECTED;
         }
-		else if (chosenMove == MOVE_ACUPRESSURE && !(gBattleTypeFlags & BATTLE_TYPE_DOUBLE))
+		else if (chosenMove == MOVE_ACUPRESSURE && !(IS_DOUBLE_BATTLE))
 			moveTarget = MOVE_TARGET_USER; //Only can target yourself in singles
         else
             moveTarget = gBattleMoves[chosenMove].target;
@@ -130,6 +130,7 @@ void HandleInputChooseMove(void)
                 gMultiUsePlayerCursor = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
 
             gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = sub_8012044; //sub_8039AD8 in Emerald
+			MoveSelectionDisplayMoveType();
         }
     }
     else if (gMain.newKeys & B_BUTTON)
@@ -289,7 +290,7 @@ static bool8 TriggerMegaEvolution(void)
 //This function sends useful data over Link Cable for the move menu to use
 void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct ChooseMoveStruct *movePpData)
 {
-    u32 i;
+    u32 i, j;
 	const struct Evolution* evolutions;
 
 	struct ChooseMoveStruct* tempMoveStruct = Calloc(sizeof(struct ChooseMoveStruct)); //Make space for new expanded data
@@ -308,7 +309,7 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 		tempMoveStruct->moves[i] = move;
 		tempMoveStruct->moveTypes[i] = GetMoveTypeSpecial(gActiveBattler, move);
 
-		if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, gActiveBattler, foe) >= 2) //Because target can vary, display only attacker's modifiers
+		if (IS_DOUBLE_BATTLE && CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, gActiveBattler, foe) >= 2) //Because target can vary, display only attacker's modifiers
 		{
 			tempMoveStruct->movePowers[i] = GetBasePower(gActiveBattler, foe, move, 
 									 gBattleMons[gActiveBattler].item, ITEM_EFFECT(gActiveBattler), ABILITY(gActiveBattler), 
@@ -318,7 +319,28 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 																move, tempMoveStruct->movePowers[i], 
 																tempMoveStruct->moveTypes[i], TRUE);
 			tempMoveStruct->moveAcc[i] = VisualAccuracyCalc_NoTarget(move, gActiveBattler);
-			tempMoveStruct->moveResults[i] = 0;
+
+			for (j = 0; j < gBattlersCount; ++j)
+			{	
+				if (SPLIT(move) != SPLIT_STATUS)
+				{
+					u8 moveResult;
+
+					if (j == gActiveBattler || j == PARTNER(gActiveBattler))
+					{
+						tempMoveStruct->moveResults[GetBattlerPosition(j)][i] = 0;
+						continue;
+					}
+
+					moveResult = VisualTypeCalc(move, gActiveBattler, j);
+
+					if (!(moveResult & MOVE_RESULT_NO_EFFECT) && CheckTableForMoveEffect(move, gNoWeaknessResistanceTable))
+						moveResult = 0; //These moves can have no effect, but are neither super nor not very effective
+					tempMoveStruct->moveResults[GetBattlerPosition(j)][i] = moveResult;
+				}
+				else
+					tempMoveStruct->moveResults[GetBattlerPosition(j)][i] = 0;
+			}
 		}
 		else
 		{
@@ -337,10 +359,11 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 
 				if (!(moveResult & MOVE_RESULT_NO_EFFECT) && CheckTableForMoveEffect(move, gNoWeaknessResistanceTable))
 					moveResult = 0; //These moves can have no effect, but are neither super nor not very effective
-				tempMoveStruct->moveResults[i] = moveResult;
+
+				tempMoveStruct->moveResults[GetBattlerPosition(foe)][i] = moveResult;
 			}
 			else
-				tempMoveStruct->moveResults[i] = 0;
+				tempMoveStruct->moveResults[GetBattlerPosition(foe)][i] = 0;
 		}
 	}
 
@@ -414,7 +437,7 @@ void EmitMoveChosen(u8 bufferId, u8 chosenMoveIndex, u8 target, u8 megaState, u8
     PrepareBufferDataTransfer(bufferId, gBattleBuffersTransferData, 7);
 }
 
-u8 sText_StabMoveInterfaceType[] = {0xFC, 0x05, 0x05, 0xFC, 0x04, 0x09, 0x0E, 0x08, 0xFF};
+const u8 sText_StabMoveInterfaceType[] = {0xFC, 0x05, 0x05, 0xFC, 0x04, 0x09, 0x0E, 0x08, 0xFF};
 
 #define SUPER_EFFECTIVE_COLOURS 0
 #define NOT_VERY_EFFECTIVE_COLOURS 4
@@ -423,7 +446,7 @@ u8 sText_StabMoveInterfaceType[] = {0xFC, 0x05, 0x05, 0xFC, 0x04, 0x09, 0x0E, 0x
 static void MoveSelectionDisplayMoveType(void)
 {
     u8 *txtPtr;
-	u8* formatting;
+	const u8* formatting;
     struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct*)(&gBattleBufferA[gActiveBattler][4]);
 	
 	#ifdef DISPLAY_REAL_MOVE_TYPE_ON_MENU
@@ -434,44 +457,52 @@ static void MoveSelectionDisplayMoveType(void)
 
 	//Update Palette Fading for Effectiveness
 	#ifdef DISPLAY_EFFECTIVENESS_ON_MENU
-		u8 stab = 0;
-		const u16* palPtr = gUserInterfaceGfx_TypeHighlightingPal;
-		if (SPLIT(moveInfo->moves[gMoveSelectionCursor[gActiveBattler]]) != SPLIT_STATUS
-		&&	(moveType == moveInfo->monType1
-		  || moveType == moveInfo->monType2
-		  || moveType == moveInfo->monType3))
-		{	
-			stab = 2;
-		}
+		if (!(gBattleTypeFlags & BATTLE_TYPE_LINK)) //Don't use this feature in link battles
+		{
+			u8 stab = 0;
+			const u16* palPtr = gUserInterfaceGfx_TypeHighlightingPal;
+			if (SPLIT(moveInfo->moves[gMoveSelectionCursor[gActiveBattler]]) != SPLIT_STATUS
+			&&	(moveType == moveInfo->monType1
+			  || moveType == moveInfo->monType2
+			  || moveType == moveInfo->monType3))
+			{	
+				stab = 2;
+			}
+			
+			u8 moveResult = 0;
+			if (IS_SINGLE_BATTLE)
+				moveResult = moveInfo->moveResults[GetBattlerPosition(FOE(gActiveBattler))][gMoveSelectionCursor[gActiveBattler]];
+			else if (gBattleBankFunc[gActiveBattler] == (u32) HandleInputChooseTarget)
+				moveResult = moveInfo->moveResults[GetBattlerPosition(gMultiUsePlayerCursor)][gMoveSelectionCursor[gActiveBattler]];
 
-		u8 moveResult = moveInfo->moveResults[gMoveSelectionCursor[gActiveBattler]];
-		if (moveResult & MOVE_RESULT_SUPER_EFFECTIVE)
-		{
-			gPlttBufferUnfaded[88] = palPtr[SUPER_EFFECTIVE_COLOURS + stab + 0];
-			gPlttBufferUnfaded[89] = palPtr[SUPER_EFFECTIVE_COLOURS + stab + 1];
-			formatting = sText_StabMoveInterfaceType;
+			if (moveResult & MOVE_RESULT_SUPER_EFFECTIVE)
+			{
+				gPlttBufferUnfaded[88] = palPtr[SUPER_EFFECTIVE_COLOURS + stab + 0];
+				gPlttBufferUnfaded[89] = palPtr[SUPER_EFFECTIVE_COLOURS + stab + 1];
+				formatting = sText_StabMoveInterfaceType;
+			}
+			else if (moveResult & MOVE_RESULT_NOT_VERY_EFFECTIVE)
+			{
+				gPlttBufferUnfaded[88] = palPtr[NOT_VERY_EFFECTIVE_COLOURS + stab + 0];
+				gPlttBufferUnfaded[89] = palPtr[NOT_VERY_EFFECTIVE_COLOURS + stab + 1];
+				formatting = sText_StabMoveInterfaceType;
+			}
+			else if (moveResult & MOVE_RESULT_NO_EFFECT)
+			{
+				gPlttBufferUnfaded[88] = palPtr[NO_EFFECT_COLOURS + 0]; //No STAB for moves with no effect
+				gPlttBufferUnfaded[89] = palPtr[NO_EFFECT_COLOURS + 1];
+				formatting = sText_StabMoveInterfaceType;
+			}
+			else //Nothing special about move
+			{
+				gPlttBufferUnfaded[88] = palPtr[REGULAR_COLOURS + stab + 0];
+				gPlttBufferUnfaded[89] = palPtr[REGULAR_COLOURS + stab + 1];
+				formatting = sText_StabMoveInterfaceType;
+			}
 		}
-		else if (moveResult & MOVE_RESULT_NOT_VERY_EFFECTIVE)
-		{
-			gPlttBufferUnfaded[88] = palPtr[NOT_VERY_EFFECTIVE_COLOURS + stab + 0];
-			gPlttBufferUnfaded[89] = palPtr[NOT_VERY_EFFECTIVE_COLOURS + stab + 1];
-			formatting = sText_StabMoveInterfaceType;
-		}
-		else if (moveResult & MOVE_RESULT_NO_EFFECT)
-		{
-			gPlttBufferUnfaded[88] = palPtr[NO_EFFECT_COLOURS + 0]; //No STAB for moves with no effect
-			gPlttBufferUnfaded[89] = palPtr[NO_EFFECT_COLOURS + 1];
-			formatting = sText_StabMoveInterfaceType;
-		}
-		else //Nothing special about move
-		{
-			gPlttBufferUnfaded[88] = palPtr[REGULAR_COLOURS + stab + 0];
-			gPlttBufferUnfaded[89] = palPtr[REGULAR_COLOURS + stab + 1];
-			formatting = sText_StabMoveInterfaceType;
-		}
-	#else
-		formatting = gText_MoveInterfaceType;
+		else
 	#endif
+			formatting = gText_MoveInterfaceType;
 
 	CpuCopy16(&gPlttBufferUnfaded[88], &gPlttBufferFaded[88], sizeof(u16));
 	CpuCopy16(&gPlttBufferUnfaded[89], &gPlttBufferFaded[89], sizeof(u16));
@@ -936,6 +967,7 @@ void HandleInputChooseTarget(void)
 		ReloadMoveNamesIfNecessary();
 		TryLoadMegaTriggers();
 		TryLoadZTrigger();
+		MoveSelectionDisplayMoveType();
     }
     else if (gMain.newKeys & (DPAD_LEFT | DPAD_UP))
     {
@@ -999,6 +1031,7 @@ void HandleInputChooseTarget(void)
 		
         } while (i == 0);
         gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = sub_8012044; //sub_8039AD8 in Emerald
+		MoveSelectionDisplayMoveType();
     }
     else if (gMain.newKeys & (DPAD_RIGHT | DPAD_DOWN))
     {
@@ -1062,6 +1095,7 @@ void HandleInputChooseTarget(void)
 			
         } while (i == 0);
         gSprites[gBattlerSpriteIds[gMultiUsePlayerCursor]].callback = sub_8012044; //sub_8039AD8 in Emerald
+		MoveSelectionDisplayMoveType();
     }
 }
 
@@ -1154,7 +1188,7 @@ void PlayerHandleChooseAction(void)
 	
 	u16 itemId = gBattleBufferA[gActiveBattler][2] | (gBattleBufferA[gActiveBattler][3] << 8);
 
-	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	if (IS_DOUBLE_BATTLE)
 	{
 		//Running or using balls cancels the second mon's attack
 		if (!IsBagDisabled()
@@ -1178,7 +1212,7 @@ void PlayerHandleChooseAction(void)
 	
     gBattleBankFunc[gActiveBattler] = (u32) HandleChooseActionAfterDma3;
 	
-	if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	if ((IS_DOUBLE_BATTLE)
 	&& GetBattlerPosition(gActiveBattler) == B_POSITION_PLAYER_RIGHT
 	&& !(gAbsentBattlerFlags & gBitTable[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)])
 	&& !(gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_INGAME_PARTNER))
@@ -1228,7 +1262,7 @@ void HandleInputChooseAction(void)
 				gNewBS->MegaData->chosen[gActiveBattler] = FALSE;
 				gNewBS->UltraData->chosen[gActiveBattler] = FALSE;
 				
-				if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+				if ((IS_DOUBLE_BATTLE)
 				&& GetBattlerPosition(gActiveBattler) == B_POSITION_PLAYER_RIGHT
 				&& !(gAbsentBattlerFlags & gBitTable[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)])
 				&& !(gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_INGAME_PARTNER))
@@ -1282,7 +1316,7 @@ void HandleInputChooseAction(void)
     }
     else if (gMain.newKeys & B_BUTTON)
     {
-        if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+        if ((IS_DOUBLE_BATTLE)
          && GetBattlerPosition(gActiveBattler) == B_POSITION_PLAYER_RIGHT
          && !(gAbsentBattlerFlags & gBitTable[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)])
          && !(gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_INGAME_PARTNER)))

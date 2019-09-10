@@ -112,7 +112,7 @@ struct ChooseMoveStruct
 	
 //New Data - Old data is memcpy so don't touch
 	u8 moveTypes[MAX_MON_MOVES];
-	u8 moveResults[MAX_MON_MOVES];
+	u8 moveResults[MAX_BATTLERS_COUNT][MAX_MON_MOVES];
 	u16 movePowers[MAX_MON_MOVES];
 	u16 moveAcc[MAX_MON_MOVES];
 	u8 monType3;
