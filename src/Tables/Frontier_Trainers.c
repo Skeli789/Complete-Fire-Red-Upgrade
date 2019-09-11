@@ -417,6 +417,7 @@ extern const u8 sFrontierText_Rancher_PlayerLose_6[];
 
 extern const u8 sTrainerName_Palmer[];
 extern const u8 sTrainerName_Pat[];
+extern const u8 sTrainerName_Pablo[];
 extern const u8 sTrainerName_Skeli[];
 extern const u8 sTrainerName_Golche[];
 extern const u8 sTrainerName_Gail[];
@@ -430,6 +431,9 @@ extern const u8 sTrainerName_Giovanni[];
 
 extern const u8 sFrontierText_Pat_PlayerWin[];
 extern const u8 sFrontierText_Pat_PlayerLose[];
+
+extern const u8 sFrontierText_Pablo_PlayerWin[];
+extern const u8 sFrontierText_Pablo_PlayerLose[];
 
 extern const u8 sFrontierText_Skeli_PreBattle[];
 extern const u8 sFrontierText_Skeli_PlayerWin[];
@@ -1918,6 +1922,42 @@ const struct SpecialBattleFrontierTrainer gFrontierBrains[] =
 			.mcSpreadSize =		ARRAY_COUNT(gMiddleCupTowerSpread_Pat2),
 			.lcSpreadSize =		ARRAY_COUNT(gLittleCupTowerSpread_Pat2),
 			.legSpreadSize =	ARRAY_COUNT(gLegendaryTowerSpread_Pat2),
+		},
+	[4] =
+		{
+			.owNum = 			OW_PABLO,
+			.trainerClass = 	CLASS_FRONTIER_BRAIN,
+			.trainerSprite = 	TRAINER_SPRITE_PABLO,
+			.gender = 			BATTLE_TOWER_MALE,
+			.name =				sTrainerName_Pablo,
+			.playerWinText = 	sFrontierText_Pablo_PlayerWin,
+			.playerLoseText = 	sFrontierText_Pablo_PlayerLose,
+			.regularSpreads =	gSpecialTowerSpread_Pablo1Format1,
+			.legendarySpreads = gSpecialTowerSpread_Pablo1Format2,
+			.middleCupSpreads = gSpecialTowerSpread_Pablo1Format2,
+			.littleCupSpreads = gSpecialTowerSpread_Pablo1Format2,
+			.regSpreadSize = 	ARRAY_COUNT(gSpecialTowerSpread_Pablo1Format1),
+			.mcSpreadSize =		ARRAY_COUNT(gSpecialTowerSpread_Pablo1Format2),
+			.lcSpreadSize =		ARRAY_COUNT(gSpecialTowerSpread_Pablo1Format2),
+			.legSpreadSize =	ARRAY_COUNT(gSpecialTowerSpread_Pablo1Format2),
+		},
+	[5] =
+		{
+			.owNum = 			OW_PABLO,
+			.trainerClass = 	CLASS_FRONTIER_BRAIN,
+			.trainerSprite = 	TRAINER_SPRITE_PABLO,
+			.gender = 			BATTLE_TOWER_MALE,
+			.name =				sTrainerName_Pablo,
+			.playerWinText = 	sFrontierText_Pablo_PlayerWin,
+			.playerLoseText = 	sFrontierText_Pablo_PlayerLose,
+			.regularSpreads =	gSpecialTowerSpread_Pablo2Format1,
+			.legendarySpreads = gSpecialTowerSpread_Pablo2Format2,
+			.middleCupSpreads = gSpecialTowerSpread_Pablo2Format2,
+			.littleCupSpreads = gSpecialTowerSpread_Pablo2Format2,
+			.regSpreadSize = 	ARRAY_COUNT(gSpecialTowerSpread_Pablo2Format1),
+			.mcSpreadSize =		ARRAY_COUNT(gSpecialTowerSpread_Pablo2Format2),
+			.lcSpreadSize =		ARRAY_COUNT(gSpecialTowerSpread_Pablo2Format2),
+			.legSpreadSize =	ARRAY_COUNT(gSpecialTowerSpread_Pablo2Format2),
 		},
 };
 

@@ -447,6 +447,8 @@ static void CB2_ShowFrontierRecords(void)
 						sFrontierRecordsPtr->tierList = gBattleTowerTiers;
 						break;
 				}
+				
+				sFrontierRecordsPtr->battleTier = sFrontierRecordsPtr->tierList[0];
 
 				gMain.state += 1;
 			}
@@ -574,6 +576,7 @@ static void FreeReusableThings(u8 taskId)
 
 static void DisplayFrontierRecordsText(void)
 {
+	u16 currStreak, maxStreak;
 	u8 tier = sFrontierRecordsPtr->battleTier;
 	const u8* string;
 
@@ -630,14 +633,31 @@ static void DisplayFrontierRecordsText(void)
 	GetMapName(gStringVar4, GetCurrentRegionMapSectionId(), 0);
 	WindowPrint(WIN_BATTLE_FACILITY_NAME, 1, 0, 6, &titleColour, 0, gStringVar4);
 
+	//Print Tier Name
+	string = GetFrontierTierName(tier, sFrontierRecordsPtr->battleType);
+	WindowPrint(WIN_TIER, 0, 0, 4, &tierNameColour, 0, string);
+	
+	//Print Current & Max Streak
+	WindowPrint(WIN_CURRENT_STREAK_LEVEL_50, 0, 0, 4, &generalColour, 0, gText_CurrentStreak);
+	WindowPrint(WIN_MAX_STREAK_LEVEL_50, 0, 0, 4, &generalColour, 0, gText_MaxStreak);
+	
+	if (BATTLE_FACILITY_NUM == IN_BATTLE_MINE) //Battle Mine is special
+	{
+		currStreak = GetBattleMineStreak(CURR_STREAK, sFrontierRecordsPtr->battleTier);
+		maxStreak = GetBattleMineStreak(MAX_STREAK, sFrontierRecordsPtr->battleTier);
+		ConvertIntToDecimalStringN(gStringVar1, currStreak, 0, 5);
+		ConvertIntToDecimalStringN(gStringVar2, maxStreak, 0, 5);
+		
+		WindowPrint(WIN_CURRENT_STREAK_3V3_LEVEL_50, 0, 0, 4, &generalColour, 0, gStringVar1);
+		WindowPrint(WIN_MAX_STREAK_3V3_LEVEL_50, 0, 0, 4, &generalColour, 0, gStringVar2);
+		TryCreateStarSprite(114, 84, 0, maxStreak);
+		goto COMMIT_WINDOWS;
+	}
+
 	//Print record battle type
 	string = sBattleTypeStrings[sFrontierRecordsPtr->battleType];
 	u8 leftShift = (StringLength(gText_LinkMultiBattleRecord) - StringLength(string)) * 5;
 	WindowPrint(WIN_BATTLE_TYPE, 1, leftShift, 6, &titleColour, 0, string);
-
-	//Print Tier Name
-	string = GetFrontierTierName(tier, sFrontierRecordsPtr->battleType);
-	WindowPrint(WIN_TIER, 0, 0, 4, &tierNameColour, 0, string);
 
 	//Print Level 50 Party Sizes Numbers
 	string = (IsFrontierSingles(sFrontierRecordsPtr->battleType)) ? gText_3v3 : gText_4v4;
@@ -651,9 +671,6 @@ static void DisplayFrontierRecordsText(void)
 		WindowPrint(WIN_LEVEL_50, 0, 0, 4, &levelColour, 0, gText_FrontierRecordLevel100);
 	else
 		WindowPrint(WIN_LEVEL_50, 0, 0, 4, &levelColour, 0, gText_FrontierRecordLevel50);
-
-	WindowPrint(WIN_CURRENT_STREAK_LEVEL_50, 0, 0, 4, &generalColour, 0, gText_CurrentStreak);
-	WindowPrint(WIN_MAX_STREAK_LEVEL_50, 0, 0, 4, &generalColour, 0, gText_MaxStreak);
 
 	if (tier != BATTLE_TOWER_LITTLE_CUP && tier != BATTLE_TOWER_MONOTYPE) //Little Cup only has Lv. 5, Monotype only has Lv. 100
 	{
@@ -679,8 +696,8 @@ static void DisplayFrontierRecordsText(void)
 			if (tier == BATTLE_TOWER_MONOTYPE)
 				level = 100;
 
-			u16 currStreak = GetBattleTowerStreak(CURR_STREAK, sFrontierRecordsPtr->battleType, sFrontierRecordsPtr->battleTier, partySize, level);
-			u16 maxStreak = GetBattleTowerStreak(MAX_STREAK, sFrontierRecordsPtr->battleType, sFrontierRecordsPtr->battleTier, partySize, level);
+			currStreak = GetBattleTowerStreak(CURR_STREAK, sFrontierRecordsPtr->battleType, sFrontierRecordsPtr->battleTier, partySize, level);
+			maxStreak = GetBattleTowerStreak(MAX_STREAK, sFrontierRecordsPtr->battleType, sFrontierRecordsPtr->battleTier, partySize, level);
 			
 			ConvertIntToDecimalStringN(gStringVar1, currStreak, 0, 5);
 			ConvertIntToDecimalStringN(gStringVar2, maxStreak, 0, 5);
@@ -720,7 +737,8 @@ static void DisplayFrontierRecordsText(void)
 		if (tier == BATTLE_TOWER_LITTLE_CUP || tier == BATTLE_TOWER_MONOTYPE)
 			break; //Only one set of levels for LC & Monotype
 	}
-	
+
+COMMIT_WINDOWS:
 	//Display committed gfx
 	for (u8 i = 0; i < WINDOW_COUNT; ++i)
 	{

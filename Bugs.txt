@@ -1,2 +1,1 @@
 -Certain Status Z-Moves (like Z-Destiny Bond) are displayed on the Move Menu with a small graphical oddity.
--Bulk Up & Curse don't work

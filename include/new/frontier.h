@@ -25,12 +25,14 @@ bool8 DuplicateItemsAreBannedInTier(u8 tier, u8 battleType);
 bool8 ShouldDisablePartyMenuItemsBattleTower(void);
 const u8* GetFrontierTierName(u8 tier, u8 format);
 bool8 InBattleSands(void);
+bool8 IsCamomonsTier(u8 tier);
 bool8 IsAverageMonsBattle(void);
 bool8 Is350CupBattle(void);
 bool8 IsScaleMonsBattle(void);
 bool8 IsBenjaminButterfreeBattle(void);
 bool8 IsBenjaminButterfreeBattle(void);
 u16 GetCurrentBattleTowerStreak(void);
+u16 GetBattleMineStreak(u8 type, u8 tier);
 u16 GetMaxBattleTowerStreakForTier(u8 tier);
 u16 GetBattleTowerStreak(u8 currentOrMax, u16 inputBattleStyle, u16 inputTier, u16 partySize, u8 level);
 
@@ -40,6 +42,11 @@ void sp053_LoadFrontierIntroBattleMessage(void);
 u16 sp054_GetBattleTowerStreak(void);
 void sp055_UpdateBattleTowerStreak(void);
 u16 sp056_DetermineBattlePointsToGive(void);
+void sp06C_SpliceFrontierTeamWithPlayerTeam(void);
+u16 sp06D_LoadFrontierMultiTrainerById(void);
+void sp06E_BufferBattleSandsRecords(void);
+void sp06F_CanTeamParticipateInBattleMine(void);
+u8 sp070_RandomizeBattleMineBattleOptions(void);
 
 //Exported Constants
 //#define TOTAL_SPREADS 0x4A0 //sizeof(gFrontierSpreads) / sizeof(struct BattleTowerSpreads)
@@ -97,16 +104,23 @@ enum BattleTowerFormats
 	BATTLE_TOWER_MIDDLE_CUP, //GS Cup in Doubles
 	BATTLE_TOWER_MONOTYPE,
 	BATTLE_TOWER_CAMOMONS,
+	BATTLE_TOWER_LC_CAMOMONS,
 	BATTLE_TOWER_SCALEMONS,
 	BATTLE_TOWER_350_CUP,
 	BATTLE_TOWER_AVERAGE_MONS,
 	BATTLE_TOWER_BENJAMIN_BUTTERFREE,
+	BATTLE_MINE_FORMAT_1, //OU, Camomons, Benjamin Butterfree
+	BATTLE_MINE_FORMAT_2, //Scalemons, 350 Cup, Averagemons
+	BATTLE_MINE_FORMAT_3, //Little Cup, Little Cup Camomons
+	NUM_TIERS
 };
 
-#define NUM_FORMATS (BATTLE_TOWER_MONOTYPE + 1)
 #define NUM_FORMATS_OLD (BATTLE_TOWER_MIDDLE_CUP + 1) //Monotype not included b/c wasn't included in Battle Tower Demo original release
 
 #define BATTLE_TOWER_GS_CUP BATTLE_TOWER_MIDDLE_CUP //Replaces Middle Cup in Doubles
+
+#define NUM_BATTLE_TOWER_TIERS 7
+#define NUM_BATTLE_MINE_TIERS 3
 
 enum BattleTowerPartySizes
 {
@@ -266,6 +280,7 @@ struct BattleSandsStreak
 
 extern struct BattleSandsStreak gBattleSandsStreaks[2 /*PREVIOUS_OR_MAX*/]; //0x202682C
 extern u16 gBattleTowerStreaks[NUM_TOWER_BATTLE_TYPES][NUM_FORMATS_OLD][/*PARTY_SIZE*/ 2][/*LEVEL*/ 2][/*CURRENT_OR_MAX*/ 2]; //0x2026840
+extern u16 gBattleMineStreaks[NUM_BATTLE_MINE_TIERS][/*CURRENT_OR_MAX*/ 2]; //0x2026B40
 //FREE SPACE FROM SLIDESHOW 0x202682C - 0x2027434
 
 extern const u8 gBattleTowerTiers[];
@@ -276,7 +291,7 @@ extern const u8 gNumBattleTowerTiers;
 extern const u8 gNumBattleMineTiers;
 extern const u8 gNumBattleCircusTiers;
 #define gNumBattleSandsTiers gNumBattleTowerTiers
-extern const u8* const gBattleFrontierTierNames[NUM_FORMATS];
+extern const u8* const gBattleFrontierTierNames[NUM_TIERS];
 
 extern const species_t gBattleTowerStandardSpeciesBanList[];
 extern const species_t gGSCup_LegendarySpeciesList[];

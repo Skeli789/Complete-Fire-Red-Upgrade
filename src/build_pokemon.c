@@ -75,6 +75,7 @@ struct TeamBuilder
 	u8 monsCount;
 	u8 numStalls;
 	u8 numChoiceItems;
+	u16 trainerId;
 };
 
 struct Immunity
@@ -272,12 +273,16 @@ void sp067_GenerateRandomBattleTowerTeam(void)
 		case 3: //Middle Cup
 			tier = BATTLE_TOWER_MIDDLE_CUP;
 			break;
+			
+		case 4: 
+			tier = VarGet(BATTLE_TOWER_TIER);
+			break;
 	}
-	
+
 	VarSet(BATTLE_TOWER_TIER, tier);
 	BuildFrontierParty(gPlayerParty, 0, tier, TRUE, TRUE, B_SIDE_PLAYER);
-	
-	
+
+
 //////
 	/*for (u32 i = TOTAL_SPREADS / 2; i < TOTAL_SPREADS; ++i)
 	{	
@@ -713,6 +718,7 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 	builder->tier = tier;
 	builder->battleType = battleType;
 	builder->monsCount = monsCount;
+	builder->trainerId = trainerId;
 	
 	for (i = 0; i < NUM_INDEX_CHECKS; ++i)
 		builder->partyIndex[i] = 0xFF;
@@ -739,6 +745,7 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 								goto REGULAR_LEGENDARY_SPREADS;
 							break;
 						case BATTLE_TOWER_LITTLE_CUP:
+						case BATTLE_TOWER_LC_CAMOMONS:
 						SPECIAL_TRAINER_LITTLE_SPREADS:
 							if (specialTrainer->littleCupSpreads != NULL)
 								spread = &specialTrainer->littleCupSpreads[Random() % specialTrainer->lcSpreadSize];
@@ -763,6 +770,9 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 							}
 							break;
 						case BATTLE_TOWER_SCALEMONS: ;
+							if (trainerId == FRONTIER_BRAIN_TID && IN_BATTLE_MINE)
+								goto SPECIAL_TRAINER_LITTLE_SPREADS;
+
 							rand = Random() & 7;
 							switch (rand) {
 								case 0: //High prevalence of baby spreads b/c they
@@ -778,6 +788,9 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 							}
 							goto SPECIAL_TRAINER_REGULAR_SPREADS;
 						case BATTLE_TOWER_350_CUP: ;
+							if (trainerId == FRONTIER_BRAIN_TID && IN_BATTLE_MINE)
+								goto SPECIAL_TRAINER_LITTLE_SPREADS; 
+						
 							rand = Random() & 3;
 							switch (rand) {
 								case 0:
@@ -788,6 +801,9 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 							}
 							goto SPECIAL_TRAINER_REGULAR_SPREADS;
 						case BATTLE_TOWER_AVERAGE_MONS: ;
+							if (trainerId == FRONTIER_BRAIN_TID && IN_BATTLE_MINE)
+								goto SPECIAL_TRAINER_LITTLE_SPREADS;
+
 							rand = Random() & 3;
 							switch (rand) {
 								case 0:
@@ -820,6 +836,7 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 								goto REGULAR_LEGENDARY_SPREADS;
 							break;
 						case BATTLE_TOWER_LITTLE_CUP:
+						case BATTLE_TOWER_LC_CAMOMONS:
 						MULTI_PARTNER_LITTLE_SPREADS:
 							if (multiPartner->littleCupSpreads != NULL)
 								spread = &multiPartner->littleCupSpreads[Random() % multiPartner->lcSpreadSize];
@@ -893,6 +910,7 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 								spread = &gFrontierLegendarySpreads[Random() % TOTAL_LEGENDARY_SPREADS];
 							break;
 						case BATTLE_TOWER_LITTLE_CUP:
+						case BATTLE_TOWER_LC_CAMOMONS:
 						REGULAR_LC_SPREADS:
 							spread = &gLittleCupSpreads[Random() % TOTAL_LITTLE_CUP_SPREADS];
 							break;
@@ -984,6 +1002,7 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 						case BATTLE_TOWER_NO_RESTRICTIONS:
 							goto REGULAR_LEGENDARY_SPREADS;
 						case BATTLE_TOWER_LITTLE_CUP:
+						case BATTLE_TOWER_LC_CAMOMONS:
 							goto REGULAR_LC_SPREADS;
 						case BATTLE_TOWER_MIDDLE_CUP:
 							if (!IsFrontierSingles(battleType)) //Doubles - GS Cup
@@ -1201,6 +1220,7 @@ static void BuildFrontierMultiParty(u8 multiId)
 					return; //No Pokemon data to load
 				break;
 			case BATTLE_TOWER_LITTLE_CUP:
+			case BATTLE_TOWER_LC_CAMOMONS:
 				if (multiPartner->littleCupSpreads != NULL && i < multiPartner->lcSpreadSize)
 					spread = &multiPartner->littleCupSpreads[i];
 				else
@@ -1267,7 +1287,7 @@ static void CreateFrontierMon(struct Pokemon* mon, const u8 level, const struct 
 	}
 
 	#ifdef UNBOUND
-		mon->metLocation = MAPSEC_TRAINER_TOWER_2; //Battle Tower Unbound
+		mon->metLocation = MAPSEC_BATTLE_FRONTIER;
 	#else
 		mon->metLocation = MAPSEC_TRAINER_TOWER;
 	#endif
@@ -1677,6 +1697,7 @@ static bool8 PokemonTierBan(const u16 species, const u16 item, const struct Batt
 			break;
 
 		case BATTLE_TOWER_LITTLE_CUP:
+		case BATTLE_TOWER_LC_CAMOMONS:
 			if (!CheckTableForSpecies(species, gSmogonLittleCup_SpeciesList)
 			||  CheckTableForItem(item, gSmogonLittleCup_ItemBanList))
 				return TRUE; //Banned
@@ -1839,6 +1860,14 @@ static bool8 PokemonTierBan(const u16 species, const u16 item, const struct Batt
 	}
 
 	return FALSE; //Not banned
+}
+
+bool8 IsMonBannedInTier(struct Pokemon* mon, u8 tier)
+{
+	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
+	u16 item = GetMonData(mon, MON_DATA_HELD_ITEM, NULL);
+
+	return PokemonTierBan(species, item, NULL, mon, tier, CHECK_PARTY_OFFSET);
 }
 
 static bool8 IsPokemonBannedBasedOnStreak(u16 species, u16 item, u16* speciesArray, u8 monsCount, u16 trainerId, u8 tier, bool8 forPlayer)
@@ -2299,7 +2328,7 @@ static void PostProcessTeam(struct Pokemon* party, struct TeamBuilder* builder)
 					break;
 			}
 		}
-		
+
 		switch (ConvertFrontierAbilityNumToAbility(builder->spreads[i]->ability, builder->spreads[i]->species)) {
 			case ABILITY_DRIZZLE:
 			case ABILITY_DROUGHT:
@@ -2324,6 +2353,32 @@ static void PostProcessTeam(struct Pokemon* party, struct TeamBuilder* builder)
 			case ABILITY_ILLUSION:
 				illusionIndex = i;
 				break;
+		}
+	}
+	
+	//Shuffle moves in camomons
+	if (IsCamomonsTier(builder->tier) && builder->trainerId != FRONTIER_BRAIN_TID)
+	{
+		for (i = 0; i < PARTY_SIZE; ++i)
+		{
+			for (j = 0; j < 30; ++j) //Shuffle 30 times
+			{
+				u8 index1 = Random() & 3;
+				u8 index2 = Random() & 3;
+
+				u16 move1 = party[i].moves[index1];
+				u16 move2 = party[i].moves[index2];
+				u8 pp1 = party[i].pp[index1];
+				u8 pp2 = party[i].pp[index2];
+
+				if (move1 == MOVE_NONE || move2 == MOVE_NONE)
+					continue;
+
+				party[i].moves[index1] = move2;
+				party[i].moves[index2] = move1;
+				party[i].pp[index1] = pp2;
+				party[i].pp[index2] = pp1;
+			}
 		}
 	}
 	

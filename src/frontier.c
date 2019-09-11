@@ -4,6 +4,7 @@
 #include "../include/random.h"
 #include "../include/script.h"
 
+#include "../include/new/build_pokemon.h"
 #include "../include/new/Helper_Functions.h"
 #include "../include/new/frontier.h"
 #include "../include/new/mega.h"
@@ -28,6 +29,15 @@ extern const u8 gText_SmogonLittleCup[];
 extern const u8 gText_MiddleCup[];
 extern const u8 gText_SmogonMonotype[];
 extern const u8 gText_GSCup[];
+extern const u8 gText_SmogonCamomons[];
+extern const u8 gText_LittleCupCamomons[];
+extern const u8 gText_SmogonScalemons[];
+extern const u8 gText_Smogon350Cup[];
+extern const u8 gText_SmogonAveragemons[];
+extern const u8 gText_SmogonBenjaminButterfree[];
+extern const u8 gText_BattleMineFormat1[];
+extern const u8 gText_BattleMineFormat2[];
+extern const u8 gText_BattleMineFormat3[];
 
 extern const u8 gText_On[];
 extern const u8 gText_Off[];
@@ -48,10 +58,31 @@ const u8 gBattleTowerTiers[] =
 
 const u8 gNumBattleTowerTiers = ARRAY_COUNT(gBattleTowerTiers);
 
-const u8 gBattleMineTiers[] =
+const u8 gBattleMineFormat1Tiers[] =
 {
 	BATTLE_TOWER_OU,
 	BATTLE_TOWER_CAMOMONS,
+	BATTLE_TOWER_BENJAMIN_BUTTERFREE,
+};
+
+const u8 gBattleMineFormat2Tiers[] =
+{
+	BATTLE_TOWER_SCALEMONS,
+	BATTLE_TOWER_350_CUP,
+	BATTLE_TOWER_AVERAGE_MONS,
+};
+
+const u8 gBattleMineFormat3Tiers[] =
+{
+	BATTLE_TOWER_LITTLE_CUP,
+	BATTLE_TOWER_LC_CAMOMONS,
+};
+
+const u8 gBattleMineTiers[] =
+{
+	BATTLE_MINE_FORMAT_1,
+	BATTLE_MINE_FORMAT_2,
+	BATTLE_MINE_FORMAT_3,
 };
 
 const u8 gNumBattleMineTiers = ARRAY_COUNT(gBattleMineTiers);
@@ -62,13 +93,18 @@ const u8 gBattleCircusTiers[] =
 	BATTLE_TOWER_NO_RESTRICTIONS,
 	BATTLE_TOWER_LITTLE_CUP,
 	BATTLE_TOWER_MIDDLE_CUP,
-	BATTLE_TOWER_SCALEMONS,
 	BATTLE_TOWER_MONOTYPE,
+	BATTLE_TOWER_CAMOMONS,
+	BATTLE_TOWER_LC_CAMOMONS,
+	BATTLE_TOWER_SCALEMONS,
+	BATTLE_TOWER_350_CUP,
+	BATTLE_TOWER_AVERAGE_MONS,
+	BATTLE_TOWER_BENJAMIN_BUTTERFREE,
 };
 
 const u8 gNumBattleCircusTiers = ARRAY_COUNT(gBattleCircusTiers);
 
-const u8* const gBattleFrontierTierNames[NUM_FORMATS] =
+const u8* const gBattleFrontierTierNames[NUM_TIERS] =
 {
 	[BATTLE_TOWER_STANDARD] = gText_BattleTowerStandard,
 	[BATTLE_TOWER_NO_RESTRICTIONS] = gText_NoRestrictions,
@@ -77,6 +113,15 @@ const u8* const gBattleFrontierTierNames[NUM_FORMATS] =
 	[BATTLE_TOWER_LITTLE_CUP] = gText_SmogonLittleCup,
 	[BATTLE_TOWER_MIDDLE_CUP] = gText_MiddleCup,
 	[BATTLE_TOWER_MONOTYPE] = gText_SmogonMonotype,
+	[BATTLE_TOWER_CAMOMONS] = gText_SmogonCamomons,
+	[BATTLE_TOWER_LC_CAMOMONS] = gText_LittleCupCamomons,
+	[BATTLE_TOWER_SCALEMONS] = gText_SmogonScalemons,
+	[BATTLE_TOWER_350_CUP] = gText_Smogon350Cup,
+	[BATTLE_TOWER_AVERAGE_MONS] = gText_SmogonAveragemons,
+	[BATTLE_TOWER_BENJAMIN_BUTTERFREE] = gText_SmogonBenjaminButterfree,
+	[BATTLE_MINE_FORMAT_1] = gText_BattleMineFormat1,
+	[BATTLE_MINE_FORMAT_2] = gText_BattleMineFormat2,
+	[BATTLE_MINE_FORMAT_3] = gText_BattleMineFormat3,
 };
 
 const u8* const gBattleFrontierFormats[NUM_TOWER_BATTLE_TYPES] =
@@ -420,6 +465,16 @@ bool8 InBattleSands(void)
 	return (gBattleTypeFlags & BATTLE_TYPE_BATTLE_SANDS) != 0;
 }
 
+bool8 IsCamomonsTier(u8 tier)
+{
+	return tier == BATTLE_TOWER_CAMOMONS || tier == BATTLE_TOWER_LC_CAMOMONS;
+}
+
+bool8 IsLittleCupTier(u8 tier)
+{
+	return tier == BATTLE_TOWER_LITTLE_CUP || tier == BATTLE_TOWER_LC_CAMOMONS;
+}
+
 bool8 IsAverageMonsBattle(void)
 {
 	return FlagGet(BATTLE_TOWER_FLAG) && VarGet(BATTLE_TOWER_TIER) == BATTLE_TOWER_AVERAGE_MONS;
@@ -569,6 +624,11 @@ u16 GetCurrentBattleTowerStreak(void)
 	return GetBattleTowerStreak(CURR_STREAK, 0xFFFF, 0xFFFF, 0xFFFF, 0);
 }
 
+u16 GetBattleMineStreak(u8 type, u8 tier)
+{
+	return GetBattleTowerStreak(type, 0xFFFF, tier, 0xFFFF, 0);
+}
+
 u16 GetMaxBattleTowerStreakForTier(u8 tier)
 {
 	u8 battleType, level, partySize;
@@ -594,7 +654,7 @@ u16 GetMaxBattleTowerStreakForTier(u8 tier)
 
 static u8 AdjustLevelForTier(u8 level, u8 tier)
 {
-	if (tier == BATTLE_TOWER_LITTLE_CUP)
+	if (IsLittleCupTier(tier))
 		return 5;
 		
 	if (tier == BATTLE_TOWER_MONOTYPE)
@@ -619,6 +679,8 @@ u16 GetBattleTowerStreak(u8 currentOrMax, u16 inputBattleStyle, u16 inputTier, u
 			return gBattleTowerStreaks[battleStyle][tier][size][level][currentOrMax];
 		case IN_BATTLE_SANDS:
 			return gBattleSandsStreaks[currentOrMax].streakLength;
+		case IN_BATTLE_MINE:
+			return gBattleMineStreaks[MathMin(tier - BATTLE_MINE_FORMAT_1, 2)][currentOrMax];
 	}
 }
 
@@ -648,6 +710,10 @@ void sp055_UpdateBattleTowerStreak(void)
 			currentStreak = &gBattleSandsStreaks[CURR_STREAK].streakLength;
 			maxStreak = &gBattleSandsStreaks[MAX_STREAK].streakLength;
 			inBattleSands = TRUE;
+			break;
+		case IN_BATTLE_MINE:
+			currentStreak = &gBattleMineStreaks[MathMin(tier - BATTLE_MINE_FORMAT_1, 2)][CURR_STREAK];
+			maxStreak = &gBattleMineStreaks[MathMin(tier - BATTLE_MINE_FORMAT_1, 2)][MAX_STREAK];
 			break;
 	}
 	
@@ -716,6 +782,10 @@ u16 sp056_DetermineBattlePointsToGive(void)
 				if (VarGet(BATTLE_TOWER_TIER) != BATTLE_TOWER_MONOTYPE)
 					toGive = 20; //Battle against frontier brain
 				break;
+				
+			case IN_BATTLE_MINE:
+				toGive = 20; //Always battle against frontier brain
+				break;
 		}
 	}
 	else if (streakLength <= 30)
@@ -737,6 +807,10 @@ u16 sp056_DetermineBattlePointsToGive(void)
 			case IN_BATTLE_SANDS:
 				if (VarGet(BATTLE_TOWER_TIER) != BATTLE_TOWER_MONOTYPE)
 					toGive = 50; //Battle against frontier brain
+				break;
+				
+			case IN_BATTLE_MINE:
+				toGive = 50; //Always battle against frontier brain
 				break;
 		}
 	}
@@ -767,7 +841,7 @@ static void LoadProperStreakData(u8* currentOrMax, u8* battleStyle, u8* tier, u8
 
 	*currentOrMax = MathMin(*currentOrMax, 1);
 	*battleStyle = MathMin(*battleStyle, NUM_TOWER_BATTLE_TYPES);
-	*tier = MathMin(*tier, NUM_FORMATS);
+	*tier = MathMin(*tier, NUM_TIERS);
 	*partySize = (*partySize < 6) ? 0 : 1;
 	*level = (*level < 100) ? 0 : 1;
 }
@@ -860,5 +934,196 @@ void sp06E_BufferBattleSandsRecords(void)
 		StringCopy(gStringVarC, requestStrings[(Var8000 == 0) ? 0 : 1]);
 
 		gSpecialVar_LastResult = TRUE;
+	}
+}
+
+//@Details: Checks if the player's team can enter the Battle Mine.
+//			Also sets the Battle Tower Tier var to the chosen tier.
+//@Inputs:
+//		Var8000: 0 = Check Battle Mine Format 1.
+//				 1 = Check Battle Mine Format 2.
+//				 2 = Check Battle Mine Format 3.
+//@Returns: LastResult: TRUE if the team can participate.
+void sp06F_CanTeamParticipateInBattleMine(void)
+{
+	int i, j, tier;
+	u16 choice = Var8000;
+	const u8* tiers = choice == 0 ? gBattleMineFormat1Tiers
+					: choice == 1 ? gBattleMineFormat2Tiers
+					: gBattleMineFormat3Tiers;
+	u8 numTiers = choice == 0 ? ARRAY_COUNT(gBattleMineFormat1Tiers)
+				: choice == 1 ? ARRAY_COUNT(gBattleMineFormat2Tiers)
+				: ARRAY_COUNT(gBattleMineFormat3Tiers);
+
+	gSpecialVar_LastResult = FALSE;
+
+	//Check if party of 6 where every Pokemon can participate in every tier in the requested format
+	for (i = 0; i < PARTY_SIZE; ++i)
+	{
+		struct Pokemon* mon = &gPlayerParty[i];
+	
+		if (GetMonData(mon, MON_DATA_SPECIES, NULL) == SPECIES_NONE
+		||  GetMonData(mon, MON_DATA_IS_EGG, NULL))
+			return;
+			
+		for (j = 0, tier = tiers[j]; j < numTiers; ++j, tier = tiers[j]) //Check every tier in requested format
+		{
+			if (IsMonBannedInTier(mon, tier))
+				return;
+		}
+	}
+	
+	VarSet(BATTLE_TOWER_TIER, BATTLE_MINE_FORMAT_1 + MathMin(choice, 2));
+	gSpecialVar_LastResult = TRUE;
+}
+
+//@Details: Randomizes various battle options for a battle in the Battle Mine.
+//@Returns: To given var the original tier to back up.
+//			gStringVar7: Tier name.
+//			gStringVar8: Battle format name.
+//			gStringVar9: Level.
+//			gStringVarA: Party size.
+//			gStringVarB: Inverse on or off.
+u8 sp070_RandomizeBattleMineBattleOptions(void)
+{
+	u8 format, tier, level, partySize, inverse;
+	
+	u8 originalTier = VarGet(BATTLE_TOWER_TIER);
+	const u8* tiers = originalTier == BATTLE_MINE_FORMAT_1 ? gBattleMineFormat1Tiers
+					: originalTier == BATTLE_MINE_FORMAT_2 ? gBattleMineFormat2Tiers
+					: gBattleMineFormat3Tiers;
+	u8 numTiers = originalTier == BATTLE_MINE_FORMAT_1 ? ARRAY_COUNT(gBattleMineFormat1Tiers)
+				: originalTier == BATTLE_MINE_FORMAT_2 ? ARRAY_COUNT(gBattleMineFormat2Tiers)
+				: ARRAY_COUNT(gBattleMineFormat3Tiers);
+
+	u16 streak = GetCurrentBattleTowerStreak();
+
+	//Choose Battle Format
+	switch (streak) {
+		case 0 ... 29:
+			format = BATTLE_TOWER_SINGLE + (Random() & 1);
+			break;
+		default: ; //Random Battles become available after battle 30
+			u8 randomOption = Random() & 3;
+			switch (randomOption) {
+				case 0:
+				case 1:
+					format = BATTLE_TOWER_SINGLE + (randomOption & 1);
+					break;
+				case 2:
+				default:
+					format = BATTLE_TOWER_SINGLE_RANDOM + (randomOption & 1);
+			}
+	}
+
+	//Choose Tier
+	tier = tiers[Random() % numTiers];
+
+	//Choose Level
+	if (IsLittleCupTier(tier))
+		level = 5;
+	else
+	{
+		switch (streak) {
+			case 0 ... 9:
+				level = 50;
+				break;
+			case 10 ... 18:
+				if (Random() & 1)
+					level = 50;
+				else
+					level = MAX_LEVEL;
+				break;
+			case 19: //Frontier Brain 1
+				level = 50;
+				break;
+			case 49: //Frontier Brain 2
+				level = MAX_LEVEL;
+				break;
+			default:
+				level = (Random() % MAX_LEVEL) + 1; //Randomize level completely after battle 20
+		}
+	}
+
+	//Choose Party Size
+	switch (streak) {
+		case 0 ... 9:
+			if (IsFrontierSingles(format))
+				partySize = 3; //3v3
+			else
+				partySize = 4; //4v4
+			break;
+		case 11 ... 39:
+			partySize = Random() % (PARTY_SIZE - 1) + 2; //2v2 - 6v6
+			
+			if (partySize == 2 && !IsFrontierSingles(format))
+				partySize = 3; //3v3
+			break;
+		default:
+			partySize = Random() % PARTY_SIZE + 1; //1v1 - 6v6
+			
+			if (partySize == 1 && !IsFrontierSingles(format))
+				partySize = 2; //2v2
+	}
+
+	//Choose Inverse
+	switch (streak) {
+		case 0 ... 19:
+			inverse = FALSE;
+			break;
+		default:
+			inverse = Random() & TRUE;
+	}
+	
+	VarSet(BATTLE_TOWER_POKE_LEVEL, level);
+	VarSet(BATTLE_TOWER_BATTLE_TYPE, format);
+	VarSet(BATTLE_TOWER_TIER, tier);
+	VarSet(BATTLE_TOWER_POKE_NUM, partySize);
+	if (inverse)
+		FlagSet(INVERSE_FLAG);
+		
+	StringCopy(gStringVar7, GetFrontierTierName(tier, format));
+	StringCopy(gStringVar8, gBattleFrontierFormats[format]);
+	ConvertIntToDecimalStringN(gStringVar9, level, 0, 3);
+	ConvertIntToDecimalStringN(gStringVarA, partySize, 0, 1);
+	StringCopy(gStringVarB, (inverse) ? gText_On : gText_Off);
+
+	return originalTier;
+}
+
+//@Details: Sets the tier var to the correct tier the Battle Mine streaks are recorded in.
+void sp071_LoadBattleMineRecordTier(void)
+{
+	u32 i, tier;
+	u8 currTier = VarGet(BATTLE_TOWER_TIER);
+
+	if (currTier == BATTLE_MINE_FORMAT_1 || currTier == BATTLE_MINE_FORMAT_2 || currTier == BATTLE_MINE_FORMAT_3)
+		return;
+
+	for (i = 0, tier = gBattleMineFormat1Tiers[i]; i < ARRAY_COUNT(gBattleMineFormat1Tiers); ++i, tier = gBattleMineFormat1Tiers[i])
+	{
+		if (currTier == tier)
+		{
+			VarSet(BATTLE_TOWER_TIER, BATTLE_MINE_FORMAT_1);
+			return;
+		}
+	}
+
+	for (i = 0, tier = gBattleMineFormat2Tiers[i]; i < ARRAY_COUNT(gBattleMineFormat2Tiers); ++i, tier = gBattleMineFormat2Tiers[i])
+	{
+		if (currTier == tier)
+		{
+			VarSet(BATTLE_TOWER_TIER, BATTLE_MINE_FORMAT_2);
+			return;
+		}
+	}
+	
+	for (i = 0, tier = gBattleMineFormat3Tiers[i]; i < ARRAY_COUNT(gBattleMineFormat3Tiers); ++i, tier = gBattleMineFormat3Tiers[i])
+	{
+		if (currTier == tier)
+		{
+			VarSet(BATTLE_TOWER_TIER, BATTLE_MINE_FORMAT_3);
+			return;
+		}
 	}
 }
