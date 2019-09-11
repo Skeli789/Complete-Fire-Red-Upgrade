@@ -165,20 +165,34 @@ void BattleBeginFirstTurn(void)
 					if (effect) return;
 				}
 				++*state;
+				*bank = 0;
 				break;
 			
 			case ThirdTypeRemoval:
-				for (*bank = 0; *bank < gBattlersCount; ++*bank)
+				for (; *bank < gBattlersCount; ++*bank)
 				{
 					gBattleMons[*bank].type3 =  TYPE_BLANK;
 					
 					if (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) //The Pokemon takes on the types of its first two moves
+					{
 						UpdateTypesForCamomons(*bank);
+						gBattleScripting->bank = *bank;
+						BattleScriptPushCursorAndCallback(BattleScript_CamomonsTypeRevealEnd3);
+						
+						if (gBattleMons[*bank].type1 == gBattleMons[*bank].type2)
+							BattleStringLoader = gText_CamomonsTypeReveal;
+						else
+							BattleStringLoader = gText_CamomonsTypeRevealDualType;
+						PREPARE_TYPE_BUFFER(gBattleTextBuff1, gBattleMons[*bank].type1);
+						PREPARE_TYPE_BUFFER(gBattleTextBuff2, gBattleMons[*bank].type2);
+						++*bank;
+						return;
+					}
 				}
 
 				*bank = 0;
 				++*state;
-			
+
 			__attribute__ ((fallthrough));
 			case SwitchInAbilities:
 				while (*bank < gBattlersCount) {
@@ -702,12 +716,12 @@ void HandleAction_UseMove(void)
 	}
 	else if (gBattleMons[gBankAttacker].status2 & STATUS2_RECHARGE)
 	{
-		gCurrentMove = gChosenMove = gLockedMoves[gBankAttacker];
+		gChosenMovesByBanks[gBankAttacker] = gCurrentMove = gChosenMove = gLockedMoves[gBankAttacker];
 	}
 	else if (gBattleMons[gBankAttacker].status2 & STATUS2_MULTIPLETURNS)
 	{
-		gCurrentMove = gChosenMove = gLockedMoves[gBankAttacker];
-		
+		gChosenMovesByBanks[gBankAttacker] = gCurrentMove = gChosenMove = gLockedMoves[gBankAttacker];
+
 		if (FindMovePositionInMoveset(gLockedMoves[gBankAttacker], gBankAttacker) == 4) //The Pokemon doesn't know the move it's locked into
 		{
 			CancelMultiTurnMoves(gBankAttacker);

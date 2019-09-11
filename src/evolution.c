@@ -5,6 +5,7 @@
 #include "../include/overworld.h"
 #include "../include/constants/hold_effects.h"
 #include "../include/constants/items.h"
+#include "../include/constants/pokedex.h"
 #include "../include/constants/pokemon.h"
 #include "../include/constants/species.h"
 
@@ -335,6 +336,16 @@ u16 GetMonDevolution(struct Pokemon* mon)
 			break;
 	}
 	
+	u16 dexNum = SpeciesToNationalPokedexNum(species);
+	switch(dexNum) {
+		case NATIONAL_DEX_PIKACHU: //Get's all the special forms
+			species = SPECIES_PICHU;
+			break;
+		case NATIONAL_DEX_VIVILLON:
+			species = SPECIES_SCATTERBUG;
+			break;
+	}
+
 	if (species != originalSpecies)
 		return species;
 		

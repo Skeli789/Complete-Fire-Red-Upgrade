@@ -22,6 +22,7 @@
 
 enum SwitchInStates 
 {
+	SwitchIn_CamomonsReveal,
 	SwitchIn_HealingWish,
 	SwitchIn_ZHealingWish,
 	SwitchIn_Spikes,
@@ -367,6 +368,23 @@ void atk52_switchineffects(void)
 		gNewBS->SwitchInEffectsTracker = SwitchIn_PrimalReversion;
 
 	switch (gNewBS->SwitchInEffectsTracker) {
+		case SwitchIn_CamomonsReveal:
+			if (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS)
+			{
+				gBattleScripting->bank = gActiveBattler;
+				BattleScriptPushCursor();
+				gBattlescriptCurrInstr = BattleScript_CamomonsTypeRevealRet;
+							
+				if (gBattleMons[gActiveBattler].type1 == gBattleMons[gActiveBattler].type2)
+					BattleStringLoader = gText_CamomonsTypeReveal;
+				else
+					BattleStringLoader = gText_CamomonsTypeRevealDualType;
+				PREPARE_TYPE_BUFFER(gBattleTextBuff1, gBattleMons[gActiveBattler].type1);
+				PREPARE_TYPE_BUFFER(gBattleTextBuff2, gBattleMons[gActiveBattler].type2);
+			}
+			++gNewBS->SwitchInEffectsTracker;
+			break;
+
 		case SwitchIn_HealingWish:
 			if (gBattleMons[gActiveBattler].hp != gBattleMons[gActiveBattler].maxHP
 			|| gBattleMons[gActiveBattler].status1 != STATUS1_NONE)

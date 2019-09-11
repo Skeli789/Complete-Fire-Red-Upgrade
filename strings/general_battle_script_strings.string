@@ -166,3 +166,9 @@ The [LAST_ITEM] restored\n[SCRIPTING_BANK]'s status!
 
 #org @gText_DevolutionsStatsReset
 [EFFECT_BANK]'s stats\nand status were reset!
+
+#org @gText_CamomonsTypeReveal
+[SCRIPTING_BANK] appears as the\n[BUFFER][00]-type!
+
+#org @gText_CamomonsTypeRevealDualType
+[SCRIPTING_BANK] appears as the\n[BUFFER][00]- and [BUFFER][01]-type!

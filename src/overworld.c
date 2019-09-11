@@ -554,7 +554,7 @@ void BattleSetup_StartTrainerBattle(void)
 		}
 
 		u16 tier = VarGet(BATTLE_TOWER_TIER);
-		if (tier == BATTLE_TOWER_CAMOMONS)
+		if (IsCamomonsTier(tier))
 			gBattleTypeFlags |= BATTLE_TYPE_CAMOMONS;
 		else if (tier == BATTLE_TOWER_BENJAMIN_BUTTERFREE)
 			gBattleTypeFlags |= BATTLE_TYPE_BENJAMIN_BUTTERFREE;
