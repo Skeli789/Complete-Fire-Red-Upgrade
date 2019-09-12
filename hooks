@@ -498,6 +498,10 @@ SetInitialSafariZoneParams 080A0ED0 1
 FixSafariZoneWindow 0806EE98 0
 FixSafariZoneBattleWindow 08049D1A 1
 
-## Scrolling Multichoice
+#ifdef SCROLLING_MULTICHOICE
+
+##Scrolling Multichoice
 CustomScrollingMultichoiceHook 080CB94C 0
 ScrollingMultiSizeHook 080CB82A 0
+
+#endif

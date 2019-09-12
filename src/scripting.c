@@ -2710,8 +2710,7 @@ void ConvertCoinInt(u32 coinAmount)
     ConvertIntToDecimalStringN(gStringVar1, coinAmount, STR_CONV_MODE_RIGHT_ALIGN, MAX_COINS_DIGITS);
 }
 
-
-
+#ifdef SCROLLING_MULTICHOICE
 
 //////////////////////////////////
 ///// Scrolling Multichoice //////
@@ -2769,8 +2768,11 @@ const struct ScrollingSizePerOpts sScrollingSizes[] = {
 	{.maxShowed = 9, .height = 16},
 };
 
-void SetScrollingListSize(u8 taskId)
+#endif
+
+void SetScrollingListSize(unusedArg u8 taskId)
 {
+#ifdef SCROLLING_MULTICHOICE
 	u8 maxShowed = Var8001;
 	if (maxShowed < MIN_NUM_SHOWED || maxShowed > MAX_NUM_SHOWED)
 		maxShowed = 4;
@@ -2789,18 +2791,24 @@ void SetScrollingListSize(u8 taskId)
 	gTasks[taskId].data[2] = 1;	//x
 	gTasks[taskId].data[3] = 1;	//y
 	gTasks[taskId].data[4] = 0xC;	//width?
+#endif
 }
 
 int GetSizeOfMultiList(void)
 {
+#ifdef SCROLLING_MULTICHOICE
 	return sScrollingSets[Var8000].count;
+#else
+	return 0;
+#endif
 }
 
 
 const u8** GetScrollingMultiList(void)
 {
+#ifdef SCROLLING_MULTICHOICE
 	return sScrollingSets[Var8000].set;
+#else
+	return 0;
+#endif
 }
-
-
-

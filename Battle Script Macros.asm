@@ -730,10 +730,10 @@
 	.byte \bank
 	.endm
 
-	.macro status2animation bank_or_side, rom_address
+	.macro status2animation bank, status2
 	.byte 0x65
-	.byte \bank_or_side
-	.4byte \rom_address
+	.byte \bank
+	.4byte \status2
 	.endm
 
 	.macro chosenstatusanimation bank_or_side, bank_or_side2, status
