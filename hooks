@@ -366,7 +366,7 @@ PokedexScreenStats 08106370 0
 ##Daycare
 GiveEggFromDaycare 080460D4 1
 TriggerPendingDaycareEgg 080459F0 1
-FlameBodyMagmaArmorEggHook 8046390 1
+FlameBodyMagmaArmorEggHook 08046390 1
 
 ##Shiny Charm
 CreateBoxMonHook 803DAD2 0
@@ -497,3 +497,7 @@ ExpandCoinIntConversion 080D06D6 2
 SetInitialSafariZoneParams 080A0ED0 1
 FixSafariZoneWindow 0806EE98 0
 FixSafariZoneBattleWindow 08049D1A 1
+
+## Scrolling Multichoice
+CustomScrollingMultichoiceHook 080CB94C 0
+ScrollingMultiSizeHook 080CB82A 0

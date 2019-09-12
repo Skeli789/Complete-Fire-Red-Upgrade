@@ -49,6 +49,67 @@ script functions/specials in asm - hooks and returns
 .global FixSafariZoneWindow
 .global FixSafariZoneBattleWindow
 
+@@ Scrolling Multichoice
+.global CustomScrollingMultichoiceHook
+.global ScrollingMultiSizeHook
+
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@ 080CB94C via r0
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.align 2
+.pool
+CustomScrollingMultichoiceHook:
+	bl GetSizeOfMultiList
+	mov r1, #0xA
+	strh r0, [r5, r1]
+	lsl r0, r0, #0x3
+	bl Calloc
+	ldr r4, =(0x2039A14) @RAM to hold pointer to malloc data
+	str r0, [r4]
+	bl SetBoxProperties
+	mov r6, #0x0
+	mov r4, #0x0
+	mov r2, #0xA
+	ldrsh r0, [r5, r2]
+	lsl r3, r7, #0x2
+	mov r10, r3
+	add r1, SP, #0x18
+	mov r9, r1
+	cmp r6, r0
+	bge MultichoiceLoop
+	bl GetScrollingMultiList
+	mov r8, r0
+	ldr r0, =(0x80CB974 +1)
+	bx r0	
+	
+MultichoiceLoop:
+	ldr r0, =(0x80CB9AE +1)
+	bx r0		
+	
+SetBoxProperties:
+	ldr r2, =(0x80CBA7C +1)
+	bx r2
+	
+Calloc:
+	ldr r2, =(0x08002BB0 +1)
+	bx r2
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@	
+@@@@@ 080CB82A via r0
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.align 2
+.pool
+ScrollingMultiSizeHook:
+	mov r0, r5	@task Id
+	push {r3-r5}
+	bl SetScrollingListSize
+	pop {r3-r5}
+	mov r1, #1
+	ldr r2, =(0x080CB8E6 +1)
+	bx r2
+
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Safari Zone Steps/Ball Count
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
