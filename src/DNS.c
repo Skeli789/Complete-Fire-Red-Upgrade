@@ -36,9 +36,9 @@ void TransferPlttBuffer(void)
 
 		#ifdef TIME_ENABLED
 		switch (GetCurrentMapType()) {
-			case MAP_TYPE_0:			//No fading in these areas
+			case MAP_TYPE_INDOOR: //No fading in these areas
 			case MAP_TYPE_UNDERGROUND:
-			case MAP_TYPE_INDOOR:
+			case MAP_TYPE_0:
 			case MAP_TYPE_SECRET_BASE:
 				break;
 			default:

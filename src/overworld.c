@@ -192,13 +192,14 @@ static const struct TrainerBattleParameter sTagBattleParams[] =
 };
 
 u8 CheckForTrainersWantingBattle(void) {
-	if (IsQuestLogActive())
-		return FALSE;
+	//if (IsQuestLogActive())
+	//	return FALSE;
 
 	if (FuncIsActiveTask(Task_OverworldMultiTrainers))
 		return FALSE;
 
-	if (ViableMonCount(gPlayerParty) == 0) //NPC's won't challenge you if, for some reason, you have no Pokemon
+	u8 viableMons = ViableMonCount(gPlayerParty);
+	if (viableMons == 0) //NPC's won't challenge you if, for some reason, you have no Pokemon
 		return FALSE;
 
     ExtensionState.spotted.count = 0;
@@ -210,7 +211,7 @@ u8 CheckForTrainersWantingBattle(void) {
 
 		if (CheckTrainerSpotting(eventObjId))
 		{
-            if (ViableMonCount(gPlayerParty) < 2)
+            if (viableMons < 2)
                 break;
 
             // We've found enough opponents
@@ -280,18 +281,18 @@ static bool8 CheckTrainerSpotting(u8 eventObjId) //Or just CheckTrainer
 
     if (canApproach)
     {
-		if (battleType == TRAINER_BATTLE_DOUBLE
-        || battleType == TRAINER_BATTLE_REMATCH_DOUBLE
-        || battleType == TRAINER_BATTLE_CONTINUE_SCRIPT_DOUBLE
-		|| battleType == TRAINER_BATTLE_TWO_OPPONENTS)
-		{
-			if (ViableMonCount(gPlayerParty) < 2)
-				return FALSE;
+		switch (battleType) {
+			case TRAINER_BATTLE_DOUBLE:
+			case TRAINER_BATTLE_REMATCH_DOUBLE:
+			case TRAINER_BATTLE_CONTINUE_SCRIPT_DOUBLE:
+			case TRAINER_BATTLE_TWO_OPPONENTS:
+				if (ViableMonCount(gPlayerParty) < 2)
+					return FALSE;
+				break;
+			case TRAINER_BATTLE_TAG:
+			case TRAINER_BATTLE_MULTI:
+				return FALSE;  //You can't be stopped by someone using the tag battle feature
 		}
-
-		if (battleType == TRAINER_BATTLE_TAG //You can't be stopped by someone using the tag battle feature
-		||  battleType == TRAINER_BATTLE_MULTI)
-			return FALSE;
 
 		struct TrainerSpotted trainer = {eventObjId, canApproach, (u8*) scriptPtr};
 		ExtensionState.spotted.trainers[ExtensionState.spotted.count++] = trainer;
