@@ -6,6 +6,7 @@
 
 #include "../include/new/ability_battle_scripts.h"
 #include "../include/new/battle_strings.h"
+#include "../include/new/battle_util.h"
 #include "../include/new/bs_helper_functions.h"
 #include "../include/new/CMD49.h"
 #include "../include/new/cmd49_battle_scripts.h"
@@ -191,6 +192,9 @@ void atkFF06_setterrain(void)
 			break;
 	}
 	
+	if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_TERRAIN)
+		type = 0xFF; //Can't be removed
+
 	if (TerrainType == type || type == 0xFF)
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
 	else
@@ -355,13 +359,13 @@ void atkFF09_jumpifcounter(void)
 			counter = gNewBS->MagnetRiseTimers[bank];
 			break;
 		case Counters_HealBlock:
-			counter = gNewBS->HealBlockTimers[bank];
+			counter = IsHealBlocked(bank);
 			break;
 		case Counters_LaserFocus:
 			counter = gNewBS->LaserFocusTimers[bank];
 			break;
 		case Counters_ThroatChop:
-			counter = gNewBS->ThroatChopTimers[bank];
+			counter = CantUseSoundMoves(bank);
 			break;
 		case Counters_Embargo:
 			counter = gNewBS->EmbargoTimers[bank];

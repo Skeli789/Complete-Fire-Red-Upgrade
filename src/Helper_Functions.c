@@ -6,6 +6,7 @@
 
 #include "../include/new/AI_Helper_Functions.h"
 #include "../include/new/battle_start_turn_start.h"
+#include "../include/new/battle_util.h"
 #include "../include/new/damage_calc.h"
 #include "../include/new/frontier.h"
 #include "../include/new/Helper_Functions.h"
@@ -62,7 +63,7 @@ bool8 CheckTableForItem(u16 item, const u16 table[]) {
 }	
 
 ability_t BanksAbility(bank_t bank) {
-	if (gStatuses3[bank] & STATUS3_ABILITY_SUPPRESS)
+	if (IsAbilitySuppressed(bank))
 		return ABILITY_NONE;
 
 	return gBattleMons[bank].ability;
@@ -70,7 +71,7 @@ ability_t BanksAbility(bank_t bank) {
 
 ability_t GetRecordedAbility(u8 bank)
 {
-	if (gStatuses3[bank] & STATUS3_ABILITY_SUPPRESS)
+	if (IsAbilitySuppressed(bank))
 		return ABILITY_NONE;
 
 	if (BATTLE_HISTORY->abilities[bank] != ABILITY_NONE)
@@ -109,14 +110,14 @@ bank_t GetFoeBank(bank_t bank) {
 }
 
 item_effect_t GetBankItemEffect(u8 bank) {
-	if (ABILITY(bank) != ABILITY_KLUTZ && !(gNewBS->EmbargoTimers[bank]) && !gNewBS->MagicRoomTimer)
+	if (ABILITY(bank) != ABILITY_KLUTZ && !gNewBS->EmbargoTimers[bank] && !IsMagicRoomActive())
 		return ItemId_GetHoldEffect(ITEM(bank));
 
 	return 0;
 }
 
 item_effect_t GetMonItemEffect(struct Pokemon* mon) {
-	if (GetPartyAbility(mon) != ABILITY_KLUTZ && !gNewBS->MagicRoomTimer)
+	if (GetPartyAbility(mon) != ABILITY_KLUTZ && !IsMagicRoomActive())
 		return ItemId_GetHoldEffect(GetMonData(mon, MON_DATA_HELD_ITEM, NULL));
 
 	return 0;
@@ -126,7 +127,7 @@ item_effect_t GetRecordedItemEffect(u8 bank)
 {
 	if (GetRecordedAbility(bank) != ABILITY_KLUTZ
 	&& !gNewBS->EmbargoTimers[bank]
-	&& !gNewBS->MagicRoomTimer
+	&& !IsMagicRoomActive()
 	&& ITEM(bank) != ITEM_NONE) //Can't have an effect if you have no item
 		return BATTLE_HISTORY->itemEffects[bank];
 
@@ -685,7 +686,7 @@ struct Pokemon* LoadPartyRange(u8 bank, u8* FirstMonId, u8* lastMonId) {
 }
 
 ability_t CopyAbility(u8 bank) {
-	if (gStatuses3[bank] & STATUS3_ABILITY_SUPPRESS)
+	if (IsAbilitySuppressed(bank))
 		return gNewBS->SuppressedAbilities[bank];
 	else if (gNewBS->DisabledMoldBreakerAbilities[bank])
 		return gNewBS->DisabledMoldBreakerAbilities[bank];
@@ -694,7 +695,7 @@ ability_t CopyAbility(u8 bank) {
 }
 
 ability_t* GetAbilityLocation(u8 bank) {
-	if (gStatuses3[bank] & STATUS3_ABILITY_SUPPRESS)
+	if (IsAbilitySuppressed(bank))
 		return &gNewBS->SuppressedAbilities[bank];
 	else if (gNewBS->DisabledMoldBreakerAbilities[bank])
 		return &gNewBS->DisabledMoldBreakerAbilities[bank];
@@ -1144,11 +1145,6 @@ u8 GetTopOfPickupStackNotIncludingBank(const u8 bank)
 	return gNewBS->pickupStack[i - 1];
 }
 
-bool8 IsTrickRoomActive(void)
-{
-	return gNewBS->TrickRoomTimer != 0;
-}
-
 void ClearBankStatus(u8 bank)
 {
 	if (gBattleMons[bank].status1 & (STATUS_POISON | STATUS_TOXIC_POISON))
@@ -1314,12 +1310,12 @@ bool8 CanBeFrozen(u8 bank, bool8 checkFlowerVeil) {
 }
 
 bool8 CanBeConfused(u8 bank) {
-	if (gBattleMons[bank].status2 & STATUS2_CONFUSION)
+	if (IsConfused(bank))
 		return FALSE;
 
-	if (TerrainType == MISTY_TERRAIN)
+	if (TerrainType == MISTY_TERRAIN && CheckGrounding(bank))
 		return FALSE;
-		
+
 	if (ABILITY(bank) == ABILITY_OWNTEMPO)
 		return FALSE;
 

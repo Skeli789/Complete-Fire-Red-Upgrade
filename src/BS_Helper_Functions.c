@@ -7,6 +7,7 @@
 #include "../include/new/ability_battle_scripts.h"
 #include "../include/new/ability_tables.h"
 #include "../include/new/battle_start_turn_start_battle_scripts.h"
+#include "../include/new/battle_util.h"
 #include "../include/new/bs_helper_functions.h"
 #include "../include/new/damage_calc.h"
 #include "../include/new/daycare.h"
@@ -642,7 +643,7 @@ void SetPledgeEffect(void)
 {
 	switch (gNewBS->PledgeHelper) {
 		case Pledge_Swamp:
-			if (!gNewBS->SwampTimers[SIDE(gBankTarget)])
+			if (!BankSideHasSwamp(gBankTarget))
 			{
 				gNewBS->SwampTimers[SIDE(gBankTarget)] = 5;
 				BattleStringLoader = SwampString;
@@ -653,7 +654,7 @@ void SetPledgeEffect(void)
 			break;
 		
 		case Pledge_SeaOfFire:
-			if (!gNewBS->SeaOfFireTimers[SIDE(gBankTarget)])
+			if (!BankSideHasSeaOfFire(gBankTarget))
 			{
 				gNewBS->SeaOfFireTimers[SIDE(gBankTarget)] = 5;
 				BattleStringLoader = SeaOfFireString;
@@ -664,7 +665,7 @@ void SetPledgeEffect(void)
 			break;
 		
 		case Pledge_Rainbow:
-			if (!gNewBS->RainbowTimers[SIDE(gBankTarget)])
+			if (!BankSideHasRainbow(gBankTarget))
 			{
 				gNewBS->RainbowTimers[SIDE(gBankTarget)] = 5;
 				BattleStringLoader = RainbowString;
@@ -690,24 +691,28 @@ void DoFieldEffect(void)
 				gNewBS->TrickRoomTimer = 0;
 				BattleStringLoader = TrickRoomEndString;
 			}
-			else
+			else if (!IsTrickRoomActive())
 			{
 				gNewBS->TrickRoomTimer = 5;
 				BattleStringLoader = TrickRoomSetString;
 			}
+			else
+				 gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
 			break;
 
 		case MOVE_WONDERROOM:
-			if (gNewBS->WonderRoomTimer)
+			if (gNewBS->WonderRoomTimer > 0)
 			{
 				gNewBS->WonderRoomTimer = 0;
 				BattleStringLoader = WonderRoomEndString;
 			}
-			else
+			else if (!IsWonderRoomActive())
 			{
 				gNewBS->WonderRoomTimer = 5;
 				BattleStringLoader = WonderRoomSetString;
 			}
+			else
+				 gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
 			break;
 	
 		case MOVE_MAGICROOM:
@@ -716,20 +721,22 @@ void DoFieldEffect(void)
 				gNewBS->MagicRoomTimer = 0;
 				BattleStringLoader = MagicRoomEndString;
 			}
-			else
+			else if (!IsMagicRoomActive())
 			{
 				gNewBS->MagicRoomTimer = 5;
 				BattleStringLoader = MagicRoomSetString;
 			}
+			else
+				 gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
 			break;
 
 		case MOVE_GRAVITY:
-			if (gNewBS->GravityTimer)
+			if (gNewBS->GravityTimer > 0)
 			{
 				gNewBS->GravityTimer = 0;
 				BattleStringLoader = GravityEndString;
 			}
-			else
+			else if (!IsGravityActive())
 			{				
 				for (int i = 0; i < gBattlersCount; ++i)
 				{
@@ -740,10 +747,17 @@ void DoFieldEffect(void)
 				gNewBS->GravityTimer = 5;
 				BattleStringLoader = GravitySetString;
 			}
+			else
+				 gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
 			break;
 
 		case MOVE_IONDELUGE:
-			gNewBS->IonDelugeTimer = 1;
+			if (!IsIonDelugeActive())
+			{
+				gNewBS->IonDelugeTimer = 1;
+			}
+
+			//Doesn't fail even if already Ion Deluge
 			BattleStringLoader = IonDelugeShowerString;
 			break;
 	}
@@ -806,7 +820,7 @@ void CheckTelekinesisFail(void)
 	u16 species = gBattleMons[gBankTarget].species;
 
 	if (gStatuses3[gBankTarget] & (STATUS3_TELEKINESIS | STATUS3_ROOTED | STATUS3_SMACKED_DOWN)
-	||  gNewBS->GravityTimer
+	||  IsGravityActive()
 	||  ITEM_EFFECT(gBankTarget) == ITEM_EFFECT_IRON_BALL
 	||  CheckTableForSpecies(species, gTelekinesisBanList))
 	{
@@ -927,7 +941,7 @@ void DoFairyLockHappyHourFunc(void)
 {
 	switch (gCurrentMove) {
 		case MOVE_FAIRYLOCK:
-			if (gNewBS->FairyLockTimer)
+			if (IsFairyLockActive())
 				gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
 			else
 			{
@@ -1093,7 +1107,7 @@ void InitiateInstruct(void)
 
 void TrySetMagnetRise(void)
 {
-	if (gNewBS->GravityTimer != 0
+	if (IsGravityActive()
 	|| gNewBS->MagnetRiseTimers[gBankAttacker] != 0
 	|| gStatuses3[gBankAttacker] & (STATUS3_LEVITATING | STATUS3_SMACKED_DOWN | STATUS3_ROOTED)
 	|| ITEM_EFFECT(gBankAttacker) == ITEM_EFFECT_IRON_BALL)
@@ -1534,11 +1548,6 @@ void BadDreamsHurtFunc(void)
 	gBattleMoveDamage = MathMax(1, gBattleMons[gBankTarget].maxHP / 8);
 }
 
-void SeaOfFireDamageFunc(void)
-{
-	gBattleMoveDamage = MathMax(1, gBattleMons[gBankAttacker].maxHP / 8);
-}
-
 void GrassyTerrainHealFunc(void)
 {
 	gBattleMoveDamage = -1 * MathMax(1, gBattleMons[gBankAttacker].maxHP / 16);
@@ -1755,6 +1764,7 @@ void RestoreEffectBankHPStatsAndRemoveBackupSpecies(void)
 		//Choose a random move to use instead
 		gBattleStruct->chosenMovePositions[gEffectBank] = Random() % counter;
 		gChosenMovesByBanks[gEffectBank] = gBattleMons[gEffectBank].moves[gBattleStruct->chosenMovePositions[gEffectBank]];
+		gBattleStruct->moveTarget[gEffectBank] = GetMoveTarget(gChosenMovesByBanks[gEffectBank], FALSE); //Fix target
 		gMoveSelectionCursor[gEffectBank] = 0; //Reset selection so can't select null move
 	}
 
@@ -1778,4 +1788,22 @@ void TryActivateTargetEndTurnItemEffect(void)
 {
 	if (ItemBattleEffects(ItemEffects_EndTurn, gBankTarget, TRUE, FALSE))
 		gBattlescriptCurrInstr -= 5;
+}
+
+void SetLaserFocusTimer(void)
+{
+	if (!IsLaserFocused(gBankAttacker))
+		gNewBS->LaserFocusTimers[gBankAttacker] = 2;
+}
+
+void SetHealBlockTimer(void)
+{
+	if (!IsHealBlocked(gBankTarget))
+		gNewBS->HealBlockTimers[gBankTarget] = 5;
+}
+
+void SetThroatChopTimer(void)
+{
+	if (!CantUseSoundMoves(gBankTarget))
+		gNewBS->ThroatChopTimers[gBankTarget] = 2;
 }

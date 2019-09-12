@@ -90,7 +90,6 @@ bool8 IsZMove(const u16 move);
 void AddBankToPickupStack(const u8 bank);
 void RemoveBankFromPickupStack(const u8 bank);
 u8 GetTopOfPickupStackNotIncludingBank(const u8 bank);
-bool8 IsTrickRoomActive(void);
 void ClearBankStatus(bank_t bank);
 
 bool8 DoesSleepClausePrevent(u8 bank);

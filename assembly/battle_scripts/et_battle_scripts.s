@@ -112,7 +112,6 @@ BattleScript_FogContinues:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_SeaOfFireDamage:
-	callasm SeaOfFireDamageFunc
 	playanimation BANK_ATTACKER ANIM_SEA_OF_FIRE 0x0
 	orword HIT_MARKER 0x100
 	graphicalhpupdate BANK_ATTACKER

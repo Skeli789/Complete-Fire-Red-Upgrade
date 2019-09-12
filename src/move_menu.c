@@ -3,8 +3,9 @@
 #include "../include/window.h"
 #include "../include/constants/songs.h"
 
-#include "../include/new/AI_Helper_Functions.h"
 #include "../include/new/accuracy_calc.h"
+#include "../include/new/AI_Helper_Functions.h"
+#include "../include/new/battle_util.h"
 #include "../include/new/damage_calc.h"
 #include "../include/new/Helper_Functions.h"
 #include "../include/new/general_bs_commands.h"
@@ -16,6 +17,7 @@
 #include "../include/new/z_move_effects.h"
 
 //TODO: Make The Z-Move Names change colour (look in SetPpNumbersPaletteInMoveSelection)
+//Fix Heal Block + Pollen Puff on partner link battle
 
 extern u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
 extern u8 gTypeNames[][TYPE_NAME_LENGTH + 1];
@@ -989,7 +991,7 @@ void HandleInputChooseTarget(void)
 					return;
 	
 				case MOVE_POLLENPUFF:
-					if (gNewBS->HealBlockTimers[gActiveBattler] //Affected by Heal Block can't target partner
+					if (IsHealBlocked(gActiveBattler) //Affected by Heal Block can't target partner
 					&& !(gAbsentBattlerFlags & gBitTable[gMultiUsePlayerCursor ^ 2]))
 					{
 						gMultiUsePlayerCursor ^= BIT_FLANK;
@@ -1053,7 +1055,7 @@ void HandleInputChooseTarget(void)
 					return;
 	
 				case MOVE_POLLENPUFF:
-					if (gNewBS->HealBlockTimers[gActiveBattler] //Affected by Heal Block can't target partner
+					if (IsHealBlocked(gActiveBattler) //Affected by Heal Block can't target partner
 					&& !(gAbsentBattlerFlags & gBitTable[gMultiUsePlayerCursor ^ 2]))
 					{
 						gMultiUsePlayerCursor ^= BIT_FLANK;
@@ -1122,13 +1124,13 @@ u8 TrySetCantSelectMoveBattleScript(void)
         gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingDisabledMove;
         ++limitations;
     }
-    else if (move == gLastUsedMoves[gActiveBattler] && move != MOVE_STRUGGLE && (gBattleMons[gActiveBattler].status2 & STATUS2_TORMENT))
+    else if (move == gLastUsedMoves[gActiveBattler] && move != MOVE_STRUGGLE && IsTormented(gActiveBattler))
     {
         CancelMultiTurnMoves(gActiveBattler);
         gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingTormentedMove;
         ++limitations;
     }
-    else if (gDisableStructs[gActiveBattler].tauntTimer != 0 && SPLIT(move) == SPLIT_STATUS)
+    else if (IsTaunted(gActiveBattler) != 0 && SPLIT(move) == SPLIT_STATUS)
     {
         gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingNotAllowedMoveTaunt;
         limitations++;
@@ -1156,17 +1158,17 @@ u8 TrySetCantSelectMoveBattleScript(void)
         gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingNotAllowedSkyBattle;
         ++limitations;
 	}
-	else if (gNewBS->GravityTimer && CheckTableForMove(move, GravityBanTable))
+	else if (IsGravityActive() && CheckTableForMove(move, GravityBanTable))
 	{
         gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingNotAllowedGravity;
         ++limitations;
 	}
-	else if (gNewBS->ThroatChopTimers[gActiveBattler] && CheckSoundMove(move))
+	else if (CantUseSoundMoves(gActiveBattler) && CheckSoundMove(move))
 	{
         gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingNotAllowedThroatChop;
         ++limitations;
 	}
-	else if (gNewBS->HealBlockTimers[gActiveBattler] && CheckHealingMove(move))
+	else if (IsHealBlocked(gActiveBattler) && CheckHealingMove(move))
 	{
         gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingNotAllowedHealBlock;
         ++limitations;

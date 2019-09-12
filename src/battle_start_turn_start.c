@@ -11,6 +11,7 @@
 #include "../include/new/ai_master.h"
 #include "../include/new/battle_start_turn_start.h"
 #include "../include/new/battle_start_turn_start_battle_scripts.h"
+#include "../include/new/battle_util.h"
 #include "../include/new/CMD49.h"
 #include "../include/new/damage_calc.h"
 #include "../include/new/dexnav.h"
@@ -126,6 +127,26 @@ void BattleBeginFirstTurn(void)
 				
 				//OW Terrain
 				u8 req_terrain = VarGet(TERRAIN_VAR);
+
+				if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_CIRCUS)
+				{
+					//Can have at most one of these set at a time
+					switch (gBattleCircusFlags & BATTLE_CIRCUS_TERRAIN) {
+						case BATTLE_CIRCUS_ELECTRIC_TERRAIN:
+							req_terrain = ELECTRIC_TERRAIN;
+							break;
+						case BATTLE_CIRCUS_GRASSY_TERRAIN:
+							req_terrain = GRASSY_TERRAIN;
+							break;
+						case BATTLE_CIRCUS_MISTY_TERRAIN:
+							req_terrain = MISTY_TERRAIN;
+							break;
+						case BATTLE_CIRCUS_PSYCHIC_TERRAIN:
+							req_terrain = PSYCHIC_TERRAIN;
+							break;
+					}
+				}
+
 				if (req_terrain && TerrainType != req_terrain) {
 					switch (req_terrain) {
 						case ELECTRIC_TERRAIN:
@@ -1364,7 +1385,7 @@ u32 SpeedCalc(u8 bank)
 	
 	if (gNewBS->TailwindTimers[SIDE(bank)])
 		speed *= 2;
-	if (gNewBS->SwampTimers[SIDE(bank)])
+	if (BankSideHasSwamp(bank))
 		speed /= 4;
 	
 	#ifdef BADGE_BOOSTS
@@ -1425,7 +1446,7 @@ u32 SpeedCalcForParty(u8 side, struct Pokemon* mon)
 	//Check other things that alter speed
 	if (gNewBS->TailwindTimers[side])
 		speed *= 2;
-	if (gNewBS->SwampTimers[side])
+	if (SideHasSwamp(side))
 		speed /= 4;
 	
 	if (mon->condition & STATUS_ANY && ability == ABILITY_QUICKFEET)

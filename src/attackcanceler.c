@@ -5,19 +5,20 @@
 #include "../include/constants/flags.h"
 #include "../include/constants/items.h"
 
-#include "../include/new/ai_master.h"
 #include "../include/new/ability_tables.h"
 #include "../include/new/accuracy_calc.h"
+#include "../include/new/ai_master.h"
 #include "../include/new/attackcanceler.h"
 #include "../include/new/attackcanceler_battle_scripts.h"
 #include "../include/new/battle_start_turn_start.h"
+#include "../include/new/battle_util.h"
 #include "../include/new/damage_calc.h"
 #include "../include/new/form_change.h"
 #include "../include/new/general_bs_commands.h"
 #include "../include/new/Helper_Functions.h"
 #include "../include/new/move_tables.h"
 
-//TODO: Make sure Powder stops Inferno Overdrive
+//TODO: Make sure Powder stops Inferno Overdrive and not Pledge moves
 
 //This file's functions:
 static u8 AtkCanceller_UnableToUseMove(void);
@@ -397,7 +398,7 @@ static u8 AtkCanceller_UnableToUseMove(void)
 		
 		case CANCELLER_HEAL_BLOCKED:
 		case CANCELLER_HEAL_BLOCKED_2:
-			if (gNewBS->HealBlockTimers[gBankAttacker] && CheckHealingMove(gCurrentMove) && !gNewBS->ZMoveData->active)
+			if (IsHealBlocked(gBankAttacker) && CheckHealingMove(gCurrentMove) && !gNewBS->ZMoveData->active)
 			{
 				gBattleScripting->bank = gBankAttacker;
 				CancelMultiTurnMoves(gBankAttacker);
@@ -410,7 +411,7 @@ static u8 AtkCanceller_UnableToUseMove(void)
 		
 		case CANCELLER_THROAT_CHOP:
 		case CANCELLER_THROAT_CHOP_2:
-			if (gNewBS->ThroatChopTimers[gBankAttacker] && CheckSoundMove(gCurrentMove) && !gNewBS->ZMoveData->active)
+			if (CantUseSoundMoves(gBankAttacker) && CheckSoundMove(gCurrentMove) && !gNewBS->ZMoveData->active)
 			{
 				gBattleScripting->bank = gBankAttacker;
 				CancelMultiTurnMoves(gBankAttacker);
@@ -423,7 +424,7 @@ static u8 AtkCanceller_UnableToUseMove(void)
 		
 		case CANCELLER_GRAVITY:
 		case CANCELLER_GRAVITY_2:
-			if (gNewBS->GravityTimer && CheckTableForMove(gCurrentMove, GravityBanTable) && !gNewBS->ZMoveData->active) //Gravity stops Z-Moves, so there will be
+			if (IsGravityActive() && CheckTableForMove(gCurrentMove, GravityBanTable) && !gNewBS->ZMoveData->active) //Gravity stops Z-Moves, so there will be
 			{																							//a second check later on
 				gBattleScripting->bank = gBankAttacker;
 				CancelMultiTurnMoves(gBankAttacker);
@@ -436,7 +437,7 @@ static u8 AtkCanceller_UnableToUseMove(void)
 			break;
 		
 		case CANCELLER_TAUNTED: // taunt
-			if (gDisableStructs[gBankAttacker].tauntTimer && SPLIT(gCurrentMove) == SPLIT_STATUS && !gNewBS->ZMoveData->active)
+			if (IsTaunted(gBankAttacker) && SPLIT(gCurrentMove) == SPLIT_STATUS && !gNewBS->ZMoveData->active)
 			{
 				gProtectStructs[gBankAttacker].usedTauntedMove = 1;
 				CancelMultiTurnMoves(gBankAttacker);
@@ -460,10 +461,12 @@ static u8 AtkCanceller_UnableToUseMove(void)
 			break;
 		
 		case CANCELLER_CONFUSED: // confusion
-			if (gBattleMons[gBankAttacker].status2 & STATUS2_CONFUSION)
+			if (IsConfused(gBankAttacker))
 			{
-				gBattleMons[gBankAttacker].status2--;
 				if (gBattleMons[gBankAttacker].status2 & STATUS2_CONFUSION)
+					gBattleMons[gBankAttacker].status2--;
+
+				if (IsConfused(gBankAttacker))
 				{
 					#ifdef OLD_CONFUSION_CHANCE
 					if (Random() & 1) //50 %
@@ -674,7 +677,7 @@ static u8 AtkCanceller_UnableToUseMove(void)
 			break;
 		
 		case CANCELLER_GRAVITY_Z_MOVES:
-			if (gNewBS->GravityTimer && CheckTableForMove(gCurrentMove, GravityBanTable) && gNewBS->ZMoveData->active) //Gravity stops Z-Moves after they apply their effect
+			if (IsGravityActive() && CheckTableForMove(gCurrentMove, GravityBanTable) && gNewBS->ZMoveData->active) //Gravity stops Z-Moves after they apply their effect
 			{																						
 				gBattleScripting->bank = gBankAttacker;
 				CancelMultiTurnMoves(gBankAttacker);
@@ -703,7 +706,7 @@ static u8 AtkCanceller_UnableToUseMove(void)
 			  (ABILITY(gBankAttacker) == ABILITY_KLUTZ
 			|| GetPocketByItemId(ITEM(gBankAttacker)) != POCKET_BERRY_POUCH 
 			|| AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, gBankAttacker, ABILITY_UNNERVE, 0, 0)
-			|| gNewBS->MagicRoomTimer
+			|| IsMagicRoomActive()
 			|| gNewBS->EmbargoTimers[gBankAttacker]))
 			{
 				gBattlescriptCurrInstr = BattleScript_ButItFailed - 2;

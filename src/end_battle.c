@@ -6,6 +6,7 @@
 #include "../include/constants/songs.h"
 #include "../include/constants/trainer_classes.h"
 
+#include "../include/new/battle_util.h"
 #include "../include/new/end_battle.h"
 #include "../include/new/end_battle_battle_scripts.h"
 #include "../include/new/form_change.h"
@@ -312,7 +313,7 @@ u8 IsRunningFromBattleImpossible(void)
 	else
 		gNewBS->TeleportBit = FALSE;
 
-	if (gNewBS->FairyLockTimer)
+	if (IsFairyLockActive())
 	{
 		gBattleCommunication[MULTISTRING_CHOOSER] = 0;
 		return TRUE;

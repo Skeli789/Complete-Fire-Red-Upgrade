@@ -67,6 +67,7 @@ BattleScript_BenjaminButterfreeDevolution:
 	setword BATTLE_STRING_LOADER gText_DevolutionsStatsReset
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+	callasm SetSkipCertainSwitchInAbilities  @;Skip certain abilities if you fainted from recoil and KO'd the Foe
 	tryactivateswitchinability BANK_EFFECT
 	return
 

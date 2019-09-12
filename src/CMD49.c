@@ -5,6 +5,7 @@
 
 #include "../include/new/ability_battle_scripts.h"
 #include "../include/new/battle_start_turn_start.h"
+#include "../include/new/battle_util.h"
 #include "../include/new/CMD49.h"
 #include "../include/new/cmd49_battle_scripts.h"
 #include "../include/new/form_change.h"
@@ -734,7 +735,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 						stats[STAT_STAGE_SPDEF-2] = gBattleMons[gBankAttacker].spDefense;
 						stats[STAT_STAGE_SPEED+1] = gBattleMons[gBankAttacker].speed;
 						
-						if (gNewBS->WonderRoomTimer) {
+						if (IsWonderRoomActive()) {
 							temp = stats[STAT_STAGE_DEF-1];
 							stats[STAT_STAGE_DEF-1] = stats[STAT_STAGE_SPDEF-2]; //-2 b/c shifted left due to speed
 							stats[STAT_STAGE_SPDEF-2] = temp;
@@ -812,7 +813,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
                 {
                     gBattleMons[gBankAttacker].status2 &= ~(STATUS2_MULTIPLETURNS);
 					
-                    if (!(gBattleMons[gBankAttacker].status2 & STATUS2_CONFUSION)
+                    if (!IsConfused(gBankAttacker)
 					&& ABILITY(gBankAttacker) != ABILITY_OWNTEMPO
 					&& !(CheckGrounding(gBankAttacker) && TerrainType == MISTY_TERRAIN))
                     {

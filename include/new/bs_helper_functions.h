@@ -83,7 +83,6 @@ void TryManipulateDamageForLeechSeedBigRoot(void);
 void DisplayForfeitYesNoBox(void);
 void HandleForfeitYesNoBox(void);
 void BadDreamsHurtFunc(void);
-void SeaOfFireDamageFunc(void);
 void GrassyTerrainHealFunc(void);
 void RestoreBanksFromSynchronize(void);
 void TrySetAlternateFlingEffect(void);
@@ -99,5 +98,8 @@ void SetBatonPassSwitchingBit(void);
 void ClearBatonPassSwitchingBit(void);
 void ReturnOpponentMon2(void);
 void BackupScriptingBank(void);
-void RestoreEffectBankHP(void);
-
+void RestoreEffectBankHPStatsAndRemoveBackupSpecies(void);
+void TryActivateTargetEndTurnItemEffect(void);
+void SetLaserFocusTimer(void);
+void SetHealBlockTimer(void);
+void SetThroatChopTimer(void);

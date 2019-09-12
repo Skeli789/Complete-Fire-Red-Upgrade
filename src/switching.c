@@ -7,6 +7,7 @@
 #include "../include/new/ai_master.h"
 #include "../include/new/battle_start_turn_start.h"
 #include "../include/new/battle_start_turn_start_battle_scripts.h"
+#include "../include/new/battle_util.h"
 #include "../include/new/cmd49_battle_scripts.h"
 #include "../include/new/damage_calc.h"
 #include "../include/new/form_change.h"
@@ -218,7 +219,7 @@ void atk4D_switchindataupdate(void)
 		gBattleMons[gActiveBattler].status2 = oldData.status2;
 		
 		//Gastro Acid Passing
-		if (gStatuses3[gActiveBattler] & STATUS3_ABILITY_SUPPRESS) 
+		if (IsAbilitySuppressed(gActiveBattler)) 
 		{
 			gNewBS->SuppressedAbilities[gActiveBattler] = gBattleMons[gActiveBattler].ability;
 			gBattleMons[gActiveBattler].ability = 0;
@@ -275,7 +276,7 @@ void atk4F_jumpifcantswitch(void)
 	if (!(T2_READ_8(gBattlescriptCurrInstr + 1) & ATK4F_DONT_CHECK_STATUSES)
 	&& !IsOfType(gActiveBattler, TYPE_GHOST)
 	&& ITEM_EFFECT(gActiveBattler) != ITEM_EFFECT_SHED_SHELL
-	&& ((gBattleMons[gActiveBattler].status2 & (STATUS2_WRAPPED | STATUS2_ESCAPE_PREVENTION)) || (gStatuses3[gActiveBattler] & STATUS3_ROOTED) || gNewBS->FairyLockTimer))
+	&& ((gBattleMons[gActiveBattler].status2 & (STATUS2_WRAPPED | STATUS2_ESCAPE_PREVENTION)) || (gStatuses3[gActiveBattler] & STATUS3_ROOTED) || IsFairyLockActive()))
 	{
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
 	}
@@ -927,7 +928,7 @@ void PartyMenuSwitchingUpdate(void)
 	gBattleStruct->switchoutPartyIndex[gActiveBattler] = gBattlerPartyIndexes[gActiveBattler];
 	if ((gBattleMons[gActiveBattler].status2 & (STATUS2_WRAPPED | STATUS2_ESCAPE_PREVENTION))
 	|| (gStatuses3[gActiveBattler] & (STATUS3_ROOTED | STATUS3_SKY_DROP_TARGET))
-	|| gNewBS->FairyLockTimer)
+	|| IsFairyLockActive())
 	{
 		EmitChoosePokemon(0, PARTY_CANT_SWITCH, 6, ABILITY_NONE, gBattleStruct->field_60[gActiveBattler]);
 	}

@@ -8,6 +8,7 @@
 #include "../../include/new/AI_Helper_Functions.h"
 #include "../../include/new/ai_master.h"
 #include "../../include/new/battle_start_turn_start.h"
+#include "../../include/new/battle_util.h"
 #include "../../include/new/bs_helper_functions.h"
 #include "../../include/new/damage_calc.h"
 #include "../../include/new/end_turn.h"
@@ -184,7 +185,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 	#endif
 
 	// Gravity Table Prevention Check
-	if (gNewBS->GravityTimer != 0 && CheckTableForMove(move, GravityBanTable))
+	if (IsGravityActive() && CheckTableForMove(move, GravityBanTable))
 		return 0; //Can't select this move period
 
 	// Ungrounded check
@@ -540,13 +541,13 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 	}
 
 	//Throat Chop Check
-	if (gNewBS->ThroatChopTimers[bankAtk] && CheckSoundMove(move))
+	if (CantUseSoundMoves(bankAtk) && CheckSoundMove(move))
 		return 0; //Can't select this move period
-			
+
 	//Heal Block Check
-	if (gNewBS->HealBlockTimers[bankAtk] && CheckHealingMove(move))
+	if (IsHealBlocked(bankAtk) && CheckHealingMove(move))
 		return 0; //Can't select this move period
-		
+
 	//Primal Weather Check
 	if (gBattleWeather & WEATHER_SUN_PRIMAL && moveType == TYPE_WATER && moveSplit != SPLIT_STATUS)
 	{
@@ -1121,11 +1122,11 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		AI_CONFUSE:
 			switch (move) {
 				case MOVE_TEETERDANCE: //Check if can affect either target
-					if ((defStatus2 & STATUS2_CONFUSION
+					if ((IsConfused(bankDef)
 					  || (NO_MOLD_BREAKERS(atkAbility, move) && defAbility == ABILITY_OWNTEMPO)
 					  || (CheckGrounding(bankDef) == GROUNDED && TerrainType == MISTY_TERRAIN)
 					  || (MoveBlockedBySubstitute(move, bankAtk, bankDef)))
-					&& ((gBattleMons[bankDefPartner].status2 & STATUS2_CONFUSION)
+					&&  (IsConfused(bankDefPartner)
 					  || (NO_MOLD_BREAKERS(atkAbility, move) && defPartnerAbility == ABILITY_OWNTEMPO) 
 					  || (CheckGrounding(bankDefPartner) == GROUNDED && TerrainType == MISTY_TERRAIN)
 					  || (MoveBlockedBySubstitute(move, bankAtk, bankDefPartner))))
@@ -1134,7 +1135,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 					}
 					break;
 				default:
-					if (defStatus2 & STATUS2_CONFUSION 
+					if (IsConfused(bankDef)
 					|| (NO_MOLD_BREAKERS(atkAbility, move) && defAbility == ABILITY_OWNTEMPO)
 					|| (CheckGrounding(bankDef) == GROUNDED && TerrainType == MISTY_TERRAIN)
 					|| (MoveBlockedBySubstitute(move, bankAtk, bankDef))
@@ -1294,7 +1295,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		case EFFECT_LOCK_ON:
 			switch (move) {
 				case MOVE_LASERFOCUS:
-					if (gNewBS->LaserFocusTimers[bankAtk] != 0)
+					if (IsLaserFocused(bankAtk))
 						DECREASE_VIABILITY(10);
 					else if (defAbility == ABILITY_SHELLARMOR || defAbility == ABILITY_BATTLEARMOR)
 						DECREASE_VIABILITY(8);
@@ -1552,7 +1553,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			break;
 			
 		case EFFECT_SANDSTORM:
-			if (gBattleWeather & (WEATHER_SANDSTORM_ANY | WEATHER_PRIMAL_ANY)
+			if (gBattleWeather & (WEATHER_SANDSTORM_ANY | WEATHER_PRIMAL_ANY | WEATHER_CIRCUS)
 			|| PARTNER_MOVE_EFFECT_IS_WEATHER)
 				DECREASE_VIABILITY(10);
 			break;
@@ -1649,13 +1650,13 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			break;
 		
 		case EFFECT_RAIN_DANCE:
-			if (gBattleWeather & (WEATHER_RAIN_ANY | WEATHER_PRIMAL_ANY)
+			if (gBattleWeather & (WEATHER_RAIN_ANY | WEATHER_PRIMAL_ANY | WEATHER_CIRCUS)
 			|| PARTNER_MOVE_EFFECT_IS_WEATHER)
 				DECREASE_VIABILITY(10);
 			break;
 		
 		case EFFECT_SUNNY_DAY:
-			if (gBattleWeather & (WEATHER_SUN_ANY | WEATHER_PRIMAL_ANY)
+			if (gBattleWeather & (WEATHER_SUN_ANY | WEATHER_PRIMAL_ANY | WEATHER_CIRCUS)
 			|| PARTNER_MOVE_EFFECT_IS_WEATHER)
 				DECREASE_VIABILITY(10);
 			break;
@@ -1746,13 +1747,13 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			break;
 		
 		case EFFECT_HAIL:
-			if (gBattleWeather & (WEATHER_HAIL_ANY | WEATHER_PRIMAL_ANY)
+			if (gBattleWeather & (WEATHER_HAIL_ANY | WEATHER_PRIMAL_ANY | WEATHER_CIRCUS)
 			|| PARTNER_MOVE_EFFECT_IS_WEATHER)
 				DECREASE_VIABILITY(10);
 			break;
 
 		case EFFECT_TORMENT:
-			if (defStatus2 & STATUS2_TORMENT
+			if (IsTormented(bankDef)
 			|| PARTNER_MOVE_EFFECT_IS_SAME)
 			{
 				DECREASE_VIABILITY(10);
@@ -1844,7 +1845,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			break;
 			
 		case EFFECT_TAUNT:
-			if (gDisableStructs[bankDef].tauntTimer != 0
+			if (IsTaunted(bankDef)
 			|| PARTNER_MOVE_EFFECT_IS_SAME)
 				DECREASE_VIABILITY(1);
 			break;
@@ -1978,7 +1979,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 					break;
 
 				case MOVE_GASTROACID:
-					if (defStatus3 & STATUS3_ABILITY_SUPPRESS
+					if (IsAbilitySuppressed(bankDef)
 					||  CheckTableForAbility(defAbility, WorrySeedGastroAcidBanTable)
 					||  MoveBlockedBySubstitute(move, bankAtk, bankDef))
 						DECREASE_VIABILITY(10);
@@ -2046,7 +2047,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			break;
 			
 		case EFFECT_MUD_SPORT:
-			if (gNewBS->MudSportTimer != 0
+			if (IsMudSportActive()
 			|| PARTNER_MOVE_EFFECT_IS_SAME_NO_TARGET)
 				DECREASE_VIABILITY(10);
 			break;
@@ -2102,7 +2103,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			break;
 			
 		case EFFECT_WATER_SPORT:
-			if (gNewBS->WaterSportTimer != 0
+			if (IsWaterSportActive()
 			|| PARTNER_MOVE_EFFECT_IS_SAME_NO_TARGET)
 				DECREASE_VIABILITY(10);
 			break;
@@ -2244,7 +2245,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 
 		case EFFECT_NATURAL_GIFT:
 			if (atkAbility == ABILITY_KLUTZ
-			|| gNewBS->MagicRoomTimer != 0
+			|| IsMagicRoomActive()
 			|| GetPocketByItemId(atkItem) != POCKET_BERRIES)
 				DECREASE_VIABILITY(10);
 			break;
@@ -2310,19 +2311,19 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 					break;
 
 				case MOVE_MAGICROOM:
-					if (gNewBS->MagicRoomTimer != 0
+					if (IsMagicRoomActive()
 					|| PARTNER_MOVE_IS_SAME_NO_TARGET)
 						DECREASE_VIABILITY(10);
 					break;
 		
 				case MOVE_WONDERROOM:
-					if (gNewBS->WonderRoomTimer != 0
+					if (IsWonderRoomActive()
 					|| PARTNER_MOVE_IS_SAME_NO_TARGET)
 						DECREASE_VIABILITY(10);
 					break;
 	
 				case MOVE_GRAVITY:
-					if ((gNewBS->GravityTimer != 0
+					if ((IsGravityActive()
 					&&  !IsOfType(bankAtk, TYPE_FLYING)
 					&&  atkEffect != ITEM_EFFECT_AIR_BALLOON) //Should revert Gravity in this case
 					|| PARTNER_MOVE_IS_SAME_NO_TARGET)
@@ -2330,7 +2331,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 					break;
 
 				case MOVE_IONDELUGE:
-					if (gNewBS->IonDelugeTimer != 0
+					if (IsIonDelugeActive()
 					|| PARTNER_MOVE_IS_SAME_NO_TARGET)
 						DECREASE_VIABILITY(10);
 					break;
@@ -2371,7 +2372,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			switch (move) {
 				case MOVE_EMBARGO:
 					if (defAbility == ABILITY_KLUTZ
-					|| gNewBS->MagicRoomTimer != 0
+					|| IsMagicRoomActive()
 					|| gNewBS->EmbargoTimers[bankDef] != 0
 					|| PARTNER_MOVE_IS_SAME)
 						DECREASE_VIABILITY(10);
@@ -2389,7 +2390,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 
 				case MOVE_TELEKINESIS:
 					if (defStatus3 & (STATUS3_TELEKINESIS | STATUS3_ROOTED | STATUS3_SMACKED_DOWN)
-					||  gNewBS->GravityTimer != 0
+					||  IsGravityActive()
 					||  defEffect == ITEM_EFFECT_IRON_BALL
 					||  CheckTableForSpecies(defSpecies, gTelekinesisBanList)
 					|| PARTNER_MOVE_IS_SAME)
@@ -2402,7 +2403,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 					goto AI_STANDARD_DAMAGE;
 					
 				default: //Heal Block
-					if (gNewBS->HealBlockTimers[bankDef] != 0
+					if (IsHealBlocked(bankDef)
 					|| PARTNER_MOVE_IS_SAME)
 						DECREASE_VIABILITY(10);
 					else
@@ -2497,7 +2498,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		case EFFECT_FAIRY_LOCK_HAPPY_HOUR:
 			switch (move) {
 				case MOVE_FAIRYLOCK:
-					if (gNewBS->FairyLockTimer != 0
+					if (IsFairyLockActive()
 					||  PARTNER_MOVE_IS_SAME_NO_TARGET)
 						DECREASE_VIABILITY(10);
 					break;
@@ -2611,7 +2612,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 					break;
 
 				case MOVE_MAGNETRISE:
-					if (gNewBS->GravityTimer != 0
+					if (IsGravityActive()
 					|| gNewBS->MagnetRiseTimers[bankAtk] != 0
 					|| atkEffect == ITEM_EFFECT_IRON_BALL
 					|| atkStatus3 & (STATUS3_ROOTED | STATUS3_LEVITATING | STATUS3_SMACKED_DOWN)

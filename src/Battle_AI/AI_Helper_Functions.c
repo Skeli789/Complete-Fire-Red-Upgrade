@@ -9,6 +9,7 @@
 #include "../../include/new/ai_master.h"
 #include "../../include/new/AI_scripts.h"
 #include "../../include/new/battle_start_turn_start.h"
+#include "../../include/new/battle_util.h"
 #include "../../include/new/damage_calc.h"
 #include "../../include/new/end_turn.h"
 #include "../../include/new/general_bs_commands.h"
@@ -1055,7 +1056,7 @@ bool8 IsTrapped(u8 bank, bool8 switching)
 		|| (ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_ARENATRAP) && CheckGrounding(bank) == GROUNDED)
 		|| (ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_MAGNETPULL) && IsOfType(bank, TYPE_STEEL))
 		|| gStatuses3[bank] & (STATUS3_ROOTED | STATUS3_SKY_DROP_TARGET)
-		|| gNewBS->FairyLockTimer != 0)
+		|| IsFairyLockActive())
 			return TRUE;
 	}
 	
@@ -1078,7 +1079,8 @@ bool8 IsTakingSecondaryDamage(u8 bank)
 		||  (gBattleMons[bank].status1 & STATUS1_PSN_ANY && ability != ABILITY_POISONHEAL)
 		||  gBattleMons[bank].status1 & STATUS1_BURN
 		||  ((gBattleMons[bank].status1 & STATUS1_SLEEP) > 1 && gBattleMons[bank].status2 & STATUS2_NIGHTMARE)
-		||  gBattleMons[bank].status2 & (STATUS2_CURSED | STATUS2_WRAPPED))
+		||  gBattleMons[bank].status2 & (STATUS2_CURSED | STATUS2_WRAPPED)
+		||	(BankSideHasSeaOfFire(bank) && !IsOfType(bank, TYPE_FIRE)))
 			return TRUE;
 	}
 	
@@ -1096,14 +1098,15 @@ bool8 WillFaintFromSecondaryDamage(u8 bank)
 		
 	if (ability != ABILITY_MAGICGUARD)
 	{
-		if (GetSandstormDamage(bank) >= hp
-		||  GetHailDamage(bank) >= hp
-		||  GetLeechSeedDamage(bank) >= hp
-		||  GetPoisonDamage(bank) >= hp
-		||  GetBurnDamage(bank) >= hp
-		||  GetNightmareDamage(bank) >= hp
-		||  GetCurseDamage(bank) >= hp
- 		||  GetTrapDamage(bank) >= hp)
+		if (GetSandstormDamage(bank)
+		+  GetHailDamage(bank)
+		+  GetLeechSeedDamage(bank)
+		+  GetPoisonDamage(bank)
+		+  GetBurnDamage(bank)
+		+  GetNightmareDamage(bank)
+		+  GetCurseDamage(bank)
+ 		+  GetTrapDamage(bank)
+		+  GetSeaOfFireDamage(bank) >= hp)
 			return TRUE;
 	}
 	
@@ -1114,7 +1117,7 @@ u16 CalcSecondaryEffectChance(u8 bank, u16 move)
 {
 	u16 chance = gBattleMoves[move].secondaryEffectChance;
 
-	if (ABILITY(bank) == ABILITY_SERENEGRACE || gNewBS->RainbowTimers[SIDE(bank)])
+	if (ABILITY(bank) == ABILITY_SERENEGRACE || BankSideHasRainbow(bank))
 		chance *= 2;
 
 	return chance;

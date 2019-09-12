@@ -7,6 +7,7 @@
 #include "../../include/new/AI_Helper_Functions.h"
 #include "../../include/new/ai_master.h"
 #include "../../include/new/battle_start_turn_start.h"
+#include "../../include/new/battle_util.h"
 #include "../../include/new/damage_calc.h"
 #include "../../include/new/Helper_Functions.h"
 #include "../../include/new/item.h"
@@ -628,7 +629,7 @@ bool8 ShouldTrap(u8 bankAtk, u8 bankDef, u16 move, u8 class)
 
 u16 GetAmountToRecoverBy(u8 bankAtk, u8 bankDef, u16 move)
 {
-	if (gNewBS->HealBlockTimers[bankAtk] > 0)
+	if (IsHealBlocked(bankAtk))
 		return 0;
 
 	u16 amountToRecover = 0;

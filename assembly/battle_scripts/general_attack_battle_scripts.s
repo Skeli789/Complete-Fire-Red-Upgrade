@@ -1786,7 +1786,7 @@ LockOnBS:
 	goto BS_MOVE_END
 
 LaserFocusBS:
-	setcounter BANK_ATTACKER LASER_FOCUS_TIMERS 0x2
+	callasm SetLaserFocusTimer
 	attackanimation
 	waitanimation
 	setword BATTLE_STRING_LOADER LaserFocusString
@@ -4565,9 +4565,9 @@ BS_228_FieldEffects:
 	attackcanceler
 	attackstring
 	ppreduce
+	callasm DoFieldEffect
 	attackanimation
 	waitanimation
-	callasm DoFieldEffect
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	jumpifmove MOVE_GRAVITY GravityBringDownBS
@@ -4650,7 +4650,7 @@ HealBlockBS:
 	ppreduce
 	attackanimation
 	waitanimation
-	setcounter BANK_TARGET HEAL_BLOCK_TIMERS 5
+	callasm SetHealBlockTimer
 	setword BATTLE_STRING_LOADER HealBlockSetString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
@@ -4691,7 +4691,7 @@ TelekinesisBS:
 	ppreduce
 	attackanimation
 	waitanimation
-	setcounter BANK_TARGET TELEKINESIS_TIMERS 0x3
+	setcounter BANK_TARGET TELEKINESIS_TIMERS 3
 	setspecialstatusbit BANK_TARGET STATUS3_TELEKINESIS
 	setword BATTLE_STRING_LOADER TelekinesisSetString
 	printstring 0x184
@@ -4702,7 +4702,7 @@ ThroatChopBS:
 	jumpifbehindsubstitute BANK_TARGET 0x81D6927
 	accuracycheck BS_MOVE_MISSED 0x0
 	call STANDARD_DAMAGE
-	setcounter BANK_TARGET THROAT_CHOP_TIMERS 0x2
+	callasm SetThroatChopTimer
 	seteffectwithchancetarget
 	prefaintmoveendeffects 0x0
 	faintpokemonaftermove
@@ -4790,7 +4790,7 @@ BS_234_TopsyTurvyElectrify:
 	
 ElectrifyBS:
 	jumpifcounter BANK_TARGET ELECTRIFY_TIMERS NOTEQUALS 0x0 FAILED
-	setcounter BANK_TARGET ELECTRIFY_TIMERS 0x1
+	setcounter BANK_TARGET ELECTRIFY_TIMERS 1
 	attackanimation
 	waitanimation
 	setword BATTLE_STRING_LOADER ElectrifyString

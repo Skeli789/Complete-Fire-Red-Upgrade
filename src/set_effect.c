@@ -5,6 +5,7 @@
 #include "../include/random.h"
 
 #include "../include/new/ability_battle_scripts.h"
+#include "../include/new/battle_util.h"
 #include "../include/new/bs_helper_functions.h"
 #include "../include/new/Helper_Functions.h"
 #include "../include/new/item.h"
@@ -103,7 +104,7 @@ void atk15_seteffectwithchance(void)
 	{
 		gHitMarker |= HITMARKER_IGNORE_SUBSTITUTE;
 	}
-    if (ABILITY(gBankAttacker) == ABILITY_SERENEGRACE || gNewBS->RainbowTimers[SIDE(gBankAttacker)])
+    if (ABILITY(gBankAttacker) == ABILITY_SERENEGRACE || BankSideHasRainbow(gBankAttacker))
 	{
         PercentChance = gBattleMoves[gCurrentMove].secondaryEffectChance * 2;
 	}
@@ -303,7 +304,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
             {
             case MOVE_EFFECT_CONFUSION:
                 if (ABILITY(gEffectBank)== ABILITY_OWNTEMPO
-                ||  gBattleMons[gEffectBank].status2 & STATUS2_CONFUSION
+                ||  IsConfused(gEffectBank)
 				||	(CheckGrounding(gEffectBank) && TerrainType == MISTY_TERRAIN))
                 {
                     gBattlescriptCurrInstr++;
@@ -642,7 +643,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 				
 			case MOVE_EFFECT_SUPPRESS_ABILITY:
 				if (!gNewBS->secondaryEffectApplied
-				&& !(gStatuses3[gEffectBank] & STATUS3_ABILITY_SUPPRESS)
+				&& !IsAbilitySuppressed(gEffectBank)
 				&&  GetBattlerTurnOrderNum(gEffectBank) < gCurrentTurnActionNumber) //Target moved before attacker
 				{
 					gNewBS->secondaryEffectApplied = TRUE;
@@ -686,6 +687,12 @@ void SetMoveEffect(bool8 primary, u8 certain)
 				break;
 			
 			case MOVE_EFFECT_REMOVE_TERRAIN:
+				if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_TERRAIN)
+				{
+					gBattlescriptCurrInstr++;
+					break; //Can't be removed
+				}
+
 				if (TerrainType)
 				{
 					TerrainType = 0;
@@ -883,14 +890,14 @@ bool8 SetMoveEffect2(void)
 					break;
 			}
 			break;
-		
+
 		case MOVE_EFFECT_BRING_DOWN:
 			if (gStatuses3[gEffectBank] & STATUS3_IN_AIR)
 				goto SMACK_TGT_DOWN;
 		
 			if (gStatuses3[gEffectBank] & (STATUS3_SKY_DROP_ATTACKER | STATUS3_SKY_DROP_TARGET | STATUS3_ROOTED | STATUS3_SMACKED_DOWN)
 			||  ITEM_EFFECT(gEffectBank) == ITEM_EFFECT_IRON_BALL
-			||  gNewBS->GravityTimer)
+			||  IsGravityActive())
 			{
 				break;
 			}
@@ -908,9 +915,10 @@ bool8 SetMoveEffect2(void)
 				effect = TRUE;
 			}
 			break;
-		
+
 		case MOVE_EFFECT_ION_DELUGE:
-			gNewBS->IonDelugeTimer = 1;
+			if (!IsIonDelugeActive())
+				gNewBS->IonDelugeTimer = 1;
 			BattleScriptPushCursor();
 			BattleStringLoader = IonDelugeShowerString;
 			gBattlescriptCurrInstr = BattleScript_PrintCustomString;

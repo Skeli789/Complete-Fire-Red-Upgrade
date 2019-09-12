@@ -4,6 +4,7 @@
 
 #include "../include/new/accuracy_calc.h"
 #include "../include/new/battle_start_turn_start.h"
+#include "../include/new/battle_util.h"
 #include "../include/new/damage_calc.h"
 #include "../include/new/Helper_Functions.h"
 #include "../include/new/move_tables.h"
@@ -353,7 +354,7 @@ static u32 AccuracyCalcPassDefAbilityItemEffect(u16 move, u8 bankAtk, u8 bankDef
 				calc = udivsi((calc * 60), 100); // 0.6 Fog loss
 		}
 
-		if  (defAbility == ABILITY_TANGLEDFEET && (gBattleMons[bankDef].status2 & STATUS2_CONFUSION))
+		if (defAbility == ABILITY_TANGLEDFEET && IsConfused(bankDef))
 			calc /= 2; // 0.5 Tangled Feet loss
 
 		switch (atkEffect) {
@@ -366,7 +367,7 @@ static u32 AccuracyCalcPassDefAbilityItemEffect(u16 move, u8 bankAtk, u8 bankDef
 					calc = udivsi((calc * (100 + atkQuality)), 100); // 1.2 Zoom Lens boost
 		}   
 
-		if (gNewBS->GravityTimer)
+		if (IsGravityActive())
 			calc = udivsi((calc * 5), 3); // 5/3 Gravity boost
 
         if (defEffect == ITEM_EFFECT_EVASION_UP)
@@ -432,7 +433,7 @@ u32 VisualAccuracyCalc_NoTarget(u16 move, u8 bankAtk)
 	if (atkEffect == ITEM_EFFECT_WIDE_LENS)
 		calc = udivsi((calc * (100 + atkQuality)), 100); // 1.1 Wide Lens boost
 
-	if (gNewBS->GravityTimer)
+	if (IsGravityActive())
 		calc = udivsi((calc * 5), 3); // 5/3 Gravity boost
 
 	if (gNewBS->MicleBerryBits & (1 << bankAtk))

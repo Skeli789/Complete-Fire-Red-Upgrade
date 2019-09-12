@@ -25,3 +25,4 @@ u32 GetBurnDamage(u8 bank);
 u32 GetNightmareDamage(u8 bank);
 u32 GetCurseDamage(u8 bank);
 u32 GetTrapDamage(u8 bank);
+u32 GetSeaOfFireDamage(u8 bank);

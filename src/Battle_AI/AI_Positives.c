@@ -9,6 +9,7 @@
 #include "../../include/new/ai_master.h"
 #include "../../include/new/AI_scripts.h"
 #include "../../include/new/battle_start_turn_start.h"
+#include "../../include/new/battle_util.h"
 #include "../../include/new/damage_calc.h"
 #include "../../include/new/frontier.h"
 #include "../../include/new/general_bs_commands.h"
@@ -472,7 +473,8 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 				break;
 			else if (atkAbility == ABILITY_SERENEGRACE
 			|| defStatus1 & STATUS1_PARALYSIS
-			|| defStatus2 & (STATUS2_INFATUATION | STATUS2_CONFUSION))
+			|| defStatus2 & STATUS2_INFATUATION
+			|| IsConfused(bankDef))
 			{
 				if (IsUsefulToFlinchTarget(bankDef))
 					INCREASE_STATUS_VIABILITY(3);
@@ -628,7 +630,8 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 				else if ((defSpeedCalc >= atkSpeedCalc && defSpeedCalc / 2 < atkSpeedCalc) //You'll go first after paralyzing foe
 				|| MoveInMoveset(MOVE_HEX, bankAtk)
 				|| FlinchingMoveInMoveset(bankAtk)
-				|| defStatus2 & (STATUS2_CONFUSION | STATUS2_INFATUATION))
+				|| defStatus2 & STATUS2_INFATUATION
+				|| IsConfused(bankDef))
 					INCREASE_STATUS_VIABILITY(2);
 				else
 					INCREASE_STATUS_VIABILITY(1);
@@ -1183,8 +1186,8 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			&& !MoveWouldHitFirst(move, bankAtk, bankDef))
 				break; //Don't use if the attract will never get a chance to proc
 		
-			if (atkStatus1 & STATUS1_ANY
-			|| atkStatus2 & STATUS2_CONFUSION
+			if (defStatus1 & STATUS1_ANY
+			|| IsConfused(bankDef)
 			|| IsTrapped(bankDef, TRUE))
 				INCREASE_STATUS_VIABILITY(2);
 			else
@@ -2028,7 +2031,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 					break;
 	
 				case MOVE_GRAVITY:
-					if (gNewBS->GravityTimer == 0)
+					if (!IsGravityActive())
 						INCREASE_STATUS_VIABILITY(2);
 					break;
 

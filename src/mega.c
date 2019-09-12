@@ -4,6 +4,7 @@
 #include "../include/constants/items.h"
 #include "../include/constants/trainer_classes.h"
 
+#include "../include/new/battle_util.h"
 #include "../include/new/Helper_Functions.h"
 #include "../include/new/form_change.h"
 #include "../include/new/frontier.h"
@@ -105,7 +106,7 @@ ability_t GetBankMegaFormAbility(u8 bank)
 {
 	const struct Evolution* evos;
 
-	if (!(gStatuses3[bank] & STATUS3_ABILITY_SUPPRESS))
+	if (!IsAbilitySuppressed(bank))
 	{
 		evos = CanMegaEvolve(bank, FALSE);
 		if (evos != NULL)

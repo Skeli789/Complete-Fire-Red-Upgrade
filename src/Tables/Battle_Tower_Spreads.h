@@ -40243,7 +40243,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.spDefEv = 4,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_DEFIANT
-		.item = ITEM_EJECT_PACK,
+		.item = ITEM_FOCUS_SASH,
 		.moves =
 		{
 			MOVE_CLOSECOMBAT,

@@ -12,6 +12,7 @@
 #include "../include/new/ability_tables.h"
 #include "../include/new/battle_start_turn_start.h"
 #include "../include/new/battle_strings.h"
+#include "../include/new/battle_util.h"
 #include "../include/new/damage_calc.h"
 #include "../include/new/form_change.h"
 #include "../include/new/Helper_Functions.h"
@@ -517,13 +518,16 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				
 			if (effect)
 			{
+				if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_WEATHER)
+					gBattleWeather |= WEATHER_CIRCUS; //Can't be removed
+
 				gBattleCommunication[MULTISTRING_CHOOSER] = GetCurrentWeather();
 				BattleScriptPushCursorAndCallback(BattleScript_OverworldWeatherStarts);
 			}
 			break;
 			
 		case ABILITY_DRIZZLE:
-			if (!(gBattleWeather & (WEATHER_RAIN_ANY | WEATHER_PRIMAL_ANY)))
+			if (!(gBattleWeather & (WEATHER_RAIN_ANY | WEATHER_PRIMAL_ANY | WEATHER_CIRCUS)))
 			{
 				effect = ActivateWeatherAbility(WEATHER_RAIN_PERMANENT | WEATHER_RAIN_TEMPORARY, 
 												ITEM_EFFECT_DAMP_ROCK, bank, B_ANIM_RAIN_CONTINUES, 0);
@@ -532,7 +536,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			break;
 			
 		case ABILITY_SANDSTREAM:
-			if (!(gBattleWeather & (WEATHER_SANDSTORM_ANY | WEATHER_PRIMAL_ANY)))
+			if (!(gBattleWeather & (WEATHER_SANDSTORM_ANY | WEATHER_PRIMAL_ANY | WEATHER_CIRCUS)))
 			{
 				effect = ActivateWeatherAbility(WEATHER_SANDSTORM_PERMANENT | WEATHER_SANDSTORM_TEMPORARY, 
 												ITEM_EFFECT_SMOOTH_ROCK, bank, B_ANIM_SANDSTORM_CONTINUES, 1);
@@ -541,7 +545,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			break;
 			
 		case ABILITY_DROUGHT:
-			if (!(gBattleWeather & (WEATHER_SUN_ANY | WEATHER_PRIMAL_ANY)))
+			if (!(gBattleWeather & (WEATHER_SUN_ANY | WEATHER_PRIMAL_ANY | WEATHER_CIRCUS)))
 			{
 				effect = ActivateWeatherAbility(WEATHER_SUN_PERMANENT | WEATHER_SUN_TEMPORARY, 
 												ITEM_EFFECT_HEAT_ROCK, bank, B_ANIM_SUN_CONTINUES, 2);
@@ -550,7 +554,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			break;
 				
 		case ABILITY_SNOWWARNING:
-			if (!(gBattleWeather & (WEATHER_HAIL_ANY | WEATHER_PRIMAL_ANY)))
+			if (!(gBattleWeather & (WEATHER_HAIL_ANY | WEATHER_PRIMAL_ANY | WEATHER_CIRCUS)))
 			{
 				gBattleScripting->animArg1 = B_ANIM_HAIL_CONTINUES;
 				effect = ActivateWeatherAbility(WEATHER_HAIL_PERMANENT | WEATHER_HAIL_TEMPORARY, 
@@ -560,7 +564,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			break;
 
 		case ABILITY_PRIMORDIALSEA:
-			if (!(gBattleWeather & WEATHER_RAIN_PRIMAL))
+			if (!(gBattleWeather & (WEATHER_RAIN_PRIMAL | WEATHER_CIRCUS)))
 			{
 				gBattleWeather = (WEATHER_RAIN_PERMANENT | WEATHER_RAIN_TEMPORARY |  WEATHER_RAIN_PRIMAL);
 				gWishFutureKnock->weatherDuration = 0;
@@ -574,7 +578,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			break;
 		
 		case ABILITY_DESOLATELAND:
-			if (!(gBattleWeather & WEATHER_SUN_PRIMAL))
+			if (!(gBattleWeather & (WEATHER_SUN_PRIMAL | WEATHER_CIRCUS)))
 			{
 				gBattleWeather = (WEATHER_SUN_PERMANENT | WEATHER_SUN_TEMPORARY |  WEATHER_SUN_PRIMAL);
 				gWishFutureKnock->weatherDuration = 0;
@@ -588,7 +592,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			break;
 				
 		case ABILITY_DELTASTREAM:
-			if (!(gBattleWeather & WEATHER_AIR_CURRENT_PRIMAL))
+			if (!(gBattleWeather & (WEATHER_AIR_CURRENT_PRIMAL | WEATHER_CIRCUS)))
 			{
 				gBattleWeather = (WEATHER_AIR_CURRENT_PRIMAL);
 				gWishFutureKnock->weatherDuration = 0;
@@ -625,7 +629,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			side = (GetBattlerPosition(bank) ^ BIT_SIDE) & BIT_SIDE; // side of the opposing pokemon
 			target1 = GetBattlerAtPosition(side);
 			target2 = GetBattlerAtPosition(side + BIT_FLANK);
-			if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+			if (IS_DOUBLE_BATTLE)
 			{
 				if (*GetAbilityLocation(target1) != ABILITY_NONE && gBattleMons[target1].hp != 0
 				&& *GetAbilityLocation(target2) != ABILITY_NONE && gBattleMons[target2].hp != 0)
@@ -765,7 +769,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 					}
 				}
 					
-				if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE
+				if (IS_DOUBLE_BATTLE
 				&&  gBattleMons[PARTNER(FOE(bank))].hp)
 				{
 					move = gBattleMons[PARTNER(FOE(bank))].moves[i];
@@ -828,7 +832,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 					}
 				}
 					
-				if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE
+				if (IS_DOUBLE_BATTLE
 				&&  gBattleMons[PARTNER(FOE(bank))].hp)
 				{
 					move = gBattleMons[PARTNER(FOE(bank))].moves[i];
@@ -918,7 +922,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			u32 opposingSpDef = gBattleMons[opposingBank].spDefense;
 			APPLY_STAT_MOD(opposingDef, &gBattleMons[opposingBank], opposingDef, STAT_SPDEF);
 				
-			if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+			if (IS_DOUBLE_BATTLE)
 			{
 				u32 opposingPartnerDef = 0;
 				u32 opposingPartnerSpDef = 0;
@@ -1143,7 +1147,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 					break;
 					
 				case ABILITY_HEALER:
-					if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE
+					if (IS_DOUBLE_BATTLE
 					&& gBattleMons[PARTNER(bank)].hp
 					&& gBattleMons[PARTNER(bank)].status1
 					&& umodsi(Random(), 100) < 30) 
@@ -1304,7 +1308,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 						break;
 					
 					case ABILITY_TELEPATHY:
-						if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE
+						if (IS_DOUBLE_BATTLE
 						&& gBankAttacker == PARTNER(bank))
 							effect = 1;
 						break;
@@ -1390,7 +1394,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			
 			switch (effect) {
 				case 1: // Restore HP ability
-					if (BATTLER_MAX_HP(bank) || gNewBS->HealBlockTimers[bank])
+					if (BATTLER_MAX_HP(bank) || IsHealBlocked(bank))
 					{
 						if ((gProtectStructs[gBattlerAttacker].notFirstStrike))
 							gBattlescriptCurrInstr = BattleScript_MonMadeMoveUseless;
@@ -1594,7 +1598,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				&& umodsi(Random(), 3) == 0
 				&& ABILITY(gBankAttacker) != ABILITY_OBLIVIOUS
 				&& ABILITY(gBankAttacker) != ABILITY_AROMAVEIL
-				&& !(gBattleTypeFlags & BATTLE_TYPE_DOUBLE && ABILITY(PARTNER(gBankAttacker)) == ABILITY_AROMAVEIL)
+				&& !(IS_DOUBLE_BATTLE && ABILITY(PARTNER(gBankAttacker)) == ABILITY_AROMAVEIL)
 				&& GetGenderFromSpeciesAndPersonality(speciesAtk, pidAtk) != GetGenderFromSpeciesAndPersonality(speciesDef, pidDef)
 				&& !(gBattleMons[gBankAttacker].status2 & STATUS2_INFATUATION)
 				&& GetGenderFromSpeciesAndPersonality(speciesAtk, pidAtk) != MON_GENDERLESS
@@ -1657,7 +1661,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				&& BATTLER_ALIVE(gBankAttacker)
 				&& gBankAttacker != bank
 				&& ABILITY(gBankAttacker) != ABILITY_AROMAVEIL
-				&& !(gBattleTypeFlags & BATTLE_TYPE_DOUBLE && ABILITY(PARTNER(gBankAttacker)) == ABILITY_AROMAVEIL)
+				&& !(IS_DOUBLE_BATTLE && ABILITY(PARTNER(gBankAttacker)) == ABILITY_AROMAVEIL)
 				&& umodsi(Random(), 3) == 0)
 				{
 					BattleScriptPushCursor();
@@ -1987,10 +1991,10 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 		case ABILITYEFFECT_FIELD_SPORT: // 14
 			switch (gLastUsedAbility) {
 				case 0xFD:
-					effect = gNewBS->MudSportTimer;
+					effect = IsMudSportActive();
 					break;
 				case 0xFE:
-					effect = gNewBS->WaterSportTimer;
+					effect = IsWaterSportActive();
 					break;
 				default:
 					for (i = 0; i < gBattlersCount; i++)
@@ -2138,10 +2142,13 @@ static u8 ActivateWeatherAbility(u16 flags, u16 item, u8 bank, u8 animArg, u8 st
 	gBattleScripting->bank = bank;
 	return TRUE;
 }
-				
+
 static u8 TryActivateTerrainAbility(u8 terrain, u8 anim, u8 bank)
 {
 	u8 effect = 0;
+	
+	if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_TERRAIN)
+		return effect; //Can't be removed
 	
 	if (TerrainType != terrain)
 	{
@@ -2582,7 +2589,7 @@ void AnimTask_LoadAbilityPopUp(u8 taskId)
 	gNewBS->activeAbilityPopUps |= gBitTable[gBattleAnimAttacker];
 	battlerPosition = GetBattlerPosition(gBattleAnimAttacker);
 
-	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+	if (IS_DOUBLE_BATTLE)
 		coords = sAbilityPopUpCoordsDoubles;
 	else
 		coords = sAbilityPopUpCoordsSingles;
@@ -2757,8 +2764,7 @@ void SetSkipCertainSwitchInAbilities(void)
 	if (BATTLER_ALIVE(FOE(gBankAttacker)))
 		return;
 		
-	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE
-	&& BATTLER_ALIVE(PARTNER(FOE(gBankAttacker))))
+	if (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(FOE(gBankAttacker))))
 		return;
 
 	//Only set the bit if no enemies are alive on the field
