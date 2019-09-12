@@ -275,12 +275,16 @@ u8* GetExpandedFlagPointer(u16 id)
 	#ifdef SAVE_BLOCK_EXPANSION
 		if (id >= 0x900 && id < 0x1900)
 			return &gExpandedFlags[(id - 0x900) / 8];
+		else if (id >= 0x4000)
+			return NULL;
 		else if (id >= 0x1900)
 			return (u8*) &Var8000; //Returns Var8000 to prevent bad memory access
 		else
 			return NULL;
 	#else
-		if (id >= 0x1900)
+		if (id >= 0x4000)
+			return NULL;
+		else if (id >= 0x1900)
 			return (u8*) &Var8000; //Returns Var8000 to prevent bad memory access
 		else
 			return NULL;
