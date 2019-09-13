@@ -326,7 +326,10 @@ EmergencyExitSwitchBS:
 	printstring 0x3
 	switch3 BANK_SCRIPTING 0x1
 	waitstateatk
+	callasm BackupScriptingBank
 	switchineffects BANK_SCRIPTING
+	callasm SetNoMoreMovingThisTurnScriptingBank @;New Pokemon can't attack after being switched in
+
 EmergencyExitReturn:
 	return
 

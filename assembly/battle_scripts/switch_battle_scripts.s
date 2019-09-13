@@ -184,8 +184,8 @@ ForceSwitchRedCard:
 	switchineffects BANK_SCRIPTING
 	callasm MoldBreakerRestoreAbilitiesOnForceSwitchIn
 	setbyte FORCE_SWITCH_HELPER 0x0
-	copybyte TARGET_BANK SEED_HELPER
-	copybyte BATTLE_SCRIPTING_BANK, SEED_HELPER + 1
+	callasm RestoreAllOriginalMoveData
+	copybyte BATTLE_SCRIPTING_BANK, TARGET_BANK
 	removeitem BANK_SCRIPTING
 	return
 

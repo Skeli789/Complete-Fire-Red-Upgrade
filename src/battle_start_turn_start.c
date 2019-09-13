@@ -481,6 +481,7 @@ void SetActionsAndBanksTurnOrder(void)
 		}
 	}
 
+	gNewBS->NoMoreMovingThisTurn = 0;
 	gBattleMainFunc = (u32) CheckFocusPunch_ClearVarsBeforeTurnStarts;
 	gBattleStruct->focusPunchBank = 0;
 }

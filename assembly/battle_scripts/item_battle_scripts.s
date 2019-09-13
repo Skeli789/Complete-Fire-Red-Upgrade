@@ -449,6 +449,7 @@ BattleScript_EjectButton:
 	waitstateatk
 	callasm BackupScriptingBank
 	switchineffects BANK_SCRIPTING
+	callasm SetNoMoreMovingThisTurnScriptingBank @;New Pokemon can't attack after being switched in
 
 EjectButtonEnd:
 	return

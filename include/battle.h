@@ -774,6 +774,7 @@ struct NewBattleStruct
 	u8 handleSetSwitchIns;
 	u8 brokeFreeMessage;
 	u8 doSwitchInEffects;
+	u8 devolveForgotMove;
 	
 	//Bit Fields for Party
 	u8 BelchCounters;
@@ -799,6 +800,7 @@ struct NewBattleStruct
 	u8 lastFainted;
 	u8 intimidateActive;
 	u8 backupAbility;
+	u8 switchOutBankLooper;
 	u8 originalAttackerBackup : 2;
 	u8 originalTargetBackup : 2;
 	
