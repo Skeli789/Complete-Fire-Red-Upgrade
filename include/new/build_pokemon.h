@@ -19,6 +19,7 @@ bool8 IsMonBannedInTier(struct Pokemon* mon, u8 tier);
 bool8 IsMonAllowedInBattleTower(struct Pokemon* mon);
 void TryStatusInducer(struct Pokemon* mon);
 void CalculateMonStatsNew(struct Pokemon *mon);
+u8 GetOpenWorldBadgeCount(void);
 
 //Functions Hooked In
 void BuildTrainerPartySetup(void);

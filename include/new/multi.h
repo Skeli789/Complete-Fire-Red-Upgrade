@@ -26,7 +26,6 @@
  #ifdef OPEN_WORLD_TRAINERS
 
 extern const u8 openWorldLevelRanges[NUM_BADGE_OPTIONS][2];
-u8 GetOpenWorldBadgeCount(void);
 
 #endif
 

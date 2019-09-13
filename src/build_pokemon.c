@@ -152,7 +152,7 @@ extern const species_t gGeneralTrainerSpreads[NUM_TRAINER_CLASSES][NUM_BADGE_OPT
 static u8 GetOpenWorldTrainerMonAmount(void);
 static u8 GetOpenWorldSpeciesIndex(u32 nameHash, u8 i);
 static u8 GetOpenWorldSpeciesLevel(u32 nameHash, u8 i);
-static u8 GetOpenWorldBadgeCount(void);
+u8 GetOpenWorldBadgeCount(void);
 
 #endif
 
@@ -2708,7 +2708,7 @@ static u8 GetOpenWorldSpeciesLevel(u32 nameHash, u8 i)
 	return min + ((nameHash + 7 * i) ^ T1_READ_32(gSaveBlock2->playerTrainerId)) % range;
 }
 
-static u8 GetOpenWorldBadgeCount(void)
+u8 GetOpenWorldBadgeCount(void)
 {
 	u8 badgeCount = 0;
 
