@@ -19,7 +19,7 @@
 #define BattleScript_YawnMakesAsleep ((u8*) 0x81D91C7)
 #define BattleScript_PerishSongHits ((u8*) 0x81D8D33)
 #define BattleScript_PerishSongTimerGoesDown ((u8*) 0x81D8D4E)
-#define BattleScript_SideStatusWoreOff ((u8*) 0x81D8B32)
+//#define BattleScript_SideStatusWoreOff ((u8*) 0x81D8B32)
 #define BattleScript_SafeguardEnds ((u8*) 0x81D8B43)
 #define BattleScript_PrintUproarOverTurns ((u8*) 0x81D90BC)
 #define BattleScript_GiveExp ((u8*) 0x81D8694)
@@ -68,4 +68,5 @@ extern u8 BattleScript_PrintCustomStringEnd2[];
 extern u8 BattleScript_MonTookFutureAttack[];
 
 //Strings
+extern u8 gText_SideStatusWoreOff[];
 extern u8 gText_TauntWoreOff[];

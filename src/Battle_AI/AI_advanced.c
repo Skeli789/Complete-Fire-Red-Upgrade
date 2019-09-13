@@ -990,6 +990,9 @@ bool8 ShouldUseWishAromatherapy(u8 bankAtk, u8 bankDef, u16 move, u8 class)
 	bool8 needHealing = FALSE;
 	
 	party = LoadPartyRange(bankAtk, &firstId, &lastId);
+	
+	if (ViableMonCountFromBankLoadPartyRange(bankAtk) <= 1 && CanKnockOut(bankDef, bankAtk))
+		return FALSE; //Don't heal if last mon and will faint after getting KOd
 
 	for (i = 0; i < PARTY_SIZE; ++i)
 	{

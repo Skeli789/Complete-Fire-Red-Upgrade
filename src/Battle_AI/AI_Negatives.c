@@ -1104,7 +1104,15 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			else if (CheckTableForMove(move, Percent100RecoilMoves))
 				dmg = MathMax(1, dmg);
 			else if (move == MOVE_MINDBLOWN)
+			{
+				if (MoveBlockedBySubstitute(move, bankAtk, bankDef))
+				{
+					DECREASE_VIABILITY(9);
+					break; //Don't use Mind Blown to break a Substitute
+				}
+
 				dmg = MathMax(1, gBattleMons[bankAtk].maxHP / 2);
+			}
 
 			if (dmg >= gBattleMons[bankAtk].hp //Recoil kills attacker
 			&&  ViableMonCountFromBank(bankDef) > 1) //Foe has more than 1 target left
@@ -1117,7 +1125,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			else
 				goto AI_STANDARD_DAMAGE;
 			break;
-		
+
 		case EFFECT_CONFUSE:
 		AI_CONFUSE:
 			switch (move) {

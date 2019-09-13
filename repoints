@@ -74,7 +74,8 @@ TheOpposingString 080D7E00
 TheOpposingString 080D7E74
 TheOpposingString 080D82C0
 TheOpposingString 080D8554
-##Other Stings
+##Other Strings
+gText_ShroudedInMist 083FE090
 gText_AbilityPreventsConfusion 083FE234
 gText_FlashFirePowerUp 083FE238
 gText_AbilityPreventsStatLoss 083FE244

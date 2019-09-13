@@ -623,7 +623,7 @@ BattleScript_RanAwayUsingMonAbility:
 
 BattleScript_PrintCustomStringEnd2:
 	call BattleScript_PrintCustomString
-	end3
+	end2
 
 BattleScript_PrintCustomStringEnd3:
 	call BattleScript_PrintCustomString
