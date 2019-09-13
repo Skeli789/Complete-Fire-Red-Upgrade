@@ -428,11 +428,17 @@ void EndOfBattleThings(void)
 		
 		#ifdef UNBOUND
 		u8 weather = GetCurrentWeather();
-		if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_SANDS
-		&& weather != WEATHER_NONE
-		&& weather != WEATHER_CLOUDS
-		&& weather != WEATHER_SUNNY)
-			SetSav1Weather(WEATHER_RAIN_LIGHT); //Reset weather in Battle Sands
+		if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_SANDS)
+		{
+			if (weather != WEATHER_NONE
+			&& weather != WEATHER_CLOUDS
+			&& weather != WEATHER_SUNNY)
+				SetSav1Weather(WEATHER_RAIN_LIGHT); //Reset weather in Battle Sands
+		}
+		else if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_CIRCUS)
+		{
+			SetSav1Weather(WEATHER_NONE);
+		}
 		#endif
 	}
 }
@@ -584,6 +590,7 @@ static void EndBattleFlagClear(void)
 	u16 backup = gTrainerBattleOpponent_B;
 	Memset(&ExtensionState, 0x0, sizeof(struct BattleExtensionState));
 	gTrainerBattleOpponent_B = backup;
+	gBattleCircusFlags = 0;
 }
 
 static void HealPokemonInFrontier(void)

@@ -2,6 +2,8 @@
 
 extern u8 BattleScript_MagicBounce[];
 extern u8 BattleScript_MoveUsedFlinched[]; //0x81D90B1
+extern u8 BattleScript_MoveUsedDevolvedForgot[];
+extern u8 BattleScript_MoveUsedIsConfused[]; //0x81D90D3
 extern u8 BattleScript_MoveUsedLoafingAround[]; //0x81D94F2
 extern u8 BattleScript_MoveUsedGravityPrevents[];
 extern u8 BattleScript_MoveUsedHealBlockPrevents[];
@@ -30,7 +32,6 @@ extern u8 BattleScript_TookAttack[];
 #define BattleScript_MoveUsedIsDisabled (u8*) 0x81D8C4F
 #define BattleScript_MoveUsedIsTaunted (u8*) 0x81D8ECA
 #define BattleScript_MoveUsedIsImprisoned (u8*) 0x81D8F94
-#define BattleScript_MoveUsedIsConfused (u8*) 0x81D90D3
 #define BattleScript_MoveUsedIsConfusedNoMore (u8*) 0x81D9116
 #define BattleScript_MoveUsedIsParalyzed (u8*) 0x81D90A1
 #define BattleScript_TooScaredToMove (u8*) 0x81D9180

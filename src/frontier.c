@@ -1,6 +1,7 @@
 #include "defines.h"
 #include "defines_battle.h"
 #include "../include/event_data.h"
+#include "../include/field_weather.h"
 #include "../include/random.h"
 #include "../include/script.h"
 
@@ -29,8 +30,11 @@ extern const u8 gText_SmogonLittleCup[];
 extern const u8 gText_MiddleCup[];
 extern const u8 gText_SmogonMonotype[];
 extern const u8 gText_GSCup[];
+extern const u8 gText_GSCupCamomons[];
 extern const u8 gText_SmogonCamomons[];
+extern const u8 gText_UberCamomons[];
 extern const u8 gText_LittleCupCamomons[];
+extern const u8 gText_MiddleCupCamomons[];
 extern const u8 gText_SmogonScalemons[];
 extern const u8 gText_Smogon350Cup[];
 extern const u8 gText_SmogonAveragemons[];
@@ -44,6 +48,35 @@ extern const u8 gText_Off[];
 extern const u8 gText_Previous[];
 extern const u8 gText_Max[];
 extern const u8 gText_None[];
+
+extern const u8 gText_BattleCircusDescriptionElectricTerrain[];
+extern const u8 gText_BattleCircusDescriptionGrassyTerrain[];
+extern const u8 gText_BattleCircusDescriptionMistyTerrain[];
+extern const u8 gText_BattleCircusDescriptionPsychicTerrain[];
+extern const u8 gText_BattleCircusDescriptionRain[];
+extern const u8 gText_BattleCircusDescriptionSun[];
+extern const u8 gText_BattleCircusDescriptionSandstorm[];
+extern const u8 gText_BattleCircusDescriptionHail[];
+extern const u8 gText_BattleCircusDescriptionFog[];
+extern const u8 gText_BattleCircusDescriptionTrickRoom[];
+extern const u8 gText_BattleCircusDescriptionMagicRoom[];
+extern const u8 gText_BattleCircusDescriptionWonderRoom[];
+extern const u8 gText_BattleCircusDescriptionGravity[];
+extern const u8 gText_BattleCircusDescriptionIonDeluge[];
+extern const u8 gText_BattleCircusDescriptionFairyLock[];
+extern const u8 gText_BattleCircusDescriptionMudSport[];
+extern const u8 gText_BattleCircusDescriptionWaterSport[];
+extern const u8 gText_BattleCircusDescriptionSeaOfFire[];
+extern const u8 gText_BattleCircusDescriptionRainbow[];
+extern const u8 gText_BattleCircusDescriptionSwamp[];
+extern const u8 gText_BattleCircusDescriptionConfused[];
+extern const u8 gText_BattleCircusDescriptionTaunt[];
+extern const u8 gText_BattleCircusDescriptionTorment[];
+extern const u8 gText_BattleCircusDescriptionHealBlock[];
+extern const u8 gText_BattleCircusDescriptionThroatChop[];
+extern const u8 gText_BattleCircusDescriptionAlwaysCrit[];
+extern const u8 gText_BattleCircusDescriptionNoCrits[];
+extern const u8 gText_BattleCircusDescriptionAbilitySuppression[];
 
 const u8 gBattleTowerTiers[] =
 {
@@ -91,11 +124,11 @@ const u8 gBattleCircusTiers[] =
 {
 	BATTLE_TOWER_STANDARD,
 	BATTLE_TOWER_NO_RESTRICTIONS,
-	BATTLE_TOWER_LITTLE_CUP,
-	BATTLE_TOWER_MIDDLE_CUP,
 	BATTLE_TOWER_MONOTYPE,
 	BATTLE_TOWER_CAMOMONS,
+	BATTLE_TOWER_UBER_CAMOMONS,
 	BATTLE_TOWER_LC_CAMOMONS,
+	BATTLE_TOWER_MC_CAMOMONS,
 	BATTLE_TOWER_SCALEMONS,
 	BATTLE_TOWER_350_CUP,
 	BATTLE_TOWER_AVERAGE_MONS,
@@ -114,7 +147,9 @@ const u8* const gBattleFrontierTierNames[NUM_TIERS] =
 	[BATTLE_TOWER_MIDDLE_CUP] = gText_MiddleCup,
 	[BATTLE_TOWER_MONOTYPE] = gText_SmogonMonotype,
 	[BATTLE_TOWER_CAMOMONS] = gText_SmogonCamomons,
+	[BATTLE_TOWER_UBER_CAMOMONS] = gText_UberCamomons,
 	[BATTLE_TOWER_LC_CAMOMONS] = gText_LittleCupCamomons,
+	[BATTLE_TOWER_MC_CAMOMONS] = gText_MiddleCupCamomons,
 	[BATTLE_TOWER_SCALEMONS] = gText_SmogonScalemons,
 	[BATTLE_TOWER_350_CUP] = gText_Smogon350Cup,
 	[BATTLE_TOWER_AVERAGE_MONS] = gText_SmogonAveragemons,
@@ -133,6 +168,38 @@ const u8* const gBattleFrontierFormats[NUM_TOWER_BATTLE_TYPES] =
 	[BATTLE_TOWER_SINGLE_RANDOM] = gText_RandomSingleBattle,
 	[BATTLE_TOWER_DOUBLE_RANDOM] = gText_RandomDoubleBattle,
 	[BATTLE_TOWER_MULTI_RANDOM] = gText_RandomMultiBattle,
+};
+
+const u8* const sBattleCircusEffectDescriptions[] =
+{
+	gText_BattleCircusDescriptionElectricTerrain,
+	gText_BattleCircusDescriptionGrassyTerrain,
+	gText_BattleCircusDescriptionMistyTerrain,
+	gText_BattleCircusDescriptionPsychicTerrain,
+	gText_BattleCircusDescriptionRain,
+	gText_BattleCircusDescriptionSun,
+	gText_BattleCircusDescriptionSandstorm,
+	gText_BattleCircusDescriptionHail,
+	gText_BattleCircusDescriptionFog,
+	gText_BattleCircusDescriptionTrickRoom,
+	gText_BattleCircusDescriptionMagicRoom,
+	gText_BattleCircusDescriptionWonderRoom,
+	gText_BattleCircusDescriptionGravity,
+	gText_BattleCircusDescriptionIonDeluge,
+	gText_BattleCircusDescriptionFairyLock,
+	gText_BattleCircusDescriptionMudSport,
+	gText_BattleCircusDescriptionWaterSport,
+	gText_BattleCircusDescriptionSeaOfFire,
+	gText_BattleCircusDescriptionRainbow,
+	gText_BattleCircusDescriptionSwamp,
+	gText_BattleCircusDescriptionConfused,
+	gText_BattleCircusDescriptionTaunt,
+	gText_BattleCircusDescriptionTorment,
+	gText_BattleCircusDescriptionHealBlock,
+	gText_BattleCircusDescriptionThroatChop,
+	gText_BattleCircusDescriptionAlwaysCrit,
+	gText_BattleCircusDescriptionNoCrits,
+	gText_BattleCircusDescriptionAbilitySuppression,
 };
 
 //This file's functions:
@@ -345,7 +412,7 @@ bool8 IsGSCupBattle()
 bool8 DuplicateItemsAreBannedInTier(u8 tier, u8 battleType)
 {
 	if (tier == BATTLE_TOWER_STANDARD
-	||  tier == BATTLE_TOWER_MIDDLE_CUP)
+	||  IsMiddleCupTier(tier))
 		return TRUE;
 		
 	return !IsFrontierSingles(battleType) && tier == BATTLE_TOWER_GS_CUP;
@@ -454,9 +521,14 @@ const u8* GetFrontierTierName(u8 tier, u8 format)
 {
 	const u8* string = gBattleFrontierTierNames[tier];
 
-	if (tier == BATTLE_TOWER_MIDDLE_CUP && !IsFrontierSingles(format))
-		string = gText_GSCup;
-		
+	if (!IsFrontierSingles(format))
+	{
+		if (tier == BATTLE_TOWER_MIDDLE_CUP)
+			string = gText_GSCup;
+		else if (tier == BATTLE_TOWER_MC_CAMOMONS)
+		string = gText_GSCupCamomons;
+	}
+
 	return string;
 }
 
@@ -467,12 +539,20 @@ bool8 InBattleSands(void)
 
 bool8 IsCamomonsTier(u8 tier)
 {
-	return tier == BATTLE_TOWER_CAMOMONS || tier == BATTLE_TOWER_LC_CAMOMONS;
+	return tier == BATTLE_TOWER_CAMOMONS
+		|| tier == BATTLE_TOWER_UBER_CAMOMONS
+		|| tier == BATTLE_TOWER_LC_CAMOMONS
+		|| tier == BATTLE_TOWER_MC_CAMOMONS;
 }
 
 bool8 IsLittleCupTier(u8 tier)
 {
 	return tier == BATTLE_TOWER_LITTLE_CUP || tier == BATTLE_TOWER_LC_CAMOMONS;
+}
+ 
+bool8 IsMiddleCupTier(u8 tier)
+{
+	return tier == BATTLE_TOWER_MIDDLE_CUP || tier == BATTLE_TOWER_MC_CAMOMONS;
 }
 
 bool8 IsAverageMonsBattle(void)
@@ -680,7 +760,9 @@ u16 GetBattleTowerStreak(u8 currentOrMax, u16 inputBattleStyle, u16 inputTier, u
 		case IN_BATTLE_SANDS:
 			return gBattleSandsStreaks[currentOrMax].streakLength;
 		case IN_BATTLE_MINE:
-			return gBattleMineStreaks[MathMin(tier - BATTLE_MINE_FORMAT_1, 2)][currentOrMax];
+			return gBattleMineStreaks[tier][currentOrMax];
+		case IN_BATTLE_CIRCUS:
+			return gBattleCircusStreaks[tier][battleStyle][size][level][currentOrMax];
 	}
 }
 
@@ -712,8 +794,12 @@ void sp055_UpdateBattleTowerStreak(void)
 			inBattleSands = TRUE;
 			break;
 		case IN_BATTLE_MINE:
-			currentStreak = &gBattleMineStreaks[MathMin(tier - BATTLE_MINE_FORMAT_1, 2)][CURR_STREAK];
-			maxStreak = &gBattleMineStreaks[MathMin(tier - BATTLE_MINE_FORMAT_1, 2)][MAX_STREAK];
+			currentStreak = &gBattleMineStreaks[tier][CURR_STREAK];
+			maxStreak = &gBattleMineStreaks[tier][MAX_STREAK];
+			break;
+		case IN_BATTLE_CIRCUS:
+			currentStreak = &gBattleCircusStreaks[tier][battleStyle][partySize][level][CURR_STREAK]; //Current Streak
+			maxStreak = &gBattleCircusStreaks[tier][battleStyle][partySize][level][MAX_STREAK]; //Max Streak
 			break;
 	}
 	
@@ -786,6 +872,11 @@ u16 sp056_DetermineBattlePointsToGive(void)
 			case IN_BATTLE_MINE:
 				toGive = 20; //Always battle against frontier brain
 				break;
+				
+			case IN_BATTLE_CIRCUS:
+				if (VarGet(BATTLE_TOWER_TIER) != BATTLE_TOWER_MONOTYPE)
+					toGive = 20; //Battle against frontier brain
+				break;
 		}
 	}
 	else if (streakLength <= 30)
@@ -812,6 +903,11 @@ u16 sp056_DetermineBattlePointsToGive(void)
 			case IN_BATTLE_MINE:
 				toGive = 50; //Always battle against frontier brain
 				break;
+				
+			case IN_BATTLE_CIRCUS:
+				if (VarGet(BATTLE_TOWER_TIER) != BATTLE_TOWER_MONOTYPE)
+					toGive = 50; //Battle against frontier brain
+				break;
 		}
 	}
 	else if (streakLength <= 70)
@@ -830,18 +926,45 @@ u16 sp056_DetermineBattlePointsToGive(void)
 
 static void LoadProperStreakData(u8* currentOrMax, u8* battleStyle, u8* tier, u8* partySize, u8* level)
 {
-	if (*tier == BATTLE_TOWER_MONOTYPE)
-	{
-		*tier = BATTLE_TOWER_LITTLE_CUP; //Hijack Little Cup level 100 slot
-		*level = 100;
+	switch (BATTLE_FACILITY_NUM) {
+		case IN_BATTLE_TOWER:
+			if (*tier == BATTLE_TOWER_MONOTYPE)
+			{
+				*tier = BATTLE_TOWER_LITTLE_CUP; //Hijack Little Cup level 100 slot
+				*level = 100;
+			}
+			*tier = MathMin(*tier, NUM_FORMATS_OLD);
+			break;
+
+		case IN_BATTLE_SANDS:
+			*tier = MathMin(*tier, gNumBattleTowerTiers);
+			break;
+
+		case IN_BATTLE_MINE:
+			*tier = MathMin(*tier - BATTLE_MINE_FORMAT_1, 2);
+			break;
+
+		case IN_BATTLE_CIRCUS: ;
+			u32 i;
+			for (i = 0; i < gNumBattleCircusTiers; ++i)
+			{
+				if (gBattleCircusTiers[i] == *tier)
+				{
+					*tier = i;
+					break;
+				}
+			}
+			
+			if (i == gNumBattleCircusTiers)
+				*tier = 0;
+			break;
 	}
-	
+
 	if (IsFrontierMulti(*battleStyle))
 		*partySize *= 2; //Each player gets half the team
 
 	*currentOrMax = MathMin(*currentOrMax, 1);
 	*battleStyle = MathMin(*battleStyle, NUM_TOWER_BATTLE_TYPES);
-	*tier = MathMin(*tier, NUM_TIERS);
 	*partySize = (*partySize < 6) ? 0 : 1;
 	*level = (*level < 100) ? 0 : 1;
 }
@@ -1100,8 +1223,9 @@ void sp071_LoadBattleMineRecordTier(void)
 	if (currTier == BATTLE_MINE_FORMAT_1 || currTier == BATTLE_MINE_FORMAT_2 || currTier == BATTLE_MINE_FORMAT_3)
 		return;
 
-	for (i = 0, tier = gBattleMineFormat1Tiers[i]; i < ARRAY_COUNT(gBattleMineFormat1Tiers); ++i, tier = gBattleMineFormat1Tiers[i])
+	for (i = 0; i < ARRAY_COUNT(gBattleMineFormat1Tiers); ++i)
 	{
+		tier = gBattleMineFormat1Tiers[i];
 		if (currTier == tier)
 		{
 			VarSet(BATTLE_TOWER_TIER, BATTLE_MINE_FORMAT_1);
@@ -1109,21 +1233,116 @@ void sp071_LoadBattleMineRecordTier(void)
 		}
 	}
 
-	for (i = 0, tier = gBattleMineFormat2Tiers[i]; i < ARRAY_COUNT(gBattleMineFormat2Tiers); ++i, tier = gBattleMineFormat2Tiers[i])
+	for (i = 0; i < ARRAY_COUNT(gBattleMineFormat2Tiers); ++i)
 	{
+		tier = gBattleMineFormat2Tiers[i];
 		if (currTier == tier)
 		{
 			VarSet(BATTLE_TOWER_TIER, BATTLE_MINE_FORMAT_2);
 			return;
 		}
 	}
-	
-	for (i = 0, tier = gBattleMineFormat3Tiers[i]; i < ARRAY_COUNT(gBattleMineFormat3Tiers); ++i, tier = gBattleMineFormat3Tiers[i])
+
+	for (i = 0; i < ARRAY_COUNT(gBattleMineFormat3Tiers); ++i)
 	{
+		tier = gBattleMineFormat3Tiers[i];
 		if (currTier == tier)
 		{
 			VarSet(BATTLE_TOWER_TIER, BATTLE_MINE_FORMAT_3);
 			return;
 		}
+	}
+}
+
+//@Details: Loads random effects for Battle Circus battles.
+//@Returns: Lastresult: TRUE if all effects loaded.
+//			gStringVarC: A description of the effect just activated.
+void sp072_LoadBattleCircusEffects(void)
+{
+	u32 i;
+	u8 numActive = 0;
+	gSpecialVar_LastResult = TRUE;
+
+	for (i = 0; ; ++i)
+	{
+		if (gBattleCircusFlags & gBitTable[i])
+			++numActive;
+	
+		if (gBitTable[i] == LAST_BATTLE_CIRCUS_FLAG)
+			break;
+	}
+
+	u8 totalEffects = 1;
+	bool8 sideEffectsAllowed = FALSE;
+	bool8 personalEffectsAllowed = FALSE;
+	u16 streak = GetCurrentBattleTowerStreak();
+
+	switch (streak) {
+		case 0 ... 9:
+			break;
+		case 10 ... 19:
+			sideEffectsAllowed = TRUE;
+			break;
+		case 20 ... 29:
+			sideEffectsAllowed = TRUE;
+			totalEffects = 2;
+			break;
+		case 30 ... 39:
+			sideEffectsAllowed = TRUE;
+			personalEffectsAllowed = TRUE;
+			totalEffects = 2;
+			break;
+		case 40 ... 49:
+			sideEffectsAllowed = TRUE;
+			personalEffectsAllowed = TRUE;
+			totalEffects = 3;
+			break;
+		case 50 ... 70:
+			sideEffectsAllowed = TRUE;
+			personalEffectsAllowed = TRUE;
+			totalEffects = 4;
+			break;
+		default:
+			sideEffectsAllowed = TRUE;
+			personalEffectsAllowed = TRUE;
+			totalEffects = 5;
+			break;
+	}
+
+	if (numActive < totalEffects)
+	{
+		bool8 weatherActive = (gBattleCircusFlags & BATTLE_CIRCUS_WEATHER) != 0;
+		bool8 terrainActive = (gBattleCircusFlags & BATTLE_CIRCUS_TERRAIN) != 0;
+
+		u8 effectNum;
+		do
+		{
+			effectNum = Random() % (i + 1);
+		} while (gBattleCircusFlags & gBitTable[effectNum] //Only add non active effects
+			|| (weatherActive && gBitTable[effectNum] & BATTLE_CIRCUS_WEATHER) //One weather effect at a time
+			|| (terrainActive && gBitTable[effectNum] & BATTLE_CIRCUS_TERRAIN) //One terrain effect at a time
+			|| (!sideEffectsAllowed && gBitTable[effectNum] >= FIRST_BATTLE_CIRCUS_SIDE_EFFECT_FLAG && gBitTable[effectNum] <= LAST_BATTLE_CIRCUS_SIDE_EFFECT_FLAG)
+			|| (!personalEffectsAllowed && gBitTable[effectNum] >= FIRST_BATTLE_CIRCUS_PERSONAL_EFFECT_FLAG));
+
+		if (gBitTable[effectNum] & BATTLE_CIRCUS_WEATHER)
+		{
+			u8 weather = 0;
+			if (gBitTable[effectNum] == BATTLE_CIRCUS_RAIN)
+				weather = WEATHER_RAIN_LIGHT;
+			else if (gBitTable[effectNum] == BATTLE_CIRCUS_SUN)
+				weather = WEATHER_DROUGHT;
+			else if (gBitTable[effectNum] == BATTLE_CIRCUS_SANDSTORM)
+				weather = WEATHER_SANDSTORM;
+			else if (gBitTable[effectNum] == BATTLE_CIRCUS_HAIL)
+				weather = WEATHER_STEADY_SNOW;
+			else if (gBitTable[effectNum] == BATTLE_CIRCUS_FOG)
+				weather = WEATHER_FOG_2;
+				
+			SetSav1Weather(weather); //Followed up by a doweather in the script
+		}
+
+		gBattleCircusFlags |= gBitTable[effectNum];
+		StringCopy(gStringVarC, sBattleCircusEffectDescriptions[effectNum]);
+		gSpecialVar_LastResult = FALSE;
 	}
 }

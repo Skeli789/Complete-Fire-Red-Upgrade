@@ -382,6 +382,18 @@ static u8 AtkCanceller_UnableToUseMove(void)
 			}
 			gBattleStruct->atkCancellerTracker++;
 			break;
+			
+		case CANCELLER_DEVOLVE:
+			if (gNewBS->devolveForgotMove & gBitTable[gBankAttacker])
+			{
+				gNewBS->devolveForgotMove &= ~(gBitTable[gBankAttacker]);
+				CancelMultiTurnMoves(gBankAttacker);
+				gBattlescriptCurrInstr = BattleScript_MoveUsedDevolvedForgot;
+				gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
+				effect = 1;
+			}
+			gBattleStruct->atkCancellerTracker++;
+			break;
 		
 		case CANCELLER_DISABLED: // disabled move
 			if (gDisableStructs[gBankAttacker].disabledMove == gCurrentMove && gDisableStructs[gBankAttacker].disabledMove != 0 && !gNewBS->ZMoveData->active)

@@ -2101,6 +2101,10 @@ bool8 AnyUsefulStatIsRaised(u8 bank)
 		}
 	}
 
+	if (gBattleResources->flags->flags[bank] & 1
+	&&  DamagingMoveTypeInMoveset(bank, TYPE_FIRE))
+		return TRUE;
+
 	return FALSE;
 }
 

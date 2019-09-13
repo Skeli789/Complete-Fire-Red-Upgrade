@@ -5,6 +5,7 @@
 gBattleSandsStreaks = 0x202682C;
 gBattleTowerStreaks = 0x2026840;
 gBattleMineStreaks = 0x2026B40;
+gBattleCircusStreaks = 0x2026B50;
 gFollowerState = 0x203B818;
 gFreeRam = 0x203F000;
 ExtensionState = 0x3000F28;

@@ -1754,17 +1754,14 @@ void RestoreEffectBankHPStatsAndRemoveBackupSpecies(void)
 	
 	//Check if chosen move is still in moveset
 	u8 originalMovePos = FindMovePositionInMoveset(gChosenMovesByBanks[gEffectBank], gEffectBank);
-	if (originalMovePos < MAX_MON_MOVES)
+	if (gChosenMovesByBanks[gEffectBank] != MOVE_NONE && originalMovePos < MAX_MON_MOVES)
 	{
 		gBattleStruct->chosenMovePositions[gEffectBank] = originalMovePos;
 		gMoveSelectionCursor[gEffectBank] = originalMovePos;
 	}
 	else if (counter >= 1)
 	{
-		//Choose a random move to use instead
-		gBattleStruct->chosenMovePositions[gEffectBank] = Random() % counter;
-		gChosenMovesByBanks[gEffectBank] = gBattleMons[gEffectBank].moves[gBattleStruct->chosenMovePositions[gEffectBank]];
-		gBattleStruct->moveTarget[gEffectBank] = GetMoveTarget(gChosenMovesByBanks[gEffectBank], FALSE); //Fix target
+		gNewBS->devolveForgotMove |= gBitTable[gEffectBank]; //Can't use move anymore
 		gMoveSelectionCursor[gEffectBank] = 0; //Reset selection so can't select null move
 	}
 
@@ -1806,4 +1803,9 @@ void SetThroatChopTimer(void)
 {
 	if (!CantUseSoundMoves(gBankTarget))
 		gNewBS->ThroatChopTimers[gBankTarget] = 2;
+}
+
+void SetNoMoreMovingThisTurnScriptingBank(void)
+{
+	gNewBS->NoMoreMovingThisTurn |= gBitTable[gBattleScripting->bank];
 }

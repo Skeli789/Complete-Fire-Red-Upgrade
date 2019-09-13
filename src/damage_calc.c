@@ -66,7 +66,7 @@ void atk04_critcalc(void) {
 			confirmedCrit = FALSE;
 
 	else if ((atkAbility == ABILITY_MERCILESS && (gBattleMons[gBankTarget].status1 & STATUS_PSN_ANY))
-	|| gNewBS->LaserFocusTimers[gBankAttacker]
+	|| IsLaserFocused(gBankAttacker)
 	|| CheckTableForMove(gCurrentMove, AlwaysCritTable))
 		confirmedCrit = TRUE;
 
@@ -135,7 +135,7 @@ static u8 CalcPossibleCritChance(u8 bankAtk, u8 bankDef, u16 move, struct Pokemo
 		return FALSE;
 
 	else if ((atkAbility == ABILITY_MERCILESS && (gBattleMons[bankDef].status1 & STATUS_PSN_ANY))
-	|| (gNewBS->LaserFocusTimers[bankAtk] && !CheckParty)
+	|| (IsLaserFocused(bankAtk) && !CheckParty)
 	|| CheckTableForMove(move, AlwaysCritTable))
 		return TRUE;
 

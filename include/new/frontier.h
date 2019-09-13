@@ -26,6 +26,8 @@ bool8 ShouldDisablePartyMenuItemsBattleTower(void);
 const u8* GetFrontierTierName(u8 tier, u8 format);
 bool8 InBattleSands(void);
 bool8 IsCamomonsTier(u8 tier);
+bool8 IsLittleCupTier(u8 tier);
+bool8 IsMiddleCupTier(u8 tier);
 bool8 IsAverageMonsBattle(void);
 bool8 Is350CupBattle(void);
 bool8 IsScaleMonsBattle(void);
@@ -104,7 +106,9 @@ enum BattleTowerFormats
 	BATTLE_TOWER_MIDDLE_CUP, //GS Cup in Doubles
 	BATTLE_TOWER_MONOTYPE,
 	BATTLE_TOWER_CAMOMONS,
+	BATTLE_TOWER_UBER_CAMOMONS,
 	BATTLE_TOWER_LC_CAMOMONS,
+	BATTLE_TOWER_MC_CAMOMONS,
 	BATTLE_TOWER_SCALEMONS,
 	BATTLE_TOWER_350_CUP,
 	BATTLE_TOWER_AVERAGE_MONS,
@@ -121,6 +125,7 @@ enum BattleTowerFormats
 
 #define NUM_BATTLE_TOWER_TIERS 7
 #define NUM_BATTLE_MINE_TIERS 3
+#define NUM_BATTLE_CIRCUS_TIERS 11
 
 enum BattleTowerPartySizes
 {
@@ -281,6 +286,7 @@ struct BattleSandsStreak
 extern struct BattleSandsStreak gBattleSandsStreaks[2 /*PREVIOUS_OR_MAX*/]; //0x202682C
 extern u16 gBattleTowerStreaks[NUM_TOWER_BATTLE_TYPES][NUM_FORMATS_OLD][/*PARTY_SIZE*/ 2][/*LEVEL*/ 2][/*CURRENT_OR_MAX*/ 2]; //0x2026840
 extern u16 gBattleMineStreaks[NUM_BATTLE_MINE_TIERS][/*CURRENT_OR_MAX*/ 2]; //0x2026B40
+extern u16 gBattleCircusStreaks[NUM_BATTLE_CIRCUS_TIERS][NUM_TOWER_BATTLE_TYPES][/*PARTY_SIZE*/ 2][/*LEVEL*/ 2][/*CURRENT_OR_MAX*/ 2]; //0x2026B50
 //FREE SPACE FROM SLIDESHOW 0x202682C - 0x2027434
 
 extern const u8 gBattleTowerTiers[];

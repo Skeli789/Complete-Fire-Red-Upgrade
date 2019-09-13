@@ -179,7 +179,7 @@ bool8 CheckGrounding(bank_t bank) {
 	if (gStatuses3[bank] & STATUS3_IN_AIR)
 		return IN_AIR;
 
-	if (gNewBS->GravityTimer > 0
+	if (IsGravityActive()
 	|| GetBankItemEffect(bank) == ITEM_EFFECT_IRON_BALL
 	|| (gStatuses3[bank] & (STATUS3_SMACKED_DOWN | STATUS3_ROOTED)))
 		return GROUNDED;
@@ -200,7 +200,7 @@ bool8 NonInvasiveCheckGrounding(u8 bank)
 	if (gStatuses3[bank] & STATUS3_IN_AIR)
 		return IN_AIR;
 
-	if (gNewBS->GravityTimer > 0
+	if (IsGravityActive()
 	|| GetRecordedItemEffect(bank) == ITEM_EFFECT_IRON_BALL
 	|| (gStatuses3[bank] & (STATUS3_SMACKED_DOWN | STATUS3_ROOTED)))
 		return GROUNDED;
@@ -217,7 +217,7 @@ bool8 NonInvasiveCheckGrounding(u8 bank)
 }
 
 bool8 CheckGroundingFromPartyData(struct Pokemon* party) {
-	if (gNewBS->GravityTimer 
+	if (IsGravityActive()
 	|| (ItemId_GetHoldEffect(party->item) == ITEM_EFFECT_IRON_BALL && GetPartyAbility(party) != ABILITY_KLUTZ))
 		return GROUNDED;
 			

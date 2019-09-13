@@ -84,6 +84,7 @@ sp06E_BufferBattleSandsRecords 0815FF18
 sp06F_CanTeamParticipateInBattleMine 0815FF1C
 sp070_RandomizeBattleMineBattleOptions 0815FF20
 sp071_LoadBattleMineRecordTier 0815FF24
+sp072_LoadBattleCircusEffects 0815FF28
 
 sp075_MeasurePokemon1 0815FF34
 sp076_MeasurePokemon2 0815FF38

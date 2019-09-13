@@ -161,6 +161,7 @@ u8 TurnBasedEffects(void)
 				gNewBS->CustapQuickClawIndicator = 0;
 				gNewBS->activatedCustapQuickClaw = 0;
 				gNewBS->criticalCapture = 0;
+				gNewBS->devolveForgotMove = 0;
 				
 				if (gNewBS->RetaliateCounters[0])
 					--gNewBS->RetaliateCounters[0];
@@ -809,7 +810,8 @@ u8 TurnBasedEffects(void)
 					{
 						gBankAttacker = gBankTarget = gActiveBattler = sideBank;
 						gSideAffecting[sideBank] &= ~SIDE_STATUS_REFLECT;
-						BattleScriptExecute(BattleScript_SideStatusWoreOff);
+						BattleStringLoader = gText_SideStatusWoreOff;
+						BattleScriptExecute(BattleScript_PrintCustomStringEnd2);
 						gBattleTextBuff1[0] = B_BUFF_PLACEHOLDER_BEGIN;
 						gBattleTextBuff1[1] = B_TXT_COPY_VAR_1;
 						gBattleTextBuff1[2] = MOVE_REFLECT;
@@ -832,7 +834,8 @@ u8 TurnBasedEffects(void)
 					{
 						gBankAttacker = gBankTarget = gActiveBattler = sideBank;
 						gSideAffecting[sideBank] &= ~SIDE_STATUS_LIGHTSCREEN;
-						BattleScriptExecute(BattleScript_SideStatusWoreOff);
+						BattleStringLoader = gText_SideStatusWoreOff;
+						BattleScriptExecute(BattleScript_PrintCustomStringEnd2);
 						gBattleTextBuff1[0] = B_BUFF_PLACEHOLDER_BEGIN;
 						gBattleTextBuff1[1] = B_TXT_COPY_VAR_1;
 						gBattleTextBuff1[2] = MOVE_LIGHTSCREEN;
@@ -891,7 +894,8 @@ u8 TurnBasedEffects(void)
 					{
 						gBankAttacker = gBankTarget = gActiveBattler = sideBank;
 						gSideAffecting[sideBank] &= ~SIDE_STATUS_MIST;
-						BattleScriptExecute(BattleScript_SideStatusWoreOff);
+						BattleStringLoader = gText_SideStatusWoreOff;
+						BattleScriptExecute(BattleScript_PrintCustomStringEnd2);
 						gBattleTextBuff1[0] = B_BUFF_PLACEHOLDER_BEGIN;
 						gBattleTextBuff1[1] = B_TXT_COPY_VAR_1;
 						gBattleTextBuff1[2] = MOVE_MIST;

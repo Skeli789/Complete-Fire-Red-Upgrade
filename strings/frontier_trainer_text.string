@@ -1185,6 +1185,12 @@ Huh.\pWell whadya know[.]\pSeems like your team is pretty well\nthought out.
 #org @sFrontierText_Pablo_PlayerLose
 Why am I not surprised[.]\pListen up, kid!\nAnd listen up well!\pYou need a team that can handle\nitself in any situation!\pKeep that in mind for next time!
 
+#org @sFrontierText_Paula_PlayerWin
+Bravo! Bravo! Wonderful!\nYou're a true rising star!
+
+#org @sFrontierText_Paula_PlayerLose
+Well, the show must go on\pEven if our young star is not at\nthe forefront[.]
+
 //Special Trainers
 
 #org @sFrontierText_Skeli_PreBattle
