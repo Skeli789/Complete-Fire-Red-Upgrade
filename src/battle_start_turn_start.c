@@ -251,10 +251,10 @@ void BattleBeginFirstTurn(void)
 				
 			case AirBalloon:
 				while (*bank < gBattlersCount) {
-					if (GetBankItemEffect(gBanksByTurnOrder[*bank]) == ITEM_EFFECT_AIR_BALLOON) {
+					if (ITEM_EFFECT(gBanksByTurnOrder[*bank]) == ITEM_EFFECT_AIR_BALLOON) {
 						BattleScriptPushCursorAndCallback(BattleScript_AirBalloonFloat);
-						gBattleScripting->bank = gBanksByTurnOrder[*bank];
-						gBankAttacker = gBanksByTurnOrder[*bank];
+						gBankAttacker = gBattleScripting->bank = gBanksByTurnOrder[*bank];
+						RecordItemEffectBattle(gBankAttacker, ITEM_EFFECT_AIR_BALLOON);
 						++effect;
 					}
 					++*bank;

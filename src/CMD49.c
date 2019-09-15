@@ -284,8 +284,12 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			|| ITEM_POCKET(gBankTarget) != POCKET_BERRY_POUCH
 			|| ITEM_EFFECT(gBankTarget) == ITEM_EFFECT_JABOCA_ROWAP_BERRY) //Only berries that activate before pluck
 			{
-				if (ItemBattleEffects(ItemEffects_ContactTarget, gBankTarget, TRUE, FALSE))
-					effect = TRUE;
+				if (gBattleMoves[gCurrentMove].effect != EFFECT_KNOCK_OFF
+				|| (ITEM_EFFECT(gBankTarget) != ITEM_EFFECT_KEE_BERRY && ITEM_EFFECT(gBankTarget) != ITEM_EFFECT_MARANGA_BERRY)) //Only contact items that don't activate first
+				{
+					if (ItemBattleEffects(ItemEffects_ContactTarget, gBankTarget, TRUE, FALSE))
+						effect = TRUE;
+				}
 			}
 			gBattleScripting->atk49_state++;
 			break;
