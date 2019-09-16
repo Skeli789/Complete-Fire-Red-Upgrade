@@ -194,7 +194,7 @@ struct Clock
 #define gSelectedOrderFromParty ((u8*) 0x203C750)
 #define gDontFadeWhite (*((bool8*) 0x203C756))
 #define gWindowsLitUp (*((bool8*) 0x203C757))
-//#define sDexNavStatePtr //0x203C758
+#define gWildDataSwitch (*((const u8**) 0x203C758))
 //#define sDexNavSearchLevels //0x203C75C -999 slots
 //extern struct CompressedPokemon gBox20[30] //0x203CB44
 //extern struct CompressedPokemon gBox21[30] //0x203D210
@@ -202,6 +202,5 @@ struct Clock
 //extern struct CompressedPokemon gTempTeamBackup1[6] //0x203E048
 //extern struct CompressedPokemon gTempTeamBackup2[6] //0x203E1A4
 
-// [FILL_IN_NEXT] = 
-
 #define gPokeBackupPtr (*((struct Pokemon**) 0x203E034))
+//#define sDexNavStatePtr/sFrontierRecordsPtr //0x203E038

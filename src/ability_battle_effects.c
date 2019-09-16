@@ -403,6 +403,9 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 	#ifndef NO_GHOST_BATTLES
 		if ((gBattleTypeFlags & (BATTLE_TYPE_SCRIPTED_WILD_1 | BATTLE_TYPE_GHOST)) == BATTLE_TYPE_GHOST)
 		{
+			if (SIDE(bank) == B_SIDE_OPPONENT)
+				return FALSE; //Ghost's abilities don't activate
+		
 			switch (gLastUsedAbility) {		//All of these abilities either use or make changes to
 				case ABILITY_INTIMIDATE:	//the unidentified Ghost. In FR, only Intimidate and
 				case ABILITY_TRACE:			//Trace were included in this list. It has thus been

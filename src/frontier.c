@@ -996,7 +996,7 @@ void sp06C_SpliceFrontierTeamWithPlayerTeam(void)
 }
 
 //@Details: Loads any relevant multi trainer data by the given Id value.
-//			Also byffers the multi trainer name to gStringVar2 ([BUFFER2] / bufferstring 0x1).
+//			Also buffers the multi trainer name to gStringVar2 ([BUFFER2] / bufferstring 0x1).
 //@Inputs:
 //		Var8000: 0xFF - Random Id.
 //				 0-0xFE - Given Id.

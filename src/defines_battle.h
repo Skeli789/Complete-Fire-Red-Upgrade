@@ -57,6 +57,7 @@
 #define IS_Z_MOVE(move) (move >= FIRST_Z_MOVE && move <= LAST_Z_MOVE)
 #define IS_DOUBLE_BATTLE (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
 #define IS_SINGLE_BATTLE !IS_DOUBLE_BATTLE
+#define IS_GHOST_BATTLE ((gBattleTypeFlags & (BATTLE_TYPE_SCRIPTED_WILD_1 | BATTLE_TYPE_GHOST)) == BATTLE_TYPE_GHOST)
 
 #define STAT_STAGE(bank, stat) (gBattleMons[bank].statStages[stat - 1])
 

@@ -230,9 +230,6 @@ CalculateMonStatsNew 803E47C 1
 TransferPlttBuffer 8070474 0
 RealTimeClock 0800041E 3
 
-##Script Specials
-sp156_GhostBattleSpecial 0807F92A 1
-
 ##Select-From-PC
 pcSelect_ClosingCheck 0808ebb2 0
 pcSelect_HackWithdrawBRM 08094982 0

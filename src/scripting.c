@@ -35,8 +35,9 @@
 #include "../include/new/read_keys.h"
 #include "../include/new/roamer.h"
 #include "../include/new/text.h"
-#include "../include/new/Vanilla_functions_battle.h"
 #include "../include/new/scrolling_multichoice.h"
+#include "../include/new/Vanilla_functions_battle.h"
+#include "../include/new/wild_encounter.h"
 
 /*
 NOTES: 
@@ -1167,12 +1168,14 @@ bool8 sp059_BufferSpeciesRoamingText(void)
 	return TRUE;
 }
 
-void sp05A_WildDataSwitch(void) {
-	return;
+void sp05A_WildDataSwitch(void)
+{
+	gWildDataSwitch = gLoadPointer;
 }
 
-void sp05B_WildDataSwitchCanceller(void) {
-	return;
+void sp05B_WildDataSwitchCanceller(void)
+{
+	gWildDataSwitch = NULL;
 }
 
 void sp0AC_LoadTrainerBDefeatText(void)
@@ -1502,17 +1505,15 @@ u16 sp07F_GetTileBehaviour(void)
 	return Var8004 & 3;
 }
 
-
-
-/*	// in src/Assembly/main.s
-void sp097_StartGroundBattle(void) {
-	return;
+void sp097_StartGroundBattle(void)
+{
+	StartRandomWildEncounter(FALSE);
 }
 
-void sp098_StartWaterBattle(void) {
-	return;
+void sp098_StartWaterBattle(void)
+{
+	StartRandomWildEncounter(TRUE);
 }
-*/
 
 // WALKING SCRIPTS
 void sp081_SetWalkingScript(void) {
@@ -1737,11 +1738,11 @@ void sp0B0_LoadPartyPokemonTypes(void)
 	}
 }
 
-//@Details: Opens the bag and let's the player select an item.
+//@Details: Opens the bag and lets the player select an item.
 //@Input: 	Var 0x8000: 0 = Any Pocket, Open From Item's Pocket
 //						1 = Any Pocket, Open From Key Item's Pocket
 //						2 = Any Pocket, Open From Poke Ball Pocket
-//						3 = Any Pocket Open From Item's Pocket
+//						3 = Any Pocket, Open From Item's Pocket
 //						4 = Berry Pouch
 //						5 = TM Case
 //@Returns: Var 0x800E: The item the player chose. 0 if they chose nothing.

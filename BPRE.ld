@@ -394,6 +394,7 @@ GetBattlerAtPosition = 0x80751E8 | 1;
 IsDoubleBattle = 0x8075290 | 1;
 CB2_EndWildBattle = 0x807FB40 | 1;
 CB2_EndScriptedWildBattle_2 = 0x807FBA0 | 1;
+CB2_EndScriptedWildBattle = 0x807FBF0 | 1;
 GetWildBattleTransition = 0x807FF34 | 1;
 GetTrainerALoseText = 0x80806EC | 1;
 GetTrainerAWinText = 0x8080710 | 1;

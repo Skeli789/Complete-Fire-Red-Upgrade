@@ -119,6 +119,7 @@ void __attribute__((long_call)) BattleSetup_StartWildBattle(void);
 void __attribute__((long_call)) StartTheBattle(void);
 void __attribute__((long_call)) CB2_EndWildBattle(void);
 void __attribute__((long_call)) CB2_EndScriptedWildBattle_2(void);
+void __attribute__((long_call)) CB2_EndScriptedWildBattle(void);
 u8 __attribute__((long_call)) GetWildBattleTransition(void);
 u8* __attribute__((long_call)) GetTrainerALoseText(void);
 u8* __attribute__((long_call)) GetTrainerAWinText(void);

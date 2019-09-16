@@ -459,7 +459,7 @@ static void MoveSelectionDisplayMoveType(void)
 
 	//Update Palette Fading for Effectiveness
 	#ifdef DISPLAY_EFFECTIVENESS_ON_MENU
-		if (!(gBattleTypeFlags & BATTLE_TYPE_LINK)) //Don't use this feature in link battles
+		if (!(gBattleTypeFlags & BATTLE_TYPE_LINK) && !IS_GHOST_BATTLE) //Don't use this feature in link battles or battles against Ghosts
 		{
 			u8 stab = 0;
 			const u16* palPtr = gUserInterfaceGfx_TypeHighlightingPal;

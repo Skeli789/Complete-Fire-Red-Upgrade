@@ -57,7 +57,12 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
 	u8 bankQuality, atkQuality;
 	u16 atkItem;
 	u8 moveSplit = CalcMoveSplit(gBankAttacker, gCurrentMove);
-	
+
+	#ifndef NO_GHOST_BATTLES
+	if (IS_GHOST_BATTLE && SIDE(bank) == B_SIDE_OPPONENT)
+		return 0; //Ghost's items don't activate
+	#endif
+
 	if (DoPluck) {
 		bankHoldEffect = ItemId_GetHoldEffect(gLastUsedItem);
 		bankQuality = ItemId_GetHoldEffectParam(gLastUsedItem);

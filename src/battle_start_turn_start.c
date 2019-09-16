@@ -196,6 +196,11 @@ void BattleBeginFirstTurn(void)
 					
 					if (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) //The Pokemon takes on the types of its first two moves
 					{
+						#ifndef NO_GHOST_BATTLES
+						if (IS_GHOST_BATTLE && SIDE(*bank) == B_SIDE_OPPONENT)
+							continue;
+						#endif
+	
 						UpdateTypesForCamomons(*bank);
 						gBattleScripting->bank = *bank;
 						BattleScriptPushCursorAndCallback(BattleScript_CamomonsTypeRevealEnd3);
@@ -250,15 +255,25 @@ void BattleBeginFirstTurn(void)
 				break;
 				
 			case AirBalloon:
-				while (*bank < gBattlersCount) {
-					if (ITEM_EFFECT(gBanksByTurnOrder[*bank]) == ITEM_EFFECT_AIR_BALLOON) {
+				while (*bank < gBattlersCount)
+				{
+					#ifndef NO_GHOST_BATTLES
+					if (IS_GHOST_BATTLE && SIDE(gBanksByTurnOrder[*bank]) == B_SIDE_OPPONENT)
+					{
+						++*bank;
+						continue;
+					}
+					#endif
+
+					if (ITEM_EFFECT(gBanksByTurnOrder[*bank]) == ITEM_EFFECT_AIR_BALLOON)
+					{
 						BattleScriptPushCursorAndCallback(BattleScript_AirBalloonFloat);
 						gBankAttacker = gBattleScripting->bank = gBanksByTurnOrder[*bank];
 						RecordItemEffectBattle(gBankAttacker, ITEM_EFFECT_AIR_BALLOON);
 						++effect;
 					}
 					++*bank;
-					
+
 					if (effect) return;
 				}
 				*bank = 0; //Reset Bank for next loop
@@ -272,6 +287,14 @@ void BattleBeginFirstTurn(void)
 				{
 					while (*bank < gBattlersCount)
 					{
+						#ifndef NO_GHOST_BATTLES
+						if (IS_GHOST_BATTLE && SIDE(*bank) == B_SIDE_OPPONENT)
+						{
+							++*bank;
+							continue;
+						}
+						#endif
+
 						if (CanActivateTotemBoost(*bank))
 						{
 							BattleScriptPushCursorAndCallback(BattleScript_Totem);

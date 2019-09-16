@@ -59,7 +59,7 @@ typedef void (*SuperCallback)(void);
 typedef void (*SpriteCallback)(struct Sprite* s);
 
 // DEFINES
-#define DEXNAV_SAVERAM 0x203C758
+#define DEXNAV_SAVERAM 0x203C75C
 
 #define TILE_SIZE 32
 #define SPRITE_RAM 0x6010000
@@ -108,7 +108,7 @@ struct FieldEffectArguments
 extern u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
 
 // STRUCTS
-static u8* sSearchLevels = (u8*) (DEXNAV_SAVERAM + 4);
+static u8* sSearchLevels = (u8*) (DEXNAV_SAVERAM);
 static const struct TextColor MenuTextBlack = {0, 2, 3};
 static const struct WindowTemplate Tbox = {0, 2, 2, 10, TOOL_COUNT << 1, 0xF, 0x130};
 

@@ -47,7 +47,7 @@ Known BUGS:
 	-GUI gets messed up in dark, flashable rooms
 */
 
-#define sDNavState (*((struct DexnavHudData**) DEXNAV_SAVERAM))
+#define sDNavState (*((struct DexnavHudData**) 0x203E038))
 
 #define ROW_LAND 0
 #define ROW_WATER 1

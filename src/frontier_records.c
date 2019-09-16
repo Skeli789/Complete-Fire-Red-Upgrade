@@ -90,7 +90,7 @@ struct FrontierRecords
 	u8 starObjIds[NUM_STAR_OBJS];
 };
 
-#define sFrontierRecordsPtr (*((struct FrontierRecords**) 0x203C758))
+#define sFrontierRecordsPtr (*((struct FrontierRecords**) 0x203E038))
 
 extern const u8 gInterfaceGfx_FrontierRecordsTiles[];
 extern const u8 gInterfaceGfx_FrontierRecordsPal[];

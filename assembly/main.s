@@ -11,8 +11,6 @@ script functions/specials in asm - hooks and returns
 
 @@ Specials (credit to JPAN)
 @ see special_inserts for most of the code
-.global sp097_WildGroundBattle
-.global sp098_WildSeaBattle
 .global sp156_GhostBattleSpecial
 
 @@ Hidden Abilities (credit to azurile13)
@@ -295,74 +293,6 @@ EndStartOptFadeCheck:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ SPECIALS
-/*@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-Activate Wild Ground Battle
-	ptr+1 at 15ffbc
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@*/
-.align 2
-.pool
-sp097_WildGroundBattle:
-	push {r4-r7, lr}
-	mov r7, r8
-	push {r7}
-	sub sp, #0x8
-	ldr r0, =(0x01000202)	@grass block data
-	lsl r4, r0, #0x18
-	lsr r4, r4, #0x18
-	ldr r1, =(0x0806cbe4 +1)
-	bx r1
-
-/*@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-Activate Wild Sea Battle
-	ptr+1 at 15ffc0
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@*/
-.align 2
-.pool
-sp098_WildSeaBattle:
-	push {r4-r7, lr}
-	mov r7, r8
-	push {r7}
-	sub SP, SP, #0x8
-	ldr r0, =(0x22000410)	@water tile data
-	lsl r4, r0, #0x18
-	lsr r4, r4, #0x18
-	ldr r1, =(0x0806cbe4|1)
-	bx r1
-
-/*@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-Ghost Battle Special 0x156
-	hook at 0807f92a via r2
-	Inputs:
-		var8004: species
-		var8005: level
-		var8006: IVs
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@*/
-.align 2
-.pool
-sp156_GhostBattleSpecial:	
-	mov r1, #0xfe
-	str r1, [sp]
-	mov r1, #0xc
-	str r1, [sp, #0x4]
-	mov r1, #0x0
-	str r1, [sp, #0x8]
-	ldr r3, =var8004
-	ldrh r1, [r3]		@species
-	cmp r1, #0x0
-	beq defaultGhost
-	ldrh r2, [r3, #0x2]	@level
-	cmp r2, #MAX_LEVEL
-	bgt defaultGhost
-	cmp r2, #0x0
-	beq defaultGhost
-	ldrh r3, [r3, #0x4]	@IVs
-	ldr r4, =(0x0807f93c +1)
-	bx r4
-defaultGhost:
-	ldr r1, =(0x0807F936 +1)
-	bx r1
-
-
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ hook at 46116 via r0
 .align 2
