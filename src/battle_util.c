@@ -2,6 +2,7 @@
 #include "defines_battle.h"
 
 #include "../include/new/battle_util.h"
+#include "../include/new/helper_functions.h"
 
 #define IS_BATTLE_CIRCUS (gBattleTypeFlags & BATTLE_TYPE_BATTLE_CIRCUS)
 
@@ -53,6 +54,12 @@ bool8 IsWaterSportActive(void)
 		|| (IS_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_WATER_SPORT);
 }
 
+bool8 IsInverseBattle(void)
+{
+	return FlagGet(INVERSE_FLAG)
+		|| (IS_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_INVERSE);
+}
+
 bool8 BankSideHasSeaOfFire(u8 bank)
 {
 	return gNewBS->SeaOfFireTimers[SIDE(bank)]
@@ -79,13 +86,13 @@ bool8 SideHasSwamp(u8 side)
 bool8 IsConfused(u8 bank)
 {
 	return (gBattleMons[bank].status2 & STATUS2_CONFUSION) != 0
-		|| (IS_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_CONFUSED);
+		|| (IS_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_CONFUSED && ABILITY(bank) != ABILITY_OWNTEMPO);
 }
 
 bool8 IsTaunted(u8 bank)
 {
 	return gDisableStructs[bank].tauntTimer > 0
-		|| (IS_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_TAUNT);
+		|| (IS_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_TAUNT && ABILITY(bank) != ABILITY_OBLIVIOUS);
 }
 
 bool8 IsTormented(u8 bank)

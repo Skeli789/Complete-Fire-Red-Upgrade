@@ -192,6 +192,9 @@ with mud showering the battlefield!\pAll Electric-type moves will be\nweakened!
 #org @gText_BattleCircusDescriptionWaterSport
 with water in the air!\pAll Fire-type moves will be\nweakened!
 
+#org @gText_BattleCircusDescriptionInverseBattle
+in an Inverse Battle!\pAll type matchups are reversed!
+
 #org @gText_BattleCircusDescriptionSeaOfFire
 with a Sea of Fire engulfing both\lsides of the battlefield!\pAll non-Fire-type Pok\emon will be\ndamaged each turn!
 

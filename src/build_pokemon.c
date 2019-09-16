@@ -2649,12 +2649,7 @@ static u8 GetHighestMonLevel(const struct Pokemon* const party)
 
 u8 GetMonPokeBall(struct PokemonSubstruct0* data)
 {
-	u8 ball = data->pokeball;
-
-	if (ball == 0) //Bug prevention
-		return BALL_TYPE_POKE_BALL;
-
-	return ball;
+	return data->pokeball;
 }
 
 void SetMonPokeBall(struct PokemonSubstruct0* data, u8 ballId)

@@ -128,6 +128,8 @@ sp0CA_IgnoreKeys 08160088
 sp0CB_PlaceKeyScript 0816008C
 sp0CC_CanLearnDracoMeteorInParty 08160090
 
+sp0CF_BufferAbilityName 0816009C
+
 sp196_TryCopyTMNameToBuffer1 081603B8
 
 ## Fossil

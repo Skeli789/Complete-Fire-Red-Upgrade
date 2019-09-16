@@ -66,6 +66,7 @@ extern const u8 gText_BattleCircusDescriptionIonDeluge[];
 extern const u8 gText_BattleCircusDescriptionFairyLock[];
 extern const u8 gText_BattleCircusDescriptionMudSport[];
 extern const u8 gText_BattleCircusDescriptionWaterSport[];
+extern const u8 gText_BattleCircusDescriptionInverseBattle[];
 extern const u8 gText_BattleCircusDescriptionSeaOfFire[];
 extern const u8 gText_BattleCircusDescriptionRainbow[];
 extern const u8 gText_BattleCircusDescriptionSwamp[];
@@ -189,6 +190,7 @@ const u8* const sBattleCircusEffectDescriptions[] =
 	gText_BattleCircusDescriptionFairyLock,
 	gText_BattleCircusDescriptionMudSport,
 	gText_BattleCircusDescriptionWaterSport,
+	gText_BattleCircusDescriptionInverseBattle,
 	gText_BattleCircusDescriptionSeaOfFire,
 	gText_BattleCircusDescriptionRainbow,
 	gText_BattleCircusDescriptionSwamp,

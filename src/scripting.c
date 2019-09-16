@@ -23,6 +23,7 @@
 #include "../include/constants/pokedex.h"
 #include "../include/constants/songs.h"
 
+#include "../include/new/battle_strings.h"
 #include "../include/new/catching.h"
 #include "../include/new/dns.h"
 #include "../include/new/Helper_Functions.h"
@@ -2506,8 +2507,6 @@ void TryAppendSOntoEndOfItemString(void)
 	}
 }
 
-
-
 ///////////// EXPANDED TEXT BUFFERS //////////////////////////////////////////
 u8* sScriptStringVars[12] =
 {
@@ -2570,6 +2569,14 @@ u8* LoadTextBuffer0D(void)
 	return sScriptStringVars[11];
 }
 
+//@Details: Buffers the given ability name to the chosen buffer.
+//@Input: Var 0x8000 - Ability Num
+//	      Var 0x8001 - Buffer #
+void sp0CF_BufferAbilityName(void)
+{
+	const u8* name = GetAbilityName(Var8000);
+	StringCopy(sScriptStringVars[Var8001], name);
+}
 
 //////////////////EXPANDED COINS///////////////////////
 #ifdef SAVE_BLOCK_EXPANSION

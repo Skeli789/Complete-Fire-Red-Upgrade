@@ -2478,7 +2478,7 @@ void atkA6_settypetorandomresistance(void) { //Conversion 2
 		i *= 3;
 
 		#ifdef INVERSE_BATTLES
-			if (FlagGet(INVERSE_FLAG))
+			if (IsInverseBattle())
 			{
 				if (TYPE_EFFECT_ATK_TYPE(i) == gNewBS->LastUsedTypes[bankDef]
 				&& TYPE_EFFECT_MULTIPLIER(i) >= TYPE_MUL_SUPER_EFFECTIVE
@@ -2515,7 +2515,7 @@ void atkA6_settypetorandomresistance(void) { //Conversion 2
 				break;
 			default:
 		#ifdef INVERSE_BATTLES
-			if (FlagGet(INVERSE_FLAG)) {
+			if (IsInverseBattle()) {
 				if (TYPE_EFFECT_ATK_TYPE(j) == gNewBS->LastUsedTypes[bankDef]
 				&& TYPE_EFFECT_MULTIPLIER(j) >= TYPE_MUL_SUPER_EFFECTIVE
 				&& !IsOfType(bankAtk, TYPE_EFFECT_DEF_TYPE(i)))

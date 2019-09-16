@@ -920,7 +920,7 @@ TYPE_LOOP_AI:
 static void ModulateDmgByType(u8 multiplier, const u16 move, const u8 moveType, const u8 defType, const u8 defBank, u8* flags, struct Pokemon* monDef, bool8 CheckPartyDef) {
 
 	#ifdef INVERSE_BATTLES
-		if (FlagGet(INVERSE_FLAG)) {
+		if (IsInverseBattle()) {
 			switch (multiplier) {
 				case TYPE_MUL_NO_EFFECT:
 					multiplier = TYPE_MUL_SUPER_EFFECTIVE;
