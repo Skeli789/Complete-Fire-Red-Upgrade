@@ -834,7 +834,7 @@ void sp156_StartGhostBattle(void)
 	if (CheckBagHasItem(ITEM_SILPH_SCOPE, 1))
 		gBattleTypeFlags |= BATTLE_TYPE_SCRIPTED_WILD_1;
 
-	if (Var8004 == 0) //Default is Marowak
+	if (Var8004 == 0 || Var8004 >= NUM_SPECIES) //Default is Marowak
 		CreateMonWithGenderNatureLetter(&gEnemyParty[0], SPECIES_MAROWAK, 30, 31, MON_FEMALE, NATURE_SERIOUS, 0);
 	else
 		CreateWildMon(Var8004, Var8005, 0, TRUE);
