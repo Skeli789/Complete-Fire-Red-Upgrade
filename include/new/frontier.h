@@ -31,6 +31,7 @@ bool8 IsMiddleCupTier(u8 tier);
 bool8 IsAverageMonsBattle(void);
 bool8 Is350CupBattle(void);
 bool8 IsScaleMonsBattle(void);
+bool8 IsCamomonsBattle(void);
 bool8 IsBenjaminButterfreeBattle(void);
 bool8 IsBenjaminButterfreeBattle(void);
 u16 GetCurrentBattleTowerStreak(void);

@@ -328,8 +328,8 @@ static u8 FindHeaderIndexWithLetter(u16 species, u8 letter)
 // ===== Pokemon Field Tile ===== //
 static u8 GetPlayerDistance(s16 x, s16 y)
 {
-    u16 deltaX = ABS(x - (gSaveBlock1->pos.x + 7));
-    u16 deltaY = ABS(y - (gSaveBlock1->pos.y + 7));
+    u16 deltaX = abs(x - (gSaveBlock1->pos.x + 7));
+    u16 deltaY = abs(y - (gSaveBlock1->pos.y + 7));
     return deltaX + deltaY;
 }
 

@@ -769,3 +769,52 @@ DisablePartyMenuListItemsBattleSalon:
 SkipAddPartyMenuListItems:
 	ldr r0, =0x8122AFC | 1
 	bx r0
+
+@0x8136168 with r0
+CamomonsSummaryScreenHook:
+	ldr r5, .hword3290
+	add r0, r2, r5
+	push {r0}
+	mov r1, #0xB @;Species
+	ldr r2, =GetMonData
+	bl bxr2
+	lsl r0, r0, #0x10
+	lsr r4, r0, #0x10
+	ldr r0, [r6]
+	ldr r2, .hword3028
+	add r0, r2
+	mov r1, r4
+	ldr r2, =GetSpeciesName
+	bl bxr2
+	bl ShouldReplaceTypesWithCamomonsSummaryScreen
+	cmp r0, #0x0
+	beq SummaryScreenLoadRegularTypes
+
+SummaryScreenLoadCamomonsTypes:
+	pop {r0}
+	push {r0}
+	mov r1, #0x0
+	bl GetCamomonsTypeByMon
+	ldr r1, [r6]
+	ldr r3, .hword3220
+	add r1, r3
+	strb r0, [r1]
+	pop {r0}
+	mov r1, #0x1
+	bl GetCamomonsTypeByMon
+	ldr r1, [r6]
+	ldr r3, .hword3220
+	add r1, r3
+	strb r0, [r1, #0x1]
+	ldr r0, =0x81361A0 | 1
+	bx r0
+
+SummaryScreenLoadRegularTypes:
+	pop {r0}
+	ldr r0, =0x8136182 | 1
+	bx r0
+
+.align 2
+.hword3220: .word 0x3220
+.hword3290: .word 0x3290
+.hword3028: .word 0x3028

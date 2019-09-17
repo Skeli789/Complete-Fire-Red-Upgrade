@@ -473,6 +473,11 @@ u8 GetCamomonsTypeBySpread(const struct BattleTowerSpread* spread, u8 whichType)
 	}
 }
 
+u8 ShouldReplaceTypesWithCamomonsSummaryScreen(void)
+{
+	return (gMain.inBattle && gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) || IsCamomonsBattle();
+}
+
 bool8 TryUpdateOutcomeForFrontierBattle(void)
 {
 	u32 i;
@@ -570,6 +575,11 @@ bool8 Is350CupBattle(void)
 bool8 IsScaleMonsBattle(void)
 {
 	return FlagGet(BATTLE_TOWER_FLAG) && VarGet(BATTLE_TOWER_TIER) == BATTLE_TOWER_SCALEMONS;
+}
+
+bool8 IsCamomonsBattle(void)
+{
+	return FlagGet(BATTLE_TOWER_FLAG) && IsCamomonsTier(VarGet(BATTLE_TOWER_TIER));
 }
 
 bool8 IsBenjaminButterfreeBattle(void)

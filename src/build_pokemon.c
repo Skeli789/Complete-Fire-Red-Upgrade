@@ -141,6 +141,7 @@ static const struct BattleTowerSpread* TryAdjustSpreadForSpecies(const struct Ba
 static u16 TryAdjustAestheticSpecies(u16 species);
 static void SwapMons(struct Pokemon* party, u8 i, u8 j);
 static void PostProcessTeam(struct Pokemon* party, struct TeamBuilder* builder);
+static void TryShuffleMovesForCamomons(struct Pokemon* party, u8 tier, u16 trainerId);
 static u8 GetPartyIdFromPartyData(struct Pokemon* mon);
 static u8 GetHighestMonLevel(const struct Pokemon* const party);
 
@@ -1277,6 +1278,8 @@ static void BuildFrontierMultiParty(u8 multiId)
 
 		CreateFrontierMon(&gPlayerParty[i], GetBattleTowerLevel(tier), spread, BATTLE_TOWER_MULTI_TRAINER_TID, 2, multiPartner->gender, FALSE);
 	}
+	
+	TryShuffleMovesForCamomons(gPlayerParty, tier, BATTLE_TOWER_MULTI_TRAINER_TID);
 }
 
 static void CreateFrontierMon(struct Pokemon* mon, const u8 level, const struct BattleTowerSpread* spread, const u16 trainerId, const u8 trainerNum, const u8 trainerGender, const bool8 forPlayer)
@@ -2377,31 +2380,8 @@ static void PostProcessTeam(struct Pokemon* party, struct TeamBuilder* builder)
 	}
 	
 	//Shuffle moves in camomons
-	if (IsCamomonsTier(builder->tier) && builder->trainerId != FRONTIER_BRAIN_TID)
-	{
-		for (i = 0; i < PARTY_SIZE; ++i)
-		{
-			for (j = 0; j < 30; ++j) //Shuffle 30 times
-			{
-				u8 index1 = Random() & 3;
-				u8 index2 = Random() & 3;
+	TryShuffleMovesForCamomons(party, builder->tier, builder->trainerId);
 
-				u16 move1 = party[i].moves[index1];
-				u16 move2 = party[i].moves[index2];
-				u8 pp1 = party[i].pp[index1];
-				u8 pp2 = party[i].pp[index2];
-
-				if (move1 == MOVE_NONE || move2 == MOVE_NONE)
-					continue;
-
-				party[i].moves[index1] = move2;
-				party[i].moves[index2] = move1;
-				party[i].pp[index1] = pp2;
-				party[i].pp[index2] = pp1;
-			}
-		}
-	}
-	
 	if (IsFrontierSingles(builder->battleType))
 	{
 		if (builder->partyIndex[HAZARDS_SETUP] != 0xFF)
@@ -2572,6 +2552,40 @@ static void PostProcessTeam(struct Pokemon* party, struct TeamBuilder* builder)
 				
 			if (INDEX_CHECK(hazardsIndex))
 				SwapMons(party, index++, hazardsIndex);
+		}
+	}
+}
+
+static void TryShuffleMovesForCamomons(struct Pokemon* party, u8 tier, u16 trainerId)
+{
+	u32 i, j;
+
+	if (IsCamomonsTier(tier) && trainerId != FRONTIER_BRAIN_TID)
+	{
+		for (i = 0; i < PARTY_SIZE; ++i)
+		{
+			if (GetMonData(&party[i], MON_DATA_SPECIES, NULL) == SPECIES_NONE
+			||  GetMonData(&party[i], MON_DATA_HP, NULL) == 0)
+				continue;
+
+			for (j = 0; j < 30; ++j) //Shuffle 30 times
+			{
+				u8 index1 = Random() & 3;
+				u8 index2 = Random() & 3;
+
+				u16 move1 = party[i].moves[index1];
+				u16 move2 = party[i].moves[index2];
+				u8 pp1 = party[i].pp[index1];
+				u8 pp2 = party[i].pp[index2];
+
+				if (move1 == MOVE_NONE || move2 == MOVE_NONE)
+					continue;
+
+				party[i].moves[index1] = move2;
+				party[i].moves[index2] = move1;
+				party[i].pp[index1] = pp2;
+				party[i].pp[index2] = pp1;
+			}
 		}
 	}
 }

@@ -1140,8 +1140,13 @@ void DoubleWildAnimBallThrowFix(void)
 								gSprites[sprite].data[7] = TRUE;	\
 								gSprites[sprite].invisible = TRUE;	\
 							}										\
+							else									\
+							{										\
+								gSprites[sprite].data[7] = FALSE;	\
+							}										\
 							break;									\
 						default:									\
+																	\
 							if (gSprites[sprite].data[7])			\
 							{										\
 								gSprites[sprite].invisible = FALSE;	\
