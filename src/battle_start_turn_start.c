@@ -542,17 +542,19 @@ void RunTurnActionsFunctions(void)
 						const u8* script = DoMegaEvolution(bank);
 						if (script != NULL) 
 						{	
+							if (!(gBattleTypeFlags & BATTLE_TYPE_MEGA_BRAWL)) //As many mons can Mega Evolve as you want
+								gNewBS->MegaData->done[bank] = TRUE;
+
 							gNewBS->MegaData->chosen[bank] = 0;
-							gNewBS->MegaData->done[bank] = TRUE;
 							gNewBS->MegaData->megaEvoInProgress = TRUE;
 							gNewBS->MegaData->script = script;
-							if (!(gBattleTypeFlags & (BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_MULTI)) 
+							if (!(gBattleTypeFlags & (BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_MULTI | BATTLE_TYPE_MEGA_BRAWL)) 
 							&& SIDE(bank) == B_SIDE_PLAYER) 
 							{
 								gNewBS->MegaData->chosen[PARTNER(bank)] = 0;
 								gNewBS->MegaData->done[PARTNER(bank)] = TRUE;
 							}
-							else if (!(gBattleTypeFlags & (BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_MULTI)) 
+							else if (!(gBattleTypeFlags & (BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_MULTI | BATTLE_TYPE_MEGA_BRAWL)) 
 							&& SIDE(bank) == B_SIDE_OPPONENT) 
 							{
 								gNewBS->MegaData->chosen[PARTNER(bank)] = 0;
@@ -568,17 +570,19 @@ void RunTurnActionsFunctions(void)
 						const u8* script = DoMegaEvolution(bank);
 						if (script != NULL) 
 						{	
+							if (!(gBattleTypeFlags & BATTLE_TYPE_MEGA_BRAWL)) //As many mons can Mega Evolve as you want
+								gNewBS->UltraData->done[bank] = TRUE;
+
 							gNewBS->UltraData->chosen[bank] = 0;
-							gNewBS->UltraData->done[bank] = TRUE;
 							gNewBS->MegaData->megaEvoInProgress = TRUE;
 							gNewBS->MegaData->script = script;
-							if (!(gBattleTypeFlags & (BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_MULTI)) 
+							if (!(gBattleTypeFlags & (BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_MULTI | BATTLE_TYPE_MEGA_BRAWL)) 
 							&& SIDE(bank) == B_SIDE_PLAYER) 
 							{
 								gNewBS->UltraData->chosen[PARTNER(bank)] = 0;
 								gNewBS->UltraData->done[PARTNER(bank)] = TRUE;
 							}
-							else if (!(gBattleTypeFlags & (BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_MULTI)) 
+							else if (!(gBattleTypeFlags & (BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_MULTI | BATTLE_TYPE_MEGA_BRAWL)) 
 							&& SIDE(bank) == B_SIDE_OPPONENT) 
 							{
 								gNewBS->UltraData->chosen[PARTNER(bank)] = 0;

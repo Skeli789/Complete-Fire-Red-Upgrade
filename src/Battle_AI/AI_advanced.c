@@ -609,6 +609,9 @@ u8 PredictFightingStyle(const u16* const moves, const u8 ability, const u8 itemE
 
 bool8 ShouldTrap(u8 bankAtk, u8 bankDef, u16 move, u8 class)
 {
+	if (WillFaintFromSecondaryDamage(bankAtk))
+		return FALSE;
+
 	if (IsClassStall(class))
 	{
 		if (MoveWouldHitFirst(move, bankAtk, bankDef)) //Attacker goes first
@@ -991,7 +994,8 @@ bool8 ShouldUseWishAromatherapy(u8 bankAtk, u8 bankDef, u16 move, u8 class)
 	
 	party = LoadPartyRange(bankAtk, &firstId, &lastId);
 	
-	if (ViableMonCountFromBankLoadPartyRange(bankAtk) <= 1 && CanKnockOut(bankDef, bankAtk))
+	if (ViableMonCountFromBankLoadPartyRange(bankAtk) <= 1
+	&& (CanKnockOut(bankDef, bankAtk) || WillFaintFromSecondaryDamage(bankAtk)))
 		return FALSE; //Don't heal if last mon and will faint after getting KOd
 
 	for (i = 0; i < PARTY_SIZE; ++i)
@@ -1426,6 +1430,9 @@ static bool8 ShouldTryToSetUpStat(u8 bankAtk, u8 bankDef, u16 move, u8 stat, u8 
 	&& !MoveInMoveset(MOVE_STOREDPOWER, bankAtk)
 	&& !MoveInMoveset(MOVE_POWERTRIP, bankAtk))
 		return FALSE;
+		
+	if (WillFaintFromSecondaryDamage(bankAtk))
+		return TRUE;
 
 	if (IS_SINGLE_BATTLE)
 	{
@@ -1882,7 +1889,7 @@ void IncreaseEntryHazardsViability(s16* originalViability, u8 class, u8 bankAtk,
 			{
 				if (MoveWouldHitFirst(move, bankAtk, bankDef))
 				{
-					if (!CanKnockOut(bankDef, bankAtk)) //Opponent can't kill before user can Baton Pass
+					if (!CanKnockOut(bankDef, bankAtk) && !WillFaintFromSecondaryDamage(bankAtk)) //Opponent can't kill before user can Baton Pass
 						INCREASE_VIABILITY(4); //Right more important than Baton Pass
 				}
 				else

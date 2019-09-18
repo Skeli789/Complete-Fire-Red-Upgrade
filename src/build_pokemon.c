@@ -75,6 +75,7 @@ struct TeamBuilder
 	u8 monsCount;
 	u8 numStalls;
 	u8 numChoiceItems;
+	u8 numMegas;
 	u16 trainerId;
 };
 
@@ -736,6 +737,20 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 			switch (trainerId) {
 				case BATTLE_TOWER_SPECIAL_TID:
 				case FRONTIER_BRAIN_TID:
+					if (tier == BATTLE_TOWER_MEGA_BRAWL)
+					{	//Force these trainers to have at least X amount of Mega Pokemon
+						if (monsCount < 6)
+						{
+							if (builder->numMegas < 2 && i + (2 - builder->numMegas) >= monsCount)
+								goto GENERIC_RANDOM_SPREADS; //Force at least two megas
+						}
+						else //6v6
+						{
+							if (builder->numMegas < 3 && i + (3 - builder->numMegas) >= monsCount)
+								goto GENERIC_RANDOM_SPREADS; //Force at least three megas
+						}
+					}
+
 					switch (tier) {
 						case BATTLE_TOWER_UBER:
 						case BATTLE_TOWER_NO_RESTRICTIONS:
@@ -786,8 +801,6 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 								case 4:
 								case 5:
 									goto SPECIAL_TRAINER_MIDDLE_SPREADS;
-								case 6:
-									goto SPECIAL_TRAINER_LEGENDARY_SPREADS;
 							}
 							goto SPECIAL_TRAINER_REGULAR_SPREADS;
 						case BATTLE_TOWER_350_CUP: ;
@@ -869,10 +882,7 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 								case 2:
 								case 3:
 								case 4:
-								case 5:
 									goto MULTI_PARTNER_LITTLE_SPREADS;
-								case 6:
-									goto MULTI_PARTNER_LEGENDARY_SPREADS;
 							}
 							goto MULTI_PARTNER_REGULAR_SPREADS;
 						case BATTLE_TOWER_350_CUP: ;
@@ -952,8 +962,6 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 								case 4:
 								case 5:
 									goto REGULAR_MC_SPREADS;
-								case 6:
-									goto REGULAR_LEGENDARY_SPREADS;
 							}
 							goto REGULAR_SPREADS;
 						case BATTLE_TOWER_350_CUP: ;
@@ -994,6 +1002,7 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 							}
 							__attribute__ ((fallthrough));
 						case BATTLE_TOWER_BENJAMIN_BUTTERFREE: //Don't use legends even though you can
+						case BATTLE_TOWER_MEGA_BRAWL:
 						default:
 						REGULAR_SPREADS:
 							spread = &gFrontierSpreads[Random() % TOTAL_SPREADS];
@@ -1041,8 +1050,6 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 								case 4:
 								case 5:
 									goto REGULAR_MC_SPREADS;
-								case 6:
-									goto REGULAR_LEGENDARY_SPREADS;
 							}
 							goto REGULAR_SPREADS;
 						case BATTLE_TOWER_350_CUP: ;
@@ -1089,12 +1096,51 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 					continue;
 			}
 			
+			if (tier == BATTLE_TOWER_MEGA_BRAWL && !IsMegaStone(item))
+			{	
+				//Force trainers to have at least X amount of Mega Pokemon
+				if (trainerId == BATTLE_TOWER_SPECIAL_TID || trainerId == FRONTIER_BRAIN_TID)
+				{
+					if (monsCount < 6)
+					{
+						if (IsFrontierMulti(battleType) && monsCount < 3)
+						{
+							if (i + 1 >= monsCount && builder->numMegas == 0)
+								continue; //Force at least one mega
+						}
+						else
+						{
+							if (builder->numMegas < 2 && i + (2 - builder->numMegas) >= monsCount)
+								continue; //Force at least two megas
+						}
+					}
+					else //6v6
+					{
+						if (builder->numMegas < 3 && i + (3 - builder->numMegas) >= monsCount)
+							continue; //Force at least three megas
+					}
+				}
+				else if (trainerId == BATTLE_TOWER_TID || forPlayer)
+				{
+					if (monsCount < 6)
+					{
+						if (i + 1 >= monsCount && builder->numMegas == 0)
+							continue; //Force at least one mega
+					}
+					else //6v6
+					{
+						if (builder->numMegas < 2 && i + (2 - builder->numMegas) >= monsCount)
+							continue; //Force at least two megas
+					}
+				}
+			}
+
 			//Prevent duplicate species and items
 			//Only allow one Mega Stone & Z-Crystal per team
 			if (!IsPokemonBannedBasedOnStreak(species, item, builder->speciesArray, monsCount, trainerId, tier, forPlayer)
 			&& (!builder->speciesOnTeam[dexNum] || tier == BATTLE_TOWER_NO_RESTRICTIONS)
 			&& (!ItemAlreadyOnTeam(item, monsCount, builder->itemArray) || tier == BATTLE_TOWER_NO_RESTRICTIONS)
-			&& (itemEffect != ITEM_EFFECT_MEGA_STONE || item == ITEM_ULTRANECROZIUM_Z || !builder->itemEffectOnTeam[ITEM_EFFECT_MEGA_STONE])
+			&& (tier == BATTLE_TOWER_MEGA_BRAWL || itemEffect != ITEM_EFFECT_MEGA_STONE || item == ITEM_ULTRANECROZIUM_Z || !builder->itemEffectOnTeam[ITEM_EFFECT_MEGA_STONE])
 			&& ((itemEffect != ITEM_EFFECT_Z_CRYSTAL && item != ITEM_ULTRANECROZIUM_Z) || !builder->itemEffectOnTeam[ITEM_EFFECT_Z_CRYSTAL])
 			&& !PokemonTierBan(species, item, spread, NULL, tier, CHECK_BATTLE_TOWER_SPREADS)
 			&& !(tier == BATTLE_TOWER_MONOTYPE && TeamNotAllSameType(species, item, monsCount, builder->speciesArray, builder->itemArray))
@@ -1115,6 +1161,9 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 					
 				if (itemEffect == ITEM_EFFECT_CHOICE_BAND)
 					++builder->numChoiceItems;
+					
+				if (IsMegaStone(item))
+					++builder->numMegas;
 				
 				builder->speciesOnTeam[dexNum] = TRUE;
 				for (j = 0; j < MAX_MON_MOVES; ++j)
@@ -1598,6 +1647,7 @@ static bool8 PokemonTierBan(const u16 species, const u16 item, const struct Batt
 
 	switch (tier) {
 		case BATTLE_TOWER_STANDARD:
+		case BATTLE_TOWER_MEGA_BRAWL:
 			if (CheckTableForSpecies(species, gBattleTowerStandardSpeciesBanList)
 			||  CheckTableForItem(item, gBattleTowerStandard_ItemBanList))
 				return TRUE;

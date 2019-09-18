@@ -559,6 +559,8 @@ void BattleSetup_StartTrainerBattle(void)
 			gBattleTypeFlags |= BATTLE_TYPE_CAMOMONS;
 		else if (tier == BATTLE_TOWER_BENJAMIN_BUTTERFREE)
 			gBattleTypeFlags |= BATTLE_TYPE_BENJAMIN_BUTTERFREE;
+		else if (tier == BATTLE_TOWER_MEGA_BRAWL)
+			gBattleTypeFlags |= BATTLE_TYPE_MEGA_BRAWL;
 
 		switch (VarGet(BATTLE_TOWER_BATTLE_TYPE)) {
 			case BATTLE_TOWER_DOUBLE:

@@ -414,7 +414,8 @@ bool8 IsGSCupBattle()
 bool8 DuplicateItemsAreBannedInTier(u8 tier, u8 battleType)
 {
 	if (tier == BATTLE_TOWER_STANDARD
-	||  IsMiddleCupTier(tier))
+	||  IsMiddleCupTier(tier)
+	||  tier == BATTLE_TOWER_MEGA_BRAWL)
 		return TRUE;
 		
 	return !IsFrontierSingles(battleType) && tier == BATTLE_TOWER_GS_CUP;

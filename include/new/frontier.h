@@ -114,6 +114,7 @@ enum BattleTowerFormats
 	BATTLE_TOWER_350_CUP,
 	BATTLE_TOWER_AVERAGE_MONS,
 	BATTLE_TOWER_BENJAMIN_BUTTERFREE,
+	BATTLE_TOWER_MEGA_BRAWL,
 	BATTLE_MINE_FORMAT_1, //OU, Camomons, Benjamin Butterfree
 	BATTLE_MINE_FORMAT_2, //Scalemons, 350 Cup, Averagemons
 	BATTLE_MINE_FORMAT_3, //Little Cup, Little Cup Camomons
@@ -126,7 +127,7 @@ enum BattleTowerFormats
 
 #define NUM_BATTLE_TOWER_TIERS 7
 #define NUM_BATTLE_MINE_TIERS 3
-#define NUM_BATTLE_CIRCUS_TIERS 11
+#define NUM_BATTLE_CIRCUS_TIERS 12
 
 enum BattleTowerPartySizes
 {

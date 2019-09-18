@@ -1098,18 +1098,26 @@ bool8 WillFaintFromSecondaryDamage(u8 bank)
 		
 	if (ability != ABILITY_MAGICGUARD)
 	{
-		if (GetSandstormDamage(bank)
-		+  GetHailDamage(bank)
+		u32 damage = 0;
+		if (gWishFutureKnock->weatherDuration != 1)
+			damage += GetSandstormDamage(bank)
+				    + GetHailDamage(bank); //Weather's not about to end
+	
+		if ((gBattleMons[bank].status1 & STATUS1_SLEEP) != 1)
+			damage += GetNightmareDamage(bank); //Sleep's not about to end
+			
+		if (!(gNewBS->brokeFreeMessage & gBitTable[bank]))
+			damage += GetTrapDamage(bank); //Trapping isn't about to end
+	
+		if (damage
 		+  GetLeechSeedDamage(bank)
 		+  GetPoisonDamage(bank)
 		+  GetBurnDamage(bank)
-		+  GetNightmareDamage(bank)
 		+  GetCurseDamage(bank)
- 		+  GetTrapDamage(bank)
-		+  GetSeaOfFireDamage(bank) >= hp)
+		+  GetSeaOfFireDamage(bank) >= hp) //Sea of Fire runs on last turn
 			return TRUE;
 	}
-	
+
 	return FALSE;
 }
 
