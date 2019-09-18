@@ -2830,28 +2830,48 @@ u8 ScriptGiveMon(u16 species, u8 level, u16 item, unusedArg u32 unused1, unusedA
 	return sentToPc;
 }
 
-static u32 CheckShinyMon(u32 pid) 
+u32 CheckShinyMon(struct Pokemon* mon) 
 {
-	u16 chance = 1;	//Default 1/4096 rate
+	u32 personality = GetMonData(mon, MON_DATA_PERSONALITY, NULL);
+
+	u16 chance = 0;
 
 	if (CheckBagHasItem(ITEM_SHINY_CHARM, 1) > 0)
-		chance = 3;
+		chance = 3; //Tries an extra two times
 		
 	if (FlagGet(SHINY_CREATION_FLAG))
 		chance = 4097;
 
 	if (RandRange(0, 4097) < chance)		//Nominal 1/4096
 	{
-		// make shiny
-		u8 shinyRange = RandRange(0,8);
-
+		//Force shiny
 		u32 playerId = T1_READ_32(gSaveBlock2->playerTrainerId);
 		u16 sid = HIHALF(playerId);
 		u16 tid = LOHALF(playerId);
-		pid = (((shinyRange ^ (sid ^ tid)) ^ LOHALF(pid)) << 16) | LOHALF(pid);
+
+		u8 shinyRange = RandRange(0,8);
+		u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
+		u8 ability = personality & 1;
+		u8 nature = GetNatureFromPersonality(personality);
+		u8 gender = GetGenderFromSpeciesAndPersonality(species, personality);
+		u8 letter = GetUnownLetterFromPersonality(personality);
+		bool8 abilityMatters = !mon->hiddenAbility;
+
+		do
+		{
+			personality = Random32();
+			personality = (((shinyRange ^ (sid ^ tid)) ^ LOHALF(personality)) << 16) | LOHALF(personality);
+
+			if (abilityMatters)
+			{
+				personality &= ~(1);
+				personality |= ability; //Either 0 or 1
+			}
+		} while (GetNatureFromPersonality(personality) != nature || GetGenderFromSpeciesAndPersonality(species, personality) != gender
+		|| (species == SPECIES_UNOWN && GetUnownLetterFromPersonality(personality) != letter)); //Keep all other values the same
 	}
-	
-	return pid;
+
+	return personality;
 };
 
 
@@ -2880,9 +2900,8 @@ void CreateBoxMon(struct BoxPokemon* boxMon, u16 species, u8 level, u8 fixedIV, 
 	else
 		personality = Random32();
 
-	personality = CheckShinyMon(personality);	//Shiny charm
-	boxMon->personality = personality;
-	
+	SetBoxMonData(boxMon, MON_DATA_PERSONALITY, &personality);
+
 	//Determine original trainer ID
 	if (otIdType == OT_ID_RANDOM_NO_SHINY) //Pokemon cannot be shiny
 	{
@@ -2965,6 +2984,12 @@ void CreateBoxMon(struct BoxPokemon* boxMon, u16 species, u8 level, u8 fixedIV, 
 	}
 
 	((struct Pokemon*) boxMon)->hiddenAbility = FALSE; //Set base hidden ability to 0
+	
+	if (otIdType != OT_ID_RANDOM_NO_SHINY) //Pokemon can be shiny
+	{
+		personality = CheckShinyMon((struct Pokemon*) boxMon);	//Shiny charm
+		SetBoxMonData(boxMon, MON_DATA_PERSONALITY, &personality);
+	}
 
 	GiveBoxMonInitialMoveset(boxMon);
 }

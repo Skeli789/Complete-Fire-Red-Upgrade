@@ -18,6 +18,7 @@ void GiveMonNatureAndAbility(pokemon_t* mon, u8 nature, u8 abilityNum, bool8 for
 bool8 IsMonBannedInTier(struct Pokemon* mon, u8 tier);
 bool8 IsMonAllowedInBattleTower(struct Pokemon* mon);
 void TryStatusInducer(struct Pokemon* mon);
+u32 CheckShinyMon(struct Pokemon* mon);
 void CalculateMonStatsNew(struct Pokemon *mon);
 u8 GetOpenWorldBadgeCount(void);
 

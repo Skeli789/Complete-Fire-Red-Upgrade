@@ -174,8 +174,6 @@ LoadBallGfx 0804BEF4 1
 GetBattlerPokeballItemId 0804BF90 1
 GetProperBallIdHook1 0804AA1E 1
 GetProperBallIdHook2 080EF3A8 1
-GetProperBallIdHook3 080EF964 1
-GetProperBallIdHook4 08139CDA 1
 CreateThrowPokeBall 080EF490 1
 DestroyThrowPokeBall 080EF4B8 1
 StartPokeballThrowAnimation 0x80EF5AC 1
@@ -367,6 +365,7 @@ PokedexScreenStats 08106370 0
 GiveEggFromDaycare 080460D4 1
 TriggerPendingDaycareEgg 080459F0 1
 FlameBodyMagmaArmorEggHook 08046390 1
+CreatedHatchedMon 08046BFC 2
 
 ##Shiny Charm
 CreateBoxMonHook 803DAD2 0

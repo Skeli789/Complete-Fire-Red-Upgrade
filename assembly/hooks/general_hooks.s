@@ -64,23 +64,6 @@ GetProperBallIdHook2:
 	ldr r1, =0x80EF3B0 | 1
 	bx r1
 
-@0x080EF964 with r0
-GetProperBallIdHook3:
-	ldr r0, =ITEM_BUFFER
-	ldrh r0, [r0]
-	bl ItemIdToBallId
-	ldr r1, =0x80EF96C | 1
-	bx r1
-
-@Summary Screen Poke Ball Hook
-@0x08139CDA with r1
-GetProperBallIdHook4:
-	mov r4, r0
-	lsl r4, #0x18
-	lsr r4, #0x18
-	ldr r1, =0x8139CE4 | 1
-	bx r1
-
 @0x80F1792 with r0
 ShinyAnimFixHook:
 	bl ShinyAnimFix
