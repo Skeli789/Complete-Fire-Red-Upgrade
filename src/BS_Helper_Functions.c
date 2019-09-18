@@ -857,8 +857,7 @@ void ChangeTargetTypeFunc(void)
 					gBattleMons[gBankTarget].type2 = TYPE_GHOST;
 				else
 					gBattleMons[gBankTarget].type3 = TYPE_GHOST;
-				
-				gBattleScripting->bank = gBankTarget;
+
 				PREPARE_TYPE_BUFFER(gBattleTextBuff1, TYPE_GHOST);
 				BattleStringLoader = ThirdTypeAddedString;
 			}
@@ -874,7 +873,6 @@ void ChangeTargetTypeFunc(void)
 				else
 					gBattleMons[gBankTarget].type3 = TYPE_GRASS;
 				
-				gBattleScripting->bank = gBankTarget;
 				PREPARE_TYPE_BUFFER(gBattleTextBuff1, TYPE_GRASS);
 				BattleStringLoader = ThirdTypeAddedString;
 			}

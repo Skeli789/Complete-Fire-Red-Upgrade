@@ -35,7 +35,7 @@ The battlefield got weird!
 [TARGET] transformed\ninto the [BUFFER][00] type!
 
 #org @ThirdTypeAddedString
-[BUFFER][00] type was added to\n[SCRIPTING_BANK]!
+[BUFFER][00] type was added to\n[TARGET]!
 
 #org @FairyLockString
 [ATTACKER] locked down the battlefield!

@@ -730,7 +730,7 @@ BS_028_Roar:
 	jumpifmove MOVE_CIRCLETHROW DragonTailBS
 
 RoarBS:
-	attackstringnoprotean
+	attackstring @;Still activates Protean even if move fails
 	ppreduce
 	jumpifability BANK_TARGET ABILITY_SUCTIONCUPS BattleScript_AbilityPreventsPhasingOut
 	jumpifspecialstatusflag BANK_TARGET STATUS3_ROOTED 0x0 0x81D8F27 @;BattleScript_PrintMonIsRooted
@@ -1626,10 +1626,10 @@ BS_085_Splash:
 .global BS_086_Disable
 BS_086_Disable:
 	attackcanceler
-	attackstring
+	accuracycheck BS_MOVE_MISSED 0x0
+	attackstringnoprotean
 	ppreduce
 	jumpifabilitypresenttargetfield ABILITY_AROMAVEIL BattleScript_ProtectedByAromaVeil
-	accuracycheck FAILED 0x0
 	disablelastusedattack BANK_TARGET FAILED
 	tryactivateprotean
 	attackanimation
@@ -4714,11 +4714,10 @@ ThroatChopBS:
 BS_232_TypeChangers:
 	attackcanceler
 	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
-	attackstringnoprotean
+	attackstring @;Activates Protean even if it fails
 	ppreduce
 	jumpifmove MOVE_SOAK SoakBS
 	callasm ChangeTargetTypeFunc
-	tryactivateprotean
 	attackanimation
 	waitanimation
 	printstring 0x184
@@ -4726,7 +4725,6 @@ BS_232_TypeChangers:
 	goto BS_MOVE_END
 	
 SoakBS:
-	tryactivateprotean
 	attackanimation
 	callasm ChangeTargetTypeFunc
 	printstring 0x184
