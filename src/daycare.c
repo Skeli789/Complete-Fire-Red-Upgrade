@@ -26,7 +26,7 @@ extern u8 GetLevelUpMovesBySpecies(u16 species, u16* moves);
 extern u16 GetItemIdFromTmId(u8 tmId);
 
 void BuildEggMoveset(struct Pokemon* egg, struct BoxPokemon* father, struct BoxPokemon* mother);
-static u8 GetEggStepsToSubtract(void);
+u8 GetEggStepsToSubtract(void);
 
 /*Priority: 
 1. Volt Tackle
@@ -36,6 +36,11 @@ static u8 GetEggStepsToSubtract(void);
 5. Inherited Level-Up Moves 
 6. Baby's Default Moveset.
 */
+
+enum Parents {
+	DAYCARE_MOTHER = 0,
+	DAYCARE_FATHER,
+};
 
 // called from GiveEggFromDaycare
 void BuildEggMoveset(struct Pokemon* egg, struct BoxPokemon* father, struct BoxPokemon* mother)
@@ -507,7 +512,7 @@ void AlterEggSpeciesWithIncenseItem(u16 *species, struct DayCare *daycare) {
 
 static void InheritPokeBall(struct Pokemon *egg, struct DayCare *daycare)
 {
-	u8 parent = 0;	// mother by default
+	u8 parent = DAYCARE_MOTHER;	// mother by default
 	u8 parentBall;
 	
 	u16 motherSpecies = GetBoxMonData(&daycare->mons[0].mon, MON_DATA_SPECIES, NULL);
@@ -515,7 +520,7 @@ static void InheritPokeBall(struct Pokemon *egg, struct DayCare *daycare)
 	
 	// gen 7 same species checks
 	if (motherSpecies == SPECIES_DITTO)
-		parent = 1;	// gen 7 ditto check -> male or non-gendered mon with ditto (mother) makes pokemon inherit from father
+		parent = DAYCARE_FATHER;	// gen 7 ditto check -> male or non-gendered mon with ditto (mother) makes pokemon inherit from father
 	else if (motherSpecies == fatherSpecies)
 		parent = Random() % 2;	// same parent species -> pokeball inherited randomly
 	
@@ -544,13 +549,13 @@ static void SetInitialEggData(struct Pokemon *mon, u16 species, struct DayCare *
     CreateMon(mon, species, EGG_HATCH_LEVEL, 0x20, TRUE, personality, FALSE, 0);
     metLevel = 0;
 	
-    //ball = ITEM_POKE_BALL;
-	ball = BALL_TYPE_POKE_BALL;
+    ball = ITEM_POKE_BALL;
+	//ball = BALL_TYPE_POKE_BALL;
 	
     language = LANGUAGE_JAPANESE;
     SetMonData(mon, MON_DATA_POKEBALL, &ball);
     SetMonData(mon, MON_DATA_NICKNAME, (const void*) 0x825F83E);
-    SetMonData(mon, MON_DATA_FRIENDSHIP, &gBaseStats[species].eggCycles);
+    SetMonData(mon, MON_DATA_FRIENDSHIP, &gBaseStats[species].eggCycles);	//required steps to hatch
     SetMonData(mon, MON_DATA_MET_LEVEL, &metLevel);
     SetMonData(mon, MON_DATA_LANGUAGE, &language);
 }
@@ -680,6 +685,26 @@ void CreatedHatchedMon(struct Pokemon *egg, struct Pokemon *temp)
 };
 
 
+u8 GetEggStepsToSubtract(void)
+{
+    u8 i;
+	u8 count = CalculatePlayerPartyCount(); 
+	// if any party mons have magma armor or flame body, subtract 2 steps from hatch counter instead of 1
+	for (i = 0; i < count; ++i)
+    {
+		if (GetMonData(&gPlayerParty[i], MON_DATA_IS_EGG, NULL))
+        {
+            u8 ability = GetPartyAbility(&gPlayerParty[i]);
+            if (ability == ABILITY_MAGMAARMOR || ability == ABILITY_FLAMEBODY)
+			{
+				return 2;
+			}
+        }
+    }
+    return 1;
+}
+
+
 void SubtractEggSteps(u32 steps, struct Pokemon* mon)
 {
 	u8 toSub = GetEggStepsToSubtract();
@@ -689,21 +714,8 @@ void SubtractEggSteps(u32 steps, struct Pokemon* mon)
 	else
 		steps -= 1;
 
-	mon->friendship = steps;
+	//mon->friendship = steps;
+	SetMonData(mon, MON_DATA_FRIENDSHIP, &steps);
 }
 
 
-static u8 GetEggStepsToSubtract(void)
-{
-    u8 count, i;
-    for (count = CalculatePlayerPartyCount(), i = 0; i < count; ++i)
-    {
-        if (!GetMonData(&gPlayerParty[i], MON_DATA_SANITY_IS_EGG, NULL))
-        {
-            u8 ability = GetPartyAbility(&gPlayerParty[i]);
-            if (ability == ABILITY_MAGMAARMOR || ability == ABILITY_FLAMEBODY)
-                return 2;
-        }
-    }
-    return 1;
-}
