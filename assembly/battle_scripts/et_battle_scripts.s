@@ -29,14 +29,8 @@
 .global BattleScript_MagicRoomEnd
 .global BattleScript_GravityEnd
 .global BattleScript_TerrainEnd
-.global BattleScript_MoodyRegular
-.global BattleScript_MoodySingleStat
-.global BattleScript_BadDreams
 .global BattleScript_ToxicOrb
 .global BattleScript_FlameOrb
-.global BattleScript_Harvest
-.global BattleScript_Pickup
-.global BattleScript_ZenMode
 .global BattleScript_PowerConstruct
 .global BattleScript_StartedSchooling
 .global BattleScript_StoppedSchooling
@@ -64,6 +58,8 @@
 .global BattleScript_RanAwayUsingMonAbility
 
 .global AbilityActivatedString
+
+.equ BattleScript_DoTurnDmg, 0x81D905B
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -113,14 +109,10 @@ BattleScript_FogContinues:
 
 BattleScript_SeaOfFireDamage:
 	playanimation BANK_ATTACKER ANIM_SEA_OF_FIRE 0x0
-	orword HIT_MARKER 0x100
-	graphicalhpupdate BANK_ATTACKER
-	datahpupdate BANK_ATTACKER
 	setword BATTLE_STRING_LOADER SeaOfFireDamageString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
-	faintpokemon BANK_ATTACKER 0x0 0x0
-	end2
+	goto BattleScript_DoTurnDmg
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

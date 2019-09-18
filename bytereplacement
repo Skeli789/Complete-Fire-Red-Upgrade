@@ -131,6 +131,8 @@
 ##Remove Old JPAN Engine
 0804039C 24 04 04 08
 08040568 AC 06 04 08 C4 06 04 08
+##Remove Old End Turn Battle Scripts
+081D9053 10 2A 00 12 40
 
 ##Save Expansion
 080DA5E0 FF 20 70 47
