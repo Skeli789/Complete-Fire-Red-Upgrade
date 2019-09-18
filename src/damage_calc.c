@@ -1206,16 +1206,7 @@ u8 GetExceptionMoveTypeFromParty(struct Pokemon* mon, u16 move) {
 
 	switch (move) {
 		case MOVE_HIDDENPOWER:
-			moveType = ((mon->hpIV & 1)) |
-						((mon->attackIV & 1) << 1) |
-						((mon->defenseIV & 1) << 2) |
-						((mon->speedIV & 1) << 3) |
-						((mon->spAttackIV & 1) << 4) |
-						((mon->spDefenseIV & 1) << 5);
-
-			moveType = udivsi((15 * moveType), 63) + 1;
-			if (moveType >= TYPE_MYSTERY)
-				moveType++;
+			moveType = CalcMonHiddenPowerType(mon);
 			break;
 
 		case MOVE_WEATHERBALL:
@@ -1268,6 +1259,24 @@ u8 GetExceptionMoveTypeFromParty(struct Pokemon* mon, u16 move) {
 		case MOVE_REVELATIONDANCE:
 			moveType = (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) ? GetCamomonsTypeByMon(mon, 0) : gBaseStats[mon->species].type1;
 	}
+
+	return moveType;
+}
+
+u8 CalcMonHiddenPowerType(struct Pokemon* mon)
+{
+	u8 moveType;
+
+	moveType = ((mon->hpIV & 1)) |
+			   ((mon->attackIV & 1) << 1) |
+			   ((mon->defenseIV & 1) << 2) |
+			   ((mon->speedIV & 1) << 3) |
+			   ((mon->spAttackIV & 1) << 4) |
+			   ((mon->spDefenseIV & 1) << 5);
+
+	moveType = ((15 * moveType) / 63) + 1;
+	if (moveType >= TYPE_MYSTERY)
+		++moveType;
 
 	return moveType;
 }

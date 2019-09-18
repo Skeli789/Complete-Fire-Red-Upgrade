@@ -1064,7 +1064,7 @@ void atk45_playanimation(void)
 	|| 	gBattlescriptCurrInstr[2] == B_ANIM_ZMOVE_ACTIVATE
 	|| 	gBattlescriptCurrInstr[2] == B_ANIM_MEGA_EVOLUTION
 	|| 	gBattlescriptCurrInstr[2] == B_ANIM_ULTRA_BURST
-	||  gBattlescriptCurrInstr[2] == B_ANIM_LOAD_DEAFUALT_BG
+	||  gBattlescriptCurrInstr[2] == B_ANIM_LOAD_DEFAULT_BG
 	||  gBattlescriptCurrInstr[2] == B_ANIM_LOAD_ABILITY_POP_UP
 	||  gBattlescriptCurrInstr[2] == B_ANIM_DESTROY_ABILITY_POP_UP)
 	{
@@ -1131,7 +1131,7 @@ void atk46_playanimation2(void) // animation Id is stored in the first pointer
 	|| 	*animationIdPtr == B_ANIM_ZMOVE_ACTIVATE
 	|| 	*animationIdPtr == B_ANIM_MEGA_EVOLUTION
 	|| 	*animationIdPtr == B_ANIM_ULTRA_BURST
-	||  *animationIdPtr == B_ANIM_LOAD_DEAFUALT_BG
+	||  *animationIdPtr == B_ANIM_LOAD_DEFAULT_BG
 	||  *animationIdPtr == B_ANIM_LOAD_ABILITY_POP_UP
 	||  *animationIdPtr == B_ANIM_DESTROY_ABILITY_POP_UP)
 	{

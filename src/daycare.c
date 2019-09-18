@@ -27,7 +27,7 @@ extern u8 GetLevelUpMovesBySpecies(u16 species, u16* moves);
 extern u16 GetItemIdFromTmId(u8 tmId);
 
 void BuildEggMoveset(struct Pokemon* egg, struct BoxPokemon* father, struct BoxPokemon* mother);
-u8 GetEggStepsToSubtract(void);
+static u8 GetEggStepsToSubtract(void);
 
 /*Priority: 
 1. Volt Tackle
@@ -671,7 +671,7 @@ void CreatedHatchedMon(struct Pokemon *egg, struct Pokemon *temp)
 };
 
 
-u8 GetEggStepsToSubtract(void)
+static u8 GetEggStepsToSubtract(void)
 {
     u8 i;
 	u8 count = CalculatePlayerPartyCount(); 
@@ -702,22 +702,6 @@ void SubtractEggSteps(u32 steps, struct Pokemon* mon)
 
 	//mon->friendship = steps;
 	SetMonData(mon, MON_DATA_FRIENDSHIP, &steps);
-}
-
-
-static u8 GetEggStepsToSubtract(void)
-{
-    u8 count, i;
-    for (count = CalculatePlayerPartyCount(), i = 0; i < count; ++i)
-    {
-        if (!GetMonData(&gPlayerParty[i], MON_DATA_SANITY_IS_EGG, NULL))
-        {
-            u8 ability = GetPartyAbility(&gPlayerParty[i]);
-            if (ability == ABILITY_MAGMAARMOR || ability == ABILITY_FLAMEBODY)
-                return 2;
-        }
-    }
-    return 1;
 }
 
 u8 GetAllEggMoves(struct Pokemon* mon, u16* moves, bool8 ignoreAlreadyKnownMoves)

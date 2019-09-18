@@ -254,7 +254,7 @@ gBattleScriptsForMoveEffects:
 .word BS_240_Camouflage
 .word BS_241_FlameBurst
 .word BS_242_LastResortSkyDrop
-.word BS_243_Blank
+.word BS_243_DamageSetTerrain
 .word BS_244_Blank
 .word BS_245_Blank
 .word BS_246_Blank

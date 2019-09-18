@@ -11509,7 +11509,7 @@ const struct BattleMove gBattleMoves[] =
 
 [MOVE_GENESIS_SUPERNOVA] =
 	{
-		.effect = 0,
+		.effect = EFFECT_DAMAGE_SET_TERRAIN,
 		.power = 185,
 		.type = TYPE_PSYCHIC,
 		.accuracy = 0,
@@ -11573,7 +11573,7 @@ const struct BattleMove gBattleMoves[] =
 
 [MOVE_SPLINTERED_STORMSHARDS] =
 	{
-		.effect = 0,
+		.effect = EFFECT_DAMAGE_SET_TERRAIN, //"Sets" the terrain to NONE
 		.power = 190,
 		.type = TYPE_ROCK,
 		.accuracy = 0,

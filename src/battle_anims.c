@@ -1340,7 +1340,7 @@ static bool8 ShouldAnimBeDoneRegardlessOfSubsitute(u8 animId)
 	switch (animId) {
 		case B_ANIM_SUBSTITUTE_FADE:
 		case B_ANIM_SNATCH_MOVE:
-		case B_ANIM_LOAD_DEAFUALT_BG:
+		case B_ANIM_LOAD_DEFAULT_BG:
 		case B_ANIM_LOAD_ABILITY_POP_UP:
 		case B_ANIM_DESTROY_ABILITY_POP_UP:
 		case B_ANIM_RAIN_CONTINUES:

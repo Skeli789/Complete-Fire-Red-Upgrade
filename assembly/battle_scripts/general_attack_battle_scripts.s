@@ -4987,16 +4987,31 @@ LastResortBS:
 	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-.global BS_243_Blank
-BS_243_Blank:
-	goto BS_STANDARD_HIT
+.global BS_243_DamageSetTerrain
+BS_243_DamageSetTerrain:
+	accuracycheck BS_MOVE_MISSED 0x0
+	call STANDARD_DAMAGE
+	jumpifmovehadnoeffect BS_MOVE_FAINT
+	seteffectwithchancetarget
+	prefaintmoveendeffects 0x0
+	faintpokemonaftermove
+	setterrain BS_MOVE_END
+	callasm TransferTerrainData
+	playanimation2 BANK_ATTACKER ANIM_ARG_1 0x0
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	setbyte SEED_HELPER 0
+	copyhword BACKUP_HWORD USER_BANK @;Backup original atatcker + target
+	callasm SeedRoomServiceLooper
+	copyhword USER_BANK BACKUP_HWORD @;Restore original attacker + target
+	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 .global BS_244_Blank
 BS_244_Blank:
-	goto BS_STANDARD_HIT	
-	
+	goto BS_STANDARD_HIT
+
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 .global BS_245_Blank

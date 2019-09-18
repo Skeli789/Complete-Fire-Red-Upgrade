@@ -180,6 +180,13 @@
 	.4byte \source
 	.byte 0x1
 	.endm
+	
+	.macro copyhword destination source
+	.byte 0x31
+	.4byte \destination
+	.4byte \source
+	.byte 0x2
+	.endm
 
 	.macro copyword destination source
 	.byte 0x31

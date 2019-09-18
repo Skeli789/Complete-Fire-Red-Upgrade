@@ -175,20 +175,29 @@ void atkFF06_setterrain(void)
 	switch (gCurrentMove) {
 		case MOVE_ELECTRICTERRAIN:
 			type = ELECTRIC_TERRAIN;
+			gBattleScripting->animArg1 = B_ANIM_ELECTRIC_SURGE;
 			BattleStringLoader = ElectricTerrainSetString;
 			break;
 		case MOVE_GRASSYTERRAIN:
 			type = GRASSY_TERRAIN;
+			gBattleScripting->animArg1 = B_ANIM_GRASSY_SURGE;
 			BattleStringLoader = GrassyTerrainSetString;
 			break;
 		case MOVE_MISTYTERRAIN:
 			type = MISTY_TERRAIN;
+			gBattleScripting->animArg1 = B_ANIM_MISTY_SURGE;
 			BattleStringLoader = MistyTerrainSetString;
 			break;
 		case MOVE_PSYCHICTERRAIN:
 		case MOVE_GENESIS_SUPERNOVA:
 			type = PSYCHIC_TERRAIN;
+			gBattleScripting->animArg1 = B_ANIM_PSYCHIC_SURGE;
 			BattleStringLoader = PsychicTerrainSetString;
+			break;
+		case MOVE_SPLINTERED_STORMSHARDS:
+			type = 0;
+			gBattleScripting->animArg1 = B_ANIM_LOAD_DEFAULT_BG;
+			BattleStringLoader = TerrainEndString;
 			break;
 	}
 	
@@ -200,7 +209,11 @@ void atkFF06_setterrain(void)
 	else
 	{
 		TerrainType = type;
-		gNewBS->TerrainTimer = duration;
+
+		if (type == 0) //No Terrain means no timer
+			gNewBS->TerrainTimer = 0;
+		else
+			gNewBS->TerrainTimer = duration;
 		gBattlescriptCurrInstr += 5;
 	}
 }
