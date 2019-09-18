@@ -19,6 +19,27 @@ Rand Double Btl Record
 #org @gText_MultiRandomBattleRecord
 Rand Multi Btl Record
 
+#org @gText_SingleBattle
+Single Battle
+
+#org @gText_DoubleBattle
+Double Battle
+
+#org @gText_MultiBattle
+Multi Battle
+
+#org @gText_LinkMultiBattle
+Link Multi Battle
+
+#org @gText_RandomSingleBattle
+Random Single Battle
+
+#org @gText_RandomDoubleBattle
+Random Double Battle
+
+#org @gText_RandomMultiBattle
+Random Multi Battle
+
 #org @gText_FrontierRecordLevel5
 Level 5
 
@@ -66,3 +87,143 @@ Smogon Monotype
 
 #org @gText_GSCup
 GS Cup
+
+#org @gText_SmogonCamomons
+Smogon Camomons
+
+#org @gText_UberCamomons
+Uber Camomons
+
+#org @gText_LittleCupCamomons
+Little Cup Camomons
+
+#org @gText_MiddleCupCamomons
+Middle Cup Camomons
+
+#org @gText_GSCupCamomons
+GS Cup Camomons
+
+#org @gText_SmogonScalemons
+Smogon Scalemons
+
+#org @gText_Smogon350Cup
+Smogon 350 Cup
+
+#org @gText_SmogonAveragemons
+Smogon Averagemons
+
+#org @gText_SmogonBenjaminButterfree
+Smogon Benjamin Butterfree
+
+#org @gText_BattleMineFormat1
+Cave Format
+
+#org @gText_BattleMineFormat2
+Mountain Format
+
+#org @gText_BattleMineFormat3
+Pebble Format
+
+#org @gText_On
+on
+
+#org @gText_Off
+off
+
+#org @gText_Previous
+Previous
+
+#org @gText_Max
+Max
+
+#org @gText_None
+None
+
+//Preceded by "The next battle will take place"
+
+#org @gText_BattleCircusDescriptionElectricTerrain
+with the battlefield electrified!\pGrounded Pok\emon can't fall asleep\nand have stronger Electric-moves!
+
+#org @gText_BattleCircusDescriptionGrassyTerrain
+with the battlefield grassy!\pGrounded Pok\emon have stronger\nGrass-moves and heal every turn!
+
+#org @gText_BattleCircusDescriptionMistyTerrain
+with the battlefield misty!\pGrounded Pok\emon have stronger\nFairy-moves and can't be afflicted\lwith status conditions!
+
+#org @gText_BattleCircusDescriptionPsychicTerrain
+with the battlefield weird!\pGrounded Pok\emon have stronger\nPsychic-moves and can't be hit\lby priority moves!
+
+#org @gText_BattleCircusDescriptionRain
+in the rain!
+
+#org @gText_BattleCircusDescriptionSun
+in the sun!
+
+#org @gText_BattleCircusDescriptionSandstorm
+in a sandstorm!
+
+#org @gText_BattleCircusDescriptionHail
+in a hailstorm!
+
+#org @gText_BattleCircusDescriptionFog
+under the cover of a deep fog[.]
+
+#org @gText_BattleCircusDescriptionTrickRoom
+in a Trick Room!\pSlower Pok\emon get to move first!
+
+#org @gText_BattleCircusDescriptionMagicRoom
+in a Magic Room!\pMost held items have no effect!
+
+#org @gText_BattleCircusDescriptionWonderRoom
+in a Wonder Room!\pDefense and Sp. Def stats are\nswapped!
+
+#org @gText_BattleCircusDescriptionGravity
+with intense gravity!\pNo Pok\emon will remain airborne!
+
+#org @gText_BattleCircusDescriptionIonDeluge
+with a deluge of ions in the air!\pAll Normal-type moves will become\nElectric-type!
+
+#org @gText_BattleCircusDescriptionFairyLock
+with the battlefield locked down!\pNo Pok\emon will be able to switch\nout!
+
+#org @gText_BattleCircusDescriptionMudSport
+with mud showering the battlefield!\pAll Electric-type moves will be\nweakened!
+
+#org @gText_BattleCircusDescriptionWaterSport
+with water in the air!\pAll Fire-type moves will be\nweakened!
+
+#org @gText_BattleCircusDescriptionInverseBattle
+in an Inverse Battle!\pAll type matchups are reversed!
+
+#org @gText_BattleCircusDescriptionSeaOfFire
+with a Sea of Fire engulfing both\lsides of the battlefield!\pAll non-Fire-type Pok\emon will be\ndamaged each turn!
+
+#org @gText_BattleCircusDescriptionRainbow
+with a Rainbow present on both\lsides of the battlefield!\pAll moves have their secondary\neffect chance doubled!
+
+#org @gText_BattleCircusDescriptionSwamp
+with a Swamp surrounding both\lsides of the battlefield!\pAll Pokemon will have their speed\nlowered!
+
+#org @gText_BattleCircusDescriptionConfused
+with all Pok\emon confused!
+
+#org @gText_BattleCircusDescriptionTaunt
+with all Pok\emon taunted!\pNo status moves can be used!
+
+#org @gText_BattleCircusDescriptionTorment
+with all Pok\emon tormented!\pNo move can be used twice in a row.
+
+#org @gText_BattleCircusDescriptionHealBlock
+with all Pok\emon Heal Blocked!\pNo Pok\emon will be able to heal!
+
+#org @gText_BattleCircusDescriptionThroatChop
+with all Pok\emon Throat Chopped!\pNo sound-based moves can be used!
+
+#org @gText_BattleCircusDescriptionAlwaysCrit
+with all Pok\emon Laser Focused!\pMoves will always score critical\nhits!
+
+#org @gText_BattleCircusDescriptionNoCrits
+with no Pok\emon being able to\lscore a critical hit!
+
+#org @gText_BattleCircusDescriptionAbilitySuppression
+with all Pok\emon having their\labilities suppressed!

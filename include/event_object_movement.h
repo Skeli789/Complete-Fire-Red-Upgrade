@@ -80,6 +80,7 @@ u8 __attribute__((long_call)) GetEventObjectIdByLocalIdAndMapInternal(u8 localId
 u8 __attribute__((long_call)) GetEventObjectIdByLocalId(u8 localId);
 void __attribute__((long_call)) FaceDirection(struct EventObject *eventObject, struct Sprite *sprite, u8 direction);
 u8 __attribute__((long_call)) GetOppositeDirection(u8 direction);
+u8 __attribute__((long_call)) CreateVirtualSprite(u8 graphicsId, u8 a1, s16 x, s16 y, u8 z, u8 direction);
 
 /*
 extern const struct SpriteFrameImage gEventObjectPicTable_PechaBerryTree[];
@@ -108,7 +109,6 @@ void sub_80930E0(s16 *, s16 *, s16, s16);
 void EventObjectClearHeldMovement(struct EventObject *);
 void EventObjectClearHeldMovementIfActive(struct EventObject *);
 void TrySpawnEventObjects(s16, s16);
-u8 sprite_new(u8 graphicsId, u8 a1, s16 x, s16 y, u8 z, u8 direction);
 u8 AddPseudoEventObject(u16, void (*)(struct Sprite *), s16 x, s16 y, u8 subpriority);
 u8 show_sprite(u8, u8, u8);
 u8 SpawnSpecialEventObjectParameterized(u8 graphicsId, u8 movementBehavior, u8 localId, s16 x, s16 y, u8 z);
@@ -118,7 +118,6 @@ void CameraObjectReset1(void);
 void EventObjectSetGraphicsId(struct EventObject *, u8 graphicsId);
 void EventObjectTurn(struct EventObject *, u8);
 void EventObjectTurnByLocalIdAndMap(u8, u8, u8, u8);
-const struct EventObjectGraphicsInfo *GetEventObjectGraphicsInfo(u8 graphicsId);
 void npc_by_local_id_and_map_set_field_1_bit_x20(u8, u8, u8, u8);
 void FreeAndReserveObjectSpritePalettes(void);
 void sub_808E82C(u8, u8, u8, s16, s16);

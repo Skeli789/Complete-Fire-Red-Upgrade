@@ -12,6 +12,7 @@
 
 #include "../include/new/catching.h"
 #include "../include/new/daycare.h"
+#include "../include/new/Helper_Functions.h"
 #include "../include/new/item.h"
 
 #define sHatchedEggFatherMoves ((u16*) 0x202455C)
@@ -245,18 +246,6 @@ u16 DetermineEggSpeciesAndParentSlots(struct DayCare* daycare, u8* parentSlots)
     return eggSpecies;
 }
 
-
-
-enum {
-	HpIv = 0,
-	AtkIv,
-	DefIv,
-	SpdIv,
-	SpAtkIv,
-	SpDefIv,
-};
-
-
 static u8 CheckPowerItem(u16 item) {
 	u8 itemEffect = ItemId_GetHoldEffect(item);
 	u8 itemQuality = ItemId_GetHoldEffectParam(item);
@@ -267,30 +256,27 @@ static u8 CheckPowerItem(u16 item) {
 	switch (itemQuality)
 	{
 		case QUALITY_POWER_BRACER:
-			return HpIv;
+			return STAT_ATK;
 			
 		case QUALITY_POWER_BELT:
-			return AtkIv;
+			return STAT_DEF;
 			
 		case QUALITY_POWER_LENS:
-			return DefIv;
+			return STAT_SPATK;
 			
 		case QUALITY_POWER_BAND:
-			return SpdIv;
+			return STAT_SPDEF;
 			
 		case QUALITY_POWER_ANKLET:
-			return SpAtkIv;
+			return STAT_SPD;
 			
 		case QUALITY_POWER_WEIGHT:
-			return SpDefIv;
+			return STAT_HP;
 			
 		default:
 			return 0xFF;
 	}
 };
-
-
-
 
 static void InheritIVs(struct Pokemon *egg, struct DayCare *daycare)
 {
@@ -393,32 +379,32 @@ static void InheritIVs(struct Pokemon *egg, struct DayCare *daycare)
     {
         switch (selectedIvs[i])
         {
-            case HpIv:
+            case STAT_HP:
                 iv = GetBoxMonData(&daycare->mons[whichParent[i]].mon, MON_DATA_HP_IV, NULL);
                 SetMonData(egg, MON_DATA_HP_IV, &iv);
                 break;
 				
-            case AtkIv:
+            case STAT_ATK:
                 iv = GetBoxMonData(&daycare->mons[whichParent[i]].mon, MON_DATA_ATK_IV, NULL);
                 SetMonData(egg, MON_DATA_ATK_IV, &iv);
                 break;
 				
-            case DefIv:
+            case STAT_DEF:
                 iv = GetBoxMonData(&daycare->mons[whichParent[i]].mon, MON_DATA_DEF_IV, NULL);
                 SetMonData(egg, MON_DATA_DEF_IV, &iv);
                 break;
 				
-            case SpdIv:
+            case STAT_SPD:
                 iv = GetBoxMonData(&daycare->mons[whichParent[i]].mon, MON_DATA_SPEED_IV, NULL);
                 SetMonData(egg, MON_DATA_SPEED_IV, &iv);
                 break;
 				
-            case SpAtkIv:
+            case STAT_SPATK:
                 iv = GetBoxMonData(&daycare->mons[whichParent[i]].mon, MON_DATA_SPATK_IV, NULL);
                 SetMonData(egg, MON_DATA_SPATK_IV, &iv);
                 break;
 				
-            case SpDefIv:
+            case STAT_SPDEF:
                 iv = GetBoxMonData(&daycare->mons[whichParent[i]].mon, MON_DATA_SPDEF_IV, NULL);
                 SetMonData(egg, MON_DATA_SPDEF_IV, &iv);
                 break;
@@ -719,3 +705,58 @@ void SubtractEggSteps(u32 steps, struct Pokemon* mon)
 }
 
 
+static u8 GetEggStepsToSubtract(void)
+{
+    u8 count, i;
+    for (count = CalculatePlayerPartyCount(), i = 0; i < count; ++i)
+    {
+        if (!GetMonData(&gPlayerParty[i], MON_DATA_SANITY_IS_EGG, NULL))
+        {
+            u8 ability = GetPartyAbility(&gPlayerParty[i]);
+            if (ability == ABILITY_MAGMAARMOR || ability == ABILITY_FLAMEBODY)
+                return 2;
+        }
+    }
+    return 1;
+}
+
+u8 GetAllEggMoves(struct Pokemon* mon, u16* moves, bool8 ignoreAlreadyKnownMoves)
+{
+	u8 numEggMoves;
+	u32 i, j;
+	struct Pokemon dummyMon = {0};
+	u16 eggMovesBuffer[EGG_MOVES_ARRAY_COUNT];
+	bool8 moveInList[MOVES_COUNT] = {FALSE};
+	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
+	u16 eggSpecies = GetEggSpecies(species);
+
+	SetMonData(&dummyMon, MON_DATA_SPECIES, &eggSpecies);
+	numEggMoves = GetEggMoves(&dummyMon, eggMovesBuffer);
+
+	//Filter out any egg moves the Pokemon already knows
+	for (i = 0, j = 0; i < numEggMoves; ++i)
+	{
+		if (!ignoreAlreadyKnownMoves || !MoveInMonMoveset(eggMovesBuffer[i], mon))
+		{
+			moves[j++] = eggMovesBuffer[i];
+			moveInList[eggMovesBuffer[i]] = TRUE;
+		}
+	}
+
+	u16 eggSpecies2 = eggSpecies;
+	AlterSpeciesWithIncenseItems(&eggSpecies2, 0, 0);
+	if (eggSpecies2 != eggSpecies) //Different baby; eg. Marill + Azurill
+	{
+		SetMonData(&dummyMon, MON_DATA_SPECIES, &eggSpecies2);
+		numEggMoves = GetEggMoves(&dummyMon, eggMovesBuffer);
+		
+		//Filter out any egg moves the Pokemon already knows
+		for (i = 0; i < numEggMoves && j < EGG_MOVES_ARRAY_COUNT; ++i)
+		{
+			if (!moveInList[eggMovesBuffer[i]] && !MoveInMonMoveset(eggMovesBuffer[i], mon))
+				moves[j++] = eggMovesBuffer[i];
+		}
+	}
+
+	return j;
+}

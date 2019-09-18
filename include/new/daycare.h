@@ -13,5 +13,6 @@
  
 //Exported Functions
 void AlterSpeciesWithIncenseItems(u16* species, u16 motherItem, u16 fatherItem);
+u8 GetAllEggMoves(struct Pokemon* mon, u16* moves, bool8 ignoreAlreadyKnownMoves);
 
 //Functions Hooked In

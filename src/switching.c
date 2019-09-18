@@ -7,6 +7,7 @@
 #include "../include/new/ai_master.h"
 #include "../include/new/battle_start_turn_start.h"
 #include "../include/new/battle_start_turn_start_battle_scripts.h"
+#include "../include/new/battle_util.h"
 #include "../include/new/cmd49_battle_scripts.h"
 #include "../include/new/damage_calc.h"
 #include "../include/new/form_change.h"
@@ -22,6 +23,7 @@
 
 enum SwitchInStates 
 {
+	SwitchIn_CamomonsReveal,
 	SwitchIn_HealingWish,
 	SwitchIn_ZHealingWish,
 	SwitchIn_Spikes,
@@ -108,6 +110,28 @@ bool8 TryRemovePrimalWeather(u8 bank, u8 ability)
 	return FALSE;
 }
 
+bool8 TryActivateFlowerGift(u8 leavingBank)
+{
+	u32 i = 0;
+
+	if (ABILITY(leavingBank) == ABILITY_AIRLOCK
+	||  ABILITY(leavingBank) == ABILITY_CLOUDNINE)
+		gBattleMons[leavingBank].ability = ABILITY_NONE; //Remove ability because we can't have these anymore
+
+	for (u8 bank = gBanksByTurnOrder[i]; i < gBattlersCount; ++i, bank = gBanksByTurnOrder[i])
+	{
+		if ((ABILITY(bank) == ABILITY_FLOWERGIFT ||  ABILITY(bank) == ABILITY_FORECAST)) //Just in case someone with Air Lock/Cloud Nine switches out
+		{
+			gStatuses3[bank] &= ~STATUS3_SWITCH_IN_ABILITY_DONE;
+		
+			if (AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, bank, 0, 0, 0))
+				return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
 void atk61_drawpartystatussummary(void)
 {
 	int i;
@@ -120,6 +144,11 @@ void atk61_drawpartystatussummary(void)
 
 	if (TryRemovePrimalWeather(gActiveBattler, ABILITY(gActiveBattler)))
 		return;
+
+	if (TryActivateFlowerGift(gActiveBattler))
+		return;
+	
+	gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
 	
 	if (SIDE(gActiveBattler) == 0)
 		party = gPlayerParty;
@@ -190,7 +219,7 @@ void atk4D_switchindataupdate(void)
 		gBattleMons[gActiveBattler].status2 = oldData.status2;
 		
 		//Gastro Acid Passing
-		if (gStatuses3[gActiveBattler] & STATUS3_ABILITY_SUPPRESS) 
+		if (IsAbilitySuppressed(gActiveBattler)) 
 		{
 			gNewBS->SuppressedAbilities[gActiveBattler] = gBattleMons[gActiveBattler].ability;
 			gBattleMons[gActiveBattler].ability = 0;
@@ -247,7 +276,7 @@ void atk4F_jumpifcantswitch(void)
 	if (!(T2_READ_8(gBattlescriptCurrInstr + 1) & ATK4F_DONT_CHECK_STATUSES)
 	&& !IsOfType(gActiveBattler, TYPE_GHOST)
 	&& ITEM_EFFECT(gActiveBattler) != ITEM_EFFECT_SHED_SHELL
-	&& ((gBattleMons[gActiveBattler].status2 & (STATUS2_WRAPPED | STATUS2_ESCAPE_PREVENTION)) || (gStatuses3[gActiveBattler] & STATUS3_ROOTED) || gNewBS->FairyLockTimer))
+	&& ((gBattleMons[gActiveBattler].status2 & (STATUS2_WRAPPED | STATUS2_ESCAPE_PREVENTION)) || (gStatuses3[gActiveBattler] & STATUS3_ROOTED) || IsFairyLockActive()))
 	{
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
 	}
@@ -321,8 +350,11 @@ void atk51_switchhandleorder(void)
 void atk52_switchineffects(void)
 {
 	int i;
+	u8 arg = T2_READ_8(gBattlescriptCurrInstr + 1);
+	if (arg == BS_GET_SCRIPTING_BANK)
+		gBattleScripting->bank = gNewBS->SentInBackup; //Restore scripting backup b/c can get changed
 
-	gActiveBattler = GetBattleBank(T2_READ_8(gBattlescriptCurrInstr + 1));
+	gActiveBattler = GetBattleBank(arg);
 	sub_80174B8(gActiveBattler);
 	gHitMarker &= ~(HITMARKER_FAINTED(gActiveBattler));
 	gSpecialStatuses[gActiveBattler].flag40 = 0;
@@ -337,6 +369,23 @@ void atk52_switchineffects(void)
 		gNewBS->SwitchInEffectsTracker = SwitchIn_PrimalReversion;
 
 	switch (gNewBS->SwitchInEffectsTracker) {
+		case SwitchIn_CamomonsReveal:
+			if (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS)
+			{
+				gBattleScripting->bank = gActiveBattler;
+				BattleScriptPushCursor();
+				gBattlescriptCurrInstr = BattleScript_CamomonsTypeRevealRet;
+							
+				if (gBattleMons[gActiveBattler].type1 == gBattleMons[gActiveBattler].type2)
+					BattleStringLoader = gText_CamomonsTypeReveal;
+				else
+					BattleStringLoader = gText_CamomonsTypeRevealDualType;
+				PREPARE_TYPE_BUFFER(gBattleTextBuff1, gBattleMons[gActiveBattler].type1);
+				PREPARE_TYPE_BUFFER(gBattleTextBuff2, gBattleMons[gActiveBattler].type2);
+			}
+			++gNewBS->SwitchInEffectsTracker;
+			break;
+
 		case SwitchIn_HealingWish:
 			if (gBattleMons[gActiveBattler].hp != gBattleMons[gActiveBattler].maxHP
 			|| gBattleMons[gActiveBattler].status1 != STATUS1_NONE)
@@ -531,7 +580,7 @@ void atk52_switchineffects(void)
 				&& AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, i, 0, 0, 0))
 					return;
 			}
-		
+
 			if (AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, gActiveBattler, 0, 0, 0))
 				return;
 
@@ -729,7 +778,7 @@ void atk8F_forcerandomswitch(void)
 			}
 			gBattleStruct->monToSwitchIntoId[gBankTarget] = i;
 
-			if (!IsLinkDoubleBattle())
+			if (!IsLinkDoubleBattle() && !IsTagBattle())
 				sub_8013F6C(gBankTarget);
 
 			if ((gBattleTypeFlags & BATTLE_TYPE_LINK && gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
@@ -739,7 +788,7 @@ void atk8F_forcerandomswitch(void)
 				sub_8127EC4(gBankTarget ^ BIT_FLANK, i, 1);
 			}
 
-			if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
+			if (IsTagBattle())
 				sub_80571DC(gBankTarget, i);
 		}
 	}
@@ -784,12 +833,12 @@ static void sub_80571DC(u8 battlerId, u8 arg1)
 		// gBattleStruct->field_60[0][i]
 
 		for (i = 0; i < 3; i++)
-			gUnknown_0203B0DC[i] = *(0 * 3 + i + (u8*)(gBattleStruct->field_60));
+			gUnknown_0203B0DC[i] = gBattleStruct->field_60[0][i];
 
 		sub_8127FF4(pokemon_order_func(gBattlerPartyIndexes[battlerId]), pokemon_order_func(arg1)); //In Emerald: sub_81B8FB0
 
 		for (i = 0; i < 3; i++)
-			*(0 * 3 + i + (u8*)(gBattleStruct->field_60)) = gUnknown_0203B0DC[i];
+			gBattleStruct->field_60[0][i] = gUnknown_0203B0DC[i];
 	}
 }
 
@@ -866,6 +915,7 @@ void ClearSwitchBits(u8 bank)
 	gNewBS->IllusionBroken &= ~(gBitTable[bank]);
 	gNewBS->brokeFreeMessage &= ~(gBitTable[bank]);
 	gNewBS->CustapQuickClawIndicator &= ~(gBitTable[bank]);
+	gNewBS->devolveForgotMove &= ~(gBitTable[bank]);
 }
 
 void PartyMenuSwitchingUpdate(void)
@@ -879,7 +929,7 @@ void PartyMenuSwitchingUpdate(void)
 	gBattleStruct->switchoutPartyIndex[gActiveBattler] = gBattlerPartyIndexes[gActiveBattler];
 	if ((gBattleMons[gActiveBattler].status2 & (STATUS2_WRAPPED | STATUS2_ESCAPE_PREVENTION))
 	|| (gStatuses3[gActiveBattler] & (STATUS3_ROOTED | STATUS3_SKY_DROP_TARGET))
-	|| gNewBS->FairyLockTimer)
+	|| IsFairyLockActive())
 	{
 		EmitChoosePokemon(0, PARTY_CANT_SWITCH, 6, ABILITY_NONE, gBattleStruct->field_60[gActiveBattler]);
 	}

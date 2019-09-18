@@ -21,16 +21,16 @@ static u8 LoadCorrectTrainerPicId(void);
 void OpponentHandleChooseMove(void)
 {
 	u8 chosenMoveId;
-    struct ChooseMoveStruct* moveInfo = (struct ChooseMoveStruct*)(&gBattleBufferA[gActiveBattler][4]);
+	struct ChooseMoveStruct* moveInfo = (struct ChooseMoveStruct*)(&gBattleBufferA[gActiveBattler][4]);
 
-    if ((gBattleTypeFlags & (BATTLE_TYPE_TRAINER | BATTLE_TYPE_OAK_TUTORIAL | BATTLE_TYPE_SAFARI | BATTLE_TYPE_ROAMER))
+	if ((gBattleTypeFlags & (BATTLE_TYPE_TRAINER | BATTLE_TYPE_OAK_TUTORIAL | BATTLE_TYPE_SAFARI | BATTLE_TYPE_ROAMER))
 	||   FlagGet(SMART_WILD_FLAG)
 	||	 WildMonIsSmart(gActiveBattler))
-    {
+	{
 		BattleAI_SetupAIData(0xF);
-        chosenMoveId = BattleAI_ChooseMoveOrAction();
+		chosenMoveId = BattleAI_ChooseMoveOrAction();
 
-        switch (chosenMoveId) {
+		switch (chosenMoveId) {
 			case AI_CHOICE_WATCH:
 				EmitTwoReturnValues(1, ACTION_WATCHES_CAREFULLY, 0);
 				break;
@@ -91,28 +91,28 @@ void OpponentHandleChooseMove(void)
 				EmitMoveChosen(1, chosenMoveId, gBankTarget, gNewBS->MegaData->chosen[gActiveBattler], gNewBS->UltraData->chosen[gActiveBattler], gNewBS->ZMoveData->toBeUsed[gActiveBattler]);
 				TryRechoosePartnerMove(moveInfo->moves[chosenMoveId]);
 				break;
-        }
+		}
 
-        OpponentBufferExecCompleted();
-    }
-    else
-    {
-        u16 move;
-        do
-        {
-            chosenMoveId = Random() & 3;
-            move = moveInfo->moves[chosenMoveId];
-        } while (move == MOVE_NONE);
+		OpponentBufferExecCompleted();
+	}
+	else
+	{
+		u16 move;
+		do
+		{
+			chosenMoveId = Random() & 3;
+			move = moveInfo->moves[chosenMoveId];
+		} while (move == MOVE_NONE);
 
-        if (gBattleMoves[move].target & (MOVE_TARGET_USER_OR_PARTNER | MOVE_TARGET_USER))
+		if (gBattleMoves[move].target & (MOVE_TARGET_USER_OR_PARTNER | MOVE_TARGET_USER))
 			EmitMoveChosen(1, chosenMoveId, gActiveBattler, 0, 0, 0);
-        else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+		else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
 			EmitMoveChosen(1, chosenMoveId, GetBattlerAtPosition(Random() & 2), 0, 0, 0);
-        else
+		else
 			EmitMoveChosen(1, chosenMoveId, FOE(gActiveBattler), 0, 0, 0);
 
-        OpponentBufferExecCompleted();
-    }
+		OpponentBufferExecCompleted();
+	}
 }
 
 #define STATE_BEFORE_ACTION_CHOSEN 0
@@ -140,58 +140,58 @@ static void TryRechoosePartnerMove(u16 chosenMove)
 
 void OpponentHandleDrawTrainerPic(void)
 {
-    u32 trainerPicId = LoadCorrectTrainerPicId();
-    s16 xPos;
+	u32 trainerPicId = LoadCorrectTrainerPicId();
+	s16 xPos;
 
-    if (gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_TWO_OPPONENTS))
-    {
-        if ((GetBattlerPosition(gActiveBattler) & BIT_FLANK) != 0) // second mon
-            xPos = 152;
-        else // first mon
-            xPos = 200;
-    }
-    else
-    {
-        xPos = 176;
-    }
+	if (gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_TWO_OPPONENTS))
+	{
+		if ((GetBattlerPosition(gActiveBattler) & BIT_FLANK) != 0) // second mon
+			xPos = 152;
+		else // first mon
+			xPos = 200;
+	}
+	else
+	{
+		xPos = 176;
+	}
 	
-    DecompressTrainerFrontPic(trainerPicId, gActiveBattler); //0x80346C4
-    SetMultiuseSpriteTemplateToTrainerBack(trainerPicId, GetBattlerPosition(gActiveBattler)); //0x803F864
-    gBattlerSpriteIds[gActiveBattler] = CreateSprite(&gMultiuseSpriteTemplate[0], //0x8006F8C
-                                               xPos,
-                                               (8 - gTrainerFrontPicCoords[trainerPicId].coords) * 4 + 40,
-                                               GetBattlerSpriteSubpriority(gActiveBattler)); //0x807685C
+	DecompressTrainerFrontPic(trainerPicId, gActiveBattler); //0x80346C4
+	SetMultiuseSpriteTemplateToTrainerBack(trainerPicId, GetBattlerPosition(gActiveBattler)); //0x803F864
+	gBattlerSpriteIds[gActiveBattler] = CreateSprite(&gMultiuseSpriteTemplate[0], //0x8006F8C
+											   xPos,
+											   (8 - gTrainerFrontPicCoords[trainerPicId].coords) * 4 + 40,
+											   GetBattlerSpriteSubpriority(gActiveBattler)); //0x807685C
 
-    gSprites[gBattlerSpriteIds[gActiveBattler]].pos2.x = -240;
-    gSprites[gBattlerSpriteIds[gActiveBattler]].data[0] = 2;
-    gSprites[gBattlerSpriteIds[gActiveBattler]].oam.paletteNum = IndexOfSpritePaletteTag(gTrainerFrontPicPaletteTable[trainerPicId].tag); //0x80089E8
+	gSprites[gBattlerSpriteIds[gActiveBattler]].pos2.x = -240;
+	gSprites[gBattlerSpriteIds[gActiveBattler]].data[0] = 2;
+	gSprites[gBattlerSpriteIds[gActiveBattler]].oam.paletteNum = IndexOfSpritePaletteTag(gTrainerFrontPicPaletteTable[trainerPicId].tag); //0x80089E8
 	gSprites[gBattlerSpriteIds[gActiveBattler]].data[5] = gSprites[gBattlerSpriteIds[gActiveBattler]].oam.tileNum;
 	gSprites[gBattlerSpriteIds[gActiveBattler]].oam.tileNum = GetSpriteTileStartByTag(gTrainerFrontPicTable[trainerPicId].tag); //0x8008804
-    gSprites[gBattlerSpriteIds[gActiveBattler]].oam.affineParam = trainerPicId;
-    gSprites[gBattlerSpriteIds[gActiveBattler]].callback = sub_8033EEC; //sub_805D7AC in Emerald
+	gSprites[gBattlerSpriteIds[gActiveBattler]].oam.affineParam = trainerPicId;
+	gSprites[gBattlerSpriteIds[gActiveBattler]].callback = sub_8033EEC; //sub_805D7AC in Emerald
 
-    gBattleBankFunc[gActiveBattler] = (u32) CompleteOnBattlerSpriteCallbackDummy; //0x8035AE8
+	gBattleBankFunc[gActiveBattler] = (u32) CompleteOnBattlerSpriteCallbackDummy; //0x8035AE8
 }
 
 void OpponentHandleTrainerSlide(void)
 {	
 
-    u32 trainerPicId = LoadCorrectTrainerPicId();
+	u32 trainerPicId = LoadCorrectTrainerPicId();
 	
-    DecompressTrainerFrontPic(trainerPicId, gActiveBattler);
-    SetMultiuseSpriteTemplateToTrainerBack(trainerPicId, GetBattlerPosition(gActiveBattler));
-    gBattlerSpriteIds[gActiveBattler] = CreateSprite(&gMultiuseSpriteTemplate[0], 176, (8 - gTrainerFrontPicCoords[trainerPicId].coords) * 4 + 40, 0x1E);
+	DecompressTrainerFrontPic(trainerPicId, gActiveBattler);
+	SetMultiuseSpriteTemplateToTrainerBack(trainerPicId, GetBattlerPosition(gActiveBattler));
+	gBattlerSpriteIds[gActiveBattler] = CreateSprite(&gMultiuseSpriteTemplate[0], 176, (8 - gTrainerFrontPicCoords[trainerPicId].coords) * 4 + 40, 0x1E);
 
-    gSprites[gBattlerSpriteIds[gActiveBattler]].pos2.x = 96;
-    gSprites[gBattlerSpriteIds[gActiveBattler]].pos1.x += 32;
-    gSprites[gBattlerSpriteIds[gActiveBattler]].data[0] = -2;
-    gSprites[gBattlerSpriteIds[gActiveBattler]].oam.paletteNum = IndexOfSpritePaletteTag(gTrainerFrontPicPaletteTable[trainerPicId].tag);
-    gSprites[gBattlerSpriteIds[gActiveBattler]].data[5] = gSprites[gBattlerSpriteIds[gActiveBattler]].oam.tileNum;
+	gSprites[gBattlerSpriteIds[gActiveBattler]].pos2.x = 96;
+	gSprites[gBattlerSpriteIds[gActiveBattler]].pos1.x += 32;
+	gSprites[gBattlerSpriteIds[gActiveBattler]].data[0] = -2;
+	gSprites[gBattlerSpriteIds[gActiveBattler]].oam.paletteNum = IndexOfSpritePaletteTag(gTrainerFrontPicPaletteTable[trainerPicId].tag);
+	gSprites[gBattlerSpriteIds[gActiveBattler]].data[5] = gSprites[gBattlerSpriteIds[gActiveBattler]].oam.tileNum;
 	gSprites[gBattlerSpriteIds[gActiveBattler]].oam.tileNum = GetSpriteTileStartByTag(gTrainerFrontPicTable[trainerPicId].tag);
 	gSprites[gBattlerSpriteIds[gActiveBattler]].oam.affineParam = trainerPicId;
-    gSprites[gBattlerSpriteIds[gActiveBattler]].callback = sub_8033EEC;
+	gSprites[gBattlerSpriteIds[gActiveBattler]].callback = sub_8033EEC;
 
-    gBattleBankFunc[gActiveBattler] = (u32) CompleteOnBankSpriteCallbackDummy2;
+	gBattleBankFunc[gActiveBattler] = (u32) CompleteOnBankSpriteCallbackDummy2;
 }
 
 extern u32 break_helper(u32 a);
@@ -199,21 +199,21 @@ extern u32 break_helper2(u32 a);
 
 void OpponentHandleChoosePokemon(void)
 {
-    u8 chosenMonId;
-	
-    if (gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] == PARTY_SIZE)
-    {
-		if (gNewBS->bestMonIdToSwitchInto[gActiveBattler][0] == PARTY_SIZE)
+	u8 chosenMonId;
+
+	if (gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] == PARTY_SIZE)
+	{
+		u8 battlerIn1, battlerIn2, firstId, lastId;
+		pokemon_t* party = LoadPartyRange(gActiveBattler, &firstId, &lastId);
+			
+		if (gNewBS->bestMonIdToSwitchInto[gActiveBattler][0] == PARTY_SIZE
+		||  GetMonData(&party[gNewBS->bestMonIdToSwitchInto[gActiveBattler][0]], MON_DATA_HP, NULL) == 0) //Best mon is dead
 			CalcMostSuitableMonToSwitchInto();
 
-        chosenMonId = GetMostSuitableMonToSwitchInto();
+		chosenMonId = GetMostSuitableMonToSwitchInto();
 		
-        if (chosenMonId == PARTY_SIZE)
-        {
-            u8 battlerIn1, battlerIn2, firstId, lastId;
-			
-			pokemon_t* party = LoadPartyRange(gActiveBattler, &firstId, &lastId);
-
+		if (chosenMonId == PARTY_SIZE)
+		{
 			if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
 			{
 				battlerIn1 = gActiveBattler;
@@ -228,74 +228,74 @@ void OpponentHandleChoosePokemon(void)
 				battlerIn2 = gActiveBattler;
 			}
 				
-            for (chosenMonId = firstId; chosenMonId < lastId; ++chosenMonId)
-            {
-                if (party[chosenMonId].species != SPECIES_NONE
+			for (chosenMonId = firstId; chosenMonId < lastId; ++chosenMonId)
+			{
+				if (party[chosenMonId].species != SPECIES_NONE
 				&& party[chosenMonId].hp != 0
 				&& !GetMonData(&party[chosenMonId], MON_DATA_IS_EGG, 0)
-                && chosenMonId != gBattlerPartyIndexes[battlerIn1]
-                && chosenMonId != gBattlerPartyIndexes[battlerIn2])
-                    break;
-            }
-        }
-    }
-    else
-    {
-        chosenMonId = gBattleStruct->switchoutIndex[SIDE(gActiveBattler)];
-        gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = PARTY_SIZE;
-    }
+				&& chosenMonId != gBattlerPartyIndexes[battlerIn1]
+				&& chosenMonId != gBattlerPartyIndexes[battlerIn2])
+					break;
+			}
+		}
+	}
+	else
+	{
+		chosenMonId = gBattleStruct->switchoutIndex[SIDE(gActiveBattler)];
+		gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = PARTY_SIZE;
+	}
 
 	RemoveBestMonToSwitchInto(gActiveBattler);
-    gBattleStruct->monToSwitchIntoId[gActiveBattler] = chosenMonId;
-    EmitChosenMonReturnValue(1, chosenMonId, 0);
-    OpponentBufferExecCompleted();
+	gBattleStruct->monToSwitchIntoId[gActiveBattler] = chosenMonId;
+	EmitChosenMonReturnValue(1, chosenMonId, 0);
+	OpponentBufferExecCompleted();
 	TryRechoosePartnerMove(MOVE_NONE);
 }
 
 static u8 LoadCorrectTrainerPicId(void) {
 	u8 trainerPicId;
 	
-    if (gTrainerBattleOpponent_A == 0x400) //Was Secret Base in Ruby
-    {
-        trainerPicId = GetSecretBaseTrainerPicIndex();
-    }
+	if (gTrainerBattleOpponent_A == 0x400) //Was Secret Base in Ruby
+	{
+		trainerPicId = GetSecretBaseTrainerPicIndex();
+	}
   /*else if (gTrainerBattleOpponent_A == TRAINER_FRONTIER_BRAIN)
-    {
-        trainerPicId = GetFrontierBrainTrainerPicIndex();
-    }*/
-    else if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
-    {
-        if (gBattleTypeFlags & (BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_TOWER_LINK_MULTI))
-        {
-            if (gActiveBattler == 1)
-                trainerPicId = GetFrontierTrainerFrontSpriteId(gTrainerBattleOpponent_A, 0);
-            else
-                trainerPicId = GetFrontierTrainerFrontSpriteId(VarGet(SECOND_OPPONENT_VAR), 1);
-        }
-        else
-        {
-            trainerPicId = GetFrontierTrainerFrontSpriteId(gTrainerBattleOpponent_A, 0);
-        }
-    }
+	{
+		trainerPicId = GetFrontierBrainTrainerPicIndex();
+	}*/
+	else if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
+	{
+		if (gBattleTypeFlags & (BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_TOWER_LINK_MULTI))
+		{
+			if (gActiveBattler == 1)
+				trainerPicId = GetFrontierTrainerFrontSpriteId(gTrainerBattleOpponent_A, 0);
+			else
+				trainerPicId = GetFrontierTrainerFrontSpriteId(VarGet(SECOND_OPPONENT_VAR), 1);
+		}
+		else
+		{
+			trainerPicId = GetFrontierTrainerFrontSpriteId(gTrainerBattleOpponent_A, 0);
+		}
+	}
 	else if (gBattleTypeFlags & BATTLE_TYPE_TRAINER_TOWER)
 	{
 		trainerPicId = GetTrainerTowerTrainerPicIndex(); //0x815DA3C
 	}
-    else if (gBattleTypeFlags & BATTLE_TYPE_EREADER_TRAINER)
-    {
-        trainerPicId = GetEreaderTrainerFrontSpriteId(); //0x80E7420
-    }
-    else if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
-    {
-        if (gActiveBattler == 1)
+	else if (gBattleTypeFlags & BATTLE_TYPE_EREADER_TRAINER)
+	{
+		trainerPicId = GetEreaderTrainerFrontSpriteId(); //0x80E7420
+	}
+	else if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
+	{
+		if (gActiveBattler == 1)
 			trainerPicId = gTrainers[gTrainerBattleOpponent_A].trainerPic;
-        else
-            trainerPicId = gTrainers[VarGet(SECOND_OPPONENT_VAR)].trainerPic;
-    }
-    else
-    {
-        trainerPicId = gTrainers[gTrainerBattleOpponent_A].trainerPic;
-    }
+		else
+			trainerPicId = gTrainers[VarGet(SECOND_OPPONENT_VAR)].trainerPic;
+	}
+	else
+	{
+		trainerPicId = gTrainers[gTrainerBattleOpponent_A].trainerPic;
+	}
 	
 	return trainerPicId;
 }

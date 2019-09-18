@@ -64,8 +64,8 @@ sp056_DetermineBattlePointsToGive 0815FEB8
 sp057_ShowFrontierRecords 0815FEBC
 sp058_BufferSwarmText 0815FEC0 
 sp059_BufferSpeciesRoamingText 0815FEC4 
-#sp05A_WildDataSwitch 0815FEC0
-#sp05B_WildDataSwitchCanceller 0815FEC4
+sp05A_WildDataSwitch 0815FEC8
+sp05B_WildDataSwitchCanceller 0815FECC
 
 sp061_LoadTimerFromVariable 0815FEE4
 sp062_PokemonEraser 0815FEE8
@@ -80,6 +80,11 @@ sp06A_GivePlayerFrontierMonByLoadedSpread 0815FF08
 sp06B_ReplacePlayerTeamWithMultiTrainerTeam 0815FF0C
 sp06C_SpliceFrontierTeamWithPlayerTeam 0815FF10
 sp06D_LoadFrontierMultiTrainerById 0815FF14
+sp06E_BufferBattleSandsRecords 0815FF18
+sp06F_CanTeamParticipateInBattleMine 0815FF1C
+sp070_RandomizeBattleMineBattleOptions 0815FF20
+sp071_LoadBattleMineRecordTier 0815FF24
+sp072_LoadBattleCircusEffects 0815FF28
 
 sp075_MeasurePokemon1 0815FF34
 sp076_MeasurePokemon2 0815FF38
@@ -98,8 +103,8 @@ sp088_GetSafariCounter 0815FF80
 sp089_SetSafariCounter 0815FF84
 sp08A_ReadPedometerValue 0815FF88
 
-sp097_WildGroundBattle 0815FFBC
-sp098_WildSeaBattle 0815FFC0
+sp097_StartGroundBattle 0815FFBC
+sp098_StartWaterBattle 0815FFC0
 sp09A_StopSounds 0815FFC8
 sp09C_OldManBattleModifier 0815FFD0
 
@@ -122,6 +127,10 @@ sp0C9_ForceOneKeyInput 08160084
 sp0CA_IgnoreKeys 08160088
 sp0CB_PlaceKeyScript 0816008C
 sp0CC_CanLearnDracoMeteorInParty 08160090
+
+sp0CF_BufferAbilityName 0816009C
+
+sp156_StartGhostBattle 081602B8
 
 sp196_TryCopyTMNameToBuffer1 081603B8
 

@@ -177,6 +177,8 @@ typedef u8 Battle_Buffer_T[0x200];
 #define AbilityPopUpHelper (*((u8*) 0x203E02F))
 #define BackupHWord (*((u16*) 0x203E030))
 
+//#define gBattleCircusFlags (*((u32*) 0x203E044))
+
 //Don't go past 0x203E048
 
 #define FIRST_NEW_BATTLE_RAM_LOC ((u8*) 0x203E020)

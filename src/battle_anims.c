@@ -124,6 +124,24 @@ const union AffineAnimCmd* const gSpriteAffineAnimTable_GrowingSuperpower[] =
 	gSpriteAffineAnim_GrowingSuperpowerEnemyAttack,
 };
 
+const struct OamData sDracoMeteorRockOAM =
+{
+	.affineMode = ST_OAM_AFFINE_OFF,
+	.objMode = ST_OAM_OBJ_NORMAL,
+	.shape = SPRITE_SHAPE(32x32),
+	.size = SPRITE_SIZE(32x32),
+	.priority = 1,
+};
+
+const struct OamData sDracoMeteorTailOAM =
+{
+	.affineMode = ST_OAM_AFFINE_DOUBLE,
+	.objMode = ST_OAM_OBJ_BLEND,
+	.shape = SPRITE_SHAPE(16x16),
+	.size = SPRITE_SIZE(16x16),
+	.priority = 2,
+};
+
 //This file's functions:
 static void InitSpritePosToAnimTargetsCentre(struct Sprite *sprite, bool8 respectMonPicOffsets);
 static void InitSpritePosToAnimAttackersCentre(struct Sprite *sprite, bool8 respectMonPicOffsets);
@@ -982,6 +1000,49 @@ void SpriteCB_GrowingSuperpower(struct Sprite *sprite)
     sprite->callback = (void*) 0x807563D;
 }
 
+extern const struct SpriteTemplate gDracoMeteorTailSpriteTemplate;
+static void AnimDracoMeteorRockStep(struct Sprite *sprite)
+{	
+    sprite->pos2.x = ((sprite->data[2] - sprite->data[0]) * sprite->data[5]) / sprite->data[4];
+    sprite->pos2.y = ((sprite->data[3] - sprite->data[1]) * sprite->data[5]) / sprite->data[4];
+
+    if (sprite->data[5] == sprite->data[4])
+		DestroyAnimSprite(sprite);
+
+    sprite->data[5]++;
+}
+
+// Moves a shooting star across the screen that leaves little twinkling stars behind its path.
+// arg 0: initial x pixel offset
+// arg 1: initial y pixel offset
+// arg 2: destination x pixel offset
+// arg 3: destination y pixel offset
+// arg 4: duration
+void SpriteCB_DracoMeteorRock(struct Sprite *sprite)
+{
+    if (SIDE(gBattleAnimTarget) == B_SIDE_PLAYER)
+    {
+        sprite->data[0] = sprite->pos1.x - gBattleAnimArgs[0];
+        sprite->data[2] = sprite->pos1.x - gBattleAnimArgs[2];
+    }
+    else
+    {
+        sprite->data[0] = sprite->pos1.x + gBattleAnimArgs[0];
+        sprite->data[2] = sprite->pos1.x + gBattleAnimArgs[2];
+    }
+
+    sprite->data[1] = sprite->pos1.y + gBattleAnimArgs[1];
+    sprite->data[3] = sprite->pos1.y + gBattleAnimArgs[3];
+    sprite->data[4] = gBattleAnimArgs[4];
+	
+	sprite->data[6] = gBattleAnimArgs[2];
+	sprite->data[7] = gBattleAnimArgs[3];
+	
+    sprite->pos1.x = sprite->data[0];
+    sprite->pos1.y = sprite->data[1];
+    sprite->callback = AnimDracoMeteorRockStep;
+}
+
 // Scales up the target mon sprite
 // Used in Let's Snuggle Forever
 // No args.
@@ -1079,8 +1140,13 @@ void DoubleWildAnimBallThrowFix(void)
 								gSprites[sprite].data[7] = TRUE;	\
 								gSprites[sprite].invisible = TRUE;	\
 							}										\
+							else									\
+							{										\
+								gSprites[sprite].data[7] = FALSE;	\
+							}										\
 							break;									\
 						default:									\
+																	\
 							if (gSprites[sprite].data[7])			\
 							{										\
 								gSprites[sprite].invisible = FALSE;	\

@@ -4,6 +4,7 @@
 #include "../include/constants/items.h"
 #include "../include/constants/trainer_classes.h"
 
+#include "../include/new/battle_util.h"
 #include "../include/new/Helper_Functions.h"
 #include "../include/new/form_change.h"
 #include "../include/new/frontier.h"
@@ -105,7 +106,7 @@ ability_t GetBankMegaFormAbility(u8 bank)
 {
 	const struct Evolution* evos;
 
-	if (!(gStatuses3[bank] & STATUS3_ABILITY_SUPPRESS))
+	if (!IsAbilitySuppressed(bank))
 	{
 		evos = CanMegaEvolve(bank, FALSE);
 		if (evos != NULL)
@@ -401,6 +402,14 @@ const u8* GetTrainerName(u8 bank)
 	u16 linkOpponent2 = GetBattlerMultiplayerId(BATTLE_PARTNER(BATTLE_OPPOSITE(gLinkPlayers[multiplayerId].id)));
 	
 	switch (GetBattlerPosition(bank)) {
+		case B_POSITION_PLAYER_LEFT:
+			if (InBattleSands())
+			{
+				trainerId = BATTLE_TOWER_MULTI_TRAINER_TID;
+				battlerNum = 2; //Name stored in partner var
+			}
+			break;
+
 		case B_POSITION_OPPONENT_LEFT:
 			if (gBattleTypeFlags & BATTLE_TYPE_LINK)
 				trainerId = linkOpponent1;
@@ -416,6 +425,13 @@ const u8* GetTrainerName(u8 bank)
 			}
 			else if (gBattleTypeFlags & BATTLE_TYPE_LINK && gBattleTypeFlags & BATTLE_TYPE_MULTI)
 				trainerId = linkPartner;
+			else if (InBattleSands())
+			{
+				trainerId = BATTLE_TOWER_MULTI_TRAINER_TID;
+				battlerNum = 2; //Name stored in partner var
+			}
+			else
+				battlerNum = 0;
 			break;
 		
 		case B_POSITION_OPPONENT_RIGHT:
@@ -425,7 +441,10 @@ const u8* GetTrainerName(u8 bank)
 			else if (gBattleTypeFlags & BATTLE_TYPE_LINK)
 				trainerId = linkOpponent1;
 			else if (!(gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS))
+			{
 				trainerId = gTrainerBattleOpponent_A;
+				battlerNum = 0;
+			}
 			else
 				trainerId = SECOND_OPPONENT;
 			break;

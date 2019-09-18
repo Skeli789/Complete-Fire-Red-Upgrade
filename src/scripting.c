@@ -23,6 +23,7 @@
 #include "../include/constants/pokedex.h"
 #include "../include/constants/songs.h"
 
+#include "../include/new/battle_strings.h"
 #include "../include/new/catching.h"
 #include "../include/new/dns.h"
 #include "../include/new/Helper_Functions.h"
@@ -34,8 +35,9 @@
 #include "../include/new/read_keys.h"
 #include "../include/new/roamer.h"
 #include "../include/new/text.h"
-#include "../include/new/Vanilla_functions_battle.h"
 #include "../include/new/scrolling_multichoice.h"
+#include "../include/new/Vanilla_functions_battle.h"
+#include "../include/new/wild_encounter.h"
 
 /*
 NOTES: 
@@ -1166,12 +1168,14 @@ bool8 sp059_BufferSpeciesRoamingText(void)
 	return TRUE;
 }
 
-void sp05A_WildDataSwitch(void) {
-	return;
+void sp05A_WildDataSwitch(void)
+{
+	gWildDataSwitch = gLoadPointer;
 }
 
-void sp05B_WildDataSwitchCanceller(void) {
-	return;
+void sp05B_WildDataSwitchCanceller(void)
+{
+	gWildDataSwitch = NULL;
 }
 
 void sp0AC_LoadTrainerBDefeatText(void)
@@ -1501,17 +1505,15 @@ u16 sp07F_GetTileBehaviour(void)
 	return Var8004 & 3;
 }
 
-
-
-/*	// in src/Assembly/main.s
-void sp097_StartGroundBattle(void) {
-	return;
+void sp097_StartGroundBattle(void)
+{
+	StartRandomWildEncounter(FALSE);
 }
 
-void sp098_StartWaterBattle(void) {
-	return;
+void sp098_StartWaterBattle(void)
+{
+	StartRandomWildEncounter(TRUE);
 }
-*/
 
 // WALKING SCRIPTS
 void sp081_SetWalkingScript(void) {
@@ -1736,11 +1738,11 @@ void sp0B0_LoadPartyPokemonTypes(void)
 	}
 }
 
-//@Details: Opens the bag and let's the player select an item.
+//@Details: Opens the bag and lets the player select an item.
 //@Input: 	Var 0x8000: 0 = Any Pocket, Open From Item's Pocket
 //						1 = Any Pocket, Open From Key Item's Pocket
 //						2 = Any Pocket, Open From Poke Ball Pocket
-//						3 = Any Pocket Open From Item's Pocket
+//						3 = Any Pocket, Open From Item's Pocket
 //						4 = Berry Pouch
 //						5 = TM Case
 //@Returns: Var 0x800E: The item the player chose. 0 if they chose nothing.
@@ -2414,7 +2416,14 @@ void ShowItemSpriteOnFind(void)
 {
 #ifdef ITEM_PICTURE_ACQUIRE
 	s16 x, y;
-	u8 iconSpriteId = AddItemIconSprite(ITEM_TAG, ITEM_TAG, Var8004);
+	u8 iconSpriteId;
+
+	#ifdef UNBOUND
+		if (Var8004 == ITEM_TM59_DRAGON_PULSE)
+			iconSpriteId = AddItemIconSprite(ITEM_TAG, ITEM_TAG, ITEM_TM02_DRAGON_CLAW); //Replace the close bag arrow with a Dragon TM sprite
+		else
+	#endif
+			iconSpriteId = AddItemIconSprite(ITEM_TAG, ITEM_TAG, Var8004);
 
     if (iconSpriteId != MAX_SPRITES)
     {
@@ -2499,8 +2508,6 @@ void TryAppendSOntoEndOfItemString(void)
 	}
 }
 
-
-
 ///////////// EXPANDED TEXT BUFFERS //////////////////////////////////////////
 u8* sScriptStringVars[12] =
 {
@@ -2563,6 +2570,14 @@ u8* LoadTextBuffer0D(void)
 	return sScriptStringVars[11];
 }
 
+//@Details: Buffers the given ability name to the chosen buffer.
+//@Input: Var 0x8000 - Ability Num
+//	      Var 0x8001 - Buffer #
+void sp0CF_BufferAbilityName(void)
+{
+	const u8* name = GetAbilityName(Var8000);
+	StringCopy(sScriptStringVars[Var8001], name);
+}
 
 //////////////////EXPANDED COINS///////////////////////
 #ifdef SAVE_BLOCK_EXPANSION
@@ -2703,8 +2718,7 @@ void ConvertCoinInt(u32 coinAmount)
     ConvertIntToDecimalStringN(gStringVar1, coinAmount, STR_CONV_MODE_RIGHT_ALIGN, MAX_COINS_DIGITS);
 }
 
-
-
+#ifdef SCROLLING_MULTICHOICE
 
 //////////////////////////////////
 ///// Scrolling Multichoice //////
@@ -2762,8 +2776,11 @@ const struct ScrollingSizePerOpts sScrollingSizes[] = {
 	{.maxShowed = 9, .height = 16},
 };
 
-void SetScrollingListSize(u8 taskId)
+#endif
+
+void SetScrollingListSize(unusedArg u8 taskId)
 {
+#ifdef SCROLLING_MULTICHOICE
 	u8 maxShowed = Var8001;
 	if (maxShowed < MIN_NUM_SHOWED || maxShowed > MAX_NUM_SHOWED)
 		maxShowed = 4;
@@ -2782,18 +2799,24 @@ void SetScrollingListSize(u8 taskId)
 	gTasks[taskId].data[2] = 1;	//x
 	gTasks[taskId].data[3] = 1;	//y
 	gTasks[taskId].data[4] = 0xC;	//width?
+#endif
 }
 
 int GetSizeOfMultiList(void)
 {
+#ifdef SCROLLING_MULTICHOICE
 	return sScrollingSets[Var8000].count;
+#else
+	return 0;
+#endif
 }
 
 
 const u8** GetScrollingMultiList(void)
 {
+#ifdef SCROLLING_MULTICHOICE
 	return sScrollingSets[Var8000].set;
+#else
+	return 0;
+#endif
 }
-
-
-

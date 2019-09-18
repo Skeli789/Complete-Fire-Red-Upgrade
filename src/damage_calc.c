@@ -9,6 +9,7 @@
 #include "../include/new/accuracy_calc.h"
 #include "../include/new/AI_Helper_Functions.h"
 #include "../include/new/battle_start_turn_start.h"
+#include "../include/new/battle_util.h"
 #include "../include/new/damage_calc.h"
 #include "../include/new/frontier.h"
 #include "../include/new/general_bs_commands.h"
@@ -59,13 +60,13 @@ void atk04_critcalc(void) {
 
 	if (defAbility == ABILITY_BATTLEARMOR
 	||  defAbility == ABILITY_SHELLARMOR
-	||  gStatuses3[gBankAttacker] & STATUS3_CANT_SCORE_A_CRIT
+	||  CantScoreACrit(gBankAttacker, NULL)
 	||  gBattleTypeFlags & (BATTLE_TYPE_OLD_MAN | BATTLE_TYPE_OAK_TUTORIAL | BATTLE_TYPE_POKE_DUDE)
 	||  gNewBS->LuckyChantTimers[SIDE(gBankTarget)])
 			confirmedCrit = FALSE;
 
 	else if ((atkAbility == ABILITY_MERCILESS && (gBattleMons[gBankTarget].status1 & STATUS_PSN_ANY))
-	|| gNewBS->LaserFocusTimers[gBankAttacker]
+	|| IsLaserFocused(gBankAttacker)
 	|| CheckTableForMove(gCurrentMove, AlwaysCritTable))
 		confirmedCrit = TRUE;
 
@@ -107,7 +108,7 @@ static u8 CalcPossibleCritChance(u8 bankAtk, u8 bankDef, u16 move, struct Pokemo
 	u8 defAbility = ABILITY(bankDef);
 	u8 atkEffect = 0;
 	u16 atkSpecies;
-	u32 atkStatus2, atkStatus3;
+	u32 atkStatus2;
 	u16 critChance = 0;
 
 	switch (CheckParty) {
@@ -116,27 +117,25 @@ static u8 CalcPossibleCritChance(u8 bankAtk, u8 bankDef, u16 move, struct Pokemo
 			atkEffect = ITEM_EFFECT(bankAtk);
 			atkSpecies = gBattleMons[bankAtk].species;
 			atkStatus2 = gBattleMons[bankAtk].status2;
-			atkStatus3 = gStatuses3[bankAtk];
 			break;
 
 		default:
 			atkAbility = GetPartyAbility(atkMon);
 			atkSpecies = atkMon->species;
-			if (atkAbility != ABILITY_KLUTZ && !gNewBS->MagicRoomTimer)
+			if (atkAbility != ABILITY_KLUTZ && !IsMagicRoomActive())
 				atkEffect = ItemId_GetHoldEffect(atkMon->item);
 			atkStatus2 = 0;
-			atkStatus3 = 0;
 	}
 
 	if (defAbility == ABILITY_BATTLEARMOR
 	||  defAbility == ABILITY_SHELLARMOR
-	||  atkStatus3 & STATUS3_CANT_SCORE_A_CRIT
+	||  CantScoreACrit(bankAtk, atkMon)
 	||  gBattleTypeFlags & (BATTLE_TYPE_OLD_MAN | BATTLE_TYPE_OAK_TUTORIAL)
 	||  gNewBS->LuckyChantTimers[SIDE(bankDef)])
 		return FALSE;
 
 	else if ((atkAbility == ABILITY_MERCILESS && (gBattleMons[bankDef].status1 & STATUS_PSN_ANY))
-	|| (gNewBS->LaserFocusTimers[bankAtk] && !CheckParty)
+	|| (IsLaserFocused(bankAtk) && !CheckParty)
 	|| CheckTableForMove(move, AlwaysCritTable))
 		return TRUE;
 
@@ -678,7 +677,7 @@ u8 AI_TypeCalc(u16 move, u8 bankAtk, struct Pokemon* monDef) {
 	return flags;
 }
 
-//This calc takes into account things like Pokemon Mega Evolving and Illusion
+//This calc takes into account things like Pokemon Mega Evolving, Protean, & Illusion
 u8 AI_SpecialTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 {
 	u8 moveType;
@@ -695,7 +694,10 @@ u8 AI_SpecialTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 	atkType2 = gBattleMons[bankAtk].type2;
 	atkType3 = gBattleMons[bankAtk].type3;
 	moveType = GetMoveTypeSpecial(bankAtk, move);
-	
+
+	if (atkAbility == ABILITY_PROTEAN)
+		atkType1 = atkType2 = atkType3 = moveType;
+
 	if (gStatuses3[bankDef] & STATUS3_ILLUSION && gDisableStructs[bankDef].isFirstTurn) //Under illusion and haven't figured it out yet
 	{
 		struct Pokemon* illusionMon = GetIllusionPartyData(bankDef);
@@ -918,7 +920,7 @@ TYPE_LOOP_AI:
 static void ModulateDmgByType(u8 multiplier, const u16 move, const u8 moveType, const u8 defType, const u8 defBank, u8* flags, struct Pokemon* monDef, bool8 CheckPartyDef) {
 
 	#ifdef INVERSE_BATTLES
-		if (FlagGet(INVERSE_FLAG)) {
+		if (IsInverseBattle()) {
 			switch (multiplier) {
 				case TYPE_MUL_NO_EFFECT:
 					multiplier = TYPE_MUL_SUPER_EFFECTIVE;
@@ -998,7 +1000,7 @@ u8 GetMoveTypeSpecial(u8 bankAtk, u16 move) {
 
 //Change Normal-type Moves
 	if (moveType == TYPE_NORMAL) {
-		if (gNewBS->IonDelugeTimer)
+		if (IsIonDelugeActive())
 			return TYPE_ELECTRIC;
 
 		if ((!gNewBS->ZMoveData->active && !gNewBS->ZMoveData->viewing) || SPLIT(move) == SPLIT_STATUS) {
@@ -1074,7 +1076,7 @@ static bool8 AbilityCanChangeTypeAndBoost(u8 bankAtk, u16 move) {
 
 //Check Normal-type Moves
 	if (moveType == TYPE_NORMAL) {
-		if (gNewBS->IonDelugeTimer)
+		if (IsIonDelugeActive())
 			return FALSE;
 
 		if ((!gNewBS->ZMoveData->active && !gNewBS->ZMoveData->viewing) || SPLIT(move) == SPLIT_STATUS) {
@@ -1150,14 +1152,14 @@ u8 GetExceptionMoveType(u8 bankAtk, u16 move) {
 			break;
 
 		case MOVE_JUDGMENT:
-			if (effect == ITEM_EFFECT_PLATE && !gNewBS->MagicRoomTimer)
+			if (effect == ITEM_EFFECT_PLATE)
 				moveType = quality;
 			else
 				moveType = TYPE_NORMAL;
 			break;
 
 		case MOVE_TECHNOBLAST:
-			if (effect == ITEM_EFFECT_DRIVE && !gNewBS->MagicRoomTimer)
+			if (effect == ITEM_EFFECT_DRIVE)
 				moveType = quality;
 			else
 				moveType = TYPE_NORMAL;
@@ -1187,7 +1189,8 @@ u8 GetExceptionMoveType(u8 bankAtk, u16 move) {
 					moveType = TYPE_MYSTERY;
 			}
 	}
-	if (moveType == TYPE_NORMAL && gNewBS->IonDelugeTimer)
+
+	if (moveType == TYPE_NORMAL && IsIonDelugeActive())
 		moveType = TYPE_ELECTRIC;
 
 	return moveType;
@@ -1444,11 +1447,13 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 		}
 	}
 
-	if (gNewBS->WonderRoomTimer) {
+	if (IsWonderRoomActive())
+	{
 		defense = defender->spDefense;
 		spDefense = defender->defense;
 	}
-	else {
+	else
+	{
 		defense = defender->defense;
 		spDefense = defender->spDefense;
 	}
@@ -1969,13 +1974,13 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 //Sport Checks
 	switch (type) {
 		case TYPE_FIRE:
-			if (gNewBS->WaterSportTimer) {
+			if (IsWaterSportActive()) {
 				attack = udivsi(attack, 3);
 				spAttack = udivsi(spAttack, 3);
 			}
 			break;
 		case TYPE_ELECTRIC:
-			if (gNewBS->MudSportTimer) {
+			if (IsMudSportActive()) {
 				attack = udivsi(attack, 3);
 				spAttack = udivsi(spAttack, 3);
 			}
@@ -2974,13 +2979,13 @@ u16 CalcVisualBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 power, u8 moveType
 //Sport Checks
 	switch (moveType) {
 		case TYPE_FIRE:
-			if (gNewBS->WaterSportTimer) {
+			if (IsWaterSportActive()) {
 				attack = udivsi(attack, 3);
 				spAttack = udivsi(spAttack, 3);
 			}
 			break;
 		case TYPE_ELECTRIC:
-			if (gNewBS->MudSportTimer) {
+			if (IsMudSportActive()) {
 				attack = udivsi(attack, 3);
 				spAttack = udivsi(spAttack, 3);
 			}

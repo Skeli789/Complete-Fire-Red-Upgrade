@@ -5,6 +5,7 @@
 
 #include "../include/new/ability_battle_scripts.h"
 #include "../include/new/battle_start_turn_start.h"
+#include "../include/new/battle_util.h"
 #include "../include/new/CMD49.h"
 #include "../include/new/cmd49_battle_scripts.h"
 #include "../include/new/form_change.h"
@@ -283,8 +284,12 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			|| ITEM_POCKET(gBankTarget) != POCKET_BERRY_POUCH
 			|| ITEM_EFFECT(gBankTarget) == ITEM_EFFECT_JABOCA_ROWAP_BERRY) //Only berries that activate before pluck
 			{
-				if (ItemBattleEffects(ItemEffects_ContactTarget, gBankTarget, TRUE, FALSE))
-					effect = TRUE;
+				if (gBattleMoves[gCurrentMove].effect != EFFECT_KNOCK_OFF
+				|| (ITEM_EFFECT(gBankTarget) != ITEM_EFFECT_KEE_BERRY && ITEM_EFFECT(gBankTarget) != ITEM_EFFECT_MARANGA_BERRY)) //Only contact items that don't activate first
+				{
+					if (ItemBattleEffects(ItemEffects_ContactTarget, gBankTarget, TRUE, FALSE))
+						effect = TRUE;
+				}
 			}
 			gBattleScripting->atk49_state++;
 			break;
@@ -734,7 +739,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 						stats[STAT_STAGE_SPDEF-2] = gBattleMons[gBankAttacker].spDefense;
 						stats[STAT_STAGE_SPEED+1] = gBattleMons[gBankAttacker].speed;
 						
-						if (gNewBS->WonderRoomTimer) {
+						if (IsWonderRoomActive()) {
 							temp = stats[STAT_STAGE_DEF-1];
 							stats[STAT_STAGE_DEF-1] = stats[STAT_STAGE_SPDEF-2]; //-2 b/c shifted left due to speed
 							stats[STAT_STAGE_SPDEF-2] = temp;
@@ -812,7 +817,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
                 {
                     gBattleMons[gBankAttacker].status2 &= ~(STATUS2_MULTIPLETURNS);
 					
-                    if (!(gBattleMons[gBankAttacker].status2 & STATUS2_CONFUSION)
+                    if (!IsConfused(gBankAttacker)
 					&& ABILITY(gBankAttacker) != ABILITY_OWNTEMPO
 					&& !(CheckGrounding(gBankAttacker) && TerrainType == MISTY_TERRAIN))
                     {
@@ -1068,7 +1073,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 						gNewBS->NoSymbiosisByte = TRUE;
 						ForceSwitchHelper = Force_Switch_Red_Card;
 						gBattlescriptCurrInstr = BattleScript_Atk49; //Cancel's U-Turn and Volt Switch
-						gActiveBattler = gBattleScripting->bank = SeedHelper[1] = banks[i];
+						gActiveBattler = gBattleScripting->bank = gNewBS->originalTargetBackup = banks[i];
 						gLastUsedItem = ITEM(banks[i]);
 						BattleScriptPushCursor();
 						gBattlescriptCurrInstr = BattleScript_RedCard;
@@ -1077,7 +1082,6 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 					}
 				}
 			}
-			*SeedHelper = 0; //For Later
 			gBattleScripting->atk49_state++;
 			break;
 			
@@ -1100,28 +1104,31 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 				}
 			}
 			gBattleScripting->atk49_state++;
+			gNewBS->switchOutBankLooper = 0;
 			break;
 
 		case ATK49_SWITCH_OUT_ABILITIES:
 			gBankAttacker = gNewBS->originalAttackerBackup;
 			if (gBattleMoves[gCurrentMove].effect != EFFECT_ROAR)
 			{
-				for (; *SeedHelper < gBattlersCount; ++*SeedHelper)
+				for (; gNewBS->switchOutBankLooper < gBattlersCount; ++gNewBS->switchOutBankLooper)
 				{
-					if (*SeedHelper != gBankAttacker
+					u8 bank = gBanksByTurnOrder[gNewBS->switchOutBankLooper];
+				
+					if (bank != gBankAttacker
 					&&  !SheerForceCheck()
-					&& (ABILITY(*SeedHelper) == ABILITY_WIMPOUT || ABILITY(*SeedHelper) == ABILITY_EMERGENCYEXIT)
-					&&  !(gNewBS->ResultFlags[*SeedHelper] & MOVE_RESULT_NO_EFFECT)
-					&&  !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, *SeedHelper)
-					&&  !(gStatuses3[*SeedHelper] & (STATUS3_SKY_DROP_ANY))
-					&&  gBattleMons[*SeedHelper].hp
-					&&  gBattleMons[*SeedHelper].hp <= gBattleMons[*SeedHelper].maxHP / 2
-					&&  gBattleMons[*SeedHelper].hp + gNewBS->DamageTaken[*SeedHelper] > gBattleMons[*SeedHelper].maxHP / 2) //Fell this turn
+					&& (ABILITY(bank) == ABILITY_WIMPOUT || ABILITY(bank) == ABILITY_EMERGENCYEXIT)
+					&&  !(gNewBS->ResultFlags[bank] & MOVE_RESULT_NO_EFFECT)
+					&&  !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bank)
+					&&  !(gStatuses3[bank] & (STATUS3_SKY_DROP_ANY))
+					&&  BATTLER_ALIVE(bank)
+					&&  gBattleMons[bank].hp <= gBattleMons[bank].maxHP / 2
+					&&  gBattleMons[bank].hp + gNewBS->DamageTaken[bank] > gBattleMons[bank].maxHP / 2) //Fell this turn
 					{
 						if (gBattleMoves[gCurrentMove].effect == EFFECT_BATON_PASS)
 							gBattlescriptCurrInstr = BattleScript_Atk49; //Cancel switchout for U-Turn & Volt Switch
 						
-						gActiveBattler = gBattleScripting->bank = *SeedHelper;
+						gActiveBattler = gBattleScripting->bank = bank;
 						BattleScriptPushCursor();
 						gBattlescriptCurrInstr = BattleScript_EmergencyExit;
 						effect = 1;

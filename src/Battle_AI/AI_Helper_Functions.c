@@ -9,6 +9,7 @@
 #include "../../include/new/ai_master.h"
 #include "../../include/new/AI_scripts.h"
 #include "../../include/new/battle_start_turn_start.h"
+#include "../../include/new/battle_util.h"
 #include "../../include/new/damage_calc.h"
 #include "../../include/new/end_turn.h"
 #include "../../include/new/general_bs_commands.h"
@@ -37,6 +38,9 @@ bool8 CanKillAFoe(u8 bank)
 
 bool8 CanKnockOut(u8 bankAtk, u8 bankDef)
 {
+	if (!BATTLER_ALIVE(bankAtk) || !BATTLER_ALIVE(bankDef))
+		return FALSE; //Can't KO if you're dead or target is dead
+
 	return gNewBS->canKnockOut[bankAtk][bankDef];
 }
 
@@ -201,16 +205,68 @@ bool8 MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(u16 move, u8 bankAtk, u8 ba
 
 		if (!(gBitTable[i] & moveLimitations))
 		{
-			if (gBattleMoves[move].effect == EFFECT_RECHARGE)
-				currAcc = 49; //Set recharge moves to a pretty low number only higher than OHKO moves
-			else
-				currAcc = AccuracyCalc(currMove, bankAtk, bankDef);
+			currAcc = CalcAIAccuracy(currMove, bankAtk, bankDef);
 
 			if ((!checkGoingFirst || MoveWouldHitFirst(currMove, bankAtk, bankDef))
-			&& MoveKnocksOutXHits(currMove, bankAtk, bankDef, 1)
-			&& (MoveWillHit(currMove, bankAtk, bankDef) || currAcc > bestAcc))
+			&& MoveKnocksOutXHits(currMove, bankAtk, bankDef, 1))
+			{
+				if (MoveWillHit(currMove, bankAtk, bankDef) || currAcc > bestAcc)
+				{
+					bestAcc = currAcc;
+					bestMoveIndex = i;
+				}
+				else if (currAcc == bestAcc)
+				{
+					if (PriorityCalc(bankAtk, ACTION_USE_MOVE, currMove) > PriorityCalc(bankAtk, ACTION_USE_MOVE, gBattleMons[bankAtk].moves[bestMoveIndex])) //The better move is still the one with more priority
+						bestMoveIndex = i;
+				}
+			}
+		}
+	}
+
+	if (bestMoveIndex == 0xFF) //No moves knock out and go first
+		return FALSE;
+
+	if (gBattleMons[bankAtk].moves[bestMoveIndex] == move)
+		return TRUE;
+		
+	return FALSE;
+}
+
+bool8 IsWeakestContactMoveWithBestAccuracy(u16 move, u8 bankAtk, u8 bankDef)
+{
+	u16 currMove, currAcc, moveEffect;
+	
+	u8 bestMoveIndex = 0xFF;
+	u16 bestAcc = 0;
+	u32 bestDmg = 0xFFFFFFFF;
+	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, 0xFF);
+
+	for (int i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		currMove = GetBattleMonMove(bankAtk, i);
+
+		if (currMove == MOVE_NONE)
+			break;
+
+		moveEffect = gBattleMoves[currMove].effect;
+
+		if (!(gBitTable[i] & moveLimitations)
+		&& CheckContact(currMove, bankAtk)
+		&& moveEffect != EFFECT_RECHARGE
+		&& moveEffect != EFFECT_COUNTER
+		&& moveEffect != EFFECT_MIRROR_COAT
+		&& moveEffect != EFFECT_BURN_UP
+		&& moveEffect != EFFECT_FAKE_OUT
+		&& moveEffect != EFFECT_0HKO) //Don't use these move effects on partner
+		{
+			currAcc = AccuracyCalc(currMove, bankAtk, bankDef);
+			u32 dmg = CalcFinalAIMoveDamage(currMove, bankAtk, bankDef, 1);
+
+			if (dmg < bestDmg && currAcc > bestAcc)
 			{
 				bestAcc = currAcc;
+				bestDmg = dmg;
 				bestMoveIndex = i;
 			}
 		}
@@ -302,7 +358,7 @@ bool8 CanKnockOutFromParty(struct Pokemon* monAtk, u8 bankDef)
 11: Hit 2 Foes, KO 1 Foe, Strongest Move 1 Foe
 10: Hit 2 Foes, KO 1 Foe/Strongest Move 2 Foes
 9: Hit 2 Foes, Strongest Move 1 Foe					Hit 2 Foes, KO 2 Foes, Hurt Partner
-8: Hit 2 Foes										Hit 2 Foes, KO 1 Foe, Strongest Move 1 Foe, Hurt Partner
+8: Hit 2 Foes, Decent Damage 2 Foes					Hit 2 Foes, KO 1 Foe, Strongest Move 1 Foe, Hurt Partner
 6: Hit 1 Foe, KO 1 Foe								Hit 2 Foes, KO 1 Foe/Strongest Move 2 Foes, Hurt Partner
 5: Hit 1 Foe, Strongest Move 1 Foe					Hit 2 Foes, Strongest Move 1 Foe, Hurt Partner
 4: Hit 1 Foe										Hit 2 Foes, Hurt Partner						
@@ -360,11 +416,15 @@ void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner,
 						else
 						{
 							switch (gBattleMoves[move].effect) {
+								case EFFECT_FLINCH_HIT:
+									if (MoveWouldHitFirst(move, bankAtk, currTarget))
+										break;
+									goto DEFAULT_CHECK;
+								
 								case EFFECT_PARALYZE_HIT:
 								case EFFECT_BURN_HIT:
 								case EFFECT_FREEZE_HIT:
 								case EFFECT_POISON_HIT:
-								case EFFECT_FLINCH_HIT:
 								case EFFECT_ATTACK_DOWN_HIT:
 								case EFFECT_DEFENSE_DOWN_HIT:
 								case EFFECT_SPEED_DOWN_HIT:
@@ -374,11 +434,17 @@ void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner,
 								case EFFECT_CONFUSE_HIT:
 								case EFFECT_SPEED_UP_1_HIT:
 								case EFFECT_ATTACK_UP_HIT:
-									break; //These move effects are good even if they do minimal damage
+									if (CalcSecondaryEffectChance(bankAtk, move) >= 50)
+										break; //These move effects are good even if they do minimal damage
+									goto DEFAULT_CHECK;
 
 								default:
-									if (CalcFinalAIMoveDamage(move, bankAtk, currTarget, 1) < gBattleMons[currTarget].maxHP / 4)
+								DEFAULT_CHECK: ;
+									u32 dmg = CalcFinalAIMoveDamage(move, bankAtk, currTarget, 1);
+									if (dmg < gBattleMons[currTarget].maxHP / 4)
 										moveScores[i][currTarget] -= (DOUBLES_INCREASE_HIT_FOE - 1); //Count it as if you basically don't do damage to the enemy
+									else if (dmg < gBattleMons[currTarget].maxHP / 3)
+										moveScores[i][currTarget] -= (DOUBLES_INCREASE_HIT_FOE - 2); //Count less than basically not hitting the enemy
 							}
 						}
 					}
@@ -571,8 +637,16 @@ u16 CalcFinalAIMoveDamage(u16 move, u8 bankAtk, u8 bankDef, u8 numHits)
 		case EFFECT_MIRROR_COAT:
 			return CalcPredictedDamageForCounterMoves(move, bankAtk, bankDef);
 	}
+	
+	u32 dmg = AI_CalcDmg(bankAtk, bankDef, move);
+	if (dmg >= gBattleMons[bankDef].hp)
+		return gBattleMons[bankDef].hp;
 
-	return MathMin(AI_CalcDmg(bankAtk, bankDef, move) * numHits, gBattleMons[bankDef].maxHP);
+	u8 defAbility = ABILITY(bankDef);
+	if (numHits >= 2 && BATTLER_MAX_HP(bankDef) && (defAbility == ABILITY_MULTISCALE || defAbility == ABILITY_SHADOWSHIELD))
+		return MathMin(dmg + (dmg * 2) * (numHits - 1), gBattleMons[bankDef].maxHP); //Adjust damage on subsequent hits
+
+	return MathMin(dmg * numHits, gBattleMons[bankDef].maxHP);
 }
 
 u16 CalcFinalAIMoveDamageFromParty(u16 move, struct Pokemon* monAtk, u8 bankDef, u8 numHits)
@@ -602,9 +676,9 @@ static u32 CalcPredictedDamageForCounterMoves(u16 move, u8 bankAtk, u8 bankDef)
 	u16 predictedMove = IsValidMovePrediction(bankDef, bankAtk);
 	u32 predictedDamage = 0;
 
-	if (predictedMove != MOVE_NONE)
+	if (predictedMove != MOVE_NONE && SPLIT(predictedMove) != SPLIT_STATUS && !MoveBlockedBySubstitute(predictedMove, bankDef, bankAtk))
 	{
-		predictedDamage = AI_CalcDmg(bankDef, bankAtk, predictedMove); //The damage the enemy will do to the AI
+		predictedDamage = CalcFinalAIMoveDamage(predictedMove, bankDef, bankAtk, 1); //The damage the enemy will do to the AI
 
 		switch (move) {
 			case MOVE_COUNTER:
@@ -657,8 +731,8 @@ move_t CalcStrongestMove(const u8 bankAtk, const u8 bankDef, const bool8 onlySpr
 				predictedDamage = CalcPredictedDamageForCounterMoves(move, bankAtk, bankDef);
 				if (predictedDamage > (u32) highestDamage)
 				{
-					highestDamage = predictedDamage;
 					strongestMove = move;
+					highestDamage = predictedDamage;
 				}
 			}
 			else if (gBattleMoves[move].effect == EFFECT_0HKO)
@@ -676,12 +750,28 @@ move_t CalcStrongestMove(const u8 bankAtk, const u8 bankDef, const bool8 onlySpr
 			}
 			else
 			{
-				predictedDamage = AI_CalcDmg(bankAtk, bankDef, move);
+				predictedDamage = CalcFinalAIMoveDamage(move, bankAtk, bankDef, 1);
 
-				if (predictedDamage > highestDamage)
+				if (predictedDamage > (u32) highestDamage)
 				{
 					strongestMove = move;
 					highestDamage = predictedDamage;
+				}
+				else if (predictedDamage == highestDamage
+				&& PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > PriorityCalc(bankAtk, ACTION_USE_MOVE, strongestMove)) //Use faster of two strongest moves
+				{
+					strongestMove = move;
+				}
+				else if (predictedDamage == highestDamage) //Find which move has better Acc
+				{
+					u16 currAcc = CalcAIAccuracy(move, bankAtk, bankDef);
+					u16 bestMoveAcc = CalcAIAccuracy(strongestMove, bankAtk, bankDef);
+	
+					if (currAcc > bestMoveAcc)
+					{
+						strongestMove = move;
+						highestDamage = predictedDamage;
+					}
 				}
 			}
 		}
@@ -832,6 +922,9 @@ bool8 WillTakeSignificantDamageFromEntryHazards(u8 bank, u8 healthFraction)
 		if (gSideTimers[SIDE(bank)].spikesAmount > 0)
 			dmg += CalcSpikesDamagePartyMon(mon, SIDE(bank));
 
+		if (dmg >= gBattleMons[bank].hp)
+			return TRUE;
+
 		if (dmg >= gBattleMons[bank].maxHP / healthFraction) //More or equal than a quarter of max health
 			return TRUE;
 	}
@@ -963,7 +1056,7 @@ bool8 IsTrapped(u8 bank, bool8 switching)
 		|| (ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_ARENATRAP) && CheckGrounding(bank) == GROUNDED)
 		|| (ABILITY_ON_OPPOSING_FIELD(bank, ABILITY_MAGNETPULL) && IsOfType(bank, TYPE_STEEL))
 		|| gStatuses3[bank] & (STATUS3_ROOTED | STATUS3_SKY_DROP_TARGET)
-		|| gNewBS->FairyLockTimer != 0)
+		|| IsFairyLockActive())
 			return TRUE;
 	}
 	
@@ -986,7 +1079,8 @@ bool8 IsTakingSecondaryDamage(u8 bank)
 		||  (gBattleMons[bank].status1 & STATUS1_PSN_ANY && ability != ABILITY_POISONHEAL)
 		||  gBattleMons[bank].status1 & STATUS1_BURN
 		||  ((gBattleMons[bank].status1 & STATUS1_SLEEP) > 1 && gBattleMons[bank].status2 & STATUS2_NIGHTMARE)
-		||  gBattleMons[bank].status2 & (STATUS2_CURSED | STATUS2_WRAPPED))
+		||  gBattleMons[bank].status2 & (STATUS2_CURSED | STATUS2_WRAPPED)
+		||	(BankSideHasSeaOfFire(bank) && !IsOfType(bank, TYPE_FIRE)))
 			return TRUE;
 	}
 	
@@ -1004,14 +1098,15 @@ bool8 WillFaintFromSecondaryDamage(u8 bank)
 		
 	if (ability != ABILITY_MAGICGUARD)
 	{
-		if (GetSandstormDamage(bank) >= hp
-		||  GetHailDamage(bank) >= hp
-		||  GetLeechSeedDamage(bank) >= hp
-		||  GetPoisonDamage(bank) >= hp
-		||  GetBurnDamage(bank) >= hp
-		||  GetNightmareDamage(bank) >= hp
-		||  GetCurseDamage(bank) >= hp
- 		||  GetTrapDamage(bank) >= hp)
+		if (GetSandstormDamage(bank)
+		+  GetHailDamage(bank)
+		+  GetLeechSeedDamage(bank)
+		+  GetPoisonDamage(bank)
+		+  GetBurnDamage(bank)
+		+  GetNightmareDamage(bank)
+		+  GetCurseDamage(bank)
+ 		+  GetTrapDamage(bank)
+		+  GetSeaOfFireDamage(bank) >= hp)
 			return TRUE;
 	}
 	
@@ -1022,13 +1117,27 @@ u16 CalcSecondaryEffectChance(u8 bank, u16 move)
 {
 	u16 chance = gBattleMoves[move].secondaryEffectChance;
 
-	if (ABILITY(bank) == ABILITY_SERENEGRACE || gNewBS->RainbowTimers[SIDE(bank)])
+	if (ABILITY(bank) == ABILITY_SERENEGRACE || BankSideHasRainbow(bank))
 		chance *= 2;
 
 	return chance;
 }
 
-bool8 ShouldAIDelayMegaEvolution(u8 bankAtk, u8 bankDef, u16 move)
+u16 CalcAIAccuracy(u16 move, u8 bankAtk, u8 bankDef)
+{
+	u16 acc = AccuracyCalc(move, bankAtk, bankDef);
+
+	if (gBattleMoves[move].effect == EFFECT_RECHARGE)
+		acc = 49; //Set recharge moves to a pretty low number only higher than OHKO moves
+	else if (gBattleMoves[move].effect == EFFECT_RAMPAGE || gBattleMoves[move].effect == EFFECT_ROLLOUT)
+		acc -= 1; //Don't rampage if you don't have to
+	else if (move == MOVE_FINALGAMBIT)
+		acc -= 5; //Don't kill yourself if you don't have to
+		
+	return acc;
+}
+
+bool8 ShouldAIDelayMegaEvolution(u8 bankAtk, unusedArg u8 bankDef, u16 move)
 {
 	u8 atkAbility = ABILITY(bankAtk);
 	u8 megaAbility = GetBankMegaFormAbility(bankAtk);
@@ -1048,7 +1157,7 @@ bool8 ShouldAIDelayMegaEvolution(u8 bankAtk, u8 bankDef, u16 move)
 					return TRUE; //Delay Mega Evolution if using Protect for Speed Boost benefits
 			}
 			break;
-
+/* With these uncommented, the game winds up in an endless loop due to AI_SpecialTypeCalc calling GetAIAbility in the damage calc
 		case ABILITY_MOXIE:
 		case ABILITY_BEASTBOOST:
 		case ABILITY_SOULHEART: ;
@@ -1056,10 +1165,149 @@ bool8 ShouldAIDelayMegaEvolution(u8 bankAtk, u8 bankDef, u16 move)
 			&&  MoveKnocksOutXHits(move, bankAtk, bankDef, 1))
 				return TRUE; //Get that Moxie boost
 			break;
+*/
 	}
 
 	return FALSE;
 }
+
+bool8 BadIdeaToPutToSleep(u8 bankDef, u8 bankAtk)
+{
+	u8 defItemEffect = ITEM_EFFECT(bankDef);
+	u8 defAbility = ABILITY(bankDef);
+
+	return !CanBePutToSleep(bankDef, TRUE)
+		|| defItemEffect == ITEM_EFFECT_CURE_SLP
+		|| defItemEffect == ITEM_EFFECT_CURE_STATUS
+		|| defAbility == ABILITY_EARLYBIRD
+		|| defAbility == ABILITY_SHEDSKIN
+		|| (defAbility == ABILITY_SYNCHRONIZE && CanBePutToSleep(bankAtk, TRUE))
+		|| (defAbility == ABILITY_HYDRATION && gBattleWeather & WEATHER_RAIN_ANY && gWishFutureKnock->weatherDuration != 1)
+		|| (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(bankDef)) && ABILITY(PARTNER(bankDef)) == ABILITY_HEALER);
+}
+
+bool8 BadIdeaToPoison(u8 bankDef, u8 bankAtk)
+{
+	u8 defItemEffect = ITEM_EFFECT(bankDef);
+	u8 defAbility = ABILITY(bankDef);
+	u8 atkAbility = ABILITY(bankAtk);
+	
+	return !CanBePoisoned(bankDef, bankAtk, TRUE)
+		||  defItemEffect == ITEM_EFFECT_CURE_PSN
+		||  defItemEffect == ITEM_EFFECT_CURE_STATUS
+		||  defAbility == ABILITY_SHEDSKIN
+		||  defAbility == ABILITY_POISONHEAL
+		||  defAbility == ABILITY_MAGICGUARD
+		||  defAbility == ABILITY_QUICKFEET
+		|| (defAbility == ABILITY_SYNCHRONIZE && CanBePoisoned(bankAtk, bankDef, TRUE) && !GoodIdeaToPoisonSelf(bankAtk))
+		|| (defAbility == ABILITY_MARVELSCALE && PhysicalMoveInMoveset(bankAtk))
+		|| (defAbility == ABILITY_NATURALCURE && CAN_SWITCH_OUT(bankDef))
+		|| (defAbility == ABILITY_TOXICBOOST && PhysicalMoveInMoveset(bankDef))
+		|| (defAbility == ABILITY_GUTS && PhysicalMoveInMoveset(bankDef))
+		|| (atkAbility == ABILITY_POISONTOUCH && ContactMovesThatAffectTargetInMoveset(bankAtk, bankDef)) //Just poison it using attacker's ability
+		|| (defAbility == ABILITY_HYDRATION && gBattleWeather & WEATHER_RAIN_ANY && gWishFutureKnock->weatherDuration != 1)
+		|| (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(bankDef)) && ABILITY(PARTNER(bankDef)) == ABILITY_HEALER)
+		||  MoveInMoveset(MOVE_FACADE, bankDef)
+		||  MoveInMoveset(MOVE_PSYCHOSHIFT, bankDef);
+}
+
+bool8 GoodIdeaToPoisonSelf(u8 bankAtk)
+{
+	u8 atkAbility = ABILITY(bankAtk);
+
+	return CanBePoisoned(bankAtk, bankAtk, FALSE)
+		&&  (atkAbility == ABILITY_MARVELSCALE
+		 ||  atkAbility == ABILITY_POISONHEAL
+		 ||  atkAbility == ABILITY_QUICKFEET
+		 ||  atkAbility == ABILITY_MAGICGUARD
+		 || (atkAbility == ABILITY_TOXICBOOST && PhysicalMoveInMoveset(bankAtk))
+		 || (atkAbility == ABILITY_GUTS && PhysicalMoveInMoveset(bankAtk))
+		 ||  MoveInMoveset(MOVE_FACADE, bankAtk)
+		 ||  MoveInMoveset(MOVE_PSYCHOSHIFT, bankAtk));
+}
+
+bool8 BadIdeaToParalyze(u8 bankDef, u8 bankAtk)
+{
+	u8 defItemEffect = ITEM_EFFECT(bankDef);
+	u8 defAbility = ABILITY(bankDef);
+
+	return !CanBeParalyzed(bankDef, TRUE)
+	   ||  defItemEffect == ITEM_EFFECT_CURE_PAR
+	   ||  defItemEffect == ITEM_EFFECT_CURE_STATUS
+	   ||  defAbility == ABILITY_SHEDSKIN
+	   ||  defAbility == ABILITY_QUICKFEET
+	   || (defAbility == ABILITY_SYNCHRONIZE && CanBeParalyzed(bankAtk, TRUE) && !GoodIdeaToParalyzeSelf(bankAtk))
+	   || (defAbility == ABILITY_MARVELSCALE && PhysicalMoveInMoveset(bankAtk))
+	   || (defAbility == ABILITY_NATURALCURE && CAN_SWITCH_OUT(bankDef))
+	   || (defAbility == ABILITY_GUTS && PhysicalMoveInMoveset(bankDef))
+	   || (defAbility == ABILITY_HYDRATION && gBattleWeather & WEATHER_RAIN_ANY && gWishFutureKnock->weatherDuration != 1)
+	   || (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(bankDef)) && ABILITY(PARTNER(bankDef)) == ABILITY_HEALER)
+	   ||  MoveInMoveset(MOVE_FACADE, bankDef)
+	   ||  MoveInMoveset(MOVE_PSYCHOSHIFT, bankDef);
+}
+
+bool8 GoodIdeaToParalyzeSelf(u8 bankAtk)
+{
+	u8 atkAbility = ABILITY(bankAtk);
+
+	return CanBeParalyzed(bankAtk, FALSE)
+		&&  (atkAbility == ABILITY_MARVELSCALE
+		 ||  atkAbility == ABILITY_QUICKFEET
+		 || (atkAbility == ABILITY_GUTS && PhysicalMoveInMoveset(bankAtk))
+		 || MoveInMoveset(MOVE_FACADE, bankAtk)
+		 || MoveInMoveset(MOVE_PSYCHOSHIFT, bankAtk));
+}
+
+bool8 BadIdeaToBurn(u8 bankDef, u8 bankAtk)
+{
+	u8 defItemEffect = ITEM_EFFECT(bankDef);
+	u8 defAbility = ABILITY(bankDef);
+	
+	return !CanBeBurned(bankDef, TRUE)
+		||  defItemEffect == ITEM_EFFECT_CURE_BRN
+		||  defItemEffect == ITEM_EFFECT_CURE_STATUS
+		||  defAbility == ABILITY_SHEDSKIN
+		||  defAbility == ABILITY_MAGICGUARD
+		||  defAbility == ABILITY_QUICKFEET
+		|| (defAbility == ABILITY_SYNCHRONIZE && CanBeBurned(bankAtk, TRUE) && !GoodIdeaToBurnSelf(bankAtk))
+		|| (defAbility == ABILITY_MARVELSCALE && PhysicalMoveInMoveset(bankAtk))
+		|| (defAbility == ABILITY_NATURALCURE && CAN_SWITCH_OUT(bankDef))
+		|| (defAbility == ABILITY_FLAREBOOST && SpecialMoveInMoveset(bankDef))
+		|| (defAbility == ABILITY_GUTS && PhysicalMoveInMoveset(bankDef))
+		|| (defAbility == ABILITY_HYDRATION && gBattleWeather & WEATHER_RAIN_ANY && gWishFutureKnock->weatherDuration != 1)
+		|| (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(bankDef)) && ABILITY(PARTNER(bankDef)) == ABILITY_HEALER)
+		||  MoveInMoveset(MOVE_FACADE, bankDef)
+		||  MoveInMoveset(MOVE_PSYCHOSHIFT, bankDef);
+}
+
+bool8 GoodIdeaToBurnSelf(u8 bankAtk)
+{
+	u8 atkAbility = ABILITY(bankAtk);
+
+	return CanBeBurned(bankAtk, FALSE)
+		&&  (atkAbility == ABILITY_QUICKFEET
+		 ||  atkAbility == ABILITY_HEATPROOF
+		 ||  atkAbility == ABILITY_MAGICGUARD
+		 || (atkAbility == ABILITY_FLAREBOOST && SpecialMoveInMoveset(bankAtk))
+		 || (atkAbility == ABILITY_GUTS && PhysicalMoveInMoveset(bankAtk))
+		 || MoveInMoveset(MOVE_FACADE, bankAtk)
+		 || MoveInMoveset(MOVE_PSYCHOSHIFT, bankAtk));
+}
+
+bool8 BadIdeaToFreeze(u8 bankDef, u8 bankAtk)
+{
+	u8 defAbility = ABILITY(bankDef);
+	u8 defItemEffect = ITEM_EFFECT(bankDef);
+
+	return !CanBeFrozen(bankDef, TRUE)
+		|| defItemEffect != ITEM_EFFECT_CURE_FRZ
+		|| defItemEffect != ITEM_EFFECT_CURE_STATUS
+		|| (defAbility == ABILITY_SYNCHRONIZE && CanBeFrozen(bankAtk, TRUE))
+		|| (defAbility == ABILITY_NATURALCURE && CAN_SWITCH_OUT(bankDef)) //Don't waste a one-time freeze
+		|| UnfreezingMoveInMoveset(bankDef);
+}
+
+//Move Prediction Code
 
 move_t IsValidMovePrediction(u8 bankAtk, u8 bankDef)
 {
@@ -1612,6 +1860,49 @@ bool8 DamagingMoveThaCanBreakThroughSubstituteInMoveset(u8 bankAtk, u8 bankDef)
 	return FALSE;
 }
 
+bool8 ContactMovesThatAffectTargetInMoveset(u8 bankAtk, u8 bankDef)
+{
+	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, 0xFF);
+
+	for (int i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		u16 move = GetBattleMonMove(bankAtk, i);
+	
+		if (move == MOVE_NONE)
+			break;
+			
+		if (!(gBitTable[i] & moveLimitations))
+		{
+			if (CheckContact(move, bankAtk)
+			&& !(AI_SpecialTypeCalc(move, bankDef, bankAtk) & MOVE_RESULT_NO_EFFECT))
+				return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+bool8 UnfreezingMoveInMoveset(u8 bank)
+{
+	u8 moveLimitations = CheckMoveLimitations(bank, 0, 0xFF);
+
+	for (int i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		u16 move = GetBattleMonMove(bank, i);
+	
+		if (move == MOVE_NONE)
+			break;
+			
+		if (!(gBitTable[i] & moveLimitations))
+		{
+			if (CheckTableForMove(move, MovesCanUnfreezeAttacker))
+				return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
 bool8 OnlyBadMovesLeftInMoveset(u8 bankAtk, u8 bankDef)
 {
 	int i;
@@ -1810,6 +2101,10 @@ bool8 AnyUsefulStatIsRaised(u8 bank)
 		}
 	}
 
+	if (gBattleResources->flags->flags[bank] & 1
+	&&  DamagingMoveTypeInMoveset(bank, TYPE_FIRE))
+		return TRUE;
+
 	return FALSE;
 }
 
@@ -1860,16 +2155,17 @@ bool8 PartyMemberStatused(u8 bank, bool8 checkSoundproof)
 u16 ShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move)
 {
 	int i;
+
+	if (IS_DOUBLE_BATTLE && bankDef == PARTNER(bankAtk))
+		return FALSE; //No need to waste a Z-Move on your partner
+
 	u16 zMove = CanUseZMove(bankAtk, 0xFF, move);
 	u16 defMovePrediction = IsValidMovePrediction(bankDef, bankAtk);
 
 	if (zMove != MOVE_NONE)
 	{
 		if (zMove != 0xFFFF) //Damaging Z-Move
-		{
-			if (IS_DOUBLE_BATTLE && bankDef == PARTNER(bankAtk))
-				return FALSE; //No need to waste a Z-Move on your partner
-		
+		{		
 			if (move == MOVE_FAKEOUT && ShouldUseFakeOut(bankAtk, bankDef))
 				return FALSE; //Prefer actual Fake Out over Breakneck Blitz
 			

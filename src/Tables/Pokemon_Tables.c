@@ -158,6 +158,28 @@ const species_t gUltraBeastList[] =
 	SPECIES_TABLES_TERMIN
 };
 
+const species_t gDeerlingForms[] =
+{
+	SPECIES_DEERLING,
+	SPECIES_DEERLING_SUMMER,
+	SPECIES_DEERLING_AUTUMN,
+	SPECIES_DEERLING_WINTER,
+	//No termin here
+};
+
+const u8 gNumDeerlingForms = ARRAY_COUNT(gDeerlingForms);
+
+const species_t gSawsbuckForms[] =
+{
+	SPECIES_SAWSBUCK,
+	SPECIES_SAWSBUCK_SUMMER,
+	SPECIES_SAWSBUCK_AUTUMN,
+	SPECIES_SAWSBUCK_WINTER,
+	//No termin here
+};
+
+const u8 gNumSawsbuckForms = ARRAY_COUNT(gSawsbuckForms);
+
 const species_t gVivillonForms[] =
 {
 	SPECIES_VIVILLON,
@@ -1053,6 +1075,108 @@ const item_t gSmogonMonotype_ItemBanList[] =
 	ITEM_SOUL_DEW,
 	#endif
 	ITEM_TABLES_TERMIN
+};
+
+const species_t gSmogonCamomons_SpeciesBanList[] =
+{
+	SPECIES_DRAGONITE,
+	SPECIES_KARTANA,
+	SPECIES_KYUREM_BLACK,
+	SPECIES_SHEDINJA,
+	SPECIES_TABLES_TERMIN //+ OU Banned Pokemon
+};
+
+const species_t gSmogonAverageMons_SpeciesBanList[] =
+{
+	SPECIES_SMEARGLE,
+	SPECIES_TABLES_TERMIN,
+};
+
+const item_t gSmogonAverageMons_ItemBanList[] =
+{
+	ITEM_THICK_CLUB,
+	ITEM_DEEP_SEA_TOOTH,
+	ITEM_LIGHT_BALL,
+	ITEM_EVIOLITE,
+	ITEM_MAWILITE,
+	ITEM_MEDICHAMITE,
+	ITEM_GENGARITE,
+	ITEM_TABLES_TERMIN
+};
+
+const move_t gSmogonAverageMons_MoveBanList[] =
+{
+	MOVE_CHATTER,
+	MOVE_BATONPASS,
+	MOVE_TABLES_TERMIN
+};
+
+const u8 gSmogonAverageMons_AbilityBanList[] =
+{
+	ABILITY_HUGEPOWER,
+	ABILITY_PUREPOWER,
+	ABILITY_SHADOWTAG,
+	ABILITY_ARENATRAP,
+	ABILITY_TABLES_TERMIN
+};
+
+const species_t gSmogon350Cup_SpeciesBanList[] =
+{
+	SPECIES_RUFFLET,
+	SPECIES_TABLES_TERMIN
+};
+
+const item_t gSmogon350Cup_ItemBanList[] =
+{
+	ITEM_DEEP_SEA_TOOTH,
+	ITEM_LIGHT_BALL,
+	ITEM_EVIOLITE,
+	ITEM_EEVIUM_Z,
+	ITEM_TABLES_TERMIN
+};
+
+const u8 gSmogon350Cup_AbilityBanList[] =
+{
+	ABILITY_SHADOWTAG,
+	ABILITY_ARENATRAP,
+	ABILITY_TABLES_TERMIN
+};
+
+const species_t gSmogonScalemons_SpeciesBanList[] =
+{
+	SPECIES_ABRA,
+	SPECIES_CARVANHA,
+	SPECIES_GASTLY,
+	SPECIES_SHEDINJA,
+	SPECIES_TABLES_TERMIN
+};
+
+const item_t gSmogonScalemons_ItemBanList[] =
+{
+	ITEM_DEEP_SEA_SCALE,
+	ITEM_DEEP_SEA_TOOTH,
+	ITEM_EEVIUM_Z,
+	ITEM_EVIOLITE,
+	ITEM_LIGHT_BALL,
+	ITEM_THICK_CLUB,
+	ITEM_MAWILITE,
+	ITEM_MEDICHAMITE,
+	ITEM_GENGARITE,
+	ITEM_TABLES_TERMIN
+};
+
+const u8 gSmogonScalemons_AbilityBanList[] =
+{
+	ABILITY_SHADOWTAG,
+	ABILITY_HUGEPOWER,
+	ABILITY_ARENATRAP,
+	ABILITY_TABLES_TERMIN
+};
+
+const species_t gSmogonBenjaminButterfree_SpeciesBanList[] =
+{
+	SPECIES_BLISSEY,
+	SPECIES_TABLES_TERMIN //+ OU Banned Pokemon
 };
 
 #ifdef CREATE_WITH_X_PERFECT_IVS

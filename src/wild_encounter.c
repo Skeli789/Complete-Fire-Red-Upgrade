@@ -7,6 +7,7 @@
 #include "../include/random.h"
 
 #include "../include/constants/flags.h"
+#include "../include/constants/items.h"
 #include "../include/constants/maps.h"
 #include "../include/constants/vars.h"
 
@@ -133,6 +134,14 @@ static u8 ChooseWildMonLevel(const struct WildPokemon* wildPokemon)
 
 static const struct WildPokemonHeader* GetCurrentMapWildMonHeader(void)
 {
+	if (gWildDataSwitch != NULL)
+	{
+		if ((u32) gWildDataSwitch >= 0x8000000) //Real Pointer
+			return (const struct WildPokemonHeader*) gWildDataSwitch;
+		else
+			gWildDataSwitch = NULL;
+	}
+
 	#ifdef TIME_ENABLED
 		u32 i;
 		
@@ -163,6 +172,14 @@ static const struct WildPokemonHeader* GetCurrentMapWildMonDaytimeHeader(void)
 {
 	u32 i;
 	
+	if (gWildDataSwitch != NULL)
+	{
+		if ((u32) gWildDataSwitch >= 0x8000000) //Real Pointer
+			return (const struct WildPokemonHeader*) gWildDataSwitch;
+		else
+			gWildDataSwitch = NULL;
+	}
+
     for (i = 0; gWildMonHeaders[i].mapGroup != 0xFF; ++i)
     {
         const struct WildPokemonHeader* wildHeader = &gWildMonHeaders[i];
@@ -675,6 +692,46 @@ bool8 SweetScentWildEncounter(void)
     return FALSE;
 }
 
+bool8 StartRandomWildEncounter(bool8 waterMon)
+{
+	const struct WildPokemonInfo* landMonsInfo = LoadProperMonsData(LAND_MONS_HEADER);
+    const struct WildPokemonInfo* waterMonsInfo = LoadProperMonsData(WATER_MONS_HEADER);
+
+    if (!waterMon)
+    {
+        if (landMonsInfo == NULL)
+			return FALSE;
+
+        if (TryStartRoamerEncounter(ENCOUNTER_TYPE_LAND) == TRUE)
+        {
+            BattleSetup_StartRoamerBattle();
+            return TRUE;
+		}
+
+        TryGenerateWildMon(landMonsInfo, WILD_AREA_LAND, 0);
+
+        BattleSetup_StartWildBattle();
+        return TRUE;
+    }
+    else
+    {
+        if (waterMonsInfo == NULL)
+			return FALSE;
+
+        if (TryStartRoamerEncounter(ENCOUNTER_TYPE_WATER) == TRUE)
+        {
+            BattleSetup_StartRoamerBattle();
+            return TRUE;
+        }
+
+        TryGenerateWildMon(waterMonsInfo, WILD_AREA_WATER, 0);
+        BattleSetup_StartWildBattle();
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
 static bool8 IsAbilityAllowingEncounter(u8 level)
 {
     u8 ability;
@@ -764,6 +821,31 @@ void sp138_StartLegendaryBattle(void)
     CreateBattleStartTask(0, GetMUS_ForBattle());
     IncrementGameStat(GAME_STAT_TOTAL_BATTLES);
     IncrementGameStat(GAME_STAT_WILD_BATTLES);
+}
+
+#define gText_Ghost (const u8*) 0x841D148
+void sp156_StartGhostBattle(void)
+{
+	#ifndef NO_GHOST_BATTLES
+	ScriptContext2_Enable();
+	gMain.savedCallback = CB2_EndScriptedWildBattle;
+	
+	gBattleTypeFlags = BATTLE_TYPE_GHOST;
+	if (CheckBagHasItem(ITEM_SILPH_SCOPE, 1))
+		gBattleTypeFlags |= BATTLE_TYPE_SCRIPTED_WILD_1;
+
+	if (Var8004 == 0 || Var8004 >= NUM_SPECIES) //Default is Marowak
+		CreateMonWithGenderNatureLetter(&gEnemyParty[0], SPECIES_MAROWAK, 30, 31, MON_FEMALE, NATURE_SERIOUS, 0);
+	else
+		CreateWildMon(Var8004, Var8005, 0, TRUE);
+
+	SetMonData(&gEnemyParty[0], MON_DATA_NICKNAME, gText_Ghost);
+	SetMonData(&gEnemyParty[0], MON_DATA_HELD_ITEM, &Var8006);
+
+	CreateBattleStartTask(0, GetMUS_ForBattle());
+	IncrementGameStat(GAME_STAT_TOTAL_BATTLES);
+	IncrementGameStat(GAME_STAT_WILD_BATTLES);
+	#endif
 }
 
 //setwildbattle SPECIES LEVEL ITEM

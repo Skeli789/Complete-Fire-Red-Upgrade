@@ -72,7 +72,7 @@ def GetTextSection() -> int:
 
     except:
         print("Error: The insertion process could not be completed.\n"
-              + "The linker symbol file was not found.")
+              + "The linker symbol file was not found. Most likely the compilation process was not completed.")
         sys.exit(1)
 
 

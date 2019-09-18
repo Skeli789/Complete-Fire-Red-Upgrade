@@ -375,12 +375,17 @@ def main():
     except FileExistsError:
         pass
 
-    # Gather source files and process them
-    objects = itertools.starmap(RunGlob, globs.items())
+    try:
+        # Gather source files and process them
+        objects = itertools.starmap(RunGlob, globs.items())
 
-    # Link and extract raw binary
-    linked = LinkObjects(itertools.chain.from_iterable(objects))
-    Objcopy(linked)
+        # Link and extract raw binary
+        linked = LinkObjects(itertools.chain.from_iterable(objects))
+        Objcopy(linked)
+
+    except Exception as e:
+        print("There was an error compiling the engine: {}".format(e))
+        sys.exit(1)
 
     # Build special_inserts.asm
     if os.path.isfile('special_inserts.asm'):

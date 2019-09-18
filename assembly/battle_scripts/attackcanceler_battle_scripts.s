@@ -8,6 +8,8 @@
 .global BattleScript_QuickClaw
 .global BattleScript_MagicBounce
 .global BattleScript_MoveUsedFlinched
+.global BattleScript_MoveUsedDevolvedForgot
+.global BattleScript_MoveUsedIsConfused
 .global BattleScript_MoveUsedLoafingAround
 .global BattleScript_MoveUsedGravityPrevents
 .global BattleScript_MoveUsedHealBlockPrevents
@@ -69,6 +71,22 @@ SteadfastBoost:
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
 	goto BS_MOVE_END
+	
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_MoveUsedDevolvedForgot:
+	setword BATTLE_STRING_LOADER gText_DevolvedForgotMove
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_MoveUsedIsConfused:
+	printstring 65 @;STRINGID_PKMNISCONFUSED
+	waitmessage DELAY_1SECOND
+	chosenstatusanimation BANK_ATTACKER TRUE STATUS2_CONFUSION
+	goto 0x81D90DF
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

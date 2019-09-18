@@ -427,6 +427,7 @@
 .equ Template_Explosion, 0x83E3F94
 .equ Template_LusterPurgeHits, 0x83E7C50
 .equ Template_Leer, 0x83FEF30
+.equ Template_MiniFirePlume, 0x83E77D8
 
 .equ Template_Pal_Fade, 0x83E7B24
 .equ Template_SlideMonToOffset, 0x83d4e9c

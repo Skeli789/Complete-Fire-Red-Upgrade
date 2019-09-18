@@ -416,6 +416,9 @@ extern const u8 sFrontierText_Rancher_PlayerWin_6[];
 extern const u8 sFrontierText_Rancher_PlayerLose_6[];
 
 extern const u8 sTrainerName_Palmer[];
+extern const u8 sTrainerName_Pat[];
+extern const u8 sTrainerName_Pablo[];
+extern const u8 sTrainerName_Paula[];
 extern const u8 sTrainerName_Skeli[];
 extern const u8 sTrainerName_Golche[];
 extern const u8 sTrainerName_Gail[];
@@ -426,6 +429,15 @@ extern const u8 sTrainerName_BigMo[];
 extern const u8 sTrainerName_Galavan[];
 extern const u8 sTrainerName_Candice[];
 extern const u8 sTrainerName_Giovanni[];
+
+extern const u8 sFrontierText_Pat_PlayerWin[];
+extern const u8 sFrontierText_Pat_PlayerLose[];
+
+extern const u8 sFrontierText_Pablo_PlayerWin[];
+extern const u8 sFrontierText_Pablo_PlayerLose[];
+
+extern const u8 sFrontierText_Paula_PlayerWin[];
+extern const u8 sFrontierText_Paula_PlayerLose[];
 
 extern const u8 sFrontierText_Skeli_PreBattle[];
 extern const u8 sFrontierText_Skeli_PlayerWin[];
@@ -1641,7 +1653,7 @@ const struct BattleTowerTrainer gTowerTrainers[] =
 	},
 };
 
-const struct SpecialBattleTowerTrainer gSpecialTowerTrainers[] =
+const struct SpecialBattleFrontierTrainer gSpecialTowerTrainers[] =
 {
 	{
 		.owNum = 			OW_SKELI,
@@ -1845,25 +1857,147 @@ const struct SpecialBattleTowerTrainer gSpecialTowerTrainers[] =
 	},
 };
 
-const struct FrontierBrain gFrontierBrains[] =
+const struct SpecialBattleFrontierTrainer gFrontierBrains[] =
 {
 	[0] =
 		{
+			.owNum = 			OW_PALMER,
 			.trainerClass = 	CLASS_FRONTIER_BRAIN,
 			.trainerSprite = 	TRAINER_SPRITE_PALMER,
 			.gender = 			BATTLE_TOWER_MALE,
 			.name =				sTrainerName_Palmer,
-			.spreads =			gSpecialTowerSpread_Palmer1,
-			.spreadSize = 		ARRAY_COUNT(gSpecialTowerSpread_Palmer1),
+			.regularSpreads =	gSpecialTowerSpread_Palmer1,
+			.legendarySpreads = gLegendaryTowerSpread_Palmer1,
+			.middleCupSpreads = gMiddleCupTowerSpread_Palmer1,
+			.littleCupSpreads = gLittleCupTowerSpread_Palmer1,
+			.regSpreadSize = 	ARRAY_COUNT(gSpecialTowerSpread_Palmer1),
+			.legSpreadSize =	ARRAY_COUNT(gLegendaryTowerSpread_Palmer1),
+			.mcSpreadSize =		ARRAY_COUNT(gMiddleCupTowerSpread_Palmer1),
+			.lcSpreadSize =		ARRAY_COUNT(gLittleCupTowerSpread_Palmer1),
 		},
 	[1] =
 		{
+			.owNum = 			OW_PALMER,
 			.trainerClass = 	CLASS_FRONTIER_BRAIN,
 			.trainerSprite = 	TRAINER_SPRITE_PALMER,
 			.gender = 			BATTLE_TOWER_MALE,
 			.name =				sTrainerName_Palmer,
-			.spreads =			gSpecialTowerSpread_Palmer2,
-			.spreadSize = 		ARRAY_COUNT(gSpecialTowerSpread_Palmer2),
+			.regularSpreads =	gSpecialTowerSpread_Palmer2,
+			.legendarySpreads = gLegendaryTowerSpread_Palmer1,
+			.middleCupSpreads = gMiddleCupTowerSpread_Palmer1,
+			.littleCupSpreads = gLittleCupTowerSpread_Palmer2,
+			.regSpreadSize = 	ARRAY_COUNT(gSpecialTowerSpread_Palmer2),
+			.legSpreadSize =	ARRAY_COUNT(gLegendaryTowerSpread_Palmer1),
+			.mcSpreadSize =		ARRAY_COUNT(gMiddleCupTowerSpread_Palmer1),
+			.lcSpreadSize =		ARRAY_COUNT(gLittleCupTowerSpread_Palmer2),
+		},
+	[2] =
+		{
+			.owNum = 			OW_PAT,
+			.trainerClass = 	CLASS_FRONTIER_BRAIN,
+			.trainerSprite = 	TRAINER_SPRITE_PAT,
+			.gender = 			BATTLE_TOWER_MALE,
+			.name =				sTrainerName_Pat,
+			.playerWinText = 	sFrontierText_Pat_PlayerWin,
+			.playerLoseText = 	sFrontierText_Pat_PlayerLose,
+			.regularSpreads =	gSpecialTowerSpread_Pat1,
+			.legendarySpreads = gLegendaryTowerSpread_Pat1,
+			.middleCupSpreads = gMiddleCupTowerSpread_Pat1,
+			.littleCupSpreads = gLittleCupTowerSpread_Pat1,
+			.regSpreadSize = 	ARRAY_COUNT(gSpecialTowerSpread_Pat1),
+			.mcSpreadSize =		ARRAY_COUNT(gMiddleCupTowerSpread_Pat1),
+			.lcSpreadSize =		ARRAY_COUNT(gLittleCupTowerSpread_Pat1),
+			.legSpreadSize =	ARRAY_COUNT(gLegendaryTowerSpread_Pat1),
+		},
+	[3] =
+		{
+			.owNum = 			OW_PAT,
+			.trainerClass = 	CLASS_FRONTIER_BRAIN,
+			.trainerSprite = 	TRAINER_SPRITE_PAT,
+			.gender = 			BATTLE_TOWER_MALE,
+			.name =				sTrainerName_Pat,
+			.playerWinText = 	sFrontierText_Pat_PlayerWin,
+			.playerLoseText = 	sFrontierText_Pat_PlayerLose,
+			.regularSpreads =	gSpecialTowerSpread_Pat2,
+			.legendarySpreads = gLegendaryTowerSpread_Pat2,
+			.middleCupSpreads = gMiddleCupTowerSpread_Pat2,
+			.littleCupSpreads = gLittleCupTowerSpread_Pat2,
+			.regSpreadSize = 	ARRAY_COUNT(gSpecialTowerSpread_Pat2),
+			.mcSpreadSize =		ARRAY_COUNT(gMiddleCupTowerSpread_Pat2),
+			.lcSpreadSize =		ARRAY_COUNT(gLittleCupTowerSpread_Pat2),
+			.legSpreadSize =	ARRAY_COUNT(gLegendaryTowerSpread_Pat2),
+		},
+	[4] =
+		{
+			.owNum = 			OW_PABLO,
+			.trainerClass = 	CLASS_FRONTIER_BRAIN,
+			.trainerSprite = 	TRAINER_SPRITE_PABLO,
+			.gender = 			BATTLE_TOWER_MALE,
+			.name =				sTrainerName_Pablo,
+			.playerWinText = 	sFrontierText_Pablo_PlayerWin,
+			.playerLoseText = 	sFrontierText_Pablo_PlayerLose,
+			.regularSpreads =	gSpecialTowerSpread_Pablo1Format1,
+			.legendarySpreads = gSpecialTowerSpread_Pablo1Format2,
+			.middleCupSpreads = gSpecialTowerSpread_Pablo1Format2,
+			.littleCupSpreads = gSpecialTowerSpread_Pablo1Format2,
+			.regSpreadSize = 	ARRAY_COUNT(gSpecialTowerSpread_Pablo1Format1),
+			.mcSpreadSize =		ARRAY_COUNT(gSpecialTowerSpread_Pablo1Format2),
+			.lcSpreadSize =		ARRAY_COUNT(gSpecialTowerSpread_Pablo1Format2),
+			.legSpreadSize =	ARRAY_COUNT(gSpecialTowerSpread_Pablo1Format2),
+		},
+	[5] =
+		{
+			.owNum = 			OW_PABLO,
+			.trainerClass = 	CLASS_FRONTIER_BRAIN,
+			.trainerSprite = 	TRAINER_SPRITE_PABLO,
+			.gender = 			BATTLE_TOWER_MALE,
+			.name =				sTrainerName_Pablo,
+			.playerWinText = 	sFrontierText_Pablo_PlayerWin,
+			.playerLoseText = 	sFrontierText_Pablo_PlayerLose,
+			.regularSpreads =	gSpecialTowerSpread_Pablo2Format1,
+			.legendarySpreads = gSpecialTowerSpread_Pablo2Format2,
+			.middleCupSpreads = gSpecialTowerSpread_Pablo2Format2,
+			.littleCupSpreads = gSpecialTowerSpread_Pablo2Format2,
+			.regSpreadSize = 	ARRAY_COUNT(gSpecialTowerSpread_Pablo2Format1),
+			.mcSpreadSize =		ARRAY_COUNT(gSpecialTowerSpread_Pablo2Format2),
+			.lcSpreadSize =		ARRAY_COUNT(gSpecialTowerSpread_Pablo2Format2),
+			.legSpreadSize =	ARRAY_COUNT(gSpecialTowerSpread_Pablo2Format2),
+		},
+	[6] =
+		{
+			.owNum = 			OW_PAULA,
+			.trainerClass = 	CLASS_FRONTIER_BRAIN,
+			.trainerSprite = 	TRAINER_SPRITE_PAULA,
+			.gender = 			BATTLE_TOWER_FEMALE,
+			.name =				sTrainerName_Paula,
+			.playerWinText = 	sFrontierText_Paula_PlayerWin,
+			.playerLoseText = 	sFrontierText_Paula_PlayerLose,
+			/*.regularSpreads =	gSpecialTowerSpread_Paula1Format1,
+			.legendarySpreads = gSpecialTowerSpread_Paula1Format2,
+			.middleCupSpreads = gSpecialTowerSpread_Paula1Format2,
+			.littleCupSpreads = gSpecialTowerSpread_Paula1Format2,
+			.regSpreadSize = 	ARRAY_COUNT(gSpecialTowerSpread_Paula1Format1),
+			.mcSpreadSize =		ARRAY_COUNT(gSpecialTowerSpread_Paula1Format2),
+			.lcSpreadSize =		ARRAY_COUNT(gSpecialTowerSpread_Paula1Format2),
+			.legSpreadSize =	ARRAY_COUNT(gSpecialTowerSpread_Paula1Format2),*/
+		},
+	[7] =
+		{
+			.owNum = 			OW_PAULA,
+			.trainerClass = 	CLASS_FRONTIER_BRAIN,
+			.trainerSprite = 	TRAINER_SPRITE_PAULA,
+			.gender = 			BATTLE_TOWER_FEMALE,
+			.name =				sTrainerName_Paula,
+			.playerWinText = 	sFrontierText_Paula_PlayerWin,
+			.playerLoseText = 	sFrontierText_Paula_PlayerLose,
+			/*.regularSpreads =	gSpecialTowerSpread_Paula2Format1,
+			.legendarySpreads = gSpecialTowerSpread_Paula2Format2,
+			.middleCupSpreads = gSpecialTowerSpread_Paula2Format2,
+			.littleCupSpreads = gSpecialTowerSpread_Paula2Format2,
+			.regSpreadSize = 	ARRAY_COUNT(gSpecialTowerSpread_Paula2Format1),
+			.mcSpreadSize =		ARRAY_COUNT(gSpecialTowerSpread_Paula2Format2),
+			.lcSpreadSize =		ARRAY_COUNT(gSpecialTowerSpread_Paula2Format2),
+			.legSpreadSize =	ARRAY_COUNT(gSpecialTowerSpread_Paula2Format2),*/
 		},
 };
 
@@ -1900,7 +2034,7 @@ const struct MultiBattleTowerTrainer gFrontierMultiBattleTrainers[] =
 	{
 		.owNum = OW_JAX,
 		.trainerClass = CLASS_PKMN_TRAINER_2,
-		.backSpriteId = BACKSPRITE_JAX,
+		.backSpriteId = TRAINER_BACK_PIC_JAX,
 		.gender = MALE,
 		.name = sTrainerName_Jax,
 		.otId = 0x95746426,
@@ -1943,18 +2077,18 @@ const u8 gNumFrontierMultiTrainers = ARRAY_COUNT(gFrontierMultiBattleTrainers);
 		},
 	};
 
-	const struct SpecialBattleTowerTrainer gSpecialTowerTrainers[] =
+	const struct SpecialBattleFrontierTrainer gSpecialTowerTrainers[] =
 	{
 	};
-	
-	const struct FrontierBrain gFrontierBrains[] =
+
+	const struct SpecialBattleFrontierTrainer gFrontierBrains[] =
 	{
 	};
-	
+
 	const struct MultiBattleTowerTrainer gFrontierMultiBattleTrainers[] =
 	{
 	};
-	
+
 	const u8 gNumFrontierMultiTrainers = ARRAY_COUNT(gFrontierMultiBattleTrainers);
 #endif
 

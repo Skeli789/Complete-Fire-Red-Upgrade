@@ -3,6 +3,7 @@
 .align 2
 .global AttackDescriptionTable
 
+.word DESC_NO_MOVE
 AttackDescriptionTable:
 .word 0x8482834		@MOVE_POUND
 .word 0x8482874		@MOVE_KARATECHOP

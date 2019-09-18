@@ -7,6 +7,7 @@
 
 #include "../include/new/daycare.h"
 #include "../include/new/Helper_Functions.h"
+#include "../include/new/item.h"
 #include "../include/new/learn_move.h"
 #include "../include/new/move_reminder_data.h"
 
@@ -140,43 +141,16 @@ u8 GetMoveRelearnerMoves(struct Pokemon* mon, u16* moves)
     u8 level = mon->level;
     int i, j, k;
 	
+#ifdef MOVE_RELEARNER_IGNORE_LEVEL_FLAG
+	if (FlagGet(MOVE_RELEARNER_IGNORE_LEVEL_FLAG))
+		level = MAX_LEVEL;
+#endif
+	
 #ifdef EGG_MOVE_RELEARNER_FLAG
 	if (FlagGet(EGG_MOVE_RELEARNER_FLAG))
 	{
-		struct Pokemon dummyMon = {0};
-		u16 eggSpecies = GetEggSpecies(species);
-		SetMonData(&dummyMon, MON_DATA_SPECIES, &eggSpecies);
-		u16 eggMovesBuffer[EGG_MOVES_ARRAY_COUNT];
-		u8 numEggMoves = GetEggMoves(&dummyMon, eggMovesBuffer);
-		
-		bool8 moveInList[MOVES_COUNT] = {FALSE};
-		
-		//Filter out any egg moves the Pokemon already knows
-		for (i = 0, j = 0; i < numEggMoves; ++i)
-		{
-			if (!MoveInMonMoveset(eggMovesBuffer[i], mon))
-			{
-				moves[j++] = eggMovesBuffer[i];
-				moveInList[eggMovesBuffer[i]] = TRUE;
-			}
-		}
-		
-		u16 eggSpecies2 = eggSpecies;
-		AlterSpeciesWithIncenseItems(&eggSpecies2, 0, 0);
-		if (eggSpecies2 != eggSpecies) //Different baby; eg. Marill + Azurill
-		{
-			SetMonData(&dummyMon, MON_DATA_SPECIES, &eggSpecies2);
-			numEggMoves = GetEggMoves(&dummyMon, eggMovesBuffer);
-			
-			//Filter out any egg moves the Pokemon already knows
-			for (i = 0; i < numEggMoves && j < EGG_MOVES_ARRAY_COUNT; ++i)
-			{
-				if (!moveInList[eggMovesBuffer[i]] && !MoveInMonMoveset(eggMovesBuffer[i], mon))
-					moves[j++] = eggMovesBuffer[i];
-			}
-		}
-
-		return j; 
+		numMoves = GetAllEggMoves(mon, moves, TRUE);
+		return numMoves; 
 	}
 #endif
 
@@ -214,7 +188,7 @@ u8 GetLevelUpMovesBySpecies(u16 species, u16* moves)
     u8 numMoves = 0;
     int i;
 
-    for (i = 0; i < MAX_LEARNABLE_MOVES && !(gLevelUpLearnsets[species][i].level == 0 
+    for (i = 0; i < MAX_LEARNABLE_MOVES && !(gLevelUpLearnsets[species][i].move == 0 
 						&& gLevelUpLearnsets[species][i].level == 0xFF); ++i)
 	{
 		u16 move = gLevelUpLearnsets[species][i].move;
@@ -252,6 +226,55 @@ static move_t RandomizeMove(u16 move)
 	return move;
 }
 #endif
+
+u16 BuildLearnableMoveset(struct Pokemon* mon, u16* moves)
+{
+	u16 numLevelMoves = 0;
+	u16 numEggMoves = 0;
+	u16 numTotalMoves;
+	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
+	u16 dexNum = SpeciesToNationalPokedexNum(species);
+
+	numLevelMoves += GetLevelUpMovesBySpecies(species, moves);
+	moves += numLevelMoves; //Increase Ptr
+	numEggMoves += GetAllEggMoves(mon, moves, FALSE);
+	moves += numEggMoves; //Increase Ptr
+	
+	numTotalMoves = numLevelMoves + numEggMoves;
+	
+	for (int i = 0; i < NUM_TMSHMS; ++i)
+	{
+		if (CanMonLearnTMHM(mon, i))
+		{
+			*moves = gTMHMMoves[i];
+			++numTotalMoves;
+			++moves; //Increase Ptr
+		}
+		
+		#ifdef EXPANDED_MOVE_TUTORS
+		u8 tutRet = CanMonLearnTutorMove(mon, i);
+		#else
+		u8 tutRet = CanLearnTutorMove(mon->species, i);
+		#endif
+		if (tutRet == TRUE
+		|| (tutRet > TRUE && tutRet == dexNum))
+		{
+			#ifdef EXPANDED_MOVE_TUTORS
+			*moves = GetExpandedTutorMove(i);
+			#else
+			*moves = GetTutorMove(i);
+			#endif
+
+			if (*moves != MOVE_NONE)
+			{
+				++numTotalMoves;
+				++moves; //Increase Ptr
+			}
+		}
+	}
+	
+	return numTotalMoves;
+}
 
 u16 GiveMoveToBoxMon(struct BoxPokemon *boxMon, u16 move)
 {

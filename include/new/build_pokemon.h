@@ -15,8 +15,11 @@
 void sp067_GenerateRandomBattleTowerTeam(void);
 u16 sp068_GivePlayerFrontierMonGivenSpecies(void);
 void GiveMonNatureAndAbility(pokemon_t* mon, u8 nature, u8 abilityNum, bool8 forceShiny);
+bool8 IsMonBannedInTier(struct Pokemon* mon, u8 tier);
 bool8 IsMonAllowedInBattleTower(struct Pokemon* mon);
 void TryStatusInducer(struct Pokemon* mon);
+void CalculateMonStatsNew(struct Pokemon *mon);
+u8 GetOpenWorldBadgeCount(void);
 
 //Functions Hooked In
 void BuildTrainerPartySetup(void);

@@ -1,20 +1,35 @@
+#include "src/config.h"
+
+#ifdef SCROLLING_MULTICHOICE
+
 #org @sExampleText_1
 Example 1
+
 #org @sExampleText_2
 Example 2
+
 #org @sExampleText_3
 Example 3
+
 #org @sExampleText_4
 Example 4
+
 #org @sExampleText_5
 Example 5
+
 #org @sExampleText_6
 Example 6
+
 #org @sExampleText_7
 Example 7
+
 #org @sExampleText_8
 Example 8
+
 #org @sExampleText_9
 Example 9
+
 #org @sExampleText_10
 Example 10
+
+#endif

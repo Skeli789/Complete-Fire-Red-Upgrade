@@ -30,7 +30,7 @@ struct PalRef
 	u16 PalTag;
 };
 
-#define sPalRefs ((struct PalRef*) 0x203B7D4)
+#define sPalRefs ((struct PalRef*) 0x203B7D4) //Make sure to change reference in BT scripts if modified
 
 //This file's functions:
 static u16 TintColor(u16 color);

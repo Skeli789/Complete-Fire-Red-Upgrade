@@ -5,7 +5,9 @@
 #include "../include/random.h"
 #include "../include/constants/items.h"
 
+#include "../include/new/battle_util.h"
 #include "../include/new/Helper_Functions.h"
+#include "../include/new/item.h"
 #include "../include/new/item_battle_effects.h"
 #include "../include/new/item_battle_scripts.h"
 #include "../include/new/move_tables.h"
@@ -55,7 +57,12 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
 	u8 bankQuality, atkQuality;
 	u16 atkItem;
 	u8 moveSplit = CalcMoveSplit(gBankAttacker, gCurrentMove);
-	
+
+	#ifndef NO_GHOST_BATTLES
+	if (IS_GHOST_BATTLE && SIDE(bank) == B_SIDE_OPPONENT)
+		return 0; //Ghost's items don't activate
+	#endif
+
 	if (DoPluck) {
 		bankHoldEffect = ItemId_GetHoldEffect(gLastUsedItem);
 		bankQuality = ItemId_GetHoldEffectParam(gLastUsedItem);
@@ -217,10 +224,18 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
 					if (moveTurn || DoPluck)
 					{
 						BattleScriptPushCursor();
-						gBattlescriptCurrInstr = BattleScript_BerryHealHP_RemoveBerryRet;
+						if (IsBerry(gLastUsedItem))
+							gBattlescriptCurrInstr = BattleScript_BerryHealHP_RemoveBerryRet;
+						else
+							gBattlescriptCurrInstr = BattleScript_ItemHealHP_RemoveItemRet; //Berry Juice
 					}
 					else
+					{
+						if (IsBerry(gLastUsedItem))
 							BattleScriptExecute(BattleScript_BerryHealHP_RemoveBerryEnd2);
+						else
+							BattleScriptExecute(BattleScript_ItemHealHP_RemoveItemEnd2);
+					}
 					effect = ITEM_HP_CHANGE;
 				}
 				break;
@@ -304,7 +319,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
 			case ITEM_EFFECT_LEFTOVERS:
 			LEFTOVERS_HEAL:
 				if (!moveTurn && gBattleMons[bank].hp < gBattleMons[bank].maxHP
-				&&  !gNewBS->HealBlockTimers[bank]
+				&&  !IsHealBlocked(bank)
 				&&  !gNewBS->leftoverHealingDone[bank])
 				{
 					gBattleMoveDamage = MathMax(1, gBattleMons[bank].maxHP / 16);
@@ -569,7 +584,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
 					StringCopy(gBattleTextBuff1, gStatusConditionString_EncoreProblem);
 					++i;
 				}
-				if (gDisableStructs[bank].tauntTimer) 
+				if (gDisableStructs[bank].tauntTimer > 0) 
 				{
 					gDisableStructs[bank].tauntTimer = 0;
 					StringCopy(gBattleTextBuff1, gStatusConditionString_TauntProblem);
@@ -823,7 +838,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
 			switch (atkHoldEffect)
 			{
 			case ITEM_EFFECT_FLINCH:
-				if (ABILITY(gBankAttacker) == ABILITY_SERENEGRACE || gNewBS->RainbowTimers[SIDE(gBankAttacker)])
+				if (ABILITY(gBankAttacker) == ABILITY_SERENEGRACE || BankSideHasRainbow(gBankAttacker))
 					bankQuality *= 2;
 				if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) 
 				&& ABILITY(gBankTarget) != ABILITY_STENCH

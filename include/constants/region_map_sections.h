@@ -151,5 +151,6 @@
 #define MAPSEC_ROUTE_16 					0x74
 #define MAPSEC_ROUTE_17 					0x75
 #define MAPSEC_DISTORTION_WORLD				0x97
+#define MAPSEC_BATTLE_FRONTIER              0xA7
 
 #endif

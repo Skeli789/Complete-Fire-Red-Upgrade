@@ -11,6 +11,7 @@
 #include "../include/new/ai_master.h"
 #include "../include/new/battle_start_turn_start.h"
 #include "../include/new/battle_start_turn_start_battle_scripts.h"
+#include "../include/new/battle_util.h"
 #include "../include/new/CMD49.h"
 #include "../include/new/damage_calc.h"
 #include "../include/new/dexnav.h"
@@ -126,6 +127,26 @@ void BattleBeginFirstTurn(void)
 				
 				//OW Terrain
 				u8 req_terrain = VarGet(TERRAIN_VAR);
+
+				if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_CIRCUS)
+				{
+					//Can have at most one of these set at a time
+					switch (gBattleCircusFlags & BATTLE_CIRCUS_TERRAIN) {
+						case BATTLE_CIRCUS_ELECTRIC_TERRAIN:
+							req_terrain = ELECTRIC_TERRAIN;
+							break;
+						case BATTLE_CIRCUS_GRASSY_TERRAIN:
+							req_terrain = GRASSY_TERRAIN;
+							break;
+						case BATTLE_CIRCUS_MISTY_TERRAIN:
+							req_terrain = MISTY_TERRAIN;
+							break;
+						case BATTLE_CIRCUS_PSYCHIC_TERRAIN:
+							req_terrain = PSYCHIC_TERRAIN;
+							break;
+					}
+				}
+
 				if (req_terrain && TerrainType != req_terrain) {
 					switch (req_terrain) {
 						case ELECTRIC_TERRAIN:
@@ -165,20 +186,39 @@ void BattleBeginFirstTurn(void)
 					if (effect) return;
 				}
 				++*state;
+				*bank = 0;
 				break;
 			
 			case ThirdTypeRemoval:
-				for (*bank = 0; *bank < gBattlersCount; ++*bank)
+				for (; *bank < gBattlersCount; ++*bank)
 				{
 					gBattleMons[*bank].type3 =  TYPE_BLANK;
 					
 					if (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) //The Pokemon takes on the types of its first two moves
+					{
+						#ifndef NO_GHOST_BATTLES
+						if (IS_GHOST_BATTLE && SIDE(*bank) == B_SIDE_OPPONENT)
+							continue;
+						#endif
+	
 						UpdateTypesForCamomons(*bank);
+						gBattleScripting->bank = *bank;
+						BattleScriptPushCursorAndCallback(BattleScript_CamomonsTypeRevealEnd3);
+						
+						if (gBattleMons[*bank].type1 == gBattleMons[*bank].type2)
+							BattleStringLoader = gText_CamomonsTypeReveal;
+						else
+							BattleStringLoader = gText_CamomonsTypeRevealDualType;
+						PREPARE_TYPE_BUFFER(gBattleTextBuff1, gBattleMons[*bank].type1);
+						PREPARE_TYPE_BUFFER(gBattleTextBuff2, gBattleMons[*bank].type2);
+						++*bank;
+						return;
+					}
 				}
 
 				*bank = 0;
 				++*state;
-			
+
 			__attribute__ ((fallthrough));
 			case SwitchInAbilities:
 				while (*bank < gBattlersCount) {
@@ -215,15 +255,25 @@ void BattleBeginFirstTurn(void)
 				break;
 				
 			case AirBalloon:
-				while (*bank < gBattlersCount) {
-					if (GetBankItemEffect(gBanksByTurnOrder[*bank]) == ITEM_EFFECT_AIR_BALLOON) {
+				while (*bank < gBattlersCount)
+				{
+					#ifndef NO_GHOST_BATTLES
+					if (IS_GHOST_BATTLE && SIDE(gBanksByTurnOrder[*bank]) == B_SIDE_OPPONENT)
+					{
+						++*bank;
+						continue;
+					}
+					#endif
+
+					if (ITEM_EFFECT(gBanksByTurnOrder[*bank]) == ITEM_EFFECT_AIR_BALLOON)
+					{
 						BattleScriptPushCursorAndCallback(BattleScript_AirBalloonFloat);
-						gBattleScripting->bank = gBanksByTurnOrder[*bank];
-						gBankAttacker = gBanksByTurnOrder[*bank];
+						gBankAttacker = gBattleScripting->bank = gBanksByTurnOrder[*bank];
+						RecordItemEffectBattle(gBankAttacker, ITEM_EFFECT_AIR_BALLOON);
 						++effect;
 					}
 					++*bank;
-					
+
 					if (effect) return;
 				}
 				*bank = 0; //Reset Bank for next loop
@@ -237,6 +287,14 @@ void BattleBeginFirstTurn(void)
 				{
 					while (*bank < gBattlersCount)
 					{
+						#ifndef NO_GHOST_BATTLES
+						if (IS_GHOST_BATTLE && SIDE(*bank) == B_SIDE_OPPONENT)
+						{
+							++*bank;
+							continue;
+						}
+						#endif
+
 						if (CanActivateTotemBoost(*bank))
 						{
 							BattleScriptPushCursorAndCallback(BattleScript_Totem);
@@ -317,7 +375,7 @@ static void TryPrepareTotemBoostInBattleSands(void)
 		u8 enemyId = 1;
 		u8 playerStat = RandRange(1, BATTLE_STATS_NO - 1);
 		u8 enemyStat = RandRange(1, BATTLE_STATS_NO - 1);
-		u8 increaseMax;
+		u8 increaseMax, increase;
 		
 		if (IS_DOUBLE_BATTLE)
 		{
@@ -339,9 +397,15 @@ static void TryPrepareTotemBoostInBattleSands(void)
 			increaseMax = 5;
 		else
 			increaseMax = 6;
+			
+		//Makes it so Contrary has no effect on the stat boost
+		u8 contraryShiftPlayer = (ABILITY(playerId) == ABILITY_CONTRARY) ? 0x80 : 0;
+		u8 contraryShiftEnemy = (ABILITY(enemyId) == ABILITY_CONTRARY) ? 0x80 : 0;
 
-		VarSet(TOTEM_VAR + playerId, playerStat | (increaseMax * 0x10));
-		VarSet(TOTEM_VAR + enemyId, enemyStat | (increaseMax * 0x10));
+		increase = (Random() % increaseMax) + 1;
+		VarSet(TOTEM_VAR + playerId, playerStat | (increase * 0x10 + contraryShiftPlayer));
+		increase = (Random() % increaseMax) + 1;
+		VarSet(TOTEM_VAR + enemyId, enemyStat | (increase * 0x10 + contraryShiftEnemy));
 	}
 }
 
@@ -440,6 +504,7 @@ void SetActionsAndBanksTurnOrder(void)
 		}
 	}
 
+	gNewBS->NoMoreMovingThisTurn = 0;
 	gBattleMainFunc = (u32) CheckFocusPunch_ClearVarsBeforeTurnStarts;
 	gBattleStruct->focusPunchBank = 0;
 }
@@ -588,7 +653,7 @@ void RunTurnActionsFunctions(void)
 			if ((chosenMove == MOVE_FOCUSPUNCH || chosenMove == MOVE_BEAKBLAST || chosenMove == MOVE_SHELLTRAP)
 			&& !(gBattleMons[gActiveBattler].status1 & STATUS1_SLEEP)
 			&& !(gDisableStructs[gActiveBattler].truantCounter)
-			&& !(gProtectStructs[gActiveBattler].onlyStruggle)) //or onlyStruggle in Emerald
+			&& !(gProtectStructs[gActiveBattler].onlyStruggle))
 			{
 				gBankAttacker = gBattleScripting->bank = gActiveBattler;
 				if (chosenMove == MOVE_BEAKBLAST && !(gNewBS->BeakBlastByte & gBitTable[gActiveBattler]))
@@ -696,12 +761,12 @@ void HandleAction_UseMove(void)
 	}
 	else if (gBattleMons[gBankAttacker].status2 & STATUS2_RECHARGE)
 	{
-		gCurrentMove = gChosenMove = gLockedMoves[gBankAttacker];
+		gChosenMovesByBanks[gBankAttacker] = gCurrentMove = gChosenMove = gLockedMoves[gBankAttacker];
 	}
 	else if (gBattleMons[gBankAttacker].status2 & STATUS2_MULTIPLETURNS)
 	{
-		gCurrentMove = gChosenMove = gLockedMoves[gBankAttacker];
-		
+		gChosenMovesByBanks[gBankAttacker] = gCurrentMove = gChosenMove = gLockedMoves[gBankAttacker];
+
 		if (FindMovePositionInMoveset(gLockedMoves[gBankAttacker], gBankAttacker) == 4) //The Pokemon doesn't know the move it's locked into
 		{
 			CancelMultiTurnMoves(gBankAttacker);
@@ -760,8 +825,22 @@ void HandleAction_UseMove(void)
 			u16 zmove = GetSpecialZMove(gCurrentMove, SPECIES(gBankAttacker), ITEM(gBankAttacker));
 			if (zmove != MOVE_NONE && zmove != 0xFFFF) //There's a special Z-Move
 				gCurrentMove = zmove;
-			else //No need to check if special z-crystal. Check is carried out before
+			else if (zmove != 0xFFFF) //This check is needed b/c in Benjamin Butterfree you can select a special Z-Move but then lose it before it activates
 				gCurrentMove = GetTypeBasedZMove(gBattleMons[gBankAttacker].moves[gCurrMovePos], gBankAttacker);
+			else
+			{
+				gNewBS->ZMoveData->active = FALSE;
+				gNewBS->ZMoveData->toBeUsed[gBankAttacker] = FALSE;
+			}
+		}
+		else
+		{
+			//This check is needed b/c in Benjamin Butterfree you can select a special Z-Move but then lose it before it activates
+			if (GetSpecialZMove(gCurrentMove, SPECIES(gBankAttacker), ITEM(gBankAttacker)) == 0xFFFF)
+			{
+				gNewBS->ZMoveData->active = FALSE;
+				gNewBS->ZMoveData->toBeUsed[gBankAttacker] = FALSE;
+			}
 		}
 	}
 	
@@ -773,7 +852,7 @@ void HandleAction_UseMove(void)
 	bank_t selectedTarget = gBattleStruct->moveTarget[gBankAttacker];
 	
 	if (gSideTimers[side].followmeTimer != 0
-	&& gBattleMoves[gCurrentMove].target & (MOVE_TARGET_SELECTED | MOVE_TARGET_RANDOM)
+	&& (gBattleMoves[gCurrentMove].target == MOVE_TARGET_SELECTED || gBattleMoves[gCurrentMove].target == MOVE_TARGET_RANDOM)
 	&& SIDE(gBankAttacker) != SIDE(gSideTimers[side].followmeTarget)
 	&& gBattleMons[gSideTimers[side].followmeTarget].hp != 0
 	&& gCurrentMove != MOVE_SKYDROP)
@@ -1330,7 +1409,7 @@ u32 SpeedCalc(u8 bank)
 	
 	if (gNewBS->TailwindTimers[SIDE(bank)])
 		speed *= 2;
-	if (gNewBS->SwampTimers[SIDE(bank)])
+	if (BankSideHasSwamp(bank))
 		speed /= 4;
 	
 	#ifdef BADGE_BOOSTS
@@ -1391,7 +1470,7 @@ u32 SpeedCalcForParty(u8 side, struct Pokemon* mon)
 	//Check other things that alter speed
 	if (gNewBS->TailwindTimers[side])
 		speed *= 2;
-	if (gNewBS->SwampTimers[side])
+	if (SideHasSwamp(side))
 		speed /= 4;
 	
 	if (mon->condition & STATUS_ANY && ability == ABILITY_QUICKFEET)

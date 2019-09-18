@@ -68,6 +68,7 @@
 #define TRAINER_BACK_PIC_MARLON				6
 #define TRAINER_BACK_PIC_POKE_KID			7
 #define TRAINER_BACK_PIC_RIVAL				8
+#define TRAINER_BACK_PIC_JAX				9
 
 #endif
 

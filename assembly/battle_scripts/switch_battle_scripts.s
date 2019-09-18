@@ -52,13 +52,13 @@ Sparkles:
 
 BattleScript_SpikesHurt:
 	orword HIT_MARKER 0x100100
-	graphicalhpupdate BANK_SCRIPTING
-	datahpupdate BANK_SCRIPTING
+	graphicalhpupdate BANK_TARGET
+	datahpupdate BANK_TARGET
 	setword BATTLE_STRING_LOADER gText_HurtBySpikes
 	printstring 0x184
 	waitmessage DELAY_1SECOND
-	faintpokemon BANK_SCRIPTING 0x0 0x0
-	faintpokemon BANK_SCRIPTING TRUE BattleScript_DmgHazardsOnAttackerFainted
+	faintpokemon BANK_TARGET 0x0 0x0
+	faintpokemon BANK_TARGET TRUE BattleScript_DmgHazardsOnAttackerFainted
 	return
 
 BattleScript_DmgHazardsOnAttackerFainted:
@@ -73,13 +73,13 @@ BattleScript_DmgHazardsOnAttackerFainted:
 	
 BattleScript_SRHurt:
 	orword HIT_MARKER 0x100100
-	graphicalhpupdate BANK_SCRIPTING
-	datahpupdate BANK_SCRIPTING
+	graphicalhpupdate BANK_TARGET
+	datahpupdate BANK_TARGET
 	setword BATTLE_STRING_LOADER gText_HurtByStealthRock
 	printstring 0x184
 	waitmessage DELAY_1SECOND
-	faintpokemon BANK_SCRIPTING 0x0 0x0
-	faintpokemon BANK_SCRIPTING TRUE BattleScript_DmgHazardsOnAttackerFainted
+	faintpokemon BANK_TARGET 0x0 0x0
+	faintpokemon BANK_TARGET TRUE BattleScript_DmgHazardsOnAttackerFainted
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -154,7 +154,9 @@ ForceSwitch:
 	waitstateatk
 	printstring 0x154
 	callasm MoldBreakerRemoveAbilitiesOnForceSwitchIn
-	switchineffects BANK_TARGET
+	copybyte BATTLE_SCRIPTING_BANK TARGET_BANK
+	callasm BackupScriptingBank
+	switchineffects BANK_SCRIPTING
 	callasm RestoreAllOriginalMoveData
 	jumpifmove MOVE_DRAGONTAIL BattleScript_DragonTailResetForceSwitchHelper
 	jumpifmove MOVE_CIRCLETHROW BattleScript_DragonTailResetForceSwitchHelper
@@ -177,11 +179,13 @@ ForceSwitchRedCard:
 	waitstateatk
 	printstring 0x154
 	callasm MoldBreakerRemoveAbilitiesOnForceSwitchIn
-	switchineffects BANK_TARGET
+	copybyte BATTLE_SCRIPTING_BANK TARGET_BANK
+	callasm BackupScriptingBank
+	switchineffects BANK_SCRIPTING
 	callasm MoldBreakerRestoreAbilitiesOnForceSwitchIn
 	setbyte FORCE_SWITCH_HELPER 0x0
-	copybyte TARGET_BANK SEED_HELPER
-	copybyte BATTLE_SCRIPTING_BANK, SEED_HELPER + 1
+	callasm RestoreAllOriginalMoveData
+	copybyte BATTLE_SCRIPTING_BANK, TARGET_BANK
 	removeitem BANK_SCRIPTING
 	return
 

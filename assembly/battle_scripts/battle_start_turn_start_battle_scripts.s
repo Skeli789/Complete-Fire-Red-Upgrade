@@ -19,6 +19,8 @@
 .global BattleScript_BeakBlastSetUp
 .global BattleScript_ShellTrapSetUp
 .global BattleScript_NoTargetMoveFailed
+.global BattleScript_CamomonsTypeRevealRet
+.global BattleScript_CamomonsTypeRevealEnd3
 
 .global StringNull
 
@@ -166,6 +168,17 @@ BattleScript_NoTargetMoveFailed:
 	attackcanceler
 	goto FAILED - 2
 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_CamomonsTypeRevealEnd3:
+	call BattleScript_CamomonsTypeRevealRet
+	end3
+
+BattleScript_CamomonsTypeRevealRet:
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	return
+	
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 AirBalloonEntryString: .byte 0xFD, 0x0F, 0x00, 0xDA, 0xE0, 0xE3, 0xD5, 0xE8, 0xE7, 0x00, 0xDD, 0xE2, 0xFE, 0xE8, 0xDC, 0xD9, 0x00, 0xD5, 0xDD, 0xE6, 0x00, 0xEB, 0xDD, 0xE8, 0xDC, 0x00, 0xDD, 0xE8, 0xE7, 0x00, 0xBB, 0xDD, 0xE6, 0x00, 0xBC, 0xD5, 0xE0, 0xE0, 0xE3, 0xE3, 0xE2, 0xAB, 0xFF

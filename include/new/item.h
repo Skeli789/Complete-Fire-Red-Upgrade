@@ -37,3 +37,6 @@ enum
 };
 
 #define NUM_TMSHMS NUM_TMS + NUM_HMS	// never change this
+
+#define gTMHMMoves ((const u16*) *((u32*) 0x8125A8C))
+#define gTutorMoves ((const u16*) *((u32*) 0x8120BE4))

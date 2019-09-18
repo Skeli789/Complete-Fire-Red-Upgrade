@@ -610,9 +610,10 @@ u8 CanPokemonSelectedBeEnteredInBattleTower(void)
         u16 item = GetMonData(&party[gSelectedOrderFromParty[i] - 1], MON_DATA_HELD_ITEM, NULL);
         for (j = i + 1; j < maxLength; j++)
         {
-            if (species == GetMonData(&party[gSelectedOrderFromParty[j] - 1], MON_DATA_SPECIES, NULL))
+            if (tier != BATTLE_TOWER_NO_RESTRICTIONS
+			&& species == GetMonData(&party[gSelectedOrderFromParty[j] - 1], MON_DATA_SPECIES, NULL))
                 return 18;
-            if (item != 0 && (tier == BATTLE_TOWER_STANDARD || tier == BATTLE_TOWER_MIDDLE_CUP)
+            if (item != 0 && DuplicateItemsAreBannedInTier(tier, VarGet(BATTLE_TOWER_BATTLE_TYPE))
 			&& item == GetMonData(&party[gSelectedOrderFromParty[j] - 1], MON_DATA_HELD_ITEM, NULL))
                 return 19;
         }

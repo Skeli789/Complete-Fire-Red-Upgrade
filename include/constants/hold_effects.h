@@ -136,6 +136,8 @@
 #define ITEM_EFFECT_EJECT_PACK 132
 #define ITEM_EFFECT_ROOM_SERVICE 133
 
+#define ITEM_EFFECT_COUNT (ITEM_EFFECT_ROOM_SERVICE + 1)
+
 //Focus Sash: Item Effect = ITEM_EFFECT_FOCUS_BAND, Item Quality = 100, Item Mystery 2 = 1
 //Power Items: Item Effect = ITEM_EFFECT_MACHO_BRACE Item Quality = See Below
 

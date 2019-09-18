@@ -6,6 +6,7 @@
 #include "../include/constants/songs.h"
 #include "../include/constants/trainer_classes.h"
 
+#include "../include/new/battle_util.h"
 #include "../include/new/end_battle.h"
 #include "../include/new/end_battle_battle_scripts.h"
 #include "../include/new/form_change.h"
@@ -312,7 +313,7 @@ u8 IsRunningFromBattleImpossible(void)
 	else
 		gNewBS->TeleportBit = FALSE;
 
-	if (gNewBS->FairyLockTimer)
+	if (IsFairyLockActive())
 	{
 		gBattleCommunication[MULTISTRING_CHOOSER] = 0;
 		return TRUE;
@@ -426,8 +427,18 @@ void EndOfBattleThings(void)
 		TerrainType = 0; //Reset now b/c normal reset is after BG is loaded
 		
 		#ifdef UNBOUND
-		if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_SANDS && GetCurrentWeather() != WEATHER_NONE)
-			SetSav1Weather(WEATHER_RAIN_LIGHT); //Reset weather in Battle Sands
+		u8 weather = GetCurrentWeather();
+		if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_SANDS)
+		{
+			if (weather != WEATHER_NONE
+			&& weather != WEATHER_CLOUDS
+			&& weather != WEATHER_SUNNY)
+				SetSav1Weather(WEATHER_RAIN_LIGHT); //Reset weather in Battle Sands
+		}
+		else if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_CIRCUS)
+		{
+			SetSav1Weather(WEATHER_NONE);
+		}
 		#endif
 	}
 }
@@ -579,6 +590,7 @@ static void EndBattleFlagClear(void)
 	u16 backup = gTrainerBattleOpponent_B;
 	Memset(&ExtensionState, 0x0, sizeof(struct BattleExtensionState));
 	gTrainerBattleOpponent_B = backup;
+	gBattleCircusFlags = 0;
 }
 
 static void HealPokemonInFrontier(void)
@@ -600,8 +612,8 @@ bool8 IsConsumable(u16 item)
 {
 	u8 effect = gItems[SanitizeItemId(item)].holdEffect;
 
-	for (u32 i = 0; ConsumableItemEffectTable[i] != 0xFF; ++i) {
-		if (effect == ConsumableItemEffectTable[i])
+	for (u32 i = 0; gConsumableItemEffects[i] != 0xFF; ++i) {
+		if (effect == gConsumableItemEffects[i])
 			return TRUE;
 	}
 

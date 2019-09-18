@@ -8,6 +8,8 @@ extern u8 BattleScript_BerryConfuseHealRet[];
 extern u8 BattleScript_BerryConfuseHealEnd2[];
 extern u8 BattleScript_BerryHealHP_RemoveBerryRet[];
 extern u8 BattleScript_BerryHealHP_RemoveBerryEnd2[];
+extern u8 BattleScript_ItemHealHP_RemoveItemRet[];
+extern u8 BattleScript_ItemHealHP_RemoveItemEnd2[];
 extern u8 BattleScript_BerryPPHealRet[];
 extern u8 BattleScript_BerryPPHealEnd2[];
 extern u8 BattleScript_BerryFocusEnergyRet[];

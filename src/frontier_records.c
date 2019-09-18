@@ -90,7 +90,7 @@ struct FrontierRecords
 	u8 starObjIds[NUM_STAR_OBJS];
 };
 
-#define sFrontierRecordsPtr (*((struct FrontierRecords**) 0x203C758))
+#define sFrontierRecordsPtr (*((struct FrontierRecords**) 0x203E038))
 
 extern const u8 gInterfaceGfx_FrontierRecordsTiles[];
 extern const u8 gInterfaceGfx_FrontierRecordsPal[];
@@ -112,14 +112,6 @@ extern const u8 gText_MaxStreak[];
 extern const u8 gText_3v3[];
 extern const u8 gText_4v4[];
 extern const u8 gText_6v6[];
-extern const u8 gText_BattleTowerStandard[];
-extern const u8 gText_NoRestrictions[];
-extern const u8 gText_SmogonGen7OU[];
-extern const u8 gText_SmogonGen7Uber[];
-extern const u8 gText_SmogonLittleCup[];
-extern const u8 gText_MiddleCup[];
-extern const u8 gText_SmogonMonotype[];
-extern const u8 gText_GSCup[];
 
 //This File's Static Functions
 static void CB2_ShowFrontierRecords(void);
@@ -290,7 +282,7 @@ static const struct WindowTemplate sFrontierRecordsWinTemplates[WINDOW_COUNT + 1
 		.bg = 0,
 		.tilemapLeft = 2,
 		.tilemapTop = 3,
-		.width = 15,
+		.width = 18,
 		.height = 2,
 		.paletteNum = 15,
 		.baseBlock = 221,
@@ -306,7 +298,7 @@ static const struct WindowTemplate sFrontierRecordsWinTemplates[WINDOW_COUNT + 1
 		.width = 4,
 		.height = 2,
 		.paletteNum = 15,
-		.baseBlock = 251,
+		.baseBlock = 257,
 	},
 	[WIN_MAX_STREAK_3V3_LEVEL_50] =
 	{
@@ -316,7 +308,7 @@ static const struct WindowTemplate sFrontierRecordsWinTemplates[WINDOW_COUNT + 1
 		.width = 4,
 		.height = 2,
 		.paletteNum = 15,
-		.baseBlock = 259,
+		.baseBlock = 265,
 	},
 	[WIN_CURRENT_STREAK_6V6_LEVEL_50] =
 	{
@@ -326,7 +318,7 @@ static const struct WindowTemplate sFrontierRecordsWinTemplates[WINDOW_COUNT + 1
 		.width = 4,
 		.height = 2,
 		.paletteNum = 15,
-		.baseBlock = 267,
+		.baseBlock = 273,
 	},
 	[WIN_MAX_STREAK_6V6_LEVEL_50] =
 	{
@@ -336,7 +328,7 @@ static const struct WindowTemplate sFrontierRecordsWinTemplates[WINDOW_COUNT + 1
 		.width = 4,
 		.height = 2,
 		.paletteNum = 15,
-		.baseBlock = 275,
+		.baseBlock = 281,
 	},
 	[WIN_CURRENT_STREAK_3V3_LEVEL_100] =
 	{
@@ -346,7 +338,7 @@ static const struct WindowTemplate sFrontierRecordsWinTemplates[WINDOW_COUNT + 1
 		.width = 4,
 		.height = 2,
 		.paletteNum = 15,
-		.baseBlock = 283,
+		.baseBlock = 289,
 	},
 	[WIN_MAX_STREAK_3V3_LEVEL_100] =
 	{
@@ -356,7 +348,7 @@ static const struct WindowTemplate sFrontierRecordsWinTemplates[WINDOW_COUNT + 1
 		.width = 4,
 		.height = 2,
 		.paletteNum = 15,
-		.baseBlock = 291,
+		.baseBlock = 297,
 	},
 	[WIN_CURRENT_STREAK_6V6_LEVEL_100] =
 	{
@@ -366,7 +358,7 @@ static const struct WindowTemplate sFrontierRecordsWinTemplates[WINDOW_COUNT + 1
 		.width = 4,
 		.height = 2,
 		.paletteNum = 15,
-		.baseBlock = 299,
+		.baseBlock = 305,
 	},
 	[WIN_MAX_STREAK_6V6_LEVEL_100] =
 	{
@@ -376,7 +368,7 @@ static const struct WindowTemplate sFrontierRecordsWinTemplates[WINDOW_COUNT + 1
 		.width = 4,
 		.height = 2,
 		.paletteNum = 15,
-		.baseBlock = 307,
+		.baseBlock = 313,
 	},
 
 	DUMMY_WIN_TEMPLATE,
@@ -413,17 +405,6 @@ static const u8* const sBattleTypeStrings[NUM_TOWER_BATTLE_TYPES] =
 	gText_SingleRandomBattleRecord,
 	gText_DoubleRandomBattleRecord,
 	gText_MultiRandomBattleRecord,
-};
-
-static const u8* const sBattleTowerTierNames[NUM_FORMATS] =
-{
-	[BATTLE_TOWER_STANDARD] = gText_BattleTowerStandard,
-	[BATTLE_TOWER_NO_RESTRICTIONS] = gText_NoRestrictions,
-	[BATTLE_TOWER_OU] = gText_SmogonGen7OU,
-	[BATTLE_TOWER_UBER] gText_SmogonGen7Uber,
-	[BATTLE_TOWER_LITTLE_CUP] = gText_SmogonLittleCup,
-	[BATTLE_TOWER_MIDDLE_CUP] = gText_MiddleCup,
-	[BATTLE_TOWER_MONOTYPE] = gText_SmogonMonotype,
 };
 
 static void MainCB2(void)
@@ -466,6 +447,8 @@ static void CB2_ShowFrontierRecords(void)
 						sFrontierRecordsPtr->tierList = gBattleTowerTiers;
 						break;
 				}
+				
+				sFrontierRecordsPtr->battleTier = sFrontierRecordsPtr->tierList[0];
 
 				gMain.state += 1;
 			}
@@ -593,6 +576,7 @@ static void FreeReusableThings(u8 taskId)
 
 static void DisplayFrontierRecordsText(void)
 {
+	u16 currStreak, maxStreak;
 	u8 tier = sFrontierRecordsPtr->battleTier;
 	const u8* string;
 
@@ -649,16 +633,31 @@ static void DisplayFrontierRecordsText(void)
 	GetMapName(gStringVar4, GetCurrentRegionMapSectionId(), 0);
 	WindowPrint(WIN_BATTLE_FACILITY_NAME, 1, 0, 6, &titleColour, 0, gStringVar4);
 
+	//Print Tier Name
+	string = GetFrontierTierName(tier, sFrontierRecordsPtr->battleType);
+	WindowPrint(WIN_TIER, 0, 0, 4, &tierNameColour, 0, string);
+	
+	//Print Current & Max Streak
+	WindowPrint(WIN_CURRENT_STREAK_LEVEL_50, 0, 0, 4, &generalColour, 0, gText_CurrentStreak);
+	WindowPrint(WIN_MAX_STREAK_LEVEL_50, 0, 0, 4, &generalColour, 0, gText_MaxStreak);
+	
+	if (BATTLE_FACILITY_NUM == IN_BATTLE_MINE) //Battle Mine is special
+	{
+		currStreak = GetBattleMineStreak(CURR_STREAK, sFrontierRecordsPtr->battleTier);
+		maxStreak = GetBattleMineStreak(MAX_STREAK, sFrontierRecordsPtr->battleTier);
+		ConvertIntToDecimalStringN(gStringVar1, currStreak, 0, 5);
+		ConvertIntToDecimalStringN(gStringVar2, maxStreak, 0, 5);
+		
+		WindowPrint(WIN_CURRENT_STREAK_3V3_LEVEL_50, 0, 0, 4, &generalColour, 0, gStringVar1);
+		WindowPrint(WIN_MAX_STREAK_3V3_LEVEL_50, 0, 0, 4, &generalColour, 0, gStringVar2);
+		TryCreateStarSprite(114, 84, 0, maxStreak);
+		goto COMMIT_WINDOWS;
+	}
+
 	//Print record battle type
 	string = sBattleTypeStrings[sFrontierRecordsPtr->battleType];
 	u8 leftShift = (StringLength(gText_LinkMultiBattleRecord) - StringLength(string)) * 5;
 	WindowPrint(WIN_BATTLE_TYPE, 1, leftShift, 6, &titleColour, 0, string);
-
-	//Print Tier Name
-	string = sBattleTowerTierNames[tier];
-	if (tier == BATTLE_TOWER_MIDDLE_CUP && !IsFrontierSingles(sFrontierRecordsPtr->battleType))
-		string = gText_GSCup;
-	WindowPrint(WIN_TIER, 0, 0, 4, &tierNameColour, 0, string);
 
 	//Print Level 50 Party Sizes Numbers
 	string = (IsFrontierSingles(sFrontierRecordsPtr->battleType)) ? gText_3v3 : gText_4v4;
@@ -666,17 +665,14 @@ static void DisplayFrontierRecordsText(void)
 	WindowPrint(WIN_6V6_LEVEL_50, 0, 0, 4, &partySizeColour, 0, gText_6v6);
 
 	//Print Level 50 General Text
-	if (tier == BATTLE_TOWER_LITTLE_CUP)
+	if (IsLittleCupTier(tier))
 		WindowPrint(WIN_LEVEL_50, 0, 0, 4, &levelColour, 0, gText_FrontierRecordLevel5);
-	else if (tier == BATTLE_TOWER_MONOTYPE)
+	else if (tier == BATTLE_TOWER_MONOTYPE && BATTLE_FACILITY_NUM == IN_BATTLE_TOWER)
 		WindowPrint(WIN_LEVEL_50, 0, 0, 4, &levelColour, 0, gText_FrontierRecordLevel100);
 	else
 		WindowPrint(WIN_LEVEL_50, 0, 0, 4, &levelColour, 0, gText_FrontierRecordLevel50);
 
-	WindowPrint(WIN_CURRENT_STREAK_LEVEL_50, 0, 0, 4, &generalColour, 0, gText_CurrentStreak);
-	WindowPrint(WIN_MAX_STREAK_LEVEL_50, 0, 0, 4, &generalColour, 0, gText_MaxStreak);
-
-	if (tier != BATTLE_TOWER_LITTLE_CUP && tier != BATTLE_TOWER_MONOTYPE) //Little Cup only has Lv. 5, Monotype only has Lv. 100
+	if (!IsLittleCupTier(tier) && (BATTLE_FACILITY_NUM != IN_BATTLE_TOWER || tier != BATTLE_TOWER_MONOTYPE)) //Little Cup only has Lv. 5, Monotype only has Lv. 100 in Battle Tower
 	{
 		//Print Level 100 Party Sizes Numbers
 		string = (IsFrontierSingles(sFrontierRecordsPtr->battleType)) ? gText_3v3 : gText_4v4;
@@ -694,27 +690,27 @@ static void DisplayFrontierRecordsText(void)
 	{
 		for (u8 partySize = 1; partySize <= 6; partySize += 5) //1 represents one record, 6 represents another
 		{
-			if (tier == BATTLE_TOWER_LITTLE_CUP)
+			if (IsLittleCupTier(tier))
 				level = 5;
 				
-			if (tier == BATTLE_TOWER_MONOTYPE)
+			if (BATTLE_FACILITY_NUM == IN_BATTLE_TOWER && tier == BATTLE_TOWER_MONOTYPE)
 				level = 100;
 
-			u16 currStreak = GetBattleTowerStreak(CURR_STREAK, sFrontierRecordsPtr->battleType, sFrontierRecordsPtr->battleTier, partySize, level);
-			u16 maxStreak = GetBattleTowerStreak(MAX_STREAK, sFrontierRecordsPtr->battleType, sFrontierRecordsPtr->battleTier, partySize, level);
+			currStreak = GetBattleTowerStreak(CURR_STREAK, sFrontierRecordsPtr->battleType, sFrontierRecordsPtr->battleTier, partySize, level);
+			maxStreak = GetBattleTowerStreak(MAX_STREAK, sFrontierRecordsPtr->battleType, sFrontierRecordsPtr->battleTier, partySize, level);
 			
 			ConvertIntToDecimalStringN(gStringVar1, currStreak, 0, 5);
 			ConvertIntToDecimalStringN(gStringVar2, maxStreak, 0, 5);
 			
 			if (partySize < 6)
 			{
-				if (level <= 50 || tier == BATTLE_TOWER_MONOTYPE) //3v3 Level 50
+				if (level <= 50 || (BATTLE_FACILITY_NUM == IN_BATTLE_TOWER && tier == BATTLE_TOWER_MONOTYPE)) //3v3 Level 50
 				{
 					WindowPrint(WIN_CURRENT_STREAK_3V3_LEVEL_50, 0, 0, 4, &generalColour, 0, gStringVar1);
 					WindowPrint(WIN_MAX_STREAK_3V3_LEVEL_50, 0, 0, 4, &generalColour, 0, gStringVar2);
 					TryCreateStarSprite(114, 84, 0, maxStreak);
 				}
-				else if (sFrontierRecordsPtr->battleTier != BATTLE_TOWER_LITTLE_CUP) //3v3 Level 100
+				else if (!IsLittleCupTier(sFrontierRecordsPtr->battleTier)) //3v3 Level 100
 				{
 					WindowPrint(WIN_CURRENT_STREAK_3V3_LEVEL_100, 0, 0, 4, &generalColour, 0, gStringVar1);
 					WindowPrint(WIN_MAX_STREAK_3V3_LEVEL_100, 0, 0, 4, &generalColour, 0, gStringVar2);
@@ -723,13 +719,13 @@ static void DisplayFrontierRecordsText(void)
 			}
 			else
 			{
-				if (level <= 50 || tier == BATTLE_TOWER_MONOTYPE) //6v6 Level 50
+				if (level <= 50 || (BATTLE_FACILITY_NUM == IN_BATTLE_TOWER && tier == BATTLE_TOWER_MONOTYPE)) //6v6 Level 50
 				{
 					WindowPrint(WIN_CURRENT_STREAK_6V6_LEVEL_50, 0, 0, 4, &generalColour, 0, gStringVar1);
 					WindowPrint(WIN_MAX_STREAK_6V6_LEVEL_50, 0, 0, 4, &generalColour, 0, gStringVar2);
 					TryCreateStarSprite(178, 84, 2, maxStreak);
 				}
-				else if (sFrontierRecordsPtr->battleTier != BATTLE_TOWER_LITTLE_CUP) //6v6 Level 100
+				else if (!IsLittleCupTier(sFrontierRecordsPtr->battleTier)) //6v6 Level 100
 				{
 					WindowPrint(WIN_CURRENT_STREAK_6V6_LEVEL_100, 0, 0, 4, &generalColour, 0, gStringVar1);
 					WindowPrint(WIN_MAX_STREAK_6V6_LEVEL_100, 0, 0, 4, &generalColour, 0, gStringVar2);
@@ -738,10 +734,11 @@ static void DisplayFrontierRecordsText(void)
 			}
 		}
 		
-		if (tier == BATTLE_TOWER_LITTLE_CUP || tier == BATTLE_TOWER_MONOTYPE)
+		if (IsLittleCupTier(tier) || (BATTLE_FACILITY_NUM == IN_BATTLE_TOWER && tier == BATTLE_TOWER_MONOTYPE))
 			break; //Only one set of levels for LC & Monotype
 	}
-	
+
+COMMIT_WINDOWS:
 	//Display committed gfx
 	for (u8 i = 0; i < WINDOW_COUNT; ++i)
 	{

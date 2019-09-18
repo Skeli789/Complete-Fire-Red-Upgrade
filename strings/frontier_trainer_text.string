@@ -1172,6 +1172,25 @@ This smell I have is the sweet\nscent of hay that Pok\emon surely\llove.
 #org @sFrontierText_Rancher_PlayerLose_6
 Whoa!
 
+//Frontier Brains
+#org @sFrontierText_Pat_PlayerWin
+Amazing!\pYou still won, even though the\nPokemon you used were not your own!
+
+#org @sFrontierText_Pat_PlayerLose
+It's harder to win when you're not\nused to your Pok\emon, eh?
+
+#org @sFrontierText_Pablo_PlayerWin
+Huh.\pWell whadya know[.]\pSeems like your team is pretty well\nthought out.
+
+#org @sFrontierText_Pablo_PlayerLose
+Why am I not surprised[.]\pListen up, kid!\nAnd listen up well!\pYou need a team that can handle\nitself in any situation!\pKeep that in mind for next time!
+
+#org @sFrontierText_Paula_PlayerWin
+Bravo! Bravo! Wonderful!\nYou're a true rising star!
+
+#org @sFrontierText_Paula_PlayerLose
+Well, the show must go on\pEven if our young star is not at\nthe forefront[.]
+
 //Special Trainers
 
 #org @sFrontierText_Skeli_PreBattle
@@ -1225,7 +1244,7 @@ Even if you lose, never lose your\nlove of Pok\emon.
 [.]
 
 #org @sFrontierText_BigMo_PreBattle
-Ha ha ha ha!\nLook who I ran into again!\p[PLAYER]!\pI've been looking forward to\nanother battle with you!\pNow, let's what you can do to the\nkingpin of Antisis City!
+Ha ha ha ha!\nLook who I ran into again!\p[PLAYER]!\pI've been looking forward to\nanother battle with you!\pNow, let's see what you can do to\nthe kingpin of Antisis City!
 
 #org @sFrontierText_BigMo_PlayerWin
 Ha ha ha ha!\pThey should start calling you\nBig [PLAYER_NAME]!

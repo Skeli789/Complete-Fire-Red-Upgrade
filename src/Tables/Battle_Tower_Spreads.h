@@ -11364,9 +11364,9 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 			MOVE_PROTECT,
 		},
 		.ball = BALL_TYPE_RANDOM,
-		.forSingles = TRUE,
+		.forSingles = FALSE,
 		.forDoubles = TRUE,
-		.modifyMovesDoubles = TRUE,
+		.modifyMovesDoubles = FALSE,
 	},
 	{
 		.species = SPECIES_SHUCKLE,
@@ -40243,7 +40243,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.spDefEv = 4,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_DEFIANT
-		.item = ITEM_EJECT_PACK,
+		.item = ITEM_FOCUS_SASH,
 		.moves =
 		{
 			MOVE_CLOSECOMBAT,
@@ -45310,7 +45310,7 @@ const struct BattleTowerSpread gFrontierLegendarySpreads[] =
 		.spAtkEv = 252,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_TERAVOLT
-		.item = ITEM_CHOICE_SCARF,
+		.item = ITEM_EXPERT_BELT,
 		.moves =
 		{
 			MOVE_DRACOMETEOR,

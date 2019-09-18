@@ -6,11 +6,13 @@
 
 #include "../include/new/ability_battle_scripts.h"
 #include "../include/new/battle_strings.h"
+#include "../include/new/battle_util.h"
 #include "../include/new/bs_helper_functions.h"
 #include "../include/new/CMD49.h"
 #include "../include/new/cmd49_battle_scripts.h"
 #include "../include/new/damage_calc.h"
 #include "../include/new/form_change.h"
+#include "../include/new/general_bs_commands.h"
 #include "../include/new/Helper_Functions.h"
 #include "../include/new/move_battle_scripts.h"
 #include "../include/new/move_tables.h"
@@ -120,7 +122,7 @@ void atkFF_callsecondarytable(void)
 	foo();
 }
 
-//cureprimarystatus BANK
+//cureprimarystatus BANK FAIL_POINTER
 void atkFF02_cureprimarystatus(void)
 {
 	if (gBattleExecBuffer) return;
@@ -129,13 +131,20 @@ void atkFF02_cureprimarystatus(void)
 	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
 	
 	if (gBattleMons[bank].status1 == 0)
-		gBattlescriptCurrInstr = ptr;
+	{
+		if (ptr != NULL)
+		{
+			gBattlescriptCurrInstr = ptr;
+			return;
+		}
+	}
 	else
 	{
 		ClearBankStatus(bank);
 		gBattleScripting->bank = bank;
-		gBattlescriptCurrInstr += 6;
 	}
+	
+	gBattlescriptCurrInstr += 6;
 }
 
 //jumpifpartnerattack BANK MOVE ROM_OFFSET
@@ -183,6 +192,9 @@ void atkFF06_setterrain(void)
 			break;
 	}
 	
+	if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_TERRAIN)
+		type = 0xFF; //Can't be removed
+
 	if (TerrainType == type || type == 0xFF)
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
 	else
@@ -347,13 +359,13 @@ void atkFF09_jumpifcounter(void)
 			counter = gNewBS->MagnetRiseTimers[bank];
 			break;
 		case Counters_HealBlock:
-			counter = gNewBS->HealBlockTimers[bank];
+			counter = IsHealBlocked(bank);
 			break;
 		case Counters_LaserFocus:
 			counter = gNewBS->LaserFocusTimers[bank];
 			break;
 		case Counters_ThroatChop:
-			counter = gNewBS->ThroatChopTimers[bank];
+			counter = CantUseSoundMoves(bank);
 			break;
 		case Counters_Embargo:
 			counter = gNewBS->EmbargoTimers[bank];
@@ -980,8 +992,12 @@ void atkFE_prefaintmoveendeffects(void)
 			|| ITEM_POCKET(gBankTarget) != POCKET_BERRY_POUCH
 			|| ITEM_EFFECT(gBankTarget) == ITEM_EFFECT_JABOCA_ROWAP_BERRY) //Only berries that activate before pluck
 			{
-				if (ItemBattleEffects(ItemEffects_ContactTarget, gBankTarget, TRUE, FALSE))
-					effect = TRUE;
+				if (gBattleMoves[gCurrentMove].effect != EFFECT_KNOCK_OFF
+				|| (ITEM_EFFECT(gBankTarget) != ITEM_EFFECT_KEE_BERRY && ITEM_EFFECT(gBankTarget) != ITEM_EFFECT_MARANGA_BERRY)) //Only contact items that don't activate first
+				{
+					if (ItemBattleEffects(ItemEffects_ContactTarget, gBankTarget, TRUE, FALSE))
+						effect = TRUE;
+				}
 			}
 			gNewBS->preFaintEffectsTracker++;
 			break;
@@ -1003,6 +1019,9 @@ void atkFF23_faintpokemonaftermove(void)
     if (!(gAbsentBattlerFlags & gBitTable[gActiveBattler])
     && gBattleMons[gActiveBattler].hp == 0)
     {
+		if (TryDoBenjaminButterfree(3))
+			return;
+
 		gNewBS->lastFainted = gActiveBattler;
         gHitMarker |= HITMARKER_FAINTED(gActiveBattler);
         BattleScriptPush(gBattlescriptCurrInstr + 3);
@@ -1565,9 +1584,9 @@ void atkFF2C_trysetpoison(void)
 }
 
 //addindicatorforplayerswitchineffects
-void atkFF2D_addindicatorforplayerswitchineffects(void)
+void atkFF2D_addindicatorforplayerswitchineffects(void) //Used for when the game asks you if you want to switch to counter what the foe is sending in
 {
-	gNewBS->doPlayerSwitchInEffects = TRUE;
+	gNewBS->doSwitchInEffects |= gBitTable[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)];
 	gBattlescriptCurrInstr += 1;
 }
 
