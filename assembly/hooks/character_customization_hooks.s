@@ -44,6 +44,18 @@ createSprite:
 	ldr r6, =(0x0806b660 +1)
 	bx r6
 	
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@0x805CA68 with r0
+.pool
+PlayerSpawnTemplateFix:
+	mov r0, #0x0
+	str r0, [r1]  @;Clear all pre-existing graphics data
+	mov r0, #0xFF @;Player local Id
+	strb r0, [r1]
+	mov r0, #0x0
+	mov r1, r8
+	ldr r2, =0x805CA70 | 1
+	bx r2
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @	08 47 at 5e5d4
@@ -163,5 +175,5 @@ NpcWaterFix:
 	bl GetEventObjectGraphicsInfo
 	ldr r1, =(0x08067f9c+1)
 	bx r1
-	
+
 	

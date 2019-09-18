@@ -767,8 +767,8 @@ bool8 ShouldRecover(u8 bankAtk, u8 bankDef, u16 move)
 {
 	u32 healAmount = GetAmountToRecoverBy(bankAtk, bankDef, move);
 
-	if (IS_SINGLE_BATTLE)
-	{
+	//if (IS_SINGLE_BATTLE)
+	//{
 		if (MoveWouldHitFirst(move, bankAtk, bankDef)) //Attacker goes first
 		{
 			if (CanKnockOut(bankDef, bankAtk)
@@ -784,12 +784,8 @@ bool8 ShouldRecover(u8 bankAtk, u8 bankDef, u16 move)
 					return TRUE;
 			}
 		}
-	}
-	else
-	{
-		
-
-	}
+	//}
+	//else {}
 
 	return FALSE;
 }

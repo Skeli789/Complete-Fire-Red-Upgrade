@@ -154,6 +154,7 @@ gHealthbarPals = 0x8260260;
 gPokeBallTiles = 0x826056C;
 gPokeBallPals = 0x82605CC;
 BallSpriteTemplates = 0x82606F4;
+//sPlayerAvatarGfxIds = 0x835B874;
 surfBlobPal = 0x835b968;
 surfBlobTiles = 0x8396b08;
 GetLedgeJumpFuncs = 0x83A705C;

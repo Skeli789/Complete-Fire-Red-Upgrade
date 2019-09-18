@@ -247,6 +247,7 @@ ReadKeys 080005E8 0
 
 ##Character Customization
 GetEventObjectGraphicsInfo 0805F2C8 1
+PlayerSpawnTemplateFix 0805CA68 0
 NpcSizeFix 0805e510 1
 NewNpcInfo 0805e964 4
 NpcOffscreenFix 08067a12 5
