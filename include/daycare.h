@@ -9,6 +9,7 @@ u16 __attribute__((long_call)) DetermineEggSpeciesAndParentSlots(struct DayCare 
 void __attribute__((long_call)) RemoveEggFromDayCare(struct DayCare *daycare);
 void __attribute__((long_call)) RemoveIVIndexFromList(u8 *ivs, u8 selectedIv);
 bool8 __attribute__((long_call)) ShouldEggHatch(void);
+u8 __attribute__((long_call)) GetDaycareCompatibilityScore(struct DayCare *daycare);
 
 /*
 #define EGG_HATCH_LEVEL 5

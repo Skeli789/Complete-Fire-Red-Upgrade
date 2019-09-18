@@ -516,7 +516,7 @@ RemoveEggFromDayCare = 0x8045F70 | 1;
 //DetermineEggSpeciesAndParentSlots = 0x8046000 | 1;
 //SetInitialEggData = 0x8046208 | 1;
 ShouldEggHatch = 0x80463B8 | 1;
-
+GetDaycareCompatibilityScore = 0x804654C | 1;
 
 /* Pokemon Storage Functions */
 ZeroBoxMonData = 0x803D97C | 1;
