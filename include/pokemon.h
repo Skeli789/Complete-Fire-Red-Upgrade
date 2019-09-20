@@ -695,6 +695,7 @@ u16 __attribute__((long_call)) GetTutorMove(u8 tutor);
 bool8 __attribute__((long_call)) MonKnowsMove(struct Pokemon *mon, u16 move);
 bool8 __attribute__((long_call)) CanLearnTutorMove(u16, u8);
 void __attribute__((long_call)) BoxMonToMon(struct BoxPokemon *srcMon, struct Pokemon *dstMon);
+bool8 __attribute__((long_call)) IsPokemonStorageFull(void);
 
 species_t __attribute__((long_call)) GetStarterChoice(void);
 
@@ -769,7 +770,6 @@ void CreateSecretBaseEnemyParty(struct SecretBaseRecord *secretBaseRecord);
 u8 GetSecretBaseTrainerPicIndex(void);
 u8 GetSecretBaseTrainerNameIndex(void);
 bool8 IsPlayerPartyAndPokemonStorageFull(void);
-bool8 IsPokemonStorageFull(void);
 u8 CalculatePPWithBonus(u16 move, u8 ppBonuses, u8 moveIndex);
 void RemoveMonPPBonus(struct Pokemon *mon, u8 moveIndex);
 void RemoveBattleMonPPBonus(struct BattlePokemon *mon, u8 moveIndex);

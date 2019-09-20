@@ -535,3 +535,21 @@ pokemon_t* LoadTargetPartyData(void)
 {
 	return GetBankPartyData(gBankTarget);
 }
+
+#define BattleScript_BallThrow (const u8*) 0x81D9A14
+#define BattleScript_SafariBallThrow (const u8*) 0x81D9A3C
+bool8 TryGetPokeBallBattleScript(void)
+{
+	if (GetPocketByItemId(gLastUsedItem) == POCKET_POKE_BALLS)
+	{
+		u8 ballType = ItemId_GetType(gLastUsedItem);
+		if (ballType == BALL_TYPE_SAFARI_BALL)
+			gBattlescriptCurrInstr = BattleScript_SafariBallThrow;
+		else
+			gBattlescriptCurrInstr = BattleScript_BallThrow;
+
+		return TRUE;
+	}
+	
+	return FALSE;
+}

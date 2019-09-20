@@ -64,6 +64,20 @@ GetProperBallIdHook2:
 	ldr r1, =0x80EF3B0 | 1
 	bx r1
 
+@0x801645E with r0
+GetPokeBallBattleScriptHook:
+	push {r3}
+	bl TryGetPokeBallBattleScript
+	cmp r0, #0x0
+	pop {r3}
+	bne SuccessfullBallBattleScript
+	ldr r0, =0x801649C | 1
+	bx r0
+
+SuccessfullBallBattleScript:
+	ldr r0, =0x80164FC | 1
+	bx r0
+
 @0x80F1792 with r0
 ShinyAnimFixHook:
 	bl ShinyAnimFix

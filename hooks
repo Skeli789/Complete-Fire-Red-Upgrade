@@ -169,6 +169,7 @@ MudBombASM 080E2590 0
 CoreEnforcerASM 080A243C 0
 
 ##Poke Ball Hooks
+GetPokeBallBattleScriptHook 801645E 0
 SetMonPokeBallHook 08040858 0
 LoadBallGfx 0804BEF4 1
 GetBattlerPokeballItemId 0804BF90 1
@@ -411,6 +412,7 @@ PokeToolNoFade 0806F3A8 3
 FixStartMenuSize 080f78f4 0
 
 ##Pokemon Storage System
+SendMonToPC 8040B90 1
 GetBoxMonDataAt 808BA18 3
 SetBoxMonDataAtHook 808BA60 2
 GetBoxMonNickAt 808BAE4 3
