@@ -2806,7 +2806,7 @@ static const struct ScrollingSizePerOpts sScrollingSizes[] =
 u32 GetSizeOfMultiList(void)
 {
 #ifdef SCROLLING_MULTICHOICE
-	return sScrollingSets[Var8000].count;
+	return gScrollingSets[Var8000].count;
 #else
 	return 0;
 #endif
@@ -2815,7 +2815,7 @@ u32 GetSizeOfMultiList(void)
 const u8* const* GetScrollingMultiList(void)
 {
 #ifdef SCROLLING_MULTICHOICE
-	return sScrollingSets[Var8000].set;
+	return gScrollingSets[Var8000].set;
 #else
 	return 0;
 #endif
