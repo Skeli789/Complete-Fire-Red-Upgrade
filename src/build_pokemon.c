@@ -1081,10 +1081,10 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 
 			species = spread->species;
 			dexNum = SpeciesToNationalPokedexNum(species);
-			item = spread->item;
+			item = spread->item;	
 			ability = ConvertFrontierAbilityNumToAbility(spread->ability, species);
 			itemEffect = (ability != ABILITY_KLUTZ) ? ItemId_GetHoldEffect(spread->item) : 0;
-			
+
 			if (IsFrontierSingles(battleType))
 			{
 				if (!spread->forSingles) //Certain spreads are only for double battles
@@ -2426,6 +2426,42 @@ static void PostProcessTeam(struct Pokemon* party, struct TeamBuilder* builder)
 			case ABILITY_ILLUSION:
 				illusionIndex = i;
 				break;
+		}
+
+		//Try to replace healing items depending on tier
+		u16 item;
+		switch (ItemId_GetHoldEffect(builder->spreads[i]->item)) {
+			case ITEM_EFFECT_RESTORE_HP:
+			case ITEM_EFFECT_ENIGMA_BERRY:
+				if (!DuplicateItemsAreBannedInTier(builder->tier, builder->battleType)) //Only replace items if no worry of duplicate items
+				{
+					switch (builder->spreads[i]->item) {
+						case ITEM_ORAN_BERRY:
+						case ITEM_BERRY_JUICE:
+							item = ITEM_SITRUS_BERRY;
+							if (GetMonData(&party[i], MON_DATA_MAX_HP, NULL) / 4 > ItemId_GetHoldEffectParam(item))
+								SetMonData(&party[i], MON_DATA_HELD_ITEM, &item);
+							break;
+						default: //Sitrus Berry + Enigma Berry
+							item = ITEM_BERRY_JUICE;
+							if (GetMonData(&party[i], MON_DATA_MAX_HP, NULL) / 4 < ItemId_GetHoldEffectParam(item))
+								SetMonData(&party[i], MON_DATA_HELD_ITEM, &item);
+							break;
+					}
+				}
+				break;
+			case ITEM_EFFECT_CONFUSE_SPICY:
+			case ITEM_EFFECT_CONFUSE_DRY:
+			case ITEM_EFFECT_CONFUSE_SWEET:
+			case ITEM_EFFECT_CONFUSE_BITTER:
+			case ITEM_EFFECT_CONFUSE_SOUR:
+				if (!DuplicateItemsAreBannedInTier(builder->tier, builder->battleType))
+				{
+					item = ITEM_BERRY_JUICE;
+					if (GetMonData(&party[i], MON_DATA_MAX_HP, NULL) / 4 < ItemId_GetHoldEffectParam(item))
+						SetMonData(&party[i], MON_DATA_HELD_ITEM, &item);
+					break;
+				}
 		}
 	}
 	
