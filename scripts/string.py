@@ -41,8 +41,19 @@ SpecialBuffers = {
     "ARROW_LEFT": ["7B"],
     "ARROW_RIGHT": ["7C"],
 
+    "SHRINK": ["FC", "06", "00"],
+    "PAUSE": ["FC", "08"],
+    "PAUSE_UNTIL_PRESS": ["FC", "09"],
+    "PLAY_BGM": ["FC", "0B"],
+    "ESCAPE": ["FC", "0C"],
+    "SHIFT_TEXT": ["FC", "0D"],
+    "PLAY_SE": ["FC", "10"],
+    "CLEAR": ["FC", "11"],
+    "SKIP": ["FC", "12"],
     "ALIGN": ["FC", "13"],
-    "SHRINK": ["FC", "06", "00"]
+    "MIN_LETTER_SPACING": ["FC", "14"],
+    "PAUSE_MUSIC": ["FC", "17"],
+    "RESUME_MUSIC": ["FC", "18"],
 }
 
 

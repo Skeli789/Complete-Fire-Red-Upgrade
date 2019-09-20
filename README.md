@@ -35,6 +35,7 @@ A complete upgrade for Fire Red, including an upgraded Battle Engine.
   * Updated Exp. Share
   * Inverse Battles, Sky Battles
   * Overworld trainer facing
+  * Move types light up on move menu based on effectiveness
 * Battle Frontier
 * Expanded Move Reminder (up to 50 moves)
 * Improved Tm/Hm Expansion, Reusable TMs
@@ -65,6 +66,8 @@ A complete upgrade for Fire Red, including an upgraded Battle Engine.
 * Footstep noise in grass & on sand
 * Omnidirectional Jumping
 * Item Image on obtain
+* Move Items on Party Screen
+* New Field Moves like Rock Climb & Defog
 
 **NOTE** Personalized options are available in *src/config.h*. The options can be customized by commenting and uncommenting lines.
 

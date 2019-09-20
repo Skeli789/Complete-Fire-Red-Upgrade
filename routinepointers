@@ -130,6 +130,7 @@ sp0CB_PlaceKeyScript 0816008C
 sp0CC_CanLearnDracoMeteorInParty 08160090
 
 sp0CF_BufferAbilityName 0816009C
+sp0D0_PokemonInPartyThatCanLearnTMHM 081600A0
 
 sp156_StartGhostBattle 081602B8
 

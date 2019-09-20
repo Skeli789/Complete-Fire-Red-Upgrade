@@ -1904,7 +1904,22 @@ bool8 sp18B_ShowFossilImage(void) {
 	return TRUE;
 }
 
+//@Details: Checks if any Pokemon in the player's party can learn the given
+//			TM or HM.
+//@Input:	Var 0x8000: TM/HM id (1 - 128).
+//@Returns: Given Var: Party id of mon that can learn it. PARTY_SIZE if none can.
+u8 sp0D0_PokemonInPartyThatCanLearnTMHM(void)
+{
+	u16 tm = Var8000;
 
+	for (u8 i = 0; i < PARTY_SIZE; ++i)
+	{
+		if (CanMonLearnTMHM(&gPlayerParty[i], tm - 1))
+			return i;
+	}
+	
+	return PARTY_SIZE;
+}
 
 
 // Hall of Fame Fix for Expanded Pokemon

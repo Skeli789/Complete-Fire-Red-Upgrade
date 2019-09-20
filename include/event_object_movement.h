@@ -81,6 +81,7 @@ u8 __attribute__((long_call)) GetEventObjectIdByLocalId(u8 localId);
 void __attribute__((long_call)) FaceDirection(struct EventObject *eventObject, struct Sprite *sprite, u8 direction);
 u8 __attribute__((long_call)) GetOppositeDirection(u8 direction);
 u8 __attribute__((long_call)) CreateVirtualSprite(u8 graphicsId, u8 a1, s16 x, s16 y, u8 z, u8 direction);
+void __attribute__((long_call)) MoveCoords(u8, s16 *, s16 *);
 
 /*
 extern const struct SpriteFrameImage gEventObjectPicTable_PechaBerryTree[];
@@ -136,7 +137,6 @@ u8 GetWalkInPlaceFastMovementAction(u32);
 u8 GetWalkInPlaceNormalMovementAction(u32);
 u8 GetWalkInPlaceSlowMovementAction(u32);
 u8 GetCollisionAtCoords(struct EventObject *, s16, s16, u32);
-void MoveCoords(u8, s16 *, s16 *);
 bool8 EventObjectIsHeldMovementActive(struct EventObject *);
 u8 EventObjectClearHeldMovementIfFinished(struct EventObject *);
 u8 GetEventObjectIdByXYZ(u16 x, u16 y, u8 z);

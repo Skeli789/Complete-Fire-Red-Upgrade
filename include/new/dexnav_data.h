@@ -103,8 +103,6 @@ struct FieldEffectArguments
     u32 priority;
 };
 
-#define gFieldEffectArguments ((struct FieldEffectArguments*) 0x20386E0)
-
 extern u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
 
 // STRUCTS

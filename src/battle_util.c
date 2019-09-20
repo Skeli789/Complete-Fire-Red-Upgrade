@@ -2,7 +2,7 @@
 #include "defines_battle.h"
 
 #include "../include/new/battle_util.h"
-#include "../include/new/helper_functions.h"
+#include "../include/new/Helper_Functions.h"
 
 #define IS_BATTLE_CIRCUS (gBattleTypeFlags & BATTLE_TYPE_BATTLE_CIRCUS)
 

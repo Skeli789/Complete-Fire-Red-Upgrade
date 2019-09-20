@@ -182,3 +182,156 @@ ObtainedMultipleItemMsg:
 	buffernumber 0x0 0x8005
 	preparemsg gText_ObtainedMultipleItems
 	return
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.equ FLAG_FR_BADGE_6, 0x825
+.equ PREVENT_ROUTE_ESCAPE_FLAG, 0x988
+.equ HM08_ROCK_CLIMB, 128
+.equ SPECIAL_POKEMON_IN_PARTY_THAT_CAN_LEARN_TM_HM, 0xD0
+EventScript_RockClimb:
+	checkflag FLAG_FR_BADGE_6
+	if NOT_SET _goto EventScript_RockClimbDoNothing
+	checkflag PREVENT_ROUTE_ESCAPE_FLAG @;Can't climb if someone's following you
+	if SET _goto EventScript_RockClimbDoNothing
+	setvar 0x8000 HM08_ROCK_CLIMB
+	special2 LASTRESULT SPECIAL_POKEMON_IN_PARTY_THAT_CAN_LEARN_TM_HM
+	compare LASTRESULT PARTY_SIZE
+	if equal _goto EventScript_RockClimbDoNothing
+	setanimation 0x0 LASTRESULT
+	bufferpartypokemon 0x0 LASTRESULT
+	bufferattack 0x1 MOVE_ROCKCLIMB
+	msgbox gText_WantToScaleCliff MSG_YESNO
+	compare LASTRESULT NO
+	if equal _goto EventScript_RockClimbEnd
+	msgbox 0x81BDFD7 MSG_NORMAL@;[BUFFER1] used [BUFFER2]!
+	goto SystemScript_RockClimb
+
+EventScript_RockClimbDoNothing:
+	msgbox gText_RockIsRocky MSG_NORMAL
+EventScript_RockClimbEnd:
+	end
+
+.equ SPECIAL_GET_PLAYER_FACING, 0x1AA
+.global SystemScript_RockClimb
+SystemScript_RockClimb:
+	lockall
+	doanimation 0x25
+	waitstate
+	special2 PLAYERFACING SPECIAL_GET_PLAYER_FACING
+	compare PLAYERFACING DOWN
+	if equal _goto SystemScript_RockClimbDown
+	compare PLAYERFACING LEFT
+	if equal _goto SystemScript_RockClimbLeft
+	compare PLAYERFACING RIGHT
+	if equal _goto SystemScript_RockClimbRight
+
+SystemScript_RockClimbUp:
+	applymovement PLAYER m_RockClimbUp
+	waitmovement PLAYER
+	callasm ShouldRockClimbContinue
+	compare LASTRESULT 0
+	if equal _goto SystemScript_RockClimbUpFinish
+	goto SystemScript_RockClimbUp
+
+SystemScript_RockClimbDown:
+	applymovement PLAYER m_RockClimbDown
+	waitmovement PLAYER
+	callasm ShouldRockClimbContinue
+	compare LASTRESULT 0
+	if equal _goto SystemScript_RockClimbDownFinish
+	goto SystemScript_RockClimbDown
+
+SystemScript_RockClimbLeft:
+	applymovement PLAYER m_RockClimbLeft
+SystemScript_RockClimbLeftWaitmovement:
+	waitmovement PLAYER
+	callasm ShouldRockClimbContinueDiagonally
+	compare LASTRESULT 1
+	if equal _goto SystemScript_RockClimbLeftUp
+	compare LASTRESULT 2
+	if equal _goto SystemScript_RockClimbLeftDown
+	callasm ShouldRockClimbContinue
+	compare LASTRESULT 0
+	if equal _goto SystemScript_RockClimbLeftFinish
+	goto SystemScript_RockClimbLeft
+	
+SystemScript_RockClimbLeftUp:
+	applymovement PLAYER m_RockClimbLeftUp
+	goto SystemScript_RockClimbLeftWaitmovement
+
+SystemScript_RockClimbLeftDown:
+	applymovement PLAYER m_RockClimbLeftDown
+	goto SystemScript_RockClimbLeftWaitmovement
+
+SystemScript_RockClimbRight:
+	applymovement PLAYER m_RockClimbRight
+SystemScript_RockClimbRightWaitmovement:
+	waitmovement PLAYER
+	callasm ShouldRockClimbContinueDiagonally
+	compare LASTRESULT 1
+	if equal _goto SystemScript_RockClimbRightUp
+	compare LASTRESULT 2
+	if equal _goto SystemScript_RockClimbRightDown
+	callasm ShouldRockClimbContinue
+	compare LASTRESULT 0
+	if equal _goto SystemScript_RockClimbRightFinish
+	goto SystemScript_RockClimbRight
+	
+SystemScript_RockClimbRightUp:
+	applymovement PLAYER m_RockClimbRightUp
+	goto SystemScript_RockClimbRightWaitmovement
+
+SystemScript_RockClimbRightDown:
+	applymovement PLAYER m_RockClimbRightDown
+	goto SystemScript_RockClimbRightWaitmovement
+
+SystemScript_RockClimbDownFinish:
+	applymovement PLAYER m_RockClimbDown
+	waitmovement PLAYER
+	releaseall
+	end
+
+SystemScript_RockClimbUpFinish:
+	applymovement PLAYER m_RockClimbUp
+	waitmovement PLAYER
+	releaseall
+	end
+
+SystemScript_RockClimbLeftFinish:
+	applymovement PLAYER m_RockClimbLeft
+	waitmovement PLAYER
+	releaseall
+	end
+
+SystemScript_RockClimbRightFinish:
+	applymovement PLAYER m_RockClimbRight
+	waitmovement PLAYER
+	releaseall
+	end
+
+m_RockClimbDown: .byte 0x1D, end_m
+m_RockClimbUp: .byte 0x1e, end_m
+m_RockClimbLeft: .byte 0x1f, end_m
+m_RockClimbRight: .byte 0x20, end_m
+
+m_RockClimbLeftUp: .byte 0xC8, end_m
+m_RockClimbLeftDown: .byte 0xC4, end_m
+m_RockClimbRightUp: .byte 0xC9, end_m
+m_RockClimbRightDown: .byte 0xC5, end_m
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global SystemScript_Defog
+SystemScript_Defog:
+	lockall
+	doanimation 0x28
+	waitstate
+	checksound
+	sound 0x7E
+	setweather 0x0
+	doweather
+	checksound
+	msgbox gText_DefogBlewAwayFog MSG_KEEPOPEN
+	releaseall
+	end

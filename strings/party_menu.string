@@ -1,0 +1,20 @@
+#org @gText_SwapItemsPart1
+[BUFFER1]'s [BUFFER2] and
+
+#org @gText_SwapItemsPart2
+\n[BUFFER1]'s [BUFFER2]\lwere swapped![PAUSE_UNTIL_PRESS]
+
+#org @gMenuText_Move
+Move
+
+#org @gText_MoveItemWhere
+Move to where?
+
+#org @gText_FieldMoveDesc_RockClimb
+Scale rocky cliffs.
+
+#org @gText_FieldMoveDesc_Defog
+Remove foggy weather.
+
+#org @gText_FieldMoveDesc_Dive
+Dive underwater.

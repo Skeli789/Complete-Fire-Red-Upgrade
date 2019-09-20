@@ -1,4 +1,5 @@
 #include "src/config.h"
+#include "include/party_menu.h"
 #include "include/pokemon_storage_system.h"
 #include "include/constants/tutors.h"
 #include "include/new/catching.h"
@@ -459,6 +460,20 @@
 
 ##IsPokemonStorageFull special
 0815FF30 A1 0F 04 08
+
+##New Field Moves
+08121F36 MENU_FIELD_MOVES_MINUS_1
+08122146 MENU_FIELD_MOVES_MINUS_1
+0812219E MENU_FIELD_MOVES
+08122A6A MENU_FIELD_MOVES
+081245BC MENU_FIELD_MOVES
+0845A768 04
+
+#ifdef GEN4_PLUS_SELECTION_SCREEN
+0845A148 02 16 0B 07 08 0E 61 03
+#else
+0845A148 02 16 0B 07 08 0E 73 03
+#endif
 
 #ifdef UNBOUND
 

@@ -136,7 +136,7 @@ pcSelect_newBrmTable 08094e48
 pcSelect_OperationsTable 0808fbc8
 pcSelect_OperationsTable 0808fce4
 
-## Expanded Text Buffers
+##Expanded Text Buffers
 sScriptStringVars 0806bcc0
 sScriptStringVars 0806bd08
 sScriptStringVars 0806bd58
@@ -151,3 +151,18 @@ CheckHasSpeciesJump 803FDEC
 ##New Naming Screen
 sNamingScreenTemplates 809DB58
 sNamingScreenTitlePrintingFuncs 0809F588
+
+##New Field Moves
+gPartyMenu_ItemMenuActions 845A74C
+gText_MoveItemWhere 845A37C
+gFieldMoveDescriptions 81221D0
+gFieldMoveCursorCallbacks 8124614
+gFieldMoveCursorCallbacks 8124680
+gPartyMenuCursorOptions 8120F74
+gPartyMenuCursorOptions 8121FB8
+gPartyMenuCursorOptions 8122D18
+gPartyMenuCursorOptions 8122D48
+
+#ifdef UNBOUND
+EventScript_RockClimb 888C844
+#endif

@@ -37,6 +37,15 @@ Obtained a [BUFFER][03]!\nIt contains [BUFFER][02].
 #org @gText_ScurriedToNearestHealer
 [PLAYER] scurried to the nearest healer,\nprotecting the exhausted and fainted\nPok\emon from further harm[.]\p
 
+#org @gText_WantToScaleCliff
+The wall is very rocky[.]\nWould you like to use [BUFFER2]?
+
+#org @gText_RockIsRocky
+The wall is very rocky[.]\nWill a Pok\emon's move scale it?
+
+#org @gText_DefogBlewAwayFog
+[BUFFER1] blew away the fog!
+
 //Mart Strings
 
 #org @gText_SingleTmBuy

@@ -1,5 +1,4 @@
-#ifndef GUARD_FIELD_EFFECTS_H
-#define GUARD_FIELD_EFFECTS_H
+#pragma once
 
 #include "global.h"
 #include "sprite.h"
@@ -77,7 +76,7 @@ enum FieldEffectScriptIdx
     FLDEFF_UNK_41  // TODO: related to vs_seeker
 };
 
-//extern u32 gFieldEffectArguments[8];
+#define gFieldEffectArguments ((struct FieldEffectArguments*) 0x20386E0) //extern u32 gFieldEffectArguments[8];
 
 struct Coords32 {
     s32 x;
@@ -104,4 +103,3 @@ void __attribute__((long_call)) BindObj(u8 spriteId, u8 value);
 bool8 FieldEffectActiveListContains(u8 id);
 void sub_80B69DC(void);
 */
-#endif //GUARD_FIELD_EFFECTS_H

@@ -1350,6 +1350,43 @@ u8 GetLedgeJumpDirection(s16 x, s16 y, u8 direction)
     return 0;
 }
 
+static bool8 MetatileBehavior_IsRockClimableWall(u8 behaviour)
+{
+	return behaviour == MB_ROCK_CLIMB_WALL;
+}
+
+bool8 IsPlayerFacingRockClimbableWall(void)
+{
+    struct EventObject *playerEventObj = &gEventObjects[gPlayerAvatar->eventObjectId];
+    s16 x = playerEventObj->currentCoords.x;
+    s16 y = playerEventObj->currentCoords.y;
+
+    MoveCoords(playerEventObj->facingDirection, &x, &y);
+    return MetatileBehavior_IsRockClimableWall(MapGridGetMetatileBehaviorAt(x, y));
+}
+
+void ShouldRockClimbContinue(void)
+{
+	gSpecialVar_LastResult = IsPlayerFacingRockClimbableWall();
+}
+
+void ShouldRockClimbContinueDiagonally(void)
+{
+	#ifdef UNBOUND
+    struct EventObject *playerEventObj = &gEventObjects[gPlayerAvatar->eventObjectId];
+    s16 x = playerEventObj->currentCoords.x;
+    s16 y = playerEventObj->currentCoords.y;
+
+    MoveCoords(playerEventObj->facingDirection, &x, &y);
+	
+	if (MetatileBehavior_IsRockClimableWall(MapGridGetMetatileBehaviorAt(x, y + 1)))
+		gSpecialVar_LastResult = 2; //Move diagonal up
+	else if (y != 0 && MetatileBehavior_IsRockClimableWall(MapGridGetMetatileBehaviorAt(x, y - 1)))
+		gSpecialVar_LastResult = 1; //Move diagonal down
+	else
+	#endif
+		gSpecialVar_LastResult = 0;
+}
 
 //Follow Me Updates/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /*
