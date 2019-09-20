@@ -2723,49 +2723,74 @@ void ConvertCoinInt(u32 coinAmount)
 //////////////////////////////////
 ///// Scrolling Multichoice //////
 //////////////////////////////////
+#define tMaxShowed 		data[0]
+#define tTilemapTop 	data[2]
+#define tTilemapLeft 	data[3]
+#define tHeight			data[5]
+
+#define MIN_NUM_SHOWED 2
+#define MAX_NUM_SHOWED 6
+
+//Text Declarations
+extern const u8 sExampleText_1[];
+extern const u8 sExampleText_2[];
+extern const u8 sExampleText_3[];
+extern const u8 sExampleText_4[];
+extern const u8 sExampleText_5[];
+extern const u8 sExampleText_6[];
+extern const u8 sExampleText_7[];
+extern const u8 sExampleText_8[];
+extern const u8 sExampleText_9[];
+extern const u8 sExampleText_10[];
+
 //Var8000 - set index
 //Var8001 - num choices showed at once
 //special 0x158
 //waitstate
-const u8* sSet1[] = {
-    sExampleText_1,
-    sExampleText_2,
-    sExampleText_3,
-    sExampleText_4,
-    sExampleText_5,
-    sExampleText_6,
-    sExampleText_7,
-    sExampleText_8,
-    sExampleText_9,
-	sExampleText_10,
-};
-const u8* sSet2[] = {
-    sExampleText_1,
-    sExampleText_2,
-    sExampleText_3,
-    sExampleText_4,
-    sExampleText_5,
-    sExampleText_6,
-    sExampleText_7,
-    sExampleText_8,
-    sExampleText_9,
-	sExampleText_10,
-};
-
-
-const struct ScrollingMulti sScrollingSets[] = 
+static const u8* sMultichoiceSet1[] =
 {
-	{sSet1, ARRAY_COUNT(sSet1)},
-	{sSet2, ARRAY_COUNT(sSet2)},
+    sExampleText_1,
+    sExampleText_2,
+    sExampleText_3,
+    sExampleText_4,
+    sExampleText_5,
+    sExampleText_6,
+    sExampleText_7,
+    sExampleText_8,
+    sExampleText_9,
+	sExampleText_10,
 };
 
-// link number of opts shown at once to the box height
-struct ScrollingSizePerOpts {
+static const u8* sMultichoiceSet2[] =
+{
+    sExampleText_1,
+    sExampleText_2,
+    sExampleText_3,
+    sExampleText_4,
+    sExampleText_5,
+    sExampleText_6,
+    sExampleText_7,
+    sExampleText_8,
+    sExampleText_9,
+	sExampleText_10,
+};
+
+
+const struct ScrollingMulti gScrollingSets[] = 
+{
+	{sMultichoiceSet1, ARRAY_COUNT(sMultichoiceSet1)},
+	{sMultichoiceSet2, ARRAY_COUNT(sMultichoiceSet2)},
+};
+
+//Link number of opts shown at once to the box height
+struct ScrollingSizePerOpts
+{
 	u8 maxShowed;
 	u8 height;
 };
 
-const struct ScrollingSizePerOpts sScrollingSizes[] = {
+static const struct ScrollingSizePerOpts sScrollingSizes[] =
+{
 	{.maxShowed = 2, .height = 3},
 	{.maxShowed = 3, .height = 5},
 	{.maxShowed = 4, .height = 7},
@@ -2778,12 +2803,31 @@ const struct ScrollingSizePerOpts sScrollingSizes[] = {
 
 #endif
 
+u32 GetSizeOfMultiList(void)
+{
+#ifdef SCROLLING_MULTICHOICE
+	return sScrollingSets[Var8000].count;
+#else
+	return 0;
+#endif
+}
+
+const u8* const* GetScrollingMultiList(void)
+{
+#ifdef SCROLLING_MULTICHOICE
+	return sScrollingSets[Var8000].set;
+#else
+	return 0;
+#endif
+}
+
 void SetScrollingListSize(unusedArg u8 taskId)
 {
 #ifdef SCROLLING_MULTICHOICE
 	u8 maxShowed = Var8001;
+	maxShowed = MathMin(GetSizeOfMultiList(), maxShowed);
 	if (maxShowed < MIN_NUM_SHOWED || maxShowed > MAX_NUM_SHOWED)
-		maxShowed = 4;
+		maxShowed = MAX_NUM_SHOWED;
 
 	gTasks[taskId].tMaxShowed = maxShowed;
 	
@@ -2799,24 +2843,5 @@ void SetScrollingListSize(unusedArg u8 taskId)
 	gTasks[taskId].data[2] = 1;	//x
 	gTasks[taskId].data[3] = 1;	//y
 	gTasks[taskId].data[4] = 0xC;	//width?
-#endif
-}
-
-int GetSizeOfMultiList(void)
-{
-#ifdef SCROLLING_MULTICHOICE
-	return sScrollingSets[Var8000].count;
-#else
-	return 0;
-#endif
-}
-
-
-const u8** GetScrollingMultiList(void)
-{
-#ifdef SCROLLING_MULTICHOICE
-	return sScrollingSets[Var8000].set;
-#else
-	return 0;
 #endif
 }
