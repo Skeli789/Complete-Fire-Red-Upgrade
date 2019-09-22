@@ -41,7 +41,7 @@ static void TryForcedScript(u8 keyFlag, u16 currKeys)
 	if (!(keyFlag & 0x4))
 		return;	// flag not set
 
-	if (gScriptEnv2->enabled)
+	if (ScriptContext2_IsEnabled())
 		return;	// a script is already enabled
 
 	if (gTasks[0].func != Task_WeatherMain)
@@ -132,7 +132,7 @@ void ReadKeys(void)
 
 #ifdef AUTO_RUN_FLAG
 	else if (gMain.newKeys & L_BUTTON //Can't be used if L=A
-	&& !gScriptEnv2->enabled
+	&& !ScriptContext2_IsEnabled()
 	&& FuncIsActiveTask(Task_WeatherMain) //In the overworld
 #ifdef RUNNING_ENABLED_FLAG
 	&& FlagGet(RUNNING_ENABLED_FLAG) //Only toggle auto-run if can run in the first place
@@ -159,7 +159,7 @@ void ReadKeys(void)
 	&& dexNavSpecies != SPECIES_NONE
 	&& !IsDexNavHudActive()
 	&& !InUnionRoom()
-	&& !gScriptEnv2->enabled
+	&& !ScriptContext2_IsEnabled()
 	&& FuncIsActiveTask(Task_WeatherMain)) //In the overworld
 	{
 		InitDexNavHUD(dexNavSpecies & 0x7FFF, dexNavSpecies >> 15);

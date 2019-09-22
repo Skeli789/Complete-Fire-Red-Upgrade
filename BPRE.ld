@@ -725,8 +725,8 @@ UpdateSurfBlobFieldEffect = 0x80DC4F8 | 1;
 /* Script Functions */
 ScriptReadHalfword = 0x80698F8 | 1;
 ScriptContext2_Enable = 0x8069940 | 1;
-ScriptEnvDisable = 0x806994C | 1;
-ScriptEnv2IsEnabled = 0x8069958 | 1;
+ScriptContext2_Disable = 0x806994C | 1;
+ScriptContext2_IsEnabled = 0x8069958 | 1;
 SetTextboxSignpostDesign = 0x8069A20 | 1;
 ScriptContext1_SetupScript = 0x8069AE4 | 1;
 ScriptContext1_Stop = 0x8069B28 | 1;
@@ -735,6 +735,7 @@ VarGet = 0x806E568 | 1;
 VarSet = 0x806E584 | 1;
 FlagSet = 0x806E680 | 1;
 FlagClear = 0x806E6A8 | 1;
+GetFlagPointer = 0x806E5C0 | 1;
 FlagGet = 0x806E6D0 | 1;
 HelpSystemDisableOnField = 0x812B478 | 1;
 

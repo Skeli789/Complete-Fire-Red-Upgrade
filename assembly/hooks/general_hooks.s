@@ -815,3 +815,17 @@ SummaryScreenLoadRegularTypes:
 .hword3220: .word 0x3220
 .hword3290: .word 0x3290
 .hword3028: .word 0x3028
+
+.pool
+@0x812461C with r0
+FieldMoveBadgeHook:
+	mov r0, r4
+	bl HasBadgeToUseFieldMove
+	cmp r0, #0x0
+	beq NoBadgeForFieldMove
+	ldr r0, =0x8124658 | 1
+	bx r0
+
+NoBadgeForFieldMove:
+	ldr r0, =0x8124632 | 1
+	bx r0

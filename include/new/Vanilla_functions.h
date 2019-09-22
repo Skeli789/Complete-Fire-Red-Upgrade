@@ -4,8 +4,6 @@
 
 #define BC_Menu 0x8014040 | 1
 
-bool8 __attribute__((long_call)) ScriptEnv2IsEnabled(void);
-void __attribute__((long_call)) ScriptEnvDisable(void);
 void* __attribute__((long_call)) memcpy_(void *dst, const void* src, u8 size);
 void* __attribute__((long_call)) memset_(void *dst, u8 pattern, u8 size);
 
@@ -62,7 +60,6 @@ u8 __attribute__((long_call)) GetCurrentMapBattleScene(void);
 void __attribute__((long_call)) PlayerGetDestCoords(s16* x, s16* y);
 u8 __attribute__((long_call)) TestPlayerAvatarFlags(u8 a);
 
-void __attribute__((long_call)) ScriptContext2_Enable(void);
 void __attribute__((long_call)) ScriptContext1_Stop(void);
 void __attribute__((long_call)) PlayNewMapMusic(u16 musicId);
 

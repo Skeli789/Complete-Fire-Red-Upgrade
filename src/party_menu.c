@@ -779,6 +779,40 @@ const u16 gFieldMoves[] =
 	[FIELD_MOVE_COUNT] = FIELD_MOVE_TERMINATOR
 };
 
+#ifndef UNBOUND //MODIFY THIS
+
+const u8 gFieldMoveBadgeRequirements[FIELD_MOVE_COUNT] =
+{
+	[FIELD_MOVE_FLASH] = 1,
+	[FIELD_MOVE_CUT] = 2,
+	[FIELD_MOVE_FLY] = 3,
+	[FIELD_MOVE_STRENGTH] = 4,
+	[FIELD_MOVE_SURF] = 5,
+	[FIELD_MOVE_ROCK_SMASH] = 6,
+	[FIELD_MOVE_WATERFALL] = 0,
+	[FIELD_MOVE_ROCK_CLIMB] = 0,
+	[FIELD_MOVE_DEFOG] = 0,
+	[FIELD_MOVE_DIVE] = 0,
+};
+
+#else //For Pokemon Unbound
+
+const u8 gFieldMoveBadgeRequirements[FIELD_MOVE_COUNT] =
+{
+	[FIELD_MOVE_DEFOG] = 1,
+	[FIELD_MOVE_CUT] = 2,
+	[FIELD_MOVE_ROCK_SMASH] = 3,
+	[FIELD_MOVE_STRENGTH] = 4,
+	[FIELD_MOVE_SURF] = 5,
+	[FIELD_MOVE_ROCK_CLIMB] = 6,
+	[FIELD_MOVE_WATERFALL] = 7,
+	[FIELD_MOVE_DIVE] = 8,
+	[FIELD_MOVE_FLY] = 0,
+	[FIELD_MOVE_FLASH] = 0,
+};
+
+#endif
+
 static bool8 SetUpFieldMove_Fly(void)
 {
 	#ifdef PREVENT_ROUTE_ESCAPE_FLAG
@@ -898,6 +932,12 @@ static bool8 SetUpFieldMove_Defog(void)
 	}
 	
 	return FALSE;
+}
+
+bool8 HasBadgeToUseFieldMove(u8 id)
+{
+	return gFieldMoveBadgeRequirements[id] == 0
+		|| FlagGet(FLAG_BADGE01_GET + (gFieldMoveBadgeRequirements[id] - 1));
 }
 
 //Move Item - Credits to Sagiri/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

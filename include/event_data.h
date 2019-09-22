@@ -8,6 +8,7 @@
 u8 __attribute__((long_call)) FlagSet(u16 id);
 u8 __attribute__((long_call)) FlagClear(u16 id);
 bool8 __attribute__((long_call)) FlagGet(u16 id);
+u8* __attribute__((long_call)) GetFlagPointer(u16 id);
 u16 __attribute__((long_call)) VarGet(u16 var);
 u32 __attribute__((long_call)) VarGetAddress(u16 var);
 bool8 __attribute__((long_call)) VarSet(u16 var, u16 value);
@@ -32,7 +33,6 @@ void DisableResetRTC(void);
 void EnableResetRTC(void);
 bool32 CanResetRTC(void);
 u8 VarGetFieldObjectGraphicsId(u8 id);
-u8 *GetFlagPointer(u16 id);
 u16 * GetVarPointer(u16 id);
 bool32 sub_806E2BC(void);
 void sub_806E6FC(void);

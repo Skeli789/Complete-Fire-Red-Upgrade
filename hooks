@@ -139,6 +139,7 @@ CursorCb_Enter 8124154 1
 IsMonAllowedInBattleTower 8127550 1
 CanPokemonSelectedBeEnteredInBattleTower 81275F8 0
 ExpandedAbilityNamesSummaryScreen 8136714 1
+FieldMoveBadgeHook 812461C 0
 
 ##Battle Animation Hooks
 TryHandleLaunchBattleTableAnimationHook 803401E 4

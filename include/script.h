@@ -40,6 +40,10 @@ void __attribute__((long_call)) ScriptContext1_SetupScript(const u8* ptr);
 void __attribute__((long_call)) ScriptCall(struct ScriptContext *ctx, const u8 *ptr);
 void __attribute__((long_call)) SetTextboxSignpostDesign(void);
 void __attribute__((long_call)) EnableBothScriptContexts(void);
+bool8 __attribute__((long_call)) ScriptContext2_IsEnabled(void);
+void __attribute__((long_call)) ScriptContext2_Enable(void);
+void __attribute__((long_call)) ScriptContext2_Disable(void);
+
 /*
 void InitScriptContext(struct ScriptContext *ctx, void *cmdTable, void *cmdTableEnd);
 u8 SetupBytecodeScript(struct ScriptContext *ctx, const u8 *ptr);
@@ -52,9 +56,6 @@ void ScriptJump(struct ScriptContext *ctx, const u8 *ptr);
 void ScriptReturn(struct ScriptContext *ctx);
 u16 ScriptReadHalfword(struct ScriptContext *ctx);
 u32 ScriptReadWord(struct ScriptContext *ctx);
-void ScriptContext2_Enable(void);
-void ScriptContext2_Disable(void);
-bool8 ScriptContext2_IsEnabled(void);
 void ScriptContext1_Init(void);
 bool8 ScriptContext1_IsScriptSetUp(void);
 bool8 ScriptContext2_RunScript(void);

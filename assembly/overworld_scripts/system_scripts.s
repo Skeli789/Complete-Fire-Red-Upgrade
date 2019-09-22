@@ -17,6 +17,7 @@ SystemScript_EnableAutoRun:
 	msgboxsign
 	msgbox gText_AutoRunEnable MSG_SIGN
 	checksound
+	release
 	end
 	
 .global SystemScript_DisableAutoRun
@@ -27,6 +28,7 @@ SystemScript_DisableAutoRun:
 	msgboxsign
 	msgbox gText_AutoRunDisable MSG_SIGN
 	checksound
+	release
 	end
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -37,6 +39,7 @@ SystemScript_PoisonSurvial:
 	msgboxsign
 	msgbox gText_PoisonSurvial MSG_KEEPOPEN
 	closeonkeypress
+	release
 	end
 	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -110,6 +113,7 @@ SystemScript_StartDexNavBattle:
 	waitmovement 0x0
 	checksound
 	dowildbattle
+	release
 	end
 
 PlayerExclaim:

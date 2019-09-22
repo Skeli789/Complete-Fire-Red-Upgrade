@@ -121,7 +121,7 @@ static void DestroyTaskCompletedTextbox(u8 tId)
 	{
         TextboxClose();
         DestroyTask(tId);
-        ScriptEnvDisable();
+        ScriptContext2_Disable();
     }
 }
 
@@ -907,7 +907,7 @@ static void DexNavManageHUD(u8 taskId)
 	}
 
     // check if script just executed
-    if (ScriptEnv2IsEnabled() == TRUE)
+    if (ScriptContext2_IsEnabled() == TRUE)
 	{
         DestroyTask(taskId);
         DexNavFreeHUD();
@@ -1622,7 +1622,7 @@ void InitDexNavHUD(u16 species, u8 environment)
 // This is called via a c1 from the GUI, while waiting to return to the OW
 static void ExecDexNavHUD(void)
 {
-	if (!gPaletteFade->active && !ScriptEnv2IsEnabled() && gMain.callback2 == CB2_Overworld)
+	if (!gPaletteFade->active && !ScriptContext2_IsEnabled() && gMain.callback2 == CB2_Overworld)
 	{
 		SetMainCallback1(CB1_Overworld);
         InitDexNavHUD(Var8000, Var8001);
@@ -2569,7 +2569,7 @@ void ToolSelection(u8 taskId)
     switch (priv0)
 	{
         case 0:
-            if (!ScriptEnv2IsEnabled())
+            if (!ScriptContext2_IsEnabled())
 				priv0++;
 			break;
         case 1:
@@ -2604,7 +2604,7 @@ void ToolSelection(u8 taskId)
                 // b pressed, exit
                 RboxIdClean(gTasks[taskId].data[1], 1);
                 RemoveWindow(gTasks[taskId].data[1]);
-                ScriptEnvDisable();
+                ScriptContext2_Disable();
                 DestroyTask(taskId);
             }
             break;
