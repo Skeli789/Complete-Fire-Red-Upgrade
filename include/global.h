@@ -82,6 +82,12 @@
 #define JOY_NEW(button) TEST_BUTTON(gMain.newKeys,  button)
 #define JOY_HELD(button)  TEST_BUTTON(gMain.heldKeys, button)
 
+#define SPECIES_TABLES_TERMIN 0xFEFE
+#define MOVE_TABLES_TERMIN 0xFEFE
+#define ITEM_TABLES_TERMIN 0xFEFE
+#define ABILITY_TABLES_TERMIN 0xFF
+#define MOVE_EFFECT_TABLES_TERMIN 0xFF
+
 extern u8 gStringVar1[];
 extern u8 gStringVar2[];
 extern u8 gStringVar3[];

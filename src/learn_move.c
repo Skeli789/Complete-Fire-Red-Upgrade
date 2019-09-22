@@ -1,4 +1,5 @@
 #include "defines.h"
+#include "defines_battle.h"
 #include "../include/daycare.h"
 #include "../include/list_menu.h"
 #include "../include/move_reminder.h"
@@ -6,7 +7,6 @@
 #include "../include/constants/moves.h"
 
 #include "../include/new/daycare.h"
-#include "../include/new/Helper_Functions.h"
 #include "../include/new/item.h"
 #include "../include/new/learn_move.h"
 #include "../include/new/move_reminder_data.h"

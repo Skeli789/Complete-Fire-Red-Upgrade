@@ -106,7 +106,6 @@ void DecreaseViability(s16* viability, u16 amount);
 
 //Exported Constants
 #define AI_THINKING_STRUCT ((struct AI_ThinkingStruct*) (gBattleResources->ai))
-#define BATTLE_HISTORY ((struct BattleHistory*) (gBattleResources->battleHistory))
 #define INCREASE_VIABILITY(x) (IncreaseViability(&viability, x))
 #define DECREASE_VIABILITY(x) (DecreaseViability(&viability, x))
 #define MOVE_PREDICTION_SWITCH 0xFFFF

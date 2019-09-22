@@ -24,7 +24,7 @@
 #define SIDE(bank) GetBattlerSide(bank)
 #define PARTNER(bank) (bank ^ BIT_FLANK)
 #define FOE(bank) ((bank ^ BIT_SIDE) & BIT_SIDE)
-#define ABILITY(bank) BanksAbility(bank)
+#define ABILITY(bank) GetBankAbility(bank)
 #define SPECIES(bank) gBattleMons[bank].species
 #define ITEM(bank) gBattleMons[bank].item
 #define ITEM_EFFECT(bank) GetBankItemEffect(bank)
@@ -35,11 +35,6 @@
 #define SAVED_CONSUMED_ITEMS(bank) gNewBS->SavedConsumedItems[gBattlerPartyIndexes[bank]]
 #define CHOICED_MOVE(bank) gBattleStruct->choicedMove[bank]
 #define SECOND_OPPONENT (VarGet(SECOND_OPPONENT_VAR))
-#define SPECIES_TABLES_TERMIN 0xFEFE
-#define MOVE_TABLES_TERMIN 0xFEFE
-#define ITEM_TABLES_TERMIN 0xFEFE
-#define ABILITY_TABLES_TERMIN 0xFF
-#define MOVE_EFFECT_TABLES_TERMIN 0xFF
 
 #define ABILITY_PRESENT(ability) AbilityBattleEffects(ABILITYEFFECT_CHECK_ON_FIELD, 0, ability, 0, 0)
 #define NO_MOLD_BREAKERS(ability, move) (ability != ABILITY_MOLDBREAKER && ability != ABILITY_TERAVOLT && ability != ABILITY_TURBOBLAZE && !CheckTableForMove(move, MoldBreakerMoves))

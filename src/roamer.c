@@ -1,4 +1,5 @@
 #include "defines.h"
+#include "defines_battle.h"
 #include "../include/event_data.h"
 #include "../include/event_object_movement.h"
 #include "../include/random.h"

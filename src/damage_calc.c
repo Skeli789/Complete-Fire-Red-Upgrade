@@ -45,7 +45,7 @@ static void ModulateDmgByType(u8 multiplier, const u16 move, const u8 moveType, 
 static bool8 AbilityCanChangeTypeAndBoost(u8 bankAtk, u16 move);
 static u16 GetZMovePower(u16 zMove);
 static u32 AdjustWeight(u32 weight, ability_t, item_effect_t, bank_t, bool8 check_nimble);
-static u8 GetFlingPower(ability_t, item_t, struct Pokemon*, bank_t, bool8 PartyCheck);
+static u8 GetFlingPower(u16 item, u16 species, u8 ability, u8 bank, bool8 partyCheck);
 static void AdjustDamage(bool8 CheckFalseSwipe);
 static void ApplyRandomDmgMultiplier(void);
 
@@ -1318,7 +1318,7 @@ void AdjustDamage(bool8 CheckFalseSwipe) {
 		gBattleMoveDamage = udivsi(gBattleMoveDamage  * 25, 100);
 
 	if (gBattleMons[gBankTarget].status2 & STATUS2_SUBSTITUTE
-	&& !CheckCurrentMoveSoundMove()
+	&& !CheckSoundMove(gCurrentMove)
 	&& ABILITY(gBankAttacker) != ABILITY_INFILTRATOR)
 		goto END;
 
@@ -1373,7 +1373,7 @@ void AdjustDamage(bool8 CheckFalseSwipe) {
 		++gBattlescriptCurrInstr;
 }
 
-s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* defender, const u16 move, u16 sideStatus, u16 powerOverride, u8 effectivenessFlags, u8 typeOverride, u8 bankAtk, u8 bankDef, struct Pokemon* monAtk, bool8 PartyCheck, bool8 IgnoreAttacker, bool8 CheckingConfusion) {
+s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* defender, const u16 move, u16 sideStatus, u16 powerOverride, u8 effectivenessFlags, u8 typeOverride, u8 bankAtk, u8 bankDef, struct Pokemon* monAtk, bool8 partyCheck, bool8 IgnoreAttacker, bool8 CheckingConfusion) {
 	u16 mon;
 	u32 damage = 0;  //Damage is usually signed, but is set as unsigned here to help prevent overflow just in case it happens (although it's unlikely)
 	u8 type;
@@ -1394,7 +1394,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 	target_quality = ITEM_QUALITY(bankDef);
 	defSpecies = defender->species;
 
-	if (PartyCheck) { //Load data from elsewhere if we're calculating damage for a partied mon
+	if (partyCheck) { //Load data from elsewhere if we're calculating damage for a partied mon
 		atkAbility = GetPartyAbility(monAtk);
 		atkPartner_ability = 0;
 		attacker_hp = monAtk->hp;
@@ -1431,7 +1431,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 		gBattleMovePower = GetZMovePower(move);
 	}
 	else if (!powerOverride)
-		gBattleMovePower = GetBasePower(bankAtk, bankDef, move, attacker_item, atkEffect, atkAbility, attackerStatus1, attacker_hp, attacker_maxHP, atkSpecies, monAtk, PartyCheck, FALSE, FALSE);
+		gBattleMovePower = GetBasePower(bankAtk, bankDef, move, attacker_item, atkEffect, atkAbility, attackerStatus1, attacker_hp, attacker_maxHP, atkSpecies, monAtk, partyCheck, FALSE, FALSE);
 	else
 		gBattleMovePower = powerOverride;
 
@@ -1446,7 +1446,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 		spAttack = defender->spAttack;
 	}
 	else {
-		if (PartyCheck) {
+		if (partyCheck) {
 			attack = monAtk->attack;
 			spAttack = monAtk->spAttack;
 		}
@@ -1502,7 +1502,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 				break;
 
 			case ABILITY_SLOWSTART:
-				if (PartyCheck)
+				if (partyCheck)
 					attack /= 2; //Pokemon in the party would start with half atk
 				else if (gNewBS->SlowStartTimers[bankAtk])
 					attack /= 2;
@@ -1523,7 +1523,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 				break;
 
 			case ABILITY_FLASHFIRE:
-				if (!PartyCheck && (gBattleResources->flags->flags[bankAtk] & 1) && type == TYPE_FIRE)
+				if (!partyCheck && (gBattleResources->flags->flags[bankAtk] & 1) && type == TYPE_FIRE)
 					spAttack = udivsi((spAttack * 150), 100);
 				break;
 
@@ -1556,7 +1556,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 				u8 attackerGender;
 				u8 targetGender = GetGenderFromSpeciesAndPersonality(defSpecies, defender->personality);
 
-				if (PartyCheck)
+				if (partyCheck)
 					attackerGender = GetGenderFromSpeciesAndPersonality(atkSpecies, monAtk->personality);
 				else
 					attackerGender = GetGenderFromSpeciesAndPersonality(atkSpecies, attacker->personality);
@@ -1657,7 +1657,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 				break;
 
 			case ABILITY_STAKEOUT:
-				if (!PartyCheck && gNewBS->StakeoutCounters[bankDef]) {
+				if (!partyCheck && gNewBS->StakeoutCounters[bankDef]) {
 					attack *= 2;
 					spAttack *= 2;
 				}
@@ -1826,7 +1826,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 				break;
 
 			case ITEM_EFFECT_METRONOME: ;
-				if (!PartyCheck) {
+				if (!partyCheck) {
 					u16 boost = MathMin(200, 100 + gNewBS->MetronomeCounter[bankAtk]);
 					attack = udivsi((attack * boost), 100);
 					spAttack = udivsi((spAttack * boost), 100);
@@ -1892,7 +1892,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 //Terrain Checks
 	switch (TerrainType) {
 		case ELECTRIC_TERRAIN:
-			if (PartyCheck) {
+			if (partyCheck) {
 				if (CheckGroundingFromPartyData(monAtk) && type == TYPE_ELECTRIC) {
 					attack = udivsi(attack * 150, 100);
 					spAttack = udivsi(spAttack * 150, 100);
@@ -1907,7 +1907,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 			break;
 
 		case GRASSY_TERRAIN:
-			if (PartyCheck) {
+			if (partyCheck) {
 				if (CheckGroundingFromPartyData(monAtk) && type == TYPE_GRASS) {
 					attack = udivsi(attack * 150, 100);
 					spAttack = udivsi(spAttack * 150, 100);
@@ -1934,7 +1934,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 			break;
 
 		case PSYCHIC_TERRAIN:
-			if (PartyCheck) {
+			if (partyCheck) {
 				if (CheckGroundingFromPartyData(monAtk) && type == TYPE_PSYCHIC) {
 					attack = udivsi(attack * 150, 100);
 					spAttack = udivsi(spAttack * 150, 100);
@@ -1950,7 +1950,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 
 //Gym Badge Checks
 	#ifdef BADGE_BOOSTS
-		if (!PartyCheck
+		if (!partyCheck
 		&& !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_TRAINER_TOWER | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_EREADER_TRAINER))
 		&& gBattleTypeFlags & BATTLE_TYPE_TRAINER
 		&& SIDE(bankAtk) == B_SIDE_PLAYER
@@ -1974,7 +1974,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 		spDefense = udivsi((150 * spDefense), 100);
 
 //Charge Boost
-	if (!PartyCheck && (gStatuses3[bankAtk] & STATUS3_CHARGED_UP) && type == TYPE_ELECTRIC)
+	if (!partyCheck && (gStatuses3[bankAtk] & STATUS3_CHARGED_UP) && type == TYPE_ELECTRIC)
 	{
 		attack *= 2;
 		spAttack *= 2;
@@ -2007,7 +2007,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 	u32 buffedDefense = defense;
 	u32 buffedSpDefense = spDefense;
 
-	if (defAbility == ABILITY_UNAWARE || PartyCheck) {
+	if (defAbility == ABILITY_UNAWARE || partyCheck) {
 		buffedAttack = attack;
 		buffedSpAttack = spAttack;
 	}
@@ -2053,7 +2053,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 	}
 
 //Actual Calculation
-	if (PartyCheck)
+	if (partyCheck)
 		damage = (2 * GetMonData(monAtk, MON_DATA_LEVEL, NULL)) / 5 + 2;
 	else
 		damage = (2 * attacker->level) / 5 + 2;
@@ -2272,7 +2272,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 }
 
 //Banks need to be accurate, even if just checking party data (for side checking)
-u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 ability, u32 atkStatus1, u16 atk_hp, u16 atk_maxHP, u16 species, struct Pokemon* monAtk, bool8 PartyCheck, bool8 menuCheck, bool8 ignoreDef) {
+u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 ability, u32 atkStatus1, u16 atkHP, u16 atkMaxHP, u16 species, struct Pokemon* monAtk, bool8 partyCheck, bool8 menuCheck, bool8 ignoreDef) {
 	u16 power = gBattleMoves[move].power;
 	int i;
 
@@ -2285,7 +2285,7 @@ u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 
 		case MOVE_AVALANCHE:
 		case MOVE_REVENGE:
 			if (!menuCheck
-			&& !PartyCheck
+			&& !partyCheck
 			&& ((gProtectStructs[bankAtk].physicalDmg && gProtectStructs[bankAtk].physicalBank == bankDef)
 			 || (gProtectStructs[bankAtk].specialDmg && gProtectStructs[bankAtk].specialBank == bankDef)))
 				power *= 2;
@@ -2307,7 +2307,7 @@ u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 
 			break;
 
 		case MOVE_FURYCUTTER:
-			if (!PartyCheck) {
+			if (!partyCheck) {
 				for (i = 0; i < gDisableStructs[bankAtk].furyCutterCounter; i++)
 					power *= 2;
 			}
@@ -2315,7 +2315,7 @@ u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 
 
 		case MOVE_FUSIONBOLT:
 			if (!menuCheck
-			&& !PartyCheck
+			&& !partyCheck
 			&& gNewBS->fusionFlareUsedPrior
 			&& gBanksByTurnOrder[0] != bankAtk)
 				power *= 2;
@@ -2323,7 +2323,7 @@ u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 
 
 		case MOVE_FUSIONFLARE:
 			if (!menuCheck
-			&& !PartyCheck
+			&& !partyCheck
 			&& gNewBS->fusionBoltUsedPrior
 			&& gBanksByTurnOrder[0] != bankAtk)
 				power *= 2;
@@ -2337,7 +2337,7 @@ u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 
 
 		case MOVE_PAYBACK:
 			if (!menuCheck
-			&& !PartyCheck
+			&& !partyCheck
 			&& BankMovedBefore(bankDef, bankAtk))
 				power *= 2;
 			break;
@@ -2349,7 +2349,7 @@ u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 
 
 		case MOVE_ROUND:
 			if (!menuCheck
-			&& !PartyCheck
+			&& !partyCheck
 			&& gNewBS->roundUsed)
 				power *= 2;
 			break;
@@ -2361,7 +2361,7 @@ u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 
 			break;
 
 		case MOVE_STOMPINGTANTRUM:
-			if (!PartyCheck && gNewBS->StompingTantrumTimers[bankAtk])
+			if (!partyCheck && gNewBS->StompingTantrumTimers[bankAtk])
 				power *= 2;
 			break;
 
@@ -2397,7 +2397,7 @@ u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 
 
 		case MOVE_ROLLOUT:
 		case MOVE_ICEBALL:
-			if (!menuCheck && !PartyCheck)
+			if (!menuCheck && !partyCheck)
 			{
 				if (gBattleMons[bankAtk].status2 & STATUS2_DEFENSE_CURL)
 					power *= 2;
@@ -2413,7 +2413,7 @@ u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 
 		case MOVE_GRASSPLEDGE:
 		case MOVE_FIREPLEDGE:
 		case MOVE_WATERPLEDGE:
-			if (!menuCheck && !PartyCheck && gNewBS->PledgeHelper)
+			if (!menuCheck && !partyCheck && gNewBS->PledgeHelper)
 				power = 150;
 			break;
 
@@ -2421,7 +2421,7 @@ u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 
 			u32 ratio;
 			if (!ignoreDef)
 			{
-				if (PartyCheck)
+				if (partyCheck)
 					ratio = udivsi(SpeedCalcForParty(SIDE(bankAtk), monAtk), SpeedCalc(bankDef));
 				else
 					ratio = udivsi(SpeedCalc(bankAtk), SpeedCalc(bankDef));
@@ -2441,7 +2441,7 @@ u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 
 			if (!ignoreDef)
 			{
 				u32 def_spd = 25 * SpeedCalc(bankDef);
-				if (PartyCheck)
+				if (partyCheck)
 					power = udivsi(def_spd, SpeedCalcForParty(SIDE(bankAtk), monAtk));
 				else
 					power = udivsi(def_spd, SpeedCalc(bankAtk));
@@ -2483,7 +2483,7 @@ u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 
 
 				defWeight = GetActualSpeciesWeight(SPECIES(bankDef), ABILITY(bankDef), ITEM_EFFECT(bankDef), bankDef, TRUE);
 				
-				if (PartyCheck)
+				if (partyCheck)
 					atkWeight = GetActualSpeciesWeight(monAtk->species, ability, item_effect, bankAtk, FALSE);
 				else
 					atkWeight = GetActualSpeciesWeight(SPECIES(bankAtk), ability, item_effect, bankAtk, TRUE);
@@ -2512,22 +2512,22 @@ u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 
 
 		case MOVE_POWERTRIP:
 		case MOVE_STOREDPOWER:
-			if (!PartyCheck)
+			if (!partyCheck)
 				power = 20 * (1 + CountBoosts(bankAtk));
 			break;
 
 		case MOVE_FLING:	;
-			power = GetFlingPower(ability, item, monAtk, bankAtk, PartyCheck);
+			power = GetFlingPower(item, species, ability, bankAtk, partyCheck);
 			break;
 
 		case MOVE_ERUPTION:
 		case MOVE_WATERSPOUT:	;
-			power = MathMax(1, udivsi(150 * atk_hp, atk_maxHP));
+			power = MathMax(1, udivsi(150 * atkHP, atkMaxHP));
 			break;
 
 		case MOVE_REVERSAL:
 		case MOVE_FLAIL:	;
-			u16 percentage = udivsi(48 * atk_hp, atk_maxHP);
+			u16 percentage = udivsi(48 * atkHP, atkMaxHP);
 
 			if (percentage <= 1)
 				power = 200;
@@ -2588,7 +2588,7 @@ u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 
 			break;
 
 		case MOVE_SPITUP:
-			if (!PartyCheck)
+			if (!partyCheck)
 				power = 100 * gDisableStructs[bankAtk].stockpileCounter; //Will be 0 if no stockpile
 			break;
 
@@ -2615,7 +2615,7 @@ u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 
 		case MOVE_RETURN:
 			if (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_TRAINER_TOWER | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_EREADER_TRAINER))
 				power = udivsi(10 * 255, 25);
-			else if (PartyCheck)
+			else if (partyCheck)
 				power = udivsi(10 * (monAtk->friendship), 25);
 			else
 				power = udivsi(10 * (gBattleMons[bankAtk].friendship), 25);
@@ -2624,14 +2624,14 @@ u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 
 		case MOVE_FRUSTRATION:
 			if (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_TRAINER_TOWER | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_EREADER_TRAINER))
 				power = udivsi(10 * 255, 25);
-			else if (PartyCheck)
+			else if (partyCheck)
 				power = udivsi(10 * (255 - monAtk->friendship), 25);
 			else
 				power = udivsi(10 * (255 - gBattleMons[bankAtk].friendship), 25);
 			break;
 
 		case MOVE_BEATUP:
-			if (PartyCheck || menuCheck)
+			if (partyCheck || menuCheck)
 				power = udivsi(gBaseStats[species].baseAttack, 10) + 5;
 			else
 			{
@@ -2647,7 +2647,7 @@ u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 
 
 		case MOVE_HIDDENPOWER:
 		#ifdef OLD_HIDDEN_POWER_BP
-			if (PartyCheck) {
+			if (partyCheck) {
 				power = ((monAtk->hpIV & 2) >> 1) |
 						((monAtk->attackIV & 2)) |
 						((monAtk->defenseIV & 2) << 1) |
@@ -2668,7 +2668,7 @@ u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 
 			break;
 
 		case MOVE_TRIPLEKICK:
-			if (!menuCheck && !PartyCheck)
+			if (!menuCheck && !partyCheck)
 				power = gBattleScripting->tripleKickPower;
 			break;
 	}
@@ -3056,18 +3056,23 @@ u32 GetActualSpeciesWeight(u16 species, u8 ability, u8 itemEffect, u8 bank, bool
 	return AdjustWeight(weight, ability, itemEffect, bank, checkNimble);
 }
 
-static u8 GetFlingPower(u8 ability, u16 item, struct Pokemon* mon, u8 bank, bool8 PartyCheck) {
+static u8 GetFlingPower(u16 item, u16 species, u8 ability, u8 bank, bool8 partyCheck)
+{
 	u8 power = 0;
-	if (CanFling(ability, item, mon, bank, PartyCheck))
+	u8 embargoTimer = (partyCheck) ? 0 : gNewBS->EmbargoTimers[bank];
+
+	if (CanFling(item, species, ability, bank, embargoTimer))
 	{
 		power = gFlingTable[item].power;
 		if (power == 0)
 			power = 30; //Default power is 30
 	}
+
 	return power;
 }
 
-static void ApplyRandomDmgMultiplier(void) {
+static void ApplyRandomDmgMultiplier(void)
+{
 	u16 rando = 100 - (Random() & 15);
 	if (gBattleMoveDamage)
 		gBattleMoveDamage = MathMax(1, (gBattleMoveDamage * rando) / 100);

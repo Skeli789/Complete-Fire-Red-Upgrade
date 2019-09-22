@@ -1,4 +1,5 @@
 #include "../defines.h"
+#include "../defines_battle.h"
 #include "../../include/random.h"
 
 #include "../../include/new/AI_Helper_Functions.h"
@@ -6,6 +7,7 @@
 #include "../../include/new/AI_scripts.h"
 #include "../../include/new/battle_controller_opponent.h"
 #include "../../include/new/battle_start_turn_start.h"
+#include "../../include/new/battle_util.h"
 #include "../../include/new/damage_calc.h"
 #include "../../include/new/frontier.h"
 #include "../../include/new/general_bs_commands.h"
@@ -1589,10 +1591,13 @@ static bool8 ShouldSwitchIfWonderGuard(void)
 					case EFFECT_TRICK:
 						if (move == MOVE_TRICK)
 						{
-							if (CanTransferItem(bankAtk, ITEM(bankAtk), GetBankPartyData(bankAtk))
-							&& CanTransferItem(bankAtk, ITEM(bankDef), GetBankPartyData(bankAtk))
-							&& CanTransferItem(bankDef, ITEM(bankAtk), GetBankPartyData(bankDef))
-							&& CanTransferItem(bankDef, ITEM(bankDef), GetBankPartyData(bankDef)))
+							u8 atkSpecies = SPECIES(bankAtk);
+							u8 defSpecies = SPECIES(bankDef);
+
+							if (CanTransferItem(atkSpecies, ITEM(bankAtk))
+							&& CanTransferItem(atkSpecies, ITEM(bankDef))
+							&& CanTransferItem(defSpecies, ITEM(bankAtk))
+							&& CanTransferItem(defSpecies, ITEM(bankDef)))
 							{
 								switch (ITEM_EFFECT(bankAtk)) {
 									case ITEM_EFFECT_TOXIC_ORB:

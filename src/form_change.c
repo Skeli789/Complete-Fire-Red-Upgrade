@@ -2,6 +2,7 @@
 #include "defines_battle.h"
 
 #include "../include/new/battle_terrain.h"
+#include "../include/new/battle_util.h"
 #include "../include/new/dns.h"
 #include "../include/new/form_change.h"
 #include "../include/new/frontier.h"

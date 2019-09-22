@@ -688,8 +688,8 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 					&& !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bankDef)
 					&& TOOK_DAMAGE(bankDef)
 					&& MOVE_HAD_EFFECT
-					&& CanTransferItem(gBattleMons[bankDef].species, ITEM(bankDef), GetBankPartyData(bankDef))
-					&& CanTransferItem(gBattleMons[gBankAttacker].species, ITEM(bankDef), GetBankPartyData(gBankAttacker))
+					&& CanTransferItem(SPECIES(bankDef), ITEM(bankDef))
+					&& CanTransferItem(SPECIES(gBankAttacker), ITEM(bankDef))
 					&& (ABILITY(bankDef) != ABILITY_STICKYHOLD || gBattleMons[bankDef].hp == 0))
 					{
 						BattleScriptPushCursor();

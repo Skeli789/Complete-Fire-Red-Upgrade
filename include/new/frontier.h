@@ -21,6 +21,7 @@ u8 GetBattleTowerLevel(u8 tier);
 void UpdateTypesForCamomons(u8 bank);
 u8 GetCamomonsTypeByMon(struct Pokemon* mon, u8 whichType);
 //u8 GetCamomonsTypeBySpread(struct BattleTowerSpread* spread, u8 whichType); - Defined further down
+u8 ShouldReplaceTypesWithCamomons(void);
 bool8 DuplicateItemsAreBannedInTier(u8 tier, u8 battleType);
 bool8 ShouldDisablePartyMenuItemsBattleTower(void);
 const u8* GetFrontierTierName(u8 tier, u8 format);

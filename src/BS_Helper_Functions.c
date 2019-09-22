@@ -425,8 +425,8 @@ void BestowItem(void)
 {
 	if (ITEM(gBankTarget) == 0
 	&& ITEM(gBankAttacker) != 0
-	&& CanTransferItem(gBattleMons[gBankTarget].species, ITEM(gBankAttacker), GetBankPartyData(gBankTarget))
-	&& CanTransferItem(gBattleMons[gBankAttacker].species, ITEM(gBankAttacker), GetBankPartyData(gBankAttacker)))
+	&& CanTransferItem(SPECIES(gBankTarget), ITEM(gBankAttacker))
+	&& CanTransferItem(SPECIES(gBankAttacker), ITEM(gBankAttacker)))
 	{
 		gLastUsedItem = gBattleMons[gBankTarget].item = ITEM(gBankAttacker);
 		gBattleMons[gBankAttacker].item = 0;
@@ -803,8 +803,8 @@ void BringDownMons(void)
 
 void TryFling(void)
 {
-	if (!CanFling(ABILITY(gBankAttacker), ITEM(gBankAttacker), 
-				 GetBankPartyData(gBankAttacker), gBankAttacker, FALSE))
+	if (!CanFling(ITEM(gBankAttacker), SPECIES(gBankAttacker), ABILITY(gBankAttacker),
+				  gBankAttacker, gNewBS->EmbargoTimers[gBankAttacker]))
 	{
 		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
 	}

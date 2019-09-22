@@ -1,4 +1,5 @@
 #include "../defines.h"
+#include "../defines_battle.h"
 #include "../../include/random.h"
 #include "../../include/constants/items.h"
 
@@ -7,6 +8,7 @@
 #include "../../include/new/AI_advanced.h"
 #include "../../include/new/AI_Helper_Functions.h"
 #include "../../include/new/battle_start_turn_start.h"
+#include "../../include/new/battle_util.h"
 #include "../../include/new/damage_calc.h"
 #include "../../include/new/general_bs_commands.h"
 #include "../../include/new/Helper_Functions.h"

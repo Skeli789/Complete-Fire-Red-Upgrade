@@ -1,4 +1,5 @@
 #include "defines.h"
+#include "defines_battle.h"
 #include "../include/battle_setup.h"
 #include "../include/daycare.h"
 #include "../include/event_data.h"

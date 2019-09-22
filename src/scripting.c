@@ -19,7 +19,9 @@
 #include "../include/wild_encounter.h"
 #include "../include/window.h"
 #include "../include/event_data.h"
+#include "../include/constants/abilities.h"
 #include "../include/constants/items.h"
+#include "../include/constants/moves.h"
 #include "../include/constants/pokedex.h"
 #include "../include/constants/songs.h"
 
@@ -32,6 +34,7 @@
 #include "../include/new/multi.h"
 #include "../include/new/overworld.h"
 #include "../include/new/pokemon_storage_system.h"
+#include "../include/new/ram_locs_battle.h"
 #include "../include/new/read_keys.h"
 #include "../include/new/roamer.h"
 #include "../include/new/text.h"
@@ -247,7 +250,7 @@ u16 sp00B_CheckPokeball(void) {
 	if (mon >= 6)
 		return 0;
 		
-	return GetMonDataFromVar8003(REQ_POKEBALL);
+	return GetMonDataFromVar8003(MON_DATA_POKEBALL);
 }
 
 

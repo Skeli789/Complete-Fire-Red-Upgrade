@@ -1,4 +1,5 @@
 #include "../defines.h"
+#include "../defines_battle.h"
 #include "../../include/random.h"
 #include "../../include/constants/items.h"
 
@@ -828,8 +829,8 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		case EFFECT_THIEF:
 			if (atkItem == ITEM_NONE
 			&&  defItem != ITEM_NONE
-			&& CanTransferItem(bankDef, defItem, GetBankPartyData(bankDef))
-			&& CanTransferItem(bankAtk, defItem, GetBankPartyData(bankAtk))
+			&& CanTransferItem(SPECIES(bankDef), defItem)
+			&& CanTransferItem(SPECIES(bankAtk), defItem)
 			&& !MoveInMoveset(MOVE_ACROBATICS, bankAtk)
 			&& defAbility != ABILITY_STICKYHOLD
 			&& IsClassSweeper(class))

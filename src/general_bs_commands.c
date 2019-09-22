@@ -1304,8 +1304,8 @@ void atk6A_removeitem(void) {
 	&& (!gNewBS->IncinerateCounters[bank] || oldItemEffect == ITEM_EFFECT_AIR_BALLOON) //Air Balloons can't be restored by Recycle, but they trigger Symbiosis
 	&& !(gWishFutureKnock->knockedOffPokes[SIDE(bank)] & gBitTable[gBattlerPartyIndexes[bank]])
 	&& partnerItem != ITEM_NONE
-	&& CanTransferItem(gBattleMons[bank].species, partnerItem, GetBankPartyData(bank))
-	&& CanTransferItem(gBattleMons[partner].species, partnerItem, GetBankPartyData(bank))) {
+	&& CanTransferItem(SPECIES(bank), partnerItem)
+	&& CanTransferItem(SPECIES(partner), partnerItem)) {
 		gBattleMons[bank].item = partnerItem;
 		gBattleMons[partner].item = 0;
 
@@ -3403,10 +3403,10 @@ void atkD2_tryswapitems(void) { //Trick
 		// can't swap if two pokemon don't have an item
 		// or if either of them is a forbidden item
 		if ((gBattleMons[gBankAttacker].item == 0 && gBattleMons[gBankTarget].item == 0)
-		|| !CanTransferItem(gBattleMons[gBankAttacker].species, gBattleMons[gBankAttacker].item, GetBankPartyData(gBankAttacker))
-		|| !CanTransferItem(gBattleMons[gBankAttacker].species, gBattleMons[gBankTarget].item, GetBankPartyData(gBankAttacker))
-		|| !CanTransferItem(gBattleMons[gBankTarget].species, gBattleMons[gBankTarget].item, GetBankPartyData(gBankTarget))
-		|| !CanTransferItem(gBattleMons[gBankTarget].species, gBattleMons[gBankAttacker].item, GetBankPartyData(gBankTarget)))
+		|| !CanTransferItem(SPECIES(gBankAttacker), gBattleMons[gBankAttacker].item)
+		|| !CanTransferItem(SPECIES(gBankAttacker), gBattleMons[gBankTarget].item)
+		|| !CanTransferItem(SPECIES(gBankTarget), gBattleMons[gBankTarget].item)
+		|| !CanTransferItem(SPECIES(gBankTarget), gBattleMons[gBankAttacker].item))
 			gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
 
 		// check if ability prevents swapping

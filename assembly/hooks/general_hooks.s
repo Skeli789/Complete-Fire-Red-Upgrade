@@ -783,7 +783,7 @@ CamomonsSummaryScreenHook:
 	mov r1, r4
 	ldr r2, =GetSpeciesName
 	bl bxr2
-	bl ShouldReplaceTypesWithCamomonsSummaryScreen
+	bl ShouldReplaceTypesWithCamomons
 	cmp r0, #0x0
 	beq SummaryScreenLoadRegularTypes
 

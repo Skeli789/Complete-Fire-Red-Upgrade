@@ -1,4 +1,5 @@
 #include "defines.h"
+#include "defines_battle.h"
 #include "../include/battle_transition.h"
 #include "../include/field_effect.h"
 #include "../include/new/mega.h"
@@ -6,8 +7,8 @@
 
 #include "../include/new/battle_transition.h"
 #include "../include/new/battle_transition_data.h"
+#include "../include/new/battle_util.h"
 #include "../include/new/character_customization.h"
-#include "../include/new/Helper_Functions.h"
 #include "../include/new/frontier.h"
 #include "../include/new/multi.h"
 #include "../include/new/overworld.h"

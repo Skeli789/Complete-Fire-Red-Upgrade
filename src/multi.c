@@ -4,9 +4,9 @@
 
 #include "../include/new/AI_Helper_Functions.h"
 #include "../include/new/ai_master.h"
+#include "../include/new/battle_util.h"
 #include "../include/new/build_pokemon.h"
 #include "../include/new/frontier.h"
-#include "../include/new/Helper_Functions.h"
 #include "../include/m4a.h"
 #include "../include/new/mega.h"
 #include "../include/new/move_menu.h"

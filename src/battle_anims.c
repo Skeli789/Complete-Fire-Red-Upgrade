@@ -7,9 +7,9 @@
 
 #include "../include/new/battle_anims.h"
 #include "../include/new/battle_terrain.h"
-#include "../include/new/mega.h"
+#include "../include/new/battle_util.h"
 #include "../include/new/dns.h"
-#include "../include/new/Helper_Functions.h"
+#include "../include/new/mega.h"
 
 extern const struct CompressedSpriteSheet gBattleAnimPicTable[];
 extern const struct CompressedSpritePalette gBattleAnimPaletteTable[];

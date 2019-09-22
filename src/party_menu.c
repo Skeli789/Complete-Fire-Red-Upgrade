@@ -9,6 +9,7 @@
 #include "../include/script.h"
 #include "../include/text.h"
 #include "../include/window.h"
+#include "../include/constants/moves.h"
 #include "../include/constants/songs.h"
 
 #include "../include/new/build_pokemon.h"

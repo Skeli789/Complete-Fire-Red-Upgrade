@@ -8,6 +8,7 @@
 #include "../include/constants/items.h"
 
 #include "../include/new/battle_strings.h"
+#include "../include/new/battle_util.h"
 #include "../include/new/exp.h"
 #include "../include/new/Helper_Functions.h"
 

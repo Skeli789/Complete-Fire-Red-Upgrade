@@ -474,7 +474,7 @@ u8 GetCamomonsTypeBySpread(const struct BattleTowerSpread* spread, u8 whichType)
 	}
 }
 
-u8 ShouldReplaceTypesWithCamomonsSummaryScreen(void)
+u8 ShouldReplaceTypesWithCamomons(void)
 {
 	return (gMain.inBattle && gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) || IsCamomonsBattle();
 }

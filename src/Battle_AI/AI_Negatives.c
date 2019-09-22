@@ -1,4 +1,5 @@
 #include "../defines.h"
+#include "../defines_battle.h"
 #include "../../include/random.h"
 #include "../../include/constants/items.h"
 
@@ -1872,16 +1873,16 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			switch (move) {
 				case MOVE_BESTOW:
 					if (atkItem == ITEM_NONE
-					|| !CanTransferItem(bankAtk, atkItem, GetBankPartyData(bankAtk)))
+					|| !CanTransferItem(atkSpecies, atkItem))
 						DECREASE_VIABILITY(10);
 					break;
 					
 				default: //Trick
 					if ((atkItem == ITEM_NONE && defItem == ITEM_NONE)
-					|| !CanTransferItem(bankAtk, atkItem, GetBankPartyData(bankAtk))
-					|| !CanTransferItem(bankAtk, defItem, GetBankPartyData(bankAtk))
-					|| !CanTransferItem(bankDef, atkItem, GetBankPartyData(bankDef))
-					|| !CanTransferItem(bankDef, defItem, GetBankPartyData(bankDef))
+					|| !CanTransferItem(atkSpecies, atkItem)
+					|| !CanTransferItem(atkSpecies, defItem)
+					|| !CanTransferItem(defSpecies, atkItem)
+					|| !CanTransferItem(defSpecies, defItem)
 					|| (defAbility == ABILITY_STICKYHOLD))
 						DECREASE_VIABILITY(10);
 					break;
@@ -2350,8 +2351,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			break;
 		
 		case EFFECT_FLING:
-			if (atkItem == ITEM_NONE
-			|| !CanTransferItem(atkSpecies, atkItem, GetBankPartyData(bankAtk)))
+			if (!CanFling(atkItem, atkSpecies, atkAbility, bankAtk, gNewBS->EmbargoTimers[bankAtk]))
 				DECREASE_VIABILITY(10);
 				
 			u8 effect = gFlingTable[atkItem].effect;

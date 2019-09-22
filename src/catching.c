@@ -6,10 +6,11 @@
 #include "../include/random.h"
 #include "../include/constants/items.h"
 
+#include "../include/new/battle_util.h"
 #include "../include/new/catching.h"
 #include "../include/new/dns.h"
-#include "../include/new/Helper_Functions.h"
 #include "../include/new/form_change.h"
+#include "../include/new/Helper_Functions.h"
 #include "../include/new/mega.h"
 #include "../include/new/pokemon_storage_system.h"
 
