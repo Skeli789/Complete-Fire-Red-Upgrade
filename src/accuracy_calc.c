@@ -159,25 +159,25 @@ bool8 ProtectAffects(u16 move, u8 bankAtk, u8 bankDef, bool8 set) {
 	else if (gSideAffecting[defSide] & SIDE_STATUS_CRAFTY_SHIELD && target != MOVE_TARGET_USER && split == SPLIT_STATUS)
 	{
 		effect = 1;
-		BattleStringLoader = CraftyShieldProtectedString;
+		gBattleStringLoader = CraftyShieldProtectedString;
 		gBattleCommunication[6] = 5;
 	}
 	else if (gSideAffecting[defSide] & SIDE_STATUS_MAT_BLOCK && protectFlag && split != SPLIT_STATUS)
 	{
 		effect = 1;
-		BattleStringLoader = MatBlockProtectedString;
+		gBattleStringLoader = MatBlockProtectedString;
 		gBattleCommunication[6] = 6;
 	}
 	else if (gSideAffecting[defSide] & SIDE_STATUS_QUICK_GUARD && protectFlag && PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > 0)
 	{
 		effect = 1;
-		BattleStringLoader = QuickGuardProtectedString;
+		gBattleStringLoader = QuickGuardProtectedString;
 		gBattleCommunication[6] = 7;
 	}
 	else if (gSideAffecting[defSide] & SIDE_STATUS_WIDE_GUARD && protectFlag && (target == MOVE_TARGET_BOTH || target == MOVE_TARGET_FOES_AND_ALLY))
 	{
 		effect = 1;
-		BattleStringLoader = WideGuardProtectedString;
+		gBattleStringLoader = WideGuardProtectedString;
 		gBattleCommunication[6] = 8;
 	}
 

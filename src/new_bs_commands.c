@@ -176,39 +176,39 @@ void atkFF06_setterrain(void)
 		case MOVE_ELECTRICTERRAIN:
 			type = ELECTRIC_TERRAIN;
 			gBattleScripting->animArg1 = B_ANIM_ELECTRIC_SURGE;
-			BattleStringLoader = ElectricTerrainSetString;
+			gBattleStringLoader = ElectricTerrainSetString;
 			break;
 		case MOVE_GRASSYTERRAIN:
 			type = GRASSY_TERRAIN;
 			gBattleScripting->animArg1 = B_ANIM_GRASSY_SURGE;
-			BattleStringLoader = GrassyTerrainSetString;
+			gBattleStringLoader = GrassyTerrainSetString;
 			break;
 		case MOVE_MISTYTERRAIN:
 			type = MISTY_TERRAIN;
 			gBattleScripting->animArg1 = B_ANIM_MISTY_SURGE;
-			BattleStringLoader = MistyTerrainSetString;
+			gBattleStringLoader = MistyTerrainSetString;
 			break;
 		case MOVE_PSYCHICTERRAIN:
 		case MOVE_GENESIS_SUPERNOVA:
 			type = PSYCHIC_TERRAIN;
 			gBattleScripting->animArg1 = B_ANIM_PSYCHIC_SURGE;
-			BattleStringLoader = PsychicTerrainSetString;
+			gBattleStringLoader = PsychicTerrainSetString;
 			break;
 		case MOVE_SPLINTERED_STORMSHARDS:
 			type = 0;
 			gBattleScripting->animArg1 = B_ANIM_LOAD_DEFAULT_BG;
-			BattleStringLoader = TerrainEndString;
+			gBattleStringLoader = TerrainEndString;
 			break;
 	}
 
 	if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_TERRAIN)
 		type = 0xFF; //Can't be removed
 
-	if (TerrainType == type || type == 0xFF)
+	if (gTerrainType == type || type == 0xFF)
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
 	else
 	{
-		TerrainType = type;
+		gTerrainType = type;
 
 		if (type == 0) //No Terrain means no timer
 			gNewBS->TerrainTimer = 0;
@@ -623,7 +623,7 @@ void atkFF14_jumpiftypepresent(void)
 void atkFF15_jumpifstatcanbemodified(void)
 {
 	u32 currStat = 0;
-	FormCounter = 0;
+	gFormCounter = 0;
 
 	gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
 	currStat = T2_READ_8(gBattlescriptCurrInstr + 2);
@@ -636,10 +636,10 @@ void atkFF15_jumpifstatcanbemodified(void)
 
 	STAT_ANIM_DOWN:
 		if (gBattleMons[gActiveBattler].statStages[currStat - 1] == 0)
-			FormCounter = 1;
+			gFormCounter = 1;
 
 		else if (gSideTimers[SIDE(gActiveBattler)].mistTimer && (gBattlescriptCurrInstr[1] != 0x0 || ABILITY(gBankAttacker) != ABILITY_INFILTRATOR))
-			FormCounter = 2;
+			gFormCounter = 2;
 
 		else if (ability == ABILITY_CLEARBODY
 		|| ability == ABILITY_WHITESMOKE
@@ -647,22 +647,22 @@ void atkFF15_jumpifstatcanbemodified(void)
 		|| (ability == ABILITY_FLOWERVEIL && IsOfType(gActiveBattler, TYPE_GRASS)))
 		{
 			gBattleScripting->bank = gActiveBattler;
-			FormCounter = 3;
+			gFormCounter = 3;
 		}
 		else if (ABILITY(PARTNER(gActiveBattler)) == ABILITY_FLOWERVEIL
 		&& IsOfType(gActiveBattler, TYPE_GRASS))
 		{
 			gBattleScripting->bank = PARTNER(gActiveBattler);
-			FormCounter = 3;
+			gFormCounter = 3;
 		}
 		else if ((ability == ABILITY_KEENEYE && currStat == STAT_STAGE_ACC)
 		|| (ability == ABILITY_HYPERCUTTER && currStat == STAT_STAGE_ATK)
 		|| (ability == ABILITY_BIGPECKS && currStat == STAT_STAGE_DEF))
-			FormCounter = 4;
+			gFormCounter = 4;
 
 		PREPARE_STAT_BUFFER(gBattleTextBuff1, currStat)
 
-		if (FormCounter)
+		if (gFormCounter)
 			gBattlescriptCurrInstr += 8;
 		else
 			gBattlescriptCurrInstr = T2_READ_PTR(gBattlescriptCurrInstr + 4);
@@ -676,7 +676,7 @@ void atkFF15_jumpifstatcanbemodified(void)
 	STAT_ANIM_UP:	;
 		if (gBattleMons[gActiveBattler].statStages[currStat - 1] >= 12)
 		{
-			FormCounter = 5;
+			gFormCounter = 5;
 			gBattlescriptCurrInstr += 8;
 		}
 		else
@@ -1102,7 +1102,7 @@ void atkFF24_jumpifattackeralreadydiddamage(void)
 //jumpifterrainandgrounded TERRAIN_ID BANK ROM_ADDRESS
 void atkFF25_jumpifterrainandgrounded(void)
 {
-	if (TerrainType == gBattlescriptCurrInstr[1]
+	if (gTerrainType == gBattlescriptCurrInstr[1]
 	&&  CheckGrounding(GetBattleBank(gBattlescriptCurrInstr[2])))
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
 	else
@@ -1245,27 +1245,27 @@ void atkFF29_trysetsleep(void)
 	}
 	else if (gBattleMons[bank].status1 & STATUS1_SLEEP)
 	{
-		BattleStringLoader = gText_TargetAlreadyAsleep;
+		gBattleStringLoader = gText_TargetAlreadyAsleep;
 		fail = TRUE;
 	}
 	else if (gBattleMons[bank].status1 != STATUS1_NONE)
 	{
-		BattleStringLoader = gText_TargetAlreadyHasStatusCondition; //String not in official games; officially "But it failed!"
+		gBattleStringLoader = gText_TargetAlreadyHasStatusCondition; //String not in official games; officially "But it failed!"
 		fail = TRUE;
 	}
 	else if (gSideAffecting[SIDE(bank)] & SIDE_STATUS_SAFEGUARD)
 	{
-		BattleStringLoader = gText_TeamProtectedBySafeguard;
+		gBattleStringLoader = gText_TeamProtectedBySafeguard;
 		fail = TRUE;
 	}
-	else if (CheckGrounding(bank) && TerrainType == MISTY_TERRAIN)
+	else if (CheckGrounding(bank) && gTerrainType == MISTY_TERRAIN)
 	{
-		BattleStringLoader = gText_TargetWrappedInMistyTerrain;
+		gBattleStringLoader = gText_TargetWrappedInMistyTerrain;
 		fail = TRUE;
 	}
-	else if (CheckGrounding(bank) && TerrainType == ELECTRIC_TERRAIN)
+	else if (CheckGrounding(bank) && gTerrainType == ELECTRIC_TERRAIN)
 	{
-		BattleStringLoader = gText_TargetWrappedInElectricTerrain;
+		gBattleStringLoader = gText_TargetWrappedInElectricTerrain;
 		fail = TRUE;
 	}
 	else if (IsOfType(bank, TYPE_GRASS) && ABILITY(bank) == ABILITY_FLOWERVEIL)
@@ -1295,7 +1295,7 @@ void atkFF29_trysetsleep(void)
 	else if (IsUproarBeingMade())
 	{
 		gBattleScripting->bank = bank;
-		BattleStringLoader = gText_CantFallAsleepDuringUproar;
+		gBattleStringLoader = gText_CantFallAsleepDuringUproar;
 		fail = TRUE;
 	}
 
@@ -1326,7 +1326,7 @@ void atkFF29_trysetsleep(void)
 
 		if (!fail && DoesSleepClausePrevent(bank))
 		{
-			BattleStringLoader = gText_SleepClausePrevents;
+			gBattleStringLoader = gText_SleepClausePrevents;
 			fail = TRUE;
 		}
 	}
@@ -1366,22 +1366,22 @@ void atkFF2A_trysetparalysis(void)
 	}
 	else if (gBattleMons[bank].status1 & STATUS1_PARALYSIS)
 	{
-		BattleStringLoader = gText_TargetAlreadyParalyzed;
+		gBattleStringLoader = gText_TargetAlreadyParalyzed;
 		fail = TRUE;
 	}
 	else if (gBattleMons[bank].status1 != STATUS1_NONE)
 	{
-		BattleStringLoader = gText_TargetAlreadyHasStatusCondition; //String not in official games; officially "But it failed!"
+		gBattleStringLoader = gText_TargetAlreadyHasStatusCondition; //String not in official games; officially "But it failed!"
 		fail = TRUE;
 	}
 	else if (gSideAffecting[SIDE(bank)] & SIDE_STATUS_SAFEGUARD)
 	{
-		BattleStringLoader = gText_TeamProtectedBySafeguard;
+		gBattleStringLoader = gText_TeamProtectedBySafeguard;
 		fail = TRUE;
 	}
-	else if (CheckGrounding(bank) && TerrainType == MISTY_TERRAIN)
+	else if (CheckGrounding(bank) && gTerrainType == MISTY_TERRAIN)
 	{
-		BattleStringLoader = gText_TargetWrappedInMistyTerrain;
+		gBattleStringLoader = gText_TargetWrappedInMistyTerrain;
 		fail = TRUE;
 	}
 	else if (IsOfType(bank, TYPE_GRASS) && ABILITY(bank) == ABILITY_FLOWERVEIL)
@@ -1448,22 +1448,22 @@ void atkFF2B_trysetburn(void)
 	}
 	else if (gBattleMons[bank].status1 & STATUS1_BURN)
 	{
-		BattleStringLoader = gText_TargetAlreadyBurned;
+		gBattleStringLoader = gText_TargetAlreadyBurned;
 		fail = TRUE;
 	}
 	else if (gBattleMons[bank].status1 != STATUS1_NONE)
 	{
-		BattleStringLoader = gText_TargetAlreadyHasStatusCondition; //String not in official games; officially "But it failed!"
+		gBattleStringLoader = gText_TargetAlreadyHasStatusCondition; //String not in official games; officially "But it failed!"
 		fail = TRUE;
 	}
 	else if (gSideAffecting[SIDE(bank)] & SIDE_STATUS_SAFEGUARD)
 	{
-		BattleStringLoader = gText_TeamProtectedBySafeguard;
+		gBattleStringLoader = gText_TeamProtectedBySafeguard;
 		fail = TRUE;
 	}
-	else if (CheckGrounding(bank) && TerrainType == MISTY_TERRAIN)
+	else if (CheckGrounding(bank) && gTerrainType == MISTY_TERRAIN)
 	{
-		BattleStringLoader = gText_TargetWrappedInMistyTerrain;
+		gBattleStringLoader = gText_TargetWrappedInMistyTerrain;
 		fail = TRUE;
 	}
 	else if (IsOfType(bank, TYPE_GRASS) && ABILITY(bank) == ABILITY_FLOWERVEIL)
@@ -1533,22 +1533,22 @@ void atkFF2C_trysetpoison(void)
 	}
 	else if (gBattleMons[bank].status1 & STATUS1_PSN_ANY)
 	{
-		BattleStringLoader = gText_TargetAlreadyPoisoned;
+		gBattleStringLoader = gText_TargetAlreadyPoisoned;
 		fail = TRUE;
 	}
 	else if (gBattleMons[bank].status1 != STATUS1_NONE)
 	{
-		BattleStringLoader = gText_TargetAlreadyHasStatusCondition; //String not in official games; officially "But it failed!"
+		gBattleStringLoader = gText_TargetAlreadyHasStatusCondition; //String not in official games; officially "But it failed!"
 		fail = TRUE;
 	}
 	else if (gSideAffecting[SIDE(bank)] & SIDE_STATUS_SAFEGUARD)
 	{
-		BattleStringLoader = gText_TeamProtectedBySafeguard;
+		gBattleStringLoader = gText_TeamProtectedBySafeguard;
 		fail = TRUE;
 	}
-	else if (CheckGrounding(bank) && TerrainType == MISTY_TERRAIN)
+	else if (CheckGrounding(bank) && gTerrainType == MISTY_TERRAIN)
 	{
-		BattleStringLoader = gText_TargetWrappedInMistyTerrain;
+		gBattleStringLoader = gText_TargetWrappedInMistyTerrain;
 		fail = TRUE;
 	}
 	else if (IsOfType(bank, TYPE_GRASS) && ABILITY(bank) == ABILITY_FLOWERVEIL)

@@ -1042,7 +1042,7 @@ bool8 CanBeGeneralStatused(u8 bank, bool8 checkFlowerVeil)
 	if (checkFlowerVeil && ABILITY(PARTNER(bank)) == ABILITY_FLOWERVEIL && IsOfType(bank, TYPE_GRASS))
 		return FALSE;
 
-	if (TerrainType == MISTY_TERRAIN && CheckGrounding(bank))
+	if (gTerrainType == MISTY_TERRAIN && CheckGrounding(bank))
 		return FALSE;
 
 	if (gBattleMons[bank].status1 != STATUS1_NONE)
@@ -1066,7 +1066,7 @@ bool8 CanBePutToSleep(u8 bank, bool8 checkFlowerVeil)
 			return FALSE;
 	}
 
-	if (TerrainType == ELECTRIC_TERRAIN && CheckGrounding(bank))
+	if (gTerrainType == ELECTRIC_TERRAIN && CheckGrounding(bank))
 		return FALSE;
 
 	if (DoesSleepClausePrevent(bank))
@@ -1151,7 +1151,7 @@ bool8 CanBeConfused(u8 bank)
 	if (IsConfused(bank))
 		return FALSE;
 
-	if (TerrainType == MISTY_TERRAIN && CheckGrounding(bank))
+	if (gTerrainType == MISTY_TERRAIN && CheckGrounding(bank))
 		return FALSE;
 
 	if (ABILITY(bank) == ABILITY_OWNTEMPO)

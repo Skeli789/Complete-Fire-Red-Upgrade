@@ -73,23 +73,23 @@ void atkE2_switchoutabilities(void)
 bool8 TryRemovePrimalWeather(u8 bank, u8 ability)
 {
 	int i;
-	BattleStringLoader = NULL;
+	gBattleStringLoader = NULL;
 
 	switch (ability) {
 		case ABILITY_PRIMORDIALSEA:
 			if (gBattleWeather & WEATHER_RAIN_PRIMAL)
-				BattleStringLoader = PrimalRainEndString;
+				gBattleStringLoader = PrimalRainEndString;
 			break;
 		case ABILITY_DESOLATELAND:
 			if (gBattleWeather & WEATHER_SUN_PRIMAL)
-				BattleStringLoader = PrimalSunEndString;
+				gBattleStringLoader = PrimalSunEndString;
 			break;
 		case ABILITY_DELTASTREAM:
 			if (gBattleWeather & WEATHER_AIR_CURRENT_PRIMAL)
-				BattleStringLoader = PrimalAirCurrentEndString;
+				gBattleStringLoader = PrimalAirCurrentEndString;
 	}
 
-	if (BattleStringLoader != NULL)
+	if (gBattleStringLoader != NULL)
 	{
 		for (i = 0; i < gBattlersCount; ++i)
 		{
@@ -377,9 +377,9 @@ void atk52_switchineffects(void)
 				gBattlescriptCurrInstr = BattleScript_CamomonsTypeRevealRet;
 
 				if (gBattleMons[gActiveBattler].type1 == gBattleMons[gActiveBattler].type2)
-					BattleStringLoader = gText_CamomonsTypeReveal;
+					gBattleStringLoader = gText_CamomonsTypeReveal;
 				else
-					BattleStringLoader = gText_CamomonsTypeRevealDualType;
+					gBattleStringLoader = gText_CamomonsTypeRevealDualType;
 				PREPARE_TYPE_BUFFER(gBattleTextBuff1, gBattleMons[gActiveBattler].type1);
 				PREPARE_TYPE_BUFFER(gBattleTextBuff2, gBattleMons[gActiveBattler].type2);
 			}

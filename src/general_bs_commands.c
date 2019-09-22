@@ -796,14 +796,14 @@ void atk1B_cleareffectsonfaint(void) {
 				gNewBS->ZMoveData->toBeUsed[gActiveBattler] = 0; //Because you died before you could use the Z-Move
 
 				gBattleMons[gActiveBattler].type3 = TYPE_BLANK;
-				*SeedHelper = 0;
+				*gSeedHelper = 0;
 				++gNewBS->FaintEffectsTracker;
 			__attribute__ ((fallthrough));
 
 			case Faint_SoulHeart:
-				for (; *SeedHelper < gBattlersCount; ++*SeedHelper)
+				for (; *gSeedHelper < gBattlersCount; ++*gSeedHelper)
 				{
-					u8 bank = *SeedHelper;
+					u8 bank = *gSeedHelper;
 					if (ABILITY(bank) == ABILITY_SOULHEART
 					&&  bank != gActiveBattler
 					&&  gBattleMons[bank].hp != 0
@@ -822,7 +822,7 @@ void atk1B_cleareffectsonfaint(void) {
 
 						BattleScriptPushCursor();
 						gBattlescriptCurrInstr = BattleScript_SoulHeart;
-						++*SeedHelper;
+						++*gSeedHelper;
 						return;
 					}
 				}
@@ -845,8 +845,8 @@ void atk1B_cleareffectsonfaint(void) {
 					BattleScriptPushCursor();
 					gBattlescriptCurrInstr = BattleScript_Receiver;
 
-					AbilityPopUpHelper = gLastUsedAbility;
-					EmitDataTransfer(0, &AbilityPopUpHelper, 1, &AbilityPopUpHelper);
+					gAbilityPopUpHelper = gLastUsedAbility;
+					EmitDataTransfer(0, &gAbilityPopUpHelper, 1, &gAbilityPopUpHelper);
 					MarkBufferBankForExecution(gActiveBattler);
 
 					++gNewBS->FaintEffectsTracker;
@@ -1389,7 +1389,7 @@ void atk77_setprotect(void) {
 			case MOVE_CRAFTYSHIELD:
 				gSideAffecting[atkSide] |= SIDE_STATUS_CRAFTY_SHIELD;
 				gBattleCommunication[MULTISTRING_CHOOSER] = 3;
-				BattleStringLoader = CraftyShieldSetString;
+				gBattleStringLoader = CraftyShieldSetString;
 				break;
 
 			case MOVE_MATBLOCK:
@@ -1398,19 +1398,19 @@ void atk77_setprotect(void) {
 
 				gSideAffecting[atkSide] |= SIDE_STATUS_MAT_BLOCK;
 				gBattleCommunication[MULTISTRING_CHOOSER] = 3;
-				BattleStringLoader = MatBlockSetString;
+				gBattleStringLoader = MatBlockSetString;
 				break;
 
 			case MOVE_QUICKGUARD:
 				gSideAffecting[atkSide] |= SIDE_STATUS_QUICK_GUARD;
 				gBattleCommunication[MULTISTRING_CHOOSER] = 3;
-				BattleStringLoader = QuickGuardSetString;
+				gBattleStringLoader = QuickGuardSetString;
 				break;
 
 			case MOVE_WIDEGUARD:
 				gSideAffecting[atkSide] |= SIDE_STATUS_WIDE_GUARD;
 				gBattleCommunication[MULTISTRING_CHOOSER] = 3;
-				BattleStringLoader = WideGuardSetString;
+				gBattleStringLoader = WideGuardSetString;
 				break;
 
 			case MOVE_ENDURE:
@@ -1557,7 +1557,7 @@ void atk7E_setreflect(void) {
 			gSideTimers[SIDE(gBankAttacker)].reflectTimer = 5;
 
 		PREPARE_STAT_BUFFER(gBattleTextBuff1, STAT_DEF);
-		BattleStringLoader = gText_ScreenRaisedStat;
+		gBattleStringLoader = gText_ScreenRaisedStat;
 		gBattleCommunication[MULTISTRING_CHOOSER] = 1;
 	}
 	gBattlescriptCurrInstr++;
@@ -1594,7 +1594,7 @@ void atk81_trysetrest(void)
 	gActiveBattler = gBankTarget = gBankAttacker;
 	gBattleMoveDamage = gBattleMons[gBankTarget].maxHP * (-1);
 
-	if (CheckGrounding(gActiveBattler) && (TerrainType == MISTY_TERRAIN || TerrainType == ELECTRIC_TERRAIN))
+	if (CheckGrounding(gActiveBattler) && (gTerrainType == MISTY_TERRAIN || gTerrainType == ELECTRIC_TERRAIN))
 	{
 		gBattlescriptCurrInstr = BattleScript_ButItFailed;
 		fail = TRUE;
@@ -1717,7 +1717,7 @@ void atk84_jumpifcantmakeasleep(void) {
 		RecordAbilityBattle(defPartner, gLastUsedAbility);
 	}
 
-	else if (CheckGrounding(bankDef) && (TerrainType == ELECTRIC_TERRAIN || TerrainType == MISTY_TERRAIN))
+	else if (CheckGrounding(bankDef) && (gTerrainType == ELECTRIC_TERRAIN || gTerrainType == MISTY_TERRAIN))
 		gBattlescriptCurrInstr = jump_loc;
 
 	else
@@ -1922,7 +1922,7 @@ void atk92_setlightscreen(void) {
 			gSideTimers[SIDE(gBankAttacker)].lightscreenTimer = 5;
 
 		PREPARE_STAT_BUFFER(gBattleTextBuff1, STAT_SPDEF);
-		BattleStringLoader = gText_ScreenRaisedStat;
+		gBattleStringLoader = gText_ScreenRaisedStat;
 		gBattleCommunication[MULTISTRING_CHOOSER] = 1;
 	}
 	gBattlescriptCurrInstr++;
@@ -2819,7 +2819,7 @@ void atkB0_trysetspikes(void) {
 	}
 
 	if (stringcase != 0xFF)
-		BattleStringLoader = (u8*) EntryHazardsStrings[stringcase];
+		gBattleStringLoader = (u8*) EntryHazardsStrings[stringcase];
 }
 
 //Actual calc has been moved to GetBasePower function
@@ -3109,7 +3109,7 @@ void atkBE_rapidspinfree(void) {
 			gSideTimers[sideAtk].stickyWeb = 0;
 			BattleScriptPushCursor();
 			gBattlescriptCurrInstr = BattleScript_PrintCustomString;
-			BattleStringLoader = RemovedEntryHazardsString;
+			gBattleStringLoader = RemovedEntryHazardsString;
 		}
 		else if (gSideAffecting[sideDef] & SIDE_STATUS_SPIKES)
 		{
@@ -3120,7 +3120,7 @@ void atkBE_rapidspinfree(void) {
 			gSideTimers[sideDef].stickyWeb = 0;
 			BattleScriptPushCursor();
 			gBattlescriptCurrInstr = BattleScript_PrintCustomString;
-			BattleStringLoader = RemovedEntryHazardsTargetSideString;
+			gBattleStringLoader = RemovedEntryHazardsTargetSideString;
 		}
 		else if (gSideAffecting[sideDef] & (SIDE_STATUS_REFLECT))
 		{
@@ -3343,7 +3343,7 @@ u16 GetNaturePowerMove(void)
 {
 	u16 move;
 
-	switch (TerrainType) {
+	switch (gTerrainType) {
 		case ELECTRIC_TERRAIN:
 			move = gTerrainTable[0].naturePowerMove;
 			break;
@@ -3603,7 +3603,7 @@ void atkE1_trygetintimidatetarget(void)
 }
 
 void atkE4_getsecretpowereffect(void) {
-	switch (TerrainType) {
+	switch (gTerrainType) {
 		case ELECTRIC_TERRAIN:
 			gBattleCommunication[MOVE_EFFECT_BYTE] = gTerrainTable[0].secretPowerEffect;
 			break;
@@ -3822,7 +3822,7 @@ u8 GetCamouflageType(void)
 {
 	u8 type;
 
-	switch (TerrainType) {
+	switch (gTerrainType) {
 		case ELECTRIC_TERRAIN:
 			type = gTerrainTable[0].camouflageType;
 			break;

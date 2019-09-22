@@ -422,7 +422,7 @@ void atk23_getexp(void)
 				gBattleMoveDamage = 0;
 				gBattleStruct->sentInPokes = gNewBS->SentInBackup;
 				gBattleScripting->expStateTracker = GetExp_CheckCurrentMonDeserving; // Time for Exp Share loop
-				BattleStringLoader = String_TeamExpGain;
+				gBattleStringLoader = String_TeamExpGain;
 				PrepareStringBattle(0x184, 0);
 			}
 			else

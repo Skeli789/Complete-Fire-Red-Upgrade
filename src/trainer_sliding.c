@@ -111,7 +111,7 @@ bool8 ShouldDoTrainerSlide(u8 bank, u16 trainerId, u8 caseId)
 				case TRAINER_SLIDE_LAST_SWITCHIN:
 					if (sTrainerSlides[i].msgLastSwitchIn != NULL && GetEnemyMonCount(TRUE) == 1)
 					{
-						BattleStringLoader = sTrainerSlides[i].msgLastSwitchIn;
+						gBattleStringLoader = sTrainerSlides[i].msgLastSwitchIn;
 						return TRUE;
 					}
 					break;
@@ -123,7 +123,7 @@ bool8 ShouldDoTrainerSlide(u8 bank, u16 trainerId, u8 caseId)
 					&& !gNewBS->trainerSlideLowHpMsgDone)
 					{
 						gNewBS->trainerSlideLowHpMsgDone = TRUE;
-						BattleStringLoader = sTrainerSlides[i].msgLastLowHp;
+						gBattleStringLoader = sTrainerSlides[i].msgLastLowHp;
 						return TRUE;
 					}
 					break;
@@ -131,7 +131,7 @@ bool8 ShouldDoTrainerSlide(u8 bank, u16 trainerId, u8 caseId)
 				case TRAINER_SLIDE_FIRST_DOWN:
 					if (sTrainerSlides[i].msgFirstDown != NULL && GetEnemyMonCount(TRUE) == GetEnemyMonCount(FALSE) - 1)
 					{
-						BattleStringLoader = sTrainerSlides[i].msgFirstDown;
+						gBattleStringLoader = sTrainerSlides[i].msgFirstDown;
 						return TRUE;
 					}
 					break;

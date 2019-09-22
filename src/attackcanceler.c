@@ -783,7 +783,7 @@ static u8 AtkCanceller_UnableToUseMove(void)
 			break;
 
 		case CANCELLER_PSYCHIC_TERRAIN:
-			if (TerrainType == PSYCHIC_TERRAIN
+			if (gTerrainType == PSYCHIC_TERRAIN
 			&& CheckGrounding(gBankTarget)
 			&& gBankAttacker != gBankTarget
 			&& PriorityCalc(gBankAttacker, ACTION_USE_MOVE, gCurrentMove) > 0

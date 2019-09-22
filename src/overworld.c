@@ -75,121 +75,121 @@ enum
 //An alternative to Oak's tutorial that allows mugshots to be used if ACTIVATE_TUTORIAL_FLAG is commented out
 static const struct TrainerBattleParameter sContinueLostBattleParams[] =
 {
-	{&sTrainerBattleMode, 			 TRAINER_PARAM_LOAD_VAL_8BIT},
-	{&gTrainerBattleOpponent_A,	  TRAINER_PARAM_LOAD_VAL_16BIT},
-	{&sTrainerEventObjectLocalId,	TRAINER_PARAM_LOAD_VAL_16BIT},
-	{&sTrainerIntroSpeech_A,		 TRAINER_PARAM_CLEAR_VAL_32BIT},
-	{&sTrainerDefeatSpeech_A,		TRAINER_PARAM_LOAD_VAL_32BIT},
-	{&sTrainerVictorySpeech,		 TRAINER_PARAM_LOAD_VAL_32BIT},
-	{&sTrainerCannotBattleSpeech,	TRAINER_PARAM_CLEAR_VAL_32BIT},
-	{&sTrainerBattleScriptRetAddr,   TRAINER_PARAM_CLEAR_VAL_32BIT},
-	{&sTrainerBattleEndScript,	   TRAINER_PARAM_LOAD_SCRIPT_RET_ADDR},
+	{&sTrainerBattleMode, 				TRAINER_PARAM_LOAD_VAL_8BIT},
+	{&gTrainerBattleOpponent_A,	  		TRAINER_PARAM_LOAD_VAL_16BIT},
+	{&sTrainerEventObjectLocalId,		TRAINER_PARAM_LOAD_VAL_16BIT},
+	{&sTrainerIntroSpeech_A,			TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerDefeatSpeech_A,			TRAINER_PARAM_LOAD_VAL_32BIT},
+	{&sTrainerVictorySpeech,			TRAINER_PARAM_LOAD_VAL_32BIT},
+	{&sTrainerCannotBattleSpeech,		TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerBattleScriptRetAddr,  	TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerBattleEndScript,	   		TRAINER_PARAM_LOAD_SCRIPT_RET_ADDR},
 };
 
 static const struct TrainerBattleParameter sTrainerBContinueScriptBattleParams[] =
 {
-	{&sTrainerBattleMode,			TRAINER_PARAM_LOAD_VAL_8BIT},
-	{&gTrainerBattleOpponent_B,	  TRAINER_PARAM_LOAD_VAL_16BIT},
-	{&sTrainerEventObjectLocalId,	TRAINER_PARAM_LOAD_VAL_16BIT},
-	{&sTrainerIntroSpeech_B,		 TRAINER_PARAM_LOAD_VAL_32BIT},
-	{&sTrainerDefeatSpeech_B,		TRAINER_PARAM_LOAD_VAL_32BIT},
-	{&sTrainerVictorySpeech_B,	   TRAINER_PARAM_CLEAR_VAL_32BIT},
-	{&sTrainerCannotBattleSpeech,	TRAINER_PARAM_CLEAR_VAL_32BIT},
-	{&sTrainerBattleScriptRetAddr_B, TRAINER_PARAM_LOAD_VAL_32BIT},
-	{&sTrainerBattleEndScript,	   TRAINER_PARAM_LOAD_SCRIPT_RET_ADDR},
+	{&sTrainerBattleMode,				TRAINER_PARAM_LOAD_VAL_8BIT},
+	{&gTrainerBattleOpponent_B,	  		TRAINER_PARAM_LOAD_VAL_16BIT},
+	{&sTrainerEventObjectLocalId,		TRAINER_PARAM_LOAD_VAL_16BIT},
+	{&sTrainerIntroSpeech_B,			TRAINER_PARAM_LOAD_VAL_32BIT},
+	{&sTrainerDefeatSpeech_B,			TRAINER_PARAM_LOAD_VAL_32BIT},
+	{&sTrainerVictorySpeech_B,	    	TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerCannotBattleSpeech,		TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerBattleScriptRetAddr_B,	TRAINER_PARAM_LOAD_VAL_32BIT},
+	{&sTrainerBattleEndScript,	    	TRAINER_PARAM_LOAD_SCRIPT_RET_ADDR},
 };
 
 static const struct TrainerBattleParameter sTrainerBOrdinaryBattleParams[] =
 {
-	{&sTrainerBattleMode,			TRAINER_PARAM_LOAD_VAL_8BIT},
-	{&gTrainerBattleOpponent_B,	  TRAINER_PARAM_LOAD_VAL_16BIT},
-	{&sTrainerEventObjectLocalId,	TRAINER_PARAM_LOAD_VAL_16BIT},
-	{&sTrainerIntroSpeech_B,		 TRAINER_PARAM_LOAD_VAL_32BIT},
-	{&sTrainerDefeatSpeech_B,		TRAINER_PARAM_LOAD_VAL_32BIT},
-	{&sTrainerVictorySpeech,		 TRAINER_PARAM_CLEAR_VAL_32BIT},
-	{&sTrainerVictorySpeech_B,	   TRAINER_PARAM_CLEAR_VAL_32BIT},
-	{&sTrainerCannotBattleSpeech,	TRAINER_PARAM_CLEAR_VAL_32BIT},
-	{&sTrainerBattleScriptRetAddr_B, TRAINER_PARAM_CLEAR_VAL_32BIT},
-	{&sTrainerBattleEndScript,	   TRAINER_PARAM_LOAD_SCRIPT_RET_ADDR},
+	{&sTrainerBattleMode,				TRAINER_PARAM_LOAD_VAL_8BIT},
+	{&gTrainerBattleOpponent_B,	 		TRAINER_PARAM_LOAD_VAL_16BIT},
+	{&sTrainerEventObjectLocalId,		TRAINER_PARAM_LOAD_VAL_16BIT},
+	{&sTrainerIntroSpeech_B,		 	TRAINER_PARAM_LOAD_VAL_32BIT},
+	{&sTrainerDefeatSpeech_B,			TRAINER_PARAM_LOAD_VAL_32BIT},
+	{&sTrainerVictorySpeech,		 	TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerVictorySpeech_B,			TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerCannotBattleSpeech,		TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerBattleScriptRetAddr_B,	TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerBattleEndScript,			TRAINER_PARAM_LOAD_SCRIPT_RET_ADDR},
 };
 
 //trainerbattle 0xA FOE_1_ID FOE_2_ID PARTNER_ID PARTNER_BACKSPRITE_ID 0x0 DEFEAT_TEXT_A DEFEAT_TEXT_B
 static const struct TrainerBattleParameter sMultiBattleParams[] =
 {
-	{&sTrainerBattleMode,		   TRAINER_PARAM_LOAD_VAL_8BIT},
+	{&sTrainerBattleMode,				TRAINER_PARAM_LOAD_VAL_8BIT},
 
-	{&gTrainerBattleOpponent_A,	  TRAINER_PARAM_LOAD_VAL_16BIT},
-	{&gTrainerBattleOpponent_B,	  TRAINER_PARAM_LOAD_VAL_16BIT},
-	{&gTrainerBattlePartner,	 	 TRAINER_PARAM_LOAD_VAL_16BIT},
-	{&sPartnerBackSpriteId,			 TRAINER_PARAM_LOAD_VAL_16BIT},
+	{&gTrainerBattleOpponent_A,			TRAINER_PARAM_LOAD_VAL_16BIT},
+	{&gTrainerBattleOpponent_B,	  		TRAINER_PARAM_LOAD_VAL_16BIT},
+	{&gTrainerBattlePartner,	 	 	TRAINER_PARAM_LOAD_VAL_16BIT},
+	{&sPartnerBackSpriteId,			 	TRAINER_PARAM_LOAD_VAL_16BIT},
 
-	{&sTrainerEventObjectLocalId,	TRAINER_PARAM_LOAD_VAL_16BIT},
-	{&sTrainerIntroSpeech_A,		 TRAINER_PARAM_CLEAR_VAL_32BIT},
-	{&sTrainerIntroSpeech_B,	   	 TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerEventObjectLocalId,		TRAINER_PARAM_LOAD_VAL_16BIT},
+	{&sTrainerIntroSpeech_A,		 	TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerIntroSpeech_B,	   	 	TRAINER_PARAM_CLEAR_VAL_32BIT},
 
-	{&sTrainerDefeatSpeech_A,		TRAINER_PARAM_LOAD_VAL_32BIT},
-	{&sTrainerDefeatSpeech_B, 		 TRAINER_PARAM_LOAD_VAL_32BIT},
+	{&sTrainerDefeatSpeech_A,			TRAINER_PARAM_LOAD_VAL_32BIT},
+	{&sTrainerDefeatSpeech_B, 		 	TRAINER_PARAM_LOAD_VAL_32BIT},
 
-	{&sTrainerVictorySpeech,		 TRAINER_PARAM_CLEAR_VAL_32BIT},
-	{&sTrainerVictorySpeech_B,	   TRAINER_PARAM_CLEAR_VAL_32BIT},
-	{&sTrainerCannotBattleSpeech,	TRAINER_PARAM_CLEAR_VAL_32BIT},
-	{&sTrainerBattleScriptRetAddr,   TRAINER_PARAM_CLEAR_VAL_32BIT},
-	{&sTrainerBattleScriptRetAddr_B, TRAINER_PARAM_CLEAR_VAL_32BIT},
-	{&sTrainerBattleEndScript,	   TRAINER_PARAM_LOAD_SCRIPT_RET_ADDR},
+	{&sTrainerVictorySpeech,		 	TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerVictorySpeech_B,	   		TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerCannotBattleSpeech,		TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerBattleScriptRetAddr,   	TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerBattleScriptRetAddr_B, 	TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerBattleEndScript,	   		TRAINER_PARAM_LOAD_SCRIPT_RET_ADDR},
 };
 
 //trainerbattle 0xB FOE_1_ID FOE_2_ID FOE_1_NPC_ID FOE_2_NPC_ID 0x0 INTRO_TEXT_A INTRO_TEXT_B DEFEAT_TEXT_A DEFEAT_TEXT_B CANNOT_BATTLE_TEXT
 static const struct TrainerBattleParameter sTwoOpponentBattleParams[] =
 {
-	{&sTrainerBattleMode,		  	 TRAINER_PARAM_LOAD_VAL_8BIT},
+	{&sTrainerBattleMode,		  	 	TRAINER_PARAM_LOAD_VAL_8BIT},
 
-	{&gTrainerBattleOpponent_A,		 TRAINER_PARAM_LOAD_VAL_16BIT},
-	{&gTrainerBattleOpponent_B,		 TRAINER_PARAM_LOAD_VAL_16BIT},
-	{&gTrainerBattlePartner,	 	 TRAINER_PARAM_CLEAR_VAL_16BIT},
+	{&gTrainerBattleOpponent_A,		 	TRAINER_PARAM_LOAD_VAL_16BIT},
+	{&gTrainerBattleOpponent_B,		 	TRAINER_PARAM_LOAD_VAL_16BIT},
+	{&gTrainerBattlePartner,	 	 	TRAINER_PARAM_CLEAR_VAL_16BIT},
 
-	{&gFirstTrainerNPCId,			 TRAINER_PARAM_LOAD_VAL_8BIT},
-	{&gSecondTrainerNPCId,			 TRAINER_PARAM_LOAD_VAL_8BIT},
+	{&gFirstTrainerNPCId,			 	TRAINER_PARAM_LOAD_VAL_8BIT},
+	{&gSecondTrainerNPCId,			 	TRAINER_PARAM_LOAD_VAL_8BIT},
 
-	{&sTrainerEventObjectLocalId,  	 TRAINER_PARAM_LOAD_VAL_16BIT},
-	{&sTrainerIntroSpeech_A,	   	 TRAINER_PARAM_LOAD_VAL_32BIT},
-	{&sTrainerIntroSpeech_B,	   	 TRAINER_PARAM_LOAD_VAL_32BIT},
+	{&sTrainerEventObjectLocalId,  	 	TRAINER_PARAM_LOAD_VAL_16BIT},
+	{&sTrainerIntroSpeech_A,	   	 	TRAINER_PARAM_LOAD_VAL_32BIT},
+	{&sTrainerIntroSpeech_B,	   	 	TRAINER_PARAM_LOAD_VAL_32BIT},
 
-	{&sTrainerDefeatSpeech_A,	 	 TRAINER_PARAM_LOAD_VAL_32BIT},
-	{&sTrainerDefeatSpeech_B,	  	 TRAINER_PARAM_LOAD_VAL_32BIT},
+	{&sTrainerDefeatSpeech_A,	 	 	TRAINER_PARAM_LOAD_VAL_32BIT},
+	{&sTrainerDefeatSpeech_B,	  	 	TRAINER_PARAM_LOAD_VAL_32BIT},
 
-	{&sTrainerVictorySpeech,	   	 TRAINER_PARAM_CLEAR_VAL_32BIT},
-	{&sTrainerVictorySpeech_B,	   TRAINER_PARAM_CLEAR_VAL_32BIT},
-	{&sTrainerCannotBattleSpeech,	TRAINER_PARAM_LOAD_VAL_32BIT},
-	{&sTrainerCannotBattleSpeech_B,  TRAINER_PARAM_LOAD_VAL_32BIT},
+	{&sTrainerVictorySpeech,	   	 	TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerVictorySpeech_B,	   		TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerCannotBattleSpeech,		TRAINER_PARAM_LOAD_VAL_32BIT},
+	{&sTrainerCannotBattleSpeech_B,  	TRAINER_PARAM_LOAD_VAL_32BIT},
 
-	{&sTrainerBattleScriptRetAddr,   TRAINER_PARAM_CLEAR_VAL_32BIT},
-	{&sTrainerBattleScriptRetAddr_B, TRAINER_PARAM_CLEAR_VAL_32BIT},
-	{&sTrainerBattleEndScript,	   TRAINER_PARAM_LOAD_SCRIPT_RET_ADDR},
+	{&sTrainerBattleScriptRetAddr,   	TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerBattleScriptRetAddr_B, 	TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerBattleEndScript,	   		TRAINER_PARAM_LOAD_SCRIPT_RET_ADDR},
 };
 
 //trainerbattle 0xC FOE_ID PARTNER_ID PARTNER_BACKSPRITE_ID 0x0 DEFEAT_TEXT_A
 static const struct TrainerBattleParameter sTagBattleParams[] =
 {
-	{&sTrainerBattleMode,		   TRAINER_PARAM_LOAD_VAL_8BIT},
+	{&sTrainerBattleMode,		   		TRAINER_PARAM_LOAD_VAL_8BIT},
 
-	{&gTrainerBattleOpponent_A,	  TRAINER_PARAM_LOAD_VAL_16BIT},
-	{&gTrainerBattleOpponent_B,	  TRAINER_PARAM_CLEAR_VAL_16BIT},
-	{&gTrainerBattlePartner,	 	 TRAINER_PARAM_LOAD_VAL_16BIT},
-	{&sPartnerBackSpriteId,			 TRAINER_PARAM_LOAD_VAL_16BIT},
+	{&gTrainerBattleOpponent_A,	  		TRAINER_PARAM_LOAD_VAL_16BIT},
+	{&gTrainerBattleOpponent_B,	  		TRAINER_PARAM_CLEAR_VAL_16BIT},
+	{&gTrainerBattlePartner,	 	 	TRAINER_PARAM_LOAD_VAL_16BIT},
+	{&sPartnerBackSpriteId,			 	TRAINER_PARAM_LOAD_VAL_16BIT},
 
-	{&sTrainerEventObjectLocalId,	TRAINER_PARAM_LOAD_VAL_16BIT},
-	{&sTrainerIntroSpeech_A,		 TRAINER_PARAM_CLEAR_VAL_32BIT},
-	{&sTrainerIntroSpeech_B,	   	 TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerEventObjectLocalId,		TRAINER_PARAM_LOAD_VAL_16BIT},
+	{&sTrainerIntroSpeech_A,		 	TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerIntroSpeech_B,	   	 	TRAINER_PARAM_CLEAR_VAL_32BIT},
 
-	{&sTrainerDefeatSpeech_A,		TRAINER_PARAM_LOAD_VAL_32BIT},
-	{&sTrainerDefeatSpeech_B, 		 TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerDefeatSpeech_A,			TRAINER_PARAM_LOAD_VAL_32BIT},
+	{&sTrainerDefeatSpeech_B, 		 	TRAINER_PARAM_CLEAR_VAL_32BIT},
 
-	{&sTrainerVictorySpeech,		 TRAINER_PARAM_CLEAR_VAL_32BIT},
-	{&sTrainerVictorySpeech_B,	   TRAINER_PARAM_CLEAR_VAL_32BIT},
-	{&sTrainerCannotBattleSpeech,	TRAINER_PARAM_CLEAR_VAL_32BIT},
-	{&sTrainerBattleScriptRetAddr,   TRAINER_PARAM_CLEAR_VAL_32BIT},
-	{&sTrainerBattleScriptRetAddr_B, TRAINER_PARAM_CLEAR_VAL_32BIT},
-	{&sTrainerBattleEndScript,	   TRAINER_PARAM_LOAD_SCRIPT_RET_ADDR},
+	{&sTrainerVictorySpeech,		 	TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerVictorySpeech_B,	   		TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerCannotBattleSpeech,		TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerBattleScriptRetAddr,   	TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerBattleScriptRetAddr_B, 	TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerBattleEndScript,	   		TRAINER_PARAM_LOAD_SCRIPT_RET_ADDR},
 };
 
 u8 CheckForTrainersWantingBattle(void) {

@@ -162,20 +162,20 @@ typedef u8 Battle_Buffer_T[0x200];
 		#define sTrainerBattleOakTutorialHelper (*((u16*) 0x20386CC))
 
 
-#define BattleStringLoader (*((u8**) 0x203E020))
-#define SeedHelper ((u8*) 0x203E024)
-#define TerrainType *((u8*) 0x203E028)
-#define FormCounter *((u8*) 0x203E029)
+#define gBattleStringLoader (*((u8**) 0x203E020))
+#define gSeedHelper ((u8*) 0x203E024)
+#define gTerrainType *((u8*) 0x203E028)
+#define gFormCounter *((u8*) 0x203E029)
 #define gPoisonedBy *((u8*) 0x203E02A)
 	// 0x1 = Poison Touch	/ 0x1 = Beak Blast Burn
 	// 0x2 = Toxic Spikes
 	// 0x3 = Toxic Orb		/ 0x3 = Flame Orb
 	// 0x4 = Baneful Bunker
-#define MagicianHelper *((u8*) 0x203E02B)
-#define ShakerData (((u8*) 0x203E02C))
-#define ForceSwitchHelper (*((u8*) 0x203E02E))
-#define AbilityPopUpHelper (*((u8*) 0x203E02F))
-#define BackupHWord (*((u16*) 0x203E030))
+#define gMagicianHelper *((u8*) 0x203E02B)
+#define gShakerData (((u8*) 0x203E02C))
+#define gForceSwitchHelper (*((u8*) 0x203E02E))
+#define gAbilityPopUpHelper (*((u8*) 0x203E02F))
+#define gBackupHWord (*((u16*) 0x203E030))
 
 //#define gBattleCircusFlags (*((u32*) 0x203E044))
 

@@ -890,7 +890,7 @@ static void MegaIndicatorCallback(struct Sprite* self) {
 
 		bool8 sineActive = (gBattleSpritesDataPtr->healthBoxesData[OBJ_BANK].healthboxIsBouncing);
 
-		struct Sprite* shaker = &gSprites[ShakerData[1]];
+		struct Sprite* shaker = &gSprites[gShakerData[1]];
 		u8 hbid = gHealthboxIDs[OBJ_BANK];
 
 		if (sineActive)
@@ -899,7 +899,7 @@ static void MegaIndicatorCallback(struct Sprite* self) {
 			self->pos2.y = Sine(ping->data[0], ping->data[2]);
 			return;
 		}
-		else if (shaker->data[1] == hbid && ShakerData[0])
+		else if (shaker->data[1] == hbid && gShakerData[0])
 		{
 			self->pos2.y = (shaker->data[2] & 1) ? -1 : 1;
 			return;

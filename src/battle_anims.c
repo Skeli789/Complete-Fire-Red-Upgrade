@@ -437,7 +437,7 @@ void AnimTask_GetSecretPowerAnimation(u8 taskId)
 {
 	u16 move;
 
-	switch (TerrainType) {
+	switch (gTerrainType) {
 		case ELECTRIC_TERRAIN:
 			move = gTerrainTable[0].secretPowerAnim;
 			break;
@@ -466,7 +466,7 @@ void AnimTask_SetCamouflageBlend(u8 taskId)
 	u8 entry = 0;
 	u32 selectedPalettes = UnpackSelectedBattleAnimPalettes(gBattleAnimArgs[0]);
 
-	switch (TerrainType) {
+	switch (gTerrainType) {
 		case ELECTRIC_TERRAIN:
 			entry = 0;
 			break;

@@ -147,7 +147,7 @@ void BattleBeginFirstTurn(void)
 					}
 				}
 
-				if (req_terrain && TerrainType != req_terrain) {
+				if (req_terrain && gTerrainType != req_terrain) {
 					switch (req_terrain) {
 						case ELECTRIC_TERRAIN:
 							BattleScriptPushCursorAndCallback(BattleScript_ElectricTerrainBattleBegin);
@@ -166,7 +166,7 @@ void BattleBeginFirstTurn(void)
 							++effect;
 					}
 					if (effect) {
-						TerrainType = req_terrain;
+						gTerrainType = req_terrain;
 						return;
 					}
 
@@ -206,9 +206,9 @@ void BattleBeginFirstTurn(void)
 						BattleScriptPushCursorAndCallback(BattleScript_CamomonsTypeRevealEnd3);
 
 						if (gBattleMons[*bank].type1 == gBattleMons[*bank].type2)
-							BattleStringLoader = gText_CamomonsTypeReveal;
+							gBattleStringLoader = gText_CamomonsTypeReveal;
 						else
-							BattleStringLoader = gText_CamomonsTypeRevealDualType;
+							gBattleStringLoader = gText_CamomonsTypeRevealDualType;
 						PREPARE_TYPE_BUFFER(gBattleTextBuff1, gBattleMons[*bank].type1);
 						PREPARE_TYPE_BUFFER(gBattleTextBuff2, gBattleMons[*bank].type2);
 						++*bank;
@@ -1404,7 +1404,7 @@ u32 SpeedCalc(u8 bank)
 				speed /= 2;
 			break;
 		case ABILITY_SURGESURFER:
-			if (TerrainType == ELECTRIC_TERRAIN)
+			if (gTerrainType == ELECTRIC_TERRAIN)
 				speed *= 2;
 			break;
 	}
@@ -1463,7 +1463,7 @@ u32 SpeedCalcForParty(u8 side, struct Pokemon* mon)
 			speed /= 2;
 			break;
 		case ABILITY_SURGESURFER:
-			if (TerrainType == ELECTRIC_TERRAIN)
+			if (gTerrainType == ELECTRIC_TERRAIN)
 				speed *= 2;
 			break;
 	}

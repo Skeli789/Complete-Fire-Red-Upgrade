@@ -514,7 +514,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 	//Terrain Check
 	if (CheckGrounding(bankDef) == GROUNDED)
 	{
-		switch (TerrainType) {
+		switch (gTerrainType) {
 			case ELECTRIC_TERRAIN:
 				if (moveEffect == EFFECT_SLEEP || moveEffect == EFFECT_YAWN)
 				{
@@ -1133,11 +1133,11 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 				case MOVE_TEETERDANCE: //Check if can affect either target
 					if ((IsConfused(bankDef)
 					  || (NO_MOLD_BREAKERS(atkAbility, move) && defAbility == ABILITY_OWNTEMPO)
-					  || (CheckGrounding(bankDef) == GROUNDED && TerrainType == MISTY_TERRAIN)
+					  || (CheckGrounding(bankDef) == GROUNDED && gTerrainType == MISTY_TERRAIN)
 					  || (MoveBlockedBySubstitute(move, bankAtk, bankDef)))
 					&&  (IsConfused(bankDefPartner)
 					  || (NO_MOLD_BREAKERS(atkAbility, move) && defPartnerAbility == ABILITY_OWNTEMPO)
-					  || (CheckGrounding(bankDefPartner) == GROUNDED && TerrainType == MISTY_TERRAIN)
+					  || (CheckGrounding(bankDefPartner) == GROUNDED && gTerrainType == MISTY_TERRAIN)
 					  || (MoveBlockedBySubstitute(move, bankAtk, bankDefPartner))))
 					{
 						DECREASE_VIABILITY(10);
@@ -1146,7 +1146,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 				default:
 					if (IsConfused(bankDef)
 					|| (NO_MOLD_BREAKERS(atkAbility, move) && defAbility == ABILITY_OWNTEMPO)
-					|| (CheckGrounding(bankDef) == GROUNDED && TerrainType == MISTY_TERRAIN)
+					|| (CheckGrounding(bankDef) == GROUNDED && gTerrainType == MISTY_TERRAIN)
 					|| (MoveBlockedBySubstitute(move, bankAtk, bankDef))
 					|| PARTNER_MOVE_EFFECT_IS_SAME)
 						DECREASE_VIABILITY(10);
@@ -2268,19 +2268,19 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 
 			switch (move) {
 				case MOVE_ELECTRICTERRAIN:
-					if (TerrainType == ELECTRIC_TERRAIN)
+					if (gTerrainType == ELECTRIC_TERRAIN)
 						DECREASE_VIABILITY(10);
 					break;
 				case MOVE_GRASSYTERRAIN:
-					if (TerrainType == GRASSY_TERRAIN)
+					if (gTerrainType == GRASSY_TERRAIN)
 						DECREASE_VIABILITY(10);
 					break;
 				case MOVE_MISTYTERRAIN:
-					if (TerrainType == MISTY_TERRAIN)
+					if (gTerrainType == MISTY_TERRAIN)
 						DECREASE_VIABILITY(10);
 					break;
 				case MOVE_PSYCHICTERRAIN:
-					if (TerrainType == PSYCHIC_TERRAIN)
+					if (gTerrainType == PSYCHIC_TERRAIN)
 						DECREASE_VIABILITY(10);
 					break;
 			}

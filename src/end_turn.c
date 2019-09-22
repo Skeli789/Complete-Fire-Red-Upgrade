@@ -379,7 +379,7 @@ u8 TurnBasedEffects(void)
 						break;
 
 					case(ET_Grassy_Terrain):
-						if (TerrainType == GRASSY_TERRAIN && CheckGrounding(gActiveBattler)
+						if (gTerrainType == GRASSY_TERRAIN && CheckGrounding(gActiveBattler)
 						&&  gBattleMons[gActiveBattler].hp != 0
 						&&  gBattleMons[gActiveBattler].hp < gBattleMons[gActiveBattler].maxHP
 						&& !IsHealBlocked(gActiveBattler))
@@ -634,7 +634,7 @@ u8 TurnBasedEffects(void)
 				if (gDisableStructs[gActiveBattler].tauntTimer > 0 && --gDisableStructs[gActiveBattler].tauntTimer == 0)
 				{
 					gBattleScripting->bank = gActiveBattler;
-					BattleStringLoader = gText_TauntWoreOff;
+					gBattleStringLoader = gText_TauntWoreOff;
 					BattleScriptExecute(BattleScript_PrintCustomStringEnd2);
 					effect++;
 				}
@@ -810,7 +810,7 @@ u8 TurnBasedEffects(void)
 					{
 						gBankAttacker = gBankTarget = gActiveBattler = sideBank;
 						gSideAffecting[sideBank] &= ~SIDE_STATUS_REFLECT;
-						BattleStringLoader = gText_SideStatusWoreOff;
+						gBattleStringLoader = gText_SideStatusWoreOff;
 						BattleScriptExecute(BattleScript_PrintCustomStringEnd2);
 						gBattleTextBuff1[0] = B_BUFF_PLACEHOLDER_BEGIN;
 						gBattleTextBuff1[1] = B_TXT_COPY_VAR_1;
@@ -834,7 +834,7 @@ u8 TurnBasedEffects(void)
 					{
 						gBankAttacker = gBankTarget = gActiveBattler = sideBank;
 						gSideAffecting[sideBank] &= ~SIDE_STATUS_LIGHTSCREEN;
-						BattleStringLoader = gText_SideStatusWoreOff;
+						gBattleStringLoader = gText_SideStatusWoreOff;
 						BattleScriptExecute(BattleScript_PrintCustomStringEnd2);
 						gBattleTextBuff1[0] = B_BUFF_PLACEHOLDER_BEGIN;
 						gBattleTextBuff1[1] = B_TXT_COPY_VAR_1;
@@ -894,7 +894,7 @@ u8 TurnBasedEffects(void)
 					{
 						gBankAttacker = gBankTarget = gActiveBattler = sideBank;
 						gSideAffecting[sideBank] &= ~SIDE_STATUS_MIST;
-						BattleStringLoader = gText_SideStatusWoreOff;
+						gBattleStringLoader = gText_SideStatusWoreOff;
 						BattleScriptExecute(BattleScript_PrintCustomStringEnd2);
 						gBattleTextBuff1[0] = B_BUFF_PLACEHOLDER_BEGIN;
 						gBattleTextBuff1[1] = B_TXT_COPY_VAR_1;

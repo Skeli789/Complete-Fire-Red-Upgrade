@@ -67,7 +67,7 @@ void BufferStringBattle(u16 stringID)
 	gBattleStruct->hpScale = (*gStringInfo)->hpScale; //Check this line
 	gStringBank = (*gStringInfo)->stringBank;
 	gBattleStruct->stringMoveType = (*gStringInfo)->moveType;
-	BattleStringLoader = (*gStringInfo)->battleStringLoader;
+	gBattleStringLoader = (*gStringInfo)->battleStringLoader;
 	bool8 zMoveActive = (*gStringInfo)->zMoveActive;
 
 	for (i = 0; i < MAX_BATTLERS_COUNT; i++)
@@ -396,7 +396,7 @@ void BufferStringBattle(u16 stringID)
 		}
 		break;
 	case 0x184: //The Ultimate Battle String Loader
-		stringPtr = BattleStringLoader;
+		stringPtr = gBattleStringLoader;
 		if (stringPtr == (u8*) 0)
 			goto DEFAULT_STRING_LOAD;
 		break;
@@ -915,7 +915,7 @@ void EmitPrintString(u8 bufferId, u16 stringID)
 	stringInfo->hpScale = gBattleStruct->hpScale;
 	stringInfo->stringBank = gStringBank;
 	stringInfo->moveType = gBattleMoves[gCurrentMove].type;
-	stringInfo->battleStringLoader = BattleStringLoader;
+	stringInfo->battleStringLoader = gBattleStringLoader;
 	stringInfo->zMoveActive = gNewBS->ZMoveData->active;
 
 	for (i = 0; i < MAX_BATTLERS_COUNT; i++)
@@ -946,7 +946,7 @@ void EmitPrintSelectionString(u8 bufferId, u16 stringID)
 	stringInfo->lastAbility = gLastUsedAbility;
 	stringInfo->scrActive = gBattleScripting->bank;
 	stringInfo->unk1605E = gBattleStruct->field_52;
-	stringInfo->battleStringLoader = BattleStringLoader;
+	stringInfo->battleStringLoader = gBattleStringLoader;
 	stringInfo->zMoveActive = gNewBS->ZMoveData->active;
 
 	for (i = 0; i < MAX_BATTLERS_COUNT; i++)

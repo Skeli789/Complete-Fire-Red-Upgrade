@@ -202,11 +202,11 @@ void DrawBattleEntryBackground(void)
 void LoadBattleBG_Background(u8 terrainId) {
 	struct BattleBackground* table = gBattleTerrainTable;
 
-	if (TerrainType) //A terrain like Electric Terrain is active
+	if (gTerrainType) //A terrain like Electric Terrain is active
 	{
-		LZDecompressVram(gAttackTerrainTable[TerrainType - 1].tileset, (void*) 0x6008000);
-		LZDecompressVram(gAttackTerrainTable[TerrainType - 1].tilemap, (void*) 0x600d000);
-		LoadCompressedPalette(gAttackTerrainTable[TerrainType - 1].palette, 0x20, 0x60);
+		LZDecompressVram(gAttackTerrainTable[gTerrainType - 1].tileset, (void*) 0x6008000);
+		LZDecompressVram(gAttackTerrainTable[gTerrainType - 1].tilemap, (void*) 0x600d000);
+		LoadCompressedPalette(gAttackTerrainTable[gTerrainType - 1].palette, 0x20, 0x60);
 		return;
 	}
 

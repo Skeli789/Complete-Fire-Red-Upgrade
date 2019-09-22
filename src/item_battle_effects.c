@@ -123,9 +123,9 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck)
 			case ITEM_EFFECT_SEEDS: ;
 				u8 stat = 0;
 
-				if (bankQuality && bankQuality == TerrainType)
+				if (bankQuality && bankQuality == gTerrainType)
 				{
-					switch (TerrainType) {
+					switch (gTerrainType) {
 						case ELECTRIC_TERRAIN:
 						case GRASSY_TERRAIN:
 							if (STAT_CAN_RISE(bank, STAT_STAGE_DEF))

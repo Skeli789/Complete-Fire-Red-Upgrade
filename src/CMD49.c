@@ -313,7 +313,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 
 						//A message is only printed when the target is freed.
 						gBattleScripting->bank = bankToFree;
-						BattleStringLoader = FreedFromSkyDropString;
+						gBattleStringLoader = FreedFromSkyDropString;
 						BattleScriptPushCursor();
 						gBattlescriptCurrInstr = BattleScript_PrintCustomString;
 						effect = TRUE;
@@ -342,7 +342,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 				gStatuses3[gBankAttacker] &= ~STATUS3_SKY_DROP_ATTACKER;
 				gStatuses3[gBankTarget] &= ~STATUS3_SKY_DROP_TARGET;
 				gBattleScripting->bank = gBankTarget;
-				BattleStringLoader = FreedFromSkyDropString;
+				gBattleStringLoader = FreedFromSkyDropString;
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_PrintCustomString;
 				effect = TRUE;
@@ -601,7 +601,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			}
 
 			gBattleScripting->atk49_state++;
-			SeedHelper[0] = 0; //Reset Seed Helper for Soul Heart
+			gSeedHelper[0] = 0; //Reset Seed Helper for Soul Heart
 			break;
 
 		case ATK49_MULTI_HIT_MOVES:
@@ -801,7 +801,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 						effect = 1;
 					}
 			}
-			*SeedHelper = 0; //For Soul-Heart Loop
+			*gSeedHelper = 0; //For Soul-Heart Loop
 			gBattleScripting->atk49_state++;
 			break;
 
@@ -819,7 +819,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 
 					if (!IsConfused(gBankAttacker)
 					&& ABILITY(gBankAttacker) != ABILITY_OWNTEMPO
-					&& !(CheckGrounding(gBankAttacker) && TerrainType == MISTY_TERRAIN))
+					&& !(CheckGrounding(gBankAttacker) && gTerrainType == MISTY_TERRAIN))
 					{
 						gBattleMons[gBankAttacker].status2 |= (umodsi(Random(), 4)) + 2;
 						BattleScriptPushCursor();
@@ -1071,7 +1071,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 					&&  ((gBattleTypeFlags & BATTLE_TYPE_TRAINER) || SIDE(gBankAttacker) == B_SIDE_PLAYER)) //Wild attackers can't activate
 					{
 						gNewBS->NoSymbiosisByte = TRUE;
-						ForceSwitchHelper = Force_Switch_Red_Card;
+						gForceSwitchHelper = Force_Switch_Red_Card;
 						gBattlescriptCurrInstr = BattleScript_Atk49; //Cancel's U-Turn and Volt Switch
 						gActiveBattler = gBattleScripting->bank = gNewBS->originalTargetBackup = banks[i];
 						gLastUsedItem = ITEM(banks[i]);

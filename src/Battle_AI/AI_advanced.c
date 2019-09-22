@@ -755,7 +755,7 @@ u16 GetAmountToRecoverBy(u8 bankAtk, u8 bankDef, u16 move)
 					amountToRecover += MathMax(1, maxHp / 8);
 			}
 
-			if (TerrainType == GRASSY_TERRAIN && CheckGrounding(bankAtk) == GROUNDED)
+			if (gTerrainType == GRASSY_TERRAIN && CheckGrounding(bankAtk) == GROUNDED)
 			{
 				amountToRecover += MathMax(1, maxHp / 16);
 			}

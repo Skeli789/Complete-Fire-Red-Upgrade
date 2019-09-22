@@ -305,7 +305,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 			case MOVE_EFFECT_CONFUSION:
 				if (ABILITY(gEffectBank)== ABILITY_OWNTEMPO
 				||  IsConfused(gEffectBank)
-				||	(CheckGrounding(gEffectBank) && TerrainType == MISTY_TERRAIN))
+				||	(CheckGrounding(gEffectBank) && gTerrainType == MISTY_TERRAIN))
 				{
 					gBattlescriptCurrInstr++;
 				}
@@ -405,7 +405,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 					}
 
 					if (gCurrentMove == MOVE_INFESTATION)
-						BattleStringLoader = gText_TargetWasInfested;
+						gBattleStringLoader = gText_TargetWasInfested;
 				}
 				break;
 
@@ -624,7 +624,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 					MarkBufferBankForExecution(gActiveBattler);
 
 					BattleScriptPush(gBattlescriptCurrInstr + 1);
-					BattleStringLoader = RoastedBerryString;
+					gBattleStringLoader = RoastedBerryString;
 					gBattlescriptCurrInstr = BattleScript_PrintCustomString;
 				}
 				else
@@ -637,7 +637,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 					gBattleMons[gEffectBank].statStages[i] = 6;
 
 				BattleScriptPush(gBattlescriptCurrInstr + 1);
-				BattleStringLoader = TargetStatsResetString;
+				gBattleStringLoader = TargetStatsResetString;
 				gBattlescriptCurrInstr = BattleScript_PrintCustomString;
 				break;
 
@@ -679,7 +679,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 					gSideTimers[side].lightscreenTimer = 0;
 					gNewBS->AuroraVeilTimers[side] = 0;
 					BattleScriptPush(gBattlescriptCurrInstr + 1);
-					BattleStringLoader = ScreensShatteredString;
+					gBattleStringLoader = ScreensShatteredString;
 					gBattlescriptCurrInstr = BattleScript_PrintCustomString;
 				}
 				else
@@ -693,16 +693,16 @@ void SetMoveEffect(bool8 primary, u8 certain)
 					break; //Can't be removed
 				}
 
-				if (TerrainType)
+				if (gTerrainType)
 				{
-					TerrainType = 0;
+					gTerrainType = 0;
 					gNewBS->TerrainTimer = 0;
 					BattleScriptPush(gBattlescriptCurrInstr + 1);
-					BattleStringLoader = TerrainEndString;
+					gBattleStringLoader = TerrainEndString;
 					gBattlescriptCurrInstr = BattleScript_PrintCustomString;
 
 					gActiveBattler = 0;
-					EmitDataTransfer(0, &TerrainType, 1, &TerrainType);
+					EmitDataTransfer(0, &gTerrainType, 1, &gTerrainType);
 					MarkBufferBankForExecution(gActiveBattler);
 				}
 				else
@@ -920,7 +920,7 @@ bool8 SetMoveEffect2(void)
 			if (!IsIonDelugeActive())
 				gNewBS->IonDelugeTimer = 1;
 			BattleScriptPushCursor();
-			BattleStringLoader = IonDelugeShowerString;
+			gBattleStringLoader = IonDelugeShowerString;
 			gBattlescriptCurrInstr = BattleScript_PrintCustomString;
 			effect = TRUE;
 			break;

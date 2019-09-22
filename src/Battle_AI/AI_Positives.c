@@ -1199,7 +1199,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			if (IS_SINGLE_BATTLE)
 			{
 				if (IsClassTeamSupport(class)
-				&& (TerrainType != MISTY_TERRAIN || !CheckGrounding(bankAtk)))
+				&& (gTerrainType != MISTY_TERRAIN || !CheckGrounding(bankAtk)))
 					INCREASE_STATUS_VIABILITY(1);
 			}
 			else //Double Battle

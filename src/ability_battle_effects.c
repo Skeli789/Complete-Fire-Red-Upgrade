@@ -510,7 +510,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				#if defined FOG_IN_BATTLE_1 || defined FOG_IN_BATTLE_2 || defined FOG_IN_BATTLE_3 //So dumb people don't cause compilation errors
 					if (!(gBattleWeather & WEATHER_FOG_ANY))
 					{
-						BattleStringLoader = gText_FogIsDeep;
+						gBattleStringLoader = gText_FogIsDeep;
 						gBattleWeather = (WEATHER_FOG_TEMPORARY | WEATHER_FOG_PERMANENT);
 						gBattleScripting->animArg1 = B_ANIM_FOG_CONTINUES;
 						effect++;
@@ -572,7 +572,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				gBattleWeather = (WEATHER_RAIN_PERMANENT | WEATHER_RAIN_TEMPORARY |  WEATHER_RAIN_PRIMAL);
 				gWishFutureKnock->weatherDuration = 0;
 				gBattleScripting->animArg1 = B_ANIM_RAIN_CONTINUES;
-				BattleStringLoader = gText_PrimordialSeaActivate;
+				gBattleStringLoader = gText_PrimordialSeaActivate;
 				gBattleCommunication[MULTISTRING_CHOOSER] = 4;
 				BattleScriptPushCursorAndCallback(BattleScript_NewWeatherAbilityActivates);
 				effect++;
@@ -586,7 +586,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				gBattleWeather = (WEATHER_SUN_PERMANENT | WEATHER_SUN_TEMPORARY |  WEATHER_SUN_PRIMAL);
 				gWishFutureKnock->weatherDuration = 0;
 				gBattleScripting->animArg1 = B_ANIM_SUN_CONTINUES;
-				BattleStringLoader = gText_DesolateLandActivate;
+				gBattleStringLoader = gText_DesolateLandActivate;
 				gBattleCommunication[MULTISTRING_CHOOSER] = 4;
 				BattleScriptPushCursorAndCallback(BattleScript_NewWeatherAbilityActivates);
 				effect++;
@@ -600,7 +600,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				gBattleWeather = (WEATHER_AIR_CURRENT_PRIMAL);
 				gWishFutureKnock->weatherDuration = 0;
 				gBattleScripting->animArg1 = B_ANIM_STRONG_WINDS_CONTINUE;
-				BattleStringLoader = gText_DeltaStream;
+				gBattleStringLoader = gText_DeltaStream;
 				gBattleCommunication[MULTISTRING_CHOOSER] = 4;
 				BattleScriptPushCursorAndCallback(BattleScript_NewWeatherAbilityActivates);
 				effect++;
@@ -680,69 +680,69 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 
 		case ABILITY_CLOUDNINE:
 		case ABILITY_AIRLOCK:
-			BattleStringLoader = gText_AirLockActivate;
+			gBattleStringLoader = gText_AirLockActivate;
 			BattleScriptPushCursorAndCallback(BattleScript_AirLock);
 			effect++;
 			break;
 
 		case ABILITY_PRESSURE:
-			BattleStringLoader = gText_PressureActivate;
+			gBattleStringLoader = gText_PressureActivate;
 			BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
 			effect++;
 			break;
 
 		case ABILITY_MOLDBREAKER:
-			BattleStringLoader = gText_MoldBreakerActivate;
+			gBattleStringLoader = gText_MoldBreakerActivate;
 			BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
 			effect++;
 			break;
 
 		case ABILITY_TERAVOLT:
-			BattleStringLoader = gText_TeravoltActivate;
+			gBattleStringLoader = gText_TeravoltActivate;
 			BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
 			effect++;
 			break;
 
 		case ABILITY_TURBOBLAZE:
-			BattleStringLoader = gText_TurboblazeActivate;
+			gBattleStringLoader = gText_TurboblazeActivate;
 			BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
 			effect++;
 			break;
 
 		case ABILITY_SLOWSTART:
 			gNewBS->SlowStartTimers[bank] = 5;
-			BattleStringLoader = gText_SlowStartActivate;
+			gBattleStringLoader = gText_SlowStartActivate;
 			BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
 			effect++;
 			break;
 
 		case ABILITY_UNNERVE:
 			gBankAttacker = bank;
-			BattleStringLoader = gText_UnnerveActivate;
+			gBattleStringLoader = gText_UnnerveActivate;
 			BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
 			effect++;
 			break;
 
 		case ABILITY_DARKAURA:
-			BattleStringLoader = gText_DarkAuraActivate;
+			gBattleStringLoader = gText_DarkAuraActivate;
 			BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
 			effect++;
 			break;
 
 		case ABILITY_FAIRYAURA:
-			BattleStringLoader = gText_FairyAuraActivate;
+			gBattleStringLoader = gText_FairyAuraActivate;
 			BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
 			effect++;
 			break;
 
 		case ABILITY_AURABREAK:
-			BattleStringLoader = gText_AuraBreakActivate;
+			gBattleStringLoader = gText_AuraBreakActivate;
 			BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
 			effect++;
 			break;
 
 		case ABILITY_COMATOSE:
-			BattleStringLoader = gText_ComatoseActivate;
+			gBattleStringLoader = gText_ComatoseActivate;
 			BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
 			effect++;
 			break;
@@ -798,7 +798,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 
 			if (effect)
 			{
-				BattleStringLoader = gText_AnticipationActivate;
+				gBattleStringLoader = gText_AnticipationActivate;
 				BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
 			}
 
@@ -863,7 +863,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			gBankAttacker = bank;
 			gEffectBank = strongestTarget;
 			PREPARE_MOVE_BUFFER(gBattleTextBuff1, strongestMove);
-			BattleStringLoader = gText_ForewarnActivate;
+			gBattleStringLoader = gText_ForewarnActivate;
 			BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
 			effect++;
 			break;
@@ -877,7 +877,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				gLastUsedItem = ITEM(foe);
 				gBankTarget = foe;
 				gBattleScripting->bank = bank;
-				BattleStringLoader = gText_FriskActivate;
+				gBattleStringLoader = gText_FriskActivate;
 				RecordItemEffectBattle(foe, ITEM_EFFECT(foe));
 				BattleScriptPushCursorAndCallback(BattleScript_Frisk);
 				effect++;
@@ -887,7 +887,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				gLastUsedItem = ITEM(partner);
 				gBankTarget = partner;
 				gBattleScripting->bank = bank;
-				BattleStringLoader = gText_FriskActivate;
+				gBattleStringLoader = gText_FriskActivate;
 				RecordItemEffectBattle(partner, ITEM_EFFECT(partner));
 				BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
 				effect++;
@@ -1215,7 +1215,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 						 gBattleMons[bank].statStages[statToLower - 1] == 0);
 
 						gStatChangeByte = statToRaise | INCREASE_2;
-						SeedHelper[0] = statToLower;
+						gSeedHelper[0] = statToLower;
 						scriptPtr = BattleScript_MoodyRegular;
 					}
 					BattleScriptPushCursorAndCallback(scriptPtr);
@@ -1277,7 +1277,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				case ABILITY_SLOWSTART:
 					if (gNewBS->SlowStartTimers[bank] != 0 && gBattleMons[bank].hp != 0 && --gNewBS->SlowStartTimers[bank] == 0)
 					{
-						BattleStringLoader = gText_SlowStartEnd;
+						gBattleStringLoader = gText_SlowStartEnd;
 						BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
 						++effect;
 					}
@@ -2153,9 +2153,9 @@ static u8 TryActivateTerrainAbility(u8 terrain, u8 anim, u8 bank)
 	if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_TERRAIN)
 		return effect; //Can't be removed
 
-	if (TerrainType != terrain)
+	if (gTerrainType != terrain)
 	{
-		TerrainType = terrain;
+		gTerrainType = terrain;
 		#ifdef INFINITE_TERRAIN
 			gNewBS->TerrainTimer = 0;
 		#else
@@ -2167,22 +2167,22 @@ static u8 TryActivateTerrainAbility(u8 terrain, u8 anim, u8 bank)
 
 		switch (terrain) {
 			case ELECTRIC_TERRAIN:
-				BattleStringLoader = ElectricTerrainSetString;
+				gBattleStringLoader = ElectricTerrainSetString;
 				break;
 			case GRASSY_TERRAIN:
-				BattleStringLoader = GrassyTerrainSetString;
+				gBattleStringLoader = GrassyTerrainSetString;
 				break;
 			case MISTY_TERRAIN:
-				BattleStringLoader = MistyTerrainSetString;
+				gBattleStringLoader = MistyTerrainSetString;
 				break;
 			case PSYCHIC_TERRAIN:
-				BattleStringLoader = PsychicTerrainSetString;
+				gBattleStringLoader = PsychicTerrainSetString;
 				break;
 		}
 
 		gBattleScripting->animArg1 = anim;
 		gBattleScripting->bank = bank;
-		*((u32*) SeedHelper) = (u32) BattleStringLoader; //Backup String
+		*((u32*) gSeedHelper) = (u32) gBattleStringLoader; //Backup String
 		BattleScriptPushCursorAndCallback(BattleScript_TerrainFromAbility);
 		++effect;
 	}
@@ -2584,7 +2584,7 @@ void AnimTask_LoadAbilityPopUp(u8 taskId)
 {
 	const s16 (*coords)[2];
 	u8 spriteId1, spriteId2, battlerPosition, destroyerTaskId;
-	u8 ability = AbilityPopUpHelper; //Preceded by transfer of proper ability
+	u8 ability = gAbilityPopUpHelper; //Preceded by transfer of proper ability
 
 	LoadSpriteSheet((const struct SpriteSheet*) &gBattleAnimPicTable[ANIM_TAG_ABILITY_POP_UP - ANIM_SPRITES_START]);
 	LoadSpritePalette((const struct SpritePalette*) &gBattleAnimPaletteTable[ANIM_TAG_ABILITY_POP_UP - ANIM_SPRITES_START]);
@@ -2709,7 +2709,7 @@ void TransferAbilityPopUpHelper(void)
 	}
 
 	TransferAbilityPopUp(gBattleScripting->bank, CopyAbility(gBattleScripting->bank));
-	gLastUsedAbility = AbilityPopUpHelper;
+	gLastUsedAbility = gAbilityPopUpHelper;
 }
 
 void TransferAbilityPopUpHelperAsTrace(void)
@@ -2737,9 +2737,9 @@ void TransferAbilityPopUpHelperAsImposter(void)
 void TransferAbilityPopUp(u8 bank, u8 ability)
 {
 	gActiveBattler = bank;
-	AbilityPopUpHelper = ability;
+	gAbilityPopUpHelper = ability;
 
-	EmitDataTransfer(0, &AbilityPopUpHelper, 1, &AbilityPopUpHelper);
+	EmitDataTransfer(0, &gAbilityPopUpHelper, 1, &gAbilityPopUpHelper);
 	MarkBufferBankForExecution(gActiveBattler);
 }
 

@@ -424,7 +424,7 @@ void EndOfBattleThings(void)
 		BringBackTheDead();
 		EndBattleFlagClear();
 		HealPokemonInFrontier();
-		TerrainType = 0; //Reset now b/c normal reset is after BG is loaded
+		gTerrainType = 0; //Reset now b/c normal reset is after BG is loaded
 
 		#ifdef UNBOUND
 		u8 weather = GetCurrentWeather();

@@ -59,16 +59,16 @@ void IncreaseNimbleCounter(void)
 
 void MagnetFluxLooper(void)
 {
-	for (; *SeedHelper < gBattlersCount; ++*SeedHelper)
+	for (; *gSeedHelper < gBattlersCount; ++*gSeedHelper)
 	{
-		u8 bank = gBanksByTurnOrder[*SeedHelper];
+		u8 bank = gBanksByTurnOrder[*gSeedHelper];
 		if ((bank == gBankAttacker || bank == PARTNER(gBankAttacker))
 		&&  (ABILITY(bank) == ABILITY_PLUS || ABILITY(bank) == ABILITY_MINUS)
 		&& gBattleMons[bank].hp
 		&& !(gStatuses3[bank] & STATUS3_SEMI_INVULNERABLE)
 		&& !(gBattleMons[bank].status2 & STATUS2_SUBSTITUTE))
 		{
-			++*SeedHelper;
+			++*gSeedHelper;
 			gBankTarget = bank;
 			if (gCurrentMove == MOVE_MAGNETICFLUX)
 				gBattlescriptCurrInstr = BattleScript_MagneticFluxStatBoost - 5;
@@ -138,7 +138,7 @@ void SetStatSwapSplit(void)
 
 			gStatuses3[bankAtk] ^= STATUS3_POWER_TRICK;
 
-			BattleStringLoader = PowerTrickString;
+			gBattleStringLoader = PowerTrickString;
 			break;
 
 		case MOVE_POWERSWAP:	;
@@ -149,7 +149,7 @@ void SetStatSwapSplit(void)
 			gBattleMons[bankDef].statStages[STAT_STAGE_ATK-1] = atkAtkBuff;
 			gBattleMons[bankDef].statStages[STAT_STAGE_SPATK-1] = atkSpAtkBuff;
 
-			BattleStringLoader = PowerSwapString;
+			gBattleStringLoader = PowerSwapString;
 			break;
 
 		case MOVE_GUARDSWAP:	;
@@ -160,7 +160,7 @@ void SetStatSwapSplit(void)
 			gBattleMons[bankDef].statStages[STAT_STAGE_DEF-1] = atkDefBuff;
 			gBattleMons[bankDef].statStages[STAT_STAGE_SPDEF-1] = atkSpDefBuff;
 
-			BattleStringLoader = GuardSwapString;
+			gBattleStringLoader = GuardSwapString;
 			break;
 
 		case MOVE_SPEEDSWAP:
@@ -168,7 +168,7 @@ void SetStatSwapSplit(void)
 			gBattleMons[bankAtk].speed = gBattleMons[bankDef].speed;
 			gBattleMons[bankDef].speed = temp;
 
-			BattleStringLoader = SpeedSwapString;
+			gBattleStringLoader = SpeedSwapString;
 			break;
 
 		case MOVE_HEARTSWAP:
@@ -179,7 +179,7 @@ void SetStatSwapSplit(void)
 				gBattleMons[bankDef].statStages[i] = temp;
 			}
 
-			BattleStringLoader = HeartSwapString;
+			gBattleStringLoader = HeartSwapString;
 			break;
 
 		case MOVE_POWERSPLIT:	;
@@ -191,7 +191,7 @@ void SetStatSwapSplit(void)
 			gBattleMons[bankDef].attack = MathMax(1, newAtk);
 			gBattleMons[bankDef].spAttack = MathMax(1, newSpAtk);
 
-			BattleStringLoader = PowerSplitString;
+			gBattleStringLoader = PowerSplitString;
 			break;
 
 		case MOVE_GUARDSPLIT:	;
@@ -203,7 +203,7 @@ void SetStatSwapSplit(void)
 			gBattleMons[bankDef].defense = MathMax(1, newDef);
 			gBattleMons[bankDef].spDefense = MathMax(1, newSpDef);
 
-			BattleStringLoader = GuardSplitString;
+			gBattleStringLoader = GuardSplitString;
 	}
 }
 
@@ -224,10 +224,10 @@ void CheeckPouchFunc(void)
 	if (ABILITY(bank) == ABILITY_CHEEKPOUCH && !gNewBS->HealBlockTimers[bank]) { //Berry check should already be done
 		gBattleMoveDamage = MathMax(1, udivsi(gBattleMons[bank].maxHP, 3));
 		gBattleMoveDamage *= -1;
-		FormCounter = TRUE;
+		gFormCounter = TRUE;
 	}
 	else
-		FormCounter = FALSE;
+		gFormCounter = FALSE;
 }
 
 void SetUnburdenBoostTarget(void)
@@ -238,7 +238,7 @@ void SetUnburdenBoostTarget(void)
 void MoldBreakerRemoveAbilitiesOnForceSwitchIn(void)
 {
 	u8 bank;
-	if (ForceSwitchHelper == 2)
+	if (gForceSwitchHelper == 2)
 		bank = gBattleScripting->bank;
 	else
 		bank = gBankAttacker;
@@ -283,7 +283,7 @@ void SetAuroraVeil(void)
 		else
 			gNewBS->AuroraVeilTimers[SIDE(gBankAttacker)] = 5;
 
-		BattleStringLoader = gText_SetAuroraVeil;
+		gBattleStringLoader = gText_SetAuroraVeil;
 		gBattleCommunication[MULTISTRING_CHOOSER] = 1;
 	}
 	else
@@ -646,7 +646,7 @@ void SetPledgeEffect(void)
 			if (!BankSideHasSwamp(gBankTarget))
 			{
 				gNewBS->SwampTimers[SIDE(gBankTarget)] = 5;
-				BattleStringLoader = SwampString;
+				gBattleStringLoader = SwampString;
 				//gBattleScripting->animArg1 = B_ANIM_SWAMP;
 			}
 			else
@@ -657,7 +657,7 @@ void SetPledgeEffect(void)
 			if (!BankSideHasSeaOfFire(gBankTarget))
 			{
 				gNewBS->SeaOfFireTimers[SIDE(gBankTarget)] = 5;
-				BattleStringLoader = SeaOfFireString;
+				gBattleStringLoader = SeaOfFireString;
 				gBattleScripting->animArg1 = B_ANIM_SEA_OF_FIRE;
 			}
 			else
@@ -668,7 +668,7 @@ void SetPledgeEffect(void)
 			if (!BankSideHasRainbow(gBankTarget))
 			{
 				gNewBS->RainbowTimers[SIDE(gBankTarget)] = 5;
-				BattleStringLoader = RainbowString;
+				gBattleStringLoader = RainbowString;
 				//BattleScripting->animArg1 = B_ANIM_RAINBOW;
 			}
 			else
@@ -689,12 +689,12 @@ void DoFieldEffect(void)
 			if (gNewBS->TrickRoomTimer > 0)
 			{
 				gNewBS->TrickRoomTimer = 0;
-				BattleStringLoader = TrickRoomEndString;
+				gBattleStringLoader = TrickRoomEndString;
 			}
 			else if (!IsTrickRoomActive())
 			{
 				gNewBS->TrickRoomTimer = 5;
-				BattleStringLoader = TrickRoomSetString;
+				gBattleStringLoader = TrickRoomSetString;
 			}
 			else
 				 gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
@@ -704,12 +704,12 @@ void DoFieldEffect(void)
 			if (gNewBS->WonderRoomTimer > 0)
 			{
 				gNewBS->WonderRoomTimer = 0;
-				BattleStringLoader = WonderRoomEndString;
+				gBattleStringLoader = WonderRoomEndString;
 			}
 			else if (!IsWonderRoomActive())
 			{
 				gNewBS->WonderRoomTimer = 5;
-				BattleStringLoader = WonderRoomSetString;
+				gBattleStringLoader = WonderRoomSetString;
 			}
 			else
 				 gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
@@ -719,12 +719,12 @@ void DoFieldEffect(void)
 			if (gNewBS->MagicRoomTimer)
 			{
 				gNewBS->MagicRoomTimer = 0;
-				BattleStringLoader = MagicRoomEndString;
+				gBattleStringLoader = MagicRoomEndString;
 			}
 			else if (!IsMagicRoomActive())
 			{
 				gNewBS->MagicRoomTimer = 5;
-				BattleStringLoader = MagicRoomSetString;
+				gBattleStringLoader = MagicRoomSetString;
 			}
 			else
 				 gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
@@ -734,7 +734,7 @@ void DoFieldEffect(void)
 			if (gNewBS->GravityTimer > 0)
 			{
 				gNewBS->GravityTimer = 0;
-				BattleStringLoader = GravityEndString;
+				gBattleStringLoader = GravityEndString;
 			}
 			else if (!IsGravityActive())
 			{
@@ -745,7 +745,7 @@ void DoFieldEffect(void)
 				}
 
 				gNewBS->GravityTimer = 5;
-				BattleStringLoader = GravitySetString;
+				gBattleStringLoader = GravitySetString;
 			}
 			else
 				 gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
@@ -758,7 +758,7 @@ void DoFieldEffect(void)
 			}
 
 			//Doesn't fail even if already Ion Deluge
-			BattleStringLoader = IonDelugeShowerString;
+			gBattleStringLoader = IonDelugeShowerString;
 			break;
 	}
 }
@@ -791,9 +791,9 @@ void BringDownMons(void)
 
 			gBattleScripting->bank = i;
 			if (gCurrentMove == MOVE_GRAVITY)
-				BattleStringLoader = NoMoreAirborneFromGravityString;
+				gBattleStringLoader = NoMoreAirborneFromGravityString;
 			else
-				BattleStringLoader = Bank0AWasBroughtDownString;
+				gBattleStringLoader = Bank0AWasBroughtDownString;
 			BattleScriptPushCursor();
 			gBattlescriptCurrInstr = BattleScript_PrintCustomString - 5;
 			return;
@@ -844,7 +844,7 @@ void ChangeTargetTypeFunc(void)
 			{
 				SET_BATTLER_TYPE(gBankTarget, TYPE_WATER);
 				PREPARE_TYPE_BUFFER(gBattleTextBuff1, TYPE_WATER);
-				BattleStringLoader = TargetTransformedIntoType;
+				gBattleStringLoader = TargetTransformedIntoType;
 			}
 			break;
 
@@ -859,7 +859,7 @@ void ChangeTargetTypeFunc(void)
 					gBattleMons[gBankTarget].type3 = TYPE_GHOST;
 
 				PREPARE_TYPE_BUFFER(gBattleTextBuff1, TYPE_GHOST);
-				BattleStringLoader = ThirdTypeAddedString;
+				gBattleStringLoader = ThirdTypeAddedString;
 			}
 			break;
 
@@ -874,7 +874,7 @@ void ChangeTargetTypeFunc(void)
 					gBattleMons[gBankTarget].type3 = TYPE_GRASS;
 
 				PREPARE_TYPE_BUFFER(gBattleTextBuff1, TYPE_GRASS);
-				BattleStringLoader = ThirdTypeAddedString;
+				gBattleStringLoader = ThirdTypeAddedString;
 			}
 			break;
 	}
@@ -900,7 +900,7 @@ void HealTargetFunc(void)
 			break;
 
 		case MOVE_FLORALHEALING:
-			if (TerrainType == GRASSY_TERRAIN)
+			if (gTerrainType == GRASSY_TERRAIN)
 				gBattleMoveDamage = udivsi(maxHP * 2, 3);
 			else
 				gBattleMoveDamage = maxHP / 2;
@@ -944,7 +944,7 @@ void DoFairyLockHappyHourFunc(void)
 			else
 			{
 				gNewBS->FairyLockTimer = 2;
-				BattleStringLoader = FairyLockString;
+				gBattleStringLoader = FairyLockString;
 			}
 			break;
 
@@ -954,18 +954,18 @@ void DoFairyLockHappyHourFunc(void)
 				gNewBS->HappyHourByte = TRUE;
 				gBattleStruct->moneyMultiplier *= 2;
 			}
-			BattleStringLoader = HappyHourString;
+			gBattleStringLoader = HappyHourString;
 			break;
 
 		case MOVE_CELEBRATE:
-			BattleStringLoader = CelebrateString;
+			gBattleStringLoader = CelebrateString;
 			break;
 
 		case MOVE_HOLDHANDS:
 			if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE
 			&&  gBattleMons[PARTNER(gBankAttacker)].hp)
 			{
-				BattleStringLoader = HoldHandsString;
+				gBattleStringLoader = HoldHandsString;
 			}
 			else
 				gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
@@ -1126,7 +1126,7 @@ void TailwindLuckyChantFunc(void)
 			else
 			{
 				gNewBS->TailwindTimers[SIDE(gBankAttacker)] = 4;
-				BattleStringLoader = TailwindSetString;
+				gBattleStringLoader = TailwindSetString;
 			}
 			break;
 		case MOVE_LUCKYCHANT:
@@ -1135,7 +1135,7 @@ void TailwindLuckyChantFunc(void)
 			else
 			{
 				gNewBS->LuckyChantTimers[SIDE(gBankAttacker)] = 4;
-				BattleStringLoader = LuckyChantSetString;
+				gBattleStringLoader = LuckyChantSetString;
 			}
 			break;
 	}
@@ -1223,7 +1223,7 @@ void AbilityChangeBSFunc(void)
 				*defAbilityLoc = ABILITY_INSOMNIA;
 				gLastUsedAbility = defAbility; //Original ability
 				gNewBS->SlowStartTimers[gBankTarget] = 0;
-				BattleStringLoader = WorrySeedString;
+				gBattleStringLoader = WorrySeedString;
 			}
 			break;
 
@@ -1240,7 +1240,7 @@ void AbilityChangeBSFunc(void)
 				*defAbilityLoc = 0;
 				gNewBS->SlowStartTimers[gBankTarget] = 0;
 				gBattleScripting->bank = gBankTarget;
-				BattleStringLoader = AbilitySuppressedString;
+				gBattleStringLoader = AbilitySuppressedString;
 				return; //No transfer needed
 			}
 			break;
@@ -1255,7 +1255,7 @@ void AbilityChangeBSFunc(void)
 				*defAbilityLoc = atkAbility;
 				gLastUsedAbility = defAbility; //Original ability
 				gNewBS->SlowStartTimers[gBankTarget] = 0;
-				BattleStringLoader = EntrainmentString;
+				gBattleStringLoader = EntrainmentString;
 
 				if (gLastUsedAbility == ABILITY_TRUANT)
 					gDisableStructs[gBankTarget].truantCounter = 0; //Reset counter
@@ -1272,7 +1272,7 @@ void AbilityChangeBSFunc(void)
 				*defAbilityLoc = ABILITY_SIMPLE;
 				gLastUsedAbility = defAbility; //Original ability
 				gNewBS->SlowStartTimers[gBankTarget] = 0;
-				BattleStringLoader = SimpleBeamString;
+				gBattleStringLoader = SimpleBeamString;
 			}
 			break;
 	}
@@ -1335,9 +1335,9 @@ void BurnUpFunc(void)
 
 void SeedRoomServiceLooper(void)
 {
-	for (; *SeedHelper < gBattlersCount; ++*SeedHelper)
+	for (; *gSeedHelper < gBattlersCount; ++*gSeedHelper)
 	{
-		u8 bank = gBanksByTurnOrder[*SeedHelper];
+		u8 bank = gBanksByTurnOrder[*gSeedHelper];
 
 		if (ITEM_EFFECT(bank) == ITEM_EFFECT_SEEDS || ITEM_EFFECT(bank) == ITEM_EFFECT_ROOM_SERVICE)
 		{
@@ -1408,7 +1408,7 @@ void TransferTerrainData(void)
 	else
 	{
 		gActiveBattler = 0;
-		EmitDataTransfer(0, &TerrainType, 1, &TerrainType);
+		EmitDataTransfer(0, &gTerrainType, 1, &gTerrainType);
 		MarkBufferBankForExecution(gActiveBattler);
 	}
 }

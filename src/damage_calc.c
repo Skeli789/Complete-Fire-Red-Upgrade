@@ -1705,7 +1705,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 			break;
 
 		case ABILITY_GRASSPELT:
-			if (TerrainType == GRASSY_TERRAIN)
+			if (gTerrainType == GRASSY_TERRAIN)
 				defense = udivsi((defense * 150), 100);
 			break;
 
@@ -1890,7 +1890,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 	}
 
 //Terrain Checks
-	switch (TerrainType) {
+	switch (gTerrainType) {
 		case ELECTRIC_TERRAIN:
 			if (partyCheck) {
 				if (CheckGroundingFromPartyData(monAtk) && type == TYPE_ELECTRIC) {
@@ -2947,7 +2947,7 @@ u16 CalcVisualBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 power, u8 moveType
 	}
 
 //Terrain Checks
-	switch (TerrainType) {
+	switch (gTerrainType) {
 		case ELECTRIC_TERRAIN:
 			if (CheckGrounding(bankAtk) && moveType == TYPE_ELECTRIC) {
 				attack = udivsi(attack * 150, 100);
