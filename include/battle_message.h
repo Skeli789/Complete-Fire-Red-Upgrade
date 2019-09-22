@@ -105,7 +105,7 @@
 	textvar[3] = STRINGID_STATROSE >> 8;									\
 	textvar[4] = B_BUFF_EOS;												\
 }
-				
+
 #define PREPARE_ABILITY_BUFFER(textVar, abilityId)                          \
 {                                                                           \
     textVar[0] = B_BUFF_PLACEHOLDER_BEGIN;                                  \

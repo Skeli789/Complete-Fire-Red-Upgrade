@@ -78,7 +78,7 @@ enum BattleFacilities
 
 #define BATTLE_FACILITY_NUM VarGet(0x403A) //Temp Var
 
-enum 
+enum
 {
 	FRONTIER_BEFORE_TEXT,
 	FRONTIER_PLAYER_LOST_TEXT,

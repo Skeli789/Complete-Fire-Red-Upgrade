@@ -19,7 +19,7 @@
 #include "../include/new/form_change.h"
 #include "../include/new/frontier.h"
 #include "../include/new/general_bs_commands.h"
-#include "../include/new/Helper_Functions.h"
+#include "../include/new/util.h"
 #include "../include/new/item_battle_scripts.h"
 #include "../include/new/move_battle_scripts.h"
 #include "../include/new/move_tables.h"
@@ -69,7 +69,7 @@ void atk02_attackstring(void)
 	u8 moveType = gBattleStruct->dynamicMoveType;
 
 	if (gBattleExecBuffer) return;
-	
+
 	if (gBattlescriptCurrInstr == BattleScript_ButItFailedAttackstring)
 		gMoveResultFlags |= MOVE_RESULT_FAILED;
 
@@ -84,7 +84,7 @@ void atk02_attackstring(void)
 			gNewBS->LastUsedMove = gCurrentMove;
 			gNewBS->LastUsedTypes[gBankAttacker] = moveType;
 
-			if (!CheckTableForMove(gCurrentMove, MovesThatCallOtherMovesTable)) {
+			if (!CheckTableForMove(gCurrentMove, gMovesThatCallOtherMoves)) {
 				if (gLastPrintedMoves[gBankAttacker] == gCurrentMove)
 					gNewBS->MetronomeCounter[gBankAttacker] = MathMin(100, gNewBS->MetronomeCounter[gBankAttacker] + 20);
 				else
@@ -108,9 +108,9 @@ void atk02_attackstring(void)
 				gBattlescriptCurrInstr = BattleScript_Gems;
 			}
 
-			if (ABILITY(gBankAttacker) == ABILITY_PROTEAN 
+			if (ABILITY(gBankAttacker) == ABILITY_PROTEAN
 			&& !(gMoveResultFlags & MOVE_RESULT_FAILED)
-			&& !CheckTableForMove(gCurrentMove, MovesThatCallOtherMovesTable))
+			&& !CheckTableForMove(gCurrentMove, gMovesThatCallOtherMoves))
 			{
 				if (gBattleMons[gBankAttacker].type1 != moveType
 				||  gBattleMons[gBankAttacker].type2 != moveType
@@ -225,7 +225,7 @@ void atk09_attackanimation(void)
 			gBattlescriptCurrInstr++;
 			return;
 		}
-		
+
 		if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT))
 		{
 			u8 multihit;
@@ -381,7 +381,7 @@ void atk0C_datahpupdate(void) {
 				gBattleMons[gActiveBattler].hp -= gBattleMoveDamage;
 				if (gBattleMons[gActiveBattler].hp > gBattleMons[gActiveBattler].maxHP)
 					gBattleMons[gActiveBattler].hp = gBattleMons[gActiveBattler].maxHP;
-					
+
 				gHitMarker &= ~(HITMARKER_IGNORE_SUBSTITUTE);
 			}
 			else //HP goes down
@@ -613,7 +613,7 @@ void atk0F_resultmessage(void) {
 				gBattleCommunication[MSG_DISPLAY] = 0;
 			}
 		}
-		
+
 		gNewBS->EnduranceHelper = 0; //Clear these here for multi-hit moves that didn't KO target
 		gSpecialStatuses[gBankTarget].focusBanded = FALSE;
 		gProtectStructs[gBankTarget].enduredSturdy = FALSE;
@@ -688,7 +688,7 @@ void atk19_tryfaintmon(void)
 			bank = gBankAttacker;
 			BS_ptr = BattleScript_FaintTarget;
 		}
-		
+
 		if (TryDoBenjaminButterfree(7))
 			return;
 
@@ -835,7 +835,7 @@ void atk1B_cleareffectsonfaint(void) {
 
 				if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE
 				&& (partnerAbility == ABILITY_RECEIVER || partnerAbility == ABILITY_POWEROFALCHEMY)
-				&& !CheckTableForAbility(CopyAbility(gActiveBattler), ReceiverBanTable))
+				&& !CheckTableForAbility(CopyAbility(gActiveBattler), gReceiverBannedAbilities))
 				{
 					gLastUsedAbility = partnerAbility;
 					*GetAbilityLocation(partner) = CopyAbility(gActiveBattler);
@@ -844,11 +844,11 @@ void atk1B_cleareffectsonfaint(void) {
 					gNewBS->ReceiverActivated = TRUE;
 					BattleScriptPushCursor();
 					gBattlescriptCurrInstr = BattleScript_Receiver;
-					
+
 					AbilityPopUpHelper = gLastUsedAbility;
 					EmitDataTransfer(0, &AbilityPopUpHelper, 1, &AbilityPopUpHelper);
 					MarkBufferBankForExecution(gActiveBattler);
-	
+
 					++gNewBS->FaintEffectsTracker;
 					return;
 				}
@@ -862,7 +862,7 @@ void atk1B_cleareffectsonfaint(void) {
 			case Faint_PrimalWeather:	;
 				if (TryRemovePrimalWeather(gActiveBattler, ABILITY(gActiveBattler)))
 					return;
-					
+
 				if (TryActivateFlowerGift(gActiveBattler))
 					return;
 
@@ -1174,9 +1174,9 @@ void atk46_playanimation2(void) // animation Id is stored in the first pointer
 
 void atk47_setgraphicalstatchangevalues(void)
 {
-    u8 value = 0;
-    switch (GET_STAT_BUFF_VALUE_WITH_SIGN(gBattleScripting->statChanger))
-    {
+	u8 value = 0;
+	switch (GET_STAT_BUFF_VALUE_WITH_SIGN(gBattleScripting->statChanger))
+	{
 		case SET_STAT_BUFF_VALUE(1): // +1
 			value = STAT_ANIM_PLUS1;
 			break;
@@ -1213,11 +1213,11 @@ void atk47_setgraphicalstatchangevalues(void)
 		case SET_STAT_BUFF_VALUE(6) | STAT_BUFF_NEGATIVE: // -3
 			value = STAT_ANIM_MINUS2;
 			break;
-    }
+	}
 
-    gBattleScripting->animArg1 = GET_STAT_BUFF_ID(gBattleScripting->statChanger) + value - 1;
-    gBattleScripting->animArg2 = 0;
-    gBattlescriptCurrInstr++;
+	gBattleScripting->animArg1 = GET_STAT_BUFF_ID(gBattleScripting->statChanger) + value - 1;
+	gBattleScripting->animArg2 = 0;
+	gBattlescriptCurrInstr++;
 }
 
 static void UpdateMoveStartValuesForCalledMove(void)
@@ -1246,7 +1246,7 @@ void atk63_jumptocalledmove(void)
 	TryUpdateCalledMoveWithZMove();
 	if (gBattlescriptCurrInstr[1] != 0xFF)
 		UpdateMoveStartValuesForCalledMove();
-	
+
 	gHitMarker &= ~(HITMARKER_ATTACKSTRING_PRINTED);
 
 	gBattlescriptCurrInstr = gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect];
@@ -2276,7 +2276,7 @@ void TransformPokemon(u8 bankAtk, u8 bankDef)
 		else
 			gBattleMons[bankAtk].pp[i] = 5;
 	}
-	
+
 	gBattleCommunication[MULTISTRING_CHOOSER] = 0;
 	gBattleSpritesDataPtr->bankData[bankAtk].transformSpecies = SPECIES(bankDef);
 }
@@ -2288,7 +2288,7 @@ void atk9D_mimicattackcopy(void)
 	if (gBattleMons[gBankAttacker].status2 & STATUS2_TRANSFORMED
 	|| gLastUsedMoves[gBankTarget] == 0
 	|| gLastUsedMoves[gBankTarget] == 0xFFFF
-	|| CheckTableForMove(gLastUsedMoves[gBankTarget], MimicBanTable)
+	|| CheckTableForMove(gLastUsedMoves[gBankTarget], gMimicBannedMoves)
 	|| IsZMove(gLastUsedMoves[gBankTarget]))
 	{
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
@@ -2328,7 +2328,7 @@ void atk9E_metronome(void)
 		if (IsZMove(gCurrentMove))
 			continue;
 
-		if (CheckTableForMove(gCurrentMove, MetronomeBanTable))
+		if (CheckTableForMove(gCurrentMove, gMetronomeBannedMoves))
 			continue;
 
 		TryUpdateCalledMoveWithZMove();
@@ -2364,7 +2364,7 @@ void atkA1_counterdamagecalculator(void) {
 			gBankTarget = gProtectStructs[gBankAttacker].physicalBank;
 		gBattlescriptCurrInstr += 5;
 	}
-	else 
+	else
 	{
 		gSpecialStatuses[gBankAttacker].ppNotAffectedByPressure = 1;
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
@@ -2439,7 +2439,7 @@ void atkA4_trysetencore(void)
 	if (gLastUsedMoves[gBankTarget] == MOVE_STRUGGLE
 	||  gLastUsedMoves[gBankTarget] == MOVE_ENCORE
 	||  gNewBS->playedShellTrapMessage & gBitTable[gBankTarget]
-	||  CheckTableForMove(gLastUsedMoves[gBankTarget], MovesThatCallOtherMovesTable)
+	||  CheckTableForMove(gLastUsedMoves[gBankTarget], gMovesThatCallOtherMoves)
 	||  IS_Z_MOVE(gLastUsedMoves[gBankTarget]))
 	{
 		i = 4;
@@ -2607,7 +2607,7 @@ void atkA9_trychoosesleeptalkmove(void) {
 	int i;
 
 	for (i = 0; i < 4; ++i) {
-		if (CheckTableForMove(gBattleMons[gBankAttacker].moves[i], SleepTalkBanTable))
+		if (CheckTableForMove(gBattleMons[gBankAttacker].moves[i], gSleepTalkBannedMoves))
 			unusable_moves |= gBitTable[i];
 	}
 
@@ -2658,9 +2658,9 @@ u8 CheckMoveLimitations(u8 bank, u8 unusableMoves, u8 check) {
 
 		else if (holdEffect == ITEM_EFFECT_ASSAULT_VEST && SPLIT(move) == SPLIT_STATUS)
 			unusableMoves |= gBitTable[i];
-		else if (FlagGet(SKY_BATTLE_FLAG) && CheckTableForMove(move, SkyBattleBanTable))
+		else if (FlagGet(SKY_BATTLE_FLAG) && CheckTableForMove(move, gSkyBattleBannedMoves))
 			unusableMoves |= gBitTable[i];
-		else if (IsGravityActive() && CheckTableForMove(move, GravityBanTable))
+		else if (IsGravityActive() && CheckTableForMove(move, gGravityBannedMoves))
 			unusableMoves |= gBitTable[i];
 		else if (CantUseSoundMoves(bank) && CheckSoundMove(move))
 			unusableMoves |= gBitTable[i];
@@ -2684,9 +2684,9 @@ u8 CheckMoveLimitationsFromParty(struct Pokemon* mon, u8 unusableMoves, u8 check
 			unusableMoves |= gBitTable[i];
 		else if (holdEffect == ITEM_EFFECT_ASSAULT_VEST && SPLIT(move) == SPLIT_STATUS)
 			unusableMoves |= gBitTable[i];
-		else if (FlagGet(SKY_BATTLE_FLAG) && CheckTableForMove(move, SkyBattleBanTable))
+		else if (FlagGet(SKY_BATTLE_FLAG) && CheckTableForMove(move, gSkyBattleBannedMoves))
 			unusableMoves |= gBitTable[i];
-		else if (IsGravityActive() && CheckTableForMove(move, GravityBanTable))
+		else if (IsGravityActive() && CheckTableForMove(move, gGravityBannedMoves))
 			unusableMoves |= gBitTable[i];
 	}
 
@@ -3042,7 +3042,7 @@ void atkBC_maxattackhalvehp(void)
 	{
 		if (STAT_STAGE(gBankAttacker, STAT_STAGE_ATK) > STAT_STAGE_MIN
 		&& gBattleMons[gBankAttacker].hp > halfHp)
-		{	
+		{
 			gBattleMons[gBankAttacker].statStages[STAT_STAGE_ATK - 1] = STAT_STAGE_MIN;
 			gBattleMoveDamage = MathMax(1, gBattleMons[gBankAttacker].maxHP / 2);
 			gBattlescriptCurrInstr += 5;
@@ -3366,7 +3366,7 @@ u16 GetNaturePowerMove(void)
 			else
 				move = gTerrainTable[gBattleTerrain + 4].naturePowerMove;
 	}
-	
+
 	return move;
 }
 
@@ -3472,8 +3472,8 @@ void atkD3_trycopyability(void) //Role Play
 
 	if (atkAbility == defAbility
 	||  defAbility == ABILITY_NONE
-	||  CheckTableForAbility(atkAbility, RolePlayAttackerBanTable)
-	||  CheckTableForAbility(defAbility, RolePlayBanTable))
+	||  CheckTableForAbility(atkAbility, gRolePlayAttackerBannedAbilities)
+	||  CheckTableForAbility(defAbility, gRolePlayBannedAbilities))
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
 
 	else
@@ -3500,7 +3500,7 @@ void atkDA_tryswapabilities(void) { //Skill Swap
 	defAbility = *defAbilityLoc;
 
 	if (atkAbility == ABILITY_NONE || defAbility == ABILITY_NONE
-	|| CheckTableForAbility(atkAbility, SkillSwapBanTable) || CheckTableForAbility(defAbility, SkillSwapBanTable)
+	|| CheckTableForAbility(atkAbility, gSkillSwapBannedAbilities) || CheckTableForAbility(defAbility, gSkillSwapBannedAbilities)
 	|| gMoveResultFlags & MOVE_RESULT_NO_EFFECT)
 	{
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
@@ -3513,13 +3513,13 @@ void atkDA_tryswapabilities(void) { //Skill Swap
 		gNewBS->SlowStartTimers[gBankTarget] = 0;
 		gStatuses3[gBankAttacker] &= ~(STATUS3_SWITCH_IN_ABILITY_DONE);
 		gStatuses3[gBankTarget] &= ~(STATUS3_SWITCH_IN_ABILITY_DONE);
-		
+
 		if (*atkAbilityLoc == ABILITY_TRUANT)
 			gDisableStructs[gBankAttacker].truantCounter = 0; //Reset counter
-			
+
 		if (*defAbilityLoc == ABILITY_TRUANT)
 			gDisableStructs[gBankTarget].truantCounter = 0; //Reset counter
-				
+
 		gBattlescriptCurrInstr += 5;
 	}
 }
@@ -3556,7 +3556,7 @@ void atkDE_asistattackselect(void)
 		{
 			u16 move = party[monId].moves[moveId];
 
-			if (CheckTableForMove(move, AssistBanTable))
+			if (CheckTableForMove(move, gAssistBannedMoves))
 				continue;
 
 			if (move == MOVE_NONE)
@@ -3581,25 +3581,25 @@ void atkDE_asistattackselect(void)
 
 void atkE1_trygetintimidatetarget(void)
 {
-    u8 side;
+	u8 side;
 
-    gBattleScripting->bank = gBattleStruct->intimidateBank;
-    side = SIDE(gBattleScripting->bank);
+	gBattleScripting->bank = gBattleStruct->intimidateBank;
+	side = SIDE(gBattleScripting->bank);
 
-    PREPARE_ABILITY_BUFFER(gBattleTextBuff1, ABILITY(gBattleScripting->bank))
+	PREPARE_ABILITY_BUFFER(gBattleTextBuff1, ABILITY(gBattleScripting->bank))
 
-    for (; gBankTarget < gBattlersCount; ++gBankTarget)
-    {
-        if (SIDE(gBankTarget) == side)
-            continue;
-        if (!(gAbsentBattlerFlags & gBitTable[gBankTarget]) && BATTLER_ALIVE(gBankTarget))
-            break;
-    }
+	for (; gBankTarget < gBattlersCount; ++gBankTarget)
+	{
+		if (SIDE(gBankTarget) == side)
+			continue;
+		if (!(gAbsentBattlerFlags & gBitTable[gBankTarget]) && BATTLER_ALIVE(gBankTarget))
+			break;
+	}
 
-    if (gBankTarget >= gBattlersCount)
-        gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
-    else
-        gBattlescriptCurrInstr += 5;
+	if (gBankTarget >= gBattlersCount)
+		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+	else
+		gBattlescriptCurrInstr += 5;
 }
 
 void atkE4_getsecretpowereffect(void) {

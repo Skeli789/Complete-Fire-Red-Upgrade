@@ -2,7 +2,7 @@
 #include "defines_battle.h"
 #include "../include/event_data.h"
 
-#include "../include/new/AI_Helper_Functions.h"
+#include "../include/new/ai_util.h"
 #include "../include/new/ai_master.h"
 #include "../include/new/battle_util.h"
 #include "../include/new/build_pokemon.h"
@@ -189,12 +189,12 @@ static u32 CalcMultiMoneyForTrainer(u16 trainerId)
 	int i;
 	struct Trainer trainer = gTrainers[trainerId];
 	u8 rate = 0;
-	
+
 	/* Find level of the last Pokemon in trainer's party */
 	u8 lastMon = trainer.partySize - 1;
 	if (gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_TWO_OPPONENTS) && lastMon > 3)
 		lastMon = 3;
-	
+
 	u8 level = 0;
 	#ifdef OPEN_WORLD_TRAINERS
 		level = openWorldLevelRanges[GetOpenWorldBadgeCount()][1];
@@ -204,7 +204,7 @@ static u32 CalcMultiMoneyForTrainer(u16 trainerId)
 		else
 			level = trainer.party.NoItemDefaultMoves[lastMon].lvl;
 	#endif
-	
+
 	for (i = 0; i < NUM_TRAINER_CLASSES; ++i)
 	{
 		if (gTrainerMoneyTable[i].trainerClass == trainer.trainerClass)
@@ -212,7 +212,7 @@ static u32 CalcMultiMoneyForTrainer(u16 trainerId)
 			rate = gTrainerMoneyTable[i].money;
 			break;
 		}
-		
+
 		if (gTrainerMoneyTable[i].trainerClass == 0xFF)
 		{
 			rate = gTrainerMoneyTable[0].money;
@@ -231,7 +231,7 @@ static u32 CalcMultiMoneyForTrainer(u16 trainerId)
 bool8 IsLinkDoubleBattle(void)
 {
 	u32 flags = (BATTLE_TYPE_MULTI | BATTLE_TYPE_TRAINER | BATTLE_TYPE_LINK | BATTLE_TYPE_DOUBLE);
-	
+
 	if ((gBattleTypeFlags & flags) == flags)
 		return TRUE;
 	else
@@ -244,9 +244,9 @@ bool8 IsMultiBattle(void)
 	u32 flags2 = (BATTLE_TYPE_MULTI | BATTLE_TYPE_TRAINER | BATTLE_TYPE_DOUBLE);
 	u32 flags3 = (BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_TRAINER | BATTLE_TYPE_DOUBLE);
 	u32 flags4 = (BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_DOUBLE);
-	
-	if (((gBattleTypeFlags & flags) == flags 
-	||   (gBattleTypeFlags & flags) == flags2 
+
+	if (((gBattleTypeFlags & flags) == flags
+	||   (gBattleTypeFlags & flags) == flags2
 	||   (gBattleTypeFlags & flags) == flags3
 	||   (gBattleTypeFlags & flags) == flags4) && gMain.inBattle)
 		return TRUE;
@@ -258,14 +258,14 @@ bool8 IsTwoOpponentBattle(void)
 {
 	if ((gBattleTypeFlags & (BATTLE_TYPE_DOUBLE | BATTLE_TYPE_TWO_OPPONENTS)) == (BATTLE_TYPE_DOUBLE | BATTLE_TYPE_TWO_OPPONENTS))
 		return TRUE;
-	
+
 	return FALSE;
 }
 
 bool8 BankSideHasTwoTrainers(u8 bank)
 {
 	u8 side = SIDE(bank);
-	
+
 	return ((side == B_SIDE_OPPONENT && IsTwoOpponentBattle())
 		 || (side == B_SIDE_PLAYER && IsTagBattle()));
 }
@@ -275,7 +275,7 @@ bool8 BankSideHasTwoTrainers(u8 bank)
 bool8 IsTagBattle(void)
 {
 	u32 flags = (BATTLE_TYPE_DOUBLE | BATTLE_TYPE_INGAME_PARTNER);
-	
+
 	if ((gBattleTypeFlags & flags) == flags)
 		return TRUE;
 	else
@@ -304,16 +304,16 @@ void ChooseProperPartnerController(void)
 	gBanksBySide[1] = 1;
 	gBanksBySide[3] = 3;
 	gBattlersCount = 4;
-	
+
 	gBattleBankFunc[0] = (u32) SetControllerToPlayer;
 	gBattleBankFunc[1] = (u32) SetControllerToOpponent;
 	gBattleBankFunc[3] = (u32) SetControllerToOpponent;
-	
+
 	if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER) {
 		gBattleBankFunc[2] = (u32) SetControllerToPlayerPartner;
 		gBanksBySide[2] = 2; //The game crashes when this line is not here for some reason
 	}
-	
+
 	else {
 		gBattleBankFunc[2] = (u32) SetControllerToPlayer;
 		gBanksBySide[2] = 2; //The game crashes when this line is not here for some reason
@@ -343,7 +343,7 @@ static void PlayerPartnerBufferExecComplete(void)
 
 static void PlayerPartnerBufferRunCommand(void)
 {
-	if (gBattleExecBuffer & gBitTable[gActiveBattler]) 
+	if (gBattleExecBuffer & gBitTable[gActiveBattler])
 	{
 		u8 buffer = gBattleBufferA[gActiveBattler][0];
 
@@ -379,7 +379,7 @@ static void PlayerPartnerHandleChooseMove(void)
 		if (gAbsentBattlerFlags & gBitTable[gBankTarget])
 			gBankTarget = GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
 	}
-	
+
 	if (moveInfo->possibleZMoves[chosenMoveId])
 	{
 		if (ShouldAIUseZMove(gActiveBattler, gBankTarget, moveInfo->moves[chosenMoveId]))
@@ -392,7 +392,7 @@ static void PlayerPartnerHandleChooseMove(void)
 		else if (moveInfo->canMegaEvolve && moveInfo->megaVariance == MEGA_VARIANT_ULTRA_BURST)
 			gNewBS->UltraData->chosen[gActiveBattler] = TRUE;
 	}
-	
+
 	//This is handled again later, but it's only here to help with the case of choosing Helping Hand when the partner is switching out.
 	gBattleStruct->chosenMovePositions[gActiveBattler] = chosenMoveId;
 	gBattleStruct->moveTarget[gActiveBattler] = gBankTarget;
@@ -417,18 +417,18 @@ static void PlayerPartnerHandleChooseAction(void)
 static void PlayerPartnerHandleChoosePokemon(void)
 {
 	u8 chosenMonId;
-	
+
 	if (gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] == PARTY_SIZE)
 	{
 		u8 battlerIn1, battlerIn2, firstId, lastId;
 		struct Pokemon* party = LoadPartyRange(gActiveBattler, &firstId, &lastId);
-			
+
 		if (gNewBS->bestMonIdToSwitchInto[gActiveBattler][0] == PARTY_SIZE
 		||  GetMonData(&party[gNewBS->bestMonIdToSwitchInto[gActiveBattler][0]], MON_DATA_HP, NULL) == 0)
 			CalcMostSuitableMonToSwitchInto();
 
 		chosenMonId = GetMostSuitableMonToSwitchInto();
-		
+
 		if (chosenMonId == PARTY_SIZE)
 		{
 			if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
@@ -444,7 +444,7 @@ static void PlayerPartnerHandleChoosePokemon(void)
 				battlerIn1 = gActiveBattler;
 				battlerIn2 = gActiveBattler;
 			}
-				
+
 			for (chosenMonId = firstId; chosenMonId < lastId; ++chosenMonId)
 			{
 				if (party[chosenMonId].species != SPECIES_NONE

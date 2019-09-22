@@ -479,7 +479,7 @@ extern const u8 sFrontierText_Giovanni_PreBattle[];
 extern const u8 sFrontierText_Giovanni_PlayerWin[];
 extern const u8 sFrontierText_Giovanni_PlayerLose[];
 
-const struct BattleTowerTrainer gTowerTrainers[] = 
+const struct BattleTowerTrainer gTowerTrainers[] =
 {
 	{
 		.owNum = 			OW_YOUNGSTER,

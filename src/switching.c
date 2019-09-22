@@ -12,7 +12,7 @@
 #include "../include/new/damage_calc.h"
 #include "../include/new/form_change.h"
 #include "../include/new/frontier.h"
-#include "../include/new/Helper_Functions.h"
+#include "../include/new/util.h"
 #include "../include/new/item_battle_scripts.h"
 #include "../include/new/move_battle_scripts.h"
 #include "../include/new/mega.h"
@@ -21,7 +21,7 @@
 #include "../include/new/trainer_sliding.h"
 #include "../include/new/z_move_battle_scripts.h"
 
-enum SwitchInStates 
+enum SwitchInStates
 {
 	SwitchIn_CamomonsReveal,
 	SwitchIn_HealingWish,
@@ -52,7 +52,7 @@ static u8 GetStealthRockDivisor(void);
 void atkE2_switchoutabilities(void)
 {
 	gActiveBattler = GetBattleBank(T2_READ_8(gBattlescriptCurrInstr + 1));
-	
+
 	switch (ABILITY(gActiveBattler)) {
 		case ABILITY_NATURALCURE:
 			gBattleMons[gActiveBattler].status1 = 0;
@@ -64,9 +64,9 @@ void atkE2_switchoutabilities(void)
 			EmitSetMonData(0, REQUEST_HP_BATTLE, gBitTable[gBattleStruct->switchoutPartyIndex[gActiveBattler]], 4, &gBattleMons[gActiveBattler].hp);
 			MarkBufferBankForExecution(gActiveBattler);
 	}
-	
+
 	SwitchOutFormsRevert(gActiveBattler);
-	
+
 	gBattlescriptCurrInstr += 2;
 }
 
@@ -75,7 +75,7 @@ bool8 TryRemovePrimalWeather(u8 bank, u8 ability)
 	int i;
 	BattleStringLoader = NULL;
 
-	switch (ability) {	
+	switch (ability) {
 		case ABILITY_PRIMORDIALSEA:
 			if (gBattleWeather & WEATHER_RAIN_PRIMAL)
 				BattleStringLoader = PrimalRainEndString;
@@ -96,7 +96,7 @@ bool8 TryRemovePrimalWeather(u8 bank, u8 ability)
 			if (i == bank) continue;
 			if (ABILITY(i) == ability) break;
 		}
-		
+
 		if (i == gBattlersCount)
 		{
 			gBattleWeather = 0;
@@ -106,7 +106,7 @@ bool8 TryRemovePrimalWeather(u8 bank, u8 ability)
 			return TRUE;
 		}
 	}
-	
+
 	return FALSE;
 }
 
@@ -123,7 +123,7 @@ bool8 TryActivateFlowerGift(u8 leavingBank)
 		if ((ABILITY(bank) == ABILITY_FLOWERGIFT ||  ABILITY(bank) == ABILITY_FORECAST)) //Just in case someone with Air Lock/Cloud Nine switches out
 		{
 			gStatuses3[bank] &= ~STATUS3_SWITCH_IN_ABILITY_DONE;
-		
+
 			if (AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, bank, 0, 0, 0))
 				return TRUE;
 		}
@@ -147,9 +147,9 @@ void atk61_drawpartystatussummary(void)
 
 	if (TryActivateFlowerGift(gActiveBattler))
 		return;
-	
+
 	gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
-	
+
 	if (SIDE(gActiveBattler) == 0)
 		party = gPlayerParty;
 	else
@@ -199,34 +199,34 @@ void atk4D_switchindataupdate(void)
 	}
 
 	gBattleMons[gActiveBattler].ability = GetPartyAbility(GetBankPartyData(gActiveBattler));
-	
+
 	CONSUMED_ITEMS(gActiveBattler) = 0;
 	gNewBS->StakeoutCounters[gActiveBattler] = 1;
-	
+
 	ClearSwitchBytes(gActiveBattler);
 	ClearSwitchBits(gActiveBattler);
-	
+
 	//gNewBS->LastUsedMoves[gActiveBattler] = 0;
 	//gNewBS->LastUsedTypes[gActiveBattler] = TYPE_BLANK;
-	
+
 	//Former Knock Off Check was here
 
 	if (gCurrentMove == MOVE_BATONPASS)
 	{
 		for (i = 0; i < BATTLE_STATS_NO-1; ++i)
 			gBattleMons[gActiveBattler].statStages[i] = oldData.statStages[i];
-		
+
 		gBattleMons[gActiveBattler].status2 = oldData.status2;
-		
+
 		//Gastro Acid Passing
-		if (IsAbilitySuppressed(gActiveBattler)) 
+		if (IsAbilitySuppressed(gActiveBattler))
 		{
 			gNewBS->SuppressedAbilities[gActiveBattler] = gBattleMons[gActiveBattler].ability;
 			gBattleMons[gActiveBattler].ability = 0;
 		}
-		
+
 		//Power Trick Passing
-		if (gStatuses3[gActiveBattler] & STATUS3_POWER_TRICK) 
+		if (gStatuses3[gActiveBattler] & STATUS3_POWER_TRICK)
 		{
 			u8 attack = gBattleMons[gActiveBattler].attack;
 			u8 defense = gBattleMons[gActiveBattler].defense;
@@ -234,16 +234,16 @@ void atk4D_switchindataupdate(void)
 			gBattleMons[gActiveBattler].defense = attack;
 		}
 	}
-	
+
 	if (!(gStatuses3[gActiveBattler] & STATUS3_LEVITATING))
 		gNewBS->MagnetRiseTimers[gActiveBattler] = 0;
-	
+
 	SwitchInClearSetData();
-	
+
 	if (ABILITY(gActiveBattler) == ABILITY_ILLUSION)
 	{
 		gStatuses3[gActiveBattler] |= STATUS3_ILLUSION;
-		
+
 		if (GetIllusionPartyData(gActiveBattler) != GetBankPartyData(gActiveBattler))
 		{
 			EmitDataTransfer(0, &gStatuses3[gActiveBattler], 4, &gStatuses3[gActiveBattler]);
@@ -256,7 +256,7 @@ void atk4D_switchindataupdate(void)
 	gBattleScripting->bank = gActiveBattler;
 
 	PREPARE_MON_NICK_BUFFER(gBattleTextBuff1, gActiveBattler, GetIllusionPartyNumber(gActiveBattler));
-	
+
 	gBattleMons[gActiveBattler].type3 = TYPE_BLANK;
 
 	gBattlescriptCurrInstr += 2;
@@ -314,7 +314,7 @@ void atk51_switchhandleorder(void)
 					gBattleStruct->monToSwitchIntoId[i] = gBattleBufferB[i][1];
 			}
 			break;
-		
+
 		case 1:
 			if (!(gBattleTypeFlags & BATTLE_TYPE_MULTI))
 				sub_8013F6C(gActiveBattler);
@@ -336,7 +336,7 @@ void atk51_switchhandleorder(void)
 			}
 			else if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
 				sub_80571DC(gActiveBattler, gBattleStruct->monToSwitchIntoId[gActiveBattler]);
-				
+
 			else
 				sub_8013F6C(gActiveBattler);
 
@@ -359,12 +359,12 @@ void atk52_switchineffects(void)
 	gHitMarker &= ~(HITMARKER_FAINTED(gActiveBattler));
 	gSpecialStatuses[gActiveBattler].flag40 = 0;
 	u8 ability = ABILITY(gActiveBattler);
-	
+
 	if (gBattleMons[gActiveBattler].hp == 0)
 		goto SWITCH_IN_END;
-	
+
 	if (!(gSideAffecting[SIDE(gActiveBattler)] & SIDE_STATUS_SPIKES) //Skip the entry hazards if there are none
-	&& gNewBS->SwitchInEffectsTracker >= SwitchIn_Spikes 
+	&& gNewBS->SwitchInEffectsTracker >= SwitchIn_Spikes
 	&& gNewBS->SwitchInEffectsTracker <= SwitchIn_StickyWeb)
 		gNewBS->SwitchInEffectsTracker = SwitchIn_PrimalReversion;
 
@@ -375,7 +375,7 @@ void atk52_switchineffects(void)
 				gBattleScripting->bank = gActiveBattler;
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_CamomonsTypeRevealRet;
-							
+
 				if (gBattleMons[gActiveBattler].type1 == gBattleMons[gActiveBattler].type2)
 					BattleStringLoader = gText_CamomonsTypeReveal;
 				else
@@ -414,29 +414,29 @@ void atk52_switchineffects(void)
 				gNewBS->HealingWishLoc &= ~gBitTable[gActiveBattler << 4];
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_LunarDanceHeal;
-				
+
 				gBattleMoveDamage = -1 * (gBattleMons[gActiveBattler].maxHP);
 				gBattleMons[gActiveBattler].status1 = 0;
 				EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[gActiveBattler].status1);
-				
+
 				//Restore PP Only in Lunar Dance
 				for (int i = 0; i < 4; ++i)
 				{
-					if (gBattleMons[gActiveBattler].moves[i] == 0) 
+					if (gBattleMons[gActiveBattler].moves[i] == 0)
 						break;
-					
+
 					gBattleMons[gActiveBattler].pp[i] = CalculatePPWithBonus(gBattleMons[gActiveBattler].moves[i], gBattleMons[gActiveBattler].ppBonuses, i);
 					EmitSetMonData(0, REQUEST_PPMOVE1_BATTLE + i, 0, 1, &gBattleMons[gActiveBattler].pp[i]);
 				}
-				
+
 				gBattleScripting->bank = gActiveBattler;
 				gBankAttacker = gActiveBattler;
 				++gNewBS->SwitchInEffectsTracker;
 				return;
 			}
 			++gNewBS->SwitchInEffectsTracker;
-		__attribute__ ((fallthrough));	
-		
+		__attribute__ ((fallthrough));
+
 		case SwitchIn_ZHealingWish:
 			if (gBattleMons[gActiveBattler].hp != gBattleMons[gActiveBattler].maxHP && gNewBS->ZMoveData->healReplacement)
 			{
@@ -449,11 +449,11 @@ void atk52_switchineffects(void)
 			}
 			else
 				gNewBS->ZMoveData->healReplacement = FALSE;
-			
+
 			gNewBS->DamageTaken[gActiveBattler] = 0;
 			++gNewBS->SwitchInEffectsTracker;
-		__attribute__ ((fallthrough));	
-		
+		__attribute__ ((fallthrough));
+
 		case SwitchIn_Spikes:
 			if (CheckGrounding(gActiveBattler) && ability != ABILITY_MAGICGUARD && gSideTimers[SIDE(gActiveBattler)].spikesAmount)
 			{
@@ -461,7 +461,7 @@ void atk52_switchineffects(void)
 				gNewBS->DamageTaken[gActiveBattler] += gBattleMoveDamage;
 
 				BattleScriptPushCursor();
-				gBattlescriptCurrInstr = BattleScript_SpikesHurt;								
+				gBattlescriptCurrInstr = BattleScript_SpikesHurt;
 				gSideAffecting[SIDE(gActiveBattler)] |= SIDE_STATUS_SPIKES_DAMAGED;
 				gBattleScripting->bank = gActiveBattler;
 				gBankTarget = gActiveBattler;
@@ -470,8 +470,8 @@ void atk52_switchineffects(void)
 				return;
 			}
 			++gNewBS->SwitchInEffectsTracker;
-		__attribute__ ((fallthrough));	
-		
+		__attribute__ ((fallthrough));
+
 		case SwitchIn_StealthRock:
 			if (ability != ABILITY_MAGICGUARD && gSideTimers[SIDE(gActiveBattler)].srAmount)
 			{
@@ -479,7 +479,7 @@ void atk52_switchineffects(void)
 				gNewBS->DamageTaken[gActiveBattler] += gBattleMoveDamage;
 
 				BattleScriptPushCursor();
-				gBattlescriptCurrInstr = BattleScript_SRHurt;								
+				gBattlescriptCurrInstr = BattleScript_SRHurt;
 				gSideAffecting[SIDE(gActiveBattler)] |= SIDE_STATUS_SPIKES_DAMAGED;
 				gBattleScripting->bank = gActiveBattler;
 				gBankTarget = gActiveBattler;
@@ -488,13 +488,13 @@ void atk52_switchineffects(void)
 				return;
 			}
 			++gNewBS->SwitchInEffectsTracker;
-		__attribute__ ((fallthrough));	
-		
+		__attribute__ ((fallthrough));
+
 		case SwitchIn_ToxicSpikes:
 			if (CheckGrounding(gActiveBattler) && gSideTimers[SIDE(gActiveBattler)].tspikesAmount)
-			{		
-				if (gBattleMons[gActiveBattler].type1 == TYPE_POISON 
-				||  gBattleMons[gActiveBattler].type2 == TYPE_POISON 
+			{
+				if (gBattleMons[gActiveBattler].type1 == TYPE_POISON
+				||  gBattleMons[gActiveBattler].type2 == TYPE_POISON
 				||  gBattleMons[gActiveBattler].type3 == TYPE_POISON)
 				{
 					gSideTimers[SIDE(gActiveBattler)].tspikesAmount = 0;
@@ -519,11 +519,11 @@ void atk52_switchineffects(void)
 				return;
 			}
 			++gNewBS->SwitchInEffectsTracker;
-		__attribute__ ((fallthrough));	
-		
+		__attribute__ ((fallthrough));
+
 		case SwitchIn_StickyWeb:
 			if (CheckGrounding(gActiveBattler) && gSideTimers[SIDE(gActiveBattler)].stickyWeb)
-			{		
+			{
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_StickyWebSpeedDrop;
 				gSideAffecting[SIDE(gActiveBattler)] |= SIDE_STATUS_SPIKES_DAMAGED;
@@ -535,7 +535,7 @@ void atk52_switchineffects(void)
 			}
 			++gNewBS->SwitchInEffectsTracker;
 		__attribute__ ((fallthrough));
-		
+
 		case SwitchIn_EmergencyExit:
 			if (ABILITY(gActiveBattler) == ABILITY_EMERGENCYEXIT
 			||  ABILITY(gActiveBattler) == ABILITY_WIMPOUT)
@@ -551,7 +551,7 @@ void atk52_switchineffects(void)
 			}
 			++gNewBS->SwitchInEffectsTracker;
 		__attribute__ ((fallthrough));
-	
+
 		case SwitchIn_PrimalReversion:	;
 			const u8* script = DoPrimalReversion(gActiveBattler, 1);
 			if(script)
@@ -564,14 +564,14 @@ void atk52_switchineffects(void)
 				return;
 			}
 			++gNewBS->SwitchInEffectsTracker;
-		__attribute__ ((fallthrough));	
-		
+		__attribute__ ((fallthrough));
+
 		case SwitchIn_Truant:
 			if (ABILITY(gActiveBattler) == ABILITY_TRUANT)
 				gDisableStructs[gActiveBattler].truantCounter ^= 1;
 			++gNewBS->SwitchInEffectsTracker;
-		__attribute__ ((fallthrough));	
-		
+		__attribute__ ((fallthrough));
+
 		case SwitchIn_Abilities:
 			for (i = 0; i < gBattlersCount; ++i)
 			{
@@ -586,7 +586,7 @@ void atk52_switchineffects(void)
 
 			++gNewBS->SwitchInEffectsTracker;
 		__attribute__ ((fallthrough));
-		
+
 		case SwitchIn_Items:
 			if (ItemBattleEffects(ItemEffects_SwitchIn, gActiveBattler, TRUE, FALSE))
 				return;
@@ -595,7 +595,7 @@ void atk52_switchineffects(void)
 				return;
 			++gNewBS->SwitchInEffectsTracker;
 		__attribute__ ((fallthrough));
-		
+
 		case SwitchIn_AirBalloon:
 			if (gActiveBattler < gBattlersCount && ITEM_EFFECT(gActiveBattler) == ITEM_EFFECT_AIR_BALLOON)
 			{
@@ -620,7 +620,7 @@ void atk52_switchineffects(void)
 			}
 			++gNewBS->SwitchInEffectsTracker;
 		__attribute__ ((fallthrough));
-	
+
 		case SwitchIn_TrainerMessage:
 			if (ShouldDoTrainerSlide(gActiveBattler, gTrainerBattleOpponent_A, TRAINER_SLIDE_LAST_SWITCHIN))
 			{
@@ -630,7 +630,7 @@ void atk52_switchineffects(void)
 			}
 			++gNewBS->SwitchInEffectsTracker;
 		__attribute__ ((fallthrough));
-		
+
 		case SwitchIn_PreEnd:
 		SWITCH_IN_END:
 			gSideAffecting[SIDE(gActiveBattler)] &= ~(SIDE_STATUS_SPIKES_DAMAGED);
@@ -804,14 +804,14 @@ static bool8 TryDoForceSwitchOut(void)
 		gBattlescriptCurrInstr = BattleScript_SuccessForceOut;
 		return TRUE;
 	}
-	
+
 	//If Wild Battle
 	else if (gBattleMons[gBankAttacker].level < gBattleMons[gBankTarget].level)
 	{
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
 		return FALSE;
 	}
-	
+
 	//Roar always fails in Wild Double Battles if used by the player
 	else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && SIDE(gBankAttacker) == B_SIDE_PLAYER)
 	{
@@ -847,7 +847,7 @@ static bool8 PPIsMaxed(u8 bank)
 	for (int i = 0; i < 4; ++i)
 	{
 		if (gBattleMons[bank].moves[i] == MOVE_NONE) break;
-		
+
 		if (gBattleMons[bank].pp[i] < CalculatePPWithBonus(gBattleMons[bank].moves[i], gBattleMons[bank].ppBonuses, i))
 			return FALSE;
 	}
@@ -855,34 +855,34 @@ static bool8 PPIsMaxed(u8 bank)
 }
 
 bool8 HasNoMonsToSwitch(u8 battler)
-{	
+{
 	pokemon_t* party;
 	u8 firstMonId, lastMonId, battlerIn1, battlerIn2;
 	int i;
-	
+
 	if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE))
 		return FALSE;
 
 	party = LoadPartyRange(battler, &firstMonId, &lastMonId);
-	
+
 	battlerIn1 = battler;
 	if (gAbsentBattlerFlags & gBitTable[GetBattlerAtPosition(GetBattlerPosition(battler) ^ BIT_FLANK)])
 		battlerIn2 = battler;
 	else
 		battlerIn2 = GetBattlerAtPosition(GetBattlerPosition(battler) ^ BIT_FLANK);
-			
+
 	for (i = firstMonId; i < lastMonId; ++i)
 	{
 		if (GetMonData(&party[i], MON_DATA_HP, 0) != 0
 		&& GetMonData(&party[i], MON_DATA_SPECIES, 0) != SPECIES_NONE
 		&& GetMonData(&party[i], MON_DATA_SPECIES2, 0) != SPECIES_EGG
 		&& !GetMonData(&party[i], MON_DATA_IS_EGG, 0)
-		&& i != gBattlerPartyIndexes[battlerIn1] 
+		&& i != gBattlerPartyIndexes[battlerIn1]
 		&& i != gBattlerPartyIndexes[battlerIn2])
 			break;
 	}
-	
-	return (i == lastMonId);	
+
+	return (i == lastMonId);
 }
 
 void ClearSwitchBytes(u8 bank)
@@ -921,7 +921,7 @@ void ClearSwitchBits(u8 bank)
 void PartyMenuSwitchingUpdate(void)
 {
 	int i;
-	
+
 	if (IsOfType(gActiveBattler, TYPE_GHOST)
 	||  ITEM_EFFECT(gActiveBattler) == ITEM_EFFECT_SHED_SHELL)
 		goto SKIP_SWITCH_BLOCKING_CHECK;
@@ -992,7 +992,7 @@ u32 CalcStealthRockDamagePartyMon(struct Pokemon* mon)
 static u8 GetStealthRockDivisor(void)
 {
 	u8 divisor = 1;
-	
+
 	switch (gBattleMoveDamage) {
 		case 5:
 			divisor = 64;

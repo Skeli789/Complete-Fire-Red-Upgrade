@@ -10,7 +10,7 @@
 #include "../include/new/catching.h"
 #include "../include/new/dns.h"
 #include "../include/new/form_change.h"
-#include "../include/new/Helper_Functions.h"
+#include "../include/new/util.h"
 #include "../include/new/mega.h"
 #include "../include/new/pokemon_storage_system.h"
 
@@ -45,20 +45,20 @@ static bool8 CriticalCapture(u32 odds);
 void atkEF_handleballthrow(void)
 {
 	if (gBattleExecBuffer) return;
-	
-    u8 ball_multiplier = 0;
-	
-    gActiveBattler = gBankAttacker;
-    gBankTarget = GetCatchingBattler();
-	
+
+	u8 ball_multiplier = 0;
+
+	gActiveBattler = gBankAttacker;
+	gBankTarget = GetCatchingBattler();
+
 	u16 atkSpecies = gBattleMons[gBankAttacker].species;
 	u16 defSpecies = gBattleMons[gBankTarget].species;
 	u8 atkLevel = gBattleMons[gBankAttacker].level;
 	u8 defLevel = gBattleMons[gBankTarget].level;
-	
+
 	u8 ItemType = ItemId_GetType(gLastUsedItem);
-	
-    if (gBattleTypeFlags & BATTLE_TYPE_TRAINER) {
+
+	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER) {
 		#ifdef CATCH_TRAINERS_POKEMON_FLAG
 			if (FlagGet(CATCH_TRAINERS_POKEMON_FLAG)) {
 				EmitBallThrowAnim(0, 4);
@@ -76,44 +76,44 @@ void atkEF_handleballthrow(void)
 				MarkBufferBankForExecution(gActiveBattler);
 				gBattlescriptCurrInstr = BattleScript_TrainerBallBlock;
 			}
-		
+
 		#else
 			EmitBallThrowAnim(0, 5);
 			MarkBufferBankForExecution(gActiveBattler);
 			gBattlescriptCurrInstr = BattleScript_TrainerBallBlock;
 		#endif
-    }
-	
+	}
+
 	else if ((gBattleTypeFlags & BATTLE_TYPE_GHOST) || FlagGet(NO_CATCHING_FLAG) || FlagGet(NO_CATCHING_AND_RUNNING_FLAG)) {
 		EmitBallThrowAnim(0, 6);
 		MarkBufferBankForExecution(gActiveBattler);
 		gBattlescriptCurrInstr = BattleScript_DodgedBall;
 	}
-	
-    else if (gBattleTypeFlags & (BATTLE_TYPE_OLD_MAN | BATTLE_TYPE_POKE_DUDE)) {
-        EmitBallThrowAnim(0, 4);
-        MarkBufferBankForExecution(gActiveBattler);
-        gBattlescriptCurrInstr = BattleScript_TutorialThrow;
-    }
-	
-    else {
-        u32 odds;
-        u8 catch_rate;
-		
-        if (ItemType == BALL_TYPE_SAFARI_BALL)
-            catch_rate = udivsi(gBattleStruct->safariCatchFactor * 1275, 100);
-        else
-            catch_rate = gBaseStats[GetBankPartyData(gBankTarget)->species].catchRate; //Uses party data b/c Transform update Gen 5+
-		
-        if (ItemType > 5) {
-            switch (ItemType) {
+
+	else if (gBattleTypeFlags & (BATTLE_TYPE_OLD_MAN | BATTLE_TYPE_POKE_DUDE)) {
+		EmitBallThrowAnim(0, 4);
+		MarkBufferBankForExecution(gActiveBattler);
+		gBattlescriptCurrInstr = BattleScript_TutorialThrow;
+	}
+
+	else {
+		u32 odds;
+		u8 catch_rate;
+
+		if (ItemType == BALL_TYPE_SAFARI_BALL)
+			catch_rate = udivsi(gBattleStruct->safariCatchFactor * 1275, 100);
+		else
+			catch_rate = gBaseStats[GetBankPartyData(gBankTarget)->species].catchRate; //Uses party data b/c Transform update Gen 5+
+
+		if (ItemType > 5) {
+			switch (ItemType) {
 				case BALL_TYPE_NET_BALL:
 					if (IsOfType(gBankTarget, TYPE_WATER) || IsOfType(gBankTarget, TYPE_BUG))
 						ball_multiplier = 35;
 					else
 						ball_multiplier = 10;
 					break;
-					
+
 				case BALL_TYPE_DIVE_BALL:
 					if (GetCurrentMapType() == MAP_TYPE_UNDERWATER
 					|| FishingByte || TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
@@ -121,25 +121,25 @@ void atkEF_handleballthrow(void)
 					else
 						ball_multiplier = 10;
 					break;
-					
+
 				case BALL_TYPE_NEST_BALL:
 					if (gBattleMons[gBankTarget].level <= 29)
 						ball_multiplier = MathMax(10, 41 - defLevel);
 					else
 						ball_multiplier = 10;
 					break;
-					
+
 				case BALL_TYPE_REPEAT_BALL:
 					if (GetSetPokedexFlag(SpeciesToNationalPokedexNum(defSpecies), FLAG_GET_CAUGHT))
 						ball_multiplier = 35;
 					else
 						ball_multiplier = 10;
 					break;
-					
+
 				case BALL_TYPE_TIMER_BALL:
 					ball_multiplier = MathMax(40, 10 + gBattleResults->battleTurnCounter * 3);
 					break;
-					
+
 				case BALL_TYPE_LUXURY_BALL:
 				case BALL_TYPE_PREMIER_BALL:
 				case BALL_TYPE_CHERISH_BALL:
@@ -147,7 +147,7 @@ void atkEF_handleballthrow(void)
 				case BALL_TYPE_HEAL_BALL:
 					ball_multiplier = 10;
 					break;
-				
+
 				case BALL_TYPE_LEVEL_BALL:
 					if (atkLevel <= defLevel)
 						ball_multiplier = 10;
@@ -158,19 +158,19 @@ void atkEF_handleballthrow(void)
 					else
 						ball_multiplier = 80;
 					break;
-					
+
 				case BALL_TYPE_LURE_BALL:
 					if (FishingByte)
 						ball_multiplier = 50;
 					else
 						ball_multiplier = 10;
 					break;
-				
+
 				case BALL_TYPE_MOON_BALL: ;
 					int i;
 					const struct Evolution* evolutions = gEvolutionTable[defSpecies];
-					
-					for (i = 0; i < EVOS_PER_MON; ++i) 
+
+					for (i = 0; i < EVOS_PER_MON; ++i)
 					{
 						switch (evolutions[i].method) {
 							case EVO_ITEM:
@@ -184,18 +184,18 @@ void atkEF_handleballthrow(void)
 								}
 						}
 					}
-					
+
 					END_MOON_LOOP:
 					if (i == EVOS_PER_MON)
 						ball_multiplier = 10;
-					
+
 					break;
-				
+
 				case BALL_TYPE_LOVE_BALL:
 					if (SpeciesToNationalPokedexNum(atkSpecies) == SpeciesToNationalPokedexNum(defSpecies)) {
 						u8 atkGender = GetGenderFromSpeciesAndPersonality(atkSpecies, gBattleMons[gBankAttacker].personality);
 						u8 defGender = GetGenderFromSpeciesAndPersonality(defSpecies, gBattleMons[gBankTarget].personality);
-						
+
 						if (atkGender != 0xFF && defGender != 0xFF && atkGender != defGender)
 							ball_multiplier = 80;
 						else
@@ -204,14 +204,14 @@ void atkEF_handleballthrow(void)
 					else
 						ball_multiplier = 10;
 					break;
-				
+
 				//Heavy Ball modifies the catch rate itself, not the multiplier
 				case BALL_TYPE_HEAVY_BALL:	;
 					ball_multiplier = 10;
 					//Apparently abilities or Float Stone have no affect here
 					u16 defWeight = GetPokedexHeightWeight(SpeciesToNationalPokedexNum(defSpecies), PKDX_GET_WEIGHT);
 					u8 old_catch_rate;
-					
+
 					if (defWeight < 1000) {
 						old_catch_rate = catch_rate;
 						catch_rate -= 20;
@@ -223,33 +223,33 @@ void atkEF_handleballthrow(void)
 					else if (defWeight > 3000)
 						catch_rate += 30;
 					break;
-				
+
 				case BALL_TYPE_FAST_BALL:
 					if (gBaseStats[gBankTarget].baseSpeed >= 100)
 						ball_multiplier = 40;
 					break;
-				
+
 				case BALL_TYPE_SPORT_BALL:
 					ball_multiplier = 15;
 					break;
-				
+
 				case BALL_TYPE_DUSK_BALL:
 					if (GetCurrentMapType() == MAP_TYPE_UNDERGROUND)
 						ball_multiplier = DUSK_BALL_MULTIPLIER;
-						
+
 					#ifdef TIME_ENABLED
 					else if (IsNightTime())
 						ball_multiplier = DUSK_BALL_MULTIPLIER;
 					#endif
 					break;
-				
+
 				case BALL_TYPE_QUICK_BALL:
 					if (gBattleResults->battleTurnCounter == 0)
 						ball_multiplier = 50;
 					else
 						ball_multiplier = 10;
 					break;
-				
+
 				case BALL_TYPE_BEAST_BALL:
 					if (CheckTableForSpecies(defSpecies, gUltraBeastList))
 						ball_multiplier = 50;
@@ -257,15 +257,15 @@ void atkEF_handleballthrow(void)
 						ball_multiplier = 1;
 					break;
 			}
-        }
-        else
-            ball_multiplier = sBallCatchBonuses[ItemType - BALL_TYPE_ULTRA_BALL];
-		
+		}
+		else
+			ball_multiplier = sBallCatchBonuses[ItemType - BALL_TYPE_ULTRA_BALL];
+
 		if (CheckTableForSpecies(defSpecies, gUltraBeastList) && ItemType != BALL_TYPE_BEAST_BALL)
 			ball_multiplier = 1; //All balls except for Beast Ball have a hard time catching Ultra Beasts
-		
-        odds = udivsi(((catch_rate * udivsi(ball_multiplier, 10)) * (gBattleMons[gBankTarget].maxHP * 3 - gBattleMons[gBankTarget].hp * 2)), (3 * gBattleMons[gBankTarget].maxHP));
-		
+
+		odds = udivsi(((catch_rate * udivsi(ball_multiplier, 10)) * (gBattleMons[gBankTarget].maxHP * 3 - gBattleMons[gBankTarget].hp * 2)), (3 * gBattleMons[gBankTarget].maxHP));
+
 		#ifndef NO_HARDER_WILD_DOUBLES
 		if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER) && (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)) {
 			u16 PokesCaught = GetNationalPokedexCount(FLAG_GET_CAUGHT);
@@ -281,82 +281,82 @@ void atkEF_handleballthrow(void)
 				odds = udivsi(odds * 80, 100);
 		}
 		#endif
-		
-        if (gBattleMons[gBankTarget].status1 & (STATUS_SLEEP | STATUS_FREEZE))
-            odds = udivsi(odds * 250, 100);
-        if (gBattleMons[gBankTarget].status1 & (STATUS_PSN_ANY | STATUS_BURN | STATUS_PARALYSIS))
-            odds = udivsi((odds * 150), 100);
 
-        if (ItemType != ITEM_SAFARI_BALL) {
-            if (ItemType == BALL_TYPE_MASTER_BALL)
-                gBattleResults->usedMasterBall = 1;
-			
+		if (gBattleMons[gBankTarget].status1 & (STATUS_SLEEP | STATUS_FREEZE))
+			odds = udivsi(odds * 250, 100);
+		if (gBattleMons[gBankTarget].status1 & (STATUS_PSN_ANY | STATUS_BURN | STATUS_PARALYSIS))
+			odds = udivsi((odds * 150), 100);
+
+		if (ItemType != ITEM_SAFARI_BALL) {
+			if (ItemType == BALL_TYPE_MASTER_BALL)
+				gBattleResults->usedMasterBall = 1;
+
 			//This was used for the TV shows in Ruby, but seems kind of pointless in FR.
 			//Commenting it out also prevents errors from using poke balls with large indices.
-            //else if (gBattleResults.usedBalls[ItemType - BALL_TYPE_ULTRA_BALL] < 0xFF)
-            //        gBattleResults.usedBalls[ItemType - BALL_TYPE_ULTRA_BALL]++;
-        }
-		
-        if (odds >= 0xFF) { //Poke Caught
-            EmitBallThrowAnim(0, 4);
-            MarkBufferBankForExecution(gActiveBattler);
-            gBattlescriptCurrInstr = BattleScript_SuccessBallThrow;
-			
+			//else if (gBattleResults.usedBalls[ItemType - BALL_TYPE_ULTRA_BALL] < 0xFF)
+			//		gBattleResults.usedBalls[ItemType - BALL_TYPE_ULTRA_BALL]++;
+		}
+
+		if (odds >= 0xFF) { //Poke Caught
+			EmitBallThrowAnim(0, 4);
+			MarkBufferBankForExecution(gActiveBattler);
+			gBattlescriptCurrInstr = BattleScript_SuccessBallThrow;
+
 			if (ItemType != BALL_TYPE_PARK_BALL) //Might crash the game if using Park Ball on regular Pokemon. Or will load garbage data for ball
 				SetMonData(&gEnemyParty[gBattlerPartyIndexes[gBankTarget]], MON_DATA_POKEBALL, (const void*) &ItemType);
-			
-            if (CalculatePlayerPartyCount() == 6)
-                gBattleCommunication[MULTISTRING_CHOOSER] = 0;
-            else
-                gBattleCommunication[MULTISTRING_CHOOSER] = 1;
-        }
-		
-        else { //Poke may be caught, calculate shakes
-            u8 shakes, maxShakes;
+
+			if (CalculatePlayerPartyCount() == 6)
+				gBattleCommunication[MULTISTRING_CHOOSER] = 0;
+			else
+				gBattleCommunication[MULTISTRING_CHOOSER] = 1;
+		}
+
+		else { //Poke may be caught, calculate shakes
+			u8 shakes, maxShakes;
 			if (CriticalCapture(odds))
 				maxShakes = 2;
 			else
 				maxShakes = 4;
-			
+
 			if (ItemType == BALL_TYPE_MASTER_BALL
 			||	ItemType == BALL_TYPE_DREAM_BALL
 			||	ItemType == BALL_TYPE_PARK_BALL)
-                shakes = maxShakes;
-				
+				shakes = maxShakes;
+
 			else {
 				odds = udivsi(0xFFFF0, Sqrt(Sqrt(udivsi(0xFF0000, odds))));
 				for (shakes = 0; shakes < maxShakes && Random() < odds; ++shakes) ;
 			}
-        
-            EmitBallThrowAnim(0, shakes);
-            MarkBufferBankForExecution(gActiveBattler);
-			
-            if (shakes == maxShakes) {
-                gBattlescriptCurrInstr = BattleScript_SuccessBallThrow;
-				
+
+			EmitBallThrowAnim(0, shakes);
+			MarkBufferBankForExecution(gActiveBattler);
+
+			if (shakes == maxShakes) {
+				gBattlescriptCurrInstr = BattleScript_SuccessBallThrow;
+
 				if (ItemType != BALL_TYPE_PARK_BALL) //May crash the game if using Park Ball on regular Pokemon
 					SetMonData(&gEnemyParty[gBattlerPartyIndexes[gBankTarget]], MON_DATA_POKEBALL, (const void*) &ItemType);
-				
-                if (CalculatePlayerPartyCount() == 6)
-                    gBattleCommunication[MULTISTRING_CHOOSER] = 0;
-                else
-                    gBattleCommunication[MULTISTRING_CHOOSER] = 1;
-            }
-			
-            else { //rip
-                gBattleCommunication[MULTISTRING_CHOOSER] = shakes;
-                gBattlescriptCurrInstr = BattleScript_ShakeBallThrow;
-            }
-        }
-    }
+
+				if (CalculatePlayerPartyCount() == 6)
+					gBattleCommunication[MULTISTRING_CHOOSER] = 0;
+				else
+					gBattleCommunication[MULTISTRING_CHOOSER] = 1;
+			}
+
+			else { //rip
+				gBattleCommunication[MULTISTRING_CHOOSER] = shakes;
+				gBattlescriptCurrInstr = BattleScript_ShakeBallThrow;
+			}
+		}
+	}
 }
 
 static u8 GetCatchingBattler(void)
 {
-    if (IsBattlerAlive(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)))
-        return GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
-    else
-        return GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
+	if (IsBattlerAlive(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)))
+		return GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
+	else
+		return GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
 }
 
 static bool8 CriticalCapture(u32 odds)
@@ -378,7 +378,7 @@ static bool8 CriticalCapture(u32 odds)
 		odds *= 2;
 	else
 		odds = udivsi(odds * 250, 100);
-	
+
 	odds = udivsi(odds, 6);
 	if (umodsi(Random(), 0xFF) < odds)
 	{
@@ -395,15 +395,15 @@ static bool8 CriticalCapture(u32 odds)
 
 u8 GiveMonToPlayer(struct Pokemon* mon) //Hook in
 {
-    int i;
+	int i;
 
 	TryFormRevert(mon);
 	TryRevertMega(mon);
 
-    SetMonData(mon, MON_DATA_OT_NAME, gSaveBlock2->playerName);
-    SetMonData(mon, MON_DATA_OT_GENDER, &gSaveBlock2->playerGender);
-    SetMonData(mon, MON_DATA_OT_ID, gSaveBlock2->playerTrainerId);
-	
+	SetMonData(mon, MON_DATA_OT_NAME, gSaveBlock2->playerName);
+	SetMonData(mon, MON_DATA_OT_GENDER, &gSaveBlock2->playerGender);
+	SetMonData(mon, MON_DATA_OT_ID, gSaveBlock2->playerTrainerId);
+
 	if (gMain.inBattle
 	&&  GetPocketByItemId(gLastUsedItem) == POCKET_POKE_BALLS)
 	{
@@ -412,19 +412,19 @@ u8 GiveMonToPlayer(struct Pokemon* mon) //Hook in
 		else if (ItemId_GetType(gLastUsedItem) == BALL_TYPE_FRIEND_BALL)
 			mon->friendship = 200;
 	}
-	
-    i = 0;
 
-    while (i < PARTY_SIZE && gPlayerParty[i].species != SPECIES_NONE)
-        ++i;
+	i = 0;
 
-    if (i >= PARTY_SIZE)
-        return SendMonToPC(mon);
+	while (i < PARTY_SIZE && gPlayerParty[i].species != SPECIES_NONE)
+		++i;
 
-    CopyMon(&gPlayerParty[i], mon, sizeof(struct Pokemon));
-    gPlayerPartyCount = i + 1;
+	if (i >= PARTY_SIZE)
+		return SendMonToPC(mon);
 
-    return MON_GIVEN_TO_PARTY;
+	CopyMon(&gPlayerParty[i], mon, sizeof(struct Pokemon));
+	gPlayerPartyCount = i + 1;
+
+	return MON_GIVEN_TO_PARTY;
 }
 
 u8 ItemIdToBallId(u16 ballItem)
@@ -434,44 +434,44 @@ u8 ItemIdToBallId(u16 ballItem)
 
 void CreateThrowPokeBall(u8 taskId)
 {
-    u8 ballId = ItemIdToBallId(gLastUsedItem);
-    LoadBallGfx(ballId);
-    DestroyAnimVisualTask(taskId);
+	u8 ballId = ItemIdToBallId(gLastUsedItem);
+	LoadBallGfx(ballId);
+	DestroyAnimVisualTask(taskId);
 }
 
 void __attribute__((long_call)) FreeBallGfx(u8 ballId);
 void DestroyThrowPokeBall(u8 taskId)
 {
-    u8 ballId = ItemIdToBallId(gLastUsedItem);
-    FreeBallGfx(ballId);
-    DestroyAnimVisualTask(taskId);
+	u8 ballId = ItemIdToBallId(gLastUsedItem);
+	FreeBallGfx(ballId);
+	DestroyAnimVisualTask(taskId);
 }
 
 void StartPokeballThrowAnimation(u8 taskId)
 {
-    u8 ballId;
-    u8 spriteId;
+	u8 ballId;
+	u8 spriteId;
 
-    ballId = ItemIdToBallId(gLastUsedItem);
-    spriteId = CreateSprite(&gBallSpriteTemplates[ballId], 32, 80, 29);
-    gSprites[spriteId].data[0] = 34;
-    gSprites[spriteId].data[1] = GetBattlerSpriteCoord(gBattleAnimTarget, 0);
-    gSprites[spriteId].data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, 1) - 16;
-    gSprites[spriteId].callback = (void*) 0x80EF8C1;
-    gBattleSpritesDataPtr->animationData->field_9_x2 = gSprites[gBattlerSpriteIds[gBattleAnimTarget]].invisible;
-    gTasks[taskId].data[0] = spriteId;
-    gTasks[taskId].func = (void*) 0x80EF699;
+	ballId = ItemIdToBallId(gLastUsedItem);
+	spriteId = CreateSprite(&gBallSpriteTemplates[ballId], 32, 80, 29);
+	gSprites[spriteId].data[0] = 34;
+	gSprites[spriteId].data[1] = GetBattlerSpriteCoord(gBattleAnimTarget, 0);
+	gSprites[spriteId].data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, 1) - 16;
+	gSprites[spriteId].callback = (void*) 0x80EF8C1;
+	gBattleSpritesDataPtr->animationData->field_9_x2 = gSprites[gBattlerSpriteIds[gBattleAnimTarget]].invisible;
+	gTasks[taskId].data[0] = spriteId;
+	gTasks[taskId].func = (void*) 0x80EF699;
 }
 
 void LoadBallGfx(u8 ballId)
 {
-    u16 var;
-    if (GetSpriteTileStartByTag(gBallSpriteSheets[ballId].tag) == 0xFFFF)
-    {
-        LoadCompressedSpriteSheetUsingHeap(&gBallSpriteSheets[ballId]);
-        LoadCompressedSpritePaletteUsingHeap(&gBallSpritePalettes[ballId]);
-    }
-    switch (ballId) {
+	u16 var;
+	if (GetSpriteTileStartByTag(gBallSpriteSheets[ballId].tag) == 0xFFFF)
+	{
+		LoadCompressedSpriteSheetUsingHeap(&gBallSpriteSheets[ballId]);
+		LoadCompressedSpritePaletteUsingHeap(&gBallSpritePalettes[ballId]);
+	}
+	switch (ballId) {
 		case BALL_TYPE_MASTER_BALL:
 		case BALL_TYPE_ULTRA_BALL:
 		case BALL_TYPE_GREAT_BALL:
@@ -484,7 +484,7 @@ void LoadBallGfx(u8 ballId)
 			var = GetSpriteTileStartByTag(gBallSpriteSheets[ballId].tag);
 			LZDecompressVram(gOpenPokeballGfx, (void*)(VRAM + 0x10100 + var * 32));
 			break;
-    }
+	}
 }
 
 u16 GetBattlerPokeballItemId(u8 bank)
@@ -517,7 +517,7 @@ bool8 DoubleWildPokeBallItemUseFix(u8 taskId)
 			effect = TRUE;
 		}
 		else if ((BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)) && BATTLER_SEMI_INVULNERABLE(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)))
-		||       (BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT)) && BATTLER_SEMI_INVULNERABLE(GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT))))
+		||	   (BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT)) && BATTLER_SEMI_INVULNERABLE(GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT))))
 		{
 			DisplayItemMessage(taskId, 2, gText_CantAimAtSemiInvulnerableTarget, bag_menu_inits_lists_menu);
 			effect = TRUE;
@@ -551,6 +551,6 @@ bool8 TryGetPokeBallBattleScript(void)
 
 		return TRUE;
 	}
-	
+
 	return FALSE;
 }

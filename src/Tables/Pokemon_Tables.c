@@ -28,7 +28,7 @@ const struct AlternateSize gAlternateSpeciesSizeTable[] =
 	ALTERNATE_SIZE(SPECIES_SLOWBRO_MEGA, 2.0, 120.0),
 	ALTERNATE_SIZE(SPECIES_GRIMER_A, 0.7, 42.0),
 	ALTERNATE_SIZE(SPECIES_MUK_A, 1.0, 52.0),
-	ALTERNATE_SIZE(SPECIES_GENGAR_MEGA, 1.4, 40.5),	
+	ALTERNATE_SIZE(SPECIES_GENGAR_MEGA, 1.4, 40.5),
 	ALTERNATE_SIZE(SPECIES_EXEGGUTOR_A, 10.9, 415.6),
 	ALTERNATE_SIZE(SPECIES_MAROWAK_A, 1.0, 34.0),
 	ALTERNATE_SIZE(SPECIES_KANGASKHAN_MEGA, 2.2, 100.0),
@@ -85,7 +85,7 @@ const struct AlternateSize gAlternateSpeciesSizeTable[] =
 	ALTERNATE_SIZE(SPECIES_HOOPA_UNBOUND, 6.5, 490.0),
 	ALTERNATE_SIZE(SPECIES_LYCANROC_N, 1.1, 25.0),
 	ALTERNATE_SIZE(SPECIES_WISHIWASHI_S, 8.2, 78.6),
-	ALTERNATE_SIZE(SPECIES_MINIOR_RED, 0.3, 0.3),	
+	ALTERNATE_SIZE(SPECIES_MINIOR_RED, 0.3, 0.3),
 	ALTERNATE_SIZE(SPECIES_MINIOR_BLUE, 0.3, 0.3),
 	ALTERNATE_SIZE(SPECIES_MINIOR_ORANGE, 0.3, 0.3),
 	ALTERNATE_SIZE(SPECIES_MINIOR_YELLOW, 0.3, 0.3),
@@ -274,7 +274,7 @@ const species_t gPikachuCapForms[] =
 
 const u8 gNumPikachuCapForms = ARRAY_COUNT(gPikachuCapForms);
 
-const species_t gBattleTowerStandardSpeciesBanList[] = 
+const species_t gBattleTowerStandardSpeciesBanList[] =
 {
 	SPECIES_MEWTWO,
 	SPECIES_MEW,
@@ -384,7 +384,7 @@ const species_t gGSCup_LegendarySpeciesList[] =
 	SPECIES_TABLES_TERMIN
 };
 
-const species_t gSmogonOU_SpeciesBanList[] = 
+const species_t gSmogonOU_SpeciesBanList[] =
 {
 	SPECIES_AEGISLASH,
 	SPECIES_ARCEUS,
@@ -444,7 +444,7 @@ const species_t gSmogonOU_SpeciesBanList[] =
 	SPECIES_TABLES_TERMIN
 };
 
-const species_t gSmogonOUDoubles_SpeciesBanList[] = 
+const species_t gSmogonOUDoubles_SpeciesBanList[] =
 {
 	SPECIES_SNORLAX,
 	SPECIES_MEWTWO,
@@ -488,7 +488,7 @@ const species_t gSmogonOUDoubles_SpeciesBanList[] =
 	SPECIES_TABLES_TERMIN
 };
 
-const ability_t gSmogonOU_AbilityBanList[] = 
+const ability_t gSmogonOU_AbilityBanList[] =
 {
 	ABILITY_ARENATRAP,
 	ABILITY_SHADOWTAG,
@@ -497,14 +497,14 @@ const ability_t gSmogonOU_AbilityBanList[] =
 	ABILITY_TABLES_TERMIN
 };
 
-const ability_t gSmogonOUDoubles_AbilityBanList[] = 
+const ability_t gSmogonOUDoubles_AbilityBanList[] =
 {
 	ABILITY_POWERCONSTRUCT,
 	ABILITY_MOODY,
 	ABILITY_TABLES_TERMIN
 };
 
-const item_t gBattleTowerStandard_ItemBanList[] = 
+const item_t gBattleTowerStandard_ItemBanList[] =
 {
 	#ifdef OLD_SOUL_DEW_EFFECT
 	ITEM_SOUL_DEW,
@@ -512,7 +512,7 @@ const item_t gBattleTowerStandard_ItemBanList[] =
 	ITEM_TABLES_TERMIN
 };
 
-const item_t gSmogonOU_ItemBanList[] = 
+const item_t gSmogonOU_ItemBanList[] =
 {
 	ITEM_BLAZIKENITE,
 	ITEM_GENGARITE,
@@ -528,7 +528,7 @@ const item_t gSmogonOU_ItemBanList[] =
 	ITEM_TABLES_TERMIN
 };
 
-const item_t gSmogonOUDoubles_ItemBanList[] = 
+const item_t gSmogonOUDoubles_ItemBanList[] =
 {
 	ITEM_GENGARITE,
 	ITEM_EEVIUM_Z,
@@ -541,14 +541,14 @@ const item_t gSmogonOUDoubles_ItemBanList[] =
 	ITEM_TABLES_TERMIN
 };
 
-const move_t gSmogonOUDoubles_MoveBanList[] = 
+const move_t gSmogonOUDoubles_MoveBanList[] =
 {
 	MOVE_DARKVOID,
 	MOVE_SWAGGER,
 	MOVE_TABLES_TERMIN
 };
 
-const move_t gSmogon_MoveBanList[] = 
+const move_t gSmogon_MoveBanList[] =
 {
 	MOVE_DOUBLETEAM,
 	MOVE_MINIMIZE,
@@ -559,7 +559,7 @@ const move_t gSmogon_MoveBanList[] =
 	MOVE_TABLES_TERMIN
 };
 
-const species_t gSmogonLittleCup_SpeciesList[] = 
+const species_t gSmogonLittleCup_SpeciesList[] =
 {
 	SPECIES_ABRA,
 	SPECIES_AMAURA,
@@ -842,7 +842,7 @@ const species_t gSmogonLittleCup_SpeciesList[] =
 	SPECIES_TABLES_TERMIN
 };
 
-const move_t gSmogonLittleCup_MoveBanList[] = 
+const move_t gSmogonLittleCup_MoveBanList[] =
 {
 	MOVE_DRAGONRAGE,
 	MOVE_SONICBOOM,
@@ -850,7 +850,7 @@ const move_t gSmogonLittleCup_MoveBanList[] =
 	MOVE_TABLES_TERMIN
 };
 
-const item_t gSmogonLittleCup_ItemBanList[] = 
+const item_t gSmogonLittleCup_ItemBanList[] =
 {
 	ITEM_EEVIUM_Z,
 	ITEM_TABLES_TERMIN
@@ -976,7 +976,7 @@ const species_t gMiddleCup_SpeciesList[] =
 	SPECIES_TABLES_TERMIN
 };
 
-const ability_t gMiddleCup_AbilityBanList[] = 
+const ability_t gMiddleCup_AbilityBanList[] =
 {
 	ABILITY_CONTRARY,
 	ABILITY_PROTEAN,
@@ -1051,13 +1051,13 @@ const species_t gSmogonMonotype_SpeciesBanList[] =
 	SPECIES_TABLES_TERMIN
 };
 
-const ability_t gSmogonMonotype_AbilityBanList[] = 
+const ability_t gSmogonMonotype_AbilityBanList[] =
 {
 	ABILITY_BATTLEBOND,
 	ABILITY_TABLES_TERMIN
 };
 
-const item_t gSmogonMonotype_ItemBanList[] = 
+const item_t gSmogonMonotype_ItemBanList[] =
 {
 	ITEM_DAMP_ROCK,
 	ITEM_GENGARITE,

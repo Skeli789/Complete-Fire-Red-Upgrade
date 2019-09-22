@@ -7,7 +7,7 @@
  * \brief Contains functions relating to things that end battle and what happens
  *		  when a battle actually ends.
  */
- 
+
 //Exported Functions
 bool8 IsConsumable(u16 item);
 

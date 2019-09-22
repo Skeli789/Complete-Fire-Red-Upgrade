@@ -68,7 +68,7 @@
 		ability = gBaseStats[species].ability1;							\
 }
 
-struct TrainersWithEvs 
+struct TrainersWithEvs
 {
     u8 nature;
     u8 ivs;

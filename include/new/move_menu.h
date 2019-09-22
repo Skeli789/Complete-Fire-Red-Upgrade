@@ -9,7 +9,7 @@
  *		  (Fight, Pokemon, Bag, Run). Mainly deals with choosing moves and their
  *		  targets. Also contains the triggers for Mega Evolution and Z-Moves.
  */
- 
+
 //Exported Functions
 void HandleInputChooseTarget(void);
 bool8 CheckCantMoveThisTurn(void);

@@ -9,7 +9,7 @@
  *		  scripts that run on every frame (like Swarm checks), updated whiteout
  *		  logic, Player running logic, and OW poison features.
  */
- 
+
 //Exported Functions
 const u8* BattleSetup_ConfigureTrainerBattle(const u8* data);
 bool8 IsTrainerBattleModeAgainstTwoOpponents(void);
@@ -53,7 +53,7 @@ void TaskRepel(u8 taskId);
 bool8 UpdateRepelCounter(void);
 
 //Exported Data Structures
-struct Pedometers 
+struct Pedometers
 {
 	u32 alwaysActive;
 	u32 large;

@@ -6,7 +6,7 @@
  * \file general_bs_commands.h
  * \brief Contains many of the redone commands for battle scripting.
  */
- 
+
 //Exported Functions
 bool8 TryDoBenjaminButterfree(u8 scriptOffset);
 s32 GetPsywaveDamage(u8 randDamage);

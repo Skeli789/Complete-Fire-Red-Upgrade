@@ -1,6 +1,6 @@
 #pragma once
 
-#define FLDEFF_EXCLAMATION_MARK_ICON     0 
+#define FLDEFF_EXCLAMATION_MARK_ICON     0
 #define FLDEFF_USE_CUT_ON_GRASS          1
 #define FLDEFF_USE_CUT_ON_TREE           2
 #define FLDEFF_SHADOW                    3

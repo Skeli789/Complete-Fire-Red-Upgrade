@@ -9,8 +9,8 @@
  *		  causes the summary screen to wrap around when viewing the first or last Pokemon
  *		  in the party. It also updates the Pokemon selection for the Battle Tower.
  */
- 
- 
+
+
 //Functions Hooked In
 void SetNewPartySelectTarget2(s8* highlightedMon, s8 movementDir);
 void CursorCb_Summary(u8 taskId);

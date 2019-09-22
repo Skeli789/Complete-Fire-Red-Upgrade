@@ -6,7 +6,7 @@
  *		  Includes things such as move choosing, trainer sliding, mon choosing,
  *		  and loading the correct trainer picture.
  */
- 
+
 //Exported Functions
 /*NONE*/
 

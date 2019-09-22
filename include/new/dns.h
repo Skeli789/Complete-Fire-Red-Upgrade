@@ -8,7 +8,7 @@
  *		  palette fading in the overworld (and optionally battle), as well as support
  *		  for daily events.
  */
- 
+
 //Exported Functions
 void TransferPlttBuffer(void);
 void DNSBattleBGPalFade(void);

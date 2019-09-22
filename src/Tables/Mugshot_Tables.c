@@ -77,7 +77,7 @@ const u16* const sMugshotsTwoBarsPals[] =
 };
 
 
-const u16* const sMugshotPlayerPals[] = 
+const u16* const sMugshotPlayerPals[] =
 {
 	[0x0] = TwoBars_MugshotPal, //This is called as an error pal
 	[0x1] = TwoBars_MugshotPal,

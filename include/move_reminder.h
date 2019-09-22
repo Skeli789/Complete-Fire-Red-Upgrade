@@ -55,7 +55,7 @@ enum
 
 #define sMoveRelearnerMovesListTemplate ((void*) 0x83FFA94)
 
-/* 
+/*
 const struct ListMenuTemplate sMoveRelearnerMovesListTemplate =
 {
     .items = NULL,
@@ -123,7 +123,7 @@ const struct WindowTemplate sMoveRelearnerWindowTemplates[] =
 		.tilemapTop = 2,
 		.width = 3,
 		.height = 3,
-		.paletteNum = 0xF, 
+		.paletteNum = 0xF,
 		.baseBlock = 0x70,
 	},
 	{	// description box

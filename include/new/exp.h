@@ -9,7 +9,7 @@
  *		  Also contains the function repsonsible for assigning Pokemon Effort
  *		  Values after battle.
  */
- 
+
 //Exported Functions
 bool8 AddEVs(struct Pokemon* mon, u8 statId, u16 numToAdd);
 

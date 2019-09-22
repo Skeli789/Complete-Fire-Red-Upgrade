@@ -6,59 +6,59 @@
 
 .equ MOVE_TABLES_TERMIN, 0xFEFE
 
-.global SheerForceTable
-.global RecklessTable
-.global IronFistTable
-.global MegaLauncherTable
-.global StrongJawTable
-.global BallBombMoveTable
-.global DanceMoveTable
-.global GravityBanTable
-.global MeFirstBanTable
-.global CopycatBanTable
-.global InstructBanList
-.global MetronomeBanTable
-.global AssistBanTable
-.global MimicBanTable
-.global PowderTable
-.global SoundMoveTable
-.global SubstituteBypassTable
-.global TypeChangeExceptionTable
-.global SkyBattleBanTable
-.global StatChangeIgnoreTable
-.global HighCritTable
-.global AlwaysCritTable
-.global SleepTalkBanTable
-.global MovesThatCallOtherMovesTable
-.global MovesThatRequireRecharging
-.global MinimizeHitTable
-.global MoldBreakerMoves
-.global FlinchMoveTable
-.global ParentalBondBanList
-.global MovesCanUnfreezeAttacker
-.global MovesCanUnfreezeTarget
-.global MovesThatChangePhysicality
-.global TwoToFiveStrikesMoves
-.global TwoStrikesMoves
-.global ThreeStrikesMoves
-.global Percent25RecoilMoves
-.global Percent33RecoilMoves
-.global Percent50RecoilMoves
-.global Percent66RecoilMoves
-.global Percent75RecoilMoves
-.global Percent100RecoilMoves
-.global IgnoreAirTable
-.global IgnoreUndergoundTable
-.global IgnoreUnderwaterTable
-.global AlwaysHitRainTable
-.global SpecialAttackPhysicalDamageMoves
-.global SpecialWholeFieldMoveTable
-.global AromaVeilTable
-.global MovesThatLiftProtectTable
+.global gSheerForceBoostedMoves
+.global gRecklessBoostedMoves
+.global gPunchingMoves
+.global gPulseAuraMoves
+.global gBitingMoves
+.global gBallBombMoves
+.global gDanceMoves
+.global gGravityBannedMoves
+.global gMeFirstBannedMoves
+.global gCopycatBannedMoves
+.global gInstructBannedMoves
+.global gMetronomeBannedMoves
+.global gAssistBannedMoves
+.global gMimicBannedMoves
+.global gPowderMoves
+.global gSoundMoves
+.global gSubstituteBypassMoves
+.global gTypeChangeExceptionMoves
+.global gSkyBattleBannedMoves
+.global gIgnoreStatChangesMoves
+.global gHighCriticalChanceMoves
+.global gAlwaysCriticalMoves
+.global gSleepTalkBannedMoves
+.global gMovesThatCallOtherMoves
+.global gMovesThatRequireRecharging
+.global gAlwaysHitWhenMinimizedMoves
+.global gMoldBreakerMoves
+.global gFlinchChanceMoves
+.global gParentalBondBannedMoves
+.global gMovesCanUnfreezeAttacker
+.global gMovesCanUnfreezeTarget
+.global gMovesThatChangePhysicality
+.global gTwoToFiveStrikesMoves
+.global gTwoStrikesMoves
+.global gThreeStrikesMoves
+.global gPercent25RecoilMoves
+.global gPercent33RecoilMoves
+.global gPercent50RecoilMoves
+.global gPercent66RecoilMoves
+.global gPercent75RecoilMoves
+.global gPercent100RecoilMoves
+.global gIgnoreInAirMoves
+.global gIgnoreUndergoundMoves
+.global gIgnoreUnderwaterMoves
+.global gAlwaysHitInRainMoves
+.global gSpecialAttackPhysicalDamageMoves
+.global gSpecialWholeFieldMoves
+.global gAromaVeilProtectedMoves
+.global gMovesThatLiftProtectTable
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-SheerForceTable:
+gSheerForceBoostedMoves:
 .hword MOVE_AIRSLASH
 .hword MOVE_ANCIENTPOWER
 .hword MOVE_ASTONISH
@@ -143,7 +143,7 @@ SheerForceTable:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-RecklessTable:
+gRecklessBoostedMoves:
 .hword MOVE_BRAVEBIRD
 .hword MOVE_DOUBLEEDGE
 .hword MOVE_FLAREBLITZ
@@ -161,7 +161,7 @@ RecklessTable:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-IronFistTable:
+gPunchingMoves:
 .hword MOVE_BULLETPUNCH
 .hword MOVE_COMETPUNCH
 .hword MOVE_DIZZYPUNCH
@@ -184,7 +184,7 @@ IronFistTable:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-MegaLauncherTable:
+gPulseAuraMoves:
 .hword MOVE_AURASPHERE
 .hword MOVE_DARKPULSE
 .hword MOVE_DRAGONPULSE
@@ -195,7 +195,7 @@ MegaLauncherTable:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-StrongJawTable:
+gBitingMoves:
 .hword MOVE_BITE
 .hword MOVE_CRUNCH
 .hword MOVE_FIREFANG
@@ -208,7 +208,7 @@ StrongJawTable:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-BallBombMoveTable:
+gBallBombMoves:
 .hword MOVE_ACIDSPRAY
 .hword MOVE_AURASPHERE
 .hword MOVE_BARRAGE
@@ -237,7 +237,7 @@ BallBombMoveTable:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-DanceMoveTable:
+gDanceMoves:
 .hword MOVE_DRAGONDANCE
 .hword MOVE_FEATHERDANCE
 .hword MOVE_FIERYDANCE
@@ -251,7 +251,7 @@ DanceMoveTable:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-GravityBanTable:
+gGravityBannedMoves:
 .hword MOVE_BOUNCE
 .hword MOVE_FLY
 .hword MOVE_SPLASH
@@ -265,7 +265,7 @@ GravityBanTable:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-MeFirstBanTable:
+gMeFirstBannedMoves:
 .hword MOVE_STRUGGLE
 .hword MOVE_BELCH
 .hword MOVE_CHATTER
@@ -281,7 +281,7 @@ MeFirstBanTable:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-CopycatBanTable:
+gCopycatBannedMoves:
 .hword MOVE_ASSIST
 .hword MOVE_BANEFULBUNKER
 .hword MOVE_BEAKBLAST
@@ -327,7 +327,7 @@ CopycatBanTable:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-InstructBanList:
+gInstructBannedMoves:
 .hword MOVE_INSTRUCT
 .hword MOVE_BIDE
 .hword MOVE_FOCUSPUNCH
@@ -357,7 +357,7 @@ InstructBanList:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-MetronomeBanTable:
+gMetronomeBannedMoves:
 .hword MOVE_AFTERYOU
 .hword MOVE_ASSIST
 .hword MOVE_BANEFULBUNKER
@@ -427,7 +427,7 @@ MetronomeBanTable:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-AssistBanTable:
+gAssistBannedMoves:
 .hword MOVE_ASSIST
 .hword MOVE_BANEFULBUNKER
 .hword MOVE_BEAKBLAST
@@ -482,7 +482,7 @@ AssistBanTable:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-MimicBanTable:
+gMimicBannedMoves:
 .hword MOVE_METRONOME
 .hword MOVE_STRUGGLE
 .hword MOVE_SKETCH
@@ -491,7 +491,7 @@ MimicBanTable:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-PowderTable:
+gPowderMoves:
 .hword MOVE_COTTONSPORE
 .hword MOVE_POISONPOWDER
 .hword MOVE_POWDER
@@ -503,7 +503,7 @@ PowderTable:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-SoundMoveTable:
+gSoundMoves:
 .hword MOVE_BOOMBURST
 .hword MOVE_BUGBUZZ
 .hword MOVE_CHATTER
@@ -534,7 +534,7 @@ SoundMoveTable:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-SubstituteBypassTable:
+gSubstituteBypassMoves:
 .hword MOVE_AFTERYOU
 .hword MOVE_AROMATICMIST
 .hword MOVE_ATTRACT
@@ -580,7 +580,7 @@ SubstituteBypassTable:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-TypeChangeExceptionTable:
+gTypeChangeExceptionMoves:
 .hword MOVE_HIDDENPOWER
 .hword MOVE_JUDGMENT
 .hword MOVE_NATURALGIFT
@@ -592,7 +592,7 @@ TypeChangeExceptionTable:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-StatChangeIgnoreTable:
+gIgnoreStatChangesMoves:
 .hword MOVE_SACREDSWORD
 .hword MOVE_CHIPAWAY
 .hword MOVE_DARKESTLARIAT
@@ -600,7 +600,7 @@ StatChangeIgnoreTable:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-SkyBattleBanTable:
+gSkyBattleBannedMoves:
 .hword MOVE_BODYSLAM
 .hword MOVE_BULLDOZE
 .hword MOVE_DIG
@@ -643,7 +643,7 @@ SkyBattleBanTable:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-HighCritTable:
+gHighCriticalChanceMoves:
 .hword MOVE_AEROBLAST
 .hword MOVE_AIRCUTTER
 .hword MOVE_ATTACKORDER
@@ -668,14 +668,14 @@ HighCritTable:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-AlwaysCritTable:
+gAlwaysCriticalMoves:
 .hword MOVE_STORMTHROW
 .hword MOVE_FROSTBREATH
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-SleepTalkBanTable:
+gSleepTalkBannedMoves:
 .hword MOVE_ASSIST
 .hword MOVE_BIDE
 .hword MOVE_BELCH
@@ -709,7 +709,7 @@ SleepTalkBanTable:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-MovesThatCallOtherMovesTable:
+gMovesThatCallOtherMoves:
 .hword MOVE_ASSIST
 .hword MOVE_COPYCAT
 .hword MOVE_MEFIRST
@@ -721,7 +721,7 @@ MovesThatCallOtherMovesTable:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-MovesThatRequireRecharging:
+gMovesThatRequireRecharging:
 .hword MOVE_BLASTBURN
 .hword MOVE_FRENZYPLANT
 .hword MOVE_GIGAIMPACT
@@ -734,7 +734,7 @@ MovesThatRequireRecharging:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-MinimizeHitTable:
+gAlwaysHitWhenMinimizedMoves:
 .hword MOVE_BODYSLAM
 .hword MOVE_DRAGONRUSH
 .hword MOVE_FLYINGPRESS
@@ -747,7 +747,7 @@ MinimizeHitTable:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-MoldBreakerMoves:
+gMoldBreakerMoves:
 .hword MOVE_MOONGEISTBEAM
 .hword MOVE_PHOTONGEYSER
 .hword MOVE_SUNSTEELSTRIKE
@@ -759,7 +759,7 @@ MoldBreakerMoves:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-FlinchMoveTable:
+gFlinchChanceMoves:
 .hword MOVE_AIRSLASH
 .hword MOVE_ASTONISH
 .hword MOVE_BITE
@@ -791,7 +791,7 @@ FlinchMoveTable:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-ParentalBondBanList:
+gParentalBondBannedMoves:
 .hword MOVE_FLING
 .hword MOVE_SELFDESTRUCT
 .hword MOVE_EXPLOSION
@@ -804,7 +804,7 @@ ParentalBondBanList:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-MovesCanUnfreezeAttacker:
+gMovesCanUnfreezeAttacker:
 .hword MOVE_FLAMEWHEEL
 .hword MOVE_SACREDFIRE
 .hword MOVE_FLAREBLITZ
@@ -816,21 +816,21 @@ MovesCanUnfreezeAttacker:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-MovesCanUnfreezeTarget:
+gMovesCanUnfreezeTarget:
 .hword MOVE_SCALD
 .hword MOVE_STEAMERUPTION
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-MovesThatChangePhysicality:
+gMovesThatChangePhysicality:
 .hword MOVE_PHOTONGEYSER
 .hword MOVE_LIGHT_THAT_BURNS_THE_SKY
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-TwoToFiveStrikesMoves:
+gTwoToFiveStrikesMoves:
 .hword MOVE_ARMTHRUST
 .hword MOVE_BARRAGE
 .hword MOVE_BONERUSH
@@ -849,7 +849,7 @@ TwoToFiveStrikesMoves:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-TwoStrikesMoves:
+gTwoStrikesMoves:
 .hword MOVE_BONEMERANG
 .hword MOVE_DOUBLEHIT
 .hword MOVE_DOUBLEKICK
@@ -861,20 +861,20 @@ TwoStrikesMoves:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-ThreeStrikesMoves:
+gThreeStrikesMoves:
 .hword MOVE_TRIPLEKICK
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-Percent25RecoilMoves:
+gPercent25RecoilMoves:
 .hword MOVE_TAKEDOWN
 .hword MOVE_SUBMISSION
 .hword MOVE_WILDCHARGE
 .hword MOVE_HEADCHARGE
 .hword MOVE_TABLES_TERMIN
 
-Percent33RecoilMoves:
+gPercent33RecoilMoves:
 .hword MOVE_DOUBLEEDGE
 .hword MOVE_VOLTTACKLE
 .hword MOVE_FLAREBLITZ
@@ -882,23 +882,23 @@ Percent33RecoilMoves:
 .hword MOVE_WOODHAMMER
 .hword MOVE_TABLES_TERMIN
 
-Percent50RecoilMoves:
+gPercent50RecoilMoves:
 .hword MOVE_HEADSMASH
 .hword MOVE_LIGHTOFRUIN
 .hword MOVE_TABLES_TERMIN
 
-Percent66RecoilMoves:
+gPercent66RecoilMoves:
 .hword MOVE_TABLES_TERMIN
 
-Percent75RecoilMoves:
+gPercent75RecoilMoves:
 .hword MOVE_TABLES_TERMIN
 
-Percent100RecoilMoves:
+gPercent100RecoilMoves:
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-IgnoreAirTable:
+gIgnoreInAirMoves:
 .hword MOVE_GUST
 .hword MOVE_TWISTER
 .hword MOVE_THUNDER
@@ -908,25 +908,25 @@ IgnoreAirTable:
 .hword MOVE_THOUSANDARROWS
 .hword MOVE_TABLES_TERMIN
 
-IgnoreUndergoundTable:
+gIgnoreUndergoundMoves:
 .hword MOVE_EARTHQUAKE
 .hword MOVE_MAGNITUDE
 .hword MOVE_FISSURE
 .hword MOVE_TABLES_TERMIN
 
-IgnoreUnderwaterTable:
+gIgnoreUnderwaterMoves:
 .hword MOVE_SURF
 .hword MOVE_WHIRLPOOL
 .hword MOVE_TABLES_TERMIN
 
-AlwaysHitRainTable:
+gAlwaysHitInRainMoves:
 .hword MOVE_THUNDER
 .hword MOVE_HURRICANE
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-SpecialAttackPhysicalDamageMoves:
+gSpecialAttackPhysicalDamageMoves:
 .hword MOVE_PSYSHOCK
 .hword MOVE_PSYSTRIKE
 .hword MOVE_SECRETSWORD
@@ -934,7 +934,7 @@ SpecialAttackPhysicalDamageMoves:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-SpecialWholeFieldMoveTable:
+gSpecialWholeFieldMoves:
 .hword MOVE_MAGNETICFLUX
 .hword MOVE_GEARUP
 .hword MOVE_FLOWERSHIELD
@@ -944,7 +944,7 @@ SpecialWholeFieldMoveTable:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-AromaVeilTable:
+gAromaVeilProtectedMoves:
 .hword MOVE_DISABLE
 .hword MOVE_ATTRACT
 .hword MOVE_ENCORE
@@ -955,7 +955,7 @@ AromaVeilTable:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-MovesThatLiftProtectTable:
+gMovesThatLiftProtectTable:
 .hword MOVE_FEINT
 .hword MOVE_HYPERSPACEFURY
 .hword MOVE_HYPERSPACEHOLE

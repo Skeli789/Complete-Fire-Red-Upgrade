@@ -7,7 +7,7 @@
  * \brief Contains a port of the DexNav system created by FBI on Pokecommunity:
  *		  https://www.pokecommunity.com/showthread.php?p=9998647
  */
- 
+
 //Exported Functions
 void InitDexNavHUD(u16 species, u8 environment);
 bool8 IsDexNavHudActive(void);

@@ -11,8 +11,8 @@
  *		  processed. Thus, these stats can no longer be used for anything permanent, but
  *		  can be used as long as the player doesn't deposit their Pokemon (temporary stats).
  */
- 
- 
+
+
 struct __attribute__((packed)) CompressedPokemonSubstruct0
 {
     u16 species;
@@ -31,7 +31,7 @@ struct __attribute__((packed)) CompressedPokemon
 	u8 nickname[10];
 	u8 language;
 	u8 sanity;
-	u8 otname[7];	
+	u8 otname[7];
 	u8 markings;
 
 //Substructure Growth
@@ -54,9 +54,9 @@ struct __attribute__((packed)) CompressedPokemon
  /* 0x01 */	u8 metLocation;
  /* 0x02 */ u16 metInfo; //Met level, met game, OT gender
  /* 0x04 */ u32 ivs;
-}; //SIZE = 0x3A / 58 bytes 
- 
- 
+}; //SIZE = 0x3A / 58 bytes
+
+
 //Exported Functions
 u32 GetBoxMonDataAt(u8 boxId, u8 boxPosition, s32 request);
 void SetBoxMonDataAt(u8 boxId, u8 boxPosition, s32 request, const void* value);

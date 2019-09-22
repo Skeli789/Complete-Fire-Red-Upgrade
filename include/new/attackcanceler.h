@@ -7,7 +7,7 @@
  *		  things that prevent the move from executing. Also helps set up other things
  *		  like Z-Moves, multi-hit moves, and multi target moves.
  */
- 
+
 //Exported Functions
 void atk00_attackcanceler(void);
 
@@ -36,7 +36,7 @@ enum
 	CANCELLER_THAW,
 	CANCELLER_Z_MOVES,
 	CANCELLER_GRAVITY_Z_MOVES,
-	
+
 //Called Attacks Start Here
 	CANCELLER_GRAVITY_2,
 	CANCELLER_SKY_BATTLE,

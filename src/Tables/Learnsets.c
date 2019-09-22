@@ -18109,5 +18109,5 @@ const struct LevelUpMove* const gLevelUpLearnsets[] =
 	[SPECIES_LYCANROC_DUSK] = sLycanrocDuskLevelUpLearnset,
 */
 };
-	
+
 #endif

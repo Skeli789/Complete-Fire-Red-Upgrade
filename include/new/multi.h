@@ -8,9 +8,9 @@
  * \file multi.h
  * \brief Contains a large part of the implementation of Multi Battles. This includes
  *		  loading the partner's name, backsprite, and providing accessor functions to
- *		  determine if the current battle is a tag or multi battle. 
+ *		  determine if the current battle is a tag or multi battle.
  */
- 
+
 //Exported Functions
  u8* GetTrainerBLoseText(void);
  bool8 IsLinkDoubleBattle(void);
@@ -22,7 +22,7 @@
  u8* PartnerLoadName(void);
  u8 LoadPartnerBackspriteIndex(void);
  void SetControllerToPlayerPartner(void);
- 
+
  #ifdef OPEN_WORLD_TRAINERS
 
 extern const u8 openWorldLevelRanges[NUM_BADGE_OPTIONS][2];

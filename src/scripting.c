@@ -28,7 +28,7 @@
 #include "../include/new/battle_strings.h"
 #include "../include/new/catching.h"
 #include "../include/new/dns.h"
-#include "../include/new/Helper_Functions.h"
+#include "../include/new/util.h"
 #include "../include/new/item.h"
 #include "../include/new_menu_helpers.h"
 #include "../include/new/multi.h"
@@ -43,13 +43,13 @@
 #include "../include/new/wild_encounter.h"
 
 /*
-NOTES: 
+NOTES:
 	1. Many specials will not work unless you have chosen to expand the save block!
 	2. PC selection hack allows a lot all of the attribute getter/setter specials to reference boxed pokemon via var8003
 		-var8003 = 1: boxed pokemon (output from pc selection: box num in var8000, slot in var8001)
 		-else: menu pokemon (and slot in var8004, etc)
 		-Be sure to always set var8003 for data manipulation specials!
-	
+
 */
 
 #define POKERUS_CURED 0x10
@@ -66,7 +66,7 @@ static u8 GetTextCaretPosition(void);
 ///////////////////////////////////////////////////////////////////////////////////
 
 #ifdef FOSSIL_IMAGE_HACK
-	struct FossilTable 
+	struct FossilTable
 	{
 		struct SpriteSheet* data;
 		u16* palette;
@@ -74,25 +74,25 @@ static u8 GetTextCaretPosition(void);
 
 	#ifdef EXISTING_FOSSIL_IMAGE_TABLE_ADDRESS
 		#define gFossilImageTable ((struct FossilTable*) EXISTING_FOSSIL_IMAGE_TABLE_ADDRESS)
-	#else 
+	#else
 		//Create a 255 image table
-		struct FossilTable gFossilImageTable[] = 
+		struct FossilTable gFossilImageTable[] =
 		{
 			[0] = //Kabutops (originally index 0x8D, now 0x0)
 				{
-					.data = (struct SpriteSheet*) 	0x83E17C0, 
+					.data = (struct SpriteSheet*) 	0x83E17C0,
 					.palette = (u16*) 				0x83E17A0,
 				},
-			[1] = 
+			[1] =
 				{ //Aerodactyl (originally index 0x8e, now 0x1)
-					.data = (struct SpriteSheet*) 	0x83E17D0, 
+					.data = (struct SpriteSheet*) 	0x83E17D0,
 					.palette = (u16*) 				0x83E0F80,
-				},	
+				},
 			[2] =
 				{ //Start adding new data here
-					.data = (struct SpriteSheet*) 	0x8AAAAAA, 
+					.data = (struct SpriteSheet*) 	0x8AAAAAA,
 					.palette = (u16*) 				0x8AAAAAA,
-				},	
+				},
 		};
 	#endif
 #endif
@@ -159,12 +159,12 @@ struct BoxPokemon* GetBoxedMonAddr(void)
 u8 sp007_PokemonEVContestStatsChecker(void) {
 	u16 mon = Var8004;
 	u16 stat = Var8005;
-	
+
 	if (mon >= PARTY_SIZE)
 		return 0;
-	
+
 	switch(stat) {
-		
+
 	case CheckEVs_HP:
 		return GetMonDataFromVar8003(MON_DATA_HP_EV);
 	case CheckEVs_Atk:
@@ -188,7 +188,7 @@ u8 sp007_PokemonEVContestStatsChecker(void) {
 	case CheckEVs_Toughness:
 		return GetMonDataFromVar8003(MON_DATA_TOUGH);
 	case CheckEVs_Luster:
-		return GetMonDataFromVar8003(MON_DATA_SHEEN);	
+		return GetMonDataFromVar8003(MON_DATA_SHEEN);
 	default:
 		return 0;
 	}
@@ -197,10 +197,10 @@ u8 sp007_PokemonEVContestStatsChecker(void) {
 u8 sp008_PokemonIVChecker(void) {
 	u16 mon = Var8004;
 	u16 stat = Var8005;
-	
+
 	if (mon >= 6)
 		return 0;
-	
+
 	switch(stat) {
 		case CheckIVs_HP:
 			return GetMonDataFromVar8003(MON_DATA_HP_IV);
@@ -213,7 +213,7 @@ u8 sp008_PokemonIVChecker(void) {
 		case CheckIVs_SpAtk:
 			return GetMonDataFromVar8003(MON_DATA_SPATK_IV);
 		case CheckIVs_SpDef:
-			return GetMonDataFromVar8003(MON_DATA_SPDEF_IV);	
+			return GetMonDataFromVar8003(MON_DATA_SPDEF_IV);
 		default:
 			return 0;
 	}
@@ -228,7 +228,7 @@ bool8 sp009_PokemonRibbonChecker(void) {
 		return FALSE;
 	else if (ribbon > 0x1F)
 		return FALSE;
-	
+
 	if (GetMonData(&gPlayerParty[mon], MON_DATA_RIBBONS, NULL) & gBitTable[ribbon])
 		return TRUE;
 
@@ -246,20 +246,20 @@ u8 sp00A_CheckPokerusTimer(void) {
 
 u16 sp00B_CheckPokeball(void) {
 	u16 mon = Var8004;
-	
+
 	if (mon >= 6)
 		return 0;
-		
+
 	return GetMonDataFromVar8003(MON_DATA_POKEBALL);
 }
 
 
 u8 sp00C_CheckCaptureLocation(void) {
 	u16 mon = Var8004;
-	
+
 	if (mon >= 6)
 		return 0;
-		
+
 	return GetMonDataFromVar8003(MON_DATA_MET_LOCATION);
 }
 
@@ -274,10 +274,10 @@ u8 sp00D_CheckHappiness(void) {
 
 item_t sp00E_CheckHeldItem(void) {
 	u16 mon = Var8004;
-	
+
 	if (mon >= 6)
 		return 0;
-		
+
 	return GetMonDataFromVar8003(MON_DATA_HELD_ITEM);
 }
 
@@ -286,13 +286,13 @@ void sp00F_EVAdderSubtracter(void) {
 	u16 mon = Var8004;
 	u16 stat = Var8005;
 	s32 amount = Var8006;
-	
+
 	if (mon >= PARTY_SIZE)
-		return;	
-	
+		return;
+
 	s16 curr = sp007_PokemonEVContestStatsChecker();	//Current val
 
-	if (amount & 0x100) 
+	if (amount & 0x100)
 	{
 		amount ^= 0x100;
 		amount *= -1;
@@ -301,15 +301,15 @@ void sp00F_EVAdderSubtracter(void) {
 	}
 	else if (amount > EV_CAP)
 		amount = EV_CAP;
-	
+
 	curr += amount;
 	if (curr < 0)
 		curr = 0;
 	else if (curr > EV_CAP)
 		curr = EV_CAP;
-	
+
 	Var8005 = curr;
-	
+
 	switch(stat)
 	{
 		case CheckEVs_HP:
@@ -331,13 +331,13 @@ void sp00F_EVAdderSubtracter(void) {
 void sp010_IVSetter(void) {
 	u16 mon = Var8004;
 	u16 stat = Var8005;
-	u16 amount = Var8006;	
+	u16 amount = Var8006;
 	if (mon >= 6)
 		return;
 	if (amount > 31)
 		amount = 31;
 	Var8005 = amount;
-	
+
 	switch(stat) {
 		case CheckIVs_HP:
 			SetMonDataFromVar8003(MON_DATA_HP_IV);
@@ -373,7 +373,7 @@ void sp011_RibbonSetterCleaner(void) {
 	u16 mon = Var8004;
 	u16 ribbon = Var8005;
 	u32* ribbonArray = (u32*) &(((u8*) 0x20242D0)[mon * sizeof(struct Pokemon)]);
-	
+
 	if (mon >= PARTY_SIZE)
 		return;
 
@@ -396,21 +396,21 @@ void sp012_PokerusSetter(void) {
 	u16 mon = Var8004;
 	//u16 timer = Var8005;
 	//u8 strain;
-	
+
 	if (mon >= 6)
 		return;
-	
+
 	if (Var8005 > 16)
 		Var8005 = 16;
-	
+
 	SetMonDataFromVar8003(MON_DATA_POKERUS);
-	
+
 }
 
 void sp013_IncreaseDecreaseHappiness(void) {
 	u16 mon = Var8004;
 	u16 amount = Var8005;
-	
+
 	if (mon >= 6)
 		return;
 	u8 current = GetMonDataFromVar8003(MON_DATA_FRIENDSHIP);	// current happiness
@@ -427,20 +427,20 @@ void sp013_IncreaseDecreaseHappiness(void) {
 		Var8005 = 0;
 	else if (Var8005 > 255)
 		Var8005 = 255;
-	Var8006 = 0;	
+	Var8006 = 0;
 	SetMonDataFromVar8003(MON_DATA_FRIENDSHIP);
 }
 
 void sp014_ChangeCapturedBall(void) {
 	u16 mon = Var8004;
 	u16 ball = Var8005;
-	
+
 	if (mon >= 6)
-		return;	
+		return;
 	else if (ball >= NUM_BALLS)
 		return;
-	SetMonDataFromVar8003(MON_DATA_POKEBALL);	
-		
+	SetMonDataFromVar8003(MON_DATA_POKEBALL);
+
 	return;
 }
 
@@ -448,15 +448,15 @@ void sp015_ModifyHeldItem(void) {
 	u16 mon = Var8004;
 	//u16 item = Var8005;
 	Var800D = 1;
-	
+
 	if (mon >= 6)
 		return;
-	
+
 	if (GetMonDataFromVar8003(MON_DATA_HELD_ITEM) != ITEM_NONE)
 	{
 		if (Var8005 != 0)
 			return;	// cant change existing item
-			
+
 		Var8005 = ITEM_NONE;
 		SetMonDataFromVar8003(MON_DATA_HELD_ITEM); //Remove items
 	}
@@ -489,7 +489,7 @@ void sp017_ChangePokemonAttacks(void) {
 	u16 mon = Var8004;
 	u16 moveSlot = Var8005;
 	u16 move = Var8006;
-	
+
 	u8 i;
 	if (mon >= 6)
 		return;
@@ -497,7 +497,7 @@ void sp017_ChangePokemonAttacks(void) {
 		return;
 	else if (moveSlot > MAX_MON_MOVES)
 		return;
-	
+
 	// check empty move slots, if not deleting
 	if (move != 0)
 	{
@@ -508,13 +508,13 @@ void sp017_ChangePokemonAttacks(void) {
 				gPlayerParty[mon].moves[i] = move;
 				gPlayerParty[mon].pp[i] = gBattleMoves[move].pp;
 				return;
-			}	
+			}
 		}
 		// otherwise, replace given slot
 		gPlayerParty[mon].moves[moveSlot] = move;
 		gPlayerParty[mon].pp[moveSlot] = gBattleMoves[move].pp;
 		gPlayerParty[mon].pp_bonuses &= ~(gBitTable[moveSlot * 2] | gBitTable[moveSlot * 2 + 1]);	//reset pp bonuses
-	}		
+	}
 	else if (move == 0)
 		Special_0DD_DeleteMove();
 }
@@ -537,7 +537,7 @@ u8 sp019_CheckAttackPP(void) {
 		return 0;
 	else if (slot >= MAX_MON_MOVES)
 		return 0;
-	
+
 	return GetMonDataFromVar8003(MON_DATA_PP1 + slot);
 }
 
@@ -546,7 +546,7 @@ u8 sp019_CheckAttackPP(void) {
 ////////////////////////////////////////////////////////////////
 // Store/Return Party Pokemon Data to Free RAM
 // Inputs:
-//		Var8002: 
+//		Var8002:
 //			0 to store from party to free ram
 //			1 to store from free ram to party
 //			2 to store from free ram to box
@@ -562,30 +562,30 @@ void sp01A_CopyPartyData(void)
 	Var800D = 1;
 	if (slot >= 6)
 		return;
-	
+
 	switch (Var8002)
 	{
 		case 0:
 			// save party slot data to last enemy slot
 			Memcpy(&gEnemyParty[5], &gPlayerParty[slot], 100);
 			break;
-			
+
 		case 1:
 			// return last enemy slot data to given party slot
 			Memcpy(&gPlayerParty[slot], &gEnemyParty[5], 100);
 			break;
-			
+
 		case 2:
 			// enemy ram to box
 			SendMonToBoxPos(&gEnemyParty[5], Var8000, Var8001);
 			break;
-			
+
 		case 3:
 			// box to free ram
 			Memcpy(&gEnemyParty[5], GetBoxedMonAddr(), sizeof(struct CompressedPokemon));
 			CalculateMonStats((pokemon_t*) &gEnemyParty[5]);
 			break;
-			
+
 		default:
 			return;	//failure
 	}
@@ -613,7 +613,7 @@ void sp01B_SwapPartyAndBoxData(void)
 	Var800D = 1;
 	if (slot >= 6)
 		return;
-	
+
 	switch (Var8002)
 	{
 		case 0:
@@ -623,16 +623,16 @@ void sp01B_SwapPartyAndBoxData(void)
 			ZeroBoxMonAt(Var8000, Var8001);	//clear box pokemon data
 			Var800D = 0;
 			break;
-			
+
 		case 1:
 			Var800D = SendMonToBoxPos(&gPlayerParty[slot], Var8000, Var8001);
 			break;
-			
+
 	}
 	return;
 #else
 	return;
-#endif	
+#endif
 }
 
 //Nicknaming Specials//
@@ -646,7 +646,7 @@ void sp07C_BufferNickname(void)
 		GetMonData(&gPlayerParty[Var8004], MON_DATA_NICKNAME, gStringVar1);
 #else
 	GetMonData(&gPlayerParty[Var8004], MON_DATA_NICKNAME, gStringVar1);
-#endif	
+#endif
 	StringGetEnd10(gStringVar1);
 }
 
@@ -724,7 +724,7 @@ void sp062_PokemonEraser(void)
 
 
 //Check status of pokemon in slot var8004
-u8 sp063_StatusChecker(void) 
+u8 sp063_StatusChecker(void)
 {
 	return gPlayerParty[Var8004].condition;
 }
@@ -747,12 +747,12 @@ static void TryAssignStatusToMon(pokemon_t* mon, u32 status)
 }
 
 // Inflict a status to affect a party member or entire party
-void sp064_InflictStatus(void) 
+void sp064_InflictStatus(void)
 {
 	u8 slot = Var8004;
 	u8 status = Var8005;
 	u8 i;
-	
+
 	if (!Var8006)
 	{
 		if (slot == 0xF)
@@ -777,7 +777,7 @@ void sp064_InflictStatus(void)
 
 
 // check slot pokemon's HP
-u16 sp065_CheckMonHP(void) 
+u16 sp065_CheckMonHP(void)
 {
 	return gPlayerParty[Var8004].hp;
 }
@@ -785,17 +785,17 @@ u16 sp065_CheckMonHP(void)
 static void InflictPartyDamageOrHeal(pokemon_t* mon, u16 damage, u8 type)
 {
 	s32 currHP = mon->hp;
-	
+
 	if (type == 1) //Heal
 		currHP = currHP +  damage;
 	else
 		currHP = currHP -  damage;
-			
+
 	if (currHP < 0)
 		currHP = 0;
 	else if (currHP > mon->maxHP)
 		currHP = mon->maxHP;
-			
+
 	mon->hp = currHP;
 }
 
@@ -804,7 +804,7 @@ void sp066_InflictPartyDamage(void) {
 	u8 slot = Var8004;
 	u16 dmg = Var8005;
 	u8 switcher = Var8006;	//1 to heal, else damage
-	
+
 	if (slot == 0xf)
 	{
 		for (int i = 0; i < gPlayerPartyCount; ++i)
@@ -824,7 +824,7 @@ void sp066_InflictPartyDamage(void) {
 //0x1 if A pressed
 //0x2 if B pressed
 //0x3 if both are pressed
-u16 sp02B_CheckABButtons(void) 
+u16 sp02B_CheckABButtons(void)
 {
 	return (~(gKeyReg) & 3);
 }
@@ -832,7 +832,7 @@ u16 sp02B_CheckABButtons(void)
 //Special 0x2c checks for the D-pad. Returns
 //0x0 if no direction is pressed
 //0x1 if up is pressed
-//0x2 if left is pressed 
+//0x2 if left is pressed
 //0x3 if down is pressed
 //0x4 if right is pressed
 //0x5 if up-left is pressed
@@ -840,7 +840,7 @@ u16 sp02B_CheckABButtons(void)
 //0x7 if down-left is pressed
 //0x8 if down-right is pressed
 u16 sp02C_CheckDPad(void)
-{	
+{
 	switch(~(gKeyReg) & 0xFF) {
 		case DPAD_UP:
 			return 1;
@@ -867,7 +867,7 @@ u16 sp02C_CheckDPad(void)
 //0x1 if select is pressed
 //0x2 if start is pressed
 //0x3 if both are pressed
-u16 sp02D_CheckStartSelect(void) 
+u16 sp02D_CheckStartSelect(void)
 {
 	return ((~(gKeyReg) >> 2) & 3);
 }
@@ -877,18 +877,18 @@ u16 sp02D_CheckStartSelect(void)
 //0x1 if R is pressed
 //0x2 if L is pressed
 //0x3 if both are pressed
-u16 sp02E_CheckLRButtons(void) 
+u16 sp02E_CheckLRButtons(void)
 {
 	return (~(gKeyReg) >> 8) & 3;
 }
 
-void sp02F_KeyDump(void) 
+void sp02F_KeyDump(void)
 {
 	Var800D = ~(gKeyReg) & 0x3FF;
 }
 
 // Inputs:
-//		var8004: key(s) to force 
+//		var8004: key(s) to force
 //		var8005: num times to 'press'
 void sp0C9_ForceOneKeyInput(void)
 {
@@ -899,7 +899,7 @@ void sp0C9_ForceOneKeyInput(void)
 #endif
 }
 
-void sp0CA_IgnoreKeys(void) 
+void sp0CA_IgnoreKeys(void)
 {
 #ifdef SAVE_BLOCK_EXPANSION
 	gKeypadSetter->keysToIgnore = Var8004;
@@ -907,7 +907,7 @@ void sp0CA_IgnoreKeys(void)
 #endif
 }
 
-void sp0CB_PlaceKeyScript(void) 
+void sp0CB_PlaceKeyScript(void)
 {
 #ifdef SAVE_BLOCK_EXPANSION
 	u16 key = Var8004;
@@ -928,93 +928,93 @@ void sp0CB_PlaceKeyScript(void)
 //Variable Math Specials//
 ///////////////////////////////////////////////////////////////////////////////////
 
-u16 sp03E_AddVariables(void) 
+u16 sp03E_AddVariables(void)
 {
 	u16 var1 = Var8004; //Var contained in Var8004
 	u16 var2 = Var8005; //Var contained in Var8005
 	bool8 overflow = FALSE;
-	
+
 	var1 = VarGet(var1);
 	var2 = VarGet(var2);
-	
+
 	u32 sum = var1 + var2;
-	
-	if (sum > 0xFFFF) 
+
+	if (sum > 0xFFFF)
 	{
 		overflow = TRUE;
 		sum = 0xFFFF;
 	}
-	
+
 	VarSet(Var8004, sum); //Set var in Var8004
 	return overflow;
 }
 
-u16 sp03F_SubtractVariables(void) 
+u16 sp03F_SubtractVariables(void)
 {
 	u16 var1 = Var8004; //Var contained in Var8004
 	u16 var2 = Var8005; //Var contained in Var8005
 	bool8 underflow = FALSE;
 	u32 diff;
-	
+
 	var1 = VarGet(var1);
 	var2 = VarGet(var2);
-	
-	if (var2 > var1) 
+
+	if (var2 > var1)
 	{
 		underflow = TRUE;
 		diff = 0;
 	}
 	else
 		diff = var1 - var2;
-	
+
 	VarSet(Var8004, diff); //Set var in Var8004
 	return underflow;
 }
 
-u16 sp040_MultiplyVariables(void) 
+u16 sp040_MultiplyVariables(void)
 {
 	u16 var1 = Var8004; //Var contained in Var8004
 	u16 var2 = Var8005; //Var contained in Var8005
 	bool8 overflow = FALSE;
 	u32 prod;
-	
+
 	var1 = VarGet(var1);
 	var2 = VarGet(var2);
-	
+
 	prod = var1 * var2;
-	
-	if (prod > 0xFFFF) 
+
+	if (prod > 0xFFFF)
 	{
 		prod = 0xFFFF;
 		overflow = TRUE;
 	}
-	
+
 	VarSet(Var8004, prod); //Set var in Var8004
 	return overflow;
 }
 
 
-u16 sp041_DivideVariables(void) 
+u16 sp041_DivideVariables(void)
 {
 	u16 numerator = Var8004;
 	u16 denominator = Var8005;
-	
+
 	Var8004 = numerator / denominator;
 	return numerator % denominator; //Return remainder
 }
 
 
-u16 sp042_ANDVariables(void) 
+u16 sp042_ANDVariables(void)
 {
 	return Var8004 & Var8005;
 }
 
-u16 sp043_ORVariables(void) 
-{	
+u16 sp043_ORVariables(void)
+{
 	return Var8004 | Var8005;
 }
 
-u16 sp044_XORVariables(void) 
+u16 sp044_XORVariables(void)
 {
 	return Var8004 ^ Var8005;
 }
@@ -1028,7 +1028,7 @@ u16 sp044_XORVariables(void)
 //		special 0x24
 // would load a multichoice pointer to 0x8905040
 // personally, special 0x25 is much better/easier to use
-void sp024_AddTextByVariable(void) 
+void sp024_AddTextByVariable(void)
 {
 #ifdef SAVE_BLOCK_EXPANSION
 	u8 multiIndex = Var8006;
@@ -1044,7 +1044,7 @@ void sp024_AddTextByVariable(void)
 //		setvar 0x8006 0x0
 //		loadpointer 0x0 @string
 //		special 0x25
-void sp025_AddTextByPointer(void) 
+void sp025_AddTextByPointer(void)
 {
 #ifdef SAVE_BLOCK_EXPANSION
 	u8 multiIndex = Var8006;
@@ -1057,7 +1057,7 @@ void sp025_AddTextByPointer(void)
 // special to buffer a pokemon species and size
 // Inputs: 	Var8005: variable to get measurements from/store to
 // 			Var8006: species to measure
-void sp075_MeasurePokemon1(void) 
+void sp075_MeasurePokemon1(void)
 {
 	u16 species = Var8006;
 	BufferPokeNameSize(species, &Var8005);
@@ -1065,7 +1065,7 @@ void sp075_MeasurePokemon1(void)
 
 
 // measure pokemon special
-// Inputs: 
+// Inputs:
 // 		Var8005: Variable the measurement was in (from special 0x75)
 // 		Var8006: Species
 // Output:
@@ -1073,7 +1073,7 @@ void sp075_MeasurePokemon1(void)
 //		Returns 2 if the pokémon is smaller
 //		Returns 3 if bigger, and also stores the biggest value in the variable
 //		Returns 4 if equal in length
-u8 sp076_MeasurePokemon2(void) 
+u8 sp076_MeasurePokemon2(void)
 {
 	u16 species = Var8006;
 	return CalculateHeight(species, &Var8005);;
@@ -1085,7 +1085,7 @@ u8 sp076_MeasurePokemon2(void)
 // Inputs:
 //		var8004: species
 //		var8005: level
-void sp09C_OldManBattleModifier(void) 
+void sp09C_OldManBattleModifier(void)
 {
 	CreateMaleMon(&gEnemyParty[0], Var8004, Var8005);
 	ScriptContext2_Enable();
@@ -1094,7 +1094,7 @@ void sp09C_OldManBattleModifier(void)
 	CreateBattleStartTask(8, 0);
 }
 
-/* 
+/*
 // in Assembly/script.s
 void sp18B_DisplayImagesFromTable(void) {
 	return;
@@ -1107,28 +1107,28 @@ void sp18B_DisplayImagesFromTable(void) {
 bool8 CanMonParticipateInASkyBattle(struct Pokemon* mon)
 {
 	u16 species = mon->species;
-		
+
 	if (GetMonData(mon, MON_DATA_IS_EGG, NULL)
 	||  mon->hp == 0
 	||  CheckTableForSpecies(species, gSkyBattleBannedSpeciesList))
 		return FALSE;
-		
+
 	if (gBaseStats[species].type1 == TYPE_FLYING
 	||  gBaseStats[species].type2 == TYPE_FLYING
 	||  GetPartyAbility(mon) == ABILITY_LEVITATE)
 		return TRUE;
-		
+
 	return FALSE;
 }
 
-bool8 sp051_CanTeamParticipateInSkyBattle(void) 
+bool8 sp051_CanTeamParticipateInSkyBattle(void)
 {
 	for (int i = 0; i < PARTY_SIZE; ++i)
 	{
 		if (CanMonParticipateInASkyBattle(&gPlayerParty[i]))
 			return gSpecialVar_LastResult = TRUE;
 	}
-	
+
 	return gSpecialVar_LastResult = FALSE;
 }
 
@@ -1141,12 +1141,12 @@ bool8 sp051_CanTeamParticipateInSkyBattle(void)
 
 //@Details: Buffers the map name where there is currently a swarm to buffer1,
 //			and the species name where there is currently a swarm to buffer2.
-void sp058_BufferSwarmText(void) 
+void sp058_BufferSwarmText(void)
 {
 	u8 index = VarGet(SWARM_INDEX_VAR);
 	u8 mapName = gSwarmTable[index].mapName;
 	u16 species = gSwarmTable[index].species;
-	
+
 	GetMapName(sScriptStringVars[0], mapName, 0);
 	StringCopy(sScriptStringVars[1], gSpeciesNames[species]);
 }
@@ -1156,15 +1156,15 @@ void sp058_BufferSwarmText(void)
 //@Inputs:
 //		Var8000: Species
 //@Returns: 0 to given var if species is not roaming. 1 if it is and the name was buffered.
-bool8 sp059_BufferSpeciesRoamingText(void) 
+bool8 sp059_BufferSpeciesRoamingText(void)
 {
 	u8 mapGroup;
 	u8 mapNum;
 	u16 species = Var8000;
-	
+
 	if (!IsSpeciesRoaming(species))
 		return FALSE;
-		
+
 	GetMapGroupAndMapNumOfRoamer(species, &mapGroup, &mapNum);
 	GetMapName(sScriptStringVars[0], Overworld_GetMapHeaderByGroupAndId(mapGroup, mapNum)->regionMapSectionId, 0);
 	StringCopy(sScriptStringVars[1], gSpeciesNames[species]);
@@ -1200,18 +1200,18 @@ struct GbaTimers
 #define gGbaTimer ((struct GbaTimers*) 0x4000108)
 
 /* timer control
-  Bit   Expl.	
+  Bit   Expl.
   0-1   Prescaler Selection (0=F/1, 1=F/64, 2=F/256, 3=F/1024)							0x1,0x2
-  2     Count-up Timing   (0=Normal, 1=See below)  ;Not used in TM0CNT_H				0x4
+  2	 Count-up Timing   (0=Normal, 1=See below)  ;Not used in TM0CNT_H				0x4
   3-5   Not used																		0x8,0x10,0x20
-  6     Timer IRQ Enable  (0=Disable, 1=IRQ on Timer overflow)							0x40
-  7     Timer Start/Stop  (0=Stop, 1=Operate)											0x80
+  6	 Timer IRQ Enable  (0=Disable, 1=IRQ on Timer overflow)							0x40
+  7	 Timer Start/Stop  (0=Stop, 1=Operate)											0x80
   8-15  Not used
 When Count-up Timing is enabled, the prescaler value is ignored, instead the time is incremented each time when the previous counter overflows. This function cannot be used for Timer 0 (as it is the first timer).
  */
 
 //@Details: Starts the timer
-void sp046_StartTimer(void) 
+void sp046_StartTimer(void)
 {
 	gGbaTimer->init = 0xC000;
 	gGbaTimer->timerFlags = 0x83;
@@ -1242,7 +1242,7 @@ void sp048_ResumeTimer(void)
 
 //@Details:	Stops the timer.
 //@Returns: The time on the timer.
-u16 sp049_StopTimer(void) 
+u16 sp049_StopTimer(void)
 {
 	gGbaTimer->timerOn ^= 0x80;
 	gGbaTimer->timerFlags ^= 0x80;
@@ -1258,10 +1258,10 @@ u16 sp04A_GetTimerValue(void)
 
 
 
-void sp04C_UpdatePlaytime(void) 
+void sp04C_UpdatePlaytime(void)
 {
 	u8 secs = gGbaTimer->timerVal + gSaveBlock2->playTimeSeconds;
-	
+
 	// subtract from hrs/mins until mins/secs < 60, respectively
 	while (secs > 60)
 	{
@@ -1275,7 +1275,7 @@ void sp04C_UpdatePlaytime(void)
 	}
 }
 
-void sp04B_StopAndUpdatePlaytime(void) 
+void sp04B_StopAndUpdatePlaytime(void)
 {
 	gGbaTimer->init = 0;
 	gGbaTimer->timerFlags = 0;
@@ -1288,7 +1288,7 @@ void sp04B_StopAndUpdatePlaytime(void)
 //@Details: Checks if the timer has reached a value
 //			sorted in var 0x8010.
 //@Returns: True or False
-bool8 sp04D_TimerValueReached(void) 
+bool8 sp04D_TimerValueReached(void)
 {
 	u16 timerVal = gGbaTimer->timerVal;
 	if (timerVal < Var8010)
@@ -1297,9 +1297,9 @@ bool8 sp04D_TimerValueReached(void)
 }
 
 
-//@Details: Saves the value in the seconds timer to a 
+//@Details: Saves the value in the seconds timer to a
 //			specific memory address.
-void sp04E_SaveTimerValue(void) 
+void sp04E_SaveTimerValue(void)
 {
 #ifdef SAVE_BLOCK_EXPANSION
 	gTimerValue = sp049_StopTimer();
@@ -1322,7 +1322,7 @@ void sp04F_StartTimerAtTime(void)
 //@Details: Stores the timer value stored by
 //			Special 0x4E.
 //@Returns: Var inside var 0x8006 - Timer time.
-void sp050_StoreTimerToVariable(void) 
+void sp050_StoreTimerToVariable(void)
 {
 #ifdef SAVE_BLOCK_EXPANSION
 	VarSet(Var8006, gTimerValue);
@@ -1352,11 +1352,11 @@ void sp061_LoadTimerFromVariable(void)
 #if MAX_SAFARI_BALLS < SAFARI_ZONE_BALL_START
 	#define MAX_SAFARI_BALLS SAFARI_ZONE_BALL_START
 #endif
-//@Details: The check Safari ball quantity. 
+//@Details: The check Safari ball quantity.
 //@Returns: 1. Var 0x8004 - Normal Safari Ball number.
 //		  2. Var 0x8005 - The extra ball slot number
 //		  3. To a given variable the number as a full integer. Max value is 0x63FF
-u16 sp086_GetSafariBalls(void) 
+u16 sp086_GetSafariBalls(void)
 {
 	/*
 	Var8004 = gSafariBallNumber;
@@ -1369,14 +1369,14 @@ u16 sp086_GetSafariBalls(void)
 
 //@Details: An increase\decrease safari balls code.
 //		  This code doesn't allow people to add over 100 balls as a safety measure.
-//@Input: Var 0x8004 as the number to increase or decrease the balls by. 
-//	    0x1aa decreases the balls by aa, and 0x0aa increases them by aa. 
+//@Input: Var 0x8004 as the number to increase or decrease the balls by.
+//		0x1aa decreases the balls by aa, and 0x0aa increases them by aa.
 //@Returns: None
-void sp087_ChangeSafariBalls(void) 
+void sp087_ChangeSafariBalls(void)
 {
 	s32 input = Var8004;
 	s32 calc;
-	
+
 	if (input & 0x100)
 	{
 		input ^= 0x100;
@@ -1385,15 +1385,15 @@ void sp087_ChangeSafariBalls(void)
 	}
 	else
 		MathMin(input, 100);	//limit to 100 balls at once
-	
+
 	calc = gSafariBallNumber + input;
-	
+
 	if (calc > MAX_SAFARI_BALLS)
 		calc = MAX_SAFARI_BALLS;
 	else if (calc < 0)
 		calc = 0;
 	gSafariBallNumber = calc;
-	
+
 	/*
 	if (calc > 100)
 		calc = 100;
@@ -1405,21 +1405,21 @@ void sp087_ChangeSafariBalls(void)
 
 //@Details: The get safari pedometer special.
 //@Returns: To a given variable the number of remaining steps
-u16 sp088_GetSafariCounter(void) 
+u16 sp088_GetSafariCounter(void)
 {
 	return gSafariSteps;
 }
 
-//@Details: The Set Safari steps special. 
-//	      It allows you to set a specific ammount of steps 
+//@Details: The Set Safari steps special.
+//		  It allows you to set a specific ammount of steps
 //		  until the safari handler is called.
 //Input: Var 0x8004 is the amount of steps to place.
-void sp089_SetSafariCounter(void) 
+void sp089_SetSafariCounter(void)
 {
 	u16 input = Var8004;
 	if (input > SAFARI_ZONE_MAX_STEPS)
 		input = SAFARI_ZONE_MAX_STEPS;
-	
+
 	gSafariSteps = input;
 }
 
@@ -1456,7 +1456,7 @@ void DisplaySafariZoneCounters(void)
 {
 	ConvertIntToDecimalStringN(gStringVar1, gSafariSteps, 1, SAFARI_STEP_DIGITS);
 	ConvertIntToDecimalStringN(gStringVar2, SAFARI_ZONE_MAX_STEPS, 1, SAFARI_STEP_DIGITS);
-	ConvertIntToDecimalStringN(gStringVar3, gSafariBallNumber, 1, SAFARI_BALL_DIGITS);	
+	ConvertIntToDecimalStringN(gStringVar3, gSafariBallNumber, 1, SAFARI_BALL_DIGITS);
 }
 
 u8* SafariZoneBallLabel(void)
@@ -1470,7 +1470,7 @@ u8* SafariZoneBallLabel(void)
 
 void SafariZoneBattleBarCount(u8* strPtr)
 {
-	
+
 	ConvertIntToDecimalStringN(strPtr, gSafariBallNumber, 0, SAFARI_BALL_DIGITS);
 }
 
@@ -1478,9 +1478,9 @@ void SafariZoneBattleBarCount(u8* strPtr)
 ///////////////////////////////////////////////////////////////////////////////////
 
 
-//@Details: Tile Number getter, gets the tile's number at (0x8004, 0x8005) location. 
+//@Details: Tile Number getter, gets the tile's number at (0x8004, 0x8005) location.
 //@Input: 1. Var 0x8004 - X-Coordinate
-//	    2. Var 0x8005 - Y-Coordinate
+//		2. Var 0x8005 - Y-Coordinate
 //@Returns: Returns to a given variable the desired tile number
 u16 sp07E_GetTileNumber(void) {
 	u16 x = Var8004;
@@ -1490,11 +1490,11 @@ u16 sp07E_GetTileNumber(void) {
 
 
 
-//@Details: The Tile Attribute getter. Designed to be used with 
-//		  special 0x8f before it (to get the positions) and to 
+//@Details: The Tile Attribute getter. Designed to be used with
+//		  special 0x8f before it (to get the positions) and to
 //		  be possible to use the required wild battle randomizer afterwards.'
 //@Input: 1. Var 0x8004 - X-Coordinate
-//	    2. Var 0x8005 - Y-Coordinate
+//		2. Var 0x8005 - Y-Coordinate
 //@Returns: 1. Var 0x8004 - The tile's background byte
 //		  2. Var 0x8005 - The tile's behaviour bytes.
 //		  3. To a given variable the background byte.
@@ -1550,8 +1550,8 @@ u32 sp08A_ReadPedometerValue(void) {
 			case 4:
 				return gPedometers->smallTwo;
 			default:
-				return 0;		
-		}	
+				return 0;
+		}
 	#else
 		return 0;
 	#endif
@@ -1573,7 +1573,7 @@ struct DailyEventVar
 };
 
 //@Details: Runs a daily event.
-//@Input: Var 0x8000: A var containing the daily event data. 
+//@Input: Var 0x8000: A var containing the daily event data.
 //					  The var after this one is used as well.
 //		  Var 0x8001: 0x0 - Don't set daily event var.
 //@Returns: False if the event has already been done. True otherwise.
@@ -1586,16 +1586,16 @@ bool8 CheckAndSetDailyEvent(u16 eventVar, bool8 setDailyEventVar)
 {
 	bool8 toReturn = FALSE;
 	struct DailyEventVar* dailyData = (struct DailyEventVar*) VarGetAddress(eventVar);
-	
+
 	u8 dailyDay = dailyData->day;
 	u8 dailyMonth = dailyData->month;
 	u32 dailyYear = dailyData->year + dailyData->century * 100;
-	
+
 	if (dailyYear > Clock->year
 	|| (dailyYear == Clock->year && dailyMonth > Clock->month)
 	|| (dailyYear == Clock->year && dailyMonth == Clock->month && dailyDay > Clock->day))
 		return FALSE; //Player changed date on their computer.
-	
+
 	if (dailyDay != Clock->day
 	||  dailyMonth != Clock->month
 	||  dailyYear != Clock->year)
@@ -1616,7 +1616,7 @@ bool8 CheckAndSetDailyEvent(u16 eventVar, bool8 setDailyEventVar)
 }
 
 //@Details: Updates the time stored in a pair of vars.
-//@Input: Var 0x8000: A var containing the daily event data. 
+//@Input: Var 0x8000: A var containing the daily event data.
 //					  The var after this one is used as well.
 void sp0A1_UpdateTimeInVars(void)
 {
@@ -1632,11 +1632,11 @@ void sp0A1_UpdateTimeInVars(void)
 }
 
 //@Details: Gets the time difference between the data stored in a var and the current time.
-//@Input: Var 0x8000: A var containing the time data. 
+//@Input: Var 0x8000: A var containing the time data.
 //					  The var after this one is used as well.
 //@Input: Var 0x8001: 0 - Get minute difference
 //					  1 - Get hour difference.
-//					  2 - Get day difference. 
+//					  2 - Get day difference.
 //					  3 - Get month difference.
 //					  4 - Get year difference.
 //@Returns: The time difference between the current time and the time stored in the given var.
@@ -1651,7 +1651,7 @@ u32 sp0A2_GetTimeDifference(void)
 	u8 startDay = startTime->day;
 	u8 startMonth = startTime->month;
 	u32 startYear = startTime->year + startTime->century * 100;
-	
+
 	switch (Var8001) {
 		case 0: //Get minute difference
 			difference = GetMinuteDifference(startYear, startMonth, startDay, startHour, startMinute, Clock->year, Clock->month, Clock->day, Clock->hour, Clock->minute);
@@ -1702,7 +1702,7 @@ u8 sp0AD_GetTimeOfDay(void)
 				return DAY;
 			else
 				return MORNING;
-			
+
 	}
 }
 
@@ -1791,7 +1791,7 @@ void sp0B2_PokemonTypeInParty(void)
 			}
 		}
 	}
-	
+
 	gSpecialVar_LastResult = FALSE;
 }
 
@@ -1817,7 +1817,7 @@ void sp0CC_CanLearnDracoMeteorInParty(void)
 					if (GetMonData(&gPlayerParty[i], MON_DATA_MOVE1 + j, NULL) == MOVE_DRACOMETEOR)
 						break;
 				}
-				
+
 				if (j != MAX_MON_MOVES)
 					continue; //If the Pokemon already knows Draco Meteor then skip it
 
@@ -1826,7 +1826,7 @@ void sp0CC_CanLearnDracoMeteorInParty(void)
 			}
 		}
 	}
-	
+
 	gSpecialVar_LastResult = FALSE;
 }
 
@@ -1847,7 +1847,7 @@ bool8 sp18B_ShowFossilImage(void) {
 	u8 result = BoxCreateTask(PicBoxSetter);
 	if (result == 1)
 		return TRUE;
-	
+
 	result = FindTaskIdByFunc(TaskDestroyPicBox);
 	if (result != 0xFF)
 		return FALSE;
@@ -1859,17 +1859,17 @@ bool8 sp18B_ShowFossilImage(void) {
 	LoadSpriteSheets(gFossilImageTable[Var8004].data);
 
 	pal = AddPalRef(5, Var8004);	// dynamic OW pals
-	if (pal == 0xFF)	
+	if (pal == 0xFF)
 		LoadPalette(gFossilImageTable[Var8004].palette, 0x1d0, 0x20);
 	else
 		DoLoadSpritePalette(gFossilImageTable[Var8004].palette, pal*16);
-	
+
 #else
 	if (Var8004 == 0x8D)
 	{
 		LoadSpriteSheets((void*) 0x83E17C0);
 		pal = AddPalRef(5, Var8004);	// dynamic OW pals
-		if (pal == 0xFF)	
+		if (pal == 0xFF)
 			LoadPalette((void*) 0x83E17A0, 0x1d0, 0x20);
 		else
 			DoLoadSpritePalette((void*) 0x83E17A0, pal*16);
@@ -1878,32 +1878,32 @@ bool8 sp18B_ShowFossilImage(void) {
 	{
 		LoadSpriteSheets((void*) 0x83E17D0);
 		pal = AddPalRef(5, Var8004);	// dynamic OW pals
-		if (pal == 0xFF)	
+		if (pal == 0xFF)
 			LoadPalette((void*) 0x83E0F80, 0x1d0, 0x20);
 		else
 			DoLoadSpritePalette((void*) 0x83E0F80, pal*16);
 	}
 	else
 		return FALSE;
-	
+
 #endif
-	
+
 	s16 x = ((Var8005 << 0x13) + 0x280000) >> 0x10;
 	s16 y = ((Var8006 << 0x13) + 0x280000) >> 0x10;
-	
+
 	u8 objId = CreateSprite(FossilTemplate, x, y, 0);
-	
+
 	gSprites[objId].oam.paletteNum |= pal;
-		
+
 	u8 taskId = CreateTask(TaskDestroyPicBox, 0x50);
 	u8 windowId = CreateWindowFromRect(Var8005, Var8006, 8, 8);
 	gTasks[taskId].data[5] = windowId;
 	gTasks[taskId].data[0] = 0;
 	gTasks[taskId].data[2] = objId;
-	
+
 	SetStandardWindowBorderStyle(windowId, 1);
 	BgIdMarkForSync(0);
-	
+
 	return TRUE;
 }
 
@@ -1920,7 +1920,7 @@ u8 sp0D0_PokemonInPartyThatCanLearnTMHM(void)
 		if (CanMonLearnTMHM(&gPlayerParty[i], tm - 1))
 			return i;
 	}
-	
+
 	return PARTY_SIZE;
 }
 
@@ -1941,381 +1941,381 @@ void HallOfFame_PrintMonInfo(struct HallofFameMon *currMon, unusedArg u8 a1, unu
 
 
 void CB2_DoHallOfFameScreen(void) {
-    if (!InitHallOfFameScreen()) {
-        u8 taskId = CreateTask(Task_Hof_InitMonData, 0);
-        gTasks[taskId].tDontSaveData = FALSE;
-        sHofMonPtr = Calloc(sizeof(*sHofMonPtr));
+	if (!InitHallOfFameScreen()) {
+		u8 taskId = CreateTask(Task_Hof_InitMonData, 0);
+		gTasks[taskId].tDontSaveData = FALSE;
+		sHofMonPtr = Calloc(sizeof(*sHofMonPtr));
 	}
 }
 
 
 void Task_Hof_InitTeamSaveData(u8 taskId) {
-    u16 i;
-	
-	Var8005 = 50;	// 020370c2
-    struct HallofFameTeam *lastSavedTeam = (struct HallofFameTeam *)(gDecompressionBuffer);
-	
-    sub_8112450();
+	u16 i;
 
-    if (gHasHallOfFameRecords == 0)
-        Memset(gDecompressionBuffer, 0, 0x2000);
+	Var8005 = 50;	// 020370c2
+	struct HallofFameTeam *lastSavedTeam = (struct HallofFameTeam *)(gDecompressionBuffer);
+
+	sub_8112450();
+
+	if (gHasHallOfFameRecords == 0)
+		Memset(gDecompressionBuffer, 0, 0x2000);
 	else
 	{
-        if (SaveLoadGameData(3) != TRUE)
-            Memset(gDecompressionBuffer, 0, 0x2000);
-    }
+		if (SaveLoadGameData(3) != TRUE)
+			Memset(gDecompressionBuffer, 0, 0x2000);
+	}
 
-    for (i = 0; i < HALL_OF_FAME_MAX_TEAMS; ++i, ++lastSavedTeam)
+	for (i = 0; i < HALL_OF_FAME_MAX_TEAMS; ++i, ++lastSavedTeam)
 	{
-        if (lastSavedTeam->mon[0].species == SPECIES_NONE)
-            break;
-    }
-			
-    if (i >= HALL_OF_FAME_MAX_TEAMS) {
-        struct HallofFameTeam *afterTeam = (struct HallofFameTeam *)(gDecompressionBuffer);
-        struct HallofFameTeam *beforeTeam = (struct HallofFameTeam *)(gDecompressionBuffer);
-        afterTeam++;
-        for (i = 0; i < HALL_OF_FAME_MAX_TEAMS - 1; ++i, beforeTeam++, afterTeam++) {
-            *beforeTeam = *afterTeam;
-        }
-        lastSavedTeam--;
-    }
-    *lastSavedTeam = *sHofMonPtr;
+		if (lastSavedTeam->mon[0].species == SPECIES_NONE)
+			break;
+	}
 
-    NewMenuHelpers_DrawDialogueFrame(0, 0);
-    AddTextPrinterParameterized2(0, 1, gText_SavingDontTurnOffPower, 0, NULL, 2, 1, 3);
-    CopyWindowToVram(0, 3);
-    gTasks[taskId].func = Task_Hof_TrySaveData;
+	if (i >= HALL_OF_FAME_MAX_TEAMS) {
+		struct HallofFameTeam *afterTeam = (struct HallofFameTeam *)(gDecompressionBuffer);
+		struct HallofFameTeam *beforeTeam = (struct HallofFameTeam *)(gDecompressionBuffer);
+		afterTeam++;
+		for (i = 0; i < HALL_OF_FAME_MAX_TEAMS - 1; ++i, beforeTeam++, afterTeam++) {
+			*beforeTeam = *afterTeam;
+		}
+		lastSavedTeam--;
+	}
+	*lastSavedTeam = *sHofMonPtr;
+
+	NewMenuHelpers_DrawDialogueFrame(0, 0);
+	AddTextPrinterParameterized2(0, 1, gText_SavingDontTurnOffPower, 0, NULL, 2, 1, 3);
+	CopyWindowToVram(0, 3);
+	gTasks[taskId].func = Task_Hof_TrySaveData;
 }
 
 
 void Task_Hof_DisplayMon(u8 taskId) {
-    u8 spriteId;
-    s16 xPos, yPos, field4, field6;
+	u8 spriteId;
+	s16 xPos, yPos, field4, field6;
 
-    u16 currMonId = gTasks[taskId].tDisplayedMonId;
-    struct HallofFameMon *currMon = &sHofMonPtr->mon[currMonId];
+	u16 currMonId = gTasks[taskId].tDisplayedMonId;
+	struct HallofFameMon *currMon = &sHofMonPtr->mon[currMonId];
 
-    if (gTasks[taskId].tMonNumber > 3) {
-        xPos = sHallOfFame_MonFullTeamPositions[currMonId][0];
-        yPos = sHallOfFame_MonFullTeamPositions[currMonId][1];
-        field4 = sHallOfFame_MonFullTeamPositions[currMonId][2];
-        field6 = sHallOfFame_MonFullTeamPositions[currMonId][3];
-    } else {
-        xPos = sHallOfFame_MonHalfTeamPositions[currMonId][0];
-        yPos = sHallOfFame_MonHalfTeamPositions[currMonId][1];
-        field4 = sHallOfFame_MonHalfTeamPositions[currMonId][2];
-        field6 = sHallOfFame_MonHalfTeamPositions[currMonId][3];
-    }
+	if (gTasks[taskId].tMonNumber > 3) {
+		xPos = sHallOfFame_MonFullTeamPositions[currMonId][0];
+		yPos = sHallOfFame_MonFullTeamPositions[currMonId][1];
+		field4 = sHallOfFame_MonFullTeamPositions[currMonId][2];
+		field6 = sHallOfFame_MonFullTeamPositions[currMonId][3];
+	} else {
+		xPos = sHallOfFame_MonHalfTeamPositions[currMonId][0];
+		yPos = sHallOfFame_MonHalfTeamPositions[currMonId][1];
+		field4 = sHallOfFame_MonHalfTeamPositions[currMonId][2];
+		field6 = sHallOfFame_MonHalfTeamPositions[currMonId][3];
+	}
 
-    // if (currMon->species == SPECIES_EGG)
-    //     field6 += 10;
+	// if (currMon->species == SPECIES_EGG)
+	//	 field6 += 10;
 
 	spriteId = CreatePicSprite2(currMon->species, currMon->tid, currMon->personality, 1, xPos, yPos, currMonId, 0xFFFF);
-    gSprites[spriteId].tDestinationX = field4;
-    gSprites[spriteId].tDestinationY = field6;
-    gSprites[spriteId].data[0] = 0;
-    // gSprites[spriteId].tSpecies = currMon->species;
-    gSprites[spriteId].callback = SpriteCB_GetOnScreenAndAnimate;
-    gTasks[taskId].tMonSpriteId(currMonId) = spriteId;
-    DeleteWindow(0, TRUE);
-    gTasks[taskId].func = Task_Hof_PrintMonInfoAfterAnimating;
+	gSprites[spriteId].tDestinationX = field4;
+	gSprites[spriteId].tDestinationY = field6;
+	gSprites[spriteId].data[0] = 0;
+	// gSprites[spriteId].tSpecies = currMon->species;
+	gSprites[spriteId].callback = SpriteCB_GetOnScreenAndAnimate;
+	gTasks[taskId].tMonSpriteId(currMonId) = spriteId;
+	DeleteWindow(0, TRUE);
+	gTasks[taskId].func = Task_Hof_PrintMonInfoAfterAnimating;
 }
 
 
 void Task_Hof_PrintMonInfoAfterAnimating(u8 taskId) {
-    u16 currMonId = gTasks[taskId].tDisplayedMonId;
-    struct HallofFameMon *currMon = &sHofMonPtr->mon[currMonId];
-    struct Sprite *monSprite = &gSprites[gTasks[taskId].tMonSpriteId(currMonId)];
+	u16 currMonId = gTasks[taskId].tDisplayedMonId;
+	struct HallofFameMon *currMon = &sHofMonPtr->mon[currMonId];
+	struct Sprite *monSprite = &gSprites[gTasks[taskId].tMonSpriteId(currMonId)];
 
-    if (monSprite->data[0]) {
-        if (currMon->species != SPECIES_EGG)
-            PlayCry1(currMon->species, 0);
+	if (monSprite->data[0]) {
+		if (currMon->species != SPECIES_EGG)
+			PlayCry1(currMon->species, 0);
 
-        HallOfFame_PrintMonInfo(currMon, 0, 14);
-        gTasks[taskId].tFrameCount = 120;
-        gTasks[taskId].func = Task_Hof_TryDisplayAnotherMon;
-    }
+		HallOfFame_PrintMonInfo(currMon, 0, 14);
+		gTasks[taskId].tFrameCount = 120;
+		gTasks[taskId].func = Task_Hof_TryDisplayAnotherMon;
+	}
 }
 
 
 void Task_Hof_TryDisplayAnotherMon(u8 taskId) {
-    u16 currPokeID = gTasks[taskId].tDisplayedMonId;
-    struct HallofFameMon *currMon = &sHofMonPtr->mon[currPokeID];
+	u16 currPokeID = gTasks[taskId].tDisplayedMonId;
+	struct HallofFameMon *currMon = &sHofMonPtr->mon[currPokeID];
 
-    if (gTasks[taskId].tFrameCount != 0) {
-        gTasks[taskId].tFrameCount--;
-    } else {
-        sHofFadingRelated |= (0x10000 << gSprites[gTasks[taskId].tMonSpriteId(currPokeID)].oam.paletteNum);
-        if (gTasks[taskId].tDisplayedMonId <= 4 && currMon[1].species != SPECIES_NONE)  // there is another pokemon to display
-        {
-            gTasks[taskId].tDisplayedMonId++;
-            BeginNormalPaletteFade(sHofFadingRelated, 0, 12, 12, RGB(22, 24, 29));
-            gSprites[gTasks[taskId].tMonSpriteId(currPokeID)].oam.priority = 1;
-            gTasks[taskId].func = Task_Hof_DisplayMon;
-        } else {
-            gTasks[taskId].func = Task_Hof_PaletteFadeAndPrintWelcomeText;
-        }
-    }
+	if (gTasks[taskId].tFrameCount != 0) {
+		gTasks[taskId].tFrameCount--;
+	} else {
+		sHofFadingRelated |= (0x10000 << gSprites[gTasks[taskId].tMonSpriteId(currPokeID)].oam.paletteNum);
+		if (gTasks[taskId].tDisplayedMonId <= 4 && currMon[1].species != SPECIES_NONE)  // there is another pokemon to display
+		{
+			gTasks[taskId].tDisplayedMonId++;
+			BeginNormalPaletteFade(sHofFadingRelated, 0, 12, 12, RGB(22, 24, 29));
+			gSprites[gTasks[taskId].tMonSpriteId(currPokeID)].oam.priority = 1;
+			gTasks[taskId].func = Task_Hof_DisplayMon;
+		} else {
+			gTasks[taskId].func = Task_Hof_PaletteFadeAndPrintWelcomeText;
+		}
+	}
 }
 
 
 
 void Task_HofPC_CopySaveData(u8 taskId) {
-    HofPC_CreateWindow(0, 0x1E, 0, 0xC, 0x226);
-    if (SaveLoadGameData(3) != 1) {
-        gTasks[taskId].func = Task_HofPC_PrintDataIsCorrupted;
-    } 
+	HofPC_CreateWindow(0, 0x1E, 0, 0xC, 0x226);
+	if (SaveLoadGameData(3) != 1) {
+		gTasks[taskId].func = Task_HofPC_PrintDataIsCorrupted;
+	}
 	else
 	{
-        u16 i;
-        struct HallofFameTeam *savedTeams;
+		u16 i;
+		struct HallofFameTeam *savedTeams;
 
-        CpuCopy16(gDecompressionBuffer, sHofMonPtr, 0x2000);
-        savedTeams = sHofMonPtr;
-        for (i = 0; i < HALL_OF_FAME_MAX_TEAMS; ++i, ++savedTeams)
+		CpuCopy16(gDecompressionBuffer, sHofMonPtr, 0x2000);
+		savedTeams = sHofMonPtr;
+		for (i = 0; i < HALL_OF_FAME_MAX_TEAMS; ++i, ++savedTeams)
 		{
-            if (savedTeams->mon[0].species == SPECIES_NONE)
-                break;
-        }
+			if (savedTeams->mon[0].species == SPECIES_NONE)
+				break;
+		}
 
-        if (i < HALL_OF_FAME_MAX_TEAMS)
-            gTasks[taskId].tCurrTeamNo = i - 1;
-        else
-            gTasks[taskId].tCurrTeamNo = HALL_OF_FAME_MAX_TEAMS - 1;
+		if (i < HALL_OF_FAME_MAX_TEAMS)
+			gTasks[taskId].tCurrTeamNo = i - 1;
+		else
+			gTasks[taskId].tCurrTeamNo = HALL_OF_FAME_MAX_TEAMS - 1;
 
-        gTasks[taskId].tCurrPageNo = GetGameStat(GAME_STAT_ENTERED_HOF);
+		gTasks[taskId].tCurrPageNo = GetGameStat(GAME_STAT_ENTERED_HOF);
 
-        gTasks[taskId].func = Task_HofPC_DrawSpritesPrintText;
-    }
+		gTasks[taskId].func = Task_HofPC_DrawSpritesPrintText;
+	}
 }
 
 
 
 void Task_HofPC_DrawSpritesPrintText(u8 taskId) {
-    struct HallofFameTeam *savedTeams = sHofMonPtr;
-    struct HallofFameMon *currMon;
-    u16 i;
+	struct HallofFameTeam *savedTeams = sHofMonPtr;
+	struct HallofFameMon *currMon;
+	u16 i;
 
-    for (i = 0; i < gTasks[taskId].tCurrTeamNo; ++i)
-        savedTeams++;
+	for (i = 0; i < gTasks[taskId].tCurrTeamNo; ++i)
+		savedTeams++;
 
-    currMon = &savedTeams->mon[0];
-    sHofFadingRelated = 0;
-    gTasks[taskId].tCurrMonId = 0;
-    gTasks[taskId].tMonNo = 0;
+	currMon = &savedTeams->mon[0];
+	sHofFadingRelated = 0;
+	gTasks[taskId].tCurrMonId = 0;
+	gTasks[taskId].tMonNo = 0;
 
-    for (i = 0; i < PARTY_SIZE; ++i, currMon++) {
-        if (currMon->species != 0)
-            gTasks[taskId].tMonNo++;
-    }
+	for (i = 0; i < PARTY_SIZE; ++i, currMon++) {
+		if (currMon->species != 0)
+			gTasks[taskId].tMonNo++;
+	}
 
-    currMon = &savedTeams->mon[0];
+	currMon = &savedTeams->mon[0];
 
-    for (i = 0; i < PARTY_SIZE; ++i, currMon++) {
-        if (currMon->species != 0) {
-            u16 spriteId;
-            s16 posX, posY;
+	for (i = 0; i < PARTY_SIZE; ++i, currMon++) {
+		if (currMon->species != 0) {
+			u16 spriteId;
+			s16 posX, posY;
 
-            if (gTasks[taskId].tMonNo > 3) {
-                posX = sHallOfFame_MonFullTeamPositions[i][2];
-                posY = sHallOfFame_MonFullTeamPositions[i][3];
-            } else {
-                posX = sHallOfFame_MonHalfTeamPositions[i][2];
-                posY = sHallOfFame_MonHalfTeamPositions[i][3];
-            }
+			if (gTasks[taskId].tMonNo > 3) {
+				posX = sHallOfFame_MonFullTeamPositions[i][2];
+				posY = sHallOfFame_MonFullTeamPositions[i][3];
+			} else {
+				posX = sHallOfFame_MonHalfTeamPositions[i][2];
+				posY = sHallOfFame_MonHalfTeamPositions[i][3];
+			}
 
-            if (currMon->species == SPECIES_EGG)
-                posY += 10;
+			if (currMon->species == SPECIES_EGG)
+				posY += 10;
 
-            spriteId = CreatePicSprite2(currMon->species, currMon->tid, currMon->personality, 1, posX, posY, i, 0xFFFF);
-            gSprites[spriteId].oam.priority = 1;
-            gTasks[taskId].tMonSpriteId(i) = spriteId;
-        } else {
-            gTasks[taskId].tMonSpriteId(i) = 0xFF;
-        }
-    }
+			spriteId = CreatePicSprite2(currMon->species, currMon->tid, currMon->personality, 1, posX, posY, i, 0xFFFF);
+			gSprites[spriteId].oam.priority = 1;
+			gTasks[taskId].tMonSpriteId(i) = spriteId;
+		} else {
+			gTasks[taskId].tMonSpriteId(i) = 0xFF;
+		}
+	}
 
-    BlendPalettes(0xFFFF0000, 0xC, RGB(22, 24, 29));
+	BlendPalettes(0xFFFF0000, 0xC, RGB(22, 24, 29));
 
-    ConvertIntToDecimalStringN(gStringVar1, gTasks[taskId].tCurrPageNo, STR_CONV_MODE_LEFT_ALIGN, 3);
-    StringExpandPlaceholders(gStringVar4, gText_HOFNumber);
+	ConvertIntToDecimalStringN(gStringVar1, gTasks[taskId].tCurrPageNo, STR_CONV_MODE_LEFT_ALIGN, 3);
+	StringExpandPlaceholders(gStringVar4, gText_HOFNumber);
 
-    if (gTasks[taskId].tCurrTeamNo <= 0)
-        HofPC_PutText(gStringVar4, gText_PickCancel, 0, 0, TRUE);
-    else
-        HofPC_PutText(gStringVar4, gText_PickNextCancel, 0, 0, TRUE);
+	if (gTasks[taskId].tCurrTeamNo <= 0)
+		HofPC_PutText(gStringVar4, gText_PickCancel, 0, 0, TRUE);
+	else
+		HofPC_PutText(gStringVar4, gText_PickNextCancel, 0, 0, TRUE);
 
-    gTasks[taskId].func = Task_HofPC_PrintMonInfo;
+	gTasks[taskId].func = Task_HofPC_PrintMonInfo;
 }
 
 
 
 void Task_HofPC_PrintMonInfo(u8 taskId) {
-    struct HallofFameTeam *savedTeams = sHofMonPtr;
-    struct HallofFameMon *currMon;
-    u16 i;
-    u16 currMonID;
+	struct HallofFameTeam *savedTeams = sHofMonPtr;
+	struct HallofFameMon *currMon;
+	u16 i;
+	u16 currMonID;
 
-    for (i = 0; i < gTasks[taskId].tCurrTeamNo; ++i)
-        savedTeams++;
+	for (i = 0; i < gTasks[taskId].tCurrTeamNo; ++i)
+		savedTeams++;
 
-    for (i = 0; i < PARTY_SIZE; ++i) {
-        u16 spriteId = gTasks[taskId].tMonSpriteId(i);
-        if (spriteId != 0xFF)
-            gSprites[spriteId].oam.priority = 1;
-    }
+	for (i = 0; i < PARTY_SIZE; ++i) {
+		u16 spriteId = gTasks[taskId].tMonSpriteId(i);
+		if (spriteId != 0xFF)
+			gSprites[spriteId].oam.priority = 1;
+	}
 
-    currMonID = gTasks[taskId].tMonSpriteId(gTasks[taskId].tCurrMonId);
-    gSprites[currMonID].oam.priority = 0;
-    sHofFadingRelated = (0x10000 << gSprites[currMonID].oam.paletteNum) ^ 0xFFFF0000;
-    BlendPalettesUnfaded(sHofFadingRelated, 0xC, RGB(22, 24, 29));
+	currMonID = gTasks[taskId].tMonSpriteId(gTasks[taskId].tCurrMonId);
+	gSprites[currMonID].oam.priority = 0;
+	sHofFadingRelated = (0x10000 << gSprites[currMonID].oam.paletteNum) ^ 0xFFFF0000;
+	BlendPalettesUnfaded(sHofFadingRelated, 0xC, RGB(22, 24, 29));
 
-    currMon = &savedTeams->mon[gTasks[taskId].tCurrMonId];
-    if (currMon->species != SPECIES_EGG)
+	currMon = &savedTeams->mon[gTasks[taskId].tCurrMonId];
+	if (currMon->species != SPECIES_EGG)
 	{
-        StopCryAndClearCrySongs();
-        PlayCry1(currMon->species, 0);
-    }
-    HallOfFame_PrintMonInfo(currMon, 0, 14);
+		StopCryAndClearCrySongs();
+		PlayCry1(currMon->species, 0);
+	}
+	HallOfFame_PrintMonInfo(currMon, 0, 14);
 
-    gTasks[taskId].func = Task_HofPC_HandleInput;
+	gTasks[taskId].func = Task_HofPC_HandleInput;
 }
 
 
 
 void Task_Hof_InitMonData(u8 taskId) {
-    u16 i, j;
+	u16 i, j;
 
-    gTasks[taskId].tMonNumber = 0;  // valid pokes
-	
-    for (i = 0; i < PARTY_SIZE; ++i)
+	gTasks[taskId].tMonNumber = 0;  // valid pokes
+
+	for (i = 0; i < PARTY_SIZE; ++i)
 	{
-        u8 nick[POKEMON_NAME_LENGTH + 2];
-        if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES, NULL) != 0)
+		u8 nick[POKEMON_NAME_LENGTH + 2];
+		if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES, NULL) != 0)
 		{
-            sHofMonPtr->mon[i].species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2, NULL);
-            sHofMonPtr->mon[i].tid = GetMonData(&gPlayerParty[i], MON_DATA_OT_ID, NULL);
-            sHofMonPtr->mon[i].personality = GetMonData(&gPlayerParty[i], MON_DATA_PERSONALITY, NULL);
-            sHofMonPtr->mon[i].lvl = GetMonData(&gPlayerParty[i], MON_DATA_LEVEL, NULL);
-            GetMonData(&gPlayerParty[i], MON_DATA_NICKNAME, nick);
-            for (j = 0; j < POKEMON_NAME_LENGTH; ++j)
+			sHofMonPtr->mon[i].species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES2, NULL);
+			sHofMonPtr->mon[i].tid = GetMonData(&gPlayerParty[i], MON_DATA_OT_ID, NULL);
+			sHofMonPtr->mon[i].personality = GetMonData(&gPlayerParty[i], MON_DATA_PERSONALITY, NULL);
+			sHofMonPtr->mon[i].lvl = GetMonData(&gPlayerParty[i], MON_DATA_LEVEL, NULL);
+			GetMonData(&gPlayerParty[i], MON_DATA_NICKNAME, nick);
+			for (j = 0; j < POKEMON_NAME_LENGTH; ++j)
 			{
-                sHofMonPtr->mon[i].nick[j] = nick[j];
-            }
-            gTasks[taskId].tMonNumber++;
-        }
+				sHofMonPtr->mon[i].nick[j] = nick[j];
+			}
+			gTasks[taskId].tMonNumber++;
+		}
 		else
 		{
-            sHofMonPtr->mon[i].species = 0;
-            sHofMonPtr->mon[i].tid = 0;
-            sHofMonPtr->mon[i].personality = 0;
-            sHofMonPtr->mon[i].lvl = 0;
-            sHofMonPtr->mon[i].nick[0] = EOS;
-        }
-    }
-		
-    sHofFadingRelated = 0;
-    gTasks[taskId].tDisplayedMonId = 0;
-    gTasks[taskId].tPlayerSpriteID = 0xFF;
+			sHofMonPtr->mon[i].species = 0;
+			sHofMonPtr->mon[i].tid = 0;
+			sHofMonPtr->mon[i].personality = 0;
+			sHofMonPtr->mon[i].lvl = 0;
+			sHofMonPtr->mon[i].nick[0] = EOS;
+		}
+	}
 
-    for (i = 0; i < PARTY_SIZE; ++i)
+	sHofFadingRelated = 0;
+	gTasks[taskId].tDisplayedMonId = 0;
+	gTasks[taskId].tPlayerSpriteID = 0xFF;
+
+	for (i = 0; i < PARTY_SIZE; ++i)
 	{
-        gTasks[taskId].tMonSpriteId(i) = 0xFF;
-    }
-	
-    if (gTasks[taskId].tDontSaveData != 0)
+		gTasks[taskId].tMonSpriteId(i) = 0xFF;
+	}
+
+	if (gTasks[taskId].tDontSaveData != 0)
 		gTasks[taskId].func = Task_Hof_SetMonDisplayTask;
-    else
-        gTasks[taskId].func = Task_Hof_InitTeamSaveData;
+	else
+		gTasks[taskId].func = Task_Hof_InitTeamSaveData;
 }
 
 
 
 void HallOfFame_PrintMonInfo(struct HallofFameMon *currMon, unusedArg u8 a1, unusedArg u8 a2) {
-    u8 text[30];
-    u8 *stringPtr;
-    s32 dexNumber;
-    s32 width;
+	u8 text[30];
+	u8 *stringPtr;
+	s32 dexNumber;
+	s32 width;
 
-    FillWindowPixelBuffer(0, 0);
-    PutWindowTilemap(0);
+	FillWindowPixelBuffer(0, 0);
+	PutWindowTilemap(0);
 
-    // dex number
-    if (currMon->species != SPECIES_EGG) {
-        stringPtr = StringCopy(text, gText_Number);
-        dexNumber = SpeciesToPokedexNum(currMon->species);
-        if (dexNumber != 0xFFFF) {
-            stringPtr[0] = (dexNumber / 100) + CHAR_0;
-            stringPtr++;
-            dexNumber = umodsi(dexNumber, 100);
-            stringPtr[0] = (dexNumber / 10) + CHAR_0;
-            stringPtr++;
-            stringPtr[0] = umodsi(dexNumber, 10) + CHAR_0;
-            stringPtr++;
-        } else {
-            *(stringPtr)++ = CHAR_QUESTION_MARK;
-            *(stringPtr)++ = CHAR_QUESTION_MARK;
-            *(stringPtr)++ = CHAR_QUESTION_MARK;
-        }
-        stringPtr[0] = EOS;
-        WindowPrint(0, 2, 0x10, 1, sUnknown_0840C23C, 0, text);
-    }
+	// dex number
+	if (currMon->species != SPECIES_EGG) {
+		stringPtr = StringCopy(text, gText_Number);
+		dexNumber = SpeciesToPokedexNum(currMon->species);
+		if (dexNumber != 0xFFFF) {
+			stringPtr[0] = (dexNumber / 100) + CHAR_0;
+			stringPtr++;
+			dexNumber = umodsi(dexNumber, 100);
+			stringPtr[0] = (dexNumber / 10) + CHAR_0;
+			stringPtr++;
+			stringPtr[0] = umodsi(dexNumber, 10) + CHAR_0;
+			stringPtr++;
+		} else {
+			*(stringPtr)++ = CHAR_QUESTION_MARK;
+			*(stringPtr)++ = CHAR_QUESTION_MARK;
+			*(stringPtr)++ = CHAR_QUESTION_MARK;
+		}
+		stringPtr[0] = EOS;
+		WindowPrint(0, 2, 0x10, 1, sUnknown_0840C23C, 0, text);
+	}
 
-    // nick, species names, gender and level
-    Memcpy(text, currMon->nick, POKEMON_NAME_LENGTH);
-    text[POKEMON_NAME_LENGTH] = EOS;
-    if (currMon->species == SPECIES_EGG) {
-        width = 128 - GetStringWidth(2, text, GetFontAttribute(2, 2)) / 2;
-        WindowPrint(0, 2, width, 1, sUnknown_0840C23C, 0, text);
-        CopyWindowToVram(0, 3);
-    } else {
-        width = -128 - GetStringWidth(2, text, GetFontAttribute(2, 2));
-        WindowPrint(0, 2, width, 1, sUnknown_0840C23C, 0, text);
+	// nick, species names, gender and level
+	Memcpy(text, currMon->nick, POKEMON_NAME_LENGTH);
+	text[POKEMON_NAME_LENGTH] = EOS;
+	if (currMon->species == SPECIES_EGG) {
+		width = 128 - GetStringWidth(2, text, GetFontAttribute(2, 2)) / 2;
+		WindowPrint(0, 2, width, 1, sUnknown_0840C23C, 0, text);
+		CopyWindowToVram(0, 3);
+	} else {
+		width = -128 - GetStringWidth(2, text, GetFontAttribute(2, 2));
+		WindowPrint(0, 2, width, 1, sUnknown_0840C23C, 0, text);
 
-        text[0] = CHAR_SLASH;
-        stringPtr = StringCopy(text + 1, gSpeciesNames[currMon->species]);
+		text[0] = CHAR_SLASH;
+		stringPtr = StringCopy(text + 1, gSpeciesNames[currMon->species]);
 
-        if (currMon->species != NATIONAL_DEX_NIDORAN_M && currMon->species != NATIONAL_DEX_NIDORAN_F) {
-            switch (GetGenderFromSpeciesAndPersonality(currMon->species, currMon->personality)) {
-                case MON_MALE:
-                    stringPtr[0] = CHAR_MALE;
-                    stringPtr++;
-                    break;
-                case MON_FEMALE:
-                    stringPtr[0] = CHAR_FEMALE;
-                    stringPtr++;
-                    break;
-            }
-        }
+		if (currMon->species != NATIONAL_DEX_NIDORAN_M && currMon->species != NATIONAL_DEX_NIDORAN_F) {
+			switch (GetGenderFromSpeciesAndPersonality(currMon->species, currMon->personality)) {
+				case MON_MALE:
+					stringPtr[0] = CHAR_MALE;
+					stringPtr++;
+					break;
+				case MON_FEMALE:
+					stringPtr[0] = CHAR_FEMALE;
+					stringPtr++;
+					break;
+			}
+		}
 
-        stringPtr[0] = EOS;
-        WindowPrint(0, 2, 0x80, 1, sUnknown_0840C23C, 0, text);
+		stringPtr[0] = EOS;
+		WindowPrint(0, 2, 0x80, 1, sUnknown_0840C23C, 0, text);
 
-        stringPtr = StringCopy(text, gText_Level);
-        ConvertIntToDecimalStringN(stringPtr, currMon->lvl, STR_CONV_MODE_LEFT_ALIGN, 3);
-        WindowPrint(0, 2, 0x20, 0x11, sUnknown_0840C23C, 0, text);
+		stringPtr = StringCopy(text, gText_Level);
+		ConvertIntToDecimalStringN(stringPtr, currMon->lvl, STR_CONV_MODE_LEFT_ALIGN, 3);
+		WindowPrint(0, 2, 0x20, 0x11, sUnknown_0840C23C, 0, text);
 
-        stringPtr = StringCopy(text, gText_IDNumber);
-        ConvertIntToDecimalStringN(stringPtr, (u16)(currMon->tid), STR_CONV_MODE_LEADING_ZEROS, 5);
-        WindowPrint(0, 2, 0x60, 0x11, sUnknown_0840C23C, 0, text);
+		stringPtr = StringCopy(text, gText_IDNumber);
+		ConvertIntToDecimalStringN(stringPtr, (u16)(currMon->tid), STR_CONV_MODE_LEADING_ZEROS, 5);
+		WindowPrint(0, 2, 0x60, 0x11, sUnknown_0840C23C, 0, text);
 
-        CopyWindowToVram(0, 3);
-    }
+		CopyWindowToVram(0, 3);
+	}
 }
 
 //Naming Screen Special////////////////////////////////////////////////////////////////////////////
 //Pointer+1 at 083E23D0, orig func at 0809F11C
 bool8 KeyboardKeyHandler_Character(u8 event)
 {
-    sub_809E518(3, 0, 0);
-    if (event == KBEVENT_PRESSED_A)
-    {
+	sub_809E518(3, 0, 0);
+	if (event == KBEVENT_PRESSED_A)
+	{
 		if (gNamingScreenData->templateNum == NAMING_SCREEN_CHOOSE_NUMBER)
 		{
 			u8 character;
 			s16 x, y;
-			
+
 			NamingScreen_GetCursorPos(&x, &y);
 			character = NamingScreen_GetCharAtKeyboardPos(x, y);
 
@@ -2326,36 +2326,36 @@ bool8 KeyboardKeyHandler_Character(u8 event)
 			}
 		}
 
-        bool8 atMaxChars = NameChooserSelectLetter();
+		bool8 atMaxChars = NameChooserSelectLetter();
 
 		#ifdef AUTO_NAMING_SCREEN_SWAP
-        if (gNamingScreenData->currentPage == PAGE_UPPER && GetTextCaretPosition() == 1)
+		if (gNamingScreenData->currentPage == PAGE_UPPER && GetTextCaretPosition() == 1)
 			gNamingScreenData->state = MAIN_STATE_START_PAGE_SWAP;
 		#endif
 
-        sub_809EAA8();
-        if (atMaxChars)
-        {
-            SetInputState(INPUT_STATE_DISABLED); //In Emerald it's INPUT_STATE_2 for some reason
-            gNamingScreenData->state = MAIN_STATE_MOVE_TO_OK_BUTTON;
-        }
-    }
-	
+		sub_809EAA8();
+		if (atMaxChars)
+		{
+			SetInputState(INPUT_STATE_DISABLED); //In Emerald it's INPUT_STATE_2 for some reason
+			gNamingScreenData->state = MAIN_STATE_MOVE_TO_OK_BUTTON;
+		}
+	}
+
 	if (gNamingScreenData->templateNum == NAMING_SCREEN_CHOOSE_NUMBER && gNamingScreenData->currentPage != PAGE_OTHERS)
 		gNamingScreenData->state = MAIN_STATE_START_PAGE_SWAP; //Jump immediately to numbers page
-	
-    return FALSE;
+
+	return FALSE;
 }
 
 static u8 GetTextCaretPosition(void)
 {
-    u8 i;
-    for (i = 0; i < gNamingScreenData->template->maxChars; i++)
-    {
-        if (gNamingScreenData->textBuffer[i] == EOS)
-            return i;
-    }
-    return gNamingScreenData->template->maxChars - 1;
+	u8 i;
+	for (i = 0; i < gNamingScreenData->template->maxChars; i++)
+	{
+		if (gNamingScreenData->textBuffer[i] == EOS)
+			return i;
+	}
+	return gNamingScreenData->template->maxChars - 1;
 }
 
 #define sPlayerNamingScreenTemplate (const struct NamingScreenTemplate*) 0x83E245C
@@ -2367,7 +2367,7 @@ static void ConvertNumberEntryToInteger(void)
 {
 	u8 numDigits = StringLength(gStringVar1);
 	u32 val = 0;
-	
+
 	if (numDigits == 0)
 		val = 0xFFFF;
 	else
@@ -2397,32 +2397,32 @@ void sp0B3_DoChooseNumberScreen(void)
 extern const u8 gText_EnterNumber[];
 static const struct NamingScreenTemplate sChooseNumberNamingScreenTemplate =
 {
-    .copyExistingString = 0,
-    .maxChars = 4, //Max 9999 - should be preloaded
-    .iconFunction = 0,
-    .addGenderIcon = 0,
-    .initialPage = 1,
-    .unused = 35,
-    .title = gText_EnterNumber,
+	.copyExistingString = 0,
+	.maxChars = 4, //Max 9999 - should be preloaded
+	.iconFunction = 0,
+	.addGenderIcon = 0,
+	.initialPage = 1,
+	.unused = 35,
+	.title = gText_EnterNumber,
 };
 
 const struct NamingScreenTemplate* const sNamingScreenTemplates[] =
 {
-    sPlayerNamingScreenTemplate,
-    sPCBoxNamingTemplate,
-    sMonNamingScreenTemplate,
-    sMonNamingScreenTemplate,
-    sRivalNamingScreenTemplate,
+	sPlayerNamingScreenTemplate,
+	sPCBoxNamingTemplate,
+	sMonNamingScreenTemplate,
+	sMonNamingScreenTemplate,
+	sRivalNamingScreenTemplate,
 	&sChooseNumberNamingScreenTemplate,
 };
 
 void (*const sNamingScreenTitlePrintingFuncs[])(void) =
 {
-    (void*) (0x809F49C | 1),
-    (void*) (0x809F49C | 1),
-    (void*) (0x809F4F0 | 1),
-    (void*) (0x809F4F0 | 1),
-    (void*) (0x809F49C | 1),
+	(void*) (0x809F49C | 1),
+	(void*) (0x809F49C | 1),
+	(void*) (0x809F4F0 | 1),
+	(void*) (0x809F4F0 | 1),
+	(void*) (0x809F49C | 1),
 	(void*) (0x809F49C | 1),
 };
 
@@ -2443,8 +2443,8 @@ void ShowItemSpriteOnFind(void)
 	#endif
 			iconSpriteId = AddItemIconSprite(ITEM_TAG, ITEM_TAG, Var8004);
 
-    if (iconSpriteId != MAX_SPRITES)
-    {
+	if (iconSpriteId != MAX_SPRITES)
+	{
 		u8 pocket = GetPocketByItemId(Var8004);
 		if (pocket == POCKET_KEY_ITEMS || pocket == POCKET_TM_CASE)
 		{ //Double the size of the item and place it in the centre of the screen
@@ -2459,12 +2459,12 @@ void ShowItemSpriteOnFind(void)
 			x = 197 + 16;
 			y = 124 + 16;
 		}
-	
-        gSprites[iconSpriteId].pos2.x = x;
-        gSprites[iconSpriteId].pos2.y = y;
+
+		gSprites[iconSpriteId].pos2.x = x;
+		gSprites[iconSpriteId].pos2.y = y;
 		gSprites[iconSpriteId].oam.priority = 0; //Highest priority
-    }
-	
+	}
+
 	Var8006 = iconSpriteId;
 #endif
 }
@@ -2472,22 +2472,22 @@ void ShowItemSpriteOnFind(void)
 void ClearItemSpriteAfterFind(void)
 {
 #ifdef ITEM_PICTURE_ACQUIRE
-    FreeSpriteTilesByTag(ITEM_TAG);
-    FreeSpritePaletteByTag(ITEM_TAG);
-    FreeSpriteOamMatrix(&gSprites[Var8006]);
-    DestroySprite(&gSprites[Var8006]);
+	FreeSpriteTilesByTag(ITEM_TAG);
+	FreeSpritePaletteByTag(ITEM_TAG);
+	FreeSpriteOamMatrix(&gSprites[Var8006]);
+	DestroySprite(&gSprites[Var8006]);
 #endif
 }
 
 bool8 sp196_TryCopyTMNameToBuffer1(void)
 {
-    if (IsTMHM(Var8004))
-    {
-        CopyTMName(gStringVar1, Var8004);
-        return TRUE;
-    }
+	if (IsTMHM(Var8004))
+	{
+		CopyTMName(gStringVar1, Var8004);
+		return TRUE;
+	}
 
-    return FALSE;
+	return FALSE;
 }
 
 void TryAppendSOntoEndOfItemString(void)
@@ -2495,7 +2495,7 @@ void TryAppendSOntoEndOfItemString(void)
 	if (Var8005 > 1)
 	{
 		u8 length = StringLength(gStringVar2);
-		
+
 		switch (gStringVar2[length - 1]) {
 			case PC_y:
 				gStringVar2[length + 0] = PC_i;
@@ -2590,7 +2590,7 @@ u8* LoadTextBuffer0D(void)
 
 //@Details: Buffers the given ability name to the chosen buffer.
 //@Input: Var 0x8000 - Ability Num
-//	      Var 0x8001 - Buffer #
+//		  Var 0x8001 - Buffer #
 void sp0CF_BufferAbilityName(void)
 {
 	const u8* name = GetAbilityName(Var8000);
@@ -2646,7 +2646,7 @@ bool8 GiveCoins(u32 toAdd)
 		newAmount = MAX_COINS;
 	else
 		newAmount = current + toAdd;
-	
+
 	SetCoins(newAmount);
 	return TRUE;
 }
@@ -2660,7 +2660,7 @@ bool8 TakeCoins(u32 toTake)
 		return FALSE;
 	else
 		newAmount = current - toTake;
-	
+
 	SetCoins(newAmount);
 	return TRUE;
 }
@@ -2683,7 +2683,7 @@ bool8 scrB3_CheckCoins(struct ScriptContext *ctx)
 		gSpecialVar_LastResult = TRUE;
 	else
 		gSpecialVar_LastResult = FALSE;
-    return FALSE;	
+	return FALSE;
 }
 
 
@@ -2700,12 +2700,12 @@ bool8 scrB4_AddCoins(struct ScriptContext *ctx)
 	#else
 		amount = VarGet(arg);
 	#endif
-	
-    if (GiveCoins(amount))
-        gSpecialVar_LastResult = FALSE;
-    else
-        gSpecialVar_LastResult = TRUE;
-    return FALSE;
+
+	if (GiveCoins(amount))
+		gSpecialVar_LastResult = FALSE;
+	else
+		gSpecialVar_LastResult = TRUE;
+	return FALSE;
 }
 
 
@@ -2722,18 +2722,18 @@ bool8 scrB5_SubtractCoins(struct ScriptContext *ctx)
 	#else
 		amount = VarGet(arg);
 	#endif
-	
-    if (TakeCoins(amount) == TRUE)
-        gSpecialVar_LastResult = FALSE;
-    else
-        gSpecialVar_LastResult = TRUE;
-    return FALSE;
+
+	if (TakeCoins(amount) == TRUE)
+		gSpecialVar_LastResult = FALSE;
+	else
+		gSpecialVar_LastResult = TRUE;
+	return FALSE;
 }
 
 
 void ConvertCoinInt(u32 coinAmount)
 {
-    ConvertIntToDecimalStringN(gStringVar1, coinAmount, STR_CONV_MODE_RIGHT_ALIGN, MAX_COINS_DIGITS);
+	ConvertIntToDecimalStringN(gStringVar1, coinAmount, STR_CONV_MODE_RIGHT_ALIGN, MAX_COINS_DIGITS);
 }
 
 #ifdef SCROLLING_MULTICHOICE
@@ -2767,34 +2767,34 @@ extern const u8 sExampleText_10[];
 //waitstate
 static const u8* sMultichoiceSet1[] =
 {
-    sExampleText_1,
-    sExampleText_2,
-    sExampleText_3,
-    sExampleText_4,
-    sExampleText_5,
-    sExampleText_6,
-    sExampleText_7,
-    sExampleText_8,
-    sExampleText_9,
+	sExampleText_1,
+	sExampleText_2,
+	sExampleText_3,
+	sExampleText_4,
+	sExampleText_5,
+	sExampleText_6,
+	sExampleText_7,
+	sExampleText_8,
+	sExampleText_9,
 	sExampleText_10,
 };
 
 static const u8* sMultichoiceSet2[] =
 {
-    sExampleText_1,
-    sExampleText_2,
-    sExampleText_3,
-    sExampleText_4,
-    sExampleText_5,
-    sExampleText_6,
-    sExampleText_7,
-    sExampleText_8,
-    sExampleText_9,
+	sExampleText_1,
+	sExampleText_2,
+	sExampleText_3,
+	sExampleText_4,
+	sExampleText_5,
+	sExampleText_6,
+	sExampleText_7,
+	sExampleText_8,
+	sExampleText_9,
 	sExampleText_10,
 };
 
 
-const struct ScrollingMulti gScrollingSets[] = 
+const struct ScrollingMulti gScrollingSets[] =
 {
 	{sMultichoiceSet1, ARRAY_COUNT(sMultichoiceSet1)},
 	{sMultichoiceSet2, ARRAY_COUNT(sMultichoiceSet2)},
@@ -2848,7 +2848,7 @@ void SetScrollingListSize(unusedArg u8 taskId)
 		maxShowed = MAX_NUM_SHOWED;
 
 	gTasks[taskId].tMaxShowed = maxShowed;
-	
+
 	for (u8 i = 0; i < ARRAY_COUNT(sScrollingSizes); ++i)
 	{
 		if (sScrollingSizes[i].maxShowed == gTasks[taskId].tMaxShowed)

@@ -13,7 +13,7 @@
 #include "../include/constants/songs.h"
 
 #include "../include/new/build_pokemon.h"
-#include "../include/new/Helper_Functions.h"
+#include "../include/new/util.h"
 #include "../include/new/overworld.h"
 #include "../include/new/party_menu.h"
 #include "../include/new/Vanilla_functions.h"
@@ -35,44 +35,44 @@ static void DisplayPartyPokemonPriorityText(u8 stringID, struct Struct203B0B4* p
 0	3						2	4
 1	4						3	5
 	5
-	
+
 	7							7
 */
 //*highlightedMon = 7 is when the party menu cancel button is selected
 //This is party menu selection used in Multi Battles
 void SetNewPartySelectTarget2(s8* highlightedMon, s8 movementDir)
 {
-	
+
 #ifdef GEN4_PLUS_SELECTION_SCREEN
 	switch (movementDir)
 	{
 	case MENU_UP:
 		if (*highlightedMon != 6 && *highlightedMon != 7)
 			gPartyMenuView->lastViewed = *highlightedMon;
-			
+
 		switch (*highlightedMon) {
 			case 0:
 			case 1:
 				*highlightedMon = 7; //Goto cancel button
 				break;
-			
+
 			case 2:
 				*highlightedMon -= 2;
 				break;
-			
+
 			case 3:
 			case 5:
 				--(*highlightedMon);
 				break;
-				
+
 			case 4:
 				*highlightedMon -= 3;
 				break;
-			
+
 			case 6:
 				*highlightedMon = gPlayerPartyCount - 1;
 				break;
-			
+
 			case 7:
 				switch (gPartyMenuView->lastViewed) {
 					case 0: //You just looped around from your side (arrived at cancel by pressing up)
@@ -83,7 +83,7 @@ void SetNewPartySelectTarget2(s8* highlightedMon, s8 movementDir)
 						else
 							*highlightedMon = 0;
 						break;
-					
+
 					case 1: //You just looped around from partner's side (arrived at cancel by pressing up)
 						if (gPlayerParty[5].species != SPECIES_NONE)
 							*highlightedMon = 5; //Go to partner's last mon from cancel
@@ -92,18 +92,18 @@ void SetNewPartySelectTarget2(s8* highlightedMon, s8 movementDir)
 						else
 							*highlightedMon = 1;
 						break;
-						
+
 					default: //Go back to whichever mon you were on before (arrived at cancel by pressing down)
 						*highlightedMon = gPartyMenuView->lastViewed;
 				}
 				break;
 		}
 		break;
-		
+
 	case MENU_DOWN:
 		if (*highlightedMon != 6 && *highlightedMon != 7)
 			gPartyMenuView->lastViewed = *highlightedMon;
-			
+
 		switch (*highlightedMon) {
 			case 0:
 				if (gPlayerParty[2].species != SPECIES_NONE)
@@ -111,14 +111,14 @@ void SetNewPartySelectTarget2(s8* highlightedMon, s8 movementDir)
 				else
 					*highlightedMon = 7;
 				break;
-			
+
 			case 1:
 				if (gPlayerParty[4].species != SPECIES_NONE)
 					*highlightedMon = 4;
 				else
 					*highlightedMon = 7;
 				break;
-				
+
 			case 2:
 			case 4:
 				if (gPlayerParty[*highlightedMon + 1].species != SPECIES_NONE)
@@ -126,25 +126,25 @@ void SetNewPartySelectTarget2(s8* highlightedMon, s8 movementDir)
 				else
 					*highlightedMon = 7;
 				break;
-			
+
 			case 3:
 			case 5:
 			case 6:
 				*highlightedMon = 7;
 				break;
-			
+
 			case 7:
 				switch (gPartyMenuView->lastViewed) {
 					case 0:
 					case 1:
 						*highlightedMon = gPartyMenuView->lastViewed;
 						break;
-					
+
 					case 4:
 					case 5:
 						*highlightedMon = 1;
 						break;
-					
+
 					case 2:
 					case 3:
 						*highlightedMon = 0;
@@ -152,31 +152,31 @@ void SetNewPartySelectTarget2(s8* highlightedMon, s8 movementDir)
 				break;
 		}
 		break;
-		
+
 	case MENU_RIGHT:
 		if (*highlightedMon != 6 && *highlightedMon != 7)
 			gPartyMenuView->lastViewed = *highlightedMon;
-		
+
 	PICK_AGAIN_RIGHT:
 		switch (*highlightedMon) {
 			case 0:
 			case 1:
 				*highlightedMon += 1;
 				break;
-				
+
 			case 2:
 			case 3:
 				*highlightedMon += 2;
 				break;
-			
+
 			case 4:
 				*highlightedMon -= 1;
 				break;
-				
+
 			case 5:
 				*highlightedMon = 7;
 				break;
-			
+
 			case 7:
 				*highlightedMon = 0;
 				break;
@@ -184,27 +184,27 @@ void SetNewPartySelectTarget2(s8* highlightedMon, s8 movementDir)
 		if (*highlightedMon != 7 && gPlayerParty[*highlightedMon].species == 0)
 			goto PICK_AGAIN_RIGHT;
 		break;
-	
+
 	case MENU_LEFT:
 		 if (*highlightedMon != 6 && *highlightedMon != 7)
 			gPartyMenuView->lastViewed = *highlightedMon;
-		
+
 	PICK_AGAIN_LEFT:
 		switch (*highlightedMon) {
 			case 0:
 				*highlightedMon = 7;
 				break;
-			
+
 			case 1:
 			case 2:
 				*highlightedMon -= 1;
 				break;
-				
+
 			case 4:
 			case 5:
 				*highlightedMon -= 2;
 				break;
-			
+
 			case 3:
 				*highlightedMon += 1;
 				break;
@@ -248,7 +248,7 @@ void SetNewPartySelectTarget2(s8* highlightedMon, s8 movementDir)
 		if (unk2 != -1)
 			*highlightedMon = unk2;
 		break;
-	
+
 	case MENU_DOWN:
 		if (*highlightedMon == 6)
 		{
@@ -435,11 +435,11 @@ u8 ChoosePokemon_LoadMaxPKMNStr(const u8** strPtr, bool8 loadString)
 	else
 	{
 		max = 3;
-		
+
 		if (loadString)
 			*strPtr = gOtherText_NoMoreThreePoke;
 	}
-	
+
 	return max;
 }
 
@@ -456,7 +456,7 @@ void CursorCb_Enter(u8 taskId)
 	}
 	else
 		max = ChoosePokemon_LoadMaxPKMNStr(&string, TRUE);
-	
+
 	sub_8121CE4(&gPartyMenuView->windowId[0]);
 	sub_8121CE4(&gPartyMenuView->windowId[1]);
 
@@ -471,13 +471,13 @@ void CursorCb_Enter(u8 taskId)
 			PlaySE(SE_SELECT);
 			gSelectedOrderFromParty[i] = gPartyMenuView2->highlightedMon + 1;
 			DisplayPartyPokemonPriorityText(i, &gUnknown_0203B0B4[gPartyMenuView2->highlightedMon], 1);
-			
+
 			if (i == (max - 1))
 				sub_8124258();
-			
+
 			PrintPartyMenuPromptText(0);
 			gTasks[taskId].func = sub_811FB28;
-			
+
 			for (i = 0; i < PARTY_SIZE; ++i) //Reload everyone else's text if needed
 			{
 				if (eligibleIndices[i] //Was eligible before the selection
@@ -489,7 +489,7 @@ void CursorCb_Enter(u8 taskId)
 			return;
 		}
 	}
-	
+
 	PlaySE(SE_ERROR);
 	DisplayPartyMenuMsgBox(string, 1);
 	gTasks[taskId].func = sub_81203B8;
@@ -503,11 +503,11 @@ void CursorCb_NoEntry(u8 taskId)
 	PlaySE(SE_SELECT);
 	sub_8121CE4(&gPartyMenuView->windowId[0]);
 	sub_8121CE4(&gPartyMenuView->windowId[1]);
-	
+
 	bool8 eligibleIndices[PARTY_SIZE] = {FALSE};
 	for (i = 0; i < PARTY_SIZE; ++i)
 		eligibleIndices[i] = IsMonAllowedInBattleTower(&gPlayerParty[i]); //Record who's currently eligible
-	
+
 	for (i = 0; i < max; ++i) //Remove chosen mon
 	{
 		if (gSelectedOrderFromParty[i] == gPartyMenuView2->highlightedMon + 1)
@@ -526,9 +526,9 @@ void CursorCb_NoEntry(u8 taskId)
 		if (gSelectedOrderFromParty[i] != 0)
 			DisplayPartyPokemonPriorityText(i, &gUnknown_0203B0B4[gSelectedOrderFromParty[i] - 1], 1);
 	}
-	
+
 	for (i = 0; i < PARTY_SIZE; ++i) //Reload everyone else's text if needed
-	{	
+	{
 		if (!eligibleIndices[i] //Wasn't eligible before the cancel
 		&& IsMonAllowedInBattleTower(&gPlayerParty[i]) //Mon is now eligible
 		&& GetMonData(&gPlayerParty[i], MON_DATA_SPECIES, NULL) != SPECIES_NONE) //Legit Pokemon
@@ -544,7 +544,7 @@ void DisplayPartyPokemonSelectForBattle(u8 slot)
 	u8 max;
 	struct Pokemon *mon = &gPlayerParty[slot];
 	u8* ptr = gSelectedOrderFromParty;
-	
+
 	if ((gPartyMenuView2->unk8 & 0xC0) == 0x80)
 		max = 2;
 	else
@@ -823,7 +823,7 @@ static bool8 SetUpFieldMove_Fly(void)
 
 	if (Overworld_MapTypeAllowsTeleportAndFly(gMapHeader.mapType) == TRUE)
 		return TRUE;
-	
+
 	return FALSE;
 }
 
@@ -906,7 +906,7 @@ static bool8 SetUpFieldMove_RockClimb(void)
 		gPostMenuFieldCallback = FieldCallback_RockClimb;
 		return TRUE;
 	}
-	
+
 	return FALSE;
 }
 
@@ -931,7 +931,7 @@ static bool8 SetUpFieldMove_Defog(void)
 		gPostMenuFieldCallback = FieldCallback_Defog;
 		return TRUE;
 	}
-	
+
 	return FALSE;
 }
 

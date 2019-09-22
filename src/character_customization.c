@@ -9,7 +9,7 @@
 
 #include "../include/new/character_customization.h"
 #include "../include/new/multi.h"
-#include "../include/new/Helper_Functions.h"
+#include "../include/new/util.h"
 
 #ifdef UNBOUND
 typedef const u8* CustomPal;
@@ -30,7 +30,7 @@ struct CharacterCustomizationPaletteSwitch
 };
 
 
-static const struct CharacterCustomizationPaletteSwitch sCharacterPalSwitchTable[] = 
+static const struct CharacterCustomizationPaletteSwitch sCharacterPalSwitchTable[] =
 {
 	{262, 		TS_Male_Player_White_Brunette_BlackPal, (CustomPal) 0x8F08000},
 	{271, 		TS_Male_Player_White_Silver_RedPal, (CustomPal) 0x8F08030},
@@ -53,7 +53,7 @@ static const struct CharacterCustomizationPaletteSwitch sCharacterPalSwitchTable
 #ifdef EXISTING_OW_TABLE_ADDRESS
 	#define gOverworldTableSwitcher ((struct EventObjectGraphicsInfo***) EXISTING_OW_TABLE_ADDRESS)
 #elif defined UNBOUND //For Pokemon Unbound
-	const struct EventObjectGraphicsInfo** const gOverworldTableSwitcher[] = 
+	const struct EventObjectGraphicsInfo** const gOverworldTableSwitcher[] =
 	{
 		(NPCPtr*) 0x88110E0,
 		(NPCPtr*) 0x88B2720,
@@ -62,7 +62,7 @@ static const struct CharacterCustomizationPaletteSwitch sCharacterPalSwitchTable
 
 #else //Modify this
 	// create 255 OW tables
-	const struct EventObjectGraphicsInfo** const gOverworldTableSwitcher[255] = 
+	const struct EventObjectGraphicsInfo** const gOverworldTableSwitcher[255] =
 	{
 		(NPCPtr*) 0x839FDB0,
 		(NPCPtr*) 0x0,
@@ -101,7 +101,7 @@ NPCPtr GetEventObjectGraphicsInfo(u16 graphicsId)
 			spriteId = (newId & 0xFF);		// lower byte
 		}
 		else if (tableId == 0)	// load sprite/table IDs from vars
-		{	
+		{
 			u16 newId = 0;
 			switch (spriteId) {
 				case 0:
@@ -140,7 +140,7 @@ NPCPtr GetEventObjectGraphicsInfo(u16 graphicsId)
 			}	// else, table and sprite ID stay the same
 		}	// runtime changeable
 	}
-	
+
 	NPCPtr spriteAddr;
 	#ifndef EXISTING_OW_TABLE_ADDRESS
 	if (tableId >= ARRAY_COUNT(gOverworldTableSwitcher)
@@ -149,10 +149,10 @@ NPCPtr GetEventObjectGraphicsInfo(u16 graphicsId)
 	else
 	#endif
 		spriteAddr = gOverworldTableSwitcher[tableId][spriteId];
-	
+
 	if (spriteAddr == NULL)
 		spriteAddr = gOverworldTableSwitcher[0][EVENT_OBJ_GFX_NINJA_BOY];	// first non-player sprite in first table default
-	
+
 	return spriteAddr;
 };
 
@@ -166,72 +166,72 @@ u8 PlayerGenderToFrontTrainerPicId(u8 gender, bool8 modify)
 	u16 trainerId = VarGet(VAR_TRAINERCARD_MALE + gender);
 	if (trainerId == 0)
 		trainerId = 0x87 + gender;
-	
+
 	return trainerId;
 };
 
 
 void PlayerHandleDrawTrainerPic(void)
 {
-    s16 xPos, yPos;
-    u32 trainerPicId = GetBackspriteId();
-	
-    if (gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_INGAME_PARTNER))
-    {
-        if ((GetBattlerPosition(gActiveBattler) & BIT_FLANK) != B_FLANK_LEFT) // Second mon, on the right.
-            xPos = 90;
-        else // First mon, on the left.
-            xPos = 32;
-		
-        yPos = (8 - gTrainerBackPicCoords[trainerPicId].coords) * 4 + 80;
-    }
-	
-    else
-    {
-        xPos = 80;
-        yPos = (8 - gTrainerBackPicCoords[trainerPicId].coords) * 4 + 80;
-    }
+	s16 xPos, yPos;
+	u32 trainerPicId = GetBackspriteId();
+
+	if (gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_INGAME_PARTNER))
+	{
+		if ((GetBattlerPosition(gActiveBattler) & BIT_FLANK) != B_FLANK_LEFT) // Second mon, on the right.
+			xPos = 90;
+		else // First mon, on the left.
+			xPos = 32;
+
+		yPos = (8 - gTrainerBackPicCoords[trainerPicId].coords) * 4 + 80;
+	}
+
+	else
+	{
+		xPos = 80;
+		yPos = (8 - gTrainerBackPicCoords[trainerPicId].coords) * 4 + 80;
+	}
 
 	LoadTrainerBackPal(trainerPicId, gActiveBattler);
-    SetMultiuseSpriteTemplateToTrainerBack(trainerPicId, GetBattlerPosition(gActiveBattler));
-    gBattlerSpriteIds[gActiveBattler] = CreateSprite(&gMultiuseSpriteTemplate[0], xPos, yPos, GetBattlerSpriteSubpriority(gActiveBattler));
+	SetMultiuseSpriteTemplateToTrainerBack(trainerPicId, GetBattlerPosition(gActiveBattler));
+	gBattlerSpriteIds[gActiveBattler] = CreateSprite(&gMultiuseSpriteTemplate[0], xPos, yPos, GetBattlerSpriteSubpriority(gActiveBattler));
 
-    gSprites[gBattlerSpriteIds[gActiveBattler]].oam.paletteNum = gActiveBattler;
-    gSprites[gBattlerSpriteIds[gActiveBattler]].pos2.x = 240;
-    gSprites[gBattlerSpriteIds[gActiveBattler]].data[0] = -2;
-    gSprites[gBattlerSpriteIds[gActiveBattler]].callback = sub_8033EEC; //sub_805D7AC in Emerald
+	gSprites[gBattlerSpriteIds[gActiveBattler]].oam.paletteNum = gActiveBattler;
+	gSprites[gBattlerSpriteIds[gActiveBattler]].pos2.x = 240;
+	gSprites[gBattlerSpriteIds[gActiveBattler]].data[0] = -2;
+	gSprites[gBattlerSpriteIds[gActiveBattler]].callback = sub_8033EEC; //sub_805D7AC in Emerald
 
-    gBattleBankFunc[gActiveBattler] = (u32) sub_802F730;
+	gBattleBankFunc[gActiveBattler] = (u32) sub_802F730;
 }
 
 void PlayerHandleTrainerSlide(void)
 {
-    u32 trainerPicId = GetBackspriteId();
-	
+	u32 trainerPicId = GetBackspriteId();
+
 	LoadTrainerBackPal(trainerPicId, gActiveBattler);
-    SetMultiuseSpriteTemplateToTrainerBack(trainerPicId, GetBattlerPosition(gActiveBattler));
-    gBattlerSpriteIds[gActiveBattler] = CreateSprite(&gMultiuseSpriteTemplate[0], 80, (8 - gTrainerBackPicCoords[trainerPicId].coords) * 4 + 80, 30);
+	SetMultiuseSpriteTemplateToTrainerBack(trainerPicId, GetBattlerPosition(gActiveBattler));
+	gBattlerSpriteIds[gActiveBattler] = CreateSprite(&gMultiuseSpriteTemplate[0], 80, (8 - gTrainerBackPicCoords[trainerPicId].coords) * 4 + 80, 30);
 
-    gSprites[gBattlerSpriteIds[gActiveBattler]].oam.paletteNum = gActiveBattler;
-    gSprites[gBattlerSpriteIds[gActiveBattler]].pos2.x = -96;
-    gSprites[gBattlerSpriteIds[gActiveBattler]].data[0] = 2;
-    gSprites[gBattlerSpriteIds[gActiveBattler]].callback = sub_8033EEC;
+	gSprites[gBattlerSpriteIds[gActiveBattler]].oam.paletteNum = gActiveBattler;
+	gSprites[gBattlerSpriteIds[gActiveBattler]].pos2.x = -96;
+	gSprites[gBattlerSpriteIds[gActiveBattler]].data[0] = 2;
+	gSprites[gBattlerSpriteIds[gActiveBattler]].callback = sub_8033EEC;
 
-    gBattleBankFunc[gActiveBattler] = (u32) sub_802F768;
+	gBattleBankFunc[gActiveBattler] = (u32) sub_802F768;
 }
 
 u16 GetBackspriteId(void)
 {
 	u16 trainerPicId;
-	
+
 	if (gBattleTypeFlags & BATTLE_TYPE_LINK)
-    {
-        if ((gLinkPlayers[GetMultiplayerId()].version & 0xFF) == VERSION_FIRE_RED
-        || (gLinkPlayers[GetMultiplayerId()].version & 0xFF) == VERSION_LEAF_GREEN)
-            trainerPicId = gLinkPlayers[GetMultiplayerId()].gender;
-        else
-            trainerPicId = gLinkPlayers[GetMultiplayerId()].gender + BACK_PIC_BRENDAN;
-    }
+	{
+		if ((gLinkPlayers[GetMultiplayerId()].version & 0xFF) == VERSION_FIRE_RED
+		|| (gLinkPlayers[GetMultiplayerId()].version & 0xFF) == VERSION_LEAF_GREEN)
+			trainerPicId = gLinkPlayers[GetMultiplayerId()].gender;
+		else
+			trainerPicId = gLinkPlayers[GetMultiplayerId()].gender + BACK_PIC_BRENDAN;
+	}
 	else if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER && gActiveBattler == 2)
 	{
 		trainerPicId = LoadPartnerBackspriteIndex();
@@ -240,7 +240,7 @@ u16 GetBackspriteId(void)
 	{
 		trainerPicId = LoadPartnerBackspriteIndex(); //The trainer's backsprite for the Battle Sands is stored in the multi partner var
 	}
-    else 
+	else
 	{
 		if (VarGet(BACKSPRITE_SWITCH_VAR))
 			trainerPicId = VarGet(BACKSPRITE_SWITCH_VAR);
@@ -255,7 +255,7 @@ void LoadTrainerBackPal(u16 trainerPicId, u8 paletteNum)
 	#ifdef UNBOUND
 	//Changes the skin tones of the player character in Unbound
 		u16 owNum = VarGet(VAR_PLAYER_WALKRUN);
-		
+
 		if (VarGet(VAR_PLAYER_WALKRUN) && gActiveBattler == 0 && (trainerPicId == TRAINER_BACK_PIC_RED || trainerPicId == TRAINER_BACK_PIC_LEAF))
 		{
 			for (int i = 0; sCharacterPalSwitchTable[i].owNum != 0xFFFF; ++i)
@@ -265,7 +265,7 @@ void LoadTrainerBackPal(u16 trainerPicId, u8 paletteNum)
 					LoadCompressedPalette(sCharacterPalSwitchTable[i].backSpritePal, 0x100 + paletteNum * 16, 32);
 					break;
 				}
-			}	
+			}
 		}
 		else
 			DecompressTrainerBackPic(trainerPicId, paletteNum);
@@ -310,7 +310,7 @@ static const u8* GetAlternateTrainerSpritePal(void)
 		if (sCharacterPalSwitchTable[i].owNum == owNum)
 			return sCharacterPalSwitchTable[i].frontSpritePal;
 	}
-	
+
 	return NULL;
 }
 #endif

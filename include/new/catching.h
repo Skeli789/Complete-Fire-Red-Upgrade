@@ -7,7 +7,7 @@
  * \brief Contains functions relating to capturing Pokemon. Also contains
  *		  details about Poke Ball types.
  */
- 
+
 //Exported Functions
 void atkEF_handleballthrow(void);
 pokemon_t* LoadTargetPartyData(void);
@@ -29,7 +29,7 @@ struct BallIdItemIdRelation
 };
 
 //Exported Constants
-enum BallTypes 
+enum BallTypes
 {
 	BALL_TYPE_MASTER_BALL,	//0
 	BALL_TYPE_ULTRA_BALL,	//1
@@ -58,7 +58,7 @@ enum BallTypes
 	BALL_TYPE_SPORT_BALL,	//24
 	BALL_TYPE_BEAST_BALL,	//25
 	BALL_TYPE_DREAM_BALL,	//26
-	
+
 	BALL_TYPE_RANDOM = 0xFF,
 };
 

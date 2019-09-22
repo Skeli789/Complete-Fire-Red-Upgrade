@@ -73,7 +73,7 @@ const struct TerrainTableStruct gTerrainTable[] =
 			.naturePowerMove = MOVE_ENERGYBALL,
 			.burmyForm = SPECIES_BURMY,
 		},
-		
+
 	[BATTLE_TERRAIN_SAND + 4] =
 		{
 			.camouflageType = TYPE_GROUND,
@@ -91,7 +91,7 @@ const struct TerrainTableStruct gTerrainTable[] =
 			.naturePowerMove = MOVE_HYDROPUMP,
 			.burmyForm = SPECIES_NONE,
 		},
-		
+
 	[BATTLE_TERRAIN_WATER + 4] =
 		{
 			.camouflageType = TYPE_WATER,
@@ -109,7 +109,7 @@ const struct TerrainTableStruct gTerrainTable[] =
 			.naturePowerMove = MOVE_HYDROPUMP,
 			.burmyForm = SPECIES_NONE,
 		},
-		
+
 	[BATTLE_TERRAIN_MOUNTAIN + 4] =
 		{
 			.camouflageType = TYPE_GROUND,
@@ -118,7 +118,7 @@ const struct TerrainTableStruct gTerrainTable[] =
 			.naturePowerMove = MOVE_EARTHPOWER,
 			.burmyForm = SPECIES_BURMY_SANDY,
 		},
-		
+
 	[BATTLE_TERRAIN_CAVE + 4] =
 		{
 			.camouflageType = TYPE_ROCK,
@@ -145,7 +145,7 @@ const struct TerrainTableStruct gTerrainTable[] =
 			.naturePowerMove = MOVE_TRIATTACK,
 			.burmyForm = SPECIES_BURMY,
 		},
-		
+
 	[BATTLE_TERRAIN_INSIDE_2 + 4] =
 		{
 			.camouflageType = TYPE_NORMAL,
@@ -154,7 +154,7 @@ const struct TerrainTableStruct gTerrainTable[] =
 			.naturePowerMove = MOVE_TRIATTACK,
 			.burmyForm = SPECIES_BURMY_TRASH,
 		},
-		
+
 	[BATTLE_TERRAIN_INSIDE_3 + 4] =
 		{
 			.camouflageType = TYPE_NORMAL,
@@ -163,7 +163,7 @@ const struct TerrainTableStruct gTerrainTable[] =
 			.naturePowerMove = MOVE_TRIATTACK,
 			.burmyForm = SPECIES_BURMY_TRASH,
 		},
-		
+
 	[BATTLE_TERRAIN_INSIDE_4 + 4] =
 		{
 			.camouflageType = TYPE_NORMAL,
@@ -172,7 +172,7 @@ const struct TerrainTableStruct gTerrainTable[] =
 			.naturePowerMove = MOVE_TRIATTACK,
 			.burmyForm = SPECIES_BURMY_TRASH,
 		},
-		
+
 	[BATTLE_TERRAIN_INSIDE_5 + 4] =
 		{
 			.camouflageType = TYPE_NORMAL,
@@ -181,7 +181,7 @@ const struct TerrainTableStruct gTerrainTable[] =
 			.naturePowerMove = MOVE_TRIATTACK,
 			.burmyForm = SPECIES_BURMY_TRASH,
 		},
-		
+
 	[BATTLE_TERRAIN_INSIDE_6 + 4] =
 		{
 			.camouflageType = TYPE_NORMAL,
@@ -190,7 +190,7 @@ const struct TerrainTableStruct gTerrainTable[] =
 			.naturePowerMove = MOVE_TRIATTACK,
 			.burmyForm = SPECIES_BURMY_TRASH,
 		},
-		
+
 	[BATTLE_TERRAIN_LORLEI + 4] =
 		{
 			.camouflageType = TYPE_ICE,
@@ -199,7 +199,7 @@ const struct TerrainTableStruct gTerrainTable[] =
 			.naturePowerMove = MOVE_ICEBEAM,
 			.burmyForm = SPECIES_BURMY_TRASH,
 		},
-		
+
 	[BATTLE_TERRAIN_BRUNO + 4] =
 		{
 			.camouflageType = TYPE_FIGHTING,
@@ -208,7 +208,7 @@ const struct TerrainTableStruct gTerrainTable[] =
 			.naturePowerMove = MOVE_FOCUSBLAST,
 			.burmyForm = SPECIES_BURMY_TRASH,
 		},
-		
+
 	[BATTLE_TERRAIN_AGATHA + 4] =
 		{
 			.camouflageType = TYPE_GHOST,
@@ -217,7 +217,7 @@ const struct TerrainTableStruct gTerrainTable[] =
 			.naturePowerMove = MOVE_SHADOWBALL,
 			.burmyForm = SPECIES_BURMY_TRASH,
 		},
-		
+
 	[BATTLE_TERRAIN_LANCE + 4] =
 		{
 			.camouflageType = TYPE_DRAGON,
@@ -226,7 +226,7 @@ const struct TerrainTableStruct gTerrainTable[] =
 			.naturePowerMove = MOVE_DRAGONPULSE,
 			.burmyForm = SPECIES_BURMY_TRASH,
 		},
-		
+
 	[BATTLE_TERRAIN_CHAMPION + 4] =
 		{
 			.camouflageType = TYPE_NORMAL,
@@ -256,7 +256,7 @@ const struct TerrainTableStruct gTerrainTable[] =
 			.naturePowerMove = MOVE_LAVAPLUME,
 			.burmyForm = SPECIES_BURMY_SANDY,
 		},
-		
+
 	[BATTLE_TERRAIN_DARK_CAVE_WATER + 4] =
 		{
 			.camouflageType = TYPE_WATER,
@@ -265,7 +265,7 @@ const struct TerrainTableStruct gTerrainTable[] =
 			.naturePowerMove = MOVE_HYDROPUMP,
 			.burmyForm = SPECIES_NONE,
 		},
-		
+
 	[BATTLE_TERRAIN_DARK_CAVE + 4] =
 		{
 			.camouflageType = TYPE_ROCK,
@@ -274,7 +274,7 @@ const struct TerrainTableStruct gTerrainTable[] =
 			.naturePowerMove = MOVE_POWERGEM,
 			.burmyForm = SPECIES_BURMY_SANDY,
 		},
-		
+
 	[BATTLE_TERRAIN_SNOW_CAVE + 4] =
 		{
 			.camouflageType = TYPE_ICE,
@@ -283,7 +283,7 @@ const struct TerrainTableStruct gTerrainTable[] =
 			.naturePowerMove = MOVE_FROSTBREATH,
 			.burmyForm = SPECIES_BURMY_SANDY,
 		},
-		
+
 	[BATTLE_TERRAIN_FOREST + 4] =
 		{
 			.camouflageType = TYPE_BUG,
@@ -292,7 +292,7 @@ const struct TerrainTableStruct gTerrainTable[] =
 			.naturePowerMove = MOVE_BUGBUZZ,
 			.burmyForm = SPECIES_BURMY,
 		},
-		
+
 	[BATTLE_TERRAIN_ICE_IN_CAVE + 4] =
 		{
 			.camouflageType = TYPE_ICE,
@@ -301,7 +301,7 @@ const struct TerrainTableStruct gTerrainTable[] =
 			.naturePowerMove = MOVE_ICEBEAM,
 			.burmyForm = SPECIES_NONE,
 		},
-		
+
 	[BATTLE_TERRAIN_RUINS_OF_VOID + 4] =
 		{
 			.camouflageType = TYPE_ROCK,
@@ -310,7 +310,7 @@ const struct TerrainTableStruct gTerrainTable[] =
 			.naturePowerMove = MOVE_POWERGEM,
 			.burmyForm = SPECIES_BURMY_SANDY,
 		},
-		
+
 	[BATTLE_TERRAIN_DISTORTION_WORLD + 4] =
 		{
 			.camouflageType = TYPE_GHOST,
@@ -319,7 +319,7 @@ const struct TerrainTableStruct gTerrainTable[] =
 			.naturePowerMove = MOVE_SHADOWBALL,
 			.burmyForm = SPECIES_BURMY_SANDY,
 		},
-		
+
 	[BATTLE_TERRAIN_GRASS_GYM + 4] =
 		{
 			.camouflageType = TYPE_GRASS,
@@ -328,7 +328,7 @@ const struct TerrainTableStruct gTerrainTable[] =
 			.naturePowerMove = MOVE_ENERGYBALL,
 			.burmyForm = SPECIES_BURMY,
 		},
-		
+
 	[BATTLE_TERRAIN_DESERT + 4] =
 		{
 			.camouflageType = TYPE_GROUND,
@@ -337,7 +337,7 @@ const struct TerrainTableStruct gTerrainTable[] =
 			.naturePowerMove = MOVE_EARTHPOWER,
 			.burmyForm = SPECIES_BURMY_SANDY,
 		},
-		
+
 	[BATTLE_TERRAIN_WATER_IN_CAVE + 4] =
 		{
 			.camouflageType = TYPE_WATER,
@@ -346,7 +346,7 @@ const struct TerrainTableStruct gTerrainTable[] =
 			.naturePowerMove = MOVE_HYDROPUMP,
 			.burmyForm = SPECIES_NONE,
 		},
-		
+
 	[BATTLE_TERRAIN_WATER_IN_SNOW_CAVE + 4] =
 		{
 			.camouflageType = TYPE_WATER,
@@ -355,7 +355,7 @@ const struct TerrainTableStruct gTerrainTable[] =
 			.naturePowerMove = MOVE_HYDROPUMP,
 			.burmyForm = SPECIES_NONE,
 		},
-		
+
 	[BATTLE_TERRAIN_LAVA_IN_VOLCANO + 4] =
 		{
 			.camouflageType = TYPE_FIRE,
@@ -364,7 +364,7 @@ const struct TerrainTableStruct gTerrainTable[] =
 			.naturePowerMove = MOVE_LAVAPLUME,
 			.burmyForm = SPECIES_NONE,
 		},
-		
+
 	[BATTLE_TERRAIN_WATER_IN_FOREST + 4] =
 		{
 			.camouflageType = TYPE_WATER,
@@ -373,7 +373,7 @@ const struct TerrainTableStruct gTerrainTable[] =
 			.naturePowerMove = MOVE_HYDROPUMP,
 			.burmyForm = SPECIES_NONE,
 		},
-		
+
 	[BATTLE_TERRAIN_AUTUMN_GRASS + 4] =
 		{
 			.camouflageType = TYPE_GRASS,
@@ -382,7 +382,7 @@ const struct TerrainTableStruct gTerrainTable[] =
 			.naturePowerMove = MOVE_ENERGYBALL,
 			.burmyForm = SPECIES_BURMY,
 		},
-		
+
 	[BATTLE_TERRAIN_AUTUMN_PLAIN + 4] =
 		{
 			.camouflageType = TYPE_NORMAL,
@@ -391,7 +391,7 @@ const struct TerrainTableStruct gTerrainTable[] =
 			.naturePowerMove = MOVE_TRIATTACK,
 			.burmyForm = SPECIES_BURMY,
 		},
-		
+
 	[BATTLE_TERRAIN_SNOW_GRASS + 4] =
 		{
 			.camouflageType = TYPE_ICE,
@@ -412,7 +412,7 @@ const struct BattleBackground gAttackTerrainTable[] =
         .entryTilemap = gBattleTerrainAnimTilemap_Building,
         .palette = BG_Electric_TerrainPal,
     },
-	
+
     {
         .tileset = BG_Grassy_TerrainTiles,
         .tilemap = BG_Grassy_TerrainMap,
@@ -428,7 +428,7 @@ const struct BattleBackground gAttackTerrainTable[] =
         .entryTilemap = gBattleTerrainAnimTilemap_Building,
         .palette = BG_Misty_TerrainPal,
     },
-	
+
     {
         .tileset = BG_Psychic_TerrainTiles,
         .tilemap = BG_Psychic_TerrainMap,
@@ -455,7 +455,7 @@ const u16 gCamouflageColours[] =
 	[TYPE_WATER] = 		RGB(11, 22, 31), //Blue
 	[TYPE_ELECTRIC] = 	RGB(31, 30, 11), //Yellow
 	[TYPE_PSYCHIC] = 	RGB(26, 7, 17), //Purplish Pink
-	[TYPE_ICE] = 		RGB(19, 27, 27), //Ice Blue	
+	[TYPE_ICE] = 		RGB(19, 27, 27), //Ice Blue
 	[TYPE_DARK] = 		RGB(5, 5, 5), //Near Black
 	[TYPE_DRAGON] = 	RGB(7, 4, 31), //Royal Blue
 	[TYPE_FAIRY] = 		RGB(31, 20, 31), //Light Pink

@@ -7,7 +7,7 @@
  * \brief Contains the implementation of dynamic loading of OW palettes by
  *		  Navenatox: https://www.pokecommunity.com/showthread.php?p=9030971.
  */
- 
+
 //Exported Functions
 u8 AddPalRef(u8 type, u16 palTag);
 u8 FindPalRef(u8 type, u16 palTag);

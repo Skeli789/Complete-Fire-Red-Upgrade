@@ -27,7 +27,7 @@ const struct WindowTemplate sMoveRelearnerExpandedTemplates[] =
         .paletteNum = 13,
         .baseBlock = 20,
     },
-	
+
 	[WINDOW_POWER_ACC_SYMBOLS] =
     {
         .bg = 0,
@@ -38,7 +38,7 @@ const struct WindowTemplate sMoveRelearnerExpandedTemplates[] =
         .paletteNum = 13,
         .baseBlock = 44,
     },
-	
+
 	[WINDOW_MOVE_TYPE] =
     {
         .bg = 0,
@@ -49,7 +49,7 @@ const struct WindowTemplate sMoveRelearnerExpandedTemplates[] =
         .paletteNum = 13,
         .baseBlock = 69,
     },
-	
+
 	[WINDOW_MOVE_POWER] =
     {
         .bg = 0,
@@ -60,7 +60,7 @@ const struct WindowTemplate sMoveRelearnerExpandedTemplates[] =
         .paletteNum = 15,
         .baseBlock = 79,
     },
-	
+
 	[WINDOW_MOVE_PP] =
 	{
 		.bg = 0,
@@ -68,10 +68,10 @@ const struct WindowTemplate sMoveRelearnerExpandedTemplates[] =
 		.tilemapTop = 2,
 		.width = 3,
 		.height = 3,
-		.paletteNum = 15, 
+		.paletteNum = 15,
 		.baseBlock = 94,
 	},
-	
+
 	[WINDOW_DESCRIPTION] =
 	{
 		.bg = 0,
@@ -82,7 +82,7 @@ const struct WindowTemplate sMoveRelearnerExpandedTemplates[] =
 		.paletteNum = 15,
 		.baseBlock = 103,
 	},
-	
+
 	[WINDOW_MOVE_LIST]
 	{
 		.bg = 0,
@@ -93,7 +93,7 @@ const struct WindowTemplate sMoveRelearnerExpandedTemplates[] =
 		.paletteNum = 15,
 		.baseBlock = 238,
 	},
-	
+
 	[WINDOW_BOTTOM_MSG] =
     {
         .bg = 0,

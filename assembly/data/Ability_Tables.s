@@ -6,19 +6,19 @@
 
 .equ ABILITY_TABLES_TERMIN, 0xFF
 
-.global RolePlayBanTable
-.global RolePlayAttackerBanTable
-.global SkillSwapBanTable
-.global WorrySeedGastroAcidBanTable
-.global EntrainmentBanTableAttacker
-.global EntrainmentBanTableTarget
-.global SimpleBeamBanTable
-.global ReceiverBanTable
-.global TraceBanTable
+.global gRolePlayBannedAbilities
+.global gRolePlayAttackerBannedAbilities
+.global gSkillSwapBannedAbilities
+.global gWorrySeedGastroAcidBannedAbilities
+.global gEntrainmentBannedAbilitiesAttacker
+.global gEntrainmentBannedAbilitiesTarget
+.global gSimpleBeamBannedAbilities
+.global gReceiverBannedAbilities
+.global gTraceBannedAbilities
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-RolePlayBanTable:
+gRolePlayBannedAbilities:
 .byte ABILITY_TRACE
 .byte ABILITY_WONDERGUARD
 .byte ABILITY_FORECAST
@@ -41,7 +41,7 @@ RolePlayBanTable:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-RolePlayAttackerBanTable:
+gRolePlayAttackerBannedAbilities:
 .byte ABILITY_MULTITYPE
 .byte ABILITY_ZENMODE
 .byte ABILITY_STANCECHANGE
@@ -56,7 +56,7 @@ RolePlayAttackerBanTable:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-SkillSwapBanTable:
+gSkillSwapBannedAbilities:
 .byte ABILITY_WONDERGUARD
 .byte ABILITY_MULTITYPE
 .byte ABILITY_ILLUSION
@@ -72,7 +72,7 @@ SkillSwapBanTable:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-WorrySeedGastroAcidBanTable:
+gWorrySeedGastroAcidBannedAbilities:
 .byte ABILITY_MULTITYPE
 .byte ABILITY_STANCECHANGE
 .byte ABILITY_SCHOOLING
@@ -86,7 +86,7 @@ WorrySeedGastroAcidBanTable:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-EntrainmentBanTableAttacker:
+gEntrainmentBannedAbilitiesAttacker:
 .byte ABILITY_TRACE
 .byte ABILITY_FORECAST
 .byte ABILITY_FLOWERGIFT
@@ -99,8 +99,8 @@ EntrainmentBanTableAttacker:
 .byte ABILITY_POWERCONSTRUCT
 .byte ABILITY_TABLES_TERMIN
 
-SimpleBeamBanTable:
-EntrainmentBanTableTarget:
+gSimpleBeamBannedAbilities:
+gEntrainmentBannedAbilitiesTarget:
 .byte ABILITY_TRUANT
 .byte ABILITY_MULTITYPE
 .byte ABILITY_STANCECHANGE
@@ -114,7 +114,7 @@ EntrainmentBanTableTarget:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-ReceiverBanTable:
+gReceiverBannedAbilities:
 .byte ABILITY_TRACE
 .byte ABILITY_FORECAST
 .byte ABILITY_FLOWERGIFT
@@ -137,7 +137,7 @@ ReceiverBanTable:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-TraceBanTable:
+gTraceBannedAbilities:
 .byte ABILITY_TRACE
 .byte ABILITY_FORECAST
 .byte ABILITY_FLOWERGIFT

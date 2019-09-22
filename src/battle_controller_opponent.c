@@ -3,7 +3,7 @@
 #include "../include/event_data.h"
 #include "../include/random.h"
 
-#include "../include/new/AI_Helper_Functions.h"
+#include "../include/new/ai_util.h"
 #include "../include/new/ai_master.h"
 #include "../include/new/battle_controller_opponent.h"
 #include "../include/new/battle_util.h"
@@ -34,15 +34,15 @@ void OpponentHandleChooseMove(void)
 			case AI_CHOICE_WATCH:
 				EmitTwoReturnValues(1, ACTION_WATCHES_CAREFULLY, 0);
 				break;
-			
+
 			case AI_CHOICE_FLEE:
 				EmitTwoReturnValues(1, ACTION_RUN, 0);
 				break;
-			
+
 			case 6:
 				EmitTwoReturnValues(1, 15, gBankTarget);
 				break;
-			
+
 			default: ;
 				u16 chosenMove = moveInfo->moves[chosenMoveId];
 
@@ -62,7 +62,7 @@ void OpponentHandleChooseMove(void)
 						if (gAbsentBattlerFlags & gBitTable[gBankTarget])
 							gBankTarget = GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
 					}
-					else { 
+					else {
 						gBankTarget = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
 						if (gAbsentBattlerFlags & gBitTable[gBankTarget])
 							gBankTarget = GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT);
@@ -126,7 +126,7 @@ static void TryRechoosePartnerMove(u16 chosenMove)
 				{
 					struct ChooseMoveStruct moveInfo;
 					gChosenMovesByBanks[gActiveBattler] = chosenMove;
-					
+
 					u8 backup = gActiveBattler;
 					gActiveBattler = PARTNER(gActiveBattler);
 					EmitChooseMove(0, (gBattleTypeFlags & BATTLE_TYPE_DOUBLE) != 0, FALSE, &moveInfo); //Rechoose partner move
@@ -154,7 +154,7 @@ void OpponentHandleDrawTrainerPic(void)
 	{
 		xPos = 176;
 	}
-	
+
 	DecompressTrainerFrontPic(trainerPicId, gActiveBattler); //0x80346C4
 	SetMultiuseSpriteTemplateToTrainerBack(trainerPicId, GetBattlerPosition(gActiveBattler)); //0x803F864
 	gBattlerSpriteIds[gActiveBattler] = CreateSprite(&gMultiuseSpriteTemplate[0], //0x8006F8C
@@ -174,10 +174,10 @@ void OpponentHandleDrawTrainerPic(void)
 }
 
 void OpponentHandleTrainerSlide(void)
-{	
+{
 
 	u32 trainerPicId = LoadCorrectTrainerPicId();
-	
+
 	DecompressTrainerFrontPic(trainerPicId, gActiveBattler);
 	SetMultiuseSpriteTemplateToTrainerBack(trainerPicId, GetBattlerPosition(gActiveBattler));
 	gBattlerSpriteIds[gActiveBattler] = CreateSprite(&gMultiuseSpriteTemplate[0], 176, (8 - gTrainerFrontPicCoords[trainerPicId].coords) * 4 + 40, 0x1E);
@@ -205,13 +205,13 @@ void OpponentHandleChoosePokemon(void)
 	{
 		u8 battlerIn1, battlerIn2, firstId, lastId;
 		pokemon_t* party = LoadPartyRange(gActiveBattler, &firstId, &lastId);
-			
+
 		if (gNewBS->bestMonIdToSwitchInto[gActiveBattler][0] == PARTY_SIZE
 		||  GetMonData(&party[gNewBS->bestMonIdToSwitchInto[gActiveBattler][0]], MON_DATA_HP, NULL) == 0) //Best mon is dead
 			CalcMostSuitableMonToSwitchInto();
 
 		chosenMonId = GetMostSuitableMonToSwitchInto();
-		
+
 		if (chosenMonId == PARTY_SIZE)
 		{
 			if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
@@ -227,7 +227,7 @@ void OpponentHandleChoosePokemon(void)
 				battlerIn1 = gActiveBattler;
 				battlerIn2 = gActiveBattler;
 			}
-				
+
 			for (chosenMonId = firstId; chosenMonId < lastId; ++chosenMonId)
 			{
 				if (party[chosenMonId].species != SPECIES_NONE
@@ -254,7 +254,7 @@ void OpponentHandleChoosePokemon(void)
 
 static u8 LoadCorrectTrainerPicId(void) {
 	u8 trainerPicId;
-	
+
 	if (gTrainerBattleOpponent_A == 0x400) //Was Secret Base in Ruby
 	{
 		trainerPicId = GetSecretBaseTrainerPicIndex();
@@ -296,6 +296,6 @@ static u8 LoadCorrectTrainerPicId(void) {
 	{
 		trainerPicId = gTrainers[gTrainerBattleOpponent_A].trainerPic;
 	}
-	
+
 	return trainerPicId;
 }

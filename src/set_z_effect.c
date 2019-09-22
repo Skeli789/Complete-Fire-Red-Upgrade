@@ -21,7 +21,7 @@ struct SpecialZMove
 	u16 zmove;
 };
 
-static const struct SpecialZMove sSpecialZMoveTable[] = 
+static const struct SpecialZMove sSpecialZMoveTable[] =
 {
 	{SPECIES_RAICHU_A,				ITEM_ALORAICHIUM_Z, 		MOVE_THUNDERBOLT, 		MOVE_STOKED_SPARKSURFER},
 	{SPECIES_DECIDUEYE,				ITEM_DECIDIUM_Z, 			MOVE_SPIRITSHACKLE,		MOVE_SINISTER_ARROW_RAID},
@@ -59,7 +59,7 @@ static const struct SpecialZMove sSpecialZMoveTable[] =
 void SetZEffect(void)
 {
 	int i;
-	
+
 	gNewBS->ZMoveData->runningZEffect = TRUE;
 
 	if (gNewBS->ZMoveData->effect == Z_EFFECT_CURSE) {
@@ -68,9 +68,9 @@ void SetZEffect(void)
 		else
 			gNewBS->ZMoveData->effect = Z_EFFECT_ATK_UP_1;
 	}
-	
+
 	gBattleScripting->bank = gBankAttacker;
-	
+
 	switch (gNewBS->ZMoveData->effect) {
 		case Z_EFFECT_RESET_STATS:
 			for (i = 0; i < BATTLE_STATS_NO-1; ++i) {
@@ -81,7 +81,7 @@ void SetZEffect(void)
 			BattleScriptPush(gBattlescriptCurrInstr + 5);
 			gBattlescriptCurrInstr = BattleScript_StatsResetZMove - 5;
 			break;
-		
+
 		case Z_EFFECT_ALL_STATS_UP_1:
 			if (!MainStatsMaxed(gBankAttacker)) {
 				for (i = 0; i < STAT_ACC-1; ++i) { //Doesn't increase Acc or Evsn
@@ -92,7 +92,7 @@ void SetZEffect(void)
 				gBattlescriptCurrInstr = BattleScript_AllStatsUpZMove - 5;
 			}
 			break;
-			
+
 		case Z_EFFECT_BOOST_CRITS:
 			if (!(gBattleMons[gBankAttacker].status2 & STATUS2_FOCUS_ENERGY)) {
 				gBattleMons[gBankAttacker].status2 |= STATUS2_FOCUS_ENERGY;
@@ -100,14 +100,14 @@ void SetZEffect(void)
 				gBattlescriptCurrInstr = BattleScript_BoostCritsZMove - 5;
 			}
 			break;
-			
+
 		case Z_EFFECT_FOLLOW_ME:
 			gSideTimers[SIDE(gBankAttacker)].followmeTimer = 1;
 			gSideTimers[SIDE(gBankAttacker)].followmeTarget = gBankAttacker;
 			BattleScriptPush(gBattlescriptCurrInstr + 5);
-            gBattlescriptCurrInstr = BattleScript_FollowMeZMove - 5;
+			gBattlescriptCurrInstr = BattleScript_FollowMeZMove - 5;
 			break;
-			
+
 		case Z_EFFECT_RECOVER_HP:
 			if (gBattleMons[gBankAttacker].hp != gBattleMons[gBankAttacker].maxHP) {
 				gBattleMoveDamage = (-1) * gBattleMons[gBankAttacker].maxHP;
@@ -115,13 +115,13 @@ void SetZEffect(void)
 				gBattlescriptCurrInstr = BattleScript_RecoverHPZMove - 5;
 			}
 			break;
-			
+
 		case Z_EFFECT_RESTORE_REPLACEMENT_HP:
 			gNewBS->ZMoveData->healReplacement = TRUE;
 			BattleScriptPush(gBattlescriptCurrInstr + 5);
-            gBattlescriptCurrInstr = BattleScript_SetUpHealReplacementZMove - 5;
+			gBattlescriptCurrInstr = BattleScript_SetUpHealReplacementZMove - 5;
 			break;
-		
+
 		case Z_EFFECT_ATK_UP_1:
 		case Z_EFFECT_DEF_UP_1:
 		case Z_EFFECT_SPD_UP_1:
@@ -136,7 +136,7 @@ void SetZEffect(void)
 				gBattlescriptCurrInstr = BattleScript_StatUpZMove - 5;
 			}
 			break;
-			
+
 		case Z_EFFECT_ATK_UP_2:
 		case Z_EFFECT_DEF_UP_2:
 		case Z_EFFECT_SPD_UP_2:
@@ -151,7 +151,7 @@ void SetZEffect(void)
 				gBattlescriptCurrInstr = BattleScript_StatUpZMove - 5;
 			}
 			break;
-			
+
 		case Z_EFFECT_ATK_UP_3:
 		case Z_EFFECT_DEF_UP_3:
 		case Z_EFFECT_SPD_UP_3:
@@ -183,26 +183,26 @@ static void ZTriggerCallback(struct Sprite* self);
 
 static const struct SpriteTemplate ZTriggerTemplate =
 {
-    .tileTag = GFX_TAG_Z_TRIGGER,
-    .paletteTag = GFX_TAG_Z_TRIGGER,
-    .oam = (const struct OamData*) &ZTriggerOAM,
-    .anims = (const union AnimCmd* const*) 0x08231CF0,
-    .images = NULL,
-    .affineAnims = (const union AffineAnimCmd* const*) 0x08231CFC,
-    .callback = ZTriggerCallback,
+	.tileTag = GFX_TAG_Z_TRIGGER,
+	.paletteTag = GFX_TAG_Z_TRIGGER,
+	.oam = (const struct OamData*) &ZTriggerOAM,
+	.anims = (const union AnimCmd* const*) 0x08231CF0,
+	.images = NULL,
+	.affineAnims = (const union AffineAnimCmd* const*) 0x08231CFC,
+	.callback = ZTriggerCallback,
 };
 
 #define TRIGGER_BANK self->data[4]
 #define PALETTE_STATE self->data[1]
-static void ZTriggerCallback(struct Sprite* self) 
-{		
+static void ZTriggerCallback(struct Sprite* self)
+{
 	s16 xshift, yshift;
-	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE) 
+	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
 	{
 		xshift = -6;
 		yshift = 0;
-	} 
-	else 
+	}
+	else
 	{
 		xshift = -5;
 		yshift = 2;
@@ -211,26 +211,26 @@ static void ZTriggerCallback(struct Sprite* self)
 	// Find the health box object that this trigger is supposed to be attached to
 	u8 id = gHealthboxIDs[TRIGGER_BANK];
 	struct Sprite* healthbox = &gSprites[id];
-	
+
 	u8 y = healthbox->oam.y;
 
 	u8 pingid = gBattleSpritesDataPtr->healthBoxesData[TRIGGER_BANK].healthboxBounceSpriteId;
 	struct Sprite* ping = &gSprites[pingid];
- 
-	if (y) 
+
+	if (y)
 	{
 		// Copy the healthbox's position (it has various animations)
 		//self->y = healthbox->y + 20;
 		self->pos1.x = (healthbox->oam.x) + xshift + self->data[3];
 		self->pos2.y = Sine(ping->data[0], ping->data[2]);
 		self->pos1.y = healthbox->pos1.y + yshift;
-	} 
-	else 
+	}
+	else
 	{
 		// The box is offscreen, so hide this one as well
 		self->pos1.x = -32;
 	}
-	
+
 	if (gBattleBankFunc[TRIGGER_BANK] == (0x0802EA10 | 1) //Old HandleInputChooseMove
 	||  gBattleBankFunc[TRIGGER_BANK] == (u32) HandleInputChooseMove
 	|| gBattleBankFunc[TRIGGER_BANK] == (u32) HandleMoveSwitching)
@@ -248,19 +248,19 @@ static void ZTriggerCallback(struct Sprite* self)
 		{
 			if (self->data[3] < 24)
 				self->data[3] += 2;
-			else 
+			else
 				self->data[3] = 24;
 		}
 	}
-	
+
 	//Mega Trigger should recede and destroy itself as long as the game isn't
 	//running one of the two mentioned functions.
 	else if (gBattleBankFunc[TRIGGER_BANK] != (0x08032C90 | 1)  //PlayerHandleChooseMove
-	      && gBattleBankFunc[TRIGGER_BANK] != (0x08032C4C | 1)) //HandleChooseMoveAfterDma3
+		  && gBattleBankFunc[TRIGGER_BANK] != (0x08032C4C | 1)) //HandleChooseMoveAfterDma3
 	{
 		if (self->data[3] < 24)
 			self->data[3] += 2;
-		else 
+		else
 		{
 			self->pos1.x = -32;
 			DestroyZTrigger();
@@ -272,17 +272,17 @@ static void ZTriggerCallback(struct Sprite* self)
 		PALETTE_STATE = MegaTriggerLightUp;
 	else
 		PALETTE_STATE = MegaTriggerNormalColour;
-	
+
 	// Only change the palette if the state has changed
-	if (PALETTE_STATE != self->data[2]) 
+	if (PALETTE_STATE != self->data[2])
 	{
 		u16* pal = &gPlttBufferFaded2[IndexOfSpritePaletteTag(GFX_TAG_Z_TRIGGER) * 16];
 		u8 i;
-		
-		for(i = 1; i < 16; i++) 
+
+		for(i = 1; i < 16; i++)
 		{
 			if (IsIgnoredTriggerColour(Z_Move_TriggerPal[i])) continue;
-	
+
 			switch(PALETTE_STATE) {
 				case MegaTriggerLightUp:
 					pal[i] = LightUpMegaSymbol(Z_Move_TriggerPal[i]);
@@ -292,7 +292,7 @@ static void ZTriggerCallback(struct Sprite* self)
 					break;
 			}
 		}
-		
+
 		self->data[2] = PALETTE_STATE;
 	}
 }
@@ -300,13 +300,13 @@ static void ZTriggerCallback(struct Sprite* self)
 void TryLoadZTrigger(void)
 {
 	u8 objid;
-	
+
 	if (gBattleTypeFlags & (BATTLE_TYPE_SAFARI | BATTLE_TYPE_POKE_DUDE | BATTLE_TYPE_OLD_MAN))
 		return;
-	
+
 	LoadSpritePalette(&ZTriggerPalette);
 	LoadCompressedSpriteSheetUsingHeap(&ZTriggerSpriteSheet);
-		
+
 	objid = CreateSprite(&ZTriggerTemplate, 130, 90, 1);
 	gSprites[objid].data[3] = 24;
 	gSprites[objid].pos1.x = -32;
@@ -316,7 +316,7 @@ void TryLoadZTrigger(void)
 void DestroyZTrigger(void)
 {
 	FreeSpritePaletteByTag(GFX_TAG_Z_TRIGGER);
-    FreeSpriteTilesByTag(GFX_TAG_Z_TRIGGER);
+	FreeSpriteTilesByTag(GFX_TAG_Z_TRIGGER);
 
 	for (int i = 0; i < MAX_SPRITES; ++i)
 	{
@@ -328,7 +328,7 @@ void DestroyZTrigger(void)
 move_t GetTypeBasedZMove(u16 move, u8 bank)
 {
 	u8 moveType = gBattleMoves[move].type;
-	
+
 	if (moveType < TYPE_FIRE)
 		return MOVE_BREAKNECK_BLITZ_P + (moveType * 2) + CalcMoveSplit(bank, move);
 	else if (moveType >= TYPE_FAIRY)
@@ -354,7 +354,7 @@ move_t GetSpecialZMove(u16 move, u16 species, u16 item)
 			}
 		}
 	}
-	
+
 	if (isSpecialZCrystal)
 		return 0xFFFF;
 	else
@@ -384,7 +384,7 @@ bool8 DoesZMoveUsageStopMegaEvolution(u8 bank)
 {
 	if (gNewBS->ZMoveData->partyIndex[SIDE(bank)] & gBitTable[gBattlerPartyIndexes[bank]])
 		return TRUE;
-		
+
 	return FALSE;
 }
 
@@ -428,7 +428,7 @@ u16 ReplaceWithZMoveRuntime(u8 bankAtk, u16 move)
 	&& SPLIT(move) != SPLIT_STATUS)
 	{
 		u16 zMove = CanUseZMove(bankAtk, 0xFF, move);
-		if (zMove != MOVE_NONE)	
+		if (zMove != MOVE_NONE)
 			move = zMove;
 	}
 

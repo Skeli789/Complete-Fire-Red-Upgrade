@@ -8,7 +8,7 @@
  *		  contains the sprite data for the Z-Move trigger that appears when a move can be
  *		  turned into a Z-Move. Additionally contains general Z-Move utility functions.
  */
- 
+
 //Exported Functions
 void SetZEffect(void);
 void TryLoadZTrigger(void);

@@ -8,7 +8,7 @@
  *		  the faint check of the target Pokemon. The main function refers to the
  *		  "cmd49" or "moveend" battle scripting command.
  */
- 
+
 //Exported Functions
 void atk49_moveend(void);
 bank_t GetNextMultiTarget(void);

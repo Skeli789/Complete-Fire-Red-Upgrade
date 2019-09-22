@@ -80,7 +80,7 @@ extern const u8 gBattleAnimSpriteSheet_ParticlesDuskBallTiles[];
 extern const u8 gBattleAnimSpriteSheet_ParticlesHealBallTiles[];
 extern const u8 gBattleAnimSpriteSheet_ParticlesQuickCherishBallTiles[];
 extern const u8 gBattleAnimSpriteSheet_ParticlesQuickCherishBallTiles[];
-	
+
 #define gBattleAnimSpritePalette_136 (const u8*) 0x8D1A6DC
 extern const u8 gBattleAnimSpriteSheet_ParticlesDuskBallPal[];
 extern const u8 gBattleAnimSpriteSheet_ParticlesHealBallPal[];
@@ -95,7 +95,7 @@ extern const u8 gBattleAnimSpriteSheet_ParticlesQuickCherishBallPal[];
 #define BALL_OPEN_YELLOW_CIRCLES 2 //Custom for Quick Ball
 #define BALL_OPEN_PURPLE_CIRCLES 2 //Custom for Dusk Ball
 
-enum BallOpenParticles 
+enum BallOpenParticles
 {
 	BALL_OPEN_STICKS,
 	BALL_OPEN_YELLOW_STARS,
@@ -133,7 +133,7 @@ enum BallTags
 	GFX_TAG_MOONBALL,
 	GFX_TAG_SPORTBALL,
 	GFX_TAG_BEASTBALL,
-	GFX_TAG_DREAMBALL,	
+	GFX_TAG_DREAMBALL,
 };
 
 enum BallOpenParticleTags
@@ -644,7 +644,7 @@ const u16 gBallOpenMonFadePal[] = //gUnknown_085E5310 in Emerald
 	[BALL_TYPE_SPORT_BALL] = 	RGB(30, 17, 17), //Sport Ball - Pinkish Red
 	[BALL_TYPE_BEAST_BALL] = 	RGB(7, 12, 31), //Beast Ball - Royal Blue
 	[BALL_TYPE_DREAM_BALL] = 	RGB(31, 12, 20), //Dream Ball - Deep Pink
-	
+
 	RGB(0, 0, 0), //No idea what these lower values are for
 	RGB(1, 16, 0),
 	RGB(3, 0, 1),

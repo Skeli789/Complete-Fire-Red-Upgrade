@@ -8,7 +8,7 @@
  * \brief Contains many utility functions that mostly aid in battle, but can also
  *		  help in the overworld.
  */
- 
+
 //Exported Functions
 u32 MathMax(u32 num1, u32 num2);
 u32 MathMin(u32 num1, u32 num2);

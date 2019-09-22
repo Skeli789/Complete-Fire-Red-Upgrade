@@ -6,7 +6,7 @@
  * \file battle_strings.h
  * \brief Contains functions relating to strings displayed in battle.
  */
- 
+
 //Exported Functions
 void PrepareStringBattle(u16 stringId, u8 bank);
 void BufferStringBattle(u16 stringID);

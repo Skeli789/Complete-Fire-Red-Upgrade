@@ -4,16 +4,16 @@
 #include "../../include/constants/items.h"
 
 #include "../../include/new/accuracy_calc.h"
-#include "../../include/new/AI_advanced.h"
-#include "../../include/new/AI_Helper_Functions.h"
+#include "../../include/new/ai_advanced.h"
+#include "../../include/new/ai_util.h"
 #include "../../include/new/ai_master.h"
-#include "../../include/new/AI_scripts.h"
+#include "../../include/new/ai_scripts.h"
 #include "../../include/new/battle_start_turn_start.h"
 #include "../../include/new/battle_util.h"
 #include "../../include/new/damage_calc.h"
 #include "../../include/new/end_turn.h"
 #include "../../include/new/general_bs_commands.h"
-#include "../../include/new/Helper_Functions.h"
+#include "../../include/new/util.h"
 #include "../../include/new/item.h"
 #include "../../include/new/mega.h"
 #include "../../include/new/move_tables.h"
@@ -99,7 +99,7 @@ bool8 GetCan2HKO(u8 bankAtk, u8 bankDef)
 
 		if (move == MOVE_NONE)
 			break;
-			
+
 		if (isAsleep && move != MOVE_SNORE)
 			continue;
 
@@ -135,7 +135,7 @@ bool8 CanKnockOutAfterHealing(u8 bankAtk, u8 bankDef, u16 healAmount, u8 numHits
 
 		if (move == MOVE_NONE)
 			break;
-			
+
 		if (isAsleep && move != MOVE_SNORE)
 			continue;
 
@@ -173,7 +173,7 @@ bool8 CanKnockOutWithoutMove(const u16 ignoredMove, const u8 bankAtk, const u8 b
 
 		if (move == MOVE_NONE)
 			break;
-			
+
 		if (isAsleep && move != MOVE_SNORE)
 			continue;
 
@@ -190,7 +190,7 @@ bool8 CanKnockOutWithoutMove(const u16 ignoredMove, const u8 bankAtk, const u8 b
 bool8 MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(u16 move, u8 bankAtk, u8 bankDef, bool8 checkGoingFirst)
 {
 	u16 currMove, currAcc;
-	
+
 	u8 bestMoveIndex = 0xFF;
 	u16 bestAcc = 0;
 	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, 0xFF);
@@ -200,7 +200,7 @@ bool8 MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(u16 move, u8 bankAtk, u8 ba
 		currMove = GetBattleMonMove(bankAtk, i);
 		if (currMove == MOVE_NONE)
 			break;
-		
+
 		currMove = TryReplaceMoveWithZMove(bankAtk, bankDef, currMove);
 
 		if (!(gBitTable[i] & moveLimitations))
@@ -229,14 +229,14 @@ bool8 MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(u16 move, u8 bankAtk, u8 ba
 
 	if (gBattleMons[bankAtk].moves[bestMoveIndex] == move)
 		return TRUE;
-		
+
 	return FALSE;
 }
 
 bool8 IsWeakestContactMoveWithBestAccuracy(u16 move, u8 bankAtk, u8 bankDef)
 {
 	u16 currMove, currAcc, moveEffect;
-	
+
 	u8 bestMoveIndex = 0xFF;
 	u16 bestAcc = 0;
 	u32 bestDmg = 0xFFFFFFFF;
@@ -277,15 +277,15 @@ bool8 IsWeakestContactMoveWithBestAccuracy(u16 move, u8 bankAtk, u8 bankDef)
 
 	if (gBattleMons[bankAtk].moves[bestMoveIndex] == move)
 		return TRUE;
-		
+
 	return FALSE;
 }
 
 bool8 StrongestMoveGoesFirst(u16 move, u8 bankAtk, u8 bankDef)
 {
-	u16 currMove; 
+	u16 currMove;
 	u32 currDmg;
-	
+
 	u8 bestMoveIndex = 0xFF;
 	u32 bestDmg = 0;
 	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, 0xFF);
@@ -296,7 +296,7 @@ bool8 StrongestMoveGoesFirst(u16 move, u8 bankAtk, u8 bankDef)
 
 		if (currMove == MOVE_NONE)
 			break;
-		
+
 		currMove = TryReplaceMoveWithZMove(bankAtk, bankDef, currMove);
 
 		if (!(gBitTable[i] & moveLimitations))
@@ -317,7 +317,7 @@ bool8 StrongestMoveGoesFirst(u16 move, u8 bankAtk, u8 bankDef)
 
 	if (gBattleMons[bankAtk].moves[bestMoveIndex] == move)
 		return TRUE;
-		
+
 	return FALSE;
 }
 
@@ -361,7 +361,7 @@ bool8 CanKnockOutFromParty(struct Pokemon* monAtk, u8 bankDef)
 8: Hit 2 Foes, Decent Damage 2 Foes					Hit 2 Foes, KO 1 Foe, Strongest Move 1 Foe, Hurt Partner
 6: Hit 1 Foe, KO 1 Foe								Hit 2 Foes, KO 1 Foe/Strongest Move 2 Foes, Hurt Partner
 5: Hit 1 Foe, Strongest Move 1 Foe					Hit 2 Foes, Strongest Move 1 Foe, Hurt Partner
-4: Hit 1 Foe										Hit 2 Foes, Hurt Partner						
+4: Hit 1 Foe										Hit 2 Foes, Hurt Partner
 */
 
 void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner, u8 bankDefPartner, s8 bestMoveScores[MAX_BATTLERS_COUNT], u16* bestMove)
@@ -380,18 +380,18 @@ void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner,
 	for (i = 0; i < MAX_MON_MOVES; ++i)
 	{
 		move = GetBattleMonMove(bankAtk, i);
-	
+
 		if (move == MOVE_NONE)
 			break;
-			
+
 		if (SPLIT(move) == SPLIT_STATUS)
 			continue;
-			
+
 		move = TryReplaceMoveWithZMove(bankAtk, bankDef, move);
 		if (!(gBitTable[i] & moveLimitations))
 		{
 			u8 foes[] = {bankDef, bankDefPartner};
-		
+
 			for (j = 0, currTarget = foes[j]; j < gBattlersCount / 2; ++j)
 			{
 				if (BATTLER_ALIVE(currTarget) && (j == 0 || gBattleMoves[move].target & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL)) //Only can hit second foe with spread move
@@ -403,7 +403,7 @@ void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner,
 					if (!(AI_SpecialTypeCalc(move, bankAtk, currTarget) & MOVE_RESULT_NO_EFFECT))
 					{
 						moveScores[i][currTarget] += DOUBLES_INCREASE_HIT_FOE; //Hit one enemy
-				
+
 						if (MoveKnocksOutXHits(move, bankAtk, currTarget, 1))
 						{
 							moveScores[i][currTarget] += DOUBLES_INCREASE_KO_FOE; //KO enemy
@@ -420,7 +420,7 @@ void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner,
 									if (MoveWouldHitFirst(move, bankAtk, currTarget))
 										break;
 									goto DEFAULT_CHECK;
-								
+
 								case EFFECT_PARALYZE_HIT:
 								case EFFECT_BURN_HIT:
 								case EFFECT_FREEZE_HIT:
@@ -499,7 +499,7 @@ void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner,
 		u8 bestScore = moveScores[bestIndex][bankDef]
 					 + moveScores[bestIndex][bankDefPartner]
 					 + moveScores[bestIndex][bankAtkPartner];
-	
+
 		if (currScore > bestScore)
 			bestIndex = i;
 		else if (currScore == bestScore)
@@ -619,12 +619,12 @@ u16 CalcFinalAIMoveDamage(u16 move, u8 bankAtk, u8 bankDef, u8 numHits)
 			if (!gDisableStructs[bankAtk].isFirstTurn)
 				return 0;
 			break;
-			
+
 		case EFFECT_BURN_UP:
 			if (!IsOfType(bankAtk, TYPE_FIRE))
 				return 0;
 			break;
-			
+
 		case EFFECT_0HKO:
 			if (gBattleMons[bankAtk].level <= gBattleMons[bankDef].level)
 				return 0;
@@ -632,12 +632,12 @@ u16 CalcFinalAIMoveDamage(u16 move, u8 bankAtk, u8 bankDef, u8 numHits)
 				return 0;
 
 			return gBattleMons[bankDef].hp;
-			
+
 		case EFFECT_COUNTER: //Includes Metal Burst
 		case EFFECT_MIRROR_COAT:
 			return CalcPredictedDamageForCounterMoves(move, bankAtk, bankDef);
 	}
-	
+
 	u32 dmg = AI_CalcDmg(bankAtk, bankDef, move);
 	if (dmg >= gBattleMons[bankDef].hp)
 		return gBattleMons[bankDef].hp;
@@ -662,7 +662,7 @@ u16 CalcFinalAIMoveDamageFromParty(u16 move, struct Pokemon* monAtk, u8 bankDef,
 				return 0;
 
 			return gBattleMons[bankDef].hp;
-			
+
 		case EFFECT_COUNTER: //Includes Metal Burst
 		case EFFECT_MIRROR_COAT:
 			return 0;
@@ -766,7 +766,7 @@ move_t CalcStrongestMove(const u8 bankAtk, const u8 bankDef, const bool8 onlySpr
 				{
 					u16 currAcc = CalcAIAccuracy(move, bankAtk, bankDef);
 					u16 bestMoveAcc = CalcAIAccuracy(strongestMove, bankAtk, bankDef);
-	
+
 					if (currAcc > bestMoveAcc)
 					{
 						strongestMove = move;
@@ -776,7 +776,7 @@ move_t CalcStrongestMove(const u8 bankAtk, const u8 bankDef, const bool8 onlySpr
 			}
 		}
 	}
-	
+
 	return strongestMove;
 }
 
@@ -803,17 +803,17 @@ bool8 MoveWillHit(u16 move, u8 bankAtk, u8 bankDef)
 	||  (gStatuses3[bankDef] & STATUS3_ALWAYS_HITS && gDisableStructs[bankDef].bankWithSureHit == bankAtk))
 		return TRUE;
 
-	if (((gStatuses3[bankDef] & (STATUS3_IN_AIR | STATUS3_SKY_DROP_ATTACKER | STATUS3_SKY_DROP_TARGET)) && !CheckTableForMove(move, IgnoreAirTable))
-	||  ((gStatuses3[bankDef] & STATUS3_UNDERGROUND) && !CheckTableForMove(move, IgnoreUndergoundTable))
-	||  ((gStatuses3[bankDef] & STATUS3_UNDERWATER) && !CheckTableForMove(move, IgnoreUnderwaterTable))
+	if (((gStatuses3[bankDef] & (STATUS3_IN_AIR | STATUS3_SKY_DROP_ATTACKER | STATUS3_SKY_DROP_TARGET)) && !CheckTableForMove(move, gIgnoreInAirMoves))
+	||  ((gStatuses3[bankDef] & STATUS3_UNDERGROUND) && !CheckTableForMove(move, gIgnoreUndergoundMoves))
+	||  ((gStatuses3[bankDef] & STATUS3_UNDERWATER) && !CheckTableForMove(move, gIgnoreUnderwaterMoves))
 	||   (gStatuses3[bankDef] & STATUS3_DISAPPEARED))
 		return FALSE;
 
 	if ((move == MOVE_TOXIC && IsOfType(bankAtk, TYPE_POISON))
-	||  (CheckTableForMove(move, MinimizeHitTable) && gStatuses3[bankDef] & STATUS3_MINIMIZED)
+	||  (CheckTableForMove(move, gAlwaysHitWhenMinimizedMoves) && gStatuses3[bankDef] & STATUS3_MINIMIZED)
 	|| ((gStatuses3[bankDef] & STATUS3_TELEKINESIS) && gBattleMoves[move].effect != EFFECT_0HKO)
 	||  gBattleMoves[move].accuracy == 0
-	|| (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_RAIN_ANY) && CheckTableForMove(move, AlwaysHitRainTable))
+	|| (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_RAIN_ANY) && CheckTableForMove(move, gAlwaysHitInRainMoves))
 	||  IsZMove(move))
 		return TRUE;
 
@@ -880,21 +880,21 @@ bool8 IsBankAsleep(u8 bank)
 	#ifdef REALLY_SMART_AI
 	&& gBattleMons[bank].status1 > 1 //Won't wake up this turn
 	#endif
-	; 
+	;
 }
 
 bool8 IsBankIncapacitated(u8 bank)
 {
 	if (IsBankAsleep(bank))
 		return TRUE;
-		
+
 	if (gBattleMons[bank].status1 & STATUS1_FREEZE)
 		return TRUE;
-		
+
 	if (gBattleMons[bank].status2 & STATUS2_RECHARGE
 	||  gDisableStructs[bank].truantCounter != 0)
 		return TRUE;
-		
+
 	return FALSE;
 }
 
@@ -911,11 +911,11 @@ bool8 WillFaintFromWeatherSoon(u8 bank)
 bool8 WillTakeSignificantDamageFromEntryHazards(u8 bank, u8 healthFraction)
 {
 	u32 dmg = 0;
-	
+
 	if (gSideAffecting[SIDE(bank)] & SIDE_STATUS_SPIKES)
 	{
 		struct Pokemon* mon = GetBankPartyData(bank);
-	
+
 		if (gSideTimers[SIDE(bank)].srAmount > 0)
 			dmg += CalcStealthRockDamagePartyMon(mon);
 
@@ -960,10 +960,10 @@ u16 GetTeamSpeedAverage(u8 bank)
 {
 	u8 firstId, lastId;
 	struct Pokemon* party = LoadPartyRange(bank, &firstId, &lastId);
-	
+
 	u8 totalNum = 0;
 	u16 sum = 0;
-	
+
 	for (int i = 0; i < PARTY_SIZE; ++i)
 	{
 		if (party[i].species == SPECIES_NONE
@@ -973,7 +973,7 @@ u16 GetTeamSpeedAverage(u8 bank)
 		++totalNum;
 		sum += GetMonData(&party[i], MON_DATA_SPEED, NULL);
 	}
-	
+
 	return sum / totalNum;
 }
 
@@ -982,7 +982,7 @@ u16 GetPokemonOnSideSpeedAverage(u8 bank)
 	u16 speed1 = 0;
 	u16 speed2 = 0;
 	u8 numBattlersAlive = 0;
-	
+
 	if (BATTLER_ALIVE(bank))
 	{
 		speed1 = SpeedCalc(bank);
@@ -995,7 +995,7 @@ u16 GetPokemonOnSideSpeedAverage(u8 bank)
 		speed2 = SpeedCalc(PARTNER(bank));
 		++numBattlersAlive;
 	}
-	
+
 	return (speed1 + speed2) / numBattlersAlive;
 }
 
@@ -1023,10 +1023,10 @@ u16 GetBattleMonMove(u8 bank, u8 i)
 u8 GetAIAbility(u8 bankAtk, u8 bankDef, u16 move)
 {
 	u8 ability = ABILITY_NONE;
-	
+
 	if (!ShouldAIDelayMegaEvolution(bankAtk, bankDef, move))
 		ability = GetBankMegaFormAbility(bankAtk);
-	
+
 	if (ability == ABILITY_NONE)
 		return ABILITY(bankAtk);
 
@@ -1059,7 +1059,7 @@ bool8 IsTrapped(u8 bank, bool8 switching)
 		|| IsFairyLockActive())
 			return TRUE;
 	}
-	
+
 	return FALSE;
 }
 
@@ -1069,7 +1069,7 @@ bool8 IsTakingSecondaryDamage(u8 bank)
 
 	if (gStatuses3[bank] & STATUS3_PERISH_SONG)
 		return TRUE;
-		
+
 	if (ability != ABILITY_MAGICGUARD)
 	{
 		if (TakesDamageFromSandstorm(bank)
@@ -1083,7 +1083,7 @@ bool8 IsTakingSecondaryDamage(u8 bank)
 		||	(BankSideHasSeaOfFire(bank) && !IsOfType(bank, TYPE_FIRE)))
 			return TRUE;
 	}
-	
+
 	return FALSE;
 }
 
@@ -1095,20 +1095,20 @@ bool8 WillFaintFromSecondaryDamage(u8 bank)
 	if (gStatuses3[bank] & STATUS3_PERISH_SONG
 	&&  gDisableStructs[bank].perishSongTimer == 0)
 		return TRUE;
-		
+
 	if (ability != ABILITY_MAGICGUARD)
 	{
 		u32 damage = 0;
 		if (gWishFutureKnock->weatherDuration != 1)
 			damage += GetSandstormDamage(bank)
 				    + GetHailDamage(bank); //Weather's not about to end
-	
+
 		if ((gBattleMons[bank].status1 & STATUS1_SLEEP) != 1)
 			damage += GetNightmareDamage(bank); //Sleep's not about to end
-			
+
 		if (!(gNewBS->brokeFreeMessage & gBitTable[bank]))
 			damage += GetTrapDamage(bank); //Trapping isn't about to end
-	
+
 		if (damage
 		+  GetLeechSeedDamage(bank)
 		+  GetPoisonDamage(bank)
@@ -1141,7 +1141,7 @@ u16 CalcAIAccuracy(u16 move, u8 bankAtk, u8 bankDef)
 		acc -= 1; //Don't rampage if you don't have to
 	else if (move == MOVE_FINALGAMBIT)
 		acc -= 5; //Don't kill yourself if you don't have to
-		
+
 	return acc;
 }
 
@@ -1199,7 +1199,7 @@ bool8 BadIdeaToPoison(u8 bankDef, u8 bankAtk)
 	u8 defItemEffect = ITEM_EFFECT(bankDef);
 	u8 defAbility = ABILITY(bankDef);
 	u8 atkAbility = ABILITY(bankAtk);
-	
+
 	return !CanBePoisoned(bankDef, bankAtk, TRUE)
 		||  defItemEffect == ITEM_EFFECT_CURE_PSN
 		||  defItemEffect == ITEM_EFFECT_CURE_STATUS
@@ -1270,7 +1270,7 @@ bool8 BadIdeaToBurn(u8 bankDef, u8 bankAtk)
 {
 	u8 defItemEffect = ITEM_EFFECT(bankDef);
 	u8 defAbility = ABILITY(bankDef);
-	
+
 	return !CanBeBurned(bankDef, TRUE)
 		||  defItemEffect == ITEM_EFFECT_CURE_BRN
 		||  defItemEffect == ITEM_EFFECT_CURE_STATUS
@@ -1348,9 +1348,9 @@ bool8 IsMovePredictionSemiInvulnerable(u8 bankAtk, u8 bankDef)
 	{
 		u8 effect = gBattleMoves[move].effect;
 		return effect == EFFECT_SEMI_INVULNERABLE;
-	
+
 	}
-	
+
 	return FALSE;
 }
 
@@ -1366,7 +1366,7 @@ bool8 IsMovePredictionHealingMove(u8 bankAtk, u8 bankDef)
 			|| effect == EFFECT_SWALLOW
 			|| effect == EFFECT_WISH;
 	}
-	
+
 	return FALSE;
 }
 
@@ -1379,7 +1379,7 @@ bool8 IsPredictedToUsePursuitableMove(u8 bankAtk, u8 bankDef)
 		u8 effect = gBattleMoves[move].effect;
 		return effect == EFFECT_BATON_PASS && move != MOVE_BATONPASS;
 	}
-	
+
 	return FALSE;
 }
 
@@ -1392,7 +1392,7 @@ bool8 IsMovePredictionPhazingMove(u8 bankAtk, u8 bankDef)
 		u8 effect = gBattleMoves[move].effect;
 		return effect == EFFECT_ROAR || effect == EFFECT_HAZE || effect == EFFECT_REMOVE_TARGET_STAT_CHANGES;
 	}
-	
+
 	return FALSE;
 }
 
@@ -1405,7 +1405,7 @@ bool8 CanMovePredictionProtectAgainstMove(u8 bankAtk, u8 bankDef, u16 move)
 	{
 		return DoesProtectionMoveBlockMove(bankDef, bankAtk, move, protectMove); //The "target" is the one not using Protection move and attacking
 	}
-	
+
 	return FALSE;
 }
 
@@ -1513,7 +1513,7 @@ bool8 HasProtectionMoveInMoveset(u8 bank, u8 checkType)
 {
 	u16 move;
 	u8 moveLimitations = CheckMoveLimitations(bank, 0, 0xFF);
-	
+
 	for (int i = 0; i < MAX_MON_MOVES; ++i)
 	{
 		move = GetBattleMonMove(bank, i);
@@ -1534,7 +1534,7 @@ bool8 HasProtectionMoveInMoveset(u8 bank, u8 checkType)
 						if (checkType & CHECK_QUICK_GUARD)
 							return TRUE;
 						break;
-					
+
 					case MOVE_WIDEGUARD:
 						if (checkType & CHECK_WIDE_GUARD)
 							return TRUE;
@@ -1728,11 +1728,11 @@ bool8 MoveInMovesetWithAccuracyLessThan(u8 bankAtk, u8 bankDef, u8 acc, bool8 ig
 		{
 			if (ignoreStatusMoves && SPLIT(move) == SPLIT_STATUS)
 				continue;
-			
+
 			if (gBattleMoves[move].accuracy == 0 //Always hits
 			||  gBattleMoves[move].target & (MOVE_TARGET_USER | MOVE_TARGET_OPPONENTS_FIELD))
 				continue;
-			
+
 			if (AccuracyCalc(move, bankAtk, bankDef) < acc)
 				return TRUE;
 		}
@@ -1827,13 +1827,13 @@ bool8 MoveThatCanHelpAttacksHitInMoveset(u8 bank)
 				case EFFECT_EVASION_DOWN:
 				case EFFECT_EVASION_DOWN_2:
 					return TRUE;
-					
+
 				case EFFECT_LOCK_ON:
 					if (move != MOVE_LASERFOCUS)
 						return TRUE;
 					break;
 			}
-			
+
 			switch (move) {
 				case MOVE_HONECLAWS:
 				case MOVE_COIL:
@@ -1853,10 +1853,10 @@ bool8 DamagingMoveThaCanBreakThroughSubstituteInMoveset(u8 bankAtk, u8 bankDef)
 	for (int i = 0; i < MAX_MON_MOVES; ++i)
 	{
 		u16 move = GetBattleMonMove(bankAtk, i);
-	
+
 		if (move == MOVE_NONE)
 			break;
-			
+
 		if (!(gBitTable[i] & moveLimitations))
 		{
 			if (SPLIT(move) != SPLIT_STATUS //Damaging move
@@ -1875,10 +1875,10 @@ bool8 ContactMovesThatAffectTargetInMoveset(u8 bankAtk, u8 bankDef)
 	for (int i = 0; i < MAX_MON_MOVES; ++i)
 	{
 		u16 move = GetBattleMonMove(bankAtk, i);
-	
+
 		if (move == MOVE_NONE)
 			break;
-			
+
 		if (!(gBitTable[i] & moveLimitations))
 		{
 			if (CheckContact(move, bankAtk)
@@ -1897,13 +1897,13 @@ bool8 UnfreezingMoveInMoveset(u8 bank)
 	for (int i = 0; i < MAX_MON_MOVES; ++i)
 	{
 		u16 move = GetBattleMonMove(bank, i);
-	
+
 		if (move == MOVE_NONE)
 			break;
-			
+
 		if (!(gBitTable[i] & moveLimitations))
 		{
-			if (CheckTableForMove(move, MovesCanUnfreezeAttacker))
+			if (CheckTableForMove(move, gMovesCanUnfreezeAttacker))
 				return TRUE;
 		}
 	}
@@ -1919,7 +1919,7 @@ bool8 OnlyBadMovesLeftInMoveset(u8 bankAtk, u8 bankDef)
 	u32 dmg;
 	u8 numDamageMoves = 0;
 	bool8 hasSuperEffectiveMove = FALSE;
-	
+
 	if (AI_THINKING_STRUCT->aiFlags == AI_SCRIPT_CHECK_BAD_MOVE) //Only basic AI
 		return FALSE; //The dumb AI doesn't get to switch like this
 
@@ -1938,11 +1938,11 @@ bool8 OnlyBadMovesLeftInMoveset(u8 bankAtk, u8 bankDef)
 			{
 				if (SPLIT(move) == SPLIT_STATUS)
 					return FALSE; //Has viable status move
-					
+
 				if (gBattleMoves[move].effect == EFFECT_KNOCK_OFF
 				&&  CanKnockOffItem(bankDef))
 					return FALSE; //Using Knock-Off is good even if it does minimal damage
-					
+
 				if (TypeCalc(move, bankAtk, bankDef, NULL, FALSE) & MOVE_RESULT_SUPER_EFFECTIVE)
 					hasSuperEffectiveMove = TRUE;
 
@@ -1993,7 +1993,7 @@ bool8 OnlyBadMovesLeftInMoveset(u8 bankAtk, u8 bankDef)
 					if (dmg * 3 >= gBattleMons[bankDef].maxHP) //Damage deals a third or more of max health
 						return FALSE; //Don't switch if can 3HKO
 				}
-				
+
 				u8 backupActiveBattler = gActiveBattler;
 				gActiveBattler = bankAtk;
 				if (GetMostSuitableMonToSwitchIntoScore() == SWITCHING_INCREASE_HAS_SUPER_EFFECTIVE_MOVE)
@@ -2014,7 +2014,7 @@ bool8 OnlyBadMovesLeftInMoveset(u8 bankAtk, u8 bankDef)
 			return TRUE;
 		}
 	}
-	
+
 	return FALSE; //Has some moves to use
 }
 
@@ -2083,7 +2083,7 @@ bool8 AnyUsefulStatIsRaised(u8 bank)
 		{
 			if (storedPowerInMoveset)
 				return TRUE;
-				
+
 			switch (statId) {
 				case STAT_STAGE_ATK:
 					if (PhysicalMoveInMoveset(bank))
@@ -2104,7 +2104,7 @@ bool8 AnyUsefulStatIsRaised(u8 bank)
 				case STAT_STAGE_SPEED:
 				case STAT_STAGE_ACC:
 				case STAT_STAGE_EVASION:
-					return TRUE;	
+					return TRUE;
 			}
 		}
 	}
@@ -2132,7 +2132,7 @@ bool8 AnyUsefulOffseniveStatIsRaised(u8 bank)
 						return TRUE;
 					break;
 				case STAT_STAGE_SPEED:
-					return TRUE;	
+					return TRUE;
 			}
 		}
 	}
@@ -2173,22 +2173,22 @@ u16 ShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move)
 	if (zMove != MOVE_NONE)
 	{
 		if (zMove != 0xFFFF) //Damaging Z-Move
-		{		
+		{
 			if (move == MOVE_FAKEOUT && ShouldUseFakeOut(bankAtk, bankDef))
 				return FALSE; //Prefer actual Fake Out over Breakneck Blitz
-			
+
 			if (MoveBlockedBySubstitute(zMove, bankAtk, bankDef)
 			|| (defMovePrediction == MOVE_SUBSTITUTE
 			 && !MoveWouldHitFirst(zMove, bankAtk, bankDef)
 			 && !MoveIgnoresSubstitutes(zMove, bankAtk)))
 				return FALSE; //Don't use a Z-Move on a Substitute or if the enemy is going to go first and use Substitute
-			
+
 			if (NO_MOLD_BREAKERS(ABILITY(bankAtk), zMove) && ABILITY(bankDef) == ABILITY_DISGUISE && SPECIES(bankDef) == SPECIES_MIMIKYU)
 				return FALSE; //Don't waste a Z-Move busting Mimikyu's disguise
-			
+
 			if (defMovePrediction == MOVE_PROTECT || defMovePrediction == MOVE_KINGSSHIELD || defMovePrediction == MOVE_SPIKYSHIELD)
 				return FALSE; //Don't waste a Z-Move on a Protect
-			
+
 			//These moves should always be turned into Z-Moves, regardless if they KO or not
 			switch (gBattleMoves[move].effect) {
 				case EFFECT_RECHARGE:
@@ -2202,13 +2202,13 @@ u16 ShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move)
 
 			if (MoveKnocksOutXHits(move, bankAtk, bankDef, 1))
 				return FALSE; //If the base move can KO, don't turn it into a Z-Move
-				
+
 			return TRUE;
 		}
 		else //Status Move
 		{
 			u8 zEffect = gBattleMoves[move].z_move_effect;
-			
+
 			switch (zEffect) {
 				case Z_EFFECT_NONE:
 					return FALSE;
@@ -2224,7 +2224,7 @@ u16 ShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move)
 							return TRUE; //Reset any negative stats
 					}
 					break;
-				case Z_EFFECT_ALL_STATS_UP_1:	
+				case Z_EFFECT_ALL_STATS_UP_1:
 					if (!StatsMaxed(bankAtk))
 						return TRUE;
 					break;
@@ -2286,7 +2286,7 @@ u16 ShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move)
 			}
 		}
 	}
-	
+
 	return FALSE;
 }
 

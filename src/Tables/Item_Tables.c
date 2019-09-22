@@ -47,7 +47,7 @@ const u32 pickup_common_item_ceilings[PU_COMMON_PER_ROW] =
 };
 
 const u32 pickup_rare_item_ceilings[PU_RARE_PER_ROW] =
-{ 
+{
 	64881, 65536
 };
 
@@ -410,7 +410,7 @@ const struct FlingStruct gFlingTable[ITEMS_COUNT] =
 	[ITEM_IRON_BALL] = {130, 0},
 };
 
-const u8 gConsumableItemEffects[] = 
+const u8 gConsumableItemEffects[] =
 {
 	ITEM_EFFECT_RESTORE_HP,
 	ITEM_EFFECT_CURE_PAR,

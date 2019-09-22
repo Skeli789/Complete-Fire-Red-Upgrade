@@ -6,7 +6,7 @@
  *		  off of the vanilla roaming functions, with the added bonus of supporting
  *		  up to ten custom roamers.
  */
- 
+
 //Exported Functions
 void ClearRoamerData(void);
 void sp129_InitRoamer(void);

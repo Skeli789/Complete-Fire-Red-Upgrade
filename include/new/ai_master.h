@@ -6,7 +6,7 @@
  * \file ai_master.h
  * \brief Contains functions relating to general doings of the battle AI.
  */
- 
+
 //Exported Functions
 void BattleAI_SetupAIData(u8 defaultScoreMoves);
 u32 GetAIFlags(void);

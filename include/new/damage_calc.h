@@ -9,7 +9,7 @@
  * \brief Contains functions relating to damage calculation, base power calculation,
  *		  move types, and type effectiveness.
  */
- 
+
 //Exported Functions
 void atk04_critcalc(void);
 

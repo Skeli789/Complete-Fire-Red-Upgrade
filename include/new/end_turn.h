@@ -10,7 +10,7 @@
  *		  any fainted Pokemon are replaced). The order of the events found here are based on:
  *		  https://bulbapedia.bulbagarden.net/wiki/User:SnorlaxMonster/End-turn_resolution_order.
  */
- 
+
 //Exported Functions
 u8 CountAliveMonsOnField(void);
 

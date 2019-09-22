@@ -1,13 +1,13 @@
 #pragma once
 
-extern const ability_t RolePlayBanTable[];
-extern const ability_t RolePlayAttackerBanTable[];
-extern const ability_t SkillSwapBanTable[];
-extern const ability_t WorrySeedGastroAcidBanTable[];
-extern const ability_t EntrainmentBanTableAttacker[];
-extern const ability_t EntrainmentBanTableTarget[];
-extern const ability_t SimpleBeamBanTable[];
-extern const ability_t ReceiverBanTable[];
-extern const ability_t TraceBanTable[];
+extern const ability_t gRolePlayBannedAbilities[];
+extern const ability_t gRolePlayAttackerBannedAbilities[];
+extern const ability_t gSkillSwapBannedAbilities[];
+extern const ability_t gWorrySeedGastroAcidBannedAbilities[];
+extern const ability_t gEntrainmentBannedAbilitiesAttacker[];
+extern const ability_t gEntrainmentBannedAbilitiesTarget[];
+extern const ability_t gSimpleBeamBannedAbilities[];
+extern const ability_t gReceiverBannedAbilities[];
+extern const ability_t gTraceBannedAbilities[];
 extern const bool8 gMoldBreakerIgnoredAbilities[];
 extern const s8 gAbilityRatings[];

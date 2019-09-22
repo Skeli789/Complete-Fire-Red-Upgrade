@@ -323,7 +323,7 @@ static const struct WindowTemplate sDexNavWindows[] =
         .paletteNum = 15,
         .baseBlock = 1,
 	},
-	
+
 	[WINDOW_SEARCH_LEVEL] =
     {
         .bg = 0,
@@ -334,7 +334,7 @@ static const struct WindowTemplate sDexNavWindows[] =
         .paletteNum = 15,
         .baseBlock = 19,
     },
-	
+
 	[WINDOW_LEVEL_BONUS] =
     {
         .bg = 0,
@@ -345,7 +345,7 @@ static const struct WindowTemplate sDexNavWindows[] =
         .paletteNum = 15,
         .baseBlock = 64,
     },
-	
+
 	[WINDOW_HIDDEN_ABILITY] =
     {
         .bg = 0,
@@ -356,7 +356,7 @@ static const struct WindowTemplate sDexNavWindows[] =
         .paletteNum = 15,
         .baseBlock = 91,
     },
-	
+
 	[WINDOW_REPLY_TEXT] =
     {
         .bg = 0,
@@ -367,7 +367,7 @@ static const struct WindowTemplate sDexNavWindows[] =
         .paletteNum = 15,
         .baseBlock = 127,
     },
-	
+
 	[WINDOW_WATER] =
 	{
         .bg = 0,
@@ -378,7 +378,7 @@ static const struct WindowTemplate sDexNavWindows[] =
         .paletteNum = 15,
         .baseBlock = 205,
 	},
-	
+
 	[WINDOW_LAND] =
 	{
         .bg = 0,
@@ -389,7 +389,7 @@ static const struct WindowTemplate sDexNavWindows[] =
         .paletteNum = 15,
         .baseBlock = 262,
 	},
-	
+
 	[WINDOW_MAP_NAME] =
 	{
         .bg = 0,
@@ -400,7 +400,7 @@ static const struct WindowTemplate sDexNavWindows[] =
         .paletteNum = 15,
         .baseBlock = 319,
 	},
-	
+
 	[WINDOW_COUNT] =
     {
         .bg = 0xFF, // marks the end of the tb array
@@ -414,7 +414,7 @@ static const struct WindowTemplate sDexNavWindows[] =
 
 //64x32 oam with second highest priority
 static const struct OamData sBlackBarOAM =
-{   
+{
 	.y = ICONY,
     .affineMode = 0,
     .objMode = 0,
@@ -433,7 +433,7 @@ static const struct OamData sBlackBarOAM =
 
 //64x32 oam with highest priority
 static const struct OamData FontOAM =
-{   
+{
 	.y = ICONY,
     .affineMode = 0,
     .objMode = 0,
@@ -491,12 +491,12 @@ static const struct OamData PIconOAM =
 
 static const struct SpriteTemplate BulbTemp =
 {
-	.tileTag = 0x3139, 
-	.paletteTag = 0x3139, 
-	.oam = (struct OamData*) &PIconOAM, 
-	.anims = (const union AnimCmd* const*)0x8231CF0, 
+	.tileTag = 0x3139,
+	.paletteTag = 0x3139,
+	.oam = (struct OamData*) &PIconOAM,
+	.anims = (const union AnimCmd* const*)0x8231CF0,
 	.images = NULL,
-    .affineAnims = (const union AffineAnimCmd* const*) 0x8231CFC, 
+    .affineAnims = (const union AffineAnimCmd* const*) 0x8231CFC,
 	.callback = (SpriteCallback) 0x800760D,
 };
 

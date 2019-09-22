@@ -6,7 +6,7 @@
  *		  Pokemon's turn. Helps set up things like Mega Evolution and Z-Moves, as
  *		  well as contains the the turn order calculation.
  */
- 
+
 //Exported Functions
 bool8 CanActivateTotemBoost(u8 bank);
 u16 GetMUS_ForBattle(void);

@@ -27,7 +27,7 @@
 #include "../include/constants/trainer_classes.h"
 
 #include "../include/new/frontier.h"
-#include "../include/new/Helper_Functions.h"
+#include "../include/new/util.h"
 #include "../include/new/multi.h"
 #include "../include/new/overworld.h"
 #include "../include/new/overworld_data.h"
@@ -63,133 +63,133 @@ const u8* const gDefaultWalkingScripts[] =
 
 enum
 {
-    TRAINER_PARAM_LOAD_VAL_8BIT,
-    TRAINER_PARAM_LOAD_VAL_16BIT,
-    TRAINER_PARAM_LOAD_VAL_32BIT,
-    TRAINER_PARAM_CLEAR_VAL_8BIT,
-    TRAINER_PARAM_CLEAR_VAL_16BIT,
-    TRAINER_PARAM_CLEAR_VAL_32BIT,
-    TRAINER_PARAM_LOAD_SCRIPT_RET_ADDR,
+	TRAINER_PARAM_LOAD_VAL_8BIT,
+	TRAINER_PARAM_LOAD_VAL_16BIT,
+	TRAINER_PARAM_LOAD_VAL_32BIT,
+	TRAINER_PARAM_CLEAR_VAL_8BIT,
+	TRAINER_PARAM_CLEAR_VAL_16BIT,
+	TRAINER_PARAM_CLEAR_VAL_32BIT,
+	TRAINER_PARAM_LOAD_SCRIPT_RET_ADDR,
 };
 
 //An alternative to Oak's tutorial that allows mugshots to be used if ACTIVATE_TUTORIAL_FLAG is commented out
 static const struct TrainerBattleParameter sContinueLostBattleParams[] =
 {
-    {&sTrainerBattleMode, 			 TRAINER_PARAM_LOAD_VAL_8BIT},
-    {&gTrainerBattleOpponent_A,      TRAINER_PARAM_LOAD_VAL_16BIT},
-    {&sTrainerEventObjectLocalId,    TRAINER_PARAM_LOAD_VAL_16BIT},
-    {&sTrainerIntroSpeech_A,         TRAINER_PARAM_CLEAR_VAL_32BIT},
-    {&sTrainerDefeatSpeech_A,        TRAINER_PARAM_LOAD_VAL_32BIT},
-    {&sTrainerVictorySpeech,         TRAINER_PARAM_LOAD_VAL_32BIT},
-    {&sTrainerCannotBattleSpeech,    TRAINER_PARAM_CLEAR_VAL_32BIT},
-    {&sTrainerBattleScriptRetAddr,   TRAINER_PARAM_CLEAR_VAL_32BIT},
-    {&sTrainerBattleEndScript,       TRAINER_PARAM_LOAD_SCRIPT_RET_ADDR},
+	{&sTrainerBattleMode, 			 TRAINER_PARAM_LOAD_VAL_8BIT},
+	{&gTrainerBattleOpponent_A,	  TRAINER_PARAM_LOAD_VAL_16BIT},
+	{&sTrainerEventObjectLocalId,	TRAINER_PARAM_LOAD_VAL_16BIT},
+	{&sTrainerIntroSpeech_A,		 TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerDefeatSpeech_A,		TRAINER_PARAM_LOAD_VAL_32BIT},
+	{&sTrainerVictorySpeech,		 TRAINER_PARAM_LOAD_VAL_32BIT},
+	{&sTrainerCannotBattleSpeech,	TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerBattleScriptRetAddr,   TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerBattleEndScript,	   TRAINER_PARAM_LOAD_SCRIPT_RET_ADDR},
 };
 
 static const struct TrainerBattleParameter sTrainerBContinueScriptBattleParams[] =
 {
-    {&sTrainerBattleMode,            TRAINER_PARAM_LOAD_VAL_8BIT},
-    {&gTrainerBattleOpponent_B,      TRAINER_PARAM_LOAD_VAL_16BIT},
-    {&sTrainerEventObjectLocalId,    TRAINER_PARAM_LOAD_VAL_16BIT},
-    {&sTrainerIntroSpeech_B,         TRAINER_PARAM_LOAD_VAL_32BIT},
-    {&sTrainerDefeatSpeech_B,        TRAINER_PARAM_LOAD_VAL_32BIT},
-    {&sTrainerVictorySpeech_B,       TRAINER_PARAM_CLEAR_VAL_32BIT},
-    {&sTrainerCannotBattleSpeech,    TRAINER_PARAM_CLEAR_VAL_32BIT},
-    {&sTrainerBattleScriptRetAddr_B, TRAINER_PARAM_LOAD_VAL_32BIT},
-    {&sTrainerBattleEndScript,       TRAINER_PARAM_LOAD_SCRIPT_RET_ADDR},
+	{&sTrainerBattleMode,			TRAINER_PARAM_LOAD_VAL_8BIT},
+	{&gTrainerBattleOpponent_B,	  TRAINER_PARAM_LOAD_VAL_16BIT},
+	{&sTrainerEventObjectLocalId,	TRAINER_PARAM_LOAD_VAL_16BIT},
+	{&sTrainerIntroSpeech_B,		 TRAINER_PARAM_LOAD_VAL_32BIT},
+	{&sTrainerDefeatSpeech_B,		TRAINER_PARAM_LOAD_VAL_32BIT},
+	{&sTrainerVictorySpeech_B,	   TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerCannotBattleSpeech,	TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerBattleScriptRetAddr_B, TRAINER_PARAM_LOAD_VAL_32BIT},
+	{&sTrainerBattleEndScript,	   TRAINER_PARAM_LOAD_SCRIPT_RET_ADDR},
 };
 
 static const struct TrainerBattleParameter sTrainerBOrdinaryBattleParams[] =
 {
-    {&sTrainerBattleMode,            TRAINER_PARAM_LOAD_VAL_8BIT},
-    {&gTrainerBattleOpponent_B,      TRAINER_PARAM_LOAD_VAL_16BIT},
-    {&sTrainerEventObjectLocalId,    TRAINER_PARAM_LOAD_VAL_16BIT},
-    {&sTrainerIntroSpeech_B,         TRAINER_PARAM_LOAD_VAL_32BIT},
-    {&sTrainerDefeatSpeech_B,        TRAINER_PARAM_LOAD_VAL_32BIT},
-    {&sTrainerVictorySpeech,         TRAINER_PARAM_CLEAR_VAL_32BIT},
-	{&sTrainerVictorySpeech_B,       TRAINER_PARAM_CLEAR_VAL_32BIT},
-    {&sTrainerCannotBattleSpeech,    TRAINER_PARAM_CLEAR_VAL_32BIT},
-    {&sTrainerBattleScriptRetAddr_B, TRAINER_PARAM_CLEAR_VAL_32BIT},
-    {&sTrainerBattleEndScript,       TRAINER_PARAM_LOAD_SCRIPT_RET_ADDR},
+	{&sTrainerBattleMode,			TRAINER_PARAM_LOAD_VAL_8BIT},
+	{&gTrainerBattleOpponent_B,	  TRAINER_PARAM_LOAD_VAL_16BIT},
+	{&sTrainerEventObjectLocalId,	TRAINER_PARAM_LOAD_VAL_16BIT},
+	{&sTrainerIntroSpeech_B,		 TRAINER_PARAM_LOAD_VAL_32BIT},
+	{&sTrainerDefeatSpeech_B,		TRAINER_PARAM_LOAD_VAL_32BIT},
+	{&sTrainerVictorySpeech,		 TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerVictorySpeech_B,	   TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerCannotBattleSpeech,	TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerBattleScriptRetAddr_B, TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerBattleEndScript,	   TRAINER_PARAM_LOAD_SCRIPT_RET_ADDR},
 };
 
 //trainerbattle 0xA FOE_1_ID FOE_2_ID PARTNER_ID PARTNER_BACKSPRITE_ID 0x0 DEFEAT_TEXT_A DEFEAT_TEXT_B
 static const struct TrainerBattleParameter sMultiBattleParams[] =
 {
-    {&sTrainerBattleMode,           TRAINER_PARAM_LOAD_VAL_8BIT},
+	{&sTrainerBattleMode,		   TRAINER_PARAM_LOAD_VAL_8BIT},
 
-    {&gTrainerBattleOpponent_A,      TRAINER_PARAM_LOAD_VAL_16BIT},
-	{&gTrainerBattleOpponent_B,      TRAINER_PARAM_LOAD_VAL_16BIT},
-	{&gTrainerBattlePartner,     	 TRAINER_PARAM_LOAD_VAL_16BIT},
+	{&gTrainerBattleOpponent_A,	  TRAINER_PARAM_LOAD_VAL_16BIT},
+	{&gTrainerBattleOpponent_B,	  TRAINER_PARAM_LOAD_VAL_16BIT},
+	{&gTrainerBattlePartner,	 	 TRAINER_PARAM_LOAD_VAL_16BIT},
 	{&sPartnerBackSpriteId,			 TRAINER_PARAM_LOAD_VAL_16BIT},
 
-    {&sTrainerEventObjectLocalId,    TRAINER_PARAM_LOAD_VAL_16BIT},
-    {&sTrainerIntroSpeech_A,         TRAINER_PARAM_CLEAR_VAL_32BIT},
-	{&sTrainerIntroSpeech_B,       	 TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerEventObjectLocalId,	TRAINER_PARAM_LOAD_VAL_16BIT},
+	{&sTrainerIntroSpeech_A,		 TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerIntroSpeech_B,	   	 TRAINER_PARAM_CLEAR_VAL_32BIT},
 
-    {&sTrainerDefeatSpeech_A,        TRAINER_PARAM_LOAD_VAL_32BIT},
+	{&sTrainerDefeatSpeech_A,		TRAINER_PARAM_LOAD_VAL_32BIT},
 	{&sTrainerDefeatSpeech_B, 		 TRAINER_PARAM_LOAD_VAL_32BIT},
 
-    {&sTrainerVictorySpeech,         TRAINER_PARAM_CLEAR_VAL_32BIT},
-	{&sTrainerVictorySpeech_B,       TRAINER_PARAM_CLEAR_VAL_32BIT},
-    {&sTrainerCannotBattleSpeech,    TRAINER_PARAM_CLEAR_VAL_32BIT},
-    {&sTrainerBattleScriptRetAddr,   TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerVictorySpeech,		 TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerVictorySpeech_B,	   TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerCannotBattleSpeech,	TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerBattleScriptRetAddr,   TRAINER_PARAM_CLEAR_VAL_32BIT},
 	{&sTrainerBattleScriptRetAddr_B, TRAINER_PARAM_CLEAR_VAL_32BIT},
-    {&sTrainerBattleEndScript,       TRAINER_PARAM_LOAD_SCRIPT_RET_ADDR},
+	{&sTrainerBattleEndScript,	   TRAINER_PARAM_LOAD_SCRIPT_RET_ADDR},
 };
 
 //trainerbattle 0xB FOE_1_ID FOE_2_ID FOE_1_NPC_ID FOE_2_NPC_ID 0x0 INTRO_TEXT_A INTRO_TEXT_B DEFEAT_TEXT_A DEFEAT_TEXT_B CANNOT_BATTLE_TEXT
 static const struct TrainerBattleParameter sTwoOpponentBattleParams[] =
 {
-    {&sTrainerBattleMode,          	 TRAINER_PARAM_LOAD_VAL_8BIT},
+	{&sTrainerBattleMode,		  	 TRAINER_PARAM_LOAD_VAL_8BIT},
 
-    {&gTrainerBattleOpponent_A,    	 TRAINER_PARAM_LOAD_VAL_16BIT},
-	{&gTrainerBattleOpponent_B,    	 TRAINER_PARAM_LOAD_VAL_16BIT},
-	{&gTrainerBattlePartner,     	 TRAINER_PARAM_CLEAR_VAL_16BIT},
+	{&gTrainerBattleOpponent_A,		 TRAINER_PARAM_LOAD_VAL_16BIT},
+	{&gTrainerBattleOpponent_B,		 TRAINER_PARAM_LOAD_VAL_16BIT},
+	{&gTrainerBattlePartner,	 	 TRAINER_PARAM_CLEAR_VAL_16BIT},
 
 	{&gFirstTrainerNPCId,			 TRAINER_PARAM_LOAD_VAL_8BIT},
 	{&gSecondTrainerNPCId,			 TRAINER_PARAM_LOAD_VAL_8BIT},
 
-    {&sTrainerEventObjectLocalId,  	 TRAINER_PARAM_LOAD_VAL_16BIT},
-    {&sTrainerIntroSpeech_A,       	 TRAINER_PARAM_LOAD_VAL_32BIT},
-	{&sTrainerIntroSpeech_B,       	 TRAINER_PARAM_LOAD_VAL_32BIT},
+	{&sTrainerEventObjectLocalId,  	 TRAINER_PARAM_LOAD_VAL_16BIT},
+	{&sTrainerIntroSpeech_A,	   	 TRAINER_PARAM_LOAD_VAL_32BIT},
+	{&sTrainerIntroSpeech_B,	   	 TRAINER_PARAM_LOAD_VAL_32BIT},
 
-    {&sTrainerDefeatSpeech_A,     	 TRAINER_PARAM_LOAD_VAL_32BIT},
-	{&sTrainerDefeatSpeech_B,      	 TRAINER_PARAM_LOAD_VAL_32BIT},
+	{&sTrainerDefeatSpeech_A,	 	 TRAINER_PARAM_LOAD_VAL_32BIT},
+	{&sTrainerDefeatSpeech_B,	  	 TRAINER_PARAM_LOAD_VAL_32BIT},
 
-    {&sTrainerVictorySpeech,       	 TRAINER_PARAM_CLEAR_VAL_32BIT},
-	{&sTrainerVictorySpeech_B,       TRAINER_PARAM_CLEAR_VAL_32BIT},
-    {&sTrainerCannotBattleSpeech,    TRAINER_PARAM_LOAD_VAL_32BIT},
+	{&sTrainerVictorySpeech,	   	 TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerVictorySpeech_B,	   TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerCannotBattleSpeech,	TRAINER_PARAM_LOAD_VAL_32BIT},
 	{&sTrainerCannotBattleSpeech_B,  TRAINER_PARAM_LOAD_VAL_32BIT},
 
-    {&sTrainerBattleScriptRetAddr,   TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerBattleScriptRetAddr,   TRAINER_PARAM_CLEAR_VAL_32BIT},
 	{&sTrainerBattleScriptRetAddr_B, TRAINER_PARAM_CLEAR_VAL_32BIT},
-    {&sTrainerBattleEndScript,       TRAINER_PARAM_LOAD_SCRIPT_RET_ADDR},
+	{&sTrainerBattleEndScript,	   TRAINER_PARAM_LOAD_SCRIPT_RET_ADDR},
 };
 
 //trainerbattle 0xC FOE_ID PARTNER_ID PARTNER_BACKSPRITE_ID 0x0 DEFEAT_TEXT_A
 static const struct TrainerBattleParameter sTagBattleParams[] =
 {
-    {&sTrainerBattleMode,           TRAINER_PARAM_LOAD_VAL_8BIT},
+	{&sTrainerBattleMode,		   TRAINER_PARAM_LOAD_VAL_8BIT},
 
-    {&gTrainerBattleOpponent_A,      TRAINER_PARAM_LOAD_VAL_16BIT},
-	{&gTrainerBattleOpponent_B,      TRAINER_PARAM_CLEAR_VAL_16BIT},
-	{&gTrainerBattlePartner,     	 TRAINER_PARAM_LOAD_VAL_16BIT},
+	{&gTrainerBattleOpponent_A,	  TRAINER_PARAM_LOAD_VAL_16BIT},
+	{&gTrainerBattleOpponent_B,	  TRAINER_PARAM_CLEAR_VAL_16BIT},
+	{&gTrainerBattlePartner,	 	 TRAINER_PARAM_LOAD_VAL_16BIT},
 	{&sPartnerBackSpriteId,			 TRAINER_PARAM_LOAD_VAL_16BIT},
 
-    {&sTrainerEventObjectLocalId,    TRAINER_PARAM_LOAD_VAL_16BIT},
-    {&sTrainerIntroSpeech_A,         TRAINER_PARAM_CLEAR_VAL_32BIT},
-	{&sTrainerIntroSpeech_B,       	 TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerEventObjectLocalId,	TRAINER_PARAM_LOAD_VAL_16BIT},
+	{&sTrainerIntroSpeech_A,		 TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerIntroSpeech_B,	   	 TRAINER_PARAM_CLEAR_VAL_32BIT},
 
-    {&sTrainerDefeatSpeech_A,        TRAINER_PARAM_LOAD_VAL_32BIT},
+	{&sTrainerDefeatSpeech_A,		TRAINER_PARAM_LOAD_VAL_32BIT},
 	{&sTrainerDefeatSpeech_B, 		 TRAINER_PARAM_CLEAR_VAL_32BIT},
 
-    {&sTrainerVictorySpeech,         TRAINER_PARAM_CLEAR_VAL_32BIT},
-	{&sTrainerVictorySpeech_B,       TRAINER_PARAM_CLEAR_VAL_32BIT},
-    {&sTrainerCannotBattleSpeech,    TRAINER_PARAM_CLEAR_VAL_32BIT},
-    {&sTrainerBattleScriptRetAddr,   TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerVictorySpeech,		 TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerVictorySpeech_B,	   TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerCannotBattleSpeech,	TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerBattleScriptRetAddr,   TRAINER_PARAM_CLEAR_VAL_32BIT},
 	{&sTrainerBattleScriptRetAddr_B, TRAINER_PARAM_CLEAR_VAL_32BIT},
-    {&sTrainerBattleEndScript,       TRAINER_PARAM_LOAD_SCRIPT_RET_ADDR},
+	{&sTrainerBattleEndScript,	   TRAINER_PARAM_LOAD_SCRIPT_RET_ADDR},
 };
 
 u8 CheckForTrainersWantingBattle(void) {
@@ -203,30 +203,30 @@ u8 CheckForTrainersWantingBattle(void) {
 	if (viableMons == 0) //NPC's won't challenge you if, for some reason, you have no Pokemon
 		return FALSE;
 
-    ExtensionState.spotted.count = 0;
+	ExtensionState.spotted.count = 0;
 
-    for (u8 eventObjId = 0; eventObjId < MAP_OBJECTS_COUNT; ++eventObjId) //For each NPC on the map
+	for (u8 eventObjId = 0; eventObjId < MAP_OBJECTS_COUNT; ++eventObjId) //For each NPC on the map
 	{
 		if (!gEventObjects[eventObjId].active || gEventObjects[eventObjId].isPlayer)
-            continue;
+			continue;
 
 		if (CheckTrainerSpotting(eventObjId))
 		{
-            if (viableMons < 2)
-                break;
+			if (viableMons < 2)
+				break;
 
-            // We've found enough opponents
-            if (ExtensionState.spotted.count > 1)
-                break;
+			// We've found enough opponents
+			if (ExtensionState.spotted.count > 1)
+				break;
 		}
 		else if (CheckNPCSpotting(eventObjId))
 		{
-			u16 flag = GetEventObjectTemplateByLocalIdAndMap(gEventObjects[eventObjId].localId, 
-															 gEventObjects[eventObjId].mapNum, 
+			u16 flag = GetEventObjectTemplateByLocalIdAndMap(gEventObjects[eventObjId].localId,
+															 gEventObjects[eventObjId].mapNum,
 															 gEventObjects[eventObjId].mapGroup)->flagId2;
 			if (flag != 0)
 				FlagSet(flag); //Set this flag so the spotting only happens once
-			
+
 			u8 direction = GetNPCDirectionFaceToPlayer(eventObjId);
 			FaceDirection(&gEventObjects[eventObjId], &gSprites[gEventObjects[eventObjId].spriteId], direction);
 			gSelectedEventObject = eventObjId;
@@ -235,7 +235,7 @@ u8 CheckForTrainersWantingBattle(void) {
 			ScriptCall(gScriptEnv1, EventScript_SetUpNPCSpotting);
 			return TRUE;
 		}
-    }
+	}
 
 	//These battle types have built in features
 	if (ExtensionState.spotted.count > 0)
@@ -260,28 +260,28 @@ u8 CheckForTrainersWantingBattle(void) {
 		case 2:
 			CreateTask(Task_OverworldMultiTrainers, 0x50);
 			return TRUE;
-    }
+	}
 
-    return FALSE;
+	return FALSE;
 }
 
 static bool8 CheckTrainerSpotting(u8 eventObjId) //Or just CheckTrainer
 {
-    const u8* scriptPtr = GetEventObjectScriptPointerByEventObjectId(eventObjId); //Get NPC Script Pointer from its Object Id
+	const u8* scriptPtr = GetEventObjectScriptPointerByEventObjectId(eventObjId); //Get NPC Script Pointer from its Object Id
 	u8 battleType = scriptPtr[1];
 
 	if (battleType == TRAINER_BATTLE_TWO_OPPONENTS
 	&& (FlagGet(FLAG_TRAINER_FLAG_START + T1_READ_16(scriptPtr + 2)) || FlagGet(FLAG_TRAINER_FLAG_START + T1_READ_16(scriptPtr + 4))))
 		return FALSE; //If either trainer flag is set
 
-    if (GetTrainerFlagFromScriptPointer(scriptPtr)) //Trainer has already been beaten
-        return FALSE;
+	if (GetTrainerFlagFromScriptPointer(scriptPtr)) //Trainer has already been beaten
+		return FALSE;
 
-    struct EventObject* trainerObj = &gEventObjects[eventObjId];
-    bool8 canApproach = TrainerCanApproachPlayer(trainerObj);
+	struct EventObject* trainerObj = &gEventObjects[eventObjId];
+	bool8 canApproach = TrainerCanApproachPlayer(trainerObj);
 
-    if (canApproach)
-    {
+	if (canApproach)
+	{
 		switch (battleType) {
 			case TRAINER_BATTLE_DOUBLE:
 			case TRAINER_BATTLE_REMATCH_DOUBLE:
@@ -297,10 +297,10 @@ static bool8 CheckTrainerSpotting(u8 eventObjId) //Or just CheckTrainer
 
 		struct TrainerSpotted trainer = {eventObjId, canApproach, (u8*) scriptPtr};
 		ExtensionState.spotted.trainers[ExtensionState.spotted.count++] = trainer;
-        return TRUE;
-    }
+		return TRUE;
+	}
 
-    return FALSE;
+	return FALSE;
 }
 
 static bool8 GetTrainerFlagFromScriptPointer(const u8* data)
@@ -308,16 +308,16 @@ static bool8 GetTrainerFlagFromScriptPointer(const u8* data)
 	if (TrainerBattleLoadArg8(data) != SCRCMD_TRAINERBATTLE) //Prevents game from crashing if you are spotted by someone
 		return TRUE;							 			 //who's not a trainer
 
-    u16 flag = TrainerBattleLoadArg16(data + 2);
-    return FlagGet(FLAG_TRAINER_FLAG_START + flag);
+	u16 flag = TrainerBattleLoadArg16(data + 2);
+	return FlagGet(FLAG_TRAINER_FLAG_START + flag);
 }
 
 static bool8 CheckNPCSpotting(u8 eventObjId)
 {
-	#ifdef NON_TRAINER_SPOTTING	
+	#ifdef NON_TRAINER_SPOTTING
 	const u8* scriptPtr = GetEventObjectScriptPointerByEventObjectId(eventObjId); //Get NPC Script Pointer from its Object Id
-	u16 flag = GetEventObjectTemplateByLocalIdAndMap(gEventObjects[eventObjId].localId, 
-													 gEventObjects[eventObjId].mapNum, 
+	u16 flag = GetEventObjectTemplateByLocalIdAndMap(gEventObjects[eventObjId].localId,
+													 gEventObjects[eventObjId].mapNum,
 													 gEventObjects[eventObjId].mapGroup)->flagId2; //Special flag just for this
 
 	if (scriptPtr != NULL && scriptPtr[0] != SCRCMD_TRAINERBATTLE //NPC has a regular script
@@ -328,15 +328,15 @@ static bool8 CheckNPCSpotting(u8 eventObjId)
 	#else
 		++eventObjId;
 	#endif
-	
+
 	return FALSE;
 }
 
 static void Task_OverworldMultiTrainers(u8 id)
 {
-    struct Task* task = &gTasks[id];
+	struct Task* task = &gTasks[id];
 
-    switch (task->data[0]) {
+	switch (task->data[0]) {
 		case 0:
 			gApproachingTrainerId = 0; //Reset Value
 			for (int i = 0; i < 2; ++i, ++gApproachingTrainerId)
@@ -384,29 +384,29 @@ static void Task_OverworldMultiTrainers(u8 id)
 			ScriptContext2_Enable();
 			DestroyTask(id);
 			break;
-    }
+	}
 }
 
 //EventScript_TryDoNormalTrainerBattle
 static void ConfigureTwoTrainersBattle(u8 trainerEventObjId, const u8* trainerScript)
 {
-    gSelectedEventObject = trainerEventObjId;
-    gSpecialVar_LastTalked = gEventObjects[trainerEventObjId].localId;
-    BattleSetup_ConfigureTrainerBattle(trainerScript + 1);
+	gSelectedEventObject = trainerEventObjId;
+	gSpecialVar_LastTalked = gEventObjects[trainerEventObjId].localId;
+	BattleSetup_ConfigureTrainerBattle(trainerScript + 1);
 }
 
 static void SetUpTwoTrainersBattle(void)
 {
-    ScriptContext1_SetupScript(Script_TrainerSpottedMulti);
-    ScriptContext2_Enable();
+	ScriptContext1_SetupScript(Script_TrainerSpottedMulti);
+	ScriptContext2_Enable();
 }
 
 const u8* BattleSetup_ConfigureTrainerBattle(const u8* data)
 {
-    InitTrainerBattleVariables(); //0x8080110
-    sTrainerBattleMode = TrainerBattleLoadArg8(data);
+	InitTrainerBattleVariables(); //0x8080110
+	sTrainerBattleMode = TrainerBattleLoadArg8(data);
 
-    switch (sTrainerBattleMode) {
+	switch (sTrainerBattleMode) {
 		case TRAINER_BATTLE_CONTINUE_SCRIPT_NO_MUSIC: //Gym Leaders
 			TrainerBattleLoadArgs(sContinueScriptBattleParams, data);
 			SetMapVarsToTrainer();
@@ -499,7 +499,7 @@ const u8* BattleSetup_ConfigureTrainerBattle(const u8* data)
 				VarSet(SECOND_OPPONENT_VAR, gTrainerBattleOpponent_B);
 			}
 			return EventScript_TryDoNormalTrainerBattle;
-    }
+	}
 }
 
 bool8 IsTrainerBattleModeAgainstTwoOpponents(void)
@@ -514,24 +514,24 @@ bool8 IsTrainerBattleModeWithPartner(void)
 
 static void InitTrainerBattleVariables(void)
 {
-    sTrainerBattleMode = 0;
-    if (ExtensionState.spotted.count <= 1)
-    {
-        sTrainerIntroSpeech_A = 0;
-        sTrainerDefeatSpeech_A = 0;
-        sTrainerBattleScriptRetAddr = 0;
+	sTrainerBattleMode = 0;
+	if (ExtensionState.spotted.count <= 1)
+	{
+		sTrainerIntroSpeech_A = 0;
+		sTrainerDefeatSpeech_A = 0;
+		sTrainerBattleScriptRetAddr = 0;
 		sTrainerVictorySpeech = 0;
-    }
-    else if (!FlagGet(TWO_OPPONENT_FLAG))
-    {
-        sTrainerIntroSpeech_B = 0;
-        sTrainerDefeatSpeech_B = 0;
+	}
+	else if (!FlagGet(TWO_OPPONENT_FLAG))
+	{
+		sTrainerIntroSpeech_B = 0;
+		sTrainerDefeatSpeech_B = 0;
 		sTrainerBattleScriptRetAddr_B = 0;
 		sTrainerVictorySpeech_B = 0;
-    }
-    sTrainerEventObjectLocalId = 0;
-    sTrainerCannotBattleSpeech = 0;
-    sTrainerBattleEndScript = 0;
+	}
+	sTrainerEventObjectLocalId = 0;
+	sTrainerCannotBattleSpeech = 0;
+	sTrainerBattleEndScript = 0;
 }
 
 void BattleSetup_StartTrainerBattle(void)
@@ -539,7 +539,7 @@ void BattleSetup_StartTrainerBattle(void)
 	if (FlagGet(BATTLE_TOWER_FLAG))
 	{
 		gBattleTypeFlags = BATTLE_TYPE_TRAINER;
-		
+
 		switch (BATTLE_FACILITY_NUM) {
 			case IN_BATTLE_SANDS:
 				gBattleTypeFlags |= (BATTLE_TYPE_BATTLE_SANDS | BATTLE_TYPE_MOCK_BATTLE);
@@ -611,9 +611,9 @@ void BattleSetup_StartTrainerBattle(void)
 		#endif
 	}
 
-    gMain.savedCallback = CB2_EndTrainerBattle;
-    StartTheBattle();
-    ScriptContext1_Stop();
+	gMain.savedCallback = CB2_EndTrainerBattle;
+	StartTheBattle();
+	ScriptContext1_Stop();
 }
 
 //Special 0x34
@@ -639,10 +639,10 @@ const u8* GetIntroSpeechOfApproachingTrainer(void)
 		}
 	}
 
-    if (gApproachingTrainerId == 0)
-        return ReturnEmptyStringIfNull((const u8*) sTrainerIntroSpeech_A);
-    else
-        return ReturnEmptyStringIfNull((const u8*) sTrainerIntroSpeech_B);
+	if (gApproachingTrainerId == 0)
+		return ReturnEmptyStringIfNull((const u8*) sTrainerIntroSpeech_A);
+	else
+		return ReturnEmptyStringIfNull((const u8*) sTrainerIntroSpeech_B);
 }
 
 //Special 0x35
@@ -658,30 +658,30 @@ const u8* GetTrainerCantBattleSpeech(void)
 //Special 0x38
 void SetUpTrainerEncounterMusic(void)
 {
-    u16 trainerId;
-    u16 music;
+	u16 trainerId;
+	u16 music;
 
 	if (gQuestLogMode == 2 || gQuestLogMode == 3)
 		return;
 
-    if (gApproachingTrainerId == 0)
-        trainerId = gTrainerBattleOpponent_A;
-    else
-        trainerId = VarGet(SECOND_OPPONENT_VAR);
+	if (gApproachingTrainerId == 0)
+		trainerId = gTrainerBattleOpponent_A;
+	else
+		trainerId = VarGet(SECOND_OPPONENT_VAR);
 
-    if (sTrainerBattleMode != TRAINER_BATTLE_CONTINUE_SCRIPT_NO_MUSIC
-    &&  sTrainerBattleMode != TRAINER_BATTLE_CONTINUE_SCRIPT_DOUBLE_NO_MUSIC)
-    {
+	if (sTrainerBattleMode != TRAINER_BATTLE_CONTINUE_SCRIPT_NO_MUSIC
+	&&  sTrainerBattleMode != TRAINER_BATTLE_CONTINUE_SCRIPT_DOUBLE_NO_MUSIC)
+	{
 		#ifndef ENCOUNTER_MUSIC_BY_CLASS
-        switch (GetTrainerEncounterMusicId(trainerId)) {
+		switch (GetTrainerEncounterMusicId(trainerId)) {
 			case TRAINER_ENCOUNTER_MUSIC_MALE: //0
 			case TRAINER_ENCOUNTER_MUSIC_INTENSE: //4
 			case TRAINER_ENCOUNTER_MUSIC_COOL: //5
 			case TRAINER_ENCOUNTER_MUSIC_SWIMMER: //8
 			case TRAINER_ENCOUNTER_MUSIC_ELITE_FOUR:  //10
-			case TRAINER_ENCOUNTER_MUSIC_HIKER:       //11
+			case TRAINER_ENCOUNTER_MUSIC_HIKER:	   //11
 			case TRAINER_ENCOUNTER_MUSIC_INTERVIEWER: //12
-			case TRAINER_ENCOUNTER_MUSIC_RICH:        //13
+			case TRAINER_ENCOUNTER_MUSIC_RICH:		//13
 				music = BGM_EYE_BOY; //0x11D
 				break;
 			case TRAINER_ENCOUNTER_MUSIC_FEMALE: //1
@@ -700,8 +700,8 @@ void SetUpTrainerEncounterMusic(void)
 				music = BGM_EYE_BOY;
 		#endif
 
-        PlayNewMapMusic(music);
-    }
+		PlayNewMapMusic(music);
+	}
 }
 
 //special 0x18F
@@ -849,7 +849,7 @@ static u8 GetNPCDirectionFaceToPlayer(u8 eventObj)
 
 	if (GetProperDirection(playerX, playerY, npcX, npcY))
 		return GetOppositeDirection(sMovementToDirection[gSpecialVar_LastResult]);
-		
+
 	return DIR_SOUTH; //Error handling...sort of
 }
 
@@ -966,43 +966,43 @@ extern bool8 __attribute__((long_call)) UpdatePoisonStepCounter(void);
 //Hack take step function to include custom walking scripts
 bool8 TryStartStepCountScript(u16 metatileBehavior)
 {
-    if (InUnionRoom() == TRUE
+	if (InUnionRoom() == TRUE
 	||  gQuestLogMode == 2)
-        return FALSE;
+		return FALSE;
 
-    UpdateHappinessStepCounter();
+	UpdateHappinessStepCounter();
 	UpdateJPANStepCounters();
-    if (!(gPlayerAvatar->flags & PLAYER_AVATAR_FLAG_6) && !MetatileBehavior_IsForcedMovementTile(metatileBehavior))
-    {
+	if (!(gPlayerAvatar->flags & PLAYER_AVATAR_FLAG_6) && !MetatileBehavior_IsForcedMovementTile(metatileBehavior))
+	{
 		if (CheckVSSeeker() == TRUE)
 		{
-            ScriptContext1_SetupScript(EventScript_VSSeeker);
-            return TRUE;
+			ScriptContext1_SetupScript(EventScript_VSSeeker);
+			return TRUE;
 		}
-        if (UpdatePoisonStepCounter() == TRUE)
-        {
-            ScriptContext1_SetupScript(EventScript_Poison);
-            return TRUE;
-        }
-        if (ShouldEggHatch())
-        {
-            IncrementGameStat(GAME_STAT_HATCHED_EGGS);
-            ScriptContext1_SetupScript(EventScript_EggHatch);
-            return TRUE;
-        }
+		if (UpdatePoisonStepCounter() == TRUE)
+		{
+			ScriptContext1_SetupScript(EventScript_Poison);
+			return TRUE;
+		}
+		if (ShouldEggHatch())
+		{
+			IncrementGameStat(GAME_STAT_HATCHED_EGGS);
+			ScriptContext1_SetupScript(EventScript_EggHatch);
+			return TRUE;
+		}
 
 		const u8* customWalkingScript = GetCustomWalkingScript();
 		if (customWalkingScript != NULL)
 		{
-            ScriptContext1_SetupScript(customWalkingScript);
-            return TRUE;
+			ScriptContext1_SetupScript(customWalkingScript);
+			return TRUE;
 		}
-    }
+	}
 
-    if (SafariZoneTakeStep() == TRUE)
-        return TRUE;
+	if (SafariZoneTakeStep() == TRUE)
+		return TRUE;
 
-    return FALSE;
+	return FALSE;
 }
 
 static void UpdateJPANStepCounters(void)
@@ -1045,7 +1045,7 @@ static bool8 SafariZoneTakeStep(void)
 			ScriptContext1_SetupScript(SafariZoneEndScript);
 			return TRUE;
 		}
-    }
+	}
 
 	return FALSE;
 }
@@ -1095,7 +1095,7 @@ const u8* LoadProperWhiteoutString(const u8* string)
 		if (gSaveBlock1->location.mapNum != MAP_NUM(PLAYER_HOME)
 		||  gSaveBlock1->location.mapGroup != MAP_GROUP(PLAYER_HOME))
 			string = gText_ScurriedToNearestHealer;
-	}		
+	}
 #endif
 	return string;
 }
@@ -1120,11 +1120,11 @@ static bool8 IsRunningDisabledByFlag(void)
 
 bool8 IsRunningDisallowed(u8 tile)
 {
-    return IsRunningDisabledByFlag() || IsRunningDisallowedByMetatile(tile)
+	return IsRunningDisabledByFlag() || IsRunningDisallowedByMetatile(tile)
 #ifndef CAN_RUN_IN_BUILDINGS
 	|| GetCurrentMapType() == MAP_TYPE_INDOOR
 #endif
-    ;
+	;
 }
 
 bool8 IsRunningDisallowedByMetatile(u8 tile)
@@ -1137,29 +1137,29 @@ bool8 Overworld_IsBikingAllowed(void)
 	#ifdef BIKE_ON_ANY_NON_INSIDE_MAP
 		return !IsMapTypeIndoors(GetCurrentMapType());
 	#else
-    if (!(gMapHeader.flags & 1))
-        return FALSE;
-    else
-        return TRUE;
+	if (!(gMapHeader.flags & 1))
+		return FALSE;
+	else
+		return TRUE;
 	#endif
 }
 
 s32 DoPoisonFieldEffect(void)
 {
 #ifndef NO_POISON_IN_OW
-    int i;
-    u32 hp;
-    struct Pokemon* mon;
-    u32 numPoisoned = 0;
-    u32 numFainted = 0;
+	int i;
+	u32 hp;
+	struct Pokemon* mon;
+	u32 numPoisoned = 0;
+	u32 numFainted = 0;
 	u32 numSurvived = 0;
 
-    for (i = 0; i < PARTY_SIZE; i++)
-    {
+	for (i = 0; i < PARTY_SIZE; i++)
+	{
 		mon = &gPlayerParty[i];
-        if (GetMonData(mon, MON_DATA_SANITY_HAS_SPECIES, NULL) && GetMonPrimaryAilments(mon->condition) == AILMENT_PSN)
-        {
-            hp = mon->hp;
+		if (GetMonData(mon, MON_DATA_SANITY_HAS_SPECIES, NULL) && GetMonPrimaryAilments(mon->condition) == AILMENT_PSN)
+		{
+			hp = mon->hp;
 
 			#ifdef POISON_1_HP_SURVIVAL
 				if (hp == 1 || --hp == 1)
@@ -1178,35 +1178,35 @@ s32 DoPoisonFieldEffect(void)
 				}
 			#endif
 
-            mon->hp = hp;
-            numPoisoned++;
-        }
-    }
+			mon->hp = hp;
+			numPoisoned++;
+		}
+	}
 	if (numSurvived != 0)
 	{
 		return FLDPSN_NONE;
 	}
-    if (numFainted != 0 || numPoisoned != 0)
-    {
-        FldEffPoison_Start();
-    }
-    if (numFainted != 0)
-    {
-        return FLDPSN_FNT;
-    }
-    if (numPoisoned != 0)
-    {
-        return FLDPSN_PSN;
-    }
+	if (numFainted != 0 || numPoisoned != 0)
+	{
+		FldEffPoison_Start();
+	}
+	if (numFainted != 0)
+	{
+		return FLDPSN_FNT;
+	}
+	if (numPoisoned != 0)
+	{
+		return FLDPSN_PSN;
+	}
 #endif
 
-    return FLDPSN_NONE;
+	return FLDPSN_NONE;
 }
 
 void TaskRepel(u8 taskId)
 {
-    if (!IsSEPlaying())
-    {
+	if (!IsSEPlaying())
+	{
 		//WriteQuestLog(4, 0, Var800E, 0xFFFF);
 		VarSet(VAR_REPEL_STEP_COUNT, ItemId_GetHoldEffectParam(Var800E));
 		#ifdef BW_REPEL_SYSTEM
@@ -1214,20 +1214,20 @@ void TaskRepel(u8 taskId)
 		#endif
 		RemoveUsedItem();
 		DisplayItemMessage(taskId, 1, gStringVar4, bag_menu_inits_lists_menu);
-    }
+	}
 };
 
 //Updated Repel - hook at 080830B8 via r1
 bool8 UpdateRepelCounter(void)
 {
-    u8 steps = VarGet(VAR_REPEL_STEP_COUNT); //0x4020
+	u8 steps = VarGet(VAR_REPEL_STEP_COUNT); //0x4020
 
-    if (steps != 0)
-    {
-        steps--;
-        VarSet(VAR_REPEL_STEP_COUNT, steps);
-        if (steps == 0)
-        {
+	if (steps != 0)
+	{
+		steps--;
+		VarSet(VAR_REPEL_STEP_COUNT, steps);
+		if (steps == 0)
+		{
 			#ifdef BW_REPEL_SYSTEM
 				Var800E = gLastUsedRepel;
 				ScriptContext1_SetupScript(EventScript_BwRepelWoreOff);
@@ -1237,9 +1237,9 @@ bool8 UpdateRepelCounter(void)
 				ScriptContext1_SetupScript(EventScript_RepelWoreOff);
 				return TRUE;
 			#endif
-        }
-    }
-    return FALSE;
+		}
+	}
+	return FALSE;
 }
 
 bool8 IsCurrentAreaVolcano(void)
@@ -1302,7 +1302,7 @@ bool8 InTanobyRuins(void)
 			return mapSec >= MAPSEC_MONEAN_CHAMBER && mapSec <= MAPSEC_VIAPOIS_CHAMBER;
 		}
 	#endif
-	
+
 	return FALSE;
 }
 
@@ -1327,18 +1327,18 @@ void PlaySandFootstepNoise(void)
 extern bool8 (*const GetLedgeJumpFuncs[])(u8);
 u8 GetLedgeJumpDirection(s16 x, s16 y, u8 direction)
 {
-    u8 behaviour;
+	u8 behaviour;
 
-    if (direction == 0)
-        return 0;
-    else if (direction > 4)
-        direction -= 4;
+	if (direction == 0)
+		return 0;
+	else if (direction > 4)
+		direction -= 4;
 
-    direction--;
-    behaviour = MapGridGetMetatileBehaviorAt(x, y);
+	direction--;
+	behaviour = MapGridGetMetatileBehaviorAt(x, y);
 
-    if (GetLedgeJumpFuncs[direction](behaviour) == 1)
-        return direction + 1;
+	if (GetLedgeJumpFuncs[direction](behaviour) == 1)
+		return direction + 1;
 	else if (behaviour == MB_OMNIDIRECTIONAL_JUMP
 	#ifdef CAN_ONLY_USE_OMNIDRECTIONAL_JUMP_ON_HEIGHT_2
 	&& gEventObjects[GetPlayerMapObjId()].currentElevation == 3 //Movement permission 0xC
@@ -1348,7 +1348,7 @@ u8 GetLedgeJumpDirection(s16 x, s16 y, u8 direction)
 		return direction + 1;
 	}
 
-    return 0;
+	return 0;
 }
 
 static bool8 MetatileBehavior_IsRockClimableWall(u8 behaviour)
@@ -1358,12 +1358,12 @@ static bool8 MetatileBehavior_IsRockClimableWall(u8 behaviour)
 
 bool8 IsPlayerFacingRockClimbableWall(void)
 {
-    struct EventObject *playerEventObj = &gEventObjects[gPlayerAvatar->eventObjectId];
-    s16 x = playerEventObj->currentCoords.x;
-    s16 y = playerEventObj->currentCoords.y;
+	struct EventObject *playerEventObj = &gEventObjects[gPlayerAvatar->eventObjectId];
+	s16 x = playerEventObj->currentCoords.x;
+	s16 y = playerEventObj->currentCoords.y;
 
-    MoveCoords(playerEventObj->facingDirection, &x, &y);
-    return MetatileBehavior_IsRockClimableWall(MapGridGetMetatileBehaviorAt(x, y));
+	MoveCoords(playerEventObj->facingDirection, &x, &y);
+	return MetatileBehavior_IsRockClimableWall(MapGridGetMetatileBehaviorAt(x, y));
 }
 
 void ShouldRockClimbContinue(void)
@@ -1374,12 +1374,12 @@ void ShouldRockClimbContinue(void)
 void ShouldRockClimbContinueDiagonally(void)
 {
 	#ifdef UNBOUND
-    struct EventObject *playerEventObj = &gEventObjects[gPlayerAvatar->eventObjectId];
-    s16 x = playerEventObj->currentCoords.x;
-    s16 y = playerEventObj->currentCoords.y;
+	struct EventObject *playerEventObj = &gEventObjects[gPlayerAvatar->eventObjectId];
+	s16 x = playerEventObj->currentCoords.x;
+	s16 y = playerEventObj->currentCoords.y;
 
-    MoveCoords(playerEventObj->facingDirection, &x, &y);
-	
+	MoveCoords(playerEventObj->facingDirection, &x, &y);
+
 	if (MetatileBehavior_IsRockClimableWall(MapGridGetMetatileBehaviorAt(x, y + 1)))
 		gSpecialVar_LastResult = 2; //Move diagonal up
 	else if (y != 0 && MetatileBehavior_IsRockClimableWall(MapGridGetMetatileBehaviorAt(x, y - 1)))
@@ -1844,73 +1844,73 @@ void FollowMe_WarpSetEnd()
 #ifdef GEN_4_PLAYER_RUNNING_FIX
 const union AnimCmd gEventObjectImageAnim_RunSouth[] =
 {
-    ANIMCMD_FRAME(9, 3),
-    ANIMCMD_FRAME(10, 5),
-    ANIMCMD_FRAME(9, 3),
-    ANIMCMD_FRAME(11, 5),
-    ANIMCMD_JUMP(0),
+	ANIMCMD_FRAME(9, 3),
+	ANIMCMD_FRAME(10, 5),
+	ANIMCMD_FRAME(9, 3),
+	ANIMCMD_FRAME(11, 5),
+	ANIMCMD_JUMP(0),
 };
 
 const union AnimCmd gEventObjectImageAnim_RunNorth[] =
 {
-    ANIMCMD_FRAME(12, 2),
-    ANIMCMD_FRAME(13, 6),
-    ANIMCMD_FRAME(12, 2),
-    ANIMCMD_FRAME(14, 6),
-    ANIMCMD_JUMP(0),
+	ANIMCMD_FRAME(12, 2),
+	ANIMCMD_FRAME(13, 6),
+	ANIMCMD_FRAME(12, 2),
+	ANIMCMD_FRAME(14, 6),
+	ANIMCMD_JUMP(0),
 };
 
 const union AnimCmd gEventObjectImageAnim_RunWest[] =
 {
-    ANIMCMD_FRAME(15, 3),
-    ANIMCMD_FRAME(16, 5),
-    ANIMCMD_FRAME(15, 3),
-    ANIMCMD_FRAME(17, 5),
-    ANIMCMD_JUMP(0),
+	ANIMCMD_FRAME(15, 3),
+	ANIMCMD_FRAME(16, 5),
+	ANIMCMD_FRAME(15, 3),
+	ANIMCMD_FRAME(17, 5),
+	ANIMCMD_JUMP(0),
 };
 
 const union AnimCmd gEventObjectImageAnim_RunEast[] =
 {
-    ANIMCMD_FRAME(15, 3, .hFlip = TRUE),
-    ANIMCMD_FRAME(16, 5, .hFlip = TRUE),
-    ANIMCMD_FRAME(15, 3, .hFlip = TRUE),
-    ANIMCMD_FRAME(17, 5, .hFlip = TRUE),
-    ANIMCMD_JUMP(0),
+	ANIMCMD_FRAME(15, 3, .hFlip = TRUE),
+	ANIMCMD_FRAME(16, 5, .hFlip = TRUE),
+	ANIMCMD_FRAME(15, 3, .hFlip = TRUE),
+	ANIMCMD_FRAME(17, 5, .hFlip = TRUE),
+	ANIMCMD_JUMP(0),
 };
 #else
 const union AnimCmd gEventObjectImageAnim_RunSouth[] =
 {
-    ANIMCMD_FRAME(9, 5),
-    ANIMCMD_FRAME(10, 3),
-    ANIMCMD_FRAME(9, 5),
-    ANIMCMD_FRAME(11, 3),
-    ANIMCMD_JUMP(0),
+	ANIMCMD_FRAME(9, 5),
+	ANIMCMD_FRAME(10, 3),
+	ANIMCMD_FRAME(9, 5),
+	ANIMCMD_FRAME(11, 3),
+	ANIMCMD_JUMP(0),
 };
 
 const union AnimCmd gEventObjectImageAnim_RunNorth[] =
 {
-    ANIMCMD_FRAME(12, 5),
-    ANIMCMD_FRAME(13, 3),
-    ANIMCMD_FRAME(12, 5),
-    ANIMCMD_FRAME(14, 3),
-    ANIMCMD_JUMP(0),
+	ANIMCMD_FRAME(12, 5),
+	ANIMCMD_FRAME(13, 3),
+	ANIMCMD_FRAME(12, 5),
+	ANIMCMD_FRAME(14, 3),
+	ANIMCMD_JUMP(0),
 };
 
 const union AnimCmd gEventObjectImageAnim_RunWest[] =
 {
-    ANIMCMD_FRAME(15, 5),
-    ANIMCMD_FRAME(16, 3),
-    ANIMCMD_FRAME(15, 5),
-    ANIMCMD_FRAME(17, 3),
-    ANIMCMD_JUMP(0),
+	ANIMCMD_FRAME(15, 5),
+	ANIMCMD_FRAME(16, 3),
+	ANIMCMD_FRAME(15, 5),
+	ANIMCMD_FRAME(17, 3),
+	ANIMCMD_JUMP(0),
 };
 
 const union AnimCmd gEventObjectImageAnim_RunEast[] =
 {
-    ANIMCMD_FRAME(15, 5, .hFlip = TRUE),
-    ANIMCMD_FRAME(16, 3, .hFlip = TRUE),
-    ANIMCMD_FRAME(15, 5, .hFlip = TRUE),
-    ANIMCMD_FRAME(17, 3, .hFlip = TRUE),
-    ANIMCMD_JUMP(0),
+	ANIMCMD_FRAME(15, 5, .hFlip = TRUE),
+	ANIMCMD_FRAME(16, 3, .hFlip = TRUE),
+	ANIMCMD_FRAME(15, 5, .hFlip = TRUE),
+	ANIMCMD_FRAME(17, 3, .hFlip = TRUE),
+	ANIMCMD_JUMP(0),
 };
 #endif

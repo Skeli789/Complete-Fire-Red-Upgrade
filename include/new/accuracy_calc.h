@@ -5,7 +5,7 @@
  * \brief Contains functions relating to the calculation of attack accuracies.
  *		  Also contains functions relating to protection moves.
  */
- 
+
 //Exported Functions
 void atk01_accuracycheck(void);
 bool8 JumpIfMoveAffectedByProtect(move_t, bank_t, bank_t);

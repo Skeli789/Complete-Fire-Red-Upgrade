@@ -7,7 +7,7 @@
  * \file battle_util.h
  * \brief Contains battle utility functions.
  */
- 
+
 //Exported Functions
 ability_t GetBankAbility(u8 bank);
 ability_t GetRecordedAbility(u8 bank);

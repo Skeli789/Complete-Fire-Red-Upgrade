@@ -105,7 +105,7 @@ const struct DNSPalFade gDNSNightFadingByTime[24][6] =
 			{RGB(1, 0, 17), 6},		//12:40 AM
 			{RGB(1, 0, 17), 6},		//12:50 AM
 		   },
-	
+
 	[1]  = {
 			{RGB(1, 0, 17), 6},		//1:00 AM
 			{RGB(1, 0, 17), 6},		//1:10 AM
@@ -179,7 +179,7 @@ const struct DNSPalFade gDNSNightFadingByTime[24][6] =
 			{RGB(19, 0, 10), 1},	//5:40 PM
 			{RGB(19, 0, 10), 1},	//5:50 PM
 		   },
-	
+
 
 	[18]  = {
 			{RGB(18, 0, 11), 2},	//6:00 PM

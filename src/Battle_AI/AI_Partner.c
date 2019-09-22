@@ -5,13 +5,13 @@
 
 #include "../../include/new/ability_tables.h"
 #include "../../include/new/accuracy_calc.h"
-#include "../../include/new/AI_advanced.h"
-#include "../../include/new/AI_Helper_Functions.h"
+#include "../../include/new/ai_advanced.h"
+#include "../../include/new/ai_util.h"
 #include "../../include/new/battle_start_turn_start.h"
 #include "../../include/new/battle_util.h"
 #include "../../include/new/damage_calc.h"
 #include "../../include/new/general_bs_commands.h"
-#include "../../include/new/Helper_Functions.h"
+#include "../../include/new/util.h"
 #include "../../include/new/item.h"
 #include "../../include/new/move_tables.h"
 
@@ -19,7 +19,7 @@
 										&& gBattleStruct->moveTarget[bankAtkPartner] == bankAtk \
 										&& gBattleMoves[partnerMove].effect == EFFECT_SKILL_SWAP)
 
-extern move_effect_t StatLowerTable[];
+extern move_effect_t gStatLoweringMoveEffects[];
 extern const struct NaturalGiftStruct gNaturalGiftTable[];
 extern const struct FlingStruct gFlingTable[];
 
@@ -36,15 +36,15 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 	foe2 = PARTNER(FOE(bankAtk));
 
 	//Get relevant params
-	u16 move = TryReplaceMoveWithZMove(bankAtk, bankAtkPartner, originalMove);	
+	u16 move = TryReplaceMoveWithZMove(bankAtk, bankAtkPartner, originalMove);
 	u8 moveEffect = gBattleMoves[move].effect;
 	u8 moveType = GetMoveTypeSpecial(bankAtk, move);
-	
+
 	u16 partnerMove = (gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE) ? gChosenMovesByBanks[bankAtkPartner] : IsValidMovePrediction(bankAtkPartner, FOE(bankAtk));
-	
+
 	//u8 atkItemEffect = ITEM_EFFECT(bankAtk);
 	u8 atkPartnerItemEffect = ITEM_EFFECT(bankAtkPartner);
-	
+
 	u8 atkAbility = GetAIAbility(bankAtk, foe1, move);
 	u8 atkPartnerAbility = ABILITY(bankAtkPartner);
 
@@ -96,13 +96,13 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 					IncreaseHelpingHandViability(&viability, class);
 				}
 				break;
-			
+
 			//case ABILITY_WATERCOMPACTION:
 			//	if (moveType == TYPE_WATER)
 			//		return viability - 10;
 			//	break;
 
-			// Fire	
+			// Fire
 			case ABILITY_FLASHFIRE:
 				if (moveType == TYPE_FIRE
 				&&  MoveTypeInMoveset(bankAtkPartner, TYPE_FIRE)
@@ -144,30 +144,30 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 					IncreaseHelpingHandViability(&viability, class);
 				}
 				break;
-			
+
 			//Move category checks
 			case ABILITY_CONTRARY:
-				if (CheckTableForMoveEffect(move, StatLowerTable))
+				if (CheckTableForMoveEffect(move, gStatLoweringMoveEffects))
 				{
 					IncreaseHelpingHandViability(&viability, class);
 				}
 				break;
-		
+
 			case ABILITY_DEFIANT:
-				if (CheckTableForMoveEffect(move, StatLowerTable)
+				if (CheckTableForMoveEffect(move, gStatLoweringMoveEffects)
 				&&  STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_ATK))
 				{
 					IncreaseHelpingHandViability(&viability, class);
 				}
 				break;
 			case ABILITY_COMPETITIVE:
-				if (CheckTableForMoveEffect(move, StatLowerTable)
+				if (CheckTableForMoveEffect(move, gStatLoweringMoveEffects)
 				&&  STAT_CAN_RISE(bankAtkPartner, STAT_STAGE_SPATK))
 				{
 					IncreaseHelpingHandViability(&viability, class);
 				}
 				break;
-				
+
 			//Mummy
 			case ABILITY_MUMMY: ;
 				u8 atkSpd = SpeedCalc(bankAtk);
@@ -181,7 +181,7 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 					if (Can2HKO(foe1, bankAtk)) //Foe 1 will KO before benefit can be used
 						break;
 				}
-				
+
 				if (SpeedCalc(foe2) < atkSpd) //Attacker is faster than foe 2
 				{
 					if (CanKnockOut(foe2, bankAtk)) //Foe 2 will KO before benefit can be used
@@ -205,13 +205,13 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 				}
 		}
 	}
-	
+
 	switch (moveEffect) {
 		case EFFECT_EVASION_UP:
 			if (move == MOVE_ACUPRESSURE && !partnerProtects)
 				IncreaseHelpingHandViability(&viability, class);
 			break;
-			
+
 		case EFFECT_SWAGGER:
 			if (STAT_STAGE(bankAtkPartner, STAT_STAGE_ATK) < STAT_STAGE_MAX
 			&& (!CanBeConfused(bankAtkPartner)
@@ -219,7 +219,7 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 			 || atkPartnerItemEffect == ITEM_EFFECT_CURE_STATUS))
 				IncreaseHelpingHandViability(&viability, class);
 			break;
-		
+
 		case EFFECT_FLATTER:
 			if (STAT_STAGE(bankAtkPartner, STAT_STAGE_SPATK) < STAT_STAGE_MAX
 			&& (!CanBeConfused(bankAtkPartner)
@@ -236,7 +236,7 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 			|| atkPartnerAbility == ABILITY_MAGICGUARD
 			|| atkPartnerItemEffect == ITEM_EFFECT_SAFETY_GOGGLES
 			|| IsOfType(bankAtkPartner, TYPE_ROCK)
-			|| IsOfType(bankAtkPartner, TYPE_STEEL) 
+			|| IsOfType(bankAtkPartner, TYPE_STEEL)
 			|| IsOfType(bankAtkPartner, TYPE_GROUND)
 			|| MoveInMoveset(MOVE_SHOREUP, bankAtkPartner)
 			|| MoveInMoveset(MOVE_WEATHERBALL, bankAtkPartner))
@@ -247,7 +247,7 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 					INCREASE_STATUS_VIABILITY(2);
 			}
 			break;
-			
+
 		case EFFECT_RAIN_DANCE:
 			if (MoveEffectInMoveset(EFFECT_THUNDER, bankAtkPartner)
 			|| MoveInMoveset(MOVE_WEATHERBALL, bankAtkPartner)
@@ -267,7 +267,7 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 					INCREASE_STATUS_VIABILITY(2);
 			}
 			break;
-			
+
 		case EFFECT_SUNNY_DAY:
 			if (atkPartnerAbility == ABILITY_CHLOROPHYLL
 			|| atkPartnerAbility == ABILITY_FLOWERGIFT
@@ -287,7 +287,7 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 					INCREASE_STATUS_VIABILITY(2);
 			}
 			break;
-			
+
 		case EFFECT_HAIL:
 			if (atkPartnerAbility == ABILITY_SNOWCLOAK
 			|| atkPartnerAbility == ABILITY_ICEBODY
@@ -305,7 +305,7 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 					INCREASE_STATUS_VIABILITY(2);
 			}
 			break;
-			
+
 		case EFFECT_BEAT_UP:
 			if (atkPartnerAbility == ABILITY_JUSTIFIED
 			&&  moveType == TYPE_DARK
@@ -315,7 +315,7 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 			&&  !MoveKnocksOutXHits(move, bankAtk, bankAtkPartner, 1))
 				INCREASE_VIABILITY(1); //1 past the previous boost
 			break;
-	
+
 		case EFFECT_HELPING_HAND:
 			if (partnerMove != MOVE_NONE
 			&& !partnerProtects
@@ -324,7 +324,7 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 				IncreaseHelpingHandViability(&viability, class);
 			}
 			break;
-			
+
 		case EFFECT_SKILL_SWAP:
 		case EFFECT_ROLE_PLAY:
 			atkAbility = *GetAbilityLocation(bankAtk); //Get actual abilities
@@ -344,7 +344,7 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 					if (!partnerProtects && partnerHasBadAbility)
 						IncreaseHelpingHandViability(&viability, class);
 					break;
-	
+
 				case MOVE_ENTRAINMENT:
 					if (!partnerProtects && partnerHasBadAbility && gAbilityRatings[atkAbility] >= 0)
 						IncreaseHelpingHandViability(&viability, class);
@@ -384,7 +384,7 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 				case MOVE_IONDELUGE: ;
 					u16 foe1Move = IsValidMovePrediction(foe1, bankAtkPartner);
 					u16 foe2Move = IsValidMovePrediction(foe1, bankAtkPartner);
-					
+
 					if (atkPartnerAbility == ABILITY_VOLTABSORB
 					|| atkPartnerAbility == ABILITY_MOTORDRIVE
 					|| atkPartnerAbility == ABILITY_LIGHTNINGROD)
@@ -399,7 +399,7 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 					break;
 			}
 			break;
-			
+
 		case EFFECT_TEAM_EFFECTS:
 			switch (move) {
 				case MOVE_MAGNETRISE:
@@ -410,7 +410,7 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 					break;
 			}
 			break;
-			
+
 		case EFFECT_INSTRUCT_AFTER_YOU_QUASH:
 			if (!partnerProtects)
 			{
@@ -422,7 +422,7 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 							if (gBattleMoves[partnerMove].effect == EFFECT_COUNTER
 							||  gBattleMoves[partnerMove].effect == EFFECT_MIRROR_COAT)
 								break; //These moves need to go last
-						
+
 							IncreaseHelpingHandViability(&viability, class);
 						}
 						break;

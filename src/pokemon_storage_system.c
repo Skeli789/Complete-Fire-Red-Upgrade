@@ -11,23 +11,23 @@
 
 enum
 {
-    WALLPAPER_FOREST,
-    WALLPAPER_CITY,
-    WALLPAPER_DESERT,
-    WALLPAPER_SAVANNA,
-    WALLPAPER_CRAG,
-    WALLPAPER_VOLCANO,
-    WALLPAPER_SNOW,
-    WALLPAPER_CAVE,
-    WALLPAPER_BEACH,
-    WALLPAPER_SEAFLOOR,
-    WALLPAPER_RIVER,
-    WALLPAPER_SKY,
-    WALLPAPER_STARS,
-    WALLPAPER_POKECENTER,
-    WALLPAPER_TILES,
-    WALLPAPER_SIMPLE,
-    WALLPAPER_COUNT
+	WALLPAPER_FOREST,
+	WALLPAPER_CITY,
+	WALLPAPER_DESERT,
+	WALLPAPER_SAVANNA,
+	WALLPAPER_CRAG,
+	WALLPAPER_VOLCANO,
+	WALLPAPER_SNOW,
+	WALLPAPER_CAVE,
+	WALLPAPER_BEACH,
+	WALLPAPER_SEAFLOOR,
+	WALLPAPER_RIVER,
+	WALLPAPER_SKY,
+	WALLPAPER_STARS,
+	WALLPAPER_POKECENTER,
+	WALLPAPER_TILES,
+	WALLPAPER_SIMPLE,
+	WALLPAPER_COUNT
 };
 
 
@@ -143,64 +143,64 @@ struct CompressedPokemon* GetCompressedMonPtr(u8 boxId, u8 boxPosition);
 
 u32 GetBoxMonDataAt(u8 boxId, u8 boxPosition, s32 request)
 {
-    if (boxId < TOTAL_BOXES_COUNT && boxPosition < IN_BOX_COUNT)
+	if (boxId < TOTAL_BOXES_COUNT && boxPosition < IN_BOX_COUNT)
 	{
 		struct BoxPokemon mon;
 		CreateBoxMonFromCompressedMon(&mon, &sPokemonBoxPtrs[boxId][boxPosition]);
-        return GetBoxMonData(&mon, request, NULL);
+		return GetBoxMonData(&mon, request, NULL);
 	}
-    else
-        return 0;
+	else
+		return 0;
 }
 
 void SetBoxMonDataAt(u8 boxId, u8 boxPosition, s32 request, const void* value)
 {
-    if (boxId < TOTAL_BOXES_COUNT && boxPosition < IN_BOX_COUNT)
+	if (boxId < TOTAL_BOXES_COUNT && boxPosition < IN_BOX_COUNT)
 	{
 		struct BoxPokemon mon;
 		CreateBoxMonFromCompressedMon(&mon, &sPokemonBoxPtrs[boxId][boxPosition]); //Create temporary mon
-        SetBoxMonData(&mon, request, value);
+		SetBoxMonData(&mon, request, value);
 		CreateCompressedMonFromBoxMon(&mon, &sPokemonBoxPtrs[boxId][boxPosition]); //Copy new data back
 	}
 }
 
 void GetBoxMonNickAt(u8 boxId, u8 boxPosition, u8* dst)
 {
-    if (boxId < TOTAL_BOXES_COUNT && boxPosition < IN_BOX_COUNT)
+	if (boxId < TOTAL_BOXES_COUNT && boxPosition < IN_BOX_COUNT)
 	{
 		struct BoxPokemon mon;
 		CreateBoxMonFromCompressedMon(&mon, &sPokemonBoxPtrs[boxId][boxPosition]);
-        GetBoxMonData(&mon, MON_DATA_NICKNAME, dst);
+		GetBoxMonData(&mon, MON_DATA_NICKNAME, dst);
 	}
-    else
-        *dst = EOS;
+	else
+		*dst = EOS;
 }
 
 void SetBoxMonNickAt(u8 boxId, u8 boxPosition, const u8* nick)
 {
-    if (boxId < TOTAL_BOXES_COUNT && boxPosition < IN_BOX_COUNT)
+	if (boxId < TOTAL_BOXES_COUNT && boxPosition < IN_BOX_COUNT)
 	{
 		struct BoxPokemon mon;
 		CreateBoxMonFromCompressedMon(&mon, &sPokemonBoxPtrs[boxId][boxPosition]);
-        SetBoxMonData(&mon, MON_DATA_NICKNAME, nick);
+		SetBoxMonData(&mon, MON_DATA_NICKNAME, nick);
 	}
 }
 
 u32 GetAndCopyBoxMonDataAt(u8 boxId, u8 boxPosition, s32 request, void* dst)
 {
-    if (boxId < TOTAL_BOXES_COUNT && boxPosition < IN_BOX_COUNT)
+	if (boxId < TOTAL_BOXES_COUNT && boxPosition < IN_BOX_COUNT)
 	{
 		struct BoxPokemon mon;
 		CreateBoxMonFromCompressedMon(&mon, &sPokemonBoxPtrs[boxId][boxPosition]);
-        return GetBoxMonData(&mon, request, dst);
+		return GetBoxMonData(&mon, request, dst);
 	}
-    else
-        return 0;
+	else
+		return 0;
 }
 
 void SetBoxMonAt(u8 boxId, u8 boxPosition, struct BoxPokemon* src)
 {
-    if (boxId < TOTAL_BOXES_COUNT && boxPosition < IN_BOX_COUNT)
+	if (boxId < TOTAL_BOXES_COUNT && boxPosition < IN_BOX_COUNT)
 	{
 		HoopaShayminPCRevertCheck((struct Pokemon*) src);
 
@@ -212,41 +212,41 @@ void SetBoxMonAt(u8 boxId, u8 boxPosition, struct BoxPokemon* src)
 
 void CopyBoxMonAt(u8 boxId, u8 boxPosition, struct CompressedPokemon* dst)
 {
-    if (boxId < TOTAL_BOXES_COUNT && boxPosition < IN_BOX_COUNT)
-        *dst = sPokemonBoxPtrs[boxId][boxPosition];
+	if (boxId < TOTAL_BOXES_COUNT && boxPosition < IN_BOX_COUNT)
+		*dst = sPokemonBoxPtrs[boxId][boxPosition];
 }
 
 void CreateBoxMonAt(u8 boxId, u8 boxPosition, u16 species, u8 level, u8 fixedIV, u8 hasFixedPersonality, u32 personality, u8 otIDType, u32 otID)
 {
-    if (boxId < TOTAL_BOXES_COUNT && boxPosition < IN_BOX_COUNT)
-    {
+	if (boxId < TOTAL_BOXES_COUNT && boxPosition < IN_BOX_COUNT)
+	{
 		struct BoxPokemon boxMon;
-        CreateBoxMon(&boxMon,
-                     species,
-                     level,
-                     fixedIV,
-                     hasFixedPersonality, personality,
-                     otIDType, otID);
-					 
+		CreateBoxMon(&boxMon,
+					 species,
+					 level,
+					 fixedIV,
+					 hasFixedPersonality, personality,
+					 otIDType, otID);
+
 		struct CompressedPokemon compMon;
 		CreateCompressedMonFromBoxMon(&boxMon, &compMon);
 		sPokemonBoxPtrs[boxId][boxPosition] = compMon;
-    }
+	}
 }
 
 void ZeroBoxMonAt(u8 boxId, u8 boxPosition)
 {
-    if (boxId < TOTAL_BOXES_COUNT && boxPosition < IN_BOX_COUNT)
-        memset(&sPokemonBoxPtrs[boxId][boxPosition], 0, sizeof(struct CompressedPokemon));
+	if (boxId < TOTAL_BOXES_COUNT && boxPosition < IN_BOX_COUNT)
+		memset(&sPokemonBoxPtrs[boxId][boxPosition], 0, sizeof(struct CompressedPokemon));
 }
 
 void BoxMonAtToMon(u8 boxId, u8 boxPosition, struct Pokemon* dst)
 {
-    if (boxId < TOTAL_BOXES_COUNT && boxPosition < IN_BOX_COUNT)
+	if (boxId < TOTAL_BOXES_COUNT && boxPosition < IN_BOX_COUNT)
 	{
 		struct BoxPokemon mon;
 		CreateBoxMonFromCompressedMon(&mon, &sPokemonBoxPtrs[boxId][boxPosition]);
-        BoxMonToMon(&mon, dst);
+		BoxMonToMon(&mon, dst);
 	}
 }
 
@@ -259,26 +259,26 @@ void CompressedMonToMon(struct CompressedPokemon* compMon, struct Pokemon* dst)
 
 struct BoxPokemon* GetBoxedMonPtr(u8 boxId, u8 boxPosition)
 {
-    if (boxId < TOTAL_BOXES_COUNT && boxPosition < IN_BOX_COUNT)
+	if (boxId < TOTAL_BOXES_COUNT && boxPosition < IN_BOX_COUNT)
 	{
 		struct CompressedPokemon* compMon = &sPokemonBoxPtrs[boxId][boxPosition];
 		CreateBoxMonFromCompressedMon(gDisposableBoxMon, compMon); //Use a static location in memory
 		return gDisposableBoxMon;
 	}
-    else
-        return NULL;
+	else
+		return NULL;
 }
 
 struct CompressedPokemon* GetCompressedMonPtr(u8 boxId, u8 boxPosition)
 {
-    if (boxId < TOTAL_BOXES_COUNT && boxPosition < IN_BOX_COUNT)
+	if (boxId < TOTAL_BOXES_COUNT && boxPosition < IN_BOX_COUNT)
 		return &sPokemonBoxPtrs[boxId][boxPosition];
-    else
-        return NULL;
+	else
+		return NULL;
 }
 
 void CreateBoxMonFromCompressedMon(struct BoxPokemon* boxMon, struct CompressedPokemon* compMon)
-{	
+{
 	Memset(boxMon, 0, sizeof(struct BoxPokemon)); //Clear garbage data
 
 	Memcpy(boxMon, compMon, 0x1C); //Personality to markings
@@ -287,7 +287,7 @@ void CreateBoxMonFromCompressedMon(struct BoxPokemon* boxMon, struct CompressedP
 	Memcpy(&boxMon->substruct3, &compMon->pokerus, 8); //Copy some of substruct misc
 
 	boxMon->substruct3.obedient = TRUE;
-	
+
 	boxMon->substruct1.moves[0] = compMon->move1;
 	boxMon->substruct1.moves[1] = compMon->move2;
 	boxMon->substruct1.moves[2] = compMon->move3;
@@ -295,7 +295,7 @@ void CreateBoxMonFromCompressedMon(struct BoxPokemon* boxMon, struct CompressedP
 
 	for (int i = 0; i < MAX_MON_MOVES; ++i) //Give PP
 		boxMon->substruct1.pp[i] = CalculatePPWithBonus(boxMon->substruct1.moves[i], boxMon->substruct0.ppBonuses, i);
-} 
+}
 
 void CreateCompressedMonFromBoxMon(struct BoxPokemon* boxMon, struct CompressedPokemon* compMon)
 {
@@ -305,113 +305,113 @@ void CreateCompressedMonFromBoxMon(struct BoxPokemon* boxMon, struct CompressedP
 	Memcpy(&compMon->substruct0, &boxMon->substruct0, sizeof(struct CompressedPokemonSubstruct0));
 	Memcpy(&compMon->hpEv, &boxMon->substruct2, NUM_STATS); //Copy EVs
 	Memcpy(&compMon->pokerus, &boxMon->substruct3, 8); //Copy some of substruct misc
-	
+
 	compMon->move1 = boxMon->substruct1.moves[0];
-	compMon->move2 = boxMon->substruct1.moves[1]; 
-	compMon->move3 = boxMon->substruct1.moves[2]; 
+	compMon->move2 = boxMon->substruct1.moves[1];
+	compMon->move3 = boxMon->substruct1.moves[2];
 	compMon->move4 = boxMon->substruct1.moves[3];
 }
 
 u8* GetBoxNamePtr(u8 boxId)
 {
-    if (boxId < TOTAL_BOXES_COUNT)
-        return (u8*) sPokemonBoxNamePtrs[boxId];
-    else
-        return NULL;
+	if (boxId < TOTAL_BOXES_COUNT)
+		return (u8*) sPokemonBoxNamePtrs[boxId];
+	else
+		return NULL;
 }
 
 u8 GetBoxWallpaper(u8 boxId)
 {
-    if (boxId < TOTAL_BOXES_COUNT)
-        return *sPokemonBoxWallpaperPtrs[boxId];
-    else
-        return 0;
+	if (boxId < TOTAL_BOXES_COUNT)
+		return *sPokemonBoxWallpaperPtrs[boxId];
+	else
+		return 0;
 }
 
 void SetBoxWallpaper(u8 boxId, u8 wallpaperId)
 {
-    if (boxId < TOTAL_BOXES_COUNT && wallpaperId < WALLPAPER_COUNT)
-        *(sPokemonBoxWallpaperPtrs[boxId]) = wallpaperId;
+	if (boxId < TOTAL_BOXES_COUNT && wallpaperId < WALLPAPER_COUNT)
+		*(sPokemonBoxWallpaperPtrs[boxId]) = wallpaperId;
 }
 
 s8 sub_80916F4(u8 boxId)
 {
-    u8 i;
-    u8 currentBox = StorageGetCurrentBox();
+	u8 i;
+	u8 currentBox = StorageGetCurrentBox();
 
-    for (i = 0; currentBox != boxId; i++)
-    {
-        currentBox++;
-        if (currentBox >= TOTAL_BOXES_COUNT)
-            currentBox = 0;
-    }
+	for (i = 0; currentBox != boxId; i++)
+	{
+		currentBox++;
+		if (currentBox >= TOTAL_BOXES_COUNT)
+			currentBox = 0;
+	}
 
-    return (i < TOTAL_BOXES_COUNT / 2) ? 1 : -1;
+	return (i < TOTAL_BOXES_COUNT / 2) ? 1 : -1;
 }
 
 s16 sub_808BDE8(struct CompressedPokemon *boxMons, u8 currIndex, u8 maxIndex, u8 arg3)
 {
-    s16 i;
-    s16 adder = -1;
+	s16 i;
+	s16 adder = -1;
 
-    if (arg3 < 2)
-        adder = 1;
+	if (arg3 < 2)
+		adder = 1;
 
-    if (arg3 == 1 || arg3 == 3)
-    {
-        for (i = (s8)currIndex + adder; i >= 0 && i <= maxIndex; i += adder)
-        {
-            if (boxMons[i].substruct0.species != SPECIES_NONE)
-                return i;
-        }
-    }
-    else
-    {
-        for (i = (s8) currIndex + adder; i >= 0 && i <= maxIndex; i += adder)
-        {
+	if (arg3 == 1 || arg3 == 3)
+	{
+		for (i = (s8)currIndex + adder; i >= 0 && i <= maxIndex; i += adder)
+		{
+			if (boxMons[i].substruct0.species != SPECIES_NONE)
+				return i;
+		}
+	}
+	else
+	{
+		for (i = (s8) currIndex + adder; i >= 0 && i <= maxIndex; i += adder)
+		{
 			struct BoxPokemon boxMon;
 			CreateBoxMonFromCompressedMon(&boxMon, &boxMons[i]);
-            if (boxMon.substruct0.species != SPECIES_NONE
-            && !GetBoxMonData(&boxMon, MON_DATA_IS_EGG, NULL))
-                return i;
-        }
-    }
+			if (boxMon.substruct0.species != SPECIES_NONE
+			&& !GetBoxMonData(&boxMon, MON_DATA_IS_EGG, NULL))
+				return i;
+		}
+	}
 
-    return -1;
+	return -1;
 }
 
 u8 SendMonToPC(struct Pokemon* mon)
 {
-    s32 boxNo, boxPos;
+	s32 boxNo, boxPos;
 
-    SetSomeBoxId(VarGet(VAR_STORAGE_UNKNOWN));
+	SetSomeBoxId(VarGet(VAR_STORAGE_UNKNOWN));
 
-    boxNo = StorageGetCurrentBox();
+	boxNo = StorageGetCurrentBox();
 
-    do
-    {
-        for (boxPos = 0; boxPos < IN_BOX_COUNT; boxPos++)
-        {
-            struct CompressedPokemon* checkingMon = GetCompressedMonPtr(boxNo, boxPos);
-            if (checkingMon->substruct0.species == SPECIES_NONE)
-            {
+	do
+	{
+		for (boxPos = 0; boxPos < IN_BOX_COUNT; boxPos++)
+		{
+			struct CompressedPokemon* checkingMon = GetCompressedMonPtr(boxNo, boxPos);
+			if (checkingMon->substruct0.species == SPECIES_NONE)
+			{
 				CreateCompressedMonFromBoxMon((struct BoxPokemon*) mon, checkingMon);
-                gSpecialVar_MonBoxId = boxNo;
-                gSpecialVar_MonBoxPos = boxPos;
-                if (GetSomeBoxId() != boxNo)
-                    FlagClear(FLAG_SYS_STORAGE_UNKNOWN_FLAG);
-                VarSet(VAR_STORAGE_UNKNOWN, boxNo);
-                return MON_GIVEN_TO_PC;
-            }
-        }
+				gSpecialVar_MonBoxId = boxNo;
+				gSpecialVar_MonBoxPos = boxPos;
+				if (GetSomeBoxId() != boxNo)
+					FlagClear(FLAG_SYS_STORAGE_UNKNOWN_FLAG);
+				VarSet(VAR_STORAGE_UNKNOWN, boxNo);
+				return MON_GIVEN_TO_PC;
+			}
+		}
 
-        boxNo++;
-        if (boxNo == TOTAL_BOXES_COUNT)
-            boxNo = 0;
+		boxNo++;
+		if (boxNo == TOTAL_BOXES_COUNT)
+			boxNo = 0;
 
-    } while (boxNo != StorageGetCurrentBox());
+	} while (boxNo != StorageGetCurrentBox());
 
-    return MON_CANT_GIVE;
+	return MON_CANT_GIVE;
 }
 
 
@@ -419,7 +419,7 @@ bool8 SendMonToBoxPos(struct Pokemon* mon, u8 boxNo, u8 boxPos)
 {
 	if (boxNo > TOTAL_BOXES_COUNT || boxPos > IN_BOX_COUNT)
 		return TRUE;
-	
+
 	struct CompressedPokemon* checkingMon = GetCompressedMonPtr(boxNo, boxPos);
 	CreateCompressedMonFromBoxMon((struct BoxPokemon*) mon, checkingMon);
 	gSpecialVar_MonBoxId = boxNo;

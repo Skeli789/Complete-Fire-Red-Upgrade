@@ -75,7 +75,7 @@ struct BackupMapData
 };
 
 typedef struct BackupMapData BackupMapLayout;
-	
+
 struct MapObjectTemplate
 {
 	/*0x00*/ u8 localId;
@@ -96,7 +96,7 @@ struct MapObjectTemplate
 	/*0x16*/ u16 flagId2;
 };  /*size = 0x18*/
 
-#define EventObjectTemplate MapObjectTemplate 
+#define EventObjectTemplate MapObjectTemplate
 
 struct WarpEvent
 {
@@ -195,7 +195,7 @@ struct MapObject
 			 u32 landingJump:1;
 			 u32 heldMovementActive:1;
 			 u32 heldMovementFinished:1;
-	/*0x01*/ u32 frozen:1;				
+	/*0x01*/ u32 frozen:1;
 			 u32 facingDirectionLocked:1;
 			 u32 disableAnim:1;
 			 u32 enableAnim:1;
@@ -272,7 +272,7 @@ struct MapObjectGraphicsInfo
 };
 
 #define EventObjectGraphicsInfo MapObjectGraphicsInfo
- 
+
 #define PLAYER_AVATAR_FLAG_ON_FOOT   (1 << 0)
 #define PLAYER_AVATAR_FLAG_MACH_BIKE (1 << 1)
 #define PLAYER_AVATAR_FLAG_ACRO_BIKE (1 << 2)

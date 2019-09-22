@@ -4,7 +4,7 @@
 #include "../include/field_weather.h"
 
 #include "../include/new/dexnav.h"
-#include "../include/new/Helper_Functions.h"
+#include "../include/new/util.h"
 #include "../include/new/read_keys.h"
 
 //emulate JPANs keypad hack
@@ -13,14 +13,14 @@
 // called from AgbMain
 void InitKeys(void)
 {
-    gKeyRepeatContinueDelay = 5;
-    gKeyRepeatStartDelay = 40;
+	gKeyRepeatContinueDelay = 5;
+	gKeyRepeatStartDelay = 40;
 
-    gMain.heldKeys = 0;
-    gMain.newKeys = 0;
-    gMain.newAndRepeatedKeys = 0;
-    gMain.heldKeysRaw = 0;
-    gMain.newKeysRaw = 0;
+	gMain.heldKeys = 0;
+	gMain.newKeys = 0;
+	gMain.newAndRepeatedKeys = 0;
+	gMain.heldKeysRaw = 0;
+	gMain.newKeysRaw = 0;
 }
 */
 // values from InitKeys
@@ -94,41 +94,41 @@ void ReadKeys(void)
 	#else
 		u16 keyInput = REG_KEYINPUT ^ KEYS_MASK;
 	#endif
-    gMain.newKeysRaw = keyInput & ~gMain.heldKeysRaw;
-    gMain.newKeys = gMain.newKeysRaw;
-    gMain.newAndRepeatedKeys = gMain.newKeysRaw;
+	gMain.newKeysRaw = keyInput & ~gMain.heldKeysRaw;
+	gMain.newKeys = gMain.newKeysRaw;
+	gMain.newAndRepeatedKeys = gMain.newKeysRaw;
 
-    // BUG: Key repeat won't work when pressing L using L=A button mode
-    // because it compares the raw key input with the remapped held keys.
-    // Note that newAndRepeatedKeys is never remapped either.
-	
+	// BUG: Key repeat won't work when pressing L using L=A button mode
+	// because it compares the raw key input with the remapped held keys.
+	// Note that newAndRepeatedKeys is never remapped either.
+
 	if (keyInput != 0 && gMain.heldKeys == keyInput)
-    {
+	{
 		gMain.keyRepeatCounter--;
-        if (gMain.keyRepeatCounter == 0)
-        {			
-            gMain.newAndRepeatedKeys = keyInput;
-            gMain.keyRepeatCounter = gKeyRepeatContinueDelay;
-        }
-    }
-    else
-    {
-        // If there is no input or the input has changed, reset the counter.
-        gMain.keyRepeatCounter = gKeyRepeatStartDelay;	
+		if (gMain.keyRepeatCounter == 0)
+		{
+			gMain.newAndRepeatedKeys = keyInput;
+			gMain.keyRepeatCounter = gKeyRepeatContinueDelay;
+		}
 	}
-	
-    gMain.heldKeysRaw = keyInput;
-    gMain.heldKeys = gMain.heldKeysRaw;
+	else
+	{
+		// If there is no input or the input has changed, reset the counter.
+		gMain.keyRepeatCounter = gKeyRepeatStartDelay;
+	}
 
-    // Remap L to A if the L=A option is enabled.
-    if (gSaveBlock2->optionsButtonMode == 2)
-    {
-        if (gMain.newKeys & L_BUTTON)
-            gMain.newKeys |= A_BUTTON;
+	gMain.heldKeysRaw = keyInput;
+	gMain.heldKeys = gMain.heldKeysRaw;
 
-        if (gMain.heldKeys & L_BUTTON)
-            gMain.heldKeys |= A_BUTTON;
-    }
+	// Remap L to A if the L=A option is enabled.
+	if (gSaveBlock2->optionsButtonMode == 2)
+	{
+		if (gMain.newKeys & L_BUTTON)
+			gMain.newKeys |= A_BUTTON;
+
+		if (gMain.heldKeys & L_BUTTON)
+			gMain.heldKeys |= A_BUTTON;
+	}
 
 #ifdef AUTO_RUN_FLAG
 	else if (gMain.newKeys & L_BUTTON //Can't be used if L=A
@@ -155,7 +155,7 @@ void ReadKeys(void)
 #endif
 
 	u16 dexNavSpecies = VarGet(DEXNAV_VAR);
-	if (gMain.newKeys & R_BUTTON 
+	if (gMain.newKeys & R_BUTTON
 	&& dexNavSpecies != SPECIES_NONE
 	&& !IsDexNavHudActive()
 	&& !InUnionRoom()
@@ -165,6 +165,6 @@ void ReadKeys(void)
 		InitDexNavHUD(dexNavSpecies & 0x7FFF, dexNavSpecies >> 15);
 	}
 
-    if (gMain.newKeys & gMain.watchedKeysMask)
-        gMain.watchedKeysPressed = TRUE;
+	if (gMain.newKeys & gMain.watchedKeysMask)
+		gMain.watchedKeysPressed = TRUE;
 }

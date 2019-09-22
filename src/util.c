@@ -2,7 +2,7 @@
 #include "../include/constants/abilities.h"
 
 #include "../include/new/damage_calc.h"
-#include "../include/new/Helper_Functions.h"
+#include "../include/new/util.h"
 #include "../include/new/frontier.h"
 #include "../include/new/mega.h"
 
@@ -91,11 +91,11 @@ bool8 CheckTableForItem(u16 item, const u16 table[])
 u8 ViableMonCount(struct Pokemon* party)
 {
 	u8 count = 0;
-	
-	for (u32 i = 0; i < PARTY_SIZE; ++i) 
+
+	for (u32 i = 0; i < PARTY_SIZE; ++i)
 	{
 		if (GetMonData(&party[i], MON_DATA_SPECIES, NULL) != SPECIES_NONE
-		&& !GetMonData(&party[i], MON_DATA_IS_EGG, NULL) 
+		&& !GetMonData(&party[i], MON_DATA_IS_EGG, NULL)
 		&&  GetMonData(&party[i], MON_DATA_HP, NULL) > 0)
 			++count;
 	}
@@ -129,7 +129,7 @@ u16 GetNationalPokedexCount(u8 caseID)
 		case FLAG_GET_SEEN:
 			flags = (u8*) SEEN_DEX_FLAGS;
 			break;
-		
+
 		default: //case FLAG_GET_CAUGHT:
 			flags = (u8*) CAUGHT_DEX_FLAGS;
 			break;
@@ -155,8 +155,8 @@ bool8 CanEvolve(struct Pokemon* mon)
 {
 	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
 	const struct Evolution* evolutions = gEvolutionTable[species];
-	
-	for (u32 i = 0; i < EVOS_PER_MON; ++i) 
+
+	for (u32 i = 0; i < EVOS_PER_MON; ++i)
 	{
 		if (evolutions[i].method != MEGA_EVOLUTION && evolutions[i].method != 0)
 			return TRUE;
@@ -170,7 +170,7 @@ bool8 CouldHaveEvolvedViaLevelUp(struct Pokemon* mon)
 	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
 	const struct Evolution* evolutions = gEvolutionTable[species];
 
-	for (u32 i = 0; i < EVOS_PER_MON; ++i) 
+	for (u32 i = 0; i < EVOS_PER_MON; ++i)
 	{
 		if (evolutions[i].method == EVO_LEVEL && mon->level >= evolutions[i].param)
 			return TRUE;
@@ -223,7 +223,7 @@ bool8 CanPartyMonBeGeneralStatused(struct Pokemon* mon)
 	switch (GetPartyAbility(mon)) {
 		case ABILITY_COMATOSE:
 			return FALSE;
-			
+
 		case ABILITY_FLOWERVEIL:
 			if (type1 == TYPE_GRASS
 			||  type2 == TYPE_GRASS)
@@ -256,7 +256,7 @@ bool8 CanPartyMonBePoisoned(struct Pokemon* mon)
 
 	if (!CanPartyMonBeGeneralStatused(mon))
 		return FALSE;
-	
+
 	switch (GetPartyAbility(mon)) {
 		case ABILITY_IMMUNITY:
 			return FALSE;
@@ -284,11 +284,11 @@ bool8 CanPartyMonBeParalyzed(struct Pokemon* mon)
 		case ABILITY_LIMBER:
 			return FALSE;
 	}
-	
+
 	if (type1 == TYPE_ELECTRIC
 	||  type2 == TYPE_ELECTRIC)
 		return FALSE;
-		
+
 	return TRUE;
 }
 

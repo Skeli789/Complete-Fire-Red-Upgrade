@@ -101,14 +101,14 @@ struct Clock
 /*u8*/  //#define gFieldEffectArguments ((struct FieldEffectArguments*) 0x20386E0)
 
 		#define gShopDataPtr ((struct ShopData*) 0x2039934)
-		
+
 		#define gNamingScreenData ((struct NamingScreenData*) (*(u32*) 0x203998C))
 /*u8*/ //#define gSafariBallNumber 	(*((u8*) 0x02039994))	// see src/scripting.c
 /*u16*/ #define gSafariSteps	   (*((u16*) 0x02039996))
 
 /*u8*/  #define gAbilitiesPerBank ((u8*) 0x2039A30)
 		//#define gStringInfo ((struct BattleMsgData*) *((u32*) 0x2039A34))
-		
+
 		#define sHofFadingRelated (*((u32*) 0x0203AB34))
 		#define gHasHallOfFameRecords (*(u8*) 0x0203AB44)
 
@@ -125,9 +125,9 @@ struct Clock
 		#define PalTagsStart *((u8*)0x3003E58)
 
 		#define PalTags ((u16*)0x3000DE8)
-		
+
 		#define gMultiuseListMenuTemplate ((struct ListMenuTemplate*) ((u32*) 0x3005E70))
-		
+
 		#define gScriptEnv1 ((struct ScriptContext*) 0x03000EB0)
 		#define gScriptEnv2 ((struct ScriptContext*) 0x03000F28)
 		#define gLoadPointer (*((const u8**) 0x03000f14))
@@ -141,9 +141,9 @@ struct Clock
 		#define gHealthboxIDs ((u8*) 0x3004FF0)
 		#define gMultiUsePlayerCursor (*((u8*) 0x3004FF4))
 		#define gNumberOfMovesToChoose (*((u8*) 0x3004FF8))
-		
+
 		#define gOverworldTilemapBg3 (*((u32*) 0x300501C))
-		
+
 /*u8*/  #define gSelectedEventObject (*((u8*) 0x3005074))
 		//#define gTasks ((struct Task*) 0x3005090) //struct Task gTasks[ACTIVE_SENTINEL];
 
@@ -153,7 +153,7 @@ struct Clock
 		#define gKeyReg (*((u16*) 0x4000130))
 
 		extern struct MusicPlayerInfo gMPlay_BGM;
-		
+
 		#define gBattleCircusFlags (*((u32*) 0x203E044))
 
 		//Expanded text buffers					//Size					//buffercommand X	//String Arg

@@ -3,11 +3,11 @@
 #include "../global.h"
 
 /**
- * \file bs_helper_functions.h
+ * \file battle_script_util.h
  * \brief Contains functions which help out with battle scripting and are generally
  *		  called with the battle scripting "callasm" command.
  */
- 
+
 //Exported Functions
 void CheckIfDarkVoidShouldFail(void);
 void SetTargetPartner(void);

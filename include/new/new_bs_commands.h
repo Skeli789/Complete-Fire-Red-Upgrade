@@ -8,7 +8,7 @@
  *		  vanilla 248 (starts at atkF8). Functions after atkFF are loaded from a second
  *		  command table using atkFF.
  */
- 
+
 //Exported Functions
 
 //callasm FUNCTION_OFFSET

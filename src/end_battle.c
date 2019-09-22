@@ -10,7 +10,7 @@
 #include "../include/new/end_battle.h"
 #include "../include/new/end_battle_battle_scripts.h"
 #include "../include/new/form_change.h"
-#include "../include/new/Helper_Functions.h"
+#include "../include/new/util.h"
 #include "../include/new/mega.h"
 #include "../include/new/multi.h"
 
@@ -48,35 +48,35 @@ static void HealPokemonInFrontier(void);
 
 void HandleEndTurn_BattleWon(void)
 {
-    gCurrentActionFuncId = 0;
+	gCurrentActionFuncId = 0;
 
-    if (gBattleTypeFlags & BATTLE_TYPE_LINK)
-    {
-        //gSpecialVar_Result = gBattleOutcome;
-        gBattleTextBuff1[0] = gBattleOutcome;
-        gBankAttacker = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
-        gBattlescriptCurrInstr = BattleScript_LinkBattleWonOrLost;
-        gBattleOutcome &= ~(B_OUTCOME_LINK_BATTLE_RAN);
-    }
-    else if (gBattleTypeFlags & BATTLE_TYPE_TRAINER
-          && gBattleTypeFlags & (BATTLE_TYPE_FRONTIER | BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_TRAINER_TOWER))
-    {
-        BattleStopLowHpSound();
-        gBattlescriptCurrInstr = BattleScript_Victory;
+	if (gBattleTypeFlags & BATTLE_TYPE_LINK)
+	{
+		//gSpecialVar_Result = gBattleOutcome;
+		gBattleTextBuff1[0] = gBattleOutcome;
+		gBankAttacker = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
+		gBattlescriptCurrInstr = BattleScript_LinkBattleWonOrLost;
+		gBattleOutcome &= ~(B_OUTCOME_LINK_BATTLE_RAN);
+	}
+	else if (gBattleTypeFlags & BATTLE_TYPE_TRAINER
+		  && gBattleTypeFlags & (BATTLE_TYPE_FRONTIER | BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_TRAINER_TOWER))
+	{
+		BattleStopLowHpSound();
+		gBattlescriptCurrInstr = BattleScript_Victory;
 
-        PlayBGM(BGM_VICTORY_TRAINER_BATTLE);
-    }
-    else if (gBattleTypeFlags & BATTLE_TYPE_TRAINER && !(gBattleTypeFlags & BATTLE_TYPE_LINK))
-    {
-        BattleStopLowHpSound();
-        gBattlescriptCurrInstr = BattleScript_Victory;
+		PlayBGM(BGM_VICTORY_TRAINER_BATTLE);
+	}
+	else if (gBattleTypeFlags & BATTLE_TYPE_TRAINER && !(gBattleTypeFlags & BATTLE_TYPE_LINK))
+	{
+		BattleStopLowHpSound();
+		gBattlescriptCurrInstr = BattleScript_Victory;
 
 		u16 id = gTrainerBattleOpponent_A;
 		u8 specialMus = FALSE;
 		u8 loop = FALSE;
 
 	VICTORY_MUSIC_SELECTION:
-        switch (gTrainers[id].trainerClass) {
+		switch (gTrainers[id].trainerClass) {
 		#ifndef UNBOUND //Change this part
 			case CLASS_LEADER:
 			case CLASS_ELITE_4:
@@ -120,49 +120,49 @@ void HandleEndTurn_BattleWon(void)
 				PlayBGM(BGM_VICTORY_TRAINER_BATTLE);
 				break;
 		#endif
-        }
+		}
 
 		if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS && !specialMus && !loop) {
 			id = VarGet(SECOND_OPPONENT_VAR);
 			loop = TRUE;
 			goto VICTORY_MUSIC_SELECTION;
 		}
-    }
-    else
-        gBattlescriptCurrInstr = BattleScript_PayDayMoneyAndPickUpItems;
+	}
+	else
+		gBattlescriptCurrInstr = BattleScript_PayDayMoneyAndPickUpItems;
 
 	gSpecialVar_LastResult = 0;
-    gBattleMainFunc = (u32) HandleEndTurn_FinishBattle;
+	gBattleMainFunc = (u32) HandleEndTurn_FinishBattle;
 }
 
 void HandleEndTurn_BattleLost(void)
 {
-    gCurrentActionFuncId = 0;
+	gCurrentActionFuncId = 0;
 
-    if (gBattleTypeFlags & BATTLE_TYPE_LINK)
-    {
-        if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
-        {
-            if (gBattleOutcome & B_OUTCOME_LINK_BATTLE_RAN)
-            {
-                gBattlescriptCurrInstr = BattleScript_PrintPlayerForfeitedLinkBattle;
-                gBattleOutcome &= ~(B_OUTCOME_LINK_BATTLE_RAN);
-            }
-            else
-            {
-                gBattlescriptCurrInstr = BattleScript_LostMultiBattleTower;
-                gBattleOutcome &= ~(B_OUTCOME_LINK_BATTLE_RAN);
-            }
-        }
-        else
-        {
-            gBattleTextBuff1[0] = gBattleOutcome;
-            gBankAttacker = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
-            gBattlescriptCurrInstr = BattleScript_LinkBattleWonOrLost;
-            gBattleOutcome &= ~(B_OUTCOME_LINK_BATTLE_RAN);
+	if (gBattleTypeFlags & BATTLE_TYPE_LINK)
+	{
+		if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
+		{
+			if (gBattleOutcome & B_OUTCOME_LINK_BATTLE_RAN)
+			{
+				gBattlescriptCurrInstr = BattleScript_PrintPlayerForfeitedLinkBattle;
+				gBattleOutcome &= ~(B_OUTCOME_LINK_BATTLE_RAN);
+			}
+			else
+			{
+				gBattlescriptCurrInstr = BattleScript_LostMultiBattleTower;
+				gBattleOutcome &= ~(B_OUTCOME_LINK_BATTLE_RAN);
+			}
+		}
+		else
+		{
+			gBattleTextBuff1[0] = gBattleOutcome;
+			gBankAttacker = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
+			gBattlescriptCurrInstr = BattleScript_LinkBattleWonOrLost;
+			gBattleOutcome &= ~(B_OUTCOME_LINK_BATTLE_RAN);
 			EndOfBattleThings();
-        }
-    }
+		}
+	}
 	else if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
 	{
 		if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
@@ -170,10 +170,10 @@ void HandleEndTurn_BattleLost(void)
 		else
 			gBattlescriptCurrInstr = BattleScript_LostBattleTower;
 
-        gBattleOutcome &= ~(B_OUTCOME_RAN);
+		gBattleOutcome &= ~(B_OUTCOME_RAN);
 		EndOfBattleThings();
 	}
-    else if (gBattleTypeFlags & BATTLE_TYPE_TRAINER && sTrainerBattleMode == TRAINER_BATTLE_OAK_TUTORIAL)
+	else if (gBattleTypeFlags & BATTLE_TYPE_TRAINER && sTrainerBattleMode == TRAINER_BATTLE_OAK_TUTORIAL)
 	{
 		if (sTrainerBattleOakTutorialHelper & 1)
 			gBattleCommunication[MULTISTRING_CHOOSER] = 1;
@@ -183,28 +183,28 @@ void HandleEndTurn_BattleLost(void)
 		gBankAttacker = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
 		gBattlescriptCurrInstr = BattleScript_LocalBattleLost;
 	}
-    else
+	else
 	{
 		gBattleCommunication[MULTISTRING_CHOOSER] = 0;
-        gBattlescriptCurrInstr = BattleScript_LocalBattleLost;
-    }
+		gBattlescriptCurrInstr = BattleScript_LocalBattleLost;
+	}
 
 	gSpecialVar_LastResult = 1;
-    gBattleMainFunc = (u32) HandleEndTurn_FinishBattle;
+	gBattleMainFunc = (u32) HandleEndTurn_FinishBattle;
 }
 
 void HandleEndTurn_RanFromBattle(void)
 {
-    gCurrentActionFuncId = 0;
+	gCurrentActionFuncId = 0;
 
-    if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER && gBattleTypeFlags & BATTLE_TYPE_TRAINER)
-    {
-        gBattlescriptCurrInstr = BattleScript_PrintPlayerForfeited;
+	if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER && gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+	{
+		gBattlescriptCurrInstr = BattleScript_PrintPlayerForfeited;
 		gBattleOutcome = B_OUTCOME_LOST;
-    }
-    else
-    {
-        switch (gProtectStructs[gBankAttacker].fleeFlag) {
+	}
+	else
+	{
+		switch (gProtectStructs[gBankAttacker].fleeFlag) {
 			case 1:
 				gBattlescriptCurrInstr = BattleScript_SmokeBallEscape; //0x81D8901
 				break;
@@ -215,24 +215,24 @@ void HandleEndTurn_RanFromBattle(void)
 			default:
 				gBattlescriptCurrInstr = BattleScript_GotAwaySafely; //0x81D8916
 				break;
-        }
-    }
+		}
+	}
 
-    gBattleMainFunc = (u32) HandleEndTurn_FinishBattle;
+	gBattleMainFunc = (u32) HandleEndTurn_FinishBattle;
 }
 
 #define STATE_BEFORE_ACTION_CHOSEN 0
 
 bool8 HandleRunActionFrontier(void)
 {
-    if (gBattleTypeFlags & BATTLE_TYPE_TRAINER
-    && gBattleTypeFlags & BATTLE_TYPE_FRONTIER
-    && gBattleBufferB[gActiveBattler][1] == ACTION_RUN)
-    {
+	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER
+	&& gBattleTypeFlags & BATTLE_TYPE_FRONTIER
+	&& gBattleBufferB[gActiveBattler][1] == ACTION_RUN)
+	{
 		BattleScriptExecute(BattleScript_AskIfWantsToForfeitMatch);
 		gBattleCommunication[gActiveBattler] = STATE_BEFORE_ACTION_CHOSEN;
-        return TRUE;
-    }
+		return TRUE;
+	}
 
 	return FALSE;
 }
@@ -241,48 +241,48 @@ bool8 HandleRunActionFrontier(void)
 
 u8 IsRunningFromBattleImpossible(void)
 {
-    u8 itemEffect;
-    u8 side;
-    int i;
+	u8 itemEffect;
+	u8 side;
+	int i;
 
-    itemEffect = ITEM_EFFECT(gActiveBattler);
-    gStringBank = gActiveBattler;
+	itemEffect = ITEM_EFFECT(gActiveBattler);
+	gStringBank = gActiveBattler;
 
-    if (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_FRONTIER))
-        return FALSE;
+	if (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_FRONTIER))
+		return FALSE;
 
 	else if (FlagGet(NO_RUNNING_FLAG) || FlagGet(NO_CATCHING_AND_RUNNING_FLAG))
 		return TRUE;
 
-    else if (itemEffect == ITEM_EFFECT_CAN_ALWAYS_RUN)
-        return FALSE;
-    else if (gBattleMons[gActiveBattler].ability == ABILITY_RUNAWAY)
-        return FALSE;
+	else if (itemEffect == ITEM_EFFECT_CAN_ALWAYS_RUN)
+		return FALSE;
+	else if (gBattleMons[gActiveBattler].ability == ABILITY_RUNAWAY)
+		return FALSE;
 	else if (IsOfType(gActiveBattler, TYPE_GHOST))
 		return FALSE;
 
-    side = SIDE(gActiveBattler);
+	side = SIDE(gActiveBattler);
 
-    for (i = 0; i < gBattlersCount; i++)
-    {
-        if (ABILITY(gActiveBattler) != ABILITY_SHADOWTAG //Shadow Tag's not affected by Shadow Tag
+	for (i = 0; i < gBattlersCount; i++)
+	{
+		if (ABILITY(gActiveBattler) != ABILITY_SHADOWTAG //Shadow Tag's not affected by Shadow Tag
 		&& side != SIDE(i)
-        && ABILITY(i) == ABILITY_SHADOWTAG)
-        {
-            gBattleScripting->bank = i;
-            gLastUsedAbility = ABILITY(i);
-            gBattleCommunication[MULTISTRING_CHOOSER] = 2;
-            return ABILITY_PREVENTING_ESCAPE;
-        }
-        if (side != SIDE(i)
-        && ABILITY(i) == ABILITY_ARENATRAP
+		&& ABILITY(i) == ABILITY_SHADOWTAG)
+		{
+			gBattleScripting->bank = i;
+			gLastUsedAbility = ABILITY(i);
+			gBattleCommunication[MULTISTRING_CHOOSER] = 2;
+			return ABILITY_PREVENTING_ESCAPE;
+		}
+		if (side != SIDE(i)
+		&& ABILITY(i) == ABILITY_ARENATRAP
 		&& !CheckGrounding(gActiveBattler))
-        {
-            gBattleScripting->bank = i;
-            gLastUsedAbility = ABILITY(i);
-            gBattleCommunication[MULTISTRING_CHOOSER] = 2;
-            return ABILITY_PREVENTING_ESCAPE;
-        }
+		{
+			gBattleScripting->bank = i;
+			gLastUsedAbility = ABILITY(i);
+			gBattleCommunication[MULTISTRING_CHOOSER] = 2;
+			return ABILITY_PREVENTING_ESCAPE;
+		}
 
 		if (i != gActiveBattler
 		&& ABILITY(i) == ABILITY_MAGNETPULL
@@ -293,14 +293,14 @@ u8 IsRunningFromBattleImpossible(void)
 			gBattleCommunication[MULTISTRING_CHOOSER] = 2;
 			return ABILITY_PREVENTING_ESCAPE;
 		}
-    }
+	}
 
-    if ((gBattleMons[gActiveBattler].status2 & (STATUS2_ESCAPE_PREVENTION | STATUS2_WRAPPED))
-    || (gStatuses3[gActiveBattler] & STATUS3_SKY_DROP_TARGET))
-    {
-        gBattleCommunication[MULTISTRING_CHOOSER] = 0;
-        return TRUE;
-    }
+	if ((gBattleMons[gActiveBattler].status2 & (STATUS2_ESCAPE_PREVENTION | STATUS2_WRAPPED))
+	|| (gStatuses3[gActiveBattler] & STATUS3_SKY_DROP_TARGET))
+	{
+		gBattleCommunication[MULTISTRING_CHOOSER] = 0;
+		return TRUE;
+	}
 
 	if (!gNewBS->TeleportBit)
 	{
@@ -319,40 +319,40 @@ u8 IsRunningFromBattleImpossible(void)
 		return TRUE;
 	}
 
-    if (gBattleTypeFlags & BATTLE_TYPE_OAK_TUTORIAL)
-    {
-        gBattleCommunication[MULTISTRING_CHOOSER] = 1;
-        return TRUE;
-    }
+	if (gBattleTypeFlags & BATTLE_TYPE_OAK_TUTORIAL)
+	{
+		gBattleCommunication[MULTISTRING_CHOOSER] = 1;
+		return TRUE;
+	}
 
-    return 0;
+	return 0;
 }
 
 bool8 TryRunFromBattle(u8 bank)
 {
-    bool8 effect = FALSE;
-    u8 itemEffect;
-    u8 speedVar;
+	bool8 effect = FALSE;
+	u8 itemEffect;
+	u8 speedVar;
 
-    itemEffect = ITEM_EFFECT(bank);
-    gStringBank = bank;
+	itemEffect = ITEM_EFFECT(bank);
+	gStringBank = bank;
 
 	if (IsOfType(bank, TYPE_GHOST))
 	{
 		++effect;
 	}
-    else if (itemEffect == ITEM_EFFECT_CAN_ALWAYS_RUN)
-    {
-        gLastUsedItem = ITEM(bank);
-        gProtectStructs[bank].fleeFlag = 1;
-        ++effect;
-    }
-    else if (ABILITY(bank) == ABILITY_RUNAWAY)
-    {
-        gLastUsedAbility = ABILITY_RUNAWAY;
-        gProtectStructs[bank].fleeFlag = 2;
-        ++effect;
-    }
+	else if (itemEffect == ITEM_EFFECT_CAN_ALWAYS_RUN)
+	{
+		gLastUsedItem = ITEM(bank);
+		gProtectStructs[bank].fleeFlag = 1;
+		++effect;
+	}
+	else if (ABILITY(bank) == ABILITY_RUNAWAY)
+	{
+		gLastUsedAbility = ABILITY_RUNAWAY;
+		gProtectStructs[bank].fleeFlag = 2;
+		++effect;
+	}
 	#ifndef NO_GHOST_BATTLES
 	else if ((gBattleTypeFlags & (BATTLE_TYPE_SCRIPTED_WILD_1 | BATTLE_TYPE_GHOST)) == BATTLE_TYPE_GHOST)
 	{
@@ -360,53 +360,53 @@ bool8 TryRunFromBattle(u8 bank)
 			++effect;
 	}
 	#endif
-    else if (gBattleTypeFlags & (BATTLE_TYPE_FRONTIER | BATTLE_TYPE_TRAINER_TOWER) && gBattleTypeFlags & BATTLE_TYPE_TRAINER)
-    {
-        ++effect;
-    }
-    else
-    {
-        if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE))
-        {
+	else if (gBattleTypeFlags & (BATTLE_TYPE_FRONTIER | BATTLE_TYPE_TRAINER_TOWER) && gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+	{
+		++effect;
+	}
+	else
+	{
+		if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE))
+		{
 		SINGLE_FLEE_CALC:
-            if (gBattleMons[bank].speed < gBattleMons[BATTLE_OPPOSITE(bank)].speed)
-            {
-                speedVar = udivsi((gBattleMons[bank].speed * 128), (gBattleMons[BATTLE_OPPOSITE(bank)].speed)) + (gBattleStruct->runTries * 30);
-                if (speedVar > (Random() & 0xFF))
-                    ++effect;
-            }
-            else // same speed or faster
-            {
-                ++effect;
-            }
-        }
+			if (gBattleMons[bank].speed < gBattleMons[BATTLE_OPPOSITE(bank)].speed)
+			{
+				speedVar = udivsi((gBattleMons[bank].speed * 128), (gBattleMons[BATTLE_OPPOSITE(bank)].speed)) + (gBattleStruct->runTries * 30);
+				if (speedVar > (Random() & 0xFF))
+					++effect;
+			}
+			else // same speed or faster
+			{
+				++effect;
+			}
+		}
 		else //Wild Double
 		{
 			if (gBattleMons[BATTLE_OPPOSITE(bank)].hp)
 				goto SINGLE_FLEE_CALC;
 
-            if (gBattleMons[bank].speed < gBattleMons[PARTNER(BATTLE_OPPOSITE(bank))].speed)
-            {
-                speedVar = udivsi((gBattleMons[bank].speed * 128), (gBattleMons[PARTNER(BATTLE_OPPOSITE(bank))].speed)) + (gBattleStruct->runTries * 30);
-                if (speedVar > (Random() & 0xFF))
-                    ++effect;
-            }
-            else // same speed or faster
-            {
-                ++effect;
-            }
+			if (gBattleMons[bank].speed < gBattleMons[PARTNER(BATTLE_OPPOSITE(bank))].speed)
+			{
+				speedVar = udivsi((gBattleMons[bank].speed * 128), (gBattleMons[PARTNER(BATTLE_OPPOSITE(bank))].speed)) + (gBattleStruct->runTries * 30);
+				if (speedVar > (Random() & 0xFF))
+					++effect;
+			}
+			else // same speed or faster
+			{
+				++effect;
+			}
 		}
 
-        gBattleStruct->runTries++;
-    }
+		gBattleStruct->runTries++;
+	}
 
-    if (effect)
-    {
-        gCurrentTurnActionNumber = gBattlersCount;
-        gBattleOutcome = B_OUTCOME_RAN;
-    }
+	if (effect)
+	{
+		gCurrentTurnActionNumber = gBattlersCount;
+		gBattleOutcome = B_OUTCOME_RAN;
+	}
 
-    return effect;
+	return effect;
 }
 
 void EndOfBattleThings(void)
@@ -425,7 +425,7 @@ void EndOfBattleThings(void)
 		EndBattleFlagClear();
 		HealPokemonInFrontier();
 		TerrainType = 0; //Reset now b/c normal reset is after BG is loaded
-		
+
 		#ifdef UNBOUND
 		u8 weather = GetCurrentWeather();
 		if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_SANDS)
@@ -566,7 +566,7 @@ static void EndBattleFlagClear(void)
 	{
 		u8 status = inducer & 0xFF;
 		u8 amount = ((inducer & 0xFF00) >> 8) - 1; //Subtract num battles by 1
-		
+
 		if (amount == 0) //Time's up
 			VarSet(STATUS_INDUCER_VAR, 0);
 		else
@@ -586,7 +586,7 @@ static void EndBattleFlagClear(void)
 	Free(gNewBS->UltraData);
 	Free(gNewBS->ZMoveData);
 	Free(gNewBS);
-	
+
 	u16 backup = gTrainerBattleOpponent_B;
 	Memset(&ExtensionState, 0x0, sizeof(struct BattleExtensionState));
 	gTrainerBattleOpponent_B = backup;

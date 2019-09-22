@@ -7,7 +7,7 @@
  * \brief Contains functions relating to Pokemon learning new moves. Also contains
  *		  functions for Evolution moves and the Move Reminder.
  */
- 
+
 //Exported Functions
 void GiveBoxMonInitialMoveset(struct BoxPokemon* boxMon);
 u16 MonTryLearningNewMoveAfterEvolution(struct Pokemon* mon, bool8 firstMove);

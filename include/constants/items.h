@@ -192,7 +192,7 @@
 #define ITEM_CHOICE_BAND 0xB0 //For Unbound
 #else
 #define ITEM_CHOICE_BAND 186
-#endif 
+#endif
 
 #define ITEM_KINGS_ROCK 187
 #define ITEM_SILVER_POWDER 188
@@ -781,7 +781,7 @@
 #define ITEM_RELIC_CROWN 0x29D
 
 //Z-Crystals
-enum 
+enum
 {
 	ITEM_NORMALIUM_Z = 0x29E, 		//All items after this will be 0x29E + 1, 0x29E + 2...
 	ITEM_FIGHTINIUM_Z, 		//0x29F //Put the Z-Crystals in order

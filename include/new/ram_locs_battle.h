@@ -27,7 +27,7 @@
 /*u8*/  #define gBattleTextBuff1 		((u8*) 0x2022AB8)
 /*u8*/  #define gBattleTextBuff2 		((u8*) 0x2022AC8)
 /*u8*/  #define gBattleTextBuff3 		((u8*) 0x2022AD8)
-		
+
 /*u32*/ #define gBattleTypeFlags 		*((u32*) 0x2022B4C)
 /*u8*/  #define gBattleTerrain			*((u8*) 0x2022B50)
 
@@ -90,7 +90,7 @@ typedef u8 Battle_Buffer_T[0x200];
 /*u8*/  #define gUnknown_2023DD4 ((u8*) 0x2023DD4)
 /*u8*/  #define gTakenDmgBanks ((u8*) 0x2023DD8)
 /*u16*/ #define gUnknown_2023DDC *((u16*) 0x2023DDC)
-	
+
 /*u16*/ #define gSideAffecting ((u16*) 0x2023DDE)
 //Padding 0x2023DE2
 
@@ -160,7 +160,7 @@ typedef u8 Battle_Buffer_T[0x200];
 		#define sTrainerBattleEndScript (*((u8**) 0x20386C4))
 		#define sTrainerBattleScriptRetAddr (*((u32*) 0x20386C8))
 		#define sTrainerBattleOakTutorialHelper (*((u16*) 0x20386CC))
-		
+
 
 #define BattleStringLoader (*((u8**) 0x203E020))
 #define SeedHelper ((u8*) 0x203E024)

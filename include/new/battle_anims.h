@@ -6,7 +6,7 @@
  *		  animation tasks and sprite callbacks for attack animations, as well as
  *		  the code responsible for hiding the healthboxes during animations.
  */
- 
+
 //Exported Functions
 void AnimTask_TechnoBlast(u8 taskId);
 void AnimTask_GetTimeOfDay(u8 taskId);

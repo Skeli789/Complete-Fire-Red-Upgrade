@@ -23,7 +23,7 @@ extern const u8 gTrainerBackPic_RivalPal[];
 extern const u8 gTrainerBackPic_JaxPal[];
 #define gTrainerPalette_Jax gTrainerBackPic_JaxPal
 
-const struct CompressedSpritePalette gTrainerBackPicPaletteTable[] = 
+const struct CompressedSpritePalette gTrainerBackPicPaletteTable[] =
 {
     [TRAINER_BACK_PIC_RED] =		{gTrainerBackPicPalette_Red, 	TRAINER_BACK_PIC_RED},
     [TRAINER_BACK_PIC_LEAF] =		{gTrainerBackPicPalette_Leaf, 	TRAINER_BACK_PIC_LEAF},
@@ -31,7 +31,7 @@ const struct CompressedSpritePalette gTrainerBackPicPaletteTable[] =
     [TRAINER_BACK_PIC_MAY] =		{gTrainerPalette_May, 			TRAINER_BACK_PIC_MAY},
     [TRAINER_BACK_PIC_POKE_DUDE] =	{gTrainerPalette_PokeDude, 		TRAINER_BACK_PIC_POKE_DUDE},
     [TRAINER_BACK_PIC_OLD_MAN] =	{gTrainerPalette_OldMan, 		TRAINER_BACK_PIC_OLD_MAN},
-	
+
 #ifdef UNBOUND
     [TRAINER_BACK_PIC_MARLON] =		{gTrainerPalette_Marlon, 		TRAINER_BACK_PIC_MARLON},
     [TRAINER_BACK_PIC_POKE_KID] =	{gTrainerPalette_PokeKid, 		TRAINER_BACK_PIC_POKE_KID},
@@ -59,11 +59,11 @@ const union AnimCmd* const* const gTrainerBackAnimsPtrTable[] =
     [TRAINER_BACK_PIC_MAY] = gTrainerBackAnims_May,
     [TRAINER_BACK_PIC_POKE_DUDE] = gTrainerBackAnims_PokeDude,
     [TRAINER_BACK_PIC_OLD_MAN] = gTrainerBackAnims_OldMan,
-	
+
 #ifdef UNBOUND
 	[TRAINER_BACK_PIC_MARLON] = gTrainerBackAnims_Marlon,
 	[TRAINER_BACK_PIC_POKE_KID] = gTrainerBackAnims_PokeKid,
-	[TRAINER_BACK_PIC_RIVAL] = gTrainerBackAnims_Rival,	
+	[TRAINER_BACK_PIC_RIVAL] = gTrainerBackAnims_Rival,
 	[TRAINER_BACK_PIC_JAX] = gTrainerBackAnims_Jax,
 #endif
 };
@@ -76,7 +76,7 @@ const struct MonCoords gTrainerBackPicCoords[] =
     [TRAINER_BACK_PIC_MAY] = 		{.coords = 8, .y_offset = 4},
     [TRAINER_BACK_PIC_POKE_DUDE] = 	{.coords = 8, .y_offset = 4},
     [TRAINER_BACK_PIC_OLD_MAN] = 	{.coords = 8, .y_offset = 4},
-	
+
 #ifdef UNBOUND
     [TRAINER_BACK_PIC_MARLON] = 	{.coords = 8, .y_offset = 4},
     [TRAINER_BACK_PIC_POKE_KID] = 	{.coords = 8, .y_offset = 4},
@@ -218,7 +218,7 @@ const struct SpriteTemplate gSpriteTemplateTable_TrainerBackSprites[] =
         .affineAnims = gAffineAnims_TrainerBacksprite,
         .callback = gSpriteCB_TrainerBacksprite,
     },
-	
+
 #ifdef UNBOUND
 	[TRAINER_BACK_PIC_MARLON] =
     {

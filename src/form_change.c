@@ -6,7 +6,7 @@
 #include "../include/new/dns.h"
 #include "../include/new/form_change.h"
 #include "../include/new/frontier.h"
-#include "../include/new/Helper_Functions.h"
+#include "../include/new/util.h"
 #include "../include/new/set_z_effect.h"
 
 const species_t gMiniorCores[] =
@@ -38,14 +38,14 @@ static const species_t sBannedBackupSpecies[] =
 //This file's functions:
 static bool8 IsMinior(u16 species);
 
-void DoFormChange(u8 bank, u16 species, bool8 ReloadType, bool8 ReloadStats, bool8 reloadAbility) 
+void DoFormChange(u8 bank, u16 species, bool8 ReloadType, bool8 ReloadStats, bool8 reloadAbility)
 {
 	u16 backup;
 	gActiveBattler = bank;
-	
+
 	struct Pokemon* mon = GetBankPartyData(bank);
 	backup = mon->species;
-	
+
 	gBattleMons[bank].species = species;
 	mon->species = species; //Needed so the right stats, types, and abilities can be loaded
 
@@ -54,14 +54,14 @@ void DoFormChange(u8 bank, u16 species, bool8 ReloadType, bool8 ReloadStats, boo
 		CalculateMonStats(mon);
 		RELOAD_BATTLE_STATS(bank, mon);
 	}
-	
+
 	if (reloadAbility)
 		*GetAbilityLocation(bank) = GetPartyAbility(mon);
-	
+
 	EmitSetMonData(0, REQUEST_FORM_CHANGE_BATTLE, 0, sizeof(struct BattlePokemon), &gBattleMons[bank]);
 	MarkBufferBankForExecution(gActiveBattler);
-	
-	if (ReloadType) 
+
+	if (ReloadType)
 	{
 		if (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) //The Pokemon takes on the types of its first two moves
 			UpdateTypesForCamomons(bank);
@@ -73,19 +73,19 @@ void DoFormChange(u8 bank, u16 species, bool8 ReloadType, bool8 ReloadStats, boo
 
 		gBattleMons[bank].type3 = TYPE_BLANK;
 	}
-	
+
 	gStatuses3[bank] &= ~(STATUS3_SWITCH_IN_ABILITY_DONE | STATUS3_ILLUSION); //A Pokemon undergoing form change can't be hidden under Illusion
-	
+
 	mon->species = backup; //Backup species is written to by the form change handler
 }
 
 //This function could have been much simpler if I didn't care about stupid people who
 //would give people the below mentioned species before battle.
-void SwitchOutFormsRevert(u8 bank) 
+void SwitchOutFormsRevert(u8 bank)
 {
 	struct Pokemon* mon = GetBankPartyData(bank);
 	u16 backupSpecies = mon->backupSpecies;
-	
+
 	switch (gBattleMons[bank].species) {
 		case SPECIES_CHERRIM_SUN:
 			if (backupSpecies != SPECIES_NONE)
@@ -136,10 +136,10 @@ void SwitchOutFormsRevert(u8 bank)
 	}
 }
 
-void FormsRevert(pokemon_t* party) 
+void FormsRevert(pokemon_t* party)
 {
 	int i;
-	
+
 	for (i = 0; i < PARTY_SIZE; ++i)
 		TryFormRevert(&party[i]);
 }
@@ -166,10 +166,10 @@ bool8 TryFormRevert(pokemon_t* mon)
 		mon->backupSpecies = SPECIES_NONE;
 		oldHP = mon->hp;
 		CalculateMonStats(mon);
-			
+
 		if (mon->species == SPECIES_ZYGARDE || mon->species == SPECIES_ZYGARDE_10)
 			mon->hp = MathMin(mon->maxHP, oldHP);
-			
+
 		return TRUE;
 	}
 	else if (mon->species == SPECIES_SHAYMIN_SKY)
@@ -188,7 +188,7 @@ bool8 TryFormRevert(pokemon_t* mon)
 			if (mon->moves[i] == MOVE_SECRETSWORD)
 				break;
 		}
-		
+
 		if (i != MAX_MON_MOVES) //Keldeo knows Secret Sword
 		{
 			mon->species = SPECIES_KELDEO_RESOLUTE;
@@ -203,7 +203,7 @@ bool8 TryFormRevert(pokemon_t* mon)
 			if (mon->moves[i] == MOVE_SECRETSWORD)
 				break;
 		}
-		
+
 		if (i == MAX_MON_MOVES) //Keldeo doesn't know Secret Sword
 		{
 			mon->species = SPECIES_KELDEO;
@@ -211,7 +211,7 @@ bool8 TryFormRevert(pokemon_t* mon)
 			return TRUE;
 		}
 	}
-	
+
 	return FALSE;
 }
 
@@ -219,10 +219,10 @@ void UpdateBurmy(void)
 {
 	int i;
 	u16 form = gTerrainTable[gBattleTerrain].burmyForm;
-	
+
 	if (form != SPECIES_NONE)
-	{	
-		for (i = 0; i < PARTY_SIZE; ++i) 
+	{
+		for (i = 0; i < PARTY_SIZE; ++i)
 		{
 			u16 species = gPlayerParty[i].species;
 			if (species == SPECIES_BURMY
@@ -253,13 +253,13 @@ void HandleFormChange(void)
 
 	mon->backupSpecies = mon->species;
 	mon->species = battleMon->species;
-	
+
 	mon->attack = battleMon->attack;
 	mon->defense = battleMon->defense;
 	mon->speed = battleMon->speed;
 	mon->spAttack = battleMon->spAttack;
 	mon->spDefense = battleMon->spDefense;
-	
+
 	mon->hp = battleMon->hp;
 	mon->maxHP = battleMon->maxHP;
 }
@@ -358,7 +358,7 @@ void HoldItemFormChange(struct Pokemon* mon, u16 item)
 						break;
 				}
 			}
-	
+
 			if (targetSpecies == SPECIES_NONE)
 				targetSpecies = SPECIES_GENESECT;
 			break;
@@ -391,7 +391,7 @@ void HoldItemFormChange(struct Pokemon* mon, u16 item)
 					targetSpecies = SPECIES_ARCEUS;
 			}
 			break;
-	
+
 		case SPECIES_SILVALLY:
 		case SPECIES_SILVALLY_FIGHT:
 		case SPECIES_SILVALLY_FLYING:
@@ -420,7 +420,7 @@ void HoldItemFormChange(struct Pokemon* mon, u16 item)
 			}
 			break;
 	}
-	
+
 	if (targetSpecies != SPECIES_NONE && targetSpecies != species)
 	{
 		SetMonData(mon, MON_DATA_SPECIES, &targetSpecies);

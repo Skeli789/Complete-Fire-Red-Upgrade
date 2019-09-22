@@ -152,7 +152,7 @@
 #define BATTLE_TERRAIN_RANDOM				0xFF
 #endif
 
-enum 
+enum
 {
 	NO_TERRAIN,
 	ELECTRIC_TERRAIN,
@@ -361,9 +361,9 @@ struct DisableStruct
     /*0x19*/ u8 rechargeTimer;
     /*0x1A*/ u8 unk1A[2];
 };
-	
+
 extern struct DisableStruct gDisableStructs[BATTLE_BANKS_COUNT];
-	
+
 struct ProtectStruct
 {
     /* field_0 */
@@ -721,7 +721,7 @@ struct NewBattleStruct
 	u8 IonDelugeTimer;
 	u8 TerrainType;
 	u8 TerrainTimer;
-	
+
 	//Team Counters
 	u8 SeaOfFireTimers[NUM_BATTLE_SIDES];
 	u8 SwampTimers[NUM_BATTLE_SIDES];
@@ -730,7 +730,7 @@ struct NewBattleStruct
 	u8 LuckyChantTimers[NUM_BATTLE_SIDES];
 	u8 TailwindTimers[NUM_BATTLE_SIDES];
 	u8 AuroraVeilTimers[NUM_BATTLE_SIDES];
-	
+
 	//Personal Counters
 	u8 TelekinesisTimers[MAX_BATTLERS_COUNT];
 	u8 MagnetRiseTimers[MAX_BATTLERS_COUNT];
@@ -758,7 +758,7 @@ struct NewBattleStruct
 	u8 leftoverHealingDone[MAX_BATTLERS_COUNT]; //Leftovers already restored health this turn or Sticky Barb did damage
 	u8 statFellThisTurn[MAX_BATTLERS_COUNT];
 	u8 recalculatedBestDoublesKillingScores[MAX_BATTLERS_COUNT];
-	
+
 	//Bit Fields for Banks
 	u8 MicleBerryBits;
 	u8 UnburdenBoosts;
@@ -776,11 +776,11 @@ struct NewBattleStruct
 	u8 brokeFreeMessage;
 	u8 doSwitchInEffects;
 	u8 devolveForgotMove;
-	
+
 	//Bit Fields for Party
 	u8 BelchCounters;
 	u8 IllusionBroken;
-	
+
 	//Other Helpers
 	u8 SwitchInEffectsTracker;
 	u8 SentInBackup;
@@ -804,7 +804,7 @@ struct NewBattleStruct
 	u8 switchOutBankLooper;
 	u8 originalAttackerBackup : 2;
 	u8 originalTargetBackup : 2;
-	
+
 	//Booleans
 	bool8 MoveBounceInProgress : 2;
 	bool8 moveWasBouncedThisTurn : 1;
@@ -836,7 +836,7 @@ struct NewBattleStruct
 	bool8 activatedCustapQuickClaw : 1;
 	bool8 calculatedAIPredictions : 1;
 	bool8 batonPassing : 1;
-	
+
 	//Other
 	u16 LastUsedMove;
 	u16 NewWishHealthSave;
@@ -881,7 +881,7 @@ struct TrainerSpotted {
 };
 
 struct BattleExtensionState //Clear After Battle
-{ 
+{
     struct {
         u8 count;
 		u8 approachingId;
@@ -889,7 +889,7 @@ struct BattleExtensionState //Clear After Battle
 		u8 secondTrainerNPCId;
         struct TrainerSpotted trainers[2];
     } spotted;
-	
+
     void* partyBackup;
 	pokemon_t* skyBattlePartyBackup;
 	u16* itemBackup;
@@ -899,7 +899,7 @@ struct BattleExtensionState //Clear After Battle
 	u8* trainerBCantBattleSpeech;
 	u8* trainerBRetAddress;
 	struct NewBattleStruct* newBattleStruct;
-	
+
 	u16   partnerTrainerId;
 	u16   partnerBackSpriteId;
 	u16   trainerBTrainerId;
@@ -1172,7 +1172,7 @@ bool8 LoadChosenBattleElement(u8 caseId);
 void DrawMainBattleBackground(void);
 void task00_0800F6FC(u8 taskId);
 
-enum BackSprites 
+enum BackSprites
 {
     BACK_PIC_RED,
     BACK_PIC_LEAF,
@@ -1303,7 +1303,7 @@ struct MegaData
   bool8 megaEvoInProgress : 1; //Used to tell the game whether or not the turn order should be recalculated
 };
 
-struct UltraData 
+struct UltraData
 {
   u8 chosen[4];
   u8 done[4];
@@ -1312,7 +1312,7 @@ struct UltraData
 struct ZMoveData
 {
 	u8 toBeUsed[4];
-	u8 used[4]; 
+	u8 used[4];
 	u8 partyIndex[2]; //Index of party member who used Z-Move
 	u8 effect;
 	u8 state;

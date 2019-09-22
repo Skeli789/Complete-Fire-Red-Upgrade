@@ -141,14 +141,14 @@
 //Focus Sash: Item Effect = ITEM_EFFECT_FOCUS_BAND, Item Quality = 100, Item Mystery 2 = 1
 //Power Items: Item Effect = ITEM_EFFECT_MACHO_BRACE Item Quality = See Below
 
-enum ChoiceQualities 
+enum ChoiceQualities
 {
 	QUALITY_CHOICE_BAND,	//0
 	QUALITY_CHOICE_SPECS,	//1
 	QUALITY_CHOICE_SCARF,	//2
 };
 
-enum OrbQualities 
+enum OrbQualities
 {
 	QUALITY_RED_ORB,		//0
 	QUALITY_BLUE_ORB,		//1

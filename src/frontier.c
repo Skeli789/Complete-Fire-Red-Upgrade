@@ -6,7 +6,7 @@
 #include "../include/script.h"
 
 #include "../include/new/build_pokemon.h"
-#include "../include/new/Helper_Functions.h"
+#include "../include/new/util.h"
 #include "../include/new/frontier.h"
 #include "../include/new/mega.h"
 #include "../include/new/pokemon_storage_system.h"
@@ -208,7 +208,7 @@ const u8* const sBattleCircusEffectDescriptions[] =
 static u8 AdjustLevelForTier(u8 level, u8 tier);
 static void LoadProperStreakData(u8* currentOrMax, u8* battleStyle, u8* tier, u8* partySize, u8* level);
 
-u8 GetFrontierTrainerClassId(u16 trainerId, u8 battlerNum) 
+u8 GetFrontierTrainerClassId(u16 trainerId, u8 battlerNum)
 {
 	switch (trainerId) {
 		case BATTLE_TOWER_TID:
@@ -221,24 +221,24 @@ u8 GetFrontierTrainerClassId(u16 trainerId, u8 battlerNum)
 			return gFrontierMultiBattleTrainers[VarGet(TOWER_TRAINER_ID_PARTNER_VAR)].trainerClass;
 		default:
 			return gTrainers[trainerId].trainerClass;
-	}	
+	}
 }
 
 void CopyFrontierTrainerName(u8* dst, u16 trainerId, u8 battlerNum)
 {
 	int i;
 	const u8* name = GetFrontierTrainerName(trainerId, battlerNum);
-	
+
 	for (i = 0; name[i] != EOS; ++i)
 		dst[i] = name[i];
-		
+
 	dst[i] = EOS;
 }
 
 const u8* GetFrontierTrainerName(u16 trainerId, u8 battlerNum)
 {
 	const u8* name;
-	
+
 	switch (trainerId) {
 		case BATTLE_TOWER_TID: ;
 			u16 nameId = (battlerNum == 0) ? VarGet(BATTLE_TOWER_TRAINER1_NAME) : VarGet(BATTLE_TOWER_TRAINER2_NAME);
@@ -247,7 +247,7 @@ const u8* GetFrontierTrainerName(u16 trainerId, u8 battlerNum)
 			{
 				if (nameId == 0xFFFF)
 					nameId = Random() % NUM_MALE_NAMES;
-				
+
 				name = gMaleFrontierNamesTable[nameId];
 			}
 			else
@@ -257,7 +257,7 @@ const u8* GetFrontierTrainerName(u16 trainerId, u8 battlerNum)
 
 				name = gFemaleFrontierNamesTable[nameId];
 			}
-			
+
 			if (battlerNum == 0)
 				VarSet(BATTLE_TOWER_TRAINER1_NAME, nameId);
 			else
@@ -272,7 +272,7 @@ const u8* GetFrontierTrainerName(u16 trainerId, u8 battlerNum)
 		case BATTLE_TOWER_MULTI_TRAINER_TID: ;
 			u16 partnerId = VarGet(TOWER_TRAINER_ID_PARTNER_VAR);
 			name = TryGetRivalNameByTrainerClass(gFrontierMultiBattleTrainers[partnerId].trainerClass);
-			
+
 			if (name == NULL) //Rival name isn't tied to a trainer class
 				name = gFrontierMultiBattleTrainers[partnerId].name;
 			break;
@@ -291,11 +291,11 @@ void CopyFrontierTrainerText(u8 whichText, u16 trainerId, u8 battlerNum)
 				case FRONTIER_BEFORE_TEXT:
 					StringCopy(gStringVar4, (gTowerTrainers[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].preBattleText));
 					break;
-			
+
 				case FRONTIER_PLAYER_LOST_TEXT:
 					StringCopy(gStringVar4, (gTowerTrainers[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].playerLoseText));
 					break;
-			
+
 				case FRONTIER_PLAYER_WON_TEXT:
 					StringCopy(gStringVar4, (gTowerTrainers[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].playerWinText));
 			}
@@ -305,11 +305,11 @@ void CopyFrontierTrainerText(u8 whichText, u16 trainerId, u8 battlerNum)
 				case FRONTIER_BEFORE_TEXT:
 					StringCopy(gStringVar4, (gSpecialTowerTrainers[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].preBattleText));
 					break;
-			
+
 				case FRONTIER_PLAYER_LOST_TEXT:
 					StringCopy(gStringVar4, (gSpecialTowerTrainers[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].playerLoseText));
 					break;
-			
+
 				case FRONTIER_PLAYER_WON_TEXT:
 					StringCopy(gStringVar4, (gSpecialTowerTrainers[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].playerWinText));
 			}
@@ -321,21 +321,21 @@ void CopyFrontierTrainerText(u8 whichText, u16 trainerId, u8 battlerNum)
 					if (gFrontierBrains[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].preBattleText != NULL)
 						StringCopy(gStringVar4, gFrontierBrains[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].preBattleText);
 					break;
-			
+
 				case FRONTIER_PLAYER_LOST_TEXT:
 					if (gFrontierBrains[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].playerLoseText != NULL)
 						StringCopy(gStringVar4, (gFrontierBrains[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].playerLoseText));
 					else //Frontier Brain text can be loaded from the OW
 						StringCopy(gStringVar4, GetTrainerAWinText());
 					break;
-			
+
 				case FRONTIER_PLAYER_WON_TEXT:
 					if (gFrontierBrains[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].playerWinText != NULL)
 						StringCopy(gStringVar4, (gFrontierBrains[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].playerWinText));
 					else //Frontier Brain text can be loaded from the OW
 						StringCopy(gStringVar4, GetTrainerALoseText());
 			}
-			break;		
+			break;
 	}
 }
 
@@ -384,7 +384,7 @@ bool8 IsFrontierSingles(u8 battleType)
 bool8 IsFrontierDoubles(u8 battleType)
 {
 	return battleType == BATTLE_TOWER_DOUBLE
-		|| battleType == BATTLE_TOWER_DOUBLE_RANDOM; 
+		|| battleType == BATTLE_TOWER_DOUBLE_RANDOM;
 }
 
 bool8 IsFrontierMulti(u8 battleType)
@@ -397,7 +397,7 @@ bool8 IsFrontierMulti(u8 battleType)
 bool8 IsRandomBattleTowerBattle()
 {
 	u8 battleType = VarGet(BATTLE_TOWER_BATTLE_TYPE);
-	
+
 	return battleType == BATTLE_TOWER_SINGLE_RANDOM
 		|| battleType == BATTLE_TOWER_DOUBLE_RANDOM
 		|| battleType == BATTLE_TOWER_MULTI_RANDOM;
@@ -408,7 +408,7 @@ bool8 IsGSCupBattle()
 	u8 battleType = VarGet(BATTLE_TOWER_BATTLE_TYPE);
 
 	return (IsFrontierDoubles(battleType) || IsFrontierMulti(battleType))
-	    &&  VarGet(BATTLE_TOWER_TIER) == BATTLE_TOWER_GS_CUP;
+		&&  VarGet(BATTLE_TOWER_TIER) == BATTLE_TOWER_GS_CUP;
 }
 
 bool8 DuplicateItemsAreBannedInTier(u8 tier, u8 battleType)
@@ -417,14 +417,14 @@ bool8 DuplicateItemsAreBannedInTier(u8 tier, u8 battleType)
 	||  IsMiddleCupTier(tier)
 	||  tier == BATTLE_TOWER_MEGA_BRAWL)
 		return TRUE;
-		
+
 	return !IsFrontierSingles(battleType) && tier == BATTLE_TOWER_GS_CUP;
 }
 
 bool8 RayquazaCanMegaEvolveInFrontierBattle()
 {
 	return IsGSCupBattle()
-	    || VarGet(BATTLE_TOWER_TIER) == BATTLE_TOWER_NO_RESTRICTIONS
+		|| VarGet(BATTLE_TOWER_TIER) == BATTLE_TOWER_NO_RESTRICTIONS
 		|| IsScaleMonsBattle();
 }
 
@@ -454,7 +454,7 @@ u8 GetCamomonsTypeByMon(struct Pokemon* mon, u8 whichType)
 		u16 move2 = GetMonData(mon, MON_DATA_MOVE2, NULL);
 		if (move2 != MOVE_NONE)
 			return gBattleMoves[move2].type;
-		
+
 		return gBattleMoves[GetMonData(mon, MON_DATA_MOVE1, NULL)].type;
 	}
 }
@@ -469,7 +469,7 @@ u8 GetCamomonsTypeBySpread(const struct BattleTowerSpread* spread, u8 whichType)
 	{
 		if (spread->moves[1] != MOVE_NONE)
 			return gBattleMoves[spread->moves[1]].type;
-		
+
 		return gBattleMoves[spread->moves[0]].type;
 	}
 }
@@ -483,10 +483,10 @@ bool8 TryUpdateOutcomeForFrontierBattle(void)
 {
 	u32 i;
 	u32 playerHPCount, enemyHPCount;
-	
+
 	if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
 	{
-	 
+
 		for (playerHPCount = 0, i = 0; i < PARTY_SIZE; ++i)
 		{
 			if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES, NULL) != SPECIES_NONE
@@ -512,7 +512,7 @@ bool8 TryUpdateOutcomeForFrontierBattle(void)
 			else
 				gBattleOutcome |= B_OUTCOME_LOST;
 		}
-	
+
 		gBattlescriptCurrInstr += 5;
 		return TRUE;
 	}
@@ -557,7 +557,7 @@ bool8 IsLittleCupTier(u8 tier)
 {
 	return tier == BATTLE_TOWER_LITTLE_CUP || tier == BATTLE_TOWER_LC_CAMOMONS;
 }
- 
+
 bool8 IsMiddleCupTier(u8 tier)
 {
 	return tier == BATTLE_TOWER_MIDDLE_CUP || tier == BATTLE_TOWER_MC_CAMOMONS;
@@ -603,12 +603,12 @@ u16 sp052_GenerateTowerTrainer(void)
 {
 	u8 battler = Var8000;
 	u16 id = Random();
-	
+
 	if (Var8001 == 0)
 	{
 		id %= NUM_TOWER_TRAINERS;
 		VarSet(TOWER_TRAINER_ID_VAR + battler, id);
-		
+
 		if (gTowerTrainers[id].gender == BATTLE_TOWER_MALE)
 		{
 			if (battler == 0)
@@ -623,7 +623,7 @@ u16 sp052_GenerateTowerTrainer(void)
 			else
 				VarSet(BATTLE_TOWER_TRAINER2_NAME, Random() % NUM_FEMALE_NAMES);
 		}
-		
+
 		StringCopy(gStringVar1, GetFrontierTrainerName(BATTLE_TOWER_TID, battler));
 		return gTowerTrainers[id].owNum;
 	}
@@ -660,7 +660,7 @@ void sp053_LoadFrontierIntroBattleMessage(void)
 {
 	u8 gender;
 	u16 id = VarGet(TOWER_TRAINER_ID_VAR + Var8000);
-	
+
 	const u8* text;
 	if (Var8001 == 0)
 	{
@@ -677,9 +677,9 @@ void sp053_LoadFrontierIntroBattleMessage(void)
 		text = gFrontierBrains[id].preBattleText;
 		gender = gFrontierBrains[id].gender;
 	}
-	
+
 	gLoadPointer = text;
-	
+
 	//Change text colour
 	if (gender == BATTLE_TOWER_MALE)
 	{
@@ -727,18 +727,18 @@ u16 GetMaxBattleTowerStreakForTier(u8 tier)
 	u8 battleType, level, partySize;
 	u16 streak = 0;
 	u16 max = 0;
-	
+
 	for (battleType = 0; battleType < NUM_TOWER_BATTLE_TYPES; ++battleType)
 	{
-		for (level = 50; level <= 100; level += 50) 
+		for (level = 50; level <= 100; level += 50)
 		{
 			for (partySize = 3; partySize <= 6; partySize += 3) //3 represents one record, 6 represents another
 			{
 				streak = GetBattleTowerStreak(MAX_STREAK, battleType, tier, partySize, level);
-				
+
 				if (streak > max)
 					max = streak;
-			}	
+			}
 		}
 	}
 
@@ -749,7 +749,7 @@ static u8 AdjustLevelForTier(u8 level, u8 tier)
 {
 	if (IsLittleCupTier(tier))
 		return 5;
-		
+
 	if (tier == BATTLE_TOWER_MONOTYPE)
 		return 100;
 
@@ -760,12 +760,12 @@ u16 GetBattleTowerStreak(u8 currentOrMax, u16 inputBattleStyle, u16 inputTier, u
 {
 	u8 battleStyle = (inputBattleStyle == 0xFFFF) ? VarGet(BATTLE_TOWER_BATTLE_TYPE) : inputBattleStyle;
 	u8 tier = (inputTier == 0xFFFF) ? VarGet(BATTLE_TOWER_TIER) : inputTier;
-	u8 size = (partySize == 0xFFFF) ? VarGet(BATTLE_TOWER_POKE_NUM) : partySize;	
+	u8 size = (partySize == 0xFFFF) ? VarGet(BATTLE_TOWER_POKE_NUM) : partySize;
 	level = (level == 0) ? VarGet(BATTLE_TOWER_POKE_LEVEL) : level;
 	level = AdjustLevelForTier(level, tier);
-	
+
 	LoadProperStreakData(&currentOrMax, &battleStyle, &tier, &size, &level);
-	
+
 	switch (BATTLE_FACILITY_NUM) {
 		case IN_BATTLE_TOWER:
 		default:
@@ -792,9 +792,9 @@ void sp055_UpdateBattleTowerStreak(void)
 	u8 level = AdjustLevelForTier(VarGet(BATTLE_TOWER_POKE_LEVEL), tier);
 	LoadProperStreakData(&dummy, &battleStyle, &tier, &partySize, &level);
 
-	u16* currentStreak, *maxStreak; 
+	u16* currentStreak, *maxStreak;
 	bool8 inBattleSands = FALSE;
-	
+
 	switch (BATTLE_FACILITY_NUM) {
 		case IN_BATTLE_TOWER:
 		default:
@@ -815,16 +815,16 @@ void sp055_UpdateBattleTowerStreak(void)
 			maxStreak = &gBattleCircusStreaks[tier][battleStyle][partySize][level][MAX_STREAK]; //Max Streak
 			break;
 	}
-	
+
 	switch (Var8000) {
 		case 0:
 			if (*currentStreak < 0xFFFF) //Prevent overflow
 				*currentStreak += 1;
-			
+
 			if (*maxStreak < *currentStreak)
 			{
 				*maxStreak = *currentStreak;
-				
+
 				if (inBattleSands)
 				{
 					gBattleSandsStreaks[MAX_STREAK].tier = VarGet(BATTLE_TOWER_TIER); //Actual Tier
@@ -837,7 +837,7 @@ void sp055_UpdateBattleTowerStreak(void)
 				}
 			}
 			break;
-			
+
 		case 1:
 			*currentStreak = 0; //Rest current streak
 
@@ -855,7 +855,7 @@ void sp055_UpdateBattleTowerStreak(void)
 	}
 }
 
-//@Details: Determines the number of battle points to give for 
+//@Details: Determines the number of battle points to give for
 //			the current Battle Tower format.
 //@Returns: The number of battle points to give.
 u16 sp056_DetermineBattlePointsToGive(void)
@@ -876,16 +876,16 @@ u16 sp056_DetermineBattlePointsToGive(void)
 				if (VarGet(BATTLE_TOWER_TIER) != BATTLE_TOWER_MONOTYPE)
 					toGive = 20; //Battle against frontier brain
 				break;
-				
+
 			case IN_BATTLE_SANDS:
 				if (VarGet(BATTLE_TOWER_TIER) != BATTLE_TOWER_MONOTYPE)
 					toGive = 20; //Battle against frontier brain
 				break;
-				
+
 			case IN_BATTLE_MINE:
 				toGive = 20; //Always battle against frontier brain
 				break;
-				
+
 			case IN_BATTLE_CIRCUS:
 				if (VarGet(BATTLE_TOWER_TIER) != BATTLE_TOWER_MONOTYPE)
 					toGive = 20; //Battle against frontier brain
@@ -907,16 +907,16 @@ u16 sp056_DetermineBattlePointsToGive(void)
 				if (VarGet(BATTLE_TOWER_TIER) != BATTLE_TOWER_MONOTYPE)
 					toGive = 50; //Battle against frontier brain
 				break;
-				
+
 			case IN_BATTLE_SANDS:
 				if (VarGet(BATTLE_TOWER_TIER) != BATTLE_TOWER_MONOTYPE)
 					toGive = 50; //Battle against frontier brain
 				break;
-				
+
 			case IN_BATTLE_MINE:
 				toGive = 50; //Always battle against frontier brain
 				break;
-				
+
 			case IN_BATTLE_CIRCUS:
 				if (VarGet(BATTLE_TOWER_TIER) != BATTLE_TOWER_MONOTYPE)
 					toGive = 50; //Battle against frontier brain
@@ -933,7 +933,7 @@ u16 sp056_DetermineBattlePointsToGive(void)
 		toGive = 100;
 	else
 		toGive = 10;
-		
+
 	return toGive;
 }
 
@@ -967,7 +967,7 @@ static void LoadProperStreakData(u8* currentOrMax, u8* battleStyle, u8* tier, u8
 					break;
 				}
 			}
-			
+
 			if (i == gNumBattleCircusTiers)
 				*tier = 0;
 			break;
@@ -996,7 +996,7 @@ void sp06C_SpliceFrontierTeamWithPlayerTeam(void)
 
 	RestorePartyFromTempTeam(0, 0, 3);
 	Memcpy(&gPlayerParty[3], partnerPokes, sizeof(struct Pokemon) * 3); //Fill second half of team with multi mons
-	
+
 	//Recalculate party count the special way because there may be a gap in the party
 	gPlayerPartyCount = 0;
 	for (int i = 0; i < PARTY_SIZE; ++i)
@@ -1015,7 +1015,7 @@ void sp06C_SpliceFrontierTeamWithPlayerTeam(void)
 u16 sp06D_LoadFrontierMultiTrainerById(void)
 {
 	u16 id = Var8000;
-	
+
 	if (id == 0xFF)
 		id = Random() % gNumFrontierMultiTrainers;
 	else if (id > 0xFF) //Invalid value
@@ -1097,18 +1097,18 @@ void sp06F_CanTeamParticipateInBattleMine(void)
 	for (i = 0; i < PARTY_SIZE; ++i)
 	{
 		struct Pokemon* mon = &gPlayerParty[i];
-	
+
 		if (GetMonData(mon, MON_DATA_SPECIES, NULL) == SPECIES_NONE
 		||  GetMonData(mon, MON_DATA_IS_EGG, NULL))
 			return;
-			
+
 		for (j = 0, tier = tiers[j]; j < numTiers; ++j, tier = tiers[j]) //Check every tier in requested format
 		{
 			if (IsMonBannedInTier(mon, tier))
 				return;
 		}
 	}
-	
+
 	VarSet(BATTLE_TOWER_TIER, BATTLE_MINE_FORMAT_1 + MathMin(choice, 2));
 	gSpecialVar_LastResult = TRUE;
 }
@@ -1123,7 +1123,7 @@ void sp06F_CanTeamParticipateInBattleMine(void)
 u8 sp070_RandomizeBattleMineBattleOptions(void)
 {
 	u8 format, tier, level, partySize, inverse;
-	
+
 	u8 originalTier = VarGet(BATTLE_TOWER_TIER);
 	const u8* tiers = originalTier == BATTLE_MINE_FORMAT_1 ? gBattleMineFormat1Tiers
 					: originalTier == BATTLE_MINE_FORMAT_2 ? gBattleMineFormat2Tiers
@@ -1191,13 +1191,13 @@ u8 sp070_RandomizeBattleMineBattleOptions(void)
 			break;
 		case 11 ... 39:
 			partySize = Random() % (PARTY_SIZE - 1) + 2; //2v2 - 6v6
-			
+
 			if (partySize == 2 && !IsFrontierSingles(format))
 				partySize = 3; //3v3
 			break;
 		default:
 			partySize = Random() % PARTY_SIZE + 1; //1v1 - 6v6
-			
+
 			if (partySize == 1 && !IsFrontierSingles(format))
 				partySize = 2; //2v2
 	}
@@ -1210,14 +1210,14 @@ u8 sp070_RandomizeBattleMineBattleOptions(void)
 		default:
 			inverse = Random() & TRUE;
 	}
-	
+
 	VarSet(BATTLE_TOWER_POKE_LEVEL, level);
 	VarSet(BATTLE_TOWER_BATTLE_TYPE, format);
 	VarSet(BATTLE_TOWER_TIER, tier);
 	VarSet(BATTLE_TOWER_POKE_NUM, partySize);
 	if (inverse)
 		FlagSet(INVERSE_FLAG);
-		
+
 	StringCopy(gStringVar7, GetFrontierTierName(tier, format));
 	StringCopy(gStringVar8, gBattleFrontierFormats[format]);
 	ConvertIntToDecimalStringN(gStringVar9, level, 0, 3);
@@ -1280,7 +1280,7 @@ void sp072_LoadBattleCircusEffects(void)
 	{
 		if (gBattleCircusFlags & gBitTable[i])
 			++numActive;
-	
+
 		if (gBitTable[i] == LAST_BATTLE_CIRCUS_FLAG)
 			break;
 	}
@@ -1350,7 +1350,7 @@ void sp072_LoadBattleCircusEffects(void)
 				weather = WEATHER_STEADY_SNOW;
 			else if (gBitTable[effectNum] == BATTLE_CIRCUS_FOG)
 				weather = WEATHER_FOG_2;
-				
+
 			SetSav1Weather(weather); //Followed up by a doweather in the script
 		}
 

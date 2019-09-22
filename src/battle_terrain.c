@@ -10,7 +10,7 @@
 #include "../include/new/battle_terrain.h"
 #include "../include/new/dns.h"
 #include "../include/new/overworld.h"
-#include "../include/new/Helper_Functions.h"
+#include "../include/new/util.h"
 
 #define gBattleTerrainTable ((struct BattleBackground*) *((u32*) 0x800F320))
 #ifdef UNBOUND
@@ -26,16 +26,16 @@ static u8 TryLoadAlternateAreaTerrain(u8 terrain);
 
 u8 BattleSetup_GetTerrainId(void)
 {
-    u16 tileBehavior;
-    s16 x, y;
+	u16 tileBehavior;
+	s16 x, y;
 	u8 terrain = BATTLE_TERRAIN_PLAIN;
 
-    PlayerGetDestCoords(&x, &y);
-    tileBehavior = MapGridGetMetatileBehaviorAt(x, y);
+	PlayerGetDestCoords(&x, &y);
+	tileBehavior = MapGridGetMetatileBehaviorAt(x, y);
 
 	if (VarGet(BATTLE_BG_VAR))
 		terrain = VarGet(BATTLE_BG_VAR);
-	
+
 	else
 	{
 		//Maybe add check for fishing byte?
@@ -56,7 +56,7 @@ u8 BattleSetup_GetTerrainId(void)
 			terrain = BATTLE_TERRAIN_SAND;
 		else if (MetatileBehavior_IsMountain(tileBehavior))
 			terrain = BATTLE_TERRAIN_MOUNTAIN;
-		
+
 		#ifdef BRIDGE_FIX
 			else if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
 			{
@@ -76,10 +76,10 @@ u8 BattleSetup_GetTerrainId(void)
 			case MAP_TYPE_UNDERGROUND:
 				if (MetatileBehavior_IsIndoorEncounter(tileBehavior))
 				{
-					terrain = BATTLE_TERRAIN_INSIDE; 
+					terrain = BATTLE_TERRAIN_INSIDE;
 					break;
 				}
-				
+
 				#ifdef UNBOUND
 					terrain = BATTLE_TERRAIN_CAVE;
 				#else
@@ -89,16 +89,16 @@ u8 BattleSetup_GetTerrainId(void)
 						terrain = BATTLE_TERRAIN_CAVE;
 				#endif
 				break;
-				
+
 			case MAP_TYPE_INDOOR:
 			case MAP_TYPE_SECRET_BASE:
 				terrain = BATTLE_TERRAIN_INSIDE;
 				break;
-				
+
 			case MAP_TYPE_UNDERWATER:
 				terrain = BATTLE_TERRAIN_UNDERWATER;
 				break;
-				
+
 			case MAP_TYPE_6:
 				if (MetatileBehavior_IsSurfableWaterOrUnderwater(tileBehavior))
 					terrain = BATTLE_TERRAIN_WATER;
@@ -106,9 +106,9 @@ u8 BattleSetup_GetTerrainId(void)
 					terrain = BATTLE_TERRAIN_PLAIN;
 		}
 	}
-		
+
 	terrain = TryLoadAlternateAreaTerrain(terrain); //Loads special BG's if you're surfing
-    return terrain;
+	return terrain;
 }
 
 u8 LoadBattleBG_TerrainID(void) {
@@ -167,7 +167,7 @@ u8 LoadBattleBG_TerrainID(void) {
 		else
 			terrain = gBattleTerrain;
 	}
-	
+
 	terrain = TryLoadAlternateAreaTerrain(terrain);
 
 	return terrain;
@@ -176,22 +176,22 @@ u8 LoadBattleBG_TerrainID(void) {
 void DrawBattleEntryBackground(void)
 {
   /*  if (gBattleTypeFlags & BATTLE_TYPE_LINK)
-    {
-        LZDecompressVram(gUnknown_08E7737C, (void*)(BG_CHAR_ADDR(1)));
-        LZDecompressVram(gUnknown_08E77598, (void*)(VRAM + 0x10000));
-        LoadCompressedPalette(gUnknown_08E77570, 0x60, 0x20);
-        SetBgAttribute(1, BG_ATTR_SCREENSIZE, 1);
-        SetGpuReg(REG_OFFSET_BG1CNT, 0x5C04);
-        CopyToBgTilemapBuffer(1, gUnknown_08E77464, 0, 0);
-        CopyToBgTilemapBuffer(2, gUnknown_08E77464, 0, 0);
-        CopyBgTilemapBufferToVram(1);
-        CopyBgTilemapBufferToVram(2);
-        SetGpuReg(REG_OFFSET_WININ, 0x36);
-        SetGpuReg(REG_OFFSET_WINOUT, 0x36);
-        gBattle_BG1_Y = 0xFF5C;
-        gBattle_BG2_Y = 0xFF5C;
-        LoadCompressedSpriteSheetUsingHeap(&gUnknown_08248318);
-    }
+	{
+		LZDecompressVram(gUnknown_08E7737C, (void*)(BG_CHAR_ADDR(1)));
+		LZDecompressVram(gUnknown_08E77598, (void*)(VRAM + 0x10000));
+		LoadCompressedPalette(gUnknown_08E77570, 0x60, 0x20);
+		SetBgAttribute(1, BG_ATTR_SCREENSIZE, 1);
+		SetGpuReg(REG_OFFSET_BG1CNT, 0x5C04);
+		CopyToBgTilemapBuffer(1, gUnknown_08E77464, 0, 0);
+		CopyToBgTilemapBuffer(2, gUnknown_08E77464, 0, 0);
+		CopyBgTilemapBufferToVram(1);
+		CopyBgTilemapBufferToVram(2);
+		SetGpuReg(REG_OFFSET_WININ, 0x36);
+		SetGpuReg(REG_OFFSET_WINOUT, 0x36);
+		gBattle_BG1_Y = 0xFF5C;
+		gBattle_BG2_Y = 0xFF5C;
+		LoadCompressedSpriteSheetUsingHeap(&gUnknown_08248318);
+	}
 	else*/
 	{
 		u8 terrain = LoadBattleBG_TerrainID();
@@ -209,7 +209,7 @@ void LoadBattleBG_Background(u8 terrainId) {
 		LoadCompressedPalette(gAttackTerrainTable[TerrainType - 1].palette, 0x20, 0x60);
 		return;
 	}
-	
+
 	#ifdef UNBOUND //Load different BGs depending on time of day
 		u8 mapType = GetCurrentMapType();
 		if (!IsMapTypeIndoors(mapType) && IsMapTypeOutdoors(mapType))
@@ -220,11 +220,11 @@ void LoadBattleBG_Background(u8 terrainId) {
 				table = gBattleTerrainTableEvening;
 		}
 	#endif
-	
+
 	LZDecompressVram(table[terrainId].tileset, (void*) 0x6008000);
 	LZDecompressVram(table[terrainId].tilemap, (void*) 0x600d000);
 	LoadCompressedPalette(table[terrainId].palette, 0x20, 0x60);
-	
+
 	#ifdef DNS_IN_BATTLE
 		DNSBattleBGPalFade();
 	#endif
@@ -244,19 +244,19 @@ static void LoadBattleBG_EntryOverlay(u8 terrainId)
 			table = gBattleTerrainTableEvening;
 	}
 	#endif
-	
-    LZDecompressVram(table[terrainId].entryTileset, (void*) 0x6004000);
-    LZDecompressVram(table[terrainId].entryTilemap, (void*) 0x600E000);
+
+	LZDecompressVram(table[terrainId].entryTileset, (void*) 0x6004000);
+	LZDecompressVram(table[terrainId].entryTilemap, (void*) 0x600E000);
 }
 
 static u8 TryLoadAlternateAreaTerrain(u8 terrain)
 {
 #ifdef UNBOUND
-    u16 tileBehavior;
-    s16 x, y;
+	u16 tileBehavior;
+	s16 x, y;
 
-    PlayerGetDestCoords(&x, &y);
-    tileBehavior = MapGridGetMetatileBehaviorAt(x, y);
+	PlayerGetDestCoords(&x, &y);
+	tileBehavior = MapGridGetMetatileBehaviorAt(x, y);
 
 	if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
 	{
@@ -278,7 +278,7 @@ static u8 TryLoadAlternateAreaTerrain(u8 terrain)
 				break;
 		}
 	}
-		
+
 	if (terrain == BATTLE_TERRAIN_SNOW_CAVE
 	&&  MetatileBehavior_IsIce(tileBehavior))
 		terrain = BATTLE_TERRAIN_ICE_IN_CAVE;
@@ -301,18 +301,18 @@ static u8 TryLoadAlternateAreaTerrain(u8 terrain)
 
 bool8 MetatileBehavior_IsIce(u8 metatileBehavior)
 {
-    if (metatileBehavior == MB_ICE
+	if (metatileBehavior == MB_ICE
 	||  metatileBehavior == MB_THIN_ICE
 	||  metatileBehavior == MB_CRACKED_ICE)
-        return TRUE;
-    else
-        return FALSE;
+		return TRUE;
+	else
+		return FALSE;
 }
 
 bool8 IsTerrainMoveIndoors(void)
 {
 	if (gBattleTypeFlags & (BATTLE_TYPE_FRONTIER | BATTLE_TYPE_LINK | BATTLE_TYPE_TRAINER_TOWER | BATTLE_TYPE_EREADER_TRAINER))
 		return TRUE;
-	
+
 	return FALSE;
 }

@@ -8,7 +8,7 @@
  *		  when the Pokemon switches out, and effects when a new Pokemon switches in. It also
  *		  includes code for Baton Pass.
  */
- 
+
 //Exported Functions
 bool8 HasNoMonsToSwitch(u8 battler);
 bool8 TryRemovePrimalWeather(u8 bank, u8 ability);

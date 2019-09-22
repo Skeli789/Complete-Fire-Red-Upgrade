@@ -7,13 +7,13 @@
  * \brief Contains functions relating to the user's input being read in. This can be
  *		  used to set up a script to launch when the user presses certain keys.
  */
- 
+
 //Functions Hooked In
 void ReadKeys(void);
 
 //Exported Data Structures
 // keypad struct
-struct KeypadSetter 
+struct KeypadSetter
 {
 	/*0x0*/u16 keyMapToForce;	// key(s) to force
 	/*0x2*/u16 keysToIgnore;		// key(s) to ignore

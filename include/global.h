@@ -170,7 +170,7 @@ enum
     POCKET_TM_HM,
     POCKET_BERRIES
 };
-	
+
 
 struct Coords16
 {
@@ -734,7 +734,7 @@ extern u8 gReservedSpritePaletteCount;
 struct BrmData {
 	MainCallback exitCallback;	//0x0-0x3
 	u32 unk4;			//0x4-0x7
-	u8 unk8_0:4;			//0x8		
+	u8 unk8_0:4;			//0x8
     u8 mode:2;
     u8 unk8_2:2;
     s8 selectedPoke;		//0x9

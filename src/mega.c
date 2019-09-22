@@ -5,7 +5,7 @@
 #include "../include/constants/trainer_classes.h"
 
 #include "../include/new/battle_util.h"
-#include "../include/new/Helper_Functions.h"
+#include "../include/new/util.h"
 #include "../include/new/form_change.h"
 #include "../include/new/frontier.h"
 #include "../include/new/item.h"
@@ -21,9 +21,9 @@ static item_t FindTrainerKeystone(u16 trainerId);
 static item_t FindPlayerKeystone(void);
 static item_t FindBankKeystone(u8 bank);
 
-static const item_t sKeystoneTable[] = 
+static const item_t sKeystoneTable[] =
 {
-    ITEM_MEGA_RING,
+	ITEM_MEGA_RING,
 };
 
 const struct Evolution* CanMegaEvolve(u8 bank, bool8 CheckUBInstead)
@@ -31,27 +31,27 @@ const struct Evolution* CanMegaEvolve(u8 bank, bool8 CheckUBInstead)
 	#ifndef MEGA_EVOLUTION_FEATURE
 		return NULL;
 	#else
-	
+
 	if (!CheckUBInstead && !MegaEvolutionEnabled(bank)) //Ultra Burst doesn't need Mega Ring
 		return NULL;
-	
+
 	pokemon_t* mon = GetBankPartyData(bank);
 	const struct Evolution* evolutions = gEvolutionTable[mon->species];
 	int i, j;
-	
+
 	for (i = 0; i < EVOS_PER_MON; ++i)
 	{
 		if (evolutions[i].method == EVO_MEGA)
 		{
 			//Ignore reversion information
 			if (evolutions[i].param == 0) continue;
-			
+
 			//Check for held item
 			if ((!CheckUBInstead && evolutions[i].unknown == MEGA_VARIANT_STANDARD) || (CheckUBInstead && evolutions[i].unknown == MEGA_VARIANT_ULTRA_BURST))
 			{
 				if (evolutions[i].param == mon->item)
-					return &evolutions[i];	
-			} 
+					return &evolutions[i];
+			}
 			else if (evolutions[i].unknown == MEGA_VARIANT_WISH && !CheckUBInstead
 			&& !IsZCrystal(mon->item)) //If Mega Rayquaza holds a Z-Crystal it can't Mega Evolve
 			{
@@ -68,7 +68,7 @@ const struct Evolution* CanMegaEvolve(u8 bank, bool8 CheckUBInstead)
 			}
 		}
 	}
-	
+
 	return NULL;
 	#endif
 }
@@ -79,25 +79,25 @@ species_t GetMegaSpecies(u16 species, u16 item)
 	#ifndef MEGA_EVOLUTION_FEATURE
 		return SPECIES_NONE;
 	#else
-	
+
 	const struct Evolution* evolutions = gEvolutionTable[species];
 	int i;
-	
+
 	for (i = 0; i < EVOS_PER_MON; ++i) {
 		if (evolutions[i].method == EVO_MEGA)
 		{
 			//Ignore reversion information
 			if (evolutions[i].param == 0) continue;
-			
+
 			//Check for held item
 			if (evolutions[i].unknown == MEGA_VARIANT_STANDARD)
 			{
 				if (evolutions[i].param == item)
-					return evolutions[i].targetSpecies;	
+					return evolutions[i].targetSpecies;
 			}
 		}
 	}
-	
+
 	return SPECIES_NONE;
 	#endif
 }
@@ -120,7 +120,7 @@ ability_t GetBankMegaFormAbility(u8 bank)
 			return gBaseStats[evos->targetSpecies].ability1; //Ultra Necrozma only has 1 ability
 		}
 	}
-	
+
 	return ABILITY_NONE;
 }
 
@@ -128,10 +128,10 @@ const u8* DoMegaEvolution(u8 bank)
 {
 	struct Pokemon* mon = GetBankPartyData(bank);
 	const struct Evolution* evolutions = CanMegaEvolve(bank, FALSE);
-	
+
 	if (evolutions == NULL) //Check Ultra Burst if no Mega
 		evolutions = CanMegaEvolve(bank, TRUE);
-	
+
 	if (evolutions != NULL)
 	{
 		u16 species = mon->species;
@@ -139,11 +139,11 @@ const u8* DoMegaEvolution(u8 bank)
 
 		gBattleScripting->bank = bank;
 		gLastUsedItem = mon->item;
-		
+
 		//FD 00's FD 16 FE is reacting to FD 04's FD 01!
 		PREPARE_SPECIES_BUFFER(gBattleTextBuff1, species);
 		PREPARE_ITEM_BUFFER(gBattleTextBuff2, FindBankKeystone(bank));
-		
+
 		if (evolutions->unknown == MEGA_VARIANT_WISH)
 			return BattleScript_MegaWish;
 		else if (evolutions->unknown == MEGA_VARIANT_ULTRA_BURST)
@@ -182,8 +182,8 @@ const u8* DoPrimalReversion(u8 bank, u8 caseId)
 //In theory, this function will do nothing as the regular forms revert should
 //should take care of the reversion. This is to prevent bugs if the player
 //gives themselves a Mega or Primal to start the battle.
-void MegaRevert(pokemon_t* party) 
-{			  
+void MegaRevert(pokemon_t* party)
+{
 	int i;
 
 	for (i = 0; i < PARTY_SIZE; ++i)
@@ -194,7 +194,7 @@ void TryRevertMega(pokemon_t* mon)
 {
 	const struct Evolution* evolutions = gEvolutionTable[mon->species];
 
-	for (u8 i = 0; i < EVOS_PER_MON; ++i) 
+	for (u8 i = 0; i < EVOS_PER_MON; ++i)
 	{
 		if (evolutions[i].method == EVO_MEGA && evolutions[i].param == 0)
 		{
@@ -206,54 +206,54 @@ void TryRevertMega(pokemon_t* mon)
 
 static bool8 IsItemKeystone(u16 item)
 {
-    for (u8 i = 0; i < ARRAY_COUNT(sKeystoneTable); ++i)
+	for (u8 i = 0; i < ARRAY_COUNT(sKeystoneTable); ++i)
 	{
 		if (item == sKeystoneTable[i])
 			return TRUE;
-    }
-    return FALSE;
+	}
+	return FALSE;
 }
 
 static item_t FindTrainerKeystone(u16 trainerId)
 {
 	if (gBattleTypeFlags & (BATTLE_TYPE_FRONTIER | BATTLE_TYPE_LINK))
 		return ITEM_MEGA_RING;
-		
-    for (u8 i = 0; i < TRAINER_ITEM_COUNT; ++i)
-	{
-        if (IsItemKeystone(gTrainers[trainerId].items[i]))
-			return gTrainers[trainerId].items[i];
-    }
 
-    return ITEM_NONE;
+	for (u8 i = 0; i < TRAINER_ITEM_COUNT; ++i)
+	{
+		if (IsItemKeystone(gTrainers[trainerId].items[i]))
+			return gTrainers[trainerId].items[i];
+	}
+
+	return ITEM_NONE;
 }
 
 static item_t FindPlayerKeystone(void)
 {
-    for (u8 i = 0; i < ARRAY_COUNT(sKeystoneTable); ++i)
+	for (u8 i = 0; i < ARRAY_COUNT(sKeystoneTable); ++i)
 	{
 		if (CheckBagHasItem(sKeystoneTable[i], 1))
 			return sKeystoneTable[i];
-    }
-	
+	}
+
 	#ifdef DEBUG_MEGA
 		return ITEM_MEGA_RING; //Give player Mega Ring if they have none
 	#endif
 
-    return ITEM_NONE;
+	return ITEM_NONE;
 }
 
 static item_t FindBankKeystone(u8 bank)
 {
 	if (gBattleTypeFlags & BATTLE_TYPE_LINK)
 		return ITEM_MEGA_RING; //You can always Mega Evolve in a link battle
-		
+
 	#ifdef DEBUG_MEGA
 		if (bank + 1)
 			return ITEM_MEGA_RING;
 	#endif
-		
-    if (SIDE(bank) == SIDE_OPPONENT)
+
+	if (SIDE(bank) == SIDE_OPPONENT)
 	{
 		if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
 		{
@@ -309,14 +309,14 @@ bool8 BankMegaEvolved(u8 bank, bool8 checkUB)
 				return FALSE;
 		}
 		else
-		{	
+		{
 			if (gNewBS->MegaData->done[bank])
 				return TRUE;
 			else
 				return FALSE;
 		}
 	}
-	
+
 	if (checkUB)
 	{
 		if (gNewBS->UltraData->done[bank] || gNewBS->UltraData->done[PARTNER(bank)])
@@ -327,7 +327,7 @@ bool8 BankMegaEvolved(u8 bank, bool8 checkUB)
 		if (gNewBS->MegaData->done[bank] || (gNewBS->MegaData->done[PARTNER(bank)]))
 			return TRUE;
 	}
-	
+
 	return FALSE;
 }
 
@@ -335,14 +335,14 @@ bool8 IsMegaSpecies(u16 species)
 {
 	const struct Evolution* evolutions = gEvolutionTable[species];
 
-	for (u8 i = 0; i < EVOS_PER_MON; ++i) 
+	for (u8 i = 0; i < EVOS_PER_MON; ++i)
 	{
-		if (evolutions[i].method == EVO_MEGA 
-		&& (evolutions[i].unknown == MEGA_VARIANT_STANDARD || evolutions[i].unknown == MEGA_VARIANT_WISH) 
+		if (evolutions[i].method == EVO_MEGA
+		&& (evolutions[i].unknown == MEGA_VARIANT_STANDARD || evolutions[i].unknown == MEGA_VARIANT_WISH)
 		&& evolutions[i].param == 0)
 			return TRUE;
 	}
-	
+
 	return FALSE;
 }
 
@@ -377,12 +377,12 @@ bool8 IsUltraNecrozma(u8 bank)
 	pokemon_t* mon = GetBankPartyData(bank);
 	const struct Evolution* evolutions = gEvolutionTable[mon->species];
 
-	for (u8 i = 0; i < EVOS_PER_MON; ++i) 
+	for (u8 i = 0; i < EVOS_PER_MON; ++i)
 	{
 		if (evolutions[i].method == EVO_MEGA && evolutions[i].unknown == MEGA_VARIANT_ULTRA_BURST && evolutions[i].param == 0)
 			return TRUE;
 	}
-	
+
 	return FALSE;
 }
 
@@ -396,11 +396,11 @@ const u8* GetTrainerName(u8 bank)
 	u8 battlerNum = 0;
 	u16 trainerId = 0xFFFF;
 	u8 multiplayerId = GetMultiplayerId();
-	
+
 	u16 linkPartner = GetBattlerMultiplayerId(BATTLE_PARTNER(gLinkPlayers[multiplayerId].id));
 	u16 linkOpponent1 = GetBattlerMultiplayerId(BATTLE_OPPOSITE(gLinkPlayers[multiplayerId].id));
 	u16 linkOpponent2 = GetBattlerMultiplayerId(BATTLE_PARTNER(BATTLE_OPPOSITE(gLinkPlayers[multiplayerId].id)));
-	
+
 	switch (GetBattlerPosition(bank)) {
 		case B_POSITION_PLAYER_LEFT:
 			if (InBattleSands())
@@ -416,7 +416,7 @@ const u8* GetTrainerName(u8 bank)
 			else
 				trainerId = gTrainerBattleOpponent_A;
 			break;
-		
+
 		case B_POSITION_PLAYER_RIGHT:
 			battlerNum = 2;
 			if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
@@ -433,7 +433,7 @@ const u8* GetTrainerName(u8 bank)
 			else
 				battlerNum = 0;
 			break;
-		
+
 		case B_POSITION_OPPONENT_RIGHT:
 			battlerNum = 1;
 			if (gBattleTypeFlags & BATTLE_TYPE_LINK && gBattleTypeFlags & BATTLE_TYPE_MULTI)
@@ -449,7 +449,7 @@ const u8* GetTrainerName(u8 bank)
 				trainerId = SECOND_OPPONENT;
 			break;
 	}
-	
+
 	if (trainerId == 0xFFFF)
 	{
 		if (gBattleTypeFlags & BATTLE_TYPE_LINK)
@@ -461,11 +461,11 @@ const u8* GetTrainerName(u8 bank)
 	{
 		return gLinkPlayers[trainerId].name;
 	}
-	else 
+	else
 	{
 		u8 class = gTrainers[trainerId].trainerClass;
 		u8* name = TryGetRivalNameByTrainerClass(class);
-		
+
 		if (name == NULL)
 		{
 			if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
@@ -473,7 +473,7 @@ const u8* GetTrainerName(u8 bank)
 
 			return gTrainers[trainerId].trainerName;
 		}
-		
+
 		return name;
 	}
 }
@@ -546,99 +546,99 @@ static const u16 MegaTriggerOAM[4] = {0, 0x8000, 0x800, 0};
 
 static const struct SpriteTemplate MegaIndicatorTemplate =
 {
-    .tileTag = GFX_TAG_MEGA_INDICATOR,
-    .paletteTag = GFX_TAG_MEGA_INDICATOR,
-    .oam = &MegaIndicatorOAM,
-    .anims = (const union AnimCmd* const*) 0x08231CF0,
-    .images = NULL,
-    .affineAnims = (const union AffineAnimCmd* const*) 0x08231CFC,
-    .callback = MegaIndicatorCallback,
+	.tileTag = GFX_TAG_MEGA_INDICATOR,
+	.paletteTag = GFX_TAG_MEGA_INDICATOR,
+	.oam = &MegaIndicatorOAM,
+	.anims = (const union AnimCmd* const*) 0x08231CF0,
+	.images = NULL,
+	.affineAnims = (const union AffineAnimCmd* const*) 0x08231CFC,
+	.callback = MegaIndicatorCallback,
 };
 
 static const struct SpriteTemplate AlphaIndicatorTemplate =
 {
-    .tileTag = GFX_TAG_ALPHA_INDICATOR,
-    .paletteTag = GFX_TAG_MEGA_INDICATOR,
-    .oam = &MegaIndicatorOAM,
-    .anims = (const union AnimCmd* const*) 0x08231CF0,
-    .images = NULL,
-    .affineAnims = (const union AffineAnimCmd* const*) 0x08231CFC,
-    .callback = MegaIndicatorCallback,
+	.tileTag = GFX_TAG_ALPHA_INDICATOR,
+	.paletteTag = GFX_TAG_MEGA_INDICATOR,
+	.oam = &MegaIndicatorOAM,
+	.anims = (const union AnimCmd* const*) 0x08231CF0,
+	.images = NULL,
+	.affineAnims = (const union AffineAnimCmd* const*) 0x08231CFC,
+	.callback = MegaIndicatorCallback,
 };
 
 static const struct SpriteTemplate OmegaIndicatorTemplate =
 {
-    .tileTag = GFX_TAG_OMEGA_INDICATOR,
-    .paletteTag = GFX_TAG_MEGA_INDICATOR,
-    .oam = &MegaIndicatorOAM,
-    .anims = (const union AnimCmd* const*) 0x08231CF0,
-    .images = NULL,
-    .affineAnims = (const union AffineAnimCmd* const*) 0x08231CFC,
-    .callback = MegaIndicatorCallback,
+	.tileTag = GFX_TAG_OMEGA_INDICATOR,
+	.paletteTag = GFX_TAG_MEGA_INDICATOR,
+	.oam = &MegaIndicatorOAM,
+	.anims = (const union AnimCmd* const*) 0x08231CF0,
+	.images = NULL,
+	.affineAnims = (const union AffineAnimCmd* const*) 0x08231CFC,
+	.callback = MegaIndicatorCallback,
 };
 
 static const struct SpriteTemplate UltraIndicatorTemplate =
 {
-    .tileTag = GFX_TAG_ULTRA_INDICATOR,
-    .paletteTag = GFX_TAG_MEGA_INDICATOR,
-    .oam = &MegaIndicatorOAM,
-    .anims = (const union AnimCmd* const*) 0x08231CF0,
-    .images = NULL,
-    .affineAnims = (const union AffineAnimCmd* const*) 0x08231CFC,
-    .callback = MegaIndicatorCallback,
+	.tileTag = GFX_TAG_ULTRA_INDICATOR,
+	.paletteTag = GFX_TAG_MEGA_INDICATOR,
+	.oam = &MegaIndicatorOAM,
+	.anims = (const union AnimCmd* const*) 0x08231CF0,
+	.images = NULL,
+	.affineAnims = (const union AffineAnimCmd* const*) 0x08231CFC,
+	.callback = MegaIndicatorCallback,
 };
 
 static const struct SpriteTemplate MegaTriggerTemplate =
 {
-    .tileTag = GFX_TAG_MEGA_TRIGGER,
-    .paletteTag = GFX_TAG_MEGA_TRIGGER,
-    .oam = (const struct OamData*) &MegaTriggerOAM,
-    .anims = (const union AnimCmd* const*) 0x08231CF0,
-    .images = NULL,
-    .affineAnims = (const union AffineAnimCmd* const*) 0x08231CFC,
-    .callback = MegaTriggerCallback,
+	.tileTag = GFX_TAG_MEGA_TRIGGER,
+	.paletteTag = GFX_TAG_MEGA_TRIGGER,
+	.oam = (const struct OamData*) &MegaTriggerOAM,
+	.anims = (const union AnimCmd* const*) 0x08231CF0,
+	.images = NULL,
+	.affineAnims = (const union AffineAnimCmd* const*) 0x08231CFC,
+	.callback = MegaTriggerCallback,
 };
 
 static const struct SpriteTemplate UltraTriggerTemplate =
 {
-    .tileTag = GFX_TAG_ULTRA_TRIGGER,
-    .paletteTag = GFX_TAG_MEGA_TRIGGER,
-    .oam = (const struct OamData*) &MegaTriggerOAM,
-    .anims = (const union AnimCmd* const*) 0x08231CF0,
-    .images = NULL,
-    .affineAnims = (const union AffineAnimCmd* const*) 0x08231CFC,
-    .callback = MegaTriggerCallback,
+	.tileTag = GFX_TAG_ULTRA_TRIGGER,
+	.paletteTag = GFX_TAG_MEGA_TRIGGER,
+	.oam = (const struct OamData*) &MegaTriggerOAM,
+	.anims = (const union AnimCmd* const*) 0x08231CF0,
+	.images = NULL,
+	.affineAnims = (const union AffineAnimCmd* const*) 0x08231CFC,
+	.callback = MegaTriggerCallback,
 };
 
 /* Declare the colours the trigger button doesn't light up */
-static const u16 IgnoredColours[] = 
+static const u16 IgnoredColours[] =
 {
-  RGB(7, 10, 8), 
-  RGB(15, 18, 16), 
-  RGB(10, 13, 12), 
+  RGB(7, 10, 8),
+  RGB(15, 18, 16),
+  RGB(10, 13, 12),
   RGB(4, 7, 0),
   RGB(4, 4, 0),
   RGB(0, 0, 0),
 };
 
 /* Easy match function */
-bool8 IsIgnoredTriggerColour(u16 colour) 
+bool8 IsIgnoredTriggerColour(u16 colour)
 {
-	for (u32 i = 0; i < ARRAY_COUNT(IgnoredColours); ++i) 
+	for (u32 i = 0; i < ARRAY_COUNT(IgnoredColours); ++i)
 	{
-		if (IgnoredColours[i] == colour) 
+		if (IgnoredColours[i] == colour)
 			return TRUE;
 	}
-  
+
 	return FALSE;
 }
 
-static struct Sprite* GetHealthboxObjId(u8 bank) 
+static struct Sprite* GetHealthboxObjId(u8 bank)
 {
 	return &gSprites[gHealthboxIDs[bank]];
 }
 
-static u16 ConvertColorToGrayscale(u16 colour) 
+static u16 ConvertColorToGrayscale(u16 colour)
 {
 	s32 r = colour & 31;
 	s32 g = (colour >> 5) & 31;
@@ -647,10 +647,10 @@ static u16 ConvertColorToGrayscale(u16 colour)
 	return RGB2(gray, gray, gray);
 }
 
-u16 LightUpMegaSymbol(u16 clra) 
+u16 LightUpMegaSymbol(u16 clra)
 {
 	u16 clrb = 0x7FFF;
-	
+
 	u32 currentAlpha  = 20;
 
 	const u32 rbmask= ((0x1F)|(0x1F << 10)), gmask= 0x1F << 5;
@@ -676,9 +676,9 @@ u16 LightUpMegaSymbol(u16 clra)
 #define TAG self->template->tileTag
 #define PAL_TAG self->template->paletteTag
 
-static void MegaTriggerCallback(struct Sprite* self) 
-{	
-	if (TAG == GFX_TAG_MEGA_TRIGGER) 
+static void MegaTriggerCallback(struct Sprite* self)
+{
+	if (TAG == GFX_TAG_MEGA_TRIGGER)
 	{
 		if (!CanMegaEvolve(TRIGGER_BANK, FALSE) || gBattleSpritesDataPtr->bankData[TRIGGER_BANK].transformSpecies)
 			self->invisible = TRUE;
@@ -692,14 +692,14 @@ static void MegaTriggerCallback(struct Sprite* self)
 		else
 			self->invisible = FALSE;
 	}
-		
+
 	s16 xshift, yshift;
-	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE) 
+	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
 	{
 		xshift = -6;
 		yshift = 0;
-	} 
-	else 
+	}
+	else
 	{
 		xshift = -5;
 		yshift = 2;
@@ -708,26 +708,26 @@ static void MegaTriggerCallback(struct Sprite* self)
 	// Find the health box object that this trigger is supposed to be attached to
 	u8 id = gHealthboxIDs[TRIGGER_BANK];
 	struct Sprite* healthbox = &gSprites[id];
-	
+
 	u8 y = healthbox->oam.y;
 
 	u8 pingid = gBattleSpritesDataPtr->healthBoxesData[TRIGGER_BANK].healthboxBounceSpriteId;
 	struct Sprite* ping = &gSprites[pingid];
- 
-	if (y) 
+
+	if (y)
 	{
 		// Copy the healthbox's position (it has various animations)
 		//self->y = healthbox->y + 20;
 		self->pos1.x = (healthbox->oam.x) + xshift + self->data[3];
 		self->pos2.y = Sine(ping->data[0], ping->data[2]);
 		self->pos1.y = healthbox->pos1.y + yshift;
-	} 
-	else 
+	}
+	else
 	{
 		// The box is offscreen, so hide this one as well
 		self->pos1.x = -32;
 	}
-	
+
 	if (gBattleBankFunc[TRIGGER_BANK] == (0x0802EA10 | 1) //Old HandleInputChooseMove
 	||  gBattleBankFunc[TRIGGER_BANK] == (u32) HandleInputChooseMove
 	|| gBattleBankFunc[TRIGGER_BANK] == (u32) HandleMoveSwitching)
@@ -735,29 +735,29 @@ static void MegaTriggerCallback(struct Sprite* self)
 		if (self->data[3] > 0)
 			self->data[3] -= 2;
 		else
-			self->data[3] = 0;  
+			self->data[3] = 0;
 	}
-	
+
 	//Mega Trigger should recede and destroy itself as long as the game isn't
 	//running one of the two mentioned functions.
 	else if (gBattleBankFunc[TRIGGER_BANK] != (0x08032C90 | 1)  //PlayerHandleChooseMove
-	      && gBattleBankFunc[TRIGGER_BANK] != (0x08032C4C | 1)) //HandleChooseMoveAfterDma3
+		  && gBattleBankFunc[TRIGGER_BANK] != (0x08032C4C | 1)) //HandleChooseMoveAfterDma3
 	{
 		if (self->data[3] < 24)
 			self->data[3] += 2;
-		else 
+		else
 		{
 			self->pos1.x = -32;
 			DestroyMegaTriggers();
 			return;
 		}
 	}
-	
+
   	const struct Evolution* evo;
 	if (TAG == GFX_TAG_MEGA_TRIGGER)
 	{
 		evo = CanMegaEvolve(TRIGGER_BANK, FALSE);
-		if (evo->unknown != MEGA_VARIANT_ULTRA_BURST) 
+		if (evo->unknown != MEGA_VARIANT_ULTRA_BURST)
 		{
 			if (gNewBS->MegaData->done[TRIGGER_BANK] || DoesZMoveUsageStopMegaEvolution(TRIGGER_BANK))
 				PALETTE_STATE = MegaTriggerGrayscale;
@@ -773,11 +773,11 @@ static void MegaTriggerCallback(struct Sprite* self)
 	else //TAG == GFX_TAG_ULTRA_TRIGGER
 	{
 		evo = CanMegaEvolve(TRIGGER_BANK, TRUE);
-		if (evo->unknown == MEGA_VARIANT_ULTRA_BURST) 
+		if (evo->unknown == MEGA_VARIANT_ULTRA_BURST)
 		{
 			if (gNewBS->UltraData->done[TRIGGER_BANK])
 				PALETTE_STATE = MegaTriggerGrayscale;
-			else 
+			else
 			{
 				if (gNewBS->UltraData->chosen[TRIGGER_BANK])
 					PALETTE_STATE = MegaTriggerLightUp;
@@ -786,17 +786,17 @@ static void MegaTriggerCallback(struct Sprite* self)
 			}
 		}
 	}
-	
+
 	// Only change the palette if the state has changed
-	if (PALETTE_STATE != self->data[2]) 
+	if (PALETTE_STATE != self->data[2])
 	{
 		u16* pal = &gPlttBufferFaded2[IndexOfSpritePaletteTag(PAL_TAG) * 16];
 		u8 i;
-		
-		for(i = 1; i < 16; i++) 
+
+		for(i = 1; i < 16; i++)
 		{
 			if (IsIgnoredTriggerColour(Mega_TriggerPal[i])) continue;
-	
+
 			switch(PALETTE_STATE) {
 				case MegaTriggerLightUp:
 					pal[i] = LightUpMegaSymbol(Mega_TriggerPal[i]);
@@ -809,7 +809,7 @@ static void MegaTriggerCallback(struct Sprite* self)
 					break;
 			}
 		}
-		
+
 		self->data[2] = PALETTE_STATE;
 	}
 }
@@ -818,7 +818,7 @@ static void MegaTriggerCallback(struct Sprite* self)
 
 static void MegaIndicatorCallback(struct Sprite* self) {
 	// Visibility
-	
+
 	switch(TAG) {
 		case GFX_TAG_ALPHA_INDICATOR:
 			if (!IsBluePrimal(OBJ_BANK))
@@ -827,7 +827,7 @@ static void MegaIndicatorCallback(struct Sprite* self) {
 				return;
 			}
 			break;
-		
+
 		case GFX_TAG_OMEGA_INDICATOR:
 			if (!IsRedPrimal(OBJ_BANK))
 			{
@@ -835,7 +835,7 @@ static void MegaIndicatorCallback(struct Sprite* self) {
 				return;
 			}
 			break;
-		
+
 		case GFX_TAG_ULTRA_INDICATOR:
 			if (!IsUltraNecrozma(OBJ_BANK))
 			{
@@ -843,68 +843,68 @@ static void MegaIndicatorCallback(struct Sprite* self) {
 				return;
 			}
 			break;
-		
+
 		default: //GFX_TAG_MEGA_TRIGGER
-			if (!IsMega(OBJ_BANK)) 
+			if (!IsMega(OBJ_BANK))
 			{
 				self->pos1.x = -8;
 				return;
 			}
 	}
-	
+
 	struct Sprite* healthbox = GetHealthboxObjId(OBJ_BANK);
-	
-	if (healthbox->invisible) 
+
+	if (healthbox->invisible)
 	{
 		self->pos1.x = -8;
 		return;
 	}
-	
+
 	u8 y = healthbox->oam.y;
 	u8 x = healthbox->oam.x;
-		
+
 	// Mirror healthbox priority
 	self->oam.priority = healthbox->oam.priority;
-		
-	if (y) 
+
+	if (y)
 	{
 		// Figure out the X position for the indicator - it differs depending on
 		// the battle type and the side the healthbox represents.
 		s16 shift = 64; // Halfway point for OAM
-	
+
 		if (SIDE(OBJ_BANK) == B_SIDE_OPPONENT)
 			shift += 18;
 		else
 			shift += 26;
-		
+
 		// Convert the level to a string to get how long it is
 		u8 buf[10];
 		u8 stringlen = ConvertIntToDecimalStringN(buf, GetBankPartyData(OBJ_BANK)->level, 0, 3) - buf;
-			
+
 		// The x position depends on the X origin of the healthbox as well as
 		// the string length
 		self->pos1.x = x + shift - 5 * stringlen;
-			
+
 		u8 pingid = gBattleSpritesDataPtr->healthBoxesData[OBJ_BANK].healthboxBounceSpriteId;
-		struct Sprite* ping = &gSprites[pingid]; 
-			
+		struct Sprite* ping = &gSprites[pingid];
+
 		bool8 sineActive = (gBattleSpritesDataPtr->healthBoxesData[OBJ_BANK].healthboxIsBouncing);
-		
+
 		struct Sprite* shaker = &gSprites[ShakerData[1]];
 		u8 hbid = gHealthboxIDs[OBJ_BANK];
-			
-		if (sineActive) 
+
+		if (sineActive)
 		{
 			self->pos1.y = healthbox->pos1.y - 4;
 			self->pos2.y = Sine(ping->data[0], ping->data[2]);
 			return;
-		} 
-		else if (shaker->data[1] == hbid && ShakerData[0]) 
+		}
+		else if (shaker->data[1] == hbid && ShakerData[0])
 		{
 			self->pos2.y = (shaker->data[2] & 1) ? -1 : 1;
 			return;
 		}
-			
+
 		// Fix indicator position
 		self->pos1.y = healthbox->pos1.y - 5;
 		self->pos2.x = 0;
@@ -914,22 +914,22 @@ static void MegaIndicatorCallback(struct Sprite* self) {
 		self->pos1.x = -8;
 }
 
-void LoadMegaGraphics(u8 state) 
+void LoadMegaGraphics(u8 state)
 {
 #ifdef MEGA_EVOLUTION_FEATURE
 	u8 objid;
 
-	if (state == 2) 
-	{	
+	if (state == 2)
+	{
 		LoadSpritePalette(&MegaIndicatorPalette);
-		
+
 		LoadCompressedSpriteSheetUsingHeap(&MegaIndicatorSpriteSheet);
 		LoadCompressedSpriteSheetUsingHeap(&AlphaIndicatorSpriteSheet);
 		LoadCompressedSpriteSheetUsingHeap(&OmegaIndicatorSpriteSheet);
 		LoadCompressedSpriteSheetUsingHeap(&UltraIndicatorSpriteSheet);
-		
+
 		// Create a Mega Indicator for every bank
-		for (u8 bank = 0; bank < gBattlersCount; ++bank) 
+		for (u8 bank = 0; bank < gBattlersCount; ++bank)
 		{
 			if (IsMega(bank))
 			{
@@ -965,9 +965,9 @@ void LoadMegaGraphics(u8 state)
 void CreateMegaIndicatorAfterAnim(void)
 {
 	u8 objid;
-	
+
 	if (!gNewBS->megaIndicatorObjIds[gActiveBattler] && gActiveBattler < gBattlersCount)
-	{	
+	{
 		if (IsMega(gActiveBattler))
 		{
 			objid = CreateSprite(&MegaIndicatorTemplate, 0, 0, 1);
@@ -1006,19 +1006,19 @@ void TryLoadIndicatorForEachBank(void)
 void TryLoadMegaTriggers(void)
 {
 	u8 objid;
-	
+
 	if (gBattleTypeFlags & (BATTLE_TYPE_SAFARI | BATTLE_TYPE_POKE_DUDE | BATTLE_TYPE_OLD_MAN))
 		return;
-	
+
 	LoadSpritePalette(&MegaTriggerPalette);
 	LoadCompressedSpriteSheetUsingHeap(&MegaTriggerSpriteSheet);
 	LoadCompressedSpriteSheetUsingHeap(&UltraTriggerSpriteSheet);
-		
+
 	objid = CreateSprite(&MegaTriggerTemplate, 130, 90, 1);
 	gSprites[objid].data[3] = 24;
 	gSprites[objid].pos1.x = -32;
 	gSprites[objid].data[4] = gActiveBattler;
-		
+
 	objid = CreateSprite(&UltraTriggerTemplate, 130, 90, 1);
 	gSprites[objid].data[3] = 24;
 	gSprites[objid].pos1.x = -32;
@@ -1028,10 +1028,10 @@ void TryLoadMegaTriggers(void)
 void DestroyMegaTriggers(void)
 {
 	FreeSpritePaletteByTag(GFX_TAG_MEGA_TRIGGER);
-    FreeSpriteTilesByTag(GFX_TAG_MEGA_TRIGGER);
+	FreeSpriteTilesByTag(GFX_TAG_MEGA_TRIGGER);
 	FreeSpritePaletteByTag(GFX_TAG_ULTRA_TRIGGER);
-    FreeSpriteTilesByTag(GFX_TAG_ULTRA_TRIGGER);
-	
+	FreeSpriteTilesByTag(GFX_TAG_ULTRA_TRIGGER);
+
 	for (int i = 0; i < MAX_SPRITES; ++i)
 	{
 		if (gSprites[i].template->tileTag == GFX_TAG_MEGA_TRIGGER

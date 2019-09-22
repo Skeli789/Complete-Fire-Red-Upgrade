@@ -29,7 +29,7 @@ enum
 	BERRY_POUCH_CHOOSE_ITEM,
 };
 
-enum 
+enum
 {
 	TM_CASE_REGULAR,
 	TM_CASE_GIVE_ITEM,

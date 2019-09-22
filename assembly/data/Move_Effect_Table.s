@@ -5,10 +5,10 @@
 .include "../defines"
 
 .global gBattleScriptsForMoveEffects
-.global SetStatusTable
-.global StatLowerTable
-.global ConfusionTable
-.global gNoWeaknessResistanceTable
+.global gSetStatusMoveEffects
+.global gStatLoweringMoveEffects
+.global gConfusionMoveEffects
+.global gMoveEffectsThatIgnoreWeaknessResistance
 
 gBattleScriptsForMoveEffects:
 .word 0x81D6926		@EFFECT_HIT
@@ -32,7 +32,7 @@ gBattleScriptsForMoveEffects:
 .word BS_018_LowerTargetAtk1
 .word BS_019_LowerTargetDef1
 .word BS_020_LowerTargetSpd1
-.word BS_021_LowerTargetSpAtk1	
+.word BS_021_LowerTargetSpAtk1
 .word BS_022_LowerTargetSpDef1
 .word BS_023_LowerTargetAcc1
 .word BS_024_LowerTargetEvsn1
@@ -270,7 +270,7 @@ gBattleScriptsForMoveEffects:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-SetStatusTable:
+gSetStatusMoveEffects:
 .byte EFFECT_SLEEP
 .byte EFFECT_TOXIC
 .byte EFFECT_POISON
@@ -281,7 +281,7 @@ SetStatusTable:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-StatLowerTable:
+gStatLoweringMoveEffects:
 .byte EFFECT_ATTACK_DOWN
 .byte EFFECT_DEFENSE_DOWN
 .byte EFFECT_SPEED_DOWN
@@ -300,7 +300,7 @@ StatLowerTable:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-ConfusionTable:
+gConfusionMoveEffects:
 .byte EFFECT_CONFUSE_HIT
 .byte EFFECT_SWAGGER
 .byte EFFECT_FLATTER
@@ -309,7 +309,7 @@ ConfusionTable:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-gNoWeaknessResistanceTable:
+gMoveEffectsThatIgnoreWeaknessResistance:
 .byte EFFECT_BIDE
 .byte EFFECT_SUPER_FANG
 .byte EFFECT_DRAGON_RAGE

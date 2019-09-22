@@ -10,7 +10,7 @@
 #include "../include/money.h"
 #include "../include/window.h"
 
-#include "../include/new/Helper_Functions.h"
+#include "../include/new/util.h"
 #include "../include/new/item.h"
 #include "../include/new/set_z_effect.h"
 
@@ -34,10 +34,10 @@ void Task_ReturnToItemListAfterItemPurchase(u8 taskId);
 //General Utility Functions
 u16 SanitizeItemId(u16 itemId)
 {
-    if (itemId >= ITEMS_COUNT)
-        return ITEM_NONE;
+	if (itemId >= ITEMS_COUNT)
+		return ITEM_NONE;
 
-    return itemId;
+	return itemId;
 }
 
 u8* ItemId_GetName(u16 itemId)
@@ -46,22 +46,22 @@ u8* ItemId_GetName(u16 itemId)
 
 	if (name[3] == 0x8) //Expanded Item Names
 		name = T1_READ_PTR(name);
-    return name;
+	return name;
 }
 
 u8 ItemId_GetHoldEffect(u16 itemId)
 {
-    return gItems[SanitizeItemId(itemId)].holdEffect;
+	return gItems[SanitizeItemId(itemId)].holdEffect;
 }
 
 u8 ItemId_GetHoldEffectParam(u16 itemId)
 {
-    return gItems[SanitizeItemId(itemId)].holdEffectParam;
+	return gItems[SanitizeItemId(itemId)].holdEffectParam;
 }
 
 u8 ItemId_GetMystery2Id(u16 itemId)
 {
-    return ItemId_GetMystery2(itemId);
+	return ItemId_GetMystery2(itemId);
 }
 
 bool8 IsMegaStone(u16 item)
@@ -98,7 +98,7 @@ bool8 IsPinchBerryItemEffect(u8 itemEffect)
 		case ITEM_EFFECT_MICLE_BERRY:
 			return TRUE;
 	}
-	
+
 	return FALSE;
 }
 
@@ -116,7 +116,7 @@ u8 TMIdFromItemId(u16 itemId)
 {
 	#ifdef EXPANDED_TMSHMS
 	u8 tmNum = ItemId_GetMystery2Id(itemId);
-	
+
 	if (itemId == ITEM_NONE)
 		return 255; //So blank items get put at the end
 	else if (tmNum == 0)
@@ -137,7 +137,7 @@ u8 BerryIdFromItemId(u16 item)
 	if (item < ITEM_CHERI_BERRY
 	||  item >= ITEM_ENIGMA_BERRY_OLD)
 		return 255;
-		
+
 	return item - ITEM_CHERI_BERRY;
 }
 
@@ -159,11 +159,11 @@ u8 BerryIdFromItemId(u16 item)
 
 u32 CanMonLearnTMHM(struct Pokemon* mon, u8 tm)
 {
-    u16 species = GetMonData(mon, MON_DATA_SPECIES2, 0);
-    if (species == SPECIES_EGG)
+	u16 species = GetMonData(mon, MON_DATA_SPECIES2, 0);
+	if (species == SPECIES_EGG)
 	{
-        return 0;
-    }
+		return 0;
+	}
 
 	u32 mask;
 	if (tm < 32)
@@ -224,7 +224,7 @@ bool8 CanMonLearnTutorMove(struct Pokemon* mon, u8 tutorId)
 		}
 	#endif
 	}
-	
+
 	//Special move tutors not stored in a table
 	u16 dexNum = SpeciesToNationalPokedexNum(species);
 	switch (tutorId) {
@@ -247,7 +247,7 @@ bool8 CanMonLearnTutorMove(struct Pokemon* mon, u8 tutorId)
 		case TUTOR_SPECIAL_CORE_ENFORCER:
 			return dexNum == NATIONAL_DEX_ZYGARDE;
 	}
-		
+
 	return FALSE;
 }
 
@@ -284,7 +284,7 @@ u8 TryHandleExcuseForDracoMeteorTutor(unusedArg struct Pokemon* mon)
 {
 #ifdef EXPANDED_MOVE_TUTORS
 	u8 tutorId = Var8005;
-	
+
 	if (tutorId == TUTOR_SPECIAL_DRACO_METEOR)
 	{
 		u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
@@ -307,7 +307,7 @@ u8 TryHandleExcuseForDracoMeteorTutorAlreadyKnow(void)
 {
 #ifdef EXPANDED_MOVE_TUTORS
 	u8 tutorId = Var8005;
-	
+
 	if (tutorId == TUTOR_SPECIAL_DRACO_METEOR)
 	{
 		Var8005 = 2;
@@ -328,7 +328,7 @@ u16 GetItemIdFromTmId(u8 tmId)
 	for (u8 i = 0; i < sizeof(gItems); ++i)
 	{
 		if (ItemId_GetMystery2Id(gItems[i].itemId) == tmId)
-			return gItems[i].itemId;		
+			return gItems[i].itemId;
 	}
 	return 0;
 }
@@ -338,7 +338,7 @@ u16 GetItemIdFromTmId(u8 tmId)
 //		use secondary ID for tm indices if expanded
 u16 ItemIdToBattleMoveId(u16 item)
 {
-    return gTMHMMoves[TMIdFromItemId(item)];
+	return gTMHMMoves[TMIdFromItemId(item)];
 }
 
 u16 RefineTmOrdering(void)
@@ -355,19 +355,19 @@ u16 RefineTmOrdering(void)
 void StringAppendFullMoveName(u8* dst, u8* src)
 {
 	s8 i;
-	
+
 	if (NUM_HMS >= 10)
 		i = -2;
 	else
 		i = -1;
-	
-    while (i < MOVE_NAME_LENGTH)
+
+	while (i < MOVE_NAME_LENGTH)
 	{
 		dst++;
 		i++;
 	}
 
-    StringCopy(dst, src);
+	StringCopy(dst, src);
 	dst++;
 	u8 end = 0xFF;
 	StringAppend(dst, &end);
@@ -385,7 +385,7 @@ void LoadTMNameWithNo(u8* dst, u16 itemId)
 	#else
 	u8 tmNum = itemId - ITEM_TM01;
 	#endif
-	
+
 	StringCopy(gStringVar4, (void*) 0x84166FF);
 
 	if (tmNum > NUM_TMS)
@@ -416,7 +416,7 @@ void LoadTMNameWithNo(u8* dst, u16 itemId)
 		StringAppendFullMoveName(gStringVar4, gMoveNames[ItemIdToBattleMoveId(itemId)]);
 	else
 		StringAppend(gStringVar4, gMoveNames[ItemIdToBattleMoveId(itemId)]);
-	
+
 	StringCopy(dst, gStringVar4);
 }
 
@@ -446,45 +446,45 @@ void* LoadTmHmMartDescription(u16 item)
 
 u8 CanMonLearnTMTutor(struct Pokemon* mon, u16 item, u8 tutor)
 {
-    u16 move;
+	u16 move;
 
-    if (GetMonData(mon, MON_DATA_IS_EGG, NULL))
-        return CANNOT_LEARN_MOVE_IS_EGG;
+	if (GetMonData(mon, MON_DATA_IS_EGG, NULL))
+		return CANNOT_LEARN_MOVE_IS_EGG;
 
-    //if (item >= ITEM_TM01_FOCUS_PUNCH)
+	//if (item >= ITEM_TM01_FOCUS_PUNCH)
 	if (GetPocketByItemId(item) == POCKET_TM_HM)
-    {
-        //if (CanMonLearnTMHM(mon, item - ITEM_TM01_FOCUS_PUNCH))
+	{
+		//if (CanMonLearnTMHM(mon, item - ITEM_TM01_FOCUS_PUNCH))
 		if (CanMonLearnTMHM(mon, TMIdFromItemId(item)))
-            move = ItemIdToBattleMoveId(item);
-        else
-            return CANNOT_LEARN_MOVE;
-        //do {} while (0); // :morphon:
-    }
+			move = ItemIdToBattleMoveId(item);
+		else
+			return CANNOT_LEARN_MOVE;
+		//do {} while (0); // :morphon:
+	}
 	#ifdef EXPANDED_MOVE_TUTORS
-    else if (!CanMonLearnTutorMove(mon, tutor))
-    {
-        return CANNOT_LEARN_MOVE;
-    }
+	else if (!CanMonLearnTutorMove(mon, tutor))
+	{
+		return CANNOT_LEARN_MOVE;
+	}
 	else
 	{
 		move = GetExpandedTutorMove(tutor);
 	}
 	#else
-    else if (!CanLearnTutorMove(mon->species, tutor))
-    {
-        return CANNOT_LEARN_MOVE;
-    }
-    else
-    {
-        move = GetTutorMove(tutor);
-    }
+	else if (!CanLearnTutorMove(mon->species, tutor))
+	{
+		return CANNOT_LEARN_MOVE;
+	}
+	else
+	{
+		move = GetTutorMove(tutor);
+	}
 	#endif
 
-    if (MonKnowsMove(mon, move))
-        return ALREADY_KNOWS_MOVE;
-    else
-        return CAN_LEARN_MOVE;
+	if (MonKnowsMove(mon, move))
+		return ALREADY_KNOWS_MOVE;
+	else
+		return CAN_LEARN_MOVE;
 }
 
 //08125a90
@@ -514,7 +514,7 @@ bool8 CheckTmHmInFront(u16 item)
 	if (TMIdFromItemId(item) < NUM_TMS)
 		return TRUE;
 	#endif
-	return FALSE;	
+	return FALSE;
 }
 
 
@@ -531,23 +531,23 @@ u8 CheckDiscIsTmHm(struct Sprite* disc, u16 itemId)
 	else
 		StartSpriteAnim(disc, 1);
 	#endif
-	
+
 	return ItemId_GetMystery2Id(itemId);
 }
 
 
 u8 TmHMDiscPosition(unusedArg struct Sprite* disc, u8 tmId)
-{	
+{
 	u8 num;
 	if (tmId <= NUM_TMS)
 		num = tmId + 8;
 	else
 		num = tmId - NUM_TMS;
-	
+
 	#ifdef EXPANDED_TMSHMS
 		num /= 2;
 	#endif
-	
+
 	return num;
 }
 
@@ -615,7 +615,7 @@ bool8 CheckSellTmHm(u16 item)
 			return FALSE;
 		else
 			return TRUE;
-	#endif	
+	#endif
 }
 
 
@@ -683,14 +683,14 @@ u16 CheckTmPrice(u16 item)
 			return ItemId_GetPrice(item);
 	#else
 		return ItemId_GetPrice(item);
-	#endif	
+	#endif
 }
 
 #ifdef REUSABLE_TMS
 u8 CheckSingleBagTm(u16 item)
 #else
 u8 CheckSingleBagTm(void)
-#endif	
+#endif
 {
 	#ifdef REUSABLE_TMS
 		if (GetPocketByItemId(item) == POCKET_TM_HM)
@@ -717,11 +717,11 @@ const void* FixTmHmDiscPalette(u8 type)
 #define tItemId data[5]
 void Task_ReturnToItemListAfterItemPurchase(u8 taskId)
 {
-    s16* data = gTasks[taskId].data;
+	s16* data = gTasks[taskId].data;
 
-    if (gMain.newKeys & (A_BUTTON | B_BUTTON))
-    {
-        PlaySE(SE_SELECT);
+	if (gMain.newKeys & (A_BUTTON | B_BUTTON))
+	{
+		PlaySE(SE_SELECT);
 		if (tItemId == ITEM_POKE_BALL)
 		{
 			#ifdef MULTIPLE_PREMIER_BALLS_AT_ONCE
@@ -733,7 +733,7 @@ void Task_ReturnToItemListAfterItemPurchase(u8 taskId)
 			{
 				ConvertIntToDecimalStringN(gStringVar1, nPremier, 2, 1);
 				StringCopy(gStringVar2, ItemId_GetName(ITEM_PREMIER_BALL));
-				
+
 				if (nPremier == 1)
 					BuyMenuDisplayMessage(taskId, gText_ThrowInOnePremierBall, BuyMenuReturnToItemList);
 				else
@@ -748,7 +748,7 @@ void Task_ReturnToItemListAfterItemPurchase(u8 taskId)
 		{
 			BuyMenuReturnToItemList(taskId);
 		}
-    }
+	}
 }
 
 //Bag Expansion////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -777,12 +777,12 @@ void Task_ReturnToItemListAfterItemPurchase(u8 taskId)
 
 struct ListBuffer1
 {
-    struct ListMenuItem subBuffers[LARGEST_POCKET_NUM];
+	struct ListMenuItem subBuffers[LARGEST_POCKET_NUM];
 };
 
 struct ListBuffer2
 {
-    s8 name[LARGEST_POCKET_NUM][24];
+	s8 name[LARGEST_POCKET_NUM][24];
 };
 
 struct BerryListBuffer
@@ -828,18 +828,18 @@ void SetMemoryForBagStorage(void)
 
 void AllocateBagItemListBuffers(void)
 {
-    sListBuffer1 = Malloc(sizeof(struct ListBuffer1));
-    sListBuffer2 = Malloc(sizeof(struct ListBuffer2));
+	sListBuffer1 = Malloc(sizeof(struct ListBuffer1));
+	sListBuffer2 = Malloc(sizeof(struct ListBuffer2));
 }
 
 #define sBerryListBuffer (*((struct BerryListBuffer**) 0x203F37C))
 bool8 AllocateBerryPouchListBuffers(void)
 {
 	sBerryListBuffer = Malloc(sizeof(struct BerryListBuffer));
-	
+
 	if (sBerryListBuffer == NULL)
 		return FALSE;
-	
+
 	return TRUE;
 }
 
@@ -868,10 +868,10 @@ void PokeDudeBackupKeyItemsTMs(void)
 	struct ItemSlot* ptr = Calloc((NUM_KEY_ITEMS + sBagPocketArrangement.tmAmount + 1) * sizeof(struct ItemSlot));
 	sPokeDudeItemBackupPtr2 = Calloc(0x164);
 	*sPokeDudeItemBackupPtr2 = ptr;
-	
+
 	Memcpy(ptr, sBagPocketArrangement.keyItemRam, NUM_KEY_ITEMS * sizeof(struct ItemSlot));
 	Memcpy(ptr + NUM_KEY_ITEMS, sBagPocketArrangement.tmRam, sBagPocketArrangement.tmAmount * sizeof(struct ItemSlot));
-		
+
 	Memset(sBagPocketArrangement.keyItemRam, 0, NUM_KEY_ITEMS * sizeof(struct ItemSlot));
 	Memset(sBagPocketArrangement.tmRam, 0, sBagPocketArrangement.tmAmount * sizeof(struct ItemSlot));
 }
@@ -881,7 +881,7 @@ void PokeDudeRestoreKeyItemsTMs(void)
 	struct ItemSlot* ptr = *sPokeDudeItemBackupPtr2;
 	Memcpy(sBagPocketArrangement.keyItemRam, ptr, NUM_KEY_ITEMS * sizeof(struct ItemSlot));
 	Memcpy(sBagPocketArrangement.tmRam, ptr + NUM_KEY_ITEMS, sBagPocketArrangement.tmAmount * sizeof(struct ItemSlot));
-	
+
 	Free(ptr);
 }
 
@@ -891,7 +891,7 @@ void StoreBagItemCount(void)
 	u16 itemAmount;
 	u16 checkLength;
 	bool8 tossed;
-	
+
 	for (u8 pocket = 0; pocket < 3; ++pocket)
 	{
 		tossed = FALSE;
@@ -903,10 +903,10 @@ void StoreBagItemCount(void)
 			case 1:
 				itemMem = sBagPocketArrangement.keyItemRam;
 				itemAmount = sBagPocketArrangement.keyItemAmount;
-				break;		
+				break;
 			default:
 				itemMem = sBagPocketArrangement.pokeBallRam;
-				itemAmount = sBagPocketArrangement.pokeBallAmount;	
+				itemAmount = sBagPocketArrangement.pokeBallAmount;
 		}
 
 		for (checkLength = 0; itemMem[checkLength].itemId != ITEM_NONE; ++checkLength);
@@ -915,8 +915,8 @@ void StoreBagItemCount(void)
 		{
 			tossed = TRUE;
 			++checkLength;
-			
-			for (; itemMem[checkLength].itemId != ITEM_NONE; ++checkLength);	
+
+			for (; itemMem[checkLength].itemId != ITEM_NONE; ++checkLength);
 		}
 
 		if (tossed)
@@ -930,7 +930,7 @@ u16 GetNumItemsInPocket(u8 pocket)
 {
 	if (pocket > 2)
 		return 0;
-	
+
 	return sBagItemAmounts[pocket];
 }
 
@@ -945,7 +945,7 @@ bool8 DoesBagHaveBerry(void)
 	if (CheckBagHasItem(ITEM_BERRY_POUCH, 1)
 	&& sBagBerries[0].itemId != 0) //At least one berry in berry pouch
 		return gSpecialVar_LastResult = 1;
-	
+
 	return gSpecialVar_LastResult = 0;
 }
 
@@ -955,7 +955,7 @@ static s8 CompareBerries(u16 item1, u16 item2)
 {
 	u8 id1 = BerryIdFromItemId(item1);
 	u8 id2 = BerryIdFromItemId(item2);
-	
+
 	if (id1 < id2)
 		return -1;
 	else if (id1 > id2)
@@ -985,25 +985,25 @@ static s8 CompareTMs(u16 item1, u16 item2)
 	else if (id2 > id1)
 		return 1;
 	return 0;
-	
+
 	/*
 	u8 id1 = TMIdFromItemId(item1);
 	u8 id2 = TMIdFromItemId(item2);
-	
+
 	#ifndef TMS_BEFORE_HMS
 		if (id1 > NUM_TMS)
 		{
 			id1 -= NUM_TMS; //HM
 			id2 += NUM_HMS; //So if TM, will always follow HM
 		}
-		
+
 		if (id2 > NUM_TMS)
 		{
 			id2 -= NUM_TMS; //HM
 			id1 += NUM_HMS; //So if TM, will always follow HM
 		}
 	#endif
-	
+
 	if (id1 < id2)
 		return -1;
 	else if (id1 > id2)
@@ -1017,12 +1017,12 @@ void SortBerriesOrTMHMs(struct BagPocket* bagPocket)
 {
 	s8 (*func)(u16, u16);
 	u16 itemAmount = bagPocket->capacity;
-	
+
 	if (bagPocket->itemSlots == sBagPocketArrangement.tmRam)
 		func = CompareTMs;
 	else
 		func = CompareBerries;
-		
+
 	MergeSort(bagPocket->itemSlots, 0, itemAmount - 1, func);
 }
 
@@ -1032,7 +1032,7 @@ void SortBerriesOrTMHMs(struct BagPocket* bagPocket)
 void SortTmHmCase(struct BagPocket* bagPocket)
 {
 	SortBerriesOrTMHMs(bagPocket);
-	
+
 	u16 numTmsHms = bagPocket->capacity;
 	u16 i,j;
 	if (numTmsHms > 0)
@@ -1041,43 +1041,43 @@ void SortTmHmCase(struct BagPocket* bagPocket)
 		{
 			if (bagPocket->itemSlots[i].itemId == 0 && GetBagItemQuantity(&bagPocket->itemSlots[i].quantity == 0))
 				return;
-			
+
 			if (bagPocket->itemSlots[i].itemId != 0)
 			{
-				
+
 				// this loop seems useless gamefreak...
 				if (bagPocket->itemSlots[i].itemId > ITEM_TM50 && GetBagItemQuantity(&bagPocket->itemSlots[i].quantity) != 0)
 				{
-					
+
 					for (j = 0; j < numTmsHms; ++j)
 					{
 						if (bagPocket->itemSlots[j].itemId != 0
 							continue;
 						else if (GetBagItemQuantity(&bagPocket->itemSlots[j].quantity) != 0)
 							continue;
-					}					
+					}
 				}
-				
+
 				else if (bagPocket->itemSlots[i].itemId > ITEM_TM50 || GetBagItemQuantity(&bagPocket->itemSlots[i].quantity) == 0)
 					continue;
 			}
-			
+
 			for (j = 0; j < numTmsHms-1; ++j)
 			{
 				bagPocket->itemSlots[numTmsHms - j].capacity = GetBagItemQuantity(&bagPocket->itemSlots[numTmsHms - j].quantity);
 			}
-			
+
 			(void*) addr = Calloc(4*numTmsHms);
-			
+
 			CpuSet(
-					
-			
-			
+
+
+
 		}
-		
-		
+
+
 	}
-	
+
 };
 */
 
@@ -1093,7 +1093,7 @@ static s8 CompareItemsAlphabetically(u16 item1, u16 item2)
 
 	u8* name1 = ItemId_GetName(item1);
 	u8* name2 = ItemId_GetName(item2);
-	
+
 	for (int i = 0; ; ++i)
 	{
 		if (name1[i] == EOS && name2[i] != EOS)
@@ -1102,13 +1102,13 @@ static s8 CompareItemsAlphabetically(u16 item1, u16 item2)
 			return 1;
 		else if (name1[i] == EOS && name2[i] == EOS)
 			return 0;
-			
+
 		if (name1[i] < name2[i])
 			return -1;
 		else if (name1[i] > name2[i])
 			return 1;
 	}
-	
+
 	return 0; //Will never be reached
 }
 
@@ -1175,7 +1175,7 @@ static s8 CompareItemsByType(u16 item1, u16 item2)
 		return -1;
 	else if (sItemsByType[item1] > sItemsByType[item2])
 		return 1;
-	
+
 	return 0;
 }
 
@@ -1199,12 +1199,12 @@ void SortItemsInBag(u8 pocket, u8 type)
 		case 1:
 			itemMem = sBagPocketArrangement.keyItemRam;
 			itemAmount = sBagPocketArrangement.keyItemAmount;
-			break;		
+			break;
 		default:
 			itemMem = sBagPocketArrangement.pokeBallRam;
-			itemAmount = sBagPocketArrangement.pokeBallAmount;	
+			itemAmount = sBagPocketArrangement.pokeBallAmount;
 	}
-	
+
 	switch (type) {
 		case SORT_ALPHABETICALLY:
 			func = CompareItemsAlphabetically;
@@ -1212,7 +1212,7 @@ void SortItemsInBag(u8 pocket, u8 type)
 		default:
 			func = CompareItemsByType;
 	}
-	
+
 	MergeSort(itemMem, 0, itemAmount - 1, func);
 }
 
@@ -1232,10 +1232,10 @@ static void Merge(struct ItemSlot* array, u32 low, u32 mid, u32 high, s8 (*compa
 	u32 i = low;
 	u32 j = mid + 1;
 	struct ItemSlot aux[high + 1];
-	
+
 	for (u32 k = low; k <= high; ++k)
 		aux[k] = array[k];
-		
+
 	for (u32 k = low; k <= high; ++k)
 	{ //Merge back to a[low..high]
 		if (i > mid)

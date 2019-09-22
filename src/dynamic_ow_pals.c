@@ -2,7 +2,7 @@
 #include "../include/field_weather.h"
 
 #include "../include/new/dynamic_ow_pals.h"
-#include "../include/new/Helper_Functions.h"
+#include "../include/new/util.h"
 
 //Credit to Navenatox
 
@@ -52,7 +52,7 @@ u8 AddPalRef(u8 type, u16 palTag)
 			return i;
 		}
 	}
-	
+
 	return 0xFF; //No more space
 }
 
@@ -63,7 +63,7 @@ u8 FindPalRef(u8 type, u16 palTag)
 		if (sPalRefs[i].Type == type && sPalRefs[i].PalTag == palTag)
 			return i;
 	}
-	
+
 	return 0xFF; // not found
 }
 
@@ -118,7 +118,7 @@ static u16 TintColor(u16 color)
 			TintPalette_SepiaTone(&color, 1);
 			break;
 	}
-	
+
 	return color;
 }
 
@@ -134,10 +134,10 @@ static u8 GetPalTypeByPalTag(u16 palTag)
 {
 	if (palTag >= 0x1000 && palTag <= 0x1010)
 		return PalTypeAnimation;
-	
+
 	if (palTag == 0x1200)
 		return PalTypeWeather;
-	
+
 	return PalTypeOther;
 }
 
@@ -145,13 +145,13 @@ static u8 FindPalTag(u16 palTag)
 {
 	if (PalTagsStart >= 16)
 		return 0xFF;
-	
+
 	for (int i = PalTagsStart; i < 16; ++i)
 	{
 		if (PalTags[i] == palTag)
 			return i;
 	}
-	
+
 	return 0xFF; //Not found
 }
 
@@ -159,7 +159,7 @@ u8 FindPalette(u16 palTag) //Hook at 0x80089E8 via r1
 {
 	if (OverworldIsActive || palTag == 0x1200)
 		return FindPalRef(GetPalTypeByPalTag(palTag), palTag); // 0x1200 is for weather sprites
-	
+
 	return FindPalTag(palTag);
 }
 
@@ -209,7 +209,7 @@ static void BrightenReflection(u8 palSlot)
 		if (B > 31) B = 31;
 		pal[i] = RGB(R, G, B);
 	}
-	
+
 	CpuSet(pal, &gPlttBufferUnfaded[palSlot * 16 + 16 * 16], 16);
 }
 
@@ -217,7 +217,7 @@ static u8 AddPalTag(u16 palTag)
 {
 	if (PalTagsStart >= 16)
 		return 0xFF;
-	
+
 	for (int i = PalTagsStart; i < 16; ++i)
 	{
 		if (PalTags[i] == 0xFFFF)
@@ -234,7 +234,7 @@ u8 FindOrLoadPalette(struct SpritePalette* pal) //Hook at 0x8928 via r1
 {
 	u8 palSlot;
 	u16 palTag = pal->tag;
-	
+
 	if (OverworldIsActive || palTag == 0x1200) //0x1200 is for weather sprites
 	{
 		palSlot = FindPalRef(GetPalTypeByPalTag(palTag), palTag);
@@ -278,7 +278,7 @@ u8 GetPalSlotMisc(u32 OBJData)
 	u16 palTag = *(u16*)(OBJData + 2);
 	if (palTag == 0xFFFF)
 		return 0xFF;
-	
+
 	palSlot = FindPalette(palTag);
 	if (palSlot != 0xFF)
 		return PalRefIncreaseCount(palSlot);
@@ -290,7 +290,7 @@ u8 GetPalSlotMisc(u32 OBJData)
 	palSlot = AddPalRef(PalTypeWeather, palTag);
 	if (palSlot == 0xFF)
 		return 0xFF;
-	
+
 	DoLoadSpritePalette((u16*) 0x83C2CE0, palSlot * 16);
 	TintOBJPalette(palSlot);
 	MaskPaletteIfFadingIn(palSlot);
@@ -302,7 +302,7 @@ u8 FindOrLoadNPCPalette(u16 palTag)
 	u8 palSlot = FindPalRef(PalTypeNPC, palTag);
 	if (palSlot != 0xFF)
 		return PalRefIncreaseCount(palSlot);
-	
+
 	palSlot = AddPalRef(PalTypeNPC, palTag);
 	if (palSlot == 0xFF)
 		return PalRefIncreaseCount(0);
@@ -314,7 +314,7 @@ u8 FindOrLoadNPCPalette(u16 palTag)
 }
 
 u8 FindOrCreateReflectionPalette(u8 palSlotNPC)
-{ 
+{
 	u16 palTag = sPalRefs[palSlotNPC].PalTag;
 	u8 palSlot = FindPalRef(PalTypeReflection, palTag);
 	if (palSlot != 0xFF)
@@ -322,8 +322,8 @@ u8 FindOrCreateReflectionPalette(u8 palSlotNPC)
 
 	palSlot = AddPalRef(PalTypeReflection, palTag);
 	if (palSlot == 0xFF)
-		return PalRefIncreaseCount(0);	
-	
+		return PalRefIncreaseCount(0);
+
 	LoadNPCPalette(palTag, palSlot);
 	BlendPalettes(gBitTable[(palSlot + 16)], 6, RGB(12, 20, 27)); //Make it blueish
 	BrightenReflection(palSlot); //And a little brighter
@@ -360,7 +360,7 @@ void FogBrightenPalettes(u16 brightenIntensity)
 
 	for (int i = 16; i < 32; i++)
 	{
-		if (PaletteNeedsFogBrightening(i)) 
+		if (PaletteNeedsFogBrightening(i))
 			BlendPalette(i * 16, 16, brightenIntensity, FOG_FADE_COLOUR);
 	}
 }
@@ -407,10 +407,10 @@ u8 GetDarkeningTypeBySlot(u8 palSlot) //Replaces table at 0x3C2CC0
 {
 	if (palSlot < 13)
 		return 1;
-	
+
 	if (palSlot < 16)
 		return 0;
-	
+
 	u8 type = sPalRefs[palSlot - 16].Type;
 	switch (type) {
 		case PalTypeNPC:
