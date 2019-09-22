@@ -74,9 +74,12 @@ def EditInsert(offset: int):
 
 def BuildCode():
     if shutil.which('python3') is not None:
-        os.system("python3 scripts/build.py")
+        result = os.system("python3 scripts/build.py")
     else:
-        os.system("python scripts/build.py")
+        result = os.system("python scripts/build.py")
+
+    if result != 0:  # Build wasn't sucessful
+        sys.exit(1)
 
 
 def InsertCode():
