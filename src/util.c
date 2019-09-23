@@ -105,7 +105,7 @@ u8 ViableMonCount(struct Pokemon* party)
 
 void HealMon(struct Pokemon* mon)
 {
-	u8 none = 0;
+	u32 none = 0;
 	u16 maxHP = GetMonData(mon, MON_DATA_MAX_HP, NULL);
 
 	//Restore HP.
