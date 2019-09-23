@@ -44,6 +44,7 @@
 #define DISABLE_BAG_FLAG 0x915 //The bag can't be used in-battle if this flag is set
 #define MOVE_RELEARNER_IGNORE_LEVEL_FLAG 0x916 //When set, the move relearner shows all level-up moves up to MAX_LEVEL
 #define EGG_MOVE_RELEARNER_FLAG 0x917 //When set, the move learner loads egg moves instead
+#define PREVENT_ROUTE_ESCAPE_FLAG 0x918 //When set, the Player will be unable to ride their bike or escape from the route other than by walking off of it
 
 /*===== Start Menu/Poketools Flags =====*/
 #define FLAG_SYS_BAG_HIDE 0x91B		//Toggle bag off

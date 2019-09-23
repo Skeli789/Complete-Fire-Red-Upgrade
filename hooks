@@ -459,7 +459,10 @@ OpenBagBugFix3 8108AC0 0
 CountItemsInBag 8108DC8 1
 PokeDudeBackupRegularBagHook 810ADDE 0
 GetSmallestItemAmount 8108E20 0
+BagSorterHook 810900C 1
 SelectItemFromBagCheck 81090B8 0
+BagSorterHook2 8109AD4 0
+BagSorterHook3 8109B5C 1
 PokeDudeBackupRegularBagClearHook 810AE78 0
 PokeDudeBackupBagRestoreHook 810AEDA 0
 SelectItemFromTMCaseCheck 81323B0 0

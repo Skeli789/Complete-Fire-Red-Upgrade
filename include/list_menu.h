@@ -87,6 +87,9 @@ extern struct ScrollArrowsTemplate gTempScrollArrowTemplate;
 //extern struct ListMenuTemplate gMultiuseListMenuTemplate;
 
 // Exported ROM declarations
+u8 __attribute__((long_call)) ListMenuInit(struct ListMenuTemplate *listMenuTemplate, u16 scrollOffset, u16 selectedRow);
+void __attribute__((long_call)) DestroyListMenuTask(u8 listTaskId, u16 *scrollOffset, u16 *selectedRow);
+
 /*
 u8 ListMenuInit(struct ListMenuTemplate *template, u16 a1, u16 a2);
 s32 ListMenuHandleInput(u8 id);

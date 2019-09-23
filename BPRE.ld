@@ -609,12 +609,25 @@ ItemId_GetType = 0x809A9FC | 1;
 IsEnoughMoney = 0x809FD88 | 1;
 AddMoney = 0x809FDA0 | 1;
 RemoveUsedItem = 0x80A1A44 | 1;
+ListMenuInit = 0x8106FF8 | 1; 
+DestroyListMenuTask = 0x810713C | 1;
 GoToBagMenu = 0x8107DB4 | 1;
+LoadBagItemListBuffers = 0x810842C | 1;
+BagMenu_PrintCursor_ = 0x810876C | 1;
+BagMenu_RemoveScrollingArrows = 0x8108978 | 1;
+SetInitialScrollAndCursorPositions = 0x81089F4 | 1;
+CreateBagMenuMiniMenuSelection = 0x81090DC | 1;
+set_callback3_to_bag = 0x810910C | 1;
+bag_menu_inits_lists_menu = 0x810A1F8 | 1;
+BagMenu_Print = 0x810B8F0 | 1;
+sub_810B9DC = 0x810B9DC | 1;
+sub_810BA3C = 0x810BA3C | 1;
+sub_810BAD8 = 0x810BAD8 | 1;
+BagMenu_YesNo = 0x810BAE8 | 1;
 CheckVSSeeker = 0x810C4EC | 1;
 GoToTMMenu = 0x81317F8 | 1;
 GoToBerryMenu = 0x813CD50 | 1;
 BuyMenuDisplayMessage = 0x813F75C | 1;
-
 
 /* PokeMart Functions */
 Task_ShopMenu = 0x809AC10 | 1;
@@ -804,7 +817,6 @@ FuncIsActiveTask = 0x8077650 | 1;
 FindTaskIdByFunc = 0x8077688 | 1;
 GetTaskCount = 0x80776B8 | 1;
 DisplayItemMessage = 0x8108E70 | 1;
-bag_menu_inits_lists_menu = 0x810A1F8 | 1;
 oac_nullsub_0 = 0x810BB88 | 1;
 CpuFastSet = 0x81E3B60 | 1;
 CpuSet = 0x81E3B64 | 1;
