@@ -67,6 +67,9 @@ void PokeDudeRestoreBag(void);
 void PokeDudeBackupKeyItemsTMs(void);
 void PokeDudeRestoreKeyItemsTMs(void);
 void StoreBagItemCount(void);
+bool8 TrySetupSortBag(u8 taskId);
+void LoadBagSorterMenuOptions(void);
+void PrintBagSortItemQuestion(u8 windowId);
 
 //Exported Constants
 enum

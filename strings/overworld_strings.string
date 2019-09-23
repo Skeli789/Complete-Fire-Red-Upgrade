@@ -54,6 +54,47 @@ The wall is very rocky[.]\nWill a Pok\emon's move scale it?
 #org @gText_AlreadyOwnTM
 You already own that TM.[FC][09]
 
+//Bag Strings
+
+#org @gText_WantToSortItems
+Sort this pocket's\nitems how?
+
+#org @gMenuText_ByType
+Type
+
+#org @gMenuText_ByName
+Name
+
+#org @gMenuText_ByMost
+Most
+
+#org @gMenuText_ByLeast
+Least
+
+#org @gMenuText_ByAmount
+Amount
+
+#org @gText_name
+name
+
+#org @gText_type
+type
+
+#org @gText_most
+most
+
+#org @gText_least
+least
+
+#org @gText_amount
+amount
+
+#org @gText_SortItemsBy
+Sort items by\n[BUFFER1]?
+
+#org @gText_ItemsSortedBy
+Items sorted by\n[BUFFER1]!
+
 //Battle Tower Pokemon Select
 
 #org @gOtherText_NoMoreOnePoke

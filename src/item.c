@@ -1,4 +1,8 @@
 #include "defines.h"
+#include "../include/item_menu.h"
+#include "../include/list_menu.h"
+#include "../include/menu.h"
+#include "../include/menu_helpers.h"
 #include "../include/money.h"
 #include "../include/script.h"
 #include "../include/shop.h"
@@ -25,12 +29,23 @@ extern const u16 gItemsByType[];
 //This file's functions:
 static void StringAppendFullMoveName(u8* dst, const u8* src);
 
-static s8 CompareBerries(u16 item1, u16 item2);
-static s8 CompareTMs(u16 item1, u16 item2);
-static s8 CompareItemsAlphabetically(u16 item1, u16 item2);
-static s8 CompareItemsByType(u16 item1, u16 item2);
-static void MergeSort(struct ItemSlot* array, u32 low, u32 high, s8 (*comparator)(u16, u16));
-static void Merge(struct ItemSlot* arr, u32 l, u32 m, u32 r, s8 (*comparator)(u16, u16));
+static s8 CompareBerries(struct ItemSlot* itemSlot1, struct ItemSlot* itemSlot2);
+static s8 CompareTMs(struct ItemSlot* itemSlot1, struct ItemSlot* itemSlot2);
+static s8 CompareItemsAlphabetically(struct ItemSlot* itemSlot1, struct ItemSlot* itemSlot2);
+static s8 CompareItemsByType(struct ItemSlot* itemSlot1, struct ItemSlot* itemSlot2);
+static s8 CompareItemsByMost(struct ItemSlot* itemSlot1, struct ItemSlot* itemSlot2);
+static s8 CompareItemsByLeast(struct ItemSlot* itemSlot1, struct ItemSlot* itemSlot2);
+static void MergeSort(struct ItemSlot* array, u32 low, u32 high, s8 (*comparator)(struct ItemSlot*, struct ItemSlot*));
+static void Merge(struct ItemSlot* arr, u32 l, u32 m, u32 r, s8 (*comparator)(struct ItemSlot*, struct ItemSlot*));
+static void BagMenu_SortByName(u8 taskId);
+static void BagMenu_SortByType(u8 taskId);
+static void BagMenu_SortByMost(u8 taskId);
+static void BagMenu_SortByLeast(u8 taskId);
+static void BagMenu_SortByAmount(u8 taskId);
+static void BagMenu_ConfirmSort(u8 taskId);
+static void BagMenu_CancelSort(u8 taskId);
+static void Task_SortFinish(u8 taskId);
+static void FinishBagSortIntro(u8 taskId);
 
 //General Utility Functions
 u16 SanitizeItemId(u16 itemId)
@@ -926,11 +941,121 @@ bool8 DoesBagHaveBerry(void)
 }
 
 
-//Functions For Sorting Bag
-static s8 CompareBerries(u16 item1, u16 item2)
+//Functions For Sorting Bag/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#define gMenuText_Use (const u8*) 0x84161a0
+#define gMenuText_Toss (const u8*) 0x84161a4
+#define gMenuText_Register (const u8*) 0x84161a9
+#define gMenuText_Give (const u8*) 0x84161b2
+#define gText_Cancel2 (const u8*) 0x84161c1
+#define gMenuText_Check (const u8*) 0x84161e9
+#define gMenuText_Open (const u8*) 0x84161f4
+#define gMenuText_Walk (const u8*) 0x84161bc
+#define gMenuText_Deselect (const u8*) 0x84161f9
+#define gText_EmptyString2 (const u8*) 0x84161cd
+
+#define ItemMenu_UseOutOfBattle (void*) 0x8109c51
+#define ItemMenu_Toss (void*) 0x8109cc1
+#define ItemMenu_Register (void*) 0x810a001
+#define ItemMenu_Give (void*) 0x810a0a9
+#define ItemMenu_Cancel (void*) 0x810a2dd
+#define ItemMenu_UseInBattle (void*) 0x810a325
+#define ItemMenu_Register (void*) 0x810a001
+
+extern const u8 gText_WantToSortItems[];
+extern const u8 gMenuText_ByType[];
+extern const u8 gMenuText_ByName[];
+extern const u8 gMenuText_ByMost[];
+extern const u8 gMenuText_ByLeast[];
+extern const u8 gMenuText_ByAmount[];
+extern const u8 gText_type[];
+extern const u8 gText_name[];
+extern const u8 gText_most[];
+extern const u8 gText_least[];
+extern const u8 gText_amount[];
+extern const u8 gText_SortItemsBy[];
+extern const u8 gText_ItemsSortedBy[];
+
+enum
 {
-	u8 id1 = BerryIdFromItemId(item1);
-	u8 id2 = BerryIdFromItemId(item2);
+	SORT_ALPHABETICALLY,
+	SORT_BY_TYPE,
+	SORT_BY_LEAST,
+	SORT_BY_MOST,
+	SORT_BY_AMOUNT,
+};
+
+enum
+{
+	BAG_MENU_OPTION_CANCEL = 4,
+
+	BAG_MENU_OPTION_BY_NAME = 12,
+	BAG_MENU_OPTION_BY_TYPE,
+	BAG_MENU_OPTION_BY_MOST,
+	BAG_MENU_OPTION_BY_LEAST,
+	BAG_MENU_OPTION_BY_AMOUNT,
+};
+
+const struct YesNoFuncTable sYesNoSortFunctions = {BagMenu_ConfirmSort, BagMenu_CancelSort};
+
+const u8* const sSortTypeStrings[] =
+{
+	[SORT_ALPHABETICALLY] = gText_name,
+	[SORT_BY_TYPE] = gText_type,
+	[SORT_BY_LEAST] = gText_least,
+	[SORT_BY_MOST] = gText_most,
+	[SORT_BY_AMOUNT] = gText_amount,
+};
+
+const struct MenuAction sItemMenuActions[] =
+{
+	{gMenuText_Use, 		{ItemMenu_UseOutOfBattle}},
+	{gMenuText_Toss, 		{ItemMenu_Toss}},
+	{gMenuText_Register, 	{ItemMenu_Register}},
+	{gMenuText_Give, 		{ItemMenu_Give}},
+	{gText_Cancel2, 		{ItemMenu_Cancel}},
+	{gMenuText_Use, 		{ItemMenu_UseInBattle}},
+	{gMenuText_Check, 		{ItemMenu_UseOutOfBattle}},
+	{gMenuText_Open, 		{ItemMenu_UseOutOfBattle}},
+	{gMenuText_Open, 		{ItemMenu_UseInBattle}},
+	{gMenuText_Walk, 		{ItemMenu_UseOutOfBattle}},
+	{gMenuText_Deselect, 	{ItemMenu_Register}},
+	{gText_EmptyString2, 	{NULL}},
+	[BAG_MENU_OPTION_BY_NAME] = 	{gMenuText_ByName, 		{BagMenu_SortByName}},
+	[BAG_MENU_OPTION_BY_TYPE] = 	{gMenuText_ByType, 		{BagMenu_SortByType}},
+	[BAG_MENU_OPTION_BY_MOST] = 	{gMenuText_ByMost, 		{BagMenu_SortByMost}},
+	[BAG_MENU_OPTION_BY_LEAST] =	{gMenuText_ByLeast, 	{BagMenu_SortByLeast}},
+	[BAG_MENU_OPTION_BY_AMOUNT] =	{gMenuText_ByAmount, 	{BagMenu_SortByAmount}},
+};
+
+const u8 gBagMenuSortItems[] =
+{
+	BAG_MENU_OPTION_BY_NAME,
+	BAG_MENU_OPTION_BY_TYPE,
+	//BAG_MENU_OPTION_BY_MOST,
+	//BAG_MENU_OPTION_BY_LEAST,
+	BAG_MENU_OPTION_BY_AMOUNT,
+	BAG_MENU_OPTION_CANCEL,
+};
+
+const u8 gBagMenuSortKeyItems[] =
+{
+	BAG_MENU_OPTION_BY_NAME,
+	BAG_MENU_OPTION_CANCEL,
+};
+
+const u8 gBagMenuSortPokeBalls[] =
+{
+	BAG_MENU_OPTION_BY_NAME,
+	//BAG_MENU_OPTION_BY_MOST,
+	//BAG_MENU_OPTION_BY_LEAST,
+	BAG_MENU_OPTION_BY_AMOUNT,
+	BAG_MENU_OPTION_CANCEL,
+};
+
+static s8 CompareBerries(struct ItemSlot* itemSlot1, struct ItemSlot* itemSlot2)
+{
+	u8 id1 = BerryIdFromItemId(itemSlot1->itemId);
+	u8 id2 = BerryIdFromItemId(itemSlot2->itemId);
 
 	if (id1 < id2)
 		return -1;
@@ -940,10 +1065,10 @@ static s8 CompareBerries(u16 item1, u16 item2)
 	return 0;
 }
 
-static s8 CompareTMs(u16 item1, u16 item2)
+static s8 CompareTMs(struct ItemSlot* itemSlot1, struct ItemSlot* itemSlot2)
 {
-	u8 id1 = TMIdFromItemId(item1);
-	u8 id2 = TMIdFromItemId(item2);
+	u8 id1 = TMIdFromItemId(itemSlot1->itemId);
+	u8 id2 = TMIdFromItemId(itemSlot2->itemId);
 
 	#ifndef TMS_BEFORE_HMS
 	if (id1 <= NUM_TMS && id2 > NUM_TMS)
@@ -961,37 +1086,11 @@ static s8 CompareTMs(u16 item1, u16 item2)
 	else if (id2 > id1)
 		return 1;
 	return 0;
-
-	/*
-	u8 id1 = TMIdFromItemId(item1);
-	u8 id2 = TMIdFromItemId(item2);
-
-	#ifndef TMS_BEFORE_HMS
-		if (id1 > NUM_TMS)
-		{
-			id1 -= NUM_TMS; //HM
-			id2 += NUM_HMS; //So if TM, will always follow HM
-		}
-
-		if (id2 > NUM_TMS)
-		{
-			id2 -= NUM_TMS; //HM
-			id1 += NUM_HMS; //So if TM, will always follow HM
-		}
-	#endif
-
-	if (id1 < id2)
-		return -1;
-	else if (id1 > id2)
-		return 1;
-
-	return 0;
-	*/
 }
 
 void SortBerriesOrTMHMs(struct BagPocket* bagPocket)
 {
-	s8 (*func)(u16, u16);
+	s8 (*func)(struct ItemSlot*, struct ItemSlot*);
 	u16 itemAmount = bagPocket->capacity;
 
 	if (bagPocket->itemSlots == sBagPocketArrangement.tmRam)
@@ -1002,63 +1101,11 @@ void SortBerriesOrTMHMs(struct BagPocket* bagPocket)
 	MergeSort(bagPocket->itemSlots, 0, itemAmount - 1, func);
 }
 
-
-
-/*
-void SortTmHmCase(struct BagPocket* bagPocket)
+static s8 CompareItemsAlphabetically(struct ItemSlot* itemSlot1, struct ItemSlot* itemSlot2)
 {
-	SortBerriesOrTMHMs(bagPocket);
+	u16 item1 = itemSlot1->itemId;
+	u16 item2 = itemSlot2->itemId;
 
-	u16 numTmsHms = bagPocket->capacity;
-	u16 i,j;
-	if (numTmsHms > 0)
-	{
-		for (i = 0;	 i < numTmsHms; ++i)
-		{
-			if (bagPocket->itemSlots[i].itemId == 0 && GetBagItemQuantity(&bagPocket->itemSlots[i].quantity == 0))
-				return;
-
-			if (bagPocket->itemSlots[i].itemId != 0)
-			{
-
-				// this loop seems useless gamefreak...
-				if (bagPocket->itemSlots[i].itemId > ITEM_TM50 && GetBagItemQuantity(&bagPocket->itemSlots[i].quantity) != 0)
-				{
-
-					for (j = 0; j < numTmsHms; ++j)
-					{
-						if (bagPocket->itemSlots[j].itemId != 0
-							continue;
-						else if (GetBagItemQuantity(&bagPocket->itemSlots[j].quantity) != 0)
-							continue;
-					}
-				}
-
-				else if (bagPocket->itemSlots[i].itemId > ITEM_TM50 || GetBagItemQuantity(&bagPocket->itemSlots[i].quantity) == 0)
-					continue;
-			}
-
-			for (j = 0; j < numTmsHms-1; ++j)
-			{
-				bagPocket->itemSlots[numTmsHms - j].capacity = GetBagItemQuantity(&bagPocket->itemSlots[numTmsHms - j].quantity);
-			}
-
-			(void*) addr = Calloc(4*numTmsHms);
-
-			CpuSet(
-
-
-
-		}
-
-
-	}
-
-};
-*/
-
-static s8 CompareItemsAlphabetically(u16 item1, u16 item2)
-{
 	if (item1 == ITEM_NONE)
 		return 1;
 	else if (item2 == ITEM_NONE)
@@ -1085,27 +1132,61 @@ static s8 CompareItemsAlphabetically(u16 item1, u16 item2)
 	return 0; //Will never be reached
 }
 
-static s8 CompareItemsByType(u16 item1, u16 item2)
+static s8 CompareItemsByType(struct ItemSlot* itemSlot1, struct ItemSlot* itemSlot2)
 {
-	if (gItemsByType[item1] < gItemsByType[item2])
+	//Null items go last
+	u8 type1 = (itemSlot1->itemId == ITEM_NONE) ? 0xFF : gItemsByType[itemSlot1->itemId];
+	u8 type2 = (itemSlot2->itemId == ITEM_NONE) ? 0xFF : gItemsByType[itemSlot2->itemId];
+
+	if (type1 < type2)
 		return -1;
-	else if (gItemsByType[item1] > gItemsByType[item2])
+	else if (type1 > type2)
 		return 1;
 
-	return CompareItemsAlphabetically(item1, item2); //Items are of same type so sort alphabetically
+	return CompareItemsAlphabetically(itemSlot1, itemSlot2); //Items are of same type so sort alphabetically
 }
 
-enum
+static s8 CompareItemsByMost(struct ItemSlot* itemSlot1, struct ItemSlot* itemSlot2)
 {
-	SORT_ALPHABETICALLY,
-	SORT_BY_TYPE,
-};
+	u16 quantity1 = itemSlot1->quantity;
+	u16 quantity2 = itemSlot2->quantity;
+	
+	if (itemSlot1->itemId == ITEM_NONE)
+		return 1;
+	else if (itemSlot2->itemId == ITEM_NONE)
+		return -1;
+
+	if (quantity1 < quantity2)
+		return 1;
+	else if (quantity1 > quantity2)
+		return -1;
+
+	return CompareItemsAlphabetically(itemSlot1, itemSlot2); //Items have same quantity so sort alphabetically
+}
+
+static s8 CompareItemsByLeast(struct ItemSlot* itemSlot1, struct ItemSlot* itemSlot2)
+{
+	u16 quantity1 = itemSlot1->quantity;
+	u16 quantity2 = itemSlot2->quantity;
+	
+	if (itemSlot1->itemId == ITEM_NONE)
+		return 1;
+	else if (itemSlot2->itemId == ITEM_NONE)
+		return -1;
+	
+	if (quantity1 < quantity2)
+		return -1;
+	else if (quantity1 > quantity2)
+		return 1;
+
+	return CompareItemsAlphabetically(itemSlot1, itemSlot2); //Items have same quantity so sort alphabetically
+}
 
 void SortItemsInBag(u8 pocket, u8 type)
 {
 	struct ItemSlot* itemMem;
 	u16 itemAmount;
-	s8 (*func)(u16, u16);
+	s8 (*func)(struct ItemSlot*, struct ItemSlot*);
 
 	switch (pocket) {
 		case 0:
@@ -1125,6 +1206,13 @@ void SortItemsInBag(u8 pocket, u8 type)
 		case SORT_ALPHABETICALLY:
 			func = CompareItemsAlphabetically;
 			break;
+		case SORT_BY_LEAST:
+			func = CompareItemsByLeast;
+			break;
+		case SORT_BY_MOST:
+		case SORT_BY_AMOUNT:
+			func = CompareItemsByMost;
+			break;
 		default:
 			func = CompareItemsByType;
 	}
@@ -1132,7 +1220,7 @@ void SortItemsInBag(u8 pocket, u8 type)
 	MergeSort(itemMem, 0, itemAmount - 1, func);
 }
 
-static void MergeSort(struct ItemSlot* array, u32 low, u32 high, s8 (*comparator)(u16, u16))
+static void MergeSort(struct ItemSlot* array, u32 low, u32 high, s8 (*comparator)(struct ItemSlot*, struct ItemSlot*))
 {
 	if (high <= low)
 		return;
@@ -1143,7 +1231,7 @@ static void MergeSort(struct ItemSlot* array, u32 low, u32 high, s8 (*comparator
 	Merge(array, low, mid, high, comparator); //Merge results.
 }
 
-static void Merge(struct ItemSlot* array, u32 low, u32 mid, u32 high, s8 (*comparator)(u16, u16))
+static void Merge(struct ItemSlot* array, u32 low, u32 mid, u32 high, s8 (*comparator)(struct ItemSlot*, struct ItemSlot*))
 {
 	u32 i = low;
 	u32 j = mid + 1;
@@ -1158,9 +1246,140 @@ static void Merge(struct ItemSlot* array, u32 low, u32 mid, u32 high, s8 (*compa
 			array[k] = aux[j++];
 		else if (j > high)
 			array[k] = aux[i++];
-		else if (comparator(aux[j].itemId, aux[i].itemId) < 0)
+		else if (comparator(&aux[j], &aux[i]) < 0)
 			array[k] = aux[j++];
 		else
 			array[k] = aux[i++];
 	}
+}
+
+static void FinishBagSortIntro(u8 taskId)
+{
+	ClearWindowTilemap(sub_810BAD8(0xA));
+	ClearWindowTilemap(sub_810BAD8(6));
+	sub_810BA3C(0xA);
+	sub_810BA3C(6);
+	PutWindowTilemap(0);
+
+	StringExpandPlaceholders(gStringVar4, gText_SortItemsBy);
+	BagMenu_Print(sub_810B9DC(6, 1), 2, gStringVar4, 0, 2, 1, 0, 0, 1);
+	BagMenu_YesNo(taskId, &sYesNoSortFunctions);
+}
+
+static void BagMenu_SortByName(u8 taskId)
+{
+	gTasks[taskId].data[2] = SORT_ALPHABETICALLY;
+	StringCopy(gStringVar1, sSortTypeStrings[SORT_ALPHABETICALLY]);
+	FinishBagSortIntro(taskId);
+}
+
+static void BagMenu_SortByType(u8 taskId)
+{
+	gTasks[taskId].data[2] = SORT_BY_TYPE;
+	StringCopy(gStringVar1, sSortTypeStrings[SORT_BY_TYPE]);
+	FinishBagSortIntro(taskId);
+}
+
+static void BagMenu_SortByMost(u8 taskId)
+{
+	gTasks[taskId].data[2] = SORT_BY_MOST;
+	StringCopy(gStringVar1, sSortTypeStrings[SORT_BY_MOST]);
+	FinishBagSortIntro(taskId);
+}
+
+static void BagMenu_SortByLeast(u8 taskId)
+{
+	gTasks[taskId].data[2] = SORT_BY_LEAST;
+	StringCopy(gStringVar1, sSortTypeStrings[SORT_BY_LEAST]);
+	FinishBagSortIntro(taskId);
+}
+
+static void BagMenu_SortByAmount(u8 taskId)
+{
+	gTasks[taskId].data[2] = SORT_BY_AMOUNT; //Just a copy of greatest->least
+	StringCopy(gStringVar1, sSortTypeStrings[SORT_BY_AMOUNT]);
+	FinishBagSortIntro(taskId);
+}
+
+static void BagMenu_CancelSort(u8 taskId)
+{
+	s16* data = gTasks[taskId].data;
+
+	sub_810BA3C(6);
+	PutWindowTilemap(1);
+	BgIdMarkForSync(0);
+	BagMenu_PrintCursor_(data[0], 1);
+	set_callback3_to_bag(taskId);
+}
+
+static void BagMenu_ConfirmSort(u8 taskId)
+{
+	s16* data = gTasks[taskId].data;
+	u16* scrollPos = &gBagPositionStruct.scrollPosition[gBagPositionStruct.pocket];
+	u16* cursorPos = &gBagPositionStruct.cursorPosition[gBagPositionStruct.pocket];
+
+	sub_810BA3C(6);
+	StringCopy(gStringVar1, sSortTypeStrings[data[2]]);
+	StringExpandPlaceholders(gStringVar4, gText_ItemsSortedBy);
+	BagMenu_Print(sub_810B9DC(6, 3), 2, gStringVar4, 0, 2, 1, 0, 0, 1);
+	SortItemsInBag(gBagPositionStruct.pocket, data[2]);
+	DestroyListMenuTask(data[0], scrollPos, cursorPos);
+	SetInitialScrollAndCursorPositions(gBagPositionStruct.pocket);
+	LoadBagItemListBuffers(gBagPositionStruct.pocket);
+	data[0] = ListMenuInit(gMultiuseListMenuTemplate, *scrollPos, *cursorPos);
+	gTasks[taskId].func = Task_SortFinish;
+}
+
+static void Task_SortFinish(u8 taskId)
+{
+	s16* data = gTasks[taskId].data;
+
+	if (gMain.newKeys & (A_BUTTON | B_BUTTON))
+	{
+		PlaySE(SE_SELECT);
+		sub_810BA3C(6);
+		PutWindowTilemap(1);
+		BgIdMarkForSync(0);
+		BagMenu_PrintCursor_(data[0], 1);
+		set_callback3_to_bag(taskId);
+	}
+}
+
+bool8 TrySetupSortBag(u8 taskId)
+{
+	if (gMain.newKeys & START_BUTTON)
+	{
+		BagMenu_RemoveScrollingArrows();
+		Var800E = 0xF9F9;
+		gTasks[taskId].func = CreateBagMenuMiniMenuSelection;
+		return TRUE;
+	}
+
+	if (Var800E == 0xF9F9)
+		Var800E = 0; //Don't activate sorter
+
+	return FALSE;
+}
+
+void LoadBagSorterMenuOptions(void)
+{
+	switch (gBagPositionStruct.pocket + 1) {
+		case POCKET_KEY_ITEMS:
+			*((const u8**) 0x203AD24) = gBagMenuSortKeyItems;
+			*((u8*) 0x203AD28) = ARRAY_COUNT(gBagMenuSortKeyItems);
+			break;
+		case POCKET_POKE_BALLS:
+			*((const u8**) 0x203AD24) = gBagMenuSortPokeBalls;
+			*((u8*) 0x203AD28) = ARRAY_COUNT(gBagMenuSortPokeBalls);
+			break;
+		default:
+			*((const u8**) 0x203AD24) = gBagMenuSortItems;
+			*((u8*) 0x203AD28) = ARRAY_COUNT(gBagMenuSortItems);
+			break;
+	}
+}
+
+void PrintBagSortItemQuestion(u8 windowId)
+{
+	BagMenu_Print(windowId, 2, gText_WantToSortItems, 0, 2, 1, 0, 0, 1);
 }

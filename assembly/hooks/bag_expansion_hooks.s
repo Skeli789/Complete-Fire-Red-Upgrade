@@ -65,6 +65,7 @@ OpenBagBugFix3:
 	add r0, #0x1
 	pop {r2-r3}
 	ldr r1, =0x8108AC8 | 1
+bxr1:
 	bx r1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -181,3 +182,62 @@ CanUseItemsReturn:
 .align 2
 .PokeDudeItemBackupPtr: .word 0x203AD2C
 .SaveBlock1: .word 0x3005008
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.pool
+@0x810900C with r1
+BagSorterHook:
+	add r0, #0x1
+	cmp r4, r0
+	bne BagMenu_PressedAButton
+	mov r0, r6
+	bl TrySetupSortBag
+	ldr r0, =0x81090C6 | 1
+	bx r0
+
+BagMenu_PressedAButton:
+	ldr r0, =0x8109044 | 1
+	bx r0
+
+.pool
+@0x8109AD4 with r0
+BagSorterHook2:
+	ldr r0, =var800e
+	ldrh r0, [r0]
+	ldr r1, .BagSortIndicator
+	cmp r0, r1
+	bne NotBagSortOption
+	bl LoadBagSorterMenuOptions
+
+NotBagSortOption:
+	ldrb r1, [r7]
+	sub r1, #0x1
+	lsl r1, #0x18
+	lsr r1, #0x18
+	ldr r0, =0x8109ADC | 1
+	bx r0
+
+.pool
+@0x8109B5C with r1
+BagSorterHook3:
+	mov r4, r0
+	lsl r4, #0x18
+	lsr r4, #0x18
+	ldr r0, =Var800E
+	ldrh r0, [r0]
+	ldr r1, .BagSortIndicator
+	cmp r0, r1
+	bne PrintRegularItemSelected
+	mov r0, r4
+	bl PrintBagSortItemQuestion
+	ldr r0, =0x8109B90 | 1
+	bx r0
+
+PrintRegularItemSelected:
+	ldr r0, =Var800E
+	ldr r1, =0x8109B64 | 1
+	bx r1
+
+.align 2
+.BagSortIndicator: .word 0xF9F9
