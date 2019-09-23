@@ -655,7 +655,8 @@ extern const u8 gText_FieldMoveDesc_Dive[];
 extern const u8 SystemScript_RockClimb[];
 extern const u8 SystemScript_Defog[];
 
-enum
+// Field Move IDs
+enum FieldMovesIDs
 {
 	FIELD_MOVE_FLASH,
 	FIELD_MOVE_CUT,

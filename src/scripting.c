@@ -2741,13 +2741,10 @@ void ConvertCoinInt(u32 coinAmount)
 //////////////////////////////////
 ///// Scrolling Multichoice //////
 //////////////////////////////////
-#define tMaxShowed 		data[0]
-#define tTilemapTop 	data[2]
-#define tTilemapLeft 	data[3]
-#define tHeight			data[5]
-
-#define MIN_NUM_SHOWED 2
-#define MAX_NUM_SHOWED 6
+//Var8000 - set index
+//Var8001 - num choices showed at once
+//special 0x158
+//waitstate
 
 //Text Declarations
 extern const u8 sExampleText_1[];
@@ -2761,10 +2758,7 @@ extern const u8 sExampleText_8[];
 extern const u8 sExampleText_9[];
 extern const u8 sExampleText_10[];
 
-//Var8000 - set index
-//Var8001 - num choices showed at once
-//special 0x158
-//waitstate
+//Scrolling Lists
 static const u8* sMultichoiceSet1[] =
 {
 	sExampleText_1,
@@ -2793,7 +2787,7 @@ static const u8* sMultichoiceSet2[] =
 	sExampleText_10,
 };
 
-
+// Multichoice Lists
 const struct ScrollingMulti gScrollingSets[] =
 {
 	{sMultichoiceSet1, ARRAY_COUNT(sMultichoiceSet1)},
@@ -2818,6 +2812,15 @@ static const struct ScrollingSizePerOpts sScrollingSizes[] =
 	{.maxShowed = 8, .height = 14},
 	{.maxShowed = 9, .height = 16},
 };
+
+
+#define tMaxShowed 		data[0]
+#define tTilemapTop 	data[2]
+#define tTilemapLeft 	data[3]
+#define tHeight			data[5]
+
+#define MIN_NUM_SHOWED 2
+#define MAX_NUM_SHOWED 6
 
 #endif
 
