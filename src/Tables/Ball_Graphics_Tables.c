@@ -1,6 +1,10 @@
 #include "../defines.h"
 #include "../../include/new/catching.h"
 #include "../../include/constants/items.h"
+/*
+ball_graphics_tables.c
+	set up the structures for expanded pokeballs
+*/
 
 #define POKEBALL_COUNT NUM_BALLS
 

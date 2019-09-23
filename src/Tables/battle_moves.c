@@ -1,6 +1,10 @@
 #include "../defines.h"
 #include "../defines_battle.h"
 #include "../../include/new/z_move_effects.h"
+/*
+battle_moves.c
+	Set up attack data for each move
+*/
 
 const struct BattleMove gBattleMoves[] =
 {

@@ -3,6 +3,10 @@
 #include "../../include/constants/trainer_classes.h"
 #include "../../include/constants/songs.h"
 #include "../../include/constants/species.h"
+/*
+music_tables.c
+	set up music for each trainer class
+*/
 
 //Finish Wild Songs for Unbound
 

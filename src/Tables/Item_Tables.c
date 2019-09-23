@@ -3,6 +3,13 @@
 #include "../../include/constants/hold_effects.h"
 #include "../../include/constants/items.h"
 #include "../../include/new/pickup_items.h"
+/*
+item_tables.c
+	set up item data tables
+		-pickup lists
+		-fling
+		-ban lists
+*/
 
 const item_t sPickupCommonItems[PU_NUM_COMMON_ITEMS] =
 {

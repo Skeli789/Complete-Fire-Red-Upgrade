@@ -1,4 +1,9 @@
 #include "../config.h"
+/*
+class_based_pokeball_table.c
+	link a specific poke-ball type to each trainer class
+*/
+
 
 #ifdef TRAINER_CLASS_POKE_BALLS
 

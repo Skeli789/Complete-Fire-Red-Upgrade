@@ -1,4 +1,8 @@
 #include "../../include/new/frontier.h"
+/*
+frontier_trainer_names.h
+	set up tables of names for battle frontier trainers
+*/
 
 extern const u8 sTrainerName_Liam[];
 extern const u8 sTrainerName_Noah[];

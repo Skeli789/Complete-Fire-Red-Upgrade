@@ -1,6 +1,10 @@
 #include "../config.h"
 #include "../../include/global.h"
 #include "../../include/constants/species.h"
+/*
+experience_tables.c
+	define base experience yeild for each species
+*/
 
 #ifdef GEN_7_BASE_EXP_YIELD
 

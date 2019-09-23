@@ -1,3 +1,8 @@
+/*
+battle_tower_spreads.h
+	set up EVs, IVs, ability types, items, moves, ball type, etc, for trainers in the battle tower.
+*/	
+
 #ifdef UNBOUND 
 /*These spreads will not be compiled for your hack.
 If you'd like to use these spreads, either remove

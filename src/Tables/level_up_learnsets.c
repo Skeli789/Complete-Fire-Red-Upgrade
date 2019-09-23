@@ -6,6 +6,12 @@
 #include "../../include/pokemon.h"
 #include "../../include/constants/moves.h"
 #include "../../include/constants/species.h"
+/*
+level_up_learnsets.c
+	Learnsets for each species
+		-NOTE: pointer list at bottom of the file
+*/
+
 
 #define LEVEL_UP_MOVE(lvl, move) {move, lvl}
 #define LEVEL_UP_END {0x0, 0xFF}

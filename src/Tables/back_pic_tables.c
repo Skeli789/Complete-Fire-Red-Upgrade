@@ -2,6 +2,10 @@
 #include "../../include/data2.h"
 #include "../../include/sprite.h"
 #include "../../include/constants/trainers.h"
+/*
+back_pic_tables.c
+	Set up tables to switch the player's back sprite
+*/
 
 #define gTrainerBackPicPalette_Red (const u8*) 0x8E76EBC
 #define gTrainerBackPicPalette_Leaf (const u8*) 0x8E76EE4

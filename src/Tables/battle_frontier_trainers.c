@@ -10,17 +10,21 @@
 #include "frontier_trainer_names.h"
 #include "frontier_special_trainer_spreads.h"
 #include "frontier_multi_spreads.h"
+/*
+battle_frontier_trainers.c
+	set up the battle frontier trainer structure
 
-/*struct BattleTowerTrainer
-{
-    u16 owNum;
-	u8 trainerClass;
-	u8 trainerSprite;
-	u8 gender;
-	u8* preBattleText;
-	u8* playerWinText;
-	u8* playerLoseText;
-};*/
+	struct BattleTowerTrainer
+	{
+		u16 owNum;
+		u8 trainerClass;
+		u8 trainerSprite;
+		u8 gender;
+		u8* preBattleText;
+		u8* playerWinText;
+		u8* playerLoseText;
+	};
+*/
 
 extern const u8 sFrontierText_Youngster_PreBattle_1[];
 extern const u8 sFrontierText_Youngster_PlayerWin_1[];

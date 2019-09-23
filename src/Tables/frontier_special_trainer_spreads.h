@@ -6,6 +6,10 @@
 #include "../../include/constants/species.h"
 #include "../../include/constants/items.h"
 #include "../../include/constants/trainer_classes.h"
+/*
+frontier_special_trainer_spreads.h
+	set up battle frontier species for special trainers, including EVs, IVs, nature, ability, ball type, etc!
+*/
 
 #ifdef UNBOUND
 const struct BattleTowerSpread gSpecialTowerSpread_Palmer1[] =

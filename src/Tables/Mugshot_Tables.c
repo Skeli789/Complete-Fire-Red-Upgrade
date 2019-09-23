@@ -1,6 +1,10 @@
 #include "../defines.h"
 
 #include "../../include/new/battle_transition_data.h"
+/*
+mugshot_tables.c
+	set up image/palette tables for trainer battle transition mugshots
+*/
 
 ///////////////////////// Custom Mugshot Table ///////////////////////////
 /////////// Replaces Trainer Front Sprite with custom Image //////////////

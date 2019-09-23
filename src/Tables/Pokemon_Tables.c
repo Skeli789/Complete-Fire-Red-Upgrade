@@ -2,6 +2,14 @@
 #include "../../include/pokedex.h"
 #include "../../include/constants/species.h"
 #include "../../include/constants/items.h"
+/*
+pokemon_tables.c
+	set up tables for pokemon species including:
+		-alternate species
+		-ban lists
+		-move tables by species
+		-etc...
+*/
 
 #define ALTERNATE_SIZE(species, height, weight) {species, height * 10, weight * 10}
 

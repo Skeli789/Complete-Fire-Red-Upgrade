@@ -1,5 +1,9 @@
 #include "../config.h"
-
+/*
+frontier_multi_spreads.h
+	set up battle frontier multi battle spreads:
+		EVs, IVs, ability type, item, moves, pokeball type, and more!
+*/
 
 
 #ifdef UNBOUND
