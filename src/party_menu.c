@@ -7,6 +7,7 @@
 #include "../include/overworld.h"
 #include "../include/party_menu.h"
 #include "../include/script.h"
+#include "../include/string_util.h"
 #include "../include/text.h"
 #include "../include/window.h"
 #include "../include/constants/moves.h"
@@ -27,6 +28,17 @@
 static void OpenSummary(u8 taskId);
 static void DisplayPartyPokemonSelectDataSpecial(u8 slot, u8 stringID);
 static void DisplayPartyPokemonPriorityText(u8 stringID, struct Struct203B0B4* ptr, u8 c);
+static bool8 SetUpFieldMove_Fly(void);
+static bool8 SetUpFieldMove_Surf(void);
+static bool8 SetUpFieldMove_Teleport(void);
+static void FieldCallback_Dive(void);
+static bool8 SetUpFieldMove_Dive(void);
+static void FieldCallback_RockClimb(void);
+static bool8 SetUpFieldMove_RockClimb(void);
+static void FieldCallback_Defog(void);
+static bool8 SetUpFieldMove_Defog(void);
+static void CursorCb_MoveItemCallback(u8 taskId);
+static void CursorCb_MoveItem(u8 taskId);
 
 //*highlightedMon = 0 is Player's Pokemon out
 //*highlightedMon = 1 is Link Partner's Pokemon out
@@ -643,14 +655,6 @@ extern const u8 gText_FieldMoveDesc_Dive[];
 extern const u8 SystemScript_RockClimb[];
 extern const u8 SystemScript_Defog[];
 
-static void CursorCb_MoveItem(u8 taskId);
-static bool8 SetUpFieldMove_Fly(void);
-static bool8 SetUpFieldMove_Surf(void);
-static bool8 SetUpFieldMove_Teleport(void);
-static bool8 SetUpFieldMove_Dive(void);
-static bool8 SetUpFieldMove_RockClimb(void);
-static bool8 SetUpFieldMove_Defog(void);
-
 enum
 {
 	FIELD_MOVE_FLASH,
@@ -846,7 +850,7 @@ static bool8 SetUpFieldMove_Surf(void)
 }
 
 #define FieldCallback_Teleport (void*) 0x80F6730
-bool8 SetUpFieldMove_Teleport(void)
+static bool8 SetUpFieldMove_Teleport(void)
 {
 	#ifdef PREVENT_ROUTE_ESCAPE_FLAG
 	if (FlagGet(PREVENT_ROUTE_ESCAPE_FLAG))

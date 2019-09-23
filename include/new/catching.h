@@ -20,6 +20,7 @@ item_t BallIdToItemId(u8 ballId);
 u16 GetBattlerPokeballItemId(u8 bank);
 bool8 CriticalCapturAnimUpdate(void);
 bool8 DoubleWildPokeBallItemUseFix(u8 taskId);
+const struct SpriteTemplate* OakIntroPokeballFix(void);
 
 //Exported Structs
 struct BallIdItemIdRelation
@@ -61,6 +62,8 @@ enum BallTypes
 
 	BALL_TYPE_RANDOM = 0xFF,
 };
+
+#define BALL_TYPE_POKE_BALL 3
 
 #define LAST_BALL_INDEX BALL_TYPE_DREAM_BALL
 #define NUM_BALLS (BALL_TYPE_DREAM_BALL + 1) //Make sure to update 0804B5AA in bytereplacement!

@@ -1,5 +1,12 @@
 #pragma once
 
+#include "../global.h"
+
+/**
+ * \file general_battle_strings.h
+ * \brief Contains declarations for many strings used in battle.
+ */
+
 #define EOS 0xFF
 
 //New Strings

@@ -43,7 +43,7 @@ ReusableTMCheck1:
 IsReusable1:
 	ldr r1, =(0x08124EB0 +1)
 	bx r1
-	
+
 .align 2
 .pool
 ReusableTMCheck2:
@@ -73,7 +73,7 @@ ReusableTMCheck3:
 IsReusable3:
 	ldr r1, =(0x08125C84 +1)
 	bx r1
-		
+
 .align 2
 .pool
 SingleTmPurchaseFix:
@@ -81,7 +81,7 @@ SingleTmPurchaseFix:
 	mov r1, r6	@task id
 	bl CheckTmPurchase
 	pop {r4-r7, pc}
-	
+
 .align 2
 .pool
 AddSingleTmFix:
@@ -96,12 +96,12 @@ AddTmToBag:
 	lsl r0, r0, #0x18
 	lsr r0, r0, #0x18
 	ldr r1, =(0x0809BEC6 +1)
-	bx r1	
-	
+	bx r1
+
 BagAddItem:
 	ldr r2, =(0x809A084 +1)
 	bx r2
-	
+
 .align 2
 .pool
 UnbuyableTmFix:
@@ -114,7 +114,7 @@ UnbuyableTmFix:
 AskPurchaseQty:
 	ldr r1, =(0x0809BC7C +1)
 	bx r1
-	
+
 .align 2
 .pool
 UnsellableTmFix:
@@ -127,7 +127,7 @@ UnsellableTmFix:
 Unsellable:
 	ldr r0, =(0x08132928 +1)
 	bx r0
-	
+
 
 .align 2
 .pool
@@ -138,19 +138,19 @@ FixBoughtTmPrice:
 	ldr r0, =(0x0809B42C +1)
 	bx r0
 
-	
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ TM/HM Expansion - Fix Mart Listings
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .align 2
 .pool
-@ 0809B4A4 via r0	
+@ 0809B4A4 via r0
 FixMartTmListing:
 	mov r0, r7	@item id
 	bl LoadTmHmNameInMart
 	ldr r1, =(0x0809B4B2 +1)
 	bx r1
-	
+
 .align 2
 .pool
 TmMartDescriptionFix:
@@ -158,7 +158,7 @@ TmMartDescriptionFix:
 	mov r7, r0
 	ldr r0, =(0x0809B34A +1)
 	bx r0
-	
+
 
 @ TM/HM Expansion - Fix Hm Symbol
 .align 2
@@ -179,10 +179,10 @@ SkipSymbolAndQty:
 MakeHmSymbol:
 	ldr r0, =(0x08131EF4 +1)
 	bx r0
-ShowQty:	
+ShowQty:
 	ldr r0, =(0x08131EA6 +1)
 	bx r0
-	
+
 .align 2
 .pool
 SelectedTmSymbolFix:
@@ -195,7 +195,7 @@ SelectedTmSymbolFix:
 SkipHmSymbol:
 	ldr r0, =(0x08132528 +1)
 	bx r0
-	
+
 
 @ TM/HM Expansion - Item Ordering
 .align 2
@@ -226,7 +226,7 @@ FixTmHmDiscLoader:
 	mov r5, r0	@tm Id
 	ldr r0, =(0x081336C4 +1)
 	bx r0
-	
+
 @ 08133854 via r0
 .align 2
 .pool
@@ -251,7 +251,7 @@ FixTmHmDiscPal:
 	cmp r0, #0x0
 	beq DiscPalFromTable
 	b ReturnDiscPal
-	
+
 DiscPalFromTable:
 	ldr r0, =(0x8463238)
 	lsl r4, r4, #0x1
@@ -260,11 +260,11 @@ DiscPalFromTable:
 	lsl r1, r1, #0x1
 	ldr r0, [r2]
 	add r0, r0, r1
-	
+
 ReturnDiscPal:
 	ldr r1, =(0x08133754 +1)
 	bx r1
-	
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ TM/HM Expansion - Disc Position
 @ 08133798
@@ -276,11 +276,11 @@ FixTmHmDiscPos:
 	mov r1, r4	@tm id
 	bl TmHMDiscPosition
 	ldr r4, =(0x081337B4 +1)
-	bx r4	
-	
+	bx r4
+
 EndOfCase:
 	mov r6, #27
 	mov r1, #54
 	ldr r0, =(0x081337A0 +1)
 	bx r0
-	
+

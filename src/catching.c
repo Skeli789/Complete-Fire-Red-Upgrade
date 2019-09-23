@@ -2,6 +2,8 @@
 #include "defines_battle.h"
 #include "../include/battle_anim.h"
 #include "../include/event_data.h"
+#include "../include/field_player_avatar.h"
+#include "../include/item.h"
 #include "../include/overworld.h"
 #include "../include/random.h"
 #include "../include/constants/items.h"
@@ -553,4 +555,11 @@ bool8 TryGetPokeBallBattleScript(void)
 	}
 
 	return FALSE;
+}
+
+const struct SpriteTemplate* OakIntroPokeballFix(void)
+{
+    LoadCompressedSpriteSheetUsingHeap(&gBallSpriteSheets[BALL_TYPE_POKE_BALL]);
+    LoadCompressedSpritePaletteUsingHeap(&gBallSpritePalettes[BALL_TYPE_POKE_BALL]);
+    return &gBallSpriteTemplates[BALL_TYPE_POKE_BALL];
 }

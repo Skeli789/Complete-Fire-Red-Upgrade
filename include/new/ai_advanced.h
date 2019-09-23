@@ -1,6 +1,11 @@
 #pragma once
+
 #include "../global.h"
-#include "../battle.h"
+
+/**
+ * \file ai_advanced.h
+ * \brief Contains functions relating to advanced AI analysis of Pokemon in battle.
+ */
 
 //Exported Functions
 u8 PredictBankFightingStyle(u8 bank);

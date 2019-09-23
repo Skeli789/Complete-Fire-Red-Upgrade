@@ -534,7 +534,7 @@ void PlayerHandleExpBarUpdate(void)
 		gTasks[taskId].data[0] = bankPartyIndex;
 		gTasks[taskId].data[1] = gainedExp;
 		gTasks[taskId].data[2] = gActiveBattler;
-		gBattleBankFunc[gActiveBattler] = (u32) nullsub_8;
+		gBattleBankFunc[gActiveBattler] = 0x802E310 | 1;
 	}
 }
 

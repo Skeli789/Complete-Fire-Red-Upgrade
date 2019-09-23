@@ -1,5 +1,12 @@
 #pragma once
 
+#include "../global.h"
+
+/**
+ * \file move_tables.h
+ * \brief Contains declarations for many lists of moves.
+ */
+
 extern const move_t gSheerForceBoostedMoves[];
 extern const move_t gRecklessBoostedMoves[];
 extern const move_t gPunchingMoves[];

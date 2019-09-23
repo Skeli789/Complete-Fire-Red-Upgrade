@@ -1,5 +1,10 @@
 #pragma once
 
+/**
+ * \file text.h
+ * \brief Contains text contants for strings.
+ */
+
 #define MSGBOX_LEN 35
 
 #define PC_BUFFER(x) 0xFD, x

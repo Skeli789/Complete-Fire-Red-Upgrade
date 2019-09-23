@@ -28,7 +28,7 @@ JumpR2:
 NoPartnerNameDisplay:
         ldr r2, =0x080444C4|1
         bl JumpR2
-	
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 @;0x08033530 with r0
@@ -49,7 +49,7 @@ TagTeamExecutionCompleteHook:
 	bl IsMockBattle
 	cmp r0, #0x0
 	bne AITakeOverForPlayer
-	
+
     @; Ensure this is a tag team battle
     bl IsTagBattle
     cmp r0, #0
@@ -74,7 +74,7 @@ ExecutionReturn:
     str r1, [r0]
     ldr r0, =0x0802E34E|1
     bx r0
-		
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 @;0x08048FAC with r1
@@ -105,7 +105,7 @@ TagTeamPartnerSendoutPokemonHook:
 	bl IsMultiBattle
 	ldr r1, =0x8013760 | 1
 	bx r1
-	
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 @;0x80336A0 with r0
@@ -113,5 +113,5 @@ TagTeamThrowPokeballHook:
 	bl IsMultiBattle
 	ldr r1, =0x80336A8 | 1
 	bx r1
-	
-	
+
+

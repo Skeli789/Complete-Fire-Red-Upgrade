@@ -4,6 +4,7 @@
 #include "../include/field_weather.h"
 #include "../include/random.h"
 #include "../include/script.h"
+#include "../include/string_util.h"
 
 #include "../include/new/build_pokemon.h"
 #include "../include/new/util.h"

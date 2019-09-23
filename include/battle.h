@@ -296,7 +296,7 @@ struct UnknownFlags
 };
 
 #define RESOURCE_FLAG_FLASH_FIRE 1
-
+/*
 struct BattleMove
 {
     u8 effect;
@@ -312,7 +312,7 @@ struct BattleMove
 	u8 split;
 	u8 z_move_effect;
 };
-
+*/
 extern const struct BattleMove gBattleMoves[];
 
 #define FLAG_MAKES_CONTACT          0x1

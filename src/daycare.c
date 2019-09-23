@@ -13,8 +13,9 @@
 #include "../include/new/build_pokemon.h"
 #include "../include/new/catching.h"
 #include "../include/new/daycare.h"
-#include "../include/new/util.h"
+#include "../include/new/learn_move.h"
 #include "../include/new/item.h"
+#include "../include/new/util.h"
 
 #define sHatchedEggFatherMoves ((u16*) 0x202455C)
 #define sHatchedEggMotherMoves ((u16*)0x2024580)
@@ -22,13 +23,6 @@
 #define sHatchedEggLevelUpMoves ((u16*) 0x20244F8)
 
 #define EGG_LVL_UP_MOVES_ARRAY_COUNT 50
-#define gTMHMMoves ((const u16*) *((u32*) 0x8125A8C))
-
-extern u8 GetLevelUpMovesBySpecies(u16 species, u16* moves);
-extern u16 GetItemIdFromTmId(u8 tmId);
-
-void BuildEggMoveset(struct Pokemon* egg, struct BoxPokemon* father, struct BoxPokemon* mother);
-static u8 GetEggStepsToSubtract(void);
 
 /*Priority:
 1. Volt Tackle
@@ -39,12 +33,27 @@ static u8 GetEggStepsToSubtract(void);
 6. Baby's Default Moveset.
 */
 
-enum Parents {
-	DAYCARE_MOTHER = 0,
+enum Parents
+{
+	DAYCARE_MOTHER,
 	DAYCARE_FATHER,
 };
 
-// called from GiveEggFromDaycare
+//This file's functions:
+static s32 GetSlotToInheritNature(struct DayCare* daycare);
+static void DetermineEggParentSlots(struct DayCare* daycare, u8* parentSlots);
+static u16 DetermineEggSpeciesAndParentSlots(struct DayCare* daycare, u8* parentSlots, u32 personality);
+static u8 CheckPowerItem(u16 item);
+static void InheritIVs(struct Pokemon* egg, struct DayCare* daycare);
+static void AlterEggSpeciesWithIncenseItem(u16* species, struct DayCare* daycare);
+static void AlterSpeciesWithIncenseItems(u16* species, u16 motherItem, u16 fatherItem);
+static void InheritPokeBall(struct Pokemon* egg, struct DayCare* daycare);
+static u32 DetermineEggPersonality(struct DayCare* daycare, struct BoxPokemon* mother);
+static bool8 DetermineEggHiddenAbility(struct BoxPokemon* father, struct BoxPokemon* mother);
+static void SetInitialEggData(struct Pokemon* mon, u16 species, u32 personality);
+static u8 GetEggStepsToSubtract(void);
+
+//Called from GiveEggFromDaycare
 void BuildEggMoveset(struct Pokemon* egg, struct BoxPokemon* father, struct BoxPokemon* mother)
 {
 	u16 eggSpecies = egg->species;
@@ -164,7 +173,7 @@ void BuildEggMoveset(struct Pokemon* egg, struct BoxPokemon* father, struct BoxP
 }
 
 
-s32 GetSlotToInheritNature(struct DayCare* daycare)
+static s32 GetSlotToInheritNature(struct DayCare* daycare)
 {
 	int i;
 	u8 numWithEverstone = 0;
@@ -276,7 +285,8 @@ static u16 DetermineEggSpeciesAndParentSlots(struct DayCare* daycare, u8* parent
 	return eggSpecies;
 }
 
-static u8 CheckPowerItem(u16 item) {
+static u8 CheckPowerItem(u16 item)
+{
 	u8 itemEffect = ItemId_GetHoldEffect(item);
 	u8 itemQuality = ItemId_GetHoldEffectParam(item);
 
@@ -308,7 +318,7 @@ static u8 CheckPowerItem(u16 item) {
 	}
 };
 
-static void InheritIVs(struct Pokemon *egg, struct DayCare *daycare)
+static void InheritIVs(struct Pokemon* egg, struct DayCare* daycare)
 {
 	u8 i, j, numIVs, stat, powerResult;
 	u16 items[2];
@@ -384,14 +394,14 @@ static void InheritIVs(struct Pokemon *egg, struct DayCare *daycare)
 }
 
 
-static void AlterEggSpeciesWithIncenseItem(u16 *species, struct DayCare *daycare)
+static void AlterEggSpeciesWithIncenseItem(u16* species, struct DayCare* daycare)
 {
 	u16 motherItem = GetBoxMonData(&daycare->mons[0].mon, MON_DATA_HELD_ITEM, NULL);
 	u16 fatherItem = GetBoxMonData(&daycare->mons[1].mon, MON_DATA_HELD_ITEM, NULL);
 	AlterSpeciesWithIncenseItems(species, motherItem, fatherItem);
 }
 
-void AlterSpeciesWithIncenseItems(u16* species, u16 motherItem, u16 fatherItem)
+static void AlterSpeciesWithIncenseItems(u16* species, u16 motherItem, u16 fatherItem)
 {
 	// if neither parent holding incense, force 2nd evo species
 	switch (*species)
@@ -446,7 +456,7 @@ void AlterSpeciesWithIncenseItems(u16* species, u16 motherItem, u16 fatherItem)
 	}
 }
 
-static void InheritPokeBall(struct Pokemon *egg, struct DayCare *daycare)
+static void InheritPokeBall(struct Pokemon* egg, struct DayCare* daycare)
 {
 	u8 parent = DAYCARE_MOTHER;	// mother by default
 	u8 parentBall;
@@ -472,7 +482,7 @@ static void InheritPokeBall(struct Pokemon *egg, struct DayCare *daycare)
 	SetMonData(egg, MON_DATA_POKEBALL, &parentBall);
 }
 
-static u32 DetermineEggPersonality(struct DayCare *daycare, struct BoxPokemon* mother)
+static u32 DetermineEggPersonality(struct DayCare* daycare, struct BoxPokemon* mother)
 {
 	u32 personality;
 	s32 natureSlot = GetSlotToInheritNature(daycare);	// updated nature slot check
@@ -514,7 +524,7 @@ static bool8 DetermineEggHiddenAbility(struct BoxPokemon* father, struct BoxPoke
 	return FALSE;
 }
 
-static void SetInitialEggData(struct Pokemon *mon, u16 species, u32 personality)
+static void SetInitialEggData(struct Pokemon* mon, u16 species, u32 personality)
 {
 	//u8 ball;
 	u8 metLevel;
@@ -536,8 +546,24 @@ static void SetInitialEggData(struct Pokemon *mon, u16 species, u32 personality)
 	mon->hiddenAbility = hiddenAbility;
 }
 
+void CreateEgg(struct Pokemon *mon, u16 species) //The function used by the giveegg scripting command
+{
+	u8 metLevel = 0;
+	u16 ball = BALL_TYPE_POKE_BALL;
+	u8 language = GAME_LANGUAGE;
+	bool8 isEgg = TRUE;
+
+	CreateMon(mon, species, EGG_HATCH_LEVEL, 0x20, FALSE, 0, FALSE, 0);
+	SetMonData(mon, MON_DATA_POKEBALL, &ball);
+	SetMonData(mon, MON_DATA_NICKNAME, (void*) 0x825F83E);
+	SetMonData(mon, MON_DATA_FRIENDSHIP, &gBaseStats[species].eggCycles);
+	SetMonData(mon, MON_DATA_MET_LEVEL, &metLevel);
+	SetMonData(mon, MON_DATA_LANGUAGE, &language);
+	SetMonData(mon, MON_DATA_IS_EGG, &isEgg);
+}
+
 //Decide features to inherit
-void GiveEggFromDaycare(struct DayCare *daycare)
+void GiveEggFromDaycare(struct DayCare* daycare)
 {
 	struct Pokemon egg = {0};
 	u16 species;
@@ -577,7 +603,6 @@ void TriggerPendingDaycareEgg(unusedArg struct DayCare *daycare)
 	#endif
 }
 
-//Ability inheritance
 void CreatedHatchedMon(struct Pokemon *egg, struct Pokemon *temp)
 {
 	u16 species;

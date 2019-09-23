@@ -4,7 +4,7 @@
 
 /**
  * \file dexnav.h
- * \brief Contains a port of the DexNav system created by FBI on Pokecommunity:
+ * \brief Contains a significant improvement of the DexNav system created by FBI on Pokecommunity:
  *		  https://www.pokecommunity.com/showthread.php?p=9998647
  */
 

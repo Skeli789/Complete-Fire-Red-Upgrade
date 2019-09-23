@@ -1,5 +1,6 @@
 #include "defines.h"
 #include "defines_battle.h"
+#include "../include/string_util.h"
 #include "../include/window.h"
 #include "../include/constants/songs.h"
 

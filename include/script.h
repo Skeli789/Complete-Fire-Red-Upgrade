@@ -43,6 +43,7 @@ void __attribute__((long_call)) EnableBothScriptContexts(void);
 bool8 __attribute__((long_call)) ScriptContext2_IsEnabled(void);
 void __attribute__((long_call)) ScriptContext2_Enable(void);
 void __attribute__((long_call)) ScriptContext2_Disable(void);
+void __attribute__((long_call)) ScriptContext1_Stop(void);
 
 /*
 void InitScriptContext(struct ScriptContext *ctx, void *cmdTable, void *cmdTableEnd);
@@ -60,7 +61,6 @@ void ScriptContext1_Init(void);
 bool8 ScriptContext1_IsScriptSetUp(void);
 bool8 ScriptContext2_RunScript(void);
 //void ScriptContext1_SetupScript(const u8 *ptr);
-void ScriptContext1_Stop(void);
 void EnableBothScriptContexts(void);
 void ScriptContext2_RunNewScript(const u8 *ptr);
 u8 *mapheader_get_tagged_pointer(u8 tag);

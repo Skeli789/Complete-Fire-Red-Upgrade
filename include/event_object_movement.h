@@ -82,6 +82,9 @@ void __attribute__((long_call)) FaceDirection(struct EventObject *eventObject, s
 u8 __attribute__((long_call)) GetOppositeDirection(u8 direction);
 u8 __attribute__((long_call)) CreateVirtualSprite(u8 graphicsId, u8 a1, s16 x, s16 y, u8 z, u8 direction);
 void __attribute__((long_call)) MoveCoords(u8, s16 *, s16 *);
+u8 __attribute__((long_call)) MovementAction_EmoteExclamationMark_Step0(struct EventObject *, struct Sprite *);
+bool8 __attribute__((long_call)) IsZCoordMismatchAt(u8, s16, s16);
+void __attribute__((long_call)) LogCoordsCameraRelative(s32* x, s32* y, u8 size_x, u8 size_y);
 
 /*
 extern const struct SpriteFrameImage gEventObjectPicTable_PechaBerryTree[];
@@ -183,7 +186,6 @@ bool8 AreZCoordsCompatible(u8, u8);
 u8 ZCoordToPriority(u8);
 void EventObjectUpdateZCoord(struct EventObject *pObject);
 void SetObjectSubpriorityByZCoord(u8, struct Sprite *, u8);
-bool8 IsZCoordMismatchAt(u8, s16, s16);
 void UnfreezeEventObject(struct EventObject *);
 u8 FindLockedEventObjectIndex(struct EventObject *);
 bool8 obj_npc_ministep(struct Sprite *sprite);

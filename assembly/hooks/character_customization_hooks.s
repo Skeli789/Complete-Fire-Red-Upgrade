@@ -38,12 +38,12 @@ CreateSpriteLoadTable:
 getTable:
 	lsl r6, r6, #0x18
 	lsr r6, r6, #0x10
-	orr r1, r6	
+	orr r1, r6
 createSprite:
 	mov r8, r1
 	ldr r6, =(0x0806b660 +1)
 	bx r6
-	
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @0x805CA68 with r0
 .pool
@@ -65,7 +65,7 @@ PlayerSpawnTemplateFix:
 NpcSpawnWithTemplate:
 	ldr r1, =(0x02036e38) @EventObjects
 	add r5, r0, r1
-	ldrb r0, [r5, #0x5] 
+	ldrb r0, [r5, #0x5]
 	ldrb r1, [r5, #0x1a]
 	lsl r1, r1, #0x8
 	orr r0, r1
@@ -77,22 +77,22 @@ NpcSpawnWithTemplate:
 @	hook at 5e510 via r1
 .align 2
 .pool
-NpcSizeFix:	
+NpcSizeFix:
 	push {r4, lr}
 	sub sp, #0x8
 	mov r4, r0
-	ldrb r0, [r4, #0x5] 
+	ldrb r0, [r4, #0x5]
 	ldrb r1, [r4, #0x1a]
 	lsl r1, r1, #0x8
 	orr r0, r1
 	bl GetEventObjectGraphicsInfo
 	ldr r1, =(0x0805e51c+1)
 	bx r1
-		
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @	hook at 5e964 via r4
 .align 2
-.pool	
+.pool
 NewNpcInfo:
 	mov r4, r0
 	mov r5, r1
@@ -108,18 +108,18 @@ NewNpcInfo:
 	mov r2, r5
 	ldr r4, =(0x0805e96e+1)
 	bx r4
-	 
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @	08 47 at 5ee84
 @	ptr+1 at 5efe4
 .align 2
-.pool		 
+.pool
 LinkNpcFix:
 	ldr r6, =(0x02036e38)
 	add r6, r6, r0
 	mov r0, #0x0
 	str r0, [sp, #0x20]
-	ldrb r0, [r6, #0x5] 
+	ldrb r0, [r6, #0x5]
 	ldrb r1, [r6, #0x1a]
 	lsl r1, r1, #0x8
 	orr r0, r1
@@ -132,7 +132,7 @@ LinkNpcFix:
 	lsl r0, r0, #0x10
 	orr r0, r2
 	str r0, [r4, #0x4]
-	ldrb r0, [r6, #0x5] 
+	ldrb r0, [r6, #0x5]
 	ldrb r1, [r6, #0x1a]
 	lsl r1, r1, #0x8
 	orr r0, r1
@@ -159,16 +159,16 @@ NpcOffscreenFix:
 	bl GetEventObjectGraphicsInfo
 	ldr r1, =(0x08067a26+1)
 	bx r1
-	
-	
+
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @	hook at 67f92 via r5
 .align 2
 .pool
-NpcWaterFix:	
+NpcWaterFix:
 	mov r5, r0
 	mov r4, #0x0
-	ldrb r0, [r5, #0x5] 
+	ldrb r0, [r5, #0x5]
 	ldrb r1, [r5, #0x1a]
 	lsl r1, r1, #0x8
 	orr r0, r1
@@ -176,4 +176,4 @@ NpcWaterFix:
 	ldr r1, =(0x08067f9c+1)
 	bx r1
 
-	
+

@@ -1,5 +1,11 @@
 #pragma once
 
+/**
+ * \file move_battle_scripts.h
+ * \brief Contains declarations for battle scripts usually called during the
+ *		  execution of attacks.
+ */
+
 extern const u8* gBattleScriptsForMoveEffects[];
 
 //Scripts

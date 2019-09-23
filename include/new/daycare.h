@@ -8,11 +8,16 @@
  *		  breeding Pokemon).
  */
 
-//Exported Constants
-#define EGG_MOVES_ARRAY_COUNT 50
-
 //Exported Functions
-void AlterSpeciesWithIncenseItems(u16* species, u16 motherItem, u16 fatherItem);
 u8 GetAllEggMoves(struct Pokemon* mon, u16* moves, bool8 ignoreAlreadyKnownMoves);
 
 //Functions Hooked In
+void BuildEggMoveset(struct Pokemon* egg, struct BoxPokemon* father, struct BoxPokemon* mother);
+void CreateEgg(struct Pokemon *mon, u16 species);
+void GiveEggFromDaycare(struct DayCare* daycare);
+void TriggerPendingDaycareEgg(unusedArg struct DayCare *daycare);
+void CreatedHatchedMon(struct Pokemon *egg, struct Pokemon *temp);
+void SubtractEggSteps(u32 steps, struct Pokemon* mon);
+
+//Exported Constants
+#define EGG_MOVES_ARRAY_COUNT 50

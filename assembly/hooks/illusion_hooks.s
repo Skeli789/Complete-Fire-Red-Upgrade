@@ -14,7 +14,7 @@ BattleLoadOpponentMonSpriteGfxHook:
 	mov r4, r0
 	ldr r1, =0x8034334 | 1
 	bx r1
-	
+
 @0x80344A4 with r2
 BattleLoadPlayerMonSpriteGfxHook:
 	lsl r1, #0x18
@@ -42,14 +42,14 @@ UpdatePokeBallForIllusionHook:
 	bl UpdatePokeBallForIllusion
 	ldr r1, =0x804AA1E | 1
 	bx r1
-	
+
 @0x804B2DC with r1
 UpdateCryForIllusionHook:
 	bl GetIllusionPartyData
 	mov r7, r0
 	ldr r0, =0x804B2F6 | 1
 	bx r0
-	
+
 @0x8074598 with r2
 UpdateAltitudeForIllusionHook:
 	lsl r1, r1, #0x10
@@ -59,7 +59,7 @@ UpdateAltitudeForIllusionHook:
 	cmp r0, #0x0
 	beq AltitudeIllusionReturn
 	mov r4, r0 @;Update Species
-	
+
 AltitudeIllusionReturn:
 	mov r7, r4
 	mov r0, r5

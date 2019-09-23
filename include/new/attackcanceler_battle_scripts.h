@@ -1,5 +1,13 @@
 #pragma once
 
+#include "../global.h"
+
+/**
+ * \file attackcanceler_battle_scripts.h
+ * \brief Contains declarations for battle scripts usually at the beginning of
+*		  a move's execution. Many times used to stop the execution.
+ */
+
 extern u8 BattleScript_MagicBounce[];
 extern u8 BattleScript_MoveUsedFlinched[]; //0x81D90B1
 extern u8 BattleScript_MoveUsedDevolvedForgot[];

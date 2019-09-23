@@ -4,6 +4,7 @@
 #include "../include/pokemon.h"
 #include "../include/pokemon_storage_system.h"
 #include "../include/random.h"
+#include "../include/string_util.h"
 #include "../include/wild_encounter.h"
 #include "../include/constants/items.h"
 #include "../include/constants/maps.h"
@@ -19,12 +20,12 @@
 #include "../include/new/dexnav.h"
 #include "../include/new/form_change.h"
 #include "../include/new/frontier.h"
-#include "../include/new/util.h"
 #include "../include/new/item.h"
 #include "../include/new/learn_move.h"
 #include "../include/new/mega.h"
 #include "../include/new/multi.h"
 #include "../include/new/pokemon_storage_system.h"
+#include "../include/new/util.h"
 
 #include "Tables/Trainers_With_EVs_Table.h"
 #include "Tables/Battle_Tower_Spreads.h"
@@ -148,7 +149,7 @@ static u8 GetHighestMonLevel(const struct Pokemon* const party);
 
 #ifdef OPEN_WORLD_TRAINERS
 
-extern const u8 openWorldLevelRanges[NUM_BADGE_OPTIONS][2];
+extern const u8 gOpenWorldLevelRanges[NUM_BADGE_OPTIONS][2];
 extern const species_t gGeneralTrainerSpreads[NUM_TRAINER_CLASSES][NUM_BADGE_OPTIONS][NUM_MONS_PER_BADGE];
 
 static u8 GetOpenWorldTrainerMonAmount(void);
@@ -284,8 +285,6 @@ void sp067_GenerateRandomBattleTowerTeam(void)
 	VarSet(BATTLE_TOWER_TIER, tier);
 	BuildFrontierParty(gPlayerParty, 0, tier, TRUE, TRUE, B_SIDE_PLAYER);
 
-
-//////
 	/*for (u32 i = TOTAL_SPREADS / 2; i < TOTAL_SPREADS; ++i)
 	{
 		struct Pokemon mon;
@@ -294,14 +293,15 @@ void sp067_GenerateRandomBattleTowerTeam(void)
 		CreateFrontierMon(&mon, 50, spread, 0, 0, 0, TRUE);
 		GiveMonToPlayer(&mon);
 	}*/
+
 	/*for (int i = 0; i < ITEMS_COUNT; ++i)
 	{
-		u8* name = ItemId_GetName(i);
+		const u8* name = ItemId_GetName(i);
 		if (name[0] != 0xAC && name[0] != 0xFF) //'?', ' '
 			AddBagItem(i, 1);
 	}
 
-	SortItemsInBag(0, 0);*/
+	SortItemsInBag(0, 1);*/
 }
 
 //@Details: Adds a Pokemon with the given species from the requested spreads to
@@ -2796,8 +2796,8 @@ static u8 GetOpenWorldSpeciesLevel(u32 nameHash, u8 i)
 {
 	u8 badgeCount = GetOpenWorldBadgeCount();
 
-	u8 max = MathMax(openWorldLevelRanges[badgeCount][0], openWorldLevelRanges[badgeCount][1]); //Prevent incorrect order errors
-	u8 min = MathMin(openWorldLevelRanges[badgeCount][0], openWorldLevelRanges[badgeCount][1]);
+	u8 max = MathMax(gOpenWorldLevelRanges[badgeCount][0], gOpenWorldLevelRanges[badgeCount][1]); //Prevent incorrect order errors
+	u8 min = MathMin(gOpenWorldLevelRanges[badgeCount][0], gOpenWorldLevelRanges[badgeCount][1]);
 	u8 range = (max - min) + 1;
 
 	return min + ((nameHash + 7 * i) ^ T1_READ_32(gSaveBlock2->playerTrainerId)) % range;

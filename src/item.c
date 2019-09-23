@@ -1,14 +1,15 @@
 #include "defines.h"
+#include "../include/money.h"
 #include "../include/script.h"
 #include "../include/shop.h"
+#include "../include/string_util.h"
+#include "../include/window.h"
 #include "../include/constants/hold_effects.h"
 #include "../include/constants/items.h"
 #include "../include/constants/moves.h"
 #include "../include/constants/pokedex.h"
 #include "../include/constants/songs.h"
 #include "../include/constants/tutors.h"
-#include "../include/money.h"
-#include "../include/window.h"
 
 #include "../include/new/util.h"
 #include "../include/new/item.h"
@@ -16,20 +17,20 @@
 
 #define EOS 0xFF
 
-u8 ItemId_GetMystery2Id(u16 itemId);
-u8* ItemId_GetName(u16 itemId);
-
-extern u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
-extern u8 gText_ThrowInOnePremierBall[];
-extern u8 gText_ThrowInPremierBalls[];
+extern const u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
+extern const u8 gText_ThrowInOnePremierBall[];
+extern const u8 gText_ThrowInPremierBalls[];
+extern const u16 gItemsByType[];
 
 //This file's functions:
+static void StringAppendFullMoveName(u8* dst, const u8* src);
+
+static s8 CompareBerries(u16 item1, u16 item2);
+static s8 CompareTMs(u16 item1, u16 item2);
 static s8 CompareItemsAlphabetically(u16 item1, u16 item2);
 static s8 CompareItemsByType(u16 item1, u16 item2);
 static void MergeSort(struct ItemSlot* array, u32 low, u32 high, s8 (*comparator)(u16, u16));
 static void Merge(struct ItemSlot* arr, u32 l, u32 m, u32 r, s8 (*comparator)(u16, u16));
-u16 GetItemIdFromTmId(u8 tmId);
-void Task_ReturnToItemListAfterItemPurchase(u8 taskId);
 
 //General Utility Functions
 u16 SanitizeItemId(u16 itemId)
@@ -40,12 +41,13 @@ u16 SanitizeItemId(u16 itemId)
 	return itemId;
 }
 
-u8* ItemId_GetName(u16 itemId)
+const u8* ItemId_GetName(u16 itemId)
 {
 	u8* name = gItems[SanitizeItemId(itemId)].name;
 
 	if (name[3] == 0x8) //Expanded Item Names
 		name = T1_READ_PTR(name);
+
 	return name;
 }
 
@@ -57,11 +59,6 @@ u8 ItemId_GetHoldEffect(u16 itemId)
 u8 ItemId_GetHoldEffectParam(u16 itemId)
 {
 	return gItems[SanitizeItemId(itemId)].holdEffectParam;
-}
-
-u8 ItemId_GetMystery2Id(u16 itemId)
-{
-	return ItemId_GetMystery2(itemId);
 }
 
 bool8 IsMegaStone(u16 item)
@@ -115,7 +112,7 @@ bool8 IsTMHM(u16 item)
 u8 TMIdFromItemId(u16 itemId)
 {
 	#ifdef EXPANDED_TMSHMS
-	u8 tmNum = ItemId_GetMystery2Id(itemId);
+	u8 tmNum = ItemId_GetMystery2(itemId);
 
 	if (itemId == ITEM_NONE)
 		return 255; //So blank items get put at the end
@@ -130,7 +127,7 @@ u8 TMIdFromItemId(u16 itemId)
 
 u8 BerryIdFromItemId(u16 item)
 {
-	u8 secondaryId = ItemId_GetMystery2Id(item);
+	u8 secondaryId = ItemId_GetMystery2(item);
 	if (secondaryId != 0)
 		return secondaryId;
 
@@ -323,17 +320,6 @@ void CancelPartyMenuLearnTutor(u8 taskId)
 	gTasks[taskId].func = (void*) 0x81255BD;
 }
 
-u16 GetItemIdFromTmId(u8 tmId)
-{
-	for (u8 i = 0; i < sizeof(gItems); ++i)
-	{
-		if (ItemId_GetMystery2Id(gItems[i].itemId) == tmId)
-			return gItems[i].itemId;
-	}
-	return 0;
-}
-
-
 // item ID to Tm number to Move ID
 //		use secondary ID for tm indices if expanded
 u16 ItemIdToBattleMoveId(u16 item)
@@ -341,18 +327,8 @@ u16 ItemIdToBattleMoveId(u16 item)
 	return gTMHMMoves[TMIdFromItemId(item)];
 }
 
-u16 RefineTmOrdering(void)
-{
-	#ifdef TMS_BEFORE_HMS
-		return 0;
-	#else
-		return ITEM_TM50;
-	#endif
-}
-
-
 //Function to fix tm move names that are full length in the bag
-void StringAppendFullMoveName(u8* dst, u8* src)
+static void StringAppendFullMoveName(u8* dst, const u8* src)
 {
 	s8 i;
 
@@ -381,7 +357,7 @@ void CopyTMName(u8* dst, u16 itemId)
 void LoadTMNameWithNo(u8* dst, u16 itemId)
 {
 	#ifdef EXPANDED_TMSHMS
-	u8 tmNum = ItemId_GetMystery2Id(itemId);
+	u8 tmNum = ItemId_GetMystery2(itemId);
 	#else
 	u8 tmNum = itemId - ITEM_TM01;
 	#endif
@@ -424,7 +400,7 @@ void LoadTMNameWithNo(u8* dst, u16 itemId)
 // Assumes no HMs will be in the mart...
 void LoadTmHmNameInMart(u16 item)
 {
-	u8 tmNum = ItemId_GetMystery2Id(item);
+	u8 tmNum = ItemId_GetMystery2(item);
 	#ifdef EXPANDED_TMSHMS
 		if (NUM_TMS < 100)
 			ConvertIntToDecimalStringN(&gStringVar1[0], tmNum, 2, 2);
@@ -532,7 +508,7 @@ u8 CheckDiscIsTmHm(struct Sprite* disc, u16 itemId)
 		StartSpriteAnim(disc, 1);
 	#endif
 
-	return ItemId_GetMystery2Id(itemId);
+	return ItemId_GetMystery2(itemId);
 }
 
 
@@ -689,7 +665,7 @@ u16 CheckTmPrice(u16 item)
 #ifdef REUSABLE_TMS
 u8 CheckSingleBagTm(u16 item)
 #else
-u8 CheckSingleBagTm(void)
+u8 CheckSingleBagTm(unusedArg u16 item)
 #endif
 {
 	#ifdef REUSABLE_TMS
@@ -702,7 +678,7 @@ u8 CheckSingleBagTm(void)
 	#endif
 }
 
-
+extern const u16 Fairy_TM_DiskPal[];
 const void* FixTmHmDiscPalette(u8 type)
 {
 	if (type == TYPE_FAIRY)
@@ -1081,9 +1057,6 @@ void SortTmHmCase(struct BagPocket* bagPocket)
 };
 */
 
-
-
-
 static s8 CompareItemsAlphabetically(u16 item1, u16 item2)
 {
 	if (item1 == ITEM_NONE)
@@ -1091,8 +1064,8 @@ static s8 CompareItemsAlphabetically(u16 item1, u16 item2)
 	else if (item2 == ITEM_NONE)
 		return -1;
 
-	u8* name1 = ItemId_GetName(item1);
-	u8* name2 = ItemId_GetName(item2);
+	const u8* name1 = ItemId_GetName(item1);
+	const u8* name2 = ItemId_GetName(item2);
 
 	for (int i = 0; ; ++i)
 	{
@@ -1112,71 +1085,14 @@ static s8 CompareItemsAlphabetically(u16 item1, u16 item2)
 	return 0; //Will never be reached
 }
 
-u16 sItemsByType[ITEMS_COUNT] =
-{
-	[ITEM_REPEL] = 0,
-	[ITEM_SUPER_REPEL] = 1,
-	[ITEM_MAX_REPEL] = 2,
-
-/*
-	[ITEM_VENUSAURITE] = ,
-	[ITEM_CHARIZARDITE_X] = ,
-	[ITEM_CHARIZARDITE_Y] = ,
-	[ITEM_BLASTOISINITE] = ,
-	[ITEM_BEEDRILLITE] = ,
-	[ITEM_PIDGEOTITE] = ,
-	[ITEM_ALAKAZITE] = ,
-	[ITEM_SLOWBRONITE] = ,
-	[ITEM_GENGARITE] = ,
-	[ITEM_KANGASKHANITE] = ,
-	[ITEM_PINSIRITE] = ,
-	[ITEM_GYARADOSITE] = ,
-	[ITEM_AERODACTYLITE] = ,
-	[ITEM_MEWTWONITE_X] = ,
-	[ITEM_MEWTWONITE_Y] = ,
-	[ITEM_AMPHAROSITE] = ,
-	[ITEM_STEELIXITE] = ,
-	[ITEM_SCIZORITE] = ,
-	[ITEM_HERACRONITE] = ,
-	[ITEM_HOUNDOOMINITE] = ,
-	[ITEM_TYRANITARITE] = ,
-	[ITEM_SCEPTILITE] = ,
-	[ITEM_BLAZIKENITE] = ,
-	[ITEM_SWAMPERTITE] = ,
-	[ITEM_GARDEVOIRITE] = ,
-	[ITEM_SABLENITE] = ,
-	[ITEM_MAWILITE] = ,
-	[ITEM_AGGRONITE] = ,
-	[ITEM_MEDICHAMITE] = ,
-	[ITEM_MANECTITE] = ,
-	[ITEM_SHARPEDONITE] = ,
-	[ITEM_CAMERUPTITE] = ,
-	[ITEM_ALTARIANITE] = ,
-	[ITEM_BANETTITE] = ,
-	[ITEM_ABSOLITE] = ,
-	[ITEM_GLALITITE] = ,
-	[ITEM_SALAMENCITE] = ,
-	[ITEM_METAGROSSITE] = ,
-	[ITEM_LATIASITE] = ,
-	[ITEM_LATIOSITE] = ,
-	[ITEM_LOPUNNITE] = ,
-	[ITEM_GARCHOMPITE] = ,
-	[ITEM_LUCARIONITE] = ,
-	[ITEM_ABOMASITE] = ,
-	[ITEM_GALLADITE] = ,
-	[ITEM_AUDINITE] = ,
-	[ITEM_DIANCITE] = ,
-*/
-};
-
 static s8 CompareItemsByType(u16 item1, u16 item2)
 {
-	if (sItemsByType[item1] < sItemsByType[item2])
+	if (gItemsByType[item1] < gItemsByType[item2])
 		return -1;
-	else if (sItemsByType[item1] > sItemsByType[item2])
+	else if (gItemsByType[item1] > gItemsByType[item2])
 		return 1;
 
-	return 0;
+	return CompareItemsAlphabetically(item1, item2); //Items are of same type so sort alphabetically
 }
 
 enum

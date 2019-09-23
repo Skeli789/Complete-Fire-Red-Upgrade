@@ -60,7 +60,7 @@ static const u8 sShieldDustIgnoredEffects[] =
 	0xFF,
 };
 
-const u32 sStatusFlagsForMoveEffects[] =
+static const u32 sStatusFlagsForMoveEffects[] =
 {
 	[MOVE_EFFECT_SLEEP] = STATUS1_SLEEP,
 	[MOVE_EFFECT_POISON] = STATUS1_POISON,

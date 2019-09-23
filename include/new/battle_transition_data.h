@@ -1,15 +1,25 @@
 #pragma once
 
-// Don't Modify These Values!
-// VAR_PRE_BATTLE_MUGSHOT_STYLE
-enum {
+#include "../global.h"
+
+/**
+ * \file cmd49_battle_scripts.h
+ * \brief A file to be included only be "src/battle_transition.c". Contains several
+ *		  declarations and constants for pre-battle mugshots.
+ */
+
+//Don't Modify These Values!
+//VAR_PRE_BATTLE_MUGSHOT_STYLE
+enum
+{
     MUGSHOT_BIG = 0,
     MUGSHOT_DP,
     MUGSHOT_TWO_BARS,
 };
 
-// VAR_PRE_BATTLE_MUGSHOT_SPRITE
-enum {
+//VAR_PRE_BATTLE_MUGSHOT_SPRITE
+enum
+{
     MUGSHOT_PLAYER = 0,
     MUGSHOT_VS_SYMBOL,
 };
@@ -41,7 +51,7 @@ extern const u8 VS_SpritePal[];
 extern const u8 Silver_MugshotTiles[];
 extern const u8 Silver_MugshotPal[];
 
-// Big Mugshot Pals
+//Big Mugshot Pals
 extern const u16 Big_Mugshot_BlackPal[];
 extern const u16 Big_Mugshot_Dark_GrayPal[];
 extern const u16 Big_Mugshot_Dark_PurplePal[];
@@ -57,7 +67,7 @@ extern const u16 Big_Mugshot_Sky_BluePal[];
 extern const u16 Big_Mugshot_Steel_GrayPal[];
 extern const u16 Big_Mugshot_Yellow_GrayPal[];
 
-// DP/Two Bars Pals
+//DP/Two Bars Pals
 extern const u16 DP_Mugshot_BlackPal[];
 extern const u16 DP_Mugshot_Dark_GrayPal[];
 extern const u16 DP_Mugshot_Dark_GreenPal[];

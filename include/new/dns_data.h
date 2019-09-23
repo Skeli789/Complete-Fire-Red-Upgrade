@@ -2,6 +2,12 @@
 
 #include "../global.h"
 
+/**
+ * \file dns_data.h
+ * \brief A file to be included only by "src/dns.c". It contains constants and
+ *		  data structures relating to the palette fading of the day/night system.
+ */
+
 //Change These
 //Overworld Palettes
 #define OW_BG_PAL_0 TRUE
@@ -278,7 +284,7 @@ const struct SpecificTilesetFade gSpecificTilesetFades[] =
 	},
 };
 
-#else
+#else //For Pokemon Unbound - Feel free to remove
 
 const struct SpecificTilesetFade gSpecificTilesetFades[] =
 {

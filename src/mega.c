@@ -1,6 +1,7 @@
 #include "defines.h"
 #include "defines_battle.h"
 #include "../include/link.h"
+#include "../include/string_util.h"
 #include "../include/constants/items.h"
 #include "../include/constants/trainer_classes.h"
 

@@ -43,7 +43,7 @@ OpenBagBugFix1:
 	add r0, #0x1
 	cmp r2, r0
 	ldr r0, =0x8108A26 | 1
-	bx r0	
+	bx r0
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -115,7 +115,7 @@ GetBerryNameBerryIdFix:
 	mov r0, r6
 	mov r2, #0x2
 	ldr r3, =0x813D344 | 1
-	bx r3	
+	bx r3
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool

@@ -31,6 +31,7 @@ u8* __attribute__((long_call)) StringCopy10(u8 *dest, const u8 *src);
 u8 __attribute__((long_call)) *StringAppend(u8 *dest, const u8 *src);
 u16 __attribute__((long_call)) StringLength(const u8 *str);
 u8* __attribute__((long_call)) ConvertIntToDecimalStringN(u8 *dest, s32 value, enum StringConvertMode mode, u8 n);
+u8* __attribute__((long_call)) StringExpandPlaceholders(u8 *dest, const u8 *src);
 //u8 __attribute__((long_call)) *StringAppendN(u8 *dest, const u8 *src, u8 n);
 
 /*

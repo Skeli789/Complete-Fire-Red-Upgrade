@@ -1,5 +1,12 @@
 #pragma once
 
+#include "../global.h"
+
+/**
+ * \file move_battle_scripts.h
+ * \brief Contains declarations for battle scripts of Z-Status moves.
+ */
+
 extern u8 BattleScript_StatsResetZMove[];
 extern u8 BattleScript_AllStatsUpZMove[];
 extern u8 BattleScript_BoostCritsZMove[];

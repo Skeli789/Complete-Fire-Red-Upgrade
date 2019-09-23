@@ -3,6 +3,12 @@
 #include "../global.h"
 #include "../pokemon.h"
 
+/**
+ * \file mega.h
+ * \brief Contains various functions relating to Mega Evolution, as well
+ *		  as sprite callbacks for Mega indicators and triggers.
+ */
+
 //Exported Functions
 const struct Evolution* CanMegaEvolve(u8 bank, bool8 CheckUBInstead);
 species_t GetMegaSpecies(u16 species, u16 item);

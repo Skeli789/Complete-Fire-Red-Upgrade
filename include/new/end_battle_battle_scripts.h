@@ -1,5 +1,13 @@
 #pragma once
 
+#include "../global.h"
+
+/**
+ * \file end_battle_battle_scripts.h
+ * \brief Contains declarations for battle scripts called when a battle
+ *		  is ended.
+ */
+
 #define BattleScript_LinkBattleWonOrLost (const u8*) 0x81D88CC
 #define BattleScript_PayDayMoneyAndPickUpItems (const u8*) 0x81D8803
 #define BattleScript_LocalBattleLost (const u8*) 0x81D8806

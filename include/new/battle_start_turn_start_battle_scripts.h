@@ -1,5 +1,13 @@
 #pragma once
 
+#include "../global.h"
+
+/**
+ * \file battle_start_turn_start_battle_scripts.h
+ * \brief Contains declarations for battle scripts usually called at the beginning of
+ *		  battle of before Pokemon have executed their actions for the turn.
+ */
+
 extern u8 BattleScript_AirBalloonFloat[];
 extern u8 BattleScript_Totem[];
 extern u8 BattleScript_TotemRet[];

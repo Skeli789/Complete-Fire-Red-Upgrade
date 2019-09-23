@@ -2,6 +2,7 @@
 #include "defines_battle.h"
 #include "../include/event_data.h"
 #include "../include/random.h"
+#include "../include/util.h"
 #include "../include/constants/flags.h"
 #include "../include/constants/items.h"
 

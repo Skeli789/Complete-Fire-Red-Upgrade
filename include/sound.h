@@ -1,30 +1,29 @@
-#ifndef GUARD_SOUND_H
-#define GUARD_SOUND_H
+#pragma once
 
 #include "global.h"
 
-void InitMapMusic(void);
-void MapMusicMain(void);
-void ResetMapMusic(void);
-u16 GetCurrentMapMusic(void);
-void PlayNewMapMusic(u16 songNum);
-void StopMapMusic(void);
-void FadeOutMapMusic(u8 speed);
-void FadeOutAndPlayNewMapMusic(u16 songNum, u8 speed);
-void FadeOutAndFadeInNewMapMusic(u16 songNum, u8 fadeOutSpeed, u8 fadeInSpeed);
-void FadeInNewMapMusic(u16 songNum, u8 speed);
-bool8 IsNotWaitingForBGMStop(void);
-void PlayFanfareByFanfareNum(u8 fanfareNum);
-bool8 WaitFanfare(bool8 stop);
-void StopFanfareByFanfareNum(u8 fanfareNum);
-void PlayFanfare(u16 songNum);
-bool8 IsFanfareTaskInactive(void);
-void FadeInNewBGM(u16 songNum, u8 speed);
-void FadeOutBGMTemporarily(u8 speed);
-bool8 IsBGMPausedOrStopped(void);
-void FadeInBGM(u8 speed);
-void FadeOutBGM(u8 speed);
-bool8 IsBGMStopped(void);
+void __attribute__((long_call)) InitMapMusic(void);
+void __attribute__((long_call)) MapMusicMain(void);
+void __attribute__((long_call)) ResetMapMusic(void);
+u16 __attribute__((long_call)) GetCurrentMapMusic(void);
+void __attribute__((long_call)) PlayNewMapMusic(u16 songNum);
+void __attribute__((long_call)) StopMapMusic(void);
+void __attribute__((long_call)) FadeOutMapMusic(u8 speed);
+void __attribute__((long_call)) FadeOutAndPlayNewMapMusic(u16 songNum, u8 speed);
+void __attribute__((long_call)) FadeOutAndFadeInNewMapMusic(u16 songNum, u8 fadeOutSpeed, u8 fadeInSpeed);
+void __attribute__((long_call)) FadeInNewMapMusic(u16 songNum, u8 speed);
+bool8 __attribute__((long_call)) IsNotWaitingForBGMStop(void);
+void __attribute__((long_call)) PlayFanfareByFanfareNum(u8 fanfareNum);
+bool8 __attribute__((long_call)) WaitFanfare(bool8 stop);
+void __attribute__((long_call)) StopFanfareByFanfareNum(u8 fanfareNum);
+void __attribute__((long_call)) PlayFanfare(u16 songNum);
+bool8 __attribute__((long_call)) IsFanfareTaskInactive(void);
+void __attribute__((long_call)) FadeInNewBGM(u16 songNum, u8 speed);
+void __attribute__((long_call)) FadeOutBGMTemporarily(u8 speed);
+bool8 __attribute__((long_call)) IsBGMPausedOrStopped(void);
+void __attribute__((long_call)) FadeInBGM(u8 speed);
+void __attribute__((long_call)) FadeOutBGM(u8 speed);
+bool8 __attribute__((long_call)) IsBGMStopped(void);
 
 void __attribute__((long_call)) PlayCry1(u16 species, s8 pan);
 void __attribute__((long_call)) PlayCry2(u16 species, s8 pan, s8 volume, u8 priority);
@@ -47,5 +46,3 @@ void __attribute__((long_call)) SE12PanpotControl(s8 pan);
 bool8 __attribute__((long_call)) IsSEPlaying(void);
 bool8 __attribute__((long_call)) IsBGMPlaying(void);
 bool8 __attribute__((long_call)) IsSpecialSEPlaying(void);
-
-#endif // GUARD_SOUND_H

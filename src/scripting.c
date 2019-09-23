@@ -681,7 +681,7 @@ void NicknameFunc(void)
 #else
 	SetMonData(&gPlayerParty[Var8004], MON_DATA_NICKNAME, gStringVar2);
 #endif
-	ReturnToFieldContinueScriptPlayMapMusic();
+	CB2_ReturnToFieldContinueScriptPlayMapMusic();
 }
 
 
@@ -1089,7 +1089,7 @@ void sp09C_OldManBattleModifier(void)
 {
 	CreateMaleMon(&gEnemyParty[0], Var8004, Var8005);
 	ScriptContext2_Enable();
-	gMain.savedCallback = ReturnToFieldContinueScriptPlayMapMusic;
+	gMain.savedCallback = CB2_ReturnToFieldContinueScriptPlayMapMusic;
 	gBattleTypeFlags = BATTLE_TYPE_OLD_MAN;
 	CreateBattleStartTask(8, 0);
 }
@@ -2385,7 +2385,7 @@ static void ConvertNumberEntryToInteger(void)
 	}
 
 	gSpecialVar_LastResult = val;
-	ReturnToFieldContinueScriptPlayMapMusic();
+	CB2_ReturnToFieldContinueScriptPlayMapMusic();
 }
 
 void sp0B3_DoChooseNumberScreen(void)

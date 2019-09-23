@@ -2,7 +2,7 @@
 #define GUARD_POKEBALL_H
 
 #include "global.h"
-
+/*
 enum
 {
     BALL_POKE,
@@ -18,7 +18,7 @@ enum
     BALL_LUXURY,
     BALL_PREMIER,
     POKEBALL_COUNT
-};
+};*/
 
 #define POKEBALL_PLAYER_SENDOUT     0xFF
 #define POKEBALL_OPPONENT_SENDOUT   0xFE

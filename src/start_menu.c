@@ -40,7 +40,9 @@ const u8* sStartMenuDescriptionItems[] =
 	&gText_DexNavDescription[0],
 };
 
-
+void __attribute__((long_call)) CloseSafariStepsBox(void);
+void __attribute__((long_call)) CloseStartMenuDescriptionBox(void);
+void __attribute__((long_call)) HideStartMenu(void);
 void BuildNormalStartMenu() {
 	if (FlagGet(FLAG_SYS_POKEDEX_GET))
 	{

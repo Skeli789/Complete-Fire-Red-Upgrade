@@ -2,6 +2,7 @@
 #include "defines_battle.h"
 #include "../include/event_object_movement.h"
 #include "../include/fieldmap.h"
+#include "../include/field_player_avatar.h"
 #include "../include/field_weather.h"
 #include "../include/script.h"
 #include "../include/wild_encounter.h"

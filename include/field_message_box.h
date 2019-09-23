@@ -1,12 +1,13 @@
-#ifndef GUARD_FIELD_MESSAGE_BOX_H
-#define GUARD_FIELD_MESSAGE_BOX_H
+#pragma once
 
 #include "global.h"
 
-bool8 ShowFieldMessage(const u8 *message);
-bool8 sub_8098238(const u8 *message);
-bool8 ShowFieldAutoScrollMessage(const u8 *message);
-void HideFieldMessageBox(void);
-bool8 IsFieldMessageBoxHidden(void);
+void __attribute__((long_call)) HideFieldMessageBox(void);
+void __attribute__((long_call)) TextboxFdecodeAutoAndCreateTask(const u8* text);
 
-#endif // GUARD_FIELD_MESSAGE_BOX_H
+/*
+bool8 __attribute__((long_call)) ShowFieldMessage(const u8 *message);
+bool8 __attribute__((long_call)) sub_8098238(const u8 *message);
+bool8 __attribute__((long_call)) ShowFieldAutoScrollMessage(const u8 *message);
+bool8 __attribute__((long_call)) IsFieldMessageBoxHidden(void);
+*/

@@ -13,12 +13,6 @@
 
 //Exported Functions
 u8 CountAliveMonsOnField(void);
-
-//Functions Hooked In
-u8 TurnBasedEffects(void);
-bool8 HandleFaintedMonActions(void);
-void RemoveSwitchInForFaintedBank(void);
-bool8 IsInMiddleOfEndTurnSwitchIn(u8 bank);
 u32 GetLeechSeedDamage(u8 bank);
 u32 GetPoisonDamage(u8 bank);
 u32 GetBurnDamage(u8 bank);
@@ -26,3 +20,10 @@ u32 GetNightmareDamage(u8 bank);
 u32 GetCurseDamage(u8 bank);
 u32 GetTrapDamage(u8 bank);
 u32 GetSeaOfFireDamage(u8 bank);
+
+//Functions Hooked In
+u8 TurnBasedEffects(void);
+bool8 HandleFaintedMonActions(void);
+void RemoveSwitchInForFaintedBank(void);
+bool8 IsInMiddleOfEndTurnSwitchIn(u8 bank);
+

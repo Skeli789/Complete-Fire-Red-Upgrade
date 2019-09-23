@@ -6,11 +6,13 @@
 
 .global BuildTrainerPartyHook
 
+.pool
 BuildTrainerPartyHook:
 	bl BuildTrainerPartySetup
 	ldr r0, =0x800FF98 | 1
 	bx r0
 
+.pool
 @0x800D2CC with r0
 AIHandleItemUseHook:
 	bl HandleNewBattleRamClearBeforeBattle
@@ -21,18 +23,20 @@ AIHandleItemUseHook:
 	str r4, [r0]
 	ldr r0, =0x800D2D4 | 1
 	bx r0
-	
+
 EmitChooseMoveHook:
 	mov r3, r5
 	bl EmitChooseMove
 	pop {r4-r6,pc}
 
+.pool
 @0x802EF90 with r0
 SwitchMoveDataHook:
 	bl HandleMoveSwitchingUpdate
 	ldr r0, =0x802F2C8 | 1
 	bx r0
 
+.pool
 @0x80992E4 with r0
 SlideMonToOffsetHook:
 	mov r0, #0x0
@@ -41,6 +45,7 @@ SlideMonToOffsetHook:
 	ldr r0, =0x8099300 | 1
 	bx r0
 
+.pool
 @0x80991BA with r0
 SlideMonToOriginalPosHook:
 	mov r0, #0x0
@@ -49,6 +54,7 @@ SlideMonToOriginalPosHook:
 	ldr r2, =0x80991DE | 1
 	bx r2
 
+.pool
 @0x0804AA1E with r1
 GetProperBallIdHook1:
 	lsl r0, #0x18
@@ -57,6 +63,7 @@ GetProperBallIdHook1:
 	ldr r1, =0x804AA28 | 1
 	bx r1
 
+.pool
 @0x080EF3A8 with r1
 GetProperBallIdHook2:
 	lsl r0, #0x18
@@ -64,6 +71,7 @@ GetProperBallIdHook2:
 	ldr r1, =0x80EF3B0 | 1
 	bx r1
 
+.pool
 @0x801645E with r0
 GetPokeBallBattleScriptHook:
 	push {r3}
@@ -78,18 +86,28 @@ SuccessfullBallBattleScript:
 	ldr r0, =0x80164FC | 1
 	bx r0
 
+.pool
+@0x804B946 with r0
+OakIntroPokeballFixHook:
+	bl OakIntroPokeballFix
+	ldr r1, =0x804B954 | 1
+	bx r1
+
+.pool
 @0x80F1792 with r0
 ShinyAnimFixHook:
 	bl ShinyAnimFix
 	ldr r0, =0x80F179E | 1
 	bx r0
 
+.pool
 @0x8014450 with r0
 PartyMenuSwitchingHook:
 	bl PartyMenuSwitchingUpdate
 	ldr r0, =0x80146AC | 1
 	bx r0
 
+.pool
 @0x80EFF0C with r2
 CriticalCaptureAnimHook:
 	push {r0-r1}
@@ -110,6 +128,7 @@ BallThrowBreakOutReturn:
 	ldr r0, =0x80EFF20 | 1
 	bx r0
 
+.pool
 @0x80EF5F4 with r1
 DoubleWildAnimBallThrowFixHook:
 	strh r0, [r6, #0x2E]
@@ -126,7 +145,7 @@ DoubleWildPokeBallItemUseFixHook:
 	bl DoubleWildPokeBallItemUseFix
 	cmp r0, #0x0
 	bne DoubleWildPokeBallItemUseFixEnd
-	
+
 	ldr r0, =0x203AD30 @Var 0x800E
 	ldrh r0, [r0]
 	mov r1, #0x1
@@ -172,13 +191,13 @@ TrainerSlidingEndTurnHook:
 Random:
 	ldr r0, =0x8044EC8 | 1
 	bx r0
-	
+
 @0x80813B8 with r0
 LoadProperMusicForLinkBattlesHook:
 	bl LoadProperMusicForLinkBattles
 	ldr r1, =0x80813C6 | 1
 	bx r1
-	
+
 @0x806E454 with r1
 ExpandedVarsHook:
 	push {r4-r6, lr}
@@ -193,10 +212,10 @@ ExpandedVarsHook:
 	bne ExpandedVarsPop
 	ldr r0, =0x806E45C | 1
 	bx r0
-	
+
 ExpandedVarsPop:
 	pop {r4-r6,pc}
-	
+
 VarReturn0:
 	ldr r0, =0x806E462 | 1
 	bx r0
@@ -391,7 +410,7 @@ SetBoxMonDataAtHook:
 	bl SetBoxMonDataAt
 	pop {r4-r6,pc}
 
-.pool 
+.pool
 @0x808BB70 with r2
 GetAndCopyBoxMonDataAtHook:
 	mov r2, r5
@@ -516,13 +535,13 @@ DisplayStatStageMessageNormal:
 DisplayStatStageMessageReturn:
 	ldr r0, =0x080D868E | 1
 	bx r0
-	
+
 .align 2
 .SeverelyIndex: .word 0x185
 .gBattleStringsTable: .word 0x83FDF3C
 .DrasticallyStringPtr: .word DrasticallyString
 .SeverelyStringPtr: .word SeverelyString
-	
+
 .pool
 @0x810BD64 with r1
 CharacterCustomizationUpdateTrainerFrontPic2:
@@ -542,7 +561,7 @@ SelectItemFromBagCheck:
 	lsl r0, #0x3
 	ldr r2, =0x81090C0 | 1
 	bx r2
-	
+
 SelectItemFromBagReturn:
 	ldr r1, =0x8109024 | 1
 	bx r1
@@ -559,7 +578,7 @@ SelectItemFromTMCaseCheck:
 	ldr r2, =0x81323B8 | 1
 bxr2:
 	bx r2
-	
+
 SelectItemFromTMCaseReturn:
 	ldr r0, =0x8132370 | 1
 	bx r0
@@ -575,7 +594,7 @@ DoSeekSpriteAnim:
 	ldr r2, =SeekSpriteAnim
 	bl bxr2
 	b EndGrassFootstepNoiseCheck
-	
+
 DoGrassFootstepNoise:
 	bl PlayGrassFootstepNoise
 EndGrassFootstepNoiseCheck:
@@ -603,7 +622,7 @@ SandFootstepNoiseHook:
 	lsl r0, r1, #0x4
 	ldr r3, =0x080DB9CC | 1
 	bx r3
-	
+
 EndSandFootstepFieldEffect:
 	ldr r0, =0x080DB9FE | 1
 	bx r0
@@ -705,7 +724,7 @@ DracoMeteorMoveTutorHook:
 	bl TryHandleExcuseForDracoMeteorTutor
 	cmp r0, #0x0
 	beq LoadCantLearnMoveString
-	
+
 DracoMeteorSkipPrintString:
 	mov r0, r6
 	bl CancelPartyMenuLearnTutor
@@ -723,7 +742,7 @@ DracoMeteorMoveTutorHook2:
 	cmp r0, #0x0
 	beq LoadAlreadyKnowsMoveString
 	b DracoMeteorSkipPrintString
-	
+
 LoadAlreadyKnowsMoveString:
 	ldr r1, =0x8416F10
 

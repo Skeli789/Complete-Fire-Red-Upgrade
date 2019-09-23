@@ -8,6 +8,7 @@
 #include "../include/field_poison.h"
 #include "../include/fieldmap.h"
 #include "../include/fldeff_misc.h"
+#include "../include/item.h"
 #include "../include/link.h"
 #include "../include/m4a.h"
 #include "../include/map_scripts.h"

@@ -2,6 +2,11 @@
 
 #include "../global.h"
 
+/**
+ * \file scrolling_multichoice.h
+ * \brief Contains functions and data structures relating to custom scrollable list menus.
+ */
+
 //Exported Functions
 extern u32 GetSizeOfMultiList(void);
 extern const u8* const* GetScrollingMultiList(void);

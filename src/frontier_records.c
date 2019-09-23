@@ -8,6 +8,7 @@
 #include "../include/palette.h"
 #include "../include/region_map.h"
 #include "../include/scanline_effect.h"
+#include "../include/string_util.h"
 #include "../include/text.h"
 #include "../include/text_window.h"
 #include "../include/window.h"

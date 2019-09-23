@@ -11,4 +11,8 @@ bool8 __attribute__((long_call)) ScriptMenu_MultichoiceGrid(u8 left, u8 top, u8 
 bool8 __attribute__((long_call)) ScriptMenu_ShowPokemonPic(u16 var1, u8 var2, u8 var3);
 bool8 __attribute__((long_call)) (*ScriptMenu_GetPicboxWaitFunc(void))(void);
 u8 __attribute__((long_call)) CreateWindowFromRect(u8, u8, u8, u8);
+void __attribute__((long_call)) PicBoxSetter(void);
+bool8 __attribute__((long_call)) BoxCreateTask(void* func);
+void __attribute__((long_call)) TaskDestroyPicBox(u8 taskId);
+u8 __attribute__((long_call)) PicBoxWindow(u16 x, u16 y, u8, u8);
 

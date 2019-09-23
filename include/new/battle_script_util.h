@@ -103,3 +103,4 @@ void TryActivateTargetEndTurnItemEffect(void);
 void SetLaserFocusTimer(void);
 void SetHealBlockTimer(void);
 void SetThroatChopTimer(void);
+void SetNoMoreMovingThisTurnScriptingBank(void);

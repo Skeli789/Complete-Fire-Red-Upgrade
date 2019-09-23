@@ -42,7 +42,7 @@
 @ hook at 9d5a8 via r2
 .align 2
 .pool
-SetPalFossilImage: 
+SetPalFossilImage:
 	push {r0}
 	mov r0, #5
 	ldr r1, =0x20370C0 @ var 8004
@@ -80,9 +80,9 @@ LoadPalFossilImage_End:
 	bx r1
 
 CallByR2:
-	bx r2	
-	
-	
+	bx r2
+
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ hook at 0x7280 via r1
 .align 2
@@ -108,7 +108,7 @@ DeleteOBJFreeTiles_Return:
 .align 2
 .pool
 @ hook at 0x779C via r1
-DeleteAllOBJs: 
+DeleteAllOBJs:
 	ldr r1, =0x80073DC+1 @ DeleteOBJ
 	bl CallByR1
 	bl ClearAllPalRefs
@@ -118,7 +118,7 @@ DeleteAllOBJs:
 .align 2
 .pool
 @ hook at 0xDAF88 via r0
-DeleteReflection: 
+DeleteReflection:
 	ldrb r0, [r4,#5]
 	lsr r0, #4
 	bl PalRefDecreaseCount
@@ -135,7 +135,7 @@ DeleteReflection:
 .align 2
 .pool
 @ hook at 0xDB120 via r0
-DeleteWarpArrow: 
+DeleteWarpArrow:
 	push {lr}
 	add r1, r2
 	mov r2, r1
@@ -159,12 +159,12 @@ DeleteWarpArrow_SetBits:
 
 CallByR1:
 	bx r1
-	
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .align 2
-.pool	
+.pool
 @ hook at 0x71B8 via r0
-SetPalMisc: 
+SetPalMisc:
 	mov r0, r8
 	bl GetPalSlotMisc
 	cmp r0, #0xFF
@@ -178,7 +178,7 @@ SetPalMisc_DoNotSet:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .align 2
-.pool	
+.pool
 @ hook at 0x82664 via r3
 SetPalEmotionBubble:
 	push {r0-r2}
@@ -204,7 +204,7 @@ SetPalEmotionBubble:
 .align 2
 .pool
 @ hook at 0xDB1AC via r3
-SetPalWarpArrow: 
+SetPalWarpArrow:
 	push {r2}
 	ldr r0, .PalTagEmotionBubble
 	bl FindOrLoadNPCPalette
@@ -228,7 +228,7 @@ SetPalWarpArrow:
 .align 2
 .pool
 @ hook at 0x13F434 via r0
-SetPalItemfinderArrow: 
+SetPalItemfinderArrow:
 	ldr r0, .PalTagEmotionBubble
 	bl FindOrLoadNPCPalette
 	lsl r0, #4
@@ -248,7 +248,7 @@ SetPalItemfinderArrow:
 .align 2
 .pool
 @ hook at 0x12D7A8 via r1
-SetPalFameCheckerUnknown: 
+SetPalFameCheckerUnknown:
 	push {r0}
 	ldr r0, .PalTagFameChecker
 	push {r2}
@@ -273,9 +273,9 @@ SetPalFameCheckerUnknown:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .align 2
-.pool	
+.pool
 @ hook at 0x5E6B0 via r0, for regular NPCs
-SetPalNPC1: 
+SetPalNPC1:
 	ldrh r0, [r6,#2]	@palette tag
 	bl FindOrLoadNPCPalette
 	lsl r1, r0, #4
@@ -301,7 +301,7 @@ SetPalNPC2:
 .align 2
 .pool
 @ hook at 0x5EAB0 via r0, for script command 0xAA createsprite
-SetPalNPC3: 
+SetPalNPC3:
 	ldrh r0, [r4,#2]
 	bl FindOrLoadNPCPalette
 	lsl r1, r0, #4
@@ -330,7 +330,7 @@ SetPalNPC4:
 .align 2
 .pool
 @ hook at 0xDADB4 via r2
-SetPalReflection: 
+SetPalReflection:
 	lsr r0, r1, #4
 	bl FindOrCreateReflectionPalette
 	ldrb r1, [r7,#5]
@@ -341,7 +341,7 @@ SetPalReflection:
 .align 2
 .pool
 @ hook at 0xDC410 via r2
-SetPalSurf: 
+SetPalSurf:
 	push {r1}
 	strb r0, [r3]
 	ldr r0, .BlobPalette
@@ -381,7 +381,7 @@ SetPalFly:
 .align 2
 .pool
 @ hook at 0x86D58 via r0
-SetPalFly2: 
+SetPalFly2:
 	push {r2}
 	ldrh r0, .BlobPalette
 	bl FindOrLoadNPCPalette
@@ -403,7 +403,7 @@ SetPalFly2:
 .align 2
 .pool
 @ hook at 0xDB260 via r0
-SetPalShadow: 
+SetPalShadow:
 	push {r2}
 	ldr r0, .BlobPalette
 	bl FindOrLoadNPCPalette
@@ -416,7 +416,7 @@ SetPalShadow:
 	strb r0, [r2,#5]
 	mov r0, #0
 	pop {r4,r5,pc}
-	
+
 .pool
 .align 2
 .BlobPalette: .word 0x00001100
@@ -425,7 +425,7 @@ SetPalShadow:
 .align 2
 .pool
 @ hook at 0x12D2AC via r0, needed for instant refreshing
-RefreshFameCheckerNPCs: 
+RefreshFameCheckerNPCs:
 	ldr r0, =0x0812c5ab
 	ldr r1, [sp,#0x14]
 	cmp r0, r1
@@ -456,13 +456,13 @@ RefreshFameCheckerNPCs_Return2:
 	bx r0
 
 CallByR4:
-	bx r4	
-	
+	bx r4
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .align 2
-.pool	
+.pool
 @ hook at 0x15D4E8 via r0
-SetPalSSAnneWake: 
+SetPalSSAnneWake:
 	push {r1}
 	ldr r0, .PalSSAnneWake
 	bl FindOrLoadNPCPalette
@@ -483,7 +483,7 @@ SetPalSSAnneWake:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .align 2
 @ hook at 0x15D600 via r2
-SetPalSSAnneSmoke: 
+SetPalSSAnneSmoke:
 	push {r0}
 	ldr r0, .PalSSAnneWake
 	bl FindOrLoadNPCPalette
@@ -494,7 +494,7 @@ SetPalSSAnneSmoke:
 	and r2, r3
 	orr r1, r2
 	ldr r2, =0x815D60A+1
-	bx r2	
+	bx r2
 
 .align 2
 .PalSSAnneWake: .word 0x1115
@@ -503,7 +503,7 @@ SetPalSSAnneSmoke:
 .align 2
 .pool
 @ hook at 0x7A2D0 via r0
-GetDarkeningType1: 
+GetDarkeningType1:
 	mov r0, r4
 	bl GetDarkeningTypeBySlot
 	cmp r0, #0
@@ -514,7 +514,7 @@ GetDarkeningType1:
 .align 2
 .pool
 @ hook at 0x7A428 via r0
-GetDarkeningType2: 
+GetDarkeningType2:
 	mov r0, r4
 	bl GetDarkeningTypeBySlot
 	ldr r1, =0x807A430+1
@@ -524,7 +524,7 @@ GetDarkeningType2:
 .align 2
 .pool
 @ hook at 0x7A544 via r0
-GetDarkeningType3: 
+GetDarkeningType3:
 	mov r0, r4
 	bl GetDarkeningTypeBySlot
 	ldr r1, =0x807A54C+1
@@ -543,7 +543,7 @@ FogBrightenAll:
 	cmp r2, #0
 	bne FogBrightenAll_End
 	bl FogBrightenPalettes
-	
+
 FogBrightenAll_End:
 	ldr r6, .hword732
 	add r0, r5, r6
@@ -583,7 +583,7 @@ FogBrightenOnStep_Brighten:
 .align 2
 .pool
 @ hook at 0x7A644 via r0
-FogBrightenAndFadeIn: 
+FogBrightenAndFadeIn:
 	mov r0, r4
 	mov r1, r7
 	ldrh r2, [sp]
@@ -619,7 +619,7 @@ GetFadeType1_ReturnTable:
 .align 2
 .pool
 @ hook at 0x7A860 via r2, copy palettes before fading out for all fog types
-GetFadeType2: 
+GetFadeType2:
 	push {r1}
 	ldrb r0, [r0]
 	bl GetFadeTypeByWeather

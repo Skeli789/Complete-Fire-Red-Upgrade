@@ -1,5 +1,13 @@
 #pragma once
 
+#include "../global.h"
+
+/**
+ * \file overworld_data.h
+ * \brief A file to be included only by "src/overworld.c". Contains data relevant
+ *		  to initializing trainer battles and walking scripts.
+ */
+
 #define SCRCMD_TRAINERBATTLE 0x5C
 
 #define sOrdinaryBattleParams (struct TrainerBattleParameter*) 0x83C6900 //Battle Type 0 & 5

@@ -3,6 +3,12 @@
 #include "../../src/defines.h"
 #include "../../src/defines_battle.h"
 
+/**
+ * \file build_pokemon_2.h
+ * \brief A file to be included only by "src/build_pokemon.c". It contains
+ *		  several macros and constants for building Pokemon.
+ */
+
 #define MAKE_POKEMON(structure)																				\
 {																											\
 	u16 speciesToCreate = structure[i].species;																\

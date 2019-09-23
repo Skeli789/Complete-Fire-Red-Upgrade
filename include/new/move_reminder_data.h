@@ -3,6 +3,12 @@
 #include "../global.h"
 #include "../window.h"
 
+/**
+ * \file move_reminder_data.h
+ * \brief A file to be included on by "src/learn_move.c". Contains window
+ *		  data relating the Move Relearner.
+ */
+
 enum
 {
 	WINDOW_TYPE_PP_SYMBOLS,

@@ -1,5 +1,13 @@
 #pragma once
 
+#include "../global.h"
+
+/**
+ * \file battle_strings_2.h
+ * \brief A file to be included on by "src/battle_strings.c". Contains several
+ *		  macros for getting battling Pokemon nicknames.
+ */
+
 #define ILLUSION_HIDE_NAME(bank)																	\
 {																									\
 	if (gStatuses3[bank] & STATUS3_ILLUSION) {														\

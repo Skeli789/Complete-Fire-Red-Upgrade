@@ -1,5 +1,10 @@
 #pragma once
 
+/**
+ * \file item_battle_scripts.h
+ * \brief Contains declarations for battle scripts relating to held items.
+ */
+
 extern u8 BattleScript_Gems[];
 extern u8 BattleScript_WeaknessBerryActivate[];
 extern u8 BattleScript_HangedOnFocusSash[];

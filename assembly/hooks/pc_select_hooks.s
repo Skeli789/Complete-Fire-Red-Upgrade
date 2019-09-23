@@ -47,7 +47,7 @@ CheckSwapNo:
 DefaultCase:
 	ldr r0, =(0x0808ee04 +1)	@do nothing
 	bx r0
-	
+
 StoreAndCancel:
 	ldr r0, =BoxDMA
 	ldr r0, [r0]
@@ -67,7 +67,7 @@ StoreAndCancel:
 CancelOperations:
 	ldr r0, =(0x0808edb8 +1)
 	bx r0
-	
+
 ResetSwapandContinue:
 	ldr r0, =pcSelect_StateTracker
 	mov r1, #0x2
@@ -85,17 +85,17 @@ RegularChecks:
 	cmp r1, r0
 	beq CancelRegular
 	b DefaultCase
-	
+
 CheckNo:
 	cmp r1, #0x1	@'no'
 	beq CancelRegular
 	b DefaultCase
-	
+
 ContinueOperations:
 	ldr r0, =(0x0808eda8 +1)	@ remove yes/no box
 	bx r0
-	
-CancelRegular:	
+
+CancelRegular:
 	ldr r1, =pcSelect_StateTracker
 	ldrb r0, [r1]
 	cmp r0, #0x0
@@ -107,7 +107,7 @@ CancelRegular:
 	ldr r1, =pcSelect_StateTracker
 	mov r0, #0xFE
 	strb r0, [r1]
-	b CancelOperations	
+	b CancelOperations
 
 StoreSpeciesID:
 	push {r2,lr}
@@ -119,7 +119,7 @@ StoreSpeciesID:
 	ldr r2, =var8000
 	strh r0, [r2, #0x4]		@species to var8002
 	pop {r2,pc}
-	
+
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @Discern between closing box and Selection
@@ -172,14 +172,14 @@ CustomBRM:
 	mov r0, #0x6	@summary
 	bl BRMAdd
 	ldr r0, =(0x080949fe +1)
-	bx r0	
-	
+	bx r0
+
 WithdrawBRM:
 	mov r0, #0x2	@withdraw
 	bl BRMAdd
 	ldr r0, =(0x080949c0 +1)
 	bx r0
-	
+
 NoPokeSelected:
 	ldr r0, =(0x080949bc +1)
 	bx r0
@@ -210,7 +210,7 @@ LoadPartyMsg:
 	ldr r1, [r4]
 	ldr r0, =(0x0808d3c0 +1)
 	bx r0
-	
+
 LoadFromTable:
 	ldr r1, =(0x0808fba4 +1)
 	bx r1
@@ -260,12 +260,12 @@ pcSelect_SkipMultiGen:
 	beq CreateMultiBoxes
 SkipMultiBoxes:
 	ldr r0, =(0x0808c3fc +1)
-	bx r0	
-	
+	bx r0
+
 CreateMultiBoxes:
 	ldr r2, =(0x0808c3ec +1)
 	bx r2
-	
+
 help_system_set_context:
 	ldr r1, =(0x0812b1f0 +1)
 	bx r1
@@ -320,9 +320,9 @@ ForceWithdraw:
 	strb r4, [r0]	@force first choice (withdraw)
 	ldr r4, =(0x0203ade4)	@choice_x
 	ldr r0, =(0x0810f9b4 +1)
-	bx r0	
-	
-RegularButtonChecks:	
+	bx r0
+
+RegularButtonChecks:
 	ldrh r1, [r0, #0x2e]	@button pressed
 	mov r0, #0x1	@'a'
 	and r0, r1
@@ -334,7 +334,7 @@ PressA:
 CheckB:
 	ldr r0, =(0x0810f9c4 +1)
 	bx r0
-	
+
 .align 2
 .choice_curr: .word 0x0203ade6
 
@@ -354,15 +354,15 @@ pcSelect_ChooseSelect:
 	bge DoSelectFunc
 	ldr r1, =(0x0808d93e +1)
 	bx r1
-	
-DoSelectFunc:	
+
+DoSelectFunc:
 	ldr r0, =pcSelectionFunc
 	mov pc, r0
-	
+
 CheckButtons:
 	ldr r1, =(0x08094f94 +1)
 	bx r1
-	
+
 .align 2
 pcSelectionFunc:
 	bl BoxClosing
@@ -378,7 +378,7 @@ pcSelectionFunc:
 BoxClosing:
 	ldr r0, =(0x0808fd20 +1)
 	bx r0
-	
+
 dp17_task_set_function:
 	ldr r1, =(0x0808cff8 +1)
 	bx r1
@@ -488,7 +488,7 @@ select_str: .byte S_, e_, l_, e_, c_, t_, 0xff
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ New Operations String Table
-@	pointers 8fbc8, 8fce4 
+@	pointers 8fbc8, 8fce4
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .align 2
 .pool

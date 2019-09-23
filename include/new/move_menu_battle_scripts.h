@@ -1,5 +1,11 @@
 #pragma once
 
+/**
+ * \file move_menu_battle_scripts.h
+ * \brief Contains declarations for text and battle scripts used when
+ *		  selecting attacks.
+ */
+
 #define BattleScript_SelectingDisabledMove (u8*) 0x81D8C5A
 #define BattleScript_SelectingTormentedMove (u8*) 0x81D8EB7
 #define BattleScript_SelectingNotAllowedMoveTaunt (u8*) 0x81D8EC6

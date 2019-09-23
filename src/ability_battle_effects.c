@@ -4,6 +4,7 @@
 #include "../include/battle_string_ids.h"
 #include "../include/field_weather.h"
 #include "../include/random.h"
+#include "../include/string_util.h"
 #include "../include/window.h"
 #include "../include/constants/items.h"
 

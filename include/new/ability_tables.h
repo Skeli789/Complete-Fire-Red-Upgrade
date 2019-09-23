@@ -1,5 +1,12 @@
 #pragma once
 
+#include "../global.h"
+
+/**
+ * \file move_tables.h
+ * \brief Contains declarations for many lists of abilities.
+ */
+
 extern const ability_t gRolePlayBannedAbilities[];
 extern const ability_t gRolePlayAttackerBannedAbilities[];
 extern const ability_t gSkillSwapBannedAbilities[];

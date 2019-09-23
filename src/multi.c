@@ -197,7 +197,7 @@ static u32 CalcMultiMoneyForTrainer(u16 trainerId)
 
 	u8 level = 0;
 	#ifdef OPEN_WORLD_TRAINERS
-		level = openWorldLevelRanges[GetOpenWorldBadgeCount()][1];
+		level = gOpenWorldLevelRanges[GetOpenWorldBadgeCount()][1];
 	#else
 		if (trainer.partyFlags & PARTY_FLAG_CUSTOM_MOVES)
 			level = trainer.party.ItemCustomMoves[lastMon].lvl;

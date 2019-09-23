@@ -1,5 +1,13 @@
 #pragma once
 
+#include "../global.h"
+
+/**
+ * \file end_turn_battle_scripts.h
+ * \brief Contains declarations for battle scripts usually called once all
+ *		  Pokemon have finished their actions for the turn.
+ */
+
 #define BattleScript_RainContinuesOrEnds (u8*) 0x81D8A64
 #define BattleScript_SunlightFaded (u8*) 0x81D8B18
 #define BattleScript_SunlightContinues (u8*) 0x81D8B0A

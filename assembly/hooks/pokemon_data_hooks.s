@@ -69,7 +69,7 @@ PCFormChangeRevertHook:
 	bl HoopaShayminPCRevertLogic
 	ldr r3, =0x8093020 | 1
 	bx r3
-	
+
 @Repoint at 0x803FDEC
 CheckHasSpeciesJump:
 	mov r0, r8
@@ -77,7 +77,7 @@ CheckHasSpeciesJump:
 	mov r4, r0
 	ldr r1, =0x8040368 | 1
 	bx r1
-	
+
 
 CheckRegularMonDataReturn:
 	ldr r1, =0x803FDC2 | 1

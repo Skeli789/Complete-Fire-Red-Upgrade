@@ -39,8 +39,8 @@ FixMoveNameLoading:
 	bl CopyMoveReminderMoveName
 	ldr r1, =(0x080E5250 +1)
 	bx r1
-	
-	
+
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Move Reminder - Fix relearnable moves counter
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -72,7 +72,7 @@ FixWindowTemplates:
 ExitMoveRelearnGuiInit:
 	ldr r1, =(0x80E476C +1)
 	bx r1
-	
+
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Move Reminder Calloc
@@ -84,7 +84,7 @@ FixReminderCalloc:
 	bl InitLearnMoveFix
 	ldr r0, =(0x080E47AC +1)
 	bx r0
-	
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Move Reminder - Fix Move Id Loading
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -97,7 +97,7 @@ FixLoadMoveId1:
 	mov r1, r0
 	pop {r0, r2-r7}
 	ldr r2, =(0x080E4AAA +1)
-	bx r2	
+	bx r2
 
 .align 2
 .pool
@@ -136,4 +136,3 @@ FixLoadMoveId5:
 	bl InitMoveRelearnerMoveIDs
 	ldr r4, =(0x080E4F9C +1)
 	bx r4
-	

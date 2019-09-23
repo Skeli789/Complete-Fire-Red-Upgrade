@@ -1,7 +1,13 @@
 #pragma once
+
 #include "../global.h"
 #include "../script.h"
-#include "../wild_encounter.h"
+
+/**
+ * \file wild_encounter.h
+ * \brief Contains functions relating to encountering Pokemon in the wild
+ *		  and beginning battles with wild Pokemon.
+ */
 
 //Exported Functions
 void CreateWildMon(u16 species, u8 level, u8 monHeaderIndex, bool8 purgeParty);
@@ -38,4 +44,3 @@ enum
 
 #define ENCOUNTER_TYPE_LAND 0
 #define ENCOUNTER_TYPE_WATER 1
-

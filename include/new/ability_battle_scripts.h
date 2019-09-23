@@ -1,5 +1,12 @@
 #pragma once
 
+#include "../global.h"
+
+/**
+ * \file move_battle_scripts.h
+ * \brief Contains declarations for battle scripts of abilities.
+ */
+
 #define BattleScript_OverworldWeatherStarts (u8*) 0x81D8B1F
 
 extern u8 BattleScript_NewWeatherAbilityActivates[];

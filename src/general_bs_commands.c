@@ -4,6 +4,7 @@
 #include "../include/battle_string_ids.h"
 #include "../include/money.h"
 #include "../include/random.h"
+#include "../include/string_util.h"
 #include "../include/constants/items.h"
 
 #include "../include/new/ability_battle_effects.h"

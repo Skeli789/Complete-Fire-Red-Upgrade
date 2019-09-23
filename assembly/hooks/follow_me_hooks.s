@@ -30,7 +30,7 @@ FollowMe_LedgeHook:
 dont_move_oam:
 	ldr r2, =(0x08068D6E + 1)
 	bx r2
-	
+
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 FollowMe_CollisionHook:
@@ -46,14 +46,14 @@ no_collision:
 	ldr r0, =(0x0806396C + 1)
 	bx r0
 
-check_for_collision:	
+check_for_collision:
 	mov r0, #0x10
 	ldrsh r1, [r2, r0]
 	lsl r0, r7, #0x10
 	asr r3, r0, #0x10
 	ldr r0, =(0x08063930 + 1)
 	bx r0
-	
+
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 bike_hook:
@@ -75,7 +75,7 @@ FollowMe_SurfHook:
 	ldrsh r0,[r6, r2]
 	str r0, [r1, #0x4]
 	ldr r0, =(0x8086B0C +1)
-	
+
 linker:
 	bx r0
 
@@ -83,7 +83,7 @@ linker:
 .pool
 @Surf hook, startmenu/bag access
 @hook via R0, at 0x8086B00. Write 00 00 to 0x8086AFE
-FollowMe_SurfBagHook:	
+FollowMe_SurfBagHook:
 	push {r4, r5, lr}
 	ldr r0, =(FollowerNoMoveSurf)
 	bl linker
@@ -95,10 +95,10 @@ FollowMe_SurfBagHook:
 	ldr r1, =(0x2036E38)
 	add r4, r0, r1
 	ldr r0, =(0x8120718 +1)
-	
+
 linker:
 	bx r0
-	
+
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 @WarpInHook
@@ -116,15 +116,15 @@ FollowMe_CreateAvatarHook2:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-FollowMe_StairsMoveHook:	
+FollowMe_StairsMoveHook:
 	strh r0, [r7, #0x26]
-	mov r0, r7		
+	mov r0, r7
 	bl StairsMoveFollower
 
-@return:	
+@return:
 	mov r1, r8
 	ldrb r0, [r1]
-	lsr r0, #7	
+	lsr r0, #7
 	ldr r1, =(0x0807EB30 + 1)
 	bx r1
 

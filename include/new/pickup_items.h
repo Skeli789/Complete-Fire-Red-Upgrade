@@ -2,6 +2,11 @@
 
 #include "../global.h"
 
+/**
+ * \file pickup_items.h
+ * \brief Contains data relating to the Ability Pickup.
+ */
+
 #define PU_NUM_COMMON_ITEMS     18
 #define PU_NUM_RARE_ITEMS       11
 

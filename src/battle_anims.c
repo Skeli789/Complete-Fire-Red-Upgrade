@@ -4,6 +4,7 @@
 #include "../include/battle_anim.h"
 #include "../include/event_data.h"
 #include "../include/random.h"
+#include "../include/sound.h"
 
 #include "../include/new/battle_anims.h"
 #include "../include/new/battle_terrain.h"
@@ -154,6 +155,7 @@ static bool8 ShouldAnimBeDoneRegardlessOfSubsitute(u8 animId);
 static bool8 ShouldSubstituteRecedeForSpecialBattleAnim(u8 animId);
 static void TrySwapBackupSpeciesWithSpecies(u8 activeBattler, u8 animId);
 static void AnimTask_GrowStep(u8 taskId);
+static void AnimDracoMeteorRockStep(struct Sprite *sprite);
 
 bank_t LoadBattleAnimTarget(u8 arg)
 {

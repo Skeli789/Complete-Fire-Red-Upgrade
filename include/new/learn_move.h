@@ -5,7 +5,7 @@
 /**
  * \file learn_move.h
  * \brief Contains functions relating to Pokemon learning new moves. Also contains
- *		  functions for Evolution moves and the Move Reminder.
+ *		  functions for Evolution moves and the Move Relearner.
  */
 
 //Exported Functions

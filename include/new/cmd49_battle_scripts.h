@@ -1,5 +1,13 @@
 #pragma once
 
+#include "../global.h"
+
+/**
+ * \file cmd49_battle_scripts.h
+ * \brief Contains declarations for battle scripts usually called near the end
+ *		  of each attack.
+ */
+
 #define BattleScript_ThrashConfuses (const u8*) 0x81D90C5
 #define BattleScript_DefrostedViaFireMove (const u8*) 0x81D9098
 #define BattleScript_Recoil (const u8*) 0x81D9243

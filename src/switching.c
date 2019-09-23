@@ -622,13 +622,13 @@ void atk52_switchineffects(void)
 		__attribute__ ((fallthrough));
 
 		case SwitchIn_TrainerMessage:
+			++gNewBS->SwitchInEffectsTracker;
 			if (ShouldDoTrainerSlide(gActiveBattler, gTrainerBattleOpponent_A, TRAINER_SLIDE_LAST_SWITCHIN))
 			{
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_TrainerSlideMsgRet;
 				return;
 			}
-			++gNewBS->SwitchInEffectsTracker;
 		__attribute__ ((fallthrough));
 
 		case SwitchIn_PreEnd:

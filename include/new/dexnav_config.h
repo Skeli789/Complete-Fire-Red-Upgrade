@@ -1,5 +1,11 @@
 #pragma once
 
+/**
+ * \file dexnav_config.h
+ * \brief A file to be included only by "src/dexnav.c". It contains various customizable
+ *		  options for the DexNav feature.
+ */
+
 //15 seconds is the time out. Max of 1092 seconds allowed
 #define DEXNAV_TIMEOUT 15
 

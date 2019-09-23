@@ -2,8 +2,11 @@
 #include "../include/battle.h"
 #include "../include/bg.h"
 #include "../include/event_data.h"
-#include "../include/fieldmap.h"
+#include "../include/event_object_movement.h"
 #include "../include/field_effect.h"
+#include "../include/field_message_box.h"
+#include "../include/field_player_avatar.h"
+#include "../include/fieldmap.h"
 #include "../include/m4a.h"
 #include "../include/main.h"
 #include "../include/metatile_behavior.h"
@@ -15,6 +18,7 @@
 #include "../include/region_map.h"
 #include "../include/script.h"
 #include "../include/sprite.h"
+#include "../include/string_util.h"
 #include "../include/text.h"
 #include "../include/wild_encounter.h"
 #include "../include/window.h"
@@ -119,7 +123,7 @@ static void DestroyTaskCompletedTextbox(u8 tId)
 {
 	if (*gBoxStatusAndType != 1)
 	{
-		TextboxClose();
+		HideFieldMessageBox();
 		DestroyTask(tId);
 		ScriptContext2_Disable();
 	}
@@ -377,7 +381,7 @@ static bool8 PickTileScreen(u8 targetBehaviour, u8 areaX, u8 areaY, s16 *xBuff, 
 				{
 					//Water
 					u8 scale = 320 - (smallScan * 200) - (GetPlayerDistance(topX, topY) / 2);
-					u8 elevDiff = (CurrMapHeightMismatch((gEventObjects[gPlayerAvatar->spriteId].elevation << 4
+					u8 elevDiff = (IsZCoordMismatchAt((gEventObjects[gPlayerAvatar->spriteId].elevation << 4
 						| gEventObjects[gPlayerAvatar->spriteId].currentElevation), topX, topY));
 
 					weight = (Random() % scale <= 1) && elevDiff && !MapGridIsImpassableAt(topX, topY);
@@ -2564,6 +2568,7 @@ bool8 IsDexNavHudActive(void)
 // ============================== //
 // ========= POKETOOLS ========== //
 // ============================== //
+void __attribute__((long_call)) StartMenuPokedexFunc(void);
 void ToolSelection(u8 taskId)
 {
 	switch (priv0)

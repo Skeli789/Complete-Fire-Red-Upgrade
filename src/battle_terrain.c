@@ -2,6 +2,7 @@
 #include "defines_battle.h"
 #include "../include/event_data.h"
 #include "../include/fieldmap.h"
+#include "../include/field_player_avatar.h"
 #include "../include/metatile_behavior.h"
 #include "../include/overworld.h"
 #include "../include/constants/metatile_behaviors.h"

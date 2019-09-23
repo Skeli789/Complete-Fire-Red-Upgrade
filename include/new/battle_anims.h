@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../global.h"
+
 /**
  * \file battle_anims.h
  * \brief Contains functions relating to various in-battle animations. Contains
@@ -18,6 +20,11 @@ void AnimTask_PlayAttackerCry(u8 taskId);
 void AnimTask_GetSecretPowerAnimation(u8 taskId);
 void AnimTask_SetCamouflageBlend(u8 taskId);
 void AnimTask_CreateFlingItem(u8 taskId);
+void AnimTask_CreateStealItem(u8 taskId);
+void AnimTask_GrowTarget(u8 taskId);
+void AnimTask_AllBanksInvisible(u8 taskId);
+void AnimTask_AllBanksVisible(u8 taskId);
+void AnimTask_AllBanksInvisibleExceptAttackerAndTarget(u8 taskId);
 
 void SpriteCB_TranslateAnimSpriteToTargetMonLocationDoubles(struct Sprite* sprite);
 void SpriteCB_SpriteToCentreOfSide(struct Sprite* sprite);
@@ -28,6 +35,13 @@ void SpriteCB_CoreEnforcerHits(struct Sprite* sprite);
 void SpriteCB_CoreEnforcerBeam(struct Sprite* sprite);
 void CoreEnforcerLoadBeamTarget(struct Sprite* sprite);
 void SpriteCB_FlareBlitzUpFlames(struct Sprite* sprite);
+void SpriteCB_SunsteelStrikeRings(struct Sprite* sprite);
+void SpriteCB_MindBlownBall(struct Sprite *sprite);
+void SpriteCB_MindBlownExplosion(struct Sprite* sprite);
+void SpriteCB_HydroCannonImpact(struct Sprite *sprite);
+void SpriteCB_SoulStealingStar(struct Sprite *sprite);
+void SpriteCB_GrowingSuperpower(struct Sprite *sprite);
+void SpriteCB_DracoMeteorRock(struct Sprite *sprite);
 
 bool8 IsAnimMoveIonDeluge(void);
 bool8 IsAnimMoveTectnoicRage(void);
@@ -50,6 +64,7 @@ bank_t LoadBattleAnimTarget(u8 arg);
 void ScriptCmd_loadspritegfx(void);
 void ShinyAnimFix(void);
 bool8 ShadowSneakAnimHelper(void);
+void UpdatedAnimStealItemFinalCallback(struct Sprite* sprite);
 void DoubleWildAnimBallThrowFix(void);
 void UpdateOamPriorityInAllHealthboxes(u8 priority);
-
+bool8 TryHandleLaunchBattleTableAnimation(u8 activeBattler, u8 bankAtk, u8 bankDef, u8 tableId, u16 argument);

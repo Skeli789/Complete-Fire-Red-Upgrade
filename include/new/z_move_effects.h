@@ -1,7 +1,10 @@
 #pragma once
 
-#include "../../src/defines.h"
-#include "../../src/defines_battle.h"
+/**
+ * \file z_move_effects.h
+ * \brief Contains constants relating to the different effects Z-Status moves
+ *		  have in battle.
+ */
 
 #define Z_EFFECT_NONE 0
 #define Z_EFFECT_RESET_STATS 1

@@ -180,6 +180,7 @@ CreateThrowPokeBall 080EF490 1
 DestroyThrowPokeBall 080EF4B8 1
 StartPokeballThrowAnimation 0x80EF5AC 1
 ItemIdToBallId 080EF52C 1
+OakIntroPokeballFixHook 804B946 0
 DoubleWildAnimBallThrowFixHook 080EF5F4 1
 DoubleWildPokeBallItemUseFixHook 080A1E2C 0
 DoubleWildDexHook1 802D95C 0
@@ -365,6 +366,7 @@ PokedexScreenStats 08106370 0
 
 ##Daycare
 GiveEggFromDaycare 080460D4 1
+CreateEgg 08046150 2
 TriggerPendingDaycareEgg 080459F0 1
 FlameBodyMagmaArmorEggHook 08046390 1
 CreatedHatchedMon 08046BFC 2
