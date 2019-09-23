@@ -35,6 +35,7 @@ static s8 CompareItemsAlphabetically(struct ItemSlot* itemSlot1, struct ItemSlot
 static s8 CompareItemsByType(struct ItemSlot* itemSlot1, struct ItemSlot* itemSlot2);
 static s8 CompareItemsByMost(struct ItemSlot* itemSlot1, struct ItemSlot* itemSlot2);
 static s8 CompareItemsByLeast(struct ItemSlot* itemSlot1, struct ItemSlot* itemSlot2);
+static s8 CompareItemsByHavingValue(struct ItemSlot* itemSlot1, struct ItemSlot* itemSlot2);
 void MergeSort(struct ItemSlot* array, u32 low, u32 high, s8 (*comparator)(struct ItemSlot*, struct ItemSlot*));
 void Merge(struct ItemSlot* arr, u32 l, u32 m, u32 r, s8 (*comparator)(struct ItemSlot*, struct ItemSlot*));
 static void BagMenu_SortByName(u8 taskId);
@@ -940,6 +941,11 @@ bool8 DoesBagHaveBerry(void)
 	return gSpecialVar_LastResult = 0;
 }
 
+void CompactItemsInBagPocket(struct ItemSlot* itemSlots, u16 amount)
+{
+	MergeSort(itemSlots, 0, amount - 1, CompareItemsByHavingValue);
+}
+
 
 //Functions For Sorting Bag/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #define gMenuText_Use (const u8*) 0x84161a0
@@ -1180,6 +1186,21 @@ static s8 CompareItemsByLeast(struct ItemSlot* itemSlot1, struct ItemSlot* itemS
 		return 1;
 
 	return CompareItemsAlphabetically(itemSlot1, itemSlot2); //Items have same quantity so sort alphabetically
+}
+
+static s8 CompareItemsByHavingValue(struct ItemSlot* itemSlot1, struct ItemSlot* itemSlot2)
+{
+	if (itemSlot1->itemId == ITEM_NONE)
+		return 1;
+	else if (itemSlot2->itemId == ITEM_NONE)
+		return -1;
+
+	if (itemSlot1->quantity == 0)
+		return 1;
+	else if (itemSlot2->quantity == 0)
+		return -1;
+
+	return 0;
 }
 
 void SortItemsInBag(u8 pocket, u8 type)
