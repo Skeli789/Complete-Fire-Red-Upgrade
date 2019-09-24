@@ -4,6 +4,10 @@
 #include "../include/new/battle_util.h"
 #include "../include/new/trainer_sliding.h"
 #include "../include/new/trainer_sliding_data.h"
+/*
+trainer_sliding.c
+	handles mid-battle trainer sliding and related message.
+*/
 
 struct TrainerSlide
 {

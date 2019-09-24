@@ -1,6 +1,10 @@
 .text
 .thumb
 .align 2
+/*
+cmd49_battle_scripts.s
+	handles most end of move/turn effects
+*/
 
 .include "../defines"
 

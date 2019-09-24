@@ -3,6 +3,10 @@
 .align 2
 
 .include "../defines"
+/*
+ability_tables.s
+	tables associated with ability ban lists or activation
+*/
 
 .equ ABILITY_TABLES_TERMIN, 0xFF
 

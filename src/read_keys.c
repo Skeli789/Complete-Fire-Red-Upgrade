@@ -6,8 +6,10 @@
 #include "../include/new/dexnav.h"
 #include "../include/new/util.h"
 #include "../include/new/read_keys.h"
-
-//emulate JPANs keypad hack
+/*
+read_keys.c
+	emulated JPANs keypad hacks, allowing the designer to force key presses, prevent them, or map functions onto them, among other uses.
+*/
 
 /*
 // called from AgbMain

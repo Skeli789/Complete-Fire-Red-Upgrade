@@ -1,6 +1,10 @@
 .text
 .thumb
 .align 2
+/*
+et_battle_scripts.s
+	handles end of turn effects/strings
+*/
 
 .include "../defines"
 

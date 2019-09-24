@@ -1,6 +1,10 @@
 .text
 .thumb
 .align 2
+/*
+standard_damage_battle_scripts.s
+	scripts for basic damage calc
+*/
 
 .include "../defines"
 

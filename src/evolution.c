@@ -11,6 +11,10 @@
 
 #include "../include/new/dns.h"
 #include "../include/new/evolution.h"
+/*
+evolution.c
+	handles old and new evolution methods
+*/
 
 u16 GetEvolutionTargetSpecies(struct Pokemon* mon, u8 type, u16 evolutionItem)
 {

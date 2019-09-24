@@ -18,6 +18,10 @@
 #include "../include/new/general_bs_commands.h"
 #include "../include/new/util.h"
 #include "../include/new/move_tables.h"
+/*
+attackcanceler.c
+	Handles any logic for discerning if a move can be used or is effective, eg. mold breaker, flinch status, truant, etc.
+*/
 
 //TODO: Make sure Powder stops Inferno Overdrive and not Pledge moves
 

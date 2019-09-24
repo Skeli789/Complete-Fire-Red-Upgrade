@@ -12,6 +12,10 @@
 #include "../include/new/move_menu.h"
 #include "../include/new/multi.h"
 #include "../include/new/switching.h"
+/*
+multi.c
+	handles partner battle logic
+*/
 
 #define BANK_PLAYER_ALLY 2
 #define sBattler data[6]

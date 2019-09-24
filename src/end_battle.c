@@ -13,6 +13,10 @@
 #include "../include/new/util.h"
 #include "../include/new/mega.h"
 #include "../include/new/multi.h"
+/*
+end_battle.c
+	handles all battle termination logic and data resetting/saving
+*/
 
 const u16 gEndBattleFlagClearTable[] =
 {

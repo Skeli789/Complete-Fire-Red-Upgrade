@@ -12,6 +12,10 @@
 #include "../include/new/frontier.h"
 #include "../include/new/multi.h"
 #include "../include/new/overworld.h"
+/*
+battle_transition.c
+	handles the transition into battle, eg. trainer mugshots.
+*/
 
 #define sTransitionStructPtr ((struct TransitionData*) *((u32*) 0x2039A2C))
 

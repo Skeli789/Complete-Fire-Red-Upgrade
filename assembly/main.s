@@ -3,8 +3,8 @@
 .thumb
 .thumb_func
 /*
-script functions/specials in asm - hooks and returns
-
+main.s
+	script functions/specials in asm - hooks and returns
 */
 
 .include "../asm_defines.s"

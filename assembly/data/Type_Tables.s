@@ -3,6 +3,11 @@
 .global gMoveMenuInfoIcons
 
 .include "../defines"
+/*
+type_tables.s
+	type effectiveness table, type icon definitions
+*/
+
 
 .equ TYPE_MUL_NO_EFFECT, 0
 .equ TYPE_MUL_NOT_EFFECTIVE, 5

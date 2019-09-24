@@ -42,13 +42,13 @@
 #include "../include/new/util.h"
 #include "../include/new/overworld.h"
 #include "../include/new/wild_encounter.h"
-
 /*
-Simplified DexNav System
-	credits to FBI: https://github.com/EternalCode/Dexnav
+dexnav.c
+	functions for the simplified dexnav system
+		credits to FBI: https://github.com/EternalCode/Dexnav
 
-Known BUGS:
-	-GUI gets messed up in dark, flashable rooms
+	Known BUGS:
+		-GUI gets messed up in dark, flashable rooms
 */
 
 #define sDNavState (*((struct DexnavHudData**) 0x203E038))

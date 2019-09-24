@@ -15,6 +15,10 @@
 #include "../include/new/util.h"
 #include "../include/new/mega.h"
 #include "../include/new/pokemon_storage_system.h"
+/*
+catching.c
+	handles the catch probability logic, expands pokeballs, etc.
+*/
 
 #define gOpenPokeballGfx (u8*) 0x8D022E8
 

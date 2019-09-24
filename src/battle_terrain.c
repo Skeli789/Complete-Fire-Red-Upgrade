@@ -12,6 +12,10 @@
 #include "../include/new/dns.h"
 #include "../include/new/overworld.h"
 #include "../include/new/util.h"
+/*
+battle_terrain.c
+	functions responsible for checking/loading/removing battle terrain
+*/
 
 #define gBattleTerrainTable ((struct BattleBackground*) *((u32*) 0x800F320))
 #ifdef UNBOUND

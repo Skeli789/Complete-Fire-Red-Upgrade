@@ -11,6 +11,10 @@
 #include "../include/new/frontier.h"
 #include "../include/new/mega.h"
 #include "../include/new/pokemon_storage_system.h"
+/*
+frontier.c
+	all supporting and master functions for developing a battle frontier
+*/
 
 extern u8* gMaleFrontierNamesTable[];
 extern u8* gFemaleFrontierNamesTable[];

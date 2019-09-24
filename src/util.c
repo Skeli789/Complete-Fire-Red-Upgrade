@@ -5,6 +5,10 @@
 #include "../include/new/util.h"
 #include "../include/new/frontier.h"
 #include "../include/new/mega.h"
+/*
+util.c
+	general utility functions
+*/
 
 u32 MathMax(u32 num1, u32 num2)
 {

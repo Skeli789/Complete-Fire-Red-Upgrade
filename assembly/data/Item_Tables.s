@@ -2,6 +2,11 @@
 .global AbilityDamageListTable
 
 .include "../defines"
+/*
+item_tables.s
+	tables of item IDs associated with battle moves and effects
+*/
+
 
 .equ ITEM_TABLES_TERMIN, 0xFEFE
 

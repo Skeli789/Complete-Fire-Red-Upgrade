@@ -2,6 +2,10 @@
 .text
 .align 2
 .global AttackAnimationTable
+/*
+attack_anim_table.s
+	table of attack animation and associated animation scripts
+*/
 
 .include "../Anim_Defines.asm"
 .include "../asm_defines.s"

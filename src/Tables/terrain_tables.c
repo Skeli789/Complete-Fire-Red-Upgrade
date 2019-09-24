@@ -5,6 +5,10 @@
 #include "../../include/constants/species.h"
 
 #include "../../include/new/battle_terrain.h"
+/*
+terrain_tables.c
+	define tables for each battle terrain type, as well as camouflage type based on the terrain
+*/
 
 #define gBattleTerrainAnimTiles_Building (void*) 0x824E410
 #define gBattleTerrainAnimTilemap_Building (void*) 0x824E490

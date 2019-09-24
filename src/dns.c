@@ -8,6 +8,10 @@
 #include "../include/new/dns_data.h"
 #include "../include/new/dynamic_ow_pals.h"
 #include "../include/new/util.h"
+/*
+dns.c
+	handles functions and palette changes for the day, night, and seasons feature
+*/
 
 #define DNSHelper ((u8*) 0x2021691)
 

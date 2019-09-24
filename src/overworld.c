@@ -33,6 +33,10 @@
 #include "../include/new/overworld.h"
 #include "../include/new/overworld_data.h"
 #include "../include/new/wild_encounter.h"
+/*
+overworld.c
+	functions for anything regarding the overworld, such as trainer spotting, whiteout, step counters, etc.
+*/
 
 extern const u16 gClassBasedTrainerEncounterBGM[NUM_TRAINER_CLASSES];
 

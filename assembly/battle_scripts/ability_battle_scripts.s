@@ -1,6 +1,10 @@
 .text
 .thumb
 .align 2
+/*
+ability_battle_scripts.s
+	battle scripts for specific abilities
+*/
 
 .include "../defines"
 

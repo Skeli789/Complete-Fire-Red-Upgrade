@@ -9,6 +9,10 @@
 #include "../include/new/character_customization.h"
 #include "../include/new/multi.h"
 #include "../include/new/util.h"
+/*
+character_customization.c
+	functions for altering the player's sprite based on the current sprite/palette selections
+*/
 
 #ifdef UNBOUND
 typedef const u8* CustomPal;

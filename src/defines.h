@@ -1,4 +1,8 @@
 #pragma once
+/*
+defines.h
+	general header files for most, if not all, files
+*/
 
 #include "config.h"
 

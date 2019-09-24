@@ -18,6 +18,10 @@
 #include "../include/new/move_tables.h"
 #include "../include/new/new_bs_commands.h"
 #include "../include/new/set_effect.h"
+/*
+new_bs_commands.c
+	functions for any additional battle scripting commands that are used inside battle scripts
+*/
 
 extern void (* const gBattleScriptingCommandsTable[])(void);
 extern void (* const gBattleScriptingCommandsTable2[])(void);

@@ -2,6 +2,10 @@
 .text
 .align 2
 .global AttackDescriptionTable
+/*
+attack_description_table.s
+	descriptions of battle moves
+*/
 
 .word DESC_NO_MOVE
 AttackDescriptionTable:

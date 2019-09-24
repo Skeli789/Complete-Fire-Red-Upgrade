@@ -2,6 +2,10 @@
 .align 2
 .thumb
 .thumb_func
+/*
+triple_layer_blocks.s
+	inserts diegoisawesome's triple layer block hack
+*/
 
 .include "../defines"
 

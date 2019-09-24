@@ -1,6 +1,10 @@
 .text
 .thumb
 .align 2
+/*
+attackcanceler_battle_scripts.s
+	battle scripts to support attackcanceler battle command
+*/
 
 .include "../defines"
 

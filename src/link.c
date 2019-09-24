@@ -3,6 +3,10 @@
 
 #include "../include/new/util.h"
 #include "../include/new/link.h"
+/*
+link.c
+	handles data transfer
+*/
 
 void EmitDataTransfer(u8 bufferId, void* dst, u16 size, void* data)
 {

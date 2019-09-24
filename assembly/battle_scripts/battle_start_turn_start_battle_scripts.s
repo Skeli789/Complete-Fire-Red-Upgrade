@@ -1,6 +1,10 @@
 .text
 .thumb
 .align 2
+/*
+battle_start_turn_start_battle_scripts.s
+	scripts to support battle start and turn start
+*/
 
 .include "../defines"
 

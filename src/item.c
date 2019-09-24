@@ -18,6 +18,10 @@
 #include "../include/new/util.h"
 #include "../include/new/item.h"
 #include "../include/new/set_z_effect.h"
+/*
+item.c
+	handles all item related functions, such as returning hold effects, tm/hm expansion, etc.
+*/
 
 #define EOS 0xFF
 

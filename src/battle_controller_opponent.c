@@ -11,6 +11,10 @@
 #include "../include/new/mega.h"
 #include "../include/new/move_menu.h"
 #include "../include/new/switching.h"
+/*
+battle_controller_opponent.c
+	handles the functions responsible for the user moving between battle menus, choosing moves, etc.
+*/
 
 //TODO: Update Acupressure Targeting for AI
 

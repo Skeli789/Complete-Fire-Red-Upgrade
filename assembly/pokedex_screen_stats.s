@@ -1,6 +1,10 @@
 .thumb
+/*
+pokedex_screen_stats.s
+	displaying base stats in the pokedex screen
+credits to DoesntKnowHowToPlay and Squeetz	
+*/
 
-@ credits to DoesntKnowHowToPlay and Squeetz
 
 @Hook at 0x106370 with r0
 PokedexScreenStats:

@@ -3,6 +3,11 @@
 .thumb
 .thumb_func
 /*
+rtc.s
+	inserts the real time clock
+*/
+
+/*
 .org 0x41E, 0xff
 	ldr r3, .ptr1
 	bx r3

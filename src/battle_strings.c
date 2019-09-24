@@ -16,6 +16,10 @@
 #include "../include/new/mega.h"
 #include "../include/new/multi.h"
 #include "../include/new/set_z_effect.h"
+/*
+battle_strings.c
+	modifies the strings displayed in battle.
+*/
 
 extern u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
 extern const u8 gAbilityNames[][ABILITY_NAME_LENGTH + 1];

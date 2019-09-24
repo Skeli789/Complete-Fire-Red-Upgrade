@@ -10,6 +10,10 @@
 #include "../include/new/form_change.h"
 #include "../include/new/util.h"
 #include "../include/new/switching.h"
+/*
+end_turn.c
+	handles all effects that happen at the end of each turn
+*/
 
 enum EndTurnEffects
 {

@@ -1,6 +1,10 @@
 .text
 .thumb
 .align 2
+/*
+switch_battle_scripts.s
+	scripts for switching logic
+*/
 
 .include "../defines"
 

@@ -12,6 +12,10 @@
 #include "../include/new/move_battle_scripts.h"
 #include "../include/new/set_effect.h"
 #include "../include/new/stat_buffs.h"
+/*
+set_effect.c
+	handles move effects
+*/
 
 #define INCREMENT_RESET_RETURN				  \
 {											   \

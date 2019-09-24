@@ -16,6 +16,10 @@
 
 #include "../include/new/dns.h"
 #include "../include/new/frontier.h"
+/*
+frontier_records.c
+	handle player's status in the battle frontier.
+*/
 
 #define NUM_STAR_OBJS 4
 

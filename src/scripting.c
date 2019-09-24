@@ -41,8 +41,10 @@
 #include "../include/new/scrolling_multichoice.h"
 #include "../include/new/Vanilla_functions_battle.h"
 #include "../include/new/wild_encounter.h"
-
 /*
+scripting.c
+	handles all scripting specials or other functions associated with scripts
+
 NOTES:
 	1. Many specials will not work unless you have chosen to expand the save block!
 	2. PC selection hack allows a lot all of the attribute getter/setter specials to reference boxed pokemon via var8003

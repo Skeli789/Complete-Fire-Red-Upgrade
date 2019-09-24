@@ -18,6 +18,10 @@
 #include "../include/new/overworld.h"
 #include "../include/new/party_menu.h"
 #include "../include/new/Vanilla_functions.h"
+/*
+party_menu.c
+	handles anything related to the party menu, such as field moves, new party menu GUIs, etc...
+*/
 
 #define MENU_UP -1
 #define MENU_DOWN 1

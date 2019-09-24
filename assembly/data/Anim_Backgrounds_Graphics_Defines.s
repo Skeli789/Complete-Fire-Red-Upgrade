@@ -1,3 +1,7 @@
+/*
+definitions for battle backgrounds
+*/
+
 .equ BG_PSYCHIC_PAL, PsychicPal
 .equ BG_ROCK_WRECKER_IMG, Rock_WreckerTiles
 .equ BG_ROCK_WRECKER_PAL, Rock_WreckerPal

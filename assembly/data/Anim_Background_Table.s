@@ -2,6 +2,10 @@
 .text
 .align 2
 .global AnimationBackgroundTable
+/*
+anim_background_tables.s
+	battle animation backgrounds
+*/
 
 .include "../Anim_Defines.asm"
 .include "assembly/data/Anim_Backgrounds_Graphics_Defines.s"

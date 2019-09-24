@@ -10,6 +10,10 @@
 #include "../include/new/stat_buffs.h"
 #include "../include/new/z_move_battle_scripts.h"
 #include "../include/new/z_move_effects.h"
+/*
+set_z_effect.c
+	handles the logic for z move effects, including special z moves
+*/
 
 extern const u8* const gZMoveNames[];
 

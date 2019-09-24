@@ -1,6 +1,10 @@
 .text
 .thumb
 .align 2
+/*
+set_effect_battle_scripts.s
+	scripts for effects being set in battle
+*/
 
 .include "../defines"
 
