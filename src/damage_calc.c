@@ -124,7 +124,7 @@ static u8 CalcPossibleCritChance(u8 bankAtk, u8 bankDef, u16 move, struct Pokemo
 			break;
 
 		default:
-			atkAbility = GetPartyAbility(atkMon);
+			atkAbility = GetMonAbility(atkMon);
 			atkSpecies = atkMon->species;
 			if (atkAbility != ABILITY_KLUTZ && !IsMagicRoomActive())
 				atkEffect = ItemId_GetHoldEffect(atkMon->item);
@@ -360,7 +360,7 @@ u32 AI_CalcPartyDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* mon) {
 
 	damage = (damage * 96) / 100; //Roll 96% damage with party mons - be more idealistic
 
-	if (CheckTableForMove(move, gTwoToFiveStrikesMoves) && GetPartyAbility(mon) == ABILITY_SKILLLINK)
+	if (CheckTableForMove(move, gTwoToFiveStrikesMoves) && GetMonAbility(mon) == ABILITY_SKILLLINK)
 	{
 		damage *= 5;
 		return damage;
@@ -378,7 +378,7 @@ u32 AI_CalcPartyDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* mon) {
 
 	//Multi hit moves skip these checks
 	if (gBattleMoves[move].effect == EFFECT_FALSE_SWIPE
-	|| (BATTLER_MAX_HP(bankDef) && ABILITY(bankDef) == ABILITY_STURDY && NO_MOLD_BREAKERS(GetPartyAbility(mon), move))
+	|| (BATTLER_MAX_HP(bankDef) && ABILITY(bankDef) == ABILITY_STURDY && NO_MOLD_BREAKERS(GetMonAbility(mon), move))
 	|| (BATTLER_MAX_HP(bankDef) && IsBankHoldingFocusSash(bankDef)))
 		damage = MathMin(damage, gBattleMons[bankDef].hp - 1);
 
@@ -577,7 +577,7 @@ u8 TypeCalc(u16 move, u8 bankAtk, u8 bankDef, struct Pokemon* monAtk, bool8 Chec
 		return 0;
 
 	if (CheckParty) {
-		atkAbility = GetPartyAbility(monAtk);
+		atkAbility = GetMonAbility(monAtk);
 		atkType1 = (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) ? GetCamomonsTypeByMon(monAtk, 0) : gBaseStats[monAtk->species].type1;
 		atkType2 = (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) ? GetCamomonsTypeByMon(monAtk, 1) : gBaseStats[monAtk->species].type2;
 		atkType3 = TYPE_BLANK;
@@ -633,7 +633,7 @@ u8 TypeCalc(u16 move, u8 bankAtk, u8 bankDef, struct Pokemon* monAtk, bool8 Chec
 u8 AI_TypeCalc(u16 move, u8 bankAtk, struct Pokemon* monDef) {
 	u8 flags = 0;
 
-	u8 defAbility = GetPartyAbility(monDef);
+	u8 defAbility = GetMonAbility(monDef);
 	u8 defEffect = ItemId_GetHoldEffectParam(monDef->item);
 	u8 defType1 = (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) ? GetCamomonsTypeByMon(monDef, 0) : gBaseStats[monDef->species].type1;
 	u8 defType2 = (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) ? GetCamomonsTypeByMon(monDef, 1) : gBaseStats[monDef->species].type2;
@@ -706,7 +706,7 @@ u8 AI_SpecialTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 	{
 		struct Pokemon* illusionMon = GetIllusionPartyData(bankDef);
 		u16 fakeSpecies = GetMonData(illusionMon, MON_DATA_SPECIES, NULL);
-		defAbility = GetPartyAbility(illusionMon);
+		defAbility = GetMonAbility(illusionMon);
 		defType1 = gBaseStats[fakeSpecies].type1;
 		defType2 = gBaseStats[fakeSpecies].type2;
 	}
@@ -946,7 +946,7 @@ static void ModulateDmgByType(u8 multiplier, const u16 move, const u8 moveType, 
 
 	if (CheckPartyDef) {
 		if (multiplier == TYPE_MUL_NO_EFFECT && ItemId_GetHoldEffectParam(monDef->item) == ITEM_EFFECT_RING_TARGET
-		&& GetPartyAbility(monDef) != ABILITY_KLUTZ)
+		&& GetMonAbility(monDef) != ABILITY_KLUTZ)
 			multiplier = TYPE_MUL_NORMAL;
 		else if (multiplier == TYPE_MUL_NO_EFFECT && moveType == TYPE_GROUND
 		&& (CheckGroundingFromPartyData(monDef) || move == MOVE_THOUSANDARROWS))
@@ -1036,7 +1036,7 @@ u8 GetMoveTypeSpecial(u8 bankAtk, u16 move) {
 }
 
 u8 GetMoveTypeSpecialFromParty(struct Pokemon* mon, u16 move) {
-	u8 atkAbility = GetPartyAbility(mon);
+	u8 atkAbility = GetMonAbility(mon);
 	u8 moveType = gBattleMoves[move].type;
 
 	if (CheckTableForMove(move, gTypeChangeExceptionMoves))
@@ -1203,7 +1203,7 @@ u8 GetExceptionMoveType(u8 bankAtk, u16 move) {
 u8 GetExceptionMoveTypeFromParty(struct Pokemon* mon, u16 move) {
 	int i;
 	u8 moveType = gBattleMoves[move].type;
-	u8 ability = GetPartyAbility(mon);
+	u8 ability = GetMonAbility(mon);
 	u16 item = mon->item;
 	u8 effect = ItemId_GetHoldEffect(item);
 	u8 quality = ItemId_GetHoldEffectParam(item);
@@ -1399,7 +1399,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 	defSpecies = defender->species;
 
 	if (partyCheck) { //Load data from elsewhere if we're calculating damage for a partied mon
-		atkAbility = GetPartyAbility(monAtk);
+		atkAbility = GetMonAbility(monAtk);
 		atkPartner_ability = 0;
 		attacker_hp = monAtk->hp;
 		attacker_maxHP = monAtk->maxHP;

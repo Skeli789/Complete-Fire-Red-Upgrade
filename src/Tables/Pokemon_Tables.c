@@ -1531,4 +1531,12 @@ const species_t gRandomizerBanList[] =
 	SPECIES_XERNEAS_NATURAL,
 	SPECIES_TABLES_TERMIN
 };
+
+const ability_t gRandomizerAbilityBanList[] =
+{
+	ABILITY_CACOPHONY,
+	ABILITY_BROKEN_1,
+	ABILITY_BROKEN_2,
+};
+
 #endif

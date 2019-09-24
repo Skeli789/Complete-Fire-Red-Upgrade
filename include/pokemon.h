@@ -685,17 +685,18 @@ extern struct SaveBlock3* gSaveBlock3;
 extern const u8 gFacilityClassToPicIndex[];
 extern const u8 gFacilityClassToTrainerClass[];
 
+u8 GetMonAbility(const struct Pokemon* const);
 u8 CountAliveMons(u8 caseId);
 #define BATTLE_ALIVE_EXCEPT_ACTIVE  0
 #define BATTLE_ALIVE_ATK_SIDE       1
 #define BATTLE_ALIVE_DEF_SIDE       2
 
-void __attribute__((long_call)) CalculateMonStats(pokemon_t *mon);
+void __attribute__((long_call)) CalculateMonStats(struct Pokemon *mon);
 void __attribute__((long_call)) CreateMon(struct Pokemon *mon, u16 species, u8 level, u8 fixedIV, u8 hasFixedPersonality, u32 fixedPersonality, u8 otIdType, u32 fixedOtId);
 void __attribute__((long_call)) CreateMonWithNature(struct Pokemon *mon, u16 species, u8 level, u8 fixedIV, u8 nature);
 void __attribute__((long_call)) CreateMonWithGenderNatureLetter(struct Pokemon *mon, u16 species, u8 level, u8 fixedIV, u8 gender, u8 nature, u8 unownLetter);
 void __attribute__((long_call)) CreateMonWithIVsPersonality(struct Pokemon* mon, u16 species, u8 level, u32 ivs, u32 personality);
-void __attribute__((long_call)) CreateMaleMon(pokemon_t* poke_address, u16 species, u8 level);
+void __attribute__((long_call)) CreateMaleMon(struct Pokemon* poke_address, u16 species, u8 level);
 u8 __attribute__((long_call)) GetLevelFromBoxMonExp(struct BoxPokemon *boxMon);
 u16 __attribute__((long_call)) GiveMoveToMon(struct Pokemon *mon, u16 move);
 u16 __attribute__((long_call)) GiveMoveToBoxMon(struct BoxPokemon *boxMon, u16 move);
@@ -705,7 +706,7 @@ u32 __attribute__((long_call)) GetBoxMonData(struct BoxPokemon *boxMon, s32 fiel
 u8 __attribute__((long_call)) CalculatePlayerPartyCount(void);
 u8 __attribute__((long_call)) GetNature(struct Pokemon *mon);
 u8 __attribute__((long_call)) GetNatureFromPersonality(u32 personality);
-u8 __attribute__((long_call)) GetMonGender(pokemon_t* mon);
+u8 __attribute__((long_call)) GetMonGender(struct Pokemon* mon);
 u8 __attribute__((long_call)) GetBoxMonGender(struct BoxPokemon* boxMon);
 u8 __attribute__((long_call)) GetGenderFromSpeciesAndPersonality(u16 species, u32 personality);
 void __attribute__((long_call)) SetBoxMonData(struct BoxPokemon *boxMon, s32 field, const void *data);
@@ -738,7 +739,6 @@ void __attribute__((long_call)) EmitSetMonData(u8 a, u8 request, u8 c, u8 bytes,
 void __attribute__((long_call)) ZeroPlayerPartyMons(void);
 void __attribute__((long_call)) ZeroEnemyPartyMons(void);
 
-u8 __attribute__((long_call)) GetPartyAbility(const pokemon_t* const);
 u8 __attribute__((long_call)) CalculatePPWithBonus(u16 move, u8 ppBonuses, u8 moveIndex);
 u16 __attribute__((long_call)) SpeciesToNationalPokedexNum(u16 species);
 s8 __attribute__((long_call)) GetPokeFlavourRelation(u32 pid, u8 flavor);
@@ -749,12 +749,12 @@ bool8 __attribute__((long_call)) GetSetPokedexFlag(u16 nationalNum, u8 caseID);
 u16 __attribute__((long_call)) GetPokedexHeightWeight(u16 dexNum, u8 data);
 void __attribute__((long_call)) ReducePartyToThree(void);
 u8 __attribute__((long_call)) pokemon_order_func(u8 a);
-u8 __attribute__((long_call)) GetEggMoves(pokemon_t* poke, void* storageAddr);
+u8 __attribute__((long_call)) GetEggMoves(struct Pokemon* poke, void* storageAddr);
 void __attribute__((long_call)) Special_0DD_DeleteMove();
 
 void __attribute__((long_call)) BufferPokeNameSize(u16 species, void* varAddress);
 u8 __attribute__((long_call)) CalculateHeight(u16 species, void* varAddress);
-void __attribute__((long_call)) PokemonSlotPurge(pokemon_t* mon);
+void __attribute__((long_call)) PokemonSlotPurge(struct Pokemon* mon);
 u16 __attribute__((long_call)) SpeciesToPokedexNum(u16 species);
 u16 __attribute__((long_call)) GetCombinedOTID(void);
 u8 __attribute__((long_call)) GetTrainerEncounterMusicId(u16 trainerOpponentId);

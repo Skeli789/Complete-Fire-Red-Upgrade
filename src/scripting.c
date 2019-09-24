@@ -1117,7 +1117,7 @@ bool8 CanMonParticipateInASkyBattle(struct Pokemon* mon)
 
 	if (gBaseStats[species].type1 == TYPE_FLYING
 	||  gBaseStats[species].type2 == TYPE_FLYING
-	||  GetPartyAbility(mon) == ABILITY_LEVITATE)
+	||  GetMonAbility(mon) == ABILITY_LEVITATE)
 		return TRUE;
 
 	return FALSE;

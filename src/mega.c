@@ -6,6 +6,7 @@
 #include "../include/constants/trainer_classes.h"
 
 #include "../include/new/battle_util.h"
+#include "../include/new/build_pokemon.h"
 #include "../include/new/util.h"
 #include "../include/new/form_change.h"
 #include "../include/new/frontier.h"
@@ -116,13 +117,13 @@ ability_t GetBankMegaFormAbility(u8 bank)
 		evos = CanMegaEvolve(bank, FALSE);
 		if (evos != NULL)
 		{
-			return gBaseStats[evos->targetSpecies].ability1; //Megas can only have 1 ability
+			return TryRandomizeAbility(gBaseStats[evos->targetSpecies].ability1, evos->targetSpecies); //Megas can only have 1 ability
 		}
 
 		evos = CanMegaEvolve(bank, TRUE);
 		if (evos != NULL)
 		{
-			return gBaseStats[evos->targetSpecies].ability1; //Ultra Necrozma only has 1 ability
+			return TryRandomizeAbility(gBaseStats[evos->targetSpecies].ability1, evos->targetSpecies); //Ultra Necrozma only has 1 ability
 		}
 	}
 

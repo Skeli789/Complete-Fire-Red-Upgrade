@@ -2225,6 +2225,11 @@ static bool8 AllStatsButOneAreMinned(bank_t bank) {
 	return TRUE;
 }
 
+void LoadProperAbilityBattleData(void)
+{
+	gBattleMons[gActiveBattler].ability = GetMonAbility(GetBankPartyData(gActiveBattler));
+}
+
 //Illusion Updates////////////////////////////////////////////////////////////////////////////////////
 pokemon_t* UpdateNickForIllusion(pokemon_t* mon)
 {

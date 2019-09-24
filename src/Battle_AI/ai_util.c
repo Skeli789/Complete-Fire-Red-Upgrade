@@ -601,7 +601,7 @@ bool8 MoveKnocksOutXHitsFromParty(u16 move, struct Pokemon* monAtk, u8 bankDef, 
 	if (IS_BEHIND_SUBSTITUTE(bankDef)
 	|| (ABILITY(bankDef) == ABILITY_DISGUISE
 	 && SPECIES(bankDef) == SPECIES_MIMIKYU
-	 && NO_MOLD_BREAKERS(GetPartyAbility(monAtk), move)))
+	 && NO_MOLD_BREAKERS(GetMonAbility(monAtk), move)))
 	{
 		if (numHits > 0)
 			numHits -= 1; //Takes at least a hit to break disguise or sub
@@ -2154,7 +2154,7 @@ bool8 PartyMemberStatused(u8 bank, bool8 checkSoundproof)
 
 	for (int i = 0; i < PARTY_SIZE; ++i)
 	{
-		if (checkSoundproof && GetPartyAbility(&party[i]) == ABILITY_SOUNDPROOF)
+		if (checkSoundproof && GetMonAbility(&party[i]) == ABILITY_SOUNDPROOF)
 			continue;
 
 		if (party[i].condition != STATUS1_NONE)

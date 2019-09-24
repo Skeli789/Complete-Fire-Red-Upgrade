@@ -21,6 +21,7 @@ void TryStatusInducer(struct Pokemon* mon);
 u32 CheckShinyMon(struct Pokemon* mon);
 void CalculateMonStatsNew(struct Pokemon *mon);
 u8 GetOpenWorldBadgeCount(void);
+u8 TryRandomizeAbility(u8 ability, u16 species);
 
 //Functions Hooked In
 void BuildTrainerPartySetup(void);

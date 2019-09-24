@@ -244,7 +244,7 @@ static void TryTempMegaEvolveBank(u8 bank, struct BattlePokemon* backupMon, u16*
 		mon->species = ((struct Evolution*) gNewBS->aiMegaPotential[bank])->targetSpecies;
 		CalculateMonStats(mon); //Temporarily mega evolve mon
 		Memcpy(&gBattleMons[bank].attack, &mon->attack, sizeof(u16) * NUM_COPY_STATS);
-		*GetAbilityLocation(bank) = GetPartyAbility(mon);
+		*GetAbilityLocation(bank) = GetMonAbility(mon);
 		if (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS)
 		{
 			UpdateTypesForCamomons(bank);
@@ -851,7 +851,7 @@ static bool8 FindMonThatAbsorbsOpponentsMove(void)
 	for (i = firstId; i < lastId; i++)
 	{
 		u16 species = party[i].species;
-		u8 monAbility = GetPartyAbility(&party[i]);
+		u8 monAbility = GetMonAbility(&party[i]);
 
 		if (party[i].hp == 0
 		||  species == SPECIES_NONE
@@ -1826,7 +1826,7 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 				&& (j == 0 || foes[0] != foes[j])) //Don't check same opponent twice
 				{
 					u8 typeEffectiveness = 0;
-					u8 ability = GetPartyAbility(&party[i]);
+					u8 ability = GetMonAbility(&party[i]);
 					bool8 isWeakToMove = FALSE;
 					bool8 isNormalEffectiveness = FALSE;
 

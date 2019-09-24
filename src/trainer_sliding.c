@@ -43,7 +43,7 @@ void HandleIntroSlide(u8 terrain)
 
 	for (int bank = 0; bank < gBattlersCount; ++bank)
 	{
-		if (GetPartyAbility(GetBankPartyData(bank)) == ABILITY_ILLUSION)
+		if (GetMonAbility(GetBankPartyData(bank)) == ABILITY_ILLUSION)
 			gStatuses3[bank] |= STATUS3_ILLUSION;
 	}
 

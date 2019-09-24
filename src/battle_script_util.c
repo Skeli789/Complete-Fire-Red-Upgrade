@@ -1608,7 +1608,7 @@ void ClearSwitchInEffectsTracker(void)
 
 void UpdatePrimalAbility(void)
 {
-	*GetAbilityLocation(gBankAttacker) = GetPartyAbility(GetBankPartyData(gBankAttacker));
+	*GetAbilityLocation(gBankAttacker) = GetMonAbility(GetBankPartyData(gBankAttacker));
 }
 
 void ClearAttackerDidDamageOnce(void)

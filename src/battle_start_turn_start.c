@@ -1272,7 +1272,7 @@ s8 PriorityCalcForParty(struct Pokemon* mon, u16 move)
 
 	priority = gBattleMoves[move].priority;
 
-	switch (GetPartyAbility(mon)) {
+	switch (GetMonAbility(mon)) {
 		case ABILITY_PRANKSTER:
 			if (SPLIT(move) == SPLIT_STATUS)
 				++priority;
@@ -1450,7 +1450,7 @@ u32 SpeedCalcForParty(u8 side, struct Pokemon* mon)
 		return 0;
 
 	u8 itemEffect;
-	u8 ability = GetPartyAbility(mon);
+	u8 ability = GetMonAbility(mon);
 	u32 speed = mon->speed;
 
 	if (ability != ABILITY_KLUTZ)

@@ -202,7 +202,7 @@ void atk4D_switchindataupdate(void)
 		gBattleMons[gActiveBattler].type2 = gBaseStats[gBattleMons[gActiveBattler].species].type2;
 	}
 
-	gBattleMons[gActiveBattler].ability = GetPartyAbility(GetBankPartyData(gActiveBattler));
+	gBattleMons[gActiveBattler].ability = GetMonAbility(GetBankPartyData(gActiveBattler));
 
 	CONSUMED_ITEMS(gActiveBattler) = 0;
 	gNewBS->StakeoutCounters[gActiveBattler] = 1;

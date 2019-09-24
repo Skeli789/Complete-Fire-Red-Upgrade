@@ -1,8 +1,9 @@
 #pragma once
-/*
-config.h
-	handles all customizable options
-*/
+
+/**
+ * \file config.h
+ * \brief Handles all customizable options.
+ */
 
 //#define DEBUG_MEGA
 
@@ -169,6 +170,11 @@ enum //These vars need to be one after the other (hence the enum)
 #define SAFARI_ZONE_MAX_STEPS 600	//Number of safari zone steps the player has
 #define SAFARI_ZONE_BALL_START 30	//Number of safari balls the player starts with
 #define MAX_SAFARI_BALLS 30		//Total safari balls player can get (maximum is 0xFFFF or 0xFF if EXPAND_SAFARI_BALLS is defined or not)
+
+/*=====Randomizer Options=====*/
+//#define POKEMON_RANDOMIZER_FLAG 0x940 //Setting randomizes Pokemon species that are created.
+//#define POKEMON_LEARNSET_RANDOMIZER_FLAG 0x941 //Setting randomizes Pokemon learnsets.
+//#define ABILITY_RANDOMIZER_FLAG 0x942 //Setting randomizes Pokemon abilities.
 
 /*===== Pre-existing Offsets =====*/
 //#define EXISTING_FOSSIL_IMAGE_TABLE_ADDRESS 0x81a4600 //Uncomment this if you've already inserted a fossil image table

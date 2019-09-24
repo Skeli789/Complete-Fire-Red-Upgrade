@@ -12,6 +12,7 @@ DrawBattleEntryBackground 800FAE0 0
 
 ##Other Battle Stuff
 BuildTrainerPartyHook 800FF7E 0
+LoadProperAbilityBattleDataHook 8013144 0
 BattleBeginFirstTurn 801385C 0
 TrainerSlidingEndTurnHook 08013D14 1
 IsRunningFromBattleImpossible 08013D54 0
@@ -227,6 +228,7 @@ ExpandedFlagsHook 806E5C0 1
 DaycareInheritHiddenAbility 8046116 0
 SetMonHeldItemHook 8040784 2
 CalculateMonStatsNew 803E47C 1
+GetMonAbility 8040D38 1
 
 ##DNS
 TransferPlttBuffer 8070474 0
@@ -369,7 +371,7 @@ GiveEggFromDaycare 080460D4 1
 CreateEgg 08046150 2
 TriggerPendingDaycareEgg 080459F0 1
 FlameBodyMagmaArmorEggHook 08046390 1
-CreatedHatchedMon 08046BFC 2
+CreateHatchedMon 08046BFC 2
 
 ##Shiny Charm
 CreateBoxMonHook 803DAD2 0
