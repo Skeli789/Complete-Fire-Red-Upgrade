@@ -39,8 +39,9 @@ static s8 CompareItemsAlphabetically(struct ItemSlot* itemSlot1, struct ItemSlot
 static s8 CompareItemsByType(struct ItemSlot* itemSlot1, struct ItemSlot* itemSlot2);
 static s8 CompareItemsByMost(struct ItemSlot* itemSlot1, struct ItemSlot* itemSlot2);
 static s8 CompareItemsByLeast(struct ItemSlot* itemSlot1, struct ItemSlot* itemSlot2);
-static void MergeSort(struct ItemSlot* array, u32 low, u32 high, s8 (*comparator)(struct ItemSlot*, struct ItemSlot*));
-static void Merge(struct ItemSlot* arr, u32 l, u32 m, u32 r, s8 (*comparator)(struct ItemSlot*, struct ItemSlot*));
+static s8 CompareItemsByHavingValue(struct ItemSlot* itemSlot1, struct ItemSlot* itemSlot2);
+void MergeSort(struct ItemSlot* array, u32 low, u32 high, s8 (*comparator)(struct ItemSlot*, struct ItemSlot*));
+void Merge(struct ItemSlot* arr, u32 l, u32 m, u32 r, s8 (*comparator)(struct ItemSlot*, struct ItemSlot*));
 static void BagMenu_SortByName(u8 taskId);
 static void BagMenu_SortByType(u8 taskId);
 static void BagMenu_SortByMost(u8 taskId);
@@ -944,6 +945,11 @@ bool8 DoesBagHaveBerry(void)
 	return gSpecialVar_LastResult = 0;
 }
 
+void CompactItemsInBagPocket(struct ItemSlot* itemSlots, u16 amount)
+{
+	MergeSort(itemSlots, 0, amount - 1, CompareItemsByHavingValue);
+}
+
 
 //Functions For Sorting Bag/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #define gMenuText_Use (const u8*) 0x84161a0
@@ -1186,6 +1192,21 @@ static s8 CompareItemsByLeast(struct ItemSlot* itemSlot1, struct ItemSlot* itemS
 	return CompareItemsAlphabetically(itemSlot1, itemSlot2); //Items have same quantity so sort alphabetically
 }
 
+static s8 CompareItemsByHavingValue(struct ItemSlot* itemSlot1, struct ItemSlot* itemSlot2)
+{
+	if (itemSlot1->itemId == ITEM_NONE)
+		return 1;
+	else if (itemSlot2->itemId == ITEM_NONE)
+		return -1;
+
+	if (itemSlot1->quantity == 0)
+		return 1;
+	else if (itemSlot2->quantity == 0)
+		return -1;
+
+	return 0;
+}
+
 void SortItemsInBag(u8 pocket, u8 type)
 {
 	struct ItemSlot* itemMem;
@@ -1224,7 +1245,7 @@ void SortItemsInBag(u8 pocket, u8 type)
 	MergeSort(itemMem, 0, itemAmount - 1, func);
 }
 
-static void MergeSort(struct ItemSlot* array, u32 low, u32 high, s8 (*comparator)(struct ItemSlot*, struct ItemSlot*))
+void MergeSort(struct ItemSlot* array, u32 low, u32 high, s8 (*comparator)(struct ItemSlot*, struct ItemSlot*))
 {
 	if (high <= low)
 		return;
@@ -1235,7 +1256,8 @@ static void MergeSort(struct ItemSlot* array, u32 low, u32 high, s8 (*comparator
 	Merge(array, low, mid, high, comparator); //Merge results.
 }
 
-static void Merge(struct ItemSlot* array, u32 low, u32 mid, u32 high, s8 (*comparator)(struct ItemSlot*, struct ItemSlot*))
+//Can't be declared static or blows the stack
+void Merge(struct ItemSlot* array, u32 low, u32 mid, u32 high, s8 (*comparator)(struct ItemSlot*, struct ItemSlot*))
 {
 	u32 i = low;
 	u32 j = mid + 1;
@@ -1331,6 +1353,7 @@ static void BagMenu_ConfirmSort(u8 taskId)
 	SetInitialScrollAndCursorPositions(gBagPositionStruct.pocket);
 	LoadBagItemListBuffers(gBagPositionStruct.pocket);
 	data[0] = ListMenuInit(gMultiuseListMenuTemplate, *scrollPos, *cursorPos);
+	PlaySE(SE_CORRECT);
 	gTasks[taskId].func = Task_SortFinish;
 }
 
@@ -1355,6 +1378,7 @@ bool8 TrySetupSortBag(u8 taskId)
 	{
 		BagMenu_RemoveScrollingArrows();
 		Var800E = 0xF9F9;
+		PlaySE(SE_WIN_OPEN);
 		gTasks[taskId].func = CreateBagMenuMiniMenuSelection;
 		return TRUE;
 	}

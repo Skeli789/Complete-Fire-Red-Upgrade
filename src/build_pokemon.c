@@ -27,7 +27,7 @@
 #include "../include/new/pokemon_storage_system.h"
 #include "../include/new/util.h"
 
-#include "Tables/Trainers_With_EVs_Table.h"
+#include "Tables/trainers_with_evs_table.h"
 #include "Tables/Battle_Tower_Spreads.h"
 /*
 build_pokemon.c
@@ -808,6 +808,7 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 							}
 							goto SPECIAL_TRAINER_REGULAR_SPREADS;
 						case BATTLE_TOWER_350_CUP: ;
+						SPECIAL_TRAINER_350_SPREADS:
 							if (trainerId == FRONTIER_BRAIN_TID && IN_BATTLE_MINE)
 								goto SPECIAL_TRAINER_LITTLE_SPREADS;
 
@@ -815,11 +816,21 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 							switch (rand) {
 								case 0:
 								case 1:
-									goto SPECIAL_TRAINER_LITTLE_SPREADS;
+									if (specialTrainer->littleCupSpreads != NULL)
+										spread = &specialTrainer->littleCupSpreads[Random() % specialTrainer->lcSpreadSize];
+									else
+										spread = &gLittleCupSpreads[Random() % TOTAL_LITTLE_CUP_SPREADS];
+									
+									u16 bst = GetBaseStatsTotal(spread->species);
+									if (bst > 350 || bst < 250)
+										goto SPECIAL_TRAINER_350_SPREADS; //Reroll if doesn't have viable stats
+									break;
 								case 2:
 									goto SPECIAL_TRAINER_LEGENDARY_SPREADS;
+								default:
+									goto SPECIAL_TRAINER_REGULAR_SPREADS;
 							}
-							goto SPECIAL_TRAINER_REGULAR_SPREADS;
+							break;
 						case BATTLE_TOWER_AVERAGE_MONS: ;
 							if (trainerId == FRONTIER_BRAIN_TID && IN_BATTLE_MINE)
 								goto SPECIAL_TRAINER_LITTLE_SPREADS;
@@ -890,15 +901,26 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 							}
 							goto MULTI_PARTNER_REGULAR_SPREADS;
 						case BATTLE_TOWER_350_CUP: ;
+						MULTI_PARTNER_350_SPREADS:
 							rand = Random() & 3;
 							switch (rand) {
 								case 0:
 								case 1:
-									goto MULTI_PARTNER_LITTLE_SPREADS;
+									if (multiPartner->littleCupSpreads != NULL)
+										spread = &multiPartner->littleCupSpreads[Random() % multiPartner->lcSpreadSize];
+									else
+										spread = &gLittleCupSpreads[Random() % TOTAL_LITTLE_CUP_SPREADS];
+
+									u16 bst = GetBaseStatsTotal(spread->species);
+									if (bst > 350 || bst < 250)
+										goto MULTI_PARTNER_350_SPREADS; //Reroll if doesn't have viable stats
+									break;
 								case 2:
 									goto MULTI_PARTNER_LEGENDARY_SPREADS;
+								default:
+									goto MULTI_PARTNER_REGULAR_SPREADS;
 							}
-							goto MULTI_PARTNER_REGULAR_SPREADS;
+							break;
 						case BATTLE_TOWER_AVERAGE_MONS: ;
 							rand = Random() & 3;
 							switch (rand) {
@@ -969,15 +991,23 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 							}
 							goto REGULAR_SPREADS;
 						case BATTLE_TOWER_350_CUP: ;
+						REGULAR_350_SPREADS:
 							rand = Random() & 3;
 							switch (rand) {
 								case 0:
 								case 1:
-									goto REGULAR_LC_SPREADS;
+									spread = &gLittleCupSpreads[Random() % TOTAL_LITTLE_CUP_SPREADS];
+
+									u16 bst = GetBaseStatsTotal(spread->species);
+									if (bst > 350 || bst < 250)
+										goto REGULAR_350_SPREADS; //Reroll if doesn't have viable stats
+									break;
 								case 2:
 									goto REGULAR_LEGENDARY_SPREADS;
+								default:
+									goto REGULAR_SPREADS;
 							}
-							goto REGULAR_SPREADS;
+							break;
 						case BATTLE_TOWER_AVERAGE_MONS: ;
 							rand = Random() & 3;
 							switch (rand) {
@@ -1057,15 +1087,7 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 							}
 							goto REGULAR_SPREADS;
 						case BATTLE_TOWER_350_CUP: ;
-							rand = Random() & 3;
-							switch (rand) {
-								case 0:
-								case 1:
-									goto REGULAR_LC_SPREADS;
-								case 2:
-									goto REGULAR_LEGENDARY_SPREADS;
-							}
-							goto REGULAR_SPREADS;
+							goto REGULAR_350_SPREADS;
 						case BATTLE_TOWER_AVERAGE_MONS: ;
 							rand = Random() & 3;
 							switch (rand) {

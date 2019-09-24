@@ -1838,10 +1838,9 @@ bool8 ShouldSelectItemFromTMCase(void)
 	return gTMCasePositionStruct[4] == TM_CASE_SELECT_ITEM; //bagMenuType
 }
 
-#define gBagPositionStruct ((u8*) 0x203ACFC)
 bool8 ShouldSelectItemFromBag(void)
 {
-	return gBagPositionStruct[4] == BAG_OPEN_SELECT_ITEM; //bagMenuType
+	return gBagPositionStruct.location == BAG_OPEN_SELECT_ITEM; //bagMenuType
 }
 
 #define FossilTemplate ((struct SpriteTemplate*) 0x83E0768)

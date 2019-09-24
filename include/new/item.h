@@ -58,6 +58,7 @@ u16 CheckTmPrice(u16 item);
 u8 CheckSingleBagTm(u16 item);
 const void* FixTmHmDiscPalette(u8 type);
 
+void CompactItemsInBagPocket(struct ItemSlot* itemSlots, u16 amount);
 void Task_ReturnToItemListAfterItemPurchase(u8 taskId);
 void SetMemoryForBagStorage(void);
 void AllocateBagItemListBuffers(void);
