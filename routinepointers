@@ -1,3 +1,5 @@
+#include "src/config.h"
+
 ##Tag Battle Fixes
 TagTeamExecutionCompleteHook 802E384
 
@@ -5,6 +7,15 @@ TagTeamExecutionCompleteHook 802E384
 CreateSpriteLoadTable 0815fc5c
 
 ##Specials
+
+#ifdef REPLACE_SOME_VANILLA_SPECIALS
+sp07C_BufferNickname 0815FF50
+sp07D_CheckTradedPokemon 0815FF54
+sp09E_NicknamePokemon 0815FFD8
+sp156_StartGhostBattle 081602B8
+sp18B_ShowFossilImage 0816038C
+#endif
+
 sp007_PokemonEVContestStatsChecker 0815FD7C
 sp008_PokemonIVChecker 0815FD80
 sp009_PokemonRibbonChecker 0815FD84
@@ -90,9 +101,6 @@ sp072_LoadBattleCircusEffects 0815FF28
 sp075_MeasurePokemon1 0815FF34
 sp076_MeasurePokemon2 0815FF38
 
-
-sp07C_BufferNickname 0815FF50
-sp07D_CheckTradedPokemon 0815FF54
 sp07E_GetTileNumber 0815FF58
 sp07F_GetTileBehaviour 0815FF5C
 
@@ -108,8 +116,6 @@ sp097_StartGroundBattle 0815FFBC
 sp098_StartWaterBattle 0815FFC0
 sp09A_StopSounds 0815FFC8
 sp09C_OldManBattleModifier 0815FFD0
-
-sp09E_NicknamePokemon 0815FFD8
 
 sp0A0_CheckAndSetDailyEvent 0815FFE0
 sp0A1_UpdateTimeInVars 0815FFE4
@@ -132,12 +138,7 @@ sp0CC_CanLearnDracoMeteorInParty 08160090
 sp0CF_BufferAbilityName 0816009C
 sp0D0_PokemonInPartyThatCanLearnTMHM 081600A0
 
-sp156_StartGhostBattle 081602B8
-
 sp196_TryCopyTMNameToBuffer1 081603B8
-
-## Fossil
-sp18B_ShowFossilImage 0816038C
 
 ## Expanded Text Buffers
 LoadTextBuffer07 08231E8C
