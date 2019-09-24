@@ -1,6 +1,6 @@
 #ifdef TRAINERS_WITH_EVS
 /*
-trainers_with_evs_tables.h
+trainers_with_evs_table.h
 	defining the EV/IV/ability/ball type to be assigned to trainer pokemon
 */
 
