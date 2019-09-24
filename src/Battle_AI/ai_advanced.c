@@ -1014,7 +1014,7 @@ bool8 ShouldUseWishAromatherapy(u8 bankAtk, u8 bankDef, u16 move, u8 class)
 
 			if (GetMonData(&party[i], MON_DATA_STATUS, NULL) != STATUS1_NONE)
 			{
-				if (move != MOVE_HEALBELL || GetPartyAbility(&party[i]) != ABILITY_SOUNDPROOF)
+				if (move != MOVE_HEALBELL || GetMonAbility(&party[i]) != ABILITY_SOUNDPROOF)
 					hasStatus = TRUE;
 			}
 		}

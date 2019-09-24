@@ -607,7 +607,7 @@ void TriggerPendingDaycareEgg(unusedArg struct DayCare *daycare)
 	#endif
 }
 
-void CreatedHatchedMon(struct Pokemon *egg, struct Pokemon *temp)
+void CreateHatchedMon(struct Pokemon *egg, struct Pokemon *temp)
 {
 	u16 species;
 	u32 personality, pokerus;
@@ -676,7 +676,7 @@ static u8 GetEggStepsToSubtract(void)
 	{
 		if (!GetMonData(&gPlayerParty[i], MON_DATA_IS_EGG, NULL))
 		{
-			u8 ability = GetPartyAbility(&gPlayerParty[i]);
+			u8 ability = GetMonAbility(&gPlayerParty[i]);
 			if (ability == ABILITY_MAGMAARMOR || ability == ABILITY_FLAMEBODY)
 			{
 				return 2;

@@ -8,198 +8,201 @@ credits to DoesntKnowHowToPlay and Squeetz
 
 @Hook at 0x106370 with r0
 PokedexScreenStats:
-    mov r5, #4
-    str r5, [sp]
-    str r6, [sp, #4]
-    mov r0, r10
-    cmp r0, #0
-    beq unknown_base_stats
-
+	mov r5, #4
+	str r5, [sp]
+	str r6, [sp, #4]
+	mov r0, r10
+	cmp r0, #0
+	beq unknown_base_stats
+	
 hp:
-    mov r0, #0
-    bl print_stat
-    mov r3, #4 @ y co-ord
-    str r3, [sp]
-    mov r3, #0 @ x co-ord
-    ldr r5, write_method
-    bl call_via_r5
-    
+	mov r0, #0
+	bl print_stat
+	mov r3, #4 @ y co-ord
+	str r3, [sp]
+	mov r3, #0 @ x co-ord
+	ldr r5, write_method
+	bl call_via_r5
+	
 atk:
-    mov r0, #1
-    bl print_stat
-    mov r3, #4 @ y co-ord
-    str r3, [sp]
-    mov r3, #0x2C @ x co-ord
-    ldr r5, write_method
-    bl call_via_r5
-     
+	mov r0, #1
+	bl print_stat
+	mov r3, #4 @ y co-ord
+	str r3, [sp]
+	mov r3, #0x2C @ x co-ord
+	ldr r5, write_method
+	bl call_via_r5
+
 def:
-    mov r0, #2
-    bl print_stat
-    mov r3, #18 @ y co-ord
-    str r3, [sp]
-    mov r3, #0 @ x co-ord
-    ldr r5, write_method
-    bl call_via_r5
-     
+	mov r0, #2
+	bl print_stat
+	mov r3, #18 @ y co-ord
+	str r3, [sp]
+	mov r3, #0 @ x co-ord
+	ldr r5, write_method
+	bl call_via_r5
+
 spa:
-    mov r0, #4
-    bl print_stat
-    mov r3, #18 @ y co-ord
-    str r3, [sp]
-    mov r3, #0x2C @ x co-ord
-    ldr r5, write_method
-    bl call_via_r5
-     
+	mov r0, #4
+	bl print_stat
+	mov r3, #18 @ y co-ord
+	str r3, [sp]
+	mov r3, #0x2C @ x co-ord
+	ldr r5, write_method
+	bl call_via_r5
+
 spd:
-    mov r0, #5
-    bl print_stat
-    mov r3, #32 @ y co-ord
-    str r3, [sp]
-    mov r3, #0 @ x co-ord
-    ldr r5, write_method
-    bl call_via_r5
-     
+	mov r0, #5
+	bl print_stat
+	mov r3, #32 @ y co-ord
+	str r3, [sp]
+	mov r3, #0 @ x co-ord
+	ldr r5, write_method
+	bl call_via_r5
+
 spe:
-    mov r0, #3
-    bl print_stat
-    mov r3, #32 @ y co-ord
-    str r3, [sp]
-    mov r3, #0x2C @ x co-ord
-    ldr r5, write_method
-    bl call_via_r5
-    
+	mov r0, #3
+	bl print_stat
+	mov r3, #32 @ y co-ord
+	str r3, [sp]
+	mov r3, #0x2C @ x co-ord
+	ldr r5, write_method
+	bl call_via_r5
+
 print_ability_one:
-    ldr r0, [sp, #0x1C]
-    mov r3, #0x1C
-    mul r0, r3
-    ldr r1, base_stats
+	ldr r0, [sp, #0x1C]
+	mov r3, #0x1C
+	mul r0, r3
+	ldr r1, base_stats
 	ldr r1, [r1]
-    mov r3, #0x16
-    add r1, r1, r3
-    add r1, r0, r1
-    ldrb r2, [r1]
-	mov r0, r2
+	mov r3, #0x16
+	add r1, r1, r3
+	add r1, r0, r1
+	ldrb r0, [r1]
+	ldrh r1, [sp, #0x1C]
+	bl TryRandomizeAbility
 	bl GetAbilityName
 	mov r2, r0
  
-    ldr r1, [r7]
-    add r1, #0x53
-    ldrb r1, [r1]
-    mov r0, r1
-    mov r1, #0
-    mov r3, #46
-    str r3, [sp]
-    mov r3, #0
-    ldr r5, write_method
-    bl call_via_r5
-    
+	ldr r1, [r7]
+	add r1, #0x53
+	ldrb r1, [r1]
+	mov r0, r1
+	mov r1, #0
+	mov r3, #46
+	str r3, [sp]
+	mov r3, #0
+	ldr r5, write_method
+	bl call_via_r5
+
 print_ability_two:
-    ldr r0, [sp, #0x1C]
-    mov r3, #0x1C
-    mul r0, r3
-    ldr r1, base_stats
+	ldr r0, [sp, #0x1C]
+	mov r3, #0x1C
+	mul r0, r3
+	ldr r1, base_stats
 	ldr r1, [r1]
-    mov r3, #0x16
-    add r1, r1, r3
-    add r1, r0, r1
-    ldrb r2, [r1, #1]
-    ldrb r5, [r1, #0]
-    cmp r2, r5
-    beq return
-    cmp r2, #0
-    beq return
+	mov r3, #0x16
+	add r1, r1, r3
+	add r1, r0, r1
+	ldrb r2, [r1, #1]
+	ldrb r5, [r1, #0]
+	cmp r2, r5
+	beq return
+	cmp r2, #0
+	beq return
 	mov r0, r2
+	ldrh r1, [sp, #0x1C]
+	bl TryRandomizeAbility
 	bl GetAbilityName
    	mov r2, r0
 	
-    ldr r1, [r7]
-    add r1, #0x53
-    ldrb r1, [r1]
-    mov r0, r1
-    mov r1, #0
-    mov r3, #60
-    str r3, [sp]
-    mov r3, #0
-    ldr r5, write_method
-    bl call_via_r5
-    b return
-    
+	ldr r1, [r7]
+	add r1, #0x53
+	ldrb r1, [r1]
+	mov r0, r1
+	mov r1, #0
+	mov r3, #60
+	str r3, [sp]
+	mov r3, #0
+	ldr r5, write_method
+	bl call_via_r5
+	b return
+
 unknown_base_stats:
-    mov r0, r1
-    mov r1, #0
-    ldr r2, str_unknown
-    mov r3, #4 @ y co-ord
-    str r3, [sp]
-    mov r3, #0 @ x co-ord
-    ldr r5, write_method
-    bl call_via_r5
-    
+	mov r0, r1
+	mov r1, #0
+	ldr r2, str_unknown
+	mov r3, #4 @ y co-ord
+	str r3, [sp]
+	mov r3, #0 @ x co-ord
+	ldr r5, write_method
+	bl call_via_r5
+
 return:
-    mov r5, #0
-    ldr r0, return_loc
-    bx r0
-    
+	mov r5, #0
+	ldr r0, return_loc
+	bx r0
+
 print_stat:
-    push {lr}
-    ldr r3, [sp, #0x20]
-    mov r1, #0x1C
-    mul r3, r1
-    ldr r2, base_stats
+	push {lr}
+	ldr r3, [sp, #0x20]
+	mov r1, #0x1C
+	mul r3, r1
+	ldr r2, base_stats
 	ldr r2, [r2]
-    add r2, r3
-    add r2, r0
-    ldrb r1, [r2]
-    mov r4, r0
-    ldr r0, fcode_buffer2
-    mov r3, #0
-    cmp r1, #99
-    bhi no_leading_zeroes
-    cmp r1, #9
-    bhi one_leading_zero
+	add r2, r3
+	add r2, r0
+	ldrb r1, [r2]
+	mov r4, r0
+	ldr r0, fcode_buffer2
+	mov r3, #0
+	cmp r1, #99
+	bhi no_leading_zeroes
+	cmp r1, #9
+	bhi one_leading_zero
 
 two_leading_zeroes:
-    str r3, [r0]
-    add r0, #1
+	str r3, [r0]
+	add r0, #1
 
 one_leading_zero:
-    str r3, [r0]
-    add r0, #1
+	str r3, [r0]
+	add r0, #1
 
 no_leading_zeroes:
-    mov r3, #3
-    ldr r5, int_to_str
-    bl call_via_r5
-    
-    mov r2, r4
-    ldr r0, displayed_string
-    ldr r1, str_table
-    lsl r2, r2, #2
-    add r1, r2
-    ldr r1, [r1]
-    ldr r5, fdecoder
-    bl call_via_r5
-    ldr r1, [r7]
-    add r1, #0x53
-    ldrb r1, [r1]
-    mov r0, r1
-    mov r1, #0
-    ldr r2, displayed_string
-    pop {r5}
-    
+	mov r3, #3
+	ldr r5, int_to_str
+	bl call_via_r5
+
+	mov r2, r4
+	ldr r0, displayed_string
+	ldr r1, str_table
+	lsl r2, r2, #2
+	add r1, r2
+	ldr r1, [r1]
+	ldr r5, fdecoder
+	bl call_via_r5
+	ldr r1, [r7]
+	add r1, #0x53
+	ldrb r1, [r1]
+	mov r0, r1
+	mov r1, #0
+	ldr r2, displayed_string
+	pop {r5}
+
 call_via_r5:
-    bx r5
+	bx r5
 
 .align 2
-    base_stats:             .word 0x80001BC
-    str_table:              .word table
-    str_unknown:            .word capture
-    fcode_buffer2:          .word 0x02021CD0
-    displayed_string:       .word 0x02021D18
-    int_to_str:             .word 0x08008E78|1
-    fdecoder:               .word 0x08008FCC|1
-    write_method:           .word 0x081047C8|1
-    return_loc:             .word 0x08106380|1
+	base_stats:			.word 0x80001BC
+	str_table:			.word table
+	str_unknown:		.word capture
+	fcode_buffer2:		.word 0x02021CD0
+	displayed_string: 	.word 0x02021D18
+	int_to_str:			.word 0x08008E78|1
+	fdecoder:			.word 0x08008FCC|1
+	write_method:		.word 0x081047C8|1
+	return_loc:			.word 0x08106380|1
 table:
 	.word stat_hp
 	.word stat_atk

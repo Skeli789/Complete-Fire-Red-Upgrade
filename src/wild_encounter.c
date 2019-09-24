@@ -122,7 +122,7 @@ static u8 ChooseWildMonLevel(const struct WildPokemon* wildPokemon)
 	//Check ability for max level mon
 	if (!GetMonData(&gPlayerParty[0], MON_DATA_IS_EGG, NULL))
 	{
-		u8 ability = GetPartyAbility(&gPlayerParty[0]);
+		u8 ability = GetMonAbility(&gPlayerParty[0]);
 		if (ability == ABILITY_HUSTLE || ability == ABILITY_VITALSPIRIT || ability == ABILITY_PRESSURE)
 		{
 			if (Random() % 2 == 0)
@@ -222,7 +222,7 @@ static u8 PickWildMonNature(void)
 {
 	//Check Synchronize for a pokemon with the same ability
 	if (!GetMonData(&gPlayerParty[0], MON_DATA_IS_EGG, NULL)
-	&&  GetPartyAbility(&gPlayerParty[0]) == ABILITY_SYNCHRONIZE
+	&&  GetMonAbility(&gPlayerParty[0]) == ABILITY_SYNCHRONIZE
 	&&  umodsi(Random(), 2) == 0)
 	{
 		return umodsi(gPlayerParty[0].personality, 25);
@@ -252,7 +252,7 @@ void CreateWildMon(u16 species, u8 level, u8 monHeaderIndex, bool8 purgeParty)
 
 	if (checkCuteCharm
 	&& !GetMonData(&gPlayerParty[0], MON_DATA_IS_EGG, NULL)
-	&&  GetPartyAbility(&gPlayerParty[0]) == ABILITY_CUTECHARM
+	&&  GetMonAbility(&gPlayerParty[0]) == ABILITY_CUTECHARM
 	&&  umodsi(Random(), 3))
 	{
 		u16 leadingMonSpecies = gPlayerParty[0].species;
@@ -465,7 +465,7 @@ static bool8 DoWildEncounterRateTest(u32 encounterRate, bool8 ignoreAbility)
 
 	if (!ignoreAbility && !GetMonData(&gPlayerParty[0], MON_DATA_IS_EGG, NULL))
 	{
-		u32 ability = GetPartyAbility(&gPlayerParty[0]);
+		u32 ability = GetMonAbility(&gPlayerParty[0]);
 
 		switch (ability) {
 			case ABILITY_WHITESMOKE:
@@ -745,7 +745,7 @@ static bool8 IsAbilityAllowingEncounter(u8 level)
 	if (GetMonData(&gPlayerParty[0], MON_DATA_IS_EGG, NULL))
 		return TRUE;
 
-	ability = GetPartyAbility(&gPlayerParty[0]);
+	ability = GetMonAbility(&gPlayerParty[0]);
 	if (ability == ABILITY_KEENEYE || ability == ABILITY_INTIMIDATE)
 	{
 		u8 playerMonLevel = gPlayerParty[0].level;
@@ -781,7 +781,7 @@ static bool8 TryGetAbilityInfluencedWildMonIndex(const struct WildPokemon* wildM
 {
 	if (GetMonData(&gPlayerParty[0], MON_DATA_IS_EGG, NULL))
 		return FALSE;
-	else if (GetPartyAbility(&gPlayerParty[0]) != ability)
+	else if (GetMonAbility(&gPlayerParty[0]) != ability)
 		return FALSE;
 	else if (umodsi(Random(), 2) != 0)
 		return FALSE;

@@ -1142,14 +1142,17 @@ static u8 DexNavGenerateHiddenAbility(u16 species, u8 searchLevel)
 
 	if (genAbility && gBaseStats[species].hiddenAbility != ABILITY_NONE
 	&& GetSetPokedexFlag(SpeciesToNationalPokedexNum(species), FLAG_GET_CAUGHT)) //Only give hidden ability if Pokemon has been caught before
-		return gBaseStats[species].hiddenAbility;
+		return TryRandomizeAbility(gBaseStats[species].hiddenAbility, species);
 	else
 	{
 		//Pick a normal ability of that Pokemon
-		if (gBaseStats[species].ability2)
-			return randVal % 2 ? gBaseStats[species].ability1 : gBaseStats[species].ability2;
+		u8 ability;
+		if (gBaseStats[species].ability2 != ABILITY_NONE)
+			ability = (randVal & 1) == 0 ? gBaseStats[species].ability1 : gBaseStats[species].ability2;
 		else
-			return gBaseStats[species].ability1;
+			ability = gBaseStats[species].ability1;
+
+		return TryRandomizeAbility(ability, species);
 	}
 }
 

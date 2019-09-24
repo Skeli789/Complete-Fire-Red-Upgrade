@@ -1238,7 +1238,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 						if (ViableMonCountFromBankLoadPartyRange(bankAtk) <= 2)
 							break; //Can't switch
 
-						if (GetPartyAbility(GetBankPartyData(bankAtk)) == ABILITY_INTIMIDATE
+						if (GetMonAbility(GetBankPartyData(bankAtk)) == ABILITY_INTIMIDATE
 						&&  MoveSplitOnTeam(bankDef, SPLIT_PHYSICAL))
 						{
 							if (IsClassDoublesUtility(class))

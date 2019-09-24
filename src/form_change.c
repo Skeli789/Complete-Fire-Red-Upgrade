@@ -60,7 +60,7 @@ void DoFormChange(u8 bank, u16 species, bool8 ReloadType, bool8 ReloadStats, boo
 	}
 
 	if (reloadAbility)
-		*GetAbilityLocation(bank) = GetPartyAbility(mon);
+		*GetAbilityLocation(bank) = GetMonAbility(mon);
 
 	EmitSetMonData(0, REQUEST_FORM_CHANGE_BATTLE, 0, sizeof(struct BattlePokemon), &gBattleMons[bank]);
 	MarkBufferBankForExecution(gActiveBattler);
@@ -325,7 +325,7 @@ void HoldItemFormChange(struct Pokemon* mon, u16 item)
 	u16 targetSpecies = SPECIES_NONE;
 
 	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
-	u8 ability = GetPartyAbility(mon);
+	u8 ability = GetMonAbility(mon);
 	u8 itemEffect = ItemId_GetHoldEffect(item);
 	u8 type = ItemId_GetHoldEffectParam(item);
 

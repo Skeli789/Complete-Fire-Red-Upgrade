@@ -102,6 +102,7 @@ static struct Immunity sImmunities[] =
 };
 
 extern const u8 gClassPokeBalls[NUM_TRAINER_CLASSES];
+extern const u8 gRandomizerAbilityBanList[];
 extern const species_t gRandomizerBanList[];
 extern const species_t gSetPerfectXIvList[];
 extern const species_t gDeerlingForms[];
@@ -120,6 +121,7 @@ extern const u8 gNumFloetteForms;
 extern const u8 gNumFlorgesForms;
 extern const u8 gNumFurfrouForms;
 extern const u8 gNumPikachuCapForms;
+
 
 extern bool8 sp051_CanTeamParticipateInSkyBattle(void);
 extern bool8 CanMonParticipateInASkyBattle(struct Pokemon* mon);
@@ -1436,7 +1438,7 @@ static void SetWildMonHeldItem(void)
 	u16 var2 = 95;
 
 	if (!GetMonData(&gPlayerParty[0], MON_DATA_IS_EGG, 0)
-	&& GetPartyAbility(&gPlayerParty[0]) == ABILITY_COMPOUNDEYES)
+	&& GetMonAbility(&gPlayerParty[0]) == ABILITY_COMPOUNDEYES)
 	{
 		var1 = 20;
 		var2 = 80;
@@ -1691,7 +1693,7 @@ static bool8 PokemonTierBan(const u16 species, const u16 item, const struct Batt
 
 				default:
 					moveLoc = mon->moves;
-					ability = GetPartyAbility(mon);
+					ability = GetMonAbility(mon);
 			}
 
 			if (IsFrontierSingles(battleFormat))
@@ -1780,7 +1782,7 @@ static bool8 PokemonTierBan(const u16 species, const u16 item, const struct Batt
 
 				default:
 					moveLoc = mon->moves;
-					ability = GetPartyAbility(mon);
+					ability = GetMonAbility(mon);
 			}
 
 			//Check Banned Abilities
@@ -1828,7 +1830,7 @@ static bool8 PokemonTierBan(const u16 species, const u16 item, const struct Batt
 
 					default:
 						moveLoc = mon->moves;
-						ability = GetPartyAbility(mon);
+						ability = GetMonAbility(mon);
 				}
 
 				//Check Banned Abilities
@@ -1861,7 +1863,7 @@ static bool8 PokemonTierBan(const u16 species, const u16 item, const struct Batt
 
 				default:
 					moveLoc = mon->moves;
-					ability = GetPartyAbility(mon);
+					ability = GetMonAbility(mon);
 			}
 
 			//Check Banned Abilities
@@ -1897,7 +1899,7 @@ static bool8 PokemonTierBan(const u16 species, const u16 item, const struct Batt
 
 				default:
 					moveLoc = mon->moves;
-					ability = GetPartyAbility(mon);
+					ability = GetMonAbility(mon);
 			}
 
 			//Check Banned Abilities
@@ -1920,7 +1922,7 @@ static bool8 PokemonTierBan(const u16 species, const u16 item, const struct Batt
 
 				default:
 					moveLoc = mon->moves;
-					ability = GetPartyAbility(mon);
+					ability = GetMonAbility(mon);
 			}
 
 			//Check Banned Abilities
@@ -1943,7 +1945,7 @@ static bool8 PokemonTierBan(const u16 species, const u16 item, const struct Batt
 
 				default:
 					moveLoc = mon->moves;
-					ability = GetPartyAbility(mon);
+					ability = GetMonAbility(mon);
 			}
 
 			//Check Banned Abilities
@@ -2523,7 +2525,7 @@ static void PostProcessTeam(struct Pokemon* party, struct TeamBuilder* builder)
 				SwapMons(party, 0, terrainIndex);
 			else if (weatherIndex != 0xFF)
 				SwapMons(party, 0, weatherIndex);
-			else if (defiantIndex != 0xFF && party == gEnemyParty && GetPartyAbility(&gPlayerParty[0]) == ABILITY_INTIMIDATE)
+			else if (defiantIndex != 0xFF && party == gEnemyParty && GetMonAbility(&gPlayerParty[0]) == ABILITY_INTIMIDATE)
 				SwapMons(party, 0, defiantIndex); //Stick Pokemon with Defiant/Competitive up front to absorb the Intimidate
 			else if (sleepIndex != 0xFF)
 				SwapMons(party, 0, sleepIndex);
@@ -2650,7 +2652,7 @@ static void PostProcessTeam(struct Pokemon* party, struct TeamBuilder* builder)
 				SwapMons(party, index++, followMeIndex);
 
 			if (INDEX_CHECK(defiantIndex) && party == gEnemyParty
-			&& (GetPartyAbility(&gPlayerParty[0]) == ABILITY_INTIMIDATE || GetPartyAbility(&gPlayerParty[1]) == ABILITY_INTIMIDATE))
+			&& (GetMonAbility(&gPlayerParty[0]) == ABILITY_INTIMIDATE || GetMonAbility(&gPlayerParty[1]) == ABILITY_INTIMIDATE))
 				SwapMons(party, index++, defiantIndex); //Stick Pokemon with Defiant/Competitive up front to absorb the Intimidate
 
 			if (INDEX_CHECK(sleepIndex))
@@ -2944,8 +2946,8 @@ void CreateBoxMon(struct BoxPokemon* boxMon, u16 species, u8 level, u8 fixedIV, 
 	u32 personality;
 	u32 value;
 
-#ifdef UNBOUND
-	if (FlagGet(POKEMON_RANDOMIZER_FLAG))
+#ifdef POKEMON_RANDOMIZER_FLAG
+	if (FlagGet(POKEMON_RANDOMIZER_FLAG) && !FlagGet(BATTLE_TOWER_FLAG)) //Don't randomize in battle facilities
 	{
 		u32 id = MathMax(1, T1_READ_32(gSaveBlock2->playerTrainerId)); //0 id would mean every Pokemon would crash the game
 		u32 newSpecies = species * id;
@@ -3205,4 +3207,43 @@ void CalculateMonStatsNew(struct Pokemon *mon)
 	}
 
 	SetMonData(mon, MON_DATA_HP, &currentHP);
+}
+
+u8 TryRandomizeAbility(u8 ability, unusedArg u16 species)
+{
+	u32 newAbility = ability;
+
+	#ifdef ABILITY_RANDOMIZER_FLAG
+	if (FlagGet(ABILITY_RANDOMIZER_FLAG) && !FlagGet(BATTLE_TOWER_FLAG))
+	{
+		u32 id = MathMax(1, T1_READ_32(gSaveBlock2->playerTrainerId)); //0 id would mean Pokemon wouldn't have ability
+
+		do
+		{
+			newAbility = newAbility * id * species;
+			newAbility = MathMax(1, newAbility % ABILITIES_COUNT);
+		}
+		while (CheckTableForAbility(newAbility, gRandomizerAbilityBanList));
+	}
+	#endif
+
+	return newAbility;
+}
+
+
+u8 GetMonAbility(const struct Pokemon* mon)
+{
+	u8 ability;
+	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
+
+	if (mon->hiddenAbility && gBaseStats[species].hiddenAbility != ABILITY_NONE)
+		return TryRandomizeAbility(gBaseStats[species].hiddenAbility, species);
+
+	u32 personality = GetMonData(mon, MON_DATA_PERSONALITY, NULL);
+	if ((personality & 1) == 0 || gBaseStats[species].ability2 == ABILITY_NONE)
+		ability = gBaseStats[species].ability1;
+	else
+		ability = gBaseStats[species].ability2;
+
+	return TryRandomizeAbility(ability, species);
 }

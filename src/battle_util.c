@@ -7,6 +7,7 @@
 
 #include "../include/new/battle_start_turn_start.h"
 #include "../include/new/battle_util.h"
+#include "../include/new/build_pokemon.h"
 #include "../include/new/damage_calc.h"
 #include "../include/new/util.h"
 #include "../include/new/frontier.h"
@@ -37,9 +38,9 @@ ability_t GetRecordedAbility(u8 bank)
 		return BATTLE_HISTORY->abilities[bank];
 
 	u16 species = species;
-	u8 ability1 = gBaseStats[species].ability1;
-	u8 ability2 = gBaseStats[species].ability2;
-	u8 hiddenAbility = gBaseStats[species].hiddenAbility;
+	u8 ability1 = TryRandomizeAbility(gBaseStats[species].ability1, species);
+	u8 ability2 = TryRandomizeAbility(gBaseStats[species].ability2, species);
+	u8 hiddenAbility = TryRandomizeAbility(gBaseStats[species].hiddenAbility, species);
 
 	if (ability1 == ability2 && hiddenAbility == ABILITY_NONE)
 		return ability1;
@@ -90,7 +91,7 @@ item_effect_t GetBankItemEffect(u8 bank)
 
 item_effect_t GetMonItemEffect(struct Pokemon* mon)
 {
-	if (GetPartyAbility(mon) != ABILITY_KLUTZ && !IsMagicRoomActive())
+	if (GetMonAbility(mon) != ABILITY_KLUTZ && !IsMagicRoomActive())
 		return ItemId_GetHoldEffect(GetMonData(mon, MON_DATA_HELD_ITEM, NULL));
 
 	return 0;
@@ -191,10 +192,10 @@ bool8 CheckGroundingFromPartyData(struct Pokemon* mon)
 	u16 item = GetMonData(mon, MON_DATA_HELD_ITEM, NULL);
 
 	if (IsGravityActive()
-	|| (ItemId_GetHoldEffect(item) == ITEM_EFFECT_IRON_BALL && GetPartyAbility(mon) != ABILITY_KLUTZ))
+	|| (ItemId_GetHoldEffect(item) == ITEM_EFFECT_IRON_BALL && GetMonAbility(mon) != ABILITY_KLUTZ))
 		return GROUNDED;
 
-	else if  (GetPartyAbility(mon) == ABILITY_LEVITATE
+	else if  (GetMonAbility(mon) == ABILITY_LEVITATE
 		|| gBaseStats[species].type1 == TYPE_FLYING
 		|| gBaseStats[species].type2 == TYPE_FLYING)
 			return IN_AIR;

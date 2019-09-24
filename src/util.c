@@ -224,7 +224,7 @@ bool8 CanPartyMonBeGeneralStatused(struct Pokemon* mon)
 	if (species == SPECIES_MINIOR_SHIELD)
 		return FALSE;
 
-	switch (GetPartyAbility(mon)) {
+	switch (GetMonAbility(mon)) {
 		case ABILITY_COMATOSE:
 			return FALSE;
 
@@ -242,7 +242,7 @@ bool8 CanPartyMonBePutToSleep(struct Pokemon* mon)
 	if (!CanPartyMonBeGeneralStatused(mon))
 		return FALSE;
 
-	switch (GetPartyAbility(mon)) {
+	switch (GetMonAbility(mon)) {
 		case ABILITY_INSOMNIA:
 		case ABILITY_VITALSPIRIT:
 		case ABILITY_SWEETVEIL:
@@ -261,7 +261,7 @@ bool8 CanPartyMonBePoisoned(struct Pokemon* mon)
 	if (!CanPartyMonBeGeneralStatused(mon))
 		return FALSE;
 
-	switch (GetPartyAbility(mon)) {
+	switch (GetMonAbility(mon)) {
 		case ABILITY_IMMUNITY:
 			return FALSE;
 	}
@@ -284,7 +284,7 @@ bool8 CanPartyMonBeParalyzed(struct Pokemon* mon)
 	if (!CanPartyMonBeGeneralStatused(mon))
 		return FALSE;
 
-	switch (GetPartyAbility(mon)) {
+	switch (GetMonAbility(mon)) {
 		case ABILITY_LIMBER:
 			return FALSE;
 	}
@@ -305,7 +305,7 @@ bool8 CanPartyMonBeBurned(struct Pokemon* mon)
 	if (!CanPartyMonBeGeneralStatused(mon))
 		return FALSE;
 
-	switch (GetPartyAbility(mon)) {
+	switch (GetMonAbility(mon)) {
 		case ABILITY_WATERVEIL:
 		case ABILITY_WATERBUBBLE:
 			return FALSE;
@@ -327,7 +327,7 @@ bool8 CanPartyMonBeFrozen(struct Pokemon* mon)
 	if (!CanPartyMonBeGeneralStatused(mon))
 		return FALSE;
 
-	switch (GetPartyAbility(mon)) {
+	switch (GetMonAbility(mon)) {
 		case ABILITY_MAGMAARMOR:
 			return FALSE;
 	}

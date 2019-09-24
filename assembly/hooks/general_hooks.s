@@ -494,6 +494,12 @@ ExpandedAbilityNamesSummaryScreen:
 	ldr r0, =0x8136720 | 1
 	bx r0
 
+.pool
+@0x8013144 with r0
+LoadProperAbilityBattleDataHook:
+	bl LoadProperAbilityBattleData
+	ldr r0, =0x8013164 | 1
+	bx r0
 
 .pool
 @0x8012850 with r0

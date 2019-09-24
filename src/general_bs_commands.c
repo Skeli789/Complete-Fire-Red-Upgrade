@@ -3646,7 +3646,7 @@ void atkE5_pickupitemcalculation(void) {
 
 		u8 level = gPlayerParty[i].level;
 
-		switch (GetPartyAbility(&gPlayerParty[i])) {
+		switch (GetMonAbility(&gPlayerParty[i])) {
 			case ABILITY_PICKUP:
 				chance = 10; // ~10% chance of pickup to activate
 				item = ChoosePickupItem(level);
