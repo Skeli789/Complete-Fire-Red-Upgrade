@@ -1,6 +1,5 @@
 #include "defines.h"
 #include "defines_battle.h"
-#include "Tables/trainer_details.h"
 #include "../include/link.h"
 #include "../include/random.h"
 #include "../include/sprite.h"
@@ -151,7 +150,7 @@ NPCPtr GetEventObjectGraphicsInfo(u16 graphicsId)
 		spriteAddr = gOverworldTableSwitcher[tableId][spriteId];
 
 	if (spriteAddr == NULL)
-		spriteAddr = gOverworldTableSwitcher[0][EVENT_OBJ_GFX_NINJA_BOY];	// first non-player sprite in first table default
+		spriteAddr = gOverworldTableSwitcher[0][EVENT_OBJ_GFX_LITTLE_BOY];	// first non-player sprite in first table default
 
 	return spriteAddr;
 };

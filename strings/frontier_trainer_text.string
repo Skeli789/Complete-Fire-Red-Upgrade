@@ -299,6 +299,33 @@ You ought to take things more\ncasually[.]
 #org @sFrontierText_Cyclist_PlayerLose_3
 Let's take it easy.
 
+#org @sFrontierText_Burglar_PreBattle_1
+I was a thief, but I went straight\nas a Trainer.
+
+#org @sFrontierText_Burglar_PlayerWin_1
+I surrender!
+
+#org @sFrontierText_Burglar_PlayerLose_1
+Too late to surrender!
+
+#org @sFrontierText_Burglar_PreBattle_2
+If a Pok\emon has the ability\nPickpocket, does that make it a\lthief-type?
+
+#org @sFrontierText_Burglar_PlayerWin_2
+I wish there was a thief Pok\emon.\nI'd use that to win!
+
+#org @sFrontierText_Burglar_PlayerLose_2
+I get this uncontrollable urge to\nsteal other people's streaks.
+
+#org @sFrontierText_Burglar_PreBattle_3
+I'm calling myself "The Doodler,\"\nand with the simple addition of a\lsmall burglar's mask, I achieve\lutter anonymity.
+
+#org @sFrontierText_Burglar_PlayerWin_3
+A good politician is quite as\nunthinkable as an honest burglar.
+
+#org @sFrontierText_Burglar_PlayerLose_3
+We burglars know there's more than\none way to skin a streak.
+
 #org @sFrontierText_Worker_PreBattle_1
 It was me who put up the buildings\naround these parts.
 
@@ -379,6 +406,33 @@ Waah!\nI want my mommy!
 
 #org @sFrontierText_Roughneck_PlayerLose_3
 Geheheh!\nI told you!
+
+#org @sFrontierText_Gambler_PreBattle_1
+All right!\nLet's play a game!
+
+#org @sFrontierText_Gambler_PlayerWin_1
+Drat!\nCame up short!
+
+#org @sFrontierText_Gambler_PlayerLose_1
+Things didn't work for you today.
+
+#org @sFrontierText_Gambler_PreBattle_2
+I'm a rambling, gaming dude!
+
+#org @sFrontierText_Gambler_PlayerWin_2
+Missed the big chance!
+
+#org @sFrontierText_Gambler_PlayerLose_2
+I'm a rambling, gaming dude!\nI'm on a winning streak!
+
+#org @sFrontierText_Gambler_PreBattle_3
+Competition!\nI can't get enough!
+
+#org @sFrontierText_Gambler_PlayerWin_3
+I had a chance!
+
+#org @sFrontierText_Gambler_PlayerLose_3
+You can't be a coward in the world\nof Pok\emon!
 
 #org @sFrontierText_Beauty_PreBattle_1
 My beauty is what makes me\nstrong.
@@ -488,31 +542,58 @@ My dream of a world tour[.]\pIt seems so far away[.]
 #org @sFrontierText_Guitarist_PlayerLose_3
 You're obviously short on\npractice.
 
-#org @sFrontierText_Tamer_PreBattle_1
+#org @sFrontierText_Juggler_PreBattle_1
+Howdy!\nAre you a member of my fan club?
+
+#org @sFrontierText_Juggler_PlayerWin_1
+Oh, so you're not a fan[.]
+
+#org @sFrontierText_Juggler_PlayerLose_1
+Lalalah[.]\nMy Pok\emon, I send them out,\lall the girls scream and shout!
+
+#org @sFrontierText_Juggler_PreBattle_2
+Shard de Battle!\nShard de Battle!\pYah, yah!
+
+#org @sFrontierText_Juggler_PlayerWin_2
+Yah, yah!\nShard de lose!
+
+#org @sFrontierText_Juggler_PlayerLose_2
+Yah, yah!\nShard de win!
+
+#org @sFrontierText_Juggler_PreBattle_3
+Behold my dexterity and grace!
+
+#org @sFrontierText_Juggler_PlayerWin_3
+Whew! That was a jolt!
+
+#org @sFrontierText_Juggler_PlayerLose_3
+Behold! You've beend dazzled by my\nprize Pok\emon!
+
+#org @sFrontierText_DragonTamer_PreBattle_1
 The credo of the Dragon Tamer!\nNumber one!
 
-#org @sFrontierText_Tamer_PlayerWin_1
+#org @sFrontierText_DragonTamer_PlayerWin_1
 Even in defeat, roar!\nRoar with your dragon!
 
-#org @sFrontierText_Tamer_PlayerLose_1
+#org @sFrontierText_DragonTamer_PlayerLose_1
 In victory, roar!\nRoar with your dragon!
 
-#org @sFrontierText_Tamer_PreBattle_2
+#org @sFrontierText_DragonTamer_PreBattle_2
 See it! Feel it! The ultimate\npower[.]\pProbably!
 
-#org @sFrontierText_Tamer_PlayerWin_2
+#org @sFrontierText_DragonTamer_PlayerWin_2
 The title of the ultimate\nprobably!\pI confer it on you!
 
-#org @sFrontierText_Tamer_PlayerLose_2
+#org @sFrontierText_DragonTamer_PlayerLose_2
 There is no defeat for me, the\nultimate[.]\pProbably!
 
-#org @sFrontierText_Tamer_PreBattle_3
+#org @sFrontierText_DragonTamer_PreBattle_3
 Mighty! Like a dragon!
 
-#org @sFrontierText_Tamer_PlayerWin_3
+#org @sFrontierText_DragonTamer_PlayerWin_3
 [.]Urf[.]\pI wanted to be strong[.]
 
-#org @sFrontierText_Tamer_PlayerLose_3
+#org @sFrontierText_DragonTamer_PlayerLose_3
 Strong, I am!
 
 #org @sFrontierText_Birdkeeper_PreBattle_1
@@ -568,6 +649,33 @@ Please! Let me call you Master\nTrainer from now on!
 
 #org @sFrontierText_Blackbelt_PlayerLose_3
 Full power is how I win!
+
+#org @sFrontierText_BattleGirl_PreBattle_1
+My Pok\emon have black belt-level\nstrength!
+
+#org @sFrontierText_BattleGirl_PlayerWin_1
+I rarely meet anyone who's better\nthan me[.]
+
+#org @sFrontierText_BattleGirl_PlayerLose_1
+You've been humiliated!
+
+#org @sFrontierText_BattleGirl_PreBattle_2
+OK, OK!\nLet's be quick about this!
+
+#org @sFrontierText_BattleGirl_PlayerWin_2
+Yup! Good going!\nI like the way you battle!
+
+#org @sFrontierText_BattleGirl_PlayerLose_2
+Yeah! Let's do this again!\n[.]Oops. You're out of Pok\emon!
+
+#org @sFrontierText_BattleGirl_PreBattle_3
+Hiyah!\nThere's no holding anything back!
+
+#org @sFrontierText_BattleGirl_PlayerWin_3
+I[.]I concede! I think you're on a\ndifferent level[.]
+
+#org @sFrontierText_BattleGirl_PlayerLose_3
+Hiyah! I put you in your place!\nYou better appreciate it!
 
 #org @sFrontierText_Scientist_PreBattle_1
 It's the power of science!

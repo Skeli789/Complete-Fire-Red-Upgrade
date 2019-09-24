@@ -943,7 +943,7 @@ bool8 DoesBagHaveBerry(void)
 
 void CompactItemsInBagPocket(struct ItemSlot* itemSlots, u16 amount)
 {
-	MergeSort(itemSlots, 0, amount - 1, CompareItemsByHavingValue);
+	MergeSort(itemSlots, 0, amount - 1, CompareItemsByHavingValue); //Sort all the null items to the back
 }
 
 
