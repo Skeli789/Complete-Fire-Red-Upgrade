@@ -11,6 +11,10 @@
 #include "../include/new/battle_util.h"
 #include "../include/new/dns.h"
 #include "../include/new/mega.h"
+/*
+battle_anims.c
+	Functions and structures to modify attack animations.
+*/
 
 extern const struct CompressedSpriteSheet gBattleAnimPicTable[];
 extern const struct CompressedSpritePalette gBattleAnimPaletteTable[];

@@ -2,6 +2,10 @@
 .text
 .align 2
 .global gZMoveNames
+/*
+z-move_name_table.s
+	z move name table
+*/
 
 gZMoveNames:
 .word NAME_BREAKNECK_BLITZ

@@ -5,6 +5,11 @@
 .include "../Anim_Defines.asm"
 /*.include "../asm_defines.s" Don't Uncomment This!*/
 
+/*
+playanimation_table.s
+	table of extra animations
+*/
+
 .global gBattleAnims_General
 
 .equ RED_PRIMAL_TASK, AnimTask_ReloadAttackerSprite

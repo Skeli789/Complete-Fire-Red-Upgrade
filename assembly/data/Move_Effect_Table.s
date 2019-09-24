@@ -3,6 +3,10 @@
 .align 2
 
 .include "../defines"
+/*
+move_effect_tables.s
+	table of move effect IDs
+*/
 
 .global gBattleScriptsForMoveEffects
 .global gSetStatusMoveEffects

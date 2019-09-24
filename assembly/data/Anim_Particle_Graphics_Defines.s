@@ -1,3 +1,7 @@
+/*
+definitions for animation particles
+*/
+
 .equ SWORD_IMG, SwordTiles
 .equ SEED_IMG, Leech_SeedTiles
 .equ HORN_HIT_IMG, HornTiles

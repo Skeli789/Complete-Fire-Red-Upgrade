@@ -13,6 +13,10 @@
 #include "../include/new/item.h"
 #include "../include/new/mega.h"
 #include "../include/new/move_tables.h"
+/*
+battle_util.c
+	general functions for aiding in battle logic for everything
+*/
 
 #define IS_BATTLE_CIRCUS (gBattleTypeFlags & BATTLE_TYPE_BATTLE_CIRCUS)
 

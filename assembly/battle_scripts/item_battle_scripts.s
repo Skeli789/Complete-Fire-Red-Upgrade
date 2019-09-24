@@ -1,6 +1,10 @@
 .text
 .thumb
 .align 2
+/*
+item_battle_scripts.s
+	handles in-battle item usage
+*/
 
 .include "../defines"
 

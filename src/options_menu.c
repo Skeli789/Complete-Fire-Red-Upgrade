@@ -8,6 +8,10 @@
 #include "../include/text.h"
 #include "../include/text_window.h"
 #include "../include/window.h"
+/*
+options_menu.c
+	functions for secondary options menu
+*/
 
 extern u8 gText_AdditionalOptions[];
 extern u8 gText_AdditionalOptions[];

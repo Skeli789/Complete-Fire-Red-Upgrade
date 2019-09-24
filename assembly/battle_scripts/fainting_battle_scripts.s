@@ -1,6 +1,10 @@
 .thumb
 .text
 .align 2
+/*
+fainting_battle_scripts.s
+	scripts for pokemon fainting
+*/
 
 .include "../defines"
 

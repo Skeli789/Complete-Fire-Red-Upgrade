@@ -9,6 +9,11 @@
 #include "../include/new/util.h"
 #include "../include/new/move_tables.h"
 #include "../include/new/move_battle_scripts.h"
+/*
+accuracy_calc.c
+	-rewrites how accuracy is calculated, including all relevant abilities, effects, etc.
+	-includes protection logic
+*/
 
 extern const struct StatFractions gAccuracyStageRatios[];
 

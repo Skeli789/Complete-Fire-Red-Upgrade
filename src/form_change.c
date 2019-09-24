@@ -8,6 +8,10 @@
 #include "../include/new/frontier.h"
 #include "../include/new/util.h"
 #include "../include/new/set_z_effect.h"
+/*
+form_change.c
+	functions/structures/arrays that handle species that change form
+*/
 
 const species_t gMiniorCores[] =
 {

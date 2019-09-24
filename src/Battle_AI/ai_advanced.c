@@ -13,6 +13,10 @@
 #include "../../include/new/util.h"
 #include "../../include/new/item.h"
 #include "../../include/new/multi.h"
+/*
+ai_advanced.c
+	advanced logic for the AI, including move prediction and fight classes
+*/
 
 enum FightingClasses
 {

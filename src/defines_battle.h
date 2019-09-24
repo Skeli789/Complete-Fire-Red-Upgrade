@@ -1,5 +1,8 @@
 #pragma once
-
+/*
+defines_battle.h
+	general header files for files associated with the battle engine
+*/
 #include "config.h"
 
 #include "../include/battle.h"

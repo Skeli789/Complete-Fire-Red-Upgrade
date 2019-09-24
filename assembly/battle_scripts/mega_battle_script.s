@@ -1,6 +1,10 @@
 .text
 .thumb
 .align 2
+/*
+mega_battle_scripts.s
+	handles mega evolution
+*/
 
 .include "../defines"
 

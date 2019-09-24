@@ -8,6 +8,10 @@
 #include "../include/new/battle_strings.h"
 #include "../include/new/battle_util.h"
 #include "../include/new/stat_buffs.h"
+/*
+stat_buffs.c
+	adjusts stat-related functions to include abilities and effects that change their opteraions (eg. contrary)
+*/
 
 #define BattleScript_MistProtected (u8*) 0x81D8C3E
 

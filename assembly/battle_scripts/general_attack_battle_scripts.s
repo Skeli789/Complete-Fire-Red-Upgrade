@@ -1,4 +1,8 @@
 @;Make sure Toxic has a check for Protean
+/*
+general_attack_battle_scripts.s
+	basic battle scripts
+*/
 
 .text
 .thumb

@@ -13,6 +13,10 @@
 #include "../include/new/mega.h"
 #include "../include/new/mega_battle_scripts.h"
 #include "../include/new/set_z_effect.h"
+/*
+mega.c
+	functions that support mega evolution logic and execution
+*/
 
 #define TRAINER_ITEM_COUNT 4
 

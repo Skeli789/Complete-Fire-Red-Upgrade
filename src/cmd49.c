@@ -14,6 +14,10 @@
 #include "../include/new/move_battle_scripts.h"
 #include "../include/new/move_tables.h"
 #include "../include/new/set_effect.h"
+/*
+cmd49.c
+	handles a ton of battle logic at the end of each turn
+*/
 
 //TODO:
 //Make sure there's no choice lock glitch

@@ -21,6 +21,11 @@
 #include "../include/new/multi.h"
 #include "../include/new/mega.h"
 #include "../include/new/set_z_effect.h"
+/*
+battle_start_turn_start.c
+	-handles the logic for determining which pokemon attacks first
+	=also handles setting up battle data
+*/
 
 enum BattleBeginStates
 {

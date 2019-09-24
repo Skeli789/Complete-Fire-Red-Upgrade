@@ -1,4 +1,8 @@
 #pragma once
+/*
+trainer_details.h
+	definitions of trainer sprites and ow sprites
+*/
 
 #define TRAINER_SPRITE_POKE_KID 6
 #define TRAINER_SPRITE_TUBER_M 7

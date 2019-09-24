@@ -17,6 +17,10 @@
 #include "../../include/new/move_tables.h"
 #include "../../include/new/set_z_effect.h"
 #include "../../include/new/switching.h"
+/*
+ai_master.c
+	The master function(s) for the AI logic
+*/
 
 // AI states
 enum

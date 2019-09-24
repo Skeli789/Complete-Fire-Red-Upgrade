@@ -13,6 +13,10 @@
 #include "../include/new/item_battle_scripts.h"
 #include "../include/new/move_tables.h"
 #include "../include/new/stat_buffs.h"
+/*
+item_battle_effects.c
+	handles functions that deal with battle effects of specific items
+*/
 
 #define BattleScript_ItemHealHP_Ret (u8*) 0x81D9622
 #define BattleScript_ItemHealHP_End2 (u8*) 0x81D961C

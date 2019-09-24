@@ -1,6 +1,10 @@
 .text
 .thumb
 .align 2
+/*
+trainer_sliding_battle_scripts.s
+	scripts for handling mid-battle trainer sliding/messages
+*/
 
 .include "../defines"
 

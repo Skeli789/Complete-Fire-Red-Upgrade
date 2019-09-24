@@ -29,6 +29,10 @@
 
 #include "Tables/Trainers_With_EVs_Table.h"
 #include "Tables/Battle_Tower_Spreads.h"
+/*
+build_pokemon.c
+	modifies the data that is set for generated pokemon, eg. for battle tower/frontier team generation and others.
+*/
 
 #define TOTAL_SPREADS ARRAY_COUNT(gFrontierSpreads)
 #define TOTAL_LEGENDARY_SPREADS ARRAY_COUNT(gFrontierLegendarySpreads)

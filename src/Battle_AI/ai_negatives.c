@@ -17,6 +17,10 @@
 #include "../../include/new/item.h"
 #include "../../include/new/general_bs_commands.h"
 #include "../../include/new/move_tables.h"
+/*
+ai_negatives.c
+	All possible subtractions to an AIs move viability.
+*/
 
 #define TARGETING_PARTNER (bankDef == bankAtkPartner)
 #define PARTNER_MOVE_EFFECT_IS_SAME (IS_DOUBLE_BATTLE \

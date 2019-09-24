@@ -3,6 +3,10 @@
 .align 2
 .global gBattleAnimPicTable
 .global gBattleAnimPaletteTable
+/*
+anim_particle_table.s
+	tables for animation particles
+*/
 
 .include "../Anim_Defines.asm"
 .include "assembly/data/Anim_Particle_Graphics_Defines.s"

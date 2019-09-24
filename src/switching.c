@@ -20,6 +20,10 @@
 #include "../include/new/switching.h"
 #include "../include/new/trainer_sliding.h"
 #include "../include/new/z_move_battle_scripts.h"
+/*
+switching.c
+	handles battle switching logic
+*/
 
 enum SwitchInStates
 {

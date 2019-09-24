@@ -20,6 +20,10 @@
 #include "../../include/new/set_z_effect.h"
 #include "../../include/new/switching.h"
 #include "../../include/new/z_move_effects.h"
+/*
+ai_util.c
+	commonly used functions in AI logic
+*/
 
 //This file's functions:
 static u32 CalcPredictedDamageForCounterMoves(u16 move, u8 bankAtk, u8 bankDef);

@@ -27,6 +27,10 @@
 #include "../include/new/pickup_items.h"
 #include "../include/new/switching.h"
 #include "../include/new/set_z_effect.h"
+/*
+general_bs_commands.c
+	functions that support the battle scripting in assembly/battle_scripts
+*/
 
 #define TEXT_BUFFER_SIDE_STATUS(move, status, side)				\
 {																\

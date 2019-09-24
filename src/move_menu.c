@@ -16,6 +16,10 @@
 #include "../include/new/move_tables.h"
 #include "../include/new/set_z_effect.h"
 #include "../include/new/z_move_effects.h"
+/*
+move_menu.c
+	functions for displaying move data and z moves in the battle menu
+*/
 
 //TODO: Make The Z-Move Names change colour (look in SetPpNumbersPaletteInMoveSelection)
 //Fix Heal Block + Pollen Puff on partner link battle

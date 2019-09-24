@@ -14,6 +14,10 @@
 #include "../../include/new/util.h"
 #include "../../include/new/item.h"
 #include "../../include/new/move_tables.h"
+/*
+ai_partner.c
+	Partner AI logic function(s)
+*/
 
 #define PARTNER_MOVE_EFFECT_IS_SKILL_SWAP (gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE \
 										&& gBattleStruct->moveTarget[bankAtkPartner] == bankAtk \

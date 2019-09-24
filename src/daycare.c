@@ -16,6 +16,10 @@
 #include "../include/new/learn_move.h"
 #include "../include/new/item.h"
 #include "../include/new/util.h"
+/*
+daycare.c
+	functions that handle all daycare functions, including attribute inheritance and step counts
+*/
 
 #define sHatchedEggFatherMoves ((u16*) 0x202455C)
 #define sHatchedEggMotherMoves ((u16*)0x2024580)

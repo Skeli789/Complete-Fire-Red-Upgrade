@@ -1,6 +1,10 @@
 .text
 .thumb
 .align 2
+/*
+z_effect_battle_scripts.s
+	handles implementing z move effects
+*/
 
 .include "../defines"
 

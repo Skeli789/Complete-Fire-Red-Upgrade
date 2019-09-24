@@ -11,6 +11,10 @@
 #include "../include/new/battle_util.h"
 #include "../include/new/exp.h"
 #include "../include/new/util.h"
+/*
+exp.c
+	functions that handle the exp share and exp gain
+*/
 
 enum
 {

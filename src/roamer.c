@@ -11,6 +11,10 @@
 #include "../include/new/util.h"
 #include "../include/new/roamer.h"
 #include "../include/new/wild_encounter.h"
+/*
+roamer.c
+	handles roaming pokemon and relevant functions/hooks
+*/
 
 //TODO: Do Pokedex area screen / Get icons on the region map
 

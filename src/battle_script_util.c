@@ -18,6 +18,10 @@
 #include "../include/new/move_battle_scripts.h"
 #include "../include/new/move_tables.h"
 #include "../include/new/switching.h"
+/*
+battle_script_util.c
+	general functions that aide in battle scripting via callasm.
+*/
 
 extern const u8* gBattleScriptsForMoveEffects[];
 

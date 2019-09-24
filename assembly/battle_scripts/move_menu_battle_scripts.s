@@ -1,6 +1,10 @@
 .text
 .thumb
 .align 2
+/*
+move_menu_battle_scripts.s
+	handles messages when trying to select a move
+*/
 
 .include "../defines"
 

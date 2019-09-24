@@ -3,6 +3,10 @@
 #include "../include/constants/vars.h"
 
 #include "../include/new/save.h"
+/*
+save.c
+	handles save block expansion functions/structures
+*/
 
 // Each 4 KiB flash sector contains 3968 bytes of actual data followed by a 128 byte footer
 #define SECTOR_DATA_SIZE 0xFF0

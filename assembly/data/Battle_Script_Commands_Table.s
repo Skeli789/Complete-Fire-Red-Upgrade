@@ -2,6 +2,10 @@
 .text
 .align 2
 .global BattleScriptCommandsTable
+/*
+battle_script_command_table.s
+	table of battle script commands, including new ones
+*/
 
 .include "../defines"
 .equ NULL, 0x00000000

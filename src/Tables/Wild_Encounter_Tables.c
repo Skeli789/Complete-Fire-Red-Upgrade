@@ -3,7 +3,10 @@
 #include "../../include/constants/maps.h"
 #include "../../include/wild_encounter.h"
 #include "../../include/constants/species.h"
-
+/*
+wild_encounter_tables.c
+	day/night and/or regular map wild encounter species
+*/
 
 #ifndef UNBOUND //Modify this section
 

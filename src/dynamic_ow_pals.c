@@ -4,8 +4,11 @@
 #include "../include/new/dynamic_ow_pals.h"
 #include "../include/new/util.h"
 
-//Credit to Navenatox
-
+/*
+dynamic_ow_pals.c
+	handles the dynamic loading and tracking of overworld sprite palettes
+Credit to Navenatox
+*/
 //#define RGB(R, G, B)	(R | G << 5 | B << 10)
 #define Red(Color)		((Color) & 31)
 #define Green(Color)	((Color >> 5) & 31)

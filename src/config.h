@@ -1,4 +1,8 @@
 #pragma once
+/*
+config.h
+	handles all customizable options
+*/
 
 //#define DEBUG_MEGA
 

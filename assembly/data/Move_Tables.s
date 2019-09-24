@@ -3,6 +3,10 @@
 .align 2
 
 .include "../defines"
+/*
+move_tables.s
+	table of battle move data pointers
+*/
 
 .equ MOVE_TABLES_TERMIN, 0xFEFE
 

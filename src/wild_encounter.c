@@ -19,6 +19,10 @@
 #include "../include/new/util.h"
 #include "../include/new/roamer.h"
 #include "../include/new/wild_encounter.h"
+/*
+wild_encounter.c
+	handles functions related to wild encounter probability and associated features
+*/
 
 //Chain Fishing
 

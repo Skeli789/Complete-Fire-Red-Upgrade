@@ -17,6 +17,10 @@
 #include "../../include/new/util.h"
 #include "../../include/new/item.h"
 #include "../../include/new/move_tables.h"
+/*
+ai_positives.c
+	all possible additions to an AIs move viability
+*/
 
 extern const struct NaturalGiftStruct gNaturalGiftTable[];
 extern const struct FlingStruct gFlingTable[];

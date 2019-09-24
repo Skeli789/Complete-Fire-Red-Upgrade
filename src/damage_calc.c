@@ -16,6 +16,10 @@
 #include "../include/new/util.h"
 #include "../include/new/item.h"
 #include "../include/new/move_tables.h"
+/*
+damage_calc.c
+	functions responsible for calculating damage, including modifications from abilities, effects, etc...
+*/
 
 //TODO: Update Type Calc to have an option to be fooled by Illusion
 

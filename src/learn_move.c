@@ -10,6 +10,10 @@
 #include "../include/new/item.h"
 #include "../include/new/learn_move.h"
 #include "../include/new/move_reminder_data.h"
+/*
+learn_move.c
+	handles functions for pokemon trying to learn moves
+*/
 
 extern const u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
 

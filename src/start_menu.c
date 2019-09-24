@@ -7,6 +7,10 @@
 #include "../include/constants/songs.h"
 
 #include "../include/new/dexnav.h"
+/*
+start_menu.c
+	functions to redo how the start menu is generated, and associated functions such as safari steps/ball count
+*/
 
 u8 PokeToolsFunc(void);
 
