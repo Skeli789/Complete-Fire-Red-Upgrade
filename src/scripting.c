@@ -2759,6 +2759,22 @@ extern const u8 sExampleText_8[];
 extern const u8 sExampleText_9[];
 extern const u8 sExampleText_10[];
 
+extern const u8 sText_1[];
+extern const u8 sText_2[];
+extern const u8 sText_3[];
+extern const u8 sText_4[];
+extern const u8 sText_5[];
+extern const u8 sText_6[];
+extern const u8 sText_7[];
+extern const u8 sText_8[];
+extern const u8 sText_9[];
+extern const u8 sText_10[];
+extern const u8 sText_11[];
+extern const u8 sText_12[];
+extern const u8 sText_13[];
+extern const u8 sText_14[];
+extern const u8 sText_15[];
+
 //Scrolling Lists
 static const u8* sMultichoiceSet1[] =
 {
@@ -2809,9 +2825,6 @@ static const struct ScrollingSizePerOpts sScrollingSizes[] =
 	{.maxShowed = 4, .height = 7},
 	{.maxShowed = 5, .height = 9},
 	{.maxShowed = 6, .height = 11},
-	{.maxShowed = 7, .height = 13},
-	{.maxShowed = 8, .height = 14},
-	{.maxShowed = 9, .height = 16},
 };
 
 
