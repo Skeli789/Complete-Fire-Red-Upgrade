@@ -121,6 +121,15 @@ PlayerExclaim:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+.global SystemScript_WaitForFollower
+SystemScript_WaitForFollower:
+	lock
+	pause 0x10
+	release
+	end
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 .global SystemScript_FindItemMessage
 SystemScript_FindItemMessage:
 	hidesprite LASTTALKED
@@ -189,37 +198,32 @@ ObtainedMultipleItemMsg:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-.equ FLAG_FR_BADGE_6, 0x825
-.equ PREVENT_ROUTE_ESCAPE_FLAG, 0x988
-.equ HM08_ROCK_CLIMB, 128
-.equ SPECIAL_POKEMON_IN_PARTY_THAT_CAN_LEARN_TM_HM, 0xD0
-EventScript_RockClimb:
-	checkflag FLAG_FR_BADGE_6
-	if NOT_SET _goto EventScript_RockClimbDoNothing
-	checkflag PREVENT_ROUTE_ESCAPE_FLAG @;Can't climb if someone's following you
-	if SET _goto EventScript_RockClimbDoNothing
-	setvar 0x8000 HM08_ROCK_CLIMB
-	special2 LASTRESULT SPECIAL_POKEMON_IN_PARTY_THAT_CAN_LEARN_TM_HM
-	compare LASTRESULT PARTY_SIZE
-	if equal _goto EventScript_RockClimbDoNothing
-	setanimation 0x0 LASTRESULT
-	bufferpartypokemon 0x0 LASTRESULT
+.equ SPECIAL_DISMOUNT_BICYCLE, 0xAF
+.global EventScript_UseRockClimb
+EventScript_UseRockClimb:
+	setanimation 0x0 0x8004
+	bufferpartypokemon 0x0 0x8004
 	bufferattack 0x1 MOVE_ROCKCLIMB
 	msgbox gText_WantToScaleCliff MSG_YESNO
 	compare LASTRESULT NO
 	if equal _goto EventScript_RockClimbEnd
-	msgbox 0x81BDFD7 MSG_NORMAL@;[BUFFER1] used [BUFFER2]!
+	msgbox 0x81BDFD7 MSG_NORMAL @;[BUFFER1] used [BUFFER2]!
 	goto SystemScript_RockClimb
 
-EventScript_RockClimbDoNothing:
+.global EventScript_JustRockWall
+EventScript_JustRockWall:
 	msgbox gText_RockIsRocky MSG_NORMAL
 EventScript_RockClimbEnd:
+	closeonkeypress
 	end
 
 .equ SPECIAL_GET_PLAYER_FACING, 0x1AA
 .global SystemScript_RockClimb
 SystemScript_RockClimb:
 	lockall
+	call FollowerIntoPlayerScript
+	callasm HideFollower
+	special SPECIAL_DISMOUNT_BICYCLE
 	doanimation 0x25
 	waitstate
 	special2 PLAYERFACING SPECIAL_GET_PLAYER_FACING
@@ -292,25 +296,22 @@ SystemScript_RockClimbRightDown:
 
 SystemScript_RockClimbDownFinish:
 	applymovement PLAYER m_RockClimbDown
-	waitmovement PLAYER
-	releaseall
-	end
+	goto SystemScript_RockClimbFinish
 
 SystemScript_RockClimbUpFinish:
 	applymovement PLAYER m_RockClimbUp
-	waitmovement PLAYER
-	releaseall
-	end
+	goto SystemScript_RockClimbFinish
 
 SystemScript_RockClimbLeftFinish:
 	applymovement PLAYER m_RockClimbLeft
-	waitmovement PLAYER
-	releaseall
-	end
+	goto SystemScript_RockClimbFinish
 
 SystemScript_RockClimbRightFinish:
 	applymovement PLAYER m_RockClimbRight
+	
+SystemScript_RockClimbFinish:
 	waitmovement PLAYER
+	callasm FollowMe_WarpSetEnd
 	releaseall
 	end
 
@@ -319,10 +320,10 @@ m_RockClimbUp: .byte 0x1e, end_m
 m_RockClimbLeft: .byte 0x1f, end_m
 m_RockClimbRight: .byte 0x20, end_m
 
-m_RockClimbLeftUp: .byte 0xC8, end_m
-m_RockClimbLeftDown: .byte 0xC4, end_m
-m_RockClimbRightUp: .byte 0xC9, end_m
-m_RockClimbRightDown: .byte 0xC5, end_m
+m_RockClimbLeftUp: .byte 0xE0, end_m
+m_RockClimbLeftDown: .byte 0xDC, end_m
+m_RockClimbRightUp: .byte 0xE1, end_m
+m_RockClimbRightDown: .byte 0xDD, end_m
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -339,3 +340,77 @@ SystemScript_Defog:
 	msgbox gText_DefogBlewAwayFog MSG_KEEPOPEN
 	releaseall
 	end
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.equ SPECIAL_POKEMON_TYPE_IN_PARTY, 0xB2
+.global SystemScript_UseLavaSurf
+SystemScript_UseLavaSurf:
+	setvar 0x8000 TYPE_FIRE
+	special SPECIAL_POKEMON_TYPE_IN_PARTY
+	compare LASTRESULT PARTY_SIZE
+	if equal _goto SystemScript_MagmaGlistens
+	bufferpartypokemon 0x0 LASTRESULT
+	setanimation 0x0 LASTRESULT
+	msgbox gText_LikeToLavaSurf MSG_YESNO
+	compare LASTRESULT NO
+	if equal _goto SystemScript_LavaSurfEnd
+	lockall
+	msgbox gText_LavaSurfedWith MSG_KEEPOPEN
+	doanimation 0x9
+	releaseall
+	end
+
+.global SystemScript_MagmaGlistens
+SystemScript_MagmaGlistens:
+	msgbox gText_LavaDyed MSG_NORMAL
+SystemScript_LavaSurfEnd:
+	closeonkeypress
+	end
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global SystemScript_UseWaterfall
+SystemScript_UseWaterfall:
+	bufferpartypokemon 0x0 0x8004
+	setanimation 0x0 0x8004
+	bufferattack 0x1 MOVE_WATERFALL
+	msgbox 0x81BE33F MSG_YESNO
+	compare LASTRESULT NO
+	if equal _goto SystemScript_WaterfallEnd
+	lockall
+	call FollowerIntoPlayerScript
+	callasm HideFollower
+	msgbox 0x81BDFD7 MSG_KEEPOPEN
+	doanimation 0x2B
+	callasm FollowMe_WarpSetEnd
+SystemScript_WaterfallEnd:
+	releaseall
+	end
+
+.global SystemScript_WallOfWater
+SystemScript_WallOfWater:
+	msgbox 0x81BE30A MSG_NORMAL
+	end
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global SystemScript_UseSurf
+SystemScript_UseSurf:
+	bufferpartypokemon 0x0 0x8004
+	setanimation 0x0 0x8004
+	bufferattack 0x1 MOVE_SURF
+	msgbox 0x81A556E MSG_YESNO	
+	compare LASTRESULT NO
+	if equal _goto SystemScript_SurfEnd
+	lockall
+	msgbox 0x81BDFD7 MSG_KEEPOPEN
+	doanimation 0x9
+SystemScript_SurfEnd:
+	releaseall
+	end
+	
+.global SystemScript_WaterDyedBlue
+SystemScript_WaterDyedBlue:
+	msgbox 0x81A6C74 MSG_NORMAL
+	end	

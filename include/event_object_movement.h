@@ -67,6 +67,7 @@ void __attribute__((long_call)) MoveEventObjectToMapCoords(struct EventObject *e
 void __attribute__((long_call)) EventObjectSetGraphicsId(struct EventObject *eventObject, u8 graphicsId);
 void __attribute__((long_call)) EventObjectTurn(struct EventObject *eventObject, u8 direction);
 void __attribute__((long_call)) EventObjectClearHeldMovement(struct EventObject *eventObject);
+u8 __attribute__((long_call)) GetJumpMovementAction(u32 idx);
 u8 __attribute__((long_call)) GetJumpSpecialMovementAction(u32 idx);
 void __attribute__((long_call)) FreezeEventObjects(void);
 void __attribute__((long_call)) UnfreezeEventObjects(void);
@@ -85,6 +86,9 @@ void __attribute__((long_call)) MoveCoords(u8, s16 *, s16 *);
 u8 __attribute__((long_call)) MovementAction_EmoteExclamationMark_Step0(struct EventObject *, struct Sprite *);
 bool8 __attribute__((long_call)) IsZCoordMismatchAt(u8, s16, s16);
 void __attribute__((long_call)) LogCoordsCameraRelative(s32* x, s32* y, u8 size_x, u8 size_y);
+void __attribute__((long_call)) RemoveEventObject(struct EventObject *eventObject);
+u8 __attribute__((long_call)) GetCollisionAtCoords(struct EventObject *, s16, s16, u32);
+u8 __attribute__((long_call)) GetFaceDirectionMovementAction(u32);
 
 /*
 extern const struct SpriteFrameImage gEventObjectPicTable_PechaBerryTree[];
@@ -139,7 +143,6 @@ u8 GetWalkInPlaceFastestMovementAction(u32);
 u8 GetWalkInPlaceFastMovementAction(u32);
 u8 GetWalkInPlaceNormalMovementAction(u32);
 u8 GetWalkInPlaceSlowMovementAction(u32);
-u8 GetCollisionAtCoords(struct EventObject *, s16, s16, u32);
 bool8 EventObjectIsHeldMovementActive(struct EventObject *);
 u8 EventObjectClearHeldMovementIfFinished(struct EventObject *);
 u8 GetEventObjectIdByXYZ(u16 x, u16 y, u8 z);

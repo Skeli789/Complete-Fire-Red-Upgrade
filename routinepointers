@@ -137,6 +137,8 @@ sp0CC_CanLearnDracoMeteorInParty 08160090
 
 sp0CF_BufferAbilityName 0816009C
 sp0D0_PokemonInPartyThatCanLearnTMHM 081600A0
+sp0D1_SetUpFollowerSprite 081600A4
+sp0D2_DestroyFollowerSprite 081600A8
 
 sp196_TryCopyTMNameToBuffer1 081603B8
 

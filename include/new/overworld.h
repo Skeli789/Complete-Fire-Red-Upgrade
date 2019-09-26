@@ -21,7 +21,7 @@ void PrepTrainerB(void);
 void HasOneTrainerBeenDefeated(void);
 void MoveCameraToTrainerB(void);
 void TrainerFaceFix(void);
-void FollowerPositionFix(void);
+void FollowerPositionFix(u8 offset);
 bool8 IsAutoRunEnabled(void);
 bool8 IsRunningDisallowed(u8 tile);
 bool8 IsCurrentAreaVolcano(void);
@@ -35,6 +35,7 @@ const u8* LoadProperWhiteoutString(const u8* string);
 bool8 IsPlayerFacingRockClimbableWall(void);
 void ShouldRockClimbContinue(void);
 void ShouldRockClimbContinueDiagonally(void);
+u8 PartyHasMonWithSurf(void);
 
 //Functions Hooked In
 u8 CheckForTrainersWantingBattle(void);
@@ -51,6 +52,7 @@ bool8 Overworld_IsBikingAllowed(void);
 s32 DoPoisonFieldEffect(void);
 void TaskRepel(u8 taskId);
 bool8 UpdateRepelCounter(void);
+const u8* GetInteractedWaterScript(u32 unused1, u8 metatileBehavior, u8 direction);
 
 //Exported Data Structures
 struct Pedometers

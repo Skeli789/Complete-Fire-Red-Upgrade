@@ -65,6 +65,11 @@ u8 BattleSetup_GetTerrainId(void)
 		#ifdef BRIDGE_FIX
 			else if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
 			{
+				#ifdef UNBOUND
+				if (MetatileBehavior_IsFastCurrent(tileBehavior))
+					terrain = BATTLE_TERRAIN_POND;
+				else
+				#endif
 				if (MetatileBehavior_IsDeepOrOceanWater(tileBehavior))
 					terrain = BATTLE_TERRAIN_WATER;
 				else if (MetatileBehavior_IsSurfableWaterOrUnderwater(tileBehavior))

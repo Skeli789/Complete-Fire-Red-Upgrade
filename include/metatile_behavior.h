@@ -11,6 +11,8 @@ bool8 __attribute__((long_call)) MetatileBehavior_IsMountain(u8 metatileBehavior
 bool8 __attribute__((long_call)) MetatileBehavior_IsDeepOrOceanWater(u8 metatileBehavior);
 bool8 __attribute__((long_call)) MetatileBehavior_IsRunningDisallowed(u8);
 bool8 __attribute__((long_call)) MetatileBehavior_IsForcedMovementTile(u8 metatileBehavior);
+bool8 __attribute__((long_call)) MetatileBehavior_IsWaterfall(u8 metatileBehavior);
+bool8 __attribute__((long_call)) MetatileBehavior_IsFastCurrent(u8 metatileBehavior);
 
 /*
 bool8 MetatileBehavior_UnusedReturnTrue(u8 metatileBehavior);
@@ -80,7 +82,6 @@ bool8 MetatileBehavior_IsNorthBlocked(u8 metatileBehavior);
 bool8 MetatileBehavior_IsSouthBlocked(u8 metatileBehavior);
 bool8 MetatileBehavior_ReturnFalse_8(u8 metatileBehavior);
 bool8 MetatileBehavior_IsHotSprings(u8 metatileBehavior);
-bool8 MetatileBehavior_IsWaterfall(u8 metatileBehavior);
 bool8 MetatileBehavior_ReturnFalse_9(u8 metatileBehavior);
 bool8 MetatileBehavior_UnusedReturnFalse(u8 metatileBehavior);
 bool8 MetatileBehavior_UnusedReturnFalse_2(u8 metatileBehavior);

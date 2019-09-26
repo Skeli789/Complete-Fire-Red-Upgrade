@@ -30,6 +30,7 @@ void __attribute__((long_call)) ResetBgsAndClearDma3BusyFlags(u8 bg);	// in bg.h
 u32 __attribute__((long_call)) GetGameStat(u8 index);
 void __attribute__((long_call)) IncrementGameStat(u8 gameStat);
 s16 __attribute__((long_call)) Sine(s16 index, s16 amplitude);
+s16 __attribute__((long_call)) Cosine(s16 index, s16 amplitude);
 
 void __attribute__((long_call)) PlayBGM(u16 songNum);
 void __attribute__((long_call)) PlaySE(u16 songNum);

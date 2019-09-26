@@ -1773,7 +1773,7 @@ void sp0B1_ChooseItemFromBag(void)
 
 //@Details: Checks if any Pokemon in the player's party is of the given type.
 //@Input: 	Var 0x8000: Pokemon type.
-//@Returns: LastResult: If the type was found in the party.
+//@Returns: LastResult: Party index of mon with type. PARTY_SIZE if not found.
 void sp0B2_PokemonTypeInParty(void)
 {
 	u8 type = Var8000;
@@ -1788,13 +1788,13 @@ void sp0B2_PokemonTypeInParty(void)
 			if (type == gBaseStats[species].type1
 			||  type == gBaseStats[species].type2)
 			{
-				gSpecialVar_LastResult = TRUE;
+				gSpecialVar_LastResult = i;
 				return;
 			}
 		}
 	}
 
-	gSpecialVar_LastResult = FALSE;
+	gSpecialVar_LastResult = PARTY_SIZE;
 }
 
 //@Details: Checks if any Pokemon in the player's party can learn Draco Meteor.
@@ -1914,9 +1914,18 @@ bool8 sp18B_ShowFossilImage(void) {
 //@Returns: Given Var: Party id of mon that can learn it. PARTY_SIZE if none can.
 u8 sp0D0_PokemonInPartyThatCanLearnTMHM(void)
 {
+	u32 i;
 	u16 tm = Var8000;
+	for (i = 0; i < ITEMS_COUNT; ++i)
+	{
+		if (TMIdFromItemId(i) == tm)
+			break;
+	}
+	
+	if (i == ITEMS_COUNT)
+		return PARTY_SIZE; //Doesn't have the TM so can't use it without knowing it
 
-	for (u8 i = 0; i < PARTY_SIZE; ++i)
+	for (i = 0; i < PARTY_SIZE; ++i)
 	{
 		if (CanMonLearnTMHM(&gPlayerParty[i], tm - 1))
 			return i;

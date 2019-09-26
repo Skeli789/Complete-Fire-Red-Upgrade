@@ -167,7 +167,3 @@ gPartyMenuCursorOptions 8122D48
 sItemMenuActions 8109BA4
 sItemMenuActions 8109C20
 sItemMenuActions 8109C48
-
-#ifdef UNBOUND
-EventScript_RockClimb 888C844
-#endif

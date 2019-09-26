@@ -10,7 +10,6 @@
 /*===== General Vars =====*/
 #define TERRAIN_VAR 0x5000 //Set to a terrain type for a battle to begin with the given terrain
 #define TOTEM_VAR 0x5001 //to var + 3 (0x5004)
-#define NPC_FOLLOWING_VAR 0x5005 //This var should should be set to the NPC Id of the NPC following the player. If no NPC is following the player, it should be set to 0.
 #define BACKSPRITE_SWITCH_VAR 0x5006 //This var can be set to a number to change the Player's backsprite
 #define BATTLE_BG_VAR 0x5007 //Set this var to a custom background id
 #define SWARM_INDEX_VAR 0x5008 //Set by the engine
@@ -137,6 +136,7 @@ enum //These vars need to be one after the other (hence the enum)
 #define AI_TRY_TO_KILL_RATE 50 //In battles against a trainer with AI flags of 1, the AI will try to use a move to knock out the opponents XX percent of the time
 #define MB_OMNIDIRECTIONAL_JUMP 0x7F //The tile behaviour byte that can be jumped over in all directions
 #define MB_ROCK_CLIMB_WALL 0xA5 //The tile behaviour byte that can be climbed up using Rock Climb
+#define MB_LAVA 0xA6 //The tile beahviour byte that can be lava surfed on. Comment out to remove Lava Surf
 
 #define MAP_PLAYER_HOME ((4 << 8) | 0) //The map bank and map number of the player's home
 
@@ -219,7 +219,7 @@ enum //These vars need to be one after the other (hence the enum)
 #define AUTO_NAMING_SCREEN_SWAP  //Comment out if you don't want naming screens to auto-swap to lower-case after first upper-case letter
 #define MULTIPLE_PREMIER_BALLS_AT_ONCE //Comment out if you don't want the player received a Premier ball for every 10 Poke Balls purchased (only 1 no matter how many over 10 balls the player buys)
 #define NON_TRAINER_SPOTTING //Comment out if you don't want regular NPCs to be able to spot the player in the oveworld (vanilla only trainers can or the game will crash)
-//#define BIKE_ON_ANY_NON_INSIDE_MAP //Comment out if you still want biking to be determined by the map header.
+//#define BIKE_ON_ANY_NON_INSIDE_MAP //Comment out if you still want biking to be determined solely by the map header.
 //#define GEN_4_PLAYER_RUNNING_FIX //Uncommmenting this line will increase the lag between frames as the player OW runs, to simulate a more accurate Gen 4 running effect
 #define EXPAND_MOVE_REMINDER_DESCRIPTION //Keep this defined to have 5 lines for the move description as opposed to 4 in the move reminder menu
 #define ITEM_PICTURE_ACQUIRE //Item images will be shown when the player finds or obtains an item.

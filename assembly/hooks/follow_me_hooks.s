@@ -1,11 +1,12 @@
 .thumb
 .text
 .align 2
-/*
+
 FollowMe_SetStateHook:
 	mov r1, r5
 	mov r5, r0
 	mov r0, r4
+	mov r2, #0x0 @;Don't ignore active scripts
 	bl FollowMe
 	mov r0, r5
 	pop {r4, r5}
@@ -25,7 +26,7 @@ FollowMe_LedgeHook:
 	mov r0, r3		@ npc
 	mov r1, r4		@ obj
 	mov r2, sp 		@ ledge jump frames
-	bl ledge_fun
+	bl FollowMe_Ledges
 
 dont_move_oam:
 	ldr r2, =(0x08068D6E + 1)
@@ -37,7 +38,7 @@ FollowMe_CollisionHook:
 	push {r1-r3}
 	mov r0, r2
 	mov r1, r6
-	bl FollowMe_CollisionExempt
+	bl FollowMe_IsCollisionExempt
 	pop {r1-r3}
 	cmp r0, #0
 	beq check_for_collision
@@ -56,7 +57,8 @@ check_for_collision:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-bike_hook:
+@0x80A1330 with r0
+FollowMe_BikeHook:
 	bl FollowMe_HandleBike
 	pop {r4, pc}
 
@@ -65,14 +67,14 @@ bike_hook:
 @Surf hook, make follower jump into water as well
 @hook via R0, at 0x8086B00. Write 00 00 to 0x8086AFE
 FollowMe_SurfHook:
-	ldr r0, =(FollowerToWater)
+	ldr r0, =(FollowMe_FollowerToWater)
 	bl linker
 	ldr r1, =(0x20386E0)
 	mov r2, #0xA
 	ldrsh r0, [r6, r2]
 	str r0, [r1]
 	mov r2, #0xC
-	ldrsh r0,[r6, r2]
+	ldrsh r0, [r6, r2]
 	str r0, [r1, #0x4]
 	ldr r0, =(0x8086B0C +1)
 
@@ -82,22 +84,23 @@ linker:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 @Surf hook, startmenu/bag access
-@hook via R0, at 0x8086B00. Write 00 00 to 0x8086AFE
+@hook via R0, at 0x8056D12.
 FollowMe_SurfBagHook:
-	push {r4, r5, lr}
-	ldr r0, =(FollowerNoMoveSurf)
+	ldr r0, =0x8057100 | 1
 	bl linker
-	ldr r5, =(0x2037078)
-	ldrb r1, [r5, #0x5]
-	lsl r0, r1, #0x3
-	add r0, r0, r1
-	lsl r0, r0, #0x2
-	ldr r1, =(0x2036E38)
-	add r4, r0, r1
-	ldr r0, =(0x8120718 +1)
-
-linker:
+	ldr r0, =0x8057114 | 1
+	bl linker
+	ldr r0, =(FollowMe_BindToSurbBlobOnReloadScreen)
+	bl linker
+	ldr r0, =0x8056D30 | 1
 	bx r0
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+@hook via R0, at 0x805D140.
+FollowMe_DismountSurf:
+	bl PrepareFollowerDismountSurf
+	pop {r4-r5,pc}
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -118,7 +121,6 @@ FollowMe_CreateAvatarHook2:
 .pool
 FollowMe_StairsMoveHook:
 	strh r0, [r7, #0x26]
-	mov r0, r7
 	bl StairsMoveFollower
 
 @return:
@@ -129,29 +131,63 @@ FollowMe_StairsMoveHook:
 	bx r1
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+@0x8084868 with r2
+FollowMe_EscalatorMoveHook:
+	strh r0, [r5, #0x8]
+	strh r1, [r5, #0xC]
+	strh r1, [r5, #0xE]
+	ldrb r0, [r5, #0xA]
+	bl EscalatorMoveFollower
+	ldrb r0, [r5, #0xA]
+	ldr r1, =(0x08084870 + 1)
+	bx r1
 
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+@0x8084ACC with r0
+FollowMe_EscalatorWarpEndHook:
+	bl EscalatorMoveFollowerFinish
+	mov r0, #0x1
+	add sp, #0x4
+	pop {r4-r5, pc}
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
 FollowMe_WarpDoorEndHook:
+	bl FollowMe_SetIndicatorToComeOutDoor
 	bl FollowMe_WarpSetEnd
-	ldr r3, =0x08068A5C | 1
+	ldr r3, =UnfreezeEventObjects
 	bl call_via_r3
-	ldr r3, =0x0806994C | 1
+	ldr r3, =ScriptContext2_Disable
 	bl call_via_r3
 	ldr r0, =0x0807E200 | 1
 	bx r0
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
+FollowMe_WarpArrowEndHook:
+	bl FollowMe_WarpSetEnd
+	ldr r3, =UnfreezeEventObjects
+	bl call_via_r3
+	ldr r3, =ScriptContext2_Disable
+	bl call_via_r3
+	ldr r0, =0x807E2C0 | 1
+	bx r0
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
 FollowMe_WarpNormalEndHook:
 	bl FollowMe_WarpSetEnd
-	ldr r3, =0x08068A5C | 1
+	ldr r3, =UnfreezeEventObjects
 	bl call_via_r3
-	ldr r3, =0x0806994C | 1
+	ldr r3, =ScriptContext2_Disable
 	bl call_via_r3
 	ldr r0, =0x0807E310 | 1
 	bx r0
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
+.pool
 FollowMe_WarpStairsEndHook:
 	bl FollowMe_WarpSetEnd
 	ldr r3, =0x0805FAA8 | 1
@@ -166,7 +202,7 @@ call_via_r3:
 	bx r3
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
+.pool
 FollowMe_LocalIdHook:
 	push {lr}
 	lsl r0, #0x18
@@ -178,7 +214,28 @@ FollowMe_LocalIdHook:
 	bx r3
 
 local_id_return:
-	bl GetFollowerLocalId
+	bl GetFollowerObjectId
 	ldr r3, =(0x0805DF7C + 1)
 	bx r3
-*/
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+FollowMe_ScriptHook:
+	push {lr}
+	lsl r0, #0x18
+	lsr r0, #0x18
+	lsl r1, #0x18
+	push {r0-r2}
+	bl GetFollowerLocalId
+	mov r3, r0
+	pop {r0-r2}
+	cmp r3, #0x0
+	beq GetRegularScript
+	cmp r0, r3
+	bne GetRegularScript @Not follower id
+	bl GetFollowerScriptPointer
+	pop {pc}
+
+GetRegularScript:
+	ldr r3, =0x805FC28 | 1
+	bx r3

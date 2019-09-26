@@ -709,25 +709,38 @@ ApplySpecialMapPalette = 0x80598CC | 1;
 apply_map_tileset1_tileset2_palette = 0x8059AD8 | 1;
 MetatileBehavior_IsSandOrDeepSand = 0x8059B74 | 1;
 MetatileBehavior_IsSurfableWaterOrUnderwater = 0x8059CA4 | 1;
+MetatileBehavior_IsFastCurrent = 0x8059CC8 | 1;
 MetatileBehavior_IsForcedMovementTile = 0x8059D70 | 1;
 MetatileBehavior_IsTallGrass = 0x8059F34 | 1;
 MetatileBehavior_IsLongGrass = 0x8059F4C | 1;
 MetatileBehavior_IsIndoorEncounter = 0x8059F88 | 1;
 MetatileBehavior_IsMountain = 0x8059F9C | 1;
 MetatileBehavior_IsDeepOrOceanWater = 0x805A01C | 1;
+MetatileBehavior_IsWaterfall = 0x805A104 | 1;
 MetatileBehavior_IsRunningDisallowed = 0x805A234 | 1;
+FieldAnimateDoorClose = 0x805B2D0 | 1;
+FieldAnimateDoorOpen = 0x805B310 | 1;
+GetDoorSoundEffect = 0x805B364 | 1;
 SetPlayerAvatarTransitionFlags = 0x805BDEC | 1;
+GetPlayerFacing = 0x805C6C4 | 1;
+PlayerGetZCoord = 0x805C700 | 1;
 sub_805C780 = 0x805C780 | 1;
-PartyHasMonWithSurf = 0x805C83C | 1;
+PartyHasMonWithSurfOriginal = 0x805C83C | 1;
+IsPlayerSurfingNorth = 0x805C88C | 1;
 IsPlayerFacingSurfableFishableWater = 0x805C8B0 | 1;
+GetCollisionAtCoords = 0x80636AC | 1;
 MoveCoords = 0x8063A20 | 1;
 GetOppositeDirection = 0x8064480 | 1;
 FaceDirection = 0x80645F4 | 1;
+walkrun_is_standing_still = 0x8069554 | 1;
 ScriptCall = 0x80698D4 | 1;
 MapHeaderCheckScriptTable = 0x8069BD8 | 1;
 UpdateHappinessStepCounter = 0x806D74C | 1;
 UpdatePoisonStepCounter = 0x806D79C | 1;
 TrySetDiveWarp = 0x806DFB8 | 1;
+PlayRainStoppingSoundEffect = 0x807B004 | 1;
+WarpFadeScreen = 0x807DC18 | 1;
+sub_807DCB0 = 0x807DCB0 | 1;
 FieldCallback_ReturnToEventScript2 = 0x807DD24 | 1;
 FieldEffectActiveListRemove = 0x80837fc | 1;
 GetMapName = 0x80C4D78 | 1;
@@ -823,6 +836,7 @@ CpuSet = 0x81E3B64 | 1;
 
 
 /*Event Object Movement Functions*/
+RemoveEventObject = 0x805E4B4 | 1;
 TrySpawnEventObjectTemplate = 0x805E72C | 1;
 CreateVirtualSprite = 0x805E9F8 | 1;
 EventObjectSetGraphicsId = 0x805F060 | 1;
@@ -834,6 +848,8 @@ EventObjectSetHeldMovement = 0x8063CA4 | 1;
 EventObjectClearHeldMovementIfActive = 0x8063D1C | 1;
 EventObjectClearHeldMovement = 0x8063D34 | 1;
 EventObjectClearHeldMovementIfFinished = 0x8063D7C | 1;
+GetFaceDirectionMovementAction = 0x8063EB8 | 1;
+GetJumpMovementAction = 0x8064194 | 1;
 GetJumpSpecialMovementAction = 0x80641C0 | 1;
 UnfreezeEventObjects = 0x8068A5C | 1;
 
@@ -1268,6 +1284,7 @@ sub_8112450 = 0x8112450 | 1;
 
 /* Math Functions */
 Sine = 0x8044E30 | 1;
+Cosine = 0x8044E4C | 1;
 Random = 0x8044EC8 | 1;
 SeedRng2 = 0x8044EE8 | 1;
 CountTrailingZeroBits = 0x8045190 | 1;

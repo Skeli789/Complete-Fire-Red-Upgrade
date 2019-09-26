@@ -115,11 +115,14 @@ ScriptGiveMon 80A011C 3
 ItemId_GetName 809A8BC 1
 
 ##Overworld Hooks
+Overworld_IsBikingAllowed 8055C9C 0
 apply_map_tileset_palette 80599C8 3
 AutoRunHook 805BA30 0
 GetLedgeJumpDirection 80680F8 3
 TryRunOnFrameMapScript 8069C74 0
+GetInteractedWaterScript 806D548 3
 TryStartStepCountScript 0806D698 1
+PlayerGoThroughDoor 0807E80C 1
 BattleSetup_ConfigureTrainerBattle 8080228 1
 SetTrainerFlags 80803FC 0
 BattleSetup_StartTrainerBattle 8080464 0
@@ -128,6 +131,7 @@ GetIntroSpeechOfApproachingTrainer 80806D8 0
 GetTrainerCantBattleSpeech 8080734 0
 DoPoisonFieldEffect 80A0618 0
 CheckForTrainersWantingBattle 8081B30 0
+CanUseEscapeRopeOnCurrMap 80A1B8C 0
 IsRunningDisallowedByMetatile 80BD4B8 1
 
 ##Party Menu Hooks
@@ -225,10 +229,10 @@ ExpandedVarsHook 806E454 1
 ExpandedFlagsHook 806E5C0 1
 
 ##Other Hooks
-DaycareInheritHiddenAbility 8046116 0
-SetMonHeldItemHook 8040784 2
 CalculateMonStatsNew 803E47C 1
+SetMonHeldItemHook 8040784 2
 GetMonAbility 8040D38 1
+DaycareInheritHiddenAbility 8046116 0
 
 ##DNS
 TransferPlttBuffer 8070474 0
@@ -339,18 +343,24 @@ RemoveEvoItem 080CED5C 0
 EvolutionMovesHook 080CEDD4 1
 
 ##Follow Me
-#FollowMe_SetStateHook 08063CF4 1
+FollowMe_SetStateHook 08063CF4 1
 #FollowMe_LedgeHook 08068D58 0
-#FollowMe_CollisionHook 08063928 0
-#FollowMe_SurfHook 08086B00 0
-#FollowMe_SurfBagHook 08150708 0
-#FollowMe_CreateAvatarHook1 0805CAF4 0
-#FollowMe_CreateAvatarHook2 080570EC 0
-#FollowMe_StairsMoveHook 0807EB28 1
-#FollowMe_WarpDoorEndHook 0807E1F8 0
-#FollowMe_WarpNormalEndHook 0807E308 0
-#FollowMe_WarpStairsEndHook 0807EC5A 0
-#FollowMe_LocalIdHook 0805DF60 3
+FollowMe_CollisionHook 08063928 0
+FollowMe_SurfHook 08086B00 0
+FollowMe_SurfBagHook 08056D12 0
+FollowMe_DismountSurf 805D140 0
+FollowMe_BikeHook 80A1330 0
+FollowMe_CreateAvatarHook1 0805CAF4 0
+FollowMe_CreateAvatarHook2 080570EC 0
+FollowMe_StairsMoveHook 0807EB28 1
+FollowMe_EscalatorMoveHook 08084868 2
+FollowMe_EscalatorWarpEndHook 08084ACC 0
+FollowMe_WarpDoorEndHook 0807E1F8 0
+FollowMe_WarpArrowEndHook 0807E2B8 0
+FollowMe_WarpNormalEndHook 0807E308 0
+FollowMe_WarpStairsEndHook 0807EC5A 0
+FollowMe_LocalIdHook 0805DF60 3
+FollowMe_ScriptHook 0805FC20 3
 
 ##Learn Move
 GiveMoveToBoxMon 0803E8B0 2

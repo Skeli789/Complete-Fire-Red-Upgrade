@@ -14,10 +14,11 @@
 #include "../include/constants/songs.h"
 
 #include "../include/new/build_pokemon.h"
-#include "../include/new/util.h"
+#include "../include/new/follow_me.h"
 #include "../include/new/overworld.h"
 #include "../include/new/party_menu.h"
-#include "../include/new/Vanilla_functions.h"
+#include "../include/new/util.h"
+
 /*
 party_menu.c
 	handles anything related to the party menu, such as field moves, new party menu GUIs, etc...
@@ -825,10 +826,8 @@ const u8 gFieldMoveBadgeRequirements[FIELD_MOVE_COUNT] =
 
 static bool8 SetUpFieldMove_Fly(void)
 {
-	#ifdef PREVENT_ROUTE_ESCAPE_FLAG
-	if (FlagGet(PREVENT_ROUTE_ESCAPE_FLAG))
+	if (gFollowerState.inProgress && !(gFollowerState.flags & FOLLOWER_FLAG_CAN_LEAVE_ROUTE))
 		return FALSE;
-	#endif
 
 	if (Overworld_MapTypeAllowsTeleportAndFly(gMapHeader.mapType) == TRUE)
 		return TRUE;
@@ -836,15 +835,13 @@ static bool8 SetUpFieldMove_Fly(void)
 	return FALSE;
 }
 
-#define FieldCallback_Surf (void*) 0x812497C
+#define FieldCallback_Surf (void*) (0x812497C | 1)
 static bool8 SetUpFieldMove_Surf(void)
 {
-	#ifdef PREVENT_ROUTE_ESCAPE_FLAG
-	if (FlagGet(PREVENT_ROUTE_ESCAPE_FLAG))
+	if (gFollowerState.inProgress && !(gFollowerState.flags & FOLLOWER_FLAG_CAN_SURF))
 		return FALSE;
-	#endif
 
-	if (PartyHasMonWithSurf() == TRUE && IsPlayerFacingSurfableFishableWater() == TRUE)
+	if (PartyHasMonWithSurf() < PARTY_SIZE && IsPlayerFacingSurfableFishableWater() == TRUE)
 	{
 		gFieldCallback2 = FieldCallback_PrepareFadeInFromMenu;
 		gPostMenuFieldCallback = FieldCallback_Surf;
@@ -854,13 +851,11 @@ static bool8 SetUpFieldMove_Surf(void)
 	return FALSE;
 }
 
-#define FieldCallback_Teleport (void*) 0x80F6730
+#define FieldCallback_Teleport (void*) (0x80F6730 | 1)
 static bool8 SetUpFieldMove_Teleport(void)
 {
-	#ifdef PREVENT_ROUTE_ESCAPE_FLAG
-	if (FlagGet(PREVENT_ROUTE_ESCAPE_FLAG))
+	if (gFollowerState.inProgress && !(gFollowerState.flags & FOLLOWER_FLAG_CAN_LEAVE_ROUTE))
 		return FALSE;
-	#endif
 
 	if (Overworld_MapTypeAllowsTeleportAndFly(gMapHeader.mapType) == TRUE)
 	{
@@ -880,10 +875,8 @@ static void FieldCallback_Dive(void)
 
 static bool8 SetUpFieldMove_Dive(void)
 {
-	#ifdef PREVENT_ROUTE_ESCAPE_FLAG
-	if (FlagGet(PREVENT_ROUTE_ESCAPE_FLAG))
+	if (gFollowerState.inProgress && !(gFollowerState.flags & FOLLOWER_FLAG_CAN_DIVE))
 		return FALSE;
-	#endif
 
 	((u32*) gFieldEffectArguments)[1] = TrySetDiveWarp();
 	if (((u32*) gFieldEffectArguments)[1] != 0)
@@ -904,10 +897,8 @@ static void FieldCallback_RockClimb(void)
 
 static bool8 SetUpFieldMove_RockClimb(void)
 {
-	#ifdef PREVENT_ROUTE_ESCAPE_FLAG
-	if (FlagGet(PREVENT_ROUTE_ESCAPE_FLAG))
+	if (gFollowerState.inProgress && !(gFollowerState.flags & FOLLOWER_FLAG_CAN_ROCK_CLIMB))
 		return FALSE;
-	#endif
 
 	if (IsPlayerFacingRockClimbableWall())
 	{
@@ -944,10 +935,34 @@ static bool8 SetUpFieldMove_Defog(void)
 	return FALSE;
 }
 
-bool8 HasBadgeToUseFieldMove(u8 id)
+bool8 HasBadgeToUseFieldMove(unusedArg u8 id)
 {
-	return gFieldMoveBadgeRequirements[id] == 0
-		|| FlagGet(FLAG_BADGE01_GET + (gFieldMoveBadgeRequirements[id] - 1));
+	#ifdef DEBUG_HMS
+		return TRUE;
+	#else
+		return gFieldMoveBadgeRequirements[id] == 0
+			|| FlagGet(FLAG_BADGE01_GET + (gFieldMoveBadgeRequirements[id] - 1));
+	#endif
+}
+
+bool8 HasBadgeToUseSurf(void)
+{
+	return HasBadgeToUseFieldMove(FIELD_MOVE_SURF);
+}
+
+bool8 HasBadgeToUseWaterfall(void)
+{
+	return HasBadgeToUseFieldMove(FIELD_MOVE_WATERFALL);
+}
+
+bool8 HasBadgeToUseRockClimb(void)
+{
+	return HasBadgeToUseFieldMove(FIELD_MOVE_ROCK_CLIMB);
+}
+
+bool8 HasBadgeToUseDive(void)
+{
+	return HasBadgeToUseFieldMove(FIELD_MOVE_DIVE);
 }
 
 //Move Item - Credits to Sagiri/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

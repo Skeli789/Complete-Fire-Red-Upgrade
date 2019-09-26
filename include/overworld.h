@@ -104,3 +104,4 @@ void __attribute__((long_call)) CB2_ReturnToFieldWithOpenMenu(void);
 void __attribute__((long_call)) CB2_ReturnToFieldContinueScript(void);
 void __attribute__((long_call)) CB2_ReturnToFieldContinueScriptPlayMapMusic(void);
 void __attribute__((long_call)) SetWarpDestination(s8 mapGroup, s8 mapNum, s8 warpId, s8 x, s8 y);
+u8 __attribute__((long_call)) GetPlayerFacing(void);

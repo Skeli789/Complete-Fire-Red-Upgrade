@@ -1,10 +1,7 @@
-#ifndef GUARD_FIELD_SCREEN_EFFECT_H
-#define GUARD_FIELD_SCREEN_EFFECT_H
+#pragma once
 
 #include "global.h"
 
-void sub_80AF79C(void);
-void sub_80B009C(u8);
-void sub_80B0244(void);
-
-#endif // GUARD_FIELD_SCREEN_EFFECT_H
+void __attribute__((long_call)) WarpFadeScreen(void);
+bool8 __attribute__((long_call)) walkrun_is_standing_still(void);
+void __attribute__((long_call)) sub_807DCB0(u8 arg);

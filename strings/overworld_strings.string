@@ -46,6 +46,15 @@ The wall is very rocky[.]\nWill a Pok\emon's move scale it?
 #org @gText_DefogBlewAwayFog
 [BUFFER1] blew away the fog!
 
+#org @gText_LikeToLavaSurf
+The magma glistens a crimson red[.]\nWould you like to surf on it?
+
+#org @gText_LavaSurfedWith
+[BUFFER1] started surfing on\nthe magma!
+
+#org @gText_LavaDyed
+The magma glistens a crimson red.
+
 //Mart Strings
 
 #org @gText_SingleTmBuy

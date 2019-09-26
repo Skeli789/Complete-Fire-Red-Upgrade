@@ -23,6 +23,7 @@ void __attribute__((long_call)) Task_WeatherMain(u8 taskId);
 u8 __attribute__((long_call)) GetCurrentWeather(void);
 void __attribute__((long_call)) PreservePaletteInWeather(u8 preservedPalIndex);
 void __attribute__((long_call)) SetSav1Weather(u32 weather);
+void __attribute__((long_call)) PlayRainStoppingSoundEffect(void);
 
 // Controls how the weather should be changing the screen palettes.
 enum

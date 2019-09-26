@@ -5,6 +5,7 @@
 #include "../include/event_data.h"
 #include "../include/event_object_movement.h"
 #include "../include/field_effect.h"
+#include "../include/field_player_avatar.h"
 #include "../include/field_poison.h"
 #include "../include/fieldmap.h"
 #include "../include/fldeff_misc.h"
@@ -21,17 +22,21 @@
 #include "../include/sound.h"
 
 #include "../include/constants/flags.h"
+#include "../include/constants/items.h"
 #include "../include/constants/maps.h"
 #include "../include/constants/region_map_sections.h"
 #include "../include/constants/songs.h"
 #include "../include/constants/trainers.h"
 #include "../include/constants/trainer_classes.h"
 
+#include "../include/new/item.h"
+#include "../include/new/follow_me.h"
 #include "../include/new/frontier.h"
 #include "../include/new/util.h"
 #include "../include/new/multi.h"
 #include "../include/new/overworld.h"
 #include "../include/new/overworld_data.h"
+#include "../include/new/party_menu.h"
 #include "../include/new/wild_encounter.h"
 /*
 overworld.c
@@ -895,74 +900,76 @@ static bool8 GetProperDirection(u16 currentX, u16 currentY, u16 toX, u16 toY)
 	return ret;
 }
 
-void FollowerPositionFix(void)
+void FollowerPositionFix(u8 offset)
 {
 	gSpecialVar_LastResult = 0xFFFF;
 
-	if (!VarGet(NPC_FOLLOWING_VAR))
+	if (!gFollowerState.inProgress)
 		return;
 
-	Var8005 = VarGet(NPC_FOLLOWING_VAR);
-
 	u8 playerObjId = GetPlayerMapObjId();
+	u8 followerObjid = gFollowerState.objId;
 	u16 playerX = gEventObjects[playerObjId].currentCoords.x;
 	u16 playerY = gEventObjects[playerObjId].currentCoords.y;
+	u16 npcX = gEventObjects[followerObjid].currentCoords.x;
+	u16 npcY = gEventObjects[followerObjid].currentCoords.y;
 
-	for (u8 eventObjId = 0; eventObjId < MAP_OBJECTS_COUNT; ++eventObjId)
+	if (playerX == npcX)
 	{
-		if (gEventObjects[eventObjId].active && gEventObjects[eventObjId].localId == Var8005)
+		if (playerY > npcY)
 		{
-			u16 npcX = gEventObjects[eventObjId].currentCoords.x;
-			u16 npcY = gEventObjects[eventObjId].currentCoords.y;
-
-			if (playerX == npcX)
+			if (playerY != npcY + offset) //Player and follower are not 1 tile apart
 			{
-				if (playerY > npcY)
-				{
-					if (playerY != npcY + 1) //Player and follower are not 1 tile apart
-					{
-						if (Var8000 == 0)
-							gSpecialVar_LastResult = GoDown;
-						else
-							gEventObjects[eventObjId].currentCoords.y = playerY - 1;
-					}
-				}
-				else // Player Y <= npcY
-				{
-					if (playerY != npcY - 1) //Player and follower are not 1 tile apart
-					{
-						if (Var8000 == 0)
-							gSpecialVar_LastResult = GoUp;
-						else
-							gEventObjects[eventObjId].currentCoords.y = playerY + 1;
-					}
-				}
+				if (Var8000 == 0)
+					gSpecialVar_LastResult = GoDown;
+				else
+					gEventObjects[followerObjid].currentCoords.y = playerY - offset;
 			}
-			else //playerY == npcY
+		}
+		else // Player Y <= npcY
+		{
+			if (playerY != npcY - offset) //Player and follower are not 1 tile apart
 			{
-				if (playerX > npcX)
-				{
-					if (playerX != npcX + 1) //Player and follower are not 1 tile apart
-					{
-						if (Var8000 == 0)
-							gSpecialVar_LastResult = GoRight;
-						else
-							gEventObjects[eventObjId].currentCoords.x = playerX - 1;
-					}
-				}
-				else // Player X <= npcX
-				{
-					if (playerX != npcX - 1) //Player and follower are not 1 tile apart
-					{
-						if (Var8000 == 0)
-							gSpecialVar_LastResult = GoLeft;
-						else
-							gEventObjects[eventObjId].currentCoords.x = playerX + 1;
-					}
-				}
+				if (Var8000 == 0)
+					gSpecialVar_LastResult = GoUp;
+				else
+					gEventObjects[followerObjid].currentCoords.y = playerY + offset;
 			}
 		}
 	}
+	else //playerY == npcY
+	{
+		if (playerX > npcX)
+		{
+			if (playerX != npcX + offset) //Player and follower are not 1 tile apart
+			{
+				if (Var8000 == 0)
+					gSpecialVar_LastResult = GoRight;
+				else
+					gEventObjects[followerObjid].currentCoords.x = playerX - offset;
+			}
+		}
+		else // Player X <= npcX
+		{
+			if (playerX != npcX - offset) //Player and follower are not 1 tile apart
+			{
+				if (Var8000 == 0)
+					gSpecialVar_LastResult = GoLeft;
+				else
+					gEventObjects[followerObjid].currentCoords.x = playerX + offset;
+			}
+		}
+	}
+}
+
+void FollowerTrainerSightingPositionFix(void)
+{
+	FollowerPositionFix(1);
+}
+
+void FollowerIntoPlayer(void)
+{
+	FollowerPositionFix(0);
 }
 
 extern void __attribute__((long_call)) UpdateHappinessStepCounter(void);
@@ -1139,14 +1146,22 @@ bool8 IsRunningDisallowedByMetatile(u8 tile)
 
 bool8 Overworld_IsBikingAllowed(void)
 {
-	#ifdef BIKE_ON_ANY_NON_INSIDE_MAP
-		return !IsMapTypeIndoors(GetCurrentMapType());
-	#else
-	if (!(gMapHeader.flags & 1))
+	if (gFollowerState.inProgress && !(gFollowerState.flags & FOLLOWER_FLAG_CAN_BIKE))
 		return FALSE;
-	else
-		return TRUE;
-	#endif
+
+	return gMapHeader.isBikeable
+#ifdef BIKE_ON_ANY_NON_INSIDE_MAP
+	|| !IsMapTypeIndoors(GetCurrentMapType());
+#endif
+	;
+}
+
+bool8 CanUseEscapeRopeOnCurrMap(void)
+{
+	if (gFollowerState.inProgress && !(gFollowerState.flags & FOLLOWER_FLAG_CAN_LEAVE_ROUTE))
+		return FALSE;
+
+    return (gMapHeader.escapeRope & 1) != 0;
 }
 
 s32 DoPoisonFieldEffect(void)
@@ -1394,457 +1409,193 @@ void ShouldRockClimbContinueDiagonally(void)
 		gSpecialVar_LastResult = 0;
 }
 
-//Follow Me Updates/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/*
-static u8 GetFollowerMapObjId();
-void FollowMe(struct EventObject* npc, u8 state);
-static u8 FollowMe_DetermineDirection(struct EventObject* player, struct EventObject* follower);
-static void PlayerLogCoordinates(struct EventObject* player);
-bool8 FollowMe_CollisionExempt(struct EventObject* obstacle, struct EventObject* collider);
-void CopyPlayer_Ledges(struct EventObject* npc, struct Sprite* obj, u16* ledgeFramesTbl);
-static bool8 CopyPlayer_StateIsMovement(u8 state);
-static u8 CopyPlayer_ReturnDelayedState(u8 direction);
-static u8 DetermineFollowerState(struct EventObject* follower, u8 state, u8 direction);
-void FollowMe_HandleBike();
-void FollowMe_HandleSprite();
-void FollowerToWater();
-void FollowerNoMoveSurf();
-static void SetSurfJump(struct EventObject* npc);
-static void FollowMe_SetSurf(struct EventObject* npc);
-static void Task_BindSurfBlobToFollower(u8 taskId);
-static void FollowMe_SetUpFieldEffect(struct EventObject* npc);
-static void SetFollowerSprite(u8 spriteIndex);
-static u8 GetFollowerSprite();
-u8 GetFollowerLocalId(void);
-void CreateFollowerAvatar();
-void StairsMoveFollower(struct Sprite* obj);
-void FollowMe_WarpSetEnd();
-
-struct Follower
+u8 PartyHasMonWithSurf(void)
 {
-	u8 objId;
-	u8 currentSprite;
-	u8 locked;
-	u8 delayedState;
-	struct
+	if (!TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
 	{
-		u8 id;
-		u8 number;
-		u8 bank;
-	} map;
-	bool8 warpEnd;
-	struct Coords16 log;
-	u8* script;
-	u16 flag;
-	u8 gfxId;
-	bool8 inProgress;
-};
+		#ifdef UNBOUND
+		bool8 hasSurfHM = CheckBagHasItem(ITEM_HM03_SURF, 1) > 0;
+		#endif
 
-extern struct Follower gFollowerState;
+		for (u32 i = 0; i < PARTY_SIZE; ++i)
+		{
+			struct Pokemon* mon = &gPlayerParty[i];
 
-#define MOVEMENT_INVALID 0xFE
+			if (GetMonData(mon, MON_DATA_SPECIES, NULL) != SPECIES_NONE
+			&& !GetMonData(mon, MON_DATA_IS_EGG, NULL))
+			{
+				if (MonKnowsMove(mon, MOVE_SURF))
+					return i;
 
-static u8 GetFollowerMapObjId()
-{
-	return gFollowerState.objId;
-}
-
-void FollowMe(struct EventObject* npc, u8 state)
-{
-	struct EventObject* player = &gEventObjects[GetPlayerMapObjId()];
-
-	if (player != npc) //Only when the player moves
-		return;
-
-	if (!gFollowerState.inProgress)
-		return;
-
-	struct EventObject* follower = &gEventObjects[GetFollowerMapObjId()];
-
-	// Check if state would cause movement
-	if (CopyPlayer_StateIsMovement(state) && gFollowerState.warpEnd)
-	{
-		follower->invisible = FALSE;
-		gFollowerState.warpEnd = 0;
+				#ifdef UNBOUND
+				if (hasSurfHM && CanMonLearnTMTutor(mon, ITEM_HM03_SURF, 0) == CAN_LEARN_MOVE)
+					return i;
+				#endif
+			}
+		}
 	}
 
-	u8 dir = FollowMe_DetermineDirection(player, follower);
-
-	if (dir == DIR_NONE)
-		goto RESET;
-
-	u8 newState = DetermineFollowerState(follower, state, dir);
-
-	if (newState == MOVEMENT_INVALID)
-		goto RESET;
-
-	EventObjectClearHeldMovementIfActive(follower);
-	EventObjectSetHeldMovement(follower, newState);
-	PlayerLogCoordinates(player);
-
-RESET:
-	EventObjectClearHeldMovementIfFinished(follower);
+	return PARTY_SIZE;
 }
 
-static u8 FollowMe_DetermineDirection(struct EventObject* player, struct EventObject* follower)
+static u8 PartyHasMonWithWaterfall(void)
 {
-	s8 delta_x = follower->currentCoords.x - player->currentCoords.x;
-	s8 delta_y = follower->currentCoords.y - player->currentCoords.y;
+	if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
+	{
+		#ifdef UNBOUND
+		bool8 hasWaterfallHM = CheckBagHasItem(ITEM_HM07_WATERFALL, 1) > 0;
+		#endif
 
-	if (delta_x < 0)
-		return DIR_EAST;
-	else if (delta_x > 0)
-		return DIR_WEST;
+		for (u32 i = 0; i < PARTY_SIZE; ++i)
+		{
+			struct Pokemon* mon = &gPlayerParty[i];
 
-	if (delta_y < 0)
-		return DIR_SOUTH;
-	else if (delta_y > 0)
-		return DIR_NORTH;
-
-	return DIR_NONE;
-}
-
-static void PlayerLogCoordinates(struct EventObject* player)
-{
-	gFollowerState.log.x = player->currentCoords.x;
-	gFollowerState.log.y = player->currentCoords.y;
-}
-
-
-//static bool8 PlayerMoved(struct EventObject* player)
-//{
-//	return gFollowerState.log.x != player->currentCoords.x
-//		|| gFollowerState.log.y != player->currentCoords.y;
-//}
-
-
-bool8 FollowMe_CollisionExempt(struct EventObject* obstacle, struct EventObject* collider)
-{
-	if (!gFollowerState.inProgress)
-		return FALSE;
-
-	struct EventObject* follower = &gEventObjects[GetFollowerMapObjId()];
-	struct EventObject* player = &gEventObjects[GetPlayerMapObjId()];
-
-	if (obstacle == follower && collider == player)
-		return TRUE;
-
-	return FALSE;
-}
-
-#define LEDGE_FRAMES_MULTIPLIER 2
-
-extern void (**stepspeeds[5])(struct Sprite*, u8);
-extern const u16 stepspeed_seq_length[5];
-
-void CopyPlayer_Ledges(struct EventObject* npc, struct Sprite* obj, u16* ledgeFramesTbl)
-{
-	u8 speed;
-
-	if (!gFollowerState.inProgress)
-		return;
-
-	struct EventObject* follower = &gEventObjects[GetFollowerMapObjId()];
-
-	if (follower == npc)
-		speed = gPlayerAvatar->runningState ? 3 : 1;
-	else
-		speed = 0;
-
-	// Calculate the frames for the jump
-	u16 frameCount = (u16) stepspeed_seq_length[speed] * LEDGE_FRAMES_MULTIPLIER;
-	ledgeFramesTbl[obj->data[4]] = frameCount;
-
-	// Call the step shifter
-	u8 currentFrame = obj->data[6] / LEDGE_FRAMES_MULTIPLIER;
-	stepspeeds[speed][currentFrame](obj, obj->data[3]);
-}
-
-static bool8 CopyPlayer_StateIsMovement(u8 state)
-{
-	return state > 3;
-}
-
-#define RETURN_STATE(state) return newState == MOVEMENT_INVALID ? state : CopyPlayer_ReturnDelayedState(direction);
-
-static u8 CopyPlayer_ReturnDelayedState(u8 direction)
-{
-	u8 newState = gFollowerState.delayedState;
-	gFollowerState.delayedState = 0;
-	return newState + direction;
-}
-
-static u8 DetermineFollowerState(struct EventObject* follower, u8 state, u8 direction)
-{
-	u8 newState = MOVEMENT_INVALID;
-
-	if (CopyPlayer_StateIsMovement(state) && gFollowerState.delayedState)
-		newState = gFollowerState.delayedState + direction;
-
-	// Clear ice tile stuff
-	follower->disableAnim = FALSE; //follower->field1 &= 0xFB;
-
-	switch (state) {
-		case 0x08:
-		case 0x09:
-		case 0x0A:
-		case 0x0B:
-			// Slow walk
-			RETURN_STATE(0x8 + direction);
-		case 0x0C:
-		case 0x0D:
-		case 0x0E:
-		case 0x0F:
-			// Slow slow
-			RETURN_STATE(0xC + direction);
-		case 0x10:
-		case 0x11:
-		case 0x12:
-		case 0x13:
-			// Normal walk
-			RETURN_STATE(0x10 + direction);
-		case 0x14:
-		case 0x15:
-		case 0x16:
-		case 0x17:
-			// Ledge jump
-			gFollowerState.delayedState = 0x14;
-			RETURN_STATE(0x10 + direction);
-		case 0x1d:
-		case 0x1e:
-		case 0x1f:
-		case 0x20:
-			 //Handle ice tile (some walking animation)
-			 //Set a bit to freeze the follower's animation
-			 //FIXME: Use a hook (at 08063E28) to set this bit
-			follower->disableAnim = TRUE;
-			RETURN_STATE(0x1d + direction);
-		case 0x3d:
-		case 0x3E:
-		case 0x3F:
-		case 0x40:
-			// Running frames
-			RETURN_STATE(0x3d + direction);
-		case 0x31:
-		case 0x32:
-		case 0x33:
-		case 0x34:
-			// Bike speed
-			RETURN_STATE(0x31 + direction);
-		case 0x41:
-		case 0x42:
-		case 0x43:
-		case 0x44:
-			// Stairs (slow walking)
-			// Running sideways on stairs does not use the slow
-			// frames, so split this into two.
-			if (direction < 2)
+			if (GetMonData(mon, MON_DATA_SPECIES, NULL) != SPECIES_NONE
+			&& !GetMonData(mon, MON_DATA_IS_EGG, NULL))
 			{
-				RETURN_STATE(0x41 + direction);
+				if (MonKnowsMove(mon, MOVE_WATERFALL))
+					return i;
+
+				#ifdef UNBOUND
+				if (hasWaterfallHM && CanMonLearnTMTutor(mon, ITEM_HM07_WATERFALL, 0) == CAN_LEARN_MOVE)
+					return i;
+				#endif
+			}
+		}
+	}
+
+	return PARTY_SIZE;
+}
+
+static u8 PartyHasMonWithRockClimb(void)
+{
+	#ifdef UNBOUND
+	bool8 hasRockClimbHM = CheckBagHasItem(ITEM_HM08_ROCK_CLIMB, 1) > 0;
+	#endif
+
+	for (u32 i = 0; i < PARTY_SIZE; ++i)
+	{
+		struct Pokemon* mon = &gPlayerParty[i];
+
+		if (GetMonData(mon, MON_DATA_SPECIES, NULL) != SPECIES_NONE
+		&& !GetMonData(mon, MON_DATA_IS_EGG, NULL))
+		{
+			if (MonKnowsMove(mon, MOVE_ROCKCLIMB))
+				return i;
+
+			#ifdef UNBOUND
+			if (hasRockClimbHM && CanMonLearnTMTutor(mon, ITEM_HM08_ROCK_CLIMB, 0) == CAN_LEARN_MOVE)
+				return i;
+			#endif
+		}
+	}
+
+	return PARTY_SIZE;
+}
+
+#ifdef MB_LAVA
+static bool8 MetatileBehavior_IsLava(u8 behaviour)
+{
+	return behaviour == MB_LAVA;
+}
+#endif
+
+static bool8 IsPlayerFacingSurfableLava(void)
+{
+    struct EventObject *playerEventObj = &gEventObjects[gPlayerAvatar->eventObjectId];
+    s16 x = playerEventObj->currentCoords.x;
+    s16 y = playerEventObj->currentCoords.y;
+
+    MoveCoords(playerEventObj->facingDirection, &x, &y);
+    return GetCollisionAtCoords(playerEventObj, x, y, playerEventObj->facingDirection) == 3
+		&& PlayerGetZCoord() == 3
+		&& MetatileBehavior_IsLava(MapGridGetMetatileBehaviorAt(x, y));
+}
+
+#define SystemScript_CurrentTooFast (const u8*) 0x81A6B0D
+#define SystemScript_CannotUseWaterfall (const u8*) 0x81BE2FF
+extern const u8 SystemScript_UseSurf[];
+extern const u8 SystemScript_WaterDyedBlue[];
+extern const u8 SystemScript_UseLavaSurf[];
+extern const u8 SystemScript_MagmaGlistens[];
+extern const u8 SystemScript_UseWaterfall[];
+extern const u8 SystemScript_WallOfWater[];
+extern const u8 EventScript_UseRockClimb[];
+extern const u8 EventScript_JustRockWall[];
+const u8* GetInteractedWaterScript(unusedArg u32 unused1, u8 metatileBehavior, unusedArg u8 direction)
+{
+	#ifdef UNBOUND
+	if (FALSE) {}
+	#else
+	if (MetatileBehavior_IsFastCurrent(metatileBehavior))
+	{	if (PartyHasMonWithSurf() < PARTY_SIZE)
+			return SystemScript_CurrentTooFast;
+	}
+	#endif
+	#ifdef MB_LAVA
+	else if (IsPlayerFacingSurfableLava())
+	{
+		if (HasBadgeToUseSurf())
+		{
+			if (!gFollowerState.inProgress || gFollowerState.flags & FOLLOWER_FLAG_CAN_SURF)
+				return SystemScript_UseLavaSurf; //Fire-type check done in script
+
+			return SystemScript_MagmaGlistens;
+		}
+	}
+	#endif
+	else if (IsPlayerFacingSurfableFishableWater())
+	{
+		if (HasBadgeToUseSurf())
+		{
+			u8 partyId = PartyHasMonWithSurf();
+			if (partyId < PARTY_SIZE
+			&& (!gFollowerState.inProgress || gFollowerState.flags & FOLLOWER_FLAG_CAN_SURF))
+			{
+				Var8004 = partyId;
+				return SystemScript_UseSurf;
+			}
+
+			return SystemScript_WaterDyedBlue;
+		}
+	}
+	else if (MetatileBehavior_IsWaterfall(metatileBehavior))
+	{
+		if (HasBadgeToUseWaterfall())
+		{
+			if (IsPlayerSurfingNorth())
+			{
+				u8 partyId = PartyHasMonWithWaterfall();
+				if (partyId < PARTY_SIZE
+				&& (!gFollowerState.inProgress || gFollowerState.flags & FOLLOWER_FLAG_CAN_WATERFALL))
+				{
+					Var8004 = partyId;
+					return SystemScript_UseWaterfall;
+				}
+				
+				return SystemScript_WallOfWater;
 			}
 			else
-			{
-				RETURN_STATE(0x3d + direction);
-			}
-		case 0x94:
-		case 0x95:
-		case 0x96:
-		case 0x97:
-			// Warp pad spinning movement
-			RETURN_STATE(0x94 + direction);
-		case 0x46:
-		case 0x47:
-		case 0x48:
-		case 0x49:
-			RETURN_STATE(0x46 + direction);
-		default:
-			return 0xFE;
+				return SystemScript_CannotUseWaterfall;
+		}
 	}
-
-	return newState;
+	else if (IsPlayerFacingRockClimbableWall())
+	{
+		if (HasBadgeToUseRockClimb())
+		{
+			u8 partyId = PartyHasMonWithRockClimb();
+			if (partyId < PARTY_SIZE
+			&& (!gFollowerState.inProgress || gFollowerState.flags & FOLLOWER_FLAG_CAN_ROCK_CLIMB))
+			{
+				Var8004 = partyId;
+				return EventScript_UseRockClimb;
+			}
+		}
+		
+		return EventScript_JustRockWall;
+	}
+    return NULL;
 }
-
-void FollowMe_HandleBike()
-{
-	if (gPlayerAvatar->flags & 6)
-		SetFollowerSprite(1); //Bike on
-	else
-		SetFollowerSprite(0);
-}
-
-void FollowMe_HandleSprite()
-{
-	if (gPlayerAvatar->flags & 6)
-		SetFollowerSprite(1);
-	else
-		SetFollowerSprite(0);
-}
-
-void FollowerToWater()
-{
-	if (!gFollowerState.inProgress)
-		return;
-
-	//Make the follower do the jump and spawn the surf head
-	//right in front of the follower's location.
-	SetSurfJump(&gEventObjects[GetFollowerMapObjId()]);
-}
-
-void FollowerNoMoveSurf()
-{
-	//Spawn surfhead under follower
-	FollowMe_SetSurf(&gEventObjects[GetFollowerMapObjId()]);
-}
-
-static void SetSurfJump(struct EventObject* npc)
-{
-	//reset NPC movement bits
-	EventObjectClearHeldMovement(npc);
-
-	//jump animation according to direction
-	u8 direction = npc->movementDirection;
-	u8 jumpState = GetJumpSpecialMovementAction(direction);
-	EventObjectSetHeldMovement(npc, jumpState);
-	FollowMe_SetUpFieldEffect(npc);
-
-	//adjust surf head spawn location infront of npc
-	switch (direction) {
-		case DIR_SOUTH:
-			gFieldEffectArguments[1]++; //effect_y
-			break;
-
-		case DIR_NORTH:
-			gFieldEffectArguments[1]--;
-			break;
-
-		case DIR_WEST:
-			gFieldEffectArguments[0]--; //effect_x
-			break;
-
-		default: //DIR_EAST
-			gFieldEffectArguments[0]++;
-	};
-
-	//execute, store obj ID in field1A and bind obj
-	u8 surfBlobObjId = FieldEffectStart(FLDEFF_SURF_BLOB);
-	npc->fieldEffectSpriteId = surfBlobObjId;
-	u8 taskId = CreateTask(Task_BindSurfBlobToFollower, 0x1);
-	gTasks[taskId].data[0] = npc->localId;
-}
-
-static void FollowMe_SetSurf(struct EventObject* npc)
-{
-	FollowMe_SetUpFieldEffect(npc);
-	u8 surfBlobObjId = FieldEffectStart(FLDEFF_SURF_BLOB);
-	npc->fieldEffectSpriteId = surfBlobObjId;
-
-	u8 taskId = CreateTask(Task_BindSurfBlobToFollower, 0x1);
-	gTasks[taskId].data[0] = npc->localId;
-}
-
-static void Task_BindSurfBlobToFollower(u8 taskId)
-{
-	struct EventObject* npc = &gEventObjects[GetFollowerMapObjId()];
-
-	//Wait animation
-	bool8 animStatus = EventObjectClearHeldMovementIfFinished(npc);
-	if (animStatus == 0)
-		return;
-
-	//Bind objs
-	BindFieldEffectToSprite(npc->fieldEffectSpriteId, 0x1);
-	UnfreezeEventObjects();
-	DestroyTask(taskId);
-	return;
-}
-
-static void FollowMe_SetUpFieldEffect(struct EventObject* npc)
-{
-	//Set up gFieldEffectArguments for execution
-	gFieldEffectArguments[0] = npc->currentCoords.x; 	//effect_x
-	gFieldEffectArguments[1] = npc->currentCoords.y;	//effect_y
-	gFieldEffectArguments[2] = npc->localId; 			//npc_id
-}
-
-static void SetFollowerSprite(u8 spriteIndex)
-{
-	if (!gFollowerState.inProgress)
-		return;
-
-	// Save sprite
-	gFollowerState.currentSprite = spriteIndex;
-
-	struct EventObject* follower = &gEventObjects[GetFollowerMapObjId()];
-	EventObjectSetGraphicsId(follower, GetFollowerSprite());
-
-	// Update direction to prevent graphical glitches
-	EventObjectTurn(follower, follower->facingDirection);
-}
-
-static const u8 gCopyPlayerSpriteTable[] =
-{
-	[212] = 9, //Poke Kid -> Temporary Female Surfing Sprite
-};
-
-static u8 GetFollowerSprite()
-{
-	if (gFollowerState.currentSprite == 0)
-		return gFollowerState.gfxId;
-
-	return gCopyPlayerSpriteTable[gFollowerState.gfxId];
-}
-
-u8 GetFollowerLocalId(void)
-{
-	return gEventObjects[gFollowerState.objId].localId;
-}
-
-void CreateFollowerAvatar()
-{
-	struct EventObjectTemplate clone;
-	struct EventObjectTemplate* npc;
-
-	npc = GetEventObjectTemplateByLocalIdAndMap(1, 0, 3); //Load dummy data
-
-	//Create in-memory copy of constant data
-	Memcpy(&clone, npc, sizeof(struct EventObjectTemplate));
-
-	struct EventObject* player = &gEventObjects[GetPlayerMapObjId()];
-	clone.x = player->currentCoords.x - 7;
-	clone.y = player->currentCoords.y - 7;
-	clone.graphicsId = gFollowerState.gfxId;
-	clone.script = gFollowerState.script;
-
-	// Create NPC and store ID
-	gFollowerState.objId = TrySpawnEventObjectTemplate(&clone, 0, 3, 0, 0);
-
-	if (gFollowerState.objId == EVENT_OBJECTS_COUNT)
-		gFollowerState.inProgress = FALSE; //Cancel the following because couldn't load sprite
-
-	gEventObjects[gFollowerState.objId].invisible = TRUE;
-	//gFollowerState.warpEnd = 0;
-}
-
-void StairsMoveFollower(struct Sprite* obj)
-{
-	struct Sprite* follower = &gSprites[gEventObjects[GetFollowerMapObjId()].spriteId];
-	follower->pos2.x = obj->pos2.x;
-	follower->pos2.y = obj->pos2.y;
-}
-
-void FollowMe_WarpSetEnd()
-{
-	struct EventObject* player = &gEventObjects[GetPlayerMapObjId()];
-	struct EventObject* follower = &gEventObjects[GetFollowerMapObjId()];
-
-	gFollowerState.warpEnd = 1;
-	PlayerLogCoordinates(player);
-	MoveEventObjectToMapCoords(follower, player->currentCoords.x, player->currentCoords.y);
-
-	follower->facingDirection = player->facingDirection;
-	follower->movementDirection = player->movementDirection;
-}
-*/
 
 #ifdef GEN_4_PLAYER_RUNNING_FIX
 const union AnimCmd gEventObjectImageAnim_RunSouth[] =

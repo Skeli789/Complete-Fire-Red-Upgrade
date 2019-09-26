@@ -151,14 +151,25 @@ LookRightCall:
 .global FollowerPositionFixScript
 FollowerPositionFixScript:
 	setvar 0x8000 0x0
-	callasm FollowerPositionFix + 1
+	callasm FollowerTrainerSightingPositionFix
 	compare LASTRESULT 0xFFFF
 	if equal _goto FollowerPositionFixScriptReturn
 	call WalkCall
 	setvar 0x8000 0x1
-	callasm FollowerPositionFix + 1
+	callasm FollowerTrainerSightingPositionFix
 	
 FollowerPositionFixScriptReturn:
+	return
+	
+.global FollowerIntoPlayerScript
+FollowerIntoPlayerScript:
+	setvar 0x8000 0x0
+	callasm FollowerIntoPlayer
+	compare LASTRESULT 0xFFFF
+	if equal _goto FollowerPositionFixScriptReturn
+	call WalkCall
+	setvar 0x8000 0x1
+	callasm FollowerIntoPlayer
 	return
 
 WalkCall:
@@ -170,23 +181,23 @@ WalkCall:
 	if equal _call WalkLeftCall
 	compare LASTRESULT 0x3
 	if equal _call WalkRightCall
-	waitmovement 0x8005
+	waitmovement FOLLOWER
 	return
 	
 WalkDownCall:
-	applymovement 0x8005 WalkDown
+	applymovement FOLLOWER WalkDown
 	return
 
 WalkUpCall:
-	applymovement 0x8005 WalkUp
+	applymovement FOLLOWER WalkUp
 	return
 
 WalkLeftCall:
-	applymovement 0x8005 WalkLeft
+	applymovement FOLLOWER WalkLeft
 	return
 
 WalkRightCall:
-	applymovement 0x8005 WalkRight
+	applymovement FOLLOWER WalkRight
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

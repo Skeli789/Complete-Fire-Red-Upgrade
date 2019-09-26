@@ -11,15 +11,16 @@
 .equ SetUpTrainerMovement, 0x13A
 
 .equ CAMERA, 0x7F
+.equ FOLLOWER, 0xFE
 .equ PLAYER, 0xFF
 .equ PLAYERFACING, 0x800C
 .equ LASTRESULT, 0x800D
 .equ LASTTALKED, 0x800F
 
+.equ look_down, 0x0
 .equ look_up, 0x1
 .equ look_left, 0x2
 .equ look_right, 0x3
-.equ look_down, 0x4
 .equ walk_down_slow, 0xC
 .equ walk_up_slow, 0xD
 .equ walk_left_slow, 0xE 
@@ -40,6 +41,8 @@
 .equ pause_short, 0x1A
 .equ pause_long, 0x1C
 
+.equ set_invisible, 0x60
+.equ set_visible, 0x61
 .equ exclaim, 0x62
 .equ end_m, 0xFE
 
