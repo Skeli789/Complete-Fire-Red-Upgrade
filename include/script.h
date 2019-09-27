@@ -44,11 +44,11 @@ bool8 __attribute__((long_call)) ScriptContext2_IsEnabled(void);
 void __attribute__((long_call)) ScriptContext2_Enable(void);
 void __attribute__((long_call)) ScriptContext2_Disable(void);
 void __attribute__((long_call)) ScriptContext1_Stop(void);
+void __attribute__((long_call)) SetupNativeScript(struct ScriptContext *ctx, bool8 (*ptr)(void));
 
 /*
 void InitScriptContext(struct ScriptContext *ctx, void *cmdTable, void *cmdTableEnd);
 u8 SetupBytecodeScript(struct ScriptContext *ctx, const u8 *ptr);
-void SetupNativeScript(struct ScriptContext *ctx, bool8 (*ptr)(void));
 void StopScript(struct ScriptContext *ctx);
 bool8 RunScriptCommand(struct ScriptContext *ctx);
 u8 ScriptPush(struct ScriptContext *ctx, const u8 *ptr);

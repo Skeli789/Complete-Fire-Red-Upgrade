@@ -794,7 +794,7 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 							}
 							break;
 						case BATTLE_TOWER_SCALEMONS: ;
-							if (trainerId == FRONTIER_BRAIN_TID && IN_BATTLE_MINE)
+							if (trainerId == FRONTIER_BRAIN_TID && BATTLE_FACILITY_NUM == IN_BATTLE_MINE)
 								goto SPECIAL_TRAINER_LITTLE_SPREADS;
 
 							rand = Random() & 7;
@@ -811,7 +811,7 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 							goto SPECIAL_TRAINER_REGULAR_SPREADS;
 						case BATTLE_TOWER_350_CUP: ;
 						SPECIAL_TRAINER_350_SPREADS:
-							if (trainerId == FRONTIER_BRAIN_TID && IN_BATTLE_MINE)
+							if (trainerId == FRONTIER_BRAIN_TID && BATTLE_FACILITY_NUM == IN_BATTLE_MINE)
 								goto SPECIAL_TRAINER_LITTLE_SPREADS;
 
 							rand = Random() & 3;
@@ -834,7 +834,7 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 							}
 							break;
 						case BATTLE_TOWER_AVERAGE_MONS: ;
-							if (trainerId == FRONTIER_BRAIN_TID && IN_BATTLE_MINE)
+							if (trainerId == FRONTIER_BRAIN_TID && BATTLE_FACILITY_NUM == IN_BATTLE_MINE)
 								goto SPECIAL_TRAINER_LITTLE_SPREADS;
 
 							rand = Random() & 3;

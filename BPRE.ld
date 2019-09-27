@@ -755,6 +755,7 @@ UpdateSurfBlobFieldEffect = 0x80DC4F8 | 1;
 sub_8150498 = 0x8150498 | 1;
 
 /* Script Functions */
+SetupNativeScript = 0x80697F4 | 1;
 ScriptReadHalfword = 0x80698F8 | 1;
 ScriptContext2_Enable = 0x8069940 | 1;
 ScriptContext2_Disable = 0x806994C | 1;
@@ -782,6 +783,7 @@ calloc_ = 0x8002BB0 | 1;
 Free = 0x8002BC4 | 1;
 free_ = 0x8002BC4 | 1;
 LZDecompressVram = 0x800EBC0 | 1;
+LoadCompressedSpriteSheet = 0x800EBCC | 1;
 LoadCompressedSpriteSheetOverrideBuffer = 0x800EC00 | 1;
 LoadCompressedSpritePaletteOverrideBuffer = 0x800EC5C | 1;
 LZ77UnCompAnyRAM = 0x800EC8C | 1;

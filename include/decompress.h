@@ -13,6 +13,8 @@ bool8 __attribute__((long_call)) LoadCompressedSpriteSheetUsingHeap(const struct
 bool8 __attribute__((long_call)) LoadCompressedSpritePaletteUsingHeap(const struct CompressedSpritePalette *src);
 void __attribute__((long_call)) LoadCompressedSpritePaletteOverrideBuffer(const struct CompressedSpritePalette *a, void *buffer);
 void __attribute__((long_call)) LoadCompressedSpriteSheetOverrideBuffer(const struct CompressedSpriteSheet *src, void *buffer);
+u16 __attribute__((long_call)) LoadCompressedSpriteSheet(const struct CompressedSpriteSheet *src);
+
 /*
 u16 LoadCompressedObjectPic(const struct CompressedSpriteSheet *src);
 void LoadCompressedObjectPicOverrideBuffer(const struct CompressedSpriteSheet *src, void *buffer);
