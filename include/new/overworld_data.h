@@ -27,10 +27,24 @@
 #define EventScript_Poison (const u8*) 0x81A8DFD
 #define EventScript_EggHatch (const u8*) 0x81BF546
 
-extern u8 EventScript_SetUpNPCSpotting[];
-extern u8 Script_TrainerSpottedMulti[];
-extern u8 EventScript_DoTwoOpponentBattle[];
-extern u8 EventScript_TryDoTwoOpponentBattle[];
-extern u8 SystemScript_PoisonSurvial[];
-extern u8 EventScript_RepelWoreOff[];
-extern u8 EventScript_BwRepelWoreOff[];
+extern const u8 EventScript_SetUpNPCSpotting[];
+extern const u8 Script_TrainerSpottedMulti[];
+extern const u8 EventScript_DoTwoOpponentBattle[];
+extern const u8 EventScript_TryDoTwoOpponentBattle[];
+extern const u8 SystemScript_PoisonSurvial[];
+extern const u8 EventScript_RepelWoreOff[];
+extern const u8 EventScript_BwRepelWoreOff[];
+extern const u8 EventScript_LockedDoor[];
+extern const u8 EventScript_PsychicBarrier[];
+extern const u8 EventScript_Ladder[];
+
+#define SystemScript_CurrentTooFast (const u8*) 0x81A6B0D
+#define SystemScript_CannotUseWaterfall (const u8*) 0x81BE2FF
+extern const u8 SystemScript_UseSurf[];
+extern const u8 SystemScript_WaterDyedBlue[];
+extern const u8 SystemScript_UseLavaSurf[];
+extern const u8 SystemScript_MagmaGlistens[];
+extern const u8 SystemScript_UseWaterfall[];
+extern const u8 SystemScript_WallOfWater[];
+extern const u8 EventScript_UseRockClimb[];
+extern const u8 EventScript_JustRockWall[];

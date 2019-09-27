@@ -58,6 +58,7 @@ void sub_806E6FC(void);
 
 #define gSpecialVar_LastResult (*((u16*) 0x20370D0)) //extern u16 gSpecialVar_Result;
 #define gSpecialVar_LastTalked (*((u16*) 0x20370D2)) //extern u16 gSpecialVar_LastTalked;
+#define gSpecialVar_PlayerFacing (*((u16*) 0x20370D4)) //extern u16 gSpecialVar_PlayerFacing;
 #define gSpecialVar_MonBoxId (*((u16*) 0x20370D6)) //extern u16 gSpecialVar_MonBoxId;
 #define gSpecialVar_MonBoxPos (*((u16*) 0x20370D8)) //extern u16 gSpecialVar_MonBoxPos;
 

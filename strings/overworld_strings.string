@@ -67,6 +67,18 @@ The sea is deep here. A Pok\emon\nmay be able to go underwater.
 #org @gText_CantSurface
 Light is filtering down from above.\nA Pok\emon may be able to surface.
 
+#org @gText_DoorIsLocked
+The door is locked.
+
+#org @gText_PsychicBarrier
+There appears to be some sort of\nPsychic barrier in the way.
+
+#org @gText_ClimbLadder
+Would you like to climb the\nladder?
+
+#org @gText_CantReachLadder
+You can't reach the ladder from\nhere!
+
 //Mart Strings
 
 #org @gText_SingleTmBuy

@@ -465,3 +465,68 @@ EventScript_CantSurface:
 EventScript_EndSurface:
 	releaseall
 	end
+	
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global EventScript_LockedDoor
+EventScript_LockedDoor:
+	msgbox gText_DoorIsLocked MSG_SIGN
+	end
+
+.global EventScript_PsychicBarrier
+EventScript_PsychicBarrier:
+	msgbox gText_PsychicBarrier MSG_SIGN
+	end
+
+.global EventScript_Ladder
+EventScript_Ladder:
+	special SPECIAL_GET_PLAYER_FACING
+	compare PLAYERFACING LEFT
+	if equal _goto EventScript_FacingLadderSideways
+	compare PLAYERFACING RIGHT
+	if equal _goto EventScript_FacingLadderSideways
+	msgbox gText_ClimbLadder MSG_YESNO
+	compare LASTRESULT NO
+	if equal _goto EventScript_LadderEnd
+	closeonkeypress
+	lockall
+	call FollowerIntoPlayerScript
+	callasm HideFollower
+	special SPECIAL_DISMOUNT_BICYCLE
+	compare PLAYERFACING DOWN
+	if equal _goto EventScript_LadderDown
+
+EventScript_LadderUp:
+	applymovement PLAYER m_LadderClimbUp
+	waitmovement 0x0
+	setvar PLAYERFACING UP
+	callasm ShouldLadderClimbContinue
+	compare LASTRESULT 0
+	if equal _goto EventScript_LadderUpFinish
+	goto EventScript_LadderUp
+
+EventScript_LadderDown:
+	applymovement PLAYER m_LadderClimbDown
+	waitmovement 0x0
+	setvar PLAYERFACING DOWN
+	callasm ShouldLadderClimbContinue
+	compare LASTRESULT 0
+	if equal _goto EventScript_LadderDownFinish
+	goto EventScript_LadderDown
+
+EventScript_LadderUpFinish:
+	applymovement PLAYER m_LadderClimbUp
+	goto SystemScript_RockClimbFinish
+
+EventScript_LadderDownFinish:
+	applymovement PLAYER m_LadderClimbDown
+	goto SystemScript_RockClimbFinish
+
+EventScript_FacingLadderSideways:
+	msgbox gText_CantReachLadder MSG_NORMAL
+EventScript_LadderEnd:
+	releaseall
+	end
+
+m_LadderClimbUp: .byte walk_up_slow, end_m
+m_LadderClimbDown: .byte 0xAF, end_m

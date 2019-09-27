@@ -64,13 +64,63 @@ static bool8 SafariZoneTakeStep(void);
 static bool8 IsRunningDisabledByFlag(void);
 
 //Table full of pointers to custom walking scripts
-const u8* const gDefaultWalkingScripts[] =
+static const u8* const gDefaultWalkingScripts[] =
 {
 	NULL,
 	NULL,
 	NULL,
 	NULL,
 	//etc
+};
+
+//Table full of pointers of scripts run when talking to tiles with certain behaviour bytes
+static const u8* const sMetatileInteractionScripts[] =
+{
+	[MB_BOOKSHELF] = (void*) 0x81A7606,
+	[MB_POKEMART_SHELF] = (void*) 0x81A760F,
+	[MB_PC] = (void*) 0x81A6955,
+	[MB_REGION_MAP] = (void*) 0x81A6C32,
+	[MB_CABINET] = (void*) 0x81A7657,
+	[MB_KITCHEN] = (void*) 0x81A7660,
+	[MB_DRESSER] = (void*) 0x81A7669,
+	[MB_SNACKS] = (void*) 0x81A7672,
+	[MB_QUESTIONNAIRE] = (void*) 0x81A7702,
+	[MB_FOOD] = (void*) 0x81A7618,
+	[MB_BLUEPRINTS] = (void*) 0x81A763C,
+	[MB_PAINTING] = (void*) 0x81A767B,
+	[MB_POWER_PLANT_MACHINE] = (void*) 0x81A7684,
+	[MB_TELEPHONE] = (void*) 0x81A768D,
+	[MB_COMPUTER] = (void*) 0x81A762A,
+	[MB_ADVERTISING_POSTER] = (void*) 0x81A7696,
+	[MB_FOOD_SMELLS_TASTY] = (void*) 0x81A769F,
+	[MB_TRASH_BIN] = (void*) 0x81A76A8,
+	[MB_CUP] = (void*) 0x81A76B1,
+	[MB_BLINKING_LIGHTS] = (void*) 0x81A76CC,
+	[MB_TOOLS] = (void*) 0x81A76D5,
+	[MB_IMPRESSIVE_MACHINE] = (void*) 0x81A7633,
+	[MB_VIDEO_GAME] = (void*) 0x81A7621,
+	[MB_BURGLARY] = (void*) 0x81A7645,
+	[MB_TRAINER_TOWER_RECORD] = (void*) 0x81C549C,
+	
+
+	[MB_TELEVISION] = (void*) 0x81A764E,
+	[MB_BERRY_CRUSH_RECORDS] = (void*) 0x81BBFD8,
+	[MB_BATTLE_RECORDS] = (void*) 0x81BB8A7,
+	
+	[MB_POKEMON_CENTER_SIGN] = (void*) 0x81A76E7,
+	[MB_POKEMART_SIGN] = (void*) 0x81A76DE,
+	[MB_INDIGO_PLATEAU_MARK_DPAD] = (void*) 0x81A76F0,
+	[MB_INDIGO_PLATEAU_MARK_2_DPAD] = (void*) 0x81A76F9,
+
+#ifdef MB_LOCKED_DOOR
+	[MB_LOCKED_DOOR] = EventScript_LockedDoor,
+#endif
+#ifdef MB_PSYCHIC_BARRIER
+	[MB_PSYCHIC_BARRIER] = EventScript_PsychicBarrier,
+#endif
+#ifdef MB_CLIMBABLE_LADDER
+	[MB_CLIMBABLE_LADDER] = EventScript_Ladder,
+#endif
 };
 
 enum
@@ -1377,7 +1427,57 @@ u8 GetLedgeJumpDirection(s16 x, s16 y, u8 direction)
 	return 0;
 }
 
-static bool8 MetatileBehavior_IsRockClimableWall(u8 behaviour)
+const u8* GetInteractedMetatileScript(unusedArg int position, u8 metatileBehavior, u8 direction)
+{
+	gSpecialVar_PlayerFacing = direction;
+
+	switch (metatileBehavior) {
+		case MB_TELEVISION:
+		case MB_BERRY_CRUSH_RECORDS:
+		case MB_BATTLE_RECORDS:
+			if (direction == DIR_NORTH)
+				return sMetatileInteractionScripts[metatileBehavior];
+			break;
+		case MB_POKEMON_CENTER_SIGN:
+		case MB_POKEMART_SIGN:
+			if (direction == DIR_NORTH)
+			{
+				SetTextboxSignpostDesign();
+				return sMetatileInteractionScripts[metatileBehavior];
+			}
+			break;
+		case MB_INDIGO_PLATEAU_MARK_DPAD:
+		case MB_INDIGO_PLATEAU_MARK_2_DPAD:
+			SetTextboxSignpostDesign();
+			__attribute__ ((fallthrough));
+		default:
+			if (metatileBehavior < ARRAY_COUNT(sMetatileInteractionScripts))
+				return sMetatileInteractionScripts[metatileBehavior];
+	}
+
+	return NULL;
+}
+
+static bool8 MetatileBehavior_IsClimbableLadder(unusedArg u8 behaviour)
+{
+	#ifndef MB_CLIMBABLE_LADDER
+	return FALSE;
+	#else
+	return behaviour == MB_CLIMBABLE_LADDER;
+	#endif
+}
+
+void ShouldLadderClimbContinue(void)
+{
+	struct EventObject *playerEventObj = &gEventObjects[gPlayerAvatar->eventObjectId];
+	s16 x = playerEventObj->currentCoords.x;
+	s16 y = playerEventObj->currentCoords.y;
+
+	MoveCoords(gSpecialVar_PlayerFacing, &x, &y);
+	gSpecialVar_LastResult = MetatileBehavior_IsClimbableLadder(MapGridGetMetatileBehaviorAt(x, y));
+}
+
+static bool8 MetatileBehavior_IsRockClimbableWall(u8 behaviour)
 {
 	return behaviour == MB_ROCK_CLIMB_WALL;
 }
@@ -1389,7 +1489,7 @@ bool8 IsPlayerFacingRockClimbableWall(void)
 	s16 y = playerEventObj->currentCoords.y;
 
 	MoveCoords(playerEventObj->facingDirection, &x, &y);
-	return MetatileBehavior_IsRockClimableWall(MapGridGetMetatileBehaviorAt(x, y));
+	return MetatileBehavior_IsRockClimbableWall(MapGridGetMetatileBehaviorAt(x, y));
 }
 
 void ShouldRockClimbContinue(void)
@@ -1406,9 +1506,9 @@ void ShouldRockClimbContinueDiagonally(void)
 
 	MoveCoords(playerEventObj->facingDirection, &x, &y);
 
-	if (MetatileBehavior_IsRockClimableWall(MapGridGetMetatileBehaviorAt(x, y + 1)))
+	if (MetatileBehavior_IsRockClimbableWall(MapGridGetMetatileBehaviorAt(x, y + 1)))
 		gSpecialVar_LastResult = 2; //Move diagonal up
-	else if (y != 0 && MetatileBehavior_IsRockClimableWall(MapGridGetMetatileBehaviorAt(x, y - 1)))
+	else if (y != 0 && MetatileBehavior_IsRockClimbableWall(MapGridGetMetatileBehaviorAt(x, y - 1)))
 		gSpecialVar_LastResult = 1; //Move diagonal down
 	else
 	#endif
@@ -1467,16 +1567,6 @@ static bool8 IsPlayerFacingSurfableLava(void)
 		&& MetatileBehavior_IsLava(MapGridGetMetatileBehaviorAt(x, y));
 }
 
-#define SystemScript_CurrentTooFast (const u8*) 0x81A6B0D
-#define SystemScript_CannotUseWaterfall (const u8*) 0x81BE2FF
-extern const u8 SystemScript_UseSurf[];
-extern const u8 SystemScript_WaterDyedBlue[];
-extern const u8 SystemScript_UseLavaSurf[];
-extern const u8 SystemScript_MagmaGlistens[];
-extern const u8 SystemScript_UseWaterfall[];
-extern const u8 SystemScript_WallOfWater[];
-extern const u8 EventScript_UseRockClimb[];
-extern const u8 EventScript_JustRockWall[];
 const u8* GetInteractedWaterScript(unusedArg u32 unused1, u8 metatileBehavior, unusedArg u8 direction)
 {
 	u16 item = ITEM_NONE;
