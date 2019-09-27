@@ -179,3 +179,7 @@ scrB5_SubtractCoins 0815FC88
 
 ##Animations
 UpdatedAnimStealItemFinalCallback 80A37B8
+
+##Dive
+PlayerAvatarTransition_Underwater 835B854
+PlayerAvatarTransition_HandleUnderwater 8471EEC

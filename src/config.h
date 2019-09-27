@@ -6,6 +6,7 @@
  */
 
 //#define DEBUG_MEGA
+//#define DEBUG_HMS
 
 /*===== General Vars =====*/
 #define TERRAIN_VAR 0x5000 //Set to a terrain type for a battle to begin with the given terrain
@@ -89,15 +90,16 @@ enum //These vars need to be one after the other (hence the enum)
 #define VAR_PLAYER_VS_SEEKER 0x5022			//Change vs seeker usage sprite. 0x4057 in JPAN engine.
 #define VAR_PLAYER_FISHING 0x5023			//Change fishing sprite. 0x4058 in JPAN engine.
 #define VAR_PLAYER_VS_SEEKER_ON_BIKE 0x5024	//Change vs seeker on bike sprite. 0x4059 in JPAN engine.
-#define VAR_TRAINERCARD_MALE 0x5025			//Change trainer card image (male). 0x4060 in JPAN engine.
-#define VAR_TRAINERCARD_FEMALE 0x5026		//Change trainer card image (female). 0x4061 in JPAN engine.
+#define VAR_PLAYER_UNDERWATER 0x5025		//Change underwater sprite.
+#define VAR_TRAINERCARD_MALE 0x5026			//Change trainer card image (male). 0x4060 in JPAN engine.
+#define VAR_TRAINERCARD_FEMALE 0x5027		//Change trainer card image (female). 0x4061 in JPAN engine.
 
-#define VAR_RUNTIME_CHANGEABLE 0x5027	//'Secret Base' variables, save 15 consecutive variables for this. 0x4080 in JPAN engine.
+#define VAR_RUNTIME_CHANGEABLE 0x5028	//'Secret Base' variables, save 15 consecutive variables for this. 0x4080 in JPAN engine.
 
 /*===== Healing Place as in JPAN's Engine =====*/
-#define VAR_HEALINGMAP 0x5036 //0x405A in JPAN's Engine
-#define VAR_HEALING_XPOS 0x5037 //0x405B in JPAN's Engine
-#define VAR_HEALING_YPOS 0x5038 //0x405C in JPAN's Engine
+#define VAR_HEALINGMAP 0x5037 //0x405A in JPAN's Engine
+#define VAR_HEALING_XPOS 0x5038 //0x405B in JPAN's Engine
+#define VAR_HEALING_YPOS 0x5039 //0x405C in JPAN's Engine
 
 /*===== TM/HM/Tutor Options (Vastly improved from other versions!) =====*/
 //#define EXPANDED_TMSHMS  //Comment this out if you want to keep 50 tms/8 hms
@@ -160,9 +162,9 @@ enum //These vars need to be one after the other (hence the enum)
 
 /*===== Pre-Battle Mugshot Options ====*/
 #define FR_PRE_BATTLE_MUGSHOT_STYLE
-#define VAR_PRE_BATTLE_MUGSHOT_STYLE 0x5039
-#define VAR_PRE_BATTLE_MUGSHOT_SPRITE 0x503A
-#define VAR_MUGSHOT_PLAYER_PAL 0x503B	// used to change the player's tilemap palette in the Two Bar mugshot style
+#define VAR_PRE_BATTLE_MUGSHOT_STYLE 0x503A
+#define VAR_PRE_BATTLE_MUGSHOT_SPRITE 0x503B
+#define VAR_MUGSHOT_PLAYER_PAL 0x503C	// used to change the player's tilemap palette in the Two Bar mugshot style
 #define FLAG_LOAD_MUGSHOT_SPRITE_FROM_TABLE 0x924	//Load custom mugshot for pre-battle transition
 
 /*=====Safari Zone Options=====*/
@@ -231,6 +233,7 @@ enum //These vars need to be one after the other (hence the enum)
 #define HIGH_PITCH_MEGA_PRIMAL_CRY //Mega Pokemon cries will be higher pitched. This is useful if you're using the base form cries for Mega Evolutions
 #define SCROLLING_MULTICHOICE //Enables scrolling multichoice menus by using special 0x158.
 //#define REPLACE_SOME_VANILLA_SPECIALS //Replaces the sp07C, sp07D, sp09E, sp156, & sp18B with modified versions. Breaks vanilla FR compatability.
+#define REPLACE_ASH_WEATHER_WITH_WHITE_SANDSTORM //Replaces the falling ash weather effect with a white version of the sandstorm weather effect
 
 /*===== Misc Battle Effect Options =====*/
 //#define OLD_BURN_DAMAGE //Uncomment this line if you want burn damage to do 1/8 of max health instead of 1/16

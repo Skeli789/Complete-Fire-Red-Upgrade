@@ -35,7 +35,7 @@ const u8* LoadProperWhiteoutString(const u8* string);
 bool8 IsPlayerFacingRockClimbableWall(void);
 void ShouldRockClimbContinue(void);
 void ShouldRockClimbContinueDiagonally(void);
-u8 PartyHasMonWithSurf(void);
+u8 PartyHasMonWithFieldMovePotential(u16 move, u16 item, u8 surfingType);
 
 //Functions Hooked In
 u8 CheckForTrainersWantingBattle(void);
@@ -53,6 +53,13 @@ s32 DoPoisonFieldEffect(void);
 void TaskRepel(u8 taskId);
 bool8 UpdateRepelCounter(void);
 const u8* GetInteractedWaterScript(u32 unused1, u8 metatileBehavior, u8 direction);
+
+//Exported Constants
+enum
+{
+	SHOULDNT_BE_SURFING = 1,
+	SHOULD_BE_SURFING,
+};
 
 //Exported Data Structures
 struct Pedometers

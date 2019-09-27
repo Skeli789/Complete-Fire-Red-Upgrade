@@ -1,12 +1,17 @@
 #include "defines.h"
 #include "defines_battle.h"
+#include "../include/event_object_movement.h"
+#include "../include/field_effect_helpers.h"
+#include "../include/field_player_avatar.h"
 #include "../include/link.h"
 #include "../include/random.h"
 #include "../include/sprite.h"
+#include "../include/constants/event_object_movement_constants.h"
 #include "../include/constants/event_objects.h"
 #include "../include/constants/trainers.h"
 
 #include "../include/new/character_customization.h"
+#include "../include/new/follow_me.h"
 #include "../include/new/multi.h"
 #include "../include/new/util.h"
 /*
@@ -74,6 +79,23 @@ static const struct CharacterCustomizationPaletteSwitch sCharacterPalSwitchTable
 	};
 #endif
 
+struct PlayerGraphics
+{
+	u16 graphicsId;
+	u8 stateFlag;
+};
+
+static const struct PlayerGraphics sPlayerAvatarGfxIds[][2] =
+{
+	[PLAYER_AVATAR_STATE_NORMAL] =			{{EVENT_OBJ_GFX_RED_NORMAL, PLAYER_AVATAR_FLAG_ON_FOOT},			{EVENT_OBJ_GFX_LEAF_NORMAL, PLAYER_AVATAR_FLAG_ON_FOOT}},
+	[PLAYER_AVATAR_STATE_BIKE] =			{{EVENT_OBJ_GFX_RED_BIKE, PLAYER_AVATAR_FLAG_BIKE},					{EVENT_OBJ_GFX_LEAF_BIKE, PLAYER_AVATAR_FLAG_BIKE}},
+	[PLAYER_AVATAR_STATE_SURFING] =			{{EVENT_OBJ_GFX_RED_SURFING, PLAYER_AVATAR_FLAG_SURFING},			{EVENT_OBJ_GFX_LEAF_SURFING, PLAYER_AVATAR_FLAG_SURFING}},
+	[PLAYER_AVATAR_STATE_FIELD_MOVE] =		{{EVENT_OBJ_GFX_RED_FIELD_MOVE, 0},									{EVENT_OBJ_GFX_LEAF_FIELD_MOVE, 0}},
+	[PLAYER_AVATAR_STATE_FISHING] =			{{EVENT_OBJ_GFX_RED_FISHING, 0},									{EVENT_OBJ_GFX_LEAF_FISHING, 0}},
+	[PLAYER_AVATAR_STATE_FIELD_MOVE_2] =	{{EVENT_OBJ_GFX_RED_FIELD_MOVE_2, 0},								{EVENT_OBJ_GFX_LEAF_FIELD_MOVE_2, 0}},
+	[PLAYER_AVATAR_STATE_UNDERWATER] =		{{EVENT_OBJ_GFX_RED_UNDERWATER, PLAYER_AVATAR_FLAG_UNDERWATER},		{EVENT_OBJ_GFX_LEAF_UNDERWATER, PLAYER_AVATAR_FLAG_UNDERWATER}},
+};
+
 //This file's functions:
 #ifdef UNBOUND
 static const u8* GetAlternateTrainerSpritePal(void);
@@ -97,6 +119,13 @@ NPCPtr GetEventObjectGraphicsInfo(u16 graphicsId)
 	}
 	else
 	{
+		switch (spriteId) {
+			case EVENT_OBJ_GFX_RED_BIKE_VS_SEEKER:
+			case EVENT_OBJ_GFX_LEAF_BIKE_VS_SEEKER:
+				newId = VarGet(VAR_PLAYER_VS_SEEKER_ON_BIKE);
+				break;
+		}
+
 		if (tableId == 0 && spriteId > 239)
 		{
 			newId = VarGetEventObjectGraphicsId(spriteId + 16);
@@ -106,34 +135,6 @@ NPCPtr GetEventObjectGraphicsInfo(u16 graphicsId)
 		else if (tableId == 0)	// load sprite/table IDs from vars
 		{
 			u16 newId = 0;
-			switch (spriteId) {
-				case 0:
-				case 7:
-					newId = VarGet(VAR_PLAYER_WALKRUN);
-					break;
-				case 1:
-				case 8:
-					newId = VarGet(VAR_PLAYER_BIKING);
-					break;
-				case 2:
-				case 9:
-					newId = VarGet(VAR_PLAYER_SURFING);
-					break;
-				case 3:
-				case 5:
-				case 10:
-				case 12:
-					newId = VarGet(VAR_PLAYER_VS_SEEKER);
-					break;
-				case 4:
-				case 11:
-					newId = VarGet(VAR_PLAYER_FISHING);
-					break;
-				case 6:
-				case 13:
-					newId = VarGet(VAR_PLAYER_VS_SEEKER_ON_BIKE);
-					break;
-			}
 
 			// get updated table and sprite IDs
 			if (newId != 0)
@@ -159,6 +160,129 @@ NPCPtr GetEventObjectGraphicsInfo(u16 graphicsId)
 	return spriteAddr;
 };
 
+static u16 GetCustomGraphicsIdByState(u8 state)
+{
+	u16 spriteId = 0;
+
+	switch (state) {
+		case PLAYER_AVATAR_STATE_NORMAL:
+			spriteId = VarGet(VAR_PLAYER_WALKRUN);
+			break;
+		case PLAYER_AVATAR_STATE_BIKE:
+			spriteId = VarGet(VAR_PLAYER_BIKING);
+			break;
+		case PLAYER_AVATAR_STATE_SURFING:
+			spriteId = VarGet(VAR_PLAYER_SURFING);
+			break;
+		case PLAYER_AVATAR_STATE_FIELD_MOVE:
+		case PLAYER_AVATAR_STATE_FIELD_MOVE_2:
+			spriteId = VarGet(VAR_PLAYER_VS_SEEKER);
+			break;
+		case PLAYER_AVATAR_STATE_FISHING:
+			spriteId = VarGet(VAR_PLAYER_FISHING);
+			break;
+		case PLAYER_AVATAR_STATE_UNDERWATER:
+			spriteId = VarGet(VAR_PLAYER_UNDERWATER);
+			break;
+	}
+	
+	return spriteId;
+}
+
+u16 GetPlayerAvatarGraphicsIdByStateIdAndGender(u8 state, u8 gender)
+{
+	u16 graphicsId = GetCustomGraphicsIdByState(state);
+	if (graphicsId != 0)
+		return graphicsId;
+
+	return sPlayerAvatarGfxIds[state][gender].graphicsId;
+}
+
+u16 GetPlayerAvatarGraphicsIdByStateId(u8 state)
+{
+	return GetPlayerAvatarGraphicsIdByStateIdAndGender(state, gPlayerAvatar->gender);
+}
+
+u8 GetPlayerAvatarStateTransitionByGraphicsId(u16 graphicsId, u8 gender)
+{
+    for (u8 state = 0; state < ARRAY_COUNT(sPlayerAvatarGfxIds); ++state)
+    {
+		u16 customGraphicsId = GetCustomGraphicsIdByState(state);
+		if (customGraphicsId == graphicsId)
+			graphicsId = sPlayerAvatarGfxIds[state][gender].graphicsId;
+
+        if (sPlayerAvatarGfxIds[state][gender].graphicsId == graphicsId)
+            return sPlayerAvatarGfxIds[state][gender].stateFlag;
+    }
+
+    return PLAYER_AVATAR_FLAG_ON_FOOT;
+}
+
+u16 GetPlayerAvatarGraphicsIdByCurrentState(void)
+{
+	u8 state = 0;
+	u8 gender = gPlayerAvatar->gender;
+    u8 flags = gPlayerAvatar->flags;
+
+    for (; state < ARRAY_COUNT(sPlayerAvatarGfxIds); ++state)
+    {
+        if (sPlayerAvatarGfxIds[state][gender].stateFlag & flags)
+		{
+			u16 graphicsId = sPlayerAvatarGfxIds[state][gender].graphicsId;
+			u16 customGraphicsId = GetCustomGraphicsIdByState(state);
+			if (customGraphicsId != 0)
+				graphicsId = customGraphicsId;
+
+			return graphicsId;
+		}
+    }
+
+    return sPlayerAvatarGfxIds[0][0].graphicsId;
+}
+
+u8 GetPlayerAvatarGenderByGraphicsId(u8 gfxId)
+{
+    for (u8 state = 0; state < ARRAY_COUNT(sPlayerAvatarGfxIds); ++state)
+    {
+		for (u8 gender = 0; gender < ARRAY_COUNT(sPlayerAvatarGfxIds[0]); ++gender)
+		{
+			if (sPlayerAvatarGfxIds[state][gender].graphicsId == gfxId)
+				return gender;
+				
+			u16 customGraphicsId = GetCustomGraphicsIdByState(state);
+			if (customGraphicsId != 0 && customGraphicsId == gfxId)
+				return gSaveBlock2->playerGender;
+		}
+	}
+	
+	return MALE;
+}
+
+static void SetPlayerAvatarExtraStateTransition(u16 graphicsId, u8 b)
+{
+    u8 unk = GetPlayerAvatarStateTransitionByGraphicsId(graphicsId, gPlayerAvatar->gender);
+	SetPlayerAvatarTransitionFlags(unk | b);
+}
+
+u16 GetEventObjectGraphicsId(struct EventObject* eventObj)
+{
+	u8 lowerByte = eventObj->graphicsIdLowerByte;
+	u8 upperByte = eventObj->graphicsIdUpperByte;
+	
+	if (upperByte >= ARRAY_COUNT(gOverworldTableSwitcher))
+		return  lowerByte;
+	
+	return lowerByte | (upperByte << 8);
+}
+
+void SetPlayerAvatarEventObjectIdAndObjectId(u8 eventObjectId, u8 spriteId)
+{
+    gPlayerAvatar->eventObjectId = eventObjectId;
+    gPlayerAvatar->spriteId = spriteId;
+    gPlayerAvatar->gender = GetPlayerAvatarGenderByGraphicsId(GetEventObjectGraphicsId(&gEventObjects[eventObjectId]));
+    SetPlayerAvatarExtraStateTransition(GetEventObjectGraphicsId(&gEventObjects[eventObjectId]), 0x20);
+}
+
 // load trainer card sprite based on variables
 // 	hook at 810c374 via r2
 u8 PlayerGenderToFrontTrainerPicId(u8 gender, bool8 modify)
@@ -173,6 +297,35 @@ u8 PlayerGenderToFrontTrainerPicId(u8 gender, bool8 modify)
 	return trainerId;
 };
 
+void InitPlayerAvatar(s16 x, s16 y, u8 direction, u8 gender)
+{
+	u8 eventObjectId;
+	struct EventObject* eventObject;
+	struct EventObjectTemplate playerEventObjTemplate = {0};
+	u16 graphicsId = GetPlayerAvatarGraphicsIdByStateIdAndGender(PLAYER_AVATAR_STATE_NORMAL, gender);
+
+	playerEventObjTemplate.localId = EVENT_OBJ_ID_PLAYER;	
+	playerEventObjTemplate.graphicsIdLowerByte = graphicsId & 0xFF;
+	playerEventObjTemplate.graphicsIdUpperByte = graphicsId >> 8;
+	playerEventObjTemplate.x = x - 7;
+	playerEventObjTemplate.y = y - 7;
+	playerEventObjTemplate.movementType = MOVEMENT_TYPE_PLAYER;
+
+	eventObjectId = SpawnSpecialEventObject(&playerEventObjTemplate);
+	eventObject = &gEventObjects[eventObjectId];
+	eventObject->isPlayer = 1;
+	eventObject->warpArrowSpriteId = CreateWarpArrowSprite();
+	EventObjectTurn(eventObject, direction);
+	ClearPlayerAvatarInfo();
+
+	gPlayerAvatar->runningState = NOT_MOVING;
+	gPlayerAvatar->tileTransitionState = T_NOT_MOVING;
+	gPlayerAvatar->eventObjectId = eventObjectId;
+	gPlayerAvatar->spriteId = eventObject->spriteId;
+	gPlayerAvatar->gender = gender;
+	SetPlayerAvatarStateMask(PLAYER_AVATAR_FLAG_5 | PLAYER_AVATAR_FLAG_ON_FOOT);
+	CreateFollowerAvatar();
+}
 
 void PlayerHandleDrawTrainerPic(void)
 {

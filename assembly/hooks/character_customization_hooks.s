@@ -45,17 +45,17 @@ createSprite:
 	bx r6
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@0x805CA68 with r0
-.pool
-PlayerSpawnTemplateFix:
-	mov r0, #0x0
-	str r0, [r1]  @;Clear all pre-existing graphics data
-	mov r0, #0xFF @;Player local Id
-	strb r0, [r1]
-	mov r0, #0x0
-	mov r1, r8
-	ldr r2, =0x805CA70 | 1
-	bx r2
+@0x805E150 with r0
+UpdateEventObjectLargerGraphicsId:
+	ldrb r0, [r4]
+	mov r1, #0x5
+	orr r0, r1
+	strb r0, [r4]
+	ldrb r0, [r5, #0x3]
+	add r1, r4, #0x7
+	strb r0, [r1, #0x1C]
+	ldr r0, =0x805E15C | 1
+	bx r0
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @	08 47 at 5e5d4
@@ -66,7 +66,8 @@ NpcSpawnWithTemplate:
 	ldr r1, =(0x02036e38) @EventObjects
 	add r5, r0, r1
 	ldrb r0, [r5, #0x5]
-	ldrb r1, [r5, #0x1a]
+	add r1, r5, #0x7
+	ldrb r1, [r1, #0x1C] @0x23
 	lsl r1, r1, #0x8
 	orr r0, r1
 	bl GetEventObjectGraphicsInfo
@@ -82,7 +83,8 @@ NpcSizeFix:
 	sub sp, #0x8
 	mov r4, r0
 	ldrb r0, [r4, #0x5]
-	ldrb r1, [r4, #0x1a]
+	add r1, r4, #0x7
+	ldrb r1, [r1, #0x1C] @0x23
 	lsl r1, r1, #0x8
 	orr r0, r1
 	bl GetEventObjectGraphicsInfo
@@ -120,7 +122,8 @@ LinkNpcFix:
 	mov r0, #0x0
 	str r0, [sp, #0x20]
 	ldrb r0, [r6, #0x5]
-	ldrb r1, [r6, #0x1a]
+	add r1, r6, #0x7
+	ldrb r1, [r1, #0x1C] @0x23
 	lsl r1, r1, #0x8
 	orr r0, r1
 	bl GetEventObjectGraphicsInfo
@@ -133,12 +136,26 @@ LinkNpcFix:
 	orr r0, r2
 	str r0, [r4, #0x4]
 	ldrb r0, [r6, #0x5]
-	ldrb r1, [r6, #0x1a]
+	add r1, r6, #0x7
+	ldrb r1, [r1, #0x1C] @0x23
 	lsl r1, r1, #0x8
 	orr r0, r1
 	ldr r1, =(0x0805eea2+1)
 	bx r1
 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@0x805F168 with r0
+EventObjectSetGraphicsIdFix:
+	ldrh r2, [r2]
+	strb r2, [r6, #0x5]
+	lsr r2, #0x8
+	add r0, r6, #0x7
+	strb r2, [r0, #0x1C] @0x23
+
+	mov r1, #0x10
+	ldrsh r0, [r6, r1]
+	ldr r2, =0x805F170 | 1
+	bx r2
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @	hook at 67a12 via r5
@@ -153,7 +170,8 @@ NpcOffscreenFix:
 	and r0, r1
 	strb r0, [r5,#1]
 	ldrb r0, [r5, #0x5]
-	ldrb r1, [r5, #0x1a]
+	add r1, r5, #0x7
+	ldrb r1, [r1, #0x1C] @0x23
 	lsl r1, r1, #0x8
 	orr r0, r1
 	bl GetEventObjectGraphicsInfo
@@ -169,7 +187,8 @@ NpcWaterFix:
 	mov r5, r0
 	mov r4, #0x0
 	ldrb r0, [r5, #0x5]
-	ldrb r1, [r5, #0x1a]
+	add r1, r5, #0x7
+	ldrb r1, [r1, #0x1C] @0x23
 	lsl r1, r1, #0x8
 	orr r0, r1
 	bl GetEventObjectGraphicsInfo

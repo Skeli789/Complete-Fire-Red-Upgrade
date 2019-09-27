@@ -319,6 +319,12 @@ bool8 MetatileBehavior_IsIce(u8 metatileBehavior)
 		return FALSE;
 }
 
+bool8 MetatileBehavior_IsDeepOrOceanWater(u8 metatileBehavior)
+{
+	return metatileBehavior == MB_SPLASHING_WATER
+		|| metatileBehavior == MB_DIVEABLE;
+}
+
 bool8 IsTerrainMoveIndoors(void)
 {
 	if (gBattleTypeFlags & (BATTLE_TYPE_FRONTIER | BATTLE_TYPE_LINK | BATTLE_TYPE_TRAINER_TOWER | BATTLE_TYPE_EREADER_TRAINER))

@@ -11,8 +11,8 @@
 #define MB_0B 0x0B
 #define MB_0C 0x0C
 #define MB_POND_WATER 0x10
-#define MB_SEMI_DEEP_WATER 0x11
-#define MB_DEEP_WATER 0x12
+#define MB_FAST_CURRENT 0x11
+#define MB_DIVEABLE 0x12
 #define MB_WATERFALL 0x13
 #define MB_SPLASHING_WATER 0x15
 #define MB_PUDDLE 0x16

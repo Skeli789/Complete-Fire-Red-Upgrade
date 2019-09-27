@@ -73,7 +73,7 @@ A complete upgrade for Fire Red, including an upgraded Battle Engine.
 
 ## Installation Instructions:
 ### Windows:
-1. Download and install Devkitpro. You can follows steps 4-6 from [this tutorial](https://www.pokecommunity.com/showpost.php?p=8825585&postcount=96).
+1. Download and install Devkitpro. You can follow steps 4-6 from [this tutorial](https://www.pokecommunity.com/showpost.php?p=8825585&postcount=96).
 
 2. Download the latest version of Python (3.7.3).
 After downloading and before proceeding to install, make sure that the **add to path** checkbox is ticked, otherwise you'll have to add the Python path in the environment variables manually. If you have installed multiple Python versions, please make sure that Python 3.6+ can be explicitly called with command `python3`.

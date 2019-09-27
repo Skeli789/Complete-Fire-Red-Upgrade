@@ -115,8 +115,12 @@ ScriptGiveMon 80A011C 3
 ItemId_GetName 809A8BC 1
 
 ##Overworld Hooks
+GetAdjustedInitialTransitionFlags 8055ACC 3
 Overworld_IsBikingAllowed 8055C9C 0
 apply_map_tileset_palette 80599C8 3
+MetatileBehavior_IsDiveable 8059FB0 1
+MetatileBehavior_IsUnableToEmerge 8059FCC 1
+DiveSpeedHook 805BA1C 0
 AutoRunHook 805BA30 0
 GetLedgeJumpDirection 80680F8 3
 TryRunOnFrameMapScript 8069C74 0
@@ -133,6 +137,7 @@ DoPoisonFieldEffect 80A0618 0
 CheckForTrainersWantingBattle 8081B30 0
 CanUseEscapeRopeOnCurrMap 80A1B8C 0
 IsRunningDisallowedByMetatile 80BD4B8 1
+ReplaceOWSandstormPaletteHook 807D5F0 0
 
 ##Party Menu Hooks
 DisplayPartyPokemonSelectForBattle 811F388 1
@@ -251,16 +256,26 @@ pcSelect_SwapDecision 0808ed8c 1
 
 ##Keypad
 ReadKeys 080005E8 0
+DiveCheckEmergeHook 806CB30 0
+DiveCheckDownHook 806CCCC 0
 
 ##Character Customization
 GetEventObjectGraphicsInfo 0805F2C8 1
-PlayerSpawnTemplateFix 0805CA68 0
+InitPlayerAvatarHook 080570CC 3
+UpdateEventObjectLargerGraphicsId 805E150 0
 NpcSizeFix 0805e510 1
 NewNpcInfo 0805e964 4
+SetPlayerAvatarEventObjectIdAndObjectId 805F02C 2
+EventObjectSetGraphicsIdFix 805F168 0
 NpcOffscreenFix 08067a12 5
 NpcWaterFix 08067f92 5
-CharacterCustomizationUpdateTrainerFrontPic2 810BD64 1
+CharacterCustomizationUpdateTrainerFrontPic2 0810BD64 1
 PlayerGenderToFrontTrainerPicId 0810C374 2
+GetPlayerAvatarGraphicsIdByStateIdAndGender 0805C7E0 2
+GetPlayerAvatarGraphicsIdByStateId 0805C808 1
+GetPlayerAvatarStateTransitionByGraphicsId 0805C988 2
+GetPlayerAvatarGraphicsIdByCurrentState 0805C9C8 0
+GetPlayerAvatarGenderByGraphicsId 0805C824 1
 
 #Pre-Battle Mughots
 GetTrainerBattleTransition 807FF80 0
@@ -350,7 +365,6 @@ FollowMe_SurfHook 08086B00 0
 FollowMe_SurfBagHook 08056D12 0
 FollowMe_DismountSurf 805D140 0
 FollowMe_BikeHook 80A1330 0
-FollowMe_CreateAvatarHook1 0805CAF4 0
 FollowMe_CreateAvatarHook2 080570EC 0
 FollowMe_StairsMoveHook 0807EB28 1
 FollowMe_EscalatorMoveHook 08084868 2
@@ -358,7 +372,10 @@ FollowMe_EscalatorWarpEndHook 08084ACC 0
 FollowMe_WarpDoorEndHook 0807E1F8 0
 FollowMe_WarpArrowEndHook 0807E2B8 0
 FollowMe_WarpNormalEndHook 0807E308 0
+FollowMe_WarpTeleportEndHook 807E364 0
+FollowMe_WarpSomethingEndHook 0807E3D6 0
 FollowMe_WarpStairsEndHook 0807EC5A 0
+FollowMe_WarpHoleEndHook 8084770 0
 FollowMe_LocalIdHook 0805DF60 3
 FollowMe_ScriptHook 0805FC20 3
 

@@ -413,4 +413,55 @@ SystemScript_SurfEnd:
 .global SystemScript_WaterDyedBlue
 SystemScript_WaterDyedBlue:
 	msgbox 0x81A6C74 MSG_NORMAL
-	end	
+	end
+	
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.equ FLDEFF_USE_DIVE, 44
+.global EventScript_UseDive
+EventScript_UseDive:
+	bufferpartypokemon 0x0 0x8004
+	bufferattack 0x1 MOVE_DIVE
+	setanimation 0x0 0x8004
+	setanimation 0x1 1
+	msgbox gText_WantToDive MSG_YESNO
+	compare LASTRESULT NO
+	if equal _goto EventScript_EndDive
+	lockall
+	call FollowerIntoPlayerScript
+	callasm HideFollower
+	msgbox 0x81BDFD7 MSG_NORMAL
+	doanimation FLDEFF_USE_DIVE
+	goto EventScript_EndDive
+
+.global EventScript_CantDive
+EventScript_CantDive:
+	msgbox gText_CantDive MSG_NORMAL
+EventScript_EndDive:
+	releaseall
+	end
+	
+.global EventScript_UseDiveUnderwater
+EventScript_UseDiveUnderwater:
+	bufferpartypokemon 0x0 0x8004
+	bufferattack 0x1 MOVE_DIVE
+	setanimation 0x0 0x8004
+	setanimation 0x1 1
+	msgbox gText_WantToSurface MSG_YESNO
+	compare LASTRESULT NO
+	if equal _goto EventScript_EndSurface
+	lockall
+	call FollowerIntoPlayerScript
+	callasm HideFollower
+	msgbox 0x81BDFD7 MSG_NORMAL
+	doanimation FLDEFF_USE_DIVE
+	callasm FollowMe_SetIndicatorToRecreateSurfBlob
+	goto EventScript_EndSurface
+	end
+
+.global EventScript_CantSurface
+EventScript_CantSurface:
+	msgbox gText_CantSurface MSG_NORMAL
+EventScript_EndSurface:
+	releaseall
+	end

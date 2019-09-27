@@ -109,6 +109,11 @@ u8 GetFadeTypeByWeather(u8 weather)
 	}
 }
 
+u8 GetFadeTypeForCurrentWeather(void)
+{
+	return GetFadeTypeByWeather(gWeatherPtr->currWeather);
+}
+
 static u16 TintColor(u16 color)
 {
 	switch (ColorFilter)
@@ -355,8 +360,9 @@ u8 SetUpWeirdDisguise(void) //Hook at 0xDCA00 via r3
 
 void FogBrightenPalettes(u16 brightenIntensity)
 {
-	if (GetFadeTypeByWeather(gWeatherPtr->currWeather) != 2)
-		return; //Only brighten if there is fog weather
+	u8 currWeather = gWeatherPtr->currWeather;
+	if (GetFadeTypeByWeather(currWeather) != 2)
+		return; //Only brighten if there is fog weather and not underwater
 
 	if (gWeatherPtr->palProcessingState != 3)
 		return; // don't brighten while fading
@@ -364,7 +370,12 @@ void FogBrightenPalettes(u16 brightenIntensity)
 	for (int i = 16; i < 32; i++)
 	{
 		if (PaletteNeedsFogBrightening(i))
-			BlendPalette(i * 16, 16, brightenIntensity, FOG_FADE_COLOUR);
+		{
+			if (currWeather == WEATHER_BUBBLES)
+				FogBrightenAndFade(i, 0x1, RGB(15, 16, 14));
+			else
+				BlendPalette(i * 16, 16, brightenIntensity, FOG_FADE_COLOUR);
+		}
 	}
 }
 
@@ -373,7 +384,7 @@ void FogBrightenAndFade(u8 palSlot, u8 fadeIntensity, u16 fadeColor)
 	u8 R, G, B;
 	u16 color;
 	u8 brightenIntensity = AlphaBlendingCoeffA;
-	u16 brightenColor = TintColor(RGB(28, 31, 28));
+	u16 brightenColor = FOG_FADE_COLOUR;
 
 	for (int i = 0; i < 16; i++)
 	{
@@ -425,4 +436,14 @@ u8 GetDarkeningTypeBySlot(u8 palSlot) //Replaces table at 0x3C2CC0
 		default:
 			return 0;
 	}
+}
+
+extern const u16 HailstormWeatherPal[];
+#define gSandstormWeatherPalette (const u16*) 0x83C2D20
+void LoadPaletteForOverworldSandstorm(void)
+{
+	if (gWeatherPtr->currWeather == WEATHER_STEADY_SNOW) //"Snow"
+		LoadCustomWeatherSpritePalette(HailstormWeatherPal);
+	else
+        LoadCustomWeatherSpritePalette(gSandstormWeatherPalette);
 }

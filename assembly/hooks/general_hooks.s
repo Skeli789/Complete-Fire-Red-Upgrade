@@ -854,3 +854,84 @@ FieldMoveBadgeHook:
 NoBadgeForFieldMove:
 	ldr r0, =0x8124632 | 1
 	bx r0
+
+.pool
+@0x806CB30 with r0
+DiveCheckEmergeHook:
+	mov r0, #0x80 @;B button pressed
+	and r0, r1
+	cmp r0, #0
+	beq CheckPlayerMovement
+	bl TrySetupDiveEmergeScript
+	cmp r0, #0x0
+	bne DiveChosen
+
+CheckPlayerMovement:
+	ldrb r1, [r5]
+	mov r0, #0x40
+	and r0, r1
+	cmp r0, #0x0
+	beq DidntTakeStepReturn
+	ldr r0, =0x806CB38 | 1
+	bx r0
+
+DidntTakeStepReturn:
+	ldr r0, =0x806CB74 | 1
+	bx r0
+
+DiveChosen:
+	ldr r0, =0x806CB6C | 1
+	bx r0
+
+.pool
+@0x806CCCC with r0
+DiveCheckDownHook:
+	ldrb r1, [r5]
+	mov r0, #1 @;A button pressed
+	and r0, r1
+	cmp r0, #0
+	beq CheckPlayerPressedStartButton
+	bl TrySetupDiveDownScript
+	cmp r0, #0x0
+	bne DiveChosen
+
+CheckPlayerPressedStartButton:
+	ldrb r1, [r5]
+	mov r0, #4 @;Start button pressed
+	and r0, r1
+	cmp r0, #0
+	beq CheckSelectButtonReturn
+	ldr r2, =0x0806CCD6 | 1
+	bx r2
+
+CheckSelectButtonReturn:
+	ldr r2, =0x0806CCFC | 1
+	bx r2
+
+.pool
+@0x805BA1C with r0
+DiveSpeedHook:
+	mov r0, #0x8 @;Surfing
+	and r0, r1
+	cmp r0, #0x0
+	bne MoveFasterOnWater
+	bl IsUnderwater
+	cmp r0, #0x0
+	bne MoveFasterOnWater
+	ldr r0, =0x805BA30 | 1
+	bx r0
+
+MoveFasterOnWater:
+	ldr r0, =0x805BA24 | 1
+	bx r0
+
+.pool
+@0x80570D0 with r3
+InitPlayerAvatarHook:
+	ldr r3, =0x300500C @SaveBlock2
+	ldr r3, [r3]
+	ldrb r3, [r3, #0x8]
+	bl InitPlayerAvatar
+	ldrb r0, [r5]
+	ldr r1, =0x80570D8 | 1
+	bx r1

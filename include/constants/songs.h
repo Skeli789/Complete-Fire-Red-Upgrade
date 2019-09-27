@@ -108,7 +108,7 @@
 #define SE_SELECT 5
 #define SE_WIN_OPEN 6
 #define SE_WALL_HIT 7
-#define SE_DOOR 8
+#define SE_DOOR_OPEN 8
 #define SE_EXIT_ROOM 9
 #define SE_HOP 0xA
 #define SE_BIKE_BELL 0xB

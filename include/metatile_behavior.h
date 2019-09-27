@@ -8,11 +8,14 @@ bool8 __attribute__((long_call)) MetatileBehavior_IsTallGrass(u8 metatileBehavio
 bool8 __attribute__((long_call)) MetatileBehavior_IsLongGrass(u8 metatileBehavior);
 bool8 __attribute__((long_call)) MetatileBehavior_IsIndoorEncounter(u8 metatileBehavior);
 bool8 __attribute__((long_call)) MetatileBehavior_IsMountain(u8 metatileBehavior);
-bool8 __attribute__((long_call)) MetatileBehavior_IsDeepOrOceanWater(u8 metatileBehavior);
+//bool8 __attribute__((long_call)) MetatileBehavior_IsDeepOrOceanWater(u8 metatileBehavior);
 bool8 __attribute__((long_call)) MetatileBehavior_IsRunningDisallowed(u8);
 bool8 __attribute__((long_call)) MetatileBehavior_IsForcedMovementTile(u8 metatileBehavior);
 bool8 __attribute__((long_call)) MetatileBehavior_IsWaterfall(u8 metatileBehavior);
 bool8 __attribute__((long_call)) MetatileBehavior_IsFastCurrent(u8 metatileBehavior);
+bool8 __attribute__((long_call)) MetatileBehavior_IsSlidingIce(u8 metatileBehavior);
+bool8 __attribute__((long_call)) MetatileBehavior_IsSlideAround(u8 metatileBehavior);
+bool8 __attribute__((long_call)) MetatileBehavior_IsSeafoamIsland(u8 metatileBehavior);
 
 /*
 bool8 MetatileBehavior_UnusedReturnTrue(u8 metatileBehavior);

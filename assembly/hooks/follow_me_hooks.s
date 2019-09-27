@@ -104,14 +104,6 @@ FollowMe_DismountSurf:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@WarpInHook
-FollowMe_CreateAvatarHook1:
-	bl CreateFollowerAvatar
-	mov r9, r4
-	pop {r4-r6}
-	pop {r0}
-	bx r0
-
 FollowMe_CreateAvatarHook2:
 	bl FollowMe_HandleSprite
 	add sp, #4
@@ -185,6 +177,37 @@ FollowMe_WarpNormalEndHook:
 	bl call_via_r3
 	ldr r0, =0x0807E310 | 1
 	bx r0
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+FollowMe_WarpTeleportEndHook:
+	bl FollowMe_WarpSetEnd
+	ldr r3, =UnfreezeEventObjects
+	bl call_via_r3
+	ldr r3, =ScriptContext2_Disable
+	bl call_via_r3
+	ldr r0, =0x0807E36C | 1
+	bx r0
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+FollowMe_WarpSomethingEndHook:
+	bl FollowMe_WarpSetEnd
+	ldr r3, =ScriptContext2_Disable
+	bl call_via_r3
+	mov r0, r4
+	ldr r3, =DestroyTask
+	bl call_via_r3		
+	ldr r0, =0x0807E3E0 | 1
+	bx r0
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+FollowMe_WarpHoleEndHook:
+	bl FollowMe_WarpSetEnd
+	mov r0, #0x0
+	add sp, #0x4
+	pop {r4, pc}
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool

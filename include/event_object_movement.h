@@ -64,7 +64,7 @@ u8 __attribute__((long_call)) EventObjectClearHeldMovementIfFinished(struct Even
 u8 __attribute__((long_call)) TrySpawnEventObjectTemplate(struct EventObjectTemplate *eventObjectTemplate, u8 mapNum, u8 mapGroup, s16 cameraX, s16 cameraY);
 struct EventObjectTemplate* __attribute__((long_call)) GetEventObjectTemplateByLocalIdAndMap(u8 localId, u8 mapNum, u8 mapGroup);
 void __attribute__((long_call)) MoveEventObjectToMapCoords(struct EventObject *eventObject, s16 x, s16 y);
-void __attribute__((long_call)) EventObjectSetGraphicsId(struct EventObject *eventObject, u8 graphicsId);
+void __attribute__((long_call)) EventObjectSetGraphicsId(struct EventObject *eventObject, u16 graphicsId);
 void __attribute__((long_call)) EventObjectTurn(struct EventObject *eventObject, u8 direction);
 void __attribute__((long_call)) EventObjectClearHeldMovement(struct EventObject *eventObject);
 u8 __attribute__((long_call)) GetJumpMovementAction(u32 idx);
@@ -89,6 +89,7 @@ void __attribute__((long_call)) LogCoordsCameraRelative(s32* x, s32* y, u8 size_
 void __attribute__((long_call)) RemoveEventObject(struct EventObject *eventObject);
 u8 __attribute__((long_call)) GetCollisionAtCoords(struct EventObject *, s16, s16, u32);
 u8 __attribute__((long_call)) GetFaceDirectionMovementAction(u32);
+u8 __attribute__((long_call)) SpawnSpecialEventObject(struct EventObjectTemplate *);
 
 /*
 extern const struct SpriteFrameImage gEventObjectPicTable_PechaBerryTree[];
@@ -120,7 +121,6 @@ void TrySpawnEventObjects(s16, s16);
 u8 AddPseudoEventObject(u16, void (*)(struct Sprite *), s16 x, s16 y, u8 subpriority);
 u8 show_sprite(u8, u8, u8);
 u8 SpawnSpecialEventObjectParameterized(u8 graphicsId, u8 movementBehavior, u8 localId, s16 x, s16 y, u8 z);
-u8 SpawnSpecialEventObject(struct EventObjectTemplate *);
 void sub_8093038(s16, s16, s16 *, s16 *);
 void CameraObjectReset1(void);
 void EventObjectSetGraphicsId(struct EventObject *, u8 graphicsId);

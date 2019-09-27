@@ -561,10 +561,8 @@ FogBrightenAll_End:
 @ hook at 0x7AAAC via r0
 FogBrightenOnStep:
 	add r2, #10
-	add r0, r1, r2
-	ldrb r0, [r0]
 	push {r1,r2}
-	bl GetFadeTypeByWeather
+	bl GetFadeTypeForCurrentWeather
 	pop {r1,r2}
 	cmp r0, #2
 	beq FogBrightenOnStep_Brighten @ only brighten if there is fog weather
@@ -587,6 +585,8 @@ FogBrightenAndFadeIn:
 	mov r0, r4
 	mov r1, r7
 	ldrh r2, [sp]
+	lsl r2, #0x10
+	lsr r2, #0x10
 	bl FogBrightenAndFade
 	add r0, r4, #1
 	mov r9, r0
@@ -633,3 +633,11 @@ GetFadeType2_NormalFade:
 	ldr r0, =0x807A880+1
 	bx r0
 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+@0x807D5F0 with r0
+ReplaceOWSandstormPaletteHook:
+	bl LoadPaletteForOverworldSandstorm
+	mov r7, #0x0
+	ldr r0, =0x807D5F8 | 1
+	bx r0

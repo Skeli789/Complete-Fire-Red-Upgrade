@@ -200,13 +200,30 @@ MaxLevelChange1:
 @ Character Customization
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-.org 0x5e152, 0xff
-	mov r1, #0x5
-	orr r0, r1
-	strb r0, [r4]
-	ldrb r0, [r5, #0x3]
-	strb r0, [r4, #0x1a]
-	
+.org 0x588C6, 0xFF	@16 bit sprite ids
+	lsl r0, #0x10
+	lsr r0, #0x10
+
+.org 0x5C7D6, 0xFF	@16 bit sprite ids
+	lsl r0, #0x10
+	lsr r0, #0x10 
+
+.org 0x5CB88, 0xFF	@16 bit sprite ids
+	lsl r1, #0x10
+	lsr r1, #0x10
+
+.org 0x5CBCC, 0xFF	@16 bit sprite ids
+	lsl r0, #0x10
+	lsr r0, #0x10
+
+.org 0x5CBFE, 0xFF	@16 bit sprite ids
+	lsl r1, #0x10
+	lsr r1, #0x10
+
+.org 0x5D268, 0xFF	@16 bit sprite ids
+	lsl r1, #0x10
+	lsr r1, #0x10
+
 .org 0x5e5d4, 0xff
 	.byte 0x8, 0x47		@ routine_ptr+1 at 5e5f4
 	
@@ -229,24 +246,29 @@ MaxLevelChange1:
 	lsr r0, r0, #0x10
 	
 .org 0x5e962, 0xff
-	.hword 0x0
+	mov r8, r8
 
 .org 0x5ea0a, 0xff		@ fix createsprite
-	.word 0x0	
-	
+	lsl r5, #0x10
+	lsr r5, #0x10	
+
 .org 0x5ee84, 0xff		@ fix link npcs
 	.byte 0x8, 0x47
 
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Dynamic Overworld Palettes & More OW Sprites
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@ Dynamic Overworld Palettes
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x5F06E, 0xFF	@16 bit sprite ids
+	lsl r1, #0x10
+	lsr r1, #0x10
+
 .org 0x5f093, 0xff	@don't auto-load NPC palettes into slot 0 or 0xA
 	.byte 0xE0
 
 .org 0x5f114, 0xff	@don't reset pal slot during player animation or reflection
 	.hword 0x0
-	
+
 .org 0x5f4ba, 0xff	@remove byte casts for NPC palette number
 	.byte 0x1, 0x0, 0x0, 0x0
 
@@ -280,6 +302,30 @@ MaxLevelChange1:
 .org 0x7aae7, 0xff	@don't record brightened slots
 	.byte 0xe0
 
+.org 0x86ADA, 0xff	@16 bit sprite ids
+	lsl r1, #0x10
+	lsr r1, #0x10
+
+.org 0x86CB4, 0xff	@16 bit sprite ids
+	lsl r1, #0x10
+	lsr r1, #0x10
+
+.org 0x86CC8, 0xff	@16 bit sprite ids
+	lsl r1, #0x10
+	lsr r1, #0x10
+
+.org 0x87024, 0xff	@16 bit sprite ids
+	lsl r1, #0x10
+	lsr r1, #0x10
+
+.org 0x87522, 0xff	@16 bit sprite ids
+	lsl r1, #0x10
+	lsr r1, #0x10
+
+.org 0x877BC, 0xff	@16 bit sprite ids
+	lsl r1, #0x10
+	lsr r1, #0x10
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ GetBagItemQuanity
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -295,7 +341,14 @@ MaxLevelChange1:
 	
 .org 0x9B86E, 0xFF
 	.byte 0x2f, 0xd0
-	
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ More OW Sprites
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x9EF68, 0xFF
+	lsl r0, #0x10
+	lsr r0, #0x10 
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Safari Zone Ball Count
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -306,8 +359,12 @@ MaxLevelChange1:
 	ldrh r0, [r0]
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@ Dynamic Overworld Palettes
+@ Dynamic Overworld Palettes & More OW Sprites
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@	
+.org 0xC9950, 0xFF	@16 bit sprite ids
+	lsl r1, #0x10
+	lsr r1, #0x10
+
 .org 0xdaec4, 0xff	@@don't auto-load NPC palettes into slot 0 or 0xA
 	.byte 0x70, 0x47
 	
@@ -365,8 +422,40 @@ SummaryScreenExpDisplay2:
 	.byte MAX_LEVEL - 1, 0x2D, 0x0, 0xD9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@ Dynamic Overworld Palettes
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@	
+@ Dynamic Overworld Palettes & More OW Sprites
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x1504C0, 0xff	@16 bit sprite ids
+	lsl r1, #0x10
+	lsr r1, #0x10
+
+.org 0x150500, 0xff	@16 bit sprite ids
+	lsl r1, #0x10
+	lsr r1, #0x10
+
+.org 0x15059C, 0xff	@16 bit sprite ids
+	lsl r1, #0x10
+	lsr r1, #0x10
+
+.org 0x15063C, 0xff	@16 bit sprite ids
+	lsl r1, #0x10
+	lsr r1, #0x10
+
+.org 0x1506C4, 0xff	@16 bit sprite ids
+	lsl r1, #0x10
+	lsr r1, #0x10
+
+.org 0x1506D8, 0xff	@16 bit sprite ids
+	lsl r1, #0x10
+	lsr r1, #0x10
+
+.org 0x15072A, 0xff	@16 bit sprite ids
+	lsl r1, #0x10
+	lsr r1, #0x10
+
+.org 0x1507BE, 0xff	@16 bit sprite ids
+	lsl r1, #0x10
+	lsr r1, #0x10
+
 .org 0x1d9895, 0xff		@don't load sand palette on healing
 	.byte 0x7, 0x9c, 0xbe, 0x3c, 0x8, 0x8d, 0x3b, 0x8, 0x8, 0x4
 	

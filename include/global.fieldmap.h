@@ -79,9 +79,9 @@ typedef struct BackupMapData BackupMapLayout;
 struct MapObjectTemplate
 {
 	/*0x00*/ u8 localId;
-	/*0x01*/ u8 graphicsId;
+	/*0x01*/ u8 graphicsIdLowerByte;
 	/*0x02*/ u8 unk2;
-	/*0x03*/ u8 unk3;
+	/*0x03*/ u8 graphicsIdUpperByte;
 	/*0x04*/ s16 x;
 	/*0x06*/ s16 y;
 	/*0x08*/ u8 elevation;
@@ -216,7 +216,7 @@ struct MapObject
 			 u32 fixedPriority:1;
 			 u32 unk3_3:1;
 	/*0x04*/ u8 spriteId;
-	/*0x05*/ u8 graphicsId;
+	/*0x05*/ u8 graphicsIdLowerByte;
 	/*0x06*/ u8 movementType;
 	/*0x07*/ u8 trainerType;
 	/*0x08*/ u8 localId;
@@ -245,6 +245,7 @@ struct MapObject
 	/*0x20*/ u8 previousMovementDirection;
 	/*0x21*/ u8 directionSequenceIndex;
 	/*0x22*/ u8 playerCopyableMovement;
+	/*0x23*/ u8 graphicsIdUpperByte;
 	/*size = 0x24*/
 };
 
@@ -272,6 +273,17 @@ struct MapObjectGraphicsInfo
 };
 
 #define EventObjectGraphicsInfo MapObjectGraphicsInfo
+
+enum
+{
+    PLAYER_AVATAR_STATE_NORMAL,
+    PLAYER_AVATAR_STATE_BIKE,
+    PLAYER_AVATAR_STATE_SURFING,
+    PLAYER_AVATAR_STATE_FIELD_MOVE,
+    PLAYER_AVATAR_STATE_FISHING,
+    PLAYER_AVATAR_STATE_FIELD_MOVE_2,
+    PLAYER_AVATAR_STATE_UNDERWATER,
+};
 
 #define PLAYER_AVATAR_FLAG_ON_FOOT    (1 << 0)
 #define PLAYER_AVATAR_FLAG_MACH_BIKE  (1 << 1)

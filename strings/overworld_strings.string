@@ -55,6 +55,18 @@ The magma glistens a crimson red[.]\nWould you like to surf on it?
 #org @gText_LavaDyed
 The magma glistens a crimson red.
 
+#org @gText_WantToDive
+The sea is deep here.\nWould you like to use [BUFFER2]?
+
+#org @gText_WantToSurface
+Light is filtering down from above.\nWould you like to use [BUFFER2]?
+
+#org @gText_CantDive
+The sea is deep here. A Pok\emon\nmay be able to go underwater.
+
+#org @gText_CantSurface
+Light is filtering down from above.\nA Pok\emon may be able to surface.
+
 //Mart Strings
 
 #org @gText_SingleTmBuy

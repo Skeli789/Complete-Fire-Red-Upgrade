@@ -10,6 +10,7 @@
 #include "../include/string_util.h"
 #include "../include/text.h"
 #include "../include/window.h"
+#include "../include/constants/items.h"
 #include "../include/constants/moves.h"
 #include "../include/constants/songs.h"
 
@@ -710,21 +711,21 @@ struct
 	[MENU_MOVE_ITEM] = {gMenuText_Move, CursorCb_MoveItem},
 
 	//Field Moves
-	[MENU_FIELD_MOVES + FIELD_MOVE_FLASH] =	   {gMoveNames[MOVE_FLASH], CursorCb_FieldMove},
-	[MENU_FIELD_MOVES + FIELD_MOVE_CUT] =		 {gMoveNames[MOVE_CUT], CursorCb_FieldMove},
-	[MENU_FIELD_MOVES + FIELD_MOVE_FLY] =		 {gMoveNames[MOVE_FLY], CursorCb_FieldMove},
-	[MENU_FIELD_MOVES + FIELD_MOVE_STRENGTH] =	{gMoveNames[MOVE_STRENGTH], CursorCb_FieldMove},
-	[MENU_FIELD_MOVES + FIELD_MOVE_SURF] =		{gMoveNames[MOVE_SURF], CursorCb_FieldMove},
+	[MENU_FIELD_MOVES + FIELD_MOVE_FLASH] =	      {gMoveNames[MOVE_FLASH], CursorCb_FieldMove},
+	[MENU_FIELD_MOVES + FIELD_MOVE_CUT] =		  {gMoveNames[MOVE_CUT], CursorCb_FieldMove},
+	[MENU_FIELD_MOVES + FIELD_MOVE_FLY] =		  {gMoveNames[MOVE_FLY], CursorCb_FieldMove},
+	[MENU_FIELD_MOVES + FIELD_MOVE_STRENGTH] =	  {gMoveNames[MOVE_STRENGTH], CursorCb_FieldMove},
+	[MENU_FIELD_MOVES + FIELD_MOVE_SURF] =		  {gMoveNames[MOVE_SURF], CursorCb_FieldMove},
 	[MENU_FIELD_MOVES + FIELD_MOVE_ROCK_SMASH] =  {gMoveNames[MOVE_ROCKSMASH], CursorCb_FieldMove},
 	[MENU_FIELD_MOVES + FIELD_MOVE_WATERFALL] =   {gMoveNames[MOVE_WATERFALL], CursorCb_FieldMove},
-	[MENU_FIELD_MOVES + FIELD_MOVE_TELEPORT] =	{gMoveNames[MOVE_TELEPORT], CursorCb_FieldMove},
-	[MENU_FIELD_MOVES + FIELD_MOVE_DIG] =		 {gMoveNames[MOVE_DIG], CursorCb_FieldMove},
+	[MENU_FIELD_MOVES + FIELD_MOVE_TELEPORT] =	  {gMoveNames[MOVE_TELEPORT], CursorCb_FieldMove},
+	[MENU_FIELD_MOVES + FIELD_MOVE_DIG] =		  {gMoveNames[MOVE_DIG], CursorCb_FieldMove},
 	[MENU_FIELD_MOVES + FIELD_MOVE_MILK_DRINK] =  {gMoveNames[MOVE_MILKDRINK], CursorCb_FieldMove},
 	[MENU_FIELD_MOVES + FIELD_MOVE_SOFT_BOILED] = {gMoveNames[MOVE_SOFTBOILED], CursorCb_FieldMove},
 	[MENU_FIELD_MOVES + FIELD_MOVE_SWEET_SCENT] = {gMoveNames[MOVE_SWEETSCENT], CursorCb_FieldMove},
 	[MENU_FIELD_MOVES + FIELD_MOVE_ROCK_CLIMB] =  {gMoveNames[MOVE_ROCKCLIMB], CursorCb_FieldMove},
-	[MENU_FIELD_MOVES + FIELD_MOVE_DEFOG] =	   {gMoveNames[MOVE_DEFOG], CursorCb_FieldMove},
-	[MENU_FIELD_MOVES + FIELD_MOVE_DIVE] =		{gMoveNames[MOVE_DIVE], CursorCb_FieldMove},
+	[MENU_FIELD_MOVES + FIELD_MOVE_DEFOG] =	      {gMoveNames[MOVE_DEFOG], CursorCb_FieldMove},
+	[MENU_FIELD_MOVES + FIELD_MOVE_DIVE] =	 	  {gMoveNames[MOVE_DIVE], CursorCb_FieldMove},
 };
 
 struct
@@ -841,7 +842,13 @@ static bool8 SetUpFieldMove_Surf(void)
 	if (gFollowerState.inProgress && !(gFollowerState.flags & FOLLOWER_FLAG_CAN_SURF))
 		return FALSE;
 
-	if (PartyHasMonWithSurf() < PARTY_SIZE && IsPlayerFacingSurfableFishableWater() == TRUE)
+	u16 item = ITEM_NONE;
+	#ifdef UNBOUND
+	item = ITEM_HM03_SURF;
+	#endif
+
+	if (PartyHasMonWithFieldMovePotential(MOVE_SURF, item, SHOULDNT_BE_SURFING) < PARTY_SIZE
+	&& IsPlayerFacingSurfableFishableWater() == TRUE)
 	{
 		gFieldCallback2 = FieldCallback_PrepareFadeInFromMenu;
 		gPostMenuFieldCallback = FieldCallback_Surf;

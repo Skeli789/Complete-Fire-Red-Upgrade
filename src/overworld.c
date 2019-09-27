@@ -5,6 +5,7 @@
 #include "../include/event_data.h"
 #include "../include/event_object_movement.h"
 #include "../include/field_effect.h"
+#include "../include/field_control_avatar.h"
 #include "../include/field_player_avatar.h"
 #include "../include/field_poison.h"
 #include "../include/fieldmap.h"
@@ -24,6 +25,7 @@
 #include "../include/constants/flags.h"
 #include "../include/constants/items.h"
 #include "../include/constants/maps.h"
+#include "../include/constants/metatile_behaviors.h"
 #include "../include/constants/region_map_sections.h"
 #include "../include/constants/songs.h"
 #include "../include/constants/trainers.h"
@@ -103,10 +105,10 @@ static const struct TrainerBattleParameter sTrainerBContinueScriptBattleParams[]
 	{&sTrainerEventObjectLocalId,		TRAINER_PARAM_LOAD_VAL_16BIT},
 	{&sTrainerIntroSpeech_B,			TRAINER_PARAM_LOAD_VAL_32BIT},
 	{&sTrainerDefeatSpeech_B,			TRAINER_PARAM_LOAD_VAL_32BIT},
-	{&sTrainerVictorySpeech_B,	    	TRAINER_PARAM_CLEAR_VAL_32BIT},
+	{&sTrainerVictorySpeech_B,			TRAINER_PARAM_CLEAR_VAL_32BIT},
 	{&sTrainerCannotBattleSpeech,		TRAINER_PARAM_CLEAR_VAL_32BIT},
 	{&sTrainerBattleScriptRetAddr_B,	TRAINER_PARAM_LOAD_VAL_32BIT},
-	{&sTrainerBattleEndScript,	    	TRAINER_PARAM_LOAD_SCRIPT_RET_ADDR},
+	{&sTrainerBattleEndScript,			TRAINER_PARAM_LOAD_SCRIPT_RET_ADDR},
 };
 
 static const struct TrainerBattleParameter sTrainerBOrdinaryBattleParams[] =
@@ -1133,6 +1135,7 @@ static bool8 IsRunningDisabledByFlag(void)
 bool8 IsRunningDisallowed(u8 tile)
 {
 	return IsRunningDisabledByFlag() || IsRunningDisallowedByMetatile(tile)
+		|| gMapHeader.mapType == MAP_TYPE_UNDERWATER;
 #ifndef CAN_RUN_IN_BUILDINGS
 	|| GetCurrentMapType() == MAP_TYPE_INDOOR
 #endif
@@ -1148,6 +1151,9 @@ bool8 Overworld_IsBikingAllowed(void)
 {
 	if (gFollowerState.inProgress && !(gFollowerState.flags & FOLLOWER_FLAG_CAN_BIKE))
 		return FALSE;
+		
+	if (gMapHeader.mapType == MAP_TYPE_UNDERWATER)
+		return FALSE;
 
 	return gMapHeader.isBikeable
 #ifdef BIKE_ON_ANY_NON_INSIDE_MAP
@@ -1161,7 +1167,7 @@ bool8 CanUseEscapeRopeOnCurrMap(void)
 	if (gFollowerState.inProgress && !(gFollowerState.flags & FOLLOWER_FLAG_CAN_LEAVE_ROUTE))
 		return FALSE;
 
-    return (gMapHeader.escapeRope & 1) != 0;
+	return (gMapHeader.escapeRope & 1) != 0;
 }
 
 s32 DoPoisonFieldEffect(void)
@@ -1409,12 +1415,16 @@ void ShouldRockClimbContinueDiagonally(void)
 		gSpecialVar_LastResult = 0;
 }
 
-u8 PartyHasMonWithSurf(void)
+u8 PartyHasMonWithFieldMovePotential(u16 move, unusedArg u16 item, u8 surfingType)
 {
-	if (!TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
+	bool8 isSurfing = TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING);
+
+	if (surfingType == 0
+	|| (surfingType == SHOULDNT_BE_SURFING && !isSurfing)
+	|| (surfingType == SHOULD_BE_SURFING && isSurfing))
 	{
 		#ifdef UNBOUND
-		bool8 hasSurfHM = CheckBagHasItem(ITEM_HM03_SURF, 1) > 0;
+		bool8 hasHM = CheckBagHasItem(item, 1) > 0;
 		#endif
 
 		for (u32 i = 0; i < PARTY_SIZE; ++i)
@@ -1424,69 +1434,14 @@ u8 PartyHasMonWithSurf(void)
 			if (GetMonData(mon, MON_DATA_SPECIES, NULL) != SPECIES_NONE
 			&& !GetMonData(mon, MON_DATA_IS_EGG, NULL))
 			{
-				if (MonKnowsMove(mon, MOVE_SURF))
+				if (MonKnowsMove(mon, move))
 					return i;
 
 				#ifdef UNBOUND
-				if (hasSurfHM && CanMonLearnTMTutor(mon, ITEM_HM03_SURF, 0) == CAN_LEARN_MOVE)
+				if (hasHM && CanMonLearnTMTutor(mon, item, 0) == CAN_LEARN_MOVE)
 					return i;
 				#endif
 			}
-		}
-	}
-
-	return PARTY_SIZE;
-}
-
-static u8 PartyHasMonWithWaterfall(void)
-{
-	if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
-	{
-		#ifdef UNBOUND
-		bool8 hasWaterfallHM = CheckBagHasItem(ITEM_HM07_WATERFALL, 1) > 0;
-		#endif
-
-		for (u32 i = 0; i < PARTY_SIZE; ++i)
-		{
-			struct Pokemon* mon = &gPlayerParty[i];
-
-			if (GetMonData(mon, MON_DATA_SPECIES, NULL) != SPECIES_NONE
-			&& !GetMonData(mon, MON_DATA_IS_EGG, NULL))
-			{
-				if (MonKnowsMove(mon, MOVE_WATERFALL))
-					return i;
-
-				#ifdef UNBOUND
-				if (hasWaterfallHM && CanMonLearnTMTutor(mon, ITEM_HM07_WATERFALL, 0) == CAN_LEARN_MOVE)
-					return i;
-				#endif
-			}
-		}
-	}
-
-	return PARTY_SIZE;
-}
-
-static u8 PartyHasMonWithRockClimb(void)
-{
-	#ifdef UNBOUND
-	bool8 hasRockClimbHM = CheckBagHasItem(ITEM_HM08_ROCK_CLIMB, 1) > 0;
-	#endif
-
-	for (u32 i = 0; i < PARTY_SIZE; ++i)
-	{
-		struct Pokemon* mon = &gPlayerParty[i];
-
-		if (GetMonData(mon, MON_DATA_SPECIES, NULL) != SPECIES_NONE
-		&& !GetMonData(mon, MON_DATA_IS_EGG, NULL))
-		{
-			if (MonKnowsMove(mon, MOVE_ROCKCLIMB))
-				return i;
-
-			#ifdef UNBOUND
-			if (hasRockClimbHM && CanMonLearnTMTutor(mon, ITEM_HM08_ROCK_CLIMB, 0) == CAN_LEARN_MOVE)
-				return i;
-			#endif
 		}
 	}
 
@@ -1502,12 +1457,12 @@ static bool8 MetatileBehavior_IsLava(u8 behaviour)
 
 static bool8 IsPlayerFacingSurfableLava(void)
 {
-    struct EventObject *playerEventObj = &gEventObjects[gPlayerAvatar->eventObjectId];
-    s16 x = playerEventObj->currentCoords.x;
-    s16 y = playerEventObj->currentCoords.y;
+	struct EventObject *playerEventObj = &gEventObjects[gPlayerAvatar->eventObjectId];
+	s16 x = playerEventObj->currentCoords.x;
+	s16 y = playerEventObj->currentCoords.y;
 
-    MoveCoords(playerEventObj->facingDirection, &x, &y);
-    return GetCollisionAtCoords(playerEventObj, x, y, playerEventObj->facingDirection) == 3
+	MoveCoords(playerEventObj->facingDirection, &x, &y);
+	return GetCollisionAtCoords(playerEventObj, x, y, playerEventObj->facingDirection) == 3
 		&& PlayerGetZCoord() == 3
 		&& MetatileBehavior_IsLava(MapGridGetMetatileBehaviorAt(x, y));
 }
@@ -1524,11 +1479,14 @@ extern const u8 EventScript_UseRockClimb[];
 extern const u8 EventScript_JustRockWall[];
 const u8* GetInteractedWaterScript(unusedArg u32 unused1, u8 metatileBehavior, unusedArg u8 direction)
 {
+	u16 item = ITEM_NONE;
+
 	#ifdef UNBOUND
 	if (FALSE) {}
 	#else
 	if (MetatileBehavior_IsFastCurrent(metatileBehavior))
-	{	if (PartyHasMonWithSurf() < PARTY_SIZE)
+	{
+		if (PartyHasMonWithFieldMovePotential(MOVE_SURF, item, SHOULDNT_BE_SURFING) < PARTY_SIZE)
 			return SystemScript_CurrentTooFast;
 	}
 	#endif
@@ -1548,7 +1506,11 @@ const u8* GetInteractedWaterScript(unusedArg u32 unused1, u8 metatileBehavior, u
 	{
 		if (HasBadgeToUseSurf())
 		{
-			u8 partyId = PartyHasMonWithSurf();
+			#ifdef UNBOUND
+			item = ITEM_HM03_SURF;
+			#endif
+		
+			u8 partyId = PartyHasMonWithFieldMovePotential(MOVE_SURF, item, SHOULDNT_BE_SURFING);
 			if (partyId < PARTY_SIZE
 			&& (!gFollowerState.inProgress || gFollowerState.flags & FOLLOWER_FLAG_CAN_SURF))
 			{
@@ -1565,7 +1527,11 @@ const u8* GetInteractedWaterScript(unusedArg u32 unused1, u8 metatileBehavior, u
 		{
 			if (IsPlayerSurfingNorth())
 			{
-				u8 partyId = PartyHasMonWithWaterfall();
+				#ifdef UNBOUND
+				item = ITEM_HM07_WATERFALL;
+				#endif
+
+				u8 partyId = PartyHasMonWithFieldMovePotential(MOVE_WATERFALL, item, SHOULD_BE_SURFING);
 				if (partyId < PARTY_SIZE
 				&& (!gFollowerState.inProgress || gFollowerState.flags & FOLLOWER_FLAG_CAN_WATERFALL))
 				{
@@ -1581,11 +1547,15 @@ const u8* GetInteractedWaterScript(unusedArg u32 unused1, u8 metatileBehavior, u
 	}
 	else if (IsPlayerFacingRockClimbableWall())
 	{
-		if (HasBadgeToUseRockClimb())
+		if (HasBadgeToUseRockClimb()
+		&& (!gFollowerState.inProgress || gFollowerState.flags & FOLLOWER_FLAG_CAN_ROCK_CLIMB))
 		{
-			u8 partyId = PartyHasMonWithRockClimb();
-			if (partyId < PARTY_SIZE
-			&& (!gFollowerState.inProgress || gFollowerState.flags & FOLLOWER_FLAG_CAN_ROCK_CLIMB))
+			#ifdef UNBOUND
+			item = ITEM_HM08_ROCK_CLIMB;
+			#endif
+
+			u8 partyId = PartyHasMonWithFieldMovePotential(MOVE_ROCKCLIMB, item, 0);
+			if (partyId < PARTY_SIZE)
 			{
 				Var8004 = partyId;
 				return EventScript_UseRockClimb;
@@ -1594,7 +1564,117 @@ const u8* GetInteractedWaterScript(unusedArg u32 unused1, u8 metatileBehavior, u
 		
 		return EventScript_JustRockWall;
 	}
-    return NULL;
+	return NULL;
+}
+
+extern const u8 EventScript_UseDive[];
+extern const u8 EventScript_CantDive[];
+extern const u8 EventScript_UseDiveUnderwater[];
+extern const u8 EventScript_CantSurface[];
+bool8 TrySetupDiveDownScript(void)
+{
+	if (HasBadgeToUseDive()
+	&& (!gFollowerState.inProgress || gFollowerState.flags & FOLLOWER_FLAG_CAN_DIVE)
+	&& TrySetDiveWarp() == 2)
+	{
+		u16 item = ITEM_NONE;
+		#ifdef UNBOUND
+		item = ITEM_HM05_DIVE;
+		#endif
+
+		u8 partyId = PartyHasMonWithFieldMovePotential(MOVE_DIVE, item, SHOULD_BE_SURFING);
+		if (partyId < PARTY_SIZE)
+		{
+			Var8004 = partyId;
+			ScriptContext1_SetupScript(EventScript_UseDive);
+		}
+		else
+			ScriptContext1_SetupScript(EventScript_CantDive);
+			
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+bool8 TrySetupDiveEmergeScript(void)
+{
+	if (HasBadgeToUseDive()
+	&& (!gFollowerState.inProgress || gFollowerState.flags & FOLLOWER_FLAG_CAN_DIVE)
+	&& gMapHeader.mapType == MAP_TYPE_UNDERWATER
+	&& TrySetDiveWarp() == 1)
+	{
+		u16 item = ITEM_NONE;
+		#ifdef UNBOUND
+		item = ITEM_HM05_DIVE;
+		#endif
+
+		u8 partyId = PartyHasMonWithFieldMovePotential(MOVE_DIVE, item, 0);
+		if (partyId < PARTY_SIZE)
+		{
+			Var8004 = partyId;
+	 		ScriptContext1_SetupScript(EventScript_UseDiveUnderwater);
+		}
+		else
+			ScriptContext1_SetupScript(EventScript_CantSurface);
+
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+bool8 MetatileBehavior_IsDiveable(u8 metatileBehavior)
+{
+	return metatileBehavior == MB_DIVEABLE;
+}
+
+bool8 MetatileBehavior_IsUnableToEmerge(u8 metatileBehavior)
+{
+	//In vanilla EM, tiles by default are emergable (it's stupid).
+	//I changed this so now it just compares for the dive tile.
+	return metatileBehavior != MB_DIVEABLE;
+}
+
+void PlayerAvatarTransition_Underwater(void)
+{
+	sub_8150498(4);
+}
+
+void PlayerAvatarTransition_HandleUnderwater(void)
+{
+	struct EventObject* player = &gEventObjects[GetPlayerMapObjId()];
+
+    EventObjectSetGraphicsId(player, GetPlayerAvatarGraphicsIdByStateId(PLAYER_AVATAR_STATE_UNDERWATER));
+    EventObjectTurn(player, player->movementDirection);
+    SetPlayerAvatarStateMask(PLAYER_AVATAR_FLAG_UNDERWATER);
+
+	player->fieldEffectSpriteId = DoBobbingFieldEffect(player->spriteId);
+}
+
+bool8 IsUnderwater(void)
+{
+	return gMapHeader.mapType == MAP_TYPE_UNDERWATER;
+}
+
+u8 GetAdjustedInitialTransitionFlags(struct InitialPlayerAvatarState *playerStruct, u16 metatileBehavior, u8 mapType)
+{
+    if (mapType != MAP_TYPE_INDOOR && FlagGet(0x802))
+        return PLAYER_AVATAR_FLAG_ON_FOOT;
+    else if (mapType == MAP_TYPE_UNDERWATER)
+        return PLAYER_AVATAR_FLAG_UNDERWATER;
+	#ifndef UNBOUND
+	else if (MetatileBehavior_IsSeafoamIsland(metatileBehavior))
+		return PLAYER_AVATAR_FLAG_ON_FOOT;
+	#endif
+    else if (MetatileBehavior_IsSurfableWaterOrUnderwater(metatileBehavior))
+        return PLAYER_AVATAR_FLAG_SURFING;
+    else if (!Overworld_IsBikingAllowed())
+        return PLAYER_AVATAR_FLAG_ON_FOOT;
+    else if (playerStruct->transitionFlags & PLAYER_AVATAR_FLAG_BIKE)
+        return PLAYER_AVATAR_FLAG_BIKE;
+	else
+		return PLAYER_AVATAR_FLAG_ON_FOOT;
 }
 
 #ifdef GEN_4_PLAYER_RUNNING_FIX
