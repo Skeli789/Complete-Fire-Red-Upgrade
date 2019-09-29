@@ -1185,10 +1185,10 @@ static bool8 IsRunningDisabledByFlag(void)
 bool8 IsRunningDisallowed(u8 tile)
 {
 	return IsRunningDisabledByFlag() || IsRunningDisallowedByMetatile(tile)
-		|| gMapHeader.mapType == MAP_TYPE_UNDERWATER;
-#ifndef CAN_RUN_IN_BUILDINGS
-	|| GetCurrentMapType() == MAP_TYPE_INDOOR
-#endif
+		|| gMapHeader.mapType == MAP_TYPE_UNDERWATER
+	#ifndef CAN_RUN_IN_BUILDINGS
+		|| GetCurrentMapType() == MAP_TYPE_INDOOR
+	#endif
 	;
 }
 

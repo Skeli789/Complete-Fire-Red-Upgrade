@@ -268,10 +268,12 @@ u16 GetEventObjectGraphicsId(struct EventObject* eventObj)
 {
 	u8 lowerByte = eventObj->graphicsIdLowerByte;
 	u8 upperByte = eventObj->graphicsIdUpperByte;
-	
+
+	#ifndef EXISTING_OW_TABLE_ADDRESS
 	if (upperByte >= ARRAY_COUNT(gOverworldTableSwitcher))
-		return  lowerByte;
-	
+		return lowerByte;
+	#endif
+
 	return lowerByte | (upperByte << 8);
 }
 

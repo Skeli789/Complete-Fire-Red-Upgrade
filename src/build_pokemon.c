@@ -1110,8 +1110,10 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 			species = spread->species;
 			dexNum = SpeciesToNationalPokedexNum(species);
 			item = spread->item;
-			ability = ConvertFrontierAbilityNumToAbility(spread->ability, species);
-			itemEffect = (ability != ABILITY_KLUTZ) ? ItemId_GetHoldEffect(spread->item) : 0;
+			ability = (gMain.inBattle && gBattleTypeFlags & BATTLE_TYPE_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_ABILITY_SUPPRESSION) ? 0
+					: ConvertFrontierAbilityNumToAbility(spread->ability, species);
+			itemEffect = (ability == ABILITY_KLUTZ
+					  || (gMain.inBattle && gBattleTypeFlags & BATTLE_TYPE_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_MAGIC_ROOM)) ? 0 : ItemId_GetHoldEffect(item);
 
 			if (IsFrontierSingles(battleType))
 			{
@@ -2040,8 +2042,10 @@ static bool8 TeamDoesntHaveSynergy(const struct BattleTowerSpread* const spread,
 {
 	int i;
 
-	u8 ability = ConvertFrontierAbilityNumToAbility(spread->ability, spread->species);
-	u8 itemEffect = (ability != ABILITY_KLUTZ) ? ItemId_GetHoldEffect(spread->item) : 0;
+	u8 ability = (gMain.inBattle && gBattleTypeFlags & BATTLE_TYPE_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_ABILITY_SUPPRESSION) ? 0
+			   : ConvertFrontierAbilityNumToAbility(spread->ability, spread->species);
+	u8 itemEffect = (ability == ABILITY_KLUTZ
+				 || (gMain.inBattle && gBattleTypeFlags & BATTLE_TYPE_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_MAGIC_ROOM)) ? 0 : ItemId_GetHoldEffect(spread->item);
 
 	bool8 hasTailwinder = builder->moveOnTeam[MOVE_TAILWIND];
 	bool8 hasTrickRoomer = builder->moveOnTeam[MOVE_TRICKROOM];
