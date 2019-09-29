@@ -1374,7 +1374,7 @@ static void Task_SortFinish(u8 taskId)
 
 bool8 TrySetupSortBag(u8 taskId)
 {
-	if (gMain.newKeys & START_BUTTON)
+	if (gMain.newKeys & START_BUTTON && gBagPositionStruct.location == BAG_OPEN_REGULAR)
 	{
 		BagMenu_RemoveScrollingArrows();
 		Var800E = 0xF9F9;
