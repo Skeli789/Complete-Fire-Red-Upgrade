@@ -405,6 +405,7 @@ u16 GetBackspriteId(void)
 		else
 			trainerPicId = gSaveBlock2->playerGender;
 	}
+
 	return trainerPicId;
 }
 

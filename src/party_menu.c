@@ -770,7 +770,7 @@ const u8* const gFieldMoveDescriptions[] =
 	[FIELD_MOVE_DIVE] = gText_FieldMoveDesc_Dive,
 };
 
-#define FIELD_MOVE_TERMINATOR MOVE_SWORDSDANCE
+#define FIELD_MOVE_TERMINATOR MOVE_GUILLOTINE
 const u16 gFieldMoves[] =
 {
 	[FIELD_MOVE_FLASH] = MOVE_FLASH,
