@@ -1284,6 +1284,13 @@ u8 TurnBasedEffects(void)
 					gNewBS->calculatedAISwitchings[i] = FALSE;
 					gNewBS->recalculatedBestDoublesKillingScores[i] = FALSE;
 					gNewBS->aiMegaPotential[i] = NULL;
+
+					for (int j = 0; j < gBattlersCount; ++j)
+					{
+						gNewBS->strongestMove[i][j] = 0xFFFF;
+						gNewBS->canKnockOut[i][j] = 0xFF;
+						gNewBS->can2HKO[i][j] = 0xFF;
+					}
 				}
 		}
 		gBattleStruct->turnEffectsBank++;

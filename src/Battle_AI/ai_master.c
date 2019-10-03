@@ -17,9 +17,10 @@
 #include "../../include/new/move_tables.h"
 #include "../../include/new/set_z_effect.h"
 #include "../../include/new/switching.h"
+
 /*
 ai_master.c
-	The master function(s) for the AI logic
+	The master function(s) for the AI logic.
 */
 
 // AI states
@@ -76,8 +77,6 @@ static u8 (*const sBattleAIScriptTable[])(const u8, const u8, const u16, const u
 //This file's functions:
 static u8 ChooseMoveOrAction_Singles(void);
 static u8 ChooseMoveOrAction_Doubles(void);
-static void TryTempMegaEvolveBank(u8 bank, struct BattlePokemon* backupMon, u16* backupSpecies, u8* backupAbility);
-static void TryRevertTempMegaEvolveBank(u8 bank, struct BattlePokemon* backupMon, u16* backupSpecies, u8* backupAbility);
 static void BattleAI_DoAIProcessing(void);
 static bool8 ShouldSwitch(void);
 static bool8 ShouldSwitchIfOnlyBadMovesLeft(void);
@@ -232,7 +231,7 @@ u8 BattleAI_ChooseMoveOrAction(void)
 	return ret;
 }
 
-static void TryTempMegaEvolveBank(u8 bank, struct BattlePokemon* backupMon, u16* backupSpecies, u8* backupAbility)
+void TryTempMegaEvolveBank(u8 bank, struct BattlePokemon* backupMon, u16* backupSpecies, u8* backupAbility)
 {
 	if (gNewBS->aiMegaPotential[bank] != NULL) //Mon will probably mega evolve
 	{
@@ -262,7 +261,7 @@ static void TryTempMegaEvolveBank(u8 bank, struct BattlePokemon* backupMon, u16*
 	}
 }
 
-static void TryRevertTempMegaEvolveBank(u8 bank, struct BattlePokemon* backupMon, u16* backupSpecies, u8* backupAbility)
+void TryRevertTempMegaEvolveBank(u8 bank, struct BattlePokemon* backupMon, u16* backupSpecies, u8* backupAbility)
 {
 	if (*backupSpecies != SPECIES_NONE)
 	{
@@ -728,8 +727,8 @@ static bool8 ShouldSwitchIfOnlyBadMovesLeft(void)
 
 	if (IS_DOUBLE_BATTLE)
 	{
-		if ((!BATTLER_ALIVE(foe1) || OnlyBadMovesLeftInMoveset(battlerIn1, foe1))
-		&&  (!BATTLER_ALIVE(foe2) || OnlyBadMovesLeftInMoveset(battlerIn1, foe2)))
+		if ((!BATTLER_ALIVE(foe1) || OnlyBadMovesLeftInMoveset(gActiveBattler, foe1))
+		&&  (!BATTLER_ALIVE(foe2) || OnlyBadMovesLeftInMoveset(gActiveBattler, foe2)))
 		{
 			gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = PARTY_SIZE;
 			EmitTwoReturnValues(1, ACTION_SWITCH, 0);
@@ -738,7 +737,7 @@ static bool8 ShouldSwitchIfOnlyBadMovesLeft(void)
 	}
 	else
 	{
-		if (OnlyBadMovesLeftInMoveset(battlerIn1, foe1))
+		if (OnlyBadMovesLeftInMoveset(gActiveBattler, foe1))
 		{
 			gBattleStruct->switchoutIndex[SIDE(gActiveBattler)] = PARTY_SIZE;
 			EmitTwoReturnValues(1, ACTION_SWITCH, 0);
@@ -2240,27 +2239,30 @@ static void UpdateStrongestMoves(void)
 				gNewBS->aiMegaPotential[bankAtk] = CanMegaEvolve(bankAtk, TRUE); //Check Ultra Burst
 		}
 
-		TryTempMegaEvolveBank(bankAtk, &backupMonAtk, &backupSpeciesAtk, &backupAbilityAtk);
-
-		for (bankDef = 0; bankDef < gBattlersCount; ++bankDef)
+		if (IS_SINGLE_BATTLE) //There's a high chance these values will be used in singles so calc now.
 		{
-			if (bankAtk == bankDef || bankDef == PARTNER(bankAtk))
-				continue; //Don't bother calculating for these Pokemon. Never used
+			TryTempMegaEvolveBank(bankAtk, &backupMonAtk, &backupSpeciesAtk, &backupAbilityAtk);
 
-			struct BattlePokemon backupMonDef;
-			u8 backupAbilityDef = ABILITY_NONE;
-			u16 backupSpeciesDef = SPECIES_NONE;
-			TryTempMegaEvolveBank(bankDef, &backupMonDef, &backupSpeciesDef, &backupAbilityDef);
+			for (bankDef = 0; bankDef < gBattlersCount; ++bankDef)
+			{
+				if (bankAtk == bankDef || bankDef == PARTNER(bankAtk))
+					continue; //Don't bother calculating for these Pokemon. Never used
 
-			gNewBS->strongestMove[bankAtk][bankDef] = CalcStrongestMove(bankAtk, bankDef, FALSE);
-			gNewBS->canKnockOut[bankAtk][bankDef] = MoveKnocksOutXHits(gNewBS->strongestMove[bankAtk][bankDef], bankAtk, bankDef, 1);
-			gNewBS->can2HKO[bankAtk][bankDef] = (gNewBS->canKnockOut[bankAtk][bankDef]) ? TRUE
-												: MoveKnocksOutXHits(gNewBS->strongestMove[bankAtk][bankDef], bankAtk, bankDef, 2); //If you can KO in 1 hit you can KO in 2
+				struct BattlePokemon backupMonDef;
+				u8 backupAbilityDef = ABILITY_NONE;
+				u16 backupSpeciesDef = SPECIES_NONE;
+				TryTempMegaEvolveBank(bankDef, &backupMonDef, &backupSpeciesDef, &backupAbilityDef);
 
-			TryRevertTempMegaEvolveBank(bankDef, &backupMonDef, &backupSpeciesDef, &backupAbilityDef);
+				gNewBS->strongestMove[bankAtk][bankDef] = CalcStrongestMove(bankAtk, bankDef, FALSE);
+				gNewBS->canKnockOut[bankAtk][bankDef] = MoveKnocksOutXHits(gNewBS->strongestMove[bankAtk][bankDef], bankAtk, bankDef, 1);
+				gNewBS->can2HKO[bankAtk][bankDef] = (gNewBS->canKnockOut[bankAtk][bankDef]) ? TRUE
+													: MoveKnocksOutXHits(gNewBS->strongestMove[bankAtk][bankDef], bankAtk, bankDef, 2); //If you can KO in 1 hit you can KO in 2
+
+				TryRevertTempMegaEvolveBank(bankDef, &backupMonDef, &backupSpeciesDef, &backupAbilityDef);
+			}
+
+			TryRevertTempMegaEvolveBank(bankAtk, &backupMonAtk, &backupSpeciesAtk, &backupAbilityAtk);
 		}
-
-		TryRevertTempMegaEvolveBank(bankAtk, &backupMonAtk, &backupSpeciesAtk, &backupAbilityAtk);
 	}
 }
 
