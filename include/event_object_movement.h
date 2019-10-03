@@ -90,6 +90,12 @@ void __attribute__((long_call)) RemoveEventObject(struct EventObject *eventObjec
 u8 __attribute__((long_call)) GetCollisionAtCoords(struct EventObject *, s16, s16, u32);
 u8 __attribute__((long_call)) GetFaceDirectionMovementAction(u32);
 u8 __attribute__((long_call)) SpawnSpecialEventObject(struct EventObjectTemplate *);
+const struct EventObjectGraphicsInfo* __attribute__((long_call)) GetEventObjectGraphicsInfoOriginal(u8 graphicsId);
+void __attribute__((long_call)) MakeObjectTemplateFromEventObjectGraphicsInfo(u16 graphicsId, void* callback, void* spriteTemplate, void* subspriteTables);
+u8 __attribute__((long_call)) GetMoveDirectionAnimNum(u8 direction);
+u8 __attribute__((long_call)) GetMoveDirectionFastAnimNum(u8 direction);
+void __attribute__((long_call)) PatchObjectPalette(u16, u8);
+u8 __attribute__((long_call)) FindEventObjectPaletteIndexByTag(u16 tag);
 
 /*
 extern const struct SpriteFrameImage gEventObjectPicTable_PechaBerryTree[];
@@ -99,7 +105,6 @@ extern const struct SpriteTemplate *const gFieldEffectObjectTemplatePointers[];
 extern const u8 gReflectionEffectPaletteMap[];
 
 void ResetEventObjects(void);
-u8 GetMoveDirectionAnimNum(u8);
 u8 GetEventObjectIdByLocalIdAndMap(u8, u8, u8);
 bool8 TryGetEventObjectIdByLocalIdAndMap(u8, u8, u8, u8 *);
 u8 GetEventObjectIdByXY(s16, s16);
@@ -109,7 +114,6 @@ void RemoveEventObjectByLocalIdAndMap(u8, u8, u8);
 void LoadPlayerObjectReflectionPalette(u16, u8);
 void LoadSpecialObjectReflectionPalette(u16, u8);
 void sub_808EBA8(u8, u8, u8, s16, s16);
-void PatchObjectPalette(u16, u8);
 void sub_808E16C(s16, s16);
 void sub_808F28C(u8 localId, u8 mapNum, u8 mapGroup, u8 decorCat);
 void sub_8092FF0(s16, s16, s16 *, s16 *);

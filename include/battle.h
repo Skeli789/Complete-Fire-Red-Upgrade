@@ -653,7 +653,7 @@ struct BattleStruct
     u8 wallyMovesState;
     u8 wallyWaitFrames;
     u8 wallyMoveFrames;
-    u16 lastTakenMove[4]; //Used by mirror move
+    u16 lastTakenMove[MAX_BATTLERS_COUNT]; //Used by mirror move
     u8 field_A0;
     u8 field_A1;
     u8 field_A2;
@@ -663,22 +663,25 @@ struct BattleStruct
     u8 field_A6;
     u8 field_A7;
     u16 hpOnSwitchout[2];
-    u32 savedBattleTypeFlags;
-    u8 abilityPreventingSwitchout;
+	u8 abilityPreventingSwitchout;
     u8 hpScale;
+    u8 field_AE;
+	u8 field_AF;
+	u8 field_B0;
+	u8 field_B1;
+	u8 field_B2;
+	u8 field_B3;
     u8 synchronizeMoveEffect;
-    u8 field_B3;
-    u8 field_B4;
     u8 field_B5;
     u8 field_B6;
     u8 atkCancellerTracker;
     // void (*savedCallback)(void);
-    u16 usedHeldItems[BATTLE_BANKS_COUNT];
-    u8 chosenItem[4]; //Why is this a u8?
+    u16 usedHeldItems[MAX_BATTLERS_COUNT];
+    u8 chosenItem[MAX_BATTLERS_COUNT]; //Why is this a u8?
     u8 AI_itemType[2];
     u8 AI_itemFlags[2];
-    u16 choicedMove[BATTLE_BANKS_COUNT];
-    u16 changedItems[BATTLE_BANKS_COUNT];
+    u16 choicedMove[MAX_BATTLERS_COUNT];
+    u16 changedItems[MAX_BATTLERS_COUNT];
     u8 intimidateBank;
     u8 switchInItemsCounter;
     u8 field_DA;
@@ -686,7 +689,7 @@ struct BattleStruct
     u8 fillerDC[0xDF-0xDC];
     u8 givenExpMons; //The party indices in the opponent's party that have fainted and been given exp for
     u16 lastTakenMoveFrom[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; // 4 sub-arrays containing the moves that bank was hit by, by each bank //used by Mirror Move
-    u16 castformPalette[BATTLE_BANKS_COUNT][16];
+    u16 castformPalette[MAX_BATTLERS_COUNT][16];
     u8 field_180;
     u8 field_181;
     u8 field_182;
@@ -699,7 +702,7 @@ struct BattleStruct
     u8 field_1A4[96];
     u8 field_204[104];
     u8 field_26C[40];
-    u8 AI_monToSwitchIntoId[BATTLE_BANKS_COUNT];
+    u8 AI_monToSwitchIntoId[MAX_BATTLERS_COUNT];
     u8 field_298[8];
     u8 field_2A0;
     u8 field_2A1;

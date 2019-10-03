@@ -377,7 +377,10 @@ u32 GetAIFlagsInBattleFrontier(unusedArg u8 bank)
 
 u8 GetNumMonsOnTeamInFrontier(void)
 {
-	return MathMin(MathMax(1, VarGet(BATTLE_TOWER_POKE_NUM)), PARTY_SIZE);
+	if (FlagGet(BATTLE_TOWER_FLAG))
+		return MathMin(MathMax(1, VarGet(BATTLE_TOWER_POKE_NUM)), PARTY_SIZE);
+	else
+		return 3; //Regular multi battle
 }
 
 bool8 IsFrontierSingles(u8 battleType)

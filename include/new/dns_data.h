@@ -22,7 +22,7 @@
 #define OW_BG_PAL_9 TRUE
 #define OW_BG_PAL_10 TRUE
 #define OW_BG_PAL_11 TRUE
-#define OW_BG_PAL_12 FALSE
+#define OW_BG_PAL_12 TRUE
 #define OW_BG_PAL_13 FALSE
 #define OW_BG_PAL_14 FALSE
 #define OW_BG_PAL_15 FALSE

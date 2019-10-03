@@ -94,10 +94,16 @@ OakIntroPokeballFixHook:
 	bx r1
 
 .pool
-@0x80F1792 with r0
+@0x80F187C with r2
 ShinyAnimFixHook:
+	ldr r2, =GetBattlerSpriteCoord
+	bl bxr2
+	lsl r0, r0, #0x18
+	lsr r2, r0, #0x18
+	push {r2}
 	bl ShinyAnimFix
-	ldr r0, =0x80F179E | 1
+	pop {r2}
+	ldr r0, =0x80F1884 | 1
 	bx r0
 
 .pool

@@ -69,6 +69,7 @@ u32 __attribute__((long_call)) ChangeBgY(u8 bg, u32 value, u8 op);
 void __attribute__((long_call)) CopyBgTilemapBufferToVram(u8 bg);
 void __attribute__((long_call)) FillBgTilemapBufferRect(u8 bg, u16 tileNum, u8 x, u8 y, u8 width, u8 height, u8 palette);
 void __attribute__((long_call)) SetBgTilemapBuffer(u8 bg, void *tilemap);
+bool8 __attribute__((long_call)) IsDma3ManagerBusyWithBgCopy(void);
 
 /*
 void ResetBgs(void);
@@ -87,7 +88,6 @@ void InitBgFromTemplate(const struct BgTemplate *template);
 void SetBgMode(u8 bgMode);
 u16 LoadBgTilemap(u8 bg, const void *src, u16 size, u16 destOffset);
 u16 Unused_LoadBgPalette(u8 bg, const void *src, u16 size, u16 destOffset);
-bool8 IsDma3ManagerBusyWithBgCopy(void);
 u32 GetBgX(u8 bg);
 u32 ChangeBgY_ScreenOff(u8 bg, u32 value, u8 op);
 u32 GetBgY(u8 bg);

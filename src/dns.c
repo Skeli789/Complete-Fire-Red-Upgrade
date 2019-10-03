@@ -18,7 +18,7 @@ dns.c
 typedef bool8 IgnoredPalT[16];
 #define gIgnoredDNSPalIndices ((IgnoredPalT*) 0x203B830)
 
-static const u8 gDaysInAMonth[] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+static const u8 sDaysInAMonth[] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
 //This file's functions:
 static void BlendFadedPalettes(u32 selectedPalettes, u8 coeff, u32 color);
@@ -280,7 +280,7 @@ static bool8 IsLastDayInMonth(u32 year, u8 month, u8 day)
 		return IsLeapYear(year) ? (day == 29) : (day == 28);
 
 	else
-		return gDaysInAMonth[month] == day;
+		return sDaysInAMonth[month] == day;
 }
 
 static void IncreaseDateByOneDay(u32* year, u8* month, u8* day)

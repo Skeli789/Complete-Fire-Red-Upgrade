@@ -14,6 +14,13 @@ struct MenuAction
     } func;
 };
 
+struct MoveMenuInfoIcon
+{
+    u8 width;
+    u8 height;
+    u16 offset;
+};
+
 void __attribute__((long_call)) clear_scheduled_bg_copies_to_vram(void);
 void __attribute__((long_call)) reset_temp_tile_data_buffers(void);
 int __attribute__((long_call)) decompress_and_copy_tile_data_to_vram(u8 bg_id, const void *src, int size, u16 offset, u8 mode);

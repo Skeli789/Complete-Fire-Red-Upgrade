@@ -7,6 +7,7 @@
 #define gDecompressionBuffer 	 ((u8*) 0x201C000)
 
 void __attribute__((long_call)) LZDecompressVram(const void *src, void *dest);
+void __attribute__((long_call)) LZDecompressWram(const void *src, void *dest);
 void __attribute__((long_call)) LZ77UnCompWram(const void *src, void *dest);
 void __attribute__((long_call)) LZ77UnCompVram(const void *src, void *dest);
 bool8 __attribute__((long_call)) LoadCompressedSpriteSheetUsingHeap(const struct CompressedSpriteSheet* src);

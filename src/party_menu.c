@@ -622,14 +622,20 @@ u8 CanPokemonSelectedBeEnteredInBattleTower(void)
 	struct Pokemon* party = gPlayerParty;
 	u8 maxLength = GetNumMonsOnTeamInFrontier();
 
-	if (gSelectedOrderFromParty[maxLength - 1] == 0) //No mon's entered
+	if (gSelectedOrderFromParty[maxLength - 1] == 0) //Not enough mon's entered
 	{
 		if (maxLength == 1)
 			return 14;
 
-		ConvertIntToDecimalStringN(gStringVar1, maxLength, 0, 1);
-		return 17;
+		if (FlagGet(BATTLE_TOWER_FLAG))
+		{
+			ConvertIntToDecimalStringN(gStringVar1, maxLength, 0, 1);
+			return 17;
+		}
 	}
+
+	if (!FlagGet(BATTLE_TOWER_FLAG))
+		return 0xFF;
 
 	for (i = 0; i < maxLength - 1; ++i)
 	{

@@ -24,3 +24,7 @@ void HandleMoveSwitchingUpdate(void);
 u8 TrySetCantSelectMoveBattleScript(void);
 void PlayerHandleChooseAction(void);
 void HandleInputChooseAction(void);
+
+//Exported Constants
+#define TYPE_ICON_TAG 0x2720
+#define TYPE_ICON_TAG_2 0x2721

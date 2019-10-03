@@ -1200,9 +1200,15 @@ static s8 CompareItemsByHavingValue(struct ItemSlot* itemSlot1, struct ItemSlot*
 		return -1;
 
 	if (itemSlot1->quantity == 0)
+	{
+		itemSlot1->itemId = ITEM_NONE; //Remove bugged items
 		return 1;
+	}
 	else if (itemSlot2->quantity == 0)
+	{
+		itemSlot2->itemId = ITEM_NONE; //Remove bugged items
 		return -1;
+	}
 
 	return 0;
 }

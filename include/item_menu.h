@@ -70,3 +70,7 @@ void __attribute__((long_call)) BagMenu_Print(u8 windowId, u8 fontId, const u8 *
 void __attribute__((long_call)) LoadBagItemListBuffers(u8 pocketId);
 void __attribute__((long_call)) BagMenu_YesNo(u8 a, const struct YesNoFuncTable *funcTable);
 void __attribute__((long_call)) SetInitialScrollAndCursorPositions(u8 pocketId);
+void __attribute__((long_call)) CB2_BagMenuFromStartMenu(void);
+void __attribute__((long_call)) ReturnFromItemToBag(u8 taskId);
+void __attribute__((long_call)) SetBagCallback(void* callbackFunc);
+void __attribute__((long_call)) PrepareOverworldReturn(void);

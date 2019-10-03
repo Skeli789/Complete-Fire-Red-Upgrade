@@ -4,7 +4,6 @@
 #include "../include/string_util.h"
 #include "../include/constants/items.h"
 #include "../include/constants/trainer_classes.h"
-
 #include "../include/new/battle_util.h"
 #include "../include/new/build_pokemon.h"
 #include "../include/new/util.h"
@@ -13,6 +12,7 @@
 #include "../include/new/item.h"
 #include "../include/new/mega.h"
 #include "../include/new/mega_battle_scripts.h"
+#include "../include/new/move_menu.h"
 #include "../include/new/set_z_effect.h"
 /*
 mega.c
@@ -619,12 +619,14 @@ static const struct SpriteTemplate UltraTriggerTemplate =
 /* Declare the colours the trigger button doesn't light up */
 static const u16 IgnoredColours[] =
 {
-  RGB(7, 10, 8),
-  RGB(15, 18, 16),
-  RGB(10, 13, 12),
-  RGB(4, 7, 0),
-  RGB(4, 4, 0),
-  RGB(0, 0, 0),
+	RGB(7, 10, 8),
+	RGB(15, 18, 16),
+	RGB(10, 13, 12),
+	RGB(13, 13, 11),
+	RGB(31, 31, 31),
+	RGB(4, 7, 0),
+	RGB(4, 4, 0),
+	RGB(0, 0, 0),
 };
 
 /* Easy match function */
@@ -703,12 +705,15 @@ static void MegaTriggerCallback(struct Sprite* self)
 	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
 	{
 		xshift = -6;
-		yshift = 0;
+		yshift = -2;
+		
+		if (IndexOfSpritePaletteTag(TYPE_ICON_TAG) != 0xFF) //Type icons are shown
+			xshift -= 8;
 	}
 	else
 	{
 		xshift = -5;
-		yshift = 2;
+		yshift = 1;
 	}
 
 	// Find the health box object that this trigger is supposed to be attached to
@@ -717,16 +722,12 @@ static void MegaTriggerCallback(struct Sprite* self)
 
 	u8 y = healthbox->oam.y;
 
-	u8 pingid = gBattleSpritesDataPtr->healthBoxesData[TRIGGER_BANK].healthboxBounceSpriteId;
-	struct Sprite* ping = &gSprites[pingid];
-
 	if (y)
 	{
 		// Copy the healthbox's position (it has various animations)
 		//self->y = healthbox->y + 20;
 		self->pos1.x = (healthbox->oam.x) + xshift + self->data[3];
-		self->pos2.y = Sine(ping->data[0], ping->data[2]);
-		self->pos1.y = healthbox->pos1.y + yshift;
+		self->pos1.y = healthbox->pos1.y + yshift + healthbox->pos2.y;
 	}
 	else
 	{

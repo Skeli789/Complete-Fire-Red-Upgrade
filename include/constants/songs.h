@@ -22,6 +22,75 @@
 
 #define BGM_RANDOM_BATTLE_MUSIC 0xFEFE
 
+#define MUS_DUMMY 0
+#define SE_STOP 0
+#define SE_USE_ITEM 1
+#define SE_PC_LOGON 2
+#define SE_PC_OFF 3
+#define SE_PC_ON 4
+#define SE_SELECT 5
+#define SE_WIN_OPEN 6
+#define SE_WALL_HIT 7
+#define SE_DOOR_OPEN 8
+#define SE_EXIT_ROOM 9
+#define SE_HOP 0xA
+#define SE_BIKE_BELL 0xB
+#define SE_NOT_VERY_EFFECTIVE 0xC
+#define SE_HIT_DAMAGE 0xD
+#define SE_SUPER_EFFECTIVE 0xE
+#define SE_SWITCH_IN 0xF
+#define SE_FAINT 0x10
+#define SE_FLEE 0x11
+#define SE_SLIDING_DOOR_OPEN 0x12
+
+#define SE_BREAK_DOOR_OPEN 0x14
+#define SE_EXCLAIM 0x15
+#define SE_FALSE 0x16
+#define SE_POKE_CENTRE_LOAD_SINGLE_BALL 0x17
+#define SE_CASINO_STOP_SLOT_REEL 0x18
+#define SE_CORRECT 0x19
+#define SE_ERROR 0x1A
+#define SE_EXP 0x1B
+#define SE_HOP_ON_BIKE 0x1C
+#define SE_LOCK 0x1D
+#define SE_UNLOCK 0x1E
+#define SE_LAVARIDGE_GYM_DIG 0x21
+
+#define SE_ICE_BREAK 0x23
+#define SE_ICE_CRACK 0x24
+#define SE_FALL 0x25
+#define SE_DOOR_SHUT 0x26
+#define SE_WARP_AWAY 0x27
+#define SE_WARP_IN 0x28
+#define SE_SLIDE 0x29
+#define SE_TURN_SWITCH_FLIP 0x2A
+
+#define SE_BT_START 0x61
+
+#define SE_POKENAV_ONE_BEEP 0x65
+#define SE_POKENAV_TWO_BEEPS 0x66
+#define SE_POKENAV_ON 0x67
+#define SE_POKENAV_OFF 0x68
+#define SE_POKENAV_SEARCHING 0x69
+
+#define SE_MUD_SLAP 0xA1
+#define SE_LEAVES 0xA2
+
+#define SE_RG_W_DOOR 241        // Door
+#define SE_RG_CARD1 242         // Trainer Card 1
+#define SE_RG_CARD2 243         // Trainer Card 2
+#define SE_RG_CARD3 244         // Trainer Card 3
+#define SE_RG_BAG1 245          // Bag Scroll
+#define SE_RG_BAG2 246          // Bag Pocket Change
+#define SE_RG_GETTING 247
+#define SE_RG_SHOP 248          // Cash Register
+#define SE_RG_KITEKI 249        // S.S. Anne Horn
+#define SE_RG_HELP_OP 250       // Help Menu Open
+#define SE_RG_HELP_CL 251       // Help Menu Close
+#define SE_RG_HELP_NG 252       // Help Menu Error
+#define SE_RG_DEOMOV 253        // Deoxys Moves
+#define SE_RG_EXCELLENT 254
+
 #ifdef UNBOUND //For Unbound
 
 #define BGM_EYE_NEO_PLASMA 0x146
@@ -98,57 +167,3 @@
 #define BGM_VICTORY_ELITE_4 0x1B4
 
 #endif
-
-#define MUS_DUMMY 0
-#define SE_STOP 0
-#define SE_USE_ITEM 1
-#define SE_PC_LOGON 2
-#define SE_PC_OFF 3
-#define SE_PC_ON 4
-#define SE_SELECT 5
-#define SE_WIN_OPEN 6
-#define SE_WALL_HIT 7
-#define SE_DOOR_OPEN 8
-#define SE_EXIT_ROOM 9
-#define SE_HOP 0xA
-#define SE_BIKE_BELL 0xB
-#define SE_NOT_VERY_EFFECTIVE 0xC
-#define SE_HIT_DAMAGE 0xD
-#define SE_SUPER_EFFECTIVE 0xE
-#define SE_SWITCH_IN 0xF
-#define SE_FAINT 0x10
-#define SE_FLEE 0x11
-#define SE_SLIDING_DOOR_OPEN 0x12
-
-#define SE_BREAK_DOOR_OPEN 0x14
-#define SE_EXCLAIM 0x15
-#define SE_FALSE 0x16
-#define SE_POKE_CENTRE_LOAD_SINGLE_BALL 0x17
-#define SE_CASINO_STOP_SLOT_REEL 0x18
-#define SE_CORRECT 0x19
-#define SE_ERROR 0x1A
-#define SE_EXP 0x1B
-#define SE_HOP_ON_BIKE 0x1C
-#define SE_LOCK 0x1D
-#define SE_UNLOCK 0x1E
-#define SE_LAVARIDGE_GYM_DIG 0x21
-
-#define SE_ICE_BREAK 0x23
-#define SE_ICE_CRACK 0x24
-#define SE_FALL 0x25
-#define SE_DOOR_SHUT 0x26
-#define SE_WARP_AWAY 0x27
-#define SE_WARP_IN 0x28
-#define SE_SLIDE 0x29
-#define SE_TURN_SWITCH_FLIP 0x2A
-
-#define SE_BT_START 0x61
-
-#define SE_POKENAV_ONE_BEEP 0x65
-#define SE_POKENAV_TWO_BEEPS 0x66
-#define SE_POKENAV_ON 0x67
-#define SE_POKENAV_OFF 0x68
-#define SE_POKENAV_SEARCHING 0x69
-
-#define SE_MUD_SLAP 0xA1
-#define SE_LEAVES 0xA2

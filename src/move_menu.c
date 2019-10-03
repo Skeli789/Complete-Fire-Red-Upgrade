@@ -1,5 +1,6 @@
 #include "defines.h"
 #include "defines_battle.h"
+#include "../include/sprite.h"
 #include "../include/string_util.h"
 #include "../include/window.h"
 #include "../include/constants/songs.h"
@@ -16,6 +17,7 @@
 #include "../include/new/move_tables.h"
 #include "../include/new/set_z_effect.h"
 #include "../include/new/z_move_effects.h"
+
 /*
 move_menu.c
 	functions for displaying move data and z moves in the battle menu
@@ -29,6 +31,10 @@ extern u8 gTypeNames[][TYPE_NAME_LENGTH + 1];
 extern const u8 sTargetIdentities[];
 extern const u16 gUserInterfaceGfx_TypeHighlightingPal[];
 extern const u8 gMoveEffectsThatIgnoreWeaknessResistance[];
+extern const u8 CamomonsTypeIconsTiles[];
+extern const u8 CamomonsTypeIcons2Tiles[];
+extern const u16 CamomonsTypeIconsPal[];
+extern const u16 CamomonsTypeIcons2Pal[];
 
 //This file's functions:
 static bool8 TriggerMegaEvolution(void);
@@ -39,11 +45,108 @@ static void ZMoveSelectionDisplayPower(void);
 static void MoveSelectionDisplayDetails(void);
 static void ReloadMoveNamesIfNecessary(void);
 static void CloseZMoveDetails(void);
+static void TryLoadTypeIcons(void);
+static void SpriteCB_CamomonsTypeIcon(struct Sprite* sprite);
+
+static const struct Coords16 sTypeIconPositions[][/*IS_SINGLE_BATTLE*/2] =
+{
+	[B_POSITION_PLAYER_LEFT] =
+	{
+		[TRUE] = {225, 86}, 	//Single Battle
+		[FALSE] = {142, 70},	//Double Battle
+	},
+	[B_POSITION_OPPONENT_LEFT] = 
+	{
+		[TRUE] = {18, 26}, 		//Single Battle
+		[FALSE] = {99, 15},		//Double Battle
+	},
+	[B_POSITION_PLAYER_RIGHT] =
+	{
+		[FALSE] = {154, 96},	//Double Battle
+	},
+	[B_POSITION_OPPONENT_RIGHT] = 
+	{
+		[FALSE] = {87, 40},		//Double Battle
+	},
+};
+
+static const struct OamData sTypeIconOAM =
+{
+	.affineMode = ST_OAM_AFFINE_OFF,
+	.objMode = ST_OAM_OBJ_NORMAL,
+	.shape = SPRITE_SHAPE(8x16),
+	.size = SPRITE_SIZE(8x16),
+	.priority = 1, //Same level as health bar
+};
+
+#define type_icon_frame(ptr, frame) {.data = (u8 *)ptr + (1 * 2 * frame * 32), .size = 1 * 2 * 32}
+static const struct SpriteFrameImage sTypeIconPicTable[] =
+{
+	[TYPE_NORMAL] =		type_icon_frame(CamomonsTypeIconsTiles, TYPE_NORMAL),
+	[TYPE_FIGHTING] =	type_icon_frame(CamomonsTypeIconsTiles, TYPE_FIGHTING),
+	[TYPE_FLYING] =		type_icon_frame(CamomonsTypeIcons2Tiles, TYPE_FLYING),
+	[TYPE_POISON] =		type_icon_frame(CamomonsTypeIcons2Tiles, TYPE_POISON),
+	[TYPE_GROUND] =		type_icon_frame(CamomonsTypeIcons2Tiles, TYPE_GROUND),
+	[TYPE_ROCK] =		type_icon_frame(CamomonsTypeIconsTiles, TYPE_ROCK),
+	[TYPE_BUG] =		type_icon_frame(CamomonsTypeIconsTiles, TYPE_BUG),
+	[TYPE_GHOST] =		type_icon_frame(CamomonsTypeIconsTiles, TYPE_GHOST),
+	[TYPE_STEEL] =		type_icon_frame(CamomonsTypeIconsTiles, TYPE_STEEL),
+	[TYPE_MYSTERY] =	type_icon_frame(CamomonsTypeIcons2Tiles, TYPE_MYSTERY),
+	[TYPE_FIRE] =		type_icon_frame(CamomonsTypeIconsTiles, TYPE_FIRE),
+	[TYPE_WATER] =		type_icon_frame(CamomonsTypeIconsTiles, TYPE_WATER),
+	[TYPE_GRASS] =		type_icon_frame(CamomonsTypeIconsTiles, TYPE_GRASS),
+	[TYPE_ELECTRIC] =	type_icon_frame(CamomonsTypeIconsTiles, TYPE_ELECTRIC),
+	[TYPE_PSYCHIC] =	type_icon_frame(CamomonsTypeIconsTiles, TYPE_PSYCHIC),
+	[TYPE_ICE] =		type_icon_frame(CamomonsTypeIconsTiles, TYPE_ICE),
+	[TYPE_DRAGON] =		type_icon_frame(CamomonsTypeIcons2Tiles, TYPE_DRAGON),
+	[TYPE_DARK] =		type_icon_frame(CamomonsTypeIconsTiles, TYPE_DARK),
+	[0x12] =			type_icon_frame(CamomonsTypeIcons2Tiles, TYPE_MYSTERY),
+	[TYPE_ROOSTLESS] = 	type_icon_frame(CamomonsTypeIcons2Tiles, TYPE_MYSTERY),
+	[TYPE_BLANK] = 		type_icon_frame(CamomonsTypeIcons2Tiles, TYPE_MYSTERY),
+	[0x15] = 			type_icon_frame(CamomonsTypeIcons2Tiles, TYPE_MYSTERY),
+	[0x16] = 			type_icon_frame(CamomonsTypeIcons2Tiles, TYPE_MYSTERY),
+	[TYPE_FAIRY] = 		type_icon_frame(CamomonsTypeIconsTiles, TYPE_FAIRY),
+};
+
+static struct SpriteTemplate sTypeIconSpriteTemplate =
+{
+	.tileTag = 0xFFFF,
+	.paletteTag = TYPE_ICON_TAG,
+	.oam = &sTypeIconOAM,
+	.anims = gDummySpriteAnimTable,
+	.images = sTypeIconPicTable,
+	.affineAnims = gDummySpriteAffineAnimTable,
+	.callback = SpriteCB_CamomonsTypeIcon,
+};
+
+static struct SpriteTemplate sTypeIconSpriteTemplate2 =
+{
+	.tileTag = 0xFFFF,
+	.paletteTag = TYPE_ICON_TAG_2,
+	.oam = &sTypeIconOAM,
+	.anims = gDummySpriteAnimTable,
+	.images = sTypeIconPicTable,
+	.affineAnims = gDummySpriteAffineAnimTable,
+	.callback = SpriteCB_CamomonsTypeIcon,
+};
+
+static const struct SpritePalette sTypeIconPalTemplate =
+{
+	.data = CamomonsTypeIconsPal,
+	.tag = TYPE_ICON_TAG,
+};
+
+static const struct SpritePalette sTypeIconPalTemplate2 =
+{
+	.data = CamomonsTypeIcons2Pal,
+	.tag = TYPE_ICON_TAG_2,
+};
 
 void InitMoveSelectionsVarsAndStrings(void)
 {
 	TryLoadMegaTriggers();
 	TryLoadZTrigger();
+	TryLoadTypeIcons();
 	MoveSelectionDisplayMoveNames();
 	gMultiUsePlayerCursor = 0xFF;
 	MoveSelectionCreateCursorAt(gMoveSelectionCursor[gActiveBattler], 0);
@@ -1356,4 +1459,155 @@ bool8 CheckCantMoveThisTurn(void)
 bool8 IsBagDisabled(void)
 {
 	return FlagGet(DISABLE_BAG_FLAG) || (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_FRONTIER));
+}
+
+static void TryLoadTypeIcons(void)
+{
+	if (/*(gBattleTypeFlags & BATTLE_TYPE_CAMOMONS)
+	&& */!(gBattleTypeFlags & BATTLE_TYPE_LINK)
+	&& IndexOfSpritePaletteTag(TYPE_ICON_TAG) == 0xFF)
+	{
+		LoadSpritePalette(&sTypeIconPalTemplate);
+		LoadSpritePalette(&sTypeIconPalTemplate2);
+		for (u8 position = 0; position < gBattlersCount; ++position)
+		{
+			if (!BATTLER_ALIVE(GetBattlerAtPosition(position)))
+				continue;
+
+			for (u8 typeNum = 0; typeNum < 2; ++typeNum) //Load each type
+			{
+				u8 spriteId;
+				s16 x = sTypeIconPositions[position][IS_SINGLE_BATTLE].x;
+				s16 y = sTypeIconPositions[position][IS_SINGLE_BATTLE].y + (11 * typeNum); //2nd type is 13px below
+
+				u8* type1Ptr;
+				if (gStatuses3[GetBattlerAtPosition(position)] & STATUS3_ILLUSION && !(gBattleTypeFlags & BATTLE_TYPE_CAMOMONS))
+					type1Ptr = &gBaseStats[GetIllusionPartyData(GetBattlerAtPosition(position))->species].type1;
+				else
+					type1Ptr = &gBattleMons[GetBattlerAtPosition(position)].type1;
+
+				u8 type = *(type1Ptr + typeNum);
+				
+				switch (type) { //Certain types have a different palette
+					case TYPE_FLYING:
+					case TYPE_POISON:
+					case TYPE_GROUND:
+					case TYPE_DRAGON:
+					case TYPE_MYSTERY:
+					case TYPE_ROOSTLESS:
+					case TYPE_BLANK:
+						spriteId = CreateSpriteAtEnd(&sTypeIconSpriteTemplate2, x, y, 0xFF);
+						break;
+					default:
+						spriteId = CreateSpriteAtEnd(&sTypeIconSpriteTemplate, x, y, 0xFF);
+				}
+	
+				if (spriteId != MAX_SPRITES)
+				{
+					struct Sprite* sprite = &gSprites[spriteId];
+					sprite->data[0] = position;
+					sprite->data[1] = gActiveBattler;
+					sprite->data[3] = y; //Save original y-value for bouncing
+
+					if (IS_SINGLE_BATTLE)
+					{
+						if (SIDE(GetBattlerAtPosition(position)) == B_SIDE_PLAYER)
+							SetSpriteOamFlipBits(sprite, TRUE, FALSE); //Flip horizontally
+					}
+					else //Double Battle
+					{
+						if (SIDE(GetBattlerAtPosition(position)) == B_SIDE_OPPONENT)
+							SetSpriteOamFlipBits(sprite, TRUE, FALSE); //Flip horizontally
+					}
+
+					RequestSpriteFrameImageCopy(type, sprite->oam.tileNum, sprite->images);
+				}
+			}
+		}
+	}
+}
+
+static void SpriteCB_CamomonsTypeIcon(struct Sprite* sprite)
+{
+	u8 position = sprite->data[0];
+	u8 bank = sprite->data[1];
+
+	if (sprite->data[2] == 10)
+	{
+		FreeSpritePaletteByTag(TYPE_ICON_TAG);
+		DestroySprite(sprite);
+		return;
+	}
+	
+	//Type icons should prepare to destroy themselves if the Player is not choosing an action
+	if (gBattleBankFunc[bank] != (0x08032C90 | 1) //PlayerHandleChooseMove
+	&&  gBattleBankFunc[bank] != (0x0802EA10 | 1) //HandleInputChooseMove
+	&&  gBattleBankFunc[bank] != (0x08032C4C | 1) //HandleChooseMoveAfterDma3
+	&&  gBattleBankFunc[bank] != (u32) HandleInputChooseMove
+	&&  gBattleBankFunc[bank] != (u32) HandleInputChooseTarget
+	&&  gBattleBankFunc[bank] != (u32) HandleMoveSwitching
+	&&  gBattleBankFunc[bank] != (u32) HandleInputChooseMove)
+	{
+		if (IS_SINGLE_BATTLE)
+		{
+			switch (position) {
+				case B_POSITION_PLAYER_LEFT:
+					sprite->pos1.x -= 1;
+					break;
+				case B_POSITION_OPPONENT_LEFT:
+					sprite->pos1.x += 1;
+					break;
+			}
+		}
+		else //Double Battle
+		{
+			switch (position) {
+				case B_POSITION_PLAYER_LEFT:
+				case B_POSITION_PLAYER_RIGHT:
+					sprite->pos1.x += 1;
+					break;
+				case B_POSITION_OPPONENT_LEFT:
+				case B_POSITION_OPPONENT_RIGHT:
+					sprite->pos1.x -= 1;
+					break;
+			}
+		}
+
+		++sprite->data[2];
+		return;
+	}
+
+	if (IS_SINGLE_BATTLE)
+	{
+		switch (position) {
+			case B_POSITION_PLAYER_LEFT:
+				if (sprite->pos1.x < sTypeIconPositions[position][TRUE].x + 10)
+					sprite->pos1.x += 1;
+				break;
+			case B_POSITION_OPPONENT_LEFT:
+				if (sprite->pos1.x > sTypeIconPositions[position][TRUE].x - 10)
+					sprite->pos1.x -= 1;
+				break;
+		}
+	}
+	else //Double Battle
+	{
+		switch (position) {
+			case B_POSITION_PLAYER_LEFT:
+			case B_POSITION_PLAYER_RIGHT:
+				if (sprite->pos1.x > sTypeIconPositions[position][FALSE].x - 10)
+					sprite->pos1.x -= 1;
+				break;
+			case B_POSITION_OPPONENT_LEFT:
+			case B_POSITION_OPPONENT_RIGHT:
+				if (sprite->pos1.x < sTypeIconPositions[position][FALSE].x + 10)
+					sprite->pos1.x += 1;
+				break;
+		}
+	}
+
+	//Deal with bouncing player healthbox
+	s16 originalY = sprite->data[3];
+	struct Sprite* healthbox = &gSprites[gHealthboxIDs[GetBattlerAtPosition(position)]];
+	sprite->pos1.y = originalY + healthbox->pos2.y;
 }

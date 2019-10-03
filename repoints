@@ -107,9 +107,6 @@ gEventObjectImageAnim_RunWest 083A34C8
 gEventObjectImageAnim_RunEast 083A34CC
 
 EventScript_TrainerSpottedInitiate 08080374
-TestScript 08B7AD70
-TestScript 08B7ADA0
-TestScript 087D67B0
 
 ##Battle Scripts
 ThiefStealBS 8020E74
@@ -130,6 +127,7 @@ Substitute_FrontPal 0803514C
 SurfPal 080AB464
 gMoveMenuInfoIcons 8107DAC
 Type_IconsTiles 08107DB0
+Type_IconsPal 08107D64
 
 ##PC Selection BRM
 pcSelect_newBrmTable 08094e48
@@ -168,3 +166,9 @@ gFieldMoves 8122A7C
 sItemMenuActions 8109BA4
 sItemMenuActions 8109C20
 sItemMenuActions 8109C48
+
+#ifdef UNBOUND
+TestScript 08B7AD70
+TestScript 08B7ADA0
+TestScript 087D67B0
+#endif
