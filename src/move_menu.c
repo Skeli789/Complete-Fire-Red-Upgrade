@@ -50,6 +50,26 @@ static void SpriteCB_CamomonsTypeIcon(struct Sprite* sprite);
 
 static const struct Coords16 sTypeIconPositions[][/*IS_SINGLE_BATTLE*/2] =
 {
+#ifndef UNBOUND //MODIFY THIS
+	[B_POSITION_PLAYER_LEFT] =
+	{
+		[TRUE] = {221, 86}, 	//Single Battle
+		[FALSE] = {144, 70},	//Double Battle
+	},
+	[B_POSITION_OPPONENT_LEFT] = 
+	{
+		[TRUE] = {20, 26}, 		//Single Battle
+		[FALSE] = {97, 14},		//Double Battle
+	},
+	[B_POSITION_PLAYER_RIGHT] =
+	{
+		[FALSE] = {156, 96},	//Double Battle
+	},
+	[B_POSITION_OPPONENT_RIGHT] = 
+	{
+		[FALSE] = {85, 39},		//Double Battle
+	},
+#else //For Pokemon Unbound
 	[B_POSITION_PLAYER_LEFT] =
 	{
 		[TRUE] = {225, 86}, 	//Single Battle
@@ -68,6 +88,7 @@ static const struct Coords16 sTypeIconPositions[][/*IS_SINGLE_BATTLE*/2] =
 	{
 		[FALSE] = {87, 40},		//Double Battle
 	},
+#endif
 };
 
 static const struct OamData sTypeIconOAM =
@@ -1463,8 +1484,13 @@ bool8 IsBagDisabled(void)
 
 static void TryLoadTypeIcons(void)
 {
-	if (/*(gBattleTypeFlags & BATTLE_TYPE_CAMOMONS)
-	&& */!(gBattleTypeFlags & BATTLE_TYPE_LINK)
+	#ifndef HEALTHBAR_TYPE_ICONS
+	if ((gBattleTypeFlags & BATTLE_TYPE_CAMOMONS)
+	&&
+	#else
+	if (
+	#endif
+	!(gBattleTypeFlags & BATTLE_TYPE_LINK)
 	&& IndexOfSpritePaletteTag(TYPE_ICON_TAG) == 0xFF)
 	{
 		LoadSpritePalette(&sTypeIconPalTemplate);
