@@ -859,7 +859,11 @@ const struct BattleMove gBattleMoves[] =
 [MOVE_FLAMETHROWER] =
 	{
 		.effect = EFFECT_BURN_HIT,
+		#ifdef GEN_6_POWER_NERFS
+		.power = 90,
+		#else
 		.power = 95,
+		#endif
 		.type = TYPE_FIRE,
 		.accuracy = 100,
 		.pp = 15,
@@ -907,7 +911,11 @@ const struct BattleMove gBattleMoves[] =
 [MOVE_HYDROPUMP] =
 	{
 		.effect = EFFECT_HIT,
+		#ifdef GEN_6_POWER_NERFS
+		.power = 110,
+		#else
 		.power = 120,
+		#endif
 		.type = TYPE_WATER,
 		.accuracy = 80,
 		.pp = 5,
@@ -923,7 +931,11 @@ const struct BattleMove gBattleMoves[] =
 [MOVE_SURF] =
 	{
 		.effect = EFFECT_HIT,
+		#ifdef GEN_6_POWER_NERFS
+		.power = 90,
+		#else
 		.power = 95,
+		#endif
 		.type = TYPE_WATER,
 		.accuracy = 100,
 		.pp = 15,
@@ -939,7 +951,11 @@ const struct BattleMove gBattleMoves[] =
 [MOVE_ICEBEAM] =
 	{
 		.effect = EFFECT_FREEZE_HIT,
+		#ifdef GEN_6_POWER_NERFS
+		.power = 90,
+		#else
 		.power = 95,
+		#endif
 		.type = TYPE_ICE,
 		.accuracy = 100,
 		.pp = 10,
@@ -955,7 +971,11 @@ const struct BattleMove gBattleMoves[] =
 [MOVE_BLIZZARD] =
 	{
 		.effect = EFFECT_FREEZE_HIT,
+		#ifdef GEN_6_POWER_NERFS
+		.power = 110,
+		#else
 		.power = 120,
+		#endif
 		.type = TYPE_ICE,
 		.accuracy = 70,
 		.pp = 5,
@@ -1371,7 +1391,11 @@ const struct BattleMove gBattleMoves[] =
 [MOVE_THUNDERBOLT] =
 	{
 		.effect = EFFECT_PARALYZE_HIT,
+		#ifdef GEN_6_POWER_NERFS
+		.power = 90,
+		#else
 		.power = 95,
+		#endif
 		.type = TYPE_ELECTRIC,
 		.accuracy = 100,
 		.pp = 15,
@@ -1403,7 +1427,11 @@ const struct BattleMove gBattleMoves[] =
 [MOVE_THUNDER] =
 	{
 		.effect = EFFECT_THUNDER,
+		#ifdef GEN_6_POWER_NERFS
+		.power = 110,
+		#else
 		.power = 120,
+		#endif
 		.type = TYPE_ELECTRIC,
 		.accuracy = 70,
 		.pp = 10,
@@ -2027,7 +2055,11 @@ const struct BattleMove gBattleMoves[] =
 [MOVE_FIREBLAST] =
 	{
 		.effect = EFFECT_BURN_HIT,
+		#ifdef GEN_6_POWER_NERFS
+		.power = 110,
+		#else
 		.power = 120,
+		#endif
 		.type = TYPE_FIRE,
 		.accuracy = 85,
 		.pp = 5,
@@ -2267,7 +2299,11 @@ const struct BattleMove gBattleMoves[] =
 [MOVE_LEECHLIFE] =
 	{
 		.effect = EFFECT_ABSORB,
+		#ifdef BUFFED_LEECH_LIFE
+		.power = 80,
+		#else
 		.power = 20,
+		#endif
 		.type = TYPE_BUG,
 		.accuracy = 100,
 		.pp = 15,
@@ -4123,7 +4159,11 @@ const struct BattleMove gBattleMoves[] =
 [MOVE_HEATWAVE] =
 	{
 		.effect = EFFECT_BURN_HIT,
+		#ifdef GEN_6_POWER_NERFS
+		.power = 95,
+		#else
 		.power = 100,
+		#endif
 		.type = TYPE_FIRE,
 		.accuracy = 90,
 		.pp = 10,
@@ -4955,7 +4995,11 @@ const struct BattleMove gBattleMoves[] =
 [MOVE_METEORMASH] =
 	{
 		.effect = EFFECT_ATTACK_UP_HIT,
+		#ifdef GEN_6_POWER_NERFS
+		.power = 90,
+		#else
 		.power = 100,
+		#endif
 		.type = TYPE_STEEL,
 		.accuracy = 90,
 		.pp = 10,
@@ -5051,7 +5095,11 @@ const struct BattleMove gBattleMoves[] =
 [MOVE_OVERHEAT] =
 	{
 		.effect = EFFECT_OVERHEAT,
+		#ifdef GEN_6_POWER_NERFS
+		.power = 130,
+		#else
 		.power = 140,
+		#endif
 		.type = TYPE_FIRE,
 		.accuracy = 90,
 		.pp = 5,
@@ -5291,7 +5339,11 @@ const struct BattleMove gBattleMoves[] =
 [MOVE_MUDDYWATER] =
 	{
 		.effect = EFFECT_ACCURACY_DOWN_HIT,
+		#ifdef GEN_6_POWER_NERFS
+		.power = 90,
+		#else
 		.power = 95,
+		#endif
 		.type = TYPE_WATER,
 		.accuracy = 85,
 		.pp = 10,
@@ -5755,7 +5807,11 @@ const struct BattleMove gBattleMoves[] =
 [MOVE_AURASPHERE] =
 	{
 		.effect = EFFECT_ALWAYS_HIT,
+		#ifdef GEN_6_POWER_NERFS
+		.power = 80,
+		#else
 		.power = 90,
+		#endif
 		.type = TYPE_FIGHTING,
 		.accuracy = 0,
 		.pp = 20,
@@ -5915,7 +5971,11 @@ const struct BattleMove gBattleMoves[] =
 [MOVE_DRACOMETEOR] =
 	{
 		.effect = EFFECT_OVERHEAT,
+		#ifdef GEN_6_POWER_NERFS
+		.power = 130,
+		#else
 		.power = 140,
+		#endif
 		.type = TYPE_DRAGON,
 		.accuracy = 90,
 		.pp = 5,
@@ -5931,7 +5991,11 @@ const struct BattleMove gBattleMoves[] =
 [MOVE_DRAGONPULSE] =
 	{
 		.effect = EFFECT_HIT,
+		#ifdef GEN_6_POWER_NERFS
+		.power = 85,
+		#else
 		.power = 90,
+		#endif
 		.type = TYPE_DRAGON,
 		.accuracy = 100,
 		.pp = 10,
@@ -6603,7 +6667,11 @@ const struct BattleMove gBattleMoves[] =
 [MOVE_HURRICANE] =
 	{
 		.effect = EFFECT_THUNDER,
+		#ifdef GEN_6_POWER_NERFS
+		.power = 110,
+		#else
 		.power = 120,
+		#endif
 		.type = TYPE_FLYING,
 		.accuracy = 70,
 		.pp = 10,
@@ -6683,7 +6751,7 @@ const struct BattleMove gBattleMoves[] =
 [MOVE_LOWSWEEP] =
 	{
 		.effect = EFFECT_SPEED_DOWN_HIT,
-		.power = 60,
+		.power = 65,
 		.type = TYPE_FIGHTING,
 		.accuracy = 100,
 		.pp = 20,
@@ -6859,7 +6927,11 @@ const struct BattleMove gBattleMoves[] =
 [MOVE_LEAFSTORM] =
 	{
 		.effect = EFFECT_OVERHEAT,
+		#ifdef GEN_6_POWER_NERFS
+		.power = 130,
+		#else
 		.power = 140,
+		#endif
 		.type = TYPE_GRASS,
 		.accuracy = 90,
 		.pp = 5,
@@ -7339,7 +7411,11 @@ const struct BattleMove gBattleMoves[] =
 [MOVE_SUCKERPUNCH] =
 	{
 		.effect = EFFECT_SUCKER_PUNCH,
+		#ifdef GEN_7_POWER_NERFS
+		.power = 70,
+		#else
 		.power = 80,
+		#endif
 		.type = TYPE_DARK,
 		.accuracy = 100,
 		.pp = 5,
@@ -7805,7 +7881,11 @@ const struct BattleMove gBattleMoves[] =
 		.effect = EFFECT_SLEEP,
 		.power = 0,
 		.type = TYPE_DARK,
+		#ifdef DARK_VOID_NERF
+		.accuracy = 50,
+		#else
 		.accuracy = 80,
+		#endif
 		.pp = 10,
 		.secondaryEffectChance = 100,
 		.target = MOVE_TARGET_BOTH,
@@ -7915,7 +7995,11 @@ const struct BattleMove gBattleMoves[] =
 [MOVE_MAGMASTORM] =
 	{
 		.effect = EFFECT_TRAP,
+		#ifdef GEN_6_POWER_NERFS
 		.power = 100,
+		#else
+		.power = 120,
+		#endif
 		.type = TYPE_FIRE,
 		.accuracy = 75,
 		.pp = 5,
@@ -8283,7 +8367,11 @@ const struct BattleMove gBattleMoves[] =
 [MOVE_ORIGINPULSE] =
 	{
 		.effect = EFFECT_HIT,
+		#ifdef GEN_6_POWER_NERFS
+		.power = 110,
+		#else
 		.power = 120,
+		#endif
 		.type = TYPE_WATER,
 		.accuracy = 85,
 		.pp = 10,
@@ -9435,7 +9523,11 @@ const struct BattleMove gBattleMoves[] =
 [MOVE_FLEURCANNON] =
 	{
 		.effect = EFFECT_OVERHEAT,
+		#ifdef GEN_6_POWER_NERFS
+		.power = 130,
+		#else
 		.power = 140,
+		#endif
 		.type = TYPE_FAIRY,
 		.accuracy = 90,
 		.pp = 5,
