@@ -174,7 +174,7 @@ The [LAST_ITEM] restored\n[SCRIPTING_BANK]'s status!
 [ATTACKER] devolved and\nforgot the move it was going to use!
 
 #org @gText_DevolutionsStatsReset
-[EFFECT_BANK]'s stats\nand status were reset!
+[EFFECT_BANK]'s stats\nand primary status were reset!
 
 #org @gText_CamomonsTypeReveal
 [SCRIPTING_BANK] appears as the\n[BUFFER][00]-type!

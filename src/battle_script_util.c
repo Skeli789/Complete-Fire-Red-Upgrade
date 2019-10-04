@@ -1743,9 +1743,6 @@ void RestoreEffectBankHPStatsAndRemoveBackupSpecies(void)
 		}
 	}
 
-	if (newMoves[0] == MOVE_NONE)
-		gProtectStructs[gEffectBank].onlyStruggle = TRUE; //No moves left so struggle
-
 	for (i = 0; i < MAX_MON_MOVES; ++i)
 	{
 		SetMonData(mon, MON_DATA_MOVE1 + i, &newMoves[i]); //Don't care about Emit as this isn't link compatible anyways
@@ -1761,7 +1758,7 @@ void RestoreEffectBankHPStatsAndRemoveBackupSpecies(void)
 		gBattleStruct->chosenMovePositions[gEffectBank] = originalMovePos;
 		gMoveSelectionCursor[gEffectBank] = originalMovePos;
 	}
-	else if (counter >= 1)
+	else
 	{
 		gNewBS->devolveForgotMove |= gBitTable[gEffectBank]; //Can't use move anymore
 		gMoveSelectionCursor[gEffectBank] = 0; //Reset selection so can't select null move
