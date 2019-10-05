@@ -58,7 +58,6 @@ A complete upgrade for Fire Red, including an upgraded Battle Engine.
 * Updated repel system
 * Configurable Start Menu
 * Follow Me
-* Secondary Options Menu
 * Expanded Pokemon in the Hall of Fame
 * Triple Layer Blocks
 * Expanded Text Buffers
