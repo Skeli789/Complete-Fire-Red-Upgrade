@@ -6,7 +6,6 @@ A complete upgrade for Fire Red, including an upgraded Battle Engine.
 **Before doing anything it is HIGHLY recommended the documentation be read thoroughly.**
 
 ## Features:
-* Expanded Pokémon
 * Expanded PC Boxes (up to 24!)
 * Battle Engine Upgraded to Gen 7
   * All Moves, Abilities, Items, and Effects through Gen 7
@@ -36,7 +35,7 @@ A complete upgrade for Fire Red, including an upgraded Battle Engine.
   * Inverse Battles, Sky Battles
   * Overworld trainer facing
   * Move types light up on move menu based on effectiveness
-* Battle Frontier
+* Battle Frontier/Facilities
 * Expanded Move Reminder (up to 50 moves)
 * Improved Tm/Hm Expansion, Reusable TMs
 * Updated Pickup mechanics
@@ -68,8 +67,12 @@ A complete upgrade for Fire Red, including an upgraded Battle Engine.
 * Item Image on obtain
 * Move Items on Party Screen
 * New Field Moves like Rock Climb & Defog
+* Expanded Coins, Safari Balls/Steps
+* And More!
 
 **NOTE** Personalized options are available in *src/config.h*. The options can be customized by commenting and uncommenting lines.
+
+**Note** Pokemon Expansion can be found [here](https://github.com/Skeli789/Dynamic-Pokemon-Expansion)
 
 ## Installation Instructions:
 ### Windows:
