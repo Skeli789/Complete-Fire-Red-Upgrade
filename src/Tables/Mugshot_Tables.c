@@ -4,6 +4,14 @@
 /*
 mugshot_tables.c
 	set up image/palette tables for trainer battle transition mugshots
+	
+tables to edit:
+	sPreBattleMugshotSprites
+	sMugshotsBigPals
+	sMugshotsDpPals
+	sMugshotsTwoBarsPals
+	sMugshotPlayerPals
+
 */
 
 ///////////////////////// Custom Mugshot Table ///////////////////////////

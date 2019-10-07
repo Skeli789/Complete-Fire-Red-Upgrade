@@ -8,6 +8,12 @@
 /*
 terrain_tables.c
 	define tables for each battle terrain type, as well as camouflage type based on the terrain
+	
+tables to edit:
+	gTerrainTable
+	gAttackTerrainTable
+	gCamouflageColours
+
 */
 
 #define gBattleTerrainAnimTiles_Building (void*) 0x824E410

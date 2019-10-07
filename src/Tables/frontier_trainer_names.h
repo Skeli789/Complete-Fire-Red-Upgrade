@@ -2,6 +2,10 @@
 /*
 frontier_trainer_names.h
 	set up tables of names for battle frontier trainers
+	
+arrays to edit:
+	gMaleFrontierNamesTable
+	gFemaleFrontierNamesTable
 */
 
 extern const u8 sTrainerName_Liam[];

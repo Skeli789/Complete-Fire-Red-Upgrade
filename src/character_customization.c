@@ -17,6 +17,12 @@
 /*
 character_customization.c
 	functions for altering the player's sprite based on the current sprite/palette selections
+	
+tables to edit:
+	sCharacterPalSwitchTable
+	gOverworldTableSwitcher
+	sPlayerAvatarGfxIds
+
 */
 
 #ifdef UNBOUND

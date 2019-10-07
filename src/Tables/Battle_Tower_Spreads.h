@@ -1,6 +1,17 @@
 /*
 battle_tower_spreads.h
 	set up EVs, IVs, ability types, items, moves, ball type, etc, for trainers in the battle tower.
+	
+tables to edit:
+	gFrontierSpreads
+	gFrontierLegendarySpreads
+	gMiddleCupSpreads
+	gLittleCupSpreads
+	gArceusSpreads
+	gPikachuSpreads
+	gWormadamSpreads
+	gRotomSpreads
+	gOricorioSpreads
 */	
 
 #ifdef UNBOUND 

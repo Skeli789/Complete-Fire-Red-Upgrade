@@ -9,6 +9,58 @@ pokemon_tables.c
 		-ban lists
 		-move tables by species
 		-etc...
+		
+tables to edit:
+	gAlternateSpeciesSizeTable
+	gTelekinesisBanList
+	gSkyBattleBannedSpeciesList
+	gUltraBeastList
+	gDeerlingForms
+	gSawsbuckForms
+	gVivillonForms
+	gFlabebeForms
+	gFloetteForms
+	gFlorgesForms
+	gFurfrouForms
+	gPikachuCapForms
+	gSetPerfectXIvList
+	gRandomizerBanList
+	gRandomizerAbilityBanList
+	
+	gBattleTowerStandardSpeciesBanList
+	gGSCup_LegendarySpeciesList
+	gSmogonOU_SpeciesBanList
+	gSmogonOUDoubles_SpeciesBanList
+	gSmogonOU_AbilityBanList
+	gSmogonOUDoubles_AbilityBanList
+	gBattleTowerStandard_ItemBanList
+	gSmogonOU_ItemBanList
+	gSmogonOUDoubles_ItemBanList
+	gSmogonOUDoubles_MoveBanList
+	gSmogon_MoveBanList
+	gSmogonLittleCup_SpeciesList
+	gSmogonLittleCup_MoveBanList
+	gSmogonLittleCup_ItemBanList
+	gMiddleCup_SpeciesList
+	gMiddleCup_AbilityBanList
+	gMiddleCup_ItemBanList
+	gSmogonMonotype_SpeciesBanList
+	gSmogonMonotype_AbilityBanList
+	gSmogonMonotype_ItemBanList
+	gSmogonCamomons_SpeciesBanList
+	gSmogonAverageMons_SpeciesBanList
+	gSmogonAverageMons_ItemBanList
+	gSmogonAverageMons_MoveBanList
+	gSmogonAverageMons_AbilityBanList
+	gSmogon350Cup_SpeciesBanList
+	gSmogon350Cup_ItemBanList
+	gSmogon350Cup_AbilityBanList
+	gSmogonScalemons_SpeciesBanList
+	gSmogonScalemons_ItemBanList
+	gSmogonScalemons_AbilityBanList
+	gSmogonBenjaminButterfree_SpeciesBanList
+
+
 */
 
 #define ALTERNATE_SIZE(species, height, weight) {species, height * 10, weight * 10}

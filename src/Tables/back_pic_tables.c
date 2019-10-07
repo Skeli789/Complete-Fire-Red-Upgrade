@@ -5,6 +5,13 @@
 /*
 back_pic_tables.c
 	Set up tables to switch the player's back sprite
+	
+tables to edit:
+	gTrainerBackPicPaletteTable
+	gTrainerBackAnimsPtrTable
+	gTrainerBackPicCoords
+	sTrainerBackPicTable_[backsprite]
+	gSpriteTemplateTable_TrainerBackSprites
 */
 
 #define gTrainerBackPicPalette_Red (const u8*) 0x8E76EBC

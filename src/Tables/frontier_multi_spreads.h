@@ -3,6 +3,21 @@
 frontier_multi_spreads.h
 	set up battle frontier multi battle spreads:
 		EVs, IVs, ability type, item, moves, pokeball type, and more!
+		
+tables to edit:
+	gMultiTowerSpread_Milo
+	gMultiLegendaryTowerSpread_Milo
+	gMultiLittleCupTowerSpread_Milo
+	gMultiTowerSpread_Marlon
+	gMultiLegendaryTowerSpread_Marlon
+	gMultiLittleCupTowerSpread_Marlon
+	gMultiTowerSpread_Rival
+	gMultiLegendaryTowerSpread_Rival
+	gMultiLittleCupTowerSpread_Rival
+	gMultiTowerSpread_Jax
+	gMultiLegendaryTowerSpread_Jax
+	gMultiLittleCupTowerSpread_Jax
+
 */
 
 

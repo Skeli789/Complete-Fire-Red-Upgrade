@@ -14,6 +14,18 @@
 /*
 frontier.c
 	all supporting and master functions for developing a battle frontier
+	
+tables to edit:
+	gBattleTowerTiers
+	gBattleMineFormat1Tiers
+	gBattleMineFormat2Tiers
+	gBattleMineFormat3Tiers
+	gBattleMineTiers
+	gBattleCircusTiers
+	gBattleFrontierTierNames
+	gBattleFrontierFormats
+	sBattleCircusEffectDescriptions
+
 */
 
 extern u8* gMaleFrontierNamesTable[];

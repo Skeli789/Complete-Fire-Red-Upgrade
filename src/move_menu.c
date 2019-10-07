@@ -21,6 +21,11 @@
 /*
 move_menu.c
 	functions for displaying move data and z moves in the battle menu
+	
+tables:
+	sTypeIconPositions
+	sTypeIconPicTable
+
 */
 
 //TODO: Make The Z-Move Names change colour (look in SetPpNumbersPaletteInMoveSelection)
