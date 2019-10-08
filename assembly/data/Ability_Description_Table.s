@@ -1,13 +1,13 @@
 .thumb
 .text
 .align 2
-.global AbilityDescriptionTable
 /*
 ability_description_table.s
 	table of ability description pointers
 */
 
-AbilityDescriptionTable:
+.global gAbilityDescriptions
+gAbilityDescriptions:
 .word 0x824f3c4		@ABILITY_NONE
 .word 0x824f3d8		@ABILITY_STENCH
 .word 0x824f3f2		@ABILITY_DRIZZLE

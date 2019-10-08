@@ -504,7 +504,7 @@ extern u8 gAbsentBattlerFlags;
 
 extern struct BattlePokemon gBattleMons[MAX_BATTLERS_COUNT];
 
-struct BattleHistory
+struct BattleHistory //0x20003D0
 {
     /*0x00*/ u16 usedMoves[2][8]; // 0xFFFF means move not used (confuse self hit, etc)
     /*0x20*/ u8 abilities[MAX_BATTLERS_COUNT / 2];

@@ -217,13 +217,13 @@ u8 GetFrontierTrainerClassId(u16 trainerId, u8 battlerNum)
 {
 	switch (trainerId) {
 		case BATTLE_TOWER_TID:
-			return gTowerTrainers[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].trainerClass;
+			return gTowerTrainers[VarGet(VAR_FACILITY_TRAINER_ID + battlerNum)].trainerClass;
 		case BATTLE_TOWER_SPECIAL_TID:
-			return gSpecialTowerTrainers[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].trainerClass;
+			return gSpecialTowerTrainers[VarGet(VAR_FACILITY_TRAINER_ID + battlerNum)].trainerClass;
 		case FRONTIER_BRAIN_TID:
-			return gFrontierBrains[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].trainerClass;
+			return gFrontierBrains[VarGet(VAR_FACILITY_TRAINER_ID + battlerNum)].trainerClass;
 		case BATTLE_TOWER_MULTI_TRAINER_TID:
-			return gFrontierMultiBattleTrainers[VarGet(TOWER_TRAINER_ID_PARTNER_VAR)].trainerClass;
+			return gFrontierMultiBattleTrainers[VarGet(VAR_FACILITY_TRAINER_ID_PARTNER)].trainerClass;
 		default:
 			return gTrainers[trainerId].trainerClass;
 	}
@@ -246,9 +246,9 @@ const u8* GetFrontierTrainerName(u16 trainerId, u8 battlerNum)
 
 	switch (trainerId) {
 		case BATTLE_TOWER_TID: ;
-			u16 nameId = (battlerNum == 0) ? VarGet(BATTLE_TOWER_TRAINER1_NAME) : VarGet(BATTLE_TOWER_TRAINER2_NAME);
+			u16 nameId = (battlerNum == 0) ? VarGet(VAR_BATTLE_FACILITY_TRAINER1_NAME) : VarGet(VAR_BATTLE_FACILITY_TRAINER2_NAME);
 
-			if (gTowerTrainers[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].gender == BATTLE_TOWER_MALE)
+			if (gTowerTrainers[VarGet(VAR_FACILITY_TRAINER_ID + battlerNum)].gender == BATTLE_TOWER_MALE)
 			{
 				if (nameId == 0xFFFF)
 					nameId = Random() % NUM_MALE_NAMES;
@@ -264,18 +264,18 @@ const u8* GetFrontierTrainerName(u16 trainerId, u8 battlerNum)
 			}
 
 			if (battlerNum == 0)
-				VarSet(BATTLE_TOWER_TRAINER1_NAME, nameId);
+				VarSet(VAR_BATTLE_FACILITY_TRAINER1_NAME, nameId);
 			else
-				VarSet(BATTLE_TOWER_TRAINER2_NAME, nameId);
+				VarSet(VAR_BATTLE_FACILITY_TRAINER2_NAME, nameId);
 			break;
 		case BATTLE_TOWER_SPECIAL_TID:
-			name = gSpecialTowerTrainers[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].name;
+			name = gSpecialTowerTrainers[VarGet(VAR_FACILITY_TRAINER_ID + battlerNum)].name;
 			break;
 		case FRONTIER_BRAIN_TID:
-			name = gFrontierBrains[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].name;
+			name = gFrontierBrains[VarGet(VAR_FACILITY_TRAINER_ID + battlerNum)].name;
 			break;
 		case BATTLE_TOWER_MULTI_TRAINER_TID: ;
-			u16 partnerId = VarGet(TOWER_TRAINER_ID_PARTNER_VAR);
+			u16 partnerId = VarGet(VAR_FACILITY_TRAINER_ID_PARTNER);
 			name = TryGetRivalNameByTrainerClass(gFrontierMultiBattleTrainers[partnerId].trainerClass);
 
 			if (name == NULL) //Rival name isn't tied to a trainer class
@@ -294,49 +294,49 @@ void CopyFrontierTrainerText(u8 whichText, u16 trainerId, u8 battlerNum)
 		case BATTLE_TOWER_TID:
 			switch (whichText) {
 				case FRONTIER_BEFORE_TEXT:
-					StringCopy(gStringVar4, (gTowerTrainers[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].preBattleText));
+					StringCopy(gStringVar4, (gTowerTrainers[VarGet(VAR_FACILITY_TRAINER_ID + battlerNum)].preBattleText));
 					break;
 
 				case FRONTIER_PLAYER_LOST_TEXT:
-					StringCopy(gStringVar4, (gTowerTrainers[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].playerLoseText));
+					StringCopy(gStringVar4, (gTowerTrainers[VarGet(VAR_FACILITY_TRAINER_ID + battlerNum)].playerLoseText));
 					break;
 
 				case FRONTIER_PLAYER_WON_TEXT:
-					StringCopy(gStringVar4, (gTowerTrainers[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].playerWinText));
+					StringCopy(gStringVar4, (gTowerTrainers[VarGet(VAR_FACILITY_TRAINER_ID + battlerNum)].playerWinText));
 			}
 			break;
 		case BATTLE_TOWER_SPECIAL_TID:
 			switch (whichText) {
 				case FRONTIER_BEFORE_TEXT:
-					StringCopy(gStringVar4, (gSpecialTowerTrainers[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].preBattleText));
+					StringCopy(gStringVar4, (gSpecialTowerTrainers[VarGet(VAR_FACILITY_TRAINER_ID + battlerNum)].preBattleText));
 					break;
 
 				case FRONTIER_PLAYER_LOST_TEXT:
-					StringCopy(gStringVar4, (gSpecialTowerTrainers[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].playerLoseText));
+					StringCopy(gStringVar4, (gSpecialTowerTrainers[VarGet(VAR_FACILITY_TRAINER_ID + battlerNum)].playerLoseText));
 					break;
 
 				case FRONTIER_PLAYER_WON_TEXT:
-					StringCopy(gStringVar4, (gSpecialTowerTrainers[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].playerWinText));
+					StringCopy(gStringVar4, (gSpecialTowerTrainers[VarGet(VAR_FACILITY_TRAINER_ID + battlerNum)].playerWinText));
 			}
 			break;
 		case FRONTIER_BRAIN_TID:
 		default:
 			switch (whichText) {
 				case FRONTIER_BEFORE_TEXT:
-					if (gFrontierBrains[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].preBattleText != NULL)
-						StringCopy(gStringVar4, gFrontierBrains[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].preBattleText);
+					if (gFrontierBrains[VarGet(VAR_FACILITY_TRAINER_ID + battlerNum)].preBattleText != NULL)
+						StringCopy(gStringVar4, gFrontierBrains[VarGet(VAR_FACILITY_TRAINER_ID + battlerNum)].preBattleText);
 					break;
 
 				case FRONTIER_PLAYER_LOST_TEXT:
-					if (gFrontierBrains[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].playerLoseText != NULL)
-						StringCopy(gStringVar4, (gFrontierBrains[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].playerLoseText));
+					if (gFrontierBrains[VarGet(VAR_FACILITY_TRAINER_ID + battlerNum)].playerLoseText != NULL)
+						StringCopy(gStringVar4, (gFrontierBrains[VarGet(VAR_FACILITY_TRAINER_ID + battlerNum)].playerLoseText));
 					else //Frontier Brain text can be loaded from the OW
 						StringCopy(gStringVar4, GetTrainerAWinText());
 					break;
 
 				case FRONTIER_PLAYER_WON_TEXT:
-					if (gFrontierBrains[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].playerWinText != NULL)
-						StringCopy(gStringVar4, (gFrontierBrains[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].playerWinText));
+					if (gFrontierBrains[VarGet(VAR_FACILITY_TRAINER_ID + battlerNum)].playerWinText != NULL)
+						StringCopy(gStringVar4, (gFrontierBrains[VarGet(VAR_FACILITY_TRAINER_ID + battlerNum)].playerWinText));
 					else //Frontier Brain text can be loaded from the OW
 						StringCopy(gStringVar4, GetTrainerALoseText());
 			}
@@ -348,11 +348,11 @@ u8 GetFrontierTrainerFrontSpriteId(u16 trainerId, u8 battlerNum)
 {
 	switch (trainerId) {
 		case BATTLE_TOWER_TID:
-			return gTowerTrainers[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].trainerSprite;
+			return gTowerTrainers[VarGet(VAR_FACILITY_TRAINER_ID + battlerNum)].trainerSprite;
 		case BATTLE_TOWER_SPECIAL_TID:
-			return gSpecialTowerTrainers[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].trainerSprite;
+			return gSpecialTowerTrainers[VarGet(VAR_FACILITY_TRAINER_ID + battlerNum)].trainerSprite;
 		case FRONTIER_BRAIN_TID:
-			return gFrontierBrains[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].trainerSprite;
+			return gFrontierBrains[VarGet(VAR_FACILITY_TRAINER_ID + battlerNum)].trainerSprite;
 		default:
 			return gTrainers[trainerId].trainerPic;
 	}
@@ -362,9 +362,9 @@ u16 TryGetSpecialFrontierTrainerMusic(u16 trainerId, u8 battlerNum)
 {
 	switch (trainerId) {
 		case BATTLE_TOWER_SPECIAL_TID:
-			return gSpecialTowerTrainers[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].songId;
+			return gSpecialTowerTrainers[VarGet(VAR_FACILITY_TRAINER_ID + battlerNum)].songId;
 		case FRONTIER_BRAIN_TID:
-			return gFrontierBrains[VarGet(TOWER_TRAINER_ID_VAR + battlerNum)].songId;
+			return gFrontierBrains[VarGet(VAR_FACILITY_TRAINER_ID + battlerNum)].songId;
 		default:
 			return 0;
 	}
@@ -377,8 +377,8 @@ u32 GetAIFlagsInBattleFrontier(unusedArg u8 bank)
 
 u8 GetNumMonsOnTeamInFrontier(void)
 {
-	if (FlagGet(BATTLE_TOWER_FLAG))
-		return MathMin(MathMax(1, VarGet(BATTLE_TOWER_POKE_NUM)), PARTY_SIZE);
+	if (FlagGet(FLAG_BATTLE_FACILITY))
+		return MathMin(MathMax(1, VarGet(VAR_BATTLE_FACILITY_POKE_NUM)), PARTY_SIZE);
 	else
 		return 3; //Regular multi battle
 }
@@ -404,7 +404,7 @@ bool8 IsFrontierMulti(u8 battleType)
 
 bool8 IsRandomBattleTowerBattle()
 {
-	u8 battleType = VarGet(BATTLE_TOWER_BATTLE_TYPE);
+	u8 battleType = VarGet(VAR_BATTLE_FACILITY_BATTLE_TYPE);
 
 	return battleType == BATTLE_TOWER_SINGLE_RANDOM
 		|| battleType == BATTLE_TOWER_DOUBLE_RANDOM
@@ -413,10 +413,10 @@ bool8 IsRandomBattleTowerBattle()
 
 bool8 IsGSCupBattle()
 {
-	u8 battleType = VarGet(BATTLE_TOWER_BATTLE_TYPE);
+	u8 battleType = VarGet(VAR_BATTLE_FACILITY_BATTLE_TYPE);
 
 	return (IsFrontierDoubles(battleType) || IsFrontierMulti(battleType))
-		&&  VarGet(BATTLE_TOWER_TIER) == BATTLE_TOWER_GS_CUP;
+		&&  VarGet(VAR_BATTLE_FACILITY_TIER) == BATTLE_TOWER_GS_CUP;
 }
 
 bool8 DuplicateItemsAreBannedInTier(u8 tier, u8 battleType)
@@ -432,13 +432,13 @@ bool8 DuplicateItemsAreBannedInTier(u8 tier, u8 battleType)
 bool8 RayquazaCanMegaEvolveInFrontierBattle()
 {
 	return IsGSCupBattle()
-		|| VarGet(BATTLE_TOWER_TIER) == BATTLE_TOWER_NO_RESTRICTIONS
+		|| VarGet(VAR_BATTLE_FACILITY_TIER) == BATTLE_TOWER_NO_RESTRICTIONS
 		|| IsScaleMonsBattle();
 }
 
 u8 GetBattleTowerLevel(u8 tier)
 {
-	return AdjustLevelForTier(VarGet(BATTLE_TOWER_POKE_LEVEL), tier);
+	return AdjustLevelForTier(VarGet(VAR_BATTLE_FACILITY_POKE_LEVEL), tier);
 }
 
 void UpdateTypesForCamomons(u8 bank)
@@ -530,7 +530,7 @@ bool8 TryUpdateOutcomeForFrontierBattle(void)
 
 bool8 ShouldDisablePartyMenuItemsBattleTower(void)
 {
-	return FlagGet(BATTLE_TOWER_FLAG);
+	return FlagGet(FLAG_BATTLE_FACILITY);
 }
 
 const u8* GetFrontierTierName(u8 tier, u8 format)
@@ -573,22 +573,22 @@ bool8 IsMiddleCupTier(u8 tier)
 
 bool8 IsAverageMonsBattle(void)
 {
-	return FlagGet(BATTLE_TOWER_FLAG) && VarGet(BATTLE_TOWER_TIER) == BATTLE_TOWER_AVERAGE_MONS;
+	return FlagGet(FLAG_BATTLE_FACILITY) && VarGet(VAR_BATTLE_FACILITY_TIER) == BATTLE_TOWER_AVERAGE_MONS;
 }
 
 bool8 Is350CupBattle(void)
 {
-	return FlagGet(BATTLE_TOWER_FLAG) && VarGet(BATTLE_TOWER_TIER) == BATTLE_TOWER_350_CUP;
+	return FlagGet(FLAG_BATTLE_FACILITY) && VarGet(VAR_BATTLE_FACILITY_TIER) == BATTLE_TOWER_350_CUP;
 }
 
 bool8 IsScaleMonsBattle(void)
 {
-	return FlagGet(BATTLE_TOWER_FLAG) && VarGet(BATTLE_TOWER_TIER) == BATTLE_TOWER_SCALEMONS;
+	return FlagGet(FLAG_BATTLE_FACILITY) && VarGet(VAR_BATTLE_FACILITY_TIER) == BATTLE_TOWER_SCALEMONS;
 }
 
 bool8 IsCamomonsBattle(void)
 {
-	return FlagGet(BATTLE_TOWER_FLAG) && IsCamomonsTier(VarGet(BATTLE_TOWER_TIER));
+	return FlagGet(FLAG_BATTLE_FACILITY) && IsCamomonsTier(VarGet(VAR_BATTLE_FACILITY_TIER));
 }
 
 bool8 IsBenjaminButterfreeBattle(void)
@@ -607,7 +607,7 @@ bool8 IsBenjaminButterfreeBattle(void)
 //				 2 = Frontier Brain
 //		Var8002: If Var8001 == Frontier Brain: Frontier Brain Id
 //@Returns: To given var OW sprite num of generated trainer.
-u16 sp052_GenerateTowerTrainer(void)
+u16 sp052_GenerateFacilityTrainer(void)
 {
 	u8 battler = Var8000;
 	u16 id = Random();
@@ -615,21 +615,21 @@ u16 sp052_GenerateTowerTrainer(void)
 	if (Var8001 == 0)
 	{
 		id %= NUM_TOWER_TRAINERS;
-		VarSet(TOWER_TRAINER_ID_VAR + battler, id);
+		VarSet(VAR_FACILITY_TRAINER_ID + battler, id);
 
 		if (gTowerTrainers[id].gender == BATTLE_TOWER_MALE)
 		{
 			if (battler == 0)
-				VarSet(BATTLE_TOWER_TRAINER1_NAME, Random() % NUM_MALE_NAMES);
+				VarSet(VAR_BATTLE_FACILITY_TRAINER1_NAME, Random() % NUM_MALE_NAMES);
 			else
-				VarSet(BATTLE_TOWER_TRAINER2_NAME, Random() % NUM_MALE_NAMES);
+				VarSet(VAR_BATTLE_FACILITY_TRAINER2_NAME, Random() % NUM_MALE_NAMES);
 		}
 		else
 		{
 			if (battler == 0)
-				VarSet(BATTLE_TOWER_TRAINER1_NAME, Random() % NUM_FEMALE_NAMES);
+				VarSet(VAR_BATTLE_FACILITY_TRAINER1_NAME, Random() % NUM_FEMALE_NAMES);
 			else
-				VarSet(BATTLE_TOWER_TRAINER2_NAME, Random() % NUM_FEMALE_NAMES);
+				VarSet(VAR_BATTLE_FACILITY_TRAINER2_NAME, Random() % NUM_FEMALE_NAMES);
 		}
 
 		StringCopy(gStringVar1, GetFrontierTrainerName(BATTLE_TOWER_TID, battler));
@@ -638,20 +638,20 @@ u16 sp052_GenerateTowerTrainer(void)
 	else if (Var8001 == 1)
 	{
 		id %= NUM_SPECIAL_TOWER_TRAINERS;
-		while (VarGet(BATTLE_TOWER_TIER) == BATTLE_TOWER_MONOTYPE && !gSpecialTowerTrainers[id].isMonotype)
+		while (VarGet(VAR_BATTLE_FACILITY_TIER) == BATTLE_TOWER_MONOTYPE && !gSpecialTowerTrainers[id].isMonotype)
 		{
 			id = Random();
 			id %= NUM_SPECIAL_TOWER_TRAINERS;
 		}
 
-		VarSet(TOWER_TRAINER_ID_VAR + battler, id);
+		VarSet(VAR_FACILITY_TRAINER_ID + battler, id);
 		StringCopy(gStringVar1, GetFrontierTrainerName(BATTLE_TOWER_SPECIAL_TID, battler));
 		return gSpecialTowerTrainers[id].owNum;
 	}
 	else
 	{
 		id = Var8002;
-		VarSet(TOWER_TRAINER_ID_VAR + battler, id);
+		VarSet(VAR_FACILITY_TRAINER_ID + battler, id);
 		StringCopy(gStringVar1, GetFrontierTrainerName(FRONTIER_BRAIN_TID, battler));
 		return gFrontierBrains[id].owNum;
 	}
@@ -667,7 +667,7 @@ u16 sp052_GenerateTowerTrainer(void)
 void sp053_LoadFrontierIntroBattleMessage(void)
 {
 	u8 gender;
-	u16 id = VarGet(TOWER_TRAINER_ID_VAR + Var8000);
+	u16 id = VarGet(VAR_FACILITY_TRAINER_ID + Var8000);
 
 	const u8* text;
 	if (Var8001 == 0)
@@ -715,7 +715,7 @@ void sp053_LoadFrontierIntroBattleMessage(void)
 //				 0xFFFF = Load Party Size From Var
 //		Var8004: 0 = Load level from var
 //				 1+ = Given Level
-u16 sp054_GetBattleTowerStreak(void)
+u16 sp054_GetBattleFacilityStreak(void)
 {
 	return GetBattleTowerStreak(Var8000, Var8001, Var8002, Var8003, Var8004);
 }
@@ -766,10 +766,10 @@ static u8 AdjustLevelForTier(u8 level, u8 tier)
 
 u16 GetBattleTowerStreak(u8 currentOrMax, u16 inputBattleStyle, u16 inputTier, u16 partySize, u8 level)
 {
-	u8 battleStyle = (inputBattleStyle == 0xFFFF) ? VarGet(BATTLE_TOWER_BATTLE_TYPE) : inputBattleStyle;
-	u8 tier = (inputTier == 0xFFFF) ? VarGet(BATTLE_TOWER_TIER) : inputTier;
-	u8 size = (partySize == 0xFFFF) ? VarGet(BATTLE_TOWER_POKE_NUM) : partySize;
-	level = (level == 0) ? VarGet(BATTLE_TOWER_POKE_LEVEL) : level;
+	u8 battleStyle = (inputBattleStyle == 0xFFFF) ? VarGet(VAR_BATTLE_FACILITY_BATTLE_TYPE) : inputBattleStyle;
+	u8 tier = (inputTier == 0xFFFF) ? VarGet(VAR_BATTLE_FACILITY_TIER) : inputTier;
+	u8 size = (partySize == 0xFFFF) ? VarGet(VAR_BATTLE_FACILITY_POKE_NUM) : partySize;
+	level = (level == 0) ? VarGet(VAR_BATTLE_FACILITY_POKE_LEVEL) : level;
 	level = AdjustLevelForTier(level, tier);
 
 	LoadProperStreakData(&currentOrMax, &battleStyle, &tier, &size, &level);
@@ -791,13 +791,13 @@ u16 GetBattleTowerStreak(u8 currentOrMax, u16 inputBattleStyle, u16 inputTier, u
 //@Input:
 //		Var8000: 0 = Increment by 1
 //				 1 = Reset
-void sp055_UpdateBattleTowerStreak(void)
+void sp055_UpdateBattleFacilityStreak(void)
 {
 	u8 dummy = 0;
-	u8 battleStyle = VarGet(BATTLE_TOWER_BATTLE_TYPE);
-	u8 tier = VarGet(BATTLE_TOWER_TIER);
-	u8 partySize = VarGet(BATTLE_TOWER_POKE_NUM);
-	u8 level = AdjustLevelForTier(VarGet(BATTLE_TOWER_POKE_LEVEL), tier);
+	u8 battleStyle = VarGet(VAR_BATTLE_FACILITY_BATTLE_TYPE);
+	u8 tier = VarGet(VAR_BATTLE_FACILITY_TIER);
+	u8 partySize = VarGet(VAR_BATTLE_FACILITY_POKE_NUM);
+	u8 level = AdjustLevelForTier(VarGet(VAR_BATTLE_FACILITY_POKE_LEVEL), tier);
 	LoadProperStreakData(&dummy, &battleStyle, &tier, &partySize, &level);
 
 	u16* currentStreak, *maxStreak;
@@ -835,10 +835,12 @@ void sp055_UpdateBattleTowerStreak(void)
 
 				if (inBattleSands)
 				{
-					gBattleSandsStreaks[MAX_STREAK].tier = VarGet(BATTLE_TOWER_TIER); //Actual Tier
+					gBattleSandsStreaks[MAX_STREAK].tier = VarGet(VAR_BATTLE_FACILITY_TIER); //Actual Tier
 					gBattleSandsStreaks[MAX_STREAK].format = battleStyle;
 					gBattleSandsStreaks[MAX_STREAK].level = level;
-					gBattleSandsStreaks[MAX_STREAK].inverse = FlagGet(INVERSE_FLAG);
+					#ifdef FLAG_INVERSE
+					gBattleSandsStreaks[MAX_STREAK].inverse = FlagGet(FLAG_INVERSE);
+					#endif
 					gBattleSandsStreaks[MAX_STREAK].species1 = GetMonData(&gPlayerParty[0], MON_DATA_SPECIES, NULL);
 					gBattleSandsStreaks[MAX_STREAK].species2 = GetMonData(&gPlayerParty[1], MON_DATA_SPECIES, NULL);
 					gBattleSandsStreaks[MAX_STREAK].species3 = GetMonData(&gPlayerParty[2], MON_DATA_SPECIES, NULL);
@@ -851,10 +853,12 @@ void sp055_UpdateBattleTowerStreak(void)
 
 			if (inBattleSands)
 			{
-				gBattleSandsStreaks[CURR_STREAK].tier = VarGet(BATTLE_TOWER_TIER); //Actual Tier
+				gBattleSandsStreaks[CURR_STREAK].tier = VarGet(VAR_BATTLE_FACILITY_TIER); //Actual Tier
 				gBattleSandsStreaks[CURR_STREAK].format = battleStyle;
 				gBattleSandsStreaks[CURR_STREAK].level = level;
-				gBattleSandsStreaks[CURR_STREAK].inverse = FlagGet(INVERSE_FLAG);
+				#ifdef FLAG_INVERSE
+				gBattleSandsStreaks[CURR_STREAK].inverse = FlagGet(FLAG_INVERSE);
+				#endif
 				gBattleSandsStreaks[CURR_STREAK].species1 = GetMonData(&gPlayerParty[0], MON_DATA_SPECIES, NULL);
 				gBattleSandsStreaks[CURR_STREAK].species2 = GetMonData(&gPlayerParty[1], MON_DATA_SPECIES, NULL);
 				gBattleSandsStreaks[CURR_STREAK].species3 = GetMonData(&gPlayerParty[2], MON_DATA_SPECIES, NULL);
@@ -881,12 +885,12 @@ u16 sp056_DetermineBattlePointsToGive(void)
 
 		switch (BATTLE_FACILITY_NUM) {
 			case IN_BATTLE_TOWER:
-				if (VarGet(BATTLE_TOWER_TIER) != BATTLE_TOWER_MONOTYPE)
+				if (VarGet(VAR_BATTLE_FACILITY_TIER) != BATTLE_TOWER_MONOTYPE)
 					toGive = 20; //Battle against frontier brain
 				break;
 
 			case IN_BATTLE_SANDS:
-				if (VarGet(BATTLE_TOWER_TIER) != BATTLE_TOWER_MONOTYPE)
+				if (VarGet(VAR_BATTLE_FACILITY_TIER) != BATTLE_TOWER_MONOTYPE)
 					toGive = 20; //Battle against frontier brain
 				break;
 
@@ -895,7 +899,7 @@ u16 sp056_DetermineBattlePointsToGive(void)
 				break;
 
 			case IN_BATTLE_CIRCUS:
-				if (VarGet(BATTLE_TOWER_TIER) != BATTLE_TOWER_MONOTYPE)
+				if (VarGet(VAR_BATTLE_FACILITY_TIER) != BATTLE_TOWER_MONOTYPE)
 					toGive = 20; //Battle against frontier brain
 				break;
 		}
@@ -912,12 +916,12 @@ u16 sp056_DetermineBattlePointsToGive(void)
 
 		switch (BATTLE_FACILITY_NUM) {
 			case IN_BATTLE_TOWER:
-				if (VarGet(BATTLE_TOWER_TIER) != BATTLE_TOWER_MONOTYPE)
+				if (VarGet(VAR_BATTLE_FACILITY_TIER) != BATTLE_TOWER_MONOTYPE)
 					toGive = 50; //Battle against frontier brain
 				break;
 
 			case IN_BATTLE_SANDS:
-				if (VarGet(BATTLE_TOWER_TIER) != BATTLE_TOWER_MONOTYPE)
+				if (VarGet(VAR_BATTLE_FACILITY_TIER) != BATTLE_TOWER_MONOTYPE)
 					toGive = 50; //Battle against frontier brain
 				break;
 
@@ -926,7 +930,7 @@ u16 sp056_DetermineBattlePointsToGive(void)
 				break;
 
 			case IN_BATTLE_CIRCUS:
-				if (VarGet(BATTLE_TOWER_TIER) != BATTLE_TOWER_MONOTYPE)
+				if (VarGet(VAR_BATTLE_FACILITY_TIER) != BATTLE_TOWER_MONOTYPE)
 					toGive = 50; //Battle against frontier brain
 				break;
 		}
@@ -1029,9 +1033,9 @@ u16 sp06D_LoadFrontierMultiTrainerById(void)
 	else if (id > 0xFF) //Invalid value
 		id = 0;
 
-	VarSet(TOWER_TRAINER_ID_PARTNER_VAR, id);
-	VarSet(PARTNER_VAR, BATTLE_TOWER_MULTI_TRAINER_TID);
-	VarSet(PARTNER_BACKSPRITE_VAR, gFrontierMultiBattleTrainers[id].backSpriteId);
+	VarSet(VAR_FACILITY_TRAINER_ID_PARTNER, id);
+	VarSet(VAR_PARTNER, BATTLE_TOWER_MULTI_TRAINER_TID);
+	VarSet(VAR_PARTNER_BACKSPRITE, gFrontierMultiBattleTrainers[id].backSpriteId);
 
 	StringCopy(gStringVar2, GetFrontierTrainerName(BATTLE_TOWER_MULTI_TRAINER_TID, 0));
 	return gFrontierMultiBattleTrainers[id].owNum;
@@ -1117,7 +1121,7 @@ void sp06F_CanTeamParticipateInBattleMine(void)
 		}
 	}
 
-	VarSet(BATTLE_TOWER_TIER, BATTLE_MINE_FORMAT_1 + MathMin(choice, 2));
+	VarSet(VAR_BATTLE_FACILITY_TIER, BATTLE_MINE_FORMAT_1 + MathMin(choice, 2));
 	gSpecialVar_LastResult = TRUE;
 }
 
@@ -1132,7 +1136,7 @@ u8 sp070_RandomizeBattleMineBattleOptions(void)
 {
 	u8 format, tier, level, partySize, inverse;
 
-	u8 originalTier = VarGet(BATTLE_TOWER_TIER);
+	u8 originalTier = VarGet(VAR_BATTLE_FACILITY_TIER);
 	const u8* tiers = originalTier == BATTLE_MINE_FORMAT_1 ? gBattleMineFormat1Tiers
 					: originalTier == BATTLE_MINE_FORMAT_2 ? gBattleMineFormat2Tiers
 					: gBattleMineFormat3Tiers;
@@ -1219,12 +1223,16 @@ u8 sp070_RandomizeBattleMineBattleOptions(void)
 			inverse = Random() & TRUE;
 	}
 
-	VarSet(BATTLE_TOWER_POKE_LEVEL, level);
-	VarSet(BATTLE_TOWER_BATTLE_TYPE, format);
-	VarSet(BATTLE_TOWER_TIER, tier);
-	VarSet(BATTLE_TOWER_POKE_NUM, partySize);
+	VarSet(VAR_BATTLE_FACILITY_POKE_LEVEL, level);
+	VarSet(VAR_BATTLE_FACILITY_BATTLE_TYPE, format);
+	VarSet(VAR_BATTLE_FACILITY_TIER, tier);
+	VarSet(VAR_BATTLE_FACILITY_POKE_NUM, partySize);
 	if (inverse)
-		FlagSet(INVERSE_FLAG);
+	{
+		#ifdef FLAG_INVERSE
+		FlagSet(FLAG_INVERSE);
+		#endif
+	}
 
 	StringCopy(gStringVar7, GetFrontierTierName(tier, format));
 	StringCopy(gStringVar8, gBattleFrontierFormats[format]);
@@ -1239,7 +1247,7 @@ u8 sp070_RandomizeBattleMineBattleOptions(void)
 void sp071_LoadBattleMineRecordTier(void)
 {
 	u32 i, tier;
-	u8 currTier = VarGet(BATTLE_TOWER_TIER);
+	u8 currTier = VarGet(VAR_BATTLE_FACILITY_TIER);
 
 	if (currTier == BATTLE_MINE_FORMAT_1 || currTier == BATTLE_MINE_FORMAT_2 || currTier == BATTLE_MINE_FORMAT_3)
 		return;
@@ -1249,7 +1257,7 @@ void sp071_LoadBattleMineRecordTier(void)
 		tier = gBattleMineFormat1Tiers[i];
 		if (currTier == tier)
 		{
-			VarSet(BATTLE_TOWER_TIER, BATTLE_MINE_FORMAT_1);
+			VarSet(VAR_BATTLE_FACILITY_TIER, BATTLE_MINE_FORMAT_1);
 			return;
 		}
 	}
@@ -1259,7 +1267,7 @@ void sp071_LoadBattleMineRecordTier(void)
 		tier = gBattleMineFormat2Tiers[i];
 		if (currTier == tier)
 		{
-			VarSet(BATTLE_TOWER_TIER, BATTLE_MINE_FORMAT_2);
+			VarSet(VAR_BATTLE_FACILITY_TIER, BATTLE_MINE_FORMAT_2);
 			return;
 		}
 	}
@@ -1269,7 +1277,7 @@ void sp071_LoadBattleMineRecordTier(void)
 		tier = gBattleMineFormat3Tiers[i];
 		if (currTier == tier)
 		{
-			VarSet(BATTLE_TOWER_TIER, BATTLE_MINE_FORMAT_3);
+			VarSet(VAR_BATTLE_FACILITY_TIER, BATTLE_MINE_FORMAT_3);
 			return;
 		}
 	}

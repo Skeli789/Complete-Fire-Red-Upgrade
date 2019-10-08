@@ -1,7 +1,6 @@
 .thumb
 .text
 .align 2
-.global AnimationBackgroundTable
 /*
 anim_background_tables.s
 	battle animation backgrounds
@@ -10,7 +9,8 @@ anim_background_tables.s
 .include "../Anim_Defines.asm"
 .include "assembly/data/Anim_Backgrounds_Graphics_Defines.s"
 
-AnimationBackgroundTable:
+.global gAnimationBackgrounds
+gAnimationBackgrounds:
 .word 0x8d1c9bc, 0x8d1cfb4, 0x8d1cfd4		@BG_DARK_2
 .word 0x8d1c9bc, 0x8d1cfb4, 0x8d1cfd4		@BG_DARK
 .word 0x8e7bf88, 0x8e7cc50, 0x8e7cc6c		@BG_GHOST

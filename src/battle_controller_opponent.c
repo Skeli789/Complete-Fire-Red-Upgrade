@@ -28,7 +28,9 @@ void OpponentHandleChooseMove(void)
 	struct ChooseMoveStruct* moveInfo = (struct ChooseMoveStruct*)(&gBattleBufferA[gActiveBattler][4]);
 
 	if ((gBattleTypeFlags & (BATTLE_TYPE_TRAINER | BATTLE_TYPE_OAK_TUTORIAL | BATTLE_TYPE_SAFARI | BATTLE_TYPE_ROAMER))
-	||   FlagGet(SMART_WILD_FLAG)
+	#ifdef FLAG_SMART_WILD
+	||   FlagGet(FLAG_SMART_WILD)
+	#endif
 	||	 WildMonIsSmart(gActiveBattler))
 	{
 		BattleAI_SetupAIData(0xF);
@@ -274,7 +276,7 @@ static u8 LoadCorrectTrainerPicId(void) {
 			if (gActiveBattler == 1)
 				trainerPicId = GetFrontierTrainerFrontSpriteId(gTrainerBattleOpponent_A, 0);
 			else
-				trainerPicId = GetFrontierTrainerFrontSpriteId(VarGet(SECOND_OPPONENT_VAR), 1);
+				trainerPicId = GetFrontierTrainerFrontSpriteId(VarGet(VAR_SECOND_OPPONENT), 1);
 		}
 		else
 		{
@@ -294,7 +296,7 @@ static u8 LoadCorrectTrainerPicId(void) {
 		if (gActiveBattler == 1)
 			trainerPicId = gTrainers[gTrainerBattleOpponent_A].trainerPic;
 		else
-			trainerPicId = gTrainers[VarGet(SECOND_OPPONENT_VAR)].trainerPic;
+			trainerPicId = gTrainers[VarGet(VAR_SECOND_OPPONENT)].trainerPic;
 	}
 	else
 	{

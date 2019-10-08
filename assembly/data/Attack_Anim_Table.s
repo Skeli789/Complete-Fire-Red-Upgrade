@@ -10,7 +10,6 @@ attack_anim_table.s
 .include "../Anim_Defines.asm"
 .include "../asm_defines.s"
 
-.global AttackAnimationTable
 .global ANIM_INFESTATION
 
 /* global ASM hooks */
@@ -34,7 +33,8 @@ attack_anim_table.s
 /* attack animation table */
 .align 2
 
-AttackAnimationTable:
+.global gMoveAnimations
+gMoveAnimations:
 .word 0x81c6f34		@MOVE_NONE
 .word 0x81c6f34		@MOVE_POUND
 .word 0x81cfcea		@MOVE_KARATECHOP

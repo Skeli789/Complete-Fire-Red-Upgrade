@@ -37,7 +37,9 @@ defines_battle.h
 #define CONSUMED_ITEMS(bank) gBattleStruct->usedHeldItems[bank]
 #define SAVED_CONSUMED_ITEMS(bank) gNewBS->SavedConsumedItems[gBattlerPartyIndexes[bank]]
 #define CHOICED_MOVE(bank) gBattleStruct->choicedMove[bank]
-#define SECOND_OPPONENT (VarGet(SECOND_OPPONENT_VAR))
+#define SECOND_OPPONENT (VarGet(VAR_SECOND_OPPONENT))
+
+#define REALLY_SMART_AI //The vanilla FR AI memory system sucks so this should always be defined
 
 #define ABILITY_PRESENT(ability) AbilityBattleEffects(ABILITYEFFECT_CHECK_ON_FIELD, 0, ability, 0, 0)
 #define NO_MOLD_BREAKERS(ability, move) (ability != ABILITY_MOLDBREAKER && ability != ABILITY_TERAVOLT && ability != ABILITY_TURBOBLAZE && !CheckTableForMove(move, gMoldBreakerMoves))

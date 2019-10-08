@@ -1135,17 +1135,17 @@ bool8 sp051_CanTeamParticipateInSkyBattle(void)
 }
 
 
-//u16 sp052_GenerateTowerTrainer(void); //Code in "src/frontier.c"
+//u16 sp052_GenerateFacilityTrainer(void); //Code in "src/frontier.c"
 //void sp053_LoadFrontierIntroBattleMessage(void); //Code in "src/frontier.c"
-//void sp054_GetBattleTowerStreak(void) //Code in "src/frontier.c"
-//void sp055_UpdateBattleTowerStreak(void) //Code in "src/frontier.c"
+//void sp054_GetBattleFacilityStreak(void) //Code in "src/frontier.c"
+//void sp055_UpdateBattleFacilityStreak(void) //Code in "src/frontier.c"
 //void sp056_DetermineBattlePointsToGive(void) //Code in "src/frontier.c"
 
 //@Details: Buffers the map name where there is currently a swarm to buffer1,
 //			and the species name where there is currently a swarm to buffer2.
 void sp058_BufferSwarmText(void)
 {
-	u8 index = VarGet(SWARM_INDEX_VAR);
+	u8 index = VarGet(VAR_SWARM_INDEX);
 	u8 mapName = gSwarmTable[index].mapName;
 	u16 species = gSwarmTable[index].species;
 
@@ -1708,6 +1708,20 @@ u8 sp0AD_GetTimeOfDay(void)
 	}
 }
 
+//@Details: Gets the current hour in the day.
+//@Returns: The current hour of the day.
+u8 sp0D9_GetHour(void)
+{
+	return Clock->hour;
+}
+
+//@Details: Gets the current day of week.
+//@Returns: The current day of week.
+u8 sp0DA_GetDayOfWeek(void)
+{
+	return Clock->dayOfWeek;
+}
+
 //@Details: Gets the time of day.
 //@Input: Var 0x8000: Flag to clear.
 void sp0AE_ClearFlag(void)
@@ -1921,7 +1935,7 @@ u8 sp0D0_PokemonInPartyThatCanLearnTMHM(void)
 		if (TMIdFromItemId(i) == tm)
 			break;
 	}
-	
+
 	if (i == ITEMS_COUNT)
 		return PARTY_SIZE; //Doesn't have the TM so can't use it without knowing it
 
@@ -1933,7 +1947,6 @@ u8 sp0D0_PokemonInPartyThatCanLearnTMHM(void)
 
 	return PARTY_SIZE;
 }
-
 
 // Hall of Fame Fix for Expanded Pokemon
 // credit to sagiri: https://github.com/Sagiri/fame-hall

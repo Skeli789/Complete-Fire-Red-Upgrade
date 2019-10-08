@@ -2309,7 +2309,7 @@ static void DexNavGuiHandler(void)
 							PlaySE(SE_POKENAV_SEARCHING);
 							// create value to store in a var
 							u16 varStore = (sDNavState->selectedArr << 15) | species;
-							VarSet(DEXNAV_VAR, varStore);
+							VarSet(VAR_DEXNAV, varStore);
 						}
 						else
 						{
@@ -2551,7 +2551,7 @@ u8 SelectHookRestore(void)
 /*Replaced with R-Button
 u8 CheckRegisteredSelect(void)
 {
-	u16 varVal = VarGet(DEXNAV_VAR);
+	u16 varVal = VarGet(VAR_DEXNAV);
 	if (varVal)
 	{
 		if ()

@@ -9,13 +9,13 @@ mugshot_tables.c
 ///////////////////////// Custom Mugshot Table ///////////////////////////
 /////////// Replaces Trainer Front Sprite with custom Image //////////////
 
+#ifdef FLAG_LOAD_MUGSHOT_SPRITE_FROM_TABLE
 const struct MugshotTable sPreBattleMugshotSprites[147] =
 {
 	//[106] = {Silver_MugshotTiles, Silver_MugshotPal, 64 * 64 / 2, 0, -32}, //Example: Replaces Blue's sprite with Silver's mugshot
 	//[124] = {Silver_MugshotTiles, Silver_MugshotPal, 64 * 64 / 2, 0, -32}, //Example: Replaces Player's sprite with Silver's mugshot
 };
-
-
+#endif
 
 //////////////////// Mugshot Tilemap Palettes ////////////////////////
 ///// trainerbattle 0xW 0xX 0xY00 @z, 0xY is the palette number //////

@@ -205,7 +205,7 @@ static void ZTriggerCallback(struct Sprite* self)
 	{
 		xshift = -6;
 		yshift = -2;
-		
+
 		if (IndexOfSpritePaletteTag(TYPE_ICON_TAG) != 0xFF) //Type icons are shown
 			xshift -= 8;
 	}

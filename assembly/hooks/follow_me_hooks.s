@@ -197,7 +197,7 @@ FollowMe_WarpSomethingEndHook:
 	bl call_via_r3
 	mov r0, r4
 	ldr r3, =DestroyTask
-	bl call_via_r3		
+	bl call_via_r3
 	ldr r0, =0x0807E3E0 | 1
 	bx r0
 

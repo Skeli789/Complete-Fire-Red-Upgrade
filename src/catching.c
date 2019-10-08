@@ -65,8 +65,8 @@ void atkEF_handleballthrow(void)
 	u8 ItemType = ItemId_GetType(gLastUsedItem);
 
 	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER) {
-		#ifdef CATCH_TRAINERS_POKEMON_FLAG
-			if (FlagGet(CATCH_TRAINERS_POKEMON_FLAG)) {
+		#ifdef FLAG_CATCH_TRAINERS_POKEMON
+			if (FlagGet(FLAG_CATCH_TRAINERS_POKEMON)) {
 				EmitBallThrowAnim(0, 4);
 				MarkBufferBankForExecution(gActiveBattler);
 				gBattlescriptCurrInstr = BattleScript_SuccessBallThrow;
@@ -89,20 +89,27 @@ void atkEF_handleballthrow(void)
 			gBattlescriptCurrInstr = BattleScript_TrainerBallBlock;
 		#endif
 	}
-
-	else if ((gBattleTypeFlags & BATTLE_TYPE_GHOST) || FlagGet(NO_CATCHING_FLAG) || FlagGet(NO_CATCHING_AND_RUNNING_FLAG)) {
+	else if (gBattleTypeFlags & BATTLE_TYPE_GHOST
+	#ifdef FLAG_NO_CATCHING
+	|| FlagGet(FLAG_NO_CATCHING)
+	#endif
+	#ifdef FLAG_NO_CATCHING_AND_RUNNING
+	|| FlagGet(FLAG_NO_CATCHING_AND_RUNNING)
+	#endif
+	)
+	{
 		EmitBallThrowAnim(0, 6);
 		MarkBufferBankForExecution(gActiveBattler);
 		gBattlescriptCurrInstr = BattleScript_DodgedBall;
 	}
-
-	else if (gBattleTypeFlags & (BATTLE_TYPE_OLD_MAN | BATTLE_TYPE_POKE_DUDE)) {
+	else if (gBattleTypeFlags & (BATTLE_TYPE_OLD_MAN | BATTLE_TYPE_POKE_DUDE))
+	{
 		EmitBallThrowAnim(0, 4);
 		MarkBufferBankForExecution(gActiveBattler);
 		gBattlescriptCurrInstr = BattleScript_TutorialThrow;
 	}
-
-	else {
+	else
+	{
 		u32 odds;
 		u8 catch_rate;
 

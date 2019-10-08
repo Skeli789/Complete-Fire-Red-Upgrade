@@ -1317,8 +1317,8 @@ const species_t gSetPerfectXIvList[] =
 };
 #endif
 
-#ifdef UNBOUND
-const species_t gRandomizerBanList[] =
+#ifdef POKEMON_RANDOMIZER_FLAG
+const species_t gRandomizerSpeciesBanList[] =
 {
 	0xFC,
 	0xFD,
@@ -1532,11 +1532,16 @@ const species_t gRandomizerBanList[] =
 	SPECIES_TABLES_TERMIN
 };
 
+#endif
+
+#ifdef ABILITY_RANDOMIZER_FLAG
+
 const ability_t gRandomizerAbilityBanList[] =
 {
 	ABILITY_CACOPHONY,
 	ABILITY_BROKEN_1,
 	ABILITY_BROKEN_2,
+	ABILITY_TABLES_TERMIN
 };
 
 #endif

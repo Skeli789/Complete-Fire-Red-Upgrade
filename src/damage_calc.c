@@ -921,25 +921,23 @@ TYPE_LOOP_AI:
 	}
 }
 
-static void ModulateDmgByType(u8 multiplier, const u16 move, const u8 moveType, const u8 defType, const u8 defBank, u8* flags, struct Pokemon* monDef, bool8 CheckPartyDef) {
+static void ModulateDmgByType(u8 multiplier, const u16 move, const u8 moveType, const u8 defType, const u8 defBank, u8* flags, struct Pokemon* monDef, bool8 CheckPartyDef)
+{
+	if (IsInverseBattle()) {
+		switch (multiplier) {
+			case TYPE_MUL_NO_EFFECT:
+				multiplier = TYPE_MUL_SUPER_EFFECTIVE;
+				break;
 
-	#ifdef INVERSE_BATTLES
-		if (IsInverseBattle()) {
-			switch (multiplier) {
-				case TYPE_MUL_NO_EFFECT:
-					multiplier = TYPE_MUL_SUPER_EFFECTIVE;
-					break;
+			case TYPE_MUL_NOT_EFFECTIVE:
+				multiplier = TYPE_MUL_SUPER_EFFECTIVE;
+				break;
 
-				case TYPE_MUL_NOT_EFFECTIVE:
-					multiplier = TYPE_MUL_SUPER_EFFECTIVE;
-					break;
-
-				case TYPE_MUL_SUPER_EFFECTIVE:
-					multiplier = TYPE_MUL_NOT_EFFECTIVE;
-					break;
-				}
-		}
-	#endif
+			case TYPE_MUL_SUPER_EFFECTIVE:
+				multiplier = TYPE_MUL_NOT_EFFECTIVE;
+				break;
+			}
+	}
 
 	if (move == MOVE_FREEZEDRY && defType == TYPE_WATER) //Always Super-Effective, even in Inverse Battles
 		multiplier = TYPE_MUL_SUPER_EFFECTIVE;
@@ -1806,7 +1804,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 			case ITEM_EFFECT_SOUL_DEW:
 				if (mon == SPECIES_LATIOS || mon == SPECIES_LATIAS) {
 					#ifdef OLD_SOUL_DEW_EFFECT
-						spAttack *= 2;
+						spAttack *= 3 / 2; //1.5
 					#else
 						if (type == TYPE_PSYCHIC || type == TYPE_DRAGON) {
 							attack = udivsi((attack * 120), 100);
@@ -1867,7 +1865,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 	switch (target_effect) {
 		case ITEM_EFFECT_SOUL_DEW:
 			#ifdef OLD_SOUL_DEW_EFFECT
-				spDefense *= 2;
+				spDefense *= 3 / 2; //1.5
 			#endif
 			break;
 
@@ -1958,7 +1956,8 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 		&& !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_TRAINER_TOWER | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_EREADER_TRAINER))
 		&& gBattleTypeFlags & BATTLE_TYPE_TRAINER
 		&& SIDE(bankAtk) == B_SIDE_PLAYER
-		&& gTrainerBattleOpponent != 0x400) {
+		&& gTrainerBattleOpponent_A != 0x400)
+		{
 			if (FlagGet(FLAG_BADGE01_GET) && SIDE(bankAtk) == B_SIDE_PLAYER)
 				attack = udivsi((110 * attack), 100);
 

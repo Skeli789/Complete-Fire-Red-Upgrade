@@ -216,6 +216,15 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 				IncreaseHelpingHandViability(&viability, class);
 			break;
 
+		case EFFECT_RESTORE_HP:
+			switch (move) {
+				case MOVE_PURIFY:
+					if (gBattleMons[bankAtkPartner].status1 != 0)
+						//TODO
+						break;
+			}
+			break;
+
 		case EFFECT_SWAGGER:
 			if (STAT_STAGE(bankAtkPartner, STAT_STAGE_ATK) < STAT_STAGE_MAX
 			&& (!CanBeConfused(bankAtkPartner)

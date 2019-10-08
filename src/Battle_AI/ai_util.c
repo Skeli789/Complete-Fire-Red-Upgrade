@@ -57,7 +57,7 @@ bool8 CanKnockOut(u8 bankAtk, u8 bankDef)
 
 		if (gNewBS->strongestMove[bankAtk][bankDef] == 0xFFFF)
 			gNewBS->strongestMove[bankAtk][bankDef] = CalcStrongestMove(bankAtk, bankDef, FALSE);
-	
+
 		gNewBS->canKnockOut[bankAtk][bankDef] = MoveKnocksOutXHits(gNewBS->strongestMove[bankAtk][bankDef], bankAtk, bankDef, 1);
 
 		if (gNewBS->canKnockOut[bankAtk][bankDef])
@@ -115,7 +115,7 @@ bool8 Can2HKO(u8 bankAtk, u8 bankDef)
 
 		if (gNewBS->strongestMove[bankAtk][bankDef] == 0xFFFF)
 			gNewBS->strongestMove[bankAtk][bankDef] = CalcStrongestMove(bankAtk, bankDef, FALSE);
-	
+
 		gNewBS->can2HKO[bankAtk][bankDef] = MoveKnocksOutXHits(gNewBS->strongestMove[bankAtk][bankDef], bankAtk, bankDef, 2);
 
 		TryRevertTempMegaEvolveBank(bankDef, &backupMonDef, &backupSpeciesDef, &backupAbilityDef);
@@ -1059,10 +1059,11 @@ u16 GetBattleMonMove(u8 bank, u8 i)
 	#ifdef REALLY_SMART_AI
 		move = gBattleMons[bank].moves[i];
 	#else
+		break_func(BATTLE_HISTORY->usedMoves) //Should throw error. We never want this to exist
 		if (SIDE(bank) == B_SIDE_PLAYER && !(gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER))
-			move = BATTLE_HISTORY->usedMoves[bank].moves[i];
+			move = BATTLE_HISTORY->usedMoves[bank][i];
 		else if (SIDE(bank) == B_SIDE_PLAYER && gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER && GetBattlerPosition(bank) == B_POSITION_PLAYER_LEFT)
-			move = BATTLE_HISTORY->usedMoves[bank].moves[i];
+			move = BATTLE_HISTORY->usedMoves[bank][i];
 		else
 			move = gBattleMons[bank].moves[i];
 	#endif

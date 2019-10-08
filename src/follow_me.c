@@ -26,7 +26,7 @@
  * \file follow_me.c
  * \brief Functions for NPCs following the player.
  */
- 
+
 //This file's functions:
 static u8 GetFollowerMapObjId(void);
 static u16 GetFollowerSprite(void);
@@ -114,14 +114,14 @@ void HideFollower(void)
 {
 	if (!gFollowerState.inProgress)
 		return;
-	
+
 	if (gFollowerState.createSurfBlob == 2 || gFollowerState.createSurfBlob == 3)
 	{
 		BindFieldEffectToSprite(gEventObjects[GetFollowerMapObjId()].fieldEffectSpriteId, 2);
 		DestroySprite(&gSprites[gEventObjects[GetFollowerMapObjId()].fieldEffectSpriteId]);
 		gEventObjects[GetFollowerMapObjId()].fieldEffectSpriteId = 0; //Unbind
 	}
-	
+
 	gEventObjects[GetFollowerMapObjId()].invisible = TRUE;
 }
 
@@ -186,7 +186,7 @@ static void TryUpdateFollowerSpriteUnderwater(void)
 	{
 		struct EventObject* follower = &gEventObjects[GetFollowerMapObjId()];
 		SetFollowerSprite(FOLLOWER_SPRITE_INDEX_UNDERWATER);
-		
+
 		follower = &gEventObjects[GetFollowerMapObjId()]; //Can change on reload sprite
 		follower->fieldEffectSpriteId = DoBobbingFieldEffect(follower->spriteId);
 	}
@@ -224,7 +224,7 @@ void FollowMe(struct EventObject* npc, u8 state, bool8 ignoreScriptActive)
 		}
 		else if (gFollowerState.comeOutDoorStairs == 2)
 			gFollowerState.comeOutDoorStairs = FALSE;
-	
+
 		follower->invisible = FALSE;
 		MoveEventObjectToMapCoords(follower, player->currentCoords.x, player->currentCoords.y);
 		EventObjectTurn(follower, player->facingDirection); //The follower should be facing the same direction as the player when it comes out of hiding
@@ -258,7 +258,7 @@ void FollowMe(struct EventObject* npc, u8 state, bool8 ignoreScriptActive)
 	}
 	else if (gFollowerState.createSurfBlob == 3) //Get off Surf Blob
 	{
-		gFollowerState.createSurfBlob = 0; 
+		gFollowerState.createSurfBlob = 0;
 		gPlayerAvatar->preventStep = TRUE; //Wait for finish
 		SetSurfDismount();
 		goto RESET;
@@ -267,9 +267,9 @@ void FollowMe(struct EventObject* npc, u8 state, bool8 ignoreScriptActive)
 	EventObjectClearHeldMovementIfActive(follower);
 	EventObjectSetHeldMovement(follower, newState);
 	PlayerLogCoordinates(player);
-	
+
 	*((u8*) 0x2023D6C) = newState;
-	
+
 	switch (newState) {
 		case MOVEMENT_ACTION_JUMP_2_DOWN ... MOVEMENT_ACTION_JUMP_2_RIGHT:
 		case 0x84 ... 0x87:
@@ -374,20 +374,20 @@ static u8 DetermineFollowerState(struct EventObject* follower, u8 state, u8 dire
 		case MOVEMENT_ACTION_SLIDE_SLOW_DOWN ... MOVEMENT_ACTION_SLIDE_SLOW_RIGHT:
 			//Slow slide or Bike Speed
 			RETURN_STATE(MOVEMENT_ACTION_SLIDE_SLOW_DOWN, direction);
-			
+
 		case MOVEMENT_ACTION_SLIDE_DOWN ... MOVEMENT_ACTION_SLIDE_RIGHT:
 			//Slide
 			RETURN_STATE(MOVEMENT_ACTION_SLIDE_DOWN, direction);
-			
+
 		case MOVEMENT_ACTION_SLIDE_FAST_DOWN ... MOVEMENT_ACTION_SLIDE_FAST_DOWN:
 			//Slide Fast
 			RETURN_STATE(MOVEMENT_ACTION_SLIDE_FAST_DOWN, direction);
-		
+
 		case MOVEMENT_ACTION_SLIDE_RIGHT_FOOT_DOWN ... MOVEMENT_ACTION_SLIDE_RIGHT_FOOT_RIGHT:
 			//Running frames
 			if (gFollowerState.flags & FOLLOWER_FLAG_HAS_RUNNING_FRAMES)
 				RETURN_STATE(MOVEMENT_ACTION_SLIDE_RIGHT_FOOT_DOWN, direction);
-			
+
 			RETURN_STATE(MOVEMENT_ACTION_WALK_FAST_DOWN, direction);
 
 
@@ -407,11 +407,11 @@ static u8 DetermineFollowerState(struct EventObject* follower, u8 state, u8 dire
 		case MOVEMENT_ACTION_JUMP_SPECIAL_DOWN ... MOVEMENT_ACTION_JUMP_SPECIAL_RIGHT:
 			gFollowerState.delayedState = MOVEMENT_ACTION_JUMP_SPECIAL_DOWN;
 			RETURN_STATE(MOVEMENT_ACTION_WALK_NORMAL_DOWN, direction);
-			
+
 		case MOVEMENT_ACTION_JUMP_DOWN ... MOVEMENT_ACTION_JUMP_RIGHT:
 			gFollowerState.delayedState = MOVEMENT_ACTION_JUMP_DOWN;
 			RETURN_STATE(MOVEMENT_ACTION_WALK_NORMAL_DOWN, direction);
-			
+
 		case 0x84 ... 0x87: ;
 			//Ledge run
 			if (((newState - direction) >= MOVEMENT_ACTION_JUMP_2_DOWN && (newState - direction) <= MOVEMENT_ACTION_JUMP_2_RIGHT)
@@ -435,7 +435,7 @@ static u8 DetermineFollowerState(struct EventObject* follower, u8 state, u8 dire
 
 			if (gFollowerState.flags & FOLLOWER_FLAG_HAS_RUNNING_FRAMES)
 				RETURN_STATE(MOVEMENT_ACTION_SLIDE_RIGHT_FOOT_DOWN, direction);
-			
+
 			RETURN_STATE(MOVEMENT_ACTION_WALK_FAST_DOWN, direction);
 
 		case MOVEMENT_ACTION_SPIN_PAD_DOWN ... MOVEMENT_ACTION_SPIN_PAD_RIGHT:
@@ -448,25 +448,25 @@ static u8 DetermineFollowerState(struct EventObject* follower, u8 state, u8 dire
 
 			gFollowerState.delayedState = MOVEMENT_ACTION_SPIN_PAD_DOWN;
 			RETURN_STATE(MOVEMENT_ACTION_WALK_FAST_DOWN, direction);
-			
+
 		case MOVEMENT_ACTION_WALK_SLOWEST_UP_BACKWARDS ... MOVEMENT_ACTION_WALK_SLOWEST_LEFT_BACKWARDS:
 			RETURN_STATE(MOVEMENT_ACTION_WALK_SLOWEST_UP_BACKWARDS, direction);
 
 		case MOVEMENT_ACTION_WALK_SLOW_UP_BACKWARDS ... MOVEMENT_ACTION_WALK_SLOW_LEFT_BACKWARDS:
 			RETURN_STATE(MOVEMENT_ACTION_WALK_SLOW_UP_BACKWARDS, direction);
-	
+
 		case MOVEMENT_ACTION_WALK_NORMAL_UP_BACKWARDS ... MOVEMENT_ACTION_WALK_NORMAL_LEFT_BACKWARDS:
 			RETURN_STATE(MOVEMENT_ACTION_WALK_NORMAL_UP_BACKWARDS, direction);
 
 		case MOVEMENT_ACTION_WALK_FAST_UP_BACKWARDS ... MOVEMENT_ACTION_WALK_FAST_LEFT_BACKWARDS:
 			RETURN_STATE(MOVEMENT_ACTION_WALK_FAST_UP_BACKWARDS, direction);
-	
+
 		case MOVEMENT_ACTION_JUMP_2_UP_BACKWARDS ... MOVEMENT_ACTION_JUMP_2_LEFT_BACKWARDS:
 			RETURN_STATE(MOVEMENT_ACTION_JUMP_2_UP_BACKWARDS, direction);
-			
+
 		case MOVEMENT_ACTION_JUMP_UP_BACKWARDS ... MOVEMENT_ACTION_JUMP_LEFT_BACKWARDS:
 			RETURN_STATE(MOVEMENT_ACTION_JUMP_UP_BACKWARDS, direction);
-			
+
 		case MOVEMENT_ACTION_WALK_NORMAL_LEFT_DOWN_FACE_DOWN ... MOVEMENT_ACTION_WALK_NORMAL_RIGHT_UP_FACE_RIGHT:
 			//Walk up/down side stairs
 			if (newState == state + direction) //Still walking up/down stairs same direction
@@ -647,7 +647,7 @@ static u8 ReturnFollowerDelayedState(u8 direction)
 {
 	u8 newState = gFollowerState.delayedState;
 	gFollowerState.delayedState = 0;
-	
+
 	switch (newState) {
 		case MOVEMENT_ACTION_WALK_NORMAL_LEFT_DOWN_FACE_DOWN ... MOVEMENT_ACTION_WALK_NORMAL_RIGHT_UP_FACE_RIGHT:
 		case MOVEMENT_ACTION_RUN_LEFT_DOWN_FACE_DOWN ... MOVEMENT_ACTION_RUN_RIGHT_UP_FACE_RIGHT:
@@ -763,7 +763,7 @@ static void SetSurfJump(void)
 	follower->fieldEffectSpriteId = FieldEffectStart(FLDEFF_SURF_BLOB);
 	CreateTask(Task_BindSurfBlobToFollower, 0x1);
 	SetFollowerSprite(FOLLOWER_SPRITE_INDEX_SURF);
-	
+
 	follower = &gEventObjects[GetFollowerMapObjId()];
 	EventObjectSetHeldMovement(follower, jumpState);
 }
@@ -817,7 +817,7 @@ static void SetSurfDismount(void)
 	BindFieldEffectToSprite(follower->fieldEffectSpriteId, 2);
 	follower->fieldEffectSpriteId = 0; //Unbind
 	FollowMe_HandleSprite();
-	
+
 	follower = &gEventObjects[GetFollowerMapObjId()]; //Can change after sprite reload
 	EventObjectSetHeldMovement(follower, jumpState);
 }
@@ -868,7 +868,7 @@ void PlayerGoThroughDoor(u8 taskId)
         {
             EventObjectClearHeldMovementIfActive(&gEventObjects[playerObjId]);
             EventObjectSetHeldMovement(&gEventObjects[playerObjId], MOVEMENT_ACTION_WALK_NORMAL_UP);
-			
+
 			if (gFollowerState.inProgress && !gEventObjects[followerObjId].invisible)
 			{
 				u8 newState = DetermineFollowerState(&gEventObjects[followerObjId], MOVEMENT_ACTION_WALK_NORMAL_UP,
@@ -941,7 +941,7 @@ static void Task_FollowerOutOfDoor(u8 taskId)
 	if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_DASH)
 	&& EventObjectClearHeldMovementIfFinished(player))
 		SetPlayerAvatarTransitionFlags(PLAYER_AVATAR_FLAG_ON_FOOT); //Temporarily stop running
-		
+
 	if (EventObjectClearHeldMovementIfFinished(player))
 		EventObjectTurn(player, GetPlayerFaceToDoorDirection(player, follower)); //The player should face towards the follow as the exit the door
 
@@ -1162,7 +1162,7 @@ static void SetFollowerSprite(u8 spriteIndex)
 {
 	if (!gFollowerState.inProgress)
 		return;
-		
+
 	if (gFollowerState.currentSprite == spriteIndex)
 		return;
 
@@ -1205,7 +1205,7 @@ void FollowMe_WarpSetEnd(void)
 
 	gFollowerState.warpEnd = 1;
 	PlayerLogCoordinates(player);
-	
+
 	u8 toY = gFollowerState.comeOutDoorStairs == 1 ? player->currentCoords.y - 1 : player->currentCoords.y;
 	MoveEventObjectToMapCoords(follower, player->currentCoords.x, toY);
 

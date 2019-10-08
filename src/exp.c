@@ -103,7 +103,7 @@ void atk23_getexp(void)
 			break;
 		}
 
-		#ifdef OLD_EXP_SHARE
+		#ifndef FLAG_EXP_SHARE
 		else if (holdEffect != ITEM_EFFECT_EXP_SHARE && !(gBattleStruct->sentInPokes & 1))
 		{
 			gBattleStruct->sentInPokes >>= 1;
@@ -150,12 +150,12 @@ void atk23_getexp(void)
 
 			if (gBitTable[i] & sentIn)
 				viaSentIn++;
-			#ifndef OLD_EXP_SHARE //In new gens, you either get bonus for being in, or exp share
-			else if (FlagGet(EXP_SHARE_FLAG))
+			#ifdef FLAG_EXP_SHARE //In new gens, you either get bonus for being in, or exp share
+			else if (FlagGet(FLAG_EXP_SHARE))
 				viaExpShare++;
 			#endif
 
-			#ifdef OLD_EXP_SHARE
+			#ifndef FLAG_EXP_SHARE
 			if (gItems[SanitizeItemId(gPlayerParty[i].item)].holdEffect == ITEM_EFFECT_EXP_SHARE)
 					viaExpShare++;
 			#endif
@@ -205,7 +205,7 @@ void atk23_getexp(void)
 			evolutionBoost = 12;
 
 		//Exp Share/Num Battlers Divisor
-		#ifdef OLD_EXP_SHARE
+		#ifndef FLAG_EXP_SHARE
 			#ifdef OLD_EXP_SPLIT
 				if (viaExpShare) { // at least one mon is getting exp via exp share
 					if (holdEffect == ITEM_EFFECT_EXP_SHARE)
@@ -300,7 +300,7 @@ void atk23_getexp(void)
 
 			PREPARE_WORD_NUMBER_BUFFER(gBattleTextBuff3, 10, calculatedExp)
 
-			#ifndef OLD_EXP_SHARE
+			#ifdef FLAG_EXP_SHARE
 				if (*expGiveType == GiveExpBattlePariticpants) //Don't print the gained exp string unless it participated in battle
 					PrepareStringBattle(STRINGID_PKMNGAINEDEXP, gBattleStruct->expGetterBank);
 			#else
@@ -419,8 +419,8 @@ void atk23_getexp(void)
 	case GetExp_End: // increment instruction
 		if (gBattleExecBuffer) break;
 
-		#ifndef OLD_EXP_SHARE
-			if (FlagGet(EXP_SHARE_FLAG) && *expGiveType == GiveExpBattlePariticpants && !WasWholeTeamSentIn(B_POSITION_PLAYER_LEFT, gNewBS->SentInBackup)) {
+		#ifdef FLAG_EXP_SHARE
+			if (FlagGet(FLAG_EXP_SHARE) && *expGiveType == GiveExpBattlePariticpants && !WasWholeTeamSentIn(B_POSITION_PLAYER_LEFT, gNewBS->SentInBackup)) {
 				*expGiveType = GiveExpViaExpShare;
 				gBattleStruct->expGetterId = 0;
 				gBattleMoveDamage = 0;

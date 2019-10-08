@@ -763,7 +763,7 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 			case B_TXT_TRAINER2_CLASS: //In FR, Trainer Tower Opponent Defeated Text
 				if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
 				{
-					toCpy = gTrainerClassNames[GetFrontierTrainerClassId(VarGet(SECOND_OPPONENT_VAR), 1)];
+					toCpy = gTrainerClassNames[GetFrontierTrainerClassId(VarGet(VAR_SECOND_OPPONENT), 1)];
 				}
 				else if (gBattleTypeFlags & BATTLE_TYPE_TRAINER_TOWER)
 				{
@@ -771,7 +771,7 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 					CopyTrainerTowerPlayerWonText(gStringVar4, 0);
 				}
 				else
-					toCpy = gTrainerClassNames[gTrainers[VarGet(SECOND_OPPONENT_VAR)].trainerClass];
+					toCpy = gTrainerClassNames[gTrainers[VarGet(VAR_SECOND_OPPONENT)].trainerClass];
 
 
 				if (toCpy[3] == 0x8) //Expanded Trainer Class Names
@@ -782,7 +782,7 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 			case B_TXT_TRAINER2_NAME: //In FR, Lost to Trainer Tower Opponent Text / Trainer Tower Opponent Win Text
 				if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
 				{
-					CopyFrontierTrainerName(text, VarGet(SECOND_OPPONENT_VAR), 1);
+					CopyFrontierTrainerName(text, VarGet(VAR_SECOND_OPPONENT), 1);
 					toCpy = text;
 				}
 				else if (gBattleTypeFlags & BATTLE_TYPE_TRAINER_TOWER)
@@ -792,11 +792,11 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 				}
 				else
 				{
-					u8 class = gTrainers[VarGet(SECOND_OPPONENT_VAR)].trainerClass;
+					u8 class = gTrainers[VarGet(VAR_SECOND_OPPONENT)].trainerClass;
 					#ifdef OPEN_WORLD_TRAINERS
-						if (VarGet(SECOND_OPPONENT_VAR) < DYNAMIC_TRAINER_LIMIT && class != CLASS_TEAM_ROCKET)
+						if (VarGet(VAR_SECOND_OPPONENT) < DYNAMIC_TRAINER_LIMIT && class != CLASS_TEAM_ROCKET)
 						{
-							toCpy = GetOpenWorldTrainerName(gTrainers[VarGet(SECOND_OPPONENT_VAR)].gender);
+							toCpy = GetOpenWorldTrainerName(gTrainers[VarGet(VAR_SECOND_OPPONENT)].gender);
 							break;
 						}
 					#endif
@@ -811,13 +811,13 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 						else
 					#endif
 
-					toCpy = gTrainers[VarGet(SECOND_OPPONENT_VAR)].trainerName;
+					toCpy = gTrainers[VarGet(VAR_SECOND_OPPONENT)].trainerName;
 				}
 				break;
 			case B_TXT_TRAINER2_LOSE_TEXT:
 				if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
 				{
-					CopyFrontierTrainerText(FRONTIER_PLAYER_WON_TEXT, VarGet(SECOND_OPPONENT_VAR), 1);
+					CopyFrontierTrainerText(FRONTIER_PLAYER_WON_TEXT, VarGet(VAR_SECOND_OPPONENT), 1);
 					toCpy = gStringVar4;
 				}
 				else
@@ -828,15 +828,15 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 			case B_TXT_TRAINER2_WIN_TEXT:
 				if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
 				{
-					CopyFrontierTrainerText(FRONTIER_PLAYER_LOST_TEXT, VarGet(SECOND_OPPONENT_VAR), 1);
+					CopyFrontierTrainerText(FRONTIER_PLAYER_LOST_TEXT, VarGet(VAR_SECOND_OPPONENT), 1);
 					toCpy = gStringVar4;
 				}
 				break;
 			case B_TXT_PARTNER_CLASS:
-				toCpy = gTrainerClassNames[GetFrontierTrainerClassId(VarGet(PARTNER_VAR), 2)];
+				toCpy = gTrainerClassNames[GetFrontierTrainerClassId(VarGet(VAR_PARTNER), 2)];
 				break;
 			case B_TXT_PARTNER_NAME:
-				CopyFrontierTrainerName(text, VarGet(PARTNER_VAR), 2);
+				CopyFrontierTrainerName(text, VarGet(VAR_PARTNER), 2);
 				toCpy = text;
 				break;
 			case B_TXT_AFFECTS_TARGET_SIDE:

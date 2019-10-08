@@ -20,24 +20,42 @@ end_battle.c
 
 const u16 gEndBattleFlagClearTable[] =
 {
-#ifdef CATCH_TRAINERS_POKEMON_FLAG
-	CATCH_TRAINERS_POKEMON_FLAG,
+#ifdef FLAG_CATCH_TRAINERS_POKEMON
+	FLAG_CATCH_TRAINERS_POKEMON,
 #endif
-#ifdef ACTIVATE_TUTORIAL_FLAG
-	ACTIVATE_TUTORIAL_FLAG,
+#ifdef FLAG_ACTIVATE_TUTORIAL
+	FLAG_ACTIVATE_TUTORIAL,
 #endif
-	INVERSE_FLAG,
-	SKY_BATTLE_FLAG,
-	NO_CATCHING_FLAG,
-	NO_RUNNING_FLAG,
-	NO_CATCHING_AND_RUNNING_FLAG,
-	TAG_BATTLE_FLAG,
-	TWO_OPPONENT_FLAG,
-	WILD_CUSTOM_MOVES_FLAG,
-	SMART_WILD_FLAG,
-	HIDDEN_ABILITY_FLAG,
-	DOUBLE_WILD_BATTLE_FLAG,
-	SHINY_CREATION_FLAG,
+#ifdef FLAG_INVERSE
+	FLAG_INVERSE,
+#endif
+#ifdef FLAG_SKY_BATTLE
+	FLAG_SKY_BATTLE,
+#endif
+#ifdef FLAG_NO_CATCHING
+	FLAG_NO_CATCHING,
+#endif
+#ifdef FLAG_NO_RUNNING
+	FLAG_NO_RUNNING,
+#endif
+#ifdef FLAG_NO_CATCHING_AND_RUNNING
+	FLAG_NO_CATCHING_AND_RUNNING,
+#endif
+#ifdef FLAG_WILD_CUSTOM_MOVES
+	FLAG_WILD_CUSTOM_MOVES,
+#endif
+#ifdef FLAG_SMART_WILD
+	FLAG_SMART_WILD,
+#endif
+#ifdef FLAG_DOUBLE_WILD_BATTLE
+	FLAG_DOUBLE_WILD_BATTLE,
+#endif
+#ifdef FLAG_SHINY_CREATION
+	FLAG_SHINY_CREATION,
+#endif
+	FLAG_TAG_BATTLE,
+	FLAG_TWO_OPPONENTS,
+	FLAG_HIDDEN_ABILITY,
 };
 
 //This file's functions:
@@ -127,7 +145,7 @@ void HandleEndTurn_BattleWon(void)
 		}
 
 		if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS && !specialMus && !loop) {
-			id = VarGet(SECOND_OPPONENT_VAR);
+			id = VarGet(VAR_SECOND_OPPONENT);
 			loop = TRUE;
 			goto VICTORY_MUSIC_SELECTION;
 		}
@@ -254,10 +272,14 @@ u8 IsRunningFromBattleImpossible(void)
 
 	if (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_FRONTIER))
 		return FALSE;
-
-	else if (FlagGet(NO_RUNNING_FLAG) || FlagGet(NO_CATCHING_AND_RUNNING_FLAG))
+	#ifdef FLAG_NO_RUNNING
+	else if (FlagGet(FLAG_NO_RUNNING))
 		return TRUE;
-
+	#endif
+	#ifdef FLAG_NO_CATCHING_AND_RUNNING
+	else if (FlagGet(FLAG_NO_CATCHING_AND_RUNNING))
+		return TRUE;
+	#endif
 	else if (itemEffect == ITEM_EFFECT_CAN_ALWAYS_RUN)
 		return FALSE;
 	else if (gBattleMons[gActiveBattler].ability == ABILITY_RUNAWAY)
@@ -565,27 +587,29 @@ static void EndBattleFlagClear(void)
 	for (u32 i = 0; i < ARRAY_COUNT(gEndBattleFlagClearTable); ++i)
 		FlagClear(gEndBattleFlagClearTable[i]);
 
-	u16 inducer = VarGet(STATUS_INDUCER_VAR);
+	#ifdef VAR_STATUS_INDUCER
+	u16 inducer = VarGet(VAR_STATUS_INDUCER);
 	if (inducer & 0xFF00) //Temporary status inducer
 	{
 		u8 status = inducer & 0xFF;
 		u8 amount = ((inducer & 0xFF00) >> 8) - 1; //Subtract num battles by 1
 
 		if (amount == 0) //Time's up
-			VarSet(STATUS_INDUCER_VAR, 0);
+			VarSet(VAR_STATUS_INDUCER, 0);
 		else
-			VarSet(STATUS_INDUCER_VAR, status | (amount << 8));
+			VarSet(VAR_STATUS_INDUCER, status | (amount << 8));
 	}
+	#endif
 
 	//Reset Totem Vars
-	VarSet(TOTEM_VAR + 0, 0);	//Bank B_POSITION_PLAYER_LEFT's Stat
-	VarSet(TOTEM_VAR + 1, 0);	//Bank B_POSITION_OPPONENT_LEFT's Stat
-	VarSet(TOTEM_VAR + 2, 0);	//Bank B_POSITION_PLAYER_RIGHT's Stat
-	VarSet(TOTEM_VAR + 3, 0);	//Bank B_POSITION_OPPONENT_RIGHT's Stat
+	VarSet(VAR_TOTEM + 0, 0);	//Bank B_POSITION_PLAYER_LEFT's Stat
+	VarSet(VAR_TOTEM + 1, 0);	//Bank B_POSITION_OPPONENT_LEFT's Stat
+	VarSet(VAR_TOTEM + 2, 0);	//Bank B_POSITION_PLAYER_RIGHT's Stat
+	VarSet(VAR_TOTEM + 3, 0);	//Bank B_POSITION_OPPONENT_RIGHT's Stat
 
-	VarSet(TERRAIN_VAR, 0);
-	VarSet(BATTLE_TOWER_TRAINER1_NAME, 0xFFFF);
-	VarSet(BATTLE_TOWER_TRAINER2_NAME, 0xFFFF);
+	VarSet(VAR_TERRAIN, 0);
+	VarSet(VAR_BATTLE_FACILITY_TRAINER1_NAME, 0xFFFF);
+	VarSet(VAR_BATTLE_FACILITY_TRAINER2_NAME, 0xFFFF);
 	Free(gNewBS->MegaData);
 	Free(gNewBS->UltraData);
 	Free(gNewBS->ZMoveData);

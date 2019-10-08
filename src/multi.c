@@ -182,7 +182,7 @@ u32 MultiMoneyCalc(void)
 	u32 money = CalcMultiMoneyForTrainer(gTrainerBattleOpponent_A);
 
 	if (gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_TWO_OPPONENTS)) {
-		money += CalcMultiMoneyForTrainer(VarGet(SECOND_OPPONENT_VAR));
+		money += CalcMultiMoneyForTrainer(VarGet(VAR_SECOND_OPPONENT));
 	}
 
 	return money;
@@ -293,13 +293,13 @@ bool8 IsPartnerAttacker(void)
 
 u8* PartnerLoadName(void)
 {
-	CopyFrontierTrainerName(gStringVar4, VarGet(PARTNER_VAR), 2);
+	CopyFrontierTrainerName(gStringVar4, VarGet(VAR_PARTNER), 2);
 	return gStringVar4;
 }
 
 u8 LoadPartnerBackspriteIndex(void)
 {
-	return VarGet(PARTNER_BACKSPRITE_VAR);
+	return VarGet(VAR_PARTNER_BACKSPRITE);
 }
 
 void ChooseProperPartnerController(void)

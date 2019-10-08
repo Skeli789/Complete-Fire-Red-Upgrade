@@ -431,11 +431,11 @@ void LoadTmHmNameInMart(u16 item)
 	#endif
 }
 
-extern u8* AttackDescriptionTable[];
+extern u8* gMoveDescriptions[];
 void* LoadTmHmMartDescription(u16 item)
 {
 	if (GetPocketByItemId(item) == POCKET_TM_HM)
-		return AttackDescriptionTable[ItemIdToBattleMoveId(item)-1];
+		return gMoveDescriptions[ItemIdToBattleMoveId(item)-1];
 	else
 		return ItemId_GetDescription(item);
 }
@@ -1160,7 +1160,7 @@ static s8 CompareItemsByMost(struct ItemSlot* itemSlot1, struct ItemSlot* itemSl
 {
 	u16 quantity1 = itemSlot1->quantity;
 	u16 quantity2 = itemSlot2->quantity;
-	
+
 	if (itemSlot1->itemId == ITEM_NONE)
 		return 1;
 	else if (itemSlot2->itemId == ITEM_NONE)
@@ -1178,12 +1178,12 @@ static s8 CompareItemsByLeast(struct ItemSlot* itemSlot1, struct ItemSlot* itemS
 {
 	u16 quantity1 = itemSlot1->quantity;
 	u16 quantity2 = itemSlot2->quantity;
-	
+
 	if (itemSlot1->itemId == ITEM_NONE)
 		return 1;
 	else if (itemSlot2->itemId == ITEM_NONE)
 		return -1;
-	
+
 	if (quantity1 < quantity2)
 		return -1;
 	else if (quantity1 > quantity2)

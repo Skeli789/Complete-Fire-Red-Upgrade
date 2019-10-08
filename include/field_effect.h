@@ -30,6 +30,7 @@ void __attribute__((long_call)) FieldEffectActiveListRemove(u8 id);
 void __attribute__((long_call)) UpdateSurfBlobFieldEffect(struct Sprite*);
 void __attribute__((long_call)) BindObj(u8 spriteId, u8 value);
 u8 __attribute__((long_call)) DoBobbingFieldEffect(u8 spriteId);
+bool8 __attribute__((long_call)) CheckObjectGraphicsInFrontOfPlayer(u16 graphicsId);
 
 /*
 bool8 FieldEffectActiveListContains(u8 id);

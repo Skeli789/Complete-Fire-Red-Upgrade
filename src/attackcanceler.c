@@ -706,7 +706,8 @@ static u8 AtkCanceller_UnableToUseMove(void)
 			break;
 
 		case CANCELLER_SKY_BATTLE:
-			if (FlagGet(SKY_BATTLE_FLAG) && CheckTableForMove(gCurrentMove, gSkyBattleBannedMoves))
+		#ifdef FLAG_SKY_BATTLE
+			if (FlagGet(FLAG_SKY_BATTLE) && CheckTableForMove(gCurrentMove, gSkyBattleBannedMoves))
 			{
 				gBattleScripting->bank = gBankAttacker;
 				CancelMultiTurnMoves(gBankAttacker);
@@ -714,6 +715,7 @@ static u8 AtkCanceller_UnableToUseMove(void)
 				gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
 				effect = 1;
 			}
+		#endif
 			gBattleStruct->atkCancellerTracker++;
 			break;
 

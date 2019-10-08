@@ -66,6 +66,7 @@ static u8 CreateMugshotTrainerSprite(u8 trainerSpriteID, s16 x, s16 y, u8 subpri
 			}
 			else
 			{
+				#ifdef FLAG_LOAD_MUGSHOT_SPRITE_FROM_TABLE
 				if (FlagGet(FLAG_LOAD_MUGSHOT_SPRITE_FROM_TABLE))
 				{
 					if (IS_VALID_TABLE_SPRITE(trainerSpriteID)) //Complete data for image
@@ -84,6 +85,7 @@ static u8 CreateMugshotTrainerSprite(u8 trainerSpriteID, s16 x, s16 y, u8 subpri
 					}
 				}
 				else
+				#endif
 				{
 					LoadCompressedSpritePaletteOverrideBuffer(&gTrainerFrontPicPaletteTable[trainerSpriteID], buffer);
 					LoadCompressedSpriteSheetOverrideBuffer(&gTrainerFrontPicTable[trainerSpriteID], buffer);
@@ -93,6 +95,7 @@ static u8 CreateMugshotTrainerSprite(u8 trainerSpriteID, s16 x, s16 y, u8 subpri
 
 		case MUGSHOT_PLAYER:
 		default:
+			#ifdef FLAG_LOAD_MUGSHOT_SPRITE_FROM_TABLE
 			if (FlagGet(FLAG_LOAD_MUGSHOT_SPRITE_FROM_TABLE))
 			{
 				if (IS_VALID_TABLE_SPRITE(trainerSpriteID)) //Complete data for image
@@ -113,6 +116,7 @@ static u8 CreateMugshotTrainerSprite(u8 trainerSpriteID, s16 x, s16 y, u8 subpri
 				}
 			}
 			else
+			#endif
 			{
 				++loadingPlayer; //So compiler doesn't complain
 				struct CompressedSpritePalette palStruct = {GetTrainerSpritePal(trainerSpriteID), gTrainerFrontPicPaletteTable[trainerSpriteID].tag};
@@ -278,7 +282,7 @@ void Mugshots_CreateOpponentPlayerSprites(struct Task* task)
 	//Load Opponent B
 	if (IsTrainerBattleModeAgainstTwoOpponents())
 	{
-		trainerSpriteID2 = GetFrontierTrainerFrontSpriteId(VarGet(SECOND_OPPONENT_VAR), 1);
+		trainerSpriteID2 = GetFrontierTrainerFrontSpriteId(VarGet(VAR_SECOND_OPPONENT), 1);
 		task->tOpponentSpriteId2 = CreateMugshotTrainerSprite(trainerSpriteID2,
 															sMugshotsOpponentCoords[mugshotId][0] - x1 - 50,
 															sMugshotsOpponentCoords[mugshotId][1] + y1,
@@ -286,6 +290,7 @@ void Mugshots_CreateOpponentPlayerSprites(struct Task* task)
 
 		if (mugshotType == MUGSHOT_BIG)
 			UpdateMugshotSpriteData(task->tOpponentSpriteId2, SPRITE_SHAPE(64x64), sMugshotsOpponentRotationScales[mugshotId][0], sMugshotsOpponentRotationScales[mugshotId][1], 0, TRUE);
+		#ifdef FLAG_LOAD_MUGSHOT_SPRITE_FROM_TABLE
 		else if (FlagGet(FLAG_LOAD_MUGSHOT_SPRITE_FROM_TABLE))
 		{
 			if (!IS_VALID_TABLE_SPRITE(trainerSpriteID2))
@@ -297,6 +302,7 @@ void Mugshots_CreateOpponentPlayerSprites(struct Task* task)
 				UpdateMugshotSpriteData(task->tOpponentSpriteId2, SPRITE_SHAPE(64x64), 0, 0, 0, FALSE);
 			}
 		}
+		#endif
 		else
 		{
 			UpdateMugshotSpriteData(task->tOpponentSpriteId2, SPRITE_SHAPE(64x32), sMugshotsOpponentRotationScales[mugshotId][0], sMugshotsOpponentRotationScales[mugshotId][1], 0, TRUE);
@@ -316,6 +322,7 @@ void Mugshots_CreateOpponentPlayerSprites(struct Task* task)
 
 			if (mugshotType == MUGSHOT_BIG)
 				UpdateMugshotSpriteData(task->tPartnerSpriteId, SPRITE_SHAPE(64x64), -512, 512, 0, TRUE);
+			#ifdef FLAG_LOAD_MUGSHOT_SPRITE_FROM_TABLE
 			else if (FlagGet(FLAG_LOAD_MUGSHOT_SPRITE_FROM_TABLE))
 			{
 				if (!IS_VALID_TABLE_SPRITE(trainerSpriteIDPartner))
@@ -323,6 +330,7 @@ void Mugshots_CreateOpponentPlayerSprites(struct Task* task)
 				else
 					UpdateMugshotSpriteData(task->tPartnerSpriteId, SPRITE_SHAPE(64x64), 0, 0, 0, FALSE);
 			}
+			#endif
 			else
 			{
 				UpdateMugshotSpriteData(task->tPartnerSpriteId, SPRITE_SHAPE(64x32), -512, 512, 0, TRUE);
@@ -357,11 +365,14 @@ void Mugshots_CreateOpponentPlayerSprites(struct Task* task)
 	{
 		if (mugshotType == MUGSHOT_DP || mugshotType == MUGSHOT_TWO_BARS)
 		{
+			#ifdef FLAG_LOAD_MUGSHOT_SPRITE_FROM_TABLE
 			if (FlagGet(FLAG_LOAD_MUGSHOT_SPRITE_FROM_TABLE))
 				opponentSprite->oam.shape = SPRITE_SHAPE(64x64);
 			else
+			#endif
 				opponentSprite->oam.shape = SPRITE_SHAPE(64x32);
 		}
+		#ifdef FLAG_LOAD_MUGSHOT_SPRITE_FROM_TABLE
 		else if (FlagGet(FLAG_LOAD_MUGSHOT_SPRITE_FROM_TABLE))
 		{
 			if (IS_VALID_TABLE_SPRITE(trainerSpriteID))
@@ -372,7 +383,9 @@ void Mugshots_CreateOpponentPlayerSprites(struct Task* task)
 				playerSprite->oam.shape = SPRITE_SHAPE(64x64); //Gets shrunk down later
 			}
 		}
+		#endif
 	}
+	#ifdef FLAG_LOAD_MUGSHOT_SPRITE_FROM_TABLE
 	else if (FlagGet(FLAG_LOAD_MUGSHOT_SPRITE_FROM_TABLE))
 	{
 		if (IS_VALID_TABLE_SPRITE(PlayerGenderToFrontTrainerPicId(gSaveBlock2->playerGender, TRUE)))
@@ -385,6 +398,7 @@ void Mugshots_CreateOpponentPlayerSprites(struct Task* task)
 		else
 			opponentSprite->oam.shape = SPRITE_SHAPE(64x32);
 	}
+	#endif
 	else
 	{
 		opponentSprite->oam.shape = SPRITE_SHAPE(64x32);
@@ -397,13 +411,14 @@ void Mugshots_CreateOpponentPlayerSprites(struct Task* task)
 	CalcCenterToCornerVec(opponentSprite, 1, 3, 3);
 	CalcCenterToCornerVec(playerSprite, 1, 3, 3);
 
-
+	#ifdef FLAG_LOAD_MUGSHOT_SPRITE_FROM_TABLE
 	if ((FlagGet(FLAG_LOAD_MUGSHOT_SPRITE_FROM_TABLE)))
 	{
 		if (!IS_VALID_TABLE_SPRITE(trainerSpriteID))
 			SetOamMatrixRotationScaling(opponentSprite->oam.matrixNum, sMugshotsOpponentRotationScales[mugshotId][0], sMugshotsOpponentRotationScales[mugshotId][1], 0);
 	}
 	else
+	#endif
 	{
 		SetOamMatrixRotationScaling(opponentSprite->oam.matrixNum, sMugshotsOpponentRotationScales[mugshotId][0], sMugshotsOpponentRotationScales[mugshotId][1], 0);
 	}
@@ -412,11 +427,13 @@ void Mugshots_CreateOpponentPlayerSprites(struct Task* task)
 		SetOamMatrixRotationScaling(playerSprite->oam.matrixNum, 448, 448, 0);
 	else if (mugshotSprite == MUGSHOT_VS_SYMBOL)
 		SetOamMatrixRotationScaling(playerSprite->oam.matrixNum, 256, 256, 0);
+	#ifdef FLAG_LOAD_MUGSHOT_SPRITE_FROM_TABLE
 	else if (FlagGet(FLAG_LOAD_MUGSHOT_SPRITE_FROM_TABLE))
 	{
 		if (!IS_VALID_TABLE_SPRITE(PlayerGenderToFrontTrainerPicId(gSaveBlock2->playerGender, TRUE)))
 			SetOamMatrixRotationScaling(playerSprite->oam.matrixNum, -512, 512, 0);
 	}
+	#endif
 	else
 		SetOamMatrixRotationScaling(playerSprite->oam.matrixNum, -512, 512, 0);
 }

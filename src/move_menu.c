@@ -56,7 +56,7 @@ static const struct Coords16 sTypeIconPositions[][/*IS_SINGLE_BATTLE*/2] =
 		[TRUE] = {221, 86}, 	//Single Battle
 		[FALSE] = {144, 70},	//Double Battle
 	},
-	[B_POSITION_OPPONENT_LEFT] = 
+	[B_POSITION_OPPONENT_LEFT] =
 	{
 		[TRUE] = {20, 26}, 		//Single Battle
 		[FALSE] = {97, 14},		//Double Battle
@@ -65,7 +65,7 @@ static const struct Coords16 sTypeIconPositions[][/*IS_SINGLE_BATTLE*/2] =
 	{
 		[FALSE] = {156, 96},	//Double Battle
 	},
-	[B_POSITION_OPPONENT_RIGHT] = 
+	[B_POSITION_OPPONENT_RIGHT] =
 	{
 		[FALSE] = {85, 39},		//Double Battle
 	},
@@ -75,7 +75,7 @@ static const struct Coords16 sTypeIconPositions[][/*IS_SINGLE_BATTLE*/2] =
 		[TRUE] = {225, 86}, 	//Single Battle
 		[FALSE] = {142, 70},	//Double Battle
 	},
-	[B_POSITION_OPPONENT_LEFT] = 
+	[B_POSITION_OPPONENT_LEFT] =
 	{
 		[TRUE] = {18, 26}, 		//Single Battle
 		[FALSE] = {99, 15},		//Double Battle
@@ -84,7 +84,7 @@ static const struct Coords16 sTypeIconPositions[][/*IS_SINGLE_BATTLE*/2] =
 	{
 		[FALSE] = {154, 96},	//Double Battle
 	},
-	[B_POSITION_OPPONENT_RIGHT] = 
+	[B_POSITION_OPPONENT_RIGHT] =
 	{
 		[FALSE] = {87, 40},		//Double Battle
 	},
@@ -1282,11 +1282,13 @@ u8 TrySetCantSelectMoveBattleScript(void)
 		gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingNotAllowedMoveAssaultVest;
 		++limitations;
 	}
-	else if (FlagGet(SKY_BATTLE_FLAG) && CheckTableForMove(move, gSkyBattleBannedMoves))
+	#ifdef FLAG_SKY_BATTLE
+	else if (FlagGet(FLAG_SKY_BATTLE) && CheckTableForMove(move, gSkyBattleBannedMoves))
 	{
 		gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingNotAllowedSkyBattle;
 		++limitations;
 	}
+	#endif
 	else if (IsGravityActive() && CheckTableForMove(move, gGravityBannedMoves))
 	{
 		gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingNotAllowedGravity;
@@ -1479,7 +1481,7 @@ bool8 CheckCantMoveThisTurn(void)
 
 bool8 IsBagDisabled(void)
 {
-	return FlagGet(DISABLE_BAG_FLAG) || (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_FRONTIER));
+	return FlagGet(FLAG_DISABLE_BAG) || (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_FRONTIER));
 }
 
 static void TryLoadTypeIcons(void)
@@ -1513,7 +1515,7 @@ static void TryLoadTypeIcons(void)
 					type1Ptr = &gBattleMons[GetBattlerAtPosition(position)].type1;
 
 				u8 type = *(type1Ptr + typeNum);
-				
+
 				switch (type) { //Certain types have a different palette
 					case TYPE_FLYING:
 					case TYPE_POISON:
@@ -1527,7 +1529,7 @@ static void TryLoadTypeIcons(void)
 					default:
 						spriteId = CreateSpriteAtEnd(&sTypeIconSpriteTemplate, x, y, 0xFF);
 				}
-	
+
 				if (spriteId != MAX_SPRITES)
 				{
 					struct Sprite* sprite = &gSprites[spriteId];
@@ -1564,7 +1566,7 @@ static void SpriteCB_CamomonsTypeIcon(struct Sprite* sprite)
 		DestroySprite(sprite);
 		return;
 	}
-	
+
 	//Type icons should prepare to destroy themselves if the Player is not choosing an action
 	if (gBattleBankFunc[bank] != (0x08032C90 | 1) //PlayerHandleChooseMove
 	&&  gBattleBankFunc[bank] != (0x0802EA10 | 1) //HandleInputChooseMove

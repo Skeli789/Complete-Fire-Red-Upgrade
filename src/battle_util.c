@@ -997,7 +997,7 @@ bool8 DoesSleepClausePrevent(u8 bank)
 {
 	if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
 	{
-		switch (VarGet(BATTLE_TOWER_TIER)) {
+		switch (VarGet(VAR_BATTLE_FACILITY_TIER)) {
 			case BATTLE_TOWER_OU:
 			case BATTLE_TOWER_UBER:
 			case BATTLE_TOWER_LITTLE_CUP:
@@ -1216,8 +1216,11 @@ bool8 IsWaterSportActive(void)
 
 bool8 IsInverseBattle(void)
 {
-	return FlagGet(INVERSE_FLAG)
-		|| (IS_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_INVERSE);
+	return
+		#ifdef FLAG_INVERSE
+		FlagGet(FLAG_INVERSE) ||
+		#endif
+		(IS_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_INVERSE);
 }
 
 bool8 BankSideHasSeaOfFire(u8 bank)

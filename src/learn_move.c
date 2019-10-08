@@ -45,7 +45,7 @@ void GiveBoxMonInitialMoveset(struct BoxPokemon* boxMon)
 		u16 move = lvlUpMove.move;
 
 		#ifdef POKEMON_LEARNSET_RANDOMIZER_FLAG
-		if (FlagGet(POKEMON_LEARNSET_RANDOMIZER_FLAG) && !FlagGet(BATTLE_TOWER_FLAG))
+		if (FlagGet(POKEMON_LEARNSET_RANDOMIZER_FLAG) && !FlagGet(FLAG_BATTLE_FACILITY))
 			move = RandomizeMove(move);
 		#endif
 
@@ -88,7 +88,7 @@ u16 MonTryLearningNewMove(struct Pokemon* mon, bool8 firstMove)
 		gMoveToLearn = lvlUpMove.move;
 
 		#ifdef POKEMON_LEARNSET_RANDOMIZER_FLAG
-		if (FlagGet(POKEMON_LEARNSET_RANDOMIZER_FLAG) && !FlagGet(BATTLE_TOWER_FLAG))
+		if (FlagGet(POKEMON_LEARNSET_RANDOMIZER_FLAG) && !FlagGet(FLAG_BATTLE_FACILITY))
 			gMoveToLearn = RandomizeMove(gMoveToLearn);
 		#endif
 
@@ -126,7 +126,7 @@ u16 MonTryLearningNewMoveAfterEvolution(struct Pokemon* mon, bool8 firstMove)
 		gMoveToLearn = lvlUpMove.move;
 
 		#ifdef POKEMON_LEARNSET_RANDOMIZER_FLAG
-		if (FlagGet(POKEMON_LEARNSET_RANDOMIZER_FLAG) && !FlagGet(BATTLE_TOWER_FLAG))
+		if (FlagGet(POKEMON_LEARNSET_RANDOMIZER_FLAG) && !FlagGet(FLAG_BATTLE_FACILITY))
 			gMoveToLearn = RandomizeMove(gMoveToLearn);
 		#endif
 
@@ -145,13 +145,13 @@ u8 GetMoveRelearnerMoves(struct Pokemon* mon, u16* moves)
 	u8 level = mon->level;
 	int i, j, k;
 
-#ifdef MOVE_RELEARNER_IGNORE_LEVEL_FLAG
-	if (FlagGet(MOVE_RELEARNER_IGNORE_LEVEL_FLAG))
+#ifdef FLAG_MOVE_RELEARNER_IGNORE_LEVEL
+	if (FlagGet(FLAG_MOVE_RELEARNER_IGNORE_LEVEL))
 		level = MAX_LEVEL;
 #endif
 
-#ifdef EGG_MOVE_RELEARNER_FLAG
-	if (FlagGet(EGG_MOVE_RELEARNER_FLAG))
+#ifdef FLAG_EGG_MOVE_RELEARNER
+	if (FlagGet(FLAG_EGG_MOVE_RELEARNER))
 	{
 		numMoves = GetAllEggMoves(mon, moves, TRUE);
 		return numMoves;
@@ -198,7 +198,7 @@ u8 GetLevelUpMovesBySpecies(u16 species, u16* moves)
 		u16 move = gLevelUpLearnsets[species][i].move;
 
 		#ifdef POKEMON_LEARNSET_RANDOMIZER_FLAG
-		if (FlagGet(POKEMON_LEARNSET_RANDOMIZER_FLAG) && !FlagGet(BATTLE_TOWER_FLAG))
+		if (FlagGet(POKEMON_LEARNSET_RANDOMIZER_FLAG) && !FlagGet(FLAG_BATTLE_FACILITY))
 			move = RandomizeMove(move);
 		#endif
 

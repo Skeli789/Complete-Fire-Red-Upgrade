@@ -244,7 +244,9 @@ void CB2_InitMoreOptionsMenu(void)
 		gTasks[taskId].data[TD_LEVELLIMIT] = gSaveBlock2Ptr->optionsBattleStyle;
 		gTasks[taskId].data[TD_FLAGTOTEST] = gSaveBlock2Ptr->optionsSound;
 		gTasks[taskId].data[TD_POKEDEXGIVEN] = gSaveBlock2Ptr->optionsButtonMode;
-		gTasks[taskId].data[TD_WILDDOUBLESACTIVATED] = FlagGet(DOUBLE_WILD_BATTLE_FLAG);
+		#ifdef FLAG_DOUBLE_WILD_BATTLE
+		gTasks[taskId].data[TD_WILDDOUBLESACTIVATED] = FlagGet(FLAG_DOUBLE_WILD_BATTLE);
+		#endif
 */
 		DrawChoices(taskId);
 		CopyWindowToVram(WIN_OPTIONS, 3);

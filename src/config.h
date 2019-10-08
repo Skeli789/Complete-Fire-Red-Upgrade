@@ -9,47 +9,46 @@
 //#define DEBUG_HMS
 
 /*===== General Vars =====*/
-#define TERRAIN_VAR 0x5000 //Set to a terrain type for a battle to begin with the given terrain
-#define TOTEM_VAR 0x5001 //to var + 3 (0x5004)
-#define BACKSPRITE_SWITCH_VAR 0x5006 //This var can be set to a number to change the Player's backsprite
-#define BATTLE_BG_VAR 0x5007 //Set this var to a custom background id
-#define SWARM_INDEX_VAR 0x5008 //Set by the engine
-#define SWARM_DAILY_EVENT_VAR 0x5009 //Set by the engine. Used to tell the game if a swarm has already been generated for the day. (Uses + 1 var also)
-#define DEFAULT_WALKING_SCRIPT_VAR 0x500B  //Walking scripts from JPAN's engine. His engine used 0x407E.
-#define DEXNAV_VAR 0x500C //Set by the engine indicating which Pokemon has been registered to find in the OW
-#define STATUS_INDUCER_VAR 0x500D //Causes wild Pokemon to be spawned with the given status condition. Status + 0x100 clears var after battle.
+#define VAR_TERRAIN 0x5000 //Set to a terrain type for a battle to begin with the given terrain
+#define VAR_TOTEM 0x5001 //to var + 3 (0x5004)
+#define VAR_BACKSPRITE_SWITCH 0x5006 //This var can be set to a number to change the Player's backsprite
+//#define VAR_BATTLE_BG 0x5007 //Set this var to a custom background id
+#define VAR_SWARM_INDEX 0x5008 //Set by the engine
+#define VAR_SWARM_DAILY_EVENT 0x5009 //Set by the engine. Used to tell the game if a swarm has already been generated for the day. (Uses + 1 var also)
+#define VAR_DEFAULT_WALKING_SCRIPT 0x500B  //Walking scripts from JPAN's engine. His engine used 0x407E.
+#define VAR_DEXNAV 0x500C //Set by the engine indicating which Pokemon has been registered to find in the OW
+#define VAR_STATUS_INDUCER 0x500D //Causes wild Pokemon to be spawned with the given status condition. Status + 0x100 clears var after battle.
 
-#define SECOND_OPPONENT_VAR 0x5010 //Set this to the var used to store the Trainer Id of the second opponent in Multi Battles (can be any free var)
-#define PARTNER_VAR 0x5011 //Set this to the var used to store the Trainer Id of your partner in Multi Battles (can be any free var)
-#define PARTNER_BACKSPRITE_VAR 0x5012 //Set this to the var used to store the backsprite number of your partner in Multi Battles (can be any free var)
+#define VAR_SECOND_OPPONENT 0x5010 //Set this to the var used to store the Trainer Id of the second opponent in Multi Battles (can be any free var)
+#define VAR_PARTNER 0x5011 //Set this to the var used to store the Trainer Id of your partner in Multi Battles (can be any free var)
+#define VAR_PARTNER_BACKSPRITE 0x5012 //Set this to the var used to store the backsprite number of your partner in Multi Battles (can be any free var)
 
 /*===== General Flags =====*/
-#define INVERSE_FLAG 0x900 //Set this flag for all battles to become Inverse Battles
-#define SKY_BATTLE_FLAG 0x901 //Set this flag to indicate the Sky Battle rules should be followed in the next battle.
-#define NO_CATCHING_FLAG 0x902 //The player cannot catch Pokemon in battles when this flag is set
-#define NO_RUNNING_FLAG 0x903 //The player cannot run in battles when this flag is set
-#define NO_CATCHING_AND_RUNNING_FLAG 0x904 //The player cannot run or catch Pokemon in battles when this flag is set
-#define CATCH_TRAINERS_POKEMON_FLAG 0x905 //If CATCH_TRAINERS_POKEMON is uncommented, then setting this flag will allow you to capture trainers' pokemon. Comment this line to remove this feature
-#define EXP_SHARE_FLAG 0x906 //Used to indicate if the Gen 6+ Exp Share is enabled
-#define DOUBLE_BATTLE_FLAG 0x907 //ACTIVATE_DOUBLE_BATTLE_FROM_FLAG is enabled, setting this flag will automatically trigger a double battle if possible
-#define TAG_BATTLE_FLAG 0x908 //This flag is set by the engine when trainerbattle 0x10 is used to activate a tag battle
-#define TWO_OPPONENT_FLAG 0x909 //This flag is set by the engine when trainerbattle 0x11 is used to activate a dual opponent battle
-#define ACTIVATE_TUTORIAL_FLAG 0x90A //Setting this flag will allow you to activate Oak's tutorial in any kind of battle (including doubles). Comment this line to remove this feature
-#define WILD_CUSTOM_MOVES_FLAG 0x90B //Setting this flag lets you assign wild Pokemon custom moves
-#define SMART_WILD_FLAG 0x90C //Set this flag is you don't want wild Pokemon to act randomly (useful for one time smarter wild battles). This is cleared at the end of the battle.
-#define SCALE_WILD_POKEMON_LEVELS_FLAG 0x90D //If this flag is set, all random wild Pokemon (other than scripted ones) will have their level scaled to the lowest level in the player's party
-#define SCALE_TRAINER_LEVELS_FLAG 0x90E //If this flag is set, all Trainer Pokemon levels will be set to the highest in your party
-#define HIDDEN_ABILITY_FLAG 0x90F //If this flag is set, generated wild Pokemon will have their hidden abilities
-#define DOUBLE_WILD_BATTLE_FLAG 0x910 //If this flag is set, a wild battles will be against two Pokemon
-#define NO_RANDOM_WILD_ENCOUNTERS_FLAG 0x911 //If this is set, wild Pokemon won't appear when walking/surfing in grass, caves, water, etc.
+#define FLAG_INVERSE 0x900 //Set this flag for all battles to become Inverse Battles
+#define FLAG_SKY_BATTLE 0x901 //Set this flag to indicate the Sky Battle rules should be followed in the next battle.
+#define FLAG_NO_CATCHING 0x902 //The player cannot catch Pokemon in battles when this flag is set
+#define FLAG_NO_RUNNING 0x903 //The player cannot run in battles when this flag is set
+#define FLAG_NO_CATCHING_AND_RUNNING 0x904 //The player cannot run or catch Pokemon in battles when this flag is set
+#define FLAG_CATCH_TRAINERS_POKEMON 0x905 //Setting this flag will allow you to capture trainers' pokemon. Comment this line to remove this feature
+#define FLAG_EXP_SHARE 0x906 //Used to indicate if the Gen 6+ Exp Share is enabled
+#define FLAG_DOUBLE_BATTLE 0x907 //Setting this flag will automatically trigger a double battle if possible
+#define FLAG_TAG_BATTLE 0x908 //This flag is set by the engine when trainerbattle 0x10 is used to activate a tag battle
+#define FLAG_TWO_OPPONENTS 0x909 //This flag is set by the engine when trainerbattle 0x11 is used to activate a dual opponent battle
+#define FLAG_ACTIVATE_TUTORIAL 0x90A //Setting this flag will allow you to activate Oak's tutorial in any kind of battle (including doubles). Comment this line to remove this feature
+#define FLAG_WILD_CUSTOM_MOVES 0x90B //Setting this flag lets you assign wild Pokemon custom moves
+#define FLAG_SMART_WILD 0x90C //Set this flag is you don't want wild Pokemon to act randomly (useful for one time smarter wild battles). This is cleared at the end of the battle.
+#define FLAG_SCALE_WILD_POKEMON_LEVELS 0x90D //If this flag is set, all random wild Pokemon (other than scripted ones) will have their level scaled to the lowest level in the player's party
+#define FLAG_SCALE_TRAINER_LEVELS 0x90E //If this flag is set, all Trainer Pokemon levels will be set to the highest in your party
+#define FLAG_HIDDEN_ABILITY 0x90F //If this flag is set, generated wild Pokemon will have their hidden abilities
+#define FLAG_DOUBLE_WILD_BATTLE 0x910 //If this flag is set, a wild battles will be against two Pokemon
+#define FLAG_NO_RANDOM_WILD_ENCOUNTERS 0x911 //If this is set, wild Pokemon won't appear when walking/surfing in grass, caves, water, etc.
 #define FLAG_REMOVE_EVO_ITEM 0x912  //Flag to toggle item removal after leveling up (set by the engine)
-#define SHINY_CREATION_FLAG 0x913 //Flag to cause next battle to be against a shiny Pokemon
-#define AUTO_RUN_FLAG 0x914 //Flag to enable auto-run (toggled by L-button). If this feature is used, L=A will not work. Comment out this line for it to work again.
-#define RUNNING_ENABLED_FLAG 0x82F //The player can only run if this flag is set. If commented, the player will start the game with running shoes.
-#define DISABLE_BAG_FLAG 0x915 //The bag can't be used in-battle if this flag is set
-#define MOVE_RELEARNER_IGNORE_LEVEL_FLAG 0x916 //When set, the move relearner shows all level-up moves up to MAX_LEVEL
-#define EGG_MOVE_RELEARNER_FLAG 0x917 //When set, the move learner loads egg moves instead
-#define PREVENT_ROUTE_ESCAPE_FLAG 0x918 //When set, the Player will be unable to ride their bike or escape from the route other than by walking off of it
+#define FLAG_SHINY_CREATION 0x913 //Flag to cause next battle to be against a shiny Pokemon
+#define FLAG_AUTO_RUN 0x914 //Flag to enable auto-run (toggled by L-button). If this feature is used, L=A will not work. Comment out this line for it to work again.
+#define FLAG_RUNNING_ENABLED 0x82F //The player can only run if this flag is set. If commented, the player will start the game with running shoes.
+#define FLAG_DISABLE_BAG 0x915 //The bag can't be used in-battle if this flag is set
+#define FLAG_MOVE_RELEARNER_IGNORE_LEVEL 0x916 //When set, the move relearner shows all level-up moves up to MAX_LEVEL
+#define FLAG_EGG_MOVE_RELEARNER 0x917 //When set, the move learner loads egg moves instead
 
 /*===== Start Menu/Poketools Flags =====*/
 #define FLAG_SYS_BAG_HIDE 0x91B		//Toggle bag off
@@ -65,23 +64,21 @@
 #define FLAG_SMALL_PEDOMETER_2 0x923	//8 bit  / 1 byte  / Max 255 steps
 
 /*===== Battle Tower Options =====*/
-#define BATTLE_TOWER_FLAG 0x930
-#define BATTLE_TOWER_POKE_NUM 0x5015 //Var
-#define BATTLE_TOWER_POKE_LEVEL 0x5016 //Var
-#define BATTLE_TOWER_BATTLE_TYPE 0x5017 //Var
-#define BATTLE_TOWER_TIER 0x5018 //Var
-#define BATTLE_TOWER_TRAINER1_NAME 0x5019 //Empty var. Will be set to 0xFFFF after every battle.
-#define BATTLE_TOWER_TRAINER2_NAME 0x501A //Empty var. Will be set to 0xFFFF after every battle.
-#define BATTLE_TOWER_SONG_OVERRIDE 0x501B //Set this var to the song id to be played during Link Battles and in the Battle Tower.
+#define FLAG_BATTLE_FACILITY 0x930
+#define VAR_BATTLE_FACILITY_POKE_NUM 0x5015 //Var
+#define VAR_BATTLE_FACILITY_POKE_LEVEL 0x5016 //Var
+#define VAR_BATTLE_FACILITY_BATTLE_TYPE 0x5017 //Var
+#define VAR_BATTLE_FACILITY_TIER 0x5018 //Var
+#define VAR_BATTLE_FACILITY_TRAINER1_NAME 0x5019 //Empty var. Will be set to 0xFFFF after every battle.
+#define VAR_BATTLE_FACILITY_TRAINER2_NAME 0x501A //Empty var. Will be set to 0xFFFF after every battle.
+#define VAR_BATTLE_FACILITY_SONG_OVERRIDE 0x501B //Set this var to the song id to be played during Link Battles and in the Battle Tower.
 
 enum //These vars need to be one after the other (hence the enum)
 {
-	TOWER_TRAINER_ID_VAR = 0x501C, 			//An index in the gTowerTrainers table, not Trainer ID
-	TOWER_TRAINER_ID_2_VAR,	//0x501D		//Index of the second trainer for Multi Battlers in the gTowerTrainers table, the var should be 1 after the first one
-	TOWER_TRAINER_ID_PARTNER_VAR, //0x501E	//If your partner is randomized, its Id would be found in this var
+	VAR_FACILITY_TRAINER_ID = 0x501C, 			//An index in the gTowerTrainers table, not Trainer ID
+	VAR_FACILITY_TRAINER_ID_2,	//0x501D		//Index of the second trainer for Multi Battlers in the gTowerTrainers table, the var should be 1 after the first one
+	VAR_FACILITY_TRAINER_ID_PARTNER, //0x501E	//If your partner is randomized, its Id would be found in this var
 };
-
-#define BATTLE_SANDS_CURRENT_STREAK_VAR 0x800A //A disposable var meant to hold the current streak in the Battle Sands.
 
 /*===== Character Customization Vars =====*/
 #define VAR_PLAYER_WALKRUN 0x501F			//Change walking, running player sprite. 0x4054 in JPAN engine.
@@ -136,6 +133,8 @@ enum //These vars need to be one after the other (hence the enum)
 #define CREATE_ROAMER_WITH_X_PERFECT_IVS 3 //Change this to the number of set 31 IVs you'd like roaming pokemon to have.
 #define EGG_HATCH_LEVEL 1 //The level eggs hatch at
 #define AI_TRY_TO_KILL_RATE 50 //In battles against a trainer with AI flags of 1, the AI will try to use a move to knock out the opponents XX percent of the time
+
+/*===== Metatile Behaviours =====*/
 #define MB_OMNIDIRECTIONAL_JUMP 0x7F //The tile behaviour byte that can be jumped over in all directions
 #define MB_ROCK_CLIMB_WALL 0xA5 //The tile behaviour byte that can be climbed up using Rock Climb
 #define MB_LAVA 0xA6 //The tile beahviour byte that can be lava surfed on. Comment out to remove Lava Surf
@@ -161,11 +160,11 @@ enum //These vars need to be one after the other (hence the enum)
 #define WEIRD_DISGUISE_PAL_ID 0x1103 //The NPC palette id of the weird disguise movement permission.
 
 /*===== Pre-Battle Mugshot Options ====*/
-#define FR_PRE_BATTLE_MUGSHOT_STYLE
-#define VAR_PRE_BATTLE_MUGSHOT_STYLE 0x503A
-#define VAR_PRE_BATTLE_MUGSHOT_SPRITE 0x503B
-#define VAR_MUGSHOT_PLAYER_PAL 0x503C	// used to change the player's tilemap palette in the Two Bar mugshot style
-#define FLAG_LOAD_MUGSHOT_SPRITE_FROM_TABLE 0x924	//Load custom mugshot for pre-battle transition
+#define FR_PRE_BATTLE_MUGSHOT_STYLE //The FR Elite Four and Champion use their GF defined mugshots
+#define VAR_PRE_BATTLE_MUGSHOT_STYLE 0x503A //Used for changing between big, two bars, etc.
+#define VAR_PRE_BATTLE_MUGSHOT_SPRITE 0x503B //Used for determining if the Vs. sprite should show
+#define VAR_MUGSHOT_PLAYER_PAL 0x503C //Used to change the player's tilemap palette in the Two Bar mugshot style
+#define FLAG_LOAD_MUGSHOT_SPRITE_FROM_TABLE 0x924 //Load custom mugshot for pre-battle transition
 
 /*=====Safari Zone Options=====*/
 #define EXPAND_SAFARI_BALLS	//Hold up to 0xFFFF safari balls
@@ -183,19 +182,16 @@ enum //These vars need to be one after the other (hence the enum)
 //#define EXISTING_OW_TABLE_ADDRESS 0x81a2000 //Uncomment if you don't want new overworld NPC tables to be generated.
 
 /*===== Other General Options =====*/
-#define INVERSE_BATTLES //Comment this line to disable the possibility of having Inverse Battles
 #define TIME_ENABLED //Comment this line to disable time based features. All time dependent features will default in Daytime.
 #define DNS_IN_BATTLE //Comment this line to disable the Day/Night system from working in battle
 #define OVERWRITE_RIVAL //Comment this line to disable to loading of your rival's name into trainer classes 0x51, 0x59, and 0x5A
 #define TRAINER_CLASS_POKE_BALLS //Comment this line to disable creating Trainer's pokemon with Poke Balls specific to their trainer class
 //#define TRAINERS_WITH_EVS //Comment this line to disbale the Trainers with EVs hack, (only avaible with custom moveset)
 //#define CONTINUE_LOST_BATTLES //Commenting this line will remove the feature of using trainerbattle 0x9 to continue lost battles if var 0x8000 is set to 0xFEFE
-/*Needs Fixing if Undefined*/ #define REALLY_SMART_AI //Comment this line if you don't want the AI knowing everything about your pokemon (such as which moves it has, its ability, item, etc.) without having seen it first. This does not allow the AI to know what move you'll use before you use it.
 #define DISPLAY_REAL_MOVE_TYPE_ON_MENU //If this line remains uncommented, the "true" move type will be displayed (such as Hidden Power, Weather Ball in Weather, etc.)
 #define DISPLAY_REAL_ACCURACY_ON_MENU //If this line remains uncommented, the "true" move accuracy will be displayed (Eg. The move Psychic on a Pokemon with Compound Eyes will have its accuracy appear as 130)
 #define DISPLAY_REAL_POWER_ON_MENU //If this line remains uncommented, the "true" move power will be displayed (Eg. Moves like Fury Cutter will show their correct power)
 #define DISPLAY_EFFECTIVENESS_ON_MENU //If this line remains uncommented, move types will have their effectiveness indicated on the move menu by highlighting the move type
-//#define CUSTOM_BATTLE_BACKGROUNDS //If this line remains uncommented, setting BATTLE_BG_VAR will allow custom backgrounds to be loaded in battles
 #define OVERWRITE_BG_FOR_LEADER_CHAMPION //If this remains uncommented, special Battle Background palettes will be loaded in for battles against Gym Leaders and the Champion
 #define BRIDGE_FIX //If this remains uncommented, the water battle background will only be loaded if the player's surfing sprite is shown
 #define MEGA_EVOLUTION_FEATURE //Comment this line to remove Mega Evolutions
@@ -264,15 +260,14 @@ enum //These vars need to be one after the other (hence the enum)
 #define GEN_6_POWER_NERFS //Comment out for moves that had powers nerfed in Gen 6 to retain their original base powers.
 #define GEN_7_POWER_NERFS //Comment out for Sucker Punch to retain its original base power.
 #define BUFFED_LEECH_LIFE //Comment out for Leech Life to retain its original base power.
-#define DARK_VOID_NERF //Comment out for Dark Void to retain its original accuracy.
+#define DARK_VOID_ACC_NERF //Comment out for Dark Void to retain its original accuracy.
 
 /*===== Capturing Pokemon Options =====*/
 //#define NO_HARDER_WILD_DOUBLES //In Gen 5, Pokemon encountered in double wild battles were harder to catch (based on how many species are owned). Uncomment this line to remove the catch rate decrement.
 #define CRITICAL_CAPTURE //Uncomment this line to enable the Critical Capture feature
 
 /*===== Exp Gain Options =====*/
-//#define OLD_EXP_SHARE //Uncomment this line to make the Exp. Share work like it did before Gen 6
-//#define TRAINER_EXP_BOOST // Uncomment this line to give the Exp boost for battling a Trainer's Pokemon (Pre Gen 7)
+//#define OLD_EXP_SHARE //Uncomment this line to make the Exp. Share work like it did before Gen 6//#define TRAINER_EXP_BOOST // Uncomment this line to give the Exp boost for battling a Trainer's Pokemon (Pre Gen 7)
 //#define OLD_EXP_SPLIT //Uncomment this line to split the Exp amongst all participating pokemon (Pre Gen 6)
 //#define FLAT_EXP_FORMULA //Uncomment this line to use a Flat Exp calculation formula (Gens 2 - 4, 6)
 #define GEN_7_BASE_EXP_YIELD //Base Exp Yield is read from gBaseExpBySpecies to use larger values that match Gen 7

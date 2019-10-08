@@ -18,7 +18,7 @@
 	personalityValue += nameHash << 8;																		\
 																											\
 	u8 lvl = structure[i].lvl;																				\
-	if (FlagGet(SCALE_TRAINER_LEVELS_FLAG)																	\
+	if (FlagGet(FLAG_SCALE_TRAINER_LEVELS)																	\
 	|| (gBattleTypeFlags & BATTLE_TYPE_TRAINER_TOWER))														\
 		lvl = GetHighestMonLevel(gPlayerParty);																\
 																											\

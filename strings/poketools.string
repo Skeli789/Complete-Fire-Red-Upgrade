@@ -1,8 +1,14 @@
-#org @gText_DexNavText
-Pok\edex\nDexnav
+//These two can be decapitalized!
+
+#org @gText_PokeTools
+TOOLS
 
 #org @gText_DexNav
 DEXNAV
+
+
+#org @gText_DexNavText
+Pok\edex\nDexnav
 
 #org @gText_DexNavWater
 WATER
@@ -33,9 +39,6 @@ MAGMA
 
 #org @gText_DexNavDescription
 Search for wild Pok\emon in the area\nwith potential special qualities!
-
-#org @gText_PokeTools
-TOOLS
 
 #org @gText_GotAway
 The Pok\emon got away!\p

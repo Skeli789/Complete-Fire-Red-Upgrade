@@ -185,7 +185,7 @@ static u16 GetCustomGraphicsIdByState(u8 state)
 			spriteId = VarGet(VAR_PLAYER_UNDERWATER);
 			break;
 	}
-	
+
 	return spriteId;
 }
 
@@ -248,13 +248,13 @@ u8 GetPlayerAvatarGenderByGraphicsId(u8 gfxId)
 		{
 			if (sPlayerAvatarGfxIds[state][gender].graphicsId == gfxId)
 				return gender;
-				
+
 			u16 customGraphicsId = GetCustomGraphicsIdByState(state);
 			if (customGraphicsId != 0 && customGraphicsId == gfxId)
 				return gSaveBlock2->playerGender;
 		}
 	}
-	
+
 	return MALE;
 }
 
@@ -306,7 +306,7 @@ void InitPlayerAvatar(s16 x, s16 y, u8 direction, u8 gender)
 	struct EventObjectTemplate playerEventObjTemplate = {0};
 	u16 graphicsId = GetPlayerAvatarGraphicsIdByStateIdAndGender(PLAYER_AVATAR_STATE_NORMAL, gender);
 
-	playerEventObjTemplate.localId = EVENT_OBJ_ID_PLAYER;	
+	playerEventObjTemplate.localId = EVENT_OBJ_ID_PLAYER;
 	playerEventObjTemplate.graphicsIdLowerByte = graphicsId & 0xFF;
 	playerEventObjTemplate.graphicsIdUpperByte = graphicsId >> 8;
 	playerEventObjTemplate.x = x - 7;
@@ -400,8 +400,8 @@ u16 GetBackspriteId(void)
 	}
 	else
 	{
-		if (VarGet(BACKSPRITE_SWITCH_VAR))
-			trainerPicId = VarGet(BACKSPRITE_SWITCH_VAR);
+		if (VarGet(VAR_BACKSPRITE_SWITCH))
+			trainerPicId = VarGet(VAR_BACKSPRITE_SWITCH);
 		else
 			trainerPicId = gSaveBlock2->playerGender;
 	}

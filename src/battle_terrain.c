@@ -38,10 +38,11 @@ u8 BattleSetup_GetTerrainId(void)
 	PlayerGetDestCoords(&x, &y);
 	tileBehavior = MapGridGetMetatileBehaviorAt(x, y);
 
-	if (VarGet(BATTLE_BG_VAR))
-		terrain = VarGet(BATTLE_BG_VAR);
-
+	#ifdef VAR_BATTLE_BG
+	if (VarGet(VAR_BATTLE_BG))
+		terrain = VarGet(VAR_BATTLE_BG);
 	else
+	#endif
 	{
 		//Maybe add check for fishing byte?
 		if (MetatileBehavior_IsTallGrass(tileBehavior))
@@ -137,10 +138,12 @@ u8 LoadBattleBG_TerrainID(void) {
 		gBattleTerrain = 0;
 		terrain = 0;
 	}
-	else if (VarGet(BATTLE_BG_VAR))
+	#ifdef VAR_BATTLE_BG
+	else if (VarGet(VAR_BATTLE_BG))
 	{
-		terrain = VarGet(BATTLE_BG_VAR);
+		terrain = VarGet(VAR_BATTLE_BG);
 	}
+	#endif
 	else if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
 	{
 		u8 trainerClass = gTrainers[gTrainerBattleOpponent_A].trainerClass;

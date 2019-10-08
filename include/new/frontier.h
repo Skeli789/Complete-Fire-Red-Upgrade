@@ -41,10 +41,10 @@ u16 GetMaxBattleTowerStreakForTier(u8 tier);
 u16 GetBattleTowerStreak(u8 currentOrMax, u16 inputBattleStyle, u16 inputTier, u16 partySize, u8 level);
 
 //Functions Hooked In:
-u16 sp052_GenerateTowerTrainer(void);
+u16 sp052_GenerateFacilityTrainer(void);
 void sp053_LoadFrontierIntroBattleMessage(void);
-u16 sp054_GetBattleTowerStreak(void);
-void sp055_UpdateBattleTowerStreak(void);
+u16 sp054_GetBattleFacilityStreak(void);
+void sp055_UpdateBattleFacilityStreak(void);
 u16 sp056_DetermineBattlePointsToGive(void);
 void sp06C_SpliceFrontierTeamWithPlayerTeam(void);
 u16 sp06D_LoadFrontierMultiTrainerById(void);
@@ -126,7 +126,7 @@ enum BattleTowerFormats
 
 #define BATTLE_TOWER_GS_CUP BATTLE_TOWER_MIDDLE_CUP //Replaces Middle Cup in Doubles
 
-#define NUM_BATTLE_TOWER_TIERS 7
+#define NUM_VAR_BATTLE_FACILITY_TIERS 7
 #define NUM_BATTLE_MINE_TIERS 3
 #define NUM_BATTLE_CIRCUS_TIERS 12
 

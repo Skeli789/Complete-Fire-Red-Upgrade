@@ -131,7 +131,7 @@ void BattleBeginFirstTurn(void)
 				}
 
 				//OW Terrain
-				u8 req_terrain = VarGet(TERRAIN_VAR);
+				u8 req_terrain = VarGet(VAR_TERRAIN);
 
 				if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_CIRCUS)
 				{
@@ -352,11 +352,11 @@ void BattleBeginFirstTurn(void)
 
 bool8 CanActivateTotemBoost(u8 bank)
 {
-	u16 stat = VarGet(TOTEM_VAR + bank) & 0x7;
+	u16 stat = VarGet(VAR_TOTEM + bank) & 0x7;
 
 	if (bank < gBattlersCount && stat != 0)
 	{
-		u8 raiseAmount = VarGet(TOTEM_VAR + bank) & ~(0xF);
+		u8 raiseAmount = VarGet(VAR_TOTEM + bank) & ~(0xF);
 
 		if (stat <= STAT_STAGE_EVASION
 		&& ((raiseAmount >= INCREASE_1 && raiseAmount <= INCREASE_6)
@@ -364,7 +364,7 @@ bool8 CanActivateTotemBoost(u8 bank)
 		{
 			gStatChangeByte = stat | raiseAmount;
 			if (InBattleSands())
-				VarSet(TOTEM_VAR + bank, 0); //Only first Pokemon gets boost in battle sands
+				VarSet(VAR_TOTEM + bank, 0); //Only first Pokemon gets boost in battle sands
 			return TRUE;
 		}
 	}
@@ -408,9 +408,9 @@ static void TryPrepareTotemBoostInBattleSands(void)
 		u8 contraryShiftEnemy = (ABILITY(enemyId) == ABILITY_CONTRARY) ? 0x80 : 0;
 
 		increase = (Random() % increaseMax) + 1;
-		VarSet(TOTEM_VAR + playerId, playerStat | (increase * 0x10 + contraryShiftPlayer));
+		VarSet(VAR_TOTEM + playerId, playerStat | (increase * 0x10 + contraryShiftPlayer));
 		increase = (Random() % increaseMax) + 1;
-		VarSet(TOTEM_VAR + enemyId, enemyStat | (increase * 0x10 + contraryShiftEnemy));
+		VarSet(VAR_TOTEM + enemyId, enemyStat | (increase * 0x10 + contraryShiftEnemy));
 	}
 }
 
@@ -1006,8 +1006,8 @@ u16 GetMUS_ForBattle(void)
 {
 	if (gBattleTypeFlags & BATTLE_TYPE_LINK)
 	{
-		if (VarGet(BATTLE_TOWER_SONG_OVERRIDE))
-			return VarGet(BATTLE_TOWER_SONG_OVERRIDE); //Play custom song
+		if (VarGet(VAR_BATTLE_FACILITY_SONG_OVERRIDE))
+			return VarGet(VAR_BATTLE_FACILITY_SONG_OVERRIDE); //Play custom song
 		else
 		{
 			#ifdef UNBOUND
@@ -1052,7 +1052,7 @@ u16 GetMUS_ForBattle(void)
 			}
 
 			//Then try loading the song override
-			song = VarGet(BATTLE_TOWER_SONG_OVERRIDE);
+			song = VarGet(VAR_BATTLE_FACILITY_SONG_OVERRIDE);
 			if (song == BGM_RANDOM_BATTLE_MUSIC)
 			{
 				do //Assumes table has legit music
@@ -1092,7 +1092,7 @@ u16 GetMUS_ForBattle(void)
 	&& gWildSpeciesBasedBattleBGM[species] != 0)
 		return gWildSpeciesBasedBattleBGM[species];
 
-	if (FlagGet(DOUBLE_WILD_BATTLE_FLAG)
+	if (FlagGet(FLAG_DOUBLE_WILD_BATTLE)
 	&& gEnemyParty[1].species != SPECIES_NONE
 	&& gEnemyParty[1].species < gWildSpeciesBasedBattleBGMLength
 	&& gWildSpeciesBasedBattleBGM[gEnemyParty[1].species] != 0)
@@ -1156,8 +1156,8 @@ u8 GetTrainerBattleTransition(void)
 	#endif
 
 	if ((gTrainers[gTrainerBattleOpponent_A].doubleBattle == TRUE
-	#ifdef DOUBLE_BATTLE_FLAG
-	|| FlagGet(DOUBLE_BATTLE_FLAG)
+	#ifdef FLAG_DOUBLE_BATTLE
+	|| FlagGet(FLAG_DOUBLE_BATTLE)
 	#endif
 	) && ViableMonCount(gPlayerParty) >= 2)
 		minPartyCount = 2; // double battles always at least have 2 pokemon.
@@ -1426,7 +1426,7 @@ u32 SpeedCalc(u8 bank)
 		&& FlagGet(FLAG_BADGE03_GET)
 		&& gBattleTypeFlags & BATTLE_TYPE_TRAINER
 		&& SIDE(bank) == B_SIDE_PLAYER
-		&& gTrainerBattleOpponent != 0x400)
+		&& gTrainerBattleOpponent_A != 0x400)
 			speed = (speed * 110) / 100;
 	#endif
 

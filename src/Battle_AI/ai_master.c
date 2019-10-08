@@ -197,7 +197,7 @@ u32 GetAIFlags(void)
 	else if (gBattleTypeFlags & BATTLE_TYPE_SCRIPTED_WILD_3)
 		flags = AI_SCRIPT_CHECK_BAD_MOVE | AI_SCRIPT_CHECK_GOOD_MOVE;
 	else if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
-		flags = gTrainers[gTrainerBattleOpponent_A].aiFlags | gTrainers[VarGet(SECOND_OPPONENT_VAR)].aiFlags;
+		flags = gTrainers[gTrainerBattleOpponent_A].aiFlags | gTrainers[VarGet(VAR_SECOND_OPPONENT)].aiFlags;
 	else
 	   flags = gTrainers[gTrainerBattleOpponent_A].aiFlags;
 

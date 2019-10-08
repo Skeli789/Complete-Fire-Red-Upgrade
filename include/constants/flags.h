@@ -1351,7 +1351,7 @@
 #define FLAG_0x886                  (CODE_FLAGS + 0x26)
 #define FLAG_0x887                  (CODE_FLAGS + 0x27)
 
-#define FLAG_SYS_USE_FLASH        (CODE_FLAGS + 0x28)
+#define FLAG_SYS_USE_FLASH        0x806
 #define FLAG_SYS_USE_STRENGTH     (CODE_FLAGS + 0x29)
 #define FLAG_SYS_WEATHER_CTRL     (CODE_FLAGS + 0x2A)
 #define FLAG_SYS_CYCLING_ROAD     (CODE_FLAGS + 0x2B)

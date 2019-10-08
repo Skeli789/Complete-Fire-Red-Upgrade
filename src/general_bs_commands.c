@@ -2482,35 +2482,33 @@ void atkA6_settypetorandomresistance(void) { //Conversion 2
 
 		i *= 3;
 
-		#ifdef INVERSE_BATTLES
-			if (IsInverseBattle())
+		if (IsInverseBattle())
+		{
+			if (TYPE_EFFECT_ATK_TYPE(i) == gNewBS->LastUsedTypes[bankDef]
+			&& TYPE_EFFECT_MULTIPLIER(i) >= TYPE_MUL_SUPER_EFFECTIVE
+			&& !IsOfType(bankAtk, TYPE_EFFECT_DEF_TYPE(i)))
 			{
-				if (TYPE_EFFECT_ATK_TYPE(i) == gNewBS->LastUsedTypes[bankDef]
-				&& TYPE_EFFECT_MULTIPLIER(i) >= TYPE_MUL_SUPER_EFFECTIVE
-				&& !IsOfType(bankAtk, TYPE_EFFECT_DEF_TYPE(i)))
-				{
-					SET_BATTLER_TYPE(bankAtk, TYPE_EFFECT_DEF_TYPE(i));
-					PREPARE_TYPE_BUFFER(gBattleTextBuff1, TYPE_EFFECT_DEF_TYPE(i));
+				SET_BATTLER_TYPE(bankAtk, TYPE_EFFECT_DEF_TYPE(i));
+				PREPARE_TYPE_BUFFER(gBattleTextBuff1, TYPE_EFFECT_DEF_TYPE(i));
 
-					gBattlescriptCurrInstr += 5;
-					return;
-				}
+				gBattlescriptCurrInstr += 5;
+				return;
 			}
+		}
 
-			else
-		#endif
+		else
+		{
+			if (TYPE_EFFECT_ATK_TYPE(i) == gNewBS->LastUsedTypes[bankDef]
+			&& TYPE_EFFECT_MULTIPLIER(i) <= TYPE_MUL_NOT_EFFECTIVE
+			&& !IsOfType(bankAtk, TYPE_EFFECT_DEF_TYPE(i)))
 			{
-				if (TYPE_EFFECT_ATK_TYPE(i) == gNewBS->LastUsedTypes[bankDef]
-				&& TYPE_EFFECT_MULTIPLIER(i) <= TYPE_MUL_NOT_EFFECTIVE
-				&& !IsOfType(bankAtk, TYPE_EFFECT_DEF_TYPE(i)))
-				{
-					SET_BATTLER_TYPE(bankAtk, TYPE_EFFECT_DEF_TYPE(i));
-					PREPARE_TYPE_BUFFER(gBattleTextBuff1, TYPE_EFFECT_DEF_TYPE(i));
+				SET_BATTLER_TYPE(bankAtk, TYPE_EFFECT_DEF_TYPE(i));
+				PREPARE_TYPE_BUFFER(gBattleTextBuff1, TYPE_EFFECT_DEF_TYPE(i));
 
-					gBattlescriptCurrInstr += 5;
-					return;
-				}
+				gBattlescriptCurrInstr += 5;
+				return;
 			}
+		}
 	}
 
 	for (j = 0, rands = 0; rands < sizeof(gTypeEffectiveness); j += 3, rands += 3) {
@@ -2663,8 +2661,10 @@ u8 CheckMoveLimitations(u8 bank, u8 unusableMoves, u8 check) {
 
 		else if (holdEffect == ITEM_EFFECT_ASSAULT_VEST && SPLIT(move) == SPLIT_STATUS)
 			unusableMoves |= gBitTable[i];
-		else if (FlagGet(SKY_BATTLE_FLAG) && CheckTableForMove(move, gSkyBattleBannedMoves))
+		#ifdef FLAG_SKY_BATTLE
+		else if (FlagGet(FLAG_SKY_BATTLE) && CheckTableForMove(move, gSkyBattleBannedMoves))
 			unusableMoves |= gBitTable[i];
+		#endif
 		else if (IsGravityActive() && CheckTableForMove(move, gGravityBannedMoves))
 			unusableMoves |= gBitTable[i];
 		else if (CantUseSoundMoves(bank) && CheckSoundMove(move))
@@ -2689,8 +2689,10 @@ u8 CheckMoveLimitationsFromParty(struct Pokemon* mon, u8 unusableMoves, u8 check
 			unusableMoves |= gBitTable[i];
 		else if (holdEffect == ITEM_EFFECT_ASSAULT_VEST && SPLIT(move) == SPLIT_STATUS)
 			unusableMoves |= gBitTable[i];
-		else if (FlagGet(SKY_BATTLE_FLAG) && CheckTableForMove(move, gSkyBattleBannedMoves))
+		#ifdef FLAG_SKY_BATTLE
+		else if (FlagGet(FLAG_SKY_BATTLE) && CheckTableForMove(move, gSkyBattleBannedMoves))
 			unusableMoves |= gBitTable[i];
+		#endif
 		else if (IsGravityActive() && CheckTableForMove(move, gGravityBannedMoves))
 			unusableMoves |= gBitTable[i];
 	}

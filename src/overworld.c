@@ -63,8 +63,9 @@ static const u8* GetCustomWalkingScript(void);
 static bool8 SafariZoneTakeStep(void);
 static bool8 IsRunningDisabledByFlag(void);
 
+#ifdef VAR_DEFAULT_WALKING_SCRIPT
 //Table full of pointers to custom walking scripts
-static const u8* const gDefaultWalkingScripts[] =
+static const u8* const sDefaultWalkingScripts[] =
 {
 	NULL,
 	NULL,
@@ -72,6 +73,7 @@ static const u8* const gDefaultWalkingScripts[] =
 	NULL,
 	//etc
 };
+#endif
 
 //Table full of pointers of scripts run when talking to tiles with certain behaviour bytes
 static const u8* const sMetatileInteractionScripts[] =
@@ -101,12 +103,12 @@ static const u8* const sMetatileInteractionScripts[] =
 	[MB_VIDEO_GAME] = (void*) 0x81A7621,
 	[MB_BURGLARY] = (void*) 0x81A7645,
 	[MB_TRAINER_TOWER_RECORD] = (void*) 0x81C549C,
-	
+
 
 	[MB_TELEVISION] = (void*) 0x81A764E,
 	[MB_BERRY_CRUSH_RECORDS] = (void*) 0x81BBFD8,
 	[MB_BATTLE_RECORDS] = (void*) 0x81BB8A7,
-	
+
 	[MB_POKEMON_CENTER_SIGN] = (void*) 0x81A76E7,
 	[MB_POKEMART_SIGN] = (void*) 0x81A76DE,
 	[MB_INDIGO_PLATEAU_MARK_DPAD] = (void*) 0x81A76F0,
@@ -134,7 +136,7 @@ enum
 	TRAINER_PARAM_LOAD_SCRIPT_RET_ADDR,
 };
 
-//An alternative to Oak's tutorial that allows mugshots to be used if ACTIVATE_TUTORIAL_FLAG is commented out
+//An alternative to Oak's tutorial that allows mugshots to be used if FLAG_ACTIVATE_TUTORIAL is commented out
 static const struct TrainerBattleParameter sContinueLostBattleParams[] =
 {
 	{&sTrainerBattleMode, 				TRAINER_PARAM_LOAD_VAL_8BIT},
@@ -483,7 +485,7 @@ const u8* BattleSetup_ConfigureTrainerBattle(const u8* data)
 			else
 			{
 				TrainerBattleLoadArgs(sTrainerBContinueScriptBattleParams, data);
-				VarSet(SECOND_OPPONENT_VAR, gTrainerBattleOpponent_B);
+				VarSet(VAR_SECOND_OPPONENT, gTrainerBattleOpponent_B);
 			}
 			return EventScript_TryDoNormalTrainerBattle;
 
@@ -527,26 +529,26 @@ const u8* BattleSetup_ConfigureTrainerBattle(const u8* data)
 
 		case TRAINER_BATTLE_MULTI:
 			TrainerBattleLoadArgs(sMultiBattleParams, data);
-			VarSet(SECOND_OPPONENT_VAR, gTrainerBattleOpponent_B);
-			VarSet(PARTNER_VAR, gTrainerBattlePartner);
-			VarSet(PARTNER_BACKSPRITE_VAR, sPartnerBackSpriteId);
-			FlagSet(TAG_BATTLE_FLAG);
-			FlagSet(TWO_OPPONENT_FLAG);
+			VarSet(VAR_SECOND_OPPONENT, gTrainerBattleOpponent_B);
+			VarSet(VAR_PARTNER, gTrainerBattlePartner);
+			VarSet(VAR_PARTNER_BACKSPRITE, sPartnerBackSpriteId);
+			FlagSet(FLAG_TAG_BATTLE);
+			FlagSet(FLAG_TWO_OPPONENTS);
 			return EventScript_DoTrainerBattle;
 
 		case TRAINER_BATTLE_TWO_OPPONENTS:
 			TrainerBattleLoadArgs(sTwoOpponentBattleParams, data);
 			SetMapVarsToTrainer();
-			VarSet(SECOND_OPPONENT_VAR, gTrainerBattleOpponent_B);
-			FlagSet(TWO_OPPONENT_FLAG);
+			VarSet(VAR_SECOND_OPPONENT, gTrainerBattleOpponent_B);
+			FlagSet(FLAG_TWO_OPPONENTS);
 			gApproachingTrainerId = 0;
 			return EventScript_TryDoTwoOpponentBattle;
 
 		case TRAINER_BATTLE_TAG:
 			TrainerBattleLoadArgs(sTagBattleParams, data);
-			VarSet(PARTNER_VAR, gTrainerBattlePartner);
-			VarSet(PARTNER_BACKSPRITE_VAR, sPartnerBackSpriteId);
-			FlagSet(TAG_BATTLE_FLAG);
+			VarSet(VAR_PARTNER, gTrainerBattlePartner);
+			VarSet(VAR_PARTNER_BACKSPRITE, sPartnerBackSpriteId);
+			FlagSet(FLAG_TAG_BATTLE);
 			return EventScript_DoTrainerBattle;
 
 		default: //TRAINER_BATTLE_SINGLE
@@ -558,7 +560,7 @@ const u8* BattleSetup_ConfigureTrainerBattle(const u8* data)
 			else
 			{
 				TrainerBattleLoadArgs(sTrainerBOrdinaryBattleParams, data);
-				VarSet(SECOND_OPPONENT_VAR, gTrainerBattleOpponent_B);
+				VarSet(VAR_SECOND_OPPONENT, gTrainerBattleOpponent_B);
 			}
 			return EventScript_TryDoNormalTrainerBattle;
 	}
@@ -566,12 +568,12 @@ const u8* BattleSetup_ConfigureTrainerBattle(const u8* data)
 
 bool8 IsTrainerBattleModeAgainstTwoOpponents(void)
 {
-	return sTrainerBattleMode == TRAINER_BATTLE_MULTI || sTrainerBattleMode == TRAINER_BATTLE_TWO_OPPONENTS || FlagGet(TWO_OPPONENT_FLAG);
+	return sTrainerBattleMode == TRAINER_BATTLE_MULTI || sTrainerBattleMode == TRAINER_BATTLE_TWO_OPPONENTS || FlagGet(FLAG_TWO_OPPONENTS);
 }
 
 bool8 IsTrainerBattleModeWithPartner(void)
 {
-	return sTrainerBattleMode == TRAINER_BATTLE_MULTI || sTrainerBattleMode == TRAINER_BATTLE_TAG || FlagGet(TAG_BATTLE_FLAG);
+	return sTrainerBattleMode == TRAINER_BATTLE_MULTI || sTrainerBattleMode == TRAINER_BATTLE_TAG || FlagGet(FLAG_TAG_BATTLE);
 }
 
 static void InitTrainerBattleVariables(void)
@@ -584,7 +586,7 @@ static void InitTrainerBattleVariables(void)
 		sTrainerBattleScriptRetAddr = 0;
 		sTrainerVictorySpeech = 0;
 	}
-	else if (!FlagGet(TWO_OPPONENT_FLAG))
+	else if (!FlagGet(FLAG_TWO_OPPONENTS))
 	{
 		sTrainerIntroSpeech_B = 0;
 		sTrainerDefeatSpeech_B = 0;
@@ -598,7 +600,7 @@ static void InitTrainerBattleVariables(void)
 
 void BattleSetup_StartTrainerBattle(void)
 {
-	if (FlagGet(BATTLE_TOWER_FLAG))
+	if (FlagGet(FLAG_BATTLE_FACILITY))
 	{
 		gBattleTypeFlags = BATTLE_TYPE_TRAINER;
 
@@ -617,7 +619,7 @@ void BattleSetup_StartTrainerBattle(void)
 				break;
 		}
 
-		u16 tier = VarGet(BATTLE_TOWER_TIER);
+		u16 tier = VarGet(VAR_BATTLE_FACILITY_TIER);
 		if (IsCamomonsTier(tier))
 			gBattleTypeFlags |= BATTLE_TYPE_CAMOMONS;
 		else if (tier == BATTLE_TOWER_BENJAMIN_BUTTERFREE)
@@ -625,7 +627,7 @@ void BattleSetup_StartTrainerBattle(void)
 		else if (tier == BATTLE_TOWER_MEGA_BRAWL)
 			gBattleTypeFlags |= BATTLE_TYPE_MEGA_BRAWL;
 
-		switch (VarGet(BATTLE_TOWER_BATTLE_TYPE)) {
+		switch (VarGet(VAR_BATTLE_FACILITY_BATTLE_TYPE)) {
 			case BATTLE_TOWER_DOUBLE:
 			case BATTLE_TOWER_DOUBLE_RANDOM:
 				gBattleTypeFlags |= BATTLE_TYPE_DOUBLE;
@@ -647,12 +649,12 @@ void BattleSetup_StartTrainerBattle(void)
 	}
 	else
 	{
-		if (gApproachingTrainerId == 2 || FlagGet(TWO_OPPONENT_FLAG))
+		if (gApproachingTrainerId == 2 || FlagGet(FLAG_TWO_OPPONENTS))
 			gBattleTypeFlags = (BATTLE_TYPE_DOUBLE | BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_TRAINER);
 		else
 			gBattleTypeFlags = (BATTLE_TYPE_TRAINER);
 
-		if (FlagGet(TAG_BATTLE_FLAG))
+		if (FlagGet(FLAG_TAG_BATTLE))
 			gBattleTypeFlags |= (BATTLE_TYPE_DOUBLE | BATTLE_TYPE_INGAME_PARTNER /* | BATTLE_TYPE_MULTI*/);
 
 		#if (defined CONTINUE_LOST_BATTLES && defined TUTORIAL_BATTLES)
@@ -663,8 +665,8 @@ void BattleSetup_StartTrainerBattle(void)
 				gBattleTypeFlags |= BATTLE_TYPE_OAK_TUTORIAL;
 		#endif
 
-		#ifdef ACTIVATE_TUTORIAL_FLAG
-		if (FlagGet(ACTIVATE_TUTORIAL_FLAG))
+		#ifdef FLAG_ACTIVATE_TUTORIAL
+		if (FlagGet(FLAG_ACTIVATE_TUTORIAL))
 		{
 			gBattleTypeFlags |= BATTLE_TYPE_OAK_TUTORIAL;
 			sTrainerBattleMode = TRAINER_BATTLE_OAK_TUTORIAL;
@@ -681,7 +683,7 @@ void BattleSetup_StartTrainerBattle(void)
 //Special 0x34
 const u8* GetIntroSpeechOfApproachingTrainer(void)
 {
-	if (FlagGet(BATTLE_TOWER_FLAG))
+	if (FlagGet(FLAG_BATTLE_FACILITY))
 	{
 		switch (Var8000) {
 			case 0:
@@ -729,7 +731,7 @@ void SetUpTrainerEncounterMusic(void)
 	if (gApproachingTrainerId == 0)
 		trainerId = gTrainerBattleOpponent_A;
 	else
-		trainerId = VarGet(SECOND_OPPONENT_VAR);
+		trainerId = VarGet(VAR_SECOND_OPPONENT);
 
 	if (sTrainerBattleMode != TRAINER_BATTLE_CONTINUE_SCRIPT_NO_MUSIC
 	&&  sTrainerBattleMode != TRAINER_BATTLE_CONTINUE_SCRIPT_DOUBLE_NO_MUSIC)
@@ -1088,12 +1090,14 @@ static void UpdateJPANStepCounters(void)
 
 static const u8* GetCustomWalkingScript(void)
 {
+	#ifdef VAR_DEFAULT_WALKING_SCRIPT
 	if (gWalkingScript >= (u8*) 0x8000000) //A real script
 		return gWalkingScript;
 
-	u8 scriptInd = VarGet(DEFAULT_WALKING_SCRIPT_VAR);
-	if (scriptInd != 0 || scriptInd > ARRAY_COUNT(gDefaultWalkingScripts))
-		return gDefaultWalkingScripts[scriptInd - 1];
+	u8 scriptInd = VarGet(VAR_DEFAULT_WALKING_SCRIPT);
+	if (scriptInd != 0 || scriptInd > ARRAY_COUNT(sDefaultWalkingScripts))
+		return sDefaultWalkingScripts[scriptInd - 1];
+	#endif
 
 	return NULL;
 }
@@ -1166,8 +1170,8 @@ const u8* LoadProperWhiteoutString(const u8* string)
 
 bool8 IsAutoRunEnabled(void)
 {
-	#ifdef AUTO_RUN_FLAG
-		return FlagGet(AUTO_RUN_FLAG);
+	#ifdef FLAG_AUTO_RUN
+		return FlagGet(FLAG_AUTO_RUN);
 	#else
 		return FALSE;
 	#endif
@@ -1175,8 +1179,8 @@ bool8 IsAutoRunEnabled(void)
 
 static bool8 IsRunningDisabledByFlag(void)
 {
-	#ifdef RUNNING_ENABLED_FLAG
-		return !FlagGet(RUNNING_ENABLED_FLAG);
+	#ifdef FLAG_RUNNING_ENABLED
+		return !FlagGet(FLAG_RUNNING_ENABLED);
 	#else
 		return FALSE;
 	#endif
@@ -1201,7 +1205,7 @@ bool8 Overworld_IsBikingAllowed(void)
 {
 	if (gFollowerState.inProgress && !(gFollowerState.flags & FOLLOWER_FLAG_CAN_BIKE))
 		return FALSE;
-		
+
 	if (gMapHeader.mapType == MAP_TYPE_UNDERWATER)
 		return FALSE;
 
@@ -1599,7 +1603,7 @@ const u8* GetInteractedWaterScript(unusedArg u32 unused1, u8 metatileBehavior, u
 			#ifdef UNBOUND
 			item = ITEM_HM03_SURF;
 			#endif
-		
+
 			u8 partyId = PartyHasMonWithFieldMovePotential(MOVE_SURF, item, SHOULDNT_BE_SURFING);
 			if (partyId < PARTY_SIZE
 			&& (!gFollowerState.inProgress || gFollowerState.flags & FOLLOWER_FLAG_CAN_SURF))
@@ -1628,7 +1632,7 @@ const u8* GetInteractedWaterScript(unusedArg u32 unused1, u8 metatileBehavior, u
 					Var8004 = partyId;
 					return SystemScript_UseWaterfall;
 				}
-				
+
 				return SystemScript_WallOfWater;
 			}
 			else
@@ -1651,7 +1655,7 @@ const u8* GetInteractedWaterScript(unusedArg u32 unused1, u8 metatileBehavior, u
 				return EventScript_UseRockClimb;
 			}
 		}
-		
+
 		return EventScript_JustRockWall;
 	}
 	return NULL;
@@ -1680,7 +1684,7 @@ bool8 TrySetupDiveDownScript(void)
 		}
 		else
 			ScriptContext1_SetupScript(EventScript_CantDive);
-			
+
 		return TRUE;
 	}
 

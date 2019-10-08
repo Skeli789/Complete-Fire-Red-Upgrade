@@ -626,7 +626,7 @@ static void DisplayFrontierRecordsText(void)
 		FillWindowPixelBuffer(i, 0);
 	}
 
-	VarSet(BATTLE_TOWER_BATTLE_TYPE, BATTLE_TOWER_SINGLE); //So the records get loaded correctly
+	VarSet(VAR_BATTLE_FACILITY_BATTLE_TYPE, BATTLE_TOWER_SINGLE); //So the records get loaded correctly
 
 	//Load Stars
 	LoadCompressedSpriteSheetUsingHeap(&sStarsSpriteSheet);

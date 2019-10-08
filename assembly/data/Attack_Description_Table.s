@@ -1,14 +1,14 @@
 .thumb
 .text
 .align 2
-.global AttackDescriptionTable
 /*
 attack_description_table.s
 	descriptions of battle moves
 */
 
 .word DESC_NO_MOVE
-AttackDescriptionTable:
+.global gMoveDescriptions
+gMoveDescriptions:
 .word 0x8482834		@MOVE_POUND
 .word 0x8482874		@MOVE_KARATECHOP
 .word 0x84828bd		@MOVE_DOUBLESLAP

@@ -18,7 +18,7 @@ battle_anims.c
 
 extern const struct CompressedSpriteSheet gBattleAnimPicTable[];
 extern const struct CompressedSpritePalette gBattleAnimPaletteTable[];
-extern const u8* const AttackAnimationTable[];
+extern const u8* const gMoveAnimations[];
 extern const u8* const gBattleAnims_General[];
 
 static const union AnimCmd sAnimCmdPowerWhipOnPlayer[] =
@@ -466,7 +466,7 @@ void AnimTask_GetSecretPowerAnimation(u8 taskId)
 				move = gTerrainTable[gBattleTerrain + 4].secretPowerAnim;
 	}
 
-	sBattleAnimScriptPtr = AttackAnimationTable[move];
+	sBattleAnimScriptPtr = gMoveAnimations[move];
 	DestroyAnimVisualTask(taskId);
 }
 

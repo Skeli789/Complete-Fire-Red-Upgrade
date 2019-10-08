@@ -1,14 +1,14 @@
 #include "src/config.h"
 
 ##Tables
-AttackDescriptionTable 080E5440
-AttackDescriptionTable 08137BC8
-AbilityDescriptionTable 080001C4
-AbilityDescriptionTable 081367A8
-AttackAnimationTable 080725D0
+gMoveDescriptions 080E5440
+gMoveDescriptions 08137BC8
+gAbilityDescriptions 080001C4
+gAbilityDescriptions 081367A8
+gMoveAnimations 080725D0
 gBattleAnimPicTable 08072914
 gBattleAnimPicTable 08072BF8
-AnimationBackgroundTable 08073960
+gAnimationBackgrounds 08073960
 gBattleScriptingCommandsTable 08014C1C
 gBattleScriptingCommandsTable 08015A28
 gBattleScriptingCommandsTable 08015C6C

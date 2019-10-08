@@ -104,11 +104,13 @@ u16 GetEvolutionTargetSpecies(struct Pokemon* mon, u8 type, u16 evolutionItem)
 						targetSpecies = gEvolutionTable[species][i].targetSpecies;
 					break;
 
-				case EVO_RAINY_OW:
+				case EVO_RAINY_FOGGY_OW:
 					if (gEvolutionTable[species][i].param <= level
 					&& (GetCurrentWeather() == WEATHER_RAIN_LIGHT
 					 || GetCurrentWeather() == WEATHER_RAIN_MED
-					 || GetCurrentWeather() == WEATHER_RAIN_HEAVY))
+					 || GetCurrentWeather() == WEATHER_RAIN_HEAVY
+					 || GetCurrentWeather() == WEATHER_FOG_1
+					 || GetCurrentWeather() == WEATHER_FOG_2))
 					{
 						targetSpecies = gEvolutionTable[species][i].targetSpecies;
 					}

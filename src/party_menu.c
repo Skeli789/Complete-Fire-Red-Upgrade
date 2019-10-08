@@ -3,7 +3,9 @@
 #include "../include/field_player_avatar.h"
 #include "../include/field_effect.h"
 #include "../include/field_weather.h"
+#include "../include/fieldmap.h"
 #include "../include/menu.h"
+#include "../include/metatile_behavior.h"
 #include "../include/overworld.h"
 #include "../include/party_menu.h"
 #include "../include/script.h"
@@ -36,6 +38,7 @@ static void DisplayPartyPokemonSelectDataSpecial(u8 slot, u8 stringID);
 static void DisplayPartyPokemonPriorityText(u8 stringID, struct Struct203B0B4* ptr, u8 c);
 static bool8 SetUpFieldMove_Fly(void);
 static bool8 SetUpFieldMove_Surf(void);
+static bool8 SetUpFieldMove_Waterfall(void);
 static bool8 SetUpFieldMove_Teleport(void);
 static void FieldCallback_Dive(void);
 static bool8 SetUpFieldMove_Dive(void);
@@ -440,7 +443,7 @@ u8 ChoosePokemon_LoadMaxPKMNStr(const u8** strPtr, bool8 loadString)
 {
 	u8 max = GetNumMonsOnTeamInFrontier();
 
-	if (FlagGet(BATTLE_TOWER_FLAG))
+	if (FlagGet(FLAG_BATTLE_FACILITY))
 	{
 		if (loadString)
 		{
@@ -618,7 +621,7 @@ static void DisplayPartyPokemonPriorityText(u8 stringID, struct Struct203B0B4* p
 u8 CanPokemonSelectedBeEnteredInBattleTower(void)
 {
 	u8 i, j;
-	u8 tier = VarGet(BATTLE_TOWER_TIER);
+	u8 tier = VarGet(VAR_BATTLE_FACILITY_TIER);
 	struct Pokemon* party = gPlayerParty;
 	u8 maxLength = GetNumMonsOnTeamInFrontier();
 
@@ -627,14 +630,14 @@ u8 CanPokemonSelectedBeEnteredInBattleTower(void)
 		if (maxLength == 1)
 			return 14;
 
-		if (FlagGet(BATTLE_TOWER_FLAG))
+		if (FlagGet(FLAG_BATTLE_FACILITY))
 		{
 			ConvertIntToDecimalStringN(gStringVar1, maxLength, 0, 1);
 			return 17;
 		}
 	}
 
-	if (!FlagGet(BATTLE_TOWER_FLAG))
+	if (!FlagGet(FLAG_BATTLE_FACILITY))
 		return 0xFF;
 
 	for (i = 0; i < maxLength - 1; ++i)
@@ -646,7 +649,7 @@ u8 CanPokemonSelectedBeEnteredInBattleTower(void)
 			if (tier != BATTLE_TOWER_NO_RESTRICTIONS
 			&& species == GetMonData(&party[gSelectedOrderFromParty[j] - 1], MON_DATA_SPECIES, NULL))
 				return 18;
-			if (item != 0 && DuplicateItemsAreBannedInTier(tier, VarGet(BATTLE_TOWER_BATTLE_TYPE))
+			if (item != 0 && DuplicateItemsAreBannedInTier(tier, VarGet(VAR_BATTLE_FACILITY_BATTLE_TYPE))
 			&& item == GetMonData(&party[gSelectedOrderFromParty[j] - 1], MON_DATA_HELD_ITEM, NULL))
 				return 19;
 		}
@@ -746,7 +749,7 @@ struct
 	[FIELD_MOVE_STRENGTH] = {(void*) 0x80D07ED, 0x0d},
 	[FIELD_MOVE_SURF] = {SetUpFieldMove_Surf, 0x08},
 	[FIELD_MOVE_ROCK_SMASH] = {(void*) 0x80C99D9, 0x0d},
-	[FIELD_MOVE_WATERFALL] = {(void*) 0x8124AF9, 0x0d},
+	[FIELD_MOVE_WATERFALL] = {SetUpFieldMove_Waterfall, 0x0d},
 	[FIELD_MOVE_TELEPORT] = {SetUpFieldMove_Teleport, 0x0d},
 	[FIELD_MOVE_DIG] = {(void*) 0x80C9A79, 0x0d},
 	[FIELD_MOVE_MILK_DRINK] = {(void*) 0x80E5685, 0x10},
@@ -864,6 +867,24 @@ static bool8 SetUpFieldMove_Surf(void)
 	return FALSE;
 }
 
+static bool8 SetUpFieldMove_Waterfall(void)
+{
+    s16 x, y;
+
+	if (gFollowerState.inProgress && !(gFollowerState.flags & FOLLOWER_FLAG_CAN_WATERFALL))
+		return FALSE;
+
+    GetXYCoordsOneStepInFrontOfPlayer(&x, &y);
+    if (MetatileBehavior_IsWaterfall(MapGridGetMetatileBehaviorAt(x, y)) == TRUE && IsPlayerSurfingNorth() == TRUE)
+    {
+        gFieldCallback2 = FieldCallback_PrepareFadeInFromMenu;
+        gPostMenuFieldCallback = (void*) 0x8124ADD;
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
 #define FieldCallback_Teleport (void*) (0x80F6730 | 1)
 static bool8 SetUpFieldMove_Teleport(void)
 {
@@ -976,6 +997,65 @@ bool8 HasBadgeToUseRockClimb(void)
 bool8 HasBadgeToUseDive(void)
 {
 	return HasBadgeToUseFieldMove(FIELD_MOVE_DIVE);
+}
+
+//The following specials are meant to help implement "PokeRide" properly
+void sp100_CanPlayerUseFlashInCurrentLocation(void)
+{
+	gSpecialVar_LastResult = gMapHeader.cave == TRUE && !FlagGet(FLAG_SYS_USE_FLASH);
+}
+
+void sp101_CanPlayerFlyInCurrentLocation(void)
+{
+	gSpecialVar_LastResult = FALSE;
+	if (gFollowerState.inProgress && !(gFollowerState.flags & FOLLOWER_FLAG_CAN_LEAVE_ROUTE))
+		return;
+
+	gSpecialVar_LastResult = Overworld_MapTypeAllowsTeleportAndFly(gMapHeader.mapType);
+}
+
+void sp102_IsPlayerFacingSurfableWater(void)
+{
+	gSpecialVar_LastResult = FALSE;
+	if (gFollowerState.inProgress && !(gFollowerState.flags & FOLLOWER_FLAG_CAN_SURF))
+		return;
+
+	gSpecialVar_LastResult = IsPlayerFacingSurfableFishableWater();
+}
+
+void sp103_IsPlayerFacingClimbableWaterfall(void)
+{
+    s16 x, y;
+    GetXYCoordsOneStepInFrontOfPlayer(&x, &y);
+
+	gSpecialVar_LastResult = FALSE;
+	if (gFollowerState.inProgress && !(gFollowerState.flags & FOLLOWER_FLAG_CAN_WATERFALL))
+		return;
+
+	gSpecialVar_LastResult = MetatileBehavior_IsWaterfall(MapGridGetMetatileBehaviorAt(x, y)) && IsPlayerSurfingNorth();
+}
+
+void sp104_IsPlayerOnDiveableWater(void)
+{
+	gSpecialVar_LastResult = FALSE;
+	if (gFollowerState.inProgress && !(gFollowerState.flags & FOLLOWER_FLAG_CAN_DIVE))
+		return;
+
+	gSpecialVar_LastResult = TrySetDiveWarp();
+}
+
+void sp105_IsPlayerFacingClimbableWall(void)
+{
+	gSpecialVar_LastResult = FALSE;
+	if (gFollowerState.inProgress && !(gFollowerState.flags & FOLLOWER_FLAG_CAN_ROCK_CLIMB))
+		return;
+
+	gSpecialVar_LastResult = IsPlayerFacingRockClimbableWall();
+}
+
+void sp109_IsPlayerFacingNPCWithOverworldPic(void)
+{
+	gSpecialVar_LastResult = CheckObjectGraphicsInFrontOfPlayer(Var8000);
 }
 
 //Move Item - Credits to Sagiri/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -1,0 +1,1 @@
+-g! -fts -fh -pe16 -pzlz77 -gu8

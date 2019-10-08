@@ -276,7 +276,7 @@ static item_t FindBankKeystone(u8 bank)
 		if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
 		{
 			if (GetBattlerPosition(bank) == B_POSITION_PLAYER_RIGHT)
-				return FindTrainerKeystone(VarGet(PARTNER_VAR));
+				return FindTrainerKeystone(VarGet(VAR_PARTNER));
 			else
 				return FindPlayerKeystone();
 		}
@@ -427,7 +427,7 @@ const u8* GetTrainerName(u8 bank)
 			battlerNum = 2;
 			if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
 			{
-				trainerId = VarGet(PARTNER_VAR);
+				trainerId = VarGet(VAR_PARTNER);
 			}
 			else if (gBattleTypeFlags & BATTLE_TYPE_LINK && gBattleTypeFlags & BATTLE_TYPE_MULTI)
 				trainerId = linkPartner;
@@ -706,7 +706,7 @@ static void MegaTriggerCallback(struct Sprite* self)
 	{
 		xshift = -6;
 		yshift = -2;
-		
+
 		if (IndexOfSpritePaletteTag(TYPE_ICON_TAG) != 0xFF) //Type icons are shown
 			xshift -= 8;
 	}

@@ -64,7 +64,7 @@ static bool8 TryGetAbilityInfluencedWildMonIndex(const struct WildPokemon* wildM
 static void CreateScriptedWildMon(u16 species, u8 level, u16 item, u16* specialMoves, bool8 firstMon);
 static const struct WildPokemonInfo* LoadProperMonsPointer(const struct WildPokemonHeader* header, const u8 type);
 
-#ifdef SCALE_WILD_POKEMON_LEVELS_FLAG
+#ifdef FLAG_SCALE_WILD_POKEMON_LEVELS
 static u8 GetLowestMonLevel(const struct Pokemon* const party);
 #endif
 
@@ -76,8 +76,8 @@ static u8 ChooseWildMonLevel(const struct WildPokemon* wildPokemon)
 	u8 rand;
 	u8 fluteBonus;
 
-	#ifdef SCALE_WILD_POKEMON_LEVELS_FLAG
-	if (FlagGet(SCALE_WILD_POKEMON_LEVELS_FLAG))
+	#ifdef FLAG_SCALE_WILD_POKEMON_LEVELS
+	if (FlagGet(FLAG_SCALE_WILD_POKEMON_LEVELS))
 	{
 		min = GetLowestMonLevel(gPlayerParty);
 		max = GetLowestMonLevel(gPlayerParty);
@@ -274,11 +274,12 @@ void CreateWildMon(u16 species, u8 level, u8 monHeaderIndex, bool8 purgeParty)
 	CreateMonWithNatureLetter(&gEnemyParty[enemyMonIndex], species, level, 32, PickWildMonNature(), PickUnownLetter(species, monHeaderIndex));
 
 	ASSIGN_HIDDEN_ABILITY:
-	if (FlagGet(HIDDEN_ABILITY_FLAG))
+	if (FlagGet(FLAG_HIDDEN_ABILITY))
 		gEnemyParty[enemyMonIndex].hiddenAbility = TRUE;
 
+	#ifdef FLAG_WILD_CUSTOM_MOVES
 	//Custom moves
-	if (FlagSet(WILD_CUSTOM_MOVES_FLAG))
+	if (FlagSet(FLAG_WILD_CUSTOM_MOVES))
 	{
 		u16* moves = (enemyMonIndex == 0) ? &Var8000 : &Var8004;
 		for (int i = 0; i < MAX_MON_MOVES; ++i)
@@ -287,6 +288,7 @@ void CreateWildMon(u16 species, u8 level, u8 monHeaderIndex, bool8 purgeParty)
 				gEnemyParty[enemyMonIndex].moves[i] = moves[i];
 		}
 	}
+	#endif
 
 	//Status Inducers
 	TryStatusInducer(&gEnemyParty[enemyMonIndex]);
@@ -322,10 +324,10 @@ enum
 
 void TryUpdateSwarm(void)
 {
-	if (CheckAndSetDailyEvent(SWARM_DAILY_EVENT_VAR, TRUE))
+	if (CheckAndSetDailyEvent(VAR_SWARM_DAILY_EVENT, TRUE))
 	{
 		u16 index = Random() % gSwarmTableLength;
-		VarSet(SWARM_INDEX_VAR, index);
+		VarSet(VAR_SWARM_INDEX, index);
 	}
 }
 
@@ -334,7 +336,7 @@ static bool8 TryGenerateSwarmMon(u8 level, u8 wildMonIndex, bool8 purgeParty)
 	if (gSwarmTableLength == 0)
 		return FALSE;
 
-	u8 index = VarGet(SWARM_INDEX_VAR);
+	u8 index = VarGet(VAR_SWARM_INDEX);
 	u8 mapName = gSwarmTable[index].mapName;
 	u16 species = gSwarmTable[index].species;
 
@@ -383,7 +385,8 @@ SKIP_INDEX_SEARCH:
 	else if (!TryGenerateSwarmMon(level, wildMonIndex, TRUE))
 		CreateWildMon(wildMonInfo->wildPokemon[wildMonIndex].species, level, wildMonIndex, TRUE);
 
-	if (FlagGet(DOUBLE_WILD_BATTLE_FLAG))
+	#ifdef FLAG_DOUBLE_WILD_BATTLE
+	if (FlagGet(FLAG_DOUBLE_WILD_BATTLE))
 	{
 		wildMonIndex = 0;
 
@@ -409,6 +412,7 @@ SKIP_INDEX_SEARCH:
 		if (!TryGenerateSwarmMon(level, wildMonIndex, FALSE))
 			CreateWildMon(wildMonInfo->wildPokemon[wildMonIndex].species, level, wildMonIndex, FALSE);
 	}
+	#endif
 
 	return TRUE;
 }
@@ -420,12 +424,14 @@ static species_t GenerateFishingWildMon(const struct WildPokemonInfo* wildMonInf
 
 	CreateWildMon(wildMonInfo->wildPokemon[wildMonIndex].species, level, wildMonIndex, TRUE);
 
-	if (FlagGet(DOUBLE_WILD_BATTLE_FLAG))
+	#ifdef FLAG_DOUBLE_WILD_BATTLE
+	if (FlagGet(FLAG_DOUBLE_WILD_BATTLE))
 	{
 		u8 wildMonIndex = ChooseWildMonIndex_Fishing(rod);
 		u8 level = ChooseWildMonLevel(&wildMonInfo->wildPokemon[wildMonIndex]);
 		CreateWildMon(wildMonInfo->wildPokemon[wildMonIndex].species, level, wildMonIndex, FALSE);
 	}
+	#endif
 
 	return wildMonInfo->wildPokemon[wildMonIndex].species;
 }
@@ -517,9 +523,11 @@ bool8 StandardWildEncounter(const u16 currMetaTileBehavior, const u16 previousMe
 	const struct WildPokemonInfo* landMonsInfo = LoadProperMonsData(LAND_MONS_HEADER);
 	const struct WildPokemonInfo* waterMonsInfo = LoadProperMonsData(WATER_MONS_HEADER);
 
-	if (FlagGet(NO_RANDOM_WILD_ENCOUNTERS_FLAG))
+	#ifdef FLAG_NO_RANDOM_WILD_ENCOUNTERS
+	if (FlagGet(FLAG_NO_RANDOM_WILD_ENCOUNTERS))
 		return FALSE;
 	else
+	#endif
 	{
 		if (lowerByte & TILE_FLAG_ENCOUNTER_TILE)
 		{
@@ -545,14 +553,16 @@ bool8 StandardWildEncounter(const u16 currMetaTileBehavior, const u16 previousMe
 			else
 			{
 				//Try a regular wild land encounter
-				if (!FlagGet(DOUBLE_WILD_BATTLE_FLAG) //Flag hasn't already been set by user
+				#ifdef FLAG_DOUBLE_WILD_BATTLE
+				if (!FlagGet(FLAG_DOUBLE_WILD_BATTLE) //Flag hasn't already been set by user
 				&&  ViableMonCount(gPlayerParty) >= 2
 				&&  (lowerByte & TILE_FLAG_WILD_DOUBLE)
 				&&  Random() % 100 < WILD_DOUBLE_RANDOM_CHANCE)
 				{
-					FlagSet(DOUBLE_WILD_BATTLE_FLAG);
+					FlagSet(FLAG_DOUBLE_WILD_BATTLE);
 					clearDoubleFlag = TRUE;
 				}
+				#endif
 
 				if (TryGenerateWildMon(landMonsInfo, WILD_AREA_LAND, WILD_CHECK_REPEL | WILD_CHECK_KEEN_EYE) == TRUE)
 				{
@@ -560,8 +570,10 @@ bool8 StandardWildEncounter(const u16 currMetaTileBehavior, const u16 previousMe
 					return TRUE;
 				}
 
+				#ifdef FLAG_DOUBLE_WILD_BATTLE
 				if (clearDoubleFlag)
-					FlagClear(DOUBLE_WILD_BATTLE_FLAG); //Battle didn't start so restart the flag
+					FlagClear(FLAG_DOUBLE_WILD_BATTLE); //Battle didn't start so restart the flag
+				#endif
 
 				IncrementEncounterProbabilityBonus(landMonsInfo->encounterRate);
 			}
@@ -587,14 +599,16 @@ bool8 StandardWildEncounter(const u16 currMetaTileBehavior, const u16 previousMe
 			}
 			else // try a regular surfing encounter
 			{
-				if (!FlagGet(DOUBLE_WILD_BATTLE_FLAG) //Flag hasn't already been set by user
+				#ifdef FLAG_DOUBLE_WILD_BATTLE
+				if (!FlagGet(FLAG_DOUBLE_WILD_BATTLE) //Flag hasn't already been set by user
 				&&  ViableMonCount(gPlayerParty) >= 2
 				&&  lowerByte & TILE_FLAG_WILD_DOUBLE
 				&&  Random() % 100 < WILD_DOUBLE_RANDOM_CHANCE)
 				{
-					FlagSet(DOUBLE_WILD_BATTLE_FLAG);
+					FlagSet(FLAG_DOUBLE_WILD_BATTLE);
 					clearDoubleFlag = TRUE;
 				}
+				#endif
 
 				if (TryGenerateWildMon(waterMonsInfo, WILD_AREA_WATER, WILD_CHECK_REPEL | WILD_CHECK_KEEN_EYE) == TRUE)
 				{
@@ -602,8 +616,10 @@ bool8 StandardWildEncounter(const u16 currMetaTileBehavior, const u16 previousMe
 					return TRUE;
 				}
 
+				#ifdef FLAG_DOUBLE_WILD_BATTLE
 				if (clearDoubleFlag)
-					FlagClear(DOUBLE_WILD_BATTLE_FLAG); //Battle didn't start so restart the flag
+					FlagClear(FLAG_DOUBLE_WILD_BATTLE); //Battle didn't start so restart the flag
+				#endif
 
 				return FALSE;
 			}
@@ -797,15 +813,17 @@ void DoStandardWildBattle(void)
 	gMain.savedCallback = CB2_EndWildBattle;
 	gBattleTypeFlags = 0;
 
-	if (FlagGet(DOUBLE_WILD_BATTLE_FLAG))
+	#ifdef FLAG_DOUBLE_WILD_BATTLE
+	if (FlagGet(FLAG_DOUBLE_WILD_BATTLE))
 	{
 		gBattleTypeFlags |= BATTLE_TYPE_DOUBLE;
 
-		if (FlagGet(TAG_BATTLE_FLAG))
+		if (FlagGet(FLAG_TAG_BATTLE))
 		{
 			gBattleTypeFlags |=  BATTLE_TYPE_INGAME_PARTNER;
 		}
 	}
+	#endif
 
 	CreateBattleStartTask(GetWildBattleTransition(), GetMUS_ForBattle());
 	IncrementGameStat(GAME_STAT_TOTAL_BATTLES);
@@ -819,10 +837,12 @@ void sp138_StartLegendaryBattle(void)
 
 	gBattleTypeFlags = BATTLE_TYPE_SCRIPTED_WILD_1 | BATTLE_TYPE_SCRIPTED_WILD_3;
 
-	if (FlagGet(DOUBLE_WILD_BATTLE_FLAG)
+	#ifdef FLAG_DOUBLE_WILD_BATTLE
+	if (FlagGet(FLAG_DOUBLE_WILD_BATTLE)
 	&& gEnemyParty[1].species != SPECIES_NONE
 	&& ViableMonCount(gPlayerParty) > 1) //At least two alive Pokemon
 		gBattleTypeFlags |= BATTLE_TYPE_DOUBLE;
+	#endif
 
 	CreateBattleStartTask(0, GetMUS_ForBattle());
 	IncrementGameStat(GAME_STAT_TOTAL_BATTLES);
@@ -867,12 +887,13 @@ bool8 ScrCmd_setwildbattle(struct ScriptContext* ctx)
 		specialMoves[i] = (&Var8000)[i];
 
 	species = ScriptReadHalfword(ctx);
+	#ifdef FLAG_DOUBLE_WILD_BATTLE
 	if (species == 0xFFFF) //Wild Double
 	{
 		species = ScriptReadByte(ctx); //Skip null values
 		species = ScriptReadHalfword(ctx); //Skip null values
 		species = ScriptReadByte(ctx); //Skip null values
-		FlagSet(DOUBLE_WILD_BATTLE_FLAG);
+		FlagSet(FLAG_DOUBLE_WILD_BATTLE);
 
 		for (i = 0; i < 2; ++i)
 		{
@@ -886,8 +907,11 @@ bool8 ScrCmd_setwildbattle(struct ScriptContext* ctx)
 		}
 	}
 	else
+	#endif
 	{
-		FlagClear(DOUBLE_WILD_BATTLE_FLAG); //Singular mon
+		#ifdef FLAG_DOUBLE_WILD_BATTLE
+		FlagClear(FLAG_DOUBLE_WILD_BATTLE); //Singular mon
+		#endif
 		level = ScriptReadByte(ctx);
 		item = ScriptReadHalfword(ctx);
 		CreateScriptedWildMon(species, level, item, specialMoves, TRUE);
@@ -907,7 +931,8 @@ static void CreateScriptedWildMon(u16 species, u8 level, u16 item, u16* moves, b
 	if (item)
 		SetMonData(&gEnemyParty[index], MON_DATA_HELD_ITEM, &item);
 
-	if (FlagGet(WILD_CUSTOM_MOVES_FLAG))
+	#ifdef FLAG_WILD_CUSTOM_MOVES
+	if (FlagGet(FLAG_WILD_CUSTOM_MOVES))
 	{
 		moves = firstMon ? moves : &moves[4];
 		for (int i = 0; i < MAX_MON_MOVES; ++i)
@@ -916,15 +941,18 @@ static void CreateScriptedWildMon(u16 species, u8 level, u16 item, u16* moves, b
 				gEnemyParty[index].moves[i] = moves[i];
 		}
 	}
+	#endif
 
-	if (FlagGet(HIDDEN_ABILITY_FLAG))
+	if (FlagGet(FLAG_HIDDEN_ABILITY))
 		gEnemyParty[index].hiddenAbility = TRUE;
 }
 
 void TrySetWildDoubleBattleTypeScripted()
 {
-	if (FlagGet(DOUBLE_WILD_BATTLE_FLAG))
+	#ifdef FLAG_DOUBLE_WILD_BATTLE
+	if (FlagGet(FLAG_DOUBLE_WILD_BATTLE))
 		gBattleTypeFlags |= BATTLE_TYPE_DOUBLE;
+	#endif
 }
 
 species_t GetLocalWildMon(bool8* isWaterMon)
@@ -1007,7 +1035,7 @@ static const struct WildPokemonInfo* LoadProperMonsPointer(const struct WildPoke
 	}
 }
 
-#ifdef SCALE_WILD_POKEMON_LEVELS_FLAG
+#ifdef FLAG_SCALE_WILD_POKEMON_LEVELS
 static u8 GetLowestMonLevel(const struct Pokemon* const party)
 {
 	u8 min = party[0].level;

@@ -132,31 +132,31 @@ void ReadKeys(void)
 			gMain.heldKeys |= A_BUTTON;
 	}
 
-#ifdef AUTO_RUN_FLAG
+#ifdef FLAG_AUTO_RUN
 	else if (gMain.newKeys & L_BUTTON //Can't be used if L=A
 	&& !ScriptContext2_IsEnabled()
 	&& FuncIsActiveTask(Task_WeatherMain) //In the overworld
-#ifdef RUNNING_ENABLED_FLAG
-	&& FlagGet(RUNNING_ENABLED_FLAG) //Only toggle auto-run if can run in the first place
+#ifdef FLAG_RUNNING_ENABLED
+	&& FlagGet(FLAG_RUNNING_ENABLED) //Only toggle auto-run if can run in the first place
 #endif
 	)
 	{
 		ScriptContext2_Enable();
 
-		if (FlagGet(AUTO_RUN_FLAG))
+		if (FlagGet(FLAG_AUTO_RUN))
 		{
-			FlagClear(AUTO_RUN_FLAG);
+			FlagClear(FLAG_AUTO_RUN);
 			ScriptContext1_SetupScript(SystemScript_DisableAutoRun);
 		}
 		else
 		{
-			FlagSet(AUTO_RUN_FLAG);
+			FlagSet(FLAG_AUTO_RUN);
 			ScriptContext1_SetupScript(SystemScript_EnableAutoRun);
 		}
 	}
 #endif
 
-	u16 dexNavSpecies = VarGet(DEXNAV_VAR);
+	u16 dexNavSpecies = VarGet(VAR_DEXNAV);
 	if (gMain.newKeys & R_BUTTON
 	&& dexNavSpecies != SPECIES_NONE
 	&& !IsDexNavHudActive()

@@ -124,7 +124,7 @@ const u8 gClassPokeBalls[NUM_TRAINER_CLASSES] =
 };
 
 #else
-//This table is for Pokemon Unbound. Modifying it will do nothing for you.
+//This table is for Pokemon Unbound. Modifying it will do nothing for you. Feel free to remove.
 const u8 gClassPokeBalls[NUM_TRAINER_CLASSES] =
 {
 	[CLASS_PKMN_TRAINER_1] =   BALL_TYPE_POKE_BALL,

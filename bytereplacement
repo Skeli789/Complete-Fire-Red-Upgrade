@@ -8,14 +8,7 @@
 ##Don't Count Eggs Healing PKMN Centre
 08083B8E 08 F0 D5 FA
 ##Extend Direct Sound Tracks
-081DD0C8 00 CC 
-##Eggs Hatch at Level 1
-081375B0 01
-08046CBE 01
-0804623E 01
-##Lower EV Cap to 252
-080439FC FC
-08043A02 FC
+081DD0C8 00 CC
 ##Fix Movement Type 0xC (Hidden)
 0839FBF8 B5 FF 05 08
 ##Remove GF Evolution Limiters
@@ -306,6 +299,15 @@
 080436D4 0B
 080436DC 09
 080436E4 0A
+
+##Lower EV Cap to 252
+080439FC EV_CAP
+08043A02 EV_CAP
+
+##Eggs Hatch at Level 1
+081375B0 EGG_HATCH_LEVEL
+08046CBE EGG_HATCH_LEVEL
+0804623E EGG_HATCH_LEVEL
 
 ##Animations##
 ##Hydro Pump Particle Update

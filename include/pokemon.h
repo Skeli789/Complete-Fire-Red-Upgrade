@@ -629,7 +629,7 @@ enum EvolutionMethods
 	EVO_LEVEL_SHEDINJA,
 	EVO_BEAUTY,
 	// new evolutions
-	EVO_RAINY_OW,		// raining in overworld
+	EVO_RAINY_FOGGY_OW,		// raining or foggy in overworld
 	EVO_MOVE_TYPE,	// knows a move with a specific type (eg. sylveon: fairy type move). Param is the move type
 	EVO_TYPE_IN_PARTY,	//specific type (param) in party after given level (unknown).
 	EVO_MAP, 	// specific map evolution. bank in param, map in unknown
