@@ -28,7 +28,7 @@ extern const u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
 #define sMoveRelearnerStruct ((struct MoveRelearner*) 0x203AAB4)
 
 //This file's functions
-#ifdef POKEMON_LEARNSET_RANDOMIZER_FLAG
+#ifdef FLAG_POKEMON_LEARNSET_RANDOMIZER
 static move_t RandomizeMove(u16 move);
 #endif
 
@@ -44,8 +44,8 @@ void GiveBoxMonInitialMoveset(struct BoxPokemon* boxMon)
 		struct LevelUpMove lvlUpMove = gLevelUpLearnsets[species][i];
 		u16 move = lvlUpMove.move;
 
-		#ifdef POKEMON_LEARNSET_RANDOMIZER_FLAG
-		if (FlagGet(POKEMON_LEARNSET_RANDOMIZER_FLAG) && !FlagGet(FLAG_BATTLE_FACILITY))
+		#ifdef FLAG_POKEMON_LEARNSET_RANDOMIZER
+		if (FlagGet(FLAG_POKEMON_LEARNSET_RANDOMIZER) && !FlagGet(FLAG_BATTLE_FACILITY))
 			move = RandomizeMove(move);
 		#endif
 
@@ -87,8 +87,8 @@ u16 MonTryLearningNewMove(struct Pokemon* mon, bool8 firstMove)
 	{
 		gMoveToLearn = lvlUpMove.move;
 
-		#ifdef POKEMON_LEARNSET_RANDOMIZER_FLAG
-		if (FlagGet(POKEMON_LEARNSET_RANDOMIZER_FLAG) && !FlagGet(FLAG_BATTLE_FACILITY))
+		#ifdef FLAG_POKEMON_LEARNSET_RANDOMIZER
+		if (FlagGet(FLAG_POKEMON_LEARNSET_RANDOMIZER) && !FlagGet(FLAG_BATTLE_FACILITY))
 			gMoveToLearn = RandomizeMove(gMoveToLearn);
 		#endif
 
@@ -125,8 +125,8 @@ u16 MonTryLearningNewMoveAfterEvolution(struct Pokemon* mon, bool8 firstMove)
 	{
 		gMoveToLearn = lvlUpMove.move;
 
-		#ifdef POKEMON_LEARNSET_RANDOMIZER_FLAG
-		if (FlagGet(POKEMON_LEARNSET_RANDOMIZER_FLAG) && !FlagGet(FLAG_BATTLE_FACILITY))
+		#ifdef FLAG_POKEMON_LEARNSET_RANDOMIZER
+		if (FlagGet(FLAG_POKEMON_LEARNSET_RANDOMIZER) && !FlagGet(FLAG_BATTLE_FACILITY))
 			gMoveToLearn = RandomizeMove(gMoveToLearn);
 		#endif
 
@@ -197,8 +197,8 @@ u8 GetLevelUpMovesBySpecies(u16 species, u16* moves)
 	{
 		u16 move = gLevelUpLearnsets[species][i].move;
 
-		#ifdef POKEMON_LEARNSET_RANDOMIZER_FLAG
-		if (FlagGet(POKEMON_LEARNSET_RANDOMIZER_FLAG) && !FlagGet(FLAG_BATTLE_FACILITY))
+		#ifdef FLAG_POKEMON_LEARNSET_RANDOMIZER
+		if (FlagGet(FLAG_POKEMON_LEARNSET_RANDOMIZER) && !FlagGet(FLAG_BATTLE_FACILITY))
 			move = RandomizeMove(move);
 		#endif
 
@@ -218,7 +218,7 @@ u8 GetNumberOfRelearnableMoves(struct Pokemon* mon)
 	return GetMoveRelearnerMoves(mon, moves); //Returns the number of moves
 }
 
-#ifdef POKEMON_LEARNSET_RANDOMIZER_FLAG
+#ifdef FLAG_POKEMON_LEARNSET_RANDOMIZER
 static move_t RandomizeMove(u16 move)
 {
 	move = (move * T1_READ_32(gSaveBlock2->playerTrainerId));

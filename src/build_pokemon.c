@@ -2954,8 +2954,8 @@ void CreateBoxMon(struct BoxPokemon* boxMon, u16 species, u8 level, u8 fixedIV, 
 	u32 personality;
 	u32 value;
 
-#ifdef POKEMON_RANDOMIZER_FLAG
-	if (FlagGet(POKEMON_RANDOMIZER_FLAG) && !FlagGet(FLAG_BATTLE_FACILITY)) //Don't randomize in battle facilities
+#ifdef FLAG_POKEMON_RANDOMIZER
+	if (FlagGet(FLAG_POKEMON_RANDOMIZER) && !FlagGet(FLAG_BATTLE_FACILITY)) //Don't randomize in battle facilities
 	{
 		u32 id = MathMax(1, T1_READ_32(gSaveBlock2->playerTrainerId)); //0 id would mean every Pokemon would crash the game
 		u32 newSpecies = species * id;
@@ -3223,8 +3223,8 @@ u8 TryRandomizeAbility(u8 ability, unusedArg u16 species)
 {
 	u32 newAbility = ability;
 
-	#ifdef ABILITY_RANDOMIZER_FLAG
-	if (FlagGet(ABILITY_RANDOMIZER_FLAG) && !FlagGet(FLAG_BATTLE_FACILITY))
+	#ifdef FLAG_ABILITY_RANDOMIZER
+	if (FlagGet(FLAG_ABILITY_RANDOMIZER) && !FlagGet(FLAG_BATTLE_FACILITY))
 	{
 		u32 id = MathMax(1, T1_READ_32(gSaveBlock2->playerTrainerId)); //0 id would mean Pokemon wouldn't have ability
 

@@ -1369,7 +1369,7 @@ const species_t gSetPerfectXIvList[] =
 };
 #endif
 
-#ifdef POKEMON_RANDOMIZER_FLAG
+#ifdef FLAG_POKEMON_RANDOMIZER
 const species_t gRandomizerSpeciesBanList[] =
 {
 	0xFC,
@@ -1586,7 +1586,7 @@ const species_t gRandomizerSpeciesBanList[] =
 
 #endif
 
-#ifdef ABILITY_RANDOMIZER_FLAG
+#ifdef FLAG_ABILITY_RANDOMIZER
 
 const ability_t gRandomizerAbilityBanList[] =
 {
