@@ -9,6 +9,14 @@ item_tables.c
 		-pickup lists
 		-fling
 		-ban lists
+		
+tables to edit:
+	sPickupCommonItems
+	sPickupRareItems
+	gFlingTable
+	gConsumableItemEffects
+	gItemsByType
+
 */
 
 const item_t sPickupCommonItems[PU_NUM_COMMON_ITEMS] =

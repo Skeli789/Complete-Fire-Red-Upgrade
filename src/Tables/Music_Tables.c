@@ -6,6 +6,13 @@
 /*
 music_tables.c
 	set up music for each trainer class
+	
+tables to edit:
+	gClassBasedTrainerEncounterBGM
+	gClassBasedBattleBGM
+	gWildSpeciesBasedBattleBGM
+	gRandomBattleMusicOptions
+
 */
 
 //Finish Wild Songs for Unbound

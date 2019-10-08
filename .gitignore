@@ -17,6 +17,7 @@ Multi Target Moves Plan.txt
 generatedrepoints
 *__pycache__
 *.idea
+tables.xlsx
 
 # generated temporary files
 .fuse*

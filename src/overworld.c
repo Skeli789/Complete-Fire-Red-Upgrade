@@ -43,6 +43,17 @@
 /*
 overworld.c
 	functions for anything regarding the overworld, such as trainer spotting, whiteout, step counters, etc.
+	
+tables:
+	gDefaultWalkingScripts
+	sMetatileInteractionScripts
+	sContinueLostBattleParams
+	sTrainerBContinueScriptBattleParams
+	sTrainerBOrdinaryBattleParams
+	sMultiBattleParams
+	sTwoOpponentBattleParams
+	sTagBattleParams
+
 */
 
 extern const u16 gClassBasedTrainerEncounterBGM[NUM_TRAINER_CLASSES];

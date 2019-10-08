@@ -30,6 +30,11 @@
 /*
 general_bs_commands.c
 	functions that support the battle scripting in assembly/battle_scripts
+	
+tables:
+	gMissStringIds
+	EntryHazardsStrings
+
 */
 
 #define TEXT_BUFFER_SIDE_STATUS(move, status, side)				\

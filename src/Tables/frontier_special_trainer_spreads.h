@@ -9,6 +9,74 @@
 /*
 frontier_special_trainer_spreads.h
 	set up battle frontier species for special trainers, including EVs, IVs, nature, ability, ball type, etc!
+	
+structs to edit:
+	gSpecialTowerSpread_Palmer1
+	gSpecialTowerSpread_Palmer2
+	gLegendaryTowerSpread_Palmer1
+	gMiddleCupTowerSpread_Palmer1
+	gLittleCupTowerSpread_Palmer1
+	gLittleCupTowerSpread_Palmer2
+	gSpecialTowerSpread_Pat1
+	gSpecialTowerSpread_Pat2
+	gLegendaryTowerSpread_Pat1
+	gLegendaryTowerSpread_Pat2
+	gMiddleCupTowerSpread_Pat1
+	gMiddleCupTowerSpread_Pat2
+	gLittleCupTowerSpread_Pat1
+	gLittleCupTowerSpread_Pat2
+	gSpecialTowerSpread_Pablo1Format1
+	gSpecialTowerSpread_Pablo1Format2
+	gSpecialTowerSpread_Pablo2Format1
+	gSpecialTowerSpread_Pablo2Format2
+	gSpecialTowerSpread_Paula1
+	gSpecialTowerSpread_Paula2
+	gLegendaryTowerSpread_Paula1
+	gLegendaryTowerSpread_Paula2
+	gMiddleCupTowerSpread_Paula1
+	gMiddleCupTowerSpread_Paula2
+	gLittleCupTowerSpread_Paula1
+	gLittleCupTowerSpread_Paula2
+	gSpecialTowerSpread_Skeli
+	gLegendaryTowerSpread_Skeli
+	gMiddleCupTowerSpread_Skeli
+	gLittleCupTowerSpread_Skeli
+	gSpecialTowerSpread_Golche
+	gLegendaryTowerSpread_Golche
+	gMiddleCupTowerSpread_Golche
+	gLittleCupTowerSpread_Golche
+	gSpecialTowerSpread_Gail
+	gLegendaryTowerSpread_Gail
+	gMiddleCupTowerSpread_Gail
+	gLittleCupTowerSpread_Gail
+	gSpecialTowerSpread_Lixdel
+	gLegendaryTowerSpread_Lixdel
+	gMiddleCupTowerSpread_Lixdel
+	gLittleCupTowerSpread_Lixdel
+	gSpecialTowerSpread_Cynthia
+	gLegendaryTowerSpread_Cynthia
+	gMiddleCupTowerSpread_Cynthia
+	gLittleCupTowerSpread_Cynthia
+	gSpecialTowerSpread_Red
+	gLegendaryTowerSpread_Red
+	gMiddleCupTowerSpread_Red
+	gLittleCupTowerSpread_Red
+	gSpecialTowerSpread_BigMo
+	gLegendaryTowerSpread_BigMo
+	gMiddleCupTowerSpread_BigMo
+	gLittleCupTowerSpread_BigMo
+	gSpecialTowerSpread_Galavan
+	gLegendaryTowerSpread_Galavan
+	gMiddleCupTowerSpread_Galavan
+	gLittleCupTowerSpread_Galavan
+	gSpecialTowerSpread_Candice
+	gLegendaryTowerSpread_Candice
+	gMiddleCupTowerSpread_Candice
+	gLittleCupTowerSpread_Candice
+	gSpecialTowerSpread_Giovanni
+	gLegendaryTowerSpread_Giovanni
+	gMiddleCupTowerSpread_Giovanni
+	gLittleCupTowerSpread_Giovanni
 */
 
 #ifdef UNBOUND

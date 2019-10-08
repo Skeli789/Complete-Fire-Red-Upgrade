@@ -11,6 +11,11 @@
 /*
 form_change.c
 	functions/structures/arrays that handle species that change form
+	
+tables to edit:
+	gMiniorCores
+	sBannedBackupSpecies
+
 */
 
 const species_t gMiniorCores[] =

@@ -52,6 +52,11 @@ NOTES:
 		-else: menu pokemon (and slot in var8004, etc)
 		-Be sure to always set var8003 for data manipulation specials!
 
+tables to edit:
+	gFossilImageTable
+	sMultichoiceSet1
+	gScrollingSets
+
 */
 
 #define POKERUS_CURED 0x10

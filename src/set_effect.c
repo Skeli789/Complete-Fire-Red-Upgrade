@@ -15,6 +15,14 @@
 /*
 set_effect.c
 	handles move effects
+	
+tables:
+	sMoveEffectsThatIgnoreSubstitute
+	sShieldDustIgnoredEffects
+	sStatusFlagsForMoveEffects
+	gTrappingMoves
+	gWrappedStringIds
+
 */
 
 #define INCREMENT_RESET_RETURN				  \

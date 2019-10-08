@@ -6,6 +6,13 @@
 /*
 wild_encounter_tables.c
 	day/night and/or regular map wild encounter species
+
+tables to edit:
+	gWildMonMorningHeaders
+	gWildMonEveningHeaders
+	gWildMonNightHeaders
+	gSwarmTable
+
 */
 
 #ifndef UNBOUND //Modify this section

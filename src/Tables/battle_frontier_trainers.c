@@ -24,6 +24,12 @@ battle_frontier_trainers.c
 		u8* playerWinText;
 		u8* playerLoseText;
 	};
+	
+tables to edit:
+	gTowerTrainers
+	gSpecialTowerTrainers
+	gFrontierBrains
+	gFrontierMultiBattleTrainers
 */
 
 extern const u8 sFrontierText_Youngster_PreBattle_1[];

@@ -10,6 +10,9 @@
 level_up_learnsets.c
 	Learnsets for each species
 		-NOTE: pointer list at bottom of the file
+		
+table to edit:
+	gLevelUpLearnsets
 */
 
 
