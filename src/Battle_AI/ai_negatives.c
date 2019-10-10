@@ -169,8 +169,15 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 	}
 
 	#ifdef AI_TRY_TO_KILL_RATE
+		u8 killRate = AI_TRY_TO_KILL_RATE;
+
+		#ifdef VAR_GAME_DIFFICULTY
+		if (VarGet(VAR_GAME_DIFFICULTY) == OPTIONS_EASY_DIFFICULTY)
+			killRate = AI_TRY_TO_KILL_RATE / 5;
+		#endif
+
 		if (AI_THINKING_STRUCT->aiFlags == AI_SCRIPT_CHECK_BAD_MOVE //Only basic AI
-		&& Random() % 100 < AI_TRY_TO_KILL_RATE
+		&& gRandomTurnNumber % 100 < killRate
 		&& DamagingMoveInMoveset(bankAtk)
 		&& !TARGETING_PARTNER)
 		{

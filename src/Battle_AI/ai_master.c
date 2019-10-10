@@ -181,6 +181,10 @@ void BattleAI_SetupAIData(u8 defaultScoreMoves)
 u32 GetAIFlags(void)
 {
 	u32 flags;
+	
+	#ifdef VAR_GAME_DIFFICULTY
+	u8 difficulty = VarGet(VAR_GAME_DIFFICULTY);
+	#endif
 
 	if (gBattleTypeFlags & BATTLE_TYPE_SAFARI)
 		flags = AI_SCRIPT_SAFARI;
@@ -191,15 +195,25 @@ u32 GetAIFlags(void)
 	else if (gBattleTypeFlags & (BATTLE_TYPE_FRONTIER))
 		flags = GetAIFlagsInBattleFrontier(gActiveBattler);
 	else if (gBattleTypeFlags & (BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_TRAINER_TOWER) && gTrainerBattleOpponent_A != 0x400)
-		flags = AI_SCRIPT_CHECK_BAD_MOVE | AI_SCRIPT_CHECK_GOOD_MOVE;
+		flags = AI_SCRIPT_CHECK_BAD_MOVE | AI_SCRIPT_CHECK_GOOD_MOVE;	
 	else if (gBattleTypeFlags & BATTLE_TYPE_SCRIPTED_WILD_2) //No idea how these two work
 		flags = AI_SCRIPT_CHECK_BAD_MOVE;
 	else if (gBattleTypeFlags & BATTLE_TYPE_SCRIPTED_WILD_3)
 		flags = AI_SCRIPT_CHECK_BAD_MOVE | AI_SCRIPT_CHECK_GOOD_MOVE;
+	#ifdef VAR_GAME_DIFFICULTY
+	else if (difficulty == OPTIONS_EASY_DIFFICULTY && gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+		flags = AI_SCRIPT_CHECK_BAD_MOVE; //Trainers are always barely smart on easy mode
+	else if (difficulty == OPTIONS_HARD_DIFFICULTY && gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+		flags = AI_SCRIPT_CHECK_BAD_MOVE | AI_SCRIPT_CHECK_GOOD_MOVE; //Traienrs are always fully smart on hard mode
+	else if (difficulty == OPTIONS_HARD_DIFFICULTY && !(gBattleTypeFlags & BATTLE_TYPE_TRAINER))
+		flags = AI_SCRIPT_CHECK_BAD_MOVE; //Wild Pokemon are moderately smart on hard mode
+	else if (difficulty == OPTIONS_EXPERT_DIFFICULTY)
+		flags = AI_SCRIPT_CHECK_BAD_MOVE | AI_SCRIPT_CHECK_GOOD_MOVE; //Event Wild Pokemon are really smart on expert mode
+	#endif
 	else if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
 		flags = gTrainers[gTrainerBattleOpponent_A].aiFlags | gTrainers[VarGet(VAR_SECOND_OPPONENT)].aiFlags;
 	else
-	   flags = gTrainers[gTrainerBattleOpponent_A].aiFlags;
+		flags = gTrainers[gTrainerBattleOpponent_A].aiFlags;
 
 	return flags;
 }
