@@ -698,6 +698,28 @@ void SubtractEggSteps(u32 steps, struct Pokemon* mon)
 	SetMonData(mon, MON_DATA_FRIENDSHIP, &steps);
 }
 
+u8 ModifyBreedingScoreForOvalCharm(u8 score)
+{
+	#ifdef ITEM_OVAL_CHARM
+	if (CheckBagHasItem(ITEM_OVAL_CHARM, 1) > 0)
+	{
+		switch (score) { //This is the easy way of doing this
+			case 20:
+				score = 40;
+				break;
+			case 50:
+				score = 80;
+				break;
+			case 70:
+				score = 88;
+				break;
+		}
+	}
+	#endif
+
+	return score;
+}
+
 u8 GetAllEggMoves(struct Pokemon* mon, u16* moves, bool8 ignoreAlreadyKnownMoves)
 {
 	u8 numEggMoves;

@@ -400,6 +400,7 @@ CreateEgg 08046150 2
 TriggerPendingDaycareEgg 080459F0 1
 FlameBodyMagmaArmorEggHook 08046390 1
 CreateHatchedMon 08046BFC 2
+OvalCharmHook 08046314 1
 
 ##Shiny Charm
 CreateBoxMonHook 803DAD2 0

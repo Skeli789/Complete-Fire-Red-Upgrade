@@ -2902,12 +2902,13 @@ u8 ScriptGiveMon(u16 species, u8 level, u16 item, unusedArg u32 unused1, unusedA
 
 u32 CheckShinyMon(struct Pokemon* mon)
 {
+	u16 chance = 0;
 	u32 personality = GetMonData(mon, MON_DATA_PERSONALITY, NULL);
 
-	u16 chance = 0;
-
+	#ifdef ITEM_SHINY_CHARM
 	if (CheckBagHasItem(ITEM_SHINY_CHARM, 1) > 0)
 		chance = 3; //Tries an extra two times
+	#endif
 
 	#ifdef FLAG_SHINY_CREATION
 	if (FlagGet(FLAG_SHINY_CREATION))

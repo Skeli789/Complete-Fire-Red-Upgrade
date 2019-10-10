@@ -190,13 +190,10 @@ TrainerSlidingEndTurnHook:
 	mov r1, r10
 	str r0, [r1]
 	bl CheckLastMonLowHPSlide
-	bl Random
+	ldr r2, =Random
+	bl bxr2
 	ldr r1, =0x8013D1C | 1
 	bx r1
-
-Random:
-	ldr r0, =0x8044EC8 | 1
-	bx r0
 
 @0x80813B8 with r0
 LoadProperMusicForLinkBattlesHook:
@@ -408,6 +405,18 @@ FlameBodyMagmaArmorEggHook:
 	bl SubtractEggSteps
 	ldr r0, =0x804639E | 1
 	bx r0
+
+.pool
+@0x8046314 with r1
+OvalCharmHook:
+	bl ModifyBreedingScoreForOvalCharm
+	mov r4, r0
+	lsl r4, #0x18
+	lsr r4, #0x18
+	ldr r2, =Random
+	bl bxr2
+	ldr r1, =0x804631E | 1
+	bx r1
 
 .pool
 @0x808BA60 with r2
