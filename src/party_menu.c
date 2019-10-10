@@ -667,8 +667,8 @@ extern const u8 gText_FieldMoveDesc_RockClimb[];
 extern const u8 gText_FieldMoveDesc_Defog[];
 extern const u8 gText_FieldMoveDesc_Dive[];
 
-extern const u8 SystemScript_RockClimb[];
-extern const u8 SystemScript_Defog[];
+extern const u8 EventScript_RockClimb[];
+extern const u8 EventScript_Defog[];
 
 // Field Move IDs
 enum FieldMovesIDs
@@ -926,7 +926,7 @@ static bool8 SetUpFieldMove_Dive(void)
 static void FieldCallback_RockClimb(void)
 {
 	((u32*) gFieldEffectArguments)[0] = GetCursorSelectionMonId();
-	ScriptContext1_SetupScript(SystemScript_RockClimb);
+	ScriptContext1_SetupScript(EventScript_RockClimb);
 }
 
 static bool8 SetUpFieldMove_RockClimb(void)
@@ -950,7 +950,7 @@ static void FieldCallback_Defog(void)
 
 	((u32*) gFieldEffectArguments)[0] = monId;
 	GetMonNickname(&gPlayerParty[monId], gStringVar1);
-	ScriptContext1_SetupScript(SystemScript_Defog);
+	ScriptContext1_SetupScript(EventScript_Defog);
 }
 
 static bool8 SetUpFieldMove_Defog(void)

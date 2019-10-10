@@ -208,7 +208,7 @@ EventScript_UseRockClimb:
 	compare LASTRESULT NO
 	if equal _goto EventScript_RockClimbEnd
 	msgbox 0x81BDFD7 MSG_NORMAL @;[BUFFER1] used [BUFFER2]!
-	goto SystemScript_RockClimb
+	goto EventScript_RockClimb
 
 .global EventScript_JustRockWall
 EventScript_JustRockWall:
@@ -218,8 +218,8 @@ EventScript_RockClimbEnd:
 	end
 
 .equ SPECIAL_GET_PLAYER_FACING, 0x1AA
-.global SystemScript_RockClimb
-SystemScript_RockClimb:
+.global EventScript_RockClimb
+EventScript_RockClimb:
 	lockall
 	call FollowerIntoPlayerScript
 	callasm HideFollower
@@ -228,88 +228,88 @@ SystemScript_RockClimb:
 	waitstate
 	special2 PLAYERFACING SPECIAL_GET_PLAYER_FACING
 	compare PLAYERFACING DOWN
-	if equal _goto SystemScript_RockClimbDown
+	if equal _goto EventScript_RockClimbDown
 	compare PLAYERFACING LEFT
-	if equal _goto SystemScript_RockClimbLeft
+	if equal _goto EventScript_RockClimbLeft
 	compare PLAYERFACING RIGHT
-	if equal _goto SystemScript_RockClimbRight
+	if equal _goto EventScript_RockClimbRight
 
-SystemScript_RockClimbUp:
+EventScript_RockClimbUp:
 	applymovement PLAYER m_RockClimbUp
 	waitmovement PLAYER
 	callasm ShouldRockClimbContinue
 	compare LASTRESULT 0
-	if equal _goto SystemScript_RockClimbUpFinish
-	goto SystemScript_RockClimbUp
+	if equal _goto EventScript_RockClimbUpFinish
+	goto EventScript_RockClimbUp
 
-SystemScript_RockClimbDown:
+EventScript_RockClimbDown:
 	applymovement PLAYER m_RockClimbDown
 	waitmovement PLAYER
 	callasm ShouldRockClimbContinue
 	compare LASTRESULT 0
-	if equal _goto SystemScript_RockClimbDownFinish
-	goto SystemScript_RockClimbDown
+	if equal _goto EventScript_RockClimbDownFinish
+	goto EventScript_RockClimbDown
 
-SystemScript_RockClimbLeft:
+EventScript_RockClimbLeft:
 	applymovement PLAYER m_RockClimbLeft
-SystemScript_RockClimbLeftWaitmovement:
+EventScript_RockClimbLeftWaitmovement:
 	waitmovement PLAYER
 	callasm ShouldRockClimbContinueDiagonally
 	compare LASTRESULT 1
-	if equal _goto SystemScript_RockClimbLeftUp
+	if equal _goto EventScript_RockClimbLeftUp
 	compare LASTRESULT 2
-	if equal _goto SystemScript_RockClimbLeftDown
+	if equal _goto EventScript_RockClimbLeftDown
 	callasm ShouldRockClimbContinue
 	compare LASTRESULT 0
-	if equal _goto SystemScript_RockClimbLeftFinish
-	goto SystemScript_RockClimbLeft
+	if equal _goto EventScript_RockClimbLeftFinish
+	goto EventScript_RockClimbLeft
 	
-SystemScript_RockClimbLeftUp:
+EventScript_RockClimbLeftUp:
 	applymovement PLAYER m_RockClimbLeftUp
-	goto SystemScript_RockClimbLeftWaitmovement
+	goto EventScript_RockClimbLeftWaitmovement
 
-SystemScript_RockClimbLeftDown:
+EventScript_RockClimbLeftDown:
 	applymovement PLAYER m_RockClimbLeftDown
-	goto SystemScript_RockClimbLeftWaitmovement
+	goto EventScript_RockClimbLeftWaitmovement
 
-SystemScript_RockClimbRight:
+EventScript_RockClimbRight:
 	applymovement PLAYER m_RockClimbRight
-SystemScript_RockClimbRightWaitmovement:
+EventScript_RockClimbRightWaitmovement:
 	waitmovement PLAYER
 	callasm ShouldRockClimbContinueDiagonally
 	compare LASTRESULT 1
-	if equal _goto SystemScript_RockClimbRightUp
+	if equal _goto EventScript_RockClimbRightUp
 	compare LASTRESULT 2
-	if equal _goto SystemScript_RockClimbRightDown
+	if equal _goto EventScript_RockClimbRightDown
 	callasm ShouldRockClimbContinue
 	compare LASTRESULT 0
-	if equal _goto SystemScript_RockClimbRightFinish
-	goto SystemScript_RockClimbRight
+	if equal _goto EventScript_RockClimbRightFinish
+	goto EventScript_RockClimbRight
 	
-SystemScript_RockClimbRightUp:
+EventScript_RockClimbRightUp:
 	applymovement PLAYER m_RockClimbRightUp
-	goto SystemScript_RockClimbRightWaitmovement
+	goto EventScript_RockClimbRightWaitmovement
 
-SystemScript_RockClimbRightDown:
+EventScript_RockClimbRightDown:
 	applymovement PLAYER m_RockClimbRightDown
-	goto SystemScript_RockClimbRightWaitmovement
+	goto EventScript_RockClimbRightWaitmovement
 
-SystemScript_RockClimbDownFinish:
+EventScript_RockClimbDownFinish:
 	applymovement PLAYER m_RockClimbDown
-	goto SystemScript_RockClimbFinish
+	goto EventScript_RockClimbFinish
 
-SystemScript_RockClimbUpFinish:
+EventScript_RockClimbUpFinish:
 	applymovement PLAYER m_RockClimbUp
-	goto SystemScript_RockClimbFinish
+	goto EventScript_RockClimbFinish
 
-SystemScript_RockClimbLeftFinish:
+EventScript_RockClimbLeftFinish:
 	applymovement PLAYER m_RockClimbLeft
-	goto SystemScript_RockClimbFinish
+	goto EventScript_RockClimbFinish
 
-SystemScript_RockClimbRightFinish:
+EventScript_RockClimbRightFinish:
 	applymovement PLAYER m_RockClimbRight
 	
-SystemScript_RockClimbFinish:
+EventScript_RockClimbFinish:
 	waitmovement PLAYER
 	callasm FollowMe_WarpSetEnd
 	releaseall
@@ -327,8 +327,8 @@ m_RockClimbRightDown: .byte 0xDD, end_m
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-.global SystemScript_Defog
-SystemScript_Defog:
+.global EventScript_Defog
+EventScript_Defog:
 	lockall
 	doanimation 0x28
 	waitstate
@@ -344,75 +344,75 @@ SystemScript_Defog:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 .equ SPECIAL_POKEMON_TYPE_IN_PARTY, 0xB2
-.global SystemScript_UseLavaSurf
-SystemScript_UseLavaSurf:
+.global EventScript_UseLavaSurf
+EventScript_UseLavaSurf:
 	setvar 0x8000 TYPE_FIRE
 	special SPECIAL_POKEMON_TYPE_IN_PARTY
 	compare LASTRESULT PARTY_SIZE
-	if equal _goto SystemScript_MagmaGlistens
+	if equal _goto EventScript_MagmaGlistens
 	bufferpartypokemon 0x0 LASTRESULT
 	setanimation 0x0 LASTRESULT
 	msgbox gText_LikeToLavaSurf MSG_YESNO
 	compare LASTRESULT NO
-	if equal _goto SystemScript_LavaSurfEnd
+	if equal _goto EventScript_LavaSurfEnd
 	lockall
 	msgbox gText_LavaSurfedWith MSG_KEEPOPEN
 	doanimation 0x9
 	releaseall
 	end
 
-.global SystemScript_MagmaGlistens
-SystemScript_MagmaGlistens:
+.global EventScript_MagmaGlistens
+EventScript_MagmaGlistens:
 	msgbox gText_LavaDyed MSG_NORMAL
-SystemScript_LavaSurfEnd:
+EventScript_LavaSurfEnd:
 	closeonkeypress
 	end
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-.global SystemScript_UseWaterfall
-SystemScript_UseWaterfall:
+.global EventScript_UseWaterfall
+EventScript_UseWaterfall:
 	bufferpartypokemon 0x0 0x8004
 	setanimation 0x0 0x8004
 	bufferattack 0x1 MOVE_WATERFALL
 	msgbox 0x81BE33F MSG_YESNO
 	compare LASTRESULT NO
-	if equal _goto SystemScript_WaterfallEnd
+	if equal _goto EventScript_WaterfallEnd
 	lockall
 	call FollowerIntoPlayerScript
 	callasm HideFollower
 	msgbox 0x81BDFD7 MSG_KEEPOPEN
 	doanimation 0x2B
 	callasm FollowMe_WarpSetEnd
-SystemScript_WaterfallEnd:
+EventScript_WaterfallEnd:
 	releaseall
 	end
 
-.global SystemScript_WallOfWater
-SystemScript_WallOfWater:
+.global EventScript_WallOfWater
+EventScript_WallOfWater:
 	msgbox 0x81BE30A MSG_NORMAL
 	end
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-.global SystemScript_UseSurf
-SystemScript_UseSurf:
+.global EventScript_UseSurf
+EventScript_UseSurf:
 	bufferpartypokemon 0x0 0x8004
 	setanimation 0x0 0x8004
 	bufferattack 0x1 MOVE_SURF
 	msgbox 0x81A556E MSG_YESNO	
 	compare LASTRESULT NO
-	if equal _goto SystemScript_SurfEnd
+	if equal _goto EventScript_SurfEnd
 	lockall
 	msgbox 0x81BDFD7 MSG_KEEPOPEN
 	doanimation 0x9
-SystemScript_SurfEnd:
+EventScript_SurfEnd:
 	releaseall
 	end
 	
-.global SystemScript_WaterDyedBlue
-SystemScript_WaterDyedBlue:
-	msgbox 0x81A6C74 MSG_NORMAL
+.global EventScript_WaterDyedBlue
+EventScript_WaterDyedBlue:
+	msgbox gText_WaterDyed MSG_NORMAL
 	end
 	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -516,11 +516,11 @@ EventScript_LadderDown:
 
 EventScript_LadderUpFinish:
 	applymovement PLAYER m_LadderClimbUp
-	goto SystemScript_RockClimbFinish
+	goto EventScript_RockClimbFinish
 
 EventScript_LadderDownFinish:
 	applymovement PLAYER m_LadderClimbDown
-	goto SystemScript_RockClimbFinish
+	goto EventScript_RockClimbFinish
 
 EventScript_FacingLadderSideways:
 	msgbox gText_CantReachLadder MSG_NORMAL

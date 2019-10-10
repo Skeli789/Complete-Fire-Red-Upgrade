@@ -46,6 +46,9 @@ The wall is very rocky[.]\nWill a Pok\emon's move scale it?
 #org @gText_DefogBlewAwayFog
 [BUFFER1] blew away the fog!
 
+#org @gText_WaterDyed
+The water is dyed a deep blue[.]
+
 #org @gText_LikeToLavaSurf
 The magma glistens a crimson red[.]\nWould you like to surf on it?
 
@@ -53,7 +56,7 @@ The magma glistens a crimson red[.]\nWould you like to surf on it?
 [BUFFER1] started surfing on\nthe magma!
 
 #org @gText_LavaDyed
-The magma glistens a crimson red.
+The magma glistens a crimson red[.]
 
 #org @gText_WantToDive
 The sea is deep here.\nWould you like to use [BUFFER2]?

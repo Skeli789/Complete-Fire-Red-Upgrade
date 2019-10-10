@@ -1592,7 +1592,7 @@ const u8* GetInteractedWaterScript(unusedArg u32 unused1, u8 metatileBehavior, u
 	if (MetatileBehavior_IsFastCurrent(metatileBehavior))
 	{
 		if (PartyHasMonWithFieldMovePotential(MOVE_SURF, item, SHOULDNT_BE_SURFING) < PARTY_SIZE)
-			return SystemScript_CurrentTooFast;
+			return EventScript_CurrentTooFast;
 	}
 	#endif
 	#ifdef MB_LAVA
@@ -1601,9 +1601,9 @@ const u8* GetInteractedWaterScript(unusedArg u32 unused1, u8 metatileBehavior, u
 		if (HasBadgeToUseSurf())
 		{
 			if (!gFollowerState.inProgress || gFollowerState.flags & FOLLOWER_FLAG_CAN_SURF)
-				return SystemScript_UseLavaSurf; //Fire-type check done in script
+				return EventScript_UseLavaSurf; //Fire-type check done in script
 
-			return SystemScript_MagmaGlistens;
+			return EventScript_MagmaGlistens;
 		}
 	}
 	#endif
@@ -1620,10 +1620,10 @@ const u8* GetInteractedWaterScript(unusedArg u32 unused1, u8 metatileBehavior, u
 			&& (!gFollowerState.inProgress || gFollowerState.flags & FOLLOWER_FLAG_CAN_SURF))
 			{
 				Var8004 = partyId;
-				return SystemScript_UseSurf;
+				return EventScript_UseSurf;
 			}
 
-			return SystemScript_WaterDyedBlue;
+			return EventScript_WaterDyedBlue;
 		}
 	}
 	else if (MetatileBehavior_IsWaterfall(metatileBehavior))
@@ -1641,13 +1641,13 @@ const u8* GetInteractedWaterScript(unusedArg u32 unused1, u8 metatileBehavior, u
 				&& (!gFollowerState.inProgress || gFollowerState.flags & FOLLOWER_FLAG_CAN_WATERFALL))
 				{
 					Var8004 = partyId;
-					return SystemScript_UseWaterfall;
+					return EventScript_UseWaterfall;
 				}
 
-				return SystemScript_WallOfWater;
+				return EventScript_WallOfWater;
 			}
 			else
-				return SystemScript_CannotUseWaterfall;
+				return EventScript_CannotUseWaterfall;
 		}
 	}
 	else if (IsPlayerFacingRockClimbableWall())
