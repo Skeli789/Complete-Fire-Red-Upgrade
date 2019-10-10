@@ -329,9 +329,9 @@ bool8 StatsMaxed(u8 bank)
 
 bool8 MainStatsMaxed(u8 bank)
 {
-	for (u8 i = 0; i < STAT_ACC-1; ++i)
+	for (u8 i = STAT_STAGE_ATK; i < STAT_ACC; ++i)
 	{
-		if (gBattleMons[bank].statStages[i] < STAT_STAGE_MAX)
+		if (STAT_STAGE(bank, i) < STAT_STAGE_MAX)
 			return FALSE;
 	}
 
@@ -366,8 +366,9 @@ u8 CountBoosts(u8 bank)
 	for (u8 i = STAT_STAGE_ATK; i < BATTLE_STATS_NO; ++i)
 	{
 		if (STAT_STAGE(bank, i) > 6)
-			sum += gBattleMons[bank].statStages[i] - 6;
+			sum += STAT_STAGE(bank, i) - 6;
 	}
+
 	return sum;
 }
 
@@ -828,11 +829,11 @@ u8 CalcMoveSplit(u8 bank, u16 move)
 		u32 attack = gBattleMons[bank].attack;
 		u32 spAttack = gBattleMons[bank].spAttack;
 
-		attack = attack * gStatStageRatios[gBattleMons[bank].statStages[STAT_STAGE_ATK-1]][0];
-		attack = udivsi(attack, gStatStageRatios[gBattleMons[bank].statStages[STAT_STAGE_ATK-1]][1]);
+		attack = attack * gStatStageRatios[STAT_STAGE(bank, STAT_STAGE_ATK)][0];
+		attack = udivsi(attack, gStatStageRatios[STAT_STAGE(bank, STAT_STAGE_ATK)][1]);
 
-		spAttack = spAttack * gStatStageRatios[gBattleMons[bank].statStages[STAT_STAGE_SPATK-1]][0];
-		spAttack = udivsi(spAttack, gStatStageRatios[gBattleMons[bank].statStages[STAT_STAGE_SPATK-1]][1]);
+		spAttack = spAttack * gStatStageRatios[STAT_STAGE(bank, STAT_STAGE_SPATK)][0];
+		spAttack = udivsi(spAttack, gStatStageRatios[STAT_STAGE(bank, STAT_STAGE_SPATK)][1]);
 
 		if (spAttack >= attack)
 			return SPLIT_SPECIAL;
