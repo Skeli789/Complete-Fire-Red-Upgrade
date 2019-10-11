@@ -52,7 +52,7 @@ void atkEF_handleballthrow(void)
 {
 	if (gBattleExecBuffer) return;
 
-	u8 ball_multiplier = 0;
+	u8 ballMultiplier = 0;
 
 	gActiveBattler = gBankAttacker;
 	gBankTarget = GetCatchingBattler();
@@ -62,27 +62,29 @@ void atkEF_handleballthrow(void)
 	u8 atkLevel = gBattleMons[gBankAttacker].level;
 	u8 defLevel = gBattleMons[gBankTarget].level;
 
-	u8 ItemType = ItemId_GetType(gLastUsedItem);
+	u8 ballType = ItemId_GetType(gLastUsedItem);
 
-	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER) {
+	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+	{
 		#ifdef FLAG_CATCH_TRAINERS_POKEMON
-			if (FlagGet(FLAG_CATCH_TRAINERS_POKEMON)) {
+			if (FlagGet(FLAG_CATCH_TRAINERS_POKEMON))
+			{
 				EmitBallThrowAnim(0, 4);
 				MarkBufferBankForExecution(gActiveBattler);
 				gBattlescriptCurrInstr = BattleScript_SuccessBallThrow;
-				if (ItemType != BALL_TYPE_PARK_BALL)
-					SetMonData(&gEnemyParty[gBattlerPartyIndexes[gBankTarget]], MON_DATA_POKEBALL, (const void*) &ItemType);
+				if (ballType != BALL_TYPE_PARK_BALL)
+					SetMonData(GetBankPartyData(gBankTarget), MON_DATA_POKEBALL, &ballType);
 				if (CalculatePlayerPartyCount() == 6)
 					gBattleCommunication[MULTISTRING_CHOOSER] = 0;
 				else
 					gBattleCommunication[MULTISTRING_CHOOSER] = 1;
 			}
-			else {
+			else
+			{
 				EmitBallThrowAnim(0, 5);
 				MarkBufferBankForExecution(gActiveBattler);
 				gBattlescriptCurrInstr = BattleScript_TrainerBallBlock;
 			}
-
 		#else
 			EmitBallThrowAnim(0, 5);
 			MarkBufferBankForExecution(gActiveBattler);
@@ -111,46 +113,47 @@ void atkEF_handleballthrow(void)
 	else
 	{
 		u32 odds;
-		u8 catch_rate;
+		u8 catchRate;
 
-		if (ItemType == BALL_TYPE_SAFARI_BALL)
-			catch_rate = udivsi(gBattleStruct->safariCatchFactor * 1275, 100);
+		if (ballType == BALL_TYPE_SAFARI_BALL)
+			catchRate = udivsi(gBattleStruct->safariCatchFactor * 1275, 100);
 		else
-			catch_rate = gBaseStats[GetBankPartyData(gBankTarget)->species].catchRate; //Uses party data b/c Transform update Gen 5+
+			catchRate = gBaseStats[GetBankPartyData(gBankTarget)->species].catchRate; //Uses party data b/c Transform update Gen 5+
 
-		if (ItemType > 5) {
-			switch (ItemType) {
+		if (ballType >= BALL_TYPE_NET_BALL)
+		{
+			switch (ballType) {
 				case BALL_TYPE_NET_BALL:
 					if (IsOfType(gBankTarget, TYPE_WATER) || IsOfType(gBankTarget, TYPE_BUG))
-						ball_multiplier = 35;
+						ballMultiplier = 35;
 					else
-						ball_multiplier = 10;
+						ballMultiplier = 10;
 					break;
 
 				case BALL_TYPE_DIVE_BALL:
 					if (GetCurrentMapType() == MAP_TYPE_UNDERWATER
 					|| FishingByte || TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
-						ball_multiplier = 35;
+						ballMultiplier = 35;
 					else
-						ball_multiplier = 10;
+						ballMultiplier = 10;
 					break;
 
 				case BALL_TYPE_NEST_BALL:
 					if (gBattleMons[gBankTarget].level <= 29)
-						ball_multiplier = MathMax(10, 41 - defLevel);
+						ballMultiplier = MathMax(10, 41 - defLevel);
 					else
-						ball_multiplier = 10;
+						ballMultiplier = 10;
 					break;
 
 				case BALL_TYPE_REPEAT_BALL:
 					if (GetSetPokedexFlag(SpeciesToNationalPokedexNum(defSpecies), FLAG_GET_CAUGHT))
-						ball_multiplier = 35;
+						ballMultiplier = 35;
 					else
-						ball_multiplier = 10;
+						ballMultiplier = 10;
 					break;
 
 				case BALL_TYPE_TIMER_BALL:
-					ball_multiplier = MathMax(40, 10 + gBattleResults->battleTurnCounter * 3);
+					ballMultiplier = MathMax(40, 10 + gBattleResults->battleTurnCounter * 3);
 					break;
 
 				case BALL_TYPE_LUXURY_BALL:
@@ -158,25 +161,25 @@ void atkEF_handleballthrow(void)
 				case BALL_TYPE_CHERISH_BALL:
 				case BALL_TYPE_FRIEND_BALL:
 				case BALL_TYPE_HEAL_BALL:
-					ball_multiplier = 10;
+					ballMultiplier = 10;
 					break;
 
 				case BALL_TYPE_LEVEL_BALL:
 					if (atkLevel <= defLevel)
-						ball_multiplier = 10;
+						ballMultiplier = 10;
 					else if (atkLevel > defLevel && atkLevel < defLevel * 2)
-						ball_multiplier = 20;
+						ballMultiplier = 20;
 					else if (atkLevel > defLevel * 2 && atkLevel < defLevel * 4)
-						ball_multiplier = 40;
+						ballMultiplier = 40;
 					else
-						ball_multiplier = 80;
+						ballMultiplier = 80;
 					break;
 
 				case BALL_TYPE_LURE_BALL:
 					if (FishingByte)
-						ball_multiplier = 50;
+						ballMultiplier = 50;
 					else
-						ball_multiplier = 10;
+						ballMultiplier = 10;
 					break;
 
 				case BALL_TYPE_MOON_BALL: ;
@@ -192,7 +195,7 @@ void atkEF_handleballthrow(void)
 							case EVO_HOLD_ITEM_DAY:
 								if (evolutions[i].param == ITEM_MOON_STONE)
 								{
-									ball_multiplier = 40;
+									ballMultiplier = 40;
 									goto END_MOON_LOOP;
 								}
 						}
@@ -200,143 +203,148 @@ void atkEF_handleballthrow(void)
 
 					END_MOON_LOOP:
 					if (i == EVOS_PER_MON)
-						ball_multiplier = 10;
+						ballMultiplier = 10;
 
 					break;
 
 				case BALL_TYPE_LOVE_BALL:
-					if (SpeciesToNationalPokedexNum(atkSpecies) == SpeciesToNationalPokedexNum(defSpecies)) {
+					if (SpeciesToNationalPokedexNum(atkSpecies) == SpeciesToNationalPokedexNum(defSpecies))
+					{
 						u8 atkGender = GetGenderFromSpeciesAndPersonality(atkSpecies, gBattleMons[gBankAttacker].personality);
 						u8 defGender = GetGenderFromSpeciesAndPersonality(defSpecies, gBattleMons[gBankTarget].personality);
 
 						if (atkGender != 0xFF && defGender != 0xFF && atkGender != defGender)
-							ball_multiplier = 80;
+							ballMultiplier = 80;
 						else
-							ball_multiplier = 10;
+							ballMultiplier = 10;
 					}
 					else
-						ball_multiplier = 10;
+						ballMultiplier = 10;
 					break;
 
 				//Heavy Ball modifies the catch rate itself, not the multiplier
 				case BALL_TYPE_HEAVY_BALL:	;
-					ball_multiplier = 10;
+					ballMultiplier = 10;
 					//Apparently abilities or Float Stone have no affect here
 					u16 defWeight = GetPokedexHeightWeight(SpeciesToNationalPokedexNum(defSpecies), PKDX_GET_WEIGHT);
-					u8 old_catch_rate;
+					u8 oldCatchRate;
 
-					if (defWeight < 1000) {
-						old_catch_rate = catch_rate;
-						catch_rate -= 20;
-						if (catch_rate > old_catch_rate)
-							catch_rate = 1; //New in USUM
+					if (defWeight < 1000)
+					{
+						oldCatchRate = catchRate;
+						catchRate -= 20;
+						if (catchRate > oldCatchRate)
+							catchRate = 1; //New in USUM
 					}
 					else if (defWeight >= 2000 && defWeight < 3000)
-						catch_rate += 20;
+						catchRate += 20;
 					else if (defWeight > 3000)
-						catch_rate += 30;
+						catchRate += 30;
 					break;
 
 				case BALL_TYPE_FAST_BALL:
 					if (gBaseStats[gBankTarget].baseSpeed >= 100)
-						ball_multiplier = 40;
+						ballMultiplier = 40;
 					break;
 
 				case BALL_TYPE_SPORT_BALL:
-					ball_multiplier = 15;
+					ballMultiplier = 15;
 					break;
 
 				case BALL_TYPE_DUSK_BALL:
 					if (GetCurrentMapType() == MAP_TYPE_UNDERGROUND)
-						ball_multiplier = DUSK_BALL_MULTIPLIER;
+						ballMultiplier = DUSK_BALL_MULTIPLIER;
 
 					#ifdef TIME_ENABLED
 					else if (IsNightTime())
-						ball_multiplier = DUSK_BALL_MULTIPLIER;
+						ballMultiplier = DUSK_BALL_MULTIPLIER;
 					#endif
 					break;
 
 				case BALL_TYPE_QUICK_BALL:
 					if (gBattleResults->battleTurnCounter == 0)
-						ball_multiplier = 50;
+						ballMultiplier = 50;
 					else
-						ball_multiplier = 10;
+						ballMultiplier = 10;
 					break;
 
 				case BALL_TYPE_BEAST_BALL:
 					if (CheckTableForSpecies(defSpecies, gUltraBeastList))
-						ball_multiplier = 50;
+						ballMultiplier = 50;
 					else
-						ball_multiplier = 1;
+						ballMultiplier = 1;
 					break;
 			}
 		}
 		else
-			ball_multiplier = sBallCatchBonuses[ItemType - BALL_TYPE_ULTRA_BALL];
+			ballMultiplier = sBallCatchBonuses[ballType - BALL_TYPE_ULTRA_BALL];
 
-		if (CheckTableForSpecies(defSpecies, gUltraBeastList) && ItemType != BALL_TYPE_BEAST_BALL)
-			ball_multiplier = 1; //All balls except for Beast Ball have a hard time catching Ultra Beasts
+		if (CheckTableForSpecies(defSpecies, gUltraBeastList) && ballType != BALL_TYPE_BEAST_BALL)
+			ballMultiplier = 1; //All balls except for Beast Ball have a hard time catching Ultra Beasts
 
-		odds = udivsi(((catch_rate * udivsi(ball_multiplier, 10)) * (gBattleMons[gBankTarget].maxHP * 3 - gBattleMons[gBankTarget].hp * 2)), (3 * gBattleMons[gBankTarget].maxHP));
+		odds = udivsi(((catchRate * udivsi(ballMultiplier, 10)) * (gBattleMons[gBankTarget].maxHP * 3 - gBattleMons[gBankTarget].hp * 2)), (3 * gBattleMons[gBankTarget].maxHP));
 
 		#ifndef NO_HARDER_WILD_DOUBLES
-		if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER) && (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)) {
+		if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER) && IS_DOUBLE_BATTLE)
+		{
 			u16 PokesCaught = GetNationalPokedexCount(FLAG_GET_CAUGHT);
 			if (PokesCaught < 30)
-				odds = udivsi(odds * 30, 100);
+				odds = (odds * 30) / 100;
 			else if (PokesCaught <= 150)
-				odds = udivsi(odds * 50, 100);
+				odds = (odds * 50) / 100;
 			else if (PokesCaught <= 300)
-				odds = udivsi(odds * 70, 100);
+				odds = (odds * 70) / 100;
 			else if (PokesCaught <= 450)
-				odds = udivsi(odds * 80, 100);
+				odds = (odds * 80) / 100;
 			else if (PokesCaught <= 600)
-				odds = udivsi(odds * 80, 100);
+				odds = (odds * 80) / 100;
 		}
 		#endif
 
 		if (gBattleMons[gBankTarget].status1 & (STATUS_SLEEP | STATUS_FREEZE))
-			odds = udivsi(odds * 250, 100);
+			odds = (odds * 250) / 100;
 		if (gBattleMons[gBankTarget].status1 & (STATUS_PSN_ANY | STATUS_BURN | STATUS_PARALYSIS))
-			odds = udivsi((odds * 150), 100);
+			odds = (odds * 150) / 100;
 
-		if (ItemType != ITEM_SAFARI_BALL) {
-			if (ItemType == BALL_TYPE_MASTER_BALL)
+		if (ballType != BALL_TYPE_SAFARI_BALL)
+		{
+			if (ballType == BALL_TYPE_MASTER_BALL)
 				gBattleResults->usedMasterBall = 1;
 
 			//This was used for the TV shows in Ruby, but seems kind of pointless in FR.
 			//Commenting it out also prevents errors from using poke balls with large indices.
-			//else if (gBattleResults.usedBalls[ItemType - BALL_TYPE_ULTRA_BALL] < 0xFF)
-			//		gBattleResults.usedBalls[ItemType - BALL_TYPE_ULTRA_BALL]++;
+			//else if (gBattleResults.usedBalls[ballType - BALL_TYPE_ULTRA_BALL] < 0xFF)
+			//		gBattleResults.usedBalls[ballType - BALL_TYPE_ULTRA_BALL]++;
 		}
 
-		if (odds >= 0xFF) { //Poke Caught
+		if (odds >= 0xFF) //Pokemon is Caught
+		{ 
 			EmitBallThrowAnim(0, 4);
 			MarkBufferBankForExecution(gActiveBattler);
 			gBattlescriptCurrInstr = BattleScript_SuccessBallThrow;
 
-			if (ItemType != BALL_TYPE_PARK_BALL) //Might crash the game if using Park Ball on regular Pokemon. Or will load garbage data for ball
-				SetMonData(&gEnemyParty[gBattlerPartyIndexes[gBankTarget]], MON_DATA_POKEBALL, (const void*) &ItemType);
+			if (ballType != BALL_TYPE_PARK_BALL)
+				SetMonData(&gEnemyParty[gBattlerPartyIndexes[gBankTarget]], MON_DATA_POKEBALL, &ballType);
 
 			if (CalculatePlayerPartyCount() == 6)
 				gBattleCommunication[MULTISTRING_CHOOSER] = 0;
 			else
 				gBattleCommunication[MULTISTRING_CHOOSER] = 1;
 		}
-
-		else { //Poke may be caught, calculate shakes
+		else //Pokemon may be caught, calculate shakes
+		{
 			u8 shakes, maxShakes;
 			if (CriticalCapture(odds))
 				maxShakes = 2;
 			else
 				maxShakes = 4;
 
-			if (ItemType == BALL_TYPE_MASTER_BALL
-			||	ItemType == BALL_TYPE_DREAM_BALL
-			||	ItemType == BALL_TYPE_PARK_BALL)
+			if (ballType == BALL_TYPE_MASTER_BALL
+			||	ballType == BALL_TYPE_DREAM_BALL
+			||	ballType == BALL_TYPE_PARK_BALL)
 				shakes = maxShakes;
-
-			else {
+			else
+			{
 				odds = udivsi(0xFFFF0, Sqrt(Sqrt(udivsi(0xFF0000, odds))));
 				for (shakes = 0; shakes < maxShakes && Random() < odds; ++shakes) ;
 			}
@@ -344,19 +352,20 @@ void atkEF_handleballthrow(void)
 			EmitBallThrowAnim(0, shakes);
 			MarkBufferBankForExecution(gActiveBattler);
 
-			if (shakes == maxShakes) {
+			if (shakes == maxShakes)
+			{
 				gBattlescriptCurrInstr = BattleScript_SuccessBallThrow;
 
-				if (ItemType != BALL_TYPE_PARK_BALL) //May crash the game if using Park Ball on regular Pokemon
-					SetMonData(&gEnemyParty[gBattlerPartyIndexes[gBankTarget]], MON_DATA_POKEBALL, (const void*) &ItemType);
+				if (ballType != BALL_TYPE_PARK_BALL)
+					SetMonData(&gEnemyParty[gBattlerPartyIndexes[gBankTarget]], MON_DATA_POKEBALL, &ballType);
 
 				if (CalculatePlayerPartyCount() == 6)
 					gBattleCommunication[MULTISTRING_CHOOSER] = 0;
 				else
 					gBattleCommunication[MULTISTRING_CHOOSER] = 1;
 			}
-
-			else { //rip
+			else //Rip
+			{
 				gBattleCommunication[MULTISTRING_CHOOSER] = shakes;
 				gBattlescriptCurrInstr = BattleScript_ShakeBallThrow;
 			}

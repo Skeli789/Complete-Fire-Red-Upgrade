@@ -2867,22 +2867,44 @@ u8 GetOpenWorldBadgeCount(void)
 #endif
 
 //unused1 is used to hook in so don't use it for anything
-u8 ScriptGiveMon(u16 species, u8 level, u16 item, unusedArg u32 unused1, unusedArg u32 unused2, u8 ballType)
+u8 ScriptGiveMon(u16 species, u8 level, u16 item, unusedArg u32 unused1, u32 customGivePokemon, u8 ballType)
 {
 	u16 nationalDexNum;
-	int sentToPc;
+	u8 sentToPc;
 	struct Pokemon mon;
 
 	CreateMon(&mon, species, level, 32, 0, 0, 0, 0);
 	SetMonData(&mon, MON_DATA_HELD_ITEM, &item);
 
 	#ifdef GIVEPOKEMON_BALL_HACK
-	if (ballType)
+	if (ballType != 0)
 		mon.pokeball = ballType;
 	#endif
 
 	if (FlagGet(FLAG_HIDDEN_ABILITY))
 		mon.hiddenAbility = TRUE;
+
+	#ifdef GIVEPOKEMON_CUSTOM_HACK
+	if (customGivePokemon != 0)
+	{
+		u8 i;
+		u16* moves = &Var8000; //-0x8003
+		bool8 nature = Var8004;
+		bool8 shiny = Var8005;
+		u16* ivs = &Var8006; //-0x800B
+
+		for (i = 0; i < MAX_MON_MOVES; ++i)
+		{
+			if (moves[i] < MOVES_COUNT)
+				SetMonData(&mon, MON_DATA_MOVE1 + i, &moves[i]); 		
+		}
+
+		for (i = 0; i < NUM_STATS; ++i)
+			SetMonData(&mon, MON_DATA_HP_IV + i, &ivs[i]);
+
+		GiveMonNatureAndAbility(&mon, nature, GetMonData(&mon, MON_DATA_PERSONALITY, NULL) & 1, shiny);
+	}
+	#endif
 
 	sentToPc = GiveMonToPlayer(&mon);
 	nationalDexNum = SpeciesToNationalPokedexNum(species);
@@ -2895,7 +2917,7 @@ u8 ScriptGiveMon(u16 species, u8 level, u16 item, unusedArg u32 unused1, unusedA
 			break;
 	}
 
-	unused1 += unused2 +=  ballType; //So the compiler doesn't complain
+	unused1 += customGivePokemon + ballType; //So the compiler doesn't complain
 
 	return sentToPc;
 }
