@@ -653,6 +653,7 @@ BuyMenuPrint = 0x813F6F4 | 1;
 /* Map Functions & Overworld Functions */
 EnableInterrupts = 0x8000B68 | 1;
 DisableInterrupts = 0x8000B94 | 1;
+Overworld_SetEventObjTemplateMovementType = 0x8055114 | 1;
 Overworld_GetMapHeaderByGroupAndId = 0x8055238 | 1;
 SetWarpDestination = 0x805538C | 1;
 ResetInitialPlayerAvatarState = 0x80559E4 | 1;

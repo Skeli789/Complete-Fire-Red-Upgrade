@@ -1225,6 +1225,7 @@ void CreateFollowerAvatar(void)
 	clone.graphicsIdUpperByte = GetFollowerSprite() >> 8;
 	clone.x = player->currentCoords.x - 7;
 	clone.y = player->currentCoords.y - 7;
+	clone.movementType = 0; //Doesn't get to move on its own
 
 	switch (GetPlayerFacing()) {
 		case DIR_NORTH:
@@ -1264,6 +1265,9 @@ static void TurnNPCIntoFollower(u8 localId, u8 followerFlags)
 		if (gEventObjects[eventObjId].localId == localId)
 		{
 			follower = &gEventObjects[eventObjId];
+			follower->movementType = 0; //Doesn't get to move on its own anymore
+			gSprites[follower->spriteId].callback = (void*) 0x805FFB5; //MovementType_None
+			Overworld_SetEventObjTemplateMovementType(localId, 0);
 			const u8* script = GetEventObjectScriptPointerByEventObjectId(eventObjId);
 			u16 flag = GetEventObjectTemplateByLocalIdAndMap(follower->localId, follower->mapNum, follower->mapGroup)->flagId;
 			//gEventObjects[eventObjId].localId = gEventObjects[eventObjId].localId;
