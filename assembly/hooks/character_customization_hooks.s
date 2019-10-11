@@ -208,3 +208,24 @@ PlayerFishingFix:
 	lsl r4, r0, #0x3
 	ldr r1, =0x805D3B4 | 1
 	bx r1
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@	hook at 9BA6C via r1
+.align 2
+.pool
+NPCMartFix:
+	bl GetEventObjectGraphicsId
+	bl GetEventObjectGraphicsInfo
+	mov r1, #0x0
+	ldrsh r2, [r4, r1]
+	lsl r1, r2, #0x3
+	add r1, r1, r2
+	lsl r1, r1, #0x2
+	add r1, r8
+	push {r0-r3}
+	mov r0, r1
+	bl GetEventObjectGraphicsId
+	mov r4, r0
+	pop {r0-r3}
+	ldr r2, =0x809BA80 | 1
+	bx r2

@@ -440,9 +440,9 @@ void FishingWildEncounter(u8 rod)
 {
 	const struct WildPokemonInfo* fishingMonsInfo = LoadProperMonsData(FISHING_MONS_HEADER); //Existence check done prior
 
+	gFishingByte = TRUE;
 	GenerateFishingWildMon(fishingMonsInfo, rod);
 	IncrementGameStat(GAME_STAT_FISHING_CAPTURES);
-	gFishingByte = TRUE;
 	BattleSetup_StartWildBattle();
 }
 
