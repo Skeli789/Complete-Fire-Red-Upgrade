@@ -68,6 +68,8 @@ A complete upgrade for Fire Red, including an upgraded Battle Engine.
 * Move Items on Party Screen
 * New Field Moves like Rock Climb & Defog
 * Expanded Coins, Safari Balls/Steps
+* Fairy Typee
+* Oval Charm
 * And More!
 
 **NOTE** Personalized options are available in *src/config.h*. The options can be customized by commenting and uncommenting lines.
