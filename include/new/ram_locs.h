@@ -59,8 +59,6 @@ struct Clock
 
 		//SaveBlock1ActualLocation 0x202552C
 		extern struct MapHeader gMapHeader;
-
-/*u8*/	#define FishingByte *((u8*) 0x2036E38)
 		#define gEventObjects ((struct MapObject*) 0x2036E38)
 /*
 		#define Var8000 (*((u16*) 0x20370B8))
@@ -155,6 +153,7 @@ struct Clock
 		extern struct MusicPlayerInfo gMPlay_BGM;
 
 		#define gBattleCircusFlags (*((u32*) 0x203E044))
+		#define gFishingByte *((u8*) 0x203E048)
 
 		//Expanded text buffers					//Size					//buffercommand X	//String Arg
 /*u8*/  #define gStringVar7 ((u8*) 0x2022BC4)	//32 bytes					//Buffer 0x5 	//FD 07

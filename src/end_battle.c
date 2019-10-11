@@ -610,6 +610,7 @@ static void EndBattleFlagClear(void)
 	VarSet(VAR_TERRAIN, 0);
 	VarSet(VAR_BATTLE_FACILITY_TRAINER1_NAME, 0xFFFF);
 	VarSet(VAR_BATTLE_FACILITY_TRAINER2_NAME, 0xFFFF);
+	gFishingByte = FALSE;
 	Free(gNewBS->MegaData);
 	Free(gNewBS->UltraData);
 	Free(gNewBS->ZMoveData);

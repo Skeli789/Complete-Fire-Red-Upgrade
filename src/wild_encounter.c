@@ -442,6 +442,7 @@ void FishingWildEncounter(u8 rod)
 
 	GenerateFishingWildMon(fishingMonsInfo, rod);
 	IncrementGameStat(GAME_STAT_FISHING_CAPTURES);
+	gFishingByte = TRUE;
 	BattleSetup_StartWildBattle();
 }
 

@@ -195,4 +195,16 @@ NpcWaterFix:
 	ldr r1, =(0x08067f9c+1)
 	bx r1
 
-
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@	hook at 5D3AC via r1
+.align 2
+.pool
+PlayerFishingFix:
+	push {r2-r3}
+	bl GetEventObjectGraphicsId
+	strh r0, [r5, #0x24]
+	pop {r2-r3}
+	ldrb r0, [r2, #0x5]
+	lsl r4, r0, #0x3
+	ldr r1, =0x805D3B4 | 1
+	bx r1

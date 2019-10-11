@@ -277,6 +277,7 @@ GetPlayerAvatarGraphicsIdByStateId 0805C808 1
 GetPlayerAvatarStateTransitionByGraphicsId 0805C988 2
 GetPlayerAvatarGraphicsIdByCurrentState 0805C9C8 0
 GetPlayerAvatarGenderByGraphicsId 0805C824 1
+PlayerFishingFix 0805D3AC 1
 
 #Pre-Battle Mughots
 GetTrainerBattleTransition 807FF80 0

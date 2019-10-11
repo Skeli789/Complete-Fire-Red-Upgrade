@@ -224,6 +224,14 @@ MaxLevelChange1:
 	lsl r1, #0x10
 	lsr r1, #0x10
 
+.org 0x5D716, 0xFF	@16 bit sprite ids
+	lsl r1, #0x10
+	lsr r1, #0x10
+
+.org 0x5D916, 0xFF	@16 bit sprite ids
+	lsl r1, #0x10
+	lsr r1, #0x10
+
 .org 0x5e5d4, 0xff
 	.byte 0x8, 0x47		@ routine_ptr+1 at 5e5f4
 	
@@ -360,7 +368,11 @@ MaxLevelChange1:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Dynamic Overworld Palettes & More OW Sprites
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@	
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0xC97AC, 0xFF	@16 bit sprite ids
+	lsl r5, #0x10
+	lsr r5, #0x10
+
 .org 0xC9950, 0xFF	@16 bit sprite ids
 	lsl r1, #0x10
 	lsr r1, #0x10

@@ -132,7 +132,7 @@ void atkEF_handleballthrow(void)
 
 				case BALL_TYPE_DIVE_BALL:
 					if (GetCurrentMapType() == MAP_TYPE_UNDERWATER
-					|| FishingByte || TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
+					|| gFishingByte || TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
 						ballMultiplier = 35;
 					else
 						ballMultiplier = 10;
@@ -176,7 +176,7 @@ void atkEF_handleballthrow(void)
 					break;
 
 				case BALL_TYPE_LURE_BALL:
-					if (FishingByte)
+					if (gFishingByte)
 						ballMultiplier = 50;
 					else
 						ballMultiplier = 10;
