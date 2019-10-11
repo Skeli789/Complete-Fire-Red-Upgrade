@@ -218,10 +218,43 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 
 		case EFFECT_RESTORE_HP:
 			switch (move) {
-				case MOVE_PURIFY:
-					if (gBattleMons[bankAtkPartner].status1 != 0)
-						//TODO
-						break;
+				case MOVE_PURIFY: ;
+					u32 status = gBattleMons[bankAtkPartner].status1;
+					if (status != 0)
+					{
+						if (status & STATUS1_PSN_ANY)
+						{
+							gBattleMons[bankAtkPartner].status1 = 0; //Temporarily remove status
+							if (!GoodIdeaToPoisonSelf(bankAtkPartner)) //Partner shouldn't be poisoned
+								IncreaseHelpingHandViability(&viability, class);
+							gBattleMons[bankAtkPartner].status1 = status; //Restore from backup
+						}
+						else if (status & STATUS1_BURN)
+						{
+							gBattleMons[bankAtkPartner].status1 = 0; //Temporarily remove status
+							if (!GoodIdeaToBurnSelf(bankAtkPartner)) //Partner shouldn't be burned
+								IncreaseHelpingHandViability(&viability, class);
+							gBattleMons[bankAtkPartner].status1 = status; //Restore from backup
+						}
+						else if (status & STATUS1_PARALYSIS)
+						{
+							gBattleMons[bankAtkPartner].status1 = 0; //Temporarily remove status
+							if (!GoodIdeaToParalyzeSelf(bankAtkPartner)) //Partner shouldn't be paralyzed
+								IncreaseHelpingHandViability(&viability, class);
+							gBattleMons[bankAtkPartner].status1 = status; //Restore from backup
+						}
+						else if (status & STATUS1_FREEZE)
+						{
+							IncreaseHelpingHandViability(&viability, class);
+						}
+						else if (status & STATUS1_SLEEP)
+						{
+							if ((partnerMove != MOVE_SLEEPTALK && partnerMove != MOVE_SNORE) //Don't wake up if partner is using a sleep-based move
+							|| !MoveWouldHitFirst(move, bankAtk, bankAtkPartner)) //Partner can use sleep-based move and then be awoken
+								IncreaseHelpingHandViability(&viability, class);
+						}
+					}
+					break;
 			}
 			break;
 

@@ -1028,16 +1028,17 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			switch (move) {
 				case MOVE_PURIFY:
 					if (!(defStatus1 & STATUS_ANY)
-					|| MoveBlockedBySubstitute(move, bankAtk, bankDef)
-					|| GetHealthPercentage(bankAtk) == 100)
+					|| MoveBlockedBySubstitute(move, bankAtk, bankDef))
 					{
 						DECREASE_VIABILITY(10);
 						break;
 					}
 					else if (bankDef == bankAtkPartner)
 						break; //Always heal your ally
+					else if (GetHealthPercentage(bankAtk) == 100)
+						DECREASE_VIABILITY(10);
 					else if (GetHealthPercentage(bankAtk) >= 90)
-						DECREASE_VIABILITY(9); //No point in healing, but should at least do it if nothing better
+						DECREASE_VIABILITY(8); //No point in healing, but should at least do it if nothing better
 					break;
 
 				default:
