@@ -96,7 +96,7 @@ sp06F_CanTeamParticipateInBattleMine 0815FF1C
 sp070_RandomizeBattleMineBattleOptions 0815FF20
 sp071_LoadBattleMineRecordTier 0815FF24
 sp072_LoadBattleCircusEffects 0815FF28
-
+sp073_ModifyTeamForBattleTower 0815FF2C
 #sp074_IsPokemonStorageFull 0815FF30 - Predefined in vanilla FR
 sp075_MeasurePokemon1 0815FF34
 sp076_MeasurePokemon2 0815FF38

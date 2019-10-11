@@ -4,7 +4,7 @@
 /*
 experience_tables.c
 	define base experience yeild for each species
-	
+
 tables to edit:
 	gBaseExpBySpecies
 	gExperienceTables

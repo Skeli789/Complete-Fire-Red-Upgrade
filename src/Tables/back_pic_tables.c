@@ -5,7 +5,7 @@
 /*
 back_pic_tables.c
 	Set up tables to switch the player's back sprite
-	
+
 tables to edit:
 	gTrainerBackPicPaletteTable
 	gTrainerBackAnimsPtrTable

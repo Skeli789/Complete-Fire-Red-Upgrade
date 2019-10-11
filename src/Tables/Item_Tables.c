@@ -9,7 +9,7 @@ item_tables.c
 		-pickup lists
 		-fling
 		-ban lists
-		
+
 tables to edit:
 	sPickupCommonItems
 	sPickupRareItems

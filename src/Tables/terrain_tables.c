@@ -8,7 +8,7 @@
 /*
 terrain_tables.c
 	define tables for each battle terrain type, as well as camouflage type based on the terrain
-	
+
 tables to edit:
 	gTerrainTable
 	gAttackTerrainTable

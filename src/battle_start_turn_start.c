@@ -1026,26 +1026,26 @@ u16 GetMUS_ForBattle(void)
 		if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
 		{
 			//If either trainer is special, try to load their music
-			song = TryGetSpecialFrontierTrainerMusic(gTrainerBattleOpponent_A, FRONTIER_TRAINER_A);
+			song = TryGetSpecialFrontierTrainerMusic(gTrainerBattleOpponent_A, BATTLE_FACILITY_TRAINER_A);
 			if (song != 0)
 				return song;
 
 			if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
 			{
-				song = TryGetSpecialFrontierTrainerMusic(gTrainerBattleOpponent_B, FRONTIER_TRAINER_B);
+				song = TryGetSpecialFrontierTrainerMusic(gTrainerBattleOpponent_B, BATTLE_FACILITY_TRAINER_B);
 				if (song != 0)
 					return song;
 			}
 
 			//Then try to load class based music for either trainer
-			trainerClass = GetFrontierTrainerClassId(gTrainerBattleOpponent_A, FRONTIER_TRAINER_A);
+			trainerClass = GetFrontierTrainerClassId(gTrainerBattleOpponent_A, BATTLE_FACILITY_TRAINER_A);
 
 			if (gClassBasedBattleBGM[trainerClass])
 				return gClassBasedBattleBGM[trainerClass];
 
 			if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
 			{
-				trainerClass = GetFrontierTrainerClassId(gTrainerBattleOpponent_B, FRONTIER_TRAINER_B);
+				trainerClass = GetFrontierTrainerClassId(gTrainerBattleOpponent_B, BATTLE_FACILITY_TRAINER_B);
 
 				if (gClassBasedBattleBGM[trainerClass])
 					return gClassBasedBattleBGM[trainerClass];

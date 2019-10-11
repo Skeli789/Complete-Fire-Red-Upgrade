@@ -181,7 +181,7 @@ void BattleAI_SetupAIData(u8 defaultScoreMoves)
 u32 GetAIFlags(void)
 {
 	u32 flags;
-	
+
 	#ifdef VAR_GAME_DIFFICULTY
 	u8 difficulty = VarGet(VAR_GAME_DIFFICULTY);
 	#endif
@@ -195,7 +195,7 @@ u32 GetAIFlags(void)
 	else if (gBattleTypeFlags & (BATTLE_TYPE_FRONTIER))
 		flags = GetAIFlagsInBattleFrontier(gActiveBattler);
 	else if (gBattleTypeFlags & (BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_TRAINER_TOWER) && gTrainerBattleOpponent_A != 0x400)
-		flags = AI_SCRIPT_CHECK_BAD_MOVE | AI_SCRIPT_CHECK_GOOD_MOVE;	
+		flags = AI_SCRIPT_CHECK_BAD_MOVE | AI_SCRIPT_CHECK_GOOD_MOVE;
 	else if (gBattleTypeFlags & BATTLE_TYPE_SCRIPTED_WILD_2) //No idea how these two work
 		flags = AI_SCRIPT_CHECK_BAD_MOVE;
 	else if (gBattleTypeFlags & BATTLE_TYPE_SCRIPTED_WILD_3)

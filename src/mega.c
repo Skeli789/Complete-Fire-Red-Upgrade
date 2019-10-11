@@ -411,7 +411,7 @@ const u8* GetTrainerName(u8 bank)
 		case B_POSITION_PLAYER_LEFT:
 			if (InBattleSands())
 			{
-				trainerId = BATTLE_TOWER_MULTI_TRAINER_TID;
+				trainerId = BATTLE_FACILITY_MULTI_TRAINER_TID;
 				battlerNum = 2; //Name stored in partner var
 			}
 			break;
@@ -433,7 +433,7 @@ const u8* GetTrainerName(u8 bank)
 				trainerId = linkPartner;
 			else if (InBattleSands())
 			{
-				trainerId = BATTLE_TOWER_MULTI_TRAINER_TID;
+				trainerId = BATTLE_FACILITY_MULTI_TRAINER_TID;
 				battlerNum = 2; //Name stored in partner var
 			}
 			else

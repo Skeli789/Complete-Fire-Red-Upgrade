@@ -15,7 +15,7 @@
 /*
 set_effect.c
 	handles move effects
-	
+
 tables:
 	sMoveEffectsThatIgnoreSubstitute
 	sShieldDustIgnoredEffects

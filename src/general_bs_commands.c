@@ -30,10 +30,10 @@
 /*
 general_bs_commands.c
 	functions that support the battle scripting in assembly/battle_scripts
-	
+
 tables:
 	gMissStringIds
-	EntryHazardsStrings
+	sEntryHazardsStrings
 
 */
 
@@ -66,7 +66,7 @@ const u16 gMissStringIds[] =
 	0x184, //Wide Guard
 };
 
-const u8* const EntryHazardsStrings[] =
+static const u8* const sEntryHazardsStrings[] =
 {
 	SpikesLayString,
 	StealthRockLayString,
@@ -2831,7 +2831,7 @@ void atkB0_trysetspikes(void) {
 	}
 
 	if (stringcase != 0xFF)
-		gBattleStringLoader = (u8*) EntryHazardsStrings[stringcase];
+		gBattleStringLoader = (u8*) sEntryHazardsStrings[stringcase];
 }
 
 //Actual calc has been moved to GetBasePower function

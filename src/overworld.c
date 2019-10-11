@@ -43,7 +43,7 @@
 /*
 overworld.c
 	functions for anything regarding the overworld, such as trainer spotting, whiteout, step counters, etc.
-	
+
 tables:
 	gDefaultWalkingScripts
 	sMetatileInteractionScripts
@@ -633,24 +633,24 @@ void BattleSetup_StartTrainerBattle(void)
 		u16 tier = VarGet(VAR_BATTLE_FACILITY_TIER);
 		if (IsCamomonsTier(tier))
 			gBattleTypeFlags |= BATTLE_TYPE_CAMOMONS;
-		else if (tier == BATTLE_TOWER_BENJAMIN_BUTTERFREE)
+		else if (tier == BATTLE_FACILITY_BENJAMIN_BUTTERFREE)
 			gBattleTypeFlags |= BATTLE_TYPE_BENJAMIN_BUTTERFREE;
-		else if (tier == BATTLE_TOWER_MEGA_BRAWL)
+		else if (tier == BATTLE_FACILITY_MEGA_BRAWL)
 			gBattleTypeFlags |= BATTLE_TYPE_MEGA_BRAWL;
 
 		switch (VarGet(VAR_BATTLE_FACILITY_BATTLE_TYPE)) {
-			case BATTLE_TOWER_DOUBLE:
-			case BATTLE_TOWER_DOUBLE_RANDOM:
+			case BATTLE_FACILITY_DOUBLE:
+			case BATTLE_FACILITY_DOUBLE_RANDOM:
 				gBattleTypeFlags |= BATTLE_TYPE_DOUBLE;
 				break;
-			case BATTLE_TOWER_MULTI:
-			case BATTLE_TOWER_MULTI_RANDOM:
+			case BATTLE_FACILITY_MULTI:
+			case BATTLE_FACILITY_MULTI_RANDOM:
 				if (gTrainerBattleOpponent_A == FRONTIER_BRAIN_TID) //Frontier Brains fight alone
 					gBattleTypeFlags |= (BATTLE_TYPE_DOUBLE | BATTLE_TYPE_INGAME_PARTNER /* | BATTLE_TYPE_MULTI*/);
 				else
 					gBattleTypeFlags |= (BATTLE_TYPE_DOUBLE | BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_INGAME_PARTNER);
 				break;
-			case BATTLE_TOWER_LINK_MULTI:
+			case BATTLE_FACILITY_LINK_MULTI:
 				if (gTrainerBattleOpponent_A == FRONTIER_BRAIN_TID) //Frontier Brains fight alone
 					gBattleTypeFlags |= (BATTLE_TYPE_DOUBLE | BATTLE_TYPE_MULTI | BATTLE_TYPE_LINK);
 				else

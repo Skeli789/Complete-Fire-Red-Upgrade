@@ -4,7 +4,7 @@
 /*
 ball_graphics_tables.c
 	set up the structures for expanded pokeballs
-	
+
 tables to edit:
 	gBallSpriteSheets
 	gBallSpritePalettes

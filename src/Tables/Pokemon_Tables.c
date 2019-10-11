@@ -9,7 +9,7 @@ pokemon_tables.c
 		-ban lists
 		-move tables by species
 		-etc...
-		
+
 tables to edit:
 	gAlternateSpeciesSizeTable
 	gTelekinesisBanList
@@ -26,7 +26,7 @@ tables to edit:
 	gSetPerfectXIvList
 	gRandomizerBanList
 	gRandomizerAbilityBanList
-	
+
 	gBattleTowerStandardSpeciesBanList
 	gGSCup_LegendarySpeciesList
 	gSmogonOU_SpeciesBanList
