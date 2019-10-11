@@ -8,7 +8,8 @@ A complete upgrade for Fire Red, including an upgraded Battle Engine.
 ## Features:
 * Expanded PC Boxes (up to 24!)
 * Battle Engine Upgraded to Gen 7
-  * All Moves, Abilities, Items, and Effects through Gen 7
+  * All Moves, Abilities, Items, Item Effects through Gen 7
+  * A complete set of move animations
   * Vastly improved AI system with decision-making skills for all new battle effects
   * Z Moves
   * Mega Evolution / Primal Reversion / Ultra Burst
