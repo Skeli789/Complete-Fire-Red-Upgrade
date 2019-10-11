@@ -18,6 +18,7 @@ generatedrepoints
 *__pycache__
 *.idea
 tables.xlsx
+cfru_thread.txt
 
 # generated temporary files
 .fuse*
