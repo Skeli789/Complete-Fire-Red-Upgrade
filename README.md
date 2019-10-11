@@ -29,7 +29,7 @@ A complete upgrade for Fire Red, including an upgraded Battle Engine.
   * New Evolution Methods
   * Expanded Learnsets
   * Badge-based obedience
-  * Shiny Charm
+  * Shiny Charm + Oval Charm
   * Level Scaling
   * Updated Exp. Share
   * Inverse Battles, Sky Battles
