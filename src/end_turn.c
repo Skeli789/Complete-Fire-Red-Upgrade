@@ -1187,6 +1187,7 @@ u8 TurnBasedEffects(void)
 					const u8* battleScript = NULL;
 
 					switch(ability) {
+						#if (defined SPECIES_DARMANITAN && defined SPECIES_DARMANITANZEN)
 						case ABILITY_ZENMODE:
 							if (species == SPECIES_DARMANITAN
 							&& gBattleMons[gActiveBattler].hp <= gBattleMons[gActiveBattler].maxHP / 2)
@@ -1198,7 +1199,9 @@ u8 TurnBasedEffects(void)
 								battleScript = BattleScript_TransformedEnd2;
 							}
 							break;
+						#endif
 
+						#if (defined SPECIES_ZYGARDE && defined SPECIES_ZYGARDE_10 && defined SPECIES_ZYGARDE_COMPLETE)
 						case ABILITY_POWERCONSTRUCT:
 							if ((species == SPECIES_ZYGARDE || species == SPECIES_ZYGARDE_10)
 							&& gBattleMons[gActiveBattler].hp <= gBattleMons[gActiveBattler].maxHP / 2)
@@ -1210,7 +1213,9 @@ u8 TurnBasedEffects(void)
 								battleScript = BattleScript_PowerConstruct;
 							}
 							break;
+						#endif
 
+						#if (defined SPECIES_WISHIWASHI && SPECIES_WISHIWASHI_S)
 						case ABILITY_SCHOOLING:
 							if (species == SPECIES_WISHIWASHI && gBattleMons[gActiveBattler].level >= 20
 							&& gBattleMons[gActiveBattler].hp > gBattleMons[gActiveBattler].maxHP / 4)
@@ -1230,7 +1235,9 @@ u8 TurnBasedEffects(void)
 								battleScript = BattleScript_StoppedSchooling;
 							}
 							break;
+						#endif
 
+						#ifdef SPECIES_MINIOR_SHIELD
 						case ABILITY_SHIELDSDOWN:
 							if (species == SPECIES_MINIOR_SHIELD
 							&& gBattleMons[gActiveBattler].hp <= gBattleMons[gActiveBattler].maxHP / 2)
@@ -1249,7 +1256,9 @@ u8 TurnBasedEffects(void)
 								battleScript = BattleScript_ShieldsDownToMeteor;
 							}
 							break;
+						#endif
 
+						#if (defined SPECIES_CHERRIM && SPECIES_CHERRIM_SUN)
 						case ABILITY_FLOWERGIFT:
 							if (species == SPECIES_CHERRIM_SUN
 							&& (!WEATHER_HAS_EFFECT || !(gBattleWeather & WEATHER_SUN_ANY) || ability != ABILITY_FLOWERGIFT))
@@ -1258,6 +1267,7 @@ u8 TurnBasedEffects(void)
 								changedForm = TRUE;
 								battleScript = BattleScript_FlowerGiftEnd2;
 							}
+						#endif
 					}
 
 					if (changedForm)

@@ -788,6 +788,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 					}
 					break;
 
+				#if (defined SPECIES_GRENINJA && defined SPECIES_ASHGRENINJA)
 				case ABILITY_BATTLEBOND:
 					if ((arg1 != ARG_IN_FUTURE_ATTACK || gWishFutureKnock->futureSightPartyIndex[bankDef] == gBattlerPartyIndexes[gBankAttacker])
 					&& SPECIES(gBankAttacker) == SPECIES_GRENINJA
@@ -804,6 +805,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 						gBattlescriptCurrInstr = BattleScript_AbilityTransformed;
 						effect = 1;
 					}
+				#endif
 			}
 			*gSeedHelper = 0; //For Soul-Heart Loop
 			gBattleScripting->atk49_state++;

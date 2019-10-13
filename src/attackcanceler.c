@@ -573,10 +573,14 @@ static u8 AtkCanceller_UnableToUseMove(void)
 
 		case CANCELLER_STANCE_CHANGE:
 		case CANCELLER_STANCE_CHANGE_2:
-			if (ABILITY(gBankAttacker) == ABILITY_STANCECHANGE && !(gBattleMons[gBankAttacker].status2 & STATUS2_TRANSFORMED)) {
-				switch (gBattleMons[gBankAttacker].species) {
+			#if (defined SPECIES_AEGISLASH && defined SPECIES_AEGISLASH_BLADE)
+			if (ABILITY(gBankAttacker) == ABILITY_STANCECHANGE && !(gBattleMons[gBankAttacker].status2 & STATUS2_TRANSFORMED))
+			{
+				switch (gBattleMons[gBankAttacker].species)
+				{
 					case SPECIES_AEGISLASH:
-						if (SPLIT(gCurrentMove) != SPLIT_STATUS) {
+						if (SPLIT(gCurrentMove) != SPLIT_STATUS)
+						{
 							DoFormChange(gBankAttacker, SPECIES_AEGISLASH_BLADE, FALSE, TRUE, FALSE);
 							BattleScriptPushCursor();
 							gBattlescriptCurrInstr = BattleScript_StanceChangeToBlade;
@@ -586,7 +590,8 @@ static u8 AtkCanceller_UnableToUseMove(void)
 						break;
 
 					case SPECIES_AEGISLASH_BLADE:
-						if (gCurrentMove == MOVE_KINGSSHIELD) {
+						if (gCurrentMove == MOVE_KINGSSHIELD)
+						{
 							DoFormChange(gBankAttacker, SPECIES_AEGISLASH, FALSE, TRUE, FALSE);
 							BattleScriptPushCursor();
 							gBattlescriptCurrInstr = BattleScript_StanceChangeToShield;
@@ -596,6 +601,7 @@ static u8 AtkCanceller_UnableToUseMove(void)
 						break;
 				}
 			}
+			#endif
 			gBattleStruct->atkCancellerTracker++;
 			break;
 
@@ -855,6 +861,7 @@ static u8 AtkCanceller_UnableToUseMove(void)
 				else if (CheckTableForMove(gCurrentMove, gThreeStrikesMoves))
 					gMultiHitCounter = 3;
 
+				#ifdef SPECIES_ASHGRENINJA
 				else if (ABILITY(gBankAttacker) == ABILITY_BATTLEBOND
 				&& gCurrentMove == MOVE_WATERSHURIKEN
 				&& gBattleMons[gBankAttacker].species == SPECIES_ASHGRENINJA)
@@ -862,6 +869,7 @@ static u8 AtkCanceller_UnableToUseMove(void)
 					gMultiHitCounter = 3;
 				}
 				else
+				#endif
 				{
 					gMultiHitCounter = Random() & 3;
 					if (gMultiHitCounter > 1)

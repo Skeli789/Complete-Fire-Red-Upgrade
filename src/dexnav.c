@@ -225,12 +225,15 @@ static bool8 SpeciesInArray(u16 species, u8 indexCount, u8 unownLetter)
 	{
 		for (int i = 0; i < NUM_LAND_MONS; ++i)
 		{
+			#ifdef SPECIES_UNOWN
 			if (species == SPECIES_UNOWN && InTanobyRuins())
 			{
 				if (sDNavState->unownForms[i] == unownLetter) //Already in array
 					return TRUE;
 			}
-			else if (sDNavState->hiddenSpecies[i] == SPECIES_TABLES_TERMIN)
+			else
+			#endif
+			if (sDNavState->hiddenSpecies[i] == SPECIES_TABLES_TERMIN)
 			{
 				sDNavState->hiddenSpecies[i] = dexNum;
 				sDNavState->hiddenSpecies[i + 1] = SPECIES_TABLES_TERMIN;
@@ -252,12 +255,15 @@ static bool8 SpeciesInArray(u16 species, u8 indexCount, u8 unownLetter)
 	{
 		if (indexCount == NUM_LAND_MONS)
 		{
+			#ifdef SPECIES_UNOWN
 			if (species == SPECIES_UNOWN && InTanobyRuins()) //This Unown code is copied from above b/c either
 			{												 //all Unown are seen, or none at all
 				if (sDNavState->unownForms[i] == unownLetter) //Already in array
 					return TRUE;
 			}
-			else if (SpeciesToNationalPokedexNum(sDNavState->grassSpecies[i]) == dexNum)
+			else
+			#endif
+			if (SpeciesToNationalPokedexNum(sDNavState->grassSpecies[i]) == dexNum)
 				return TRUE;
 		}
 		else
@@ -2077,6 +2083,7 @@ static void DexNavPopulateEncounterList(void)
 		}
 	}
 
+	#ifdef NATIONAL_DEX_UNOWN
 	if (InTanobyRuins() && !GetSetPokedexFlag(NATIONAL_DEX_UNOWN, FLAG_GET_SEEN))
 	{ //This is so the right amount of ? appear for Unown in the different chambers
 		u16 unowns[NUM_LAND_MONS + 1];
@@ -2093,6 +2100,7 @@ static void DexNavPopulateEncounterList(void)
 			}
 		}
 	}
+	#endif
 
 	sDNavState->numGrassMons = grassIndex;
 	sDNavState->numWaterMons = waterIndex;

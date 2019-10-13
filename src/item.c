@@ -251,18 +251,28 @@ bool8 CanMonLearnTutorMove(struct Pokemon* mon, u8 tutorId)
 			 || gBaseStats[species].type2 == TYPE_DRAGON))
 				return TRUE;
 			break;
+		#ifdef NATIONAL_DEX_KELDEO
 		case TUTOR_SPECIAL_SECRET_SWORD:
 			return dexNum == NATIONAL_DEX_KELDEO;
+		#endif
+		#ifdef NATIONAL_DEX_MELOETTA
 		case TUTOR_SPECIAL_RELIC_SONG:
 			return dexNum == NATIONAL_DEX_MELOETTA;
+		#endif
+		#ifdef NATIONAL_DEX_PIKACHU
 		case TUTOR_SPECIAL_VOLT_TACKLE:
 			return dexNum == NATIONAL_DEX_PIKACHU;
+		#endif
+		#ifdef NATIONAL_DEX_RAYQUAZA
 		case TUTOR_SPECIAL_DRAGON_ASCENT:
 			return dexNum == NATIONAL_DEX_RAYQUAZA;
+		#endif
+		#ifdef NATIONAL_DEX_ZYGARDE
 		case TUTOR_SPECIAL_THOUSAND_ARROWS:
 		case TUTOR_SPECIAL_THOUSAND_WAVES:
 		case TUTOR_SPECIAL_CORE_ENFORCER:
 			return dexNum == NATIONAL_DEX_ZYGARDE;
+		#endif
 	}
 
 	return FALSE;

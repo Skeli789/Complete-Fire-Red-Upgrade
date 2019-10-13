@@ -2304,7 +2304,10 @@ void HallOfFame_PrintMonInfo(struct HallofFameMon *currMon, unusedArg u8 a1, unu
 		text[0] = CHAR_SLASH;
 		stringPtr = StringCopy(text + 1, gSpeciesNames[currMon->species]);
 
-		if (currMon->species != NATIONAL_DEX_NIDORAN_M && currMon->species != NATIONAL_DEX_NIDORAN_F) {
+		#if (defined NATIONAL_DEX_NIDORAN_M && defined NATIONAL_DEX_NIDORAN_F)
+		if (currMon->species != NATIONAL_DEX_NIDORAN_M && currMon->species != NATIONAL_DEX_NIDORAN_F)
+		{
+		#endif
 			switch (GetGenderFromSpeciesAndPersonality(currMon->species, currMon->personality)) {
 				case MON_MALE:
 					stringPtr[0] = CHAR_MALE;
@@ -2315,7 +2318,9 @@ void HallOfFame_PrintMonInfo(struct HallofFameMon *currMon, unusedArg u8 a1, unu
 					stringPtr++;
 					break;
 			}
+		#if (defined NATIONAL_DEX_NIDORAN_M && defined NATIONAL_DEX_NIDORAN_F)
 		}
+		#endif
 
 		stringPtr[0] = EOS;
 		WindowPrint(0, 2, 0x80, 1, sUnknown_0840C23C, 0, text);

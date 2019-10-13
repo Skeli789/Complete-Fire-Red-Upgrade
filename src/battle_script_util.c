@@ -30,10 +30,12 @@ extern const struct FlingStruct gFlingTable[];
 
 void CheckIfDarkVoidShouldFail(void)
 {
+	#ifdef SPECIES_DARKRAI
 	if (gCurrentMove == MOVE_DARKVOID
 	&&  SPECIES(gBankAttacker) != SPECIES_DARKRAI
 	&&  !gNewBS->MoveBounceInProgress)
 		gBattlescriptCurrInstr = BattleScript_DarkVoidFail - 5;
+	#endif
 }
 
 void SetTargetPartner(void)

@@ -79,8 +79,12 @@ void atk04_critcalc(void) {
 					+ (CheckTableForMove(gCurrentMove, gHighCriticalChanceMoves))
 					+ (atkEffect == ITEM_EFFECT_SCOPE_LENS)
 					+ (atkAbility == ABILITY_SUPERLUCK)
+					#ifdef SPECIES_CHANSEY
 					+ 2 * (atkEffect == ITEM_EFFECT_LUCKY_PUNCH && gBattleMons[gBankAttacker].species == SPECIES_CHANSEY)
+					#endif
+					#ifdef SPECIES_FARFETCHD
 					+ 2 * (atkEffect == ITEM_EFFECT_STICK && gBattleMons[gBankAttacker].species == SPECIES_FARFETCHD)
+					#endif
 					+ 2 * (gCurrentMove == MOVE_10000000_VOLT_THUNDERBOLT);
 
 		if (critChance > 4)
@@ -148,8 +152,12 @@ static u8 CalcPossibleCritChance(u8 bankAtk, u8 bankDef, u16 move, struct Pokemo
 					+ (CheckTableForMove(move, gHighCriticalChanceMoves))
 					+ (atkEffect == ITEM_EFFECT_SCOPE_LENS)
 					+ (atkAbility == ABILITY_SUPERLUCK)
+					#ifdef SPECIES_CHANSEY
 					+ 2 * (atkEffect == ITEM_EFFECT_LUCKY_PUNCH && atkSpecies == SPECIES_CHANSEY)
+					#endif
+					#ifdef SPECIES_FARFETCHD
 					+ 2 * (atkEffect == ITEM_EFFECT_STICK && atkSpecies == SPECIES_FARFETCHD)
+					#endif
 					+ 2 * (move == MOVE_10000000_VOLT_THUNDERBOLT);
 
 		#ifdef CRIT_CHANCE_GEN_6
@@ -1747,22 +1755,36 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 				}
 				break;
 
+			#ifdef SPECIES_CUBONE
 			case ITEM_EFFECT_THICK_CLUB:
-				if (mon == SPECIES_CUBONE || mon == SPECIES_MAROWAK || mon == SPECIES_MAROWAK_A)
+				if (mon == SPECIES_CUBONE
+				#ifdef SPECIES_MAROWAK
+				||  mon == SPECIES_MAROWAK
+				#endif
+				#ifdef SPECIES_MAROWAK_A
+				||  mon == SPECIES_MAROWAK_A
+				#endif
+				)
 					attack *= 2;
 				break;
+			#endif
 
+			#ifdef NATIONAL_DEX_PIKACHU
 			case ITEM_EFFECT_LIGHT_BALL:
-				if (SpeciesToNationalPokedexNum(mon) == NATIONAL_DEX_PIKACHU) {
+				if (SpeciesToNationalPokedexNum(mon) == NATIONAL_DEX_PIKACHU)
+				{
 					attack *= 2;
 					spAttack *= 2;
 				}
 				break;
+			#endif
 
+			#ifdef SPECIES_CLAMPERL
 			case ITEM_EFFECT_DEEP_SEA_TOOTH:
 				if (mon == SPECIES_CLAMPERL)
 					spAttack *= 2;
 				break;
+			#endif
 
 			case ITEM_EFFECT_MUSCLE_BAND:
 				attack = udivsi((attack * 110), 100);
@@ -1774,45 +1796,60 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 
 			case ITEM_EFFECT_PLATE:
 			case ITEM_EFFECT_TYPE_BOOSTERS:
-				if (type == atkQuality) {
+				if (type == atkQuality)
+				{
 					attack = udivsi((attack * 120), 100);
 					spAttack = udivsi((spAttack * 120), 100);
 				}
 				break;
 
+			#ifdef SPECIES_DIALGA
 			case ITEM_EFFECT_ADAMANT_ORB:
-				if (mon == SPECIES_DIALGA && (type == TYPE_STEEL || type == TYPE_DRAGON)) {
+				if (mon == SPECIES_DIALGA && (type == TYPE_STEEL || type == TYPE_DRAGON))
+				{
 					attack = udivsi((attack * 120), 100);
 					spAttack = udivsi((spAttack * 120), 100);
 				}
 				break;
+			#endif
 
+			#ifdef SPECIES_PALKIA
 			case ITEM_EFFECT_LUSTROUS_ORB:
-				if (mon == SPECIES_PALKIA && (type == TYPE_WATER || type == TYPE_DRAGON)) {
+				if (mon == SPECIES_PALKIA && (type == TYPE_WATER || type == TYPE_DRAGON))
+				{
 					attack = udivsi((attack * 120), 100);
 					spAttack = udivsi((spAttack * 120), 100);
 				}
 				break;
+			#endif
 
+			#if (defined SPECIES_GIRATINA && defined SPECIES_GIRATINA_ORIGIN)
 			case ITEM_EFFECT_GRISEOUS_ORB:
-				if ((mon == SPECIES_GIRATINA || mon == SPECIES_GIRATINA_ORIGIN) && (type == TYPE_GHOST || type == TYPE_DRAGON)) {
+				if ((mon == SPECIES_GIRATINA || mon == SPECIES_GIRATINA_ORIGIN)
+				&& (type == TYPE_GHOST || type == TYPE_DRAGON))
+				{
 					attack = udivsi((attack * 120), 100);
 					spAttack = udivsi((spAttack * 120), 100);
 				}
 				break;
+			#endif
 
+			#if (defined SPECIES_LATIOS && defined SPECIES_LATIAS)
 			case ITEM_EFFECT_SOUL_DEW:
-				if (mon == SPECIES_LATIOS || mon == SPECIES_LATIAS) {
+				if (mon == SPECIES_LATIOS || mon == SPECIES_LATIAS)
+				{
 					#ifdef OLD_SOUL_DEW_EFFECT
 						spAttack *= 3 / 2; //1.5
 					#else
-						if (type == TYPE_PSYCHIC || type == TYPE_DRAGON) {
+						if (type == TYPE_PSYCHIC || type == TYPE_DRAGON)
+						{
 							attack = udivsi((attack * 120), 100);
 							spAttack = udivsi((spAttack * 120), 100);
 						}
 					#endif
 				}
 				break;
+			#endif
 
 			case ITEM_EFFECT_GEM: //This check is specifically meant for the AI, as the Gem would usually be consumed by now
 								  //If the gNewBS->GemHelper is active and the user still has a gem, that means it received another through Symbiosis which is ignored
@@ -1863,24 +1900,30 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 //Target Item Checks
 	mon = defSpecies;
 	switch (target_effect) {
+		#if (defined OLD_SOUL_DEW_EFFECT && defined SPECIES_LATIOS && defined SPECIES_LATIAS)
 		case ITEM_EFFECT_SOUL_DEW:
-			#ifdef OLD_SOUL_DEW_EFFECT
+			if (mon == SPECIES_LATIOS || mon == SPECIES_LATIAS)
 				spDefense *= 3 / 2; //1.5
-			#endif
 			break;
+		#endif
 
+		#ifdef SPECIES_DITTO
 		case ITEM_EFFECT_METAL_POWDER:
 			if (mon == SPECIES_DITTO && !(defender->status2 & STATUS2_TRANSFORMED))
 				defense *= 2;
 			break;
+		#endif
 
+		#ifdef SPECIES_CLAMPERL
 		case ITEM_EFFECT_DEEP_SEA_SCALE:
 			if (mon == SPECIES_CLAMPERL)
 				spDefense *= 2;
 			break;
+		#endif
 
 		case ITEM_EFFECT_EVIOLITE:
-			if (CanEvolve(GetBankPartyData(bankDef))) {
+			if (CanEvolve(GetBankPartyData(bankDef)))
+			{
 				defense = udivsi((defense * 150), 100);
 				spDefense = udivsi((spDefense * 150), 100);
 			}
@@ -2546,10 +2589,12 @@ u16 GetBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 item, u8 item_effect, u8 
 				power = 20;
 			break;
 
+		#ifdef SPECIES_ASHGRENINJA
 		case MOVE_WATERSHURIKEN:
 			if (species == SPECIES_ASHGRENINJA && ability == ABILITY_BATTLEBOND)
 				power = 20;
 			break;
+		#endif
 
 		case MOVE_CRUSHGRIP:
 		case MOVE_WRINGOUT:
@@ -2884,43 +2929,55 @@ u16 CalcVisualBasePower(u8 bankAtk, u8 bankDef, u16 move, u16 power, u8 moveType
 			}
 			break;
 
+		#ifdef SPECIES_DIALGA
 		case ITEM_EFFECT_ADAMANT_ORB:
 			if (atkSpecies == SPECIES_DIALGA
-			&& (moveType == TYPE_STEEL || moveType == TYPE_DRAGON)) {
+			&& (moveType == TYPE_STEEL || moveType == TYPE_DRAGON))
+			{
 				attack = udivsi((attack * 120), 100);
 				spAttack = udivsi((spAttack * 120), 100);
 			}
 			break;
+		#endif
 
+		#ifdef SPECIES_PALKIA
 		case ITEM_EFFECT_LUSTROUS_ORB:
 			if (atkSpecies == SPECIES_PALKIA
-			&& (moveType == TYPE_WATER || moveType == TYPE_DRAGON)) {
+			&& (moveType == TYPE_WATER || moveType == TYPE_DRAGON))
+			{
 				attack = udivsi((attack * 120), 100);
 				spAttack = udivsi((spAttack * 120), 100);
 			}
 			break;
+		#endif
 
+		#if (defined SPECIES_GIRATINA && defined SPECIES_GIRATINA_ORIGIN)
 		case ITEM_EFFECT_GRISEOUS_ORB:
 			if ((atkSpecies == SPECIES_GIRATINA || atkSpecies == SPECIES_GIRATINA_ORIGIN)
-			&& (moveType == TYPE_GHOST || moveType == TYPE_DRAGON)) {
+			&& (moveType == TYPE_GHOST || moveType == TYPE_DRAGON))
+			{
 				attack = udivsi((attack * 120), 100);
 				spAttack = udivsi((spAttack * 120), 100);
 			}
 			break;
+		#endif
 
+		#if (!defined OLD_SOUL_DEW_EFFECT && defined SPECIES_LATIOS && defined SPECIES_LATIAS)
 		case ITEM_EFFECT_SOUL_DEW:
-			if (atkSpecies == SPECIES_LATIOS || atkSpecies == SPECIES_LATIAS) {
-				#ifndef OLD_SOUL_DEW_EFFECT
-					if (moveType == TYPE_PSYCHIC || moveType == TYPE_DRAGON) {
-						attack = udivsi((attack * 120), 100);
-						spAttack = udivsi((spAttack * 120), 100);
-					}
-				#endif
+			if (atkSpecies == SPECIES_LATIOS || atkSpecies == SPECIES_LATIAS)
+			{
+				if (moveType == TYPE_PSYCHIC || moveType == TYPE_DRAGON)
+				{
+					attack = udivsi((attack * 120), 100);
+					spAttack = udivsi((spAttack * 120), 100);
+				}
 			}
 			break;
+		#endif
 
 		case ITEM_EFFECT_GEM:
-			if (moveType == atkQuality) {
+			if (moveType == atkQuality)
+			{
 				#ifdef OLD_GEM_BOOST
 					attack = udivsi((attack * 150), 100);
 					spAttack = udivsi((spAttack * 150), 100);

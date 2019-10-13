@@ -2274,21 +2274,27 @@ static const struct BattleTowerSpread* TryAdjustSpreadForSpecies(const struct Ba
 	u16 species = originalSpread->species;
 
 	switch (species) {
+		#ifdef SPECIES_PIKACHU
 		case SPECIES_PIKACHU:
 			return &gPikachuSpreads[Random() % TOTAL_PIKACHU_SPREADS]; //Sooo many different forms of Pikachu
-
+		#endif
+		#ifdef SPECIES_WORMADAM
 		case SPECIES_WORMADAM:
 			return &gWormadamSpreads[Random() % TOTAL_WORMADAM_SPREADS];
-
+		#endif
+		#ifdef SPECIES_ROTOM
 		case SPECIES_ROTOM:
 			return &gRotomSpreads[Random() % TOTAL_ROTOM_SPREADS]; //All the Rotom forms
-
+		#endif
+		#ifdef SPECIES_ARCEUS
 		case SPECIES_ARCEUS:
 			return &gArceusSpreads[Random() % TOTAL_ARCEUS_SPREADS]; //There are more Arceus spreads than any other Pokemon,
 																	 //so they're held seperately to keep things fresh.
-
+		#endif
+		#ifdef SPECIES_ORICORIO
 		case SPECIES_ORICORIO:
 			return &gOricorioSpreads[Random() % TOTAL_ORICORIO_SPREADS];
+		#endif
 	}
 
 	return originalSpread;
@@ -2299,31 +2305,50 @@ static u16 TryAdjustAestheticSpecies(u16 species)
 	u16 nationalDexNum = SpeciesToNationalPokedexNum(species);
 
 	switch (nationalDexNum) {
+		#ifdef NATIONAL_DEX_DEERLING
 		case NATIONAL_DEX_DEERLING:
 			species = gDeerlingForms[Random() % gNumDeerlingForms];
 			break;
+		#endif
+		#ifdef NATIONAL_DEX_SAWSBUCK
 		case NATIONAL_DEX_SAWSBUCK:
 			species = gSawsbuckForms[Random() % gNumSawsbuckForms];
 			break;
+		#endif
+		#ifdef NATIONAL_DEX_VIVILLON
 		case NATIONAL_DEX_VIVILLON:
 			species = gVivillonForms[Random() % gNumVivillonForms];
 			break;
+		#endif
+		#ifdef NATIONAL_DEX_FLABEBE
 		case NATIONAL_DEX_FLABEBE:
 			species = gFlabebeForms[Random() % gNumFlabebeForms];
 			break;
+		#endif
+		#ifdef NATIONAL_DEX_FLOETTE
 		case NATIONAL_DEX_FLOETTE:
+			#ifdef SPECIES_FLOETTE_ETERNAL
 			if (species != SPECIES_FLOETTE_ETERNAL) //Floette Eternal gets its own spreads
+			#endif
 				species = gFloetteForms[Random() % gNumFloetteForms];
 			break;
+		#endif
+		#ifdef NATIONAL_DEX_FLORGES
 		case NATIONAL_DEX_FLORGES:
 			species = gFlorgesForms[Random() % gNumFlorgesForms];
 			break;
+		#endif
+		#ifdef NATIONAL_DEX_FURFROU
 		case NATIONAL_DEX_FURFROU:
 			species = gFurfrouForms[Random() % gNumFurfrouForms];
 			break;
+		#endif
 		default:
+			#ifdef SPECIES_PIKACHU_CAP_ORIGINAL
 			if (species == SPECIES_PIKACHU_CAP_ORIGINAL)
 				species = gPikachuCapForms[Random() % gNumPikachuCapForms];
+			#endif
+			break;
 	}
 
 	return species;
@@ -2963,7 +2988,10 @@ u32 CheckShinyMon(struct Pokemon* mon)
 				personality |= ability; //Either 0 or 1
 			}
 		} while (GetNatureFromPersonality(personality) != nature || GetGenderFromSpeciesAndPersonality(species, personality) != gender
-		|| (species == SPECIES_UNOWN && GetUnownLetterFromPersonality(personality) != letter)); //Keep all other values the same
+		#ifdef SPECIES_UNOWN 
+		|| (species == SPECIES_UNOWN && GetUnownLetterFromPersonality(personality) != letter)
+		#endif
+		); //Keep all other values the same
 	}
 
 	return personality;
@@ -2982,7 +3010,7 @@ void CreateBoxMon(struct BoxPokemon* boxMon, u16 species, u8 level, u8 fixedIV, 
 	{
 		u32 id = MathMax(1, T1_READ_32(gSaveBlock2->playerTrainerId)); //0 id would mean every Pokemon would crash the game
 		u32 newSpecies = species * id;
-		species = MathMax(SPECIES_BULBASAUR, newSpecies % NUM_SPECIES);
+		species = MathMax(1, newSpecies % NUM_SPECIES);
 
 		while (CheckTableForSpecies(species, gRandomizerSpeciesBanList))
 			species *= id;
@@ -3172,11 +3200,13 @@ void CalculateMonStatsNew(struct Pokemon *mon)
 
 	SetMonData(mon, MON_DATA_LEVEL, &level);
 
+	#ifdef SPECIES_SHEDINJA
 	if (species == SPECIES_SHEDINJA)
 	{
 		newMaxHP = 1;
 	}
 	else
+	#endif
 	{
 		u32 n = 2 * baseHP + ivs[STAT_HP];
 		newMaxHP = MathMin((((n + evs[STAT_HP] / 4) * level) / 100) + level + 10, 0xFFFF);
@@ -3222,6 +3252,7 @@ void CalculateMonStatsNew(struct Pokemon *mon)
 		}
 	}
 
+	#ifdef SPECIES_SHEDINJA
 	if (species == SPECIES_SHEDINJA)
 	{
 		if (currentHP != 0 || oldMaxHP == 0)
@@ -3230,6 +3261,7 @@ void CalculateMonStatsNew(struct Pokemon *mon)
 			return;
 	}
 	else
+	#endif
 	{
 		if (currentHP == 0 && oldMaxHP == 0)
 			currentHP = newMaxHP;

@@ -353,14 +353,22 @@ bool8 IsMegaSpecies(u16 species)
 }
 
 //No better way to check for these next two
-bool8 IsBluePrimalSpecies(u16 species)
+bool8 IsBluePrimalSpecies(unusedArg u16 species)
 {
+	#ifdef SPECIES_KYOGRE_PRIMAL
 	return species == SPECIES_KYOGRE_PRIMAL;
+	#else
+	return FALSE;
+	#endif
 }
 
-bool8 IsRedPrimalSpecies(u16 species)
+bool8 IsRedPrimalSpecies(unusedArg u16 species)
 {
+	#ifdef SPECIES_GROUDON_PRIMAL
 	return species == SPECIES_GROUDON_PRIMAL;
+	#else
+	return FALSE;
+	#endif
 }
 
 bool8 IsMega(u8 bank)

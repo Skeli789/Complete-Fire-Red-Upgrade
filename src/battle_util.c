@@ -696,25 +696,33 @@ bool8 CanTransferItem(u16 species, u16 item)
 		case ITEM_EFFECT_Z_CRYSTAL:
 			return FALSE;
 
+		#ifdef NATIONAL_DEX_GIRATINA
 		case ITEM_EFFECT_GRISEOUS_ORB:
 			if (dexNum == NATIONAL_DEX_GIRATINA)
 				return FALSE;
 			break;
+		#endif
 
+		#ifdef NATIONAL_DEX_ARCEUS
 		case ITEM_EFFECT_PLATE:
 			if (dexNum == NATIONAL_DEX_ARCEUS)
 				return FALSE;
 			break;
+		#endif
 
+		#ifdef NATIONAL_DEX_SILVALLY
 		case ITEM_EFFECT_MEMORY:
 			if (dexNum == NATIONAL_DEX_SILVALLY)
 				return FALSE;
 			break;
+		#endif
 
+		#ifdef NATIONAL_DEX_GENESECT
 		case ITEM_EFFECT_DRIVE:
 			if (dexNum == NATIONAL_DEX_GENESECT)
 				return FALSE;
 			break;
+		#endif
 
 		case ITEM_EFFECT_MEGA_STONE:
 			for (i = 0; i < EVOS_PER_MON; ++i)
@@ -1028,9 +1036,11 @@ bool8 DoesSleepClausePrevent(u8 bank)
 
 bool8 CanBeGeneralStatused(u8 bank, bool8 checkFlowerVeil)
 {
+	#ifdef SPECIES_MINIOR_SHIELD
 	if (ABILITY(bank) == ABILITY_SHIELDSDOWN
 	&&  GetBankPartyData(bank)->species == SPECIES_MINIOR_SHIELD) //Prevents Ditto from getting this benefit
 		return FALSE;
+	#endif
 
 	switch (ABILITY(bank)) {
 		case ABILITY_COMATOSE:

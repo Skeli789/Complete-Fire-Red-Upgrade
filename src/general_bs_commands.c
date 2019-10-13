@@ -283,6 +283,7 @@ void atk0B_healthbarupdate(void) {
 		{
 			PrepareStringBattle(STRINGID_SUBSTITUTEDAMAGED, gActiveBattler);
 		}
+		#ifdef SPECIES_MIMIKYU
 		else if (ABILITY(gActiveBattler) == ABILITY_DISGUISE
 		&& gBattleMons[gActiveBattler].species == SPECIES_MIMIKYU
 		&& !(gHitMarker & HITMARKER_IGNORE_SUBSTITUTE)
@@ -293,6 +294,7 @@ void atk0B_healthbarupdate(void) {
 			gBattlescriptCurrInstr = BattleScript_MimikyuTookDamage;
 			return;
 		}
+		#endif
 		else
 		{
 			s16 healthValue;
@@ -351,6 +353,7 @@ void atk0C_datahpupdate(void) {
 				return;
 			}
 		}
+		#ifdef SPECIES_MIMIKYU
 		else if (ABILITY(gActiveBattler) == ABILITY_DISGUISE //Disguise Protected
 		&& gBattleMons[gActiveBattler].species == SPECIES_MIMIKYU
 		&& !(gHitMarker & HITMARKER_IGNORE_SUBSTITUTE)
@@ -384,6 +387,7 @@ void atk0C_datahpupdate(void) {
 			gBattlescriptCurrInstr = BattleScript_MimikyuTransform;
 			return;
 		}
+		#endif
 		else //No Substitute
 		{
 			if (gBattleMoveDamage < 0) //HP goes up
@@ -901,6 +905,7 @@ void atk1B_cleareffectsonfaint(void) {
 				u16 oldHP, newHP;
 				oldHP = mon->hp;
 
+				#if (defined SPECIES_ZYGARDE && defined SPECIES_ZYGARDE_10)
 				if (mon->species == SPECIES_ZYGARDE || mon->species == SPECIES_ZYGARDE_10)
 				{
 					newHP = MathMin(mon->maxHP, oldHP);
@@ -909,6 +914,7 @@ void atk1B_cleareffectsonfaint(void) {
 					++gNewBS->FaintEffectsTracker;
 					return;
 				}
+				#endif
 		}
 
 		gNewBS->FaintEffectsTracker = 0;
@@ -1666,12 +1672,15 @@ void atk81_trysetrest(void)
 				gBattlescriptCurrInstr = BattleScript_ButItFailed;
 				fail = TRUE;
 				break;
+			#ifdef SPECIES_MINIOR_SHIELD
 			case ABILITY_SHIELDSDOWN:
 				if (SPECIES(gBankAttacker) == SPECIES_MINIOR_SHIELD)
 				{
 					gBattlescriptCurrInstr = BattleScript_ButItFailed;
 					fail = TRUE;
 				}
+				break;
+			#endif
 		}
 	}
 
@@ -1708,7 +1717,11 @@ void atk84_jumpifcantmakeasleep(void) {
 
 	u8* jump_loc = T1_READ_PTR(gBattlescriptCurrInstr + 1);
 
-	if (UproarWakeUpCheck(bankDef) || gBattleMons[bankDef].species == SPECIES_MINIOR_SHIELD)
+	if (UproarWakeUpCheck(bankDef)
+	#ifdef SPECIES_MINIOR_SHIELD
+	|| SPECIES(bankDef) == SPECIES_MINIOR_SHIELD
+	#endif
+	)
 		gBattlescriptCurrInstr = jump_loc;
 
 	else if (defAbility == ABILITY_INSOMNIA || defAbility == ABILITY_VITALSPIRIT || defAbility == ABILITY_COMATOSE || defAbility == ABILITY_SWEETVEIL
@@ -1811,19 +1824,23 @@ void atk8D_setmultihitcounter(void) {
 	if (ABILITY(gBankAttacker) == ABILITY_SKILLLINK)
 		gMultiHitCounter = 5;
 
+	#ifdef SPECIES_ASHGRENINJA
 	else if (ABILITY(gBankAttacker) == ABILITY_BATTLEBOND
 	&& gCurrentMove == MOVE_WATERSHURIKEN
 	&& gBattleMons[gBankAttacker].species == SPECIES_ASHGRENINJA)
 	{
 		gMultiHitCounter = 3;
 	}
-	else {
+	else
+	#endif
+	{
 		gMultiHitCounter = Random() & 3;
 		if (gMultiHitCounter > 1)
 			gMultiHitCounter = (Random() & 3) + 2;
 		else
 			gMultiHitCounter += 2;
 	}
+
 	gBattlescriptCurrInstr += 2;
 }
 
@@ -3701,6 +3718,7 @@ void atkE7_trycastformdatachange(void)
 	gBattlescriptCurrInstr++;
 
 	switch (SPECIES(bank)) { //Not ability b/c you can lose ability
+		#ifdef SPECIES_CASTFORM
 		case SPECIES_CASTFORM:
 			form = CastformDataTypeChange(bank);
 			if (form)
@@ -3709,7 +3727,9 @@ void atkE7_trycastformdatachange(void)
 				gBattleStruct->castformToChangeInto = form - 1;
 			}
 			return;
+		#endif
 
+		#if (defined SPECIES_CHERRIM && defined SPECIES_CHERRIM_SUN)
 		case SPECIES_CHERRIM:
 			if (ABILITY(bank) == ABILITY_FLOWERGIFT && !IS_TRANSFORMED(bank)
 			&& WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
@@ -3726,11 +3746,13 @@ void atkE7_trycastformdatachange(void)
 				DoFormChange(bank, SPECIES_CHERRIM, FALSE, FALSE, FALSE);
 				BattleScriptPushCursorAndCallback(BattleScript_FlowerGift);
 			}
+		#endif
 	}
 }
 
-u8 CastformDataTypeChange(u8 bank)
+u8 CastformDataTypeChange(unusedArg u8 bank)
 {
+	#ifdef SPECIES_CASTFORM
 	u8 formChange = 0;
 	if (SPECIES(bank) != SPECIES_CASTFORM || !BATTLER_ALIVE(bank))
 		return CASTFORM_NO_CHANGE;
@@ -3765,6 +3787,7 @@ u8 CastformDataTypeChange(u8 bank)
 
 		return formChange;
 	}
+	#endif
 
 	return CASTFORM_NO_CHANGE;
 }

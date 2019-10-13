@@ -237,9 +237,11 @@ void AnimTask_GetTimeOfDay(u8 taskId)
 
 void AnimTask_GetLycanrocForm(u8 taskId)
 {
+	#ifdef SPECIES_LYCANROC_N
 	if (GetBankPartyData(gBattleAnimAttacker)->species == SPECIES_LYCANROC_N)
 		gBattleAnimArgs[0] = 1;
 	else
+	#endif
 		gBattleAnimArgs[0] = 0;
 
 	DestroyAnimVisualTask(taskId);

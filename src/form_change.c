@@ -96,52 +96,66 @@ void SwitchOutFormsRevert(u8 bank)
 	u16 backupSpecies = mon->backupSpecies;
 
 	switch (gBattleMons[bank].species) {
+		#if (defined SPECIES_CHERRIM && defined SPECIES_CHERRIM_SUN)
 		case SPECIES_CHERRIM_SUN:
 			if (backupSpecies != SPECIES_NONE)
 				DoFormChange(bank, backupSpecies, FALSE, TRUE, FALSE);
 			else
 				DoFormChange(bank, SPECIES_CHERRIM, FALSE, TRUE, FALSE);
 			break;
+		#endif
 
+		#if (defined SPECIES_DARMANITAN && defined SPECIES_DARMANITANZEN)
 		case SPECIES_DARMANITANZEN:
 			if (backupSpecies != SPECIES_NONE)
 				DoFormChange(bank, backupSpecies, FALSE, TRUE, FALSE);
 			else
 				DoFormChange(bank, SPECIES_CHERRIM, FALSE, TRUE, FALSE);
 			break;
+		#endif
 
+		#if (defined SPECIES_KELDEO && defined SPECIES_KELDEO_RESOLUTE)
 		case SPECIES_KELDEO_RESOLUTE:
 			if (FindMovePositionInMoveset(MOVE_SECRETSWORD, bank) == MAX_MON_MOVES) //Doesn't know Secret Sword
 				DoFormChange(bank, SPECIES_KELDEO, FALSE, TRUE, FALSE);
 			break;
+		#endif
 
+		#if (defined SPECIES_MELOETTA && defined SPECIES_MELOETTA_PIROUETTE)
 		case SPECIES_MELOETTA_PIROUETTE:
 			if (backupSpecies != SPECIES_NONE)
 				DoFormChange(bank, backupSpecies, FALSE, TRUE, FALSE);
 			else
 				DoFormChange(bank, SPECIES_MELOETTA, FALSE, TRUE, FALSE);
 			break;
+		#endif
 
+		#if (defined SPECIES_AEGISLASH && defined SPECIES_AEGISLASH_BLADE)
 		case SPECIES_AEGISLASH_BLADE:
 			if (backupSpecies != SPECIES_NONE)
 				DoFormChange(bank, backupSpecies, FALSE, TRUE, FALSE);
 			else
 				DoFormChange(bank, SPECIES_AEGISLASH, FALSE, TRUE, FALSE);
 			break;
+		#endif
 
+		#if (defined SPECIES_WISHIWASHI && defined SPECIES_WISHIWASHI_S)
 		case SPECIES_WISHIWASHI_S:
 			if (backupSpecies != SPECIES_NONE)
 				DoFormChange(bank, backupSpecies, FALSE, TRUE, FALSE);
 			else
 				DoFormChange(bank, SPECIES_WISHIWASHI, FALSE, TRUE, FALSE);
 			break;
+		#endif
 
+		#ifdef SPECIES_MINIOR_SHIELD
 		case SPECIES_MINIOR_SHIELD:
 			if (backupSpecies != SPECIES_NONE)
 				DoFormChange(bank, backupSpecies, FALSE, TRUE, FALSE);
 			else
 				DoFormChange(bank, GetMiniorCoreSpecies(mon), FALSE, TRUE, FALSE);
 			break;
+		#endif
 	}
 }
 
@@ -176,11 +190,14 @@ bool8 TryFormRevert(pokemon_t* mon)
 		oldHP = mon->hp;
 		CalculateMonStats(mon);
 
+		#if (defined SPECIES_ZYGARDE && defined SPECIES_ZYGARDE_10)
 		if (mon->species == SPECIES_ZYGARDE || mon->species == SPECIES_ZYGARDE_10)
 			mon->hp = MathMin(mon->maxHP, oldHP);
+		#endif
 
 		return TRUE;
 	}
+	#if (defined SPECIES_SHAYMIN && defined SPECIES_SHAYMIN_SKY)
 	else if (mon->species == SPECIES_SHAYMIN_SKY)
 	{
 		if (IsNightTime())
@@ -190,6 +207,8 @@ bool8 TryFormRevert(pokemon_t* mon)
 			return TRUE;
 		}
 	}
+	#endif
+	#if (defined SPECIES_KELDEO && SPECIES_KELDEO_RESOLUTE)
 	else if (mon->species == SPECIES_KELDEO)
 	{
 		for (i = 0; i < MAX_MON_MOVES; ++i)
@@ -220,12 +239,14 @@ bool8 TryFormRevert(pokemon_t* mon)
 			return TRUE;
 		}
 	}
+	#endif
 
 	return FALSE;
 }
 
 void UpdateBurmy(void)
 {
+	#ifdef SPECIES_BURMY
 	int i;
 	u16 form = gTerrainTable[gBattleTerrain].burmyForm;
 
@@ -243,6 +264,7 @@ void UpdateBurmy(void)
 			}
 		}
 	}
+	#endif
 }
 
 species_t GetMiniorCoreSpecies(struct Pokemon* mon)
@@ -252,7 +274,11 @@ species_t GetMiniorCoreSpecies(struct Pokemon* mon)
 
 static bool8 IsMinior(u16 species)
 {
-	return species == SPECIES_MINIOR_SHIELD || CheckTableForSpecies(species, gMiniorCores);
+	return
+	#ifdef SPECIES_MINIOR_SHIELD
+	species == SPECIES_MINIOR_SHIELD ||
+	#endif
+	CheckTableForSpecies(species, gMiniorCores);
 }
 
 void HandleFormChange(void)
@@ -335,6 +361,7 @@ void HoldItemFormChange(struct Pokemon* mon, u16 item)
 	u8 type = ItemId_GetHoldEffectParam(item);
 
 	switch(species) {
+		#if (defined SPECIES_GIRATINA && defined SPECIES_GIRATINA_ORIGIN)
 		case SPECIES_GIRATINA:
 			if (itemEffect == ITEM_EFFECT_GRISEOUS_ORB)
 				targetSpecies = SPECIES_GIRATINA_ORIGIN;
@@ -344,7 +371,9 @@ void HoldItemFormChange(struct Pokemon* mon, u16 item)
 			if (itemEffect != ITEM_EFFECT_GRISEOUS_ORB)
 				targetSpecies = SPECIES_GIRATINA;
 			break;
+		#endif
 
+		#ifdef SPECIES_GENESECT
 		case SPECIES_GENESECT:
 		case SPECIES_GENESECT_BURN:
 		case SPECIES_GENESECT_CHILL:
@@ -371,7 +400,9 @@ void HoldItemFormChange(struct Pokemon* mon, u16 item)
 			if (targetSpecies == SPECIES_NONE)
 				targetSpecies = SPECIES_GENESECT;
 			break;
+		#endif
 
+		#ifdef SPECIES_ARCEUS
 		case SPECIES_ARCEUS:
 		case SPECIES_ARCEUS_FIGHT:
 		case SPECIES_ARCEUS_FLYING:
@@ -400,7 +431,9 @@ void HoldItemFormChange(struct Pokemon* mon, u16 item)
 					targetSpecies = SPECIES_ARCEUS;
 			}
 			break;
+		#endif
 
+		#ifdef SPECIES_SILVALLY
 		case SPECIES_SILVALLY:
 		case SPECIES_SILVALLY_FIGHT:
 		case SPECIES_SILVALLY_FLYING:
@@ -428,6 +461,7 @@ void HoldItemFormChange(struct Pokemon* mon, u16 item)
 					targetSpecies = SPECIES_SILVALLY;
 			}
 			break;
+		#endif
 	}
 
 	if (targetSpecies != SPECIES_NONE && targetSpecies != species)
@@ -450,16 +484,17 @@ void HoopaShayminPCRevertCheck(struct Pokemon* mon)
 	u16 targetSpecies = SPECIES_NONE;
 
 	switch (species) {
+		#if (defined HOOPA_CHANGE_IN_PC && defined SPECIES_HOOPA_UNBOUND && defined SPECIES_HOOPA)
 		case SPECIES_HOOPA_UNBOUND:
-		#ifdef HOOPA_CHANGE_IN_PC
 			targetSpecies = SPECIES_HOOPA;
-		#endif
 			break;
+		#endif
+		
+		#if (defined SHAYMIN_CHANGE_IN_PC && defined SPECIES_SHAYMIN_SKY && defined SPECIES_SHAYMIN)
 		case SPECIES_SHAYMIN_SKY:
-		#ifdef SHAYMIN_CHANGE_IN_PC
 			targetSpecies = SPECIES_SHAYMIN;
-		#endif
 			break;
+		#endif
 	}
 
 	if (targetSpecies != SPECIES_NONE)

@@ -344,12 +344,16 @@ u16 GetMonDevolution(struct Pokemon* mon)
 
 	u16 dexNum = SpeciesToNationalPokedexNum(species);
 	switch(dexNum) {
+		#if (defined NATIONAL_DEX_PIKACHU && defined SPECIES_PICHU)
 		case NATIONAL_DEX_PIKACHU: //Get's all the special forms
 			species = SPECIES_PICHU;
 			break;
+		#endif
+		#if (defined NATIONAL_DEX_VIVILLON && defined SPECIES_SCATTERBUG)
 		case NATIONAL_DEX_VIVILLON:
 			species = SPECIES_SCATTERBUG;
 			break;
+		#endif
 	}
 
 	if (species != originalSpecies)

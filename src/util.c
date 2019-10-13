@@ -221,8 +221,10 @@ bool8 CanPartyMonBeGeneralStatused(struct Pokemon* mon)
 	u8 type1 = (ShouldReplaceTypesWithCamomons()) ? GetCamomonsTypeByMon(mon, 0) : gBaseStats[species].type1;
 	u8 type2 = (ShouldReplaceTypesWithCamomons()) ? GetCamomonsTypeByMon(mon, 1) : gBaseStats[species].type2;
 
+	#ifdef SPECIES_MINIOR_SHIELD
 	if (species == SPECIES_MINIOR_SHIELD)
 		return FALSE;
+	#endif
 
 	switch (GetMonAbility(mon)) {
 		case ABILITY_COMATOSE:

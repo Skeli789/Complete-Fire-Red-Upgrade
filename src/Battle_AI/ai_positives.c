@@ -994,6 +994,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 					break;
 
 				case MOVE_KINGSSHIELD:
+					#if (defined SPECIES_AEGISLASH && defined SPECIES_AEGISLASH_BLADE)
 					if (atkAbility == ABILITY_STANCECHANGE //Special logic for Aegislash
 					&&  atkSpecies == SPECIES_AEGISLASH_BLADE
 					&&  !IsBankIncapacitated(bankDef))
@@ -1006,6 +1007,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 							INCREASE_STATUS_VIABILITY(3);
 						break;
 					}
+					#endif
 					__attribute__ ((fallthrough));
 
 				default:
@@ -1975,10 +1977,12 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			break;
 
 		case EFFECT_RELIC_SONG:
+			#if (defined SPECIES_MELOETTA && defined SPECIES_MELOETTA_PIROUETTE)
 			if (atkSpecies == SPECIES_MELOETTA && defDefense < defSpDef) //Change to pirouette if can do more damage
 				INCREASE_VIABILITY(3); //Increase past strongest move
 			else if (atkSpecies == SPECIES_MELOETTA_PIROUETTE && defSpDef < defDefense) //Change to Aria if can do more damage
 				INCREASE_VIABILITY(3); //Increase past strongest move
+			#endif
 //			else
 //				goto AI_SLEEP_CHECKS;
 			break;
