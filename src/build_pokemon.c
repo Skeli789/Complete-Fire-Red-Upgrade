@@ -28,7 +28,7 @@
 #include "../include/new/util.h"
 
 #include "Tables/trainers_with_evs_table.h"
-#include "Tables/Battle_Tower_Spreads.h"
+#include "Tables/battle_tower_spreads.h"
 /*
 build_pokemon.c
 	modifies the data that is set for generated pokemon, eg. for battle tower/frontier team generation and others.
