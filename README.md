@@ -68,7 +68,7 @@ A complete upgrade for Fire Red, including an upgraded Battle Engine.
 * Move Items on Party Screen
 * New Field Moves like Rock Climb & Defog
 * Expanded Coins, Safari Balls/Steps
-* Fairy Typee
+* Fairy Type
 * Oval Charm
 * And More!
 

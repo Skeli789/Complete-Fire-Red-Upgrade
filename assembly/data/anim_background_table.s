@@ -7,7 +7,7 @@ anim_background_tables.s
 */
 
 .include "../Anim_Defines.asm"
-.include "assembly/data/Anim_Backgrounds_Graphics_Defines.s"
+.include "assembly/data/anim_backgrounds_graphics_defines.s"
 
 .global gAnimationBackgrounds
 gAnimationBackgrounds:
