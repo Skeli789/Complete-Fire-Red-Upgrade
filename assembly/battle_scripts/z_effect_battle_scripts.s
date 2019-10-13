@@ -6,7 +6,8 @@ z_effect_battle_scripts.s
 	handles implementing z move effects
 */
 
-.include "../defines"
+.include "../asm_defines.s"
+.include "../battle_script_macros.s"
 
 .global BattleScript_StatsResetZMove
 .global BattleScript_AllStatsUpZMove

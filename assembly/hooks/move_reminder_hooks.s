@@ -3,7 +3,7 @@
 .thumb
 .thumb_func
 
-.include "../defines"
+.include "../asm_defines.s"
 
 @@ Move Reminder
 .global FixReminderCalloc

@@ -6,7 +6,8 @@ fainting_battle_scripts.s
 	scripts for pokemon fainting
 */
 
-.include "../defines"
+.include "../asm_defines.s"
+.include "../battle_script_macros.s"
 
 .global BattleScript_FaintAttacker
 .global BattleScript_FaintTarget

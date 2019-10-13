@@ -2,7 +2,7 @@
 .global gTypeEffectiveness
 .global gMoveMenuInfoIcons
 
-.include "../defines"
+.include "../asm_defines.s"
 /*
 type_tables.s
 	type effectiveness table, type icon definitions

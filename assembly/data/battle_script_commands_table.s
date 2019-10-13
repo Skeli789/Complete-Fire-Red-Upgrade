@@ -7,7 +7,7 @@ battle_script_command_table.s
 	table of battle script commands, including new ones
 */
 
-.include "../defines"
+.include "../asm_defines.s"
 .equ NULL, 0x00000000
 
 .global gBattleScriptingCommandsTable

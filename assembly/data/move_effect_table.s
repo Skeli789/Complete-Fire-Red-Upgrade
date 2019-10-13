@@ -2,7 +2,7 @@
 .text
 .align 2
 
-.include "../defines"
+.include "../asm_defines.s"
 /*
 move_effect_tables.s
 	table of move effect IDs

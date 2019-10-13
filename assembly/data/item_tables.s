@@ -1,7 +1,7 @@
 .thumb
 .global AbilityDamageListTable
 
-.include "../defines"
+.include "../asm_defines.s"
 /*
 item_tables.s
 	tables of item IDs associated with battle moves and effects

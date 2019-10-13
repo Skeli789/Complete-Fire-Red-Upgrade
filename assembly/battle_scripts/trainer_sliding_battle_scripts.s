@@ -6,7 +6,8 @@ trainer_sliding_battle_scripts.s
 	scripts for handling mid-battle trainer sliding/messages
 */
 
-.include "../defines"
+.include "../asm_defines.s"
+.include "../battle_script_macros.s"
 
 .global BattleScript_TrainerSlideMsgRet
 .global BattleScript_TrainerSlideMsgEnd2

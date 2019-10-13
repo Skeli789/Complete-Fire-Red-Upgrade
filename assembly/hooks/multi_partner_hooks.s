@@ -2,7 +2,7 @@
 .thumb
 .align 2
 
-.include "../defines"
+.include "../asm_defines.s"
 
 .global DisplayPartnerNameInPartyMenuHook
 .global TagTeamBackspritePalHook

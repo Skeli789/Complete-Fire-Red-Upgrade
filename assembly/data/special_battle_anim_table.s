@@ -2,7 +2,7 @@
 .text
 .align 2
 
-.include "../Anim_Defines.asm"
+.include "../anim_defines.s"
 /*.include "../asm_defines.s" Don't Uncomment This!*/
 
 /*

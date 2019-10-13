@@ -2,7 +2,7 @@
 .text
 .align 2
 
-.include "../defines"
+.include "../asm_defines.s"
 
 @Repoint at 0x803FE70
 GetMonPokeBallHook:

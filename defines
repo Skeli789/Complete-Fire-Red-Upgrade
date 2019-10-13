@@ -1,4 +1,0 @@
-.thumb
-
-.include "asm_defines.s"
-.include "Battle Script Macros.asm"

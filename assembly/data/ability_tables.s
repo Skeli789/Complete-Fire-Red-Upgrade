@@ -2,7 +2,7 @@
 .text
 .align 2
 
-.include "../defines"
+.include "../asm_defines.s"
 /*
 ability_tables.s
 	tables associated with ability ban lists or activation

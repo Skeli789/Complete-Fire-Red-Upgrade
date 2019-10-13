@@ -7,7 +7,7 @@ triple_layer_blocks.s
 	inserts diegoisawesome's triple layer block hack
 */
 
-.include "../defines"
+.include "../asm_defines.s"
 
 @@ Triple Layer Blocks
 .global DrawBlockHook

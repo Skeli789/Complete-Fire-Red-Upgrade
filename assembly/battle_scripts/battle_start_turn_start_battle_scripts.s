@@ -6,7 +6,8 @@ battle_start_turn_start_battle_scripts.s
 	scripts to support battle start and turn start
 */
 
-.include "../defines"
+.include "../asm_defines.s"
+.include "../battle_script_macros.s"
 
 .global BattleScript_AirBalloonFloat
 .global BattleScript_AirBalloonSub

@@ -2,8 +2,7 @@
 .text
 .align 2
 
-.include "../defines"
-
+.include "../asm_defines.s"
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

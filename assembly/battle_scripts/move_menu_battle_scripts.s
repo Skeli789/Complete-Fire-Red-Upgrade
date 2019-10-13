@@ -6,7 +6,8 @@ move_menu_battle_scripts.s
 	handles messages when trying to select a move
 */
 
-.include "../defines"
+.include "../asm_defines.s"
+.include "../battle_script_macros.s"
 
 .global BattleScript_MustSelectEncoredMove
 .global BattleScript_SelectingNotAllowedMoveAssaultVest

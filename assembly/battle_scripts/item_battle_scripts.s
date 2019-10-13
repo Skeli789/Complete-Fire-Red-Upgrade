@@ -6,7 +6,8 @@ item_battle_scripts.s
 	handles in-battle item usage
 */
 
-.include "../defines"
+.include "../asm_defines.s"
+.include "../battle_script_macros.s"
 
 .global BattleScript_BerryConfuseHealRet
 .global BattleScript_BerryConfuseHealEnd2

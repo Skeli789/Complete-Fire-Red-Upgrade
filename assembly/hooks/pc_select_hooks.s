@@ -3,7 +3,7 @@
 .thumb
 .thumb_func
 
-.include "../defines"
+.include "../asm_defines.s"
 
 @@ Direct PC Selection (credit to ghoulslash)
 .global pcSelect_ClosingCheck

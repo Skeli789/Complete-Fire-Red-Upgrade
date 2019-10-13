@@ -6,7 +6,8 @@ switch_battle_scripts.s
 	scripts for switching logic
 */
 
-.include "../defines"
+.include "../asm_defines.s"
+.include "../battle_script_macros.s"
 
 .global BattleScript_HealingWishHeal
 .global BattleScript_LunarDanceHeal

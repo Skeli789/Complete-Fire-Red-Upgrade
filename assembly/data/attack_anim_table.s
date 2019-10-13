@@ -7,7 +7,7 @@ attack_anim_table.s
 	table of attack animation and associated animation scripts
 */
 
-.include "../Anim_Defines.asm"
+.include "../anim_defines.s"
 .include "../asm_defines.s"
 
 .global ANIM_INFESTATION

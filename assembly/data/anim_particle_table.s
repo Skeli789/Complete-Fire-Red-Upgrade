@@ -8,7 +8,7 @@ anim_particle_table.s
 	tables for animation particles
 */
 
-.include "../Anim_Defines.asm"
+.include "../anim_defines.s"
 .include "assembly/data/anim_particle_graphics_defines.s"
 
 gBattleAnimPicTable:

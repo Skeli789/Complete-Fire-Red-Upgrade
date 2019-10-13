@@ -8,7 +8,8 @@ general_attack_battle_scripts.s
 .thumb
 .align 2
 
-.include "../defines"
+.include "../asm_defines.s"
+.include "../battle_script_macros.s"
 
 .global GuardSwapString
 .global SpeedSwapString

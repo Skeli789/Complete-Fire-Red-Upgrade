@@ -3,7 +3,7 @@
 .thumb
 .thumb_func
 
-.include "../defines"
+.include "../asm_defines.s"
 
 @@ Dynamic Overworld Palettes (credit to Navenatox)
 .global SetPalFossilImage
