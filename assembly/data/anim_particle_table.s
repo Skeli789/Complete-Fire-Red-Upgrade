@@ -9,7 +9,7 @@ anim_particle_table.s
 */
 
 .include "../Anim_Defines.asm"
-.include "assembly/data/Anim_Particle_Graphics_Defines.s"
+.include "assembly/data/anim_particle_graphics_defines.s"
 
 gBattleAnimPicTable:
 animparticle 0x8d02520,	0x200,	ANIM_TAG_BONE
