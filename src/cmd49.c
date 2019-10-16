@@ -100,7 +100,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 
 	u8 bankDef = gBankTarget;
 
-	if (gChosenMove == -1)
+	if (gChosenMove == 0xFFFF)
 		originallyUsedMove = 0;
 	else
 		originallyUsedMove = gChosenMove;

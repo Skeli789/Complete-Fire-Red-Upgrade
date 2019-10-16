@@ -9572,7 +9572,7 @@ CoreEnforcerASM:
 	beq SolarBeamBeamReturn
 	bl IsAnimMoveCoreEnforcer
 	cmp r0, #0x0
-	beq CoreEnforcerFuncCall
+	bne CoreEnforcerFuncCall
 
 SolarBeamBeamReturn:
 	ldrh r0, [r6, #0x4]

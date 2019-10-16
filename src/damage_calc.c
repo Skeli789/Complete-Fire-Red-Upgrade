@@ -21,18 +21,17 @@ damage_calc.c
 	functions responsible for calculating damage, including modifications from abilities, effects, etc...
 */
 
-//TODO: Update Type Calc to have an option to be fooled by Illusion
-
 extern const struct NaturalGiftStruct gNaturalGiftTable[];
 extern const struct FlingStruct gFlingTable[];
 extern struct AlternateSize gAlternateSpeciesSizeTable[];
 
-#ifdef CRIT_CHANCE_GEN_6
-	static const u16 Gen6CriticalHitChance[] = {16, 8, 2, 1, 1};
-#elifdef CRIT_CHANCE_GEN_2_TO_5
-	static const u16 Gen2_5CriticalHitChance[] = {16, 8, 4, 3, 2};
+static const u16 sCriticalHitChances[] =
+#ifdef CRIT_CHANCE_GEN_6	
+	{16, 8, 2, 1, 1};
+#elif (defined CRIT_CHANCE_GEN_2_TO_5)
+	{16, 8, 4, 3, 2};
 #else
-	static const u16 Gen7CriticalHitChance[] = {24, 8, 2, 1, 1};
+	{24, 8, 2, 1, 1};
 #endif
 
 #define BASE_CRIT_MULTIPLIER 100
@@ -90,16 +89,8 @@ void atk04_critcalc(void) {
 		if (critChance > 4)
 			critChance = 4;
 
-		#ifdef CRIT_CHANCE_GEN_6
-			if (!(Random() % Gen6CriticalHitChance[critChance]))
-				confirmedCrit = TRUE;
-		#elifdef CRIT_CHANCE_GEN_2_TO_5
-			if (!(Random() % Gen2_5CriticalHitChance[critChance]))
-				confirmedCrit = TRUE;
-		#else
-			if (!(Random() % Gen7CriticalHitChance[critChance]))
-				confirmedCrit = TRUE;
-		#endif
+		if (!(Random() % sCriticalHitChances[critChance]))
+			confirmedCrit = TRUE;
 	}
 
 	gCritMultiplier = BASE_CRIT_MULTIPLIER;
@@ -165,7 +156,7 @@ static u8 CalcPossibleCritChance(u8 bankAtk, u8 bankDef, u16 move, struct Pokemo
 				return TRUE;
 			if (critChance >= 2)
 				return 2; //50 % Chance
-		#elifdef CRIT_CHANCE_GEN_2_TO_5
+		#elif (defined CRIT_CHANCE_GEN_2_TO_5)
 			if (critChance >= 4)
 				return 2; //50 % Chance
 		#else
