@@ -21657,8 +21657,8 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
-		.forDoubles = TRUE,
-		.modifyMovesDoubles = TRUE,
+		.forDoubles = FALSE,
+		.modifyMovesDoubles = FALSE,
 	},
 	{
 		.species = SPECIES_MOTHIM,

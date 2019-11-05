@@ -126,7 +126,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.ability = Ability_Random_1_2,
 	},
 	[13] =
-	{ //Special Wall 
+	{ //Special Wall: Less Attack
 		.nature = NATURE_CALM,
 		.ivs = 31,
 		.hpEv = 252,
@@ -135,7 +135,7 @@ const struct TrainersWithEvs gTrainersWithEvsSpreads[] =
 		.ability = Ability_Random_1_2,
 	},
 	[14] =
-	{ //Special Wall 
+	{ //Special Wall: Less Special Attack
 		.nature = NATURE_CAREFUL,
 		.ivs = 31,
 		.hpEv = 252,

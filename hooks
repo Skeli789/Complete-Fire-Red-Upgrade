@@ -21,6 +21,7 @@ PartyMenuSwitchingHook 8014450 0
 ForfeitBattleTowerHook 80146AC 0
 GetWhoStrikesFirst 8014CD8 3
 SetActionsAndBanksTurnOrder 80150A8 0
+TurnValuesCleanUpAdditionHook 8015438 0
 RunTurnActionsFunctions 80155C8 0
 HandleEndTurn_BattleWon 8015670 0
 HandleEndTurn_BattleLost 801578C 0
@@ -181,6 +182,7 @@ MudBombASM 080E2590 0
 CoreEnforcerASM 080A243C 0
 
 ##Poke Ball Hooks
+CaptureExperienceEvolutionHook 8015A44 1
 GetPokeBallBattleScriptHook 801645E 0
 SetMonPokeBallHook 08040858 0
 LoadBallGfx 0804BEF4 1
@@ -192,7 +194,6 @@ DestroyThrowPokeBall 080EF4B8 1
 StartPokeballThrowAnimation 0x80EF5AC 1
 ItemIdToBallId 080EF52C 1
 OakIntroPokeballFixHook 804B946 0
-DoubleWildAnimBallThrowFixHook 080EF5F4 1
 DoubleWildPokeBallItemUseFixHook 080A1E2C 0
 DoubleWildDexHook1 802D95C 0
 DoubleWildDexHook2 802D9D8 0
@@ -239,10 +240,13 @@ CalculateMonStatsNew 803E47C 1
 SetMonHeldItemHook 8040784 2
 GetMonAbility 8040D38 1
 DaycareInheritHiddenAbility 8046116 0
+SetMonExpWithMaxLevelCheck 8043B48 2
 
 ##DNS
 TransferPlttBuffer 8070474 0
 RealTimeClock 0800041E 3
+DNSCreateBuyMenuHook 0809AC84 0
+DNSEndBuyMenuHook 0809C078 1
 
 ##Select-From-PC
 pcSelect_ClosingCheck 0808ebb2 0
@@ -381,6 +385,7 @@ FollowMe_WarpStairsEndHook 0807EC5A 0
 FollowMe_WarpHoleEndHook 8084770 0
 FollowMe_LocalIdHook 0805DF60 3
 FollowMe_ScriptHook 0805FC20 3
+FollowMe_WhiteOutHook 8054E1A 2
 
 ##Learn Move
 GiveMoveToBoxMon 0803E8B0 2
@@ -394,6 +399,7 @@ GetNumberOfRelearnableMoves 08043E2C 1
 #Pokedex
 PokedexLoadAlternateHeightHook 081058DC 0
 PokedexLoadAlternateWeightHook 08105A58 0
+SizeMinigameLoadAlternateHeightHook 080A0774 2
 PokedexScreenStats 08106370 0
 
 ##Daycare

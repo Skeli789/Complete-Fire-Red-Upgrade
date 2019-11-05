@@ -30,6 +30,7 @@ FollowMe_LedgeHook:
 
 dont_move_oam:
 	ldr r2, =(0x08068D6E + 1)
+bxr2:
 	bx r2
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -262,3 +263,12 @@ FollowMe_ScriptHook:
 GetRegularScript:
 	ldr r3, =0x805FC28 | 1
 	bx r3
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+@0x8054E1A with r2
+FollowMe_WhiteOutHook:
+	ldr r2, =VarSet
+	bl bxr2
+	bl FollowMe_TryRemoveFollowerOnWhiteOut
+	pop {pc}

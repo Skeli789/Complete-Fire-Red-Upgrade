@@ -477,6 +477,15 @@ void StartPokeballThrowAnimation(u8 taskId)
 	ballId = ItemIdToBallId(gLastUsedItem);
 	spriteId = CreateSprite(&gBallSpriteTemplates[ballId], 32, 80, 29);
 	gSprites[spriteId].data[0] = 34;
+
+	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && !(gBattleTypeFlags & BATTLE_TYPE_TRAINER))
+	{
+		if (BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)))
+			gBattleAnimTarget = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
+		else
+			gBattleAnimTarget = GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
+	}
+
 	gSprites[spriteId].data[1] = GetBattlerSpriteCoord(gBattleAnimTarget, 0);
 	gSprites[spriteId].data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, 1) - 16;
 	gSprites[spriteId].callback = (void*) 0x80EF8C1;

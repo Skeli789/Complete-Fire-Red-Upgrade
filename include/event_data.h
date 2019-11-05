@@ -10,7 +10,7 @@ u8 __attribute__((long_call)) FlagClear(u16 id);
 bool8 __attribute__((long_call)) FlagGet(u16 id);
 u8* __attribute__((long_call)) GetFlagPointer(u16 id);
 u16 __attribute__((long_call)) VarGet(u16 var);
-u32 __attribute__((long_call)) VarGetAddress(u16 var);
+u16* __attribute__((long_call)) GetVarPointer(u16 var);
 bool8 __attribute__((long_call)) VarSet(u16 var, u16 value);
 u16 __attribute__((long_call)) VarGetEventObjectGraphicsId(u8 Id);
 

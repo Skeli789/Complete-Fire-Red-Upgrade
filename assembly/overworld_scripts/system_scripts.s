@@ -63,9 +63,9 @@ AnotherRepel:
 	if notequal _goto EndScript
 	compare 0x800E ITEM_REPEL
 	if equal _goto UseAnotherRepel
-	compare 0x800E ITEM_SUPERREPEL
+	compare 0x800E ITEM_SUPER_REPEL
 	if equal _goto UseAnotherSuperRepel
-	compare 0x800E ITEM_MAXREPEL
+	compare 0x800E ITEM_MAX_REPEL
 	if equal _goto UseAnotherMaxRepel
 	goto EndScript
 	
@@ -75,12 +75,12 @@ UseAnotherRepel:
 	goto FinishNewRepel
 	
 UseAnotherSuperRepel:
-	removeitem ITEM_SUPERREPEL 1
+	removeitem ITEM_SUPER_REPEL 1
 	setvar VAR_REPEL_STEP_COUNT 200
 	goto FinishNewRepel
 	
 UseAnotherMaxRepel:
-	removeitem ITEM_MAXREPEL 1
+	removeitem ITEM_MAX_REPEL 1
 	setvar VAR_REPEL_STEP_COUNT 250
 	goto FinishNewRepel
 	

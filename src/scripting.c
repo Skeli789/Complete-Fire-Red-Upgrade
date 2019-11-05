@@ -1067,7 +1067,7 @@ void sp025_AddTextByPointer(void)
 void sp075_MeasurePokemon1(void)
 {
 	u16 species = Var8006;
-	BufferPokeNameSize(species, &Var8005);
+	SizeMinigame_BufferPokeNameSize(species, GetVarPointer(Var8005));
 }
 
 
@@ -1080,12 +1080,11 @@ void sp075_MeasurePokemon1(void)
 //		Returns 2 if the pokémon is smaller
 //		Returns 3 if bigger, and also stores the biggest value in the variable
 //		Returns 4 if equal in length
-u8 sp076_MeasurePokemon2(void)
+u16 sp076_MeasurePokemon2(void)
 {
 	u16 species = Var8006;
-	return CalculateHeight(species, &Var8005);;
+	return SizeMinigame_CalculateMonHeight(species, GetVarPointer(Var8005));
 }
-
 
 
 // old man battle with given species/level
@@ -1592,7 +1591,7 @@ bool8 sp0A0_CheckAndSetDailyEvent(void)
 bool8 CheckAndSetDailyEvent(u16 eventVar, bool8 setDailyEventVar)
 {
 	bool8 toReturn = FALSE;
-	struct DailyEventVar* dailyData = (struct DailyEventVar*) VarGetAddress(eventVar);
+	struct DailyEventVar* dailyData = (struct DailyEventVar*) GetVarPointer(eventVar);
 
 	u8 dailyDay = dailyData->day;
 	u8 dailyMonth = dailyData->month;
@@ -1628,7 +1627,7 @@ bool8 CheckAndSetDailyEvent(u16 eventVar, bool8 setDailyEventVar)
 void sp0A1_UpdateTimeInVars(void)
 {
 	u16 eventVar = Var8000; //Var contained in Var8000
-	struct DailyEventVar* data = (struct DailyEventVar*) VarGetAddress(eventVar);
+	struct DailyEventVar* data = (struct DailyEventVar*) GetVarPointer(eventVar);
 
 	data->minute = Clock->minute;
 	data->hour = Clock->hour;
@@ -1651,7 +1650,7 @@ u32 sp0A2_GetTimeDifference(void)
 {
 	u32 difference = 0;
 	u16 eventVar = Var8000; //Var contained in Var8000
-	struct DailyEventVar* startTime = (struct DailyEventVar*) VarGetAddress(eventVar);
+	struct DailyEventVar* startTime = (struct DailyEventVar*) GetVarPointer(eventVar);
 
 	u8 startMinute = startTime->minute;
 	u8 startHour = startTime->hour;

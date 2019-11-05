@@ -973,6 +973,10 @@ static u8 IsMonDisobedient(void)
 		return 0;
 	else if (gNewBS->InstructInProgress || gNewBS->DancerInProgress || gNewBS->ZMoveData->active)
 		return 0;
+		
+	#ifdef DEBUG_OBEDIENCE
+	return 0;
+	#endif
 
 	#ifndef OBEDIENCE_CHECK_FOR_PLAYER_ORIGINAL_POKEMON
 	if (!IsOtherTrainer(gBattleMons[gBankAttacker].otId, gBattleMons[gBankAttacker].otName))

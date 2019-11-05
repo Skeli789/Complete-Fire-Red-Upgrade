@@ -17,6 +17,7 @@ void TryFreezeFollowerAnim(struct EventObject* npc);
 void IsFollowerStoppingRockClimb(void);
 void FollowMe_SetIndicatorToComeOutDoor(void);
 void FollowMe_SetIndicatorToRecreateSurfBlob(void);
+void FollowMe_TryRemoveFollowerOnWhiteOut(void);
 void FollowMe(struct EventObject* npc, u8 state, bool8 ignoreScriptActive);
 void FollowMe_Ledges(struct EventObject* npc, struct Sprite* obj, u16* ledgeFramesTbl);
 bool8 FollowMe_IsCollisionExempt(struct EventObject* obstacle, struct EventObject* collider);
@@ -66,6 +67,7 @@ struct Follower
 #define FOLLOWER_FLAG_CAN_WATERFALL 0x10
 #define FOLLOWER_FLAG_CAN_DIVE 0x20
 #define FOLLOWER_FLAG_CAN_ROCK_CLIMB 0x40
+#define FOLLOWER_FLAG_CLEAR_ON_WHITE_OUT 0x80
 
 #define DEFAULT_FOLLOWER_LOCAL_ID 0xFE
 

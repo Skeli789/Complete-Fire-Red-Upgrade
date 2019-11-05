@@ -203,3 +203,4 @@ struct Clock
 
 #define gPokeBackupPtr (*((struct Pokemon**) 0x203E034))
 //#define sDexNavStatePtr/sFrontierRecordsPtr //0x203E038
+extern bool8 gInShop; //0x203E043

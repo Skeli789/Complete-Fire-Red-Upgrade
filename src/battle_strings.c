@@ -638,6 +638,7 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 				else
 				{
 					u8 class = gTrainers[gTrainerBattleOpponent_A].trainerClass;
+					class += 0; //So no unusued variable is displayed
 					#ifdef OPEN_WORLD_TRAINERS
 						if (gTrainerBattleOpponent_A < DYNAMIC_TRAINER_LIMIT && class != CLASS_TEAM_ROCKET)
 						{
@@ -793,6 +794,7 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 				else
 				{
 					u8 class = gTrainers[VarGet(VAR_SECOND_OPPONENT)].trainerClass;
+					class += 0;
 					#ifdef OPEN_WORLD_TRAINERS
 						if (VarGet(VAR_SECOND_OPPONENT) < DYNAMIC_TRAINER_LIMIT && class != CLASS_TEAM_ROCKET)
 						{

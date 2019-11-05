@@ -78,7 +78,7 @@ void atk23_getexp(void)
 			  | BATTLE_TYPE_FRONTIER
 			  | BATTLE_TYPE_TRAINER_TOWER)))
 		{
-			gBattleScripting->expStateTracker = GetExp_End; // goto last case
+			goto END_EXP_GIVE; // goto last case
 		}
 		else
 		{
@@ -430,16 +430,13 @@ void atk23_getexp(void)
 				PrepareStringBattle(0x184, 0);
 			}
 			else
+		#endif
 			{
+			END_EXP_GIVE:
 				gBattleMons[gBankFainted].item = 0;
 				gBattleMons[gBankFainted].ability = 0;
 				gBattlescriptCurrInstr += 2;
 			}
-		#else
-			gBattleMons[gBankFainted].item = 0;
-			gBattleMons[gBankFainted].ability = 0;
-			gBattlescriptCurrInstr += 2;
-		#endif
 		break;
 	}
 }
@@ -490,7 +487,6 @@ static bool8 WasWholeTeamSentIn(u8 bank, u8 sentIn) {
 
 	return TRUE;
 }
-
 
 static void EmitExpBarUpdate(u8 a, u8 b, u32 c) //Changed the u16 to a u32 to allow for more exp gain
 {

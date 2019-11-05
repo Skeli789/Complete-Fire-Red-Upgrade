@@ -22,6 +22,7 @@ u32 SpeedCalcForParty(u8 side, struct Pokemon* mon);
 void HandleNewBattleRamClearBeforeBattle(void);
 void SavePartyItems(void);
 void BattleBeginFirstTurn(void);
+void CleanUpExtraTurnValues(void);
 void SetActionsAndBanksTurnOrder(void);
 void RunTurnActionsFunctions(void);
 void HandleAction_UseMove(void);

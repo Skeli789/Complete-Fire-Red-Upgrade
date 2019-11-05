@@ -46,6 +46,12 @@
 .equ exclaim, 0x62
 .equ end_m, 0xFE
 
+@;Only if you've expanded your movement types
+.equ walk_up_backwards, 0xB2
+.equ walk_down_backwards, 0xB3
+.equ walk_right_backwards, 0xB4
+.equ walk_left_backwards, 0xB5
+
 .equ EventScript_RevealTrainer, 0x81A4FBA
 .equ EventScript_NoDoubleTrainerBattle, 0x81A4F20
 .equ EventScript_NotEnoughMonsForDoubleBattle, 0x81A4F19
@@ -59,6 +65,9 @@
 
 .equ NO, 0x0
 .equ YES, 0x1
+
+.equ FALSE, 0x0
+.equ TRUE, 0x1
 
 .equ NOT_SET, 0x0
 .equ SET, 0x1
@@ -80,6 +89,8 @@
 .equ FADEOUT_BLACK, 0x1
 .equ FADEIN_WHITE, 0x2
 .equ FADEOUT_WHITE, 0x3
+
+.equ ENDMART, 0x0
 
 .equ TWO_MULTICHOICE_OPTIONS, 0x20
 .equ THREE_MULTICHOICE_OPTIONS, 0x21
@@ -113,3 +124,14 @@
 .equ TYPE_FAIRY, 0x17
 
 .equ NUM_HIDDEN_POWER_TYPES, 16
+
+.equ DELAY_HALFSECOND, 0x20
+.equ DELAY_1SECOND, 0x40
+
+.equ SUNDAY, 0x0
+.equ MONDAY, 0x1
+.equ TUESDAY, 0x2
+.equ WEDNESDAY, 0x3
+.equ THURSDAY, 0x4
+.equ FRIDAY, 0x5
+.equ SATURDAY, 0x6

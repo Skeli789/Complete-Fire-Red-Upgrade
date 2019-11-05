@@ -96,6 +96,7 @@ u8 __attribute__((long_call)) GetMoveDirectionAnimNum(u8 direction);
 u8 __attribute__((long_call)) GetMoveDirectionFastAnimNum(u8 direction);
 void __attribute__((long_call)) PatchObjectPalette(u16, u8);
 u8 __attribute__((long_call)) FindEventObjectPaletteIndexByTag(u16 tag);
+struct EventObjectTemplate* __attribute__((long_call)) FindEventObjectTemplateByLocalId(u8 localId, struct EventObjectTemplate* templates, u8 count);
 
 /*
 extern const struct SpriteFrameImage gEventObjectPicTable_PechaBerryTree[];

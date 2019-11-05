@@ -1321,7 +1321,7 @@
 #define FLAG_SYS_POKEMON_GET     (CODE_FLAGS + 0xF)
 #define FLAG_SYS_POKEDEX_GET     (CODE_FLAGS + 0x10)
 
-#define FLAG_ELITE4_BEAT		 (CODE_FLAGS + 0x13) //0x82C
+#define FLAG_ELITE4_BEAT		 0x82C
 
 // cities and towns
 #define FLAG_VISITED_LITTLEROOT_TOWN  (CODE_FLAGS + 0xF)

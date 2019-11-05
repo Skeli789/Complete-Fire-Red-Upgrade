@@ -1788,7 +1788,7 @@ void atk87_stockpiletohpheal(void)
 }
 
 void atk88_negativedamage(void) {
-	if (gCurrentMove == MOVE_OBLIVIONWING)
+	if (gCurrentMove == MOVE_OBLIVIONWING || MOVE_DRAININGKISS)
 		gBattleMoveDamage = udivsi(75 * gHpDealt, 100);
 	else
 		gBattleMoveDamage = (gHpDealt / 2);

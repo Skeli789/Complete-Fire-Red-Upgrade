@@ -33,6 +33,8 @@ void __attribute__((long_call)) CB2_BuyMenu(void);
 bool8 __attribute__((long_call)) InitShopData(void);
 void __attribute__((long_call)) Task_ShopMenu(u8 taskId);
 void __attribute__((long_call)) Task_ReturnToShopMenu(u8 taskId);
+void __attribute__((long_call)) Task_BuyMenu(u8 taskId);
+void __attribute__((long_call)) Task_SellMenu(u8 taskId);
 void __attribute__((long_call)) BuildMartStrings(u16 item);
 void __attribute__((long_call)) BuyMenuPrintPriceInList(u8 windowId, int item, u8 y);
 void __attribute__((long_call)) BuyMenuPrint(u8 windowId, const u8 *text, u8 x, u8 y, s8 speed, u8 colorSet);

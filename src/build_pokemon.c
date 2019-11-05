@@ -2907,14 +2907,17 @@ u8 ScriptGiveMon(u16 species, u8 level, u16 item, unusedArg u32 unused1, u32 cus
 	#endif
 
 	if (FlagGet(FLAG_HIDDEN_ABILITY))
+	{
 		mon.hiddenAbility = TRUE;
+		FlagClear(FLAG_HIDDEN_ABILITY);
+	}
 
 	#ifdef GIVEPOKEMON_CUSTOM_HACK
 	if (customGivePokemon != 0)
 	{
 		u8 i;
 		u16* moves = &Var8000; //-0x8003
-		bool8 nature = Var8004;
+		u8 nature = Var8004;
 		bool8 shiny = Var8005;
 		u16* ivs = &Var8006; //-0x800B
 
@@ -2926,6 +2929,9 @@ u8 ScriptGiveMon(u16 species, u8 level, u16 item, unusedArg u32 unused1, u32 cus
 
 		for (i = 0; i < NUM_STATS; ++i)
 			SetMonData(&mon, MON_DATA_HP_IV + i, &ivs[i]);
+
+		if (nature >= NUM_NATURES)
+			nature = Random() % NUM_NATURES;
 
 		GiveMonNatureAndAbility(&mon, nature, GetMonData(&mon, MON_DATA_PERSONALITY, NULL) & 1, shiny);
 	}
@@ -3311,4 +3317,13 @@ u8 GetMonAbility(const struct Pokemon* mon)
 		ability = gBaseStats[species].ability2;
 
 	return TryRandomizeAbility(ability, species);
+}
+
+void SetMonExpWithMaxLevelCheck(struct Pokemon *mon, u16 species, unusedArg u8 unused, u32 data)
+{
+    if (data > gExperienceTables[gBaseStats[species].growthRate][MAX_LEVEL])
+    {
+        data = gExperienceTables[gBaseStats[species].growthRate][MAX_LEVEL];
+        SetMonData(mon, MON_DATA_EXP, &data);
+    }
 }

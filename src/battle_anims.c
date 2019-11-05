@@ -1120,17 +1120,6 @@ void AnimTask_AllBanksInvisibleExceptAttackerAndTarget(u8 taskId)
 	DestroyAnimVisualTask(taskId);
 }
 
-void DoubleWildAnimBallThrowFix(void)
-{
-	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && !(gBattleTypeFlags & BATTLE_TYPE_TRAINER))
-	{
-		if (gBattleMons[GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)].hp)
-			gBattleAnimTarget = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
-		else
-			gBattleAnimTarget = GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
-	}
-}
-
 #define RESTORE_HIDDEN_HEALTHBOXES									\
 {																	\
 	for (sprite = 0; sprite < MAX_SPRITES; ++sprite)				\

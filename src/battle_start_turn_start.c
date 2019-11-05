@@ -414,6 +414,17 @@ static void TryPrepareTotemBoostInBattleSands(void)
 	}
 }
 
+void CleanUpExtraTurnValues(void)
+{
+	gNewBS->NoMoreMovingThisTurn = 0;
+	gNewBS->OriginalAttackerTargetCount = 0;
+	gNewBS->ParentalBondOn = FALSE;
+	gNewBS->DancerInProgress = FALSE;
+	gNewBS->MoveBounceInProgress = FALSE;
+	gNewBS->ZMoveData->active = FALSE;
+	gNewBS->batonPassing = FALSE;
+}
+
 void SetActionsAndBanksTurnOrder(void)
 {
 	s32 turnOrderId = 0;
@@ -509,7 +520,6 @@ void SetActionsAndBanksTurnOrder(void)
 		}
 	}
 
-	gNewBS->NoMoreMovingThisTurn = 0;
 	gBattleMainFunc = (u32) CheckFocusPunch_ClearVarsBeforeTurnStarts;
 	gBattleStruct->focusPunchBank = 0;
 }
@@ -1032,7 +1042,7 @@ u16 GetMUS_ForBattle(void)
 
 			if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
 			{
-				song = TryGetSpecialFrontierTrainerMusic(gTrainerBattleOpponent_B, BATTLE_FACILITY_TRAINER_B);
+				song = TryGetSpecialFrontierTrainerMusic(SECOND_OPPONENT, BATTLE_FACILITY_TRAINER_B);
 				if (song != 0)
 					return song;
 			}
@@ -1045,7 +1055,7 @@ u16 GetMUS_ForBattle(void)
 
 			if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
 			{
-				trainerClass = GetFrontierTrainerClassId(gTrainerBattleOpponent_B, BATTLE_FACILITY_TRAINER_B);
+				trainerClass = GetFrontierTrainerClassId(SECOND_OPPONENT, BATTLE_FACILITY_TRAINER_B);
 
 				if (gClassBasedBattleBGM[trainerClass])
 					return gClassBasedBattleBGM[trainerClass];
@@ -1073,7 +1083,7 @@ u16 GetMUS_ForBattle(void)
 
 			if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
 			{
-				trainerClass = gTrainers[gTrainerBattleOpponent_B].trainerClass;
+				trainerClass = gTrainers[SECOND_OPPONENT].trainerClass;
 				if (gClassBasedBattleBGM[trainerClass])
 					return gClassBasedBattleBGM[trainerClass];
 			}

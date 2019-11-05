@@ -177,6 +177,7 @@ typedef u8 Battle_Buffer_T[0x200];
 #define gAbilityPopUpHelper (*((u8*) 0x203E02F))
 #define gBackupHWord (*((u16*) 0x203E030))
 
+//#define gInShop (*((bool8*) 0x203E043))
 //#define gBattleCircusFlags (*((u32*) 0x203E044))
 //#define gFishingByte *((u8*) 0x203E048)
 

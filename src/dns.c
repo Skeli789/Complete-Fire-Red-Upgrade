@@ -32,6 +32,9 @@ static void IncreaseDateByOneDay(u32* year, u8* month, u8* day);
 
 void TransferPlttBuffer(void)
 {
+	u32 palsToFade;
+	bool8 inOverworld, fadePalettes;
+	
 	if (!gPaletteFade->bufferTransferDisabled)
 	{
 		void *src = gPlttBufferFaded;
@@ -46,13 +49,21 @@ void TransferPlttBuffer(void)
 			case MAP_TYPE_SECRET_BASE:
 				break;
 			default:
-				if (FuncIsActiveTask(Task_WeatherMain)) //In overworld
+				inOverworld = FuncIsActiveTask(Task_WeatherMain);
+				fadePalettes = inOverworld || gInShop;
+
+				if (fadePalettes)
 				{
 					if ((IsNightTime() && !gWindowsLitUp)
 					|| (!IsNightTime() && gWindowsLitUp))
 						LoadIgnoredPaletteIndices(TRUE); //Load/remove the palettes to fade once during the day and night
 
-					BlendFadedPalettes(OW_DNS_BG_PAL_FADE, gDNSNightFadingByTime[Clock->hour][Clock->minute / 10].amount, gDNSNightFadingByTime[Clock->hour][Clock->minute / 10].colour);
+					if (inOverworld)
+						palsToFade = OW_DNS_BG_PAL_FADE;
+					else
+						palsToFade = OW_DNS_BG_PAL_FADE & ~(OBG_SHI(11)); //Used by shop
+
+					BlendFadedPalettes(palsToFade, gDNSNightFadingByTime[Clock->hour][Clock->minute / 10].amount, gDNSNightFadingByTime[Clock->hour][Clock->minute / 10].colour);
 				}
 		}
 		#endif
@@ -142,6 +153,10 @@ static void LoadIgnoredPaletteIndices(bool8 copyToFaded)
 			||  (u32) gMapHeader.mapLayout->secondaryTileset == gSpecificTilesetFades[i].tilesetPointer)
 			{
 				row = gSpecificTilesetFades[i].paletteNumToFade;
+
+				if (row == 11 && FuncIsActiveTask(Task_BuyMenu))
+					continue; //Don't fade palette 11 in shop menu
+
 				for (j = 0; gSpecificTilesetFades[i].paletteIndicesToFade[j].index != 0xFF; ++j)
 				{
 					column = gSpecificTilesetFades[i].paletteIndicesToFade[j].index;

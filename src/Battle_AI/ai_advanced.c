@@ -691,7 +691,7 @@ u16 GetAmountToRecoverBy(u8 bankAtk, u8 bankDef, u16 move)
 		case EFFECT_DREAM_EATER: ;
 			u16 predictedDmg = CalcFinalAIMoveDamage(move, bankAtk, bankDef, 1);
 
-			if (move == MOVE_OBLIVIONWING)
+			if (move == MOVE_OBLIVIONWING || move == MOVE_DRAININGKISS)
 				amountToRecover = MathMax(1, (75 * predictedDmg) / 100);
 			else
 				amountToRecover = MathMax(1, predictedDmg / 2);

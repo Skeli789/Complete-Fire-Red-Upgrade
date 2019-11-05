@@ -30,6 +30,7 @@ void SetMonPokeBall(struct PokemonSubstruct0* data, u8 ballId);
 void SetMonHeldItem(struct PokemonSubstruct0* data, u16 item, struct Pokemon* mon);
 void CreateBoxMon(struct BoxPokemon *boxMon, u16 species, u8 level, u8 fixedIV, u8 hasFixedPersonality, u32 fixedPersonality, u8 otIdType, u32 fixedOtId);
 void CreateMonWithNatureLetter(struct Pokemon* mon, u16 species, u8 level, u8 fixedIV, u8 nature, u8 unownLetter);
+void SetMonExpWithMaxLevelCheck(struct Pokemon *mon, u16 species, u8 unused, u32 data);
 
 //Exported Constants
 enum TierBanCheckingType

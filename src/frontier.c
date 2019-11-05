@@ -770,7 +770,7 @@ static u8 AdjustLevelForTier(u8 level, u8 tier)
 	if (IsLittleCupTier(tier))
 		return 5;
 
-	if (tier == BATTLE_FACILITY_MONOTYPE)
+	if (tier == BATTLE_FACILITY_MONOTYPE && BATTLE_FACILITY_NUM == IN_BATTLE_TOWER)
 		return 100;
 
 	return level;
@@ -844,6 +844,8 @@ void sp055_UpdateBattleFacilityStreak(void)
 			if (*maxStreak < *currentStreak)
 			{
 				*maxStreak = *currentStreak;
+				if (GetGameStat(GAME_STAT_BATTLE_FACILITY_BEST_STREAK) < *currentStreak)
+					SetGameStat(GAME_STAT_BATTLE_FACILITY_BEST_STREAK, *currentStreak);
 
 				if (inBattleSands)
 				{

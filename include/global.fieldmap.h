@@ -142,15 +142,15 @@ struct BgEvent
 
 struct MapEvents
 {
-	u8 mapObjectCount;
+	u8 eventObjectCount;
 	u8 warpCount;
 	u8 coordEventCount;
 	u8 bgEventCount;
 
-	struct MapObjectTemplate *mapObjects;
+	struct MapObjectTemplate *eventObjects;
 	struct WarpEvent *warps;
-	struct CoordEvent *coordEvents;
-	struct BgEvent *bgEvents;
+	struct CoordEvent *coordEvents; //Script
+	struct BgEvent *bgEvents; //Signpost
 };
 
 struct MapConnection

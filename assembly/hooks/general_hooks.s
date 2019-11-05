@@ -37,6 +37,12 @@ SwitchMoveDataHook:
 	bx r0
 
 .pool
+@0x8015438 with r0
+TurnValuesCleanUpAdditionHook:
+	bl CleanUpExtraTurnValues
+	pop {r4-r7, pc}
+
+.pool
 @0x80992E4 with r0
 SlideMonToOffsetHook:
 	mov r0, #0x0
@@ -134,17 +140,6 @@ BallThrowBreakOutReturn:
 	ldr r0, =0x80EFF20 | 1
 	bx r0
 
-.pool
-@0x80EF5F4 with r1
-DoubleWildAnimBallThrowFixHook:
-	strh r0, [r6, #0x2E]
-	bl DoubleWildAnimBallThrowFix
-	ldr r2, =ANIM_TARGET
-	mov r8, r2
-	ldrb r0, [r2]
-	ldr r1, =0x80EF5FC | 1
-	bx r1
-
 @0x80A1E2C with r0
 DoubleWildPokeBallItemUseFixHook:
 	mov r0, r4
@@ -184,6 +179,26 @@ DoubleWildDexHook2:
 	mov r1, #0xB
 	ldr r2, =0x802D9E0 | 1
 	bx r2
+
+@0x8015A44 with r1
+CaptureExperienceEvolutionHook:
+	ldrb r0, [r0]
+	cmp r0, #0x0
+	beq NoEvolutionPostBattle
+	ldr r0, =BATTLE_OUTCOME
+	ldrb r0, [r0]
+	cmp r0, #0x1 @Won battle
+	beq EvolutionPostBattle
+	cmp r0, #0x7 @Caught
+	beq EvolutionPostBattle
+
+NoEvolutionPostBattle:
+	ldr r0, =0x8015A52 | 1
+	bx r0
+
+EvolutionPostBattle:
+	ldr r0, =0x8015A6C | 1
+	bx r0	
 
 @0x8013D14 with r1
 TrainerSlidingEndTurnHook:
@@ -319,6 +334,27 @@ ReturnPokedexWeight:
 	bl bxr1
 	ldr r1, =0x8105A70 | 1
 bxr1:
+	bx r1
+
+
+.pool
+@0x80A0774 with r2
+SizeMinigameLoadAlternateHeightHook:
+	lsl r0, #0x10
+	lsr r0, #0x10
+	lsl r1, r1, #0x10
+	lsr r6, r1, #0x10
+	mov r5, r0 @;Backup species
+	mov r1, #0x0 @PKDX_GET_HEIGHT
+	bl TryGetAlternateSpeciesSize
+	cmp r0, #0x0
+	bne ReturnAlternatWeightMinigame
+	mov r0, r5
+	ldr r1, =0x80A077E | 1
+	bx r1
+
+ReturnAlternatWeightMinigame:
+	ldr r1, =0x80A078C | 1
 	bx r1
 
 .pool
@@ -950,3 +986,25 @@ InitPlayerAvatarHook:
 	ldrb r0, [r5]
 	ldr r1, =0x80570D8 | 1
 	bx r1
+
+.pool
+@0x809AC84 with r0
+DNSCreateBuyMenuHook:
+	ldr r0, =gInShop
+	mov r1, #0x1
+	strb r1, [r0]
+	pop {r4, pc}
+
+.pool
+@0x809C078 with r1
+DNSEndBuyMenuHook:
+	ldr r1, =SetMainCallback2
+	bl bxr1
+	mov r0, r4
+	ldr r1, =DestroyTask
+	bl bxr1
+	ldr r0, =gInShop
+	mov r1, #0x0
+	strb r1, [r0]
+	ldr r0, =0x809C082 | 1
+	bx r0

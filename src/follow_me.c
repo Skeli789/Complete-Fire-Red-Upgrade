@@ -146,6 +146,15 @@ void FollowMe_SetIndicatorToRecreateSurfBlob(void)
 		gFollowerState.createSurfBlob = 2;
 }
 
+void FollowMe_TryRemoveFollowerOnWhiteOut(void)
+{
+	if (gFollowerState.inProgress)
+	{
+		if (gFollowerState.flags & FOLLOWER_FLAG_CLEAR_ON_WHITE_OUT)
+			gFollowerState.inProgress = FALSE;
+	}
+}
+
 static u8 GetFollowerMapObjId(void)
 {
 	return gFollowerState.objId;
@@ -333,7 +342,7 @@ static u8 DetermineFollowerState(struct EventObject* follower, u8 state, u8 dire
 	if (IsStateMovement(state) && gFollowerState.delayedState)
 		newState = gFollowerState.delayedState + direction;
 
-	*((u8*) 0x2023D6B) = state;
+	*((u8*) 0x2023D6B) = state; //For Debug
 
 	//Clear ice tile stuff
 	follower->disableAnim = FALSE; //follower->field1 &= 0xFB;
@@ -393,15 +402,22 @@ static u8 DetermineFollowerState(struct EventObject* follower, u8 state, u8 dire
 
 		case MOVEMENT_ACTION_SLIDE_LEFT_FOOT_DOWN ... MOVEMENT_ACTION_SLIDE_LEFT_FOOT_RIGHT:
 			//Stairs (slow walking)
-			//Running sideways on stairs does not use the slow
-			//frames, so split this into two.
-			if (direction < 2)
+			if (gFollowerState.flags & FOLLOWER_FLAG_HAS_RUNNING_FRAMES)
 			{
-				RETURN_STATE(MOVEMENT_ACTION_SLIDE_LEFT_FOOT_DOWN, direction);
+				//Running sideways on stairs does not use the slow
+				//frames, so split this into two.
+				if (direction <= DIR_NORTH)
+				{
+					RETURN_STATE(MOVEMENT_ACTION_SLIDE_LEFT_FOOT_DOWN, direction);
+				}
+				else
+				{
+					RETURN_STATE(MOVEMENT_ACTION_SLIDE_RIGHT_FOOT_DOWN, direction);
+				}
 			}
 			else
 			{
-				RETURN_STATE(MOVEMENT_ACTION_SLIDE_RIGHT_FOOT_DOWN, direction);
+				RETURN_STATE(MOVEMENT_ACTION_WALK_FAST_DOWN, direction);
 			}
 
 		case MOVEMENT_ACTION_JUMP_SPECIAL_DOWN ... MOVEMENT_ACTION_JUMP_SPECIAL_RIGHT:
@@ -1215,11 +1231,14 @@ void FollowMe_WarpSetEnd(void)
 
 void CreateFollowerAvatar(void)
 {
+	struct EventObject* player;
+	struct EventObjectTemplate clone;
+
 	if (!gFollowerState.inProgress)
 		return;
 
-	struct EventObject* player = &gEventObjects[gPlayerAvatar->eventObjectId];
-	struct EventObjectTemplate clone = *GetEventObjectTemplateByLocalIdAndMap(gFollowerState.map.id, gFollowerState.map.number, gFollowerState.map.group);
+	player = &gEventObjects[gPlayerAvatar->eventObjectId];
+	clone = *GetEventObjectTemplateByLocalIdAndMap(gFollowerState.map.id, gFollowerState.map.number, gFollowerState.map.group);
 
 	clone.graphicsIdLowerByte = GetFollowerSprite() & 0xFF;
 	clone.graphicsIdUpperByte = GetFollowerSprite() >> 8;
@@ -1240,7 +1259,7 @@ void CreateFollowerAvatar(void)
 	}
 
 	// Create NPC and store ID
-	gFollowerState.objId = TrySpawnEventObjectTemplate(&clone, gSaveBlock1->location.mapNum, gSaveBlock1->location.mapGroup, clone.x, clone.y);
+	gFollowerState.objId = TrySpawnEventObjectTemplate(&clone, gFollowerState.map.number, gFollowerState.map.group, clone.x, clone.y);
 	if (gFollowerState.objId == EVENT_OBJECTS_COUNT)
 		gFollowerState.inProgress = FALSE; //Cancel the following because couldn't load sprite
 
@@ -1252,10 +1271,10 @@ void CreateFollowerAvatar(void)
 
 static void TurnNPCIntoFollower(u8 localId, u8 followerFlags)
 {
+	struct EventObject* follower;
+	
 	if (gFollowerState.inProgress)
 		return; //Only 1 NPC following at a time
-
-	struct EventObject* follower;
 
 	for (u8 eventObjId = 0; eventObjId < MAP_OBJECTS_COUNT; ++eventObjId) //For each NPC on the map
 	{
@@ -1308,4 +1327,49 @@ void sp0D2_DestroyFollowerSprite(void)
 		FlagSet(gFollowerState.flag);
 		gFollowerState.inProgress = FALSE;
 	}
+}
+
+//@Details: Faces the player and the follower sprite towards each other.
+void sp0D3_FaceFollowerSprite(void)
+{
+	if (gFollowerState.inProgress)
+	{
+		u8 playerDirection, followerDirection;
+		struct EventObject* player, *follower;
+	
+		player = &gEventObjects[gPlayerAvatar->eventObjectId];
+		follower = &gEventObjects[gFollowerState.objId];
+		playerDirection = DetermineFollowerDirection(player, follower);
+		followerDirection = playerDirection;
+		
+		//Flip direction
+		switch (playerDirection) {
+			case DIR_NORTH:
+				playerDirection = DIR_SOUTH;
+				followerDirection = DIR_NORTH;
+				break;
+			case DIR_SOUTH:
+				playerDirection = DIR_NORTH;
+				followerDirection = DIR_SOUTH;
+				break;
+			case DIR_WEST:
+				playerDirection = DIR_EAST;
+				followerDirection = DIR_WEST;
+				break;
+			case DIR_EAST:
+				playerDirection = DIR_WEST;
+				followerDirection = DIR_EAST;
+				break;
+		}
+
+		EventObjectTurn(player, playerDirection);
+		EventObjectTurn(follower, followerDirection);
+	}
+}
+
+//@Details: Checks if the player is being followed.
+//@Returns: LastResult: 0 if the Player isn't being followed. 1 otherwise.
+void sp0E1_DoesPlayerHaveFollower(void)
+{
+	gSpecialVar_LastResult = gFollowerState.inProgress;
 }

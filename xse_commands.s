@@ -110,6 +110,34 @@
 .byte \day
 .endm
 
+.macro candodailyevent var
+.byte 0x16 @setvar
+.2byte 0x8000
+.2byte \var
+.byte 0x16 @setvar
+.2byte 0x8001
+.2byte 0x0
+.byte 0x26 @special2
+.2byte 0x800D @LastResult
+.2byte 0xA0
+.endm
+
+.macro setdailyevent var
+.byte 0x16 @setvar
+.2byte 0x8000
+.2byte \var
+.byte 0x16 @setvar
+.2byte 0x8001
+.2byte 0x1
+.byte 0x26 @special2
+.2byte 0x800D @LastResult
+.2byte 0xA0
+.endm
+
+.macro walkingnpcface
+.byte 0x6A, 0x6C, 0x5A @lock, release, faceplayer
+.endm
+
 @Commands
 .macro nop
 .byte 0x0
@@ -459,7 +487,7 @@
 .hword \warpteleport_y_axis
 .endm
 
-.macro warp3 warp3_bank warp3_map warp3_warp warp3_x_axis warp3_y_axis
+.macro setwarp warp3_bank warp3_map warp3_warp warp3_x_axis warp3_y_axis
 .byte 0x3E
 .byte \warp3_bank
 .byte \warp3_map
@@ -1064,10 +1092,11 @@
 .byte \checkmoney_byte
 .endm
 
-.macro showmoney showmoney_x showmoney_y
+.macro showmoney showmoney_x showmoney_y showmoney_check
 .byte 0x93
 .byte \showmoney_x
 .byte \showmoney_y
+.byte \showmoney_check
 .endm
 
 .macro hidemoney hidemoney_x hidemoney_y
@@ -1076,10 +1105,11 @@
 .byte \hidemoney_y
 .endm
 
-.macro updatemoney updatemoney_x updatemoney_y
+.macro updatemoney updatemoney_x updatemoney_y updatemoney_check
 .byte 0x95
 .byte \updatemoney_x
 .byte \updatemoney_y
+.byte \updatemoney_check
 .endm
 
 .macro cmd96 checkpokenewsfor @(u16 reportID(may be in a var)) Stores return value in 0x800D. Pokenews stands for those things you sometimes see on tv.
@@ -1329,12 +1359,12 @@
 .byte \updatecoins_y
 .endm
 
-.macro cmdC3 cmdC3_hidden_var increment_encrypted_counter @(u8 counterID)
+.macro incrementgamestat stat
 .byte 0xC3
-.byte \counterID
+.byte \stat
 .endm
 
-.macro warp6 warp6_bank warp6_map warp6_warp warp6_x warp6_y
+.macro warpescape warp6_bank warp6_map warp6_warp warp6_x warp6_y
 .byte 0xC4
 .byte \warp6_bank
 .byte \warp6_map
@@ -1403,9 +1433,9 @@
 .byte 0xCF
 .endm
 
-.macro setworldmapflag setworldmapflag_param nopD0
+.macro setworldmapflag setworldmapflag_param
 .byte 0xD0
-@.hword \setworldmapflag_param uncomment if FR.
+.hword \setworldmapflag_param
 .endm
 
 .macro warpteleport2

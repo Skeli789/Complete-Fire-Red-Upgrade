@@ -167,6 +167,7 @@ FollowerIntoPlayerScript:
 	callasm FollowerIntoPlayer
 	compare LASTRESULT 0xFFFF
 	if equal _goto FollowerPositionFixScriptReturn
+	setvar 0x8005 FOLLOWER
 	call WalkCall
 	setvar 0x8000 0x1
 	callasm FollowerIntoPlayer
@@ -181,23 +182,23 @@ WalkCall:
 	if equal _call WalkLeftCall
 	compare LASTRESULT 0x3
 	if equal _call WalkRightCall
-	waitmovement FOLLOWER
+	waitmovement 0x8005
 	return
 	
 WalkDownCall:
-	applymovement FOLLOWER WalkDown
+	applymovement 0x8005 WalkDown
 	return
 
 WalkUpCall:
-	applymovement FOLLOWER WalkUp
+	applymovement 0x8005 WalkUp
 	return
 
 WalkLeftCall:
-	applymovement FOLLOWER WalkLeft
+	applymovement 0x8005 WalkLeft
 	return
 
 WalkRightCall:
-	applymovement FOLLOWER WalkRight
+	applymovement 0x8005 WalkRight
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

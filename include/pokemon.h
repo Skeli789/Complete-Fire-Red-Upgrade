@@ -752,8 +752,11 @@ u8 __attribute__((long_call)) pokemon_order_func(u8 a);
 u8 __attribute__((long_call)) GetEggMoves(struct Pokemon* poke, void* storageAddr);
 void __attribute__((long_call)) Special_0DD_DeleteMove();
 
-void __attribute__((long_call)) BufferPokeNameSize(u16 species, void* varAddress);
-u8 __attribute__((long_call)) CalculateHeight(u16 species, void* varAddress);
+void __attribute__((long_call)) SizeMinigame_BufferPokeNameSize(u16 species, void* varAddress);
+u8 __attribute__((long_call)) SizeMinigame_CalculateMonHeight(u16 species, void* varAddress);
+u16 __attribute__((long_call)) SizeMinigame_GetHeightBonus(struct Pokemon* mon);
+u32 __attribute__((long_call)) SizeMinigame_CalculateAdjustedHeight(u16 species, u16 heightBonus);
+void __attribute__((long_call)) SizeMinigame_BufferHeightInches(u8* stringBuffer, u16 height);
 void __attribute__((long_call)) PokemonSlotPurge(struct Pokemon* mon);
 u16 __attribute__((long_call)) SpeciesToPokedexNum(u16 species);
 u16 __attribute__((long_call)) GetCombinedOTID(void);

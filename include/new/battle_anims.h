@@ -65,6 +65,5 @@ void ScriptCmd_loadspritegfx(void);
 void ShinyAnimFix(void);
 bool8 ShadowSneakAnimHelper(void);
 void UpdatedAnimStealItemFinalCallback(struct Sprite* sprite);
-void DoubleWildAnimBallThrowFix(void);
 void UpdateOamPriorityInAllHealthboxes(u8 priority);
 bool8 TryHandleLaunchBattleTableAnimation(u8 activeBattler, u8 bankAtk, u8 bankDef, u8 tableId, u16 argument);
