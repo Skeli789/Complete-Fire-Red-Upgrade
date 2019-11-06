@@ -22098,3 +22098,24 @@ DoHeartSwap:
 SKILLSWAP_TEMPL: objtemplate ANIM_TAG_BLUEGREEN_ORB ANIM_TAG_ELECTRIC_ORBS 0x83ACA30 0x8231CF0 0x0 0x83E7104 0x80B3A35
 POWERSWAP_TEMPL: objtemplate ANIM_TAG_BLUEGREEN_ORB ANIM_TAG_RED_HEART 0x83ACA30 0x8231CF0 0x0 0x83E7104 0x80B3A35
 HEARTSWAP_TEMPL: objtemplate ANIM_TAG_BLUEGREEN_ORB ANIM_TAG_RED_HEART 0x83ACA30 0x8231CF0 0x0 0x83E7104 0x80B3A35
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+@0x80A4984 with r0
+KingsShieldASM:
+    ldr r0, =BATTLE_ANIM_ARGS
+    ldrh r0, [r0, #0x4]
+    strh r0, [r5, #0x2E]
+	bl IsAnimMoveKingsShield
+	mov r2, r0
+    ldr r0, .KingsShieldProtectColour
+    cmp r2, #0x0
+    bne KingsShieldASM_Cont
+    ldr r0, .ProtectColour
+KingsShieldASM_Cont:
+    ldr r1, =(0x080A498C|1)
+    bx r1
+
+.align 2
+.KingsShieldProtectColour: .word ANIM_TAG_WATER_ORB
+.ProtectColour: .word ANIM_TAG_PROTECT

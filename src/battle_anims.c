@@ -382,6 +382,11 @@ bool8 IsAnimMoveBulletSeed(void)
 	return sAnimMoveIndex == MOVE_BULLETSEED;
 }
 
+bool8 IsAnimMoveKingsShield(void)
+{
+	return sAnimMoveIndex == MOVE_KINGSSHIELD;
+}
+
 void AnimTask_ReloadAttackerSprite(u8 taskId)
 {
 	u8 spriteId = gBattlerSpriteIds[gBattleAnimAttacker];

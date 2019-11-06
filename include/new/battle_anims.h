@@ -58,6 +58,8 @@ bool8 IsAnimMovePowerSwap(void);
 bool8 IsAnimMoveHeartSwap(void);
 bool8 IsAnimMoveMudBomb(void);
 bool8 IsAnimMoveCoreEnforcer(void);
+bool8 IsAnimMoveBulletSeed(void);
+bool8 IsAnimMoveKingsShield(void);
 
 //Functions hooked in
 bank_t LoadBattleAnimTarget(u8 arg);
