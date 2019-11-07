@@ -22,7 +22,7 @@ static const u8 sDaysInAMonth[] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30
 
 //This file's functions:
 static void BlendFadedPalettes(u32 selectedPalettes, u8 coeff, u32 color);
-static void BlendFadedPalette(u16 palOffset, u16 numEntries, u8 coeff, u32 blendColor, bool8 ignoredIndices[32][16]);
+static void BlendFadedPalette(u16 palOffset, u16 numEntries, u8 coeff, u32 blendColor);
 static u16 FadeColourForDNS(struct PlttData* blend, u8 coeff, s8 r, s8 g, s8 b);
 static void LoadIgnoredPaletteIndices(bool8 copyToFaded);
 static bool8 IsDate1BeforeDate2(u32 y1, u32 m1, u32 d1, u32 y2, u32 m2, u32 d2);
@@ -42,29 +42,42 @@ void TransferPlttBuffer(void)
 		DmaCopy16(3, src, dest, PLTT_SIZE);
 
 		#ifdef TIME_ENABLED
-		switch (GetCurrentMapType()) {
-			case MAP_TYPE_INDOOR: //No fading in these areas
-			case MAP_TYPE_UNDERGROUND:
-			case MAP_TYPE_0:
-			case MAP_TYPE_SECRET_BASE:
-				break;
+		switch (gMapHeader.mapType) { //Save time by not calling the function
+			case MAP_TYPE_TOWN: //Try to force a jump table to manually placing these values
+			case MAP_TYPE_CITY:
+			case MAP_TYPE_ROUTE:
+			case MAP_TYPE_UNDERWATER:
+			case MAP_TYPE_6:
+			case MAP_TYPE_7:
 			default:
 				inOverworld = FuncIsActiveTask(Task_WeatherMain);
 				fadePalettes = inOverworld || gInShop;
 
 				if (fadePalettes)
-				{
+				{/*
 					if ((IsNightTime() && !gWindowsLitUp)
 					|| (!IsNightTime() && gWindowsLitUp))
 						LoadIgnoredPaletteIndices(TRUE); //Load/remove the palettes to fade once during the day and night
-
+*/
 					if (inOverworld)
 						palsToFade = OW_DNS_BG_PAL_FADE;
 					else
 						palsToFade = OW_DNS_BG_PAL_FADE & ~(OBG_SHI(11)); //Used by shop
 
-					BlendFadedPalettes(palsToFade, gDNSNightFadingByTime[Clock->hour][Clock->minute / 10].amount, gDNSNightFadingByTime[Clock->hour][Clock->minute / 10].colour);
+					u8 coeff = gDNSNightFadingByTime[Clock->hour][Clock->minute / 10].amount;
+					u32 colour = gDNSNightFadingByTime[Clock->hour][Clock->minute / 10].colour;
+
+					if (coeff == 0) //Cheap fix. Game still slows game down when there is fading
+						break; //Don't bother fading a null fade
+
+					BlendFadedPalettes(palsToFade, coeff, colour);
 				}
+				break;
+			case MAP_TYPE_INDOOR: //No fading in these areas
+			case MAP_TYPE_UNDERGROUND:
+			case MAP_TYPE_0:
+			case MAP_TYPE_SECRET_BASE:
+				break;
 		}
 		#endif
 
@@ -88,32 +101,33 @@ static void BlendFadedPalettes(u32 selectedPalettes, u8 coeff, u32 color)
 			switch (GetPalTypeByPaletteOffset(paletteOffset)) {
 				case PalTypeUnused:
 					if (paletteOffset < 256) //The background
-						BlendFadedPalette(paletteOffset, 16, coeff, color, gIgnoredDNSPalIndices);
+						BlendFadedPalette(paletteOffset, 16, coeff, color);
 					break;
 				case PalTypeOther: //Fade everything except Poke pics
 					break;
 				default:
-					BlendFadedPalette(paletteOffset, 16, coeff, color, gIgnoredDNSPalIndices);
+					BlendFadedPalette(paletteOffset, 16, coeff, color);
 			}
 		}
 		selectedPalettes >>= 1;
 	}
 }
 
-static void BlendFadedPalette(u16 palOffset, u16 numEntries, u8 coeff, u32 blendColor, bool8 ignoredIndices[32][16])
+static void BlendFadedPalette(u16 palOffset, u16 numEntries, u8 coeff, u32 blendColor)
 {
 	u16 i;
+	u16 ignoreOffset = palOffset / 16;
+	bool8 dontFadeWhite = gDontFadeWhite && !gMain.inBattle;
 
-	for (i = 0; i < numEntries; i++)
+	for (i = 0; i < numEntries; ++i)
 	{
-		if (ignoredIndices[palOffset / 16][i]) continue; //Don't fade this index.
-
 		u16 index = i + palOffset;
-
 		if (gPlttBufferFaded[index] == RGB_BLACK) continue; //Don't fade black
 
+		if (gIgnoredDNSPalIndices[ignoreOffset][i]) continue; //Don't fade this index.
+
 		//Fixes an issue with pre-battle mugshots
-		if (gDontFadeWhite && !gMain.inBattle && gPlttBufferFaded[index] == RGB_WHITE) continue;
+		if (dontFadeWhite && gPlttBufferFaded[index] == RGB_WHITE) continue;
 
 		struct PlttData *data1 = (struct PlttData*) &gPlttBufferFaded[index];
 		s8 r = data1->r;

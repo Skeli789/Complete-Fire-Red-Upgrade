@@ -386,6 +386,11 @@ MaxLevelChange1:
 .org 0xdafb8, 0xff	@don't reset pal slot during player animation or reflection
 	.hword 0x0
 	
+.org 0xdcd70, 0xff  @remove time wasting useless function call
+	mov r8, r8
+	mov r8, r8
+	mov r8, r8
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Remove TM Animation
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

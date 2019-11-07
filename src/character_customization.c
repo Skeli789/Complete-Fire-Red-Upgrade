@@ -115,10 +115,10 @@ NPCPtr GetEventObjectGraphicsInfo(u16 graphicsId)
 	u8 tableId = (graphicsId >> 8) & 0xFF;	// upper byte
 	u8 spriteId = graphicsId & 0xFF;		// lower byte
 
-	// check runtime changeable OWs
+	//Check runtime changeable OWs
 	if (tableId == 0xFF && spriteId <= 0xF)
 	{
-		//runtime changeable
+		//Runtime changeable
 		newId = VarGet(VAR_RUNTIME_CHANGEABLE + spriteId);
 		tableId = (newId >> 8) & 0xFF;	// upper byte
 		spriteId = (newId & 0xFF);		// lower byte
@@ -132,23 +132,12 @@ NPCPtr GetEventObjectGraphicsInfo(u16 graphicsId)
 				break;
 		}
 
-		if (tableId == 0 && spriteId > 239)
+		if (spriteId > 239 && tableId == 0)
 		{
 			newId = VarGetEventObjectGraphicsId(spriteId + 16);
 			tableId = (newId >> 8) & 0xFF;	// upper byte
 			spriteId = (newId & 0xFF);		// lower byte
 		}
-		else if (tableId == 0)	// load sprite/table IDs from vars
-		{
-			u16 newId = 0;
-
-			// get updated table and sprite IDs
-			if (newId != 0)
-			{
-				tableId = (newId >> 8) & 0xFF;	// upper byte
-				spriteId = (newId & 0xFF);		// lower byte
-			}	// else, table and sprite ID stay the same
-		}	// runtime changeable
 	}
 
 	NPCPtr spriteAddr;
