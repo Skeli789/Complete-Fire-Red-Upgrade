@@ -716,6 +716,7 @@ MapGridGetMetatileIdAt = 0x8058E48 | 1;
 MetatileBehavior_GetLowerBytes = 0x8058F1C | 1;
 MapGridGetMetatileField = 0x8058F48 | 1;
 MapGridGetMetatileBehaviorAt = 0x8058F78 | 1;
+MapGridSetMetatileIdAt = 0x8058FA4 | 1;
 save_serialize_map = 0x80590D8 | 1;
 ApplySpecialMapPalette = 0x80598CC | 1;
 apply_map_tileset1_tileset2_palette = 0x8059AD8 | 1;

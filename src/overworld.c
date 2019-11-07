@@ -136,6 +136,318 @@ static const u8* const sMetatileInteractionScripts[] =
 #endif
 };
 
+/*
+Below is a table of grass tiles related to the field move Cut.
+When the player uses cut in tall grass, any grass tiles around
+the player will be replaced. In the table, the first element of
+each struct is the original tile number, the second element is the
+the tile to replace it with, and third element is the tileset pointer.
+For example, the first entry (0xD -> 0x1) replaces the vanilla FR tall
+grass tile with the vanilla FR plain grass tile while in Tileset 0.
+Look in AdvanceMap for tile numbers.
+*/
+
+#define CUT_GRASS_TERMIN {0xFFFF, 0xFFFF, NULL}
+struct CutGrass {u16 originalMetatileId; u16 newMetatileId; struct Tileset* tilesetPtr;};
+const struct CutGrass sCutGrassTiles[] =
+#ifndef UNBOUND //Modify this
+{
+	#define Tileset_0 (struct Tileset*) 0x82D4A94
+	#define Tileset_7 (struct Tileset*) 0x82D4B3C
+	#define Tileset_8 (struct Tileset*) 0x82D4B54
+	#define Tileset_34 (struct Tileset*) 0x82D4DC4
+
+	{0xD, 0x1, Tileset_0},
+	{0xA, 0x13, Tileset_0},
+	{0xB, 0xE, Tileset_0},
+	{0xC, 0xF, Tileset_0},
+	{0x352, 0x33E, Tileset_7}, //Cycling Road
+	{0x300, 0x310, Tileset_8}, //Safari Zone
+	{0x301, 0x311, Tileset_8}, //Safari Zone
+	{0x302, 0x312, Tileset_8}, //Safari Zone
+	{0x284, 0x281, Tileset_34}, //Viridian Forest
+	CUT_GRASS_TERMIN
+};
+#else //For Pokemon Unbound
+{
+	#define Tileset_General (struct Tileset*) 0x82D4A94
+	#define Tileset_CraterTown (struct Tileset*) 0x82D4ADC
+	#define Tileset_DrescoTown (struct Tileset*) 0x82D4AF4
+	#define Tileset_FallshoreCity (struct Tileset*) 0x8744D8C
+	#define Tileset_DeharaCity (struct Tileset*) 0x82D4B3C
+	#define Tileset_GurunTown (struct Tileset*) 0x82D4B24
+	#define Tileset_Route17 (struct Tileset*) 0x82D4B9C
+	#define Tileset_FlowerParadise (struct Tileset*) 0x8B56314
+	#define Tileset_Forest (struct Tileset*) 0x82D5004
+	#define Tileset_Snow (struct Tileset*) 0x8725AB4
+	#define Tileset_Autumn (struct Tileset*) 0x873CC2C
+
+	#define METATILE_General_PlainGrass 0x1
+	#define METATILE_General_TreeTopLeft 0xE
+	#define METATILE_General_TreeTopRight 0xF
+	#define METATILE_General_TreeSideLeft 0x18 
+	#define METATILE_General_TreeSideRight 0x19
+	#define METATILE_General_BothTreeSides 0x20
+	#define METATILE_General_ThinTreeTop 0x12
+	#define METATILE_General_LandEdgeLeft 0x132
+	#define METATILE_General_LandEdgeMiddle 0x133
+	#define METATILE_General_LandEdgeRight 0x134
+	#define METATILE_General_TreeTopLeftOverTreeSideRight 0x27C
+	#define METATILE_General_TreeTopRightOverTreeSideLeft 0x27D
+	
+	#define METATILE_Route17_LandEdgeBottomRight 0x28C
+	#define METATILE_Route17_LandEdgeBottomLeft 0x28B
+	#define METATILE_Route17_LandEdgeBottomMiddle 0x299
+	
+	#define METATILE_Forest_Ground 0x280
+	#define METATILE_Forest_TreeTopLeft 0x289
+	#define METATILE_Forest_TreeTopRight 0x28A
+	#define METATILE_Forest_TreeTopCornerLeft 0x2EE
+	#define METATILE_Forest_TreeTopCornerRight 0x2EF
+	#define METATILE_Forest_TreeSideLeft 0x290
+	#define METATILE_Forest_TreeSideRight 0x293
+	
+	#define METATILE_Autumn_Ground 0x296
+	#define METATILE_Autumn_TreeTopLeft 0x280
+	#define METATILE_Autumn_TreeTopMiddleLeft 0x281
+	#define METATILE_Autumn_TreeTopMiddleRight 0x282
+	#define METATILE_Autumn_TreeTopRight 0x283
+	#define METATILE_Autumn_TreeTopMiddleLeftJoined 0x28C
+	#define METATILE_Autumn_TreeTopLeftCorner 0x298
+	#define METATILE_Autumn_TreeTopRightCorner 0x299
+	#define METATILE_Autumn_TreeSideLeftTop 0x288
+	#define METATILE_Autumn_TreeSideLeftBottom 0x290
+	#define METATILE_Autumn_TreeSideRightTop 0x28B
+	#define METATILE_Autumn_TreeSideRightBottom 0x293
+	#define METATILE_Autumn_TreeSideLeftJoined 0x284
+	#define METATILE_Autumn_TreeSideRightJoined 0x287
+	
+	{0xA, METATILE_Forest_Ground, Tileset_Forest}, //Override regular
+	{0x2A8, METATILE_Forest_TreeTopLeft, Tileset_Forest},
+	{0x2AA, METATILE_Forest_TreeTopRight, Tileset_Forest},
+	{0x2AC, METATILE_Forest_TreeSideLeft, Tileset_Forest},
+	{0x2AE, METATILE_Forest_TreeSideRight, Tileset_Forest},
+	{0x2F8, METATILE_Forest_Ground, Tileset_Forest},
+	{0x2F9, METATILE_Forest_Ground, Tileset_Forest},
+	{0x2FA, METATILE_Forest_Ground, Tileset_Forest},
+	{0x2FB, METATILE_Forest_Ground, Tileset_Forest},
+	{0x2FC, METATILE_Forest_Ground, Tileset_Forest},
+	{0x2FD, METATILE_Forest_Ground, Tileset_Forest},
+	{0x300, METATILE_Forest_Ground, Tileset_Forest},
+	{0x301, METATILE_Forest_Ground, Tileset_Forest},
+	{0x302, METATILE_Forest_Ground, Tileset_Forest},
+	{0x303, METATILE_Forest_Ground, Tileset_Forest},
+	{0x304, METATILE_Forest_Ground, Tileset_Forest},
+	{0x308, METATILE_Forest_Ground, Tileset_Forest},
+	{0x309, METATILE_Forest_Ground, Tileset_Forest},
+	{0x30A, METATILE_Forest_Ground, Tileset_Forest},
+	{0x30B, METATILE_Forest_Ground, Tileset_Forest},
+	{0x30C, METATILE_Forest_Ground, Tileset_Forest},
+	{0x310, METATILE_Forest_TreeTopLeft, Tileset_Forest},
+	{0x312, METATILE_Forest_TreeTopLeft, Tileset_Forest},
+	{0x314, METATILE_Forest_TreeTopRight, Tileset_Forest},
+	{0x316, METATILE_Forest_TreeTopRight, Tileset_Forest},
+	{0x328, METATILE_Forest_TreeSideRight, Tileset_Forest},
+	{0x32A, METATILE_Forest_TreeSideLeft, Tileset_Forest},
+	{0x32C, METATILE_Forest_TreeTopCornerLeft, Tileset_Forest},
+	{0x32E, METATILE_Forest_TreeTopCornerRight, Tileset_Forest},
+	{0x330, METATILE_Forest_TreeSideRight, Tileset_Forest},
+	{0x332, METATILE_Forest_TreeSideLeft, Tileset_Forest},
+	{0x338, METATILE_Forest_TreeSideRight, Tileset_Forest},
+	{0x33A, METATILE_Forest_TreeSideLeft, Tileset_Forest},
+
+	{0x6, METATILE_General_TreeSideRight, Tileset_General},
+	{0x7, METATILE_General_TreeSideLeft, Tileset_General},
+	{0xA, METATILE_General_PlainGrass, Tileset_General},
+	{0xB, METATILE_General_TreeTopLeft, Tileset_General},
+	{0xC, METATILE_General_TreeTopRight, Tileset_General},
+	{0xD, METATILE_General_PlainGrass, Tileset_General},
+	{0x12, METATILE_General_PlainGrass, Tileset_General},
+	{0x137, METATILE_General_PlainGrass, Tileset_General},
+	{0x1EE, METATILE_General_PlainGrass, Tileset_General},
+	{0x1EF, METATILE_General_PlainGrass, Tileset_General},
+	{0x1F3, METATILE_General_PlainGrass, Tileset_General},
+	{0x1F4, METATILE_General_PlainGrass, Tileset_General},
+	{0x1F5, METATILE_General_TreeTopLeft, Tileset_General},
+	{0x1F6, METATILE_General_TreeTopRight, Tileset_General},
+	{0x1F7, METATILE_General_PlainGrass, Tileset_General},
+	{0x1FF, METATILE_General_PlainGrass, Tileset_General},
+	{0x205, METATILE_General_PlainGrass, Tileset_General},
+	{0x206, METATILE_General_PlainGrass, Tileset_General},
+	{0x20F, METATILE_General_TreeSideRight, Tileset_General},
+	{0x210, METATILE_General_PlainGrass, Tileset_General},
+	{0x211, METATILE_General_PlainGrass, Tileset_General},
+	{0x217, METATILE_General_TreeSideLeft, Tileset_General},
+	{0x218, METATILE_General_PlainGrass, Tileset_General},
+	{0x219, METATILE_General_PlainGrass, Tileset_General},
+	{0x220, METATILE_General_LandEdgeMiddle, Tileset_General},
+	{0x221, METATILE_General_LandEdgeMiddle, Tileset_General},
+	{0x222, METATILE_General_LandEdgeMiddle, Tileset_General},
+	{0x223, METATILE_General_LandEdgeMiddle, Tileset_General},
+	{0x227, METATILE_General_PlainGrass, Tileset_General},
+	{0x228, METATILE_General_PlainGrass, Tileset_General},
+	{0x229, METATILE_General_LandEdgeMiddle, Tileset_General},
+	{0x22A, METATILE_General_PlainGrass, Tileset_General},
+	{0x22B, METATILE_General_LandEdgeMiddle, Tileset_General},
+	{0x321, METATILE_General_TreeSideLeft, Tileset_DrescoTown},
+	{0x329, METATILE_General_TreeSideRight, Tileset_DrescoTown},
+	{0x32B, METATILE_General_TreeSideRight, Tileset_DrescoTown},
+	{0x32C, METATILE_General_TreeTopLeft, Tileset_DrescoTown},
+	{0x32D, METATILE_General_LandEdgeLeft, Tileset_DrescoTown},
+	{0x32E, METATILE_General_LandEdgeMiddle, Tileset_DrescoTown},
+	{0x333, METATILE_General_TreeSideLeft, Tileset_DrescoTown},
+	{0x335, METATILE_General_LandEdgeMiddle, Tileset_DrescoTown},
+	{0x2BE, METATILE_General_TreeTopLeft, Tileset_FlowerParadise},
+	{0x2BF, METATILE_General_TreeTopRight, Tileset_FlowerParadise},
+	{0x2C7, METATILE_General_TreeTopRight, Tileset_FlowerParadise},
+	{0x2CF, METATILE_General_TreeSideRight, Tileset_FlowerParadise},
+	{0x2D5, METATILE_General_TreeSideLeft, Tileset_FlowerParadise},
+	{0x2F7, METATILE_General_TreeSideRight, Tileset_FlowerParadise},
+	{0x2AF, METATILE_General_TreeSideLeft, Tileset_CraterTown},
+	{0x2B7, METATILE_General_TreeSideLeft, Tileset_CraterTown},
+	{0x2BF, METATILE_General_TreeSideLeft, Tileset_CraterTown},
+	{0x2C7, METATILE_General_TreeSideLeft, Tileset_CraterTown},
+	{0x2CF, METATILE_General_TreeSideLeft, Tileset_CraterTown},
+	{0x319, METATILE_General_TreeTopRightOverTreeSideLeft, Tileset_CraterTown},
+	{0x321, METATILE_General_TreeSideLeft, Tileset_CraterTown},
+	{0x329, METATILE_General_TreeSideLeft, Tileset_CraterTown},
+	{0x32A, METATILE_General_TreeSideRight, Tileset_CraterTown},
+	{0x32C, METATILE_General_TreeSideRight, Tileset_CraterTown},
+	{0x331, METATILE_General_TreeTopLeft, Tileset_CraterTown},
+	{0x332, METATILE_General_TreeTopRight, Tileset_CraterTown},
+	{0x340, METATILE_General_TreeTopRight, Tileset_CraterTown},
+	{0x341, METATILE_General_TreeSideRight, Tileset_CraterTown},
+
+	{0x2C0, METATILE_Autumn_Ground, Tileset_Autumn},
+	{0x2C1, METATILE_Autumn_Ground, Tileset_Autumn},
+	{0x2C2, METATILE_Autumn_Ground, Tileset_Autumn},
+	{0x2C3, METATILE_Autumn_Ground, Tileset_Autumn},
+	{0x2C4, METATILE_Autumn_Ground, Tileset_Autumn},
+	{0x2C8, METATILE_Autumn_Ground, Tileset_Autumn},
+	{0x2C9, METATILE_Autumn_Ground, Tileset_Autumn},
+	{0x2CA, METATILE_Autumn_Ground, Tileset_Autumn},
+	{0x2CB, METATILE_Autumn_Ground, Tileset_Autumn},
+	{0x2CC, METATILE_Autumn_Ground, Tileset_Autumn},
+	{0x2CD, METATILE_Autumn_Ground, Tileset_Autumn},
+	{0x2CE, METATILE_Autumn_Ground, Tileset_Autumn},
+	{0x2D0, METATILE_Autumn_Ground, Tileset_Autumn},
+	{0x2D1, METATILE_Autumn_Ground, Tileset_Autumn},
+	{0x2D2, METATILE_Autumn_Ground, Tileset_Autumn},
+	{0x2D3, METATILE_Autumn_Ground, Tileset_Autumn},
+	{0x310, METATILE_Autumn_TreeSideRightTop, Tileset_Autumn},
+	{0x311, METATILE_Autumn_TreeSideLeftTop, Tileset_Autumn},
+	{0x318, METATILE_Autumn_TreeSideRightBottom, Tileset_Autumn},
+	{0x319, METATILE_Autumn_TreeSideLeftBottom, Tileset_Autumn},
+	{0x320, METATILE_Autumn_TreeSideRightTop, Tileset_Autumn},
+	{0x321, METATILE_Autumn_TreeSideLeftTop, Tileset_Autumn},
+	{0x328, METATILE_Autumn_TreeSideRightJoined, Tileset_Autumn},
+	{0x329, METATILE_Autumn_TreeSideLeftJoined, Tileset_Autumn},
+	{0x32A, METATILE_Autumn_TreeTopRight, Tileset_Autumn},
+	{0x32B, METATILE_Autumn_TreeTopLeft, Tileset_Autumn},
+	{0x330, METATILE_Autumn_TreeSideRightBottom, Tileset_Autumn},
+	{0x331, METATILE_Autumn_TreeSideLeftBottom, Tileset_Autumn},
+	{0x332, METATILE_Autumn_TreeTopMiddleLeft, Tileset_Autumn},
+	{0x333, METATILE_Autumn_TreeTopMiddleLeftJoined, Tileset_Autumn},
+	{0x338, METATILE_Autumn_TreeTopLeftCorner, Tileset_Autumn},
+	{0x339, METATILE_Autumn_TreeTopMiddleRight, Tileset_Autumn},
+	{0x33A, METATILE_Autumn_TreeTopMiddleLeftJoined, Tileset_Autumn},
+	{0x33B, METATILE_Autumn_TreeTopRightCorner, Tileset_Autumn},
+	{0x344, METATILE_Autumn_TreeTopLeft, Tileset_Autumn},
+	{0x348, METATILE_Autumn_TreeSideRightJoined, Tileset_Autumn},
+	{0x349, METATILE_Autumn_TreeSideLeftJoined, Tileset_Autumn},
+	{0x350, METATILE_Autumn_TreeSideRightJoined, Tileset_Autumn},
+	{0x351, METATILE_Autumn_TreeSideLeftTop, Tileset_Autumn},
+	{0x3D4, METATILE_Autumn_TreeSideRightTop, Tileset_Autumn},
+	{0x3D6, METATILE_Autumn_TreeTopRight, Tileset_Autumn},
+	{0x3F8, METATILE_Autumn_TreeSideRightTop, Tileset_Autumn},
+	{0x3F9, METATILE_Autumn_TreeTopMiddleLeftJoined, Tileset_Autumn},
+	{0x3FA, METATILE_Autumn_TreeTopRight, Tileset_Autumn},
+
+	{0x366, METATILE_General_TreeTopRight, Tileset_FallshoreCity},
+	{0x367, METATILE_General_TreeTopRight, Tileset_FallshoreCity},
+	{0x376, METATILE_General_TreeSideLeft, Tileset_FallshoreCity},
+	{0x377, METATILE_General_TreeSideRight, Tileset_FallshoreCity},
+	{0x3B4, METATILE_General_TreeTopLeft, Tileset_DeharaCity},
+	{0x3B5, METATILE_General_TreeTopRight, Tileset_DeharaCity},
+	{0x3CE, METATILE_General_TreeTopLeft, Tileset_DeharaCity},
+	{0x3CF, METATILE_General_TreeTopRight, Tileset_DeharaCity},
+	{0x3D3, METATILE_General_TreeTopLeft, Tileset_DeharaCity},
+	{0x3D4, METATILE_General_TreeTopRight, Tileset_DeharaCity},
+	{0x3DD, METATILE_General_LandEdgeMiddle, Tileset_DeharaCity},
+	{0x3DE, METATILE_General_TreeTopLeft, Tileset_DeharaCity},
+	{0x3DF, METATILE_General_TreeTopRight, Tileset_DeharaCity},
+	{0x318, METATILE_General_LandEdgeLeft, Tileset_GurunTown},
+	{0x319, METATILE_General_LandEdgeLeft, Tileset_GurunTown},
+	{0x31A, METATILE_General_LandEdgeLeft, Tileset_GurunTown},
+	{0x322, METATILE_General_BothTreeSides, Tileset_GurunTown},
+	{0x346, METATILE_General_LandEdgeRight, Tileset_GurunTown},
+	{0x2F6, METATILE_Route17_LandEdgeBottomRight, Tileset_Route17},
+	{0x2F8, METATILE_Route17_LandEdgeBottomMiddle, Tileset_Route17},
+	{0x2F9, METATILE_Route17_LandEdgeBottomMiddle, Tileset_Route17},
+	{0x2FA, METATILE_Route17_LandEdgeBottomMiddle, Tileset_Route17},
+	{0x2FB, METATILE_Route17_LandEdgeBottomLeft, Tileset_Route17},
+	{0x2FC, METATILE_Route17_LandEdgeBottomLeft, Tileset_Route17},
+	{0x2FD, METATILE_Route17_LandEdgeBottomLeft, Tileset_Route17},
+	{0x2FE, METATILE_Route17_LandEdgeBottomRight, Tileset_Route17},
+	{0x2FF, METATILE_Route17_LandEdgeBottomRight, Tileset_Route17},
+
+	{0x1, 0x0, Tileset_Snow},
+	{0x4, 0x2, Tileset_Snow},
+	{0x5, 0x3, Tileset_Snow},
+	{0x7, 0x6, Tileset_Snow},
+	{0xD5, 0x47, Tileset_Snow},
+	{0xD6, 0x47, Tileset_Snow},
+	{0xDD, 0x57, Tileset_Snow},
+	{0xDE, 0x57, Tileset_Snow},
+	{0xE4, 0x3F, Tileset_Snow},
+	{0xEC, 0x3D, Tileset_Snow},
+	{0x180, 0x178, Tileset_Snow},
+	{0x181, 0x179, Tileset_Snow},
+	{0x1B0, 0x0, Tileset_Snow},
+	{0x1B1, 0x0, Tileset_Snow},
+	{0x1B2, 0x0, Tileset_Snow},
+	{0x1B3, 0x0, Tileset_Snow},
+	{0x1B4, 0x0, Tileset_Snow},
+	{0x1B5, 0x0, Tileset_Snow},
+	{0x1B6, 0x0, Tileset_Snow},
+	{0x1B8, 0x0, Tileset_Snow},
+	{0x1B9, 0x0, Tileset_Snow},
+	{0x1BA, 0x0, Tileset_Snow},
+	{0x1BB, 0x0, Tileset_Snow},
+	{0x1BE, 0x2, Tileset_Snow},
+	{0x1BF, 0x3, Tileset_Snow},	
+	{0x1C0, 0x0, Tileset_Snow},
+	{0x1C1, 0x0, Tileset_Snow},
+	{0x1C2, 0x0, Tileset_Snow},
+	{0x1C3, 0x0, Tileset_Snow},
+	{0x1C4, 0x2, Tileset_Snow},
+	{0x1C5, 0x3, Tileset_Snow},
+	{0x1C6, 0x2, Tileset_Snow},
+	{0x1C7, 0x3, Tileset_Snow},
+	{0x1C8, 0x2, Tileset_Snow},
+	{0x1C9, 0x3, Tileset_Snow},
+	{0x1CA, 0x2, Tileset_Snow},
+	{0x1CB, 0x3, Tileset_Snow},
+	{0x1CC, 0x2, Tileset_Snow},
+	{0x1CD, 0x3, Tileset_Snow},
+	{0x1CE, 0x2, Tileset_Snow},
+	{0x1CF, 0x3, Tileset_Snow},
+	{0x1D0, 0x179, Tileset_Snow},
+	{0x1D1, 0x178, Tileset_Snow},
+	{0x1D8, 0x179, Tileset_Snow},
+	{0x1D9, 0x178, Tileset_Snow},
+	{0x1E0, 0x179, Tileset_Snow},
+	{0x1E1, 0x178, Tileset_Snow},
+	{0x1E8, 0x179, Tileset_Snow},
+	{0x1E9, 0x178, Tileset_Snow},
+	{0x1F0, 0x179, Tileset_Snow},
+	{0x1F1, 0x178, Tileset_Snow},
+	{0x1F8, 0x179, Tileset_Snow},
+	{0x1F9, 0x178, Tileset_Snow},
+	CUT_GRASS_TERMIN
+};
+#endif
+
 enum
 {
 	TRAINER_PARAM_LOAD_VAL_8BIT,
@@ -1248,7 +1560,10 @@ s32 DoPoisonFieldEffect(void)
 	for (i = 0; i < PARTY_SIZE; i++)
 	{
 		mon = &gPlayerParty[i];
-		if (GetMonData(mon, MON_DATA_SANITY_HAS_SPECIES, NULL) && GetMonPrimaryAilments(mon->condition) == AILMENT_PSN)
+		u8 ability = GetMonAbility(mon);
+		if (GetMonData(mon, MON_DATA_SPECIES, NULL) != SPECIES_NONE
+		&& GetMonPrimaryAilments(mon->condition) == AILMENT_PSN
+		&& ability != ABILITY_POISONHEAL && ability != ABILITY_MAGICGUARD)
 		{
 			hp = mon->hp;
 
@@ -1471,6 +1786,23 @@ const u8* GetInteractedMetatileScript(unusedArg int position, u8 metatileBehavio
 	}
 
 	return NULL;
+}
+
+void SetCutGrassMetatile(s16 x, s16 y)
+{
+    u32 i;
+	s32 metatileId = MapGridGetMetatileIdAt(x, y);
+	
+	for (i = 0; i < ARRAY_COUNT(sCutGrassTiles); ++i)
+	{
+		if (sCutGrassTiles[i].originalMetatileId == metatileId
+		&& (gMapHeader.mapLayout->primaryTileset == sCutGrassTiles[i].tilesetPtr
+		 || gMapHeader.mapLayout->secondaryTileset == sCutGrassTiles[i].tilesetPtr))
+		{
+			MapGridSetMetatileIdAt(x, y, sCutGrassTiles[i].newMetatileId);
+			break;
+		}
+	}
 }
 
 static bool8 MetatileBehavior_IsClimbableLadder(unusedArg u8 behaviour)

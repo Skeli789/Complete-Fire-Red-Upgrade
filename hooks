@@ -140,6 +140,7 @@ CheckForTrainersWantingBattle 8081B30 0
 CanUseEscapeRopeOnCurrMap 80A1B8C 0
 IsRunningDisallowedByMetatile 80BD4B8 1
 ReplaceOWSandstormPaletteHook 807D5F0 0
+SetCutGrassMetatile 8097B50 2
 
 ##Party Menu Hooks
 DisplayPartyPokemonSelectForBattle 811F388 1
