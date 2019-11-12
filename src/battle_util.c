@@ -1099,8 +1099,12 @@ bool8 CanBePoisoned(u8 bankDef, u8 bankAtk, bool8 checkFlowerVeil)
 
 	switch (ABILITY(bankDef)) {
 		case ABILITY_IMMUNITY:
+		case ABILITY_PASTELVEIL:
 			return FALSE;
 	}
+	
+	if (IS_DOUBLE_BATTLE && ABILITY(PARTNER(bankDef)) == ABILITY_PASTELVEIL)
+		return FALSE;
 
 	if (ABILITY(bankAtk) != ABILITY_CORROSION)
 	{

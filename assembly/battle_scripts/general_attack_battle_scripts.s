@@ -1403,8 +1403,8 @@ BS_071_LowerTargetSpAtk1Chance:
 
 .global BS_072_LowerTargetSpDef1Chance
 BS_072_LowerTargetSpDef1Chance:
-	jumpifhalfword EQUALS CURRENT_MOVE MOVE_ACIDSPRAY AcidSprayBS
-	jumpifhalfword EQUALS CURRENT_MOVE MOVE_SEEDFLARE AcidSprayBS
+	jumpifmove MOVE_ACIDSPRAY AcidSprayBS
+	jumpifmove MOVE_SEEDFLARE AcidSprayBS
 	setmoveeffect MOVE_EFFECT_SP_DEF_MINUS_1
 	goto BS_STANDARD_HIT
 

@@ -1123,7 +1123,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 
 					if (bank != gBankAttacker
 					&&  !SheerForceCheck()
-					&& (ABILITY(bank) == ABILITY_WIMPOUT || ABILITY(bank) == ABILITY_EMERGENCYEXIT)
+					&& (/*ABILITY(bank) == ABILITY_WIMPOUT ||*/ ABILITY(bank) == ABILITY_EMERGENCYEXIT)
 					&&  !(gNewBS->ResultFlags[bank] & MOVE_RESULT_NO_EFFECT)
 					&&  !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bank)
 					&&  !(gStatuses3[bank] & (STATUS3_SKY_DROP_ANY))

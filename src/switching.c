@@ -542,7 +542,7 @@ void atk52_switchineffects(void)
 
 		case SwitchIn_EmergencyExit:
 			if (ABILITY(gActiveBattler) == ABILITY_EMERGENCYEXIT
-			||  ABILITY(gActiveBattler) == ABILITY_WIMPOUT)
+			/*||  ABILITY(gActiveBattler) == ABILITY_WIMPOUT*/)
 			{
 				if (gBattleMons[gActiveBattler].hp > 0
 				&&  gBattleMons[gActiveBattler].hp <= gBattleMons[gActiveBattler].maxHP / 2

@@ -1,3 +1,6 @@
+#org @DESC_BLANK
+-
+
 #org @DESC_NO_MOVE
 No move information.
 
@@ -970,5 +973,164 @@ The Pok\emon\ncongratulates you\non your special\nday!
 #org @DESC_HOLDHANDS
 The user and an\nally hold hands.\nThis makes them\nvery happy.
 
-#org @DESC_BLANK
+#org @DESC_DYNAMAX_CANNON
+-
+
+#org @DESC_SNIPE_SHOT
+-
+
+#org @DESC_JAW_LOCK
+-
+
+#org @DESC_STUFF_CHEEKS
+-
+
+#org @DESC_NO_RETREAT
+-
+
+#org @DESC_TAR_SHOT
+-
+
+#org @DESC_MAGIC_POWDER
+-
+
+#org @DESC_DRAGON_DARTS
+-
+
+#org @DESC_TEATIME
+-
+
+#org @DESC_OCTOLOCK
+-
+
+#org @DESC_BOLT_BEAK
+-
+
+#org @DESC_FISHIOUS_REND
+-
+
+#org @DESC_COURT_CHANGE
+-
+
+#org @DESC_CLANGOROUS_SOUL
+-
+
+#org @DESC_BODY_PRESS
+-
+
+#org @DESC_DECORATE
+-
+
+#org @DESC_DRUM_BEATING
+-
+
+#org @DESC_SNAP_TRAP
+-
+
+#org @DESC_PYRO_BALL
+-
+
+#org @DESC_BEHEMOTH_BLADE
+-
+
+#org @DESC_BEHEMOTH_BASH
+-
+
+#org @DESC_AURA_WHEEL
+-
+
+#org @DESC_BREAKING_SWIPE
+-
+
+#org @DESC_BRANCH_POKE
+-
+
+#org @DESC_OVERDRIVE
+-
+
+#org @DESC_APPLE_ACID
+-
+
+#org @DESC_GRAV_APPLE
+-
+
+#org @DESC_SPIRIT_BREAK
+-
+
+#org @DESC_STRANGE_STEAM
+-
+
+#org @DESC_LIFE_DEW
+-
+
+#org @DESC_OBSTRUCT
+-
+
+#org @DESC_FALSE_SURRENDER
+-
+
+#org @DESC_METEOR_ASSAULT
+-
+
+#org @DESC_ETERNABEAM
+-
+
+#org @DESC_STEEL_BEAM
+-
+
+#org @DESC_MAX_GUARD
+-
+
+#org @DESC_MAX_FLARE
+-
+
+#org @DESC_MAX_FLUTTERBY
+-
+
+#org @DESC_MAX_LIGHTNING
+-
+
+#org @DESC_MAX_STRIKE
+-
+
+#org @DESC_MAX_KNUCKLE
+-
+
+#org @DESC_MAX_PHANTASM
+-
+
+#org @DESC_MAX_HAILSTORM
+-
+
+#org @DESC_MAX_OOZE
+-
+
+#org @DESC_MAX_GEYSER
+-
+
+#org @DESC_MAX_AIRSTREAM
+-
+
+#org @DESC_MAX_STARFALL
+-
+
+#org @DESC_MAX_WYRMWIND
+-
+
+#org @DESC_MAX_MINDSTORM
+-
+
+#org @DESC_MAX_ROCKFALL
+-
+
+#org @DESC_MAX_QUAKE
+-
+
+#org @DESC_MAX_DARKNESS
+-
+
+#org @DESC_MAX_OVERGROWTH
+-
+
+#org @DESC_MAX_STEELSPIKE
 -

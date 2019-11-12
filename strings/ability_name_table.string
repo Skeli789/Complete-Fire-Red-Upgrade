@@ -224,14 +224,14 @@ Vital Spirit
 #org @NAME_WHITE_SMOKE
 White Smoke
 
-#org @NAME_PURE_POWER
-Pure Power
+#org @NAME_NEUTRALISING_GAS
+Neutralising Gas
 
 #org @NAME_SHELL_ARMOR
 Shell Armor
 
-#org @NAME_CACOPHONY
-Cacophony
+#org @NAME_HUNGER_SWITCH
+Hunger Switch
 
 #org @NAME_AIR_LOCK
 Air Lock
@@ -488,14 +488,14 @@ Emergency Exit
 #org @NAME_FLUFFY
 Fluffy
 
-#org @NAME_FULL_METAL_BODY
-Full Metal Body
+#org @NAME_STEELY_SPIRIT
+Steely Spirit
 
-#org @NAME_UNUSED_1
-UNUSED 1
+#org @NAME_PERISH_BODY
+Perish Body
 
-#org @NAME_UNUSED_2
-UNUSED 2
+#org @NAME_WANDERING_SPIRIT
+Wandering Soul
 
 #org @NAME_POWER_CONSTRUCT
 Power Construct
@@ -647,8 +647,8 @@ Desolate Land
 #org @NAME_DELTA_STREAM
 Delta Stream
 
-#org @NAME_WIMP_OUT
-Wimp Out
+#org @NAME_GORILLA_TACTICS
+Gorilla Tactics
 
 #org @NAME_BERSERK
 Berserk
@@ -715,3 +715,54 @@ Neuroforce
 
 #org @NAME_GALVANIZE
 Galvanize
+
+#org @NAME_INTREPID_SWORD
+Intrepid Sword
+
+#org @NAME_DAUNTLESS_SHIELD
+Valiant Shield
+
+#org @NAME_BALL_FETCH
+Ball Fetch
+
+#org @NAME_COTTON_DOWN
+Cotton Down
+
+#org @NAME_MIRROR_ARMOR
+Mirror Armor
+
+#org @NAME_GULP_MISSLE
+Gulp Missile
+
+#org @NAME_STALWART
+Stalwart
+
+#org @NAME_STEAM_ENGINE
+Steam Engine
+
+#org @NAME_PUNK_ROCK
+Punk Rock
+
+#org @NAME_SAND_SPIT
+Sand Spit
+
+#org @NAME_ICE_SCALES
+Ice Scales
+
+#org @NAME_RIPEN
+Ripen
+
+#org @NAME_ICE_FACE
+Ice Face
+
+#org @NAME_POWER_SPOT
+Power Spot
+
+#org @NAME_MIMICRY
+Mimicry
+
+#org @NAME_SCREEN_CLEANER
+Screen Cleaner
+
+#org @NAME_PASTEL_VEIL
+Pastel Veil

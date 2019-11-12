@@ -353,7 +353,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			&& defAbility != ABILITY_CONTRARY
 			&& defAbility != ABILITY_CLEARBODY
 			&& defAbility != ABILITY_WHITESMOKE
-			&& defAbility != ABILITY_FULLMETALBODY
+			//&& defAbility != ABILITY_FULLMETALBODY
 			&& defAbility != ABILITY_HYPERCUTTER)
 				INCREASE_STATUS_VIABILITY(1);
 			break;
@@ -367,7 +367,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			&& defAbility != ABILITY_CONTRARY
 			&& defAbility != ABILITY_CLEARBODY
 			&& defAbility != ABILITY_WHITESMOKE
-			&& defAbility != ABILITY_FULLMETALBODY
+			//&& defAbility != ABILITY_FULLMETALBODY
 			&& defAbility != ABILITY_BIGPECKS)
 				INCREASE_STATUS_VIABILITY(1);
 			break;
@@ -380,8 +380,8 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			if (SpeedCalc(bankAtk) <= SpeedCalc(bankDef)
 			&& defAbility != ABILITY_CONTRARY
 			&& defAbility != ABILITY_CLEARBODY
-			&& defAbility != ABILITY_WHITESMOKE
-			&& defAbility != ABILITY_FULLMETALBODY)
+			//&& defAbility != ABILITY_FULLMETALBODY
+			&& defAbility != ABILITY_WHITESMOKE)
 				INCREASE_STATUS_VIABILITY(2);
 			break;
 
@@ -393,8 +393,8 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			if (STAT_STAGE(bankDef, STAT_STAGE_SPATK) > 4 && SpecialMoveInMoveset(bankDef)
 			&& defAbility != ABILITY_CONTRARY
 			&& defAbility != ABILITY_CLEARBODY
-			&& defAbility != ABILITY_WHITESMOKE
-			&& defAbility != ABILITY_FULLMETALBODY)
+			//&& defAbility != ABILITY_FULLMETALBODY
+			&& defAbility != ABILITY_WHITESMOKE)
 				INCREASE_STATUS_VIABILITY(1);
 			break;
 
@@ -406,8 +406,8 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			if (STAT_STAGE(bankDef, STAT_STAGE_SPDEF) > 4 && SpecialMoveInMoveset(bankAtk)
 			&& defAbility != ABILITY_CONTRARY
 			&& defAbility != ABILITY_CLEARBODY
-			&& defAbility != ABILITY_WHITESMOKE
-			&& defAbility != ABILITY_FULLMETALBODY)
+			//&& defAbility != ABILITY_FULLMETALBODY
+			&& defAbility != ABILITY_WHITESMOKE)
 				INCREASE_STATUS_VIABILITY(1);
 			break;
 
@@ -419,7 +419,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			if (defAbility != ABILITY_CONTRARY
 			&& defAbility != ABILITY_CLEARBODY
 			&& defAbility != ABILITY_WHITESMOKE
-			&& defAbility != ABILITY_FULLMETALBODY
+			//&& defAbility != ABILITY_FULLMETALBODY
 			&& defAbility != ABILITY_KEENEYE)
 				INCREASE_STATUS_VIABILITY(1);
 			break;
@@ -430,8 +430,8 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			if ((STAT_STAGE(bankDef, STAT_STAGE_EVASION) > 6 || MoveInMovesetWithAccuracyLessThan(bankAtk, bankDef, 90, TRUE))
 			&& defAbility != ABILITY_CONTRARY
 			&& defAbility != ABILITY_CLEARBODY
-			&& defAbility != ABILITY_WHITESMOKE
-			&& defAbility != ABILITY_FULLMETALBODY)
+			//&& defAbility != ABILITY_FULLMETALBODY
+			&& defAbility != ABILITY_WHITESMOKE)
 				INCREASE_STATUS_VIABILITY(2);
 			break;
 
@@ -664,7 +664,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 					if (defAbility != ABILITY_CONTRARY
 					&& defAbility != ABILITY_CLEARBODY
 					&& defAbility != ABILITY_WHITESMOKE
-					&& defAbility != ABILITY_FULLMETALBODY
+					//&& defAbility != ABILITY_FULLMETALBODY
 					&& STAT_STAGE(bankDef, STAT_STAGE_SPEED) > 0)
 						IncreaseViabilityForSpeedControl(&viability, class, bankAtk, bankDef);
 				}

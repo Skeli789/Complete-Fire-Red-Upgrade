@@ -211,6 +211,7 @@ void BuildTrainerPartySetup(void)
 			if (ExtensionState.skyBattlePartyBackup != NULL)
 			{
 				u8 counter = 0;
+				u8 j = 0;
 				for (int i = 0; i < PARTY_SIZE; ++i)
 				{
 					if (!CanMonParticipateInASkyBattle(&gPlayerParty[i]))
@@ -218,7 +219,13 @@ void BuildTrainerPartySetup(void)
 						(ExtensionState.skyBattlePartyBackup)[counter++] = gPlayerParty[i];
 						Memset(&gPlayerParty[i], 0x0, sizeof(struct Pokemon));
 					}
+					else
+					{
+						gSelectedOrderFromParty[j++] = i + 1;
+					}
 				}
+
+				gSelectedOrderFromParty[j] = 0;
 				CompactPartySlots();
 			}
 		}

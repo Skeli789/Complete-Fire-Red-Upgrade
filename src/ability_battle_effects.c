@@ -97,7 +97,7 @@ const s8 gAbilityRatings[ABILITIES_COUNT] =
 	[ABILITY_FOREWARN] = 2,
 	[ABILITY_FRIENDGUARD] = 0,
 	[ABILITY_FRISK] = 3,
-	[ABILITY_FULLMETALBODY] = 4,
+//	[ABILITY_FULLMETALBODY] = 4,
 	[ABILITY_FURCOAT] = 7,
 	[ABILITY_GALEWINGS] = 6,
 	[ABILITY_GALVANIZE] = 8,
@@ -180,7 +180,7 @@ const s8 gAbilityRatings[ABILITIES_COUNT] =
 	[ABILITY_PRISMARMOR] = 6,
 	[ABILITY_PROTEAN] = 8,
 	[ABILITY_PSYCHICSURGE] = 8,
-	[ABILITY_PUREPOWER] = 10,
+//	[ABILITY_PUREPOWER] = 10,
 	[ABILITY_QUEENLYMAJESTY] = 6,
 	[ABILITY_QUICKFEET] = 5,
 	[ABILITY_RAINDISH] = 3,
@@ -267,7 +267,7 @@ const s8 gAbilityRatings[ABILITIES_COUNT] =
 	[ABILITY_WATERVEIL] = 4,
 	[ABILITY_WEAKARMOR] = 2,
 	[ABILITY_WHITESMOKE] = 4,
-	[ABILITY_WIMPOUT] = 3,
+//	[ABILITY_WIMPOUT] = 3,
 	[ABILITY_WONDERGUARD] = 10,
 	[ABILITY_WONDERSKIN] = 4,
 	[ABILITY_ZENMODE] = -1,
@@ -910,6 +910,10 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 		case ABILITY_IMMUNITY:
 			effect = ImmunityAbilityCheck(bank, STATUS1_PSN_ANY, gStatusConditionString_Poison);
 			break;
+			
+		//case ABILITY_PASTELVEIL:
+		//	effect = ImmunityAbilityCheck(bank, STATUS1_PSN_ANY, gStatusConditionString_Poison);
+		//	break;
 
 		case ABILITY_LIMBER:
 			effect = ImmunityAbilityCheck(bank, STATUS1_PARALYSIS, gStatusConditionString_Paralysis);

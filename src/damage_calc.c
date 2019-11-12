@@ -1472,7 +1472,7 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 	if (!IgnoreAttacker) { //Find out if this is necessary for Future Sight
 		switch(atkAbility) {
 			case ABILITY_HUGEPOWER:
-			case ABILITY_PUREPOWER:
+//			case ABILITY_PUREPOWER:
 				attack *= 2;
 				break;
 
@@ -1694,9 +1694,17 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 
 			case ABILITY_BATTERY:
 				spAttack = udivsi((spAttack * 130), 100);
+				break;
+
+			//case ABILITY_STEELYSPIRIT:
+			//	if (moveType == TYPE_STEEL)
+			//	{
+			//		attack = udivsi((attack * 130), 100);
+			//		spAttack = udivsi((spAttack * 130), 100);
+			//	}
+			//	break;
 		}
 	}
-
 
 //Target Ability Checks
 	switch (defAbility) {
@@ -2231,6 +2239,17 @@ s32 CalculateBaseDamage(struct BattlePokemon* attacker, struct BattlePokemon* de
 			&& atkEffect != ITEM_EFFECT_PROTECTIVE_PADS
 			&& atkAbility != ABILITY_LONGREACH)
 				damage /= 2;
+			break;
+
+		case ABILITY_PUNKROCK:
+			if (CheckSoundMove(move))
+				damage /= 2;
+			break;
+
+		case ABILITY_ICESCALES:
+			if (moveSplit == SPLIT_SPECIAL)
+				damage /= 2;
+			break;
 	}
 
 	if (defPartner_ability == ABILITY_FRIENDGUARD)

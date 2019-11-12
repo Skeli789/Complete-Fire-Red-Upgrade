@@ -1174,7 +1174,7 @@ const move_t gSmogonAverageMons_MoveBanList[] =
 const u8 gSmogonAverageMons_AbilityBanList[] =
 {
 	ABILITY_HUGEPOWER,
-	ABILITY_PUREPOWER,
+//	ABILITY_PUREPOWER,
 	ABILITY_SHADOWTAG,
 	ABILITY_ARENATRAP,
 	ABILITY_TABLES_TERMIN
@@ -1590,9 +1590,6 @@ const species_t gRandomizerSpeciesBanList[] =
 
 const ability_t gRandomizerAbilityBanList[] =
 {
-	ABILITY_CACOPHONY,
-	ABILITY_BROKEN_1,
-	ABILITY_BROKEN_2,
 	ABILITY_TABLES_TERMIN
 };
 

@@ -178,22 +178,26 @@ void atkFF06_setterrain(void)
 
 	switch (gCurrentMove) {
 		case MOVE_ELECTRICTERRAIN:
+		case MOVE_MAX_LIGHTNING:
 			type = ELECTRIC_TERRAIN;
 			gBattleScripting->animArg1 = B_ANIM_ELECTRIC_SURGE;
 			gBattleStringLoader = ElectricTerrainSetString;
 			break;
 		case MOVE_GRASSYTERRAIN:
+		case MOVE_MAX_OVERGROWTH:
 			type = GRASSY_TERRAIN;
 			gBattleScripting->animArg1 = B_ANIM_GRASSY_SURGE;
 			gBattleStringLoader = GrassyTerrainSetString;
 			break;
 		case MOVE_MISTYTERRAIN:
+		case MOVE_MAX_STARFALL:
 			type = MISTY_TERRAIN;
 			gBattleScripting->animArg1 = B_ANIM_MISTY_SURGE;
 			gBattleStringLoader = MistyTerrainSetString;
 			break;
 		case MOVE_PSYCHICTERRAIN:
 		case MOVE_GENESIS_SUPERNOVA:
+		case MOVE_MAX_MINDSTORM:
 			type = PSYCHIC_TERRAIN;
 			gBattleScripting->animArg1 = B_ANIM_PSYCHIC_SURGE;
 			gBattleStringLoader = PsychicTerrainSetString;
@@ -647,7 +651,7 @@ void atkFF15_jumpifstatcanbemodified(void)
 
 		else if (ability == ABILITY_CLEARBODY
 		|| ability == ABILITY_WHITESMOKE
-		|| ability == ABILITY_FULLMETALBODY
+		//|| ability == ABILITY_FULLMETALBODY
 		|| (ability == ABILITY_FLOWERVEIL && IsOfType(gActiveBattler, TYPE_GRASS)))
 		{
 			gBattleScripting->bank = gActiveBattler;
@@ -1561,12 +1565,14 @@ void atkFF2C_trysetpoison(void)
 		gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
 		return;
 	}
+	//Put Pastel Veil here
 	else if (IsOfType(bank, TYPE_GRASS) && gBattleTypeFlags & BATTLE_TYPE_DOUBLE && ABILITY(PARTNER(bank)) == ABILITY_FLOWERVEIL)
 	{
 		gBattleScripting->bank = PARTNER(bank);
 		gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
 		return;
 	}
+	//Put Pastel Veil here
 
 	if (!fail)
 	{

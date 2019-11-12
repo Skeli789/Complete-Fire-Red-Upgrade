@@ -69,7 +69,7 @@ gBattleAnims_General:
 .word ANIM_POWDER_EXPLOSION
 .word ANIM_BEAK_BLAST_WARM_UP
 .word ANIM_SHELL_TRAP_SET
-.word ANIM_BERRY_EAT
+.word ANIM_BERRY_EATING
 .word ANIM_FOG_CONTINUES
 .word ANIM_AQUA_RING_HEAL
 .word ELECTRIC_TERRAIN_ACTIVE_ANIM
@@ -571,7 +571,8 @@ ANIM_SHELL_TRAP_SET:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-ANIM_BERRY_EAT:
+.global ANIM_BERRY_EATING
+ANIM_BERRY_EATING:
 	loadparticle ANIM_TAG_BERRY_NORMAL
 	loadparticle ANIM_TAG_SHARP_TEETH
 	loadparticle ANIM_TAG_THIN_RING

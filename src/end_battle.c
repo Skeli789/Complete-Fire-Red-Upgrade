@@ -570,14 +570,28 @@ static void EndSkyBattlePartyRestore(void)
 {
 	int i;
 	u8 counter = 0;
-	pokemon_t* backup = ExtensionState.skyBattlePartyBackup;
+	struct Pokemon* backup = ExtensionState.skyBattlePartyBackup;
 
-	if (ExtensionState.skyBattlePartyBackup != NULL)
+	if (backup != NULL)
 	{
-		for (i = 0; i < PARTY_SIZE; ++i) {
-			if (gPlayerParty[i].species == 0)
-				Memcpy(&gPlayerParty[i], &backup[counter++], sizeof(struct Pokemon));
+		struct Pokemon tempTeam[PARTY_SIZE] = {0};
+
+		for (i = 0; i < PARTY_SIZE; ++i)
+		{
+			if (gSelectedOrderFromParty[i] != 0)
+			{
+				tempTeam[gSelectedOrderFromParty[i] - 1] = gPlayerParty[i];
+				gSelectedOrderFromParty[i] = 0;
+			}
 		}
+
+		for (i = 0; i < PARTY_SIZE; ++i) 
+		{
+			if (tempTeam[i].species == SPECIES_NONE)
+				tempTeam[i] = backup[counter++];
+		}
+
+		Memcpy(gPlayerParty, tempTeam, sizeof(struct Pokemon) * PARTY_SIZE);
 		Free(backup);
 	}
 }
