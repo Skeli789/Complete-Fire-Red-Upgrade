@@ -364,6 +364,8 @@ animparticle HAVOC_SPEAR_IMG, 0x800	ANIM_TAG_HAVOC_SPEAR
 animparticle PURPLE_DRAKE_IMG, 0x800	ANIM_TAG_PURPLE_DRAKE
 animparticle ABILITY_POP_UP_IMG, (64 * 64) / 2,	ANIM_TAG_ABILITY_POP_UP
 animparticle MUD_BOMB_IMG, (64 * 64) / 2, ANIM_TAG_MUD_BOMB
+animparticle BRANCH_IMG, (32 * 32) / 2, ANIM_TAG_BRANCH
+animparticle APPLE_IMG, (32 * 32) / 2, ANIM_TAG_APPLE
 
 gBattleAnimPaletteTable:
 animparticlepal 0x8d028b4,	ANIM_TAG_BONE,	0x0
@@ -718,3 +720,5 @@ animparticlepal HAVOC_SPEAR_PAL,	ANIM_TAG_HAVOC_SPEAR,	0x0
 animparticlepal PURPLE_DRAKE_PAL,	ANIM_TAG_PURPLE_DRAKE,	0x0
 animparticlepal ABILITY_POP_UP_PAL,	ANIM_TAG_ABILITY_POP_UP, 0x0
 animparticlepal MUD_BOMB_PAL, ANIM_TAG_MUD_BOMB, 0x0
+animparticlepal BRANCH_PAL, ANIM_TAG_BRANCH, 0x0
+animparticlepal APPLE_PAL, ANIM_TAG_APPLE, 0x0

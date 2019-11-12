@@ -81,6 +81,8 @@ definitions for animation particles
 .equ PURPLE_DRAKE_IMG, Purple_DrakeTiles
 .equ ABILITY_POP_UP_IMG, Ability_Pop_UpTiles
 .equ MUD_BOMB_IMG, Mud_BombTiles
+.equ BRANCH_IMG, BranchTiles
+.equ APPLE_IMG, AppleTiles
 
 .equ SWORD_PAL, SwordPal
 .equ SEED_PAL, Leech_SeedPal
@@ -162,3 +164,5 @@ definitions for animation particles
 .equ PURPLE_DRAKE_PAL, Purple_DrakePal
 .equ ABILITY_POP_UP_PAL, Ability_Pop_UpPal
 .equ MUD_BOMB_PAL, Mud_BombPal
+.equ BRANCH_PAL, BranchPal
+.equ APPLE_PAL, ApplePal

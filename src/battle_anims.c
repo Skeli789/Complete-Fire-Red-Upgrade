@@ -1059,6 +1059,171 @@ void SpriteCB_DracoMeteorRock(struct Sprite *sprite)
 	sprite->callback = AnimDracoMeteorRockStep;
 }
 
+const struct OamData sPyroBallRockOAM =
+{
+	.affineMode = ST_OAM_AFFINE_OFF,
+	.objMode = ST_OAM_OBJ_NORMAL,
+	.shape = SPRITE_SHAPE(16x16),
+	.size = SPRITE_SIZE(16x16),
+	.priority = 1, //Above sprites
+};
+
+const struct OamData sPyroBallFlamesOAM =
+{
+	.affineMode = ST_OAM_AFFINE_OFF,
+	.objMode = ST_OAM_OBJ_NORMAL,
+	.shape = SPRITE_SHAPE(32x32),
+	.size = SPRITE_SIZE(32x32),
+	.priority = 1, //Above sprites
+};
+
+//Creates a rock that bounces between the attacker's feet.
+//arg 0: initial x pixel offset
+//arg 1: initial y pixel offset
+//arg 2: Ignore horizontal motion if TRUE. Only bounce once. 
+#define sVerticalTime sprite->data[0]
+#define sHorizontalTime sprite->data[1]
+#define sMovingBackHorizontally sprite->data[2]
+void SpriteCB_PyroBallRockBounceStep(struct Sprite* sprite)
+{
+	if (sprite->pos2.y > 0) //Rock returned back down
+	{
+		if (gBattleAnimArgs[2] || sMovingBackHorizontally) //Finished moving from left to right
+			DestroyAnimSprite(sprite);
+		else
+		{
+			sVerticalTime = 0;
+			sMovingBackHorizontally = TRUE;
+		}
+	}
+
+	s8 initialVerticalVelocity = -6;
+	s8 initialHorizontalVelocity = -1; //Starts by moving right to left
+
+	//vi = -6
+	//g = 0.25 (gravity not negative b/c go up to go closer to 0)
+	//h = vi*t + 0.5g*t^2
+	//t = sVerticalTime
+	sprite->pos2.y = (initialVerticalVelocity * sVerticalTime + (1 * sVerticalTime * sVerticalTime) / 4);
+
+	//x = vi*t
+	//vi = sprite->data[2]
+	//t = sHorizontalTime
+	if (!gBattleAnimArgs[2])
+		sprite->pos2.x = (initialHorizontalVelocity * sHorizontalTime);
+
+	sVerticalTime++;
+	
+	if (sMovingBackHorizontally)
+		sHorizontalTime--; //Move left to right
+	else
+		sHorizontalTime++; //Move right to left
+}
+
+static void InitSpritePositionForPyroBall(struct Sprite* sprite)
+{
+	InitSpritePosToAnimAttacker(sprite, 0);
+	sprite->pos1.y += 20; //Move closer to attacker's feet
+
+	if (SIDE(gBattleAnimAttacker) == B_SIDE_PLAYER)
+		sprite->pos1.y += 20; //Move below the text box
+
+}
+
+void SpriteCB_PyroBallRockBounce(struct Sprite* sprite)
+{
+	InitSpritePositionForPyroBall(sprite);
+	sprite->callback = SpriteCB_PyroBallRockBounceStep;
+}
+#undef sVerticalTime
+#undef sHorizontalTime
+#undef sMovingBackHorizontally
+
+//Launches a projectile from the attacker's feet at the target.
+//arg 0: initial x pixel offset
+//arg 1: initial y pixel offset
+//arg 2: target x pixel offset
+//arg 3: target y pixel offset
+//arg 4: duration
+//arg 5: wave amplitude
+void SpriteCB_PyroBallLaunch(struct Sprite* sprite)
+{
+	InitSpritePositionForPyroBall(sprite);
+
+	if (GetBattlerSide(gBattleAnimAttacker))
+		gBattleAnimArgs[2] = -gBattleAnimArgs[2];
+
+	sprite->data[0] = gBattleAnimArgs[4];
+	sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, 2) + gBattleAnimArgs[2];
+	sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimTarget, 3) + gBattleAnimArgs[3];
+	sprite->data[5] = gBattleAnimArgs[5];
+	InitAnimArcTranslation(sprite);
+
+	sprite->callback = SpriteCB_AnimMissileArcStep;
+}
+
+const struct OamData sAppleOAM=
+{
+	.affineMode = ST_OAM_AFFINE_DOUBLE,
+	.objMode = ST_OAM_OBJ_NORMAL,
+	.shape = SPRITE_SHAPE(32x32),
+	.size = SPRITE_SIZE(32x32),
+	.priority = 1, //Above sprites
+};
+
+static const union AffineAnimCmd gSpriteAffineAnim_ScaledApple[] =
+{
+	AFFINEANIMCMD_FRAME(64, 64, 0, 10), //Quadruple in size
+	AFFINEANIMCMD_END
+};
+
+const union AffineAnimCmd* const gSpriteAffineAnimTable_ScaledApple[] =
+{
+	gSpriteAffineAnim_ScaledApple,
+};
+
+static void SpriteCB_FallingAppleStep(struct Sprite *sprite)
+{
+	switch (sprite->data[0])
+	{
+	case 0:
+		sprite->pos2.y += 4;
+		if (sprite->pos2.y >= 0)
+		{
+			sprite->pos2.y = 0;
+			sprite->data[0]++;
+		}
+		break;
+	case 1:
+		if (++sprite->data[1] > 0)
+		{
+			sprite->data[1] = 0;
+			sprite->invisible ^= 1;
+			if (++sprite->data[2] == 10)
+				DestroyAnimSprite(sprite);
+		}
+		break;
+	}
+}
+
+//Causes an apple to fall from the sky.
+//arg 0: initial x pixel offset
+//arg 1: initial y pixel offset
+void SpriteCB_FallingApple(struct Sprite *sprite)
+{
+	sprite->pos2.x = gBattleAnimArgs[0];
+	sprite->pos1.y = gBattleAnimArgs[1];
+	sprite->pos2.y = -gBattleAnimArgs[1];
+	
+	if (SIDE(gBattleAnimTarget) == B_SIDE_PLAYER)
+	{
+		sprite->pos1.y += 45;
+		sprite->pos2.y -= 45;
+	}
+
+	sprite->callback = SpriteCB_FallingAppleStep;
+}
+
 // Scales up the target mon sprite
 // Used in Let's Snuggle Forever
 // No args.

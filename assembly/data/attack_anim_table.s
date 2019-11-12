@@ -15641,10 +15641,40 @@ ANIM_SNAP_TRAP:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_PYRO_BALL:
-	goto ANIM_FLAMEBURST
+	loadparticle ANIM_TAG_FLAT_ROCK
+	loadparticle ANIM_TAG_SMALL_EMBER
+	playsound2 0xA 0xC0 @;Hop
+	launchtemplate PYRO_BALL_ROCK, 0x2, 0x3, 0, 0, 0
+	pause 0x19
+	playsound2 0xA 0xC0 @;Hop
+	pause 0x19
+	playsound2 0x89 0x3f
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0x7 0x043D
+	launchtemplate PYRO_BALL_BURNING_ROCK, 0x2, 0x3, 0, 0, 0
+	pause 0x19
+	playsound2 0x89 0x3f
+	pause 0x19
+	playsound2 0x89 0x3f
+	launchtemplate PYRO_BALL_FLAMES_UP, 0x2, 0x3, 0, 0, 1
+	pause 0x19
+	playsound2 0x8A 0x3f
+	launchtemplate PYRO_BALL_BALL, 0x2, 0x6, 0, 10, 0, 5, 20, -20
+	waitanimation
+	launchtask AnimTask_pal_fade_complex 0x2 0x6 PAL_DEF 0x2 0x2 0x0 0xc 0x1f
+	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x3 0xf 0x1
+	call BURN_CHANCE_ANIM
+	pause 0x20
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x7 0x0 0x043D
+	waitanimation
 	endanimation
+
+.align 2
+PYRO_BALL_ROCK: objtemplate ANIM_TAG_FLAT_ROCK ANIM_TAG_FLAT_ROCK sPyroBallRockOAM 0x8231CF0 0x0 0x8231CFC SpriteCB_PyroBallRockBounce
+PYRO_BALL_BURNING_ROCK: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_SMALL_EMBER sPyroBallFlamesOAM 0x8231CF0 0x0 0x8231CFC SpriteCB_PyroBallRockBounce
+PYRO_BALL_FLAMES_UP: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_SMALL_EMBER sPyroBallFlamesOAM 0x83E7764 0x0 0x8231CFC SpriteCB_PyroBallRockBounce
+PYRO_BALL_BALL: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_SMALL_EMBER sPyroBallFlamesOAM 0x83E7764 0x0 0x8231CFC SpriteCB_PyroBallLaunch
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -15676,10 +15706,21 @@ ANIM_BREAKING_SWIPE:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_BRANCH_POKE:
-	goto ANIM_HORNLEECH
+	loadparticle ANIM_TAG_BRANCH
+	loadparticle ANIM_TAG_IMPACT
+	playsound2 0x9B 0xc0
+	launchtemplate BRANCH 0x82 0x3 0x0 0x0 0x25
+	waitanimation
+	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x5 0x0 0x6 0x1
+	launchtemplate 0x83E7C98 0x83 0x4 0x0 0x0 0x1 0x1
+	playsound2 0x9F 0x3f
+	waitanimation
 	endanimation
+
+.align 2
+BRANCH: objtemplate ANIM_TAG_BRANCH ANIM_TAG_BRANCH 0x83ACA38 0x8231CF0 0x0 0x8231CFC 0x80B563D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -15697,10 +15738,61 @@ ANIM_APPLE_ACID:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_GRAV_APPLE:
-	goto 0x81c82ca @ANIM_STOMP
+	loadparticle ANIM_TAG_APPLE
+	loadBG1 BG_SEISMICTOSS_SKUUPPERCUT
+	waitforBG
+	launchtask AnimTask_scroll_background 0x5 0x4 0x0 0xf800 0x0 0xffff
+	waitanimation
+	call SMALL_APPLES_FALL
+	call SMALL_APPLES_FALL
+	launchtemplate LARGE_FALLING_APPLE 0x82 0x2 0x0 0x3c
+	pause 0x7
+	playsound2 0x86 0x3f
+	launchtemplate Template_SlideMonToOffset 0x2 0x5 bank_target 0 0x15 0x0 0x4
+	pause 0x30
+	launchtemplate Template_SlideMonToOriginalPos 0x2 0x3 bank_target 0x0 0x10
+	waitanimation
+	call UNSET_SCROLLING_BG
 	endanimation
+	
+SMALL_APPLES_FALL:
+	launchtemplate SMALL_FALLING_APPLE 0x82 0x2, 35, 0x3c
+	playsound2 0x25 0xc0 @;Falling sound
+	pause 0x2
+	launchtemplate SMALL_FALLING_APPLE 0x82 0x2, -30, 0x44
+	playsound2 0x25 0xc0 @;Falling sound
+	pause 0x2
+	launchtemplate SMALL_FALLING_APPLE 0x82 0x2, 27, 0x37
+	playsound2 0x25 0xc0 @;Falling sound
+	pause 0x2
+	launchtemplate SMALL_FALLING_APPLE 0x82 0x2, -20, 0x32
+	playsound2 0x25 0xc0 @;Falling sound
+	pause 0x2
+	launchtemplate SMALL_FALLING_APPLE 0x82 0x2, 33, 0x3a
+	playsound2 0x25 0xc0 @;Falling sound
+	pause 0x2
+	launchtemplate SMALL_FALLING_APPLE 0x82 0x2, -12, 0x3a
+	playsound2 0x25 0xc0 @;Falling sound
+	pause 0x2
+	launchtemplate SMALL_FALLING_APPLE 0x82 0x2, 19, 0x3c
+	playsound2 0x25 0xc0 @;Falling sound
+	pause 0x2
+	launchtemplate SMALL_FALLING_APPLE 0x82 0x2, -38, 0x3a
+	playsound2 0x25 0xc0 @;Falling sound
+	pause 0x2
+	launchtemplate SMALL_FALLING_APPLE 0x82 0x2, 5, 0x3c
+	playsound2 0x25 0xc0 @;Falling sound
+	pause 0x2
+	launchtemplate SMALL_FALLING_APPLE 0x82 0x2, -23, 0x28
+	playsound2 0x25 0xc0 @;Falling sound
+	pause 0x2
+	return
+
+.align 2
+SMALL_FALLING_APPLE: objtemplate ANIM_TAG_APPLE ANIM_TAG_APPLE sAppleOAM 0x8231CF0 0x0 0x8231CFC SpriteCB_FallingApple
+LARGE_FALLING_APPLE: objtemplate ANIM_TAG_APPLE ANIM_TAG_APPLE sAppleOAM 0x8231CF0 0x0 gSpriteAffineAnimTable_ScaledApple SpriteCB_FallingApple
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool

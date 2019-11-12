@@ -452,6 +452,7 @@ sub_8074E14 = 0x8074E14 | 1;
 DestroySpriteAndMatrix = 0x8074EE0 | 1;
 RunStoredCallbackWhenAffineAnimEnds = 0x8074F50 | 1;
 SetAnimSpriteInitialXOffset = 0x8074FF8 | 1;
+InitAnimArcTranslation = 0x8075068 | 1;
 InitSpritePosToAnimTarget = 0x8075114 | 1;
 InitSpritePosToAnimAttacker = 0x8075160 | 1;
 InitSpriteDataForLinearTranslation = 0x80754B8 | 1;
@@ -468,6 +469,7 @@ GetBattlerSpriteBGPriority = 0x8076884 | 1;
 SpriteCB_AnimSolarbeamBigOrb = 0x80A23D8 | 1;
 AnimSpinningKickOrPunchFinish = 0x80B0D24 | 1;
 SpriteCB_SpiderWeb = 0x80B42C1 | 1;
+SpriteCB_AnimMissileArcStep = 0x80B4510 | 1;
 UnpackSelectedBattleAnimPalettes = 0x80B9A14 | 1;
 SpriteCB_80BA7BC = 0x80BA7BC | 1;
 StartBlendAnimSpriteColor = 0x80BAA4C | 1;
@@ -880,11 +882,13 @@ UnfreezeEventObjects = 0x8068A5C | 1;
 
 /*Field Effects Functions*/
 FieldEffectStart = 0x8083444 | 1;
+FieldEffectScript_LoadFadedPalette = 0x8083614 | 1;
 FieldEffectFreeGraphicsResources = 0x80836B4 | 1;
 FieldEffectStop = 0x80836D8 | 1;
 FldEffPoison_Start = 0x80A0E48 | 1;
 CheckObjectGraphicsInFrontOfPlayer = 0x80C97A8 | 1;
 CreateWarpArrowSprite = 0x80DB0C4 | 1;
+FldEff_JumpTallGrass = 0x80DB4F4 | 1;
 BindFieldEffectToSprite = 0x80DC44C | 1;
 DoBobbingFieldEffect = 0x80DC6B0 | 1;
 
@@ -915,7 +919,7 @@ SetMapVarsToTrainer = 0x80801F0 | 1;
 TrainerWantsBattle = 0x8080334 | 1;
 /*GetTrainerFlagFromScriptPointer = 0x8080378 | 1;*/
 CB2_EndTrainerBattle = 0x80804AC | 1;
-TrainerCanApproachPlayer = 0x8081BEC | 1;
+GetTrainerApproachDistance = 0x8081BEC | 1;
 TrainerApproachPlayer = 0x8081E68 | 1;
 GetRematchTrainerId = 0x810CE64 | 1;
 
@@ -1215,6 +1219,7 @@ TintPalette_GrayScale = 0x8071544 | 1;
 TintPalette_GrayScale2 = 0x8071594 | 1;
 TintPalette_SepiaTone = 0x80715F4 | 1;
 TintPalette_CustomTone = 0x8071660 | 1;
+UpdateSpritePaletteWithWeather = 0x807AA8C | 1;
 PreservePaletteInWeather = 0x807B084 | 1;
 
 

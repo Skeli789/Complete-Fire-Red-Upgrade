@@ -400,6 +400,8 @@ u8 __attribute__((long_call)) GetAnimBattlerSpriteId(u8 wantedBattler);
 u8 __attribute__((long_call)) GetBattlerSpriteBGPriority(u8 battlerId);
 bool8 __attribute__((long_call)) IsBattlerSpriteVisible(u8 battlerId);
 void __attribute__((long_call)) MoveBattlerSpriteToBG(u8 battlerId, bool8 toBG_2, bool8 setSpriteInvisible);
+void __attribute__((long_call)) SpriteCB_AnimMissileArcStep(struct Sprite *sprite);
+void __attribute__((long_call)) InitAnimArcTranslation(struct Sprite *sprite);
 
 void __attribute__((long_call)) StartAnimLinearTranslation(struct Sprite *sprite);
 
