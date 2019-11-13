@@ -1133,4 +1133,82 @@ Dark-Type Dynamax\nmove. It lowers\nthe target's\nSp. Def stat.
 Grass-Type Dynamax\nmove. It activates\nGrassy Terrain for\nfive turns.
 
 #org @DESC_MAX_STEELSPIKE
-Steel=Ty[e Dynamax\nmove. It raises\nally Pok\emon's\nDefense stats.
+Steel-Type Dynamax\nmove. It raises\nally Pok\emon's\nDefense stats.
+
+#org @DESC_GMAXWILDFIRE
+G-Max Charizard's\nsignature move. It\ndeals damage for\nfour turns.
+
+#org @DESC_GMAXBEFUDDLE
+G-Max Butterfree's\nsignature move. It\ncauses paralysis, \nsleep, or poison.
+
+#org @DESC_GMAXVOLTCRASH
+G-Max Pikachu's\nsignature move.\nIt paralyzes the\ntarget.
+
+#org @DESC_GMAXGOLDRUSH
+G-Max Meowth's\nsignature move. It\nconfuses the foe\nand creates money.
+
+#org @DESC_GMAXCHISTRIKE
+G-Max Machamp's\nsignature move. It\nraises the chance\nof critical hits.
+
+#org @DESC_TERROR
+G-Max Gengar's\nsignature move. It\nprevents the foe\nfrom escaping.
+
+#org @DESC_RESONANCE
+G-Max Lapras's\nsignature move. It\nreduces damage\nfor five turns.
+
+#org @DESC_CUDDLE
+G-Max Eevee's\nsignature move.\nIt infatuates\nthe target.
+
+#org @DESC_REPLENISH
+G-Max Snorlax's\nsignature move. It\nrestores berries\nthat were eaten.
+
+#org @DESC_MALODOR
+G-Max Garbodor's\nsignature move.\nIt poisons the\ntarget.
+
+#org @DESC_STONESURGE
+G-Max Drednaw's\nsignature move.\nIt scatters rocks\naround the field.
+
+#org @DESC_WINDRAGE
+G-Max Corviknight's\nsignature move. It\nremoves the effect\nof screen moves.
+
+#org @DESC_STUNSHOCK
+G-Max Toxtricity's\nsignature move.\nIt paralyzes or\npoisons opponents.
+
+#org @DESC_FINALE
+G-Max Alcremie's\nsignature move.\nIt heals the HP\nof its allies.
+
+#org @DESC_DEPLETION
+G-Max Duraludon's\nsignature move. It\nreduces the PP of\nthe last move used.
+
+#org @DESC_GRAVITAS
+G-Max Orbeetle's\nsignature move. It\nchanges gravity\nfor five turns.
+
+#org @DESC_VOLCALITH
+G-Max Coalossal's\nsignature move. It\ndeals damage for\nfour turns.
+
+#org @DESC_SANDBLAST
+G-Max Sandaconda's\nsignature move. It\ntraps the foe for\nfour to five turns.
+
+#org @DESC_SNOOZE
+G-Max Grimmsnarl's\nsignature move.\nIt inflicts Yawn\nstatus on the foe.
+
+#org @DESC_TARTNESS
+G-Max Flapple's\nsignature move. It\nreduces the foe's\nevasiveness.
+
+#org @DESC_SWEETNESS
+G-Max Appletun's\nsignature move. It\nheals the status\nof its allies.
+
+#org @DESC_SMITE
+G-Max Hatterene's\nsignature move.\nIt confuses the\ntarget.
+
+#org @DESC_STEELSURGE
+G-Max Copperajah's\nsignature move. It\nscatters spikes\naround the field.
+
+#org @DESC_MELTDOWN
+G-Max Melmetal's\nsignature move. It\nprevents the foe\nfrom repeating moves.
+
+#org @DESC_FOAMBURST
+G-Max Kingler's\nsignature move. It\nharshly lowers the\nopponent's Speed.
+
+#org @DESC_CENTIFERNO
+G-Max Centiskorch's\nsignature move. It\ntraps the foe for\nfour to five turns.
