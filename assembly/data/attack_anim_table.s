@@ -7406,20 +7406,11 @@ WRINGOUT_HAND:	objtemplate ANIM_TAG_ASSURANCE_HAND ANIM_TAG_ACUPRESSURE_FINGER 0
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Skeli
 ANIM_KINGSSHIELD:
 	loadparticle ANIM_TAG_PROTECT @protect
-	loadparticle ANIM_TAG_WATER_ORB @shield color
-	pokespritetoBG side_attacker
-	leftbankBG_over_partnerBG bank_attacker
-	playsound3 0xC8 0xC0 0x10
-	launchtemplate BLUESHIELD 0x2 0x3 0x18 0x0 0x5a
-	waitanimation
-	pokespritefromBG side_attacker
-	endanimation
-
-.align 2
-BLUESHIELD: objtemplate ANIM_TAG_PROTECT ANIM_TAG_WATER_ORB 0x83ACB00 0x8231CF0 0x0 0x8231CFC 0x80A48F1
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_PROTECT 0x0 0xC 0xC 0x318C @;Gray
+	goto 0x81c8f55 + 0x3 @ANIM_PROTECT - skip loadparticle
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -15037,7 +15028,7 @@ ANIM_LIGHTOFRUIN:
 	loadparticle ANIM_TAG_ELECTRICITY @discharge
 	loadparticle ANIM_TAG_PINK_PETAL @pink color
 	loadparticle ANIM_TAG_EXPLOSION @explosion
-	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_ELECTRIC_ORBS 0x0 0x0 0xC 0x6DDE @;Pink
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_ELECTRIC_ORBS 0x0 0xC 0xC 0x6DDE @;Pink
 	waitanimation
 	launchtask 0x80AE541 0x2 0x4 0x0 0x14 0x0 0x2   @Use pink particles for this launchtask (ANIM_TAG_PINK_PETAL or ANIM_TAG_PINK_HEART)
 	playsoundpanchange 0xc2 0xc0 0x3f 0x2 0x0
@@ -15817,10 +15808,30 @@ ANIM_LIFE_DEW:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_OBSTRUCT:
-	goto 0x81c8f55 @ANIM_PROTECT
+	loadparticle ANIM_TAG_NOISE_LINE @growl
+	loadparticle ANIM_TAG_PROTECT
+	loadparticle ANIM_TAG_OBSTRUCT_CROSS
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_NOISE_LINE 0x0 0xA 0xA 0x0 @;Black
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_PROTECT 0x0 0xA 0xA 0x0 @;Black
+	launchtask AnimTask_play_growling_cry 0x2 0x2 bank_attacker 0xff
+	call CREATE_GROWLING_PARTICLES
+	waitanimation
+	pause 0x10
+	pokespritetoBG side_attacker 
+	leftbankBG_over_partnerBG bank_attacker  
+	playsound3 0xC8 0xC0 0x10 
+	launchtemplate 0x83E3354 0x2 0x3 0x18 0x0 0x5a @;Protect
+	waitanimation
+	launchtemplate OBSTRUCT_CROSS 0x82 0x4 0x0 0x0 0x1 0x24  
+	playsound2 0xb9 0x3f
+	waitanimation
+	pokespritefromBG side_attacker 
 	endanimation
+
+.align 2
+OBSTRUCT_CROSS: objtemplate ANIM_TAG_OBSTRUCT_CROSS ANIM_TAG_OBSTRUCT_CROSS 0x83ACAF8 0x8231CF0 0x0 0x8231CFC 0x80BA739
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -15831,10 +15842,46 @@ ANIM_FALSE_SURRENDER:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_METEOR_ASSAULT:
-	goto ANIM_GIGAIMPACT
+	loadparticle ANIM_TAG_ELECTRIC_ORBS
+	loadparticle ANIM_TAG_METEOR
+	loadparticle ANIM_TAG_EXPLOSION
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_ELECTRIC_ORBS 0x0 0xC 0xC 0x0B1D @;Light orange
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ATK 0x1 0x0 0x9 0x0B1D @;Light orange
+	launchtask 0x80AE541 0x2 0x4 0x0 0x30 0x0 0x4
+	playsound2 0xCE 0xc0
+	waitanimation
+	makebankinvisible bank_attacker
+	launchtemplate GROWING_SUPERPOWER 0x83 0x1 0x0
+	playsound2 0xba 0xc0
+	pause 0xF
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ATK | PAL_BG 0x1 0x10 0x10 0x7FFF @;Screen flash white
+	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x5 0x20 0x1
+	call GENERIC_EXPLOSION
+	call GENERIC_EXPLOSION
+	waitanimation
+	makebankvisible bank_attacker
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ATK | PAL_BG 0x1 0x10 0x0 0x7FFF @;Screen revert from white
+	waitanimation
 	endanimation
+	
+GENERIC_EXPLOSION:
+	playsound2 0xAA 0x3f
+	launchtemplate Template_Explosion 0x83 0x4 0x0 0x0 0x1 0x1
+	pause 0x3
+	playsound2 0xAA 0x3f
+	launchtemplate Template_Explosion 0x83 0x4 0x18 0xffe8 0x1 0x1
+	pause 0x3
+	playsound2 0xAA 0x3f
+	launchtemplate Template_Explosion 0x83 0x4 0xfff0 0x10 0x1 0x1
+	pause 0x3
+	playsound2 0xAA 0x3f
+	launchtemplate Template_Explosion 0x83 0x4 0xffe8 0xfff4 0x1 0x1
+	pause 0x3
+	playsound2 0xAA 0x3f
+	launchtemplate Template_Explosion 0x83 0x4 0x10 0x10 0x1 0x1
+	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -22621,24 +22668,3 @@ DoHeartSwap:
 SKILLSWAP_TEMPL: objtemplate ANIM_TAG_BLUEGREEN_ORB ANIM_TAG_ELECTRIC_ORBS 0x83ACA30 0x8231CF0 0x0 0x83E7104 0x80B3A35
 POWERSWAP_TEMPL: objtemplate ANIM_TAG_BLUEGREEN_ORB ANIM_TAG_RED_HEART 0x83ACA30 0x8231CF0 0x0 0x83E7104 0x80B3A35
 HEARTSWAP_TEMPL: objtemplate ANIM_TAG_BLUEGREEN_ORB ANIM_TAG_RED_HEART 0x83ACA30 0x8231CF0 0x0 0x83E7104 0x80B3A35
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool
-@0x80A4984 with r0
-KingsShieldASM:
-    ldr r0, =BATTLE_ANIM_ARGS
-    ldrh r0, [r0, #0x4]
-    strh r0, [r5, #0x2E]
-	bl IsAnimMoveKingsShield
-	mov r2, r0
-    ldr r0, .KingsShieldProtectColour
-    cmp r2, #0x0
-    bne KingsShieldASM_Cont
-    ldr r0, .ProtectColour
-KingsShieldASM_Cont:
-    ldr r1, =(0x080A498C|1)
-    bx r1
-
-.align 2
-.KingsShieldProtectColour: .word ANIM_TAG_WATER_ORB
-.ProtectColour: .word ANIM_TAG_PROTECT

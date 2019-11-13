@@ -2517,32 +2517,22 @@ static void FieldEff_LavaBubbles(void)
 	}
 }
 
-
-struct  __attribute__((packed)) FieldEffectScript
-{
-	u8 command;
-	void (*func)(void);
-	u8 endCommand;
-};
-
-#define CALLASM 3
-#define END 4
 const struct FieldEffectScript FieldEffectScript_CaveDust =
 {
-	CALLASM, FieldEff_CaveDust,
-	END,
+	FLDEFF_CALLASM, FieldEff_CaveDust,
+	FLDEFF_END,
 };
 
 const struct FieldEffectScript FieldEffectScript_Sparkles =
 {
-	CALLASM, FieldEff_Sparkles,
-	END,
+	FLDEFF_CALLASM, FieldEff_Sparkles,
+	FLDEFF_END,
 };
 
 const struct FieldEffectScript FieldEffectScript_LavaBubbles =
 {
-	CALLASM, FieldEff_LavaBubbles,
-	END,
+	FLDEFF_CALLASM, FieldEff_LavaBubbles,
+	FLDEFF_END,
 };
 
 // ========================================== //

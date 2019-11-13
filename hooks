@@ -181,7 +181,6 @@ WATERGUN_ASM 080A7C28 0
 ION_DELUGE_ASM 080AAC24 0
 MudBombASM 080E2590 0
 CoreEnforcerASM 080A243C 0
-KingsShieldASM 080A4984 0
 
 ##Poke Ball Hooks
 CaptureExperienceEvolutionHook 8015A44 1

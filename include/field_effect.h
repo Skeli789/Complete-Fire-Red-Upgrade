@@ -14,6 +14,16 @@ struct Coords32 {
     s32 y;
 };
 
+struct  __attribute__((packed)) FieldEffectScript
+{
+	u8 command;
+	void (*func)(void);
+	u8 endCommand;
+};
+
+#define FLDEFF_CALLASM 3
+#define FLDEFF_END 4
+
 /*extern struct gFieldEffectArguments {
     struct Coords32 effect_pos;
     u32 priority;
@@ -31,6 +41,7 @@ void __attribute__((long_call)) UpdateSurfBlobFieldEffect(struct Sprite*);
 void __attribute__((long_call)) BindObj(u8 spriteId, u8 value);
 u8 __attribute__((long_call)) DoBobbingFieldEffect(u8 spriteId);
 bool8 __attribute__((long_call)) CheckObjectGraphicsInFrontOfPlayer(u16 graphicsId);
+void __attribute__((long_call)) FieldEffectScript_LoadFadedPalette(u8 **script);
 
 /*
 bool8 FieldEffectActiveListContains(u8 id);

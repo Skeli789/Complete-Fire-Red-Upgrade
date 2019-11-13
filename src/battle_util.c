@@ -273,12 +273,14 @@ bool8 LiftProtect(u8 bank)
 	|| gProtectStructs[bank].KingsShield
 	|| gProtectStructs[bank].SpikyShield
 	|| gProtectStructs[bank].BanefulBunker
+	|| gProtectStructs[bank].obstruct
 	|| gSideAffecting[SIDE(bank)] & (SIDE_STATUS_CRAFTY_SHIELD | SIDE_STATUS_MAT_BLOCK | SIDE_STATUS_QUICK_GUARD | SIDE_STATUS_WIDE_GUARD))
 	{
 		gProtectStructs[bank].protected = 0;
 		gProtectStructs[bank].KingsShield = 0;
 		gProtectStructs[bank].SpikyShield = 0;
 		gProtectStructs[bank].BanefulBunker = 0;
+		gProtectStructs[bank].obstruct = 0;
 		gSideAffecting[SIDE(bank)] &= ~(SIDE_STATUS_CRAFTY_SHIELD | SIDE_STATUS_MAT_BLOCK | SIDE_STATUS_QUICK_GUARD | SIDE_STATUS_WIDE_GUARD);
 		return TRUE;
 	}
@@ -290,7 +292,8 @@ bool8 ProtectsAgainstZMoves(u16 move, u8 bankAtk, u8 bankDef)
 {
 	if (gProtectStructs[bankDef].protected
 	|| gProtectStructs[bankDef].SpikyShield
-	|| gProtectStructs[bankDef].BanefulBunker)
+	|| gProtectStructs[bankDef].BanefulBunker
+	|| gProtectStructs[bankDef].obstruct)
 	{
 		return TRUE;
 	}

@@ -805,6 +805,7 @@ void atk1B_cleareffectsonfaint(void) {
 				gProtectStructs[gActiveBattler].KingsShield = 0;	//Necessary because could be sent away with Roar
 				gProtectStructs[gActiveBattler].SpikyShield = 0;
 				gProtectStructs[gActiveBattler].BanefulBunker = 0;
+				gProtectStructs[gActiveBattler].obstruct = 0;
 				gProtectStructs[gActiveBattler].enduredSturdy = 0;
 
 				gNewBS->ZMoveData->toBeUsed[gActiveBattler] = 0; //Because you died before you could use the Z-Move
@@ -1399,6 +1400,11 @@ void atk77_setprotect(void) {
 
 			case MOVE_BANEFULBUNKER:
 				gProtectStructs[gBankAttacker].BanefulBunker = 1;
+				gBattleCommunication[MULTISTRING_CHOOSER] = 0;
+				break;
+
+			case MOVE_OBSTRUCT:
+				gProtectStructs[gBankAttacker].obstruct = 1;
 				gBattleCommunication[MULTISTRING_CHOOSER] = 0;
 				break;
 

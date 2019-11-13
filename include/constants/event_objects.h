@@ -150,6 +150,7 @@ enum OverworldNPCSprites
 #define EVENT_OBJ_GFX_LOG 71
 #define EVENT_OBJ_GFX_BIG_MO 80
 #define EVENT_OBJ_GFX_GALAVAN 82
+#define EVENT_OBJ_GFX_TESSY 85
 
 enum
 {

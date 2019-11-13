@@ -161,6 +161,15 @@ bool8 ProtectAffects(u16 move, u8 bankAtk, u8 bankDef, bool8 set) {
 			gBattleCommunication[6] = 1;
 		}
 	}
+	else if (gProtectStructs[bankDef].obstruct && protectFlag)
+	{
+		effect = 1;
+		if (contact && set)
+		{
+			gProtectStructs[bankDef].obstructDamage = TRUE;
+			gBattleCommunication[6] = 1;
+		}
+	}
 	else if (gSideAffecting[defSide] & SIDE_STATUS_CRAFTY_SHIELD && target != MOVE_TARGET_USER && split == SPLIT_STATUS)
 	{
 		effect = 1;
@@ -204,6 +213,7 @@ bool8 DoesProtectionMoveBlockMove(u8 bankAtk, u8 bankDef, u16 atkMove, u16 prote
 				return protectFlag != 0;
 
 			case MOVE_KINGSSHIELD:
+			case MOVE_OBSTRUCT:
 				return protectFlag && split != SPLIT_STATUS;
 
 			case MOVE_MATBLOCK:

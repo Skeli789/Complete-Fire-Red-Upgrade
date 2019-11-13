@@ -31,7 +31,7 @@ void __attribute__((long_call)) SetMapVarsToTrainer(void);
 void __attribute__((long_call)) TrainerWantsBattle(u8 trainerEventObjId, const u8 *trainerScript);
 //u32 __attribute__((long_call)) GetTrainerFlagFromScriptPointer(const u8 *data);
 void __attribute__((long_call)) CB2_EndTrainerBattle(void);
-bool8 __attribute__((long_call)) TrainerCanApproachPlayer(struct MapObject* trainerObj);
+bool8 __attribute__((long_call)) GetTrainerApproachDistance(struct MapObject* trainerObj);
 void __attribute__((long_call)) TrainerApproachPlayer(struct MapObject* trainerObj, u8 range);
 u16 __attribute__((long_call)) GetRematchTrainerId(u16 opponentId);
 u8 __attribute__((long_call)) GetBattleTransitionTypeByMap(void);

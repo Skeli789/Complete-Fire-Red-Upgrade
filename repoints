@@ -167,6 +167,10 @@ sItemMenuActions 8109BA4
 sItemMenuActions 8109C20
 sItemMenuActions 8109C48
 
+##Grass Field Effects
+gFieldEffectScript_TallGrass 81D96BC
+gFieldEffectScript_JumpTallGrass 81D96DC
+
 #ifdef UNBOUND
 TestScript 08B7AD70
 TestScript 08B7ADA0

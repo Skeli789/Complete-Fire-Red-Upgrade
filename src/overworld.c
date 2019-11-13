@@ -5,9 +5,11 @@
 #include "../include/event_data.h"
 #include "../include/event_object_movement.h"
 #include "../include/field_effect.h"
+#include "../include/field_effect_helpers.h"
 #include "../include/field_control_avatar.h"
 #include "../include/field_player_avatar.h"
 #include "../include/field_poison.h"
+#include "../include/field_weather.h"
 #include "../include/fieldmap.h"
 #include "../include/fldeff_misc.h"
 #include "../include/item.h"
@@ -594,7 +596,9 @@ u8 CheckForTrainersWantingBattle(void) {
 
 	for (u8 eventObjId = 0; eventObjId < MAP_OBJECTS_COUNT; ++eventObjId) //For each NPC on the map
 	{
-		if (!gEventObjects[eventObjId].active || gEventObjects[eventObjId].isPlayer)
+		if (!gEventObjects[eventObjId].active
+		||  gEventObjects[eventObjId].isPlayer
+		||  gEventObjects[eventObjId].trainerType == 0)
 			continue;
 
 		if (CheckTrainerSpotting(eventObjId))
@@ -617,7 +621,7 @@ u8 CheckForTrainersWantingBattle(void) {
 			u8 direction = GetNPCDirectionFaceToPlayer(eventObjId);
 			FaceDirection(&gEventObjects[eventObjId], &gSprites[gEventObjects[eventObjId].spriteId], direction);
 			gSelectedEventObject = eventObjId;
-			TrainerApproachPlayer(&gEventObjects[eventObjId], TrainerCanApproachPlayer(&gEventObjects[eventObjId]) - 1);
+			TrainerApproachPlayer(&gEventObjects[eventObjId], GetTrainerApproachDistance(&gEventObjects[eventObjId]) - 1);
 			ScriptContext1_SetupScript(GetEventObjectScriptPointerByEventObjectId(eventObjId));
 			ScriptCall(gScriptEnv1, EventScript_SetUpNPCSpotting);
 			return TRUE;
@@ -665,9 +669,9 @@ static bool8 CheckTrainerSpotting(u8 eventObjId) //Or just CheckTrainer
 		return FALSE;
 
 	struct EventObject* trainerObj = &gEventObjects[eventObjId];
-	bool8 canApproach = TrainerCanApproachPlayer(trainerObj);
+	u8 approachDistance = GetTrainerApproachDistance(trainerObj);
 
-	if (canApproach)
+	if (approachDistance > 0)
 	{
 		switch (battleType) {
 			case TRAINER_BATTLE_DOUBLE:
@@ -682,7 +686,7 @@ static bool8 CheckTrainerSpotting(u8 eventObjId) //Or just CheckTrainer
 				return FALSE;  //You can't be stopped by someone using the tag battle feature
 		}
 
-		struct TrainerSpotted trainer = {eventObjId, canApproach, (u8*) scriptPtr};
+		struct TrainerSpotted trainer = {eventObjId, approachDistance, (u8*) scriptPtr};
 		ExtensionState.spotted.trainers[ExtensionState.spotted.count++] = trainer;
 		return TRUE;
 	}
@@ -699,7 +703,7 @@ static bool8 GetTrainerFlagFromScriptPointer(const u8* data)
 	return FlagGet(FLAG_TRAINER_FLAG_START + flag);
 }
 
-static bool8 CheckNPCSpotting(u8 eventObjId)
+static u8 CheckNPCSpotting(u8 eventObjId)
 {
 	#ifdef NON_TRAINER_SPOTTING
 	const u8* scriptPtr = GetEventObjectScriptPointerByEventObjectId(eventObjId); //Get NPC Script Pointer from its Object Id
@@ -710,13 +714,13 @@ static bool8 CheckNPCSpotting(u8 eventObjId)
 	if (scriptPtr != NULL && scriptPtr[0] != SCRCMD_TRAINERBATTLE //NPC has a regular script
 	&& (flag == 0 || !FlagGet(flag)))
 	{
-		return TrainerCanApproachPlayer(&gEventObjects[eventObjId]);
+		return GetTrainerApproachDistance(&gEventObjects[eventObjId]);
 	}
 	#else
 		++eventObjId;
 	#endif
 
-	return FALSE;
+	return 0;
 }
 
 static void Task_OverworldMultiTrainers(u8 id)
@@ -1757,6 +1761,93 @@ u8 GetLedgeJumpDirection(s16 x, s16 y, u8 direction)
 	return 0;
 }
 
+#define gFieldEffectObjectPaletteInfo1 (void*) 0x83A5348
+#define gFieldEffectObjectTemplatePointers ((const struct SpriteTemplate* const *) 0x83A0010)
+
+#ifdef UNBOUND //For Pokemon Unbound - Feel free to remove
+#define AUTUMN_GRASS_PALETTE_TAG 0x1215
+static u16 sAutumnGrassObjectPalette[] = {0x741F, 0x3E9B, 0x3E9B, 0x1993, 0x1570, 0x0167, 0x76AC, 0x62AC, 0x7B31, 0x7F92, 0x0, 0x0, 0x3A7A, 0x2E38, 0x2E38, 0x1DD6};
+static const struct SpritePalette sAutumnGrassObjectPaletteInfo = {sAutumnGrassObjectPalette, 0x1005};
+#endif
+
+static void GetSpriteTemplateAndPaletteForTallGrassFieldEffect(const struct SpriteTemplate** spriteTemplate, const struct SpritePalette** spritePalette)
+{
+	switch (GetCurrentRegionMapSectionId()) {
+	#ifdef UNBOUND //For Pokemon Unbound - Feel free to remove
+		case MAPSEC_ROUTE_9:
+		case MAPSEC_ROUTE_10:
+		case MAPSEC_AUBURN_WATERWAY:
+			*spriteTemplate = gFieldEffectObjectTemplatePointers[4];
+			*spritePalette = &sAutumnGrassObjectPaletteInfo;
+			break;
+	#endif
+		default:
+			*spriteTemplate = gFieldEffectObjectTemplatePointers[4];
+			*spritePalette = gFieldEffectObjectPaletteInfo1;
+			break;
+	}
+}
+
+static void FldEff_TallGrass(void)
+{
+	s32 x, y;
+	u8 spriteId;
+	struct Sprite *sprite;
+	const struct SpriteTemplate* spriteTemplate;
+	const struct SpritePalette* spritePalette; const struct SpritePalette** palettePointer; const struct SpritePalette*** palette2Pointer;
+	x = ((u32*) gFieldEffectArguments)[0];
+	y = ((u32*) gFieldEffectArguments)[1];
+	LogCoordsCameraRelative(&x, &y, 8, 8);
+
+	GetSpriteTemplateAndPaletteForTallGrassFieldEffect(&spriteTemplate, &spritePalette);
+	palettePointer = &spritePalette;
+	palette2Pointer = &palettePointer; //This way we fool the function into thinking it's a script.
+	
+	FieldEffectScript_LoadFadedPalette((u8**) palette2Pointer);
+	spriteId = CreateSpriteAtEnd(spriteTemplate, x, y, 0);
+
+	if (spriteId != MAX_SPRITES)
+	{
+		sprite = &gSprites[spriteId];
+		sprite->coordOffsetEnabled = TRUE;
+		sprite->oam.priority = ((u32*) gFieldEffectArguments)[3];
+		sprite->data[0] = ((u32*) gFieldEffectArguments)[2];
+		sprite->data[1] = ((u32*) gFieldEffectArguments)[0];
+		sprite->data[2] = ((u32*) gFieldEffectArguments)[1];
+		sprite->data[3] = ((u32*) gFieldEffectArguments)[4];
+		sprite->data[4] = ((u32*) gFieldEffectArguments)[5];
+		sprite->data[5] = ((u32*) gFieldEffectArguments)[6];
+		if (((u32*) gFieldEffectArguments)[7])
+		{
+			SeekSpriteAnim(sprite, 4);
+		}
+	}
+}
+
+static void FldEff_JumpTallGrassLoadPalette(void)
+{
+	const struct SpriteTemplate* spriteTemplate;
+	const struct SpritePalette* spritePalette; const struct SpritePalette** palettePointer; const struct SpritePalette*** palette2Pointer;
+	palettePointer = &spritePalette;
+	palette2Pointer = &palettePointer; //This way we fool the function into thinking it's a script.
+
+	GetSpriteTemplateAndPaletteForTallGrassFieldEffect(&spriteTemplate, &spritePalette);
+	FieldEffectScript_LoadFadedPalette((u8**) palette2Pointer);
+	FldEff_JumpTallGrass();
+}
+
+const struct FieldEffectScript gFieldEffectScript_TallGrass =
+{
+	FLDEFF_CALLASM, FldEff_TallGrass,
+	FLDEFF_END,
+};
+
+const struct FieldEffectScript gFieldEffectScript_JumpTallGrass =
+{
+	FLDEFF_CALLASM, FldEff_JumpTallGrassLoadPalette,
+	FLDEFF_END,
+};
+
 const u8* GetInteractedMetatileScript(unusedArg int position, u8 metatileBehavior, u8 direction)
 {
 	gSpecialVar_PlayerFacing = direction;
@@ -1790,7 +1881,7 @@ const u8* GetInteractedMetatileScript(unusedArg int position, u8 metatileBehavio
 
 void SetCutGrassMetatile(s16 x, s16 y)
 {
-    u32 i;
+	u32 i;
 	s32 metatileId = MapGridGetMetatileIdAt(x, y);
 	
 	for (i = 0; i < ARRAY_COUNT(sCutGrassTiles); ++i)
@@ -2082,9 +2173,9 @@ void PlayerAvatarTransition_HandleUnderwater(void)
 {
 	struct EventObject* player = &gEventObjects[GetPlayerMapObjId()];
 
-    EventObjectSetGraphicsId(player, GetPlayerAvatarGraphicsIdByStateId(PLAYER_AVATAR_STATE_UNDERWATER));
-    EventObjectTurn(player, player->movementDirection);
-    SetPlayerAvatarStateMask(PLAYER_AVATAR_FLAG_UNDERWATER);
+	EventObjectSetGraphicsId(player, GetPlayerAvatarGraphicsIdByStateId(PLAYER_AVATAR_STATE_UNDERWATER));
+	EventObjectTurn(player, player->movementDirection);
+	SetPlayerAvatarStateMask(PLAYER_AVATAR_FLAG_UNDERWATER);
 
 	player->fieldEffectSpriteId = DoBobbingFieldEffect(player->spriteId);
 }
@@ -2096,20 +2187,20 @@ bool8 IsUnderwater(void)
 
 u8 GetAdjustedInitialTransitionFlags(struct InitialPlayerAvatarState *playerStruct, u16 metatileBehavior, u8 mapType)
 {
-    if (mapType != MAP_TYPE_INDOOR && FlagGet(0x802))
-        return PLAYER_AVATAR_FLAG_ON_FOOT;
-    else if (mapType == MAP_TYPE_UNDERWATER)
-        return PLAYER_AVATAR_FLAG_UNDERWATER;
+	if (mapType != MAP_TYPE_INDOOR && FlagGet(0x802))
+		return PLAYER_AVATAR_FLAG_ON_FOOT;
+	else if (mapType == MAP_TYPE_UNDERWATER)
+		return PLAYER_AVATAR_FLAG_UNDERWATER;
 	#ifndef UNBOUND
 	else if (MetatileBehavior_IsSeafoamIsland(metatileBehavior))
 		return PLAYER_AVATAR_FLAG_ON_FOOT;
 	#endif
-    else if (MetatileBehavior_IsSurfableWaterOrUnderwater(metatileBehavior))
-        return PLAYER_AVATAR_FLAG_SURFING;
-    else if (!Overworld_IsBikingAllowed())
-        return PLAYER_AVATAR_FLAG_ON_FOOT;
-    else if (playerStruct->transitionFlags & PLAYER_AVATAR_FLAG_BIKE)
-        return PLAYER_AVATAR_FLAG_BIKE;
+	else if (MetatileBehavior_IsSurfableWaterOrUnderwater(metatileBehavior))
+		return PLAYER_AVATAR_FLAG_SURFING;
+	else if (!Overworld_IsBikingAllowed())
+		return PLAYER_AVATAR_FLAG_ON_FOOT;
+	else if (playerStruct->transitionFlags & PLAYER_AVATAR_FLAG_BIKE)
+		return PLAYER_AVATAR_FLAG_BIKE;
 	else
 		return PLAYER_AVATAR_FLAG_ON_FOOT;
 }

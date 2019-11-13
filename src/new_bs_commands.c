@@ -949,6 +949,19 @@ void atkFE_prefaintmoveendeffects(void)
 				effect = 1;
 				break;
 			}
+			if (gProtectStructs[gBankTarget].obstructDamage)
+			{
+				gProtectStructs[gBankTarget].obstructDamage = FALSE;
+
+				if (gBattleMons[gBankAttacker].hp
+				&&  STAT_CAN_FALL(gBankAttacker, STAT_DEF))
+				{
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_ObstructStatDecrement;
+					effect = TRUE;
+					break;
+				}
+			}
 			gNewBS->preFaintEffectsTracker++;
 			break;
 

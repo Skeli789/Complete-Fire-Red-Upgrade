@@ -13,6 +13,7 @@ cmd49_battle_scripts.s
 .global BattleScript_KingsShield
 .global BattleScript_SpikyShield
 .global BattleScript_BanefulBunker
+.global BattleScript_ObstructStatDecrement
 .global BattleScript_RageIsBuilding
 .global BattleScript_BeakBlastBurn
 .global BattleScript_Magician
@@ -42,6 +43,8 @@ BattleScript_PoisonTouch:
 
 BattleScript_KingsShield:
 	setstatchanger STAT_ATK | DECREASE_2
+	
+BattleScript_KingsShieldPostDecrementSet:
 	statbuffchange STAT_ATTACKER | STAT_NOT_PROTECT_AFFECTED | STAT_BS_PTR KingsShieldReturn
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 KingsShieldReturn
 	setgraphicalstatchangevalues
@@ -89,6 +92,12 @@ BattleScript_BanefulBunker:
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	return
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_ObstructStatDecrement:
+	setstatchanger STAT_DEF | DECREASE_2
+	goto BattleScript_KingsShieldPostDecrementSet
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

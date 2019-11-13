@@ -366,6 +366,7 @@ animparticle ABILITY_POP_UP_IMG, (64 * 64) / 2,	ANIM_TAG_ABILITY_POP_UP
 animparticle MUD_BOMB_IMG, (64 * 64) / 2, ANIM_TAG_MUD_BOMB
 animparticle BRANCH_IMG, (32 * 32) / 2, ANIM_TAG_BRANCH
 animparticle APPLE_IMG, (32 * 32) / 2, ANIM_TAG_APPLE
+animparticle OBSTRUCT_IMG, (32 * 32) / 2, ANIM_TAG_OBSTRUCT_CROSS
 
 gBattleAnimPaletteTable:
 animparticlepal 0x8d028b4,	ANIM_TAG_BONE,	0x0
@@ -722,3 +723,4 @@ animparticlepal ABILITY_POP_UP_PAL,	ANIM_TAG_ABILITY_POP_UP, 0x0
 animparticlepal MUD_BOMB_PAL, ANIM_TAG_MUD_BOMB, 0x0
 animparticlepal BRANCH_PAL, ANIM_TAG_BRANCH, 0x0
 animparticlepal APPLE_PAL, ANIM_TAG_APPLE, 0x0
+animparticlepal OBSTRUCT_PAL, ANIM_TAG_OBSTRUCT_CROSS, 0x0

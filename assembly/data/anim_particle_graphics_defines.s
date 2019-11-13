@@ -83,6 +83,7 @@ definitions for animation particles
 .equ MUD_BOMB_IMG, Mud_BombTiles
 .equ BRANCH_IMG, BranchTiles
 .equ APPLE_IMG, AppleTiles
+.equ OBSTRUCT_IMG, ObstructTiles
 
 .equ SWORD_PAL, SwordPal
 .equ SEED_PAL, Leech_SeedPal
@@ -166,3 +167,4 @@ definitions for animation particles
 .equ MUD_BOMB_PAL, Mud_BombPal
 .equ BRANCH_PAL, BranchPal
 .equ APPLE_PAL, ApplePal
+.equ OBSTRUCT_PAL, ObstructPal

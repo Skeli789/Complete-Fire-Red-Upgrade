@@ -225,6 +225,19 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 				effect = 1;
 				break;
 			}
+			if (gProtectStructs[gBankTarget].obstructDamage)
+			{
+				gProtectStructs[gBankTarget].obstructDamage = FALSE;
+
+				if (BATTLER_ALIVE(gBankAttacker)
+				&&  STAT_CAN_FALL(gBankAttacker, STAT_DEF))
+				{
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_ObstructStatDecrement;
+					effect = TRUE;
+					break;
+				}
+			}
 			gBattleScripting->atk49_state++;
 			break;
 
