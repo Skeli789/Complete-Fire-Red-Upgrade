@@ -215,6 +215,7 @@ Half damage from physical moves.
 Ups status move evasion.
 
 #org @DESC_PROTEAN
+#org @DESC_LIBERO
 Changes type to match move.
 
 #org @DESC_PARENTALBOND
@@ -238,6 +239,7 @@ KOing a foe ups highest stat.
 Poison Steel and Poison-types.
 
 #org @DESC_DISGUISE
+#org @DESC_ICEFACE
 Takes one hit with no damage.
 
 #org @DESC_EMERGENCYEXIT
@@ -464,3 +466,69 @@ Powers up Super-Effective hits.
 #org @DESC_GALVANIZE
 Normal moves become Electric-type.
 
+#org @DESC_INTREPIDSWORD
+Raises Attack.
+
+#org @DESC_DAUNTLESSSHIELD
+Raises Defense.
+
+#org @DESC_BALLFETCH
+Fetches a failed Pok\eball.
+
+#org @DESC_COTTONDOWN
+Lowers everyone's speed when hit.
+
+#org @DESC_MIRRORARMOR
+Bounces back stat decreases.
+
+#org @DESC_GULPMISSILE
+Spits prey when damaged.
+
+#org @DESC_STALWART
+#org @DESC_PROPELLERTAIL
+Moves ignore redirection.
+
+#org @DESC_STEAMENGINE
+Fire and Water boosts speed.
+
+#org @DESC_PUNKROCK
+Boosts and resists sound.
+
+#org @DESC_SANDSPIT
+Creates sandstorm when hit.
+
+#org @DESC_ICESCALES
+Halves Special damage.
+
+#org @DESC_RIPEN
+Doubles berry effects.
+
+#org @DESC_POWERSPOT
+Powers up ally moves.
+
+#org @DESC_MIMICRY
+Changes type with terrain.
+
+#org @DESC_SCREENCLEANER
+Screen effects are nullified.
+
+#org @DESC_STEELYSPIRIT
+Boosts ally Steel moves.
+
+#org @DESC_PERISHBODY
+Perish status on contact.
+
+#org @DESC_WANDERINGSPIRIT
+Trade abilities on contact.
+
+#org @DESC_GORILLATACTICS
+Boosts Atk, but allows one move.
+
+#org @DESC_NEUTRALIZING GAS
+All abilities are nullified.
+
+#org @DESC_PASTEL VEIL
+Allies protected from Poison.
+
+#org @DESC_HUNGERSWITCH
+Changes form each turn.
