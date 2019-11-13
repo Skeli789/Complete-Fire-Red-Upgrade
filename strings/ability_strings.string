@@ -17,7 +17,7 @@ The effects of weather\ndisappeared.
 [SCRIPTING_BANK] couldn't get\ngoing!
 
 #org @gText_UnnerveActivate
-[FD][37] team is too\nnervous to eat berries!
+[FD][37] team is too\nnervous to eat Berries!
 
 #org @gText_DarkAuraActivate
 [SCRIPTING_BANK] is radiating\na dark aura!

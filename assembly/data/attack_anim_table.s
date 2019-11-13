@@ -821,6 +821,32 @@ gMoveAnimations:
 .word ANIM_MAX_DARKNESS
 .word ANIM_MAX_OVERGROWTH
 .word ANIM_MAX_STEELSPIKE
+.word ANIM_G_MAX_WILDFIRE
+.word ANIM_G_MAX_BEFUDDLE
+.word ANIM_G_MAX_VOLTCRASH
+.word ANIM_G_MAX_GOLDRUSH
+.word ANIM_G_MAX_CHISTRIKE
+.word ANIM_G_MAX_TERROR
+.word ANIM_G_MAX_RESONANCE
+.word ANIM_G_MAX_CUDDLE
+.word ANIM_G_MAX_REPLENISH
+.word ANIM_G_MAX_MALODOR
+.word ANIM_G_MAX_STONESURGE
+.word ANIM_G_MAX_WINDRAGE
+.word ANIM_G_MAX_STUNSHOCK
+.word ANIM_G_MAX_FINALE
+.word ANIM_G_MAX_DEPLETION
+.word ANIM_G_MAX_GRAVITAS
+.word ANIM_G_MAX_VOLCALITH
+.word ANIM_G_MAX_SANDBLAST
+.word ANIM_G_MAX_SNOOZE
+.word ANIM_G_MAX_TARTNESS
+.word ANIM_G_MAX_SWEETNESS
+.word ANIM_G_MAX_SMITE
+.word ANIM_G_MAX_STEELSURGE
+.word ANIM_G_MAX_MELTDOWN
+.word ANIM_G_MAX_FOAMBURST
+.word ANIM_G_MAX_CENTIFERNO
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -22622,6 +22648,188 @@ ANIM_MAX_OVERGROWTH:
 @Credit to -
 ANIM_MAX_STEELSPIKE:
 	goto ANIM_CORKSCREW_CRASH
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+@Credit to -
+ANIM_G_MAX_WILDFIRE:
+	goto 0x81c6f34 @ANIM_POUND
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+@Credit to -
+ANIM_G_MAX_BEFUDDLE:
+	goto 0x81c6f34 @ANIM_POUND
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+@Credit to -
+ANIM_G_MAX_VOLTCRASH:
+	goto 0x81c6f34 @ANIM_POUND
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+@Credit to -
+ANIM_G_MAX_GOLDRUSH:
+	goto 0x81c6f34 @ANIM_POUND
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+@Credit to -
+ANIM_G_MAX_CHISTRIKE:
+	goto 0x81c6f34 @ANIM_POUND
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+@Credit to -
+ANIM_G_MAX_TERROR:
+	goto 0x81c6f34 @ANIM_POUND
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+@Credit to -
+ANIM_G_MAX_RESONANCE:
+	goto 0x81c6f34 @ANIM_POUND
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+@Credit to -
+ANIM_G_MAX_CUDDLE:
+	goto 0x81c6f34 @ANIM_POUND
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+@Credit to -
+ANIM_G_MAX_REPLENISH:
+	goto 0x81c6f34 @ANIM_POUND
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+@Credit to -
+ANIM_G_MAX_MALODOR:
+	goto 0x81c6f34 @ANIM_POUND
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+@Credit to -
+ANIM_G_MAX_STONESURGE:
+	goto 0x81c6f34 @ANIM_POUND
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+@Credit to -
+ANIM_G_MAX_WINDRAGE:
+	goto 0x81c6f34 @ANIM_POUND
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+@Credit to -
+ANIM_G_MAX_STUNSHOCK:
+	goto 0x81c6f34 @ANIM_POUND
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+@Credit to -
+ANIM_G_MAX_FINALE:
+	goto 0x81c6f34 @ANIM_POUND
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+@Credit to -
+ANIM_G_MAX_DEPLETION:
+	goto 0x81c6f34 @ANIM_POUND
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+@Credit to -
+ANIM_G_MAX_GRAVITAS:
+	goto 0x81c6f34 @ANIM_POUND
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+@Credit to -
+ANIM_G_MAX_VOLCALITH:
+	goto 0x81c6f34 @ANIM_POUND
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+@Credit to -
+ANIM_G_MAX_SANDBLAST:
+	goto 0x81c6f34 @ANIM_POUND
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+@Credit to -
+ANIM_G_MAX_SNOOZE:
+	goto 0x81c6f34 @ANIM_POUND
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+@Credit to -
+ANIM_G_MAX_TARTNESS:
+	goto 0x81c6f34 @ANIM_POUND
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+@Credit to -
+ANIM_G_MAX_SWEETNESS:
+	goto 0x81c6f34 @ANIM_POUND
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+@Credit to -
+ANIM_G_MAX_SMITE:
+	goto 0x81c6f34 @ANIM_POUND
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+@Credit to -
+ANIM_G_MAX_STEELSURGE:
+	goto 0x81c6f34 @ANIM_POUND
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+@Credit to -
+ANIM_G_MAX_MELTDOWN:
+	goto 0x81c6f34 @ANIM_POUND
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+@Credit to -
+ANIM_G_MAX_FOAMBURST:
+	goto 0x81c6f34 @ANIM_POUND
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+@Credit to -
+ANIM_G_MAX_CENTIFERNO:
+	goto 0x81c6f34 @ANIM_POUND
 	endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

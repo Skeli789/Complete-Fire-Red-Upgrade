@@ -12,7 +12,7 @@ Pound
 Karate Chop
 
 #org @NAME_DOUBLESLAP
-Doubleslap
+Double Slap
 
 #org @NAME_COMET_PUNCH
 Comet Punch
@@ -35,8 +35,8 @@ ThunderPunch
 #org @NAME_SCRATCH
 Scratch
 
-#org @NAME_VICEGRIP
-Vicegrip
+#org @NAME_VISE_GRIP
+Vise Grip
 
 #org @NAME_GUILLOTINE
 Guillotine
@@ -87,7 +87,7 @@ Jump Kick
 Rolling Kick
 
 #org @NAME_SAND_ATTACK
-Sand-Attack
+Sand Attack
 
 #org @NAME_HEADBUTT
 Headbutt
@@ -149,8 +149,8 @@ Sing
 #org @NAME_SUPERSONIC
 Supersonic
 
-#org @NAME_SONICBOOM
-Sonicboom
+#org @NAME_SONIC_BOOM
+Sonic Boom
 
 #org @NAME_DISABLE
 Disable
@@ -185,8 +185,8 @@ Blizzard
 #org @NAME_PSYBEAM
 Psybeam
 
-#org @NAME_BUBBLEBEAM
-BubbleBeam
+#org @NAME_BUBBLE_BEAM
+Bubble Beam
 
 #org @NAME_AURORA_BEAM
 Aurora Beam
@@ -230,8 +230,8 @@ Growth
 #org @NAME_RAZOR_LEAF
 Razor Leaf
 
-#org @NAME_SOLARBEAM
-SolarBeam
+#org @NAME_SOLAR_BEAM
+Solar Beam
 
 #org @NAME_POISONPOWDER
 PoisonPowder
@@ -1592,8 +1592,8 @@ Psystrike
 #org @NAME_AUTOTOMIZE
 Autotomize
 
-#org @NAME_DIAMONDSTORM
-Diamondstorm
+#org @NAME_DIAMOND_STORM
+DiamondStorm
 
 #org @NAME_SLUDGE_WAVE
 Sludge Wave
@@ -1686,7 +1686,7 @@ Dragon Rise
 Parting Shot
 
 #org @NAME_TOPSY_TURVY
-Topsy Turvy
+Topsy-Turvy
 
 #org @NAME_CORE_ENFORCE
 Core Enforce
@@ -2356,3 +2356,81 @@ Overgrowth
 
 #org @NAME_MAX_STEELSPIKE
 Steelspike
+
+#org @NAME_G_MAX_WILDFIRE
+Wilfire
+
+#org @NAME_G_MAX_BEFUDDLE
+Befuddle
+
+#org @NAME_G_MAX_VOLTCRASH
+Voltcrash
+
+#org @NAME_G_MAX_GOLDRUSH
+Goldrush
+
+#org @NAME_G_MAX_CHISTRIKE
+Chistrike
+
+#org @NAME_G_MAX_TERROR
+Terro
+
+#org @NAME_G_MAX_RESONANCE
+Resonance
+
+#org @NAME_G_MAX_CUDDLE
+Cuddle
+
+#org @NAME_G_MAX_REPLENISH
+Replenish
+
+#org @NAME_G_MAX_MALODOR
+Malodor
+
+#org @NAME_G_MAX_STONESURGE
+Stonesurge
+
+#org @NAME_G_MAX_WINDRAGE
+Windrage
+
+#org @NAME_G_MAX_STUNSHOCK
+Stunshock
+
+#org @NAME_G_MAX_FINALE
+Finale
+
+#org @NAME_G_MAX_DEPLETION
+Depletion
+
+#org @NAME_G_MAX_GRAVITAS
+Gravitas
+
+#org @NAME_G_MAX_VOLCALITH
+Volcalith
+
+#org @NAME_G_MAX_SANDBLAST
+Sandblast
+
+#org @NAME_G_MAX_SNOOZE
+Snooze
+
+#org @NAME_G_MAX_TARTNESS
+Tartness
+
+#org @NAME_G_MAX_SWEETNESS
+Sweetness
+
+#org @NAME_G_MAX_SMITE
+Smite
+
+#org @NAME_G_MAX_STEELSURGE
+Steelsurge
+
+#org @NAME_G_MAX_MELTDOWN
+Meltdown
+
+#org @NAME_G_MAX_FOAMBURST
+Foamburst
+
+#org @NAME_G_MAX_CENTIFERNO
+Centiferno
