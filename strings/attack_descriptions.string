@@ -974,163 +974,163 @@ The Pok\emon\ncongratulates you\non your special\nday!
 The user and an\nally hold hands.\nThis makes them\nvery happy.
 
 #org @DESC_DYNAMAX_CANNON
--
+The user unleashes\na strong beam that\ndeals double damage\nto Dynamaxed targets.
 
 #org @DESC_SNIPE_SHOT
--
+It ignores the\neffects of moves\nand Abilities that\ndraw in moves.
 
 #org @DESC_JAW_LOCK
--
+It prevents the\nuser and the target\nfrom switching out\nuntil either faints.
 
 #org @DESC_STUFF_CHEEKS
--
+The user consumes\nits held berry, \nthen raises its\nDefense sharply.
 
 #org @DESC_NO_RETREAT
--
+It raises all of\nthe user's stats, \nbut prevents it\nfrom switching out.
 
 #org @DESC_TAR_SHOT
--
+The move lowers\nthe target's Speed, \nand makes it weaker\nto Fire-Type moves.
 
 #org @DESC_MAGIC_POWDER
--
+The user scatters\nmagic powder that\nchanges the target\ninto a Psychic-Type.
 
 #org @DESC_DRAGON_DARTS
--
+The user attacks\ntwice. If there\nare two targets, \neach is hit once.
 
 #org @DESC_TEATIME
--
+The user forces\nall Pok\emon in\nbattle to eat\nits held berry.
 
 #org @DESC_OCTOLOCK
--
+It prevents the\ntarget from fleeing, \nwhile lowering its\ndefenses each turn.
 
 #org @DESC_BOLT_BEAK
--
+If the user moves\nbefore the target, \nthe power of this\nmove is doubled.
 
 #org @DESC_FISHIOUS_REND
--
+If the user moves\nbefore the target, \nthe power of this\nmove is doubled.
 
 #org @DESC_COURT_CHANGE
--
+The user swaps\nthe effects on\neither side of\nthe field.
 
 #org @DESC_CLANGOROUS_SOUL
--
+The user raises\nall of its stats\nby using some of\nits HP.
 
 #org @DESC_BODY_PRESS
--
+The higher the\nuser's Defense, \nthe more damage\nit will inflict.
 
 #org @DESC_DECORATE
--
+The user decorates\nthe target, sharply\nraising the targets'\nAttack and Sp. Atk.
 
 #org @DESC_DRUM_BEATING
--
+The user plays its\ndrum to attack.\nThe target's Speed\nstat is lowered.
 
 #org @DESC_SNAP_TRAP
--
+The user snares\nthe target in a\nsnap trap for four\nto five turns.
 
 #org @DESC_PYRO_BALL
--
+The user launches\na fiery ball at\nthe target. It may\nalso cause a burn.
 
 #org @DESC_BEHEMOTH_BLADE
--
+The user becomes a\nsword and strikes.\nDouble damage on\nDynamaxed targets.
 
 #org @DESC_BEHEMOTH_BASH
--
+The user becomes a\nshield and strikes.\nDouble damage on\nDynamaxed targets.
 
 #org @DESC_AURA_WHEEL
--
+Morpeko raises its\nSpeed and attacks.\nThe move's Type is\nbased on its form.
 
 #org @DESC_BREAKING_SWIPE
--
+The user attacks\nby swinging its\ntail, lowering the\ntarget's Attack.
 
 #org @DESC_BRANCH_POKE
--
+The user attacks\nthe target by\npoking it with a\npointed branch.
 
 #org @DESC_OVERDRIVE
--
+The user twangs\nits guitar, which\ncauses an echo and\nstrong vibrations.
 
 #org @DESC_APPLE_ACID
--
+The user attacks\nthe target with\nacid, lowering\nits Sp. Defense.
 
 #org @DESC_GRAV_APPLE
--
+The user attacks\nby dropping an\napple from above, \nlowering Defense.
 
 #org @DESC_SPIRIT_BREAK
--
+The user attacks\nwith spirit-breaking\nforce, lowering the\ntarget's Sp. Atk.
 
 #org @DESC_STRANGE_STEAM
--
+The user attacks\nby emitting steam.\nThe steam may also\nConfuse the target.
 
 #org @DESC_LIFE_DEW
--
+The user scatters\nwater that restores\nthe HP of itself\nand its allies.
 
 #org @DESC_OBSTRUCT
--
+The user protects\nitself, and harshly\nlowers the foe's\nDefense on contact.
 
 #org @DESC_FALSE_SURRENDER
--
+The user bows, \nthen uses its hair\nto stab the foe.\nIt never misses.
 
 #org @DESC_METEOR_ASSAULT
--
+The user attacks\nwith its thick leek.\nThe user must rest\non the next turn.
 
 #org @DESC_ETERNABEAM
--
+Eternatus's most\npowerful attack.\nThe user must rest\non the next turn.
 
 #org @DESC_STEEL_BEAM
--
+It fires a beam\nof steel from its\nbody, which also\nhurts the user.
 
 #org @DESC_MAX_GUARD
--
+Enables the user to\nevade all attacks.\nIt may fail if used\nin succession.
 
 #org @DESC_MAX_FLARE
--
+Fire-Type Dynamax\nmove. It causes the\nsun to intensify\nfor five turns.
 
 #org @DESC_MAX_FLUTTERBY
--
+Bug-Type Dynamax\nmove. It lowers\nthe target's\nSpecial Attack.
 
 #org @DESC_MAX_LIGHTNING
--
+Electric Dynamax\nmove. It activates\nElectric Terrain\nfor five turns.
 
 #org @DESC_MAX_STRIKE
--
+Normal-Type Dynamax\nmove. It lowers\nthe target's Speed\nstat.
 
 #org @DESC_MAX_KNUCKLE
--
+Fighting Dynamax\nmove. It raises\nally Pok\emon's\nAttack stats.
 
 #org @DESC_MAX_PHANTASM
--
+Ghost-Type Dynamax\nmove. It lowers\nthe target's\nDefense stat.
 
 #org @DESC_MAX_HAILSTORM
--
+Ice-Type Dynamax\nmove. It summons\na hailstorm for\nfive turns.
 
 #org @DESC_MAX_OOZE
--
+Poison-Type Dynamax\nmove. It raises\nally Pok\emon's\nSp. Atk stats.
 
 #org @DESC_MAX_GEYSER
--
+Water-Type Dynamax\nmove. It summons\nrain that falls\nfor five turns.
 
 #org @DESC_MAX_AIRSTREAM
--
+Flying-Type Dynamax\nmove. It raises\nally Pok\emon's\nSpeed stats.
 
 #org @DESC_MAX_STARFALL
--
+Fairy-Type Dynamax\nmove. It activates\nMisty Terrain for\nfive turns.
 
 #org @DESC_MAX_WYRMWIND
--
+Dragon-Type Dynamax\nmove. It lowers\nthe target's Attack\nstat.
 
 #org @DESC_MAX_MINDSTORM
--
+Psychic Dynamax\nmove. It activates\nPsychic Terrain\nfor five turns.
 
 #org @DESC_MAX_ROCKFALL
--
+Rock-Type Dynamax\nmove. It summons\na sandstorm that\nlasts five turns.
 
 #org @DESC_MAX_QUAKE
--
+Ground-Type Dynamax\nmove. It raises\nally Pok\emon's\nSp. Def stats.
 
 #org @DESC_MAX_DARKNESS
--
+Dark-Type Dynamax\nmove. It lowers\nthe target's\nSp. Def stat.
 
 #org @DESC_MAX_OVERGROWTH
--
+Grass-Type Dynamax\nmove. It activates\nGrassy Terrain for\nfive turns.
 
 #org @DESC_MAX_STEELSPIKE
--
+Steel=Ty[e Dynamax\nmove. It raises\nally Pok\emon's\nDefense stats.
