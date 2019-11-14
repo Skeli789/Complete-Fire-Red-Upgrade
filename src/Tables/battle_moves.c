@@ -8546,7 +8546,7 @@ const struct BattleMove gBattleMoves[] =
 		.flags = 0,
 		.z_move_power = 0,
 		.split = SPLIT_STATUS,
-		.z_move_effect = 0
+		.z_move_effect = Z_EFFECT_RESET_STATS
 	},
 
 	[MOVE_PSYSTRIKE] =
@@ -11022,7 +11022,7 @@ const struct BattleMove gBattleMoves[] =
 		.flags = FLAG_SNATCH_AFFECTED,
 		.split = SPLIT_STATUS,
 		.z_move_power = 0,
-		.z_move_effect = 0,
+		.z_move_effect = Z_EFFECT_RESET_STATS,
 	},
 
 	[MOVE_NORETREAT] =
@@ -11038,7 +11038,7 @@ const struct BattleMove gBattleMoves[] =
 		.flags = FLAG_SNATCH_AFFECTED,
 		.split = SPLIT_STATUS,
 		.z_move_power = 0,
-		.z_move_effect = 0,
+		.z_move_effect = Z_EFFECT_RESET_STATS,
 	},
 
 	[MOVE_TARSHOT] =
@@ -11054,7 +11054,7 @@ const struct BattleMove gBattleMoves[] =
 		.flags = FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 		.split = SPLIT_STATUS,
 		.z_move_power = 0,
-		.z_move_effect = 0,
+		.z_move_effect = Z_EFFECT_SPD_UP_1,
 	},
 
 	[MOVE_MAGICPOWDER] =
@@ -11070,7 +11070,7 @@ const struct BattleMove gBattleMoves[] =
 		.flags = FLAG_PROTECT_AFFECTED | FLAG_MAGIC_COAT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 		.split = SPLIT_STATUS,
 		.z_move_power = 0,
-		.z_move_effect = 0,
+		.z_move_effect = Z_EFFECT_SPATK_UP_1,
 	},
 
 	[MOVE_DRAGONDARTS] =
@@ -11102,7 +11102,7 @@ const struct BattleMove gBattleMoves[] =
 		.flags = 0,
 		.split = SPLIT_STATUS,
 		.z_move_power = 0,
-		.z_move_effect = 0,
+		.z_move_effect = Z_EFFECT_ALL_STATS_UP_1,
 	},
 
 	[MOVE_OCTOLOCK] =
@@ -11118,7 +11118,7 @@ const struct BattleMove gBattleMoves[] =
 		.flags = FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED,
 		.split = SPLIT_STATUS,
 		.z_move_power = 0,
-		.z_move_effect = 0,
+		.z_move_effect = Z_EFFECT_ATK_UP_1,
 	},
 
 	[MOVE_BOLTBEAK] =
@@ -11166,7 +11166,7 @@ const struct BattleMove gBattleMoves[] =
 		.flags = FLAG_MIRROR_MOVE_AFFECTED,
 		.split = SPLIT_STATUS,
 		.z_move_power = 0,
-		.z_move_effect = 0,
+		.z_move_effect = Z_EFFECT_SPD_UP_1,
 	},
 
 	[MOVE_CLANGOROUSSOUL] =
@@ -11182,7 +11182,7 @@ const struct BattleMove gBattleMoves[] =
 		.flags = FLAG_SNATCH_AFFECTED,
 		.split = SPLIT_STATUS,
 		.z_move_power = 0,
-		.z_move_effect = 0,
+		.z_move_effect = Z_EFFECT_RESET_STATS,
 	},
 
 	[MOVE_BODYPRESS] =
@@ -11214,7 +11214,7 @@ const struct BattleMove gBattleMoves[] =
 		.flags = 0,
 		.split = SPLIT_STATUS,
 		.z_move_power = 0,
-		.z_move_effect = 0,
+		.z_move_effect = Z_EFFECT_RESET_STATS,
 	},
 
 	[MOVE_DRUMBEATING] =
@@ -11438,7 +11438,7 @@ const struct BattleMove gBattleMoves[] =
 		.flags = FLAG_SNATCH_AFFECTED | FLAG_TRIAGE_AFFECTED,
 		.split = SPLIT_STATUS,
 		.z_move_power = 0,
-		.z_move_effect = 0,
+		.z_move_effect = Z_EFFECT_RESET_STATS,
 	},
 
 	[MOVE_OBSTRUCT] =
@@ -11454,7 +11454,7 @@ const struct BattleMove gBattleMoves[] =
 		.flags = 0,
 		.split = SPLIT_STATUS,
 		.z_move_power = 0,
-		.z_move_effect = 0,
+		.z_move_effect = Z_EFFECT_DEF_UP_1,
 	},
 
 	[MOVE_FALSESURRENDER] =

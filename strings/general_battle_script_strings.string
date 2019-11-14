@@ -102,6 +102,9 @@ The Quick Guard protected\n[TARGET]!
 #org @WideGuardProtectedString
 The Wide Guard protected\n[TARGET]!
 
+#org @gText_JawLockNoEscape
+Neither Pok\emon can run away!
+
 //Status Strings
 
 #org @gText_TargetStaysAwake

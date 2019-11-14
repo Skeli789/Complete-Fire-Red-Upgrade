@@ -1224,6 +1224,37 @@ void SpriteCB_FallingApple(struct Sprite *sprite)
 	sprite->callback = SpriteCB_FallingAppleStep;
 }
 
+static void SpriteCB_LockingJawFinish(struct Sprite *sprite)
+{
+    if (--sprite->data[3] <= sprite->data[6])
+        DestroySpriteAndMatrix(sprite);
+}
+
+static void SpriteCB_LockingJawStep(struct Sprite *sprite)
+{
+    sprite->data[4] += sprite->data[0];
+    sprite->data[5] += sprite->data[1];
+    sprite->pos2.x = sprite->data[4] >> 8;
+    sprite->pos2.y = sprite->data[5] >> 8;
+    if (++sprite->data[3] == sprite->data[2])
+        sprite->callback = SpriteCB_LockingJawFinish;
+}
+
+//Creates a jaw that bites down and locks on the target.
+//args: Idk same as bite and crunch
+//arg 6: Time to hold bite for.
+void SpriteCB_LockingJaw(struct Sprite *sprite)
+{
+    sprite->pos1.x += gBattleAnimArgs[0];
+    sprite->pos1.y += gBattleAnimArgs[1];
+    StartSpriteAffineAnim(sprite, gBattleAnimArgs[2]);
+    sprite->data[0] = gBattleAnimArgs[3];
+    sprite->data[1] = gBattleAnimArgs[4];
+    sprite->data[2] = gBattleAnimArgs[5];
+	sprite->data[6] = -gBattleAnimArgs[6];
+    sprite->callback = SpriteCB_LockingJawStep;
+}
+
 // Scales up the target mon sprite
 // Used in Let's Snuggle Forever
 // No args.

@@ -12,6 +12,7 @@
 .equ side_target, 0x3
 
 @For launchtemplate
+.equ TEMPLATE_ATTACKER, 0x0
 .equ TEMPLATE_TARGET, 0x80
 
 @background IDs
@@ -428,11 +429,13 @@
 .equ Template_LusterPurgeHits, 0x83E7C50
 .equ Template_Leer, 0x83FEF30
 .equ Template_MiniFirePlume, 0x83E77D8
-
 .equ Template_Pal_Fade, 0x83E7B24
 .equ Template_SlideMonToOffset, 0x83d4e9c
 .equ Template_SlideMonToOriginalPos, 0x83d4e84
 .equ Template_HorizontalLunge, 0x83D4E54
+.equ Template_Teeth, 0x83E7930
+.equ Template_FrenzyPlantRoot, 0x83e2ddc
+.equ Template_BellyDrumNote, 0x83e3914
 
 .equ Callback_TranslateAnimSpriteToTargetMonLocation, 0x8075DF5
 

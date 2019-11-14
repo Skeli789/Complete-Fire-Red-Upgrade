@@ -1969,6 +1969,7 @@ BS_106_MeanLook:
 	jumpifmove MOVE_ANCHORSHOT DamageAndTrapBS
 	jumpifmove MOVE_SPIRITSHACKLE DamageAndTrapBS
 	jumpifmove MOVE_THOUSANDWAVES DamageAndTrapBS
+	jumpifmove MOVE_JAWLOCK JawLockBS
 	attackcanceler
 	accuracycheck FAILED_PRE 0x0
 	jumpiftype BANK_TARGET TYPE_GHOST FAILED_PRE
@@ -1994,6 +1995,24 @@ DamageAndTrapBS:
 	jumpifmovehadnoeffect BS_MOVE_FAINT
 	seteffecttarget
 	printstring 0x8F
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_FAINT
+
+JawLockBS:
+	attackcanceler
+	accuracycheck BS_MOVE_MISSED 0x0
+	call STANDARD_DAMAGE
+	jumpiffainted BANK_TARGET BS_MOVE_FAINT
+	jumpifmovehadnoeffect BS_MOVE_FAINT
+	@;Make both banks lock each other
+	setmoveeffect MOVE_EFFECT_PREVENT_ESCAPE
+	seteffecttarget
+	swapattackerwithtarget
+	setmoveeffect MOVE_EFFECT_PREVENT_ESCAPE
+	seteffecttarget
+	swapattackerwithtarget
+	setword BATTLE_STRING_LOADER gText_JawLockNoEscape
+	printstring 0x184
 	waitmessage DELAY_1SECOND
 	goto BS_MOVE_FAINT
 
