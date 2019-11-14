@@ -213,11 +213,12 @@ RockSmashWildEncounter 8082E54 0
 SweetScentWildEncounter 8082EC0 0
 DoesCurrentMapHaveFishingMons 8082F78 0
 FishingWildEncounter 8082FB0 1
-CheckStandardWildEncounter 80833B0 1
+TryStandardWildEncounter 80833B0 1
 ScrCmd_setwildbattle 806C368 1
 sp138_StartLegendaryBattle 807F9D8 0
 GetLocalWildMon 8082FE8 1
 GetLocalWaterMon 8083074 0
+GetAbilityEncounterRateModType 8082C58 0
 
 #Roamer Hooks
 ClearRoamersData 8141C54 0

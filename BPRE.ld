@@ -74,7 +74,7 @@ gPaletteFade = 0x2037AB8;
 /* Map/Overworld RAM */
 gMapHeader = 0x2036DFC;
 gWeatherPtr = 0x2037F34;
-gEncounterRate = 0x20386D0;
+sWildEncounterData = 0x20386D0;
 gFieldEffectArguments = 0x20386E0;
 gPostMenuFieldCallback = 0x203B0C4;
 gFieldCallback = 0x3005020;
@@ -576,10 +576,11 @@ GetUnownLetterFromPersonality = 0x8082AB8 | 1;
 DoGlobalWildEncounterDiceRoll = 0x8082C98 | 1;
 IsWildLevelAllowedByRepel = 0x808310C | 1;
 ApplyFluteEncounterRateMod = 0x8083174 | 1;
+GetFluteEncounterRateModType = 0x80831A0 | 1;
 ApplyCleanseTagEncounterRateMod = 0x80831D8 | 1;
-IncrementEncounterProbabilityBonus = 0x8083410 | 1;
+HandleWildEncounterCooldown = 0x80832E4 | 1;
+AddToWildEncounterRateBuff = 0x8083410 | 1;
 //TryStartRoamerEncounter = 0x8141FAC | 1;
-
 
 /* Diploma Screen Functions */
 ClearAndInitDiploma = 0x80F4E24 | 1;

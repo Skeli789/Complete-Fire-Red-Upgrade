@@ -49,5 +49,7 @@ bool8 __attribute__((long_call)) DoGlobalWildEncounterDiceRoll(void);
 bool8 __attribute__((long_call)) IsWildLevelAllowedByRepel(u8 level);
 void __attribute__((long_call)) ApplyFluteEncounterRateMod(u32 *encRate);
 void __attribute__((long_call)) ApplyCleanseTagEncounterRateMod(u32 *encRate);
-void __attribute__((long_call)) IncrementEncounterProbabilityBonus(u8 encounterRate);
+void __attribute__((long_call)) AddToWildEncounterRateBuff(u8 encounterRate);
 u8  __attribute__((long_call)) GetUnownLetterFromPersonality(u32 personality);
+bool8 __attribute__((long_call)) HandleWildEncounterCooldown(u32 currMetatileBehavior);
+u8 __attribute__((long_call)) GetFluteEncounterRateModType(void);

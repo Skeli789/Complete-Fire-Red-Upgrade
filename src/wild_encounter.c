@@ -30,15 +30,15 @@ wild_encounter.c
 
 struct EncounterRate
 {
-	u32 randomNum;
-	u16 previousMetatileBehavior;
-	u16 rateBonus;
-	u8 maxNoEncounterStepCounter;
-	u8 abilityRateModifier;
-	u16 firstMonHeldItem;
+	u32 rngState;
+	u16 prevMetatileBehavior;
+	u16 encounterRateBuff;
+	u8 stepsSinceLastEncounter;
+	u8 abilityEffect;
+	u16 leadMonHeldItem;
 };
 
-extern struct EncounterRate gEncounterRate;
+extern struct EncounterRate sWildEncounterData;
 
 extern u8 gUnownDistributionByChamber[NUM_TANOBY_CHAMBERS][12]; //[NUM_ROOMS][NUM_WILD_INDEXES]
 extern const struct WildPokemonHeader gWildMonMorningHeaders[];
@@ -98,25 +98,25 @@ static u8 ChooseWildMonLevel(const struct WildPokemon* wildPokemon)
 	range = max - min + 1;
 	rand = Random() % range;
 
-	if (FlagGet(FLAG_SYS_BLACK_FLUTE))
-	{
-		fluteBonus = (Random() % 3 + 1);
-		max = MathMin(MAX_LEVEL, max + fluteBonus);
-		min = MathMin(MAX_LEVEL, min + fluteBonus);
-	}
-	else if (FlagGet(FLAG_SYS_WHITE_FLUTE))
-	{
-		fluteBonus = (Random() % 3 + 1);
+    switch (GetFluteEncounterRateModType()) {
+		case 2: //Black Flute
+			fluteBonus = (Random() % 3 + 1);
+			max = MathMin(MAX_LEVEL, max + fluteBonus);
+			min = MathMin(MAX_LEVEL, min + fluteBonus);
+			break;
+		case 1: //White Flute
+			fluteBonus = (Random() % 3 + 1);
 
-		if (fluteBonus < max)
-			max -= fluteBonus;
-		else
-			max = 1;
+			if (fluteBonus < max)
+				max -= fluteBonus;
+			else
+				max = 1;
 
-		if (fluteBonus < min)
-			min -= fluteBonus;
-		else
-			min = 1;
+			if (fluteBonus < min)
+				min -= fluteBonus;
+			else
+				min = 1;
+			break;
 	}
 
 	//Check ability for max level mon
@@ -459,60 +459,74 @@ bool8 DoesCurrentMapHaveFishingMons(void)
 static bool8 DoWildEncounterRateTest(u32 encounterRate, bool8 ignoreAbility)
 {
 	encounterRate *= 16;
-	if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_MACH_BIKE | PLAYER_AVATAR_FLAG_ACRO_BIKE))
-	{
+	if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_BIKE))
 		encounterRate = encounterRate * 80 / 100;
-	}
 
-	//encounterRate += (gEncounterRate.rateBonus * 16 / 200);
-
-	gEncounterRate.firstMonHeldItem = gPlayerParty[0].item;
+	encounterRate += sWildEncounterData.encounterRateBuff * 16 / 200;
 	//ApplyFluteEncounterRateMod(&encounterRate);
 	ApplyCleanseTagEncounterRateMod(&encounterRate);
 
-	if (!ignoreAbility && !GetMonData(&gPlayerParty[0], MON_DATA_IS_EGG, NULL))
+	if (!ignoreAbility)
 	{
-		u32 ability = GetMonAbility(&gPlayerParty[0]);
-
-		switch (ability) {
-			case ABILITY_WHITESMOKE:
-			case ABILITY_STENCH:
-			case ABILITY_QUICKFEET:
+        switch (sWildEncounterData.abilityEffect) {
+			case 1:
 				encounterRate /= 2;
 				break;
-			case ABILITY_ARENATRAP:
-			case ABILITY_ILLUMINATE:
-			case ABILITY_NOGUARD:
-			case ABILITY_SWARM:
+			case 2:
 				encounterRate *= 2;
 				break;
-			case ABILITY_SANDVEIL:
-				if (GetCurrentWeather() == WEATHER_SANDSTORM)
-					encounterRate /= 2;
-				break;
-			case ABILITY_SNOWCLOAK:
-				if (GetCurrentWeather() == WEATHER_STEADY_SNOW)
-					encounterRate /= 2;
-				break;
-		}
-
+        }
 	}
 
-	if (encounterRate > 2880)
-		encounterRate = 2880;
+	if (encounterRate > 1600)
+		encounterRate = 1600;
 
 	return DoWildEncounterRateDiceRoll(encounterRate);
 }
 
 static bool8 DoWildEncounterRateDiceRoll(u16 encounterRate)
 {
-	if (Random() % 2880 < encounterRate)
+	if (Random() % 1600 < encounterRate)
 		return TRUE;
 	else
 		return FALSE;
 }
 
-bool8 StandardWildEncounter(const u16 currMetaTileBehavior, const u16 previousMetaTileBehavior)
+u8 GetAbilityEncounterRateModType(void)
+{
+    sWildEncounterData.abilityEffect = 0;
+
+    if (!GetMonData(&gPlayerParty[0], MON_DATA_IS_EGG, NULL))
+    {
+        u8 ability = GetMonAbility(&gPlayerParty[0]);
+
+		switch (ability) {
+			case ABILITY_WHITESMOKE:
+			case ABILITY_STENCH:
+			case ABILITY_QUICKFEET:
+				sWildEncounterData.abilityEffect = 1;
+				break;
+			case ABILITY_ARENATRAP:
+			case ABILITY_ILLUMINATE:
+			case ABILITY_NOGUARD:
+			case ABILITY_SWARM:
+				sWildEncounterData.abilityEffect = 2;
+				break;
+			case ABILITY_SANDVEIL:
+				if (GetCurrentWeather() == WEATHER_SANDSTORM)
+					sWildEncounterData.abilityEffect = 1;
+				break;
+			case ABILITY_SNOWCLOAK:
+				if (GetCurrentWeather() == WEATHER_STEADY_SNOW)
+					sWildEncounterData.abilityEffect = 1;
+				break;
+		}
+    }
+
+    return sWildEncounterData.abilityEffect;
+}
+
+bool8 StandardWildEncounter(const u32 currMetaTileBehavior, const u16 previousMetaTileBehavior)
 {
 	struct Roamer* roamer;
 	bool8 clearDoubleFlag = FALSE;
@@ -523,7 +537,7 @@ bool8 StandardWildEncounter(const u16 currMetaTileBehavior, const u16 previousMe
 
 	const struct WildPokemonInfo* landMonsInfo = LoadProperMonsData(LAND_MONS_HEADER);
 	const struct WildPokemonInfo* waterMonsInfo = LoadProperMonsData(WATER_MONS_HEADER);
-
+	
 	#ifdef FLAG_NO_RANDOM_WILD_ENCOUNTERS
 	if (FlagGet(FLAG_NO_RANDOM_WILD_ENCOUNTERS))
 		return FALSE;
@@ -538,7 +552,7 @@ bool8 StandardWildEncounter(const u16 currMetaTileBehavior, const u16 previousMe
 				return FALSE;
 			else if (DoWildEncounterRateTest(landMonsInfo->encounterRate, FALSE) != TRUE)
 			{
-				IncrementEncounterProbabilityBonus(landMonsInfo->encounterRate);
+				AddToWildEncounterRateBuff(landMonsInfo->encounterRate);
 				return FALSE;
 			}
 
@@ -576,7 +590,7 @@ bool8 StandardWildEncounter(const u16 currMetaTileBehavior, const u16 previousMe
 					FlagClear(FLAG_DOUBLE_WILD_BATTLE); //Battle didn't start so restart the flag
 				#endif
 
-				IncrementEncounterProbabilityBonus(landMonsInfo->encounterRate);
+				AddToWildEncounterRateBuff(landMonsInfo->encounterRate);
 			}
 		}
 		else if (lowerByte & TILE_FLAG_SURFABLE
@@ -630,18 +644,25 @@ bool8 StandardWildEncounter(const u16 currMetaTileBehavior, const u16 previousMe
 	return FALSE;
 }
 
-bool8 CheckStandardWildEncounter(u16 metatileBehavior)
+bool8 TryStandardWildEncounter(u32 currMetatileBehavior)
 {
-	if (StandardWildEncounter(metatileBehavior, gEncounterRate.previousMetatileBehavior) == TRUE)
+	if (!HandleWildEncounterCooldown(currMetatileBehavior))
+    {
+        sWildEncounterData.prevMetatileBehavior = MetatileBehavior_GetLowerBytes(currMetatileBehavior, 0);
+        return FALSE;
+    }
+	else if (StandardWildEncounter(currMetatileBehavior, sWildEncounterData.prevMetatileBehavior) == TRUE)
 	{
-		gEncounterRate.rateBonus = 0;
-		gEncounterRate.maxNoEncounterStepCounter = 0;
-		gEncounterRate.previousMetatileBehavior = MetatileBehavior_GetLowerBytes(metatileBehavior, 0);
+		sWildEncounterData.encounterRateBuff = 0;
+		sWildEncounterData.stepsSinceLastEncounter = 0;
+		sWildEncounterData.prevMetatileBehavior = MetatileBehavior_GetLowerBytes(currMetatileBehavior, 0);
 		return TRUE;
 	}
-
-	gEncounterRate.previousMetatileBehavior = MetatileBehavior_GetLowerBytes(metatileBehavior, 0);
-	return FALSE;
+	else
+	{
+		sWildEncounterData.prevMetatileBehavior = MetatileBehavior_GetLowerBytes(currMetatileBehavior, 0);
+		return FALSE;
+	}
 }
 
 void RockSmashWildEncounter(void)

@@ -15,8 +15,8 @@ u8 PickUnownLetter(u16 species, u8 headerIndex);
 void TryUpdateSwarm(void);
 void FishingWildEncounter(u8 rod);
 bool8 DoesCurrentMapHaveFishingMons(void);
-bool8 StandardWildEncounter(u16 currMetaTileBehavior, u16 previousMetaTileBehavior);
-bool8 CheckStandardWildEncounter(u16 metatileBehavior);
+bool8 StandardWildEncounter(u32 currMetaTileBehavior, u16 previousMetaTileBehavior);
+bool8 TryStandardWildEncounter(u32 metatileBehavior);
 void RockSmashWildEncounter(void);
 bool8 SweetScentWildEncounter(void);
 bool8 StartRandomWildEncounter(bool8 waterMon); //Used in script specials
