@@ -7,8 +7,8 @@ import sys
 from datetime import datetime
 import _io
 
-OFFSET_TO_PUT = 0x1eb4df0
-SOURCE_ROM = "Pokemon Unbound.gba"
+OFFSET_TO_PUT = 0x900000
+SOURCE_ROM = "BPRE0.gba"
 ROM_NAME = "test.gba"
 
 if sys.platform.startswith('win'):
