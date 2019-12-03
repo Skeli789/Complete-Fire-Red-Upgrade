@@ -73,7 +73,7 @@ SpecialBuffers = {
 
 def StringFileConverter(fileName: str):
     stringToWrite = ".thumb\n.text\n.align 2\n\n"
-    with open(fileName, 'r') as file:
+    with open(fileName, 'r', encoding="utf-8") as file:
         maxLength = 0
         fillFF = False
         readingState = 0
@@ -121,7 +121,7 @@ def StringFileConverter(fileName: str):
                     stringToWrite += ProcessString(line, lineNum, maxLength, fillFF)
                     stringToWrite += "0xFF\n\n"  # Only print line in everything went alright
 
-    output = open(fileName.split(".string")[0] + '.s', 'w')  # Only open file once we know everything went okay.
+    output = open(fileName.split(".string")[0] + '.s', 'w', encoding="utf-8")  # Only open file once we know everything went okay.
     output.write(stringToWrite)
     output.close()
 
@@ -203,7 +203,7 @@ def ProcessString(string: str, lineNum: int, maxLength=0, fillWithFF=False) -> s
 
 def PokeByteTableMaker():
     dictionary = {}
-    with open(CharMap) as file:
+    with open(CharMap, 'r', encoding="utf-8") as file:
         for line in file:
             if line.strip() != "/FF" and line.strip() != "":
                 if line[2] == '=' and line[3] != "":
@@ -216,7 +216,7 @@ def PokeByteTableMaker():
                         pass
         dictionary[' '] = 0
 
-    dictionary["’"] = 0xB4
-    dictionary["“"] = 0xB0
-    dictionary["”"] = 0xB1
+    dictionary["ï¿½"] = 0xB4
+    dictionary["ï¿½"] = 0xB0
+    dictionary["ï¿½"] = 0xB1
     return dictionary
