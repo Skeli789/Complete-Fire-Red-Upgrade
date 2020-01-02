@@ -86,13 +86,15 @@
 #define BBG_SHI(num) (BBG_PAL_##num << num)
 #define BSP_SHI(num) (B_SPRITE_PAL_##num << (num + 16))
 
-#define OW_DNS_BG_PAL_FADE (OBG_SHI(0) | OBG_SHI(1) | OBG_SHI(2) | OBG_SHI(3) | OBG_SHI(4) | OBG_SHI(5) 		\
+#define OW_DNS_PAL_FADE (OW_DNS_BG_PAL_FADE | OW_DNS_SPRITE_PAL_FADE)
+
+#define OW_DNS_BG_PAL_FADE (OBG_SHI(0) | OBG_SHI(1) | OBG_SHI(2) | OBG_SHI(3) | OBG_SHI(4) | OBG_SHI(5) 	\
 						 | OBG_SHI(6) | OBG_SHI(7) | OBG_SHI(8) | OBG_SHI(9) | OBG_SHI(10) | OBG_SHI(11) 	\
-						 | OBG_SHI(12) | OBG_SHI(13) | OBG_SHI(14) | OBG_SHI(15) 							\
-						 | OSP_SHI(0) | OSP_SHI(1) | OSP_SHI(2) | OSP_SHI(3) | OSP_SHI(4) | OSP_SHI(5) 		\
+						 | OBG_SHI(12) | OBG_SHI(13) | OBG_SHI(14) | OBG_SHI(15))
+
+#define OW_DNS_SPRITE_PAL_FADE (OSP_SHI(0) | OSP_SHI(1) | OSP_SHI(2) | OSP_SHI(3) | OSP_SHI(4) | OSP_SHI(5) \
 						 | OSP_SHI(6) | OSP_SHI(7) | OSP_SHI(8) | OSP_SHI(9) | OSP_SHI(10) | OSP_SHI(11) 	\
 						 | OSP_SHI(12) | OSP_SHI(13) | OSP_SHI(14) | OSP_SHI(15))
-
 
 #define BATTLE_DNS_PAL_FADE (BBG_SHI(0) | BBG_SHI(1) | BBG_SHI(2) | BBG_SHI(3) | BBG_SHI(4) | BBG_SHI(5) 	\
 						 | BBG_SHI(6) | BBG_SHI(7) | BBG_SHI(8) | BBG_SHI(9) | BBG_SHI(10) | BBG_SHI(11) 	\
@@ -367,7 +369,7 @@ const struct SpecificTilesetFade gSpecificTilesetFades[] =
 		},
 	},
 	{ //Snow Town House Windows
-		.tilesetPointer = 0x8725AB4, //Tileset 188588
+		.tilesetPointer = 0x82D4AC4, //Tileset 2
 		.paletteNumToFade = 12,
 		.paletteIndicesToFade =
 		{
@@ -906,6 +908,27 @@ const struct SpecificTilesetFade gSpecificTilesetFades[] =
 		{
 			{1,  RGB(8, 18, 20)},
 			{2,  RGB(4, 14, 16)},
+			TILESET_PAL_FADE_END
+		},
+	},
+	{ //Polder Town
+		.tilesetPointer = 0x82D4B54, //Tileset 8
+		.paletteNumToFade = 12,
+		.paletteIndicesToFade =
+		{
+			{1,  RGB(31, 31, 20)},
+			{2,  RGB(31, 31, 14)},
+			{3,  RGB(31, 30, 1)},
+
+			{6,  RGB(31, 30, 1)},
+			{11,  RGB(31, 31, 14)},
+
+			{8,  RGB(31, 31, 14)},
+			{9,  RGB(31, 30, 0)},
+			{10,  RGB(31, 31, 20)},
+			{12,  RGB(31, 31, 14)},
+			{13,  RGB(31, 30, 1)},
+			{14,  RGB(31, 30, 0)},
 			TILESET_PAL_FADE_END
 		},
 	},
