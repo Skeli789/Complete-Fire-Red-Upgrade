@@ -538,7 +538,7 @@ def main():
             mapBanksHeader = ExtractPointer(rom.read(4)) - 0x08000000
 
             with open(EVENT_SCRIPTS, 'r') as file:
-                for line in file:
+                for i, line in enumerate(file):
                     if TryProcessFileInclusion(line, definesDict):
                         continue
                     if TryProcessConditionalCompilation(line, definesDict, conditionals):
@@ -546,78 +546,81 @@ def main():
                     if line.strip().startswith('#') or line.strip() == '':
                         continue
 
-                    if len(line.split()) == 4 or len(line.split()) == 5:
-                        if len(line.split()) == 5:
-                            eventType, mapBank, mapNum, eventId, symbol = line.split()
-                            eventId = int(eventId)
-                        else:  # 4
-                            eventType, mapBank, mapNum, symbol = line.split()
+                    try:
+                        if len(line.split()) == 4 or len(line.split()) == 5:
+                            if len(line.split()) == 5:
+                                eventType, mapBank, mapNum, eventId, symbol = line.split()
+                                eventId = int(eventId)
+                            else:  # 4
+                                eventType, mapBank, mapNum, symbol = line.split()
 
-                        eventType = eventType.lower()
-                        mapBank = int(mapBank)
-                        mapNum = int(mapNum)
-                        dictId = (mapBank << 8) | mapNum
+                            eventType = eventType.lower()
+                            mapBank = int(mapBank)
+                            mapNum = int(mapNum)
+                            dictId = (mapBank << 8) | mapNum
 
-                        if dictId not in mapHeaders:
-                            rom.seek(mapBanksHeader + mapBank * 4)
-                            mapBankHeader = ExtractPointer(rom.read(4)) - 0x08000000
-                            rom.seek(mapBankHeader + mapNum * 4)
-                            mapHeader = ExtractPointer(rom.read(4)) - 0x08000000
-                            mapHeaders[dictId] = mapHeader  # Store for later
-                        else:
-                            mapHeader = mapHeaders[dictId]
-
-                        if eventType == "map":
-                            offset = mapHeader + 0x8
-                        elif eventType == "npc":
-                            if dictId not in npcTables:
-                                rom.seek(mapHeader + 0x4)
-                                eventHeader = ExtractPointer(rom.read(4)) - 0x08000000
-                                rom.seek(eventHeader + 0x4)
-                                npcTable = ExtractPointer(rom.read(4)) - 0x08000000
-                                npcTables[dictId] = npcTable  # Store for later
+                            if dictId not in mapHeaders:
+                                rom.seek(mapBanksHeader + mapBank * 4)
+                                mapBankHeader = ExtractPointer(rom.read(4)) - 0x08000000
+                                rom.seek(mapBankHeader + mapNum * 4)
+                                mapHeader = ExtractPointer(rom.read(4)) - 0x08000000
+                                mapHeaders[dictId] = mapHeader  # Store for later
                             else:
-                                npcTable = npcTables[dictId]
-                            length = 0x18  # Length of one entry
-                            offset = npcTable + eventId * 0x18 + 0x10
+                                mapHeader = mapHeaders[dictId]
 
-                        elif eventType == "tile":
-                            if dictId not in tileTables:
-                                rom.seek(mapHeader + 0x4)
-                                eventHeader = ExtractPointer(rom.read(4)) - 0x08000000
-                                rom.seek(eventHeader + 0xC)
-                                tileTable = ExtractPointer(rom.read(4)) - 0x08000000
-                                tileTables[dictId] = tileTable  # Store for later
-                            else:
-                                tileTable = tileTables[dictId]
-                            length = 0x10  # Length of one entry
-                            offset = tileTable + eventId * length + 0xC
+                            if eventType == "map":
+                                offset = mapHeader + 0x8
+                            elif eventType == "npc":
+                                if dictId not in npcTables:
+                                    rom.seek(mapHeader + 0x4)
+                                    eventHeader = ExtractPointer(rom.read(4)) - 0x08000000
+                                    rom.seek(eventHeader + 0x4)
+                                    npcTable = ExtractPointer(rom.read(4)) - 0x08000000
+                                    npcTables[dictId] = npcTable  # Store for later
+                                else:
+                                    npcTable = npcTables[dictId]
+                                length = 0x18  # Length of one entry
+                                offset = npcTable + eventId * 0x18 + 0x10
 
-                        elif eventType == "sign":
-                            if dictId not in signTables:
-                                rom.seek(mapHeader + 0x4)
-                                eventHeader = ExtractPointer(rom.read(4)) - 0x08000000
-                                rom.seek(eventHeader + 0x10)
-                                signTable = ExtractPointer(rom.read(4)) - 0x08000000
-                                signTables[dictId] = signTable  # Store for later
-                            else:
-                                signTable = signTables[dictId]
-                            length = 0xC  # Length of one entry
-                            offset = signTable + eventId * length + 0x8
+                            elif eventType == "tile":
+                                if dictId not in tileTables:
+                                    rom.seek(mapHeader + 0x4)
+                                    eventHeader = ExtractPointer(rom.read(4)) - 0x08000000
+                                    rom.seek(eventHeader + 0xC)
+                                    tileTable = ExtractPointer(rom.read(4)) - 0x08000000
+                                    tileTables[dictId] = tileTable  # Store for later
+                                else:
+                                    tileTable = tileTables[dictId]
+                                length = 0x10  # Length of one entry
+                                offset = tileTable + eventId * length + 0xC
 
-                        if symbol in definesDict:
-                            symbol = definesDict[symbol]
+                            elif eventType == "sign":
+                                if dictId not in signTables:
+                                    rom.seek(mapHeader + 0x4)
+                                    eventHeader = ExtractPointer(rom.read(4)) - 0x08000000
+                                    rom.seek(eventHeader + 0x10)
+                                    signTable = ExtractPointer(rom.read(4)) - 0x08000000
+                                    signTables[dictId] = signTable  # Store for later
+                                else:
+                                    signTable = signTables[dictId]
+                                length = 0xC  # Length of one entry
+                                offset = signTable + eventId * length + 0x8
 
-                        try:
-                            code = table[symbol]
-                        except KeyError:
+                            if symbol in definesDict:
+                                symbol = definesDict[symbol]
+
                             try:
-                                code = int(symbol, 16)  # If script offset was written in hex
-                            except ValueError:
-                                print('Symbol missing:', symbol)
-                                continue
+                                code = table[symbol]
+                            except KeyError:
+                                try:
+                                    code = int(symbol, 16)  # If script offset was written in hex
+                                except ValueError:
+                                    print('Symbol missing:', symbol)
+                                    continue
 
-                        Repoint(rom, code, offset)
+                            Repoint(rom, code, offset)
+                    except OSError:
+                        print("There was an error inserting the event script on line {}: {}".format(i, line))
 
         width = max(map(len, table.keys())) + 1
         if os.path.isfile('offsets.ini'):

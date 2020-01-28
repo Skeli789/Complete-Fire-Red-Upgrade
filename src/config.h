@@ -5,8 +5,11 @@
  * \brief Handles all customizable options.
  */
 
-//#define DEBUG_MEGA
-//#define DEBUG_HMS
+/*===== Debugging Options =====*/
+//#define DEBUG_MEGA //Mega Evolution can always be used
+//#define DEBUG_HMS //HMs can always be used from the party screen, Surf, Waterfall, and Rock Climb can always be used
+//#define DEBUG_OBEDIENCE //Traded Pokemon never have obedience issues
+//#define DEBUG_DYNAMAX //Dynamax can be used in Dynamax battles without a Dynamax Band
 
 /*===== General Vars =====*/
 #define VAR_TERRAIN 0x5000 //Set to a terrain type for a battle to begin with the given terrain
@@ -49,6 +52,10 @@
 #define FLAG_DISABLE_BAG 0x915 //The bag can't be used in-battle if this flag is set
 #define FLAG_MOVE_RELEARNER_IGNORE_LEVEL 0x916 //When set, the move relearner shows all level-up moves up to MAX_LEVEL
 #define FLAG_EGG_MOVE_RELEARNER 0x917 //When set, the move learner loads egg moves instead
+#define FLAG_DYNAMAX_BATTLE 0x918 //When set, Pokemon can Dynamax in battle
+#define FLAG_RAID_BATTLE 0x919 //When set, wild Pokemon will appear Dynamaxed and be fought Raid Battle style.
+#define FLAG_RAID_BATTLE_NO_FORCE_END 0x91A //When set, if FLAG_RAID_BATTLE is set, then raid battles won't be force ended.
+#define FLAG_FAST_BATTLE_MESSAGES 0x925 //When set, battle messages have no wait time once they've completed printing
 
 /*===== Start Menu/Poketools Flags =====*/
 #define FLAG_SYS_BAG_HIDE 0x91B		//Toggle bag off
@@ -121,7 +128,7 @@ enum //These vars need to be one after the other (hence the enum)
 
 #define MAX_LEVEL 100 //Also change this in the file "asm_defines.asm" found in the root
 #define NUM_TRAINER_CLASSES 107 //Vanilla FR has 107
-#define EVOS_PER_MON 5 //The number of maximum evolutions per Pokemon. Vanilla FR has 5
+#define EVOS_PER_MON 5 //The number of maximum evolutions per Pokemon. Vanilla FR has 5. DPE has 16
 #define EV_CAP 252 //Also change this in the file "asm_defines.s" found in the root
 #define POWER_ITEM_EV_YIELD 8 //Set to 4 for older mechanic
 
@@ -136,6 +143,7 @@ enum //These vars need to be one after the other (hence the enum)
 
 /*===== Metatile Behaviours =====*/
 #define MB_OMNIDIRECTIONAL_JUMP 0x7F //The tile behaviour byte that can be jumped over in all directions
+#define MB_LOCKED_DOOR 0xA4 //The tile behaviour byte for doors that are locked and cannot be opened
 #define MB_ROCK_CLIMB_WALL 0xA5 //The tile behaviour byte that can be climbed up using Rock Climb
 #define MB_LAVA 0xA6 //The tile beahviour byte that can be lava surfed on. Comment out to remove Lava Surf
 
@@ -195,6 +203,7 @@ enum //These vars need to be one after the other (hence the enum)
 #define OVERWRITE_BG_FOR_LEADER_CHAMPION //If this remains uncommented, special Battle Background palettes will be loaded in for battles against Gym Leaders and the Champion
 #define BRIDGE_FIX //If this remains uncommented, the water battle background will only be loaded if the player's surfing sprite is shown
 #define MEGA_EVOLUTION_FEATURE //Comment this line to remove Mega Evolutions
+#define DYNAMAX_FEATURE //Comment this line to remove Dynamax and Raid Battles
 #define TUTORIAL_BATTLES //Comment this line to remove Oak's Tutorial
 #define TANOBY_RUINS_ENABLED //The Tanoby Ruins will be the only location Unown can be encountered
 #define ALTERING_CAVE_ENABLED //The Altering Cave from FR will work as intended provided the proper var is set
@@ -231,6 +240,7 @@ enum //These vars need to be one after the other (hence the enum)
 #define SCROLLING_MULTICHOICE //Enables scrolling multichoice menus by using special 0x158.
 //#define REPLACE_SOME_VANILLA_SPECIALS //Replaces the sp07C, sp07D, sp09E, sp156, & sp18B with modified versions. Breaks vanilla FR compatability.
 #define REPLACE_ASH_WEATHER_WITH_WHITE_SANDSTORM //Replaces the falling ash weather effect with a white version of the sandstorm weather effect
+//#define ONLY_CHECK_ITEM_FOR_HM_USAGE //Allows HMs to be used if the HM is the Bag, and as long as there is a Pokemon in the party that can learn the HM
 
 /*===== Misc Battle Effect Options =====*/
 //#define OLD_BURN_DAMAGE //Uncomment this line if you want burn damage to do 1/8 of max health instead of 1/16
@@ -240,6 +250,8 @@ enum //These vars need to be one after the other (hence the enum)
 //#define INFINITE_TERRAIN //Uncomment this line if you want terrain abilities to last for infinite turns
 //#define NO_SHEER_COLD_NERF //Uncomment this line to remove all Gen 7 Sheer Cold nerfs
 //#define OLD_MOVE_SPLIT //Uncomment this line to use the Physical/Special split based on move types. Status moves are still set with the split byte.
+//#define OLD_CONFUSION_HEAL_BERRIES //Uncomment this line for berries like Figy and Wiki Berry to restore only 1/8 max HP when HP is below 1/2
+//#define GEN_7_CONFUSION_HEAL_BERRIES //Uncomment this line for berries like Figy and Wiki Berry to restore 1/2 max HP (Gen 8 is 1/3) when HP is below 1/4
 
 /*===== Ability Options =====*/
 //#define OLD_GALE_WINGS //Uncomment this line if you want Gale Wings to activate regardless of the user's HP
@@ -273,6 +285,7 @@ enum //These vars need to be one after the other (hence the enum)
 //#define FLAT_EXP_FORMULA //Uncomment this line to use a Flat Exp calculation formula (Gens 2 - 4, 6)
 #define GEN_7_BASE_EXP_YIELD //Base Exp Yield is read from gBaseExpBySpecies to use larger values that match Gen 7
 #define CAPTURE_EXPERIENCE //Experience is awared upon capturing Pokemon.
+#define EXP_AFFECTION_BOOST //Pokemon with friendship >= 220 gain boosted experience
 
 /*===== Other Battle Options =====*/
 //#define NO_GHOST_BATTLES //Uncomment this line to disable the Ghost battle feature from Pokemon Tower in Lavender town
