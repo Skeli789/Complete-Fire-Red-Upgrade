@@ -748,6 +748,38 @@ bool8 TryStandardWildEncounter(u32 currMetatileBehavior)
 	}
 }
 
+u8 GetMapBaseEncounterCooldown(u8 lowerByte)
+{
+    const struct WildPokemonInfo* landMonsInfo = LoadProperMonsData(LAND_MONS_HEADER);
+	const struct WildPokemonInfo* waterMonsInfo = LoadProperMonsData(WATER_MONS_HEADER);
+
+    if (lowerByte & TILE_FLAG_ENCOUNTER_TILE)
+    {
+        if (landMonsInfo == NULL) //No land data on this map
+            return 0xFF;
+        if (landMonsInfo->encounterRate >= 80)
+            return 0;
+        if (landMonsInfo->encounterRate < 10)
+            return 8;
+
+        return 8 - (landMonsInfo->encounterRate / 10);
+    }
+
+    if (lowerByte & TILE_FLAG_SURFABLE)
+    {
+        if (waterMonsInfo == NULL) //No water data on this map
+            return 0xFF;
+        if (waterMonsInfo->encounterRate >= 80)
+            return 0;
+        if (waterMonsInfo->encounterRate < 10)
+            return 8;
+
+        return 8 - (waterMonsInfo->encounterRate / 10);
+    }
+
+    return 0xFF;
+}
+
 void RockSmashWildEncounter(void)
 {
 	const struct WildPokemonInfo* wildPokemonInfo = LoadProperMonsData(ROCK_SMASH_MONS_HEADER);

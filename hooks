@@ -234,6 +234,7 @@ CreateWildMon 80829FC 2
 GetLocalWildMon 8082FE8 1
 GetLocalWaterMon 8083074 0
 GetAbilityEncounterRateModType 8082C58 0
+GetMapBaseEncounterCooldown 0808324C 1
 
 #Roamer Hooks
 ClearRoamersData 8141C54 0
