@@ -11,6 +11,7 @@
 #include "../include/new/battle_util.h"
 #include "../include/new/catching.h"
 #include "../include/new/dns.h"
+#include "../include/new/dynamax.h"
 #include "../include/new/form_change.h"
 #include "../include/new/util.h"
 #include "../include/new/mega.h"
@@ -26,6 +27,7 @@ catching.c
 #define BattleScript_ShakeBallThrow 	((u8*) 0x81D9A93)
 #define BattleScript_TrainerBallBlock 	((u8*) 0x81D9AC1)
 #define BattleScript_DodgedBall 		((u8*) 0x81D9AD1)
+extern const u8 BattleScript_RaidMonEscapeBall[];
 
 #define sBallCatchBonuses ((u8*) 0x8250892)
 
@@ -39,8 +41,10 @@ extern const struct SpriteTemplate gBallSpriteTemplates[];
 	#define BattleScript_SuccessBallThrow ((u8*) 0x81D9A42)
 #endif
 
-extern u8 gText_CantAimAtTwoTargets[];
-extern u8 gText_CantAimAtSemiInvulnerableTarget[];
+extern const u8 gText_CantAimAtTwoTargets[];
+extern const u8 gText_CantAimAtSemiInvulnerableTarget[];
+extern const u8 gText_CantCatchPokemonYet[];
+extern const u8 gText_CantCatchPokemonRightNow[];
 
 extern species_t gUltraBeastList[];
 
@@ -243,7 +247,7 @@ void atkEF_handleballthrow(void)
 					break;
 
 				case BALL_TYPE_FAST_BALL:
-					if (gBaseStats[gBankTarget].baseSpeed >= 100)
+					if (gBaseStats[defSpecies].baseSpeed >= 100)
 						ballMultiplier = 40;
 					break;
 
@@ -268,6 +272,11 @@ void atkEF_handleballthrow(void)
 						ballMultiplier = 10;
 					break;
 
+				case BALL_TYPE_DREAM_BALL:
+					if (gBattleMons[gBankTarget].status1 & STATUS1_SLEEP)
+						ballMultiplier = 30;
+					break;
+
 				case BALL_TYPE_BEAST_BALL:
 					if (CheckTableForSpecies(defSpecies, gUltraBeastList))
 						ballMultiplier = 50;
@@ -282,7 +291,7 @@ void atkEF_handleballthrow(void)
 		if (CheckTableForSpecies(defSpecies, gUltraBeastList) && ballType != BALL_TYPE_BEAST_BALL)
 			ballMultiplier = 1; //All balls except for Beast Ball have a hard time catching Ultra Beasts
 
-		odds = udivsi(((catchRate * udivsi(ballMultiplier, 10)) * (gBattleMons[gBankTarget].maxHP * 3 - gBattleMons[gBankTarget].hp * 2)), (3 * gBattleMons[gBankTarget].maxHP));
+		odds = (((catchRate * ballMultiplier) / 10) * (gBattleMons[gBankTarget].maxHP * 3 - gBattleMons[gBankTarget].hp * 2)) / (3 * gBattleMons[gBankTarget].maxHP);
 
 		#ifndef NO_HARDER_WILD_DOUBLES
 		if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER) && IS_DOUBLE_BATTLE)
@@ -302,9 +311,12 @@ void atkEF_handleballthrow(void)
 		#endif
 
 		if (gBattleMons[gBankTarget].status1 & (STATUS_SLEEP | STATUS_FREEZE))
-			odds = (odds * 250) / 100;
+			odds = (odds * 25) / 10;
 		if (gBattleMons[gBankTarget].status1 & (STATUS_PSN_ANY | STATUS_BURN | STATUS_PARALYSIS))
-			odds = (odds * 150) / 100;
+			odds = (odds * 15) / 10;
+
+		if (IsRaidBattle()) //Dynamax Raid Pokemon can be caught easier
+			odds *= 4;
 
 		if (ballType != BALL_TYPE_SAFARI_BALL)
 		{
@@ -340,7 +352,6 @@ void atkEF_handleballthrow(void)
 				maxShakes = 4;
 
 			if (ballType == BALL_TYPE_MASTER_BALL
-			||	ballType == BALL_TYPE_DREAM_BALL
 			||	ballType == BALL_TYPE_PARK_BALL)
 				shakes = maxShakes;
 			else
@@ -351,6 +362,12 @@ void atkEF_handleballthrow(void)
 
 			EmitBallThrowAnim(0, shakes);
 			MarkBufferBankForExecution(gActiveBattler);
+			
+			if (!gNewBS->firstFailedPokeBallStored)
+			{
+				gNewBS->firstFailedPokeBallStored = TRUE; //Only once per battle
+				gNewBS->failedThrownPokeBall = gLastUsedItem;
+			}
 
 			if (shakes == maxShakes)
 			{
@@ -364,6 +381,11 @@ void atkEF_handleballthrow(void)
 				else
 					gBattleCommunication[MULTISTRING_CHOOSER] = 1;
 			}
+			else if (IsRaidBattle())
+			{
+				gBattleCommunication[MULTISTRING_CHOOSER] = shakes;
+				gBattlescriptCurrInstr = BattleScript_RaidMonEscapeBall;
+			}
 			else //Rip
 			{
 				gBattleCommunication[MULTISTRING_CHOOSER] = shakes;
@@ -375,10 +397,17 @@ void atkEF_handleballthrow(void)
 
 static u8 GetCatchingBattler(void)
 {
-	if (IsBattlerAlive(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)))
-		return GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
+	u8 battler;
+
+	if (IS_DOUBLE_BATTLE && GetBankPartyData(GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT))->hp > 0)
+		battler = GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
 	else
-		return GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
+		battler = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
+	
+	if (battler >= gBattlersCount || SIDE(battler) == B_SIDE_PLAYER)
+		battler = B_POSITION_OPPONENT_LEFT;
+
+	return battler;
 }
 
 static bool8 CriticalCapture(u32 odds)
@@ -454,6 +483,16 @@ u8 ItemIdToBallId(u16 ballItem)
 	return ItemId_GetType(ballItem);
 }
 
+void PlayerHandleBallThrowAnim(void)
+{
+    u8 ballThrowCaseId = gBattleBufferA[gActiveBattler][1];
+
+    gBattleSpritesDataPtr->animationData->ballThrowCaseId = ballThrowCaseId;
+    gDoingBattleAnim = TRUE;
+    InitAndLaunchSpecialAnimation(gActiveBattler, gActiveBattler, GetCatchingBattler(), B_ANIM_BALL_THROW);
+    gBattleBankFunc[gActiveBattler] = (0x8030778 | 1); //CompleteOnSpecialAnimDone;
+}
+
 void CreateThrowPokeBall(u8 taskId)
 {
 	u8 ballId = ItemIdToBallId(gLastUsedItem);
@@ -478,13 +517,7 @@ void StartPokeballThrowAnimation(u8 taskId)
 	spriteId = CreateSprite(&gBallSpriteTemplates[ballId], 32, 80, 29);
 	gSprites[spriteId].data[0] = 34;
 
-	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && !(gBattleTypeFlags & BATTLE_TYPE_TRAINER))
-	{
-		if (BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)))
-			gBattleAnimTarget = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
-		else
-			gBattleAnimTarget = GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
-	}
+	gBattleAnimTarget = GetCatchingBattler();
 
 	gSprites[spriteId].data[1] = GetBattlerSpriteCoord(gBattleAnimTarget, 0);
 	gSprites[spriteId].data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, 1) - 16;
@@ -545,6 +578,16 @@ bool8 DoubleWildPokeBallItemUseFix(u8 taskId)
 		&& BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT)))
 		{
 			DisplayItemMessage(taskId, 2, gText_CantAimAtTwoTargets, bag_menu_inits_lists_menu);
+			effect = TRUE;
+		}
+		else if (IsRaidBattle() && !RAID_BATTLE_END)
+		{
+			DisplayItemMessage(taskId, 2, gText_CantCatchPokemonYet, bag_menu_inits_lists_menu);
+			effect = TRUE;
+		}
+		else if (FlagGet(FLAG_NO_CATCHING) || FlagGet(FLAG_NO_CATCHING_AND_RUNNING))
+		{
+			DisplayItemMessage(taskId, 2, gText_CantCatchPokemonRightNow, bag_menu_inits_lists_menu);
 			effect = TRUE;
 		}
 		else if ((BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)) && BATTLER_SEMI_INVULNERABLE(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)))

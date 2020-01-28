@@ -34,11 +34,13 @@ static move_t RandomizeMove(u16 move);
 
 void GiveBoxMonInitialMoveset(struct BoxPokemon* boxMon)
 {
+	s32 i, k, index;
+	u16 moveStack[MAX_LEARNABLE_MOVES];
+	
 	u16 species = GetBoxMonData(boxMon, MON_DATA_SPECIES, NULL);
 	s32 level = GetLevelFromBoxMonExp(boxMon);
-	s32 i;
 
-	for (i = 0; !(gLevelUpLearnsets[species][i].level == 0
+	for (i = 0, k = 0; !(gLevelUpLearnsets[species][i].level == 0
 				  && gLevelUpLearnsets[species][i].level == 0xFF); ++i)
 	{
 		struct LevelUpMove lvlUpMove = gLevelUpLearnsets[species][i];
@@ -51,10 +53,15 @@ void GiveBoxMonInitialMoveset(struct BoxPokemon* boxMon)
 
 		if (lvlUpMove.level > level)
 			break;
-
-		if (GiveMoveToBoxMon(boxMon, move) == 0xFFFF)
-			DeleteFirstMoveAndGiveMoveToBoxMon(boxMon, move);
+		
+		moveStack[k++] = move;
 	}
+	
+	index = k - MAX_MON_MOVES;
+	if (index < 0)
+		index = 0;
+
+	while (index < k && GiveMoveToBoxMon(boxMon, moveStack[index++]) != 0xFFFF);
 }
 
 u16 MonTryLearningNewMove(struct Pokemon* mon, bool8 firstMove)

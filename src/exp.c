@@ -9,8 +9,10 @@
 
 #include "../include/new/battle_strings.h"
 #include "../include/new/battle_util.h"
+#include "../include/new/dynamax.h"
 #include "../include/new/exp.h"
 #include "../include/new/util.h"
+
 /*
 exp.c
 	functions that handle the exp share and exp gain
@@ -42,6 +44,7 @@ extern u8 String_TeamExpGain[];
 //This file's functions:
 static u32 ExpCalculator(u32 a, u32 t, u32 b, u32 e, u32 L, u32 Lp, u32 p, u32 f, u32 v, u32 s);
 static bool8 WasWholeTeamSentIn(u8 bank, u8 sentIn);
+static bool8 MonGetsAffectionBoost(struct Pokemon* mon);
 static void EmitExpBarUpdate(u8 a, u8 b, u32 c);
 static void EmitExpTransferBack(u8 bufferId, u8 b, u8 *c);
 static void Task_GiveExpToMon(u8 taskId);
@@ -196,8 +199,10 @@ void atk23_getexp(void)
 		//Pass Power Bonus - Not implemented
 		passPower = 1;
 
-		//Affection Boost - Not implemented
-		affection = 1;
+		//Affection Boost
+		affection = 10;
+		if (MonGetsAffectionBoost(&gPlayerParty[gBattleStruct->expGetterId]))
+			affection = 12;
 
 		//Evolution Boost
 		evolutionBoost = 10;
@@ -207,7 +212,8 @@ void atk23_getexp(void)
 		//Exp Share/Num Battlers Divisor
 		#ifndef FLAG_EXP_SHARE
 			#ifdef OLD_EXP_SPLIT
-				if (viaExpShare) { // at least one mon is getting exp via exp share
+				if (viaExpShare) // at least one mon is getting exp via exp share
+				{
 					if (holdEffect == ITEM_EFFECT_EXP_SHARE)
 						calculatedExp += ExpCalculator(trainerBonus, tradeBonus, baseExp, eggBoost, defLevel, pokeLevel, passPower, affection, evolutionBoost, 2 * viaExpShare);
 					if (gNewBS->SentInBackup & (1 << gBattleStruct->expGetterId))
@@ -261,12 +267,11 @@ void atk23_getexp(void)
 
 		if (gPlayerParty[gBattleStruct->expGetterId].hp)
 		{
-
 			//Check Boosted String necessary
 			if (IsTradedMon(&gPlayerParty[gBattleStruct->expGetterId])
 			||  CouldHaveEvolvedViaLevelUp(&gPlayerParty[gBattleStruct->expGetterId])
 			||  holdEffect == ITEM_EFFECT_LUCKY_EGG
-		  /*|| [gBattleStruct->expGetterId]->affection >= 2*/) //There's no affection boost in Vanilla FR. If you want it, you'll have to implement it yourself.
+		    ||  MonGetsAffectionBoost(&gPlayerParty[gBattleStruct->expGetterId]))
 			{
 				// check if the pokemon doesn't belong to the player
 				if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER && gBattleStruct->expGetterId >= 3)
@@ -352,6 +357,8 @@ void atk23_getexp(void)
 		if (gBattleBufferB[gActiveBattler][0] == CONTROLLER_CHOSENMONRETURNVALUE
 		&&  gBattleBufferB[gActiveBattler][1] == RET_VALUE_LEVELED_UP)
 		{
+			u8 leveledUpBank = 0xFF;
+
 			if (gBattleTypeFlags & BATTLE_TYPE_TRAINER && gBattlerPartyIndexes[gActiveBattler] == gBattleStruct->expGetterId)
 				HandleLowHpMusicChange(&gPlayerParty[gBattlerPartyIndexes[gActiveBattler]], gActiveBattler);
 
@@ -366,27 +373,23 @@ void atk23_getexp(void)
  			AdjustFriendship(&gPlayerParty[gBattleStruct->expGetterId], FRIENDSHIP_EVENT_GROW_LEVEL);
 
 			// update battle mon structure after level up
-			if (gBattlerPartyIndexes[B_POSITION_PLAYER_LEFT] == gBattleStruct->expGetterId && gBattleMons[B_POSITION_PLAYER_LEFT].hp)
+			if (gBattlerPartyIndexes[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)] == gBattleStruct->expGetterId && BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)))
+				leveledUpBank = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
+			else if (IS_DOUBLE_BATTLE && gBattlerPartyIndexes[GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT)] == gBattleStruct->expGetterId && BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT)))
+				leveledUpBank = GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT);
+
+			if (leveledUpBank != 0xFF)
 			{
-				gBattleMons[B_POSITION_PLAYER_LEFT].level = gPlayerParty[gBattleStruct->expGetterId].level;
-				gBattleMons[B_POSITION_PLAYER_LEFT].hp = gPlayerParty[gBattleStruct->expGetterId].hp;
-				gBattleMons[B_POSITION_PLAYER_LEFT].maxHP = gPlayerParty[gBattleStruct->expGetterId].maxHP;
-				gBattleMons[B_POSITION_PLAYER_LEFT].attack = gPlayerParty[gBattleStruct->expGetterId].attack;
-				gBattleMons[B_POSITION_PLAYER_LEFT].defense = gPlayerParty[gBattleStruct->expGetterId].defense;
-				gBattleMons[B_POSITION_PLAYER_LEFT].speed = gPlayerParty[gBattleStruct->expGetterId].speed;
-				gBattleMons[B_POSITION_PLAYER_LEFT].spAttack = gPlayerParty[gBattleStruct->expGetterId].spAttack;
-				gBattleMons[B_POSITION_PLAYER_LEFT].spDefense = gPlayerParty[gBattleStruct->expGetterId].spDefense;
-			}
-			else if (gBattlerPartyIndexes[B_POSITION_PLAYER_RIGHT] == gBattleStruct->expGetterId && gBattleMons[B_POSITION_PLAYER_RIGHT].hp && (gBattleTypeFlags & BATTLE_TYPE_DOUBLE))
-			{
-				gBattleMons[B_POSITION_PLAYER_RIGHT].level = gPlayerParty[gBattleStruct->expGetterId].level;
-				gBattleMons[B_POSITION_PLAYER_RIGHT].hp = gPlayerParty[gBattleStruct->expGetterId].hp;
-				gBattleMons[B_POSITION_PLAYER_RIGHT].maxHP = gPlayerParty[gBattleStruct->expGetterId].maxHP;
-				gBattleMons[B_POSITION_PLAYER_RIGHT].attack = gPlayerParty[gBattleStruct->expGetterId].attack;
-				gBattleMons[B_POSITION_PLAYER_RIGHT].defense = gPlayerParty[gBattleStruct->expGetterId].defense;
-				gBattleMons[B_POSITION_PLAYER_RIGHT].speed = gPlayerParty[gBattleStruct->expGetterId].speed;
-				gBattleMons[B_POSITION_PLAYER_RIGHT].spAttack = gPlayerParty[gBattleStruct->expGetterId].spAttack;
-				gBattleMons[B_POSITION_PLAYER_RIGHT].spDefense = gPlayerParty[gBattleStruct->expGetterId].spDefense;
+				gBattleMons[leveledUpBank].level = gPlayerParty[gBattleStruct->expGetterId].level;
+				gBattleMons[leveledUpBank].hp = gPlayerParty[gBattleStruct->expGetterId].hp;
+				gBattleMons[leveledUpBank].maxHP = gPlayerParty[gBattleStruct->expGetterId].maxHP;
+				gBattleMons[leveledUpBank].attack = gPlayerParty[gBattleStruct->expGetterId].attack;
+				gBattleMons[leveledUpBank].defense = gPlayerParty[gBattleStruct->expGetterId].defense;
+				gBattleMons[leveledUpBank].speed = gPlayerParty[gBattleStruct->expGetterId].speed;
+				gBattleMons[leveledUpBank].spAttack = gPlayerParty[gBattleStruct->expGetterId].spAttack;
+				gBattleMons[leveledUpBank].spDefense = gPlayerParty[gBattleStruct->expGetterId].spDefense;
+
+				TryBoostDynamaxHPAfterLevelUp(leveledUpBank);
 			}
 		}
 		else
@@ -446,7 +449,8 @@ static u32 ExpCalculator(u32 a, u32 t, u32 b, u32 e, u32 L, u32 Lp, u32 p, u32 f
 
 	#ifdef FLAT_EXP_FORMULA
 		++Lp; //So the variable doesn't remain unused
-		calculatedExp = udivsi(a * t * b * e * L * p * f * v, 10 * 10 * 10 * 10); //Did the calcs, shouldn't overflow (unless Base Exp > 1060)
+		calculatedExp = udivsi(a * t * b * e * L * p * v, 10 * 10 * 10 * 10); //Did the calcs, shouldn't overflow (unless Base Exp > 1060)
+		calculatedExp = (calculatedExp * f) / 10; //Affection boost
 		calculatedExp = udivsi(calculatedExp, 7 * s);
 
 	#else //Scaled Formula Gens 5, 7
@@ -463,8 +467,12 @@ static u32 ExpCalculator(u32 a, u32 t, u32 b, u32 e, u32 L, u32 Lp, u32 p, u32 f
 
 		calculatedExp += 1;
 
-		calculatedExp = udivsi(calculatedExp * t * e * v, 10 * 10 * 10) * p * f;
+		calculatedExp = (udivsi(calculatedExp * t * e * v, 10 * 10 * 10) * p * f) / 10;
 	#endif
+
+	if (IsRaidBattle())
+		calculatedExp *= 2;
+
 	return MathMin(1640000, calculatedExp);
 }
 
@@ -486,6 +494,21 @@ static bool8 WasWholeTeamSentIn(u8 bank, u8 sentIn) {
 	}
 
 	return TRUE;
+}
+
+static bool8 MonGetsAffectionBoost(struct Pokemon* mon)
+{
+	if (GetMonData(mon, MON_DATA_FRIENDSHIP, NULL) >= 220)
+	{
+		#ifdef EXP_AFFECTION_BOOST
+			#ifdef UNBOUND
+			if (FlagGet(FLAG_ELITE4_BEAT)) //Too OP before game end
+			#endif
+				return TRUE;
+		#endif
+	}
+
+	return FALSE;
 }
 
 static void EmitExpBarUpdate(u8 a, u8 b, u32 c) //Changed the u16 to a u32 to allow for more exp gain

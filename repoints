@@ -6,6 +6,7 @@ gMoveDescriptions 08137BC8
 gAbilityDescriptions 080001C4
 gAbilityDescriptions 081367A8
 gMoveAnimations 080725D0
+gMovesWithQuietBGM 080726E8
 gBattleAnimPicTable 08072914
 gBattleAnimPicTable 08072BF8
 gAnimationBackgrounds 08073960
@@ -75,11 +76,16 @@ TheOpposingString 080D7E74
 TheOpposingString 080D82C0
 TheOpposingString 080D8554
 ##Other Strings
+gText_CloakedInLight 083FE068
 gText_ShroudedInMist 083FE090
+gText_CanNoLongerEscape 083FE148
+gText_HazardsBlownAway 083FE188
 gText_AbilityPreventsConfusion 083FE234
 gText_FlashFirePowerUp 083FE238
 gText_AbilityPreventsStatLoss 083FE244
+gText_CriticalHit 083FE270
 gText_AbilityPreventsSpecificStatLoss 083FE3E0
+gText_ItemPumpedMon 083FE424
 gText_AbilityBlocksHealBell 083FE484
 gText_AbilityCuredStatusProblem 083FE49C
 
@@ -119,6 +125,7 @@ BattleScript_ActionSwitch 0801640C
 
 ##Poke Ball Expansion
 GetMonPokeBallHook 0803FE70
+gBallParticleSpriteTemplates 080F0268
 
 ##Graphics
 Substitute_FrontTiles 080350F4

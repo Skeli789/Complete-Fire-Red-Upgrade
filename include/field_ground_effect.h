@@ -12,8 +12,6 @@
 // Exported RAM declarations
 
 // Exported ROM declarations
-void SetObjectSubpriorityByZCoord(u8, struct Sprite *, u8);
-void InitObjectPriorityByZCoord(struct Sprite *, u8);
 bool8 IsZCoordMismatchAt(u8, s16, s16);
 bool8 AreZCoordsCompatible(u8, u8);
 void FieldObjectUpdateSubpriority(struct MapObject *, struct Sprite *);

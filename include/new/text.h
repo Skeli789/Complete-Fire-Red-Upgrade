@@ -13,8 +13,10 @@
 #define PC_NEWLINE 0xFE
 
 //  Punctutation
+#define PC_DASH 0xAE
 #define PC_EXCLAMATION 0xAB
 #define PC_APOSTROPHE 0xB4
+#define PC_TIMES 0xB9
 
 // Uppercase
 #define PC_A 0xBB

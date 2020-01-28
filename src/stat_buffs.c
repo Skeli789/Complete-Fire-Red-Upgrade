@@ -39,6 +39,11 @@ void atk13_printfromtable(void)
 			case ABILITY_COMPETITIVE:
 				gBattleScripting->statChanger = INCREASE_2 | STAT_STAGE_SPATK;
 				break;
+				
+			case ABILITY_RATTLED:
+				if (gNewBS->intimidateActive)
+					gBattleScripting->statChanger = INCREASE_1 | STAT_STAGE_SPEED;
+				break;
 
 			default:
 				return;
@@ -141,9 +146,14 @@ void atk48_playstatchangeanimation(void)
 						//&& ability != ABILITY_FULLMETALBODY
 						&& !(ability == ABILITY_KEENEYE && currStat == STAT_STAGE_ACC)
 						&& !(ability == ABILITY_HYPERCUTTER && currStat == STAT_STAGE_ATK)
-						&& !(ability == ABILITY_BIGPECKS && currStat == STAT_STAGE_DEF))
+						&& !(ability == ABILITY_BIGPECKS && currStat == STAT_STAGE_DEF)
+						&& !(ability == ABILITY_INNERFOCUS && gNewBS->intimidateActive)
+						&& !(ability == ABILITY_OWNTEMPO && gNewBS->intimidateActive)
+						&& !(ability == ABILITY_OBLIVIOUS && gNewBS->intimidateActive)
+						&& !(ability == ABILITY_SCRAPPY && gNewBS->intimidateActive)
+						&& !(ability == ABILITY_MIRRORARMOR && gBankAttacker != gBankTarget && gActiveBattler == gBankTarget))
 				{
-					if (gBattleMons[gActiveBattler].statStages[currStat - 1] > 0)
+					if (STAT_STAGE(gActiveBattler, currStat) > STAT_STAGE_MIN)
 					{
 						statAnimId = startingStatAnimId + currStat;
 						changeableStatsCount++;
@@ -234,14 +244,18 @@ void atk89_statbuffchange(void)
 		gBattlescriptCurrInstr += 6;
 }
 
-u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, u8* BS_ptr)
+u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8* BS_ptr)
 {
 	bool8 certain = FALSE;
+	bool8 affectsUser = FALSE;
 	bool8 notProtectAffected = FALSE;
 	u32 index;
 
 	if (flags & MOVE_EFFECT_AFFECTS_USER)
+	{
 		gActiveBattler = gBankAttacker;
+		affectsUser = TRUE;
+	}
 	else
 		gActiveBattler = gBankTarget;
 
@@ -337,9 +351,7 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, u8* BS_ptr)
 					BattleScriptPush(BS_ptr);
 					gBattleScripting->bank = PARTNER(gActiveBattler);
 					gBattleCommunication[0] = gActiveBattler;
-					gBattlescriptCurrInstr = BattleScript_AbilityNoStatLoss;
-					gLastUsedAbility = ABILITY(PARTNER(gActiveBattler));
-					RecordAbilityBattle(PARTNER(gActiveBattler), gLastUsedAbility);
+					gBattlescriptCurrInstr = BattleScript_PartnerAbilityNoStatLoss;
 					gSpecialStatuses[gActiveBattler].statLowered = 1;
 				}
 			}
@@ -348,7 +360,11 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, u8* BS_ptr)
 
 		else if (((ability == ABILITY_KEENEYE && statId == STAT_STAGE_ACC)
 			  ||  (ability == ABILITY_HYPERCUTTER && statId == STAT_STAGE_ATK)
-			  ||  (ability == ABILITY_BIGPECKS && statId == STAT_STAGE_DEF))
+			  ||  (ability == ABILITY_BIGPECKS && statId == STAT_STAGE_DEF)
+			  ||  (ability == ABILITY_INNERFOCUS && gNewBS->intimidateActive)
+			  ||  (ability == ABILITY_OWNTEMPO && gNewBS->intimidateActive)
+			  ||  (ability == ABILITY_OBLIVIOUS && gNewBS->intimidateActive)
+			  ||  (ability == ABILITY_SCRAPPY && gNewBS->intimidateActive))
 		&& !certain)
 		{
 			if (flags == STAT_CHANGE_BS_PTR)
@@ -356,15 +372,33 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, u8* BS_ptr)
 				BattleScriptPush(BS_ptr);
 				gBattleScripting->bank = gActiveBattler;
 				gBattlescriptCurrInstr = BattleScript_AbilityNoSpecificStatLoss;
-				gLastUsedAbility = ability;
-				RecordAbilityBattle(gActiveBattler, gLastUsedAbility);
 			}
 			return STAT_CHANGE_DIDNT_WORK;
 		}
-
-		else if ((ability == ABILITY_SHIELDDUST || SheerForceCheck()) && !(gHitMarker & HITMARKER_IGNORE_SUBSTITUTE) && flags == 0)
+		else if (ability == ABILITY_MIRRORARMOR && gNewBS->intimidateActive && !certain)
+		{
+			if (flags == STAT_CHANGE_BS_PTR)
+			{
+				BattleScriptPush(BS_ptr);
+				gBattleScripting->bank = gActiveBattler;
+				gBattlescriptCurrInstr = BattleScript_MirrorArmorReflectsIntimidate;
+			}
 			return STAT_CHANGE_DIDNT_WORK;
-
+		}
+		else if (ability == ABILITY_MIRRORARMOR && !affectsUser && gBankAttacker != gBankTarget && gActiveBattler == gBankTarget)
+		{
+			if (flags == STAT_CHANGE_BS_PTR)
+			{
+				BattleScriptPush(BS_ptr);
+				gBattleScripting->bank = gActiveBattler;
+				gBattlescriptCurrInstr = BattleScript_MirrorArmorReflectsStatLoss;
+			}
+			return STAT_CHANGE_DIDNT_WORK;
+		}
+		else if ((ability == ABILITY_SHIELDDUST || SheerForceCheck()) && !(gHitMarker & HITMARKER_IGNORE_SUBSTITUTE) && flags == 0)
+		{
+			return STAT_CHANGE_DIDNT_WORK;
+		}
 		else // try to decrease
 		{
 			statValue = -GET_STAT_BUFF_VALUE(statValue);
@@ -398,7 +432,7 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, u8* BS_ptr)
 			}
 			gBattleTextBuff2[index] = B_BUFF_EOS;
 
-			if (gBattleMons[gActiveBattler].statStages[statId - 1] == 0)
+			if (STAT_STAGE(gActiveBattler, statId) == 0)
 				gBattleCommunication[MULTISTRING_CHOOSER] = 2;
 			else
 				gBattleCommunication[MULTISTRING_CHOOSER] = (gBankTarget == gActiveBattler);

@@ -977,19 +977,19 @@ The user and an\nally hold hands.\nThis makes them\nvery happy.
 The user unleashes\na strong beam that\ndeals double damage\nto Dynamaxed targets.
 
 #org @DESC_SNIPE_SHOT
-It ignores the\neffects of moves\nand Abilities that\ndraw in moves.
+The user ignores\nthe effects of moves\nand Abilities that\ndraw in moves.
 
 #org @DESC_JAW_LOCK
-It prevents the\nuser and the target\nfrom switching out\nuntil either faints.
+The user bites down,\npreventing itself\nand the target from\nswitching out.
 
 #org @DESC_STUFF_CHEEKS
 The user consumes\nits held Berry,\nthen raises its\nDefense sharply.
 
 #org @DESC_NO_RETREAT
-It raises all of\nthe user's stats,\nbut prevents it\nfrom switching out.
+All of the user's\nstats are raised,\nbut it can no longer\nswitch out or flee.
 
 #org @DESC_TAR_SHOT
-The move lowers\nthe target's Speed,\nand makes it weaker\nto Fire-type moves.
+Sticky tar lowers\nthe target's Speed,\nand makes it weaker\nto Fire-type moves.
 
 #org @DESC_MAGIC_POWDER
 The user scatters\nmagic powder that\nchanges the target\ninto a Psychic-type.
@@ -998,10 +998,10 @@ The user scatters\nmagic powder that\nchanges the target\ninto a Psychic-type.
 The user attacks\ntwice. If there\nare two targets,\neach is hit once.
 
 #org @DESC_TEATIME
-The user forces\nall Pok\emon in\nbattle to eat\ntheir held Berry.
+All Pok\emon on the\nfield have teatime.\nEach Pok\emon eats\nits held Berry.
 
 #org @DESC_OCTOLOCK
-It prevents the\ntarget from fleeing,\nwhile lowering its\ndefenses each turn.
+The user traps the\nfoe and makes its\nDefense and Sp. Def\nfall each turn.
 
 #org @DESC_BOLT_BEAK
 If the user moves\nbefore the target,\nthe power of this\nmove is doubled.
@@ -1019,7 +1019,7 @@ The user raises\nall of its stats\nby using some of\nits HP.
 The higher the\nuser's Defense,\nthe more damage\nit will inflict.
 
 #org @DESC_DECORATE
-The user decorates\nthe target, sharply\nraising the targets'\nAttack and Sp. Atk.
+The user sharply\nraises the target's\nAttack and Sp. Atk\nby decorating it.
 
 #org @DESC_DRUM_BEATING
 The user plays its\ndrum to attack.\nThe target's Speed\nstat is lowered.
@@ -1049,10 +1049,10 @@ The user attacks\nthe target by\npoking it with a\npointed branch.
 The user twangs\nits guitar, which\ncauses an echo and\nstrong vibrations.
 
 #org @DESC_APPLE_ACID
-The user attacks\nthe target with\nacid, lowering\nits Sp. Def.
+The user attacks\nwith acid made from\ntart apples. Lowers\nthe foe's Sp. Def.
 
 #org @DESC_GRAV_APPLE
-The user attacks\nby dropping an\napple from above,\nlowering Defense.
+The user attacks by\ndropping an apple\nfrom above. Lowers\nthe foe's Defense.
 
 #org @DESC_SPIRIT_BREAK
 The user attacks\nwith spirit-breaking\nforce, lowering the\ntarget's Sp. Atk.

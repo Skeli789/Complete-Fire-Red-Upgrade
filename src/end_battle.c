@@ -7,6 +7,7 @@
 #include "../include/constants/trainer_classes.h"
 
 #include "../include/new/battle_util.h"
+#include "../include/new/dynamax.h"
 #include "../include/new/end_battle.h"
 #include "../include/new/end_battle_battle_scripts.h"
 #include "../include/new/form_change.h"
@@ -52,6 +53,9 @@ const u16 gEndBattleFlagClearTable[] =
 #endif
 #ifdef FLAG_SHINY_CREATION
 	FLAG_SHINY_CREATION,
+#endif
+#ifdef FLAG_RAID_BATTLE
+	FLAG_RAID_BATTLE,
 #endif
 	FLAG_TAG_BATTLE,
 	FLAG_TWO_OPPONENTS,
@@ -151,7 +155,16 @@ void HandleEndTurn_BattleWon(void)
 		}
 	}
 	else
+	{
+		if (IsRaidBattle())
+		#ifdef UNBOUND
+			PlayBGM(BGM_VICTORY_GYM);
+		#else
+			PlayBGM(BGM_VICTORY_SPECIAL);
+		#endif
+
 		gBattlescriptCurrInstr = BattleScript_PayDayMoneyAndPickUpItems;
+	}
 
 	gSpecialVar_LastResult = 0;
 	gBattleMainFunc = (u32) HandleEndTurn_FinishBattle;
@@ -224,6 +237,15 @@ void HandleEndTurn_RanFromBattle(void)
 		gBattlescriptCurrInstr = BattleScript_PrintPlayerForfeited;
 		gBattleOutcome = B_OUTCOME_LOST;
 	}
+	else if (RAID_BATTLE_END)
+	{
+		gActiveBattler = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
+		EmitSpriteInvisibility(0, TRUE);
+		MarkBufferBankForExecution(gActiveBattler);
+
+		gBattlescriptCurrInstr = BattleScript_RaidMonRanAway;
+		gBattleOutcome = B_OUTCOME_WON;
+	}
 	else
 	{
 		switch (gProtectStructs[gBankAttacker].fleeFlag) {
@@ -280,6 +302,8 @@ u8 IsRunningFromBattleImpossible(void)
 	else if (FlagGet(FLAG_NO_CATCHING_AND_RUNNING))
 		return TRUE;
 	#endif
+	else if (IsRaidBattle() && !RAID_BATTLE_END)
+		return TRUE;
 	else if (itemEffect == ITEM_EFFECT_CAN_ALWAYS_RUN)
 		return FALSE;
 	else if (gBattleMons[gActiveBattler].ability == ABILITY_RUNAWAY)
@@ -490,7 +514,7 @@ static void RestoreNonConsumableItems(void)
 			for (int i = 0; i < PARTY_SIZE; ++i)
 			{
 				if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER
-				||  items[i] == 0
+				||  items[i] == ITEM_NONE
 				||  !IsConsumable(items[i]))
 					SetMonData(&gPlayerParty[i], MON_DATA_HELD_ITEM, &items[i]);
 
@@ -499,6 +523,7 @@ static void RestoreNonConsumableItems(void)
 					SetMonData(&gPlayerParty[i], MON_DATA_HELD_ITEM, &none);
 			}
 		}
+
 		Free(items);
 	}
 }
@@ -556,6 +581,9 @@ static void EndPartnerBattlePartyRestore(void)
 
 			for (i = 0; i < PARTY_SIZE; ++i)
 			{
+				if (!FlagGet(FLAG_BATTLE_FACILITY))
+					gSelectedOrderFromParty[i] = 0; //Reset for next battle
+			
 				if (gPlayerParty[i].species == 0)
 					Memcpy(&gPlayerParty[i], &backup[counter++], sizeof(struct Pokemon));
 			}
@@ -629,6 +657,15 @@ static void EndBattleFlagClear(void)
 	Free(gNewBS->UltraData);
 	Free(gNewBS->ZMoveData);
 	Free(gNewBS);
+
+	//Handle DexNav Chain
+	if (gDexNavStartedBattle
+	&& gCurrentDexNavChain < 100
+	&& (gBattleOutcome == B_OUTCOME_WON || gBattleOutcome == B_OUTCOME_CAUGHT))
+		++gCurrentDexNavChain;
+	else
+		gCurrentDexNavChain = 0;
+	gDexNavStartedBattle = FALSE;
 
 	u16 backup = gTrainerBattleOpponent_B;
 	Memset(&ExtensionState, 0x0, sizeof(struct BattleExtensionState));

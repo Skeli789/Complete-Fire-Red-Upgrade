@@ -1,7 +1,9 @@
 #include "defines.h"
+#include "../include/random.h"
 #include "../include/constants/abilities.h"
 
 #include "../include/new/damage_calc.h"
+#include "../include/new/evolution.h"
 #include "../include/new/util.h"
 #include "../include/new/frontier.h"
 #include "../include/new/mega.h"
@@ -24,6 +26,14 @@ u32 MathMin(u32 num1, u32 num2)
 		return num1;
 
 	return num2;
+}
+
+u16 RandRange(u16 min, u16 max)
+{
+	if (min == max)
+		return min;
+
+	return (Random() % (max - min)) + min;
 }
 
 bool8 CheckTableForMove(move_t move, const u16 table[])
@@ -162,7 +172,7 @@ bool8 CanEvolve(struct Pokemon* mon)
 
 	for (u32 i = 0; i < EVOS_PER_MON; ++i)
 	{
-		if (evolutions[i].method != MEGA_EVOLUTION && evolutions[i].method != 0)
+		if (evolutions[i].method != MEGA_EVOLUTION && evolutions[i].method != EVO_GIGANTAMAX && evolutions[i].method != 0)
 			return TRUE;
 	}
 
@@ -176,11 +186,42 @@ bool8 CouldHaveEvolvedViaLevelUp(struct Pokemon* mon)
 
 	for (u32 i = 0; i < EVOS_PER_MON; ++i)
 	{
-		if (evolutions[i].method == EVO_LEVEL && mon->level >= evolutions[i].param)
+		if (IsLevelUpEvolutionMethod(evolutions[i].method) && mon->level >= evolutions[i].param)
 			return TRUE;
 	}
 
 	return FALSE;
+}
+
+void EvolveSpeciesByLevel(u16* species, u8 level)
+{
+	const struct Evolution* evolutions;
+	
+	START:
+	evolutions = gEvolutionTable[*species];
+
+	for (u32 i = 0; i < EVOS_PER_MON; ++i)
+	{
+		if ((IsLevelUpEvolutionMethod(evolutions[i].method) && level >= evolutions[i].param)
+		||  (IsOtherEvolutionMethod(evolutions[i].method) && level >= 40)
+		||  (IsItemEvolutionMethod(evolutions[i].method) && level >= 50)
+		||  (IsFriendshipEvolutionMethod(evolutions[i].method) && level >= 60))
+		{
+			*species = evolutions[i].targetSpecies;
+			goto START; //Evolve until it can't evolve any more
+		}
+	}
+}
+
+u32 GetBaseStatsTotal(const u16 species)
+{
+	u32 sum = 0;
+	u8* ptr = &gBaseStats[species].baseHP;
+
+	for (int i = 0; i < NUM_STATS; ++i)
+		sum += ptr[i];
+
+	return sum;
 }
 
 u8 FindMovePositionInMonMoveset(u16 move, struct Pokemon* mon)

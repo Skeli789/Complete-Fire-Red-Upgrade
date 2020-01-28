@@ -16,6 +16,7 @@
 .equ BS_HIT_FROM_ATTACKANIMATION, 0x81D6934
 .equ BS_STANDARD_HIT, 0x81D6926
 .equ BS_FLUSH_MESSAGE_BOX, 0x81D96A8
+.equ BattleScript_AllStatsUp, 0x81D8D55
 
 @Banks
 .equ BANK_TARGET, 0x0
@@ -1695,4 +1696,20 @@
 	
 	.macro setmoveeffect2
 	.byte 0xFF, 0x2E
-	.endm	
+	.endm
+
+	.macro setmaxmoveeffect
+	.byte 0xFF, 0x2F
+	.endm
+
+	.macro jumpifdynamaxed bank rom_address
+	.byte 0xFF, 0x30
+	.byte \bank
+	.4byte \rom_address
+	.endm
+
+	.macro jumpifraidboss bank rom_address
+	.byte 0xFF, 0x31
+	.byte \bank
+	.4byte \rom_address
+	.endm

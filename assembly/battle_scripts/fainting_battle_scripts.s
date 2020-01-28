@@ -10,8 +10,11 @@ fainting_battle_scripts.s
 .include "../battle_script_macros.s"
 
 .global BattleScript_FaintAttacker
+.global BattleScript_FaintRaidAttacker
 .global BattleScript_FaintTarget
+.global BattleScript_FaintRaidTarget
 .global BattleScript_FaintScriptingBank
+.global BattleScript_FaintRaidScriptingBank
 .global BattleScript_SuccessBallThrow
 .global BattleScript_BenjaminButterfreeDevolution
 
@@ -25,6 +28,13 @@ BattleScript_FaintAttacker:
 	trytrainerslidefirstdownmsg BANK_ATTACKER
 	return
 
+BattleScript_FaintRaidAttacker:
+	pokemonfaintcry BANK_ATTACKER
+	playanimation BANK_ATTACKER ANIM_POWDER_EXPLOSION 0x0
+	cleareffectsonfaint BANK_ATTACKER
+	callasm FinishTurn
+	return
+
 BattleScript_FaintTarget:
 	pokemonfaintcry BANK_TARGET
 	pause 0x30
@@ -34,7 +44,14 @@ BattleScript_FaintTarget:
 	printstring 0x130
 	trytrainerslidefirstdownmsg BANK_TARGET
 	return
-	
+
+BattleScript_FaintRaidTarget:
+	pokemonfaintcry BANK_TARGET
+	playanimation BANK_TARGET ANIM_POWDER_EXPLOSION 0x0
+	cleareffectsonfaint BANK_TARGET
+	callasm FinishTurn
+	return
+
 BattleScript_FaintScriptingBank:
 	pokemonfaintcry BANK_SCRIPTING
 	pause 0x30
@@ -45,7 +62,14 @@ BattleScript_FaintScriptingBank:
 	printstring 0x130
 	trytrainerslidefirstdownmsg BANK_SCRIPTING
 	return
-	
+
+BattleScript_FaintRaidScriptingBank:
+	pokemonfaintcry BANK_SCRIPTING
+	playanimation BANK_SCRIPTING ANIM_POWDER_EXPLOSION 0x0
+	cleareffectsonfaint BANK_SCRIPTING
+	callasm FinishTurn
+	return
+
 BattleScript_SuccessBallThrow:
 	jumpifhalfword EQUALS ITEM_BUFFER ITEM_SAFARI_BALL BattleScript_PrintCaughtMonInfo
 	incrementgamestat 0xB @;GAME_STAT_POKEMON_CAPTURES

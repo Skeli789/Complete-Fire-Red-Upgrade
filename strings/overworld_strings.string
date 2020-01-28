@@ -28,8 +28,11 @@ The repellent's effect wore off!\nWould you like to use another one?
 #org @gText_RepelWoreOff
 The repellent's effect wore off!
 
+#org @gText_FoundMultipleItems
+[PLAYER] found [BUFFER1] [BUFFER2]!
+
 #org @gText_ObtainedMultipleItems
-Obtained [BUFFER][02] [BUFFER][03]s!
+Obtained [BUFFER1] [BUFFER2]!
 
 #org @gText_ObtainedTMHM
 Obtained a [BUFFER][03]!\nIt contains [BUFFER][02].
@@ -81,6 +84,12 @@ Would you like to climb the\nladder?
 
 #org @gText_CantReachLadder
 You can't reach the ladder from\nhere!
+
+#org @gText_FollowNarrowPath
+Look!\nYou've found a narrow path.\pWill you follow it?
+
+#org @gText_FollowNarrowPathNowhere
+The narrow path went nowhere.
 
 //Mart Strings
 
@@ -165,3 +174,9 @@ SIXTH
 
 #org @gText_EnterNumber
 Enter a Number
+
+#org @gText_EnterPhrase
+Enter a Phrase
+
+#org @gText_EnterPassword
+Enter Password

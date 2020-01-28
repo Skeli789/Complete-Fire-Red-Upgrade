@@ -216,7 +216,7 @@ animparticle 0x8d218ec,	0x200,	ANIM_TAG_GHOSTLY_SPIRIT
 animparticle 0x8d21a48,	0xa80,	ANIM_TAG_WARM_ROCK
 animparticle 0x8d2227c,	0x600,	ANIM_TAG_BREAKING_EGG
 animparticle 0x8d22408,	0x800,	ANIM_TAG_THIN_RING
-animparticle 0x8d220e0,	0x200,	ANIM_TAG_UNUSED_PUNCH_IMPACT
+animparticle 0x8d220e0,	0x200,	ANIM_TAG_PUNCH_IMPACT
 animparticle 0x8d22878,	0x600,	ANIM_TAG_BELL
 animparticle 0x8d225d8,	0x800,	ANIM_TAG_MUSIC_NOTES_2
 animparticle 0x8d22ad0,	0x180,	ANIM_TAG_SPEED_DUST
@@ -367,360 +367,382 @@ animparticle MUD_BOMB_IMG, (64 * 64) / 2, ANIM_TAG_MUD_BOMB
 animparticle BRANCH_IMG, (32 * 32) / 2, ANIM_TAG_BRANCH
 animparticle APPLE_IMG, (32 * 32) / 2, ANIM_TAG_APPLE
 animparticle OBSTRUCT_IMG, (32 * 32) / 2, ANIM_TAG_OBSTRUCT_CROSS
+animparticle POISON_COLUMN_IMG, (32 * 64 * 8) / 2, ANIM_TAG_POISON_COLUMN
+animparticle POISON_COLUMN_IMG, (32 * 64 * 8) / 2, ANIM_TAG_GARBAGE_COLUMN
+animparticle LARGE_SPIKE_IMG, (32 * 64 * 4) / 2, ANIM_TAG_LARGE_SPIKE
+animparticle DRAGON_PULSE_RING_IMG, (32 * 32) / 2, ANIM_TAG_DRAGON_PULSE_RING
+animparticle STONE_PILLAR_IMG, (64 * 64 * 4) / 2, ANIM_TAG_STONE_PILLAR
+animparticle MUSHROOM_IMG, (32 * 32 * 4) / 2, ANIM_TAG_MUSHROOM
+animparticle GOLDEN_APPLE_IMG, (32 * 32 * 4) / 2, ANIM_TAG_GOLDEN_APPLE
+animparticle ICE_ROCK_IMG, (64 * 64 * 5) / 2, ANIM_TAG_ICE_ROCK
+animparticle TORNADO_IMG, (64 * 64 * 3) / 2, ANIM_TAG_TORNADO
+animparticle STRAIGHT_BEAM_IMG, (16 * 16 * 2) / 2, ANIM_TAG_STRAIGHT_BEAM
+animparticle DREEPY_IMG, (32 * 32) / 2, ANIM_TAG_DREEPY
 
 gBattleAnimPaletteTable:
-animparticlepal 0x8d028b4,	ANIM_TAG_BONE,	0x0
-animparticlepal 0x8d1c90c,	ANIM_TAG_SPARK,	0x0
-animparticlepal 0x8d20a3c,	ANIM_TAG_PENCIL,	0x0
-animparticlepal 0x8d028d8,	ANIM_TAG_AIR_WAVE,	0x0
-animparticlepal 0x8d02900,	ANIM_TAG_UNUSED_ORB,	0x0
-animparticlepal SWORD_PAL,	ANIM_TAG_SWORD,	0x0
-animparticlepal SEED_PAL,	ANIM_TAG_SEED,	0x0
-animparticlepal 0x8d02b30,	ANIM_TAG_UNUSED_EXPLOSION,	0x0
-animparticlepal 0x8d02b70,	ANIM_TAG_UNUSED_PINK_ORB,	0x0
-animparticlepal 0x8d03274,	ANIM_TAG_GUST,	0x0
-animparticlepal 0x8d02b8c,	ANIM_TAG_ICE_CUBE,	0x0
-animparticlepal 0x8d0330c,	ANIM_TAG_SPARK_2,	0x0
-animparticlepal 0x8d0339c,	ANIM_TAG_UNUSED_ORANGE,	0x0
-animparticlepal 0x8d03454,	ANIM_TAG_YELLOW_BALL,	0x0
-animparticlepal 0x8d1fe3c,	ANIM_TAG_LOCK_ON,	0x0
-animparticlepal 0x8d034d8,	ANIM_TAG_TIED_BAG,	0x0
-animparticlepal 0x8d03570,	ANIM_TAG_BLACK_SMOKE,	0x0
-animparticlepal 0x8d03570,	ANIM_TAG_BLACK_BALL,	0x0
-animparticlepal 0x8d24f8c,	ANIM_TAG_CONVERSION,	0x0
-animparticlepal 0x8d035c4,	ANIM_TAG_UNUSED_GLASS,	0x0
-animparticlepal HORN_HIT_PAL,	ANIM_TAG_HORN_HIT,	0x0
-animparticlepal 0x8d039e8,	ANIM_TAG_UNUSED_HIT,	0x0
-animparticlepal 0x8d03d48,	ANIM_TAG_UNUSED_HIT_2,	0x0
-animparticlepal 0x8d03794,	ANIM_TAG_UNUSED_BLUE_SHARDS,	0x0
-animparticlepal 0x8d03f54,	ANIM_TAG_UNUSED_CLOSING_EYE,	0x0
-animparticlepal 0x8d03d70,	ANIM_TAG_UNUSED_WAVING_HAND,	0x0
-animparticlepal 0x8d047b4,	ANIM_TAG_UNUSED_HIT_DUPLICATE,	0x0
-animparticlepal 0x8d047dc,	ANIM_TAG_LEER,	0x0
-animparticlepal 0x8d04b00,	ANIM_TAG_UNUSED_BLUE_BURST,	0x0
-animparticlepal SMALL_EMBER_PAL,	ANIM_TAG_SMALL_EMBER,	0x0
-animparticlepal 0x8d05518,	ANIM_TAG_GRAY_SMOKE,	0x0
-animparticlepal 0x8d04348,	ANIM_TAG_BLUE_STAR,	0x0
-animparticlepal 0x8d04368,	ANIM_TAG_UNUSED_BUBBLE_BURST,	0x0
-animparticlepal 0x8d0553c,	ANIM_TAG_FIRE,	0x0
-animparticlepal 0x8d0553c,	ANIM_TAG_UNUSED_SPINNING_FIRE,	0x0
-animparticlepal 0x8d0553c,	ANIM_TAG_FIRE_PLUME,	0x0
-animparticlepal 0x8d06638,	ANIM_TAG_UNUSED_LIGHTNING,	0x0
-animparticlepal 0x8d06638,	ANIM_TAG_LIGHTNING,	0x0
-animparticlepal 0x8d078fc,	ANIM_TAG_UNUSED_CLAW_SLASH,	0x0
-animparticlepal 0x8d07924,	ANIM_TAG_CLAW_SLASH,	0x0
-animparticlepal 0x8d078fc,	ANIM_TAG_UNUSED_SCRATCH,	0x0
-animparticlepal 0x8d078fc,	ANIM_TAG_UNUSED_SCRATCH_2,	0x0
-animparticlepal 0x8d0857c,	ANIM_TAG_UNUSED_BUBBLE_BURST_2,	0x0
-animparticlepal 0x8d089a4,	ANIM_TAG_ICE_CHUNK,	0x0
-animparticlepal 0x8d089cc,	ANIM_TAG_UNUSED_GLASS_2,	0x0
-animparticlepal 0x8d08c60,	ANIM_TAG_UNUSED_PINK_HEART,	0x0
-animparticlepal 0x8d099cc,	ANIM_TAG_UNUSED_SAP_DRIP,	0x0
-animparticlepal 0x8d099ec,	ANIM_TAG_UNUSED_SAP_DRIP,	0x0
-animparticlepal 0x8d09f70,	ANIM_TAG_SPARKLE_1,	0x0
-animparticlepal 0x8d09f98,	ANIM_TAG_SPARKLE_2,	0x0
-animparticlepal 0x8d09fc0,	ANIM_TAG_HUMANOID_FOOT,	0x0
-animparticlepal 0x8d09fc0,	ANIM_TAG_UNUSED_MONSTER_FOOT,	0x0
-animparticlepal 0x8d09fc0,	ANIM_TAG_UNUSED_HUMANOID_HAND,	0x0
-animparticlepal 0x8d047b4,	ANIM_TAG_NOISE_LINE,	0x0
-animparticlepal 0x8d0a3bc,	ANIM_TAG_UNUSED_YELLOW_UNK,	0x0
-animparticlepal 0x8d09fc0,	ANIM_TAG_UNUSED_RED_FIST,	0x0
-animparticlepal 0x8d0a87c,	ANIM_TAG_SLAM_HIT,	0x0
-animparticlepal 0x8d0a9f0,	ANIM_TAG_UNUSED_RING,	0x0
-animparticlepal ROCKS_PAL,	ANIM_TAG_ROCKS,	0x0
-animparticlepal 0x8d0af04,	ANIM_TAG_UNUSED_Z,	0x0
-animparticlepal 0x8d0af48,	ANIM_TAG_UNUSED_YELLOW_UNK_2,	0x0
-animparticlepal 0x8d0b014,	ANIM_TAG_UNUSED_AIR_SLASH,	0x0
-animparticlepal 0x8d0b404,	ANIM_TAG_UNUSED_SPINNING_GREEN_ORBS,	0x0
-animparticlepal LEAF_PAL,	ANIM_TAG_LEAF,	0x0
-animparticlepal 0x8d233c8,	ANIM_TAG_FINGER,	0x0
-animparticlepal 0x8d0b7b8,	ANIM_TAG_POISON_POWDER,	0x0
-animparticlepal 0x8d0b824,	ANIM_TAG_UNUSED_BROWN_TRIANGLE,	0x0
-animparticlepal 0x8e7a9cc,	ANIM_TAG_SLEEP_POWDER,	0x0
-animparticlepal 0x8e7a9ec,	ANIM_TAG_STUN_SPORE,	0x0
-animparticlepal 0x8d0b7b8,	ANIM_TAG_UNUSED_POWDER,	0x0
-animparticlepal 0x8d0b8cc,	ANIM_TAG_SPARKLE_3,	0x0
-animparticlepal 0x8d0b8cc,	ANIM_TAG_SPARKLE_4,	0x0
-animparticlepal 0x8d0bbf0,	ANIM_TAG_MUSIC_NOTES,	0x0
-animparticlepal 0x8d0bd24,	ANIM_TAG_DUCK,	0x0
-animparticlepal 0x8d1b47c,	ANIM_TAG_MUD_SAND,	0x0
-animparticlepal 0x8d0bfc0,	ANIM_TAG_ALERT,	0x0
-animparticlepal 0x8d14f50,	ANIM_TAG_UNUSED_BLUE_FLAMES,	0x0
-animparticlepal 0x8d14f50,	ANIM_TAG_UNUSED_BLUE_FLAMES_2,	0x0
-animparticlepal 0x8d0c17c,	ANIM_TAG_UNUSED_SHOCK,	0x0
-animparticlepal 0x8d0c17c,	ANIM_TAG_SHOCK,	0x0
-animparticlepal 0x8d0c938,	ANIM_TAG_UNUSED_BELL,	0x0
-animparticlepal 0x8d0c9e0,	ANIM_TAG_UNUSED_PINK_GLOVE,	0x0
-animparticlepal 0x8d0cb9c,	ANIM_TAG_UNUSED_BLUE_LINES,	0x0
-animparticlepal 0x8d0cbb0,	ANIM_TAG_UNUSED_IMPACT,	0x0
-animparticlepal 0x8d0cbd8,	ANIM_TAG_UNUSED_IMPACT_2,	0x0
-animparticlepal 0x8d0cc00,	ANIM_TAG_UNUSED_RETICLE,	0x0
-animparticlepal 0x8d0cc18,	ANIM_TAG_BREATH,	0x0
-animparticlepal 0x8d24f28,	ANIM_TAG_ANGER,	0x0
-animparticlepal 0x8d0cc40,	ANIM_TAG_UNUSED_SNOWBALL,	0x0
-animparticlepal 0x8d0cc5c,	ANIM_TAG_UNUSED_VINE,	0x0
-animparticlepal 0x8d0cc84,	ANIM_TAG_UNUSED_SWORD,	0x0
-animparticlepal 0x8d0b680,	ANIM_TAG_UNUSED_CLAPPING,	0x0
-animparticlepal 0x8d0cca8,	ANIM_TAG_UNUSED_RED_TUBE,	0x0
-animparticlepal 0x8d0ccc4,	ANIM_TAG_AMNESIA,	0x0
-animparticlepal 0x8d0ccec,	ANIM_TAG_UNUSED_STRING,	0x0
-animparticlepal 0x8d0cd2c,	ANIM_TAG_UNUSED_PENCIL,	0x0
-animparticlepal 0x8d0cd54,	ANIM_TAG_UNUSED_PETAL,	0x0
-animparticlepal 0x8d0cd70,	ANIM_TAG_BENT_SPOON,	0x0
-animparticlepal 0x8d0ccec,	ANIM_TAG_UNUSED_WEB,	0x0
-animparticlepal 0x8d27fe0,	ANIM_TAG_MILK_BOTTLE,	0x0
-animparticlepal 0x8d0cd98,	ANIM_TAG_COIN,	0x0
-animparticlepal 0x8d0cdb4,	ANIM_TAG_UNUSED_CRACKED_EGG,	0x0
-animparticlepal 0x8d0cdb4,	ANIM_TAG_UNUSED_HATCHED_EGG,	0x0
-animparticlepal 0x8d0cddc,	ANIM_TAG_UNUSED_FRESH_EGG,	0x0
-animparticlepal 0x8d0f134,	ANIM_TAG_UNUSED_FANGS,	0x0
-animparticlepal 0x8d0f6e0,	ANIM_TAG_UNUSED_EXPLOSION_2,	0x0
-animparticlepal 0x8d0f6e0,	ANIM_TAG_UNUSED_EXPLOSION_3,	0x0
-animparticlepal 0x8d0fba4,	ANIM_TAG_UNUSED_WATER_DROPLET,	0x0
-animparticlepal 0x8d0fba4,	ANIM_TAG_UNUSED_WATER_DROPLET_2,	0x0
-animparticlepal 0x8d0ff78,	ANIM_TAG_UNUSED_SEED,	0x0
-animparticlepal 0x8d0ff78,	ANIM_TAG_UNUSED_SPROUT,	0x0
-animparticlepal 0x8d103c8,	ANIM_TAG_UNUSED_RED_WAND,	0x0
-animparticlepal 0x8d10714,	ANIM_TAG_UNUSED_PURPLE_GREEN_UNK,	0x0
-animparticlepal 0x8d109a8,	ANIM_TAG_UNUSED_WATER_COLUMN,	0x0
-animparticlepal 0x8d10ac4,	ANIM_TAG_UNUSED_MUD_UNK,	0x0
-animparticlepal 0x8d02894,	ANIM_TAG_RAIN_DROPS,	0x0
-animparticlepal 0x8d1315c,	ANIM_TAG_UNUSED_FURY_SWIPES,	0x0
-animparticlepal 0x8d133c0,	ANIM_TAG_UNUSED_VINE_2,	0x0
-animparticlepal 0x8d13574,	ANIM_TAG_UNUSED_TEETH,	0x0
-animparticlepal 0x8d13820,	ANIM_TAG_UNUSED_BONE,	0x0
-animparticlepal 0x8d1393c,	ANIM_TAG_UNUSED_WHITE_BAG,	0x0
-animparticlepal 0x8d13990,	ANIM_TAG_UNUSED_UNKNOWN,	0x0
-animparticlepal 0x8d13ab0,	ANIM_TAG_UNUSED_PURPLE_CORAL,	0x0
-animparticlepal 0x8d13ab0,	ANIM_TAG_UNUSED_PURPLE_DROPLET,	0x0
-animparticlepal 0x8d13ea0,	ANIM_TAG_UNUSED_SHOCK_2,	0x0
-animparticlepal 0x8d13fb4,	ANIM_TAG_UNUSED_CLOSING_EYE_2,	0x0
-animparticlepal 0x8d14044,	ANIM_TAG_UNUSED_METAL_BALL,	0x0
-animparticlepal MONSTER_DOLL_PAL,	ANIM_TAG_UNUSED_MONSTER_DOLL,	0x0
-animparticlepal 0x8d14494,	ANIM_TAG_UNUSED_WHIRLWIND,	0x0
-animparticlepal 0x8d14494,	ANIM_TAG_UNUSED_WHIRLWIND_2,	0x0
-animparticlepal 0x8d148e8,	ANIM_TAG_UNUSED_EXPLOSION_4,	0x0
-animparticlepal 0x8d148e8,	ANIM_TAG_UNUSED_EXPLOSION_5,	0x0
-animparticlepal 0x8d14b80,	ANIM_TAG_UNUSED_TONGUE,	0x0
-animparticlepal 0x8d14c1c,	ANIM_TAG_UNUSED_SMOKE,	0x0
-animparticlepal 0x8d14c1c,	ANIM_TAG_UNUSED_SMOKE_2,	0x0
-animparticlepal IMPACT_PAL,	ANIM_TAG_IMPACT,	0x0
-animparticlepal 0x8d1a6dc,	ANIM_TAG_CIRCLE_IMPACT,	0x0
-animparticlepal 0x8d1a5f0,	ANIM_TAG_SCRATCH,	0x0
-animparticlepal 0x8d1a5f0,	ANIM_TAG_CUT,	0x0
-animparticlepal SHARP_TEETH_PAL,	ANIM_TAG_SHARP_TEETH,	0x0
-animparticlepal 0x8d1ae84,	ANIM_TAG_RAINBOW_RINGS,	0x0
-animparticlepal 0x8d1afac,	ANIM_TAG_ICE_CRYSTALS,	0x0
-animparticlepal 0x8d1afac,	ANIM_TAG_ICE_SPIKES,	0x0
-animparticlepal HANDS_AND_FEET_PAL,	ANIM_TAG_HANDS_AND_FEET,	0x0
-animparticlepal 0x8d1be54,	ANIM_TAG_MIST_CLOUD,	0x0
-animparticlepal 0x8d1ac98,	ANIM_TAG_CLAMP,	0x0
-animparticlepal 0x8d02894,	ANIM_TAG_BUBBLE,	0x0
-animparticlepal 0x8d1b1f8,	ANIM_TAG_ORBS,	0x0
-animparticlepal 0x8d1b3d4,	ANIM_TAG_WATER_IMPACT,	0x0
-animparticlepal 0x8d1b3d4,	ANIM_TAG_WATER_ORB,	0x0
-animparticlepal 0x8d1b574,	ANIM_TAG_POISON_BUBBLE,	0x0
-animparticlepal 0x8d1b574,	ANIM_TAG_TOXIC_BUBBLE,	0x0
-animparticlepal SPIKES_PAL,	ANIM_TAG_SPIKES,	0x0
-animparticlepal 0x8d1b6f4,	ANIM_TAG_HORN_HIT_2,	0x0
-animparticlepal 0x8d1b7b8,	ANIM_TAG_AIR_WAVE_2,	0x0
-animparticlepal 0x8d1b8a0,	ANIM_TAG_SMALL_BUBBLES,	0x0
-animparticlepal ROUND_SHADOW_PAL,	ANIM_TAG_ROUND_SHADOW,	0x0
-animparticlepal 0x8d1bb64,	ANIM_TAG_SUNLIGHT,	0x0
-animparticlepal 0x8d1bc44,	ANIM_TAG_SPORE,	0x0
-animparticlepal 0x8d1bce4,	ANIM_TAG_FLOWER,	0x0
-animparticlepal 0x8d1bdb4,	ANIM_TAG_RAZOR_LEAF,	0x0
-animparticlepal 0x8d0298c,	ANIM_TAG_NEEDLE,	0x0
-animparticlepal 0x8d1c03c,	ANIM_TAG_WHIRLWIND_LINES,	0x0
-animparticlepal 0x8d1c0bc,	ANIM_TAG_GOLD_RING,	0x0
-animparticlepal 0x8d1c0ec,	ANIM_TAG_PURPLE_RING,	0x0
-animparticlepal 0x8d1c104,	ANIM_TAG_BLUE_RING,	0x0
-animparticlepal 0x8d1c428,	ANIM_TAG_GREEN_LIGHT_WALL,	0x0
-animparticlepal 0x8d1c448,	ANIM_TAG_BLUE_LIGHT_WALL,	0x0
-animparticlepal 0x8d1c468,	ANIM_TAG_RED_LIGHT_WALL,	0x0
-animparticlepal 0x8d1c488,	ANIM_TAG_GRAY_LIGHT_WALL,	0x0
-animparticlepal 0x8d1c4a8,	ANIM_TAG_ORANGE_LIGHT_WALL,	0x0
-animparticlepal 0x8d1c514,	ANIM_TAG_BLACK_BALL_2,	0x0
-animparticlepal 0x8d1c53c,	ANIM_TAG_PURPLE_GAS_CLOUD,	0x0
-animparticlepal 0x8d1c90c,	ANIM_TAG_SPARK_H,	0x0
-animparticlepal 0x8d1d814,	ANIM_TAG_YELLOW_STAR,	0x0
-animparticlepal 0x8d1d8a0,	ANIM_TAG_LARGE_FRESH_EGG,	0x0
-animparticlepal 0x8d1da20,	ANIM_TAG_SHADOW_BALL,	0x0
-animparticlepal 0x8d1db0c,	ANIM_TAG_LICK,	0x0
-animparticlepal 0x8d1dc8c,	ANIM_TAG_UNUSED_VOID_LINES,	0x0
-animparticlepal 0x8d1dcb4,	ANIM_TAG_STRING,	0x0
-animparticlepal 0x8d1dcb4,	ANIM_TAG_WEB_THREAD,	0x0
-animparticlepal 0x8d1dcb4,	ANIM_TAG_SPIDER_WEB,	0x0
-animparticlepal 0x8d1e204,	ANIM_TAG_UNUSED_LIGHTBULB,	0x0
-animparticlepal 0x8d1e4a4,	ANIM_TAG_SLASH,	0x0
-animparticlepal 0x8d1e620,	ANIM_TAG_FOCUS_ENERGY,	0x0
-animparticlepal 0x8d1ea5c,	ANIM_TAG_SPHERE_TO_CUBE,	0x0
-animparticlepal 0x8d1f31c,	ANIM_TAG_TENDRILS,	0x0
-animparticlepal EYE_PAL,	ANIM_TAG_EYE,	0x0
-animparticlepal 0x8e826e8,	ANIM_TAG_WHITE_SHADOW,	0x0
-animparticlepal 0x8d203f0,	ANIM_TAG_TEAL_ALERT,	0x0
-animparticlepal 0x8d200b4,	ANIM_TAG_OPENING_EYE,	0x0
-animparticlepal 0x8d20344,	ANIM_TAG_ROUND_WHITE_HALO,	0x0
-animparticlepal 0x8d20690,	ANIM_TAG_FANG_ATTACK,	0x0
-animparticlepal 0x8d20814,	ANIM_TAG_PURPLE_HAND_OUTLINE,	0x0
-animparticlepal 0x8d21158,	ANIM_TAG_MOON,	0x0
-animparticlepal 0x8d21238,	ANIM_TAG_GREEN_SPARKLE,	0x0
-animparticlepal 0x8d20e08,	ANIM_TAG_SPIRAL,	0x0
-animparticlepal 0x8d213c8,	ANIM_TAG_SNORE_Z,	0x0
-animparticlepal 0x8d217e0,	ANIM_TAG_EXPLOSION,	0x0
-animparticlepal NAIL_PAL,	ANIM_TAG_NAIL,	0x0
-animparticlepal 0x8d21a2c,	ANIM_TAG_GHOSTLY_SPIRIT,	0x0
-animparticlepal 0x8d220b8,	ANIM_TAG_WARM_ROCK,	0x0
-animparticlepal 0x8d223e4,	ANIM_TAG_BREAKING_EGG,	0x0
-animparticlepal 0x8d225b4,	ANIM_TAG_THIN_RING,	0x0
-animparticlepal 0x8d22254,	ANIM_TAG_UNUSED_PUNCH_IMPACT,	0x0
-animparticlepal 0x8d22aac,	ANIM_TAG_BELL,	0x0
-animparticlepal 0x8d227e4,	ANIM_TAG_MUSIC_NOTES_2,	0x0
-animparticlepal 0x8d22b9c,	ANIM_TAG_SPEED_DUST,	0x0
-animparticlepal 0x8d1c448,	ANIM_TAG_TORN_METAL,	0x0
-animparticlepal 0x8d232b8,	ANIM_TAG_THOUGHT_BUBBLE,	0x0
-animparticlepal 0x8d23474,	ANIM_TAG_MAGENTA_HEART,	0x0
-animparticlepal 0x8d24740,	ANIM_TAG_ELECTRIC_ORBS,	0x0
-animparticlepal 0x8d24740,	ANIM_TAG_CIRCLE_OF_LIGHT,	0x0
-animparticlepal 0x8d24740,	ANIM_TAG_ELECTRICITY,	0x0
-animparticlepal 0x8d233c8,	ANIM_TAG_FINGER_2,	0x0
-animparticlepal 0x8d24b80,	ANIM_TAG_MOVEMENT_WAVES,	0x0
-animparticlepal 0x8d23494,	ANIM_TAG_RED_HEART,	0x0
-animparticlepal 0x8d24230,	ANIM_TAG_RED_ORB,	0x0
-animparticlepal 0x8d24dfc,	ANIM_TAG_EYE_SPARKLE,	0x0
-animparticlepal 0x8d23454,	ANIM_TAG_PINK_HEART,	0x0
-animparticlepal 0x8d24fa8,	ANIM_TAG_ANGEL,	0x0
-animparticlepal 0x8d250fc,	ANIM_TAG_DEVIL,	0x0
-animparticlepal 0x8d2566c,	ANIM_TAG_SWIPE,	0x0
-animparticlepal 0x8d25694,	ANIM_TAG_ROOTS,	0x0
-animparticlepal 0x8d25948,	ANIM_TAG_ITEM_BAG,	0x0
-animparticlepal 0x8d27abc,	ANIM_TAG_JAGGED_MUSIC_NOTE,	0x0
-animparticlepal BATON_PASS_POKEBALL_PAL,	ANIM_TAG_POKEBALL,	0x0
-animparticlepal 0x8d27cb8,	ANIM_TAG_SPOTLIGHT,	0x0
-animparticlepal 0x8d25cd0,	ANIM_TAG_LETTER_Z,	0x0
-animparticlepal 0x8d27e98,	ANIM_TAG_RAPID_SPIN,	0x0
-animparticlepal 0x8d25a64,	ANIM_TAG_TRI_FORCE_TRIANGLE,	0x0
-animparticlepal 0x8d28540,	ANIM_TAG_WISP_ORB,	0x0
-animparticlepal 0x8d28540,	ANIM_TAG_WISP_FIRE,	0x0
-animparticlepal 0x8d287bc,	ANIM_TAG_GOLD_STARS,	0x0
-animparticlepal 0x8d289a4,	ANIM_TAG_ECLIPSING_ORB,	0x0
-animparticlepal 0x8d28aa4,	ANIM_TAG_GRAY_ORB,	0x0
-animparticlepal 0x8d28ac0,	ANIM_TAG_BLUE_ORB,	0x0
-animparticlepal 0x8d28adc,	ANIM_TAG_RED_ORB_2,	0x0
-animparticlepal 0x8d28a30,	ANIM_TAG_PINK_PETAL,	0x0
-animparticlepal 0x8d2cd58,	ANIM_TAG_PAIN_SPLIT,	0x0
-animparticlepal 0x8d2d068,	ANIM_TAG_CONFETTI,	0x0
-animparticlepal GREEN_STAR_PAL,	ANIM_TAG_GREEN_STAR,	0x0
-animparticlepal 0x8d2d880,	ANIM_TAG_PINK_CLOUD,	0x0
-animparticlepal 0x8d2d8cc,	ANIM_TAG_SWEAT_DROP,	0x0
-animparticlepal 0x8d2e804,	ANIM_TAG_GUARD_RING,	0x0
-animparticlepal 0x8d2e0b4,	ANIM_TAG_PURPLE_SCRATCH,	0x0
-animparticlepal 0x8d2e0b4,	ANIM_TAG_PURPLE_SWIPE,	0x0
-animparticlepal 0x8d233c8,	ANIM_TAG_TAG_HAND,	0x0
-animparticlepal 0x8d2ed90,	ANIM_TAG_SMALL_RED_EYE,	0x0
-animparticlepal 0x8d2edf8,	ANIM_TAG_HOLLOW_ORB,	0x0
-animparticlepal 0x8d2edf8,	ANIM_TAG_X_SIGN,	0x0
-animparticlepal 0x8d2f070,	ANIM_TAG_BLUEGREEN_ORB,	0x0
-animparticlepal 0x8d2f1a0,	ANIM_TAG_PAW_PRINT,	0x0
-animparticlepal 0x8d2f3a0,	ANIM_TAG_PURPLE_FLAME,	0x0
-animparticlepal 0x8d2f500,	ANIM_TAG_RED_BALL,	0x0
-animparticlepal 0x8d2f5a0,	ANIM_TAG_SMELLINGSALT_EFFECT,	0x0
-animparticlepal 0x8d2fa50,	ANIM_TAG_METEOR,	0x0
-animparticlepal 0x8d2fb94,	ANIM_TAG_FLAT_ROCK,	0x0
-animparticlepal 0x8d2f69c,	ANIM_TAG_MAGNIFYING_GLASS,	0x0
-animparticlepal 0x8d1b3f4,	ANIM_TAG_BROWN_ORB,	0x0
-animparticlepal 0x8e79be0,	ANIM_TAG_METAL_SOUND_WAVES,	0x0
-animparticlepal 0x8e799fc,	ANIM_TAG_FLYING_DIRT,	0x0
-animparticlepal 0x8e7a858,	ANIM_TAG_ICICLE_SPEAR,	0x0
-animparticlepal 0x8e7fa98,	ANIM_TAG_HAIL,	0x0
-animparticlepal 0x8e7a99c,	ANIM_TAG_GLOWY_RED_ORB,	0x0
-animparticlepal 0x8e7a9b4,	ANIM_TAG_GLOWY_GREEN_ORB,	0x0
-animparticlepal 0x8e7faf0,	ANIM_TAG_GREEN_SPIKE,	0x0
-animparticlepal 0x8e7fb08,	ANIM_TAG_WHITE_CIRCLE_OF_LIGHT,	0x0
-animparticlepal 0x8e7fb20,	ANIM_TAG_GLOWY_BLUE_ORB,	0x0
-animparticlepal 0x8e7ae94,	ANIM_TAG_POKEBLOCK,	0x0
-animparticlepal 0x8e93958,	ANIM_TAG_WHITE_FEATHER,	0x0
-animparticlepal 0x8e93a9c,	ANIM_TAG_SPARKLE_6,	0x0
-animparticlepal 0x8e7adf4,	ANIM_TAG_SPLASH,	0x0
-animparticlepal 0x8e7adf4,	ANIM_TAG_SWEAT_BEAD,	0x0
-animparticlepal 0x8e7b300,	ANIM_TAG_UNUSED_GEM_1,	0x0
-animparticlepal 0x8e7b300,	ANIM_TAG_UNUSED_GEM_2,	0x0
-animparticlepal 0x8e7b300,	ANIM_TAG_UNUSED_GEM_3,	0x0
-animparticlepal 0x8e7edd8,	ANIM_TAG_SLAM_HIT_2,	0x0
-animparticlepal 0x8e7fd44,	ANIM_TAG_RECYCLE,	0x0
-animparticlepal 0x8e7fdac,	ANIM_TAG_UNUSED_RED_PARTICLES,	0x0
-animparticlepal 0x8e7ba90,	ANIM_TAG_PROTECT,	0x0
-animparticlepal 0x8e7ff50,	ANIM_TAG_DIRT_MOUND,	0x0
-animparticlepal 0x8e93748,	ANIM_TAG_SHOCK_3,	0x0
-animparticlepal 0x8e7f36c,	ANIM_TAG_WEATHER_BALL,	0x0
-animparticlepal 0x8e808e8,	ANIM_TAG_BIRD,	0x0
-animparticlepal 0x8e809a4,	ANIM_TAG_CROSS_IMPACT,	0x0
-animparticlepal 0x8e825ac,	ANIM_TAG_SLASH_2,	0x0
-animparticlepal 0x8e7cf60,	ANIM_TAG_WHIP_HIT,	0x0
-animparticlepal 0x8d1c0d4,	ANIM_TAG_BLUE_RING_2,	0x0
-animparticlepal WOOD_PAL,	ANIM_TAG_WOOD,	0x0
-animparticlepal FLASH_CANNON_BALL_PAL,	ANIM_TAG_FLASH_CANNON_BALL,	0x0
-animparticlepal POISON_JAB_PAL,	ANIM_TAG_POISON_JAB,	0x0
-animparticlepal POWER_GEM_PAL,	ANIM_TAG_POWER_GEM,	0x0
-animparticlepal SHELL_RIGHT_PAL,	ANIM_TAG_SHELL_RIGHT,	0x0
-animparticlepal SHELL_LEFT_PAL,	ANIM_TAG_SHELL_LEFT,	0x0
-animparticlepal RAZOR_SHELL_PAL,	ANIM_TAG_RAZOR_SHELL,	0x0
-animparticlepal HYDRO_PUMP_PAL,	ANIM_TAG_HYDRO_PUMP,	0x0
-animparticlepal WATER_GUN_PAL,	ANIM_TAG_WATER_GUN,	0x0
-animparticlepal BRINE_PAL,	ANIM_TAG_BRINE,	0x0
-animparticlepal STEALTH_ROCK_PAL,	ANIM_TAG_STEALTH_ROCK,	0x0
-animparticlepal STONE_EDGE_PAL,	ANIM_TAG_STONE_EDGE,	0x0
-animparticlepal GEAR_PAL,	ANIM_TAG_GEAR,	0x0
-animparticlepal ASSURANCE_HAND_PAL,	ANIM_TAG_ASSURANCE_HAND,	0x0
-animparticlepal ACUPRESSURE_FINGER_PAL,	ANIM_TAG_ACUPRESSURE_FINGER,	0x0
-animparticlepal PUNISHMENT_BLADES_PAL,	ANIM_TAG_PUNISHMENT_BLADES,	0x0
-animparticlepal BEES_PAL,	ANIM_TAG_BEES,	0x0
-animparticlepal WISHIWASHI_FISH_PAL,	ANIM_TAG_WISHIWASHI_FISH,	0x0
-animparticlepal ZYGARDE_HEXES_PAL,	ANIM_TAG_ZYGARDE_HEXES,	0x0
-animparticlepal AURA_SPHERE_PAL,	ANIM_TAG_AURA_SPHERE,	0x0
-animparticlepal ENERGY_BALL_PAL,	ANIM_TAG_ENERGY_BALL,	0x0
-animparticlepal MEGA_RAINBOW_PAL,	ANIM_TAG_MEGA_RAINBOW,	0x0
-animparticlepal MEGA_STONE_PAL,	ANIM_TAG_MEGA_STONE,	0x0
-animparticlepal MEGA_SYMBOL_PAL,	ANIM_TAG_MEGA_SYMBOL,	0x0
-animparticlepal OMEGA_STONE_PAL,	ANIM_TAG_OMEGA_STONE,	0x0
-animparticlepal ALPHA_STONE_PAL,	ANIM_TAG_ALPHA_STONE,	0x0
-animparticlepal BERRY_NORMAL_PAL,	ANIM_TAG_BERRY_NORMAL,	0x0
-animparticlepal BERRY_EATEN_PAL,	ANIM_TAG_BERRY_EATEN,	0x0
-animparticlepal DRAGON_ASCENT_PAL,	ANIM_TAG_DRAGON_ASCENT,	0x0
-animparticlepal PINK_DIAMOND_PAL,	ANIM_TAG_PINK_DIAMOND,	0x0
-animparticlepal STEAM_ERUPTION_PAL,	ANIM_TAG_STEAM_ERUPTION,	0x0
-animparticlepal CONFIDE_PAL,	ANIM_TAG_CONFIDE,	0x0
-animparticlepal VERTICAL_HEX_PAL,	ANIM_TAG_VERTICAL_HEX,	0x0
-animparticlepal POWER_TRICK_PAL,	ANIM_TAG_POWER_TRICK,	0x0
-animparticlepal CHAIN_LINK_PAL,	ANIM_TAG_CHAIN_LINK,	0x0
-animparticlepal ANCHOR_PAL,	ANIM_TAG_ANCHOR,	0x0
-animparticlepal HORSESHOE_SIDE_FIST_PAL,	ANIM_TAG_HORSESHOE_SIDE_FIST,	0x0
-animparticlepal DRAGON_ASCENT_FOE_PAL,	ANIM_TAG_DRAGON_ASCENT_FOE,	0x0
-animparticlepal CRAFTY_SHIELD_PAL,	ANIM_TAG_CRAFTY_SHIELD,	0x0
-animparticlepal QUICK_GUARD_HAND_PAL,	ANIM_TAG_QUICK_GUARD_HAND,	0x0
-animparticlepal BLACEPHALON_HEAD_PAL,	ANIM_TAG_BLACEPHALON_HEAD,	0x0
-animparticlepal FAIRY_LOCK_CHAINS_PAL,	ANIM_TAG_FAIRY_LOCK_CHAINS,	0x0
-animparticlepal IONS_PAL,	ANIM_TAG_IONS,	0x0
-animparticlepal CHOP_PAL,	ANIM_TAG_CHOP,	0x0
-animparticlepal HEART_STAMP_PAL,	ANIM_TAG_HEART_STAMP,	0x0
-animparticlepal HORN_LEECH_PAL,	ANIM_TAG_HORN_LEECH,	0x0
-animparticlepal STEAMROLLER_PAL,	ANIM_TAG_STEAMROLLER,	0x0
-animparticlepal HOOPA_HAND_PAL,	ANIM_TAG_HOOPA_HAND,	0x0
-animparticlepal HOOPA_RING_PAL,	ANIM_TAG_HOOPA_RING,	0x0
-animparticlepal UNAVAILABLE_1_PAL,	ANIM_TAG_UNAVAILABLE_1,	0x0
-animparticlepal UNAVAILABLE_2_PAL,	ANIM_TAG_UNAVAILABLE_2,	0x0
-animparticlepal METAL_BITS_PAL,	ANIM_TAG_METAL_BITS,	0x0
-animparticlepal SMALL_ROCK_PAL,	ANIM_TAG_SMALL_ROCK,	0x0
-animparticlepal SPIRIT_ARROW_PAL,	ANIM_TAG_SPIRIT_ARROW,	0x0
-animparticlepal ULTRA_BURST_SYMBOL_PAL,	ANIM_TAG_ULTRA_BURST_SYMBOL,	0x0
-animparticlepal Z_MOVE_SYMBOL_PAL,	ANIM_TAG_Z_MOVE_SYMBOL,	0x0
-animparticlepal REALLY_BIG_ROCK_PAL,	ANIM_TAG_REALLY_BIG_ROCK,	0x0
-animparticlepal COCOON_PAL,		ANIM_TAG_COCOON,	0x0
-animparticlepal CORKSCREW_PAL,		ANIM_TAG_CORKSCREW,	0x0
-animparticlepal HAVOC_SPEAR_PAL,	ANIM_TAG_HAVOC_SPEAR,	0x0
-animparticlepal PURPLE_DRAKE_PAL,	ANIM_TAG_PURPLE_DRAKE,	0x0
-animparticlepal ABILITY_POP_UP_PAL,	ANIM_TAG_ABILITY_POP_UP, 0x0
-animparticlepal MUD_BOMB_PAL, ANIM_TAG_MUD_BOMB, 0x0
-animparticlepal BRANCH_PAL, ANIM_TAG_BRANCH, 0x0
-animparticlepal APPLE_PAL, ANIM_TAG_APPLE, 0x0
-animparticlepal OBSTRUCT_PAL, ANIM_TAG_OBSTRUCT_CROSS, 0x0
+animparticlepal 0x8d028b4,	ANIM_TAG_BONE
+animparticlepal 0x8d1c90c,	ANIM_TAG_SPARK
+animparticlepal 0x8d20a3c,	ANIM_TAG_PENCIL
+animparticlepal 0x8d028d8,	ANIM_TAG_AIR_WAVE
+animparticlepal 0x8d02900,	ANIM_TAG_UNUSED_ORB
+animparticlepal SWORD_PAL,	ANIM_TAG_SWORD
+animparticlepal SEED_PAL,	ANIM_TAG_SEED
+animparticlepal 0x8d02b30,	ANIM_TAG_UNUSED_EXPLOSION
+animparticlepal 0x8d02b70,	ANIM_TAG_UNUSED_PINK_ORB
+animparticlepal 0x8d03274,	ANIM_TAG_GUST
+animparticlepal 0x8d02b8c,	ANIM_TAG_ICE_CUBE
+animparticlepal 0x8d0330c,	ANIM_TAG_SPARK_2
+animparticlepal 0x8d0339c,	ANIM_TAG_UNUSED_ORANGE
+animparticlepal 0x8d03454,	ANIM_TAG_YELLOW_BALL
+animparticlepal 0x8d1fe3c,	ANIM_TAG_LOCK_ON
+animparticlepal 0x8d034d8,	ANIM_TAG_TIED_BAG
+animparticlepal 0x8d03570,	ANIM_TAG_BLACK_SMOKE
+animparticlepal 0x8d03570,	ANIM_TAG_BLACK_BALL
+animparticlepal 0x8d24f8c,	ANIM_TAG_CONVERSION
+animparticlepal 0x8d035c4,	ANIM_TAG_UNUSED_GLASS
+animparticlepal HORN_HIT_PAL,	ANIM_TAG_HORN_HIT
+animparticlepal 0x8d039e8,	ANIM_TAG_UNUSED_HIT
+animparticlepal 0x8d03d48,	ANIM_TAG_UNUSED_HIT_2
+animparticlepal 0x8d03794,	ANIM_TAG_UNUSED_BLUE_SHARDS
+animparticlepal 0x8d03f54,	ANIM_TAG_UNUSED_CLOSING_EYE
+animparticlepal 0x8d03d70,	ANIM_TAG_UNUSED_WAVING_HAND
+animparticlepal 0x8d047b4,	ANIM_TAG_UNUSED_HIT_DUPLICATE
+animparticlepal 0x8d047dc,	ANIM_TAG_LEER
+animparticlepal 0x8d04b00,	ANIM_TAG_UNUSED_BLUE_BURST
+animparticlepal SMALL_EMBER_PAL,	ANIM_TAG_SMALL_EMBER
+animparticlepal 0x8d05518,	ANIM_TAG_GRAY_SMOKE
+animparticlepal 0x8d04348,	ANIM_TAG_BLUE_STAR
+animparticlepal 0x8d04368,	ANIM_TAG_UNUSED_BUBBLE_BURST
+animparticlepal 0x8d0553c,	ANIM_TAG_FIRE
+animparticlepal 0x8d0553c,	ANIM_TAG_UNUSED_SPINNING_FIRE
+animparticlepal 0x8d0553c,	ANIM_TAG_FIRE_PLUME
+animparticlepal 0x8d06638,	ANIM_TAG_UNUSED_LIGHTNING
+animparticlepal 0x8d06638,	ANIM_TAG_LIGHTNING
+animparticlepal 0x8d078fc,	ANIM_TAG_UNUSED_CLAW_SLASH
+animparticlepal 0x8d07924,	ANIM_TAG_CLAW_SLASH
+animparticlepal 0x8d078fc,	ANIM_TAG_UNUSED_SCRATCH
+animparticlepal 0x8d078fc,	ANIM_TAG_UNUSED_SCRATCH_2
+animparticlepal 0x8d0857c,	ANIM_TAG_UNUSED_BUBBLE_BURST_2
+animparticlepal 0x8d089a4,	ANIM_TAG_ICE_CHUNK
+animparticlepal 0x8d089cc,	ANIM_TAG_UNUSED_GLASS_2
+animparticlepal 0x8d08c60,	ANIM_TAG_UNUSED_PINK_HEART
+animparticlepal 0x8d099cc,	ANIM_TAG_UNUSED_SAP_DRIP
+animparticlepal 0x8d099ec,	ANIM_TAG_UNUSED_SAP_DRIP
+animparticlepal 0x8d09f70,	ANIM_TAG_SPARKLE_1
+animparticlepal 0x8d09f98,	ANIM_TAG_SPARKLE_2
+animparticlepal 0x8d09fc0,	ANIM_TAG_HUMANOID_FOOT
+animparticlepal 0x8d09fc0,	ANIM_TAG_UNUSED_MONSTER_FOOT
+animparticlepal 0x8d09fc0,	ANIM_TAG_UNUSED_HUMANOID_HAND
+animparticlepal 0x8d047b4,	ANIM_TAG_NOISE_LINE
+animparticlepal 0x8d0a3bc,	ANIM_TAG_UNUSED_YELLOW_UNK
+animparticlepal 0x8d09fc0,	ANIM_TAG_UNUSED_RED_FIST
+animparticlepal 0x8d0a87c,	ANIM_TAG_SLAM_HIT
+animparticlepal 0x8d0a9f0,	ANIM_TAG_UNUSED_RING
+animparticlepal ROCKS_PAL,	ANIM_TAG_ROCKS
+animparticlepal 0x8d0af04,	ANIM_TAG_UNUSED_Z
+animparticlepal 0x8d0af48,	ANIM_TAG_UNUSED_YELLOW_UNK_2
+animparticlepal 0x8d0b014,	ANIM_TAG_UNUSED_AIR_SLASH
+animparticlepal 0x8d0b404,	ANIM_TAG_UNUSED_SPINNING_GREEN_ORBS
+animparticlepal LEAF_PAL,	ANIM_TAG_LEAF
+animparticlepal 0x8d233c8,	ANIM_TAG_FINGER
+animparticlepal 0x8d0b7b8,	ANIM_TAG_POISON_POWDER
+animparticlepal 0x8d0b824,	ANIM_TAG_UNUSED_BROWN_TRIANGLE
+animparticlepal 0x8e7a9cc,	ANIM_TAG_SLEEP_POWDER
+animparticlepal 0x8e7a9ec,	ANIM_TAG_STUN_SPORE
+animparticlepal 0x8d0b7b8,	ANIM_TAG_UNUSED_POWDER
+animparticlepal 0x8d0b8cc,	ANIM_TAG_SPARKLE_3
+animparticlepal 0x8d0b8cc,	ANIM_TAG_SPARKLE_4
+animparticlepal 0x8d0bbf0,	ANIM_TAG_MUSIC_NOTES
+animparticlepal 0x8d0bd24,	ANIM_TAG_DUCK
+animparticlepal 0x8d1b47c,	ANIM_TAG_MUD_SAND
+animparticlepal 0x8d0bfc0,	ANIM_TAG_ALERT
+animparticlepal 0x8d14f50,	ANIM_TAG_UNUSED_BLUE_FLAMES
+animparticlepal 0x8d14f50,	ANIM_TAG_UNUSED_BLUE_FLAMES_2
+animparticlepal 0x8d0c17c,	ANIM_TAG_UNUSED_SHOCK
+animparticlepal 0x8d0c17c,	ANIM_TAG_SHOCK
+animparticlepal 0x8d0c938,	ANIM_TAG_UNUSED_BELL
+animparticlepal 0x8d0c9e0,	ANIM_TAG_UNUSED_PINK_GLOVE
+animparticlepal 0x8d0cb9c,	ANIM_TAG_UNUSED_BLUE_LINES
+animparticlepal 0x8d0cbb0,	ANIM_TAG_UNUSED_IMPACT
+animparticlepal 0x8d0cbd8,	ANIM_TAG_UNUSED_IMPACT_2
+animparticlepal 0x8d0cc00,	ANIM_TAG_UNUSED_RETICLE
+animparticlepal 0x8d0cc18,	ANIM_TAG_BREATH
+animparticlepal 0x8d24f28,	ANIM_TAG_ANGER
+animparticlepal 0x8d0cc40,	ANIM_TAG_UNUSED_SNOWBALL
+animparticlepal 0x8d0cc5c,	ANIM_TAG_UNUSED_VINE
+animparticlepal 0x8d0cc84,	ANIM_TAG_UNUSED_SWORD
+animparticlepal 0x8d0b680,	ANIM_TAG_UNUSED_CLAPPING
+animparticlepal 0x8d0cca8,	ANIM_TAG_UNUSED_RED_TUBE
+animparticlepal 0x8d0ccc4,	ANIM_TAG_AMNESIA
+animparticlepal 0x8d0ccec,	ANIM_TAG_UNUSED_STRING
+animparticlepal 0x8d0cd2c,	ANIM_TAG_UNUSED_PENCIL
+animparticlepal 0x8d0cd54,	ANIM_TAG_UNUSED_PETAL
+animparticlepal 0x8d0cd70,	ANIM_TAG_BENT_SPOON
+animparticlepal 0x8d0ccec,	ANIM_TAG_UNUSED_WEB
+animparticlepal 0x8d27fe0,	ANIM_TAG_MILK_BOTTLE
+animparticlepal 0x8d0cd98,	ANIM_TAG_COIN
+animparticlepal 0x8d0cdb4,	ANIM_TAG_UNUSED_CRACKED_EGG
+animparticlepal 0x8d0cdb4,	ANIM_TAG_UNUSED_HATCHED_EGG
+animparticlepal 0x8d0cddc,	ANIM_TAG_UNUSED_FRESH_EGG
+animparticlepal 0x8d0f134,	ANIM_TAG_UNUSED_FANGS
+animparticlepal 0x8d0f6e0,	ANIM_TAG_UNUSED_EXPLOSION_2
+animparticlepal 0x8d0f6e0,	ANIM_TAG_UNUSED_EXPLOSION_3
+animparticlepal 0x8d0fba4,	ANIM_TAG_UNUSED_WATER_DROPLET
+animparticlepal 0x8d0fba4,	ANIM_TAG_UNUSED_WATER_DROPLET_2
+animparticlepal 0x8d0ff78,	ANIM_TAG_UNUSED_SEED
+animparticlepal 0x8d0ff78,	ANIM_TAG_UNUSED_SPROUT
+animparticlepal 0x8d103c8,	ANIM_TAG_UNUSED_RED_WAND
+animparticlepal 0x8d10714,	ANIM_TAG_UNUSED_PURPLE_GREEN_UNK
+animparticlepal 0x8d109a8,	ANIM_TAG_UNUSED_WATER_COLUMN
+animparticlepal 0x8d10ac4,	ANIM_TAG_UNUSED_MUD_UNK
+animparticlepal 0x8d02894,	ANIM_TAG_RAIN_DROPS
+animparticlepal 0x8d1315c,	ANIM_TAG_UNUSED_FURY_SWIPES
+animparticlepal 0x8d133c0,	ANIM_TAG_UNUSED_VINE_2
+animparticlepal 0x8d13574,	ANIM_TAG_UNUSED_TEETH
+animparticlepal 0x8d13820,	ANIM_TAG_UNUSED_BONE
+animparticlepal 0x8d1393c,	ANIM_TAG_UNUSED_WHITE_BAG
+animparticlepal 0x8d13990,	ANIM_TAG_UNUSED_UNKNOWN
+animparticlepal 0x8d13ab0,	ANIM_TAG_UNUSED_PURPLE_CORAL
+animparticlepal 0x8d13ab0,	ANIM_TAG_UNUSED_PURPLE_DROPLET
+animparticlepal 0x8d13ea0,	ANIM_TAG_UNUSED_SHOCK_2
+animparticlepal 0x8d13fb4,	ANIM_TAG_UNUSED_CLOSING_EYE_2
+animparticlepal 0x8d14044,	ANIM_TAG_UNUSED_METAL_BALL
+animparticlepal MONSTER_DOLL_PAL,	ANIM_TAG_UNUSED_MONSTER_DOLL
+animparticlepal 0x8d14494,	ANIM_TAG_UNUSED_WHIRLWIND
+animparticlepal 0x8d14494,	ANIM_TAG_UNUSED_WHIRLWIND_2
+animparticlepal 0x8d148e8,	ANIM_TAG_UNUSED_EXPLOSION_4
+animparticlepal 0x8d148e8,	ANIM_TAG_UNUSED_EXPLOSION_5
+animparticlepal 0x8d14b80,	ANIM_TAG_UNUSED_TONGUE
+animparticlepal 0x8d14c1c,	ANIM_TAG_UNUSED_SMOKE
+animparticlepal 0x8d14c1c,	ANIM_TAG_UNUSED_SMOKE_2
+animparticlepal IMPACT_PAL,	ANIM_TAG_IMPACT
+animparticlepal 0x8d1a6dc,	ANIM_TAG_CIRCLE_IMPACT
+animparticlepal 0x8d1a5f0,	ANIM_TAG_SCRATCH
+animparticlepal 0x8d1a5f0,	ANIM_TAG_CUT
+animparticlepal SHARP_TEETH_PAL,	ANIM_TAG_SHARP_TEETH
+animparticlepal 0x8d1ae84,	ANIM_TAG_RAINBOW_RINGS
+animparticlepal 0x8d1afac,	ANIM_TAG_ICE_CRYSTALS
+animparticlepal 0x8d1afac,	ANIM_TAG_ICE_SPIKES
+animparticlepal HANDS_AND_FEET_PAL,	ANIM_TAG_HANDS_AND_FEET
+animparticlepal 0x8d1be54,	ANIM_TAG_MIST_CLOUD
+animparticlepal 0x8d1ac98,	ANIM_TAG_CLAMP
+animparticlepal 0x8d02894,	ANIM_TAG_BUBBLE
+animparticlepal 0x8d1b1f8,	ANIM_TAG_ORBS
+animparticlepal 0x8d1b3d4,	ANIM_TAG_WATER_IMPACT
+animparticlepal 0x8d1b3d4,	ANIM_TAG_WATER_ORB
+animparticlepal 0x8d1b574,	ANIM_TAG_POISON_BUBBLE
+animparticlepal 0x8d1b574,	ANIM_TAG_TOXIC_BUBBLE
+animparticlepal SPIKES_PAL,	ANIM_TAG_SPIKES
+animparticlepal 0x8d1b6f4,	ANIM_TAG_HORN_HIT_2
+animparticlepal 0x8d1b7b8,	ANIM_TAG_AIR_WAVE_2
+animparticlepal 0x8d1b8a0,	ANIM_TAG_SMALL_BUBBLES
+animparticlepal ROUND_SHADOW_PAL,	ANIM_TAG_ROUND_SHADOW
+animparticlepal 0x8d1bb64,	ANIM_TAG_SUNLIGHT
+animparticlepal 0x8d1bc44,	ANIM_TAG_SPORE
+animparticlepal 0x8d1bce4,	ANIM_TAG_FLOWER
+animparticlepal 0x8d1bdb4,	ANIM_TAG_RAZOR_LEAF
+animparticlepal 0x8d0298c,	ANIM_TAG_NEEDLE
+animparticlepal 0x8d1c03c,	ANIM_TAG_WHIRLWIND_LINES
+animparticlepal 0x8d1c0bc,	ANIM_TAG_GOLD_RING
+animparticlepal 0x8d1c0ec,	ANIM_TAG_PURPLE_RING
+animparticlepal 0x8d1c104,	ANIM_TAG_BLUE_RING
+animparticlepal 0x8d1c428,	ANIM_TAG_GREEN_LIGHT_WALL
+animparticlepal 0x8d1c448,	ANIM_TAG_BLUE_LIGHT_WALL
+animparticlepal 0x8d1c468,	ANIM_TAG_RED_LIGHT_WALL
+animparticlepal 0x8d1c488,	ANIM_TAG_GRAY_LIGHT_WALL
+animparticlepal 0x8d1c4a8,	ANIM_TAG_ORANGE_LIGHT_WALL
+animparticlepal 0x8d1c514,	ANIM_TAG_BLACK_BALL_2
+animparticlepal 0x8d1c53c,	ANIM_TAG_PURPLE_GAS_CLOUD
+animparticlepal 0x8d1c90c,	ANIM_TAG_SPARK_H
+animparticlepal 0x8d1d814,	ANIM_TAG_YELLOW_STAR
+animparticlepal 0x8d1d8a0,	ANIM_TAG_LARGE_FRESH_EGG
+animparticlepal 0x8d1da20,	ANIM_TAG_SHADOW_BALL
+animparticlepal 0x8d1db0c,	ANIM_TAG_LICK
+animparticlepal 0x8d1dc8c,	ANIM_TAG_UNUSED_VOID_LINES
+animparticlepal 0x8d1dcb4,	ANIM_TAG_STRING
+animparticlepal 0x8d1dcb4,	ANIM_TAG_WEB_THREAD
+animparticlepal 0x8d1dcb4,	ANIM_TAG_SPIDER_WEB
+animparticlepal 0x8d1e204,	ANIM_TAG_UNUSED_LIGHTBULB
+animparticlepal 0x8d1e4a4,	ANIM_TAG_SLASH
+animparticlepal 0x8d1e620,	ANIM_TAG_FOCUS_ENERGY
+animparticlepal 0x8d1ea5c,	ANIM_TAG_SPHERE_TO_CUBE
+animparticlepal 0x8d1f31c,	ANIM_TAG_TENDRILS
+animparticlepal EYE_PAL,	ANIM_TAG_EYE
+animparticlepal 0x8e826e8,	ANIM_TAG_WHITE_SHADOW
+animparticlepal 0x8d203f0,	ANIM_TAG_TEAL_ALERT
+animparticlepal 0x8d200b4,	ANIM_TAG_OPENING_EYE
+animparticlepal 0x8d20344,	ANIM_TAG_ROUND_WHITE_HALO
+animparticlepal 0x8d20690,	ANIM_TAG_FANG_ATTACK
+animparticlepal 0x8d20814,	ANIM_TAG_PURPLE_HAND_OUTLINE
+animparticlepal 0x8d21158,	ANIM_TAG_MOON
+animparticlepal 0x8d21238,	ANIM_TAG_GREEN_SPARKLE
+animparticlepal 0x8d20e08,	ANIM_TAG_SPIRAL
+animparticlepal 0x8d213c8,	ANIM_TAG_SNORE_Z
+animparticlepal 0x8d217e0,	ANIM_TAG_EXPLOSION
+animparticlepal NAIL_PAL,	ANIM_TAG_NAIL
+animparticlepal 0x8d21a2c,	ANIM_TAG_GHOSTLY_SPIRIT
+animparticlepal 0x8d220b8,	ANIM_TAG_WARM_ROCK
+animparticlepal 0x8d223e4,	ANIM_TAG_BREAKING_EGG
+animparticlepal 0x8d225b4,	ANIM_TAG_THIN_RING
+animparticlepal 0x8d22254,	ANIM_TAG_PUNCH_IMPACT
+animparticlepal 0x8d22aac,	ANIM_TAG_BELL
+animparticlepal 0x8d227e4,	ANIM_TAG_MUSIC_NOTES_2
+animparticlepal 0x8d22b9c,	ANIM_TAG_SPEED_DUST
+animparticlepal 0x8d1c448,	ANIM_TAG_TORN_METAL
+animparticlepal 0x8d232b8,	ANIM_TAG_THOUGHT_BUBBLE
+animparticlepal 0x8d23474,	ANIM_TAG_MAGENTA_HEART
+animparticlepal 0x8d24740,	ANIM_TAG_ELECTRIC_ORBS
+animparticlepal 0x8d24740,	ANIM_TAG_CIRCLE_OF_LIGHT
+animparticlepal 0x8d24740,	ANIM_TAG_ELECTRICITY
+animparticlepal 0x8d233c8,	ANIM_TAG_FINGER_2
+animparticlepal 0x8d24b80,	ANIM_TAG_MOVEMENT_WAVES
+animparticlepal 0x8d23494,	ANIM_TAG_RED_HEART
+animparticlepal 0x8d24230,	ANIM_TAG_RED_ORB
+animparticlepal 0x8d24dfc,	ANIM_TAG_EYE_SPARKLE
+animparticlepal 0x8d23454,	ANIM_TAG_PINK_HEART
+animparticlepal 0x8d24fa8,	ANIM_TAG_ANGEL
+animparticlepal 0x8d250fc,	ANIM_TAG_DEVIL
+animparticlepal 0x8d2566c,	ANIM_TAG_SWIPE
+animparticlepal 0x8d25694,	ANIM_TAG_ROOTS
+animparticlepal 0x8d25948,	ANIM_TAG_ITEM_BAG
+animparticlepal 0x8d27abc,	ANIM_TAG_JAGGED_MUSIC_NOTE
+animparticlepal BATON_PASS_POKEBALL_PAL,	ANIM_TAG_POKEBALL
+animparticlepal 0x8d27cb8,	ANIM_TAG_SPOTLIGHT
+animparticlepal 0x8d25cd0,	ANIM_TAG_LETTER_Z
+animparticlepal 0x8d27e98,	ANIM_TAG_RAPID_SPIN
+animparticlepal 0x8d25a64,	ANIM_TAG_TRI_FORCE_TRIANGLE
+animparticlepal 0x8d28540,	ANIM_TAG_WISP_ORB
+animparticlepal 0x8d28540,	ANIM_TAG_WISP_FIRE
+animparticlepal 0x8d287bc,	ANIM_TAG_GOLD_STARS
+animparticlepal 0x8d289a4,	ANIM_TAG_ECLIPSING_ORB
+animparticlepal 0x8d28aa4,	ANIM_TAG_GRAY_ORB
+animparticlepal 0x8d28ac0,	ANIM_TAG_BLUE_ORB
+animparticlepal 0x8d28adc,	ANIM_TAG_RED_ORB_2
+animparticlepal 0x8d28a30,	ANIM_TAG_PINK_PETAL
+animparticlepal 0x8d2cd58,	ANIM_TAG_PAIN_SPLIT
+animparticlepal 0x8d2d068,	ANIM_TAG_CONFETTI
+animparticlepal GREEN_STAR_PAL,	ANIM_TAG_GREEN_STAR
+animparticlepal 0x8d2d880,	ANIM_TAG_PINK_CLOUD
+animparticlepal 0x8d2d8cc,	ANIM_TAG_SWEAT_DROP
+animparticlepal 0x8d2e804,	ANIM_TAG_GUARD_RING
+animparticlepal 0x8d2e0b4,	ANIM_TAG_PURPLE_SCRATCH
+animparticlepal 0x8d2e0b4,	ANIM_TAG_PURPLE_SWIPE
+animparticlepal 0x8d233c8,	ANIM_TAG_TAG_HAND
+animparticlepal 0x8d2ed90,	ANIM_TAG_SMALL_RED_EYE
+animparticlepal 0x8d2edf8,	ANIM_TAG_HOLLOW_ORB
+animparticlepal 0x8d2edf8,	ANIM_TAG_X_SIGN
+animparticlepal 0x8d2f070,	ANIM_TAG_BLUEGREEN_ORB
+animparticlepal 0x8d2f1a0,	ANIM_TAG_PAW_PRINT
+animparticlepal 0x8d2f3a0,	ANIM_TAG_PURPLE_FLAME
+animparticlepal 0x8d2f500,	ANIM_TAG_RED_BALL
+animparticlepal 0x8d2f5a0,	ANIM_TAG_SMELLINGSALT_EFFECT
+animparticlepal 0x8d2fa50,	ANIM_TAG_METEOR
+animparticlepal 0x8d2fb94,	ANIM_TAG_FLAT_ROCK
+animparticlepal 0x8d2f69c,	ANIM_TAG_MAGNIFYING_GLASS
+animparticlepal 0x8d1b3f4,	ANIM_TAG_BROWN_ORB
+animparticlepal 0x8e79be0,	ANIM_TAG_METAL_SOUND_WAVES
+animparticlepal 0x8e799fc,	ANIM_TAG_FLYING_DIRT
+animparticlepal 0x8e7a858,	ANIM_TAG_ICICLE_SPEAR
+animparticlepal 0x8e7fa98,	ANIM_TAG_HAIL
+animparticlepal 0x8e7a99c,	ANIM_TAG_GLOWY_RED_ORB
+animparticlepal 0x8e7a9b4,	ANIM_TAG_GLOWY_GREEN_ORB
+animparticlepal 0x8e7faf0,	ANIM_TAG_GREEN_SPIKE
+animparticlepal 0x8e7fb08,	ANIM_TAG_WHITE_CIRCLE_OF_LIGHT
+animparticlepal 0x8e7fb20,	ANIM_TAG_GLOWY_BLUE_ORB
+animparticlepal 0x8e7ae94,	ANIM_TAG_POKEBLOCK
+animparticlepal 0x8e93958,	ANIM_TAG_WHITE_FEATHER
+animparticlepal 0x8e93a9c,	ANIM_TAG_SPARKLE_6
+animparticlepal 0x8e7adf4,	ANIM_TAG_SPLASH
+animparticlepal 0x8e7adf4,	ANIM_TAG_SWEAT_BEAD
+animparticlepal 0x8e7b300,	ANIM_TAG_UNUSED_GEM_1
+animparticlepal 0x8e7b300,	ANIM_TAG_UNUSED_GEM_2
+animparticlepal 0x8e7b300,	ANIM_TAG_UNUSED_GEM_3
+animparticlepal 0x8e7edd8,	ANIM_TAG_SLAM_HIT_2
+animparticlepal 0x8e7fd44,	ANIM_TAG_RECYCLE
+animparticlepal 0x8e7fdac,	ANIM_TAG_UNUSED_RED_PARTICLES
+animparticlepal 0x8e7ba90,	ANIM_TAG_PROTECT
+animparticlepal 0x8e7ff50,	ANIM_TAG_DIRT_MOUND
+animparticlepal 0x8e93748,	ANIM_TAG_SHOCK_3
+animparticlepal 0x8e7f36c,	ANIM_TAG_WEATHER_BALL
+animparticlepal 0x8e808e8,	ANIM_TAG_BIRD
+animparticlepal 0x8e809a4,	ANIM_TAG_CROSS_IMPACT
+animparticlepal 0x8e825ac,	ANIM_TAG_SLASH_2
+animparticlepal 0x8e7cf60,	ANIM_TAG_WHIP_HIT
+animparticlepal 0x8d1c0d4,	ANIM_TAG_BLUE_RING_2
+animparticlepal WOOD_PAL,	ANIM_TAG_WOOD
+animparticlepal FLASH_CANNON_BALL_PAL,	ANIM_TAG_FLASH_CANNON_BALL
+animparticlepal POISON_JAB_PAL,	ANIM_TAG_POISON_JAB
+animparticlepal POWER_GEM_PAL,	ANIM_TAG_POWER_GEM
+animparticlepal SHELL_RIGHT_PAL,	ANIM_TAG_SHELL_RIGHT
+animparticlepal SHELL_LEFT_PAL,	ANIM_TAG_SHELL_LEFT
+animparticlepal RAZOR_SHELL_PAL,	ANIM_TAG_RAZOR_SHELL
+animparticlepal HYDRO_PUMP_PAL,	ANIM_TAG_HYDRO_PUMP
+animparticlepal WATER_GUN_PAL,	ANIM_TAG_WATER_GUN
+animparticlepal BRINE_PAL,	ANIM_TAG_BRINE
+animparticlepal STEALTH_ROCK_PAL,	ANIM_TAG_STEALTH_ROCK
+animparticlepal STONE_EDGE_PAL,	ANIM_TAG_STONE_EDGE
+animparticlepal GEAR_PAL,	ANIM_TAG_GEAR
+animparticlepal ASSURANCE_HAND_PAL,	ANIM_TAG_ASSURANCE_HAND
+animparticlepal ACUPRESSURE_FINGER_PAL,	ANIM_TAG_ACUPRESSURE_FINGER
+animparticlepal PUNISHMENT_BLADES_PAL,	ANIM_TAG_PUNISHMENT_BLADES
+animparticlepal BEES_PAL,	ANIM_TAG_BEES
+animparticlepal WISHIWASHI_FISH_PAL,	ANIM_TAG_WISHIWASHI_FISH
+animparticlepal ZYGARDE_HEXES_PAL,	ANIM_TAG_ZYGARDE_HEXES
+animparticlepal AURA_SPHERE_PAL,	ANIM_TAG_AURA_SPHERE
+animparticlepal ENERGY_BALL_PAL,	ANIM_TAG_ENERGY_BALL
+animparticlepal MEGA_RAINBOW_PAL,	ANIM_TAG_MEGA_RAINBOW
+animparticlepal MEGA_STONE_PAL,	ANIM_TAG_MEGA_STONE
+animparticlepal MEGA_SYMBOL_PAL,	ANIM_TAG_MEGA_SYMBOL
+animparticlepal OMEGA_STONE_PAL,	ANIM_TAG_OMEGA_STONE
+animparticlepal ALPHA_STONE_PAL,	ANIM_TAG_ALPHA_STONE
+animparticlepal BERRY_NORMAL_PAL,	ANIM_TAG_BERRY_NORMAL
+animparticlepal BERRY_EATEN_PAL,	ANIM_TAG_BERRY_EATEN
+animparticlepal DRAGON_ASCENT_PAL,	ANIM_TAG_DRAGON_ASCENT
+animparticlepal PINK_DIAMOND_PAL,	ANIM_TAG_PINK_DIAMOND
+animparticlepal STEAM_ERUPTION_PAL,	ANIM_TAG_STEAM_ERUPTION
+animparticlepal CONFIDE_PAL,	ANIM_TAG_CONFIDE
+animparticlepal VERTICAL_HEX_PAL,	ANIM_TAG_VERTICAL_HEX
+animparticlepal POWER_TRICK_PAL,	ANIM_TAG_POWER_TRICK
+animparticlepal CHAIN_LINK_PAL,	ANIM_TAG_CHAIN_LINK
+animparticlepal ANCHOR_PAL,	ANIM_TAG_ANCHOR
+animparticlepal HORSESHOE_SIDE_FIST_PAL,	ANIM_TAG_HORSESHOE_SIDE_FIST
+animparticlepal DRAGON_ASCENT_FOE_PAL,	ANIM_TAG_DRAGON_ASCENT_FOE
+animparticlepal CRAFTY_SHIELD_PAL,	ANIM_TAG_CRAFTY_SHIELD
+animparticlepal QUICK_GUARD_HAND_PAL,	ANIM_TAG_QUICK_GUARD_HAND
+animparticlepal BLACEPHALON_HEAD_PAL,	ANIM_TAG_BLACEPHALON_HEAD
+animparticlepal FAIRY_LOCK_CHAINS_PAL,	ANIM_TAG_FAIRY_LOCK_CHAINS
+animparticlepal IONS_PAL, ANIM_TAG_IONS
+animparticlepal CHOP_PAL, ANIM_TAG_CHOP
+animparticlepal HEART_STAMP_PAL, ANIM_TAG_HEART_STAMP
+animparticlepal HORN_LEECH_PAL,	ANIM_TAG_HORN_LEECH
+animparticlepal STEAMROLLER_PAL, ANIM_TAG_STEAMROLLER
+animparticlepal HOOPA_HAND_PAL,	ANIM_TAG_HOOPA_HAND
+animparticlepal HOOPA_RING_PAL, ANIM_TAG_HOOPA_RING
+animparticlepal UNAVAILABLE_1_PAL, ANIM_TAG_UNAVAILABLE_1
+animparticlepal UNAVAILABLE_2_PAL, ANIM_TAG_UNAVAILABLE_2
+animparticlepal METAL_BITS_PAL,	ANIM_TAG_METAL_BITS
+animparticlepal SMALL_ROCK_PAL,	ANIM_TAG_SMALL_ROCK
+animparticlepal SPIRIT_ARROW_PAL, ANIM_TAG_SPIRIT_ARROW
+animparticlepal ULTRA_BURST_SYMBOL_PAL,	ANIM_TAG_ULTRA_BURST_SYMBOL
+animparticlepal Z_MOVE_SYMBOL_PAL, ANIM_TAG_Z_MOVE_SYMBOL
+animparticlepal REALLY_BIG_ROCK_PAL, ANIM_TAG_REALLY_BIG_ROCK
+animparticlepal COCOON_PAL,	ANIM_TAG_COCOON
+animparticlepal CORKSCREW_PAL,	ANIM_TAG_CORKSCREW
+animparticlepal HAVOC_SPEAR_PAL, ANIM_TAG_HAVOC_SPEAR
+animparticlepal PURPLE_DRAKE_PAL, ANIM_TAG_PURPLE_DRAKE
+animparticlepal ABILITY_POP_UP_PAL,	ANIM_TAG_ABILITY_POP_UP
+animparticlepal MUD_BOMB_PAL, ANIM_TAG_MUD_BOMB
+animparticlepal BRANCH_PAL, ANIM_TAG_BRANCH
+animparticlepal APPLE_PAL, ANIM_TAG_APPLE
+animparticlepal OBSTRUCT_PAL, ANIM_TAG_OBSTRUCT_CROSS
+animparticlepal POISON_COLUMN_PAL, ANIM_TAG_POISON_COLUMN
+animparticlepal GARBAGE_COLUMN_PAL, ANIM_TAG_GARBAGE_COLUMN
+animparticlepal LARGE_SPIKE_PAL, ANIM_TAG_LARGE_SPIKE
+animparticlepal DRAGON_PULSE_RING_PAL, ANIM_TAG_DRAGON_PULSE_RING
+animparticlepal STONE_PILLAR_PAL, ANIM_TAG_STONE_PILLAR
+animparticlepal MUSHROOM_PAL, ANIM_TAG_MUSHROOM
+animparticlepal GOLDEN_APPLE_PAL, ANIM_TAG_GOLDEN_APPLE
+animparticlepal ICE_ROCK_PAL, ANIM_TAG_ICE_ROCK
+animparticlepal TORNADO_PAL, ANIM_TAG_TORNADO
+animparticlepal STRAIGHT_BEAM_PAL, ANIM_TAG_STRAIGHT_BEAM
+animparticlepal DREEPY_PAL, ANIM_TAG_DREEPY

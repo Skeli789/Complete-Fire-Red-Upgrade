@@ -1,3 +1,6 @@
+#org @gText_CriticalHit
+[FC][01][02]A critical hit!
+
 #org @TrickRoomSetString
 [ATTACKER] twisted\nthe dimensions!
 
@@ -34,8 +37,14 @@ The battlefield got weird!
 #org @TargetTransformedIntoType
 [TARGET] transformed\ninto the [BUFFER][00] type!
 
+#org @gText_MimicryTransformed
+[SCRIPTING_BANK]'s type\nchanged to [BUFFER][00]!
+
 #org @ThirdTypeAddedString
 [BUFFER][00] type was added to\n[TARGET]!
+
+#org @gText_MimicryReturnedToNormal
+[SCRIPTING_BANK] returned\nto its original type!
 
 #org @FairyLockString
 [ATTACKER] locked down the battlefield!
@@ -105,6 +114,15 @@ The Wide Guard protected\n[TARGET]!
 #org @gText_JawLockNoEscape
 Neither Pok\emon can run away!
 
+#org @gText_CanNoLongerEscape
+[TARGET] can no longer\nescape!
+
+#org @gText_CloakedInLight
+[ATTACKER] became\ncloaked in light!
+
+#org @gText_ItemPumpedMon
+[SCRIPTING_BANK] used the\n[LAST_ITEM] to get pumped!
+
 //Status Strings
 
 #org @gText_TargetStaysAwake
@@ -170,6 +188,50 @@ The [LAST_ITEM] restored\n[SCRIPTING_BANK]'s status!
 #org @gText_BellyDrumMinimizedAttack
 [ATTACKER] cut its own HP\nand minimized Attack!
 
+#org @gText_SqueezedByOctolock
+[ATTACKER] was squeezed\nby the Octolock!
+
+#org @gText_NoRetreatTrapped
+[ATTACKER] can no longer\nescape because it used [CURRENT_MOVE]!
+
+#org @gText_TarShotAffected
+[TARGET] became\nweaker to fire!
+
+#org @gText_TargetWasCaughtInSnapTrap
+[TARGET] got trapped\nby a snap trap!
+
+#org @gText_HurtBySeaOfFire
+[ATTACKER] is hurt\nby the sea of fire!
+
+#org @gText_BallFetchRetrievedItem
+[SCRIPTING_BANK] found one\n[LAST_ITEM]!
+
+#org @gText_PerishBodyActivated
+Both Pok\emon will faint in\nthree turns!
+
+#org @gText_SurroundedByGMaxWildfire
+[FD][37] was surrounded\nby fire!
+
+#org @gText_HurtByGMaxWildfire
+[ATTACKER] is burning\nup within G-Max Wildfire's flame!
+
+#org @gText_GMaxWildfireEnded
+The G-Max Wildfire flames around\n[FD][35] disappeared!
+
+#org @gText_SurroundedByGMaxVolcalith
+[FD][37] was surrounded\nby rocks!
+
+#org @gText_HurtByGMaxVolcalith
+[ATTACKER] is hurt\nby G-Max Volcalith's rocks!
+
+#org @gText_GMaxVolcalithEnded
+The G-Max Volcalith rocks around\n[FD][35] disappeared!
+
+#org @gText_TrappedByGMaxCentiferno
+[FD][37] has become\ntrapped in a fiery vortex!
+
+//Other Battle Features
+
 #org @gText_Devolved
 [EFFECT_BANK] has devolved\ninto [BUFFER][00]!
 
@@ -184,3 +246,61 @@ The [LAST_ITEM] restored\n[SCRIPTING_BANK]'s status!
 
 #org @gText_CamomonsTypeRevealDualType
 [SCRIPTING_BANK] appears as the\n[BUFFER][00]- and [BUFFER][01]-type!
+
+#org @gText_DynamaxUsable
+Dynamax Energy gathered\naround you!
+
+#org @gText_MonDynamaxed
+[SCRIPTING_BANK] created a\nprojection of itself with Dynamax!
+
+#org @gText_DynamaxEnded
+[SCRIPTING_BANK] is no longer\nDynamaxed!
+
+#org @gText_DynamaxAttackCancel
+[ATTACKER] shook its\nhead.\pIt seems like it can't use\nthis move[.]
+
+#org @gText_RaidBattleAttackCancel
+The move was blocked by the\npower of Dynamax!
+
+#org @gText_DynamaxItemBlock
+The item was blocked by the\npower of Dynamax!
+
+#org @gText_RaidBattleReveal
+[SCRIPTING_BANK] appears\nto be massive!
+
+#org @gText_RaidBattleStormStarted
+A storm started brewing above you.
+
+#org @gText_RaidPokemonGettingDesperate
+[SCRIPTING_BANK] is getting\ndesperate!\pIts attacks are growing more\naggressive!
+
+#org @gText_RaidShield
+A mysterious barrier appeared in\nfront of [SCRIPTING_BANK]\land is protecting it from attacks!
+
+#org @gText_RaidShieldProtected
+The mysterious barrier is\nprotecting [TARGET]\lfrom the impacts of the move!
+
+#org @gText_RaidShieldBroke
+The mysterious barrier that was\nprotecting [SCRIPTING_BANK]\ldisappeared!
+
+#org @gText_RaidBattleStatBoost
+[SCRIPTING_BANK]'s [BUFFER][00]\n[BUFFER][01]
+
+#org @gText_RaidBattleStatNullification
+[SCRIPTING_BANK] nullifed the\nstat changes of and is ignoring\lthe Abilities of other Pok\emon!
+
+#org @gText_RaidBattleKO1
+The storm raging above you is\ngrowing stronger!
+
+#org @gText_RaidBattleKO2
+The storm is growing even\nstronger!
+
+#org @gText_RaidBattleKO3
+The storm is getting too strong to\nwithstand!
+
+#org @gText_RaidBattleKO4
+[PLAYER_NAME] was blown out of the\nbattle!
+
+#org @gText_RaidMonRanAway
+[PLAY_SE][11][00][FD][06] disappeared\nsomewhere[.]\p
+

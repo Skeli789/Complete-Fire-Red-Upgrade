@@ -728,7 +728,7 @@ void Task_ReturnToItemListAfterItemPurchase(u8 taskId)
 	if (gMain.newKeys & (A_BUTTON | B_BUTTON))
 	{
 		PlaySE(SE_SELECT);
-		if (tItemId == ITEM_POKE_BALL)
+		if (GetPocketByItemId(tItemId) == POCKET_POKE_BALLS)
 		{
 			#ifdef MULTIPLE_PREMIER_BALLS_AT_ONCE
 			u8 nPremier = tItemCount / 10;

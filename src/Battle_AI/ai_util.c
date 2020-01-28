@@ -11,6 +11,7 @@
 #include "../../include/new/battle_start_turn_start.h"
 #include "../../include/new/battle_util.h"
 #include "../../include/new/damage_calc.h"
+#include "../../include/new/dynamax.h"
 #include "../../include/new/end_turn.h"
 #include "../../include/new/general_bs_commands.h"
 #include "../../include/new/util.h"
@@ -46,7 +47,7 @@ bool8 CanKnockOut(u8 bankAtk, u8 bankDef)
 	if (!BATTLER_ALIVE(bankAtk) || !BATTLER_ALIVE(bankDef))
 		return FALSE; //Can't KO if you're dead or target is dead
 
-	if (gNewBS->canKnockOut[bankAtk][bankDef] == 0xFF) //Hasn't been calculated yet
+	if (gNewBS->ai.canKnockOut[bankAtk][bankDef] == 0xFF) //Hasn't been calculated yet
 	{
 		struct BattlePokemon backupMonAtk, backupMonDef;
 		u8 backupAbilityAtk = ABILITY_NONE; u8 backupAbilityDef = ABILITY_NONE;
@@ -55,19 +56,19 @@ bool8 CanKnockOut(u8 bankAtk, u8 bankDef)
 		TryTempMegaEvolveBank(bankAtk, &backupMonAtk, &backupSpeciesAtk, &backupAbilityAtk);
 		TryTempMegaEvolveBank(bankDef, &backupMonDef, &backupSpeciesDef, &backupAbilityDef);
 
-		if (gNewBS->strongestMove[bankAtk][bankDef] == 0xFFFF)
-			gNewBS->strongestMove[bankAtk][bankDef] = CalcStrongestMove(bankAtk, bankDef, FALSE);
+		if (gNewBS->ai.strongestMove[bankAtk][bankDef] == 0xFFFF)
+			gNewBS->ai.strongestMove[bankAtk][bankDef] = CalcStrongestMove(bankAtk, bankDef, FALSE);
 
-		gNewBS->canKnockOut[bankAtk][bankDef] = MoveKnocksOutXHits(gNewBS->strongestMove[bankAtk][bankDef], bankAtk, bankDef, 1);
+		gNewBS->ai.canKnockOut[bankAtk][bankDef] = MoveKnocksOutXHits(gNewBS->ai.strongestMove[bankAtk][bankDef], bankAtk, bankDef, 1);
 
-		if (gNewBS->canKnockOut[bankAtk][bankDef])
-			gNewBS->can2HKO[bankAtk][bankDef] = TRUE; //If you can KO in 1 hit you can KO in 2
+		if (gNewBS->ai.canKnockOut[bankAtk][bankDef])
+			gNewBS->ai.can2HKO[bankAtk][bankDef] = TRUE; //If you can KO in 1 hit you can KO in 2
 
 		TryRevertTempMegaEvolveBank(bankDef, &backupMonDef, &backupSpeciesDef, &backupAbilityDef);
 		TryRevertTempMegaEvolveBank(bankAtk, &backupMonAtk, &backupSpeciesAtk, &backupAbilityAtk);
 	}
 
-	return gNewBS->canKnockOut[bankAtk][bankDef];
+	return gNewBS->ai.canKnockOut[bankAtk][bankDef];
 }
 
 bool8 GetCanKnockOut(u8 bankAtk, u8 bankDef)
@@ -104,7 +105,7 @@ bool8 GetCanKnockOut(u8 bankAtk, u8 bankDef)
 
 bool8 Can2HKO(u8 bankAtk, u8 bankDef)
 {
-	if (gNewBS->can2HKO[bankAtk][bankDef] == 0xFF) //Hasn't been calculated yet
+	if (gNewBS->ai.can2HKO[bankAtk][bankDef] == 0xFF) //Hasn't been calculated yet
 	{
 		struct BattlePokemon backupMonAtk, backupMonDef;
 		u8 backupAbilityAtk = ABILITY_NONE; u8 backupAbilityDef = ABILITY_NONE;
@@ -113,16 +114,16 @@ bool8 Can2HKO(u8 bankAtk, u8 bankDef)
 		TryTempMegaEvolveBank(bankAtk, &backupMonAtk, &backupSpeciesAtk, &backupAbilityAtk);
 		TryTempMegaEvolveBank(bankDef, &backupMonDef, &backupSpeciesDef, &backupAbilityDef);
 
-		if (gNewBS->strongestMove[bankAtk][bankDef] == 0xFFFF)
-			gNewBS->strongestMove[bankAtk][bankDef] = CalcStrongestMove(bankAtk, bankDef, FALSE);
+		if (gNewBS->ai.strongestMove[bankAtk][bankDef] == 0xFFFF)
+			gNewBS->ai.strongestMove[bankAtk][bankDef] = CalcStrongestMove(bankAtk, bankDef, FALSE);
 
-		gNewBS->can2HKO[bankAtk][bankDef] = MoveKnocksOutXHits(gNewBS->strongestMove[bankAtk][bankDef], bankAtk, bankDef, 2);
+		gNewBS->ai.can2HKO[bankAtk][bankDef] = MoveKnocksOutXHits(gNewBS->ai.strongestMove[bankAtk][bankDef], bankAtk, bankDef, 2);
 
 		TryRevertTempMegaEvolveBank(bankDef, &backupMonDef, &backupSpeciesDef, &backupAbilityDef);
 		TryRevertTempMegaEvolveBank(bankAtk, &backupMonAtk, &backupSpeciesAtk, &backupAbilityAtk);
 	}
 
-	return gNewBS->can2HKO[bankAtk][bankDef];
+	return gNewBS->ai.can2HKO[bankAtk][bankDef];
 }
 
 bool8 GetCan2HKO(u8 bankAtk, u8 bankDef)
@@ -418,7 +419,7 @@ void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner,
 	u16 partnerMove = gChosenMovesByBanks[bankAtkPartner];
 	u16 partnerTarget = gBattleStruct->moveTarget[bankAtkPartner];
 	bool8 partnerIncapacitated = IsBankIncapacitated(bankAtkPartner);
-	bool8 partnerKnocksOut = MoveKnocksOutXHits(partnerMove, bankAtkPartner, partnerTarget, 1);
+	bool8 partnerKnocksOut = partnerTarget != bankAtkPartner && MoveKnocksOutXHits(partnerMove, bankAtkPartner, partnerTarget, 1);
 
 	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, 0xFF);
 	for (i = 0; i < MAX_MON_MOVES; ++i)
@@ -442,6 +443,7 @@ void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner,
 				&& (partnerMove == MOVE_NONE
 				 || partnerTarget != currTarget
 				 || partnerIncapacitated
+				 || CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, bankAtk, currTarget) <= 1 //Only 1 target left
 				 || !partnerKnocksOut)) //Don't count the target if the partner is already taking care of it
 				{
 					if (!(AI_SpecialTypeCalc(move, bankAtk, currTarget) & MOVE_RESULT_NO_EFFECT))
@@ -483,12 +485,15 @@ void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner,
 									goto DEFAULT_CHECK;
 
 								default:
-								DEFAULT_CHECK: ;
-									u32 dmg = CalcFinalAIMoveDamage(move, bankAtk, currTarget, 1);
-									if (dmg < gBattleMons[currTarget].maxHP / 4)
-										moveScores[i][currTarget] -= (DOUBLES_INCREASE_HIT_FOE - 1); //Count it as if you basically don't do damage to the enemy
-									else if (dmg < gBattleMons[currTarget].maxHP / 3)
-										moveScores[i][currTarget] -= (DOUBLES_INCREASE_HIT_FOE - 2); //Count less than basically not hitting the enemy
+								DEFAULT_CHECK:
+									if (CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, bankAtk, currTarget) >= 2) //If there's only 1 target we rely on the strongest move check
+									{
+										u32 dmg = CalcFinalAIMoveDamage(move, bankAtk, currTarget, 1);
+										if (dmg < gBattleMons[currTarget].maxHP / 4)
+											moveScores[i][currTarget] -= (DOUBLES_INCREASE_HIT_FOE - 1); //Count it as if you basically don't do damage to the enemy
+										else if (dmg < gBattleMons[currTarget].maxHP / 3)
+											moveScores[i][currTarget] -= (DOUBLES_INCREASE_HIT_FOE - 2); //Count less than basically not hitting the enemy
+									}
 							}
 						}
 					}
@@ -573,14 +578,14 @@ u8 GetDoubleKillingScore(u16 move, u8 bankAtk, u8 bankDef)
 	{
 		//Recalculate as partner has chosen to protect from spread move
 		gNewBS->recalculatedBestDoublesKillingScores[bankAtk] = TRUE;
-		UpdateBestDoubleKillingMoveScore(bankAtk, bankDef, PARTNER(bankAtk), PARTNER(bankDef), gNewBS->bestDoublesKillingScores[bankAtk][bankDef], &gNewBS->bestDoublesKillingMoves[bankAtk][bankDef]);
+		UpdateBestDoubleKillingMoveScore(bankAtk, bankDef, PARTNER(bankAtk), PARTNER(bankDef), gNewBS->ai.bestDoublesKillingScores[bankAtk][bankDef], &gNewBS->ai.bestDoublesKillingMoves[bankAtk][bankDef]);
 	}
 
-	if (move == gNewBS->bestDoublesKillingMoves[bankAtk][bankDef])
+	if (move == gNewBS->ai.bestDoublesKillingMoves[bankAtk][bankDef])
 	{
-		return gNewBS->bestDoublesKillingScores[bankAtk][bankDef][bankDef]
-		     + gNewBS->bestDoublesKillingScores[bankAtk][bankDef][PARTNER(bankDef)]
-			 + gNewBS->bestDoublesKillingScores[bankAtk][bankDef][PARTNER(bankAtk)];
+		return gNewBS->ai.bestDoublesKillingScores[bankAtk][bankDef][bankDef]
+		     + gNewBS->ai.bestDoublesKillingScores[bankAtk][bankDef][PARTNER(bankDef)]
+			 + gNewBS->ai.bestDoublesKillingScores[bankAtk][bankDef][PARTNER(bankAtk)];
 	}
 
 	return 0;
@@ -589,7 +594,7 @@ u8 GetDoubleKillingScore(u16 move, u8 bankAtk, u8 bankDef)
 static void RemoveDoublesKillingScore(u8 bankAtk, u8 bankDef)
 {
 	//Reset the points received by attacking bankDef for both foes
-	UpdateBestDoubleKillingMoveScore(bankAtk, bankDef, PARTNER(bankAtk), PARTNER(bankDef), gNewBS->bestDoublesKillingScores[bankAtk][bankDef], &gNewBS->bestDoublesKillingMoves[bankAtk][bankDef]);
+	UpdateBestDoubleKillingMoveScore(bankAtk, bankDef, PARTNER(bankAtk), PARTNER(bankDef), gNewBS->ai.bestDoublesKillingScores[bankAtk][bankDef], &gNewBS->ai.bestDoublesKillingMoves[bankAtk][bankDef]);
 }
 
 void TryRemoveDoublesKillingScore(u8 bankAtk, u8 bankDef, u16 chosenMove)
@@ -598,7 +603,7 @@ void TryRemoveDoublesKillingScore(u8 bankAtk, u8 bankDef, u16 chosenMove)
 
 	if (IS_DOUBLE_BATTLE && BATTLER_ALIVE(partner))
 	{
-		u16 partnerKillingMove = gNewBS->bestDoublesKillingMoves[partner][bankDef];
+		u16 partnerKillingMove = gNewBS->ai.bestDoublesKillingMoves[partner][bankDef];
 
 		if (!(bankAtk & BIT_FLANK) //Don't bother with reseting scores if no Pokemon are going to choose moves after this
 		&& !IsBankIncapacitated(bankAtk) //Not actually going to hit a target this turn
@@ -619,15 +624,23 @@ bool8 RangeMoveCanHurtPartner(u16 move, u8 bankAtk, u8 bankAtkPartner)
 		&& !(AI_SpecialTypeCalc(move, bankAtk, bankAtkPartner) & MOVE_RESULT_NO_EFFECT); //Move has effect
 }
 
-bool8 MoveKnocksOutXHits(u16 move, u8 bankAtk, u8 bankDef, u8 numHits)
+static bool8 CalculateMoveKnocksOutXHits(u16 move, u8 bankAtk, u8 bankDef, u8 numHits)
 {
+	u8 ability = ABILITY(bankDef);
+	u16 species = SPECIES(bankDef);
+	bool8 noMoldBreakers = NO_MOLD_BREAKERS(ABILITY(bankAtk), move);
+
 	if (IS_BEHIND_SUBSTITUTE(bankDef)
-	|| (ABILITY(bankDef) == ABILITY_DISGUISE
-	 && SPECIES(bankDef) == SPECIES_MIMIKYU
-	 && NO_MOLD_BREAKERS(ABILITY(bankAtk), move)))
+	#ifdef SPECIES_MIMIKYU
+	|| (ability == ABILITY_DISGUISE && species == SPECIES_MIMIKYU && noMoldBreakers)
+	#endif
+	#ifdef SPECIES_EISCUE
+	|| (ability == ABILITY_ICEFACE && species == SPECIES_EISCUE && SPLIT(move) == SPLIT_PHYSICAL && noMoldBreakers)
+	#endif
+	)
 	{
 		if (numHits > 0)
-			numHits -= 1; //Takes at least a hit to break disguise or sub
+			numHits -= 1; //Takes at least a hit to break Disguise/Ice Face or sub
 	}
 
 	if (CalcFinalAIMoveDamage(move, bankAtk, bankDef, numHits) >= gBattleMons[bankDef].hp)
@@ -636,15 +649,50 @@ bool8 MoveKnocksOutXHits(u16 move, u8 bankAtk, u8 bankDef, u8 numHits)
 	return FALSE;
 }
 
+bool8 MoveKnocksOutXHits(u16 move, u8 bankAtk, u8 bankDef, u8 numHits)
+{
+	u8 movePos;
+
+	switch (numHits) {
+		case 1:
+			movePos = FindMovePositionInMoveset(move, bankAtk);
+			if (movePos >= MAX_MON_MOVES)
+				break; //Move not in moveset
+
+			if (gNewBS->ai.moveKnocksOut1Hit[bankAtk][bankDef][movePos] != 0xFF)
+				return gNewBS->ai.moveKnocksOut1Hit[bankAtk][bankDef][movePos];
+			return gNewBS->ai.moveKnocksOut1Hit[bankAtk][bankDef][movePos] = CalculateMoveKnocksOutXHits(move, bankAtk, bankDef, 1);
+
+		case 2:
+			movePos = FindMovePositionInMoveset(move, bankAtk);
+			if (movePos >= MAX_MON_MOVES)
+				break; //Move not in moveset
+
+			if (gNewBS->ai.moveKnocksOut2Hits[bankAtk][bankDef][movePos] != 0xFF)
+				return gNewBS->ai.moveKnocksOut2Hits[bankAtk][bankDef][movePos];
+			return gNewBS->ai.moveKnocksOut2Hits[bankAtk][bankDef][movePos] = CalculateMoveKnocksOutXHits(move, bankAtk, bankDef, 2);
+	}
+
+	return CalculateMoveKnocksOutXHits(move, bankAtk, bankDef, numHits);
+}
+
 bool8 MoveKnocksOutXHitsFromParty(u16 move, struct Pokemon* monAtk, u8 bankDef, u8 numHits)
 {
+	u8 ability = ABILITY(bankDef);
+	u16 species = SPECIES(bankDef);
+	bool8 noMoldBreakers = NO_MOLD_BREAKERS(GetMonAbility(monAtk), move);
+
 	if (IS_BEHIND_SUBSTITUTE(bankDef)
-	|| (ABILITY(bankDef) == ABILITY_DISGUISE
-	 && SPECIES(bankDef) == SPECIES_MIMIKYU
-	 && NO_MOLD_BREAKERS(GetMonAbility(monAtk), move)))
+	#ifdef SPECIES_MIMIKYU
+	|| (ability == ABILITY_DISGUISE && species == SPECIES_MIMIKYU && noMoldBreakers)
+	#endif
+	#ifdef SPECIES_EISCUE
+	|| (ability == ABILITY_ICEFACE && species == SPECIES_EISCUE && SPLIT(move) == SPLIT_PHYSICAL && noMoldBreakers)
+	#endif
+	)
 	{
 		if (numHits > 0)
-			numHits -= 1; //Takes at least a hit to break disguise or sub
+			numHits -= 1; //Takes at least a hit to break Disguise/Ice Face or sub
 	}
 
 	if (CalcFinalAIMoveDamageFromParty(move, monAtk, bankDef, numHits) >= gBattleMons[bankDef].hp)
@@ -655,7 +703,7 @@ bool8 MoveKnocksOutXHitsFromParty(u16 move, struct Pokemon* monAtk, u8 bankDef, 
 
 u16 CalcFinalAIMoveDamage(u16 move, u8 bankAtk, u8 bankDef, u8 numHits)
 {
-	if (move == MOVE_NONE || SPLIT(move) == SPLIT_STATUS || gBattleMoves[move].power == 0)
+	if (move == MOVE_NONE || numHits == 0 || gBattleMoves[move].power == 0)
 		return 0;
 
 	switch (gBattleMoves[move].effect) {
@@ -752,8 +800,13 @@ move_t CalcStrongestMove(const u8 bankAtk, const u8 bankDef, const bool8 onlySpr
 	u32 highestDamage = 0;
 	u32 predictedDamage;
 	int i;
+	u16 defHP = gBattleMons[bankDef].hp;
+	
+	if (defHP == 0) //Foe dead
+		return MOVE_NONE;
 
 	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, 0xFF);
+	predictedDamage = 0;
 
 	for (i = 0; i < MAX_MON_MOVES; ++i)
 	{
@@ -765,8 +818,7 @@ move_t CalcStrongestMove(const u8 bankAtk, const u8 bankDef, const bool8 onlySpr
 
 		if (!(gBitTable[i] & moveLimitations))
 		{
-			if (SPLIT(move) == SPLIT_STATUS
-			||  gBattleMoves[move].power == 0
+			if (gBattleMoves[move].power == 0
 			||  (onlySpreadMoves && !(gBattleMoves[move].target & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL))))
 				continue;
 
@@ -781,6 +833,7 @@ move_t CalcStrongestMove(const u8 bankAtk, const u8 bankDef, const bool8 onlySpr
 			}
 			else if (gBattleMoves[move].effect == EFFECT_0HKO)
 			{
+				gNewBS->ai.moveKnocksOut1Hit[bankAtk][bankDef][i] = FALSE;
 				if (gBattleMons[bankAtk].level <= gBattleMons[bankDef].level)
 					continue;
 				if (move == MOVE_SHEERCOLD && IsOfType(bankDef, TYPE_ICE))
@@ -789,6 +842,7 @@ move_t CalcStrongestMove(const u8 bankAtk, const u8 bankDef, const bool8 onlySpr
 					continue;
 				if (MoveWillHit(move, bankAtk, bankDef))
 				{
+					gNewBS->ai.moveKnocksOut1Hit[bankAtk][bankDef][i] = TRUE;
 					return move; //No stronger move that OHKO move that can kill
 				}
 			}
@@ -818,6 +872,11 @@ move_t CalcStrongestMove(const u8 bankAtk, const u8 bankDef, const bool8 onlySpr
 					}
 				}
 			}
+
+			if (predictedDamage >= defHP)
+				gNewBS->ai.moveKnocksOut1Hit[bankAtk][bankDef][i] = TRUE;
+			else
+				gNewBS->ai.moveKnocksOut1Hit[bankAtk][bankDef][i] = FALSE;
 		}
 	}
 
@@ -826,18 +885,18 @@ move_t CalcStrongestMove(const u8 bankAtk, const u8 bankDef, const bool8 onlySpr
 
 bool8 IsStrongestMove(const u16 currentMove, const u8 bankAtk, const u8 bankDef)
 {
-	if (gNewBS->strongestMove[bankAtk][bankDef] == 0xFFFF)
-		gNewBS->strongestMove[bankAtk][bankDef] = CalcStrongestMove(bankAtk, bankDef, FALSE);
+	if (gNewBS->ai.strongestMove[bankAtk][bankDef] == 0xFFFF)
+		gNewBS->ai.strongestMove[bankAtk][bankDef] = CalcStrongestMove(bankAtk, bankDef, FALSE);
 
-	return gNewBS->strongestMove[bankAtk][bankDef] == currentMove;
+	return gNewBS->ai.strongestMove[bankAtk][bankDef] == currentMove;
 }
 
-bool8 GetStrongestMove(const u8 bankAtk, const u8 bankDef)
+u16 GetStrongestMove(const u8 bankAtk, const u8 bankDef)
 {
-	if (gNewBS->strongestMove[bankAtk][bankDef] == 0xFFFF)
-		gNewBS->strongestMove[bankAtk][bankDef] = CalcStrongestMove(bankAtk, bankDef, FALSE);
+	if (gNewBS->ai.strongestMove[bankAtk][bankDef] == 0xFFFF)
+		gNewBS->ai.strongestMove[bankAtk][bankDef] = CalcStrongestMove(bankAtk, bankDef, FALSE);
 
-	return gNewBS->strongestMove[bankAtk][bankDef];
+	return gNewBS->ai.strongestMove[bankAtk][bankDef];
 }
 
 bool8 MoveWillHit(u16 move, u8 bankAtk, u8 bankDef)
@@ -864,7 +923,8 @@ bool8 MoveWillHit(u16 move, u8 bankAtk, u8 bankDef)
 	|| ((gStatuses3[bankDef] & STATUS3_TELEKINESIS) && gBattleMoves[move].effect != EFFECT_0HKO)
 	||  gBattleMoves[move].accuracy == 0
 	|| (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_RAIN_ANY) && CheckTableForMove(move, gAlwaysHitInRainMoves))
-	||  IsZMove(move))
+	||  IsZMove(move)
+	||  IsAnyMaxMove(move))
 		return TRUE;
 
 	return FALSE;
@@ -916,6 +976,9 @@ bool8 MoveWouldHitBeforeOtherMove(u16 moveAtk, u8 bankAtk, u16 moveDef, u8 bankD
 
 bool8 IsUsefulToFlinchTarget(u8 bankDef)
 {
+	if (IsDynamaxed(bankDef))
+		return FALSE;
+
 	if (IsBankAsleep(bankDef)
 	&&  !MoveInMoveset(MOVE_SLEEPTALK, bankDef)
 	&&  !MoveInMoveset(MOVE_SNORE, bankDef))
@@ -962,12 +1025,17 @@ bool8 WillTakeSignificantDamageFromEntryHazards(u8 bank, u8 healthFraction)
 {
 	u32 dmg = 0;
 
-	if (gSideAffecting[SIDE(bank)] & SIDE_STATUS_SPIKES)
+	if (gSideAffecting[SIDE(bank)] & SIDE_STATUS_SPIKES
+	&& GetMonAbility(GetBankPartyData(bank)) != ABILITY_MAGICGUARD
+	&& ITEM_EFFECT(bank) != ITEM_EFFECT_HEAVY_DUTY_BOOTS)
 	{
 		struct Pokemon* mon = GetBankPartyData(bank);
 
 		if (gSideTimers[SIDE(bank)].srAmount > 0)
 			dmg += CalcStealthRockDamagePartyMon(mon);
+			
+		if (gSideTimers[SIDE(bank)].steelsurge > 0)
+			dmg += CalcSteelsurgeDamagePartyMon(mon);
 
 		if (gSideTimers[SIDE(bank)].spikesAmount > 0)
 			dmg += CalcSpikesDamagePartyMon(mon, SIDE(bank));
@@ -1067,6 +1135,9 @@ u16 GetBattleMonMove(u8 bank, u8 i)
 		else
 			move = gBattleMons[bank].moves[i];
 	#endif
+	
+	if (IsDynamaxed(bank))
+		move = GetMaxMove(bank, i);
 
 	return move;
 }
@@ -1131,7 +1202,9 @@ bool8 IsTakingSecondaryDamage(u8 bank)
 		||  gBattleMons[bank].status1 & STATUS1_BURN
 		||  ((gBattleMons[bank].status1 & STATUS1_SLEEP) > 1 && gBattleMons[bank].status2 & STATUS2_NIGHTMARE)
 		||  gBattleMons[bank].status2 & (STATUS2_CURSED | STATUS2_WRAPPED)
-		||	(BankSideHasSeaOfFire(bank) && !IsOfType(bank, TYPE_FIRE)))
+		||	(BankSideHasSeaOfFire(bank) && !IsOfType(bank, TYPE_FIRE))
+		||  (BankSideHasGMaxWildfire(bank) && !IsOfType(bank, TYPE_FIRE))
+		||  BankSideHasGMaxVolcalith(bank))
 			return TRUE;
 	}
 
@@ -1165,7 +1238,9 @@ bool8 WillFaintFromSecondaryDamage(u8 bank)
 		+  GetPoisonDamage(bank)
 		+  GetBurnDamage(bank)
 		+  GetCurseDamage(bank)
-		+  GetSeaOfFireDamage(bank) >= hp) //Sea of Fire runs on last turn
+		+  GetSeaOfFireDamage(bank) //Sea of Fire runs on last turn
+		+  GetGMaxWildfireDamage(bank)
+		+  GetGMaxVolcalithDamage(bank) >= hp) 
 			return TRUE;
 	}
 
@@ -1370,25 +1445,25 @@ bool8 BadIdeaToFreeze(u8 bankDef, u8 bankAtk)
 
 move_t IsValidMovePrediction(u8 bankAtk, u8 bankDef)
 {
-	if (gNewBS->movePredictions[bankAtk][bankDef] == MOVE_PREDICTION_SWITCH)
+	if (gNewBS->ai.movePredictions[bankAtk][bankDef] == MOVE_PREDICTION_SWITCH)
 		return MOVE_NONE;
 	else
-		return gNewBS->movePredictions[bankAtk][bankDef];
+		return gNewBS->ai.movePredictions[bankAtk][bankDef];
 }
 
 bool8 IsPredictedToSwitch(u8 bankAtk, u8 bankDef)
 {
-	return gNewBS->movePredictions[bankAtk][bankDef] == MOVE_PREDICTION_SWITCH;
+	return gNewBS->ai.movePredictions[bankAtk][bankDef] == MOVE_PREDICTION_SWITCH;
 }
 
 void StoreMovePrediction(u8 bankAtk, u8 bankDef, u16 move)
 {
-	gNewBS->movePredictions[bankAtk][bankDef] = move;
+	gNewBS->ai.movePredictions[bankAtk][bankDef] = move;
 }
 
 void StoreSwitchPrediction(u8 bankAtk, u8 bankDef)
 {
-	gNewBS->movePredictions[bankAtk][bankDef] = MOVE_PREDICTION_SWITCH;
+	gNewBS->ai.movePredictions[bankAtk][bankDef] = MOVE_PREDICTION_SWITCH;
 }
 
 bool8 IsMovePredictionSemiInvulnerable(u8 bankAtk, u8 bankDef)
@@ -1838,6 +1913,31 @@ bool8 HealingMoveInMoveset(u8 bank)
 	return FALSE;
 }
 
+bool8 HealingMoveInMonMoveset(struct Pokemon* mon)
+{
+	u16 move;
+	u8 moveLimitations = CheckMoveLimitationsFromParty(mon, 0, 0xFF);
+
+	for (int i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		move = GetMonData(mon, MON_DATA_MOVE1 + i, NULL);
+		if (move == MOVE_NONE)
+			break;
+
+		if (!(gBitTable[i] & moveLimitations))
+		{
+			u8 effect = gBattleMoves[move].effect;
+			if (effect == EFFECT_RESTORE_HP
+			||  effect == EFFECT_MORNING_SUN
+			||  effect == EFFECT_SWALLOW
+			||  effect == EFFECT_WISH)
+				return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
 bool8 SoundMoveInMoveset(u8 bank)
 {
 	u16 move;
@@ -1962,6 +2062,22 @@ bool8 UnfreezingMoveInMoveset(u8 bank)
 	return FALSE;
 }
 
+static bool8 WallsFoe(u8 bankAtk, u8 bankDef)
+{
+	u32 attack, spAttack;
+	bool8 cantWall = FALSE;
+
+	APPLY_STAT_MOD(attack, &gBattleMons[bankAtk], gBattleMons[bankAtk].attack, STAT_STAGE_ATK);
+	APPLY_STAT_MOD(spAttack, &gBattleMons[bankAtk], gBattleMons[bankAtk].spAttack, STAT_STAGE_SPATK);
+
+	if (PhysicalMoveInMoveset(bankAtk) && gBattleMons[bankDef].defense <= attack)
+		cantWall = TRUE;
+	else if (SpecialMoveInMoveset(bankAtk) && gBattleMons[bankDef].spDefense <= spAttack)
+		cantWall = TRUE;
+	
+	return !cantWall;
+}
+
 bool8 OnlyBadMovesLeftInMoveset(u8 bankAtk, u8 bankDef)
 {
 	int i;
@@ -2047,16 +2163,28 @@ bool8 OnlyBadMovesLeftInMoveset(u8 bankAtk, u8 bankDef)
 
 				u8 backupActiveBattler = gActiveBattler;
 				gActiveBattler = bankAtk;
-				if (GetMostSuitableMonToSwitchIntoScore() == SWITCHING_INCREASE_HAS_SUPER_EFFECTIVE_MOVE)
+				if (GetMostSuitableMonToSwitchIntoScore() & SWITCHING_INCREASE_HAS_SUPER_EFFECTIVE_MOVE)
 				{
 					gActiveBattler = backupActiveBattler;
 					if (hasSuperEffectiveMove)
 						return FALSE; //Don't switch to another Pokemon just because they have a Super-Effective move if you have one too.
+
+					if (GetMostSuitableMonToSwitchIntoScore() == SWITCHING_INCREASE_HAS_SUPER_EFFECTIVE_MOVE
+					&& WallsFoe(bankAtk, bankDef))
+						return FALSE; //Tough it out
 				}
 				else if (GetMostSuitableMonToSwitchIntoScore() < SWITCHING_INCREASE_HAS_SUPER_EFFECTIVE_MOVE)
 				{
 					gActiveBattler = backupActiveBattler;
 					return FALSE;
+				}
+				else if (GetMostSuitableMonToSwitchIntoScore() == SWITCHING_INCREASE_WALLS_FOE)
+				{
+					//Check if current mon can't wall
+					bool8 canWall = WallsFoe(bankAtk, bankDef);
+
+					if (canWall) //Current mon can wall
+						return FALSE; //Tough it out
 				}
 			}
 			else
@@ -2072,6 +2200,7 @@ bool8 OnlyBadMovesLeftInMoveset(u8 bankAtk, u8 bankDef)
 u16 TryReplaceMoveWithZMove(u8 bankAtk, u8 bankDef, u16 move)
 {
 	if (!gNewBS->ZMoveData->used[bankAtk] && SPLIT(move) != SPLIT_STATUS
+	&& !IsAnyMaxMove(move)
 	&& ShouldAIUseZMove(bankAtk, bankDef, move))
 	{
 		u8 moveIndex = FindMovePositionInMoveset(move, bankAtk);
@@ -2080,7 +2209,7 @@ u16 TryReplaceMoveWithZMove(u8 bankAtk, u8 bankDef, u16 move)
 			u16 zMove = CanUseZMove(bankAtk, moveIndex, move);
 			if (zMove != MOVE_NONE)
 			{
-				gNewBS->aiZMoveHelper = move; //Store the original move in memory for damage calcs later
+				gNewBS->ai.zMoveHelper = move; //Store the original move in memory for damage calcs later
 				move = zMove;
 			}
 		}
@@ -2211,7 +2340,7 @@ bool8 PartyMemberStatused(u8 bank, bool8 checkSoundproof)
 	return FALSE;
 }
 
-u16 ShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move)
+bool8 ShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move)
 {
 	int i;
 
@@ -2225,6 +2354,10 @@ u16 ShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move)
 	{
 		if (zMove != 0xFFFF) //Damaging Z-Move
 		{
+			u8 defAbility = ABILITY(bankDef);
+			u16 defSpecies = SPECIES(bankDef);
+			bool8 noMoldBreakers = NO_MOLD_BREAKERS(ABILITY(bankAtk), zMove);
+
 			if (move == MOVE_FAKEOUT && ShouldUseFakeOut(bankAtk, bankDef))
 				return FALSE; //Prefer actual Fake Out over Breakneck Blitz
 
@@ -2234,11 +2367,32 @@ u16 ShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move)
 			 && !MoveIgnoresSubstitutes(zMove, bankAtk)))
 				return FALSE; //Don't use a Z-Move on a Substitute or if the enemy is going to go first and use Substitute
 
-			if (NO_MOLD_BREAKERS(ABILITY(bankAtk), zMove) && ABILITY(bankDef) == ABILITY_DISGUISE && SPECIES(bankDef) == SPECIES_MIMIKYU)
+			#ifdef SPECIES_MIMIKYU
+			if (noMoldBreakers && defAbility == ABILITY_DISGUISE && defSpecies == SPECIES_MIMIKYU)
 				return FALSE; //Don't waste a Z-Move busting Mimikyu's disguise
+			#endif
+			#ifdef SPECIES_EISCUE
+			if (noMoldBreakers && defAbility == ABILITY_ICEFACE && defSpecies == SPECIES_EISCUE && SPLIT(zMove) == SPLIT_PHYSICAL)
+				return FALSE; //Don't waste a Z-Move busting Eiscue's Ice Face
+			#endif
 
-			if (defMovePrediction == MOVE_PROTECT || defMovePrediction == MOVE_KINGSSHIELD || defMovePrediction == MOVE_SPIKYSHIELD)
+			if (defMovePrediction == MOVE_PROTECT || defMovePrediction == MOVE_KINGSSHIELD || defMovePrediction == MOVE_SPIKYSHIELD || defMovePrediction == MOVE_OBSTRUCT
+			|| (IsDynamaxed(bankDef) && SPLIT(defMovePrediction) == SPLIT_STATUS))
 				return FALSE; //Don't waste a Z-Move on a Protect
+
+			if (IsRaidBattle() && gNewBS->dynamaxData.raidShieldsUp && SIDE(bankAtk) == B_SIDE_PLAYER && SIDE(bankDef) == B_SIDE_OPPONENT) //Partner AI on Raid Pokemon with shields up
+			{
+				if (gNewBS->dynamaxData.shieldCount - gNewBS->dynamaxData.shieldsDestroyed >= 2)
+					return FALSE; //Don't waste a Z-Move breaking a shield
+
+				u16 bankAtkPartner = PARTNER(bankAtk);
+				u16 partnerMove = (gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE) ? gChosenMovesByBanks[bankAtkPartner] : IsValidMovePrediction(bankAtkPartner, bankDef);
+
+				if (SPLIT(partnerMove) == SPLIT_STATUS
+				|| MoveWouldHitFirst(partnerMove, bankAtkPartner, bankAtk)
+				|| (gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE && gBattleStruct->moveTarget[bankAtkPartner] != bankDef)) //Not targeting raid Pokemon
+					return FALSE; //Don't waste a Z-Move if partner can't destroy shield first
+			}
 
 			//These moves should always be turned into Z-Moves, regardless if they KO or not
 			switch (gBattleMoves[move].effect) {
@@ -2335,6 +2489,30 @@ u16 ShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move)
 				default: //Recover HP
 					return TRUE;
 			}
+		}
+	}
+
+	return FALSE;
+}
+
+bool8 ShouldAIDynamax(u8 bankAtk, u8 bankDef, u16 move)
+{
+	if (gBattleTypeFlags & BATTLE_TYPE_DYNAMAX && CanDynamax(bankAtk))
+	{
+		if (IS_DOUBLE_BATTLE && bankDef == PARTNER(bankAtk))
+			return FALSE; //No need to Dynamax against your partner
+
+		if (IsMegaStone(GetBankPartyData(bankAtk)->item)
+		||  IsZCrystal(GetBankPartyData(bankAtk)->item))
+			return FALSE;
+
+		if (IsClassSweeper(GetBankFightingStyle(bankAtk)))
+		{
+			if (MoveWouldHitFirst(move, bankAtk, bankDef)
+			&&  MoveKnocksOutXHits(move, bankAtk, bankDef, 1))
+				return FALSE; //Just KO the opponent normally
+
+			return TRUE;
 		}
 	}
 

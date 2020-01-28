@@ -10,8 +10,10 @@
 //Exported Functions
 bool8 TryDoBenjaminButterfree(u8 scriptOffset);
 s32 GetPsywaveDamage(u8 randDamage);
-u8 CheckMoveLimitations(u8 bank, u8 unusableMoves, u8 check);
-u8 CheckMoveLimitationsFromParty(struct Pokemon* mon, u8 unusableMoves, u8 check);
+bool8 SetSunnyWeather(void);
+bool8 SetRainyWeather(void);
+bool8 SetHailWeather(void);
+bool8 SetSandstormWeather(void);
 bool8 SandstormHurts(u8 bank);
 bool8 HailHurts(u8 bank);
 bool8 TakesDamageFromSandstorm(u8 bank);
@@ -26,14 +28,6 @@ void BufferAttackerItem(void);
 void MoveValuesCleanUp(void);
 
 //Exported Constants
-#define MOVE_LIMITATION_ZEROMOVE    (1 << 0)
-#define MOVE_LIMITATION_PP          (1 << 1)
-#define MOVE_LIMITATION_DISABLED    (1 << 2)
-#define MOVE_LIMITATION_TORMENTED   (1 << 3)
-#define MOVE_LIMITATION_TAUNT       (1 << 4)
-#define MOVE_LIMITATION_IMPRISION   (1 << 5)
-#define MOVE_LIMITATION_CHOICE		(1 << 6)
-#define MOVE_LIMITATION_ENCORE		(1 << 7)
 
 enum FaintEffectsStates
 {
@@ -42,6 +36,7 @@ enum FaintEffectsStates
 	Faint_ReceiverActivate,
 	Faint_SwitchInAbilities,
 	Faint_PrimalWeather,
+	Faint_RaidBattle,
 	Faint_FormsRevert,
 	Faint_FormsStats,
 	Faint_FormsHP,
@@ -55,7 +50,6 @@ enum
 	CASTFORM_TO_WATER,  //3
 	CASTFORM_TO_ICE,    //4
 };
-
 
 enum CastformForms
 {

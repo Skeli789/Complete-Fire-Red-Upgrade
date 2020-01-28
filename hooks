@@ -40,6 +40,7 @@ CalcMonHiddenPowerType 802B678 1
 ReshowBattleScreenMonSpriteHook1 8077CD2 0
 ReshowBattleScreenMonSpriteHook2 8077ECA 0
 ReshowBattleScreenHealthboxSpriteHook 8078104 0
+HealthBarChangeAmountHook 804A00C 4
 
 HandleInputChooseAction 0802E438 0
 SwitchMoveDataHook 802EF90 0
@@ -63,6 +64,7 @@ HandleIntroSlide 80BC3A0 1
 BufferStringBattle 080D7274 1
 BattleStringExpandPlaceholders 80D7868 2
 DisplayStatStageMessage 80D8486 0
+BufferMaxMoveNameBattle 80D84F6 0
 ExpandedAbilityNamesBattle2 80D860C 0
 
 ##Multi Hooks
@@ -107,6 +109,17 @@ LoadMegaGraphicsHook 803495C 1
 MegaLevelStringHook 80483A4 1
 CreateShakerHook 804BE80 3
 ObjcShakerHook 804BEDC 2
+
+##Dynamax Hooks
+DynamaxPalFadeHook1_LoadOpponentGfx 803443C 0
+DynamaxPalFadeHook2_LoadPlayerGfx 80345FC 0
+DynamaxPalFadeHook3_AlreadyTransformed 8034DE0 0
+DynamaxPalFadeHook4_PostTransform 8034FFC 0
+RaidBattleCoordHook1 80744B0 0
+RaidBattleCoordHook2 80744D8 0
+HandleDynamaxOnTurnEnd 8018C98 0
+DeadRaidMonSpriteHook 8077CC4 1
+DeadRaidMonSpriteHook2 807524C 2
 
 BatonPassEffects 08012850 0
 
@@ -185,6 +198,7 @@ CoreEnforcerASM 080A243C 0
 ##Poke Ball Hooks
 CaptureExperienceEvolutionHook 8015A44 1
 GetPokeBallBattleScriptHook 801645E 0
+PlayerHandleBallThrowAnim 80327B0 0
 SetMonPokeBallHook 08040858 0
 LoadBallGfx 0804BEF4 1
 GetBattlerPokeballItemId 0804BF90 1
@@ -216,6 +230,7 @@ FishingWildEncounter 8082FB0 1
 TryStandardWildEncounter 80833B0 1
 ScrCmd_setwildbattle 806C368 1
 sp138_StartLegendaryBattle 807F9D8 0
+CreateWildMon 80829FC 2
 GetLocalWildMon 8082FE8 1
 GetLocalWaterMon 8083074 0
 GetAbilityEncounterRateModType 8082C58 0
@@ -233,7 +248,7 @@ SetFoughtRoamerInactive 814201C 1
 HandleWriteSector 80D9870 2
 HandleLoadSector 80D9E54 2
 HandleSavingData 80DA248 1
-NewGameSaveClearHook 8054B44 0
+NewGameSaveClearHook 8054A60 0
 ExpandedVarsHook 806E454 1
 ExpandedFlagsHook 806E5C0 1
 
@@ -380,9 +395,8 @@ FollowMe_EscalatorMoveHook 08084868 2
 FollowMe_EscalatorWarpEndHook 08084ACC 0
 FollowMe_WarpDoorEndHook 0807E1F8 0
 FollowMe_WarpArrowEndHook 0807E2B8 0
-FollowMe_WarpNormalEndHook 0807E308 0
+FollowMe_WarpNormalEndHook 0807DF74 0
 FollowMe_WarpTeleportEndHook 807E364 0
-FollowMe_WarpSomethingEndHook 0807E3D6 0
 FollowMe_WarpStairsEndHook 0807EC5A 0
 FollowMe_WarpHoleEndHook 8084770 0
 FollowMe_LocalIdHook 0805DF60 3
@@ -531,7 +545,7 @@ FixWindowTemplates 080E46B4 0
 DrawBlockHook 0805A9B8 1
 
 ##Footstep Sounds
-GrassFootstepNoiseHook 80DB3C8 1
+#GrassFootstepNoiseHook 80DB3C8 1
 VeryTallGrassFootstepNoiseHook 80DB678 1
 SandFootstepNoiseHook 80DB9C4 1
 

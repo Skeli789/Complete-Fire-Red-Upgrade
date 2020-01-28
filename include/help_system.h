@@ -3,6 +3,6 @@
 
 #include "global.h"
 
-extern bool8 gUnknown_3005ECC;
+DrawHelpMessageWindowWithText
 
 #endif //GUARD_HELP_SYSTEM_H

@@ -32,3 +32,6 @@ extern const u8 BattleScript_EjectButton[];
 extern const u8 BattleScript_RedCard[];
 extern const u8 BattleScript_EmergencyExit[];
 extern const u8 BattleScript_AbilityTransformed[];
+extern const u8 BattleScript_RaidShields[];
+extern const u8 BattleScript_BrokenRaidBarrier[];
+extern const u8 BattleScript_RaidBattleStatIncrease[];

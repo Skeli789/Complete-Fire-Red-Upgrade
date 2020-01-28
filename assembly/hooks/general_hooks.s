@@ -268,13 +268,14 @@ SkipEncoreReturn:
 	bx r0
 
 .pool
-@0x8054B44 with r0
+@0x8054A60 with r0
 NewGameSaveClearHook:
+	push {r4-r6, lr}
+	mov r6, r8
+	push {r6}
+	sub sp, sp, #0x8
 	bl NewGameWipeNewSaveData
-	pop {r3}
-	mov r8, r3
-	pop {r4-r6}
-	pop {r0}
+	ldr r0, =0x8054A68 | 1
 	bx r0
 
 .pool
@@ -640,6 +641,7 @@ SelectItemFromTMCaseReturn:
 	ldr r0, =0x8132370 | 1
 	bx r0
 
+/*
 .pool
 @0x80DB3C8 with r1
 GrassFootstepNoiseHook:
@@ -647,6 +649,7 @@ GrassFootstepNoiseHook:
 	beq DoGrassFootstepNoise
 	mov r0, r3
 	mov r1, #0x4
+*/
 DoSeekSpriteAnim:
 	ldr r2, =SeekSpriteAnim
 	bl bxr2
@@ -717,7 +720,8 @@ ReshowBattleScreenMonSpriteHook1:
 	ldrh r0, [r6]
 	mov r1, r10
 	mul r0, r1
-	ldr r1, =0x8077CDA | 1
+	add r0, r9
+	ldr r1, =0x8077CDC | 1
 	bx r1
 
 .pool
@@ -1008,3 +1012,17 @@ DNSEndBuyMenuHook:
 	strb r1, [r0]
 	ldr r0, =0x809C082 | 1
 	bx r0
+
+.pool
+@0x804A00C with r4
+HealthBarChangeAmountHook:
+	mov r4, #0x6
+	str r4, [sp]
+	push {r0-r3}
+	mov r0, r8
+	bl CalcHealthBarPixelChange
+	mov r4, r0
+	pop {r0-r3}
+	str r4, [sp, #0x4]
+	ldr r4, =0x804A014 | 1
+	bx r4

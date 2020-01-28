@@ -127,3 +127,13 @@ definitions for battle backgrounds
 .equ BG_SNUGGLE_FOREVER_IMG, Snuggle_ForeverTiles
 .equ BG_SNUGGLE_FOREVER_PAL, Snuggle_ForeverPal
 .equ BG_SNUGGLE_FOREVER_RAW, Snuggle_ForeverMap
+.equ BG_MAX_LIGHTNING_IMG, Max_LightningTiles
+.equ BG_MAX_LIGHTNING_PAL, Max_LightningPal
+.equ BG_MAX_LIGHTNING_RAW, Max_LightningMap
+.equ BG_GARBAGE_FALL_PAL, Garbage_FallsPal
+.equ BG_HYPER_BEAM_IMG, Hydro_CannonTiles
+.equ BG_HYPER_BEAM_PAL, Hyper_BeamPal
+.equ BG_HYPER_BEAM_RAW, Hydro_CannonMap
+.equ BG_DYNAMAX_CANNON_IMG, Hydro_CannonTiles
+.equ BG_DYNAMAX_CANNON_PAL, Dynamax_CannonPal
+.equ BG_DYNAMAX_CANNON_RAW, Hydro_CannonMap

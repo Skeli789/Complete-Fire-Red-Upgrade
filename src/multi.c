@@ -6,6 +6,7 @@
 #include "../include/new/ai_master.h"
 #include "../include/new/battle_util.h"
 #include "../include/new/build_pokemon.h"
+#include "../include/new/dynamax.h"
 #include "../include/new/frontier.h"
 #include "../include/m4a.h"
 #include "../include/new/mega.h"
@@ -308,17 +309,21 @@ void ChooseProperPartnerController(void)
 	gBanksBySide[1] = 1;
 	gBanksBySide[3] = 3;
 	gBattlersCount = 4;
+	
+	if (IsRaidBattle())
+		gBattlersCount = 3;
 
 	gBattleBankFunc[0] = (u32) SetControllerToPlayer;
 	gBattleBankFunc[1] = (u32) SetControllerToOpponent;
 	gBattleBankFunc[3] = (u32) SetControllerToOpponent;
 
-	if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER) {
+	if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
+	{
 		gBattleBankFunc[2] = (u32) SetControllerToPlayerPartner;
 		gBanksBySide[2] = 2; //The game crashes when this line is not here for some reason
 	}
-
-	else {
+	else
+	{
 		gBattleBankFunc[2] = (u32) SetControllerToPlayer;
 		gBanksBySide[2] = 2; //The game crashes when this line is not here for some reason
 	}
@@ -389,6 +394,8 @@ static void PlayerPartnerHandleChooseMove(void)
 		if (ShouldAIUseZMove(gActiveBattler, gBankTarget, moveInfo->moves[chosenMoveId]))
 			gNewBS->ZMoveData->toBeUsed[gActiveBattler] = TRUE;
 	}
+	else if (gBattleResults->battleTurnCounter > 3 && ShouldAIDynamax(gActiveBattler, gBankTarget, chosenMove)) //Give the Player a chance to Dynamax first
+		gNewBS->dynamaxData.toBeUsed[gActiveBattler] = TRUE;
 	else if (!ShouldAIDelayMegaEvolution(gActiveBattler, gBankTarget, chosenMove))
 	{
 		if (moveInfo->canMegaEvolve && moveInfo->megaVariance != MEGA_VARIANT_ULTRA_BURST)
@@ -403,7 +410,7 @@ static void PlayerPartnerHandleChooseMove(void)
 	gChosenMovesByBanks[gActiveBattler] = chosenMove;
 	TryRemoveDoublesKillingScore(gActiveBattler, gBankTarget, chosenMove);
 
-	EmitMoveChosen(1, chosenMoveId, gBankTarget, gNewBS->MegaData->chosen[gActiveBattler], gNewBS->UltraData->chosen[gActiveBattler], gNewBS->ZMoveData->toBeUsed[gActiveBattler]);
+	EmitMoveChosen(1, chosenMoveId, gBankTarget, gNewBS->MegaData->chosen[gActiveBattler], gNewBS->UltraData->chosen[gActiveBattler], gNewBS->ZMoveData->toBeUsed[gActiveBattler], FALSE);
 	PlayerPartnerBufferExecComplete();
 }
 
@@ -414,6 +421,38 @@ static void PlayerPartnerHandlePrintSelectionString(void)
 
 static void PlayerPartnerHandleChooseAction(void)
 {
+	u8 partner = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
+	u16 itemId = gBattleBufferA[gActiveBattler][2] | (gBattleBufferA[gActiveBattler][3] << 8);
+
+	if (RAID_BATTLE_END) //mon 2 doesn't get to do anything.
+	{
+		if ((gActionForBanks[partner] == ACTION_USE_ITEM && GetPocketByItemId(itemId) == POCKET_POKEBALLS)
+		|| gActionForBanks[partner] == ACTION_RUN)
+		{
+			gNewBS->NoMoreMovingThisTurn |= gBitTable[gActiveBattler];
+			EmitTwoReturnValues(1, ACTION_USE_MOVE, 0);
+			PlayerPartnerBufferExecComplete();
+			return;
+		}
+		else
+		{
+			EmitTwoReturnValues(1, ACTION_CANCEL_PARTNER, 0);
+			PlayerPartnerBufferExecComplete();
+			return;
+		}
+	}
+	else if (gActionForBanks[partner] == ACTION_RUN
+	|| (!IsBagDisabled()
+	 && gActionForBanks[partner] == ACTION_USE_ITEM
+	 && GetPocketByItemId(itemId) == POCKET_POKEBALLS)) //mon 2 doesn't get to do anything.
+	{
+		gNewBS->NoMoreMovingThisTurn |= gBitTable[gActiveBattler];
+
+		EmitTwoReturnValues(1, ACTION_USE_MOVE, 0);
+		PlayerPartnerBufferExecComplete();
+		return;
+	}
+
 	AI_TrySwitchOrUseItem();
 	PlayerPartnerBufferExecComplete();
 }
@@ -427,8 +466,8 @@ static void PlayerPartnerHandleChoosePokemon(void)
 		u8 battlerIn1, battlerIn2, firstId, lastId;
 		struct Pokemon* party = LoadPartyRange(gActiveBattler, &firstId, &lastId);
 
-		if (gNewBS->bestMonIdToSwitchInto[gActiveBattler][0] == PARTY_SIZE
-		||  GetMonData(&party[gNewBS->bestMonIdToSwitchInto[gActiveBattler][0]], MON_DATA_HP, NULL) == 0)
+		if (gNewBS->ai.bestMonIdToSwitchInto[gActiveBattler][0] == PARTY_SIZE
+		||  GetMonData(&party[gNewBS->ai.bestMonIdToSwitchInto[gActiveBattler][0]], MON_DATA_HP, NULL) == 0)
 			CalcMostSuitableMonToSwitchInto();
 
 		chosenMonId = GetMostSuitableMonToSwitchInto();

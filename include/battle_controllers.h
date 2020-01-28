@@ -121,10 +121,15 @@ struct ChooseMoveStruct
 	bool8 zMoveUsed : 1;
 	bool8 megaDone : 1;
 	bool8 ultraDone : 1;
-	bool8 bank : 8;
+	bool8 dynamaxDone : 1;
+	bool8 bank;
 	u8 zPartyIndex;
 	u16 possibleZMoves[MAX_MON_MOVES];
 	u8 ability;
+	bool8 canDynamax;
+	u16 possibleMaxMoves[MAX_MON_MOVES];
+	u16 maxMovePowers[MAX_MON_MOVES];
+	u8 dynamaxPartyIndex;
 };
 
 

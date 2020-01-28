@@ -129,13 +129,13 @@ u16 GetEvolutionTargetSpecies(struct Pokemon* mon, u8 type, u16 evolutionItem)
 					break;
 
 				case EVO_TYPE_IN_PARTY:
-					// type in param
-					// level in unknown
+					// level in param
+					// type in unknown
 					// eg. Pancham table would be:
-					//		[SPECIES_PANCHAM] = {{EVO_TYPE_IN_PARTY, TYPE_DARK, SPECIES_PANGORO, 32}},
-					if (level >= gEvolutionTable[species][i].unknown)
+					//		[SPECIES_PANCHAM] = {{EVO_TYPE_IN_PARTY, 32, SPECIES_PANGORO, TYPE_DARK}},
+					if (level >= gEvolutionTable[species][i].param)
 					{
-						u8 typeCheck = gEvolutionTable[species][i].param;
+						u8 typeCheck = gEvolutionTable[species][i].unknown;
 						if (typeCheck >= NUMBER_OF_MON_TYPES)
 							break;
 						for (j = 0; j < gPlayerPartyCount; ++j)
@@ -308,6 +308,71 @@ void ItemEvolutionRemoval(pokemon_t* mon)
 	#endif
 }
 
+bool8 IsLevelUpEvolutionMethod(u8 method)
+{
+	switch (method) { 
+		case EVO_LEVEL:
+		case EVO_LEVEL_ATK_GT_DEF:
+		case EVO_LEVEL_ATK_EQ_DEF:
+		case EVO_LEVEL_ATK_LT_DEF:
+		case EVO_LEVEL_SILCOON:
+		case EVO_LEVEL_CASCOON:
+		case EVO_LEVEL_NINJASK:
+		case EVO_LEVEL_SHEDINJA:
+		case EVO_RAINY_FOGGY_OW:
+		case EVO_TYPE_IN_PARTY:
+		case EVO_MALE_LEVEL:
+		case EVO_FEMALE_LEVEL:
+		case EVO_LEVEL_NIGHT:
+		case EVO_LEVEL_DAY:
+		case EVO_LEVEL_SPECIFIC_TIME_RANGE:	
+			return TRUE;
+		default:
+			return FALSE;
+	}
+}
+
+bool8 IsItemEvolutionMethod(u8 method)
+{
+	switch (method) {
+		case EVO_ITEM:
+		case EVO_TRADE_ITEM:
+		case EVO_HOLD_ITEM_NIGHT:
+		case EVO_HOLD_ITEM_DAY:
+			return TRUE;
+		default:
+			return FALSE;
+	}
+}
+
+bool8 IsFriendshipEvolutionMethod(u8 method)
+{
+	switch (method) {
+		case EVO_FRIENDSHIP:
+		case EVO_FRIENDSHIP_DAY:
+		case EVO_FRIENDSHIP_NIGHT:
+			return TRUE;
+		default:
+			return FALSE;
+	}
+}
+
+bool8 IsOtherEvolutionMethod(u8 method)
+{
+	switch (method) {
+		case EVO_BEAUTY:
+		case EVO_TRADE:
+		case EVO_MOVE_TYPE:
+		case EVO_MAP:
+		case EVO_MOVE:
+		case EVO_OTHER_PARTY_MON:
+		case EVO_FLAG_SET:
+			return TRUE;
+		default:
+			return FALSE;
+	}
+}
+
 u16 GetMonDevolution(struct Pokemon* mon)
 {
 	int j, k;
@@ -328,6 +393,14 @@ u16 GetMonDevolution(struct Pokemon* mon)
 				{
 					originalSpecies = j;
 					goto SEARCH_START; //Find base form for Mega and then actually look
+				}
+			}
+			else if (gEvolutionTable[j][k].method == EVO_GIGANTAMAX)
+			{
+				if (gEvolutionTable[j][k].targetSpecies == species && gEvolutionTable[j][k].param != FALSE)
+				{
+					originalSpecies = j;
+					goto SEARCH_START; //Find base form for Gigantamax and then actually look
 				}
 			}
 			else if (gEvolutionTable[j][k].targetSpecies == species)

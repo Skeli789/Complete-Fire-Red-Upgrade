@@ -268,7 +268,7 @@ gBattleScriptsForMoveEffects:
 .word BS_250_Blank
 .word BS_251_Blank
 .word BS_252_Blank
-.word BS_253_Blank
+.word BS_253_MaxMove
 .word BS_254_Synchronoise
 .word BS_255_Blank
 

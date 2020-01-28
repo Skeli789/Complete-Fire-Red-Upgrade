@@ -13,7 +13,8 @@ ability_tables.s
 .global gRolePlayBannedAbilities
 .global gRolePlayAttackerBannedAbilities
 .global gSkillSwapBannedAbilities
-.global gWorrySeedGastroAcidBannedAbilities
+.global gWorrySeedBannedAbilities
+.global gGastroAcidBannedAbilities
 .global gEntrainmentBannedAbilitiesAttacker
 .global gEntrainmentBannedAbilitiesTarget
 .global gSimpleBeamBannedAbilities
@@ -76,7 +77,22 @@ gSkillSwapBannedAbilities:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-gWorrySeedGastroAcidBannedAbilities:
+gWorrySeedBannedAbilities:
+.byte ABILITY_MULTITYPE
+.byte ABILITY_STANCECHANGE
+.byte ABILITY_SCHOOLING
+.byte ABILITY_COMATOSE
+.byte ABILITY_SHIELDSDOWN
+.byte ABILITY_DISGUISE
+.byte ABILITY_RKSSYSTEM
+.byte ABILITY_BATTLEBOND
+.byte ABILITY_POWERCONSTRUCT
+.byte ABILITY_TRUANT
+.byte ABILITY_TABLES_TERMIN
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+gGastroAcidBannedAbilities:
 .byte ABILITY_MULTITYPE
 .byte ABILITY_STANCECHANGE
 .byte ABILITY_SCHOOLING

@@ -11,11 +11,14 @@
 #include "../include/new/battle_strings.h"
 #include "../include/new/battle_strings_2.h"
 #include "../include/new/battle_util.h"
+#include "../include/new/dynamax.h"
 #include "../include/new/frontier.h"
 #include "../include/new/general_battle_strings.h"
 #include "../include/new/mega.h"
 #include "../include/new/multi.h"
 #include "../include/new/set_z_effect.h"
+#include "../include/new/text.h"
+
 /*
 battle_strings.c
 	modifies the strings displayed in battle.
@@ -140,7 +143,7 @@ void BufferStringBattle(u16 stringID)
 				stringPtr = BattleText_WildPkmnAppeared6; //0x83FD297
 			#endif
 
-			else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+			else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && !IsRaidBattle())
 				stringPtr = BattleText_TwoWildPkmnAppeared; //0x83FD2BF
 			else if (gBattleTypeFlags & BATTLE_TYPE_OLD_MAN)
 				stringPtr = BattleText_WildPkmnAppearedPause; //0x83FD2AA
@@ -291,17 +294,8 @@ void BufferStringBattle(u16 stringID)
 
 		if (move >= MOVES_COUNT)
 			StringCopy(gBattleTextBuff2, sATypeMove_Table[gBattleStruct->stringMoveType]);
-
 		else
-		{
-			if (IsZMove(move))
-			{
-				//Load elongated move names for Z-Moves
-				StringCopy(gBattleTextBuff2, GetZMoveName(move));
-			}
-			else
-				StringCopy(gBattleTextBuff2, gMoveNames[move]);
-		}
+			BufferMoveNameBattle(move, gBattleTextBuff2);
 
 		ChooseTypeOfMoveUsedString(gBattleTextBuff2);
 
@@ -422,11 +416,12 @@ void BufferStringBattle(u16 stringID)
 
 u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 {
+	int i;
+	u8 multiplayerId;
+	u8 text[30];
+	
 	u32 dstID = 0; // if they used dstID, why not use srcID as well?
 	const u8* toCpy = NULL;
-	u8 text[30];
-	u8 multiplayerId;
-	int i;
 
 	multiplayerId = GetMultiplayerId();
 
@@ -557,20 +552,18 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 					toCpy = sATypeMove_Table[gBattleStruct->stringMoveType];
 				else
 				{
-					if (gNewBS->ZMoveData->active && SPLIT((*gStringInfo)->currentMove) != SPLIT_STATUS)
-					{
-						//Load elongated move names for Z-Moves
-						toCpy = GetZMoveName((*gStringInfo)->currentMove);
-					}
-					else
-						toCpy = gMoveNames[(*gStringInfo)->currentMove];
+					BufferMoveNameBattle((*gStringInfo)->currentMove, text);
+					toCpy = text;
 				}
 				break;
 			case B_TXT_LAST_MOVE: // originally used move name
 				if ((*gStringInfo)->originallyUsedMove >= MOVES_COUNT)
 					toCpy = sATypeMove_Table[gBattleStruct->stringMoveType];
 				else
-					toCpy = gMoveNames[(*gStringInfo)->originallyUsedMove];
+				{
+					BufferMoveNameBattle((*gStringInfo)->originallyUsedMove, text);
+					toCpy = text;
+				}
 				break;
 			case B_TXT_LAST_ITEM: // last used item
 				CopyItemName(gLastUsedItem, text);
@@ -901,6 +894,55 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 	return dstID;
 }
 
+static u8* StringCopyBattleStringLoader(u8 *dest, const u8 *src)
+{
+    s32 i;
+    s32 limit = MAX_BATTLE_STRING_LOADER_LENGTH;
+
+    for (i = 0; i < limit; i++)
+    {
+        dest[i] = src[i];
+
+        if (dest[i] == EOS)
+            return &dest[i];
+    }
+
+    dest[i] = EOS;
+    return &dest[i];
+}
+
+void BufferMoveNameBattle(u16 move, u8* dst)
+{
+	if (IsZMove(move))
+	{
+		//Load elongated move names for Z-Moves
+		StringCopy(dst, GetZMoveName(move));
+	}
+	else if ((*gStringInfo)->dynamaxActive)
+	{
+		if (IsGMaxMove(move))
+		{
+			dst[0] = PC_G,
+			dst[1] = PC_DASH,
+			dst[2] = PC_M,
+			dst[3] = PC_a,
+			dst[4] = PC_x,
+			dst[5] = PC_SPACE, //Space
+			StringCopy(&dst[6], gMoveNames[move]);
+		}
+		else
+		{
+			dst[0] = PC_M,
+			dst[1] = PC_a,
+			dst[2] = PC_x,
+			dst[3] = PC_SPACE, //Space
+			StringCopy(&dst[4], gMoveNames[move]);
+		}
+	}
+	else
+		StringCopy(dst, gMoveNames[move]);
+}
+
 void EmitPrintString(u8 bufferId, u16 stringID)
 {
 	int i;
@@ -921,8 +963,11 @@ void EmitPrintString(u8 bufferId, u16 stringID)
 	stringInfo->hpScale = gBattleStruct->hpScale;
 	stringInfo->stringBank = gStringBank;
 	stringInfo->moveType = gBattleMoves[gCurrentMove].type;
-	stringInfo->battleStringLoader = gBattleStringLoader;
 	stringInfo->zMoveActive = gNewBS->ZMoveData->active;
+	stringInfo->dynamaxActive = gNewBS->dynamaxData.active;
+
+	if (gBattleStringLoader !=  NULL)
+		StringCopyBattleStringLoader(stringInfo->battleStringLoader, gBattleStringLoader);
 
 	for (i = 0; i < MAX_BATTLERS_COUNT; i++)
 		stringInfo->abilities[i] = *GetAbilityLocation(i);
@@ -952,8 +997,11 @@ void EmitPrintSelectionString(u8 bufferId, u16 stringID)
 	stringInfo->lastAbility = gLastUsedAbility;
 	stringInfo->scrActive = gBattleScripting->bank;
 	stringInfo->unk1605E = gBattleStruct->field_52;
-	stringInfo->battleStringLoader = gBattleStringLoader;
 	stringInfo->zMoveActive = gNewBS->ZMoveData->active;
+	stringInfo->dynamaxActive = gNewBS->dynamaxData.active;
+
+	if (gBattleStringLoader !=  NULL)
+		StringCopyBattleStringLoader(stringInfo->battleStringLoader, gBattleStringLoader);
 
 	for (i = 0; i < MAX_BATTLERS_COUNT; i++)
 		stringInfo->abilities[i] = *GetAbilityLocation(i);

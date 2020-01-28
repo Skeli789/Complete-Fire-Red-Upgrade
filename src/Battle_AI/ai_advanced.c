@@ -10,6 +10,7 @@
 #include "../../include/new/battle_start_turn_start.h"
 #include "../../include/new/battle_util.h"
 #include "../../include/new/damage_calc.h"
+#include "../../include/new/dynamax.h"
 #include "../../include/new/util.h"
 #include "../../include/new/item.h"
 #include "../../include/new/multi.h"
@@ -285,6 +286,14 @@ bool8 IsClassDamager(u8 class)
 	return IsClassSweeper(class) ||  IsClassDoublesAttacker(class);
 }
 
+u8 GetBankFightingStyle(u8 bank)
+{
+	if (gNewBS->ai.fightingStyle[bank] == 0xFF)
+		gNewBS->ai.fightingStyle[bank] = PredictBankFightingStyle(bank);
+
+	return gNewBS->ai.fightingStyle[bank];
+}
+
 u8 PredictBankFightingStyle(u8 bank)
 {
 	return PredictFightingStyle(gBattleMons[bank].moves, ABILITY(bank), ITEM_EFFECT(bank), bank);
@@ -355,7 +364,7 @@ u8 PredictFightingStyle(const u16* const moves, const u8 ability, const u8 itemE
 						break;
 
 					default:
-						if (itemEffect == ITEM_EFFECT_CHOICE_BAND || itemEffect == ITEM_EFFECT_ASSAULT_VEST)
+						if (ability == ABILITY_GORILLATACTICS || itemEffect == ITEM_EFFECT_CHOICE_BAND || itemEffect == ITEM_EFFECT_ASSAULT_VEST)
 							class = FIGHT_CLASS_SWEEPER_KILL;
 						else if (moveEffect == EFFECT_RESTORE_HP //Not placed above because checked in this order
 							  || moveEffect == EFFECT_MORNING_SUN
@@ -641,12 +650,16 @@ u16 GetAmountToRecoverBy(u8 bankAtk, u8 bankDef, u16 move)
 		return 0;
 
 	u16 amountToRecover = 0;
-	u16 curHp = gBattleMons[bankAtk].hp;
-	u16 maxHp = gBattleMons[bankAtk].maxHP;
+	u16 curHp = GetBaseCurrentHP(bankAtk);
+	u16 maxHp = GetBaseMaxHP(bankAtk);
+	u8 itemEffect = ITEM_EFFECT(bankAtk);
 
 	switch (gBattleMoves[move].effect) {
 		case EFFECT_RESTORE_HP:
-			amountToRecover = MathMax(1, maxHp / 2);
+			if (move == MOVE_LIFEDEW)
+				amountToRecover = MathMax(1, maxHp / 4);
+			else
+				amountToRecover = MathMax(1, maxHp / 2);
 			break;
 
 		case EFFECT_MORNING_SUN:
@@ -659,9 +672,9 @@ u16 GetAmountToRecoverBy(u8 bankAtk, u8 bankDef, u16 move)
 					break;
 
 				default:
-					if (gBattleWeather & WEATHER_SUN_ANY && WEATHER_HAS_EFFECT)
+					if (gBattleWeather & WEATHER_SUN_ANY && WEATHER_HAS_EFFECT && itemEffect != ITEM_EFFECT_UTILITY_UMBRELLA)
 						amountToRecover = maxHp;
-					else if (gBattleWeather && WEATHER_HAS_EFFECT) //Not sunny
+					else if (gBattleWeather && WEATHER_HAS_EFFECT && itemEffect != ITEM_EFFECT_UTILITY_UMBRELLA) //Not sunny
 						amountToRecover = MathMax(1, maxHp / 4);
 					else
 						amountToRecover = MathMax(1, maxHp / 2);
@@ -701,7 +714,7 @@ u16 GetAmountToRecoverBy(u8 bankAtk, u8 bankDef, u16 move)
 			break;
 
 		case EFFECT_PAIN_SPLIT: ;
-			u16 finalHp = MathMax(1, (curHp + gBattleMons[bankDef].hp) / 2);
+			u16 finalHp = MathMax(1, (curHp + GetBaseCurrentHP(bankDef)) / 2);
 
 			if (finalHp > curHp)
 				amountToRecover = finalHp - curHp;
@@ -710,6 +723,8 @@ u16 GetAmountToRecoverBy(u8 bankAtk, u8 bankDef, u16 move)
 		case EFFECT_PROTECT: ;
 			u8 ability = ABILITY(bankAtk);
 			u8 itemEffect = ITEM_EFFECT(bankAtk);
+
+			//maxHp = baseMaxHP;
 
 			if (gStatuses3[bankAtk] & (STATUS3_ROOTED | STATUS3_AQUA_RING))
 			{
@@ -724,7 +739,7 @@ u16 GetAmountToRecoverBy(u8 bankAtk, u8 bankDef, u16 move)
 				&&  ABILITY(i) != ABILITY_MAGICGUARD
 				&& (gStatuses3[i] & STATUS3_LEECHSEED_BATTLER) == bankAtk)
 				{
-					amountToRecover += MathMax(1, gBattleMons[i].maxHP / 8);
+					amountToRecover += MathMax(1, GetBaseMaxHP(i) / 8);
 				}
 			}
 
@@ -739,7 +754,7 @@ u16 GetAmountToRecoverBy(u8 bankAtk, u8 bankDef, u16 move)
 				amountToRecover += MathMax(1, maxHp / 2);
 			}
 
-			if (gBattleWeather & WEATHER_RAIN_ANY && WEATHER_HAS_EFFECT)
+			if (gBattleWeather & WEATHER_RAIN_ANY && WEATHER_HAS_EFFECT && ITEM_EFFECT(bankAtk) != ITEM_EFFECT_UTILITY_UMBRELLA)
 			{
 				if (ability == ABILITY_RAINDISH)
 					amountToRecover += MathMax(1, maxHp / 16);
@@ -765,7 +780,7 @@ u16 GetAmountToRecoverBy(u8 bankAtk, u8 bankDef, u16 move)
 			}
 	}
 
-	return MathMin(amountToRecover, maxHp - curHp);
+	return MathMin(amountToRecover, gBattleMons[bankAtk].maxHP - gBattleMons[bankAtk].hp);
 }
 
 bool8 ShouldRecover(u8 bankAtk, u8 bankDef, u16 move)
@@ -853,6 +868,7 @@ enum ProtectQueries ShouldProtect(u8 bankAtk, u8 bankDef, u16 move)
 
 	if (BankHoldingUsefulItemToProtectFor(bankAtk)
 	||  BankHasAbilityUsefulToProtectFor(bankAtk, bankDef)
+	||  (IsDynamaxed(bankDef) && SPLIT(predictedMove) != SPLIT_STATUS) //Foe is going to attack with a Max Move
 	||  predictedMoveEffect == EFFECT_EXPLOSION
 	|| (predictedMoveEffect == EFFECT_SEMI_INVULNERABLE && BATTLER_SEMI_INVULNERABLE(bankDef) //Foe coming down
 	   && gBattleMoves[predictedMove].flags & FLAG_PROTECT_AFFECTED))
@@ -917,6 +933,9 @@ enum ProtectQueries ShouldProtect(u8 bankAtk, u8 bankDef, u16 move)
 
 bool8 ShouldPhaze(u8 bankAtk, u8 bankDef, u16 move, u8 class)
 {
+	if (IsDynamaxed(bankDef))
+		return FALSE; //These Pokemon can't be forced out.
+
 	if (IsClassPhazer(class))
 	{
 		if (IS_SINGLE_BATTLE)
@@ -947,6 +966,7 @@ bool8 ShouldPhaze(u8 bankAtk, u8 bankDef, u16 move, u8 class)
 							if (gSideTimers[SIDE(bankDef)].srAmount > 0 //Has some hurtful hazard
 							||  gSideTimers[SIDE(bankDef)].tspikesAmount >= 1
 							||  gSideTimers[SIDE(bankDef)].spikesAmount >= 1
+							||  gSideTimers[SIDE(bankDef)].steelsurge > 0
 							||  AnyUsefulStatIsRaised(bankDef))
 								return TRUE;
 							break;

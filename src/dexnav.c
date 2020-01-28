@@ -7,6 +7,7 @@
 #include "../include/field_message_box.h"
 #include "../include/field_player_avatar.h"
 #include "../include/fieldmap.h"
+#include "../include/menu.h"
 #include "../include/m4a.h"
 #include "../include/main.h"
 #include "../include/metatile_behavior.h"
@@ -68,7 +69,7 @@ static void ResetPalSettings(void);
 static void ResetBgSettings(void);
 static void Setup(void);
 static bool8 SpeciesInArray(u16 species, u8 indexCount, u8 unownLetter);
-static void DexNavGetMon(u16 species, u8 potential, u8 level, u8 ability, u16* moves);
+static void DexNavGetMon(u16 species, u8 potential, u8 level, u8 ability, u16* moves, u8 searchLevel, u8 chain);
 static u8 FindHeaderIndexWithLetter(u16 species, u8 letter);
 static u8 GetPlayerDistance(s16 x, s16 y);
 static u8 PickTileScreen(u8 targetBehaviour, u8 areaX, u8 areaY, s16 *xBuff, s16 *yBuff, u8 smallScan);
@@ -84,7 +85,7 @@ static void DexNavSightUpdate(u8 sight);
 static void DexNavIconsVisionUpdate(u8 proximity, u8 searchLevel);
 static void DexNavManageHUD(u8 taskId);
 static u8 GetEncounterLevel(u16 species, u8 environment);
-static u8 DexNavGenerateMonLevel(u16 species, u8 searchLevel, u8 environment);
+static u8 DexNavGenerateMonLevel(u16 species, u8 chainLevel, u8 environment);
 static u16 DexNavGenerateHeldItem(u16 species, u8 searchLevel);
 static u8 DexNavGenerateHiddenAbility(u16 species, u8 searchLevel);
 static u8 DexNavGeneratePotential(u8 searchLevel);
@@ -139,15 +140,6 @@ static void MsgNormal(const u8* str)
    ScriptContext2_Enable();
    return;
 }
-
-
-u16 RandRange(u16 min, u16 max)
-{
-	if (min == max)
-		return min;
-	return (Random() % (max - min)) + min;
-}
-
 
 static void VblackCallbackSeq(void)
 {
@@ -282,9 +274,44 @@ static bool8 SpeciesInArray(u16 species, u8 indexCount, u8 unownLetter)
 // ===================================== //
 
 
-void DexNavGetMon(u16 species, u8 potential, u8 level, u8 ability, u16* moves)
+void DexNavGetMon(u16 species, u8 potential, u8 level, u8 ability, u16* moves, u8 searchLevel, u8 chain)
 {
 	struct Pokemon* pkmn = &gEnemyParty[0];
+
+	//Try Force Shiny
+	//https://bulbapedia.bulbagarden.net/wiki/DexNav#Shiny_probability
+	u32 i, otherValue, numChecks, charmBonus, chainBonus, randBonus;
+	otherValue = 0;
+	charmBonus = (CheckBagHasItem(ITEM_SHINY_CHARM, 1) > 0) ? 2 : 0;
+	chainBonus = (chain == 50) ? 5 : (chain == 100) ? 10 : 0;
+	randBonus = (Random() % 100 < 4 ? 4 : 0);
+	numChecks = 1 + charmBonus + chainBonus + randBonus;
+
+	if (searchLevel > 200)
+	{
+		otherValue += searchLevel - 200;
+		searchLevel = 200;
+	}
+
+	if (searchLevel > 100)
+	{
+		otherValue += (searchLevel * 2) - 200;
+		searchLevel = 100;
+	}
+
+	if (searchLevel > 0)
+		otherValue += searchLevel * 6;
+
+	otherValue /= 100;
+
+	for (i = 0; i < numChecks; ++i)
+	{
+		if (Random() % 10000 < otherValue)
+		{
+			FlagSet(FLAG_SHINY_CREATION);
+			break;
+		}
+	}
 
 	//Create standard wild
 	CreateWildMon(species, level, FindHeaderIndexWithLetter(species, sDNavState->unownLetter - 1), TRUE);
@@ -572,26 +599,47 @@ static void DexNavFreeHUD(void)
 	ResetSprite(&gSprites[sDNavState->objIdBlackBar[2]]);
 	ResetSprite(&gSprites[sDNavState->objIdBlackBar[3]]);
 
-	FieldEffectFreeGraphicsResources(&gSprites[sDNavState->objIdSight]);
-	ResetSprite(&gSprites[sDNavState->objIdSight]);
+	if (sDNavState->objIdSight < MAX_SPRITES)
+	{
+		FieldEffectFreeGraphicsResources(&gSprites[sDNavState->objIdSight]);
+		ResetSprite(&gSprites[sDNavState->objIdSight]);
+	}
 
-	FieldEffectFreeGraphicsResources(&gSprites[sDNavState->objIdAbility]);
-	ResetSprite(&gSprites[sDNavState->objIdAbility]);
+	if (sDNavState->objIdAbility < MAX_SPRITES)
+	{
+		FieldEffectFreeGraphicsResources(&gSprites[sDNavState->objIdAbility]);
+		ResetSprite(&gSprites[sDNavState->objIdAbility]);
+	}
 
-	FieldEffectFreeGraphicsResources(&gSprites[sDNavState->objIdMove]);
-	ResetSprite(&gSprites[sDNavState->objIdMove]);
+	if (sDNavState->objIdMove < MAX_SPRITES)
+	{
+		FieldEffectFreeGraphicsResources(&gSprites[sDNavState->objIdMove]);
+		ResetSprite(&gSprites[sDNavState->objIdMove]);
+	}
 
-	FieldEffectFreeGraphicsResources(&gSprites[sDNavState->objIdItem]);
-	ResetSprite(&gSprites[sDNavState->objIdItem]);
+	if (sDNavState->objIdItem < MAX_SPRITES)
+	{
+		FieldEffectFreeGraphicsResources(&gSprites[sDNavState->objIdItem]);
+		ResetSprite(&gSprites[sDNavState->objIdItem]);
+	}
 
-	FieldEffectFreeGraphicsResources(&gSprites[sDNavState->objIdPotential[0]]);
-	ResetSprite(&gSprites[sDNavState->objIdPotential[0]]);
+	if (sDNavState->objIdPotential[0] < MAX_SPRITES)
+	{
+		FieldEffectFreeGraphicsResources(&gSprites[sDNavState->objIdPotential[0]]);
+		ResetSprite(&gSprites[sDNavState->objIdPotential[0]]);
+	}
 
-	FieldEffectFreeGraphicsResources(&gSprites[sDNavState->objIdPotential[1]]);
-	ResetSprite(&gSprites[sDNavState->objIdPotential[1]]);
+	if (sDNavState->objIdPotential[1] < MAX_SPRITES)
+	{
+		FieldEffectFreeGraphicsResources(&gSprites[sDNavState->objIdPotential[1]]);
+		ResetSprite(&gSprites[sDNavState->objIdPotential[1]]);
+	}
 
-	FieldEffectFreeGraphicsResources(&gSprites[sDNavState->objIdPotential[2]]);
-	ResetSprite(&gSprites[sDNavState->objIdPotential[2]]);
+	if (sDNavState->objIdPotential[2] < MAX_SPRITES)
+	{
+		FieldEffectFreeGraphicsResources(&gSprites[sDNavState->objIdPotential[2]]);
+		ResetSprite(&gSprites[sDNavState->objIdPotential[2]]);
+	}
 
 	//FreeSpriteTilesByTag(0x4736);
 	FreeSpriteTilesByTag(0x61);
@@ -603,8 +651,6 @@ static void DexNavFreeHUD(void)
 	FreeSpriteTilesByTag(0x3039);
 	FreeSpritePaletteByTag(0x8472);
 	FreeSpritePaletteByTag(0x3039);
-
-	ResetSprite(&gSprites[sDNavState->objIdMove]);
 
 	Free(sDNavState);
 	DisableInterrupts(2);
@@ -646,7 +692,8 @@ static void DexNavShowMessage(u8 id)
 
 static void OutlinedFontDraw(u8 objId, u8 tileNum, u16 size)
 {
-	//return;
+	if (objId >= MAX_SPRITES)
+		return;
 
 	u8 tile = gSprites[objId].oam.tileNum + tileNum;
 	u8* toWrite = (u8*)((tile * TILE_SIZE) + SPRITE_RAM);
@@ -819,18 +866,21 @@ static void OutlinedFontDraw(u8 objId, u8 tileNum, u16 size)
 static void DexNavSightUpdate(u8 sight)
 {
 	u8 objId = sDNavState->objIdSight;
-	// draw sight eye on first tile, takes up two tiles
-	u8 tileid = gSprites[objId].oam.tileNum;
-	u8* toWrite = (u8*)((tileid * 32) + (SPRITE_RAM));
-	Memcpy(toWrite, &gInterfaceGfx_dexnavStarsTiles[((19 * 4) + (7 - (2 * sight))) * 32], 64);
+	if (objId < MAX_SPRITES)
+	{
+		// draw sight eye on first tile, takes up two tiles
+		u8 tileid = gSprites[objId].oam.tileNum;
+		u8* toWrite = (u8*)((tileid * 32) + (SPRITE_RAM));
+		Memcpy(toWrite, &gInterfaceGfx_dexnavStarsTiles[((19 * 4) + (7 - (2 * sight))) * 32], 64);
 
-	// draw the B button tile
-	Memcpy(toWrite + 128, &gInterfaceGfx_dexnavStarsTiles[((19 * 4) + 2) *32], 64);
+		// draw the B button tile
+		Memcpy(toWrite + 128, &gInterfaceGfx_dexnavStarsTiles[((19 * 4) + 2) *32], 64);
 
-	// draw info text on the 5th tile
-	//pchar back[] = _(" Back  ");
-	StringCopy((u8*) gStringVar4, (u8*) &gText_DexNavBack[0]);
-	OutlinedFontDraw(objId, 5, 32 * 8);
+		// draw info text on the 5th tile
+		//pchar back[] = _(" Back  ");
+		StringCopy((u8*) gStringVar4, (u8*) &gText_DexNavBack[0]);
+		OutlinedFontDraw(objId, 5, 32 * 8);
+	}
 }
 
 
@@ -842,43 +892,64 @@ static void DexNavIconsVisionUpdate(u8 proximity, u8 searchLevel)
 	// 	At search level 5, Potential is drawn
 
 	// species and sight/info are always shown, regardless of proximity
-	gSprites[sDNavState->objIdSpecies].oam.affineMode = 0;
-	gSprites[sDNavState->objIdSight].oam.affineMode = 0;
+	if (sDNavState->objIdSpecies < MAX_SPRITES)
+		gSprites[sDNavState->objIdSpecies].invisible = FALSE;
+
+	if (sDNavState->objIdSight < MAX_SPRITES)
+		gSprites[sDNavState->objIdSight].invisible = FALSE;
 
 	// hide everything at the start, and recalc what needs to be shown
-	gSprites[sDNavState->objIdMove].oam.affineMode = 2;
-	gSprites[sDNavState->objIdAbility].oam.affineMode = 2;
-	gSprites[sDNavState->objIdItem].oam.affineMode = 2;
-	gSprites[sDNavState->objIdPotential[0]].oam.affineMode = 2;
-	gSprites[sDNavState->objIdPotential[1]].oam.affineMode = 2;
-	gSprites[sDNavState->objIdPotential[2]].oam.affineMode = 2;
+	if (sDNavState->objIdMove < MAX_SPRITES)
+		gSprites[sDNavState->objIdMove].invisible = TRUE;
+
+	if (sDNavState->objIdAbility < MAX_SPRITES)
+		gSprites[sDNavState->objIdAbility].invisible = TRUE;
+	
+	if (sDNavState->objIdItem < MAX_SPRITES)
+		gSprites[sDNavState->objIdItem].invisible = TRUE;
+	
+	if (sDNavState->objIdPotential[0] < MAX_SPRITES)
+		gSprites[sDNavState->objIdPotential[0]].invisible = TRUE;
+
+	if (sDNavState->objIdPotential[1] < MAX_SPRITES)
+		gSprites[sDNavState->objIdPotential[1]].invisible = TRUE;
+
+	if (sDNavState->objIdPotential[2] < MAX_SPRITES)
+		gSprites[sDNavState->objIdPotential[2]].invisible = TRUE;
 
 	if (proximity < 3)
 	{
 		// at proximity 5, the sight should start to show and indicate sneaking is required
-		DexNavSightUpdate(0); // alert level TODO: Update in a better way utiliting sight_level
+		DexNavSightUpdate(0);
 		if (searchLevel > 1)
 		{
 			// show move, hide others
-			gSprites[sDNavState->objIdMove].oam.affineMode = 0;
+			if (sDNavState->objIdMove < MAX_SPRITES)
+				gSprites[sDNavState->objIdMove].invisible = FALSE;
 		}
 		if (searchLevel > 2)
 		{
 			// show ability, move, hide others
-			gSprites[sDNavState->objIdAbility].oam.affineMode = 0;
+			if (sDNavState->objIdAbility < MAX_SPRITES)
+				gSprites[sDNavState->objIdAbility].invisible = FALSE;
 			if (sDNavState->heldItem)
 			{
 				// toggle item view
-				gSprites[sDNavState->objIdItem].oam.affineMode = 0;
+				if (sDNavState->objIdItem < MAX_SPRITES)
+					gSprites[sDNavState->objIdItem].invisible = FALSE;
 			}
 		}
 		if (searchLevel > 4)
 		{
-			gSprites[sDNavState->objIdPotential[0]].oam.affineMode = 0;
-			gSprites[sDNavState->objIdPotential[1]].oam.affineMode = 0;
-			gSprites[sDNavState->objIdPotential[2]].oam.affineMode = 0;
+			if (sDNavState->objIdPotential[0] < MAX_SPRITES)
+				gSprites[sDNavState->objIdPotential[0]].invisible = FALSE;
+			
+			if (sDNavState->objIdPotential[1] < MAX_SPRITES)
+				gSprites[sDNavState->objIdPotential[1]].invisible = FALSE;
+			
+			if (sDNavState->objIdPotential[2] < MAX_SPRITES)
+				gSprites[sDNavState->objIdPotential[2]].invisible = FALSE;
 		}
-
 	}
 	else if (proximity <= SNEAKING_PROXIMITY)
 		DexNavSightUpdate(1); // Sneaking is required flag
@@ -889,7 +960,7 @@ static void DexNavIconsVisionUpdate(u8 proximity, u8 searchLevel)
 extern const u8 SystemScript_StartDexNavBattle[];
 static void DexNavManageHUD(u8 taskId)
 {
-	// check for out of range
+	//Check for out of range
 	if (sDNavState->proximity > 20)
 	{
 		DestroyTask(taskId);
@@ -898,10 +969,11 @@ static void DexNavManageHUD(u8 taskId)
 		return;
 	}
 
-	// check for timeout.
+	//Check for timeout.
 	gTasks[taskId].data[1]++;
 	if (gTasks[taskId].data[1] > DEXNAV_TIMEOUT * 60)
 	{
+		gCurrentDexNavChain = 0; //A Pokemon running like this resets the chain
 		DestroyTask(taskId);
 		DexNavFreeHUD();
 		DexNavShowMessage(0);	//The pokemon got away!
@@ -910,15 +982,17 @@ static void DexNavManageHUD(u8 taskId)
 
 	if (sDNavState->proximity <= SNEAKING_PROXIMITY && TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_DASH | PLAYER_AVATAR_FLAG_BIKE)) //If player is close and running then the Pokemon should flee
 	{
+		gCurrentDexNavChain = 0; //A Pokemon running like this resets the chain
 		DestroyTask(taskId);
 		DexNavFreeHUD();
 		DexNavShowMessage(2);	//The pokemon got away!\nTry moving more slowly.
 		return;
 	}
 
-	// check if script just executed
+	//Check if script just executed
 	if (ScriptContext2_IsEnabled() == TRUE)
 	{
+		//gCurrentDexNavChain = 0; //Not fair because of the repel pop up
 		DestroyTask(taskId);
 		DexNavFreeHUD();
 		return;
@@ -926,6 +1000,7 @@ static void DexNavManageHUD(u8 taskId)
 
 	if (gMain.newKeys & (B_BUTTON | START_BUTTON))
 	{
+		gCurrentDexNavChain = 0; //A Pokemon running like this resets the chain
 		DestroyTask(taskId);
 		DexNavFreeHUD();
 		PlaySE(SE_POKENAV_OFF);
@@ -949,29 +1024,26 @@ static void DexNavManageHUD(u8 taskId)
 				break;
 		};
 
-
-		while(!ShakingGrass(sDNavState->environment, 8, 8, 1))
-			__asm__("mov r8, r8");
-
+		while(!ShakingGrass(sDNavState->environment, 8, 8, 1));
 		sDNavState->movementTimes += 1;
 	}
 
 	// check for encounter start
 	if (sDNavState-> proximity < 1)
 	{
-		//extern void DexNavGetMon(u16 species, u8 potential, u8 level, u8 ability, u16* moves);
 		DexNavGetMon(sDNavState->species, sDNavState->potential, sDNavState->pokemonLevel,
-		sDNavState->ability, sDNavState->moveId);
+			sDNavState->ability, sDNavState->moveId, sDNavState->searchLevel, gCurrentDexNavChain);
 		DestroyTask(taskId);
 
 		// increment the search level
 		u16 dexNum = SpeciesToNationalPokedexNum(sDNavState->species);
-		if (sSearchLevels[dexNum] < 100)
+		if (sSearchLevels[dexNum] < 255)
 			sSearchLevels[dexNum] += 1;
 
 		// Freeing only the state, objects and hblank cleared on battle start.
 		Free(sDNavState);
 
+		gDexNavStartedBattle = TRUE;
 		ScriptContext1_SetupScript(SystemScript_StartDexNavBattle);
 /*
 		// exclamation point animation over the player
@@ -1051,22 +1123,23 @@ static u8 GetEncounterLevel(u16 species, u8 environment)
 }
 
 
-static u8 DexNavGenerateMonLevel(u16 species, u8 searchLevel, u8 environment)
+static u8 DexNavGenerateMonLevel(u16 species, u8 chainLevel, u8 environment)
 {
-	u8 levelBase = GetEncounterLevel(species, environment);
+	u8 levelBase, levelBonus;
+
+	levelBase = GetEncounterLevel(species, environment); 
 	if (levelBase > MAX_LEVEL)
 		return 0;
 
-	u8 searchLevelBonus = 0;
-	if (searchLevel >> 2 > 20)
-		searchLevelBonus = 20;
-	else
-		searchLevelBonus = searchLevel >> 2;
+	levelBonus = chainLevel / 5;
+	
+	if (Random() % 100 < 4) //4% chance of having a +10 level
+		levelBonus += 10;
 
-	if (searchLevelBonus + levelBase > MAX_LEVEL)
+	if (levelBase + levelBonus > MAX_LEVEL)
 		return MAX_LEVEL;
 	else
-		return searchLevelBonus + levelBase;
+		return levelBase + levelBonus;
 }
 
 
@@ -1329,7 +1402,7 @@ static void DexNavGenerateMoveset(u16 species, u8 searchLevel, u8 encounterLevel
 }
 
 extern const u8 gInterfaceGfx_DexnavBarTiles[];
-static const struct CompressedSpriteSheet sBlackBarTiles = {gInterfaceGfx_DexnavBarTiles, 64 * 32 / 2, 0xFDF1};
+static const struct CompressedSpriteSheet sBlackBarTiles = {gInterfaceGfx_DexnavBarTiles, (64 * 32) / 2, 0xFDF1};
 static const struct SpriteTemplate sBlackBarTemplate =
 {
 	.tileTag = 0xFDF1,
@@ -1352,7 +1425,7 @@ static void DexNavDrawBlackBars(u8 objidAddr[4])
 }
 
 // create empty object of size 64x32 to draw icons on
-static const struct CompressedSpriteSheet sightTiles = {(const u8*)(&gInterfaceGfx_emptyTiles), 0x800, 0x5424};
+static const struct CompressedSpriteSheet sightTiles = {(const u8*)(&gInterfaceGfx_emptyTiles), (64 * 32) / 2, 0x5424};
 static const struct SpriteTemplate fontTempSight =
 {
 	.tileTag = 0x5424,
@@ -1369,14 +1442,15 @@ static void DexNavDrawSight(u8 sight_lvl, u8* objidAddr)
 	LoadSpritePalette(&HeldPal);
 	LoadCompressedSpriteSheetUsingHeap(&sightTiles);
 	u8 objId = CreateSprite(&fontTempSight, ICONX + 192, ICONY + 0x12, 0x0);
-	*objidAddr = objId;
-	gSprites[objId].oam.affineMode = 2;
-	DexNavSightUpdate(sight_lvl);
-	gSprites[objId].oam.objMode = 1;
+	if (objId < MAX_SPRITES)
+	{
+		*objidAddr = objId;
+		DexNavSightUpdate(sight_lvl);
+	}
 };
 
 // create empty object of size 64x32 to draw font on
-static const struct CompressedSpriteSheet FontSpriteAbility = {(const u8*)(&gInterfaceGfx_emptyTiles), 0x800, 0x1EE7};
+static const struct CompressedSpriteSheet FontSpriteAbility = {(const u8*)(&gInterfaceGfx_emptyTiles), (64 * 32) / 2, 0x1EE7};
 static const struct SpriteTemplate FontTempAbility =
 {
 	.tileTag = 0x1EE7,
@@ -1393,33 +1467,33 @@ static void DexNavDrawAbility(u8 ability, u8* objidAddr)
 	LoadSpritePalette(&HeldPal);
 	LoadCompressedSpriteSheetUsingHeap(&FontSpriteAbility);
 	u8 objId = CreateSprite(&FontTempAbility, ICONX + 80, ICONY + 0x12, 0x0);
-	*objidAddr = objId;
-	gSprites[objId].oam.affineMode = 2;
-
-	// ability name beside move name
-	u8 len = sDNavState->moveNameLength;
-	gSprites[objId].pos1.x += ((8 * (len/2)) + (4 * (len % 2)));
-
-	// Copy ability string from table using state id
-	CopyAbilityName(gStringVar4, ability);
-
-	// format string so it's even length or if it's odd ends in two spaces
-	len = StringLength(gStringVar4);
-	if (!(len % 2))
+	if (objId < MAX_SPRITES)
 	{
-		gStringVar4[len] = 0x0;
-		gStringVar4[len + 1] = 0x0;
-		gStringVar4[len + 2] = 0xFF;
-	}
+		*objidAddr = objId;
 
-	// write name to object
-	OutlinedFontDraw(objId, 0, 32 * 8);
-	gSprites[objId].oam.objMode = 1;
-	return;
+		//Ability name beside move name
+		u8 len = sDNavState->moveNameLength;
+		gSprites[objId].pos1.x += ((8 * (len/2)) + (4 * (len % 2)));
+
+		//Copy ability string from table using state id
+		CopyAbilityName(gStringVar4, ability);
+
+		//Format string so it's even length or if it's odd ends in two spaces
+		len = StringLength(gStringVar4);
+		if (!(len % 2))
+		{
+			gStringVar4[len] = 0x0;
+			gStringVar4[len + 1] = 0x0;
+			gStringVar4[len + 2] = 0xFF;
+		}
+
+		//Write ability name on sprite
+		OutlinedFontDraw(objId, 0, 32 * 8);
+	}
 }
 
 	// create empty object of size 64x32 to draw font on
-static const struct CompressedSpriteSheet FontSpriteMove = {(u8*) gInterfaceGfx_emptyTiles, 0x800, 0x4736};
+static const struct CompressedSpriteSheet FontSpriteMove = {(u8*) gInterfaceGfx_emptyTiles, (64 * 32) / 2, 0x4736};
 static const struct SpriteTemplate FontTempMove =
 {
 	.tileTag = 0x4736,
@@ -1436,37 +1510,38 @@ static void DexNavDrawMove(u16 move, u8 searchLevel, u8* objidAddr)
 	LoadSpritePalette(&HeldPal);
 	LoadCompressedSpriteSheetUsingHeap(&FontSpriteMove);
 	u8 objId = CreateSprite(&FontTempMove, ICONX + 80, ICONY + 0x12, 0x0);
-	*objidAddr = objId;
-	gSprites[objId].oam.affineMode = 2;
-
-	// Copy move string from table using state id, add '/' character to the end of it
-	u8* ptr = StringCopy(gStringVar4, gMoveNames[move]);
-	u8 len = StringLength(gStringVar4);
-
-	if (searchLevel > 2)
+	if (objId < MAX_SPRITES)
 	{
-		*ptr = 0xBA;
-		len += 1;
-	}
+		*objidAddr = objId;
 
-	// record length of move with slash for ability name to be placed beside it
-	sDNavState->moveNameLength = len;
+		// Copy move string from table using state id, add '/' character to the end of it
+		u8* ptr = StringCopy(gStringVar4, gMoveNames[move]);
+		u8 len = StringLength(gStringVar4);
 
-	// adjust string to be even chars, if odd end in two spaces
-	if (!(len % 2))
-	{
-		gStringVar4[len] = 0x0;
-		gStringVar4[len + 1] = 0x0;
-		gStringVar4[len + 2] = 0xFF;
-	}
-	else
-	{
-		gStringVar4[len] = 0xFF;
-	}
+		if (searchLevel > 2)
+		{
+			*ptr = 0xBA;
+			len += 1;
+		}
 
-	// write name to object
-	OutlinedFontDraw(objId, 0, 32 * 8);
-	gSprites[objId].oam.objMode = 1;
+		// record length of move with slash for ability name to be placed beside it
+		sDNavState->moveNameLength = len;
+
+		// adjust string to be even chars, if odd end in two spaces
+		if (!(len % 2))
+		{
+			gStringVar4[len] = 0x0;
+			gStringVar4[len + 1] = 0x0;
+			gStringVar4[len + 2] = 0xFF;
+		}
+		else
+		{
+			gStringVar4[len] = 0xFF;
+		}
+
+		// write name to object
+		OutlinedFontDraw(objId, 0, 32 * 8);
+	}
 };
 
 //19 tiles per row, stars are on the 4th row. 1 tile is 32 bytes. Hence 19 * 4 *32
@@ -1488,10 +1563,10 @@ static const struct SpriteTemplate StarOffTemp =
 {
 	.tileTag = 0x2613,
 	.paletteTag = 0x8472,
-	.oam = (struct OamData*) &HeldOAM,
-	.anims = (const union AnimCmd* const*) gDummySpriteAnimTable,
-	.images = 0,
-	.affineAnims = (const union AffineAnimCmd* const*) gDummySpriteAffineAnimTable,
+	.oam = &HeldOAM,
+	.anims = gDummySpriteAnimTable,
+	.images = NULL,
+	.affineAnims = gDummySpriteAffineAnimTable,
 	.callback = SpriteCallbackDummy,
 };
 
@@ -1513,8 +1588,6 @@ static void DexNavDrawPotential(u8 potential, u8* objidAddr)
 			objId = CreateSprite(&StarOffTemp, ICONX + 23 + (i * 8), ICONY + 0x5, 0x0);
 
 		objidAddr[i] = objId;
-		gSprites[objId].oam.affineMode = 2;
-		gSprites[objId].oam.objMode = 1;
 	}
 }
 
@@ -1531,9 +1604,6 @@ void DexNavHudDrawSpeciesIcon(u16 species, u8* objIdAddr)
 	//Create the icon
 	u8 objId = CreateMonIcon(species, SpriteCB_PokeIcon, ICONX, ICONY, 0, pid, FALSE);
 	*objIdAddr = objId;
-
-	gSprites[objId].oam.affineMode = 2;
-	gSprites[objId].oam.objMode = 1;
 }
 
 static const struct SpriteSheet HeldIcon = {(const u8*) (0x0845A3AC), 64, 0x8472};
@@ -1541,23 +1611,20 @@ static const struct SpriteTemplate HeldTemp =
 {
 	.tileTag = 0x8472,
 	.paletteTag = 0x8472,
-	.oam = (struct OamData*) &HeldOAM,
-	.anims = (const union AnimCmd* const*) gDummySpriteAnimTable,
+	.oam = &HeldOAM,
+	.anims = gDummySpriteAnimTable,
 	.images = 0,
-	.affineAnims = (const union AffineAnimCmd* const*) gDummySpriteAffineAnimTable,
+	.affineAnims = gDummySpriteAffineAnimTable,
 	.callback = SpriteCallbackDummy,
 };
 
 void DexNavDrawHeldItem(u8* objidAddr)
 {
-	// create object for held item icon
-
+	//Create SPRITE for held item icon
 	LoadSpriteSheet(&HeldIcon);
 	LoadSpritePalette(&HeldPal);
 	u8 objId = CreateSprite(&HeldTemp, ICONX + 0x8, ICONY + 0xC, 0x0);
 	*objidAddr = objId;
-	gSprites[objId].oam.affineMode = 2;
-	gSprites[objId].oam.objMode = 1;
 };
 
 
@@ -1591,7 +1658,7 @@ void InitDexNavHUD(u16 species, u8 environment)
 	sDNavState->environment = environment;
 	u8 searchLevel = sSearchLevels[SpeciesToNationalPokedexNum(species)];
 	sDNavState->searchLevel = searchLevel;
-	sDNavState->pokemonLevel = DexNavGenerateMonLevel(species, searchLevel, environment);
+	sDNavState->pokemonLevel = DexNavGenerateMonLevel(species, gCurrentDexNavChain, environment);
 
 	if (sDNavState->pokemonLevel < 1)
 	{
@@ -1914,7 +1981,7 @@ static void DexNavLoadNames(u8 status)
 }
 
 
-static const struct CompressedSpriteSheet sCapturedAllPokemonSpriteSheet = {gInterfaceGfx_CapturedAllPokemonTiles, 8 * 8 / 2, 0xFDF2}; //Tag is from Mega Evo and not in use
+static const struct CompressedSpriteSheet sCapturedAllPokemonSpriteSheet = {gInterfaceGfx_CapturedAllPokemonTiles, (8 * 8) / 2, 0xFDF2}; //Tag is from Mega Evo and not in use
 static const struct SpriteTemplate sCapturedAllPokemonSymbolTemplate =
 {
 	.tileTag = 0xFDF2,
@@ -2582,8 +2649,8 @@ void ToolSelection(u8 taskId)
 			ScriptContext2_Enable();
 			u8 boxId = AddWindow(&Tbox);
 			FillWindowPixelBuffer(boxId, 0x11);
-			WindowOutline(boxId, 1, 0x214, 0xE);
-			WindowPrint(boxId, 1, 8, 2, &MenuTextBlack, 0, &gText_DexNavText[0]);
+			DrawStdFrameWithCustomTileAndPalette(boxId, 1, 0x214, 0xE);
+			WindowPrint(boxId, 1, 8, 2, &MenuTextBlack, 0, gText_DexNavText);
 			ChoiceSetupSimple(boxId, 2, 0, 1, 16, TOOL_COUNT, 0);
 			CopyWindowToVram(boxId, 3);
 			PutWindowTilemap(boxId);
@@ -2608,7 +2675,7 @@ void ToolSelection(u8 taskId)
 			else if (choice == -1)
 			{
 				// b pressed, exit
-				RboxIdClean(gTasks[taskId].data[1], 1);
+				ClearStdWindowAndFrameToTransparent(gTasks[taskId].data[1], 1);
 				RemoveWindow(gTasks[taskId].data[1]);
 				ScriptContext2_Disable();
 				DestroyTask(taskId);

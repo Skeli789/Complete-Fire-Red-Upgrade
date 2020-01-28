@@ -84,7 +84,18 @@ definitions for animation particles
 .equ BRANCH_IMG, BranchTiles
 .equ APPLE_IMG, AppleTiles
 .equ OBSTRUCT_IMG, ObstructTiles
+.equ POISON_COLUMN_IMG, Poison_ColumnTiles
+.equ LARGE_SPIKE_IMG, Large_SpikeTiles
+.equ DRAGON_PULSE_RING_IMG, Dragon_Pulse_RingTiles
+.equ STONE_PILLAR_IMG, Stone_PillarTiles
+.equ MUSHROOM_IMG, MushroomTiles
+.equ GOLDEN_APPLE_IMG, Golden_AppleTiles
+.equ ICE_ROCK_IMG, Ice_RockTiles
+.equ TORNADO_IMG, TornadoTiles
+.equ STRAIGHT_BEAM_IMG, Straight_BeamTiles
+.equ DREEPY_IMG, Dreepy_MissileTiles
 
+@;Palettes
 .equ SWORD_PAL, SwordPal
 .equ SEED_PAL, Leech_SeedPal
 .equ HORN_HIT_PAL, HornPal
@@ -168,3 +179,14 @@ definitions for animation particles
 .equ BRANCH_PAL, BranchPal
 .equ APPLE_PAL, ApplePal
 .equ OBSTRUCT_PAL, ObstructPal
+.equ POISON_COLUMN_PAL, Poison_ColumnPal
+.equ GARBAGE_COLUMN_PAL, Garbage_Poison_ColumnPal
+.equ LARGE_SPIKE_PAL, Large_SpikePal
+.equ DRAGON_PULSE_RING_PAL, Dragon_Pulse_RingPal
+.equ STONE_PILLAR_PAL, Stone_PillarPal
+.equ MUSHROOM_PAL, MushroomPal
+.equ GOLDEN_APPLE_PAL, Golden_ApplePal
+.equ ICE_ROCK_PAL, Ice_RockPal
+.equ TORNADO_PAL, TornadoPal
+.equ STRAIGHT_BEAM_PAL, Straight_BeamPal
+.equ DREEPY_PAL, Dreepy_MissilePal

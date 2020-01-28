@@ -4,16 +4,23 @@
 #include "../include/constants/items.h"
 
 #include "../include/new/ability_battle_scripts.h"
+#include "../include/new/accuracy_calc.h"
+#include "../include/new/attackcanceler.h"
+#include "../include/new/battle_indicators.h"
 #include "../include/new/battle_start_turn_start.h"
 #include "../include/new/battle_util.h"
 #include "../include/new/cmd49.h"
 #include "../include/new/cmd49_battle_scripts.h"
+#include "../include/new/damage_calc.h"
+#include "../include/new/dynamax.h"
 #include "../include/new/form_change.h"
-#include "../include/new/util.h"
+#include "../include/new/item.h"
 #include "../include/new/item_battle_scripts.h"
 #include "../include/new/move_battle_scripts.h"
 #include "../include/new/move_tables.h"
 #include "../include/new/set_effect.h"
+#include "../include/new/util.h"
+
 /*
 cmd49.c
 	handles a ton of battle logic at the end of each turn
@@ -61,6 +68,7 @@ enum
 	ATK49_UPDATE_LAST_MOVES,
 	ATK49_MIRROR_MOVE,
 	ATK49_MULTI_HIT_MOVES,
+	ATK49_RAID_SHIELD_BREAK,
 	ATK49_DEFROST,
 	ATK49_SECOND_MOVE_EFFECT,
 	ATK49_MAGICIAN_MOXIE_BATTLEBOND,
@@ -75,9 +83,11 @@ enum
 	ATK49_SHELL_BELL_LIFE_ORB_RECOIL,
 	ATK49_RESTORE_ABILITIES,
 	ATK49_PICKPOCKET,
+	ATK49_RAID_MON_PREP_MORE_ATTACKS,
 	ATK49_SUBSTITUTE,
 	ATK49_END_ZMOVES,
 	ATK49_DANCER,
+	ATK49_RAID_SHIELD,
 	ATK49_COUNT,
 };
 
@@ -121,6 +131,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 	{ 	//Cancel the Z-Moves
 		gNewBS->ZMoveData->active = FALSE;
 		gNewBS->ZMoveData->toBeUsed[gBankAttacker] = 0;
+		gNewBS->dynamaxData.active = FALSE;
 	}
 
 	if (arg1 == ARG_ONLY_EMERGENCY_EXIT)
@@ -425,13 +436,13 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			break;
 
 		case ATK49_CHOICE_MOVE: // update choice band move
-			if (arg1 != ARG_IN_FUTURE_ATTACK)
+			if (arg1 != ARG_IN_FUTURE_ATTACK && !IsDynamaxed(gBankAttacker))
 			{
 				if (gChosenMove != MOVE_STRUGGLE)
 				{
 					if (gHitMarker & HITMARKER_OBEYS)
 					{
-						if (holdEffectAtk == ITEM_EFFECT_CHOICE_BAND)
+						if (holdEffectAtk == ITEM_EFFECT_CHOICE_BAND || ABILITY(gBankAttacker) == ABILITY_GORILLATACTICS)
 						{
 							if (*choicedMoveAtk == 0 || *choicedMoveAtk == 0xFFFF)
 							{
@@ -460,7 +471,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			&& TOOK_DAMAGE(gBankTarget)
 			&& gBattleMoves[gCurrentMove].effect == EFFECT_EAT_BERRY
 			&& gCurrentMove != MOVE_INCINERATE
-			&& ITEM_POCKET(gBankTarget) == POCKET_BERRY_POUCH
+			&& IsBerry(ITEM(gBankTarget))
 			&& ABILITY(gBankTarget) != ABILITY_STICKYHOLD
 			&& (!gBattleMons[gBankTarget].hp || !(ITEM_EFFECT(gBankTarget) == ITEM_EFFECT_JABOCA_ROWAP_BERRY && ITEM_QUALITY(gBankTarget) == CalcMoveSplit(gBankAttacker, gCurrentMove))))
 			{
@@ -551,7 +562,9 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			{
 				gLastPrintedMoves[gBankAttacker] = gChosenMove;
 				gNewBS->lastTargeted[gBankAttacker] = gBankTarget;
-				gNewBS->usedMoveIndices[gBankAttacker] |= gBitTable[gCurrMovePos];
+				
+				if (!IsDynamaxed(gBankAttacker))
+					gNewBS->usedMoveIndices[gBankAttacker] |= gBitTable[gCurrMovePos];
 			}
 
 			if (!(gAbsentBattlerFlags & gBitTable[gBankAttacker])
@@ -613,8 +626,8 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 
 			if (gNewBS->ZMoveData->active)
 			{
-				gBattleStruct->lastTakenMove[bankDef] = 0;
-				gBattleStruct->lastTakenMoveFrom[bankDef][gBankAttacker] = 0;
+				gBattleStruct->lastTakenMove[bankDef] = MOVE_NONE;
+				gBattleStruct->lastTakenMoveFrom[bankDef][gBankAttacker] = MOVE_NONE;
 			}
 
 			gBattleScripting->atk49_state++;
@@ -637,6 +650,15 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 				}
 				else
 				{
+					if (gCurrentMove == MOVE_DRAGONDARTS
+					&&  gBattleStruct->moveTarget[gBankAttacker] == gBankTarget //Haven't already changed targets
+					&&  CanTargetPartner(gBankTarget)
+					&&  !TargetFullyImmuneToCurrMove(PARTNER(gBankTarget)))
+					{
+						gBankTarget = PARTNER(gBankTarget); //Target the partner is doubles for second hit.
+						PressurePPLose(gBankTarget, gBankAttacker, gChosenMove);
+					}
+
 					if (gBattleMons[gBankAttacker].hp
 					&& gBattleMons[gBankTarget].hp
 					&& (gChosenMove == MOVE_SLEEPTALK || !(gBattleMons[gBankAttacker].status1 & STATUS1_SLEEP))
@@ -668,6 +690,39 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			gMultiHitCounter = 0;
 			gNewBS->ParentalBondOn = 0;
 			gNewBS->MultiHitOn = FALSE;
+			break;
+
+		case ATK49_RAID_SHIELD_BREAK: //Here b/c multi-hit moves only break one shield
+		#ifdef FLAG_RAID_BATTLE
+			if (IsRaidBattle()
+			&& GetBattlerPosition(gBankTarget) == B_POSITION_OPPONENT_LEFT
+			&& MOVE_HAD_EFFECT
+			&& TOOK_DAMAGE(gBankTarget)
+			&& gNewBS->dynamaxData.raidShieldsUp)
+			{
+				DestroyRaidShieldSprite();
+				if (IsAnyMaxMove(gCurrentMove) || IsZMove(gCurrentMove) || gBattleMoves[gCurrentMove].effect == EFFECT_0HKO)
+					DestroyRaidShieldSprite();
+				if (IsZMove(gCurrentMove))
+					DestroyRaidShieldSprite(); //Z-Moves destroy 3 shields
+
+				if (gNewBS->dynamaxData.shieldsDestroyed >= gNewBS->dynamaxData.shieldCount)
+				{
+					gNewBS->dynamaxData.raidShieldsUp = FALSE;
+					gBattleScripting->bank = gBankTarget;
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_BrokenRaidBarrier;
+
+					//Do some residual damage after the shattering
+					gBattleMoveDamage = gBattleMons[gBankTarget].maxHP / 6;
+					if (gNewBS->dynamaxData.shieldsDestroyed > gNewBS->dynamaxData.shieldCount)
+						gBattleMoveDamage *= 2;
+					gNewBS->dynamaxData.turnStartHP = gBattleMons[gBankTarget].hp - gBattleMoveDamage; //No reactivating barrier yet
+					effect = TRUE;
+				}
+			}
+		#endif
+			gBattleScripting->atk49_state++;
 			break;
 
 		case ATK49_DEFROST: // defrosting check
@@ -949,7 +1004,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			if (arg1 != ARG_IN_FUTURE_ATTACK
 			&&  !(gHitMarker & HITMARKER_UNABLE_TO_USE_MOVE))
 			{
-				if (gCurrentMove == MOVE_MINDBLOWN
+				if ((gCurrentMove == MOVE_MINDBLOWN || gCurrentMove == MOVE_STEELBEAM)
 				&& ABILITY(gBankAttacker) != ABILITY_MAGICGUARD
 				&& gBattleMons[gBankAttacker].hp)
 				{
@@ -1083,6 +1138,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 					if (banks[i] != gBankAttacker
 					&&  BATTLER_ALIVE(banks[i])
 					&&  !SheerForceCheck()
+					//&&  !IsDynamaxed(banks[i]) //Can't force out a Dynamaxed mon - handled in BS
 					&&  ITEM_EFFECT(banks[i]) == ITEM_EFFECT_RED_CARD
 					&&  !(gNewBS->ResultFlags[banks[i]] & MOVE_RESULT_NO_EFFECT)
 					&&  gNewBS->DamageTaken[banks[i]]
@@ -1164,7 +1220,10 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 
 			if (arg1 != ARG_IN_FUTURE_ATTACK
 			&& !(gHitMarker & HITMARKER_UNABLE_TO_USE_MOVE)
-			&& (itemEffect == ITEM_EFFECT_LIFE_ORB || itemEffect == ITEM_EFFECT_SHELL_BELL))
+			&& (itemEffect == ITEM_EFFECT_LIFE_ORB
+			 || itemEffect == ITEM_EFFECT_SHELL_BELL
+			 || itemEffect == ITEM_EFFECT_THROAT_SPRAY
+			 || itemEffect == ITEM_EFFECT_BLUNDER_POLICY))
 			{
 				if (ItemBattleEffects(ItemEffects_ContactAttacker, gBankAttacker, TRUE, FALSE))
 					effect = TRUE;
@@ -1213,6 +1272,15 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 					break; //Only fastest Pickpocket activates so exit loop.
 				}
 			}
+			gBattleScripting->atk49_state++;
+			break;
+		
+		case ATK49_RAID_MON_PREP_MORE_ATTACKS:
+			if (BATTLER_ALIVE(gBankAttacker)
+			&& GetBattlerPosition(gBankAttacker) == B_POSITION_OPPONENT_LEFT
+			&& (SPLIT(gCurrentMove) == SPLIT_STATUS || !gNewBS->dynamaxData.active) //Status move or Raid Boss didn't use Max Move
+			&& Random() % 100 < GetRaidBattleRepeatedAttackChance(gBankAttacker))
+				gNewBS->dynamaxData.attackAgain = TRUE;
 			gBattleScripting->atk49_state++;
 			break;
 
@@ -1269,6 +1337,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			gNewBS->ZMoveData->active = FALSE;
 			gNewBS->ZMoveData->effectApplied = FALSE;
 			gNewBS->ZMoveData->toBeUsed[gBankAttacker] = 0;
+			gNewBS->dynamaxData.active = FALSE;
 			gNewBS->secondaryEffectApplied = FALSE;
 			gNewBS->InstructInProgress = FALSE;
 			gNewBS->bypassSubstitute = FALSE;
@@ -1349,6 +1418,20 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			}
 
 			++gNewBS->DancerBankCount;
+			break;
+			
+		case ATK49_RAID_SHIELD:
+			if (IsRaidBattle() && ShouldCreateRaidShields(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)))
+			{
+				gNewBS->dynamaxData.raidShieldsUp = TRUE;
+				gNewBS->dynamaxData.shieldsDestroyed = 0;
+				gBattleScripting->bank = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
+				BattleScriptPushCursor();
+				gBattlescriptCurrInstr = BattleScript_RaidShields;
+				effect = 1;
+			}
+
+			gBattleScripting->atk49_state++;
 			break;
 
 		case ATK49_COUNT:

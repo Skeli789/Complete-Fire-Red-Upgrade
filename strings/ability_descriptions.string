@@ -167,7 +167,7 @@ Powers up Dark-type moves.
 Powers up Fairy-type moves.
 
 #org @DESC_AURABREAK
-Reverses Aura abilities.
+Reverses Aura Abilities.
 
 #org @DESC_REFRIGERATE
 Normal moves become Ice.
@@ -224,7 +224,7 @@ Parent and child attack together.
 #org @DESC_MOLDBREAKER
 #org @DESC_TURBOBLAZE
 #org @DESC_TERAVOLT
-Moves ignore abilities.
+Moves ignore Abilities.
 
 #org @DESC_ZENMODE
 Transforms below half HP.
@@ -250,7 +250,7 @@ Halves contact damage.
 
 #org @DESC_BROKEN_1
 #org @DESC_BROKEN_2
-No special ability.
+No special Ability.
 
 #org @DESC_POWERCONSTRUCT
 Transforms below half HP.
@@ -454,10 +454,10 @@ Copies dance moves.
 Powers up allies.
 
 #org @DESC_RECEIVER
-Takes over a KOed ally's ability.
+Takes over a KOed ally's Ability.
 
 #org @DESC_POWEROFALCHEMY
-Takes over a KOed ally's ability.
+Takes over a KOed ally's Ability.
 
 #org @DESC_NEUROFORCE
 Powers up super-effective hits.
@@ -465,7 +465,7 @@ Powers up super-effective hits.
 #org @DESC_GALVANIZE
 Normal moves become Electric.
 
-//Sword and Shield abilities.
+//Sword and Shield Abilities.
 
 #org @DESC_INTREPIDSWORD
 Ups Attack on entry.
@@ -477,7 +477,7 @@ Ups Defense on entry.
 Fetches first failed Pok\e Ball.
 
 #org @DESC_COTTONDOWN
-Lowers everyone's speed when hit.
+Lowers everyone's Speed when hit.
 
 #org @DESC_MIRRORARMOR
 Bounces back stat decreases.
@@ -490,13 +490,13 @@ Spits prey if damaged after a swim.
 Moves ignore redirection.
 
 #org @DESC_STEAMENGINE
-Fire and Water hits boost speed.
+Fire and Water hits boost Speed.
 
 #org @DESC_PUNKROCK
 Ups and resists sound moves.
 
 #org @DESC_SANDSPIT
-Creates sandstorm when hit.
+Creates a sandstorm when hit.
 
 #org @DESC_ICESCALES
 Halves special damage.
@@ -520,19 +520,19 @@ Screens are removed on entry.
 Boosts ally Steel moves.
 
 #org @DESC_PERISHBODY
-Perish Song inflicted on contact.
+Gives a perish count on contact.
 
 #org @DESC_WANDERINGSPIRIT
-Trade abilities on contact.
+Trades Abilities on contact.
 
 #org @DESC_GORILLATACTICS
 Ups Attack, but allows one move.
 
 #org @DESC_NEUTRALISINGGAS
-All abilities are nullified.
+All Abilities are nullified.
 
 #org @DESC_PASTEL_VEIL
-Team protected from Poison.
+Protects team from poison.
 
 #org @DESC_HUNGERSWITCH
 Changes form each turn.

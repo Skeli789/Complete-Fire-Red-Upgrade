@@ -10,6 +10,7 @@ move_menu_battle_scripts.s
 .include "../battle_script_macros.s"
 
 .global BattleScript_MustSelectEncoredMove
+.global BattleScript_SelectingNotAllowedMoveChoiceAbility
 .global BattleScript_SelectingNotAllowedMoveAssaultVest
 .global BattleScript_SelectingNotAllowedSkyBattle
 .global BattleScript_SelectingNotAllowedGravity
@@ -20,6 +21,11 @@ BattleScript_MustSelectEncoredMove:
 	setword BATTLE_STRING_LOADER EncoreMoveMenuString
 	printselectionstring 0x184
 	endselectionscript
+	
+BattleScript_SelectingNotAllowedMoveChoiceAbility:
+	setword BATTLE_STRING_LOADER gText_GorillaTacticsMoveMenuBlockage
+	printselectionstring 0x184
+	endselectionscript	
 
 BattleScript_SelectingNotAllowedMoveAssaultVest:
 	setword BATTLE_STRING_LOADER AssualtVestMoveMenuString

@@ -31,6 +31,7 @@
 #endif // __APPLE__
 
 #define ARRAY_COUNT(array) (sizeof(array) / sizeof((array)[0]))
+#define NELEMS(arr) (sizeof(arr)/sizeof(*(arr)))
 
 // useful math macros
 
@@ -80,6 +81,7 @@
 // TODO: Propagate use of this macro
 #define TEST_BUTTON(field, button) ({(field) & (button);})
 #define JOY_NEW(button) TEST_BUTTON(gMain.newKeys,  button)
+#define JOY_NEW_AND_REPEATED(button) TEST_BUTTON(gMain.newAndRepeatedKeys,  button)
 #define JOY_HELD(button)  TEST_BUTTON(gMain.heldKeys, button)
 
 #define SPECIES_TABLES_TERMIN 0xFEFE
@@ -179,6 +181,13 @@ enum
     POCKET_BERRIES
 };
 
+struct UCoords8
+{
+    u8 x;
+    u8 y;
+	u8 _;
+	u8 __;
+};
 
 struct Coords16
 {
@@ -315,7 +324,7 @@ struct LinkBattleRecords
     u8 languages[LINK_B_RECORDS_COUNT];
 };
 
-struct SaveBlock2
+struct SaveBlock2 //0x2024588
 {
     /*0x000*/ u8 playerName[PLAYER_NAME_LENGTH];
     /*0x008*/ u8 playerGender; // MALE, FEMALE
@@ -667,14 +676,14 @@ struct FameCheckerSaveData
 #define NUM_EASY_CHAT_EXTRA_PHRASES 33
 #define EASY_CHAT_EXTRA_PHRASES_SIZE 8
 
-struct SaveBlock1
+struct SaveBlock1 //0x202552C
 {
     /*0x0000*/ struct Coords16 pos;
     /*0x0004*/ struct WarpData location;
-    /*0x000C*/ struct WarpData warp1;
-    /*0x0014*/ struct WarpData warp2;
-    /*0x001C*/ struct WarpData lastHealLocation;
-    /*0x0024*/ struct WarpData warp4;
+    /*0x000C*/ struct WarpData continueGameWarp;
+    /*0x0014*/ struct WarpData dynamicWarp;
+    /*0x001C*/ struct WarpData lastHealLocation; // used by white-out and teleport
+    /*0x0024*/ struct WarpData escapeWarp; // used by Dig and Escape Rope
     /*0x002C*/ u16 savedMusic;
     /*0x002E*/ u8 weather;
     /*0x002F*/ u8 filler_2F;
@@ -729,6 +738,13 @@ struct SaveBlock1
 };
 
 extern struct SaveBlock1* gSaveBlock1Ptr;
+
+struct MapPosition
+{
+    s16 x;
+    s16 y;
+    s8 height;
+};
 
 struct Bitmap           // TODO: Find a better spot for this
 {

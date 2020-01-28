@@ -12,6 +12,7 @@
 //Exported Functions
 u32 MathMax(u32 num1, u32 num2);
 u32 MathMin(u32 num1, u32 num2);
+u16 RandRange(u16 min, u16 max);
 bool8 CheckTableForMove(move_t move, const u16 table[]);
 bool8 CheckTableForMoveEffect(move_t move, const u8 table[]);
 bool8 CheckTableForAbility(u8 ability, const u8 table[]);
@@ -23,6 +24,8 @@ void HealMon(struct Pokemon* mon);
 u16 GetNationalPokedexCount(u8 caseID);
 bool8 CanEvolve(struct Pokemon* mon);
 bool8 CouldHaveEvolvedViaLevelUp(struct Pokemon* mon);
+void EvolveSpeciesByLevel(u16* species, u8 level);
+u32 GetBaseStatsTotal(const u16 species);
 u8 FindMovePositionInMonMoveset(u16 move, struct Pokemon* mon);
 bool8 MoveInMonMoveset(u16 move, struct Pokemon* mon);
 bool8 AllHittingMoveWithTypeInMonMoveset(struct Pokemon* mon, u8 moveType);

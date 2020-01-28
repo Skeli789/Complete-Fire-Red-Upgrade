@@ -80,8 +80,34 @@
 #define TEXT_COLOR_TRANSPARENT  0x0
 #define TEXT_COLOR_WHITE        0x1
 #define TEXT_COLOR_DARK_GREY    0x2
+#define TEXT_COLOR_LIGHT_GREY   0x3
+#define TEXT_COLOR_RED          0x4
+#define TEXT_COLOR_LIGHT_RED    0x5
+#define TEXT_COLOR_GREEN        0x6
+#define TEXT_COLOR_LIGHT_GREEN  0x7
+#define TEXT_COLOR_BLUE         0x8
+#define TEXT_COLOR_LIGHT_BLUE   0x9
+#define TEXT_DYNAMIC_COLOR_1    0xA // Usually white
+#define TEXT_DYNAMIC_COLOR_2    0xB // Usually white w/ tinge of green
+#define TEXT_DYNAMIC_COLOR_3    0xC // Usually white
+#define TEXT_DYNAMIC_COLOR_4    0xD // Usually aquamarine
+#define TEXT_DYNAMIC_COLOR_5    0xE // Usually blue-green
+#define TEXT_DYNAMIC_COLOR_6    0xF // Usually cerulean
 
-// battle placeholders are located in battle_message.h
+#define PLACEHOLDER_ID_UNKNOWN       0x0
+#define PLACEHOLDER_ID_PLAYER        0x1
+#define PLACEHOLDER_ID_STRING_VAR_1  0x2
+#define PLACEHOLDER_ID_STRING_VAR_2  0x3
+#define PLACEHOLDER_ID_STRING_VAR_3  0x4
+#define PLACEHOLDER_ID_KUN           0x5
+#define PLACEHOLDER_ID_RIVAL         0x6
+#define PLACEHOLDER_ID_VERSION       0x7
+#define PLACEHOLDER_ID_AQUA          0x8
+#define PLACEHOLDER_ID_MAGMA         0x9
+#define PLACEHOLDER_ID_ARCHIE        0xA 
+#define PLACEHOLDER_ID_MAXIE         0xB
+#define PLACEHOLDER_ID_KYOGRE        0xC
+#define PLACEHOLDER_ID_GROUDON       0xD
 
 #define EXT_CTRL_CODE_JPN   0x15
 #define EXT_CTRL_CODE_ENG   0x16
@@ -185,6 +211,18 @@ struct __attribute__((packed)) TextColor
     u8 bgColor;
     u8 fgColor;
     u8 shadowColor;
+};
+
+enum
+{
+    FONTATTR_MAX_LETTER_WIDTH,
+    FONTATTR_MAX_LETTER_HEIGHT,
+    FONTATTR_LETTER_SPACING,
+    FONTATTR_LINE_SPACING,
+    FONTATTR_UNKNOWN,   // dunno what this is yet
+    FONTATTR_COLOR_FOREGROUND,
+    FONTATTR_COLOR_BACKGROUND,
+    FONTATTR_COLOR_SHADOW
 };
 
 u16 __attribute__((long_call)) AddTextPrinterParameterized(u8 windowId, u8 fontId, const u8 *str, u8 x, u8 y, u8 speed, void (*callback)(struct TextSubPrinter *, u16));

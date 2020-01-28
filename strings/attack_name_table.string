@@ -2303,134 +2303,266 @@ Z-Move 53
 #org @NAME_MAX_GUARD
 Guard
 
-#org @NAME_MAX_FLARE
-Flare
-
-#org @NAME_MAX_FLUTTERBY
-Flutterby
-
-#org @NAME_MAX_LIGHTNING
-Lightning
-
-#org @NAME_MAX_STRIKE
+#org @NAME_MAX_STRIKE_P
 Strike
 
-#org @NAME_MAX_KNUCKLE
+#org @NAME_MAX_STRIKE_S
+Strike
+
+#org @NAME_MAX_KNUCKLE_P
 Knuckle
 
-#org @NAME_MAX_PHANTASM
-Phantasm
+#org @NAME_MAX_KNUCKLE_S
+Knuckle
 
-#org @NAME_MAX_HAILSTORM
-Hailstorm
-
-#org @NAME_MAX_OOZE
-Ooze
-
-#org @NAME_MAX_GEYSER
-Geyser
-
-#org @NAME_MAX_AIRSTREAM
+#org @NAME_MAX_AIRSTREAM_P
 Airstream
 
-#org @NAME_MAX_STARFALL
-Starfall
+#org @NAME_MAX_AIRSTREAM_S
+Airstream
 
-#org @NAME_MAX_WYRMWIND
-Wyrmwind
+#org @NAME_MAX_OOZE_P
+Ooze
 
-#org @NAME_MAX_MINDSTORM
-Mindstorm
+#org @NAME_MAX_OOZE_S
+Ooze
 
-#org @NAME_MAX_ROCKFALL
-Rockfall
-
-#org @NAME_MAX_QUAKE
+#org @NAME_MAX_QUAKE_P
 Quake
 
-#org @NAME_MAX_DARKNESS
-Darkness
+#org @NAME_MAX_QUAKE_S
+Quake
 
-#org @NAME_MAX_OVERGROWTH
-Overgrowth
+#org @NAME_MAX_ROCKFALL_P
+Rockfall
 
-#org @NAME_MAX_STEELSPIKE
+#org @NAME_MAX_ROCKFALL_S
+Rockfall
+
+#org @NAME_MAX_FLUTTERBY_P
+Flutterby
+
+#org @NAME_MAX_FLUTTERBY_S
+Flutterby
+
+#org @NAME_MAX_PHANTASM_P
+Phantasm
+
+#org @NAME_MAX_PHANTASM_S
+Phantasm
+
+#org @NAME_MAX_STEELSPIKE_P
 Steelspike
 
-#org @NAME_G_MAX_WILDFIRE
-Wilfire
+#org @NAME_MAX_STEELSPIKE_S
+Steelspike
 
-#org @NAME_G_MAX_BEFUDDLE
+#org @NAME_MAX_FLARE_P
+Flare
+
+#org @NAME_MAX_FLARE_S
+Flare
+
+#org @NAME_MAX_GEYSER_P
+Geyser
+
+#org @NAME_MAX_GEYSER_S
+Geyser
+
+#org @NAME_MAX_OVERGROWTH_P
+Overgrowth
+
+#org @NAME_MAX_OVERGROWTH_S
+Overgrowth
+
+#org @NAME_MAX_LIGHTNING_P
+Lightning
+
+#org @NAME_MAX_LIGHTNING_S
+Lightning
+
+#org @NAME_MAX_MINDSTORM_P
+Mindstorm
+
+#org @NAME_MAX_MINDSTORM_S
+Mindstorm
+
+#org @NAME_MAX_HAILSTORM_P
+Hailstorm
+
+#org @NAME_MAX_HAILSTORM_S
+Hailstorm
+
+#org @NAME_MAX_WYRMWIND_P
+Wyrmwind
+
+#org @NAME_MAX_WYRMWIND_S
+Wyrmwind
+
+#org @NAME_MAX_DARKNESS_P
+Darkness
+
+#org @NAME_MAX_DARKNESS_S
+Darkness
+
+#org @NAME_MAX_STARFALL_P
+Starfall
+
+#org @NAME_MAX_STARFALL_S
+Starfall
+
+#org @NAME_G_MAX_WILDFIRE_P
+Wildfire
+
+#org @NAME_G_MAX_WILDFIRE_S
+Wildfire
+
+#org @NAME_G_MAX_BEFUDDLE_P
 Befuddle
 
-#org @NAME_G_MAX_VOLTCRASH
+#org @NAME_G_MAX_BEFUDDLE_S
+Befuddle
+
+#org @NAME_G_MAX_VOLTCRASH_P
 Voltcrash
 
-#org @NAME_G_MAX_GOLDRUSH
+#org @NAME_G_MAX_VOLTCRASH_S
+Voltcrash
+
+#org @NAME_G_MAX_GOLDRUSH_P
 Goldrush
 
-#org @NAME_G_MAX_CHISTRIKE
+#org @NAME_G_MAX_GOLDRUSH_S
+Goldrush
+
+#org @NAME_G_MAX_CHISTRIKE_P
 Chistrike
 
-#org @NAME_G_MAX_TERROR
-Terro
+#org @NAME_G_MAX_CHISTRIKE_S
+Chistrike
 
-#org @NAME_G_MAX_RESONANCE
-Resonance
+#org @NAME_G_MAX_TERROR_P
+Terror
 
-#org @NAME_G_MAX_CUDDLE
-Cuddle
+#org @NAME_G_MAX_TERROR_S
+Terror
 
-#org @NAME_G_MAX_REPLENISH
-Replenish
-
-#org @NAME_G_MAX_MALODOR
-Malodor
-
-#org @NAME_G_MAX_STONESURGE
-Stonesurge
-
-#org @NAME_G_MAX_WINDRAGE
-Windrage
-
-#org @NAME_G_MAX_STUNSHOCK
-Stunshock
-
-#org @NAME_G_MAX_FINALE
-Finale
-
-#org @NAME_G_MAX_DEPLETION
-Depletion
-
-#org @NAME_G_MAX_GRAVITAS
-Gravitas
-
-#org @NAME_G_MAX_VOLCALITH
-Volcalith
-
-#org @NAME_G_MAX_SANDBLAST
-Sandblast
-
-#org @NAME_G_MAX_SNOOZE
-Snooze
-
-#org @NAME_G_MAX_TARTNESS
-Tartness
-
-#org @NAME_G_MAX_SWEETNESS
-Sweetness
-
-#org @NAME_G_MAX_SMITE
-Smite
-
-#org @NAME_G_MAX_STEELSURGE
-Steelsurge
-
-#org @NAME_G_MAX_MELTDOWN
-Meltdown
-
-#org @NAME_G_MAX_FOAMBURST
+#org @NAME_G_MAX_FOAMBURST_P
 Foamburst
 
-#org @NAME_G_MAX_CENTIFERNO
+#org @NAME_G_MAX_FOAMBURST_S
+Foamburst
+
+#org @NAME_G_MAX_RESONANCE_P
+Resonance
+
+#org @NAME_G_MAX_RESONANCE_S
+Resonance
+
+#org @NAME_G_MAX_CUDDLE_P
+Cuddle
+
+#org @NAME_G_MAX_CUDDLE_S
+Cuddle
+
+#org @NAME_G_MAX_REPLENISH_P
+Replenish
+
+#org @NAME_G_MAX_REPLENISH_S
+Replenish
+
+#org @NAME_G_MAX_MALODOR_P
+Malodor
+
+#org @NAME_G_MAX_MALODOR_S
+Malodor
+
+#org @NAME_G_MAX_MELTDOWN_P
+Meltdown
+
+#org @NAME_G_MAX_MELTDOWN_S
+Meltdown
+
+#org @NAME_G_MAX_STONESURGE_P
+Stonesurge
+
+#org @NAME_G_MAX_STONESURGE_S
+Stonesurge
+
+#org @NAME_G_MAX_WINDRAGE_P
+Windrage
+
+#org @NAME_G_MAX_WINDRAGE_S
+Windrage
+
+#org @NAME_G_MAX_STUNSHOCK_P
+Stunshock
+
+#org @NAME_G_MAX_STUNSHOCK_S
+Stunshock
+
+#org @NAME_G_MAX_FINALE_P
+Finale
+
+#org @NAME_G_MAX_FINALE_S
+Finale
+
+#org @NAME_G_MAX_DEPLETION_P
+Depletion
+
+#org @NAME_G_MAX_DEPLETION_S
+Depletion
+
+#org @NAME_G_MAX_GRAVITAS_P
+Gravitas
+
+#org @NAME_G_MAX_GRAVITAS_S
+Gravitas
+
+#org @NAME_G_MAX_VOLCALITH_P
+Volcalith
+
+#org @NAME_G_MAX_VOLCALITH_S
+Volcalith
+
+#org @NAME_G_MAX_SANDBLAST_P
+Sandblast
+
+#org @NAME_G_MAX_SANDBLAST_S
+Sandblast
+
+#org @NAME_G_MAX_SNOOZE_P
+Snooze
+
+#org @NAME_G_MAX_SNOOZE_S
+Snooze
+
+#org @NAME_G_MAX_TARTNESS_P
+Tartness
+
+#org @NAME_G_MAX_TARTNESS_S
+Tartness
+
+#org @NAME_G_MAX_SWEETNESS_P
+Sweetness
+
+#org @NAME_G_MAX_SWEETNESS_S
+Sweetness
+
+#org @NAME_G_MAX_SMITE_P
+Smite
+
+#org @NAME_G_MAX_SMITE_S
+Smite
+
+#org @NAME_G_MAX_STEELSURGE_P
+Steelsurge
+
+#org @NAME_G_MAX_STEELSURGE_S
+Steelsurge
+
+#org @NAME_G_MAX_CENTIFERNO_P
+Centiferno
+
+#org @NAME_G_MAX_CENTIFERNO_S
 Centiferno

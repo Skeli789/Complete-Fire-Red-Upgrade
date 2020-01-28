@@ -75,3 +75,15 @@ The power of [SCRIPTING_BANK]'s\nFire-type moves rose!
 
 #org @gText_StoppedSchooling
 [SCRIPTING_BANK] stopped\nschooling!
+
+#org @gText_GorillaTacticsMoveMenuBlockage
+[CURRENT_MOVE] can't be selected\nbecause of [LAST_ABILITY]!\p
+
+#org @gText_IceFaceTookDamage
+The Ice Face took damage for\n[TARGET]!
+
+#org @gText_IceFaceBusted
+[TARGET]'s Ice Face\nshattered!
+
+#org @gText_ScreenCleanerActivate
+All screens on the field were\ncleansed!

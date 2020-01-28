@@ -235,7 +235,8 @@ struct PokemonSubstruct3
 
  /* 0x02 */ u16 metLevel:7;
  /* 0x02 */ u16 metGame:4;
- /* 0x03 */ u16 blank:4;
+ /* 0x03 */ u16 gigantamax:1;
+ /* 0x03 */ u16 blank:3;
  /* 0x03 */ u16 otGender:1;
 
  /* 0x04 */ u32 hpIV:5;
@@ -341,11 +342,12 @@ typedef struct Pokemon
  /* 0x00 */ u8 pokerusDays : 4;
  /* 0x00 */ u8 pokerusStrain : 4;
 
-/* 0x01 */	u8 metLocation;
+ /* 0x01 */	u8 metLocation;
 
  /* 0x02 */ u16 metLevel:7;
  /* 0x02 */ u16 metGame:4;
- /* 0x03 */ u16 blank:4;
+ /* 0x03 */ u16 gigantamax:1;
+ /* 0x03 */ u16 blank:3;
  /* 0x03 */ u16 otGender:1;
 
  /* 0x04 */ u32 hpIV:5;
@@ -631,7 +633,7 @@ enum EvolutionMethods
 	// new evolutions
 	EVO_RAINY_FOGGY_OW,		// raining or foggy in overworld
 	EVO_MOVE_TYPE,	// knows a move with a specific type (eg. sylveon: fairy type move). Param is the move type
-	EVO_TYPE_IN_PARTY,	//specific type (param) in party after given level (unknown).
+	EVO_TYPE_IN_PARTY,	//specific type (unknown) in party after given level (param).
 	EVO_MAP, 	// specific map evolution. bank in param, map in unknown
 	EVO_MALE_LEVEL,		// above given level if male
 	EVO_FEMALE_LEVEL,	// above given level if female
@@ -644,6 +646,7 @@ enum EvolutionMethods
 	EVO_LEVEL_SPECIFIC_TIME_RANGE, // above given level with a range (unknown is [start][end]. eg lycanroc -> 1700-1800 hrs -> 0x1112)
 	EVO_FLAG_SET, //If a certain flag is set. Can be used for touching the Mossy/Icy Rock for Leafeon/Glaceon evolutions
 };
+#define EVO_GIGANTAMAX 0xFD
 #define EVO_MEGA 0xFE
 
 struct Evolution
@@ -747,6 +750,7 @@ bool8 __attribute__((long_call)) IsOtherTrainer(u32 otId, u8* otName);
 void __attribute__((long_call)) MonRestorePP(struct Pokemon *mon);
 bool8 __attribute__((long_call)) GetSetPokedexFlag(u16 nationalNum, u8 caseID);
 u16 __attribute__((long_call)) GetPokedexHeightWeight(u16 dexNum, u8 data);
+void __attribute__((long_call)) HealPlayerParty(void);
 void __attribute__((long_call)) ReducePartyToThree(void);
 u8 __attribute__((long_call)) pokemon_order_func(u8 a);
 u8 __attribute__((long_call)) GetEggMoves(struct Pokemon* poke, void* storageAddr);

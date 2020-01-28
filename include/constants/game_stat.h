@@ -49,7 +49,7 @@
 #define GAME_STAT_CHECKED_CLOCK             45
 #define GAME_STAT_WON_POKEMON_LOTTERY       46
 #define GAME_STAT_USED_DAYCARE              47
-#define GAME_STAT_RODE_CABLE_CAR            48
+#define GAME_STAT_RAID_BATTLES              48
 #define GAME_STAT_ENTERED_HOT_SPRINGS       49
 
 /*TODO: add new stats added in Emerald*/

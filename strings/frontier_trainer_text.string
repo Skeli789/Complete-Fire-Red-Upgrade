@@ -1182,13 +1182,13 @@ Urk[.] We lost[.]
 Yeehah! Yippee!\nI won, I won!
 
 #org @sFrontierText_Pokekid_PreBattle_2
-My mommy made this outfit for me.
+Kneel down before me!
 
 #org @sFrontierText_Pokekid_PlayerWin_2
-My mommy is really good at sewing.
+My mommy always says that to my\ndaddy!
 
 #org @sFrontierText_Pokekid_PlayerLose_2
-Isn't it cute?
+Hooray!\nI'm gonna tell my mommy!
 
 #org @sFrontierText_Pokekid_PreBattle_3
 My Pok\emon are cute,\nbut they're not very tough!
@@ -1311,7 +1311,7 @@ Alright!\nThat was fun!
 I'm looking forward to battling you\nagain in the future!
 
 #org @sFrontierText_Golche_PreBattle
-Hey, there!\nI'm Golche!\pThe strategies of the trainers you\nfaced?\pI helped make them!\pLet's see what you can do against\nmy strategy!
+Hey, there!\nI'm Golche!\pThe strategies of the Trainers you\nfaced?\pI helped make them!\pLet's see what you can do against\nmy strategy!
 
 #org @sFrontierText_Golche_PlayerWin
 Hmm[.]\pLooks like I've got some refining\nto do[.]

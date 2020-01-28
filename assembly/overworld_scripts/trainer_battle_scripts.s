@@ -51,7 +51,9 @@ Script_TrainerSpottedMulti:
 	special ShowTrainerIntroSpeech
 	waitmsg
 	waitkeypress
-	callasm AllowTrainerIncrementation + 1
+	closeonkeypress
+	callasm AllowTrainerIncrementation
+	lock
 	end
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -75,20 +77,21 @@ StartTwoOpponentBattle:
 	setvar 0x8000 0x0
 
 TwoOpponentBattleShowMessage:
-	callasm LoadProperIntroSpeechForTwoOpponentSighting + 1
+	callasm LoadProperIntroSpeechForTwoOpponentSighting
 	special ShowTrainerIntroSpeech
 	waitmsg
 	waitkeypress
 	closeonkeypress
 	special CAMERA_START
-	callasm MoveCameraToTrainerB + 1
+	callasm MoveCameraToTrainerB
 	call WalkCall
 	callasm PrepTrainerB + 1
 	faceplayer
 	special ShowTrainerIntroSpeech
 	waitmsg
 	waitkeypress
-	callasm MoveCameraToTrainerB + 1 @Here it moves the camera back
+	closeonkeypress
+	callasm MoveCameraToTrainerB @Here it moves the camera back
 	call WalkCall
 	special CAMERA_END
 	goto 0x81A4FCC

@@ -6,6 +6,7 @@
 
 .global MegaRetrieveDataHook
 
+.pool
 @;0x148C0 with r0
 MegaRetrieveDataHook:
 	push {r3}
@@ -26,6 +27,7 @@ LoadMegaGraphicsHook:
 	pop {r1}
 	bx r1
 
+.pool
 @;0x80483A4 with r0
 MegaLevelStringHook:
 	lsl r4, #0x18
@@ -39,6 +41,15 @@ MegaLevelStringHook:
 	add r1, r2
 	ldrh r0, [r1, #0x3A]
 	bl HasMegaSymbol
+	cmp r0, #0
+	bne LoadSpecialMegaSymbol
+	ldr r2, objects
+	lsl r1, r5, #4
+	add r1, r5
+	lsl r1, r1, #2
+	add r1, r2
+	ldrh r0, [r1, #0x3A]
+	bl HasDynamaxSymbol
 	cmp r0, #0
 	bne LoadSpecialMegaSymbol
 
@@ -111,6 +122,7 @@ special_string:
 .endr
 
 .align 2
+.pool
 @;0804BE80 with r3
 CreateShakerHook:
 	lsl r0, #0x18
@@ -130,6 +142,7 @@ CreateShakerHook:
 	ldr r3, =0x0804BE88 | 1
 	bx r3
 
+.pool
 @;0x804BEDC with r2
 ObjcShakerHook:
 	mov r2, #0
@@ -153,6 +166,7 @@ ObjcShakerHookReturn:
 .align 2
 .ShakerData: .word SHAKER_HELPER
 
+.pool
 @;0x803301C with r1
 PlayerHandleStatusIconUpdateHook:
 	ldr r0, [r0, #0x4]
@@ -166,6 +180,7 @@ PlayerHandleStatusIconUpdateHook:
 	ldr r0, =0x8033026 | 1
 	bx r0
 
+.pool
 @;0x8038974 with r1
 OpponentHandleStatusIconUpdateHook:
 	ldr r0, [r0, #0x4]
@@ -179,6 +194,7 @@ OpponentHandleStatusIconUpdateHook:
 	ldr r0, =0x803897E | 1
 	bx r0
 
+.pool
 @;0x802F858 with r0
 LoadHealthBoxesIndicatorHook:
 	push {r4-r6,lr}
@@ -190,3 +206,85 @@ LoadHealthBoxesIndicatorHook:
 	bl CreateMegaIndicatorAfterAnim
 	ldr r1, =0x80483A4 | 1
 	bx r1
+
+@;Dynamax Hooks///////////////////////////////////////////////////////////////
+.pool
+@;0x0803443C with r0
+DynamaxPalFadeHook1_LoadOpponentGfx:
+	mov r0, r8
+	mov r1, r7
+	bl TryFadeBankPaletteForDynamax
+	ldr r0, =0x8034468 | 1
+	bx r0
+
+.pool
+@;0x080345FC with r0
+DynamaxPalFadeHook2_LoadPlayerGfx:
+	mov r0, r8
+	mov r1, r7
+	bl TryFadeBankPaletteForDynamax
+	ldr r0, =0x8034626 | 1
+	bx r0
+
+.pool
+@;0x08034DE0 with r0
+DynamaxPalFadeHook3_AlreadyTransformed:
+	mov r0, r9
+	mov r1, r10
+	bl TryFadeBankPaletteForDynamax
+	ldr r0, =0x8034E0E | 1
+	bx r0
+
+.pool
+@;0x08034FFC with r0
+DynamaxPalFadeHook4_PostTransform:
+	mov r0, r9
+	mov r1, r10
+	bl TryFadeBankPaletteForDynamax
+	ldr r0, =0x803501A | 1
+	bx r0
+
+.pool
+@;0x080744B0 with r0
+RaidBattleCoordHook1:
+	mov r0, r5
+	bl GetBattlerXCoord
+	ldr r1, =0x08074588 | 1
+	bx r1
+
+.pool
+@;0x080744D8 with r0
+RaidBattleCoordHook2:
+	mov r0, r5
+	bl GetBattlerYCoord
+	ldr r1, =0x08074588 | 1
+	bx r1
+
+.pool
+@;0x08077CC4 with r1
+DeadRaidMonSpriteHook:
+	add r0, r9
+	bl ShouldShowOpponentBattlerSprite
+	ldr r1, =0x8077CCC | 1
+	bx r1
+
+.pool
+@;0x0807524C with r2
+DeadRaidMonSpriteHook2:
+	mul r0, r1
+	ldr r1, =PARTY_OPPONENT
+	add r0, r1
+	bl ShouldShowOpponentBattlerSprite
+	ldr r1, =0x8075276 | 1
+	bx r1
+
+.pool
+@;0x80D84F6 with r0
+BufferMaxMoveNameBattle:
+	mov r0, r1
+	mov r1, r6 
+	bl BufferMoveNameBattle
+	ldr r0, =0x80D86AE | 1
+	bx r0
+
+	

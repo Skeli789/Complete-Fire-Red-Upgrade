@@ -152,9 +152,6 @@ struct Clock
 
 		extern struct MusicPlayerInfo gMPlay_BGM;
 
-		#define gBattleCircusFlags (*((u32*) 0x203E044))
-		#define gFishingByte *((u8*) 0x203E048)
-
 		//Expanded text buffers					//Size					//buffercommand X	//String Arg
 /*u8*/  #define gStringVar7 ((u8*) 0x2022BC4)	//32 bytes					//Buffer 0x5 	//FD 07
 /*u8*/  #define gStringVar8 ((u8*) 0x2022BE4)	//32 bytes					//Buffer 0x6	//FD 08
@@ -204,3 +201,13 @@ struct Clock
 #define gPokeBackupPtr (*((struct Pokemon**) 0x203E034))
 //#define sDexNavStatePtr/sFrontierRecordsPtr //0x203E038
 extern bool8 gInShop; //0x203E043
+#define gBattleCircusFlags (*((u32*) 0x203E044))
+#define gFishingByte *((u8*) 0x203E048)
+#define gLastRecordedFadeCoeff (*((u8*) 0x203E049))
+#define gLastRecordedFadeColour (*((u16*) 0x203E04A))
+#define gRaidBattleSpecies (*((u16*) 0x203E04C))
+#define gRaidBattleStars (*((u8*) 0x203E04E))
+#define gRaidBattleLevel (*((u8*) 0x203E04F))
+#define gRainFadeHelper (*((u8*) 0x203E050))
+#define gCurrentDexNavChain (*((u8*) 0x203E051))
+#define gDexNavStartedBattle (*((bool8*) 0x203E052))

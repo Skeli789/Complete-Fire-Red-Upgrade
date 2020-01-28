@@ -25,8 +25,11 @@ extern u8 BattleScript_ZMoveActivateStatus[];
 extern u8 BattleScript_ZMoveActivateDamaging[];
 extern u8 BattleScript_DarkTypePreventsPrankster[];
 extern u8 BattleScript_MoveUsedSkyBattlePrevents[];
+extern u8 BattleScript_MoveUsedDynamaxPrevents[];
+extern u8 BattleScript_MoveUsedRaidBattlePrevents[];
 extern u8 BattleScript_DampStopsExplosion[];
 extern u8 BattleScript_TookAttack[];
+extern u8 BattleScript_RaidBattleStatNullification[];
 
 #define BattleScript_NoPPForMove (u8*) 0x81D8EA8
 #define BattleScript_MagicCoatBounce (u8*) 0x81D8FAA

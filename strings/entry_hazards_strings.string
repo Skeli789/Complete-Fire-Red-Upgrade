@@ -10,6 +10,9 @@ Pointed stones float in the air\naround [FD][35] team!
 #org @StickyWebLayString
 A sticky web has been laid out\naround [FD][35] team!
 
+#org @gText_SteelsurgeLay
+Sharp pieces of steel started\nfloating around [FD][35] team!
+
 #org @RemovedEntryHazardsString
 The entry hazards around\n[FD][36] side were blown away!
 
@@ -22,8 +25,14 @@ The entry hazards around\n[FD][35] side were blown away!
 #org @gText_HurtByStealthRock
 Pointed stones dug into\n[TARGET]!
 
+#org @gText_HurtBySteelsurge
+The sharp steel bit into\n[TARGET]!
+
 #org @gText_AbsorbedToxicSpikes
 The Toxic Spikes disappeared from\naround [TARGET]'s feet!
 
 #org @gText_CaughtInStickyWeb
 [TARGET] was caught\nin a Sticky Web!
+
+#org @gText_HazardsBlownAway
+The hazards were blown away from\naround [ATTACKER]!

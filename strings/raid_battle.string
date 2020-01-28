@@ -1,0 +1,11 @@
+#org @gText_RecommendedLevel
+Recommended Lvl: 
+
+#org @gText_RaidIntroSelection
+[DPAD_UP_DOWN]Pick [A_BUTTON]Choose [START_BUTTON]Random [B_BUTTON]Cancel
+
+#org @gText_RaidBattleRules
+Battle ends if:\n4 Pok\emon faint\n10 turns pass
+
+#org @gText_RaidBattleChoosePartner
+Available Partners

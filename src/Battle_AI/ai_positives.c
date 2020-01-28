@@ -35,7 +35,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 {
 	u32 i, j;
 	u16 predictedMove = IsValidMovePrediction(bankDef, bankAtk); //The move the target is likely to make against the attacker
-	u8 class = PredictBankFightingStyle(bankAtk);
+	u8 class = GetBankFightingStyle(bankAtk);
 	s16 viability = originalViability;
 
 	//Get relevant params
@@ -530,7 +530,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			|| MoveEffectInMoveset(EFFECT_SNORE, bankAtk)
 			|| atkAbility == ABILITY_SHEDSKIN
 			|| atkAbility == ABILITY_EARLYBIRD
-			|| (gBattleWeather & WEATHER_RAIN_ANY && gWishFutureKnock->weatherDuration != 1 && atkAbility == ABILITY_HYDRATION))
+			|| (gBattleWeather & WEATHER_RAIN_ANY && gWishFutureKnock->weatherDuration != 1 && atkAbility == ABILITY_HYDRATION && atkItemEffect != ITEM_EFFECT_UTILITY_UMBRELLA))
 			{
 				if (ShouldRecover(bankAtk, bankDef, move))
 					INCREASE_STATUS_VIABILITY(1);
@@ -1034,28 +1034,42 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 				case MOVE_STICKYWEB:
 					for (i = 0; i < PARTY_SIZE; ++i) //Loop through attacker party
 					{
-						for (j = 0; j < PARTY_SIZE; ++j) //Loop through target party
+						if (GetMonData(&atkParty[i], MON_DATA_HP, NULL) > 0
+						&&  GetMonData(&atkParty[i], MON_DATA_SPECIES, NULL) != SPECIES_NONE
+						&& !GetMonData(&atkParty[i], MON_DATA_IS_EGG, NULL))
 						{
-							if (GetMonData(&atkParty[i], MON_DATA_HP, NULL) > 0
-							&&  GetMonData(&defParty[j], MON_DATA_HP, NULL) > 0
-							&&  GetMonData(&atkParty[i], MON_DATA_SPECIES, NULL) != SPECIES_NONE
-							&&  GetMonData(&defParty[j], MON_DATA_SPECIES, NULL) != SPECIES_NONE
-							&&  !GetMonData(&atkParty[i], MON_DATA_IS_EGG, NULL)
-							&&  !GetMonData(&defParty[j], MON_DATA_IS_EGG, NULL)
-							&&  j != gBattlerPartyIndexes[foe1]
-							&&  j != gBattlerPartyIndexes[foe2]
-							&&  CheckGroundingFromPartyData(&defParty[j]) == GROUNDED //Affected by Sticky Web
-							&&  SpeedCalcForParty(SIDE(bankAtk), &atkParty[i]) < SpeedCalcForParty(SIDE(bankDef), &defParty[j]))
+							for (j = 0; j < PARTY_SIZE; ++j) //Loop through target party
 							{
-								IncreaseEntryHazardsViability(&viability, class, bankAtk, bankDef, move);
-								goto END_ENTRY_HAZARDS;
+								if (GetMonData(&defParty[j], MON_DATA_HP, NULL) > 0
+								&&  GetMonData(&defParty[j], MON_DATA_SPECIES, NULL) != SPECIES_NONE
+								&& !GetMonData(&defParty[j], MON_DATA_IS_EGG, NULL)
+								&&  ItemId_GetHoldEffect(GetMonData(&defParty[j], MON_DATA_HELD_ITEM, NULL)) != ITEM_EFFECT_HEAVY_DUTY_BOOTS
+								&&  j != gBattlerPartyIndexes[foe1]
+								&&  j != gBattlerPartyIndexes[foe2]
+								&&  CheckGroundingFromPartyData(&defParty[j]) == GROUNDED //Affected by Sticky Web
+								&&  SpeedCalcForParty(SIDE(bankAtk), &atkParty[i]) < SpeedCalcForParty(SIDE(bankDef), &defParty[j]))
+								{
+									IncreaseEntryHazardsViability(&viability, class, bankAtk, bankDef, move);
+									goto END_ENTRY_HAZARDS;
+								}
 							}
 						}
 					}
 					break;
 
 				case MOVE_STEALTHROCK:
-					IncreaseEntryHazardsViability(&viability, class, bankAtk, bankDef, move);
+					for (i = 0; i < PARTY_SIZE; ++i)
+					{
+						if (GetMonData(&defParty[i], MON_DATA_SPECIES, NULL) != SPECIES_NONE
+						&& !GetMonData(&defParty[i], MON_DATA_IS_EGG, NULL)
+						&&  GetMonData(&defParty[i], MON_DATA_HP, NULL) > 0
+						&&  ItemId_GetHoldEffect(GetMonData(&defParty[i], MON_DATA_HELD_ITEM, NULL)) != ITEM_EFFECT_HEAVY_DUTY_BOOTS
+						&&  i != gBattlerPartyIndexes[foe1]
+						&&  i != gBattlerPartyIndexes[foe2])
+						{
+							IncreaseEntryHazardsViability(&viability, class, bankAtk, bankDef, move);
+						}
+					}
 					break;
 
 				case MOVE_TOXICSPIKES:
@@ -1064,6 +1078,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 						if (GetMonData(&defParty[i], MON_DATA_SPECIES, NULL) != SPECIES_NONE
 						&& !GetMonData(&defParty[i], MON_DATA_IS_EGG, NULL)
 						&&  GetMonData(&defParty[i], MON_DATA_HP, NULL) > 0
+						&&  ItemId_GetHoldEffect(GetMonData(&defParty[i], MON_DATA_HELD_ITEM, NULL)) != ITEM_EFFECT_HEAVY_DUTY_BOOTS
 						&&  i != gBattlerPartyIndexes[foe1]
 						&&  i != gBattlerPartyIndexes[foe2]
 						&&  CheckGroundingFromPartyData(&defParty[i]) == GROUNDED)
@@ -1088,6 +1103,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 						if (GetMonData(&defParty[i], MON_DATA_SPECIES, NULL) != SPECIES_NONE
 						&& !GetMonData(&defParty[i], MON_DATA_IS_EGG, NULL)
 						&&  GetMonData(&defParty[i], MON_DATA_HP, NULL) > 0
+						&&  ItemId_GetHoldEffect(GetMonData(&defParty[i], MON_DATA_HELD_ITEM, NULL)) != ITEM_EFFECT_HEAVY_DUTY_BOOTS
 						&&  i != gBattlerPartyIndexes[foe1]
 						&&  i != gBattlerPartyIndexes[foe2]
 						&&  CheckGroundingFromPartyData(&defParty[i]) == GROUNDED)
@@ -1325,17 +1341,18 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			&& atkAbility == ABILITY_SWIFTSWIM)
 				IncreaseTailwindViability(&viability, class, bankAtk, bankDef);
 
-			else if (atkAbility == ABILITY_SWIFTSWIM
-			|| atkAbility == ABILITY_FORECAST
-			|| atkAbility == ABILITY_HYDRATION
-			|| atkAbility == ABILITY_RAINDISH
-			|| atkAbility == ABILITY_DRYSKIN
-			|| MoveEffectInMoveset(EFFECT_THUNDER, bankAtk) //Includes Hurricane
-			|| MoveEffectInMoveset(EFFECT_MORNING_SUN, bankDef)
-			|| MoveInMoveset(MOVE_WEATHERBALL, bankAtk)
-			|| MoveTypeInMoveset(TYPE_WATER, bankAtk)
-			|| MoveTypeInMoveset(TYPE_FIRE, bankDef)
-			|| atkItemEffect == ITEM_EFFECT_DAMP_ROCK)
+			else if (atkItemEffect != ITEM_EFFECT_UTILITY_UMBRELLA
+			&& (atkAbility == ABILITY_SWIFTSWIM
+			 || atkAbility == ABILITY_FORECAST
+			 || atkAbility == ABILITY_HYDRATION
+			 || atkAbility == ABILITY_RAINDISH
+			 || atkAbility == ABILITY_DRYSKIN
+			 || MoveEffectInMoveset(EFFECT_THUNDER, bankAtk) //Includes Hurricane
+			 || MoveEffectInMoveset(EFFECT_MORNING_SUN, bankDef)
+			 || MoveInMoveset(MOVE_WEATHERBALL, bankAtk)
+			 || MoveTypeInMoveset(TYPE_WATER, bankAtk)
+			 || MoveTypeInMoveset(TYPE_FIRE, bankDef)
+			 || atkItemEffect == ITEM_EFFECT_DAMP_ROCK))
 			{
 				if (IsClassDoublesTeamSupport(class))
 					INCREASE_VIABILITY(17);
@@ -1355,20 +1372,21 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			&& atkAbility == ABILITY_CHLOROPHYLL)
 				IncreaseTailwindViability(&viability, class, bankAtk, bankDef);
 
-			else if (atkAbility == ABILITY_CHLOROPHYLL
-			|| atkAbility == ABILITY_FLOWERGIFT
-			|| atkAbility == ABILITY_FORECAST
-			|| atkAbility == ABILITY_LEAFGUARD
-			|| atkAbility == ABILITY_SOLARPOWER
-			|| atkAbility == ABILITY_HARVEST
-			|| MoveEffectInMoveset(EFFECT_SOLARBEAM, bankAtk)
-			|| MoveEffectInMoveset(EFFECT_MORNING_SUN, bankAtk)
-			|| MoveEffectInMoveset(EFFECT_THUNDER, bankDef)
-			|| MoveInMoveset(MOVE_WEATHERBALL, bankAtk)
-			|| MoveInMoveset(MOVE_GROWTH, bankAtk)
-			|| MoveTypeInMoveset(TYPE_FIRE, bankAtk)
-			|| MoveTypeInMoveset(TYPE_WATER, bankDef)
-			|| atkItemEffect == ITEM_EFFECT_HEAT_ROCK)
+			else if (atkItemEffect != ITEM_EFFECT_UTILITY_UMBRELLA
+			&& (atkAbility == ABILITY_CHLOROPHYLL
+			 || atkAbility == ABILITY_FLOWERGIFT
+			 || atkAbility == ABILITY_FORECAST
+			 || atkAbility == ABILITY_LEAFGUARD
+			 || atkAbility == ABILITY_SOLARPOWER
+			 || atkAbility == ABILITY_HARVEST
+			 || MoveEffectInMoveset(EFFECT_SOLARBEAM, bankAtk)
+			 || MoveEffectInMoveset(EFFECT_MORNING_SUN, bankAtk)
+			 || MoveEffectInMoveset(EFFECT_THUNDER, bankDef)
+			 || MoveInMoveset(MOVE_WEATHERBALL, bankAtk)
+			 || MoveInMoveset(MOVE_GROWTH, bankAtk)
+			 || MoveTypeInMoveset(TYPE_FIRE, bankAtk)
+			 || MoveTypeInMoveset(TYPE_WATER, bankDef)
+			 || atkItemEffect == ITEM_EFFECT_HEAT_ROCK))
 			{
 				if (IsClassDoublesTeamSupport(class))
 					INCREASE_VIABILITY(17);
@@ -1626,6 +1644,30 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 				case ITEM_EFFECT_LAGGING_TAIL:
 				case ITEM_EFFECT_STICKY_BARB:
 					INCREASE_STATUS_VIABILITY(3);
+					break;
+
+				case ITEM_EFFECT_UTILITY_UMBRELLA:
+					if (atkAbility != ABILITY_SOLARPOWER && atkAbility != ABILITY_DRYSKIN)
+					{
+						switch (defAbility) {
+							case ABILITY_SWIFTSWIM:
+								if (gBattleWeather & WEATHER_RAIN_ANY)
+									INCREASE_STATUS_VIABILITY(3); //Slow 'em down
+								break;
+							case ABILITY_CHLOROPHYLL:
+							case ABILITY_FLOWERGIFT:
+								if (gBattleWeather & WEATHER_SUN_ANY)
+									INCREASE_STATUS_VIABILITY(3); //Slow 'em down
+								break;
+						}
+					}
+					break;
+
+				case ITEM_EFFECT_EJECT_BUTTON:
+					if (!IsRaidBattle() && IsDynamaxed(bankDef) && gNewBS->dynamaxData.timer[bankDef] > 1
+					&& (DamagingMoveInMoveset(bankAtk)
+					 || (IS_DOUBLE_BATTLE && BATTLER_ALIVE(bankAtkPartner) && DamagingMoveInMoveset(bankAtkPartner))))
+						INCREASE_STATUS_VIABILITY(2); //Force 'em out next turn
 					break;
 
 				default:

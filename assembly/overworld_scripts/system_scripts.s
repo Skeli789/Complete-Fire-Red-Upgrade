@@ -140,11 +140,23 @@ SystemScript_FindItemMessage:
 	compare 0x8008 0x1
 	if equal _call 0x81A6821
 	compare 0x8008 0x0
-	if equal _call 0x81A6827
+	if equal _call SystemScript_FindNormalItem
 	waitfanfare
 	waitmsg
 	msgbox 0x81A5218 MSG_KEEPOPEN 
 	callasm ClearItemSpriteAfterFind
+	return
+
+SystemScript_FindNormalItem:
+	compare 0x8005 0x1
+	if greaterthan _goto SystemScript_FindMultipleNormalItems
+	preparemsg 0x81A5231
+	return
+
+SystemScript_FindMultipleNormalItems:
+	buffernumber 0x0 0x8005
+	callasm TryAppendSOntoEndOfItemString
+	preparemsg gText_FoundMultipleItems
 	return
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -169,7 +181,6 @@ SystemScript_ObtainItemMessage:
 	if greaterthan _call ObtainedMultipleItemMsg
 	waitfanfare
 	waitmsg
-	callasm TryAppendSOntoEndOfItemString
 	msgbox 0x81A5218 MSG_KEEPOPEN @;[PLAYER] put the item in the...
 	setvar LASTRESULT 0x1
 	callasm ClearItemSpriteAfterFind
@@ -193,21 +204,32 @@ ObtainedRegularItem:
 	
 ObtainedMultipleItemMsg:
 	buffernumber 0x0 0x8005
+	callasm TryAppendSOntoEndOfItemString
 	preparemsg gText_ObtainedMultipleItems
 	return
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+.equ FLAG_AUTO_HMS, 0x902 @For Unbound
 .equ SPECIAL_DISMOUNT_BICYCLE, 0xAF
 .global EventScript_UseRockClimb
 EventScript_UseRockClimb:
-	setanimation 0x0 0x8004
 	bufferpartypokemon 0x0 0x8004
 	bufferattack 0x1 MOVE_ROCKCLIMB
+	callasm IsUnboundToVar
+	compare LASTRESULT 0x0
+	if equal _goto EventScript_UseRockClimb_Ask
+	checkflag FLAG_AUTO_HMS
+	if SET _goto EventScript_UseRockClimb_SkipAsk
+
+EventScript_UseRockClimb_Ask:
 	msgbox gText_WantToScaleCliff MSG_YESNO
 	compare LASTRESULT NO
 	if equal _goto EventScript_RockClimbEnd
 	msgbox 0x81BDFD7 MSG_NORMAL @;[BUFFER1] used [BUFFER2]!
+
+EventScript_UseRockClimb_SkipAsk:
+	setanimation 0x0 0x8004
 	goto EventScript_RockClimb
 
 .global EventScript_JustRockWall
@@ -226,6 +248,8 @@ EventScript_RockClimb:
 	special SPECIAL_DISMOUNT_BICYCLE
 	doanimation 0x25
 	waitstate
+	callasm StopPlayerMotion
+	callasm sp09A_StopSounds
 	special2 PLAYERFACING SPECIAL_GET_PLAYER_FACING
 	compare PLAYERFACING DOWN
 	if equal _goto EventScript_RockClimbDown
@@ -235,6 +259,7 @@ EventScript_RockClimb:
 	if equal _goto EventScript_RockClimbRight
 
 EventScript_RockClimbUp:
+	sound 0x7C @Rock Smash
 	applymovement PLAYER m_RockClimbUp
 	waitmovement PLAYER
 	callasm ShouldRockClimbContinue
@@ -243,6 +268,7 @@ EventScript_RockClimbUp:
 	goto EventScript_RockClimbUp
 
 EventScript_RockClimbDown:
+	sound 0x7C @Rock Smash
 	applymovement PLAYER m_RockClimbDown
 	waitmovement PLAYER
 	callasm ShouldRockClimbContinue
@@ -251,6 +277,7 @@ EventScript_RockClimbDown:
 	goto EventScript_RockClimbDown
 
 EventScript_RockClimbLeft:
+	sound 0x7C @Rock Smash
 	applymovement PLAYER m_RockClimbLeft
 EventScript_RockClimbLeftWaitmovement:
 	waitmovement PLAYER
@@ -265,14 +292,17 @@ EventScript_RockClimbLeftWaitmovement:
 	goto EventScript_RockClimbLeft
 	
 EventScript_RockClimbLeftUp:
+	sound 0x7C @Rock Smash
 	applymovement PLAYER m_RockClimbLeftUp
 	goto EventScript_RockClimbLeftWaitmovement
 
 EventScript_RockClimbLeftDown:
+	sound 0x7C @Rock Smash
 	applymovement PLAYER m_RockClimbLeftDown
 	goto EventScript_RockClimbLeftWaitmovement
 
 EventScript_RockClimbRight:
+	sound 0x7C @Rock Smash
 	applymovement PLAYER m_RockClimbRight
 EventScript_RockClimbRightWaitmovement:
 	waitmovement PLAYER
@@ -287,10 +317,12 @@ EventScript_RockClimbRightWaitmovement:
 	goto EventScript_RockClimbRight
 	
 EventScript_RockClimbRightUp:
+	sound 0x7C @Rock Smash
 	applymovement PLAYER m_RockClimbRightUp
 	goto EventScript_RockClimbRightWaitmovement
 
 EventScript_RockClimbRightDown:
+	sound 0x7C @Rock Smash
 	applymovement PLAYER m_RockClimbRightDown
 	goto EventScript_RockClimbRightWaitmovement
 
@@ -311,14 +343,15 @@ EventScript_RockClimbRightFinish:
 	
 EventScript_RockClimbFinish:
 	waitmovement PLAYER
+	callasm StartPlayerMotion
 	callasm FollowMe_WarpSetEnd
 	releaseall
 	end
 
-m_RockClimbDown: .byte 0x1D, end_m
-m_RockClimbUp: .byte 0x1e, end_m
-m_RockClimbLeft: .byte 0x1f, end_m
-m_RockClimbRight: .byte 0x20, end_m
+m_RockClimbDown: .byte run_down, end_m
+m_RockClimbUp: .byte run_up, end_m
+m_RockClimbLeft: .byte run_left, end_m
+m_RockClimbRight: .byte run_right, end_m
 
 m_RockClimbLeftUp: .byte 0xE0, end_m
 m_RockClimbLeftDown: .byte 0xDC, end_m
@@ -350,13 +383,24 @@ EventScript_UseLavaSurf:
 	special SPECIAL_POKEMON_TYPE_IN_PARTY
 	compare LASTRESULT PARTY_SIZE
 	if equal _goto EventScript_MagmaGlistens
-	bufferpartypokemon 0x0 LASTRESULT
-	setanimation 0x0 LASTRESULT
+	copyvar 0x8004 LASTRESULT
+	bufferpartypokemon 0x0 0x8004
+	callasm IsUnboundToVar
+	compare LASTRESULT 0x0
+	if equal _goto EventScript_UseLavaSurf_Ask
+	checkflag FLAG_AUTO_HMS
+	if SET _goto EventScript_UseLavaSurf_SkipAsk
+
+EventScript_UseLavaSurf_Ask:
 	msgbox gText_LikeToLavaSurf MSG_YESNO
 	compare LASTRESULT NO
 	if equal _goto EventScript_LavaSurfEnd
 	lockall
 	msgbox gText_LavaSurfedWith MSG_KEEPOPEN
+
+EventScript_UseLavaSurf_SkipAsk:
+	lockall
+	setanimation 0x0 0x8004
 	doanimation 0x9
 	releaseall
 	end
@@ -373,8 +417,14 @@ EventScript_LavaSurfEnd:
 .global EventScript_UseWaterfall
 EventScript_UseWaterfall:
 	bufferpartypokemon 0x0 0x8004
-	setanimation 0x0 0x8004
 	bufferattack 0x1 MOVE_WATERFALL
+	callasm IsUnboundToVar
+	compare LASTRESULT 0x0
+	if equal _goto EventScript_UseWaterfall_Ask
+	checkflag FLAG_AUTO_HMS
+	if SET _goto EventScript_UseWaterfall_SkipAsk
+
+EventScript_UseWaterfall_Ask:
 	msgbox 0x81BE33F MSG_YESNO
 	compare LASTRESULT NO
 	if equal _goto EventScript_WaterfallEnd
@@ -382,11 +432,20 @@ EventScript_UseWaterfall:
 	call FollowerIntoPlayerScript
 	callasm HideFollower
 	msgbox 0x81BDFD7 MSG_KEEPOPEN
+
+EventScript_UseWaterfall_SkipMsg:
+	setanimation 0x0 0x8004
 	doanimation 0x2B
 	callasm FollowMe_WarpSetEnd
 EventScript_WaterfallEnd:
 	releaseall
 	end
+
+EventScript_UseWaterfall_SkipAsk:
+	lockall
+	call FollowerIntoPlayerScript
+	callasm HideFollower
+	goto EventScript_UseWaterfall_SkipMsg
 
 .global EventScript_WallOfWater
 EventScript_WallOfWater:
@@ -398,13 +457,23 @@ EventScript_WallOfWater:
 .global EventScript_UseSurf
 EventScript_UseSurf:
 	bufferpartypokemon 0x0 0x8004
-	setanimation 0x0 0x8004
 	bufferattack 0x1 MOVE_SURF
+	callasm IsUnboundToVar
+	compare LASTRESULT 0x0
+	if equal _goto EventScript_UseSurf_Ask
+	checkflag FLAG_AUTO_HMS
+	if SET _goto EventScript_UseSurf_SkipAsk
+
+EventScript_UseSurf_Ask:
 	msgbox 0x81A556E MSG_YESNO	
 	compare LASTRESULT NO
 	if equal _goto EventScript_SurfEnd
 	lockall
 	msgbox 0x81BDFD7 MSG_KEEPOPEN
+
+EventScript_UseSurf_SkipAsk:
+	lockall
+	setanimation 0x0 0x8004
 	doanimation 0x9
 EventScript_SurfEnd:
 	releaseall
@@ -422,8 +491,13 @@ EventScript_WaterDyedBlue:
 EventScript_UseDive:
 	bufferpartypokemon 0x0 0x8004
 	bufferattack 0x1 MOVE_DIVE
-	setanimation 0x0 0x8004
-	setanimation 0x1 1
+	callasm IsUnboundToVar
+	compare LASTRESULT 0x0
+	if equal _goto EventScript_UseDive_Ask
+	checkflag FLAG_AUTO_HMS
+	if SET _goto EventScript_UseDive_SkipAsk
+
+EventScript_UseDive_Ask:
 	msgbox gText_WantToDive MSG_YESNO
 	compare LASTRESULT NO
 	if equal _goto EventScript_EndDive
@@ -431,6 +505,8 @@ EventScript_UseDive:
 	call FollowerIntoPlayerScript
 	callasm HideFollower
 	msgbox 0x81BDFD7 MSG_NORMAL
+	setanimation 0x0 0x8004
+	setanimation 0x1 1
 	doanimation FLDEFF_USE_DIVE
 	goto EventScript_EndDive
 
@@ -440,13 +516,20 @@ EventScript_CantDive:
 EventScript_EndDive:
 	releaseall
 	end
-	
+
+EventScript_UseDive_SkipAsk:
+	lockall
+	call FollowerIntoPlayerScript
+	callasm HideFollower
+	setanimation 0x0 0x8004
+	setanimation 0x1 1
+	doanimation FLDEFF_USE_DIVE
+	goto EventScript_EndDive	
+
 .global EventScript_UseDiveUnderwater
 EventScript_UseDiveUnderwater:
 	bufferpartypokemon 0x0 0x8004
 	bufferattack 0x1 MOVE_DIVE
-	setanimation 0x0 0x8004
-	setanimation 0x1 1
 	msgbox gText_WantToSurface MSG_YESNO
 	compare LASTRESULT NO
 	if equal _goto EventScript_EndSurface
@@ -454,6 +537,8 @@ EventScript_UseDiveUnderwater:
 	call FollowerIntoPlayerScript
 	callasm HideFollower
 	msgbox 0x81BDFD7 MSG_NORMAL
+	setanimation 0x0 0x8004
+	setanimation 0x1 1
 	doanimation FLDEFF_USE_DIVE
 	callasm FollowMe_SetIndicatorToRecreateSurfBlob
 	goto EventScript_EndSurface
@@ -477,6 +562,8 @@ EventScript_LockedDoor:
 EventScript_PsychicBarrier:
 	msgbox gText_PsychicBarrier MSG_SIGN
 	end
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 .global EventScript_Ladder
 EventScript_Ladder:
@@ -530,3 +617,27 @@ EventScript_LadderEnd:
 
 m_LadderClimbUp: .byte walk_up_slow, end_m
 m_LadderClimbDown: .byte 0xAF, end_m
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global EventScript_HiddenGrottoForest
+EventScript_HiddenGrottoForest:
+	msgboxsign
+	msgbox gText_FollowNarrowPath MSG_YESNO
+	compare LASTRESULT NO
+	if equal _goto EventScript_HiddenGrottoForest_Reject
+	release
+	callasm FollowHiddenGrottoWarp
+	compare LASTRESULT 0x0
+	if equal _goto EventScript_HiddenGrottoForest_Nowhere
+	waitstate
+
+EventScript_HiddenGrottoForest_Reject:
+	msgboxnormal
+	release
+	end
+	
+EventScript_HiddenGrottoForest_Nowhere:
+	msgbox gText_FollowNarrowPathNowhere MSG_NORMAL
+	msgboxnormal
+	end

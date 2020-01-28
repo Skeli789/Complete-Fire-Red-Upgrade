@@ -423,57 +423,33 @@ static const struct WindowTemplate sDexNavWindows[] =
 //64x32 oam with second highest priority
 static const struct OamData sBlackBarOAM =
 {
-	.y = ICONY,
-    .affineMode = 0,
-    .objMode = 0,
-    .mosaic = 0,
-    .bpp = 0,
-    .shape = SPRITE_SHAPE(64x32),
-    .x = ICONX,
-    .matrixNum = 0,
-    .size = SPRITE_SIZE(64x32),
-    .tileNum = 0,
-    .priority = 1,
-    .paletteNum = 0,
-    .affineParam = 0,
+	.affineMode = ST_OAM_AFFINE_OFF,
+	.objMode = ST_OAM_OBJ_NORMAL,
+	.shape = SPRITE_SHAPE(64x32),
+	.size = SPRITE_SIZE(64x32),
+	.priority = 1, //Above everything
 };
 
 
 //64x32 oam with highest priority
 static const struct OamData FontOAM =
 {
-	.y = ICONY,
-    .affineMode = 0,
-    .objMode = 0,
-    .mosaic = 0,
-    .bpp = 0,
-    .shape = SPRITE_SHAPE(64x32),
-    .x = ICONX,
-    .matrixNum = 0,
-    .size = SPRITE_SIZE(64x32),
-    .tileNum = 0,
-    .priority = 0,
-    .paletteNum = 0,
-    .affineParam = 0,
+	.affineMode = ST_OAM_AFFINE_OFF,
+	.objMode = ST_OAM_OBJ_NORMAL,
+	.shape = SPRITE_SHAPE(64x32),
+	.size = SPRITE_SIZE(64x32),
+	.priority = 0, //Above everything
 };
 
 
 // 8x8 oam with highest priority
 static const struct OamData HeldOAM =
 {
-	.y = ICONY,
-    .affineMode = 0,
-    .objMode = 0,
-    .mosaic = 0,
-    .bpp = 0,
-    .shape = 0,
-    .x = ICONX,
-    .matrixNum = 0,
-    .size = 0,
-    .tileNum = 0,
-    .priority = 0,
-    .paletteNum = 0,
-    .affineParam = 0,
+	.affineMode = ST_OAM_AFFINE_OFF,
+	.objMode = ST_OAM_OBJ_NORMAL,
+	.shape = SPRITE_SHAPE(8x8),
+	.size = SPRITE_SIZE(8x8),
+	.priority = 0, //Above everything
 };
 
 //#define gPalHeldItemIcon ((u32*) 0x0845A3EC) //Pal for held items. The yellow box and mail icon

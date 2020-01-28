@@ -21,6 +21,8 @@ item_effect_t GetRecordedItemEffect(u8 bank);
 void RecordItemEffectBattle(u8 bank, u8 itemEffect);
 void ClearBattlerItemEffectHistory(u8 bank);
 struct Pokemon* GetBankPartyData(u8 bank);
+u16 GetBaseCurrentHP(u8 bank);
+u16 GetBaseMaxHP(u8 bank);
 u8 GetBankFromPartyData(struct Pokemon* mon);
 bool8 CheckGrounding(u8 bank);
 bool8 NonInvasiveCheckGrounding(u8 bank);
@@ -28,17 +30,25 @@ bool8 CheckGroundingFromPartyData(struct Pokemon* mon);
 u8 ViableMonCountFromBank(u8 bank);
 u8 ViableMonCountFromBankLoadPartyRange(u8 bank);
 bool8 CheckContact(u16 move, u8 bank);
-bool8 CheckHealingMove(move_t move);
-bool8 CheckSoundMove(move_t move);
+bool8 CheckContactByMon(u16 move, struct Pokemon* mon);
+bool8 CheckHealingMove(u16 move);
+bool8 CheckSoundMove(u16 move);
 bool8 SheerForceCheck(void);
 bool8 IsOfType(u8 bank, u8 type);
+u8 GetMonType(struct Pokemon* mon, u8 typeId);
+bool8 IsMonOfType(struct Pokemon* mon, u8 type);
 bool8 LiftProtect(u8 bank);
 bool8 ProtectsAgainstZMoves(u16 move, u8 bankAtk, u8 bankDef);
+bool8 IsProtectedByMaxGuard(u8 bank);
 bool8 StatsMaxed(u8 bank);
 bool8 MainStatsMaxed(u8 bank);
 bool8 StatsMinned(u8 bank);
+bool8 MainStatsMinned(u8 bank);
 bool8 AnyStatGreaterThan(u8 bank, u8 amount);
 u8 CountBoosts(u8 bank);
+u8 CheckMoveLimitations(u8 bank, u8 unusableMoves, u8 check);
+u8 CheckMoveLimitationsFromParty(struct Pokemon* mon, u8 unusableMoves, u8 check);
+bool8 IsMoveRedirectionPrevented(u16 move, u8 atkAbility);
 u8 GetMoveTarget(u16 move, u8 useMoveTarget);
 bool8 IsBattlerAlive(u8 bank);
 struct Pokemon* LoadPartyRange(u8 bank, u8* firstMonId, u8* lastMonId);
@@ -47,11 +57,13 @@ bool8 IsUproarBeingMade(void);
 u8 GetIllusionPartyNumber(u8 bank);
 struct Pokemon* GetIllusionPartyData(u8 bank);
 bool8 BankMovedBefore(u8 bank1, u8 bank2);
+bool8 BankMovedBeforeIgnoreSwitch(u8 bank1, u8 bank2);
 bool8 IsFirstAttacker(u8 bank);
 bool8 CanTransferItem(u16 species, u16 item);
 bool8 CanFling(u16 item, u16 species, u8 ability, u8 bankOnSide, u8 embargoTimer);
 bool8 SymbiosisCanActivate(u8 giverBank, u8 receiverBank);
 bool8 CanKnockOffItem(u8 bank);
+bool8 CanKnockOffMonItem(struct Pokemon* mon, u8 side);
 bool8 IsAffectedByPowder(u8 bank);
 bool8 IsAffectedByPowderByDetails(u8 type1, u8 type2, u8 type3, u8 ability, u8 itemEffect);
 bool8 MoveIgnoresSubstitutes(u16 move, u8 bankAtk);
@@ -66,6 +78,7 @@ bool8 IsZMove(const u16 move);
 void AddBankToPickupStack(const u8 bank);
 void RemoveBankFromPickupStack(const u8 bank);
 u8 GetTopOfPickupStackNotIncludingBank(const u8 bank);
+void RemoveScreensFromSide(const u8 side);
 
 void ClearBankStatus(u8 bank);
 bool8 DoesSleepClausePrevent(u8 bank);
@@ -90,6 +103,8 @@ bool8 BankSideHasSeaOfFire(u8 bank);
 bool8 BankSideHasRainbow(u8 bank);
 bool8 BankSideHasSwamp(u8 bank);
 bool8 SideHasSwamp(u8 side);
+bool8 BankSideHasGMaxWildfire(u8 bank);
+bool8 BankSideHasGMaxVolcalith(u8 bank);
 bool8 IsConfused(u8 bank);
 bool8 IsTaunted(u8 bank);
 bool8 IsTormented(u8 bank);
@@ -113,3 +128,12 @@ enum ItemBattleEffectCases
 	ItemEffects_ContactTarget,
 	ItemEffects_ContactAttacker
 };
+
+#define MOVE_LIMITATION_ZEROMOVE    (1 << 0)
+#define MOVE_LIMITATION_PP          (1 << 1)
+#define MOVE_LIMITATION_DISABLED    (1 << 2)
+#define MOVE_LIMITATION_TORMENTED   (1 << 3)
+#define MOVE_LIMITATION_TAUNT       (1 << 4)
+#define MOVE_LIMITATION_IMPRISION   (1 << 5)
+#define MOVE_LIMITATION_CHOICE		(1 << 6)
+#define MOVE_LIMITATION_ENCORE		(1 << 7)

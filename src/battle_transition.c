@@ -30,6 +30,8 @@ battle_transition.c
 #define tPlayerSpriteId	 data[14]
 #define tMugshotId 			data[15]
 
+#define GFX_TAG_VS_SYMBOL 0xFDF0
+
 //Structures
 extern const struct MugshotTable sPreBattleMugshotSprites[147];
 extern const u16* const sMugshotsBigPals[];
@@ -258,11 +260,11 @@ void Mugshots_CreateOpponentPlayerSprites(struct Task* task)
 	{
 		struct SpriteTemplate spriteTemplate;
 
-		struct CompressedSpritePalette pal = {VS_SpritePal, GFX_TAG_MEGA_INDICATOR};
-		struct CompressedSpriteSheet sprite = {VS_SpriteTiles, 64 * 64 / 2, GFX_TAG_MEGA_INDICATOR};
+		struct CompressedSpritePalette pal = {VS_SpritePal, GFX_TAG_VS_SYMBOL};
+		struct CompressedSpriteSheet sprite = {VS_SpriteTiles, 64 * 64 / 2, GFX_TAG_VS_SYMBOL};
 		LoadCompressedSpritePaletteOverrideBuffer(&pal, gDecompressionBuffer);
 		LoadCompressedSpriteSheetOverrideBuffer(&sprite, gDecompressionBuffer);
-		UpdateMugshotSpriteTemplate(&spriteTemplate, GFX_TAG_MEGA_INDICATOR); //Not being used currently
+		UpdateMugshotSpriteTemplate(&spriteTemplate, GFX_TAG_VS_SYMBOL); //Not being used currently
 		task->tVSSymbol = CreateSprite(&spriteTemplate, sMugshotsOpponentCoords[mugshotId][0] - x1 - 108, 50, 0);
 		UpdateMugshotSpriteData(task->tVSSymbol, SPRITE_SHAPE(64x64), 256, 256, 0, TRUE);
 	}

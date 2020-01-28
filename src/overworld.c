@@ -9,6 +9,7 @@
 #include "../include/field_control_avatar.h"
 #include "../include/field_player_avatar.h"
 #include "../include/field_poison.h"
+#include "../include/field_screen_effect.h"
 #include "../include/field_weather.h"
 #include "../include/fieldmap.h"
 #include "../include/fldeff_misc.h"
@@ -135,6 +136,9 @@ static const u8* const sMetatileInteractionScripts[] =
 #endif
 #ifdef MB_CLIMBABLE_LADDER
 	[MB_CLIMBABLE_LADDER] = EventScript_Ladder,
+#endif
+#ifdef MB_HIDDEN_GROTTO_FOREST
+	[MB_HIDDEN_GROTTO_FOREST] = EventScript_HiddenGrottoForest,
 #endif
 };
 
@@ -678,6 +682,7 @@ static bool8 CheckTrainerSpotting(u8 eventObjId) //Or just CheckTrainer
 			case TRAINER_BATTLE_REMATCH_DOUBLE:
 			case TRAINER_BATTLE_CONTINUE_SCRIPT_DOUBLE:
 			case TRAINER_BATTLE_TWO_OPPONENTS:
+			case TRAINER_BATTLE_DOUBLE_SCALED:
 				if (ViableMonCount(gPlayerParty) < 2)
 					return FALSE;
 				break;
@@ -818,9 +823,11 @@ const u8* BattleSetup_ConfigureTrainerBattle(const u8* data)
 
 		case TRAINER_BATTLE_SINGLE_NO_INTRO_TEXT:
 			TrainerBattleLoadArgs(sOrdinaryNoIntroBattleParams, data);
+			gTrainerBattleOpponent_A = VarGet(gTrainerBattleOpponent_A);
 			return EventScript_DoTrainerBattle;
 
 		case TRAINER_BATTLE_DOUBLE:
+		case TRAINER_BATTLE_DOUBLE_SCALED:
 			TrainerBattleLoadArgs(sDoubleBattleParams, data);
 			SetMapVarsToTrainer();
 			return EventScript_TryDoDoubleTrainerBattle;
@@ -829,7 +836,9 @@ const u8* BattleSetup_ConfigureTrainerBattle(const u8* data)
 			//QuestLogRemtachBattleStore();
 			TrainerBattleLoadArgs(sOrdinaryBattleParams, data);
 			SetMapVarsToTrainer();
+			#ifndef UNBOUND
 			gTrainerBattleOpponent_A = GetRematchTrainerId(gTrainerBattleOpponent_A);
+			#endif
 			return EventScript_TryDoRematchBattle;
 
 		case TRAINER_BATTLE_CONTINUE_SCRIPT_DOUBLE:
@@ -842,7 +851,9 @@ const u8* BattleSetup_ConfigureTrainerBattle(const u8* data)
 			//QuestLogRemtachBattleStore();
 			TrainerBattleLoadArgs(sDoubleBattleParams, data);
 			SetMapVarsToTrainer();
+			#ifndef UNBOUND
 			gTrainerBattleOpponent_A = GetRematchTrainerId(gTrainerBattleOpponent_A);
+			#endif
 			return EventScript_TryDoDoubleRematchBattle;
 
 		case TRAINER_BATTLE_OAK_TUTORIAL:
@@ -878,6 +889,7 @@ const u8* BattleSetup_ConfigureTrainerBattle(const u8* data)
 			FlagSet(FLAG_TAG_BATTLE);
 			return EventScript_DoTrainerBattle;
 
+		case TRAINER_BATTLE_SINGLE_SCALED:
 		default: //TRAINER_BATTLE_SINGLE
 			if (gApproachingTrainerId == 0)
 			{
@@ -927,6 +939,11 @@ static void InitTrainerBattleVariables(void)
 
 void BattleSetup_StartTrainerBattle(void)
 {
+	#ifdef FLAG_DYNAMAX_BATTLE
+	if (FlagGet(FLAG_DYNAMAX_BATTLE))
+		gBattleTypeFlags |= BATTLE_TYPE_DYNAMAX;
+	#endif
+
 	if (FlagGet(FLAG_BATTLE_FACILITY))
 	{
 		gBattleTypeFlags = BATTLE_TYPE_TRAINER;
@@ -953,6 +970,9 @@ void BattleSetup_StartTrainerBattle(void)
 			gBattleTypeFlags |= BATTLE_TYPE_BENJAMIN_BUTTERFREE;
 		else if (tier == BATTLE_FACILITY_MEGA_BRAWL)
 			gBattleTypeFlags |= BATTLE_TYPE_MEGA_BRAWL;
+
+		if (DynamaxAllowedInTier(tier))
+			gBattleTypeFlags |= BATTLE_TYPE_DYNAMAX;
 
 		switch (VarGet(VAR_BATTLE_FACILITY_BATTLE_TYPE)) {
 			case BATTLE_FACILITY_DOUBLE:
@@ -1822,6 +1842,8 @@ static void FldEff_TallGrass(void)
 			SeekSpriteAnim(sprite, 4);
 		}
 	}
+
+	PlayGrassFootstepNoise();
 }
 
 static void FldEff_JumpTallGrassLoadPalette(void)
@@ -1896,6 +1918,24 @@ void SetCutGrassMetatile(s16 x, s16 y)
 	}
 }
 
+void FollowHiddenGrottoWarp(void)
+{
+	s8 warpEventId;
+    struct MapPosition position;
+	
+	GetPlayerPosition(&position);
+	gSpecialVar_LastResult = FALSE;
+	warpEventId = GetWarpEventAtMapPosition(&gMapHeader, &position);	
+
+	if (warpEventId != -1)
+	{
+		StoreInitialPlayerAvatarState();
+		SetupWarp(&gMapHeader, warpEventId, &position);
+		DoWarp();
+		gSpecialVar_LastResult = TRUE;
+	}
+}
+
 static bool8 MetatileBehavior_IsClimbableLadder(unusedArg u8 behaviour)
 {
 	#ifndef MB_CLIMBABLE_LADDER
@@ -1913,6 +1953,15 @@ void ShouldLadderClimbContinue(void)
 
 	MoveCoords(gSpecialVar_PlayerFacing, &x, &y);
 	gSpecialVar_LastResult = MetatileBehavior_IsClimbableLadder(MapGridGetMetatileBehaviorAt(x, y));
+}
+
+void IsUnboundToVar(void)
+{
+	#ifdef UNBOUND
+	gSpecialVar_LastResult = TRUE;
+	#else
+	gSpecialVar_LastResult = FALSE;
+	#endif
 }
 
 static bool8 MetatileBehavior_IsRockClimbableWall(u8 behaviour)
@@ -1953,6 +2002,18 @@ void ShouldRockClimbContinueDiagonally(void)
 		gSpecialVar_LastResult = 0;
 }
 
+void StopPlayerMotion(void)
+{
+	gEventObjects[gPlayerAvatar->eventObjectId].disableAnim = TRUE;
+	gEventObjects[gPlayerAvatar->eventObjectId].inanimate = TRUE;
+}
+
+void StartPlayerMotion(void)
+{
+	gEventObjects[gPlayerAvatar->eventObjectId].disableAnim = FALSE;
+	gEventObjects[gPlayerAvatar->eventObjectId].inanimate = FALSE;
+}
+
 u8 PartyHasMonWithFieldMovePotential(u16 move, unusedArg u16 item, u8 surfingType)
 {
 	bool8 isSurfing = TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING);
@@ -1961,7 +2022,7 @@ u8 PartyHasMonWithFieldMovePotential(u16 move, unusedArg u16 item, u8 surfingTyp
 	|| (surfingType == SHOULDNT_BE_SURFING && !isSurfing)
 	|| (surfingType == SHOULD_BE_SURFING && isSurfing))
 	{
-		#ifdef UNBOUND
+		#ifdef ONLY_CHECK_ITEM_FOR_HM_USAGE
 		bool8 hasHM = CheckBagHasItem(item, 1) > 0;
 		#endif
 
@@ -1975,13 +2036,17 @@ u8 PartyHasMonWithFieldMovePotential(u16 move, unusedArg u16 item, u8 surfingTyp
 				if (MonKnowsMove(mon, move))
 					return i;
 
-				#ifdef UNBOUND
+				#ifdef ONLY_CHECK_ITEM_FOR_HM_USAGE
 				if (hasHM && CanMonLearnTMTutor(mon, item, 0) == CAN_LEARN_MOVE)
 					return i;
 				#endif
 			}
 		}
 	}
+	
+	#ifdef DEBUG_HMS
+		return 0;
+	#endif
 
 	return PARTY_SIZE;
 }
@@ -2034,7 +2099,7 @@ const u8* GetInteractedWaterScript(unusedArg u32 unused1, u8 metatileBehavior, u
 	{
 		if (HasBadgeToUseSurf())
 		{
-			#ifdef UNBOUND
+			#ifdef ONLY_CHECK_ITEM_FOR_HM_USAGE
 			item = ITEM_HM03_SURF;
 			#endif
 
@@ -2055,7 +2120,7 @@ const u8* GetInteractedWaterScript(unusedArg u32 unused1, u8 metatileBehavior, u
 		{
 			if (IsPlayerSurfingNorth())
 			{
-				#ifdef UNBOUND
+				#ifdef ONLY_CHECK_ITEM_FOR_HM_USAGE
 				item = ITEM_HM07_WATERFALL;
 				#endif
 
@@ -2078,7 +2143,7 @@ const u8* GetInteractedWaterScript(unusedArg u32 unused1, u8 metatileBehavior, u
 		if (HasBadgeToUseRockClimb()
 		&& (!gFollowerState.inProgress || gFollowerState.flags & FOLLOWER_FLAG_CAN_ROCK_CLIMB))
 		{
-			#ifdef UNBOUND
+			#ifdef ONLY_CHECK_ITEM_FOR_HM_USAGE
 			item = ITEM_HM08_ROCK_CLIMB;
 			#endif
 
@@ -2106,7 +2171,7 @@ bool8 TrySetupDiveDownScript(void)
 	&& TrySetDiveWarp() == 2)
 	{
 		u16 item = ITEM_NONE;
-		#ifdef UNBOUND
+		#ifdef ONLY_CHECK_ITEM_FOR_HM_USAGE
 		item = ITEM_HM05_DIVE;
 		#endif
 
@@ -2133,7 +2198,7 @@ bool8 TrySetupDiveEmergeScript(void)
 	&& TrySetDiveWarp() == 1)
 	{
 		u16 item = ITEM_NONE;
-		#ifdef UNBOUND
+		#ifdef ONLY_CHECK_ITEM_FOR_HM_USAGE
 		item = ITEM_HM05_DIVE;
 		#endif
 

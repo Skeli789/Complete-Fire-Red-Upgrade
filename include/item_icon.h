@@ -1,19 +1,16 @@
-//
-// Created by scott on 10/20/2017.
-//
+#pragma once
 
-#ifndef GUARD_ITEM_ICON_H
-#define GUARD_ITEM_ICON_H
+extern void* gItemIconDecompressionBuffer;
+extern void* gItemIcon4x4Buffer;
 
-#include "global.h"
+extern const struct SpriteTemplate gItemIconSpriteTemplate;
 
-extern EWRAM_DATA void *gUnknown_0203CEBC;
-extern EWRAM_DATA void *gUnknown_0203CEC0;
+u8 __attribute__((long_call)) AddItemIconSprite(u16 tilesTag, u16 paletteTag, u16 itemId);
+u8 __attribute__((long_call)) AddCustomItemIconSprite(const struct SpriteTemplate *customSpriteTemplate, u16 tilesTag, u16 paletteTag, u16 itemId);
 
-extern const struct SpriteTemplate gUnknown_08614FF4;
-
+/*
 bool8 AllocItemIconTemporaryBuffers(void);
-void CopyItemIconPicTo4x4Buffer(void *src, void *dest);
 void FreeItemIconTemporaryBuffers(void);
-
-#endif //GUARD_ITEM_ICON_H
+void CopyItemIconPicTo4x4Buffer(const void *src, void *dest);
+const void *GetItemIconPicOrPalette(u16 itemId, u8 which);
+*/

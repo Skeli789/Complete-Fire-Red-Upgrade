@@ -9,11 +9,13 @@
 #include "../include/new/battle_util.h"
 #include "../include/new/build_pokemon.h"
 #include "../include/new/damage_calc.h"
-#include "../include/new/util.h"
+#include "../include/new/dynamax.h"
 #include "../include/new/frontier.h"
 #include "../include/new/item.h"
 #include "../include/new/mega.h"
 #include "../include/new/move_tables.h"
+#include "../include/new/util.h"
+
 /*
 battle_util.c
 	general functions for aiding in battle logic for everything
@@ -122,6 +124,32 @@ struct Pokemon* GetBankPartyData(u8 bank)
 {
 	u8 index = gBattlerPartyIndexes[bank];
 	return (SIDE(bank) == B_SIDE_OPPONENT) ? &gEnemyParty[index] : &gPlayerParty[index];
+}
+
+u16 GetBaseCurrentHP(u8 bank)
+{
+	if (IsDynamaxed(bank))
+	{
+		if (IsRaidBattle() && bank == GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT))
+			return gBattleMons[bank].hp / GetRaidBattleHPBoost();
+		else
+			return gBattleMons[bank].hp / GetDynamaxHPBoost(bank);
+	}
+
+	return gBattleMons[bank].hp;
+}
+
+u16 GetBaseMaxHP(u8 bank)
+{
+	if (IsDynamaxed(bank))
+	{
+		if (IsRaidBattle() && bank == GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT))
+			return gBattleMons[bank].maxHP / GetRaidBattleHPBoost();
+		else
+			return gBattleMons[bank].maxHP / GetDynamaxHPBoost(bank);
+	}
+
+	return gBattleMons[bank].maxHP;
 }
 
 u8 GetBankFromPartyData(struct Pokemon* mon)
@@ -234,6 +262,16 @@ bool8 CheckContact(u16 move, u8 bank)
 	return TRUE;
 }
 
+bool8 CheckContactByMon(u16 move, struct Pokemon* mon)
+{
+	if (!(gBattleMoves[move].flags & FLAG_MAKES_CONTACT)
+	|| GetMonItemEffect(mon) == ITEM_EFFECT_PROTECTIVE_PADS
+	|| GetMonAbility(mon) == ABILITY_LONGREACH)
+		return FALSE;
+
+	return TRUE;
+}
+
 bool8 CheckHealingMove(move_t move)
 {
 	return gBattleMoves[move].flags & FLAG_TRIAGE_AFFECTED;
@@ -267,16 +305,36 @@ bool8 IsOfType(u8 bank, u8 type)
 	return FALSE;
 }
 
+u8 GetMonType(struct Pokemon* mon, u8 typeId)
+{
+	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
+
+	if (typeId == 0)
+		return (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) ? GetCamomonsTypeByMon(mon, 0) : gBaseStats[species].type1;
+	else
+		return (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) ? GetCamomonsTypeByMon(mon, 1) : gBaseStats[species].type2;
+}
+
+bool8 IsMonOfType(struct Pokemon* mon, u8 type)
+{
+	u8 type1 = GetMonType(mon, 0);
+	u8 type2 = GetMonType(mon, 1);
+
+	return type1 == type || type2 == type;
+}
+
 bool8 LiftProtect(u8 bank)
 {
-	if (gProtectStructs[bank].protected
+	if ((gProtectStructs[bank].protected && !IsDynamaxed(bank))
 	|| gProtectStructs[bank].KingsShield
 	|| gProtectStructs[bank].SpikyShield
 	|| gProtectStructs[bank].BanefulBunker
 	|| gProtectStructs[bank].obstruct
 	|| gSideAffecting[SIDE(bank)] & (SIDE_STATUS_CRAFTY_SHIELD | SIDE_STATUS_MAT_BLOCK | SIDE_STATUS_QUICK_GUARD | SIDE_STATUS_WIDE_GUARD))
 	{
-		gProtectStructs[bank].protected = 0;
+		if (!IsDynamaxed(bank))
+			gProtectStructs[bank].protected = 0; //Max Guard is not affected by Feint
+
 		gProtectStructs[bank].KingsShield = 0;
 		gProtectStructs[bank].SpikyShield = 0;
 		gProtectStructs[bank].BanefulBunker = 0;
@@ -319,6 +377,11 @@ bool8 ProtectsAgainstZMoves(u16 move, u8 bankAtk, u8 bankDef)
 	return FALSE;
 }
 
+bool8 IsProtectedByMaxGuard(u8 bank)
+{
+	return IsDynamaxed(bank) && gProtectStructs[bank].protected;
+}
+
 bool8 StatsMaxed(u8 bank)
 {
 	for (u8 i = STAT_STAGE_ATK; i < BATTLE_STATS_NO; ++i)
@@ -351,6 +414,16 @@ bool8 StatsMinned(u8 bank)
 	return TRUE;
 }
 
+bool8 MainStatsMinned(u8 bank)
+{
+	for (u8 i = STAT_STAGE_ATK; i < STAT_ACC; ++i)
+	{
+		if (STAT_STAGE(bank, i) > 0)
+			return FALSE;
+	}
+	return TRUE;
+}
+
 bool8 AnyStatGreaterThan(u8 bank, u8 amount)
 {
 	for (u8 i = STAT_STAGE_ATK; i < BATTLE_STATS_NO; ++i)
@@ -375,13 +448,99 @@ u8 CountBoosts(u8 bank)
 	return sum;
 }
 
+u8 CheckMoveLimitations(u8 bank, u8 unusableMoves, u8 check)
+{
+	u8 ability = ABILITY(bank);
+	u8 holdEffect = ITEM_EFFECT(bank);
+	u16 choicedMove = CHOICED_MOVE(bank);
+	int i;
+
+	gStringBank = bank;
+	for (i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		u16 move = gBattleMons[bank].moves[i];
+		if (move == 0 && check & MOVE_LIMITATION_ZEROMOVE)
+			unusableMoves |= gBitTable[i];
+		else if (gBattleMons[bank].pp[i] == 0 && check & MOVE_LIMITATION_PP)
+			unusableMoves |= gBitTable[i];
+		else if (!IsDynamaxed(bank) && move == gDisableStructs[bank].disabledMove && check & MOVE_LIMITATION_DISABLED)
+			unusableMoves |= gBitTable[i];
+		else if (move == gLastUsedMoves[bank] && check & MOVE_LIMITATION_TORMENTED && IsTormented(bank))
+			unusableMoves |= gBitTable[i];
+		else if (IsTaunted(bank) && check & MOVE_LIMITATION_TAUNT && SPLIT(move) == SPLIT_STATUS)
+			unusableMoves |= gBitTable[i];
+		else if (IsImprisoned(bank, move) && check & MOVE_LIMITATION_IMPRISION)
+			unusableMoves |= gBitTable[i];
+		else if (gDisableStructs[bank].encoreTimer && gDisableStructs[bank].encoredMove != move && check & MOVE_LIMITATION_ENCORE)
+			unusableMoves |= gBitTable[i];
+		else if (!IsDynamaxed(bank)
+			 && (holdEffect == ITEM_EFFECT_CHOICE_BAND || ability == ABILITY_GORILLATACTICS)
+			 && choicedMove != 0 && choicedMove != 0xFFFF && choicedMove != move
+			 && check & MOVE_LIMITATION_CHOICE)
+		{
+			unusableMoves |= gBitTable[i];
+		}
+		else if (holdEffect == ITEM_EFFECT_ASSAULT_VEST && SPLIT(move) == SPLIT_STATUS)
+			unusableMoves |= gBitTable[i];
+		#ifdef FLAG_SKY_BATTLE
+		else if (FlagGet(FLAG_SKY_BATTLE) && CheckTableForMove(move, gSkyBattleBannedMoves))
+			unusableMoves |= gBitTable[i];
+		#endif
+		else if (IsGravityActive() && CheckTableForMove(move, gGravityBannedMoves))
+			unusableMoves |= gBitTable[i];
+		else if (CantUseSoundMoves(bank) && CheckSoundMove(move))
+			unusableMoves |= gBitTable[i];
+		else if (IsHealBlocked(bank) && CheckHealingMove(move))
+			unusableMoves |= gBitTable[i];
+		else if (IsRaidBattle() && bank != GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT) && CheckTableForMove(move, gRaidBattleBannedMoves))
+			unusableMoves |= gBitTable[i];
+	}
+	return unusableMoves;
+}
+
+u8 CheckMoveLimitationsFromParty(struct Pokemon* mon, u8 unusableMoves, u8 check)
+{
+	u8 holdEffect = GetMonItemEffect(mon);
+
+	for (int i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		u16 move = GetMonData(mon, MON_DATA_MOVE1 + i, NULL);
+
+		if (move == MOVE_NONE && check & MOVE_LIMITATION_ZEROMOVE)
+			unusableMoves |= gBitTable[i];
+		else if (GetMonData(mon, MON_DATA_PP1 + i, NULL) == 0 && check & MOVE_LIMITATION_PP)
+			unusableMoves |= gBitTable[i];
+		else if (holdEffect == ITEM_EFFECT_ASSAULT_VEST && SPLIT(move) == SPLIT_STATUS)
+			unusableMoves |= gBitTable[i];
+		#ifdef FLAG_SKY_BATTLE
+		else if (FlagGet(FLAG_SKY_BATTLE) && CheckTableForMove(move, gSkyBattleBannedMoves))
+			unusableMoves |= gBitTable[i];
+		#endif
+		else if (IsGravityActive() && CheckTableForMove(move, gGravityBannedMoves))
+			unusableMoves |= gBitTable[i];
+		else if (IsRaidBattle() && CheckTableForMove(move, gRaidBattleBannedMoves))
+			unusableMoves |= gBitTable[i];
+	}
+
+	return unusableMoves;
+}
+
+bool8 IsMoveRedirectionPrevented(u16 move, u8 atkAbility)
+{
+	return move == MOVE_SKYDROP
+		|| move == MOVE_SNIPESHOT
+//		|| atkAbility == ABILITY_PROPELLERTAIL
+		|| atkAbility != ABILITY_STALWART;
+}
+
 u8 GetMoveTarget(u16 move, u8 useMoveTarget)
 {
+	u8 moveTarget;
 	u8 bankAtk = gBankAttacker;
 	u8 bankDef = 0;
-	u8 moveTarget;
 	u8 atkSide, defSide;
 	u8 chosen = FALSE;
+	u8 atkAbility = ABILITY(bankAtk);
 
 	if (useMoveTarget)
 		moveTarget = useMoveTarget - 1;
@@ -391,18 +550,24 @@ u8 GetMoveTarget(u16 move, u8 useMoveTarget)
 	switch (moveTarget) {
 	case MOVE_TARGET_SELECTED:
 		defSide = SIDE(bankAtk) ^ BIT_SIDE;
-		if (gSideTimers[defSide].followmeTimer && gBattleMons[gSideTimers[defSide].followmeTarget].hp && move != MOVE_SKYDROP)
+		if (gSideTimers[defSide].followmeTimer
+		&&  BATTLER_ALIVE(gSideTimers[defSide].followmeTarget)
+		&&  !IsMoveRedirectionPrevented(move, atkAbility))
+		{
 			bankDef = gSideTimers[defSide].followmeTarget;
-
-		else {
-			if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE) {
-				if (gBattleMons[defSide].hp == 0 && gBattleMons[defSide ^ BIT_FLANK].hp == 0) {
+		}
+		else
+		{
+			if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+			{
+				if (gBattleMons[defSide].hp == 0 && gBattleMons[defSide ^ BIT_FLANK].hp == 0)
+				{
 					bankDef = defSide; //Both targets are dead so either target on opposing side works
 					chosen = TRUE;
 				}
 			}
-
-			else if (gBattleMons[defSide].hp == 0) {
+			else if (gBattleMons[defSide].hp == 0)
+			{
 				bankDef = defSide; //Target is dead so no choice but to hit it
 				chosen = TRUE;
 			}
@@ -414,7 +579,7 @@ u8 GetMoveTarget(u16 move, u8 useMoveTarget)
 				} while (bankDef == bankAtk || atkSide == SIDE(bankDef) || gAbsentBattlerFlags & gBitTable[bankDef]);
 			}
 
-			if (NO_MOLD_BREAKERS(ABILITY(bankAtk), move))
+			if (NO_MOLD_BREAKERS(atkAbility, move) && !IsMoveRedirectionPrevented(move, atkAbility))
 			{
 				u8 moveType = GetMoveTypeSpecial(bankAtk, move);
 				switch (moveType) {
@@ -480,11 +645,16 @@ u8 GetMoveTarget(u16 move, u8 useMoveTarget)
 
 	case MOVE_TARGET_RANDOM:
 		defSide = SIDE(bankAtk) ^ BIT_SIDE;
-		if (gSideTimers[defSide].followmeTimer && gBattleMons[gSideTimers[defSide].followmeTarget].hp)
+		if (gSideTimers[defSide].followmeTimer
+		&& BATTLER_ALIVE(gSideTimers[defSide].followmeTarget)
+		&& !IsMoveRedirectionPrevented(move, atkAbility))
+		{
 			bankDef = gSideTimers[defSide].followmeTarget;
-
-		else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && moveTarget & 4) {
-			if (SIDE(bankAtk) == B_SIDE_PLAYER) {
+		}
+		else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && moveTarget & 4)
+		{
+			if (SIDE(bankAtk) == B_SIDE_PLAYER)
+			{
 				if (Random() & 1)
 					bankDef = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
 				else
@@ -671,6 +841,22 @@ bool8 BankMovedBefore(u8 bank1, u8 bank2)
 	return FALSE; //Should never be reached
 }
 
+bool8 BankMovedBeforeIgnoreSwitch(u8 bank1, u8 bank2)
+{
+	for (u32 i = 0; i < gBattlersCount; ++i)
+	{
+		if (gActionsByTurnOrder[i] == ACTION_SWITCH)
+			continue;
+
+		if (gBanksByTurnOrder[i] == bank1)
+			return TRUE;
+		else if (gBanksByTurnOrder[i] == bank2)
+			return FALSE;
+	}
+
+	return FALSE; //Should never be reached
+}
+
 bool8 IsFirstAttacker(u8 bank)
 {
 	for (u8 i = 0; i < gBattlersCount; ++i)
@@ -796,6 +982,22 @@ bool8 CanKnockOffItem(u8 bank)
 		return FALSE;
 
 	if (!CanTransferItem(SPECIES(bank), item))
+		return FALSE;
+
+	return TRUE;
+}
+
+bool8 CanKnockOffMonItem(struct Pokemon* mon, u8 side)
+{
+	u16 item = GetMonData(mon, MON_DATA_HELD_ITEM, NULL);
+
+	if (item == ITEM_NONE)
+		return FALSE;
+
+	if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER) && side == B_SIDE_PLAYER) //Wild mons can't knock off items
+		return FALSE;
+
+	if (!CanTransferItem(GetMonData(mon, MON_DATA_SPECIES, NULL), item))
 		return FALSE;
 
 	return TRUE;
@@ -985,6 +1187,15 @@ u8 GetTopOfPickupStackNotIncludingBank(const u8 bank)
 	return gNewBS->pickupStack[i - 1];
 }
 
+void RemoveScreensFromSide(const u8 side)
+{
+	gSideAffecting[side] &= ~(SIDE_STATUS_REFLECT);
+	gSideAffecting[side] &= ~(SIDE_STATUS_LIGHTSCREEN);
+	gSideTimers[side].reflectTimer = 0;
+	gSideTimers[side].lightscreenTimer = 0;
+	gNewBS->AuroraVeilTimers[side] = 0;
+}
+
 void ClearBankStatus(u8 bank)
 {
 	if (gBattleMons[bank].status1 & (STATUS_POISON | STATUS_TOXIC_POISON))
@@ -1050,7 +1261,7 @@ bool8 CanBeGeneralStatused(u8 bank, bool8 checkFlowerVeil)
 			return FALSE;
 
 		case ABILITY_LEAFGUARD:
-			if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
+			if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY && ITEM_EFFECT(bank) != ITEM_EFFECT_UTILITY_UMBRELLA)
 				return FALSE;
 			break;
 
@@ -1164,7 +1375,7 @@ bool8 CanBeFrozen(u8 bank, bool8 checkFlowerVeil)
 			return FALSE;
 	}
 
-	if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
+	if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY && ITEM_EFFECT(bank) != ITEM_EFFECT_UTILITY_UMBRELLA)
 		return FALSE;
 
 	return TRUE;
@@ -1262,6 +1473,16 @@ bool8 SideHasSwamp(u8 side)
 {
 	return gNewBS->SwampTimers[side]
 		|| (IS_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_SWAMP);
+}
+
+bool8 BankSideHasGMaxWildfire(u8 bank)
+{
+	return gNewBS->maxWildfireTimers[SIDE(bank)] > 0;
+}
+
+bool8 BankSideHasGMaxVolcalith(u8 bank)
+{
+	return gNewBS->maxVolcalithTimers[SIDE(bank)] > 0;
 }
 
 bool8 IsConfused(u8 bank)

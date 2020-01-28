@@ -1,1 +1,2 @@
 -Certain Status Z-Moves (like Z-Destiny Bond) are displayed on the Move Menu with a small graphical oddity.
+-Dynamax HP can't go over 999 without graphical issues

@@ -23,6 +23,6 @@ void sub_80F6E9C(void);
 
 void __attribute__((long_call)) DrawDialogueFrameNewMenuHelpers(u8 windowId, bool8 transfer);
 u16 __attribute__((long_call)) AddTextPrinterParameterized2(u8 windowId, u8 fontId, const u8 *str, u8 speed, void (*callback)(struct TextPrinterTemplate *, u16), u8 fgColor, u8 bgColor, u8 shadowColor);
-
+void __attribute__((long_call)) DrawHelpMessageWindowWithText(const u8 * text);
 
 #endif // GUARD_NEW_MENU_HELPERS_H

@@ -29,6 +29,8 @@ attack_anim_table.s
 .global WATERGUN_ASM		@ hook at 0xA7C28 via r0
 .global MudBombASM 		@ hook at 0xE2590 via r0
 
+.equ FALSE, 0
+.equ TRUE, 1
 
 /* attack animation table */
 .align 2
@@ -803,49 +805,93 @@ gMoveAnimations:
 .word ANIM_LIGHT_THAT_BURNS_THE_SKY
 .word ANIM_SOUL_STEALING_7_STAR_STRIKE
 .word ANIM_MAX_GUARD
-.word ANIM_MAX_FLARE
-.word ANIM_MAX_FLUTTERBY
-.word ANIM_MAX_LIGHTNING
+.word ANIM_MAX_STRIKE
 .word ANIM_MAX_STRIKE
 .word ANIM_MAX_KNUCKLE
-.word ANIM_MAX_PHANTASM
-.word ANIM_MAX_HAILSTORM
-.word ANIM_MAX_OOZE
-.word ANIM_MAX_GEYSER
+.word ANIM_MAX_KNUCKLE
 .word ANIM_MAX_AIRSTREAM
-.word ANIM_MAX_STARFALL
-.word ANIM_MAX_WYRMWIND
-.word ANIM_MAX_MINDSTORM
-.word ANIM_MAX_ROCKFALL
+.word ANIM_MAX_AIRSTREAM
+.word ANIM_MAX_OOZE
+.word ANIM_MAX_OOZE
 .word ANIM_MAX_QUAKE
-.word ANIM_MAX_DARKNESS
-.word ANIM_MAX_OVERGROWTH
+.word ANIM_MAX_QUAKE
+.word ANIM_MAX_ROCKFALL
+.word ANIM_MAX_ROCKFALL
+.word ANIM_MAX_FLUTTERBY
+.word ANIM_MAX_FLUTTERBY
+.word ANIM_MAX_PHANTASM
+.word ANIM_MAX_PHANTASM
 .word ANIM_MAX_STEELSPIKE
+.word ANIM_MAX_STEELSPIKE
+.word ANIM_MAX_FLARE
+.word ANIM_MAX_FLARE
+.word ANIM_MAX_GEYSER
+.word ANIM_MAX_GEYSER
+.word ANIM_MAX_OVERGROWTH
+.word ANIM_MAX_OVERGROWTH
+.word ANIM_MAX_LIGHTNING
+.word ANIM_MAX_LIGHTNING
+.word ANIM_MAX_MINDSTORM
+.word ANIM_MAX_MINDSTORM
+.word ANIM_MAX_HAILSTORM
+.word ANIM_MAX_HAILSTORM
+.word ANIM_MAX_WYRMWIND
+.word ANIM_MAX_WYRMWIND
+.word ANIM_MAX_DARKNESS
+.word ANIM_MAX_DARKNESS
+.word ANIM_MAX_STARFALL
+.word ANIM_MAX_STARFALL
+.word ANIM_G_MAX_WILDFIRE
 .word ANIM_G_MAX_WILDFIRE
 .word ANIM_G_MAX_BEFUDDLE
+.word ANIM_G_MAX_BEFUDDLE
+.word ANIM_G_MAX_VOLTCRASH
 .word ANIM_G_MAX_VOLTCRASH
 .word ANIM_G_MAX_GOLDRUSH
+.word ANIM_G_MAX_GOLDRUSH
+.word ANIM_G_MAX_CHISTRIKE
 .word ANIM_G_MAX_CHISTRIKE
 .word ANIM_G_MAX_TERROR
+.word ANIM_G_MAX_TERROR
+.word ANIM_G_MAX_FOAMBURST
+.word ANIM_G_MAX_FOAMBURST
+.word ANIM_G_MAX_RESONANCE
 .word ANIM_G_MAX_RESONANCE
 .word ANIM_G_MAX_CUDDLE
+.word ANIM_G_MAX_CUDDLE
+.word ANIM_G_MAX_REPLENISH
 .word ANIM_G_MAX_REPLENISH
 .word ANIM_G_MAX_MALODOR
+.word ANIM_G_MAX_MALODOR
+.word ANIM_G_MAX_MELTDOWN
+.word ANIM_G_MAX_MELTDOWN
+.word ANIM_G_MAX_STONESURGE
 .word ANIM_G_MAX_STONESURGE
 .word ANIM_G_MAX_WINDRAGE
+.word ANIM_G_MAX_WINDRAGE
+.word ANIM_G_MAX_STUNSHOCK
 .word ANIM_G_MAX_STUNSHOCK
 .word ANIM_G_MAX_FINALE
+.word ANIM_G_MAX_FINALE
+.word ANIM_G_MAX_DEPLETION
 .word ANIM_G_MAX_DEPLETION
 .word ANIM_G_MAX_GRAVITAS
+.word ANIM_G_MAX_GRAVITAS
+.word ANIM_G_MAX_VOLCALITH
 .word ANIM_G_MAX_VOLCALITH
 .word ANIM_G_MAX_SANDBLAST
+.word ANIM_G_MAX_SANDBLAST
+.word ANIM_G_MAX_SNOOZE
 .word ANIM_G_MAX_SNOOZE
 .word ANIM_G_MAX_TARTNESS
+.word ANIM_G_MAX_TARTNESS
+.word ANIM_G_MAX_SWEETNESS
 .word ANIM_G_MAX_SWEETNESS
 .word ANIM_G_MAX_SMITE
+.word ANIM_G_MAX_SMITE
 .word ANIM_G_MAX_STEELSURGE
-.word ANIM_G_MAX_MELTDOWN
-.word ANIM_G_MAX_FOAMBURST
+.word ANIM_G_MAX_STEELSURGE
+.word ANIM_G_MAX_CENTIFERNO
 .word ANIM_G_MAX_CENTIFERNO
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -943,7 +989,7 @@ ANIM_WATERGUN:
 	endanimation
 
 .align 2
-WATERGUN_PARTICLE: objtemplate ANIM_TAG_WATER_GUN ANIM_TAG_WATER_GUN 0x83ACA30 0x8231CF0 0x0 0x83E3D90 0x80A7BC5
+WATERGUN_PARTICLE: objtemplate ANIM_TAG_WATER_GUN ANIM_TAG_WATER_GUN OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E3D90 0x80A7BC5
 
 @ hook at A7C28
 WATERGUN_ASM:
@@ -973,7 +1019,7 @@ ANIM_THUNDERPUNCH:
 	loadparticle ANIM_TAG_SPARK_2
 	pokespritetoBG bank_target
 	setblends 0x80c
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x2 0x0 0xE 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xE 0x0
 	waitanimation
 	playsound2 0x84 0x3f
 	launchtemplate Template_Fist 0x84 0x5 0x0 0x0 0x8 0x1 0x0
@@ -984,7 +1030,7 @@ ANIM_THUNDERPUNCH:
 	call PARALYZE_CHANCE_ANIM
 	waitanimation
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x2 0x9 0x0 0x07FE
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x2 0xE 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xE 0x0 0x0
 	waitanimation
 	pokespritefromBG bank_target
 	resetblends
@@ -1000,10 +1046,10 @@ ANIM_SWAGGER:
 	waitanimation
 	launchtask AnimTask_pal_fade_complex 0x2 0x6 PAL_DEF 0x2 0x2 0x0 0xb 0x1f
 	launchtask AnimTask_move_bank_2 0x2 0x5 0x1 0x1 0x0 0x20 0x1
-	launchtemplate 0x83E3F04 0x82 0x3 0x1 0xffec 0xffe4
+	launchtemplate 0x83E3F04 TEMPLATE_TARGET | 2, 0x3, 0x1 0xffec 0xffe4
 	playsound2 0xBB 0x3f
 	pause 0xc
-	launchtemplate 0x83E3F04 0x82 0x3 0x1 0x14 0xffe4
+	launchtemplate 0x83E3F04 TEMPLATE_TARGET | 2, 0x3, 0x1 0x14 0xffe4
 	playsound2 0xBB 0x3f
 	waitanimation
 	endanimation
@@ -1035,23 +1081,23 @@ ANIM_ROCKSMASH:
 	endanimation
 
 .align 2
-SMASH_FLOATROCK: objtemplate ANIM_TAG_ROCKS ANIM_TAG_ROCKS 0x83AC9D8 0x83E73A8 0x0 0x8231CFC 0x80B0E81
+SMASH_FLOATROCK: objtemplate ANIM_TAG_ROCKS ANIM_TAG_ROCKS OAM_OFF_32x32 0x83E73A8 0x0 0x8231CFC SpriteCB_SpriteOnMonForDuration
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 ANIM_ROCKSLIDE:
 	loadparticle ANIM_TAG_ROCKS
 	pokespritetoBG side_target
-	launchtemplate 0x83E73B4 0x82 0x4 0xfffb 0x1 0xfffb 0x1
+	launchtemplate 0x83E73B4 TEMPLATE_TARGET | 2, 0x4, 0xfffb 0x1 0xfffb 0x1
 	playsound2 0x7C 0x3f
 	pause 0x2
-	launchtemplate 0x83E73B4 0x82 0x4 0x5 0x0 0x6 0x1
+	launchtemplate 0x83E73B4 TEMPLATE_TARGET | 2, 0x4, 0x5 0x0 0x6 0x1
 	playsound2 0x7C 0x3f
 	pause 0x2
-	launchtemplate 0x83E73B4 0x82 0x4 0x13 0x1 0xa 0x1
+	launchtemplate 0x83E73B4 TEMPLATE_TARGET | 2, 0x4, 0x13 0x1 0xa 0x1
 	playsound2 0x7C 0x3f
 	pause 0x2
-	launchtemplate 0x83E73B4 0x82 0x4 0xffe9 0x2 0xfff6 0x1
+	launchtemplate 0x83E73B4 TEMPLATE_TARGET | 2, 0x4, 0xffe9 0x2 0xfff6 0x1
 	playsound2 0x7C 0x3f
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x5 0x32 0x1
 	launchtask AnimTask_move_bank 0x2 0x5 target_partner 0x0 0x5 0x32 0x1
@@ -1067,14 +1113,14 @@ ANIM_ROCKSLIDE:
 ANIM_RAINDANCE:
 	loadparticle ANIM_TAG_RAIN_DROPS
 	playsound2 0x78 0xc0
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x2 0x0 0xD 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xD 0x0
 	waitanimation
 	launchtask 0x80AABC1 0x2 0x3 0x0 0x3 0x78
 	launchtask 0x80AABC1 0x2 0x3 0x0 0x3 0x78
 	pause 0x78
 	pause 0x1e
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x2 0xD 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xD 0x0 0x0
 	waitanimation
 	endanimation
 
@@ -1114,7 +1160,7 @@ ANIM_IRONTAIL:
 	loadparticle ANIM_TAG_IMPACT
 	setblends 0x80c
 	soundcomplex 0x71 0xc0 0x1c 0x2
-	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_SLAM_HIT_2 0x2 0x0 0xE 0x4630 @;Gray
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_SLAM_HIT_2 0x2 0xE 0xE 0x4630 @;Gray
 	launchtask AnimTask_steel_sprite 0x5 0x3 0x0 0x0 0x0
 	waitanimation
 	pokespritetoBG bank_target
@@ -1142,10 +1188,10 @@ ANIM_IRONTAIL:
 TAIL_WHACK_DOWN:
 	launchtemplate Template_Hit 0x83 0x4 0xfff6 0xfff8 0x1 0x1
 	playsound2 0xcf 0x3f
-	launchtemplate 0x83e7560 0x82 0x4 0xfff4 0x1b 0x2 0x3
-	launchtemplate 0x83e7560 0x82 0x4 0x8 0x1c 0x3 0x4
-	launchtemplate 0x83e7560 0x82 0x4 0xfffc 0x1e 0x2 0x3
-	launchtemplate 0x83e7560 0x82 0x4 0xc 0x19 0x4 0x4
+	launchtemplate 0x83e7560 TEMPLATE_TARGET | 2, 0x4, 0xfff4 0x1b 0x2 0x3
+	launchtemplate 0x83e7560 TEMPLATE_TARGET | 2, 0x4, 0x8 0x1c 0x3 0x4
+	launchtemplate 0x83e7560 TEMPLATE_TARGET | 2, 0x4, 0xfffc 0x1e 0x2 0x3
+	launchtemplate 0x83e7560 TEMPLATE_TARGET | 2, 0x4, 0xc 0x19 0x4 0x4
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -1199,10 +1245,11 @@ ANIM_HYDROCANNON:
 	pokespritetoBG side_target
 	pause 0x10
 	playsoundpanchange 0x9d 0xc0 0x3f 0x2 0x0
+	launchtask AnimTask_screen_shake 0x5 0x3, 5, 1, 67
 	call HYDROCANNON_SHOT
 	call HYDROCANNON_SHOT
 	call HYDROCANNON_SHOT
-	launchtask AnimTask_move_bank 0x5 0x5 bank_target 0x0 0x2 0x29 0x1
+	launchtask AnimTask_move_bank 0x5 0x5 bank_target 0x0 0x4 0x45 0x1
 	call HYDROCANNON_SHOT
 	call HYDROCANNON_SHOT
 	call HYDROCANNON_SHOT
@@ -1220,23 +1267,24 @@ ANIM_HYDROCANNON:
 	call HYDROCANNON_SHOT
 	call HYDROCANNON_SHOT
 	waitanimation
+	pause 0x5
 	loaddefaultBG
 	waitforBG
 	pokespritefromBG side_target
 	endanimation
 
 HYDROCANNON_SHOT:
-	launchtemplate HYDROCANNON_WATER 0x2 0x5 0xf 0xf 0x14 0x0 0x0
-	launchtemplate HYDROCANNON_WATER 0x2 0x5 0xf 0xf 0x14 0xa 0x5
-	launchtemplate HYDROCANNON_WATER 0x2 0x5 0xf 0xf 0x14 0xfff6 0xfffb
+	launchtemplate HYDROCANNON_WATER TEMPLATE_TARGET | 0, 0x5 0xf 0xf 0x14 0x0 0x0
+	launchtemplate HYDROCANNON_WATER TEMPLATE_TARGET | 0, 0x5 0xf 0xf 0x14 0xa 0x5
+	launchtemplate HYDROCANNON_WATER TEMPLATE_TARGET | 0, 0x5 0xf 0xf 0x14 0xfff6 0xfffb
 	pause 0x2
-	launchtemplate HYDROCANNON_WATER 0x2 0x5 0xf 0xf 0x14 0x14 0xa
-	launchtemplate HYDROCANNON_WATER 0x2 0x5 0xf 0xf 0x14 0xffec 0xfff6
+	launchtemplate HYDROCANNON_WATER TEMPLATE_TARGET | 0, 0x5 0xf 0xf 0x14 0x14 0xa
+	launchtemplate HYDROCANNON_WATER TEMPLATE_TARGET | 0, 0x5 0xf 0xf 0x14 0xffec 0xfff6
 	pause 0x2
 	return
 
 .align 2
-HYDROCANNON_WATER: objtemplate ANIM_TAG_HYDRO_PUMP ANIM_TAG_HYDRO_PUMP sHydroCannonBallOAM 0x8231CF0 0x0 gSpriteAffineAnim_HydroCannonBall 0x80B8CC9
+HYDROCANNON_WATER: objtemplate ANIM_TAG_HYDRO_PUMP ANIM_TAG_HYDRO_PUMP OAM_DOUBLE_16x16 0x8231CF0 0x0 gSpriteAffineAnimTable_HydroCannonBall 0x80B8CC9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -1247,7 +1295,7 @@ ANIM_BLASTBURN:
 	pokespritetoBG side_target
 	setblends 0x80c
 	playsound2 0x8e 0xc0
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0xA 0x043D
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xA 0x043D
 	launchtemplate 0x83e5ca0 0x2 0x6 0xffe0 0x0 0x18 0x0 0x0 0x0
 	launchtemplate 0x83e5ca0 0x2 0x6 0xffec 0xfff6 0x18 0x0 0x0 0x0
 	launchtemplate 0x83e5ca0 0x42 0x6 0x0 0xfff0 0x18 0x0 0x0 0x0
@@ -1281,7 +1329,7 @@ ANIM_BLASTBURN:
 	launchtask AnimTask_pal_fade_complex 0x2 0x6 PAL_DEF 0x2 0x2 0x0 0xb 0x1f
 	call BURN_CHANCE_ANIM
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0xA 0x0 0x043D
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xA 0x0 0x043D
 	waitanimation
 	pokespritefromBG side_target
 	resetblends
@@ -1299,9 +1347,9 @@ ANIM_BRICKBREAK:
 BRICKBREAK_NORMAL_ANIM:
 	pokespritetoBG bank_target
 	setblends 0x80c
-	launchtemplate BRICKBREAK_CHOP 0x3 0x3 0x0 0xffe0 0xf
+	launchtemplate BRICKBREAK_CHOP 0x3 0x3, 0x0, -30, 15
 	playsound2 0x80 0x3f
-	pause 0x13
+	pause 0x16
 	launchtemplate Template_Hit 0x2 0x4 0x0 0x0 0x1 0x1
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x4 0x9 0x1
 	playsound2 0x86 0x3f
@@ -1314,9 +1362,9 @@ BRICKBREAK_SCREEN_DESTROY_ANIM:
 	setblends 0x80c
 	launchtemplate 0x83E6808 0x3 0x5 0x1 0x0 0x0 0x32 0xa
 	pause 0x1F
-	launchtemplate BRICKBREAK_CHOP 0x3 0x3 0x0 0xffe0 0xf
+	launchtemplate BRICKBREAK_CHOP 0x3 0x3, 0x0, -30, 15
 	playsound2 0x80 0x3f
-	pause 0x13
+	pause 0x16
 	launchtemplate Template_Hit 0x2 0x4 0x0 0x0 0x1 0x1
 	playsound2 0x86 0x3f
 	pause 0x3
@@ -1330,7 +1378,7 @@ BRICKBREAK_SCREEN_DESTROY_ANIM:
 	endanimation
 
 .align 2
-BRICKBREAK_CHOP: objtemplate ANIM_TAG_CHOP ANIM_TAG_CHOP 0x83AC9D8 0x83E66CC 0x0 0x8231CFC 0x80B0D59
+BRICKBREAK_CHOP: objtemplate ANIM_TAG_CHOP ANIM_TAG_CHOP OAM_OFF_32x32 0x83E66CC 0x0 0x8231CFC 0x80B0D59
 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -1347,7 +1395,7 @@ ANIM_DOUBLEEDGE:
 	pause 0x3
 	waitanimation
 	playsound2 0x86 0x3f
-	launchtemplate Template_Hit 0x84 0x4 0xfff6 0x0 0x1 0x0
+	launchtemplate Template_Hit TEMPLATE_TARGET | 4, 0x4, 0xfff6 0x0 0x1 0x0
 	launchtemplate Template_SlideMonToOffset 0x2 0x5 bank_target 0xffe0 0x0 0x0 0x3
 	waitanimation
 	launchtask 0x8099981 0x2 0x4 0x8 0xff00 0x0 0x0
@@ -1400,7 +1448,7 @@ DRAGONBREATH_BREATH:
 	return
 
 .align 2
-DRAGONBREATH_BLUEFIRE: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_HYDRO_PUMP 0x83ACA98 0x83E7764 0x0 0x83E779C 0x80B741D
+DRAGONBREATH_BLUEFIRE: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_HYDRO_PUMP OAM_DOUBLE_32x32 0x83E7764 0x0 0x83E779C 0x80B741D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -1420,15 +1468,15 @@ ANIM_DRAGONCLAW:
 	pause 0x2
 	playsound2 0x81 0x3f
 	launchtask AnimTask_move_bank_2 0x2 0x5 0x1 0x2 0x0 0x12 0x1
-	launchtemplate Template_Claws 0x82 0x3 0xfff6 0xfff6 0x0
-	launchtemplate Template_Claws 0x82 0x3 0xfff6 0xa 0x0
+	launchtemplate Template_Claws TEMPLATE_TARGET | 2, 0x3, 0xfff6 0xfff6 0x0
+	launchtemplate Template_Claws TEMPLATE_TARGET | 2, 0x3, 0xfff6 0xa 0x0
 	launchtemplate 0x83E7B88 0x2 0x5 0xfffc 0x1 0xa 0x3 0x1
 	pause 0xA
 	launchtemplate Template_HorizontalLunge 0x2 0x2 0x6 0x4
 	pause 0x2
 	playsound2 0x81 0x3f
-	launchtemplate Template_Claws 0x82 0x3 0xa 0xfff6 0x1
-	launchtemplate Template_Claws 0x82 0x3 0xa 0xa 0x1
+	launchtemplate Template_Claws TEMPLATE_TARGET | 2, 0x3, 0xa 0xfff6 0x1
+	launchtemplate Template_Claws TEMPLATE_TARGET | 2, 0x3, 0xa 0xa 0x1
 	launchtemplate 0x83E7B88 0x2 0x5 0xfffc 0x1 0xa 0x3 0x1
 	waitanimation
 	endanimation
@@ -1465,13 +1513,13 @@ DRAGON_DANCE_SMOKE_UP:
 	return
 
 .align 2
-DRAGON_DANCE_SMOKE: objtemplate ANIM_TAG_PINK_CLOUD ANIM_TAG_HANDS_AND_FEET 0x83ACA98 0x8231CF0 0x0 0x8231CFC 0x80B477D
+DRAGON_DANCE_SMOKE: objtemplate ANIM_TAG_PINK_CLOUD ANIM_TAG_HANDS_AND_FEET OAM_DOUBLE_32x32 0x8231CF0 0x0 0x8231CFC 0x80B477D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 ANIM_FLAMETHROWER:
 	loadparticle ANIM_TAG_SMALL_EMBER
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0x8 0x043D
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x8 0x043D
 	pause 0x20
 	pokespritetoBG side_target
 	leftbankBG_over_partnerBG bank_target
@@ -1501,7 +1549,7 @@ ANIM_FLAMETHROWER:
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x1 0x9 0x0 0x1f
 	waitanimation
 	pokespritefromBG side_target
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x8 0x0 0x043D
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x8 0x0 0x043D
 	endanimation
 
 FLAMETHROWER_FIRE:
@@ -1640,7 +1688,7 @@ ANIM_AIRSLASH:
 	endanimation
 
 .align 2
-AIR_SLASH_CUT: objtemplate ANIM_TAG_CUT ANIM_TAG_SPLASH 0x83ACAF8 0x83E3290 0x0 0x8231CFC 0x80A44E1
+AIR_SLASH_CUT: objtemplate ANIM_TAG_CUT ANIM_TAG_SPLASH OAM_OFF_BLEND_32x32 0x83E3290 0x0 0x8231CFC 0x80A44E1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -1658,7 +1706,7 @@ ANIM_AQUAJET:
 	call 0x81d420c
 	call 0x81d420c
 	pause 0xc
-	call 0x81c8ca2
+	call WATER_DIVE_ATTACK
 	waitanimation
 	launchtask 0x80A939D 0x2 0x0
 	waitanimation
@@ -1731,7 +1779,7 @@ ANIM_AURASPHERE:
 	launchtask 0x80bb82d 0x5 0x4 0xf700 0x0 0x1 0xffff
 	pause 0xf
 	launchsoundtask 0x80dcf39 0x7 0xa1 0xffc0 0x3f 0x5 0x5 0x0 0x5
-	launchtemplate AURA_SPHERE_BALL 0x82 0x3 0x0 0x0 0x19
+	launchtemplate AURA_SPHERE_BALL TEMPLATE_TARGET | 2, 0x3, 0x0 0x0 0x19
 	waitanimation
 	playsound2 0x98 0x3f
 	launchtask AnimTask_move_bank_2 0x2 0x5 0x1 0x4 0x0 0x8 0x1
@@ -1739,7 +1787,7 @@ ANIM_AURASPHERE:
 	call 0x81d59c7
 	endanimation
 
-AURA_SPHERE_BALL: objtemplate ANIM_TAG_AURA_SPHERE ANIM_TAG_AURA_SPHERE 0x83ACA38 0x8231CF0 0x0 0x83E7604 0x80B563D
+AURA_SPHERE_BALL: objtemplate ANIM_TAG_AURA_SPHERE ANIM_TAG_AURA_SPHERE OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E7604 0x80B563D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -1749,16 +1797,16 @@ ANIM_AVALANCHE:
 	loadBG1 0xf
 	waitfortransparentBG
 	pokespritetoBG side_target
-	launchtemplate ICEROCKS 0x82 0x4 0xfffb 0x1 0xfffb 0x1
+	launchtemplate ICEROCKS TEMPLATE_TARGET | 2, 0x4, 0xfffb 0x1 0xfffb 0x0
 	playsound2 0x7c 0x3f
 	pause 0x2
-	launchtemplate ICEROCKS 0x82 0x4 0x5 0x0 0x6 0x1
+	launchtemplate ICEROCKS TEMPLATE_TARGET | 2, 0x4, 0x5 0x0 0x6 0x0
 	playsound2 0x7c 0x3f
 	pause 0x2
-	launchtemplate ICEROCKS 0x82 0x4 0x13 0x1 0xa 0x1
+	launchtemplate ICEROCKS TEMPLATE_TARGET | 2, 0x4, 0x13 0x1 0xa 0x0
 	playsound2 0x7c 0x3f
 	pause 0x2
-	launchtemplate ICEROCKS 0x82 0x4 0xffe9 0x2 0xfff6 0x1
+	launchtemplate ICEROCKS TEMPLATE_TARGET | 2, 0x4, 0xffe9 0x2 0xfff6 0x0
 	playsound2 0x7c 0x3f
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x5 0x32 0x1
 	pause 0x2
@@ -1771,34 +1819,34 @@ ANIM_AVALANCHE:
 	endanimation
 
 AvalancheRocks:
-	launchtemplate ICEROCKS 0x82 0x4 0xffec 0x0 0xfff6 0x1
+	launchtemplate ICEROCKS TEMPLATE_TARGET | 2, 0x4, 0xffec 0x0 0xfff6 0x0
 	playsound2 0x7C 0x3f
 	pause 0x2
-	launchtemplate ICEROCKS 0x82 0x4 0x1c 0x1 0xa 0x1
+	launchtemplate ICEROCKS TEMPLATE_TARGET | 2, 0x4, 0x1c 0x1 0xa 0x0
 	playsound2 0x7C 0x3f
 	pause 0x2
-	launchtemplate ICEROCKS 0x82 0x4 0xfff6 0x1 0xfffb 0x1
+	launchtemplate ICEROCKS TEMPLATE_TARGET | 2, 0x4, 0xfff6 0x1 0xfffb 0x0
 	playsound2 0x7C 0x3f
 	pause 0x2
-	launchtemplate ICEROCKS 0x82 0x4 0xa 0x0 0x6 0x1
+	launchtemplate ICEROCKS TEMPLATE_TARGET | 2, 0x4, 0xa 0x0 0x6 0x0
 	playsound2 0x7C 0x3f
 	pause 0x2
-	launchtemplate ICEROCKS 0x82 0x4 0x18 0x1 0xa 0x1
+	launchtemplate ICEROCKS TEMPLATE_TARGET | 2, 0x4, 0x18 0x1 0xa 0x0
 	playsound2 0x7C 0x3f
 	pause 0x2
-	launchtemplate ICEROCKS 0x82 0x4 0xffe0 0x2 0xfff6 0x1
+	launchtemplate ICEROCKS TEMPLATE_TARGET | 2, 0x4, 0xffe0 0x2 0xfff6 0x0
 	playsound2 0x7C 0x3f
 	pause 0x2
-	launchtemplate ICEROCKS 0x82 0x4 0xffec 0x0 0xfff6 0x1
+	launchtemplate ICEROCKS TEMPLATE_TARGET | 2, 0x4, 0xffec 0x0 0xfff6 0x0
 	playsound2 0x7C 0x3f
 	pause 0x2
-	launchtemplate ICEROCKS 0x82 0x4 0x1e 0x2 0xa 0x1
+	launchtemplate ICEROCKS TEMPLATE_TARGET | 2, 0x4, 0x1e 0x2 0xa 0x0
 	playsound2 0x7C 0x3f
 	pause 0x2
 	return
 
 .align 2
-ICEROCKS: objtemplate ANIM_TAG_ROCKS ANIM_TAG_DRAGON_ASCENT_FOE 0x83AC9D8 0x83E73A8 0x0 0x8231CFC 0x80B4635
+ICEROCKS: objtemplate ANIM_TAG_ROCKS ANIM_TAG_DRAGON_ASCENT_FOE OAM_OFF_32x32 0x83E73A8 0x0 0x8231CFC 0x80B4635
 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -1836,7 +1884,7 @@ LOAD_BG_ON_PLAYER:
 	goto BraveBirdHit
 
 .align 2
-BIRD_TEMPLATE: objtemplate ANIM_TAG_BIRD ANIM_TAG_JAGGED_MUSIC_NOTE 0x83ACAA0 0x8231CF0 0x0 0x8231CFC 0x80B2D65
+BIRD_TEMPLATE: objtemplate ANIM_TAG_BIRD ANIM_TAG_JAGGED_MUSIC_NOTE OAM_DOUBLE_64x64 0x8231CF0 0x0 0x8231CFC 0x80B2D65
 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -1877,6 +1925,8 @@ ANIM_BUGBUZZ:
 ANIM_BULLETPUNCH:
 	loadparticle ANIM_TAG_IMPACT
 	loadparticle ANIM_TAG_HANDS_AND_FEET
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_IMPACT 0x2 0xE 0xE 0x0 @;Black
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_HANDS_AND_FEET 0x2 0xC 0xC 0x639C @;Beige
 	soundcomplex 0x71 0xc0 0x1c 0x2
 	launchtask 0x80b86ed 0x5 0x3 0x0 0x0 0x0
 	waitanimation
@@ -1885,38 +1935,41 @@ ANIM_BULLETPUNCH:
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x3 0x0 0x15 0x1
 @Right
 	playsound2 0x74 0x3F
-	launchtemplate Template_Hit 0x2 0x4 0xA 0x0 0x1 0x0
+	launchtemplate Template_Hit 0x2 0x4 0xA 0x0 0x1 0x1
 	pause 0x1
-	launchtemplate Template_Fist 0x3 0x5 0xA 0x0 0x8 0x1 0x0
+	launchtemplate BULLET_FIST 0x3 0x5 0xA 0x0 0x8 0x1 0x0
 	pause 0x2
 @Low Left
 	playsound2 0x74 0x3F
-	launchtemplate Template_Hit 0x2 0x4 0xFFF0 0x10 0x1 0x0
+	launchtemplate Template_Hit 0x2 0x4 0xFFF0 0x10 0x1 0x1
 	pause 0x1
-	launchtemplate Template_Fist 0x3 0x5 0xFFF0 0x10 0x8 0x1 0x0
+	launchtemplate BULLET_FIST 0x3 0x5 0xFFF0 0x10 0x8 0x1 0x0
 	pause 0x2
 @Down
 	playsound2 0x74 0x3F
-	launchtemplate Template_Hit 0x2 0x4 0x5 0x10 0x1 0x0
+	launchtemplate Template_Hit 0x2 0x4 0x5 0x10 0x1 0x1
 	pause 0x1
-	launchtemplate Template_Fist 0x3 0x5 0x5 0x10 0x8 0x1 0x0
+	launchtemplate BULLET_FIST 0x3 0x5 0x5 0x10 0x8 0x1 0x0
 	pause 0x2
 @Up
 	playsound2 0x74 0x3F
-	launchtemplate Template_Hit 0x2 0x4 0x5 0xFFF5 0x1 0x0
+	launchtemplate Template_Hit 0x2 0x4 0x5 0xFFF5 0x1 0x1
 	pause 0x1
-	launchtemplate Template_Fist 0x3 0x5 0x5 0xFFF5 0x8 0x1 0x0
+	launchtemplate BULLET_FIST 0x3 0x5 0x5 0xFFF5 0x8 0x1 0x0
 	pause 0x2
 @Top Left
 	playsound2 0x74 0x3F
-	launchtemplate Template_Hit 0x2 0x4 0xFFF5 0xFFF7 0x1 0x0
+	launchtemplate Template_Hit 0x2 0x4 0xFFF5 0xFFF7 0x1 0x1
 	pause 0x1
-	launchtemplate Template_Fist 0x3 0x5 0xFFF5 0xFFF7 0x8 0x1 0x0
+	launchtemplate BULLET_FIST 0x3 0x5 0xFFF5 0xFFF7 0x8 0x1 0x0
 	pause 0x2
 	waitanimation
 	pokespritefromBG bank_target
 	resetblends
 	endanimation
+	
+.align 2
+BULLET_FIST: objtemplate ANIM_TAG_HANDS_AND_FEET ANIM_TAG_HANDS_AND_FEET OAM_NORMAL_32x32 0x83E66CC 0x0 gSpriteAffineAnimTable_HalfSize 0x80B0955
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -1924,8 +1977,8 @@ ANIM_CHARGEBEAM:
 	loadparticle ANIM_TAG_ELECTRIC_ORBS
 	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT
 	loadparticle ANIM_TAG_ORBS
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0xC 0x0
-	launchtask 0x80AE541 0x2 0x4 0x0 0x14 0x0 0x2  @controls the flying electric particles
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xC 0x0
+	launchtask AnimTask_ChargeBalls 0x2 0x4 0x0 0x14 0x0 0x2  @controls the flying electric particles
 	playsound2 0xCE 0xc0
 	pause 0xc
 	launchtemplate 0x83E6290 0x2 0x0  @electric circle
@@ -1963,7 +2016,7 @@ ANIM_CHARGEBEAM:
 	call CHARGE_BEAM_TEMPLATE
 	waitanimation
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x2 0x9 0x0 0x07FE
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0xC 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xC 0x0 0x0
 	waitanimation
 	endanimation
 
@@ -1974,7 +2027,7 @@ CHARGE_BEAM_TEMPLATE:
 	return
 
 .align 2
-YELLOWPARTICLES: objtemplate ANIM_TAG_ORBS ANIM_TAG_ELECTRIC_ORBS 0x83AC9C8 0x83E2A20 0x0 0x8231CFC 0x80A25ED
+YELLOWPARTICLES: objtemplate ANIM_TAG_ORBS ANIM_TAG_ELECTRIC_ORBS OAM_OFF_8x8 0x83E2A20 0x0 0x8231CFC 0x80A25ED
 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -2022,7 +2075,7 @@ BeatDown_closecombat:
 	return
 
 .align 2
-REDFIST: objtemplate ANIM_TAG_HANDS_AND_FEET ANIM_TAG_VERTICAL_HEX 0x83AC9D8 0x83E66CC 0x0 0x8231CFC 0x80B0955
+REDFIST: objtemplate ANIM_TAG_HANDS_AND_FEET ANIM_TAG_VERTICAL_HEX OAM_OFF_32x32 0x83E66CC 0x0 0x8231CFC 0x80B0955
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -2046,7 +2099,7 @@ ANIM_CROSSPOISON:
 ANIM_DARKPULSE:
 	loadparticle ANIM_TAG_ORBS @Hyper Beam
 	loadparticle ANIM_TAG_POISON_JAB @Purple
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0xE 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xE 0x0
 	pause 0x4
 	playsound2 0x1E0 0xC0
 	launchtask 0x80B9F6D 0x2 0x7 ANIM_TAG_ORBS 0x1 0xc 0x1F 0x10 0x0 0x0
@@ -2080,7 +2133,7 @@ ANIM_DARKPULSE:
 	call PURPLE_BEAM
 	waitanimation
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x2 0x9 0x0 0x3006
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0xE 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xE 0x0 0x0
 	waitanimation
 	endanimation
 
@@ -2091,7 +2144,7 @@ PURPLE_BEAM:
 	return
 
 .align 2
-PURPLEPARTICLES: objtemplate ANIM_TAG_ORBS ANIM_TAG_POISON_JAB 0x83AC9C8 0x83E2A20 0x0 0x8231CFC 0x80A25ED
+PURPLEPARTICLES: objtemplate ANIM_TAG_ORBS ANIM_TAG_POISON_JAB OAM_OFF_8x8 0x83E2A20 0x0 0x8231CFC 0x80A25ED
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -2104,17 +2157,17 @@ ANIM_DISCHARGE:
 	pause 0x0
 	launchtask AnimTask_pal_fade_complex 0x2 0x6 0x3 0xffe1 0x1 0x5 0x5 0x5bff
 	playsound2 0x70 0xc0
-	launchtemplate 0x83e5fc4 0x0 0x7 0x20 0x18 0xbe 0xc 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x20 0x18 0xbe 0xc 0x0 0x1 0x0
 	pause 0x0
-	launchtemplate 0x83e5fc4 0x0 0x7 0x50 0x18 0x16 0xc 0x0 0x1 0x0
-	launchtemplate 0x83e5fc4 0x0 0x7 0x9c 0x18 0x79 0xd 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x50 0x18 0x16 0xc 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x9c 0x18 0x79 0xd 0x0 0x1 0x1
 	pause 0x0
 	launchtask AnimTask_pal_fade_complex 0x2 0x6 0x3 0xffe1 0x1 0x0 0x0 0x5bff
 	pause 0xa
 	launchtask AnimTask_pal_fade_complex 0x2 0x6 0x3 0xffe1 0x1 0x5 0x5 0x5bff
 	playsound2 0x70 0xc0
-	launchtemplate 0x83e5fc4 0x0 0x7 0x64 0x18 0x3c 0xa 0x0 0x1 0x0
-	launchtemplate 0x83e5fc4 0x0 0x7 0xaa 0x18 0x2a 0xb 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x64 0x18 0x3c 0xa 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0xaa 0x18 0x2a 0xb 0x0 0x1 0x1
 	playsound2 0xc2 0xc0
 	launchtemplate 0x83e7148 0x29 0x4 0x0 0x0 0x0 0x0
 	pause 0x14
@@ -2156,26 +2209,26 @@ ANIM_DISCHARGE:
 
 CENTRED_ELECTRICITY_ANIM:
 	playsound2 0x70 0x3f
-	launchtemplate CENTRED_ELECTRICITY 0x82 0x4 0x5 0x0 0x5 0x0
+	launchtemplate CENTRED_ELECTRICITY TEMPLATE_TARGET | 2, 0x4, 0x5 0x0 0x5 0x0
 	pause 0x2
-	launchtemplate CENTRED_ELECTRICITY 0x82 0x4 0xfffb 0xa 0x5 0x1
+	launchtemplate CENTRED_ELECTRICITY TEMPLATE_TARGET | 2, 0x4, 0xfffb 0xa 0x5 0x1
 	pause 0x2
-	launchtemplate CENTRED_ELECTRICITY 0x82 0x4 0xf 0x14 0x5 0x2
+	launchtemplate CENTRED_ELECTRICITY TEMPLATE_TARGET | 2, 0x4, 0xf 0x14 0x5 0x2
 	pause 0x2
-	launchtemplate CENTRED_ELECTRICITY 0x82 0x4 0xfff1 0xfff6 0x5 0x0
+	launchtemplate CENTRED_ELECTRICITY TEMPLATE_TARGET | 2, 0x4, 0xfff1 0xfff6 0x5 0x0
 	pause 0x2
-	launchtemplate CENTRED_ELECTRICITY 0x82 0x4 0x19 0x0 0x5 0x1
+	launchtemplate CENTRED_ELECTRICITY TEMPLATE_TARGET | 2, 0x4, 0x19 0x0 0x5 0x1
 	pause 0x2
-	launchtemplate CENTRED_ELECTRICITY 0x82 0x4 0xfff8 0x8 0x5 0x2
+	launchtemplate CENTRED_ELECTRICITY TEMPLATE_TARGET | 2, 0x4, 0xfff8 0x8 0x5 0x2
 	pause 0x2
-	launchtemplate CENTRED_ELECTRICITY 0x82 0x4 0x2 0xfff8 0x5 0x0
+	launchtemplate CENTRED_ELECTRICITY TEMPLATE_TARGET | 2, 0x4, 0x2 0xfff8 0x5 0x0
 	pause 0x2
-	launchtemplate CENTRED_ELECTRICITY 0x82 0x4 0xffec 0xf 0x5 0x1
+	launchtemplate CENTRED_ELECTRICITY TEMPLATE_TARGET | 2, 0x4, 0xffec 0xf 0x5 0x1
 	return
 
 .align 2
-DISCHARGE_HITS: objtemplate ANIM_TAG_IMPACT ANIM_TAG_IMPACT 0x83ACB58 0x8231CF0 0x0 0x83E7BF8 SpriteCB_RandomCentredHits
-CENTRED_ELECTRICITY: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_SPARK_2 0x83AC9D0 0x8231CF0 0x0 0x8231CFC SpriteCB_CentredElectricity
+DISCHARGE_HITS: objtemplate ANIM_TAG_IMPACT ANIM_TAG_IMPACT OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 SpriteCB_RandomCentredHits
+CENTRED_ELECTRICITY: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_SPARK_2 OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC SpriteCB_CentredElectricity
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -2196,43 +2249,43 @@ ANIM_DRACOMETEOR:
 	stopmusic
 	playsound2 0x7C 0x3f
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x7 0x4 0x2
-	launchtemplate Template_MiniFirePlume 0x82 0x3 bank_target 0x28 0x20 @; For Meteor 1
+	launchtemplate Template_MiniFirePlume TEMPLATE_TARGET | 2, 0x3, bank_target 0x28 0x20 @; For Meteor 1
 	launchtask AnimTask_screen_shake 0x5 0x3 0x5 0x2 0x1
 	pause 0x7
 	call DRACO_METEOR_3
 	playsound2 0x7C 0x3f
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x7 0x4 0x2
-	launchtemplate Template_MiniFirePlume 0x82 0x3 bank_target 0xFFF8 0x20 @; For Meteor 2
+	launchtemplate Template_MiniFirePlume TEMPLATE_TARGET | 2, 0x3, bank_target 0xFFF8 0x20 @; For Meteor 2
 
 	pause 0x7
 	call DRACO_METEOR_4
 	playsound2 0x7C 0x3f
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x7 0x4 0x2
-	launchtemplate Template_MiniFirePlume 0x82 0x3 bank_target 0x15 0x20  @; For Meteor 3
+	launchtemplate Template_MiniFirePlume TEMPLATE_TARGET | 2, 0x3, bank_target 0x15 0x20  @; For Meteor 3
 
 	pause 0x7
 	call DRACO_METEOR_1
 	playsound2 0x7C 0x3f
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x7 0x4 0x2
-	launchtemplate Template_MiniFirePlume 0x82 0x3 bank_target 0xFFF8 0x20  @; For Meteor 4
+	launchtemplate Template_MiniFirePlume TEMPLATE_TARGET | 2, 0x3, bank_target 0xFFF8 0x20  @; For Meteor 4
 	launchtask AnimTask_screen_shake 0x5 0x3 0x5 0x2 0x1
 
 	pause 0x7
 	call DRACO_METEOR_2
 	playsound2 0x7C 0x3f
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x7 0x4 0x2
-	launchtemplate Template_MiniFirePlume 0x82 0x3 bank_target 0x28 0x20 @; For Meteor 1
+	launchtemplate Template_MiniFirePlume TEMPLATE_TARGET | 2, 0x3, bank_target 0x28 0x20 @; For Meteor 1
 
 	pause 0x7
 	call DRACO_METEOR_3
 	playsound2 0x7C 0x3f
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x7 0x4 0x2
-	launchtemplate Template_MiniFirePlume 0x82 0x3 bank_target 0xFFF8 0x20 @; For Meteor 2
+	launchtemplate Template_MiniFirePlume TEMPLATE_TARGET | 2, 0x3, bank_target 0xFFF8 0x20 @; For Meteor 2
 
 	pause 0xF
 	playsound2 0x7C 0x3f
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x7 0x4 0x2
-	launchtemplate Template_MiniFirePlume 0x82 0x3 bank_target 0x15 0x20  @; For Meteor 3
+	launchtemplate Template_MiniFirePlume TEMPLATE_TARGET | 2, 0x3, bank_target 0x15 0x20  @; For Meteor 3
 	launchtask AnimTask_screen_shake 0x5 0x3 0x5 0x2 0x1
 	waitanimation
 	pokespritefromBG bank_target
@@ -2276,21 +2329,26 @@ DRACO_METEOR_4:
 .align 2
 .global gDracoMeteorTailSpriteTemplate
 DRACO_ROCKS: objtemplate ANIM_TAG_ROCKS ANIM_TAG_FAIRY_LOCK_CHAINS sDracoMeteorRockOAM 0x8231CF0 0x0 0x8231CFC SpriteCB_DracoMeteorRock
-DRACO_TAIL: objtemplate ANIM_TAG_WATER_GUN ANIM_TAG_WATER_GUN sDracoMeteorTailOAM 0x8231CF0 0x0 gSpriteAffineAnim_HydroCannonBall SpriteCB_DracoMeteorRock
+DRACO_TAIL: objtemplate ANIM_TAG_WATER_GUN ANIM_TAG_WATER_GUN sDracoMeteorTailOAM 0x8231CF0 0x0 gSpriteAffineAnimTable_HydroCannonBall SpriteCB_DracoMeteorRock
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 ANIM_DRAGONPULSE:
-	loadparticle ANIM_TAG_GOLD_RING
-	loadparticle ANIM_TAG_POISON_BUBBLE
+	loadparticle ANIM_TAG_FLASH_CANNON_BALL
+	loadparticle ANIM_TAG_DRAGON_PULSE_RING
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x4 0x0
 	waitanimation
 	playsound2 0xb6 0xc0
-	launchsoundtask 0x80dcf39 0x7 0xc1 0xffc0 0x3f 0x3 0x4 0x0 0xf
+	soundcomplex 0x8A 0x3f 0xb 9
 	call DRAGON_PULSE_CALL
 	call DRAGON_PULSE_CALL
-	launchtask 0x8099705 0x5 0x5 0x0 0x6 0x800 0x4 0x1
-	launchtask AnimTask_pal_fade_complex 0x2 0x6 0x4 0x2 0x2 0x0 0xc 0x7e5f
+	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x2 0x0 0x25 0x2
+	call DRAGON_PULSE_CALL
+	call DRAGON_PULSE_CALL
+	call DRAGON_PULSE_CALL
+	call DRAGON_PULSE_CALL
+	call DRAGON_PULSE_CALL
+	call DRAGON_PULSE_CALL
 	call DRAGON_PULSE_CALL
 	call DRAGON_PULSE_CALL
 	call DRAGON_PULSE_CALL
@@ -2307,12 +2365,15 @@ ANIM_DRAGONPULSE:
 	endanimation
 
 DRAGON_PULSE_CALL:
-	launchtemplate PULSE_RING 0x82 0x6 0x10 0x0 0x0 0x0 0xd 0x0
-	pause 0x4
+	launchtemplate PULSE_RING 0x82 0x6 0x10 0x0 0x0 0x0 0x16 0x0
+	pause 0x1
+	launchtemplate PULSE_BALL 0x82 0x6 0x10 0x0 0x0 0x0 0x16 0x0
+	pause 0x1
 	return
 
 .align 2
-PULSE_RING: objtemplate ANIM_TAG_GOLD_RING ANIM_TAG_POISON_BUBBLE 0x83ACA18 0x8231CF0 0x0 0x8231CFC Callback_TranslateAnimSpriteToTargetMonLocation
+PULSE_RING: objtemplate ANIM_TAG_DRAGON_PULSE_RING ANIM_TAG_DRAGON_PULSE_RING OAM_NORMAL_32x32 0x8231CF0 0x0 0x8231CFC Callback_TranslateAnimSpriteToTargetMonLocation
+PULSE_BALL: objtemplate ANIM_TAG_FLASH_CANNON_BALL ANIM_TAG_FLASH_CANNON_BALL OAM_NORMAL_32x32 0x8231CF0 0x0 0x8231CFC Callback_TranslateAnimSpriteToTargetMonLocation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -2338,7 +2399,7 @@ ANIM_DRAINPUNCH:
 	endanimation
 
 .align 2
-DRAIN_FIST: objtemplate ANIM_TAG_HANDS_AND_FEET ANIM_TAG_VERTICAL_HEX 0x83ACB58 0x8231CF0 0x0 0x83E7BF8 0x80B0E81
+DRAIN_FIST: objtemplate ANIM_TAG_HANDS_AND_FEET ANIM_TAG_VERTICAL_HEX OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 SpriteCB_SpriteOnMonForDuration
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -2362,15 +2423,15 @@ EARTH_POWER_ERUPTION:
 	pause 0x1
 	launchtemplate Template_MiniFirePlume 0xc2 0x3 bank_target 0xfff6 0xfff1
 	pause 0x1
-	launchtemplate Template_MiniFirePlume 0x82 0x3 bank_target 0x0 0x19
+	launchtemplate Template_MiniFirePlume TEMPLATE_TARGET | 2, 0x3, bank_target 0x0 0x19
 	pause 0x1
 	launchtemplate Template_MiniFirePlume 0xc2 0x3 bank_target 0xf 0x5
 	pause 0x1
 	launchtemplate Template_MiniFirePlume 0xc2 0x3 bank_target 0xffe7 0x0
 	pause 0x1
-	launchtemplate Template_MiniFirePlume 0x82 0x3 bank_target 0x1e 0x1e
+	launchtemplate Template_MiniFirePlume TEMPLATE_TARGET | 2, 0x3, bank_target 0x1e 0x1e
 	pause 0x1
-	launchtemplate Template_MiniFirePlume 0x82 0x3 bank_target 0xffe5 0x19
+	launchtemplate Template_MiniFirePlume TEMPLATE_TARGET | 2, 0x3, bank_target 0xffe5 0x19
 	pause 0x1
 	launchtemplate Template_MiniFirePlume 0xc2 0x3 bank_target 0x0 0x8
 	return
@@ -2380,21 +2441,21 @@ EARTH_POWER_ERUPTION:
 ANIM_ENERGYBALL:
 	loadparticle ANIM_TAG_ENERGY_BALL
 	loadparticle ANIM_TAG_RAZOR_LEAF
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x2 0x0 0xD 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xD 0x0
 	waitanimation
 	launchsoundtask 0x80dcf39 0x7 0xa1 0xffc0 0x3f 0x5 0x5 0x0 0x5
-	launchtemplate ENERGY_BALL 0x82 0x3 0x0 0x0 0x25
+	launchtemplate ENERGY_BALL TEMPLATE_TARGET | 2, 0x3, 0x0 0x0 0x25
 	waitanimation
 	playsound2 0x8D 0x3f
 	launchtask AnimTask_move_bank_2 0x2 0x5 0x1 0x4 0x0 0x8 0x1
 	launchtask AnimTask_pal_fade_complex 0x2 0x6 PAL_DEF 0x1 0x2 0x0 0xb 0x1FE1
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x2 0xD 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xD 0x0 0x0
 	waitanimation
 	endanimation
 
 .align 2
-ENERGY_BALL: objtemplate ANIM_TAG_ENERGY_BALL ANIM_TAG_ENERGY_BALL 0x83ACA38 0x8231CF0 0x0 0x83E7604 0x80B563D
+ENERGY_BALL: objtemplate ANIM_TAG_ENERGY_BALL ANIM_TAG_ENERGY_BALL OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E7604 0x80B563D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -2423,7 +2484,7 @@ ANIM_FOCUSBLAST:
 	endanimation
 
 .align 2
-FOCUS_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_SPARK_2 0x83ACAA0 0x8231CF0 0x0 0x83E4088 0x80A8EE9
+FOCUS_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_SPARK_2 OAM_DOUBLE_64x64 0x8231CF0 0x0 0x83E4088 0x80A8EE9
 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -2446,8 +2507,8 @@ ANIM_FORCEPALM:
 	endanimation
 
 .align 2
-FORCE_PALM: objtemplate ANIM_TAG_ASSURANCE_HAND ANIM_TAG_ACUPRESSURE_FINGER 0x83AC9D8 0x83E66CC 0x0 0x8231CFC 0x80A4D0D
-PURPLEHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_SHADOW_BALL 0x83ACB58 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+FORCE_PALM: objtemplate ANIM_TAG_ASSURANCE_HAND ANIM_TAG_ACUPRESSURE_FINGER OAM_OFF_32x32 0x83E66CC 0x0 0x8231CFC 0x80A4D0D
+PURPLEHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_SHADOW_BALL OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -2489,7 +2550,7 @@ ANIM_GRASSKNOT:
 	launchtemplate Template_SlideMonToOffset 0x2 0x5 bank_attacker 0x14 0x0 0x0 0x4
 	launchtemplate KNOT 0x82 0x6 0xffe8 0x13 0x28 0x8 0xa0 0x0
 	pause 0x4
-	launchtemplate Template_Hit 0x82 0x4 0xfff8 0x8 0x1 0x2
+	launchtemplate Template_Hit TEMPLATE_TARGET | 2, 0x4, 0xfff8 0x8 0x1 0x2
 	launchtask 0x8099981 0x2 0x4 0x6 0x180 0x1 0x2
 	playsound2 0x81 0x3f
 	waitanimation
@@ -2497,7 +2558,7 @@ ANIM_GRASSKNOT:
 	endanimation
 
 .align 2
-KNOT: objtemplate ANIM_TAG_RAZOR_LEAF ANIM_TAG_RAZOR_LEAF 0x83AC9F8 0x83E2C4C 0x0 0x8231CFC 0x80B0C29
+KNOT: objtemplate ANIM_TAG_RAZOR_LEAF ANIM_TAG_RAZOR_LEAF OAM_OFF_32x16 0x83E2C4C 0x0 0x8231CFC 0x80B0C29
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -2555,32 +2616,25 @@ GUNK_SHOT2:
 	return
 
 .align 2
-GUNK_PUMP: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_BUBBLE 0x83ACA30 0x8231CF0 0x0 0x8231CFC 0x80AB025
-GUNK_HIT: objtemplate ANIM_TAG_WATER_IMPACT ANIM_TAG_POISON_JAB 0x83ACB58 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+GUNK_PUMP: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_BUBBLE OAM_NORMAL_16x16 0x8231CF0 0x0 0x8231CFC 0x80AB025
+GUNK_HIT: objtemplate ANIM_TAG_WATER_IMPACT ANIM_TAG_POISON_JAB OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 ANIM_HAMMERARM:
 	loadparticle ANIM_TAG_HORSESHOE_SIDE_FIST @punch
-	loadparticle ANIM_TAG_IMPACT @hit
-	pokespritetoBG bank_target
 	setblends 0x80c
 	playsound2 0x80 0x3f
-	launchtemplate HAMMERARM_FIST 0x3 0x3 0x0 0xffe0 0xf
+	launchtemplate HAMMERARM_FIST TEMPLATE_TARGET | 4, 0x3 0x0 0xffe0 0xf
 	pause 0x13
-	launchtemplate Template_Hit 0x2 0x4 0x0 0xfffc 0x1 0x1
-	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x4 0x9 0x1
 	playsound2 0x86 0x3f
-	pause 0x6
-	launchtask 0x80E12F9 0x2 0x1 0x1
+	launchtask AnimTask_SquishTarget 0x2 0x0
 	waitanimation
-	pokespritefromBG bank_target
 	resetblends
 	endanimation
 
 .align 2
-HAMMERARM_FIST: objtemplate ANIM_TAG_HORSESHOE_SIDE_FIST ANIM_TAG_HORSESHOE_SIDE_FIST 0x83AC9D8 0x83E66CC 0x0 0x8231CFC 0x80B0D59
-
+HAMMERARM_FIST: objtemplate ANIM_TAG_HORSESHOE_SIDE_FIST ANIM_TAG_HORSESHOE_SIDE_FIST OAM_OFF_32x32 0x83E66CC 0x0 0x8231CFC 0x80B0D59
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -2594,7 +2648,7 @@ ANIM_HEADSMASH:
 	launchtemplate 0x83e7b3c 0x2 0x7 0x1 0x3 0x1 0x0 0xe 0x7fff 0xe
 	launchtask AnimTask_ShakeMonInPlace 0x2 0x5 0x0 0x2 0x0 0x28 0x1
 	launchtask AnimTask_ShakeMonInPlace 0x2 0x5 0x1 0xa 0x0 0x28 0x1
-	launchtemplate 0x83e7c98 0x84 0x4 0x0 0x0 0x1 0x0
+	launchtemplate 0x83e7c98 TEMPLATE_TARGET | 4, 0x4, 0x0 0x0 0x1 0x0
 	soundcomplex 0x86 0x3f 0x8 0x3
 	waitanimation
 	launchtask 0x80a5695 0x2 0x1 0x1
@@ -2607,7 +2661,7 @@ ANIM_ICESHARD:
 	loadparticle ANIM_TAG_ICICLE_SPEAR @Icicle
 	loadparticle ANIM_TAG_IMPACT @Hit
 	loadparticle ANIM_TAG_ICE_CRYSTALS @Ice
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0xF 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xF 0x0
 	waitanimation
 	launchtemplate Template_HorizontalLunge 0x2 0x2 0x4 0x6
 	pause 0x3
@@ -2617,13 +2671,13 @@ ANIM_ICESHARD:
 	launchtemplate BLUEHIT 0x83 0x4 0x0 0x0 0x1 0x1
 	call FREEZE_CHANCE_ANIM
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0xF 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xF 0x0 0x0
 	waitanimation
 	endanimation
 
 .align 2
-ICICLE: objtemplate ANIM_TAG_ICICLE_SPEAR ANIM_TAG_ICICLE_SPEAR 0x83ACA38 0x83E74A8 0x0 0x83E7540 0x80B5075
-BLUEHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_ICICLE_SPEAR 0x83ACB58 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+ICICLE: objtemplate ANIM_TAG_ICICLE_SPEAR ANIM_TAG_ICICLE_SPEAR OAM_NORMAL_32x32 0x83E74A8 0x0 0x83E7540 0x80B5075
+BLUEHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_ICICLE_SPEAR OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -2692,7 +2746,7 @@ ANIM_LAVAPLUME:
 	endanimation
 
 .align 2
-PLUME_SMOKE: objtemplate ANIM_TAG_PINK_CLOUD ANIM_TAG_HANDS_AND_FEET 0x83ACA98 0x8231CF0 0x0 0x83FF504 0x80E1929
+PLUME_SMOKE: objtemplate ANIM_TAG_PINK_CLOUD ANIM_TAG_HANDS_AND_FEET OAM_DOUBLE_32x32 0x8231CF0 0x0 0x83FF504 0x80E1929
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -2706,36 +2760,36 @@ ANIM_MAGNETBOMB:
 	launchtemplate MAGNET_ROCKHITS 0x82 0x5 0x1 0x0 0x0 0xFFE0 0x10 @up
 	pause 0x1
 	playsound2 0xAA 0x3f
-	launchtemplate MAGNET_BLUEBOMB 0x82 0x4 0xfff6 0xfff6 0x1 0x1
+	launchtemplate MAGNET_BLUEBOMB TEMPLATE_TARGET | 2, 0x4, 0xfff6 0xfff6 0x1 0x1
 	launchtemplate MAGNET_ROCKHITS 0x82 0x5 0x1 0x0 0x14 0x14 0x10 @lowerright
 	launchtemplate MAGNET_ROCKHITS 0x82 0x5 0x1 0x0 0xFFE5 0x0 0x10 @left
 	pause 0x5
 	playsound2 0xAA 0x3f
-	launchtemplate MAGNET_BLUEBOMB 0x82 0x4 0xa 0x14 0x1 0x1
+	launchtemplate MAGNET_BLUEBOMB TEMPLATE_TARGET | 2, 0x4, 0xa 0x14 0x1 0x1
 	launchtemplate MAGNET_ROCKHITS 0x82 0x5 0x1 0x0 0x16 0xFFEA 0x10 @upperright
 	pause 0x1
 	playsound2 0xAA 0x3f
-	launchtemplate MAGNET_BLUEBOMB 0x82 0x4 0xfffb 0xa 0x1 0x1
+	launchtemplate MAGNET_BLUEBOMB TEMPLATE_TARGET | 2, 0x4, 0xfffb 0xa 0x1 0x1
 	launchtemplate MAGNET_ROCKHITS 0x82 0x5 0x1 0x0 0x0 0x1C 0x10 @down
 	launchtemplate MAGNET_ROCKHITS 0x82 0x5 0x1 0x0 0xFFEE 0xFFEE 0x10 @upperleft
 	pause 0x5
 	playsound2 0xAA 0x3f
-	launchtemplate MAGNET_BLUEBOMB 0x82 0x4 0x11 0xfff4 0x1 0x1
+	launchtemplate MAGNET_BLUEBOMB TEMPLATE_TARGET | 2, 0x4, 0x11 0xfff4 0x1 0x1
 	launchtemplate MAGNET_ROCKHITS 0x82 0x5 0x1 0x0 0x1E 0x0 0x10 @right
 	pause 0x1
 	launchtemplate MAGNET_ROCKHITS 0x82 0x5 0x1 0x0 0xFFED 0x13 0x10 @downleft
 	pause 0x1
 	playsound2 0xAA 0x3f
-	launchtemplate MAGNET_BLUEBOMB 0x82 0x4 0xfff1 0xf 0x1 0x1
+	launchtemplate MAGNET_BLUEBOMB TEMPLATE_TARGET | 2, 0x4, 0xfff1 0xf 0x1 0x1
 	launchtemplate MAGNET_ROCKHITS 0x82 0x5 0x1 0x0 0xFFE5 0x0 0x10 @left
 	launchtemplate MAGNET_ROCKHITS 0x82 0x5 0x1 0x0 0x0 0xFFE0 0x10 @up
 	pause 0x1
 	playsound2 0xAA 0x3f
-	launchtemplate MAGNET_BLUEBOMB 0x82 0x4 0x0 0x0 0x1 0x1
+	launchtemplate MAGNET_BLUEBOMB TEMPLATE_TARGET | 2, 0x4, 0x0 0x0 0x1 0x1
 	launchtemplate MAGNET_ROCKHITS 0x82 0x5 0x1 0x0 0xFFED 0x13 0x10 @downleft
 	pause 0x1
 	playsound2 0xAA 0x3f
-	launchtemplate MAGNET_BLUEBOMB 0x82 0x4 0x14 0x2 0x1 0x1
+	launchtemplate MAGNET_BLUEBOMB TEMPLATE_TARGET | 2, 0x4, 0x14 0x2 0x1 0x1
 	launchtemplate MAGNET_ROCKHITS 0x82 0x5 0x1 0x0 0x1E 0x0 0x10 @right
 	waitanimation
 	resetblends
@@ -2743,8 +2797,8 @@ ANIM_MAGNETBOMB:
 	endanimation
 
 .align 2
-MAGNET_ROCKHITS: objtemplate ANIM_TAG_BLACK_BALL_2 ANIM_TAG_BLACK_BALL_2 0x83AC9D0 0x8231CF0 0x0 0x8231CFC 0x80A4299
-MAGNET_BLUEBOMB: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_WATER_GUN 0x83AC9D8 0x83E3F90 0x0 0x8231CFC 0x8075D9D
+MAGNET_ROCKHITS: objtemplate ANIM_TAG_BLACK_BALL_2 ANIM_TAG_BLACK_BALL_2 OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC 0x80A4299
+MAGNET_BLUEBOMB: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_WATER_GUN OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC 0x8075D9D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -2765,9 +2819,9 @@ ANIM_MUDBOMB:
 	endanimation
 
 .align 2
-BROWNSLUDGE: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_BROWN_ORB 0x83ACA90 0x83E69DC 0x0 0x83E6A18 0x80B46F9
-BROWNDRIPS: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_BROWN_ORB 0x83ACA90 0x83E69E0 0x0 0x83E6A80 0x80B17C5
-MUD_BOMB_TEMPLATE: objtemplate ANIM_TAG_MUD_BOMB ANIM_TAG_MUD_BOMB 0x83ACA40 0x8231CF0 0x0 0x83FF624 0x800760D
+BROWNSLUDGE: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_BROWN_ORB OAM_DOUBLE_16x16 0x83E69DC 0x0 0x83E6A18 0x80B46F9
+BROWNDRIPS: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_BROWN_ORB OAM_DOUBLE_16x16 0x83E69E0 0x0 0x83E6A80 0x80B17C5
+MUD_BOMB_TEMPLATE: objtemplate ANIM_TAG_MUD_BOMB ANIM_TAG_MUD_BOMB OAM_NORMAL_64x64 0x8231CF0 0x0 0x83FF624 0x800760D
 
 @0x80E2590 with r0
 MudBombASM:
@@ -2829,13 +2883,13 @@ ANIM_NIGHTSLASH:
 	endanimation
 
 .align 2
-DARKCUT: objtemplate ANIM_TAG_CUT ANIM_TAG_HANDS_AND_FEET 0x83ACAF8 0x83E3290 0x0 0x8231CFC 0x80A44E1
+DARKCUT: objtemplate ANIM_TAG_CUT ANIM_TAG_HANDS_AND_FEET OAM_OFF_BLEND_32x32 0x83E3290 0x0 0x8231CFC 0x80A44E1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 ANIM_OMINOUSWIND:
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ALL_BANKS 0x2 0x0 0xB 0x2c28
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x2 0x0 0xE 0x2c28
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xE 0x2c28
 	pause 0x10
 	launchtask 0x80b4811 0x5 0x1 0x1
 	launchtask 0x80adaa5 0x6 0x2 0x6 0x2c28
@@ -2844,7 +2898,7 @@ ANIM_OMINOUSWIND:
 	launchtask AnimTask_move_bank_2 0x2 0x5 bank_target 0x2 0x0 0x40 0x1
 	pause 0x40
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ALL_BANKS | PAL_BG 0x4 0xB 0x0 0x2c28
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x2 0xE 0x0 0x2c28
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xE 0x0 0x2c28
 	waitanimation
 	endanimation
 
@@ -2856,7 +2910,7 @@ ANIM_POWERGEM:
 	loadparticle ANIM_TAG_AIR_WAVE_2 @Gray Colour
 	pokespritetoBG side_target
 	leftopponentbankBG_over_partnerBG 0x1
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0xD 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xD 0x0
 	waitanimation
 	launchtemplate POWERGEM_WHEEL 0x3 0x4 0x0 0x0 0x38 0x0
 	playsound2 0x5F 0xC0
@@ -2892,7 +2946,7 @@ ANIM_POWERGEM:
 	launchtemplate POWERGEM_BLADES 0x81 0x5 0x0 0xa 0x70 0xff80 0x28
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x3 0xf 0x1
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0xD 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xD 0x0 0x0
 	waitanimation
 	pokespritefromBG side_target
 	endanimation
@@ -2907,15 +2961,15 @@ POWERGEM_LOAD_PARTICLE:
 	return
 
 .align 2
-POWERGEM_WHEEL: objtemplate ANIM_TAG_POWER_GEM ANIM_TAG_POWER_GEM 0x83ACA30 0x8231CF0 0x0 0x83E2C78 0x80ACDE9
-POWERGEM_GEM: objtemplate ANIM_TAG_POWER_GEM ANIM_TAG_POWER_GEM 0x83ACA30 0x8231CF0 0x0 0x83E7604 0x80B8CC9
-POWERGEM_BLADES: objtemplate ANIM_TAG_PUNISHMENT_BLADES ANIM_TAG_AIR_WAVE_2 0x83AC9D8 0x83E5BD8 0x0 0x8231CFC 0x80AC94D
+POWERGEM_WHEEL: objtemplate ANIM_TAG_POWER_GEM ANIM_TAG_POWER_GEM OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E2C78 0x80ACDE9
+POWERGEM_GEM: objtemplate ANIM_TAG_POWER_GEM ANIM_TAG_POWER_GEM OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E7604 0x80B8CC9
+POWERGEM_BLADES: objtemplate ANIM_TAG_PUNISHMENT_BLADES ANIM_TAG_AIR_WAVE_2 OAM_OFF_32x32 0x83E5BD8 0x0 0x8231CFC 0x80AC94D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 ANIM_POWERWHIP:
 	loadparticle ANIM_TAG_UNUSED_VINE_2 @Vine
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0x10 0x02C0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x10 0x02C0
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ALL_BANKS 0x2 0x0 0x10 0x0
 	waitanimation
 	call POWER_WHIP
@@ -2924,7 +2978,7 @@ ANIM_POWERWHIP:
 	call POWER_WHIP
 	call POWER_WHIP
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x10 0x0 0x02C0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x10 0x0 0x02C0
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ALL_BANKS 0x2 0x10 0x0 0x0
 	waitanimation
 	endanimation
@@ -2936,7 +2990,7 @@ POWER_WHIP:
 	return
 
 .align 2
-POWER_WHIP_VINE: objtemplate ANIM_TAG_UNUSED_VINE_2 ANIM_TAG_UNUSED_VINE_2 0x83AC9D8 gAnimCmdPowerWhip 0x0 0x8231CFC 0x80A4451
+POWER_WHIP_VINE: objtemplate ANIM_TAG_UNUSED_VINE_2 ANIM_TAG_UNUSED_VINE_2 OAM_OFF_32x32 gAnimCmdPowerWhip 0x0 0x8231CFC 0x80A4451
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -2946,7 +3000,7 @@ ANIM_PSYCHOCUT:
 	soundcomplex 0xb1 0x3f 0xa 0x3
 	launchtemplate PSYCHOCUT_WHEEL 0x3 0x4 0x0 0x0 0x38 0x0
 	waitanimation
-	launchtemplate PSYCHOCUT_BLADE 0x82 0x3 0x0 0x0 0x25
+	launchtemplate PSYCHOCUT_BLADE TEMPLATE_TARGET | 2, 0x3, 0x0 0x0 0x25
 	waitanimation
 	launchtask AnimTask_move_bank_2 0x2 0x5 0x1 0x4 0x0 0x8 0x1
 	playsound2 0x81 0x3F
@@ -2955,8 +3009,8 @@ ANIM_PSYCHOCUT:
 	endanimation
 
 .align 2
-PSYCHOCUT_WHEEL: objtemplate ANIM_TAG_PUNISHMENT_BLADES ANIM_TAG_PUNISHMENT_BLADES 0x83ACA38 0x8231CF0 0x0 0x83e7604 0x80ACDE9
-PSYCHOCUT_BLADE: objtemplate ANIM_TAG_PUNISHMENT_BLADES ANIM_TAG_PUNISHMENT_BLADES 0x83ACA38 0x8231CF0 0x0 0x83e7604 0x80B563D
+PSYCHOCUT_WHEEL: objtemplate ANIM_TAG_PUNISHMENT_BLADES ANIM_TAG_PUNISHMENT_BLADES OAM_NORMAL_32x32 0x8231CF0 0x0 0x83e7604 0x80ACDE9
+PSYCHOCUT_BLADE: objtemplate ANIM_TAG_PUNISHMENT_BLADES ANIM_TAG_PUNISHMENT_BLADES OAM_NORMAL_32x32 0x8231CF0 0x0 0x83e7604 0x80B563D
 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -2998,7 +3052,7 @@ ROCKCLIMB_ROCKY:
 	return
 
 .align 2
-CLIMB_ROCKPARTICLES: objtemplate ANIM_TAG_SMALL_ROCK ANIM_TAG_ROCKS 0x83ACA30 0x8231CF0 0x0 0x83E7990 0x80B7C89
+CLIMB_ROCKPARTICLES: objtemplate ANIM_TAG_SMALL_ROCK ANIM_TAG_ROCKS OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E7990 0x80B7C89
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -3056,7 +3110,7 @@ ANIM_ROCKWRECKER:
 	endanimation
 
 .align 2
-ROCKWRECKER_BIGROCK: objtemplate ANIM_TAG_REALLY_BIG_ROCK ANIM_TAG_REALLY_BIG_ROCK 0x83AC9E0 0x8231CF0 0x0 0x8231CFC 0x80B12E9
+ROCKWRECKER_BIGROCK: objtemplate ANIM_TAG_REALLY_BIG_ROCK ANIM_TAG_REALLY_BIG_ROCK OAM_OFF_64x64 0x8231CF0 0x0 0x8231CFC 0x80B12E9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -3130,7 +3184,7 @@ ANIM_SEEDBOMB:
 	endanimation
 
 .align 2
-SEEDBOMB_SEED: objtemplate ANIM_TAG_SEED ANIM_TAG_SEED 0x83ACA30 0x8231CF0 0x0 0x83E3D90 0x80B4495
+SEEDBOMB_SEED: objtemplate ANIM_TAG_SEED ANIM_TAG_SEED OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E3D90 0x80B4495
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -3142,9 +3196,9 @@ ANIM_SHADOWCLAW:
 	loadBG1 BG_GHOST
 	waitforBG
 	pause 0x20
-	launchtemplate SHADOW_DARKCLAW 0x82 0x3 0x0 0xffEA 0x1
-	launchtemplate SHADOW_DARKCLAW 0x82 0x3 0x0 0xFFFA 0x1
-	launchtemplate SHADOW_DARKCLAW 0x82 0x3 0x0 0xa 0x1
+	launchtemplate SHADOW_DARKCLAW TEMPLATE_TARGET | 2, 0x3, 0x0 0xffEA 0x1
+	launchtemplate SHADOW_DARKCLAW TEMPLATE_TARGET | 2, 0x3, 0x0 0xFFFA 0x1
+	launchtemplate SHADOW_DARKCLAW TEMPLATE_TARGET | 2, 0x3, 0x0 0xa 0x1
 	playsound2 0x81 0x3f
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x3 0x10 0x1
 	waitanimation
@@ -3154,7 +3208,7 @@ ANIM_SHADOWCLAW:
 	endanimation
 
 .align 2
-SHADOW_DARKCLAW: objtemplate ANIM_TAG_CLAW_SLASH ANIM_TAG_HANDS_AND_FEET 0x83AC9D8 0x83E79E0 0x0 0x8231CFC 0x80B86B1
+SHADOW_DARKCLAW: objtemplate ANIM_TAG_CLAW_SLASH ANIM_TAG_HANDS_AND_FEET OAM_OFF_32x32 0x83E79E0 0x0 0x8231CFC 0x80B86B1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -3165,7 +3219,7 @@ ANIM_SHADOWSNEAK:
 	loadparticle ANIM_TAG_POISON_BUBBLE @Poison
 	loadparticle ANIM_TAG_HANDS_AND_FEET
 	pokespritetoBG bank_attacker
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0x7 0x0000
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x7 0x0000
 	waitanimation
 	playsound2 0xb7 0xc0
 	launchtask 0x809907D 0x2 0x5 0x0 0x12 0x6 0x1 0x3
@@ -3177,17 +3231,17 @@ ANIM_SHADOWSNEAK:
 	launchtask 0x80B6021 0x5 0x2 0x0 0x30
 	pause 0x30
 	launchtask AnimTask_pal_fade_complex 0x2 0x6 PAL_DEF 0x2 0x2 0x0 0xF 0x0
-	launchtemplate SHADOWSNEAK_HITS 0x82 0x3 0xfff6 0xfff6 0x0
+	launchtemplate SHADOWSNEAK_HITS TEMPLATE_TARGET | 2, 0x3, 0xfff6 0xfff6 0x0
 	call SHADOWSNEAK_MOVE
-	launchtemplate SHADOWSNEAK_HITS 0x82 0x3 0xa 0x14 0x0
+	launchtemplate SHADOWSNEAK_HITS TEMPLATE_TARGET | 2, 0x3, 0xa 0x14 0x0
 	call SHADOWSNEAK_MOVE
-	launchtemplate SHADOWSNEAK_HITS 0x82 0x3 0xfffb 0xa 0x0
+	launchtemplate SHADOWSNEAK_HITS TEMPLATE_TARGET | 2, 0x3, 0xfffb 0xa 0x0
 	call SHADOWSNEAK_MOVE
-	launchtemplate SHADOWSNEAK_HITS 0x82 0x3 0x11 0xfff4 0x0
+	launchtemplate SHADOWSNEAK_HITS TEMPLATE_TARGET | 2, 0x3, 0x11 0xfff4 0x0
 	call SHADOWSNEAK_MOVE
 	waitanimation
 	makebankvisible bank_attacker
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x7 0x0 0x0000
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x7 0x0 0x0000
 	waitanimation
 	endanimation
 
@@ -3198,7 +3252,7 @@ SHADOWSNEAK_MOVE:
 	return
 
 .align 2
-SHADOWSNEAK_HITS: objtemplate ANIM_TAG_IMPACT ANIM_TAG_HANDS_AND_FEET 0x83ACB58 0x8231CF0 0x0 0x83E63DC 0x80AF3B9
+SHADOWSNEAK_HITS: objtemplate ANIM_TAG_IMPACT ANIM_TAG_HANDS_AND_FEET OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E63DC 0x80AF3B9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -3222,7 +3276,7 @@ ANIM_VACUUMWAVE:
 	endanimation
 
 .align 2
-VACUUM_SMOKES: objtemplate ANIM_TAG_BLACK_SMOKE ANIM_TAG_ICE_CHUNK 0x83AC9F8 0x8231CF0 0x0 0x8231CFC 0x80DE2C1
+VACUUM_SMOKES: objtemplate ANIM_TAG_BLACK_SMOKE ANIM_TAG_ICE_CHUNK OAM_OFF_32x16 0x8231CF0 0x0 0x8231CFC 0x80DE2C1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -3240,7 +3294,7 @@ ANIM_XSCISSOR:
 	endanimation
 
 .align 2
-XSCISSOR_CUT: objtemplate ANIM_TAG_CUT ANIM_TAG_JAGGED_MUSIC_NOTE 0x83ACAF8 0x83E3290 0x0 0x8231CFC 0x80A44E1
+XSCISSOR_CUT: objtemplate ANIM_TAG_CUT ANIM_TAG_JAGGED_MUSIC_NOTE OAM_OFF_BLEND_32x32 0x83E3290 0x0 0x8231CFC 0x80A44E1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -3250,7 +3304,7 @@ ANIM_ZENHEADBUTT:
 	loadparticle ANIM_TAG_IMPACT
 	setblends 0x80c
 	pokespritetoBG bank_target
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x2 0x0 0x10 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x10 0x0
 	waitanimation
 	soundcomplex 0xb1 0x3f 0xa 0x3
 	launchtemplate ZEN_BLUECHARGE 0x2 0x0
@@ -3265,14 +3319,14 @@ ANIM_ZENHEADBUTT:
 	launchtemplate 0x83e7c98 0x83 0x4 0x0 0x0 0x1 0x1
 	playsound2 0x74 0x3f
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x4 0x10 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x10 0x0 0x0
 	pokespritefromBG bank_target
 	resetblends
 	endanimation
 
 .align 2
-ZEN_BLUECHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WATER_IMPACT 0x83ACB60 0x8231CF0 0x0 0x83E61C8 0x80AEC81
-ZEN_GLOW: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WATER_IMPACT 0x83ACB60 0x8231CF0 0x0 0x83E61C8 0x80B12E9
+ZEN_BLUECHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WATER_IMPACT OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80AEC81
+ZEN_GLOW: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WATER_IMPACT OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80B12E9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -3383,7 +3437,7 @@ ANIM_ELECTROWEB:
 	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT @Yellow Colour
 	pokespritetoBG side_target
 	leftbankBG_over_partnerBG 0x1
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x2 0x0 0xD 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xD 0x0
 	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_WEB_THREAD 0x0 0x6 0xA 0x07FE
 	waitanimation
 	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_SPIDER_WEB 0x0 0x6 0xA 0x07FE
@@ -3409,11 +3463,11 @@ ANIM_ELECTROWEB:
 	waitanimation
 	pokespritefromBG side_target
 	pause 0x1
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x2 0xC 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xC 0x0 0x0
 	endanimation
 
 .align 2
-CENTRED_WEB: objtemplate ANIM_TAG_SPIDER_WEB ANIM_TAG_SPIDER_WEB 0x83ACBC0 0x8231CF0 0x0 0x83E72D8 SpriteCB_CentredSpiderWeb
+CENTRED_WEB: objtemplate ANIM_TAG_SPIDER_WEB ANIM_TAG_SPIDER_WEB OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E72D8 SpriteCB_CentredSpiderWeb
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -3452,7 +3506,7 @@ FLAMEWHEEL_SWIRL:
 	return
 
 .align 2
-FLAMES_CHARGE: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_SMALL_EMBER 0x83AC9D8 0x83E59CC 0x0 0x8231CFC 0x80A2921
+FLAMES_CHARGE: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_SMALL_EMBER OAM_OFF_32x32 0x83E59CC 0x0 0x8231CFC 0x80A2921
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -3476,15 +3530,15 @@ ANIM_FROSTBREATH:
 	pause 0x1
 	launchtemplate BLUERAGE 0xc2 0x3 0x1 0xfff6 0xfff1
 	pause 0x1
-	launchtemplate BLUERAGE 0x82 0x3 0x1 0x0 0x19
+	launchtemplate BLUERAGE TEMPLATE_TARGET | 2, 0x3, 0x1 0x0 0x19
 	pause 0x1
 	launchtemplate BLUERAGE 0xc2 0x3 0x1 0xf 0x5
 	pause 0x1
 	launchtemplate BLUERAGE 0xc2 0x3 0x1 0xffe7 0x0
 	pause 0x1
-	launchtemplate BLUERAGE 0x82 0x3 0x1 0x1e 0x1e
+	launchtemplate BLUERAGE TEMPLATE_TARGET | 2, 0x3, 0x1 0x1e 0x1e
 	pause 0x1
-	launchtemplate BLUERAGE 0x82 0x3 0x1 0xffe5 0x19
+	launchtemplate BLUERAGE TEMPLATE_TARGET | 2, 0x3, 0x1 0xffe5 0x19
 	pause 0x1
 	launchtemplate BLUERAGE 0xc2 0x3 0x1 0x0 0x8
 	waitanimation
@@ -3494,8 +3548,8 @@ ANIM_FROSTBREATH:
 	endanimation
 
 .align 2
-BLUERAGE: objtemplate ANIM_TAG_FIRE_PLUME ANIM_TAG_ICE_CHUNK 0x83AC9D8 0x83E77D4 0x0 0x8231CFC 0x80B73AD
-BLUEBALL: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_ICE_CHUNK 0x83ACA98 0x83E7800 0x0 0x83E7828 0x80B741D
+BLUERAGE: objtemplate ANIM_TAG_FIRE_PLUME ANIM_TAG_ICE_CHUNK OAM_OFF_32x32 0x83E77D4 0x0 0x8231CFC 0x80B73AD
+BLUEBALL: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_ICE_CHUNK OAM_DOUBLE_32x32 0x83E7800 0x0 0x83E7828 0x80B741D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -3513,7 +3567,7 @@ ANIM_HEARTSTAMP:
 	endanimation
 
 .align 2
-HEART: objtemplate ANIM_TAG_HEART_STAMP ANIM_TAG_HEART_STAMP 0x83ACA98 0x83E66CC 0x0 0x83E6788 0x80B0CED
+HEART: objtemplate ANIM_TAG_HEART_STAMP ANIM_TAG_HEART_STAMP OAM_DOUBLE_32x32 0x83E66CC 0x0 0x83E6788 0x80B0CED
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -3535,14 +3589,14 @@ ANIM_HONECLAWS:
 
 HONECLAWS:
 	playsound2 0x94 0x3f
-	launchtemplate Template_Claws 0x82 0x3 0xA 0xffEA 0x1
-	launchtemplate Template_Claws 0x82 0x3 0xA 0xFFFA 0x1
-	launchtemplate Template_Claws 0x82 0x3 0xA 0xa 0x1
+	launchtemplate Template_Claws TEMPLATE_TARGET | 2, 0x3, 0xA 0xffEA 0x1
+	launchtemplate Template_Claws TEMPLATE_TARGET | 2, 0x3, 0xA 0xFFFA 0x1
+	launchtemplate Template_Claws TEMPLATE_TARGET | 2, 0x3, 0xA 0xa 0x1
 	pause 0x10
 	playsound2 0x94 0x3f
-	launchtemplate Template_Claws 0x82 0x3 0xfff6 0xffEA 0x0
-	launchtemplate Template_Claws 0x82 0x3 0xfff6 0xFFFA 0x0
-	launchtemplate Template_Claws 0x82 0x3 0xfff6 0xa 0x0
+	launchtemplate Template_Claws TEMPLATE_TARGET | 2, 0x3, 0xfff6 0xffEA 0x0
+	launchtemplate Template_Claws TEMPLATE_TARGET | 2, 0x3, 0xfff6 0xFFFA 0x0
+	launchtemplate Template_Claws TEMPLATE_TARGET | 2, 0x3, 0xfff6 0xa 0x0
 	pause 0x10
 	return
 
@@ -3554,7 +3608,7 @@ ANIM_HORNLEECH:
 	loadparticle ANIM_TAG_ORBS
 	loadparticle ANIM_TAG_BLUE_STAR
 	playsound2 0x9B 0xc0
-	launchtemplate LEECH_HORN 0x82 0x3 0x0 0x0 0x25
+	launchtemplate LEECH_HORN TEMPLATE_TARGET | 2, 0x3, 0x0 0x0 0x25
 	waitanimation
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x5 0x0 0x6 0x1
 	launchtemplate 0x83E7C98 0x83 0x4 0x0 0x0 0x1 0x1
@@ -3566,17 +3620,17 @@ ANIM_HORNLEECH:
 	endanimation
 
 .align 2
-LEECH_HORN: objtemplate ANIM_TAG_HORN_LEECH ANIM_TAG_HORN_LEECH 0x83ACA38 0x8231CF0 0x0 0x8231CFC 0x80B563D
+LEECH_HORN: objtemplate ANIM_TAG_HORN_LEECH ANIM_TAG_HORN_LEECH OAM_NORMAL_32x32 0x8231CF0 0x0 0x8231CFC 0x80B563D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 ANIM_COIL:
 	loadparticle ANIM_TAG_TENDRILS
 	soundcomplex 0x94 0x3f 0x6 0x4
-	launchtemplate 0x83e2d0c 0x84 0x4 0x0 0x10 0x0 0x2
+	launchtemplate 0x83e2d0c TEMPLATE_TARGET | 4, 0x4, 0x0 0x10 0x0 0x2
 	pause 0x7
 	launchtemplate 0x83e2d0c 0x83 0x4 0x0 0x0 0x0 0x2
-	launchtemplate 0x83e2d0c 0x82 0x4 0x0 0x8 0x1 0x2
+	launchtemplate 0x83e2d0c TEMPLATE_TARGET | 2, 0x4, 0x0 0x8 0x1 0x2
 	pause 0x7
 	launchtemplate 0x83e2d0c 0x83 0x4 0x0 0xfff8 0x1 0x2
 	pause 0x8
@@ -3620,7 +3674,7 @@ ANIM_HURRICANE:
 	endanimation
 
 HURRICANE_GUST:
-	launchtemplate 0x83e6ae8 0x2 0x2 0x0 0xfff0
+	launchtemplate 0x83e6ae8 TEMPLATE_TARGET | 2, 0x2 0x0 0xfff0
 	launchtask 0x80b194d 0x5 0x2 0x1 0x46
 	return
 
@@ -3631,16 +3685,16 @@ ANIM_ICICLECRASH:
 	loadBG1 0xf
 	waitfortransparentBG
 	pokespritetoBG side_target
-	launchtemplate ICICLE_CRASH 0x82 0x4 0xfffb 0x0 0xfffb 0x1
+	launchtemplate ICICLE_CRASH TEMPLATE_TARGET | 2, 0x4, 0xfffb 0x0 0xfffb 0x0
 	playsound2 0x82 0x3F
 	pause 0x2
-	launchtemplate ICICLE_CRASH 0x82 0x4 0x5 0x0 0x6 0x1
+	launchtemplate ICICLE_CRASH TEMPLATE_TARGET | 2, 0x4, 0x5 0x0 0x6 0x1
 	playsound2 0x82 0x3F
 	pause 0x2
-	launchtemplate ICICLE_CRASH 0x82 0x4 0x13 0x0 0xa 0x01
+	launchtemplate ICICLE_CRASH TEMPLATE_TARGET | 2, 0x4, 0x13 0x0 0xa 0x01
 	playsound2 0x82 0x3F
 	pause 0x2
-	launchtemplate ICICLE_CRASH 0x82 0x4 0xffe9 0x0 0xfff6 0x1
+	launchtemplate ICICLE_CRASH TEMPLATE_TARGET | 2, 0x4, 0xffe9 0x0 0xfff6 0x1
 	playsound2 0x82 0x3F
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x5 0x32 0x1
 	pause 0x2
@@ -3653,34 +3707,34 @@ ANIM_ICICLECRASH:
 	endanimation
 
 More_IcicleCrash:
-	launchtemplate ICICLE_CRASH 0x82 0x4 0xffec 0x0 0xfff6 0x1
+	launchtemplate ICICLE_CRASH TEMPLATE_TARGET | 2, 0x4, 0xffec 0x0 0xfff6 0x0
 	playsound2 0x82 0x3F
 	pause 0x2
-	launchtemplate ICICLE_CRASH 0x82 0x4 0x1c 0x0 0xa 0x1
+	launchtemplate ICICLE_CRASH TEMPLATE_TARGET | 2, 0x4, 0x1c 0x0 0xa 0x0
 	playsound2 0x82 0x3F
 	pause 0x2
-	launchtemplate ICICLE_CRASH 0x82 0x4 0xfff6 0x0 0xfffb 0x1
+	launchtemplate ICICLE_CRASH TEMPLATE_TARGET | 2, 0x4, 0xfff6 0x0 0xfffb 0x0
 	playsound2 0x82 0x3F
 	pause 0x2
-	launchtemplate ICICLE_CRASH 0x82 0x4 0xa 0x0 0x6 0x1
+	launchtemplate ICICLE_CRASH TEMPLATE_TARGET | 2, 0x4, 0xa 0x0 0x6 0x0
 	playsound2 0x82 0x3F
 	pause 0x2
-	launchtemplate ICICLE_CRASH 0x82 0x4 0x18 0x0 0xa 0x1
+	launchtemplate ICICLE_CRASH TEMPLATE_TARGET | 2, 0x4, 0x18 0x0 0xa 0x0
 	playsound2 0x82 0x3f
 	pause 0x2
-	launchtemplate ICICLE_CRASH 0x82 0x4 0xffe0 0x0 0xfff6 0x1
+	launchtemplate ICICLE_CRASH TEMPLATE_TARGET | 2, 0x4, 0xffe0 0x0 0xfff6 0x0
 	playsound2 0x82 0x3F
 	pause 0x2
-	launchtemplate ICICLE_CRASH 0x82 0x4 0xffec 0x0 0xfff6 0x1
+	launchtemplate ICICLE_CRASH TEMPLATE_TARGET | 2, 0x4, 0xffec 0x0 0xfff6 0x0
 	playsound2 0x82 0x3F
 	pause 0x2
-	launchtemplate ICICLE_CRASH 0x82 0x4 0x1e 0x0 0xa 0x1
+	launchtemplate ICICLE_CRASH TEMPLATE_TARGET | 2, 0x4, 0x1e 0x0 0xa 0x0
 	playsound2 0x82 0x3F
 	pause 0x2
 	return
 
 .align 2
-ICICLE_CRASH: objtemplate ANIM_TAG_ICICLE_SPEAR ANIM_TAG_ICICLE_SPEAR 0x83ACA38 0x83E74A8 0x0 0x83E7540 0x80B4635
+ICICLE_CRASH: objtemplate ANIM_TAG_ICICLE_SPEAR ANIM_TAG_ICICLE_SPEAR OAM_NORMAL_32x32 0x8231CF0 0x0 gSpriteAffineAnimTable_IcicleCrash 0x80B4635
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -3711,7 +3765,7 @@ WORKUP_BUFF:
 	return
 
 .align 2
-RED_BUFF: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_JAGGED_MUSIC_NOTE 0x83aca18 0x83e3600 0x0 0x8231cfc 0x80a5ad9
+RED_BUFF: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_JAGGED_MUSIC_NOTE OAM_OFF_16x32 0x83e3600 0x0 0x8231cfc 0x80a5ad9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -3742,7 +3796,7 @@ ANIM_QUIVERDANCE:
 	endanimation
 
 .align 2
-QUIVERDANCE_CIRCLE: objtemplate ANIM_TAG_HOLLOW_ORB ANIM_TAG_CIRCLE_OF_LIGHT 0x83AC9D0 0x8231CF0 0x0 0x8231CFC 0x80B7449
+QUIVERDANCE_CIRCLE: objtemplate ANIM_TAG_HOLLOW_ORB ANIM_TAG_CIRCLE_OF_LIGHT OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC 0x80B7449
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -3779,7 +3833,7 @@ LEAFTORNADO_TORNADO:
 	return
 
 .align 2
-LEAFTORNADO_BITS: objtemplate ANIM_TAG_LEAF ANIM_TAG_LEAF 0x83AC9D0 0x83E2C00 0x0 0x8231CFC 0x80B477D
+LEAFTORNADO_BITS: objtemplate ANIM_TAG_LEAF ANIM_TAG_LEAF OAM_OFF_16x16 0x83E2C00 0x0 0x8231CFC 0x80B477D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -3868,10 +3922,10 @@ ANIM_STEAMROLLER:
 	launchtemplate STEAMROLLER 0x3 0x3 0x0 0xffe0 0xf
 	pause 0x13
 	launchtemplate Template_Hit 0x2 0x4 0x0 0xfff8 0x1 0x1
-	launchtemplate 0x83e7560 0x82 0x4 0xfff4 0x1b 0x2 0x3
-	launchtemplate 0x83e7560 0x82 0x4 0x8 0x1c 0x3 0x4
-	launchtemplate 0x83e7560 0x82 0x4 0xfffc 0x1e 0x2 0x3
-	launchtemplate 0x83e7560 0x82 0x4 0xc 0x19 0x4 0x4
+	launchtemplate 0x83e7560 TEMPLATE_TARGET | 2, 0x4, 0xfff4 0x1b 0x2 0x3
+	launchtemplate 0x83e7560 TEMPLATE_TARGET | 2, 0x4, 0x8 0x1c 0x3 0x4
+	launchtemplate 0x83e7560 TEMPLATE_TARGET | 2, 0x4, 0xfffc 0x1e 0x2 0x3
+	launchtemplate 0x83e7560 TEMPLATE_TARGET | 2, 0x4, 0xc 0x19 0x4 0x4
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x4 0x9 0x1
 	playsound2 0x86 0x3f
 	waitanimation
@@ -3880,7 +3934,7 @@ ANIM_STEAMROLLER:
 	endanimation
 
 .align 2
-STEAMROLLER: objtemplate ANIM_TAG_STEAMROLLER ANIM_TAG_STEAMROLLER 0x83AC9E0 0x8231CF0 0x0 0x8231CFC 0x80B0D59
+STEAMROLLER: objtemplate ANIM_TAG_STEAMROLLER ANIM_TAG_STEAMROLLER OAM_OFF_64x64 0x8231CF0 0x0 0x8231CFC 0x80B0D59
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -3913,7 +3967,7 @@ ANIM_STORMTHROW:
 	endanimation
 
 .align 2
-STORM_THROW_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_JAGGED_MUSIC_NOTE 0x83ACAA0 0x8231CF0 0x0 0x83E4088 0x8075D9D
+STORM_THROW_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_JAGGED_MUSIC_NOTE OAM_DOUBLE_64x64 0x8231CF0 0x0 0x83E4088 0x8075D9D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -3950,7 +4004,7 @@ ANIM_VENOSHOCK:
 	endanimation
 
 .align 2
-VENOSHOCK_POISON: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_BUBBLE 0x83ACA30 0x83E69E4 0x0 0x8231CFC 0x80A4299
+VENOSHOCK_POISON: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_BUBBLE OAM_NORMAL_16x16 0x83E69E4 0x0 0x8231CFC 0x80A4299
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -3987,7 +4041,7 @@ ANIM_WILDCHARGE:
 	endanimation
 
 ScreenFlash:
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0xC 0x0 0x07FE
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xC 0x0 0x07FE
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -4026,7 +4080,7 @@ ANIM_POISONJAB:
 	endanimation
 
 .align 2
-POISONJAB: objtemplate ANIM_TAG_POISON_JAB ANIM_TAG_POISON_JAB 0x83ACA30 0x8231CF0 0x0 0x8231CFC 0x80A4299
+POISONJAB: objtemplate ANIM_TAG_POISON_JAB ANIM_TAG_POISON_JAB OAM_NORMAL_16x16 0x8231CF0 0x0 0x8231CFC 0x80A4299
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -4063,8 +4117,8 @@ ANIM_ACIDSPRAY:
 	endanimation
 
 .align 2
-ACIDSHOT: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_RAZOR_LEAF 0x83ACA90 0x83E69DC 0x0 0x83E6A18 0x80B16A1
-ACIDDRIPS: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_RAZOR_LEAF 0x83ACA90 0x83E69E0 0x0 0x83E6A80 0x80B17C5
+ACIDSHOT: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_RAZOR_LEAF OAM_DOUBLE_16x16 0x83E69DC 0x0 0x83E6A18 SpriteCB_AcidLaunchSingleTarget
+ACIDDRIPS: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_RAZOR_LEAF OAM_DOUBLE_16x16 0x83E69E0 0x0 0x83E6A80 SpriteCB_AcidDripSingleTarget
 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -4116,7 +4170,7 @@ CLEARSMOG_SWIRL:
 	return
 
 .align 2
-CLEARSMOG_MIST: objtemplate ANIM_TAG_PURPLE_GAS_CLOUD ANIM_TAG_POWER_GEM 0x83ACB18 0x83E64A0 0x0 0x8231CFC 0x80AF915
+CLEARSMOG_MIST: objtemplate ANIM_TAG_PURPLE_GAS_CLOUD ANIM_TAG_POWER_GEM OAM_OFF_BLEND_32x16 0x83E64A0 0x0 0x8231CFC 0x80AF915
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -4187,44 +4241,43 @@ LEAFSTORM_LOAD_PARTICLE:
 	return
 
 .align 2
-LEAFSTORM_LEAVES: objtemplate ANIM_TAG_LEAF ANIM_TAG_LEAF 0x83AC9D0 0x83E2C00 0x0 0x83E7604 0x80B8CC9
+LEAFSTORM_LEAVES: objtemplate ANIM_TAG_LEAF ANIM_TAG_LEAF OAM_OFF_16x16 0x83E2C00 0x0 0x83E7604 0x80B8CC9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
+@Credits to Squeetz
 ANIM_STONEEDGE:
-	loadparticle ANIM_TAG_STONE_EDGE @Stone Edge Rock
+	loadparticle ANIM_TAG_STEALTH_ROCK
+	loadparticle ANIM_TAG_IMPACT
 	pokespritetoBG side_target
-	leftbankBG_over_partnerBG bank_target
-	setblends 0x80c
-	launchtemplate Template_SlideMonToOffset 0x2 0x5 bank_attacker 0x1c 0x0 0x0 0x5
-	pause 0x4
-	launchtask AnimTask_move_bank_2 0x2 0x5 0x1 0x4 0x0 0x6 0x1
-	playsound2 0x74 0x3f
-	launchtemplate STONEEDGE_ROCKS 0x83 0x4 0xffe4 0x1c 0x1 0x1
-	pause 0x1
-	playsound2 0x74 0x3f
-	launchtemplate STONEEDGE_ROCKS 0x83 0x4 0xfff1 0x8 0x1 0x1
-	playsound2 0x74 0x3f
-	pause 0x1
-	playsound2 0x74 0x3f
-	launchtemplate STONEEDGE_ROCKS 0x83 0x4 0xfffb 0xfff4 0x1 0x1
-	pause 0x1
-	playsound2 0x74 0x3f
-	launchtemplate STONEEDGE_ROCKS 0x83 0x4 0x0 0xffe0 0x1 0x1
-	pause 0x1
-	playsound2 0x74 0x3f
-	launchtemplate STONEEDGE_ROCKS 0x83 0x4 0x5 0xffcc 0x1 0x1
-	launchtemplate Template_SlideMonToOffset 0x2 0x5 bank_target 0x0 0x3 0x6 0x1
-	pause 0x1e
-	launchtemplate Template_SlideMonToOriginalPos 0x2 0x3 bank_attacker 0x0 0x6
-	pause 0x4
-	launchtemplate Template_SlideMonToOriginalPos 0x2 0x3 bank_target 0x0 0x6
+	setblends 0x80C
+	playsound2 124, 0x3F
+	launchtemplate STONEEDGE_ROCKS, TEMPLATE_TARGET | 3, 0x2, 18, 24
+	pause 4
+	launchtemplate STONEEDGE_ROCKS, TEMPLATE_TARGET | 3, 0x2, -20, 30
+	pause 4
+	launchtemplate STONEEDGE_ROCKS, TEMPLATE_TARGET | -5, 0x2, 24, 20
+	pause 4
+	launchtemplate STONEEDGE_ROCKS, TEMPLATE_TARGET | -5, 0x2, -24, 24
+	pause 4
+	launchtemplate STONEEDGE_ROCKS, TEMPLATE_TARGET | 3, 0x2, 12, 30
+	soundcomplex 124, 0x3F, 7, 5
+	launchtask AnimTask_move_bank_2, 0x3, 0x5, bank_target, 3, 0, 10, 2
+	launchtemplate Template_Hit, TEMPLATE_TARGET | 2, 0x4, 16, 3, 1, 2
+	pause 4
+	launchtemplate Template_Hit, TEMPLATE_TARGET | 2, 0x4, -18, 9, 1, 2
+	pause 4
+	launchtemplate Template_Hit, TEMPLATE_TARGET | -4, 0x4, 22, -1, 1, 2
+	pause 4
+	launchtemplate Template_Hit, TEMPLATE_TARGET | -4, 0x4, -22, 3, 1, 2
+	pause 4
+	launchtemplate Template_Hit, TEMPLATE_TARGET | 2, 0x4, 10, 9, 1, 2
+	waitanimation
 	pokespritefromBG side_target
-	resetblends
 	endanimation
 
 .align 2
-STONEEDGE_ROCKS: objtemplate ANIM_TAG_STONE_EDGE ANIM_TAG_STONE_EDGE 0x83ACA38 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+STONEEDGE_ROCKS: objtemplate ANIM_TAG_STEALTH_ROCK ANIM_TAG_STEALTH_ROCK OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC SpriteCB_StoneEdgeRock
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -4241,13 +4294,13 @@ ANIM_PAYBACK:
 	call PAYBACK_POWERUP
 	call PAYBACK_POWERUP
 	waitanimation
-	launchtemplate PAYBACK_PURPLEHIT 0x82 0x3 0xfff6 0xfff6 0x0
+	launchtemplate PAYBACK_PURPLEHIT TEMPLATE_TARGET | 2, 0x3, 0xfff6 0xfff6 0x0
 	call PAYBACK_MOVE
-	launchtemplate PAYBACK_PURPLEHIT 0x82 0x3 0xa 0x14 0x0
+	launchtemplate PAYBACK_PURPLEHIT TEMPLATE_TARGET | 2, 0x3, 0xa 0x14 0x0
 	call PAYBACK_MOVE
-	launchtemplate PAYBACK_PURPLEHIT 0x82 0x3 0xfffb 0xa 0x0
+	launchtemplate PAYBACK_PURPLEHIT TEMPLATE_TARGET | 2, 0x3, 0xfffb 0xa 0x0
 	call PAYBACK_MOVE
-	launchtemplate PAYBACK_PURPLEHIT 0x82 0x3 0x11 0xfff4 0x0
+	launchtemplate PAYBACK_PURPLEHIT TEMPLATE_TARGET | 2, 0x3, 0x11 0xfff4 0x0
 	call PAYBACK_MOVE
 	waitanimation
 	pokespritefromBG bank_target
@@ -4278,8 +4331,8 @@ PAYBACK_MOVE:
 	return
 
 .align 2
-PAYBACK_RECOVER: objtemplate ANIM_TAG_ORBS ANIM_TAG_POISON_JAB 0x83ACB50 0x83E2A40 0x0 0x83E2A54 0x80A2389
-PAYBACK_PURPLEHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_POISON_BUBBLE 0x83ACB58 0x8231CF0 0x0 0x83E63DC 0x80AF3B9
+PAYBACK_RECOVER: objtemplate ANIM_TAG_ORBS ANIM_TAG_POISON_JAB OAM_NORMAL_BLEND_16x16 0x83E2A40 0x0 0x83E2A54 0x80A2389
+PAYBACK_PURPLEHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_POISON_BUBBLE OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E63DC 0x80AF3B9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -4288,10 +4341,10 @@ ANIM_FIREFANG:
 	loadparticle ANIM_TAG_IMPACT
 	loadparticle ANIM_TAG_SMALL_EMBER
 	pokespritetoBG bank_target
-	setblends 0x80c
 	playsound2 0x9a 0x3f
 	launchtemplate Template_Teeth 0x2 0x6 0x0 0xffe0 0x0 0x0 0x333 0xa
 	launchtemplate Template_Teeth 0x2 0x6 0x0 0x20 0x4 0x0 0xfccd 0xa
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_SHARP_TEETH 0x1 0x0 0xA 0x1D @;Red
 	pause 0xA
 	launchtemplate Template_Hit 0x2 0x4 0x0 0x0 0x1 0x2
 	call 0x81D0950 @flames
@@ -4300,7 +4353,6 @@ ANIM_FIREFANG:
 	launchtask AnimTask_move_bank 0x5 0x5 bank_target 0x0 0x4 0x7 0x1
 	waitanimation
 	pokespritefromBG bank_target
-	resetblends
 	pause 0x1
 	endanimation
 
@@ -4311,11 +4363,11 @@ ANIM_ICEFANG:
 	loadparticle ANIM_TAG_IMPACT
 	loadparticle ANIM_TAG_ICE_CRYSTALS
 	pokespritetoBG bank_target
-	setblends 0x80c
 	playsound2 0x9a 0x3f
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x2 0x0 0x9 0x7f4c
 	launchtemplate Template_Teeth 0x2 0x6 0x0 0xffe0 0x0 0x0 0x333 0xa
 	launchtemplate Template_Teeth 0x2 0x6 0x0 0x20 0x4 0x0 0xfccd 0xa
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_SHARP_TEETH 0x1 0x0 0xA 0x7f4c @;Yellow
 	pause 0xA
 	launchtemplate Template_Hit 0x2 0x4 0x0 0x0 0x1 0x2
 	call 0x81D540A @ice
@@ -4324,7 +4376,6 @@ ANIM_ICEFANG:
 	launchtask AnimTask_move_bank 0x5 0x5 bank_target 0x0 0x4 0x7 0x1
 	waitanimation
 	pokespritefromBG bank_target
-	resetblends
 	pause 0x1
 	endanimation
 
@@ -4335,32 +4386,31 @@ ANIM_THUNDERFANG:
 	loadparticle ANIM_TAG_IMPACT
 	loadparticle ANIM_TAG_SPARK_2
 	pokespritetoBG bank_target
-	setblends 0x80c
 	playsound2 0x9a 0x3f
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x2 0x0 0x9 0x07FE
 	launchtemplate Template_Teeth 0x2 0x6 0x0 0xffe0 0x0 0x0 0x333 0xa
 	launchtemplate Template_Teeth 0x2 0x6 0x0 0x20 0x4 0x0 0xfccd 0xa
-	launchtemplate 0x83E6088 0x82 0x4 0x5 0x0 0x5 0x0
-	launchtemplate 0x83E6088 0x82 0x4 0xfffb 0xa 0x5 0x1
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_SHARP_TEETH 0x1 0x0 0xA 0x07FE @;Ice blue
+	launchtemplate 0x83E6088 TEMPLATE_TARGET | 2, 0x4, 0x5 0x0 0x5 0x0
+	launchtemplate 0x83E6088 TEMPLATE_TARGET | 2, 0x4, 0xfffb 0xa 0x5 0x1
 	pause 0xA
 	launchtemplate Template_Hit 0x2 0x4 0x0 0x0 0x1 0x2
 	playsound2 0x70 0x3f
-	launchtemplate 0x83E6088 0x82 0x4 0xf 0x14 0x5 0x2
+	launchtemplate 0x83E6088 TEMPLATE_TARGET | 2, 0x4, 0xf 0x14 0x5 0x2
 	pause 0x1
-	launchtemplate 0x83E6088 0x82 0x4 0xfff1 0xfff6 0x5 0x0
+	launchtemplate 0x83E6088 TEMPLATE_TARGET | 2, 0x4, 0xfff1 0xfff6 0x5 0x0
 	pause 0x1
-	launchtemplate 0x83E6088 0x82 0x4 0x19 0x0 0x5 0x1
+	launchtemplate 0x83E6088 TEMPLATE_TARGET | 2, 0x4, 0x19 0x0 0x5 0x1
 	pause 0x1
-	launchtemplate 0x83E6088 0x82 0x4 0xfff8 0x8 0x5 0x2
+	launchtemplate 0x83E6088 TEMPLATE_TARGET | 2, 0x4, 0xfff8 0x8 0x5 0x2
 	pause 0x1
-	launchtemplate 0x83E6088 0x82 0x4 0x2 0xfff8 0x5 0x0
+	launchtemplate 0x83E6088 TEMPLATE_TARGET | 2, 0x4, 0x2 0xfff8 0x5 0x0
 	pause 0x1
-	launchtemplate 0x83E6088 0x82 0x4 0xffec 0xf 0x5 0x1
+	launchtemplate 0x83E6088 TEMPLATE_TARGET | 2, 0x4, 0xffec 0xf 0x5 0x1
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x2 0x9 0x0 0x07FE
 	launchtask AnimTask_move_bank 0x5 0x5 bank_target 0x0 0x4 0x7 0x1
 	waitanimation
 	pokespritefromBG bank_target
-	resetblends
 	endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -4373,7 +4423,7 @@ ANIM_FLAREBLITZ:
 	playsound2 0xA4 0x3f
 	call FLAME_BUFF
 	pause 0x4
-	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_IMPACT 0x0 0x6 0x8 0x001F
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_IMPACT 0x0 0x8 0x8 0x001F
 	launchtask AnimTask_pal_fade_complex 0x2 0x6 0x2 0x2 0x2 0x0 0xb 0x001F
 	launchtask AnimTask_move_bank_2 0x2 0x5 0x0 0x1 0x0 0x15 0x1
 	call FLAME_BUFF
@@ -4420,7 +4470,7 @@ FLAME_BUFF:
 	return
 
 .align 2
-FLAREBLITZ_BUFF: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_SMALL_EMBER 0x83AC9D8 0x8231CF0 0x0 0x8231CFC SpriteCB_FlareBlitzUpFlames
+FLAREBLITZ_BUFF: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_SMALL_EMBER OAM_OFF_32x32 0x8231CF0 0x0 0x8231CFC SpriteCB_FlareBlitzUpFlames
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -4449,20 +4499,24 @@ ANIM_INFERNO:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 ANIM_HEX:
+	loadparticle ANIM_TAG_PURPLE_FLAME
 	loadparticle ANIM_TAG_GHOSTLY_SPIRIT
-	loadBG1 BG_GHOST
-	waitfortransparentBG
-	playsound2 0xb6 0xc0
-	launchtask AnimTask_move_bank 0x2 0x5 bank_attacker 0x3 0x0 0x10 0x1
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x0 0x0 0x10 0x4C4A @;Deep purple
 	waitanimation
-	playsound2 0xb6 0xc0
-	launchtask AnimTask_pal_fade_complex 0x2 0x6 PAL_DEF 0x2 0x2 0x0 0xc 0x3447
-	launchtemplate 0x83E7698 0x82 0x0
-	launchtask AnimTask_move_bank_2 0x2 0x5 0x1 0x4 0x0 0x5 0x1
-	launchtask 0x80A9A21 0x3 0x0
+	pokespritetoBG bank_target 
+	bankBG_over_partnerBG
+	playsound2 0xb6 0xc0 
+	waitfortransparentBG 
+	launchtask AnimTask_PurpleFlamesOnTarget 0x3 0x0
+	launchtask AnimTask_move_bank 0x5 0x5 bank_target 0x2 0x0 0x25 0x1
+	playsound2 0x72 0x3f
+	pause 0x20
+	launchtask AnimTask_pal_fade_complex 0x2 0x6 PAL_DEF 0x2 0x2 0x0 0xc 0x4C4A @;Deep purple
+	launchtemplate 0x83E7698 TEMPLATE_TARGET | 4, 0x0 @;Ghostly spirit
 	waitanimation
-	loaddefaultBG
-	waitforBG
+	pokespritefromBG bank_target
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x0 0x10 0x0 0x4C4A @;Deep purple
+	waitanimation
 	endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -4491,7 +4545,7 @@ ANIM_DUALCHOP:
 	endanimation
 
 .align 2
-DUALCHOP_HIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_POISON_BUBBLE 0x83ACB58 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+DUALCHOP_HIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_POISON_BUBBLE OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -4552,7 +4606,7 @@ CottonIn:
 	return
 
 .align 2
-COTTONGUARD_COTTON: objtemplate ANIM_TAG_SPORE ANIM_TAG_SPORE 0x83AC9D0 0x83E2B5C 0x0 0x83E2A54 0x80A2389
+COTTONGUARD_COTTON: objtemplate ANIM_TAG_SPORE ANIM_TAG_SPORE OAM_OFF_16x16 0x83E2B5C 0x0 0x83E2A54 0x80A2389
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -4564,11 +4618,11 @@ ANIM_ACROBATICS:
 	playsound2 0x88 0xc0
 	pause 0x4
 	playsound2 0x74 0x3f
-	launchtemplate Template_Hit 0x84 0x4 0x0 0xFFFA 0x1 0x1
+	launchtemplate Template_Hit TEMPLATE_TARGET | 4, 0x4, 0x0 0xFFFA 0x1 0x1
 	launchtask AnimTask_move_bank 0x2 0x5 0x1 0x5 0x0 0x6 0x1
 	pause 0x8
 	playsound2 0x74 0x3f
-	launchtemplate Template_Hit 0x84 0x4 0x3 0xA 0x1 0x1
+	launchtemplate Template_Hit TEMPLATE_TARGET | 4, 0x4, 0x3 0xA 0x1 0x1
 	launchtask AnimTask_move_bank 0x2 0x5 0x1 0x5 0x0 0x6 0x1
 	waitanimation
 	pokespritefromBG bank_target
@@ -4599,7 +4653,7 @@ ANIM_UTURN:
 	setblends 0x80C
 	makebankinvisible bank_attacker
 	playsound2 0x88 0xC0
-	launchtemplate BALL 0x82 0x3 0x0 0x0 0x15
+	launchtemplate BALL TEMPLATE_TARGET | 2, 0x3, 0x0 0x0 0x15
 	waitanimation
 	playsound2 0xA0 0x30
 	launchtemplate Template_Hit 0x2 0x4 0x0 0x0 0x1 0x2
@@ -4612,8 +4666,8 @@ ANIM_UTURN:
 	endanimation
 
 .align 2
-BALL: objtemplate ANIM_TAG_SMALL_BUBBLES ANIM_TAG_RAZOR_LEAF 0x83AC9D0 0x8231CF0 0x0 0x83E7604 0x80B563D
-BALLBACK: objtemplate ANIM_TAG_SMALL_BUBBLES ANIM_TAG_RAZOR_LEAF 0x83AC9D0 0x8231CF0 0x0 0x83E7604 0x80A2581
+BALL: objtemplate ANIM_TAG_SMALL_BUBBLES ANIM_TAG_RAZOR_LEAF OAM_OFF_16x16 0x8231CF0 0x0 0x83E7604 0x80B563D
+BALLBACK: objtemplate ANIM_TAG_SMALL_BUBBLES ANIM_TAG_RAZOR_LEAF OAM_OFF_16x16 0x8231CF0 0x0 0x83E7604 0x80A2581
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -4646,7 +4700,7 @@ ANIM_VOLTSWITCH:
 	endanimation
 
 .align 2
-VOLTSWITCH_VOLT: objtemplate ANIM_TAG_SHADOW_BALL ANIM_TAG_IONS 0x83ACA38 0x8231CF0 0x0 0x83E7604 0x80B563D
+VOLTSWITCH_VOLT: objtemplate ANIM_TAG_SHADOW_BALL ANIM_TAG_IONS OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E7604 0x80B563D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -4709,7 +4763,7 @@ ANIM_CIRCLETHROW:
 	endanimation
 
 .align 2
-CIRCLETHROW_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_ICE_CHUNK 0x83ACAA0 0x8231CF0 0x0 0x83E4088 0x8075D9D
+CIRCLETHROW_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_ICE_CHUNK OAM_DOUBLE_64x64 0x8231CF0 0x0 0x83E4088 0x8075D9D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -4746,8 +4800,8 @@ ANIM_WOODHAMMER:
 	endanimation
 
 .align 2
-WOODSTOMP: objtemplate ANIM_TAG_WOOD ANIM_TAG_WOOD 0x83ACA38 0x83E74A8 0x0 0x8231CFC 0x80B0D59
-WOODBURST: objtemplate ANIM_TAG_WOOD ANIM_TAG_WOOD 0x83AC9D8 0x83E73A8 0x0 0x8231CFC 0x80B46F9
+WOODSTOMP: objtemplate ANIM_TAG_WOOD ANIM_TAG_WOOD OAM_NORMAL_32x32 0x83E74A8 0x0 0x8231CFC 0x80B0D59
+WOODBURST: objtemplate ANIM_TAG_WOOD ANIM_TAG_WOOD OAM_OFF_32x32 0x83E73A8 0x0 0x8231CFC 0x80B46F9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -4761,7 +4815,7 @@ ANIM_HEALPULSE:
 	launchsoundtask 0x80dcf39 0x7 0xCC 0xffc0 0x3f 0x3 0x4 0x0 0xf
 	call HEALPULSE_Beam
 	call HEALPULSE_Beam
-	launchtask 0x8099705 0x5 0x5 0x0 0x6 0x800 0x4 0x1
+	launchtask AnimTask_SwayMon 0x5 0x5 0x0 0x6 0x800 0x4 bank_target
 	launchtask AnimTask_pal_fade_complex 0x2 0x6 0x4 0x2 0x2 0x0 0xc 0x7e5f
 	call HEALPULSE_Beam
 	call HEALPULSE_Beam
@@ -4784,7 +4838,7 @@ HEALPULSE_Beam:
 	return
 
 .align 2
-HEALPULSE_RING: objtemplate ANIM_TAG_GOLD_RING ANIM_TAG_RED_HEART 0x83ACA18 0x8231CF0 0x0 0x8231CFC Callback_TranslateAnimSpriteToTargetMonLocation
+HEALPULSE_RING: objtemplate ANIM_TAG_GOLD_RING ANIM_TAG_RED_HEART OAM_OFF_16x32 0x8231CF0 0x0 0x8231CFC Callback_TranslateAnimSpriteToTargetMonLocation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -4797,7 +4851,7 @@ ANIM_FLASHCANNON:
 	loadparticle ANIM_TAG_FLASH_CANNON_BALL @Ball
 	pokespritetoBG bank_attacker
 	setblends 0x80D
-	launchtask 0x80AE541 0x2 0x4 0x0 0x3c 0x2 0xc
+	launchtask AnimTask_ChargeBalls 0x2 0x4 0x0 0x3c 0x2 0xc
 	playsound2 0xce 0xc0
 	pause 0x1e
 	playsound2 0xce 0xc0
@@ -4815,7 +4869,7 @@ ANIM_FLASHCANNON:
 	soundcomplex 0xce 0xc0 0x6 0x5
 	waitanimation
 	playsound2 0xA7 0xC0
-	launchtemplate BALLTRAVEL 0x82 0x3 0x0 0x0 0x15
+	launchtemplate BALLTRAVEL TEMPLATE_TARGET | 2, 0x3, 0x0 0x0 0x15
 	pokespritefromBG bank_attacker
 	waitanimation
 	playsound2 0xB9 0xc0
@@ -4827,8 +4881,8 @@ ANIM_FLASHCANNON:
 	endanimation
 
 .align 2
-GRAYCHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_HANDS_AND_FEET 0x83ACB60 0x8231CF0 0x0 0x83E61C8 0x80AE71D
-BALLTRAVEL: objtemplate ANIM_TAG_FLASH_CANNON_BALL ANIM_TAG_FLASH_CANNON_BALL 0x83ACA38 0x8231CF0 0x0 0x83E7604 0x80B563D
+GRAYCHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_HANDS_AND_FEET OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80AE71D
+BALLTRAVEL: objtemplate ANIM_TAG_FLASH_CANNON_BALL ANIM_TAG_FLASH_CANNON_BALL OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E7604 0x80B563D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -4891,7 +4945,7 @@ ANIM_PLUCK:
 	endanimation
 
 .align 2
-PLUCK_OBJ: objtemplate ANIM_TAG_ROCKS ANIM_TAG_ROCKS 0x83ACA38 0x8231CF0 0x0 0x83E7BF8 0x80BA781
+PLUCK_OBJ: objtemplate ANIM_TAG_ROCKS ANIM_TAG_ROCKS OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA781
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -4924,9 +4978,9 @@ ANIM_SHELLSMASH:
 	endanimation
 
 .align 2
-ShellLeft: objtemplate ANIM_TAG_SHELL_RIGHT ANIM_TAG_SHELL_RIGHT 0x83ACB60 0x8231CF0 0x0 0x83E7910 0x80B7BD5
-ShellRight: objtemplate ANIM_TAG_SHELL_LEFT ANIM_TAG_SHELL_LEFT 0x83ACB60 0x8231CF0 0x0 0x83E7910 0x80B7BD5
-PurpleRocks: objtemplate ANIM_TAG_ROCKS ANIM_TAG_SHELL_RIGHT 0x83AC9D8 0x83E73A8 0x0 0x8231CFC 0x80B46F9
+ShellLeft: objtemplate ANIM_TAG_SHELL_RIGHT ANIM_TAG_SHELL_RIGHT OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E7910 0x80B7BD5
+ShellRight: objtemplate ANIM_TAG_SHELL_LEFT ANIM_TAG_SHELL_LEFT OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E7910 0x80B7BD5
+PurpleRocks: objtemplate ANIM_TAG_ROCKS ANIM_TAG_SHELL_RIGHT OAM_OFF_32x32 0x83E73A8 0x0 0x8231CFC 0x80B46F9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -4954,7 +5008,7 @@ Sprinkle:
 	return
 
 .align 2
-RED_POWDER: objtemplate ANIM_TAG_SPORE ANIM_TAG_HEART_STAMP 0x83AC9D0 0x83E2B5C 0x0 0x8231CFC 0x80A27D1
+RED_POWDER: objtemplate ANIM_TAG_SPORE ANIM_TAG_HEART_STAMP OAM_OFF_16x16 0x83E2B5C 0x0 0x8231CFC 0x80A27D1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -4983,8 +5037,8 @@ Wack:
 	return
 
 .align 2
-WAKEUP_PALM: objtemplate ANIM_TAG_ASSURANCE_HAND ANIM_TAG_ACUPRESSURE_FINGER 0x83AC9D8 0x83E66CC 0x0 0x8231CFC 0x80B08DD
-WAKEUP_HIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_WATER_ORB 0x83ACB58 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+WAKEUP_PALM: objtemplate ANIM_TAG_ASSURANCE_HAND ANIM_TAG_ACUPRESSURE_FINGER OAM_OFF_32x32 0x83E66CC 0x0 0x8231CFC 0x80B08DD
+WAKEUP_HIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_WATER_ORB OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -4992,7 +5046,7 @@ ANIM_RAZORSHELL:
 	loadparticle ANIM_TAG_RAZOR_SHELL
 	loadparticle ANIM_TAG_CUT
 	pokespritetoBG bank_target
-	launchtemplate RAZOR_SHELL 0x2 0x5 0x1 0x0 0x0 0xF 0xa
+	launchtemplate RAZOR_SHELL 0x2 0x5 0x1 0x0 0x0 25 0
 	playsound2 0x79 0x3f
 	launchtemplate 0x83E3294 0x1 0x3 0x28 0xffe0 0x0
 	pause 0x5
@@ -5003,7 +5057,7 @@ ANIM_RAZORSHELL:
 	endanimation
 
 .align 2
-RAZOR_SHELL: objtemplate ANIM_TAG_RAZOR_SHELL ANIM_TAG_RAZOR_SHELL 0x83ACB58 0x8231CF0 0x0 0x8231CFC 0x80B0E81
+RAZOR_SHELL: objtemplate ANIM_TAG_RAZOR_SHELL ANIM_TAG_RAZOR_SHELL OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7604 SpriteCB_SpriteOnMonForDuration
 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -5037,7 +5091,7 @@ ANIM_SUCKERPUNCH:
 	launchtemplate Template_SlideMonToOffset 0x2 0x5 bank_attacker 0x14 0x0 0x0 0x4
 	launchtemplate SUCKER_PUNCH 0x82 0x6 0xffe8 0x5 0x28 0x8 0xa0 0x0
 	pause 0x4
-	launchtemplate Template_Hit 0x82 0x4 0x0 0x0 0x1 0x2
+	launchtemplate Template_Hit TEMPLATE_TARGET | 2, 0x4, 0x0 0x0 0x1 0x2
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x3 0x9 0x1
 	playsound2 0x84 0x3f
 	waitanimation
@@ -5045,14 +5099,14 @@ ANIM_SUCKERPUNCH:
 	endanimation
 
 .align 2
-SUCKER_PUNCH: objtemplate ANIM_TAG_POISON_JAB ANIM_TAG_POISON_JAB 0x83ACA30 0x83E2C4C 0x0 0x8231CFC 0x80B0C29
+SUCKER_PUNCH: objtemplate ANIM_TAG_POISON_JAB ANIM_TAG_POISON_JAB OAM_NORMAL_16x16 0x83E2C4C 0x0 0x8231CFC 0x80B0C29
 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 ANIM_SCALD:
 	loadparticle ANIM_TAG_WATER_GUN
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0x5 0x043D
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x5 0x043D
 	waitanimation
 	pokespritetoBG side_target
 	leftbankBG_over_partnerBG bank_target
@@ -5072,7 +5126,7 @@ ANIM_SCALD:
 	call SCALD_GUN
 	waitanimation
 	launchtask AnimTask_pal_fade 0xa 0x5 0x4 0x1 0x9 0x0 0x1f
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x5 0x0 0x043D
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x5 0x0 0x043D
 	waitanimation
 	pokespritefromBG side_target
 	resetblends
@@ -5083,7 +5137,7 @@ SCALD_GUN:
 	pause 0x2
 	return
 
-SCALD_WATERGUN: objtemplate ANIM_TAG_WATER_GUN ANIM_TAG_WATER_GUN 0x83acaf0 0x83e5a78 0x0 0x8231cfc 0x8075e81
+SCALD_WATERGUN: objtemplate ANIM_TAG_WATER_GUN ANIM_TAG_WATER_GUN OAM_OFF_BLEND_16x16 0x83e5a78 0x0 0x8231cfc 0x8075e81
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -5091,13 +5145,13 @@ ANIM_BRINE:
 	loadparticle ANIM_TAG_BRINE
 	pokespritetoBG bank_target
 	playsoundpanchange 0x9D 0xc0 0x3f 0x2 0x0
-	launchtemplate BRINE_WATER 0x82 0x4 0xfffb 0x0 0xfffb 0x1
+	launchtemplate BRINE_WATER TEMPLATE_TARGET | 2, 0x4, 0xfffb 0x0 0xfffb 0x0
 	pause 0x2
-	launchtemplate BRINE_WATER 0x82 0x4 0x5 0x0 0x6 0x1
+	launchtemplate BRINE_WATER TEMPLATE_TARGET | 2, 0x4, 0x5 0x0 0x6 0x0
 	pause 0x2
-	launchtemplate BRINE_WATER 0x82 0x4 0x13 0x0 0xa 0x1
+	launchtemplate BRINE_WATER TEMPLATE_TARGET | 2, 0x4, 0x13 0x0 0xa 0x0
 	pause 0x2
-	launchtemplate BRINE_WATER 0x82 0x4 0xffe9 0x0 0xfff6 0x1
+	launchtemplate BRINE_WATER TEMPLATE_TARGET | 2, 0x4, 0xffe9 0x0 0xfff6 0x0
 	pause 0x2
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x5 0x32 0x1
 	call BrineCall
@@ -5107,26 +5161,26 @@ ANIM_BRINE:
 	endanimation
 
 BrineCall:
-	launchtemplate BRINE_WATER 0x82 0x4 0xffec 0x0 0xfff6 0x1
+	launchtemplate BRINE_WATER TEMPLATE_TARGET | 2, 0x4, 0xffec 0x0 0xfff6 0x0
 	pause 0x2
-	launchtemplate BRINE_WATER 0x82 0x4 0x1c 0x0 0xa 0x1
+	launchtemplate BRINE_WATER TEMPLATE_TARGET | 2, 0x4, 0x1c 0x0 0xa 0x0
 	pause 0x2
-	launchtemplate BRINE_WATER 0x82 0x4 0xfff6 0x0 0xfffb 0x1
+	launchtemplate BRINE_WATER TEMPLATE_TARGET | 2, 0x4, 0xfff6 0x0 0xfffb 0x0
 	pause 0x2
-	launchtemplate BRINE_WATER 0x82 0x4 0xa 0x0 0x6 0x1
+	launchtemplate BRINE_WATER TEMPLATE_TARGET | 2, 0x4, 0xa 0x0 0x6 0x0
 	pause 0x2
-	launchtemplate BRINE_WATER 0x82 0x4 0x18 0x0 0xa 0x1
+	launchtemplate BRINE_WATER TEMPLATE_TARGET | 2, 0x4, 0x18 0x0 0xa 0x0
 	pause 0x2
-	launchtemplate BRINE_WATER 0x82 0x4 0xffe0 0x0 0xfff6 0x1
+	launchtemplate BRINE_WATER TEMPLATE_TARGET | 2, 0x4, 0xffe0 0x0 0xfff6 0x0
 	pause 0x2
-	launchtemplate BRINE_WATER 0x82 0x4 0xffec 0x0 0xfff6 0x1
+	launchtemplate BRINE_WATER TEMPLATE_TARGET | 2, 0x4, 0xffec 0x0 0xfff6 0x0
 	pause 0x2
-	launchtemplate BRINE_WATER 0x82 0x4 0x1e 0x0 0xa 0x1
+	launchtemplate BRINE_WATER TEMPLATE_TARGET | 2, 0x4, 0x1e 0x0 0xa 0x0
 	pause 0x2
 	return
 
 .align 2
-BRINE_WATER: objtemplate ANIM_TAG_BRINE ANIM_TAG_BRINE 0x83AC9D8 0x83E73A8 0x0 0x8231CFC 0x80B4635
+BRINE_WATER: objtemplate ANIM_TAG_BRINE ANIM_TAG_BRINE OAM_OFF_32x32 0x83E73A8 0x0 0x8231CFC 0x80B4635
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -5158,7 +5212,7 @@ ANIM_FAIRYWIND:
 	endanimation
 
 .align 2
-FAIRY_WIND: objtemplate ANIM_TAG_PINK_CLOUD ANIM_TAG_PINK_CLOUD 0x83ACA38 0x8231CF0 0x0 0x83E2C78 0x80A2B9D
+FAIRY_WIND: objtemplate ANIM_TAG_PINK_CLOUD ANIM_TAG_PINK_CLOUD OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E2C78 0x80A2B9D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -5257,7 +5311,7 @@ ANIM_MOONBLAST:
 	launchsoundtask 0x80DCF39 0x7 0xC1 0xFFC0 0x3F 0x3 0x4 0x0 0xF
 	pause 0xF
 	launchsoundtask 0x80DCF39 0x7 0xA1 0xFFC0 0x3F 0x5 0x5 0x0 0x5
-	launchtemplate MOON_BLAST 0x82 0x3 0x0 0x0 0x40
+	launchtemplate MOON_BLAST TEMPLATE_TARGET | 2, 0x3, 0x0 0x0 0x40
 	pause 0x30
 	launchtask 0x80A5FC1 0x2 0x0
 	waitanimation
@@ -5265,7 +5319,7 @@ ANIM_MOONBLAST:
 	endanimation
 
 .align 2
-MOON_BLAST: objtemplate ANIM_TAG_FLASH_CANNON_BALL ANIM_TAG_FLASH_CANNON_BALL 0x83ACA38 0x8231CF0 0x0 0x83E7604 0x80B563D
+MOON_BLAST: objtemplate ANIM_TAG_FLASH_CANNON_BALL ANIM_TAG_FLASH_CANNON_BALL OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E7604 0x80B563D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -5346,7 +5400,7 @@ ANIM_STEALTHROCK:
 	endanimation
 
 .align 2
-STEALTH_ROCKS: objtemplate ANIM_TAG_STEALTH_ROCK ANIM_TAG_STEALTH_ROCK 0x83AC9D0 0x83E2B2C 0x0 0x8231CFC 0x80A26F1
+STEALTH_ROCKS: objtemplate ANIM_TAG_STEALTH_ROCK ANIM_TAG_STEALTH_ROCK OAM_OFF_16x16 0x83E2B2C 0x0 0x8231CFC 0x80A26F1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -5372,7 +5426,7 @@ ANIM_TOXICSPIKES:
 	endanimation
 
 .align 2
-TSPIKES: objtemplate ANIM_TAG_SPIKES ANIM_TAG_SHADOW_BALL 0x83AC9D0 0x8231CF0 0x0 0x8231CFC 0x80DE8B1
+TSPIKES: objtemplate ANIM_TAG_SPIKES ANIM_TAG_SHADOW_BALL OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC 0x80DE8B1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -5408,7 +5462,7 @@ ANIM_LUNARDANCE:
 	resetblends
 	endanimation
 
-LUNAR_DANCE_RINGS: objtemplate ANIM_TAG_GUARD_RING ANIM_TAG_SMALL_EMBER 0x83ACBE0 0x8231CF0 0x0 0x83E44D4 0x80AAAE5
+LUNAR_DANCE_RINGS: objtemplate ANIM_TAG_GUARD_RING ANIM_TAG_SMALL_EMBER OAM_DOUBLE_BLEND_64x32 0x8231CF0 0x0 0x83E44D4 0x80AAAE5
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -5477,8 +5531,8 @@ BOOMBURST_BLAST:
 	return
 
 .align 2
-BOOMBURST_REDRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_JAGGED_MUSIC_NOTE 0x83ACBC0 0x8231CF0 0x0 0x83E4090 0x80A8CA5
-BOOMBURST_EXPLOSION: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_EXPLOSION 0x83AC9D8 0x83E3F90 0x0 0x8231CFC SpriteCB_SpriteToCentreOfSide
+BOOMBURST_REDRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_JAGGED_MUSIC_NOTE OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E4090 0x80A8CA5
+BOOMBURST_EXPLOSION: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_EXPLOSION OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC SpriteCB_SpriteToCentreOfSide
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -5507,7 +5561,7 @@ ANIM_INCINERATE:
 	endanimation
 
 .align 2
-INCINERATE_FLAME: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_SMALL_EMBER 0x83ACA98 0x83E7764 0x0 0x83E779C 0x80B4495
+INCINERATE_FLAME: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_SMALL_EMBER OAM_DOUBLE_32x32 0x83E7764 0x0 0x83E779C 0x80B4495
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -5525,11 +5579,11 @@ ANIM_WORRYSEED:
 	pause 0xc
 	soundcomplex 0xa0 0x3f 0xa 0x8
 	waitanimation
-	launchtemplate 0x83e3f04 0x82 0x3 0x1 0xffec 0xffe4
+	launchtemplate 0x83e3f04 TEMPLATE_TARGET | 2, 0x3, 0x1 0xffec 0xffe4
 	playsound2 0xbb 0x3f
 	waitanimation
 	pause 0xc
-	launchtemplate 0x83e3f04 0x82 0x3 0x1 0x14 0xffe4
+	launchtemplate 0x83e3f04 TEMPLATE_TARGET | 2, 0x3, 0x1 0x14 0xffe4
 	playsound2 0xbb 0x3f
 	endanimation
 
@@ -5539,16 +5593,16 @@ ANIM_GASTROACID:
 	loadparticle ANIM_TAG_POISON_BUBBLE
 	loadparticle ANIM_TAG_RAZOR_LEAF
 	pokespritetoBG side_target
-	launchtemplate GREENACID 0x82 0x4 0xfffb 0x1 0xfffb 0x1
+	launchtemplate GREENACID TEMPLATE_TARGET | 2, 0x4, 0xfffb 0x1 0xfffb 0x0
 	playsound2 0x77 0x3f
 	pause 0x2
-	launchtemplate GREENACID 0x82 0x4 0x5 0x0 0x6 0x1
+	launchtemplate GREENACID TEMPLATE_TARGET | 2, 0x4, 0x5 0x0 0x6 0x0
 	playsound2 0x77 0x3f
 	pause 0x2
-	launchtemplate GREENACID 0x82 0x4 0x13 0x1 0xa 0x1
+	launchtemplate GREENACID TEMPLATE_TARGET | 2, 0x4, 0x13 0x1 0xa 0x0
 	playsound2 0x77 0x3f
 	pause 0x2
-	launchtemplate GREENACID 0x82 0x4 0xffe9 0x2 0xfff6 0x1
+	launchtemplate GREENACID TEMPLATE_TARGET | 2, 0x4, 0xffe9 0x2 0xfff6 0x0
 	playsound2 0x77 0x3f
 	pause 0x2
 	call GastroAcidCall
@@ -5558,34 +5612,34 @@ ANIM_GASTROACID:
 	endanimation
 
 GastroAcidCall:
-	launchtemplate GREENACID 0x82 0x4 0xffec 0x0 0xfff6 0x1
+	launchtemplate GREENACID TEMPLATE_TARGET | 2, 0x4, 0xffec 0x0 0xfff6 0x0
 	playsound2 0x77 0x3f
 	pause 0x2
-	launchtemplate GREENACID 0x82 0x4 0x1c 0x1 0xa 0x1
+	launchtemplate GREENACID TEMPLATE_TARGET | 2, 0x4, 0x1c 0x1 0xa 0x0
 	playsound2 0x77 0x3f
 	pause 0x2
-	launchtemplate GREENACID 0x82 0x4 0xfff6 0x1 0xfffb 0x1
+	launchtemplate GREENACID TEMPLATE_TARGET | 2, 0x4, 0xfff6 0x1 0xfffb 0x0
 	playsound2 0x77 0x3f
 	pause 0x2
-	launchtemplate GREENACID 0x82 0x4 0xa 0x0 0x6 0x1
+	launchtemplate GREENACID TEMPLATE_TARGET | 2, 0x4, 0xa 0x0 0x6 0x0
 	playsound2 0x77 0x3f
 	pause 0x2
-	launchtemplate GREENACID 0x82 0x4 0x18 0x1 0xa 0x1
+	launchtemplate GREENACID TEMPLATE_TARGET | 2, 0x4, 0x18 0x1 0xa 0x0
 	playsound2 0x77 0x3f
 	pause 0x2
-	launchtemplate GREENACID 0x82 0x4 0xffe0 0x2 0xfff6 0x1
+	launchtemplate GREENACID TEMPLATE_TARGET | 2, 0x4, 0xffe0 0x2 0xfff6 0x0
 	playsound2 0x77 0x3f
 	pause 0x2
-	launchtemplate GREENACID 0x82 0x4 0xffec 0x0 0xfff6 0x1
+	launchtemplate GREENACID TEMPLATE_TARGET | 2, 0x4, 0xffec 0x0 0xfff6 0x0
 	playsound2 0x77 0x3f
 	pause 0x2
-	launchtemplate GREENACID 0x82 0x4 0x1e 0x2 0xa 0x1
+	launchtemplate GREENACID TEMPLATE_TARGET | 2, 0x4, 0x1e 0x2 0xa 0x0
 	playsound2 0x77 0x3f
 	pause 0x2
 	return
 
 .align 2
-GREENACID: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_RAZOR_LEAF 0x83ACA90 0x83E69DC 0x0 0x8231CFC 0x80B4635
+GREENACID: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_RAZOR_LEAF OAM_DOUBLE_16x16 0x83E69DC 0x0 0x8231CFC 0x80B4635
 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -5604,7 +5658,7 @@ ANIM_GEOMANCY:
 
 GEOMANCY_CHARGE_ANIM:
 	loadparticle ANIM_TAG_FOCUS_ENERGY @endure buff effect
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0xC 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xC 0x0
 	waitanimation
 	playsound2 0xEC 0xC0
 	launchtask AnimTask_move_bank 0x5 0x5 bank_attacker 0x0 0x2 0x5f 0x1
@@ -5615,7 +5669,7 @@ GEOMANCY_CHARGE_ANIM:
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ATK 0x2 0x0 0x5 0x7C60
 	call BUFFEFFECT
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x8 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x8 0x0 0x0
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ATK 0x2 0x5 0x0 0x7C60
 	waitanimation
 	resetblends
@@ -5672,7 +5726,7 @@ BUFFEFFECT:
 
 GEOMANCY_ATTACK_ANIM:
 	loadparticle ANIM_TAG_FIRE_PLUME @dragon rage
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x2 0x0 0x10 0x24CF
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x10 0x24CF
 	playsound2 0xDA 0xC0
 	launchtemplate 0x83E44DC 0x2 0x0
 	pause 0x1
@@ -5687,7 +5741,7 @@ GEOMANCY_ATTACK_ANIM:
 	launchtemplate 0x83E44DC 0x2 0x0
 	waitanimation
 	playsound2 0xA4 0xC0
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x2 0x10 0x10 0x4D01
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x10 0x10 0x4D01
 	launchtask AnimTask_move_bank 0x5 0x5 bank_attacker 0x0 0x2 0x25 0x1
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ATK 0x2 0x0 0x5 0x1F
 	launchtemplate REDCELLS2 0x2 0x5 0x14 0x20 0xffd0 0x32 0x1
@@ -5699,7 +5753,7 @@ GEOMANCY_ATTACK_ANIM:
 	call BUFFEFFECTATTACK
 	call BUFFEFFECTATTACK
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x2 0x10 0x0 0x4D01
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x10 0x0 0x4D01
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ATK 0x2 0x5 0x0 0x1F
 	waitanimation
 	resetblends
@@ -5711,28 +5765,28 @@ BUFFEFFECTATTACK:
 	pause 0x1
 	launchtemplate YELLOWRAGE 0xc2 0x3 0x0 0xfff6 0xfff1
 	pause 0x1
-	launchtemplate YELLOWRAGE 0x82 0x3 0x0 0x0 0x19
+	launchtemplate YELLOWRAGE TEMPLATE_TARGET | 2, 0x3, 0x0 0x0 0x19
 	pause 0x1
 	launchtemplate YELLOWRAGE 0xc2 0x3 0x0 0xf 0x5
 	pause 0x1
 	launchtemplate YELLOWRAGE 0xc2 0x3 0x0 0xffe7 0x0
 	pause 0x1
-	launchtemplate YELLOWRAGE 0x82 0x3 0x0 0x1e 0x1e
+	launchtemplate YELLOWRAGE TEMPLATE_TARGET | 2, 0x3, 0x0 0x1e 0x1e
 	pause 0x1
-	launchtemplate YELLOWRAGE 0x82 0x3 0x0 0xffe5 0x19
+	launchtemplate YELLOWRAGE TEMPLATE_TARGET | 2, 0x3, 0x0 0xffe5 0x19
 	pause 0x1
 	launchtemplate YELLOWRAGE 0xc2 0x3 0x0 0x0 0x8
 	pause 0x1
 	return
 
 .align 2
-YELLOWRAGE: objtemplate ANIM_TAG_FIRE_PLUME ANIM_TAG_PAW_PRINT 0x83AC9D8 0x83E77D4 0x0 0x8231CFC 0x80B73AD
-REDCELLS: objtemplate ANIM_TAG_ZYGARDE_HEXES ANIM_TAG_SMALL_EMBER 0x83AC9D0 0x83E2C00 0x0 0x8231CFC 0x80B477D
-GREENCELLS: objtemplate ANIM_TAG_ZYGARDE_HEXES ANIM_TAG_WHIP_HIT 0x83AC9D0 0x83E2C00 0x0 0x8231CFC 0x80B477D
-BLUECELLS: objtemplate ANIM_TAG_ZYGARDE_HEXES ANIM_TAG_SWEAT_BEAD 0x83AC9D0 0x83E2C00 0x0 0x8231CFC 0x80B477D
-REDCELLS2: objtemplate ANIM_TAG_ZYGARDE_HEXES ANIM_TAG_SMALL_EMBER 0x83AC9D0 0x83E2C00 0x0 0x8231CFC 0x80B4B8D
-GREENCELLS2: objtemplate ANIM_TAG_ZYGARDE_HEXES ANIM_TAG_WHIP_HIT 0x83AC9D0 0x83E2C00 0x0 0x8231CFC 0x80B4B8D
-BLUECELLS2: objtemplate ANIM_TAG_ZYGARDE_HEXES ANIM_TAG_SWEAT_BEAD 0x83AC9D0 0x83E2C00 0x0 0x8231CFC 0x80B4B8D
+YELLOWRAGE: objtemplate ANIM_TAG_FIRE_PLUME ANIM_TAG_PAW_PRINT OAM_OFF_32x32 0x83E77D4 0x0 0x8231CFC 0x80B73AD
+REDCELLS: objtemplate ANIM_TAG_ZYGARDE_HEXES ANIM_TAG_SMALL_EMBER OAM_OFF_16x16 0x83E2C00 0x0 0x8231CFC 0x80B477D
+GREENCELLS: objtemplate ANIM_TAG_ZYGARDE_HEXES ANIM_TAG_WHIP_HIT OAM_OFF_16x16 0x83E2C00 0x0 0x8231CFC 0x80B477D
+BLUECELLS: objtemplate ANIM_TAG_ZYGARDE_HEXES ANIM_TAG_SWEAT_BEAD OAM_OFF_16x16 0x83E2C00 0x0 0x8231CFC 0x80B477D
+REDCELLS2: objtemplate ANIM_TAG_ZYGARDE_HEXES ANIM_TAG_SMALL_EMBER OAM_OFF_16x16 0x83E2C00 0x0 0x8231CFC 0x80B4B8D
+GREENCELLS2: objtemplate ANIM_TAG_ZYGARDE_HEXES ANIM_TAG_WHIP_HIT OAM_OFF_16x16 0x83E2C00 0x0 0x8231CFC 0x80B4B8D
+BLUECELLS2: objtemplate ANIM_TAG_ZYGARDE_HEXES ANIM_TAG_SWEAT_BEAD OAM_OFF_16x16 0x83E2C00 0x0 0x8231CFC 0x80B4B8D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -5774,14 +5828,14 @@ ANIM_ROTOTILLER:
 	loadparticle ANIM_TAG_GREEN_SPARKLE
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x10 0x112C
 	waitanimation
-	launchtemplate 0x83e7ac4 0x1 0x3 0x0 0x0 0xb4
-	launchtemplate 0x83e7ac4 0x1 0x3 0x0 0x1 0xb4
+	launchtemplate Template_DigMound 0x1 0x3 0x0 0x0 0xb4
+	launchtemplate Template_DigMound 0x1 0x3 0x0 0x1 0xb4
 	launchtask 0x809907d 0x2 0x5 0x0 0x6 0x4 0x2 0x4
-	call 0x81ca90a
-	call 0x81ca90a
+	call GROUND_DIGGING
+	call GROUND_DIGGING
 	launchtask 0x809907d 0x2 0x5 0x0 0x6 0x4 0x2 0x4
-	call 0x81ca90a
-	call 0x81ca90a
+	call GROUND_DIGGING
+	call GROUND_DIGGING
 	waitanimation
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x10 0x0 0x112C
 	waitanimation
@@ -5801,7 +5855,7 @@ ANIM_SHIFTGEAR:
 	endanimation
 
 .align 2
-SHIFT_GEAR: objtemplate ANIM_TAG_GEAR ANIM_TAG_GEAR 0x83ACA38 0x8231CF0 0x0 0x83E7A24 0x80B0E81
+SHIFT_GEAR: objtemplate ANIM_TAG_GEAR ANIM_TAG_GEAR OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E7A24 SpriteCB_SpriteOnMonForDuration
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -5810,7 +5864,7 @@ ANIM_STICKYWEB:
 	loadparticle ANIM_TAG_SPIDER_WEB
 	loadparticle ANIM_TAG_WEB_THREAD
 	pokespritetoBG side_target
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x2 0x0 0x9 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x9 0x0
 	waitanimation
 	soundcomplex 0x7a 0xc0 0x9 0x6
 	call 0x81d1504
@@ -5833,7 +5887,7 @@ ANIM_STICKYWEB:
 	launchtemplate CENTRED_WEB 0x82 0x2 0xFFFF 0xFFF5
 	launchtemplate CENTRED_WEB 0x82 0x2 0xFFF5 10
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x2 0x9 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x9 0x0 0x0
 	waitanimation
 	pokespritefromBG side_target
 	endanimation
@@ -5881,7 +5935,7 @@ ANIM_ACUPRESSURE:
 	endanimation
 
 .align 2
-ACUPRESSURE_FINGER: objtemplate ANIM_TAG_ACUPRESSURE_FINGER ANIM_TAG_ACUPRESSURE_FINGER 0x83AC9D8 0x8231CF0 0x0 0x8231CFC 0x80B0D59
+ACUPRESSURE_FINGER: objtemplate ANIM_TAG_ACUPRESSURE_FINGER ANIM_TAG_ACUPRESSURE_FINGER OAM_OFF_32x32 0x8231CF0 0x0 0x8231CFC 0x80B0D59
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -5908,8 +5962,8 @@ ANIM_PUNISHMENT:
 	endanimation
 
 .align 2
-PUNISHMENT_BLADE: objtemplate ANIM_TAG_PUNISHMENT_BLADES ANIM_TAG_PUNISHMENT_BLADES 0x83ACA38 0x83FEDFC 0x0 0x8231CFC 0x80E4335
-PUNISHMENT_PURPLEHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_POISON_BUBBLE 0x83ACB58 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+PUNISHMENT_BLADE: objtemplate ANIM_TAG_PUNISHMENT_BLADES ANIM_TAG_PUNISHMENT_BLADES OAM_NORMAL_32x32 0x83FEDFC 0x0 0x8231CFC 0x80E4335
+PUNISHMENT_PURPLEHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_POISON_BUBBLE OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -5934,7 +5988,7 @@ ANIM_ASSURANCE:
 	endanimation
 
 .align 2
-PURPLEHAND: objtemplate ANIM_TAG_ASSURANCE_HAND ANIM_TAG_ASSURANCE_HAND 0x83ACA38 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+PURPLEHAND: objtemplate ANIM_TAG_ASSURANCE_HAND ANIM_TAG_ASSURANCE_HAND OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -5942,8 +5996,7 @@ ANIM_DRAGONRUSH:
 	loadparticle ANIM_TAG_ROUND_SHADOW
 	loadparticle ANIM_TAG_ROCKS
 	loadparticle ANIM_TAG_IMPACT
-	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_ROUND_SHADOW 0x2 0x0 0xD 0x5CAE @;Purple
-	waitanimation
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_ROUND_SHADOW 0x2 0xD 0xD 0x5CAE @;Purple
 	playsound2 0x97 0xc0
 	launchtemplate 0x83E6BB8 0x2 0x4 0x0 0x0 0xd 0x150 @Fly up
 	waitanimation
@@ -5955,7 +6008,7 @@ ANIM_DRAGONRUSH:
 	launchtemplate 0x83E6CFC 0x83 0x0 @Bounce down
 	pause 0x7
 	playsound2 0x86 0x3f
-	launchtemplate Template_Hit 0x82 0x4 0x0 0x0 0x1 0x0
+	launchtemplate Template_Hit TEMPLATE_TARGET | 2, 0x4, 0x0 0x0 0x1 0x0
 	launchtask AnimTask_move_bank 0x5 0x5 bank_target 0x0 0x5 0xb 0x1
 	call TAIL_WHACK_DOWN @seismic toss
 	waitanimation
@@ -5994,8 +6047,8 @@ ANIM_DARKVOID:
 	endanimation
 
 .align 2
-BLACKHOLE: objtemplate ANIM_TAG_WHITE_SHADOW ANIM_TAG_QUICK_GUARD_HAND 0x83ACB20 0x8231CF0 0x0 0x8231CFC 0x80B5EC1
-PURPLESTARS: objtemplate ANIM_TAG_SPARKLE_2 ANIM_TAG_POISON_BUBBLE 0x83AC9D8 0x83E33F0 0x0 0x8231CFC 0x80A4D0D
+BLACKHOLE: objtemplate ANIM_TAG_WHITE_SHADOW ANIM_TAG_QUICK_GUARD_HAND OAM_OFF_BLEND_64x32 0x8231CF0 0x0 0x8231CFC 0x80B5EC1
+PURPLESTARS: objtemplate ANIM_TAG_SPARKLE_2 ANIM_TAG_POISON_BUBBLE OAM_OFF_32x32 0x83E33F0 0x0 0x8231CFC 0x80A4D0D
 
 @ hook at 0xB60BC via r0
 .align 2
@@ -6036,7 +6089,7 @@ ANIM_FEINT:
 	endanimation
 
 .align 2
-FEINT_FIST: objtemplate ANIM_TAG_HANDS_AND_FEET ANIM_TAG_HANDS_AND_FEET 0x83AC9D8 0x83E66CC 0x0 0x8231CFC 0x80A4D0D
+FEINT_FIST: objtemplate ANIM_TAG_HANDS_AND_FEET ANIM_TAG_HANDS_AND_FEET OAM_OFF_32x32 0x83E66CC 0x0 0x8231CFC 0x80A4D0D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -6076,13 +6129,13 @@ PHANTOM_FORCE_ATTACK:
 	setblends 0x80c
 	soundcomplex 0x86 0xc0 0x1 0x5
 	pause 0x10
-	launchtemplate SHADOWFORCE_PURPLEHIT 0x82 0x3 0xfff6 0xfff6 0x0
+	launchtemplate SHADOWFORCE_PURPLEHIT TEMPLATE_TARGET | 2, 0x3, 0xfff6 0xfff6 0x0
 	call SHADOWSNEAK_MOVE
-	launchtemplate SHADOWFORCE_PURPLEHIT 0x82 0x3 0xa 0x14 0x0
+	launchtemplate SHADOWFORCE_PURPLEHIT TEMPLATE_TARGET | 2, 0x3, 0xa 0x14 0x0
 	call SHADOWSNEAK_MOVE
-	launchtemplate SHADOWFORCE_PURPLEHIT 0x82 0x3 0xfffb 0xa 0x0
+	launchtemplate SHADOWFORCE_PURPLEHIT TEMPLATE_TARGET | 2, 0x3, 0xfffb 0xa 0x0
 	call SHADOWSNEAK_MOVE
-	launchtemplate SHADOWFORCE_PURPLEHIT 0x82 0x3 0x11 0xfff4 0x0
+	launchtemplate SHADOWFORCE_PURPLEHIT TEMPLATE_TARGET | 2, 0x3, 0x11 0xfff4 0x0
 	call SHADOWSNEAK_MOVE
 	pause 0x10
 	makebankvisible 0x0
@@ -6142,7 +6195,7 @@ ANIM_PETALBLIZZARD:
 	endanimation
 
 .align 2
-PETALBLIZZARD_OBJ: objtemplate ANIM_TAG_FLOWER ANIM_TAG_FLOWER 0x83AC9D0 PB_OBJPTR_1 0x0 0x8231cfc 0x80a2d11
+PETALBLIZZARD_OBJ: objtemplate ANIM_TAG_FLOWER ANIM_TAG_FLOWER OAM_OFF_16x16 PB_OBJPTR_1 0x0 0x8231cfc 0x80a2d11
 PETALBLIZZARD_OBJ_2: objtemplate ANIM_TAG_FLOWER ANIM_TAG_FLOWER PB_OBJPTR_2 PB_OBJPTR_3 0x0 0x8231cfc 0x80a2d11
 
 .align 2
@@ -6168,7 +6221,7 @@ ANIM_ROAROFTIME:
 	loadparticle ANIM_TAG_ORBS
 	loadparticle ANIM_TAG_EXPLOSION
 	loadparticle ANIM_TAG_WATER_GUN
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0x10 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x10 0x0
 	pause 0x20
 	pokespritetoBG side_attacker
 	setblends 0x80c
@@ -6177,9 +6230,9 @@ ANIM_ROAROFTIME:
 	waitanimation
 	pokespritefromBG side_attacker
 	resetblends
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x10 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x10 0x0 0x0
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0x10 0xffff
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x10 0xffff
 	launchtask AnimTask_play_growling_cry 0x2 0x2 bank_attacker 0xff
 	pause 0x20
 	launchtask AnimTask_ShakeMonInPlace 0x2 0x5 0x1 0xa 0x0 0x14 0x1
@@ -6201,12 +6254,12 @@ ANIM_ROAROFTIME:
 	playsound2 0xAA 0x3f
 	launchtemplate ROAROFTIME_BLUEBOMB 0x3 0x4 0xffe8 0x18 0x1 0x1
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x10 0x0 0xffff
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x10 0x0 0xffff
 	waitanimation
 	endanimation
 
 .align 2
-ROAROFTIME_BLUEBOMB: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_WATER_GUN 0x83AC9D8 0x83E3F90 0x0 0x8231CFC 0x8075D9D
+ROAROFTIME_BLUEBOMB: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_WATER_GUN OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC 0x8075D9D
 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -6216,7 +6269,7 @@ ANIM_SPACIALRENDANIMATION:
 	loadparticle ANIM_TAG_BERRY_EATEN @Pink Palette
 	pokespritetoBG side_target
 	setblends 0x80c
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0x10 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x10 0x0
 
 	soundcomplex 0x85 0xc0 0xd 0x2
 	launchtemplate TWISTYS 0x3 0x4 0x0 0x0 0x38 0x0
@@ -6244,14 +6297,14 @@ ANIM_SPACIALRENDANIMATION:
 	waitanimation
 	loaddefaultBG
 	waitfortransparentBG
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x0 0x0
 	pokespritefromBG side_target
 	resetblends
 	endanimation
 
 .align 2
-TWISTYS: objtemplate ANIM_TAG_PUNISHMENT_BLADES ANIM_TAG_BERRY_EATEN 0x83AC9D8 0x83E5D48 0x0 0x8231CFC 0x80ACDE9
-TWISTYS2: objtemplate ANIM_TAG_PUNISHMENT_BLADES ANIM_TAG_BERRY_EATEN 0x83AC9D8 0x83E5BD8 0x0 0x8231CFC 0x80AC94D
+TWISTYS: objtemplate ANIM_TAG_PUNISHMENT_BLADES ANIM_TAG_BERRY_EATEN OAM_OFF_32x32 0x83E5D48 0x0 0x8231CFC 0x80ACDE9
+TWISTYS2: objtemplate ANIM_TAG_PUNISHMENT_BLADES ANIM_TAG_BERRY_EATEN OAM_OFF_32x32 0x83E5BD8 0x0 0x8231CFC 0x80AC94D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -6273,12 +6326,12 @@ ANIM_MAGMASTORM:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 ANIM_FINALGAMBIT:
 	loadparticle ANIM_TAG_PINK_CLOUD @yawn animation
 	loadparticle ANIM_TAG_WATER_IMPACT @blue colour
 	loadparticle ANIM_TAG_EXPLOSION @explosion animation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0xC 0x0 @Darken
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xC 0x0 @Darken
 	waitanimation
 	launchtask AnimTask_move_bank_2 0x2 0x5 0x0 0x1 0x0 0xa 0x1
 	launchtask AnimTask_pal_fade_complex 0x2 0x6 PAL_ATK 0x0 0x2 0x0 0x8 0x7fff
@@ -6297,13 +6350,13 @@ ANIM_FINALGAMBIT:
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x3 0xf 0x1
 	waitanimation
 	pokespritefromBG bank_target
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0xC 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xC 0x0 0x0
 	waitanimation
 	endanimation
 
 .align 2
-GAMBIT_BLUEYAWN: objtemplate ANIM_TAG_PINK_CLOUD ANIM_TAG_WATER_IMPACT 0x83ACA38 0x8231CF0 0x0 0x83E7604 0x80B563D
-GAMBIT_EXPLOSIONHIT: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_WATER_IMPACT 0x83AC9D8 0x83E3F90 0x0 0x8231CFC 0x8075D9D
+GAMBIT_BLUEYAWN: objtemplate ANIM_TAG_PINK_CLOUD ANIM_TAG_WATER_IMPACT OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E7604 0x80B563D
+GAMBIT_EXPLOSIONHIT: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_WATER_IMPACT OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC 0x8075D9D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -6341,13 +6394,13 @@ SHADOW_FORCE_ATTACK:
 	setblends 0x80c
 	soundcomplex 0x86 0xc0 0x1 0x5
 	pause 0x10
-	launchtemplate SHADOWFORCE_PURPLEHIT 0x82 0x3 0xfff6 0xfff6 0x0
+	launchtemplate SHADOWFORCE_PURPLEHIT TEMPLATE_TARGET | 2, 0x3, 0xfff6 0xfff6 0x0
 	call SHADOWSNEAK_MOVE
-	launchtemplate SHADOWFORCE_PURPLEHIT 0x82 0x3 0xa 0x14 0x0
+	launchtemplate SHADOWFORCE_PURPLEHIT TEMPLATE_TARGET | 2, 0x3, 0xa 0x14 0x0
 	call SHADOWSNEAK_MOVE
-	launchtemplate SHADOWFORCE_PURPLEHIT 0x82 0x3 0xfffb 0xa 0x0
+	launchtemplate SHADOWFORCE_PURPLEHIT TEMPLATE_TARGET | 2, 0x3, 0xfffb 0xa 0x0
 	call SHADOWSNEAK_MOVE
-	launchtemplate SHADOWFORCE_PURPLEHIT 0x82 0x3 0x11 0xfff4 0x0
+	launchtemplate SHADOWFORCE_PURPLEHIT TEMPLATE_TARGET | 2, 0x3, 0x11 0xfff4 0x0
 	call SHADOWSNEAK_MOVE
 	pause 0x10
 	makebankvisible 0x0
@@ -6359,7 +6412,7 @@ SHADOW_FORCE_ATTACK:
     goto SHADOW_FORCE_WAIT_END
 
 .align 2
-SHADOWFORCE_PURPLEHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_POISON_BUBBLE 0x83ACB58 0x8231CF0 0x0 0x83E63DC 0x80AF3B9
+SHADOWFORCE_PURPLEHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_POISON_BUBBLE OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E63DC 0x80AF3B9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -6391,17 +6444,17 @@ ANIM_RETALIATE:
 	pokespritetoBG side_target
 	setblends 0x809
 	launchtask 0x8077031 0x2 0x2 0x7128 0xa
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0x10 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x10 0x0
 	waitanimation
 	playsound2 0x79 0x3f
 	launchtemplate 0x83E3E48 0x2 0x1 0x0
 	launchtemplate 0x83E3E48 0x2 0x1 0x1
 	pause 0x38
 	playsound2 0x7f 0x3f
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x10 0x10 0x43D
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x10 0x10 0x43D
 	waitanimation
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x3 0xf 0x1
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x10 0x0 0x043D
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x10 0x0 0x043D
 	waitanimation
 	pokespritefromBG side_target
 	resetblends
@@ -6409,7 +6462,7 @@ ANIM_RETALIATE:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 ANIM_JUDGMENT:
 	loadparticle ANIM_TAG_HANDS_AND_FEET @black color
 	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT @charge animation
@@ -6417,11 +6470,13 @@ ANIM_JUDGMENT:
 	loadparticle ANIM_TAG_GUST @gray color
 	loadparticle ANIM_TAG_ORBS @recover particle
 	loadparticle ANIM_TAG_ELECTRICITY @discharge animation
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_GUST 0x0 0xE 0xE 0x0 @;Black
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_HANDS_AND_FEET 0x0 0xA 0xA 0x0 @;Black
 	pokespritetoBG bank_target
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0xE 0x7FFF
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xF 0x7FFF
 	waitanimation
-	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x5 0x32 0x1
-	launchtemplate BLACKCHARGE 0x2 0x1 0x1
+	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x3 83 0x1
+	launchtemplate BLACKCHARGE TEMPLATE_TARGET | 1, 0x1, bank_target
 	playsound2 0xb1 0x3f
 	call INWARDSPIKES
 	pause 0x5
@@ -6457,7 +6512,7 @@ ANIM_JUDGMENT:
 	pause 0x5
 	call OUTWARDSPIKES2
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0xE 0x0 0x7FFF
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xF 0x0 0x7FFF
 	waitanimation
 	pokespritefromBG bank_target
 	endanimation
@@ -6506,13 +6561,13 @@ INWARDSPIKES2:
 	return
 
 .align 2
-BLACKCHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_HANDS_AND_FEET 0x83ACB60 0x8231CF0 0x0 0x83E61C8 0x80AE71D
-GRAYOUTWARDSPIKES: objtemplate ANIM_TAG_GREEN_SPIKE ANIM_TAG_GUST 0x83ACA30 0x8231CF0 0x0 0x8231CFC 0x80A4299
-GRAYINWARD: objtemplate ANIM_TAG_ORBS ANIM_TAG_HANDS_AND_FEET 0x83ACB50 0x83E2A40 0x0 0x8231CFC 0x80A4299
+BLACKCHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_HANDS_AND_FEET OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 gSpriteAffineAnimTable_JudgmentBall 0x80AE71D
+GRAYOUTWARDSPIKES: objtemplate ANIM_TAG_GREEN_SPIKE ANIM_TAG_GUST OAM_NORMAL_16x16 0x8231CF0 0x0 0x8231CFC 0x80A4299
+GRAYINWARD: objtemplate ANIM_TAG_ORBS ANIM_TAG_HANDS_AND_FEET OAM_NORMAL_BLEND_16x16 0x83E2A40 0x0 0x8231CFC 0x80A4299
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 ANIM_FREEZEDRY:
 	pokespritetoBG side_target
 	loadparticle ANIM_TAG_ICE_CRYSTALS
@@ -6547,7 +6602,7 @@ ANIM_FREEZEDRY:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 ANIM_PSYSHOCK:
 	loadparticle ANIM_TAG_WATER_ORB @whirlpool animation
 	loadparticle ANIM_TAG_ICE_CRYSTALS @freeze chance animation
@@ -6583,36 +6638,36 @@ ANIM_PSYSHOCK:
 	launchtemplate PSYSHOCK_ROCKHITS 0x82 0x5 0x1 0x0 0x0 0xFFE0 0x10 @up
 	pause 0x1
 	playsound2 0x84 0x3f
-	launchtemplate PSYSHOCK_HITS2 0x82 0x3 0xfff6 0xfff6 0x0
+	launchtemplate PSYSHOCK_HITS2 TEMPLATE_TARGET | 2, 0x3, 0xfff6 0xfff6 0x0
 	launchtemplate PSYSHOCK_ROCKHITS 0x82 0x5 0x1 0x0 0x14 0x14 0x10 @lowerright
 	launchtemplate PSYSHOCK_ROCKHITS 0x82 0x5 0x1 0x0 0xFFE5 0x0 0x10 @left
 	pause 0x5
 	playsound2 0x84 0x3f
-	launchtemplate PSYSHOCK_HITS2 0x82 0x3 0xa 0x14 0x0
+	launchtemplate PSYSHOCK_HITS2 TEMPLATE_TARGET | 2, 0x3, 0xa 0x14 0x0
 	launchtemplate PSYSHOCK_ROCKHITS 0x82 0x5 0x1 0x0 0x16 0xFFEA 0x10 @upperright
 	pause 0x1
 	playsound2 0x84 0x3f
-	launchtemplate PSYSHOCK_HITS2 0x82 0x3 0xfffb 0xa 0x0
+	launchtemplate PSYSHOCK_HITS2 TEMPLATE_TARGET | 2, 0x3, 0xfffb 0xa 0x0
 	launchtemplate PSYSHOCK_ROCKHITS 0x82 0x5 0x1 0x0 0x0 0x1C 0x10 @down
 	launchtemplate PSYSHOCK_ROCKHITS 0x82 0x5 0x1 0x0 0xFFEE 0xFFEE 0x10 @upperleft
 	pause 0x5
 	playsound2 0x84 0x3f
-	launchtemplate PSYSHOCK_HITS2 0x82 0x3 0x11 0xfff4 0x0
+	launchtemplate PSYSHOCK_HITS2 TEMPLATE_TARGET | 2, 0x3, 0x11 0xfff4 0x0
 	launchtemplate PSYSHOCK_ROCKHITS 0x82 0x5 0x1 0x0 0x1E 0x0 0x10 @right
 	pause 0x1
 	launchtemplate PSYSHOCK_ROCKHITS 0x82 0x5 0x1 0x0 0xFFED 0x13 0x10 @downleft
 	pause 0x1
 	playsound2 0x84 0x3f
-	launchtemplate PSYSHOCK_HITS2 0x82 0x3 0xfff1 0xf 0x0
+	launchtemplate PSYSHOCK_HITS2 TEMPLATE_TARGET | 2, 0x3, 0xfff1 0xf 0x0
 	launchtemplate PSYSHOCK_ROCKHITS 0x82 0x5 0x1 0x0 0xFFE5 0x0 0x10 @left
 	launchtemplate PSYSHOCK_ROCKHITS 0x82 0x5 0x1 0x0 0x0 0xFFE0 0x10 @up
 	pause 0x1
 	playsound2 0x84 0x3f
-	launchtemplate PSYSHOCK_HITS2 0x82 0x3 0x0 0x0 0x0
+	launchtemplate PSYSHOCK_HITS2 TEMPLATE_TARGET | 2, 0x3, 0x0 0x0 0x0
 	launchtemplate PSYSHOCK_ROCKHITS 0x82 0x5 0x1 0x0 0xFFED 0x13 0x10 @downleft
 	pause 0x1
 	playsound2 0x84 0x3f
-	launchtemplate PSYSHOCK_HITS2 0x82 0x3 0x14 0x2 0x0
+	launchtemplate PSYSHOCK_HITS2 TEMPLATE_TARGET | 2, 0x3, 0x14 0x2 0x0
 	launchtemplate PSYSHOCK_ROCKHITS 0x82 0x5 0x1 0x0 0x1E 0x0 0x10 @right
 	waitanimation
 	resetblends
@@ -6621,13 +6676,13 @@ ANIM_PSYSHOCK:
 	endanimation
 
 .align 2
-PSYSHOCK_ROCKTRAP: objtemplate ANIM_TAG_FLAT_ROCK ANIM_TAG_FLAT_ROCK 0x83AC9D0 0x8231CF0 0x0 0x83E741C 0x80B477D
-PSYSHOCK_ROCKHITS: objtemplate ANIM_TAG_FLAT_ROCK ANIM_TAG_FLAT_ROCK 0x83AC9D0 0x8231CF0 0x0 0x8231CFC 0x80A4299
-PSYSHOCK_HITS2: objtemplate ANIM_TAG_IMPACT ANIM_TAG_FLAT_ROCK 0x83ACB58 0x8231CF0 0x0 0x83E63DC 0x80AF3B9
+PSYSHOCK_ROCKTRAP: objtemplate ANIM_TAG_FLAT_ROCK ANIM_TAG_FLAT_ROCK OAM_OFF_16x16 0x8231CF0 0x0 0x83E741C 0x80B477D
+PSYSHOCK_ROCKHITS: objtemplate ANIM_TAG_FLAT_ROCK ANIM_TAG_FLAT_ROCK OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC 0x80A4299
+PSYSHOCK_HITS2: objtemplate ANIM_TAG_IMPACT ANIM_TAG_FLAT_ROCK OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E63DC 0x80AF3B9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 ANIM_ROUND:
 	loadparticle ANIM_TAG_THIN_RING
 	loadparticle ANIM_TAG_MUSIC_NOTES
@@ -6635,31 +6690,31 @@ ANIM_ROUND:
 	launchtemplate 0x83E40F8 0x0 0x7 0x2d 0x0 0x0 0x0 0x0 0x0 0x1
 	launchtask 0x80A65E9 0x2 0x0
 	playsoundpanchange 0xA5 0xc0 0x3f 0x2 0x0
-	launchtemplate 0x83E3880 0x82 0x3 0x7 0x0 0xc
+	launchtemplate 0x83E3880 TEMPLATE_TARGET | 2, 0x3, 0x7 0x0 0xc
 	pause 0x5
-	launchtemplate 0x83E3880 0x82 0x3 0x6 0x1 0xc
+	launchtemplate 0x83E3880 TEMPLATE_TARGET | 2, 0x3, 0x6 0x1 0xc
 	pause 0x5
-	launchtemplate 0x83E3880 0x82 0x3 0x1 0x2 0xc
+	launchtemplate 0x83E3880 TEMPLATE_TARGET | 2, 0x3, 0x1 0x2 0xc
 	pause 0x5
-	launchtemplate 0x83E3880 0x82 0x3 0x2 0x3 0xc
+	launchtemplate 0x83E3880 TEMPLATE_TARGET | 2, 0x3, 0x2 0x3 0xc
 	pause 0x5
 	launchtemplate 0x83E40F8 0x0 0x7 0x2d 0x0 0x0 0x0 0x0 0x0 0x1
-	launchtemplate 0x83E3880 0x82 0x3 0x3 0x0 0xc
+	launchtemplate 0x83E3880 TEMPLATE_TARGET | 2, 0x3, 0x3 0x0 0xc
 	pause 0x4
-	launchtemplate 0x83E3880 0x82 0x3 0x2 0x1 0xc
+	launchtemplate 0x83E3880 TEMPLATE_TARGET | 2, 0x3, 0x2 0x1 0xc
 	pause 0x4
-	launchtemplate 0x83E3880 0x82 0x3 0x5 0x2 0xc
+	launchtemplate 0x83E3880 TEMPLATE_TARGET | 2, 0x3, 0x5 0x2 0xc
 	pause 0x4
-	launchtemplate 0x83E3880 0x82 0x3 0x6 0x3 0xc
+	launchtemplate 0x83E3880 TEMPLATE_TARGET | 2, 0x3, 0x6 0x3 0xc
 	pause 0x4
 	launchtemplate 0x83E40F8 0x0 0x7 0x2d 0x0 0x0 0x0 0x0 0x0 0x1
-	launchtemplate 0x83E3880 0x82 0x3 0x2 0x0 0xc
+	launchtemplate 0x83E3880 TEMPLATE_TARGET | 2, 0x3, 0x2 0x0 0xc
 	pause 0x4
-	launchtemplate 0x83E3880 0x82 0x3 0x2 0x1 0xc
+	launchtemplate 0x83E3880 TEMPLATE_TARGET | 2, 0x3, 0x2 0x1 0xc
 	pause 0x4
-	launchtemplate 0x83E3880 0x82 0x3 0x1 0x2 0xc
+	launchtemplate 0x83E3880 TEMPLATE_TARGET | 2, 0x3, 0x1 0x2 0xc
 	pause 0x4
-	launchtemplate 0x83E3880 0x82 0x3 0x5 0x3 0xc
+	launchtemplate 0x83E3880 TEMPLATE_TARGET | 2, 0x3, 0x5 0x3 0xc
 	pause 0x4
 	waitanimation
 	launchtask 0x80A66A1 0x2 0x0
@@ -6669,7 +6724,7 @@ ANIM_ROUND:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 ANIM_TAILSLAP:
 	loadparticle ANIM_TAG_IMPACT @Hit
 	loadparticle ANIM_TAG_AIR_WAVE_2 @Aeroblast
@@ -6694,7 +6749,7 @@ TAILSLAP_LEFT:
 	goto TAILSLAP_HIT
 
 .align 2
-TAILSLAP_TAIL: objtemplate ANIM_TAG_PUNISHMENT_BLADES ANIM_TAG_AIR_WAVE_2 0x83ACA38 0x83FEDFC 0x0 0x8231CFC 0x8075D9D
+TAILSLAP_TAIL: objtemplate ANIM_TAG_PUNISHMENT_BLADES ANIM_TAG_AIR_WAVE_2 OAM_NORMAL_32x32 0x83FEDFC 0x0 0x8231CFC 0x8075D9D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -6722,7 +6777,7 @@ ANIM_GEARGRIND:
 	endanimation
 
 .align 2
-GEARGRIND_GEAR: objtemplate ANIM_TAG_GEAR ANIM_TAG_GEAR 0x83ACA38 0x8231CF0 0x0 0x83E7604 0x80B7BD5
+GEARGRIND_GEAR: objtemplate ANIM_TAG_GEAR ANIM_TAG_GEAR OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E7604 0x80B7BD5
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -6745,7 +6800,7 @@ ANIM_NATURALGIFT:
 	endanimation
 
 .align 2
-GIFT_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_ANCHOR 0x83ACBC0 0x8231CF0 0x0 0x83E4088 0x80A8EE9
+GIFT_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_ANCHOR OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E4088 0x80A8EE9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -6758,7 +6813,7 @@ ANIM_CHIPAWAY:
 	launchtask 0x809907D 0x2 0x5 0x0 0x18 0x6 0x1 0x5
 	pause 0x4
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x5 0x0 0x6 0x1
-	launchtemplate Template_Hit 0x84 0x4 0x0 0x0 0x1 0x1
+	launchtemplate Template_Hit TEMPLATE_TARGET | 4, 0x4, 0x0 0x0 0x1 0x1
 	playsound2 0x74 0x3f
 	waitanimation
 	pokespritefromBG side_attacker
@@ -6790,7 +6845,7 @@ ANIM_HYPERSPACEHOLE:
 	loadparticle ANIM_TAG_WHITE_SHADOW @Destiny Bond
 	loadparticle ANIM_TAG_QUICK_GUARD_HAND @Black Colour
 	loadparticle ANIM_TAG_POISON_BUBBLE @Poison Colour
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0x10 0x7FFF
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x10 0x7FFF
 	waitanimation
 	playsound2 0xb7 0xc0
 	makebankinvisible bank_attacker
@@ -6811,13 +6866,13 @@ ANIM_HYPERSPACEHOLE:
 	makebankvisible bank_attacker
 	makebankinvisible bank_attacker
 	pause 0x5
-	launchtemplate HYPERSPACEHOLE_HITS 0x82 0x3 0xfff6 0xfff6 0x0
+	launchtemplate HYPERSPACEHOLE_HITS TEMPLATE_TARGET | 2, 0x3, 0xfff6 0xfff6 0x0
 	call HYPERSPACEHOLE_MOVE
-	launchtemplate HYPERSPACEHOLE_HITS 0x82 0x3 0xa 0x14 0x0
+	launchtemplate HYPERSPACEHOLE_HITS TEMPLATE_TARGET | 2, 0x3, 0xa 0x14 0x0
 	call HYPERSPACEHOLE_MOVE
-	launchtemplate HYPERSPACEHOLE_HITS 0x82 0x3 0xfffb 0xa 0x0
+	launchtemplate HYPERSPACEHOLE_HITS TEMPLATE_TARGET | 2, 0x3, 0xfffb 0xa 0x0
 	call HYPERSPACEHOLE_MOVE
-	launchtemplate HYPERSPACEHOLE_HITS 0x82 0x3 0x11 0xfff4 0x0
+	launchtemplate HYPERSPACEHOLE_HITS TEMPLATE_TARGET | 2, 0x3, 0x11 0xfff4 0x0
 	call HYPERSPACEHOLE_MOVE
 	waitanimation
 	makebankvisible bank_attacker
@@ -6829,7 +6884,7 @@ ANIM_HYPERSPACEHOLE:
 	makebankinvisible bank_attacker
 	pause 0x1
 	makebankvisible bank_attacker
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x10 0x0 0x7FFF
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x10 0x0 0x7FFF
 	waitanimation
 	endanimation
 
@@ -6840,7 +6895,7 @@ HYPERSPACEHOLE_MOVE:
 	return
 
 .align
-HYPERSPACEHOLE_HITS: objtemplate ANIM_TAG_IMPACT ANIM_TAG_POISON_BUBBLE 0x83ACB58 0x8231CF0 0x0 0x83E63DC 0x80AF3B9
+HYPERSPACEHOLE_HITS: objtemplate ANIM_TAG_IMPACT ANIM_TAG_POISON_BUBBLE OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E63DC 0x80AF3B9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -6882,9 +6937,9 @@ ANIM_GYROBALL:
 	endanimation
 
 .align 2
-GYRO_STEELBALL: objtemplate ANIM_TAG_WISP_ORB ANIM_TAG_GUST 0x83AC9D0 0x83E5EA4 0x0 0x8231CFC 0x80ACDE9
-GYRO_HITS: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_GUST 0x83ACBC0 0x8231CF0 0x0 0x83E4088 0x80A8EE9
-GYRO_CIRCLEHIT: objtemplate ANIM_TAG_YELLOW_BALL ANIM_TAG_GUST 0x83ACA90 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+GYRO_STEELBALL: objtemplate ANIM_TAG_WISP_ORB ANIM_TAG_GUST OAM_OFF_16x16 0x83E5EA4 0x0 0x8231CFC 0x80ACDE9
+GYRO_HITS: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_GUST OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E4088 0x80A8EE9
+GYRO_CIRCLEHIT: objtemplate ANIM_TAG_YELLOW_BALL ANIM_TAG_GUST OAM_DOUBLE_16x16 0x8231CF0 0x0 0x83E7BF8 0x80BA561
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -6893,7 +6948,7 @@ ANIM_HYPERSPACEFURY:
 	loadparticle ANIM_TAG_HOOPA_RING @Hoopa Ring
 	loadparticle ANIM_TAG_IMPACT
 	loadparticle ANIM_TAG_POISON_BUBBLE
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0xA 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xA 0x0
 	waitanimation
 	playsound2 0x72 0xC0
 	launchtemplate HYPERSPACEFURY_RING 0x3 0x4 0x0 0x0 0x38 0x0
@@ -6968,7 +7023,7 @@ ANIM_HYPERSPACEFURY:
 	makebankinvisible bank_attacker
 	pause 0x1
 	makebankvisible bank_attacker
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x0 0x0
 	endanimation
 
 HYPERSPACEFURY_RANDOMHIT:
@@ -6976,9 +7031,9 @@ HYPERSPACEFURY_RANDOMHIT:
 	return
 
 .align 2
-HYPERSPACEFURY_RING: objtemplate ANIM_TAG_HOOPA_RING ANIM_TAG_HOOPA_RING 0x83ACA38 0x8231CF0 0x0 0x83E7604 0x80ACDE9
-HYPERSPACEFURY_HAND: objtemplate ANIM_TAG_HOOPA_HAND ANIM_TAG_HOOPA_HAND 0x83ACA30 0x8231CF0 0x0 0x8231CFC 0x80A4299
-HYPERSPACEFURY_PURPLEHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_POISON_BUBBLE 0x83ACB58 0x8231CF0 0x0 0x83E7BF8 0x80BA631
+HYPERSPACEFURY_RING: objtemplate ANIM_TAG_HOOPA_RING ANIM_TAG_HOOPA_RING OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E7604 0x80ACDE9
+HYPERSPACEFURY_HAND: objtemplate ANIM_TAG_HOOPA_HAND ANIM_TAG_HOOPA_HAND OAM_NORMAL_16x16 0x8231CF0 0x0 0x8231CFC 0x80A4299
+HYPERSPACEFURY_PURPLEHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_POISON_BUBBLE OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA631
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -6992,17 +7047,17 @@ ANIM_ATTACKORDER:
 	waitanimation
 	stopmusic
 	pokespritetoBG bank_target
-	launchtemplate ORDER_HITS 0x82 0x3 0xfff6 0xfff6 0x0
+	launchtemplate ORDER_HITS TEMPLATE_TARGET | 2, 0x3, 0xfff6 0xfff6 0x0
 	call ATTACKORDER_MOVE
-	launchtemplate ORDER_HITS 0x82 0x3 0xa 0x14 0x0
+	launchtemplate ORDER_HITS TEMPLATE_TARGET | 2, 0x3, 0xa 0x14 0x0
 	call ATTACKORDER_MOVE
-	launchtemplate ORDER_HITS 0x82 0x3 0xfffb 0xa 0x0
+	launchtemplate ORDER_HITS TEMPLATE_TARGET | 2, 0x3, 0xfffb 0xa 0x0
 	call ATTACKORDER_MOVE
-	launchtemplate ORDER_HITS 0x82 0x3 0x11 0xfff4 0x0
+	launchtemplate ORDER_HITS TEMPLATE_TARGET | 2, 0x3, 0x11 0xfff4 0x0
 	call ATTACKORDER_MOVE
-	launchtemplate ORDER_HITS 0x82 0x3 0x0 0x7 0x0
+	launchtemplate ORDER_HITS TEMPLATE_TARGET | 2, 0x3, 0x0 0x7 0x0
 	call ATTACKORDER_MOVE
-	launchtemplate ORDER_HITS 0x82 0x3 0xfff4 0x5 0x0
+	launchtemplate ORDER_HITS TEMPLATE_TARGET | 2, 0x3, 0xfff4 0x5 0x0
 	call ATTACKORDER_MOVE
 	waitanimation
 	pokespritefromBG bank_target
@@ -7030,9 +7085,9 @@ ATTACKORDER_MOVE:
 	return
 
 .align 2
-ORDER_BEES: objtemplate ANIM_TAG_BEES ANIM_TAG_BEES 0x83AC9D0 0x83E2C00 0x0 0x8231CFC 0x80B477D
-ORDER_HITS: objtemplate ANIM_TAG_IMPACT ANIM_TAG_IMPACT 0x83ACB58 0x8231CF0 0x0 0x83E63DC 0x80AF3B9
-ORDER_REDRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_VERTICAL_HEX 0x83ACBC0 0x8231CF0 0x0 0x83E4090 0x8075D9D
+ORDER_BEES: objtemplate ANIM_TAG_BEES ANIM_TAG_BEES OAM_OFF_16x16 0x83E2C00 0x0 0x8231CFC 0x80B477D
+ORDER_HITS: objtemplate ANIM_TAG_IMPACT ANIM_TAG_IMPACT OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E63DC 0x80AF3B9
+ORDER_REDRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_VERTICAL_HEX OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E4090 0x8075D9D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -7096,11 +7151,11 @@ ANIM_CAPTIVATE:
 	endanimation
 
 .align 2
-BLUE_HEARTS: objtemplate ANIM_TAG_MAGENTA_HEART ANIM_TAG_BLUE_STAR 0x83AC9D0 0x8231CF0 0x0 0x8231CFC 0x80A9861
+BLUE_HEARTS: objtemplate ANIM_TAG_MAGENTA_HEART ANIM_TAG_BLUE_STAR OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC 0x80A9861
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 ANIM_DEFOG:
 	loadparticle ANIM_TAG_WHITE_FEATHER
 	playsound2 0xEF 0x0
@@ -7114,7 +7169,7 @@ ANIM_DEFOG:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 ANIM_ORIGINPULSE:
 	loadparticle ANIM_TAG_THIN_RING @uproar
 	loadparticle ANIM_TAG_WATER_ORB @blue color
@@ -7186,70 +7241,85 @@ ANIM_ORIGINPULSE:
 	endanimation
 
 .align 2
-ORIGINPULSE_BLUERINGS: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_WATER_ORB 0x83ACBC0 0x8231CF0 0x0 0x83E4088 0x80A8EE9
-ORIGINPULSE_BLUECIRCLES: objtemplate ANIM_TAG_ORBS ANIM_TAG_WATER_ORB 0x83ACB50 0x83E2A40 0x0 0x8231CFC 0x80B7449
-ORIGINPULSE_BLUEINWARD: objtemplate ANIM_TAG_ORBS ANIM_TAG_WATER_ORB 0x83ACB50 0x83E2A40 0x0 0x8231CFC 0x80A4299
-ORIGINPULSE_BLUEHITS: objtemplate ANIM_TAG_IMPACT ANIM_TAG_WATER_ORB 0x83ACB58 0x8231CF0 0x0 0x83E7BF8 0x80BA631
-ORIGINPULSE_BLUEHITS2: objtemplate ANIM_TAG_IMPACT ANIM_TAG_WATER_ORB 0x83ACB58 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+ORIGINPULSE_BLUERINGS: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_WATER_ORB OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E4088 0x80A8EE9
+ORIGINPULSE_BLUECIRCLES: objtemplate ANIM_TAG_ORBS ANIM_TAG_WATER_ORB OAM_NORMAL_BLEND_16x16 0x83E2A40 0x0 0x8231CFC 0x80B7449
+ORIGINPULSE_BLUEINWARD: objtemplate ANIM_TAG_ORBS ANIM_TAG_WATER_ORB OAM_NORMAL_BLEND_16x16 0x83E2A40 0x0 0x8231CFC 0x80A4299
+ORIGINPULSE_BLUEHITS: objtemplate ANIM_TAG_IMPACT ANIM_TAG_WATER_ORB OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA631
+ORIGINPULSE_BLUEHITS2: objtemplate ANIM_TAG_IMPACT ANIM_TAG_WATER_ORB OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
+@Credits to Skeli
 ANIM_PRECIPICEBLADES:
-	loadparticle ANIM_TAG_STEALTH_ROCK
+	loadparticle ANIM_TAG_LARGE_SPIKE
+	loadparticle ANIM_TAG_FIRE_PLUME
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_LARGE_SPIKE 0x0 0xA 0xA 0x159F @;Blood orange
+	pokespritetoBG side_target
+	leftbankBG_over_partnerBG bank_target
+	setblends 0x80c
 	loadBG1 0x15
 	waitforBG
 	launchtask 0x80b9801 0x5 0x3 0x1 0x5 0xffff
-	launchtask AnimTask_screen_shake 0x5 0x3 0x5 0xa 0x32
-	launchtask AnimTask_screen_shake 0x5 0x3 0x4 0xa 0x32
+	launchtask AnimTask_screen_shake 0x5 0x3 0x5 0xa 0x5
+	launchtask AnimTask_screen_shake 0x5 0x3 0x4 0xa 0x5
 	playsound2 0xe3 0x0
-	launchtemplate PRECIPICEBLADES_ROCKS 0x82 0x4 0xfffb 0x0 0xfffb 0x1
-	pause 0x2
-	launchtemplate PRECIPICEBLADES_ROCKS 0x82 0x4 0x5 0x0 0x6 0x1
-	pause 0x2
-	launchtemplate PRECIPICEBLADES_ROCKS 0x82 0x4 0x13 0x0 0xa 0x1
-	pause 0x2
-	launchtemplate PRECIPICEBLADES_ROCKS 0x82 0x4 0xffe9 0x0 0xfff6 0x1
-	pause 0x2
-	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x5 0x32 0x1
-	launchtask AnimTask_move_bank 0x2 0x5 target_partner 0x0 0x5 0x32 0x1
-	launchtemplate 0x83E7B3C 0x2 0x7 0x1 0x3 0x1 0x0 0xe 0x7fff 0xe
-	call PRECIPICEBLADES_CALL
-	launchtemplate 0x83E7B3C 0x2 0x7 0x1 0x3 0x1 0x0 0xe 0x7fff 0xe
-	call PRECIPICEBLADES_CALL
-	call PRECIPICEBLADES_CALL
-	call PRECIPICEBLADES_CALL
+	launchtask AnimTask_arg7_is_target_player 0x2 0x0
+	jumpifargmatches 0x7 bank_target PRECIPICE_BLADES_OPPONENT_ATTACK
+	
+PRECIPICE_BLADES_PLAYER_ATTACK:
+	launchtemplate PRECIPICE_SPIKE TEMPLATE_ATTACKER | 3, 0x5, bank_attacker, -45, 5, 145 0x0
+	pause 10
+	launchtemplate PRECIPICE_SPIKE TEMPLATE_ATTACKER | 3, 0x5, bank_attacker, 10, 7, 135 0x0
+	pause 10
+	launchtemplate PRECIPICE_SPIKE TEMPLATE_ATTACKER | 4, 0x5, bank_attacker, -30, 15, 125 0x0
+	pause 5
+	launchtemplate PRECIPICE_SPIKE TEMPLATE_ATTACKER | 5, 0x5, bank_attacker, -10, 17, 120 0x0
+
+PRECIPICE_BLADES_REJOIN:
+	pause 0x10
+	launchtemplate PRECIPICE_PLUME TEMPLATE_TARGET | 2, 0x3, -15, 18, bank_target
+	launchtemplate PRECIPICE_PLUME TEMPLATE_TARGET | 2, 0x3, -15, 18, target_partner
+	pause 0x20
+	launchtemplate PRECIPICE_PLUME TEMPLATE_TARGET | 2, 0x3, 15, 18, bank_target
+	launchtemplate PRECIPICE_PLUME TEMPLATE_TARGET | 2, 0x3, 15, 18, target_partner
+	pause 0x20
+	stopmusic
+	playsound2 0xCF 0x3f
+	launchtemplate LARGE_PRECIPICE_SPIKE TEMPLATE_TARGET | 2, 0x5, bank_target, 0, -25, 40, 0x0
+	launchtemplate LARGE_PRECIPICE_SPIKE TEMPLATE_TARGET | 2, 0x5, target_partner, 0, -25, 40, 0x0
+	pause 0x6
+	launchtemplate Template_SlideMonToOffset TEMPLATE_TARGET | 2, 0x5, bank_target, -20 0 0x6 0x1
+	launchtemplate Template_SlideMonToOffset TEMPLATE_TARGET | 2, 0x5, target_partner, -20 0 0x6 0x1
+	pause 0x22
+	launchtemplate Template_SlideMonToOriginalPos TEMPLATE_TARGET | 2, 0x3 bank_target 0x0 0x6
+	launchtemplate Template_SlideMonToOriginalPos TEMPLATE_TARGET | 2, 0x3 target_partner 0x0 0x6
 	waitanimation
 	call UNSET_SCROLLING_BG
+	pokespritefromBG side_target
+	resetblends
 	endanimation
 
-PRECIPICEBLADES_CALL:
-	launchtemplate PRECIPICEBLADES_ROCKS 0x82 0x4 0xffec 0x0 0xfff6 0x1
-	pause 0x2
-	launchtemplate PRECIPICEBLADES_ROCKS 0x82 0x4 0x1c 0x0 0xa 0x1
-	pause 0x2
-	launchtemplate PRECIPICEBLADES_ROCKS 0x82 0x4 0xfff6 0x0 0xfffb 0x1
-	pause 0x2
-	launchtemplate PRECIPICEBLADES_ROCKS 0x82 0x4 0xa 0x0 0x6 0x1
-	pause 0x2
-	launchtemplate PRECIPICEBLADES_ROCKS 0x82 0x4 0x18 0x0 0xa 0x1
-	pause 0x2
-	launchtemplate PRECIPICEBLADES_ROCKS 0x82 0x4 0xffe0 0x0 0xfff6 0x1
-	pause 0x2
-	launchtemplate PRECIPICEBLADES_ROCKS 0x82 0x4 0xffec 0x0 0xfff6 0x1
-	pause 0x2
-	launchtemplate PRECIPICEBLADES_ROCKS 0x82 0x4 0x1e 0x0 0xa 0x1
-	pause 0x2
-	return
+PRECIPICE_BLADES_OPPONENT_ATTACK:
+	launchtemplate PRECIPICE_SPIKE TEMPLATE_ATTACKER | 0x43, 0x5, bank_attacker, 35, -5, 145 0x0
+	pause 10
+	launchtemplate PRECIPICE_SPIKE TEMPLATE_ATTACKER | 0x43, 0x5, bank_attacker, -20, -7, 135 0x0
+	pause 10
+	launchtemplate PRECIPICE_SPIKE TEMPLATE_ATTACKER | 0x44, 0x5, bank_attacker, 20, -15, 125 0x0
+	pause 5
+	launchtemplate PRECIPICE_SPIKE TEMPLATE_ATTACKER | 0x45, 0x5, bank_attacker, 0, -17, 120 0x0
+	goto PRECIPICE_BLADES_REJOIN
 
 .align 2
-PRECIPICEBLADES_ROCKS: objtemplate ANIM_TAG_STEALTH_ROCK ANIM_TAG_STEALTH_ROCK 0x83AC9D0 0x83E2B2C 0x0 0x8231CFC 0x80B4635
+PRECIPICE_SPIKE: objtemplate ANIM_TAG_LARGE_SPIKE ANIM_TAG_LARGE_SPIKE OAM_OFF_32x64 gAnimCmdTable_LargeSpike 0x0 0x8231CFC SpriteCB_SpriteOnMonForDuration
+LARGE_PRECIPICE_SPIKE: objtemplate ANIM_TAG_LARGE_SPIKE ANIM_TAG_LARGE_SPIKE OAM_DOUBLE_32x64 gAnimCmdTable_LargeSpike 0x0 gSpriteAffineAnimTable_LargeHailRock SpriteCB_SpriteOnMonForDuration
+PRECIPICE_PLUME: objtemplate  ANIM_TAG_FIRE_PLUME ANIM_TAG_FIRE_PLUME OAM_OFF_32x32 0x83E77D4 0x0 0x8231CFC SpriteCB_AnimSpriteOnSelectedMonPos
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 ANIM_STEAMERUPTION:
 	loadparticle ANIM_TAG_STEAM_ERUPTION @Steam Eruption Particle
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0x7 0x043D
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x7 0x043D
 	pause 0x20
 	pokespritetoBG side_target
 	leftbankBG_over_partnerBG bank_target
@@ -7279,7 +7349,7 @@ ANIM_STEAMERUPTION:
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x1 0x9 0x0 0x1f
 	waitanimation
 	pokespritefromBG side_target
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x7 0x0 0x043D
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x7 0x0 0x043D
 	waitanimation
 	endanimation
 
@@ -7290,7 +7360,7 @@ BreatheFire:
 	return
 
 .align 2
-BREATHEHYDRO: objtemplate ANIM_TAG_STEAM_ERUPTION ANIM_TAG_STEAM_ERUPTION 0x83ACA98 0x83E7764 0x0 0x83E779C 0x80B741D
+BREATHEHYDRO: objtemplate ANIM_TAG_STEAM_ERUPTION ANIM_TAG_STEAM_ERUPTION OAM_DOUBLE_32x32 0x83E7764 0x0 0x83E779C 0x80B741D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -7342,8 +7412,8 @@ METALBURST_CALL2:
 	return
 
 .align 2
-METALBURST_STARS: objtemplate ANIM_TAG_SPARKLE_2 ANIM_TAG_FLASH_CANNON_BALL 0x83ac9d8 0x83e33f0 0x0 0x8231cfc 0x80a4d0d
-METALBURST_SPIKES: objtemplate ANIM_TAG_SPIKES ANIM_TAG_SPIKES 0x83ac9d0 0x8231cf0 0x0 0x8231cfc 0x80b725d
+METALBURST_STARS: objtemplate ANIM_TAG_SPARKLE_2 ANIM_TAG_FLASH_CANNON_BALL OAM_OFF_32x32 0x83e33f0 0x0 0x8231cfc 0x80a4d0d
+METALBURST_SPIKES: objtemplate ANIM_TAG_SPIKES ANIM_TAG_SPIKES OAM_OFF_16x16 0x8231cf0 0x0 0x8231cfc 0x80b725d
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -7367,7 +7437,7 @@ ANIM_POWERTRICK:
 	endanimation
 
 .align 2
-POWERTRICK: objtemplate ANIM_TAG_POWER_TRICK ANIM_TAG_POWER_TRICK 0x83AC9E0 0x8231CF0 0x0 0x83E7A24 0x80B0E81
+POWERTRICK: objtemplate ANIM_TAG_POWER_TRICK ANIM_TAG_POWER_TRICK OAM_OFF_64x64 0x8231CF0 0x0 0x83E7A24 SpriteCB_SpriteOnMonForDuration
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -7428,7 +7498,7 @@ WRINGOUT_CALL:
 	return
 
 .align 2
-WRINGOUT_HAND:	objtemplate ANIM_TAG_ASSURANCE_HAND ANIM_TAG_ACUPRESSURE_FINGER 0x83acb58 0x8231cf0 0x0 0x83e7bf8 0x80ba561
+WRINGOUT_HAND:	objtemplate ANIM_TAG_ASSURANCE_HAND ANIM_TAG_ACUPRESSURE_FINGER OAM_NORMAL_BLEND_32x32 0x8231cf0 0x0 0x83e7bf8 0x80ba561
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -7440,7 +7510,7 @@ ANIM_KINGSSHIELD:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 ANIM_PSYSTRIKE:
 	loadparticle ANIM_TAG_FLAT_ROCK @rocks
 	loadparticle ANIM_TAG_IMPACT @pound particles
@@ -7496,40 +7566,40 @@ PSYSTRIKE_Blast:
 
 PSYSTRIKE_DESTROY:
  	playsound2 0xAA 0x3f
-	launchtemplate PSYSHOCK_HITS2 0x82 0x4 0xfff6 0xfff6 0x1 0x1
+	launchtemplate PSYSHOCK_HITS2 TEMPLATE_TARGET | 2, 0x4, 0xfff6 0xfff6 0x1 0x1
 	launchtemplate PSYSTRIKE_ROCKHITS 0x82 0x5 0x1 0x0 0x14 0x14 0x10 @lowerright
 	launchtemplate PSYSTRIKE_ROCKHITS 0x82 0x5 0x1 0x0 0xFFE5 0x0 0x10 @left
 	pause 0x5
  	playsound2 0xAA 0x3f
-	launchtemplate PSYSHOCK_HITS2 0x82 0x4 0xa 0x14 0x1 0x1
+	launchtemplate PSYSHOCK_HITS2 TEMPLATE_TARGET | 2, 0x4, 0xa 0x14 0x1 0x1
 	launchtemplate PSYSTRIKE_ROCKHITS 0x82 0x5 0x1 0x0 0x16 0xFFEA 0x10 @upperright
 	pause 0x2
  	playsound2 0xAA 0x3f
-	launchtemplate PSYSHOCK_HITS2 0x82 0x4 0xfffb 0xa 0x1 0x1
+	launchtemplate PSYSHOCK_HITS2 TEMPLATE_TARGET | 2, 0x4, 0xfffb 0xa 0x1 0x1
 	launchtemplate PSYSTRIKE_ROCKHITS 0x82 0x5 0x1 0x0 0x0 0x1C 0x10 @down
 	launchtemplate PSYSTRIKE_ROCKHITS 0x82 0x5 0x1 0x0 0xFFEE 0xFFEE 0x10 @upperleft
 	pause 0x5
  	playsound2 0xAA 0x3f
-	launchtemplate PSYSHOCK_HITS2 0x82 0x4 0x11 0xfff4 0x1 0x1
+	launchtemplate PSYSHOCK_HITS2 TEMPLATE_TARGET | 2, 0x4, 0x11 0xfff4 0x1 0x1
 	launchtemplate PSYSTRIKE_ROCKHITS 0x82 0x5 0x1 0x0 0x1E 0x0 0x10 @right
 	pause 0x2
 	launchtemplate PSYSTRIKE_ROCKHITS 0x82 0x5 0x1 0x0 0xFFED 0x13 0x10 @downleft
 	pause 0x2
  	playsound2 0xAA 0x3f
-	launchtemplate PSYSHOCK_HITS2 0x82 0x4 0xfff1 0xf 0x1 0x1
+	launchtemplate PSYSHOCK_HITS2 TEMPLATE_TARGET | 2, 0x4, 0xfff1 0xf 0x1 0x1
 	launchtemplate PSYSTRIKE_ROCKHITS 0x82 0x5 0x1 0x0 0xFFE5 0x0 0x10 @left
 	launchtemplate PSYSTRIKE_ROCKHITS 0x82 0x5 0x1 0x0 0x0 0xFFE0 0x10 @up
 	pause 0x2
  	playsound2 0xAA 0x3f
-	launchtemplate PSYSHOCK_HITS2 0x82 0x4 0x0 0x0 0x1 0x1
+	launchtemplate PSYSHOCK_HITS2 TEMPLATE_TARGET | 2, 0x4, 0x0 0x0 0x1 0x1
 	launchtemplate PSYSTRIKE_ROCKHITS 0x82 0x5 0x1 0x0 0xFFED 0x13 0x10 @downleft
 	pause 0x1
 	return
 
 .align 2
-VIOLETMIND: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_POISON_BUBBLE 0x83ACBC0 0x8231CF0 0x0 0x83E40C4 0x8075D9D
-PSYSTRIKE_ROCKTRAP: objtemplate ANIM_TAG_FLAT_ROCK ANIM_TAG_FLAT_ROCK 0x83AC9D0 0x8231CF0 0x0 0x83E741C 0x80B477D
-PSYSTRIKE_ROCKHITS: objtemplate ANIM_TAG_FLAT_ROCK ANIM_TAG_FLAT_ROCK 0x83AC9D0 0x8231CF0 0x0 0x8231CFC 0x80A4299
+VIOLETMIND: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_POISON_BUBBLE OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E40C4 0x8075D9D
+PSYSTRIKE_ROCKTRAP: objtemplate ANIM_TAG_FLAT_ROCK ANIM_TAG_FLAT_ROCK OAM_OFF_16x16 0x8231CF0 0x0 0x83E741C 0x80B477D
+PSYSTRIKE_ROCKHITS: objtemplate ANIM_TAG_FLAT_ROCK ANIM_TAG_FLAT_ROCK OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC 0x80A4299
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -7559,18 +7629,18 @@ ANIM_AUTOTOMIZE:
 	endanimation
 
 .align 2
-METALBITS: objtemplate ANIM_TAG_METAL_BITS ANIM_TAG_METAL_BITS 0x83ACA30 0x8231CF0 0x0 0x83E7990 0x80B7C89
+METALBITS: objtemplate ANIM_TAG_METAL_BITS ANIM_TAG_METAL_BITS OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E7990 0x80B7C89
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 ANIM_DIAMONDSTORM:
 	loadparticle ANIM_TAG_IMPACT
 	loadparticle ANIM_TAG_ICE_CRYSTALS
 	pokespritetoBG side_target
 	leftbankBG_over_partnerBG bank_target
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0xF 0x1888
-	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_ICE_CRYSTALS 0x0 0x0 0xD 0x7DDE @;Pink
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xF 0x1888
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_ICE_CRYSTALS 0x0 0xD 0xD 0x7DDE @;Pink
 	waitanimation
 	playsoundpanchange 0x92 0xC0 0x3F 0x2 0x0
 	launchtemplate BLIZDIAMOND1 0x28 0x6 0x0 0xfff6 0x0 0xfff6 0x48 0x1
@@ -7631,16 +7701,16 @@ ANIM_DIAMONDSTORM:
 	launchtemplate Template_Hit 0x83 0x4 0x20 0x14 0x1 0x3
 	playsound2 0x82 0x3f
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0xF 0x0 0x1888
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xF 0x0 0x1888
 	waitanimation
 	pokespritefromBG side_target
 	resetblends
 	endanimation
 
 .align 2
-BLIZDIAMOND1: objtemplate ANIM_TAG_ICE_CRYSTALS ANIM_TAG_ICE_CRYSTALS 0x83AC9C8 0x83E6328 0x0 0x8231CFC 0x80AF469
-BLIZDIAMOND2: objtemplate ANIM_TAG_ICE_CRYSTALS ANIM_TAG_ICE_CRYSTALS 0x83AC9D0 0x83E632C 0x0 0x8231CFC 0x80AF6D9
-DIAMOND: objtemplate ANIM_TAG_ICE_CRYSTALS ANIM_TAG_ICE_CRYSTALS 0x83ACB88 0x83E6320 0x0 0x83E7540 0x80A2D11
+BLIZDIAMOND1: objtemplate ANIM_TAG_ICE_CRYSTALS ANIM_TAG_ICE_CRYSTALS OAM_OFF_8x8 0x83E6328 0x0 0x8231CFC 0x80AF469
+BLIZDIAMOND2: objtemplate ANIM_TAG_ICE_CRYSTALS ANIM_TAG_ICE_CRYSTALS OAM_OFF_16x16 0x83E632C 0x0 0x8231CFC 0x80AF6D9
+DIAMOND: objtemplate ANIM_TAG_ICE_CRYSTALS ANIM_TAG_ICE_CRYSTALS OAM_NORMAL_BLEND_8x16 0x83E6320 0x0 0x83E7540 0x80A2D11
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -7652,7 +7722,7 @@ ANIM_SLUDGEWAVE:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 ANIM_HEAVYSLAM:
 	loadparticle ANIM_TAG_ROUND_SHADOW @fly and bounce animation
 	loadparticle ANIM_TAG_GRAY_SMOKE @smoke
@@ -7665,40 +7735,39 @@ ANIM_HEAVYSLAM:
 	pause 0x2F
 	soundcomplex 0xCF 0x3f 0x8 0x2
 	launchtemplate HEAVYSLAM_METALHIT 0x83 0x0
-	pause 0x9
-	pokespritetoBG bank_target
+	pause 0x2
+	launchtask AnimTask_SquishTarget 0x2 0x0
+	pause 0x7
 	setblends 0xF
 	launchtask AnimTask_screen_shake 0x5 0x3 0x5 0xA 0x1
 	launchtask AnimTask_screen_shake 0x5 0x3 0x4 0xA 0x1
-	launchtask 0x80E12F9 0x2 0x1 0x1
-	launchtemplate 0x83E36A8 0x82 0x4 0x8 0x8 0x1 0x0
+	launchtemplate 0x83E36A8 TEMPLATE_TARGET 0x4 0x8 0x8 0x1 0x0
 	pause 0x2
-	launchtemplate 0x83E36A8 0x82 0x4 0xfff8 0xfff8 0x1 0x0
+	launchtemplate 0x83E36A8 TEMPLATE_TARGET 0x4 0xfff8 0xfff8 0x1 0x0
 	pause 0x2
-	launchtemplate 0x83E36A8 0x82 0x4 0x8 0xfff8 0x1 0x0
+	launchtemplate 0x83E36A8 TEMPLATE_TARGET 0x4 0x8 0xfff8 0x1 0x0
 	pause 0x2
-	launchtemplate 0x83E36A8 0x82 0x4 0xfff8 0x8 0x1 0x0
+	launchtemplate 0x83E36A8 TEMPLATE_TARGET 0x4 0xfff8 0x8 0x1 0x0
 	pause 0x2
-	launchtemplate 0x83E36A8 0x82 0x4 0x8 0x8 0x1 0x0
+	launchtemplate 0x83E36A8 TEMPLATE_TARGET 0x4 0x8 0x8 0x1 0x0
 	pause 0x2
-	launchtemplate 0x83E36A8 0x82 0x4 0xfff8 0xfff8 0x1 0x0
+	launchtemplate 0x83E36A8 TEMPLATE_TARGET 0x4 0xfff8 0xfff8 0x1 0x0
 	pause 0x2
-	launchtemplate 0x83E36A8 0x82 0x4 0x8 0xfff8 0x1 0x0
+	launchtemplate 0x83E36A8 TEMPLATE_TARGET 0x4 0x8 0xfff8 0x1 0x0
 	pause 0x2
-	launchtemplate 0x83E36A8 0x82 0x4 0xfff8 0x8 0x1 0x0
+	launchtemplate 0x83E36A8 TEMPLATE_TARGET 0x4 0xfff8 0x8 0x1 0x0
 	waitanimation
 	resetblends
-	pokespritefromBG bank_target
 	waitanimation
 	endanimation
 
 .align 2
-HEAVYSLAM_METALUP: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_GUST 0x83ACAA0 0x8231CF0 0x0 0x83E6B8C 0x80B1BB1
-HEAVYSLAM_METALHIT: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_GUST 0x83ACAA0 0x8231CF0 0x0 0x83E6CF8 0x80B2975
+HEAVYSLAM_METALUP: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_GUST OAM_DOUBLE_64x64 0x8231CF0 0x0 0x83E6B8C 0x80B1BB1
+HEAVYSLAM_METALHIT: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_GUST OAM_DOUBLE_64x64 0x8231CF0 0x0 0x83E6CF8 0x80B2975
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 ANIM_SYNCHRONOISE:
 	loadparticle ANIM_TAG_THIN_RING @hypervoice ring
 	loadparticle ANIM_TAG_SPARK_2 @yellow color
@@ -7708,7 +7777,7 @@ ANIM_SYNCHRONOISE:
 	loadparticle ANIM_TAG_AIR_WAVE_2 @aero particles
 	pokespritetoBG side_target
 	leftopponentbankBG_over_partnerBG 0x1
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0xC 0x0 @Darken
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xC 0x0 @Darken
 	waitanimation
 	playsoundpanchange 0xAE 0xC0 0x3F 0x2 0x0
 	launchtemplate SYNCHRONOISE_VIOLETRING 0x0 0x7 0x2d 0x0 0x0 0x0 0x0 0x0 0x1
@@ -7733,16 +7802,16 @@ ANIM_SYNCHRONOISE:
 	launchtemplate SYNCHRONOISE_AEROWHEEL 0x81 0x5 0x0 0xffef 0xff20 0xffe0 0x28
 	launchtemplate SYNCHRONOISE_AEROWHEEL 0x81 0x5 0x0 0xffef 0x70 0xff80 0x28
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0xC 0x0 0x0 @Darken
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xC 0x0 0x0 @Darken
 	waitanimation
 	pokespritefromBG side_target
 	endanimation
 
 .align 2
-SYNCHRONOISE_VIOLETRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_POISON_BUBBLE 0x83ACBC0 0x8231CF0 0x0 0x83E4090 0x80A8CA5
-SYNCHRONOISE_YELLOWRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_SPARK_2 0x83ACBC0 0x8231CF0 0x0 0x83E4090 0x80A8CA5
-SYNCHRONOISE_BLUERING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_WATER_ORB 0x83ACBC0 0x8231CF0 0x0 0x83E4090 0x80A8CA5
-SYNCHRONOISE_AEROWHEEL: objtemplate ANIM_TAG_AIR_WAVE_2 ANIM_TAG_AIR_WAVE_2 0x83AC9F8 0x83E6B48 0x0 0x8231CFC 0x80AC94D
+SYNCHRONOISE_VIOLETRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_POISON_BUBBLE OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E4090 0x80A8CA5
+SYNCHRONOISE_YELLOWRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_SPARK_2 OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E4090 0x80A8CA5
+SYNCHRONOISE_BLUERING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_WATER_ORB OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E4090 0x80A8CA5
+SYNCHRONOISE_AEROWHEEL: objtemplate ANIM_TAG_AIR_WAVE_2 ANIM_TAG_AIR_WAVE_2 OAM_OFF_32x16 0x83E6B48 0x0 0x8231CFC 0x80AC94D
 @need light black background and sounds
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -7766,7 +7835,7 @@ ANIM_ELECTROBALL:
 	soundcomplex 0xCE 0xC 0x6 0x5
 	waitanimation
 	loadparticle ANIM_TAG_FLASH_CANNON_BALL	@ball
-	launchtemplate ELECTRO_BALL 0x82 0x3 0x10 0x10 0x8
+	launchtemplate ELECTRO_BALL TEMPLATE_TARGET | 2, 0x3, 0x10 0x10 0x8
 	waitanimation
 	playsound2 0x98 0x3f
 	launchtask AnimTask_move_bank_2 0x2 0x5 0x1 0x4 0x0 0x8 0x1
@@ -7777,7 +7846,7 @@ ANIM_ELECTROBALL:
 	endanimation
 
 .align 2
-ELECTRO_BALL: objtemplate ANIM_TAG_FLASH_CANNON_BALL ANIM_TAG_CIRCLE_OF_LIGHT 0x83aca38 0x8231cf0 0x0 0x83e7604 0x80b563d
+ELECTRO_BALL: objtemplate ANIM_TAG_FLASH_CANNON_BALL ANIM_TAG_CIRCLE_OF_LIGHT OAM_NORMAL_32x32 0x8231cf0 0x0 0x83e7604 0x80b563d
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -7806,8 +7875,8 @@ ANIM_FOULPLAY:
 	endanimation
 
 .align 2
-FOUL_PLAY_HIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_HANDS_AND_FEET 0x83ACB58 0x8231CF0 0x0 0x83E7BF8 0x80BA561
-FOUL_PLAY_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_POISON_BUBBLE 0x83ACAA0 0x8231CF0 0x0 0x83E4088 0x8075D9D
+FOUL_PLAY_HIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_HANDS_AND_FEET OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+FOUL_PLAY_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_POISON_BUBBLE OAM_DOUBLE_64x64 0x8231CF0 0x0 0x83E4088 0x8075D9D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -7828,12 +7897,12 @@ ANIM_ENTRAINMENT:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 ANIM_NIGHTDAZE:
 	loadparticle ANIM_TAG_THIN_RING @uproar
 	loadparticle ANIM_TAG_PURPLE_FLAME @dark violet color
 	loadparticle ANIM_TAG_RED_ORB @circles
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0xC 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xC 0x0
 	waitanimation
 	playsound2 0x64 0xC0
 	launchtemplate DAZE_VIOLETRINGS 0x3 0x6 0x0 0x0 0x0 0x0 0x1F 0x8
@@ -7863,13 +7932,13 @@ ANIM_NIGHTDAZE:
 	waitanimation
 	launchtask AnimTask_pal_fade 0xA 0x5 PAL_DEF 0x2 0x9 0x0 0x2002
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0xC 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xC 0x0 0x0
 	waitanimation
 	endanimation
 
 .align 2
-DAZE_VIOLETRINGS: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_PURPLE_FLAME 0x83ACBC0 0x8231CF0 0x0 0x83E4088 0x80A8EE9
-DAZE_VIOLETCIRCLES: objtemplate ANIM_TAG_RED_ORB ANIM_TAG_PURPLE_FLAME 0x83ACA90 0x8231CF0 0x0 0x83E4278 0x80AA2B1
+DAZE_VIOLETRINGS: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_PURPLE_FLAME OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E4088 0x80A8EE9
+DAZE_VIOLETCIRCLES: objtemplate ANIM_TAG_RED_ORB ANIM_TAG_PURPLE_FLAME OAM_DOUBLE_16x16 0x8231CF0 0x0 0x83E4278 0x80AA2B1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -7895,12 +7964,12 @@ METALSOUND_PARTICLE_LOAD_AND_PLAY:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 ANIM_LANDSWRATH:
 	loadparticle ANIM_TAG_WATER_ORB @whirl motion
 	loadparticle ANIM_TAG_SPARK_2 @yellow color
 	pokespritetoBG bank_attacker
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0xE 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xE 0x0
 	waitanimation
 	call WHIRL
 	call WHIRL
@@ -7916,7 +7985,7 @@ ANIM_LANDSWRATH:
 	waitfortransparentBG
 	waitanimation
 	unsetscrollingBG
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x0 0x0
 	pokespritefromBG bank_attacker
 	endanimation
 WHIRL:
@@ -7936,7 +8005,7 @@ WHIRL:
 	return
 
 .align 2
-WHIRLPARTICLES: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_SPARK_2 0x83ACB50 0x83E5958 0x0 0x83E741C 0x80B477D
+WHIRLPARTICLES: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_SPARK_2 OAM_NORMAL_BLEND_16x16 0x83E5958 0x0 0x83E741C 0x80B477D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -8024,37 +8093,35 @@ ANIM_HEARTSWAP:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 ANIM_CRUSHGRIP:
 	loadparticle ANIM_TAG_EXPLOSION @hits
 	loadparticle ANIM_TAG_ACUPRESSURE_FINGER @hand colour
 	loadparticle ANIM_TAG_ASSURANCE_HAND @hand
-	pokespritetoBG bank_target
 	setblends 0xF
 	launchtemplate CRUSHGRIP_HAND 0x82 0x6 0x10 0x0 0x0 0x0 0x19 0x101
 	waitanimation
-	launchtask 0x80E12F9 0x2 0x1 0x1
-	launchtemplate CRUSHGRIP_HITPARTICLES 0x3 0x4 0x0 0x0 0x1 0x1
+	launchtask AnimTask_CompressTargetHorizontally 0x2 0x0
+	launchtemplate CRUSHGRIP_HITPARTICLES TEMPLATE_TARGET 0x4 0x0 0x0 0x1 0x1
 	pause 0x3
 	playsound2 0xab 0xc0
-	launchtemplate CRUSHGRIP_HITPARTICLES 0x3 0x4 0x18 0xffe8 0x1 0x1
+	launchtemplate CRUSHGRIP_HITPARTICLES TEMPLATE_TARGET 0x4 0x18 0xffe8 0x1 0x1
 	pause 0x3
 	playsound2 0xab 0xc0
-	launchtemplate CRUSHGRIP_HITPARTICLES 0x3 0x4 0xfff0 0x10 0x1 0x1
+	launchtemplate CRUSHGRIP_HITPARTICLES TEMPLATE_TARGET 0x4 0xfff0 0x10 0x1 0x1
 	pause 0x3
 	playsound2 0xab 0xc0
-	launchtemplate CRUSHGRIP_HITPARTICLES 0x3 0x4 0xffe8 0xfff4 0x1 0x1
+	launchtemplate CRUSHGRIP_HITPARTICLES TEMPLATE_TARGET 0x4 0xffe8 0xfff4 0x1 0x1
 	pause 0x3
 	playsound2 0xab 0xc0
-	launchtemplate CRUSHGRIP_HITPARTICLES 0x3 0x4 0x10 0x10 0x1 0x1
+	launchtemplate CRUSHGRIP_HITPARTICLES TEMPLATE_TARGET 0x4 0x10 0x10 0x1 0x1
 	waitanimation
-	pokespritefromBG bank_target
 	resetblends
 	endanimation
 
 .align 2
-CRUSHGRIP_HITPARTICLES: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_EXPLOSION 0x83AC9D8 0x83E3F90 0x0 0x8231CFC 0x8075D9D
-CRUSHGRIP_HAND: objtemplate ANIM_TAG_ASSURANCE_HAND ANIM_TAG_ACUPRESSURE_FINGER 0x83ACA38 0x83E74A8 0x0 0x83E7540 0x80B5075
+CRUSHGRIP_HITPARTICLES: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_EXPLOSION OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC 0x8075D9D
+CRUSHGRIP_HAND: objtemplate ANIM_TAG_ASSURANCE_HAND ANIM_TAG_ACUPRESSURE_FINGER OAM_NORMAL_32x32 0x83E74A8 0x0 gSpriteAffineAnimTable_CrushGripHand 0x80B5075
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -8085,12 +8152,12 @@ ANIM_SACREDSWORD:
 	endanimation
 
 .align 2
-SWORD_BLADES: objtemplate ANIM_TAG_PUNISHMENT_BLADES ANIM_TAG_HYDRO_PUMP 0x83ACA98 0x83E7764 0x0 0x8231CFC 0x80AC94D
-SWORD_CUT:objtemplate ANIM_TAG_CUT ANIM_TAG_HYDRO_PUMP 0x83ACAF8 0x83E3290 0x0 0x8231CFC 0x80A44E1
+SWORD_BLADES: objtemplate ANIM_TAG_PUNISHMENT_BLADES ANIM_TAG_HYDRO_PUMP OAM_DOUBLE_32x32 0x83E7764 0x0 0x8231CFC 0x80AC94D
+SWORD_CUT:objtemplate ANIM_TAG_CUT ANIM_TAG_HYDRO_PUMP OAM_OFF_BLEND_32x32 0x83E3290 0x0 0x8231CFC 0x80A44E1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 ANIM_HEATCRASH:
 	loadparticle ANIM_TAG_IMPACT
 	loadparticle ANIM_TAG_WARM_ROCK
@@ -8107,20 +8174,20 @@ ANIM_HEATCRASH:
 	launchtemplate Template_Hit 0x83 0x4 0xa 0xfff8 0x1 0x1
 	playsound2 0x7C 0x3f
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x3 0x5 0x1
-	launchtemplate 0x83E7560 0x82 0x4 0xfff4 0x20 0x3 0x4
-	launchtemplate 0x83E7560 0x82 0x4 0x8 0x1f 0x2 0x2
-	launchtemplate 0x83E7560 0x82 0x4 0xfffc 0x1c 0x2 0x3
-	launchtemplate 0x83E7560 0x82 0x4 0xc 0x1e 0x4 0x3
+	launchtemplate 0x83E7560 TEMPLATE_TARGET | 2, 0x4, 0xfff4 0x20 0x3 0x4
+	launchtemplate 0x83E7560 TEMPLATE_TARGET | 2, 0x4, 0x8 0x1f 0x2 0x2
+	launchtemplate 0x83E7560 TEMPLATE_TARGET | 2, 0x4, 0xfffc 0x1c 0x2 0x3
+	launchtemplate 0x83E7560 TEMPLATE_TARGET | 2, 0x4, 0xc 0x1e 0x4 0x3
 	pokespritefromBG bank_target
 	resetblends
 	endanimation
 
 .align 2
-ERUPTIONROCK: objtemplate ANIM_TAG_WARM_ROCK ANIM_TAG_WARM_ROCK 0x83AC9D8 0x8231CF0 0x0 0x8231CFC 0x80B0D59
+ERUPTIONROCK: objtemplate ANIM_TAG_WARM_ROCK ANIM_TAG_WARM_ROCK OAM_OFF_32x32 0x8231CF0 0x0 0x8231CFC 0x80B0D59
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 ANIM_HEADCHARGE:
 	loadparticle ANIM_TAG_IMPACT
 	chooseBG BG_GIGA_IMPACT_ON_OPPONENT BG_GIGA_IMPACT_ON_PLAYER BG_GIGA_IMPACT_ON_OPPONENT
@@ -8143,7 +8210,7 @@ ANIM_HEADCHARGE:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 ANIM_TECHNOBLAST:
 TECHNO_BLAST:
 	launchtask AnimTask_TechnoBlast 0x5 0x0
@@ -8161,7 +8228,7 @@ TECHNO_BLAST_NORMAL_ANIM2:
 	loadparticle ANIM_TAG_GRAY_SMOKE @dispersal
 	pokespritetoBG bank_attacker
 	setblends 0x80E
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0xC 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xC 0x0
 	waitanimation
 	soundcomplex 0x85 0xc0 0xE 0x8
 	launchtemplate WHITECIRCLES 0x2 0x3 0x28 0x28 0x10
@@ -8209,15 +8276,15 @@ TECHNO_BLAST_NORMAL_ANIM2:
 	waitanimation
 	playsound2 0x90 0xC0
 	launchtask AnimTask_move_bank_2 0x2 0x5 0x1 0x4 0x0 0x5 0x1
-	launchtemplate WHITEDISPERSAL 0x82 0x4 0x8 0x8 0x1 0x0
+	launchtemplate WHITEDISPERSAL TEMPLATE_TARGET | 2, 0x4, 0x8 0x8 0x1 0x0
 	pause 0x2
-	launchtemplate WHITEDISPERSAL 0x82 0x4 0xfff8 0xfff8 0x1 0x0
+	launchtemplate WHITEDISPERSAL TEMPLATE_TARGET | 2, 0x4, 0xfff8 0xfff8 0x1 0x0
 	pause 0x2
-	launchtemplate WHITEDISPERSAL 0x82 0x4 0x8 0xfff8 0x1 0x0
+	launchtemplate WHITEDISPERSAL TEMPLATE_TARGET | 2, 0x4, 0x8 0xfff8 0x1 0x0
 	pause 0x2
-	launchtemplate WHITEDISPERSAL 0x82 0x4 0xfff8 0x8 0x1 0x0
+	launchtemplate WHITEDISPERSAL TEMPLATE_TARGET | 2, 0x4, 0xfff8 0x8 0x1 0x0
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0xC 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xC 0x0 0x0
 	waitanimation
 	resetblends
 	pokespritefromBG bank_attacker
@@ -8254,11 +8321,11 @@ CIRCLES:
 	return
 
 .align 2
-WHITECHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_AIR_WAVE_2 0x83ACB60 0x8231CF0 0x0 0x83E61C8 0x80AE71D
-WHITECIRCLES: objtemplate ANIM_TAG_ORBS ANIM_TAG_AIR_WAVE_2 0x83ACB50 0x83E2A40 0x0 0x83E2A54 0x80A2389
-WHITEBLAST: objtemplate ANIM_TAG_BLACK_BALL_2 ANIM_TAG_AIR_WAVE_2 0x83AC9D0 0x8231CF0 0x0 0x8231CFC Callback_TranslateAnimSpriteToTargetMonLocation
-WHITEBLASTPARTICLES: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_AIR_WAVE_2 0x83ACA30 0x8231CF0 0x0 0x83E6004 0x80ADEB1
-WHITEDISPERSAL: objtemplate ANIM_TAG_GRAY_SMOKE ANIM_TAG_AIR_WAVE_2 0x83AC9D8 0x83E36A4 0x0 0x8231CFC 0x8075D9D
+WHITECHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_AIR_WAVE_2 OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80AE71D
+WHITECIRCLES: objtemplate ANIM_TAG_ORBS ANIM_TAG_AIR_WAVE_2 OAM_NORMAL_BLEND_16x16 0x83E2A40 0x0 0x83E2A54 0x80A2389
+WHITEBLAST: objtemplate ANIM_TAG_BLACK_BALL_2 ANIM_TAG_AIR_WAVE_2 OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC Callback_TranslateAnimSpriteToTargetMonLocation
+WHITEBLASTPARTICLES: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_AIR_WAVE_2 OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E6004 0x80ADEB1
+WHITEDISPERSAL: objtemplate ANIM_TAG_GRAY_SMOKE ANIM_TAG_AIR_WAVE_2 OAM_OFF_32x32 0x83E36A4 0x0 0x8231CFC 0x8075D9D
 
 TECHNO_BLAST_ELECTRIC_ANIM:
 	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT @charge animation
@@ -8268,7 +8335,7 @@ TECHNO_BLAST_ELECTRIC_ANIM:
 	loadparticle ANIM_TAG_GRAY_SMOKE @dispersal
 	pokespritetoBG bank_attacker
 	setblends 0x80E
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0xC 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xC 0x0
 	waitanimation
 	soundcomplex 0x85 0xc0 0xE 0x8
 	launchtemplate 0x83E61D4 0x2 0x1 0x0
@@ -8302,46 +8369,46 @@ TECHNO_BLAST_ELECTRIC_ANIM:
 	waitanimation
 	playsound2 0x90 0xC0
 	launchtask AnimTask_move_bank_2 0x2 0x5 0x1 0x4 0x0 0x5 0x1
-	launchtemplate YELLOWDISPERSAL 0x82 0x4 0x8 0x8 0x1 0x0
-	launchtemplate 0x83E6088 0x82 0x4 0x5 0x0 0x5 0x0
-	launchtemplate 0x83E6088 0x82 0x4 0xfffb 0xa 0x5 0x1
+	launchtemplate YELLOWDISPERSAL TEMPLATE_TARGET | 2, 0x4, 0x8 0x8 0x1 0x0
+	launchtemplate 0x83E6088 TEMPLATE_TARGET | 2, 0x4, 0x5 0x0 0x5 0x0
+	launchtemplate 0x83E6088 TEMPLATE_TARGET | 2, 0x4, 0xfffb 0xa 0x5 0x1
 	pause 0x2
-	launchtemplate YELLOWDISPERSAL 0x82 0x4 0xfff8 0xfff8 0x1 0x0
-	launchtemplate 0x83E6088 0x82 0x4 0xf 0x14 0x5 0x2
-	launchtemplate 0x83E6088 0x82 0x4 0xfff1 0xfff6 0x5 0x0
+	launchtemplate YELLOWDISPERSAL TEMPLATE_TARGET | 2, 0x4, 0xfff8 0xfff8 0x1 0x0
+	launchtemplate 0x83E6088 TEMPLATE_TARGET | 2, 0x4, 0xf 0x14 0x5 0x2
+	launchtemplate 0x83E6088 TEMPLATE_TARGET | 2, 0x4, 0xfff1 0xfff6 0x5 0x0
 	pause 0x2
-	launchtemplate YELLOWDISPERSAL 0x82 0x4 0x8 0xfff8 0x1 0x0
-	launchtemplate 0x83E6088 0x82 0x4 0x19 0x0 0x5 0x1
-	launchtemplate 0x83E6088 0x82 0x4 0xfff8 0x8 0x5 0x2
+	launchtemplate YELLOWDISPERSAL TEMPLATE_TARGET | 2, 0x4, 0x8 0xfff8 0x1 0x0
+	launchtemplate 0x83E6088 TEMPLATE_TARGET | 2, 0x4, 0x19 0x0 0x5 0x1
+	launchtemplate 0x83E6088 TEMPLATE_TARGET | 2, 0x4, 0xfff8 0x8 0x5 0x2
 	pause 0x2
-	launchtemplate YELLOWDISPERSAL 0x82 0x4 0xfff8 0x8 0x1 0x0
-	launchtemplate 0x83E6088 0x82 0x4 0x2 0xfff8 0x5 0x0
-	launchtemplate 0x83E6088 0x82 0x4 0xffec 0xf 0x5 0x1
+	launchtemplate YELLOWDISPERSAL TEMPLATE_TARGET | 2, 0x4, 0xfff8 0x8 0x1 0x0
+	launchtemplate 0x83E6088 TEMPLATE_TARGET | 2, 0x4, 0x2 0xfff8 0x5 0x0
+	launchtemplate 0x83E6088 TEMPLATE_TARGET | 2, 0x4, 0xffec 0xf 0x5 0x1
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0xC 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xC 0x0 0x0
 	waitanimation
 	resetblends
 	pokespritefromBG bank_attacker
 	endanimation
 CHARGING1:
 	playsound2 0x70 0xC0
-	launchtemplate 0x83E5FC4 0x0 0x7 0x20 0x18 0xbe 0xc 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x20 0x18 0xbe 0xc 0x0 0x1 0x0
 	pause 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0x50 0x18 0x16 0xc 0x0 0x1 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0x9c 0x18 0x79 0xd 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x50 0x18 0x16 0xc 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x9c 0x18 0x79 0xd 0x0 0x1 0x1
 	return
 CHARGING2:
 	playsound2 0x70 0xC0
-	launchtemplate 0x83E5FC4 0x0 0x7 0x64 0x18 0x3c 0xa 0x0 0x1 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0xaa 0x18 0x2a 0xb 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x64 0x18 0x3c 0xa 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0xaa 0x18 0x2a 0xb 0x0 0x1 0x1
 	pause 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0xee 0x18 0xa5 0xa 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0xee 0x18 0xa5 0xa 0x0 0x1 0x1
 	return
 
 .align 2
-YELLOWBLAST: objtemplate ANIM_TAG_BLACK_BALL_2 ANIM_TAG_CIRCLE_OF_LIGHT 0x83AC9D0 0x8231CF0 0x0 0x8231CFC Callback_TranslateAnimSpriteToTargetMonLocation
-YELLOWBLASTPARTICLES: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_CIRCLE_OF_LIGHT 0x83ACA30 0x8231CF0 0x0 0x83E6004 0x80ADEB1
-YELLOWDISPERSAL: objtemplate ANIM_TAG_GRAY_SMOKE ANIM_TAG_CIRCLE_OF_LIGHT 0x83AC9D8 0x83E36A4 0x0 0x8231CFC 0x8075D9D
+YELLOWBLAST: objtemplate ANIM_TAG_BLACK_BALL_2 ANIM_TAG_CIRCLE_OF_LIGHT OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC Callback_TranslateAnimSpriteToTargetMonLocation
+YELLOWBLASTPARTICLES: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_CIRCLE_OF_LIGHT OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E6004 0x80ADEB1
+YELLOWDISPERSAL: objtemplate ANIM_TAG_GRAY_SMOKE ANIM_TAG_CIRCLE_OF_LIGHT OAM_OFF_32x32 0x83E36A4 0x0 0x8231CFC 0x8075D9D
 
 TECHNO_BLAST_WATER_ANIM:
 	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT @charge animation
@@ -8352,7 +8419,7 @@ TECHNO_BLAST_WATER_ANIM:
 	loadparticle ANIM_TAG_BUBBLE @bubbles
 	pokespritetoBG bank_attacker
 	setblends 0x80E
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0xC 0x1
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xC 0x1
 	waitanimation
 	launchtemplate BLUECHARGE 0x2 0x1 0x0
 	playsound2 0x87 0xc0
@@ -8441,34 +8508,34 @@ TECHNO_BLAST_WATER_ANIM:
 	waitanimation
 	playsound2 0x90 0xC0
 	launchtask AnimTask_move_bank_2 0x2 0x5 0x1 0x4 0x0 0x5 0x1
-	launchtemplate BLUEDISPERSAL 0x82 0x4 0x8 0x8 0x1 0x0
+	launchtemplate BLUEDISPERSAL TEMPLATE_TARGET | 2, 0x4, 0x8 0x8 0x1 0x0
 	launchtemplate BUBBLES 0x2 0x4 0xa 0xa 0x19 0x1
 	launchtemplate BUBBLES 0x2 0x4 0xfff1 0x0 0x19 0x1
 	pause 0x2
-	launchtemplate BLUEDISPERSAL 0x82 0x4 0xfff8 0xfff8 0x1 0x0
+	launchtemplate BLUEDISPERSAL TEMPLATE_TARGET | 2, 0x4, 0xfff8 0xfff8 0x1 0x0
 	launchtemplate BUBBLES 0x2 0x4 0x14 0xa 0x19 0x1
 	launchtemplate BUBBLES 0x2 0x4 0x0 0xfff6 0x19 0x1
 	pause 0x2
-	launchtemplate BLUEDISPERSAL 0x82 0x4 0x8 0xfff8 0x1 0x0
+	launchtemplate BLUEDISPERSAL TEMPLATE_TARGET | 2, 0x4, 0x8 0xfff8 0x1 0x0
 	launchtemplate BUBBLES 0x2 0x4 0xfff6 0xf 0x19 0x1
 	launchtemplate BUBBLES 0x2 0x4 0x19 0x14 0x19 0x1
 	pause 0x2
-	launchtemplate BLUEDISPERSAL 0x82 0x4 0xfff8 0x8 0x1 0x0
+	launchtemplate BLUEDISPERSAL TEMPLATE_TARGET | 2, 0x4, 0xfff8 0x8 0x1 0x0
 	launchtemplate BUBBLES 0x2 0x4 0xffec 0x14 0x19 0x1
 	launchtemplate BUBBLES 0x2 0x4 0xc 0x0 0x19 0x1
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0xC 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xC 0x0 0x0
 	waitanimation
 	resetblends
 	pokespritefromBG bank_attacker
 	endanimation
 
 .align 2
-BLUECHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WATER_ORB 0x83ACB60 0x8231CF0 0x0 0x83E61C8 0x80AE71D
-BUBBLES: objtemplate ANIM_TAG_BUBBLE ANIM_TAG_BUBBLE 0x83ACB50 0x83E58DC 0x0 0x8231CFC 0x80AB309
-BLUEBLAST: objtemplate ANIM_TAG_BLACK_BALL_2 ANIM_TAG_WATER_ORB 0x83AC9D0 0x8231CF0 0x0 0x8231CFC Callback_TranslateAnimSpriteToTargetMonLocation
-BLUEBLASTPARTICLES: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_WATER_ORB 0x83ACA30 0x8231CF0 0x0 0x83E6004 0x80ADEB1
-BLUEDISPERSAL: objtemplate ANIM_TAG_GRAY_SMOKE ANIM_TAG_WATER_ORB 0x83AC9D8 0x83E36A4 0x0 0x8231CFC 0x8075D9D
+BLUECHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WATER_ORB OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80AE71D
+BUBBLES: objtemplate ANIM_TAG_BUBBLE ANIM_TAG_BUBBLE OAM_NORMAL_BLEND_16x16 0x83E58DC 0x0 0x8231CFC 0x80AB309
+BLUEBLAST: objtemplate ANIM_TAG_BLACK_BALL_2 ANIM_TAG_WATER_ORB OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC Callback_TranslateAnimSpriteToTargetMonLocation
+BLUEBLASTPARTICLES: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_WATER_ORB OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E6004 0x80ADEB1
+BLUEDISPERSAL: objtemplate ANIM_TAG_GRAY_SMOKE ANIM_TAG_WATER_ORB OAM_OFF_32x32 0x83E36A4 0x0 0x8231CFC 0x8075D9D
 
 TECHNO_BLAST_FIRE_ANIM:
 	loadparticle ANIM_TAG_JAGGED_MUSIC_NOTE @red color
@@ -8480,7 +8547,7 @@ TECHNO_BLAST_FIRE_ANIM:
 	loadparticle ANIM_TAG_GRAY_SMOKE @dispersal
 	pokespritetoBG bank_attacker
 	setblends 0x80E
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0xC 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xC 0x0
 	waitanimation
 	launchtemplate REDCHARGE 0x2 0x1 0x0
 	pause 0x5
@@ -8501,7 +8568,7 @@ TECHNO_BLAST_FIRE_ANIM:
 	waitanimation
 	playsound2 0x90 0xC0
 	launchtask AnimTask_move_bank_2 0x2 0x5 0x1 0x4 0x0 0x5 0x1
-	launchtemplate REDDISPERSAL 0x82 0x4 0x8 0x8 0x1 0x0
+	launchtemplate REDDISPERSAL TEMPLATE_TARGET | 2, 0x4, 0x8 0x8 0x1 0x0
 	launchtemplate 0x83E5BF8 0x81 0x5 0x0 0xa 0xc0 0xb0 0x28
 	launchtemplate 0x83E5BF8 0x81 0x5 0x0 0xa 0xff40 0xf0 0x28
 	launchtemplate 0x83E5BF8 0x81 0x5 0x0 0xa 0xc0 0xff60 0x28
@@ -8510,13 +8577,13 @@ TECHNO_BLAST_FIRE_ANIM:
 	launchtemplate 0x83E5BF8 0x81 0x5 0x0 0xa 0xff20 0xffe0 0x28
 	launchtemplate 0x83E5BF8 0x81 0x5 0x0 0xa 0x70 0xff80 0x28
 	pause 0x2
-	launchtemplate REDDISPERSAL 0x82 0x4 0xfff8 0xfff8 0x1 0x0
+	launchtemplate REDDISPERSAL TEMPLATE_TARGET | 2, 0x4, 0xfff8 0xfff8 0x1 0x0
 	pause 0x2
-	launchtemplate REDDISPERSAL 0x82 0x4 0x8 0xfff8 0x1 0x0
+	launchtemplate REDDISPERSAL TEMPLATE_TARGET | 2, 0x4, 0x8 0xfff8 0x1 0x0
 	pause 0x2
-	launchtemplate REDDISPERSAL 0x82 0x4 0xfff8 0x8 0x1 0x0
+	launchtemplate REDDISPERSAL TEMPLATE_TARGET | 2, 0x4, 0xfff8 0x8 0x1 0x0
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0xC 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xC 0x0 0x0
 	waitanimation
 	resetblends
 	pokespritefromBG bank_attacker
@@ -8546,10 +8613,10 @@ FIRES:
 	return
 
 .align 2
-REDCHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_SMALL_RED_EYE 0x83ACB60 0x8231CF0 0x0 0x83E61C8 0x80AE71D
-REDBLAST: objtemplate ANIM_TAG_BLACK_BALL_2 ANIM_TAG_SMALL_RED_EYE 0x83AC9D0 0x8231CF0 0x0 0x8231CFC Callback_TranslateAnimSpriteToTargetMonLocation
-REDBLASTPARTICLES: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_JAGGED_MUSIC_NOTE 0x83ACA30 0x8231CF0 0x0 0x83E6004 0x80ADEB1
-REDDISPERSAL: objtemplate ANIM_TAG_GRAY_SMOKE ANIM_TAG_JAGGED_MUSIC_NOTE 0x83AC9D8 0x83E36A4 0x0 0x8231CFC 0x8075D9D
+REDCHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_SMALL_RED_EYE OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80AE71D
+REDBLAST: objtemplate ANIM_TAG_BLACK_BALL_2 ANIM_TAG_SMALL_RED_EYE OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC Callback_TranslateAnimSpriteToTargetMonLocation
+REDBLASTPARTICLES: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_JAGGED_MUSIC_NOTE OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E6004 0x80ADEB1
+REDDISPERSAL: objtemplate ANIM_TAG_GRAY_SMOKE ANIM_TAG_JAGGED_MUSIC_NOTE OAM_OFF_32x32 0x83E36A4 0x0 0x8231CFC 0x8075D9D
 
 TECHNO_BLAST_ICE_ANIM:
 	loadparticle ANIM_TAG_ICE_CRYSTALS @ice
@@ -8559,7 +8626,7 @@ TECHNO_BLAST_ICE_ANIM:
 	loadparticle ANIM_TAG_SPARK_2 @blast particles
 	loadparticle ANIM_TAG_GRAY_SMOKE @dispersal
 	pokespritetoBG bank_attacker
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0xC 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xC 0x0
 	waitanimation
 	launchtemplate ICECHARGE 0x2 0x1 0x0
 	pause 0x5
@@ -8591,22 +8658,22 @@ TECHNO_BLAST_ICE_ANIM:
 	waitanimation
 	playsound2 0x90 0xC0
 	launchtask AnimTask_move_bank_2 0x2 0x5 0x1 0x4 0x0 0x5 0x1
-	launchtemplate ICEDISPERSAL 0x82 0x4 0x8 0x8 0x1 0x0
-	launchtemplate 0x83E63E0 0x82 0x3 0xfff6 0xfff6 0x0
+	launchtemplate ICEDISPERSAL TEMPLATE_TARGET | 2, 0x4, 0x8 0x8 0x1 0x0
+	launchtemplate 0x83E63E0 TEMPLATE_TARGET | 2, 0x3, 0xfff6 0xfff6 0x0
 	pause 0x2
-	launchtemplate ICEDISPERSAL 0x82 0x4 0xfff8 0xfff8 0x1 0x0
-	launchtemplate 0x83E63F8 0x82 0x3 0xa 0x14 0x0
-	launchtemplate 0x83E63E0 0x82 0x3 0xfffb 0xa 0x0
+	launchtemplate ICEDISPERSAL TEMPLATE_TARGET | 2, 0x4, 0xfff8 0xfff8 0x1 0x0
+	launchtemplate 0x83E63F8 TEMPLATE_TARGET | 2, 0x3, 0xa 0x14 0x0
+	launchtemplate 0x83E63E0 TEMPLATE_TARGET | 2, 0x3, 0xfffb 0xa 0x0
 	pause 0x2
-	launchtemplate ICEDISPERSAL 0x82 0x4 0x8 0xfff8 0x1 0x0
-	launchtemplate 0x83E63F8 0x82 0x3 0x11 0xfff4 0x0
-	launchtemplate 0x83E63F8 0x82 0x3 0xfff1 0xf 0x0
+	launchtemplate ICEDISPERSAL TEMPLATE_TARGET | 2, 0x4, 0x8 0xfff8 0x1 0x0
+	launchtemplate 0x83E63F8 TEMPLATE_TARGET | 2, 0x3, 0x11 0xfff4 0x0
+	launchtemplate 0x83E63F8 TEMPLATE_TARGET | 2, 0x3, 0xfff1 0xf 0x0
 	pause 0x2
-	launchtemplate ICEDISPERSAL 0x82 0x4 0xfff8 0x8 0x1 0x0
-	launchtemplate 0x83E63F8 0x82 0x3 0x0 0x0 0x0
-	launchtemplate 0x83E63E0 0x82 0x3 0x14 0x2 0x0
+	launchtemplate ICEDISPERSAL TEMPLATE_TARGET | 2, 0x4, 0xfff8 0x8 0x1 0x0
+	launchtemplate 0x83E63F8 TEMPLATE_TARGET | 2, 0x3, 0x0 0x0 0x0
+	launchtemplate 0x83E63E0 TEMPLATE_TARGET | 2, 0x3, 0x14 0x2 0x0
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0xC 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xC 0x0 0x0
 	waitanimation
 	pokespritefromBG bank_attacker
 	endanimation
@@ -8635,15 +8702,15 @@ ICEFROMCHARGE:
 	return
 
 .align 2
-ICECHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_ICE_CHUNK 0x83ACB60 0x8231CF0 0x0 0x83E61C8 0x80AE71D
-ICEBLAST: objtemplate ANIM_TAG_BLACK_BALL_2 ANIM_TAG_ICE_CHUNK 0x83AC9D0 0x8231CF0 0x0 0x8231CFC Callback_TranslateAnimSpriteToTargetMonLocation @278D
-ICEBLASTPARTICLES: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_ICE_CHUNK 0x83ACA30 0x8231CF0 0x0 0x83E6004 0x80ADEB1
-ICEDISPERSAL: objtemplate ANIM_TAG_GRAY_SMOKE ANIM_TAG_ICE_CHUNK 0x83AC9D8 0x83E36A4 0x0 0x8231CFC 0x8075D9D
-ICEPARTICLES: objtemplate ANIM_TAG_ICE_CRYSTALS ANIM_TAG_ICE_CRYSTALS 0x83ACB88 0x83E6320 0x0 0x83E7BF8 0x80BA561
+ICECHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_ICE_CHUNK OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80AE71D
+ICEBLAST: objtemplate ANIM_TAG_BLACK_BALL_2 ANIM_TAG_ICE_CHUNK OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC Callback_TranslateAnimSpriteToTargetMonLocation @278D
+ICEBLASTPARTICLES: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_ICE_CHUNK OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E6004 0x80ADEB1
+ICEDISPERSAL: objtemplate ANIM_TAG_GRAY_SMOKE ANIM_TAG_ICE_CHUNK OAM_OFF_32x32 0x83E36A4 0x0 0x8231CFC 0x8075D9D
+ICEPARTICLES: objtemplate ANIM_TAG_ICE_CRYSTALS ANIM_TAG_ICE_CRYSTALS OAM_NORMAL_BLEND_8x16 0x83E6320 0x0 0x83E7BF8 0x80BA561
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 ANIM_RELICSONG:
 	loadparticle ANIM_TAG_JAGGED_MUSIC_NOTE
 	loadparticle ANIM_TAG_THIN_RING
@@ -8657,49 +8724,49 @@ ANIM_RELICSONG:
 	launchtemplate 0x83E4110 0x3 0x6 0x0 0x0 0x0 0x0 0x1f 0x8
 	launchtemplate 0x83E4430 0x2 0x4 0x0 0x1d 0xfff4 0x0
 	launchtemplate 0x83E4430 0x2 0x4 0x0 0xfff4 0xffe3 0x1
-	launchtemplate 0x83E3880 0x82 0x3 0x7 0x0 0xc
+	launchtemplate 0x83E3880 TEMPLATE_TARGET | 2, 0x3, 0x7 0x0 0xc
 	pause 0x5
-	launchtemplate 0x83E3880 0x82 0x3 0x6 0x1 0xc
+	launchtemplate 0x83E3880 TEMPLATE_TARGET | 2, 0x3, 0x6 0x1 0xc
 	pause 0x5
 	launchtask 0x80AA7C9 0x2 0x1 0x0
 	launchtemplate 0x83E4110 0x3 0x6 0x0 0x0 0x0 0x0 0x1f 0x8
 	launchtemplate 0x83E4430 0x2 0x4 0x0 0xc 0xffe3 0x1
 	launchtemplate 0x83E4430 0x2 0x4 0x0 0xffe3 0xfff4 0x0
-	launchtemplate 0x83E3880 0x82 0x3 0x1 0x2 0xc
+	launchtemplate 0x83E3880 TEMPLATE_TARGET | 2, 0x3, 0x1 0x2 0xc
 	pause 0x5
-	launchtemplate 0x83E3880 0x82 0x3 0x2 0x3 0xc
+	launchtemplate 0x83E3880 TEMPLATE_TARGET | 2, 0x3, 0x2 0x3 0xc
 	pause 0x5
 	launchtask 0x80AA7C9 0x2 0x1 0x0
 	launchtemplate 0x83E4110 0x3 0x6 0x0 0x0 0x0 0x0 0x1f 0x8
 	launchtemplate 0x83E4430 0x2 0x4 0x0 0x18 0xffe8 0x1
 	launchtemplate 0x83E4430 0x2 0x4 0x0 0xffe8 0xffe8 0x0
-	launchtemplate 0x83E3880 0x82 0x3 0x3 0x0 0xc
+	launchtemplate 0x83E3880 TEMPLATE_TARGET | 2, 0x3, 0x3 0x0 0xc
 	pause 0x5
-	launchtemplate 0x83E3880 0x82 0x3 0x2 0x1 0xc
+	launchtemplate 0x83E3880 TEMPLATE_TARGET | 2, 0x3, 0x2 0x1 0xc
 	pause 0x5
 	launchtask 0x80AA7C9 0x2 0x1 0x0
 	launchtemplate 0x83E4110 0x3 0x6 0x0 0x0 0x0 0x0 0x1f 0x8
 	launchtemplate 0x83E4430 0x2 0x4 0x0 0x1d 0xfff4 0x0
 	launchtemplate 0x83E4430 0x2 0x4 0x0 0xfff4 0xffe3 0x1
-	launchtemplate 0x83E3880 0x82 0x3 0x5 0x2 0xc
+	launchtemplate 0x83E3880 TEMPLATE_TARGET | 2, 0x3, 0x5 0x2 0xc
 	pause 0x5
-	launchtemplate 0x83E3880 0x82 0x3 0x6 0x3 0xc
+	launchtemplate 0x83E3880 TEMPLATE_TARGET | 2, 0x3, 0x6 0x3 0xc
 	pause 0x5
 	launchtask 0x80AA7C9 0x2 0x1 0x0
 	launchtemplate 0x83E4110 0x3 0x6 0x0 0x0 0x0 0x0 0x1f 0x8
 	launchtemplate 0x83E4430 0x2 0x4 0x0 0xc 0xffe3 0x1
 	launchtemplate 0x83E4430 0x2 0x4 0x0 0xffe3 0xfff4 0x0
-	launchtemplate 0x83E3880 0x82 0x3 0x2 0x0 0xc
+	launchtemplate 0x83E3880 TEMPLATE_TARGET | 2, 0x3, 0x2 0x0 0xc
 	pause 0x5
-	launchtemplate 0x83E3880 0x82 0x3 0x2 0x1 0xc
+	launchtemplate 0x83E3880 TEMPLATE_TARGET | 2, 0x3, 0x2 0x1 0xc
 	pause 0x5
 	launchtask 0x80AA7C9 0x2 0x1 0x0
 	launchtemplate 0x83E4110 0x3 0x6 0x0 0x0 0x0 0x0 0x1f 0x8
 	launchtemplate 0x83E4430 0x2 0x4 0x0 0x18 0xffe8 0x1
 	launchtemplate 0x83E4430 0x2 0x4 0x0 0xffe8 0xffe8 0x0
-	launchtemplate 0x83E3880 0x82 0x3 0x1 0x2 0xc
+	launchtemplate 0x83E3880 TEMPLATE_TARGET | 2, 0x3, 0x1 0x2 0xc
 	pause 0x5
-	launchtemplate 0x83E3880 0x82 0x3 0x5 0x3 0xc
+	launchtemplate 0x83E3880 TEMPLATE_TARGET | 2, 0x3, 0x5 0x3 0xc
 	pause 0x5
 	launchtask 0x80AA7C9 0x2 0x1 0x0
 	launchtemplate 0x83E4110 0x3 0x6 0x0 0x0 0x0 0x0 0x1f 0x8
@@ -8757,7 +8824,7 @@ ANIM_SECRETSWORD:
 	endanimation
 
 .align 2
-SECRETSWORD_BLADES: objtemplate ANIM_TAG_PUNISHMENT_BLADES ANIM_TAG_HYDRO_PUMP 0x83ACA98 0x83E7764 0x0 0x8231CFC 0x80AC94D
+SECRETSWORD_BLADES: objtemplate ANIM_TAG_PUNISHMENT_BLADES ANIM_TAG_HYDRO_PUMP OAM_DOUBLE_32x32 0x83E7764 0x0 0x8231CFC 0x80AC94D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -8793,7 +8860,7 @@ ANIM_GLACIATE:
 	endanimation
 
 .align 2
-GLACIATE_SMOKES: objtemplate ANIM_TAG_BLACK_SMOKE ANIM_TAG_ICE_CHUNK 0x83AC9F8 0x8231CF0 0x0 0x8231CFC 0x80DE2C1
+GLACIATE_SMOKES: objtemplate ANIM_TAG_BLACK_SMOKE ANIM_TAG_ICE_CHUNK OAM_OFF_32x16 0x8231CF0 0x0 0x8231CFC 0x80DE2C1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -8804,9 +8871,9 @@ ANIM_BOLTSTRIKE:
 	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT @Electric Circle
 	pokespritetoBG bank_attacker
 	setblends 0x80c
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x2 0x0 0x10 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x10 0x0
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ATK 0x2 0x0 0x9 0x07FE
-	launchtask 0x80AE541 0x2 0x4 0x0 0x40 0x0 0x2
+	launchtask AnimTask_ChargeBalls 0x2 0x4 0x0 0x40 0x0 0x2
 	playsound2 0xCE 0xc0
 	pause 0xc
 	launchtemplate 0x83E6290 0x2 0x0
@@ -8835,7 +8902,7 @@ ANIM_BOLTSTRIKE:
 	pokespritefromBG bank_target
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x2 0x9 0x0 0x07FE
 	call UNSET_SCROLLING_BG
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x2 0x0 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x0 0x0
 	resetblends
 	waitanimation
 	endanimation
@@ -8914,13 +8981,13 @@ BLUE_BURN_CHANCE_ANIM:
 	return
 
 .align 2
-BLUE_FLAMEJAB: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_METAL_BITS 0x83AC9D8 0x83E59CC 0x0 0x8231CFC 0x80A4299
-BLUE_FLAMESWIRL: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_METAL_BITS 0x83AC9D8 0x83E59CC 0x0 0x8231CFC 0x80B477D
-BLUEBURN: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_METAL_BITS 0x83AC9D8 0x83E59CC 0x0 0x8231CFC 0x80AC94D
+BLUE_FLAMEJAB: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_METAL_BITS OAM_OFF_32x32 0x83E59CC 0x0 0x8231CFC 0x80A4299
+BLUE_FLAMESWIRL: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_METAL_BITS OAM_OFF_32x32 0x83E59CC 0x0 0x8231CFC 0x80B477D
+BLUEBURN: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_METAL_BITS OAM_OFF_32x32 0x83E59CC 0x0 0x8231CFC 0x80AC94D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 ANIM_FREEZESHOCK:
 	loadparticle ANIM_TAG_SPARK
 	loadparticle ANIM_TAG_SPARK_2
@@ -8965,12 +9032,12 @@ FREEZE_SHOCK_ATTACK:
 	endanimation
 
 .align 2
-SHOCK_ELECTRICCIRLCLE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_CIRCLE_OF_LIGHT 0x83ACB60 0x8231CF0 0x0 0x83E61C8 0x80AEC81
-SHOCK_ICEBALL: objtemplate ANIM_TAG_ICE_CHUNK ANIM_TAG_ICE_CHUNK 0x83ACA98 0x83E65F0 0x0 0x8231CFC Callback_TranslateAnimSpriteToTargetMonLocation
+SHOCK_ELECTRICCIRLCLE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_CIRCLE_OF_LIGHT OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80AEC81
+SHOCK_ICEBALL: objtemplate ANIM_TAG_ICE_CHUNK ANIM_TAG_ICE_CHUNK OAM_DOUBLE_32x32 0x83E65F0 0x0 0x8231CFC Callback_TranslateAnimSpriteToTargetMonLocation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 ANIM_ICEBURN:
 	loadparticle ANIM_TAG_BLACK_SMOKE @smoke
 	loadparticle ANIM_TAG_ICE_CHUNK @white color
@@ -8980,7 +9047,7 @@ ANIM_ICEBURN:
 	waitanimation
 	endanimation
 ICE_BURN_PREP:
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0xC 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xC 0x0
 	waitanimation
 	soundcomplex 0x82 0x3F 0x4 0x3
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ATK 0x1 0x8 0x0 0x0
@@ -8989,7 +9056,7 @@ ICE_BURN_PREP:
 	pause 0x14
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ATK 0x1 0xf 0x0 0x7fff
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0xC 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xC 0x0 0x0
 	waitanimation
 	endanimation
 ICE_BURN_ATTACK:
@@ -8997,7 +9064,7 @@ ICE_BURN_ATTACK:
 	loadBG1 BG_ICE
 	waitforBG
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x2 0x0 0x9 0x7fff
-	launchtemplate 0x83E63E0 0x82 0x3 0xfff6 0xfff6 0x0
+	launchtemplate 0x83E63E0 TEMPLATE_TARGET | 2, 0x3, 0xfff6 0xfff6 0x0
 	playsound2 0x82 0x3f
 	launchtemplate ICEBURN_SMOKES 0x84 0x5 0x0 0xfff4 0x68 0x0 0x4b
 	launchtemplate ICEBURN_SMOKES 0x84 0x5 0x0 0xfff4 0x48 0x1 0x4b
@@ -9014,22 +9081,22 @@ ICE_BURN_ATTACK:
 	call BURN_CHANCE_ANIM
 	playsound2 0x8C 0x3f
 	pause 0x4
-	launchtemplate 0x83E63F8 0x82 0x3 0xa 0x14 0x0
+	launchtemplate 0x83E63F8 TEMPLATE_TARGET | 2, 0x3, 0xa 0x14 0x0
 	playsound2 0x82 0x3f
 	pause 0x4
-	launchtemplate 0x83E63E0 0x82 0x3 0xfffb 0xa 0x0
+	launchtemplate 0x83E63E0 TEMPLATE_TARGET | 2, 0x3, 0xfffb 0xa 0x0
 	playsound2 0x82 0x3f
 	pause 0x4
-	launchtemplate 0x83E63F8 0x82 0x3 0x11 0xfff4 0x0
+	launchtemplate 0x83E63F8 TEMPLATE_TARGET | 2, 0x3, 0x11 0xfff4 0x0
 	playsound2 0x82 0x3f
 	pause 0x4
-	launchtemplate 0x83E63F8 0x82 0x3 0xfff1 0xf 0x0
+	launchtemplate 0x83E63F8 TEMPLATE_TARGET | 2, 0x3, 0xfff1 0xf 0x0
 	playsound2 0x82 0x3f
 	pause 0x4
-	launchtemplate 0x83E63F8 0x82 0x3 0x0 0x0 0x0
+	launchtemplate 0x83E63F8 TEMPLATE_TARGET | 2, 0x3, 0x0 0x0 0x0
 	playsound2 0x82 0x3f
 	pause 0x4
-	launchtemplate 0x83E63E0 0x82 0x3 0x14 0x2 0x0
+	launchtemplate 0x83E63E0 TEMPLATE_TARGET | 2, 0x3, 0x14 0x2 0x0
 	playsound2 0x82 0x3f
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x2 0x9 0x0 0x7fff
 	waitanimation
@@ -9038,18 +9105,18 @@ ICE_BURN_ATTACK:
 	endanimation
 
 .align 2
-ICEBURN_SMOKES: objtemplate ANIM_TAG_BLACK_SMOKE ANIM_TAG_ICE_CHUNK 0x83AC9F8 0x8231CF0 0x0 0x8231CFC 0x80DE2C1
+ICEBURN_SMOKES: objtemplate ANIM_TAG_BLACK_SMOKE ANIM_TAG_ICE_CHUNK OAM_OFF_32x16 0x8231CF0 0x0 0x8231CFC 0x80DE2C1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 ANIM_VCREATE:
 	loadparticle ANIM_TAG_SMALL_EMBER @fire blast flame
 	loadparticle ANIM_TAG_THIN_RING @calm mind animation
 	loadparticle ANIM_TAG_JAGGED_MUSIC_NOTE @red color
 	loadparticle ANIM_TAG_ECLIPSING_ORB @defense curl animation
 	pokespritetoBG side_attacker
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0xC 0x0 @Darken
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xC 0x0 @Darken
 	launchtemplate V_REDCIRCLE 0x2 0x4 0x0 0x11 0x0 0x1
 	playsound2 0x85 0xc0
 	pause 0x2
@@ -9102,9 +9169,9 @@ Attack:
 	launchtemplate Template_Explosion 0x3 0x4 0x10 0x10 0x1 0x1
 	waitanimation
 	launchtemplate Template_HorizontalLunge 0x2 0x2 0x4 0x4
-	launchtemplate Template_Claws 0x82 0x3 0xfff6 0xfff6 0x0
+	launchtemplate Template_Claws TEMPLATE_TARGET | 2, 0x3, 0xfff6 0xfff6 0x0
 	@pause 0xF
-	launchtemplate Template_Claws 0x82 0x3 0xa 0xfff6 0x1
+	launchtemplate Template_Claws TEMPLATE_TARGET | 2, 0x3, 0xa 0xfff6 0x1
 	waitanimation
 	launchtask AnimTask_ShakeMonInPlace 0x2 0x5 0x1 0x4 0x0 0xc 0x1
 	waitanimation
@@ -9115,7 +9182,7 @@ Attack:
 	waitanimation
 	pokespritefromBG side_target
 	unsetscrollingBG
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0x0 0xffff
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x0 0xffff
 	waitanimation
 	endanimation
 
@@ -9126,13 +9193,13 @@ VF:
 	return
 
 .align 2
-V_VFLAME: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_SMALL_EMBER 0x83AC9D8 0x83E5DB8 0x0 0x8231CFC 0x80A4299
-V_REDRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_JAGGED_MUSIC_NOTE 0x83ACBC0 0x8231CF0 0x0 0x83E40C4 0x8075D9D
-V_REDCIRCLE: objtemplate ANIM_TAG_ECLIPSING_ORB ANIM_TAG_JAGGED_MUSIC_NOTE 0x83AC9D8 0x83FF114 0x0 0x8231CFC 0x8075D9D
+V_VFLAME: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_SMALL_EMBER OAM_OFF_32x32 0x83E5DB8 0x0 0x8231CFC 0x80A4299
+V_REDRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_JAGGED_MUSIC_NOTE OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E40C4 0x8075D9D
+V_REDCIRCLE: objtemplate ANIM_TAG_ECLIPSING_ORB ANIM_TAG_JAGGED_MUSIC_NOTE OAM_OFF_32x32 0x83FF114 0x0 0x8231CFC 0x8075D9D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 ANIM_FUSIONFLARE:
 	loadparticle ANIM_TAG_FOCUS_ENERGY @focus energy
 	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT @ball
@@ -9140,9 +9207,10 @@ ANIM_FUSIONFLARE:
 	loadparticle ANIM_TAG_JAGGED_MUSIC_NOTE @flame palette
 	loadparticle ANIM_TAG_SMALL_BUBBLES @particles
 	loadparticle ANIM_TAG_THIN_RING @ring
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_SMALL_BUBBLES 0x0 0xD 0xD 0x015B @;Reddish Orange
 	pokespritetoBG bank_target
 	setblends 0x80C
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0xC 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xC 0x0
 	waitanimation
 	playsound2 0x85 0xc0
 	call FF_BUFF_EFFECT
@@ -9173,7 +9241,7 @@ ANIM_FUSIONFLARE:
 	pause 0x5
 	playsound2 0xAB 0xC0
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0xC 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xC 0x0 0x0
 	waitanimation
 	pokespritefromBG bank_target
 	resetblends
@@ -9191,10 +9259,10 @@ FF_BUFF_EFFECT:
 	return
 
 .align 2
-FF_REDBALLUP: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_VERTICAL_HEX 0x83ACB60 0x8231CF0 0x0 0x8231CFC 0x807729D
-FF_REDBALL: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_VERTICAL_HEX 0x83ACB60 0x8231CF0 0x0 0x8231CFC 0x80B0D59
-FF_REDPARTICLES: objtemplate ANIM_TAG_SMALL_BUBBLES ANIM_TAG_JAGGED_MUSIC_NOTE 0x83AC9C8 0x83E5B10 0x0 0x8231CFC 0x80AC625
-FF_REDRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_JAGGED_MUSIC_NOTE 0x83ACBC0 0x8231CF0 0x0 0x83E4088 0x80A8EE9
+FF_REDBALLUP: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_VERTICAL_HEX OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x8231CFC 0x807729D
+FF_REDBALL: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_VERTICAL_HEX OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x8231CFC 0x80B0D59
+FF_REDPARTICLES: objtemplate ANIM_TAG_SMALL_BUBBLES ANIM_TAG_SMALL_BUBBLES OAM_OFF_8x8 0x83E5B10 0x0 0x8231CFC 0x80AC625
+FF_REDRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_JAGGED_MUSIC_NOTE OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E4088 0x80A8EE9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -9202,9 +9270,9 @@ ANIM_FUSIONBOLT:
 	loadparticle ANIM_TAG_SPARK
 	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT
 	loadparticle ANIM_TAG_ELECTRICITY
-	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_SPARK 0x0 0x0 0xC 0x7960 @;Blue Electricity
-	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_CIRCLE_OF_LIGHT 0x0 0x0 0xC 0x7960 @;Blue Electricity
-	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_ELECTRICITY 0x0 0x0 0xC 0x7960 @;Blue Electricity
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_SPARK 0x0 0xC 0xC 0x7960 @;Blue Electricity
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_CIRCLE_OF_LIGHT 0x0 0xC 0xC 0x7960 @;Blue Electricity
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_ELECTRICITY 0x0 0xC 0xC 0x7960 @;Blue Electricity
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x0 0x0 0xE 0x0
 	waitanimation
 	launchtemplate 0x83E621C 0x1 0x0
@@ -9245,7 +9313,7 @@ ANIM_FUSIONBOLT:
 	endanimation
 
 .align 2
-FUSION_BOLT_BALL: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_CIRCLE_OF_LIGHT 0x83ACA40 0x8231CF0 0x0 DRAKE_STRIKE_ROTATIONS 0x80B1C3D
+FUSION_BOLT_BALL: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_CIRCLE_OF_LIGHT OAM_NORMAL_64x64 0x8231CF0 0x0 DRAKE_STRIKE_ROTATIONS 0x80B1C3D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -9254,9 +9322,9 @@ ANIM_FELLSTINGER:
 	loadparticle ANIM_TAG_NEEDLE
 	loadparticle ANIM_TAG_IMPACT
 	loadparticle ANIM_TAG_SPARK_2
-	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_LEER 0x0 0x0 0xC 0x5917 @;Purply
-	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_IMPACT 0x0 0x0 0xC 0x5917 @;Purply
-	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_SPARK_2 0x0 0x0 0xC 0x71DD @;Pinkish
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_LEER 0x0 0xC 0xC 0x5917 @;Purply
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_IMPACT 0x0 0xC 0xC 0x5917 @;Purply
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_SPARK_2 0x0 0xC 0xC 0x71DD @;Pinkish
 	launchtask AnimTask_pal_fade 0xA 0x5 PAL_BG 0x0 0x0 0x10 0x0
 	waitanimation
  	launchtemplate Template_Leer 0x2 0x2 0x18 0xFFF4
@@ -9286,7 +9354,7 @@ ANIM_FELLSTINGER:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 ANIM_NOBLEROAR:
 	loadparticle ANIM_TAG_NOISE_LINE
 	pokespritetoBG bank_attacker
@@ -9309,12 +9377,12 @@ ANIM_NOBLEROAR:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 ANIM_DRAGONASCENT:
 	loadparticle ANIM_TAG_DRAGON_ASCENT
 	setblends 0xB0C
 	pokespritetoBG side_target
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0xC 0x0 @Darkens the BG
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xC 0x0 @Darkens the BG
 	waitanimation
 	pause 0xc
 	launchtask AnimTask_screen_shake 0x5 0x3 0x0 0x2 0x10
@@ -9338,19 +9406,19 @@ ANIM_DRAGONASCENT:
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x4 0x9 0x1
 	waitanimation
 	call UNSET_SCROLLING_BG
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0x0 0x0 @Removes bad aftermath of BG darken
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x0 0x0 @Removes bad aftermath of BG darken
 	pokespritefromBG side_target
 	resetblends
 	waitanimation
 	endanimation
 
 .align 2
-ASCENT_FLYUP: objtemplate ANIM_TAG_DRAGON_ASCENT ANIM_TAG_DRAGON_ASCENT 0x83ACA40 0x8231CF0 0x0 DRAKE_UP_ROTATIONS 0x80B477D
-DRAGONASCENT_DRAKE: objtemplate ANIM_TAG_DRAGON_ASCENT ANIM_TAG_DRAGON_ASCENT 0x83ACA40 0x8231CF0 0x0 DRAKE_STRIKE_ROTATIONS 0x80B1C3D
+ASCENT_FLYUP: objtemplate ANIM_TAG_DRAGON_ASCENT ANIM_TAG_DRAGON_ASCENT OAM_NORMAL_64x64 0x8231CF0 0x0 DRAKE_UP_ROTATIONS 0x80B477D
+DRAGONASCENT_DRAKE: objtemplate ANIM_TAG_DRAGON_ASCENT ANIM_TAG_DRAGON_ASCENT OAM_NORMAL_64x64 0x8231CF0 0x0 DRAKE_STRIKE_ROTATIONS 0x80B1C3D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 ANIM_PARTINGSHOT:
 	loadparticle ANIM_TAG_CONFIDE @Confide Bubble
 	loadparticle ANIM_TAG_ANGER @Anger Marks
@@ -9361,10 +9429,10 @@ ANIM_PARTINGSHOT:
 	launchtemplate CONFIDE_BUBBLE 0xb 0x2 0x0 0x64
 	launchtask AnimTask_play_growling_cry 0x2 0x2 bank_attacker 0xff
 	waitanimation
-	launchtemplate 0x83E3F04 0x82 0x3 0x1 0xffec 0xffe4
+	launchtemplate 0x83E3F04 TEMPLATE_TARGET | 2, 0x3, 0x1 0xffec 0xffe4
 	playsound2 0xBB 0x3f
 	pause 0xc
-	launchtemplate 0x83E3F04 0x82 0x3 0x1 0x14 0xffe4
+	launchtemplate 0x83E3F04 TEMPLATE_TARGET | 2, 0x3, 0x1 0x14 0xffe4
 	playsound2 0xBB 0x3f
 	waitanimation
 	unsetscrollingBG
@@ -9401,7 +9469,7 @@ ANIM_TOPSYTURVY:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 ANIM_COREENFORCER:
 	loadparticle ANIM_TAG_SPARK_2 @yellow color
 	loadparticle ANIM_TAG_LEAF @green color
@@ -9418,102 +9486,102 @@ ANIM_COREENFORCER:
 	soundcomplex 0x85 0xc0 0xd 0xA
 	launchtemplate CE_circlecharge 0x2 0x4 0x0 0x0 0x0 0x2
 	launchtemplate CE_bluering 0x28 0x4 0x0 0x0 0x0 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0x20 0x18 0xbe 0xc 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x20 0x18 0xbe 0xc 0x0 0x1 0x0
 	pause 0x0
 	launchtemplate CE_bluecharging 0x0 0x7 0x50 0x18 0x16 0xc 0x0 0x1 0x0
 	launchtemplate CE_greencharging 0x0 0x7 0x9c 0x18 0x79 0xd 0x0 0x1 0x1
 	pause 0x5
 	launchtemplate CE_greencharging 0x0 0x7 0x64 0x18 0x3c 0xa 0x0 0x1 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0xaa 0x18 0x2a 0xb 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0xaa 0x18 0x2a 0xb 0x0 0x1 0x1
 	pause 0x0
 	launchtemplate CE_bluecharging 0x0 0x7 0xee 0x18 0xa5 0xa 0x0 0x1 0x1
 	pause 0x5
 	launchtemplate CE_bluecharging 0x0 0x7 0x20 0x18 0xbe 0xc 0x0 0x1 0x0
 	pause 0x0
 	launchtemplate CE_greencharging 0x0 0x7 0x50 0x18 0x16 0xc 0x0 0x1 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0x9c 0x18 0x79 0xd 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x9c 0x18 0x79 0xd 0x0 0x1 0x1
 	waitanimation
 	launchtemplate CE_circlecharge 0x2 0x4 0x0 0x0 0x0 0x2
-	launchtemplate 0x83E5FC4 0x0 0x7 0x64 0x18 0x3c 0xa 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x64 0x18 0x3c 0xa 0x0 0x1 0x0
 	launchtemplate CE_bluecharging 0x0 0x7 0xaa 0x18 0x2a 0xb 0x0 0x1 0x1
 	pause 0x0
 	launchtemplate CE_greencharging 0x0 0x7 0xee 0x18 0xa5 0xa 0x0 0x1 0x1
 	pause 0x5
 	launchtemplate CE_greencharging 0x0 0x7 0x20 0x18 0xbe 0xc 0x0 0x1 0x0
 	pause 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0x50 0x18 0x16 0xc 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x50 0x18 0x16 0xc 0x0 0x1 0x0
 	launchtemplate CE_bluecharging 0x0 0x7 0x9c 0x18 0x79 0xd 0x0 0x1 0x1
 	pause 0x5
 	launchtemplate CE_bluecharging 0x0 0x7 0x64 0x18 0x3c 0xa 0x0 0x1 0x0
 	launchtemplate CE_greencharging 0x0 0x7 0xaa 0x18 0x2a 0xb 0x0 0x1 0x1
 	pause 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0xee 0x18 0xa5 0xa 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0xee 0x18 0xa5 0xa 0x0 0x1 0x1
 	waitanimation
 	launchtemplate CE_circlecharge 0x2 0x4 0x0 0x0 0x0 0x2
 	launchtemplate CE_yellowring 0x28 0x4 0x0 0x0 0x0 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0x20 0x18 0xbe 0xc 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x20 0x18 0xbe 0xc 0x0 0x1 0x0
 	pause 0x0
 	launchtemplate CE_bluecharging 0x0 0x7 0x50 0x18 0x16 0xc 0x0 0x1 0x0
 	launchtemplate CE_greencharging 0x0 0x7 0x9c 0x18 0x79 0xd 0x0 0x1 0x1
 	pause 0x5
 	launchtemplate CE_greencharging 0x0 0x7 0x64 0x18 0x3c 0xa 0x0 0x1 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0xaa 0x18 0x2a 0xb 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0xaa 0x18 0x2a 0xb 0x0 0x1 0x1
 	pause 0x0
 	launchtemplate CE_bluecharging 0x0 0x7 0xee 0x18 0xa5 0xa 0x0 0x1 0x1
 	pause 0x5
 	launchtemplate CE_bluecharging 0x0 0x7 0x20 0x18 0xbe 0xc 0x0 0x1 0x0
 	pause 0x0
 	launchtemplate CE_greencharging 0x0 0x7 0x50 0x18 0x16 0xc 0x0 0x1 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0x9c 0x18 0x79 0xd 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x9c 0x18 0x79 0xd 0x0 0x1 0x1
 	waitanimation
 	launchtemplate CE_circlecharge 0x2 0x4 0x0 0x0 0x0 0x2
-	launchtemplate 0x83E5FC4 0x0 0x7 0x64 0x18 0x3c 0xa 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x64 0x18 0x3c 0xa 0x0 0x1 0x0
 	launchtemplate CE_bluecharging 0x0 0x7 0xaa 0x18 0x2a 0xb 0x0 0x1 0x1
 	pause 0x0
 	launchtemplate CE_greencharging 0x0 0x7 0xee 0x18 0xa5 0xa 0x0 0x1 0x1
 	pause 0x5
 	launchtemplate CE_greencharging 0x0 0x7 0x20 0x18 0xbe 0xc 0x0 0x1 0x0
 	pause 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0x50 0x18 0x16 0xc 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x50 0x18 0x16 0xc 0x0 0x1 0x0
 	launchtemplate CE_bluecharging 0x0 0x7 0x9c 0x18 0x79 0xd 0x0 0x1 0x1
 	pause 0x5
 	launchtemplate CE_bluecharging 0x0 0x7 0x64 0x18 0x3c 0xa 0x0 0x1 0x0
 	launchtemplate CE_greencharging 0x0 0x7 0xaa 0x18 0x2a 0xb 0x0 0x1 0x1
 	pause 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0xee 0x18 0xa5 0xa 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0xee 0x18 0xa5 0xa 0x0 0x1 0x1
 	waitanimation
 	launchtemplate CE_circlecharge 0x2 0x4 0x0 0x0 0x0 0x2
 	launchtemplate CE_greenring 0x28 0x4 0x0 0x0 0x0 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0x20 0x18 0xbe 0xc 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x20 0x18 0xbe 0xc 0x0 0x1 0x0
 	pause 0x0
 	launchtemplate CE_bluecharging 0x0 0x7 0x50 0x18 0x16 0xc 0x0 0x1 0x0
 	launchtemplate CE_greencharging 0x0 0x7 0x9c 0x18 0x79 0xd 0x0 0x1 0x1
 	pause 0x5
 	launchtemplate CE_greencharging 0x0 0x7 0x64 0x18 0x3c 0xa 0x0 0x1 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0xaa 0x18 0x2a 0xb 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0xaa 0x18 0x2a 0xb 0x0 0x1 0x1
 	pause 0x0
 	launchtemplate CE_bluecharging 0x0 0x7 0xee 0x18 0xa5 0xa 0x0 0x1 0x1
 	pause 0x5
 	launchtemplate CE_bluecharging 0x0 0x7 0x20 0x18 0xbe 0xc 0x0 0x1 0x0
 	pause 0x0
 	launchtemplate CE_greencharging 0x0 0x7 0x50 0x18 0x16 0xc 0x0 0x1 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0x9c 0x18 0x79 0xd 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x9c 0x18 0x79 0xd 0x0 0x1 0x1
 	waitanimation
 	launchtemplate CE_circlecharge 0x2 0x4 0x0 0x0 0x0 0x2
-	launchtemplate 0x83E5FC4 0x0 0x7 0x64 0x18 0x3c 0xa 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x64 0x18 0x3c 0xa 0x0 0x1 0x0
 	launchtemplate CE_bluecharging 0x0 0x7 0xaa 0x18 0x2a 0xb 0x0 0x1 0x1
 	pause 0x0
 	launchtemplate CE_greencharging 0x0 0x7 0xee 0x18 0xa5 0xa 0x0 0x1 0x1
 	pause 0x5
 	launchtemplate CE_greencharging 0x0 0x7 0x20 0x18 0xbe 0xc 0x0 0x1 0x0
 	pause 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0x50 0x18 0x16 0xc 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x50 0x18 0x16 0xc 0x0 0x1 0x0
 	launchtemplate CE_bluecharging 0x0 0x7 0x9c 0x18 0x79 0xd 0x0 0x1 0x1
 	pause 0x5
 	launchtemplate CE_bluecharging 0x0 0x7 0x64 0x18 0x3c 0xa 0x0 0x1 0x0
 	launchtemplate CE_greencharging 0x0 0x7 0xaa 0x18 0x2a 0xb 0x0 0x1 0x1
 	pause 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0xee 0x18 0xa5 0xa 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0xee 0x18 0xa5 0xa 0x0 0x1 0x1
 	pause 0x5
 	launchtemplate CE_circlecharge 0x2 0x4 0x0 0x0 0x0 0x2
 	waitanimation
@@ -9528,9 +9596,9 @@ ANIM_COREENFORCER:
 	loadparticle ANIM_TAG_SNORE_Z
 	loadparticle ANIM_TAG_EXPLOSION
 	pokespritefromBG bank_attacker
-	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_IMPACT 0x0 0x0 0xD 0x079F @;Yellow
-	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_ORBS 0x0 0x0 0xA 0x7501 @;Royal Blue
-	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_SNORE_Z 0x0 0x0 0xA 0x0688 @;Green
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_IMPACT 0x0 0xD 0xD 0x079F @;Yellow
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_ORBS 0x0 0xA 0xA 0x7501 @;Royal Blue
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_SNORE_Z 0x0 0xA 0xA 0x0688 @;Green
 	pause 0x10
 	pokespritetoBG bank_target
 	launchtask 0x80A2501 0x5 0x0
@@ -9621,15 +9689,15 @@ ANIM_COREENFORCER:
 	endanimation
 
 .align 2
-CE_bluering: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_WATER_ORB 0x83ACBC0 0x8231CF0 0x0 0x83E40C4 0x8075D9D
-CE_yellowring: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_SPARK_2 0x83ACBC0 0x8231CF0 0x0 0x83E40C4 0x8075D9D
-CE_greenring: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_LEAF 0x83ACBC0 0x8231CF0 0x0 0x83E40C4 0x8075D9D
-CE_circlecharge: objtemplate ANIM_TAG_SHOCK_3 ANIM_TAG_SHOCK_3 0x83ACA38 0x83E6030 0x0 0x83E7BF8 0x80BA781
-CE_bluecharging: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_WATER_ORB 0x83ACA30 0x8231CF0 0x0 0x8231CFC 0x80ADD4D
-CE_greencharging: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_LEAF 0x83ACA30 0x8231CF0 0x0 0x8231CFC 0x80ADD4D
-CE_ACTUALZ: objtemplate ANIM_TAG_SNORE_Z ANIM_TAG_SNORE_Z 0x83ACAF8 0x8231CF0 0x0 0x8231CFC SpriteCB_CentredSpiderWeb
-CE_HITS: objtemplate ANIM_TAG_IMPACT ANIM_TAG_IMPACT 0x83ACA38 0x8231CF0 0x0 0x83E7BF8 SpriteCB_CoreEnforcerHits
-CE_BEAM: objtemplate ANIM_TAG_ORBS ANIM_TAG_ORBS 0x83AC9C8 0x83E2A20 0x0 0x8231CFC SpriteCB_CoreEnforcerBeam
+CE_bluering: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_WATER_ORB OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E40C4 0x8075D9D
+CE_yellowring: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_SPARK_2 OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E40C4 0x8075D9D
+CE_greenring: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_LEAF OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E40C4 0x8075D9D
+CE_circlecharge: objtemplate ANIM_TAG_SHOCK_3 ANIM_TAG_SHOCK_3 OAM_NORMAL_32x32 0x83E6030 0x0 0x83E7BF8 0x80BA781
+CE_bluecharging: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_WATER_ORB OAM_NORMAL_16x16 0x8231CF0 0x0 0x8231CFC 0x80ADD4D
+CE_greencharging: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_LEAF OAM_NORMAL_16x16 0x8231CF0 0x0 0x8231CFC 0x80ADD4D
+CE_ACTUALZ: objtemplate ANIM_TAG_SNORE_Z ANIM_TAG_SNORE_Z OAM_OFF_BLEND_32x32 0x8231CF0 0x0 0x8231CFC SpriteCB_CentredSpiderWeb
+CE_HITS: objtemplate ANIM_TAG_IMPACT ANIM_TAG_IMPACT OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E7BF8 SpriteCB_CoreEnforcerHits
+CE_BEAM: objtemplate ANIM_TAG_ORBS ANIM_TAG_ORBS OAM_OFF_8x8 0x83E2A20 0x0 0x8231CFC SpriteCB_CoreEnforcerBeam
 
 .align 2
 @Hook @0x80A243C with r0
@@ -9662,7 +9730,7 @@ CoreEnforcerFuncCall:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 ANIM_CHATTER:
 	loadparticle ANIM_TAG_JAGGED_MUSIC_NOTE @uproar
 	loadparticle ANIM_TAG_THIN_RING @uproar
@@ -9687,24 +9755,24 @@ ANIM_CHATTER:
 	launchtemplate 0x83E4430 0x2 0x4 0x0 0xffe8 0xffe8 0x0
 	waitanimation
 	loadparticle ANIM_TAG_ICE_CRYSTALS @freeze_chance_anim particles
-	launchtemplate CHATTER_SINGNOTES 0x82 0x3 0xfff6 0xfff6 0x0
+	launchtemplate CHATTER_SINGNOTES TEMPLATE_TARGET | 2, 0x3, 0xfff6 0xfff6 0x0
 	pause 0x4
-	launchtemplate CHATTER_SINGNOTES 0x82 0x3 0xa 0x14 0x0
+	launchtemplate CHATTER_SINGNOTES TEMPLATE_TARGET | 2, 0x3, 0xa 0x14 0x0
 	pause 0x4
-	launchtemplate CHATTER_SINGNOTES 0x82 0x3 0xfffb 0xa 0x0
+	launchtemplate CHATTER_SINGNOTES TEMPLATE_TARGET | 2, 0x3, 0xfffb 0xa 0x0
 	pause 0x4
-	launchtemplate CHATTER_SINGNOTES 0x82 0x3 0x11 0xfff4 0x0
+	launchtemplate CHATTER_SINGNOTES TEMPLATE_TARGET | 2, 0x3, 0x11 0xfff4 0x0
 	pause 0x4
-	launchtemplate CHATTER_SINGNOTES 0x82 0x3 0xfff1 0xf 0x0
+	launchtemplate CHATTER_SINGNOTES TEMPLATE_TARGET | 2, 0x3, 0xfff1 0xf 0x0
 	pause 0x4
-	launchtemplate CHATTER_SINGNOTES 0x82 0x3 0x0 0x0 0x0
+	launchtemplate CHATTER_SINGNOTES TEMPLATE_TARGET | 2, 0x3, 0x0 0x0 0x0
 	pause 0x4
-	launchtemplate CHATTER_SINGNOTES 0x82 0x3 0x14 0x2 0x0
+	launchtemplate CHATTER_SINGNOTES TEMPLATE_TARGET | 2, 0x3, 0x14 0x2 0x0
 	pokespritefromBG side_target
 	endanimation
 
 .align 2
-CHATTER_SINGNOTES: objtemplate ANIM_TAG_MUSIC_NOTES ANIM_TAG_MUSIC_NOTES 0x83ACA90 0x83E3844 0x0 0x83E63DC 0x80AF3B9
+CHATTER_SINGNOTES: objtemplate ANIM_TAG_MUSIC_NOTES ANIM_TAG_MUSIC_NOTES OAM_DOUBLE_16x16 0x83E3844 0x0 0x83E63DC 0x80AF3B9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -9717,11 +9785,11 @@ ANIM_CONFIDE:
 	endanimation
 
 .align 2
-CONFIDE_BUBBLE: objtemplate ANIM_TAG_CONFIDE ANIM_TAG_CONFIDE 0x83AC9D8 0x83E397C 0x0 0x8231CFC 0x80A6B65
+CONFIDE_BUBBLE: objtemplate ANIM_TAG_CONFIDE ANIM_TAG_CONFIDE OAM_OFF_32x32 0x83E397C 0x0 0x8231CFC 0x80A6B65
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 ANIM_WATERSHURIKEN:
 	loadparticle ANIM_TAG_WATER_ORB @blue color
 	loadparticle ANIM_TAG_YELLOW_STAR @swift
@@ -9731,13 +9799,13 @@ ANIM_WATERSHURIKEN:
 	pokespritetoBG side_target
 	leftbankBG_over_partnerBG bank_target
 	launchsoundtask 0x80DCF39 0x7 0x87 0xffc0 0x3f 0x5 0x5 0x0 0x5
-	launchtemplate WS_BLUESHURIKEN 0x82 0x3 0x0 0x0 0x27
+	launchtemplate WS_BLUESHURIKEN TEMPLATE_TARGET | 2, 0x3, 0x0 0x0 0x27
 	pause 0x8
-	launchtemplate WS_BLUERINGS 0x82 0x4 0x0 0x0 0x28 0xf
+	launchtemplate WS_BLUERINGS TEMPLATE_TARGET | 2, 0x4, 0x0 0x0 0x28 0xf
 	pause 0x5
-	launchtemplate WS_BLUERINGS 0x82 0x4 0x0 0x0 0x28 0xf
+	launchtemplate WS_BLUERINGS TEMPLATE_TARGET | 2, 0x4, 0x0 0x0 0x28 0xf
 	pause 0x5
-	launchtemplate WS_BLUERINGS 0x82 0x4 0x0 0x0 0x28 0xf
+	launchtemplate WS_BLUERINGS TEMPLATE_TARGET | 2, 0x4, 0x0 0x0 0x28 0xf
 	pause 0xC
 	playsound2 0x98 0x3f
 	launchtemplate WS_BLUEHIT 0x2 0x4 0x0 0x0 0x1 0x2
@@ -9746,9 +9814,9 @@ ANIM_WATERSHURIKEN:
 	endanimation
 
 .align 2
-WS_BLUESHURIKEN: objtemplate ANIM_TAG_YELLOW_STAR ANIM_TAG_WATER_ORB 0x83ACA38 0x8231CF0 0x0 0x83E7604 0x80B563D
-WS_BLUERINGS: objtemplate ANIM_TAG_BLUE_RING_2 ANIM_TAG_WATER_ORB 0x83ACAD8 0x8231CF0 0x0 0x83E3C9C 0x80AC6D9
-WS_BLUEHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_WATER_ORB 0x83ACB58 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+WS_BLUESHURIKEN: objtemplate ANIM_TAG_YELLOW_STAR ANIM_TAG_WATER_ORB OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E7604 0x80B563D
+WS_BLUERINGS: objtemplate ANIM_TAG_BLUE_RING_2 ANIM_TAG_WATER_ORB OAM_DOUBLE_16x32 0x8231CF0 0x0 0x83E3C9C 0x80AC6D9
+WS_BLUEHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_WATER_ORB OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -9785,7 +9853,7 @@ ANIM_MYSTICALFIRE:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 ANIM_SPIKYSHIELD:
 	loadparticle ANIM_TAG_PROTECT
 	loadparticle ANIM_TAG_GREEN_SPIKE
@@ -9823,7 +9891,7 @@ ANIM_SPIKYSHIELD:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 ANIM_EERIEIMPULSE:
 	loadparticle ANIM_TAG_THIN_RING  @hypervoice circle
 	loadparticle ANIM_TAG_SPARK  @electric particles
@@ -9851,27 +9919,27 @@ ANIM_EERIEIMPULSE:
 	waitanimation
 	playsound2 0x70 0xc0
 	launchtemplate EERIE_HITCIRCLES 0x2 0x6 0x0 0xfffb 0x1 0x0 0x20 0x10
-	launchtemplate 0x83E6088 0x82 0x4 0x5 0x0 0x5 0x0
-	launchtemplate 0x83E6088 0x82 0x4 0xfffb 0xa 0x5 0x1
+	launchtemplate 0x83E6088 TEMPLATE_TARGET | 2, 0x4, 0x5 0x0 0x5 0x0
+	launchtemplate 0x83E6088 TEMPLATE_TARGET | 2, 0x4, 0xfffb 0xa 0x5 0x1
 	pause 0x7
 	launchtemplate EERIE_HITCIRCLES 0x2 0x6 0xfff1 0xa 0x1 0x0 0x20 0x10
-	launchtemplate 0x83E6088 0x82 0x4 0xf 0x14 0x5 0x2
-	launchtemplate 0x83E6088 0x82 0x4 0xfff1 0xfff6 0x5 0x0
+	launchtemplate 0x83E6088 TEMPLATE_TARGET | 2, 0x4, 0xf 0x14 0x5 0x2
+	launchtemplate 0x83E6088 TEMPLATE_TARGET | 2, 0x4, 0xfff1 0xfff6 0x5 0x0
 	pause 0x7
 	launchtemplate EERIE_HITCIRCLES 0x2 0x6 0xfff1 0xfff1 0x1 0x0 0x20 0x10
-	launchtemplate 0x83E6088 0x82 0x4 0x19 0x0 0x5 0x1
-	launchtemplate 0x83E6088 0x82 0x4 0xfff8 0x8 0x5 0x2
+	launchtemplate 0x83E6088 TEMPLATE_TARGET | 2, 0x4, 0x19 0x0 0x5 0x1
+	launchtemplate 0x83E6088 TEMPLATE_TARGET | 2, 0x4, 0xfff8 0x8 0x5 0x2
 	pause 0x7
 	launchtemplate EERIE_HITCIRCLES 0x2 0x6 0xa 0xfffb 0x1 0x0 0x20 0x10
-	launchtemplate 0x83E6088 0x82 0x4 0x2 0xfff8 0x5 0x0
-	launchtemplate 0x83E6088 0x82 0x4 0xffec 0xf 0x5 0x1
+	launchtemplate 0x83E6088 TEMPLATE_TARGET | 2, 0x4, 0x2 0xfff8 0x5 0x0
+	launchtemplate 0x83E6088 TEMPLATE_TARGET | 2, 0x4, 0xffec 0xf 0x5 0x1
 	waitanimation
 	pokespritefromBG side_target
 	endanimation
 
 .align 2
-EERIE_ELECTRICRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_SPARK_2 0x83ACBC0 0x8231CF0 0x0 0x83E4090 0x80A8CA5
-EERIE_HITCIRCLES: objtemplate ANIM_TAG_GOLD_RING ANIM_TAG_SPARK_H 0x83ACA18 0x8231CF0 0x0 0x8231CFC 0x80A4D0D
+EERIE_ELECTRICRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_SPARK_2 OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E4090 0x80A8CA5
+EERIE_HITCIRCLES: objtemplate ANIM_TAG_GOLD_RING ANIM_TAG_SPARK_H OAM_OFF_16x32 0x8231CF0 0x0 0x8231CFC 0x80A4D0D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -9886,7 +9954,7 @@ ANIM_HOLDBACK:
 	pokespritetoBG bank_target
 	setblends 0x80c
 	playsound2 0xba 0x3f
-	launchtemplate HOLDBACK_SWIPE 0x82 0x3 0x0 0x0 0x1
+	launchtemplate HOLDBACK_SWIPE TEMPLATE_TARGET | 2, 0x3, 0x0 0x0 0x1
 	waitanimation
 	launchtask AnimTask_move_bank_2 0x2 0x5 0x1 0x3 0x0 0xa 0x1
 	launchtemplate Template_Hit 0x2 0x4 0x0 0x0 0x1 0x2
@@ -9904,13 +9972,13 @@ ANIM_HOLDBACK:
 	endanimation
 
 .align 2
-HOLDBACK_SWIPE: objtemplate ANIM_TAG_PURPLE_SWIPE ANIM_TAG_PAW_PRINT 0x83AC9E0 0x83E693C 0x0 0x8231CFC 0x80B1485
-HOLDBACK_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_PAW_PRINT 0x83ACAA0 0x8231CF0 0x0 0x83E4088 0x8075D9D
-HOLDBACK_STARS: objtemplate ANIM_TAG_PAIN_SPLIT ANIM_TAG_DUCK 0x83AC9D0 0x8231CF0 0x0 0x8231CFC 0x80B0DF1
+HOLDBACK_SWIPE: objtemplate ANIM_TAG_PURPLE_SWIPE ANIM_TAG_PAW_PRINT OAM_OFF_64x64 0x83E693C 0x0 0x8231CFC 0x80B1485
+HOLDBACK_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_PAW_PRINT OAM_DOUBLE_64x64 0x8231CF0 0x0 0x83E4088 0x8075D9D
+HOLDBACK_STARS: objtemplate ANIM_TAG_PAIN_SPLIT ANIM_TAG_DUCK OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC 0x80B0DF1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 ANIM_INFESTATION:
 	loadparticle ANIM_TAG_HANDS_AND_FEET @black color
 	loadparticle ANIM_TAG_SMALL_BUBBLES @circle particles
@@ -9946,7 +10014,7 @@ INFESTATION_TRAP_PARTICLES:
 	return
 
 .align 2
-INFEST: objtemplate ANIM_TAG_SMALL_BUBBLES ANIM_TAG_HANDS_AND_FEET 0x83AC9C8 0x83E5B10 0x0 0x8231CFC 0x80B477D
+INFEST: objtemplate ANIM_TAG_SMALL_BUBBLES ANIM_TAG_HANDS_AND_FEET OAM_OFF_8x8 0x83E5B10 0x0 0x8231CFC 0x80B477D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -9973,7 +10041,7 @@ ANIM_POWERUPPUNCH:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Nuisance
+@Credits to Lixdel
 ANIM_THOUSANDARROWS:
 	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT @charge animation
 	loadparticle ANIM_TAG_ELECTRICITY @charge animation
@@ -9984,7 +10052,7 @@ ANIM_THOUSANDARROWS:
 	loadparticle ANIM_TAG_NEEDLE @sting
 	pokespritetoBG bank_attacker
 	setblends 0x80e
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0xC 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xC 0x0
 	waitanimation
 	launchtemplate GREENCHARGE 0x2 0x1 0x0
 	playsound2 0xce 0xc0
@@ -10011,67 +10079,67 @@ ANIM_THOUSANDARROWS:
 	call DOWNARROWS
 	call DOWNARROWS
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0xC 0x0 0xffff
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xC 0x0 0xffff
 	waitanimation
 	pokespritefromBG bank_attacker
 	resetblends
 	endanimation
 
 UPHEXAGONS:
-	launchtemplate GREENHEXAGONS 0x82 0x3 0x0 0xfffc 0xfff0
+	launchtemplate GREENHEXAGONS TEMPLATE_TARGET | 2, 0x3, 0x0 0xfffc 0xfff0
 	playsound2 0xa8 0xc0
 	pause 0x2
-	launchtemplate GREENHEXAGONS 0x82 0x3 0x0 0x100D 0xfff0
+	launchtemplate GREENHEXAGONS TEMPLATE_TARGET | 2, 0x3, 0x0 0x100D 0xfff0
 	playsound2 0xa8 0xc0
 	pause 0x2
-	launchtemplate GREENHEXAGONS 0x82 0x3 0x0 0x4 0xfff4
+	launchtemplate GREENHEXAGONS TEMPLATE_TARGET | 2, 0x3, 0x0 0x4 0xfff4
 	playsound2 0xa8 0xc0
 	pause 0x2
-	launchtemplate GREENHEXAGONS 0x82 0x3 0x0 0xfff0 0xfff0
+	launchtemplate GREENHEXAGONS TEMPLATE_TARGET | 2, 0x3, 0x0 0xfff0 0xfff0
 	playsound2 0xa8 0xc0
 	pause 0x2
 	return
 DOWNARROWS:
-	launchtemplate GREENARROWS 0x82 0x3 0x1 0xdc 0x3c
+	launchtemplate GREENARROWS TEMPLATE_TARGET | 2, 0x3, 0x1 0xdc 0x3c
 	playsound2 0xa8 0xc0
 	pause 0x2
-	launchtemplate GREENARROWS 0x82 0x3 0x1 0x3c 0x64
+	launchtemplate GREENARROWS TEMPLATE_TARGET | 2, 0x3, 0x1 0x3c 0x64
 	playsound2 0xa8 0xc0
 	pause 0x2
-	launchtemplate GREENARROWS 0x82 0x3 0x1 0x8c 0x37
+	launchtemplate GREENARROWS TEMPLATE_TARGET | 2, 0x3, 0x1 0x8c 0x37
 	playsound2 0xa8 0xc0
 	pause 0x2
-	launchtemplate GREENARROWS 0x82 0x3 0x1 0xb4 0x32
+	launchtemplate GREENARROWS TEMPLATE_TARGET | 2, 0x3, 0x1 0xb4 0x32
 	playsound2 0xa8 0xc0
 	pause 0x2
-	launchtemplate GREENARROWS 0x82 0x3 0x1 0x14 0x5a
+	launchtemplate GREENARROWS TEMPLATE_TARGET | 2, 0x3, 0x1 0x14 0x5a
 	playsound2 0xa8 0xc0
 	pause 0x2
-	launchtemplate GREENARROWS 0x82 0x3 0x1 0x5a 0x5a
+	launchtemplate GREENARROWS TEMPLATE_TARGET | 2, 0x3, 0x1 0x5a 0x5a
 	playsound2 0xa8 0xc0
 	pause 0x2
-	launchtemplate GREENARROWS 0x82 0x3 0x1 0xa0 0x3c
+	launchtemplate GREENARROWS TEMPLATE_TARGET | 2, 0x3, 0x1 0xa0 0x3c
 	playsound2 0xa8 0xc0
 	pause 0x2
-	launchtemplate GREENARROWS 0x82 0x3 0x1 0x1e 0x5a
+	launchtemplate GREENARROWS TEMPLATE_TARGET | 2, 0x3, 0x1 0x1e 0x5a
 	playsound2 0xa8 0xc0
 	pause 0x2
-	launchtemplate GREENARROWS 0x82 0x3 0x1 0x78 0x3c
+	launchtemplate GREENARROWS TEMPLATE_TARGET | 2, 0x3, 0x1 0x78 0x3c
 	playsound2 0xa8 0xc0
 	pause 0x2
-	launchtemplate GREENARROWS 0x82 0x3 0x1 0xc8 0x28
+	launchtemplate GREENARROWS TEMPLATE_TARGET | 2, 0x3, 0x1 0xc8 0x28
 	playsound2 0xa8 0xc0
 	return
 
 .align 2
-GREENCHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_LEAF 0x83ACB60 0x8231CF0 0x0 0x83E61C8 0x80AE71D
-GREENHEXAGONS: objtemplate ANIM_TAG_VERTICAL_HEX ANIM_TAG_ZYGARDE_HEXES 0x83AC9D0 0x83E2C00 0x0 0x8231CFC 0x80B8D59
-GREENARROWS: objtemplate ANIM_TAG_NEEDLE ANIM_TAG_LEAF 0x83AC9D0 0x8231CF0 0x0 0x8231CFC 0x80B8D59
-GREENDISCHARGE: objtemplate ANIM_TAG_ELECTRICITY ANIM_TAG_RAZOR_LEAF 0x83AC9D8 0x83E6200 0x0 0x8231CFC 0x80AE775
+GREENCHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_LEAF OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80AE71D
+GREENHEXAGONS: objtemplate ANIM_TAG_VERTICAL_HEX ANIM_TAG_ZYGARDE_HEXES OAM_OFF_16x16 0x83E2C00 0x0 0x8231CFC SpriteCB_Geyser
+GREENARROWS: objtemplate ANIM_TAG_NEEDLE ANIM_TAG_LEAF OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC SpriteCB_Geyser
+GREENDISCHARGE: objtemplate ANIM_TAG_ELECTRICITY ANIM_TAG_RAZOR_LEAF OAM_OFF_32x32 0x83E6200 0x0 0x8231CFC 0x80AE775
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 ANIM_THOUSANDWAVES:
 	loadparticle ANIM_TAG_ZYGARDE_HEXES @Hex
 	loadparticle ANIM_TAG_FLYING_DIRT @heat wave animation
@@ -10079,7 +10147,7 @@ ANIM_THOUSANDWAVES:
 	loadparticle ANIM_TAG_IMPACT @pound hits
 	pokespritetoBG side_attacker
 	setblends 0x808 @Please also try no setblends, using setblends 0x80c, and using setblends 0x808
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0xC 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xC 0x0
 	waitanimation
 	playsound2 0x85 0xc0
 	launchtemplate TW_GREENWHEEL 0x2 0x1 0x0
@@ -10133,7 +10201,7 @@ ANIM_THOUSANDWAVES:
 	waitanimation
 	launchtask 0x80A939D 0x2 0x0
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0xC 0x0 0xffff
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xC 0x0 0xffff
 	waitanimation
 	resetblends
 	pokespritefromBG side_target
@@ -10174,41 +10242,41 @@ ROTATINGHITSANDWAVE:
 	launchtemplate TW_GREENWAVES 0x28 0x4 0x46 0x7c0 0x60 0x1
 	pause 0x2
 	playsound2 0x84 0x3f
-	launchtemplate TW_POUNDHITS 0x82 0x4 0x1 0x0 0x0 0x3
+	launchtemplate TW_POUNDHITS TEMPLATE_TARGET | 2, 0x4, 0x1 0x0 0x0 0x3
 	launchtemplate TW_ROTATINGHITS2 0x82 0x7 0x23 0x20 0xf0 0x28 0xb 0xffd2 0x1    @2
 	launchtemplate TW_GREENWAVES 0x28 0x4 0x0 0xb00 0x60 0x1
 	pause 0x2
 	playsound2 0x84 0x3f
-	launchtemplate TW_POUNDHITS 0x82 0x4 0x1 0x5 0xfff4 0x3
+	launchtemplate TW_POUNDHITS TEMPLATE_TARGET | 2, 0x4, 0x1 0x5 0xfff4 0x3
 	launchtemplate TW_ROTATINGHITS2 0x82 0x7 0x23 0x21 0x1a0 0x28 0x4 0x2a 0x1  @3
 	launchtemplate TW_GREENWAVES 0x28 0x4 0x3c 0xa00 0x60 0x1
 	pause 0x2
 	playsound2 0x84 0x3f
-	launchtemplate TW_POUNDHITS 0x82 0x4 0x1 0xfffa 0x9 0x3
+	launchtemplate TW_POUNDHITS TEMPLATE_TARGET | 2, 0x4, 0x1 0xfffa 0x9 0x3
 	launchtemplate TW_ROTATINGHITS2 0x82 0x7 0x23 0x1f 0x120 0x2d 0x6 0xffd6 0x1  @4
 	launchtemplate TW_GREENWAVES 0x28 0x4 0xa 0x900 0x60 0x1
 	pause 0x2
 	playsound2 0x84 0x3f
-	launchtemplate TW_POUNDHITS 0x82 0x4 0x1 0xfffa 0xfff4 0x3
+	launchtemplate TW_POUNDHITS TEMPLATE_TARGET | 2, 0x4, 0x1 0xfffa 0xfff4 0x3
 	launchtemplate TW_ROTATINGHITS2 0x82 0x7 0x23 0x1c 0x1c0 0x2d 0xb 0x2e 0x1  @5
 	launchtemplate TW_GREENWAVES 0x28 0x4 0x5a 0x800 0x60 0x1
 	pause 0x2
 	playsound2 0x84 0x3f
-	launchtemplate TW_POUNDHITS 0x82 0x4 0x1 0x5 0x9 0x3
+	launchtemplate TW_POUNDHITS TEMPLATE_TARGET | 2, 0x4, 0x1 0x5 0x9 0x3
 	launchtemplate TW_ROTATINGHITS2 0x82 0x7 0x23 0x21 0x1d0 0x32 0xa 0xffce 0x1  @6
 	launchtemplate TW_GREENWAVES 0x28 0x4 0x32 0xa00 0x60 0x1
 	pause 0x2
 	playsound2 0x84 0x3f
-	launchtemplate TW_POUNDHITS 0x82 0x4 0x1 0xfffa 0x0 0x3
+	launchtemplate TW_POUNDHITS TEMPLATE_TARGET | 2, 0x4, 0x1 0xfffa 0x0 0x3
 	return
 
 
 .align 2
-TW_GREENWAVES: objtemplate ANIM_TAG_FLYING_DIRT ANIM_TAG_LEAF 0x83AC9F8 0x8231CF0 0x0 0x8231CFC 0x80B4AA9
-TW_GREENRECOVER2: objtemplate ANIM_TAG_ZYGARDE_HEXES ANIM_TAG_ZYGARDE_HEXES 0x83AC9D0 0x83E2C00 0x0 0x83E2A54 0x80A2389
-TW_GREENWHEEL: objtemplate ANIM_TAG_ZYGARDE_HEXES ANIM_TAG_ZYGARDE_HEXES 0x83AC9D0 0x83E2C00 0x0 0x8231CFC 0x80B7449
-TW_ROTATINGHITS2: objtemplate ANIM_TAG_ZYGARDE_HEXES ANIM_TAG_ZYGARDE_HEXES 0x83AC9D0 0x83E2C00 0x0 0x83E741C 0x80B477D
-TW_POUNDHITS: objtemplate ANIM_TAG_IMPACT ANIM_TAG_LEAF 0x83ACB58 0x8231CF0 0x0 0x83E7BF8 0x80BA6C9
+TW_GREENWAVES: objtemplate ANIM_TAG_FLYING_DIRT ANIM_TAG_LEAF OAM_OFF_32x16 0x8231CF0 0x0 0x8231CFC 0x80B4AA9
+TW_GREENRECOVER2: objtemplate ANIM_TAG_ZYGARDE_HEXES ANIM_TAG_ZYGARDE_HEXES OAM_OFF_16x16 0x83E2C00 0x0 0x83E2A54 0x80A2389
+TW_GREENWHEEL: objtemplate ANIM_TAG_ZYGARDE_HEXES ANIM_TAG_ZYGARDE_HEXES OAM_OFF_16x16 0x83E2C00 0x0 0x8231CFC 0x80B7449
+TW_ROTATINGHITS2: objtemplate ANIM_TAG_ZYGARDE_HEXES ANIM_TAG_ZYGARDE_HEXES OAM_OFF_16x16 0x83E2C00 0x0 0x83E741C 0x80B477D
+TW_POUNDHITS: objtemplate ANIM_TAG_IMPACT ANIM_TAG_LEAF OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA6C9
 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -10223,7 +10291,7 @@ ANIM_PARABOLICCHARGE:
 	loadparticle ANIM_TAG_LIGHTNING
 	pokespritetoBG bank_attacker
 	setblends 0x80c
-	launchtask 0x80ae541 0x2 0x4 0x0 0x14 0x0 0x2
+	launchtask AnimTask_ChargeBalls 0x2 0x4 0x0 0x14 0x0 0x2
 	playsound2 0xce 0xc0
 	pause 0xc
 	launchtemplate 0x83e6290 0x2 0x0
@@ -10256,18 +10324,20 @@ ANIM_PARABOLICCHARGE:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 ANIM_SEARINGSHOT:
 	loadparticle ANIM_TAG_SPARK_2 @yellow color
 	loadparticle ANIM_TAG_JAGGED_MUSIC_NOTE @red color
 	loadparticle ANIM_TAG_ELECTRIC_ORBS @charge
 	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT @charge
 	loadparticle ANIM_TAG_WARM_ROCK @eruption
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_ELECTRIC_ORBS 0x0 0xC 0xC 0x0E3E @;Orange
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_WARM_ROCK 0x0 0xB 0xB 0x01BE @;Orange
 	pokespritetoBG bank_attacker
 	setblends 0x808
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0x10 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x10 0x0
 	waitanimation
-	launchtask 0x80AE541 0x2 0x4 0x0 0x3c 0x2 0xc
+	launchtask AnimTask_ChargeBalls 0x2 0x4 0x0 0x3c 0x2 0xc
 	launchtask AnimTask_pal_fade 0xA 0x5 PAL_ATK 0x2 0x0 0x9 0x1F
 	playsound2 0xce 0xc0
 	pause 0x1e
@@ -10286,31 +10356,29 @@ ANIM_SEARINGSHOT:
 	launchtemplate SS_ERUPTIONROCK 0x2 0x5 0x1 0x0 0x1e 0x19 0xffec
 	launchtemplate SS_ERUPTIONROCK 0x2 0x5 0x1 0x20 0x1e 0x19 0xffec
 	launchtemplate SS_ERUPTIONROCK 0x2 0x5 0x1 0x40 0x1e 0x19 0xffec
+	pause 0x2
 	launchtemplate SS_ERUPTIONROCK 0x2 0x5 0x1 0x60 0x1e 0x19 0xffec
 	launchtemplate SS_ERUPTIONROCK 0x2 0x5 0x1 0x80 0x1e 0x19 0xffec
+	pause 0x2
 	launchtemplate SS_ERUPTIONROCK 0x42 0x5 0x1 0xa0 0x1e 0x19 0xffec
 	launchtemplate SS_ERUPTIONROCK 0x42 0x5 0x1 0xc0 0x1e 0x19 0xffec
+	pause 0x2
 	launchtemplate SS_ERUPTIONROCK 0x42 0x5 0x1 0xe0 0x1e 0x19 0xffec
-	pause 0x15
+	pause 0xF
 	playsound2 0x8A 0xC0
 	launchtemplate SS_ERUPTIONROCK 0x2 0x5 0x1 0x0 0x1e 0x19 0x0
+	pause 0x2
 	launchtemplate SS_ERUPTIONROCK 0x2 0x5 0x1 0x20 0x1e 0x19 0x0
 	launchtemplate SS_ERUPTIONROCK 0x2 0x5 0x1 0x40 0x1e 0x19 0x0
 	launchtemplate SS_ERUPTIONROCK 0x2 0x5 0x1 0x60 0x1e 0x19 0x0
+	pause 0x2
 	launchtemplate SS_ERUPTIONROCK 0x2 0x5 0x1 0x80 0x1e 0x19 0x0
+	pause 0x2
 	launchtemplate SS_ERUPTIONROCK 0x42 0x5 0x1 0xa0 0x1e 0x19 0x0
 	launchtemplate SS_ERUPTIONROCK 0x42 0x5 0x1 0xc0 0x1e 0x19 0x0
+	pause 0x2
 	launchtemplate SS_ERUPTIONROCK 0x42 0x5 0x1 0xe0 0x1e 0x19 0x0
 	pause 0x15
-	playsound2 0x8A 0xC0
-	launchtemplate SS_ERUPTIONROCK 0x2 0x5 0x1 0x0 0x1e 0x19 0xa
-	launchtemplate SS_ERUPTIONROCK 0x2 0x5 0x1 0x20 0x1e 0x19 0xa
-	launchtemplate SS_ERUPTIONROCK 0x2 0x5 0x1 0x40 0x1e 0x19 0xa
-	launchtemplate SS_ERUPTIONROCK 0x2 0x5 0x1 0x60 0x1e 0x19 0xa
-	launchtemplate SS_ERUPTIONROCK 0x2 0x5 0x1 0x80 0x1e 0x19 0xa
-	launchtemplate SS_ERUPTIONROCK 0x42 0x5 0x1 0xa0 0x1e 0x19 0xa
-	launchtemplate SS_ERUPTIONROCK 0x42 0x5 0x1 0xc0 0x1e 0x19 0xa
-	launchtemplate SS_ERUPTIONROCK 0x42 0x5 0x1 0xe0 0x1e 0x19 0xa
 	waitanimation
 	launchtask AnimTask_pal_fade 0xA 0x5 PAL_ATK 0x2 0x9 0x0 0x1F
 	pokespritefromBG bank_attacker
@@ -10325,28 +10393,31 @@ ANIM_SEARINGSHOT:
 	launchtask AnimTask_move_bank 0x2 0x5 target_partner 0x3 0x0 0x1B 0x1
 	launchtask AnimTask_move_bank 0x2 0x5 attacker_partner 0x3 0x0 0x1B 0x1
 	playsound2 0x8C 0x3f
-	launchtemplate SS_ERUPTIONHIT 0x83 0x5 0x0 0x0 0x1 0x1E bank_target
-	launchtemplate SS_ERUPTIONHIT 0x83 0x5 0x0 0x0 0x1 0x1E target_partner
-	launchtemplate SS_ERUPTIONHIT 0x83 0x5 0x0 0x0 0x1 0x1E attacker_partner
+	launchtemplate SS_ERUPTIONHIT 0x83 0x5, -5, -5, 0x1 0x1E bank_target
+	launchtemplate SS_ERUPTIONHIT 0x83 0x5, 5, 10, 0x1 0x1E bank_target
+	launchtemplate SS_ERUPTIONHIT 0x83 0x5, -5, -5, 0x1 0x1E target_partner
+	launchtemplate SS_ERUPTIONHIT 0x83 0x5, 5, 10, 0x1 0x1E target_partner
+	launchtemplate SS_ERUPTIONHIT 0x83 0x5, -5, -5, 0x1 0x1E attacker_partner
+	launchtemplate SS_ERUPTIONHIT 0x83 0x5, 5, 10, 0x1 0x1E attacker_partner
 	pause 0x1E
 	playsound2 0xab 0xc0
 	waitanimation
 	launchtask AnimTask_pal_fade 0xA 0x5 PAL_ATK_PARTNER | PAL_DEF | PAL_DEF_PARTNER 0x2 0x9 0x0 0x1F
 	pause 0x1E
 	unsetscrollingBG
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x0 0x0
 	pokespritefromBG side_attacker
 	resetblends
 	endanimation
 
 .align 2
-SS_REDCHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_JAGGED_MUSIC_NOTE 0x83ACB60 0x8231CF0 0x0 0x83E61C8 0x80AE71D
-SS_ERUPTIONROCK: objtemplate ANIM_TAG_WARM_ROCK ANIM_TAG_WARM_ROCK 0x83AC9D8 0x8231CF0 0x0 0x8231CFC 0x80B77E5
-SS_ERUPTIONHIT: objtemplate ANIM_TAG_WARM_ROCK ANIM_TAG_WARM_ROCK 0x83ACA98 0x83E66CC 0x0 0x83E6788 SpriteCB_SearingShotRock
+SS_REDCHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_JAGGED_MUSIC_NOTE OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80AE71D
+SS_ERUPTIONROCK: objtemplate ANIM_TAG_WARM_ROCK ANIM_TAG_WARM_ROCK OAM_OFF_32x32 0x8231CF0 0x0 0x8231CFC 0x80B77E5
+SS_ERUPTIONHIT: objtemplate ANIM_TAG_WARM_ROCK ANIM_TAG_WARM_ROCK OAM_DOUBLE_32x32 0x83E66CC 0x0 gSpriteAffineAnimTable_SearingShotRock SpriteCB_SearingShotRock
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 ANIM_SEEDFLARE:
 	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT @charge animation
 	loadparticle ANIM_TAG_LEAF @green color
@@ -10355,7 +10426,7 @@ ANIM_SEEDFLARE:
 	loadparticle ANIM_TAG_FLYING_DIRT @heat wave animation
 	pokespritetoBG bank_attacker
 	setblends 0x80e
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0xC 0x7FFF
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xC 0x7FFF
 	waitanimation
 	playsound2 0x85 0xc0
 	launchtemplate SF_GREENCIRCLES 0x2 0x3 0x28 0x28 0x10
@@ -10426,16 +10497,16 @@ ANIM_SEEDFLARE:
 	pause 0xA
 	launchtemplate SF_GREENWAVES 0x28 0x4 0x3c 0xa00 0x60 0x1
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0xC 0x0 0x7FFF
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xC 0x0 0x7FFF
 	waitanimation
 	pokespritefromBG bank_attacker
 	resetblends
 	endanimation
 
 .align 2
-SF_GREENCHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_LEAF 0x83ACB60 0x8231CF0 0x0 0x83E61C8 0x80AE71D
-SF_GREENCIRCLES: objtemplate ANIM_TAG_ORBS ANIM_TAG_RAZOR_LEAF 0x83ACB50 0x83E2A40 0x0 0x83E2A54 0x80A2389
-SF_GREENWAVES: objtemplate ANIM_TAG_FLYING_DIRT ANIM_TAG_LEAF 0x83AC9F8 0x8231CF0 0x0 0x8231CFC 0x80B4AA9
+SF_GREENCHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_LEAF OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80AE71D
+SF_GREENCIRCLES: objtemplate ANIM_TAG_ORBS ANIM_TAG_RAZOR_LEAF OAM_NORMAL_BLEND_16x16 0x83E2A40 0x0 0x83E2A54 0x80A2389
+SF_GREENWAVES: objtemplate ANIM_TAG_FLYING_DIRT ANIM_TAG_LEAF OAM_OFF_32x16 0x8231CF0 0x0 0x8231CFC 0x80B4AA9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -10450,7 +10521,7 @@ ANIM_ACCELEROCK:
 	playsound2 0x88 0xc0
 	pause 0x4
 	launchtask AnimTask_move_bank 0x2 0x5 0x1 0x5 0x0 0x6 0x1
-	launchtemplate Template_Hit 0x84 0x4 0x0 0x0 0x1 0x1
+	launchtemplate Template_Hit TEMPLATE_TARGET | 4, 0x4, 0x0 0x0 0x1 0x1
 	playsound2 0x74 0x3f
 	launchtemplate Template_HorizontalLunge 0x2 0x5 0x1 0x3 0x0 0x5 0x1
 	launchtemplate 0x83e73cc 0x82 0x6 0x5 0x0 0xffec 0x18 0xe 0x1
@@ -10488,8 +10559,8 @@ ANIM_ANCHORSHOT:
 	endanimation
 
 .align 2
-ANCHOR: objtemplate ANIM_TAG_ANCHOR ANIM_TAG_CHAIN_LINK 0x83AC9D8 0x8231CF0 0x0 0x8231CFC 0x80E34D1
-ANCHORANGLED: objtemplate ANIM_TAG_ANCHOR ANIM_TAG_CHAIN_LINK 0x83ACA38 0x8231CF0 0x0 0x83E7604 0x80B563D
+ANCHOR: objtemplate ANIM_TAG_ANCHOR ANIM_TAG_CHAIN_LINK OAM_OFF_32x32 0x8231CF0 0x0 0x8231CFC 0x80E34D1
+ANCHORANGLED: objtemplate ANIM_TAG_ANCHOR ANIM_TAG_CHAIN_LINK OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E7604 0x80B563D
 
 @ hook at 0xAE484 via r2
 .align 2
@@ -10514,7 +10585,7 @@ Jump:
 .align 2
 .NormalTWaveTemplate: .word 0x83E60B8
 .ATemplate: .word CHAIN
-CHAIN: objtemplate ANIM_TAG_CHAIN_LINK ANIM_TAG_CHAIN_LINK 0x83AC9F8 0x8231CF0 0x0 0x8231CFC 0x80AE471
+CHAIN: objtemplate ANIM_TAG_CHAIN_LINK ANIM_TAG_CHAIN_LINK OAM_OFF_32x16 0x8231CF0 0x0 0x8231CFC 0x80AE471
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -10545,7 +10616,7 @@ ANIM_AURORAVEIL:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 ANIM_BANEFULBUNKER:
 	loadparticle ANIM_TAG_PROTECT @protect
 	loadparticle ANIM_TAG_POISON_BUBBLE @poison
@@ -10573,11 +10644,11 @@ ANIM_BANEFULBUNKER:
 	endanimation
 
 .align 2
-POISONBUBBLES: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_BUBBLE 0x83ACA30 0x83E69DC 0x0 0x8231CFC 0x80AB309
+POISONBUBBLES: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_BUBBLE OAM_NORMAL_16x16 0x83E69DC 0x0 0x8231CFC 0x80AB309
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 @ charge-up anim
 ANIM_BEAKBLAST:
 	loadparticle ANIM_TAG_SMALL_EMBER @Fire
@@ -10614,7 +10685,7 @@ BEAK_BLAST_ANIM:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 ANIM_BRUTALSWING:
 	loadparticle ANIM_TAG_IMPACT @hits
 	loadparticle ANIM_TAG_HANDS_AND_FEET @black color
@@ -10650,12 +10721,12 @@ ANIM_BRUTALSWING:
 	endanimation
 
 .align 2
-BRUTALSWING_HITS: objtemplate ANIM_TAG_IMPACT ANIM_TAG_HANDS_AND_FEET 0x83ACB58 0x8231CF0 0x0 0x83E7BF8 0x80BA631
-BRUTALSWING_HITS2: objtemplate ANIM_TAG_IMPACT ANIM_TAG_HANDS_AND_FEET 0x83ACB58 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+BRUTALSWING_HITS: objtemplate ANIM_TAG_IMPACT ANIM_TAG_HANDS_AND_FEET OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA631
+BRUTALSWING_HITS2: objtemplate ANIM_TAG_IMPACT ANIM_TAG_HANDS_AND_FEET OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Nuisance
+@Credits to Lixdel
 ANIM_BURNUP:
 	loadparticle ANIM_TAG_THIN_RING @ring
 	loadparticle ANIM_TAG_SMALL_RED_EYE @red color
@@ -10716,18 +10787,18 @@ ANIM_BURNUP:
 	endanimation
 
 .align 2
-REDYAWN: objtemplate ANIM_TAG_PINK_CLOUD ANIM_TAG_SMALL_RED_EYE 0x83ACA38 0x8231CF0 0x0 0x8231CFC 0x80AFD4D @or use the fire particle you used on vcreate
+REDYAWN: objtemplate ANIM_TAG_PINK_CLOUD ANIM_TAG_SMALL_RED_EYE OAM_NORMAL_32x32 0x8231CF0 0x0 0x8231CFC 0x80AFD4D @or use the fire particle you used on vcreate
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 ANIM_CLANGINGSCALES:
 	loadparticle ANIM_TAG_METAL_SOUND_WAVES @metal sound
 	loadparticle ANIM_TAG_POISON_BUBBLE @purple color
 	pokespritetoBG side_target
 	leftopponentbankBG_over_partnerBG 0x1
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0xC 0x2002
-	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_METAL_SOUND_WAVES 0x0 0x0 0xA 0x642D
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xC 0x2002
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_METAL_SOUND_WAVES 0x0 0xA 0xA 0x642D
 	waitanimation
 	launchtask AnimTask_move_bank_2 0x2 0x5 0x0 0x2 0x0 0x8 0x1
 	call SCALES_SOUNDPARTICLES
@@ -10740,7 +10811,7 @@ ANIM_CLANGINGSCALES:
 	waitanimation
 	pokespritefromBG side_target
 	pause 0x0
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0xC 0x0 0x2002
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xC 0x0 0x2002
 	waitanimation
 	endanimation
 SCALES_SOUNDPARTICLES:
@@ -10751,7 +10822,7 @@ SCALES_SOUNDPARTICLES:
 	return
 
 .align 2
-PURPLEMETAL: objtemplate ANIM_TAG_METAL_SOUND_WAVES ANIM_TAG_METAL_SOUND_WAVES 0x83ACAE0 0x8231CF0 0x0 0x83E3C98 SpriteCB_TranslateAnimSpriteToTargetMonLocationDoubles
+PURPLEMETAL: objtemplate ANIM_TAG_METAL_SOUND_WAVES ANIM_TAG_METAL_SOUND_WAVES OAM_DOUBLE_32x64 0x8231CF0 0x0 0x83E3C98 SpriteCB_TranslateAnimSpriteToTargetMonLocationDoubles
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -10795,7 +10866,7 @@ PURPLE_HIT_CALL:
 	return
 
 .align 2
-DARKLARIAT_HIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_POISON_BUBBLE 0x83ACB58 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+DARKLARIAT_HIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_POISON_BUBBLE OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -10864,10 +10935,10 @@ ANIM_FIRELASH:
 	launchtask 0x807616d 0x3 0x5 0x1 0x1f 0xc 0x1 0x1
 	playsound2 0x8a 0x3f
 	loadparticle ANIM_TAG_SLASH
-	launchtemplate 0x83e35a4 0x82 0x3 0x1 0xfff8 0x0
+	launchtemplate 0x83e35a4 TEMPLATE_TARGET | 2, 0x3, 0x1 0xfff8 0x0
 	playsound2 0x81 0x3f
 	pause 0x4
-	launchtemplate 0x83e35a4 0x82 0x3 0x1 0x8 0x0
+	launchtemplate 0x83e35a4 TEMPLATE_TARGET | 2, 0x3, 0x1 0x8 0x0
 	launchtask AnimTask_move_bank_2 0x2 0x5 0x1 0x4 0x0 0x12 0x1
 	playsound2 0x81 0x3f
 	pause 0x7
@@ -10878,7 +10949,7 @@ ANIM_FIRELASH:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 ANIM_FIRSTIMPRESSION:
 	loadparticle ANIM_TAG_SWEAT_BEAD @astonish
 	loadparticle ANIM_TAG_IMPACT @pound hit
@@ -10910,7 +10981,7 @@ ANIM_FIRSTIMPRESSION:
 	endanimation
 
 .align 2
-FI_GREENPOUND: objtemplate ANIM_TAG_IMPACT ANIM_TAG_RAZOR_LEAF 0x83ACB58 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+FI_GREENPOUND: objtemplate ANIM_TAG_IMPACT ANIM_TAG_RAZOR_LEAF OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -10921,7 +10992,7 @@ ANIM_FLEURCANNON:
 	loadparticle ANIM_TAG_PINK_HEART @pink color
 	setblends 0x80C
 	pokespritetoBG bank_target
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0xF 0x7440
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xF 0x7440
 	waitanimation
 	playsoundpanchange 0xc2 0xc0 0x3f 0x2 0x0
 	launchtask AnimTask_move_bank 0x2 0x5 bank_attacker 0x0 0x4 0x32 0x1
@@ -10955,7 +11026,7 @@ ANIM_FLEURCANNON:
 	pause 0x5
 	launchtask AnimTask_move_bank 0x5 0x5 bank_target 0x0 0x5 0xb 0x1
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x10 0x0 0x7440
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x10 0x0 0x7440
 	waitanimation
 	pokespritefromBG bank_target
 	resetblends
@@ -10971,12 +11042,12 @@ PINK_BEAM:
 	return
 
 .align 2
-PINKPARTICLES: objtemplate ANIM_TAG_ORBS ANIM_TAG_PINK_PETAL 0x83AC9C8 0x83E2A20 0x0 0x8231CFC 0x80A25ED
-PINKDISCHARGE: objtemplate ANIM_TAG_ELECTRICITY ANIM_TAG_PINK_PETAL 0x83AC9D8 0x83E6200 0x0 0x8231CFC 0x80AE775
+PINKPARTICLES: objtemplate ANIM_TAG_ORBS ANIM_TAG_PINK_PETAL OAM_OFF_8x8 0x83E2A20 0x0 0x8231CFC 0x80A25ED
+PINKDISCHARGE: objtemplate ANIM_TAG_ELECTRICITY ANIM_TAG_PINK_PETAL OAM_OFF_32x32 0x83E6200 0x0 0x8231CFC 0x80AE775
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 ANIM_FLORALHEALING:
 	loadparticle ANIM_TAG_SPARKLE_2 @heal
 	loadparticle ANIM_TAG_FLOWER @flowers
@@ -11083,73 +11154,73 @@ CIRCLES_LEAVES:
 	return
 
 .align 2
-FH_FLOWERS: objtemplate ANIM_TAG_FLOWER ANIM_TAG_FLOWER 0x83AC9D0 0x83E2B8C 0x0 0x8231CFC 0x80A27D1
-FH_CIRCLES: objtemplate ANIM_TAG_ORBS ANIM_TAG_ORBS 0x83ACB50 0x83E2A40 0x0 0x83E741C 0x80B477D
-FH_LEAVES: objtemplate ANIM_TAG_LEAF ANIM_TAG_LEAF 0x83AC9D0 0x83E2C00 0x0 0x83E741C 0x80B477D
-FH_WINDLEAVES: objtemplate ANIM_TAG_LEAF ANIM_TAG_LEAF 0x83AC9D0 0x83E2C00 0x0 0x8231CFC 0x80E0791
+FH_FLOWERS: objtemplate ANIM_TAG_FLOWER ANIM_TAG_FLOWER OAM_OFF_16x16 0x83E2B8C 0x0 0x8231CFC 0x80A27D1
+FH_CIRCLES: objtemplate ANIM_TAG_ORBS ANIM_TAG_ORBS OAM_NORMAL_BLEND_16x16 0x83E2A40 0x0 0x83E741C 0x80B477D
+FH_LEAVES: objtemplate ANIM_TAG_LEAF ANIM_TAG_LEAF OAM_OFF_16x16 0x83E2C00 0x0 0x83E741C 0x80B477D
+FH_WINDLEAVES: objtemplate ANIM_TAG_LEAF ANIM_TAG_LEAF OAM_OFF_16x16 0x83E2C00 0x0 0x8231CFC 0x80E0791
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 ANIM_GEARUP:
 	loadparticle ANIM_TAG_GEAR
 	loadparticle ANIM_TAG_SPARK_2 @sparks
 	launchtask AnimTask_pal_fade 0xA 0x5 PAL_ATK 0x2 0x0 0x9 0x039B
 	launchtemplate GEARUP_GEAR 0x2 0x4 0x0 0xffe8 0x8 0x8c
 	playsound2 0x56 0xC0
-	launchtemplate 0x83E5FC4 0x0 0x7 0x20 0x18 0xbe 0xc 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x20 0x18 0xbe 0xc 0x0 0x1 0x0
 	pause 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0x50 0x18 0x16 0xc 0x0 0x1 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0x9c 0x18 0x79 0xd 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x50 0x18 0x16 0xc 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x9c 0x18 0x79 0xd 0x0 0x1 0x1
 	pause 0xF
 	playsound2 0x56 0xC0
 	launchtemplate GEARUP_GEAR 0x2 0x4 0x0 0xffe8 0x8 0x8c
-	launchtemplate 0x83E5FC4 0x0 0x7 0x64 0x18 0x3c 0xa 0x0 0x1 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0xaa 0x18 0x2a 0xb 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x64 0x18 0x3c 0xa 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0xaa 0x18 0x2a 0xb 0x0 0x1 0x1
 	pause 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0xee 0x18 0xa5 0xa 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0xee 0x18 0xa5 0xa 0x0 0x1 0x1
 	pause 0xF
 	playsound2 0x56 0xC0
 	launchtemplate GEARUP_GEAR 0x2 0x4 0x0 0xffe8 0x8 0x8c
-	launchtemplate 0x83E5FC4 0x0 0x7 0x20 0x18 0xbe 0xc 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x20 0x18 0xbe 0xc 0x0 0x1 0x0
 	pause 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0x50 0x18 0x16 0xc 0x0 0x1 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0x9c 0x18 0x79 0xd 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x50 0x18 0x16 0xc 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x9c 0x18 0x79 0xd 0x0 0x1 0x1
 	pause 0xF
 	playsound2 0x56 0xC0
 	call GEARUP_SPARKS
 	call GEARUP_SPARKS
 	call GEARUP_SPARKS
 	playsound2 0x56 0xC0
-	launchtemplate 0x83E5FC4 0x0 0x7 0x20 0x18 0xbe 0xc 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x20 0x18 0xbe 0xc 0x0 0x1 0x0
 	pause 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0x50 0x18 0x16 0xc 0x0 0x1 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0x9c 0x18 0x79 0xd 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x50 0x18 0x16 0xc 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x9c 0x18 0x79 0xd 0x0 0x1 0x1
 	waitanimation
 	launchtask AnimTask_pal_fade 0xA 0x5 PAL_ATK 0x2 0x9 0x0 0x039B
 	waitanimation
 	endanimation
 GEARUP_SPARKS:
 	playsound2 0x56 0xC0
-	launchtemplate 0x83E5FC4 0x0 0x7 0x20 0x18 0xbe 0xc 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x20 0x18 0xbe 0xc 0x0 0x1 0x0
 	pause 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0x50 0x18 0x16 0xc 0x0 0x1 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0x9c 0x18 0x79 0xd 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x50 0x18 0x16 0xc 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x9c 0x18 0x79 0xd 0x0 0x1 0x1
 	pause 0xF
 	playsound2 0x56 0xC0
-	launchtemplate 0x83E5FC4 0x0 0x7 0x64 0x18 0x3c 0xa 0x0 0x1 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0xaa 0x18 0x2a 0xb 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x64 0x18 0x3c 0xa 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0xaa 0x18 0x2a 0xb 0x0 0x1 0x1
 	pause 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0xee 0x18 0xa5 0xa 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0xee 0x18 0xa5 0xa 0x0 0x1 0x1
 	pause 0xF
 	return
 
 .align 2
-GEARUP_GEAR: objtemplate ANIM_TAG_GEAR ANIM_TAG_GEAR 0x83ACA38 0x8231CF0 0x0 0x8231CFC 0x80A2921
+GEARUP_GEAR: objtemplate ANIM_TAG_GEAR ANIM_TAG_GEAR OAM_NORMAL_32x32 0x8231CF0 0x0 0x8231CFC 0x80A2921
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 ANIM_HIGHHORSEPOWER:
 	loadparticle ANIM_TAG_IMPACT @hit
 	loadparticle ANIM_TAG_HORSESHOE_SIDE_FIST @horseshoe
@@ -11176,78 +11247,72 @@ ANIM_HIGHHORSEPOWER:
 	endanimation
 
 .align 2
-HORSESHOE: objtemplate ANIM_TAG_HORSESHOE_SIDE_FIST ANIM_TAG_HORSESHOE_SIDE_FIST 0x83ACA98 0x83E66CC 0x0 0x83E67BC 0x80B0CED @Change to horseshoe custom particle
+HORSESHOE: objtemplate ANIM_TAG_HORSESHOE_SIDE_FIST ANIM_TAG_HORSESHOE_SIDE_FIST OAM_DOUBLE_32x32 0x83E66CC 0x0 0x83E67BC 0x80B0CED @Change to horseshoe custom particle
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Skeli
 ANIM_ICEHAMMER:
 	loadparticle ANIM_TAG_HORSESHOE_SIDE_FIST @punch
-	loadparticle ANIM_TAG_IMPACT @hit
 	loadparticle ANIM_TAG_ICE_CRYSTALS @ice
 	loadparticle ANIM_TAG_ECLIPSING_ORB @gray color
 	loadparticle ANIM_TAG_BLACK_SMOKE @smoke
-	pokespritetoBG bank_target
 	setblends 0x80c
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0xC 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xC 0x0
 	waitanimation
 	playsound2 0x80 0x3f
-	launchtemplate ICEHAMMER_PUNCHSTOMP 0x3 0x3 0x0 0xffe0 0xf
+	launchtemplate ICEHAMMER_PUNCHSTOMP TEMPLATE_TARGET | 0x3, 0x3 0x0 0xffe0 0xf
 	pause 0x13
-	launchtemplate Template_Hit 0x2 0x4 0x0 0xfffc 0x1 0x1
-	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x4 0x9 0x1
 	playsound2 0x86 0x3f
-	pause 0x6
-	launchtask 0x80E12F9 0x2 0x1 0x1
-	launchtemplate ICEHAMMER_GRAYSMOKES 0x84 0x5 0x0 0xfff4 0x68 0x0 0x4b
-	launchtemplate ICEHAMMER_GRAYSMOKES 0x84 0x5 0x0 0xfff4 0x48 0x1 0x4b
-	launchtemplate ICEHAMMER_GRAYSMOKES 0x84 0x5 0x0 0xfffa 0x38 0x1 0x4b
-	launchtemplate ICEHAMMER_GRAYSMOKES 0x84 0x5 0x0 0xfffa 0x58 0x0 0x4b
-	launchtemplate ICEHAMMER_GRAYSMOKES 0x84 0x5 0x0 0x0 0x38 0x0 0x4b
-	launchtemplate ICEHAMMER_GRAYSMOKES 0x84 0x5 0x0 0x0 0x58 0x1 0x4b
-	launchtemplate ICEHAMMER_GRAYSMOKES 0x84 0x5 0x0 0x6 0x48 0x0 0x4b
-	launchtemplate ICEHAMMER_GRAYSMOKES 0x84 0x5 0x0 0x6 0x68 0x1 0x4b
-	launchtemplate ICEHAMMER_GRAYSMOKES 0x84 0x5 0x0 0xc 0x48 0x0 0x4b
-	launchtemplate ICEHAMMER_GRAYSMOKES 0x84 0x5 0x0 0xc 0x38 0x1 0x4b
-	launchtemplate ICEHAMMER_GRAYSMOKES 0x84 0x5 0x0 0x12 0x50 0x0 0x4b
-	launchtemplate ICEHAMMER_GRAYSMOKES 0x84 0x5 0x0 0x12 0x48 0x1 0x4b
+	launchtask AnimTask_SquishTarget 0x2 0x0
+	launchtemplate ICEHAMMER_GRAYSMOKES TEMPLATE_TARGET | 0x4, 0x5 0x0 0xfff4 0x68 0x0 0x4b
+	launchtemplate ICEHAMMER_GRAYSMOKES TEMPLATE_TARGET | 0x4, 0x5 0x0 0xfff4 0x48 0x1 0x4b
+	launchtemplate ICEHAMMER_GRAYSMOKES TEMPLATE_TARGET | 0x4, 0x5 0x0 0xfffa 0x38 0x1 0x4b
+	launchtemplate ICEHAMMER_GRAYSMOKES TEMPLATE_TARGET | 0x4, 0x5 0x0 0xfffa 0x58 0x0 0x4b
+	launchtemplate ICEHAMMER_GRAYSMOKES TEMPLATE_TARGET | 0x4, 0x5 0x0 0x0 0x38 0x0 0x4b
+	launchtemplate ICEHAMMER_GRAYSMOKES TEMPLATE_TARGET | 0x4, 0x5 0x0 0x0 0x58 0x1 0x4b
+	launchtemplate ICEHAMMER_GRAYSMOKES TEMPLATE_TARGET | 0x4, 0x5 0x0 0x6 0x48 0x0 0x4b
+	launchtemplate ICEHAMMER_GRAYSMOKES TEMPLATE_TARGET | 0x4, 0x5 0x0 0x6 0x68 0x1 0x4b
+	launchtemplate ICEHAMMER_GRAYSMOKES TEMPLATE_TARGET | 0x4, 0x5 0x0 0xc 0x48 0x0 0x4b
+	launchtemplate ICEHAMMER_GRAYSMOKES TEMPLATE_TARGET | 0x4, 0x5 0x0 0xc 0x38 0x1 0x4b
+	launchtemplate ICEHAMMER_GRAYSMOKES TEMPLATE_TARGET | 0x4, 0x5 0x0 0x12 0x50 0x0 0x4b
+	launchtemplate ICEHAMMER_GRAYSMOKES TEMPLATE_TARGET | 0x4, 0x5 0x0 0x12 0x48 0x1 0x4b
 	call FREEZE_CHANCE_ANIM
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0xC 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xC 0x0 0x0
 	waitanimation
-	pokespritefromBG bank_target
 	resetblends
 	endanimation
 
 .align 2
-ICEHAMMER_PUNCHSTOMP: objtemplate ANIM_TAG_HORSESHOE_SIDE_FIST ANIM_TAG_HORSESHOE_SIDE_FIST 0x83AC9D8 0x83E66CC 0x0 0x8231CFC 0x80B0D59
-ICEHAMMER_GRAYSMOKES: objtemplate ANIM_TAG_BLACK_SMOKE ANIM_TAG_ECLIPSING_ORB 0x83AC9F8 0x8231CF0 0x0 0x8231CFC 0x80DE2C1
+ICEHAMMER_PUNCHSTOMP: objtemplate ANIM_TAG_HORSESHOE_SIDE_FIST ANIM_TAG_HORSESHOE_SIDE_FIST OAM_OFF_32x32 0x83E66CC 0x0 0x8231CFC 0x80B0D59
+ICEHAMMER_GRAYSMOKES: objtemplate ANIM_TAG_BLACK_SMOKE ANIM_TAG_ECLIPSING_ORB OAM_OFF_32x16 0x8231CF0 0x0 0x8231CFC 0x80DE2C1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 ANIM_LASERFOCUS:
 	loadparticle ANIM_TAG_EYE_SPARKLE @red
 	loadparticle ANIM_TAG_OPENING_EYE @eyes
 	loadparticle ANIM_TAG_LEER @leer
 	pokespritetoBG bank_attacker
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0xC 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xC 0x0
 	waitanimation
 	launchtemplate LASERFOCUS_REDEYES 0x5 0x4 0x0 0x0 0x0 0x0
 	waitanimation
 	playsound2 0xB9 0xc0
 	launchtemplate Template_Leer 0x2 0x2 0x18 0xfff4
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0xC 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xC 0x0 0x0
 	waitanimation
 	pokespritefromBG bank_attacker
 	endanimation
 
 .align 2
-LASERFOCUS_REDEYES: objtemplate ANIM_TAG_OPENING_EYE ANIM_TAG_EYE_SPARKLE 0x83AC9D8 0x83FEE58 0x0 0x8231CFC 0x8075D9D
+LASERFOCUS_REDEYES: objtemplate ANIM_TAG_OPENING_EYE ANIM_TAG_EYE_SPARKLE OAM_OFF_32x32 0x83FEE58 0x0 0x8231CFC 0x8075D9D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 ANIM_LEAFAGE:
 	loadparticle ANIM_TAG_RAZOR_LEAF @leaf
 	loadparticle ANIM_TAG_IMPACT @hit
@@ -11264,7 +11329,7 @@ ANIM_LEAFAGE:
 	endanimation
 
 .align 2
-LEAFAGE_GREENHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_RAZOR_LEAF 0x83ACB58 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+LEAFAGE_GREENHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_RAZOR_LEAF OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -11290,7 +11355,7 @@ ANIM_LIQUIDATION:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 ANIM_LUNGE:
 	loadparticle ANIM_TAG_IMPACT @hit
 	loadparticle ANIM_TAG_TEAL_ALERT @hit particles
@@ -11344,22 +11409,34 @@ ANIM_LUNGE:
 	endanimation
 
 .align 2
-LUNGE_GREENCHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_LEAF 0x83ACBC0 0x8231CF0 0x0 0x83E71C8 0x80B3E85
-LUNGE_GREENBALL: objtemplate ANIM_TAG_SMALL_BUBBLES ANIM_TAG_RAZOR_LEAF 0x83AC9D0 0x8231CF0 0x0 0x8231CFC 0x8075E81
-LUNGE_GREENHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_RAZOR_LEAF 0x83ACB58 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+LUNGE_GREENCHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_LEAF OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E71C8 0x80B3E85
+LUNGE_GREENBALL: objtemplate ANIM_TAG_SMALL_BUBBLES ANIM_TAG_RAZOR_LEAF OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC 0x8075E81
+LUNGE_GREENHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_RAZOR_LEAF OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 ANIM_MOONGEISTBEAM:
+	loadparticle ANIM_TAG_MOON
+	loadparticle ANIM_TAG_ELECTRIC_ORBS
+	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT
 	loadparticle ANIM_TAG_ORBS @hyper beam
-	loadparticle ANIM_TAG_MOON @moon
 	loadparticle ANIM_TAG_WATER_GUN @water gun colour
+	loadparticle ANIM_TAG_ASSURANCE_HAND @purple colour
 	setblends 0x808
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x10 0x0
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_ELECTRIC_ORBS 0x0 0xF 0xF 0x7FFF @;White
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_CIRCLE_OF_LIGHT 0x0 0xF 0xF 0x7FFC @;Light Blue
 	waitanimation
+	playsound2 0x85 0x3f
 	launchtemplate 0x83E3734 0x80 0x2 0x20 0x15
 	launchtask 0x8076049 0x3 0x5 0x0 0x10 0x10 0x0 0x1
-	pause 0x30
+	call GEIST_CHARGING
+	call GEIST_CHARGING
+	call GEIST_CHARGING
+	call GEIST_CHARGING
+	launchtemplate 0x83E61D4 0x2 0x1 0x0 @;Charge circle
+	call GEIST_CHARGING
+	pause 0x20
 	launchsoundtask 0x80DCF39 0x7 0xCC 0xffc0 0x3f 0x1 0xf 0x0 0x5
 	launchtask AnimTask_move_bank 0x2 0x5 bank_attacker 0x0 0x4 0x32 0x1
 	launchtask 0x80B9F6D 0x2 0x7 ANIM_TAG_ORBS 0x1 0xc 0x1f 0x10 0x0 0x0
@@ -11400,27 +11477,40 @@ ANIM_MOONGEISTBEAM:
 	call GEIST_HYPER_BEAM_PARTICLES
 	call GEIST_HYPER_BEAM_PARTICLES
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x2 0xb 0x0 0x6739
-	pause 0x17
+	pause 0x1A
 	stopmusic
 	launchtask 0x80A5FC1 0x2 0x0
 	endanimation
+
+GEIST_CHARGING:
+	launchtemplate GEIST_CHARGE TEMPLATE_ATTACKER, 0x6, 40, 0, 0, 0, 30, 10 @;From right
+	launchtemplate GEIST_CHARGE TEMPLATE_ATTACKER, 0x6, -40, 0, 0, 0, 30, -10 @;From left
+	launchtemplate GEIST_CHARGE TEMPLATE_ATTACKER, 0x6, -25, -40, 0, 0, 30, -20 @;From top left
+	launchtemplate GEIST_CHARGE TEMPLATE_ATTACKER, 0x6, 25, -40, 0, 0, 30, 20 @;From top right
+	launchtemplate GEIST_CHARGE TEMPLATE_ATTACKER, 0x6, 25, 20, 0, 0, 30, 20 @;From bottom right
+	launchtemplate GEIST_CHARGE TEMPLATE_ATTACKER, 0x6, -25, 40, 0, 0, 30, -20 @;From bottom left
+	pause 0x5
+	return
+
 GEIST_HYPER_BEAM_PARTICLES:
-	launchtemplate GEIST 0x82 0x0
-	launchtemplate GEIST 0x82 0x0
+	launchtemplate GEIST_BALLS_1 0x82 0x0
+	launchtemplate GEIST_BALLS_2 0x82 0x0
 	pause 0x1
 	return
 
 .align 2
-GEIST: objtemplate ANIM_TAG_ORBS ANIM_TAG_WATER_GUN 0x83AC9C8 0x83E2A20 0x0 0x8231CFC 0x80A25ED
+GEIST_BALLS_1: objtemplate ANIM_TAG_ORBS ANIM_TAG_WATER_GUN OAM_OFF_8x8 0x83E2A20 0x0 0x8231CFC 0x80A25ED
+GEIST_BALLS_2: objtemplate ANIM_TAG_ORBS ANIM_TAG_ASSURANCE_HAND OAM_OFF_8x8 0x83E2A20 0x0 0x8231CFC 0x80A25ED
+GEIST_CHARGE: objtemplate ANIM_TAG_ELECTRIC_ORBS ANIM_TAG_ELECTRIC_ORBS OAM_OFF_8x8 0x83E6118 0x0 0x8231CFC SpriteCB_MoongeistCharge
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 ANIM_MULTIATTACK:
 	loadparticle ANIM_TAG_FOCUS_ENERGY @focus energy
 	loadparticle ANIM_TAG_CUT @cut
 	pokespritetoBG bank_target
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0xC 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xC 0x0
 	waitanimation
 	playsound2 0xa4 0xc0
 	call MULTIATTACK_BUFF
@@ -11437,7 +11527,7 @@ ANIM_MULTIATTACK:
 	launchtemplate 0x83E3294 0x2 0x3 0x28 0xffd0 0x0
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x3 0xf 0x1
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0xC 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xC 0x0 0x0
 	waitanimation
 	pokespritefromBG bank_target
 	endanimation
@@ -11455,7 +11545,7 @@ MULTIATTACK_BUFF:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Nuisance
+@Credits to Lixdel
 ANIM_NATURESMADNESS:
 	loadparticle ANIM_TAG_ICE_CRYSTALS @small circles
 	loadparticle ANIM_TAG_THIN_RING @ring
@@ -11538,14 +11628,14 @@ ANIM_NATURESMADNESS:
 	endanimation
 
 .align 2
-NM_PINKSTARS: objtemplate ANIM_TAG_SPARKLE_2 ANIM_TAG_PINK_PETAL 0x83AC9D8 0x83E33F0 0x0 0x8231CFC 0x80AB309
-NM_BGCIRCLES: objtemplate ANIM_TAG_ICE_CRYSTALS ANIM_TAG_ICE_CHUNK 0x83AC9C8 0x83E6330 0x0 0x8231CFC 0x80AB309
-NM_PINKRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_PINK_PETAL 0x83ACBC0 0x8231CF0 0x0 0x83E4088 0x80A8EE9
-NM_GRAYRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_ECLIPSING_ORB 0x83ACBC0 0x8231CF0 0x0 0x83E40C4 0x8075D9D
+NM_PINKSTARS: objtemplate ANIM_TAG_SPARKLE_2 ANIM_TAG_PINK_PETAL OAM_OFF_32x32 0x83E33F0 0x0 0x8231CFC 0x80AB309
+NM_BGCIRCLES: objtemplate ANIM_TAG_ICE_CRYSTALS ANIM_TAG_ICE_CHUNK OAM_OFF_8x8 0x83E6330 0x0 0x8231CFC 0x80AB309
+NM_PINKRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_PINK_PETAL OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E4088 0x80A8EE9
+NM_GRAYRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_ECLIPSING_ORB OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E40C4 0x8075D9D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@ Credits to Nuisance
+@ Credits to Lixdel
 ANIM_POLLENPUFF:
 	launchtask AnimTask_IsTargetPartner 0x5 0x0
 	jumpifargmatches 0x0 0x1 POLLEN_PUFF_ALLY
@@ -11560,7 +11650,7 @@ POLLEN_PUFF_ENEMY:
 	loadparticle ANIM_TAG_ORBS @hit
 	pokespritetoBG bank_attacker
 	setblends 0x80C
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0x8 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x8 0x0
 	waitanimation
 	launchtask 0x80E0559 0x5 0x3 0x0 0x2 0x0
 	launchtemplate PP_PINKSTARS 0x2 0x4 0xa 0xa 0x19 0x0
@@ -11603,7 +11693,7 @@ POLLEN_PUFF_ENEMY:
 	launchtemplate PP_HITS 0x82 0x5 0x1 0x1 0x1E 0x0 0x10 @right
 	launchtemplate PP_HITS 0x82 0x5 0x1 0x1 0x16 0xFFEA 0x10 @upperright
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x8 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x8 0x0 0x0
 	waitanimation
 	pokespritefromBG bank_target
 	resetblends
@@ -11611,12 +11701,12 @@ POLLEN_PUFF_ENEMY:
 
 
 .align 2
-PP_PINKSTARS: objtemplate ANIM_TAG_SPARKLE_2 ANIM_TAG_PINK_PETAL 0x83AC9D8 0x83E33F0 0x0 0x8231CFC 0x80AB309
-PP_STARPARTICLES: objtemplate ANIM_TAG_SPARKLE_2 ANIM_TAG_PINK_PETAL 0x83AC9D8 0x83E33F0 0x0 0x83E6004 0x80ADEB1
-PP_STARPARTICLES2: objtemplate ANIM_TAG_SPARKLE_2 ANIM_TAG_SMALL_EMBER 0x83AC9D8 0x83E33F0 0x0 0x83E6004 0x80ADEB1
-PP_COTTON: objtemplate ANIM_TAG_SPORE ANIM_TAG_SPORE 0x83AC9D0 0x83E2B5C 0x0 0x8231CFC 0x8075E81
-PP_HITS: objtemplate ANIM_TAG_ORBS ANIM_TAG_FLAT_ROCK 0x83ACB50 0x83E2A40 0x0 0x8231CFC 0x80A4299
-PP_PINKHEAL: objtemplate ANIM_TAG_BLUE_STAR ANIM_TAG_PINK_PETAL 0x83AC9D8 0x83E37A0 0x0 0x8231CFC 0x8075D9D
+PP_PINKSTARS: objtemplate ANIM_TAG_SPARKLE_2 ANIM_TAG_PINK_PETAL OAM_OFF_32x32 0x83E33F0 0x0 0x8231CFC 0x80AB309
+PP_STARPARTICLES: objtemplate ANIM_TAG_SPARKLE_2 ANIM_TAG_PINK_PETAL OAM_OFF_32x32 0x83E33F0 0x0 0x83E6004 0x80ADEB1
+PP_STARPARTICLES2: objtemplate ANIM_TAG_SPARKLE_2 ANIM_TAG_SMALL_EMBER OAM_OFF_32x32 0x83E33F0 0x0 0x83E6004 0x80ADEB1
+PP_COTTON: objtemplate ANIM_TAG_SPORE ANIM_TAG_SPORE OAM_OFF_16x16 0x83E2B5C 0x0 0x8231CFC 0x8075E81
+PP_HITS: objtemplate ANIM_TAG_ORBS ANIM_TAG_FLAT_ROCK OAM_NORMAL_BLEND_16x16 0x83E2A40 0x0 0x8231CFC 0x80A4299
+PP_PINKHEAL: objtemplate ANIM_TAG_BLUE_STAR ANIM_TAG_PINK_PETAL OAM_OFF_32x32 0x83E37A0 0x0 0x8231CFC 0x8075D9D
 
 POLLEN_PUFF_ALLY:
 	loadparticle ANIM_TAG_SPARKLE_2 @stars
@@ -11626,7 +11716,7 @@ POLLEN_PUFF_ALLY:
 	loadparticle ANIM_TAG_SPORE @ball
 	pokespritetoBG bank_attacker
 	setblends 0x80C
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0x8 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x8 0x0
 	waitanimation
 	launchtask 0x80E0559 0x5 0x3 0x0 0x2 0x0
 	launchtemplate PP_PINKSTARS 0x2 0x4 0xa 0xa 0x19 0x0
@@ -11667,7 +11757,7 @@ POLLEN_PUFF_ALLY:
 	pause 0x7
 	launchtemplate PP_PINKHEAL 0x2 0x4 0xa 0xfffb 0x1 0x0
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x8 0x1 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x8 0x1 0x0
 	waitanimation
 	pokespritefromBG bank_target
 	resetblends
@@ -11675,7 +11765,7 @@ POLLEN_PUFF_ALLY:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Nuisance
+@Credits to Lixdel
 ANIM_POWERTRIP:
 	loadparticle ANIM_TAG_FOCUS_ENERGY @focus energy
 	loadparticle ANIM_TAG_HANDS_AND_FEET @black color
@@ -11718,12 +11808,12 @@ POWERTRIP_BUFF:
 	return
 
 .align 2
-BLACKFOCUSENERGY: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_HANDS_AND_FEET 0x83ACA18 0x83E3600 0x0 0x8231CFC 0x80A5AD9
-POWERTRIP_HIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_PURPLE_FLAME 0x83ACB58 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+BLACKFOCUSENERGY: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_HANDS_AND_FEET OAM_OFF_16x32 0x83E3600 0x0 0x8231CFC 0x80A5AD9
+POWERTRIP_HIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_PURPLE_FLAME OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Nuisance
+@Credits to Lixdel
 ANIM_PRISMATICLASER:
 	loadparticle ANIM_TAG_ICE_CHUNK @blue green color
 	loadparticle ANIM_TAG_SPARK_H @yellow color
@@ -11736,7 +11826,7 @@ ANIM_PRISMATICLASER:
 	loadparticle ANIM_TAG_NEEDLE @sting
 	pokespritetoBG bank_attacker
 	setblends 0x80E
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0x10 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x10 0x0
 	waitanimation
 	playsound2 0x52 0xc0
 	launchtemplate PL_BGCHARGE 0x2 0x1 0x0
@@ -11772,7 +11862,7 @@ ANIM_PRISMATICLASER:
 	call PL_DOWN
 	call PL_DOWN
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x10 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x10 0x0 0x0
 	waitanimation
 	pokespritefromBG bank_attacker
 	resetblends
@@ -11827,43 +11917,43 @@ PL_INWARDSPIKES:
 	pause 0x1
 	return
 PL_DOWN:
-	launchtemplate PL_YELLOWRAIN 0x82 0x3 0x1 0xdc 0x3c
+	launchtemplate PL_YELLOWRAIN TEMPLATE_TARGET | 2, 0x3, 0x1 0xdc 0x3c
 	pause 0x2
-	launchtemplate PL_GREENRAIN 0x82 0x3 0x1 0x3c 0x64
+	launchtemplate PL_GREENRAIN TEMPLATE_TARGET | 2, 0x3, 0x1 0x3c 0x64
 	pause 0x2
-	launchtemplate PL_REDRAIN 0x82 0x3 0x1 0x8c 0x37
+	launchtemplate PL_REDRAIN TEMPLATE_TARGET | 2, 0x3, 0x1 0x8c 0x37
 	pause 0x2
-	launchtemplate PL_VIOLETRAIN 0x82 0x3 0x1 0xb4 0x32
+	launchtemplate PL_VIOLETRAIN TEMPLATE_TARGET | 2, 0x3, 0x1 0xb4 0x32
 	pause 0x2
-	launchtemplate PL_YELLOWRAIN 0x82 0x3 0x1 0x14 0x5a
+	launchtemplate PL_YELLOWRAIN TEMPLATE_TARGET | 2, 0x3, 0x1 0x14 0x5a
 	pause 0x2
-	launchtemplate PL_GREENRAIN 0x82 0x3 0x1 0x5a 0x5a
+	launchtemplate PL_GREENRAIN TEMPLATE_TARGET | 2, 0x3, 0x1 0x5a 0x5a
 	pause 0x2
-	launchtemplate PL_REDRAIN 0x82 0x3 0x1 0xa0 0x3c
+	launchtemplate PL_REDRAIN TEMPLATE_TARGET | 2, 0x3, 0x1 0xa0 0x3c
 	pause 0x2
-	launchtemplate PL_VIOLETRAIN 0x82 0x3 0x1 0x1e 0x5a
+	launchtemplate PL_VIOLETRAIN TEMPLATE_TARGET | 2, 0x3, 0x1 0x1e 0x5a
 	pause 0x2
-	launchtemplate PL_YELLOWRAIN 0x82 0x3 0x1 0x78 0x3c
+	launchtemplate PL_YELLOWRAIN TEMPLATE_TARGET | 2, 0x3, 0x1 0x78 0x3c
 	pause 0x2
-	launchtemplate PL_GREENRAIN 0x82 0x3 0x1 0xc8 0x28
+	launchtemplate PL_GREENRAIN TEMPLATE_TARGET | 2, 0x3, 0x1 0xc8 0x28
 	return
 
 .align 2
-PL_BGCHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_ICE_CHUNK 0x83ACB60 0x8231CF0 0x0 0x83E61C8 0x80AE71D
-PL_YELLOWOUTWARD: objtemplate ANIM_TAG_GREEN_SPIKE ANIM_TAG_SPARK_H 0x83ACA30 0x8231CF0 0x0 0x8231CFC 0x80A4299
-PL_GREENOUTWARD: objtemplate ANIM_TAG_GREEN_SPIKE ANIM_TAG_RAZOR_LEAF 0x83ACA30 0x8231CF0 0x0 0x8231CFC 0x80A4299
-PL_REDOUTWARD: objtemplate ANIM_TAG_GREEN_SPIKE ANIM_TAG_JAGGED_MUSIC_NOTE 0x83ACA30 0x8231CF0 0x0 0x8231CFC 0x80A4299
-PL_VIOLETOUTWARD: objtemplate ANIM_TAG_GREEN_SPIKE ANIM_TAG_POISON_BUBBLE 0x83ACA30 0x8231CF0 0x0 0x8231CFC 0x80A4299
+PL_BGCHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_ICE_CHUNK OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80AE71D
+PL_YELLOWOUTWARD: objtemplate ANIM_TAG_GREEN_SPIKE ANIM_TAG_SPARK_H OAM_NORMAL_16x16 0x8231CF0 0x0 0x8231CFC 0x80A4299
+PL_GREENOUTWARD: objtemplate ANIM_TAG_GREEN_SPIKE ANIM_TAG_RAZOR_LEAF OAM_NORMAL_16x16 0x8231CF0 0x0 0x8231CFC 0x80A4299
+PL_REDOUTWARD: objtemplate ANIM_TAG_GREEN_SPIKE ANIM_TAG_JAGGED_MUSIC_NOTE OAM_NORMAL_16x16 0x8231CF0 0x0 0x8231CFC 0x80A4299
+PL_VIOLETOUTWARD: objtemplate ANIM_TAG_GREEN_SPIKE ANIM_TAG_POISON_BUBBLE OAM_NORMAL_16x16 0x8231CF0 0x0 0x8231CFC 0x80A4299
 
-PL_YELLOWINWARD: objtemplate ANIM_TAG_TEAL_ALERT ANIM_TAG_SPARK_H 0x83ACA38 0x8231CF0 0x0 0x8231CFC 0x80A4299
-PL_GREENINWARD: objtemplate ANIM_TAG_TEAL_ALERT ANIM_TAG_RAZOR_LEAF 0x83ACA38 0x8231CF0 0x0 0x8231CFC 0x80A4299
-PL_REDINWARD: objtemplate ANIM_TAG_TEAL_ALERT ANIM_TAG_JAGGED_MUSIC_NOTE 0x83ACA38 0x8231CF0 0x0 0x8231CFC 0x80A4299
-PL_VIOLETINWARD: objtemplate ANIM_TAG_TEAL_ALERT ANIM_TAG_POISON_BUBBLE 0x83ACA38 0x8231CF0 0x0 0x8231CFC 0x80A4299
+PL_YELLOWINWARD: objtemplate ANIM_TAG_TEAL_ALERT ANIM_TAG_SPARK_H OAM_NORMAL_32x32 0x8231CF0 0x0 0x8231CFC 0x80A4299
+PL_GREENINWARD: objtemplate ANIM_TAG_TEAL_ALERT ANIM_TAG_RAZOR_LEAF OAM_NORMAL_32x32 0x8231CF0 0x0 0x8231CFC 0x80A4299
+PL_REDINWARD: objtemplate ANIM_TAG_TEAL_ALERT ANIM_TAG_JAGGED_MUSIC_NOTE OAM_NORMAL_32x32 0x8231CF0 0x0 0x8231CFC 0x80A4299
+PL_VIOLETINWARD: objtemplate ANIM_TAG_TEAL_ALERT ANIM_TAG_POISON_BUBBLE OAM_NORMAL_32x32 0x8231CF0 0x0 0x8231CFC 0x80A4299
 
-PL_YELLOWRAIN: objtemplate ANIM_TAG_NEEDLE ANIM_TAG_SPARK_H 0x83AC9D0 0x8231CF0 0x0 0x8231CFC 0x80B8D59
-PL_GREENRAIN: objtemplate ANIM_TAG_NEEDLE ANIM_TAG_RAZOR_LEAF 0x83AC9D0 0x8231CF0 0x0 0x8231CFC 0x80B8D59
-PL_REDRAIN: objtemplate ANIM_TAG_NEEDLE ANIM_TAG_JAGGED_MUSIC_NOTE 0x83AC9D0 0x8231CF0 0x0 0x8231CFC 0x80B8D59
-PL_VIOLETRAIN: objtemplate ANIM_TAG_NEEDLE ANIM_TAG_POISON_BUBBLE 0x83AC9D0 0x8231CF0 0x0 0x8231CFC 0x80B8D59
+PL_YELLOWRAIN: objtemplate ANIM_TAG_NEEDLE ANIM_TAG_SPARK_H OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC SpriteCB_Geyser
+PL_GREENRAIN: objtemplate ANIM_TAG_NEEDLE ANIM_TAG_RAZOR_LEAF OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC SpriteCB_Geyser
+PL_REDRAIN: objtemplate ANIM_TAG_NEEDLE ANIM_TAG_JAGGED_MUSIC_NOTE OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC SpriteCB_Geyser
+PL_VIOLETRAIN: objtemplate ANIM_TAG_NEEDLE ANIM_TAG_POISON_BUBBLE OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC SpriteCB_Geyser
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -11954,12 +12044,12 @@ ANIM_PURIFY:
 	endanimation
 
 .align 2
-PURIFY_WHITEBALL: objtemplate ANIM_TAG_FLASH_CANNON_BALL ANIM_TAG_FLASH_CANNON_BALL 0x83ACA38 0x8231CF0 0x0 0x8231CFC 0x80B4495
-PURIFY_SMOKES: objtemplate ANIM_TAG_BLACK_SMOKE ANIM_TAG_ICE_CHUNK 0x83AC9F8 0x8231CF0 0x0 0x8231CFC 0x80DE2C1
+PURIFY_WHITEBALL: objtemplate ANIM_TAG_FLASH_CANNON_BALL ANIM_TAG_FLASH_CANNON_BALL OAM_NORMAL_32x32 0x8231CF0 0x0 0x8231CFC 0x80B4495
+PURIFY_SMOKES: objtemplate ANIM_TAG_BLACK_SMOKE ANIM_TAG_ICE_CHUNK OAM_OFF_32x16 0x8231CF0 0x0 0x8231CFC 0x80DE2C1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Nuisance
+@Credits to Lixdel
 ANIM_REVELATIONDANCE:
 	loadparticle ANIM_TAG_ORBS @circles
 	loadparticle ANIM_TAG_FLOWER @particles
@@ -11967,7 +12057,7 @@ ANIM_REVELATIONDANCE:
 	loadparticle ANIM_TAG_AIR_WAVE @sonicboom
 	loadparticle ANIM_TAG_THIN_RING @ring
 	pokespritetoBG bank_target
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0xF 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xF 0x0
 	waitanimation
 	playsound2 0xc3 0xc0
 	launchtask 0x80E0559 0x5 0x3 0x0 0x2 0x0
@@ -12008,18 +12098,18 @@ ANIM_REVELATIONDANCE:
 	launchtemplate RD_YELLOWDISPERSAL 0x81 0x5 0x0 0xa 0x70 0xff80 0x28
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0003 0x0000 0x0006 0x0001
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0xF 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xF 0x0 0x0
 	waitanimation
 	pokespritefromBG bank_target
 	endanimation
 
 .align 2
-RD_YELLOWCIRCLES: objtemplate ANIM_TAG_ORBS ANIM_TAG_ORBS 0x83ACB50 0x83E2A40 0x0 0x8231CFC 0x80A2921
-RD_YELLOWPARTICLES: objtemplate ANIM_TAG_FLOWER ANIM_TAG_JAGGED_MUSIC_NOTE 0x83AC9C8 0x83E2B90 0x0 0x8231CFC 0x80A29ED
-RD_YELLOWSONIC: objtemplate ANIM_TAG_AIR_WAVE ANIM_TAG_JAGGED_MUSIC_NOTE 0x83ACBD8 0x8231CF0 0x0 0x8231CFC 0x80A72C9
-RD_YELLOWHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_SMALL_EMBER 0x83ACB58 0x8231CF0 0x0 0x83E7BF8 0x80BA561
-RD_YELLOWRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_SMALL_EMBER 0x83ACBC0 0x8231CF0 0x0 0x83E4088 0x80A8EE9
-RD_YELLOWDISPERSAL: objtemplate ANIM_TAG_ORBS ANIM_TAG_ORBS 0x83ACB50 0x83E2A40 0x0 0x8231CFC 0x80AC94D
+RD_YELLOWCIRCLES: objtemplate ANIM_TAG_ORBS ANIM_TAG_ORBS OAM_NORMAL_BLEND_16x16 0x83E2A40 0x0 0x8231CFC 0x80A2921
+RD_YELLOWPARTICLES: objtemplate ANIM_TAG_FLOWER ANIM_TAG_JAGGED_MUSIC_NOTE OAM_OFF_8x8 0x83E2B90 0x0 0x8231CFC 0x80A29ED
+RD_YELLOWSONIC: objtemplate ANIM_TAG_AIR_WAVE ANIM_TAG_JAGGED_MUSIC_NOTE OAM_DOUBLE_BLEND_32x16 0x8231CF0 0x0 0x8231CFC 0x80A72C9
+RD_YELLOWHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_SMALL_EMBER OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+RD_YELLOWRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_SMALL_EMBER OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E4088 0x80A8EE9
+RD_YELLOWDISPERSAL: objtemplate ANIM_TAG_ORBS ANIM_TAG_ORBS OAM_NORMAL_BLEND_16x16 0x83E2A40 0x0 0x8231CFC 0x80AC94D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -12051,7 +12141,7 @@ ANIM_SHADOWBONE:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Nuisance
+@Credits to Lixdel
 ANIM_SHELLTRAP:
 @ set up
 	loadparticle ANIM_TAG_SMALL_EMBER
@@ -12248,9 +12338,9 @@ ST_FIRELAUNCH2:
 	return
 
 .align 2
-ST_YELLOWPOUND: objtemplate ANIM_TAG_IMPACT ANIM_TAG_SMALL_EMBER 0x83ACB58 0x8231CF0 0x0 0x83E7BF8 0x80BA561
-ST_REDPOUND: objtemplate ANIM_TAG_IMPACT ANIM_TAG_SMALL_RED_EYE 0x83ACB58 0x8231CF0 0x0 0x83E7BF8 0x80BA561
-ST_FIREHITS: objtemplate ANIM_TAG_ICE_CRYSTALS ANIM_TAG_SMALL_EMBER 0x83AC9C8 0x83E6328 0x0 0x8231CFC 0x80AF6D9
+ST_YELLOWPOUND: objtemplate ANIM_TAG_IMPACT ANIM_TAG_SMALL_EMBER OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+ST_REDPOUND: objtemplate ANIM_TAG_IMPACT ANIM_TAG_SMALL_RED_EYE OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+ST_FIREHITS: objtemplate ANIM_TAG_ICE_CRYSTALS ANIM_TAG_SMALL_EMBER OAM_OFF_8x8 0x83E6328 0x0 0x8231CFC 0x80AF6D9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -12320,8 +12410,8 @@ ANIM_SMARTSTRIKE:
 	endanimation
 
 .align 2
-SMARTSTRIKE_GEM: objtemplate ANIM_TAG_POWER_GEM ANIM_TAG_POWER_GEM 0x83ACA30 0x8231CF0 0x0 0x8231CFC 0x80A4299
-SMARTSTRIKE_TGT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_FLASH_CANNON_BALL 0x83ACB58 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+SMARTSTRIKE_GEM: objtemplate ANIM_TAG_POWER_GEM ANIM_TAG_POWER_GEM OAM_NORMAL_16x16 0x8231CF0 0x0 0x8231CFC 0x80A4299
+SMARTSTRIKE_TGT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_FLASH_CANNON_BALL OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -12349,7 +12439,7 @@ SOLARBLADE_ATTACK:
 	waitanimation
 	call 0x81D5A07 			@Solarbeam BG Load
 	playsound2 0x81 0x3f
-	launchtemplate SOLARBLADE_BLADEHIT 0x82 0x3 0x0 0x0 0x1
+	launchtemplate SOLARBLADE_BLADEHIT TEMPLATE_TARGET | 2, 0x3, 0x0 0x0 0x1
 	pause 0x2
 	launchtask AnimTask_move_bank_2 0x2 0x5 bank_target 0x2 0x0 0xC 0x1
 	waitanimation
@@ -12366,18 +12456,18 @@ SOLARBLADE_SUNRAYS:
 	return
 
 .align 2
-SOLARBLADE_BLADEHIT: objtemplate ANIM_TAG_CLAW_SLASH ANIM_TAG_SPARK_2 0x83AC9D8 0x83E79E0 0x0 0x8231CFC 0x80B86B1
+SOLARBLADE_BLADEHIT: objtemplate ANIM_TAG_CLAW_SLASH ANIM_TAG_SPARK_2 OAM_OFF_32x32 0x83E79E0 0x0 0x8231CFC 0x80B86B1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Nuisance
+@Credits to Lixdel
 ANIM_SPARKLINGARIA:
 	loadparticle ANIM_TAG_WATER_ORB @blue color
 	loadparticle ANIM_TAG_BUBBLE @circles
 	loadparticle ANIM_TAG_HYDRO_PUMP @hydro pump
 	pokespritetoBG bank_attacker
 	setblends 0x80E
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0xE 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xE 0x0
 	waitanimation
 	launchtemplate SA_BLUECHARGE 0x2 0x1 0x0
 	call SA_BUBBLECHARGE
@@ -12389,49 +12479,49 @@ ANIM_SPARKLINGARIA:
 	call SA_CRAIN
 	call SA_CRAIN
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0xE 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xE 0x0 0x0
 	waitanimation
 	pokespritefromBG bank_attacker
 	resetblends
 	endanimation
 SA_CRAIN:
-	launchtemplate SA_CIRCLERAIN 0x82 0x3 0x1 0xdc 0x3c
+	launchtemplate SA_CIRCLERAIN TEMPLATE_TARGET | 2, 0x3, 0x1 0xdc 0x3c
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x3 0x0 0x6 0x1
 	launchtask AnimTask_move_bank 0x2 0x5 target_partner 0x3 0x0 0x6 0x1
 	pause 0x2
-	launchtemplate SA_BUBBLERAIN 0x82 0x3 0x1 0x3c 0x64
+	launchtemplate SA_BUBBLERAIN TEMPLATE_TARGET | 2, 0x3, 0x1 0x3c 0x64
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x3 0x0 0x6 0x1
 	launchtask AnimTask_move_bank 0x2 0x5 target_partner 0x3 0x0 0x6 0x1
 	pause 0x2
-	launchtemplate SA_CIRCLERAIN 0x82 0x3 0x1 0x8c 0x37
+	launchtemplate SA_CIRCLERAIN TEMPLATE_TARGET | 2, 0x3, 0x1 0x8c 0x37
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x3 0x0 0x6 0x1
 	launchtask AnimTask_move_bank 0x2 0x5 target_partner 0x3 0x0 0x6 0x1
 	pause 0x2
-	launchtemplate SA_CIRCLERAIN 0x82 0x3 0x1 0xb4 0x32
+	launchtemplate SA_CIRCLERAIN TEMPLATE_TARGET | 2, 0x3, 0x1 0xb4 0x32
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x3 0x0 0x6 0x1
 	launchtask AnimTask_move_bank 0x2 0x5 target_partner 0x3 0x0 0x6 0x1
 	pause 0x2
-	launchtemplate SA_CIRCLERAIN 0x82 0x3 0x1 0x14 0x5a
+	launchtemplate SA_CIRCLERAIN TEMPLATE_TARGET | 2, 0x3, 0x1 0x14 0x5a
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x3 0x0 0x6 0x1
 	launchtask AnimTask_move_bank 0x2 0x5 target_partner 0x3 0x0 0x6 0x1
 	pause 0x2
-	launchtemplate SA_BUBBLERAIN 0x82 0x3 0x1 0x5a 0x5a
+	launchtemplate SA_BUBBLERAIN TEMPLATE_TARGET | 2, 0x3, 0x1 0x5a 0x5a
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x3 0x0 0x6 0x1
 	launchtask AnimTask_move_bank 0x2 0x5 target_partner 0x3 0x0 0x6 0x1
 	pause 0x2
-	launchtemplate SA_CIRCLERAIN 0x82 0x3 0x1 0xa0 0x3c
+	launchtemplate SA_CIRCLERAIN TEMPLATE_TARGET | 2, 0x3, 0x1 0xa0 0x3c
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x3 0x0 0x6 0x1
 	launchtask AnimTask_move_bank 0x2 0x5 target_partner 0x3 0x0 0x6 0x1
 	pause 0x2
-	launchtemplate SA_CIRCLERAIN 0x82 0x3 0x1 0x1e 0x5a
+	launchtemplate SA_CIRCLERAIN TEMPLATE_TARGET | 2, 0x3, 0x1 0x1e 0x5a
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x3 0x0 0x6 0x1
 	launchtask AnimTask_move_bank 0x2 0x5 target_partner 0x3 0x0 0x6 0x1
 	pause 0x2
-	launchtemplate SA_CIRCLERAIN 0x82 0x3 0x1 0x78 0x3c
+	launchtemplate SA_CIRCLERAIN TEMPLATE_TARGET | 2, 0x3, 0x1 0x78 0x3c
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x3 0x0 0x6 0x1
 	launchtask AnimTask_move_bank 0x2 0x5 target_partner 0x3 0x0 0x6 0x1
 	pause 0x2
-	launchtemplate SA_BUBBLERAIN 0x82 0x3 0x1 0xc8 0x28
+	launchtemplate SA_BUBBLERAIN TEMPLATE_TARGET | 2, 0x3, 0x1 0xc8 0x28
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x3 0x0 0x6 0x1
 	launchtask AnimTask_move_bank 0x2 0x5 target_partner 0x3 0x0 0x6 0x1
 	pause 0x2
@@ -12465,14 +12555,14 @@ SA_BUBBLECHARGE:
 	return
 
 .align 2
-SA_BLUECHARGE: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_WATER_ORB 0x83ACBB0 0x83E5958 0x0 0x83E61C8 0x80AE71D
-SA_CIRCLERAIN: objtemplate ANIM_TAG_HYDRO_PUMP ANIM_TAG_HYDRO_PUMP 0x83ACB50 0x83E58DC 0x0 0x8231CFC 0x80B8D59
-SA_BUBBLERAIN: objtemplate ANIM_TAG_BUBBLE ANIM_TAG_BUBBLE 0x83ACB50 0x83E58DC 0x0 0x8231CFC 0x80B8D59
-SA_BUBBLES: objtemplate ANIM_TAG_BUBBLE ANIM_TAG_BUBBLE 0x83ACB50 0x83E58DC 0x0 0x8231CFC 0x80AB309
+SA_BLUECHARGE: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_WATER_ORB OAM_DOUBLE_BLEND_16x16 0x83E5958 0x0 0x83E61C8 0x80AE71D
+SA_CIRCLERAIN: objtemplate ANIM_TAG_HYDRO_PUMP ANIM_TAG_HYDRO_PUMP OAM_NORMAL_BLEND_16x16 0x83E58DC 0x0 0x8231CFC SpriteCB_Geyser
+SA_BUBBLERAIN: objtemplate ANIM_TAG_BUBBLE ANIM_TAG_BUBBLE OAM_NORMAL_BLEND_16x16 0x83E58DC 0x0 0x8231CFC SpriteCB_Geyser
+SA_BUBBLES: objtemplate ANIM_TAG_BUBBLE ANIM_TAG_BUBBLE OAM_NORMAL_BLEND_16x16 0x83E58DC 0x0 0x8231CFC 0x80AB309
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Nuisance
+@Credits to Lixdel
 ANIM_SPECTRALTHIEF:
 	choosetwoturnanim SPECTRAL_THIEF_STEAL SPECTRAL_THIEF_ATTACK
 
@@ -12487,22 +12577,22 @@ SPECTRAL_THIEF_ATTACK:
 	waitfortransparentBG
 	pause 0x5
 	playsound2 0xaa 0x3f
-	launchtemplate SPECTRAL_THIEF_BLACKSMOKE 0x82 0x4 0x8 0x8 0x0 0x0
+	launchtemplate SPECTRAL_THIEF_BLACKSMOKE TEMPLATE_TARGET | 2, 0x4, 0x8 0x8 0x0 0x0
 	makebankinvisible 0x0
 	pause 0x2
-	launchtemplate SPECTRAL_THIEF_BLACKSMOKE 0x82 0x4 0xfff8 0xfff8 0x0 0x0
+	launchtemplate SPECTRAL_THIEF_BLACKSMOKE TEMPLATE_TARGET | 2, 0x4, 0xfff8 0xfff8 0x0 0x0
 	pause 0x2
-	launchtemplate SPECTRAL_THIEF_BLACKSMOKE 0x82 0x4 0x8 0xfff8 0x0 0x0
+	launchtemplate SPECTRAL_THIEF_BLACKSMOKE TEMPLATE_TARGET | 2, 0x4, 0x8 0xfff8 0x0 0x0
 	pause 0x2
-	launchtemplate SPECTRAL_THIEF_BLACKSMOKE 0x82 0x4 0xfff8 0x8 0x0 0x0
+	launchtemplate SPECTRAL_THIEF_BLACKSMOKE TEMPLATE_TARGET | 2, 0x4, 0xfff8 0x8 0x0 0x0
 	pause 0x2
-	launchtemplate SPECTRAL_THIEF_BLACKSMOKE 0x82 0x4 0x8 0x8 0x0 0x0
+	launchtemplate SPECTRAL_THIEF_BLACKSMOKE TEMPLATE_TARGET | 2, 0x4, 0x8 0x8 0x0 0x0
 	pause 0x2
-	launchtemplate SPECTRAL_THIEF_BLACKSMOKE 0x82 0x4 0xfff8 0xfff8 0x0 0x0
+	launchtemplate SPECTRAL_THIEF_BLACKSMOKE TEMPLATE_TARGET | 2, 0x4, 0xfff8 0xfff8 0x0 0x0
 	pause 0x2
-	launchtemplate SPECTRAL_THIEF_BLACKSMOKE 0x82 0x4 0x8 0xfff8 0x0 0x0
+	launchtemplate SPECTRAL_THIEF_BLACKSMOKE TEMPLATE_TARGET | 2, 0x4, 0x8 0xfff8 0x0 0x0
 	pause 0x2
-	launchtemplate SPECTRAL_THIEF_BLACKSMOKE 0x82 0x4 0xfff8 0x8 0x0 0x0
+	launchtemplate SPECTRAL_THIEF_BLACKSMOKE TEMPLATE_TARGET | 2, 0x4, 0xfff8 0x8 0x0 0x0
 	waitanimation
 	playsound2 0xB6 0xc0
 	waitanimation
@@ -12526,31 +12616,31 @@ SPECTRAL_THIEF_ATTACK:
 	setblends 0x80C
 	pokespritetoBG bank_target
 	pause 0x1
-	launchtemplate SPECTRAL_THIEF_HITS 0x82 0x3 0xfff6 0xfff6 0x0
+	launchtemplate SPECTRAL_THIEF_HITS TEMPLATE_TARGET | 2, 0x3, 0xfff6 0xfff6 0x0
 	playsound2 0x7f 0x3f
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0003 0x0000 0x0006 0x0001
 	pause 0x4
-	launchtemplate SPECTRAL_THIEF_HITS 0x82 0x3 0xa 0x14 0x0
+	launchtemplate SPECTRAL_THIEF_HITS TEMPLATE_TARGET | 2, 0x3, 0xa 0x14 0x0
 	playsound2 0x7f 0x3f
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0003 0x0000 0x0006 0x0001
 	pause 0x4
-	launchtemplate SPECTRAL_THIEF_HITS 0x82 0x3 0xfffb 0xa 0x0
+	launchtemplate SPECTRAL_THIEF_HITS TEMPLATE_TARGET | 2, 0x3, 0xfffb 0xa 0x0
 	playsound2 0x7f 0x3f
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0003 0x0000 0x0006 0x0001
 	pause 0x4
-	launchtemplate SPECTRAL_THIEF_HITS 0x82 0x3 0x11 0xfff4 0x0
+	launchtemplate SPECTRAL_THIEF_HITS TEMPLATE_TARGET | 2, 0x3, 0x11 0xfff4 0x0
 	playsound2 0x7f 0x3f
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0003 0x0000 0x0006 0x0001
 	pause 0x4
-	launchtemplate SPECTRAL_THIEF_HITS 0x82 0x3 0xfff1 0xf 0x0
+	launchtemplate SPECTRAL_THIEF_HITS TEMPLATE_TARGET | 2, 0x3, 0xfff1 0xf 0x0
 	playsound2 0x7f 0x3f
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0003 0x0000 0x0006 0x0001
 	pause 0x4
-	launchtemplate SPECTRAL_THIEF_HITS 0x82 0x3 0x0 0x0 0x0
+	launchtemplate SPECTRAL_THIEF_HITS TEMPLATE_TARGET | 2, 0x3, 0x0 0x0 0x0
 	playsound2 0x7f 0x3f
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0003 0x0000 0x0006 0x0001
 	pause 0x4
-	launchtemplate SPECTRAL_THIEF_HITS 0x82 0x3 0x14 0x2 0x0
+	launchtemplate SPECTRAL_THIEF_HITS TEMPLATE_TARGET | 2, 0x3, 0x14 0x2 0x0
 	playsound2 0x7f 0x3f
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0003 0x0000 0x0006 0x0001
 	waitanimation
@@ -12564,8 +12654,8 @@ SPECTRAL_THIEF_ATTACK:
 
 
 .align 2
-SPECTRAL_THIEF_BLACKSMOKE: objtemplate ANIM_TAG_GRAY_SMOKE ANIM_TAG_HANDS_AND_FEET 0x83AC9D8 0x83E36A4 0x0 0x8231CFC 0x8075D9D
-SPECTRAL_THIEF_HITS: objtemplate ANIM_TAG_IMPACT ANIM_TAG_HANDS_AND_FEET 0x83ACB58 0x8231CF0 0x0 0x83E63DC 0x80AF3B9
+SPECTRAL_THIEF_BLACKSMOKE: objtemplate ANIM_TAG_GRAY_SMOKE ANIM_TAG_HANDS_AND_FEET OAM_OFF_32x32 0x83E36A4 0x0 0x8231CFC 0x8075D9D
+SPECTRAL_THIEF_HITS: objtemplate ANIM_TAG_IMPACT ANIM_TAG_HANDS_AND_FEET OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E63DC 0x80AF3B9
 
 SPECTRAL_THIEF_STEAL:
 	loadparticle ANIM_TAG_HANDS_AND_FEET @black color
@@ -12602,12 +12692,12 @@ SPECTRAL_THIEF_BUFF:
 	return
 
 .align 2
-SPECTRAL_THIEF_BLACKCIRCLE: objtemplate ANIM_TAG_ORBS ANIM_TAG_HANDS_AND_FEET 0x83ACA90 0x83E2A40 0x0 0x83E2D4C 0x80A3099
-SPECTRAL_THIEF_BLACKFE: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_HANDS_AND_FEET 0x83ACA18 0x83E3600 0x0 0x8231CFC 0x80A5AD9
+SPECTRAL_THIEF_BLACKCIRCLE: objtemplate ANIM_TAG_ORBS ANIM_TAG_HANDS_AND_FEET OAM_DOUBLE_16x16 0x83E2A40 0x0 0x83E2D4C 0x80A3099
+SPECTRAL_THIEF_BLACKFE: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_HANDS_AND_FEET OAM_OFF_16x32 0x83E3600 0x0 0x8231CFC 0x80A5AD9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Nuisance
+@Credits to Lixdel
 ANIM_SPEEDSWAP:
 	loadparticle ANIM_TAG_THIN_RING @ring
 	loadparticle ANIM_TAG_ICE_CHUNK @blue green
@@ -12643,11 +12733,11 @@ ANIM_SPEEDSWAP:
 	endanimation
 
 .align 2
-SPEEDSWAP_BGRING1: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_ICE_CHUNK 0x83ACBC0 0x8231CF0 0x0 0x83E40C4 0x8075D9D
-SPEEDSWAP_BGRING2: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_ICE_CHUNK 0x83ACBC0 0x8231CF0 0x0 0x83E4088 0x80A8EE9
-SPEEDSWAP_BGCIRCLE1: objtemplate ANIM_TAG_ORBS ANIM_TAG_ICE_CHUNK 0x83ACA90 0x83E2A40 0x0 0x83E2D4C 0x80A3099
-SPEEDSWAP_BGCIRCLE2: objtemplate ANIM_TAG_ORBS ANIM_TAG_ICE_CHUNK 0x83ACA90 0x83E2A40 0x0 0x83E2D4C 0x80B4495
-SPEEDSWAP_BGPARTICLES: objtemplate ANIM_TAG_ORBS ANIM_TAG_ICE_CHUNK 0x83ACB50 0x83E2A40 0x0 0x8231CFC 0x80A4299
+SPEEDSWAP_BGRING1: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_ICE_CHUNK OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E40C4 0x8075D9D
+SPEEDSWAP_BGRING2: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_ICE_CHUNK OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E4088 0x80A8EE9
+SPEEDSWAP_BGCIRCLE1: objtemplate ANIM_TAG_ORBS ANIM_TAG_ICE_CHUNK OAM_DOUBLE_16x16 0x83E2A40 0x0 0x83E2D4C 0x80A3099
+SPEEDSWAP_BGCIRCLE2: objtemplate ANIM_TAG_ORBS ANIM_TAG_ICE_CHUNK OAM_DOUBLE_16x16 0x83E2A40 0x0 0x83E2D4C 0x80B4495
+SPEEDSWAP_BGPARTICLES: objtemplate ANIM_TAG_ORBS ANIM_TAG_ICE_CHUNK OAM_NORMAL_BLEND_16x16 0x83E2A40 0x0 0x8231CFC 0x80A4299
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -12657,7 +12747,7 @@ ANIM_SPIRITSHACKLE:
 	pokespritetoBG side_target
 	leftbankBG_over_partnerBG bank_target
 	setblends 0x80c
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x2 0x0 0x10 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x10 0x0
 	waitanimation
 	playsound2 0x99 0xc0
 	launchtemplate SHACKLE_ARROW 0x82 0x5 0x10 0x0 0x0 0x0 0xf
@@ -12671,15 +12761,15 @@ ANIM_SPIRITSHACKLE:
 	pause 0x4
 	launchtemplate SHACKLE_CHAIN 0x82 0x2 0xfff0 0x10
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x2 0x10 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x10 0x0 0x0
 	waitanimation
 	pokespritefromBG side_target
 	resetblends
 	endanimation
 
 .align 2
-SHACKLE_ARROW: objtemplate ANIM_TAG_SPIRIT_ARROW ANIM_TAG_SPIRIT_ARROW 0x83ACB58 0x8231CF0 0x0 0x8231CFC 0x80A72C9
-SHACKLE_CHAIN: objtemplate ANIM_TAG_CHAIN_LINK ANIM_TAG_CHAIN_LINK 0x83AC9F8 0x8231CF0 0x0 0x8231CFC 0x80AE471
+SHACKLE_ARROW: objtemplate ANIM_TAG_SPIRIT_ARROW ANIM_TAG_SPIRIT_ARROW OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x8231CFC 0x80A72C9
+SHACKLE_CHAIN: objtemplate ANIM_TAG_CHAIN_LINK ANIM_TAG_CHAIN_LINK OAM_OFF_32x16 0x8231CF0 0x0 0x8231CFC 0x80AE471
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -12699,7 +12789,7 @@ ANIM_SPOTLIGHT:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Nuisance
+@Credits to Lixdel
 ANIM_STOMPINGTANTRUM:
 	loadparticle ANIM_TAG_ROCKS @rock colour
 	loadparticle ANIM_TAG_SMALL_ROCK @small rock
@@ -12739,11 +12829,11 @@ TANTRUM_HIT:
 	return
 
 .align 2
-TANTRUM_ROCKPARTICLES: objtemplate ANIM_TAG_SMALL_ROCK ANIM_TAG_ROCKS 0x83ACA30 0x8231CF0 0x0 0x83E7990 0x80B7C89
+TANTRUM_ROCKPARTICLES: objtemplate ANIM_TAG_SMALL_ROCK ANIM_TAG_ROCKS OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E7990 0x80B7C89
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Nuisance
+@Credits to Lixdel
 ANIM_STRENGTHSAP:
 	loadparticle ANIM_TAG_GRAY_SMOKE @smoke
 	loadparticle ANIM_TAG_TEAL_ALERT @inward
@@ -12753,7 +12843,7 @@ ANIM_STRENGTHSAP:
 	loadparticle ANIM_TAG_SPARKLE_2 @stars
 	pokespritetoBG side_target
 	playsound2 0xAA 0x3F
-	launchtemplate SAP_REDSMOKES 0x82 0x4 0x8 0x3 0x1 0x0
+	launchtemplate SAP_REDSMOKES TEMPLATE_TARGET | 2, 0x4, 0x8 0x3 0x1 0x0
 	launchtemplate SAP_REDINWARD 0x4 0x3 0x46 0x0 0x6
 	launchtemplate SAP_REDINWARD 0x4 0x3 0x28 0x28 0x6
 	launchtemplate SAP_REDINWARD 0x4 0x3 0xa 0xffc4 0x6
@@ -12761,7 +12851,7 @@ ANIM_STRENGTHSAP:
 	launchtemplate SAP_REDINWARD 0x4 0x3 0xffd8 0x28 0x6
 	launchtemplate SAP_REDINWARD 0x4 0x3 0x32 0xffce 0x6
 	pause 0x2
-	launchtemplate SAP_REDSMOKES 0x82 0x4 0xfff8 0xfff8 0x1 0x0
+	launchtemplate SAP_REDSMOKES TEMPLATE_TARGET | 2, 0x4, 0xfff8 0xfff8 0x1 0x0
 	launchtemplate SAP_REDINWARD 0x4 0x3 0x32 0xffe2 0x6
 	launchtemplate SAP_REDINWARD 0x4 0x3 0x3c 0xa 0x6
 	launchtemplate SAP_REDINWARD 0x4 0x3 0x0 0x3c 0x6
@@ -12769,7 +12859,7 @@ ANIM_STRENGTHSAP:
 	launchtemplate SAP_REDINWARD 0x4 0x3 0xffc4 0x14 0x6
 	launchtemplate SAP_REDINWARD 0x4 0x3 0xffc4 0xffe2 0x6
 	pause 0x2
-	launchtemplate SAP_REDSMOKES 0x82 0x4 0x8 0xfff8 0x1 0x0
+	launchtemplate SAP_REDSMOKES TEMPLATE_TARGET | 2, 0x4, 0x8 0xfff8 0x1 0x0
 	launchtemplate SAP_REDINWARD 0x4 0x3 0xffce 0x32 0x6
 	launchtemplate SAP_REDINWARD 0x4 0x3 0xffc4 0x14 0x6
 	launchtemplate SAP_REDINWARD 0x4 0x3 0xffd8 0xffd8 0x6
@@ -12777,9 +12867,9 @@ ANIM_STRENGTHSAP:
 	launchtemplate SAP_REDINWARD 0x4 0x3 0x32 0xffce 0x6
 	launchtemplate SAP_REDINWARD 0x4 0x3 0x23 0x28 0x6
 	pause 0x2
-	launchtemplate SAP_REDSMOKES 0x82 0x4 0xfff8 0x8 0x1 0x0
+	launchtemplate SAP_REDSMOKES TEMPLATE_TARGET | 2, 0x4, 0xfff8 0x8 0x1 0x0
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0x3 0x07FD
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x3 0x07FD
 	pause 0x5
 	playsound2 0x87 0x3f
 	launchtemplate SAP_PINKABSORB 0x3 0x4 0x0 0x5 0x8 0x1a
@@ -12805,7 +12895,7 @@ ANIM_STRENGTHSAP:
 	playsound2 0x87 0x3f
 	launchtemplate SAP_PINKABSORB 0x3 0x4 0x5 0xffee 0xffec 0x23
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x3 0x0 0x07FD
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x3 0x0 0x07FD
 	soundcomplex 0xBC 0xc0 0x10 0x3
 	call HEALING_STARS
 	waitanimation
@@ -12813,13 +12903,13 @@ ANIM_STRENGTHSAP:
 	endanimation
 
 .align 2
-SAP_REDSMOKES: objtemplate ANIM_TAG_GRAY_SMOKE ANIM_TAG_RED_HEART 0x83AC9D8 0x83E36A4 0x0 0x8231CFC 0x8075D9D @or try pink (ANIM_TAG_PINK_PETAL)
-SAP_REDINWARD: objtemplate ANIM_TAG_TEAL_ALERT ANIM_TAG_RED_HEART 0x83ACA38 0x8231CF0 0x0 0x8231CFC 0x80DE441 @or try pink (ANIM_TAG_PINK_PETAL)
-SAP_PINKABSORB: objtemplate ANIM_TAG_ORBS ANIM_TAG_PINK_PETAL 0x83ACB50 0x83E2A40 0x0 0x83E2AE4 0x80A2581
+SAP_REDSMOKES: objtemplate ANIM_TAG_GRAY_SMOKE ANIM_TAG_RED_HEART OAM_OFF_32x32 0x83E36A4 0x0 0x8231CFC 0x8075D9D @or try pink (ANIM_TAG_PINK_PETAL)
+SAP_REDINWARD: objtemplate ANIM_TAG_TEAL_ALERT ANIM_TAG_RED_HEART OAM_NORMAL_32x32 0x8231CF0 0x0 0x8231CFC 0x80DE441 @or try pink (ANIM_TAG_PINK_PETAL)
+SAP_PINKABSORB: objtemplate ANIM_TAG_ORBS ANIM_TAG_PINK_PETAL OAM_NORMAL_BLEND_16x16 0x83E2A40 0x0 0x83E2AE4 0x80A2581
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Nuisance
+@Credits to Lixdel
 ANIM_SUNSTEELSTRIKE:
 	loadparticle ANIM_TAG_ROUND_SHADOW @fly
 	loadparticle ANIM_TAG_AIR_WAVE_2 @black color
@@ -12886,21 +12976,21 @@ SUNSTRIKE_BEAM:
 	return
 
 .align 2
-SUNSTRIKE_BLACKFLY: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_AIR_WAVE_2 0x83ACAA0 0x8231CF0 0x0 0x83E6B8C 0x80B1BB1
+SUNSTRIKE_BLACKFLY: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_AIR_WAVE_2 OAM_DOUBLE_64x64 0x8231CF0 0x0 0x83E6B8C 0x80B1BB1
 SUNSTRIKE_SUPERPOWER: objtemplate ANIM_TAG_METEOR ANIM_TAG_METEOR sSunsteelStrikeBlastOAM 0x8231CF0 0x0 gSpriteAffineAnimTable_SunsteelStrikeBlast 0x80B1C3D
-SUNSTRIKE_REDBEAM: objtemplate ANIM_TAG_GOLD_RING ANIM_TAG_SMALL_RED_EYE 0x83ACA18 0x8231CF0 0x0 0x83E6BB0 SpriteCB_SunsteelStrikeRings
-SUNSTRIKE_YELLOWBEAM: objtemplate ANIM_TAG_GOLD_RING ANIM_TAG_GOLD_RING 0x83ACA18 0x8231CF0 0x0 0x83E6BB0 SpriteCB_SunsteelStrikeRings
-SUNSTRIKE_REDHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_SMALL_RED_EYE 0x83ACB58 0x8231CF0 0x0 0x83E7BF8 0x80BA561
-SUNSTRIKE_ROCKS: objtemplate ANIM_TAG_SMALL_ROCK ANIM_TAG_ROCKS 0x83ACA30 0x8231CF0 0x0 0x83E7990 0x80B7C89
+SUNSTRIKE_REDBEAM: objtemplate ANIM_TAG_GOLD_RING ANIM_TAG_SMALL_RED_EYE OAM_OFF_16x32 0x8231CF0 0x0 0x83E6BB0 SpriteCB_SunsteelStrikeRings
+SUNSTRIKE_YELLOWBEAM: objtemplate ANIM_TAG_GOLD_RING ANIM_TAG_GOLD_RING OAM_OFF_16x32 0x8231CF0 0x0 0x83E6BB0 SpriteCB_SunsteelStrikeRings
+SUNSTRIKE_REDHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_SMALL_RED_EYE OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+SUNSTRIKE_ROCKS: objtemplate ANIM_TAG_SMALL_ROCK ANIM_TAG_ROCKS OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E7990 0x80B7C89
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Nuisance
+@Credits to Lixdel
 ANIM_TEARFULLOOK:
 	loadparticle ANIM_TAG_SMALL_BUBBLES @tears
 	loadparticle ANIM_TAG_OPENING_EYE @eye
 	pokespritetoBG side_target
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0x5 0x7DE0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x5 0x7DE0
 	waitanimation
 	playsound2 0xbd 0x3f
 	launchtemplate 0x83FEE5C 0x5 0x4 0x0 0x0 0x1 0x0
@@ -12917,14 +13007,14 @@ ANIM_TEARFULLOOK:
 	launchtemplate 0x83E7998 0x2 0x2 0x1 0x2
 	launchtemplate 0x83E7998 0x2 0x2 0x1 0x3
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x5 0x0 0x7DE0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x5 0x0 0x7DE0
 	waitanimation
 	pokespritefromBG side_target
 	endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Nuisance
+@Credits to Lixdel
 ANIM_THROATCHOP:
 	loadparticle ANIM_TAG_HANDS_AND_FEET @karate chop
 	loadparticle ANIM_TAG_IMPACT @hit
@@ -12961,7 +13051,7 @@ ANIM_THROATCHOP:
 	endanimation
 
 .align 2
-THROATCHOP_REDHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_SMALL_RED_EYE 0x83ACB58 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+THROATCHOP_REDHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_SMALL_RED_EYE OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -12971,7 +13061,7 @@ ANIM_TOXICTHREAD:
 	loadparticle ANIM_TAG_WEB_THREAD
 	pokespritetoBG side_target
 	pause 0x0
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x2 0x0 0x9 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x9 0x0
 	waitanimation
 	soundcomplex 0x7A 0xc0 0x9 0x6
 	call STRINGSHOT_LOAD_PARTICLE
@@ -13003,7 +13093,7 @@ ANIM_TOXICTHREAD:
 	pokespritefromBG side_target
 	pause 0x1
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x2 0x9 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x9 0x0 0x0
 	endanimation
 STRINGSHOT_LOAD_PARTICLE:
 	launchtemplate ToxicThreadString1 0x82 0x5 0x14 0x0 0x200 0x14 0x1
@@ -13011,13 +13101,13 @@ STRINGSHOT_LOAD_PARTICLE:
 	return
 
 .align 2
-ToxicThreadString1: objtemplate ANIM_TAG_WEB_THREAD ANIM_TAG_POISON_BUBBLE 0x83AC9C8 0x8231CF0 0x0 0x8231CFC 0x80B4129
-ToxicThreadString2: objtemplate ANIM_TAG_STRING ANIM_TAG_POISON_BUBBLE 0x83ACA00 0x8231CF0 0x0 0x8231CFC 0x80B41F9
+ToxicThreadString1: objtemplate ANIM_TAG_WEB_THREAD ANIM_TAG_POISON_BUBBLE OAM_OFF_8x8 0x8231CF0 0x0 0x8231CFC 0x80B4129
+ToxicThreadString2: objtemplate ANIM_TAG_STRING ANIM_TAG_POISON_BUBBLE OAM_OFF_64x32 0x8231CF0 0x0 0x8231CFC 0x80B41F9
 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Nuisance
+@Credits to Lixdel
 ANIM_TROPKICK:
 	loadparticle ANIM_TAG_HANDS_AND_FEET @kick
 	loadparticle ANIM_TAG_LEAF @leaves
@@ -13040,13 +13130,13 @@ ANIM_TROPKICK:
 	endanimation
 
 .align 2
-TROPKICK_GREENKICK: objtemplate ANIM_TAG_HANDS_AND_FEET ANIM_TAG_HANDS_AND_FEET 0x83AC9D8 0x83E66CC 0x0 0x8231CFC 0x80B0929
-TROPKICK_FLOWERS: objtemplate ANIM_TAG_FLOWER ANIM_TAG_FLOWER 0x83AC9D0 0x83E2B8C 0x0 0x8231CFC 0x80AC94D
-TROPKICK_LEAVES: objtemplate ANIM_TAG_LEAF ANIM_TAG_LEAF 0x83AC9D0 0x83E2C00 0x0 0x8231CFC 0x80AC94D
+TROPKICK_GREENKICK: objtemplate ANIM_TAG_HANDS_AND_FEET ANIM_TAG_HANDS_AND_FEET OAM_OFF_32x32 0x83E66CC 0x0 0x8231CFC 0x80B0929
+TROPKICK_FLOWERS: objtemplate ANIM_TAG_FLOWER ANIM_TAG_FLOWER OAM_OFF_16x16 0x83E2B8C 0x0 0x8231CFC 0x80AC94D
+TROPKICK_LEAVES: objtemplate ANIM_TAG_LEAF ANIM_TAG_LEAF OAM_OFF_16x16 0x83E2C00 0x0 0x8231CFC 0x80AC94D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Nuisance
+@Credits to Lixdel
 ANIM_ZINGZAP:
 	loadparticle ANIM_TAG_SPARK_2 @sparks
 	loadparticle ANIM_TAG_YELLOW_BALL @ball
@@ -13070,7 +13160,7 @@ ANIM_ZINGZAP:
 	pause 0x4
 	call ZZ_SPARKS1
 	makebankinvisible 0x0
-	launchtemplate ZZ_YELLOWBALL 0x82 0x3 0x0 0x0 0xF
+	launchtemplate ZZ_YELLOWBALL TEMPLATE_TARGET | 2, 0x3, 0x0 0x0 0xF
 	pause 0xA
 	call ZZ_SPARKS2
 	pause 0x5
@@ -13087,22 +13177,22 @@ ANIM_ZINGZAP:
 
 ZZ_SPARKS1:
 	playsound2 0x70 0xC0
-	launchtemplate 0x83E5FC4 0x0 0x7 0x20 0x18 0xbe 0xc 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x20 0x18 0xbe 0xc 0x0 0x1 0x0
 	pause 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0x50 0x18 0x16 0xc 0x0 0x1 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0x9c 0x18 0x79 0xd 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x50 0x18 0x16 0xc 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x9c 0x18 0x79 0xd 0x0 0x1 0x1
 	return
 ZZ_SPARKS2:
 	playsound2 0x70 0xC0
-	launchtemplate 0x83E5FC4 0x0 0x7 0x64 0x18 0x3c 0xa 0x0 0x1 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0xaa 0x18 0x2a 0xb 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x64 0x18 0x3c 0xa 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0xaa 0x18 0x2a 0xb 0x0 0x1 0x1
 	pause 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0xee 0x18 0xa5 0xa 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0xee 0x18 0xa5 0xa 0x0 0x1 0x1
 	return
 
 .align 2
-ZZ_YELLOWBALL: objtemplate ANIM_TAG_YELLOW_BALL ANIM_TAG_SPARK_H 0x83ACA90 0x8231CF0 0x0 0x83E7604 0x80B563D
-ZZ_YELLOWRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_SMALL_EMBER 0x83ACBC0 0x8231CF0 0x0 0x83E4088 0x80A8EE9
+ZZ_YELLOWBALL: objtemplate ANIM_TAG_YELLOW_BALL ANIM_TAG_SPARK_H OAM_DOUBLE_16x16 0x8231CF0 0x0 0x83E7604 0x80B563D
+ZZ_YELLOWRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_SMALL_EMBER OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E4088 0x80A8EE9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -13137,8 +13227,8 @@ ANIM_ELECTRICTERRAIN:
 	endanimation
 
 .align 2
-ELEC_TERRAIN_BALL: objtemplate ANIM_TAG_ELECTRIC_ORBS ANIM_TAG_ELECTRIC_ORBS 0x83AC9C8 0x83E6118 0x0 0x8231CFC 0x80AA175
-ELEC_TERRAIN_FLYINGBALL: objtemplate ANIM_TAG_ELECTRIC_ORBS ANIM_TAG_ELECTRIC_ORBS 0x83AC9C8 0x83E6118 0x0 0x8231CFC 0x80AA2B1
+ELEC_TERRAIN_BALL: objtemplate ANIM_TAG_ELECTRIC_ORBS ANIM_TAG_ELECTRIC_ORBS OAM_OFF_8x8 0x83E6118 0x0 0x8231CFC 0x80AA175
+ELEC_TERRAIN_FLYINGBALL: objtemplate ANIM_TAG_ELECTRIC_ORBS ANIM_TAG_ELECTRIC_ORBS OAM_OFF_8x8 0x83E6118 0x0 0x8231CFC 0x80AA2B1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -13172,8 +13262,8 @@ ANIM_GRASSYTERRAIN:
 	endanimation
 
 .align 2
-GRASSY_TERRAIN_BALL: objtemplate ANIM_TAG_ORBS ANIM_TAG_ORBS 0x83ACB50 0x83E2A40 0x0 0x83E2A54 0x80AA175
-GRASSY_TERRAIN_GREENSTAR: objtemplate ANIM_TAG_GREEN_SPARKLE ANIM_TAG_GREEN_SPARKLE 0x83AC9D0 0x83E3760 0x0 0x8231CFC 0x80AA2B1
+GRASSY_TERRAIN_BALL: objtemplate ANIM_TAG_ORBS ANIM_TAG_ORBS OAM_NORMAL_BLEND_16x16 0x83E2A40 0x0 0x83E2A54 0x80AA175
+GRASSY_TERRAIN_GREENSTAR: objtemplate ANIM_TAG_GREEN_SPARKLE ANIM_TAG_GREEN_SPARKLE OAM_OFF_16x16 0x83E3760 0x0 0x8231CFC 0x80AA2B1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -13208,8 +13298,8 @@ ANIM_MISTYTERRAIN:
 	endanimation
 
 .align 2
-MISTY_TERRAIN_BALL: objtemplate ANIM_TAG_ORBS ANIM_TAG_WATER_GUN 0x83ACB50 0x83E2A40 0x0 0x83E2A54 0x80AA175
-MISTY_TERRAIN_BLUESTAR: objtemplate ANIM_TAG_GREEN_SPARKLE ANIM_TAG_WATER_GUN 0x83AC9D0 0x83E3760 0x0 0x8231CFC 0x80AA2B1
+MISTY_TERRAIN_BALL: objtemplate ANIM_TAG_ORBS ANIM_TAG_WATER_GUN OAM_NORMAL_BLEND_16x16 0x83E2A40 0x0 0x83E2A54 0x80AA175
+MISTY_TERRAIN_BLUESTAR: objtemplate ANIM_TAG_GREEN_SPARKLE ANIM_TAG_WATER_GUN OAM_OFF_16x16 0x83E3760 0x0 0x8231CFC 0x80AA2B1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -13244,12 +13334,12 @@ ANIM_PSYCHICTERRAIN:
 	endanimation
 
 .align 2
-PSY_TERRAIN_BALL: objtemplate ANIM_TAG_ORBS ANIM_TAG_POISON_BUBBLE 0x83ACB50 0x83E2A40 0x0 0x83E2A54 0x80AA175
-PSY_TERRAIN_PURPLESTAR: objtemplate ANIM_TAG_GREEN_SPARKLE ANIM_TAG_POISON_BUBBLE 0x83AC9D0 0x83E3760 0x0 0x8231CFC 0x80AA2B1
+PSY_TERRAIN_BALL: objtemplate ANIM_TAG_ORBS ANIM_TAG_POISON_BUBBLE OAM_NORMAL_BLEND_16x16 0x83E2A40 0x0 0x83E2A54 0x80AA175
+PSY_TERRAIN_PURPLESTAR: objtemplate ANIM_TAG_GREEN_SPARKLE ANIM_TAG_POISON_BUBBLE OAM_OFF_16x16 0x83E3760 0x0 0x8231CFC 0x80AA2B1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Nuisance
+@Credits to Lixdel
 ANIM_GRASSPLEDGE:
 	loadparticle ANIM_TAG_LEAF @leaves
 	loadparticle ANIM_TAG_WATER_IMPACT @hits
@@ -13381,13 +13471,13 @@ ANIM_GRASSPLEDGE:
 	endanimation
 
 .align 2
-GP_LEAVES: objtemplate ANIM_TAG_LEAF ANIM_TAG_LEAF 0x83AC9D0 0x83E2C00 0x0 0x8231CFC 0x80ABA79
-GP_LEAVES2: objtemplate ANIM_TAG_LEAF ANIM_TAG_LEAF 0x83AC9D0 0x83E2C00 0x0 0x8231CFC 0x80B477D
-GP_GREENHIT: objtemplate ANIM_TAG_WATER_IMPACT ANIM_TAG_LEAF 0x83ACB58 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+GP_LEAVES: objtemplate ANIM_TAG_LEAF ANIM_TAG_LEAF OAM_OFF_16x16 0x83E2C00 0x0 0x8231CFC 0x80ABA79
+GP_LEAVES2: objtemplate ANIM_TAG_LEAF ANIM_TAG_LEAF OAM_OFF_16x16 0x83E2C00 0x0 0x8231CFC 0x80B477D
+GP_GREENHIT: objtemplate ANIM_TAG_WATER_IMPACT ANIM_TAG_LEAF OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Nuisance
+@Credits to Lixdel
 ANIM_FIREPLEDGE:
 	loadparticle ANIM_TAG_SMALL_EMBER @fire
 	pokespritetoBG bank_target
@@ -13462,7 +13552,7 @@ ANIM_FIREPLEDGE:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Nuisance
+@Credits to Lixdel
 ANIM_WATERPLEDGE:
 	loadparticle ANIM_TAG_WATER_IMPACT @hit
 	loadparticle ANIM_TAG_SMALL_BUBBLES @bubbles
@@ -13628,12 +13718,12 @@ BEGIN_ROOM:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Nuisance
+@Credits to Lixdel
 ANIM_CRAFTYSHIELD:
 	loadparticle ANIM_TAG_CRAFTY_SHIELD
 	pokespritetoBG side_attacker
 	leftbankBG_over_partnerBG bank_attacker
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0x5 0x4DBF
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x5 0x4DBF
 	setblends 0x10
 	pause 0x0
 	playsound2 0xc7 0xc0
@@ -13677,7 +13767,7 @@ ANIM_CRAFTYSHIELD:
 	pause 0x6
 	launchtask 0x80A5CD5 0x5 0x0
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x5 0x0 0x4DBF
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x5 0x0 0x4DBF
 	waitanimation
 	pause 0x1
 	pokespritefromBG side_attacker
@@ -13685,11 +13775,11 @@ ANIM_CRAFTYSHIELD:
 	endanimation
 
 .align 2
-CS_PINKCONVERSION: objtemplate ANIM_TAG_CRAFTY_SHIELD ANIM_TAG_CRAFTY_SHIELD 0x83ACBA8 0x83E36D4 0x0 0x83E36E8 0x80A5C69
+CS_PINKCONVERSION: objtemplate ANIM_TAG_CRAFTY_SHIELD ANIM_TAG_CRAFTY_SHIELD OAM_DOUBLE_BLEND_8x8 0x83E36D4 0x0 0x83E36E8 0x80A5C69
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Nuisance
+@Credits to Lixdel
 ANIM_MATBLOCK:
 	loadparticle ANIM_TAG_CONVERSION
 	loadparticle ANIM_TAG_GREEN_LIGHT_WALL @green color
@@ -13721,11 +13811,11 @@ ANIM_MATBLOCK:
 	endanimation
 
 .align 2
-GREENCONVERSION: objtemplate ANIM_TAG_CONVERSION ANIM_TAG_GREEN_LIGHT_WALL 0x83ACBA8 0x83E36D4 0x0 0x83E36E8 0x80A5C69
+GREENCONVERSION: objtemplate ANIM_TAG_CONVERSION ANIM_TAG_GREEN_LIGHT_WALL OAM_DOUBLE_BLEND_8x8 0x83E36D4 0x0 0x83E36E8 0x80A5C69
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Nuisance
+@Credits to Lixdel
 ANIM_QUICKGUARD:
 	loadparticle ANIM_TAG_QUICK_GUARD_HAND @hand
 	loadparticle ANIM_TAG_SPARKLE_4 @sparkles
@@ -13757,11 +13847,11 @@ ANIM_QUICKGUARD:
 	endanimation
 
 .align 2
-QUICKGUARD_ARMHIT: objtemplate ANIM_TAG_QUICK_GUARD_HAND ANIM_TAG_QUICK_GUARD_HAND 0x83AC9D8 0x83E66CC 0x0 0x8231CFC 0x80B0955
+QUICKGUARD_ARMHIT: objtemplate ANIM_TAG_QUICK_GUARD_HAND ANIM_TAG_QUICK_GUARD_HAND OAM_OFF_32x32 0x83E66CC 0x0 0x8231CFC 0x80B0955
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Nuisance
+@Credits to Lixdel
 ANIM_WIDEGUARD:
 	loadparticle ANIM_TAG_ICE_SPIKES @motion from icy wind
 	loadparticle ANIM_TAG_PINK_PETAL @pink color
@@ -13813,11 +13903,11 @@ ANIM_WIDEGUARD:
 	endanimation
 
 .align 2
-BLUECONV: objtemplate ANIM_TAG_CONVERSION ANIM_TAG_WATER_ORB 0x83ACBA8 0x83E36D4 0x0 0x83E36E8 0x80A5C69
+BLUECONV: objtemplate ANIM_TAG_CONVERSION ANIM_TAG_WATER_ORB OAM_DOUBLE_BLEND_8x8 0x83E36D4 0x0 0x83E36E8 0x80A5C69
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Nuisance
+@Credits to Lixdel
 ANIM_AQUARING:
 	loadparticle ANIM_TAG_GUARD_RING @safeguard
 	loadparticle ANIM_TAG_WATER_ORB @blue color
@@ -13865,8 +13955,8 @@ AQUA_RING_ANIM:
 	endanimation
 
 .align 2
-AQUARING_BLUERING: objtemplate ANIM_TAG_GUARD_RING ANIM_TAG_WATER_ORB 0x83ACBE0 0x8231CF0 0x0 0x83E44D4 0x80AAAE5
-AQUARING_BUBBLES: objtemplate ANIM_TAG_SMALL_BUBBLES ANIM_TAG_SMALL_BUBBLES 0x83ACB50 0x83E5A78 0x0 0x8231CFC 0x80AB309
+AQUARING_BLUERING: objtemplate ANIM_TAG_GUARD_RING ANIM_TAG_WATER_ORB OAM_DOUBLE_BLEND_64x32 0x8231CF0 0x0 0x83E44D4 0x80AAAE5
+AQUARING_BUBBLES: objtemplate ANIM_TAG_SMALL_BUBBLES ANIM_TAG_SMALL_BUBBLES OAM_NORMAL_BLEND_16x16 0x83E5A78 0x0 0x8231CFC 0x80AB309
 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -13874,7 +13964,7 @@ AQUARING_BUBBLES: objtemplate ANIM_TAG_SMALL_BUBBLES ANIM_TAG_SMALL_BUBBLES 0x83
 ANIM_AROMATICMIST:
 	loadparticle ANIM_TAG_PINK_PETAL
 	playsound2 0xE5 0xc0
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0x8 0x6E7D
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x8 0x6E7D
 	launchtemplate 0x83FF324 0x2 0x3 0x64 0x0 0x64
 	pause 0x19
 	pancontrol 0x0
@@ -13884,7 +13974,7 @@ ANIM_AROMATICMIST:
 	launchtask AnimTask_pal_fade_complex 0x2 0x6 PAL_DEF | PAL_DEF_PARTNER 0x1 0x5 0x5 0xd 0x56bf
 	call 0x81D2901
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x8 0x0 0x6E7D
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x8 0x0 0x6E7D
 	waitanimation
 	endanimation
 
@@ -13924,12 +14014,12 @@ ANIM_BELCH:
 	endanimation
 
 .align 2
-BELCH_BERRY: objtemplate ANIM_TAG_BERRY_EATEN ANIM_TAG_BERRY_NORMAL 0x83ACA38 0x8231CF0 0x0 0x8231CFC 0x80B4495
+BELCH_BERRY: objtemplate ANIM_TAG_BERRY_EATEN ANIM_TAG_BERRY_NORMAL OAM_NORMAL_32x32 0x8231CF0 0x0 0x8231CFC 0x80B4495
 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Nuisance
+@Credits to Lixdel
 ANIM_BESTOW:
 	loadparticle ANIM_TAG_ITEM_BAG @item
 	pokespritetoBG bank_target
@@ -13941,7 +14031,7 @@ ANIM_BESTOW:
 	endanimation
 
 .align 2
-BESTOW_ITEM: objtemplate ANIM_TAG_ITEM_BAG ANIM_TAG_ITEM_BAG 0x83ACA38 0x83E2E24 0x0 0x8231CFC 0x8075E81
+BESTOW_ITEM: objtemplate ANIM_TAG_ITEM_BAG ANIM_TAG_ITEM_BAG OAM_NORMAL_32x32 0x83E2E24 0x0 0x8231CFC 0x8075E81
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -13965,15 +14055,14 @@ ANIM_FLING:
 	endanimation
 
 @;.align 2
-@;FLING_ITEM: objtemplate ANIM_TAG_ITEM_BAG ANIM_TAG_ITEM_BAG 0x83ACA38 0x8231CF0 0x0 0x8231CFC 0x80B4495
+@;FLING_ITEM: objtemplate ANIM_TAG_ITEM_BAG ANIM_TAG_ITEM_BAG OAM_NORMAL_32x32 0x8231CF0 0x0 0x8231CFC 0x80B4495
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Nuisance
+@Credits to Lixdel
 ANIM_FLYINGPRESS:
 	loadparticle ANIM_TAG_ROUND_SHADOW @fly/bounce
 	loadparticle ANIM_TAG_GRAY_SMOKE @smoke
-	pokespritetoBG side_target
 	setblends 0xF
 	playsound2 0x97 0xc0
 	launchtemplate 0x83E6BB8 0x2 0x4 0x0 0x0 0xd 0x150
@@ -13981,33 +14070,32 @@ ANIM_FLYINGPRESS:
 	pause 0xF
 	playsound2 0xBA 0x3f
 	launchtemplate 0x83E6CFC 0x83 0x0
-	pause 0x7
+	pause 0x2
+	launchtask AnimTask_SquishTarget 0x2 0x0
+	pause 0x5
 	playsound2 0x86 0x3f
-	launchtask 0x80E12F9 0x2 0x1 0x1
-	launchtask AnimTask_move_bank 0x5 0x5 bank_target 0x0 0x5 0xb 0x1
-	launchtemplate 0x83E36A8 0x82 0x4 0x8 0x8 0x1 0x0
+	launchtemplate 0x83E36A8 TEMPLATE_TARGET 0x4 0x8 0x8 0x1 0x0
 	pause 0x2
-	launchtemplate 0x83E36A8 0x82 0x4 0xfff8 0xfff8 0x1 0x0
+	launchtemplate 0x83E36A8 TEMPLATE_TARGET 0x4 0xfff8 0xfff8 0x1 0x0
 	pause 0x2
-	launchtemplate 0x83E36A8 0x82 0x4 0x8 0xfff8 0x1 0x0
+	launchtemplate 0x83E36A8 TEMPLATE_TARGET 0x4 0x8 0xfff8 0x1 0x0
 	pause 0x2
-	launchtemplate 0x83E36A8 0x82 0x4 0xfff8 0x8 0x1 0x0
+	launchtemplate 0x83E36A8 TEMPLATE_TARGET 0x4 0xfff8 0x8 0x1 0x0
 	pause 0x2
-	launchtemplate 0x83E36A8 0x82 0x4 0x8 0x8 0x1 0x0
+	launchtemplate 0x83E36A8 TEMPLATE_TARGET 0x4 0x8 0x8 0x1 0x0
 	pause 0x2
-	launchtemplate 0x83E36A8 0x82 0x4 0xfff8 0xfff8 0x1 0x0
+	launchtemplate 0x83E36A8 TEMPLATE_TARGET 0x4 0xfff8 0xfff8 0x1 0x0
 	pause 0x2
-	launchtemplate 0x83E36A8 0x82 0x4 0x8 0xfff8 0x1 0x0
+	launchtemplate 0x83E36A8 TEMPLATE_TARGET 0x4 0x8 0xfff8 0x1 0x0
 	pause 0x2
-	launchtemplate 0x83E36A8 0x82 0x4 0xfff8 0x8 0x1 0x0
+	launchtemplate 0x83E36A8 TEMPLATE_TARGET 0x4 0xfff8 0x8 0x1 0x0
 	waitanimation
-	pokespritefromBG side_target
 	resetblends
 	endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Nuisance
+@Credits to Lixdel
 ANIM_GRAVITY:
 	loadparticle ANIM_TAG_SHADOW_BALL @shadow ball
 	pokespritetoBG bank_target
@@ -14032,13 +14120,13 @@ ANIM_GRAVITY:
 	endanimation
 
 .align 2
-GRAVITY_BLACKHOLE: objtemplate ANIM_TAG_SHADOW_BALL ANIM_TAG_SHADOW_BALL 0x83ACA38 0x8231CF0 0x0 0x83E7604 0x80B0E81
+GRAVITY_BLACKHOLE: objtemplate ANIM_TAG_SHADOW_BALL ANIM_TAG_SHADOW_BALL OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E7604 SpriteCB_SpriteOnMonForDuration
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 ANIM_GUARDSPLIT:
 	loadparticle ANIM_TAG_BLUEGREEN_ORB
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0xC 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xC 0x0
 	soundcomplex 0xd2 0xc0 0x18 0x3
 	call GuardSplitLaunch
 	call GuardSplitLaunch
@@ -14051,7 +14139,7 @@ ANIM_GUARDSPLIT:
 	call GuardSplitLaunch
 	call GuardSplitLaunch
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0xC 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xC 0x0 0x0
 	waitanimation
 	endanimation
 
@@ -14062,8 +14150,8 @@ GuardSplitLaunch:
 	return
 
 .align 2
-GUARD_SPLIT_SWAPPER1: objtemplate ANIM_TAG_BLUEGREEN_ORB ANIM_TAG_BLUEGREEN_ORB 0x83ACA30 0x8231CF0 0x0 0x83E7BF8 0x80A3099
-GUARD_SPLIT_SWAPPER2: objtemplate ANIM_TAG_BLUEGREEN_ORB ANIM_TAG_BLUEGREEN_ORB 0x83ACA30 0x8231CF0 0x0 0x83E7BF8 0x80B4495
+GUARD_SPLIT_SWAPPER1: objtemplate ANIM_TAG_BLUEGREEN_ORB ANIM_TAG_BLUEGREEN_ORB OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E7BF8 0x80A3099
+GUARD_SPLIT_SWAPPER2: objtemplate ANIM_TAG_BLUEGREEN_ORB ANIM_TAG_BLUEGREEN_ORB OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E7BF8 0x80B4495
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -14095,19 +14183,19 @@ HEAL_BLOCK_STARS:
 ANIM_IONDELUGE:
 	loadparticle ANIM_TAG_IONS @ions
 	pokespritetoBG side_target
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0xA 0x7440
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xA 0x7440
 	waitanimation
 	soundcomplex 0x70 0x3f 0xA 0x9
 	launchtask 0x80AABC1 0x2 0x3 0x0 0x3 0x78
 	launchtask 0x80AABC1 0x2 0x3 0x0 0x3 0x78
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0xA 0x0 0x7440
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xA 0x0 0x7440
 	waitanimation
 	pokespritefromBG side_target
 	endanimation
 
 .align 2
-IONS: objtemplate ANIM_TAG_IONS ANIM_TAG_IONS 0x83ACA18 0x83E5894 0x0 0x8231CFC 0x80AAC55
+IONS: objtemplate ANIM_TAG_IONS ANIM_TAG_IONS OAM_OFF_16x32 0x83E5894 0x0 0x8231CFC 0x80AAC55
 
 @ hook at 0xAAC24 via r0
 .align 2
@@ -14136,7 +14224,7 @@ ReturnIonASM:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Nuisance
+@Credits to Lixdel
 ANIM_LUCKYCHANT:
 	loadparticle ANIM_TAG_THIN_RING @ring
 	loadparticle ANIM_TAG_PINK_PETAL @pink color
@@ -14164,8 +14252,8 @@ ANIM_LUCKYCHANT:
 	endanimation
 
 .align 2
-LUCKYCHANT_PINKRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_PINK_PETAL 0x83ACBC0 0x8231CF0 0x0 0x83E4088 0x80A8EE9
-LUCKYCHANT_PINKSTARS: objtemplate ANIM_TAG_SPARKLE_2 ANIM_TAG_PINK_PETAL 0x83AC9D8 0x83E33F0 0x0 0x83E7604 0x80A2921
+LUCKYCHANT_PINKRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_PINK_PETAL OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E4088 0x80A8EE9
+LUCKYCHANT_PINKSTARS: objtemplate ANIM_TAG_SPARKLE_2 ANIM_TAG_PINK_PETAL OAM_OFF_32x32 0x83E33F0 0x0 0x83E7604 0x80A2921
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -14177,27 +14265,27 @@ ANIM_MAGNETRISE:
 	launchtask AnimTask_pal_fade_complex 0x2 0x6 PAL_BG | PAL_ATK 0xffe1 0x1 0x5 0x5 0x5bff
 	playsound2 0x70 0xc0
 	launchtask 0x809949D 0x5 0x7 0x0 0xfff4 0x4 0xa 0xa 0xc 0x6
-	launchtemplate 0x83E5FC4 0x0 0x7 0x20 0x18 0xbe 0xc 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x20 0x18 0xbe 0xc 0x0 0x1 0x0
 	pause 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0x50 0x18 0x16 0xc 0x0 0x1 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0x9c 0x18 0x79 0xd 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x50 0x18 0x16 0xc 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x9c 0x18 0x79 0xd 0x0 0x1 0x1
 	pause 0x0
 	playsound2 0x70 0xc0
 	pause 0x4
-	launchtemplate 0x83E5FC4 0x0 0x7 0x64 0x18 0x3c 0xa 0x0 0x1 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0xaa 0x18 0x2a 0xb 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x64 0x18 0x3c 0xa 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0xaa 0x18 0x2a 0xb 0x0 0x1 0x1
 	pause 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0xee 0x18 0xa5 0xa 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0xee 0x18 0xa5 0xa 0x0 0x1 0x1
 	pause 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0x20 0x18 0xbe 0xc 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x20 0x18 0xbe 0xc 0x0 0x1 0x0
 	pause 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0x50 0x18 0x16 0xc 0x0 0x1 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0x9c 0x18 0x79 0xd 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x50 0x18 0x16 0xc 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x9c 0x18 0x79 0xd 0x0 0x1 0x1
 	pause 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0x64 0x18 0x3c 0xa 0x0 0x1 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0xaa 0x18 0x2a 0xb 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x64 0x18 0x3c 0xa 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0xaa 0x18 0x2a 0xb 0x0 0x1 0x1
 	pause 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0xee 0x18 0xa5 0xa 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0xee 0x18 0xa5 0xa 0x0 0x1 0x1
 	pause 0x0
 	launchtask AnimTask_pal_fade_complex 0x2 0x6 PAL_BG | PAL_ATK 0xffe1 0x1 0x0 0x0 0x5bff
 	pause 0x14
@@ -14209,7 +14297,7 @@ ANIM_MAGNETRISE:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Nuisance
+@Credits to Lixdel
 ANIM_MAGNETICFLUX:
 	loadparticle ANIM_TAG_THIN_RING @uproar
 	loadparticle ANIM_TAG_SPARK_2 @paralyze_chance_anim
@@ -14232,20 +14320,20 @@ ANIM_MAGNETICFLUX:
 	waitanimation
 	endanimation
 FLUX_SPARKS1:
-	launchtemplate 0x83E5FC4 0x0 0x7 0x20 0x18 0xbe 0xc 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x20 0x18 0xbe 0xc 0x0 0x1 0x0
 	pause 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0x50 0x18 0x16 0xc 0x0 0x1 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0x9c 0x18 0x79 0xd 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x50 0x18 0x16 0xc 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x9c 0x18 0x79 0xd 0x0 0x1 0x1
 	return
 FLUX_SPARKS2:
-	launchtemplate 0x83E5FC4 0x0 0x7 0x64 0x18 0x3c 0xa 0x0 0x1 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0xaa 0x18 0x2a 0xb 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x64 0x18 0x3c 0xa 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0xaa 0x18 0x2a 0xb 0x0 0x1 0x1
 	pause 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0xee 0x18 0xa5 0xa 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0xee 0x18 0xa5 0xa 0x0 0x1 0x1
 	return
 
 .align 2
-FLUX_YELLOWUPROAR: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_SMALL_EMBER 0x83ACBC0 0x8231CF0 0x0 0x83E4088 0x80A8EE9
+FLUX_YELLOWUPROAR: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_SMALL_EMBER OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E4088 0x80A8EE9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -14271,14 +14359,14 @@ POWDER_SPORE:
 	return
 
 .align 2
-POWDER_BLACKPOWDER: objtemplate ANIM_TAG_SPORE ANIM_TAG_HANDS_AND_FEET 0x83AC9D0 0x83E2B5C 0x0 0x8231CFC 0x80A27D1
+POWDER_BLACKPOWDER: objtemplate ANIM_TAG_SPORE ANIM_TAG_HANDS_AND_FEET OAM_OFF_16x16 0x83E2B5C 0x0 0x8231CFC 0x80A27D1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 ANIM_POWERSPLIT:
 	loadparticle ANIM_TAG_RED_HEART
 	loadparticle ANIM_TAG_BLUEGREEN_ORB
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0xC 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xC 0x0
 	soundcomplex 0xd2 0xc0 0x18 0x3
 	call POWERSPLIT_Launch
 	call POWERSPLIT_Launch
@@ -14291,7 +14379,7 @@ ANIM_POWERSPLIT:
 	call POWERSPLIT_Launch
 	call POWERSPLIT_Launch
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0xC 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xC 0x0 0x0
 	waitanimation
 	endanimation
 
@@ -14302,12 +14390,12 @@ POWERSPLIT_Launch:
 	return
 
 .align 2
-POWERSPLIT_SWAPPER1: objtemplate ANIM_TAG_BLUEGREEN_ORB ANIM_TAG_RED_HEART 0x83ACA30 0x8231CF0 0x0 0x83E7BF8 0x80A3099
-POWERSPLIT_SWAPPER2: objtemplate ANIM_TAG_BLUEGREEN_ORB ANIM_TAG_RED_HEART 0x83ACA30 0x8231CF0 0x0 0x83E7BF8 0x80B4495
+POWERSPLIT_SWAPPER1: objtemplate ANIM_TAG_BLUEGREEN_ORB ANIM_TAG_RED_HEART OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E7BF8 0x80A3099
+POWERSPLIT_SWAPPER2: objtemplate ANIM_TAG_BLUEGREEN_ORB ANIM_TAG_RED_HEART OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E7BF8 0x80B4495
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Nuisance
+@Credits to Lixdel
 ANIM_REFLECTTYPE:
 	loadparticle ANIM_TAG_GUARD_RING @ring around user
 	loadparticle ANIM_TAG_ICE_CHUNK @blue green color
@@ -14347,17 +14435,17 @@ ANIM_REFLECTTYPE:
 	endanimation
 
 .align 2
-BGSS: objtemplate ANIM_TAG_GUARD_RING ANIM_TAG_ICE_CHUNK 0x83ACBE0 0x8231CF0 0x0 0x8231CFC 0x80B41F9
-VIOLETSS: objtemplate ANIM_TAG_GUARD_RING ANIM_TAG_PURPLE_FLAME 0x83ACBE0 0x8231CF0 0x0 0x8231CFC 0x80B41F9
-WHITESS: objtemplate ANIM_TAG_GUARD_RING ANIM_TAG_GUARD_RING 0x83ACBE0 0x8231CF0 0x0 0x8231CFC 0x80B41F9
-WHITESG: objtemplate ANIM_TAG_GUARD_RING ANIM_TAG_GUARD_RING 0x83ACBE0 0x8231CF0 0x0 0x83E44D4 0x80AAAE5
-PINKSG: objtemplate ANIM_TAG_GUARD_RING ANIM_TAG_PINK_PETAL 0x83ACBE0 0x8231CF0 0x0 0x83E44D4 0x80AAAE5
-VIOLETSG: objtemplate ANIM_TAG_GUARD_RING ANIM_TAG_PURPLE_FLAME 0x83ACBE0 0x8231CF0 0x0 0x83E44D4 0x80AAAE5
-BGSG: objtemplate ANIM_TAG_GUARD_RING ANIM_TAG_ICE_CHUNK 0x83ACBE0 0x8231CF0 0x0 0x83E44D4 0x80AAAE5
+BGSS: objtemplate ANIM_TAG_GUARD_RING ANIM_TAG_ICE_CHUNK OAM_DOUBLE_BLEND_64x32 0x8231CF0 0x0 0x8231CFC 0x80B41F9
+VIOLETSS: objtemplate ANIM_TAG_GUARD_RING ANIM_TAG_PURPLE_FLAME OAM_DOUBLE_BLEND_64x32 0x8231CF0 0x0 0x8231CFC 0x80B41F9
+WHITESS: objtemplate ANIM_TAG_GUARD_RING ANIM_TAG_GUARD_RING OAM_DOUBLE_BLEND_64x32 0x8231CF0 0x0 0x8231CFC 0x80B41F9
+WHITESG: objtemplate ANIM_TAG_GUARD_RING ANIM_TAG_GUARD_RING OAM_DOUBLE_BLEND_64x32 0x8231CF0 0x0 0x83E44D4 0x80AAAE5
+PINKSG: objtemplate ANIM_TAG_GUARD_RING ANIM_TAG_PINK_PETAL OAM_DOUBLE_BLEND_64x32 0x8231CF0 0x0 0x83E44D4 0x80AAAE5
+VIOLETSG: objtemplate ANIM_TAG_GUARD_RING ANIM_TAG_PURPLE_FLAME OAM_DOUBLE_BLEND_64x32 0x8231CF0 0x0 0x83E44D4 0x80AAAE5
+BGSG: objtemplate ANIM_TAG_GUARD_RING ANIM_TAG_ICE_CHUNK OAM_DOUBLE_BLEND_64x32 0x8231CF0 0x0 0x83E44D4 0x80AAAE5
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Nuisance
+@Credits to Lixdel
 ANIM_SIMPLEBEAM:
 	loadparticle ANIM_TAG_GOLD_RING @psybeam
 	loadparticle ANIM_TAG_ROCKS @brown color
@@ -14365,13 +14453,13 @@ ANIM_SIMPLEBEAM:
 	loadparticle ANIM_TAG_THIN_RING @ring
 	setblends 0x808
 	pokespritetobg bank_target
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0xC 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xC 0x0
 	waitanimation
 	playsound2 0xaf 0xc0
 	call SIMPLE_BEAMS
 	call SIMPLE_BEAMS
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x2 0x0 0x9 0x7FFF
-	launchtask 0x8099705 0x5 0x5 0x0 0x6 0x800 0x4 0x1
+	launchtask AnimTask_SwayMon 0x5 0x5 0x0 0x6 0x800 0x4 bank_target
 	call SIMPLE_BEAMWITHRINGS
 	call SIMPLE_BEAMWITHRINGS
 	call SIMPLE_BEAMWITHRINGS
@@ -14384,7 +14472,7 @@ ANIM_SIMPLEBEAM:
 	stopmusic
 	waitanimation
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x2 0x9 0x0 0x7FFF
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0xC 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xC 0x0 0x0
 	waitanimation
 	pokespritefrombg bank_target
 	resetblends
@@ -14406,10 +14494,10 @@ SIMPLE_BEAMWITHRINGS:
 	return
 
 .align 2
-SIMPLE_BROWNBEAM: objtemplate ANIM_TAG_GOLD_RING ANIM_TAG_ROCKS 0x83ACA18 0x8231CF0 0x0 0x8231CFC Callback_TranslateAnimSpriteToTargetMonLocation
-SIMPLE_PINKBEAM: objtemplate ANIM_TAG_GOLD_RING ANIM_TAG_PINK_PETAL 0x83ACA18 0x8231CF0 0x0 0x8231CFC Callback_TranslateAnimSpriteToTargetMonLocation
-SIMPLE_BROWNRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_ROCKS 0x83ACBC0 0x8231CF0 0x0 0x83E4088 0x80A8EE9
-SIMPLE_PINKRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_PINK_PETAL 0x83ACBC0 0x8231CF0 0x0 0x83E4088 0x80A8EE9
+SIMPLE_BROWNBEAM: objtemplate ANIM_TAG_GOLD_RING ANIM_TAG_ROCKS OAM_OFF_16x32 0x8231CF0 0x0 0x8231CFC Callback_TranslateAnimSpriteToTargetMonLocation
+SIMPLE_PINKBEAM: objtemplate ANIM_TAG_GOLD_RING ANIM_TAG_PINK_PETAL OAM_OFF_16x32 0x8231CF0 0x0 0x8231CFC Callback_TranslateAnimSpriteToTargetMonLocation
+SIMPLE_BROWNRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_ROCKS OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E4088 0x80A8EE9
+SIMPLE_PINKRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_PINK_PETAL OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E4088 0x80A8EE9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -14417,13 +14505,13 @@ ANIM_SOAK:
 	loadparticle ANIM_TAG_HYDRO_PUMP
 	pokespritetoBG bank_target
 	playsoundpanchange 0x9D 0xc0 0x3f 0x2 0x0
-	launchtemplate SOAK_WATER 0x82 0x4 0xfffb 0x0 0xfffb 0x1
+	launchtemplate SOAK_WATER TEMPLATE_TARGET | 2, 0x4, 0xfffb 0x0 0xfffb 0x0
 	pause 0x2
-	launchtemplate SOAK_WATER 0x82 0x4 0x5 0x0 0x6 0x1
+	launchtemplate SOAK_WATER TEMPLATE_TARGET | 2, 0x4, 0x5 0x0 0x6 0x0
 	pause 0x2
-	launchtemplate SOAK_WATER 0x82 0x4 0x13 0x0 0xa 0x1
+	launchtemplate SOAK_WATER TEMPLATE_TARGET | 2, 0x4, 0x13 0x0 0xa 0x0
 	pause 0x2
-	launchtemplate SOAK_WATER 0x82 0x4 0xffe9 0x0 0xfff6 0x1
+	launchtemplate SOAK_WATER TEMPLATE_TARGET | 2, 0x4, 0xffe9 0x0 0xfff6 0x0
 	pause 0x2
 	call SOAK_CALL
 	call SOAK_CALL
@@ -14434,33 +14522,33 @@ ANIM_SOAK:
 	endanimation
 
 SOAK_CALL:
-	launchtemplate SOAK_WATER 0x82 0x4 0xffec 0x0 0xfff6 0x1
+	launchtemplate SOAK_WATER TEMPLATE_TARGET | 2, 0x4, 0xffec 0x0 0xfff6 0x0
 	pause 0x2
-	launchtemplate SOAK_WATER 0x82 0x4 0x1c 0x0 0xa 0x1
+	launchtemplate SOAK_WATER TEMPLATE_TARGET | 2, 0x4, 0x1c 0x0 0xa 0x0
 	pause 0x2
-	launchtemplate SOAK_WATER 0x82 0x4 0xfff6 0x0 0xfffb 0x1
+	launchtemplate SOAK_WATER TEMPLATE_TARGET | 2, 0x4, 0xfff6 0x0 0xfffb 0x0
 	pause 0x2
-	launchtemplate SOAK_WATER 0x82 0x4 0xa 0x0 0x6 0x1
+	launchtemplate SOAK_WATER TEMPLATE_TARGET | 2, 0x4, 0xa 0x0 0x6 0x0
 	pause 0x2
-	launchtemplate SOAK_WATER 0x82 0x4 0x18 0x0 0xa 0x1
+	launchtemplate SOAK_WATER TEMPLATE_TARGET | 2, 0x4, 0x18 0x0 0xa 0x0
 	pause 0x2
-	launchtemplate SOAK_WATER 0x82 0x4 0xffe0 0x0 0xfff6 0x1
+	launchtemplate SOAK_WATER TEMPLATE_TARGET | 2, 0x4, 0xffe0 0x0 0xfff6 0x0
 	pause 0x2
-	launchtemplate SOAK_WATER 0x82 0x4 0xffec 0x0 0xfff6 0x1
+	launchtemplate SOAK_WATER TEMPLATE_TARGET | 2, 0x4, 0xffec 0x0 0xfff6 0x0
 	pause 0x2
-	launchtemplate SOAK_WATER 0x82 0x4 0x1e 0x0 0xa 0x1
+	launchtemplate SOAK_WATER TEMPLATE_TARGET | 2, 0x4, 0x1e 0x0 0xa 0x0
 	pause 0x2
 	return
 
 .align 2
-SOAK_WATER: objtemplate ANIM_TAG_HYDRO_PUMP ANIM_TAG_HYDRO_PUMP 0x83ACA90 0x83E69DC 0x0 0x8231CFC 0x80B4635
+SOAK_WATER: objtemplate ANIM_TAG_HYDRO_PUMP ANIM_TAG_HYDRO_PUMP OAM_DOUBLE_16x16 0x83E69DC 0x0 0x8231CFC 0x80B4635
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Nuisance
+@Credits to Lixdel
 ANIM_TELEKINESIS:
 	loadparticle ANIM_TAG_SPARKLE_4 @detect
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x2 0x0 0x9 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x9 0x0
 	waitanimation
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ATK 0x1 0x0 0x9 0x7fff
 	pause 0x12
@@ -14468,21 +14556,21 @@ ANIM_TELEKINESIS:
 	launchtemplate 0x83BF480 0xd 0x2 0x14 0xffec
 	waitanimation
 	soundcomplex 0xb1 0x3f 0xa 0x3
-	launchtask 0x8099705 0x5 0x5 0x1 0x18 0xD0 0x1 0x1
+	launchtask AnimTask_SwayMon 0x5 0x5 0x1 0x18 0xD0 0x1 bank_target
 	waitanimation
 	pause 0xA
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x2 0x9 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x9 0x0 0x0
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ATK 0x2 0x9 0x0 0x7fff
 	waitanimation
 	endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Nuisance
+@Credits to Lixdel
 ANIM_TRICKORTREAT:
 	loadparticle ANIM_TAG_GHOSTLY_SPIRIT @ghost
 	pokespritetoBG side_attacker
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0xD 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xD 0x0
 	waitanimation
 	playsound2 0xb6 0x3f
 	launchtemplate TOT_GHOST 0x2 0x4 0x0 0xfff6 0x19 0x0
@@ -14502,29 +14590,29 @@ ANIM_TRICKORTREAT:
 	launchtask AnimTask_pal_fade_complex 0x2 0x6 PAL_DEF 0x2 0x2 0x0 0xb 0x0
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x3 0x0 0xf 0x1
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0xD 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xD 0x0 0x0
 	waitanimation
 	endanimation
 
 .align 2
-TOT_GHOST: objtemplate ANIM_TAG_GHOSTLY_SPIRIT ANIM_TAG_GHOSTLY_SPIRIT 0x83ACAF8 0x8231CF0 0x0 0x8231CFC 0x80AB309
-TOT_GHOST2: objtemplate ANIM_TAG_GHOSTLY_SPIRIT ANIM_TAG_GHOSTLY_SPIRIT 0x83ACAF8 0x8231CF0 0x0 0x8231CFC 0x80AA58D
+TOT_GHOST: objtemplate ANIM_TAG_GHOSTLY_SPIRIT ANIM_TAG_GHOSTLY_SPIRIT OAM_OFF_BLEND_32x32 0x8231CF0 0x0 0x8231CFC 0x80AB309
+TOT_GHOST2: objtemplate ANIM_TAG_GHOSTLY_SPIRIT ANIM_TAG_GHOSTLY_SPIRIT OAM_OFF_BLEND_32x32 0x8231CF0 0x0 0x8231CFC 0x80AA58D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 ANIM_VENOMDRENCH:
 	loadparticle ANIM_TAG_POISON_BUBBLE
 	pokespritetoBG side_target
-	launchtemplate DRENCH_ACID 0x82 0x4 0xfffb 0x1 0xfffb 0x1
+	launchtemplate DRENCH_ACID TEMPLATE_TARGET | 2, 0x4, 0xfffb 0x1 0xfffb 0x0
 	playsound2 0x77 0x3f
 	pause 0x2
-	launchtemplate DRENCH_ACID 0x82 0x4 0x5 0x0 0x6 0x1
+	launchtemplate DRENCH_ACID TEMPLATE_TARGET | 2, 0x4, 0x5 0x0 0x6 0x0
 	playsound2 0x77 0x3f
 	pause 0x2
-	launchtemplate DRENCH_ACID 0x82 0x4 0x13 0x1 0xa 0x1
+	launchtemplate DRENCH_ACID TEMPLATE_TARGET | 2, 0x4, 0x13 0x1 0xa 0x0
 	playsound2 0x77 0x3f
 	pause 0x2
-	launchtemplate DRENCH_ACID 0x82 0x4 0xffe9 0x2 0xfff6 0x1
+	launchtemplate DRENCH_ACID TEMPLATE_TARGET | 2, 0x4, 0xffe9 0x2 0xfff6 0x0
 	playsound2 0x77 0x3f
 	pause 0x2
 	call VENOM_DRENCH_CALL
@@ -14534,43 +14622,43 @@ ANIM_VENOMDRENCH:
 	endanimation
 
 VENOM_DRENCH_CALL:
-	launchtemplate DRENCH_ACID 0x82 0x4 0xffec 0x0 0xfff6 0x1
+	launchtemplate DRENCH_ACID TEMPLATE_TARGET | 2, 0x4, 0xffec 0x0 0xfff6 0x0
 	playsound2 0x77 0x3f
 	pause 0x2
-	launchtemplate DRENCH_ACID 0x82 0x4 0x1c 0x1 0xa 0x1
+	launchtemplate DRENCH_ACID TEMPLATE_TARGET | 2, 0x4, 0x1c 0x1 0xa 0x0
 	playsound2 0x77 0x3f
 	pause 0x2
-	launchtemplate DRENCH_ACID 0x82 0x4 0xfff6 0x1 0xfffb 0x1
+	launchtemplate DRENCH_ACID TEMPLATE_TARGET | 2, 0x4, 0xfff6 0x1 0xfffb 0x0
 	playsound2 0x77 0x3f
 	pause 0x2
-	launchtemplate DRENCH_ACID 0x82 0x4 0xa 0x0 0x6 0x1
+	launchtemplate DRENCH_ACID TEMPLATE_TARGET | 2, 0x4, 0xa 0x0 0x6 0x0
 	playsound2 0x77 0x3f
 	pause 0x2
-	launchtemplate DRENCH_ACID 0x82 0x4 0x18 0x1 0xa 0x1
+	launchtemplate DRENCH_ACID TEMPLATE_TARGET | 2, 0x4, 0x18 0x1 0xa 0x0
 	playsound2 0x77 0x3f
 	pause 0x2
-	launchtemplate DRENCH_ACID 0x82 0x4 0xffe0 0x2 0xfff6 0x1
+	launchtemplate DRENCH_ACID TEMPLATE_TARGET | 2, 0x4, 0xffe0 0x2 0xfff6 0x0
 	playsound2 0x77 0x3f
 	pause 0x2
-	launchtemplate DRENCH_ACID 0x82 0x4 0xffec 0x0 0xfff6 0x1
+	launchtemplate DRENCH_ACID TEMPLATE_TARGET | 2, 0x4, 0xffec 0x0 0xfff6 0x0
 	playsound2 0x77 0x3f
 	pause 0x2
-	launchtemplate DRENCH_ACID 0x82 0x4 0x1e 0x2 0xa 0x1
+	launchtemplate DRENCH_ACID TEMPLATE_TARGET | 2, 0x4, 0x1e 0x2 0xa 0x0
 	playsound2 0x77 0x3f
 	pause 0x2
 	return
 
 .align 2
-DRENCH_ACID: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_BUBBLE 0x83ACA90 0x83E69DC 0x0 0x8231CFC 0x80B4635
+DRENCH_ACID: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_BUBBLE OAM_DOUBLE_16x16 0x83E69DC 0x0 0x8231CFC 0x80B4635
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Nuisance
+@Credits to Lixdel
 ANIM_FORESTSCURSE:
 	loadparticle ANIM_TAG_ROOTS @frenzy plant
 	loadparticle ANIM_TAG_GHOSTLY_SPIRIT @curse
 	pokespritetoBG bank_attacker
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0x10 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x10 0x0
 	waitanimation
 	playsound2 0x94 0xc0
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x2 0x0 0x8 0x02E3
@@ -14599,17 +14687,17 @@ ANIM_FORESTSCURSE:
 	waitanimation
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x2 0x8 0x0 0x02E3
 	pause 0x3
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x10 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x10 0x0 0x0
 	waitanimation
 	pokespritefromBG bank_attacker
 	endanimation
 
 .align 2
-CURSE_PLANTSPLANTS: objtemplate ANIM_TAG_ROOTS ANIM_TAG_ROOTS 0x83AC9D8 0x83E2DB4 0x0 0x8231CFC 0x80AC625
+CURSE_PLANTSPLANTS: objtemplate ANIM_TAG_ROOTS ANIM_TAG_ROOTS OAM_OFF_32x32 0x83E2DB4 0x0 0x8231CFC 0x80AC625
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Nuisance
+@Credits to Lixdel
 ANIM_MINDBLOWN:
 	loadparticle ANIM_TAG_PINK_HEART @pink color
 	loadparticle ANIM_TAG_SMALL_BUBBLES @blue color
@@ -14618,10 +14706,10 @@ ANIM_MINDBLOWN:
 	loadparticle ANIM_TAG_IMPACT @hit
 	pokespritetoBG bank_target
 	setblends 0x80C
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0xC 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xC 0x0
 	waitanimation
 	playsound2 0x25 0x3f
-	launchtemplate MINDBLOWN_BLACEPHALONHEAD 0x82 0x3 0x0 0x0 0x25
+	launchtemplate MINDBLOWN_BLACEPHALONHEAD TEMPLATE_TARGET | 2, 0x3, 0x0 0x0 0x25
 	waitanimation
 	launchtask AnimTask_move_bank_2 0x2 0x5 bank_target 0x2 0x0 0xf 0x1
 	launchtask AnimTask_move_bank_2 0x2 0x5 target_partner 0x2 0x0 0xf 0x1
@@ -14641,7 +14729,7 @@ ANIM_MINDBLOWN:
 	call MINDBLOWN_OUTWARD1
 	pause 0x1
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0xC 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xC 0x0 0x0
 	waitanimation
 	resetblends
 	pokespritefromBG bank_target
@@ -14668,15 +14756,15 @@ MINDBLOWN_OUTWARD2:
 	return
 
 .align 2
-MINDBLOWN_BLACEPHALONHEAD: objtemplate ANIM_TAG_BLACEPHALON_HEAD ANIM_TAG_BLACEPHALON_HEAD 0x83ACA38 0x8231CF0 0x0 0x83E7604 SpriteCB_MindBlownBall
-MINDBLOWN_OUTWARDCIRCLES1: objtemplate ANIM_TAG_ORBS ANIM_TAG_SMALL_BUBBLES 0x83ACB50 0x83E2A40 0x0 0x8231CFC SpriteCB_MindBlownExplosion
-MINDBLOWN_OUTWARDCIRCLES2: objtemplate ANIM_TAG_ORBS ANIM_TAG_PINK_HEART 0x83ACB50 0x83E2A40 0x0 0x8231CFC SpriteCB_MindBlownExplosion
-MINDBLOWN_BLUEHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_SMALL_BUBBLES 0x83ACB58 0x8231CF0 0x0 0x83E7BF8 SpriteCB_RandomCentredHits
-MINDBLOWN_PINKHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_PINK_HEART 0x83ACB58 0x8231CF0 0x0 0x83E7BF8 SpriteCB_RandomCentredHits
+MINDBLOWN_BLACEPHALONHEAD: objtemplate ANIM_TAG_BLACEPHALON_HEAD ANIM_TAG_BLACEPHALON_HEAD OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E7604 SpriteCB_MindBlownBall
+MINDBLOWN_OUTWARDCIRCLES1: objtemplate ANIM_TAG_ORBS ANIM_TAG_SMALL_BUBBLES OAM_NORMAL_BLEND_16x16 0x83E2A40 0x0 0x8231CFC SpriteCB_MindBlownExplosion
+MINDBLOWN_OUTWARDCIRCLES2: objtemplate ANIM_TAG_ORBS ANIM_TAG_PINK_HEART OAM_NORMAL_BLEND_16x16 0x83E2A40 0x0 0x8231CFC SpriteCB_MindBlownExplosion
+MINDBLOWN_BLUEHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_SMALL_BUBBLES OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 SpriteCB_RandomCentredHits
+MINDBLOWN_PINKHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_PINK_HEART OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 SpriteCB_RandomCentredHits
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Nuisance
+@Credits to Lixdel
 ANIM_PHOTONGEYSER:
 	loadparticle ANIM_TAG_SHOCK_3 @charge
 	loadparticle ANIM_TAG_SPARK_2 @paralyze_chance_anim
@@ -14717,7 +14805,7 @@ ANIM_PHOTONGEYSER:
 	pause 0xA
 	call GEYSER_SPARKS2
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0xF 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xF 0x0
 	pokespritefromBG bank_attacker
 	playsound2 0x83 0xC0
 	unloadparticle ANIM_TAG_ORBS @recover
@@ -14758,7 +14846,7 @@ ANIM_PHOTONGEYSER:
 	playsound2 0xab 0xc0
 	launchtemplate GEYSER_EXPLODINGHITS 0x3 0x4 0x10 0x10 0x1 0x1
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0xF 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xF 0x0 0x0
 	waitanimation
 	pokespritefromBG bank_target
 	resetblends
@@ -14781,17 +14869,17 @@ GEYSER_SPARKS2:
 	return
 
 .align 2
-GEYSER_CHARGE: objtemplate ANIM_TAG_SHOCK_3 ANIM_TAG_SMALL_RED_EYE 0x83ACA38 0x83E6030 0x0 0x83E61C8 0x80AE71D
-GEYSER_SPARKS: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_SMALL_RED_EYE 0x83ACA30 0x8231CF0 0x0 0x8231CFC 0x80ADD4D
-GEYSER_SPARKSS: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_SMALL_RED_EYE 0x83ACA30 0x8231CF0 0x0 0x83E6004 0x80ADEB1
-GEYSER_UPROAR1: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_AIR_WAVE_2 0x83ACBC0 0x8231CF0 0x0 0x83E4088 0x80A8EE9
-GEYSER_UPROAR2: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_SMALL_EMBER 0x83ACBC0 0x8231CF0 0x0 0x83E4088 0x80A8EE9
-GEYSER_ZAPBALL: objtemplate ANIM_TAG_YELLOW_BALL ANIM_TAG_YELLOW_BALL 0x83ACA90 0x8231CF0 0x0 0x8231CFC Callback_TranslateAnimSpriteToTargetMonLocation
-GEYSER_EXPLODINGHITS: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_SMALL_EMBER 0x83AC9D8 0x83E3F90 0x0 0x8231CFC 0x8075D9D
+GEYSER_CHARGE: objtemplate ANIM_TAG_SHOCK_3 ANIM_TAG_SMALL_RED_EYE OAM_NORMAL_32x32 0x83E6030 0x0 0x83E61C8 0x80AE71D
+GEYSER_SPARKS: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_SMALL_RED_EYE OAM_NORMAL_16x16 0x8231CF0 0x0 0x8231CFC 0x80ADD4D
+GEYSER_SPARKSS: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_SMALL_RED_EYE OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E6004 0x80ADEB1
+GEYSER_UPROAR1: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_AIR_WAVE_2 OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E4088 0x80A8EE9
+GEYSER_UPROAR2: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_SMALL_EMBER OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E4088 0x80A8EE9
+GEYSER_ZAPBALL: objtemplate ANIM_TAG_YELLOW_BALL ANIM_TAG_YELLOW_BALL OAM_DOUBLE_16x16 0x8231CF0 0x0 0x8231CFC Callback_TranslateAnimSpriteToTargetMonLocation
+GEYSER_EXPLODINGHITS: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_SMALL_EMBER OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC 0x8075D9D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Nuisance
+@Credits to Lixdel
 ANIM_PLASMAFISTS:
 	loadparticle ANIM_TAG_SHOCK_3 @charge
 	loadparticle ANIM_TAG_SPARK_2 @paralyze_chance_anim
@@ -14801,7 +14889,7 @@ ANIM_PLASMAFISTS:
 	loadparticle ANIM_TAG_LIGHTNING @thunder punch
 	pokespritetoBG bank_attacker
 	setblends 0x80C
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0x10 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x10 0x0
 	waitanimation
 	launchtemplate PFISTS_CHARGE 0x2 0x1 0x0
 	launchtask AnimTask_move_bank 0x2 0x5 bank_attacker 0x0 0x3 0x5c 0x1
@@ -14837,7 +14925,7 @@ ANIM_PLASMAFISTS:
 	waitanimation
 	call PFISTS_TP
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0xC 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xC 0x0 0x0
 	waitanimation
 	pokespritefromBG bank_target
 	resetblends
@@ -14846,17 +14934,17 @@ ANIM_PLASMAFISTS:
 PFISTS_SPARKS1:
 	playsound2 0xce 0xc0
 	launchtask AnimTask_pal_fade_complex 0x2 0x6 PAL_ATK 0x0 0x2 0x0 0xb 0x5bff
-	launchtemplate 0x83E5FC4 0x0 0x7 0x20 0x18 0xbe 0xc 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x20 0x18 0xbe 0xc 0x0 0x1 0x0
 	pause 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0x50 0x18 0x16 0xc 0x0 0x1 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0x9c 0x18 0x79 0xd 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x50 0x18 0x16 0xc 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x9c 0x18 0x79 0xd 0x0 0x1 0x1
 	return
 PFISTS_SPARKS2:
 	playsound2 0xce 0xc0
-	launchtemplate 0x83E5FC4 0x0 0x7 0x64 0x18 0x3c 0xa 0x0 0x1 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0xaa 0x18 0x2a 0xb 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x64 0x18 0x3c 0xa 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0xaa 0x18 0x2a 0xb 0x0 0x1 0x1
 	pause 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0xee 0x18 0xa5 0xa 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0xee 0x18 0xa5 0xa 0x0 0x1 0x1
 	return
 PFISTS_TP:
 	playsound2 0x84 0x3f
@@ -14865,11 +14953,11 @@ PFISTS_TP:
 	pause 0x1
 	launchtask 0x80BA0E9 0x2 0x3 0x101 0x101 0x101
 	pause 0x1
-	launchtemplate 0x83E5F38 0x82 0x2 0x0 0xffd0
+	launchtemplate Template_Lightning 0x82 0x2 0x0 0xffd0
 	pause 0x1
-	launchtemplate 0x83E5F38 0x2 0x2 0x0 0xfff0
+	launchtemplate Template_Lightning 0x2 0x2 0x0 0xfff0
 	pause 0x1
-	launchtemplate 0x83E5F38 0x2 0x2 0x0 0x10
+	launchtemplate Template_Lightning 0x2 0x2 0x0 0x10
 	pause 0x1
 	playsound2 0xd6 0x3f
 	launchtask 0x80BA0E9 0x2 0x3 0x101 0x101 0x101
@@ -14879,11 +14967,11 @@ PFISTS_TP:
 	return
 
 .align 2
-PFISTS_CHARGE: objtemplate ANIM_TAG_SHOCK_3 ANIM_TAG_SHOCK_3 0x83ACA38 0x83E6030 0x0 0x83E61C8 0x80AE71D
+PFISTS_CHARGE: objtemplate ANIM_TAG_SHOCK_3 ANIM_TAG_SHOCK_3 OAM_NORMAL_32x32 0x83E6030 0x0 0x83E61C8 0x80AE71D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Nuisance
+@Credits to Lixdel
 ANIM_ELECTRIFY:
 	loadparticle ANIM_TAG_GUARD_RING @ring around user
 	loadparticle ANIM_TAG_SPARK_2 @yellow color
@@ -14893,16 +14981,16 @@ ANIM_ELECTRIFY:
 	pokespritetoBG bank_attacker
 	soundcomplex 0x70 0x3f 0xa 0x4
 	launchtemplate ELECTRIFY_YELLOWSG 0x2 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0x20 0x18 0xbe 0xc 0x0 0x1 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0x50 0x18 0x16 0xc 0x0 0x1 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0x9c 0x18 0x79 0xd 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x20 0x18 0xbe 0xc 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x50 0x18 0x16 0xc 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x9c 0x18 0x79 0xd 0x0 0x1 0x1
 	pause 0x4
 	launchtemplate ELECTRIFY_YELLOWSG 0x2 0x0
 	pause 0x4
 	launchtemplate ELECTRIFY_YELLOWSG 0x2 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0x64 0x18 0x3c 0xa 0x0 0x1 0x0
-	launchtemplate 0x83E5FC4 0x0 0x7 0xaa 0x18 0x2a 0xb 0x0 0x1 0x1
-	launchtemplate 0x83E5FC4 0x0 0x7 0xee 0x18 0xa5 0xa 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x64 0x18 0x3c 0xa 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0xaa 0x18 0x2a 0xb 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0xee 0x18 0xa5 0xa 0x0 0x1 0x1
 	waitanimation
 	playsound2 0x83 0xC0
 	launchtemplate 0x83E6008 0x84 0x7 0xa 0x0 0x10 0x1e 0x0 0x28 0x0
@@ -14915,7 +15003,7 @@ ANIM_ELECTRIFY:
 	launchtemplate 0x83E6008 0x84 0x7 0xa 0x0 0x8 0x1e 0xe0 0x28 0x2
 	pause 0xA
 	launchtask AnimTask_pal_fade 0xA 0x5 PAL_DEF 0x2 0x0 0xB 0x039B
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0x3 0x039B
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x3 0x039B
 	pause 0x4
 	pokespritefromBG bank_attacker
 	pause 0x1
@@ -14923,37 +15011,37 @@ ANIM_ELECTRIFY:
 	playsound2 0x70 0x3f
 	launchtemplate ELECTRIFY_YELLOWRING 0x3 0x6 0x0 0x0 0x1 0x0 0x1f 0x8
 	launchtask AnimTask_move_bank 0x5 0x5 bank_target 0x4 0x0 0x6 0x1
-	launchtemplate 0x83E6088 0x82 0x4 0x5 0x0 0x5 0x0
+	launchtemplate 0x83E6088 TEMPLATE_TARGET | 2, 0x4, 0x5 0x0 0x5 0x0
 	pause 0x1
 	launchtemplate ELECTRIFY_YELLOWRING 0x3 0x6 0x0 0x0 0x1 0x0 0x1f 0x8
 	pause 0x1
-	launchtemplate 0x83E6088 0x82 0x4 0xfffb 0xa 0x5 0x1
+	launchtemplate 0x83E6088 TEMPLATE_TARGET | 2, 0x4, 0xfffb 0xa 0x5 0x1
 	launchtemplate ELECTRIFY_YELLOWRING 0x3 0x6 0x0 0x0 0x1 0x0 0x1f 0x8
 	pause 0x1
 	launchtemplate ELECTRIFY_YELLOWRING 0x3 0x6 0x0 0x0 0x1 0x0 0x1f 0x8
 	pause 0x1
-	launchtemplate 0x83E6088 0x82 0x4 0xf 0x14 0x5 0x2
+	launchtemplate 0x83E6088 TEMPLATE_TARGET | 2, 0x4, 0xf 0x14 0x5 0x2
 	launchtemplate ELECTRIFY_YELLOWRING 0x3 0x6 0x0 0x0 0x1 0x0 0x1f 0x8
 	pause 0x2
-	launchtemplate 0x83E6088 0x82 0x4 0xfff1 0xfff6 0x5 0x0
+	launchtemplate 0x83E6088 TEMPLATE_TARGET | 2, 0x4, 0xfff1 0xfff6 0x5 0x0
 	pause 0x2
-	launchtemplate 0x83E6088 0x82 0x4 0x19 0x0 0x5 0x1
+	launchtemplate 0x83E6088 TEMPLATE_TARGET | 2, 0x4, 0x19 0x0 0x5 0x1
 	pause 0x2
-	launchtemplate 0x83E6088 0x82 0x4 0xfff8 0x8 0x5 0x2
+	launchtemplate 0x83E6088 TEMPLATE_TARGET | 2, 0x4, 0xfff8 0x8 0x5 0x2
 	pause 0x2
-	launchtemplate 0x83E6088 0x82 0x4 0x2 0xfff8 0x5 0x0
+	launchtemplate 0x83E6088 TEMPLATE_TARGET | 2, 0x4, 0x2 0xfff8 0x5 0x0
 	pause 0x2
-	launchtemplate 0x83E6088 0x82 0x4 0xffec 0xf 0x5 0x1
+	launchtemplate 0x83E6088 TEMPLATE_TARGET | 2, 0x4, 0xffec 0xf 0x5 0x1
 	waitanimation
 	launchtask AnimTask_pal_fade 0xA 0x5 PAL_DEF 0x2 0xB 0x0 0x039B
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x3 0x0 0x039B
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x3 0x0 0x039B
 	waitanimation
 	pokespritefromBG side_target
 	endanimation
 
 .align 2
-ELECTRIFY_YELLOWSG: objtemplate ANIM_TAG_GUARD_RING ANIM_TAG_SPARK_2 0x83ACBE0 0x8231CF0 0x0 0x83E44D4 0x80AAAE5
-ELECTRIFY_YELLOWRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_SMALL_EMBER 0x83ACBC0 0x8231CF0 0x0 0x83E4088 0x80A8EE9
+ELECTRIFY_YELLOWSG: objtemplate ANIM_TAG_GUARD_RING ANIM_TAG_SPARK_2 OAM_DOUBLE_BLEND_64x32 0x8231CF0 0x0 0x83E44D4 0x80AAAE5
+ELECTRIFY_YELLOWRING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_SMALL_EMBER OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E4088 0x80A8EE9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -14995,13 +15083,13 @@ ReturnEmbargo:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Nuisance
+@Credits to Lixdel
 ANIM_FAIRYLOCK:
 	loadparticle ANIM_TAG_CHAIN_LINK @Chain Colour
 	loadparticle ANIM_TAG_FAIRY_LOCK_CHAINS @Fairy Lock Chain
 	setblends 0x808
 	pokespritetoBG side_attacker
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0x8 0x6B1F
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x8 0x6B1F
 	waitanimation
 	soundcomplex 0x94 0x3f 0x6 0x4
 	launchtask 0x80AEA11 0x5 0x1 0x7
@@ -15012,14 +15100,14 @@ ANIM_FAIRYLOCK:
 	launchtask 0x80AEA11 0x5 0x1 0x6
 	launchtask 0x80AEA11 0x5 0x1 0x35
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x8 0x0 0x6B1F
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x8 0x0 0x6B1F
 	waitanimation
 	pokespritefromBG side_attacker
 	resetblends
 	endanimation
 
 .align 2
-FAIRYLOCK_CHAIN: objtemplate ANIM_TAG_FAIRY_LOCK_CHAINS ANIM_TAG_CHAIN_LINK 0x83ACAC8 0x83E6254 0x0 0x83E6274 0x80AEC35
+FAIRYLOCK_CHAIN: objtemplate ANIM_TAG_FAIRY_LOCK_CHAINS ANIM_TAG_CHAIN_LINK OAM_DOUBLE_8x16 0x83E6254 0x0 0x83E6274 0x80AEC35
 
 @hook at 0xAEBA0 via r0
 .align 2
@@ -15046,7 +15134,7 @@ ReturnFL:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Nuisance
+@Credits to Lixdel
 ANIM_LIGHTOFRUIN:
 	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT @charge
 	loadparticle ANIM_TAG_ELECTRIC_ORBS @launchtask particles
@@ -15056,9 +15144,9 @@ ANIM_LIGHTOFRUIN:
 	loadparticle ANIM_TAG_EXPLOSION @explosion
 	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_ELECTRIC_ORBS 0x0 0xC 0xC 0x6DDE @;Pink
 	waitanimation
-	launchtask 0x80AE541 0x2 0x4 0x0 0x14 0x0 0x2   @Use pink particles for this launchtask (ANIM_TAG_PINK_PETAL or ANIM_TAG_PINK_HEART)
+	launchtask AnimTask_ChargeBalls 0x2 0x4 0x0 0x14 0x0 0x2   @Use pink particles for this launchtask (ANIM_TAG_PINK_PETAL or ANIM_TAG_PINK_HEART)
 	playsoundpanchange 0xc2 0xc0 0x3f 0x2 0x0
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x0 0xF 0x6B1F
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xF 0x6B1F
 	launchtask AnimTask_move_bank 0x2 0x5 bank_attacker 0x0 0x4 0x32 0x1
 	launchtask 0x80B9F6D 0x2 0x7 ANIM_TAG_ORBS 0x1 0xc 0x1f 0x10 0x0 0x0
 	call LOR_PINK_BEAM
@@ -15097,7 +15185,7 @@ ANIM_LIGHTOFRUIN:
 	launchtask AnimTask_move_bank 0x5 0x5 bank_target 0x0 0x5 0xb 0x1
 	launchtemplate LOR_PINKEXPLOSION 0x3 0x4 0x0 0x0 0x1 0x1
 	pause 0x10
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x2 0x10 0x0 0x7FFF
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x10 0x0 0x7FFF
 	waitanimation
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ALL_BANKS 0x1 0x0 0x0 0x0
 	waitanimation
@@ -15110,12 +15198,12 @@ LOR_PINK_BEAM:
 	return
 
 .align 2
-LOR_PINKPARTICLES: objtemplate ANIM_TAG_ORBS ANIM_TAG_PINK_PETAL 0x83AC9C8 0x83E2A20 0x0 0x8231CFC 0x80A25ED
-LOR_PINKAFTERMATH: objtemplate ANIM_TAG_SMALL_BUBBLES ANIM_TAG_PINK_PETAL 0x83ACB50 0x83E5A78 0x0 0x83E6AB4 0x80B1839
-LOR_PINKDISCHARGE: objtemplate ANIM_TAG_ELECTRICITY ANIM_TAG_PINK_PETAL 0x83AC9D8 0x83E6200 0x0 0x8231CFC 0x80AE775
-LOR_PINKEXPLOSION: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_PINK_PETAL 0x83AC9D8 0x83E3F90 0x0 0x8231CFC 0x8075D9D
+LOR_PINKPARTICLES: objtemplate ANIM_TAG_ORBS ANIM_TAG_PINK_PETAL OAM_OFF_8x8 0x83E2A20 0x0 0x8231CFC 0x80A25ED
+LOR_PINKAFTERMATH: objtemplate ANIM_TAG_SMALL_BUBBLES ANIM_TAG_PINK_PETAL OAM_NORMAL_BLEND_16x16 0x83E5A78 0x0 0x83E6AB4 0x80B1839
+LOR_PINKDISCHARGE: objtemplate ANIM_TAG_ELECTRICITY ANIM_TAG_PINK_PETAL OAM_OFF_32x32 0x83E6200 0x0 0x8231CFC 0x80AE775
+LOR_PINKEXPLOSION: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_PINK_PETAL OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC 0x8075D9D
 
-LOR_GRAYCHARGE: objtemplate ANIM_TAG_ELECTRIC_ORBS ANIM_TAG_GUST 0x83AC9C8 0x83E6118 0x0 0x8231CFC 0x800760D
+LOR_GRAYCHARGE: objtemplate ANIM_TAG_ELECTRIC_ORBS ANIM_TAG_GUST OAM_OFF_8x8 0x83E6118 0x0 0x8231CFC 0x800760D
 
 @ hook at 0xAE5EC via r0
 .align 2
@@ -15181,11 +15269,11 @@ ANIM_TRUMPCARD:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Nuisance
+@Credits to Lixdel
 ANIM_AFTERYOU:
 	loadparticle ANIM_TAG_ANGER @rage
 	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT @green color
-	launchtask 0x8099705 0x5 0x5 0x1 0xF 0x600 0x2 0x0
+	launchtask AnimTask_SwayMon 0x5 0x5 0x1 0xF 0x600 0x2 bank_attacker
 	pause 0x1
 	launchtemplate AFTERYOU_GREENRAGE 0x2 0x3 0x0 0xffec 0xffe0
 	launchtemplate AFTERYOU_GREENRAGE 0x2 0x3 0x0 0xfffb 0xffe5
@@ -15199,11 +15287,11 @@ ANIM_AFTERYOU:
 
 
 .align 2
-AFTERYOU_GREENRAGE: objtemplate ANIM_TAG_ANGER ANIM_TAG_CIRCLE_OF_LIGHT 0x83ACA30 0x8231CF0 0x0 0x83E3F00 0x80A85AD
+AFTERYOU_GREENRAGE: objtemplate ANIM_TAG_ANGER ANIM_TAG_CIRCLE_OF_LIGHT OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E3F00 0x80A85AD
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Nuisance
+@Credits to Lixdel
 ANIM_INSTRUCT:
 	loadparticle ANIM_TAG_FINGER @finger
 	loadparticle ANIM_TAG_SPOTLIGHT @spotlight
@@ -15217,7 +15305,7 @@ ANIM_INSTRUCT:
 	launchtemplate 0x83FF00C 0x82 0x2 0x0 0xfff8
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x2 0x0 0x8 0x7DB9
 	pause 0x4
-	pokespritetoBG bank_target @I purposedly placed this here for a better animation
+	pokespritetoBG bank_target @I purposely placed this here for a better animation
 	launchtask 0x807616D 0x5 0x5 0x0 0x37b 0xc 0x1 0x1
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x3 0x0 0x29 0x1
 	playsound2 0xa3 0x3f
@@ -15236,29 +15324,26 @@ ANIM_INSTRUCT:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Nuisance
+@Credits to Lixdel
 ANIM_QUASH:
 	loadparticle ANIM_TAG_ASSURANCE_HAND  @hand
-	pokespritetoBG bank_target
 	loadBG1 BG_DARK
-	waitforBG
+	waitfortransparentBG
 	setblends 0x80c
 	playsound2 0x7f 0x3f
-	launchtemplate QUASH_ARMHIT 0x3 0x3 0x0 0xffe0 0xf
+	launchtemplate QUASH_ARMHIT TEMPLATE_TARGET | 0x3, 0x3 0x0 0xffe0 0xf
 	pause 0x13
-	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x4 0x9 0x1
 	playsound2 0xC5 0xC0
-	pause 0x6
-	launchtask 0x80E12F9 0x2 0x1 0x1
+	launchtask AnimTask_SquishTarget 0x2 0x0
 	waitanimation
 	pokespritefromBG bank_target
 	resetblends
 	loaddefaultBG
-	waitforBG
+	waitfortransparentBG
 	endanimation
 
 .align 2
-QUASH_ARMHIT: objtemplate ANIM_TAG_ASSURANCE_HAND ANIM_TAG_ASSURANCE_HAND 0x83AC9D8 0x83E66CC 0x0 0x8231CFC 0x80B0D59
+QUASH_ARMHIT: objtemplate ANIM_TAG_ASSURANCE_HAND ANIM_TAG_ASSURANCE_HAND OAM_OFF_32x32 0x83E66CC 0x0 0x8231CFC 0x80B0D59
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -15267,13 +15352,13 @@ ANIM_HAPPYHOUR:
 	loadparticle ANIM_TAG_COIN
 	pokespritetoBG bank_attacker
 	soundcomplex 0xa7 0x3f 0x8 10
-	launchtemplate COIN_DROP 0x82 0x4 0xfffb 0x0 0xfffb 0x1
+	launchtemplate COIN_DROP TEMPLATE_TARGET | 2, 0x4, 0xfffb 0x0 0xfffb 0x1
 	pause 0x2
-	launchtemplate COIN_DROP 0x82 0x4 0x5 0x0 0x6 0x1
+	launchtemplate COIN_DROP TEMPLATE_TARGET | 2, 0x4, 0x5 0x0 0x6 0x1
 	pause 0x2
-	launchtemplate COIN_DROP 0x82 0x4 0x13 0x0 0xa 0x1
+	launchtemplate COIN_DROP TEMPLATE_TARGET | 2, 0x4, 0x13 0x0 0xa 0x1
 	pause 0x2
-	launchtemplate COIN_DROP 0x82 0x4 0xffe9 0x0 0xfff6 0x1
+	launchtemplate COIN_DROP TEMPLATE_TARGET | 2, 0x4, 0xffe9 0x0 0xfff6 0x1
 	pause 0x2
 	call COINFALL
 	call COINFALL
@@ -15282,26 +15367,26 @@ ANIM_HAPPYHOUR:
 	endanimation
 
 COINFALL:
-	launchtemplate COIN_DROP 0x82 0x4 0xffec 0x0 0xfff6 0x1
+	launchtemplate COIN_DROP TEMPLATE_TARGET | 2, 0x4, 0xffec 0x0 0xfff6 0x1
 	pause 0x2
-	launchtemplate COIN_DROP 0x82 0x4 0x1c 0x0 0xa 0x1
+	launchtemplate COIN_DROP TEMPLATE_TARGET | 2, 0x4, 0x1c 0x0 0xa 0x1
 	pause 0x2
-	launchtemplate COIN_DROP 0x82 0x4 0xfff6 0x0 0xfffb 0x1
+	launchtemplate COIN_DROP TEMPLATE_TARGET | 2, 0x4, 0xfff6 0x0 0xfffb 0x1
 	pause 0x2
-	launchtemplate COIN_DROP 0x82 0x4 0xa 0x0 0x6 0x1
+	launchtemplate COIN_DROP TEMPLATE_TARGET | 2, 0x4, 0xa 0x0 0x6 0x1
 	pause 0x2
-	launchtemplate COIN_DROP 0x82 0x4 0x18 0x0 0xa 0x1
+	launchtemplate COIN_DROP TEMPLATE_TARGET | 2, 0x4, 0x18 0x0 0xa 0x1
 	pause 0x2
-	launchtemplate COIN_DROP 0x82 0x4 0xffe0 0x0 0xfff6 0x1
+	launchtemplate COIN_DROP TEMPLATE_TARGET | 2, 0x4, 0xffe0 0x0 0xfff6 0x1
 	pause 0x2
-	launchtemplate COIN_DROP 0x82 0x4 0xffec 0x0 0xfff6 0x1
+	launchtemplate COIN_DROP TEMPLATE_TARGET | 2, 0x4, 0xffec 0x0 0xfff6 0x1
 	pause 0x2
-	launchtemplate COIN_DROP 0x82 0x4 0x1e 0x0 0xa 0x1
+	launchtemplate COIN_DROP TEMPLATE_TARGET | 2, 0x4, 0x1e 0x0 0xa 0x1
 	pause 0x2
 	return
 
 .align 2
-COIN_DROP: objtemplate ANIM_TAG_COIN ANIM_TAG_COIN 0x83ACA30 0x83E3D38 0x0 0x8231CFC ROCKSLIDE_USER_ASM+1
+COIN_DROP: objtemplate ANIM_TAG_COIN ANIM_TAG_COIN OAM_NORMAL_16x16 0x83E3D38 0x0 0x8231CFC ROCKSLIDE_USER_ASM+1
 
 ROCKSLIDE_USER_ASM:
 	push {r4-r6,lr}
@@ -15342,7 +15427,7 @@ ANIM_DOUBLEIRONBASH:
 	pause 0x18
 	launchtemplate Template_SlideMonToOffset 0x2 0x5 bank_attacker 0x18 0x0 0x0 0x9
 	pause 0x11
-	launchtemplate Template_Hit 0x84 0x4 0x0 0x0 0x1 0x1
+	launchtemplate Template_Hit TEMPLATE_TARGET | 4, 0x4, 0x0 0x0 0x1 0x1
 	launchtemplate Template_SlideMonToOffset 0x2 0x5 bank_target 0xffe0 0x0 0x0 0x3
 	waitanimation
 	playsound2 0x81 0x3f
@@ -15391,9 +15476,9 @@ LASTRESORT_CALL:
 	return
 
 .align 2
-LR_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_THIN_RING 0x83ACAA0 0x8231CF0 0x0 0x83E4088 0x8075D9D
-LR_SPARKLES: objtemplate ANIM_TAG_SPARKLE_2 ANIM_TAG_PAIN_SPLIT 0x83ac9d8 0x83e33f0 0x0 0x8231cfc 0x80a4d0d
-LASTRESORT_STARS: objtemplate ANIM_TAG_PAIN_SPLIT ANIM_TAG_DUCK 0x83AC9D0 0x8231CF0 0x0 0x8231CFC 0x80B0DF1
+LR_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_THIN_RING OAM_DOUBLE_64x64 0x8231CF0 0x0 0x83E4088 0x8075D9D
+LR_SPARKLES: objtemplate ANIM_TAG_SPARKLE_2 ANIM_TAG_PAIN_SPLIT OAM_OFF_32x32 0x83e33f0 0x0 0x8231cfc 0x80a4d0d
+LASTRESORT_STARS: objtemplate ANIM_TAG_PAIN_SPLIT ANIM_TAG_DUCK OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC 0x80B0DF1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -15426,7 +15511,7 @@ SKYDROP_SECOND_TURN:
 	launchtemplate 0x83e6cfc 0x83 0x0
 	pause 0x7
 	playsound2 0x86 0x3f
-	launchtemplate Template_Hit 0x82 0x4 0x0 0x0 0x1 0x0
+	launchtemplate Template_Hit TEMPLATE_TARGET | 2, 0x4, 0x0 0x0 0x1 0x0
 	launchtask AnimTask_move_bank 0x5 0x5 0x1 0x0 0x5 0xb 0x1
 	waitanimation
 	pokespritefromBG side_target
@@ -15449,10 +15534,10 @@ SKYDROP_SECOND_TURN:
 	endanimation
 
 .align 2
-SKYDROP_FLY_BALL: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_ROUND_SHADOW 0x83ACAA0 0x8231CF0 0x0 SKYDROP_ROT 0x80AFD4D
+SKYDROP_FLY_BALL: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_ROUND_SHADOW OAM_DOUBLE_64x64 0x8231CF0 0x0 SKYDROP_ROT 0x80AFD4D
 SKYDROP_ROT: .word SKYDROP_ROTATIONS
 SKYDROP_ROTATIONS: .hword 0xa0, 0x100, 0x50, 0x0, 0x7fff, 0x0, 0x0, 0x0
-SKYDROP_TARGET_FLY: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_ROUND_SHADOW 0x83acaa0 0x8231cf0 0x0 0x83e6b8c TARGET_FLY_ASM+1
+SKYDROP_TARGET_FLY: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_ROUND_SHADOW OAM_DOUBLE_64x64 0x8231cf0 0x0 0x83e6b8c TARGET_FLY_ASM+1
 
 .align 2
 TARGET_FLY_ASM:
@@ -15481,7 +15566,7 @@ ANIM_CELEBRATE:
 	endanimation
 
 .align 2
-CELEBRATE_TEMPLATE: objtemplate ANIM_TAG_ITEM_BAG ANIM_TAG_ITEM_BAG 0x83ACA38 0x8231CF0 0x0 0x83E3A2C 0x80A6C85
+CELEBRATE_TEMPLATE: objtemplate ANIM_TAG_ITEM_BAG ANIM_TAG_ITEM_BAG OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E3A2C 0x80A6C85
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -15528,7 +15613,7 @@ ANIM_HOLDHANDS:
 	endanimation
 
 .align 2
-HOLDHANDS_HEART: objtemplate ANIM_TAG_MAGENTA_HEART ANIM_TAG_VERTICAL_HEX 0x83AC9D0 0x8231CF0 0x0 0x8231CFC 0x80A2921
+HOLDHANDS_HEART: objtemplate ANIM_TAG_MAGENTA_HEART ANIM_TAG_VERTICAL_HEX OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC 0x80A2921
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -15541,25 +15626,25 @@ ANIM_DYNAMAX_CANNON:
 .pool
 @Credit to Skeli
 ANIM_SNIPE_SHOT:
-	loadparticle ANIM_TAG_WATER_GUN
+	loadparticle ANIM_TAG_UNUSED_IMPACT_2
 	loadparticle ANIM_TAG_LEER
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x10 0x0 @;Black
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x0 0x0 0x10 0x0 @;Black
 	waitanimation
- 	launchtemplate Template_Leer 0x2 0x2 0x18 0xFFF4
+ 	launchtemplate Template_Leer TEMPLATE_ATTACKER | 2, 0x2 0x18 0xFFF4
 	playsound2 0xCA 0xC0
 	waitanimation
 	pause 0x20
 	playsound2 0xC0 0x3f
-	launchtemplate SNIPE_SHOT_BALL 0x82 0x3 0x0 0x0 0x10
+	launchtemplate SNIPE_SHOT_BALL TEMPLATE_TARGET | 2, 0x3, 0x0 0x0 0x10
 	waitanimation
 	launchtask AnimTask_move_bank_2 0x2 0x5 0x1 0x4 0x0 0x8 0x1
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x10 0x0 0x0 @;Black
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x0 0x10 0x0 0x0 @;Black
 	waitanimation
 	endanimation
 	
 .align 2
-SNIPE_SHOT_BALL: objtemplate ANIM_TAG_WATER_GUN ANIM_TAG_WATER_GUN 0x83ACA30 0x8231CF0 0x0 0x83E7604 0x80B563D
+SNIPE_SHOT_BALL: objtemplate ANIM_TAG_UNUSED_IMPACT_2 ANIM_TAG_UNUSED_IMPACT_2 OAM_NORMAL_32x32 gAnimCmdTable_SnipeShot 0x0 gSpriteAffineAnimTable_SnipeShot 0x80B563D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -15569,7 +15654,7 @@ ANIM_JAW_LOCK:
 	loadparticle ANIM_TAG_IMPACT
 	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_SHARP_TEETH 0x0 0xA 0xA 0x0B1D @;Light orange
 	pokespritetoBG bank_target
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x2 0x0 0x7 0x0 @;Black
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x7 0x0 @;Black
 	waitanimation
 	playsound2 0x9a 0x3f 
 	launchtemplate LOCKED_JAW 0x2 0x7 0xffe0 0xffe0 0x1 0x333 0x333 0xa 15
@@ -15578,49 +15663,115 @@ ANIM_JAW_LOCK:
 	launchtemplate Template_Hit 0x2 0x4 0xfff8 0x0 0x1 0x1 
 	launchtask AnimTask_move_bank 0x5 0x5 bank_target 0x0 0x7 0xA 0x2  
 	waitanimation 
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x2 0x7 0x0 0x0 @;Black
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x7 0x0 0x0 @;Black
 	waitanimation
 	pokespritefromBG bank_target
 	pause 0x1
 	endanimation
 
 .align 2
-LOCKED_JAW: objtemplate ANIM_TAG_SHARP_TEETH ANIM_TAG_SHARP_TEETH 0x83ACB60 0x8231CF0 0x0 0x83E7910 SpriteCB_LockingJaw
+LOCKED_JAW: objtemplate ANIM_TAG_SHARP_TEETH ANIM_TAG_SHARP_TEETH OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E7910 SpriteCB_LockingJaw
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_STUFF_CHEEKS:
 	goto ANIM_BERRY_EATING
 	endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_NO_RETREAT:
-	goto ANIM_WORKUP
+	loadparticle ANIM_TAG_SMALL_EMBER
+	soundcomplex 0x89 0xc0 0x7 0x12
+	launchtemplate NO_RETREAT_FLAME TEMPLATE_ATTACKER | 2, 0x5 1,  20, 10, 0xA0, 0
+	launchtemplate NO_RETREAT_FLAME TEMPLATE_ATTACKER | 2, 0x5 1, -20, 10, 0xA0, 0
+	launchtask 0x80E4161 0x5 0x0 
+	waitanimation
 	endanimation
+
+.align 2
+NO_RETREAT_FLAME: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_SMALL_EMBER sPyroBallFlamesOAM 0x83E7764 0x0 0x8231CFC SpriteCB_SpriteOnMonForDuration
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_TAR_SHOT:
-	goto 0x81c6f34 @ANIM_POUND
+	loadparticle ANIM_TAG_POISON_BUBBLE
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_POISON_BUBBLE 0x0 0xF 0xF 0x0 @;Black
+	pokespritetoBG bank_target 
+	launchtemplate APPLE_ACID_LAUNCH TEMPLATE_TARGET | 2, 0x6 0x14 0x0 0x28 0x1 0x0 0x0  
+	playsound2 0x77 0xc0
+	pause 0x5 
+	launchtemplate APPLE_ACID_LAUNCH TEMPLATE_TARGET | 2, 0x6 0x14 0x0 0x28 0x1 0xffe8 0x0  
+	playsound2 0x77 0xc0 
+	pause 0xf 
+	launchtask AnimTask_move_bank_2 0x5 0x5 bank_target 0x2 0x0 0xa 0x1
+	launchtask AnimTask_pal_fade_complex 0x2 0x6 PAL_DEF 0x2 0x2 0x0 0x10 0x0 @;Black
+	launchtemplate APPLE_ACID_DRIP TEMPLATE_TARGET | 2, 0x5 0xffe6 0xffe8 0x0 0xf 0x37  
+	playsound2 0x75 0x3f 
+	pause 0xa 
+	launchtemplate APPLE_ACID_DRIP TEMPLATE_TARGET | 2, 0x5 0xf 0xffe5 0x0 0xC 0x32  
+	playsound2 0x75 0x3f 
+	pause 0xa 
+	launchtemplate APPLE_ACID_DRIP TEMPLATE_TARGET | 2, 0x5 0xfff1 0xffef 0x0 0xa 0x2d  
+	playsound2 0x75 0x3f
+	waitanimation 
+	pokespritefromBG bank_target 
 	endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_MAGIC_POWDER:
-	goto ANIM_POWDER
+	loadparticle ANIM_TAG_POISON_POWDER
+	loadparticle ANIM_TAG_WATER_GUN
+	soundcomplex 0xDD 0xc0 0xE 0x8
+	launchtemplate 0x83E29C0 0x82 0x6 0xffe2 0xffea 0x75 0x50 0x5 0x1  
+	launchtemplate BLUE_MAGIC_POWDER 0x82 0x6 0xa 0xffea 0x75 0x50 0xfffb 0x1  
+	launchtemplate 0x83E29C0 0x82 0x6 0xffe7 0xffea 0x75 0x70 0x5 0x3  
+	pause 0xf 
+	launchtemplate BLUE_MAGIC_POWDER 0x82 0x6 0xfffb 0xffea 0x75 0x50 0xfffb 0x1  
+	launchtemplate 0x83E29C0 0x82 0x6 0x5 0xffea 0x75 0x60 0x5 0x1  
+	launchtemplate BLUE_MAGIC_POWDER 0x82 0x6 0x0 0xffea 0x75 0x45 0xfffb 0x1  
+	launchtemplate 0x83E29C0 0x82 0x6 0xfff1 0xffea 0x75 0x70 0x5 0x2  
+	pause 0x1e 
+	launchtemplate BLUE_MAGIC_POWDER 0x82 0x6 0xfff1 0xffea 0x75 0x70 0x5 0x2  
+	launchtemplate 0x83E29C0 0x82 0x6 0xf 0xffea 0x75 0x50 0xfffb 0x1  
+	launchtemplate BLUE_MAGIC_POWDER 0x82 0x6 0xfff6 0xffea 0x75 0x60 0x7 0x2  
+	launchtemplate 0x83E29C0 0x82 0x6 0xfffb 0xffea 0x75 0x5a 0xfff8 0x0  
+	pause 0x14 
+	launchtemplate BLUE_MAGIC_POWDER 0x82 0x6 0xfff6 0xffea 0x75 0x50 0xfffb 0x1  
+	launchtemplate 0x83E29C0 0x82 0x6 0x0 0xffea 0x75 0x59 0x5 0x2  
+	launchtemplate BLUE_MAGIC_POWDER 0x82 0x6 0x14 0xffea 0x75 0x70 0xfff8 0x2  
+	launchtemplate 0x83E29C0 0x82 0x6 0x5 0xffea 0x75 0x50 0x5 0x1  
+	waitanimation
+	playsound2 0xb1 0x3f 
+	launchtask 0x80998b1 0x5 0x5 0xfffa 0xfffa 0xf 0x1 0x1
+	waitanimation
 	endanimation
+
+.align 2
+BLUE_MAGIC_POWDER: objtemplate ANIM_TAG_POISON_POWDER ANIM_TAG_WATER_GUN OAM_OFF_8x16 0x83E298C 0x0 0x8231CFC 0x80A22E9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_DRAGON_DARTS:
-	goto 0x81c6f34 @ANIM_POUND
+	loadparticle ANIM_TAG_DREEPY
+	loadparticle ANIM_TAG_EXPLOSION
+	playsound2 0x25 0xc0 @;Falling sound
+	launchtemplate DREEPY_MISSILE TEMPLATE_TARGET | 2, 0x3, 0x0 0x0 0x19
+	pause 0x19
+	playsound2 0xAA 0x3f
+	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x3 0x0 0x10 0x1
+	launchtemplate Template_Explosion, TEMPLATE_TARGET | 3, 0x4 0x0 0x0 0x1 0x1
+	waitanimation
 	endanimation
+
+.align 2
+DREEPY_MISSILE: objtemplate ANIM_TAG_DREEPY ANIM_TAG_DREEPY OAM_OFF_32x32 0x8231CF0 0x0 0x8231CFC 0x80B563D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -15631,44 +15782,200 @@ ANIM_TEATIME:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
+.global ANIM_OCTOLOCK
 ANIM_OCTOLOCK:
-	goto 0x81d17c1 @ANIM_CONSTRICT
+	loadparticle ANIM_TAG_TENDRILS
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_TENDRILS 0x0 0xC 0xC 0x3D98 @;Pinkish Red
+	soundcomplex 0x94 0x3f 0x6 0x4
+	launchtemplate 0x83e2d0c TEMPLATE_TARGET | 4, 0x4, 0x0 0x10 0x0 0x2 
+	pause 0x7 
+	launchtemplate 0x83e2d0c 0x83 0x4 0x0 0x0 0x0 0x2 
+	launchtemplate 0x83e2d0c TEMPLATE_TARGET | 2, 0x4, 0x0 0x8 0x1 0x2 
+	pause 0x7 
+	launchtemplate 0x83e2d0c 0x83 0x4 0x0 0xfff8 0x1 0x2 
+	pause 0x8 
+	launchtask 0x8098b1d 0x2 0x5 0x1 0x3 0x0 0x6 0x1 
+	pause 0x14
+	launchtask AnimTask_pal_fade_complex 0x2 0x6 PAL_DEF 0x2 0x2 0x0 0x8 0x1f
+	playsound2 0xa3 0x3f 
+	setarg 0x7 0xffff 
+	waitanimation
 	endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_BOLT_BEAK:
-	goto 0x81c8b68 @ANIM_DRILL_PECK
+	loadparticle ANIM_TAG_HORN_HIT
+	loadparticle ANIM_TAG_IMPACT
+	loadparticle ANIM_TAG_SPARK_2
+	loadparticle ANIM_TAG_ELECTRICITY
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_ELECTRICITY 0x0 0xC 0xC 0x76E1 @;Blue Electricity
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_HORN_HIT 0x0 0xC 0xC 0x079D @;Yellow
+	call YELLOW_BLUE_SPARKS_ON_PLAYER
+	waitanimation 
+	launchtask AnimTask_pal_fade_complex 0x2 0x6 0x3 0xffe1 0x1 0x0 0x0 0x5bff 
+	launchtemplate 0x83d4e54 0x2 0x2 0x4 0x4 
+	pause 0x4 
+	launchtemplate 0x83e37bc 0x84 0x3 0x8 0x8 0xa 
+	waitanimation 
+	launchtemplate 0x83e7c98 0x83 0x4 0x0 0x0 0x1 0x1 
+	playsound2 0x9f 0x3f
+	launchtask AnimTask_move_bank 0x2 0x5 0x1 0x3 0x0 0x6 0x1 
+	waitanimation 
+	launchtask AnimTask_pal_fade_complex 0x2 0x6 0x4 0xffe1 0x2 0x0 0x6 0x5bff 
+	call PARALYZE_CHANCE_ANIM 
+	waitanimation 
 	endanimation
+
+YELLOW_BLUE_SPARKS_ON_PLAYER:
+	playsound2 0x70 0xc0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x20 0x18 0xbe 0xc 0x0 0x1 0x0 
+	pause 0x0
+	launchtemplate BLUE_SPARK_PLAYER 0x0 0x7 0x50 0x18 0x16 0xc 0x0 0x1 0x0 
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x9c 0x18 0x79 0xd 0x0 0x1 0x1 
+	pause 0x0 
+	launchtask AnimTask_pal_fade_complex 0x2 0x6 0x3 0xffe1 0x1 0x0 0x0 0x5bff 
+	pause 0xa 
+	launchtask AnimTask_pal_fade_complex 0x2 0x6 0x3 0xffe1 0x1 0x5 0x5 0x5bff 
+	playsound2 0x70 0xc0 
+	launchtemplate BLUE_SPARK_PLAYER 0x0 0x7 0x64 0x18 0x3c 0xa 0x0 0x1 0x0 
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0xaa 0x18 0x2a 0xb 0x0 0x1 0x1 
+	pause 0x0 
+	launchtemplate BLUE_SPARK_PLAYER 0x0 0x7 0xee 0x18 0xa5 0xa 0x0 0x1 0x1 
+	pause 0x0 
+	launchtask AnimTask_pal_fade_complex 0x2 0x6 0x3 0xffe1 0x1 0x0 0x0 0x76E1 
+	pause 0x14 
+	launchtask AnimTask_pal_fade_complex 0x2 0x6 0x3 0xffe1 0x1 0x4 0x4 0x76E1 
+	playsound2 0x70 0xc0 
+	launchtemplate 0x83e6070 0x4 0x8 0x0 0x0 0x20 0xc 0x0 0x14 0x0 0x0 
+	launchtemplate BLUE_SPARK_PLAYER_2 0x4 0x8 0x0 0x0 0x20 0xc 0x40 0x14 0x1 0x0 
+	launchtemplate 0x83e6070 0x4 0x8 0x0 0x0 0x20 0xc 0x80 0x14 0x0 0x0 
+	launchtemplate BLUE_SPARK_PLAYER_2 0x4 0x8 0x0 0x0 0x20 0xc 0xc0 0x14 0x2 0x0 
+	launchtemplate 0x83e6070 0x4 0x8 0x0 0x0 0x10 0xc 0x20 0x14 0x0 0x0 
+	launchtemplate BLUE_SPARK_PLAYER_2 0x4 0x8 0x0 0x0 0x10 0xc 0x60 0x14 0x1 0x0 
+	launchtemplate 0x83e6070 0x4 0x8 0x0 0x0 0x10 0xc 0xa0 0x14 0x0 0x0 
+	launchtemplate BLUE_SPARK_PLAYER_2 0x4 0x8 0x0 0x0 0x10 0xc 0xe0 0x14 0x2 0x0 
+	pause 0x4 
+	return
+
+.align 2	
+BLUE_SPARK_PLAYER: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_ELECTRICITY OAM_NORMAL_16x16 0x8231CF0 0x0 0x8231CFC 0x80ADD4D 
+BLUE_SPARK_PLAYER_2: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_ELECTRICITY OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E6004 0x80AE06D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_FISHIOUS_REND:
-	goto 0x81c6f34 @ANIM_POUND
+	loadparticle ANIM_TAG_SHARP_TEETH @Teeth
+	loadparticle ANIM_TAG_SMALL_BUBBLES
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_SHARP_TEETH 0x0 0xA 0xA 0x726A @;Blue Teeth
+	playsound2 0xd1 0x3f
+	launchtemplate FISHIOUS_TEETH, TEMPLATE_TARGET | 0, 0x2, 50, 4
+	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x4 0x0 0xC 0x2
+	call FISHY_REND_BUBBLES
+	waitanimation
 	endanimation
+
+FISHY_REND_BUBBLES:
+	launchtemplate 0x83E5AC8 0x4 0x2 0xF 0x0  
+	launchtemplate 0x83E5AC8 0x4 0x2 0xF 0x0  
+	pause 0x2 
+	launchtemplate 0x83E5AC8 0x4 0x2 0xA 0x0
+	launchtemplate 0x83E5AC8 0x4 0x2 0xA 0x0  
+	pause 0x2 
+	launchtemplate 0x83E5AC8 0x4 0x2 0x5 0x0
+	launchtemplate 0x83E5AC8 0x4 0x2 0x5 0x0  
+	pause 0x2 
+	launchtemplate 0x83E5AC8 0x4 0x2 0x0 0x0  
+	launchtemplate 0x83E5AC8 0x4 0x2 0x0 0x0  
+	pause 0x2 
+	launchtemplate 0x83E5AC8 0x4 0x2 0xfffb 0x0
+	launchtemplate 0x83E5AC8 0x4 0x2 0xfffb 0x0
+	pause 0x2 
+	launchtemplate 0x83E5AC8 0x4 0x2 0xfff6 0x0
+	launchtemplate 0x83E5AC8 0x4 0x2 0xfff6 0x0
+	pause 0x2 
+	launchtemplate 0x83E5AC8 0x4 0x2 0xfff1 0x0
+	launchtemplate 0x83E5AC8 0x4 0x2 0xfff1 0x0
+	pause 0x2 
+	launchtemplate 0x83E5AC8 0x4 0x2 0xffec 0x0
+	launchtemplate 0x83E5AC8 0x4 0x2 0xffec 0x0
+	pause 0x2
+	launchtemplate 0x83E5AC8 0x4 0x2 0xfff1 0x0
+	launchtemplate 0x83E5AC8 0x4 0x2 0xfff1 0x0
+	pause 0x2 
+	launchtemplate 0x83E5AC8 0x4 0x2 0xfff6 0x0
+	launchtemplate 0x83E5AC8 0x4 0x2 0xfff6 0x0  
+	pause 0x2 
+	launchtemplate 0x83E5AC8 0x4 0x2 0xfffb 0x0
+	launchtemplate 0x83E5AC8 0x4 0x2 0xfffb 0x0  
+	pause 0x2 
+	launchtemplate 0x83E5AC8 0x4 0x2 0x0 0x0  
+	launchtemplate 0x83E5AC8 0x4 0x2 0x0 0x0  
+	pause 0x2 
+	launchtemplate 0x83E5AC8 0x4 0x2 0x5 0x0
+	launchtemplate 0x83E5AC8 0x4 0x2 0x5 0x0  
+	pause 0x2 
+	launchtemplate 0x83E5AC8 0x4 0x2 0xA 0x0
+	launchtemplate 0x83E5AC8 0x4 0x2 0xA 0x0
+	return 
+
+.align 2
+FISHIOUS_TEETH: objtemplate ANIM_TAG_SHARP_TEETH ANIM_TAG_SHARP_TEETH sFishiousRendTeethOam 0x8231CF0 0x0 0x8231CFC SpriteCB_LeftRightSlice
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 @Credit to -
 ANIM_COURT_CHANGE:
-	goto ANIM_TRICKROOM
+	goto ANIM_TRICKROOM @;Transparent balls going upwards on the player's side, followed by transparent balls falling on the opponent side, and then the same but swapped
 	endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_CLANGOROUS_SOUL:
-	goto ANIM_QUIVERDANCE
+	loadparticle ANIM_TAG_FOCUS_ENERGY @focus energy
+	loadparticle ANIM_TAG_WATER_ORB @blue
+	loadparticle ANIM_TAG_POISON_BUBBLE @purple
+	loadparticle ANIM_TAG_AIR_WAVE_2 @white/grey
+	loadparticle ANIM_TAG_SPARKLE_2 @stars
+	launchtask 0x80e0559 0x5 0x3 0x0 0x2 0x0
+	call SOULBLAZE_STARS_BUFF_EFFECT
+	call SOULBLAZE_STARS_BUFF_EFFECT
+	call SOULBLAZE_STARS_BUFF_EFFECT
+	waitanimation
+	loadparticle ANIM_TAG_VERTICAL_HEX @red
+	loadparticle ANIM_TAG_HORSESHOE_SIDE_FIST @fist
+	launchtemplate SOULBLAZE_RED_FIST 0x2 0x8 0xfff0 0x0 0x0 0x0 0xa bank_attacker RIGHT_FIST 0x1
+	launchtemplate SOULBLAZE_RED_FIST 0x2 0x8 0x10 0x0 0x0 0x0 0xa bank_attacker LEFT_FIST 0x1
+	playsound2 0x74 0x3F
+	waitanimation
+	loadparticle ANIM_TAG_THIN_RING @ring
+	playsound2 0x5f 0xc0
+	launchtemplate SOULBLAZE_RED_RING	0x3 0x4 0x0 0x0 0x0 0x0
+	waitanimation
 	endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_BODY_PRESS:
-	goto 0x81c74d0 @MOVE_BODYSLAM
+	loadparticle ANIM_TAG_ROUND_SHADOW @fly and bounce animation
+	loadparticle ANIM_TAG_GRAY_SMOKE @smoke
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_ROUND_SHADOW 0x0 0xD 0xD 0x1E5D @;Orange
+	playsound2 0x91 0xc0
+	launchtemplate 0x83D4E6C 0x2 0x3 0x6 0x1 0x0
+	pause 0x7
+	launchtemplate 0x83E6BB8 0x2 0x4 0x0 0x0 0xd 0x150  @;Fly up
+	waitanimation
+	pause 0x2F
+	launchtemplate 0x83E6CFC 0x83 0x0 @;Bounce down
+	pause 0x2
+	playsound2 0xC5 0xC0
+	launchtask AnimTask_SquishTarget 0x2 0x0
+	waitanimation
 	endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -15745,6 +16052,7 @@ ANIM_DRUM_BEATING:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 @Credit to -
+.global ANIM_SNAP_TRAP
 ANIM_SNAP_TRAP:
 	goto 0x81c6f34 @ANIM_POUND
 	endanimation
@@ -15776,7 +16084,7 @@ ANIM_PYRO_BALL:
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x3 0xf 0x1
 	call BURN_CHANCE_ANIM
 	pause 0x20
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x3 0x7 0x0 0x043D
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x7 0x0 0x043D
 	waitanimation
 	endanimation
 
@@ -15809,9 +16117,35 @@ ANIM_AURA_WHEEL:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_BREAKING_SWIPE:
-	goto ANIM_BRUTALSWING
+	loadparticle ANIM_TAG_IMPACT @hits
+	loadparticle ANIM_TAG_SPARK_2
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_IMPACT 0x0 0xC 0xC 0x001F @;Red
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_SPARK_2 0x0 0xC 0xC 0x001F @;Red
+	pokespritetoBG bank_target
+	setblends 0x80C
+	launchtemplate 0x83E7C08 0x83 0x4 0xffe0 0xfff0 0x1 0x1
+	launchtemplate CENTRED_ELECTRICITY TEMPLATE_TARGET | 2, 0x4, 0x5 0x0 0x5 0x0
+	playsound2 0x84 0x3f
+	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x3 0x15 0x1
+	launchtask AnimTask_move_bank 0x2 0x5 target_partner 0x0 0x3 0x15 0x1
+	pause 0x4
+	launchtemplate 0x83E7C50 0x83 0x2 0x1 0x1
+	launchtemplate CENTRED_ELECTRICITY TEMPLATE_TARGET | 2, 0x4, 0xfff1 0xfff6 0x5 0x0
+	playsound2 0x84 0x3f
+	pause 0x4
+	launchtemplate 0x83E7C50 0x83 0x2 0x1 0x1
+	launchtemplate CENTRED_ELECTRICITY TEMPLATE_TARGET | 2, 0x4, 0xfff8 0x8 0x5 0x2
+	playsound2 0x84 0x3f
+	pause 0x4
+	launchtemplate 0x83E7C08 0x83 0x4 0x20 0x14 0x1 0x1
+	launchtemplate CENTRED_ELECTRICITY TEMPLATE_TARGET | 2, 0x4, 0xffec 0xf 0x5 0x1
+	playsound2 0x84 0x3f
+	waitforsound
+	waitanimation
+	resetblends
+	pokespritefromBG bank_target
 	endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -15830,21 +16164,81 @@ ANIM_BRANCH_POKE:
 	endanimation
 
 .align 2
-BRANCH: objtemplate ANIM_TAG_BRANCH ANIM_TAG_BRANCH 0x83ACA38 0x8231CF0 0x0 0x8231CFC 0x80B563D
+BRANCH: objtemplate ANIM_TAG_BRANCH ANIM_TAG_BRANCH OAM_NORMAL_32x32 0x8231CF0 0x0 0x8231CFC 0x80B563D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_OVERDRIVE:
-	goto 0x81d2d0d @ANIM_HYPERVOICE
+	loadparticle ANIM_TAG_THIN_RING
+	loadparticle ANIM_TAG_SPARK_2
+	loadparticle ANIM_TAG_ELECTRICITY
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_ELECTRICITY 0x0 0xC 0xC 0x76E1 @;Blue Electricity
+	call YELLOW_BLUE_SPARKS_ON_PLAYER
+	waitanimation
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_THIN_RING 0x0 0xC 0xC 0x17BF @;Yellow Electricity
+	call OVERDRIVE_RING
+	pause 0x8
+	call OVERDRIVE_RING
+	pause 0x10
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_THIN_RING 0x0 0x0 0xC 0x76E1 @;Blue Electricity
+	waitanimation 
 	endanimation
+
+OVERDRIVE_RING:
+	playsound2 0x6f 0x3f
+	launchtemplate 0x83E7B24 0x2 0x5 0x1f 0x3 0x8 0x0 0x3ff
+	launchtask 0x80998B1 0x5 0x5 0xfffb 0xfffb 0x5 0x0 0x0  
+	launchtemplate 0x83E40F8 0x0 0x7 0x2d 0x0 0x0 0x0 0x0 0x0 0x1  
+	launchtask 0x8098B1D 0x2 0x5 0x1 0x1 0x0 0x6 0x1  
+	launchtask 0x8098B1D 0x2 0x5 0x3 0x1 0x0 0x6 0x1  
+	launchtask 0x80BA47D 0x2 0x4 0x1 0x0 0x6 0x1  
+	launchtask 0x80DD2F5 0x5 0x0  
+	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_APPLE_ACID:
-	goto 0x81cf308 @ANIM_ACID
+	loadparticle ANIM_TAG_APPLE
+	loadparticle ANIM_TAG_POISON_BUBBLE
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_POISON_BUBBLE 0x0 0xC 0xC 0x061D @;Orange
+	playsound2 0xb3 0xc0
+	launchtemplate APPLE_FLOAT 0xc 0x1 0x0
+	pause 0x30
+	pokespritetoBG bank_target 
+	launchtemplate APPLE_ACID_LAUNCH TEMPLATE_TARGET | 2, 0x6 0x14 0x0 0x28 0x1 0x0 0x0  
+	playsound2 0x77 0xc0 
+	pause 0x5 
+	launchtemplate APPLE_ACID_LAUNCH TEMPLATE_TARGET | 2, 0x6 0x14 0x0 0x28 0x1 0x18 0x0  
+	playsound2 0x77 0xc0 
+	pause 0x5 
+	launchtemplate APPLE_ACID_LAUNCH TEMPLATE_TARGET | 2, 0x6 0x14 0x0 0x28 0x1 0xffe8 0x0  
+	playsound2 0x77 0xc0 
+	pause 0xf 
+	launchtask AnimTask_move_bank_2 0x5 0x5 bank_target 0x2 0x0 0xa 0x1
+	launchtemplate APPLE_ACID_DRIP TEMPLATE_TARGET | 2, 0x5 0x0 0xffea 0x0 0xf 0x37  
+	playsound2 0x75 0x3f 
+	pause 0xa 
+	launchtemplate APPLE_ACID_DRIP TEMPLATE_TARGET | 2, 0x5 0xffe6 0xffe8 0x0 0xf 0x37  
+	playsound2 0x75 0x3f 
+	pause 0xa 
+	launchtemplate APPLE_ACID_DRIP TEMPLATE_TARGET | 2, 0x5 0xf 0xffe5 0x0 0xf 0x32  
+	playsound2 0x75 0x3f 
+	pause 0xa 
+	launchtemplate APPLE_ACID_DRIP TEMPLATE_TARGET | 2, 0x5 0xfff1 0xffef 0x0 0xa 0x2d  
+	playsound2 0x75 0x3f 
+	pause 0xa 
+	launchtemplate APPLE_ACID_DRIP TEMPLATE_TARGET | 2, 0x5 0x1b 0xffea 0x0 0xf 0x32  
+	playsound2 0x75 0x3f 
+	waitanimation 
+	pokespritefromBG bank_target 
 	endanimation
+
+.align 2
+APPLE_FLOAT: objtemplate ANIM_TAG_APPLE ANIM_TAG_APPLE OAM_DOUBLE_32x32 0x8231CF0 0x0 0x83E3A2C 0x80A6C09
+APPLE_ACID_LAUNCH: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_BUBBLE OAM_DOUBLE_16x16 0x83E69DC 0x0 0x83E6A18 SpriteCB_AcidLaunchSingleTarget
+APPLE_ACID_DRIP: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_BUBBLE OAM_DOUBLE_16x16 0x83E69E0 0x0 0x83E6A80 SpriteCB_AcidDripSingleTarget
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -15857,52 +16251,52 @@ ANIM_GRAV_APPLE:
 	waitanimation
 	call SMALL_APPLES_FALL
 	call SMALL_APPLES_FALL
-	launchtemplate LARGE_FALLING_APPLE, TEMPLATE_TARGET | 2, 0x2 0x0 0x3c
+	launchtemplate LARGE_FALLING_APPLE, TEMPLATE_TARGET | 2, 0x4, 0x0, 0x3c, 4, bank_target
 	pause 0x7
-	playsound2 0x86 0x3f
+	playsound2 0xCF 0x3f
 	launchtemplate Template_SlideMonToOffset 0x2 0x5 bank_target 0 0x15 0x0 0x4
 	pause 0x30
 	launchtemplate Template_SlideMonToOriginalPos 0x2 0x3 bank_target 0x0 0x10
 	waitanimation
 	call UNSET_SCROLLING_BG
 	endanimation
-	
+
 SMALL_APPLES_FALL:
-	launchtemplate SMALL_FALLING_APPLE, TEMPLATE_TARGET | 2, 0x2, 35, 0x3c
+	launchtemplate SMALL_FALLING_APPLE, TEMPLATE_TARGET | 2, 0x4, 35, 0x3c, 4, bank_target
 	playsound2 0x25 0xc0 @;Falling sound
 	pause 0x2
-	launchtemplate SMALL_FALLING_APPLE, TEMPLATE_TARGET | 2, 0x2, -30, 0x44
+	launchtemplate SMALL_FALLING_APPLE, TEMPLATE_TARGET | 2, 0x4, -30, 0x44, 4, bank_target
 	playsound2 0x25 0xc0 @;Falling sound
 	pause 0x2
-	launchtemplate SMALL_FALLING_APPLE, TEMPLATE_TARGET | 2, 0x2, 27, 0x37
+	launchtemplate SMALL_FALLING_APPLE, TEMPLATE_TARGET | 2, 0x4, 27, 0x37, 4, bank_target
 	playsound2 0x25 0xc0 @;Falling sound
 	pause 0x2
-	launchtemplate SMALL_FALLING_APPLE, TEMPLATE_TARGET | 2, 0x2, -20, 0x32
+	launchtemplate SMALL_FALLING_APPLE, TEMPLATE_TARGET | 2, 0x4, -20, 0x32, 4, bank_target
 	playsound2 0x25 0xc0 @;Falling sound
 	pause 0x2
-	launchtemplate SMALL_FALLING_APPLE, TEMPLATE_TARGET | 2, 0x2, 33, 0x3a
+	launchtemplate SMALL_FALLING_APPLE, TEMPLATE_TARGET | 2, 0x4, 33, 0x3a, 4, bank_target
 	playsound2 0x25 0xc0 @;Falling sound
 	pause 0x2
-	launchtemplate SMALL_FALLING_APPLE, TEMPLATE_TARGET | 2, 0x2, -12, 0x3a
+	launchtemplate SMALL_FALLING_APPLE, TEMPLATE_TARGET | 2, 0x4, -12, 0x3a, 4, bank_target
 	playsound2 0x25 0xc0 @;Falling sound
 	pause 0x2
-	launchtemplate SMALL_FALLING_APPLE, TEMPLATE_TARGET | 2, 0x2, 19, 0x3c
+	launchtemplate SMALL_FALLING_APPLE, TEMPLATE_TARGET | 2, 0x4, 19, 0x3c, 4, bank_target
 	playsound2 0x25 0xc0 @;Falling sound
 	pause 0x2
-	launchtemplate SMALL_FALLING_APPLE, TEMPLATE_TARGET | 2, 0x2, -38, 0x3a
+	launchtemplate SMALL_FALLING_APPLE, TEMPLATE_TARGET | 2, 0x4, -38, 0x3a, 4, bank_target
 	playsound2 0x25 0xc0 @;Falling sound
 	pause 0x2
-	launchtemplate SMALL_FALLING_APPLE, TEMPLATE_TARGET | 2, 0x2, 5, 0x3c
+	launchtemplate SMALL_FALLING_APPLE, TEMPLATE_TARGET | 2, 0x4, 5, 0x3c, 4, bank_target
 	playsound2 0x25 0xc0 @;Falling sound
 	pause 0x2
-	launchtemplate SMALL_FALLING_APPLE, TEMPLATE_TARGET | 2, 0x2, -23, 0x28
+	launchtemplate SMALL_FALLING_APPLE, TEMPLATE_TARGET | 2, 0x4, -23, 0x28, 4, bank_target
 	playsound2 0x25 0xc0 @;Falling sound
 	pause 0x2
 	return
 
 .align 2
-SMALL_FALLING_APPLE: objtemplate ANIM_TAG_APPLE ANIM_TAG_APPLE sAppleOAM 0x8231CF0 0x0 0x8231CFC SpriteCB_FallingApple
-LARGE_FALLING_APPLE: objtemplate ANIM_TAG_APPLE ANIM_TAG_APPLE sAppleOAM 0x8231CF0 0x0 gSpriteAffineAnimTable_ScaledApple SpriteCB_FallingApple
+SMALL_FALLING_APPLE: objtemplate ANIM_TAG_APPLE ANIM_TAG_APPLE sAppleOAM 0x8231CF0 0x0 0x8231CFC SpriteCB_FallingObject
+LARGE_FALLING_APPLE: objtemplate ANIM_TAG_APPLE ANIM_TAG_APPLE sAppleOAM 0x8231CF0 0x0 gSpriteAffineAnimTable_ScaledApple SpriteCB_FallingObject
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -15913,17 +16307,77 @@ ANIM_SPIRIT_BREAK:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_STRANGE_STEAM:
-	goto 0x81c6f34 @ANIM_POUND
+	loadparticle ANIM_TAG_PINK_CLOUD
+	loadparticle ANIM_TAG_FINGER
+	loadparticle ANIM_TAG_WATER_GUN @blue colour
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_FINGER 0x0 0xA 0xA 0x4798 @;Green
+	pokespritetoBG side_target
+	leftbankBG_over_partnerBG bank_target
+	soundcomplex 0x89 0xc0 0x4 0xA
+	call STRANGE_STEAM_CLOUD
+	call STRANGE_STEAM_CLOUD
+	call STRANGE_STEAM_CLOUD
+	launchtask AnimTask_move_bank_2 0x2 0x5 bank_target 0x2 0x0 0x2A 0x1
+	call STRANGE_STEAM_CLOUD
+	call STRANGE_STEAM_CLOUD
+	call STRANGE_STEAM_CLOUD
+	call STRANGE_STEAM_CLOUD
+	call STRANGE_STEAM_CLOUD
+	call STRANGE_STEAM_CLOUD
+	call STRANGE_STEAM_CLOUD
+	call STRANGE_STEAM_CLOUD
+	waitanimation
+	pokespritefromBG side_target
 	endanimation
+
+STRANGE_STEAM_CLOUD:
+	launchtemplate STRANGE_STEAM_PINK 0x82 0x5 0xf 0xf 0x14 0x0 0x0
+	launchtemplate STRANGE_STEAM_GREEN 0x82 0x5 0xf 0xf 0x14 0xa 0x5
+	launchtemplate STRANGE_STEAM_PINK 0x82 0x5 0xf 0xf 0x14 0xfff6 0xfffb
+	launchtemplate STRANGE_STEAM_GREEN 0x82 0x5 0xf 0xf 0x14 0x14 0xa
+	launchtemplate STRANGE_STEAM_BLUE 0x82 0x5 0xf 0xf 0x14 0xffec 0xfff6
+	pause 0x2
+	return
+
+.align 2	
+STRANGE_STEAM_PINK: objtemplate ANIM_TAG_PINK_CLOUD ANIM_TAG_PINK_CLOUD OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E7604 0x80B8CC9
+STRANGE_STEAM_GREEN: objtemplate ANIM_TAG_PINK_CLOUD ANIM_TAG_FINGER OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E7604 0x80B8CC9
+STRANGE_STEAM_BLUE: objtemplate ANIM_TAG_PINK_CLOUD ANIM_TAG_WATER_GUN OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E7604 0x80B8CC9
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_LIFE_DEW:
-	goto 0x81cc212 @ANIM_MISTBALL
+	loadparticle ANIM_TAG_UNUSED_WATER_DROPLET
+	loadparticle ANIM_TAG_BLUE_STAR
+	pokespritetoBG side_attacker
+	launchtemplate WATER_DROPLET, TEMPLATE_ATTACKER | 2, 0x3, 0, 0, bank_attacker
+	launchtemplate WATER_DROPLET, TEMPLATE_ATTACKER | 2, 0x3, 0, 0, attacker_partner
+	pause 0x15
+	playsound2 0x75 0xc0
+	waitanimation
+	playsound2 0xAC 0xc0 
+	launchtemplate HEALING_ORBS_SPECIAL, TEMPLATE_ATTACKER | 2, 0x4, 0, -5, bank_attacker, FALSE
+	launchtemplate HEALING_ORBS_SPECIAL, TEMPLATE_ATTACKER | 2, 0x4, 0, -5, attacker_partner, FALSE
+	pause 0x7 
+	launchtemplate HEALING_ORBS_SPECIAL, TEMPLATE_ATTACKER | 2, 0x4, -15, 10, bank_attacker, FALSE
+	launchtemplate HEALING_ORBS_SPECIAL, TEMPLATE_ATTACKER | 2, 0x4, -15, 10, attacker_partner, FALSE
+	pause 0x7 
+	launchtemplate HEALING_ORBS_SPECIAL, TEMPLATE_ATTACKER | 2, 0x4, -15, -15, bank_attacker, FALSE
+	launchtemplate HEALING_ORBS_SPECIAL, TEMPLATE_ATTACKER | 2, 0x4, -15, -15, attacker_partner, FALSE
+	pause 0x7 
+	launchtemplate HEALING_ORBS_SPECIAL, TEMPLATE_ATTACKER | 2, 0x4, 10, -5, bank_attacker, FALSE
+	launchtemplate HEALING_ORBS_SPECIAL, TEMPLATE_ATTACKER | 2, 0x4, 10, -5, attacker_partner, FALSE
+	pause 0x7
+	waitanimation
+	pokespritefromBG side_attacker
 	endanimation
+
+.align 2
+WATER_DROPLET: objtemplate ANIM_TAG_UNUSED_WATER_DROPLET ANIM_TAG_UNUSED_WATER_DROPLET sAppleOAM gAnimCmdWaterDroplet 0x0 0x8231CFC SpriteCB_WaterDroplet
+HEALING_ORBS_SPECIAL: objtemplate ANIM_TAG_BLUE_STAR ANIM_TAG_BLUE_STAR OAM_OFF_32x32 0x83E37A0 0x0 0x8231CFC SpriteCB_AnimSpriteOnSelectedMonPos
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -15950,7 +16404,7 @@ ANIM_OBSTRUCT:
 	endanimation
 
 .align 2
-OBSTRUCT_CROSS: objtemplate ANIM_TAG_OBSTRUCT_CROSS ANIM_TAG_OBSTRUCT_CROSS 0x83ACAF8 0x8231CF0 0x0 0x8231CFC 0x80BA739
+OBSTRUCT_CROSS: objtemplate ANIM_TAG_OBSTRUCT_CROSS ANIM_TAG_OBSTRUCT_CROSS OAM_OFF_BLEND_32x32 0x8231CF0 0x0 0x8231CFC 0x80BA739
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -15968,7 +16422,7 @@ ANIM_METEOR_ASSAULT:
 	loadparticle ANIM_TAG_EXPLOSION
 	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_ELECTRIC_ORBS 0x0 0xC 0xC 0x0B1D @;Light orange
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ATK 0x1 0x0 0x9 0x0B1D @;Light orange
-	launchtask 0x80AE541 0x2 0x4 0x0 0x30 0x0 0x4
+	launchtask AnimTask_ChargeBalls 0x2 0x4 0x0 0x30 0x0 0x4
 	playsound2 0xCE 0xc0
 	waitanimation
 	makebankinvisible bank_attacker
@@ -16100,9 +16554,9 @@ ANIM_BREAKNECK_BLITZ:
 	endanimation
 
 .align 2
-BLITZ_DANCE: objtemplate ANIM_TAG_HOLLOW_ORB ANIM_TAG_FLAT_ROCK 0x83AC9D0 0x8231CF0 0x0 0x8231CFC 0x80B7449
+BLITZ_DANCE: objtemplate ANIM_TAG_HOLLOW_ORB ANIM_TAG_FLAT_ROCK OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC 0x80B7449
 GROWING_SUPERPOWER: objtemplate ANIM_TAG_METEOR ANIM_TAG_METEOR sGrowingSuperpowerOAM 0x8231CF0 0x0 gSpriteAffineAnimTable_GrowingSuperpower SpriteCB_GrowingSuperpower
-BLITZ_HIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_FLAT_ROCK 0x83ACB58 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+BLITZ_HIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_FLAT_ROCK OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -16201,7 +16655,7 @@ ANIM_ALL_OUT_PUMMELING:
 	endanimation
 
 .align 2
-PUMMEL_ONSLAUGHT: objtemplate ANIM_TAG_HANDS_AND_FEET ANIM_TAG_IMPACT 0x83AC9D8 0x83E66CC 0x0 0x8231CFC 0x80B0929
+PUMMEL_ONSLAUGHT: objtemplate ANIM_TAG_HANDS_AND_FEET ANIM_TAG_IMPACT OAM_OFF_32x32 0x83E66CC 0x0 0x8231CFC 0x80B0929
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -16279,7 +16733,7 @@ finishBG_SSSS:
 	endanimation
 
 .align 2
-FLY_STRIKE: objtemplate ANIM_TAG_BIRD ANIM_TAG_BIRD 0x83ACA40 0x8231CF0 0x0 ROTATIONS_SSSS 0x80B1C3D
+FLY_STRIKE: objtemplate ANIM_TAG_BIRD ANIM_TAG_BIRD OAM_NORMAL_64x64 0x8231CF0 0x0 ROTATIONS_SSSS 0x80B1C3D
 ROTATIONS_SSSS: .word PLAYER_ROT_SSSS, ENEMY_ROT_SSSS
 PLAYER_ROT_SSSS: .hword 0,0,0x01b9,0,0x7fff,0,0,0
 ENEMY_ROT_SSSS: .hword 0,0,0x0150,0,0x7fff,0,0,0
@@ -16375,8 +16829,8 @@ PURPLE_FLARE_SELF:
 	return
 
 .align 2
-PURPLE_REVERSAL: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_BUBBLE 0x83ACA30 0x8231CF0 0x0 0x8231CFC 0x80E0E95
-PURPLE_Z_AURA: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_BUBBLE 0x83ACA30 0x8231CF0 0x0 0x8231CFC 0x80B477D
+PURPLE_REVERSAL: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_BUBBLE OAM_NORMAL_16x16 0x8231CF0 0x0 0x8231CFC 0x80E0E95
+PURPLE_Z_AURA: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_BUBBLE OAM_NORMAL_16x16 0x8231CF0 0x0 0x8231CFC 0x80B477D
 
 @ hook at AB43C via r0
 .pool
@@ -16417,18 +16871,18 @@ ANIM_TECTONIC_RAGE:
 	loadparticle ANIM_TAG_MUD_SAND @ rollout small rocks
 	loadparticle ANIM_TAG_ROCKS @ rollout
 	loadparticle ANIM_TAG_IMPACT @ hit
-	launchtemplate 0x83e7ac4 0x1 0x3 0x0 0x0 0xb4
-	launchtemplate 0x83e7ac4 0x1 0x3 0x0 0x1 0xb4
+	launchtemplate Template_DigMound 0x1 0x3 0x0 0x0 0xb4
+	launchtemplate Template_DigMound 0x1 0x3 0x0 0x1 0xb4
 	pokespritetoBG2 bank_attacker
 	pause 0x1
 	launchtask 0x80b8e95 0x2 0x1 0x0
 	pause 0x6
-	call 0x81ca90a
-	call 0x81ca90a
-	call 0x81ca90a
-	call 0x81ca90a
+	call GROUND_DIGGING
+	call GROUND_DIGGING
+	call GROUND_DIGGING
+	call GROUND_DIGGING
 	launchtask 0x80b4bd1 0x2 0x0 	@ rollout
-	call 0x81ca90a
+	call GROUND_DIGGING
 	setblends 0x80c
 	pause 0x20
 	playsound2 0xab 0xc0
@@ -16530,8 +16984,8 @@ TEC_RAGE_EXPLOSION:
 
 
 .align 2
-TEC_RAGE_BLAST_BURN: objtemplate ANIM_TAG_FIRE_PLUME ANIM_TAG_FIRE_PLUME 0x83AC9D8 0x83E5C50 0x0 0x8231CFC BLASTBURN_TARGET_ASM+1
-TECTONIC_EXPLODE: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_UNUSED_EXPLOSION_2 0x83AC9D8 0x83E3F90 0x0 0x8231CFC 0x8075D9D
+TEC_RAGE_BLAST_BURN: objtemplate ANIM_TAG_FIRE_PLUME ANIM_TAG_FIRE_PLUME OAM_OFF_32x32 0x83E5C50 0x0 0x8231CFC BLASTBURN_TARGET_ASM+1
+TECTONIC_EXPLODE: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_UNUSED_EXPLOSION_2 OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC 0x8075D9D
 
 .align 2
 .pool
@@ -16570,7 +17024,7 @@ get_bank_presence: 	@ sub_8074480
 .pool
 @ hook at 0xB4C40 via r0
 ROLLOUT_TIMER_ASM:
-	bl IsAnimMoveTectnoicRage
+	bl DoesAnimMoveGetMaxRollout
 	cmp r0, #0x0
 	bne SkipRolloutTimer
 	bl GetRolloutTimer
@@ -16746,11 +17200,11 @@ ROCKS_COALESCE:
 	return
 
 .align 2
-NEEDLEARM_ROCK: objtemplate ANIM_TAG_ROCKS ANIM_TAG_ROCKS 0x83AC9D8 0x83E73A8 0x0 0x8231CFC 0x80A4299
-BIGROCK_STOMP: objtemplate ANIM_TAG_REALLY_BIG_ROCK ANIM_TAG_REALLY_BIG_ROCK 0x83AC9E0 0x8231CF0 0x0 0x8231CFC 0x80B0D59
-CC_FOCUS_ENERGY: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_ROCKS 0x83ACA18 0x83E3600 0x0 0x8231CFC 0x80A5AD9
-CC_ROCK_GROW: objtemplate ANIM_TAG_REALLY_BIG_ROCK ANIM_TAG_REALLY_BIG_ROCK 0x83ACB60 0x8231CF0 0x0 0x83E61C8 0x80AE71D
-CC_ROCK_ERUPTION: objtemplate ANIM_TAG_ROCKS ANIM_TAG_ROCKS 0x83AC9D8 0x8231CF0 0x0 0x8231CFC 0x80AD455
+NEEDLEARM_ROCK: objtemplate ANIM_TAG_ROCKS ANIM_TAG_ROCKS OAM_OFF_32x32 0x83E73A8 0x0 0x8231CFC 0x80A4299
+BIGROCK_STOMP: objtemplate ANIM_TAG_REALLY_BIG_ROCK ANIM_TAG_REALLY_BIG_ROCK OAM_OFF_64x64 0x8231CF0 0x0 0x8231CFC 0x80B0D59
+CC_FOCUS_ENERGY: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_ROCKS OAM_OFF_16x32 0x83E3600 0x0 0x8231CFC 0x80A5AD9
+CC_ROCK_GROW: objtemplate ANIM_TAG_REALLY_BIG_ROCK ANIM_TAG_REALLY_BIG_ROCK OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80AE71D
+CC_ROCK_ERUPTION: objtemplate ANIM_TAG_ROCKS ANIM_TAG_ROCKS OAM_OFF_32x32 0x8231CF0 0x0 0x8231CFC 0x80AD455
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -16765,7 +17219,7 @@ ANIM_SAVAGE_SPIN_OUT:
 	waitanimation
 	pokespritetoBG bank_attacker
 	setblends 0x80c
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x2 0x0 0x4 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x4 0x0
 	launchtemplate SPINOUT_GREEN_CHARGE 0x2 0x1 0x0
 	pause 0x19
 	playsound2 0xce 0xc0
@@ -16774,7 +17228,7 @@ ANIM_SAVAGE_SPIN_OUT:
 	pause 0xf
 	playsound2 0xce 0xc0
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x4 0x4 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x4 0x0 0x0
 	pokespritefromBG bank_attacker
 	launchtask AnimTask_AllBanksInvisibleExceptAttackerAndTarget 0xA 0x0
 	waitanimation
@@ -16847,8 +17301,8 @@ FINISH_CACOON:
 	loadparticle ANIM_TAG_AIR_WAVE_2 @white/gray
 	launchtask AnimTask_ShakeMonInPlace 0x82 0x5 0x1 0x4 0x0 0xc 0x1
 	launchtask AnimTask_ShakeMonInPlace 0x82 0x5 0x1 0x4 0x0 0xc 0x1
-	launchtemplate SPINOUT_GREEN_CUT 0x82 0x3 0x28 0xffe0 0x0
-	launchtemplate SPINOUT_GREEN_CUT 0x82 0x3 0x28 0xffd0 0x0
+	launchtemplate SPINOUT_GREEN_CUT TEMPLATE_TARGET | 2, 0x3, 0x28 0xffe0 0x0
+	launchtemplate SPINOUT_GREEN_CUT TEMPLATE_TARGET | 2, 0x3, 0x28 0xffd0 0x0
 	playsound2 0x81 0x3f
 	pause 0xc
 	playsound2 0x81 0x3f
@@ -16893,7 +17347,7 @@ AEROBLAST_STRINGSHOT:
 	return
 
 SPINOUT_SMASH_GROUND1:
-	launchtemplate Template_Hit 0x82 0x4 0xfff6 0xfff8 0x1 0x1
+	launchtemplate Template_Hit TEMPLATE_TARGET | 2, 0x4, 0xfff6 0xfff8 0x1 0x1
 	playsound2 0x7c 0x3f
 	launchtemplate 0x83e7aac 0x82 0x6 0x1 0x0 0xc 0xffe8 0xfff0 0x18
 	launchtemplate 0x83e7aac 0x82 0x6 0x1 0x0 0x10 0xffda 0xfff6 0x18
@@ -16902,7 +17356,7 @@ SPINOUT_SMASH_GROUND1:
 	return
 
 SPINOUT_SMASH_GROUND2:
-	launchtemplate Template_Hit 0x82 0x4 0xa 0xfff8 0x1 0x1
+	launchtemplate Template_Hit TEMPLATE_TARGET | 2, 0x4, 0xa 0xfff8 0x1 0x1
 	playsound2 0x7c 0x3f
 	launchtemplate 0x83e7aac 0x82 0x6 0x1 0x0 0xc 0xffd0 0xfff0 0x18
 	launchtemplate 0x83e7aac 0x82 0x6 0x1 0x0 0x10 0xfff0 0xfff6 0x18
@@ -16916,11 +17370,11 @@ SPINOUT_BG_SLOWDOWN:
 	return
 
 .align 2
-AEROBLAST_STRING: objtemplate ANIM_TAG_STRING ANIM_TAG_STRING 0x83ACA00 0x83E6B48 0x0 0x8231CFC 0x80B1AB9
-SPINOUT_CACOON: objtemplate ANIM_TAG_COCOON ANIM_TAG_COCOON 0x83ACB60 0x8231CF0 0x0 0x83E7910 0x80B7BD5
-SPINOUT_GREEN_CHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_RAZOR_LEAF 0x83ACB60 0x8231CF0 0x0 0x83E61C8 0x80AE71D
-SPINOUT_GREEN_CUT: objtemplate ANIM_TAG_CUT ANIM_TAG_RAZOR_LEAF 0x83ACAF8 0x83E3290 0x0 0x8231CFC 0x80A44E1
-SPINOUT_WHITE_EXPLODE: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_AIR_WAVE_2 0x83AC9D8 0x83E3F90 0x0 0x8231CFC 0x8075D9D
+AEROBLAST_STRING: objtemplate ANIM_TAG_STRING ANIM_TAG_STRING OAM_OFF_64x32 0x83E6B48 0x0 0x8231CFC 0x80B1AB9
+SPINOUT_CACOON: objtemplate ANIM_TAG_COCOON ANIM_TAG_COCOON OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E7910 0x80B7BD5
+SPINOUT_GREEN_CHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_RAZOR_LEAF OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80AE71D
+SPINOUT_GREEN_CUT: objtemplate ANIM_TAG_CUT ANIM_TAG_RAZOR_LEAF OAM_OFF_BLEND_32x32 0x83E3290 0x0 0x8231CFC 0x80A44E1
+SPINOUT_WHITE_EXPLODE: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_AIR_WAVE_2 OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC 0x8075D9D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -16968,6 +17422,7 @@ ANIM_NEVER_ENDING_NIGHTMARE:
 	playsound2 0xab 0xc0
 	loadparticle ANIM_TAG_UNUSED_EXPLOSION_2
 	unloadparticle ANIM_TAG_THIN_RING
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_VERTICAL_HEX 0x2 0xA 0xA 0x580A @;Purple
 	call NEN_GEYSER
 	playsound2 0x8e 0xc0
 	launchtemplate NEN_PURPLE_BLAST_BURN 0x2 0x6 0xffe0 0x0 0x18 0x0 0x0 0x0
@@ -17061,66 +17516,66 @@ NEN_HANDS_ATTACK:
 	return
 
 NEN_GEYSER:
-	launchtemplate NEN_EXPLODE 0x84 0x4 0x0003 0x0005 0x1 0x0
-	launchtemplate NEN_GEYSER_HEX 0x82 0x3 0x0 0xfffc 0x10
+	launchtemplate NEN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0003 0x0005 0x1 0x0
+	launchtemplate NEN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfffc 0x10
 	playsound2 0xaa 0x3f
 	pause 0x0
-	launchtemplate NEN_EXPLODE 0x84 0x4 0xfff5 0xfff1 0x1 0x0
-	launchtemplate NEN_GEYSER_HEX 0x82 0x3 0x0 0x100D 0x10
+	launchtemplate NEN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfff5 0xfff1 0x1 0x0
+	launchtemplate NEN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x100D 0x10
 	playsound2 0xaa 0x3f
 	pause 0x0
-	launchtemplate NEN_EXPLODE 0x84 0x4 0x0008 0xfffb 0x1 0x0
-	launchtemplate NEN_GEYSER_HEX 0x82 0x3 0x0 0x4 0x10
+	launchtemplate NEN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0008 0xfffb 0x1 0x0
+	launchtemplate NEN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x4 0x10
 	playsound2 0xaa 0x3f
 	pause 0x0
-	launchtemplate NEN_EXPLODE 0x84 0x4 0xfffa 0x0012 0x1 0x0
-	launchtemplate NEN_GEYSER_HEX 0x82 0x3 0x0 0xfff0 0x10
+	launchtemplate NEN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfffa 0x0012 0x1 0x0
+	launchtemplate NEN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfff0 0x10
 	playsound2 0xaa 0x3f
 	pause 0x0
-	launchtemplate NEN_EXPLODE 0x84 0x4 0x0000 0x0005 0x1 0x0
-	launchtemplate NEN_GEYSER_HEX 0x82 0x3 0x0 0xfffc 0x10
+	launchtemplate NEN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0000 0x0005 0x1 0x0
+	launchtemplate NEN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfffc 0x10
 	playsound2 0xaa 0x3f
-	launchtemplate NEN_EXPLODE 0x84 0x4 0x0003 0xfff5 bank_target 0x0
-	launchtemplate NEN_GEYSER_HEX 0x82 0x3 0x0 0x100D 0x10
+	launchtemplate NEN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0003 0xfff5 bank_target 0x0
+	launchtemplate NEN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x100D 0x10
 	pause 0x0
-	launchtemplate NEN_EXPLODE 0x84 0x4 0xfff5 0xffe1 bank_target 0x0
-	launchtemplate NEN_GEYSER_HEX 0x82 0x3 0x0 0x4 0x10
+	launchtemplate NEN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfff5 0xffe1 bank_target 0x0
+	launchtemplate NEN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x4 0x10
 	pause 0x0
-	launchtemplate NEN_EXPLODE 0x84 0x4 0x0008 0xffeb bank_target 0x0
-	launchtemplate NEN_GEYSER_HEX 0x82 0x3 0x0 0xfff0 0x10
+	launchtemplate NEN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0008 0xffeb bank_target 0x0
+	launchtemplate NEN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfff0 0x10
 	pause 0x0
-	launchtemplate NEN_EXPLODE 0x84 0x4 0xfffa 0x0002 bank_target 0x0
-	launchtemplate NEN_GEYSER_HEX 0x82 0x3 0x0 0xfffc 0x10
+	launchtemplate NEN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfffa 0x0002 bank_target 0x0
+	launchtemplate NEN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfffc 0x10
 	pause 0x0
-	launchtemplate NEN_EXPLODE 0x84 0x4 0x0000 0xfff5 bank_target 0x0
-	launchtemplate NEN_GEYSER_HEX 0x82 0x3 0x0 0x100D 0x10
+	launchtemplate NEN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0000 0xfff5 bank_target 0x0
+	launchtemplate NEN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x100D 0x10
 	pause 0x0
-	launchtemplate NEN_EXPLODE 0x84 0x4 0x0003 0xffe5 bank_target 0x0
-	launchtemplate NEN_GEYSER_HEX 0x82 0x3 0x0 0x4 0x10
+	launchtemplate NEN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0003 0xffe5 bank_target 0x0
+	launchtemplate NEN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x4 0x10
 	pause 0x0
-	launchtemplate NEN_EXPLODE 0x84 0x4 0xfff5 0xffd1 bank_target 0x0
-	launchtemplate NEN_GEYSER_HEX 0x82 0x3 0x0 0xfff0 0x10
+	launchtemplate NEN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfff5 0xffd1 bank_target 0x0
+	launchtemplate NEN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfff0 0x10
 	pause 0x0
-	launchtemplate NEN_EXPLODE 0x84 0x4 0x0008 0xffdb bank_target 0x0
-	launchtemplate NEN_GEYSER_HEX 0x82 0x3 0x0 0xfffc 0x10
+	launchtemplate NEN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0008 0xffdb bank_target 0x0
+	launchtemplate NEN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfffc 0x10
 	pause 0x0
-	launchtemplate NEN_EXPLODE 0x84 0x4 0xfffa 0xfff2 bank_target 0x0
-	launchtemplate NEN_GEYSER_HEX 0x82 0x3 0x0 0x100D 0x10
+	launchtemplate NEN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfffa 0xfff2 bank_target 0x0
+	launchtemplate NEN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x100D 0x10
 	pause 0x0
-	launchtemplate NEN_EXPLODE 0x84 0x4 0x0000 0xffe5 bank_target 0x0
-	launchtemplate NEN_GEYSER_HEX 0x82 0x3 0x0 0x4 0x10
+	launchtemplate NEN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0000 0xffe5 bank_target 0x0
+	launchtemplate NEN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x4 0x10
 	pause 0x0
-	launchtemplate NEN_GEYSER_HEX 0x82 0x3 0x0 0xfff0 0x10
+	launchtemplate NEN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfff0 0x10
 	return
 
 .align 2
-NEN_PURPLE_RING_USER: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_POISON_BUBBLE 0x83ACAA0 0x8231CF0 0x0 0x83E4088 0x8075D9D
-NEN_PURPLE_RING_TARGET: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_POISON_BUBBLE 0x83ACBC0 0x8231CF0 0x0 0x83E40C4 0x8075D9D
-NEN_ENERGY_PURPLE: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_POISON_BUBBLE 0x83ACA18 0x83E3600 0x0 0x8231CFC 0x80A5AD9
-NEN_NIGHTMARE_HAND: objtemplate ANIM_TAG_ASSURANCE_HAND ANIM_TAG_ASSURANCE_HAND 0x83ACA38 0x8231CF0 0x0 0x8231CFC 0x80A4299
-NEN_PURPLE_BLAST_BURN: objtemplate ANIM_TAG_FIRE_PLUME ANIM_TAG_POISON_BUBBLE 0x83AC9D8 0x83E5C50 0x0 0x8231CFC BLASTBURN_TARGET_ASM+1
-NEN_GEYSER_HEX: objtemplate ANIM_TAG_VERTICAL_HEX ANIM_TAG_POISON_BUBBLE 0x83AC9D0 0x83E2C00 0x0 0x8231CFC 0x80B8D59
-NEN_EXPLODE: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_POISON_BUBBLE 0x83AC9D8 0x83E3F90 0x0 0x8231CFC 0x8075D9D
+NEN_PURPLE_RING_USER: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_POISON_BUBBLE OAM_DOUBLE_64x64 0x8231CF0 0x0 0x83E4088 0x8075D9D
+NEN_PURPLE_RING_TARGET: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_POISON_BUBBLE OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E40C4 0x8075D9D
+NEN_ENERGY_PURPLE: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_POISON_BUBBLE OAM_OFF_16x32 0x83E3600 0x0 0x8231CFC 0x80A5AD9
+NEN_NIGHTMARE_HAND: objtemplate ANIM_TAG_ASSURANCE_HAND ANIM_TAG_ASSURANCE_HAND OAM_NORMAL_32x32 0x8231CF0 0x0 0x8231CFC 0x80A4299
+NEN_PURPLE_BLAST_BURN: objtemplate ANIM_TAG_FIRE_PLUME ANIM_TAG_POISON_BUBBLE OAM_OFF_32x32 0x83E5C50 0x0 0x8231CFC BLASTBURN_TARGET_ASM+1
+NEN_GEYSER_HEX: objtemplate ANIM_TAG_VERTICAL_HEX ANIM_TAG_VERTICAL_HEX OAM_OFF_16x16 0x83E2C00 0x0 0x8231CFC SpriteCB_Geyser
+NEN_EXPLODE: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_VERTICAL_HEX OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC 0x8075D9D
 
 @ hook at 0xb8d74 via r0
 .align 2
@@ -17283,20 +17738,20 @@ CORKSCREW_ROCKS_SPRAY:
 
 
 .align 2
-CORKSCREW_METALBIT: objtemplate ANIM_TAG_SPIKES ANIM_TAG_SPIKES 0x83ACB50 0x8231CF0 0x0 0x83E7990 0x80B477D
-CORKSCREW_CHARGE: objtemplate ANIM_TAG_CORKSCREW ANIM_TAG_CORKSCREW 0x83ACB60 0x8231CF0 0x0 0x83E61C8 0x80AE71D
-CORKSCREW_UP: objtemplate ANIM_TAG_CORKSCREW ANIM_TAG_CORKSCREW 0x83ACA40 0x8231CF0 0x0 0x83e6b8c 0x80B477D
-CORKSCREW_DOWN: objtemplate ANIM_TAG_CORKSCREW ANIM_TAG_CORKSCREW 0x83ACA40 0x8231CF0 0x0 CORKSCREW_DOWN_ROTATIONS 0x80B0D59
+CORKSCREW_METALBIT: objtemplate ANIM_TAG_SPIKES ANIM_TAG_SPIKES OAM_NORMAL_BLEND_16x16 0x8231CF0 0x0 0x83E7990 0x80B477D
+CORKSCREW_CHARGE: objtemplate ANIM_TAG_CORKSCREW ANIM_TAG_CORKSCREW OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80AE71D
+CORKSCREW_UP: objtemplate ANIM_TAG_CORKSCREW ANIM_TAG_CORKSCREW OAM_NORMAL_64x64 0x8231CF0 0x0 0x83e6b8c 0x80B477D
+CORKSCREW_DOWN: objtemplate ANIM_TAG_CORKSCREW ANIM_TAG_CORKSCREW OAM_NORMAL_64x64 0x8231CF0 0x0 CORKSCREW_DOWN_ROTATIONS 0x80B0D59
 CORKSCREW_DOWN_ROTATIONS: .word CORKSCREW_DOWN_ROT
 CORKSCREW_DOWN_ROT: .hword 0,0,0x0180,0,0x7fff,0,0,0
-CORKSCREW_STRIKE: objtemplate ANIM_TAG_CORKSCREW ANIM_TAG_CORKSCREW 0x83ACA40 0x8231CF0 0x0 CORKSCREW_STRIKE_ROTS 0x80B1C3D
+CORKSCREW_STRIKE: objtemplate ANIM_TAG_CORKSCREW ANIM_TAG_CORKSCREW OAM_NORMAL_64x64 0x8231CF0 0x0 CORKSCREW_STRIKE_ROTS 0x80B1C3D
 CORKSCREW_STRIKE_ROTS: .word CORKSCREW_PLAYER_ROT, CORKSCREW_ENEMY_ROT
 CORKSCREW_PLAYER_ROT: .hword 0,0,0x01b9,0,0x7fff,0,0,0
 CORKSCREW_ENEMY_ROT: .hword 0,0,0x0150,0,0x7fff,0,0,0
 
 @ on opponent
-CORKSCREW_RIGHT_UP: objtemplate ANIM_TAG_CORKSCREW ANIM_TAG_CORKSCREW 0x83ACA40 0x8231CF0 0x0 CORKSCREW_RIGHTUP_ROTATIONS 0x80E24E1
-CORKSCREW_LEFT_UP: objtemplate ANIM_TAG_CORKSCREW ANIM_TAG_CORKSCREW 0x83ACA40 0x8231CF0 0x0 CORKSCREW_LEFT_ROTATIONS 0x80E24E1
+CORKSCREW_RIGHT_UP: objtemplate ANIM_TAG_CORKSCREW ANIM_TAG_CORKSCREW OAM_NORMAL_64x64 0x8231CF0 0x0 CORKSCREW_RIGHTUP_ROTATIONS 0x80E24E1
+CORKSCREW_LEFT_UP: objtemplate ANIM_TAG_CORKSCREW ANIM_TAG_CORKSCREW OAM_NORMAL_64x64 0x8231CF0 0x0 CORKSCREW_LEFT_ROTATIONS 0x80E24E1
 CORKSCREW_RIGHTUP_ROTATIONS: .word CORKSCREW_RIGHTUP_ROT
 CORKSCREW_RIGHTUP_ROT: .hword 0,0,0x01c2,0,0x7fff,0,0,0
 
@@ -17306,8 +17761,8 @@ CORKSCREW_DOWNUP_ROTATIONS: .word CORKSCREW_DOWNUP_ROT
 CORKSCREW_DOWNUP_ROT: .hword 0,0,0x0180,0,0x7fff,0,0,0
 
 @ on player
-CORKSCREW_RIGHT_DOWN: objtemplate ANIM_TAG_CORKSCREW ANIM_TAG_CORKSCREW 0x83ACA40 0x8231CF0 0x0 CORKSCREW_RIGHTDOWN_ROTATIONS 0x80E24E1
-CORKSCREW_LEFT_DOWN: objtemplate ANIM_TAG_CORKSCREW ANIM_TAG_CORKSCREW 0x83ACA40 0x8231CF0 0x0 CORKSCREW_LEFT_ROTATIONS 0x80E24E1
+CORKSCREW_RIGHT_DOWN: objtemplate ANIM_TAG_CORKSCREW ANIM_TAG_CORKSCREW OAM_NORMAL_64x64 0x8231CF0 0x0 CORKSCREW_RIGHTDOWN_ROTATIONS 0x80E24E1
+CORKSCREW_LEFT_DOWN: objtemplate ANIM_TAG_CORKSCREW ANIM_TAG_CORKSCREW OAM_NORMAL_64x64 0x8231CF0 0x0 CORKSCREW_LEFT_ROTATIONS 0x80E24E1
 CORKSCREW_RIGHTDOWN_ROTATIONS: .word CORKSCREW_RIGHTDOWN_ROT
 CORKSCREW_RIGHTDOWN_ROT: .hword 0,0,0x01ba,0,0x7fff,0,0,0
 
@@ -17318,7 +17773,7 @@ CORKSCREW_RIGHTDOWN_ROT: .hword 0,0,0x01ba,0,0x7fff,0,0,0
 ANIM_INFERNO_OVERDRIVE:
 	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT @charge
 	loadparticle ANIM_TAG_SMALL_EMBER @fire
-	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_CIRCLE_OF_LIGHT 0x0 0x0 0xA 0x1F
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_CIRCLE_OF_LIGHT 0x0 0xA 0xA 0x1F
 	launchtask AnimTask_AllBanksInvisibleExceptAttackerAndTarget 0xA 0x0
 	waitanimation
 	loadBG1 BG_INFERNO_OVERDRIVE
@@ -17428,8 +17883,8 @@ IO_EXPLOSION:
 
 .align 2
 IO_RED_SUPERPOWER: objtemplate ANIM_TAG_METEOR ANIM_TAG_VERTICAL_HEX sGrowingSuperpowerOAM 0x8231CF0 0x0 gSpriteAffineAnimTable_GrowingSuperpower SpriteCB_GrowingSuperpower
-IO_RED_CHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_CIRCLE_OF_LIGHT 0x83ACB60 0x8231CF0 0x0 0x83E61C8 0x80AE71D
-INFERNO_EXPLOSION: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_UNUSED_EXPLOSION_2 0x83AC9D8 0x83E3F90 0x0 0x8231CFC 0x8075D9D
+IO_RED_CHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_CIRCLE_OF_LIGHT OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80AE71D
+INFERNO_EXPLOSION: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_UNUSED_EXPLOSION_2 OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC 0x8075D9D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -17503,28 +17958,28 @@ ANIM_HYDRO_VORTEX:
 
 HV_BUBBLES_BOTH:
 	launchtemplate 0x83e5ab0 0x2 0x4 0xa 0xa 0x14 bank_attacker
-	launchtemplate 0x83e5ab0 0x82 0x4 0xa 0xa 0x14 bank_target
+	launchtemplate 0x83e5ab0 TEMPLATE_TARGET | 2, 0x4, 0xa 0xa 0x14 bank_target
 	pause 0x4
 	launchtemplate 0x83e5ab0 0x2 0x4 0x14 0xffec 0x14 bank_attacker
-	launchtemplate 0x83e5ab0 0x82 0x4 0x14 0xffec 0x14 bank_target
+	launchtemplate 0x83e5ab0 TEMPLATE_TARGET | 2, 0x4, 0x14 0xffec 0x14 bank_target
 	pause 0x4
 	launchtemplate 0x83e5ab0 0x2 0x4 0xfff1 0xf 0x14 bank_attacker
-	launchtemplate 0x83e5ab0 0x82 0x4 0xfff1 0xf 0x14 bank_target
+	launchtemplate 0x83e5ab0 TEMPLATE_TARGET | 2, 0x4, 0xfff1 0xf 0x14 bank_target
 	pause 0x4
 	launchtemplate 0x83e5ab0 0x2 0x4 0x0 0x0 0x14 bank_attacker
-	launchtemplate 0x83e5ab0 0x82 0x4 0x0 0x0 0x14 bank_target
+	launchtemplate 0x83e5ab0 TEMPLATE_TARGET | 2, 0x4, 0x0 0x0 0x14 bank_target
 	pause 0x4
 	launchtemplate 0x83e5ab0 0x2 0x4 0xfff6 0xffec 0x14 bank_attacker
-	launchtemplate 0x83e5ab0 0x82 0x4 0xfff6 0xffec 0x14 bank_target
+	launchtemplate 0x83e5ab0 TEMPLATE_TARGET | 2, 0x4, 0xfff6 0xffec 0x14 bank_target
 	pause 0x4
 	launchtemplate 0x83e5ab0 0x2 0x4 0x10 0xfff8 0x14 bank_attacker
-	launchtemplate 0x83e5ab0 0x82 0x4 0x10 0xfff8 0x14 bank_target
+	launchtemplate 0x83e5ab0 TEMPLATE_TARGET | 2, 0x4, 0x10 0xfff8 0x14 bank_target
 	pause 0x4
 	launchtemplate 0x83e5ab0 0x2 0x4 0x5 0x8 0x14 bank_attacker
-	launchtemplate 0x83e5ab0 0x82 0x4 0x5 0x8 0x14 bank_target
+	launchtemplate 0x83e5ab0 TEMPLATE_TARGET | 2, 0x4, 0x5 0x8 0x14 bank_target
 	pause 0x4
 	launchtemplate 0x83e5ab0 0x2 0x4 0xfff0 0x0 0x14 bank_attacker
-	launchtemplate 0x83e5ab0 0x82 0x4 0xfff0 0x0 0x14 bank_target
+	launchtemplate 0x83e5ab0 TEMPLATE_TARGET | 2, 0x4, 0xfff0 0x0 0x14 bank_target
 	return
 
 HV_WHIRLPOOL_HURRICANE:
@@ -17551,8 +18006,8 @@ HV_WHIRLPOOL_HURRICANE:
 
 .align 2
 HV_BLUE_SUPERPOWER: objtemplate ANIM_TAG_METEOR ANIM_TAG_WATER_ORB sGrowingSuperpowerOAM 0x8231CF0 0x0 gSpriteAffineAnimTable_GrowingSuperpower SpriteCB_GrowingSuperpower
-HV_BLUE_HURRICANE: objtemplate ANIM_TAG_GUST ANIM_TAG_WATER_ORB 0x83ACA20 0x8231CF0 0x0 0x8231CFC 0x80B18E5
-HV_BLUE_HIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_WATER_ORB 0x83ACB58 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+HV_BLUE_HURRICANE: objtemplate ANIM_TAG_GUST ANIM_TAG_WATER_ORB OAM_OFF_32x64 0x8231CF0 0x0 0x8231CFC 0x80B18E5
+HV_BLUE_HIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_WATER_ORB OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -17567,7 +18022,7 @@ ANIM_BLOOM_DOOM:
 	launchtask AnimTask_AllBanksInvisibleExceptAttackerAndTarget 0xA 0x0
 	waitanimation
 	setblends 0x80c
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x2 0x0 0x4 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x4 0x0
 	soundcomplex 0x5F 0xC0 0x9 0x3
 	launchtemplate BD_GREEN_CHARGE 0x2 0x1 0x0
 	pause 0x3C
@@ -17590,7 +18045,7 @@ ANIM_BLOOM_DOOM:
 	launchtemplate BD_PETAL_SPIN 0x3 0x4 0x0 0x0 0x38 0x18
 	playsound2 0xDB 0xc0
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x4 0x4 0x0 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x4 0x0 0x0
 	waitanimation
 	unloadparticle ANIM_TAG_CIRCLE_OF_LIGHT
 	call BD_GREEN_HURRICANE_USER
@@ -17750,18 +18205,18 @@ RESET_FROM_GREEN_SCREEN:
 	launchtask AnimTask_AllBanksVisible 0xA 0x0
 	waitanimation
 	pause 0x5
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x2 0x0 0x0 0x33ED
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x0 0x33ED
 	waitanimation
 	return
 
 .align 2
-BD_PETAL_SPIN: objtemplate ANIM_TAG_FLOWER ANIM_TAG_FLOWER 0x83AC9D0 0x83E2B8C 0x0 0x8231cfc 0x80ACDE9
-BD_GREEN_CHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_RAZOR_LEAF 0x83ACB60 0x8231CF0 0x0 0x83E61C8 0x80AE71D
-BD_GREEN_HURRICANE: objtemplate ANIM_TAG_GUST ANIM_TAG_RAZOR_LEAF 0x83ACA20 0x8231CF0 0x0 0x8231CFC HURRICANE_USER_ASM+1
-BD_GEYSER_FLOWER: objtemplate ANIM_TAG_FLOWER ANIM_TAG_FLOWER 0x83AC9D0 0x83E2B8C 0x0 0x8231CFC 0x80B8D59
-BD_GREEN_BEAM: objtemplate ANIM_TAG_ORBS ANIM_TAG_RAZOR_LEAF 0x83AC9C8 0x83E2A20 0x0 0x8231CFC 0x80A25ED
-BD_PETAL_STAR: objtemplate ANIM_TAG_FLOWER ANIM_TAG_FLOWER 0x83AC9D0 0x83E2B8C 0x0 0x8231CFC 0x80A4299
-BD_GREEN_EXPLOSION: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_RAZOR_LEAF 0x83AC9D8 0x83E3F90 0x0 0x8231CFC 0x8075D9D
+BD_PETAL_SPIN: objtemplate ANIM_TAG_FLOWER ANIM_TAG_FLOWER OAM_OFF_16x16 0x83E2B8C 0x0 0x8231cfc 0x80ACDE9
+BD_GREEN_CHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_RAZOR_LEAF OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80AE71D
+BD_GREEN_HURRICANE: objtemplate ANIM_TAG_GUST ANIM_TAG_RAZOR_LEAF OAM_OFF_32x64 0x8231CF0 0x0 0x8231CFC HURRICANE_USER_ASM+1
+BD_GEYSER_FLOWER: objtemplate ANIM_TAG_FLOWER ANIM_TAG_FLOWER OAM_OFF_16x16 0x83E2B8C 0x0 0x8231CFC SpriteCB_Geyser
+BD_GREEN_BEAM: objtemplate ANIM_TAG_ORBS ANIM_TAG_RAZOR_LEAF OAM_OFF_8x8 0x83E2A20 0x0 0x8231CFC 0x80A25ED
+BD_PETAL_STAR: objtemplate ANIM_TAG_FLOWER ANIM_TAG_FLOWER OAM_OFF_16x16 0x83E2B8C 0x0 0x8231CFC 0x80A4299
+BD_GREEN_EXPLOSION: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_RAZOR_LEAF OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC 0x8075D9D
 
 @ original 080B18E4
 HURRICANE_USER_ASM:
@@ -17816,35 +18271,35 @@ ANIM_GIGAVOLT_HAVOC:
 	waitanimation
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x6 0x0 0x10 0x0000
 	playsound2 0x70 0xc0
-	launchtemplate 0x83e5fc4 0x0 0x7 0x20 0x18 0xbe 0xc 0x0 0x1 0x0
-	launchtemplate 0x83e5fc4 0x0 0x7 0x50 0x18 0x16 0xc 0x0 0x1 0x0
-	launchtemplate 0x83e5fc4 0x0 0x7 0x9c 0x18 0x79 0xd 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x20 0x18 0xbe 0xc 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x50 0x18 0x16 0xc 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x9c 0x18 0x79 0xd 0x0 0x1 0x1
 	pause 0xa
 	playsound2 0x70 0xc0
-	launchtemplate 0x83e5fc4 0x0 0x7 0x64 0x18 0x3c 0xa 0x0 0x1 0x0
-	launchtemplate 0x83e5fc4 0x0 0x7 0xaa 0x18 0x2a 0xb 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x64 0x18 0x3c 0xa 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0xaa 0x18 0x2a 0xb 0x0 0x1 0x1
 	pause 0x0
-	launchtemplate 0x83e5fc4 0x0 0x7 0xee 0x18 0xa5 0xa 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0xee 0x18 0xa5 0xa 0x0 0x1 0x1
 	pause 0x0
 	pause 0x5
-	launchtemplate 0x83e5fc4 0x0 0x7 0x64 0x18 0x3c 0xa 0x0 0x1 0x0
-	launchtemplate 0x83e5fc4 0x0 0x7 0xaa 0x18 0x2a 0xb 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x64 0x18 0x3c 0xa 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0xaa 0x18 0x2a 0xb 0x0 0x1 0x1
 	pause 0x0
-	launchtemplate 0x83e5fc4 0x0 0x7 0xee 0x18 0xa5 0xa 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0xee 0x18 0xa5 0xa 0x0 0x1 0x1
 	pause 0x5
 	launchtemplate 0x83e6070 0x4 0x8 0x0 0x0 0x10 0xc 0x20 0x14 0x0 0x0
 	launchtemplate 0x83e6070 0x4 0x8 0x0 0x0 0x10 0xc 0x60 0x14 0x1 0x0
 	launchtemplate 0x83e6070 0x4 0x8 0x0 0x0 0x10 0xc 0xa0 0x14 0x0 0x0
 	launchtemplate 0x83e6070 0x4 0x8 0x0 0x0 0x10 0xc 0xe0 0x14 0x2 0x0
 	pause 0x5
-	launchtemplate 0x83e5fc4 0x0 0x7 0x64 0x18 0x3c 0xa 0x0 0x1 0x0
-	launchtemplate 0x83e5fc4 0x0 0x7 0xaa 0x18 0x2a 0xb 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x64 0x18 0x3c 0xa 0x0 0x1 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0xaa 0x18 0x2a 0xb 0x0 0x1 0x1
 	pause 0x0
-	launchtemplate 0x83e5fc4 0x0 0x7 0xee 0x18 0xa5 0xa 0x0 0x1 0x1
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0xee 0x18 0xa5 0xa 0x0 0x1 0x1
 	playsound2 0x70 0xc0
 	pokespritetoBG bank_attacker
 	playsound2 0x70 0xc0
-	launchtask 0x80ae541 0x2 0x4 0x0 0x3c 0x2 0xc 	@charge particles to user
+	launchtask AnimTask_ChargeBalls 0x2 0x4 0x0 0x3c 0x2 0xc 	@charge particles to user
 	launchtemplate 0x83e6070 0x82 0x8 0x0 0x0 0x10 0x2c 0x20 0x28 0x0 0x3
 	launchtemplate 0x83e6070 0x82 0x8 0x0 0x0 0x10 0x2c 0x60 0x28 0x1 0x3
 	launchtemplate 0x83e6070 0x82 0x8 0x0 0x0 0x10 0x2c 0xa0 0x28 0x0 0x3
@@ -17959,20 +18414,20 @@ ANIM_GIGAVOLT_HAVOC:
 	playsound2 0x83 0x3f
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x2 0xc 0x0 0x5bff
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x2 0x10 0x0 0x0000
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x10 0x0 0x0000
 	waitanimation
 	launchtask AnimTask_AllBanksVisible 0xa 0x0
 	waitanimation
 	endanimation
 
 HAVOC_GEYSER:
-	launchtemplate HAVOC_GEYSER_HEX 0x82 0x3 0x0 0xfffc 0x10	@ -4, -0x10
+	launchtemplate HAVOC_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfffc 0x10	@ -4, -0x10
 	pause 0x0
-	launchtemplate HAVOC_GEYSER_HEX 0x82 0x3 0x0 0x100D 0x10	@
+	launchtemplate HAVOC_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x100D 0x10	@
 	pause 0x0
-	launchtemplate HAVOC_GEYSER_HEX 0x82 0x3 0x0 0x4 0x10
+	launchtemplate HAVOC_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x4 0x10
 	pause 0x0
-	launchtemplate HAVOC_GEYSER_HEX 0x82 0x3 0x0 0xfff0 0x10
+	launchtemplate HAVOC_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfff0 0x10
 	pause 0x0
 	return
 
@@ -17988,10 +18443,10 @@ HAVOC_SPARK_TARGET:
 	return
 
 .align 2
-HAVOC_CHARGE_SPEAR: objtemplate ANIM_TAG_HAVOC_SPEAR ANIM_TAG_HAVOC_SPEAR 0x83ACB60 0x8231CF0 0x0 0x83E61C8 0x80AE71D
-HAVOC_SPEAR: objtemplate ANIM_TAG_HAVOC_SPEAR ANIM_TAG_HAVOC_SPEAR 0x83ACB60 0x8231CF0 0x0 0x8231CFC 0x80B12E9
-HAVOC_RING_TARGET: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_CIRCLE_OF_LIGHT 0x83ACAA0 0x8231CF0 0x0 0x83E4088 0x8075D9D
-HAVOC_GEYSER_HEX: objtemplate ANIM_TAG_VERTICAL_HEX ANIM_TAG_CIRCLE_OF_LIGHT 0x83AC9D0 0x83E2C00 0x0 0x8231CFC 0x80B8D59
+HAVOC_CHARGE_SPEAR: objtemplate ANIM_TAG_HAVOC_SPEAR ANIM_TAG_HAVOC_SPEAR OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80AE71D
+HAVOC_SPEAR: objtemplate ANIM_TAG_HAVOC_SPEAR ANIM_TAG_HAVOC_SPEAR OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x8231CFC 0x80B12E9
+HAVOC_RING_TARGET: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_CIRCLE_OF_LIGHT OAM_DOUBLE_64x64 0x8231CF0 0x0 0x83E4088 0x8075D9D
+HAVOC_GEYSER_HEX: objtemplate ANIM_TAG_VERTICAL_HEX ANIM_TAG_CIRCLE_OF_LIGHT OAM_OFF_16x16 0x83E2C00 0x0 0x8231CFC SpriteCB_Geyser
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -18059,10 +18514,10 @@ SPSY_FINISH_PSYCHE:
 	loaddefaultBG
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x3 0x0 0xf 0x1
 	launchtask 0x80998b1 0x5 0x5 0xfffc 0xfffc 0xf 0x1 0x1
-	launchtemplate 0x83E6820 0x82 0x4 0x1 0x0 0x0 0x0  		@ -8, -12
-	launchtemplate 0x83E6820 0x82 0x4 0x1 0x1 0x0 0x0
-	launchtemplate 0x83E6820 0x82 0x4 0x1 0x2 0x0 0x0
-	launchtemplate 0x83E6820 0x82 0x4 0x1 0x3 0x0 0x0
+	launchtemplate 0x83E6820 TEMPLATE_TARGET | 2, 0x4, 0x1 0x0 0x0 0x0  		@ -8, -12
+	launchtemplate 0x83E6820 TEMPLATE_TARGET | 2, 0x4, 0x1 0x1 0x0 0x0
+	launchtemplate 0x83E6820 TEMPLATE_TARGET | 2, 0x4, 0x1 0x2 0x0 0x0
+	launchtemplate 0x83E6820 TEMPLATE_TARGET | 2, 0x4, 0x1 0x3 0x0 0x0
 	waitforBG
 	launchtask AnimTask_AllBanksVisible 0xA 0x0
 	waitanimation
@@ -18159,9 +18614,9 @@ SPSY_PLAYER_FLINGING:
 	return
 
 .align 2
-SPSY_REFLECT_HIT: objtemplate ANIM_TAG_BLUE_LIGHT_WALL ANIM_TAG_BLUE_LIGHT_WALL 0x83acb58 0x8231cf0 0x0 0x83e7bf8 0x80ba561
-SPSY_PINK_CHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_PINK_PETAL 0x83ACB60 0x8231CF0 0x0 0x83E61C8 0x80AE71D
-SPSY_PINK_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_PINK_PETAL 0x83ACBC0 0x8231CF0 0x0 0x83E40C4 0x8075D9D
+SPSY_REFLECT_HIT: objtemplate ANIM_TAG_BLUE_LIGHT_WALL ANIM_TAG_BLUE_LIGHT_WALL OAM_NORMAL_BLEND_32x32 0x8231cf0 0x0 0x83e7bf8 0x80ba561
+SPSY_PINK_CHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_PINK_PETAL OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80AE71D
+SPSY_PINK_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_PINK_PETAL OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E40C4 0x8075D9D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -18174,7 +18629,7 @@ ANIM_SUBZERO_SLAMMER:
 	waitanimation
 	loadBG1 BG_ICE
 	waitfortransparentbg
-	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_UNUSED_EXPLOSION_2 0x0 0x0 0xC 0x6A23
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_UNUSED_EXPLOSION_2 0x0 0xC 0xC 0x6A23
 	launchtask AnimTask_arg7_is_target_player 0x2 0x0
 	jumpifargmatches 0x7 bank_target SZS_ON_PLAYER
 SZS_ON_TARGET:
@@ -18249,10 +18704,10 @@ SZS_FINISH_BG:
 	loadparticle ANIM_TAG_TORN_METAL
 	playsound2 0x86 0x3f
 	pause 0x3
-	launchtemplate 0x83E6820 0x82 0x4 0x1 0x0 0x0 0x0  		@ -8, -12
-	launchtemplate 0x83E6820 0x82 0x4 0x1 0x1 0x0 0x0
-	launchtemplate 0x83E6820 0x82 0x4 0x1 0x2 0x0 0x0
-	launchtemplate 0x83E6820 0x82 0x4 0x1 0x3 0x0 0x0
+	launchtemplate 0x83E6820 TEMPLATE_TARGET | 2, 0x4, 0x1 0x0 0x0 0x0  		@ -8, -12
+	launchtemplate 0x83E6820 TEMPLATE_TARGET | 2, 0x4, 0x1 0x1 0x0 0x0
+	launchtemplate 0x83E6820 TEMPLATE_TARGET | 2, 0x4, 0x1 0x2 0x0 0x0
+	launchtemplate 0x83E6820 TEMPLATE_TARGET | 2, 0x4, 0x1 0x3 0x0 0x0
 	launchtask AnimTask_screen_shake 0x5 0x3 bank_target 0x8 0x1c
 	call SZS_ICE_EXPLOSION
 	call SZS_ICE_EXPLOSION
@@ -18268,33 +18723,33 @@ SZS_FINISH_BG:
 SZS_ICE_EXPLOSION:
 	playsound2 0xab 0xc0
 	launchtemplate SZS_BLUE_EXPLOSION 0x83 0x4 0x0 0x0 bank_target 0x1
-	launchtemplate 0x83e63e0 0x82 0x3 0xfff6 0xfff6 0x0
+	launchtemplate 0x83e63e0 TEMPLATE_TARGET | 2, 0x3, 0xfff6 0xfff6 0x0
 	pause 0x3
-	launchtemplate 0x83e63f8 0x82 0x3 0xa 0x14 0x0
+	launchtemplate 0x83e63f8 TEMPLATE_TARGET | 2, 0x3, 0xa 0x14 0x0
 	pause 0x3
 	playsound2 0xab 0xc0
 	launchtemplate SZS_BLUE_EXPLOSION 0x83 0x4 0x18 0xffe8 bank_target 0x1
-	launchtemplate 0x83e63e0 0x82 0x3 0xfffb 0xa 0x0
+	launchtemplate 0x83e63e0 TEMPLATE_TARGET | 2, 0x3, 0xfffb 0xa 0x0
 	pause 0x3
-	launchtemplate 0x83e63f8 0x82 0x3 0x11 0xfff4 0x0
+	launchtemplate 0x83e63f8 TEMPLATE_TARGET | 2, 0x3, 0x11 0xfff4 0x0
 	pause 0x3
 	playsound2 0xab 0xc0
 	launchtemplate SZS_BLUE_EXPLOSION 0x83 0x4 0xfff0 0x10 bank_target 0x1
-	launchtemplate 0x83e63f8 0x82 0x3 0xfff1 0xf 0x0
+	launchtemplate 0x83e63f8 TEMPLATE_TARGET | 2, 0x3, 0xfff1 0xf 0x0
 	pause 0x3
-	launchtemplate 0x83e63f8 0x82 0x3 0x0 0x0 0x0
+	launchtemplate 0x83e63f8 TEMPLATE_TARGET | 2, 0x3, 0x0 0x0 0x0
 	pause 0x3
 	playsound2 0xab 0xc0
 	launchtemplate SZS_BLUE_EXPLOSION 0x83 0x4 0xffe8 0xfff4 bank_target 0x1
-	launchtemplate 0x83e63e0 0x82 0x3 0x14 0x2 0x0
+	launchtemplate 0x83e63e0 TEMPLATE_TARGET | 2, 0x3, 0x14 0x2 0x0
 	pause 0x3
-	launchtemplate 0x83e63e0 0x82 0x3 0xfff6 0xfff6 0x0
+	launchtemplate 0x83e63e0 TEMPLATE_TARGET | 2, 0x3, 0xfff6 0xfff6 0x0
 	pause 0x3
 	playsound2 0xab 0xc0
 	launchtemplate SZS_BLUE_EXPLOSION 0x83 0x4 0x10 0x10 bank_target 0x1
-	launchtemplate 0x83e63f8 0x82 0x3 0x11 0xfff4 0x0
+	launchtemplate 0x83e63f8 TEMPLATE_TARGET | 2, 0x3, 0x11 0xfff4 0x0
 	pause 0x3
-	launchtemplate 0x83e63f8 0x82 0x3 0xfff1 0xf 0x0
+	launchtemplate 0x83e63f8 TEMPLATE_TARGET | 2, 0x3, 0xfff1 0xf 0x0
 	pause 0x3
 	return
 
@@ -18318,9 +18773,9 @@ SZS_ICE_SWIRL_CALL:
 	return
 
 .align 2
-SZS_ICE_SPIN: objtemplate ANIM_TAG_ICE_CRYSTALS ANIM_TAG_ICE_CRYSTALS 0x83ACB88 0x83E6320 0x0 0x83E63DC 0x80ACDE9
-SZS_BLUE_EXPLOSION: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_UNUSED_EXPLOSION_2 0x83AC9D8 0x83E3F90 0x0 0x8231CFC 0x8075D9D
-SZS_ICE_SWIRL: objtemplate ANIM_TAG_ICE_CRYSTALS ANIM_TAG_ICE_CRYSTALS 0x83ACB88 0x83E6320 0x0 0x83E63DC 0x80B477D
+SZS_ICE_SPIN: objtemplate ANIM_TAG_ICE_CRYSTALS ANIM_TAG_ICE_CRYSTALS OAM_NORMAL_BLEND_8x16 0x83E6320 0x0 0x83E63DC 0x80ACDE9
+SZS_BLUE_EXPLOSION: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_UNUSED_EXPLOSION_2 OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC 0x8075D9D
+SZS_ICE_SWIRL: objtemplate ANIM_TAG_ICE_CRYSTALS ANIM_TAG_ICE_CRYSTALS OAM_NORMAL_BLEND_8x16 0x83E6320 0x0 0x83E63DC 0x80B477D
 
 .align 2
 GLACIER_TASK_ATTACKER:
@@ -18487,56 +18942,56 @@ DRAKE_PURPLE_BUFF:
 	return
 
 DEVESTATING_DRAKE_GEYSER:
-	launchtemplate DRAKE_EXPLODE 0x84 0x4 0x0003 0x0005 0x1 0x0
-	launchtemplate DRAKE_GEYSER_HEX 0x82 0x3 0x0 0xfffc 0x10
+	launchtemplate DRAKE_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0003 0x0005 0x1 0x0
+	launchtemplate DRAKE_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfffc 0x10
 	playsound2 0xaa 0x3f
 	pause 0x0
-	launchtemplate DRAKE_EXPLODE 0x84 0x4 0xfff5 0xfff1 0x1 0x0
-	launchtemplate DRAKE_GEYSER_HEX 0x82 0x3 0x0 0x100D 0x10
+	launchtemplate DRAKE_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfff5 0xfff1 0x1 0x0
+	launchtemplate DRAKE_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x100D 0x10
 	playsound2 0xaa 0x3f
 	pause 0x0
-	launchtemplate DRAKE_EXPLODE 0x84 0x4 0x0008 0xfffb 0x1 0x0
-	launchtemplate DRAKE_GEYSER_HEX 0x82 0x3 0x0 0x4 0x10
+	launchtemplate DRAKE_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0008 0xfffb 0x1 0x0
+	launchtemplate DRAKE_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x4 0x10
 	playsound2 0xaa 0x3f
 	pause 0x0
-	launchtemplate DRAKE_EXPLODE 0x84 0x4 0xfffa 0x0012 0x1 0x0
-	launchtemplate DRAKE_GEYSER_HEX 0x82 0x3 0x0 0xfff0 0x10
+	launchtemplate DRAKE_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfffa 0x0012 0x1 0x0
+	launchtemplate DRAKE_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfff0 0x10
 	playsound2 0xaa 0x3f
 	pause 0x0
-	launchtemplate DRAKE_EXPLODE 0x84 0x4 0x0000 0x0005 0x1 0x0
-	launchtemplate DRAKE_GEYSER_HEX 0x82 0x3 0x0 0xfffc 0x10
+	launchtemplate DRAKE_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0000 0x0005 0x1 0x0
+	launchtemplate DRAKE_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfffc 0x10
 	playsound2 0xaa 0x3f
-	launchtemplate DRAKE_EXPLODE 0x84 0x4 0x0003 0xfff5 bank_target 0x0
-	launchtemplate DRAKE_GEYSER_HEX 0x82 0x3 0x0 0x100D 0x10
+	launchtemplate DRAKE_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0003 0xfff5 bank_target 0x0
+	launchtemplate DRAKE_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x100D 0x10
 	pause 0x0
-	launchtemplate DRAKE_EXPLODE 0x84 0x4 0xfff5 0xffe1 bank_target 0x0
-	launchtemplate DRAKE_GEYSER_HEX 0x82 0x3 0x0 0x4 0x10
+	launchtemplate DRAKE_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfff5 0xffe1 bank_target 0x0
+	launchtemplate DRAKE_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x4 0x10
 	pause 0x0
-	launchtemplate DRAKE_EXPLODE 0x84 0x4 0x0008 0xffeb bank_target 0x0
-	launchtemplate DRAKE_GEYSER_HEX 0x82 0x3 0x0 0xfff0 0x10
+	launchtemplate DRAKE_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0008 0xffeb bank_target 0x0
+	launchtemplate DRAKE_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfff0 0x10
 	pause 0x0
-	launchtemplate DRAKE_EXPLODE 0x84 0x4 0xfffa 0x0002 bank_target 0x0
-	launchtemplate DRAKE_GEYSER_HEX 0x82 0x3 0x0 0xfffc 0x10
+	launchtemplate DRAKE_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfffa 0x0002 bank_target 0x0
+	launchtemplate DRAKE_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfffc 0x10
 	pause 0x0
-	launchtemplate DRAKE_EXPLODE 0x84 0x4 0x0000 0xfff5 bank_target 0x0
-	launchtemplate DRAKE_GEYSER_HEX 0x82 0x3 0x0 0x100D 0x10
+	launchtemplate DRAKE_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0000 0xfff5 bank_target 0x0
+	launchtemplate DRAKE_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x100D 0x10
 	pause 0x0
-	launchtemplate DRAKE_EXPLODE 0x84 0x4 0x0003 0xffe5 bank_target 0x0
-	launchtemplate DRAKE_GEYSER_HEX 0x82 0x3 0x0 0x4 0x10
+	launchtemplate DRAKE_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0003 0xffe5 bank_target 0x0
+	launchtemplate DRAKE_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x4 0x10
 	pause 0x0
-	launchtemplate DRAKE_EXPLODE 0x84 0x4 0xfff5 0xffd1 bank_target 0x0
-	launchtemplate DRAKE_GEYSER_HEX 0x82 0x3 0x0 0xfff0 0x10
+	launchtemplate DRAKE_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfff5 0xffd1 bank_target 0x0
+	launchtemplate DRAKE_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfff0 0x10
 	pause 0x0
-	launchtemplate DRAKE_EXPLODE 0x84 0x4 0x0008 0xffdb bank_target 0x0
-	launchtemplate DRAKE_GEYSER_HEX 0x82 0x3 0x0 0xfffc 0x10
+	launchtemplate DRAKE_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0008 0xffdb bank_target 0x0
+	launchtemplate DRAKE_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfffc 0x10
 	pause 0x0
-	launchtemplate DRAKE_EXPLODE 0x84 0x4 0xfffa 0xfff2 bank_target 0x0
-	launchtemplate DRAKE_GEYSER_HEX 0x82 0x3 0x0 0x100D 0x10
+	launchtemplate DRAKE_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfffa 0xfff2 bank_target 0x0
+	launchtemplate DRAKE_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x100D 0x10
 	pause 0x0
-	launchtemplate DRAKE_EXPLODE 0x84 0x4 0x0000 0xffe5 bank_target 0x0
-	launchtemplate DRAKE_GEYSER_HEX 0x82 0x3 0x0 0x4 0x10
+	launchtemplate DRAKE_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0000 0xffe5 bank_target 0x0
+	launchtemplate DRAKE_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x4 0x10
 	pause 0x0
-	launchtemplate DRAKE_GEYSER_HEX 0x82 0x3 0x0 0xfff0 0x10
+	launchtemplate DRAKE_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfff0 0x10
 	return
 
 DRAKE_EXPLOSION:
@@ -18559,16 +19014,16 @@ DRAKE_EXPLOSION:
 	return
 
 .align 2
-DRAKE_ENERGY_PURPLE: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_POISON_BUBBLE 0x83ACA18 0x83E3600 0x0 0x8231CFC 0x80A5AD9
-DRAKE_PURPLE_SHOCKWAVE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_POISON_BUBBLE 0x83ACB60 0x8231CF0 0x0 0x83E61C8 0x80AEC81
-DRAKE_UP: objtemplate ANIM_TAG_PURPLE_DRAKE ANIM_TAG_PURPLE_DRAKE 0x83ACA40 0x8231CF0 0x0 DRAKE_UP_ROTATIONS 0x80B477D
-DRAKE_RIGHT: objtemplate ANIM_TAG_PURPLE_DRAKE ANIM_TAG_PURPLE_DRAKE 0x83ACA40 0x8231CF0 0x0 DRAKE_RIGHT_ROTATIONS 0x80E24E1
-DRAKE_LEFT: objtemplate ANIM_TAG_PURPLE_DRAKE ANIM_TAG_PURPLE_DRAKE 0x83ACA40 0x8231CF0 0x0 DRAKE_LEFT_ROTATIONS 0x80E24E1
-DRAKE_STRIKE: objtemplate ANIM_TAG_PURPLE_DRAKE ANIM_TAG_PURPLE_DRAKE 0x83ACA40 0x8231CF0 0x0 DRAKE_STRIKE_ROTATIONS 0x80B1C3D
-DRAKE_PURPLE_BLAST_BURN: objtemplate ANIM_TAG_FIRE_PLUME ANIM_TAG_FIRE_PLUME 0x83AC9D8 0x83E5C50 0x0 0x8231CFC BLASTBURN_TARGET_ASM+1
-DRAKE_GEYSER_HEX: objtemplate ANIM_TAG_VERTICAL_HEX ANIM_TAG_VERTICAL_HEX 0x83AC9D0 0x83E2C00 0x0 0x8231CFC 0x80B8D59
-DRAKE_PURPLE_EXPLOSION: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_EXPLOSION 0x83AC9D8 0x83E3F90 0x0 0x8231CFC 0x8075D9D
-DRAKE_EXPLODE: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_UNUSED_EXPLOSION_2 0x83AC9D8 0x83E3F90 0x0 0x8231CFC 0x8075D9D
+DRAKE_ENERGY_PURPLE: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_POISON_BUBBLE OAM_OFF_16x32 0x83E3600 0x0 0x8231CFC 0x80A5AD9
+DRAKE_PURPLE_SHOCKWAVE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_POISON_BUBBLE OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80AEC81
+DRAKE_UP: objtemplate ANIM_TAG_PURPLE_DRAKE ANIM_TAG_PURPLE_DRAKE OAM_NORMAL_64x64 0x8231CF0 0x0 DRAKE_UP_ROTATIONS 0x80B477D
+DRAKE_RIGHT: objtemplate ANIM_TAG_PURPLE_DRAKE ANIM_TAG_PURPLE_DRAKE OAM_NORMAL_64x64 0x8231CF0 0x0 DRAKE_RIGHT_ROTATIONS 0x80E24E1
+DRAKE_LEFT: objtemplate ANIM_TAG_PURPLE_DRAKE ANIM_TAG_PURPLE_DRAKE OAM_NORMAL_64x64 0x8231CF0 0x0 DRAKE_LEFT_ROTATIONS 0x80E24E1
+DRAKE_STRIKE: objtemplate ANIM_TAG_PURPLE_DRAKE ANIM_TAG_PURPLE_DRAKE OAM_NORMAL_64x64 0x8231CF0 0x0 DRAKE_STRIKE_ROTATIONS 0x80B1C3D
+DRAKE_PURPLE_BLAST_BURN: objtemplate ANIM_TAG_FIRE_PLUME ANIM_TAG_FIRE_PLUME OAM_OFF_32x32 0x83E5C50 0x0 0x8231CFC BLASTBURN_TARGET_ASM+1
+DRAKE_GEYSER_HEX: objtemplate ANIM_TAG_VERTICAL_HEX ANIM_TAG_VERTICAL_HEX OAM_OFF_16x16 0x83E2C00 0x0 0x8231CFC SpriteCB_Geyser
+DRAKE_PURPLE_EXPLOSION: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_EXPLOSION OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC 0x8075D9D
+DRAKE_EXPLODE: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_UNUSED_EXPLOSION_2 OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC 0x8075D9D
 
 DRAKE_STRIKE_ROTATIONS: .word DRAKE_STRIKE_PLAYER_ROT, DRAKE_STRIKE_ENEMY_ROT
 DRAKE_STRIKE_PLAYER_ROT: .hword 0,0,0x01b9,0,0x7fff,0,0,0
@@ -18716,18 +19171,18 @@ BHE_EXPLODE:
 	return
 
 .align 2
-BHE_BLACK_SHOCKWAVE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_BLACK_BALL_2 0x83acb60 0x8231cf0 0x0 0x83e61c8 0x80aec81
-BHE_BLUE_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_ICE_CHUNK 0x83acaa0 0x8231cf0 0x0 0x83e4088 0x8075d9d
-BHE_BLACK_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_HANDS_AND_FEET 0x83acaa0 0x8231cf0 0x0 0x83e4088 0x8075d9d
-BHE_DARKRED_EXPLOSION: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_VERTICAL_HEX 0x83AC9D8 0x83E3F90 0x0 0x8231CFC 0x8075D9D
-BHE_BLACK_WISP: objtemplate ANIM_TAG_WISP_ORB ANIM_TAG_HANDS_AND_FEET 0x83AC9D0 0x83E5EA4 0x0 0x8231CFC 0x80AD541
-BHE_RED_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_VERTICAL_HEX 0x83acaa0 0x8231cf0 0x0 0x83e4088 0x8075d9d
-BHE_BLUE_RING_IN: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_ICE_CHUNK 0x83ACBC0 0x8231CF0 0x0 0x83E40C4 0x8075D9D
-BHE_RED_RING_IN: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_VERTICAL_HEX 0x83ACBC0 0x8231CF0 0x0 0x83E40C4 0x8075D9D
+BHE_BLACK_SHOCKWAVE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_BLACK_BALL_2 OAM_NORMAL_BLEND_64x64 0x8231cf0 0x0 0x83e61c8 0x80aec81
+BHE_BLUE_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_ICE_CHUNK OAM_DOUBLE_64x64 0x8231cf0 0x0 0x83e4088 0x8075d9d
+BHE_BLACK_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_HANDS_AND_FEET OAM_DOUBLE_64x64 0x8231cf0 0x0 0x83e4088 0x8075d9d
+BHE_DARKRED_EXPLOSION: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_VERTICAL_HEX OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC 0x8075D9D
+BHE_BLACK_WISP: objtemplate ANIM_TAG_WISP_ORB ANIM_TAG_HANDS_AND_FEET OAM_OFF_16x16 0x83E5EA4 0x0 0x8231CFC 0x80AD541
+BHE_RED_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_VERTICAL_HEX OAM_DOUBLE_64x64 0x8231cf0 0x0 0x83e4088 0x8075d9d
+BHE_BLUE_RING_IN: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_ICE_CHUNK OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E40C4 0x8075D9D
+BHE_RED_RING_IN: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_VERTICAL_HEX OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E40C4 0x8075D9D
 
-BHE_ECLIPSE_HOLE: objtemplate ANIM_TAG_SHADOW_BALL ANIM_TAG_VERTICAL_HEX 0x83ACA38 0x8231CF0 0x0 BHE_ECLIPSE_GROW_HOLE 0x8075D9D
-BHE_ECLIPSE_SHRINK: objtemplate ANIM_TAG_SHADOW_BALL ANIM_TAG_VERTICAL_HEX 0x83ACA38 0x8231CF0 0x0 BHE_ECLIPSE_SHRINK_HOLE 0x8075D9D
-BHE_ECLIPSE_USER: objtemplate ANIM_TAG_SHADOW_BALL ANIM_TAG_HANDS_AND_FEET 0x83ACA38 0x8231CF0 0x0 BHE_ECLIPSE_GROW 0x8075D9D
+BHE_ECLIPSE_HOLE: objtemplate ANIM_TAG_SHADOW_BALL ANIM_TAG_VERTICAL_HEX OAM_NORMAL_32x32 0x8231CF0 0x0 BHE_ECLIPSE_GROW_HOLE 0x8075D9D
+BHE_ECLIPSE_SHRINK: objtemplate ANIM_TAG_SHADOW_BALL ANIM_TAG_VERTICAL_HEX OAM_NORMAL_32x32 0x8231CF0 0x0 BHE_ECLIPSE_SHRINK_HOLE 0x8075D9D
+BHE_ECLIPSE_USER: objtemplate ANIM_TAG_SHADOW_BALL ANIM_TAG_HANDS_AND_FEET OAM_NORMAL_32x32 0x8231CF0 0x0 BHE_ECLIPSE_GROW 0x8075D9D
 
 BHE_ECLIPSE_GROW: .word BHE_GROW_PLAYER
 BHE_GROW_PLAYER: .hword 0x100, 0x100, 0x0, 0x0, 0x0, 0x0, 0x48f6, 0x0, 0x7fff, 0x0, 0x0, 0x0
@@ -18739,7 +19194,7 @@ BHE_ECLIPSE_SHRINK_HOLE: .word BHE_HOLE_SHRINK
 BHE_HOLE_SHRINK: @.hword 0x0100, 0x0100, 0x0, 0x0, 0xfff0, 0xfff0, 0x1e00, 0x0, 0x7fff, 0x1, 0x0, 0x0
 .hword 0x100, 0x100, 0x0, 0x0, 0xfff0, 0xfff0, 0x08f6, 0x0, 0x7fff, 0x1, 0x0, 0x0
 
-BHE_TWINKLE_TARGET: objtemplate ANIM_TAG_SPARKLE_4 ANIM_TAG_SPARKLE_4 0x83AC9D8 0x83BF47C 0x0 0x8231CFC TWINKLE_ASM+1
+BHE_TWINKLE_TARGET: objtemplate ANIM_TAG_SPARKLE_4 ANIM_TAG_SPARKLE_4 OAM_OFF_32x32 0x83BF47C 0x0 0x8231CFC TWINKLE_ASM+1
 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -18909,13 +19364,13 @@ TWINKLE_STARS_TARGET:
 	return
 
 .align 2
-TWINKLE_PINK_STARS: objtemplate ANIM_TAG_SPARKLE_2 ANIM_TAG_PINK_PETAL 0x83AC9D8 0x83E33F0 0x0 0x8231CFC 0x80A4D0D
-TWINKLE_PINK_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_PINK_PETAL 0x83ACAA0 0x8231CF0 0x0 0x83E4088 0x8075D9D
-TWINKLE_STAR_GROW: objtemplate ANIM_TAG_YELLOW_STAR ANIM_TAG_YELLOW_STAR 0x83ACA98 0x8231CF0 0x0 TWINKLE_STAR_SCALING 0x8075D9D
-TWINKLE_TARGET: objtemplate ANIM_TAG_SPARKLE_4 ANIM_TAG_SPARKLE_4 0x83AC9D8 0x83BF47C 0x0 0x8231CFC TWINKLE_ASM+1
-TWINKLE_DIG_STAR: objtemplate ANIM_TAG_YELLOW_STAR ANIM_TAG_YELLOW_STAR 0x83ACA98 0x8231CF0 0x0 0x8231CFC 0x80B9379
-TWINKLE_YELLOW_HIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_YELLOW_STAR 0x83ACB58 0x8231CF0 0x0 0x83E7BF8 0x80BA561
-TWINKLE_HIT_STARS: objtemplate ANIM_TAG_PAIN_SPLIT ANIM_TAG_YELLOW_STAR 0x83AC9D0 0x8231CF0 0x0 0x8231CFC 0x80B0DF1
+TWINKLE_PINK_STARS: objtemplate ANIM_TAG_SPARKLE_2 ANIM_TAG_PINK_PETAL OAM_OFF_32x32 0x83E33F0 0x0 0x8231CFC 0x80A4D0D
+TWINKLE_PINK_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_PINK_PETAL OAM_DOUBLE_64x64 0x8231CF0 0x0 0x83E4088 0x8075D9D
+TWINKLE_STAR_GROW: objtemplate ANIM_TAG_YELLOW_STAR ANIM_TAG_YELLOW_STAR OAM_DOUBLE_32x32 0x8231CF0 0x0 TWINKLE_STAR_SCALING 0x8075D9D
+TWINKLE_TARGET: objtemplate ANIM_TAG_SPARKLE_4 ANIM_TAG_SPARKLE_4 OAM_OFF_32x32 0x83BF47C 0x0 0x8231CFC TWINKLE_ASM+1
+TWINKLE_DIG_STAR: objtemplate ANIM_TAG_YELLOW_STAR ANIM_TAG_YELLOW_STAR OAM_DOUBLE_32x32 0x8231CF0 0x0 0x8231CFC 0x80B9379
+TWINKLE_YELLOW_HIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_YELLOW_STAR OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+TWINKLE_HIT_STARS: objtemplate ANIM_TAG_PAIN_SPLIT ANIM_TAG_YELLOW_STAR OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC 0x80B0DF1
 
 TWINKLE_STAR_SCALING:
 .word TWINKLE_SCALE_PLAYER, TWINKLE_SCALE_OPPONENT
@@ -18984,7 +19439,7 @@ FINISH_CATASTROPIKA:
 	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT @charge
 	loadparticle ANIM_TAG_SPARK_2 @spark
 	playsound2 0x70 0xc0
-	launchtask 0x80ae541 0x2 0x4 0x0 0x3c 0x2 0xc 	@charge particles to user
+	launchtask AnimTask_ChargeBalls 0x2 0x4 0x0 0x3c 0x2 0xc 	@charge particles to user
 	launchtemplate 0x83e6070 0x2 0x8 0x0 0x0 0x10 0x2c 0x20 0x28 0x0 0x3
 	launchtemplate 0x83e6070 0x2 0x8 0x0 0x0 0x10 0x2c 0x60 0x28 0x1 0x3
 	launchtemplate 0x83e6070 0x2 0x8 0x0 0x0 0x10 0x2c 0xa0 0x28 0x0 0x3
@@ -19121,17 +19576,17 @@ FINISH_CATASTROPIKA:
 
 CPIKA_THUNDERING:
 	playsound2 0xd6 0x3f
-	launchtemplate 0x83e5f38 0x82 0x2 0x0 0xfff0
+	launchtemplate Template_Lightning 0x82 0x2 0x0 0xfff0
 	pause 0x1
-	launchtemplate 0x83e5f38 0x82 0x2 0x0 0x10
+	launchtemplate Template_Lightning 0x82 0x2 0x0 0x10
 	pause 0x1
-	launchtemplate 0x83e5f38 0x82 0x2 0x0 0xfff0
+	launchtemplate Template_Lightning 0x82 0x2 0x0 0xfff0
 	pause 0x1
-	launchtemplate 0x83e5f38 0x82 0x2 0x0 0x10
+	launchtemplate Template_Lightning 0x82 0x2 0x0 0x10
 	pause 0x1
-	launchtemplate 0x83e5f38 0x82 0x2 0x0 0xfff0
+	launchtemplate Template_Lightning 0x82 0x2 0x0 0xfff0
 	pause 0x1
-	launchtemplate 0x83e5f38 0x82 0x2 0x0 0x10
+	launchtemplate Template_Lightning 0x82 0x2 0x0 0x10
 	pause 0x1
 	return
 
@@ -19179,7 +19634,7 @@ ANIM_10000000_VOLT_THUNDERBOLT:
 	waitfortransparentBG
 	makebankvisible bank_attacker
 	playsound2 0x70 0xc0
-	launchtask 0x80ae541 0x2 0x4 0x0 0x3c 0x2 0xc 	@charge particles to user
+	launchtask AnimTask_ChargeBalls 0x2 0x4 0x0 0x3c 0x2 0xc 	@charge particles to user
 	launchtemplate 0x83e6070 0x2 0x8 0x0 0x0 0x10 0x2c 0x20 0x28 0x0 0x3
 	launchtemplate 0x83e6070 0x2 0x8 0x0 0x0 0x10 0x2c 0x60 0x28 0x1 0x3
 	launchtemplate 0x83e6070 0x2 0x8 0x0 0x0 0x10 0x2c 0xa0 0x28 0x0 0x3
@@ -19196,11 +19651,11 @@ ANIM_10000000_VOLT_THUNDERBOLT:
 	playsound2 0x83 0x3f
 	launchtask 0x80ba0e9 0x2 0x3 0x101 0x101 0x101  @thunder flash
 	launchtemplate 0x83e61d4 0x2 0x1 bank_attacker	@ charge
-	launchtemplate 0x83e5f38 0x82 0x2 0x40 0xffdc
+	launchtemplate Template_Lightning 0x82 0x2 0x40 0xffdc
 	pause 0x1
-	launchtemplate 0x83e5f38 0x82 0x2 0x40 0xffec
+	launchtemplate Template_Lightning 0x82 0x2 0x40 0xffec
 	pause 0x1
-	launchtemplate 0x83e5f38 0x82 0x2 0x40 0xc
+	launchtemplate Template_Lightning 0x82 0x2 0x40 0xc
 	pause 0x14
 	playsound2 0x70 0xc0
 	launchtemplate 0x83e6070 0x2 0x8 0x0 0x0 0x18 0x2c 0x0 0x28 0x0 0x3
@@ -19210,11 +19665,11 @@ ANIM_10000000_VOLT_THUNDERBOLT:
 	pause 0x14
 	playsound2 0x83 0x3f
 	launchtask 0x80ba0e9 0x2 0x3 0x101 0x101 0x101  @thunder flash
-	launchtemplate 0x83e5f38 0x82 0x2 0xffc0 0xffdc
+	launchtemplate Template_Lightning 0x82 0x2 0xffc0 0xffdc
 	pause 0x1
-	launchtemplate 0x83e5f38 0x82 0x2 0xffc0 0xffec
+	launchtemplate Template_Lightning 0x82 0x2 0xffc0 0xffec
 	pause 0x1
-	launchtemplate 0x83e5f38 0x82 0x2 0xffc0 0xc
+	launchtemplate Template_Lightning 0x82 0x2 0xffc0 0xc
 	pause 0x14
 	playsound2 0x70 0xc0
 	launchtemplate 0x83e6070 0x2 0x8 0x0 0x0 0x1c 0x2c 0x0 0x28 0x0 0x3
@@ -19224,11 +19679,11 @@ ANIM_10000000_VOLT_THUNDERBOLT:
 	pause 0x14
 	playsound2 0x83 0x3f
 	launchtask 0x80ba0e9 0x2 0x3 0x101 0x101 0x101  @thunder flash
-	launchtemplate 0x83e5f38 0x82 0x2 0xff90 0xffdc
+	launchtemplate Template_Lightning 0x82 0x2 0xff90 0xffdc
 	pause 0x1
-	launchtemplate 0x83e5f38 0x82 0x2 0xff90 0xffec
+	launchtemplate Template_Lightning 0x82 0x2 0xff90 0xffec
 	pause 0x1
-	launchtemplate 0x83e5f38 0x82 0x2 0xff90 0xc
+	launchtemplate Template_Lightning 0x82 0x2 0xff90 0xc
 	pause 0x14
 	playsound2 0x70 0xc0
 	launchtemplate 0x83e6070 0x2 0x8 0x0 0x0 0x20 0x2c 0x0 0x28 0x0 0x3
@@ -19238,11 +19693,11 @@ ANIM_10000000_VOLT_THUNDERBOLT:
 	pause 0x10
 	playsound2 0x83 0x3f
 	launchtask 0x80ba0e9 0x2 0x3 0x101 0x101 0x101  @thunder flash
-	launchtemplate 0x83e5f38 0x82 0x2 0xffd0 0xffdc
+	launchtemplate Template_Lightning 0x82 0x2 0xffd0 0xffdc
 	pause 0x1
-	launchtemplate 0x83e5f38 0x82 0x2 0xffd0 0xffec
+	launchtemplate Template_Lightning 0x82 0x2 0xffd0 0xffec
 	pause 0x1
-	launchtemplate 0x83e5f38 0x82 0x2 0xffd0 0xc
+	launchtemplate Template_Lightning 0x82 0x2 0xffd0 0xc
 	playsound2 0x70 0xc0
 	launchtemplate 0x83e6070 0x2 0x8 0x0 0x0 0x2a 0x2c 0x0 0x28 0x0 0x3
 	launchtemplate 0x83e6070 0x2 0x8 0x0 0x0 0x2a 0x2c 0x40 0x28 0x1 0x3
@@ -19410,14 +19865,14 @@ TENE6_SPARK_GEYSER:
 	return
 
 .align 2
-TENE6_YELLOW_FLY: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_SPARK_2 0x83acaa0 0x8231cf0 0x0 0x83e6b8c 0x80b1bb1
-TENE6_TARGET_SHOCKWAVE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_CIRCLE_OF_LIGHT 0x83ACB60 0x8231CF0 0x0 0x83E61C8 TARGET_SHOCKWAVE_TRAJ+1
-TENE6_RED_BEAM: objtemplate ANIM_TAG_ORBS ANIM_TAG_VERTICAL_HEX 0x83AC9C8 0x83E2A20 0x0 0x8231CFC 0x80A25ED
-TENE6_BLUE_BEAM: objtemplate ANIM_TAG_ORBS ANIM_TAG_WATER_ORB 0x83AC9C8 0x83E2A20 0x0 0x8231CFC 0x80A25ED
-TENE6_PINK_BEAM: objtemplate ANIM_TAG_ORBS ANIM_TAG_BERRY_EATEN 0x83AC9C8 0x83E2A20 0x0 0x8231CFC 0x80A25ED
-TENE6_YELLOW_BEAM: objtemplate ANIM_TAG_ORBS ANIM_TAG_ELECTRIC_ORBS 0x83AC9C8 0x83E2A20 0x0 0x8231CFC 0x80A25ED
-TENE6_GREEN_BEAM: objtemplate ANIM_TAG_ORBS ANIM_TAG_LEAF 0x83AC9C8 0x83E2A20 0x0 0x8231CFC 0x80A25ED
-TENE6_PURPLE_BEAM: objtemplate ANIM_TAG_ORBS ANIM_TAG_POISON_BUBBLE 0x83AC9C8 0x83E2A20 0x0 0x8231CFC 0x80A25ED
+TENE6_YELLOW_FLY: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_SPARK_2 OAM_DOUBLE_64x64 0x8231cf0 0x0 0x83e6b8c 0x80b1bb1
+TENE6_TARGET_SHOCKWAVE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_CIRCLE_OF_LIGHT OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 TARGET_SHOCKWAVE_TRAJ+1
+TENE6_RED_BEAM: objtemplate ANIM_TAG_ORBS ANIM_TAG_VERTICAL_HEX OAM_OFF_8x8 0x83E2A20 0x0 0x8231CFC 0x80A25ED
+TENE6_BLUE_BEAM: objtemplate ANIM_TAG_ORBS ANIM_TAG_WATER_ORB OAM_OFF_8x8 0x83E2A20 0x0 0x8231CFC 0x80A25ED
+TENE6_PINK_BEAM: objtemplate ANIM_TAG_ORBS ANIM_TAG_BERRY_EATEN OAM_OFF_8x8 0x83E2A20 0x0 0x8231CFC 0x80A25ED
+TENE6_YELLOW_BEAM: objtemplate ANIM_TAG_ORBS ANIM_TAG_ELECTRIC_ORBS OAM_OFF_8x8 0x83E2A20 0x0 0x8231CFC 0x80A25ED
+TENE6_GREEN_BEAM: objtemplate ANIM_TAG_ORBS ANIM_TAG_LEAF OAM_OFF_8x8 0x83E2A20 0x0 0x8231CFC 0x80A25ED
+TENE6_PURPLE_BEAM: objtemplate ANIM_TAG_ORBS ANIM_TAG_POISON_BUBBLE OAM_OFF_8x8 0x83E2A20 0x0 0x8231CFC 0x80A25ED
 
 .align 2
 TARGET_SHOCKWAVE_TRAJ:
@@ -19490,7 +19945,7 @@ FINISH_SPARKSURFER:
 	loadparticle ANIM_TAG_ELECTRIC_ORBS @charge
 	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT @charge
 	playsound2 0xa4 0xc0
-	launchtask 0x80ae541 0x2 0x4 0x0 0x1c 0x2 0xc
+	launchtask AnimTask_ChargeBalls 0x2 0x4 0x0 0x1c 0x2 0xc
 	launchtask AnimTask_move_bank_2 0x2 0x5 0x0 0x1 0x0 0x3c 0x1
 	call BUFF_EFFECT
 	pause 0x8
@@ -19587,7 +20042,7 @@ SPARKSURF_SPARK_GEYSER:
 	return
 
 .align 2
-SPARKSURF_YELLOW_FLY: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_SPARK_2 0x83acaa0 0x8231cf0 0x0 0x83e6b8c 0x80b1bb1
+SPARKSURF_YELLOW_FLY: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_SPARK_2 OAM_DOUBLE_64x64 0x8231cf0 0x0 0x83e6b8c 0x80b1bb1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -19641,7 +20096,7 @@ ANIM_EXTREME_EVOBOOST:
 	loadparticle ANIM_TAG_WATER_ORB @blue
 	loadparticle ANIM_TAG_POISON_BUBBLE @purple
 	loadparticle ANIM_TAG_LEAF @green
-	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_CIRCLE_OF_LIGHT 0x0 0x0 0x10 0x5bff
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_CIRCLE_OF_LIGHT 0x0 0x10 0x10 0x5bff
 	waitanimation
 	playsound2 0xd2 0xc0
 	launchtemplate EVOBOOST_RED_CHARGE_FLYUP 0x82 0x7 0x0 0x1c 0x510 0x1e 0xd 0x32 bank_attacker
@@ -19731,30 +20186,30 @@ EVOBOOST_COLORS_CIRCLE_CHARGE:
 	return
 
 .align 2
-EVOBOOST_RED_CHARGE_FLYUP: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_VERTICAL_HEX 0x83ACB60 0x8231CF0 0x0 0x8231CFC 0x80B477D
-EVOBOOST_PINK_CHARGE_FLYUP: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_BERRY_EATEN 0x83ACB60 0x8231CF0 0x0 0x8231CFC 0x80B477D
-EVOBOOST_ICE_CHARGE_FLYUP: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_ICE_CHUNK 0x83ACB60 0x8231CF0 0x0 0x8231CFC 0x80B477D
-EVOBOOST_BLACK_CHARGE_FLYUP: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WISP_ORB 0x83ACB60 0x8231CF0 0x0 0x8231CFC 0x80B477D
-EVOBOOST_BLUE_CHARGE_FLYUP: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WATER_ORB 0x83ACB60 0x8231CF0 0x0 0x8231CFC 0x80B477D
-EVOBOOST_PURPLE_CHARGE_FLYUP: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_POISON_BUBBLE 0x83ACB60 0x8231CF0 0x0 0x8231CFC 0x80B477D
-EVOBOOST_YELLOW_CHARGE_FLYUP: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_CIRCLE_OF_LIGHT 0x83ACB60 0x8231CF0 0x0 0x8231CFC 0x80B477D
-EVOBOOST_GREEN_CHARGE_FLYUP: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_LEAF 0x83ACB60 0x8231CF0 0x0 0x8231CFC 0x80B477D
-EVOBOOST_RED_CHARGE_CIRCLE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_VERTICAL_HEX 0x83ACB60 0x8231CF0 0x0 0x8231CFC HURRICANE_USER_ASM+1
-EVOBOOST_PINK_CHARGE_CIRCLE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_BERRY_EATEN 0x83ACB60 0x8231CF0 0x0 0x8231CFC HURRICANE_USER_ASM+1
-EVOBOOST_ICE_CHARGE_CIRCLE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_ICE_CHUNK 0x83ACB60 0x8231CF0 0x0 0x8231CFC HURRICANE_USER_ASM+1
-EVOBOOST_BLACK_CHARGE_CIRCLE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WISP_ORB 0x83ACB60 0x8231CF0 0x0 0x8231CFC HURRICANE_USER_ASM+1
-EVOBOOST_BLUE_CHARGE_CIRCLE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WATER_ORB 0x83ACB60 0x8231CF0 0x0 0x8231CFC HURRICANE_USER_ASM+1
-EVOBOOST_PURPLE_CHARGE_CIRCLE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_POISON_BUBBLE 0x83ACB60 0x8231CF0 0x0 0x8231CFC HURRICANE_USER_ASM+1
-EVOBOOST_YELLOW_CHARGE_CIRCLE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_CIRCLE_OF_LIGHT 0x83ACB60 0x8231CF0 0x0 0x8231CFC HURRICANE_USER_ASM+1
-EVOBOOST_GREEN_CHARGE_CIRCLE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_LEAF 0x83ACB60 0x8231CF0 0x0 0x8231CFC HURRICANE_USER_ASM+1
-EVOBOOST_RED_STOCK: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_VERTICAL_HEX 0x83ACB50 0x8231CF0 0x0 0x83E2AB8 0x80A2389
-EVOBOOST_PINK_STOCK: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_BERRY_EATEN 0x83ACB50 0x8231CF0 0x0 0x83E2AB8 0x80A2389
-EVOBOOST_ICE_STOCK: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_ICE_CHUNK 0x83ACB50 0x8231CF0 0x0 0x83E2AB8 0x80A2389
-EVOBOOST_BLACK_STOCK: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_WISP_ORB 0x83ACB50 0x8231CF0 0x0 0x83E2AB8 0x80A2389
-EVOBOOST_BLUE_STOCK: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_WATER_ORB 0x83ACB50 0x8231CF0 0x0 0x83E2AB8 0x80A2389
-EVOBOOST_PURPLE_STOCK: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_POISON_BUBBLE 0x83ACB50 0x8231CF0 0x0 0x83E2AB8 0x80A2389
-EVOBOOST_YELLOW_STOCK: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_CIRCLE_OF_LIGHT 0x83ACB50 0x8231CF0 0x0 0x83E2AB8 0x80A2389
-EVOBOOST_GREEN_STOCK: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_LEAF 0x83ACB50 0x8231CF0 0x0 0x83E2AB8 0x80A2389
+EVOBOOST_RED_CHARGE_FLYUP: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_VERTICAL_HEX OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x8231CFC 0x80B477D
+EVOBOOST_PINK_CHARGE_FLYUP: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_BERRY_EATEN OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x8231CFC 0x80B477D
+EVOBOOST_ICE_CHARGE_FLYUP: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_ICE_CHUNK OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x8231CFC 0x80B477D
+EVOBOOST_BLACK_CHARGE_FLYUP: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WISP_ORB OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x8231CFC 0x80B477D
+EVOBOOST_BLUE_CHARGE_FLYUP: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WATER_ORB OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x8231CFC 0x80B477D
+EVOBOOST_PURPLE_CHARGE_FLYUP: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_POISON_BUBBLE OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x8231CFC 0x80B477D
+EVOBOOST_YELLOW_CHARGE_FLYUP: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_CIRCLE_OF_LIGHT OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x8231CFC 0x80B477D
+EVOBOOST_GREEN_CHARGE_FLYUP: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_LEAF OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x8231CFC 0x80B477D
+EVOBOOST_RED_CHARGE_CIRCLE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_VERTICAL_HEX OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x8231CFC HURRICANE_USER_ASM+1
+EVOBOOST_PINK_CHARGE_CIRCLE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_BERRY_EATEN OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x8231CFC HURRICANE_USER_ASM+1
+EVOBOOST_ICE_CHARGE_CIRCLE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_ICE_CHUNK OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x8231CFC HURRICANE_USER_ASM+1
+EVOBOOST_BLACK_CHARGE_CIRCLE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WISP_ORB OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x8231CFC HURRICANE_USER_ASM+1
+EVOBOOST_BLUE_CHARGE_CIRCLE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WATER_ORB OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x8231CFC HURRICANE_USER_ASM+1
+EVOBOOST_PURPLE_CHARGE_CIRCLE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_POISON_BUBBLE OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x8231CFC HURRICANE_USER_ASM+1
+EVOBOOST_YELLOW_CHARGE_CIRCLE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_CIRCLE_OF_LIGHT OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x8231CFC HURRICANE_USER_ASM+1
+EVOBOOST_GREEN_CHARGE_CIRCLE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_LEAF OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x8231CFC HURRICANE_USER_ASM+1
+EVOBOOST_RED_STOCK: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_VERTICAL_HEX OAM_NORMAL_BLEND_16x16 0x8231CF0 0x0 0x83E2AB8 0x80A2389
+EVOBOOST_PINK_STOCK: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_BERRY_EATEN OAM_NORMAL_BLEND_16x16 0x8231CF0 0x0 0x83E2AB8 0x80A2389
+EVOBOOST_ICE_STOCK: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_ICE_CHUNK OAM_NORMAL_BLEND_16x16 0x8231CF0 0x0 0x83E2AB8 0x80A2389
+EVOBOOST_BLACK_STOCK: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_WISP_ORB OAM_NORMAL_BLEND_16x16 0x8231CF0 0x0 0x83E2AB8 0x80A2389
+EVOBOOST_BLUE_STOCK: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_WATER_ORB OAM_NORMAL_BLEND_16x16 0x8231CF0 0x0 0x83E2AB8 0x80A2389
+EVOBOOST_PURPLE_STOCK: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_POISON_BUBBLE OAM_NORMAL_BLEND_16x16 0x8231CF0 0x0 0x83E2AB8 0x80A2389
+EVOBOOST_YELLOW_STOCK: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_CIRCLE_OF_LIGHT OAM_NORMAL_BLEND_16x16 0x8231CF0 0x0 0x83E2AB8 0x80A2389
+EVOBOOST_GREEN_STOCK: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_LEAF OAM_NORMAL_BLEND_16x16 0x8231CF0 0x0 0x83E2AB8 0x80A2389
 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -19829,7 +20284,7 @@ CONTINUE_PULVERIZE:
 	launchtemplate 0x83e6cfc 0x83 0x0
 	pause 0x7
 	playsound2 0xab 0xc0
-	launchtemplate Template_Hit 0x82 0x4 0x0 0x0 0x1 0x0		@big hit marker
+	launchtemplate Template_Hit TEMPLATE_TARGET | 2, 0x4, 0x0 0x0 0x1 0x0		@big hit marker
 	pause 0x0
 	launchtask AnimTask_screen_shake 0x5 0x3 bank_target 0x4 0x2c
 	launchtemplate PANCAKE_YELLOW_RING 0x83 0x4 0x0 0x0 0x100 0x0
@@ -19877,9 +20332,9 @@ PANCAKE_EXPLODE:
 	return
 
 .align 2
-PANCAKE_RED_DETECT: objtemplate ANIM_TAG_SPARKLE_4 ANIM_TAG_VERTICAL_HEX 0x83AC9D8 0x83BF47C 0x0 0x8231CFC 0x8076FD1
-PANCAKE_YELLOW_EXPLODE: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_ELECTRIC_ORBS 0x83AC9D8 0x83E3F90 0x0 0x8231CFC 0x8075D9D
-PANCAKE_YELLOW_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_ELECTRIC_ORBS 0x83ACAA0 0x8231CF0 0x0 0x83E4088 0x8075D9D
+PANCAKE_RED_DETECT: objtemplate ANIM_TAG_SPARKLE_4 ANIM_TAG_VERTICAL_HEX OAM_OFF_32x32 0x83BF47C 0x0 0x8231CFC 0x8076FD1
+PANCAKE_YELLOW_EXPLODE: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_ELECTRIC_ORBS OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC 0x8075D9D
+PANCAKE_YELLOW_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_ELECTRIC_ORBS OAM_DOUBLE_64x64 0x8231CF0 0x0 0x83E4088 0x8075D9D
 
 
 @ hook at 0xB6092 via r0
@@ -19998,28 +20453,28 @@ FINISH_GENESIS:
 
 GENESIS_BUBBLE_EXPLODE:
 	launchtemplate 0x83e33f4 0x2 0x6 0xfff1 0x0 bank_target 0x0 0x20 0x3c
-	launchtemplate GENESIS_BUBBLE 0x82 0x3 0xa 0xa 0x0
+	launchtemplate GENESIS_BUBBLE TEMPLATE_TARGET | 2, 0x3, 0xa 0xa 0x0
 	launchtemplate GENESIS_EXPLOSION 0x3 0x4 0x0 0x0 bank_target 0x1
 	playsound2 0xab 0xc0
 	pause 0x6
-	launchtemplate GENESIS_BUBBLE 0x82 0x3 0x14 0xffec 0x0
+	launchtemplate GENESIS_BUBBLE TEMPLATE_TARGET | 2, 0x3, 0x14 0xffec 0x0
 	launchtemplate GENESIS_EXPLOSION 0x3 0x4 0x18 0xffe8 bank_target 0x1
 	playsound2 0xab 0xc0
 	pause 0x6
 	launchtemplate 0x83e33f4 0x2 0x6 0xc 0xfffb bank_target 0x0 0x20 0x3c
-	launchtemplate GENESIS_BUBBLE 0x82 0x3 0xffec 0xf 0x0
+	launchtemplate GENESIS_BUBBLE TEMPLATE_TARGET | 2, 0x3, 0xffec 0xf 0x0
 	launchtemplate GENESIS_EXPLOSION 0x3 0x4 0xfff0 0x10 bank_target 0x1
 	playsound2 0xab 0xc0
 	pause 0x6
-	launchtemplate GENESIS_BUBBLE 0x82 0x3 0x0 0x0 0x0
+	launchtemplate GENESIS_BUBBLE TEMPLATE_TARGET | 2, 0x3, 0x0 0x0 0x0
 	launchtemplate GENESIS_EXPLOSION 0x3 0x4 0xffe8 0xfff4 bank_target 0x1
 	playsound2 0xab 0xc0
 	pause 0x6
-	launchtemplate GENESIS_BUBBLE 0x82 0x3 0xffec 0xffec 0x0
+	launchtemplate GENESIS_BUBBLE TEMPLATE_TARGET | 2, 0x3, 0xffec 0xffec 0x0
 	launchtemplate GENESIS_EXPLOSION 0x3 0x4 0x10 0x10 bank_target 0x1
 	playsound2 0xab 0xc0
 	pause 0x6
-	launchtemplate GENESIS_BUBBLE 0x82 0x3 0x10 0xfff8 0x0
+	launchtemplate GENESIS_BUBBLE TEMPLATE_TARGET | 2, 0x3, 0x10 0xfff8 0x0
 	launchtemplate GENESIS_EXPLOSION 0x3 0x4 0xffe0 0xffe8 bank_target 0x1
 	playsound2 0xab 0xc0
 	return
@@ -20123,14 +20578,14 @@ GENESIS_RISING_2_OPPONENT:
 	return
 
 .align 2
-GENESIS_RISE: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_JAB 0x83ACA30 0x83E69DC 0x0 0x83E6AB4 0x80E24E1
-GENESIS_REVERSAL: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_JAB 0x83ACA30 0x8231CF0 0x0 0x8231CFC 0x80E0E95
-GENESIS_SPINUP: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_JAB 0x83ACA30 0x8231CF0 0x0 0x8231CFC 0x80B477D
-GENESIS_CHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_POISON_JAB 0x83ACB60 0x8231CF0 0x0 0x83E61C8 0x80AE71D
+GENESIS_RISE: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_JAB OAM_NORMAL_16x16 0x83E69DC 0x0 0x83E6AB4 0x80E24E1
+GENESIS_REVERSAL: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_JAB OAM_NORMAL_16x16 0x8231CF0 0x0 0x8231CFC 0x80E0E95
+GENESIS_SPINUP: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_JAB OAM_NORMAL_16x16 0x8231CF0 0x0 0x8231CFC 0x80B477D
+GENESIS_CHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_POISON_JAB OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80AE71D
 GENESIS_SUPERPOWER: objtemplate ANIM_TAG_METEOR ANIM_TAG_WISP_ORB sGrowingSuperpowerOAM 0x8231CF0 0x0 gSpriteAffineAnimTable_GrowingSuperpower SpriteCB_GrowingSuperpower
-GENESIS_BUBBLE: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_JAB 0x83ACA30 0x83E69DC 0x0 0x83E6AB4 0x80B1839
-GENESIS_EXPLOSION: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_WISP_ORB 0x83AC9D8 0x83E3F90 0x0 0x8231CFC 0x8075D9D
-GENESIS_SPARKLES: objtemplate ANIM_TAG_SPARKLE_2 ANIM_TAG_AIR_WAVE_2 0x83AC9D8 0x83E33F0 0x0 0x8231CFC 0x80A4D0D
+GENESIS_BUBBLE: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_JAB OAM_NORMAL_16x16 0x83E69DC 0x0 0x83E6AB4 0x80B1839
+GENESIS_EXPLOSION: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_WISP_ORB OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC 0x8075D9D
+GENESIS_SPARKLES: objtemplate ANIM_TAG_SPARKLE_2 ANIM_TAG_AIR_WAVE_2 OAM_OFF_32x32 0x83E33F0 0x0 0x8231CFC 0x80A4D0D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -20146,7 +20601,7 @@ ANIM_SINISTER_ARROW_RAID:
 	launchtemplate SAR_RAID_FLYUP 0x2 0x4 0x0 0x0 0xd 0x150
 	waitanimation
 	unloadparticle ANIM_TAG_ROUND_SHADOW
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x4 0x0 0x10 0x388C @ bg to purple
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x10 0x388C @ bg to purple
 	waitanimation
 	makebankvisible bank_attacker
 	playsound2 0x9e 0x3f
@@ -20275,7 +20730,7 @@ SAR_RAID_ON_PLAYER:
 SAR_FINISH_RAID:
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x4 0x10 0x0 0x40c0	@ return tgt to normal
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x4 0x10 0x00 0x388C @ bg to nrml
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x10 0x00 0x388C @ bg to nrml
 	pause 0x5
 	launchtask AnimTask_AllBanksVisible 0xA 0x0
 	waitanimation
@@ -20449,11 +20904,11 @@ SAR_FINAL_EXPLOSION:
 	return
 
 .align 2
-SAR_PURPLE_EXPLODE: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_POISON_BUBBLE 0x83AC9D8 0x83E3F90 0x0 0x8231CFC 0x8075D9D
-SAR_RAID_FLYUP: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_LEAF 0x83ACAA0 0x8231CF0 0x0 0x83E6B8C 0x80B1BB1
-SAR_RAID_RIGHT: objtemplate ANIM_TAG_BIRD ANIM_TAG_LEAF 0x83ACA40 0x8231CF0 0x0 SAR_RAID_RIGHT_ROTATIONS 0x80E24E1
-SAR_RAID_LEFT: objtemplate ANIM_TAG_BIRD ANIM_TAG_LEAF 0x83ACA40 0x8231CF0 0x0 SAR_RAID_LEFT_ROTATIONS 0x80E24E1
-SAR_RAID_STRIKE: objtemplate ANIM_TAG_BIRD ANIM_TAG_LEAF 0x83ACA40 0x8231CF0 0x0 SAR_RAID_STRIKE_ROTATIONS 0x80B1C3D
+SAR_PURPLE_EXPLODE: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_POISON_BUBBLE OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC 0x8075D9D
+SAR_RAID_FLYUP: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_LEAF OAM_DOUBLE_64x64 0x8231CF0 0x0 0x83E6B8C 0x80B1BB1
+SAR_RAID_RIGHT: objtemplate ANIM_TAG_BIRD ANIM_TAG_LEAF OAM_NORMAL_64x64 0x8231CF0 0x0 SAR_RAID_RIGHT_ROTATIONS 0x80E24E1
+SAR_RAID_LEFT: objtemplate ANIM_TAG_BIRD ANIM_TAG_LEAF OAM_NORMAL_64x64 0x8231CF0 0x0 SAR_RAID_LEFT_ROTATIONS 0x80E24E1
+SAR_RAID_STRIKE: objtemplate ANIM_TAG_BIRD ANIM_TAG_LEAF OAM_NORMAL_64x64 0x8231CF0 0x0 SAR_RAID_STRIKE_ROTATIONS 0x80B1C3D
 
 SAR_RAID_STRIKE_ROTATIONS: .word SAR_RAID_STRIKE_PLAYER_ROT, SAR_RAID_STRIKE_ENEMY_ROT
 SAR_RAID_STRIKE_PLAYER_ROT: .hword 0,0,0x01b9,0,0x7fff,0,0,0
@@ -20467,42 +20922,42 @@ SAR_RAID_LEFT_ROT: .hword 0,0,0x0140,0,0x7fff,0,0,0
 
 @@@ Arrow Particles
 @ arrow up
-SAR_ARROW_UP: objtemplate ANIM_TAG_SPIRIT_ARROW ANIM_TAG_SPIRIT_ARROW 0x83ACB58 0x8231CF0 0x0 SAR_UP_ROTATIONS 0x80B477D
+SAR_ARROW_UP: objtemplate ANIM_TAG_SPIRIT_ARROW ANIM_TAG_SPIRIT_ARROW OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 SAR_UP_ROTATIONS 0x80B477D
 SAR_UP_ROTATIONS: .word SAR_UP_ROT
 SAR_UP_ROT: .hword 0,0,0x01a0,0,0x7fff,0,0,0
 
 @ arrow face right and up
-SAR_ARROW_RIGHT: objtemplate ANIM_TAG_SPIRIT_ARROW ANIM_TAG_SPIRIT_ARROW 0x83ACB58 0x8231CF0 0x0 SAR_ARROW_RIGHT_ROTATIONS 0x80E24E1
+SAR_ARROW_RIGHT: objtemplate ANIM_TAG_SPIRIT_ARROW ANIM_TAG_SPIRIT_ARROW OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 SAR_ARROW_RIGHT_ROTATIONS 0x80E24E1
 SAR_ARROW_RIGHT_ROTATIONS: .word SAR_ARROW_RIGHT_ROT
 SAR_ARROW_RIGHT_ROT: .hword 0,0,0x0175,0,0x7fff,0,0,0
 
 @ arrow face right and down
-SAR_ARROW_RIGHT2: objtemplate ANIM_TAG_SPIRIT_ARROW ANIM_TAG_SPIRIT_ARROW 0x83ACB58 0x8231CF0 0x0 SAR_ARROW_RIGHT2_ROTATIONS 0x80E24E1
+SAR_ARROW_RIGHT2: objtemplate ANIM_TAG_SPIRIT_ARROW ANIM_TAG_SPIRIT_ARROW OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 SAR_ARROW_RIGHT2_ROTATIONS 0x80E24E1
 SAR_ARROW_RIGHT2_ROTATIONS: .word SAR_ARROW_RIGHT2_ROT
 SAR_ARROW_RIGHT2_ROT: .hword 0,0,0x0160,0,0x7fff,0,0,0
 
 @ arrow face left and up
-SAR_ARROW_LEFT: objtemplate ANIM_TAG_SPIRIT_ARROW ANIM_TAG_SPIRIT_ARROW 0x83ACB58 0x8231CF0 0x0 SAR_LEFT_ROTATIONS 0x80E24E1
+SAR_ARROW_LEFT: objtemplate ANIM_TAG_SPIRIT_ARROW ANIM_TAG_SPIRIT_ARROW OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 SAR_LEFT_ROTATIONS 0x80E24E1
 SAR_LEFT_ROTATIONS: .word SAR_LEFT_ROT
 SAR_LEFT_ROT: .hword 0,0,0x01e0,0,0x7fff,0,0,0
 
 @ arrow face up and to left
-SAR_ARROW_LEFT_TGT_HI: objtemplate ANIM_TAG_SPIRIT_ARROW ANIM_TAG_SPIRIT_ARROW 0x83ACB58 0x8231CF0 0x0 SAR_LEFT_ROTATIONS_TGT_HI 0x80E24E1
+SAR_ARROW_LEFT_TGT_HI: objtemplate ANIM_TAG_SPIRIT_ARROW ANIM_TAG_SPIRIT_ARROW OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 SAR_LEFT_ROTATIONS_TGT_HI 0x80E24E1
 SAR_LEFT_ROTATIONS_TGT_HI: .word SAR_LEFT_ROT_TGT
 SAR_LEFT_ROT_TGT: .hword 0,0,0x01e0,0,0x7fff,0,0,0
 
 @ arrow face right
-SAR_ARROW_RIGHT_TGT: objtemplate ANIM_TAG_SPIRIT_ARROW ANIM_TAG_SPIRIT_ARROW 0x83ACB58 0x8231CF0 0x0 SAR_RIGHT_ROTATIONS_TGT 0x80E24E1
+SAR_ARROW_RIGHT_TGT: objtemplate ANIM_TAG_SPIRIT_ARROW ANIM_TAG_SPIRIT_ARROW OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 SAR_RIGHT_ROTATIONS_TGT 0x80E24E1
 SAR_RIGHT_ROTATIONS_TGT: .word SAR_RIGHT_ROT_TGT
 SAR_RIGHT_ROT_TGT: .hword 0,0,0x0160,0,0x7fff,0,0,0
 
 @ arrow face left and down
-SAR_ARROW_LEFT_TGT_LOW: objtemplate ANIM_TAG_SPIRIT_ARROW ANIM_TAG_SPIRIT_ARROW 0x83ACB58 0x8231CF0 0x0 SAR_LEFT_ROTATIONS_TGT_LOW 0x80E24E1
+SAR_ARROW_LEFT_TGT_LOW: objtemplate ANIM_TAG_SPIRIT_ARROW ANIM_TAG_SPIRIT_ARROW OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 SAR_LEFT_ROTATIONS_TGT_LOW 0x80E24E1
 SAR_LEFT_ROTATIONS_TGT_LOW: .word SAR_LEFT_ROT_TGT_LOW
 SAR_LEFT_ROT_TGT_LOW: .hword 0,0,0x01d0,0,0x7fff,0,0,0
 
 @ arrow onslaught
-SAR_ARROW_STRIKE: objtemplate ANIM_TAG_SPIRIT_ARROW ANIM_TAG_SPIRIT_ARROW 0x83ACB58 0x8231CF0 0x0 SAR_STRIKE_ROTATIONS 0x80E24E1
+SAR_ARROW_STRIKE: objtemplate ANIM_TAG_SPIRIT_ARROW ANIM_TAG_SPIRIT_ARROW OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 SAR_STRIKE_ROTATIONS 0x80E24E1
 SAR_STRIKE_ROTATIONS: .word SAR_STRIKE_ROT
 SAR_STRIKE_ROT: .hword 0,0,0x0130,0,0x7fff,0,0,0
 
@@ -20541,14 +20996,14 @@ ANIM_MALICIOUS_MOONSAULT:
 	launchtask AnimTask_AllBanksInvisibleExceptAttackerAndTarget 0xA 0x0
 	waitanimation
 	playsound2 0x97 0xc0
-	launchtemplate MOONSAULT_RED_FLY 0x82 0x4 0x0 0x0 0xd 0x150
+	launchtemplate MOONSAULT_RED_FLY TEMPLATE_TARGET | 2, 0x4, 0x0 0x0 0xd 0x150
 	call MOONSAULT_FIRE_SPIN
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x5 0x0 0xa 0x0000		@ target darkens
 	pause 0x1a
 	playsound2 0xba 0x3f
 	launchtemplate MOONSAULT_RED_BOUNCE 0x83 0x0
 	pause 0x7
-	launchtemplate MOONSAULT_RED_HIT 0x82 0x4 0x0 0x0 0x1 0x0
+	launchtemplate MOONSAULT_RED_HIT TEMPLATE_TARGET | 2, 0x4, 0x0 0x0 0x1 0x0
 	launchtemplate Template_SlideMonToOffset 0x2 0x5 bank_target 0xff00 0x15 0x0 0x4
 	call MOONSAULT_EXPLOSION
 	pause 0x6
@@ -20632,11 +21087,11 @@ MOONSAULT_EXPLOSION:
 	return
 
 .align 2
-MOONSAULT_RED_FLY: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_VERTICAL_HEX 0x83ACAA0 0x8231CF0 0x0 0x83E6B8C 0x80B1BB1
-MOONSAULT_RED_BOUNCE: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_VERTICAL_HEX 0x83ACAA0 0x8231CF0 0x0 0x83E6CF8 0x80B2975
-MOONSAULT_RED_HIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_VERTICAL_HEX 0x83ACB58 0x8231CF0 0x0 0x83E7BF8 0x80BA561
-MOONSAULT_DEEP_FIREBLAST: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_VERTICAL_HEX 0x83AC9D8 0x83E5DB8 0x0 0x8231CFC 0x80ACDA9
-MOONSAULT_EXPLODE: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_UNUSED_EXPLOSION_2 0x83AC9D8 0x83E3F90 0x0 0x8231CFC 0x8075D9D
+MOONSAULT_RED_FLY: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_VERTICAL_HEX OAM_DOUBLE_64x64 0x8231CF0 0x0 0x83E6B8C 0x80B1BB1
+MOONSAULT_RED_BOUNCE: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_VERTICAL_HEX OAM_DOUBLE_64x64 0x8231CF0 0x0 0x83E6CF8 0x80B2975
+MOONSAULT_RED_HIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_VERTICAL_HEX OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
+MOONSAULT_DEEP_FIREBLAST: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_VERTICAL_HEX OAM_OFF_32x32 0x83E5DB8 0x0 0x8231CFC 0x80ACDA9
+MOONSAULT_EXPLODE: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_UNUSED_EXPLOSION_2 OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC 0x8075D9D
 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -20649,7 +21104,7 @@ ANIM_OCEANIC_OPERETTA:
 	launchtask 0x80dedd9 0x2 0x0
 	launchtask 0x80bab39 0x2 0x5 0xf8 0x3 0x0 0xa 0x0
 	waitanimation					@ [x] [y]
-	launchtemplate 0x83ff3a0 0x82 0x3 0x0 0xfff8 0x50 	@spotlight
+	launchtemplate 0x83ff3a0 TEMPLATE_TARGET | 2, 0x3, 0x0 0xfff8 0x50 	@spotlight
 	loadparticle ANIM_TAG_FOCUS_ENERGY @focus energy
 	loadparticle ANIM_TAG_WATER_ORB @blue
 	playsound2 0xa4 0xc0
@@ -20667,7 +21122,7 @@ ANIM_OCEANIC_OPERETTA:
 	waitanimation
 	launchtask 0x80dee79 0x2 0x0
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x2 0x0 0x6 0x5da0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x6 0x5da0
 	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT
 	loadparticle ANIM_TAG_THIN_RING
 	makebankinvisible bank_attacker
@@ -20791,7 +21246,7 @@ ANIM_OCEANIC_OPERETTA:
 	waitanimation
 	launchtask AnimTask_pal_fade 0x2 0x5 PAL_DEF 0x2 0xb 0x0 0x5da0
 	waitanimation
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x2 0x6 0x0 0x5da0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x6 0x0 0x5da0
 	waitanimation
 	launchtask AnimTask_AllBanksVisible 0xA 0x0
 	waitanimation
@@ -20830,14 +21285,14 @@ OPERA_BLUE_EXPLODE:
 	return
 
 .align 2
-OPERA_BLUE_FLARE: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_WATER_ORB 0x83ACA18 0x83E3600 0x0 0x8231CFC 0x80A5AD9
-OPERA_BLUE_CHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WATER_ORB 0x83ACB60 0x8231CF0 0x0 0x83E61C8 0x80AE71D
-OPERA_BLUE_RING_IN: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_WATER_ORB 0x83ACBC0 0x8231CF0 0x0 0x83E40C4 0x8075D9D
-OPERA_BLUE_BALL_MOVE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WATER_ORB 0x83ACB60 0x8231CF0 0x0 0x8231CFC 0x80AFD4D
-OPERA_FINAL_BLUE_BALL: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WATER_ORB 0x83ACB60 0x8231CF0 0x0 0x8231CFC 0x80B7BD5
-OPERA_BLUE_RING_OUT: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_WATER_ORB 0x83ACAA0 0x8231CF0 0x0 0x83E4088 0x8075D9D
-OPERA_BLUE_EXPLOSION: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_WATER_ORB 0x83AC9D8 0x83E3F90 0x0 0x8231CFC 0x8075D9D
-OPERA_BLUE_SPARKLE: objtemplate ANIM_TAG_SPARKLE_2 ANIM_TAG_WATER_ORB 0x83AC9D8 0x83E33F0 0x0 0x8231CFC 0x80A4D0D
+OPERA_BLUE_FLARE: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_WATER_ORB OAM_OFF_16x32 0x83E3600 0x0 0x8231CFC 0x80A5AD9
+OPERA_BLUE_CHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WATER_ORB OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80AE71D
+OPERA_BLUE_RING_IN: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_WATER_ORB OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E40C4 0x8075D9D
+OPERA_BLUE_BALL_MOVE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WATER_ORB OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x8231CFC 0x80AFD4D
+OPERA_FINAL_BLUE_BALL: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WATER_ORB OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x8231CFC 0x80B7BD5
+OPERA_BLUE_RING_OUT: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_WATER_ORB OAM_DOUBLE_64x64 0x8231CF0 0x0 0x83E4088 0x8075D9D
+OPERA_BLUE_EXPLOSION: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_WATER_ORB OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC 0x8075D9D
+OPERA_BLUE_SPARKLE: objtemplate ANIM_TAG_SPARKLE_2 ANIM_TAG_WATER_ORB OAM_OFF_32x32 0x83E33F0 0x0 0x8231CFC 0x80A4D0D
 
 .pool
 .align 2
@@ -20886,10 +21341,10 @@ ANIM_SPLINTERED_STORMSHARDS:
 	launchtask AnimTask_GetLycanrocForm 0x2 0x0
 	jumpifargmatches 0x0 0x1 SPLINTER_NIGHT_FORME
 SPLINTER_DAY_FORME:
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x2 0x0 0xc 0x5bff
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xc 0x5bff
 	goto SPLINTER_FINISH_FADE
 SPLINTER_NIGHT_FORME:
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x2 0x0 0xc 0x0000
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xc 0x0000
 SPLINTER_FINISH_FADE:
 	waitanimation
 	setblends 0x80c
@@ -21140,20 +21595,20 @@ SPLINTER_FIX_BG_FADE:
 	launchtask AnimTask_GetLycanrocForm 0x2 0x0
 	jumpifargmatches 0x0 0x1 SPLINTER_NIGHT_FORME_RETURN
 SPLINTER_DAY_FORME_RETURN:
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x2 0xc 0x0 0x5bff
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xc 0x0 0x5bff
 	goto SPLINTER_FINISH_FADE_RETURN
 SPLINTER_NIGHT_FORME_RETURN:
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x2 0xc 0x0 0x0000
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xc 0x0 0x0000
 SPLINTER_FINISH_FADE_RETURN:
 	return
 
 .align 2
-SPLINTER_BROWN_FLY: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_ROCKS 0x83acaa0 0x8231cf0 0x0 0x83e6b8c 0x80b1bb1
-SPLINTER_BROWN_EXPLODE: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_ROCKS 0x83AC9D8 0x83E3F90 0x0 0x8231CFC 0x8075D9D
-SPLINTER_RISE: objtemplate ANIM_TAG_ICICLE_SPEAR ANIM_TAG_ROCKS 0x83ACA38 0x8231CF0 0x0 0x8231CFC 0x80E24E1
+SPLINTER_BROWN_FLY: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_ROCKS OAM_DOUBLE_64x64 0x8231cf0 0x0 0x83e6b8c 0x80b1bb1
+SPLINTER_BROWN_EXPLODE: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_ROCKS OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC 0x8075D9D
+SPLINTER_RISE: objtemplate ANIM_TAG_ICICLE_SPEAR ANIM_TAG_ROCKS OAM_NORMAL_32x32 0x8231CF0 0x0 0x8231CFC 0x80E24E1
 
-SPLINTER_THROWN_ON_OPPONENT_STEEP: objtemplate ANIM_TAG_ICICLE_SPEAR ANIM_TAG_ROCKS 0x83ACA38 0x8231CF0 0x0 SPLINTER_THROWN_ROT_ON_OPPONENT_STEEP 0x80B0929
-SPLINTER_THROWN_ON_OPPONENT_SHALLOW: objtemplate ANIM_TAG_ICICLE_SPEAR ANIM_TAG_ROCKS 0x83ACA38 0x8231CF0 0x0 SPLINTER_THROWN_ROT_ON_OPPONENT_SHALLOW 0x80B0929
+SPLINTER_THROWN_ON_OPPONENT_STEEP: objtemplate ANIM_TAG_ICICLE_SPEAR ANIM_TAG_ROCKS OAM_NORMAL_32x32 0x8231CF0 0x0 SPLINTER_THROWN_ROT_ON_OPPONENT_STEEP 0x80B0929
+SPLINTER_THROWN_ON_OPPONENT_SHALLOW: objtemplate ANIM_TAG_ICICLE_SPEAR ANIM_TAG_ROCKS OAM_NORMAL_32x32 0x8231CF0 0x0 SPLINTER_THROWN_ROT_ON_OPPONENT_SHALLOW 0x80B0929
 
 SPLINTER_THROWN_ROT_ON_OPPONENT_STEEP: .word SPLINTER_THROWN_STEEP_OPPONENT
 SPLINTER_THROWN_STEEP_OPPONENT: .hword 0,0,0x01ca,0,0x7fff,0,0,0
@@ -21161,8 +21616,8 @@ SPLINTER_THROWN_STEEP_OPPONENT: .hword 0,0,0x01ca,0,0x7fff,0,0,0
 SPLINTER_THROWN_ROT_ON_OPPONENT_SHALLOW: .word SPLINTER_THROWN_SHALLOW_OPPONENT
 SPLINTER_THROWN_SHALLOW_OPPONENT: .hword 0,0,0x01b9,0,0x7fff,0,0,0
 
-SPLINTER_THROWN_ON_PLAYER_STEEP: objtemplate ANIM_TAG_ICICLE_SPEAR ANIM_TAG_ROCKS 0x83ACA38 0x8231CF0 0x0 SPLINTER_THROWN_ROT_ON_PLAYER_STEEP 0x80B0929
-SPLINTER_THROWN_ON_PLAYER_SHALLOW: objtemplate ANIM_TAG_ICICLE_SPEAR ANIM_TAG_ROCKS 0x83ACA38 0x8231CF0 0x0 SPLINTER_THROWN_ROT_ON_PLAYER_SHALLOW 0x80B0929
+SPLINTER_THROWN_ON_PLAYER_STEEP: objtemplate ANIM_TAG_ICICLE_SPEAR ANIM_TAG_ROCKS OAM_NORMAL_32x32 0x8231CF0 0x0 SPLINTER_THROWN_ROT_ON_PLAYER_STEEP 0x80B0929
+SPLINTER_THROWN_ON_PLAYER_SHALLOW: objtemplate ANIM_TAG_ICICLE_SPEAR ANIM_TAG_ROCKS OAM_NORMAL_32x32 0x8231CF0 0x0 SPLINTER_THROWN_ROT_ON_PLAYER_SHALLOW 0x80B0929
 
 SPLINTER_THROWN_ROT_ON_PLAYER_STEEP: .word SPLINTER_THROWN_STEEP_PLAYER
 SPLINTER_THROWN_STEEP_PLAYER: .hword 0,0,0x0160,0,0x7fff,0,0,0
@@ -21321,9 +21776,9 @@ SNUGGLE_SOUNDS:
 
 
 .align 2
-SNUGGLE_EYES: objtemplate ANIM_TAG_SPARKLE_4 ANIM_TAG_VERTICAL_HEX 0x83AC9D8 0x83BF47C 0x0 0x8231CFC 0x8076FD1
-SNUGGLE_STAR: objtemplate ANIM_TAG_PAIN_SPLIT ANIM_TAG_DUCK 0x83AC9D0 0x8231CF0 0x0 0x8231CFC 0x80B0DF1
-SNUGGLE_HEART: objtemplate ANIM_TAG_MAGENTA_HEART ANIM_TAG_VERTICAL_HEX 0x83AC9D0 0x8231CF0 0x0 0x8231CFC 0x80A9861
+SNUGGLE_EYES: objtemplate ANIM_TAG_SPARKLE_4 ANIM_TAG_VERTICAL_HEX OAM_OFF_32x32 0x83BF47C 0x0 0x8231CFC 0x8076FD1
+SNUGGLE_STAR: objtemplate ANIM_TAG_PAIN_SPLIT ANIM_TAG_DUCK OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC 0x80B0DF1
+SNUGGLE_HEART: objtemplate ANIM_TAG_MAGENTA_HEART ANIM_TAG_VERTICAL_HEX OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC 0x80A9861
 
 @ hook at 0xA7FF8 via r1
 .align 2
@@ -21383,7 +21838,7 @@ ANIM_CLANGOROUS_SOULBLAZE:
 	launchtask AnimTask_scroll_background 0x5 0x4 0x0 0x20 0x1 0xffff
 	pause 0xC
 	setblends 0x80c
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x2 0x0 0x4 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x4 0x0
 	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT @charge
 	makebankvisible bank_attacker
 	pokespritetoBG bank_attacker
@@ -21649,15 +22104,15 @@ RESET_FROM_WHITE_SCREEN:
 	return
 
 .align 2
-SOULBLAZE_BLUE_BUFF: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_WATER_ORB 0x83ACA18 0x83E3600 0x0 0x8231CFC 0x80A5AD9
-SOULBLAZE_PURPLE_BUFF: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_POISON_BUBBLE 0x83ACA18 0x83E3600 0x0 0x8231CFC 0x80A5AD9
-SOULBLAZE_WHITE_BUFF: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_AIR_WAVE_2 0x83ACA18 0x83E3600 0x0 0x8231CFC 0x80A5AD9
-SOULBLAZE_RED_FIST: objtemplate ANIM_TAG_HORSESHOE_SIDE_FIST ANIM_TAG_VERTICAL_HEX 0x83AC9D8 0x83E66CC 0x0 0x8231CFC 0x80B0929
-SOULBLAZE_RED_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_VERTICAL_HEX 0x83ACAA0 0x8231CF0 0x0 0x83E4088 0x8075D9D
-SOULBLAZE_WHITE_FLY: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_AIR_WAVE_2 0x83acaa0 0x8231cf0 0x0 0x83e6b8c 0x80b1bb1
-SOULBLAZE_PURPLE_SWIRL: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_POISON_BUBBLE 0x83ACB50 0x83E5958 0x0 0x83E741C 0x80B477D
-SOULBLAZE_PURPLE_CHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_POISON_BUBBLE 0x83ACB60 0x8231CF0 0x0 0x83E61C8 0x80AE71D
-SOULBLAZE_PULSE_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_POISON_BUBBLE 0x83ACBC0 0x8231CF0 0x0 0x8231CFC Callback_TranslateAnimSpriteToTargetMonLocation
+SOULBLAZE_BLUE_BUFF: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_WATER_ORB OAM_OFF_16x32 0x83E3600 0x0 0x8231CFC 0x80A5AD9
+SOULBLAZE_PURPLE_BUFF: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_POISON_BUBBLE OAM_OFF_16x32 0x83E3600 0x0 0x8231CFC 0x80A5AD9
+SOULBLAZE_WHITE_BUFF: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_AIR_WAVE_2 OAM_OFF_16x32 0x83E3600 0x0 0x8231CFC 0x80A5AD9
+SOULBLAZE_RED_FIST: objtemplate ANIM_TAG_HORSESHOE_SIDE_FIST ANIM_TAG_VERTICAL_HEX OAM_OFF_32x32 0x83E66CC 0x0 0x8231CFC 0x80B0929
+SOULBLAZE_RED_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_VERTICAL_HEX OAM_DOUBLE_64x64 0x8231CF0 0x0 0x83E4088 0x8075D9D
+SOULBLAZE_WHITE_FLY: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_AIR_WAVE_2 OAM_DOUBLE_64x64 0x8231cf0 0x0 0x83e6b8c 0x80b1bb1
+SOULBLAZE_PURPLE_SWIRL: objtemplate ANIM_TAG_WATER_ORB ANIM_TAG_POISON_BUBBLE OAM_NORMAL_BLEND_16x16 0x83E5958 0x0 0x83E741C 0x80B477D
+SOULBLAZE_PURPLE_CHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_POISON_BUBBLE OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80AE71D
+SOULBLAZE_PULSE_RING: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_POISON_BUBBLE OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x8231CFC Callback_TranslateAnimSpriteToTargetMonLocation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -21733,8 +22188,6 @@ ANIM_GUARDIAN_OF_ALOLA:
 	call GUARDIAN_ROCK_GEYSER
 	call GUARDIAN_ROCKS_TARGET
 	waitanimation
-	launchtask AnimTask_pal_fade_particle 0x2 0x5 ANIM_TAG_HORSESHOE_SIDE_FIST 0x0 0xc 0x0 0x277f
-	waitanimation
 	call RESET_FROM_WHITE_SCREEN
 	endanimation
 
@@ -21754,19 +22207,19 @@ GUARDIAN_ROCKS_TARGET:
 	return
 
 GUARDIAN_ROCK_GEYSER:
-	launchtemplate GUARDIAN_ROCK_UP 0x82 0x3 0x0 0xfffc 0x10	@ -4, -0x10
+	launchtemplate GUARDIAN_ROCK_UP TEMPLATE_TARGET | 2, 0x3, 0x0 0xfffc 0x10	@ -4, -0x10
 	pause 0x0
-	launchtemplate GUARDIAN_ROCK_UP 0x82 0x3 0x0 0x100D 0x10	@
+	launchtemplate GUARDIAN_ROCK_UP TEMPLATE_TARGET | 2, 0x3, 0x0 0x100D 0x10	@
 	pause 0x0
-	launchtemplate GUARDIAN_ROCK_UP 0x82 0x3 0x0 0x4 0x10
+	launchtemplate GUARDIAN_ROCK_UP TEMPLATE_TARGET | 2, 0x3, 0x0 0x4 0x10
 	pause 0x0
-	launchtemplate GUARDIAN_ROCK_UP 0x82 0x3 0x0 0xfff0 0x10
+	launchtemplate GUARDIAN_ROCK_UP TEMPLATE_TARGET | 2, 0x3, 0x0 0xfff0 0x10
 	pause 0x0
 	return
 
 .align 2
-GUARDIAN_FIST_DOWN: objtemplate ANIM_TAG_HORSESHOE_SIDE_FIST ANIM_TAG_HORSESHOE_SIDE_FIST 0x83AC9D8 0x8231CF0 0x0 0x8231CFC 0x80B0D59
-GUARDIAN_ROCK_UP: objtemplate ANIM_TAG_MUD_SAND ANIM_TAG_MUD_SAND 0x83AC9D8 0x8231CF0 0x0 0x8231CFC 0x80B8D59
+GUARDIAN_FIST_DOWN: objtemplate ANIM_TAG_HORSESHOE_SIDE_FIST ANIM_TAG_HORSESHOE_SIDE_FIST OAM_OFF_32x32 0x8231CF0 0x0 0x8231CFC 0x80B0D59
+GUARDIAN_ROCK_UP: objtemplate ANIM_TAG_MUD_SAND ANIM_TAG_MUD_SAND OAM_OFF_32x32 0x8231CF0 0x0 0x8231CFC SpriteCB_Geyser
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -21874,29 +22327,29 @@ SUNRAZE_IMPACT:
 	unloadparticle ANIM_TAG_GOLD_RING @beam
 	launchtask AnimTask_screen_shake 0x5 0x3 bank_target 0x4 0x3c
 	playsound2 0x79 0x3f
-	launchtemplate SUNRAZE_WHITECUT 0x82 0x3 0x20 0xffe0 0x0
+	launchtemplate SUNRAZE_WHITECUT TEMPLATE_TARGET | 2, 0x3, 0x20 0xffe0 0x0
 	pause 0x2
 	playsound2 0x79 0x3f
-	launchtemplate SUNRAZE_WHITECUT 0x82 0x3 0x20 0xffe0 0x1
+	launchtemplate SUNRAZE_WHITECUT TEMPLATE_TARGET | 2, 0x3, 0x20 0xffe0 0x1
 	pause 0x2
 	playsound2 0x79 0x3f
-	launchtemplate SUNRAZE_WHITECUT 0x82 0x3 0x1c 0xffe0 0x0
+	launchtemplate SUNRAZE_WHITECUT TEMPLATE_TARGET | 2, 0x3, 0x1c 0xffe0 0x0
 	pause 0x2
 	playsound2 0x79 0x3f
-	launchtemplate SUNRAZE_WHITECUT 0x82 0x3 0x1c 0xffe0 0x1
+	launchtemplate SUNRAZE_WHITECUT TEMPLATE_TARGET | 2, 0x3, 0x1c 0xffe0 0x1
 	pause 0x2
 	playsound2 0x79 0x3f
-	launchtemplate SUNRAZE_WHITECUT 0x82 0x3 0x2c 0xffe0 0x0
+	launchtemplate SUNRAZE_WHITECUT TEMPLATE_TARGET | 2, 0x3, 0x2c 0xffe0 0x0
 	pause 0x2
 	playsound2 0x79 0x3f
-	launchtemplate SUNRAZE_WHITECUT 0x82 0x3 0x2c 0xffe0 0x1
+	launchtemplate SUNRAZE_WHITECUT TEMPLATE_TARGET | 2, 0x3, 0x2c 0xffe0 0x1
 	pause 0x2
 	loadparticle ANIM_TAG_CROSS_IMPACT @x
 	pause 0x0
 	unloadparticle ANIM_TAG_METEOR @superpower
 	unloadparticle ANIM_TAG_DRAGON_ASCENT @dragon ascent 1
 	unloadparticle ANIM_TAG_DRAGON_ASCENT_FOE @dragon ascent 2
-	launchtemplate SUNRAZE_X 0x82 0x4 0x0 0x0 0x1 0x24
+	launchtemplate SUNRAZE_X TEMPLATE_TARGET | 2, 0x4, 0x0 0x0 0x1 0x24
 	playsound2 0xb9 0x3f
 	makebankvisible bank_attacker
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG | PAL_ATK 0x3 0xF 0x0 0x0
@@ -22006,20 +22459,20 @@ RESET_FROM_RED_SCREEN:
 	return
 
 .align 2
-SUNRAZE_WORMHOLE_GROW: objtemplate ANIM_TAG_SHADOW_BALL ANIM_TAG_WATER_ORB 0x83ACA38 0x8231CF0 0x0 SUNRAZE_GROW_SCALE 0x8075D9D
+SUNRAZE_WORMHOLE_GROW: objtemplate ANIM_TAG_SHADOW_BALL ANIM_TAG_WATER_ORB OAM_NORMAL_32x32 0x8231CF0 0x0 SUNRAZE_GROW_SCALE 0x8075D9D
 SUNRAZE_GROW_SCALE: .word SUNRAZE_GROW_SCALE_PTR
 SUNRAZE_GROW_SCALE_PTR: .hword 0x100, 0x100, 0x0, 0x0, 0x0, 0x0, 0x88f6, 0x0, 0x7fff, 0x0, 0x0, 0x0
-SUNRAZE_WORMHOLE_SHRINK: objtemplate ANIM_TAG_SHADOW_BALL ANIM_TAG_WATER_ORB 0x83ACA38 0x8231CF0 0x0 SUNRAZE_SHRINK_SCALE 0x8075D9D
+SUNRAZE_WORMHOLE_SHRINK: objtemplate ANIM_TAG_SHADOW_BALL ANIM_TAG_WATER_ORB OAM_NORMAL_32x32 0x8231CF0 0x0 SUNRAZE_SHRINK_SCALE 0x8075D9D
 SUNRAZE_SHRINK_SCALE: .word SUNRAZE_SHRINK_SCALE_PTR
 SUNRAZE_SHRINK_SCALE_PTR: .hword 0x100, 0x100, 0x0, 0x0, 0xfff0, 0xfff0, 0x08f6, 0x0, 0x7fff, 0x1, 0x0, 0x0
-SUNRAZE_BLUE_RING_IN: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_WATER_ORB 0x83acbc0 0x8231cf0 0x0 0x83e40c4 0x8075d9d
-SUNRAZE_WHITE_RING_IN: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_AIR_WAVE_2 0x83acbc0 0x8231cf0 0x0 0x83e40c4 0x8075d9d
-SUNRAZE_CHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_VERTICAL_HEX 0x83ACB60 0x8231CF0 0x0 0x83E61C8 0x80AEC81
-SUNRAZE_X: objtemplate ANIM_TAG_CROSS_IMPACT ANIM_TAG_AIR_WAVE_2 0x83ACAF8 0x8231CF0 0x0 0x8231CFC 0x80BA739
-SUNRAZE_WHITECUT: objtemplate ANIM_TAG_CUT ANIM_TAG_AIR_WAVE_2 0x83ACAF8 0x83E3290 0x0 0x8231CFC 0x80A44E1
-SUNRAZE_INFERNO_BALL: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_VERTICAL_HEX 0x83ACB60 0x8231CF0 0x0 0x83E61C8 0x80AE71D
-SUNRAZE_RED_SHOCKWAVE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_VERTICAL_HEX 0x83ACB60 0x8231CF0 0x0 0x83E61C8 TARGET_SHOCKWAVE_TRAJ+1
-SUNRAZE_REDFLY: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_VERTICAL_HEX 0x83ACAA0 0x8231CF0 0x0 0x83E6B8C 0x80B1BB1
+SUNRAZE_BLUE_RING_IN: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_WATER_ORB OAM_DOUBLE_BLEND_64x64 0x8231cf0 0x0 0x83e40c4 0x8075d9d
+SUNRAZE_WHITE_RING_IN: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_AIR_WAVE_2 OAM_DOUBLE_BLEND_64x64 0x8231cf0 0x0 0x83e40c4 0x8075d9d
+SUNRAZE_CHARGE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_VERTICAL_HEX OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80AEC81
+SUNRAZE_X: objtemplate ANIM_TAG_CROSS_IMPACT ANIM_TAG_AIR_WAVE_2 OAM_OFF_BLEND_32x32 0x8231CF0 0x0 0x8231CFC 0x80BA739
+SUNRAZE_WHITECUT: objtemplate ANIM_TAG_CUT ANIM_TAG_AIR_WAVE_2 OAM_OFF_BLEND_32x32 0x83E3290 0x0 0x8231CFC 0x80A44E1
+SUNRAZE_INFERNO_BALL: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_VERTICAL_HEX OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 0x80AE71D
+SUNRAZE_RED_SHOCKWAVE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_VERTICAL_HEX OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 TARGET_SHOCKWAVE_TRAJ+1
+SUNRAZE_REDFLY: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_VERTICAL_HEX OAM_DOUBLE_64x64 0x8231CF0 0x0 0x83E6B8C 0x80B1BB1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -22221,18 +22674,18 @@ MOONRAZE_BEAM:
 	return
 
 .align 2
-MOONRAZE_BLUE_FOCUS: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_WATER_ORB 0x83ACA18 0x83E3600 0x0 0x8231CFC 0x80A5AD9
-MOONRAZE_BLACK_FOCUS: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_HANDS_AND_FEET 0x83ACA18 0x83E3600 0x0 0x8231CFC 0x80A5AD9
-MOONRAZE_PURPLE_FOCUS: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_POISON_BUBBLE 0x83ACA18 0x83E3600 0x0 0x8231CFC 0x80A5AD9
-MOONRAZE_BLACK_SPARKLES: objtemplate ANIM_TAG_SPARKLE_2 ANIM_TAG_HANDS_AND_FEET 0x83AC9D8 0x83E33F0 0x0 0x8231CFC 0x80A4D0D
-MOONRAZE_BLUE_RING_IN: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_WATER_ORB 0x83acbc0 0x8231cf0 0x0 0x83e40c4 0x8075d9d
-MOONRAZE_WHITE_RING_IN: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_AIR_WAVE_2 0x83acbc0 0x8231cf0 0x0 0x83e40c4 0x8075d9d
-MOONRAZE_BLACK_SUPERPOWER: objtemplate ANIM_TAG_METEOR ANIM_TAG_HANDS_AND_FEET 0x83AC9E0 0x8231CF0 0x0 0x8231CFC 0x80B12E9
-MOONRAZE_BLACK_BALL: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_HANDS_AND_FEET 0x83ACA30 0x8231CF0 0x0 0x8231CFC 0x80B477D
-MOONRAZE_BEAM_PARTICLE: objtemplate ANIM_TAG_ORBS ANIM_TAG_POISON_BUBBLE 0x83AC9C8 0x83E2A20 0x0 0x8231CFC 0x80A25ED
-MOONRAZE_EXPLOSION: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_POISON_BUBBLE 0x83AC9D8 0x83E3F90 0x0 0x8231CFC 0x8075D9D
-MOONRAZE_SHOCKWAVE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_POISON_BUBBLE 0x83ACB60 0x8231CF0 0x0 0x83E61C8 TARGET_SHOCKWAVE_TRAJ+1
-MOONRAZE_WORMHOLE_GROW: objtemplate ANIM_TAG_SHADOW_BALL ANIM_TAG_WATER_ORB 0x83ACA38 0x8231CF0 0x0 MOONRAZE_GROW_SCALE 0x8075D9D
+MOONRAZE_BLUE_FOCUS: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_WATER_ORB OAM_OFF_16x32 0x83E3600 0x0 0x8231CFC 0x80A5AD9
+MOONRAZE_BLACK_FOCUS: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_HANDS_AND_FEET OAM_OFF_16x32 0x83E3600 0x0 0x8231CFC 0x80A5AD9
+MOONRAZE_PURPLE_FOCUS: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_POISON_BUBBLE OAM_OFF_16x32 0x83E3600 0x0 0x8231CFC 0x80A5AD9
+MOONRAZE_BLACK_SPARKLES: objtemplate ANIM_TAG_SPARKLE_2 ANIM_TAG_HANDS_AND_FEET OAM_OFF_32x32 0x83E33F0 0x0 0x8231CFC 0x80A4D0D
+MOONRAZE_BLUE_RING_IN: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_WATER_ORB OAM_DOUBLE_BLEND_64x64 0x8231cf0 0x0 0x83e40c4 0x8075d9d
+MOONRAZE_WHITE_RING_IN: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_AIR_WAVE_2 OAM_DOUBLE_BLEND_64x64 0x8231cf0 0x0 0x83e40c4 0x8075d9d
+MOONRAZE_BLACK_SUPERPOWER: objtemplate ANIM_TAG_METEOR ANIM_TAG_HANDS_AND_FEET OAM_OFF_64x64 0x8231CF0 0x0 0x8231CFC 0x80B12E9
+MOONRAZE_BLACK_BALL: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_HANDS_AND_FEET OAM_NORMAL_16x16 0x8231CF0 0x0 0x8231CFC 0x80B477D
+MOONRAZE_BEAM_PARTICLE: objtemplate ANIM_TAG_ORBS ANIM_TAG_POISON_BUBBLE OAM_OFF_8x8 0x83E2A20 0x0 0x8231CFC 0x80A25ED
+MOONRAZE_EXPLOSION: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_POISON_BUBBLE OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC 0x8075D9D
+MOONRAZE_SHOCKWAVE: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_POISON_BUBBLE OAM_NORMAL_BLEND_64x64 0x8231CF0 0x0 0x83E61C8 TARGET_SHOCKWAVE_TRAJ+1
+MOONRAZE_WORMHOLE_GROW: objtemplate ANIM_TAG_SHADOW_BALL ANIM_TAG_WATER_ORB OAM_NORMAL_32x32 0x8231CF0 0x0 MOONRAZE_GROW_SCALE 0x8075D9D
 MOONRAZE_GROW_SCALE: .word MOONRAZE_GROW_SCALE_PTR
 MOONRAZE_GROW_SCALE_PTR: .hword 0x100, 0x100, 0x0, 0x0, 0x0, 0x0, 0x88f6, 0x0, 0x7fff, 0x0, 0x0, 0x0
 
@@ -22261,7 +22714,7 @@ ANIM_LIGHT_THAT_BURNS_THE_SKY:
 	setblends 0x80c
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ALL-PAL_ATK 0x2 0x0 0xF 0x0000
 	waitanimation
-	launchtask 0x80ae541 0x2 0x4 0x0 0x3c 0x2 0xc 	@ charge particles to attacker
+	launchtask AnimTask_ChargeBalls 0x2 0x4 0x0 0x3c 0x2 0xc 	@ charge particles to attacker
 	pause 0x1e
 	soundcomplex 0xce 0xc0 0xe 0xa
 	launchtemplate 0x83E6864 0x83 0x1 0x0
@@ -22351,56 +22804,56 @@ LIGHTBURN_BLAST_3:
 	return
 
 LIGHTBURN_NUCLEAR_GEYSER:
-	launchtemplate LIGHTBURN_EXPLODE 0x84 0x4 0x0003 0x0005 0x1 0x0
-	launchtemplate LIGHTBURN_GEYSER_HEX 0x82 0x3 0x0 0xfffc 0x10
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0003 0x0005 0x1 0x0
+	launchtemplate LIGHTBURN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfffc 0x10
 	playsound2 0xaa 0x3f
 	pause 0x0
-	launchtemplate LIGHTBURN_EXPLODE 0x84 0x4 0xfff5 0xfff1 0x1 0x0
-	launchtemplate LIGHTBURN_GEYSER_HEX 0x82 0x3 0x0 0x100D 0x10
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfff5 0xfff1 0x1 0x0
+	launchtemplate LIGHTBURN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x100D 0x10
 	playsound2 0xaa 0x3f
 	pause 0x0
-	launchtemplate LIGHTBURN_EXPLODE 0x84 0x4 0x0008 0xfffb 0x1 0x0
-	launchtemplate LIGHTBURN_GEYSER_HEX 0x82 0x3 0x0 0x4 0x10
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0008 0xfffb 0x1 0x0
+	launchtemplate LIGHTBURN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x4 0x10
 	playsound2 0xaa 0x3f
 	pause 0x0
-	launchtemplate LIGHTBURN_EXPLODE 0x84 0x4 0xfffa 0x0012 0x1 0x0
-	launchtemplate LIGHTBURN_GEYSER_HEX 0x82 0x3 0x0 0xfff0 0x10
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfffa 0x0012 0x1 0x0
+	launchtemplate LIGHTBURN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfff0 0x10
 	playsound2 0xaa 0x3f
 	pause 0x0
-	launchtemplate LIGHTBURN_EXPLODE 0x84 0x4 0x0000 0x0005 0x1 0x0
-	launchtemplate LIGHTBURN_GEYSER_HEX 0x82 0x3 0x0 0xfffc 0x10
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0000 0x0005 0x1 0x0
+	launchtemplate LIGHTBURN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfffc 0x10
 	playsound2 0xaa 0x3f
-	launchtemplate LIGHTBURN_EXPLODE 0x84 0x4 0x0003 0xfff5 bank_target 0x0
-	launchtemplate LIGHTBURN_GEYSER_HEX 0x82 0x3 0x0 0x100D 0x10
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0003 0xfff5 bank_target 0x0
+	launchtemplate LIGHTBURN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x100D 0x10
 	pause 0x0
-	launchtemplate LIGHTBURN_EXPLODE 0x84 0x4 0xfff5 0xffe1 bank_target 0x0
-	launchtemplate LIGHTBURN_GEYSER_HEX 0x82 0x3 0x0 0x4 0x10
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfff5 0xffe1 bank_target 0x0
+	launchtemplate LIGHTBURN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x4 0x10
 	pause 0x0
-	launchtemplate LIGHTBURN_EXPLODE 0x84 0x4 0x0008 0xffeb bank_target 0x0
-	launchtemplate LIGHTBURN_GEYSER_HEX 0x82 0x3 0x0 0xfff0 0x10
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0008 0xffeb bank_target 0x0
+	launchtemplate LIGHTBURN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfff0 0x10
 	pause 0x0
-	launchtemplate LIGHTBURN_EXPLODE 0x84 0x4 0xfffa 0x0002 bank_target 0x0
-	launchtemplate LIGHTBURN_GEYSER_HEX 0x82 0x3 0x0 0xfffc 0x10
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfffa 0x0002 bank_target 0x0
+	launchtemplate LIGHTBURN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfffc 0x10
 	pause 0x0
-	launchtemplate LIGHTBURN_EXPLODE 0x84 0x4 0x0000 0xfff5 bank_target 0x0
-	launchtemplate LIGHTBURN_GEYSER_HEX 0x82 0x3 0x0 0x100D 0x10
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0000 0xfff5 bank_target 0x0
+	launchtemplate LIGHTBURN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x100D 0x10
 	pause 0x0
-	launchtemplate LIGHTBURN_EXPLODE 0x84 0x4 0x0003 0xffe5 bank_target 0x0
-	launchtemplate LIGHTBURN_GEYSER_HEX 0x82 0x3 0x0 0x4 0x10
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0003 0xffe5 bank_target 0x0
+	launchtemplate LIGHTBURN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x4 0x10
 	pause 0x0
-	launchtemplate LIGHTBURN_EXPLODE 0x84 0x4 0xfff5 0xffd1 bank_target 0x0
-	launchtemplate LIGHTBURN_GEYSER_HEX 0x82 0x3 0x0 0xfff0 0x10
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfff5 0xffd1 bank_target 0x0
+	launchtemplate LIGHTBURN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfff0 0x10
 	pause 0x0
-	launchtemplate LIGHTBURN_EXPLODE 0x84 0x4 0x0008 0xffdb bank_target 0x0
-	launchtemplate LIGHTBURN_GEYSER_HEX 0x82 0x3 0x0 0xfffc 0x10
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0008 0xffdb bank_target 0x0
+	launchtemplate LIGHTBURN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfffc 0x10
 	pause 0x0
-	launchtemplate LIGHTBURN_EXPLODE 0x84 0x4 0xfffa 0xfff2 bank_target 0x0
-	launchtemplate LIGHTBURN_GEYSER_HEX 0x82 0x3 0x0 0x100D 0x10
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfffa 0xfff2 bank_target 0x0
+	launchtemplate LIGHTBURN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x100D 0x10
 	pause 0x0
-	launchtemplate LIGHTBURN_EXPLODE 0x84 0x4 0x0000 0xffe5 bank_target 0x0
-	launchtemplate LIGHTBURN_GEYSER_HEX 0x82 0x3 0x0 0x4 0x10
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0000 0xffe5 bank_target 0x0
+	launchtemplate LIGHTBURN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x4 0x10
 	pause 0x0
-	launchtemplate LIGHTBURN_GEYSER_HEX 0x82 0x3 0x0 0xfff0 0x10
+	launchtemplate LIGHTBURN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfff0 0x10
 	return
 
 LIGHTBURN_GREEN_SPARKS:
@@ -22416,10 +22869,10 @@ LIGHTBURN_GREEN_SPARKS:
 	return
 
 .align 2
-LIGHTBURN_GREEN_SPARK: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_LEAF 0x83ACA30 0x8231CF0 0x0 0x83E6004 0x80AE06D
-LIGHTBURN_BLAST_BURN: objtemplate ANIM_TAG_FIRE_PLUME ANIM_TAG_CIRCLE_OF_LIGHT 0x83AC9D8 0x83E5C50 0x0 0x8231CFC BLASTBURN_TARGET_ASM+1
-LIGHTBURN_GEYSER_HEX: objtemplate ANIM_TAG_VERTICAL_HEX ANIM_TAG_CIRCLE_OF_LIGHT 0x83AC9D0 0x83E2C00 0x0 0x8231CFC 0x80B8D59
-LIGHTBURN_EXPLODE: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_UNUSED_EXPLOSION_2 0x83AC9D8 0x83E3F90 0x0 0x8231CFC 0x8075D9D
+LIGHTBURN_GREEN_SPARK: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_LEAF OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E6004 0x80AE06D
+LIGHTBURN_BLAST_BURN: objtemplate ANIM_TAG_FIRE_PLUME ANIM_TAG_CIRCLE_OF_LIGHT OAM_OFF_32x32 0x83E5C50 0x0 0x8231CFC BLASTBURN_TARGET_ASM+1
+LIGHTBURN_GEYSER_HEX: objtemplate ANIM_TAG_VERTICAL_HEX ANIM_TAG_CIRCLE_OF_LIGHT OAM_OFF_16x16 0x83E2C00 0x0 0x8231CFC SpriteCB_Geyser
+LIGHTBURN_EXPLODE: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_UNUSED_EXPLOSION_2 sGeyserOam 0x83E3F90 0x0 0x8231CFC 0x8075D9D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -22503,7 +22956,7 @@ ANIM_SOUL_STEALING_7_STAR_STRIKE:
 	launchtemplate SOULSTEAL_BLUE_STAR 0x84 0x6 0x0 0x10 0x2 0x0 0x0 0x10
 	pause 0x4
 	playsound2 0x97 0xc0
-	launchtemplate SOULSTEAL_BLACK_FLY 0x82 0x4 0x0 0x0 0xd 0x150
+	launchtemplate SOULSTEAL_BLACK_FLY TEMPLATE_TARGET | 2, 0x4, 0x0 0x0 0xd 0x150
 	pause 0x20
 	unloadparticle ANIM_TAG_PAIN_SPLIT
 	unloadparticle ANIM_TAG_ROUND_SHADOW
@@ -22515,7 +22968,7 @@ ANIM_SOUL_STEALING_7_STAR_STRIKE:
 	pause 0x1c
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x0 0x0 0x10 0x0000
 	pause 0x1
-	launchtemplate SOULSTEAL_ZSTAR 0x82 0x4 0x0 0x0 0x1 0x24
+	launchtemplate SOULSTEAL_ZSTAR TEMPLATE_TARGET | 2, 0x4, 0x0 0x0 0x1 0x24
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x3 0x0 0x6 0x1
 	launchtemplate 0x83e5ee4 0x82 0x1 0x0
 	launchtemplate 0x83e5ee4 0x82 0x1 0x2a
@@ -22564,21 +23017,21 @@ SOULSTEAL_BLUE_BUFF_EFFECT:
 
 SOULSTEAL_BLUE_PARALYSIS:
 	playsound2 0x70 0x3f
-	launchtemplate SOULSTEAL_BLUE_PARALYZE 0x82 0x4 0x5 0x0 0x5 0x0
+	launchtemplate SOULSTEAL_BLUE_PARALYZE TEMPLATE_TARGET | 2, 0x4, 0x5 0x0 0x5 0x0
 	pause 0x2
-	launchtemplate SOULSTEAL_BLUE_PARALYZE 0x82 0x4 0xfffb 0xa 0x5 0x1
+	launchtemplate SOULSTEAL_BLUE_PARALYZE TEMPLATE_TARGET | 2, 0x4, 0xfffb 0xa 0x5 0x1
 	pause 0x2
-	launchtemplate SOULSTEAL_BLUE_PARALYZE 0x82 0x4 0xf 0x14 0x5 0x2
+	launchtemplate SOULSTEAL_BLUE_PARALYZE TEMPLATE_TARGET | 2, 0x4, 0xf 0x14 0x5 0x2
 	pause 0x2
-	launchtemplate SOULSTEAL_BLUE_PARALYZE 0x82 0x4 0xfff1 0xfff6 0x5 0x0
+	launchtemplate SOULSTEAL_BLUE_PARALYZE TEMPLATE_TARGET | 2, 0x4, 0xfff1 0xfff6 0x5 0x0
 	pause 0x2
-	launchtemplate SOULSTEAL_BLUE_PARALYZE 0x82 0x4 0x19 0x0 0x5 0x1
+	launchtemplate SOULSTEAL_BLUE_PARALYZE TEMPLATE_TARGET | 2, 0x4, 0x19 0x0 0x5 0x1
 	pause 0x2
-	launchtemplate SOULSTEAL_BLUE_PARALYZE 0x82 0x4 0xfff8 0x8 0x5 0x2
+	launchtemplate SOULSTEAL_BLUE_PARALYZE TEMPLATE_TARGET | 2, 0x4, 0xfff8 0x8 0x5 0x2
 	pause 0x2
-	launchtemplate SOULSTEAL_BLUE_PARALYZE 0x82 0x4 0x2 0xfff8 0x5 0x0
+	launchtemplate SOULSTEAL_BLUE_PARALYZE TEMPLATE_TARGET | 2, 0x4, 0x2 0xfff8 0x5 0x0
 	pause 0x2
-	launchtemplate SOULSTEAL_BLUE_PARALYZE 0x82 0x4 0xffec 0xf 0x5 0x1
+	launchtemplate SOULSTEAL_BLUE_PARALYZE TEMPLATE_TARGET | 2, 0x4, 0xffec 0xf 0x5 0x1
 	return
 
 SOULSTEAL_EXPLODE:
@@ -22600,148 +23053,1382 @@ SOULSTEAL_EXPLODE:
 	return
 
 .align 2
-SOULSTEAL_BLACK_FLY: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_HANDS_AND_FEET 0x83ACAA0 0x8231CF0 0x0 0x83E6B8C 0x80B1BB1
-SOULSTEAL_ICE_FOCUS: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_ICE_CRYSTALS 0x83ACA18 0x83E3600 0x0 0x8231CFC 0x80A5AD9
-SOULSTEAL_BLUE_FIST: objtemplate ANIM_TAG_HANDS_AND_FEET ANIM_TAG_ICE_CRYSTALS 0x83AC9D8 0x83E66CC 0x0 0x8231CFC 0x80B0929
-SOULSTEAL_BLUE_STAR: objtemplate ANIM_TAG_PAIN_SPLIT ANIM_TAG_ICE_CRYSTALS 0x83AC9D0 0x8231CF0 0x0 0x83E7910 SpriteCB_SoulStealingStar
-SOULSTEAL_BLUE_PARALYZE: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_ICE_CRYSTALS 0x83AC9D0 0x8231CF0 0x0 0x8231CFC 0x80AE1A1
-SOULSTEAL_TWINKLE_TARGET: objtemplate ANIM_TAG_SPARKLE_4 ANIM_TAG_WISP_FIRE 0x83AC9D8 0x83BF47C 0x0 0x8231CFC TWINKLE_ASM+1
-SOULSTEAL_BLACK_BLASTBURN: objtemplate ANIM_TAG_FIRE_PLUME ANIM_TAG_WISP_FIRE 0x83AC9D8 0x83E5C50 0x0 0x8231CFC 0x80AC991
-SOULSTEAL_EXPLOSION: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_WISP_FIRE 0x83AC9D8 0x83E3F90 0x0 0x8231CFC 0x8075D9D
-SOULSTEAL_ZSTAR: objtemplate ANIM_TAG_SNORE_Z ANIM_TAG_SNORE_Z 0x83ACAF8 0x8231CF0 0x0 0x8231CFC 0x80BA739
+SOULSTEAL_BLACK_FLY: objtemplate ANIM_TAG_ROUND_SHADOW ANIM_TAG_HANDS_AND_FEET OAM_DOUBLE_64x64 0x8231CF0 0x0 0x83E6B8C 0x80B1BB1
+SOULSTEAL_ICE_FOCUS: objtemplate ANIM_TAG_FOCUS_ENERGY ANIM_TAG_ICE_CRYSTALS OAM_OFF_16x32 0x83E3600 0x0 0x8231CFC 0x80A5AD9
+SOULSTEAL_BLUE_FIST: objtemplate ANIM_TAG_HANDS_AND_FEET ANIM_TAG_ICE_CRYSTALS OAM_OFF_32x32 0x83E66CC 0x0 0x8231CFC 0x80B0929
+SOULSTEAL_BLUE_STAR: objtemplate ANIM_TAG_PAIN_SPLIT ANIM_TAG_ICE_CRYSTALS OAM_OFF_16x16 0x8231CF0 0x0 0x83E7910 SpriteCB_SoulStealingStar
+SOULSTEAL_BLUE_PARALYZE: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_ICE_CRYSTALS OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC 0x80AE1A1
+SOULSTEAL_TWINKLE_TARGET: objtemplate ANIM_TAG_SPARKLE_4 ANIM_TAG_WISP_FIRE OAM_OFF_32x32 0x83BF47C 0x0 0x8231CFC TWINKLE_ASM+1
+SOULSTEAL_BLACK_BLASTBURN: objtemplate ANIM_TAG_FIRE_PLUME ANIM_TAG_WISP_FIRE OAM_OFF_32x32 0x83E5C50 0x0 0x8231CFC 0x80AC991
+SOULSTEAL_EXPLOSION: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_WISP_FIRE OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC 0x8075D9D
+SOULSTEAL_ZSTAR: objtemplate ANIM_TAG_SNORE_Z ANIM_TAG_SNORE_Z OAM_OFF_BLEND_32x32 0x8231CF0 0x0 0x8231CFC 0x80BA739
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 @Credit to -
 ANIM_MAX_GUARD:
+	launchtask AnimTask_DynamaxGrowth 0x5 0x1 0x1
+	waitanimation
 	goto 0x81c8f55 @ANIM_PROTECT
 	endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_MAX_FLARE:
-	goto ANIM_INFERNO_OVERDRIVE
+	loadparticle ANIM_TAG_SMALL_EMBER
+	loadparticle ANIM_TAG_UNUSED_EXPLOSION_2
+	loadparticle ANIM_TAG_FLASH_CANNON_BALL
+	loadparticle ANIM_TAG_SHARP_TEETH @;Extra colour
+	loadparticle ANIM_TAG_ACUPRESSURE_FINGER @;Extra colour
+	playsound2 0x85 0xc0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xE 0x0 @;Black
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_FLASH_CANNON_BALL 0x0 0xF 0xF 0x057C @;Red
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_SHARP_TEETH 0x0 0xF 0xF 0x01DD @;Orange
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_ACUPRESSURE_FINGER 0x0 0xF 0xF 0x063C @;Yellow
+	launchtask AnimTask_DynamaxGrowth 0x5 0x1 0x1
+	launchtemplate MAX_FLARE_BALL_ATTACKER TEMPLATE_ATTACKER | 2, 0x2, 0x0, 0x0
+	pause 0x21
+	loadBG1 BG_INFERNO_OVERDRIVE
+	waitforBG
+	launchtask AnimTask_scroll_background 0x5 0x4 0xfb00 0x0 0x0 0xFFFF
+	waitfortransparentbg
+	soundcomplex 0x8A 0xc0 0xa 0x4
+	launchtemplate MAX_FLARE_BALL_LAUNCH_RED TEMPLATE_ATTACKER | 2, 0x2, 0x0, 0x0
+	pause 0x4
+	launchtemplate MAX_FLARE_BALL_LAUNCH_RED TEMPLATE_ATTACKER | 2, 0x2, 0x0, 0x0
+	pause 0x4
+	launchtemplate MAX_FLARE_BALL_LAUNCH_ORANGE TEMPLATE_ATTACKER | 2, 0x2, 0x0, 0x0
+	pause 0x4
+	launchtemplate MAX_FLARE_BALL_LAUNCH_ORANGE TEMPLATE_ATTACKER | 2, 0x2, 0x0, 0x0
+	pause 0x4
+	launchtemplate MAX_FLARE_BALL_LAUNCH_YELLOW TEMPLATE_ATTACKER | 2, 0x2, 0x0, 0x0
+	pause 0x4
+	launchtemplate MAX_FLARE_BALL_LAUNCH_YELLOW TEMPLATE_ATTACKER | 2, 0x2, 0x0, 0x0
+	pause 0x4
+	launchtask AnimTask_move_bank 0x5 0x5 bank_target 0x0 0x4 0x3A 0x1
+	pause 0x10
+	call MAX_FLARE_GEYSER
+	call MAX_FLARE_GEYSER
+	call MAX_FLARE_GEYSER
+	waitanimation
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x0 0x0 @;Black
+	call UNSET_SCROLLING_BG
+	waitanimation
 	endanimation
+
+MAX_FLARE_GEYSER:
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0003 0x0005 0x1 0x0
+	launchtemplate MAX_FLARE_GEYSER_FLAME TEMPLATE_TARGET | 2, 0x3, 0x0 0xfffc 0x10
+	playsound2 0xaa 0x3f
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfff5 0xfff1 0x1 0x0
+	launchtemplate MAX_FLARE_GEYSER_FLAME TEMPLATE_TARGET | 2, 0x3, 0x0 0x100D 0x10
+	playsound2 0xaa 0x3f
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0008 0xfffb 0x1 0x0
+	launchtemplate MAX_FLARE_GEYSER_FLAME TEMPLATE_TARGET | 2, 0x3, 0x0 0x4 0x10
+	playsound2 0xaa 0x3f
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfffa 0x0012 0x1 0x0
+	launchtemplate MAX_FLARE_GEYSER_FLAME TEMPLATE_TARGET | 2, 0x3, 0x0 0xfff0 0x10
+	playsound2 0xaa 0x3f
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0000 0x0005 0x1 0x0
+	launchtemplate MAX_FLARE_GEYSER_FLAME TEMPLATE_TARGET | 2, 0x3, 0x0 0xfffc 0x10
+	playsound2 0xaa 0x3f
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0003 0xfff5 bank_target 0x0
+	launchtemplate MAX_FLARE_GEYSER_FLAME TEMPLATE_TARGET | 2, 0x3, 0x0 0x100D 0x10
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfff5 0xffe1 bank_target 0x0
+	launchtemplate MAX_FLARE_GEYSER_FLAME TEMPLATE_TARGET | 2, 0x3, 0x0 0x4 0x10
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0008 0xffeb bank_target 0x0
+	launchtemplate MAX_FLARE_GEYSER_FLAME TEMPLATE_TARGET | 2, 0x3, 0x0 0xfff0 0x10
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfffa 0x0002 bank_target 0x0
+	launchtemplate MAX_FLARE_GEYSER_FLAME TEMPLATE_TARGET | 2, 0x3, 0x0 0xfffc 0x10
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0000 0xfff5 bank_target 0x0
+	launchtemplate MAX_FLARE_GEYSER_FLAME TEMPLATE_TARGET | 2, 0x3, 0x0 0x100D 0x10
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0003 0xffe5 bank_target 0x0
+	launchtemplate MAX_FLARE_GEYSER_FLAME TEMPLATE_TARGET | 2, 0x3, 0x0 0x4 0x10
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfff5 0xffd1 bank_target 0x0
+	launchtemplate MAX_FLARE_GEYSER_FLAME TEMPLATE_TARGET | 2, 0x3, 0x0 0xfff0 0x10
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0008 0xffdb bank_target 0x0
+	launchtemplate MAX_FLARE_GEYSER_FLAME TEMPLATE_TARGET | 2, 0x3, 0x0 0xfffc 0x10
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfffa 0xfff2 bank_target 0x0
+	launchtemplate MAX_FLARE_GEYSER_FLAME TEMPLATE_TARGET | 2, 0x3, 0x0 0x100D 0x10
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0000 0xffe5 bank_target 0x0
+	launchtemplate MAX_FLARE_GEYSER_FLAME TEMPLATE_TARGET | 2, 0x3, 0x0 0x4 0x10
+	pause 0x0
+	launchtemplate MAX_FLARE_GEYSER_FLAME TEMPLATE_TARGET | 2, 0x3, 0x0 0xfff0 0x10
+	return
+
+.align 2
+MAX_FLARE_BALL_ATTACKER: objtemplate ANIM_TAG_FLASH_CANNON_BALL ANIM_TAG_FLASH_CANNON_BALL sAppleOAM 0x8231CF0 0x0 gSpriteAffineAnimTable_MaxFlareBall SpriteCB_MaxFlareBallOnAttacker
+MAX_FLARE_BALL_LAUNCH_RED: objtemplate ANIM_TAG_FLASH_CANNON_BALL ANIM_TAG_FLASH_CANNON_BALL sAppleOAM 0x8231CF0 0x0 gSpriteAffineAnimTable_MaxFlareBall SpriteCB_MaxFlareBall
+MAX_FLARE_BALL_LAUNCH_ORANGE: objtemplate ANIM_TAG_FLASH_CANNON_BALL ANIM_TAG_SHARP_TEETH sAppleOAM 0x8231CF0 0x0 gSpriteAffineAnimTable_MaxFlareBall SpriteCB_MaxFlareBall
+MAX_FLARE_BALL_LAUNCH_YELLOW: objtemplate ANIM_TAG_FLASH_CANNON_BALL ANIM_TAG_ACUPRESSURE_FINGER sAppleOAM 0x8231CF0 0x0 gSpriteAffineAnimTable_MaxFlareBall SpriteCB_MaxFlareBall
+MAX_FLARE_GEYSER_FLAME: objtemplate ANIM_TAG_SMALL_EMBER ANIM_TAG_SMALL_EMBER sGeyserOam 0x83E7764 0x0 0x8231CFC SpriteCB_Geyser
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_MAX_FLUTTERBY:
-	goto ANIM_SAVAGE_SPIN_OUT
+	loadparticle ANIM_TAG_SPARKLE_6
+	loadparticle ANIM_TAG_EXPLOSION
+	loadparticle ANIM_TAG_UNUSED_EXPLOSION_2
+	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_EXPLOSION 0x0 0xA 0xA 0x3FB5 @;Light green
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_UNUSED_EXPLOSION_2 0x0 0xA 0xA 0x33D5 @;Light green
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_CIRCLE_OF_LIGHT 0x0 0xC 0xC 0x33D5 @;Light green
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xE 0x0 @;Black
+	launchtask AnimTask_DynamaxGrowth 0x5 0x1 0x1
+	launchtemplate BUTTERFLY TEMPLATE_TARGET | 2, 0x3, -30, -30, -20 @;Top left
+	launchtemplate BUTTERFLY TEMPLATE_TARGET | 2, 0x3, -30,  10,  20 @;Bottom left
+	launchtemplate BUTTERFLY TEMPLATE_TARGET | 2, 0x3,  30, -30, -20 @;Top right
+	launchtemplate BUTTERFLY TEMPLATE_TARGET | 2, 0x3,  30,  10,  20 @;Bottom right
+	playsoundpanchange3 0xc8 0x3f 0xc0 0xfd 0x0 
+	pause 0x48
+	pause 0x1
+	launchtemplate BUTTERFLY TEMPLATE_TARGET | 2, 0x3, -30, -40, -20 @;Top left - tail
+	launchtemplate BUTTERFLY TEMPLATE_TARGET | 2, 0x3, -30,  20,  20 @;Bottom left - tail
+	launchtemplate BUTTERFLY TEMPLATE_TARGET | 2, 0x3,  30, -40, -20 @;Top right - tail
+	launchtemplate BUTTERFLY TEMPLATE_TARGET | 2, 0x3,  30,  20,  20 @;Bottom right - tail
+	pause 0x3
+	launchtask AnimTask_move_bank 0x5 0x5 bank_target 0x4 0x0 0x48 0x1
+	call CREATE_FLUTTERBIES
+	call CREATE_FLUTTERBIES
+	call CREATE_FLUTTERBIES
+	call CREATE_FLUTTERBIES
+	stopmusic
+	pause 0x10
+	launchtask AnimTask_move_bank 0x5 0x5 bank_target 0x0 0x4 0x28 0x1
+	soundcomplex 0xAA 0x3F 0x6 0x6
+	launchtemplate FLUTTERBY_EXPLOSION 0x83 0x1 0x1
+	call FLUTTERBY_CLOUD_EXPLOSION
+	call FLUTTERBY_CLOUD_EXPLOSION
+	waitanimation
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xE 0x0 0x0 @;From black
+	waitanimation
 	endanimation
+
+CREATE_FLUTTERBIES:
+	playsound2 0xAA 0x3f
+	launchtemplate Template_Explosion TEMPLATE_TARGET | 2, 0x4 0x0 0x0 0x1 0x1
+	launchtemplate BUTTERFLY TEMPLATE_TARGET | 2, 0x3, -30, -30, -20 @;Top left
+	pause 0x1
+	launchtemplate BUTTERFLY TEMPLATE_TARGET | 2, 0x3, -30, -30, -20 @;Top left - tail
+	pause 0x3
+	playsound2 0xAA 0x3f
+	launchtemplate Template_Explosion TEMPLATE_TARGET | 2, 0x4 0x18 0xffe8 0x1 0x1
+	launchtemplate BUTTERFLY TEMPLATE_TARGET | 2, 0x3, -30,  10,  20 @;Bottom left
+	pause 0x1
+	launchtemplate BUTTERFLY TEMPLATE_TARGET | 2, 0x3, -30,  10,  20 @;Bottom left - tail
+	pause 0x3
+	playsound2 0xAA 0x3f
+	launchtemplate Template_Explosion TEMPLATE_TARGET | 2, 0x4 0xfff0 0x10 0x1 0x1
+	launchtemplate BUTTERFLY TEMPLATE_TARGET | 2, 0x3,  30, -30, -20 @;Top right
+	pause 0x1
+	launchtemplate BUTTERFLY TEMPLATE_TARGET | 2, 0x3,  30, -30, -20 @;Top right - tail
+	pause 0x3
+	playsound2 0xAA 0x3f
+	launchtemplate Template_Explosion 0x3 0x4 0xffe8 0xfff4 0x1 0x1
+	launchtemplate BUTTERFLY TEMPLATE_TARGET | 2, 0x3,  30,  10,  20 @;Bottom right
+	pause 0x1
+	launchtemplate BUTTERFLY TEMPLATE_TARGET | 2, 0x3,  30,  10,  20 @;Bottom right - tail
+	pause 0x3
+	playsound2 0xAA 0x3f
+	launchtemplate Template_Explosion TEMPLATE_TARGET | 2, 0x4 0x10 0x10 0x1 0x1
+	return
+	
+FLUTTERBY_CLOUD_EXPLOSION:
+	launchtemplate LIGHTBURN_EXPLODE 0x3 0x4 0x0 0x0 0x1 0x1
+	pause 0x3
+	launchtemplate LIGHTBURN_EXPLODE 0x3 0x4 0x18 0xffe8 0x1 0x1
+	pause 0x3
+	launchtemplate LIGHTBURN_EXPLODE 0x3 0x4 0xfff0 0x10 0x1 0x1
+	pause 0x3
+	launchtemplate LIGHTBURN_EXPLODE 0x3 0x4 0xffe8 0xfff4 0x1 0x1
+	pause 0x3
+	launchtemplate LIGHTBURN_EXPLODE 0x3 0x4 0x10 0x10 0x1 0x1
+	pause 0x3
+	return
+
+.align 2
+BUTTERFLY: objtemplate ANIM_TAG_SPARKLE_6 ANIM_TAG_SPARKLE_6 OAM_DOUBLE_16x16 0x8231CF0 0x0 gSpriteAffineAnimTable_Flutterby SpriteCB_MaxFlutterby
+FLUTTERBY_EXPLOSION: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_CIRCLE_OF_LIGHT OAM_DOUBLE_64x64 0x8231CF0 0x0 gSpriteAffineAnimTable_MushroomCloud 0x80AE71D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_MAX_LIGHTNING:
-	goto ANIM_GIGAVOLT_HAVOC
+	loadparticle ANIM_TAG_UNUSED_LIGHTNING
+	loadparticle ANIM_TAG_LIGHTNING
+	loadparticle ANIM_TAG_SPARK_2
+
+ANIM_MAX_LIGHTNING_BEGIN:
+	loadBG1 BG_MAX_LIGHTNING
+	waitforBG
+	launchtask AnimTask_scroll_background 0x5 0x4 0xff00 0x0 0x1 0xffff
+	waitfortransparentBG
+	launchtask AnimTask_DynamaxGrowth 0x5 0x1 0x1
+	call MAX_LIGHTNING_PLAYER_SPARK_1
+	launchtask AnimTask_pal_fade_complex 0x2 0x6 PAL_ATK 0x1 0x4 0x0 0x8 0x17BF 
+	pause 0xa
+	call MAX_LIGHTNING_PLAYER_SPARK_2
+	pause 0xa
+	call MAX_LIGHTNING_PLAYER_SPARK_1
+	pause 0xa
+	call MAX_LIGHTNING_PLAYER_SPARK_2
+	waitanimation
+	launchtemplate UNUSED_LIGHTNING 0x82 0x2 0x0, -32
+	playsound2 0xd6 0x3f 
+	pause 0x1 
+	launchtemplate UNUSED_LIGHTNING 0x82 0x2 0x0, -16  
+	pause 0x1 
+	launchtemplate UNUSED_LIGHTNING 0x82 0x2 0x0, 16
+	pause 0x5
+	launchtask AnimTask_move_bank 0x5 0x5 bank_target 0x0 0x4 0x4f 0x1
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ALL_BANKS | PAL_BG 0x1 0x10 0x10 0x17BF @;Yellow
+	pause 0x5
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ALL_BANKS | PAL_BG 0x1 0x0 0x0 0x17BF @;From Yellow
+	pause 0x5
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ALL_BANKS | PAL_BG 0x1 0x10 0x10 0x17BF @;Yellow
+	pause 0x5
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ALL_BANKS | PAL_BG 0x1 0x0 0x0 0x17BF @;From Yellow
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x1 0x0 0x10 0x17BF @;Yellow
+	call SPARKSURF_SPARK_GEYSER
+	launchtemplate Template_Lightning 0x82 0x2, 20, -36  
+	pause 0x1
+	launchtemplate Template_Lightning 0x82 0x2, 20, -20 
+	pause 0x1 
+	launchtemplate Template_Lightning 0x82 0x2, 20, 12
+	call SPARKSURF_SPARK_GEYSER
+	launchtemplate Template_Lightning 0x86 0x2, -20, -32
+	playsound2 0x83 0x3f 
+	pause 0x1 
+	launchtemplate Template_Lightning 0x86 0x2, -20, -16
+	pause 0x1 
+	launchtemplate Template_Lightning 0x86 0x2, -20, 16
+	call SPARKSURF_SPARK_GEYSER
+	waitanimation
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x1 0x10 0x0 0x17BF @;Yellow
+	call UNSET_SCROLLING_BG
+	waitanimation
 	endanimation
+	
+MAX_LIGHTNING_PLAYER_SPARK_1:
+	playsound2 0x70 0xc0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x20 0x18 0xbe 0xc 0x0 0x1 0x0 
+	pause 0x0
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x50 0x18 0x16 0xc 0x0 0x1 0x0 
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x9c 0x18 0x79 0xd 0x0 0x1 0x1 
+	pause 0x0
+	return
+
+MAX_LIGHTNING_PLAYER_SPARK_2:
+	playsound2 0x70 0xc0 
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0x64 0x18 0x3c 0xa 0x0 0x1 0x0 
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0xaa 0x18 0x2a 0xb 0x0 0x1 0x1 
+	pause 0x0 
+	launchtemplate Template_ElectricSparkPlayer 0x0 0x7 0xee 0x18 0xa5 0xa 0x0 0x1 0x1 
+	pause 0x0
+	return
+
+.align 2
+UNUSED_LIGHTNING: objtemplate ANIM_TAG_UNUSED_LIGHTNING ANIM_TAG_UNUSED_LIGHTNING OAM_OFF_32x32 0x83E5F34 0x0 0x8231CFC 0x80ADBED
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_MAX_STRIKE:
-	goto ANIM_BREAKNECK_BLITZ
+	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT
+	loadparticle ANIM_TAG_UNUSED_EXPLOSION_2
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xE 0x0 @;Black
+	launchtask AnimTask_DynamaxGrowth 0x5 0x1 0x1
+	call MAX_STRIKE_SCREEN_SHAKE
+	launchtask AnimTask_move_bank 0x5 0x5 bank_target 0x0 0x4 0x34 0x1
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x4 0x0 0x10 0x73DF @;Bright yellow
+	call EXPLOSION_GEYSER
+	call EXPLOSION_GEYSER
+	call EXPLOSION_GEYSER
+	waitanimation
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x1 0x10 0x0 0x73DF @;From bright yellow
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xE 0x0 0x0 @;From black
+	waitanimation
 	endanimation
+
+MAX_STRIKE_SCREEN_SHAKE:
+	soundcomplex 0xCF 0x3f 0x8 0x3
+	launchtask AnimTask_screen_shake 0x5 0x3 4, 10 / 10, 1  @;All battlers, weakest power, 10 frames
+	launchtask AnimTask_screen_shake 0x5 0x3 5, 10 / 10, 1  @;Screen
+	pause 0x1C
+	soundcomplex 0xCF 0x3f 0x6 0x3
+	launchtask AnimTask_screen_shake 0x5 0x3 4, 60 / 10, 1  @;All battlers, medium power, 10 frames
+	launchtask AnimTask_screen_shake 0x5 0x3 5, 60 / 10, 1  @;Screen
+	pause 0x2C
+	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_MAX_KNUCKLE:
-	goto ANIM_ALL_OUT_PUMMELING
+	loadparticle ANIM_TAG_HANDS_AND_FEET @Fist
+	loadparticle ANIM_TAG_VERTICAL_HEX @Red Colour
+	loadparticle ANIM_TAG_FOCUS_ENERGY @Buff
+	loadparticle ANIM_TAG_LEER
+	loadparticle ANIM_TAG_PUNCH_IMPACT
+	loadparticle ANIM_TAG_UNUSED_EXPLOSION_2
+	setblends 0x80C
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xE 0x0 @;Black
+	launchtask AnimTask_DynamaxGrowth 0x5 0x1 0x1
+	launchtemplate MAX_KNUCKLE_USER_FIST 0x2 0x5 0x0 0x0 0x0 60 0xa
+	playsound2 0xa4 0xc0
+	call BUFF_EFFECT
+	pause 0x10
+	waitanimation	
+	playsound2 0xca 0xc0
+	launchtemplate MAX_KNUCKLE_TWINKLE TEMPLATE_ATTACKER | 2, 0x0
+	waitanimation
+	playsound2 0xba 0xc0
+	launchtemplate MAX_KNUCKLE_FLYING_FIST 0x82 0x1 0x14
+	pause 0x14
+	launchtask AnimTask_move_bank 0x5 0x5 bank_target 0x0 0x4 0x34 0x1
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x2 0x0 0x10 0x0E5F @;Orange
+	call EXPLOSION_GEYSER
+	call EXPLOSION_GEYSER
+	call EXPLOSION_GEYSER
+	waitanimation
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x1 0x10 0x0 0x0E5F @;Orange
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xE 0x0 0x0 @;Black
+	waitanimation
+	resetblends
 	endanimation
+
+EXPLOSION_GEYSER:
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0003 0x0005 bank_target 0x0
+	playsound2 0xaa 0x3f
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfff5 0xfff1 bank_target 0x0
+	playsound2 0xaa 0x3f
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0008 0xfffb bank_target 0x0
+	playsound2 0xaa 0x3f
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfffa 0x0012 bank_target 0x0
+	playsound2 0xaa 0x3f
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0000 0x0005 bank_target 0x0
+	playsound2 0xaa 0x3f
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0003 0xfff5 bank_target 0x0
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfff5 0xffe1 bank_target 0x0
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0008 0xffeb bank_target 0x0
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfffa 0x0002 bank_target 0x0
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0000 0xfff5 bank_target 0x0
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0003 0xffe5 bank_target 0x0
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfff5 0xffd1 bank_target 0x0
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0008 0xffdb bank_target 0x0
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfffa 0xfff2 bank_target 0x0
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0000 0xffe5 bank_target 0x0
+	return
+
+.align 2
+MAX_KNUCKLE_USER_FIST: objtemplate ANIM_TAG_HANDS_AND_FEET ANIM_TAG_VERTICAL_HEX sTransparentFistOAM 0x8231CF0 0x0 gSpriteAffineAnimTable_GrowingFist SpriteCB_SpriteOnMonForDuration
+MAX_KNUCKLE_TWINKLE: objtemplate ANIM_TAG_LEER ANIM_TAG_LEER OAM_OFF_32x32 0x83FEF2C 0x0 0x8231CFC SpriteCB_SparkleInCorner
+MAX_KNUCKLE_FLYING_FIST: objtemplate ANIM_TAG_PUNCH_IMPACT ANIM_TAG_PUNCH_IMPACT sAppleOAM 0x8231CF0 0x0 gSpriteAffineAnimTable_SunsteelStrikeBlast 0x80B1C3D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_MAX_PHANTASM:
-	goto ANIM_NEVER_ENDING_NIGHTMARE
+	loadparticle ANIM_TAG_ROCKS
+	loadparticle ANIM_TAG_ASSURANCE_HAND
+	loadparticle ANIM_TAG_WOOD
+	loadparticle ANIM_TAG_ANCHOR
+	loadparticle ANIM_TAG_CHAIN_LINK
+	loadparticle ANIM_TAG_RAZOR_SHELL
+	loadparticle ANIM_TAG_UNUSED_EXPLOSION_2
+	loadparticle ANIM_TAG_VERTICAL_HEX
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_ROCKS 0x0 0xA 0xA 0x7CBF @;Pink
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_ASSURANCE_HAND 0x0 0xA 0xA 0x7CBF @;Pink
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_WOOD 0x0 0xA 0xA 0x7CBF @;Pink
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_CHAIN_LINK 0x0 0xA 0xA 0x7CBF @;Pink
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_RAZOR_SHELL 0x0 0xA 0xA 0x7CBF @;Pink
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_VERTICAL_HEX 0x2 0xA 0xA 0x5C05 @;Royal Blue
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xE 0x0 @;Black
+	launchtask AnimTask_DynamaxGrowth 0x5 0x1 0x1
+	launchtemplate PHANTASM_OBJ_1 TEMPLATE_ATTACKER | 2, 0x5, -30, -40,  30, -10, 40 @;Top left - Top Right
+	launchtemplate PHANTASM_OBJ_2 TEMPLATE_ATTACKER | 2, 0x5, -40, -10,   0, -30, 40 @;Middle left - Top
+	launchtemplate PHANTASM_OBJ_3 TEMPLATE_ATTACKER | 2, 0x5, -30,  20,  20,  10, 40 @;Bottom left - Bottom Right
+	launchtemplate PHANTASM_OBJ_4 TEMPLATE_ATTACKER | 2, 0x5,  30, -25, -20,  10, 40 @;Top right - Bottom Left
+	launchtemplate PHANTASM_OBJ_5 TEMPLATE_ATTACKER | 2, 0x5,  30,   5, -30, -10, 40 @;Bottom right - Top left 
+	playsound2 0x72 0xC0
+	pause 0x48
+	waitanimation
+	launchtask AnimTask_move_bank 0x5 0x5 bank_target 0x0 0x4 0x34 0x1
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x3 0x0 0x10 0x5C05 @;Royal Blue
+	call NEN_GEYSER
+	call NEN_GEYSER
+	call NEN_GEYSER
+	waitanimation
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x1 0x10 0x0 0x5C05 @;From royal Blue
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xE 0x0 0x0 @;From black
+	waitanimation
 	endanimation
+
+.align 2
+PHANTASM_OBJ_1: objtemplate ANIM_TAG_ROCKS ANIM_TAG_ROCKS sMaxPhantasmObjectsOam 0x8231CF0 0x0 gSpriteAffineAnimTable_GrowToNormalSize SpriteCB_MaxPhantasmObject
+PHANTASM_OBJ_2: objtemplate ANIM_TAG_ASSURANCE_HAND ANIM_TAG_ASSURANCE_HAND sMaxPhantasmObjectsOam 0x8231CF0 0x0 gSpriteAffineAnimTable_GrowToNormalSize SpriteCB_MaxPhantasmObject
+PHANTASM_OBJ_3: objtemplate ANIM_TAG_WOOD ANIM_TAG_WOOD sMaxPhantasmObjectsOam 0x8231CF0 0x0 gSpriteAffineAnimTable_GrowToNormalSize SpriteCB_MaxPhantasmObject
+PHANTASM_OBJ_4: objtemplate ANIM_TAG_ANCHOR ANIM_TAG_CHAIN_LINK sMaxPhantasmObjectsOam 0x8231CF0 0x0 gSpriteAffineAnimTable_GrowToNormalSize SpriteCB_MaxPhantasmObject
+PHANTASM_OBJ_5: objtemplate ANIM_TAG_RAZOR_SHELL ANIM_TAG_RAZOR_SHELL sMaxPhantasmObjectsOam 0x8231CF0 0x0 gSpriteAffineAnimTable_GrowToNormalSize SpriteCB_MaxPhantasmObject
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_MAX_HAILSTORM:
-	goto ANIM_SUBZERO_SLAMMER
+	loadparticle ANIM_TAG_HAIL
+	loadparticle ANIM_TAG_ICE_ROCK
+	loadparticle ANIM_TAG_ICE_CRYSTALS
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xE 0x0 @;Black
+	launchtask AnimTask_DynamaxGrowth 0x5 0x1 0x1
+	waitanimation
+	launchtask 0x80B038D 0x5 0x0 @;Hail  
+	@soundcomplex 0xEB 0x0 0x8 0xa
+	playsound2 0x25 0xc0 @;Falling sound
+	launchtemplate HAILSTORM_ICE_ROCK, TEMPLATE_TARGET | 2, 0x4, -40, 0x3c, 3, bank_target
+	playsound2 0x25 0xc0 @;Falling sound
+	pause 0xF
+	playsound2 0xCF 0x3f
+	pause 0x11
+	playsound2 0x25 0xc0 @;Falling sound
+	launchtemplate HAILSTORM_ICE_ROCK, TEMPLATE_TARGET | 2, 0x4, 30, 0x3c, 3, bank_target
+	playsound2 0x25 0xc0 @;Falling sound
+	pause 0xF
+	playsound2 0xCF 0x3f
+	pause 0x11
+	playsound2 0x25 0xc0 @;Falling sound
+	launchtemplate HAILSTORM_LARGER_ICE_ROCK, TEMPLATE_TARGET | 2, 0x4, 0x0 0x3c, 3, bank_target
+	pause 0x7
+	launchtask AnimTask_screen_shake 0x5 0x3 4, 1, 8  @;All battlers, weakest power
+	playsound2 0xCF 0x3f
+	@launchtask AnimTask_SquishTarget 0x2 0x0
+	launchtemplate Template_SlideMonToOffset 0x2 0x5 bank_target 0 0x15 0x0 0x4
+	pause 0x30
+	launchtemplate Template_SlideMonToOriginalPos 0x2 0x3 bank_target 0x0 0x10
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xE 0x0 0x0 @;Black
+	waitanimation
 	endanimation
+
+.align 2
+HAILSTORM_ICE_ROCK: objtemplate ANIM_TAG_ICE_ROCK ANIM_TAG_ICE_ROCK OAM_DOUBLE_64x64 gAnimCmdTable_IceRock 0x0 gSpriteAffineAnimTable_LargeHailRock SpriteCB_FallingObjectPlayAnimOnEnd
+HAILSTORM_LARGER_ICE_ROCK: objtemplate ANIM_TAG_ICE_ROCK ANIM_TAG_ICE_ROCK OAM_DOUBLE_64x64 gAnimCmdTable_IceRock 0x0 gSpriteAffineAnimTable_EvenLargerHailRock SpriteCB_FallingObjectPlayAnimOnEnd
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_MAX_OOZE:
-	goto ANIM_ACID_DOWNPOUR
+	loadparticle ANIM_TAG_POISON_BUBBLE
+	loadparticle ANIM_TAG_POISON_COLUMN
+	launchtask AnimTask_DynamaxGrowth 0x5 0x1 0x1
+	soundcomplex 0x77 0x3f 0xd 0x3
+	launchtemplate OOZE_REVERSAL 0x2 0x2 0x1a 0x0
+	launchtemplate OOZE_REVERSAL 0x2 0x2 0x1a 0x2a
+	launchtemplate OOZE_REVERSAL 0x2 0x2 0x1a 0x54
+	launchtemplate OOZE_REVERSAL 0x2 0x2 0x1a 0x7e
+	launchtemplate OOZE_REVERSAL 0x2 0x2 0x1a 0xa8
+	launchtemplate OOZE_REVERSAL 0x2 0x2 0x1a 0xd2
+	loadBG1 BG_POISON
+	waitforBG
+	launchtask AnimTask_arg7_is_target_player 0x2 0x0
+	jumpifargmatches 0x7 0x1 BG_ON_PLAYER_OOZE
+	launchtask AnimTask_scroll_background 0x5 0x4 0x0 0xff10 0x1 0xffff
+	goto FINISH_BG_OOZE
+
+BG_ON_PLAYER_OOZE:
+	launchtask AnimTask_scroll_background 0x5 0x4 0x0 0xf0 0x1 0xffff
+
+FINISH_BG_OOZE:
+	waitfortransparentBG
+	waitanimation
+	playsound2 0x9D 0xc0
+	launchtask AnimTask_arg7_is_target_player 0x2 0x0
+	jumpifargmatches 0x7 0x1 POISON_COLUMNS_ON_PLAYER
+	launchtemplate POISON_COLUMN TEMPLATE_TARGET | 2, 0x5, 0x1, 30, 5, 0xC5 0x0
+	pause 0x30
+	playsound2 0x9D 0xc0
+	launchtemplate POISON_COLUMN TEMPLATE_TARGET | 2, 0x5, 0x1, -50, -10, 0x95 0x0
+	
+MAX_OOZE_REJOIN:
+	pause 0x30
+	playsound2 0x13 0xC0
+	launchtemplate POISON_COLUMN TEMPLATE_TARGET | 2, 0x5, 0x1, -10, -25, 0x65 0x0
+	pause 0x3
+	launchtask AnimTask_move_bank 0x5 0x5 bank_target 0x0 0x4 0x2F 0x1
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x2 0x0 0x10 0x6038 @;Purple
+	waitanimation
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x2 0x10 0x0 0x6038 @;Purple
+	call UNSET_SCROLLING_BG
+	waitanimation
 	endanimation
+	
+POISON_COLUMNS_ON_PLAYER:
+	launchtemplate POISON_COLUMN TEMPLATE_TARGET | 0, 0x5, 0x1, -15, -60, 0xC5 0x0
+	pause 0x30
+	playsound2 0x9D 0xc0
+	launchtemplate POISON_COLUMN TEMPLATE_TARGET | 0, 0x5, 0x1, 45, -40, 0x95 0x0
+	goto MAX_OOZE_REJOIN
+
+.align 2
+OOZE_REVERSAL: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_POISON_BUBBLE OAM_DOUBLE_16x16 0x8231CF0 0x0 gSpriteAffineAnimTable_GrowingFist 0x80E0E95
+POISON_COLUMN: objtemplate ANIM_TAG_POISON_COLUMN ANIM_TAG_POISON_COLUMN gPoisonColumnOam gAnimCmdTable_PoisonColumn 0x0 gSpriteAffineAnimTable_LargeHailRock SpriteCB_SpriteOnMonForDuration
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_MAX_GEYSER:
-	goto ANIM_HYDRO_VORTEX
+	loadparticle ANIM_TAG_HYDRO_PUMP
+	loadparticle ANIM_TAG_SMALL_BUBBLES
+	loadparticle ANIM_TAG_ICE_CRYSTALS
+	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT
+	loadparticle ANIM_TAG_WATER_IMPACT
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xE 0x0 @;Black
+	launchtask AnimTask_DynamaxGrowth 0x5 0x1 0x1
+	pause 0x5
+	playsound2 0x87 0xc0
+	launchtemplate LARGE_BUBBLES 0x2 0x4 0xa 0xa 0x19 0x0
+	pause 0x4
+	playsound2 0x87 0xc0
+	launchtemplate LARGE_BUBBLES 0x2 0x4 0xfff1 0x0 0x19 0x0
+	pause 0x4
+	playsound2 0x87 0xc0
+	launchtemplate LARGE_BUBBLES 0x2 0x4 0x14 0xa 0x19 0x0
+	pause 0x4
+	playsound2 0x87 0xc0
+	launchtemplate LARGE_BUBBLES 0x2 0x4 0x0 0xfff6 0x19 0x0
+	pause 0x4
+	playsound2 0x87 0xc0
+	launchtemplate LARGE_BUBBLES 0x2 0x4 0xfff6 0xf 0x19 0x0
+	pause 0x4
+	playsound2 0x87 0xc0
+	launchtemplate LARGE_BUBBLES 0x2 0x4 0x19 0x14 0x19 0x0
+	pause 0x4
+	playsound2 0x87 0xc0
+	launchtemplate LARGE_BUBBLES 0x2 0x4 0xffec 0x14 0x19 0x0
+	pause 0x4
+	playsound2 0x87 0xc0
+	launchtemplate LARGE_BUBBLES 0x2 0x4 0xc 0x0 0x19 0x0
+	waitanimation
+	pokespritetoBG side_target
+	pause 0x10
+	playsoundpanchange 0x9d 0xc0 0x3f 0x2 0x0
+	launchtask AnimTask_screen_shake 0x5 0x3, 5, 1, 67
+	launchtemplate GEYSER_BUBBLE_SHOT TEMPLATE_TARGET | 3, 0x3, 0, 0, 0x19
+	call MAX_GEYSER_SHOT
+	call MAX_GEYSER_SHOT
+	call MAX_GEYSER_SHOT
+	launchtemplate GEYSER_BUBBLE_SHOT TEMPLATE_TARGET | 3, 0x3, 0, 0, 0x19
+	launchtask AnimTask_move_bank 0x5 0x5 bank_target 0x0 0x4 0x66 0x1
+	call MAX_GEYSER_BUBBLES_ON_TARGET
+	call MAX_GEYSER_SHOT
+	call MAX_GEYSER_BUBBLES_ON_TARGET
+	call MAX_GEYSER_SHOT
+	call MAX_GEYSER_BUBBLES_ON_TARGET
+	call MAX_GEYSER_SHOT
+	launchtemplate GEYSER_BUBBLE_SHOT TEMPLATE_TARGET | 3, 0x3, 0, 0, 0x19
+	call MAX_GEYSER_BUBBLES_ON_TARGET
+	call MAX_GEYSER_SHOT
+	call MAX_GEYSER_BUBBLES_ON_TARGET
+	call MAX_GEYSER_SHOT
+	call MAX_GEYSER_BUBBLES_ON_TARGET
+	call MAX_GEYSER_SHOT
+	launchtemplate GEYSER_BUBBLE_SHOT TEMPLATE_TARGET | 3, 0x3, 0, 0, 0x19
+	call MAX_GEYSER_BUBBLES_ON_TARGET
+	playsoundpanchange 0x9d 0xc0 0x3f 0x2 0x0
+	call MAX_GEYSER_SHOT
+	call MAX_GEYSER_BUBBLES_ON_TARGET
+	call MAX_GEYSER_SHOT
+	call MAX_GEYSER_BUBBLES_ON_TARGET
+	call MAX_GEYSER_SHOT
+	launchtemplate GEYSER_BUBBLE_SHOT TEMPLATE_TARGET | 3, 0x3, 0, 0, 0x19
+	call MAX_GEYSER_BUBBLES_ON_TARGET
+	call MAX_GEYSER_SHOT
+	call MAX_GEYSER_BUBBLES_ON_TARGET
+	call MAX_GEYSER_SHOT
+	call MAX_GEYSER_BUBBLES_ON_TARGET
+	call MAX_GEYSER_SHOT
+	launchtemplate GEYSER_BUBBLE_SHOT TEMPLATE_TARGET | 3, 0x3, 0, 0, 0x19
+	call MAX_GEYSER_BUBBLES_ON_TARGET
+	call MAX_GEYSER_SHOT
+	call MAX_GEYSER_BUBBLES_ON_TARGET
+	call MAX_GEYSER_SHOT
+	call MAX_GEYSER_BUBBLES_ON_TARGET
+	call MAX_GEYSER_SHOT
+	call MAX_GEYSER_BUBBLES_ON_TARGET
+	launchtemplate GEYSER_EXPLOSION 0x83 0x1 0x1
+	call MAX_GEYSER_EXPLOSION_BUBBLES
+	call MAX_GEYSER_EXPLOSION_BUBBLES
+	call MAX_GEYSER_EXPLOSION_BUBBLES
+	call MAX_GEYSER_EXPLOSION_BUBBLES
+	call MAX_GEYSER_EXPLOSION_BUBBLES
+	call MAX_GEYSER_EXPLOSION_BUBBLES
+	call MAX_GEYSER_EXPLOSION_BUBBLES
+	call MAX_GEYSER_EXPLOSION_BUBBLES
+	call MAX_GEYSER_EXPLOSION_BUBBLES
+	waitanimation
+	pokespritefromBG side_target
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xE 0x0 0x0 @;From black
+	waitanimation
 	endanimation
+
+MAX_GEYSER_SHOT:
+	launchtemplate GEYSER_SHOT TEMPLATE_TARGET | 2, 0x3, 0, 0, 0x19
+	pause 0x2
+	launchtemplate GEYSER_SHOT TEMPLATE_TARGET | 2, 0x3, 0, 0, 0x19
+	pause 0x2
+	return
+
+MAX_GEYSER_BUBBLES_ON_TARGET:
+	launchtemplate 0x83E5AC8 TEMPLATE_TARGET | 1, 0x4,   0,   0, 0x1 0x1
+	launchtemplate 0x83E5AC8 TEMPLATE_TARGET | 1, 0x4,   5,   0, 0x1 0x1
+	launchtemplate 0x83E5AC8 TEMPLATE_TARGET | 1, 0x4,  10,   0, 0x1 0x1
+	launchtemplate 0x83E5AC8 TEMPLATE_TARGET | 1, 0x4,  15,   0, 0x1 0x1
+	launchtemplate 0x83E5AC8 TEMPLATE_TARGET | 1, 0x4,  -5,   0, 0x1 0x1
+	launchtemplate 0x83E5AC8 TEMPLATE_TARGET | 1, 0x4, -10,   0, 0x1 0x1
+	launchtemplate 0x83E5AC8 TEMPLATE_TARGET | 1, 0x4, -15,   0, 0x1 0x1
+	return
+	
+MAX_GEYSER_EXPLOSION_BUBBLES:
+	playsound2 0xAA 0x3F
+	launchtemplate 0x83E5AC8 TEMPLATE_TARGET | 3, 0x4,   0,   0, 0x1 0x1
+	launchtemplate 0x83E5AC8 TEMPLATE_TARGET | 3, 0x4,   5,   5, 0x1 0x1
+	launchtemplate 0x83E5AC8 TEMPLATE_TARGET | 3, 0x4,  10,  10, 0x1 0x1
+	launchtemplate 0x83E5AC8 TEMPLATE_TARGET | 3, 0x4,  15, -10, 0x1 0x1
+	launchtemplate 0x83E5AC8 TEMPLATE_TARGET | 3, 0x4,  -5,   5, 0x1 0x1
+	launchtemplate 0x83E5AC8 TEMPLATE_TARGET | 3, 0x4, -10,  10, 0x1 0x1
+	launchtemplate 0x83E5AC8 TEMPLATE_TARGET | 3, 0x4, -15, -10, 0x1 0x1
+	pause 0x3
+	playsound2 0x87 0xc0
+	pause 0x2
+	return
+
+.align 2
+LARGE_BUBBLES: objtemplate ANIM_TAG_ICE_CRYSTALS ANIM_TAG_ICE_CRYSTALS OAM_DOUBLE_8x8 0x83E6330 0x0 gSpriteAffineAnimTable_LargeHailRock 0x80AB309
+GEYSER_SHOT: objtemplate ANIM_TAG_HYDRO_PUMP ANIM_TAG_HYDRO_PUMP OAM_DOUBLE_16x16 0x8231CF0 0x0 gSpriteAffineAnimTable_HydroCannonBall 0x80B563D
+GEYSER_EXPLOSION: objtemplate ANIM_TAG_CIRCLE_OF_LIGHT ANIM_TAG_WATER_IMPACT OAM_DOUBLE_64x64 0x8231CF0 0x0 gSpriteAffineAnimTable_MushroomCloud 0x80AE71D
+GEYSER_BUBBLE_SHOT: objtemplate ANIM_TAG_SMALL_BUBBLES ANIM_TAG_SMALL_BUBBLES OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC 0x80B563D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_MAX_AIRSTREAM:
-	goto ANIM_SUPERSONIC_SKYSTRIKE
+	loadparticle ANIM_TAG_AIR_WAVE_2
+	loadparticle ANIM_TAG_METAL_SOUND_WAVES
+	launchtask AnimTask_GrayscaleParticle 0x5 0x1 ANIM_TAG_METAL_SOUND_WAVES
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_METAL_SOUND_WAVES 0x2 0x9 0x9 0x7FFF @;Brighten palette
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xE 0x0 @;Black
+	launchtask AnimTask_DynamaxGrowth 0x5 0x1 0x1
+	launchtemplate AIRSTREAM_SPINNING_BLADE 0x3 0x4 0x0 0x0 0x38 0x0  
+	playsound2 0x7E 0xc0 
+	pause 0x2 
+	launchtemplate AIRSTREAM_SPINNING_BLADE 0x3 0x4 0x0 0x0 0x38 0x4
+	playsound2 0x7E 0xc0
+	pause 0x2 
+	launchtemplate AIRSTREAM_SPINNING_BLADE 0x3 0x4 0x0 0x0 0x38 0x8
+	playsound2 0x7E 0xc0
+	pause 0x2 
+	launchtemplate AIRSTREAM_SPINNING_BLADE 0x3 0x4 0x0 0x0 0x38 0xc
+	playsound2 0x7E 0xc0
+	pause 0x2 
+	launchtemplate AIRSTREAM_SPINNING_BLADE 0x3 0x4 0x0 0x0 0x38 0x10
+	playsound2 0x7E 0xc0
+	pause 0x3E
+	soundcomplex 0x88 0xc0 0x7 11
+	call MAX_AIRSTREAM_CALL
+	call MAX_AIRSTREAM_CALL
+	call MAX_AIRSTREAM_CALL
+	call MAX_AIRSTREAM_CALL
+	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x4 0x0 0x1D 0x2
+	call MAX_AIRSTREAM_CALL
+	call MAX_AIRSTREAM_CALL
+	call MAX_AIRSTREAM_CALL
+	call MAX_AIRSTREAM_CALL
+	call MAX_AIRSTREAM_CALL
+	call MAX_AIRSTREAM_CALL
+	call MAX_AIRSTREAM_CALL
+	call MAX_AIRSTREAM_CALL
+	call MAX_AIRSTREAM_CALL
+	call MAX_AIRSTREAM_CALL
+	call MAX_AIRSTREAM_CALL
+	call MAX_AIRSTREAM_CALL
+	call MAX_AIRSTREAM_CALL
+	call MAX_AIRSTREAM_CALL
+	call MAX_AIRSTREAM_CALL
+	call MAX_AIRSTREAM_CALL
+	waitanimation
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xE 0x0 0x0 @;Black
+	waitanimation
 	endanimation
+
+MAX_AIRSTREAM_CALL:
+	launchtemplate AIRSTREAM_RING 0x82 0x6 0x10 0x0 0x0 0x0 0x16 0x0
+	pause 0x2
+	return
+	
+.align 2
+AIRSTREAM_SPINNING_BLADE: objtemplate ANIM_TAG_AIR_WAVE_2 ANIM_TAG_AIR_WAVE_2 OAM_OFF_32x16 0x83E6B48 0x0 0x8231CFC 0x80ACDE9
+AIRSTREAM_RING: objtemplate ANIM_TAG_METAL_SOUND_WAVES ANIM_TAG_METAL_SOUND_WAVES OAM_NORMAL_32x64 0x8231CF0 0x0 0x83E7604 Callback_TranslateAnimSpriteToTargetMonLocation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_MAX_STARFALL:
-	goto ANIM_TWINKLE_TACKLE
+	loadparticle ANIM_TAG_YELLOW_STAR
+	loadparticle ANIM_TAG_STRAIGHT_BEAM
+	loadparticle ANIM_TAG_LEER
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xE 0x0 @;Black
+	launchtask AnimTask_DynamaxGrowth 0x5 0x1 0x1
+	pause 0x20
+	call STARFALL_STAR_TWINKLE
+	waitanimation
+	call STARFALL_STARS_FALL
+	pause 0x20
+	soundcomplex 0x85 0xc0 0xd 0x3
+	call STARFALL_BEAMS_UP
+	pause 0x5
+	waitforsound
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x6 0x0 0x10 0x7A5B @;Pink
+	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x4 0x0 0x60 0x1
+	playsoundpanchange 0xc2 0xc0 0x3f 0x2 0x0
+	call STARFALL_TARGET_BEAM_UP
+	waitanimation
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x1 0x10 0x0 0x7A5B @;From pink
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xE 0x0 0x0 @;From black
+	waitanimation
 	endanimation
+	
+STARFALL_STAR_TWINKLE:
+	launchtemplate STARFALL_TWINKLE TEMPLATE_TARGET | 2, 0x2,  30, 0
+	launchtemplate STARFALL_TWINKLE TEMPLATE_TARGET | 2, 0x2, -30, 0
+	launchtemplate STARFALL_TWINKLE TEMPLATE_TARGET | 0x42, 0x2, 3, 0
+	playsound2 0xca 0xc0
+	return
+	
+STARFALL_STARS_FALL:
+	playsound2 0x25 0xc0 @;Falling sound
+	launchtemplate STARFALL_STAR TEMPLATE_TARGET | 2, 0x5, 30, 20 0x40 0x77 0x0
+	launchtemplate STARFALL_STAR TEMPLATE_TARGET | 2, 0x5, -30, 20 0x40 0x77 0x0
+	launchtemplate STARFALL_STAR TEMPLATE_TARGET | 0x42, 0x5, 3, 16 0x40 0x77 0x0
+	return
+	
+STARFALL_BEAMS_UP:
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 3, 0x6,    30,  19, bank_target, 105, 0, 6
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 3, 0x6,   -30,  19, bank_target, 105, 0, 6
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 0x43, 0x6,  3,  17, bank_target, 105, 0, 6
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 3, 0x6,    30,   3, bank_target, 105, 0, 5
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 3, 0x6,   -30,   3, bank_target, 105, 0, 5
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 0x43, 0x6,  3,   1, bank_target, 105, 0, 5
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 3, 0x6,    30, -13, bank_target, 105, 0, 4
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 3, 0x6,   -30, -13, bank_target, 105, 0, 4
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 0x43, 0x6,  3, -15, bank_target, 105, 0, 4
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 3, 0x6,    30, -29, bank_target, 105, 0, 3
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 3, 0x6,   -30, -29, bank_target, 105, 0, 3
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 0x43, 0x6,  3, -31, bank_target, 105, 0, 3
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 3, 0x6,    30, -45, bank_target, 105, 0, 2
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 3, 0x6,   -30, -45, bank_target, 105, 0, 2
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 0x43, 0x6,  3, -47, bank_target, 105, 0, 2
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 3, 0x6,    30, -61, bank_target, 105, 0, 1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 3, 0x6,   -30, -61, bank_target, 105, 0, 1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 0x43, 0x6,  3, -63, bank_target, 105, 0, 1
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 3, 0x6,    30, -77, bank_target, 105, 0, 0
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 3, 0x6,   -30, -77, bank_target, 105, 0, 0
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 0x43, 0x6,  3, -79, bank_target, 105, 0, 0
+	return
+
+STARFALL_TARGET_BEAM_UP:
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 3, 0x6, 0,  19, bank_target, 180, 0, 6
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 3, 0x6, 0,   3, bank_target, 180, 0, 5
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 3, 0x6, 0, -13, bank_target, 180, 0, 4
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 3, 0x6, 0, -29, bank_target, 180, 0, 3
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 3, 0x6, 0, -45, bank_target, 180, 0, 2
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 3, 0x6, 0, -61, bank_target, 180, 0, 1
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 3, 0x6, 0, -77, bank_target, 180, 0, 0
+	return
+
+.align 2
+STARFALL_TWINKLE: objtemplate ANIM_TAG_LEER ANIM_TAG_LEER OAM_OFF_32x32 0x83FEF2C 0x0 0x8231CFC SpriteCB_TwinkleAboveTarget
+STARFALL_STAR: objtemplate ANIM_TAG_YELLOW_STAR ANIM_TAG_YELLOW_STAR OAM_DOUBLE_32x32 0x8231CF0 0x0 gSpriteAffineAnimTable_LargeHailRock 0x80B4FE5
+STARFALL_BEAM: objtemplate ANIM_TAG_STRAIGHT_BEAM ANIM_TAG_STRAIGHT_BEAM OAM_DOUBLE_16x16 gAnimCmdTable_StarfallBeam 0x0 gSpriteAffineAnimTable_StarfallBeam SpriteCB_StarfallBeam
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_MAX_WYRMWIND:
-	goto ANIM_DEVASTATING_DRAKE
+	loadparticle ANIM_TAG_TORNADO
+	loadparticle ANIM_TAG_GUST
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_TORNADO 0x0 0x8 0x8 0x5818 @;Pink
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_GUST 0x0 0x8 0x8 0x5818 @;Pink
+	launchtask AnimTask_DynamaxGrowth 0x5 0x1 0x1
+	soundcomplex 0x80 0x3f 0xa 0x4
+	launchtemplate WYRMWIND_TWISER TEMPLATE_TARGET | 2, 0x6, 0, 0, 0, -32, 0x10, 142 @;Reliant on no arg 5 coming for at least 0x49 frames after it
+	pause 0x48
+	playsound2 0x7A 0x3f
+	pause 0x10
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x0 0x0 0xE 0x0 @;Black
+	playsound2 0xE4 0x3f
+	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x4 0x48 0x1
+	pause 0xA
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x5 0x0 0x10 0x5818 @;Pink
+	call HURRICANE_GUST
+	pause 0xA
+	call HURRICANE_GUST
+	pause 0xA
+	call HURRICANE_GUST
+	pause 0xA
+	call HURRICANE_GUST
+	pause 0xA
+	call HURRICANE_GUST
+	pause 0xA
+	call HURRICANE_GUST
+	waitanimation
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x1 0x10 0x0 0x5818 @;From pink
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xE 0x0 0x0 @;From black
 	endanimation
+
+.align 2
+WYRMWIND_TWISER: objtemplate ANIM_TAG_TORNADO ANIM_TAG_TORNADO OAM_DOUBLE_64x64 gAnimCmdTable_Tornado 0x0 gSpriteAffineAnimTable_GrowingFist SpriteCB_MaxWyrmwindTornado
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_MAX_MINDSTORM:
-	goto ANIM_SHATTERED_PSYCHE
+	loadparticle ANIM_TAG_AURA_SPHERE
+	loadparticle ANIM_TAG_GOLD_RING
+	loadparticle ANIM_TAG_PINK_PETAL @;Pink colour
+	loadparticle ANIM_TAG_UNUSED_EXPLOSION_2
+	loadparticle ANIM_TAG_NEEDLE
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_GOLD_RING 0x2 0xC 0xC 0x5413 @;Purple
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_PINK_PETAL 0x2 0x7 0x7 0x7D3d @;Pinkish purple
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_NEEDLE 0x2 0xA 0xA 0x7FEE @;Sky blue
+	
+MAX_MINDSTORM_BEGIN:
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xE 0x0 @;Black
+	launchtask AnimTask_DynamaxGrowth 0x5 0x1 0x1
+	launchtemplate MINDSTORM_BALL TEMPLATE_ATTACKER | 2, 0x2 0x0 0x0
+	playsound2 0x27 0xC0
+	waitanimation
+	soundcomplex 0xc1 0x3f 0xb 0xa
+	call MINDSTORM_CREATE_RING
+	call MINDSTORM_CREATE_RING
+	launchtask AnimTask_SwayMon 0x5 0x5, 0x0 0x8 2048 0x6 bank_target
+	launchtask AnimTask_pal_fade_complex 0x2 0x6 PAL_DEF 0x2 0x4 0x0 0xc 0x7d3d  
+	call MINDSTORM_CREATE_RING
+	call MINDSTORM_CREATE_RING
+	call MINDSTORM_CREATE_RING
+	call MINDSTORM_CREATE_RING
+	call MINDSTORM_CREATE_RING
+	call MINDSTORM_CREATE_RING
+	call MINDSTORM_CREATE_RING
+	call MINDSTORM_CREATE_RING
+	call MINDSTORM_CREATE_RING
+	call MINDSTORM_CREATE_RING
+	pause 10
+	launchtask AnimTask_move_bank 0x5 0x5 bank_target 0x0 0x4 0x38 0x1
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x3 0x0 0x10 0x7d3d @;Purple
+	call MINDSTORM_GEYSER
+	call MINDSTORM_GEYSER
+	call MINDSTORM_GEYSER
+	waitanimation
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x1 0x10 0x0 0x7d3d @;Purple
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xE 0x0 0x0 @;From black
+	waitanimation
 	endanimation
+
+MINDSTORM_CREATE_RING:
+	launchtemplate MINDTORM_RING_PINK TEMPLATE_TARGET | 2, 0x6, 0, -90, 0, 20, 0x15 0x0
+	pause 0x2
+	launchtemplate MINDTORM_RING_PURPLE TEMPLATE_TARGET | 2, 0x6, 0, -90, 0, 20, 0x15 0x0
+	pause 0x2
+	return
+
+MINDSTORM_GEYSER:
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0003 0x0005 0x1 0x0
+	launchtemplate BLUE_LINE_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfffc 0x10
+	playsound2 0xaa 0x3f
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0xfff5 0xfff1 0x1 0x0
+	launchtemplate BLUE_LINE_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x100D 0x10
+	playsound2 0xaa 0x3f
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0008 0xfffb 0x1 0x0
+	launchtemplate BLUE_LINE_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x4 0x10
+	playsound2 0xaa 0x3f
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0xfffa 0x0012 0x1 0x0
+	launchtemplate BLUE_LINE_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfff0 0x10
+	playsound2 0xaa 0x3f
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0000 0x0005 0x1 0x0
+	launchtemplate BLUE_LINE_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfffc 0x10
+	playsound2 0xaa 0x3f
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0003 0xfff5 bank_target 0x0
+	launchtemplate BLUE_LINE_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x100D 0x10
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0xfff5 0xffe1 bank_target 0x0
+	launchtemplate BLUE_LINE_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x4 0x10
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0008 0xffeb bank_target 0x0
+	launchtemplate BLUE_LINE_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfff0 0x10
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0xfffa 0x0002 bank_target 0x0
+	launchtemplate BLUE_LINE_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfffc 0x10
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0000 0xfff5 bank_target 0x0
+	launchtemplate BLUE_LINE_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x100D 0x10
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0003 0xffe5 bank_target 0x0
+	launchtemplate BLUE_LINE_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x4 0x10
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0xfff5 0xffd1 bank_target 0x0
+	launchtemplate BLUE_LINE_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfff0 0x10
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0008 0xffdb bank_target 0x0
+	launchtemplate BLUE_LINE_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfffc 0x10
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0xfffa 0xfff2 bank_target 0x0
+	launchtemplate BLUE_LINE_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x100D 0x10
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0000 0xffe5 bank_target 0x0
+	launchtemplate BLUE_LINE_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x4 0x10
+	pause 0x0
+	launchtemplate BLUE_LINE_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfff0 0x10
+	return
+
+.align 2
+MINDSTORM_BALL: objtemplate ANIM_TAG_AURA_SPHERE ANIM_TAG_AURA_SPHERE OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E7604 SpriteCB_LaunchObjectUpwards
+MINDTORM_RING_PINK: objtemplate ANIM_TAG_GOLD_RING ANIM_TAG_PINK_PETAL OAM_DOUBLE_16x32 0x8231CF0 0x0 gSpriteAffineAnimTable_GrowingRing Callback_TranslateAnimSpriteToTargetMonLocation
+MINDTORM_RING_PURPLE: objtemplate ANIM_TAG_GOLD_RING ANIM_TAG_GOLD_RING OAM_DOUBLE_16x32 0x8231CF0 0x0 gSpriteAffineAnimTable_GrowingRing Callback_TranslateAnimSpriteToTargetMonLocation
+BLUE_LINE_GEYSER: objtemplate ANIM_TAG_NEEDLE ANIM_TAG_NEEDLE OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC SpriteCB_Geyser
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_MAX_ROCKFALL:
-	goto ANIM_CONTINENTAL_CRUSH
+	loadparticle ANIM_TAG_STONE_PILLAR
+	loadparticle ANIM_TAG_UNUSED_EXPLOSION_2
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xE 0x0 @;Black
+	launchtask AnimTask_AllBanksInvisibleExceptAttackerAndTarget 0xA 0x0
+	launchtask AnimTask_DynamaxGrowth 0x5 0x1 0x1
+	soundcomplex 0x7C 0x3f 0x8 0x3
+	launchtask AnimTask_arg7_is_target_player 0x2 0x0
+	jumpifargmatches 0x7 0x1 MAX_ROCKFALL_ON_PLAYER
+	launchtemplate STONE_PILLAR TEMPLATE_TARGET | 2, 0x2, -30, -24
+	pause 0x48
+	playsound2 0x25 0xc0 @;Falling sound
+	pause 10
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x2 0x0 0xb 0x0 @;Cast shadow
+	pause 30
+	playsound2 0xCF 0x3f
+	launchtask AnimTask_SquishTarget 0x2 0x0
+	pause 15
+	
+MAX_ROCKFALL_REJOIN:
+	launchtask AnimTask_screen_shake 0x5 0x3, 5, 1, 0x2
+	launchtask AnimTask_screen_shake 0x5 0x3, 4, 1, 0x2
+	call EXPLOSION_GEYSER
+	pause 9 + 0x25
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x1 0xB 0x0 0x0
+	waitanimation
+	launchtask AnimTask_AllBanksVisible 0xA 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xE 0x0 0x0 @;Black
+	waitanimation
 	endanimation
+	
+MAX_ROCKFALL_ON_PLAYER:
+	launchtemplate STONE_PILLAR TEMPLATE_TARGET | 2, 0x2, -30, -33
+	pause 0x48
+	playsound2 0x25 0xc0 @;Falling sound
+	pause 2
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x2 0x0 0xb 0x0 @;Cast shadow
+	pause 23
+	playsound2 0x86 0x3f
+	launchtask AnimTask_SquishTarget 0x2 0x0
+	pause 30
+	goto MAX_ROCKFALL_REJOIN
+
+.align 2
+STONE_PILLAR: objtemplate ANIM_TAG_STONE_PILLAR ANIM_TAG_STONE_PILLAR sGrowingSuperpowerOAM gAnimCmdTable_StonePillar 0x0 gSpriteAffineAnimTable_StonePillar SpriteCB_StonePillar
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_MAX_QUAKE:
-	goto ANIM_TECTONIC_RAGE
+	loadparticle ANIM_TAG_DIRT_MOUND @ dig
+	loadparticle ANIM_TAG_UNUSED_EXPLOSION_2
+	loadparticle ANIM_TAG_MUD_SAND
+	loadparticle ANIM_TAG_ROCKS @ rollout
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_UNUSED_EXPLOSION_2 0x2 0x8 0x8 0x447F @;Reddish - Pink
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xE 0x0 @;Black
+	launchtask AnimTask_DynamaxGrowth 0x5 0x1 0x1
+	waitanimation
+	launchtemplate Template_DigMound TEMPLATE_ATTACKER | 0x1, 0x3 0x0 0x0 0xb4
+	launchtemplate Template_DigMound TEMPLATE_ATTACKER | 0x1, 0x3 0x0 0x1 0xb4
+	pokespritetoBG2 bank_attacker
+	pause 0x1
+	launchtask 0x80b8e95 0x2 0x1 0x0
+	pause 0x6
+	call GROUND_DIGGING
+	call GROUND_DIGGING
+	call GROUND_DIGGING
+	call GROUND_DIGGING
+	launchtask 0x80b4bd1 0x2 0x0 	@ rollout
+	launchtask AnimTask_RolloutPathExplosions 0x2 0x0
+	call GROUND_DIGGING
+	setblends 0x80c
+	pause 0x20
+	playsound2 0xab 0xc0
+	pokespritetoBG bank_target
+	launchtask AnimTask_move_bank 0x5 0x5 bank_target 0x0 0x4 0x40 0x1
+	call DIRT_GEYSER
+	call DIRT_GEYSER
+	call DIRT_GEYSER
+	call DIRT_GEYSER
+	waitanimation
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ATK 0x1 0xE 0xE 0x0 @;Black
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG | PAL_ATK 0x1 0xE 0x0 0x0 @;Black
+	makebankvisible bank_attacker
+	waitanimation
+	pokespritefromBG bank_target
+	resetblends
 	endanimation
+
+DIRT_GEYSER:
+	launchtemplate TECTONIC_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0003 0x0005 0x1 0x0
+	launchtemplate MAX_QUAKE_ROCK_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfffc 0x10
+	playsound2 0xaa 0x3f
+	pause 0x0
+	launchtemplate TECTONIC_EXPLODE TEMPLATE_TARGET | 2, 0x4 0xfff5 0xfff1 0x1 0x0
+	launchtemplate MAX_QUAKE_DIRT_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x100D 0x10
+	playsound2 0xaa 0x3f
+	pause 0x0
+	launchtemplate TECTONIC_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0008 0xfffb 0x1 0x0
+	launchtemplate MAX_QUAKE_DIRT_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x4 0x10
+	playsound2 0xaa 0x3f
+	pause 0x0
+	launchtemplate TECTONIC_EXPLODE TEMPLATE_TARGET | 2, 0x4 0xfffa 0x0012 0x1 0x0
+	launchtemplate MAX_QUAKE_ROCK_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfff0 0x10
+	playsound2 0xaa 0x3f
+	pause 0x0
+	launchtemplate TECTONIC_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0000 0x0005 0x1 0x0
+	launchtemplate MAX_QUAKE_DIRT_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfffc 0x10
+	playsound2 0xaa 0x3f
+	launchtemplate TECTONIC_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0003 0xfff5 bank_target 0x0
+	launchtemplate MAX_QUAKE_DIRT_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x100D 0x10
+	pause 0x0
+	launchtemplate TECTONIC_EXPLODE TEMPLATE_TARGET | 2, 0x4 0xfff5 0xffe1 bank_target 0x0
+	launchtemplate MAX_QUAKE_ROCK_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x4 0x10
+	pause 0x0
+	launchtemplate TECTONIC_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0008 0xffeb bank_target 0x0
+	launchtemplate MAX_QUAKE_DIRT_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfff0 0x10
+	pause 0x0
+	launchtemplate TECTONIC_EXPLODE TEMPLATE_TARGET | 2, 0x4 0xfffa 0x0002 bank_target 0x0
+	launchtemplate MAX_QUAKE_DIRT_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfffc 0x10
+	pause 0x0
+	launchtemplate TECTONIC_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0000 0xfff5 bank_target 0x0
+	launchtemplate MAX_QUAKE_ROCK_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x100D 0x10
+	pause 0x0
+	launchtemplate TECTONIC_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0003 0xffe5 bank_target 0x0
+	launchtemplate MAX_QUAKE_DIRT_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x4 0x10
+	pause 0x0
+	launchtemplate TECTONIC_EXPLODE TEMPLATE_TARGET | 2, 0x4 0xfff5 0xffd1 bank_target 0x0
+	launchtemplate MAX_QUAKE_DIRT_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfff0 0x10
+	pause 0x0
+	launchtemplate TECTONIC_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0008 0xffdb bank_target 0x0
+	launchtemplate MAX_QUAKE_ROCK_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfffc 0x10
+	pause 0x0
+	launchtemplate TECTONIC_EXPLODE TEMPLATE_TARGET | 2, 0x4 0xfffa 0xfff2 bank_target 0x0
+	launchtemplate MAX_QUAKE_DIRT_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x100D 0x10
+	pause 0x0
+	launchtemplate TECTONIC_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0000 0xffe5 bank_target 0x0
+	launchtemplate MAX_QUAKE_DIRT_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x4 0x10
+	pause 0x0
+	launchtemplate MAX_QUAKE_ROCK_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfff0 0x10
+	return
+
+.align 2
+.global gRolloutExplosionSpriteTemplate
+gRolloutExplosionSpriteTemplate: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_UNUSED_EXPLOSION_2 OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC SpriteCB_RolloutExplosion
+MAX_QUAKE_DIRT_GEYSER: objtemplate ANIM_TAG_MUD_SAND ANIM_TAG_MUD_SAND OAM_OFF_16x16 0x8231CF0 0x0 0x8231CFC 0x80B8D59
+MAX_QUAKE_ROCK_GEYSER: objtemplate ANIM_TAG_ROCKS ANIM_TAG_ROCKS OAM_OFF_32x32 0x83E73A8 0x0 0x8231CFC SpriteCB_Geyser
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_MAX_DARKNESS:
-	goto ANIM_BLACK_HOLE_ECLIPSE
+	loadparticle ANIM_TAG_SHADOW_BALL
+	loadparticle ANIM_TAG_VERTICAL_HEX
+	loadparticle ANIM_TAG_ORBS
+	loadparticle ANIM_TAG_UNUSED_PINK_ORB
+	loadparticle ANIM_TAG_UNUSED_EXPLOSION_2
+	loadparticle ANIM_TAG_VERTICAL_HEX
+	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_ORBS 0x2 0xA 0xA 0x441F @;Reddish pink
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_UNUSED_PINK_ORB 0x2 0xA 0xA 0x640B @;Purple
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_CIRCLE_OF_LIGHT 0x2 0xE 0xE 0x3006 @;Purple
+	launchtask AnimTask_DynamaxGrowth 0x5 0x1 0x1
+	soundcomplex 0x70 0xc0 0x9 0x5
+	launchtemplate DARKNESS_HOLE TEMPLATE_ATTACKER | 2, 0x5, 0, -20, 0, 145, 0
+	launchtemplate DARKNESS_HOLE TEMPLATE_ATTACKER | 2, 0x5, 0, 20, 0, 145, 0
+	pause 0x48
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x0 0x0 0xE 0x0 @;Black
+	call DARKNESS_ORB_LAUNCH_PINK
+	call DARKNESS_ORB_LAUNCH_PURPLE
+	call DARKNESS_ORB_LAUNCH_PINK
+	call DARKNESS_ORB_LAUNCH_PURPLE
+	call DARKNESS_ORB_LAUNCH_PINK
+	call DARKNESS_ORB_LAUNCH_PURPLE
+	launchtask AnimTask_move_bank 0x5 0x5 bank_target 0x0 0x4 62 0x1
+	call DARKNESS_ORB_LAUNCH_PINK
+	call DARKNESS_ORB_LAUNCH_PURPLE
+	call DARKNESS_ORB_LAUNCH_PINK
+	call DARKNESS_ORB_LAUNCH_PURPLE
+	call DARKNESS_ORB_LAUNCH_PINK
+	call DARKNESS_ORB_LAUNCH_PURPLE
+	call DARKNESS_ORB_LAUNCH_PINK
+	call DARKNESS_ORB_LAUNCH_PURPLE
+	call DARKNESS_ORB_LAUNCH_PINK
+	call DARKNESS_ORB_LAUNCH_PURPLE
+	call DARKNESS_ORB_LAUNCH_PINK
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x3 0x0 0x10 0x3006 @;Purple
+	soundcomplex 0xAA 0x3F 0x6 0x6
+	launchtemplate FLUTTERBY_EXPLOSION 0x83 0x1 0x1
+	call DARKNESS_CLOUD_EXPLOSION
+	call DARKNESS_CLOUD_EXPLOSION
+	waitanimation
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x10 0x0 0x0 @;From black
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x1 0x10 0x0 0x40c0 @;From purple
+	waitanimation
 	endanimation
+
+DARKNESS_ORB_LAUNCH_PINK:
+	playsound2 0xC5 0x3F
+	launchtemplate DARKNESS_ORB TEMPLATE_ATTACKER | 3, 0x4, -20, 0, 0x0, 32
+	launchtemplate DARKNESS_ORB TEMPLATE_ATTACKER | 3, 0x4, 20, 0, 0x0, -32
+	pause 0x2
+	return
+	
+DARKNESS_ORB_LAUNCH_PURPLE:
+	playsound2 0xC5 0x3F
+	launchtemplate DARKNESS_ORB_2 TEMPLATE_ATTACKER | 3, 0x4, -20, 0, 0x0, 32
+	launchtemplate DARKNESS_ORB_2 TEMPLATE_ATTACKER | 3, 0x4, 20, 0, 0x0, -32
+	pause 0x2
+	return
+	
+DARKNESS_CLOUD_EXPLOSION:
+	launchtemplate NEN_EXPLODE 0x3 0x4 0x0 0x0 0x1 0x1
+	pause 0x3
+	launchtemplate NEN_EXPLODE 0x3 0x4 0x18 0xffe8 0x1 0x1
+	pause 0x3
+	launchtemplate NEN_EXPLODE 0x3 0x4 0xfff0 0x10 0x1 0x1
+	pause 0x3
+	launchtemplate NEN_EXPLODE 0x3 0x4 0xffe8 0xfff4 0x1 0x1
+	pause 0x3
+	launchtemplate NEN_EXPLODE 0x3 0x4 0x10 0x10 0x1 0x1
+	pause 0x3
+	return
+
+.align 2
+DARKNESS_HOLE: objtemplate ANIM_TAG_SHADOW_BALL ANIM_TAG_VERTICAL_HEX OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E7604 SpriteCB_SpriteOnMonForDuration
+DARKNESS_ORB: objtemplate ANIM_TAG_ORBS ANIM_TAG_ORBS OAM_OFF_8x8 0x83E2A20 0x0 0x8231CFC 0x80AB025
+DARKNESS_ORB_2: objtemplate ANIM_TAG_ORBS ANIM_TAG_UNUSED_PINK_ORB OAM_OFF_8x8 0x83E2A20 0x0 0x8231CFC 0x80AB025
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_MAX_OVERGROWTH:
-	goto ANIM_BLOOM_DOOM
+	loadparticle ANIM_TAG_SEED
+	loadparticle ANIM_TAG_MUSHROOM
+	loadparticle ANIM_TAG_UNUSED_EXPLOSION_2
+	loadparticle ANIM_TAG_LEAF
+	loadparticle ANIM_TAG_SPORE
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xE 0x0 @;Black
+	launchtask AnimTask_DynamaxGrowth 0x5 0x1 0x1
+	call OVERGROWTH_SEEDS_UP
+	waitanimation
+	call OVERGROWTH_SEEDS_DOWN
+	call OVERGROWTH_GIANT_MUSHROOMS
+	launchtask AnimTask_move_bank 0x5 0x5 bank_target 0x0 0x4 0x34 0x1
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x3 0x0 0x10 0x33F2 @;Light Green
+	call LEAVES_COTTON_EXPLOSION_GEYSER
+	call LEAVES_COTTON_EXPLOSION_GEYSER
+	call LEAVES_COTTON_EXPLOSION_GEYSER
+	waitanimation
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x1 0x10 0x0 0x33F2 @;Light Green
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xE 0x0 0x0 @;Black
+	waitanimation
 	endanimation
+
+OVERGROWTH_SEEDS_UP:
+	launchtemplate OVERGROWTH_SMALL_SEED TEMPLATE_TARGET | 2, 0x2, 0xfffc 0xfff0
+	playsound2 0x9F 0xC0
+	pause 0x2
+	launchtemplate OVERGROWTH_SMALL_SEED TEMPLATE_TARGET | 2, 0x2, 0x100D 0xfff0
+	playsound2 0x9F 0xC0
+	pause 0x2
+	launchtemplate OVERGROWTH_SMALL_SEED TEMPLATE_TARGET | 2, 0x2, 0x4 0xfff4
+	playsound2 0x9F 0xC0
+	pause 0x2
+	launchtemplate OVERGROWTH_SMALL_SEED TEMPLATE_TARGET | 2, 0x2, 0xfff0 0xfff0
+	playsound2 0x9F 0xC0
+	pause 0x2
+	return
+	
+OVERGROWTH_SEEDS_DOWN:
+	launchtemplate OVERGROWTH_LARGE_SEED TEMPLATE_TARGET | 2, 0x5, 30, 20 0x40 0x57 0x0
+	pause 0x8
+	playsound2 0xcf 0x3f
+	pause 0x8
+	launchtemplate OVERGROWTH_LARGE_SEED TEMPLATE_TARGET | 2, 0x5, -30, 20 0x40 0x46 0x0
+	pause 0x8
+	playsound2 0xcf 0x3f 
+	pause 0x8
+	launchtemplate OVERGROWTH_LARGE_SEED TEMPLATE_TARGET | 0x42, 0x5, 3, 16 0x40 0x35 0x0
+	pause 0x8
+	playsound2 0xcf 0x3f
+	pause 0x8
+	launchtemplate OVERGROWTH_LARGE_SEED TEMPLATE_TARGET | 2, 0x5, -3, 24 0x40 0x24 0x0
+	pause 0x8
+	playsound2 0xcf 0x3f
+	pause 0x18
+	return
+	
+OVERGROWTH_GIANT_MUSHROOMS:
+	playsound2 0xb3 0xc0
+	launchtemplate OVERGROWTH_MUSHROOM TEMPLATE_TARGET | 3, 0x5, 0x1, 30, 1, 45 0x0
+	pause 0x1
+	playsound2 0xb3 0xc0
+	launchtemplate OVERGROWTH_MUSHROOM TEMPLATE_TARGET | 3, 0x5, 0x1, -30, 1, 45 0x0
+	pause 0x1
+	playsound2 0xb3 0xc0
+	launchtemplate OVERGROWTH_MUSHROOM TEMPLATE_TARGET | 0x43, 0x5, 0x1, 3, -3, 45 0x0
+	pause 0x1
+	playsound2 0xb3 0xc0
+	launchtemplate OVERGROWTH_MUSHROOM TEMPLATE_TARGET | 8, 0x5, 0x1, -3, 5, 45 0x0
+	pause 25
+	return
+	
+LEAVES_COTTON_EXPLOSION_GEYSER:
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0003 0x0005 0x1 0x0
+	launchtemplate OVERGROWTH_COTTON_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfffc 0x10
+	playsound2 0xaa 0x3f
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0xfff5 0xfff1 0x1 0x0
+	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x100D 0x10
+	playsound2 0xaa 0x3f
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0008 0xfffb 0x1 0x0
+	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x4 0x10
+	playsound2 0xaa 0x3f
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0xfffa 0x0012 0x1 0x0
+	launchtemplate OVERGROWTH_COTTON_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfff0 0x10
+	playsound2 0xaa 0x3f
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0000 0x0005 0x1 0x0
+	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfffc 0x10
+	playsound2 0xaa 0x3f
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0003 0xfff5 bank_target 0x0
+	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x100D 0x10
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0xfff5 0xffe1 bank_target 0x0
+	launchtemplate OVERGROWTH_COTTON_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x4 0x10
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0008 0xffeb bank_target 0x0
+	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfff0 0x10
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0xfffa 0x0002 bank_target 0x0
+	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfffc 0x10
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0000 0xfff5 bank_target 0x0
+	launchtemplate OVERGROWTH_COTTON_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x100D 0x10
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0003 0xffe5 bank_target 0x0
+	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x4 0x10
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0xfff5 0xffd1 bank_target 0x0
+	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfff0 0x10
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0008 0xffdb bank_target 0x0
+	launchtemplate OVERGROWTH_COTTON_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfffc 0x10
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0xfffa 0xfff2 bank_target 0x0
+	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x100D 0x10
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0000 0xffe5 bank_target 0x0
+	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x4 0x10
+	pause 0x0
+	launchtemplate OVERGROWTH_COTTON_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfff0 0x10
+	return
+
+.align 2
+OVERGROWTH_SMALL_SEED: objtemplate ANIM_TAG_SEED ANIM_TAG_SEED sPyroBallRockOAM 0x8231CF0 0x0 gSpriteAffineAnimTable_GrowingFist SpriteCB_LaunchObjectUpwards
+OVERGROWTH_LARGE_SEED: objtemplate ANIM_TAG_SEED ANIM_TAG_SEED OAM_DOUBLE_16x16 0x8231CF0 0x0 gSpriteAffineAnimTable_LargeHailRock 0x80B4FE5
+OVERGROWTH_MUSHROOM: objtemplate ANIM_TAG_MUSHROOM ANIM_TAG_MUSHROOM OAM_DOUBLE_32x32 gAnimCmdTable_GrowingMushroom 0x0 gSpriteAffineAnimTable_LargeHailRock SpriteCB_SpriteOnMonForDuration
+OVERGROWTH_LEAF_GEYSER: objtemplate ANIM_TAG_LEAF ANIM_TAG_LEAF OAM_OFF_16x16 0x83E2C00 0x0 0x8231CFC SpriteCB_Geyser
+OVERGROWTH_COTTON_GEYSER: objtemplate ANIM_TAG_SPORE ANIM_TAG_SPORE OAM_OFF_16x16 0x83E2B5C 0x0 0x8231CFC SpriteCB_Geyser
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_MAX_STEELSPIKE:
-	goto ANIM_CORKSCREW_CRASH
+	loadparticle ANIM_TAG_LARGE_SPIKE
+
+ANIM_MAX_STEELSPIKE_BEGIN:
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xE 0x0 @;Black
+	launchtask AnimTask_DynamaxGrowth 0x5 0x1 0x1
+	waitanimation
+	launchtask AnimTask_MaxSteelspike 0x2 0x0
+	waitanimation
+	playsound2 0x86 0x3f
+	launchtask AnimTask_move_bank 0x5 0x5 bank_target 0x8 0x0 20 0x1
+	waitanimation
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xE 0x0 0x0 @;Black
 	endanimation
+
+.align 2
+.global gMaxSteelspikeSpriteTemplate
+.global gMaxSteelspikeCurvedSpriteTemplate
+gMaxSteelspikeSpriteTemplate: objtemplate ANIM_TAG_LARGE_SPIKE ANIM_TAG_LARGE_SPIKE OAM_OFF_32x64 gAnimCmdTable_LargeSpike 0x0 0x8231CFC SpriteCB_MaxSteelspike
+gMaxSteelspikeCurvedSpriteTemplate: objtemplate ANIM_TAG_LARGE_SPIKE ANIM_TAG_LARGE_SPIKE OAM_DOUBLE_32x64 gAnimCmdTable_LargeSpike 0x0 gSpriteAffineAnimTable_LargeSpike SpriteCB_MaxSteelspike
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -22752,10 +24439,9 @@ ANIM_G_MAX_WILDFIRE:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_G_MAX_BEFUDDLE:
-	goto 0x81c6f34 @ANIM_POUND
-	endanimation
+	goto ANIM_MAX_FLUTTERBY
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -22773,31 +24459,71 @@ ANIM_G_MAX_GOLDRUSH:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_G_MAX_CHISTRIKE:
-	goto 0x81c6f34 @ANIM_POUND
-	endanimation
+	goto ANIM_MAX_KNUCKLE
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_G_MAX_TERROR:
-	goto 0x81c6f34 @ANIM_POUND
+	loadparticle ANIM_TAG_ROCKS
+	loadparticle ANIM_TAG_ASSURANCE_HAND
+	loadparticle ANIM_TAG_WOOD
+	loadparticle ANIM_TAG_ANCHOR
+	loadparticle ANIM_TAG_CHAIN_LINK
+	loadparticle ANIM_TAG_RAZOR_SHELL
+	loadparticle ANIM_TAG_UNUSED_EXPLOSION_2
+	loadparticle ANIM_TAG_VERTICAL_HEX
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_ROCKS 0x0 0xA 0xA 0x7CBF @;Pink
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_ASSURANCE_HAND 0x0 0xA 0xA 0x7CBF @;Pink
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_WOOD 0x0 0xA 0xA 0x7CBF @;Pink
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_CHAIN_LINK 0x0 0xA 0xA 0x7CBF @;Pink
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_RAZOR_SHELL 0x0 0xA 0xA 0x7CBF @;Pink
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_VERTICAL_HEX 0x2 0xA 0xA 0x5C05 @;Royal Blue
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xE 0x0 @;Black
+	launchtask AnimTask_DynamaxGrowth 0x5 0x1 0x1
+	launchtemplate PHANTASM_OBJ_1 TEMPLATE_ATTACKER | 2, 0x5, -30, -40,  30, -10, 40 @;Top left - Top Right
+	launchtemplate PHANTASM_OBJ_2 TEMPLATE_ATTACKER | 2, 0x5, -40, -10,   0, -30, 40 @;Middle left - Top
+	launchtemplate PHANTASM_OBJ_3 TEMPLATE_ATTACKER | 2, 0x5, -30,  20,  20,  10, 40 @;Bottom left - Bottom Right
+	launchtemplate PHANTASM_OBJ_4 TEMPLATE_ATTACKER | 2, 0x5,  30, -25, -20,  10, 40 @;Top right - Bottom Left
+	launchtemplate PHANTASM_OBJ_5 TEMPLATE_ATTACKER | 2, 0x5,  30,   5, -30, -10, 40 @;Bottom right - Top left 
+	playsound2 0x72 0xC0
+	pause 0x48
+	waitanimation
+	launchtask AnimTask_move_bank 0x5 0x5 bank_target 0x0 0x4 0x34 0x1
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x3 0x0 0x10 0x5C05 @;Royal Blue
+	call NEN_GEYSER
+	call NEN_GEYSER
+	call NEN_GEYSER
+	waitanimation
+	unloadparticle ANIM_TAG_ROCKS
+	unloadparticle ANIM_TAG_UNUSED_EXPLOSION_2
+	loadparticle ANIM_TAG_EYE
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_EYE 0x0 0x8 0x8 0x1F @;Red
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x1 0x10 0x0 0x5C05 @;From royal Blue
+	pokespritetoBG side_target 
+	playsound2 0xb6 0xc0
+	soundcomplex 0xBD 0x3f 0xf 0x4 
+	playsound3 0xB9 0x3f 0x55 
+	launchtemplate 0x83FEEE4 0x2 0x0  
+	waitanimation
+	pokespritefromBG side_target
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xE 0x0 0x0 @;From black
+	waitanimation
 	endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_G_MAX_RESONANCE:
-	goto 0x81c6f34 @ANIM_POUND
-	endanimation
+	goto ANIM_MAX_HAILSTORM
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_G_MAX_CUDDLE:
-	goto 0x81c6f34 @ANIM_POUND
-	endanimation
+	goto ANIM_MAX_STRIKE
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -22808,31 +24534,88 @@ ANIM_G_MAX_REPLENISH:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_G_MAX_MALODOR:
-	goto 0x81c6f34 @ANIM_POUND
+	loadparticle ANIM_TAG_POISON_BUBBLE
+	loadparticle ANIM_TAG_POISON_COLUMN
+	loadparticle ANIM_TAG_GARBAGE_COLUMN
+	loadparticle ANIM_TAG_RAZOR_LEAF
+	launchtask AnimTask_DynamaxGrowth 0x5 0x1 0x1
+	soundcomplex 0x77 0x3f 0xd 0x3
+	launchtemplate MALODOR_REVERSAL 0x2 0x2 0x1a 0x0
+	launchtemplate MALODOR_REVERSAL 0x2 0x2 0x1a 0x2a
+	launchtemplate MALODOR_REVERSAL 0x2 0x2 0x1a 0x54
+	launchtemplate MALODOR_REVERSAL 0x2 0x2 0x1a 0x7e
+	launchtemplate MALODOR_REVERSAL 0x2 0x2 0x1a 0xa8
+	launchtemplate MALODOR_REVERSAL 0x2 0x2 0x1a 0xd2
+	loadBG1 BG_GARBAGE_FALLS
+	waitforBG
+	launchtask AnimTask_arg7_is_target_player 0x2 0x0
+	jumpifargmatches 0x7 0x1 BG_ON_PLAYER_MALODOR
+	launchtask AnimTask_scroll_background 0x5 0x4 0x0 0xff10 0x1 0xffff
+	goto FINISH_BG_MALODOR
+
+BG_ON_PLAYER_MALODOR:
+	launchtask AnimTask_scroll_background 0x5 0x4 0x0 0xf0 0x1 0xffff
+
+FINISH_BG_MALODOR:
+	waitfortransparentBG
+	waitanimation
+	playsound2 0x9D 0xc0
+	launchtask AnimTask_arg7_is_target_player 0x2 0x0
+	jumpifargmatches 0x7 0x1 GARBAGE_COLUMNS_ON_PLAYER
+	launchtemplate GARBAGE_COLUMN TEMPLATE_TARGET | 2, 0x5, 0x1, 30, 5, 0xC5 0x0
+	pause 0x30
+	playsound2 0x9D 0xc0
+	launchtemplate GARBAGE_COLUMN TEMPLATE_TARGET | 2, 0x5, 0x1, -50, -10, 0x95 0x0
+	
+MALODOR_REJOIN:
+	pause 0x30
+	playsound2 0x13 0xC0
+	launchtemplate GARBAGE_COLUMN TEMPLATE_TARGET | 2, 0x5, 0x1, -10, -25, 0x65 0x0
+	pause 0x3
+	launchtask AnimTask_move_bank 0x5 0x5 bank_target 0x0 0x4 0x2F 0x1
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x2 0x0 0x10 0x2DCC @;Garbage Green
+	waitanimation
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x2 0x10 0x0 0x2DCC @;Garbage Green
+	call UNSET_SCROLLING_BG
+	waitanimation
 	endanimation
+
+GARBAGE_COLUMNS_ON_PLAYER:
+	launchtemplate GARBAGE_COLUMN TEMPLATE_TARGET | 0, 0x5, 0x1, -15, -60, 0xC5 0x0
+	pause 0x30
+	playsound2 0x9D 0xc0
+	launchtemplate GARBAGE_COLUMN TEMPLATE_TARGET | 0, 0x5, 0x1, 45, -40, 0x95 0x0
+	goto MALODOR_REJOIN
+
+.align 2
+MALODOR_REVERSAL: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_RAZOR_LEAF OAM_DOUBLE_16x16 0x8231CF0 0x0 gSpriteAffineAnimTable_GrowingFist 0x80E0E95
+GARBAGE_COLUMN: objtemplate ANIM_TAG_POISON_COLUMN ANIM_TAG_GARBAGE_COLUMN gPoisonColumnOam gAnimCmdTable_PoisonColumn 0x0 gSpriteAffineAnimTable_LargeHailRock SpriteCB_SpriteOnMonForDuration
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_G_MAX_STONESURGE:
-	goto 0x81c6f34 @ANIM_POUND
-	endanimation
+	goto ANIM_MAX_GEYSER
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_G_MAX_WINDRAGE:
-	goto 0x81c6f34 @ANIM_POUND
-	endanimation
+	goto ANIM_MAX_AIRSTREAM
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_G_MAX_STUNSHOCK:
-	goto 0x81c6f34 @ANIM_POUND
-	endanimation
+	loadparticle ANIM_TAG_UNUSED_LIGHTNING
+	loadparticle ANIM_TAG_LIGHTNING
+	loadparticle ANIM_TAG_SPARK_2
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_UNUSED_LIGHTNING 0x2 0xA 0xA 0x701D @;Purplish - pink
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_LIGHTNING 0x2 0xA 0xA 0x701D @;Purplish - pink
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_SPARK_2 0x2 0xA 0xA 0x701D @;Purplish - pink
+	goto ANIM_MAX_LIGHTNING_BEGIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -22843,85 +24626,357 @@ ANIM_G_MAX_FINALE:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_G_MAX_DEPLETION:
-	goto 0x81c6f34 @ANIM_POUND
+	loadparticle ANIM_TAG_TORNADO
+	loadparticle ANIM_TAG_GUST
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_TORNADO 0x0 0xA 0xA 0x1D @;Red
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_GUST 0x0 0x8 0x8 0x1F @;Red
+	launchtask AnimTask_DynamaxGrowth 0x5 0x1 0x1
+	soundcomplex 0x80 0x3f 0xa 0x4
+	launchtemplate WYRMWIND_TWISER TEMPLATE_TARGET | 2, 0x6, 0, 0, 0, -32, 0x10, 142 @;Reliant on no arg 5 coming for at least 0x49 frames after it
+	pause 0x48
+	playsound2 0x7A 0x3f
+	pause 0x10
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x0 0x0 0xE 0x0 @;Black
+	playsound2 0xE4 0x3f
+	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x4 0x48 0x1
+	pause 0xA
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x5 0x0 0x10 0x1D @;Red
+	call HURRICANE_GUST
+	pause 0xA
+	call HURRICANE_GUST
+	pause 0xA
+	call HURRICANE_GUST
+	pause 0xA
+	call HURRICANE_GUST
+	pause 0xA
+	call HURRICANE_GUST
+	pause 0xA
+	call HURRICANE_GUST
+	waitanimation
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x1 0x10 0x0 0x1D @;From red
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xE 0x0 0x0 @;From black
 	endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_G_MAX_GRAVITAS:
-	goto 0x81c6f34 @ANIM_POUND
-	endanimation
-
+	loadparticle ANIM_TAG_AURA_SPHERE
+	loadparticle ANIM_TAG_GOLD_RING
+	loadparticle ANIM_TAG_PINK_PETAL @;Pink colour
+	loadparticle ANIM_TAG_UNUSED_EXPLOSION_2
+	loadparticle ANIM_TAG_NEEDLE
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_GOLD_RING 0x2 0xC 0xC 0x5413 @;Purple
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_PINK_PETAL 0x2 0xA 0xA 0x7FEE @;Sky blue
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_NEEDLE 0x2 0xA 0xA 0x7FEE @;Sky blue
+	goto MAX_MINDSTORM_BEGIN
+	
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_G_MAX_VOLCALITH:
-	goto 0x81c6f34 @ANIM_POUND
-	endanimation
+	goto ANIM_MAX_ROCKFALL
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_G_MAX_SANDBLAST:
-	goto 0x81c6f34 @ANIM_POUND
+	loadparticle ANIM_TAG_DIRT_MOUND @ dig
+	loadparticle ANIM_TAG_MUD_SAND
+	loadparticle ANIM_TAG_ROCKS @ rollout
+	loadparticle ANIM_TAG_UNUSED_EXPLOSION_2
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_UNUSED_EXPLOSION_2 0x2 0x8 0x8 0x447F @;Reddish - Pink
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xE 0x0 @;Black
+	launchtask AnimTask_DynamaxGrowth 0x5 0x1 0x1
+	waitanimation
+	launchtemplate Template_DigMound TEMPLATE_ATTACKER | 0x1, 0x3 0x0 0x0 0xb4
+	launchtemplate Template_DigMound TEMPLATE_ATTACKER | 0x1, 0x3 0x0 0x1 0xb4
+	pokespritetoBG2 bank_attacker
+	pause 0x1
+	launchtask 0x80b8e95 0x2 0x1 0x0
+	pause 0x6
+	call GROUND_DIGGING
+	call GROUND_DIGGING
+	call GROUND_DIGGING
+	call GROUND_DIGGING
+	launchtask 0x80b4bd1 0x2 0x0 	@ rollout
+	launchtask AnimTask_RolloutPathExplosions 0x2 0x0
+	call GROUND_DIGGING
+	setblends 0x80c
+	pause 0x20
+	playsound2 0xab 0xc0
+	pokespritetoBG bank_target
+	launchtask AnimTask_move_bank 0x5 0x5 bank_target 0x0 0x4 0x38 0x1
+	call DIRT_GEYSER
+	call DIRT_GEYSER
+	call DIRT_GEYSER
+	call DIRT_GEYSER
+	waitanimation
+	playsound2 0xDF 0x3f 
+	call SANDTOMB_TRAP_PARTICLES
+	call SANDTOMB_TRAP_PARTICLES
+	call SANDTOMB_TRAP_PARTICLES
+	waitanimation
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ATK 0x1 0xE 0xE 0x0 @;Black
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG | PAL_ATK 0x1 0xE 0x0 0x0 @;Black
+	makebankvisible bank_attacker
+	waitanimation
+	pokespritefromBG bank_target
+	resetblends
 	endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_G_MAX_SNOOZE:
-	goto 0x81c6f34 @ANIM_POUND
+	loadparticle ANIM_TAG_SHADOW_BALL
+	loadparticle ANIM_TAG_VERTICAL_HEX
+	loadparticle ANIM_TAG_ORBS
+	loadparticle ANIM_TAG_UNUSED_PINK_ORB
+	loadparticle ANIM_TAG_UNUSED_EXPLOSION_2 
+	loadparticle ANIM_TAG_VERTICAL_HEX
+	loadparticle ANIM_TAG_ICE_CHUNK
+	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_ORBS 0x2 0xA 0xA 0x441F @;Reddish pink
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_UNUSED_PINK_ORB 0x2 0xC 0xC 0x640B @;Purple
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_CIRCLE_OF_LIGHT 0x2 0xE 0xE 0x3006 @;Purple
+	launchtask AnimTask_DynamaxGrowth 0x5 0x1 0x1
+	soundcomplex 0x70 0xc0 0x9 0x5
+	launchtemplate SNOOZE_HOLE TEMPLATE_ATTACKER | 2, 0x5, bank_attacker, -20, 0, 145, 0
+	launchtemplate SNOOZE_HOLE TEMPLATE_ATTACKER | 2, 0x5, bank_attacker, 20, 0, 145, 0
+	pause 0x48
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x0 0x0 0xE 0x0 @;Black
+	call DARKNESS_ORB_LAUNCH_PURPLE
+	call DARKNESS_ORB_LAUNCH_PURPLE
+	call DARKNESS_ORB_LAUNCH_PURPLE
+	call DARKNESS_ORB_LAUNCH_PURPLE
+	call DARKNESS_ORB_LAUNCH_PURPLE
+	call DARKNESS_ORB_LAUNCH_PURPLE
+	launchtask AnimTask_move_bank 0x5 0x5 bank_target 0x0 0x4 0x48 0x1
+	call DARKNESS_ORB_LAUNCH_PURPLE
+	call DARKNESS_ORB_LAUNCH_PURPLE
+	call DARKNESS_ORB_LAUNCH_PURPLE
+	call DARKNESS_ORB_LAUNCH_PURPLE
+	call DARKNESS_ORB_LAUNCH_PURPLE
+	call DARKNESS_ORB_LAUNCH_PURPLE
+	call DARKNESS_ORB_LAUNCH_PURPLE
+	call DARKNESS_ORB_LAUNCH_PURPLE
+	call DARKNESS_ORB_LAUNCH_PURPLE
+	call DARKNESS_ORB_LAUNCH_PURPLE
+	call DARKNESS_ORB_LAUNCH_PURPLE
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x3 0x0 0x10 0x3006 @;Purple
+	soundcomplex 0xAA 0x3F 0x6 0x6
+	launchtemplate FLUTTERBY_EXPLOSION 0x83 0x1 0x1
+	call DARKNESS_CLOUD_EXPLOSION
+	call DARKNESS_CLOUD_EXPLOSION
+	waitanimation
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x10 0x0 0x0 @;From black
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x1 0x10 0x0 0x40c0 @;From purple
+	waitanimation
 	endanimation
+
+.align 2
+SNOOZE_HOLE: objtemplate ANIM_TAG_SHADOW_BALL ANIM_TAG_ICE_CHUNK OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E7604 SpriteCB_SpriteOnMonForDuration
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_G_MAX_TARTNESS:
-	goto 0x81c6f34 @ANIM_POUND
+	loadparticle ANIM_TAG_SEED
+	loadparticle ANIM_TAG_GOLDEN_APPLE
+	loadparticle ANIM_TAG_UNUSED_EXPLOSION_2
+	loadparticle ANIM_TAG_APPLE
+	loadparticle ANIM_TAG_LEAF
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xE 0x0 @;Black
+	launchtask AnimTask_DynamaxGrowth 0x5 0x1 0x1
+	call OVERGROWTH_SEEDS_UP
+	waitanimation
+	call OVERGROWTH_SEEDS_DOWN
+	call TARTNESS_GIANT_APPLES
+	launchtask AnimTask_move_bank 0x5 0x5 bank_target 0x0 0x4 0x34 0x1
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x3 0x0 0x10 0x33F2 @;Light Green
+	call LEAVES_APPLE_EXPLOSION_GEYSER
+	call LEAVES_APPLE_EXPLOSION_GEYSER
+	call LEAVES_APPLE_EXPLOSION_GEYSER
+	waitanimation
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x1 0x10 0x0 0x33F2 @;Light Green
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xE 0x0 0x0 @;Black
+	waitanimation
 	endanimation
+
+TARTNESS_GIANT_APPLES:
+	playsound2 0xb3 0xc0
+	launchtemplate TARTNESS_APPLE TEMPLATE_TARGET | 3, 0x5, 0x1, 30, 1, 45 0x0
+	pause 0x1
+	playsound2 0xb3 0xc0
+	launchtemplate TARTNESS_APPLE TEMPLATE_TARGET | 3, 0x5, 0x1, -30, 1, 45 0x0
+	pause 0x1
+	playsound2 0xb3 0xc0
+	launchtemplate TARTNESS_APPLE TEMPLATE_TARGET | 0x43, 0x5, 0x1, 3, -3, 45 0x0
+	pause 0x1
+	playsound2 0xb3 0xc0
+	launchtemplate TARTNESS_APPLE TEMPLATE_TARGET | 8, 0x5, 0x1, -3, 5, 45 0x0
+	pause 25
+	return
+
+LEAVES_APPLE_EXPLOSION_GEYSER:
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0003 0x0005 0x1 0x0
+	launchtemplate OVERGROWTH_APPLE_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfffc 0x10
+	playsound2 0xaa 0x3f
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0xfff5 0xfff1 0x1 0x0
+	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x100D 0x10
+	playsound2 0xaa 0x3f
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0008 0xfffb 0x1 0x0
+	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x4 0x10
+	playsound2 0xaa 0x3f
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0xfffa 0x0012 0x1 0x0
+	launchtemplate OVERGROWTH_APPLE_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfff0 0x10
+	playsound2 0xaa 0x3f
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0000 0x0005 0x1 0x0
+	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfffc 0x10
+	playsound2 0xaa 0x3f
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0003 0xfff5 bank_target 0x0
+	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x100D 0x10
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0xfff5 0xffe1 bank_target 0x0
+	launchtemplate OVERGROWTH_APPLE_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x4 0x10
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0008 0xffeb bank_target 0x0
+	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfff0 0x10
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0xfffa 0x0002 bank_target 0x0
+	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfffc 0x10
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0000 0xfff5 bank_target 0x0
+	launchtemplate OVERGROWTH_APPLE_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x100D 0x10
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0003 0xffe5 bank_target 0x0
+	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x4 0x10
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0xfff5 0xffd1 bank_target 0x0
+	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfff0 0x10
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0008 0xffdb bank_target 0x0
+	launchtemplate OVERGROWTH_APPLE_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfffc 0x10
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0xfffa 0xfff2 bank_target 0x0
+	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x100D 0x10
+	pause 0x0
+	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 2, 0x4 0x0000 0xffe5 bank_target 0x0
+	launchtemplate OVERGROWTH_LEAF_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0x4 0x10
+	pause 0x0
+	launchtemplate OVERGROWTH_APPLE_GEYSER TEMPLATE_TARGET | 4, 0x3 0x0 0xfff0 0x10
+	return
+
+.align 2
+TARTNESS_APPLE: objtemplate ANIM_TAG_GOLDEN_APPLE ANIM_TAG_GOLDEN_APPLE OAM_DOUBLE_32x32 gAnimCmdTable_GrowingMushroom 0x0 gSpriteAffineAnimTable_LargeHailRock SpriteCB_SpriteOnMonForDuration
+OVERGROWTH_APPLE_GEYSER: objtemplate ANIM_TAG_APPLE ANIM_TAG_APPLE OAM_OFF_32x32 0x8231CF0 0x0 0x8231CFC SpriteCB_Geyser
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_G_MAX_SWEETNESS:
-	goto 0x81c6f34 @ANIM_POUND
-	endanimation
+	goto ANIM_G_MAX_TARTNESS
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_G_MAX_SMITE:
-	goto 0x81c6f34 @ANIM_POUND
+	loadparticle ANIM_TAG_YELLOW_STAR
+	loadparticle ANIM_TAG_STRAIGHT_BEAM
+	loadparticle ANIM_TAG_LEER
+	loadparticle ANIM_TAG_SPARK
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_SPARK 0x0 0x10 0x10 0x7FAF @;Light blue
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xE 0x0 @;Black
+	launchtask AnimTask_DynamaxGrowth 0x5 0x1 0x1
+	pause 0x20
+	call STARFALL_STAR_TWINKLE
+	waitanimation
+	call STARFALL_STARS_FALL
+	pause 0x20
+	soundcomplex 0x85 0xc0 0xd 0x3
+	call SMITE_CREATE_ELECTRICITY
+	call SMITE_CREATE_ELECTRICITY
+	call SMITE_CREATE_ELECTRICITY
+	call SMITE_CREATE_ELECTRICITY
+	call SMITE_CREATE_ELECTRICITY
+	call SMITE_CREATE_ELECTRICITY
+	call SMITE_CREATE_ELECTRICITY
+	call SMITE_CREATE_ELECTRICITY
+	call SMITE_CREATE_ELECTRICITY
+	call SMITE_CREATE_ELECTRICITY
+	call SMITE_CREATE_ELECTRICITY
+	call SMITE_CREATE_ELECTRICITY
+	call SMITE_CREATE_ELECTRICITY
+	pause 0x5
+	waitforsound
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x6 0x0 0x10 0x7F0C @;Light blue
+	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x4 0x0 0x60 0x1
+	playsoundpanchange 0xc2 0xc0 0x3f 0x2 0x0
+	call SMITE_TARGET_BEAM_UP
+	waitanimation
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x1 0x10 0x0 0x7F0C @;Light blue
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xE 0x0 0x0 @;From black
+	waitanimation
 	endanimation
+
+SMITE_CREATE_ELECTRICITY:
+	launchtemplate SMITE_SPARK_LINE TEMPLATE_TARGET | 3, 0x3,    0,  30,  3
+	launchtemplate SMITE_SPARK_LINE TEMPLATE_TARGET | 3, 0x3,    0, -30,  3
+	launchtemplate SMITE_SPARK_LINE TEMPLATE_TARGET | 0x43, 0x3, 0,   3, -1
+	pause 0x4
+	return
+
+SMITE_TARGET_BEAM_UP:
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 3, 0x6, 0,  19, bank_target, 180, 1, 6
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 3, 0x6, 0,   3, bank_target, 180, 1, 5
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 3, 0x6, 0, -13, bank_target, 180, 1, 4
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 3, 0x6, 0, -29, bank_target, 180, 1, 3
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 3, 0x6, 0, -45, bank_target, 180, 1, 2
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 3, 0x6, 0, -61, bank_target, 180, 1, 1
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 3, 0x6, 0, -77, bank_target, 180, 1, 0
+	return
+
+.align 2
+SMITE_SPARK_LINE: objtemplate ANIM_TAG_SPARK ANIM_TAG_SPARK OAM_DOUBLE_8x32 0x8231CF0 0x0 gSpriteAffineAnimTable_LargeHailRock SpriteCB_Geyser
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_G_MAX_STEELSURGE:
-	goto 0x81c6f34 @ANIM_POUND
-	endanimation
+	loadparticle ANIM_TAG_LARGE_SPIKE
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_LARGE_SPIKE 0x2 0x7 0x7 0x46A0 @;Greenish
+	goto ANIM_MAX_STEELSPIKE_BEGIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_G_MAX_MELTDOWN:
-	goto 0x81c6f34 @ANIM_POUND
-	endanimation
+	goto ANIM_MAX_STEELSPIKE
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credit to -
+@Credit to Skeli
 ANIM_G_MAX_FOAMBURST:
-	goto 0x81c6f34 @ANIM_POUND
-	endanimation
+	goto ANIM_MAX_GEYSER
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 @Credit to -
 ANIM_G_MAX_CENTIFERNO:
+	@;call ANIM_MAX_FLARE_MAIN
 	goto 0x81c6f34 @ANIM_POUND
 	endanimation
 
@@ -22966,6 +25021,6 @@ DoHeartSwap:
 .SkillSwapTemplatePointer: .word SKILLSWAP_TEMPL @This is how they're called!
 .PowerSwapTemplatePointer: .word POWERSWAP_TEMPL @Don't change!
 .HeartSwapTemplatePointer: .word HEARTSWAP_TEMPL
-SKILLSWAP_TEMPL: objtemplate ANIM_TAG_BLUEGREEN_ORB ANIM_TAG_ELECTRIC_ORBS 0x83ACA30 0x8231CF0 0x0 0x83E7104 0x80B3A35
-POWERSWAP_TEMPL: objtemplate ANIM_TAG_BLUEGREEN_ORB ANIM_TAG_RED_HEART 0x83ACA30 0x8231CF0 0x0 0x83E7104 0x80B3A35
-HEARTSWAP_TEMPL: objtemplate ANIM_TAG_BLUEGREEN_ORB ANIM_TAG_RED_HEART 0x83ACA30 0x8231CF0 0x0 0x83E7104 0x80B3A35
+SKILLSWAP_TEMPL: objtemplate ANIM_TAG_BLUEGREEN_ORB ANIM_TAG_ELECTRIC_ORBS OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E7104 0x80B3A35
+POWERSWAP_TEMPL: objtemplate ANIM_TAG_BLUEGREEN_ORB ANIM_TAG_RED_HEART OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E7104 0x80B3A35
+HEARTSWAP_TEMPL: objtemplate ANIM_TAG_BLUEGREEN_ORB ANIM_TAG_RED_HEART OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E7104 0x80B3A35

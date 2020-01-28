@@ -2,6 +2,7 @@
 #include "defines_battle.h"
 
 #include "../include/new/battle_util.h"
+#include "../include/new/multi.h"
 #include "../include/new/trainer_sliding.h"
 #include "../include/new/trainer_sliding_data.h"
 /*
@@ -12,15 +13,62 @@ trainer_sliding.c
 struct TrainerSlide
 {
 	u16 trainerId;
-	u8* msgFirstDown;
-	u8* msgLastSwitchIn;
-	u8* msgLastLowHp;
+	const u8* msgFirstDown;
+	const u8* msgLastSwitchIn;
+	const u8* msgLastLowHp;
+};
+
+struct DynamaxTrainerSlide
+{
+	u16 trainerId;
+	const u8* dynamaxMsg;
 };
 
 static const struct TrainerSlide sTrainerSlides[] =
 {
-	{0x17, sText_VegaFirstMonDown, sText_VegaLastSwitchIn, sText_VegaLastLowHP},
-	{0x19F, sText_VegaFirstMonDown, sText_VegaLastSwitchIn, sText_VegaLastLowHP},
+	{},
+
+	#ifdef UNBOUND //For Pokemon Unbound - Feel free to remove
+	{0x6, sText_MirskleFirstMonDown, NULL, NULL},
+	{0x2CF, sText_MirskleFirstMonDown, NULL, NULL},
+	{0x2D0, sText_MirskleFirstMonDown, NULL, NULL},
+	{0x2D1, sText_MirskleFirstMonDown, NULL, NULL},
+	{0x19F, NULL, sText_VegaLastSwitchIn, NULL},
+	{0x2D2, NULL, sText_VegaLastSwitchIn, NULL},
+	{0x2D3, NULL, sText_VegaLastSwitchIn, NULL},
+	{0x2D4, NULL, sText_VegaLastSwitchIn, NULL},
+	{0x14, NULL, sText_AliceLastSwitchIn, NULL},
+	{0x2D5, NULL, sText_AliceLastSwitchIn, NULL},
+	{0x2D6, NULL, sText_AliceLastSwitchIn, NULL},
+	{0x2D7, NULL, sText_AliceLastSwitchIn, NULL},
+	{0x18, NULL, sText_MelLastSwitchIn, NULL},
+	{0x2D8, NULL, sText_MelLastSwitchIn, NULL},
+	{0x2D9, NULL, sText_MelLastSwitchIn, NULL},
+	{0x2DA, NULL, sText_MelLastSwitchIn, NULL},
+	{0x1A2, NULL, sText_GalavanLastSwitchIn, NULL},
+	{0x2DB, NULL, sText_GalavanLastSwitchIn, NULL},
+	{0x2DC, NULL, sText_GalavanLastSwitchIn, NULL},
+	{0x2DD, NULL, sText_GalavanLastSwitchIn, NULL},
+
+	{0x15C, NULL, NULL, sText_Zeph1LowHP},
+	{0x2AB, NULL, NULL, sText_Zeph1LowHP},
+	{0x2AC, NULL, NULL, sText_Zeph1LowHP},
+	{0x2AD, NULL, NULL, sText_Zeph1LowHP},
+	{0x15E, NULL, NULL, sText_Zeph2LowHP},
+	{0x2B7, NULL, NULL, sText_Zeph2LowHP},
+	{0x2B8, NULL, NULL, sText_Zeph2LowHP},
+	{0x2B9, NULL, NULL, sText_Zeph2LowHP},
+
+	{0x19, NULL, sText_MaximaLastSwitchIn, NULL},
+	{0x2BD, NULL, sText_MaximaLastSwitchIn, NULL},
+	{0x2BE, NULL, sText_MaximaLastSwitchIn, NULL},
+	{0x2BF, NULL, sText_MaximaLastSwitchIn, NULL},
+	#endif
+};
+
+static const struct DynamaxTrainerSlide sDynamaxTrainerSlides[] =
+{
+	{0x17, gText_TestTrainerDynamaxMsg}, //Test data
 };
 
 //This file's functions:
@@ -147,10 +195,36 @@ bool8 ShouldDoTrainerSlide(u8 bank, u16 trainerId, u8 caseId)
 	return FALSE;
 }
 
+void TryDoDynamaxTrainerSlide(void)
+{
+	u32 i;
+	u16 trainerId;
+
+	if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER) || SIDE(gBattleScripting->bank) != B_SIDE_OPPONENT)
+		return;
+
+	if (IsTwoOpponentBattle() && GetBattlerPosition(gBattleScripting->bank) == B_POSITION_OPPONENT_RIGHT)
+		trainerId = gTrainerBattleOpponent_B;
+	else
+		trainerId = gTrainerBattleOpponent_A;
+
+	gBattleStringLoader = gText_DefaultTrainerDynamaxMsg;
+	for (i = 0; i < ARRAY_COUNT(sDynamaxTrainerSlides); ++i)
+	{
+		if (trainerId == sDynamaxTrainerSlides[i].trainerId)
+			gBattleStringLoader = sDynamaxTrainerSlides[i].dynamaxMsg;
+	}
+
+	BattleScriptPush(gBattlescriptCurrInstr + 5); //After callasm
+	gBattlescriptCurrInstr = BattleScript_TrainerSlideMsgRet - 5;
+}
+
 //Hook in Battle Miain
 void CheckLastMonLowHPSlide(void)
 {
-	if (ShouldDoTrainerSlide(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT), gTrainerBattleOpponent_A, TRAINER_SLIDE_LAST_LOW_HP))
+	if (ShouldDoTrainerSlide(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT), gTrainerBattleOpponent_A, TRAINER_SLIDE_LAST_LOW_HP)
+	|| (IsTwoOpponentBattle() && ShouldDoTrainerSlide(GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT), gTrainerBattleOpponent_B, TRAINER_SLIDE_LAST_LOW_HP))
+	|| (IS_DOUBLE_BATTLE && ShouldDoTrainerSlide(GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT), gTrainerBattleOpponent_A, TRAINER_SLIDE_LAST_LOW_HP)))
 		BattleScriptExecute(BattleScript_TrainerSlideMsgEnd2);
 }
 
@@ -158,6 +232,10 @@ void CheckLastMonLowHPSlide(void)
 void atkFF1C_handletrainerslidemsg(void)
 {
 	gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
+	
+	if (IS_DOUBLE_BATTLE)
+		gActiveBattler &= BIT_SIDE; //Always mon on enemy left in doubles
+	
 	u8 caseId = gBattlescriptCurrInstr[2];
 
 	switch(caseId) {
@@ -177,9 +255,17 @@ void atkFF1C_handletrainerslidemsg(void)
 //trytrainerslidefirstdownmsg BANK
 void atkFF1D_trytrainerslidefirstdownmsg(void)
 {
-	gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
+	u8 pos, shouldDo;
 
-	if (ShouldDoTrainerSlide(gActiveBattler, gTrainerBattleOpponent_A, TRAINER_SLIDE_FIRST_DOWN))
+	gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
+	pos = GetBattlerPosition(gActiveBattler);
+	
+	if (IsTwoOpponentBattle() && pos == B_POSITION_OPPONENT_RIGHT)
+		shouldDo = ShouldDoTrainerSlide(gActiveBattler, gTrainerBattleOpponent_B, TRAINER_SLIDE_FIRST_DOWN);
+	else
+		shouldDo = ShouldDoTrainerSlide(gActiveBattler, gTrainerBattleOpponent_A, TRAINER_SLIDE_FIRST_DOWN);
+
+	if (shouldDo)
 	{
 		BattleScriptPush(gBattlescriptCurrInstr + 2);
 		gBattlescriptCurrInstr = BattleScript_TrainerSlideMsgRet;

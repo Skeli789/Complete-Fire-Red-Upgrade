@@ -12,6 +12,7 @@ mega_battle_scripts.s
 .global BattleScript_MegaEvolution
 .global BattleScript_MegaWish
 .global BattleScript_UltraBurst
+.global BattleScript_Dynamax
 
 BattleScript_MegaEvolution:
 	setword BATTLE_STRING_LOADER MegaReactingString
@@ -19,8 +20,8 @@ BattleScript_MegaEvolution:
 	waitmessage DELAY_HALFSECOND
 
 MegaAnimBS:
-	playanimation 0xA ANIM_MEGA_EVOLUTION 0x0
-	reloadhealthbar 0xA
+	playanimation BANK_SCRIPTING ANIM_MEGA_EVOLUTION 0x0
+	reloadhealthbar BANK_SCRIPTING
 	setword BATTLE_STRING_LOADER MegaEvolutionCompleteString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
@@ -36,9 +37,31 @@ BattleScript_UltraBurst:
 	setword BATTLE_STRING_LOADER UltraBurstGlowingString
 	printstring 0x184
 	waitmessage DELAY_HALFSECOND
-	playanimation 0xA ANIM_ULTRA_BURST 0x0
-	reloadhealthbar 0xA
+	playanimation BANK_SCRIPTING ANIM_ULTRA_BURST 0x0
+	reloadhealthbar BANK_SCRIPTING
 	setword BATTLE_STRING_LOADER UltraBurstCompleteString
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	end3
+
+BattleScript_Dynamax:
+	call BS_FLUSH_MESSAGE_BOX
+	call BSTryRemoveIllusion
+	callasm UpdateMaxHealthForDynamax
+	playanimation BANK_SCRIPTING ANIM_CALL_BACK_POKEMON
+	waitanimation
+	pause DELAY_1SECOND
+	pause DELAY_HALFSECOND
+	returntoball BANK_SCRIPTING
+	callasm TryDoDynamaxTrainerSlide
+	switch3 BANK_SCRIPTING 0x1 @;Play the switch-in animation
+	waitanimation
+	playanimation BANK_SCRIPTING ANIM_DYNAMAX_START 0x0
+	orword HIT_MARKER, HITMARKER_IGNORE_SUBSTITUTE
+	graphicalhpupdate BANK_SCRIPTING
+	datahpupdate BANK_SCRIPTING
+	bicword HIT_MARKER, HITMARKER_IGNORE_SUBSTITUTE
+	setword BATTLE_STRING_LOADER gText_MonDynamaxed
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	end3

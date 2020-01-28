@@ -97,6 +97,12 @@ u8 __attribute__((long_call)) GetMoveDirectionFastAnimNum(u8 direction);
 void __attribute__((long_call)) PatchObjectPalette(u16, u8);
 u8 __attribute__((long_call)) FindEventObjectPaletteIndexByTag(u16 tag);
 struct EventObjectTemplate* __attribute__((long_call)) FindEventObjectTemplateByLocalId(u8 localId, struct EventObjectTemplate* templates, u8 count);
+u8 __attribute__((long_call)) AddPseudoEventObject(u16, void (*)(struct Sprite *), s16 x, s16 y, u8 subpriority);
+void __attribute__((long_call)) SetObjectSubpriorityByZCoord(u8, struct Sprite *, u8);
+void __attribute__((long_call)) InitObjectPriorityByZCoord(struct Sprite *, u8);
+u8 __attribute__((long_call)) EventObjectFaceOppositeDirection(struct EventObject *, u8);
+void __attribute__((long_call)) LockSelectedEventObject(void);
+bool8 __attribute__((long_call)) FreezeEventObject(struct EventObject *eventObject);
 
 /*
 extern const struct SpriteFrameImage gEventObjectPicTable_PechaBerryTree[];
@@ -123,7 +129,6 @@ void sub_80930E0(s16 *, s16 *, s16, s16);
 void EventObjectClearHeldMovement(struct EventObject *);
 void EventObjectClearHeldMovementIfActive(struct EventObject *);
 void TrySpawnEventObjects(s16, s16);
-u8 AddPseudoEventObject(u16, void (*)(struct Sprite *), s16 x, s16 y, u8 subpriority);
 u8 show_sprite(u8, u8, u8);
 u8 SpawnSpecialEventObjectParameterized(u8 graphicsId, u8 movementBehavior, u8 localId, s16 x, s16 y, u8 z);
 void sub_8093038(s16, s16, s16 *, s16 *);
@@ -143,7 +148,6 @@ void sub_808EB08(struct EventObject *, s16, s16);
 void sub_808F254(u8, u8, u8);
 void InitEventObjectPalettes(u8 palSlot);
 void UpdateEventObjectCurrentMovement(struct EventObject *, struct Sprite *, bool8(struct EventObject *, struct Sprite *));
-u8 EventObjectFaceOppositeDirection(struct EventObject *, u8);
 u8 GetWalkInPlaceFastestMovementAction(u32);
 u8 GetWalkInPlaceFastMovementAction(u32);
 u8 GetWalkInPlaceNormalMovementAction(u32);

@@ -26,6 +26,9 @@ battle_start_turn_start_battle_scripts.s
 .global BattleScript_NoTargetMoveFailed
 .global BattleScript_CamomonsTypeRevealRet
 .global BattleScript_CamomonsTypeRevealEnd3
+.global BattleScript_DynamaxEnergySwirl
+.global BattleScript_RaidBattleStart
+.global BattleScript_RaidBattleStorm
 
 .global StringNull
 
@@ -184,6 +187,28 @@ BattleScript_CamomonsTypeRevealRet:
 	waitmessage DELAY_1SECOND
 	return
 	
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_RaidBattleStart:
+	playanimation BANK_SCRIPTING ANIM_DYNAMAX_START 0x0
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	setword BATTLE_STRING_LOADER gText_RaidBattleStormStarted
+	call BattleScript_RaidBattleStorm
+	end3
+	
+BattleScript_RaidBattleStorm:
+	playanimation BANK_SCRIPTING ANIM_RAID_BATTLE_STORM 0x0
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	return
+
+BattleScript_DynamaxEnergySwirl:
+	playanimation BANK_SCRIPTING ANIM_DYNAMAX_ENERGY_SWIRL 0x0
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	end3
+
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 AirBalloonEntryString: .byte 0xFD, 0x0F, 0x00, 0xDA, 0xE0, 0xE3, 0xD5, 0xE8, 0xE7, 0x00, 0xDD, 0xE2, 0xFE, 0xE8, 0xDC, 0xD9, 0x00, 0xD5, 0xDD, 0xE6, 0x00, 0xEB, 0xDD, 0xE8, 0xDC, 0x00, 0xDD, 0xE8, 0xE7, 0x00, 0xBB, 0xDD, 0xE6, 0x00, 0xBC, 0xD5, 0xE0, 0xE0, 0xE3, 0xE3, 0xE2, 0xAB, 0xFF

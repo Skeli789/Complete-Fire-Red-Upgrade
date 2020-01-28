@@ -1,6 +1,7 @@
 #pragma once
 
 #include "global.h"
+#include "global.fieldmap.h"
 
 struct FieldInput
 {
@@ -24,6 +25,9 @@ struct FieldInput
 };
 
 u8 __attribute__((long_call)) TrySetDiveWarp(void);
+void __attribute__((long_call)) GetPlayerPosition(struct MapPosition *);
+void __attribute__((long_call)) SetupWarp(struct MapHeader*, s8, struct MapPosition*);
+s8 __attribute__((long_call)) GetWarpEventAtMapPosition(struct MapHeader*, struct MapPosition*);
 
 /*
 void FieldClearPlayerInput(struct FieldInput *pStruct);

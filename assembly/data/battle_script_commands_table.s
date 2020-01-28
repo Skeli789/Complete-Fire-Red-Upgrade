@@ -137,7 +137,7 @@ gBattleScriptingCommandsTable:
 .word atk78_faintifabilitynotdamp
 .word 0x80271c1				@setuserhptozero
 .word atk7A_jumpifnexttargetvalid	@jumpwhiletargetvalid
-.word 0x80272c5				@setdamageasrestorehalfmaxhp
+.word atk7B_tryhealhalfhealth		@setdamageasrestorehalfmaxhp
 .word atk7C_trymirrormove		@jumptolastusedattack
 .word atk7D_setrain
 .word atk7E_setreflect
@@ -179,7 +179,7 @@ gBattleScriptingCommandsTable:
 .word atkA2_mirrorcoatdamagecalculator
 .word atkA3_disablelastusedattack
 .word atkA4_trysetencore		@setencore
-.word 0x8029ce9				@painsplitdamagecalculator
+.word atkA5_painsplitdmgcalc	@painsplitdamagecalculator
 .word atkA6_settypetorandomresistance
 .word 0x8029fad				@setalwayshitflag
 .word atkA8_copymovepermanently
@@ -220,17 +220,17 @@ gBattleScriptingCommandsTable:
 .word 0x802bdb5				@setcharge
 .word atkCC_callterrainattack
 .word 0x802be8d				@cureifburnedparalysedorpoisoned
-.word 0x802bf11				@settorment
+.word atkCE_settorment
 .word atkCF_jumpifnodamage
 .word atkD0_settaunt
 .word 0x802c039				@sethelpinghand
 .word atkD2_tryswapitems		@itemswap
 .word atkD3_trycopyability		@copyability
-.word 0x802c409				@trywish
+.word atkD4_trywish
 .word 0x802c4dd				@setroots
 .word 0x802c535				@doubledamagedealtifdamaged
 .word 0x802c595				@setyawn
-.word 0x802c605				@setdamagetohealthdifference
+.word atkD8_setdamagetohealthdifference
 .word 0x802c671				@scaledamagebyhealthratio
 .word atkDA_tryswapabilities		@abilityswap
 .word atkDB_tryimprision		@imprisoneffect
@@ -319,4 +319,6 @@ gBattleScriptingCommandsTable2:
 .word atkFF2C_trysetpoison
 .word atkFF2D_addindicatorforplayerswitchineffects
 .word atkFF2E_setmoveeffect2
-
+.word atkFF2F_setmaxmoveeffect
+.word atkFF30_jumpifdynamaxed
+.word atkFF31_jumpifraidboss

@@ -121,7 +121,7 @@ def StringFileConverter(fileName: str):
                     stringToWrite += ProcessString(line, lineNum, maxLength, fillFF)
                     stringToWrite += "0xFF\n\n"  # Only print line in everything went alright
 
-    output = open(fileName.split(".string")[0] + '.s', 'w', encoding="utf-8")  # Only open file once we know everything went okay.
+    output = open(fileName.split(".string")[0] + '.s', 'w')  # Only open file once we know everything went okay.
     output.write(stringToWrite)
     output.close()
 
@@ -215,8 +215,4 @@ def PokeByteTableMaker():
                     except:
                         pass
         dictionary[' '] = 0
-
-    dictionary["�"] = 0xB4
-    dictionary["�"] = 0xB0
-    dictionary["�"] = 0xB1
     return dictionary

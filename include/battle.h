@@ -189,7 +189,8 @@ enum
 #define TYPE_EFFECT_MULTIPLIER(i)((gTypeEffectiveness[i + 2]))
 
 // defines for the gTypeEffectiveness multipliers
-#define TYPE_MUL_NO_EFFECT          0
+#define TYPE_MUL_NO_DATA			0
+#define TYPE_MUL_NO_EFFECT          1
 #define TYPE_MUL_NOT_EFFECTIVE      5
 #define TYPE_MUL_NORMAL             10
 #define TYPE_MUL_SUPER_EFFECTIVE    20
@@ -449,7 +450,7 @@ struct SideTimer
 			 u8 tspikesAmount : 2;
 			 u8 srAmount : 1;
 			 u8 stickyWeb : 1;
-    /*0x0B*/ u8 fieldB;
+    /*0x0B*/ u8 steelsurge: 1;
 };
 
 extern struct SideTimer gSideTimers[];
@@ -461,7 +462,7 @@ struct WishFutureKnock
     u32 futureSightPartyIndex[BATTLE_BANKS_COUNT]; //was s32 futureSightDmg[BATTLE_BANKS_COUNT];
     u16 futureSightMove[BATTLE_BANKS_COUNT];
     u8 wishCounter[BATTLE_BANKS_COUNT];
-    u8 wishUserID[BATTLE_BANKS_COUNT];
+    u8 wishMonId[BATTLE_BANKS_COUNT];
     u8 weatherDuration;
     u8 knockedOffPokes[2];
 };
@@ -588,6 +589,58 @@ struct BattleResults
 };
 
 extern struct BattleResults gBattleResults;
+
+struct MegaData
+{
+  u8 chosen[4];
+  u8 done[4];
+  u8 state;
+  u8 activeBank;
+  const u8* script;
+  bool8 megaEvoInProgress : 1; //Used to tell the game whether or not the turn order should be recalculated
+};
+
+struct UltraData
+{
+  u8 chosen[4];
+  u8 done[4];
+};
+
+struct ZMoveData
+{
+	u8 toBeUsed[4];
+	u8 used[4];
+	u8 partyIndex[2]; //Index of party member who used Z-Move
+	u8 effect;
+	u8 state;
+	bool8 active : 1;
+	bool8 effectApplied : 1; //Used so moves like Sleep Talk don't give 2 z-effects, clear in CMD49
+	bool8 healReplacement : 1;
+	bool8 viewing : 1;
+	bool8 runningZEffect : 1;
+	bool8 viewingDetails : 1; //Not actually related to Z-Moves, I just felt like putting it here
+};
+
+#define MAX_NUM_RAID_SHIELDS 5
+
+struct DynamaxData
+{
+	bool8 toBeUsed[MAX_BATTLERS_COUNT];
+	bool8 used[MAX_BATTLERS_COUNT];
+	s8 timer[MAX_BATTLERS_COUNT]; //Negative number means permanent
+	u8 partyIndex[NUM_BATTLE_SIDES];
+	u8 shieldSpriteIds[MAX_NUM_RAID_SHIELDS]; //Shields for raid battles
+	u8 shieldCount;					//The amount of shields created in a Raid Battle
+	u8 shieldsDestroyed;			//The amount of shields destroyed in a Raid Battle
+	u8 stormLevel;					//The number of Pokemon the raid boss has KO'd.
+	u8 repeatedAttacks;				//The amount of times the raid boss took another attack
+	bool8 active : 1;
+	bool8 viewing : 1;
+	bool8 raidShieldsUp : 1;
+	bool8 attackAgain : 1;
+	bool8 nullifiedStats : 1;
+	u16 turnStartHP;
+};
 
 struct BattleStruct
 {
@@ -722,7 +775,7 @@ struct NewBattleStruct
 	u8 WonderRoomTimer;
 	u8 FairyLockTimer;
 	u8 IonDelugeTimer;
-	u8 TerrainType;
+	//u8 TerrainType;
 	u8 TerrainTimer;
 
 	//Team Counters
@@ -733,6 +786,8 @@ struct NewBattleStruct
 	u8 LuckyChantTimers[NUM_BATTLE_SIDES];
 	u8 TailwindTimers[NUM_BATTLE_SIDES];
 	u8 AuroraVeilTimers[NUM_BATTLE_SIDES];
+	u8 maxWildfireTimers[NUM_BATTLE_SIDES];
+	u8 maxVolcalithTimers[NUM_BATTLE_SIDES];
 
 	//Personal Counters
 	u8 TelekinesisTimers[MAX_BATTLERS_COUNT];
@@ -761,6 +816,7 @@ struct NewBattleStruct
 	u8 leftoverHealingDone[MAX_BATTLERS_COUNT]; //Leftovers already restored health this turn or Sticky Barb did damage
 	u8 statFellThisTurn[MAX_BATTLERS_COUNT];
 	u8 recalculatedBestDoublesKillingScores[MAX_BATTLERS_COUNT];
+	u8 lastBracketCalc[MAX_BATTLERS_COUNT];
 
 	//Bit Fields for Banks
 	u8 MicleBerryBits;
@@ -772,6 +828,10 @@ struct NewBattleStruct
 	u8 CustapQuickClawIndicator; //0x2017632
 	u8 HealingWishLoc;
 	u8 PowderByte;
+	u8 quashed;
+	u8 tarShotBits;
+	u8 trappedByOctolock;
+	u8 trappedByNoRetreat;
 	u8 AbsentBattlerHelper;
 	u8 activeAbilityPopUps;
 	u8 NoMoreMovingThisTurn;
@@ -802,7 +862,7 @@ struct NewBattleStruct
 	u8 preFaintEffectsTracker;
 	u8 savedObjId;
 	u8 lastFainted;
-	u8 intimidateActive;
+	s8 intimidateActive;
 	u8 backupAbility;
 	u8 switchOutBankLooper;
 	u8 originalAttackerBackup : 2;
@@ -839,6 +899,9 @@ struct NewBattleStruct
 	bool8 activatedCustapQuickClaw : 1;
 	bool8 calculatedAIPredictions : 1;
 	bool8 batonPassing : 1;
+	bool8 activateBlunderPolicy : 1;
+	bool8 tempIgnoreAnimations : 1;
+	bool8 firstFailedPokeBallStored : 1;
 
 	//Other
 	u16 LastUsedMove;
@@ -846,28 +909,37 @@ struct NewBattleStruct
 	u32 totalDamageGiven;
 	u8 DancerTurnOrder[MAX_BATTLERS_COUNT];
 	u8 PayDayByPartyIndices[PARTY_SIZE];
-	u16 aiZMoveHelper;
 	item_t SavedConsumedItems[PARTY_SIZE];
-	s32 DamageTaken[MAX_BATTLERS_COUNT]; //0x2017668
+	s32 DamageTaken[MAX_BATTLERS_COUNT];
 	u8 ResultFlags[MAX_BATTLERS_COUNT];
 	u8 expHelper[MAX_BATTLERS_COUNT];
 	u8 megaIndicatorObjIds[MAX_BATTLERS_COUNT];
 	u8 abilityPopUpIds[MAX_BATTLERS_COUNT][2];
 	u8 backupSynchronizeBanks[2];
-	u16 movePredictions[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //movePredictions[bankAtk][bankDef] //0x201769A
-	u16 strongestMove[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //strongestMove[bankAtk][bankDef]
-	u16 bestDoublesKillingMoves[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //bestDoublesKillingMoves[bankAtk][bankDef]
-	s8 bestDoublesKillingScores[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //bestDoublesKillingScores[bankAtk][bankDef][bankDef / bankDefPartner / bankAtkPartner]
-	bool8 canKnockOut[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //canKnockOut[bankAtk][bankDef]
-	bool8 can2HKO[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //can2HKO[bankAtk][bankDef]
-	u8 bestMonIdToSwitchInto[MAX_BATTLERS_COUNT][2]; //bestMonIdToSwitchInto[bankAtk][first or second choice] //0x2017762
-	s8 bestMonIdToSwitchIntoScores[MAX_BATTLERS_COUNT][2];//bestMonIdToSwitchIntoScores[bankAtk][first or second choice]
-	u8 calculatedAISwitchings[MAX_BATTLERS_COUNT];
-	const void* aiMegaPotential[MAX_BATTLERS_COUNT]; //aiMegaPotential[bankAtk] - stores evolution data of attacker
+	u16 failedThrownPokeBall;
+
+	struct 
+	{
+		u16 zMoveHelper;
+		u16 movePredictions[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //movePredictions[bankAtk][bankDef]
+		u16 strongestMove[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //strongestMove[bankAtk][bankDef]
+		bool8 moveKnocksOut1Hit[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT][MAX_MON_MOVES]; //moveKnocksOut1Hit[bankAtk][bankDef][monMoveIndex]
+		bool8 moveKnocksOut2Hits[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT][MAX_MON_MOVES]; //moveKnocksOut2Hits[bankAtk][bankDef][monMoveIndex]
+		u16 bestDoublesKillingMoves[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //bestDoublesKillingMoves[bankAtk][bankDef]
+		s8 bestDoublesKillingScores[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //bestDoublesKillingScores[bankAtk][bankDef][bankDef / bankDefPartner / bankAtkPartner]
+		bool8 canKnockOut[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //canKnockOut[bankAtk][bankDef]
+		bool8 can2HKO[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //can2HKO[bankAtk][bankDef]
+		u8 bestMonIdToSwitchInto[MAX_BATTLERS_COUNT][2]; //bestMonIdToSwitchInto[bankAtk][first or second choice]
+		s8 bestMonIdToSwitchIntoScores[MAX_BATTLERS_COUNT][2];//bestMonIdToSwitchIntoScores[bankAtk][first or second choice]
+		u8 calculatedAISwitchings[MAX_BATTLERS_COUNT]; //calculatedAISwitchings[bankSwitch]
+		u8 fightingStyle[MAX_BATTLERS_COUNT]; //fightingStyle[bankAtk]
+		const void* megaPotential[MAX_BATTLERS_COUNT]; //aiMegaPotential[bankAtk] - stores evolution data of attacker
+	} ai;
 
 	struct MegaData* MegaData;
 	struct UltraData* UltraData;
 	struct ZMoveData* ZMoveData;
+	struct DynamaxData dynamaxData;
 };
 
 #define gNewBS (ExtensionState.newBattleStruct)
@@ -1070,6 +1142,12 @@ struct FlingStruct
 #define B_ANIM_LOAD_ABILITY_POP_UP 0x42
 #define B_ANIM_DESTROY_ABILITY_POP_UP 0x43
 #define B_ANIM_TOTEM_BOOST 0x44
+#define B_ANIM_DYNAMAX_START 0x45
+#define B_ANIM_DYNAMAX_ENERGY_SWIRL 0x46
+#define B_ANIM_RAID_BATTLE_STORM 0x47
+#define B_ANIM_RAID_BATTLE_ENERGY_BURST 0x48
+#define B_ANIM_G_MAX_WILDFIRE 0x49
+#define B_ANIM_G_MAX_VOLCALITH 0x4A
 
 #define B_ANIM_TRANSFORM_MOVE 0xFF
 
@@ -1296,38 +1374,6 @@ struct MonSpritesGfx
 
 enum EnduranceListings {ENUDRE_REG, ENDURE_STURDY, ENDURE_FOCUS_SASH};
 
-struct MegaData
-{
-  u8 chosen[4];
-  u8 done[4];
-  u8 state;
-  u8 activeBank;
-  const u8* script;
-  bool8 megaEvoInProgress : 1; //Used to tell the game whether or not the turn order should be recalculated
-};
-
-struct UltraData
-{
-  u8 chosen[4];
-  u8 done[4];
-};
-
-struct ZMoveData
-{
-	u8 toBeUsed[4];
-	u8 used[4];
-	u8 partyIndex[2]; //Index of party member who used Z-Move
-	u8 effect;
-	u8 state;
-	u8* backupTilemap;
-	bool8 active : 1;
-	bool8 effectApplied : 1; //Used so moves like Sleep Talk don't give 2 z-effects, clear in CMD49
-	bool8 healReplacement : 1;
-	bool8 viewing : 1;
-	bool8 runningZEffect : 1;
-	bool8 viewingDetails : 1; //Not actually related to Z-Moves, I just felt like putting it here
-};
-
 extern struct BattleSpritesGfx* gMonSpritesGfx;
 extern u8 gBattleOutcome;
 extern u16 gLastUsedItem;
@@ -1346,6 +1392,7 @@ extern u8 gPotentialItemEffectBattler;
 extern u8 gBattlersCount;
 extern u16 gBattlerPartyIndexes[MAX_BATTLERS_COUNT];
 extern s32 gBattleMoveDamage;
+extern bool8 gDoingBattleAnim;
 
 extern u8 gUnknown_2023E8A;
 

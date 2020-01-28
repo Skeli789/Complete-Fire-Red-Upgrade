@@ -168,4 +168,5 @@ enum Counters
 	Counters_Powder,			//14
 	Counters_BeakBlast,			//15
 	Counters_AuroraVeil, 		//16
+	Counters_TarShot,			//17
 };

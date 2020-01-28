@@ -14,6 +14,9 @@ set_effect_battle_scripts.s
 .global BattleScript_StickyHoldActivatesRet
 .global BattleScript_TargetFrozen
 .global BattleScript_AbilityWasSuppressed
+.global BattleScript_StatUpPartner
+.global BattleScript_MaxMoveSetWeather
+.global BattleScript_MaxMoveSetTerrain
 
 BattleScript_TargetSleepHeal:
 	setword BATTLE_STRING_LOADER SlappedAwakeString
@@ -66,6 +69,24 @@ BattleScript_AbilityWasSuppressed:
 	call BSTryRemoveIllusion
 	callasm TryRemovePrimalWeatherAfterAbilityChange
 	call 0x81D92DC @;Try to revert Cherrim and Castform
+	return
+	
+BattleScript_StatUpPartner:
+	playanimation BANK_SCRIPTING ANIM_STAT_BUFF ANIM_ARG_1
+	setword BATTLE_STRING_LOADER gText_RaidBattleStatBoost
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	return
+	
+BattleScript_MaxMoveSetWeather:
+	playanimation2 BANK_SCRIPTING ANIM_ARG_1 0x0
+	printfromtable 0x83fe528 
+	waitmessage DELAY_1SECOND 
+	call 0x81d92dc
+	return
+
+BattleScript_MaxMoveSetTerrain:
+	call BattleScript_SetTerrain
 	return
 
 .align 2

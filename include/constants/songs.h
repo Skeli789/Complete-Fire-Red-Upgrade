@@ -46,7 +46,7 @@
 #define SE_BREAK_DOOR_OPEN 0x14
 #define SE_EXCLAIM 0x15
 #define SE_FALSE 0x16
-#define SE_POKE_CENTRE_LOAD_SINGLE_BALL 0x17
+#define SE_POKE_BALL_SHAKE 0x17
 #define SE_CASINO_STOP_SLOT_REEL 0x18
 #define SE_CORRECT 0x19
 #define SE_ERROR 0x1A
@@ -65,6 +65,30 @@
 #define SE_SLIDE 0x29
 #define SE_TURN_SWITCH_FLIP 0x2A
 
+#define SE_POKE_BALL_BOUNCE_1 0x32
+#define SE_POKE_BALL_BOUNCE_2 0x32
+#define SE_POKE_BALL_BOUNCE_3 0x33
+#define SE_POKE_BALL_BOUNCE_4 0x34
+#define SE_POKE_BALL_TRADE 0x35
+#define SE_THROW_POKE_BALL 0x36
+#define SE_NOTE_C 0x37
+#define SE_NOTE_D 0x38
+#define SE_NOTE_E 0x39
+#define SE_NOTE_F 0x3A
+#define SE_NOTE_G 0x3B
+#define SE_NOTE_A 0x3C
+#define SE_NOTE_B 0x3D
+#define SE_NOTE_C1 0x3E
+#define SE_PUDDLE 0x3F
+#define SE_BOARDWALK 0x40
+#define SE_SLOTS_CREDITS 0x41
+#define SE_DING_DONG 0x42
+#define SE_RED_BALLOON 0x43
+#define SE_BLUE_BALLOON 0x44
+#define SE_YELLOW_BALLOON 0x45
+#define SE_BREAKABLE_DOOR 0x46
+#define SE_MUD_BALL 0x47
+
 #define SE_BT_START 0x61
 
 #define SE_POKENAV_ONE_BEEP 0x65
@@ -73,8 +97,12 @@
 #define SE_POKENAV_OFF 0x68
 #define SE_POKENAV_SEARCHING 0x69
 
+#define SE_CHOMP 0x9A
+
 #define SE_MUD_SLAP 0xA1
 #define SE_LEAVES 0xA2
+
+#define SE_GLASS_BREAK 0xBF
 
 #define SE_RG_W_DOOR 241        // Door
 #define SE_RG_CARD1 242         // Trainer Card 1
@@ -91,13 +119,18 @@
 #define SE_RG_DEOMOV 253        // Deoxys Moves
 #define SE_RG_EXCELLENT 254
 
+#define SE_CAUGHT_POKEMON 0x13F
+
 #ifdef UNBOUND //For Unbound
+
+#define SE_RELIC_SONG 0x1DF
 
 #define BGM_EYE_NEO_PLASMA 0x146
 #define BGM_EYE_HIKER 0x164
 #define BGM_EYE_ACE 0x165
 #define BGM_EYE_MYSTERIOUS 0x166
 #define BGM_EYE_SAILOR 0x167
+#define BGM_EYE_SEVEN_SAGES 0x192
 #define BGM_EYE_BLACK_BELT 0x19B
 #define BGM_EYE_GALACTIC 0x1A8
 #define BGM_EYE_AROMA_LADY_BEAUTY 0x1B5
@@ -165,5 +198,11 @@
 #define BGM_VICTORY_PLASMA 0x1B1
 #define BGM_VICTORY_CHAMPION 0x1B2
 #define BGM_VICTORY_ELITE_4 0x1B4
+
+#define BGM_HOOPAS_THEME 0x183
+#define BGM_SEARCH_FOR_THE_RED_GYARADOS 0x1E4
+#define BGM_TWINLEAF_TOWN 0x16A
+#define BGM_UNDELLA_TOWN_WINTER 0x1E3
+#define BGM_ROCKET_HIDEOUT 0x112
 
 #endif

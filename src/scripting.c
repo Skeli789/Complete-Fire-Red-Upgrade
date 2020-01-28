@@ -2,6 +2,7 @@
 #include "../include/field_player_avatar.h"
 #include "../include/fieldmap.h"
 #include "../include/hall_of_fame.h"
+#include "../include/item_icon.h"
 #include "../include/item_menu.h"
 #include "../include/list_menu.h"
 #include "../include/m4a.h"
@@ -1147,7 +1148,8 @@ bool8 sp051_CanTeamParticipateInSkyBattle(void)
 
 //@Details: Buffers the map name where there is currently a swarm to buffer1,
 //			and the species name where there is currently a swarm to buffer2.
-void sp058_BufferSwarmText(void)
+//@Returns: Species roaming.
+u16 sp058_BufferSwarmText(void)
 {
 	u8 index = VarGet(VAR_SWARM_INDEX);
 	u8 mapName = gSwarmTable[index].mapName;
@@ -1155,6 +1157,8 @@ void sp058_BufferSwarmText(void)
 
 	GetMapName(sScriptStringVars[0], mapName, 0);
 	StringCopy(sScriptStringVars[1], gSpeciesNames[species]);
+	
+	return species;
 }
 
 //@Details: Buffers the map name where the given roamer can be found to buffer1,
@@ -2400,9 +2404,7 @@ static void ConvertNumberEntryToInteger(void)
 	u8 numDigits = StringLength(gStringVar1);
 	u32 val = 0;
 
-	if (numDigits == 0)
-		val = 0xFFFF;
-	else
+	if (numDigits > 0)
 	{
 		for (int i = 0; i < numDigits; ++i)
 		{
@@ -2415,16 +2417,39 @@ static void ConvertNumberEntryToInteger(void)
 			}
 		}
 	}
+	else
+		val = 0xFFFF;
 
-	gSpecialVar_LastResult = val;
+	gSpecialVar_LastResult = MathMin(val, 0xFFFF);
 	CB2_ReturnToFieldContinueScriptPlayMapMusic();
 }
 
 void sp0B3_DoChooseNumberScreen(void)
 {
+	gStringVar1[0] = EOS; //Empty input
 	DoNamingScreen(NAMING_SCREEN_CHOOSE_NUMBER, gStringVar1, 0, 0, 0, (void*) ConvertNumberEntryToInteger);
 }
 
+void sp12C_DoEnterPhraseScreen(void)
+{
+	u8 type;
+
+	switch (Var8000) {
+		case 0x1:
+			type = NAMING_SCREEN_ENTER_PASSWORD;
+			break;
+		default:
+			type = NAMING_SCREEN_ENTER_PHRASE;
+	}
+
+	gStringVar1[0] = EOS; //Empty input
+	DoNamingScreen(type, gStringVar1, 0, 0, 0, (void*) CB2_ReturnToFieldContinueScriptPlayMapMusic);
+}
+
+void sp12D_CompareEnteredPhrase(void)
+{
+	gSpecialVar_LastResult = StringCompare(gLoadPointer, gStringVar1);
+}
 
 extern const u8 gText_EnterNumber[];
 static const struct NamingScreenTemplate sChooseNumberNamingScreenTemplate =
@@ -2438,6 +2463,30 @@ static const struct NamingScreenTemplate sChooseNumberNamingScreenTemplate =
 	.title = gText_EnterNumber,
 };
 
+extern const u8 gText_EnterPhrase[];
+static const struct NamingScreenTemplate sEnterPhraseNamingScreenTemplate =
+{
+	.copyExistingString = 0,
+	.maxChars = 12,
+	.iconFunction = 0,
+	.addGenderIcon = 0,
+	.initialPage = 1,
+	.unused = 35,
+	.title = gText_EnterPhrase,
+};
+
+extern const u8 gText_EnterPassword[];
+static const struct NamingScreenTemplate sEnterPasswordNamingScreenTemplate =
+{
+	.copyExistingString = 0,
+	.maxChars = 12,
+	.iconFunction = 0,
+	.addGenderIcon = 0,
+	.initialPage = 1,
+	.unused = 35,
+	.title = gText_EnterPassword,
+};
+
 const struct NamingScreenTemplate* const sNamingScreenTemplates[] =
 {
 	sPlayerNamingScreenTemplate,
@@ -2446,6 +2495,8 @@ const struct NamingScreenTemplate* const sNamingScreenTemplates[] =
 	sMonNamingScreenTemplate,
 	sRivalNamingScreenTemplate,
 	&sChooseNumberNamingScreenTemplate,
+	&sEnterPhraseNamingScreenTemplate,
+	&sEnterPasswordNamingScreenTemplate,
 };
 
 void (*const sNamingScreenTitlePrintingFuncs[])(void) =
@@ -2456,12 +2507,13 @@ void (*const sNamingScreenTitlePrintingFuncs[])(void) =
 	(void*) (0x809F4F0 | 1),
 	(void*) (0x809F49C | 1),
 	(void*) (0x809F49C | 1),
+	(void*) (0x809F49C | 1),
+	(void*) (0x809F49C | 1),
 };
 
 
 //Item Find Show Picture Special (Really Callasm)
 #define ITEM_TAG 0xFDF3
-u8 __attribute__((long_call)) AddItemIconSprite(u16 tilesTag, u16 paletteTag, u16 itemId);
 void ShowItemSpriteOnFind(void)
 {
 #ifdef ITEM_PICTURE_ACQUIRE
@@ -2530,16 +2582,16 @@ void TryAppendSOntoEndOfItemString(void)
 
 		switch (gStringVar2[length - 1]) {
 			case PC_y:
-				gStringVar2[length + 0] = PC_i;
-				gStringVar2[length + 1] = PC_e;
-				gStringVar2[length + 2] = PC_s;
-				gStringVar2[length + 3] = EOS;
+				gStringVar2[length - 1] = PC_i;
+				gStringVar2[length + 0] = PC_e;
+				gStringVar2[length + 1] = PC_s;
+				gStringVar2[length + 2] = EOS;
 				break;
 			case PC_Y:
-				gStringVar2[length + 0] = PC_I;
-				gStringVar2[length + 1] = PC_E;
-				gStringVar2[length + 2] = PC_S;
-				gStringVar2[length + 3] = EOS;
+				gStringVar2[length - 1] = PC_I;
+				gStringVar2[length + 0] = PC_E;
+				gStringVar2[length + 1] = PC_S;
+				gStringVar2[length + 2] = EOS;
 				break;
 			case PC_X:
 				gStringVar2[length + 0] = PC_E;
@@ -2551,6 +2603,9 @@ void TryAppendSOntoEndOfItemString(void)
 				gStringVar2[length + 1] = PC_S;
 				gStringVar2[length + 2] = EOS;
 				break;
+			case PC_s:
+			case PC_S:
+				break; //Already S on end of string
 			default:
 				gStringVar2[length + 0] = PC_s;
 				gStringVar2[length + 1] = EOS;
@@ -2701,20 +2756,28 @@ bool8 TakeCoins(u32 toTake)
 // Check if player has a certain number of coins
 bool8 scrB3_CheckCoins(struct ScriptContext *ctx)
 {
-	u32 amount;
-	u16 arg = ScriptReadHalfword(ctx);
-	#ifdef SAVE_BLOCK_EXPANSION
-		if (arg == 0xFFFF)
-			amount = (Var8000 << 16) + Var8001;
-		else
+	u32 amount, arg;
+	
+	#ifndef UNBOUND
+		arg = ScriptReadHalfword(ctx);
+		#ifdef SAVE_BLOCK_EXPANSION
+			if (arg == 0xFFFF)
+				amount = (Var8000 << 16) + Var8001;
+			else
+				amount = VarGet(arg);
+		#else
 			amount = VarGet(arg);
-	#else
-		amount = VarGet(arg);
+		#endif
+	#else //Unbound
+		arg = ScriptReadWord(ctx);
+		amount = arg;
 	#endif
+	
 	if (GetCoins() >= amount)
 		gSpecialVar_LastResult = TRUE;
 	else
 		gSpecialVar_LastResult = FALSE;
+
 	return FALSE;
 }
 

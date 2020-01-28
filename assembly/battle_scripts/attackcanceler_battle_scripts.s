@@ -28,6 +28,9 @@ attackcanceler_battle_scripts.s
 .global BattleScript_ZMoveActivateDamaging
 .global BattleScript_DarkTypePreventsPrankster
 .global BattleScript_MoveUsedSkyBattlePrevents
+.global BattleScript_MoveUsedDynamaxPrevents
+.global BattleScript_MoveUsedRaidBattlePrevents
+.global BattleScript_RaidBattleStatNullification
 
 .global BSTryRemoveIllusion
 .global AbilityRaisedStatString
@@ -263,6 +266,41 @@ BattleScript_MoveUsedSkyBattlePrevents:
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	goto BS_MOVE_END
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_MoveUsedDynamaxPrevents:
+	attackstring
+	ppreduce
+	pause DELAY_HALFSECOND
+	orbyte OUTCOME OUTCOME_FAILED
+	setword BATTLE_STRING_LOADER gText_DynamaxAttackCancel
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_MoveUsedRaidBattlePrevents:
+	attackstring
+	ppreduce
+	pause DELAY_HALFSECOND
+	orbyte OUTCOME OUTCOME_FAILED
+	setword BATTLE_STRING_LOADER gText_RaidBattleAttackCancel
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_RaidBattleStatNullification:
+	call BS_FLUSH_MSGBOX
+	playanimation BANK_SCRIPTING ANIM_RAID_BATTLE_ENERGY_BURST 0x0
+	setword BATTLE_STRING_LOADER gText_RaidBattleStatNullification
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	refreshhpbar BANK_SCRIPTING
+	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

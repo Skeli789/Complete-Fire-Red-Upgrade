@@ -60,16 +60,17 @@ item_battle_scripts.s
 .global BattleScript_EjectPackRet
 .global BattleScript_EjectPackCMD49
 .global BattleScript_RedCard
-.global BattleScript_TypeResistBerry
 .global BattleScript_HangedOnFocusSash
 .global BattleScript_Gems
 .global BattleScript_WeaknessBerryActivate
 
 .global DoCheekPouch
+.global BattleScript_MoveMissedCheckBlunderPolicy
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_BerryConfuseHealRet:
+	call BattleScript_TryPrintRipenAbilityPopUp
 	playanimation 0xA ANIM_BERRY_EAT 0x0
 	printstring 0x12A
 	waitmessage DELAY_1SECOND
@@ -90,6 +91,7 @@ BattleScript_BerryConfuseHealEnd2:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_BerryHealHP_RemoveBerryRet:
+	call BattleScript_TryPrintRipenAbilityPopUp
 	playanimation 0xA ANIM_BERRY_EAT 0x0
 	
 BattleScript_ItemHealHP_RemoveItem_SkipAnim:
@@ -120,6 +122,7 @@ BattleScript_ItemHealHP_RemoveItemEnd2:
 
 BattleScript_BerryPPHealRet:
 	waitstateatk
+	call BattleScript_TryPrintRipenAbilityPopUp
 	playanimation 0xA ANIM_BERRY_EAT 0x0
 	printstring 0x12B
 	waitmessage DELAY_1SECOND
@@ -146,6 +149,7 @@ BattleScript_BerryFocusEnergyEnd2:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_BerryStatRaiseRet:
+	call BattleScript_TryPrintRipenAbilityPopUp
 	playanimation 0xA ANIM_BERRY_EAT 0x0
 	setbyte MULTISTRING_CHOOSER 0x4
 	call 0x81D6BD1
@@ -274,6 +278,18 @@ CheeckPouchRet:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+BattleScript_TryPrintRipenAbilityPopUp:
+	jumpifability BANK_SCRIPTING ABILITY_RIPEN BattleScript_PrintRipenAbilityPopUp
+	return
+
+BattleScript_PrintRipenAbilityPopUp:
+	call BattleScript_AbilityPopUp
+	pause DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert	
+	return
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 BattleScript_HerbCureChosenStatusRet:
 	playanimation BANK_SCRIPTING ANIM_ITEM_USE 0x0
 	refreshhpbar BANK_SCRIPTING
@@ -381,6 +397,7 @@ BattleScript_RockyHelmetDamage:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_JabocaRowapBerry:
+	call BattleScript_TryPrintRipenAbilityPopUp
 	playanimation BANK_TARGET ANIM_BERRY_EAT 0x0
 	orword HIT_MARKER 0x100
 	graphicalhpupdate BANK_ATTACKER
@@ -408,6 +425,7 @@ BattleScript_BlackSludgeHurt:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_MicleBerryRet:
+	call BattleScript_TryPrintRipenAbilityPopUp
 	playanimation 0xA ANIM_BERRY_EAT 0x0
 	setword BATTLE_STRING_LOADER MicleBerryString
 	printstring 0x184
@@ -487,6 +505,7 @@ BattleScript_RedCard:
 	setword BATTLE_STRING_LOADER RedCardString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+	jumpifdynamaxed BANK_ATTACKER RedCard_Dynamax
 	jumpifspecialstatusflag BANK_ATTACKER STATUS3_ROOTED 0x0 RedCard_Ingrain
 	jumpifability BANK_ATTACKER ABILITY_SUCTIONCUPS RedCard_SuctionCups
 	copybyte SEED_HELPER TARGET_BANK
@@ -505,6 +524,12 @@ RedCardEnd:
 RedCardRet:
 	return
 
+RedCard_Dynamax:
+	setword BATTLE_STRING_LOADER gText_DynamaxItemBlock
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	goto RedCardEnd	
+
 RedCard_Ingrain:
 	setword BATTLE_STRING_LOADER RedCardIngrainString
 	printstring 0x184
@@ -516,16 +541,6 @@ RedCard_SuctionCups:
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	goto RedCardEnd
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-BattleScript_TypeResistBerry:
-	playanimation 0xA ANIM_BERRY_EAT 0x0
-	setword BATTLE_STRING_LOADER TypeResistBerryString
-	printstring 0x184
-	waitmessage DELAY_1SECOND
-	call DoCheekPouch
-	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -551,12 +566,15 @@ BattleScript_Gems:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_WeaknessBerryActivate:
+	call BattleScript_TryPrintRipenAbilityPopUp
 	playanimation BANK_SCRIPTING ANIM_BERRY_EAT 0x0
 	setword BATTLE_STRING_LOADER WeaknessBerryString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	call DoCheekPouch
 	return
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 .align 2
 CheekPouchString: .byte 0xFD, 0x13, 0xB4, 0xE7, 0x00, 0xC2, 0xCA, 0xFE, 0xEB, 0xD5, 0xE7, 0x00, 0xE6, 0xD9, 0xE7, 0xE8, 0xE3, 0xE6, 0xD9, 0xD8, 0xAB, 0xFF
@@ -571,5 +589,5 @@ RedCardString: .byte 0xFD, 0x13, 0x00, 0xDC, 0xD9, 0xE0, 0xD8, 0x00, 0xE9, 0xE4,
 RedCardIngrainString: .byte 0xBC, 0xE9, 0xE8, 0x00, 0xFD, 0x0F, 0x00, 0xD5, 0xE2, 0xD7, 0xDC, 0xE3, 0xE6, 0xD9, 0xD8, 0xFE, 0xDD, 0xE8, 0xE7, 0xD9, 0xE0, 0xDA, 0x00, 0xEB, 0xDD, 0xE8, 0xDC, 0x00, 0xDD, 0xE8, 0xE7, 0x00, 0xE6, 0xE3, 0xE3, 0xE8, 0xE7, 0xAB, 0xFF
 RedCardSuctionCupsString: .byte 0xBC, 0xE9, 0xE8, 0x00, 0xFD, 0x0F, 0x00, 0xD5, 0xE2, 0xD7, 0xDC, 0xE3, 0xE6, 0xE7, 0xFE, 0xDD, 0xE8, 0xE7, 0xD9, 0xE0, 0xDA, 0x00, 0xEB, 0xDD, 0xE8, 0xDC, 0x00, 0xFD, 0x18, 0xAB, 0xFF
 TypeResistBerryString: .byte 0xFD, 0x13, 0xB4, 0xE7, 0x00, 0xFD, 0x16, 0xFE, 0xE6, 0xD9, 0xD8, 0xE9, 0xD7, 0xD9, 0xD8, 0x00, 0xFD, 0x14, 0xB4, 0xE7, 0x00, 0xE4, 0xE3, 0xEB, 0xD9, 0xE6, 0xAB, 0xFF
-GemString: .byte 0xCE, 0xDC, 0xD9, 0x00, 0xFD, 0x16, 0x00, 0xE7, 0xE8, 0xE6, 0xD9, 0xE2, 0xDB, 0xE8, 0xDC, 0xD9, 0xE2, 0xD9, 0xD8, 0xFE, 0xE8, 0xDC, 0xD9, 0x00, 0xE4, 0xE3, 0xEB, 0xD9, 0xE6, 0x00, 0xE3, 0xDA, 0x00, 0xFD, 0x01, 0xFF
+GemString: .byte 0xCE, 0xDC, 0xD9, 0x00, 0xFD, 0x16, 0x00, 0xE7, 0xE8, 0xE6, 0xD9, 0xE2, 0xDB, 0xE8, 0xDC, 0xD9, 0xE2, 0xD9, 0xD8, 0xFE, 0xE8, 0xDC, 0xD9, 0x00, 0xE4, 0xE3, 0xEB, 0xD9, 0xE6, 0x00, 0xE3, 0xDA, 0x00, 0xFD, 0x14, 0xAB, 0xFF
 WeaknessBerryString: .byte 0xFD, 0x13, 0xB4, 0xE7, 0x00, 0xFD, 0x16, 0xFE, 0xE6, 0xD9, 0xD8, 0xE9, 0xD7, 0xD9, 0xD8, 0x00, 0xFD, 0x14, 0xB4, 0xE7, 0x00, 0xE4, 0xE3, 0xEB, 0xD9, 0xE6, 0xAB, 0xFF

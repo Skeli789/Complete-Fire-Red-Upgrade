@@ -153,6 +153,21 @@ sp103_IsPlayerFacingClimbableWaterfall 0816016C
 sp104_IsPlayerOnDiveableWater 08160170
 sp105_IsPlayerFacingClimbableWall 08160174
 sp109_IsPlayerFacingNPCWithOverworldPic 8160184
+sp10A_CanUseCutOnTree 8160188
+sp10B_CanUseRockSmashOnRock 816018C
+sp10C_CanUseStrengthOnBoulder 8160190
+
+sp115_RaidBattleAvailable 081601B4
+sp116_StartRaidBattleIntro 081601B8
+sp117_CreateRaidMon 081601BC
+sp118_StartRaidBattle 081601C0
+sp119_SetRaidBattleFlag 081601C4
+sp11A_ClearRaidBattleFlag 081601C8
+sp11B_AllRaidBattlesCompleted 081601CC
+sp11C_GiveRaidBattleRewards 081601D0
+
+sp12C_DoEnterPhraseScreen 08160210
+sp12D_CompareEnteredPhrase 08160214
 
 sp196_TryCopyTMNameToBuffer1 081603B8
 

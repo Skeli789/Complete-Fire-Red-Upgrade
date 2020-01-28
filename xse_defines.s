@@ -21,36 +21,94 @@
 .equ look_up, 0x1
 .equ look_left, 0x2
 .equ look_right, 0x3
+
+.equ walk_down_very_slow, 0x8
+.equ walk_up_very_slow, 0x9
+.equ walk_left_very_slow, 0xA 
+.equ walk_right_very_slow, 0xB
 .equ walk_down_slow, 0xC
 .equ walk_up_slow, 0xD
 .equ walk_left_slow, 0xE 
 .equ walk_right_slow, 0xF
-
 .equ walk_down, 0x10
 .equ walk_up, 0x11
 .equ walk_left, 0x12
 .equ walk_right, 0x13
-
-.equ walk_down_onspot, 0x25
-.equ walk_up_onspot, 0x26
-.equ walk_left_onspot, 0x27
-.equ walk_right_onspot, 0x28
-
+.equ jump_2_down, 0x14
+.equ jump_2_up, 0x15
+.equ jump_2_left, 0x16
+.equ jump_2_right, 0x17
 .equ pause_xshort, 0x18
 .equ pause_vshort, 0x19
 .equ pause_short, 0x1A
 .equ pause_long, 0x1C
+.equ run_down, 0x1D
+.equ run_up, 0x1E
+.equ run_left, 0x1F
+.equ run_right, 0x20
+.equ walk_down_onspot, 0x21
+.equ walk_up_onspot, 0x22
+.equ walk_left_onspot, 0x23
+.equ walk_right_onspot, 0x24
+.equ walk_down_onspot_fast, 0x25
+.equ walk_up_onspot_fast, 0x26
+.equ walk_left_onspot_fast, 0x27
+.equ walk_right_onspot_fast, 0x28
+.equ walk_down_onspot_vfast, 0x29
+.equ walk_up_onspot_vfast, 0x2A
+.equ walk_left_onspot_vfast, 0x2B
+.equ walk_right_onspot_vfast, 0x2C
+
+.equ slide_down_slow, 0x31
+.equ slide_up_slow, 0x32
+.equ slide_left_slow, 0x33
+.equ slide_right_slow, 0x34
+.equ slide_down, 0x35
+.equ slide_up, 0x36
+.equ slide_left, 0x37
+.equ slide_right, 0x38
+.equ slide_down_fast, 0x39
+.equ slide_up_fast, 0x3A
+.equ slide_left_fast, 0x3B
+.equ slide_right_fast, 0x3C
+.equ slide_right_foot_down, 0x3D
+.equ slide_right_foot_up, 0x3E
+.equ slide_right_foot_left, 0x3F
+.equ slide_right_foot_right, 0x40
+.equ slide_left_foot_down, 0x41
+.equ slide_left_foot_up, 0x42
+.equ slide_left_foot_left, 0x43
+.equ slide_left_foot_right, 0x44
+
+.equ jump_special_down, 0x46
+.equ jump_special_up, 0x47
+.equ jump_special_left, 0x48
+.equ jump_special_right, 0x49
+.equ face_player, 0x4A
+.equ face_away_player, 0x4B
+.equ lock_facing, 0x4C
+.equ unlock_facing, 0x4D
+.equ jump_down, 0x4E
+.equ jump_up, 0x4F
+.equ jump_left, 0x50
+.equ jump_right, 0x51
+.equ jump_onspot_down, 0x52
+.equ jump_onspot_up, 0x53
+.equ jump_onspot_left, 0x54
+.equ jump_onspot_right, 0x55
+.equ jump_onspot_down_up, 0x56
+.equ jump_onspot_up_down, 0x57
+.equ jump_onspot_left_right, 0x58
+.equ jump_onspot_right_left, 0x59
 
 .equ set_invisible, 0x60
 .equ set_visible, 0x61
 .equ exclaim, 0x62
+.equ say_question, 0x63
+.equ say_cross, 0x64
+.equ say_double_exclaim, 0x65
+.equ say_smile, 0x66
 .equ end_m, 0xFE
-
-@;Only if you've expanded your movement types
-.equ walk_up_backwards, 0xB2
-.equ walk_down_backwards, 0xB3
-.equ walk_right_backwards, 0xB4
-.equ walk_left_backwards, 0xB5
 
 .equ EventScript_RevealTrainer, 0x81A4FBA
 .equ EventScript_NoDoubleTrainerBattle, 0x81A4F20

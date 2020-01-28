@@ -14,7 +14,9 @@
 //Exported Functions
 void sp067_GenerateRandomBattleTowerTeam(void);
 u16 sp068_GivePlayerFrontierMonGivenSpecies(void);
+const struct BattleTowerSpread* GetRaidMultiSpread(u8 multiId, u8 index, u8 numStars);
 void GiveMonNatureAndAbility(pokemon_t* mon, u8 nature, u8 abilityNum, bool8 forceShiny);
+void CreateFrontierRaidMon(const u16 species);
 bool8 IsMonBannedInTier(struct Pokemon* mon, u8 tier);
 bool8 IsMonAllowedInBattleTower(struct Pokemon* mon);
 void TryStatusInducer(struct Pokemon* mon);

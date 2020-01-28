@@ -9,8 +9,8 @@ tables to edit:
 	gBallSpriteSheets
 	gBallSpritePalettes
 	gBallSpriteTemplates
-	gBallOpenParticleSpritesheets
-	gBallOpenParticlePalettes
+	gBallParticleSpritesheets
+	gBallParticlePalettes
 	gBallOpenParticleAnimNums
 	gBallOpenParticleAnimationFuncs
 	gBallOpenMonFadePal
@@ -102,8 +102,8 @@ extern const u8 gBattleAnimSpriteSheet_ParticlesHealBallPal[];
 extern const u8 gBattleAnimSpriteSheet_ParticlesQuickCherishBallPal[];
 extern const u8 gBattleAnimSpriteSheet_ParticlesQuickCherishBallPal[];
 
-#define gUnknown_083AC9C8 (const struct OamData*) 0x83AC9C8
-#define gUnknown_0840C050 (const union AnimCmd* const*) 0x840C050
+#define gOamData_AffineOff_ObjNormal_8x8 (const struct OamData*) 0x83AC9C8
+#define sAnims_BallParticles (const union AnimCmd* const*) 0x840C050
 
 #define BALL_OPEN_WHITE_STARS 0 //Custom for Heal Ball
 #define BALL_OPEN_RAINBOW_CIRCLES 0 //Custom for Cherish Ball
@@ -506,7 +506,7 @@ const struct SpriteTemplate gBallSpriteTemplates[POKEBALL_COUNT] =
 	},
 };
 
-const struct CompressedSpriteSheet gBallOpenParticleSpritesheets[] =
+const struct CompressedSpriteSheet gBallParticleSpritesheets[] =
 {
 	[BALL_TYPE_POKE_BALL] =		{gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, 55020},
 	[BALL_TYPE_GREAT_BALL] =	{gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, 55021},
@@ -537,7 +537,7 @@ const struct CompressedSpriteSheet gBallOpenParticleSpritesheets[] =
 	[BALL_TYPE_DREAM_BALL] =	{gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, TAG_BALL_OPEN_DREAM},
 };
 
-const struct CompressedSpritePalette gBallOpenParticlePalettes[] =
+const struct CompressedSpritePalette gBallParticlePalettes[] =
 {
 	[BALL_TYPE_POKE_BALL] = 	{gBattleAnimSpritePalette_136, 							55020},
 	[BALL_TYPE_GREAT_BALL] = 	{gBattleAnimSpritePalette_136, 							55021},
@@ -637,7 +637,7 @@ const u16 gBallOpenMonFadePal[] = //gUnknown_085E5310 in Emerald
 	[BALL_TYPE_SAFARI_BALL] = 	RGB(23, 30, 20), //Safari Ball - Light Green
 	[BALL_TYPE_ULTRA_BALL] = 	RGB(31, 31, 15), //Ultra Ball - Yellow
 	[BALL_TYPE_MASTER_BALL] = 	RGB(23, 20, 28), //Master Ball - Violet
-	[BALL_TYPE_NET_BALL] = 	RGB(21, 31, 25), //Net Ball - Turquoise
+	[BALL_TYPE_NET_BALL] =		RGB(21, 31, 25), //Net Ball - Turquoise
 	[BALL_TYPE_DIVE_BALL] = 	RGB(12, 25, 30), //Dive Ball - Deep Sky Blue
 	[BALL_TYPE_NEST_BALL] = 	RGB(30, 27, 10), //Nest Ball - Gold
 	[BALL_TYPE_REPEAT_BALL] = 	RGB(31, 24, 16), //Repeat Ball - Light Orange
@@ -670,13 +670,13 @@ const u16 gBallOpenMonFadePal[] = //gUnknown_085E5310 in Emerald
 	RGB(4, 0, 0),
 };
 
-const struct SpriteTemplate gBallParticleSpriteTemplates[POKEBALL_COUNT] = //gUnknown_085E51F0 in Emerald
+const struct SpriteTemplate gBallParticleSpriteTemplates[POKEBALL_COUNT] =
 {
 	{ //GFX_TAG_MASTERBALL
 		.tileTag = 55024,
 		.paletteTag = 55024,
-		.oam = gUnknown_083AC9C8,
-		.anims = gUnknown_0840C050,
+		.oam = gOamData_AffineOff_ObjNormal_8x8,
+		.anims = sAnims_BallParticles,
 		.images = NULL,
 		.affineAnims = gDummySpriteAffineAnimTable,
 		.callback = SpriteCallbackDummy,
@@ -684,8 +684,8 @@ const struct SpriteTemplate gBallParticleSpriteTemplates[POKEBALL_COUNT] = //gUn
 	{ //GFX_TAG_ULTRABALL
 		.tileTag = 55023,
 		.paletteTag = 55023,
-		.oam = gUnknown_083AC9C8,
-		.anims = gUnknown_0840C050,
+		.oam = gOamData_AffineOff_ObjNormal_8x8,
+		.anims = sAnims_BallParticles,
 		.images = NULL,
 		.affineAnims = gDummySpriteAffineAnimTable,
 		.callback = SpriteCallbackDummy,
@@ -693,8 +693,8 @@ const struct SpriteTemplate gBallParticleSpriteTemplates[POKEBALL_COUNT] = //gUn
 	{ //GFX_TAG_GREATBALL
 		.tileTag = 55021,
 		.paletteTag = 55021,
-		.oam = gUnknown_083AC9C8,
-		.anims = gUnknown_0840C050,
+		.oam = gOamData_AffineOff_ObjNormal_8x8,
+		.anims = sAnims_BallParticles,
 		.images = NULL,
 		.affineAnims = gDummySpriteAffineAnimTable,
 		.callback = SpriteCallbackDummy,
@@ -702,8 +702,8 @@ const struct SpriteTemplate gBallParticleSpriteTemplates[POKEBALL_COUNT] = //gUn
 	{ //GFX_TAG_POKEBALL
 		.tileTag = 55020,
 		.paletteTag = 55020,
-		.oam = gUnknown_083AC9C8, //gUnknown_08524904 in Emerald
-		.anims = gUnknown_0840C050, //gUnknown_085E519C in Emerald
+		.oam = gOamData_AffineOff_ObjNormal_8x8, //gUnknown_08524904 in Emerald
+		.anims = sAnims_BallParticles, //gUnknown_085E519C in Emerald
 		.images = NULL,
 		.affineAnims = gDummySpriteAffineAnimTable,
 		.callback = SpriteCallbackDummy,
@@ -712,8 +712,8 @@ const struct SpriteTemplate gBallParticleSpriteTemplates[POKEBALL_COUNT] = //gUn
 	{ //GFX_TAG_SAFARIBALL
 		.tileTag = 55022,
 		.paletteTag = 55022,
-		.oam = gUnknown_083AC9C8,
-		.anims = gUnknown_0840C050,
+		.oam = gOamData_AffineOff_ObjNormal_8x8,
+		.anims = sAnims_BallParticles,
 		.images = NULL,
 		.affineAnims = gDummySpriteAffineAnimTable,
 		.callback = SpriteCallbackDummy,
@@ -721,8 +721,8 @@ const struct SpriteTemplate gBallParticleSpriteTemplates[POKEBALL_COUNT] = //gUn
 	{ //GFX_TAG_NETBALL
 		.tileTag = 55025,
 		.paletteTag = 55025,
-		.oam = gUnknown_083AC9C8,
-		.anims = gUnknown_0840C050,
+		.oam = gOamData_AffineOff_ObjNormal_8x8,
+		.anims = sAnims_BallParticles,
 		.images = NULL,
 		.affineAnims = gDummySpriteAffineAnimTable,
 		.callback = SpriteCallbackDummy,
@@ -730,8 +730,8 @@ const struct SpriteTemplate gBallParticleSpriteTemplates[POKEBALL_COUNT] = //gUn
 	{ //GFX_TAG_DIVEBALL
 		.tileTag = 55026,
 		.paletteTag = 55026,
-		.oam = gUnknown_083AC9C8,
-		.anims = gUnknown_0840C050,
+		.oam = gOamData_AffineOff_ObjNormal_8x8,
+		.anims = sAnims_BallParticles,
 		.images = NULL,
 		.affineAnims = gDummySpriteAffineAnimTable,
 		.callback = SpriteCallbackDummy,
@@ -739,8 +739,8 @@ const struct SpriteTemplate gBallParticleSpriteTemplates[POKEBALL_COUNT] = //gUn
 	{ //GFX_TAG_NESTBALL
 		.tileTag = 55027,
 		.paletteTag = 55027,
-		.oam = gUnknown_083AC9C8,
-		.anims = gUnknown_0840C050,
+		.oam = gOamData_AffineOff_ObjNormal_8x8,
+		.anims = sAnims_BallParticles,
 		.images = NULL,
 		.affineAnims = gDummySpriteAffineAnimTable,
 		.callback = SpriteCallbackDummy,
@@ -748,8 +748,8 @@ const struct SpriteTemplate gBallParticleSpriteTemplates[POKEBALL_COUNT] = //gUn
 	{ //GFX_TAG_REPEATBALL
 		.tileTag = 55028,
 		.paletteTag = 55028,
-		.oam = gUnknown_083AC9C8,
-		.anims = gUnknown_0840C050,
+		.oam = gOamData_AffineOff_ObjNormal_8x8,
+		.anims = sAnims_BallParticles,
 		.images = NULL,
 		.affineAnims = gDummySpriteAffineAnimTable,
 		.callback = SpriteCallbackDummy,
@@ -757,8 +757,8 @@ const struct SpriteTemplate gBallParticleSpriteTemplates[POKEBALL_COUNT] = //gUn
 	{ //GFX_TAG_TIMERBALL
 		.tileTag = 55029,
 		.paletteTag = 55029,
-		.oam = gUnknown_083AC9C8,
-		.anims = gUnknown_0840C050,
+		.oam = gOamData_AffineOff_ObjNormal_8x8,
+		.anims = sAnims_BallParticles,
 		.images = NULL,
 		.affineAnims = gDummySpriteAffineAnimTable,
 		.callback = SpriteCallbackDummy,
@@ -766,8 +766,8 @@ const struct SpriteTemplate gBallParticleSpriteTemplates[POKEBALL_COUNT] = //gUn
 	{ //GFX_TAG_LUXURYBALL
 		.tileTag = 55030,
 		.paletteTag = 55030,
-		.oam = gUnknown_083AC9C8,
-		.anims = gUnknown_0840C050,
+		.oam = gOamData_AffineOff_ObjNormal_8x8,
+		.anims = sAnims_BallParticles,
 		.images = NULL,
 		.affineAnims = gDummySpriteAffineAnimTable,
 		.callback = SpriteCallbackDummy,
@@ -775,8 +775,8 @@ const struct SpriteTemplate gBallParticleSpriteTemplates[POKEBALL_COUNT] = //gUn
 	{ //GFX_TAG_PREMIERBALL
 		.tileTag = 55031,
 		.paletteTag = 55031,
-		.oam = gUnknown_083AC9C8,
-		.anims = gUnknown_0840C050,
+		.oam = gOamData_AffineOff_ObjNormal_8x8,
+		.anims = sAnims_BallParticles,
 		.images = NULL,
 		.affineAnims = gDummySpriteAffineAnimTable,
 		.callback = SpriteCallbackDummy,
@@ -784,8 +784,8 @@ const struct SpriteTemplate gBallParticleSpriteTemplates[POKEBALL_COUNT] = //gUn
 	{ //GFX_TAG_DUSKBALL
 		.tileTag = TAG_BALL_OPEN_DUSK,
 		.paletteTag = TAG_BALL_OPEN_DUSK,
-		.oam = gUnknown_083AC9C8,
-		.anims = gUnknown_0840C050,
+		.oam = gOamData_AffineOff_ObjNormal_8x8,
+		.anims = sAnims_BallParticles,
 		.images = NULL,
 		.affineAnims = gDummySpriteAffineAnimTable,
 		.callback = SpriteCallbackDummy,
@@ -793,8 +793,8 @@ const struct SpriteTemplate gBallParticleSpriteTemplates[POKEBALL_COUNT] = //gUn
 	{ //GFX_TAG_HEALBALL
 		.tileTag = TAG_BALL_OPEN_HEAL,
 		.paletteTag = TAG_BALL_OPEN_HEAL,
-		.oam = gUnknown_083AC9C8,
-		.anims = gUnknown_0840C050,
+		.oam = gOamData_AffineOff_ObjNormal_8x8,
+		.anims = sAnims_BallParticles,
 		.images = NULL,
 		.affineAnims = gDummySpriteAffineAnimTable,
 		.callback = SpriteCallbackDummy,
@@ -802,8 +802,8 @@ const struct SpriteTemplate gBallParticleSpriteTemplates[POKEBALL_COUNT] = //gUn
 	{ //GFX_TAG_QUICKBALL
 		.tileTag = TAG_BALL_OPEN_QUICK,
 		.paletteTag = TAG_BALL_OPEN_QUICK,
-		.oam = gUnknown_083AC9C8,
-		.anims = gUnknown_0840C050,
+		.oam = gOamData_AffineOff_ObjNormal_8x8,
+		.anims = sAnims_BallParticles,
 		.images = NULL,
 		.affineAnims = gDummySpriteAffineAnimTable,
 		.callback = SpriteCallbackDummy,
@@ -811,8 +811,8 @@ const struct SpriteTemplate gBallParticleSpriteTemplates[POKEBALL_COUNT] = //gUn
 	{ //GFX_TAG_CHERISHBALL
 		.tileTag = TAG_BALL_OPEN_CHERISH,
 		.paletteTag = TAG_BALL_OPEN_CHERISH,
-		.oam = gUnknown_083AC9C8,
-		.anims = gUnknown_0840C050,
+		.oam = gOamData_AffineOff_ObjNormal_8x8,
+		.anims = sAnims_BallParticles,
 		.images = NULL,
 		.affineAnims = gDummySpriteAffineAnimTable,
 		.callback = SpriteCallbackDummy,
@@ -820,8 +820,8 @@ const struct SpriteTemplate gBallParticleSpriteTemplates[POKEBALL_COUNT] = //gUn
 	{ //GFX_TAG_PARKBALL
 		.tileTag = TAG_BALL_OPEN_PARK,
 		.paletteTag = TAG_BALL_OPEN_PARK,
-		.oam = gUnknown_083AC9C8,
-		.anims = gUnknown_0840C050,
+		.oam = gOamData_AffineOff_ObjNormal_8x8,
+		.anims = sAnims_BallParticles,
 		.images = NULL,
 		.affineAnims = gDummySpriteAffineAnimTable,
 		.callback = SpriteCallbackDummy,
@@ -829,8 +829,8 @@ const struct SpriteTemplate gBallParticleSpriteTemplates[POKEBALL_COUNT] = //gUn
 	{ //GFX_TAG_FASTBALL
 		.tileTag = TAG_BALL_OPEN_FAST,
 		.paletteTag = TAG_BALL_OPEN_FAST,
-		.oam = gUnknown_083AC9C8,
-		.anims = gUnknown_0840C050,
+		.oam = gOamData_AffineOff_ObjNormal_8x8,
+		.anims = sAnims_BallParticles,
 		.images = NULL,
 		.affineAnims = gDummySpriteAffineAnimTable,
 		.callback = SpriteCallbackDummy,
@@ -838,8 +838,8 @@ const struct SpriteTemplate gBallParticleSpriteTemplates[POKEBALL_COUNT] = //gUn
 	{ //GFX_TAG_LEVELBALL
 		.tileTag = TAG_BALL_OPEN_LEVEL,
 		.paletteTag = TAG_BALL_OPEN_LEVEL,
-		.oam = gUnknown_083AC9C8,
-		.anims = gUnknown_0840C050,
+		.oam = gOamData_AffineOff_ObjNormal_8x8,
+		.anims = sAnims_BallParticles,
 		.images = NULL,
 		.affineAnims = gDummySpriteAffineAnimTable,
 		.callback = SpriteCallbackDummy,
@@ -847,8 +847,8 @@ const struct SpriteTemplate gBallParticleSpriteTemplates[POKEBALL_COUNT] = //gUn
 	{ //GFX_TAG_LUREBALL
 		.tileTag = TAG_BALL_OPEN_LURE,
 		.paletteTag = TAG_BALL_OPEN_LURE,
-		.oam = gUnknown_083AC9C8,
-		.anims = gUnknown_0840C050,
+		.oam = gOamData_AffineOff_ObjNormal_8x8,
+		.anims = sAnims_BallParticles,
 		.images = NULL,
 		.affineAnims = gDummySpriteAffineAnimTable,
 		.callback = SpriteCallbackDummy,
@@ -856,8 +856,8 @@ const struct SpriteTemplate gBallParticleSpriteTemplates[POKEBALL_COUNT] = //gUn
 	{ //GFX_TAG_HEAVYBALL
 		.tileTag = TAG_BALL_OPEN_HEAVY,
 		.paletteTag = TAG_BALL_OPEN_HEAVY,
-		.oam = gUnknown_083AC9C8,
-		.anims = gUnknown_0840C050,
+		.oam = gOamData_AffineOff_ObjNormal_8x8,
+		.anims = sAnims_BallParticles,
 		.images = NULL,
 		.affineAnims = gDummySpriteAffineAnimTable,
 		.callback = SpriteCallbackDummy,
@@ -865,8 +865,8 @@ const struct SpriteTemplate gBallParticleSpriteTemplates[POKEBALL_COUNT] = //gUn
 	{ //GFX_TAG_LOVEBALL
 		.tileTag = TAG_BALL_OPEN_LOVE,
 		.paletteTag = TAG_BALL_OPEN_LOVE,
-		.oam = gUnknown_083AC9C8,
-		.anims = gUnknown_0840C050,
+		.oam = gOamData_AffineOff_ObjNormal_8x8,
+		.anims = sAnims_BallParticles,
 		.images = NULL,
 		.affineAnims = gDummySpriteAffineAnimTable,
 		.callback = SpriteCallbackDummy,
@@ -874,8 +874,8 @@ const struct SpriteTemplate gBallParticleSpriteTemplates[POKEBALL_COUNT] = //gUn
 	{ //GFX_TAG_FRIENDBALL
 		.tileTag = TAG_BALL_OPEN_FRIEND,
 		.paletteTag = TAG_BALL_OPEN_FRIEND,
-		.oam = gUnknown_083AC9C8,
-		.anims = gUnknown_0840C050,
+		.oam = gOamData_AffineOff_ObjNormal_8x8,
+		.anims = sAnims_BallParticles,
 		.images = NULL,
 		.affineAnims = gDummySpriteAffineAnimTable,
 		.callback = SpriteCallbackDummy,
@@ -883,8 +883,8 @@ const struct SpriteTemplate gBallParticleSpriteTemplates[POKEBALL_COUNT] = //gUn
 	{ //GFX_TAG_MOONBALL
 		.tileTag = TAG_BALL_OPEN_MOON,
 		.paletteTag = TAG_BALL_OPEN_MOON,
-		.oam = gUnknown_083AC9C8,
-		.anims = gUnknown_0840C050,
+		.oam = gOamData_AffineOff_ObjNormal_8x8,
+		.anims = sAnims_BallParticles,
 		.images = NULL,
 		.affineAnims = gDummySpriteAffineAnimTable,
 		.callback = SpriteCallbackDummy,
@@ -892,8 +892,8 @@ const struct SpriteTemplate gBallParticleSpriteTemplates[POKEBALL_COUNT] = //gUn
 	{ //GFX_TAG_SPORTBALL
 		.tileTag = TAG_BALL_OPEN_SPORT,
 		.paletteTag = TAG_BALL_OPEN_SPORT,
-		.oam = gUnknown_083AC9C8,
-		.anims = gUnknown_0840C050,
+		.oam = gOamData_AffineOff_ObjNormal_8x8,
+		.anims = sAnims_BallParticles,
 		.images = NULL,
 		.affineAnims = gDummySpriteAffineAnimTable,
 		.callback = SpriteCallbackDummy,
@@ -901,8 +901,8 @@ const struct SpriteTemplate gBallParticleSpriteTemplates[POKEBALL_COUNT] = //gUn
 	{ //GFX_TAG_BEASTBALL
 		.tileTag = TAG_BALL_OPEN_BEAST,
 		.paletteTag = TAG_BALL_OPEN_BEAST,
-		.oam = gUnknown_083AC9C8,
-		.anims = gUnknown_0840C050,
+		.oam = gOamData_AffineOff_ObjNormal_8x8,
+		.anims = sAnims_BallParticles,
 		.images = NULL,
 		.affineAnims = gDummySpriteAffineAnimTable,
 		.callback = SpriteCallbackDummy,
@@ -910,8 +910,8 @@ const struct SpriteTemplate gBallParticleSpriteTemplates[POKEBALL_COUNT] = //gUn
 	{ //GFX_TAG_DREAMBALL
 		.tileTag = TAG_BALL_OPEN_DREAM,
 		.paletteTag = TAG_BALL_OPEN_DREAM,
-		.oam = gUnknown_083AC9C8,
-		.anims = gUnknown_0840C050,
+		.oam = gOamData_AffineOff_ObjNormal_8x8,
+		.anims = sAnims_BallParticles,
 		.images = NULL,
 		.affineAnims = gDummySpriteAffineAnimTable,
 		.callback = SpriteCallbackDummy,

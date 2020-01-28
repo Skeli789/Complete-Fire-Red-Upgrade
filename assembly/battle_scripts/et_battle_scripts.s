@@ -44,6 +44,9 @@ et_battle_scripts.s
 .global BattleScript_FlowerGift
 .global BattleScript_FlowerGiftEnd2
 .global BattleScript_MonTookFutureAttack
+.global BattleScript_OctolockTurnDmg
+.global BattleScript_DynamaxEnd
+.global BattleScript_LoseRaidBattle
 .global BattleScript_PrintCustomStringEnd2
 .global BattleScript_PrintCustomStringEnd3
 
@@ -61,6 +64,8 @@ et_battle_scripts.s
 .global BattleScript_LostBattleTower
 .global BattleScript_AskIfWantsToForfeitMatch
 .global BattleScript_RanAwayUsingMonAbility
+.global BattleScript_RaidMonRanAway
+.global BattleScript_RaidMonEscapeBall
 
 .global AbilityActivatedString
 
@@ -113,8 +118,7 @@ BattleScript_FogContinues:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_SeaOfFireDamage:
-	playanimation BANK_ATTACKER ANIM_SEA_OF_FIRE 0x0
-	setword BATTLE_STRING_LOADER SeaOfFireDamageString
+	playanimation2 BANK_ATTACKER ANIM_ARG_1 0x0
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	goto BattleScript_DoTurnDmg
@@ -122,7 +126,6 @@ BattleScript_SeaOfFireDamage:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_GrassyTerrainHeal:
-	callasm GrassyTerrainHealFunc
 	playanimation BANK_ATTACKER ANIM_GRASSY_TERRAIN_HEAL 0x0
 	orword HIT_MARKER 0x100
 	graphicalhpupdate BANK_ATTACKER
@@ -333,6 +336,10 @@ BattleScript_TerrainEnd:
 	callasm TransferTerrainData
 	playanimation 0x0 ANIM_LOAD_DEFAULT_BG 0x0
 	setword BATTLE_STRING_LOADER TerrainEndString
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	callasm TryActivateMimicry
+	end2
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -478,9 +485,11 @@ BattleScript_CheckDoomDesireMiss:
 
 BattleScript_CalcDamage:
 	critcalc
+	callasm TryUseGemFutureSight
 	callasm FutureSightDamageCalc + 1
 	typecalc
 	adjustnormaldamage2
+	callasm TryActivateWeakenessBerryFutureSight
 	jumpifmove MOVE_DOOMDESIRE BattleScript_FutureHitAnimDoomDesire
 	playanimation BANK_ATTACKER ANIM_FUTURE_SIGHT_HIT 0x0
 	goto BattleScript_DoFutureAttackHit
@@ -513,6 +522,62 @@ BattleScript_FutureAttackMiss:
 	resultmessage
 	waitmessage DELAY_1SECOND
 	setbyte OUTCOME 0
+	end2
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_OctolockTurnDmg:
+	playanimation BANK_ATTACKER, ANIM_TURN_TRAP, ANIM_ARG_1
+	setword BATTLE_STRING_LOADER gText_SqueezedByOctolock
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	setbyte STAT_ANIM_PLAYED 0x0
+	playstatchangeanimation BANK_ATTACKER, STAT_ANIM_DEF | STAT_ANIM_SPDEF, STAT_ANIM_DOWN | STAT_ANIM_ONLY_MULTIPLE
+
+BattleScript_OctolockTurnDmg_Def:
+	playstatchangeanimation BANK_ATTACKER, STAT_ANIM_DEF, STAT_ANIM_DOWN
+	setstatchanger STAT_DEF | DECREASE_1
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR BattleScript_OctolockTurnDmgPrintDefMsg
+BattleScript_OctolockTurnDmgPrintDefMsg:
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x3 BattleScript_OctolockTurnDmg_SpDef
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x4 BattleScript_OctolockTurnDmgEnd
+	printfromtable 0x83FE588
+	waitmessage DELAY_1SECOND
+
+BattleScript_OctolockTurnDmg_SpDef:
+	playstatchangeanimation BANK_ATTACKER, STAT_ANIM_SPDEF, STAT_ANIM_DOWN
+	setstatchanger STAT_SPDEF | DECREASE_1
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR BattleScript_OctolockTurnDmgPrintSpDefMsg
+BattleScript_OctolockTurnDmgPrintSpDefMsg:
+	jumpifbyte GREATERTHAN MULTISTRING_CHOOSER 0x2 BattleScript_OctolockTurnDmgEnd
+	printfromtable 0x83FE588
+	waitmessage DELAY_1SECOND
+
+BattleScript_OctolockTurnDmgEnd:
+	end2
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_DynamaxEnd:
+	callasm UpdateMaxHealthForDynamax
+	callasm UpdateCurrentHealthForDynamaxEnd
+	reloadhealthbar BANK_SCRIPTING
+	playanimation BANK_SCRIPTING ANIM_TRANSFORM 0x0
+	setword BATTLE_STRING_LOADER gText_DynamaxEnded
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	end2
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_LoseRaidBattle:
+	playanimation BANK_SCRIPTING ANIM_RAID_BATTLE_STORM 0x0
+	playanimation BANK_SCRIPTING DRAGON_TAIL_BLOW_AWAY_ANIM 0x0
+	callasm SetScriptingBankToItsPartner
+	playanimation BANK_SCRIPTING DRAGON_TAIL_BLOW_AWAY_ANIM 0x0
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	setbyte BATTLE_OUTCOME 0x5 @;Teleported
 	end2
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -618,6 +683,27 @@ BattleScript_RanAwayUsingMonAbility:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+BattleScript_RaidMonRanAway:
+	setword BATTLE_STRING_LOADER gText_RaidMonRanAway
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	end2
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_RaidMonEscapeBall:
+	printfromtable 0x83FE5F2 @;gBallEscapeStringIds
+	waitmessage DELAY_1SECOND
+	copybyte BATTLE_SCRIPTING_BANK TARGET_BANK
+	callasm MakeScriptingBankInvisible
+	setword BATTLE_STRING_LOADER gText_RaidMonRanAway
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	setbyte BATTLE_OUTCOME 0x1 @B_OUTCOME_WON
+	finishaction
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 BattleScript_PrintCustomStringEnd2:
 	call BattleScript_PrintCustomString
 	end2
@@ -630,7 +716,6 @@ BattleScript_PrintCustomStringEnd3:
 MysteriousAirCurrentContinuesString: .byte 0xCE, 0xDC, 0xD9, 0x00, 0xE1, 0xED, 0xE7, 0xE8, 0xD9, 0xE6, 0xDD, 0xE3, 0xE9, 0xE7, 0x00, 0xD5, 0xDD, 0xE6, 0x00, 0xD7, 0xE9, 0xE6, 0xE6, 0xD9, 0xE2, 0xE8, 0xFE, 0xD7, 0xE3, 0xE2, 0xE8, 0xDD, 0xE2, 0xE9, 0xD9, 0xE7, 0x00, 0xE8, 0xE3, 0x00, 0xD6, 0xE0, 0xE3, 0xEB, 0xAD, 0xFF
 FogEndedString: .byte 0xCE, 0xDC, 0xD9, 0x00, 0xDA, 0xE3, 0xDB, 0x00, 0xD8, 0xDD, 0xE7, 0xD5, 0xE4, 0xE4, 0xD9, 0xD5, 0xE6, 0xD9, 0xD8, 0xAD, 0xFF
 FogContinuesString: .byte 0xCE, 0xDC, 0xD9, 0x00, 0xDA, 0xE3, 0xDB, 0x00, 0xDD, 0xE7, 0x00, 0xD8, 0xD9, 0xD9, 0xE4, 0xAD, 0xAD, 0xAD, 0xFF
-SeaOfFireDamageString: .byte 0xFD, 0x0F, 0x00, 0xDD, 0xE7, 0x00, 0xDC, 0xE9, 0xE6, 0xE8, 0x00, 0xD6, 0xED, 0xFE, 0xE8, 0xDC, 0xD9, 0x00, 0xE7, 0xD9, 0xD5, 0x00, 0xE3, 0xDA, 0x00, 0xDA, 0xDD, 0xE6, 0xD9, 0xAB, 0xFF
 GrassyTerrainHealString: .byte 0xCE, 0xDC, 0xD9, 0x00, 0xDB, 0xE6, 0xD5, 0xE7, 0xE7, 0xED, 0x00, 0xE8, 0xD9, 0xE6, 0xE6, 0xD5, 0xDD, 0xE2, 0x00, 0xE6, 0xD9, 0xE7, 0xE8, 0xE3, 0xE6, 0xD9, 0xD8, 0xFE, 0xFD, 0x0F, 0xB4, 0xE7, 0x00, 0xDC, 0xD9, 0xD5, 0xE0, 0xE8, 0xDC, 0xAB, 0xFF
 AquaRingHealString: .byte 0xCE, 0xDC, 0xD9, 0x00, 0xBB, 0xE5, 0xE9, 0xD5, 0x00, 0xCC, 0xDD, 0xE2, 0xDB, 0x00, 0xE6, 0xD9, 0xE7, 0xE8, 0xE3, 0xE6, 0xD9, 0xD8, 0xFE, 0xFD, 0x0F, 0xB4, 0xE7, 0x00, 0xDC, 0xD9, 0xD5, 0xE0, 0xE8, 0xDC, 0xAB, 0xFF
 MagnetRiseEndString: .byte 0xFD, 0x0F, 0xB4, 0xE7, 0xFE, 0xD9, 0xE0, 0xD9, 0xD7, 0xE8, 0xE6, 0xE3, 0xE1, 0xD5, 0xDB, 0xE2, 0xD9, 0xE8, 0xDD, 0xE7, 0xE1, 0x00, 0xEB, 0xE3, 0xE6, 0xD9, 0x00, 0xE3, 0xDA, 0xDA, 0xAB, 0xFF

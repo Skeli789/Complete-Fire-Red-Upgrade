@@ -21,6 +21,8 @@ extern const u8 BattleText_GoPkmn_BattleSands[];
 extern const u8 BattleText_PartnerWithdrewPkmn[];
 extern const u8 BattleText_PartnerSaysGo[];
 extern const u8 BattleText_AttackerUsedZStatusMove[];
+extern const u8 BattleText_AttackerUsedMaxMove[];
+extern const u8 BattleText_AttackerUsedGMaxMove[];
 extern const u8 BattleText_TwoInGameTrainersDefeated[];
 extern const u8 BattleText_PlayerLostToTwoInGameTrainers[];
 extern const u8 TheOpposingString[];

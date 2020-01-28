@@ -14,5 +14,6 @@ const u8* GetAbilityName(const u8 ability);
 void CopyAbilityName(u8* dst, const u8 ability);
 
 //Functions Hooked In
+void BufferMoveNameBattle(u16 move, u8* dst);
 void EmitPrintString(u8 bufferId, u16 stringID);
 void EmitPrintSelectionString(u8 bufferId, u16 stringID);

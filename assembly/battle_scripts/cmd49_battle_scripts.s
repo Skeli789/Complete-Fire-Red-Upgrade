@@ -27,6 +27,9 @@ cmd49_battle_scripts.s
 .global BattleScript_DancerActivated
 .global BattleScript_MultiHitPrintStrings
 .global BattleScript_PluckEat
+.global BattleScript_RaidShields
+.global BattleScript_BrokenRaidBarrier
+.global BattleScript_RaidBattleStatIncrease
 
 .global ToxicOrbString
 .global FlameOrbString
@@ -45,30 +48,16 @@ BattleScript_KingsShield:
 	setstatchanger STAT_ATK | DECREASE_2
 	
 BattleScript_KingsShieldPostDecrementSet:
-	statbuffchange STAT_ATTACKER | STAT_NOT_PROTECT_AFFECTED | STAT_BS_PTR KingsShieldReturn
+	swapattackerwithtarget @;Allows for abilities like Defiant and Mirror Armor to have their proper effect
+	statbuffchange STAT_TARGET | STAT_NOT_PROTECT_AFFECTED | STAT_BS_PTR KingsShieldReturn
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 KingsShieldReturn
 	setgraphicalstatchangevalues
-	playanimation BANK_ATTACKER ANIM_STAT_BUFF ANIM_ARG_1
+	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
 	printfromtable 0x83FE588
 	waitmessage DELAY_1SECOND
-	jumpifability BANK_ATTACKER ABILITY_DEFIANT KingsShieldCallDefiant
-	jumpifability BANK_ATTACKER ABILITY_COMPETITIVE KingsShieldCallCompetitive
 
 KingsShieldReturn:
-	return
-
-KingsShieldCallDefiant:
-	setstatchanger STAT_ATK | INCREASE_2
-	copyarray BATTLE_SCRIPTING_BANK USER_BANK 0x1
-	statbuffchange STAT_ATTACKER | STAT_BS_PTR KingsShieldReturn
-	call BattleScript_DefiantCompetitiveCall
-	return
-
-KingsShieldCallCompetitive:
-	setstatchanger STAT_SPATK | INCREASE_2
-	copyarray BATTLE_SCRIPTING_BANK USER_BANK 0x1
-	statbuffchange STAT_ATTACKER | STAT_BS_PTR KingsShieldReturn
-	call BattleScript_DefiantCompetitiveCall
+	swapattackerwithtarget
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -336,6 +325,64 @@ BattleScript_PluckEat:
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	callasm PluckBerryEat
+	return
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_RaidShields:
+	setword BATTLE_STRING_LOADER gText_RaidPokemonGettingDesperate
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	callasm CreateRaidShieldSprites
+	setword BATTLE_STRING_LOADER gText_RaidShield
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	return
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_BrokenRaidBarrier:
+	setword BATTLE_STRING_LOADER gText_RaidShieldBroke
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	orword HIT_MARKER, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_NON_ATTACK_DMG
+	graphicalhpupdate BANK_TARGET
+	datahpupdate BANK_TARGET
+	faintpokemon BANK_TARGET 0x0 0x0
+	jumpiffainted BANK_TARGET BattleScript_BrokenRaidBarrierEnd
+	setbyte STAT_ANIM_PLAYED 0x0
+	playstatchangeanimation BANK_TARGET, STAT_ANIM_DEF | STAT_ANIM_SPDEF, STAT_ANIM_DOWN | STAT_ANIM_BY_TWO | STAT_ANIM_ONLY_MULTIPLE
+
+BattleScript_BrokenRaidBarrier_Def:
+	playstatchangeanimation BANK_TARGET, STAT_ANIM_DEF, STAT_ANIM_DOWN | STAT_ANIM_BY_TWO
+	setstatchanger STAT_DEF | DECREASE_2
+	statbuffchange STAT_TARGET | STAT_BS_PTR BattleScript_BrokenRaidBarrierPrintDefMsg
+BattleScript_BrokenRaidBarrierPrintDefMsg:
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x3 BattleScript_BrokenRaidBarrier_SpDef
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x4 BattleScript_BrokenRaidBarrierEnd
+	printfromtable 0x83FE588
+	waitmessage DELAY_1SECOND
+
+BattleScript_BrokenRaidBarrier_SpDef:
+	playstatchangeanimation BANK_TARGET, STAT_ANIM_SPDEF, STAT_ANIM_DOWN | STAT_ANIM_BY_TWO
+	setstatchanger STAT_SPDEF | DECREASE_2
+	statbuffchange STAT_TARGET | STAT_BS_PTR BattleScript_BrokenRaidBarrierPrintSpDefMsg
+BattleScript_BrokenRaidBarrierPrintSpDefMsg:
+	jumpifbyte GREATERTHAN MULTISTRING_CHOOSER 0x2 BattleScript_BrokenRaidBarrierEnd
+	printfromtable 0x83FE588
+	waitmessage DELAY_1SECOND
+
+BattleScript_BrokenRaidBarrierEnd:
+	return
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_RaidBattleStatIncrease:
+	setgraphicalstatchangevalues
+	playanimation BANK_SCRIPTING ANIM_STAT_BUFF ANIM_ARG_1
+	setword BATTLE_STRING_LOADER gText_RaidBattleStatBoost
+	printstring 0x184
+	waitmessage DELAY_1SECOND
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

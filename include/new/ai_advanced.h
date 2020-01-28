@@ -8,6 +8,7 @@
  */
 
 //Exported Functions
+u8 GetBankFightingStyle(u8 bank);
 u8 PredictBankFightingStyle(u8 bank);
 bool8 IsClassSweeper(u8 class);
 bool8 IsClassKillerSweeper(u8 class);

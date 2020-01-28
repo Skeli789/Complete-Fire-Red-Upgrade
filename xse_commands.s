@@ -134,10 +134,6 @@
 .2byte 0xA0
 .endm
 
-.macro walkingnpcface
-.byte 0x6A, 0x6C, 0x5A @lock, release, faceplayer
-.endm
-
 @Commands
 .macro nop
 .byte 0x0
@@ -343,7 +339,7 @@
 .word \callasm_pointer
 .endm
 
-.macro cmd24 cmd24_pointer
+.macro waitcallasm cmd24_pointer
 .byte 0x24
 .word \cmd24_pointer
 .endm
@@ -496,7 +492,7 @@
 .hword \warp3_y_axis
 .endm
 
-.macro setwarpplace setwarpplace_bank setwarpplace_map setwarpplace_warp setwarpplace_x_axis setwarpplace_y_axis
+.macro warpelevator setwarpplace_bank setwarpplace_map setwarpplace_warp setwarpplace_x_axis setwarpplace_y_axis
 .byte 0x3F
 .byte \setwarpplace_bank
 .byte \setwarpplace_map
@@ -689,14 +685,14 @@
 .word \trainerbattle3_intro
 .endm
 
-.macro trainerbattle4 trainerbattle4_type trainerbattle4_index trainerbattle4_filler trainerbattle4_intro trainerbattle4_loss trainerbattle4_extra
+.macro trainerbattle4 trainerbattle4_type trainerbattle4_index trainerbattle4_filler trainerbattle4_intro trainerbattle4_loss trainerbattle4_cantbattle
 .byte 0x5C
 .byte 0x4
 .hword \trainerbattle4_index
 .hword \trainerbattle4_filler
 .word \trainerbattle4_intro
 .word \trainerbattle4_loss
-.word \trainerbattle4_extra
+.word \trainerbattle4_cantbattle
 .endm
 
 .macro trainerbattle5 trainerbattle5_type trainerbattle5_index trainerbattle5_filler trainerbattle5_intro trainerbattle5_loss
@@ -788,6 +784,27 @@
 .hword \trainerbattle12_partnerbackspriteindex
 .hword \trainerbattle12_filler
 .word \trainerbattle12_loss
+.endm
+
+@same as trainerbattle0
+.macro trainerbattle13 trainerbattle0_type trainerbattle0_index trainerbattle0_filler trainerbattle0_intro trainerbattle0_loss
+.byte 0x5C
+.byte 0xD
+.hword \trainerbattle0_index
+.hword \trainerbattle0_filler
+.word \trainerbattle0_intro
+.word \trainerbattle0_loss
+.endm
+
+@same as trainerbattle4
+.macro trainerbattle14 trainerbattle4_type trainerbattle4_index trainerbattle4_filler trainerbattle4_intro trainerbattle4_loss trainerbattle4_cantbattle
+.byte 0x5C
+.byte 0xE
+.hword \trainerbattle4_index
+.hword \trainerbattle4_filler
+.word \trainerbattle4_intro
+.word \trainerbattle4_loss
+.word \trainerbattle4_cantbattle
 .endm
 
 .macro repeattrainerbattle
@@ -1154,7 +1171,7 @@
 .hword \setanimation_slot
 .endm
 
-.macro checkanimation checkanimation_param
+.macro waitanimation checkanimation_param
 .byte 0x9E
 .hword \checkanimation_param
 .endm
@@ -1275,6 +1292,11 @@
 .macro checkcoins checkcoins_var
 .byte 0xB3
 .hword \checkcoins_var
+.endm
+
+.macro checkexpandedcoins amount
+.byte 0xB3
+.word \amount
 .endm
 
 .macro givecoins givecoins_param
@@ -1453,7 +1475,8 @@
 .word \braille2_text
 .endm
 
-.macro bufferitems bufferitems_buffer bufferitems_item bufferitems_amount
+.macro bufferitemnameplural bufferitems_buffer bufferitems_item bufferitems_amount
+.byte 0xD4
 .byte \bufferitems_buffer
 .hword \bufferitems_item
 .hword \bufferitems_amount

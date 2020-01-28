@@ -1,5 +1,6 @@
 #include "defines.h"
 #include "defines_battle.h"
+#include "../include/battle_anim.h"
 #include "../include/random.h"
 #include "../include/constants/songs.h"
 
@@ -11,13 +12,17 @@
 #include "../include/new/battle_script_util.h"
 #include "../include/new/damage_calc.h"
 #include "../include/new/daycare.h"
+#include "../include/new/dynamax.h"
 #include "../include/new/end_battle.h"
 #include "../include/new/util.h"
 #include "../include/new/item.h"
+#include "../include/new/item_battle_scripts.h"
 #include "../include/new/learn_move.h"
 #include "../include/new/move_battle_scripts.h"
 #include "../include/new/move_tables.h"
 #include "../include/new/switching.h"
+#include "../include/new/stat_buffs.h"
+
 /*
 battle_script_util.c
 	general functions that aide in battle scripting via callasm.
@@ -69,10 +74,11 @@ void MagnetFluxLooper(void)
 	{
 		u8 bank = gBanksByTurnOrder[*gSeedHelper];
 		if ((bank == gBankAttacker || bank == PARTNER(gBankAttacker))
-		&&  (ABILITY(bank) == ABILITY_PLUS || ABILITY(bank) == ABILITY_MINUS)
-		&& gBattleMons[bank].hp
-		&& !(gStatuses3[bank] & STATUS3_SEMI_INVULNERABLE)
-		&& !(gBattleMons[bank].status2 & STATUS2_SUBSTITUTE))
+		&& (ABILITY(bank) == ABILITY_PLUS || ABILITY(bank) == ABILITY_MINUS)
+		&& BATTLER_ALIVE(bank)
+		&& !BATTLER_SEMI_INVULNERABLE(bank)
+		&& !IS_BEHIND_SUBSTITUTE(bank)
+		&& !IsProtectedByMaxGuard(bank))
 		{
 			++*gSeedHelper;
 			gBankTarget = bank;
@@ -95,7 +101,7 @@ void MagnetFluxLooper(void)
 
 void ModifyGrowthInSun(void)
 {
-	if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
+	if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY && ITEM_EFFECT(gBankAttacker) != ITEM_EFFECT_UTILITY_UMBRELLA)
 		gBattleScripting->statChanger += INCREASE_1;
 }
 
@@ -377,7 +383,10 @@ void RoundBSFunction(void)
 		}
 
 		for (i = 0; rounders[i] != 0xFF && i < 3; ++i)
+		{
 			gBanksByTurnOrder[index++] = rounders[i];
+			gNewBS->quashed |= gBitTable[rounders[i]]; //So their turn order can't be changed
+		}
 
 		for (i = 0; nonRounders[i] != 0xFF && i < 3; ++i)
 			gBanksByTurnOrder[index++] = nonRounders[i];
@@ -408,6 +417,7 @@ void EchoedVoiceFunc(void)
 void DefogHelperFunc(void)
 {
 	if (gNewBS->AuroraVeilTimers[SIDE(gBankTarget)]
+	|| gTerrainType != 0
 	|| gSideAffecting[SIDE(gBankAttacker)] & SIDE_STATUS_SPIKES
 	|| gSideAffecting[SIDE(gBankTarget)] & (SIDE_STATUS_SPIKES
 										  | SIDE_STATUS_REFLECT
@@ -451,6 +461,9 @@ void BestowItem(void)
 
 void BelchFunction(void)
 {
+	if (IsRaidBattle() && gBankAttacker == GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT))
+		return; //Raid bosses can always use Belch
+
 	if (!(gNewBS->BelchCounters & gBitTable[gBattlerPartyIndexes[gBankAttacker]]))
 		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5 - 2;
 }
@@ -854,6 +867,23 @@ void ChangeTargetTypeFunc(void)
 			}
 			break;
 
+		case MOVE_MAGICPOWDER:
+			if (ABILITY(gBankTarget) == ABILITY_MULTITYPE
+			||  ABILITY(gBankTarget) == ABILITY_RKS_SYSTEM
+			|| (gBattleMons[gBankTarget].type1 == TYPE_PSYCHIC &&
+				gBattleMons[gBankTarget].type2 == TYPE_PSYCHIC &&
+				gBattleMons[gBankTarget].type3 == TYPE_BLANK))
+			{
+				gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+			}
+			else
+			{
+				SET_BATTLER_TYPE(gBankTarget, TYPE_PSYCHIC);
+				PREPARE_TYPE_BUFFER(gBattleTextBuff1, TYPE_PSYCHIC);
+				gBattleStringLoader = TargetTransformedIntoType;
+			}
+			break;
+
 		case MOVE_TRICKORTREAT:
 			if (IsOfType(gBankTarget, TYPE_GHOST))
 				gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
@@ -1056,6 +1086,8 @@ void QuashFunc(void)
 			if (newTurnOrder[i] != 0xFF)
 				gBanksByTurnOrder[i] = newTurnOrder[i];
 		}
+		
+		gNewBS->quashed |= gBitTable[gBankTarget];
 	}
 	else
 		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
@@ -1068,7 +1100,9 @@ void TryExecuteInstruct(void)
 	if (CheckTableForMove(move, gInstructBannedMoves)
 	||  CheckTableForMove(move, gMovesThatRequireRecharging)
 	||  CheckTableForMove(move, gMovesThatCallOtherMoves)
-	|| (IsZMove(move))
+	|| IsZMove(move)
+	|| IsAnyMaxMove(move)
+	|| IsDynamaxed(gBankTarget)
 	|| (gLockedMoves[gBankTarget] != 0 && gLockedMoves[gBankTarget] != 0xFFFF)
 	|| gBattleMons[gBankTarget].status2 & STATUS2_MULTIPLETURNS
 	|| FindMovePositionInMoveset(move, gBankTarget) == 4 //No longer knows the move
@@ -1222,7 +1256,7 @@ void AbilityChangeBSFunc(void)
 
 	switch (gCurrentMove) {
 		case MOVE_WORRYSEED:
-			if (CheckTableForAbility(defAbility, gWorrySeedGastroAcidBannedAbilities))
+			if (CheckTableForAbility(defAbility, gWorrySeedBannedAbilities))
 				gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
 			else
 			{
@@ -1234,7 +1268,7 @@ void AbilityChangeBSFunc(void)
 			break;
 
 		case MOVE_GASTROACID:
-			if (CheckTableForAbility(defAbility, gWorrySeedGastroAcidBannedAbilities)
+			if (CheckTableForAbility(defAbility, gGastroAcidBannedAbilities)
 			|| gStatuses3[gBankTarget] & STATUS3_ABILITY_SUPPRESS)
 			{
 				gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
@@ -1253,6 +1287,7 @@ void AbilityChangeBSFunc(void)
 
 		case MOVE_ENTRAINMENT:
 			if (atkAbility == ABILITY_NONE
+			||  IsDynamaxed(gBankTarget)
 			||  CheckTableForAbility(atkAbility, gEntrainmentBannedAbilitiesAttacker)
 			||  CheckTableForAbility(defAbility, gEntrainmentBannedAbilitiesTarget))
 				gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
@@ -1552,11 +1587,6 @@ void BadDreamsHurtFunc(void)
 	gBattleMoveDamage = MathMax(1, gBattleMons[gBankTarget].maxHP / 8);
 }
 
-void GrassyTerrainHealFunc(void)
-{
-	gBattleMoveDamage = -1 * MathMax(1, gBattleMons[gBankAttacker].maxHP / 16);
-}
-
 void RestoreBanksFromSynchronize(void)
 {
 	gBankAttacker = gNewBS->backupSynchronizeBanks[0];
@@ -1809,4 +1839,172 @@ void SetThroatChopTimer(void)
 void SetNoMoreMovingThisTurnScriptingBank(void)
 {
 	gNewBS->NoMoreMovingThisTurn |= gBitTable[gBattleScripting->bank];
+}
+
+void SetBattleScriptingBankForPartnerAbilityNoStatLoss(void)
+{
+	gBattleScripting->bank = PARTNER(gBattleScripting->bank);
+}
+
+void FailIfAttackerIsntHoldingBerry(void)
+{
+	u16 item = ITEM(gBankAttacker);
+	
+	if (!IsBerry(item))
+		gBattlescriptCurrInstr = BattleScript_ButItFailedAttackstring - 5;
+}
+
+void SetTempIgnoreAnimations(void)
+{
+	gNewBS->tempIgnoreAnimations = TRUE;
+}
+
+void ClearTempIgnoreAnimations(void)
+{
+	gNewBS->tempIgnoreAnimations = FALSE;
+}
+
+void FailIfTrappedByNoRetreat(void)
+{
+	if (gNewBS->trappedByNoRetreat & gBitTable[gBankAttacker])
+		gBattlescriptCurrInstr = BattleScript_ButItFailedAttackstring - 5;
+}
+
+void FinishTurn(void)
+{
+	gCurrentActionFuncId = ACTION_FINISHED;
+	gCurrentTurnActionNumber = gBattlersCount;
+}
+
+void SetScriptingBankToItsPartner(void)
+{
+	gBattleScripting->bank = PARTNER(gBattleScripting->bank);
+}
+
+void TryFailLifeDew(void)
+{
+	if (!IS_DOUBLE_BATTLE || !BATTLER_ALIVE(PARTNER(gBankAttacker)))
+		gBattlescriptCurrInstr = RecoverBS - 5;
+	else if (BATTLER_MAX_HP(gBankAttacker) && BATTLER_MAX_HP(PARTNER(gBankAttacker)))
+		gBattlescriptCurrInstr = BattleScript_LifeDewFail - 5;
+}
+
+void ChooseTargetForMirrorArmorStickyWeb(void)
+{
+	u8 foe = FOE(gBankTarget);
+	gBankAttacker = gBankTarget;
+	PREPARE_STAT_BUFFER(gBattleTextBuff1, STAT_STAGE_SPEED); //Just in case speed isn't lowered
+
+	if (!IS_DOUBLE_BATTLE)
+	{
+		if (BATTLER_ALIVE(foe)
+		&& !IS_BEHIND_SUBSTITUTE(foe))
+			gBankAttacker = foe;
+	}
+	else //Pick target that's alive and not behind substitute
+	{
+		if (BATTLER_ALIVE(foe)
+		&& !IS_BEHIND_SUBSTITUTE(foe))
+			gBankAttacker = foe;
+		else if (BATTLER_ALIVE(PARTNER(foe))
+		&& !IS_BEHIND_SUBSTITUTE(PARTNER(foe)))
+			gBankAttacker = PARTNER(foe);
+	}
+}
+
+const u8* TryActivateMimicryForBank(u8 bank)
+{
+	u8 monType;
+
+	switch (gTerrainType) {
+		case ELECTRIC_TERRAIN:
+			monType = TYPE_ELECTRIC;
+			break;
+		case GRASSY_TERRAIN:
+			monType = TYPE_GRASS;
+			break;
+		case MISTY_TERRAIN:
+			monType = TYPE_FAIRY;
+			break;
+		case PSYCHIC_TERRAIN:
+			monType = TYPE_PSYCHIC;
+			break;
+		default:
+			monType = 0xFF;
+	}
+
+	if (ABILITY(bank) == ABILITY_MIMICRY)
+	{
+		struct Pokemon* mon = GetBankPartyData(bank);
+
+		if (monType == 0xFF)
+		{
+			u8 type1 = GetMonType(mon, 0);
+			u8 type2 = GetMonType(mon, 1);
+		
+			if (gBattleMons[bank].type1 != type1 || gBattleMons[bank].type2 != type2
+			||  !IS_BLANK_TYPE(gBattleMons[bank].type3))
+			{
+				gBattleMons[bank].type1 = type1;
+				gBattleMons[bank].type2 = type2;
+				gBattleMons[bank].type3 = TYPE_BLANK;
+
+				gBattleScripting->bank = bank;
+				return BattleScript_MimicryReturnedToNormal;
+			}
+		}
+		else
+		{
+			if (gBattleMons[bank].type1 != monType || gBattleMons[bank].type2 != monType
+			|| !IS_BLANK_TYPE(gBattleMons[bank].type3))
+			{
+				gBattleScripting->bank = bank;
+				SET_BATTLER_TYPE(bank, monType);
+				PREPARE_TYPE_BUFFER(gBattleTextBuff1, monType);
+				return BattleScript_MimicryTransformed;
+			}
+		}
+	}
+	
+	return NULL;
+}
+
+void TryActivateMimicry(void)
+{
+	u8 i;
+
+	for (i = 0; i < gBattlersCount; ++i)
+	{
+		const u8* script = TryActivateMimicryForBank(i);
+		if (script != NULL)
+		{
+			BattleScriptPushCursor();
+			gBattlescriptCurrInstr = script - 5;
+			break;
+		}
+	}
+}
+
+void ActivatePerishBody(void)
+{
+	bool8 activated = FALSE;
+
+	//Perish Body only works if the attacker doesn't already have a perish count
+	if (!(gStatuses3[gBankAttacker] & STATUS3_PERISH_SONG))
+	{
+		activated = TRUE;
+		gStatuses3[gBankAttacker] |= STATUS3_PERISH_SONG;
+		gDisableStructs[gBankAttacker].perishSongTimer = 3;
+		gDisableStructs[gBankAttacker].perishSongTimerStartValue = 3;
+
+		if (!(gStatuses3[gBankTarget] & STATUS3_PERISH_SONG))
+		{
+			gStatuses3[gBankTarget] |= STATUS3_PERISH_SONG;
+			gDisableStructs[gBankTarget].perishSongTimer = 3;
+			gDisableStructs[gBankTarget].perishSongTimerStartValue = 3;
+		}
+	}
+
+	if (!activated)
+		gBattlescriptCurrInstr = BattleScript_PerishBodyReturn - 5;
 }

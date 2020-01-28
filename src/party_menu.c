@@ -852,7 +852,7 @@ static bool8 SetUpFieldMove_Surf(void)
 		return FALSE;
 
 	u16 item = ITEM_NONE;
-	#ifdef UNBOUND
+	#ifdef ONLY_CHECK_ITEM_FOR_HM_USAGE
 	item = ITEM_HM03_SURF;
 	#endif
 
@@ -1056,6 +1056,45 @@ void sp105_IsPlayerFacingClimbableWall(void)
 void sp109_IsPlayerFacingNPCWithOverworldPic(void)
 {
 	gSpecialVar_LastResult = CheckObjectGraphicsInFrontOfPlayer(Var8000);
+}
+
+void sp10A_CanUseCutOnTree(void)
+{
+	u16 item = ITEM_NONE;
+
+	#ifdef ONLY_CHECK_ITEM_FOR_HM_USAGE
+	item = ITEM_HM01_CUT;
+	#endif
+
+	Var8004 = PARTY_SIZE;
+	if (HasBadgeToUseFieldMove(FIELD_MOVE_CUT))
+		Var8004 = PartyHasMonWithFieldMovePotential(MOVE_CUT, item, SHOULDNT_BE_SURFING);
+}
+
+void sp10B_CanUseRockSmashOnRock(void)
+{
+	u16 item = ITEM_NONE;
+
+	#ifdef ONLY_CHECK_ITEM_FOR_HM_USAGE
+	item = ITEM_HM06_ROCK_SMASH;
+	#endif
+
+	Var8004 = PARTY_SIZE;
+	if (HasBadgeToUseFieldMove(FIELD_MOVE_ROCK_SMASH))
+		Var8004 = PartyHasMonWithFieldMovePotential(MOVE_ROCKSMASH, item, SHOULDNT_BE_SURFING);
+}
+
+void sp10C_CanUseStrengthOnBoulder(void)
+{
+	u16 item = ITEM_NONE;
+
+	#ifdef ONLY_CHECK_ITEM_FOR_HM_USAGE
+	item = ITEM_HM04_STRENGTH;
+	#endif
+
+	Var8004 = PARTY_SIZE;
+	if (HasBadgeToUseFieldMove(FIELD_MOVE_STRENGTH))
+		Var8004 = PartyHasMonWithFieldMovePotential(MOVE_STRENGTH, item, SHOULDNT_BE_SURFING);
 }
 
 //Move Item - Credits to Sagiri/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

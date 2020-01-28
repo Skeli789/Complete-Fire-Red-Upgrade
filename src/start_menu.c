@@ -7,12 +7,20 @@
 #include "../include/constants/songs.h"
 
 #include "../include/new/dexnav.h"
+
 /*
 start_menu.c
-	functions to redo how the start menu is generated, and associated functions such as safari steps/ball count
+	Functions to redo how the start menu is generated, and
+	associated functions such as safari steps/ball count.
 */
 
-u8 PokeToolsFunc(void);
+//This file's functions:
+static void CloseStartMenu(void);
+static void BuildNormalStartMenu();
+static void BuildSafariZoneStartMenu();
+#ifdef FLAG_POKETOOLS_MENU
+static void BuildPokeToolsMenu(void);
+#endif
 
 const struct MenuAction sStartMenuItems[] =
 {
@@ -29,35 +37,35 @@ const struct MenuAction sStartMenuItems[] =
 	{gText_DexNav, {.u8_void = ExecDexNav}},
 };
 
-const u8* sStartMenuDescriptionItems[] =
+const u8* const sStartMenuDescriptionItems[] =
 {
-	&gText_PokedexDescription[0],
-	&gText_PokemonDescription[0],
-	&gText_BagDescription[0],
-	&gText_PlayerDescription[0],
-	&gText_SaveDescription[0],
-	&gText_OptionDescription[0],
-	&gText_ExitDescription[0],
-	&gText_RetireDescription[0],
-	&gText_PlayerDescription[0],
-	&gText_ToolsDescription[0],
-	&gText_DexNavDescription[0],
+	gText_PokedexDescription,
+	gText_PokemonDescription,
+	gText_BagDescription,
+	gText_PlayerDescription,
+	gText_SaveDescription,
+	gText_OptionDescription,
+	gText_ExitDescription,
+	gText_RetireDescription,
+	gText_PlayerDescription,
+	gText_ToolsDescription,
+	gText_DexNavDescription,
 };
 
 void __attribute__((long_call)) CloseSafariStepsBox(void);
 void __attribute__((long_call)) CloseStartMenuDescriptionBox(void);
 void __attribute__((long_call)) HideStartMenu(void);
-void BuildNormalStartMenu() {
+
+static void BuildNormalStartMenu()
+{
 	if (FlagGet(FLAG_SYS_POKEDEX_GET))
 	{
 		#ifdef FLAG_SYS_DEXNAV
 			if (FlagGet(FLAG_SYS_DEXNAV))
 				AddStartMenuAction(MENU_ACTION_POKETOOLS);
 			else
-				AddStartMenuAction(MENU_ACTION_POKEDEX);
-		#else
-			AddStartMenuAction(MENU_ACTION_POKEDEX);
 		#endif
+				AddStartMenuAction(MENU_ACTION_POKEDEX);		
 	}
 
 	if (FlagGet(FLAG_SYS_POKEMON_GET))
@@ -65,32 +73,27 @@ void BuildNormalStartMenu() {
 
 	#ifdef FLAG_SYS_BAG_HIDE
 		if (!FlagGet(FLAG_SYS_BAG_HIDE))
-			AddStartMenuAction(MENU_ACTION_BAG);
-	#else
-		AddStartMenuAction(MENU_ACTION_BAG);
 	#endif
+			AddStartMenuAction(MENU_ACTION_BAG);
 
 	#ifdef FLAG_SYS_PLAYER_HIDE
 		if (!FlagGet(FLAG_SYS_PLAYER_HIDE))
-			AddStartMenuAction(MENU_ACTION_PLAYER);
-	#else
-		AddStartMenuAction(MENU_ACTION_PLAYER);
 	#endif
+			AddStartMenuAction(MENU_ACTION_PLAYER);
 
 	#ifdef FLAG_SYS_SAVE_HIDE
 		if (!FlagGet(FLAG_SYS_SAVE_HIDE))
-			AddStartMenuAction(MENU_ACTION_SAVE);
-	#else
-		AddStartMenuAction(MENU_ACTION_SAVE);
 	#endif
+			AddStartMenuAction(MENU_ACTION_SAVE);
 
-	// these two always present
+	//These two are always present
 	AddStartMenuAction(MENU_ACTION_OPTION);
 	AddStartMenuAction(MENU_ACTION_EXIT);
-};
+}
 
 
-void BuildSafariZoneStartMenu() {
+static void BuildSafariZoneStartMenu()
+{
 	AddStartMenuAction(MENU_ACTION_RETIRE_SAFARI);
 
 	if (FlagGet(FLAG_SYS_POKEDEX_GET))
@@ -99,28 +102,24 @@ void BuildSafariZoneStartMenu() {
 			if (FlagGet(FLAG_SYS_DEXNAV))
 				AddStartMenuAction(MENU_ACTION_POKETOOLS);
 			else
-				AddStartMenuAction(MENU_ACTION_POKEDEX);
-		#else
-			AddStartMenuAction(MENU_ACTION_POKEDEX);
 		#endif
+				AddStartMenuAction(MENU_ACTION_POKEDEX);
 	}
 
+	#ifdef FLAG_SYS_POKEMON_GET
 	if (FlagGet(FLAG_SYS_POKEMON_GET))
+	#endif
 		AddStartMenuAction(MENU_ACTION_POKEMON);
 
 	#ifdef FLAG_SYS_BAG_GET
 		if (FlagGet(FLAG_SYS_BAG_GET))
-			AddStartMenuAction(MENU_ACTION_BAG);
-	#else
-		AddStartMenuAction(MENU_ACTION_BAG);
 	#endif
+			AddStartMenuAction(MENU_ACTION_BAG);
 
 	#ifdef FLAG_SYS_PLAYER_GET
 		if (FlagGet(FLAG_SYS_PLAYER_GET))
-			AddStartMenuAction(MENU_ACTION_PLAYER);
-	#else
-		AddStartMenuAction(MENU_ACTION_PLAYER);
 	#endif
+			AddStartMenuAction(MENU_ACTION_PLAYER);
 
 	AddStartMenuAction(MENU_ACTION_OPTION);
 	AddStartMenuAction(MENU_ACTION_EXIT);
@@ -128,8 +127,8 @@ void BuildSafariZoneStartMenu() {
 
 
 #ifdef FLAG_POKETOOLS_MENU
-void BuildPokeToolsMenu(void) {
-
+static void BuildPokeToolsMenu(void)
+{
 	gStartMenu->numItems = 0;
 
 	AddStartMenuAction(MENU_ACTION_POKEDEX);
@@ -137,7 +136,7 @@ void BuildPokeToolsMenu(void) {
 	AddStartMenuAction(MENU_ACTION_EXIT);
 
 	FlagClear(FLAG_POKETOOLS_MENU);
-};
+}
 #endif
 
 
@@ -162,14 +161,14 @@ void BuildStartMenuActions(void)
 
 static void CloseStartMenu(void)
 {
-	CloseSafariStepsBox();	// void safari_stepscount_close(void) 0806EF18
-	CloseStartMenuDescriptionBox();	// void sm_close_description(void) 080F7998
-	HideStartMenu();		// void sm_close_menu(void) 0806FEA0
+	CloseSafariStepsBox();	//0x806EF18
+	CloseStartMenuDescriptionBox();	//0x80F7998
+	HideStartMenu();		//0x806FEA0
 }
 
 
-
-u8 PokeToolsFunc(void) {
+u8 PokeToolsFunc(void)
+{
 	CloseStartMenu();
 	PlaySE(SE_WIN_OPEN);
 
@@ -182,4 +181,3 @@ u8 PokeToolsFunc(void) {
 
 	return 1;
 }
-

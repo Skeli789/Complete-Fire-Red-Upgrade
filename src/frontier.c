@@ -236,6 +236,8 @@ u8 GetFrontierTrainerClassId(u16 trainerId, u8 battlerNum)
 			return gFrontierBrains[VarGet(VAR_FACILITY_TRAINER_ID + battlerNum)].trainerClass;
 		case BATTLE_FACILITY_MULTI_TRAINER_TID:
 			return gFrontierMultiBattleTrainers[VarGet(VAR_FACILITY_TRAINER_ID_PARTNER)].trainerClass;
+		case RAID_BATTLE_MULTI_TRAINER_TID:
+			return gRaidPartners[VarGet(VAR_FACILITY_TRAINER_ID_PARTNER)].trainerClass;
 		default:
 			return gTrainers[trainerId].trainerClass;
 	}
@@ -255,6 +257,7 @@ void CopyFrontierTrainerName(u8* dst, u16 trainerId, u8 battlerNum)
 const u8* GetFrontierTrainerName(u16 trainerId, u8 battlerNum)
 {
 	const u8* name;
+	u16 partnerId;
 
 	switch (trainerId) {
 		case BATTLE_TOWER_TID: ;
@@ -286,12 +289,19 @@ const u8* GetFrontierTrainerName(u16 trainerId, u8 battlerNum)
 		case FRONTIER_BRAIN_TID:
 			name = gFrontierBrains[VarGet(VAR_FACILITY_TRAINER_ID + battlerNum)].name;
 			break;
-		case BATTLE_FACILITY_MULTI_TRAINER_TID: ;
-			u16 partnerId = VarGet(VAR_FACILITY_TRAINER_ID_PARTNER);
+		case BATTLE_FACILITY_MULTI_TRAINER_TID:
+			partnerId = VarGet(VAR_FACILITY_TRAINER_ID_PARTNER);
 			name = TryGetRivalNameByTrainerClass(gFrontierMultiBattleTrainers[partnerId].trainerClass);
 
 			if (name == NULL) //Rival name isn't tied to a trainer class
 				name = gFrontierMultiBattleTrainers[partnerId].name;
+			break;
+		case RAID_BATTLE_MULTI_TRAINER_TID:
+			partnerId = VarGet(VAR_FACILITY_TRAINER_ID_PARTNER);
+			name = TryGetRivalNameByTrainerClass(gRaidPartners[partnerId].trainerClass);
+
+			if (name == NULL) //Rival name isn't tied to a trainer class
+				name = gRaidPartners[partnerId].name;
 			break;
 		default:
 			name = gTrainers[trainerId].trainerName;
@@ -441,11 +451,16 @@ bool8 DuplicateItemsAreBannedInTier(u8 tier, u8 battleType)
 	return !IsFrontierSingles(battleType) && tier == BATTLE_FACILITY_GS_CUP;
 }
 
-bool8 RayquazaCanMegaEvolveInFrontierBattle()
+bool8 RayquazaCanMegaEvolveInFrontierBattle(void)
 {
 	return IsGSCupBattle()
 		|| VarGet(VAR_BATTLE_FACILITY_TIER) == BATTLE_FACILITY_NO_RESTRICTIONS
 		|| IsScaleMonsBattle();
+}
+
+bool8 DynamaxAllowedInTier(u8 tier)
+{
+	return tier = BATTLE_FACILITY_NO_RESTRICTIONS;
 }
 
 u8 GetBattleTowerLevel(u8 tier)

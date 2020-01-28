@@ -4131,7 +4131,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.defEv = 4,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_DEFIANT
-		.item = ITEM_STICK,
+		.item = ITEM_LEEK,
 		.moves =
 		{
 			MOVE_BRAVEBIRD,
@@ -61591,3 +61591,5 @@ const struct BattleTowerSpread gOricorioSpreads[] =
 };
 
 #endif
+
+const u16 gNumFrontierSpreads = ARRAY_COUNT(gFrontierSpreads);

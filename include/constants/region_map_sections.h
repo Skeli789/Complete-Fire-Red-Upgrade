@@ -123,6 +123,7 @@
 #undef MAPSEC_ROUTE_4
 #undef MAPSEC_ROUTE_10
 
+#define MAPSEC_SHADOW_BASE					0x85
 #define MAPSEC_FROZEN_HEIGHTS				0x58
 #define MAPSEC_ROUTE_1 						0x65
 #define	MAPSEC_BELLIN_TOWN					0x59
@@ -133,6 +134,7 @@
 #define MAPSEC_ROUTE_4 						0x63
 #define MAPSEC_CINDER_VOLCANO 				0x7F
 #define MAPSEC_ROUTE_5 						0x69
+#define MAPSEC_CRATER_TOWN					0x5B
 #define MAPSEC_VALLEY_CAVE 					0x83
 #define MAPSEC_ROUTE_6 						0x6A
 #define MAPSEC_ROUTE_7 						0x6B
@@ -147,10 +149,13 @@
 #define MAPSEC_ROUTE_11 					0x6F
 #define MAPSEC_THUNDERCAP_MOUNTAIN 			0x8A
 #define MAPSEC_ROUTE_12 					0x70
+#define MAPSEC_GREAT_DESERT					0x7B
 #define MAPSEC_VIVILL_WOODS 				0x8C
 #define MAPSEC_ROUTE_16 					0x74
 #define MAPSEC_ROUTE_17 					0x75
 #define MAPSEC_DISTORTION_WORLD				0x97
 #define MAPSEC_BATTLE_FRONTIER              0xA7
+#define MAPSEC_SEAPORT_CITY					0x77
+#define MAPSEC_POLDER_TOWN                  0x90
 
 #endif

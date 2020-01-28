@@ -44,7 +44,7 @@ void SpriteCB_GrowingSuperpower(struct Sprite *sprite);
 void SpriteCB_DracoMeteorRock(struct Sprite *sprite);
 
 bool8 IsAnimMoveIonDeluge(void);
-bool8 IsAnimMoveTectnoicRage(void);
+bool8 DoesAnimMoveGetMaxRollout(void);
 bool8 IsAnimMoveBloomDoom(void);
 bool8 IsAnimMoveOceanicOperretta(void);
 bool8 IsMoveNeverEndingNightmareOrDevastatingDrakeOrLightThatBurnsTheSky(void);

@@ -211,6 +211,7 @@
 }
 
 #define TEXT_BUFF_ARRAY_COUNT   16
+#define MAX_BATTLE_STRING_LOADER_LENGTH 0x96
 
 struct BattleMsgData
 {
@@ -224,11 +225,11 @@ struct BattleMsgData
     u8 stringBank;
     u8 moveType;
 	bool8 zMoveActive;
+	bool8 dynamaxActive;
     u8 abilities[MAX_BATTLERS_COUNT];
     u8 textBuffs[3][TEXT_BUFF_ARRAY_COUNT];
-	u8* battleStringLoader;
+	u8 battleStringLoader[MAX_BATTLE_STRING_LOADER_LENGTH];
 };
-
 
 void __attribute__((long_call)) BufferStringBattle(u16 stringID);
 u32 __attribute__((long_call)) BattleStringExpandPlaceholdersToDisplayedString(const u8* src);

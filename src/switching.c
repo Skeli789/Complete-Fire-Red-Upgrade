@@ -5,11 +5,13 @@
 
 #include "../include/new/ability_battle_scripts.h"
 #include "../include/new/ai_master.h"
+#include "../include/new/battle_indicators.h"
 #include "../include/new/battle_start_turn_start.h"
 #include "../include/new/battle_start_turn_start_battle_scripts.h"
 #include "../include/new/battle_util.h"
 #include "../include/new/cmd49_battle_scripts.h"
 #include "../include/new/damage_calc.h"
+#include "../include/new/dynamax.h"
 #include "../include/new/form_change.h"
 #include "../include/new/frontier.h"
 #include "../include/new/util.h"
@@ -32,6 +34,7 @@ enum SwitchInStates
 	SwitchIn_ZHealingWish,
 	SwitchIn_Spikes,
 	SwitchIn_StealthRock,
+	SwitchIn_Steelsurge,
 	SwitchIn_ToxicSpikes,
 	SwitchIn_StickyWeb,
 	SwitchIn_EmergencyExit,
@@ -363,6 +366,7 @@ void atk52_switchineffects(void)
 	gHitMarker &= ~(HITMARKER_FAINTED(gActiveBattler));
 	gSpecialStatuses[gActiveBattler].flag40 = 0;
 	u8 ability = ABILITY(gActiveBattler);
+	u8 itemEffect = ITEM_EFFECT(gActiveBattler);
 
 	if (gBattleMons[gActiveBattler].hp == 0)
 		goto SWITCH_IN_END;
@@ -424,12 +428,15 @@ void atk52_switchineffects(void)
 				EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[gActiveBattler].status1);
 
 				//Restore PP Only in Lunar Dance
-				for (int i = 0; i < 4; ++i)
+				for (int i = 0; i < MAX_MON_MOVES; ++i)
 				{
 					if (gBattleMons[gActiveBattler].moves[i] == 0)
 						break;
 
 					gBattleMons[gActiveBattler].pp[i] = CalculatePPWithBonus(gBattleMons[gActiveBattler].moves[i], gBattleMons[gActiveBattler].ppBonuses, i);
+					if (IS_TRANSFORMED(gActiveBattler) && gBattleMons[gActiveBattler].pp[i] > 5)
+						gBattleMons[gActiveBattler].pp[i] = 5; //Can't restore past 5 PP if transformed
+
 					EmitSetMonData(0, REQUEST_PPMOVE1_BATTLE + i, 0, 1, &gBattleMons[gActiveBattler].pp[i]);
 				}
 
@@ -459,7 +466,10 @@ void atk52_switchineffects(void)
 		__attribute__ ((fallthrough));
 
 		case SwitchIn_Spikes:
-			if (CheckGrounding(gActiveBattler) && ability != ABILITY_MAGICGUARD && gSideTimers[SIDE(gActiveBattler)].spikesAmount)
+			if (CheckGrounding(gActiveBattler)
+			&& gSideTimers[SIDE(gActiveBattler)].spikesAmount > 0
+			&& ability != ABILITY_MAGICGUARD
+			&& itemEffect != ITEM_EFFECT_HEAVY_DUTY_BOOTS)
 			{
 				gBattleMoveDamage = CalcSpikesDamage(gActiveBattler);
 				gNewBS->DamageTaken[gActiveBattler] += gBattleMoveDamage;
@@ -477,7 +487,9 @@ void atk52_switchineffects(void)
 		__attribute__ ((fallthrough));
 
 		case SwitchIn_StealthRock:
-			if (ability != ABILITY_MAGICGUARD && gSideTimers[SIDE(gActiveBattler)].srAmount)
+			if (gSideTimers[SIDE(gActiveBattler)].srAmount > 0
+			&& ability != ABILITY_MAGICGUARD
+			&& itemEffect != ITEM_EFFECT_HEAVY_DUTY_BOOTS)
 			{
 				gBattleMoveDamage = CalcStealthRockDamage(gActiveBattler);
 				gNewBS->DamageTaken[gActiveBattler] += gBattleMoveDamage;
@@ -493,28 +505,17 @@ void atk52_switchineffects(void)
 			}
 			++gNewBS->SwitchInEffectsTracker;
 		__attribute__ ((fallthrough));
-
-		case SwitchIn_ToxicSpikes:
-			if (CheckGrounding(gActiveBattler) && gSideTimers[SIDE(gActiveBattler)].tspikesAmount)
+		
+		case SwitchIn_Steelsurge:
+			if (gSideTimers[SIDE(gActiveBattler)].steelsurge > 0
+			&& ability != ABILITY_MAGICGUARD
+			&& itemEffect != ITEM_EFFECT_HEAVY_DUTY_BOOTS)
 			{
-				if (gBattleMons[gActiveBattler].type1 == TYPE_POISON
-				||  gBattleMons[gActiveBattler].type2 == TYPE_POISON
-				||  gBattleMons[gActiveBattler].type3 == TYPE_POISON)
-				{
-					gSideTimers[SIDE(gActiveBattler)].tspikesAmount = 0;
-					BattleScriptPushCursor();
-					gBattlescriptCurrInstr = BattleScript_TSAbsorb;
-				}
-				else if (gSideTimers[SIDE(gActiveBattler)].tspikesAmount == 1)
-				{
-					BattleScriptPushCursor();
-					gBattlescriptCurrInstr = BattleScript_TSPoison;
-				}
-				else
-				{
-					BattleScriptPushCursor();
-					gBattlescriptCurrInstr = BattleScript_TSHarshPoison;
-				}
+				gBattleMoveDamage = CalcSteelsurgeDamage(gActiveBattler);
+				gNewBS->DamageTaken[gActiveBattler] += gBattleMoveDamage;
+
+				BattleScriptPushCursor();
+				gBattlescriptCurrInstr = BattleScript_SteelsurgeHurt;
 				gSideAffecting[SIDE(gActiveBattler)] |= SIDE_STATUS_SPIKES_DAMAGED;
 				gBattleScripting->bank = gActiveBattler;
 				gBankTarget = gActiveBattler;
@@ -525,8 +526,47 @@ void atk52_switchineffects(void)
 			++gNewBS->SwitchInEffectsTracker;
 		__attribute__ ((fallthrough));
 
+		case SwitchIn_ToxicSpikes:
+			if (gSideTimers[SIDE(gActiveBattler)].tspikesAmount > 0
+			&& CheckGrounding(gActiveBattler))
+			{
+				if (gBattleMons[gActiveBattler].type1 == TYPE_POISON
+				||  gBattleMons[gActiveBattler].type2 == TYPE_POISON
+				||  gBattleMons[gActiveBattler].type3 == TYPE_POISON)
+				{
+					gSideTimers[SIDE(gActiveBattler)].tspikesAmount = 0;
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_TSAbsorb;
+				}
+				else if (itemEffect != ITEM_EFFECT_HEAVY_DUTY_BOOTS) //Pokemon with this item can still remove T-Spikes
+				{
+					if (gSideTimers[SIDE(gActiveBattler)].tspikesAmount == 1)
+					{
+						BattleScriptPushCursor();
+						gBattlescriptCurrInstr = BattleScript_TSPoison;
+					}
+					else
+					{
+						BattleScriptPushCursor();
+						gBattlescriptCurrInstr = BattleScript_TSHarshPoison;
+					}
+
+					gSideAffecting[SIDE(gActiveBattler)] |= SIDE_STATUS_SPIKES_DAMAGED;
+				}
+
+				gBattleScripting->bank = gActiveBattler;
+				gBankTarget = gActiveBattler;
+				//gBankAttacker = FOE(gActiveBattler); //For EXP
+				++gNewBS->SwitchInEffectsTracker;
+				return;
+			}
+			++gNewBS->SwitchInEffectsTracker;
+		__attribute__ ((fallthrough));
+
 		case SwitchIn_StickyWeb:
-			if (CheckGrounding(gActiveBattler) && gSideTimers[SIDE(gActiveBattler)].stickyWeb)
+			if (gSideTimers[SIDE(gActiveBattler)].stickyWeb
+			&&  CheckGrounding(gActiveBattler)
+			&& itemEffect != ITEM_EFFECT_HEAVY_DUTY_BOOTS)
 			{
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_StickyWebSpeedDrop;
@@ -802,6 +842,12 @@ void atk8F_forcerandomswitch(void)
 
 static bool8 TryDoForceSwitchOut(void)
 {
+	if (IsDynamaxed(gBankTarget)) //Can't force out a Dynamaxed mon
+	{
+		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+		return FALSE;
+	}
+
 	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
 	{
 		gBattleStruct->switchoutPartyIndex[gBankTarget] = gBattlerPartyIndexes[gBankTarget];
@@ -906,6 +952,7 @@ void ClearSwitchBytes(u8 bank)
 	gNewBS->usedMoveIndices[bank] = 0;
 	gNewBS->synchronizeTarget[bank] = 0;
 	gNewBS->statFellThisTurn[bank] = FALSE;
+	gNewBS->dynamaxData.timer[bank] = 0;
 	DestroyMegaIndicator(bank);
 	ClearBattlerAbilityHistory(bank);
 	ClearBattlerItemEffectHistory(bank);
@@ -914,7 +961,11 @@ void ClearSwitchBytes(u8 bank)
 void ClearSwitchBits(u8 bank)
 {
 	gNewBS->PowderByte &= ~(gBitTable[bank]);
+	gNewBS->quashed &= ~(gBitTable[bank]);
 	gNewBS->BeakBlastByte &= ~(gBitTable[bank]);
+	gNewBS->tarShotBits &= ~(gBitTable[bank]);
+	gNewBS->trappedByOctolock &= ~(gBitTable[bank]);
+	gNewBS->trappedByNoRetreat &= ~(gBitTable[bank]);
 	gNewBS->UnburdenBoosts &= ~(gBitTable[bank]);
 	gNewBS->IllusionBroken &= ~(gBitTable[bank]);
 	gNewBS->brokeFreeMessage &= ~(gBitTable[bank]);
@@ -993,6 +1044,30 @@ u32 CalcStealthRockDamagePartyMon(struct Pokemon* mon)
 	return MathMax(1, GetMonData(mon, MON_DATA_MAX_HP, NULL) / divisor);
 }
 
+u32 CalcSteelsurgeDamage(u8 bank)
+{
+	u8 flags;
+	u8 divisor = 8;
+	gBattleMoveDamage = 40;
+
+	TypeDamageModification(0, bank, MOVE_IRONHEAD, TYPE_STEEL, &flags);
+	divisor = GetStealthRockDivisor();
+
+	return MathMax(1, gBattleMons[bank].maxHP / divisor);
+}
+
+u32 CalcSteelsurgeDamagePartyMon(struct Pokemon* mon)
+{
+	u8 flags;
+	u8 divisor = 8;
+	gBattleMoveDamage = 40;
+
+	TypeDamageModificationPartyMon(0, mon, MOVE_IRONHEAD, TYPE_STEEL, &flags);
+	divisor = GetStealthRockDivisor();
+
+	return MathMax(1, GetMonData(mon, MON_DATA_MAX_HP, NULL) / divisor);
+}
+
 static u8 GetStealthRockDivisor(void)
 {
 	u8 divisor = 1;
@@ -1028,10 +1103,15 @@ bool8 WillFaintFromEntryHazards(struct Pokemon* mon, u8 side)
 	u16 hp = GetMonData(mon, MON_DATA_HP, NULL);
 	u32 dmg = 0;
 
-	if (gSideAffecting[side] & SIDE_STATUS_SPIKES)
+	if (gSideAffecting[side] & SIDE_STATUS_SPIKES
+	&& GetMonAbility(mon) != ABILITY_MAGICGUARD
+	&& ItemId_GetHoldEffect(GetMonData(mon, MON_DATA_HELD_ITEM, NULL)) != ITEM_EFFECT_HEAVY_DUTY_BOOTS)
 	{
 		if (gSideTimers[side].srAmount > 0)
 			dmg += CalcStealthRockDamagePartyMon(mon);
+
+		if (gSideTimers[side].steelsurge > 0)
+			dmg += CalcSteelsurgeDamagePartyMon(mon);
 
 		if (gSideTimers[side].spikesAmount > 0)
 			dmg += CalcSpikesDamagePartyMon(mon, side);

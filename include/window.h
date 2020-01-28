@@ -67,11 +67,10 @@ void __attribute__((long_call)) CallWindowFunction(u8 windowId, void ( *func)(u8
 bool8 __attribute__((long_call)) SetWindowAttribute(u8 windowId, u8 attributeId, u32 value);
 u32 __attribute__((long_call)) GetWindowAttribute(u8 windowId, u8 attributeId);
 u8 __attribute__((long_call)) GetNumActiveWindowsOnBg(u8 bgId);
-u32 __attribute__((long_call)) WindowOutline(u8 rid, bool8 triggerA, u16 tilemap_set_something_idk, u8 pal_slot);
 u8 __attribute__((long_call)) WindowPrint(u8 windowId, u8 fontId, u8 left, u8 top, const struct TextColor* color, s8 speed, const u8 *str);
 void __attribute__((long_call)) ChoiceSetupSimple(u8 rid, u8 fboxid, u8 x, u8 y, u8 y_stride, u8 num_choices, u8 preselected_choice);
 s8 __attribute__((long_call)) RboxChoiceUpdate(void);
-u8 __attribute__((long_call)) RboxIdClean(u8 id, bool8 update);
+u8 __attribute__((long_call)) ClearStdWindowAndFrameToTransparent(u8 id, bool8 update);
 void __attribute__((long_call)) DeleteWindow(u8 windowId, bool8 copyToVram);
 
 /*

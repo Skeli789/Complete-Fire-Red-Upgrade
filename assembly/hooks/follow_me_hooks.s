@@ -170,14 +170,13 @@ FollowMe_WarpArrowEndHook:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
+@Used to be 0807E308
+@Now is 0807DF74
 FollowMe_WarpNormalEndHook:
 	bl FollowMe_WarpSetEnd
-	ldr r3, =UnfreezeEventObjects
+	ldr r3, =ScriptContext2_Enable
 	bl call_via_r3
-	ldr r3, =ScriptContext2_Disable
-	bl call_via_r3
-	ldr r0, =0x0807E310 | 1
-	bx r0
+	pop {pc}
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -188,18 +187,6 @@ FollowMe_WarpTeleportEndHook:
 	ldr r3, =ScriptContext2_Disable
 	bl call_via_r3
 	ldr r0, =0x0807E36C | 1
-	bx r0
-
-@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-.pool
-FollowMe_WarpSomethingEndHook:
-	bl FollowMe_WarpSetEnd
-	ldr r3, =ScriptContext2_Disable
-	bl call_via_r3
-	mov r0, r4
-	ldr r3, =DestroyTask
-	bl call_via_r3
-	ldr r0, =0x0807E3E0 | 1
 	bx r0
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

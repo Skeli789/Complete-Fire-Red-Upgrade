@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../global.h"
+#include "dynamax.h"
 
 //Exported Functions
 u8 GetFrontierTrainerClassId(u16 trainerId, u8 battlerNum);
@@ -17,6 +18,7 @@ bool8 IsFrontierMulti(u8 battleType);
 bool8 IsGSCupBattle();
 bool8 IsRandomBattleTowerBattle();
 bool8 RayquazaCanMegaEvolveInFrontierBattle();
+bool8 DynamaxAllowedInTier(u8 tier);
 u8 GetBattleTowerLevel(u8 tier);
 void UpdateTypesForCamomons(u8 bank);
 u8 GetCamomonsTypeByMon(struct Pokemon* mon, u8 whichType);
@@ -60,6 +62,7 @@ u8 sp070_RandomizeBattleMineBattleOptions(void);
 #define NUM_TOWER_TRAINERS gNumTowerTrainers
 #define NUM_SPECIAL_TOWER_TRAINERS gNumSpecialTowerTrainers
 
+#define RAID_BATTLE_MULTI_TRAINER_TID 0x395 //Trainer Index
 #define BATTLE_FACILITY_MULTI_TRAINER_TID 0x396 //Trainer Index
 #define FRONTIER_BRAIN_TID 0x397 //Trainer Index
 #define BATTLE_TOWER_SPECIAL_TID 0x398 //Trainer Index
@@ -204,6 +207,7 @@ struct BattleTowerSpread
 };
 
 extern const struct BattleTowerSpread gFrontierSpreads[];
+extern const u16 gNumFrontierSpreads;
 //#define gFrontierSpreads ((const struct BattleTowerSpread*) 0x89DFA00)
 
 struct BattleTowerTrainer
@@ -262,6 +266,21 @@ struct MultiBattleTowerTrainer
 
 extern const struct MultiBattleTowerTrainer gFrontierMultiBattleTrainers[];
 extern const u8 gNumFrontierMultiTrainers;
+
+struct MultiRaidTrainer
+{
+	u16 owNum;
+	u8 trainerClass;
+	u8 backSpriteId;
+	u8 gender;
+	u32 otId;
+	const u8* name;
+	const struct BattleTowerSpread* spreads[RAID_STAR_COUNT];
+	u16 spreadSizes[RAID_STAR_COUNT];
+};
+
+extern const struct MultiRaidTrainer gRaidPartners[];
+extern const u8 gNumRaidPartners;
 
 struct BattleSandsStreak
 {

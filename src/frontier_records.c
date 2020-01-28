@@ -487,7 +487,7 @@ static void CB2_ShowFrontierRecords(void)
 			sFrontierRecordsPtr->tilemapPtr = Malloc(0x1000);
 			InitFrontierRecordsBg();
 			InitFrontierRecordsWindow();
-			reset_temp_tile_data_buffers();
+			ResetTempTileDataBuffers();
 			decompress_and_copy_tile_data_to_vram(1, gInterfaceGfx_FrontierRecordsTiles, 0, 0, 0);
 			while (free_temp_tile_data_buffers_if_possible())
 				;

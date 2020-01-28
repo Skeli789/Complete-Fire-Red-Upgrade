@@ -70,6 +70,10 @@ void __attribute__((long_call)) CopyBgTilemapBufferToVram(u8 bg);
 void __attribute__((long_call)) FillBgTilemapBufferRect(u8 bg, u16 tileNum, u8 x, u8 y, u8 width, u8 height, u8 palette);
 void __attribute__((long_call)) SetBgTilemapBuffer(u8 bg, void *tilemap);
 bool8 __attribute__((long_call)) IsDma3ManagerBusyWithBgCopy(void);
+void __attribute__((long_call)) CopyToBgTilemapBuffer(u8 bg, const void *src, u16 mode, u16 destOffset);
+void __attribute__((long_call)) FillBgTilemapBufferRect_Palette0(u8 bg, u16 tileNum, u8 x, u8 y, u8 width, u8 height);
+void __attribute__((long_call)) ResetTempTileDataBuffers(void);
+u16 __attribute__((long_call)) LoadBgTilemap(u8 bg, const void *src, u16 size, u16 destOffset);
 
 /*
 void ResetBgs(void);
@@ -86,7 +90,6 @@ int BgTileAllocOp(int bg, int offset, int count, int mode);
 void InitBgsFromTemplates(u8 bgMode, const struct BgTemplate *templates, u8 numTemplates);
 void InitBgFromTemplate(const struct BgTemplate *template);
 void SetBgMode(u8 bgMode);
-u16 LoadBgTilemap(u8 bg, const void *src, u16 size, u16 destOffset);
 u16 Unused_LoadBgPalette(u8 bg, const void *src, u16 size, u16 destOffset);
 u32 GetBgX(u8 bg);
 u32 ChangeBgY_ScreenOff(u8 bg, u32 value, u8 op);
@@ -95,11 +98,9 @@ void SetBgAffine(u8 bg, u32 srcCenterX, u32 srcCenterY, s16 dispCenterX, s16 dis
 u8 Unused_AdjustBgMosaic(u8 a1, u8 a2);
 void UnsetBgTilemapBuffer(u8 bg);
 void* GetBgTilemapBuffer(u8 bg);
-void CopyToBgTilemapBuffer(u8 bg, const void *src, u16 mode, u16 destOffset);
 void CopyToBgTilemapBufferRect(u8 bg, const void* src, u8 destX, u8 destY, u8 width, u8 height);
 void CopyToBgTilemapBufferRect_ChangePalette(u8 bg, const void *src, u8 destX, u8 destY, u8 rectWidth, u8 rectHeight, u8 palette);
 void CopyRectToBgTilemapBufferRect(u8 bg, const void* src, u8 srcX, u8 srcY, u8 srcWidth, u8 srcHeight, u8 destX, u8 destY, u8 rectWidth, u8 rectHeight, u8 palette1, u16 tileOffset, u16 palette2);
-void FillBgTilemapBufferRect_Palette0(u8 bg, u16 tileNum, u8 x, u8 y, u8 width, u8 height);
 void WriteSequenceToBgTilemapBuffer(u8 bg, u16 firstTileNum, u8 x, u8 y, u8 width, u8 height, u8 paletteSlot, s16 tileNumDelta);
 u16 GetBgMetricTextMode(u8 bg, u8 whichMetric);
 u32 GetBgMetricAffineMode(u8 bg, u8 whichMetric);

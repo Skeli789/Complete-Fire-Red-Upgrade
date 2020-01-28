@@ -12,6 +12,7 @@
 #include "../../include/new/battle_util.h"
 #include "../../include/new/battle_script_util.h"
 #include "../../include/new/damage_calc.h"
+#include "../../include/new/dynamax.h"
 #include "../../include/new/end_turn.h"
 #include "../../include/new/util.h"
 #include "../../include/new/item.h"
@@ -207,6 +208,13 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 	// Powder Move Checks (safety goggles, defender has grass type, overcoat, and powder move table)
 	if (CheckTableForMove(move, gPowderMoves) && !IsAffectedByPowder(bankDef))
 		DECREASE_VIABILITY(10); //No return b/c could be reduced further by absorb abilities
+
+	//Dynamax Check
+	if (IsDynamaxed(bankDef) && CheckTableForMove(move, gDynamaxBannedMoves))
+	{
+		DECREASE_VIABILITY(10);
+		return viability; //Move Fails
+	}
 
 	//Target Ability Checks
 	if (NO_MOLD_BREAKERS(atkAbility, move))
@@ -444,6 +452,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 
 			case ABILITY_LEAFGUARD:
 				if (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_SUN_ANY)
+				&& defEffect != ITEM_EFFECT_UTILITY_UMBRELLA
 				&& CheckTableForMoveEffect(move, gSetStatusMoveEffects))
 				{
 					DECREASE_VIABILITY(10);
@@ -457,7 +466,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		{
 			switch (defPartnerAbility) {
 				case ABILITY_LIGHTNINGROD:
-					if (moveType == TYPE_ELECTRIC)
+					if (moveType == TYPE_ELECTRIC && !IsMoveRedirectionPrevented(move, atkAbility))
 					{
 						DECREASE_VIABILITY(20);
 						return viability;
@@ -465,7 +474,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 					break;
 
 				case ABILITY_STORMDRAIN:
-					if (moveType == TYPE_WATER)
+					if (moveType == TYPE_WATER && !IsMoveRedirectionPrevented(move, atkAbility))
 					{
 						DECREASE_VIABILITY(20);
 						return viability;
@@ -552,6 +561,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		}
 	}
 
+MOVESCR_CHECK_0:	
 	//Throat Chop Check
 	if (CantUseSoundMoves(bankAtk) && CheckSoundMove(move))
 		return 0; //Can't select this move period
@@ -559,6 +569,25 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 	//Heal Block Check
 	if (IsHealBlocked(bankAtk) && CheckHealingMove(move))
 		return 0; //Can't select this move period
+
+	//Raid Battle Check
+	if (IsRaidBattle())
+	{
+		if (CheckTableForMove(move, gRaidBattleBannedMoves))
+			return 0; //This move won't work at all.
+		
+		if (GetBattlerPosition(bankAtk) == B_POSITION_OPPONENT_LEFT && CheckTableForMove(move, gRaidBattleBannedRaidMonMoves))
+			return 0; //This move really shouldn't be used
+		
+		if (bankAtk != bankDef
+		&& GetBattlerPosition(bankDef) == B_POSITION_OPPONENT_LEFT
+		&& gNewBS->dynamaxData.raidShieldsUp
+		&& moveSplit == SPLIT_STATUS) //Status moves can't be used while Raid Shields are up
+		{
+			DECREASE_VIABILITY(10);
+			return viability;
+		}
+	}
 
 	//Primal Weather Check
 	if (gBattleWeather & WEATHER_SUN_PRIMAL && moveType == TYPE_WATER && moveSplit != SPLIT_STATUS)
@@ -573,7 +602,6 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 	}
 
 	// Check Move Effects
-	MOVESCR_CHECK_0:
 	switch (moveEffect)
 	{
 		case EFFECT_HIT:
@@ -1116,7 +1144,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 				dmg = MathMax(1, (dmg * 3) / 4);
 			else if (CheckTableForMove(move, gPercent100RecoilMoves))
 				dmg = MathMax(1, dmg);
-			else if (move == MOVE_MINDBLOWN)
+			else if (move == MOVE_MINDBLOWN || move == MOVE_STEELBEAM)
 			{
 				if (MoveBlockedBySubstitute(move, bankAtk, bankDef))
 				{
@@ -1705,7 +1733,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 
 		case EFFECT_SOLARBEAM:
 			if (atkEffect == ITEM_EFFECT_POWER_HERB
-			|| (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY))
+			|| (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY && atkEffect != ITEM_EFFECT_UTILITY_UMBRELLA))
 				goto AI_STANDARD_DAMAGE;
 
 			if (CanKnockOut(bankDef, bankAtk)) //Attacker can be knocked out
@@ -1730,7 +1758,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 				DECREASE_VIABILITY(10);
 			else if (move == MOVE_FAKEOUT)
 			{
-				if (ITEM_EFFECT(bankAtk) == ITEM_EFFECT_CHOICE_BAND
+				if ((atkEffect == ITEM_EFFECT_CHOICE_BAND || atkAbility == ABILITY_GORILLATACTICS)
 				&& (ViableMonCountFromBank(bankDef) >= 2 || !MoveKnocksOutXHits(MOVE_FAKEOUT, bankAtk, bankDef, 1)))
 				{
 					if (IS_DOUBLE_BATTLE)
@@ -1979,7 +2007,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 
 		case EFFECT_KNOCK_OFF:
 			if (defEffect == ITEM_EFFECT_ASSAULT_VEST
-			|| (defEffect == ITEM_EFFECT_CHOICE_BAND && gBattleStruct->choicedMove[bankDef]))
+			|| (defEffect == ITEM_EFFECT_CHOICE_BAND && atkAbility != ABILITY_GORILLATACTICS && gBattleStruct->choicedMove[bankDef]))
 			{
 				if (GetStrongestMove(bankDef, bankAtk) == MOVE_NONE
 				|| AI_SpecialTypeCalc(GetStrongestMove(bankDef, bankAtk), bankDef, bankAtk) & (MOVE_RESULT_NO_EFFECT | MOVE_RESULT_MISSED))
@@ -1994,20 +2022,21 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			switch (move) {
 				case MOVE_WORRYSEED:
 					if (defAbility == ABILITY_INSOMNIA
-					|| CheckTableForAbility(defAbility, gWorrySeedGastroAcidBannedAbilities)
+					|| CheckTableForAbility(defAbility, gWorrySeedBannedAbilities)
 					|| MoveBlockedBySubstitute(move, bankAtk, bankDef))
 						DECREASE_VIABILITY(10);
 					break;
 
 				case MOVE_GASTROACID:
 					if (IsAbilitySuppressed(bankDef)
-					||  CheckTableForAbility(defAbility, gWorrySeedGastroAcidBannedAbilities)
+					||  CheckTableForAbility(defAbility, gGastroAcidBannedAbilities)
 					||  MoveBlockedBySubstitute(move, bankAtk, bankDef))
 						DECREASE_VIABILITY(10);
 					break;
 
 				case MOVE_ENTRAINMENT:
 					if (atkAbility == ABILITY_NONE
+					||  IsDynamaxed(bankDef)
 					||  CheckTableForAbility(atkAbility, gEntrainmentBannedAbilitiesAttacker)
 					||  CheckTableForAbility(defAbility, gEntrainmentBannedAbilitiesTarget)
 					||  MoveBlockedBySubstitute(move, bankAtk, bankDef))
@@ -2028,6 +2057,8 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 
 				default: //Skill Swap
 					if (atkAbility == ABILITY_NONE || defAbility == ABILITY_NONE
+					|| IsDynamaxed(bankAtk)
+					|| IsDynamaxed(bankDef)
 					|| CheckTableForAbility(atkAbility, gSkillSwapBannedAbilities)
 					|| CheckTableForAbility(defAbility, gSkillSwapBannedAbilities))
 						DECREASE_VIABILITY(10);
@@ -2557,6 +2588,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 						instructedMove = gLastPrintedMoves[bankDef];
 
 					if (instructedMove == MOVE_NONE
+					||  IsDynamaxed(bankDef)
 					||  CheckTableForMove(instructedMove, gInstructBannedMoves)
 					||  CheckTableForMove(instructedMove, gMovesThatRequireRecharging)
 					||  CheckTableForMove(instructedMove, gMovesThatCallOtherMoves)
@@ -2578,7 +2610,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 																 | MOVE_TARGET_BOTH
 																 | MOVE_TARGET_ALL
 																 | MOVE_TARGET_OPPONENTS_FIELD)
-						&& instructedMove != MOVE_MINDBLOWN)
+						&& instructedMove != MOVE_MINDBLOWN && instructedMove != MOVE_STEELBEAM)
 							DECREASE_VIABILITY(10); //Don't force the enemy to attack you again unless it can kill itself with Mind Blown
 						else if (instructedMove != MOVE_MINDBLOWN)
 							DECREASE_VIABILITY(5); //Do something better

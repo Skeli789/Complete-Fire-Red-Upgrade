@@ -10,6 +10,7 @@
 #include "../../include/new/battle_start_turn_start.h"
 #include "../../include/new/battle_util.h"
 #include "../../include/new/damage_calc.h"
+#include "../../include/new/dynamax.h"
 #include "../../include/new/general_bs_commands.h"
 #include "../../include/new/util.h"
 #include "../../include/new/item.h"
@@ -30,7 +31,7 @@ extern const struct FlingStruct gFlingTable[];
 u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 originalMove, const u8 originalViability)
 {
 	//u32 i, j;
-	u8 class = PredictBankFightingStyle(bankAtk);
+	u8 class = GetBankFightingStyle(bankAtk);
 	s16 viability = originalViability;
 
 	//Load Alternative targets
@@ -220,7 +221,7 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 			switch (move) {
 				case MOVE_PURIFY: ;
 					u32 status = gBattleMons[bankAtkPartner].status1;
-					if (status != 0)
+					if (status != 0 && !partnerProtects)
 					{
 						if (status & STATUS1_PSN_ANY)
 						{
@@ -254,6 +255,10 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 								IncreaseHelpingHandViability(&viability, class);
 						}
 					}
+					break;
+				case MOVE_LIFEDEW:
+					if (!partnerProtects)
+						IncreaseHealPartnerViability(&viability, class, bankAtkPartner);
 					break;
 			}
 			break;
@@ -295,17 +300,18 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 			break;
 
 		case EFFECT_RAIN_DANCE:
-			if (MoveEffectInMoveset(EFFECT_THUNDER, bankAtkPartner)
-			|| MoveInMoveset(MOVE_WEATHERBALL, bankAtkPartner)
-			|| atkPartnerItemEffect == ITEM_EFFECT_DAMP_ROCK
-			|| atkPartnerAbility == ABILITY_SWIFTSWIM
-			|| atkPartnerAbility == ABILITY_FORECAST
-			|| atkPartnerAbility == ABILITY_HYDRATION
-			|| atkPartnerAbility == ABILITY_RAINDISH
-			|| atkPartnerAbility == ABILITY_DRYSKIN
-			|| MoveEffectInMoveset(EFFECT_THUNDER, bankAtkPartner) //Includes Hurricane
-			|| MoveInMoveset(MOVE_WEATHERBALL, bankAtkPartner)
-			|| MoveTypeInMoveset(TYPE_WATER, bankAtkPartner))
+			if (atkPartnerItemEffect != ITEM_EFFECT_UTILITY_UMBRELLA
+			&& (MoveEffectInMoveset(EFFECT_THUNDER, bankAtkPartner)
+			 || MoveInMoveset(MOVE_WEATHERBALL, bankAtkPartner)
+			 || atkPartnerItemEffect == ITEM_EFFECT_DAMP_ROCK
+			 || atkPartnerAbility == ABILITY_SWIFTSWIM
+			 || atkPartnerAbility == ABILITY_FORECAST
+			 || atkPartnerAbility == ABILITY_HYDRATION
+			 || atkPartnerAbility == ABILITY_RAINDISH
+			 || atkPartnerAbility == ABILITY_DRYSKIN
+			 || MoveEffectInMoveset(EFFECT_THUNDER, bankAtkPartner) //Includes Hurricane
+			 || MoveInMoveset(MOVE_WEATHERBALL, bankAtkPartner)
+			 || MoveTypeInMoveset(TYPE_WATER, bankAtkPartner)))
 			{
 				if (IsClassDoublesTeamSupport(class))
 					INCREASE_VIABILITY(17);
@@ -315,17 +321,18 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 			break;
 
 		case EFFECT_SUNNY_DAY:
-			if (atkPartnerAbility == ABILITY_CHLOROPHYLL
-			|| atkPartnerAbility == ABILITY_FLOWERGIFT
-			|| atkPartnerAbility == ABILITY_FORECAST
-			|| atkPartnerAbility == ABILITY_LEAFGUARD
-			|| atkPartnerAbility == ABILITY_SOLARPOWER
-			|| atkPartnerAbility == ABILITY_HARVEST
-			|| MoveEffectInMoveset(EFFECT_SOLARBEAM, bankAtkPartner)
-			|| MoveEffectInMoveset(EFFECT_MORNING_SUN, bankAtkPartner)
-			|| MoveInMoveset(MOVE_WEATHERBALL, bankAtkPartner)
-			|| MoveInMoveset(MOVE_GROWTH, bankAtkPartner)
-			|| MoveTypeInMoveset(TYPE_FIRE, bankAtkPartner))
+			if (atkPartnerItemEffect != ITEM_EFFECT_UTILITY_UMBRELLA
+			&& (atkPartnerAbility == ABILITY_CHLOROPHYLL
+			 || atkPartnerAbility == ABILITY_FLOWERGIFT
+			 || atkPartnerAbility == ABILITY_FORECAST
+			 || atkPartnerAbility == ABILITY_LEAFGUARD
+			 || atkPartnerAbility == ABILITY_SOLARPOWER
+			 || atkPartnerAbility == ABILITY_HARVEST
+			 || MoveEffectInMoveset(EFFECT_SOLARBEAM, bankAtkPartner)
+			 || MoveEffectInMoveset(EFFECT_MORNING_SUN, bankAtkPartner)
+			 || MoveInMoveset(MOVE_WEATHERBALL, bankAtkPartner)
+			 || MoveInMoveset(MOVE_GROWTH, bankAtkPartner)
+			 || MoveTypeInMoveset(TYPE_FIRE, bankAtkPartner)))
 			{
 				if (IsClassDoublesTeamSupport(class))
 					INCREASE_VIABILITY(17);
@@ -365,7 +372,8 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 		case EFFECT_HELPING_HAND:
 			if (partnerMove != MOVE_NONE
 			&& !partnerProtects
-			&&  SPLIT(partnerMove) != SPLIT_STATUS)
+			&&  SPLIT(partnerMove) != SPLIT_STATUS
+			&& (!IsRaidBattle() || !gNewBS->dynamaxData.raidShieldsUp))
 			{
 				IncreaseHelpingHandViability(&viability, class);
 			}

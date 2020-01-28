@@ -20,8 +20,9 @@ enum
 
 	//New
     NAMING_SCREEN_CHOOSE_NUMBER,
+	NAMING_SCREEN_ENTER_PHRASE,
+	NAMING_SCREEN_ENTER_PASSWORD,
 };
-
 
 struct NamingScreenTemplate
 {

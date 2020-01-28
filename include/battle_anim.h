@@ -345,6 +345,7 @@ struct BattleAnimBackground
 
 void __attribute__((long_call)) InitSpritePosToAnimTarget(struct Sprite *sprite, bool8 respectMonPicOffsets);
 void __attribute__((long_call)) InitSpritePosToAnimAttacker(struct Sprite *sprite, bool8 respectMonPicOffsets);
+void __attribute__((long_call)) SetAverageBattlerPositions(u8 battlerId, bool8 respectMonPicOffsets, s16* spriteX, s16* spriteY);
 
 enum
 {
@@ -378,6 +379,7 @@ bool8 __attribute__((long_call)) IsDoubleBattle(void);
 u8 __attribute__((long_call)) sub_80A6D94(void);
 u8 __attribute__((long_call)) sub_80A8364(u8);
 void __attribute__((long_call)) StoreSpriteCallbackInData6(struct Sprite *sprite, void (*spriteCallback)(struct Sprite*));
+void __attribute__((long_call)) SetCallbackToStoredInData6(struct Sprite *sprite);
 void __attribute__((long_call)) oamt_add_pos2_onto_pos1(struct Sprite *sprite);
 u8 __attribute__((long_call)) GetBankSpriteDefault_Y(u8 bank);
 u8 __attribute__((long_call)) sub_80A82E4(u8 bank);
@@ -385,12 +387,14 @@ u8 __attribute__((long_call)) GetSubstituteSpriteDefault_Y(u8 bank);
 void __attribute__((long_call)) SetAnimSpriteInitialXOffset(struct Sprite *sprite, s16 xOffset);
 void __attribute__((long_call)) DestroySpriteAndMatrix(struct Sprite *sprite);
 void __attribute__((long_call)) RunStoredCallbackWhenAffineAnimEnds(struct Sprite *sprite);
+void __attribute__((long_call)) RunStoredCallbackWhenAnimEnds(struct Sprite *sprite);
 void __attribute__((long_call)) WaitAnimForDuration(struct Sprite *sprite);
 void __attribute__((long_call)) SpriteCB_SpiderWeb(struct Sprite* sprite);
 void __attribute__((long_call)) AnimSpinningKickOrPunchFinish(struct Sprite *sprite);
 void __attribute__((long_call)) SpriteCB_80BA7BC(struct Sprite *sprite);
 void __attribute__((long_call)) SpriteCB_AnimSolarbeamBigOrb(struct Sprite *sprite);
 void __attribute__((long_call)) InitAnimLinearTranslation(struct Sprite *sprite);
+bool8 __attribute__((long_call)) AnimTranslateLinear(struct Sprite *sprite);
 u16 __attribute__((long_call)) ArcTan2Neg(s16 a, s16 b);
 void __attribute__((long_call)) TrySetSpriteRotScale(struct Sprite *sprite, bool8 a2, s16 xScale, s16 yScale, u16 rotation);
 void __attribute__((long_call)) PrepareBattlerSpriteForRotScale(u8 spriteId, u8 objMode);
@@ -402,16 +406,15 @@ bool8 __attribute__((long_call)) IsBattlerSpriteVisible(u8 battlerId);
 void __attribute__((long_call)) MoveBattlerSpriteToBG(u8 battlerId, bool8 toBG_2, bool8 setSpriteInvisible);
 void __attribute__((long_call)) SpriteCB_AnimMissileArcStep(struct Sprite *sprite);
 void __attribute__((long_call)) InitAnimArcTranslation(struct Sprite *sprite);
-
+bool8 __attribute__((long_call)) TranslateAnimHorizontalArc(struct Sprite *sprite);
+void __attribute__((long_call)) PrepareAffineAnimInTaskData(struct Task *task, u8 spriteId, const union AffineAnimCmd *affineAnimCmds);
+bool8 __attribute__((long_call)) RunAffineAnimFromTaskData(struct Task *task);
+s8 __attribute__((long_call)) BattleAnimAdjustPanning(s8 pan);
+s16 __attribute__((long_call)) GetBattlerSpriteCoordAttr(u8 battlerId, u8 a2);
+u8 __attribute__((long_call)) GetBattlerYCoordWithElevation(u8 battlerId);
 void __attribute__((long_call)) StartAnimLinearTranslation(struct Sprite *sprite);
-
 void __attribute__((long_call)) LaunchBattleAnimation(const u8* const animsTable[], u16 tableId, bool8 isMoveAnim);
-
-// battle_anim_80A9C70.s
 void __attribute__((long_call)) LaunchStatusAnimation(u8 bank, u8 statusAnimId);
-
-// battle_anim_8170478.s
-u8 __attribute__((long_call)) ItemIdToBallId(u16 itemId);
 u8 __attribute__((long_call)) LaunchBallStarsTask(u8 x, u8 y, u8 kindOfStars, u8 arg3, u8 ballId);
 u8 __attribute__((long_call)) LaunchBallFadeMonTask(bool8 unFadeLater, u8 bank, u32 arg2, u8 ballId);
 

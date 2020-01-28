@@ -55,7 +55,7 @@ void __attribute__((long_call)) sub_802F768(void);
 void __attribute__((long_call)) CompleteOnInactiveTextPrinter(void);
 void __attribute__((long_call)) Task_LaunchLvlUpAnim(u8);
 void __attribute__((long_call)) DestroyExpTaskAndCompleteOnInactiveTextPrinter(u8);
-void __attribute__((long_call)) MoveSelectionDisplayMoveNames(void);
+//void __attribute__((long_call)) MoveSelectionDisplayMoveNames(void);
 void __attribute__((long_call)) MoveSelectionDisplayPpString(void);
 void __attribute__((long_call)) MoveSelectionDisplayPpNumber(void);
 /*void __attribute__((long_call)) MoveSelectionDisplayMoveType(void);*/

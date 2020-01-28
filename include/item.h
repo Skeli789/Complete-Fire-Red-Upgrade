@@ -32,8 +32,11 @@ extern struct BagPocket gBagPockets[];
 
 bool8 __attribute__((long_call)) IsMail(u16 item_id);
 void __attribute__((long_call)) CopyItemName(u16 itemId, u8* dst);
+void __attribute__((long_call)) CopyItemNameHandlePlural(u16 itemId, u8 *string, u32 quantity);
 bool8 __attribute__((long_call)) CheckBagHasItem(u16 itemId, u16 count);
 bool8 __attribute__((long_call)) AddBagItem(u16 itemId, u16 count);
+bool8 __attribute__((long_call)) RemoveBagItem(u16 itemId, u16 count);
+u16 __attribute__((long_call)) CountTotalItemQuantityInBag(u16 itemId);
 u16 __attribute__((long_call)) SanitizeItemId(u16 item_id);
 u8 /*__attribute__((long_call))*/ ItemId_GetHoldEffect(u16 item_id);
 u8 /*__attribute__((long_call))*/ ItemId_GetHoldEffectParam(u16 item_id);
@@ -54,11 +57,9 @@ bool8 __attribute__((long_call)) CheckBagHasSpace(u16 itemId, u16 count);
 /*
 void GetBerryCountString(u8* dst, const u8* berryName, u32 quantity);
 
-void CopyItemNameHandlePlural(u16 itemId, u8 *string, u32 quantity);
 bool8 IsBagPocketNonEmpty(u8 pocket);
 bool8 CheckBagHasItem(u16 itemId, u16 count);
 bool8 AddBagItem(u16 itemId, u16 count);
-bool8 RemoveBagItem(u16 itemId, u16 count);
 u8 GetPocketByItemId(u16 itemId);
 void ClearItemSlots(struct ItemSlot *itemSlots, u8 b);
 u8 CountUsedPCItemSlots(void);

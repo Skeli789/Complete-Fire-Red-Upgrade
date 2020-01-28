@@ -27,12 +27,23 @@ void OpponentHandleChooseMove(void)
 	u8 chosenMoveId;
 	struct ChooseMoveStruct* moveInfo = (struct ChooseMoveStruct*)(&gBattleBufferA[gActiveBattler][4]);
 
+	#ifdef VAR_GAME_DIFFICULTY
+	u8 difficulty = VarGet(VAR_GAME_DIFFICULTY);
+	#endif
+
 	if ((gBattleTypeFlags & (BATTLE_TYPE_TRAINER | BATTLE_TYPE_OAK_TUTORIAL | BATTLE_TYPE_SAFARI | BATTLE_TYPE_ROAMER))
 	#ifdef FLAG_SMART_WILD
 	||   FlagGet(FLAG_SMART_WILD)
 	#endif
-	||	 WildMonIsSmart(gActiveBattler))
+	#ifdef VAR_GAME_DIFFICULTY //Wild Pokemon are smart in expert mode
+	||   difficulty == OPTIONS_EXPERT_DIFFICULTY
+	#endif
+	||	 WildMonIsSmart(gActiveBattler)
+	||  (IsRaidBattle() && gRaidBattleStars >= 6))
 	{
+		if (RAID_BATTLE_END)
+			goto CHOOSE_DUMB_MOVE;
+	
 		BattleAI_SetupAIData(0xF);
 		chosenMoveId = BattleAI_ChooseMoveOrAction();
 
@@ -63,12 +74,14 @@ void OpponentHandleChooseMove(void)
 				}
 				else if (gBattleMoves[chosenMove].target & MOVE_TARGET_BOTH)
 				{
-					if (SIDE(gActiveBattler) == B_SIDE_PLAYER) {
+					if (SIDE(gActiveBattler) == B_SIDE_PLAYER)
+					{
 						gBankTarget = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
 						if (gAbsentBattlerFlags & gBitTable[gBankTarget])
 							gBankTarget = GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
 					}
-					else {
+					else
+					{
 						gBankTarget = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
 						if (gAbsentBattlerFlags & gBitTable[gBankTarget])
 							gBankTarget = GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT);
@@ -80,6 +93,8 @@ void OpponentHandleChooseMove(void)
 					if (ShouldAIUseZMove(gActiveBattler, gBankTarget, moveInfo->moves[chosenMoveId]))
 						gNewBS->ZMoveData->toBeUsed[gActiveBattler] = TRUE;
 				}
+				else if (ShouldAIDynamax(gActiveBattler, gBankTarget, chosenMove))
+					gNewBS->dynamaxData.toBeUsed[gActiveBattler] = TRUE;
 				else if (!ShouldAIDelayMegaEvolution(gActiveBattler, gBankTarget, chosenMove))
 				{
 					if (moveInfo->canMegaEvolve && moveInfo->megaVariance != MEGA_VARIANT_ULTRA_BURST)
@@ -87,6 +102,7 @@ void OpponentHandleChooseMove(void)
 					else if (moveInfo->canMegaEvolve && moveInfo->megaVariance == MEGA_VARIANT_ULTRA_BURST)
 						gNewBS->UltraData->chosen[gActiveBattler] = TRUE;
 				}
+				
 
 				//This is handled again later, but it's only here to help with the case of choosing Helping Hand when the partner is switching out.
 				gBattleStruct->chosenMovePositions[gActiveBattler] = chosenMoveId;
@@ -94,7 +110,7 @@ void OpponentHandleChooseMove(void)
 				gChosenMovesByBanks[gActiveBattler] = chosenMove;
 				TryRemoveDoublesKillingScore(gActiveBattler, gBankTarget, chosenMove);
 
-				EmitMoveChosen(1, chosenMoveId, gBankTarget, gNewBS->MegaData->chosen[gActiveBattler], gNewBS->UltraData->chosen[gActiveBattler], gNewBS->ZMoveData->toBeUsed[gActiveBattler]);
+				EmitMoveChosen(1, chosenMoveId, gBankTarget, gNewBS->MegaData->chosen[gActiveBattler], gNewBS->UltraData->chosen[gActiveBattler], gNewBS->ZMoveData->toBeUsed[gActiveBattler], gNewBS->dynamaxData.toBeUsed[gActiveBattler]);
 				TryRechoosePartnerMove(moveInfo->moves[chosenMoveId]);
 				break;
 		}
@@ -103,6 +119,7 @@ void OpponentHandleChooseMove(void)
 	}
 	else
 	{
+		CHOOSE_DUMB_MOVE: ;
 		u16 move;
 		do
 		{
@@ -111,11 +128,11 @@ void OpponentHandleChooseMove(void)
 		} while (move == MOVE_NONE);
 
 		if (gBattleMoves[move].target & (MOVE_TARGET_USER_OR_PARTNER | MOVE_TARGET_USER))
-			EmitMoveChosen(1, chosenMoveId, gActiveBattler, 0, 0, 0);
+			EmitMoveChosen(1, chosenMoveId, gActiveBattler, 0, 0, 0, FALSE);
 		else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
-			EmitMoveChosen(1, chosenMoveId, GetBattlerAtPosition(Random() & 2), 0, 0, 0);
+			EmitMoveChosen(1, chosenMoveId, GetBattlerAtPosition(Random() & 2), 0, 0, 0, FALSE);
 		else
-			EmitMoveChosen(1, chosenMoveId, FOE(gActiveBattler), 0, 0, 0);
+			EmitMoveChosen(1, chosenMoveId, FOE(gActiveBattler), 0, 0, 0, FALSE);
 
 		OpponentBufferExecCompleted();
 	}
@@ -212,8 +229,8 @@ void OpponentHandleChoosePokemon(void)
 		u8 battlerIn1, battlerIn2, firstId, lastId;
 		pokemon_t* party = LoadPartyRange(gActiveBattler, &firstId, &lastId);
 
-		if (gNewBS->bestMonIdToSwitchInto[gActiveBattler][0] == PARTY_SIZE
-		||  GetMonData(&party[gNewBS->bestMonIdToSwitchInto[gActiveBattler][0]], MON_DATA_HP, NULL) == 0) //Best mon is dead
+		if (gNewBS->ai.bestMonIdToSwitchInto[gActiveBattler][0] == PARTY_SIZE
+		||  GetMonData(&party[gNewBS->ai.bestMonIdToSwitchInto[gActiveBattler][0]], MON_DATA_HP, NULL) == 0) //Best mon is dead
 			CalcMostSuitableMonToSwitchInto();
 
 		chosenMonId = GetMostSuitableMonToSwitchInto();

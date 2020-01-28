@@ -7,11 +7,13 @@
 #include "../include/new/ability_battle_scripts.h"
 #include "../include/new/battle_util.h"
 #include "../include/new/battle_script_util.h"
-#include "../include/new/util.h"
+#include "../include/new/dynamax.h"
 #include "../include/new/item.h"
 #include "../include/new/move_battle_scripts.h"
 #include "../include/new/set_effect.h"
 #include "../include/new/stat_buffs.h"
+#include "../include/new/util.h"
+
 /*
 set_effect.c
 	handles move effects
@@ -93,7 +95,7 @@ static const u32 sStatusFlagsForMoveEffects[] =
 
 const u16 gTrappingMoves[] =
 {
-	MOVE_BIND, MOVE_WRAP, MOVE_FIRESPIN, MOVE_CLAMP, MOVE_WHIRLPOOL, MOVE_SANDTOMB, MOVE_MAGMASTORM, MOVE_INFESTATION, 0xFFFF
+	MOVE_BIND, MOVE_WRAP, MOVE_FIRESPIN, MOVE_CLAMP, MOVE_WHIRLPOOL, MOVE_SANDTOMB, MOVE_MAGMASTORM, MOVE_INFESTATION, MOVE_SNAPTRAP, MOVE_OCTOLOCK, 0xFFFF
 };
 
 const u16 gWrappedStringIds[] =
@@ -157,6 +159,8 @@ void SetMoveEffect(bool8 primary, u8 certain)
 {
 	bool8 statusChanged = FALSE;
 	u8 affectsUser = 0; // 0x40 otherwise
+	u8 flags = 0;
+	bool8 mirrorArmorReflected = ABILITY(gBankTarget) == ABILITY_MIRRORARMOR;
 
 	if (gBattleCommunication[MOVE_EFFECT_BYTE] & MOVE_EFFECT_AFFECTS_USER)
 	{
@@ -191,7 +195,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 		++gBattlescriptCurrInstr;
 		goto CLEAR_MOVE_EFFECT_BYTE;
 	}
-
+	
 	if (IsOfType(gEffectBank, TYPE_GRASS)
 	&& (ABILITY(gEffectBank) == ABILITY_FLOWERVEIL || (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && ABILITY(PARTNER(gEffectBank)) == ABILITY_FLOWERVEIL))
 	&& gEffectBank != gBankAttacker
@@ -212,6 +216,15 @@ void SetMoveEffect(bool8 primary, u8 certain)
 
 	if (MoveBlockedBySubstitute(gCurrentMove, gBattleScripting->bank, gEffectBank)
 	&& affectsUser != MOVE_EFFECT_AFFECTS_USER
+	&& !(gHitMarker & HITMARKER_IGNORE_SUBSTITUTE))
+	{
+		++gBattlescriptCurrInstr;
+		goto CLEAR_MOVE_EFFECT_BYTE;
+	}
+
+	if (gNewBS->dynamaxData.raidShieldsUp
+	&& affectsUser != MOVE_EFFECT_AFFECTS_USER
+	&& gEffectBank == GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)
 	&& !(gHitMarker & HITMARKER_IGNORE_SUBSTITUTE))
 	{
 		++gBattlescriptCurrInstr;
@@ -303,7 +316,6 @@ void SetMoveEffect(bool8 primary, u8 certain)
 		}
 		return;
 	}
-
 	else
 	{
 		if (gBattleMons[gEffectBank].status2 & sStatusFlagsForMoveEffects[gBattleCommunication[MOVE_EFFECT_BYTE]])
@@ -331,7 +343,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 				break;
 
 			case MOVE_EFFECT_FLINCH:
-				if (ABILITY(gEffectBank) == ABILITY_INNERFOCUS)
+				if (ABILITY(gEffectBank) == ABILITY_INNERFOCUS || IsDynamaxed(gEffectBank))
 					gBattlescriptCurrInstr++;
 				else
 				{
@@ -415,9 +427,15 @@ void SetMoveEffect(bool8 primary, u8 certain)
 						if (gTrappingMoves[gBattleCommunication[MULTISTRING_CHOOSER]] == gCurrentMove)
 							break;
 					}
-
-					if (gCurrentMove == MOVE_INFESTATION)
-						gBattleStringLoader = gText_TargetWasInfested;
+					
+					switch (gCurrentMove) {
+						case MOVE_INFESTATION:
+							gBattleStringLoader = gText_TargetWasInfested;
+							break;
+						case MOVE_SNAPTRAP:
+							gBattleStringLoader = gText_TargetWasCaughtInSnapTrap;
+							break;
+					}
 				}
 				break;
 
@@ -430,7 +448,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 			case MOVE_EFFECT_EVS_PLUS_1:
 				if (ChangeStatBuffs(SET_STAT_BUFF_VALUE(1),
 									gBattleCommunication[MOVE_EFFECT_BYTE] - MOVE_EFFECT_ATK_PLUS_1 + 1,
-									affectsUser, 0))
+									affectsUser | certain, 0))
 				{
 					gBattlescriptCurrInstr++;
 				}
@@ -450,11 +468,19 @@ void SetMoveEffect(bool8 primary, u8 certain)
 			case MOVE_EFFECT_SP_DEF_MINUS_1:
 			case MOVE_EFFECT_ACC_MINUS_1:
 			case MOVE_EFFECT_EVS_MINUS_1:
+				flags = affectsUser | certain;
+				if (mirrorArmorReflected && !affectsUser)
+				{
+					gBattleScripting->statChanger = DECREASE_1 | (gBattleCommunication[MOVE_EFFECT_BYTE] - MOVE_EFFECT_ATK_MINUS_1 + 1);
+					flags |= STAT_CHANGE_BS_PTR;
+				}
+
 				if (ChangeStatBuffs(SET_STAT_BUFF_VALUE(1) | STAT_BUFF_NEGATIVE,
 									gBattleCommunication[MOVE_EFFECT_BYTE] - MOVE_EFFECT_ATK_MINUS_1 + 1,
-									 affectsUser, 0))
+									flags, gBattlescriptCurrInstr + 1))
 				{
-					gBattlescriptCurrInstr++;
+					if (!mirrorArmorReflected)
+						gBattlescriptCurrInstr++;
 				}
 				else
 				{
@@ -474,7 +500,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 			case MOVE_EFFECT_EVS_PLUS_2:
 				if (ChangeStatBuffs(SET_STAT_BUFF_VALUE(2),
 									gBattleCommunication[MOVE_EFFECT_BYTE] - MOVE_EFFECT_ATK_PLUS_2 + 1,
-									affectsUser, 0))
+									affectsUser | certain, 0))
 				{
 					gBattlescriptCurrInstr++;
 				}
@@ -494,11 +520,19 @@ void SetMoveEffect(bool8 primary, u8 certain)
 			case MOVE_EFFECT_SP_DEF_MINUS_2:
 			case MOVE_EFFECT_ACC_MINUS_2:
 			case MOVE_EFFECT_EVS_MINUS_2:
+				flags = affectsUser | certain;
+				if (mirrorArmorReflected && !affectsUser)
+				{
+					gBattleScripting->statChanger = DECREASE_2 | (gBattleCommunication[MOVE_EFFECT_BYTE] - MOVE_EFFECT_ATK_MINUS_2 + 1);
+					flags |= STAT_CHANGE_BS_PTR;
+				}
+
 				if (ChangeStatBuffs(SET_STAT_BUFF_VALUE(2) | STAT_BUFF_NEGATIVE,
 									gBattleCommunication[MOVE_EFFECT_BYTE] - MOVE_EFFECT_ATK_MINUS_2 + 1,
-									affectsUser, 0))
+									flags, gBattlescriptCurrInstr + 1))
 				{
-					gBattlescriptCurrInstr++;
+					if (!mirrorArmorReflected)
+						gBattlescriptCurrInstr++;
 				}
 				else
 				{
@@ -568,10 +602,17 @@ void SetMoveEffect(bool8 primary, u8 certain)
 				break;
 
 			case MOVE_EFFECT_PREVENT_ESCAPE:
-				if (!IsOfType(gEffectBank, TYPE_GHOST))
+				if (!IsOfType(gEffectBank, TYPE_GHOST) && !(gBattleMons[gEffectBank].status2 & STATUS2_ESCAPE_PREVENTION))
 				{
 					gBattleMons[gEffectBank].status2 |= STATUS2_ESCAPE_PREVENTION;
 					gDisableStructs[gEffectBank].bankPreventingEscape = gBankAttacker;
+					
+					if (gCurrentMove == MOVE_OCTOLOCK)
+						gNewBS->trappedByOctolock |= gBitTable[gEffectBank];
+					else if (gCurrentMove == MOVE_NORETREAT)
+						gNewBS->trappedByNoRetreat |= gBitTable[gEffectBank];
+					else
+						gNewBS->trappedByOctolock &= ~(gBitTable[gEffectBank]);
 					gBattlescriptCurrInstr++;
 				}
 				break;
@@ -643,6 +684,26 @@ void SetMoveEffect(bool8 primary, u8 certain)
 					gBattlescriptCurrInstr++;
 
 				break;
+			
+			case MOVE_EFFECT_EAT_BERRY:
+				if (IsBerry(ITEM(gEffectBank)) && BATTLER_ALIVE(gEffectBank))
+				{
+					gNewBS->BelchCounters |= gBitTable[gBattlerPartyIndexes[gEffectBank]];
+					gLastUsedItem = gBattleMons[gEffectBank].item;
+
+					gBattlescriptCurrInstr++;
+
+					if (ItemBattleEffects(ItemEffects_EndTurn, gEffectBank, TRUE, TRUE)
+					|| ItemBattleEffects(ItemEffects_ContactTarget, gEffectBank, TRUE, TRUE))
+						break;
+
+					gBattleMons[gEffectBank].item = 0;
+
+					gActiveBattler = gEffectBank;
+					EmitSetMonData(0, REQUEST_HELDITEM_BATTLE, 0, 2, &gBattleMons[gEffectBank].item);
+					MarkBufferBankForExecution(gEffectBank);
+				}
+				break;
 
 			case MOVE_EFFECT_RESET_STAT_CHANGES:
 				for (int i = 0; i < BATTLE_STATS_NO-1; ++i)
@@ -685,11 +746,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 				||  gSideAffecting[side] & SIDE_STATUS_LIGHTSCREEN
 				||  gNewBS->AuroraVeilTimers[side])
 				{
-					gSideAffecting[side] &= ~(SIDE_STATUS_REFLECT);
-					gSideAffecting[side] &= ~(SIDE_STATUS_LIGHTSCREEN);
-					gSideTimers[side].reflectTimer = 0;
-					gSideTimers[side].lightscreenTimer = 0;
-					gNewBS->AuroraVeilTimers[side] = 0;
+					RemoveScreensFromSide(side);
 					BattleScriptPush(gBattlescriptCurrInstr + 1);
 					gBattleStringLoader = ScreensShatteredString;
 					gBattlescriptCurrInstr = BattleScript_PrintCustomString;
@@ -766,6 +823,11 @@ bool8 SetMoveEffect2(void)
 		RESET_RETURN
 
 	if (MoveBlockedBySubstitute(gCurrentMove, gBattleScripting->bank, gEffectBank)
+	&& !affectsUser
+	&& !(gHitMarker & HITMARKER_IGNORE_SUBSTITUTE))
+		RESET_RETURN
+
+	if (gNewBS->dynamaxData.raidShieldsUp
 	&& !affectsUser
 	&& !(gHitMarker & HITMARKER_IGNORE_SUBSTITUTE))
 		RESET_RETURN

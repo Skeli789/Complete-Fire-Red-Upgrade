@@ -19,6 +19,7 @@ switch_battle_scripts.s
 
 .global BattleScript_SpikesHurt
 .global BattleScript_SRHurt
+.global BattleScript_SteelsurgeHurt
 .global BattleScript_TSPoison
 .global BattleScript_TSHarshPoison
 .global BattleScript_TSAbsorb
@@ -88,6 +89,19 @@ BattleScript_SRHurt:
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_SteelsurgeHurt:
+	orword HIT_MARKER 0x100100
+	graphicalhpupdate BANK_TARGET
+	datahpupdate BANK_TARGET
+	setword BATTLE_STRING_LOADER gText_HurtBySteelsurge
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	faintpokemon BANK_TARGET 0x0 0x0
+	faintpokemon BANK_TARGET TRUE BattleScript_DmgHazardsOnAttackerFainted
+	return
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 	
 BattleScript_TSPoison:
 	setbyte POISONED_BY 0x2 @To-Do, modify PSN set script
@@ -121,6 +135,7 @@ BattleScript_StickyWebSpeedDrop:
 	printstring 0x184
 	waitmessage DELAY_HALFSECOND
 	orword HIT_MARKER HITMARKER_IGNORE_SAFEGUARD | HITMARKER_IGNORE_SUBSTITUTE @;Ignore Shield Dust
+	jumpifability BANK_TARGET ABILITY_MIRRORARMOR BattleScript_MirrorArmorStickyWeb
 	setbyte EFFECT_BYTE 0x18
 	seteffecttarget
 	bicword HIT_MARKER HITMARKER_IGNORE_SAFEGUARD | HITMARKER_IGNORE_SUBSTITUTE

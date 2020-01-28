@@ -11,11 +11,14 @@
 #include "../include/constants/flags.h"
 #include "../include/constants/items.h"
 #include "../include/constants/maps.h"
+#include "../include/constants/metatile_behaviors.h"
 #include "../include/constants/vars.h"
 
 #include "../include/new/battle_start_turn_start.h"
 #include "../include/new/build_pokemon.h"
+#include "../include/new/daycare.h"
 #include "../include/new/dns.h"
+#include "../include/new/dynamax.h"
 #include "../include/new/util.h"
 #include "../include/new/roamer.h"
 #include "../include/new/wild_encounter.h"
@@ -223,7 +226,7 @@ static u8 PickWildMonNature(void)
 	//Check Synchronize for a pokemon with the same ability
 	if (!GetMonData(&gPlayerParty[0], MON_DATA_IS_EGG, NULL)
 	&&  GetMonAbility(&gPlayerParty[0]) == ABILITY_SYNCHRONIZE
-	&&  umodsi(Random(), 2) == 0)
+/*	&&  umodsi(Random(), 2) == 0*/) //Guaranteed Gen 8+
 	{
 		return umodsi(gPlayerParty[0].personality, 25);
 	}
@@ -294,6 +297,69 @@ void CreateWildMon(u16 species, u8 level, u8 monHeaderIndex, bool8 purgeParty)
 	TryStatusInducer(&gEnemyParty[enemyMonIndex]);
 }
 
+void sp117_CreateRaidMon(void)
+{
+	if (FlagGet(FLAG_BATTLE_FACILITY)) //Battle Frontier Demo
+	{
+		VarSet(VAR_BATTLE_FACILITY_POKE_LEVEL, gRaidBattleLevel);
+		CreateFrontierRaidMon(gRaidBattleSpecies);
+		return;
+	}
+
+	u32 i, numEggMoves;
+	u16 eggMoveBuffer[EGG_MOVES_ARRAY_COUNT];
+
+	u8 eggMoveChance = GetRaidEggMoveChance();
+	u8 abilityNum = GetRaidSpeciesAbilityNum(gRaidBattleSpecies);
+	struct Pokemon* mon = &gEnemyParty[0];
+	
+	if (abilityNum == RAID_ABILITY_HIDDEN
+	|| (abilityNum == RAID_ABILITY_RANDOM_ALL && Random() & 1)) //50% chance of hidden ability
+		FlagSet(FLAG_HIDDEN_ABILITY);
+	else
+		FlagClear(FLAG_HIDDEN_ABILITY);
+		
+	#ifdef FLAG_WILD_CUSTOM_MOVES
+	FlagClear(FLAG_WILD_CUSTOM_MOVES); //We'll set custom moves later
+	#endif
+
+	CreateWildMon(gRaidBattleSpecies, gRaidBattleLevel, 0, TRUE);
+
+	if (abilityNum == RAID_ABILITY_1 || abilityNum == RAID_ABILITY_2)
+		GiveMonNatureAndAbility(mon, GetNature(mon), abilityNum - RAID_ABILITY_1, IsMonShiny(mon));
+
+	numEggMoves = GetAllEggMoves(&gEnemyParty[0], eggMoveBuffer, TRUE);
+	for (i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		if (numEggMoves != 0 && Random() % 100 < eggMoveChance)
+		{
+			u16 eggMove = eggMoveBuffer[RandRange(0, numEggMoves)];
+
+			if (MoveInMonMoveset(eggMove, mon)) //Try to reroll once if mon already knows move
+				eggMove = eggMoveBuffer[RandRange(0, numEggMoves)];
+
+			if (!MoveInMonMoveset(eggMove, mon) && GiveMoveToBoxMon((struct BoxPokemon*) mon, eggMove) == 0xFFFF)
+				DeleteFirstMoveAndGiveMoveToBoxMon((struct BoxPokemon*) mon, eggMove);
+		}
+	}
+	
+	//Give perfect IVs based on the number of Raid stars
+	u8 numPerfectStats = 0;
+	u8 perfect = 31;
+	bool8 perfectStats[NUM_STATS] = {0};
+
+	while (numPerfectStats < MathMin(gRaidBattleStars, NUM_STATS)) //Error prevention
+	{
+		u8 statId = Random() % NUM_STATS;
+		if (!perfectStats[statId]) //Must be unique
+		{
+			perfectStats[statId] = TRUE;
+			++numPerfectStats;
+			SetMonData(&gPlayerParty[0], MON_DATA_HP_IV + statId, &perfect);
+		}
+	}
+}
+
 u8 PickUnownLetter(unusedArg u16 species, unusedArg u8 headerIndex)
 {
 	#ifdef TANOBY_RUINS_ENABLED
@@ -359,6 +425,14 @@ static bool8 TryGenerateWildMon(const struct WildPokemonInfo* wildMonInfo, u8 ar
 		goto SKIP_INDEX_SEARCH;
 	if (TryGetAbilityInfluencedWildMonIndex(wildMonInfo->wildPokemon, TYPE_ELECTRIC, ABILITY_STATIC, &wildMonIndex))
 		goto SKIP_INDEX_SEARCH;
+	if (TryGetAbilityInfluencedWildMonIndex(wildMonInfo->wildPokemon, TYPE_ELECTRIC, ABILITY_LIGHTNINGROD, &wildMonIndex))
+		goto SKIP_INDEX_SEARCH;
+	if (TryGetAbilityInfluencedWildMonIndex(wildMonInfo->wildPokemon, TYPE_FIRE, ABILITY_FLASHFIRE, &wildMonIndex))
+		goto SKIP_INDEX_SEARCH;
+	if (TryGetAbilityInfluencedWildMonIndex(wildMonInfo->wildPokemon, TYPE_GRASS, ABILITY_HARVEST, &wildMonIndex))
+		goto SKIP_INDEX_SEARCH;
+	if (TryGetAbilityInfluencedWildMonIndex(wildMonInfo->wildPokemon, TYPE_WATER, ABILITY_STORMDRAIN, &wildMonIndex))
+		goto SKIP_INDEX_SEARCH;
 
 	switch (area) {
 		case WILD_AREA_LAND:
@@ -393,6 +467,14 @@ SKIP_INDEX_SEARCH:
 		if (TryGetAbilityInfluencedWildMonIndex(wildMonInfo->wildPokemon, TYPE_STEEL, ABILITY_MAGNETPULL, &wildMonIndex))
 			goto SKIP_INDEX_SEARCH_2;
 		if (TryGetAbilityInfluencedWildMonIndex(wildMonInfo->wildPokemon, TYPE_ELECTRIC, ABILITY_STATIC, &wildMonIndex))
+			goto SKIP_INDEX_SEARCH_2;
+		if (TryGetAbilityInfluencedWildMonIndex(wildMonInfo->wildPokemon, TYPE_ELECTRIC, ABILITY_LIGHTNINGROD, &wildMonIndex))
+			goto SKIP_INDEX_SEARCH_2;
+		if (TryGetAbilityInfluencedWildMonIndex(wildMonInfo->wildPokemon, TYPE_FIRE, ABILITY_FLASHFIRE, &wildMonIndex))
+			goto SKIP_INDEX_SEARCH_2;
+		if (TryGetAbilityInfluencedWildMonIndex(wildMonInfo->wildPokemon, TYPE_GRASS, ABILITY_HARVEST, &wildMonIndex))
+			goto SKIP_INDEX_SEARCH_2;
+		if (TryGetAbilityInfluencedWildMonIndex(wildMonInfo->wildPokemon, TYPE_WATER, ABILITY_STORMDRAIN, &wildMonIndex))
 			goto SKIP_INDEX_SEARCH_2;
 
 		switch (area) {
@@ -504,6 +586,7 @@ u8 GetAbilityEncounterRateModType(void)
 			case ABILITY_WHITESMOKE:
 			case ABILITY_STENCH:
 			case ABILITY_QUICKFEET:
+			case ABILITY_INFILTRATOR:
 				sWildEncounterData.abilityEffect = 1;
 				break;
 			case ABILITY_ARENATRAP:
@@ -594,7 +677,7 @@ bool8 StandardWildEncounter(const u32 currMetaTileBehavior, const u16 previousMe
 			}
 		}
 		else if (lowerByte & TILE_FLAG_SURFABLE
-			 &&  TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING))
+			 &&  (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_SURFING) || (currMetaTileBehavior & 0xFF) == MB_CAVE)) //For alternate grass data on route
 		{
 			if (waterMonsInfo == NULL)
 			   return FALSE;
@@ -841,9 +924,7 @@ void DoStandardWildBattle(void)
 		gBattleTypeFlags |= BATTLE_TYPE_DOUBLE;
 
 		if (FlagGet(FLAG_TAG_BATTLE))
-		{
 			gBattleTypeFlags |=  BATTLE_TYPE_INGAME_PARTNER;
-		}
 	}
 	#endif
 
@@ -894,6 +975,28 @@ void sp156_StartGhostBattle(void)
 	IncrementGameStat(GAME_STAT_TOTAL_BATTLES);
 	IncrementGameStat(GAME_STAT_WILD_BATTLES);
 	#endif
+}
+
+void sp118_StartRaidBattle(void)
+{
+	HealPlayerParty();
+
+	ScriptContext2_Enable();
+	gMain.savedCallback = CB2_EndScriptedWildBattle_2;
+
+	gBattleTypeFlags = BATTLE_TYPE_SCRIPTED_WILD_1 | BATTLE_TYPE_SCRIPTED_WILD_3 | BATTLE_TYPE_DYNAMAX;
+	
+	#ifdef FLAG_RAID_BATTLE
+	FlagSet(FLAG_RAID_BATTLE);
+	#endif
+	
+	if (FlagGet(FLAG_TAG_BATTLE))
+		gBattleTypeFlags |= (BATTLE_TYPE_DOUBLE | BATTLE_TYPE_INGAME_PARTNER);
+
+	CreateBattleStartTask(0, GetMUS_ForBattle());
+	IncrementGameStat(GAME_STAT_TOTAL_BATTLES);
+	IncrementGameStat(GAME_STAT_WILD_BATTLES);
+	IncrementGameStat(GAME_STAT_RAID_BATTLES);
 }
 
 //setwildbattle SPECIES LEVEL ITEM

@@ -20,10 +20,13 @@ u32 GetNightmareDamage(u8 bank);
 u32 GetCurseDamage(u8 bank);
 u32 GetTrapDamage(u8 bank);
 u32 GetSeaOfFireDamage(u8 bank);
+u32 GetGMaxWildfireDamage(u8 bank);
+u32 GetGMaxVolcalithDamage(u8 bank);
 
 //Functions Hooked In
 u8 TurnBasedEffects(void);
 bool8 HandleFaintedMonActions(void);
 void RemoveSwitchInForFaintedBank(void);
 bool8 IsInMiddleOfEndTurnSwitchIn(u8 bank);
+bool8 HandleDynamaxOnTurnEnd(void);
 

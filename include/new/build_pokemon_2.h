@@ -22,6 +22,9 @@
 	|| (gBattleTypeFlags & BATTLE_TYPE_TRAINER_TOWER))														\
 		lvl = GetHighestMonLevel(gPlayerParty);																\
 																											\
+	if (side == B_SIDE_OPPONENT && scaledTrainerBattleMode)													\
+		ModifySpeciesAndLevelForRematchBattle(&speciesToCreate, &lvl, minPartyLevel);						\
+																											\
 	CreateMon(&party[i], speciesToCreate, lvl, STANDARD_IV, TRUE, personalityValue, OT_ID_PRESET, otid);	\
 	party[i].metLevel = structure[i].lvl;																	\
 }

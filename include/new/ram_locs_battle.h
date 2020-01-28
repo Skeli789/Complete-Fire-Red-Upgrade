@@ -162,7 +162,7 @@ typedef u8 Battle_Buffer_T[0x200];
 		#define sTrainerBattleOakTutorialHelper (*((u16*) 0x20386CC))
 
 
-#define gBattleStringLoader (*((u8**) 0x203E020))
+#define gBattleStringLoader (*((const u8**) 0x203E020))
 #define gSeedHelper ((u8*) 0x203E024)
 #define gTerrainType *((u8*) 0x203E028)
 #define gFormCounter *((u8*) 0x203E029)

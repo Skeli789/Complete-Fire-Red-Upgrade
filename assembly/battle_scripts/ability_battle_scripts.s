@@ -11,6 +11,7 @@ ability_battle_scripts.s
 
 .global BattleScript_OverworldWeatherStarts
 .global BattleScript_NewWeatherAbilityActivates
+.global BattleScript_NewWeatherAbilityActivatesCall
 .global BattleScript_AirLock
 .global BattleScript_IntimidateActivatesEnd3
 .global BattleScript_TraceActivates
@@ -20,6 +21,7 @@ ability_battle_scripts.s
 .global BattleScript_ImposterActivates
 .global BattleScript_AttackerAbilityStatRaiseEnd3
 .global BattleScript_SwitchInAbilityMsg
+.global BattleScript_End3
 .global BattleScript_AbilityCuredStatus
 .global BattleScript_AbilityCuredStatusEnd3
 .global BattleScript_StartedSchoolingEnd3
@@ -40,6 +42,7 @@ ability_battle_scripts.s
 .global BattleScript_BadDreams
 .global BattleScript_Harvest
 .global BattleScript_Pickup
+.global BattleScript_BallFetch
 .global BattleScript_AttackerCantUseMove
 .global BattleScript_FlashFireBoost_PPLoss
 .global BattleScript_FlashFireBoost
@@ -56,6 +59,7 @@ ability_battle_scripts.s
 .global BattleScript_WeakArmorActivates
 .global BattleScript_CursedBodyActivates
 .global BattleScript_MummyActivates
+.global BattleScript_WanderingSpiritActivates
 .global BattleScript_GooeyActivates
 .global BattleScript_IllusionBroken
 .global BattleScript_IllusionBrokenFaint
@@ -64,8 +68,10 @@ ability_battle_scripts.s
 
 .global BattleScript_AbilityChangedType
 .global BattleScript_AbilityChangedTypeContact
-.global BattleScript_MimikyuTookDamage
-.global BattleScript_MimikyuTransform
+.global BattleScript_DisguiseTookDamage
+.global BattleScript_DisguiseTransform
+.global BattleScript_IceFaceTookDamage
+.global BattleScript_IceFaceTransform
 .global MimikyuDisguisedTookDamageString
 .global BattleScript_EnduredSturdy
 .global BattleScript_Receiver
@@ -74,13 +80,18 @@ ability_battle_scripts.s
 .global BattleScript_DefiantCompetitiveCall
 .global BattleScript_SoulHeart
 .global BattleScript_AbilityNoStatLoss
+.global BattleScript_PartnerAbilityNoStatLoss
 .global BattleScript_AbilityNoSpecificStatLoss
+.global BattleScript_MirrorArmorReflectsIntimidate
 .global BattleScript_CastformChange
+.global BattleScript_PerishBody
 .global BattleScript_SturdyPreventsOHKO
 .global BattleScript_StickyHoldActivates
 .global BattleScript_DampStopsExplosion
 .global BattleScript_TookAttack
 .global BattleScript_AvoidedMoveWithAbility
+.global BattleScript_MimicryTransformed
+.global BattleScript_MimicryReturnedToNormal
 
 .global BattleScript_AbilityPopUp
 .global BattleScript_AbilityPopUpRevert
@@ -96,13 +107,17 @@ BattleScript_OverworldWeatherStarts:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_NewWeatherAbilityActivates:
+	call BattleScript_NewWeatherAbilityActivatesCall
+	end3
+
+BattleScript_NewWeatherAbilityActivatesCall:
 	call BattleScript_AbilityPopUp
 	printfromtable gWeatherAbilityStrings
 	waitstateatk
 	playanimation2 BANK_SCRIPTING ANIM_ARG_1 0x0
 	call BattleScript_AbilityPopUpRevert
 	call 0x81D92DC @;BattleScript_WeatherFormChanges
-	end3
+	return
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -138,6 +153,10 @@ BS_IntimidateActivatesLoop:
 	goto IntimidateActivatesLoopIncrement
 	
 BattleScript_AdrenalineOrb:
+	call BattleScript_AdrenalineOrbCall
+	goto IntimidateActivatesLoopIncrement
+
+BattleScript_AdrenalineOrbCall:
 	setstatchanger STAT_SPD | INCREASE_1
 	statbuffchange STAT_TARGET | STAT_NOT_PROTECT_AFFECTED | STAT_BS_PTR, IntimidateActivatesLoopIncrement
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 IntimidateActivatesLoopIncrement
@@ -148,8 +167,8 @@ BattleScript_AdrenalineOrb:
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	removeitem BANK_TARGET
-	goto IntimidateActivatesLoopIncrement
-	
+	return
+
 BattleScript_IntimidatePrevented:
 	pause DELAY_HALFSECOND
 	printfromtable 0x83FE588
@@ -158,6 +177,8 @@ BattleScript_IntimidatePrevented:
 IntimidateActivatesLoopIncrement:
 	jumpifword NOTANDS BATTLE_TYPE BATTLE_DOUBLE BattleScript_IntimidateActivatesReturn
 	addbyte TARGET_BANK 0x1
+	trygetintimidatetarget BattleScript_IntimidateActivatesReturn
+	callasm TryReactiveIntimidatePopUp
 	goto BS_IntimidateActivatesLoop
 
 BattleScript_IntimidateActivatesReturn:
@@ -206,6 +227,7 @@ BattleScript_TerrainFromAbility:
 	call BattleScript_AbilityPopUpRevert
 	setbyte SEED_HELPER 0
 	callasm SeedRoomServiceLooper
+	callasm TryActivateMimicry
 	end3
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -244,6 +266,7 @@ BattleScript_SwitchInAbilityMsg:
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
+BattleScript_End3:
 	end3	
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -488,6 +511,15 @@ BattleScript_Pickup:
 	call BattleScript_AbilityPopUpRevert
 	end3
 
+BattleScript_BallFetch:
+	call BattleScript_AbilityPopUp
+	playanimation BANK_SCRIPTING ANIM_SNATCH_GRAB_STAT_BOOST 0x0
+	setword BATTLE_STRING_LOADER gText_BallFetchRetrievedItem
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	end3
+
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_AttackerCantUseMove:
@@ -684,19 +716,46 @@ BattleScript_MummyActivates:
 	return
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_WanderingSpiritActivates:
+	swapattackerwithtarget
+	abilityswap BattleScript_WanderingSpiritActivatesReturn
+	callasm TransferAbilityPopUpHelperAsWanderingSpirit
+	playanimation BANK_SCRIPTING ANIM_LOAD_ABILITY_POP_UP 0x0
+	call BattleScript_AbilityPopUpRevert
+
+	call BattleScript_AbilityPopUp
+	pause DELAY_HALFSECOND
+	call BattleScript_AbilityPopUpRevert
+	copyarray BATTLE_SCRIPTING_BANK TARGET_BANK 0x1
+	call BattleScript_AbilityPopUp
+	pause DELAY_HALFSECOND
+	call BattleScript_AbilityPopUpRevert
+	printstring 0xB8
+	waitmessage DELAY_1SECOND
+	tryactivateswitchinability BANK_ATTACKER
+	tryactivateswitchinability BANK_TARGET
+
+BattleScript_WanderingSpiritActivatesReturn:
+	swapattackerwithtarget
+	return
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 	
 BattleScript_GooeyActivates:
 	call BattleScript_AbilityPopUp
+	swapattackerwithtarget @;Allows for abilities like Defiant and Mirror Armor to have their proper effect
 	setbyte STAT_ANIM_PLAYED 0x0
-	playstatchangeanimation BANK_ATTACKER STAT_ANIM_SPD STAT_ANIM_DOWN
+	playstatchangeanimation BANK_TARGET STAT_ANIM_SPD STAT_ANIM_DOWN
 	setstatchanger STAT_SPD | DECREASE_1
-	statbuffchange STAT_ATTACKER | STAT_BS_PTR GooeyReturn
+	statbuffchange STAT_TARGET | STAT_BS_PTR GooeyReturn
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 GooeyReturn
 	printfromtable 0x83FE588
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
 
 GooeyReturn:
+	swapattackerwithtarget
 	return
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -785,7 +844,7 @@ BattleScript_AbilityChangedTypeContact:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-BattleScript_MimikyuTookDamage:
+BattleScript_DisguiseTookDamage:
 	call BattleScript_AbilityPopUp
 	setword BATTLE_STRING_LOADER MimikyuDisguisedTookDamageString
 	printstring 0x184
@@ -795,9 +854,32 @@ BattleScript_MimikyuTookDamage:
 	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-BattleScript_MimikyuTransform:
+BattleScript_DisguiseTransform:
 	playanimation BANK_TARGET ANIM_TRANSFORM 0x0
+	orword HIT_MARKER, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_NON_ATTACK_DMG
+	graphicalhpupdate BANK_SCRIPTING
+	datahpupdate BANK_SCRIPTING
+	bicword HIT_MARKER, HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_NON_ATTACK_DMG
 	setword BATTLE_STRING_LOADER DisguiseBustedString
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	return
+	
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_IceFaceTookDamage:
+	call BattleScript_AbilityPopUp
+	setword BATTLE_STRING_LOADER gText_IceFaceTookDamage
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	return
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_IceFaceTransform:
+	playanimation BANK_TARGET ANIM_TRANSFORM 0x0
+	setword BATTLE_STRING_LOADER gText_IceFaceBusted
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	return
@@ -847,6 +929,7 @@ BattleScript_DefiantCompetitiveCall:
 	pause DELAY_HALFSECOND
 	setbyte STAT_ANIM_PLAYED 0x0
 	callasm TryRemoveIntimidateAbilityPopUp
+	callasm TryHideActiveAbilityPopUps @;Basically Mirror Armor
 	copybyte BATTLE_SCRIPTING_BANK TARGET_BANK
 	call BattleScript_AbilityPopUp
 	setgraphicalstatchangevalues
@@ -874,6 +957,7 @@ BattleScript_SoulHeart:
 BattleScript_AbilityNoStatLoss:
 	pause 0x10
 	callasm TryRemoveIntimidateAbilityPopUp
+	callasm TryHideActiveAbilityPopUps @;Basically Mirror Armor
 	copybyte BATTLE_SCRIPTING_BANK BATTLE_COMMUNICATION
 	call BattleScript_AbilityPopUp
 	printstring 0xCE
@@ -884,17 +968,117 @@ BattleScript_AbilityNoStatLoss:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+BattleScript_PartnerAbilityNoStatLoss:
+	pause 0x10
+	callasm TryRemoveIntimidateAbilityPopUp
+	callasm TryHideActiveAbilityPopUps @;Basically Mirror Armor
+	copybyte BATTLE_SCRIPTING_BANK BATTLE_COMMUNICATION
+	callasm SetBattleScriptingBankForPartnerAbilityNoStatLoss
+	call BattleScript_AbilityPopUp
+	copybyte BATTLE_SCRIPTING_BANK BATTLE_COMMUNICATION
+	printstring 0xCE
+	waitmessage DELAY_1SECOND
+	callasm SetBattleScriptingBankForPartnerAbilityNoStatLoss
+	call BattleScript_AbilityPopUpRevert
+	copybyte BATTLE_SCRIPTING_BANK BATTLE_COMMUNICATION
+	setbyte MULTISTRING_CHOOSER 0x4
+	return
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 BattleScript_AbilityNoSpecificStatLoss:
 	pause 0x10
 	copybyte FORM_COUNTER BATTLE_SCRIPTING_BANK
 	callasm TryRemoveIntimidateAbilityPopUp
+	callasm TryHideActiveAbilityPopUps @;Basically Mirror Armor
 	copybyte BATTLE_SCRIPTING_BANK FORM_COUNTER
 	call BattleScript_AbilityPopUp
+	
+BattleScript_AbilityNoSpecificStatLossPrintMessage:
 	printstring 0x135
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
 	setbyte MULTISTRING_CHOOSER 0x3
 	return
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global BattleScript_MirrorArmorReflectsStatLoss
+BattleScript_MirrorArmorReflectsStatLoss:
+	copybyte FORM_COUNTER BATTLE_SCRIPTING_BANK
+	callasm TryHideActiveAbilityPopUps @;Basically hide Gooey
+	copybyte BATTLE_SCRIPTING_BANK FORM_COUNTER
+	call BattleScript_AbilityPopUp
+	jumpifbehindsubstitute BANK_ATTACKER BattleScript_AbilityNoSpecificStatLossPrintMessage
+
+BattleScript_MirrorArmorReflectsStatLoss_StatChange:
+	statbuffchange STAT_ATTACKER | STAT_NOT_PROTECT_AFFECTED | STAT_BS_PTR BattleScript_MirrorArmorReflectsStatLossReturn
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_MirrorArmorReflectsStatLossAttackerStatCantGoLower
+	setgraphicalstatchangevalues
+	playanimation BANK_ATTACKER ANIM_STAT_BUFF ANIM_ARG_1
+	printfromtable 0x83FE588
+	waitmessage DELAY_1SECOND
+
+BattleScript_MirrorArmorReflectsStatLossReturn:
+	call BattleScript_AbilityPopUpRevert
+	return
+
+BattleScript_MirrorArmorReflectsStatLossAttackerStatCantGoLower:
+	printfromtable 0x83FE588
+	waitmessage DELAY_1SECOND
+	setbyte MULTISTRING_CHOOSER 0x3
+	goto BattleScript_MirrorArmorReflectsStatLossReturn
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.global BattleScript_MirrorArmorStickyWeb
+BattleScript_MirrorArmorStickyWeb:
+	copybyte BATTLE_SCRIPTING_BANK TARGET_BANK
+	call BattleScript_AbilityPopUp
+	callasm ChooseTargetForMirrorArmorStickyWeb
+	jumpifarrayequal TARGET_BANK USER_BANK 1 BattleScript_AbilityNoSpecificStatLossPrintMessage @;No target on other side of field
+	setstatchanger STAT_SPD | DECREASE_1
+	goto BattleScript_MirrorArmorReflectsStatLoss_StatChange
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_MirrorArmorReflectsIntimidate:
+	pause 0x10
+	copybyte FORM_COUNTER BATTLE_SCRIPTING_BANK
+	callasm TryRemoveIntimidateAbilityPopUp
+	copybyte BATTLE_SCRIPTING_BANK FORM_COUNTER
+	call BattleScript_AbilityPopUp
+	copybyte USER_BANK BATTLE_SCRIPTING_BANK
+	callasm LoadIntimidateBankIntoTarget
+	swapattackerwithtarget
+	bicword HIT_MARKER HITMARKER_SWAP_ATTACKER_TARGET
+	jumpifbehindsubstitute BANK_ATTACKER BattleScript_AbilityNoSpecificStatLossPrintMessage
+	swapattackerwithtarget
+	bicword HIT_MARKER HITMARKER_SWAP_ATTACKER_TARGET
+	statbuffchange STAT_TARGET | STAT_NOT_PROTECT_AFFECTED | STAT_BS_PTR BattleScript_MirrorArmorReflectsIntimidateReturn
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_MirrorArmorAttackerStatCantGoLower
+	setgraphicalstatchangevalues
+	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
+	printfromtable 0x83FE588
+	waitmessage DELAY_1SECOND
+	jumpifhelditemeffect BANK_TARGET ITEM_EFFECT_ADRENALINE_ORB BattleScript_MirrorArmorAdrenalineOrb
+
+BattleScript_MirrorArmorReflectsIntimidateReturn:
+	swapattackerwithtarget @;Places the initial target in the target bank
+	bicword HIT_MARKER HITMARKER_SWAP_ATTACKER_TARGET
+	copybyte BATTLE_SCRIPTING_BANK FORM_COUNTER
+	call BattleScript_AbilityPopUpRevert
+	return
+	
+BattleScript_MirrorArmorAdrenalineOrb:
+	call BattleScript_AdrenalineOrbCall
+	goto BattleScript_MirrorArmorReflectsIntimidateReturn
+
+BattleScript_MirrorArmorAttackerStatCantGoLower:
+	printfromtable 0x83FE588
+	waitmessage DELAY_1SECOND
+	setbyte MULTISTRING_CHOOSER 0x3
+	goto BattleScript_MirrorArmorReflectsIntimidateReturn
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -915,6 +1099,21 @@ CastformChangeSkipAbilityPopUp:
 	printstring 0x13A @;STRINGID_PKMNTRANSFORMED
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
+	return
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_PerishBody:
+	callasm ActivatePerishBody
+	call BattleScript_AbilityPopUp
+	setword BATTLE_STRING_LOADER gText_PerishBodyActivated
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	jumpiffainted BANK_ATTACKER BattleScript_PerishBodyReturn
+
+.global BattleScript_PerishBodyReturn
+BattleScript_PerishBodyReturn:
 	return
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -967,6 +1166,24 @@ BattleScript_TookAttack:
 BattleScript_AvoidedMoveWithAbility:
 	call BattleScript_AbilityPopUp
 	printstring 0x1B @;STRINGID_ITDOESNTAFFECT
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	return
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_MimicryTransformed:
+	call BattleScript_AbilityPopUp
+	setword BATTLE_STRING_LOADER gText_MimicryTransformed
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	return
+
+BattleScript_MimicryReturnedToNormal:
+	call BattleScript_AbilityPopUp
+	setword BATTLE_STRING_LOADER gText_MimicryReturnedToNormal
+	printstring 0x184
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
 	return

@@ -11,6 +11,7 @@
 #include "../include/new/cmd49.h"
 #include "../include/new/cmd49_battle_scripts.h"
 #include "../include/new/damage_calc.h"
+#include "../include/new/dynamax.h"
 #include "../include/new/form_change.h"
 #include "../include/new/general_bs_commands.h"
 #include "../include/new/util.h"
@@ -176,33 +177,50 @@ void atkFF06_setterrain(void)
 	if (ITEM_EFFECT(gBankAttacker) == ITEM_EFFECT_TERRAIN_EXTENDER)
 		duration = 8;
 
+	if (IsAnyMaxMove(gCurrentMove))
+	{
+		switch (gBattleMoves[gCurrentMove].z_move_effect) {
+			case MAX_EFFECT_ELECTRIC_TERRAIN:
+				goto SET_ELECTRIC_TERRAIN;
+			case MAX_EFFECT_GRASSY_TERRAIN:
+				goto SET_GRASSY_TERRAIN;
+			case MAX_EFFECT_MISTY_TERRAIN:
+				goto SET_MISTY_TERRAIN;
+			case MAX_EFFECT_PSYCHIC_TERRAIN:
+				goto SET_PSYCHIC_TERRAIN;
+		}
+	}
+
 	switch (gCurrentMove) {
 		case MOVE_ELECTRICTERRAIN:
-		case MOVE_MAX_LIGHTNING:
+		SET_ELECTRIC_TERRAIN:
 			type = ELECTRIC_TERRAIN;
 			gBattleScripting->animArg1 = B_ANIM_ELECTRIC_SURGE;
 			gBattleStringLoader = ElectricTerrainSetString;
 			break;
 		case MOVE_GRASSYTERRAIN:
-		case MOVE_MAX_OVERGROWTH:
+		SET_GRASSY_TERRAIN:
 			type = GRASSY_TERRAIN;
 			gBattleScripting->animArg1 = B_ANIM_GRASSY_SURGE;
 			gBattleStringLoader = GrassyTerrainSetString;
 			break;
 		case MOVE_MISTYTERRAIN:
-		case MOVE_MAX_STARFALL:
+		SET_MISTY_TERRAIN:
 			type = MISTY_TERRAIN;
 			gBattleScripting->animArg1 = B_ANIM_MISTY_SURGE;
 			gBattleStringLoader = MistyTerrainSetString;
 			break;
 		case MOVE_PSYCHICTERRAIN:
 		case MOVE_GENESIS_SUPERNOVA:
-		case MOVE_MAX_MINDSTORM:
+		SET_PSYCHIC_TERRAIN:
 			type = PSYCHIC_TERRAIN;
 			gBattleScripting->animArg1 = B_ANIM_PSYCHIC_SURGE;
 			gBattleStringLoader = PsychicTerrainSetString;
 			break;
 		case MOVE_SPLINTERED_STORMSHARDS:
+		case MOVE_DEFOG:
+		case MOVE_G_MAX_WIND_RAGE_P:
+		case MOVE_G_MAX_WIND_RAGE_S:
 			type = 0;
 			gBattleScripting->animArg1 = B_ANIM_LOAD_DEFAULT_BG;
 			gBattleStringLoader = TerrainEndString;
@@ -353,6 +371,12 @@ void atkFF08_counterclear(void)
 			else
 				failed = TRUE;
 			break;
+		case Counters_TarShot:
+			if (gNewBS->tarShotBits & gBitTable[bank])
+				gNewBS->tarShotBits &= ~(gBitTable[bank]);
+			else
+				failed = TRUE;
+			break;
 	}
 
 	if (failed)
@@ -423,6 +447,9 @@ void atkFF09_jumpifcounter(void)
 			break;
 		case Counters_AuroraVeil:
 			counter = gNewBS->AuroraVeilTimers[SIDE(bank)];
+			break;
+		case Counters_TarShot:
+			counter = gNewBS->tarShotBits & gBitTable[bank];
 			break;
 		default:
 			counter = 0; //Shouldn't happen...
@@ -539,6 +566,9 @@ void atkFF0E_setcounter(void)
 			break;
 		case Counters_BeakBlast:
 			gNewBS->BeakBlastByte |= gBitTable[bank];
+			break;
+		case Counters_TarShot:
+			gNewBS->tarShotBits |= gBitTable[bank];
 			break;
 	}
 
@@ -774,9 +804,10 @@ void atkFF1F_flowershieldlooper(void)
 	{
 		u8 bank = gBanksByTurnOrder[gBattleCommunication[0]];
 		if (IsOfType(bank, TYPE_GRASS)
-		&& gBattleMons[bank].hp
-		&& !(gStatuses3[bank] & STATUS3_SEMI_INVULNERABLE)
-		&& !(gBattleMons[bank].status2 & STATUS2_SUBSTITUTE))
+		&& BATTLER_ALIVE(bank)
+		&& !BATTLER_SEMI_INVULNERABLE(bank)
+		&& !IS_BEHIND_SUBSTITUTE(bank)
+		&& !IsProtectedByMaxGuard(bank))
 		{
 			gBattleCommunication[MOVE_EFFECT_BYTE] = gBattlescriptCurrInstr[1];
 			++gBattleCommunication[0];
@@ -1059,7 +1090,12 @@ void atkFF23_faintpokemonaftermove(void)
 		gNewBS->lastFainted = gActiveBattler;
 		gHitMarker |= HITMARKER_FAINTED(gActiveBattler);
 		BattleScriptPush(gBattlescriptCurrInstr + 3);
-		gBattlescriptCurrInstr = BattleScript_FaintTarget;
+		
+		if (IsRaidBattle() && gActiveBattler == GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT))
+			gBattlescriptCurrInstr = BattleScript_FaintRaidTarget;
+		else
+			gBattlescriptCurrInstr = BattleScript_FaintTarget;
+
 		if (SIDE(gActiveBattler) == B_SIDE_PLAYER)
 		{
 			gHitMarker |= HITMARKER_x400000;
@@ -1077,6 +1113,7 @@ void atkFF23_faintpokemonaftermove(void)
 		gNewBS->RetaliateCounters[SIDE(gActiveBattler)] = 2;
 
 		if ((gHitMarker & HITMARKER_DESTINYBOND)
+		&& !IsDynamaxed(gBankAttacker)
 		&& gBattleMons[gBankAttacker].hp != 0)
 		{
 			gHitMarker &= ~(HITMARKER_DESTINYBOND);
@@ -1328,7 +1365,7 @@ void atkFF29_trysetsleep(void)
 				gBattlescriptCurrInstr = BattleScript_TargetStayedAwakeUsingAbility;
 				return;
 			case ABILITY_LEAFGUARD:
-				if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
+				if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY && ITEM_EFFECT(bank) != ITEM_EFFECT_UTILITY_UMBRELLA)
 				{
 					gBattlescriptCurrInstr = BattleScript_ProtectedByAbility;
 					return;
@@ -1422,7 +1459,7 @@ void atkFF2A_trysetparalysis(void)
 	{
 		switch (ABILITY(bank)) {
 			case ABILITY_LEAFGUARD:
-				if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
+				if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY && ITEM_EFFECT(bank) != ITEM_EFFECT_UTILITY_UMBRELLA)
 				{
 					gBattlescriptCurrInstr = BattleScript_ProtectedByAbility;
 					return;
@@ -1504,7 +1541,7 @@ void atkFF2B_trysetburn(void)
 	{
 		switch (ABILITY(bank)) {
 			case ABILITY_LEAFGUARD:
-				if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
+				if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY && ITEM_EFFECT(bank) != ITEM_EFFECT_UTILITY_UMBRELLA)
 				{
 					gBattlescriptCurrInstr = BattleScript_ProtectedByAbility;
 					return;
@@ -1591,7 +1628,7 @@ void atkFF2C_trysetpoison(void)
 	{
 		switch (ABILITY(bank)) {
 			case ABILITY_LEAFGUARD:
-				if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY)
+				if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY && ITEM_EFFECT(bank) != ITEM_EFFECT_UTILITY_UMBRELLA)
 				{
 					gBattlescriptCurrInstr = BattleScript_ProtectedByAbility;
 					return;
@@ -1631,4 +1668,31 @@ void atkFF2E_setmoveeffect2(void)
 {
 	gBattlescriptCurrInstr += 1;
 	SetMoveEffect2();
+}
+
+//setmaxmoveeffect
+//void atkFF2F_setmaxmoveeffect
+
+//jumpifdynamaxed BANK ROM_OFFSET
+void atkFF30_jumpifdynamaxed(void)
+{
+	u8 bank = GetBattleBank(gBattlescriptCurrInstr[1]);
+	const u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
+
+	if (IsDynamaxed(bank))
+		gBattlescriptCurrInstr = ptr;
+	else
+		gBattlescriptCurrInstr += 6;
+}
+
+//jumpifraidboss BANK ROM_OFFSET
+void atkFF31_jumpifraidboss(void)
+{
+	u8 bank = GetBattleBank(gBattlescriptCurrInstr[1]);
+	const u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
+
+	if (IsRaidBattle() && bank == GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT))
+		gBattlescriptCurrInstr = ptr;
+	else
+		gBattlescriptCurrInstr += 6;
 }

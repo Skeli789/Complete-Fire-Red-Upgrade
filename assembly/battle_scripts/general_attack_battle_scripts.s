@@ -655,7 +655,34 @@ BS_019_LowerTargetDef1:
 .global BS_020_LowerTargetSpd1
 BS_020_LowerTargetSpd1:
 	setstatchanger STAT_SPD | DECREASE_1
+	jumpifmove MOVE_TARSHOT TarShotBS
 	goto 0x81D6C13
+
+TarShotBS:
+	jumpifcounter BANK_TARGET TAR_SHOT_TIMERS NOTEQUALS 0 0x81D6C13 @;Already set
+	attackcanceler
+	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
+	accuracycheck BS_MOVE_MISSED 0x0
+	attackstring
+	ppreduce
+	statbuffchange STAT_TARGET | STAT_BS_PTR BS_MOVE_END
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_PauseAndJumpToStatChangeTargetFail
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x3 BS_MOVE_END
+	attackanimation
+	waitanimation
+	setgraphicalstatchangevalues
+	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
+	printfromtable 0x83FE588
+	waitmessage DELAY_1SECOND
+	setcounter BANK_TARGET TAR_SHOT_TIMERS 1
+	setword BATTLE_STRING_LOADER gText_TarShotAffected
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
+
+BattleScript_PauseAndJumpToStatChangeTargetFail:
+	pause 0x20
+	goto 0x81D6C55
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -851,12 +878,14 @@ IceFangBS:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 .global BS_032_Recover
+.global RecoverBS
 BS_032_Recover:
 	attackcanceler
 	jumpifmove MOVE_PURIFY PurifyBS
 	attackstring
 	ppreduce
 	jumpifmove MOVE_ROOST RoostBS
+	jumpifmove MOVE_LIFEDEW LifeDewBS
 
 RecoverBS:
 	setdamageasrestorehalfmaxhp 0x81D7DD1 BANK_ATTACKER @;BattleScript_AlreadyAtFullHp
@@ -900,6 +929,50 @@ PurifyHeal:
 	setdamageasrestorehalfmaxhp 0x81D7DD1 0x1
 	playanimation BANK_ATTACKER ANIM_HEALING_SPARKLES 0x0
 	goto RecoverHealthUpdateBS
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+LifeDewBS:
+	callasm TryFailLifeDew
+	attackanimation
+	waitanimation
+	setdamageasrestorehalfmaxhp LifeDewAttackerFullHealthBS BANK_ATTACKER
+	orword HIT_MARKER HITMARKER_IGNORE_SUBSTITUTE
+	graphicalhpupdate BANK_ATTACKER
+	datahpupdate BANK_ATTACKER
+	printstring 0x4B @;STRINGID_PKMNREGAINEDHEALTH
+	waitmessage DELAY_1SECOND
+
+LifeDewRestorePartnerHPBS:
+	callasm SetTargetPartner
+	accuracycheck LifeDewMissedPartnerBS 0x0
+	setdamageasrestorehalfmaxhp LifeDewPartnerFullHealthBS BANK_TARGET
+	orword HIT_MARKER HITMARKER_IGNORE_SUBSTITUTE
+	graphicalhpupdate BANK_TARGET
+	datahpupdate BANK_TARGET
+	printstring 0x4B @;STRINGID_PKMNREGAINEDHEALTH
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
+
+LifeDewAttackerFullHealthBS:
+	printstring 0x4C @;STRINGID_PKMNHPFULL
+	waitmessage DELAY_1SECOND
+	goto LifeDewRestorePartnerHPBS
+
+LifeDewMissedPartnerBS:
+	orbyte OUTCOME OUTCOME_MISSED
+	goto BS_MOVE_MISSED_PAUSE + 4
+
+.global BattleScript_LifeDewFail
+BattleScript_LifeDewFail:
+	pause DELAY_HALFSECOND
+	printstring 0x4C @;STRINGID_PKMNHPFULL
+	waitmessage DELAY_1SECOND
+	callasm SetTargetPartner
+LifeDewPartnerFullHealthBS:
+	printstring 0x4C @;STRINGID_PKMNHPFULL
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -1141,10 +1214,28 @@ BS_050_RaiseUserAtk2:
 .global BS_051_RaiseUserDef2
 BS_051_RaiseUserDef2:
 	setstatchanger STAT_DEF | INCREASE_2
-	jumpifhalfword NOTEQUALS CURRENT_MOVE MOVE_COTTONGUARD BS_BUFF_ATK_STATS
-	setstatchanger STAT_DEF | INCREASE_3
+	jumpifmove MOVE_COTTONGUARD CottonGuardBS
+	jumpifmove MOVE_STUFFCHEEKS StuffCheeksBS
 	goto BS_BUFF_ATK_STATS
 	
+CottonGuardBS:
+	setstatchanger STAT_DEF | INCREASE_3
+	goto BS_BUFF_ATK_STATS
+
+StuffCheeksBS:
+	attackcanceler
+	callasm FailIfAttackerIsntHoldingBerry
+	attackstring
+	ppreduce
+	attackanimation
+	waitanimation
+	callasm SetTempIgnoreAnimations @;So the berry animation doesn't play
+	setmoveeffect MOVE_EFFECT_EAT_BERRY
+	seteffectuser
+	callasm SetTempIgnoreAnimations @;So the attack animation doesn't play again
+	setstatchanger STAT_DEF | INCREASE_2
+	goto BS_BUFF_ATK_STATS + 3
+
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 .global BS_052_RaiseUserSpd2
@@ -1467,6 +1558,7 @@ PrintShadowForceString:
 PowerHerbCheckBS:
 	waitmessage DELAY_1SECOND
 	jumpifhelditemeffect BANK_ATTACKER ITEM_EFFECT_POWER_HERB PowerHerbChargeBS
+	jumpifraidboss BANK_ATTACKER TwoTurnMovesRaidBossSkipCharge
 	orword HIT_MARKER HITMARKER_CHARGING
 	setmoveeffect MOVE_EFFECT_CHARGING | MOVE_EFFECT_AFFECTS_USER
 	seteffecttarget
@@ -1477,9 +1569,11 @@ PowerHerbChargeBS:
 	setword BATTLE_STRING_LOADER PowerHerbString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
-	setbyte ANIM_TARGETS_HIT 0x0
-	setbyte ANIM_TURN 0x1
 	removeitem BANK_ATTACKER
+
+TwoTurnMovesRaidBossSkipCharge:
+	setbyte ANIM_TARGETS_HIT 0x0
+	setbyte ANIM_TURN 0x1	
 	goto PowerHerbSkipBS
 
 TwoTurnMovesSecondTurnBS:
@@ -2840,6 +2934,7 @@ BS_150_Blank:
 BS_151_Solarbeam:
 	jumpifabilitypresent ABILITY_CLOUDNINE, BSSolarbeamDecideTurn
 	jumpifabilitypresent ABILITY_AIRLOCK, BSSolarbeamDecideTurn
+	jumpifhelditemeffect BANK_ATTACKER, ITEM_EFFECT_UTILITY_UMBRELLA, BSSolarbeamDecideTurn
 	jumpifweather WEATHER_SUN_ANY BSSolarbeamOnFirstTurn
 
 BSSolarbeamDecideTurn:
@@ -4008,8 +4103,10 @@ CosmicPower_SpDef:
 .global BS_207_ExtremeEvoBoost @;Was Sky Uppercut
 BS_207_ExtremeEvoBoost:
 	attackcanceler
+	jumpifmove MOVE_NORETREAT NoRetreatBS
 	attackstring
 	ppreduce
+	jumpifmove MOVE_CLANGOROUSSOUL ClangorousSoulBS
 	jumpifstat BANK_ATTACKER LESSTHAN STAT_ATK STAT_MAX ExtremeEvoboost_Atk
 	jumpifstat BANK_ATTACKER LESSTHAN STAT_DEF STAT_MAX ExtremeEvoboost_Atk
 	jumpifstat BANK_ATTACKER LESSTHAN STAT_SPD STAT_MAX ExtremeEvoboost_Atk
@@ -4055,7 +4152,40 @@ ExtremeEvoboost_Spd:
 	printfromtable 0x83FE57C
 	waitmessage DELAY_1SECOND
 	goto BS_MOVE_END
-	
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+ClangorousSoulBS:
+	jumpifstat BANK_ATTACKER LESSTHAN STAT_ATK STAT_MAX ClangorusSoul_Atk
+	jumpifstat BANK_ATTACKER LESSTHAN STAT_DEF STAT_MAX ClangorusSoul_Atk
+	jumpifstat BANK_ATTACKER LESSTHAN STAT_SPD STAT_MAX ClangorusSoul_Atk
+	jumpifstat BANK_ATTACKER LESSTHAN STAT_SPATK STAT_MAX ClangorusSoul_Atk
+	jumpifstat BANK_ATTACKER EQUALS STAT_SPDEF STAT_MAX 0x81D85E7
+
+ClangorusSoul_Atk:
+	attackanimation
+	waitanimation
+	call BattleScript_AllStatsUp
+	goto BS_MOVE_END
+
+NoRetreatBS:
+	callasm FailIfTrappedByNoRetreat
+	attackstring
+	ppreduce
+	attackanimation
+	waitanimation
+	call BattleScript_AllStatsUp
+	setmoveeffect MOVE_EFFECT_PREVENT_ESCAPE | MOVE_EFFECT_AFFECTS_USER
+	seteffectuser
+	jumpifsecondarystatus BANK_ATTACKER STATUS2_TRAPPED PrintNoRetreatMessage @;May not be affected if Ghost or already trapped
+	goto BS_MOVE_END
+
+PrintNoRetreatMessage:
+	setword BATTLE_STRING_LOADER gText_NoRetreatTrapped
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
+
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 .global BS_208_BulkUp
@@ -4209,6 +4339,7 @@ Geomancy_Charge:
 	attackanimation
 	waitanimation
 	jumpifhelditemeffect BANK_ATTACKER ITEM_EFFECT_POWER_HERB Geomancy_PowerHerb
+	jumpifraidboss BANK_ATTACKER Geomancy_RaidBossSkipCharge
 	orword HIT_MARKER HITMARKER_CHARGING
 	setmoveeffect MOVE_EFFECT_CHARGING | MOVE_EFFECT_AFFECTS_USER
 	seteffecttarget
@@ -4260,11 +4391,13 @@ Geomancy_PowerHerb:
 	setword BATTLE_STRING_LOADER PowerHerbString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
-	setbyte ANIM_TARGETS_HIT 0x0
-	setbyte ANIM_TURN 0x1
 	removeitem BANK_ATTACKER
+
+Geomancy_RaidBossSkipCharge:
+	setbyte ANIM_TARGETS_HIT 0x0
+	setbyte ANIM_TURN 0x1	
 	goto Geomancy_PowerHerbSkip
-	
+
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 .global BS_212_DragonDance
@@ -4379,6 +4512,7 @@ BS_213_StatSwapSplitters:
 	attackcanceler
 	attackstringnoprotean
 	ppreduce
+	accuracycheck BS_MOVE_MISSED_PAUSE 0x0
 	callasm SetStatSwapSplit
 	tryactivateprotean
 	attackanimation
@@ -4545,6 +4679,7 @@ BS_226_Terrain:
 	setbyte SEED_HELPER 0
 	callasm SeedRoomServiceLooper
 	copybyte USER_BANK TARGET_BANK @;Restore original target
+	callasm TryActivateMimicry
 	goto BS_MOVE_END
 	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -5018,7 +5153,12 @@ BS_243_DamageSetTerrain:
 	seteffectwithchancetarget
 	prefaintmoveendeffects 0x0
 	faintpokemonaftermove
-	setterrain BS_MOVE_END
+	call BattleScript_SetTerrain
+	goto BS_MOVE_END
+
+.global BattleScript_SetTerrain
+BattleScript_SetTerrain:
+	setterrain BattleScript_SetTerrainReturn
 	callasm TransferTerrainData
 	playanimation2 BANK_ATTACKER ANIM_ARG_1 0x0
 	printstring 0x184
@@ -5027,7 +5167,9 @@ BS_243_DamageSetTerrain:
 	copyhword BACKUP_HWORD USER_BANK @;Backup original atatcker + target
 	callasm SeedRoomServiceLooper
 	copyhword USER_BANK BACKUP_HWORD @;Restore original attacker + target
-	goto BS_MOVE_END
+	callasm TryActivateMimicry
+BattleScript_SetTerrainReturn:
+	return
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -5085,10 +5227,17 @@ BS_252_Blank:
 	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-.global BS_253_Blank
-BS_253_Blank:
-	goto BS_STANDARD_HIT
-	
+.global BS_253_MaxMove
+BS_253_MaxMove:
+	attackcanceler
+	accuracycheck BS_MOVE_MISSED 0x0
+	call STANDARD_DAMAGE
+	jumpifmovehadnoeffect BS_MOVE_FAINT
+	setmaxmoveeffect
+	prefaintmoveendeffects 0x0
+	faintpokemonaftermove
+	goto BS_MOVE_END
+
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 .global BS_254_Synchronoise
