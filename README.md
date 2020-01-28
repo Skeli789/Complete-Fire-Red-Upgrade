@@ -80,7 +80,7 @@ A complete upgrade for Fire Red, including an upgraded Battle Engine.
 ### Windows:
 1. Download and install Devkitpro. You can follow steps 4-6 from [this tutorial](https://www.pokecommunity.com/showpost.php?p=8825585&postcount=96). You may need to restart your computer for the changes to take effect.
 
-2. Download the latest version of Python (3.7.3).
+2. Download the latest version of Python 3.7 (3.7.6). **DO NOT DOWNLOAD PYTHON 3.8!**
 After downloading and before proceeding to install, make sure that the **add to path** checkbox is ticked, otherwise you'll have to add the Python path in the environment variables manually. If you have installed multiple Python versions, please make sure that Python 3.6+ can be explicitly called with command `python3`.
 
 3. Download (or clone) the master folder from this github page.
@@ -91,10 +91,12 @@ After downloading and before proceeding to install, make sure that the **add to 
 5. To decide the offsets where you want to insert the code:
 In 'scripts/make.py' change `OFFSET_TO_PUT=YYY` to the location you want to insert the data. Don't worry about changing *insert.py* because *make.py* automatically updates *insert.py* and *linker.ld*.
 
-6. Run **cmd.exe** in the main folder. You can do this by typing `cmd` and hitting enter in the
-url address or selecting *Open command window here* from right clicking on empty space while holding the shift key.
+6. Run **cmd.exe** from the **main folder**. You can do this by typing `cmd` and hitting enter in the
+url address or selecting *Open command window here* from right clicking on empty space while holding the shift key. If the command line contains */scripts* when showing the current directory, you are in the wrong place.
 
 7. In the command prompt window, type `python scripts//make.py` (or `python3 scripts//make.py` if you've installed multiple python versions).
+
+7.5. If you get an error with a mention of a file called **libwinpthread-1.dll** (or something similar), search Google for a 64-bit version of this file and add it to the root.
 
 A new gba file will appear named as **test.gba** and an **offsets.ini** file.
 Those are your resultant files.
