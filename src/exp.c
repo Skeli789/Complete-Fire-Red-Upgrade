@@ -502,7 +502,7 @@ static bool8 MonGetsAffectionBoost(struct Pokemon* mon)
 	{
 		#ifdef EXP_AFFECTION_BOOST
 			#ifdef UNBOUND
-			if (FlagGet(FLAG_ELITE4_BEAT)) //Too OP before game end
+			if (FlagGet(FLAG_SYS_GAME_CLEAR)) //Too OP before game end
 			#endif
 				return TRUE;
 		#endif

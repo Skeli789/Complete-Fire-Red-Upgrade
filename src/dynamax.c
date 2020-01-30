@@ -1183,7 +1183,7 @@ u16 GetRaidRewardAmount(u16 item)
 	}
 }
 
-//Input: gSpecialVar_PlayerFacing = 0
+//Input: VAR_TEMP_0 = 0
 void sp11C_GiveRaidBattleRewards(void)
 {
 	u32 i = 0;
@@ -1197,13 +1197,13 @@ void sp11C_GiveRaidBattleRewards(void)
 		{
 			if (raid->data[i].species == gRaidBattleSpecies) //Max one species per dataset
 			{
-				for (; gSpecialVar_PlayerFacing < MAX_RAID_DROPS; ++gSpecialVar_PlayerFacing)
+				for (; VarGet(VAR_TEMP_0) < MAX_RAID_DROPS; ++*(GetVarPointer(VAR_TEMP_0)))
 				{
-					if (raid->data[i].drops[gSpecialVar_PlayerFacing] != ITEM_NONE
-					&& Random() % 100 < sRaidBattleDropRates[gSpecialVar_PlayerFacing])
+					if (raid->data[i].drops[VarGet(VAR_TEMP_0)] != ITEM_NONE
+					&& Random() % 100 < sRaidBattleDropRates[VarGet(VAR_TEMP_0)])
 					{
 						gSpecialVar_LastTalked = 0xFD; //So no event objects disappear
-						Var8000 = raid->data[i].drops[gSpecialVar_PlayerFacing++];
+						Var8000 = raid->data[i].drops[(*(GetVarPointer(VAR_TEMP_0)))++];
 						Var8001 = GetRaidRewardAmount(Var8000);
 						return;
 					}

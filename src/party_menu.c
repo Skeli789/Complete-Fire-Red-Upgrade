@@ -1002,7 +1002,7 @@ bool8 HasBadgeToUseDive(void)
 //The following specials are meant to help implement "PokeRide" properly
 void sp100_CanPlayerUseFlashInCurrentLocation(void)
 {
-	gSpecialVar_LastResult = gMapHeader.cave == TRUE && !FlagGet(FLAG_SYS_USE_FLASH);
+	gSpecialVar_LastResult = gMapHeader.cave == TRUE && !FlagGet(FLAG_SYS_FLASH_ACTIVE);
 }
 
 void sp101_CanPlayerFlyInCurrentLocation(void)

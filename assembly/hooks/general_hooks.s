@@ -100,6 +100,13 @@ OakIntroPokeballFixHook:
 	bx r1
 
 .pool
+@0x804BBD8 with r0
+TradePokeballFixHook:
+	bl OakIntroPokeballFix
+	ldr r1, =0x804BBE6 | 1
+	bx r1
+
+.pool
 @0x80F187C with r2
 ShinyAnimFixHook:
 	ldr r2, =GetBattlerSpriteCoord

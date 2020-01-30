@@ -3049,7 +3049,7 @@ u8 GetOpenWorldBadgeCount(void)
 {
 	u8 badgeCount = 0;
 
-	if (FlagGet(FLAG_ELITE4_BEAT)) //0x82C
+	if (FlagGet(FLAG_SYS_GAME_CLEAR)) //0x82C
 		return 9;
 
 	if (FlagGet(FLAG_BADGE08_GET))

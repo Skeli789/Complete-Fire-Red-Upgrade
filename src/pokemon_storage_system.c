@@ -388,7 +388,7 @@ u8 SendMonToPC(struct Pokemon* mon)
 {
 	s32 boxNo, boxPos;
 
-	SetSomeBoxId(VarGet(VAR_STORAGE_UNKNOWN));
+	SetSomeBoxId(VarGet(VAR_PC_BOX_TO_SEND_MON));
 
 	boxNo = StorageGetCurrentBox();
 
@@ -403,8 +403,8 @@ u8 SendMonToPC(struct Pokemon* mon)
 				gSpecialVar_MonBoxId = boxNo;
 				gSpecialVar_MonBoxPos = boxPos;
 				if (GetSomeBoxId() != boxNo)
-					FlagClear(FLAG_SYS_STORAGE_UNKNOWN_FLAG);
-				VarSet(VAR_STORAGE_UNKNOWN, boxNo);
+					FlagClear(FLAG_SYS_CHANGED_BOX_TO_STORE_MON);
+				VarSet(VAR_PC_BOX_TO_SEND_MON, boxNo);
 				return MON_GIVEN_TO_PC;
 			}
 		}
@@ -429,8 +429,8 @@ bool8 SendMonToBoxPos(struct Pokemon* mon, u8 boxNo, u8 boxPos)
 	gSpecialVar_MonBoxId = boxNo;
 	gSpecialVar_MonBoxPos = boxPos;
 	if (GetSomeBoxId() != boxNo)
-		FlagClear(FLAG_SYS_STORAGE_UNKNOWN_FLAG);
-	VarSet(VAR_STORAGE_UNKNOWN, boxNo);
+		FlagClear(FLAG_SYS_CHANGED_BOX_TO_STORE_MON);
+	VarSet(VAR_PC_BOX_TO_SEND_MON, boxNo);
 	return FALSE;
 
 }
