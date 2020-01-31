@@ -628,7 +628,9 @@
 #define FLAG_GOT_EEVEE                                   0x263
 #define FLAG_FOUND_BOTH_VERMILION_GYM_SWITCHES           0x264
 #define FLAG_CINNABAR_GYM_QUIZ_1                         0x265
+*/
 #define FLAG_PENDING_DAYCARE_EGG                         0x266
+/*
 #define FLAG_CINNABAR_GYM_QUIZ_2                         0x267
 #define FLAG_CINNABAR_GYM_QUIZ_3                         0x268
 #define FLAG_CINNABAR_GYM_QUIZ_4                         0x269
@@ -781,9 +783,11 @@
 #define FLAG_GOT_FULL_RESTORE_FROM_THREE_ISLAND_DEFENDER 0x2FC
 #define FLAG_GOT_AMULET_COIN_FROM_OAKS_AIDE              0x2FD
 #define FLAG_NO_ROOM_FOR_JOYFUL_GAME_CORNER_MOON_STONE   0x2FE
+*/
 #define FLAG_OAKS_RATING_IS_VIA_PC                       0x2FF
 
 // Unused?
+/*
 #define FLAG_0x300               0x300
 #define FLAG_0x301               0x301
 #define FLAG_0x302               0x302
