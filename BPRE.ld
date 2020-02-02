@@ -82,6 +82,7 @@ gFieldCallback = 0x3005020;
 gFieldCallback2 = 0x3005024;
 
 /* Audio RAM */
+gDisableMusic = 0x3005080;
 gMPlay_BGM = 0x3007300;
 
 /* Window RAM */
@@ -111,6 +112,7 @@ gTasks = 0x3005090;
 gMain = 0x30030F0;
 
 /* Audio RAM */
+sFanfareCounter = 0x3000FC6;
 gMPlayInfo_BGM = 0x3007300;
 gMPlayInfo_SE1 = 0x3007340;
 gMPlayInfo_SE2 = 0x3007380;
@@ -1325,9 +1327,12 @@ SetMainCallback1 = 0x80565E0 | 1;
 HandleLowHpMusicChange = 0x8035244 | 1;
 BattleStopLowHpSound = 0x8035314 | 1;
 GetTrainerEncounterMusicId = 0x804367C | 1;
+ResetMapMusic = 0x8071A44 | 1;
+GetCurrentMapMusic = 0x8071A68 | 1;
 PlayNewMapMusic = 0x8071A74 | 1;
 PlayFanfare = 0x8071C60 | 1;
 IsFanfareTaskInactive = 0x8071C9C | 1;
+IsBGMPausedOrStopped = 0x8071D7C | 1;
 PlayCry1 = 0x8071DF0 | 1;
 PlayCry3 = 0x8071E60 | 1;
 StopCryAndClearCrySongs = 0x80721C4 | 1;
@@ -1341,8 +1346,12 @@ m4aMPlayContinue = 0x81DD26C | 1;
 MPlayStart = 0x81DD858 | 1;
 m4aMPlayStop = 0x81DD93C | 1;
 m4aMPlayVolumeControl = 0x81DE0E0 | 1;
+m4aSongNumStart = 0x81DD0F4 | 1;
+m4aSongNumStartOrChange = 0x81DD120 | 1;
+m4aSongNumStartOrContinue = 0x81DD16C | 1;
+m4aMPlayImmInit = 0x81DD314 | 1;
+m4aMPlayPanpotControl = 0x81DE1BC | 1;
 SetPokemonCryStereo = 0x81DE7D4 | 1;
-
 
 /* Hall of Fame (HoF) Functions */
 SpeciesToPokedexNum = 0x8043F90 | 1;

@@ -11,6 +11,7 @@ void __attribute__((long_call)) m4aSoundInit(void);
 void __attribute__((long_call)) m4aSoundMain(void);
 void __attribute__((long_call)) m4aSongNumStart(u16 n);
 void __attribute__((long_call)) m4aSongNumStartOrChange(u16 n);
+void __attribute__((long_call)) m4aSongNumStartOrContinue(u16 n);
 void __attribute__((long_call)) m4aSongNumStop(u16 n);
 void __attribute__((long_call)) m4aMPlayStop(struct MusicPlayerInfo *mplayInfo);
 void __attribute__((long_call)) m4aMPlayAllStop(void);

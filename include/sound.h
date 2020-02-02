@@ -2,6 +2,8 @@
 
 #include "global.h"
 
+extern bool8 gDisableMusic;
+
 void __attribute__((long_call)) InitMapMusic(void);
 void __attribute__((long_call)) MapMusicMain(void);
 void __attribute__((long_call)) ResetMapMusic(void);

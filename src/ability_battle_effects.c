@@ -1373,7 +1373,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 					break;
 
 				case ABILITY_SLOWSTART:
-					if (gNewBS->SlowStartTimers[bank] != 0 && gBattleMons[bank].hp != 0 && --gNewBS->SlowStartTimers[bank] == 0)
+					if (gNewBS->SlowStartTimers[bank] != 0 && BATTLER_ALIVE(bank) && --gNewBS->SlowStartTimers[bank] == 0)
 					{
 						gBattleStringLoader = gText_SlowStartEnd;
 						BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
@@ -1900,7 +1900,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				&& BATTLER_ALIVE(gBankAttacker)
 				&& gBankAttacker != bank
 				&& ABILITY(gBankAttacker) != ABILITY_MAGICGUARD
-				&& gBattleMons[bank].hp == 0)
+				&& !BATTLER_ALIVE(bank))
 				{
 					gBattleMoveDamage = MathMax(1, gHpDealt);
 					BattleScriptPushCursor();
@@ -1912,7 +1912,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			case ABILITY_STAMINA:
 				if (MOVE_HAD_EFFECT
 				&& TOOK_DAMAGE(bank)
-				&& gBattleMons[bank].hp
+				&& BATTLER_ALIVE(bank)
 				&& gBankAttacker != bank
 				&& gBattleMons[bank].statStages[STAT_DEF - 1] < 12)
 				{
@@ -1926,7 +1926,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			case ABILITY_WATERCOMPACTION:
 				if (MOVE_HAD_EFFECT
 				&& TOOK_DAMAGE(bank)
-				&& gBattleMons[bank].hp
+				&& BATTLER_ALIVE(bank)
 				&& gBankAttacker != bank
 				&& moveType == TYPE_WATER
 				&& gBattleMons[bank].statStages[STAT_DEF - 1] < 12)
