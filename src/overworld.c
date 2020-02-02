@@ -1726,7 +1726,7 @@ bool8 IsCurrentAreaDarkerCave(void)
 bool8 InTanobyRuins(void)
 {
 	#ifdef TANOBY_RUINS_ENABLED
-		if (FlagGet(FLAG_TANOBY_KEY))
+		if (FlagGet(FLAG_SYS_UNLOCKED_TANOBY_RUINS))
 		{
 			u8 mapSec = GetCurrentRegionMapSectionId();
 			return mapSec >= MAPSEC_MONEAN_CHAMBER && mapSec <= MAPSEC_VIAPOIS_CHAMBER;

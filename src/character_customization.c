@@ -19,7 +19,6 @@ character_customization.c
 	functions for altering the player's sprite based on the current sprite/palette selections
 
 tables to edit:
-	sCharacterPalSwitchTable
 	gOverworldTableSwitcher
 	sPlayerAvatarGfxIds
 
@@ -36,13 +35,20 @@ extern const u8 TS_Male_Player_Brown_Dark_BlackPal[];
 extern const u8 TS_Male_Player_Brown_Silver_RedPal[];
 extern const u8 TS_Male_Player_Brown_Silver_BlackPal[];
 
+extern const u8 TS_Female_Player_White_Brunette_PurplePal[];
+extern const u8 TS_Female_Player_White_Silver_RedPal[];
+extern const u8 TS_Female_Player_White_Silver_PurplePal[];
+extern const u8 TS_Female_Player_Brown_Dark_RedPal[];
+extern const u8 TS_Female_Player_Brown_Dark_PurplePal[];
+extern const u8 TS_Female_Player_Brown_Silver_RedPal[];
+extern const u8 TS_Female_Player_Brown_Silver_PurplePal[];
+
 struct CharacterCustomizationPaletteSwitch
 {
 	u16 owNum;
 	const u8* frontSpritePal;
 	const u8* backSpritePal;
 };
-
 
 static const struct CharacterCustomizationPaletteSwitch sCharacterPalSwitchTable[] =
 {
@@ -53,13 +59,13 @@ static const struct CharacterCustomizationPaletteSwitch sCharacterPalSwitchTable
 	{298, 		TS_Male_Player_Brown_Dark_BlackPal, (CustomPal) 0x8F080C0},
 	{307, 		TS_Male_Player_Brown_Silver_RedPal, (CustomPal) 0x8F080F0},
 	{316, 		TS_Male_Player_Brown_Silver_BlackPal, (CustomPal) 0x8F08120},
-	{325, 		(CustomPal) 0, (CustomPal) 0x8F08150},
-	{334, 		(CustomPal) 0, (CustomPal) 0x8F08180},
-	{343, 		(CustomPal) 0, (CustomPal) 0x8F081B0},
-	{352, 		(CustomPal) 0, (CustomPal) 0x8F081E0},
-	{361, 		(CustomPal) 0, (CustomPal) 0x8F08210},
-	{370, 		(CustomPal) 0, (CustomPal) 0x8F08240},
-	{379, 		(CustomPal) 0, (CustomPal) 0x8F08270},
+	{325, 		TS_Female_Player_White_Brunette_PurplePal, (CustomPal) 0x8F08150},
+	{334, 		TS_Female_Player_White_Silver_RedPal, (CustomPal) 0x8F08180},
+	{343, 		TS_Female_Player_White_Silver_PurplePal, (CustomPal) 0x8F081B0},
+	{352, 		TS_Female_Player_Brown_Dark_RedPal, (CustomPal) 0x8F081E0},
+	{361, 		TS_Female_Player_Brown_Dark_PurplePal, (CustomPal) 0x8F08210},
+	{370, 		TS_Female_Player_Brown_Silver_RedPal, (CustomPal) 0x8F08240},
+	{379, 		TS_Female_Player_Brown_Silver_PurplePal, (CustomPal) 0x8F08270},
 	{0xFFFF, 	(CustomPal) 0, (CustomPal) 0},
 };
 #endif
@@ -442,7 +448,7 @@ const u8* GetTrainerSpritePal(u16 trainerPicId)
 		if ((gSaveBlock2->playerGender == FEMALE && VarGet(VAR_TRAINERCARD_FEMALE) == 0)
 		||  (gSaveBlock2->playerGender != FEMALE && VarGet(VAR_TRAINERCARD_MALE) == 0))
 		{
-			if (trainerPicId == 0x87 || trainerPicId == 0x88)
+			if (trainerPicId == TRAINER_PIC_PLAYER_M || trainerPicId == TRAINER_PIC_PLAYER_F)
 			{
 				if ((palette = GetAlternateTrainerSpritePal()) != NULL)
 					return palette;
