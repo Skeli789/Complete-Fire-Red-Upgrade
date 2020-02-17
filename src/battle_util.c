@@ -810,7 +810,9 @@ u8 GetIllusionPartyNumber(u8 bank)
 			if (i == gBattlerPartyIndexes[bank]) //Finsihed checking mons after
 				return gBattlerPartyIndexes[bank];
 
-			if (party[i].species == SPECIES_NONE ||  party[i].hp == 0)
+			if (party[i].species == SPECIES_NONE
+			|| party[i].hp == 0
+			|| GetMonData(&party[i], MON_DATA_IS_EGG, NULL))
 				continue;
 
 			return i;

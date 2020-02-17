@@ -812,11 +812,16 @@ void AnimTask_PlayAttackerCry(u8 taskId)
 
 u8 ModifyMegaCries(u16 species, u8 mode)
 {
-	if (mode <= 1
-	&& (IsMegaSpecies(species) || IsBluePrimalSpecies(species) || IsRedPrimalSpecies(species)))
+	if (mode <= 1)
 	{
 		#ifdef HIGH_PITCH_MEGA_PRIMAL_CRY
+		if (IsMegaSpecies(species)
+		|| IsBluePrimalSpecies(species)
+		|| IsRedPrimalSpecies(species)
+		|| IsGigantamaxSpecies(species))
+		{
 			mode = 3;
+		}
 		#endif
 	}
 

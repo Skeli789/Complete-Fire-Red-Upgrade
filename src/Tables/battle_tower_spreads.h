@@ -11879,32 +11879,6 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.modifyMovesDoubles = TRUE,
 	},
 	{
-		.species = SPECIES_OCTILLERY,
-		.nature = NATURE_ADAMANT,
-		.hpIv = 31,
-		.atkIv = 31,
-		.defIv = 31,
-		.spAtkIv = 0,
-		.spDefIv = 31,
-		.spdIv = 31,
-		.hpEv = 212,
-		.atkEv = 252,
-		.spdEv = 44,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_MOODY
-		.item = ITEM_LIFE_ORB,
-		.moves =
-		{
-			MOVE_WATERFALL,
-			MOVE_GUNKSHOT,
-			MOVE_SEEDBOMB,
-			MOVE_PAYBACK,
-		},
-		.ball = BALL_TYPE_RANDOM,
-		.forSingles = TRUE,
-		.forDoubles = TRUE,
-		.modifyMovesDoubles = TRUE,
-	},
-	{
 		.species = SPECIES_CORSOLA,
 		.nature = NATURE_CALM,
 		.hpIv = 31,
@@ -11973,8 +11947,8 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.moves =
 		{
 			MOVE_OCTAZOOKA,
-			MOVE_BIND,
 			MOVE_TOXIC,
+			MOVE_OCTOLOCK,
 			MOVE_PROTECT,
 		},
 		.ball = BALL_TYPE_RANDOM,
@@ -12027,7 +12001,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		{
 			MOVE_OCTAZOOKA,
 			MOVE_THUNDERWAVE,
-			MOVE_STRINGSHOT,
+			MOVE_OCTOLOCK,
 			MOVE_PROTECT,
 		},
 		.ball = BALL_TYPE_RANDOM,
