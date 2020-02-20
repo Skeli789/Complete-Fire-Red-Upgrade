@@ -939,11 +939,6 @@ static void InitTrainerBattleVariables(void)
 
 void BattleSetup_StartTrainerBattle(void)
 {
-	#ifdef FLAG_DYNAMAX_BATTLE
-	if (FlagGet(FLAG_DYNAMAX_BATTLE))
-		gBattleTypeFlags |= BATTLE_TYPE_DYNAMAX;
-	#endif
-
 	if (FlagGet(FLAG_BATTLE_FACILITY))
 	{
 		gBattleTypeFlags = BATTLE_TYPE_TRAINER;
@@ -1021,6 +1016,11 @@ void BattleSetup_StartTrainerBattle(void)
 		}
 		#endif
 	}
+
+	#ifdef FLAG_DYNAMAX_BATTLE
+	if (FlagGet(FLAG_DYNAMAX_BATTLE))
+		gBattleTypeFlags |= BATTLE_TYPE_DYNAMAX;
+	#endif
 
 	gMain.savedCallback = CB2_EndTrainerBattle;
 	StartTheBattle();
