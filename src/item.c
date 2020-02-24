@@ -246,11 +246,9 @@ bool8 CanMonLearnTutorMove(struct Pokemon* mon, u8 tutorId)
 	u16 dexNum = SpeciesToNationalPokedexNum(species);
 	switch (tutorId) {
 		case TUTOR_SPECIAL_DRACO_METEOR:
-			if (GetMonData(mon, MON_DATA_FRIENDSHIP, NULL) >= MAX_FRIENDSHIP
-			&& (gBaseStats[species].type1 == TYPE_DRAGON
-			 || gBaseStats[species].type2 == TYPE_DRAGON))
-				return TRUE;
-			break;
+			return GetMonData(mon, MON_DATA_FRIENDSHIP, NULL) >= MAX_FRIENDSHIP
+				&& (gBaseStats[species].type1 == TYPE_DRAGON
+				 || gBaseStats[species].type2 == TYPE_DRAGON);
 		#ifdef NATIONAL_DEX_KELDEO
 		case TUTOR_SPECIAL_SECRET_SWORD:
 			return dexNum == NATIONAL_DEX_KELDEO;
@@ -273,6 +271,16 @@ bool8 CanMonLearnTutorMove(struct Pokemon* mon, u8 tutorId)
 		case TUTOR_SPECIAL_CORE_ENFORCER:
 			return dexNum == NATIONAL_DEX_ZYGARDE;
 		#endif
+		case TUTOR_SPECIAL_STEEL_BEAM:
+			return gBaseStats[species].type1 == TYPE_STEEL
+				|| gBaseStats[species].type2 == TYPE_STEEL
+			#ifdef NATIONAL_DEX_ZACIAN
+				|| dexNum == NATIONAL_DEX_ZACIAN
+			#endif
+			#ifdef NATIONAL_DEX_ZAMAZENTA
+				|| dexNum == NATIONAL_DEX_ZAMAZENTA
+			#endif
+				;
 	}
 
 	return FALSE;
@@ -297,6 +305,8 @@ u16 GetExpandedTutorMove(u8 tutorId)
 			return MOVE_THOUSANDWAVES;
 		case TUTOR_SPECIAL_CORE_ENFORCER:
 			return MOVE_COREENFORCER;
+		case TUTOR_SPECIAL_STEEL_BEAM:
+			return MOVE_STEELBEAM;
 		default:
 			if (tutorId >= NUM_MOVE_TUTORS)
 				return MOVE_NONE;
