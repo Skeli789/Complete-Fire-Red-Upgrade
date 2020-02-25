@@ -1589,7 +1589,6 @@ static void CreateFrontierMon(struct Pokemon* mon, const u8 level, const struct 
 	else //Hidden Ability
 	{
 		GiveMonNatureAndAbility(mon, spread->nature, 0xFF, spread->shiny);
-		mon->hiddenAbility = TRUE;
 	}
 
 	for (j = 0; j < MAX_MON_MOVES; j++)
@@ -1658,6 +1657,9 @@ void GiveMonNatureAndAbility(struct Pokemon* mon, u8 nature, u8 abilityNum, bool
 	u32 trainerId = GetMonData(mon, MON_DATA_OT_ID, NULL);
 	u16 sid = HIHALF(trainerId);
 	u16 tid = LOHALF(trainerId);
+
+	if (abilityNum == 0xFF) //Hidden Ability
+		mon->hiddenAbility = TRUE;
 
 	do
 	{
