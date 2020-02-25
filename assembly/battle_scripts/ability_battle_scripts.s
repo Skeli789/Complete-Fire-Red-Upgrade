@@ -182,7 +182,7 @@ IntimidateActivatesLoopIncrement:
 	goto BS_IntimidateActivatesLoop
 
 BattleScript_IntimidateActivatesReturn:
-	call BattleScript_AbilityPopUpRevert
+	callasm TryRemoveIntimidateAbilityPopUp @;In case the battle scripting bank is changed
 	callasm RemoveIntimidateActive
 	return
 
