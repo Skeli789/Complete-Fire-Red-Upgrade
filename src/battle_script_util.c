@@ -1222,10 +1222,10 @@ void SetHealingWishLunarDanceFunc(void)
 {
 	switch (gCurrentMove) {
 		case MOVE_HEALINGWISH:
-			gNewBS->HealingWishLoc |= gBitTable[gBankAttacker];
+			gNewBS->HealingWishLoc |= gBitTable[GetBattlerPosition(gBankAttacker)];
 			break;
 		case MOVE_LUNARDANCE:
-			gNewBS->HealingWishLoc |= (gBitTable[gBankAttacker] << 4);
+			gNewBS->HealingWishLoc |= (gBitTable[GetBattlerPosition(gBankAttacker)] << 4);
 	}
 }
 

@@ -42,6 +42,7 @@ BattleScript_HealingWishHeal:
 	goto Sparkles
 
 BattleScript_LunarDanceHeal:
+	callasm RestorePPLunarDance
 	playanimation BANK_SCRIPTING ANIM_LUNAR_DANCE_HEAL 0x0
 	setword BATTLE_STRING_LOADER LunarDanceHealString
 

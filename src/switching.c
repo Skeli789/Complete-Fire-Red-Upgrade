@@ -398,9 +398,9 @@ void atk52_switchineffects(void)
 			if (gBattleMons[gActiveBattler].hp != gBattleMons[gActiveBattler].maxHP
 			|| gBattleMons[gActiveBattler].status1 != STATUS1_NONE)
 			{
-				if (gNewBS->HealingWishLoc & gBitTable[gActiveBattler])
+				if (gNewBS->HealingWishLoc & gBitTable[GetBattlerPosition(gActiveBattler)])
 				{
-					gNewBS->HealingWishLoc &= ~gBitTable[gActiveBattler];
+					gNewBS->HealingWishLoc &= ~gBitTable[GetBattlerPosition(gActiveBattler)];
 					BattleScriptPushCursor();
 					gBattlescriptCurrInstr = BattleScript_HealingWishHeal;
 					gBattleMoveDamage = -1 * (gBattleMons[gActiveBattler].maxHP);
@@ -411,15 +411,15 @@ void atk52_switchineffects(void)
 					++gNewBS->SwitchInEffectsTracker;
 					return;
 				}
-				else if (gNewBS->HealingWishLoc & gBitTable[gActiveBattler << 4])
+				else if (gNewBS->HealingWishLoc & (gBitTable[GetBattlerPosition(gActiveBattler)] << 4))
 				{
 					goto LUNAR_DANCE_ACTIVATE;
 				}
 			}
-			else if (gNewBS->HealingWishLoc & gBitTable[gActiveBattler << 4] && !PPIsMaxed(gActiveBattler))
+			else if (gNewBS->HealingWishLoc & (gBitTable[GetBattlerPosition(gActiveBattler)] << 4) && !PPIsMaxed(gActiveBattler))
 			{
 			LUNAR_DANCE_ACTIVATE:
-				gNewBS->HealingWishLoc &= ~gBitTable[gActiveBattler << 4];
+				gNewBS->HealingWishLoc &= ~(gBitTable[GetBattlerPosition(gActiveBattler)] << 4);
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_LunarDanceHeal;
 
@@ -427,18 +427,7 @@ void atk52_switchineffects(void)
 				gBattleMons[gActiveBattler].status1 = 0;
 				EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[gActiveBattler].status1);
 
-				//Restore PP Only in Lunar Dance
-				for (int i = 0; i < MAX_MON_MOVES; ++i)
-				{
-					if (gBattleMons[gActiveBattler].moves[i] == 0)
-						break;
-
-					gBattleMons[gActiveBattler].pp[i] = CalculatePPWithBonus(gBattleMons[gActiveBattler].moves[i], gBattleMons[gActiveBattler].ppBonuses, i);
-					if (IS_TRANSFORMED(gActiveBattler) && gBattleMons[gActiveBattler].pp[i] > 5)
-						gBattleMons[gActiveBattler].pp[i] = 5; //Can't restore past 5 PP if transformed
-
-					EmitSetMonData(0, REQUEST_PPMOVE1_BATTLE + i, 0, 1, &gBattleMons[gActiveBattler].pp[i]);
-				}
+				//PP Restored in Battle Script
 
 				gBattleScripting->bank = gActiveBattler;
 				gBankAttacker = gActiveBattler;
@@ -717,6 +706,38 @@ void atk52_switchineffects(void)
 
 		case SwitchIn_End:
 			break;
+	}
+}
+
+void RestorePPLunarDance(void)
+{
+	u8 i, maxPP;
+	gActiveBattler = gBattleScripting->bank;
+
+	if (gBattleExecBuffer)
+	{
+		gBattlescriptCurrInstr -= 5;
+		return;
+	}
+
+	for (i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		maxPP = 0;
+		if (gBattleMons[gActiveBattler].moves[i] != MOVE_NONE)
+		{
+			maxPP = CalculatePPWithBonus(gBattleMons[gActiveBattler].moves[i], gBattleMons[gActiveBattler].ppBonuses, i);
+			if (IS_TRANSFORMED(gActiveBattler) && maxPP > 5)
+				maxPP = 5; //Can't restore past 5 PP if transformed	
+		}
+
+		if (gBattleMons[gActiveBattler].pp[i] != maxPP)
+		{
+			gBattleMons[gActiveBattler].pp[i] = maxPP;
+			EmitSetMonData(0, REQUEST_PPMOVE1_BATTLE + i, 0, 1, &gBattleMons[gActiveBattler].pp[i]); //Restore PP, one move at a time
+			MarkBufferBankForExecution(gActiveBattler);
+			gBattlescriptCurrInstr -= 5;
+			return;
+		}
 	}
 }
 
