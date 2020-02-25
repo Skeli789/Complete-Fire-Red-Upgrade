@@ -847,7 +847,7 @@ bool8 BankMovedBeforeIgnoreSwitch(u8 bank1, u8 bank2)
 {
 	for (u32 i = 0; i < gBattlersCount; ++i)
 	{
-		if (gActionsByTurnOrder[i] == ACTION_SWITCH)
+		if (gActionForBanks[gBanksByTurnOrder[i]] == ACTION_SWITCH)
 			continue;
 
 		if (gBanksByTurnOrder[i] == bank1)

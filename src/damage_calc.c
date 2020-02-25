@@ -2905,7 +2905,7 @@ static u16 GetBasePower(struct DamageCalc* data)
 			if (!(data->specialFlags & (FLAG_CHECKING_FROM_MENU | FLAG_AI_CALC)) && !useMonAtk)
 				power = gBattleScripting->tripleKickPower;
 			break;
-			
+
 		case MOVE_BOLTBEAK:
 		case MOVE_FISHIOUSREND:
 			if (BankMovedBeforeIgnoreSwitch(bankAtk, bankDef))
