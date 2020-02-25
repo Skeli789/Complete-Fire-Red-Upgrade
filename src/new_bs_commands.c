@@ -191,44 +191,47 @@ void atkFF06_setterrain(void)
 		}
 	}
 
-	switch (gCurrentMove) {
-		case MOVE_ELECTRICTERRAIN:
-		SET_ELECTRIC_TERRAIN:
-			type = ELECTRIC_TERRAIN;
-			gBattleScripting->animArg1 = B_ANIM_ELECTRIC_SURGE;
-			gBattleStringLoader = ElectricTerrainSetString;
-			break;
-		case MOVE_GRASSYTERRAIN:
-		SET_GRASSY_TERRAIN:
-			type = GRASSY_TERRAIN;
-			gBattleScripting->animArg1 = B_ANIM_GRASSY_SURGE;
-			gBattleStringLoader = GrassyTerrainSetString;
-			break;
-		case MOVE_MISTYTERRAIN:
-		SET_MISTY_TERRAIN:
-			type = MISTY_TERRAIN;
-			gBattleScripting->animArg1 = B_ANIM_MISTY_SURGE;
-			gBattleStringLoader = MistyTerrainSetString;
-			break;
-		case MOVE_PSYCHICTERRAIN:
-		case MOVE_GENESIS_SUPERNOVA:
-		SET_PSYCHIC_TERRAIN:
-			type = PSYCHIC_TERRAIN;
-			gBattleScripting->animArg1 = B_ANIM_PSYCHIC_SURGE;
-			gBattleStringLoader = PsychicTerrainSetString;
-			break;
-		case MOVE_SPLINTERED_STORMSHARDS:
-		case MOVE_DEFOG:
-		case MOVE_G_MAX_WIND_RAGE_P:
-		case MOVE_G_MAX_WIND_RAGE_S:
-			type = 0;
-			gBattleScripting->animArg1 = B_ANIM_LOAD_DEFAULT_BG;
-			gBattleStringLoader = TerrainEndString;
-			break;
-	}
-
 	if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_TERRAIN)
-		type = 0xFF; //Can't be removed
+		type = 0xFF; //Can't be changed
+	else
+	{
+		switch (gCurrentMove) {
+			case MOVE_ELECTRICTERRAIN:
+			SET_ELECTRIC_TERRAIN:
+				type = ELECTRIC_TERRAIN;
+				gBattleScripting->animArg1 = B_ANIM_ELECTRIC_SURGE;
+				gBattleStringLoader = ElectricTerrainSetString;
+				break;
+			case MOVE_GRASSYTERRAIN:
+			SET_GRASSY_TERRAIN:
+				type = GRASSY_TERRAIN;
+				gBattleScripting->animArg1 = B_ANIM_GRASSY_SURGE;
+				gBattleStringLoader = GrassyTerrainSetString;
+				break;
+			case MOVE_MISTYTERRAIN:
+			SET_MISTY_TERRAIN:
+				type = MISTY_TERRAIN;
+				gBattleScripting->animArg1 = B_ANIM_MISTY_SURGE;
+				gBattleStringLoader = MistyTerrainSetString;
+				break;
+			case MOVE_PSYCHICTERRAIN:
+			case MOVE_GENESIS_SUPERNOVA:
+			SET_PSYCHIC_TERRAIN:
+				type = PSYCHIC_TERRAIN;
+				gBattleScripting->animArg1 = B_ANIM_PSYCHIC_SURGE;
+				gBattleStringLoader = PsychicTerrainSetString;
+				break;
+			case MOVE_SPLINTERED_STORMSHARDS:
+			case MOVE_DEFOG:
+			case MOVE_G_MAX_WIND_RAGE_P:
+			case MOVE_G_MAX_WIND_RAGE_S:
+				type = 0;
+				gNewBS->terrainForcefullyRemoved = TRUE;
+				gBattleScripting->animArg1 = B_ANIM_LOAD_DEFAULT_BG;
+				gBattleStringLoader = TerrainEndString;
+				break;
+		}
+	}
 
 	if (gTerrainType == type || type == 0xFF)
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);

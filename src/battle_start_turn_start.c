@@ -139,57 +139,15 @@ void BattleBeginFirstTurn(void)
 				}
 
 				//OW Weather
-				if (gBattleStruct->field_B6 == 0 && AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, 0, 0, 0xFF, 0)) {
+				if (gBattleStruct->field_B6 == 0 && AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, 0, 0, 0xFF, 0)) 
+				{
 					gBattleStruct->field_B6 = 1;
 					return;
 				}
 
 				//OW Terrain
-				u8 req_terrain = VarGet(VAR_TERRAIN);
-
-				if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_CIRCUS)
-				{
-					//Can have at most one of these set at a time
-					switch (gBattleCircusFlags & BATTLE_CIRCUS_TERRAIN) {
-						case BATTLE_CIRCUS_ELECTRIC_TERRAIN:
-							req_terrain = ELECTRIC_TERRAIN;
-							break;
-						case BATTLE_CIRCUS_GRASSY_TERRAIN:
-							req_terrain = GRASSY_TERRAIN;
-							break;
-						case BATTLE_CIRCUS_MISTY_TERRAIN:
-							req_terrain = MISTY_TERRAIN;
-							break;
-						case BATTLE_CIRCUS_PSYCHIC_TERRAIN:
-							req_terrain = PSYCHIC_TERRAIN;
-							break;
-					}
-				}
-
-				if (req_terrain && gTerrainType != req_terrain) {
-					switch (req_terrain) {
-						case ELECTRIC_TERRAIN:
-							BattleScriptPushCursorAndCallback(BattleScript_ElectricTerrainBattleBegin);
-							++effect;
-							break;
-						case GRASSY_TERRAIN:
-							BattleScriptPushCursorAndCallback(BattleScript_GrassyTerrainBattleBegin);
-							++effect;
-							break;
-						case MISTY_TERRAIN:
-							BattleScriptPushCursorAndCallback(BattleScript_MistyTerrainBattleBegin);
-							++effect;
-							break;
-						case PSYCHIC_TERRAIN:
-							BattleScriptPushCursorAndCallback(BattleScript_PsychicTerrainBattleBegin);
-							++effect;
-					}
-					if (effect) {
-						gTerrainType = req_terrain;
-						return;
-					}
-
-				}
+				if (TryActivateOWTerrain())
+					return;
 
 				//Primal Reversion
 				while (*bank < gBattlersCount) {
@@ -404,6 +362,57 @@ void BattleBeginFirstTurn(void)
 				*state = 0;
 		}
 	}
+}
+
+bool8 TryActivateOWTerrain(void)
+{
+	bool8 effect = FALSE;
+	u8 owTerrain = VarGet(VAR_TERRAIN);
+
+	if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_CIRCUS)
+	{
+		//Can have at most one of these set at a time
+		switch (gBattleCircusFlags & BATTLE_CIRCUS_TERRAIN) {
+			case BATTLE_CIRCUS_ELECTRIC_TERRAIN:
+				owTerrain = ELECTRIC_TERRAIN;
+				break;
+			case BATTLE_CIRCUS_GRASSY_TERRAIN:
+				owTerrain = GRASSY_TERRAIN;
+				break;
+			case BATTLE_CIRCUS_MISTY_TERRAIN:
+				owTerrain = MISTY_TERRAIN;
+				break;
+			case BATTLE_CIRCUS_PSYCHIC_TERRAIN:
+				owTerrain = PSYCHIC_TERRAIN;
+				break;
+		}
+	}
+
+	if (owTerrain != 0 && gTerrainType != owTerrain && !gNewBS->terrainForcefullyRemoved) 
+	{
+		switch (owTerrain) {
+			case ELECTRIC_TERRAIN:
+				BattleScriptPushCursorAndCallback(BattleScript_ElectricTerrainBattleBegin);
+				effect = TRUE;
+				break;
+			case GRASSY_TERRAIN:
+				BattleScriptPushCursorAndCallback(BattleScript_GrassyTerrainBattleBegin);
+				effect = TRUE;
+				break;
+			case MISTY_TERRAIN:
+				BattleScriptPushCursorAndCallback(BattleScript_MistyTerrainBattleBegin);
+				effect = TRUE;
+				break;
+			case PSYCHIC_TERRAIN:
+				BattleScriptPushCursorAndCallback(BattleScript_PsychicTerrainBattleBegin);
+				effect = TRUE;
+		}
+
+		if (effect)
+			gTerrainType = owTerrain;
+	}
+
+	return effect;
 }
 
 bool8 CanActivateTotemBoost(u8 bank)

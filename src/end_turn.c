@@ -83,6 +83,7 @@ enum EndTurnEffects
 	ET_Terrain_Timer,
 	ET_Block_B,
 	ET_Form_Change,
+	ET_Reactivate_Overworld_Weather,
 	ET_End
 };
 
@@ -1409,6 +1410,21 @@ u8 TurnBasedEffects(void)
 				}
 				break;
 
+			case ET_Reactivate_Overworld_Weather:
+				gBattleStruct->turnEffectsBank = gBattlersCount;
+				if (gBattleWeather == 0 && AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, 0, 0, 0xFF, 0))
+				{
+					++effect;
+					return effect;
+				}
+
+				if (gTerrainType == 0 && TryActivateOWTerrain())
+				{
+					++effect;
+					return effect;
+				}
+				break;
+
 			case ET_End:
 			END_TURN_SKIP:
 				gBattleStruct->turnEffectsBank = gBattlersCount;
@@ -1450,14 +1466,15 @@ u8 TurnBasedEffects(void)
 		}
 		gBattleStruct->turnEffectsBank++;
 
-		SkipBankIncrement:
-			if (gBattleStruct->turnEffectsBank >= gBattlersCount)
-			{
-				gBattleStruct->turnEffectsTracker++;
-				gBattleStruct->turnEffectsBank = 0;
-			}
-			if (effect)
-				return effect;
+	SkipBankIncrement:
+		if (gBattleStruct->turnEffectsBank >= gBattlersCount)
+		{
+			gBattleStruct->turnEffectsTracker++;
+			gBattleStruct->turnEffectsBank = 0;
+		}
+
+		if (effect)
+			return effect;
 	}
 
 	gHitMarker &= ~(HITMARKER_GRUDGE | HITMARKER_x20);

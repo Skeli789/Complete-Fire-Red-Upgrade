@@ -546,7 +546,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				#endif
 
 				#if defined FOG_IN_BATTLE_1 || defined FOG_IN_BATTLE_2 || defined FOG_IN_BATTLE_3 //So dumb people don't cause compilation errors
-					if (!(gBattleWeather & WEATHER_FOG_ANY))
+					if (!(gBattleWeather & WEATHER_FOG_ANY) && !gNewBS->fogBlownAwayByDefog)
 					{
 						gBattleStringLoader = gText_FogIsDeep;
 						gBattleWeather = (WEATHER_FOG_TEMPORARY | WEATHER_FOG_PERMANENT);

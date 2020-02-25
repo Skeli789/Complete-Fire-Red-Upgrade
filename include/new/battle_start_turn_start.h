@@ -8,6 +8,7 @@
  */
 
 //Exported Functions
+bool8 TryActivateOWTerrain(void);
 bool8 CanActivateTotemBoost(u8 bank);
 u16 GetMUS_ForBattle(void);
 u8 GetTrainerBattleTransition(void);

@@ -902,6 +902,8 @@ struct NewBattleStruct
 	bool8 activateBlunderPolicy : 1;
 	bool8 tempIgnoreAnimations : 1;
 	bool8 firstFailedPokeBallStored : 1;
+	bool8 fogBlownAwayByDefog : 1;
+	bool8 terrainForcefullyRemoved : 1;
 
 	//Other
 	u16 LastUsedMove;

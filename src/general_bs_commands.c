@@ -3653,7 +3653,10 @@ void atkBE_rapidspinfree(void)
 			gBattlescriptCurrInstr = BattleScript_SetTerrain; //Removes the Terrain
 		}
 		else
+		{
+			gNewBS->fogBlownAwayByDefog = TRUE; //No reactivating fog
 			gBattlescriptCurrInstr++;
+		}
 	}
 }
 
