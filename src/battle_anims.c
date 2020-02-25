@@ -2023,6 +2023,16 @@ void SpriteCB_ForcePalm(struct Sprite* sprite)
 	sprite->callback = SpriteCB_ForcePalmStep1;
 }
 
+//Destroys the chains for Fairy Lock
+void SpriteCB_FairyLockChain(struct Sprite *sprite)
+{
+	if (++sprite->data[0] > 12)
+	{
+		--gTasks[sprite->data[6]].data[sprite->data[7]];
+		DestroySprite(sprite);
+	}
+}
+
 //Creates a twinkle in the upper corner of the screen
 void SpriteCB_SparkleInCorner(struct Sprite *sprite)
 {

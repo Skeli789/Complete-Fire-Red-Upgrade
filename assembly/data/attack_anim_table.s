@@ -7424,20 +7424,18 @@ endanimation
 .pool
 ANIM_POWERTRICK:
 	loadparticle ANIM_TAG_POWER_TRICK
-	pokespritetoBG bank_attacker
 	soundcomplex 0xb1 0x3f 0xa 0x3
 	launchtask 0x80AA7C9 0x2 0x1 0x0
-	launchtemplate POWERTRICK 0x2 0x5 0x1 0xFFF3 0x8 0x35 0xa
+	launchtemplate POWERTRICK TEMPLATE_ATTACKER | 2 0x5 bank_attacker 0x0 0x0 0x3F 0x0
 	pause 0x10
 	launchtask 0x80AA7C9 0x2 0x1 0x0
 	pause 0x10
 	launchtask 0x80AA7C9 0x2 0x1 0x0
 	waitanimation
-	pokespritefromBG bank_attacker
 	endanimation
 
 .align 2
-POWERTRICK: objtemplate ANIM_TAG_POWER_TRICK ANIM_TAG_POWER_TRICK OAM_OFF_64x64 0x8231CF0 0x0 0x83E7A24 SpriteCB_SpriteOnMonForDuration
+POWERTRICK: objtemplate ANIM_TAG_POWER_TRICK ANIM_TAG_POWER_TRICK OAM_NORMAL_64x64 0x8231CF0 0x0 0x83E7A24 SpriteCB_SpriteOnMonForDuration
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -15117,7 +15115,7 @@ ANIM_FAIRYLOCK:
 	endanimation
 
 .align 2
-FAIRYLOCK_CHAIN: objtemplate ANIM_TAG_FAIRY_LOCK_CHAINS ANIM_TAG_CHAIN_LINK OAM_DOUBLE_8x16 0x83E6254 0x0 0x83E6274 0x80AEC35
+FAIRYLOCK_CHAIN: objtemplate ANIM_TAG_FAIRY_LOCK_CHAINS ANIM_TAG_CHAIN_LINK OAM_OFF_64x32 0x8231CF0 0x0 0x8231CFC SpriteCB_FairyLockChain
 
 @hook at 0xAEBA0 via r0
 .align 2
