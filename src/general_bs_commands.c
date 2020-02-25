@@ -277,7 +277,8 @@ void atk09_attackanimation(void)
 		else if (gBattleScripting->animTargetsHit > 0
 			&&  (gBattleMoves[gCurrentMove].target & (MOVE_TARGET_BOTH | MOVE_TARGET_FOES_AND_ALLY | MOVE_TARGET_DEPENDS)
 			  || gCurrentMove == MOVE_DEFOG
-			  || gCurrentMove == MOVE_SHELLSMASH))
+			  || gCurrentMove == MOVE_SHELLSMASH
+			  || gCurrentMove == MOVE_HOWL))
 		{
 			gBattlescriptCurrInstr++;
 			return;

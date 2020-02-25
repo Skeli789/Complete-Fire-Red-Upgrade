@@ -251,7 +251,10 @@ CopycatBS:
 .global BS_010_RaiseUserAtk1
 BS_010_RaiseUserAtk1:
 	setstatchanger STAT_ATK | INCREASE_1
-	jumpifnotmove MOVE_HONECLAWS BS_BUFF_ATK_STATS
+	jumpifmove MOVE_HONECLAWS HoneClawsBS
+	jumpifnotbattletype BATTLE_DOUBLE BS_BUFF_ATK_STATS
+	jumpifmove MOVE_HOWL HowlBS @;Only difference is that it raises partner's attack in Doubles too
+	goto BS_BUFF_ATK_STATS
 
 HoneClawsBS:
 	attackcanceler
@@ -265,7 +268,7 @@ HoneClaws_Atk:
 	waitanimation
 	setbyte STAT_ANIM_PLAYED 0x0
 	playstatchangeanimation BANK_ATTACKER, STAT_ANIM_ATK | STAT_ANIM_ACC, STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES
-	setstatchanger STAT_ATK | INCREASE_1
+	@;setstatchanger STAT_ATK | INCREASE_1
 	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN HoneClaws_Acc
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 HoneClaws_Acc
 	printfromtable 0x83FE57C
@@ -275,6 +278,50 @@ HoneClaws_Acc:
 	setstatchanger STAT_ACC | INCREASE_1
 	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_CERTAIN BS_MOVE_END
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BS_MOVE_END
+	printfromtable 0x83FE57C
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_END
+
+HowlBS:
+	attackcanceler
+	attackstring
+	ppreduce
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR HowlTryPartnerBS
+	jumpifbyte NOTEQUALS MULTISTRING_CHOOSER 0x2 HowlAttackAnimation
+	pause DELAY_HALFSECOND
+	setbyte ANIM_TARGETS_HIT 0x0
+	goto HowlPrintAttackerString
+
+HowlAttackAnimation:
+	attackanimation
+	waitanimation
+	setbyte ANIM_TARGETS_HIT 0x1
+	setgraphicalstatchangevalues
+	playanimation BANK_ATTACKER ANIM_STAT_BUFF ANIM_ARG_1
+HowlPrintAttackerString:
+	printfromtable 0x83FE57C
+	waitmessage DELAY_1SECOND
+
+HowlTryPartnerBS:
+	callasm SetTargetPartner
+	jumpifbehindsubstitute BANK_TARGET BS_MOVE_END
+	jumpiffainted BANK_TARGET BS_MOVE_END
+	statbuffchange STAT_TARGET | STAT_BS_PTR BS_MOVE_END
+	jumpifbyte NOTEQUALS MULTISTRING_CHOOSER 0x2 HowlSecondAttackAnimation
+	pause DELAY_HALFSECOND
+	swapattackerwithtarget @;So the proper string is shown
+	printfromtable 0x83FE57C
+	waitmessage DELAY_1SECOND	
+	swapattackerwithtarget
+	goto BS_MOVE_END
+
+HowlSecondAttackAnimation:
+	bicbyte OUTCOME OUTCOME_NO_EFFECT
+	attackanimation
+	waitanimation
+	setgraphicalstatchangevalues
+	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
+HowlPrintPartnerString:
 	printfromtable 0x83FE57C
 	waitmessage DELAY_1SECOND
 	goto BS_MOVE_END
