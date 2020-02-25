@@ -376,7 +376,7 @@ animparticle MUSHROOM_IMG, (32 * 32 * 4) / 2, ANIM_TAG_MUSHROOM
 animparticle GOLDEN_APPLE_IMG, (32 * 32 * 4) / 2, ANIM_TAG_GOLDEN_APPLE
 animparticle ICE_ROCK_IMG, (64 * 64 * 5) / 2, ANIM_TAG_ICE_ROCK
 animparticle TORNADO_IMG, (64 * 64 * 3) / 2, ANIM_TAG_TORNADO
-animparticle STRAIGHT_BEAM_IMG, (16 * 16 * 2) / 2, ANIM_TAG_STRAIGHT_BEAM
+animparticle STRAIGHT_BEAM_IMG, (16 * 16 * 3) / 2, ANIM_TAG_STRAIGHT_BEAM
 animparticle DREEPY_IMG, (32 * 32) / 2, ANIM_TAG_DREEPY
 
 gBattleAnimPaletteTable:

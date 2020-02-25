@@ -479,10 +479,17 @@ static const union AnimCmd sAnimCmdSmiteBeam[] =
 	ANIMCMD_END
 };
 
+static const union AnimCmd sAnimCmdPhotonGeyserBeam[] =
+{
+	ANIMCMD_FRAME(8, 1),
+	ANIMCMD_END
+};
+
 const union AnimCmd *const gAnimCmdTable_StarfallBeam[] =
 {
 	sAnimCmdStarfallBeam,
 	sAnimCmdSmiteBeam,
+	sAnimCmdPhotonGeyserBeam,
 };
 
 static const union AffineAnimCmd sSpriteAffineAnim_StarfallBeam[] =
@@ -1951,6 +1958,69 @@ void SpriteCB_StoneEdgeRock(struct Sprite* sprite)
 	sprite->data[1] = 20;
 
 	sprite->callback = SpriteCB_StoneEdgeRockStep1;
+}
+
+void SpriteCB_ForcePalmStep5(struct Sprite* sprite)
+{
+	if (++sprite->data[0] >= 6)
+		DestroyAnimSprite(sprite);
+}
+
+void SpriteCB_ForcePalmStep4(struct Sprite* sprite)
+{
+	if (++sprite->data[0] >= 8)
+	{
+		sprite->data[0] = 0;
+		sprite->callback = SpriteCB_ForcePalmStep5;	
+	}
+	else
+		sprite->pos1.x += 1;
+}
+
+void SpriteCB_ForcePalmStep3(struct Sprite* sprite)
+{
+	if (++sprite->data[0] >= 8)
+	{
+		sprite->data[0] = 0;
+		sprite->callback = SpriteCB_ForcePalmStep4;	
+	}
+	else
+		sprite->pos1.x -= 1;
+}
+
+void SpriteCB_ForcePalmStep2(struct Sprite* sprite)
+{
+	sprite->data[0] = 0;
+	sprite->callback = SpriteCB_ForcePalmStep3;
+}
+
+void SpriteCB_ForcePalmStep1(struct Sprite* sprite)
+{
+	if (++sprite->data[6] >= sprite->data[5])
+	{
+		sprite->callback = StartAnimLinearTranslation;
+		StoreSpriteCallbackInData6(sprite, SpriteCB_ForcePalmStep2);
+	}
+}
+
+//Creates an object on the target that moves linearly in some direction.
+//arg 0: Initial x-offset
+//arg 1: Initial y-offset
+//arg 2: Final x-offset
+//arg 3: Final y-offset
+//arg 4: Motion speed delay
+//arg 5: Pause before motion
+void SpriteCB_ForcePalm(struct Sprite* sprite)
+{
+	InitSpritePosToAnimTarget(sprite, TRUE);
+
+	sprite->data[0] = gBattleAnimArgs[4]; //Speed delay
+	sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2) + gBattleAnimArgs[2];
+	sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET) + gBattleAnimArgs[3];
+
+	sprite->data[5] = gBattleAnimArgs[5]; //Pause before motion
+	sprite->data[6] = 0;
+	sprite->callback = SpriteCB_ForcePalmStep1;
 }
 
 //Creates a twinkle in the upper corner of the screen

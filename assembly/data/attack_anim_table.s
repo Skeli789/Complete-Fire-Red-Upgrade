@@ -2497,9 +2497,10 @@ ANIM_FORCEPALM:
 	pokespritetoBG bank_target
 	leftbankBG_over_partnerBG 0x1
 	setblends 0x80C
+	launchtemplate FORCE_PALM TEMPLATE_TARGET | 2, 0x6 0, 0, 40, 0, 8, 0x20
+	pause 0x20
 	launchtemplate PURPLEHIT 0x2 0x4 0xFFF5 0x0 0x1 0x2
-	launchtemplate FORCE_PALM 0x3 0x6 0x0 0x0 0x1 0xFF 0x0 0x20
-	playsound2 0x80 0x3f
+	playsound2 0x7F 0x3f
 	launchtask AnimTask_move_bank 0x5 0x5 0x1 0x4 0x0 0x6 0x1
 	waitanimation
 	pokespritefromBG bank_target
@@ -2507,9 +2508,8 @@ ANIM_FORCEPALM:
 	endanimation
 
 .align 2
-FORCE_PALM: objtemplate ANIM_TAG_ASSURANCE_HAND ANIM_TAG_ACUPRESSURE_FINGER OAM_OFF_32x32 0x83E66CC 0x0 0x8231CFC 0x80A4D0D
+FORCE_PALM: objtemplate ANIM_TAG_ASSURANCE_HAND ANIM_TAG_ACUPRESSURE_FINGER OAM_OFF_32x32 0x83E66CC 0x0 0x8231CFC SpriteCB_ForcePalm
 PURPLEHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_SHADOW_BALL OAM_NORMAL_BLEND_32x32 0x8231CF0 0x0 0x83E7BF8 0x80BA561
-
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -14764,7 +14764,7 @@ MINDBLOWN_PINKHIT: objtemplate ANIM_TAG_IMPACT ANIM_TAG_PINK_HEART OAM_NORMAL_BL
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Lixdel
+@Credits to Skeli & Lixdel
 ANIM_PHOTONGEYSER:
 	loadparticle ANIM_TAG_SHOCK_3 @charge
 	loadparticle ANIM_TAG_SPARK_2 @paralyze_chance_anim
@@ -14831,21 +14831,15 @@ ANIM_PHOTONGEYSER:
 	unloadparticle ANIM_TAG_YELLOW_BALL @confuse ray (for zap cannon)
 	unloadparticle ANIM_TAG_BLACK_BALL_2 @zap cannon
 	unloadparticle ANIM_TAG_AIR_WAVE_2 @white/gray color
-	loadparticle ANIM_TAG_EXPLOSION @explosion
-	launchtemplate GEYSER_EXPLODINGHITS 0x3 0x4 0x0 0x0 0x1 0x1
-	pause 0x6
-	playsound2 0xab 0xc0
-	launchtemplate GEYSER_EXPLODINGHITS 0x3 0x4 0x18 0xffe8 0x1 0x1
-	pause 0x6
-	playsound2 0xab 0xc0
-	launchtemplate GEYSER_EXPLODINGHITS 0x3 0x4 0xfff0 0x10 0x1 0x1
-	pause 0x6
-	playsound2 0xab 0xc0
-	launchtemplate GEYSER_EXPLODINGHITS 0x3 0x4 0xffe8 0xfff4 0x1 0x1
-	pause 0x6
-	playsound2 0xab 0xc0
-	launchtemplate GEYSER_EXPLODINGHITS 0x3 0x4 0x10 0x10 0x1 0x1
+
+@;Shoot beam to the sky
+	loadparticle ANIM_TAG_STRAIGHT_BEAM
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x6 0x0 0x10 0x43FF @;Light yellow
+	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x4 0x0 0x60 0x1
+	playsoundpanchange 0xc2 0xc0 0x3f 0x2 0x0
+	call PHOTON_GEYSER_BEAM
 	waitanimation
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x1 0x10 0x0 0x43FF @;Light yellow
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xF 0x0 0x0
 	waitanimation
 	pokespritefromBG bank_target
@@ -14860,12 +14854,29 @@ GEYSER_SPARKS1:
 	launchtemplate GEYSER_SPARKS 0x0 0x7 0x50 0x18 0x16 0xc 0x0 0x1 0x0
 	launchtemplate GEYSER_SPARKS 0x0 0x7 0x9c 0x18 0x79 0xd 0x0 0x1 0x1
 	return
+
 GEYSER_SPARKS2:
 	playsound2 0xce 0xc0
 	launchtemplate GEYSER_SPARKS 0x0 0x7 0x64 0x18 0x3c 0xa 0x0 0x1 0x0
 	launchtemplate GEYSER_SPARKS 0x0 0x7 0xaa 0x18 0x2a 0xb 0x0 0x1 0x1
 	pause 0x0
 	launchtemplate GEYSER_SPARKS 0x0 0x7 0xee 0x18 0xa5 0xa 0x0 0x1 0x1
+	return
+
+PHOTON_GEYSER_BEAM:
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 3, 0x6, 0,  19, bank_target, 180, 2, 6
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 3, 0x6, 0,   3, bank_target, 180, 2, 5
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 3, 0x6, 0, -13, bank_target, 180, 2, 4
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 3, 0x6, 0, -29, bank_target, 180, 2, 3
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 3, 0x6, 0, -45, bank_target, 180, 2, 2
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 3, 0x6, 0, -61, bank_target, 180, 2, 1
+	pause 0x1
+	launchtemplate STARFALL_BEAM TEMPLATE_TARGET | 3, 0x6, 0, -77, bank_target, 180, 2, 0
 	return
 
 .align 2
@@ -14875,7 +14886,6 @@ GEYSER_SPARKSS: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_SMALL_RED_EYE OAM_NORMAL_1
 GEYSER_UPROAR1: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_AIR_WAVE_2 OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E4088 0x80A8EE9
 GEYSER_UPROAR2: objtemplate ANIM_TAG_THIN_RING ANIM_TAG_SMALL_EMBER OAM_DOUBLE_BLEND_64x64 0x8231CF0 0x0 0x83E4088 0x80A8EE9
 GEYSER_ZAPBALL: objtemplate ANIM_TAG_YELLOW_BALL ANIM_TAG_YELLOW_BALL OAM_DOUBLE_16x16 0x8231CF0 0x0 0x8231CFC Callback_TranslateAnimSpriteToTargetMonLocation
-GEYSER_EXPLODINGHITS: objtemplate ANIM_TAG_EXPLOSION ANIM_TAG_SMALL_EMBER OAM_OFF_32x32 0x83E3F90 0x0 0x8231CFC 0x8075D9D
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -19229,8 +19239,10 @@ FINISH_TWINKLE_TACKLE:
 	pause 0x5
 	makebankvisible bank_attacker
 	makebankvisible bank_target
+	launchtask AnimTask_SwayMon 0x5 0x5, 0x0 0x8 2048 1 bank_attacker
 	call TWINKLE_STARS
 	waitanimation
+	launchtask AnimTask_SwayMon 0x5 0x5, 0x0 0x8 2048 1 bank_attacker
 	call TWINKLE_STARS
 	waitanimation
 	loadparticle ANIM_TAG_SPARKLE_4	@detect
