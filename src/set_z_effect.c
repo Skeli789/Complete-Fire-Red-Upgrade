@@ -240,6 +240,11 @@ bool8 DoesZMoveUsageStopMegaEvolution(u8 bank)
 		&& gNewBS->ZMoveData->partyIndex[SIDE(bank)] & gBitTable[gBattlerPartyIndexes[bank]];
 }
 
+bool8 DoesZMoveUsageStopDynamaxing(u8 bank)
+{
+	return DoesZMoveUsageStopMegaEvolution(bank);
+}
+
 move_t CanUseZMove(u8 bank, u8 moveIndex, u16 move)
 {
 	struct Pokemon* mon = GetBankPartyData(bank);

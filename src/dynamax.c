@@ -478,7 +478,7 @@ move_t GetMaxMove(u8 bank, u8 moveIndex)
 	|| IsRedPrimal(bank)
 	|| IsBluePrimal(bank)
 	|| IsUltraNecrozma(bank)
-	|| gNewBS->ZMoveData->used[bank]) //No using Z-Move and Dynamaxing
+	|| DoesZMoveUsageStopDynamaxing(bank)) //No using Z-Move and Dynamaxing
 		return MOVE_NONE;
 
 	if (SPLIT(baseMove) == SPLIT_STATUS)

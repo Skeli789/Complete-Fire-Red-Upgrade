@@ -237,6 +237,12 @@ void HandleInputChooseMove(void)
 		else
 			moveTarget = gBattleMoves[chosenMove].target;
 
+		if (gNewBS->ZMoveData->viewing && SPLIT(chosenMove) != SPLIT_STATUS) //Status moves keep original targets
+			moveTarget = gBattleMoves[CanUseZMove(gActiveBattler, 0xFF, chosenMove)].target;
+
+		if (gNewBS->dynamaxData.viewing || IsDynamaxed(gActiveBattler))
+			moveTarget = gBattleMoves[moveInfo->possibleMaxMoves[gMoveSelectionCursor[gActiveBattler]]].target;
+
 		if (moveTarget & MOVE_TARGET_USER)
 			gMultiUsePlayerCursor = gActiveBattler;
 		else
@@ -244,12 +250,6 @@ void HandleInputChooseMove(void)
 
 		if (gBattleBufferA[gActiveBattler][1]) // double battle
 		{
-			if (gNewBS->ZMoveData->viewing && SPLIT(chosenMove) != SPLIT_STATUS) //Status moves keep original targets
-				moveTarget = gBattleMoves[CanUseZMove(gActiveBattler, 0xFF, chosenMove)].target;
-				
-			if (gNewBS->dynamaxData.viewing || IsDynamaxed(gActiveBattler))
-				moveTarget = gBattleMoves[moveInfo->possibleMaxMoves[gMoveSelectionCursor[gActiveBattler]]].target;
-
 			if (!(moveTarget & (MOVE_TARGET_RANDOM | MOVE_TARGET_BOTH | MOVE_TARGET_DEPENDS | MOVE_TARGET_FOES_AND_ALLY | MOVE_TARGET_OPPONENTS_FIELD | MOVE_TARGET_USER)))
 				canSelectTarget++; // either selected or user
 
