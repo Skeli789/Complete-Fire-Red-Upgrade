@@ -91,13 +91,6 @@ enum
 	ATK49_COUNT,
 };
 
-enum
-{
-	Force_Switch_Regular,
-	Force_Switch_Dragon_Tail,
-	Force_Switch_Red_Card
-};
-
 void atk49_moveend(void) //All the effects that happen after a move is used
 {
 	int i;

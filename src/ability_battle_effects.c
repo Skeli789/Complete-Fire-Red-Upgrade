@@ -15,6 +15,7 @@
 #include "../include/new/battle_strings.h"
 #include "../include/new/battle_script_util.h"
 #include "../include/new/battle_util.h"
+#include "../include/new/cmd49.h"
 #include "../include/new/damage_calc.h"
 #include "../include/new/dynamax.h"
 #include "../include/new/form_change.h"
@@ -31,7 +32,6 @@ tables to edit:
 	gMoldBreakerIgnoredAbilities
 	gWeatherContinuesStringIds
 	gFlashFireStringIds
-
 */
 
 extern u8 gStatusConditionString_MentalState[];
@@ -909,8 +909,23 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 		case ABILITY_FRISK: ;
 			u8 foe = SIDE(bank) ^ BIT_SIDE;
 			u8 partner = PARTNER(foe);
+			u8 skipFoe = 0xFF;
 
-			if (BATTLER_ALIVE(foe) && ITEM(foe))
+			//Deal with a Red Card switch-in.
+			if (gForceSwitchHelper == Force_Switch_Red_Card)
+			{
+				skipFoe = gNewBS->originalTargetBackup;
+
+				if (IS_DOUBLE_BATTLE && partner == skipFoe) //The second Frisk target should be skipped
+				{
+					//Make the skipped target the first one
+					u8 temp = partner;
+					partner = foe;
+					foe = temp;
+				}
+			}
+
+			if (foe != skipFoe && BATTLER_ALIVE(foe) && ITEM(foe))
 			{
 				gLastUsedItem = ITEM(foe);
 				gBankTarget = foe;
@@ -920,7 +935,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				BattleScriptPushCursorAndCallback(BattleScript_Frisk);
 				effect++;
 			}
-			else if (IsDoubleBattle() && BATTLER_ALIVE(partner) && ITEM(partner))
+			else if (IS_DOUBLE_BATTLE && BATTLER_ALIVE(partner) && ITEM(partner) != ITEM_NONE)
 			{
 				gLastUsedItem = ITEM(partner);
 				gBankTarget = partner;

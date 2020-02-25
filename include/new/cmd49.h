@@ -30,6 +30,13 @@ enum
 	FAINT_COUNT,
 };
 
+enum
+{
+	Force_Switch_Regular,
+	Force_Switch_Dragon_Tail,
+	Force_Switch_Red_Card
+};
+
 #define ARG_IN_FUTURE_ATTACK 3
 #define ARG_IN_PURSUIT 4
 #define ARG_ONLY_EMERGENCY_EXIT 5
