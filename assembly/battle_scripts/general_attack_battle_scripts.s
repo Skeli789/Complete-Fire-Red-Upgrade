@@ -2003,8 +2003,13 @@ BS_102_HealBell:
 	jumpifmove MOVE_AROMATHERAPY AromatherapySapSipperCheckBS
 	jumpifnotmove MOVE_HEALBELL BattleScript_PartyHealEnd
 	jumpifbyte NOTANDS MULTISTRING_CHOOSER 0x1 BattleScript_CheckHealBellMon2Unaffected
-	printstring 0x132
+	copybyte FORM_COUNTER BATTLE_SCRIPTING_BANK
+	copybyte BATTLE_SCRIPTING_BANK USER_BANK
+	call BattleScript_AbilityPopUp
+	printstring 0x15E @;STRINGID_PKMNSXBLOCKSY2
 	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	copybyte BATTLE_SCRIPTING_BANK FORM_COUNTER
 
 BattleScript_CheckHealBellMon2Unaffected:
 	jumpifbyte NOTANDS MULTISTRING_CHOOSER 0x2 BattleScript_PartyHealEnd

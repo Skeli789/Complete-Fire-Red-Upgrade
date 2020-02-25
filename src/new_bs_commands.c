@@ -635,7 +635,7 @@ void atkFF13_setdamagetobankhealthpercent(void)
 {
 	u8 bank = GetBattleBank(gBattlescriptCurrInstr[1]);
 	u8 percent = gBattlescriptCurrInstr[2];
-	gBattleMoveDamage = udivsi(gBattleMons[bank].maxHP * percent, 100);
+	gBattleMoveDamage = (GetBaseMaxHP(bank) * percent) / 100;
 	gBattlescriptCurrInstr += 3;
 }
 

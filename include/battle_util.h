@@ -50,11 +50,11 @@
 #define BS_GET_PLAYER2                  13
 #define BS_GET_OPPONENT2                14
 
-
-/*
 void __attribute__((long_call)) PressurePPLose(u8 bankDef, u8 bankAtk, u16 move);
 void __attribute__((long_call)) PressurePPLoseOnUsingPerishSong(u8 bankAtk);
 void __attribute__((long_call)) PressurePPLoseOnUsingImprision(u8 bankAtk);
+
+/*
 void __attribute__((long_call)) MarkAllBufferBanksForExecution(void); // unused
 void __attribute__((long_call)) MarkBufferBankForExecution(u8 bank);
 void __attribute__((long_call)) sub_803F850(u8 arg0);

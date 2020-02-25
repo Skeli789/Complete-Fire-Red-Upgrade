@@ -957,7 +957,7 @@ void atk1B_cleareffectsonfaint(void) {
 				gNewBS->ReceiverActivated = FALSE;
 				u8 partnerAbility = ABILITY(partner);
 
-				if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE
+				if (IS_DOUBLE_BATTLE
 				&& (partnerAbility == ABILITY_RECEIVER || partnerAbility == ABILITY_POWEROFALCHEMY)
 				&& !CheckTableForAbility(CopyAbility(gActiveBattler), gReceiverBannedAbilities))
 				{
@@ -1137,6 +1137,53 @@ void atk1F_jumpifsideaffecting(void) {
 		gBattlescriptCurrInstr = jump_loc;
 	else
 		gBattlescriptCurrInstr += 8;
+}
+
+void atk1E_jumpifability(void)
+{
+	u8 battlerId;
+	u8 ability = gBattlescriptCurrInstr[2];
+	const u8* jumpPtr = T2_READ_PTR(gBattlescriptCurrInstr + 3);
+
+	if (gBattlescriptCurrInstr[1] == BS_GET_ATTACKER_SIDE)
+	{
+		battlerId = AbilityBattleEffects(ABILITYEFFECT_CHECK_BANK_SIDE, gBankAttacker, ability, 0, 0);
+		if (battlerId)
+		{
+			gLastUsedAbility = ability;
+			gBattlescriptCurrInstr = jumpPtr;
+			RecordAbilityBattle(battlerId - 1, gLastUsedAbility);
+			gBattleScripting->bankWithAbility = battlerId - 1;
+		}
+		else
+			gBattlescriptCurrInstr += 7;
+	}
+	else if (gBattlescriptCurrInstr[1] == BS_GET_NOT_ATTACKER_SIDE)
+	{
+		battlerId = AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, gBankAttacker, ability, 0, 0);
+		if (battlerId)
+		{
+			gLastUsedAbility = ability;
+			gBattlescriptCurrInstr = jumpPtr;
+			RecordAbilityBattle(battlerId - 1, gLastUsedAbility);
+			gBattleScripting->bankWithAbility = battlerId - 1;
+		}
+		else
+			gBattlescriptCurrInstr += 7;
+	}
+	else
+	{
+		battlerId = GetBattleBank(gBattlescriptCurrInstr[1]);
+		if (ABILITY(battlerId) == ability)
+		{
+			gLastUsedAbility = ability;
+			gBattlescriptCurrInstr = jumpPtr;
+			RecordAbilityBattle(battlerId, gLastUsedAbility);
+			gBattleScripting->bankWithAbility = battlerId;
+		}
+		else
+			gBattlescriptCurrInstr += 7;
+	}
 }
 
 void atk22_jumpiftype(void) //u8 bank, u8 type, *ptr
@@ -1511,7 +1558,7 @@ void atk6A_removeitem(void) {
 	u8 partner = PARTNER(bank);
 	u16 partnerItem = gBattleMons[partner].item;
 
-	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE
+	if (IS_DOUBLE_BATTLE
 	&& gNewBS->NoSymbiosisByte == FALSE
 	&& ABILITY(partner) == ABILITY_SYMBIOSIS
 	&& (!gNewBS->IncinerateCounters[bank] || oldItemEffect == ITEM_EFFECT_AIR_BALLOON) //Air Balloons can't be restored by Recycle, but they trigger Symbiosis
@@ -1669,7 +1716,7 @@ void atk78_faintifabilitynotdamp(void)
 void atk7A_jumpifnexttargetvalid(void) {
 	u8* jump_loc = T1_READ_PTR(gBattlescriptCurrInstr + 1);
 
-	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE) {
+	if (IS_DOUBLE_BATTLE) {
 
 		if (gBankAttacker == GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT)
 		&& gBankTarget == GetBattlerAtPosition(B_POSITION_PLAYER_LEFT))
@@ -1857,7 +1904,7 @@ void atk81_trysetrest(void)
 		gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
 		fail = TRUE;
 	}
-	else if (IsOfType(gActiveBattler, TYPE_GRASS) && gBattleTypeFlags & BATTLE_TYPE_DOUBLE && ABILITY(PARTNER(gActiveBattler)) == ABILITY_FLOWERVEIL)
+	else if (IsOfType(gActiveBattler, TYPE_GRASS) && IS_DOUBLE_BATTLE && ABILITY(PARTNER(gActiveBattler)) == ABILITY_FLOWERVEIL)
 	{
 		gBattleScripting->bank = PARTNER(gActiveBattler);
 		gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
@@ -1869,7 +1916,7 @@ void atk81_trysetrest(void)
 		gBattlescriptCurrInstr = BattleScript_TeamProtectedBySweetVeil;
 		fail = TRUE;
 	}
-	else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && ABILITY(PARTNER(gActiveBattler)) == ABILITY_SWEETVEIL)
+	else if (IS_DOUBLE_BATTLE && ABILITY(PARTNER(gActiveBattler)) == ABILITY_SWEETVEIL)
 	{
 		gBattleScripting->bank = PARTNER(gActiveBattler);
 		gBattlescriptCurrInstr = BattleScript_TeamProtectedBySweetVeil;
@@ -2787,26 +2834,26 @@ void atkA4_trysetencore(void)
 
 void atkA5_painsplitdmgcalc(void)
 {
-    if (!IS_BEHIND_SUBSTITUTE(gBankTarget))
-    {
-        s32 hpDiff = (GetBaseCurrentHP(gBankAttacker) + GetBaseCurrentHP(gBankTarget)) / 2;
-        s32 painSplitHp = gBattleMoveDamage = GetBaseCurrentHP(gBankTarget) - hpDiff;
-        u8* storeLoc = (void*)(&gBattleScripting->painSplitHp);
+	if (!IS_BEHIND_SUBSTITUTE(gBankTarget))
+	{
+		s32 hpDiff = (GetBaseCurrentHP(gBankAttacker) + GetBaseCurrentHP(gBankTarget)) / 2;
+		s32 painSplitHp = gBattleMoveDamage = GetBaseCurrentHP(gBankTarget) - hpDiff;
+		u8* storeLoc = (void*)(&gBattleScripting->painSplitHp);
 
-        storeLoc[0] = (painSplitHp);
-        storeLoc[1] = (painSplitHp & 0x0000FF00) >> 8;
-        storeLoc[2] = (painSplitHp & 0x00FF0000) >> 16;
-        storeLoc[3] = (painSplitHp & 0xFF000000) >> 24;
+		storeLoc[0] = (painSplitHp);
+		storeLoc[1] = (painSplitHp & 0x0000FF00) >> 8;
+		storeLoc[2] = (painSplitHp & 0x00FF0000) >> 16;
+		storeLoc[3] = (painSplitHp & 0xFF000000) >> 24;
 
-        gBattleMoveDamage = GetBaseCurrentHP(gBankAttacker) - hpDiff;
-        gSpecialStatuses[gBankTarget].moveturnLostHP = 0xFFFF;
+		gBattleMoveDamage = GetBaseCurrentHP(gBankAttacker) - hpDiff;
+		gSpecialStatuses[gBankTarget].moveturnLostHP = 0xFFFF;
 
-        gBattlescriptCurrInstr += 5;
-    }
-    else
-    {
-        gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
-    }
+		gBattlescriptCurrInstr += 5;
+	}
+	else
+	{
+		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+	}
 }
 
 void atkA6_settypetorandomresistance(void) //Conversion 2
@@ -2989,7 +3036,8 @@ void atkAA_setdestinybond(void) {
 	}
 }
 
-void atkAD_tryspiteppreduce(void) {
+void atkAD_tryspiteppreduce(void)
+{
 	if (gLastUsedMoves[gBankTarget] != 0
 	&&  gLastUsedMoves[gBankTarget] != 0xFFFF
 	&& (!(gStatuses3[gBankTarget] & STATUS3_SEMI_INVULNERABLE) || ABILITY(gBankAttacker) == ABILITY_NOGUARD || ABILITY(gBankTarget) == ABILITY_NOGUARD)) {
@@ -3033,7 +3081,102 @@ void atkAD_tryspiteppreduce(void) {
 	gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
 }
 
-void atkAF_cursetarget(void) {
+void atkAE_healpartystatus(void)
+{
+	u32 zero = 0;
+	u8 toHeal = 0;
+
+	if (CheckSoundMove(gCurrentMove))
+	{
+		int i;
+		struct Pokemon *party;
+
+		gBattleCommunication[MULTISTRING_CHOOSER] = 0;
+
+		if (SIDE(gBankAttacker) == B_SIDE_PLAYER)
+			party = gPlayerParty;
+		else
+			party = gEnemyParty;
+
+		if (ABILITY(gBankAttacker) != ABILITY_SOUNDPROOF)
+		{
+			gBattleMons[gBankAttacker].status1 = 0;
+			gBattleMons[gBankAttacker].status2 &= ~(STATUS2_NIGHTMARE);
+		}
+		else
+		{
+			RecordAbilityBattle(gBankAttacker, ABILITY(gBankAttacker));
+			gBattleCommunication[MULTISTRING_CHOOSER] |= 1;
+		}
+
+		gActiveBattler = gBattleScripting->bank = GetBattlerAtPosition(GetBattlerPosition(gBankAttacker) ^ BIT_FLANK);
+
+		if (IS_DOUBLE_BATTLE
+		&& !(gAbsentBattlerFlags & gBitTable[gActiveBattler]))
+		{
+			if (ABILITY(gActiveBattler) != ABILITY_SOUNDPROOF)
+			{
+				gBattleMons[gActiveBattler].status1 = 0;
+				gBattleMons[gActiveBattler].status2 &= ~(STATUS2_NIGHTMARE);
+			}
+			else
+			{
+				RecordAbilityBattle(gActiveBattler, ABILITY(gActiveBattler));
+				gBattleCommunication[MULTISTRING_CHOOSER] |= 2;
+			}
+		}
+
+		for (i = 0; i < PARTY_SIZE; ++i)
+		{
+			u16 species = GetMonData(&party[i], MON_DATA_SPECIES2, NULL);
+
+			if (species != SPECIES_NONE && species != SPECIES_EGG)
+			{
+				u8 ability;
+
+				if (i == gBattlerPartyIndexes[gBankAttacker])
+					ability = ABILITY(gBankAttacker);
+				else if (IS_DOUBLE_BATTLE
+				&& i == gBattlerPartyIndexes[gActiveBattler]
+				&& !(gAbsentBattlerFlags & gBitTable[gActiveBattler]))
+					ability = ABILITY(gActiveBattler);
+				else
+					ability = GetMonAbility(&party[i]);
+
+				if (ability != ABILITY_SOUNDPROOF)
+					toHeal |= (1 << i);
+			}
+		}
+	}
+	else // Aromatherapy
+	{
+		gBattleCommunication[MULTISTRING_CHOOSER] = 4;
+		toHeal = 0x3F;
+
+		gBattleMons[gBankAttacker].status1 = 0;
+		gBattleMons[gBankAttacker].status2 &= ~(STATUS2_NIGHTMARE);
+
+		gActiveBattler = GetBattlerAtPosition(GetBattlerPosition(gBankAttacker) ^ BIT_FLANK);
+		if (IS_DOUBLE_BATTLE
+		&& !(gAbsentBattlerFlags & gBitTable[gActiveBattler]))
+		{
+			gBattleMons[gActiveBattler].status1 = 0;
+			gBattleMons[gActiveBattler].status2 &= ~(STATUS2_NIGHTMARE);
+		}
+	}
+
+	if (toHeal)
+	{
+		gActiveBattler = gBankAttacker;
+		EmitSetMonData(0, REQUEST_STATUS_BATTLE, toHeal, 4, &zero);
+		MarkBufferBankForExecution(gActiveBattler);
+	}
+
+	gBattlescriptCurrInstr++;
+}
+
+void atkAF_cursetarget(void)
+{
 	if (gBattleMons[gBankTarget].status2 & STATUS2_CURSED
 	|| (gStatuses3[gBankTarget] & STATUS3_SEMI_INVULNERABLE && ABILITY(gBankAttacker) != ABILITY_NOGUARD && ABILITY(gBankTarget) != ABILITY_NOGUARD))
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
@@ -3045,7 +3188,8 @@ void atkAF_cursetarget(void) {
 	}
 }
 
-void atkB0_trysetspikes(void) {
+void atkB0_trysetspikes(void)
+{
 	u8 atkSide = SIDE(gBankAttacker);
 	u8 defSide = atkSide ^ BIT_SIDE;
 	u8 stringcase = 0xFF;
@@ -3127,6 +3271,33 @@ void atkB0_trysetspikes(void) {
 
 	if (stringcase != 0xFF)
 		gBattleStringLoader = (u8*) sEntryHazardsStrings[stringcase];
+}
+
+void atkB2_trysetperishsong(void)
+{
+	s32 i;
+	s32 notAffectedCount = 0;
+
+	for (i = 0; i < gBattlersCount; ++i)
+	{
+		if (gStatuses3[i] & STATUS3_PERISH_SONG || ABILITY(i) == ABILITY_SOUNDPROOF)
+		{
+			notAffectedCount++;
+		}
+		else
+		{
+			gStatuses3[i] |= STATUS3_PERISH_SONG;
+			gDisableStructs[i].perishSongTimer = 3;
+			gDisableStructs[i].perishSongTimerStartValue = 3;
+		}
+	}
+
+	PressurePPLoseOnUsingPerishSong(gBankAttacker);
+
+	if (notAffectedCount == gBattlersCount)
+		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+	else
+		gBattlescriptCurrInstr += 5;
 }
 
 //Actual calc has been moved to GetBasePower function
@@ -3529,7 +3700,7 @@ void atkC2_selectfirstvalidtarget(void) {
 	}
 
 	//Stops certain animations from acting like they only target the partner
-	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE
+	if (IS_DOUBLE_BATTLE
 	&&  gBankAttacker == GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT)
 	&&  gBankTarget == GetBattlerAtPosition(B_POSITION_PLAYER_LEFT))
 	{
@@ -3726,16 +3897,16 @@ u16 GetNaturePowerMove(void)
 
 void atkCE_settorment(void)
 {
-    if (gBattleMons[gBankTarget].status2 & STATUS2_TORMENT
+	if (gBattleMons[gBankTarget].status2 & STATUS2_TORMENT
 	||  IsDynamaxed(gBankTarget))
-    {
-        gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
-    }
-    else
-    {
-        gBattleMons[gBankTarget].status2 |= STATUS2_TORMENT;
-        gBattlescriptCurrInstr += 5;
-    }
+	{
+		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+	}
+	else
+	{
+		gBattleMons[gBankTarget].status2 |= STATUS2_TORMENT;
+		gBattlescriptCurrInstr += 5;
+	}
 }
 
 void atkCF_jumpifnodamage(void)

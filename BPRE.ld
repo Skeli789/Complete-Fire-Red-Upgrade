@@ -321,6 +321,7 @@ HandleEndTurn_FinishBattle = 0x8015910 | 1;
 GetBattleBank = 0x8016E24 | 1;
 PressurePPLose = 0x8016EC8 | 1;
 PressurePPLoseOnUsingImprision = 0x8016F90 | 1;
+PressurePPLoseOnUsingPerishSong = 0x80170C4 | 1;
 MarkBufferBankForExecution = 0x8017248 | 1;
 CancelMultiTurnMoves = 0x80172E8 | 1;
 WasUnableToUseMove = 0x8017354 | 1;
