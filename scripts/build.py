@@ -94,7 +94,10 @@ def RunCommand(cmd: [str]):
     try:
         subprocess.check_output(cmd)
     except subprocess.CalledProcessError as e:
-        print(e.output.decode(), file=sys.stderr)
+        try:
+            print(e.output.decode(), file=sys.stderr)
+        except:
+            print(e)
         sys.exit(1)
 
 
