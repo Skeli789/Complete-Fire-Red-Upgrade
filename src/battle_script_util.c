@@ -1846,11 +1846,12 @@ void SetBattleScriptingBankForPartnerAbilityNoStatLoss(void)
 	gBattleScripting->bank = PARTNER(gBattleScripting->bank);
 }
 
-void FailIfAttackerIsntHoldingBerry(void)
+extern const u16 gBannedBattleEatBerries[];
+void FailIfAttackerIsntHoldingEdibleBerry(void)
 {
 	u16 item = ITEM(gBankAttacker);
 	
-	if (!IsBerry(item))
+	if (!IsBerry(item) || CheckTableForItem(item, gBannedBattleEatBerries))
 		gBattlescriptCurrInstr = BattleScript_ButItFailedAttackstring - 5;
 }
 

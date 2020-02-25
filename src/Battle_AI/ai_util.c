@@ -2503,7 +2503,8 @@ bool8 ShouldAIDynamax(u8 bankAtk, u8 bankDef, u16 move)
 			return FALSE; //No need to Dynamax against your partner
 
 		if (IsMegaStone(GetBankPartyData(bankAtk)->item)
-		||  IsZCrystal(GetBankPartyData(bankAtk)->item))
+		|| IsZCrystal(GetBankPartyData(bankAtk)->item)
+		|| GetMaxMove(bankAtk, 0) == MOVE_NONE)
 			return FALSE;
 
 		if (IsClassSweeper(GetBankFightingStyle(bankAtk)))

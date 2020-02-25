@@ -104,7 +104,7 @@ void SetHealBlockTimer(void);
 void SetThroatChopTimer(void);
 void SetNoMoreMovingThisTurnScriptingBank(void);
 void SetBattleScriptingBankForPartnerAbilityNoStatLoss(void);
-void FailIfAttackerIsntHoldingBerry(void);
+void FailIfAttackerIsntHoldingEdibleBerry(void);
 void SetTempIgnoreAnimations(void);
 void ClearTempIgnoreAnimations(void);
 void FailIfTrappedByNoRetreat(void);

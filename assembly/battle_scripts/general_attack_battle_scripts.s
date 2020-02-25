@@ -1271,7 +1271,7 @@ CottonGuardBS:
 
 StuffCheeksBS:
 	attackcanceler
-	callasm FailIfAttackerIsntHoldingBerry
+	callasm FailIfAttackerIsntHoldingEdibleBerry
 	attackstring
 	ppreduce
 	attackanimation

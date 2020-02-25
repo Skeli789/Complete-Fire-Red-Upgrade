@@ -426,6 +426,17 @@ const struct FlingStruct gFlingTable[ITEMS_COUNT] =
 	[ITEM_IRON_BALL] = {130, 0},
 };
 
+const u16 gBannedBattleEatBerries[] =
+{
+	ITEM_POMEG_BERRY,
+	ITEM_KELPSY_BERRY,
+	ITEM_QUALOT_BERRY,
+	ITEM_HONDEW_BERRY,
+	ITEM_GREPA_BERRY,
+	ITEM_TAMATO_BERRY,
+	ITEM_TABLES_TERMIN
+};
+
 const u8 gConsumableItemEffects[] =
 {
 	ITEM_EFFECT_RESTORE_HP,

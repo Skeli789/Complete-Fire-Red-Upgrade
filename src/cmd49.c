@@ -466,12 +466,14 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			gBattleScripting->atk49_state++;
 			break;
 
+		extern const u16 gBannedBattleEatBerries[];
 		case ATK49_PLUCK:
 			if (MOVE_HAD_EFFECT
 			&& TOOK_DAMAGE(gBankTarget)
 			&& gBattleMoves[gCurrentMove].effect == EFFECT_EAT_BERRY
 			&& gCurrentMove != MOVE_INCINERATE
 			&& IsBerry(ITEM(gBankTarget))
+			&& !CheckTableForItem(ITEM(gBankTarget), gBannedBattleEatBerries)
 			&& ABILITY(gBankTarget) != ABILITY_STICKYHOLD
 			&& (!gBattleMons[gBankTarget].hp || !(ITEM_EFFECT(gBankTarget) == ITEM_EFFECT_JABOCA_ROWAP_BERRY && ITEM_QUALITY(gBankTarget) == CalcMoveSplit(gBankAttacker, gCurrentMove))))
 			{

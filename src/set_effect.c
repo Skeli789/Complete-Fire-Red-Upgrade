@@ -685,8 +685,12 @@ void SetMoveEffect(bool8 primary, u8 certain)
 
 				break;
 			
+			extern const u16 gBannedBattleEatBerries[];
 			case MOVE_EFFECT_EAT_BERRY:
-				if (IsBerry(ITEM(gEffectBank)) && BATTLER_ALIVE(gEffectBank))
+				if (IsBerry(ITEM(gEffectBank))
+				&& !CheckTableForItem(ITEM(gEffectBank), gBannedBattleEatBerries)
+				&& BATTLER_ALIVE(gEffectBank)
+				&& gEffectBank == gBankAttacker) //Don't do Pluck here
 				{
 					gNewBS->BelchCounters |= gBitTable[gBattlerPartyIndexes[gEffectBank]];
 					gLastUsedItem = gBattleMons[gEffectBank].item;
