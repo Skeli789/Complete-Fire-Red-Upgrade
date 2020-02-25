@@ -397,6 +397,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 				gBattleMons[gEffectBank].status2 |= STATUS2_MULTIPLETURNS;
 				gLockedMoves[gEffectBank] = gCurrentMove;
 				gProtectStructs[gEffectBank].chargingTurn = 1;
+				gNewBS->metronomeItemBonus[gEffectBank] = 2;
 				gBattlescriptCurrInstr++;
 				break;
 

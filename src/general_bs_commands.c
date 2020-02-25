@@ -133,10 +133,11 @@ void atk02_attackstring(void)
 
 			if (!CheckTableForMove(gCurrentMove, gMovesThatCallOtherMoves))
 			{
+				u8 chargingBonus = 20 * gNewBS->metronomeItemBonus[gBankAttacker];
 				if (gLastPrintedMoves[gBankAttacker] == gCurrentMove)
-					gNewBS->MetronomeCounter[gBankAttacker] = MathMin(100, gNewBS->MetronomeCounter[gBankAttacker] + 20);
+					gNewBS->MetronomeCounter[gBankAttacker] = MathMin(100, gNewBS->MetronomeCounter[gBankAttacker] + 20 + chargingBonus);
 				else
-					gNewBS->MetronomeCounter[gBankAttacker] = 0;
+					gNewBS->MetronomeCounter[gBankAttacker] = 0 + chargingBonus;
 			}
 		}
 

@@ -1444,6 +1444,9 @@ u8 TurnBasedEffects(void)
 					gNewBS->ai.fightingStyle[i] = 0xFF;
 					gNewBS->ai.megaPotential[i] = NULL;
 
+					if (gNewBS->metronomeItemBonus[i] > 0)
+						--gNewBS->metronomeItemBonus[i];
+
 					if (gNewBS->dynamaxData.timer[i] > 0)
 					{
 						if (--gNewBS->dynamaxData.timer[i] == 0)

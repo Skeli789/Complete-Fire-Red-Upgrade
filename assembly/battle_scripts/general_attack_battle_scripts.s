@@ -1628,7 +1628,7 @@ TwoTurnMovesSecondTurnBS:
 	setmoveeffect MOVE_EFFECT_CHARGING
 	setbyte ANIM_TURN 0x1
 	clearstatus BANK_ATTACKER
-	
+
 PowerHerbSkipBS:
 	orword HIT_MARKER HITMARKER_NO_PPDEDUCT
 	clearsemiinvulnerablebit
