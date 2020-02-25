@@ -1021,18 +1021,14 @@ void HandleAction_UseMove(void)
 	}
 	else if (IsDynamaxed(gBankAttacker))
 	{
-		if (IsRaidBattle() && SIDE(gBankAttacker) == B_SIDE_OPPONENT)
+		if (IsRaidBattle() && gBankAttacker == GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT))
 		{
 			u8 split = SPLIT(gCurrentMove);
 			bool8 isBannedMove = CheckTableForMove(gCurrentMove, gRaidBattleBannedRaidMonMoves) || CheckTableForMove(gCurrentMove, gRaidBattleBannedMoves);
 
 			if (isBannedMove && split != SPLIT_STATUS) //Use banned status move - don't use Max Guard
 				goto TURN_MOVE_INTO_MAX_MOVE;
-			else if (split == SPLIT_STATUS
-			|| gCurrentMove == MOVE_STRUGGLE
-			|| (gRaidBattleStars  < 4 && (Random() & 3) == 0) //25 % chance to use regular damaging move
-			|| (gRaidBattleStars >= 4 && (Random() % 100 < 10)) //Harder foes have a lower chance of using regular moves
-			|| gBattleMons[gBankAttacker].status2 & (STATUS2_RECHARGE | STATUS2_MULTIPLETURNS))
+			else if (IsRaidBossUsingRegularMove(gBankAttacker, gCurrentMove))
 			{
 				//Samll chance to use regular damaging move
 				//Raid wild Pokemon shouldn't be using Max Guard

@@ -572,7 +572,7 @@ void MeFirstFunc(void)
 	|| CheckTableForMove(move, gMeFirstBannedMoves)
 	|| CheckTableForMove(move, gMovesThatCallOtherMoves))
 	{
-		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5 - 1; //Start from PP Reduce
 	}
 	else
 	{

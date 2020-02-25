@@ -4603,8 +4603,7 @@ BS_217_Blank:
 BS_218_MeFirst:
 	attackcanceler
 	attackstringnoprotean
-	ppreduce
-	accuracycheck FAILED 0x0
+	accuracycheck FAILED_PRE + 1 0x0
 	callasm MeFirstFunc + 1
 	attackanimation
 	waitanimation

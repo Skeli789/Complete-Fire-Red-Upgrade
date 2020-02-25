@@ -473,7 +473,11 @@ static move_t GetGMaxMove(u16 move, u8 bank)
 move_t GetMaxMove(u8 bank, u8 moveIndex)
 {
 	u16 baseMove = gBattleMons[bank].moves[moveIndex];
+	return GetMaxMoveByMove(bank, baseMove);
+}
 
+move_t GetMaxMoveByMove(u8 bank, u16 baseMove)
+{
 	if (IsMega(bank)
 	|| IsRedPrimal(bank)
 	|| IsBluePrimal(bank)
@@ -947,6 +951,15 @@ u8 GetRaidBattleStatNullificationChance(u8 bank)
 		default:
 			return 50; //50 % chance before each attack
 	}
+}
+
+bool8 IsRaidBossUsingRegularMove(u8 bank, u16 baseMove)
+{
+	return SPLIT(baseMove) == SPLIT_STATUS
+		|| baseMove == MOVE_STRUGGLE
+		|| (gRaidBattleStars < 4 && (gRandomTurnNumber & 3) == 0) //25 % chance to use regular damaging move
+		|| (gRaidBattleStars >= 4 && (gRandomTurnNumber % 100 >= 90)) //Harder foes have a lower chance of using regular moves
+		|| gBattleMons[bank].status2 & (STATUS2_RECHARGE | STATUS2_MULTIPLETURNS);
 }
 
 static u8 GetRaidMapSectionId(void)

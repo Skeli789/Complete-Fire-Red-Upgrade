@@ -287,11 +287,14 @@ u16 ReplaceWithZMoveRuntime(u8 bankAtk, u16 move)
 		if (zMove != MOVE_NONE)
 			move = zMove;
 	}
-	else if ((IsDynamaxed(bankAtk) || (gNewBS->dynamaxData.toBeUsed[bankAtk] && !gNewBS->dynamaxData.used[bankAtk]))
-		&& SPLIT(move) == SPLIT_STATUS
-		&& !(IsRaidBattle() && bankAtk == GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT))) //Raid Pokemon can't use Max Guard
+	else if (IsDynamaxed(bankAtk) || (gNewBS->dynamaxData.toBeUsed[bankAtk] && !gNewBS->dynamaxData.used[bankAtk]))
 	{
-		move = MOVE_MAX_GUARD;
+		if (IsRaidBattle() && bankAtk == GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT) && IsRaidBossUsingRegularMove(bankAtk, move))
+			return move; //This turn the raid boss isn't using a Max Move
+
+		u16 maxMove = GetMaxMoveByMove(bankAtk, move);
+		if (maxMove != MOVE_NONE)
+			move = maxMove;
 	}
 
 	return move;
