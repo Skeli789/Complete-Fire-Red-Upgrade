@@ -22,7 +22,6 @@ void SetStatSwapSplit(void);
 void ResetTargetStats(void);
 void ToggleSpectralThiefByte(void);
 void CheeckPouchFunc(void);
-void SetUnburdenBoostTarget(void);
 void MoldBreakerRemoveAbilitiesOnForceSwitchIn(void);
 void MoldBreakerRestoreAbilitiesOnForceSwitchIn(void);
 void TrainerSlideOut(void);

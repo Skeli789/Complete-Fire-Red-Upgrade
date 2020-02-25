@@ -1398,7 +1398,8 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 
 				case ABILITY_BALLFETCH:
 					if (gNewBS->failedThrownPokeBall != ITEM_NONE
-					&&  ITEM(bank) == ITEM_NONE)
+					&& SIDE(bank) == B_SIDE_PLAYER
+					&& ITEM(bank) == ITEM_NONE)
 					{
 						gLastUsedItem = ITEM(bank) = gNewBS->failedThrownPokeBall;
 						gNewBS->failedThrownPokeBall = ITEM_NONE;

@@ -474,6 +474,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 
 				gLastUsedItem = gBattleMons[gBankTarget].item;
 				gBattleMons[gBankTarget].item = 0;
+				HandleUnburdenBoost(gBankTarget); //Give target Unburden boost
 
 				gActiveBattler = gBankTarget;
 				EmitSetMonData(0, REQUEST_HELDITEM_BATTLE, 0, 2, &gBattleMons[gActiveBattler].item);

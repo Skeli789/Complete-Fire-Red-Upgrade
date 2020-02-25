@@ -1131,6 +1131,25 @@ bool8 IsZMove(const u16 move)
 	return move >= FIRST_Z_MOVE && move <= LAST_Z_MOVE;
 }
 
+void ResetVarsForAbilityChange(u8 bank)
+{
+	gNewBS->SlowStartTimers[bank] = 0;
+	gStatuses3[bank] &= ~(STATUS3_SWITCH_IN_ABILITY_DONE);
+	HandleUnburdenBoost(bank);
+}
+
+void HandleUnburdenBoost(u8 bank)
+{
+	//1. Boost bit is only set if the Pokemon has Unburden.
+	//2. Losing Unburden clears the boost, even if the Pokemon gets Unburden back.
+	//3. If Unburden is suppressed, the boost isn't lost if Unburden returns,
+	//   but a new one can't be gained during the suppression.
+	if (ABILITY(bank) == ABILITY_UNBURDEN && ITEM(bank) == ITEM_NONE)
+		gNewBS->UnburdenBoosts |= gBitTable[bank];
+	else if (*GetAbilityLocation(bank) != ABILITY_UNBURDEN || ITEM(bank) != ITEM_NONE)
+		gNewBS->UnburdenBoosts &= ~gBitTable[bank];
+}
+
 void AddBankToPickupStack(const u8 bank)
 {
 	u32 i, j;

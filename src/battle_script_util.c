@@ -242,11 +242,6 @@ void CheeckPouchFunc(void)
 		gFormCounter = FALSE;
 }
 
-void SetUnburdenBoostTarget(void)
-{
-	gNewBS->UnburdenBoosts |= 1 << gBankTarget;
-}
-
 void MoldBreakerRemoveAbilitiesOnForceSwitchIn(void)
 {
 	u8 bank;
@@ -446,6 +441,8 @@ void BestowItem(void)
 	{
 		gLastUsedItem = gBattleMons[gBankTarget].item = ITEM(gBankAttacker);
 		gBattleMons[gBankAttacker].item = 0;
+		HandleUnburdenBoost(gBankAttacker); //Give attacker Unburden boost
+		HandleUnburdenBoost(gBankTarget); //Remove target Unburden boost
 
 		gActiveBattler = gBankAttacker;
 		EmitSetMonData(0, REQUEST_HELDITEM_BATTLE, 0, 2, &gBattleMons[gActiveBattler].item);
@@ -1262,7 +1259,7 @@ void AbilityChangeBSFunc(void)
 			{
 				*defAbilityLoc = ABILITY_INSOMNIA;
 				gLastUsedAbility = defAbility; //Original ability
-				gNewBS->SlowStartTimers[gBankTarget] = 0;
+				ResetVarsForAbilityChange(gBankTarget);
 				gBattleStringLoader = WorrySeedString;
 			}
 			break;
@@ -1295,7 +1292,7 @@ void AbilityChangeBSFunc(void)
 			{
 				*defAbilityLoc = atkAbility;
 				gLastUsedAbility = defAbility; //Original ability
-				gNewBS->SlowStartTimers[gBankTarget] = 0;
+				ResetVarsForAbilityChange(gBankTarget);
 				gBattleStringLoader = EntrainmentString;
 
 				if (gLastUsedAbility == ABILITY_TRUANT)
@@ -1312,7 +1309,7 @@ void AbilityChangeBSFunc(void)
 			{
 				*defAbilityLoc = ABILITY_SIMPLE;
 				gLastUsedAbility = defAbility; //Original ability
-				gNewBS->SlowStartTimers[gBankTarget] = 0;
+				ResetVarsForAbilityChange(gBankTarget);
 				gBattleStringLoader = SimpleBeamString;
 			}
 			break;

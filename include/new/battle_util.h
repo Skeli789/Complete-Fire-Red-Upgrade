@@ -75,6 +75,8 @@ u8 FindMovePositionInMoveset(u16 move, u8 bank);
 bool8 MoveInMoveset(u16 move, u8 bank);
 u8 AttacksThisTurn(u8 bank, u16 move);
 bool8 IsZMove(const u16 move);
+void ResetVarsForAbilityChange(u8 bank);
+void HandleUnburdenBoost(u8 bank);
 void AddBankToPickupStack(const u8 bank);
 void RemoveBankFromPickupStack(const u8 bank);
 u8 GetTopOfPickupStackNotIncludingBank(const u8 bank);

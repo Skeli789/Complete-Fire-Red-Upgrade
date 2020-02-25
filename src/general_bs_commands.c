@@ -1544,16 +1544,19 @@ void atk6A_removeitem(void) {
 	u8 oldItemEffect = ITEM_EFFECT(bank);
 	gLastUsedItem = gBattleMons[bank].item;
 
-	if (!gNewBS->IncinerateCounters[bank] && gLastUsedItem) {
-		CONSUMED_ITEMS(bank) = gLastUsedItem;
-		SAVED_CONSUMED_ITEMS(bank) = gLastUsedItem;
-		gNewBS->UnburdenBoosts |= 1 << bank;
-		AddBankToPickupStack(bank);
+	if (gLastUsedItem != ITEM_NONE)
+	{
+		if (!gNewBS->IncinerateCounters[bank]) //Item can be restored
+		{
+			CONSUMED_ITEMS(bank) = gLastUsedItem;
+			SAVED_CONSUMED_ITEMS(bank) = gLastUsedItem;
+			AddBankToPickupStack(bank);
+		}
+
+		gBattleMons[bank].item = ITEM_NONE;
+		HandleUnburdenBoost(bank);		
 	}
 
-	gBattleMons[bank].item = 0;
-	EmitSetMonData(0, REQUEST_HELDITEM_BATTLE, 0, 2, &gBattleMons[bank].item);
-	MarkBufferBankForExecution(bank);
 	gBattlescriptCurrInstr += 2;
 
 	u8 partner = PARTNER(bank);
@@ -1566,9 +1569,11 @@ void atk6A_removeitem(void) {
 	&& !(gWishFutureKnock->knockedOffPokes[SIDE(bank)] & gBitTable[gBattlerPartyIndexes[bank]])
 	&& partnerItem != ITEM_NONE
 	&& CanTransferItem(SPECIES(bank), partnerItem)
-	&& CanTransferItem(SPECIES(partner), partnerItem)) {
+	&& CanTransferItem(SPECIES(partner), partnerItem))
+	{
 		gBattleMons[bank].item = partnerItem;
 		gBattleMons[partner].item = 0;
+		HandleUnburdenBoost(bank); //Remove the Unburden boost it may have gained
 
 		EmitSetMonData(0, REQUEST_HELDITEM_BATTLE, 0, 2, &gBattleMons[bank].item);
 		MarkBufferBankForExecution(bank);
@@ -1581,6 +1586,11 @@ void atk6A_removeitem(void) {
 
 		BattleScriptPushCursor();
 		gBattlescriptCurrInstr = BattleScript_Symbiosis;
+	}
+	else
+	{
+		EmitSetMonData(0, REQUEST_HELDITEM_BATTLE, 0, 2, &gBattleMons[bank].item);
+		MarkBufferBankForExecution(bank);
 	}
 
 	gNewBS->NoSymbiosisByte = FALSE;
@@ -3962,8 +3972,9 @@ void atkD2_tryswapitems(void) { //Trick
 			RecordAbilityBattle(gBankTarget, gLastUsedAbility);
 		}
 
-		// took a while, but all checks passed and items can be safely swapped
-		else {
+		//Took a while, but all checks passed and items can be safely swapped
+		else
+		{
 			u16 oldItemAtk, *newItemAtk;
 
 			newItemAtk = &gBattleStruct->changedItems[gBankAttacker];
@@ -3972,6 +3983,8 @@ void atkD2_tryswapitems(void) { //Trick
 
 			gBattleMons[gBankAttacker].item = *newItemAtk;
 			gBattleMons[gBankTarget].item = oldItemAtk;
+			HandleUnburdenBoost(gBankAttacker); //Give or take away Unburden boost
+			HandleUnburdenBoost(gBankTarget); //Give or take away Unburden boost
 
 			gActiveBattler = gBankAttacker;
 			EmitSetMonData(0, REQUEST_HELDITEM_BATTLE, 0, 2, &gBattleMons[gBankAttacker].item);
@@ -4028,9 +4041,7 @@ void atkD3_trycopyability(void) //Role Play
 		*atkAbilityLoc = defAbility;
 		gLastUsedAbility = atkAbility; //To display what changed
 		TransferAbilityPopUp(gBankAttacker, gLastUsedAbility);
-
-		gNewBS->SlowStartTimers[gBankAttacker] = 0;
-		gStatuses3[gBankAttacker] &= ~(STATUS3_SWITCH_IN_ABILITY_DONE);
+		ResetVarsForAbilityChange(gBankAttacker);
 		gBattlescriptCurrInstr += 5;
 	}
 }
@@ -4104,10 +4115,9 @@ void atkDA_tryswapabilities(void) //Skill Swap
 	{
 		*atkAbilityLoc = defAbility;
 		*defAbilityLoc = atkAbility;
-		gNewBS->SlowStartTimers[gBankAttacker] = 0;
-		gNewBS->SlowStartTimers[gBankTarget] = 0;
-		gStatuses3[gBankAttacker] &= ~(STATUS3_SWITCH_IN_ABILITY_DONE);
-		gStatuses3[gBankTarget] &= ~(STATUS3_SWITCH_IN_ABILITY_DONE);
+		
+		ResetVarsForAbilityChange(gBankAttacker);
+		ResetVarsForAbilityChange(gBankTarget);
 
 		if (*atkAbilityLoc == ABILITY_TRUANT)
 			gDisableStructs[gBankAttacker].truantCounter = 0; //Reset counter
@@ -4399,12 +4409,16 @@ void atkEA_tryrecycleitem(void) {
 	gActiveBattler = gBankAttacker;
 	u16 item = SAVED_CONSUMED_ITEMS(gActiveBattler);
 
-	if (item && gBattleMons[gActiveBattler].item == 0) {
+	if (item && gBattleMons[gActiveBattler].item == ITEM_NONE)
+	{
 		gLastUsedItem = item;
-		SAVED_CONSUMED_ITEMS(gActiveBattler) = 0;
-		CONSUMED_ITEMS(gActiveBattler) = 0;	//Remove the temporary item storage
+		SAVED_CONSUMED_ITEMS(gActiveBattler) = ITEM_NONE;
+		CONSUMED_ITEMS(gActiveBattler) = ITEM_NONE;	//Remove the temporary item storage
 		RemoveBankFromPickupStack(gActiveBattler);
+
 		gBattleMons[gActiveBattler].item = gLastUsedItem;
+		HandleUnburdenBoost(gActiveBattler); //Remove the Unburden Boost
+
 		EmitSetMonData(0, REQUEST_HELDITEM_BATTLE, 0, 2, &gBattleMons[gActiveBattler].item);
 		MarkBufferBankForExecution(gActiveBattler);
 		gBattlescriptCurrInstr += 5;

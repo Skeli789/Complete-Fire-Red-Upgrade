@@ -671,6 +671,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 
 					gLastUsedItem = gBattleMons[gEffectBank].item;
 					gBattleMons[gEffectBank].item = 0;
+					HandleUnburdenBoost(gEffectBank); //Give target Unburden boost
 
 					gActiveBattler = gEffectBank;
 					EmitSetMonData(0, REQUEST_HELDITEM_BATTLE, 0, 2, &gBattleMons[gActiveBattler].item);
@@ -702,6 +703,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 						break;
 
 					gBattleMons[gEffectBank].item = 0;
+					HandleUnburdenBoost(gEffectBank); //Give target Unburden boost
 
 					gActiveBattler = gEffectBank;
 					EmitSetMonData(0, REQUEST_HELDITEM_BATTLE, 0, 2, &gBattleMons[gEffectBank].item);
@@ -869,6 +871,8 @@ bool8 SetMoveEffect2(void)
 				gLastUsedItem = gBattleMons[gEffectBank].item;
 				gBattleMons[gEffectBank].item = 0;
 				gBattleMons[gBankAttacker].item = gLastUsedItem;
+				HandleUnburdenBoost(gEffectBank); //Give target Unburden boost
+				HandleUnburdenBoost(gBankAttacker); //Remove attacker's Unburden boost
 
 				gActiveBattler = gBankAttacker;
 				EmitSetMonData(0, REQUEST_HELDITEM_BATTLE, 0, 2, &gLastUsedItem);
@@ -888,7 +892,7 @@ bool8 SetMoveEffect2(void)
 
 		case MOVE_EFFECT_KNOCK_OFF:
 			if (!CanKnockOffItem(gEffectBank)
-			||	gBattleMons[gBankAttacker].hp == 0)
+			||	!BATTLER_ALIVE(gBankAttacker))
 			{
 				break;
 			}
@@ -907,6 +911,7 @@ bool8 SetMoveEffect2(void)
 			{
 				gLastUsedItem = gBattleMons[gEffectBank].item;
 				gBattleMons[gEffectBank].item = 0;
+				HandleUnburdenBoost(gEffectBank); //Give target Unburden boost
 
 				gActiveBattler = gEffectBank;
 				EmitSetMonData(0, REQUEST_HELDITEM_BATTLE, 0, 2, &gBattleMons[gActiveBattler].item);
