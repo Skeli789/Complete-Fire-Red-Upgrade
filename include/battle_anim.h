@@ -300,6 +300,26 @@
 
 #define ANIM_TAG_ABILITY_POP_UP				0x286E
 
+// battlers
+#define ANIM_ATTACKER    0
+#define ANIM_TARGET      1
+#define ANIM_ATK_PARTNER 2
+#define ANIM_DEF_PARTNER 3
+
+// stereo panning constants [0-255]
+//
+//          0
+//         .  .
+//      .        .
+// 192 .          . 63
+//     .          .
+//      .        .
+//         .  .
+//          127
+//
+#define SOUND_PAN_ATTACKER -64
+#define SOUND_PAN_TARGET    63
+
 #define gAnimVisualTaskCount (*((u8*) 0x2037EE2))
 
 enum

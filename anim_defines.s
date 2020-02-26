@@ -104,6 +104,10 @@
 .equ PAL_OPPONENT1, 0x200
 .equ PAL_OPPONENT2, 0x400
 
+@for sound commands
+.equ SOUND_PAN_ATTACKER, 0xC0
+.equ SOUND_PAN_TARGET, 0x3F
+
 @particle table
 .macro animparticle offset size tag
 .word \offset

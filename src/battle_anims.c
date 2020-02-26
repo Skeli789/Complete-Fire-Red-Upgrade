@@ -2060,6 +2060,22 @@ void SpriteCB_TwinkleAboveTarget(struct Sprite *sprite)
 	StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
 }
 
+//Creates a twinkle at the location the target was knocked too in Twinkle Tackle
+void SpriteCB_TwinkleOnBank(struct Sprite *sprite)
+{
+	struct Sprite* monSprite;
+
+	if (gBattleAnimArgs[2] == ANIM_TARGET)
+		monSprite = &gSprites[GetAnimBattlerSpriteId(ANIM_TARGET)];
+	else
+		monSprite = &gSprites[GetAnimBattlerSpriteId(ANIM_ATTACKER)];
+
+	sprite->pos1 = monSprite->pos1;
+	sprite->pos2 = monSprite->pos2;
+	sprite->callback = RunStoredCallbackWhenAnimEnds;
+	StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
+}
+
 void SpriteCB_MaxSteelspike(struct Sprite* sprite)
 {
 	if (--sprite->data[7] == 0)
@@ -2722,8 +2738,6 @@ void AnimTask_GrayscaleParticle(u8 taskId)
 // Scales up the target mon sprite
 // Used in Let's Snuggle Forever
 // No args.
-#define ANIM_ATTACKER 0
-#define ANIM_TARGET 1
 void AnimTask_GrowTarget(u8 taskId)
 {
 	u8 spriteId = GetAnimBattlerSpriteId(ANIM_TARGET);
@@ -2821,6 +2835,111 @@ void AnimTask_CompressTargetHorizontally(u8 taskId)
 	PrepareAffineAnimInTaskData(task, spriteId, sCompressTargetHorizontallyAffineAnimCmds);
 	task->func = AnimTask_DynamaxGrowthStep;
 }
+
+#define tSpriteId data[0]
+#define tTimer data[1]
+#define tInitialXPos data[2]
+#define tInitialYPos data[3]
+#define tSide data[4]
+#define tAnimLengthTime data[5]
+static const s8 sHomerunEnemyHorizontalMovement[] =
+{
+	3, 3, 3, 3,
+	3, 3, 2, 2,
+	1, 1, 1, 1,
+	1, 1, 1, 1,
+	0, 1, 0, 1,
+	0, 1, 0, 0,
+	1, 0, 0, 1,
+	0, 0, 0, 1,
+	0, 0, 0, 1,
+};
+
+static const s8 sHomerunEnemyVerticalMovement[] =
+{
+	-4, -4, -4, -4,
+	-4, -3, -3, -2,
+	-2, -1, -1, -1,
+	-1, -1, -1, -1,
+	 0, -1,  0, -1,
+	 0, -1,  0,  0,
+	 0,  0, -1,  0,
+	 0, -1,  0,  0,
+	-1,  0,  0,  0,
+};
+
+void AnimTask_TwinkleTackleLaunchStep(u8 taskId)
+{
+	u16 rotation;
+	s16 xScale, yScale;
+	struct Task* task = &gTasks[taskId];
+	struct Sprite* sprite = &gSprites[task->tSpriteId];
+
+	if (task->tTimer > task->tAnimLengthTime)
+	{
+		if (task->tTimer > task->tAnimLengthTime + 5) //Wait an extra few frames so the glint can be placed on the target
+		{
+			sprite->pos1.x = task->tInitialXPos;
+			sprite->pos1.y = task->tInitialYPos;
+			ResetSpriteRotScale(task->tSpriteId);
+			DestroyAnimVisualTask(taskId);
+		}
+		else
+			++task->tTimer;
+		return;
+	}
+	else if ((u16) task->tTimer < NELEMS(sHomerunEnemyHorizontalMovement))
+	{
+		s8 movement = sHomerunEnemyHorizontalMovement[task->tTimer];
+		if (task->tSide == B_SIDE_PLAYER)
+			movement *= -1;
+		sprite->pos1.x += movement;
+
+		movement = sHomerunEnemyVerticalMovement[task->tTimer];
+		if (task->tSide == B_SIDE_PLAYER)
+			movement *= -1;
+		sprite->pos1.y += movement;
+	}
+
+	xScale = 0x180;
+	yScale = 0x180;
+	rotation = (task->tTimer << 4) + (task->tTimer << 3);
+
+	xScale += rotation;
+	yScale += rotation;
+	rotation <<= 7;
+
+	if (task->tSide == B_SIDE_OPPONENT)
+		rotation *= -1;
+
+	SetSpriteRotScale(task->tSpriteId, xScale, yScale, rotation);
+
+	if (++task->tTimer > task->tAnimLengthTime)
+		sprite->invisible = TRUE;
+}
+
+//Launches the target in Twinkle Tackle
+//arg 0: Anim time
+void AnimTask_TwinkleTackleLaunch(u8 taskId)
+{
+	struct Task* task = &gTasks[taskId];
+
+	task->tSpriteId = GetAnimBattlerSpriteId(ANIM_TARGET);
+	task->tSide = SIDE(gBattleAnimTarget);
+	task->tAnimLengthTime = gBattleAnimArgs[0];
+	task->tInitialXPos = gSprites[task->tSpriteId].pos1.x;
+	task->tInitialYPos = gSprites[task->tSpriteId].pos1.y;
+	task->tTimer = 0;
+	task->func = AnimTask_TwinkleTackleLaunchStep;
+
+	PrepareBattlerSpriteForRotScale(task->tSpriteId, ST_OAM_OBJ_NORMAL);	
+}
+#undef tSpriteId
+#undef tTimer
+#undef tInitialXPos
+#undef tInitialYPos
+#undef tSide
+#undef tAnimLengthTime
 
 void AnimTask_AllBanksInvisible(u8 taskId)
 {
