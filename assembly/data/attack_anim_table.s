@@ -14017,19 +14017,16 @@ BELCH_BERRY: objtemplate ANIM_TAG_BERRY_EATEN ANIM_TAG_BERRY_NORMAL OAM_NORMAL_3
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
-@Credits to Lixdel
+@Credits to Skeli
 ANIM_BESTOW:
-	loadparticle ANIM_TAG_ITEM_BAG @item
 	pokespritetoBG bank_target
 	leftbankBG_over_partnerBG bank_target
-	playsound2 0xB3 SOUND_PAN_ATTACKER
-	launchtemplate BESTOW_ITEM 0x2 0x6 0x14 0x0 0x0 0x0 0x28 0xffe7
+	playsoundpanchange 0xB3 SOUND_PAN_ATTACKER SOUND_PAN_TARGET 0x2 0x0
+	launchtask AnimTask_CreateBestowItem 0x2 0x6 0x14 0x0 0x0 0x0 0x28 0xffe7
 	waitanimation
+	unloadparticle ANIM_TAG_ITEM_BAG @;The generated item sprite uses this tag
 	pokespritefromBG bank_target
 	endanimation
-
-.align 2
-BESTOW_ITEM: objtemplate ANIM_TAG_ITEM_BAG ANIM_TAG_ITEM_BAG OAM_NORMAL_32x32 0x83E2E24 0x0 0x8231CFC 0x8075E81
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool

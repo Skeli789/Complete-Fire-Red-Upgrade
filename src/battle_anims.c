@@ -1200,6 +1200,35 @@ void AnimTask_CreateStealItem(u8 taskId)
 	DestroyAnimVisualTask(taskId);
 }
 
+void AnimTask_CreateKnockOffItem(u8 taskId)
+{
+	u8 iconSpriteId = AddItemIconSprite(ITEM_TAG, ITEM_TAG, gLastUsedItem);
+
+	if (iconSpriteId != MAX_SPRITES)
+	{
+		gSprites[iconSpriteId].pos1.x = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2);
+		gSprites[iconSpriteId].pos1.y = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET);
+		gSprites[iconSpriteId].oam.priority = 2;
+		gSprites[iconSpriteId].affineAnims = (void*) 0x83E2E80;
+		gSprites[iconSpriteId].callback = (void*) 0x80A35F5;
+		++gAnimVisualTaskCount;
+	}
+	DestroyAnimVisualTask(taskId);
+}
+
+void AnimTask_CreateBestowItem(u8 taskId)
+{
+	u8 iconSpriteId = AddItemIconSprite(ITEM_TAG, ITEM_TAG, gLastUsedItem);
+
+	if (iconSpriteId != MAX_SPRITES)
+	{
+		gSprites[iconSpriteId].oam.priority = 2;
+		gSprites[iconSpriteId].callback = (void*) 0x8075E81;
+		++gAnimVisualTaskCount;
+	}
+	DestroyAnimVisualTask(taskId);
+}
+
 void UpdatedAnimStealItemFinalCallback(struct Sprite* sprite)
 {
 	sprite->data[0]++;

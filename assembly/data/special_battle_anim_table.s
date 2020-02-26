@@ -21,7 +21,7 @@ gBattleAnims_General:
 .word 0x81d5bc7	@ ANIM_SUBSTITUTE_REMOVAL
 .word 0x81d5c04	@ ANIM_CREATE_SUBSTITUTE
 .word 0x81d5c0c	@ ANIM_POKEBLOCK_TRANSFORM
-.word 0x81d5c54	@ ANIM_KNOCK_OFF_ITEM
+.word ANIM_KNOCK_OFF_ITEM
 .word ANIM_WRAPPED_END_TURN	@ ANIM_WRAP
 .word ANIM_USEITEM	@ ANIM_ITEM_USE
 .word 0x81d5e66	@ ANIM_SMOKE_BALL
@@ -121,6 +121,15 @@ ANIM_STEAL_ITEM:
 	launchtask 0x80F1701 0x2 0x0
 	pause 0x1
 	launchtask AnimTask_CreateStealItem 0x2 0x5 0x0 0xFFFB 0xA 0x2 0xFFFF
+	waitanimation
+	unloadparticle ANIM_TAG_ITEM_BAG @;The generated item sprite uses this tag
+	endanimation
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.pool
+ANIM_KNOCK_OFF_ITEM:
+	launchtask AnimTask_CreateKnockOffItem 0x2 0x0
 	waitanimation
 	unloadparticle ANIM_TAG_ITEM_BAG @;The generated item sprite uses this tag
 	endanimation
