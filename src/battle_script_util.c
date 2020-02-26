@@ -1274,8 +1274,9 @@ void AbilityChangeBSFunc(void)
 			{
 				gStatuses3[gBankTarget] |= STATUS3_ABILITY_SUPPRESS;
 				gNewBS->SuppressedAbilities[gBankTarget] = defAbility;
-				*defAbilityLoc = 0;
+				*defAbilityLoc = ABILITY_NONE;
 				gNewBS->SlowStartTimers[gBankTarget] = 0;
+				gDisableStructs[gBankTarget].truantCounter = 0;
 				gBattleScripting->bank = gBankTarget;
 				gBattleStringLoader = AbilitySuppressedString;
 				return; //No transfer needed
@@ -1647,29 +1648,61 @@ void ClearAttackerDidDamageOnce(void)
 
 void TryRemovePrimalWeatherOnPivot(void)
 {
-	if (TryRemovePrimalWeather(gBankAttacker, ABILITY(gBankAttacker)))
+	RestoreOriginalAttackerAndTarget();
+	gNewBS->skipBankStatAnim = gBankAttacker; //Helps with Neutralizing Gas and Intimidate
+	if (HandleSpecialSwitchOutAbilities(gBankAttacker, ABILITY(gBankAttacker)))
 		gBattlescriptCurrInstr -= 5;
-
-	if (TryActivateFlowerGift(gBankAttacker))
-		gBattlescriptCurrInstr -= 5;
+	else
+		gNewBS->skipBankStatAnim = 0xFF; //No longer needed
 }
 
 void TryRemovePrimalWeatherOnForceSwitchout(void)
 {
-	if (TryRemovePrimalWeather(gBankTarget, ABILITY(gBankTarget)))
+	RestoreOriginalAttackerAndTarget();
+	gNewBS->skipBankStatAnim = gBankTarget; //Helps with Neutralizing Gas and Intimidate
+	if (HandleSpecialSwitchOutAbilities(gBankTarget, ABILITY(gBankTarget)))
 		gBattlescriptCurrInstr -= 5;
-
-	if (TryActivateFlowerGift(gBankTarget))
-		gBattlescriptCurrInstr -= 5;
+	else
+		gNewBS->skipBankStatAnim = 0xFF; //No longer needed
 }
 
 void TryRemovePrimalWeatherAfterAbilityChange(void)
 {
-	if (TryRemovePrimalWeather(gBankTarget, gNewBS->backupAbility))
+	RestoreOriginalAttackerAndTarget();
+	if (HandleSpecialSwitchOutAbilities(gBankTarget, gNewBS->backupAbility))
 		gBattlescriptCurrInstr -= 5;
+}
 
-	if (TryActivateFlowerGift(gBankTarget))
-		gBattlescriptCurrInstr -= 5;
+void UndoAbilityEffectsForNeutralizingGas(void)
+{
+	gBattleStringLoader = NULL;
+
+	if (gBattleWeather & WEATHER_RAIN_PRIMAL)
+		gBattleStringLoader = PrimalRainEndString;
+	else if (gBattleWeather & WEATHER_SUN_PRIMAL)
+		gBattleStringLoader = PrimalSunEndString;
+	else if (gBattleWeather & WEATHER_AIR_CURRENT_PRIMAL)
+		gBattleStringLoader = PrimalAirCurrentEndString;
+
+	if (gBattleStringLoader != NULL)
+	{
+		gBattleWeather = 0;
+		gWeatherCounter = 0;
+		BattleScriptPushCursor();
+		gBattlescriptCurrInstr = BattleScript_PrimalWeatherEnd - 5;
+		return;
+	}
+	
+	for (int i = 0; i < gBattlersCount; ++i)
+	{
+		if (gStatuses3[i] & STATUS3_ILLUSION)
+		{
+			gBattleScripting->bank = i;
+			BattleScriptPushCursor();
+			gBattlescriptCurrInstr = BattleScript_TryRemoveIllusion - 5;
+			break;
+		}
+	}
 }
 
 void TryLoadSecondFriskTargetDoubles(void)
@@ -1686,10 +1719,22 @@ void TryLoadSecondFriskTargetDoubles(void)
 	gBattlescriptCurrInstr = BattleScript_FriskEnd - 5;
 }
 
+void BackupSwitchingBank(void)
+{
+	gNewBS->originalAttackerBackup = gBankAttacker;
+	gNewBS->originalTargetBackup = gBankTarget;
+}
+
 void RestoreAllOriginalMoveData(void)
 {
 	gCurrentMove = gChosenMove;
 
+	gBankAttacker = gNewBS->originalAttackerBackup;
+	gBankTarget = gNewBS->originalTargetBackup;
+}
+
+void RestoreOriginalAttackerAndTarget(void)
+{
 	gBankAttacker = gNewBS->originalAttackerBackup;
 	gBankTarget = gNewBS->originalTargetBackup;
 }

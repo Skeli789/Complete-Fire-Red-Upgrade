@@ -289,7 +289,7 @@ const s8 gAbilityRatings[ABILITIES_COUNT] =
 	[ABILITY_POWERSPOT] = 2, //UPDATE
 	[ABILITY_MIMICRY] = 2,
 	[ABILITY_SCREENCLEANER] = 3,
-	[ABILITY_NEUTRALIINGGAS] = 5,
+	[ABILITY_NEUTRALIZINGGAS] = 5,
 	[ABILITY_HUNGERSWITCH] = 2,
 	[ABILITY_PASTELVEIL] = 4,
 	[ABILITY_STEELY_SPIRIT] = 2,
@@ -364,6 +364,11 @@ const bool8 gMoldBreakerIgnoredAbilities[] =
 	[ABILITY_QUEENLYMAJESTY] =	TRUE,
 	[ABILITY_WATERBUBBLE] =		TRUE,
 	[ABILITY_PORTALPOWER] =		TRUE,
+	[ABILITY_MIRRORARMOR] =		TRUE,
+	[ABILITY_PUNKROCK] =		TRUE,
+	[ABILITY_ICESCALES] =		TRUE,
+	[ABILITY_ICEFACE] =			TRUE,
+	[ABILITY_PASTELVEIL] =		TRUE,
 };
 
 const u16 gWeatherContinuesStringIds[] =
@@ -1152,7 +1157,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				effect++;
 			}
 			break;
-			
+
 		case ABILITY_SCREENCLEANER:
 			RemoveScreensFromSide(B_SIDE_PLAYER);
 			RemoveScreensFromSide(B_SIDE_OPPONENT);
@@ -1160,7 +1165,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 			BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);
 			effect++;
 			break;
-		
+
 		case ABILITY_MIMICRY: ;
 			const u8* script = TryActivateMimicryForBank(bank);
 			if (script != NULL)
@@ -1171,9 +1176,28 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				effect++;
 			}
 			break;
+
+		case ABILITY_NEUTRALIZINGGAS:
+			for (i = 0; i < gBattlersCount; ++i)
+			{
+				if (!IsAbilitySuppressed(i) //Gastro Acid has higher priority
+				&& ABILITY(i) != ABILITY_NONE
+				&& !CheckTableForAbility(ABILITY(i), gNeutralizingGasBannedAbilities))
+				{
+					u8* abilityLoc = GetAbilityLocation(i);
+					gNewBS->neutralizingGasBlockedAbilities[i] = *abilityLoc;
+					*abilityLoc = 0;
+					gNewBS->SlowStartTimers[i] = 0;
+				}
+			}
+
+			gBattleStringLoader = gText_NeutralizingGasActivate;
+			BattleScriptPushCursorAndCallback(BattleScript_NeutralizingGas);
+			effect++;
 		}
 
 		switch (gLastUsedAbility) { //These abilities should always activate if they can
+			case ABILITY_NONE: //So Unnerve activates the first time when Neutralizing Gas leaves the field
 			case ABILITY_FORECAST:
 			case ABILITY_FLOWERGIFT:
 			case ABILITY_TRACE:

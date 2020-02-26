@@ -3512,6 +3512,7 @@ TrickBS:
 	waitmessage DELAY_1SECOND
 	printfromtable 0x83FE64A @;gItemSwapStringIds
 	waitmessage DELAY_1SECOND
+	call 0x81D92DC @;BattleScript_WeatherFormChanges - In case of Utility Umbrella
 	goto BS_MOVE_END
 
 BestowBS:
@@ -3527,6 +3528,7 @@ BestowBS:
 	setword BATTLE_STRING_LOADER BestowString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+	call 0x81D92DC @;BattleScript_WeatherFormChanges - In case of Utility Umbrella
 	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -3550,7 +3552,8 @@ BS_178_RolePlay:
 	printstring 0xB0 @;STRINGID_PKMNCOPIEDFOE
 	waitmessage DELAY_1SECOND
 	copybyte BATTLE_SCRIPTING_BANK USER_BANK
-	call BSTryRemoveIllusion
+	call BattleScript_TryRemoveIllusion
+	callasm TryRemovePrimalWeatherAfterAbilityChange
 	call 0x81D92DC @;Try to revert Cherrim and Castform
 	tryactivateswitchinability BANK_ATTACKER
 	goto BS_MOVE_END
@@ -3893,7 +3896,7 @@ GastroAcidBS:
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	copybyte BATTLE_SCRIPTING_BANK TARGET_BANK
-	call BSTryRemoveIllusion
+	call BattleScript_TryRemoveIllusion
 	callasm TryRemovePrimalWeatherAfterAbilityChange
 	call 0x81D92DC @;Try to revert Cherrim and Castform
 	goto BS_MOVE_END
@@ -3921,7 +3924,7 @@ SimpleBeamBS:
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	copyarray BATTLE_SCRIPTING_BANK TARGET_BANK 0x1
-	call BSTryRemoveIllusion
+	call BattleScript_TryRemoveIllusion
 	callasm TryRemovePrimalWeatherAfterAbilityChange
 	call 0x81D92DC @;Try to revert Cherrim and Castform
 	tryactivateswitchinability BANK_TARGET

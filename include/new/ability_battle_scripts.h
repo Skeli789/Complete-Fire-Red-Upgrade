@@ -26,6 +26,7 @@ extern const u8 BattleScript_ShieldsDownToCoreEnd3[];
 extern const u8 BattleScript_ShieldsDownToMeteorEnd3[];
 extern const u8 BattleScript_TransformedEnd3[];
 extern const u8 BattleScript_AttackerAbilityStatRaiseEnd3[];
+extern const u8 BattleScript_NeutralizingGas[];
 extern const u8 BattleScript_ImposterActivates[];
 extern const u8 BattleScript_TerrainFromAbility[];
 extern const u8 BattleScript_RainDishActivates[];
@@ -95,6 +96,7 @@ extern const u8 BattleScript_AbilityNoSpecificStatLoss[];
 extern const u8 BattleScript_MirrorArmorReflectsStatLoss[];
 extern const u8 BattleScript_MirrorArmorReflectsIntimidate[];
 extern const u8 BattleScript_DefiantCompetitive[];
+extern const u8 BattleScript_TryRemoveIllusion[];
 
 extern const u8 BattleScript_PrimalWeatherEnd[];
 
@@ -122,6 +124,8 @@ extern const u8 gText_AnticipationActivate[];
 extern const u8 gText_ForewarnActivate[];
 extern const u8 gText_FriskActivate[];
 extern const u8 gText_ScreenCleanerActivate[];
+extern const u8 gText_NeutralizingGasActivate[];
+extern const u8 gText_NeutralizingGasEnd[];
 extern const u8 ElectricTerrainSetString[];
 extern const u8 GrassyTerrainSetString[];
 extern const u8 MistyTerrainSetString[];

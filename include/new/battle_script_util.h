@@ -92,6 +92,7 @@ void ClearAttackerDidDamageOnce(void);
 void TryRemovePrimalWeatherOnForceSwitchout(void);
 void TryLoadSecondFriskTargetDoubles(void);
 void RestoreAllOriginalMoveData(void);
+void RestoreOriginalAttackerAndTarget(void);
 void SetBatonPassSwitchingBit(void);
 void ClearBatonPassSwitchingBit(void);
 void ReturnOpponentMon2(void);

@@ -38,6 +38,7 @@ enum BattleBeginStates
 	ThirdTypeRemoval,
 	RaidBattleReveal,
 	DynamaxUsableIndicator,
+	NeutralizingGas,
 	SwitchInAbilities,
 	Intimidate,
 	AmuletCoin_WhiteHerb,
@@ -219,8 +220,21 @@ void BattleBeginFirstTurn(void)
 				++*state;
 				break;
 
+			case NeutralizingGas:
+				for (; *bank < gBattlersCount; ++*bank)
+				{
+					if (ABILITY(gBanksByTurnOrder[*bank]) == ABILITY_NEUTRALIZINGGAS
+					&& AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, gBanksByTurnOrder[*bank], 0, 0, 0))
+						return;
+				}
+
+				*bank = 0;
+				++*state;
+				break;
+
 			case SwitchInAbilities:
-				while (*bank < gBattlersCount) {
+				while (*bank < gBattlersCount)
+				{
 					if (AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, gBanksByTurnOrder[*bank], 0, 0, 0))
 						effect++;
 					++*bank;
@@ -357,6 +371,7 @@ void BattleBeginFirstTurn(void)
 				gBattleScripting->atk49_state = 0;
 				gBattleStruct->faintedActionsState = 0;
 				gBattleStruct->turncountersTracker = 0;
+				gNewBS->skipBankStatAnim = 0xFF;
 				gMoveResultFlags = 0;
 				gRandomTurnNumber = Random();
 				*state = 0;

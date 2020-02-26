@@ -87,3 +87,9 @@ The Ice Face took damage for\n[TARGET]!
 
 #org @gText_ScreenCleanerActivate
 All screens on the field were\ncleansed!
+
+#org @gText_NeutralizingGasActivate
+Neutralizing Gas fills the area!
+
+#org @gText_NeutralizingGasEnd
+The effects of Neutralizing Gas\nwore off!

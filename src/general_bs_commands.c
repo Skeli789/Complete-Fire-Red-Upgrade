@@ -986,10 +986,7 @@ void atk1B_cleareffectsonfaint(void) {
 			__attribute__ ((fallthrough));
 
 			case Faint_PrimalWeather:	;
-				if (TryRemovePrimalWeather(gActiveBattler, ABILITY(gActiveBattler)))
-					return;
-
-				if (TryActivateFlowerGift(gActiveBattler))
+				if (HandleSpecialSwitchOutAbilities(gActiveBattler, ABILITY(gActiveBattler)))
 					return;
 
 				++gNewBS->FaintEffectsTracker;
@@ -1298,8 +1295,14 @@ void atk45_playanimation(void)
 
 	if (gBattlescriptCurrInstr[2] == B_ANIM_STATS_CHANGE)
 		TryContraryChangeStatAnim(gActiveBattler, argumentPtr);
-
-	if (gBattlescriptCurrInstr[2] == B_ANIM_CASTFORM_CHANGE
+	
+	if (gBattlescriptCurrInstr[2] == B_ANIM_STATS_CHANGE
+	&&  gActiveBattler == gNewBS->skipBankStatAnim) //The Pokemon has no sprite on the screen, so don't play the stat anim
+	{
+		gNewBS->skipBankStatAnim = 0xFF;
+		gBattlescriptCurrInstr += 7;
+	}
+	else if (gBattlescriptCurrInstr[2] == B_ANIM_CASTFORM_CHANGE
 	||	gBattlescriptCurrInstr[2] == B_ANIM_STATS_CHANGE
 	||  gBattlescriptCurrInstr[2] == B_ANIM_CALL_BACK_POKEMON
 	||  gBattlescriptCurrInstr[2] == B_ANIM_CALL_BACK_POKEMON_2
@@ -4039,6 +4042,7 @@ void atkD3_trycopyability(void) //Role Play
 	}
 	else
 	{
+		gNewBS->backupAbility = atkAbility;
 		*atkAbilityLoc = defAbility;
 		gLastUsedAbility = atkAbility; //To display what changed
 		TransferAbilityPopUp(gBankAttacker, gLastUsedAbility);

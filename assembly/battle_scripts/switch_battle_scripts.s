@@ -214,6 +214,7 @@ ForceSwitchRedCard:
 
 BattleScript_ActionSwitch:
 	call BS_FLUSH_MESSAGE_BOX
+	callasm BackupSwitchingBank
 	hpthresholds2 BANK_ATTACKER
 	atknameinbuff1
 	printstring 0x2 @;STRINGID_RETURNMON

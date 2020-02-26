@@ -20,6 +20,7 @@ ability_battle_scripts.s
 .global BattleScript_TerrainFromAbility
 .global BattleScript_ImposterActivates
 .global BattleScript_AttackerAbilityStatRaiseEnd3
+.global BattleScript_NeutralizingGas
 .global BattleScript_SwitchInAbilityMsg
 .global BattleScript_End3
 .global BattleScript_AbilityCuredStatus
@@ -258,6 +259,17 @@ BattleScript_AttackerAbilityStatRaise:
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
 	return
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_NeutralizingGas:
+	call BattleScript_AbilityPopUp
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	call BattleScript_AbilityPopUpRevert
+	callasm UndoAbilityEffectsForNeutralizingGas
+	call 0x81D92DC @;BattleScript_WeatherFormChanges
+	end3
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

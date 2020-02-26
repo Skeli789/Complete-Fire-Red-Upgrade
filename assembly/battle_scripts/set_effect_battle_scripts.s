@@ -13,6 +13,7 @@ set_effect_battle_scripts.s
 .global BattleScript_TargetBurnHeal
 .global BattleScript_StickyHoldActivatesRet
 .global BattleScript_TargetFrozen
+.global BattleScript_KnockedOff
 .global BattleScript_AbilityWasSuppressed
 .global BattleScript_StatUpPartner
 .global BattleScript_MaxMoveSetWeather
@@ -61,12 +62,19 @@ BattleScript_MoveEffectWrap:
 	printfromtable gWrappedStringIds
 	waitmessage DELAY_1SECOND
 	return
-	
+
+BattleScript_KnockedOff:
+	playanimation BANK_TARGET ANIM_KNOCK_OFF_ITEM 0x0
+	printstring 0xB7 @;STRINGID_PKMNKNOCKEDOFF
+	waitmessage DELAY_1SECOND
+	call 0x81D92DC @;BattleScript_WeatherFormChanges - In case of Utility Umbrella
+	return
+
 BattleScript_AbilityWasSuppressed:
 	setword BATTLE_STRING_LOADER AbilitySuppressedString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
-	call BSTryRemoveIllusion
+	call BattleScript_TryRemoveIllusion
 	callasm TryRemovePrimalWeatherAfterAbilityChange
 	call 0x81D92DC @;Try to revert Cherrim and Castform
 	return

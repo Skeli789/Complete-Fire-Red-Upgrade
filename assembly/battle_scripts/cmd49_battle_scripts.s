@@ -280,7 +280,8 @@ ThiefStealBS:
 	jumpifbyte EQUALS MAGICIAN_HELPER 0x2 PickpocketStealBS
 	playanimation BANK_TARGET ANIM_STEAL_ITEM 0x0
 	printstring 0x8E
-	waitmessage 0x40
+	waitmessage DELAY_1SECOND
+	call 0x81D92DC @;BattleScript_WeatherFormChanges - In case of Utility Umbrella
 	return
 
 MagicianStealBS:
@@ -289,6 +290,7 @@ MagicianStealBS:
 	setword BATTLE_STRING_LOADER MagicianStealString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+	call 0x81D92DC @;BattleScript_WeatherFormChanges - In case of Utility Umbrella
 	return
 
 PickpocketStealBS:
@@ -300,6 +302,7 @@ PickpocketStealBS:
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
+	call 0x81D92DC @;BattleScript_WeatherFormChanges - In case of Utility Umbrella
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

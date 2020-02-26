@@ -35,7 +35,6 @@ extern const u8* gBattleScriptsForMoveEffects[];
 #define BattleScript_RapidSpinAway (u8*) 0x81D8DF1
 #define BattleScript_TargetPRLZHeal (u8*) 0x81D9177
 #define BattleScript_AtkDefDown (u8*) 0x81D8F35
-#define BattleScript_KnockedOff (u8*) 0x81D8F86
 #define BattleScript_StatUp (u8*) 0x81D6BD1
 #define BattleScript_StatDown (u8*) 0x81D6C62
 #define BattleScript_SAtkDown2 (u8*) 0x81D8FEB
@@ -68,6 +67,7 @@ extern const u8 BattleScript_LifeDewFail[];
 extern const u8 BattleScript_TargetSleepHeal[];
 extern const u8 BattleScript_TargetBurnHeal[];
 extern const u8 BattleScript_ItemSteal[];
+extern const u8 BattleScript_KnockedOff[];
 extern const u8 BattleScript_AbilityWasSuppressed[];
 extern const u8 BattleScript_StatUpPartner[];
 extern const u8 BattleScript_MaxMoveSetWeather[];

@@ -810,6 +810,7 @@ struct NewBattleStruct
 	u8 usedMoveIndices[MAX_BATTLERS_COUNT];
 	u8 DisabledMoldBreakerAbilities[MAX_BATTLERS_COUNT];
 	u8 SuppressedAbilities[MAX_BATTLERS_COUNT];
+	u8 neutralizingGasBlockedAbilities[MAX_BATTLERS_COUNT];
 	u8 skyDropAttackersTarget[MAX_BATTLERS_COUNT]; //skyDropAttackersTarget[gBankAttacker] = gBankTarget
 	u8 skyDropTargetsAttacker[MAX_BATTLERS_COUNT]; //skyDropTargetsAttacker[gBankTarget] = gBankAttacker
 	u8 pickupStack[MAX_BATTLERS_COUNT]; //0x2017620
@@ -866,6 +867,7 @@ struct NewBattleStruct
 	s8 intimidateActive;
 	u8 backupAbility;
 	u8 switchOutBankLooper;
+	u8 skipBankStatAnim;
 	u8 originalAttackerBackup : 2;
 	u8 originalTargetBackup : 2;
 
@@ -905,6 +907,7 @@ struct NewBattleStruct
 	bool8 firstFailedPokeBallStored : 1;
 	bool8 fogBlownAwayByDefog : 1;
 	bool8 terrainForcefullyRemoved : 1;
+	bool8 printedNeutralizingGasOverMsg : 1;
 
 	//Other
 	u16 LastUsedMove;

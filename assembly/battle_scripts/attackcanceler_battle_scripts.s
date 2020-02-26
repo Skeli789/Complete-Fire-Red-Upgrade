@@ -32,7 +32,7 @@ attackcanceler_battle_scripts.s
 .global BattleScript_MoveUsedRaidBattlePrevents
 .global BattleScript_RaidBattleStatNullification
 
-.global BSTryRemoveIllusion
+.global BattleScript_TryRemoveIllusion
 .global AbilityRaisedStatString
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -215,7 +215,7 @@ BattleScript_StanceChangeToShield:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_ZMoveActivateStatus:
-	call BSTryRemoveIllusion
+	call BattleScript_TryRemoveIllusion
 	setword BATTLE_STRING_LOADER ZPowerSurroundsString
 	printstring 0x184
 	playanimation BANK_ATTACKER ANIM_ZMOVE_ACTIVATE 0x0
@@ -226,7 +226,7 @@ BattleScript_ZMoveActivateStatus:
 	return
 
 BattleScript_ZMoveActivateDamaging:
-	call BSTryRemoveIllusion
+	call BattleScript_TryRemoveIllusion
 	setword BATTLE_STRING_LOADER ZPowerSurroundsString
 	printstring 0x184
 	playanimation BANK_ATTACKER ANIM_ZMOVE_ACTIVATE 0x0
@@ -234,8 +234,8 @@ BattleScript_ZMoveActivateDamaging:
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	return
-	
-BSTryRemoveIllusion:
+
+BattleScript_TryRemoveIllusion:
 	jumpifspecialstatusflag BANK_SCRIPTING STATUS3_ILLUSION 0x1 RemoveIllusionReturn
 	@;remove illusion counter
 	clearspecialstatusbit BANK_SCRIPTING STATUS3_ILLUSION

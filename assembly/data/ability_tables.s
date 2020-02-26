@@ -20,6 +20,7 @@ ability_tables.s
 .global gSimpleBeamBannedAbilities
 .global gReceiverBannedAbilities
 .global gTraceBannedAbilities
+.global gNeutralizingGasBannedAbilities
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -42,6 +43,9 @@ gRolePlayBannedAbilities:
 .byte ABILITY_RKSSYSTEM
 .byte ABILITY_BATTLEBOND
 .byte ABILITY_POWERCONSTRUCT
+.byte ABILITY_ICEFACE
+.byte ABILITY_HUNGERSWITCH
+.byte ABILITY_GULPMISSILE
 .byte ABILITY_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -57,6 +61,9 @@ gRolePlayAttackerBannedAbilities:
 .byte ABILITY_RKSSYSTEM
 .byte ABILITY_BATTLEBOND
 .byte ABILITY_POWERCONSTRUCT
+.byte ABILITY_ICEFACE
+.byte ABILITY_HUNGERSWITCH
+.byte ABILITY_GULPMISSILE
 .byte ABILITY_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -73,6 +80,10 @@ gSkillSwapBannedAbilities:
 .byte ABILITY_RKSSYSTEM
 .byte ABILITY_BATTLEBOND
 .byte ABILITY_POWERCONSTRUCT
+.byte ABILITY_NEUTRALIZINGGAS
+.byte ABILITY_ICEFACE
+.byte ABILITY_HUNGERSWITCH
+.byte ABILITY_GULPMISSILE
 .byte ABILITY_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -88,6 +99,9 @@ gWorrySeedBannedAbilities:
 .byte ABILITY_BATTLEBOND
 .byte ABILITY_POWERCONSTRUCT
 .byte ABILITY_TRUANT
+.byte ABILITY_ICEFACE
+.byte ABILITY_HUNGERSWITCH
+.byte ABILITY_GULPMISSILE
 .byte ABILITY_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -102,6 +116,9 @@ gGastroAcidBannedAbilities:
 .byte ABILITY_RKSSYSTEM
 .byte ABILITY_BATTLEBOND
 .byte ABILITY_POWERCONSTRUCT
+.byte ABILITY_ICEFACE
+.byte ABILITY_HUNGERSWITCH
+.byte ABILITY_GULPMISSILE
 .byte ABILITY_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -117,6 +134,10 @@ gEntrainmentBannedAbilitiesAttacker:
 .byte ABILITY_RECEIVER
 .byte ABILITY_DISGUISE
 .byte ABILITY_POWERCONSTRUCT
+.byte ABILITY_NEUTRALIZINGGAS
+.byte ABILITY_ICEFACE
+.byte ABILITY_HUNGERSWITCH
+.byte ABILITY_GULPMISSILE
 .byte ABILITY_TABLES_TERMIN
 
 gSimpleBeamBannedAbilities:
@@ -130,6 +151,9 @@ gEntrainmentBannedAbilitiesTarget:
 .byte ABILITY_DISGUISE
 .byte ABILITY_RKSSYSTEM
 .byte ABILITY_BATTLEBOND
+.byte ABILITY_ICEFACE
+.byte ABILITY_HUNGERSWITCH
+.byte ABILITY_GULPMISSILE
 .byte ABILITY_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -153,6 +177,10 @@ gReceiverBannedAbilities:
 .byte ABILITY_BATTLEBOND
 .byte ABILITY_POWERCONSTRUCT
 .byte ABILITY_WONDERGUARD
+.byte ABILITY_NEUTRALIZINGGAS
+.byte ABILITY_ICEFACE
+.byte ABILITY_HUNGERSWITCH
+.byte ABILITY_GULPMISSILE
 .byte ABILITY_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -175,6 +203,26 @@ gTraceBannedAbilities:
 .byte ABILITY_RKSSYSTEM
 .byte ABILITY_BATTLEBOND
 .byte ABILITY_POWERCONSTRUCT
+.byte ABILITY_NEUTRALIZINGGAS
+.byte ABILITY_ICEFACE
+.byte ABILITY_HUNGERSWITCH
+.byte ABILITY_GULPMISSILE
 .byte ABILITY_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+gNeutralizingGasBannedAbilities:
+.byte ABILITY_MULTITYPE
+.byte ABILITY_STANCECHANGE
+.byte ABILITY_SCHOOLING
+.byte ABILITY_COMATOSE
+.byte ABILITY_SHIELDSDOWN
+.byte ABILITY_DISGUISE
+.byte ABILITY_RKSSYSTEM
+.byte ABILITY_BATTLEBOND
+.byte ABILITY_POWERCONSTRUCT
+.byte ABILITY_NEUTRALIZINGGAS
+.byte ABILITY_ICEFACE
+.byte ABILITY_HUNGERSWITCH
+.byte ABILITY_GULPMISSILE
+.byte ABILITY_TABLES_TERMIN

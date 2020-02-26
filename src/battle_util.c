@@ -23,6 +23,8 @@ battle_util.c
 
 #define IS_BATTLE_CIRCUS (gBattleTypeFlags & BATTLE_TYPE_BATTLE_CIRCUS)
 
+static void TryRemoveUnburdenBoost(u8 bank);
+
 ability_t GetBankAbility(u8 bank)
 {
 	if (IsAbilitySuppressed(bank))
@@ -57,6 +59,8 @@ ability_t CopyAbility(u8 bank)
 {
 	if (IsAbilitySuppressed(bank))
 		return gNewBS->SuppressedAbilities[bank];
+	else if (gNewBS->neutralizingGasBlockedAbilities[bank])
+		return gNewBS->neutralizingGasBlockedAbilities[bank];
 	else if (gNewBS->DisabledMoldBreakerAbilities[bank])
 		return gNewBS->DisabledMoldBreakerAbilities[bank];
 	else
@@ -64,6 +68,18 @@ ability_t CopyAbility(u8 bank)
 }
 
 ability_t* GetAbilityLocation(u8 bank)
+{
+	if (IsAbilitySuppressed(bank))
+		return &gNewBS->SuppressedAbilities[bank];
+	else if (gNewBS->neutralizingGasBlockedAbilities[bank])
+		return &gNewBS->neutralizingGasBlockedAbilities[bank];
+	else if (gNewBS->DisabledMoldBreakerAbilities[bank])
+		return &gNewBS->DisabledMoldBreakerAbilities[bank];
+	else
+		return &gBattleMons[bank].ability;
+}
+
+ability_t* GetAbilityLocationIgnoreNeutralizingGas(u8 bank)
 {
 	if (IsAbilitySuppressed(bank))
 		return &gNewBS->SuppressedAbilities[bank];
@@ -1134,8 +1150,9 @@ bool8 IsZMove(const u16 move)
 void ResetVarsForAbilityChange(u8 bank)
 {
 	gNewBS->SlowStartTimers[bank] = 0;
+	gDisableStructs[gBankTarget].truantCounter = 0;
 	gStatuses3[bank] &= ~(STATUS3_SWITCH_IN_ABILITY_DONE);
-	HandleUnburdenBoost(bank);
+	TryRemoveUnburdenBoost(bank);
 }
 
 void HandleUnburdenBoost(u8 bank)
@@ -1147,6 +1164,12 @@ void HandleUnburdenBoost(u8 bank)
 	if (ABILITY(bank) == ABILITY_UNBURDEN && ITEM(bank) == ITEM_NONE)
 		gNewBS->UnburdenBoosts |= gBitTable[bank];
 	else if (*GetAbilityLocation(bank) != ABILITY_UNBURDEN || ITEM(bank) != ITEM_NONE)
+		gNewBS->UnburdenBoosts &= ~gBitTable[bank];
+}
+
+static void TryRemoveUnburdenBoost(u8 bank)
+{
+	if (*GetAbilityLocation(bank) != ABILITY_UNBURDEN || ITEM(bank) != ITEM_NONE)
 		gNewBS->UnburdenBoosts &= ~gBitTable[bank];
 }
 

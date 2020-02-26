@@ -6,6 +6,7 @@
 #include "../include/new/ability_battle_scripts.h"
 #include "../include/new/ai_master.h"
 #include "../include/new/battle_indicators.h"
+#include "../include/new/battle_script_util.h"
 #include "../include/new/battle_start_turn_start.h"
 #include "../include/new/battle_start_turn_start_battle_scripts.h"
 #include "../include/new/battle_util.h"
@@ -15,6 +16,7 @@
 #include "../include/new/form_change.h"
 #include "../include/new/frontier.h"
 #include "../include/new/util.h"
+#include "../include/new/item.h"
 #include "../include/new/item_battle_scripts.h"
 #include "../include/new/move_battle_scripts.h"
 #include "../include/new/mega.h"
@@ -51,6 +53,10 @@ enum SwitchInStates
 };
 
 //This file's functions:
+static bool8 TryRemovePrimalWeather(u8 bank, u8 ability);
+static bool8 TryRemoveNeutralizingGas(u8 ability);
+static bool8 TryRemoveUnnerve(u8 bank);
+static bool8 TryActivateFlowerGift(u8 leavingBank);
 static bool8 TryDoForceSwitchOut(void);
 static void sub_80571DC(u8 battlerId, u8 arg1);
 static bool8 PPIsMaxed(bank_t);
@@ -77,7 +83,15 @@ void atkE2_switchoutabilities(void)
 	gBattlescriptCurrInstr += 2;
 }
 
-bool8 TryRemovePrimalWeather(u8 bank, u8 ability)
+bool8 HandleSpecialSwitchOutAbilities(u8 bank, u8 ability)
+{
+	return TryRemovePrimalWeather(bank, ability)
+		|| TryRemoveNeutralizingGas(ability)
+		|| TryRemoveUnnerve(bank)
+		|| TryActivateFlowerGift(bank);
+}
+
+static bool8 TryRemovePrimalWeather(u8 bank, u8 ability)
 {
 	int i;
 	gBattleStringLoader = NULL;
@@ -117,7 +131,82 @@ bool8 TryRemovePrimalWeather(u8 bank, u8 ability)
 	return FALSE;
 }
 
-bool8 TryActivateFlowerGift(u8 leavingBank)
+static bool8 TryRemoveNeutralizingGas(u8 ability)
+{
+	if (ability == ABILITY_NEUTRALIZINGGAS)
+	{
+		if (!gNewBS->printedNeutralizingGasOverMsg)
+		{
+			BattleScriptPushCursor();
+			gBattleStringLoader = gText_NeutralizingGasEnd;
+			gBattlescriptCurrInstr = BattleScript_PrintCustomString;
+			gNewBS->printedNeutralizingGasOverMsg = TRUE;
+			return TRUE;
+		}
+	
+		for (int i = 0; i < gBattlersCount; ++i)
+		{
+			u8 bank = gBanksByTurnOrder[i];
+		
+			if (gNewBS->neutralizingGasBlockedAbilities[bank] != ABILITY_NONE)
+			{
+				u8 ability = *GetAbilityLocationIgnoreNeutralizingGas(bank) = gNewBS->neutralizingGasBlockedAbilities[bank]; //Restore ability
+				gNewBS->neutralizingGasBlockedAbilities[bank] = ABILITY_NONE;
+				gNewBS->SlowStartTimers[bank] = 0;
+				gDisableStructs[gBankTarget].truantCounter = 0;
+
+				//Some abilities don't reactivate
+				switch (ability) {
+					case ABILITY_UNNERVE:
+						break;
+					case ABILITY_IMPOSTER: //Never gets another chance
+						gStatuses3[bank] |= STATUS3_SWITCH_IN_ABILITY_DONE;
+						break;
+					default:
+						gStatuses3[bank] &= ~STATUS3_SWITCH_IN_ABILITY_DONE;
+				}
+
+				if (AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, bank, 0, 0, 0))
+					return TRUE;
+			}
+		}
+	}
+
+	gNewBS->printedNeutralizingGasOverMsg = FALSE; //Reset for next time
+	return FALSE;
+}
+
+static bool8 TryRemoveUnnerve(u8 bank)
+{
+	u8 side = SIDE(bank);
+	bool8 ret = FALSE;
+
+	if (ABILITY(bank) == ABILITY_UNNERVE)
+	{
+		*GetAbilityLocation(bank) = ABILITY_NONE; //Temporarily remove Unnerve so Berries can activate
+
+		for (int i = 0; i < gBattlersCount; ++i)
+		{
+			u8 bank = gBanksByTurnOrder[i];
+			if (SIDE(bank) == side) //Ignore Berries on the side of the Unnerver
+				continue;
+
+			if (IsBerry(ITEM(bank)))
+			{
+				if (ItemBattleEffects(ItemEffects_EndTurn, bank, TRUE, FALSE))
+				{
+					ret = TRUE;
+					break;
+				}
+			}
+		}
+	}
+
+	*GetAbilityLocation(bank) = ABILITY_UNNERVE; //Restore Unnerve so loop can continue when we return to this function
+	return ret;
+}
+
+static bool8 TryActivateFlowerGift(u8 leavingBank)
 {
 	u32 i = 0;
 
@@ -147,14 +236,13 @@ void atk61_drawpartystatussummary(void)
 	if (gBattleExecBuffer)
 		return;
 
-	gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
+	RestoreOriginalAttackerAndTarget();
+	gNewBS->skipBankStatAnim = gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
 
-	if (TryRemovePrimalWeather(gActiveBattler, ABILITY(gActiveBattler)))
+	if (HandleSpecialSwitchOutAbilities(gActiveBattler, ABILITY(gActiveBattler)))
 		return;
-
-	if (TryActivateFlowerGift(gActiveBattler))
-		return;
-
+	
+	gNewBS->skipBankStatAnim = 0xFF; //No longer needed
 	gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
 
 	if (SIDE(gActiveBattler) == 0)
@@ -968,7 +1056,9 @@ void ClearSwitchBytes(u8 bank)
 	gNewBS->SlowStartTimers[bank] = 0;
 	gNewBS->IncinerateCounters[bank] = 0;
 	gNewBS->EmbargoTimers[bank] = 0;
+	gNewBS->DisabledMoldBreakerAbilities[bank] = 0;
 	gNewBS->SuppressedAbilities[bank] = 0;
+	gNewBS->neutralizingGasBlockedAbilities[bank] = 0;
 	gNewBS->lastTargeted[bank] = 0;
 	gNewBS->usedMoveIndices[bank] = 0;
 	gNewBS->synchronizeTarget[bank] = 0;
