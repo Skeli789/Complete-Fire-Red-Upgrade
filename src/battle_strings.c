@@ -536,7 +536,7 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 				HANDLE_NICKNAME_STRING_CASE(gBankAttacker, gBankAttacker);
 				break;
 			case B_TXT_DEF_NAME_WITH_PREFIX: // target name with prefix
-				HANDLE_NICKNAME_STRING_CASE(gBattlerTarget, gBattlerTarget);
+				HANDLE_NICKNAME_STRING_CASE(gBankTarget, gBankTarget);
 				break;
 			case B_TXT_EFF_NAME_WITH_PREFIX: // effect battlerId name with prefix
 				HANDLE_NICKNAME_STRING_CASE(gEffectBank, gEffectBank);
@@ -576,7 +576,7 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 				toCpy = GetAbilityName(gAbilitiesPerBank[gBankAttacker]);
 				break;
 			case B_TXT_DEF_ABILITY: // target ability
-				toCpy = GetAbilityName(gAbilitiesPerBank[gBattlerTarget]);
+				toCpy = GetAbilityName(gAbilitiesPerBank[gBankTarget]);
 				break;
 			case B_TXT_SCR_ACTIVE_ABILITY: // scripting active ability
 				toCpy = GetAbilityName(gAbilitiesPerBank[gBattleScripting->bank]);
@@ -722,7 +722,7 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 					toCpy = sText_FoePkmnPrefix2; //0x83FD560
 				break;
 			case B_TXT_DEF_PREFIX1:
-				if (SIDE(gBattlerTarget) == B_SIDE_PLAYER)
+				if (SIDE(gBankTarget) == B_SIDE_PLAYER)
 					toCpy = sText_AllyPkmnPrefix; //0x83FD564
 				else
 					toCpy = sText_FoePkmnPrefix2; //0x83FD560
@@ -735,7 +735,7 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 					toCpy = sText_FoePkmnPrefix3; //0x83FD569
 				break;
 			case B_TXT_DEF_PREFIX2:
-				if (SIDE(gBattlerTarget) == B_SIDE_PLAYER)
+				if (SIDE(gBankTarget) == B_SIDE_PLAYER)
 					toCpy = sText_AllyPkmnPrefix2; //0x83FD56D
 				else
 					toCpy = sText_FoePkmnPrefix3; //0x83FD569
@@ -748,7 +748,7 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 					toCpy = sText_FoePkmnPrefix4; //0x83FD572
 				break;
 			case B_TXT_DEF_PREFIX3:
-				if (SIDE(gBattlerTarget) == B_SIDE_PLAYER)
+				if (SIDE(gBankTarget) == B_SIDE_PLAYER)
 					toCpy = sText_AllyPkmnPrefix3; //0x83FD576
 				else
 					toCpy = sText_FoePkmnPrefix4; //0x83FD572
@@ -861,6 +861,11 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 			case B_TXT_SCRIPTING_TRAINER:
 				 toCpy = (u8*) GetTrainerName(gBattleScripting->bank);
 				 break;
+			case B_TXT_CAPTURED_MON_NAME:
+				GetMonData(GetBankPartyData(gBankTarget), MON_DATA_NICKNAME, text);
+				StringGetEnd10(text);
+				toCpy = text;
+				break;
 			}
 
 			if (toCpy != NULL) {
