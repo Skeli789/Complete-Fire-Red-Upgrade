@@ -530,7 +530,7 @@ const struct BattleTowerSpread gMultiTowerSpread_Marlon[] =
 		.moves =
 		{
 			MOVE_EARTHQUAKE,
-			MOVE_CRUNCH,
+			MOVE_DARKESTLARIAT,
 			MOVE_DRAGONTAIL,
 			MOVE_SNARL,
 		},

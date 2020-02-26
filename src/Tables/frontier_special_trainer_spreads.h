@@ -4076,7 +4076,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Paula1[] =
 		.moves =
 		{
 			MOVE_WILDCHARGE,
-			MOVE_THROATCHOP,
+			MOVE_PSYCHICFANGS,
 			MOVE_ICEFANG,
 			MOVE_VOLTSWITCH,
 		},
@@ -17538,7 +17538,7 @@ const struct BattleTowerSpread gSpecialTowerSpread_Galavan[] =
 			MOVE_WILDCHARGE,
 			MOVE_FACADE,
 			MOVE_ICEFANG,
-			MOVE_SUPERPOWER,
+			MOVE_PLAYROUGH,
 		},
 		.ball = BALL_TYPE_GREAT_BALL,
 		.forSingles = TRUE,
