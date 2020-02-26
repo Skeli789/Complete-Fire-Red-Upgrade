@@ -935,7 +935,7 @@ void BufferMoveNameBattle(u16 move, u8* dst)
 			dst[5] = PC_SPACE, //Space
 			StringCopy(&dst[6], gMoveNames[move]);
 		}
-		else
+		else if (IsAnyMaxMove(move)) //Necessary because can be called during Evolution
 		{
 			dst[0] = PC_M,
 			dst[1] = PC_a,
@@ -943,6 +943,8 @@ void BufferMoveNameBattle(u16 move, u8* dst)
 			dst[3] = PC_SPACE, //Space
 			StringCopy(&dst[4], gMoveNames[move]);
 		}
+		else //Fix Evolution move bug
+			StringCopy(dst, gMoveNames[move]);
 	}
 	else
 		StringCopy(dst, gMoveNames[move]);
