@@ -417,7 +417,7 @@ u8 TurnBasedEffects(void)
 
 					case ET_G_Max_Volcalith:
 						if (BATTLER_ALIVE(gActiveBattler)
-						&&  BankSideHasGMaxWildfire(gActiveBattler)
+						&&  BankSideHasGMaxVolcalith(gActiveBattler)
 						&&	ABILITY(gActiveBattler) != ABILITY_MAGICGUARD)
 						{
 							gBattleMoveDamage = GetGMaxVolcalithDamage(gActiveBattler);
@@ -640,6 +640,7 @@ u8 TurnBasedEffects(void)
 					//Broke free
 					gBattleMons[gActiveBattler].status2 &= ~(STATUS2_WRAPPED);
 					gNewBS->brokeFreeMessage &= ~(gBitTable[gActiveBattler]);
+					gNewBS->sandblastCentiferno[gActiveBattler] = 0;
 
 					gBattleTextBuff1[0] = B_BUFF_PLACEHOLDER_BEGIN;
 					gBattleTextBuff1[1] = B_TXT_COPY_VAR_1;
@@ -654,6 +655,12 @@ u8 TurnBasedEffects(void)
 				&& gBattleMons[gActiveBattler].hp)
 				{
 					gBattleMons[gActiveBattler].status2 -= 0x2000;
+
+					if (!(gBattleMons[gActiveBattler].status2 & STATUS2_WRAPPED))
+					{
+						gBattleMons[gActiveBattler].status2 |= STATUS2_WRAPPED; //Reactivate temporarily
+						gNewBS->brokeFreeMessage |= gBitTable[gActiveBattler]; //Will play next turn
+					}
 
 					if (ABILITY(gActiveBattler) != ABILITY_MAGICGUARD)
 					{
@@ -671,12 +678,6 @@ u8 TurnBasedEffects(void)
 
 						BattleScriptExecute(gBattlescriptCurrInstr);
 						effect++;
-					}
-
-					if (!(gBattleMons[gActiveBattler].status2 & STATUS2_WRAPPED))
-					{
-						gBattleMons[gActiveBattler].status2 |= STATUS2_WRAPPED; //Reactivate temporarily
-						gNewBS->brokeFreeMessage |= gBitTable[gActiveBattler]; //Will play next turn
 					}
 				}
 				break;
@@ -933,7 +934,7 @@ u8 TurnBasedEffects(void)
 			case ET_Safeguard:
 				if (gBattleStruct->turnEffectsBank < 2)
 				{
-					sideBank = gBattleStruct->turnEffectsBank;
+					sideBank = SIDE(gBattleStruct->turnEffectsBank);
 					if (gSideAffecting[sideBank] & SIDE_STATUS_SAFEGUARD && --gSideTimers[sideBank].safeguardTimer == 0)
 					{
 						gBankAttacker = gBankTarget = gActiveBattler = sideBank;
@@ -951,7 +952,7 @@ u8 TurnBasedEffects(void)
 			case ET_Mist:
 				if (gBattleStruct->turnEffectsBank < 2)
 				{
-					sideBank = gBattleStruct->turnEffectsBank;
+					sideBank = SIDE(gBattleStruct->turnEffectsBank);
 					if ((gSideAffecting[sideBank] & SIDE_STATUS_MIST) && --gSideTimers[sideBank].mistTimer == 0)
 					{
 						gBankAttacker = gBankTarget = gActiveBattler = sideBank;
@@ -1582,7 +1583,8 @@ u32 GetTrapDamage(u8 bank)
 	if (gBattleMons[bank].status2 & STATUS2_WRAPPED
 	&& ABILITY(bank) != ABILITY_MAGICGUARD)
 	{
-		if (ITEM_EFFECT(gBattleStruct->wrappedBy[bank]) == ITEM_EFFECT_BINDING_BAND)
+		if ((gNewBS->sandblastCentiferno[gActiveBattler] & 2) //Trapped by this move and user held Binding Band
+		|| ITEM_EFFECT(gBattleStruct->wrappedBy[bank]) == ITEM_EFFECT_BINDING_BAND)
 			damage = MathMax(1, GetBaseMaxHP(bank) / 6);
 		else
 			damage = MathMax(1, GetBaseMaxHP(bank) / 8);

@@ -841,8 +841,8 @@ gMoveAnimations:
 .word ANIM_MAX_DARKNESS
 .word ANIM_MAX_STARFALL
 .word ANIM_MAX_STARFALL
-.word ANIM_G_MAX_WILDFIRE
-.word ANIM_G_MAX_WILDFIRE
+.word ANIM_G_MAX_WILDFIRE_MOVE
+.word ANIM_G_MAX_WILDFIRE_MOVE
 .word ANIM_G_MAX_BEFUDDLE
 .word ANIM_G_MAX_BEFUDDLE
 .word ANIM_G_MAX_VOLTCRASH
@@ -877,8 +877,8 @@ gMoveAnimations:
 .word ANIM_G_MAX_DEPLETION
 .word ANIM_G_MAX_GRAVITAS
 .word ANIM_G_MAX_GRAVITAS
-.word ANIM_G_MAX_VOLCALITH
-.word ANIM_G_MAX_VOLCALITH
+.word ANIM_G_MAX_VOLCALITH_MOVE
+.word ANIM_G_MAX_VOLCALITH_MOVE
 .word ANIM_G_MAX_SANDBLAST
 .word ANIM_G_MAX_SANDBLAST
 .word ANIM_G_MAX_SNOOZE
@@ -23492,6 +23492,7 @@ ANIM_MAX_HAILSTORM:
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xE 0x0 @;Black
 	launchtask AnimTask_DynamaxGrowth 0x5 0x1 0x1
 	waitanimation
+	pokespritetoBG side_target
 	launchtask 0x80B038D 0x5 0x0 @;Hail  
 	@soundcomplex 0xEB 0x0 0x8 0xa
 	playsound2 0x25 SOUND_PAN_TARGET @;Falling sound
@@ -23517,6 +23518,7 @@ ANIM_MAX_HAILSTORM:
 	launchtemplate Template_SlideMonToOriginalPos 0x2 0x3 bank_target 0x0 0x10
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xE 0x0 0x0 @;Black
 	waitanimation
+	pokespritefromBG side_target
 	endanimation
 
 .align 2
@@ -23550,6 +23552,7 @@ BG_ON_PLAYER_OOZE:
 FINISH_BG_OOZE:
 	waitfortransparentBG
 	waitanimation
+	pokespritetobg side_target
 	playsound2 0x9D SOUND_PAN_TARGET
 	launchtask AnimTask_arg7_is_target_player 0x2 0x0
 	jumpifargmatches 0x7 0x1 POISON_COLUMNS_ON_PLAYER
@@ -23567,6 +23570,7 @@ MAX_OOZE_REJOIN:
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x2 0x0 0x10 0x6038 @;Purple
 	waitanimation
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x2 0x10 0x0 0x6038 @;Purple
+	pokespritefrombg side_target
 	call UNSET_SCROLLING_BG
 	waitanimation
 	endanimation
@@ -24415,9 +24419,8 @@ gMaxSteelspikeCurvedSpriteTemplate: objtemplate ANIM_TAG_LARGE_SPIKE ANIM_TAG_LA
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 @Credit to -
-ANIM_G_MAX_WILDFIRE:
-	goto 0x81c6f34 @ANIM_POUND
-	endanimation
+ANIM_G_MAX_WILDFIRE_MOVE:
+	goto ANIM_MAX_FLARE
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -24509,8 +24512,7 @@ ANIM_G_MAX_CUDDLE:
 .pool
 @Credit to -
 ANIM_G_MAX_REPLENISH:
-	goto 0x81c6f34 @ANIM_POUND
-	endanimation
+	goto ANIM_MAX_STRIKE
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -24541,6 +24543,7 @@ BG_ON_PLAYER_MALODOR:
 FINISH_BG_MALODOR:
 	waitfortransparentBG
 	waitanimation
+	pokespritetobg side_target
 	playsound2 0x9D SOUND_PAN_TARGET
 	launchtask AnimTask_arg7_is_target_player 0x2 0x0
 	jumpifargmatches 0x7 0x1 GARBAGE_COLUMNS_ON_PLAYER
@@ -24558,6 +24561,7 @@ MALODOR_REJOIN:
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x2 0x0 0x10 0x2DCC @;Garbage Green
 	waitanimation
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x2 0x10 0x0 0x2DCC @;Garbage Green
+	pokespritefrombg side_target
 	call UNSET_SCROLLING_BG
 	waitanimation
 	endanimation
@@ -24601,8 +24605,7 @@ ANIM_G_MAX_STUNSHOCK:
 .pool
 @Credit to -
 ANIM_G_MAX_FINALE:
-	goto 0x81c6f34 @ANIM_POUND
-	endanimation
+	goto ANIM_MAX_STARFALL
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -24656,7 +24659,7 @@ ANIM_G_MAX_GRAVITAS:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 @Credit to Skeli
-ANIM_G_MAX_VOLCALITH:
+ANIM_G_MAX_VOLCALITH_MOVE:
 	goto ANIM_MAX_ROCKFALL
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -24957,8 +24960,7 @@ ANIM_G_MAX_FOAMBURST:
 @Credit to -
 ANIM_G_MAX_CENTIFERNO:
 	@;call ANIM_MAX_FLARE_MAIN
-	goto 0x81c6f34 @ANIM_POUND
-	endanimation
+	goto ANIM_MAX_FLARE
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool

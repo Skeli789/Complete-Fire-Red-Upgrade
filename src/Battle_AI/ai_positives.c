@@ -575,7 +575,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 
 		case EFFECT_CONFUSE:
 		AI_CONFUSE_CHECK:
-			if (CanBeConfused(bankDef)
+			if (CanBeConfused(bankDef, TRUE)
 			&&  defItemEffect != ITEM_EFFECT_CURE_CONFUSION
 			&&  defItemEffect != ITEM_EFFECT_CURE_STATUS)
 			{

@@ -167,7 +167,7 @@ gBattleScriptingCommandsTable:
 .word atk96_weatherdamage
 .word atk97_tryinfatuating		@tryinfatuatebank
 .word 0x8029049					@refreshhpbar
-.word 0x80291d1					@setmisteffect
+.word atk99_setmist				@setmisteffect
 .word 0x8029279					@setincreasedcriticalchance
 .word atk9B_transformdataexecution
 .word 0x8029475					@setsubstituteeffect
@@ -198,7 +198,7 @@ gBattleScriptingCommandsTable:
 .word atkB5_furycuttercalc		@furycutterdamagecalculation
 .word 0x802ae25					@happinesstodamagecalculation
 .word atkB7_presentdamagecalculation
-.word 0x802af75					@setsafeguard
+.word atkB8_setsafeguard
 .word atkB9_magnitudedamagecalculation
 .word atkBA_jumpifnopursuitswitchdmg
 .word atkBB_setsunny
@@ -291,7 +291,7 @@ gBattleScriptingCommandsTable2:
 .word atkFF10_jumpifhelditem
 .word 0x8029049					@refreshhpbar
 .word atkFF12_jumpifhealthcomparestomax
-.word atkFF13_setdamagetobankhealthpercent
+.word atkFF13_setdamagetobankhealthfraction
 .word atkFF14_jumpiftypepresent
 .word atkFF15_jumpifstatcanbemodified
 .word atkFF16_jumpifnoviablemonsleft
@@ -322,3 +322,4 @@ gBattleScriptingCommandsTable2:
 .word atkFF2F_setmaxmoveeffect
 .word atkFF30_jumpifdynamaxed
 .word atkFF31_jumpifraidboss
+.word atkFF32_recycleberry

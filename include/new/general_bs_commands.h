@@ -10,6 +10,7 @@
 //Exported Functions
 bool8 TryDoBenjaminButterfree(u8 scriptOffset);
 s32 GetPsywaveDamage(u8 randDamage);
+bool8 TrySpitePPReduce(u8 bank, u8 lostPP);
 bool8 SetSunnyWeather(void);
 bool8 SetRainyWeather(void);
 bool8 SetHailWeather(void);
@@ -23,6 +24,7 @@ u32 GetHailDamage(u8 bank);
 void TransformPokemon(u8 bankAtk, u8 bankDef);
 u8 CastformDataTypeChange(u8 bank);
 u16 GetNaturePowerMove(void);
+void RecycleItem(u8 bank);
 u8 GetCamouflageType(void);
 void BufferAttackerItem(void);
 void MoveValuesCleanUp(void);

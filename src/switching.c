@@ -333,7 +333,13 @@ void atk4D_switchindataupdate(void)
 	if (!(gStatuses3[gActiveBattler] & STATUS3_LEVITATING))
 		gNewBS->MagnetRiseTimers[gActiveBattler] = 0;
 
-	SwitchInClearSetData();
+	{
+		u32 backupStatus2[gBattlersCount];
+		for (i = 0; i < gBattlersCount; ++i)
+			backupStatus2[i] = gBattleMons[i].status2;
+		SwitchInClearSetData();
+		TryReactivateCentifernoSandblast(backupStatus2);
+	}
 
 	if (ABILITY(gActiveBattler) == ABILITY_ILLUSION)
 	{
@@ -355,6 +361,16 @@ void atk4D_switchindataupdate(void)
 	gBattleMons[gActiveBattler].type3 = TYPE_BLANK;
 
 	gBattlescriptCurrInstr += 2;
+}
+
+void TryReactivateCentifernoSandblast(u32* status2)
+{
+	for (int i = 0; i < gBattlersCount; ++i)
+	{
+		//Check if special Fire Spin or Sand Tomb were undone by the switch, and they reactivate them
+		if (gNewBS->sandblastCentiferno[i])
+			gBattleMons[i].status2 |= (status2[i] & STATUS2_WRAPPED);
+	}
 }
 
 void atk4F_jumpifcantswitch(void)
@@ -1064,6 +1080,7 @@ void ClearSwitchBytes(u8 bank)
 	gNewBS->synchronizeTarget[bank] = 0;
 	gNewBS->statFellThisTurn[bank] = FALSE;
 	gNewBS->dynamaxData.timer[bank] = 0;
+	gNewBS->sandblastCentiferno[bank] = 0;
 	DestroyMegaIndicator(bank);
 	ClearBattlerAbilityHistory(bank);
 	ClearBattlerItemEffectHistory(bank);

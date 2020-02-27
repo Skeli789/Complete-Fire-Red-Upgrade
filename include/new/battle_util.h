@@ -91,7 +91,8 @@ bool8 CanBePoisoned(u8 bankDef, u8 bankAtk, bool8 checkFlowerVeil);
 bool8 CanBeParalyzed(u8 bank, bool8 checkFlowerVeil);
 bool8 CanBeBurned(u8 bank, bool8 checkFlowerVeil);
 bool8 CanBeFrozen(u8 bank, bool8 checkFlowerVeil);
-bool8 CanBeConfused(u8 bank);
+bool8 CanBeConfused(u8 bank, u8 checkSafeguard);
+bool8 CanBeTormented(u8 bank);
 
 bool8 IsTrickRoomActive(void);
 bool8 IsMagicRoomActive(void);

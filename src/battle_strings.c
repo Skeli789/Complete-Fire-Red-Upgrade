@@ -923,28 +923,23 @@ void BufferMoveNameBattle(u16 move, u8* dst)
 		//Load elongated move names for Z-Moves
 		StringCopy(dst, GetZMoveName(move));
 	}
-	else if ((*gStringInfo)->dynamaxActive)
+	else if (IsGMaxMove(move))
 	{
-		if (IsGMaxMove(move))
-		{
-			dst[0] = PC_G,
-			dst[1] = PC_DASH,
-			dst[2] = PC_M,
-			dst[3] = PC_a,
-			dst[4] = PC_x,
-			dst[5] = PC_SPACE, //Space
-			StringCopy(&dst[6], gMoveNames[move]);
-		}
-		else if (IsAnyMaxMove(move)) //Necessary because can be called during Evolution
-		{
-			dst[0] = PC_M,
-			dst[1] = PC_a,
-			dst[2] = PC_x,
-			dst[3] = PC_SPACE, //Space
-			StringCopy(&dst[4], gMoveNames[move]);
-		}
-		else //Fix Evolution move bug
-			StringCopy(dst, gMoveNames[move]);
+		dst[0] = PC_G,
+		dst[1] = PC_DASH,
+		dst[2] = PC_M,
+		dst[3] = PC_a,
+		dst[4] = PC_x,
+		dst[5] = PC_SPACE, //Space
+		StringCopy(&dst[6], gMoveNames[move]);
+	}
+	else if (IsAnyMaxMove(move))
+	{
+		dst[0] = PC_M,
+		dst[1] = PC_a,
+		dst[2] = PC_x,
+		dst[3] = PC_SPACE, //Space
+		StringCopy(&dst[4], gMoveNames[move]);
 	}
 	else
 		StringCopy(dst, gMoveNames[move]);

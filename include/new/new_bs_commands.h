@@ -73,8 +73,8 @@ void atkFF10_jumpifhelditem(void);
 //jumpifhealthcomparestomax BANK PREDICATE ROM_OFFSET
 void atkFF12_jumpifhealthcomparestomax(void);
 
-//atkFF13_setdamagetobankhealthpercent BANK PERCENT
-void atkFF13_setdamagetobankhealthpercent(void);
+//atkFF13_setdamagetobankhealthfraction BANK PERCENT
+void atkFF13_setdamagetobankhealthfraction(void);
 
 //jumpiftypepresent TYPE ROM_OFFSET
 void atkFF14_jumpiftypepresent(void);

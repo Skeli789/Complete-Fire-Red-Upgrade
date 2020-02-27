@@ -12,6 +12,7 @@
 //Exported Functions
 bool8 HasNoMonsToSwitch(u8 battler);
 bool8 HandleSpecialSwitchOutAbilities(u8 bank, u8 ability);
+void TryReactivateCentifernoSandblast(u32* backupStatus2);
 void ClearSwitchBytes(u8 bank);
 void ClearSwitchBits(u8 bank);
 u32 CalcSpikesDamage(u8 bank);

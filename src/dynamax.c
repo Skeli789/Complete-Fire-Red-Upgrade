@@ -659,6 +659,8 @@ void atkFF2F_setmaxmoveeffect(void)
 	&& gBankTarget == GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)
 	&& gNewBS->dynamaxData.raidShieldsUp)
 		return; //No special effect when move is blocked by shields
+	
+	gHitMarker |= HITMARKER_IGNORE_SUBSTITUTE;
 
 	switch (gBattleMoves[gCurrentMove].z_move_effect) { //Stored here for simplicity
 		case MAX_EFFECT_RAISE_TEAM_ATTACK:
@@ -701,25 +703,28 @@ void atkFF2F_setmaxmoveeffect(void)
 		case MAX_EFFECT_LOWER_SPEED:
 		case MAX_EFFECT_LOWER_SP_ATK:
 		case MAX_EFFECT_LOWER_SP_DEF:
-			statId = (gBattleMoves[gCurrentMove].z_move_effect - MAX_EFFECT_LOWER_ATTACK) + 1;
-			decrease = SET_STAT_BUFF_VALUE(1) | STAT_BUFF_NEGATIVE;
-
-			flags = 0;
-			if (mirrorArmorReflected)
+			if (BATTLER_ALIVE(gBankTarget))
 			{
-				gBattleScripting->statChanger = decrease | statId;
-				flags = STAT_CHANGE_BS_PTR;
-			}
+				statId = (gBattleMoves[gCurrentMove].z_move_effect - MAX_EFFECT_LOWER_ATTACK) + 1;
+				decrease = SET_STAT_BUFF_VALUE(1) | STAT_BUFF_NEGATIVE;
 
-			if (!ChangeStatBuffs(decrease, statId, flags, gBattlescriptCurrInstr))
-			{
-				if (!mirrorArmorReflected)
+				flags = 0;
+				if (mirrorArmorReflected)
 				{
-					gEffectBank = gBankTarget;
-					gBattleScripting->animArg1 = STAT_ANIM_MINUS1 + statId - 1;
-					gBattleScripting->animArg2 = 0;
-					BattleScriptPushCursor();
-					gBattlescriptCurrInstr = BattleScript_StatDown;
+					gBattleScripting->statChanger = decrease | statId;
+					flags = STAT_CHANGE_BS_PTR;
+				}
+
+				if (!ChangeStatBuffs(decrease, statId, flags, gBattlescriptCurrInstr))
+				{
+					if (!mirrorArmorReflected)
+					{
+						gEffectBank = gBankTarget;
+						gBattleScripting->animArg1 = STAT_ANIM_MINUS1 + statId - 1;
+						gBattleScripting->animArg2 = 0;
+						BattleScriptPushCursor();
+						gBattlescriptCurrInstr = BattleScript_StatDown;
+					}
 				}
 			}
 			break;
@@ -760,7 +765,278 @@ void atkFF2F_setmaxmoveeffect(void)
 			BattleScriptPushCursor();
 			gBattlescriptCurrInstr = BattleScript_MaxMoveSetTerrain;
 			break;
+
+		case MAX_EFFECT_WILDFIRE:
+			if (!BankSideHasGMaxWildfire(gBankTarget))
+			{
+				gNewBS->maxWildfireTimers[SIDE(gBankTarget)] = 4;
+				gBattleStringLoader = gText_SurroundedByGMaxWildfire;
+				BattleScriptPushCursor();
+				gBattlescriptCurrInstr = BattleScript_PrintCustomString;
+			}
+			break;
+
+		case MAX_EFFECT_EFFECT_SPORE_FOES:
+			if (BATTLER_ALIVE(gBankTarget) || (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(gBankTarget))))
+			{
+				BattleScriptPushCursor();
+				gBattlescriptCurrInstr = BattleScript_MaxMoveEffectSporeFoes;
+			}
+			break;
+
+		case MAX_EFFECT_PARALYZE_FOES:
+			if (BATTLER_ALIVE(gBankTarget) || (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(gBankTarget))))
+			{
+				BattleScriptPushCursor();
+				gBattlescriptCurrInstr = BattleScript_MaxMoveParalyzeFoes;
+			}
+			break;
+
+		case MAX_EFFECT_CONFUSE_FOES_PAY_DAY:
+			BattleScriptPushCursor();
+			gBattlescriptCurrInstr = BattleScript_MaxMovePayDayConfuseFoes;
+			break;
+
+		case MAX_EFFECT_CRIT_PLUS:
+			if ((BATTLER_ALIVE(gBankAttacker) || (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(gBankAttacker))))
+			&& (!(gBattleMons[gBankAttacker].status2 & STATUS2_FOCUS_ENERGY) || (IS_DOUBLE_BATTLE && !(gBattleMons[PARTNER(gBankAttacker)].status2 & STATUS2_FOCUS_ENERGY))))
+			{
+				BattleScriptPushCursor();
+				gBattlescriptCurrInstr = BattleScript_MaxMoveFocusEnergy;
+			}
+			break;
+
+		case MAX_EFFECT_MEAN_LOOK:
+			if (BATTLER_ALIVE(gBankTarget) && !IsOfType(gBankTarget, TYPE_GHOST) && !(gBattleMons[gBankTarget].status2 & STATUS2_ESCAPE_PREVENTION))
+			{
+				BattleScriptPushCursor();
+				gBattlescriptCurrInstr = BattleScript_MaxMoveTrap;
+			}
+			break;
+
+		case MAX_EFFECT_AURORA_VEIL:
+			if (!gNewBS->AuroraVeilTimers[SIDE(gBankAttacker)])
+			{
+				if (ITEM_EFFECT(gBankAttacker) == ITEM_EFFECT_LIGHT_CLAY)
+					gNewBS->AuroraVeilTimers[SIDE(gBankAttacker)] = 8;
+				else
+					gNewBS->AuroraVeilTimers[SIDE(gBankAttacker)] = 5;
+
+				BattleScriptPushCursor();
+				gBattlescriptCurrInstr = BattleScript_PrintCustomString;
+				gBattleStringLoader = gText_SetAuroraVeil;
+			}
+			break;
+
+		case MAX_EFFECT_INFATUATE_FOES:
+			BattleScriptPushCursor();
+			gBattlescriptCurrInstr = BattleScript_MaxMoveInfatuation;
+			break;
+
+		case MAX_EFFECT_RECYCLE_BERRIES:
+			if ((Random() & 1) == 0 //50 % of the time
+			&& (BATTLER_ALIVE(gBankAttacker) || (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(gBankAttacker)))) //Someone on this side is alive
+			&& ((ITEM(gBankAttacker) == ITEM_NONE && IsBerry(SAVED_CONSUMED_ITEMS(gBankAttacker))) //Check for a Berry to restore
+			 || (IS_DOUBLE_BATTLE && ITEM(PARTNER(gBankAttacker)) == ITEM_NONE && IsBerry(SAVED_CONSUMED_ITEMS(PARTNER(gBankAttacker))))))
+			{
+				BattleScriptPushCursor();
+				gBattlescriptCurrInstr = BattleScript_MaxMoveRecycle;
+			}
+			break;
+
+		case MAX_EFFECT_POISON_FOES:
+			if (BATTLER_ALIVE(gBankTarget) || (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(gBankTarget))))
+			{
+				BattleScriptPushCursor();
+				gBattlescriptCurrInstr = BattleScript_MaxMovePoisonFoes;
+			}
+			break;
+
+		case MAX_EFFECT_STEALTH_ROCK:
+			if (gSideTimers[SIDE(gBankTarget)].srAmount == 0)
+			{
+				BattleScriptPushCursor();
+				gBattlescriptCurrInstr = BattleScript_MaxMoveSetStealthRock;
+			}
+			break;
+
+		case MAX_EFFECT_DEFOG:
+			BattleScriptPushCursor();
+			gBattlescriptCurrInstr = BattleScript_MaxMoveDefog;
+			break;
+
+		case MAX_EFFECT_POISON_PARALYZE_FOES:
+			if (BATTLER_ALIVE(gBankTarget) || (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(gBankTarget))))
+			{
+				BattleScriptPushCursor();
+				gBattlescriptCurrInstr = BattleScript_MaxMovePoisonParalyzeFoes;
+			}
+			break;
+
+		case MAX_EFFECT_HEAL_TEAM:
+			if ((BATTLER_ALIVE(gBankAttacker) || (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(gBankAttacker))))
+			&& (!BATTLER_MAX_HP(gBankAttacker) || (IS_DOUBLE_BATTLE && !BATTLER_MAX_HP(PARTNER(gBankAttacker)))))
+			{
+				BattleScriptPushCursor();
+				gBattlescriptCurrInstr = BattleScript_MaxMoveHealTeam;
+			}
+			break;
+
+		case MAX_EFFECT_SPITE:
+			if (BATTLER_ALIVE(gBankTarget) && TrySpitePPReduce(gBankTarget, 2))
+			{
+				BattleScriptPushCursor();
+				gBattlescriptCurrInstr = BattleScript_MaxMoveSpite;
+			}
+			break;
+	
+		case MAX_EFFECT_GRAVITY:
+			if (!IsGravityActive())
+			{
+				BattleScriptPushCursor();
+				gBattlescriptCurrInstr = BattleScript_MaxMoveSetGravity;
+			}
+			break;
+
+		case MAX_EFFECT_VOLCAITH_FOES:
+			if (!BankSideHasGMaxVolcalith(gBankTarget))
+			{
+				gNewBS->maxVolcalithTimers[SIDE(gBankTarget)] = 4;
+				gBattleStringLoader = gText_SurroundedByGMaxVolcalith;
+				BattleScriptPushCursor();
+				gBattlescriptCurrInstr = BattleScript_PrintCustomString;
+			}
+			break;
+
+		case MAX_EFFECT_SANDBLAST_FOES:
+		case MAX_EFFECT_FIRE_SPIN_FOES:
+			if ((BATTLER_ALIVE(gBankTarget) || (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(gBankTarget))))
+			&&  (!(gBattleMons[gBankTarget].status2 & STATUS2_WRAPPED) || (IS_DOUBLE_BATTLE && !(gBattleMons[PARTNER(gBankTarget)].status2 & STATUS2_WRAPPED))))
+			{
+				BattleScriptPushCursor();
+				gBattlescriptCurrInstr = BattleScript_MaxMoveTrapAndDamageFoes;
+			}
+			break;
+
+		case MAX_EFFECT_YAWN_FOE:
+			if (BATTLER_ALIVE(gBankTarget)
+			&& CanBePutToSleep(gBankTarget, TRUE)
+			&& !(gStatuses3[gBankTarget] & STATUS3_YAWN)
+			&& (Random() & 1) == 0) //50 % chance target is put to sleep
+			{
+				BattleScriptPushCursor();
+				gBattlescriptCurrInstr = BattleScript_MaxMoveSetYawn;
+			}
+			break;
+
+		case MAX_EFFECT_LOWER_EVASIVENESS_FOES:
+			if (BATTLER_ALIVE(gBankTarget) || (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(gBankTarget))))
+			{	
+				BattleScriptPushCursor();
+				gBattlescriptCurrInstr = BattleScript_MaxMoveLowerEvasivenessFoes;
+			}
+			break;
+
+		case MAX_EFFECT_AROMATHERAPY:
+			BattleScriptPushCursor();
+			gBattlescriptCurrInstr = BattleScript_MaxMoveAromatherapy;
+			break;
+	
+		case MAX_EFFECT_CONFUSE_FOES:
+			if ((BATTLER_ALIVE(gBankTarget) || (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(gBankTarget))))
+			&&  (CanBeConfused(gBankTarget, TRUE) || (IS_DOUBLE_BATTLE && CanBeConfused(PARTNER(gBankTarget), TRUE)))) //Is it worth it to push the script
+			{
+				BattleScriptPushCursor();
+				gBattlescriptCurrInstr = BattleScript_MaxMoveConfuseFoes;
+			}
+			break;
+
+		case MAX_EFFECT_TORMENT_FOES:
+			if ((BATTLER_ALIVE(gBankTarget) || (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(gBankTarget))))
+			&&  (CanBeTormented(gBankTarget) || (IS_DOUBLE_BATTLE && CanBeTormented(PARTNER(gBankTarget))))) //Is it worth it to push the script
+			{
+				BattleScriptPushCursor();
+				gBattlescriptCurrInstr = BattleScript_MaxMoveTormentFoes;
+			}
+			break;
+
+		case MAX_EFFECT_LOWER_SPEED_2_FOES:
+			if (BATTLER_ALIVE(gBankTarget) || (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(gBankTarget))))
+			{	
+				BattleScriptPushCursor();
+				gBattlescriptCurrInstr = BattleScript_MaxMoveLowerSpeed2Foes;
+			}
+			break;
+		
+		case MAX_EFFECT_STEELSURGE:
+			if (gSideTimers[SIDE(gBankTarget)].steelsurge == 0)
+			{
+				BattleScriptPushCursor();
+				gBattlescriptCurrInstr = BattleScript_MaxMoveSetStealthRock;
+			}
+			break;
 	}
+}
+
+void PickRandomGMaxBefuddleEffect(void)
+{
+	do
+	{
+		gBattleCommunication[MOVE_EFFECT_BYTE] = Random() & 3;
+	} while (gBattleCommunication[MOVE_EFFECT_BYTE] == 0);
+
+	switch (gBattleCommunication[MOVE_EFFECT_BYTE]) {
+		case MOVE_EFFECT_SLEEP:
+			if (CanBePutToSleep(gBankTarget, TRUE))
+				gHitMarker |= HITMARKER_IGNORE_SAFEGUARD; //Safeguard checked on line above
+			break;
+		case MOVE_EFFECT_POISON:
+			if (CanBePoisoned(gBankTarget, gBankAttacker, TRUE))
+				gHitMarker |= HITMARKER_IGNORE_SAFEGUARD; //Safeguard checked on line above
+			break;
+		case MOVE_EFFECT_BURN: //Gets changed to Paralysis
+			gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_PARALYSIS;
+			if (CanBeParalyzed(gBankTarget, TRUE))
+				gHitMarker |= HITMARKER_IGNORE_SAFEGUARD; //Safeguard checked on line above
+			break;
+	}
+}
+
+void SetGMaxVoltCrashEffect(void)
+{
+	gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_PARALYSIS;
+	if (CanBeParalyzed(gBankTarget, TRUE))
+		gHitMarker |= HITMARKER_IGNORE_SAFEGUARD; //Safeguard checked on line above
+}
+
+void SetGMaxMalodorEffect(void)
+{
+	gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_POISON;
+	if (CanBePoisoned(gBankTarget, gBankAttacker, TRUE))
+		gHitMarker |= HITMARKER_IGNORE_SAFEGUARD; //Safeguard checked on line above
+}
+
+void PickRandomGMaxStunshockEffect(void)
+{
+	if ((Random() & 1) == 0)
+	{
+		gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_POISON;
+		if (CanBePoisoned(gBankTarget, gBankAttacker, TRUE))
+			gHitMarker |= HITMARKER_IGNORE_SAFEGUARD; //Safeguard checked on line above
+	}
+	else
+	{
+		gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_PARALYSIS;
+		if (CanBeParalyzed(gBankTarget, TRUE))
+			gHitMarker |= HITMARKER_IGNORE_SAFEGUARD; //Safeguard checked on line above
+	}
+}
+
+void SetGMaxSmiteEffect(void)
+{
+	gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_CONFUSION;
+	if (CanBeConfused(gBankTarget, TRUE))
+		gHitMarker |= HITMARKER_IGNORE_SAFEGUARD; //Safeguard checked on line above
 }
 
 //The following functions relate to raid battles:

@@ -297,7 +297,11 @@
 	.byte 0x16
 	.endm
 
-	.macro seteffectuser
+	.macro seteffectprimary
+	.byte 0x16
+	.endm
+
+	.macro seteffectsecondary
 	.byte 0x17
 	.endm
 
@@ -1527,17 +1531,18 @@
 	
 	.macro jumpifhealthcomparestomax bank predicate rom_address
 	.byte 0xFF, 0x12
-	.byte bank
-	.byte predicate
+	.byte \bank
+	.byte \predicate
 	.4byte \rom_address
 	.endm
 
-	.macro setdamagetobankhealthpercent bank percent
+	.macro setdamagetobankhealthfraction bank percent useActualMaxHP
 	.byte 0xFF, 0x13
 	.byte \bank
 	.byte \percent
+	.byte \useActualMaxHP
 	.endm
-	
+
 	.macro jumpiftypepresent type rom_address
 	.byte 0xFF, 0x14
 	.byte \type
@@ -1711,5 +1716,11 @@
 	.macro jumpifraidboss bank rom_address
 	.byte 0xFF, 0x31
 	.byte \bank
+	.4byte \rom_address
+	.endm
+
+	.macro recycleberry bankish rom_address
+	.byte 0xFF, 0x32
+	.byte \bankish
 	.4byte \rom_address
 	.endm

@@ -171,7 +171,7 @@ The sleep clause prevents more\nPok\emon from being put to sleep!
 [CURRENT_MOVE] raised [FD][36]\nteam's [BUFFER][00]!
 
 #org @gText_SetAuroraVeil
-[CURRENT_MOVE] protects [FD][36] team\nagainst physical and special moves!
+Aurora Veil protects [FD][36] team\nagainst physical and special moves!
 
 #org @gText_ShroudedInMist
 [BUFFER][38] team became\nshrouded in Mist!
@@ -210,25 +210,25 @@ The [LAST_ITEM] restored\n[SCRIPTING_BANK]'s status!
 Both Pok\emon will faint in\nthree turns!
 
 #org @gText_SurroundedByGMaxWildfire
-[FD][37] was surrounded\nby fire!
+[FD][37] team was surrounded\nby fire!
 
 #org @gText_HurtByGMaxWildfire
 [ATTACKER] is burning\nup within G-Max Wildfire's flame!
 
 #org @gText_GMaxWildfireEnded
-The G-Max Wildfire flames around\n[FD][35] disappeared!
+The G-Max Wildfire flames around\n[FD][36] team disappeared!
 
 #org @gText_SurroundedByGMaxVolcalith
-[FD][37] was surrounded\nby rocks!
+[FD][37] team was surrounded\nby rocks!
 
 #org @gText_HurtByGMaxVolcalith
 [ATTACKER] is hurt\nby G-Max Volcalith's rocks!
 
 #org @gText_GMaxVolcalithEnded
-The G-Max Volcalith rocks around\n[FD][35] disappeared!
+The G-Max Volcalith rocks around\n[FD][36] team disappeared!
 
 #org @gText_TrappedByGMaxCentiferno
-[FD][37] has become\ntrapped in a fiery vortex!
+[FD][37] team has become\ntrapped in a fiery vortex!
 
 //Other Battle Features
 

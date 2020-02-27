@@ -1688,7 +1688,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 						gBattleCommunication[MOVE_EFFECT_BYTE] |= MOVE_EFFECT_AFFECTS_USER;
 						BattleScriptPushCursor();
 						gBattlescriptCurrInstr = BattleScript_AbilityApplySecondaryEffect;
-						gHitMarker |= HITMARKER_IGNORE_SAFEGUARD;
+						gHitMarker |= HITMARKER_IGNORE_SAFEGUARD; //Safeguard checked earlier
 					}
 					else
 						gBattleCommunication[MOVE_EFFECT_BYTE] = 0;
@@ -1707,7 +1707,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 					gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_POISON;
 					BattleScriptPushCursor();
 					gBattlescriptCurrInstr = BattleScript_AbilityApplySecondaryEffect;
-					gHitMarker |= HITMARKER_IGNORE_SAFEGUARD;
+					gHitMarker |= HITMARKER_IGNORE_SAFEGUARD; //Safeguard checked earlier
 					effect++;
 				}
 				break;
@@ -1724,7 +1724,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 					gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_PARALYSIS;
 					BattleScriptPushCursor();
 					gBattlescriptCurrInstr = BattleScript_AbilityApplySecondaryEffect;
-					gHitMarker |= HITMARKER_IGNORE_SAFEGUARD;
+					gHitMarker |= HITMARKER_IGNORE_SAFEGUARD; //Safeguard checked earlier
 					effect++;
 				}
 				break;
@@ -1741,7 +1741,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 					gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_BURN;
 					BattleScriptPushCursor();
 					gBattlescriptCurrInstr = BattleScript_AbilityApplySecondaryEffect;
-					gHitMarker |= HITMARKER_IGNORE_SAFEGUARD;
+					gHitMarker |= HITMARKER_IGNORE_SAFEGUARD; //Safeguard checked earlier
 					effect++;
 				}
 				break;

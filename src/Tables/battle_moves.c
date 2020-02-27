@@ -3728,7 +3728,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_SWEETSCENT] =
 	{
-		.effect = EFFECT_EVASION_DOWN,
+		.effect = EFFECT_EVASION_DOWN_2,
 		.power = 0,
 		.type = TYPE_NORMAL,
 		.accuracy = 100,
@@ -12965,7 +12965,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_WILDFIRE_P] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_FIRE,
 		.accuracy = 0,
@@ -12981,7 +12981,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_WILDFIRE_S] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_FIRE,
 		.accuracy = 0,
@@ -12997,7 +12997,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_BEFUDDLE_P] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_BUG,
 		.accuracy = 0,
@@ -13013,7 +13013,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_BEFUDDLE_S] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_BUG,
 		.accuracy = 0,
@@ -13029,7 +13029,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_VOLT_CRASH_P] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_ELECTRIC,
 		.accuracy = 0,
@@ -13045,7 +13045,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_VOLT_CRASH_S] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_ELECTRIC,
 		.accuracy = 0,
@@ -13061,7 +13061,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_GOLD_RUSH_P] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_NORMAL,
 		.accuracy = 0,
@@ -13077,7 +13077,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_GOLD_RUSH_S] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_NORMAL,
 		.accuracy = 0,
@@ -13093,7 +13093,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_CHI_STRIKE_P] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_FIGHTING,
 		.accuracy = 0,
@@ -13109,7 +13109,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_CHI_STRIKE_S] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_FIGHTING,
 		.accuracy = 0,
@@ -13125,7 +13125,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_TERROR_P] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_GHOST,
 		.accuracy = 0,
@@ -13141,7 +13141,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_TERROR_S] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_GHOST,
 		.accuracy = 0,
@@ -13157,7 +13157,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_FOAM_BURST_P] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_WATER,
 		.accuracy = 0,
@@ -13173,7 +13173,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_FOAM_BURST_S] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_WATER,
 		.accuracy = 0,
@@ -13189,7 +13189,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_RESONANCE_P] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_ICE,
 		.accuracy = 0,
@@ -13205,7 +13205,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_RESONANCE_S] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_ICE,
 		.accuracy = 0,
@@ -13221,7 +13221,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_CUDDLE_P] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_NORMAL,
 		.accuracy = 0,
@@ -13237,7 +13237,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_CUDDLE_S] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_NORMAL,
 		.accuracy = 0,
@@ -13253,7 +13253,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_REPLENISH_P] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_NORMAL,
 		.accuracy = 0,
@@ -13269,7 +13269,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_REPLENISH_S] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_NORMAL,
 		.accuracy = 0,
@@ -13285,7 +13285,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_MALODOR_P] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_POISON,
 		.accuracy = 0,
@@ -13301,7 +13301,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_MALODOR_S] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_POISON,
 		.accuracy = 0,
@@ -13317,7 +13317,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_MELTDOWN_P] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_STEEL,
 		.accuracy = 0,
@@ -13333,7 +13333,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_MELTDOWN_S] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_STEEL,
 		.accuracy = 0,
@@ -13349,7 +13349,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_STONESURGE_P] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_WATER,
 		.accuracy = 0,
@@ -13365,7 +13365,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_STONESURGE_S] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_WATER,
 		.accuracy = 0,
@@ -13381,7 +13381,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_WIND_RAGE_P] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_FLYING,
 		.accuracy = 0,
@@ -13392,12 +13392,12 @@ const struct BattleMove gBattleMoves[] =
 		.flags = 0,
 		.split = SPLIT_PHYSICAL,
 		.z_move_power = 100,
-		.z_move_effect = MAX_EFFECT_REMOVE_SCREENS,
+		.z_move_effect = MAX_EFFECT_DEFOG,
 	},
 
 	[MOVE_G_MAX_WIND_RAGE_S] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_FLYING,
 		.accuracy = 0,
@@ -13408,12 +13408,12 @@ const struct BattleMove gBattleMoves[] =
 		.flags = 0,
 		.split = SPLIT_PHYSICAL,
 		.z_move_power = 100,
-		.z_move_effect = MAX_EFFECT_REMOVE_SCREENS,
+		.z_move_effect = MAX_EFFECT_DEFOG,
 	},
 
 	[MOVE_G_MAX_STUN_SHOCK_P] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_ELECTRIC,
 		.accuracy = 0,
@@ -13429,7 +13429,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_STUN_SHOCK_S] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_ELECTRIC,
 		.accuracy = 0,
@@ -13445,7 +13445,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_FINALE_P] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_FAIRY,
 		.accuracy = 0,
@@ -13461,7 +13461,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_FINALE_S] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_FAIRY,
 		.accuracy = 0,
@@ -13477,7 +13477,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_DEPLETION_P] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_DRAGON,
 		.accuracy = 0,
@@ -13493,7 +13493,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_DEPLETION_S] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_DRAGON,
 		.accuracy = 0,
@@ -13509,7 +13509,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_GRAVITAS_P] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_PSYCHIC,
 		.accuracy = 0,
@@ -13525,7 +13525,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_GRAVITAS_S] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_PSYCHIC,
 		.accuracy = 0,
@@ -13541,7 +13541,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_VOLCALITH_P] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_ROCK,
 		.accuracy = 0,
@@ -13557,7 +13557,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_VOLCALITH_S] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_ROCK,
 		.accuracy = 0,
@@ -13573,7 +13573,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_SANDBLAST_P] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_GROUND,
 		.accuracy = 0,
@@ -13589,7 +13589,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_SANDBLAST_S] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_GROUND,
 		.accuracy = 0,
@@ -13605,7 +13605,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_SNOOZE_P] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_DARK,
 		.accuracy = 0,
@@ -13621,7 +13621,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_SNOOZE_S] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_DARK,
 		.accuracy = 0,
@@ -13637,7 +13637,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_TARTNESS_P] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_GRASS,
 		.accuracy = 0,
@@ -13653,7 +13653,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_TARTNESS_S] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_GRASS,
 		.accuracy = 0,
@@ -13669,7 +13669,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_SWEETNESS_P] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_GRASS,
 		.accuracy = 0,
@@ -13685,7 +13685,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_SWEETNESS_S] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_GRASS,
 		.accuracy = 0,
@@ -13701,7 +13701,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_SMITE_P] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_FAIRY,
 		.accuracy = 0,
@@ -13717,7 +13717,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_SMITE_S] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_FAIRY,
 		.accuracy = 0,
@@ -13733,7 +13733,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_STEELSURGE_P] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_STEEL,
 		.accuracy = 0,
@@ -13749,7 +13749,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_STEELSURGE_S] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_STEEL,
 		.accuracy = 0,
@@ -13765,7 +13765,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_CENTIFERNO_P] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_FIRE,
 		.accuracy = 0,
@@ -13781,7 +13781,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_G_MAX_CENTIFERNO_S] =
 	{
-		.effect = 0,
+		.effect = EFFECT_MAX_MOVE,
 		.power = 10,
 		.type = TYPE_FIRE,
 		.accuracy = 0,

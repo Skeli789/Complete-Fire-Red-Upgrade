@@ -11,6 +11,8 @@
 //Exported Functions
 void CheckIfDarkVoidShouldFail(void);
 void SetTargetPartner(void);
+void SetTargetFoePartner(void);
+void SetAttackerPartner(void);
 bool8 CheckCraftyShield(u8 bank);
 void LiftProtectTarget(void);
 void IncreaseNimbleCounter(void);

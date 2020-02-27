@@ -1314,7 +1314,7 @@ bool8 CanBeGeneralStatused(u8 bank, bool8 checkFlowerVeil)
 				return FALSE;
 	}
 
-	if (checkFlowerVeil && ABILITY(PARTNER(bank)) == ABILITY_FLOWERVEIL && IsOfType(bank, TYPE_GRASS))
+	if (checkFlowerVeil && ABILITY(PARTNER(bank)) == ABILITY_FLOWERVEIL && IsOfType(bank, TYPE_GRASS) && !(gHitMarker & HITMARKER_IGNORE_SAFEGUARD))
 		return FALSE;
 
 	if (gTerrainType == MISTY_TERRAIN && CheckGrounding(bank))
@@ -1323,7 +1323,7 @@ bool8 CanBeGeneralStatused(u8 bank, bool8 checkFlowerVeil)
 	if (gBattleMons[bank].status1 != STATUS1_NONE)
 		return FALSE;
 
-	if (gSideAffecting[SIDE(bank)] & SIDE_STATUS_SAFEGUARD)
+	if (checkFlowerVeil && gSideAffecting[SIDE(bank)] & SIDE_STATUS_SAFEGUARD && !(gHitMarker & HITMARKER_IGNORE_SAFEGUARD))
 		return FALSE;
 
 	return TRUE;
@@ -1425,7 +1425,7 @@ bool8 CanBeFrozen(u8 bank, bool8 checkFlowerVeil)
 	return TRUE;
 }
 
-bool8 CanBeConfused(u8 bank)
+bool8 CanBeConfused(u8 bank, u8 checkSafeguard)
 {
 	if (IsConfused(bank))
 		return FALSE;
@@ -1435,8 +1435,16 @@ bool8 CanBeConfused(u8 bank)
 
 	if (ABILITY(bank) == ABILITY_OWNTEMPO)
 		return FALSE;
+	
+	if (checkSafeguard && gSideAffecting[SIDE(bank)] & SIDE_STATUS_SAFEGUARD && !(gHitMarker & HITMARKER_IGNORE_SAFEGUARD))
+		return FALSE;
 
 	return TRUE;
+}
+
+bool8 CanBeTormented(u8 bank)
+{
+	return !(gBattleMons[bank].status2 & STATUS2_TORMENT) && !IsDynamaxed(bank);
 }
 
 bool8 IsTrickRoomActive(void)

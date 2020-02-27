@@ -1173,7 +1173,7 @@ HighJumpKickMiss:
 	waitmessage DELAY_1SECOND
 	bicbyte OUTCOME OUTCOME_MISSED
 	orword HIT_MARKER HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_NON_ATTACK_DMG
-	setdamagetobankhealthpercent BANK_ATTACKER 50
+	setdamagetobankhealthfraction BANK_ATTACKER 2 0x0 @;50 % of Base Max HP
 	graphicalhpupdate BANK_ATTACKER
 	datahpupdate BANK_ATTACKER
 	faintpokemon BANK_ATTACKER 0x0 0x0
@@ -1278,7 +1278,7 @@ StuffCheeksBS:
 	waitanimation
 	callasm SetTempIgnoreAnimations @;So the berry animation doesn't play
 	setmoveeffect MOVE_EFFECT_EAT_BERRY
-	seteffectuser
+	seteffectprimary
 	callasm SetTempIgnoreAnimations @;So the attack animation doesn't play again
 	setstatchanger STAT_DEF | INCREASE_2
 	goto BS_BUFF_ATK_STATS + 3
@@ -2999,7 +2999,7 @@ BSSolarbeamDecideTurn:
 BSSolarbeamOnFirstTurn:
 	orword HIT_MARKER HITMARKER_CHARGING
 	setmoveeffect MOVE_EFFECT_CHARGING | MOVE_EFFECT_AFFECTS_USER
-	seteffectuser
+	seteffectprimary
 	ppreduce
 	goto TwoTurnMovesSecondTurnBS
 
@@ -3456,7 +3456,7 @@ BS_174_Charge:
 	printstring 0xA5
 	waitmessage DELAY_1SECOND
 	setmoveeffect MOVE_EFFECT_SP_DEF_PLUS_1 | MOVE_EFFECT_AFFECTS_USER
-	seteffectuser
+	seteffectprimary
 	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -4231,7 +4231,7 @@ NoRetreatBS:
 	waitanimation
 	call BattleScript_AllStatsUp
 	setmoveeffect MOVE_EFFECT_PREVENT_ESCAPE | MOVE_EFFECT_AFFECTS_USER
-	seteffectuser
+	seteffectprimary
 	jumpifsecondarystatus BANK_ATTACKER STATUS2_TRAPPED PrintNoRetreatMessage @;May not be affected if Ghost or already trapped
 	goto BS_MOVE_END
 

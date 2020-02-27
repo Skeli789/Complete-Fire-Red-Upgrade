@@ -819,6 +819,7 @@ struct NewBattleStruct
 	u8 statFellThisTurn[MAX_BATTLERS_COUNT];
 	u8 recalculatedBestDoublesKillingScores[MAX_BATTLERS_COUNT];
 	u8 lastBracketCalc[MAX_BATTLERS_COUNT];
+	u8 sandblastCentiferno[MAX_BATTLERS_COUNT]; //Records if any banks are trapped by G-Max Centiferno or G-Max Sandblast
 
 	//Bit Fields for Banks
 	u8 MicleBerryBits;
@@ -868,6 +869,7 @@ struct NewBattleStruct
 	u8 backupAbility;
 	u8 switchOutBankLooper;
 	u8 skipBankStatAnim;
+	u8 maxGoldrushUses;
 	u8 originalAttackerBackup : 2;
 	u8 originalTargetBackup : 2;
 
@@ -923,6 +925,7 @@ struct NewBattleStruct
 	u8 abilityPopUpIds[MAX_BATTLERS_COUNT][2];
 	u8 backupSynchronizeBanks[2];
 	u16 failedThrownPokeBall;
+	u32 maxGoldrushMoney;
 
 	struct 
 	{

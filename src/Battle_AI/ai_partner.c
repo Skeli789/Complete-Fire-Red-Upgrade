@@ -265,7 +265,7 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 
 		case EFFECT_SWAGGER:
 			if (STAT_STAGE(bankAtkPartner, STAT_STAGE_ATK) < STAT_STAGE_MAX
-			&& (!CanBeConfused(bankAtkPartner)
+			&& (!CanBeConfused(bankAtkPartner, TRUE)
 			 || atkPartnerItemEffect == ITEM_EFFECT_CURE_CONFUSION
 			 || atkPartnerItemEffect == ITEM_EFFECT_CURE_STATUS))
 				IncreaseHelpingHandViability(&viability, class);
@@ -273,7 +273,7 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 
 		case EFFECT_FLATTER:
 			if (STAT_STAGE(bankAtkPartner, STAT_STAGE_SPATK) < STAT_STAGE_MAX
-			&& (!CanBeConfused(bankAtkPartner)
+			&& (!CanBeConfused(bankAtkPartner, TRUE)
 			 || atkPartnerItemEffect == ITEM_EFFECT_CURE_CONFUSION
 			 || atkPartnerItemEffect == ITEM_EFFECT_CURE_STATUS))
 				IncreaseHelpingHandViability(&viability, class);

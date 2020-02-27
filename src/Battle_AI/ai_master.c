@@ -1581,7 +1581,7 @@ static bool8 ShouldSwitchIfWonderGuard(void)
 					case EFFECT_CONFUSE:
 					case EFFECT_SWAGGER:
 					case EFFECT_FLATTER:
-						if (CanBeConfused(bankDef))
+						if (CanBeConfused(bankDef, TRUE))
 							return FALSE;
 						break;
 					case EFFECT_PARALYZE:

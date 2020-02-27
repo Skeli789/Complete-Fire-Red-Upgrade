@@ -14,11 +14,13 @@
 #include "../include/new/dynamax.h"
 #include "../include/new/form_change.h"
 #include "../include/new/general_bs_commands.h"
-#include "../include/new/util.h"
+#include "../include/new/item.h"
 #include "../include/new/move_battle_scripts.h"
 #include "../include/new/move_tables.h"
 #include "../include/new/new_bs_commands.h"
 #include "../include/new/set_effect.h"
+#include "../include/new/util.h"
+
 /*
 new_bs_commands.c
 	functions for any additional battle scripting commands that are used inside battle scripts
@@ -177,24 +179,26 @@ void atkFF06_setterrain(void)
 	if (ITEM_EFFECT(gBankAttacker) == ITEM_EFFECT_TERRAIN_EXTENDER)
 		duration = 8;
 
-	if (IsAnyMaxMove(gCurrentMove))
-	{
-		switch (gBattleMoves[gCurrentMove].z_move_effect) {
-			case MAX_EFFECT_ELECTRIC_TERRAIN:
-				goto SET_ELECTRIC_TERRAIN;
-			case MAX_EFFECT_GRASSY_TERRAIN:
-				goto SET_GRASSY_TERRAIN;
-			case MAX_EFFECT_MISTY_TERRAIN:
-				goto SET_MISTY_TERRAIN;
-			case MAX_EFFECT_PSYCHIC_TERRAIN:
-				goto SET_PSYCHIC_TERRAIN;
-		}
-	}
-
 	if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_TERRAIN)
 		type = 0xFF; //Can't be changed
 	else
 	{
+		if (IsAnyMaxMove(gCurrentMove))
+		{
+			switch (gBattleMoves[gCurrentMove].z_move_effect) {
+				case MAX_EFFECT_ELECTRIC_TERRAIN:
+					goto SET_ELECTRIC_TERRAIN;
+				case MAX_EFFECT_GRASSY_TERRAIN:
+					goto SET_GRASSY_TERRAIN;
+				case MAX_EFFECT_MISTY_TERRAIN:
+					goto SET_MISTY_TERRAIN;
+				case MAX_EFFECT_PSYCHIC_TERRAIN:
+					goto SET_PSYCHIC_TERRAIN;
+				case MAX_EFFECT_DEFOG:
+					goto REMOVE_TERRAIN;
+			}
+		}
+
 		switch (gCurrentMove) {
 			case MOVE_ELECTRICTERRAIN:
 			SET_ELECTRIC_TERRAIN:
@@ -223,8 +227,7 @@ void atkFF06_setterrain(void)
 				break;
 			case MOVE_SPLINTERED_STORMSHARDS:
 			case MOVE_DEFOG:
-			case MOVE_G_MAX_WIND_RAGE_P:
-			case MOVE_G_MAX_WIND_RAGE_S:
+			REMOVE_TERRAIN:
 				type = 0;
 				gNewBS->terrainForcefullyRemoved = TRUE;
 				gBattleScripting->animArg1 = B_ANIM_LOAD_DEFAULT_BG;
@@ -633,13 +636,19 @@ void atkFF12_jumpifhealthcomparestomax(void)
 		gBattlescriptCurrInstr += 7;
 }
 
-//atkFF13_setdamagetobankhealthpercent BANK PERCENT
-void atkFF13_setdamagetobankhealthpercent(void)
+//atkFF13_setdamagetobankhealthfraction BANK FRACTION USE_ACTUAL_MAX_HP
+void atkFF13_setdamagetobankhealthfraction(void)
 {
 	u8 bank = GetBattleBank(gBattlescriptCurrInstr[1]);
-	u8 percent = gBattlescriptCurrInstr[2];
-	gBattleMoveDamage = (GetBaseMaxHP(bank) * percent) / 100;
-	gBattlescriptCurrInstr += 3;
+	s8 fraction = gBattlescriptCurrInstr[2];
+	bool8 useActualMaxHP = gBattlescriptCurrInstr[3];
+
+	if (useActualMaxHP)
+		gBattleMoveDamage = gBattleMons[bank].maxHP / fraction;
+	else
+		gBattleMoveDamage = GetBaseMaxHP(bank) / fraction;
+
+	gBattlescriptCurrInstr += 4;
 }
 
 //jumpiftypepresent TYPE ROM_OFFSET
@@ -1294,7 +1303,7 @@ void atkFF29_trysetsleep(void)
 	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
 	bool8 fail = FALSE;
 
-	if (AbilityBattleEffects(ABILITYEFFECT_ABSORBING, gBankTarget, 0, 0, gCurrentMove))
+	if (AbilityBattleEffects(ABILITYEFFECT_ABSORBING, bank, 0, 0, gCurrentMove))
 	{
 		return;
 	}
@@ -1314,7 +1323,7 @@ void atkFF29_trysetsleep(void)
 		gBattleStringLoader = gText_TargetAlreadyHasStatusCondition; //String not in official games; officially "But it failed!"
 		fail = TRUE;
 	}
-	else if (gSideAffecting[SIDE(bank)] & SIDE_STATUS_SAFEGUARD)
+	else if (ABILITY(gBankAttacker) != ABILITY_INFILTRATOR && gSideAffecting[SIDE(bank)] & SIDE_STATUS_SAFEGUARD)
 	{
 		gBattleStringLoader = gText_TeamProtectedBySafeguard;
 		fail = TRUE;
@@ -1408,7 +1417,7 @@ void atkFF2A_trysetparalysis(void)
 	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
 	bool8 fail = FALSE;
 
-	if (AbilityBattleEffects(ABILITYEFFECT_ABSORBING, gBankTarget, 0, 0, gCurrentMove))
+	if (AbilityBattleEffects(ABILITYEFFECT_ABSORBING, bank, 0, 0, gCurrentMove))
 	{
 		return;
 	}
@@ -1435,7 +1444,7 @@ void atkFF2A_trysetparalysis(void)
 		gBattleStringLoader = gText_TargetAlreadyHasStatusCondition; //String not in official games; officially "But it failed!"
 		fail = TRUE;
 	}
-	else if (gSideAffecting[SIDE(bank)] & SIDE_STATUS_SAFEGUARD)
+	else if (ABILITY(gBankAttacker) != ABILITY_INFILTRATOR && gSideAffecting[SIDE(bank)] & SIDE_STATUS_SAFEGUARD)
 	{
 		gBattleStringLoader = gText_TeamProtectedBySafeguard;
 		fail = TRUE;
@@ -1497,7 +1506,7 @@ void atkFF2B_trysetburn(void)
 	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
 	bool8 fail = FALSE;
 
-	if (AbilityBattleEffects(ABILITYEFFECT_ABSORBING, gBankTarget, 0, 0, gCurrentMove))
+	if (AbilityBattleEffects(ABILITYEFFECT_ABSORBING, bank, 0, 0, gCurrentMove))
 	{
 		return;
 	}
@@ -1517,7 +1526,7 @@ void atkFF2B_trysetburn(void)
 		gBattleStringLoader = gText_TargetAlreadyHasStatusCondition; //String not in official games; officially "But it failed!"
 		fail = TRUE;
 	}
-	else if (gSideAffecting[SIDE(bank)] & SIDE_STATUS_SAFEGUARD)
+	else if (ABILITY(gBankAttacker) != ABILITY_INFILTRATOR && gSideAffecting[SIDE(bank)] & SIDE_STATUS_SAFEGUARD)
 	{
 		gBattleStringLoader = gText_TeamProtectedBySafeguard;
 		fail = TRUE;
@@ -1581,7 +1590,7 @@ void atkFF2C_trysetpoison(void)
 	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
 	bool8 fail = FALSE;
 
-	if (AbilityBattleEffects(ABILITYEFFECT_ABSORBING, gBankTarget, 0, 0, gCurrentMove))
+	if (AbilityBattleEffects(ABILITYEFFECT_ABSORBING, bank, 0, 0, gCurrentMove))
 	{
 		return;
 	}
@@ -1602,7 +1611,7 @@ void atkFF2C_trysetpoison(void)
 		gBattleStringLoader = gText_TargetAlreadyHasStatusCondition; //String not in official games; officially "But it failed!"
 		fail = TRUE;
 	}
-	else if (gSideAffecting[SIDE(bank)] & SIDE_STATUS_SAFEGUARD)
+	else if (ABILITY(gBankAttacker) != ABILITY_INFILTRATOR && gSideAffecting[SIDE(bank)] & SIDE_STATUS_SAFEGUARD)
 	{
 		gBattleStringLoader = gText_TeamProtectedBySafeguard;
 		fail = TRUE;
@@ -1698,4 +1707,19 @@ void atkFF31_jumpifraidboss(void)
 		gBattlescriptCurrInstr = ptr;
 	else
 		gBattlescriptCurrInstr += 6;
+}
+
+//recycleberry BANKish FAIL_OFFSET
+void atkFF32_recycleberry(void)
+{
+	u8 bank = (gBattlescriptCurrInstr[1] == BS_GET_ATTACKER) ? gBankAttacker : PARTNER(gBankAttacker);
+	u16 item = SAVED_CONSUMED_ITEMS(bank);
+
+	if (item != ITEM_NONE && IsBerry(item) && ITEM(bank) == ITEM_NONE)
+	{
+		RecycleItem(bank);
+		gBattlescriptCurrInstr += 6;
+	}
+	else
+		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
 }

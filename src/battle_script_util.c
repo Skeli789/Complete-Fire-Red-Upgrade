@@ -48,6 +48,16 @@ void SetTargetPartner(void)
 	gBankTarget = PARTNER(gBankAttacker);
 }
 
+void SetTargetFoePartner(void)
+{
+	gBankTarget = PARTNER(gBankTarget);
+}
+
+void SetAttackerPartner(void)
+{
+	gBankAttacker = PARTNER(gBankAttacker);
+}
+
 bool8 CheckCraftyShield(u8 bank)
 {
 	if (gSideAffecting[SIDE(bank)] & SIDE_STATUS_CRAFTY_SHIELD)
@@ -700,6 +710,23 @@ void SetPledgeEffect(void)
 
 void DoFieldEffect(void)
 {
+	if (IsAnyMaxMove(gCurrentMove)
+	&& gBattleMoves[gCurrentMove].z_move_effect == MAX_EFFECT_GRAVITY)
+	{
+		if (!IsGravityActive())
+		{
+			for (int i = 0; i < gBattlersCount; ++i)
+			{
+				if (!CheckGrounding(i))
+					gNewBS->targetsToBringDown |= gBitTable[i];
+			}
+
+			gNewBS->GravityTimer = 5;
+			gBattleStringLoader = GravitySetString;
+		}
+		return;
+	}
+
 	switch (gCurrentMove) {
 		case MOVE_TRICKROOM:
 			if (gNewBS->TrickRoomTimer > 0)
