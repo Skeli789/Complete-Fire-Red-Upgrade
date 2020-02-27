@@ -1192,9 +1192,15 @@ void AnimTask_CreateStealItem(u8 taskId)
 
 	if (iconSpriteId != MAX_SPRITES)
 	{
-		gSprites[iconSpriteId].oam.priority = 2;
-		gSprites[iconSpriteId].affineAnims = (void*) 0x83E2E80;
-		gSprites[iconSpriteId].callback = (void*) 0x80A36B5;
+		struct Sprite* sprite = &gSprites[iconSpriteId];
+
+		sprite->oam.priority = 2;
+		sprite->oam.affineMode = ST_OAM_AFFINE_NORMAL;
+		sprite->affineAnims = (void*) 0x83E2E80;
+		sprite->callback = (void*) 0x80A36B5;
+
+		CalcCenterToCornerVec(sprite, sprite->oam.shape, sprite->oam.size, sprite->oam.affineMode);
+		InitSpriteAffineAnim(sprite);
 		++gAnimVisualTaskCount;
 	}
 	DestroyAnimVisualTask(taskId);
@@ -1206,11 +1212,17 @@ void AnimTask_CreateKnockOffItem(u8 taskId)
 
 	if (iconSpriteId != MAX_SPRITES)
 	{
-		gSprites[iconSpriteId].pos1.x = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2);
-		gSprites[iconSpriteId].pos1.y = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET);
-		gSprites[iconSpriteId].oam.priority = 2;
-		gSprites[iconSpriteId].affineAnims = (void*) 0x83E2E80;
-		gSprites[iconSpriteId].callback = (void*) 0x80A35F5;
+		struct Sprite* sprite = &gSprites[iconSpriteId];
+	
+		sprite->pos1.x = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2);
+		sprite->pos1.y = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET);
+		sprite->oam.priority = 2;
+		sprite->oam.affineMode = ST_OAM_AFFINE_NORMAL;
+		sprite->affineAnims = (void*) 0x83E2E80;
+		sprite->callback = (void*) 0x80A35F5;
+		
+		CalcCenterToCornerVec(sprite, sprite->oam.shape, sprite->oam.size, sprite->oam.affineMode);
+		InitSpriteAffineAnim(sprite);
 		++gAnimVisualTaskCount;
 	}
 	DestroyAnimVisualTask(taskId);
