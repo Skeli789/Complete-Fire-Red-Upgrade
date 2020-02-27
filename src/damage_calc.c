@@ -1743,8 +1743,18 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 			case MOVE_BODYPRESS:
 				attack = gBattleMons[bankAtk].defense;
 				spAttack = gBattleMons[bankAtk].spDefense;
-				data->atkBuff = STAT_STAGE(bankAtk, STAT_STAGE_DEF);
-				data->spAtkBuff = STAT_STAGE(bankAtk, STAT_STAGE_SPDEF);
+				if (IsWonderRoomActive())
+				{
+					//For some strange reason in SwSh, Wonder Room swaps the defense boosts
+					//when using Body Press, as opposed to the actual stat.
+					data->atkBuff = STAT_STAGE(bankAtk, STAT_STAGE_SPDEF);
+					data->spAtkBuff = STAT_STAGE(bankAtk, STAT_STAGE_DEF);
+				}
+				else
+				{
+					data->atkBuff = STAT_STAGE(bankAtk, STAT_STAGE_DEF);
+					data->spAtkBuff = STAT_STAGE(bankAtk, STAT_STAGE_SPDEF);
+				}
 				break;
 			default:
 				attack = gBattleMons[bankAtk].attack;
