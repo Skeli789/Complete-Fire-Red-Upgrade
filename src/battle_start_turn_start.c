@@ -126,6 +126,7 @@ void BattleBeginFirstTurn(void)
 	if (!gBattleExecBuffer) { //Inlclude Safari Check Here?
 		switch(*state) {
 			case GetTurnOrder:
+				gNewBS->skipBankStatAnim = 0xFF;
 				for (i = 0; i < gBattlersCount; ++i)
 				{
 					gBanksByTurnOrder[i] = i;
@@ -371,7 +372,6 @@ void BattleBeginFirstTurn(void)
 				gBattleScripting->atk49_state = 0;
 				gBattleStruct->faintedActionsState = 0;
 				gBattleStruct->turncountersTracker = 0;
-				gNewBS->skipBankStatAnim = 0xFF;
 				gMoveResultFlags = 0;
 				gRandomTurnNumber = Random();
 				*state = 0;
