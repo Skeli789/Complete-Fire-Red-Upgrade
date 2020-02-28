@@ -382,14 +382,13 @@ static void SpriteCB_MegaTrigger(struct Sprite* self)
 	}
 
   	const struct Evolution* evo;
+	struct ChooseMoveStruct* moveInfo = (struct ChooseMoveStruct*) (&gBattleBufferA[TRIGGER_BANK][4]);
 	if (TAG == GFX_TAG_MEGA_TRIGGER)
 	{
 		evo = CanMegaEvolve(TRIGGER_BANK, FALSE);
 		if (evo->unknown != MEGA_VARIANT_ULTRA_BURST)
 		{
-			if (gNewBS->MegaData->done[TRIGGER_BANK]
-			||  DoesZMoveUsageStopMegaEvolution(TRIGGER_BANK)
-			||  DoesDynamaxUsageStopMegaEvolution(TRIGGER_BANK))
+			if (!moveInfo->canMegaEvolve)
 				PALETTE_STATE = MegaTriggerGrayscale;
 			else
 			{
@@ -405,8 +404,7 @@ static void SpriteCB_MegaTrigger(struct Sprite* self)
 		evo = CanMegaEvolve(TRIGGER_BANK, TRUE);
 		if (evo->unknown == MEGA_VARIANT_ULTRA_BURST)
 		{
-			if (gNewBS->UltraData->done[TRIGGER_BANK]
-			||  DoesDynamaxUsageStopMegaEvolution(TRIGGER_BANK))
+			if (!moveInfo->canMegaEvolve)
 				PALETTE_STATE = MegaTriggerGrayscale;
 			else
 			{

@@ -1276,6 +1276,9 @@ bool8 ShouldAIDelayMegaEvolution(u8 bankAtk, unusedArg u8 bankDef, u16 move)
 	u8 atkAbility = ABILITY(bankAtk);
 	u8 megaAbility = GetBankMegaFormAbility(bankAtk);
 
+	if (BATTLER_SEMI_INVULNERABLE(bankAtk))
+		return TRUE; //Can't Mega Evolve this turn
+
 	if (atkAbility == megaAbility //Ability isn't changing
 	||  megaAbility == ABILITY_NONE) //Can't Mega evolve or ability suppressed
 		return FALSE;
@@ -2499,6 +2502,9 @@ bool8 ShouldAIDynamax(u8 bankAtk, u8 bankDef, u16 move)
 {
 	if (gBattleTypeFlags & BATTLE_TYPE_DYNAMAX && CanDynamax(bankAtk))
 	{
+		if (BATTLER_SEMI_INVULNERABLE(bankAtk))
+			return FALSE; //Can't Dynamax out of view
+
 		if (IS_DOUBLE_BATTLE && bankDef == PARTNER(bankAtk))
 			return FALSE; //No need to Dynamax against your partner
 

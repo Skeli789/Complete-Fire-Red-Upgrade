@@ -465,6 +465,7 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 	tempMoveStruct->dynamaxDone = gNewBS->dynamaxData.used[gActiveBattler];
 	if ((!gNewBS->dynamaxData.used[gActiveBattler] || IsDynamaxed(gActiveBattler))
 	&& DynamaxEnabled(gActiveBattler)
+	&& !BATTLER_SEMI_INVULNERABLE(gActiveBattler)
 	&& !IsMega(gActiveBattler)
 	&& !IsBluePrimal(gActiveBattler)
 	&& !IsRedPrimal(gActiveBattler))
@@ -557,7 +558,9 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 			{
 				if (!BankMegaEvolved(gActiveBattler, FALSE)
 				&& MegaEvolutionEnabled(gActiveBattler)
-				&& !DoesZMoveUsageStopMegaEvolution(gActiveBattler)) //No Mega Evolving if you've used a Z-Move (*cough* *cough* Rayquaza)
+				&& !BATTLER_SEMI_INVULNERABLE(gActiveBattler) //No Mega Evolving while not on screen
+				&& !DoesZMoveUsageStopMegaEvolution(gActiveBattler) //No Mega Evolving if you've used a Z-Move (*cough* *cough* Rayquaza)
+				&& !DoesDynamaxUsageStopMegaEvolution(gActiveBattler))
 				{
 					tempMoveStruct->canMegaEvolve = TRUE;
 					tempMoveStruct->megaVariance = evolutions->unknown;
@@ -570,7 +573,9 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 			evolutions = CanMegaEvolve(gActiveBattler, TRUE); //Check Ultra Burst
 			if (evolutions != NULL)
 			{
-				if (!BankMegaEvolved(gActiveBattler, TRUE)) //Check Ultra Burst
+				if (!BankMegaEvolved(gActiveBattler, TRUE) //Check Ultra Burst
+				&& !BATTLER_SEMI_INVULNERABLE(gActiveBattler) //No Ultra Bursting while not on screen
+				&& !DoesDynamaxUsageStopMegaEvolution(gActiveBattler))
 				{
 					tempMoveStruct->canMegaEvolve = TRUE;
 					tempMoveStruct->megaVariance = evolutions->unknown;

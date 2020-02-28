@@ -389,19 +389,26 @@ static void PlayerPartnerHandleChooseMove(void)
 			gBankTarget = GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
 	}
 
-	if (moveInfo->possibleZMoves[chosenMoveId])
+	//You get 1 of 3 of the following gimmicks per Pokemon
+	if (moveInfo->possibleZMoves[chosenMoveId]) //Checked first b/c Rayquaza can do all 3
 	{
 		if (ShouldAIUseZMove(gActiveBattler, gBankTarget, moveInfo->moves[chosenMoveId]))
 			gNewBS->ZMoveData->toBeUsed[gActiveBattler] = TRUE;
 	}
-	else if (gBattleResults->battleTurnCounter > 3 && ShouldAIDynamax(gActiveBattler, gBankTarget, chosenMove)) //Give the Player a chance to Dynamax first
-		gNewBS->dynamaxData.toBeUsed[gActiveBattler] = TRUE;
-	else if (!ShouldAIDelayMegaEvolution(gActiveBattler, gBankTarget, chosenMove))
+	else if (moveInfo->canMegaEvolve)
 	{
-		if (moveInfo->canMegaEvolve && moveInfo->megaVariance != MEGA_VARIANT_ULTRA_BURST)
-			gNewBS->MegaData->chosen[gActiveBattler] = TRUE;
-		else if (moveInfo->canMegaEvolve && moveInfo->megaVariance == MEGA_VARIANT_ULTRA_BURST)
-			gNewBS->UltraData->chosen[gActiveBattler] = TRUE;
+		if (!ShouldAIDelayMegaEvolution(gActiveBattler, gBankTarget, chosenMove))
+		{
+			if (moveInfo->megaVariance != MEGA_VARIANT_ULTRA_BURST)
+				gNewBS->MegaData->chosen[gActiveBattler] = TRUE;
+			else if (moveInfo->megaVariance == MEGA_VARIANT_ULTRA_BURST)
+				gNewBS->UltraData->chosen[gActiveBattler] = TRUE;
+		}
+	}
+	else if (moveInfo->possibleMaxMoves[chosenMoveId])
+	{
+		if (gBattleResults->battleTurnCounter > 3 && ShouldAIDynamax(gActiveBattler, gBankTarget, chosenMove)) //Give the Player a chance to Dynamax first
+			gNewBS->dynamaxData.toBeUsed[gActiveBattler] = TRUE;
 	}
 
 	//This is handled again later, but it's only here to help with the case of choosing Helping Hand when the partner is switching out.

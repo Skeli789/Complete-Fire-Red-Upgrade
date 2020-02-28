@@ -1261,11 +1261,11 @@ void atkFF28_jumpifweight(void)
 				ret = TRUE;
 			break;
 		case CMP_GREATER_THAN:
-			if (value > weight)
+			if (weight > value)
 				ret = TRUE;
 			break;
 		case CMP_LESS_THAN:
-			if (value < weight)
+			if (weight < value)
 				ret = TRUE;
 			break;
 		case CMP_COMMON_BITS:

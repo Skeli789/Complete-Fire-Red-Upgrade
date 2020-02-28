@@ -445,6 +445,7 @@ gDynamaxBannedMoves:
 .hword MOVE_ROAR
 .hword MOVE_SKILLSWAP
 .hword MOVE_WHIRLWIND
+.hword MOVE_SKYDROP
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

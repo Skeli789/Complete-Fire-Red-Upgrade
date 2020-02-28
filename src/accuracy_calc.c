@@ -102,16 +102,15 @@ ACCURACY_CHECK_START:
 				if (umodsi(Random(), 100 + 1) > calc)
 				{
 					gMoveResultFlags |= MOVE_RESULT_MISSED;
-					if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE
+					if (IS_DOUBLE_BATTLE
 					&& (gBattleMoves[move].target == MOVE_TARGET_BOTH || gBattleMoves[move].target == MOVE_TARGET_FOES_AND_ALLY))
 						gBattleCommunication[6] = 2;
 					else
 						gBattleCommunication[6] = 0;
-					//gMoveResultFlags |= (TypeCalc(move, gBankAttacker, gBankTarget, GetBankPartyData(gBankAttacker), FALSE) & (MOVE_RESULT_MISSED | MOVE_RESULT_FAILED | MOVE_RESULT_DOESNT_AFFECT_FOE));
-	
+
 					if (gMoveResultFlags == MOVE_RESULT_MISSED && ITEM_EFFECT(gBankAttacker) == ITEM_EFFECT_BLUNDER_POLICY)
 						gNewBS->activateBlunderPolicy = TRUE;
-					
+
 					if (gCurrentMove == MOVE_DRAGONDARTS
 					&& !recalculated //So don't jump back and forth between targets
 					&& CanTargetPartner(gBankTarget)
@@ -388,7 +387,7 @@ static u32 AccuracyCalcPassDefAbilityItemEffect(u16 move, u8 bankAtk, u8 bankDef
 			calc = udivsi((calc * 110), 100); // 1.1 Victory Star boost
 	}
 
-	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && ABILITY(PARTNER(bankAtk)) == ABILITY_VICTORYSTAR)
+	if (IS_DOUBLE_BATTLE && ABILITY(PARTNER(bankAtk)) == ABILITY_VICTORYSTAR)
 		calc = udivsi((calc * 110), 100); // 1.1 Victory Star partner boost
 
 	if (WEATHER_HAS_EFFECT)
@@ -485,7 +484,7 @@ u32 VisualAccuracyCalc_NoTarget(u16 move, u8 bankAtk)
 			calc = udivsi((calc * 110), 100); // 1.1 Victory Star boost
 	}
 
-	if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && ABILITY(PARTNER(bankAtk)) == ABILITY_VICTORYSTAR)
+	if (IS_DOUBLE_BATTLE && ABILITY(PARTNER(bankAtk)) == ABILITY_VICTORYSTAR)
 		calc = udivsi((calc * 110), 100); // 1.1 Victory Star partner boost
 
 	if (WEATHER_HAS_EFFECT &&  gBattleWeather & WEATHER_FOG_ANY)
