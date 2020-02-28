@@ -1005,7 +1005,7 @@ bool8 IsBankIncapacitated(u8 bank)
 		return TRUE;
 
 	if (gBattleMons[bank].status2 & STATUS2_RECHARGE
-	||  gDisableStructs[bank].truantCounter != 0)
+	||  (ABILITY(bank) == ABILITY_TRUANT && gDisableStructs[bank].truantCounter != 0))
 		return TRUE;
 
 	return FALSE;
@@ -1015,7 +1015,7 @@ bool8 WillFaintFromWeatherSoon(u8 bank)
 {
 	if (TakesDamageFromSandstorm(bank) || TakesDamageFromHail(bank))
 	{
-		return gBattleMons[bank].hp <= gBattleMons[bank].maxHP / 16;
+		return gBattleMons[bank].hp <= GetBaseMaxHP(bank) / 16;
 	}
 
 	return FALSE;
@@ -1040,10 +1040,10 @@ bool8 WillTakeSignificantDamageFromEntryHazards(u8 bank, u8 healthFraction)
 		if (gSideTimers[SIDE(bank)].spikesAmount > 0)
 			dmg += CalcSpikesDamagePartyMon(mon, SIDE(bank));
 
-		if (dmg >= gBattleMons[bank].hp)
+		if (dmg >= GetBaseCurrentHP(bank))
 			return TRUE;
 
-		if (dmg >= gBattleMons[bank].maxHP / healthFraction) //More or equal than a quarter of max health
+		if (dmg >= GetBaseMaxHP(bank) / healthFraction) //More or equal than a quarter of max health
 			return TRUE;
 	}
 

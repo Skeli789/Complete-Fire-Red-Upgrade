@@ -81,10 +81,6 @@ gPostMenuFieldCallback = 0x203B0C4;
 gFieldCallback = 0x3005020;
 gFieldCallback2 = 0x3005024;
 
-/* Audio RAM */
-gDisableMusic = 0x3005080;
-gMPlay_BGM = 0x3007300;
-
 /* Window RAM */
 gWindows = 0x20204B4;
 
@@ -112,7 +108,13 @@ gTasks = 0x3005090;
 gMain = 0x30030F0;
 
 /* Audio RAM */
+gWarpMusicDisable = 0x2031DD8;
+sCurrentMapMusic = 0x3000FC0;
+sNextMapMusic = 0x3000FC2;
+sMapMusicState = 0x3000FC4;
+sMapMusicFadeInSpeed = 0x3000FC5;
 sFanfareCounter = 0x3000FC6;
+gDisableMusic = 0x3005080;
 gMPlayInfo_BGM = 0x3007300;
 gMPlayInfo_SE1 = 0x3007340;
 gMPlayInfo_SE2 = 0x3007380;
@@ -1333,7 +1335,9 @@ GetCurrentMapMusic = 0x8071A68 | 1;
 PlayNewMapMusic = 0x8071A74 | 1;
 PlayFanfare = 0x8071C60 | 1;
 IsFanfareTaskInactive = 0x8071C9C | 1;
+FadeInNewBGM = 0x8071D10 | 1;
 IsBGMPausedOrStopped = 0x8071D7C | 1;
+IsBGMStopped = 0x8071DD4 | 1;
 PlayCry1 = 0x8071DF0 | 1;
 PlayCry3 = 0x8071E60 | 1;
 StopCryAndClearCrySongs = 0x80721C4 | 1;

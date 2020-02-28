@@ -866,6 +866,9 @@ enum ProtectQueries ShouldProtect(u8 bankAtk, u8 bankDef, u16 move)
 	&&  defAbility != ABILITY_BEASTBOOST)
 		return FALSE; //Don't protect if you're going to faint after protecting and foe can't get boosts from your KO
 
+	if (IsBankIncapacitated(bankDef))
+		return FALSE; //Don't Protect against an opponent that isn't going to do anything
+
 	if (BankHoldingUsefulItemToProtectFor(bankAtk)
 	||  BankHasAbilityUsefulToProtectFor(bankAtk, bankDef)
 	||  (IsDynamaxed(bankDef) && SPLIT(predictedMove) != SPLIT_STATUS) //Foe is going to attack with a Max Move

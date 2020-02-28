@@ -3,6 +3,7 @@
 #include "global.h"
 
 extern bool8 gDisableMusic;
+extern bool8 gWarpMusicDisable;
 
 void __attribute__((long_call)) InitMapMusic(void);
 void __attribute__((long_call)) MapMusicMain(void);

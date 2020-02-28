@@ -2062,7 +2062,7 @@ static void DexNavGuiExitSearch(void)
 			}
 			break;
 		case 2:
-			m4aMPlayVolumeControl(&gMPlay_BGM, 0xFFFF, 256);
+			m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0xFFFF, 256);
 			SetMainCallback1(CallbackDexNavOW);
 			SetMainCallback2(CB2_ReturnToFieldContinueScript);
 			break;
@@ -2087,7 +2087,7 @@ static void DexNavGuiExitNoSearch(void)
 			}
 			break;
 		case 2:
-			m4aMPlayVolumeControl(&gMPlay_BGM, 0xFFFF, 256);
+			m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0xFFFF, 256);
 			SetMainCallback1(CB1_Overworld);
 
 			#ifdef FLAG_POKETOOLS_MENU

@@ -157,7 +157,7 @@ void sub_8035C30Fix(void)
 				{
 					FreeSpriteTilesByTag(0x27F9);
 					FreeSpritePaletteByTag(0x27F9);
-					m4aMPlayVolumeControl(&gMPlay_BGM, 0xFFFF, 256);
+					m4aMPlayVolumeControl(&gMPlayInfo_BGM, 0xFFFF, 256);
 				}
 				else
 					return;

@@ -150,8 +150,6 @@ struct Clock
 		//#define gGbaTimer ((struct GbaTimer*) 0x4000108)
 		#define gKeyReg (*((u16*) 0x4000130))
 
-		extern struct MusicPlayerInfo gMPlay_BGM;
-
 		//Expanded text buffers					//Size					//buffercommand X	//String Arg
 /*u8*/  #define gStringVar7 ((u8*) 0x2022BC4)	//32 bytes					//Buffer 0x5 	//FD 07
 /*u8*/  #define gStringVar8 ((u8*) 0x2022BE4)	//32 bytes					//Buffer 0x6	//FD 08
