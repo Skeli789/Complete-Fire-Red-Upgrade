@@ -307,6 +307,22 @@ const union AffineAnimCmd* const gSpriteAffineAnimTable_HydroCannonBall[] =
 	sSpriteAffineAnim_HydroCannonBall,
 };
 
+static const union AffineAnimCmd sSpriteAffineAnim_AuraSphereBall[] =
+{
+    AFFINEANIMCMD_FRAME(16, 16, 0, 0), //Start at 1 pixel
+    AFFINEANIMCMD_FRAME(16, 16, 0, 15),
+
+	//Pulsate
+    AFFINEANIMCMD_FRAME(-8, -8, 10, 3), //Shrink & Spin
+	AFFINEANIMCMD_FRAME(8, 8, 10, 3), //Grow & Spin
+    AFFINEANIMCMD_JUMP(2),
+};
+
+const union AffineAnimCmd* const gSpriteAffineAnimTable_AuraSphereBall[] =
+{
+	sSpriteAffineAnim_AuraSphereBall,
+};
+
 const struct OamData sGrowingSuperpowerOAM =
 {
 	.affineMode = ST_OAM_AFFINE_DOUBLE,

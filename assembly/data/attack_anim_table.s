@@ -1061,7 +1061,7 @@ ANIM_ROCKSMASH:
 	loadparticle ANIM_TAG_HANDS_AND_FEET
 	pokespritetoBG side_target
 	setblends 0x80c
-	launchtemplate SMASH_FLOATROCK 0x1 0x5 0x1 0x0 0x0 0x20 0xa
+	launchtemplate SMASH_FLOATROCK 0x1 0x5 bank_target 0x0 0x0 0x20 0xa
 	pause 0x1A
 	launchtemplate Template_Fist 0x3 0x5 0x0 0x0 0x8 0x1 0x0
 	playsound2 0x74 SOUND_PAN_TARGET
@@ -1774,20 +1774,24 @@ ANIM_AQUATAIL:
 .pool
 ANIM_AURASPHERE:
 	loadparticle ANIM_TAG_AURA_SPHERE
-	loadBG1 0x9
+	loadparticle ANIM_TAG_UNUSED_IMPACT_2
+	loadBG1 BG_AURA_SPHERE
+	waitforBG
+	launchtask AnimTask_scroll_background 0x5 0x4 0xf700 0x0 0x1 0xffff
 	waitfortransparentBG
-	launchtask 0x80bb82d 0x5 0x4 0xf700 0x0 0x1 0xffff
-	pause 0xf
-	launchsoundtask 0x80dcf39 0x7 0xa1 0xffc0 SOUND_PAN_TARGET 0x5 0x5 0x0 0x5
-	launchtemplate AURA_SPHERE_BALL TEMPLATE_TARGET | 2, 0x3, 0x0 0x0 0x19
+	playsound2 0x85 SOUND_PAN_ATTACKER
+	launchtemplate AURA_SPHERE_BALL 0x2 0x5 bank_attacker 0x0 0x10 0x35 0x0
+	pause 0x30
+	playsoundpanchange 0xBA SOUND_PAN_ATTACKER SOUND_PAN_TARGET 0x2 0x0
+	launchtemplate SNIPE_SHOT_BALL TEMPLATE_TARGET | 2, 0x3, 0x0 0x0 0x10
 	waitanimation
-	playsound2 0x98 SOUND_PAN_TARGET
 	launchtask AnimTask_move_bank_2 0x2 0x5 0x1 0x4 0x0 0x8 0x1
 	waitanimation
-	call 0x81d59c7
+	call UNSET_SCROLLING_BG
 	endanimation
 
-AURA_SPHERE_BALL: objtemplate ANIM_TAG_AURA_SPHERE ANIM_TAG_AURA_SPHERE OAM_NORMAL_32x32 0x8231CF0 0x0 0x83E7604 0x80B563D
+.align 2
+AURA_SPHERE_BALL: objtemplate ANIM_TAG_AURA_SPHERE ANIM_TAG_AURA_SPHERE OAM_NORMAL_32x32 0x8231CF0 0x0 gSpriteAffineAnimTable_AuraSphereBall SpriteCB_SpriteOnMonForDuration
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -1848,7 +1852,6 @@ AvalancheRocks:
 .align 2
 ICEROCKS: objtemplate ANIM_TAG_ROCKS ANIM_TAG_DRAGON_ASCENT_FOE OAM_OFF_32x32 0x83E73A8 0x0 0x8231CFC 0x80B4635
 
-
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 ANIM_BRAVEBIRD:
@@ -1885,7 +1888,6 @@ LOAD_BG_ON_PLAYER:
 
 .align 2
 BIRD_TEMPLATE: objtemplate ANIM_TAG_BIRD ANIM_TAG_JAGGED_MUSIC_NOTE OAM_DOUBLE_64x64 0x8231CF0 0x0 0x8231CFC 0x80B2D65
-
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -2387,7 +2389,7 @@ ANIM_DRAINPUNCH:
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xA 0x171D
 	waitanimation
 	playsound2 0xAD SOUND_PAN_TARGET
-	launchtemplate DRAIN_FIST 0x1 0x5 0x1 0x0 0x0 0x25 0xA
+	launchtemplate DRAIN_FIST 0x1 0x5 bank_target 0x0 0x0 0x25 0xA
 	launchtask AnimTask_move_bank 0x5 0x5 0x1 0x0 0x5 0x1A 0x1
 	call ABSORB_ANIM
 	waitanimation
@@ -5046,7 +5048,7 @@ ANIM_RAZORSHELL:
 	loadparticle ANIM_TAG_RAZOR_SHELL
 	loadparticle ANIM_TAG_CUT
 	pokespritetoBG bank_target
-	launchtemplate RAZOR_SHELL 0x2 0x5 0x1 0x0 0x0 25 0
+	launchtemplate RAZOR_SHELL 0x2 0x5 bank_target 0x0 0x0 25 0
 	playsound2 0x79 SOUND_PAN_TARGET
 	launchtemplate 0x83E3294 0x1 0x3 0x28 0xffe0 0x0
 	pause 0x5
@@ -5357,7 +5359,7 @@ ANIM_DAZZLINGGLEAM:
 	waitanimation
 	launchtask 0x080B9BDD 0x2 0x6 0x2 0x0 0x3 0x0 0x10 0x7fff
 	pause 0x4
-	playsound2 SOUND_PAN_ATTACKER SOUND_PAN_ATTACKER
+	playsound2 0xC0 SOUND_PAN_ATTACKER
 	waitanimation
 	launchtemplate 0x083E7B24 0x2 0x5 0x1 0x0 0xd 0x0 0x7fff
 	waitanimation
@@ -5848,8 +5850,8 @@ ANIM_SHIFTGEAR:
 	loadparticle ANIM_TAG_GEAR @Gear
 	pokespritetoBG bank_attacker
 	playsound2 0x49 SOUND_PAN_ATTACKER
-	launchtemplate SHIFT_GEAR 0x2 0x5 0x1 0xFFF3 0x8 0x65 0xa
-	launchtemplate SHIFT_GEAR 0x2 0x5 0x1 0xE 0xFFF8 0x65 0xa
+	launchtemplate SHIFT_GEAR 0x2 0x5 bank_attacker 0xFFF3 0x8 0x65 0xa
+	launchtemplate SHIFT_GEAR 0x2 0x5 bank_attacker 0xE 0xFFF8 0x65 0xa
 	waitanimation
 	pokespritefromBG bank_attacker
 	endanimation
@@ -14103,7 +14105,7 @@ ANIM_GRAVITY:
 	launchtask 0x8098e91 0x5 0x5 bank_target 0x2 0x0 0x60 0x1e
 	launchtask 0x8098e91 0x5 0x5 attacker_partner 0x2 0x0 0x60 0x1e
 	launchtask 0x8098e91 0x5 0x5 target_partner 0x2 0x0 0x60 0x1e
-	launchtemplate GRAVITY_BLACKHOLE 0x1 0x5 0x0 0x0 0x0 0x45 0xa
+	launchtemplate GRAVITY_BLACKHOLE 0x1 0x5 bank_attacker 0x0 0x0 0x45 0xa
 	waitanimation
 	launchtemplate Template_SlideMonToOriginalPos 0x2 0x3 bank_attacker 0x0 0x4
 	launchtemplate Template_SlideMonToOriginalPos 0x2 0x3 bank_target 0x0 0x4
@@ -15639,7 +15641,7 @@ ANIM_SNIPE_SHOT:
 	playsound2 0xCA SOUND_PAN_ATTACKER
 	waitanimation
 	pause 0x20
-	playsound2 SOUND_PAN_ATTACKER SOUND_PAN_TARGET
+	playsound2 0xC0 SOUND_PAN_TARGET
 	launchtemplate SNIPE_SHOT_BALL TEMPLATE_TARGET | 2, 0x3, 0x0 0x0 0x10
 	waitanimation
 	launchtask AnimTask_move_bank_2 0x2 0x5 0x1 0x4 0x0 0x8 0x1
@@ -15690,8 +15692,8 @@ ANIM_STUFF_CHEEKS:
 ANIM_NO_RETREAT:
 	loadparticle ANIM_TAG_SMALL_EMBER
 	soundcomplex 0x89 SOUND_PAN_ATTACKER 0x7 0x12
-	launchtemplate NO_RETREAT_FLAME TEMPLATE_ATTACKER | 2, 0x5 1,  20, 10, 0xA0, 0
-	launchtemplate NO_RETREAT_FLAME TEMPLATE_ATTACKER | 2, 0x5 1, -20, 10, 0xA0, 0
+	launchtemplate NO_RETREAT_FLAME TEMPLATE_ATTACKER | 2, 0x5 bank_attacker,  20, 10, 0xA0, 0
+	launchtemplate NO_RETREAT_FLAME TEMPLATE_ATTACKER | 2, 0x5 bank_attacker, -20, 10, 0xA0, 0
 	launchtask 0x80E4161 0x5 0x0 
 	waitanimation
 	endanimation
@@ -21891,7 +21893,7 @@ ANIM_CLANGOROUS_SOULBLAZE:
 	makebankinvisible attacker_partner
 	pause 0x0
 	pokespritetoBG bank_target
-	playsound2 SOUND_PAN_ATTACKER SOUND_PAN_ATTACKER
+	playsound2 0xC0 SOUND_PAN_ATTACKER
 	launchtemplate SOULBLAZE_PULSE_RING 0x2 0x6 0x10 0x0 0x0 0x0 0x1d 0x0
 	launchtemplate Template_BellyDrumNote 0x2 0x4 0x0 0x0 0x0 0x0 @music note
 	pause 0x5
@@ -23419,7 +23421,7 @@ ANIM_MAX_KNUCKLE:
 	setblends 0x80C
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xE 0x0 @;Black
 	launchtask AnimTask_DynamaxGrowth 0x5 0x1 0x1
-	launchtemplate MAX_KNUCKLE_USER_FIST 0x2 0x5 0x0 0x0 0x0 60 0xa
+	launchtemplate MAX_KNUCKLE_USER_FIST 0x2 0x5 bank_attacker 0x0 0x0 60 0xa
 	playsound2 0xa4 SOUND_PAN_ATTACKER
 	call BUFF_EFFECT
 	pause 0x10
@@ -23604,15 +23606,15 @@ FINISH_BG_OOZE:
 	playsound2 0x9D SOUND_PAN_TARGET
 	launchtask AnimTask_arg7_is_target_player 0x2 0x0
 	jumpifargmatches 0x7 0x1 POISON_COLUMNS_ON_PLAYER
-	launchtemplate POISON_COLUMN TEMPLATE_TARGET | 2, 0x5, 0x1, 30, 5, 0xC5 0x0
+	launchtemplate POISON_COLUMN TEMPLATE_TARGET | 2, 0x5, bank_target, 30, 5, 0xC5 0x0
 	pause 0x30
 	playsound2 0x9D SOUND_PAN_TARGET
-	launchtemplate POISON_COLUMN TEMPLATE_TARGET | 2, 0x5, 0x1, -50, -10, 0x95 0x0
+	launchtemplate POISON_COLUMN TEMPLATE_TARGET | 2, 0x5, bank_target, -50, -10, 0x95 0x0
 	
 MAX_OOZE_REJOIN:
 	pause 0x30
 	playsound2 0x13 SOUND_PAN_TARGET
-	launchtemplate POISON_COLUMN TEMPLATE_TARGET | 2, 0x5, 0x1, -10, -25, 0x65 0x0
+	launchtemplate POISON_COLUMN TEMPLATE_TARGET | 2, 0x5, bank_target, -10, -25, 0x65 0x0
 	pause 0x3
 	launchtask AnimTask_move_bank 0x5 0x5 bank_target 0x0 0x4 0x2F 0x1
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x2 0x0 0x10 0x6038 @;Purple
@@ -23624,10 +23626,10 @@ MAX_OOZE_REJOIN:
 	endanimation
 	
 POISON_COLUMNS_ON_PLAYER:
-	launchtemplate POISON_COLUMN TEMPLATE_TARGET | 0, 0x5, 0x1, -15, -60, 0xC5 0x0
+	launchtemplate POISON_COLUMN TEMPLATE_TARGET | 0, 0x5, bank_target, -15, -60, 0xC5 0x0
 	pause 0x30
 	playsound2 0x9D SOUND_PAN_TARGET
-	launchtemplate POISON_COLUMN TEMPLATE_TARGET | 0, 0x5, 0x1, 45, -40, 0x95 0x0
+	launchtemplate POISON_COLUMN TEMPLATE_TARGET | 0, 0x5, bank_target, 45, -40, 0x95 0x0
 	goto MAX_OOZE_REJOIN
 
 .align 2
@@ -24240,8 +24242,8 @@ ANIM_MAX_DARKNESS:
 	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_CIRCLE_OF_LIGHT 0x2 0xE 0xE 0x3006 @;Purple
 	launchtask AnimTask_DynamaxGrowth 0x5 0x1 0x1
 	soundcomplex 0x70 SOUND_PAN_ATTACKER 0x9 0x5
-	launchtemplate DARKNESS_HOLE TEMPLATE_ATTACKER | 2, 0x5, 0, -20, 0, 145, 0
-	launchtemplate DARKNESS_HOLE TEMPLATE_ATTACKER | 2, 0x5, 0, 20, 0, 145, 0
+	launchtemplate DARKNESS_HOLE TEMPLATE_ATTACKER | 2, 0x5, bank_attacker, -20, 0, 145, 0
+	launchtemplate DARKNESS_HOLE TEMPLATE_ATTACKER | 2, 0x5, bank_attacker, 20, 0, 145, 0
 	pause 0x48
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x0 0x0 0xE 0x0 @;Black
 	call DARKNESS_ORB_LAUNCH_PINK
@@ -24367,16 +24369,16 @@ OVERGROWTH_SEEDS_DOWN:
 	
 OVERGROWTH_GIANT_MUSHROOMS:
 	playsound2 0xb3 SOUND_PAN_TARGET
-	launchtemplate OVERGROWTH_MUSHROOM TEMPLATE_TARGET | 3, 0x5, 0x1, 30, 1, 45 0x0
+	launchtemplate OVERGROWTH_MUSHROOM TEMPLATE_TARGET | 3, 0x5, bank_target, 30, 1, 45 0x0
 	pause 0x1
 	playsound2 0xb3 SOUND_PAN_TARGET
-	launchtemplate OVERGROWTH_MUSHROOM TEMPLATE_TARGET | 3, 0x5, 0x1, -30, 1, 45 0x0
+	launchtemplate OVERGROWTH_MUSHROOM TEMPLATE_TARGET | 3, 0x5, bank_target, -30, 1, 45 0x0
 	pause 0x1
 	playsound2 0xb3 SOUND_PAN_TARGET
-	launchtemplate OVERGROWTH_MUSHROOM TEMPLATE_TARGET | 0x43, 0x5, 0x1, 3, -3, 45 0x0
+	launchtemplate OVERGROWTH_MUSHROOM TEMPLATE_TARGET | 0x43, 0x5, bank_target, 3, -3, 45 0x0
 	pause 0x1
 	playsound2 0xb3 SOUND_PAN_TARGET
-	launchtemplate OVERGROWTH_MUSHROOM TEMPLATE_TARGET | 8, 0x5, 0x1, -3, 5, 45 0x0
+	launchtemplate OVERGROWTH_MUSHROOM TEMPLATE_TARGET | 8, 0x5, bank_target, -3, 5, 45 0x0
 	pause 25
 	return
 	
@@ -24595,15 +24597,15 @@ FINISH_BG_MALODOR:
 	playsound2 0x9D SOUND_PAN_TARGET
 	launchtask AnimTask_arg7_is_target_player 0x2 0x0
 	jumpifargmatches 0x7 0x1 GARBAGE_COLUMNS_ON_PLAYER
-	launchtemplate GARBAGE_COLUMN TEMPLATE_TARGET | 2, 0x5, 0x1, 30, 5, 0xC5 0x0
+	launchtemplate GARBAGE_COLUMN TEMPLATE_TARGET | 2, 0x5, bank_target, 30, 5, 0xC5 0x0
 	pause 0x30
 	playsound2 0x9D SOUND_PAN_TARGET
-	launchtemplate GARBAGE_COLUMN TEMPLATE_TARGET | 2, 0x5, 0x1, -50, -10, 0x95 0x0
+	launchtemplate GARBAGE_COLUMN TEMPLATE_TARGET | 2, 0x5, bank_target, -50, -10, 0x95 0x0
 	
 MALODOR_REJOIN:
 	pause 0x30
 	playsound2 0x13 SOUND_PAN_TARGET
-	launchtemplate GARBAGE_COLUMN TEMPLATE_TARGET | 2, 0x5, 0x1, -10, -25, 0x65 0x0
+	launchtemplate GARBAGE_COLUMN TEMPLATE_TARGET | 2, 0x5, bank_target, -10, -25, 0x65 0x0
 	pause 0x3
 	launchtask AnimTask_move_bank 0x5 0x5 bank_target 0x0 0x4 0x2F 0x1
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x2 0x0 0x10 0x2DCC @;Garbage Green
@@ -24615,10 +24617,10 @@ MALODOR_REJOIN:
 	endanimation
 
 GARBAGE_COLUMNS_ON_PLAYER:
-	launchtemplate GARBAGE_COLUMN TEMPLATE_TARGET | 0, 0x5, 0x1, -15, -60, 0xC5 0x0
+	launchtemplate GARBAGE_COLUMN TEMPLATE_TARGET | 0, 0x5, bank_target, -15, -60, 0xC5 0x0
 	pause 0x30
 	playsound2 0x9D SOUND_PAN_TARGET
-	launchtemplate GARBAGE_COLUMN TEMPLATE_TARGET | 0, 0x5, 0x1, 45, -40, 0x95 0x0
+	launchtemplate GARBAGE_COLUMN TEMPLATE_TARGET | 0, 0x5, bank_target, 45, -40, 0x95 0x0
 	goto MALODOR_REJOIN
 
 .align 2
@@ -24839,16 +24841,16 @@ ANIM_G_MAX_TARTNESS:
 
 TARTNESS_GIANT_APPLES:
 	playsound2 0xb3 SOUND_PAN_TARGET
-	launchtemplate TARTNESS_APPLE TEMPLATE_TARGET | 3, 0x5, 0x1, 30, 1, 45 0x0
+	launchtemplate TARTNESS_APPLE TEMPLATE_TARGET | 3, 0x5, bank_target, 30, 1, 45 0x0
 	pause 0x1
 	playsound2 0xb3 SOUND_PAN_TARGET
-	launchtemplate TARTNESS_APPLE TEMPLATE_TARGET | 3, 0x5, 0x1, -30, 1, 45 0x0
+	launchtemplate TARTNESS_APPLE TEMPLATE_TARGET | 3, 0x5, bank_target, -30, 1, 45 0x0
 	pause 0x1
 	playsound2 0xb3 SOUND_PAN_TARGET
-	launchtemplate TARTNESS_APPLE TEMPLATE_TARGET | 0x43, 0x5, 0x1, 3, -3, 45 0x0
+	launchtemplate TARTNESS_APPLE TEMPLATE_TARGET | 0x43, 0x5, bank_target, 3, -3, 45 0x0
 	pause 0x1
 	playsound2 0xb3 SOUND_PAN_TARGET
-	launchtemplate TARTNESS_APPLE TEMPLATE_TARGET | 8, 0x5, 0x1, -3, 5, 45 0x0
+	launchtemplate TARTNESS_APPLE TEMPLATE_TARGET | 8, 0x5, bank_target, -3, 5, 45 0x0
 	pause 25
 	return
 

@@ -137,3 +137,6 @@ definitions for battle backgrounds
 .equ BG_DYNAMAX_CANNON_IMG, Hydro_CannonTiles
 .equ BG_DYNAMAX_CANNON_PAL, Dynamax_CannonPal
 .equ BG_DYNAMAX_CANNON_RAW, Hydro_CannonMap
+.equ BG_AURA_SPHERE_IMG, Focus_BlastTiles
+.equ BG_AURA_SPHERE_PAL, Aura_Sphere_BGPal
+.equ BG_AURA_SPHERE_RAW, Focus_BlastMap
