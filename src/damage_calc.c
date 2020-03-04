@@ -793,8 +793,8 @@ u8 TypeCalc(u16 move, u8 bankAtk, u8 bankDef, struct Pokemon* monAtk, bool8 Chec
 	if (CheckParty)
 	{
 		atkAbility = GetMonAbility(monAtk);
-		atkType1 = (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) ? GetCamomonsTypeByMon(monAtk, 0) : gBaseStats[monAtk->species].type1;
-		atkType2 = (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) ? GetCamomonsTypeByMon(monAtk, 1) : gBaseStats[monAtk->species].type2;
+		atkType1 = GetMonType(monAtk, 0);
+		atkType2 = GetMonType(monAtk, 1);
 		atkType3 = TYPE_BLANK;
 		moveType = GetMoveTypeSpecialFromParty(monAtk, move);
 	}
@@ -859,8 +859,8 @@ u8 AI_TypeCalc(u16 move, u8 bankAtk, struct Pokemon* monDef) {
 
 	u8 defAbility = GetMonAbility(monDef);
 	u8 defEffect = ItemId_GetHoldEffectParam(monDef->item);
-	u8 defType1 = (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) ? GetCamomonsTypeByMon(monDef, 0) : gBaseStats[monDef->species].type1;
-	u8 defType2 = (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) ? GetCamomonsTypeByMon(monDef, 1) : gBaseStats[monDef->species].type2;
+	u8 defType1 = GetMonType(monDef, 0);
+	u8 defType2 = GetMonType(monDef, 1);
 
 	u8 atkAbility = ABILITY(bankAtk);
 	u8 atkType1 = gBattleMons[bankAtk].type1;
@@ -1014,9 +1014,8 @@ u8 VisualTypeCalc(u16 move, u8 bankAtk, u8 bankDef)
 	struct Pokemon* monIllusion = GetIllusionPartyData(bankDef);
 	if (monIllusion != GetBankPartyData(bankDef)) //Under illusion
 	{
-		u16 species = GetMonData(monIllusion, MON_DATA_SPECIES, NULL);
-		defType1 = (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) ? GetCamomonsTypeByMon(monIllusion, 0) : gBaseStats[species].type1;
-		defType2 = (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) ? GetCamomonsTypeByMon(monIllusion, 0) : gBaseStats[species].type2;
+		defType1 = GetMonType(monIllusion, 0);
+		defType2 = GetMonType(monIllusion, 1);
 		defType3 = TYPE_BLANK;
 	}
 	else
@@ -1091,8 +1090,8 @@ void TypeDamageModificationPartyMon(u8 atkAbility, struct Pokemon* monDef, u16 m
 {
 	u8 defType1, defType2, multiplier1, multiplier2;
 
-	defType1 = (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) ? GetCamomonsTypeByMon(monDef, 0) : gBaseStats[monDef->species].type1;
-	defType2 = (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) ? GetCamomonsTypeByMon(monDef, 1) : gBaseStats[monDef->species].type2;
+	defType1 = GetMonType(monDef, 0);
+	defType2 = GetMonType(monDef, 1);
 
 	multiplier1 = gTypeEffectiveness[moveType][defType1];
 	multiplier2 = gTypeEffectiveness[moveType][defType2];
@@ -1220,33 +1219,33 @@ u8 GetMoveTypeSpecial(u8 bankAtk, u16 move)
 		return GetExceptionMoveType(bankAtk, move);
 
 //Change Normal-type Moves
-	if (moveType == TYPE_NORMAL) {
+	if (moveType == TYPE_NORMAL)
+	{
 		if (IsIonDelugeActive())
 			return TYPE_ELECTRIC;
 
-		if ((!gNewBS->ZMoveData->active && !gNewBS->ZMoveData->viewing) || SPLIT(move) == SPLIT_STATUS) {
+		if (SPLIT(move) == SPLIT_STATUS
+		|| (!gNewBS->ZMoveData->active && !gNewBS->ZMoveData->viewing))
+		{
 			switch (atkAbility) {
 				case ABILITY_REFRIGERATE:
 					return TYPE_ICE;
-
 				case ABILITY_PIXILATE:
 					return TYPE_FAIRY;
-
 				case ABILITY_AERILATE:
 					return TYPE_FLYING;
-
 				case ABILITY_GALVANIZE:
 					return TYPE_ELECTRIC;
 			}
 		}
 	}
 
-//Change non-Normal-type moves
+	//Change non-Normal-type moves
 	else if (atkAbility == ABILITY_NORMALIZE && ((!gNewBS->ZMoveData->active && !gNewBS->ZMoveData->viewing) || SPLIT(move) == SPLIT_STATUS))
 		return TYPE_NORMAL;
 
-//Change Sound Moves
-	if (CheckSoundMove(move) && atkAbility == ABILITY_LIQUIDVOICE && ((!gNewBS->ZMoveData->active && !gNewBS->ZMoveData->viewing) || SPLIT(move) == SPLIT_STATUS))
+	//Change Sound Moves
+	else if (CheckSoundMove(move) && atkAbility == ABILITY_LIQUIDVOICE && ((!gNewBS->ZMoveData->active && !gNewBS->ZMoveData->viewing) || SPLIT(move) == SPLIT_STATUS))
 		return TYPE_WATER;
 
 	return moveType;
@@ -1413,6 +1412,13 @@ u8 GetExceptionMoveType(u8 bankAtk, u16 move)
 				moveType = TYPE_NORMAL;
 			break;
 
+		case MOVE_MULTIATTACK:
+			if (effect == ITEM_EFFECT_MEMORY)
+				moveType = quality;
+			else
+				moveType = TYPE_NORMAL;
+			break;
+
 		case MOVE_TECHNOBLAST:
 			if (effect == ITEM_EFFECT_DRIVE)
 				moveType = quality;
@@ -1517,6 +1523,13 @@ u8 GetExceptionMoveTypeFromParty(struct Pokemon* mon, u16 move) {
 				moveType = TYPE_NORMAL;
 			break;
 
+		case MOVE_MULTIATTACK:
+			if (effect == ITEM_EFFECT_MEMORY && ability != ABILITY_KLUTZ)
+				moveType = quality;
+			else
+				moveType = TYPE_NORMAL;
+			break;
+
 		case MOVE_TECHNOBLAST:
 			if (effect == ITEM_EFFECT_DRIVE && ability != ABILITY_KLUTZ)
 				moveType = quality;
@@ -1525,7 +1538,17 @@ u8 GetExceptionMoveTypeFromParty(struct Pokemon* mon, u16 move) {
 			break;
 
 		case MOVE_REVELATIONDANCE:
-			moveType = (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) ? GetCamomonsTypeByMon(mon, 0) : gBaseStats[mon->species].type1;
+			moveType = GetMonType(mon, 0);
+			break;
+
+		case MOVE_AURAWHEEL:
+			#ifdef SPECIES_MORPEKO_HANGRY
+			if (mon->species == SPECIES_MORPEKO_HANGRY)
+				moveType = TYPE_DARK;
+			else
+			#endif
+				moveType = TYPE_ELECTRIC;
+			break;
 	}
 
 	return moveType;
@@ -3343,8 +3366,8 @@ u16 CalcVisualBasePower(u8 bankAtk, u8 bankDef, u16 move, bool8 ignoreDef)
 	data.basePower = gBattleMoves[move].power;
 	power = GetBasePower(&data);
 	power = AdjustBasePower(&data, power);
-	
-	//Not really a base power think but stick it in anayways
+
+	//Not really a base power thing, but stick them in anayways
 	switch (move) {
 		case MOVE_SOLARBEAM:
 		case MOVE_SOLARBLADE:

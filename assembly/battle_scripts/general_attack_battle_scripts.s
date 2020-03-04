@@ -28,7 +28,7 @@ BS_001_SetSleep:
 	attackcanceler
 	attackstring
 	ppreduce
-	callasm CheckIfDarkVoidShouldFail
+	callasm CheckIfExclusiveMoveShouldFail
 	jumpifbehindsubstitute BANK_TARGET FAILED
 	trysetsleep BANK_TARGET BS_StatusMoveFail
 	accuracycheck BS_MOVE_MISSED_PAUSE 0x0
@@ -98,6 +98,7 @@ BattleScript_DarkVoidFail:
 	setword BATTLE_STRING_LOADER CantUseHyperspaceFuryString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
+	orword HIT_MARKER HITMARKER_UNABLE_TO_USE_MOVE
 	goto BS_MOVE_END
 	
 .global BattleScript_PauseResultMessage
@@ -1961,7 +1962,16 @@ BS_095_Sketch:
 .global BS_096_RaiseAttackerSpd1Chance
 BS_096_RaiseAttackerSpd1Chance:
 	setmoveeffect MOVE_EFFECT_SPD_PLUS_1 | MOVE_EFFECT_AFFECTS_USER
+	jumpifmove MOVE_AURAWHEEL AuraWheelBS
 	goto BS_STANDARD_HIT
+
+AuraWheelBS:
+	attackcanceler
+	attackstring
+	ppreduce
+	callasm CheckIfExclusiveMoveShouldFail
+	accuracycheck BS_MOVE_MISSED 0x0
+	goto BS_HIT_FROM_DAMAGE_CALC
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -4637,8 +4647,10 @@ BS_220_NaturalGift:
 	seteffectwithchancetarget
 	prefaintmoveendeffects 0x0
 	faintpokemonaftermove
+	setbyte CMD49_STATE 0x0
+	cmd49 0x0 0x0
 	removeitem BANK_ATTACKER
-	goto BS_MOVE_END
+	end
 
 NaturalGiftMiss:
 	attackstring

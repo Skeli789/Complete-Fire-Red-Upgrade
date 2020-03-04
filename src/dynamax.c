@@ -436,14 +436,21 @@ bool8 DoesDynamaxUsageStopMegaEvolution(u8 bank)
 		&& gNewBS->dynamaxData.partyIndex[SIDE(bank)] & gBitTable[gBattlerPartyIndexes[bank]];
 }
 
-static move_t GetTypeBasedMaxMove(u16 move, u8 bank)
+static u8 GetMaxMoveType(u16 move, u8 bank)
 {
 	u8 moveType = gBattleMoves[move].type;
-	
-	if (move == MOVE_HIDDENPOWER || move == MOVE_NATURALGIFT)
-		moveType = GetMoveTypeSpecial(bank, MOVE_MAX_STRIKE_P); //The only except moves that don't change type
+
+	if (move == MOVE_HIDDENPOWER || move == MOVE_NATURALGIFT) //The only exception moves that don't change type
+		moveType = GetMoveTypeSpecial(bank, MOVE_POUND);
 	else
 		moveType = GetMoveTypeSpecial(bank, move);
+	
+	return moveType;
+}
+
+static move_t GetTypeBasedMaxMove(u16 move, u8 bank)
+{
+	u8 moveType = GetMaxMoveType(move, bank);
 
 	if (moveType < TYPE_FIRE)
 		return MOVE_MAX_STRIKE_P + (moveType * 2) + CalcMoveSplit(bank, move);
@@ -455,7 +462,7 @@ static move_t GetTypeBasedMaxMove(u16 move, u8 bank)
 
 static move_t GetGMaxMove(u16 move, u8 bank)
 {
-	u8 moveType = gBattleMoves[move].type;
+	u8 moveType = GetMaxMoveType(move, bank);
 	u16 species = SPECIES(bank);
 
 	for (u32 i = 0; i < ARRAY_COUNT(sGMaxMoveTable); ++i)

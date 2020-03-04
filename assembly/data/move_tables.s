@@ -240,6 +240,8 @@ gMetronomeBannedMoves:
 .hword MOVE_VCREATE
 .hword MOVE_WIDEGUARD
 .hword MOVE_OBSTRUCT
+.hword MOVE_DARKVOID
+.hword MOVE_AURAWHEEL
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -757,6 +759,8 @@ gTypeChangeExceptionMoves:
 .hword MOVE_STRUGGLE
 .hword MOVE_TECHNOBLAST
 .hword MOVE_WEATHERBALL
+.hword MOVE_MULTIATTACK
+.hword MOVE_AURAWHEEL
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

@@ -33,14 +33,28 @@ extern const u8* gBattleScriptsForMoveEffects[];
 extern const species_t gTelekinesisBanList[];
 extern const struct FlingStruct gFlingTable[];
 
-void CheckIfDarkVoidShouldFail(void)
+void CheckIfExclusiveMoveShouldFail(void)
 {
-	#ifdef SPECIES_DARKRAI
-	if (gCurrentMove == MOVE_DARKVOID
-	&&  SPECIES(gBankAttacker) != SPECIES_DARKRAI
-	&&  !gNewBS->MoveBounceInProgress)
+	bool8 fail = FALSE;
+	u16 species = SPECIES(gBankAttacker);
+
+	switch (gCurrentMove) {
+		case MOVE_DARKVOID:
+			#ifdef SPECIES_DARKRAI
+			if (species != SPECIES_DARKRAI && !gNewBS->MoveBounceInProgress)
+				fail = TRUE;
+			#endif
+			break;
+		case MOVE_AURAWHEEL:
+			#ifdef SPECIES_MORPEKO
+			if (species != SPECIES_MORPEKO && species != SPECIES_MORPEKO_HANGRY)
+				fail = TRUE;
+			#endif
+			break;
+	}
+
+	if (fail)
 		gBattlescriptCurrInstr = BattleScript_DarkVoidFail - 5;
-	#endif
 }
 
 void SetTargetPartner(void)

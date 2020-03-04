@@ -36,8 +36,6 @@ bool8 CheckHealingMove(u16 move);
 bool8 CheckSoundMove(u16 move);
 bool8 SheerForceCheck(void);
 bool8 IsOfType(u8 bank, u8 type);
-u8 GetMonType(struct Pokemon* mon, u8 typeId);
-bool8 IsMonOfType(struct Pokemon* mon, u8 type);
 bool8 LiftProtect(u8 bank);
 bool8 ProtectsAgainstZMoves(u16 move, u8 bankAtk, u8 bankDef);
 bool8 IsProtectedByMaxGuard(u8 bank);

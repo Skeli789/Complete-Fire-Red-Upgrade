@@ -321,24 +321,6 @@ bool8 IsOfType(u8 bank, u8 type)
 	return FALSE;
 }
 
-u8 GetMonType(struct Pokemon* mon, u8 typeId)
-{
-	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
-
-	if (typeId == 0)
-		return (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) ? GetCamomonsTypeByMon(mon, 0) : gBaseStats[species].type1;
-	else
-		return (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS) ? GetCamomonsTypeByMon(mon, 1) : gBaseStats[species].type2;
-}
-
-bool8 IsMonOfType(struct Pokemon* mon, u8 type)
-{
-	u8 type1 = GetMonType(mon, 0);
-	u8 type2 = GetMonType(mon, 1);
-
-	return type1 == type || type2 == type;
-}
-
 bool8 LiftProtect(u8 bank)
 {
 	if ((gProtectStructs[bank].protected && !IsDynamaxed(bank))

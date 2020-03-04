@@ -29,6 +29,8 @@ u32 GetBaseStatsTotal(const u16 species);
 u8 FindMovePositionInMonMoveset(u16 move, struct Pokemon* mon);
 bool8 MoveInMonMoveset(u16 move, struct Pokemon* mon);
 bool8 AllHittingMoveWithTypeInMonMoveset(struct Pokemon* mon, u8 moveType);
+u8 GetMonType(struct Pokemon* mon, u8 typeId);
+bool8 IsMonOfType(struct Pokemon* mon, u8 type);
 bool8 CanPartyMonBeGeneralStatused(struct Pokemon* mon);
 bool8 CanPartyMonBePutToSleep(struct Pokemon* mon);
 bool8 CanPartyMonBePoisoned(struct Pokemon* mon);

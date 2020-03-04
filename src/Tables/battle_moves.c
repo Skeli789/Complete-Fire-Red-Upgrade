@@ -11299,7 +11299,7 @@ const struct BattleMove gBattleMoves[] =
 	},
 
 	[MOVE_AURAWHEEL] =
-	{	//ANIM TODO
+	{
 		.effect = EFFECT_SPEED_UP_1_HIT,
 		.power = 110,
 		.type = TYPE_ELECTRIC,

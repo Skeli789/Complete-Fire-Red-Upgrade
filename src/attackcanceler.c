@@ -17,8 +17,9 @@
 #include "../include/new/dynamax.h"
 #include "../include/new/form_change.h"
 #include "../include/new/general_bs_commands.h"
-#include "../include/new/util.h"
+#include "../include/new/item.h"
 #include "../include/new/move_tables.h"
+#include "../include/new/util.h"
 /*
 attackcanceler.c
 	Handles any logic for discerning if a move can be used or is effective, eg. mold breaker, flinch status, truant, etc.
@@ -806,10 +807,9 @@ static u8 AtkCanceller_UnableToUseMove(void)
 		case CANCELLER_NATURAL_GIFT:
 			if (gCurrentMove == MOVE_NATURALGIFT &&
 			  (ABILITY(gBankAttacker) == ABILITY_KLUTZ
-			|| GetPocketByItemId(ITEM(gBankAttacker)) != POCKET_BERRY_POUCH
-			|| AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, gBankAttacker, ABILITY_UNNERVE, 0, 0)
-			|| IsMagicRoomActive()
-			|| gNewBS->EmbargoTimers[gBankAttacker]))
+			 || !IsBerry(ITEM(gBankAttacker))
+			 || IsMagicRoomActive()
+			 || gNewBS->EmbargoTimers[gBankAttacker]))
 			{
 				gBattlescriptCurrInstr = BattleScript_ButItFailed - 2;
 				gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;

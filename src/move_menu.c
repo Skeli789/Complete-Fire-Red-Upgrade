@@ -240,7 +240,7 @@ void HandleInputChooseMove(void)
 		if (gNewBS->ZMoveData->viewing && SPLIT(chosenMove) != SPLIT_STATUS) //Status moves keep original targets
 			moveTarget = gBattleMoves[CanUseZMove(gActiveBattler, 0xFF, chosenMove)].target;
 
-		if (gNewBS->dynamaxData.viewing || IsDynamaxed(gActiveBattler))
+		if (gNewBS->dynamaxData.viewing || moveInfo->dynamaxed)
 			moveTarget = gBattleMoves[moveInfo->possibleMaxMoves[gMoveSelectionCursor[gActiveBattler]]].target;
 
 		if (moveTarget & MOVE_TARGET_USER)
@@ -462,6 +462,7 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 	}
 
 	#ifdef DYNAMAX_FEATURE
+	tempMoveStruct->dynamaxed = IsDynamaxed(gActiveBattler);
 	tempMoveStruct->dynamaxDone = gNewBS->dynamaxData.used[gActiveBattler];
 	if ((!gNewBS->dynamaxData.used[gActiveBattler] || IsDynamaxed(gActiveBattler))
 	&& DynamaxEnabled(gActiveBattler)
@@ -482,9 +483,9 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 	for (i = 0; i < MAX_MON_MOVES; ++i)
 	{
 		u8 foe = (IS_DOUBLE_BATTLE && !BATTLER_ALIVE(FOE(gActiveBattler))) ? PARTNER(FOE(gActiveBattler)) : FOE(gActiveBattler);
-		u16 move = gBattleMons[gActiveBattler].moves[i];
+		u16 originalMove = gBattleMons[gActiveBattler].moves[i];
+		u16 move = (tempMoveStruct->dynamaxed) ? tempMoveStruct->possibleMaxMoves[i] : originalMove;
 
-		tempMoveStruct->moves[i] = move;
 		tempMoveStruct->moveTypes[i] = GetMoveTypeSpecial(gActiveBattler, move);
 
 		if (IS_DOUBLE_BATTLE && CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, gActiveBattler, foe) >= 2) //Because target can vary, display only attacker's modifiers
@@ -494,7 +495,7 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 
 			if (tempMoveStruct->possibleMaxMoves[i] != MOVE_NONE)
 			{
-				gNewBS->ai.zMoveHelper = move;
+				gNewBS->ai.zMoveHelper = originalMove;
 				tempMoveStruct->maxMovePowers[i] = CalcVisualBasePower(gActiveBattler, gActiveBattler, tempMoveStruct->possibleMaxMoves[i], TRUE);
 				gNewBS->ai.zMoveHelper = MOVE_NONE;
 			}
@@ -521,14 +522,14 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 					tempMoveStruct->moveResults[GetBattlerPosition(j)][i] = 0;
 			}
 		}
-		else
+		else //Single Battle or single target 
 		{
 			tempMoveStruct->movePowers[i] = CalcVisualBasePower(gActiveBattler, foe, move, FALSE);
 			tempMoveStruct->moveAcc[i] = VisualAccuracyCalc(move, gActiveBattler, foe);
 
 			if (tempMoveStruct->possibleMaxMoves[i] != MOVE_NONE)
 			{
-				gNewBS->ai.zMoveHelper = move;
+				gNewBS->ai.zMoveHelper = originalMove;
 				tempMoveStruct->maxMovePowers[i] = CalcVisualBasePower(gActiveBattler, foe, tempMoveStruct->possibleMaxMoves[i], FALSE);
 				gNewBS->ai.zMoveHelper = MOVE_NONE;
 			}
@@ -549,7 +550,7 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 
 	tempMoveStruct->megaDone = gNewBS->MegaData->done[gActiveBattler];
 	tempMoveStruct->ultraDone = gNewBS->UltraData->done[gActiveBattler];
-	if (!IS_TRANSFORMED(gActiveBattler) && !IsDynamaxed(gActiveBattler))
+	if (!IS_TRANSFORMED(gActiveBattler) && !tempMoveStruct->dynamaxed)
 	{
 		if (!gNewBS->MegaData->done[gActiveBattler])
 		{
@@ -627,7 +628,7 @@ static void MoveNameToDisplayedStringBattle(u8 moveIndex)
 {
 	struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct*)(&gBattleBufferA[gActiveBattler][4]);
 
-	if (IsDynamaxed(gActiveBattler) && moveInfo->moves[moveIndex] != MOVE_NONE)
+	if (moveInfo->dynamaxed && moveInfo->moves[moveIndex] != MOVE_NONE)
 	{
 		if (IsGMaxMove(moveInfo->possibleMaxMoves[moveIndex]))
 			gDisplayedStringBattle[0] = PC_G; //Short for G-Max
@@ -663,14 +664,17 @@ static void MoveSelectionDisplayMoveNames(void)
 #define REGULAR_COLOURS 12
 static void MoveSelectionDisplayMoveType(void)
 {
-	u8 *txtPtr;
+	u8 *txtPtr, moveType;
 	const u8* formatting;
 	struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct*)(&gBattleBufferA[gActiveBattler][4]);
 
 	#ifdef DISPLAY_REAL_MOVE_TYPE_ON_MENU
-		u8 moveType = moveInfo->moveTypes[gMoveSelectionCursor[gActiveBattler]];
+		moveType = moveInfo->moveTypes[gMoveSelectionCursor[gActiveBattler]];
 	#else
-		u8 moveType = gBattleMoves[moveInfo->moves[gMoveSelectionCursor[gActiveBattler]]].type;
+		if (!moveInfo->dynamaxed)
+			moveType = gBattleMoves[moveInfo->moves[gMoveSelectionCursor[gActiveBattler]]].type;
+		else
+			moveType = gBattleMoves[moveInfo->possibleMaxMoves[gMoveSelectionCursor[gActiveBattler]]].type;
 	#endif
 
 	//Update Palette Fading for Effectiveness
@@ -751,7 +755,7 @@ static bool8 MoveSelectionDisplayZMove(void)
 		return TRUE;
 	}
 	
-	if (IsDynamaxed(gActiveBattler))
+	if (moveInfo->dynamaxed)
 		return FALSE;
 
 	if (zmove != MOVE_NONE)
@@ -879,7 +883,7 @@ static bool8 MoveSelectionDisplayMaxMove(void)
 	{
 		ReloadMoveNamesIfNecessary();
 		
-		if (!IsDynamaxed(gActiveBattler)) //Don't play sound if already Dynamaxed
+		if (!moveInfo->dynamaxed) //Don't play sound if already Dynamaxed
 			PlaySE(3); //Turn Off
 		return TRUE;
 	}
@@ -997,7 +1001,7 @@ static bool8 MoveSelectionDisplayMaxMove(void)
 		MoveSelectionCreateCursorAt(0, 0);
 		gNewBS->dynamaxData.viewing = TRUE;
 		
-		if (!IsDynamaxed(gActiveBattler)) //Don't play sound if already Dynamaxed
+		if (!moveInfo->dynamaxed) //Don't play sound if already Dynamaxed
 			PlaySE(2); //Turn On
 		return TRUE;
 	}
@@ -1110,12 +1114,12 @@ static void MoveSelectionDisplayDetails(void)
 //Display Move Accuracy
 	txtPtr = StringCopy(gDisplayedStringBattle, gText_Acc);
 	#ifdef DISPLAY_REAL_ACCURACY_ON_MENU
-		if (IsDynamaxed(gActiveBattler) || moveInfo->moveAcc[gMoveSelectionCursor[gActiveBattler]] == 0xFFFF)
+		if (moveInfo->dynamaxed || moveInfo->moveAcc[gMoveSelectionCursor[gActiveBattler]] == 0xFFFF)
 			StringCopy(txtPtr, gText_NoMiss);
 		else
 			ConvertIntToDecimalStringN(txtPtr, moveInfo->moveAcc[gMoveSelectionCursor[gActiveBattler]], STR_CONV_MODE_LEFT_ALIGN, 3);
 	#else
-		if (IsDynamaxed(gActiveBattler) || gBattleMoves[moveInfo->moves[gMoveSelectionCursor[gActiveBattler]]].accuracy == 0)
+		if (moveInfo->dynamaxed || gBattleMoves[moveInfo->moves[gMoveSelectionCursor[gActiveBattler]]].accuracy == 0)
 			StringCopy(txtPtr, gText_NoMiss);
 		else
 			ConvertIntToDecimalStringN(txtPtr, gBattleMoves[moveInfo->moves[gMoveSelectionCursor[gActiveBattler]]].accuracy, STR_CONV_MODE_LEFT_ALIGN, 3);
@@ -1126,12 +1130,12 @@ static void MoveSelectionDisplayDetails(void)
 	u16 power;
 	txtPtr = StringCopy(gDisplayedStringBattle, gText_Power);
 	#ifdef DISPLAY_REAL_POWER_ON_MENU
-		if (IsDynamaxed(gActiveBattler))
+		if (moveInfo->dynamaxed)
 			power = moveInfo->maxMovePowers[gMoveSelectionCursor[gActiveBattler]];
 		else
 			power = moveInfo->movePowers[gMoveSelectionCursor[gActiveBattler]];
 	#else
-		if (IsDynamaxed(gActiveBattler))
+		if (moveInfo->dynamaxed)
 			power = gDynamaxMovePowers[moveInfo->moves[gMoveSelectionCursor[gActiveBattler]]];
 		else
 			power = gBattleMoves[moveInfo->moves[gMoveSelectionCursor[gActiveBattler]]].power;
@@ -1192,9 +1196,11 @@ static void CloseZMoveDetails(void)
 
 static void CloseMaxMoveDetails(void)
 {
+	struct ChooseMoveStruct *moveInfo = (struct ChooseMoveStruct*)(&gBattleBufferA[gActiveBattler][4]);
+
 	if (gNewBS->dynamaxData.viewing)
 	{
-		if (!IsDynamaxed(gActiveBattler))
+		if (!moveInfo->dynamaxed)
 			gNewBS->dynamaxData.toBeUsed[gActiveBattler] = TRUE; //Only set if not already dynamaxed
 
 		gNewBS->dynamaxData.viewing = FALSE;
@@ -1420,7 +1426,7 @@ void HandleInputChooseTarget(void)
 					else if (gBattleMoves[move].target & MOVE_TARGET_USER_OR_PARTNER)
 						i++;
 					
-					if ((IsDynamaxed(gActiveBattler) || gNewBS->dynamaxData.viewing) && gMultiUsePlayerCursor == PARTNER(gActiveBattler))
+					if ((moveInfo->dynamaxed || gNewBS->dynamaxData.viewing) && gMultiUsePlayerCursor == PARTNER(gActiveBattler))
 						i = FALSE; //Can't use Max Move on partner 
 
 					break;
@@ -1489,7 +1495,7 @@ void HandleInputChooseTarget(void)
 					else if (gBattleMoves[move].target & MOVE_TARGET_USER_OR_PARTNER)
 						i++;
 					
-					if ((IsDynamaxed(gActiveBattler) || gNewBS->dynamaxData.viewing) && gMultiUsePlayerCursor == PARTNER(gActiveBattler))
+					if ((moveInfo->dynamaxed || gNewBS->dynamaxData.viewing) && gMultiUsePlayerCursor == PARTNER(gActiveBattler))
 						i = FALSE; //Can't use Max Move on partner 
 					break;
 				case B_POSITION_OPPONENT_LEFT:

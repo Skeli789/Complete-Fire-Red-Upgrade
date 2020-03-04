@@ -507,16 +507,15 @@ BattleScript_RedCard:
 	jumpifdynamaxed BANK_ATTACKER RedCard_Dynamax
 	jumpifspecialstatusflag BANK_ATTACKER STATUS3_ROOTED 0x0 RedCard_Ingrain
 	jumpifability BANK_ATTACKER ABILITY_SUCTIONCUPS RedCard_SuctionCups
-	copybyte SEED_HELPER TARGET_BANK
-	copybyte TARGET_BANK USER_BANK
-	playanimation BANK_TARGET DRAGON_TAIL_BLOW_AWAY_ANIM 0x0
+	playanimation BANK_ATTACKER DRAGON_TAIL_BLOW_AWAY_ANIM 0x0
 	callasm ClearAttackerDidDamageOnce
 	callasm TryRemovePrimalWeatherOnPivot
+	swapattackerwithtarget @;Puts attacker (who's being switched out) into target
 	forcerandomswitch RedCardSwapBanksBack
 
 RedCardSwapBanksBack:
-	copybyte TARGET_BANK SEED_HELPER
-	
+	swapattackerwithtarget
+
 RedCardEnd:
 	removeitem BANK_SCRIPTING
 	

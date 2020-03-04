@@ -1501,7 +1501,7 @@ static void UpdateMoveStartValuesForCalledMove(void)
 
 static void TryUpdateCalledMoveWithZMove(void)
 {
-	if (gNewBS->ZMoveData->active)
+	if (gNewBS->ZMoveData->active && SPLIT(gCurrentMove) != SPLIT_STATUS)
 	{
 		gNewBS->ai.zMoveHelper = gCurrentMove;
 		gCurrentMove = GetTypeBasedZMove(gCurrentMove, gBankAttacker);
@@ -2737,21 +2737,16 @@ void atk9D_mimicattackcopy(void)
 
 void atk9E_metronome(void)
 {
-	while (TRUE)
+	do
 	{
-		gCurrentMove = umodsi(Random(), LAST_MOVE_INDEX) + 1;
-		if (IsZMove(gCurrentMove) || IsAnyMaxMove(gCurrentMove))
-			continue;
+		gCurrentMove = umodsi(Random(), LAST_MOVE_INDEX) + 1;	
+	} while (IsZMove(gCurrentMove) || IsAnyMaxMove(gCurrentMove)
+		|| CheckTableForMove(gCurrentMove, gMetronomeBannedMoves));
 
-		if (CheckTableForMove(gCurrentMove, gMetronomeBannedMoves))
-			continue;
-
-		TryUpdateCalledMoveWithZMove();
-		UpdateMoveStartValuesForCalledMove();
-		gBattlescriptCurrInstr = gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect];
-		gBankTarget = GetMoveTarget(gCurrentMove, 0);
-		return;
-	}
+	TryUpdateCalledMoveWithZMove();
+	UpdateMoveStartValuesForCalledMove();
+	gBattlescriptCurrInstr = gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect];
+	gBankTarget = GetMoveTarget(gCurrentMove, 0);
 }
 
 void atkA0_psywavedamageeffect(void)

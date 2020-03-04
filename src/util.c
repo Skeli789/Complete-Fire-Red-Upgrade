@@ -256,11 +256,29 @@ bool8 AllHittingMoveWithTypeInMonMoveset(struct Pokemon* mon, u8 moveType)
 	return FALSE;
 }
 
+u8 GetMonType(struct Pokemon* mon, u8 typeId)
+{
+	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
+
+	if (typeId == 0)
+		return (ShouldReplaceTypesWithCamomons()) ? GetCamomonsTypeByMon(mon, 0) : gBaseStats[species].type1;
+	else
+		return (ShouldReplaceTypesWithCamomons()) ? GetCamomonsTypeByMon(mon, 1) : gBaseStats[species].type2;
+}
+
+bool8 IsMonOfType(struct Pokemon* mon, u8 type)
+{
+	u8 type1 = GetMonType(mon, 0);
+	u8 type2 = GetMonType(mon, 1);
+
+	return type1 == type || type2 == type;
+}
+
 bool8 CanPartyMonBeGeneralStatused(struct Pokemon* mon)
 {
 	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
-	u8 type1 = (ShouldReplaceTypesWithCamomons()) ? GetCamomonsTypeByMon(mon, 0) : gBaseStats[species].type1;
-	u8 type2 = (ShouldReplaceTypesWithCamomons()) ? GetCamomonsTypeByMon(mon, 1) : gBaseStats[species].type2;
+	u8 type1 = GetMonType(mon, 0);
+	u8 type2 = GetMonType(mon, 1);
 
 	#ifdef SPECIES_MINIOR_SHIELD
 	if (species == SPECIES_MINIOR_SHIELD)
@@ -297,9 +315,8 @@ bool8 CanPartyMonBePutToSleep(struct Pokemon* mon)
 
 bool8 CanPartyMonBePoisoned(struct Pokemon* mon)
 {
-	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
-	u8 type1 = (ShouldReplaceTypesWithCamomons()) ? GetCamomonsTypeByMon(mon, 0) : gBaseStats[species].type1;
-	u8 type2 = (ShouldReplaceTypesWithCamomons()) ? GetCamomonsTypeByMon(mon, 1) : gBaseStats[species].type2;
+	u8 type1 = GetMonType(mon, 0);
+	u8 type2 = GetMonType(mon, 1);
 
 	if (!CanPartyMonBeGeneralStatused(mon))
 		return FALSE;
@@ -321,9 +338,8 @@ bool8 CanPartyMonBePoisoned(struct Pokemon* mon)
 
 bool8 CanPartyMonBeParalyzed(struct Pokemon* mon)
 {
-	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
-	u8 type1 = (ShouldReplaceTypesWithCamomons()) ? GetCamomonsTypeByMon(mon, 0) : gBaseStats[species].type1;
-	u8 type2 = (ShouldReplaceTypesWithCamomons()) ? GetCamomonsTypeByMon(mon, 1) : gBaseStats[species].type2;
+	u8 type1 = GetMonType(mon, 0);
+	u8 type2 = GetMonType(mon, 1);
 
 	if (!CanPartyMonBeGeneralStatused(mon))
 		return FALSE;
@@ -342,9 +358,8 @@ bool8 CanPartyMonBeParalyzed(struct Pokemon* mon)
 
 bool8 CanPartyMonBeBurned(struct Pokemon* mon)
 {
-	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
-	u8 type1 = (ShouldReplaceTypesWithCamomons()) ? GetCamomonsTypeByMon(mon, 0) : gBaseStats[species].type1;
-	u8 type2 = (ShouldReplaceTypesWithCamomons()) ? GetCamomonsTypeByMon(mon, 1) : gBaseStats[species].type2;
+	u8 type1 = GetMonType(mon, 0);
+	u8 type2 = GetMonType(mon, 1);
 
 	if (!CanPartyMonBeGeneralStatused(mon))
 		return FALSE;
@@ -364,9 +379,8 @@ bool8 CanPartyMonBeBurned(struct Pokemon* mon)
 
 bool8 CanPartyMonBeFrozen(struct Pokemon* mon)
 {
-	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
-	u8 type1 = (ShouldReplaceTypesWithCamomons()) ? GetCamomonsTypeByMon(mon, 0) : gBaseStats[species].type1;
-	u8 type2 = (ShouldReplaceTypesWithCamomons()) ? GetCamomonsTypeByMon(mon, 1) : gBaseStats[species].type2;
+	u8 type1 = GetMonType(mon, 0);
+	u8 type2 = GetMonType(mon, 1);
 
 	if (!CanPartyMonBeGeneralStatused(mon))
 		return FALSE;

@@ -22830,7 +22830,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.moves =
 		{
 			MOVE_DARKPULSE,
-			MOVE_AIRCUTTER,
+			MOVE_HURRICANE,
 			MOVE_HEATWAVE,
 			MOVE_NASTYPLOT,
 		},

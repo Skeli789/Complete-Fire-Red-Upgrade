@@ -1143,7 +1143,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 					{
 						gNewBS->NoSymbiosisByte = TRUE;
 						gForceSwitchHelper = Force_Switch_Red_Card;
-						gBattlescriptCurrInstr = BattleScript_Atk49; //Cancel's U-Turn and Volt Switch
+						gBattlescriptCurrInstr = BattleScript_Atk49; //Cancels U-Turn, Volt Switch, and Natural Gift
 						gActiveBattler = gBattleScripting->bank = gNewBS->originalTargetBackup = banks[i];
 						gLastUsedItem = ITEM(banks[i]);
 						BattleScriptPushCursor();
