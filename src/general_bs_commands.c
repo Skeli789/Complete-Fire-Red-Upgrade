@@ -2573,38 +2573,18 @@ void atk97_tryinfatuating(void)
 		bankDef = gBankAttacker;
 	}
 
-	struct Pokemon *monAttacker, *monTarget;
-	u16 speciesAttacker, speciesTarget;
-	u32 personalityAttacker, personalityTarget;
-
-	monAttacker = GetBankPartyData(bankAtk);
-	monTarget = GetBankPartyData(bankDef);
-
-	speciesAttacker = monAttacker->species;
-	personalityAttacker = monAttacker->personality;
-
-	speciesTarget = monTarget->species;
-	personalityTarget = monTarget->personality;
-
 	if (ABILITY(bankDef) == ABILITY_OBLIVIOUS)
 	{
 		gBattlescriptCurrInstr = BattleScript_ObliviousPrevents;
 	}
+	else if (!CanBeInfatuated(bankDef, bankAtk))
+	{
+		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
+	}
 	else
 	{
-		if (gBattleMons[bankDef].status2 & STATUS2_INFATUATION
-		|| !BATTLER_ALIVE(bankDef)
-		|| GetGenderFromSpeciesAndPersonality(speciesAttacker, personalityAttacker) == GetGenderFromSpeciesAndPersonality(speciesTarget, personalityTarget)
-		|| GetGenderFromSpeciesAndPersonality(speciesAttacker, personalityAttacker) == MON_GENDERLESS
-		|| GetGenderFromSpeciesAndPersonality(speciesTarget, personalityTarget) == MON_GENDERLESS)
-		{
-			gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
-		}
-		else
-		{
-			gBattleMons[bankDef].status2 |= STATUS2_INFATUATED_WITH(bankAtk);
-			gBattlescriptCurrInstr += 6;
-		}
+		gBattleMons[bankDef].status2 |= STATUS2_INFATUATED_WITH(bankAtk);
+		gBattlescriptCurrInstr += 6;
 	}
 }
 

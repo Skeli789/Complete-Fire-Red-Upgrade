@@ -407,7 +407,7 @@ static void PlayerPartnerHandleChooseMove(void)
 	}
 	else if (moveInfo->possibleMaxMoves[chosenMoveId])
 	{
-		if (gBattleResults->battleTurnCounter > 3 && ShouldAIDynamax(gActiveBattler, gBankTarget, chosenMove)) //Give the Player a chance to Dynamax first
+		if (/*gBattleResults->battleTurnCounter > 3 && */ShouldAIDynamax(gActiveBattler, gBankTarget)) //Give the Player a chance to Dynamax first
 			gNewBS->dynamaxData.toBeUsed[gActiveBattler] = TRUE;
 	}
 

@@ -296,7 +296,19 @@ u8 GetBankFightingStyle(u8 bank)
 
 u8 PredictBankFightingStyle(u8 bank)
 {
-	return PredictFightingStyle(gBattleMons[bank].moves, ABILITY(bank), ITEM_EFFECT(bank), bank);
+	u8 ability = ABILITY(bank);
+	u8 itemEffect = ITEM_EFFECT(bank);
+
+	if (IsDynamaxed(bank))
+	{
+		u16 moves[MAX_MON_MOVES] = {0};
+		for (u8 i = 0; i < MAX_MON_MOVES; ++i)
+			moves[i] = GetMaxMove(bank, i);
+
+		return PredictFightingStyle(moves, ability, itemEffect, bank);
+	}
+
+	return PredictFightingStyle(gBattleMons[bank].moves, ability, itemEffect, bank);
 }
 
 u8 PredictFightingStyle(const u16* const moves, const u8 ability, const u8 itemEffect, const u8 bank)

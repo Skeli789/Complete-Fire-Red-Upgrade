@@ -70,6 +70,8 @@ bool8 DamagingMoveInMoveset(u8 bank);
 bool8 PhysicalMoveInMoveset(u8 bank);
 bool8 SpecialMoveInMoveset(u8 bank);
 bool8 MoveSplitInMoveset(u8 bank, u8 moveSplit);
+bool8 PhysicalMoveInMonMoveset(struct Pokemon* mon, u8 moveLimitations);
+bool8 SpecialMoveInMonMoveset(struct Pokemon* mon, u8 moveLimitations);
 bool8 MagicCoatableMovesInMoveset(u8 bank);
 bool8 HasProtectionMoveInMoveset(u8 bank, u8 checkType);
 bool8 MoveTypeInMoveset(u8 bank, u8 moveType);
@@ -90,6 +92,7 @@ bool8 ContactMovesThatAffectTargetInMoveset(u8 bankAtk, u8 bankDef);
 bool8 UnfreezingMoveInMoveset(u8 bank);
 bool8 OnlyBadMovesLeftInMoveset(u8 bankAtk, u8 bankDef);
 u16 TryReplaceMoveWithZMove(u8 bankAtk, u8 bankDef, u16 move);
+u8 GetAIMoveEffectForMaxMove(u16 move, u8 bankAtk, u8 bankDef);
 
 bool8 GetHealthPercentage(u8 bank);
 bool8 TeamFullyHealedMinusBank(u8 bank);
@@ -98,7 +101,10 @@ bool8 AnyUsefulStatIsRaised(u8 bank);
 bool8 AnyUsefulOffseniveStatIsRaised(u8 bank);
 bool8 PartyMemberStatused(u8 bank, bool8 checkSoundproof);
 bool8 ShouldAIUseZMove(u8 bank, u8 moveIndex, u16 move);
-bool8 ShouldAIDynamax(u8 bankAtk, u8 bankDef, u16 move);
+void CalcAIDynamaxMon(u8 bank);
+void CalcShouldAIDynamax(u8 bankAtk, u8 bankDef);
+bool8 ShouldAIDynamax(u8 bankAtk, u8 bankDef);
+u8 AdjustMoveLimitationFlagsForAI(u8 bankAtk, u8 bankDef);
 
 void IncreaseViability(s16* viability, u8 amount);
 void DecreaseViability(s16* viability, u16 amount);

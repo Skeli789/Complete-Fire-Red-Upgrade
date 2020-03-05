@@ -678,10 +678,6 @@ static void SpriteCB_DynamaxTrigger(struct Sprite* self)
 		xshift = -5;
 		yshift = 1;
 	}
-	
-	if (IsMegaStone(GetBankPartyData(TRIGGER_BANK)->item)
-	||  IsZCrystal(GetBankPartyData(TRIGGER_BANK)->item))
-		return; //Can't Dynamax if holding one of these two types of items
 
 	// Find the health box object that this trigger is supposed to be attached to
 	u8 id = gHealthboxIDs[TRIGGER_BANK];
@@ -707,8 +703,7 @@ static void SpriteCB_DynamaxTrigger(struct Sprite* self)
 	|| gBattleBankFunc[TRIGGER_BANK] == (u32) HandleMoveSwitching)
 	{
 		struct ChooseMoveStruct* moveInfo = (struct ChooseMoveStruct*) (&gBattleBufferA[TRIGGER_BANK][4]);
-
-		if (!IsDynamaxed(TRIGGER_BANK) && moveInfo->possibleMaxMoves[gMoveSelectionCursor[TRIGGER_BANK]]) //Viewing move that can become Z-Move
+		if (!moveInfo->dynamaxed && !moveInfo->canMegaEvolve && moveInfo->possibleMaxMoves[gMoveSelectionCursor[TRIGGER_BANK]]) //Viewing move that can become Max Move
 		{
 			if (self->data[3] > 0)
 				self->data[3] -= 2;

@@ -1138,12 +1138,18 @@ void PartyMenuSwitchingUpdate(void)
 
 u32 CalcSpikesDamage(u8 bank)
 {
+	if (ITEM_EFFECT(bank) == ITEM_EFFECT_HEAVY_DUTY_BOOTS)
+		return 0;
+
 	u32 dmg = (5 - gSideTimers[SIDE(bank)].spikesAmount) * 2;
 	return MathMax(1, gBattleMons[bank].maxHP / dmg);
 }
 
 u32 CalcSpikesDamagePartyMon(struct Pokemon* mon, u8 side)
 {
+	if (GetMonItemEffect(mon) == ITEM_EFFECT_HEAVY_DUTY_BOOTS)
+		return 0;
+
 	u32 dmg = (5 - gSideTimers[side].spikesAmount) * 2;
 	return MathMax(1, GetMonData(mon, MON_DATA_MAX_HP, NULL) / dmg);
 }
@@ -1153,6 +1159,9 @@ u32 CalcStealthRockDamage(u8 bank)
 	u8 flags;
 	u8 divisor = 8;
 	gBattleMoveDamage = 40;
+
+	if (ITEM_EFFECT(bank) == ITEM_EFFECT_HEAVY_DUTY_BOOTS)
+		return 0;
 
 	TypeDamageModification(0, bank, MOVE_STEALTHROCK, TYPE_ROCK, &flags);
 	divisor = GetStealthRockDivisor();
@@ -1166,6 +1175,9 @@ u32 CalcStealthRockDamagePartyMon(struct Pokemon* mon)
 	u8 divisor = 8;
 	gBattleMoveDamage = 40;
 
+	if (GetMonItemEffect(mon) == ITEM_EFFECT_HEAVY_DUTY_BOOTS)
+		return 0;
+
 	TypeDamageModificationPartyMon(0, mon, MOVE_STEALTHROCK, TYPE_ROCK, &flags);
 	divisor = GetStealthRockDivisor();
 
@@ -1178,6 +1190,9 @@ u32 CalcSteelsurgeDamage(u8 bank)
 	u8 divisor = 8;
 	gBattleMoveDamage = 40;
 
+	if (ITEM_EFFECT(bank) == ITEM_EFFECT_HEAVY_DUTY_BOOTS)
+		return 0;
+
 	TypeDamageModification(0, bank, MOVE_IRONHEAD, TYPE_STEEL, &flags);
 	divisor = GetStealthRockDivisor();
 
@@ -1189,6 +1204,9 @@ u32 CalcSteelsurgeDamagePartyMon(struct Pokemon* mon)
 	u8 flags;
 	u8 divisor = 8;
 	gBattleMoveDamage = 40;
+
+	if (GetMonItemEffect(mon) == ITEM_EFFECT_HEAVY_DUTY_BOOTS)
+		return 0;
 
 	TypeDamageModificationPartyMon(0, mon, MOVE_IRONHEAD, TYPE_STEEL, &flags);
 	divisor = GetStealthRockDivisor();

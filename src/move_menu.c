@@ -466,6 +466,7 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 	tempMoveStruct->dynamaxDone = gNewBS->dynamaxData.used[gActiveBattler];
 	if ((!gNewBS->dynamaxData.used[gActiveBattler] || IsDynamaxed(gActiveBattler))
 	&& DynamaxEnabled(gActiveBattler)
+	&& MonCanDynamax(GetBankPartyData(gActiveBattler))
 	&& !BATTLER_SEMI_INVULNERABLE(gActiveBattler)
 	&& !IsMega(gActiveBattler)
 	&& !IsBluePrimal(gActiveBattler)

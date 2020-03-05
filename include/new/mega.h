@@ -26,6 +26,7 @@ bool8 IsMegaSpecies(u16 species);
 bool8 IsBluePrimalSpecies(u16 species);
 bool8 IsRedPrimalSpecies(u16 species);
 bool8 IsUltraNecrozma(u8 bank);
+bool8 IsMonUltraNecrozma(struct Pokemon* mon);
 const u8* GetTrainerName(u8 bank);
 u8* TryGetRivalNameByTrainerClass(u8 class);
 

@@ -94,6 +94,7 @@ static bool8 ShouldSwitchToAvoidDeath(void);
 static bool8 ShouldSwitchIfWonderGuard(void);
 static void CalcMostSuitableMonSwitchIfNecessary(void);
 static void PredictMovesForBanks(void);
+static void RunCalcShouldAIDynamax(void);
 static void UpdateStrongestMoves(void);
 static void UpdateBestDoublesKillingMoves(void);
 static u32 GetMaxByteIndexInList(const u8 array[], const u32 size);
@@ -147,17 +148,6 @@ void BattleAI_SetupAIData(u8 defaultScoreMoves)
 		defaultScoreMoves >>= 1;
 	}
 
-	moveLimitations = CheckMoveLimitations(gActiveBattler, 0, 0xFF);
-
-	// Ignore moves that aren't possible to use.
-	for (i = 0; i < MAX_MON_MOVES; i++)
-	{
-		if (gBitTable[i] & moveLimitations)
-			AI_THINKING_STRUCT->score[i] = 0;
-
-		AI_THINKING_STRUCT->simulatedRNG[i] = 100 - umodsi(Random(), 16);
-	}
-
 	gBattleResources->AI_ScriptsStack->size = 0;
 	gBankAttacker = gActiveBattler;
 
@@ -171,6 +161,17 @@ void BattleAI_SetupAIData(u8 defaultScoreMoves)
 	// There's only one choice in single battles.
 	else
 		gBankTarget = gBankAttacker ^ BIT_SIDE;
+
+	moveLimitations = CheckMoveLimitations(gActiveBattler, 0, AdjustMoveLimitationFlagsForAI(gBankAttacker, gBankTarget));
+
+	// Ignore moves that aren't possible to use.
+	for (i = 0; i < MAX_MON_MOVES; i++)
+	{
+		if (gBitTable[i] & moveLimitations)
+			AI_THINKING_STRUCT->score[i] = 0;
+
+		AI_THINKING_STRUCT->simulatedRNG[i] = 100 - umodsi(Random(), 16);
+	}
 
 	// Choose proper trainer ai scripts.
 	AI_THINKING_STRUCT->aiFlags = GetAIFlags();
@@ -236,7 +237,7 @@ u8 BattleAI_ChooseMoveOrAction(void)
 
 	TryTempMegaEvolveBank(gBankAttacker, &backupMonAtk, &backupSpeciesAtk, &backupAbilityAtk);
 
-	if (!(IS_DOUBLE_BATTLE))
+	if (IS_SINGLE_BATTLE)
 	{
 		TryTempMegaEvolveBank(gBankTarget, &backupMonDef, &backupSpeciesDef, &backupAbilityDef);
 		ret = ChooseMoveOrAction_Singles();
@@ -557,6 +558,7 @@ void AI_TrySwitchOrUseItem(void)
 		UpdateStrongestMoves();
 		UpdateBestDoublesKillingMoves();
 		PredictMovesForBanks();
+		RunCalcShouldAIDynamax(); //Allows move predictions to change outcome
 
 		gNewBS->calculatedAIPredictions = TRUE;
 
@@ -942,13 +944,15 @@ static bool8 ShouldSwitchIfNaturalCureOrRegenerator(void)
 			if (gBattleMons[gActiveBattler].status1 & (STATUS1_SLEEP | STATUS1_FREEZE))
 				break;
 			if (gBattleMons[gActiveBattler].status1 //Has regular status and over half health
-			&& gBattleMons[gActiveBattler].hp >= gBattleMons[gActiveBattler].maxHP / 2)
+			&& gBattleMons[gActiveBattler].hp >= gBattleMons[gActiveBattler].maxHP / 2
+			&& !IsDynamaxed(gActiveBattler))
 				break;
 			return FALSE;
 
 		//Try switch if less than half health, enemy can kill, and mon can't kill enemy first
 		case ABILITY_REGENERATOR:
-			if (gBattleMons[gActiveBattler].hp > gBattleMons[gActiveBattler].maxHP / 2)
+			if (gBattleMons[gActiveBattler].hp > gBattleMons[gActiveBattler].maxHP / 2
+			|| IsDynamaxed(gActiveBattler))
 				return FALSE;
 
 			if (WillTakeSignificantDamageFromEntryHazards(gActiveBattler, 3))
@@ -1130,6 +1134,9 @@ static bool8 SemiInvulnerableTroll(void)
 	else if (!(gStatuses3[opposingBattler1] & STATUS3_SEMI_INVULNERABLE))
 		return FALSE;
 
+	if (IsDynamaxed(gActiveBattler) && gNewBS->dynamaxData.timer[gActiveBattler] > 1) //Going to be Dynamaxed after this turn
+		return FALSE;
+
 	if (RunAllSemiInvulnerableLockedMoveCalcs(opposingBattler1, opposingBattler2, FALSE))
 		return TRUE;
 
@@ -1263,6 +1270,9 @@ static bool8 CanStopLockedMove(void)
 	else if (!(gLockedMoves[opposingBattler1] && SPLIT(gLockedMoves[opposingBattler1]) != SPLIT_STATUS))
 		return FALSE;
 
+	if (IsDynamaxed(gActiveBattler) && gNewBS->dynamaxData.timer[gActiveBattler] > 1) //Going to be Dynamaxed after this turn
+		return FALSE;
+
 	if (RunAllSemiInvulnerableLockedMoveCalcs(opposingBattler1, opposingBattler2, TRUE))
 		return TRUE;
 
@@ -1370,6 +1380,7 @@ static bool8 IsTakingAnnoyingSecondaryDamage(void)
 {
 	if (GetPredictedAIAbility(gActiveBattler, FOE(gActiveBattler)) != ABILITY_MAGICGUARD
 	&& !CanKillAFoe(gActiveBattler)
+	&& !IsDynamaxed(gActiveBattler)
 	&& AI_THINKING_STRUCT->aiFlags > AI_SCRIPT_CHECK_BAD_MOVE) //Has smart AI
 	{
 		if ((gStatuses3[gActiveBattler] & STATUS3_LEECHSEED && (Random() & 3) == 0) //25% chance to switch out when seeded
@@ -1529,9 +1540,9 @@ static bool8 ShouldSwitchIfWonderGuard(void)
 		return FALSE;
 
 	//Check if pokemon has a super effective move, Mold Breaker Move, or move that can hurt Shedinja
-	u8 moveLimitations = CheckMoveLimitations(gActiveBattler, 0, 0xFF);
 	u8 bankAtk = gActiveBattler;
 	u8 bankDef = opposingBattler;
+	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, AdjustMoveLimitationFlagsForAI(bankAtk, bankDef));
 	for (i = 0; i < MAX_MON_MOVES; ++i)
 	{
 		u16 move = GetBattleMonMove(gActiveBattler, i);
@@ -1867,6 +1878,7 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 	{
 		if (party[i].species != SPECIES_NONE
 		&& party[i].hp > 0
+		&& !GetMonData(&party[i], MON_DATA_IS_EGG, NULL)
 		&& i != gBattlerPartyIndexes[battlerIn1]
 		&& i != gBattlerPartyIndexes[battlerIn2]
 		&& i != gBattleStruct->monToSwitchIntoId[battlerIn1]
@@ -1912,7 +1924,7 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 								if (gBattleMoves[move].effect == EFFECT_RAPID_SPIN //Includes Defog
 								&&  gSideAffecting[SIDE(gActiveBattler)] & SIDE_STATUS_SPIKES)
 								{
-									if (!IS_DOUBLE_BATTLE) //Single Battle
+									if (IS_SINGLE_BATTLE) //Single Battle
 										canRemoveHazards[i] = ViableMonCountFromBank(gActiveBattler) >= 2; //There's a point in removing the hazards
 									else //Double Battle
 										canRemoveHazards[i] = ViableMonCountFromBank(gActiveBattler) >= 3; //There's a point in removing the hazards
@@ -2360,6 +2372,18 @@ static void UpdateBestDoublesKillingMoves(void)
 				UpdateBestDoubleKillingMoveScore(bankAtk, bankDef, PARTNER(bankAtk), PARTNER(bankDef), gNewBS->ai.bestDoublesKillingScores[bankAtk][bankDef], &gNewBS->ai.bestDoublesKillingMoves[bankAtk][bankDef]);
 			}
 		}
+	}
+}
+
+static void RunCalcShouldAIDynamax(void)
+{
+	for (u8 i = 0; i < NUM_BATTLE_SIDES; ++i)
+		CalcAIDynamaxMon(i);
+
+	for (u8 i = 0; i < gBattlersCount; ++i)
+	{
+		for (u8 j = 0; j < gBattlersCount; ++j)
+			CalcShouldAIDynamax(i, j);
 	}
 }
 

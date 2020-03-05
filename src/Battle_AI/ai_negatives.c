@@ -39,20 +39,33 @@ ai_negatives.c
 									 || gBattleMoves[partnerMove].effect == EFFECT_TOXIC \
 									 || gBattleMoves[partnerMove].effect == EFFECT_PARALYZE \
 									 || gBattleMoves[partnerMove].effect == EFFECT_WILL_O_WISP \
-									 || gBattleMoves[partnerMove].effect == EFFECT_YAWN))
+									 || gBattleMoves[partnerMove].effect == EFFECT_YAWN \
+									 || IsMaxMoveWithStatusEffect(partnerMove))) \
 
 #define PARTNER_MOVE_EFFECT_IS_WEATHER (IS_DOUBLE_BATTLE \
 									&& gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE \
 									&& (gBattleMoves[partnerMove].effect == EFFECT_SUNNY_DAY \
 									 || gBattleMoves[partnerMove].effect == EFFECT_RAIN_DANCE \
 									 || gBattleMoves[partnerMove].effect == EFFECT_SANDSTORM \
-									 || gBattleMoves[partnerMove].effect == EFFECT_HAIL))
+									 || gBattleMoves[partnerMove].effect == EFFECT_HAIL \
+									 || IsMaxMoveWithWeatherEffect(partnerMove)))
 #define PARTNER_MOVE_EFFECT_IS_TERRAIN (IS_DOUBLE_BATTLE \
 									&& gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE \
-									&& gBattleMoves[partnerMove].effect == EFFECT_SET_TERRAIN)
+									&& (gBattleMoves[partnerMove].effect == EFFECT_SET_TERRAIN \
+									 || IsMaxMoveWithTerrainEffect(partnerMove)))
 #define PARTNER_MOVE_IS_TAILWIND_TRICKROOM (IS_DOUBLE_BATTLE \
 									&& gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE \
 									&& (partnerMove == MOVE_TAILWIND || partnerMove == MOVE_TRICKROOM))
+
+#define PARTNER_MOVE_IS_CONFUSION_MAX_MOVE (IS_DOUBLE_BATTLE \
+									&& gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE \
+									&& IsMaxMoveWithConfusionEffect(partnerMove))
+#define PARTNER_MOVE_IS_TRAP_DAMAGE_MAX_MOVE (IS_DOUBLE_BATTLE \
+									&& gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE \
+									&& IsMaxMoveWithTrapDamageEffect(partnerMove))
+#define PARTNER_MOVE_IS_MAX_MOVE_WITH_EFFECT(effect) (IS_DOUBLE_BATTLE \
+									&& gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE \
+									&& IsMaxMoveWithEffect(partnerMove, effect))
 
 #define PARTNER_MOVE_IS_SAME (IS_DOUBLE_BATTLE \
 							  && move == partnerMove \
@@ -1122,7 +1135,8 @@ MOVESCR_CHECK_0:
 			break;
 
 		case EFFECT_FOCUS_ENERGY:
-			if (atkStatus2 & STATUS2_FOCUS_ENERGY)
+			if (atkStatus2 & STATUS2_FOCUS_ENERGY
+			|| PARTNER_MOVE_IS_MAX_MOVE_WITH_EFFECT(MAX_EFFECT_CRIT_PLUS))
 				DECREASE_VIABILITY(10);
 			break;
 
@@ -1169,6 +1183,12 @@ MOVESCR_CHECK_0:
 
 		case EFFECT_CONFUSE:
 		AI_CONFUSE:
+			if (PARTNER_MOVE_IS_CONFUSION_MAX_MOVE)
+			{
+				DECREASE_VIABILITY(10);
+				break;
+			}
+
 			switch (move) {
 				case MOVE_TEETERDANCE: //Check if can affect either target
 					if ((IsConfused(bankDef)
@@ -1204,7 +1224,8 @@ MOVESCR_CHECK_0:
 				case MOVE_AURORAVEIL:
 					if (gNewBS->AuroraVeilTimers[SIDE(bankAtk)]
 					|| !(gBattleWeather & WEATHER_HAIL_ANY)
-					|| PARTNER_MOVE_EFFECT_IS_SAME_NO_TARGET)
+					|| PARTNER_MOVE_EFFECT_IS_SAME_NO_TARGET
+					|| PARTNER_MOVE_IS_MAX_MOVE_WITH_EFFECT(MAX_EFFECT_AURORA_VEIL))
 						DECREASE_VIABILITY(10);
 					break;
 
@@ -1378,14 +1399,15 @@ MOVESCR_CHECK_0:
 			break;
 
 		case EFFECT_HEAL_BELL:
-			if (move == MOVE_HEALBELL)
+			if (CheckSoundMove(move))
 			{
 				if (!PartyMemberStatused(bankAtk, TRUE) //Check Soundproof
 				|| PARTNER_MOVE_EFFECT_IS_SAME_NO_TARGET)
 					DECREASE_VIABILITY(10);
 			}
 			else if (!PartyMemberStatused(bankAtk, FALSE)
-			|| PARTNER_MOVE_EFFECT_IS_SAME_NO_TARGET)
+			|| PARTNER_MOVE_EFFECT_IS_SAME_NO_TARGET
+			|| PARTNER_MOVE_IS_MAX_MOVE_WITH_EFFECT(MAX_EFFECT_AROMATHERAPY))
 				DECREASE_VIABILITY(10);
 			break;
 
@@ -1397,7 +1419,8 @@ MOVESCR_CHECK_0:
 
 				default: //Mean look
 					if (IsTrapped(bankDef, TRUE)
-					|| PARTNER_MOVE_EFFECT_IS_SAME)
+					|| PARTNER_MOVE_EFFECT_IS_SAME
+					|| PARTNER_MOVE_IS_MAX_MOVE_WITH_EFFECT(MAX_EFFECT_MEAN_LOOK))
 						DECREASE_VIABILITY(10);
 					break;
 			}
@@ -1519,10 +1542,10 @@ MOVESCR_CHECK_0:
 
 			switch (move) {
 				case MOVE_STEALTHROCK:
-					if (gSideTimers[SIDE(bankDef)].srAmount > 0)
-						DECREASE_VIABILITY(10);
-					else if (PARTNER_MOVE_IS_SAME_NO_TARGET)
-						DECREASE_VIABILITY(10); //Only one mon needs to set up Stealth Rocks
+					if (gSideTimers[SIDE(bankDef)].srAmount > 0
+					|| PARTNER_MOVE_IS_SAME_NO_TARGET //Only one mon needs to set up Stealth Rocks
+					|| PARTNER_MOVE_IS_MAX_MOVE_WITH_EFFECT(MAX_EFFECT_STEALTH_ROCK))
+						DECREASE_VIABILITY(10); 
 					break;
 
 				case MOVE_TOXICSPIKES:
@@ -1618,9 +1641,9 @@ MOVESCR_CHECK_0:
 			break;
 
 		case EFFECT_ATTRACT:
-			if (defAbility == ABILITY_OBLIVIOUS || (defStatus2 & STATUS2_INFATUATION)
-			||  defGender == atkGender || atkGender == MON_GENDERLESS || defGender == MON_GENDERLESS
-			|| PARTNER_MOVE_EFFECT_IS_SAME)
+			if (CanBeInfatuated(bankDef, bankAtk)
+			|| PARTNER_MOVE_EFFECT_IS_SAME
+			|| PARTNER_MOVE_IS_MAX_MOVE_WITH_EFFECT(MAX_EFFECT_INFATUATE_FOES))
 				DECREASE_VIABILITY(10);
 			break;
 
@@ -1665,7 +1688,8 @@ MOVESCR_CHECK_0:
 				|| gNewBS->AuroraVeilTimers[SIDE(bankDef)] != 0
 				|| gSideAffecting[SIDE(bankAtk)] & SIDE_STATUS_SPIKES)
 				{
-					if (PARTNER_MOVE_EFFECT_IS_SAME_NO_TARGET)
+					if (PARTNER_MOVE_EFFECT_IS_SAME_NO_TARGET
+					|| PARTNER_MOVE_IS_MAX_MOVE_WITH_EFFECT(MAX_EFFECT_DEFOG))
 					{
 						DECREASE_VIABILITY(10); //Only need one hazards removal
 						break;
@@ -1802,8 +1826,9 @@ MOVESCR_CHECK_0:
 			break;
 
 		case EFFECT_TORMENT:
-			if (IsTormented(bankDef)
-			|| PARTNER_MOVE_EFFECT_IS_SAME)
+			if (!CanBeTormented(bankDef)
+			|| PARTNER_MOVE_EFFECT_IS_SAME
+			|| PARTNER_MOVE_IS_MAX_MOVE_WITH_EFFECT(MAX_EFFECT_TORMENT_FOES))
 			{
 				DECREASE_VIABILITY(10);
 				break;
@@ -2303,7 +2328,8 @@ MOVESCR_CHECK_0:
 			break;
 
 		case EFFECT_SET_TERRAIN:
-			if (PARTNER_MOVE_EFFECT_IS_TERRAIN)
+			if (PARTNER_MOVE_EFFECT_IS_TERRAIN
+			|| (gBattleTypeFlags & BATTLE_TYPE_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_TERRAIN))
 			{
 				DECREASE_VIABILITY(10);
 				break;
@@ -2378,7 +2404,8 @@ MOVESCR_CHECK_0:
 					if ((IsGravityActive()
 					&&  !IsOfType(bankAtk, TYPE_FLYING)
 					&&  atkEffect != ITEM_EFFECT_AIR_BALLOON) //Should revert Gravity in this case
-					|| PARTNER_MOVE_IS_SAME_NO_TARGET)
+					|| PARTNER_MOVE_IS_SAME_NO_TARGET
+					|| PARTNER_MOVE_IS_MAX_MOVE_WITH_EFFECT(MAX_EFFECT_GRAVITY))
 						DECREASE_VIABILITY(10);
 					break;
 

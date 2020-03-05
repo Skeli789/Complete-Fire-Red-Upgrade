@@ -106,7 +106,7 @@ void OpponentHandleChooseMove(void)
 				}
 				else if (moveInfo->possibleMaxMoves[chosenMoveId]) //Handles the "Can I Dynamax" checks
 				{
-					if (ShouldAIDynamax(gActiveBattler, gBankTarget, chosenMove))
+					if (ShouldAIDynamax(gActiveBattler, gBankTarget))
 						gNewBS->dynamaxData.toBeUsed[gActiveBattler] = TRUE;
 				}
 

@@ -404,7 +404,11 @@ bool8 IsRedPrimal(u8 bank)
 
 bool8 IsUltraNecrozma(u8 bank)
 {
-	pokemon_t* mon = GetBankPartyData(bank);
+	return IsMonUltraNecrozma(GetBankPartyData(bank));
+}
+
+bool8 IsMonUltraNecrozma(struct Pokemon* mon)
+{
 	const struct Evolution* evolutions = gEvolutionTable[mon->species];
 
 	for (u8 i = 0; i < EVOS_PER_MON; ++i)

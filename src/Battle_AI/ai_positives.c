@@ -110,6 +110,9 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 	if (IS_DOUBLE_BATTLE && TARGETING_PARTNER)
 		return AI_Script_Partner(bankAtk, bankAtkPartner, originalMove, originalViability);
 
+	if (IsAnyMaxMove(move))
+		moveEffect = GetAIMoveEffectForMaxMove(move, bankAtk, bankDef);
+
 	switch (moveEffect) {
 		case EFFECT_HIT:
 			// to do
@@ -192,11 +195,11 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		//Increased stat effects
 		case EFFECT_ATTACK_UP:
 		case EFFECT_ATTACK_UP_2:
-			if (IsMovePredictionPhazingMove(bankDef, bankAtk))
-				break;
-
 			switch (move) {
 				case MOVE_HONECLAWS:
+					if (IsMovePredictionPhazingMove(bankDef, bankAtk))
+						break;
+
 					if (STAT_STAGE(bankAtk,STAT_STAGE_ATK) >= 8)
 						goto AI_ACCURACY_PLUS;
 					break;
@@ -208,6 +211,11 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 
 					if (PhysicalMoveInMoveset(bankAtk) && atkAbility != ABILITY_CONTRARY)
 						INCREASE_STAT_VIABILITY(STAT_STAGE_ATK, 8, 2);
+					/*else if (IsMaxMove(move) && IS_DOUBLE_BATTLE && BATTLER_ALIVE(bankAtkPartner)
+						&& PhysicalMoveInMoveset(bankAtkPartner) && atkAbility != ABILITY_CONTRARY)
+					{
+						IncreaseStatViability(&viability, class, 2, bankAtkPartner, bankDef, move, STAT_STAGE_ATK, 8);
+					}*/
 					break;
 			}
 			break;
@@ -215,10 +223,10 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		case EFFECT_DEFENSE_UP:
 		case EFFECT_DEFENSE_UP_2:
 		AI_DEFENSE_PLUS:
-		if (IsMovePredictionPhazingMove(bankDef, bankAtk))
-			break;
+			if (IsMovePredictionPhazingMove(bankDef, bankAtk))
+				break;
 
-		/*
+			/*
 			switch (move) {
 				case MOVE_FLOWERSHIELD:
 					if (IsClassCleric(class)
@@ -571,6 +579,8 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			|| atkAbility == ABILITY_SNIPER
 			|| atkItemEffect == ITEM_EFFECT_SCOPE_LENS)
 				INCREASE_STATUS_VIABILITY(2);
+			else
+				INCREASE_STATUS_VIABILITY(1);
 			break;
 
 		case EFFECT_CONFUSE:
@@ -602,6 +612,8 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		case EFFECT_REFLECT:
 			switch (move) {
 				case MOVE_AURORAVEIL:
+				case MOVE_G_MAX_RESONANCE_P:
+				case MOVE_G_MAX_RESONANCE_S:
 					if (ShouldSetUpScreens(bankAtk, bankDef, move))
 					{
 						if (IsClassScreener(class))
@@ -1058,6 +1070,10 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 					break;
 
 				case MOVE_STEALTHROCK:
+				case MOVE_G_MAX_STONESURGE_P:
+				case MOVE_G_MAX_STONESURGE_S:
+				case MOVE_G_MAX_STEELSURGE_P:
+				case MOVE_G_MAX_STEELSURGE_S:
 					for (i = 0; i < PARTY_SIZE; ++i)
 					{
 						if (GetMonData(&defParty[i], MON_DATA_SPECIES, NULL) != SPECIES_NONE
@@ -1068,6 +1084,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 						&&  i != gBattlerPartyIndexes[foe2])
 						{
 							IncreaseEntryHazardsViability(&viability, class, bankAtk, bankDef, move);
+							break; //Can hurt at least one mon
 						}
 					}
 					break;
@@ -1109,6 +1126,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 						&&  CheckGroundingFromPartyData(&defParty[i]) == GROUNDED)
 						{
 							IncreaseEntryHazardsViability(&viability, class, bankAtk, bankDef, move);
+							break; //Can hurt at least one mon
 						}
 					}
 					break;
@@ -1299,7 +1317,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			}
 
 			//At this point no entry hazards are to be removed
-			if (move == MOVE_DEFOG)
+			if (move != MOVE_RAPIDSPIN)
 			{
 				if (gSideAffecting[SIDE(bankDef)] &
 					(SIDE_STATUS_REFLECT | SIDE_STATUS_LIGHTSCREEN | SIDE_STATUS_SAFEGUARD | SIDE_STATUS_MIST)
@@ -2032,10 +2050,16 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		case EFFECT_SET_TERRAIN:
 			if (atkStatus3 & STATUS3_YAWN && CheckGrounding(bankAtk))
 			{
-				if (move == MOVE_ELECTRICTERRAIN || move == MOVE_MISTYTERRAIN)
-				{
-					//Stop yourself from falling asleep
-					IncreaseFakeOutViability(&viability, class, bankAtk, bankDef, move); //Treat very important
+				switch (move) {
+					case MOVE_ELECTRICTERRAIN:
+					case MOVE_MISTYTERRAIN:
+					case MOVE_MAX_LIGHTNING_P:
+					case MOVE_MAX_LIGHTNING_S:
+					case MOVE_MAX_STARFALL_P:
+					case MOVE_MAX_STARFALL_S:
+						//Stop yourself from falling asleep
+						IncreaseFakeOutViability(&viability, class, bankAtk, bankDef, move); //Treat very important
+						break;
 				}
 			}
 
@@ -2082,6 +2106,8 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 					break;
 
 				case MOVE_GRAVITY:
+				case MOVE_G_MAX_GRAVITAS_P:
+				case MOVE_G_MAX_GRAVITAS_S:
 					if (!IsGravityActive())
 						INCREASE_STATUS_VIABILITY(2);
 					break;

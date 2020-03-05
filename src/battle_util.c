@@ -457,21 +457,26 @@ u8 CheckMoveLimitations(u8 bank, u8 unusableMoves, u8 check)
 	for (i = 0; i < MAX_MON_MOVES; ++i)
 	{
 		u16 move = gBattleMons[bank].moves[i];
-		if (move == 0 && check & MOVE_LIMITATION_ZEROMOVE)
+		if (IsDynamaxed(bank))
+			move = GetMaxMoveByMove(bank, move);
+
+		bool8 isMaxMove = IsAnyMaxMove(move);
+
+		if (move == MOVE_NONE && check & MOVE_LIMITATION_ZEROMOVE)
 			unusableMoves |= gBitTable[i];
 		else if (gBattleMons[bank].pp[i] == 0 && check & MOVE_LIMITATION_PP)
 			unusableMoves |= gBitTable[i];
-		else if (!IsDynamaxed(bank) && move == gDisableStructs[bank].disabledMove && check & MOVE_LIMITATION_DISABLED)
+		else if (!isMaxMove && move == gDisableStructs[bank].disabledMove && check & MOVE_LIMITATION_DISABLED)
 			unusableMoves |= gBitTable[i];
-		else if (move == gLastUsedMoves[bank] && check & MOVE_LIMITATION_TORMENTED && IsTormented(bank))
+		else if (!isMaxMove && move == gLastUsedMoves[bank] && check & MOVE_LIMITATION_TORMENTED && IsTormented(bank))
 			unusableMoves |= gBitTable[i];
 		else if (IsTaunted(bank) && check & MOVE_LIMITATION_TAUNT && SPLIT(move) == SPLIT_STATUS)
 			unusableMoves |= gBitTable[i];
-		else if (IsImprisoned(bank, move) && check & MOVE_LIMITATION_IMPRISION)
+		else if (!isMaxMove && IsImprisoned(bank, move) && check & MOVE_LIMITATION_IMPRISION)
 			unusableMoves |= gBitTable[i];
 		else if (gDisableStructs[bank].encoreTimer && gDisableStructs[bank].encoredMove != move && check & MOVE_LIMITATION_ENCORE)
 			unusableMoves |= gBitTable[i];
-		else if (!IsDynamaxed(bank)
+		else if (!isMaxMove
 			 && (holdEffect == ITEM_EFFECT_CHOICE_BAND || ability == ABILITY_GORILLATACTICS)
 			 && choicedMove != 0 && choicedMove != 0xFFFF && choicedMove != move
 			 && check & MOVE_LIMITATION_CHOICE)
@@ -1427,6 +1432,30 @@ bool8 CanBeConfused(u8 bank, u8 checkSafeguard)
 bool8 CanBeTormented(u8 bank)
 {
 	return !(gBattleMons[bank].status2 & STATUS2_TORMENT) && !IsDynamaxed(bank);
+}
+
+bool8 CanBeInfatuated(u8 bankDef, u8 bankAtk)
+{
+	struct Pokemon *monAttacker, *monTarget;
+	u16 speciesAttacker, speciesTarget;
+	u32 personalityAttacker, personalityTarget;
+
+	monAttacker = GetBankPartyData(bankAtk);
+	monTarget = GetBankPartyData(bankDef);
+
+	speciesAttacker = monAttacker->species;
+	personalityAttacker = monAttacker->personality;
+
+	speciesTarget = monTarget->species;
+	personalityTarget = monTarget->personality;
+
+	return BATTLER_ALIVE(bankDef)
+		&& !(gBattleMons[bankDef].status2 & STATUS2_INFATUATION)
+		&& ABILITY(bankDef) != ABILITY_OBLIVIOUS
+		&& GetGenderFromSpeciesAndPersonality(speciesAttacker, personalityAttacker) != GetGenderFromSpeciesAndPersonality(speciesTarget, personalityTarget)
+		&& GetGenderFromSpeciesAndPersonality(speciesAttacker, personalityAttacker) != MON_GENDERLESS
+		&& GetGenderFromSpeciesAndPersonality(speciesTarget, personalityTarget) != MON_GENDERLESS
+		&& !AbilityBattleEffects(ABILITYEFFECT_CHECK_BANK_SIDE, bankDef, ABILITY_AROMAVEIL, 0, 0);
 }
 
 bool8 IsTrickRoomActive(void)

@@ -46,13 +46,6 @@ static const u16 sCriticalHitChances[] =
 	#define CRIT_MULTIPLIER 150
 #endif
 
-#define APPLY_QUICK_STAT_MOD(var, buff)                 \
-{                                                       \
-    (var) = (var) * gStatStageRatios[buff][0];         \
-    (var) = udivsi((var), gStatStageRatios[buff][1]);   \
-}
-
-
 #define FLAG_IGNORE_TARGET 0x1
 #define FLAG_CONFUSION_DAMAGE 0x2
 #define FLAG_CHECKING_FROM_MENU 0x4

@@ -18,6 +18,7 @@
 #include "../../include/new/item.h"
 #include "../../include/new/mega.h"
 #include "../../include/new/move_tables.h"
+#include "../../include/new/multi.h"
 #include "../../include/new/set_z_effect.h"
 #include "../../include/new/switching.h"
 #include "../../include/new/z_move_effects.h"
@@ -81,7 +82,7 @@ bool8 GetCanKnockOut(u8 bankAtk, u8 bankDef)
 	|| gAbsentBattlerFlags & (gBitTable[bankAtk] | gBitTable[bankDef]))
 		return FALSE;
 
-	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, 0xFF);
+	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, AdjustMoveLimitationFlagsForAI(bankAtk, bankDef));
 
 	for (i = 0; i < MAX_MON_MOVES; ++i)
 	{
@@ -136,7 +137,7 @@ bool8 GetCan2HKO(u8 bankAtk, u8 bankDef)
 	|| gAbsentBattlerFlags & (gBitTable[bankAtk] | gBitTable[bankDef]))
 		return FALSE;
 
-	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, 0xFF);
+	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, AdjustMoveLimitationFlagsForAI(bankAtk, bankDef));
 
 	for (i = 0; i < MAX_MON_MOVES; ++i)
 	{
@@ -172,7 +173,7 @@ bool8 CanKnockOutAfterHealing(u8 bankAtk, u8 bankDef, u16 healAmount, u8 numHits
 	u16 backupHp = gBattleMons[bankDef].hp;
 	gBattleMons[bankDef].hp = MathMin(backupHp + healAmount, gBattleMons[bankDef].maxHP);
 
-	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, 0xFF);
+	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, AdjustMoveLimitationFlagsForAI(bankAtk, bankDef));
 
 	for (i = 0; i < MAX_MON_MOVES; ++i)
 	{
@@ -208,7 +209,7 @@ bool8 CanKnockOutWithoutMove(const u16 ignoredMove, const u8 bankAtk, const u8 b
 	|| gAbsentBattlerFlags & (gBitTable[bankAtk] | gBitTable[bankDef]))
 		return FALSE;
 
-	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, 0xFF);
+	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, AdjustMoveLimitationFlagsForAI(bankAtk, bankDef));
 
 	for (i = 0; i < MAX_MON_MOVES; ++i)
 	{
@@ -238,7 +239,7 @@ bool8 MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(u16 move, u8 bankAtk, u8 ba
 
 	u8 bestMoveIndex = 0xFF;
 	u16 bestAcc = 0;
-	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, 0xFF);
+	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, AdjustMoveLimitationFlagsForAI(bankAtk, bankDef));
 
 	for (int i = 0; i < MAX_MON_MOVES; ++i)
 	{
@@ -285,7 +286,7 @@ bool8 IsWeakestContactMoveWithBestAccuracy(u16 move, u8 bankAtk, u8 bankDef)
 	u8 bestMoveIndex = 0xFF;
 	u16 bestAcc = 0;
 	u32 bestDmg = 0xFFFFFFFF;
-	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, 0xFF);
+	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, AdjustMoveLimitationFlagsForAI(bankAtk, bankDef));
 
 	for (int i = 0; i < MAX_MON_MOVES; ++i)
 	{
@@ -333,7 +334,7 @@ bool8 StrongestMoveGoesFirst(u16 move, u8 bankAtk, u8 bankDef)
 
 	u8 bestMoveIndex = 0xFF;
 	u32 bestDmg = 0;
-	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, 0xFF);
+	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, AdjustMoveLimitationFlagsForAI(bankAtk, bankDef));
 
 	for (int i = 0; i < MAX_MON_MOVES; ++i)
 	{
@@ -701,6 +702,30 @@ bool8 MoveKnocksOutXHitsFromParty(u16 move, struct Pokemon* monAtk, u8 bankDef, 
 	return FALSE;
 }
 
+static bool8 MoveKnocksOutAfterDynamax(u16 move, u8 bankAtk, u8 bankDef)
+{
+	bool8 ret;
+	u8 movePos = FindMovePositionInMoveset(move, bankAtk);
+	if (movePos < MAX_MON_MOVES && !gNewBS->ai.moveKnocksOut1Hit[bankAtk][bankDef][movePos])
+		return FALSE; //Move doesn't normally KO, certainly won't KO after Dynamaxing
+
+	//Temporarily Dynamax target
+	u16 backupHP = gBattleMons[bankDef].hp;
+	u16 backupMaxHP = gBattleMons[bankDef].maxHP;
+	gBattleMons[bankDef].hp *= GetDynamaxHPBoost(bankDef);
+	gBattleMons[bankDef].maxHP *= GetDynamaxHPBoost(bankDef);
+	gNewBS->dynamaxData.timer[bankDef] += 1;
+
+	ret = CalculateMoveKnocksOutXHits(move, bankAtk, bankDef, 1);
+
+	//Revert Dynamax
+	gNewBS->dynamaxData.timer[bankDef] -= 1;
+	gBattleMons[bankDef].maxHP = backupMaxHP;
+	gBattleMons[bankDef].hp = backupHP;
+
+	return ret;
+}
+
 u16 CalcFinalAIMoveDamage(u16 move, u8 bankAtk, u8 bankDef, u8 numHits)
 {
 	if (move == MOVE_NONE || numHits == 0 || gBattleMoves[move].power == 0)
@@ -805,7 +830,7 @@ move_t CalcStrongestMove(const u8 bankAtk, const u8 bankDef, const bool8 onlySpr
 	if (defHP == 0) //Foe dead
 		return MOVE_NONE;
 
-	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, 0xFF);
+	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, AdjustMoveLimitationFlagsForAI(bankAtk, bankDef));
 	predictedDamage = 0;
 
 	for (i = 0; i < MAX_MON_MOVES; ++i)
@@ -897,6 +922,13 @@ u16 GetStrongestMove(const u8 bankAtk, const u8 bankDef)
 		gNewBS->ai.strongestMove[bankAtk][bankDef] = CalcStrongestMove(bankAtk, bankDef, FALSE);
 
 	return gNewBS->ai.strongestMove[bankAtk][bankDef];
+}
+
+static void ClearStrongestMoveAndCanKnockOut(const u8 bankAtk, const u8 bankDef)
+{
+	gNewBS->ai.strongestMove[bankAtk][bankDef] = 0xFFFF;
+	gNewBS->ai.canKnockOut[bankAtk][bankDef] = 0xFF;
+	gNewBS->ai.can2HKO[bankAtk][bankDef] = 0xFF;
 }
 
 bool8 MoveWillHit(u16 move, u8 bankAtk, u8 bankDef)
@@ -1515,6 +1547,9 @@ bool8 IsPredictedToUsePursuitableMove(u8 bankAtk, u8 bankDef)
 bool8 IsMovePredictionPhazingMove(u8 bankAtk, u8 bankDef)
 {
 	u16 move = IsValidMovePrediction(bankAtk, bankDef);
+	
+	if (IsDynamaxed(bankDef))
+		return FALSE; //Dynamax Pokemon can't be phazed out
 
 	if (move != MOVE_NONE)
 	{
@@ -1581,6 +1616,7 @@ bool8 PhysicalMoveInMoveset(u8 bank)
 				return TRUE;
 		}
 	}
+
 	return FALSE;
 }
 
@@ -1603,6 +1639,7 @@ bool8 SpecialMoveInMoveset(u8 bank)
 				return TRUE;
 		}
 	}
+
 	return FALSE;
 }
 
@@ -1616,6 +1653,52 @@ bool8 MoveSplitInMoveset(u8 bank, u8 moveSplit)
 		default:
 			return !PhysicalMoveInMoveset(bank) && !SpecialMoveInMoveset(bank);
 	}
+}
+
+bool8 PhysicalMoveInMonMoveset(struct Pokemon* mon, u8 moveLimitations)
+{
+	u16 move;
+	
+	moveLimitations = CheckMoveLimitationsFromParty(mon, 0, moveLimitations);
+	for (int i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		move = GetMonData(mon, MON_DATA_MOVE1 + i, NULL);
+		if (move == MOVE_NONE)
+			break;
+
+		if (!(gBitTable[i] & moveLimitations))
+		{
+			if (CalcMoveSplitFromParty(mon, move) == SPLIT_PHYSICAL
+			&& gBattleMoves[move].power != 0
+			&& gBattleMoves[move].effect != EFFECT_COUNTER)
+				return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+bool8 SpecialMoveInMonMoveset(struct Pokemon* mon, u8 moveLimitations)
+{
+	u16 move;
+	
+	moveLimitations = CheckMoveLimitationsFromParty(mon, 0, moveLimitations);
+	for (int i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		move = GetMonData(mon, MON_DATA_MOVE1 + i, NULL);
+		if (move == MOVE_NONE)
+			break;
+
+		if (!(gBitTable[i] & moveLimitations))
+		{
+			if (CalcMoveSplitFromParty(mon, move) == SPLIT_SPECIAL
+			&& gBattleMoves[move].power != 0
+			&& gBattleMoves[move].effect != EFFECT_MIRROR_COAT)
+				return TRUE;
+		}
+	}
+
+	return FALSE;
 }
 
 bool8 MagicCoatableMovesInMoveset(u8 bank)
@@ -2081,7 +2164,31 @@ static bool8 WallsFoe(u8 bankAtk, u8 bankDef)
 	return !cantWall;
 }
 
-bool8 OnlyBadMovesLeftInMoveset(u8 bankAtk, u8 bankDef)
+static bool8 ShouldAIFreeChoiceLockWithDynamax(u8 bankAtk, u8 bankDef)
+{
+	if (CanDynamax(bankAtk)
+	&& (ITEM_EFFECT(bankAtk) == ITEM_EFFECT_CHOICE_BAND || ABILITY(bankAtk) == ABILITY_GORILLATACTICS)
+	&& CHOICED_MOVE(bankAtk) != MOVE_NONE && CHOICED_MOVE(bankAtk) != 0xFFFF) //AI is locked into some move
+	{
+		u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, MOVE_LIMITATION_ZEROMOVE | MOVE_LIMITATION_PP);
+		for (int i = 0; i < MAX_MON_MOVES; ++i)
+		{
+			u16 move = GetMaxMove(bankAtk, i);
+			if (move == MOVE_NONE)
+				break;
+
+			if (!(gBitTable[i] & moveLimitations))
+			{
+				if (AI_Script_Negatives(bankAtk, bankDef, move, 100) >= 100)
+					return TRUE;
+			}
+		}
+	}
+	
+	return FALSE; //AI still has no usable moves after Dynamaxing
+}
+
+static bool8 CalcOnlyBadMovesLeftInMoveset(u8 bankAtk, u8 bankDef)
 {
 	int i;
 	u8 viability;
@@ -2130,6 +2237,13 @@ bool8 OnlyBadMovesLeftInMoveset(u8 bankAtk, u8 bankDef)
 			&& IsTakingSecondaryDamage(bankDef))
 				return FALSE; //Don't switch out on a foe who's taking damage even if you literally have no good moves
 
+			if (ShouldAIFreeChoiceLockWithDynamax(bankAtk, bankDef)) //AI is locked into some move
+			{
+				gNewBS->ai.dynamaxMonId[SIDE(bankAtk)] = gBattlerPartyIndexes[bankAtk]; //Dynamax this mon and free the choice lock
+				gNewBS->ai.shouldFreeChoiceLockWithDynamax[bankAtk][bankDef] = TRUE;
+				return FALSE;
+			}
+
 			return TRUE; //Legit no moves left
 		}
 		else if (IS_BEHIND_SUBSTITUTE(bankAtk)
@@ -2142,9 +2256,9 @@ bool8 OnlyBadMovesLeftInMoveset(u8 bankAtk, u8 bankDef)
 		&& (!IsTrapped(bankDef, TRUE) || !(gStatuses3[bankDef] & STATUS3_PERISH_SONG) || gDisableStructs[bankDef].perishSongTimer == 0) //Don't let a trapped foe escape from Perish Song
 		/*&& numDamageMoves == 1*/) //Only 1 viable damaging move left
 		{
-			//This is meant to help the Pokemon with attacking moves
-			//and a bunch of setup moves to know they should switch out instead
-			//of trying to attack the enemy with their weak moves.
+			/*This is meant to help the Pokemon with attacking moves
+			  and a bunch of setup moves to know they should switch out instead
+			  of trying to attack the enemy with their weak moves.*/
 
 			move = GetStrongestMove(bankAtk, bankDef); //Assume the usuable damage move is the strongest move
 			dmg = CalcFinalAIMoveDamage(move, bankAtk, bankDef, 1);
@@ -2155,13 +2269,20 @@ bool8 OnlyBadMovesLeftInMoveset(u8 bankAtk, u8 bankDef)
 				if (leftoversRecovery != 0  //Target can heal itself with ability/item
 				||  HealingMoveInMoveset(bankDef)) //Target can heal itself with move
 				{
-					if (dmg * 3 >= gBattleMons[bankDef].hp + ((u32) leftoversRecovery * 2)) //Damage deals a third or more of max health after leftovers recovery
+					if (dmg * 3 >= gBattleMons[bankDef].hp + ((u32) leftoversRecovery * 2)) //Damage deals a third or more of remaining health after leftovers recovery
 						return FALSE; //Don't switch if can 2-3HKO
 				}
 				else
 				{
-					if (dmg * 3 >= gBattleMons[bankDef].maxHP) //Damage deals a third or more of max health
+					if (dmg * 3 >= gBattleMons[bankDef].hp) //Damage deals a third or more of remaining health
 						return FALSE; //Don't switch if can 3HKO
+				}
+
+				if (ShouldAIFreeChoiceLockWithDynamax(bankAtk, bankDef)) //AI is locked into some move
+				{
+					gNewBS->ai.dynamaxMonId[SIDE(bankAtk)] = gBattlerPartyIndexes[bankAtk]; //Dynamax this mon and free the choice lock
+					gNewBS->ai.shouldFreeChoiceLockWithDynamax[bankAtk][bankDef] = TRUE;
+					return FALSE;
 				}
 
 				u8 backupActiveBattler = gActiveBattler;
@@ -2200,6 +2321,14 @@ bool8 OnlyBadMovesLeftInMoveset(u8 bankAtk, u8 bankDef)
 	return FALSE; //Has some moves to use
 }
 
+bool8 OnlyBadMovesLeftInMoveset(u8 bankAtk, u8 bankDef)
+{
+	if (gNewBS->ai.onlyBadMovesLeft[bankAtk][bankDef] == 0xFF)
+		gNewBS->ai.onlyBadMovesLeft[bankAtk][bankDef] = CalcOnlyBadMovesLeftInMoveset(bankAtk, bankDef);
+
+	return gNewBS->ai.onlyBadMovesLeft[bankAtk][bankDef];
+}
+
 u16 TryReplaceMoveWithZMove(u8 bankAtk, u8 bankDef, u16 move)
 {
 	if (!gNewBS->ZMoveData->used[bankAtk] && SPLIT(move) != SPLIT_STATUS
@@ -2217,8 +2346,189 @@ u16 TryReplaceMoveWithZMove(u8 bankAtk, u8 bankDef, u16 move)
 			}
 		}
 	}
+	else if (IsDynamaxed(bankAtk) || (!gNewBS->dynamaxData.used[bankAtk] && ShouldAIDynamax(bankAtk, bankDef)))
+	{
+		if (IsRaidBattle() && bankAtk == GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT) && IsRaidBossUsingRegularMove(bankAtk, move))
+			return move; //This turn the raid boss isn't using a Max Move
 
+		u16 maxMove = GetMaxMoveByMove(bankAtk, move);
+		if (maxMove != MOVE_NONE)
+			move = maxMove;
+	}
+	
 	return move;
+}
+
+u8 GetAIMoveEffectForMaxMove(u16 move, u8 bankAtk, u8 bankDef)
+{
+	u8 maxEffect = gBattleMoves[move].z_move_effect;
+	u8 moveEffect = 0;
+	
+	if (move == MOVE_MAX_GUARD)
+		return EFFECT_PROTECT;
+
+	switch (maxEffect) {
+		case MAX_EFFECT_RAISE_TEAM_ATTACK:
+		case MAX_EFFECT_RAISE_TEAM_DEFENSE:
+		case MAX_EFFECT_RAISE_TEAM_SPEED:
+		case MAX_EFFECT_RAISE_TEAM_SP_ATK:
+		case MAX_EFFECT_RAISE_TEAM_SP_DEF:
+			if (STAT_STAGE(bankAtk, (maxEffect - MAX_EFFECT_RAISE_TEAM_ATTACK) + 1) < STAT_STAGE_MAX
+			|| (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(bankAtk)) && STAT_STAGE(PARTNER(bankAtk), (maxEffect - MAX_EFFECT_RAISE_TEAM_ATTACK) + 1) < STAT_STAGE_MAX))
+				moveEffect = (maxEffect - MAX_EFFECT_RAISE_TEAM_ATTACK) + EFFECT_ATTACK_UP;
+			break;
+
+		case MAX_EFFECT_LOWER_ATTACK:
+		case MAX_EFFECT_LOWER_DEFENSE:
+		case MAX_EFFECT_LOWER_SPEED:
+		case MAX_EFFECT_LOWER_SP_ATK:
+		case MAX_EFFECT_LOWER_SP_DEF:
+			if (STAT_STAGE(bankDef, (maxEffect - MAX_EFFECT_LOWER_ATTACK) + 1) > STAT_STAGE_MIN)
+				moveEffect = (maxEffect - MAX_EFFECT_LOWER_ATTACK) + EFFECT_ATTACK_DOWN;
+			break;
+
+		case MAX_EFFECT_SUN:
+			if (!(gBattleWeather & (WEATHER_SUN_ANY | WEATHER_PRIMAL_ANY | WEATHER_CIRCUS)))
+				moveEffect = EFFECT_SUNNY_DAY;
+			break;
+		case MAX_EFFECT_RAIN:
+			if (!(gBattleWeather & (WEATHER_RAIN_ANY | WEATHER_PRIMAL_ANY | WEATHER_CIRCUS)))
+				moveEffect = EFFECT_RAIN_DANCE;
+			break;
+		case MAX_EFFECT_SANDSTORM:
+			if (!(gBattleWeather & (WEATHER_SANDSTORM_ANY | WEATHER_PRIMAL_ANY | WEATHER_CIRCUS)))
+				moveEffect = EFFECT_SANDSTORM;
+			break;
+		case MAX_EFFECT_HAIL:
+			if (!(gBattleWeather & (WEATHER_HAIL_ANY | WEATHER_PRIMAL_ANY | WEATHER_CIRCUS)))
+				moveEffect = EFFECT_HAIL;
+			break;
+
+		case MAX_EFFECT_ELECTRIC_TERRAIN:
+		case MAX_EFFECT_GRASSY_TERRAIN:
+		case MAX_EFFECT_MISTY_TERRAIN:
+		case MAX_EFFECT_PSYCHIC_TERRAIN:
+			if (!(gBattleTypeFlags & BATTLE_TYPE_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_TERRAIN)
+			&& gTerrainType != (maxEffect - MAX_EFFECT_ELECTRIC_TERRAIN) + 1)
+				moveEffect = EFFECT_SET_TERRAIN;
+			break;
+
+		case MAX_EFFECT_WILDFIRE:
+			//TODO AI
+			break;
+
+		case MAX_EFFECT_EFFECT_SPORE_FOES:
+			//TODO AI
+			break;
+		case MAX_EFFECT_POISON_PARALYZE_FOES:
+			//TODO AI
+			break;
+		case MAX_EFFECT_PARALYZE_FOES:
+			if (CanBeParalyzed(bankDef, TRUE))
+				moveEffect = EFFECT_PARALYZE;
+			break;
+		case MAX_EFFECT_POISON_FOES:
+			if (CanBePoisoned(bankDef, bankAtk, TRUE))
+				moveEffect = EFFECT_POISON;
+			break;
+		case MAX_EFFECT_CONFUSE_FOES_PAY_DAY:
+		case MAX_EFFECT_CONFUSE_FOES:
+			if (CanBeConfused(bankDef, TRUE))
+				moveEffect = EFFECT_CONFUSE;
+			break;
+
+		case MAX_EFFECT_CRIT_PLUS:
+			if (!(gBattleMons[bankAtk].status2 & STATUS2_FOCUS_ENERGY))
+				moveEffect = EFFECT_FOCUS_ENERGY;
+			break;
+
+		case MAX_EFFECT_MEAN_LOOK:
+			if (!IsTrapped(bankDef, TRUE))
+				moveEffect = EFFECT_MEAN_LOOK;
+			break;
+
+		case MAX_EFFECT_AURORA_VEIL:
+			if (gNewBS->AuroraVeilTimers[SIDE(bankAtk)] == 0)
+				moveEffect = EFFECT_REFLECT;
+			break;
+
+		case MAX_EFFECT_INFATUATE_FOES:
+			if (CanBeInfatuated(bankDef, bankAtk))
+				moveEffect = EFFECT_ATTRACT;
+			break;
+
+		case MAX_EFFECT_RECYCLE_BERRIES:
+			if (SAVED_CONSUMED_ITEMS(bankAtk) != ITEM_NONE
+			&& IsBerry(SAVED_CONSUMED_ITEMS(bankAtk))
+			&& ITEM(bankAtk) == ITEM_NONE)
+				moveEffect = EFFECT_RECYCLE;
+			break;
+
+		case MAX_EFFECT_STEALTH_ROCK:
+			if (gSideTimers[SIDE(bankDef)].srAmount == 0)
+				moveEffect = EFFECT_SPIKES;
+			break;
+		case MAX_EFFECT_STEELSURGE:
+			if (gSideTimers[SIDE(bankDef)].steelsurge == 0)
+				moveEffect = EFFECT_SPIKES;
+			break;
+
+		case MAX_EFFECT_DEFOG:
+			if (gSideAffecting[SIDE(bankDef)] & (SIDE_STATUS_REFLECT | SIDE_STATUS_SAFEGUARD | SIDE_STATUS_MIST)
+			|| gNewBS->AuroraVeilTimers[SIDE(bankDef)] != 0
+			|| gSideAffecting[SIDE(bankAtk)] & SIDE_STATUS_SPIKES
+			|| !(gSideAffecting[SIDE(bankDef)] & SIDE_STATUS_SPIKES))
+				moveEffect = EFFECT_RAPID_SPIN;
+			break;
+
+		case MAX_EFFECT_HEAL_TEAM:
+			moveEffect = EFFECT_RESTORE_HP;
+			break;
+
+		case MAX_EFFECT_SPITE:
+			moveEffect = EFFECT_SPITE;
+			break;
+
+		case MAX_EFFECT_GRAVITY:
+			if (!IsGravityActive())
+				moveEffect = EFFECT_FIELD_EFFECTS;
+			break;
+
+		case MAX_EFFECT_VOLCAITH_FOES:
+			break;
+
+		case MAX_EFFECT_SANDBLAST_FOES:
+		case MAX_EFFECT_FIRE_SPIN_FOES:
+			moveEffect = EFFECT_TRAP;
+			break;
+
+		case MAX_EFFECT_YAWN_FOE:
+			if (CanBePutToSleep(bankDef, TRUE) && !(gStatuses3[bankDef] & STATUS3_YAWN))
+				moveEffect = EFFECT_YAWN;
+			break;
+
+		case MAX_EFFECT_LOWER_EVASIVENESS_FOES:
+			if (STAT_STAGE(bankDef, STAT_STAGE_EVASION) > STAT_STAGE_MIN)
+				moveEffect = EFFECT_EVASION_DOWN;
+			break;
+
+		case MAX_EFFECT_AROMATHERAPY:
+			if (PartyMemberStatused(bankAtk, FALSE))
+				moveEffect = EFFECT_HEAL_BELL;
+			break;
+
+		case MAX_EFFECT_TORMENT_FOES:
+			if (CanBeTormented(bankDef))
+				moveEffect = EFFECT_TORMENT;
+			break;
+
+		case MAX_EFFECT_LOWER_SPEED_2_FOES:
+			if (STAT_STAGE(bankDef, STAT_STAGE_SPEED) > STAT_STAGE_MIN)
+				moveEffect = EFFECT_SPEED_DOWN_2;
+			break;
+	}
+
+	return moveEffect;
 }
 
 bool8 GetHealthPercentage(u8 bank)
@@ -2498,32 +2808,201 @@ bool8 ShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move)
 	return FALSE;
 }
 
-bool8 ShouldAIDynamax(u8 bankAtk, u8 bankDef, u16 move)
+/*
+	1. Highest Attacking Stat
+	2. Weather Boosting Ability
+	3. Choice Item
+	4. Weakness Policy
+*/
+static bool8 MonCanTriggerWeatherAbilityWithMaxMove(struct Pokemon* mon)
 {
-	if (gBattleTypeFlags & BATTLE_TYPE_DYNAMAX && CanDynamax(bankAtk))
+	if (WEATHER_HAS_EFFECT)
 	{
-		if (BATTLER_SEMI_INVULNERABLE(bankAtk))
-			return FALSE; //Can't Dynamax out of view
+		switch (GetMonAbility(mon)) {
+			case ABILITY_SWIFTSWIM:
+			case ABILITY_RAINDISH:
+			case ABILITY_DRYSKIN:
+				return MonCanUseMaxMoveWithEffect(mon, MAX_EFFECT_RAIN);
+			case ABILITY_CHLOROPHYLL:
+			case ABILITY_SOLARPOWER:
+			case ABILITY_FLOWERGIFT:
+				return MonCanUseMaxMoveWithEffect(mon, MAX_EFFECT_SUN);
+			case ABILITY_SANDRUSH:
+			case ABILITY_SANDFORCE:
+				return MonCanUseMaxMoveWithEffect(mon, MAX_EFFECT_SANDSTORM);
+			case ABILITY_SLUSHRUSH:
+			case ABILITY_ICEBODY:
+			case ABILITY_ICEFACE:
+				return MonCanUseMaxMoveWithEffect(mon, MAX_EFFECT_HAIL);
+			case ABILITY_SURGESURFER:
+				return MonCanUseMaxMoveWithEffect(mon, MAX_EFFECT_ELECTRIC_TERRAIN);
+		}
+	}
+	
+	return FALSE;
+}
 
-		if (IS_DOUBLE_BATTLE && bankDef == PARTNER(bankAtk))
-			return FALSE; //No need to Dynamax against your partner
+void CalcAIDynamaxMon(u8 bank)
+{
+	u8 bestMonId = 0xFF;
 
-		if (IsMegaStone(GetBankPartyData(bankAtk)->item)
-		|| IsZCrystal(GetBankPartyData(bankAtk)->item)
-		|| GetMaxMove(bankAtk, 0) == MOVE_NONE)
-			return FALSE;
+	if (gBattleTypeFlags & BATTLE_TYPE_DYNAMAX && !gNewBS->dynamaxData.used[bank])
+	{
+		struct Pokemon* party;
+		u8 bestMonScore, bestStatAmount, firstId, lastId, battlerIn1, battlerIn2, i;
 
-		if (IsClassSweeper(GetBankFightingStyle(bankAtk)))
+		party = LoadPartyRange(bank, &firstId, &lastId);
+		if (IS_SINGLE_BATTLE)
+			battlerIn1 = battlerIn2 = bank;
+		else
 		{
-			if (MoveWouldHitFirst(move, bankAtk, bankDef)
-			&&  MoveKnocksOutXHits(move, bankAtk, bankDef, 1))
-				return FALSE; //Just KO the opponent normally
+			if (gAbsentBattlerFlags & gBitTable[bank])
+				battlerIn1 = battlerIn2 = PARTNER(bank);
+			else if (gAbsentBattlerFlags & gBitTable[PARTNER(bank)])
+				battlerIn1 = battlerIn2 = bank;
+			else
+			{
+				battlerIn1 = bank;
+				battlerIn2 = PARTNER(bank);
+			}
+		}
 
-			return TRUE;
+		for (i = 0, bestMonScore = 0, bestStatAmount = 0; i < PARTY_SIZE; ++i) //Do entire party at once, even for Multi Battles
+		{
+			struct Pokemon* mon = &party[i];
+			u8 updateScore, itemEffect, ability;
+			u32 bestMonStat, attack, spAttack;
+
+			if (mon->species == SPECIES_NONE
+			|| GetMonData(mon, MON_DATA_HP, NULL) == 0
+			|| GetMonData(mon, MON_DATA_IS_EGG, NULL)
+			|| !MonCanDynamax(mon))
+				continue;
+
+			updateScore = 0;
+			bestMonStat = 0;
+			if (gBattlerPartyIndexes[battlerIn1] == i || gBattlerPartyIndexes[battlerIn2] == i)
+			{
+				u8 checkBank;
+				if (gBattlerPartyIndexes[battlerIn1] == i)
+					checkBank = battlerIn1;
+				else
+					checkBank = battlerIn2;
+
+				itemEffect = ITEM_EFFECT(checkBank);
+				ability = ABILITY(checkBank);
+				attack = gBattleMons[checkBank].attack;
+				spAttack = gBattleMons[checkBank].spAttack;
+				APPLY_QUICK_STAT_MOD(attack, STAT_STAGE(checkBank, STAT_STAGE_ATK));
+				APPLY_QUICK_STAT_MOD(spAttack, STAT_STAGE(checkBank, STAT_STAGE_SPATK));
+			}
+			else
+			{
+				itemEffect = GetMonItemEffect(mon);
+				ability = GetMonAbility(mon);
+				attack = mon->attack;
+				spAttack = mon->spAttack;
+			}
+
+			if (PhysicalMoveInMonMoveset(mon, MOVE_LIMITATION_ZEROMOVE | MOVE_LIMITATION_PP))
+			{
+				if (SpecialMoveInMonMoveset(mon, MOVE_LIMITATION_ZEROMOVE | MOVE_LIMITATION_PP) && spAttack > attack)
+					bestMonStat = spAttack;
+				else
+					bestMonStat = attack;
+			}
+			else if (SpecialMoveInMonMoveset(mon, MOVE_LIMITATION_ZEROMOVE | MOVE_LIMITATION_PP)) //Only set if mon has Special move
+				bestMonStat = spAttack;
+
+			if (itemEffect == ITEM_EFFECT_WEAKNESS_POLICY)
+				updateScore = 4;
+			else if (itemEffect == ITEM_EFFECT_CHOICE_BAND || ability == ABILITY_GORILLATACTICS)
+				updateScore = 3;
+			else if (MonCanTriggerWeatherAbilityWithMaxMove(mon))
+				updateScore = 2;
+			else if (bestMonStat > 0 //Has an actual attacking move
+			&& itemEffect != ITEM_EFFECT_EJECT_BUTTON && itemEffect != ITEM_EFFECT_EJECT_PACK) //And probably won't be forced out by its item
+				updateScore = 1;
+
+			if (updateScore >= bestMonScore)
+			{
+				if (updateScore == bestMonScore
+				&& bestMonStat <= bestStatAmount)
+					continue; //Stats aren't better so check next mon
+
+				if (bestMonStat > 0) //Mon has attacking moves
+				{
+					bestMonId = i;
+					bestMonScore = updateScore;
+					bestStatAmount = bestMonStat;
+				}
+			}
 		}
 	}
 
-	return FALSE;
+	gNewBS->ai.dynamaxMonId[SIDE(bank)] = bestMonId;
+}
+
+void CalcShouldAIDynamax(u8 bankAtk, u8 bankDef)
+{
+	gNewBS->ai.dynamaxPotential[bankAtk][bankDef] = FALSE;
+
+	if (bankAtk != bankDef && CanDynamax(bankAtk))
+	{
+		if (BATTLER_SEMI_INVULNERABLE(bankAtk))
+			return; //Can't Dynamax out of view
+
+		if (IS_DOUBLE_BATTLE && bankDef == PARTNER(bankAtk))
+			return; //No need to Dynamax against your partner
+		
+		if (!IsMockBattle() && SIDE(bankAtk) == B_SIDE_PLAYER)
+		{
+			if (IsTagBattle())
+			{
+				if (GetBattlerPosition(bankAtk) == B_POSITION_PLAYER_LEFT)
+					return; //Never predict that the player will Dynamax
+			}
+			else //Player is in control
+				return; //Never predict that the player will Dynamax
+		}
+
+		if (gNewBS->ai.dynamaxMonId[SIDE(bankAtk)] == gBattlerPartyIndexes[bankAtk])
+		{
+			u16 predictedMove = IsValidMovePrediction(bankAtk, bankDef);
+			if (predictedMove != MOVE_NONE
+			&&  MoveWouldHitFirst(predictedMove, bankAtk, bankDef)
+			&&  MoveKnocksOutXHits(predictedMove, bankAtk, bankDef, 1))
+				return; //Just KO the opponent normally
+
+			predictedMove = IsValidMovePrediction(bankDef, bankAtk);
+			if (predictedMove != MOVE_NONE
+			&&  MoveWouldHitFirst(predictedMove, bankDef, bankAtk)
+			&&  MoveKnocksOutAfterDynamax(predictedMove, bankDef, bankAtk))
+				return; //Don't Dynamax is foe will just KO you
+
+			OnlyBadMovesLeftInMoveset(bankAtk, bankDef); //Force calculation
+
+			if ((ITEM_EFFECT(bankAtk) == ITEM_EFFECT_CHOICE_BAND || ABILITY(bankAtk) == ABILITY_GORILLATACTICS)
+			&& !gNewBS->ai.shouldFreeChoiceLockWithDynamax[bankAtk][bankDef]) //There are good moves left
+				return; //Save Dynamax for when you really need it
+
+			gNewBS->ai.dynamaxPotential[bankAtk][bankDef] = TRUE;
+			ClearStrongestMoveAndCanKnockOut(bankAtk, bankDef); //All moves now are treated like Max Moves so wipe old data
+		}
+	}
+}
+
+bool8 ShouldAIDynamax(u8 bankAtk, u8 bankDef)
+{
+	return gNewBS->ai.dynamaxPotential[bankAtk][bankDef];
+}
+
+u8 AdjustMoveLimitationFlagsForAI(u8 bankAtk, u8 bankDef)
+{
+	if (ShouldAIDynamax(bankAtk, bankDef)) //AI will Dynamax this turn
+		return MOVE_LIMITATION_ZEROMOVE | MOVE_LIMITATION_PP;
+
+	return 0xFF; //All flags by default
 }
 
 void IncreaseViability(s16* viability, u8 amount)

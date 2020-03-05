@@ -260,6 +260,10 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 					if (!partnerProtects)
 						IncreaseHealPartnerViability(&viability, class, bankAtkPartner);
 					break;
+				case MOVE_G_MAX_FINALE_P:
+				case MOVE_G_MAX_FINALE_S:
+					IncreaseHealPartnerViability(&viability, class, bankAtkPartner);
+					break;
 			}
 			break;
 

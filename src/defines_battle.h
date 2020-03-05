@@ -91,6 +91,12 @@ defines_battle.h
     (var) = udivsi((var), (gStatStageRatios)[(mon)->statStages[(statIndex)-1]][1]);     \
 }
 
+#define APPLY_QUICK_STAT_MOD(var, buff)                 \
+{                                                       \
+    (var) = (var) * gStatStageRatios[buff][0];          \
+    (var) = udivsi((var), gStatStageRatios[buff][1]);   \
+}
+
 enum
 {
 	TRAINER_SLIDE_LAST_SWITCHIN,

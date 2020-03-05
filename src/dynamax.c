@@ -42,8 +42,8 @@ static bool8 IsItemDynamaxBand(u16 item);
 static item_t FindTrainerDynamaxBand(u16 trainerId);
 static item_t FindPlayerDynamaxBand(void);
 static item_t FindBankDynamaxBand(u8 bank);
-static move_t GetTypeBasedMaxMove(u16 move, u8 bank);
-static move_t GetGMaxMove(u16 move, u8 bank);
+static move_t GetTypeBasedMaxMove(u8 moveType, u8 moveSplit);
+static move_t GetGMaxMove(u8 moveType, u8 moveSplit, u16 species);
 static u8 GetRaidMapSectionId(void);
 static u32 GetRaidRandomNumber(void);
 
@@ -207,12 +207,18 @@ bool8 IsBannedDynamaxSpecies(u16 species)
 
 bool8 CanDynamax(u8 bank)
 {
-	return GetDynamaxSpecies(bank, FALSE) != SPECIES_NONE;
+	if (gBattleTypeFlags & BATTLE_TYPE_DYNAMAX && !gNewBS->dynamaxData.used[bank])
+		return GetDynamaxSpecies(bank, FALSE) != SPECIES_NONE;
+
+	return FALSE;
 }
 
 bool8 CanGigantamax(u8 bank)
 {
-	return GetDynamaxSpecies(bank, TRUE) != SPECIES_NONE;
+	if (gBattleTypeFlags & BATTLE_TYPE_DYNAMAX && !gNewBS->dynamaxData.used[bank])
+		return GetDynamaxSpecies(bank, TRUE) != SPECIES_NONE;
+
+	return FALSE;
 }
 
 static const u8* DoDynamax(u8 bank)
@@ -448,29 +454,36 @@ static u8 GetMaxMoveType(u16 move, u8 bank)
 	return moveType;
 }
 
-static move_t GetTypeBasedMaxMove(u16 move, u8 bank)
+static u8 GetMonMaxMoveType(u16 move, struct Pokemon* mon)
 {
-	u8 moveType = GetMaxMoveType(move, bank);
+	u8 moveType = gBattleMoves[move].type;
 
-	if (moveType < TYPE_FIRE)
-		return MOVE_MAX_STRIKE_P + (moveType * 2) + CalcMoveSplit(bank, move);
-	else if (moveType >= TYPE_FAIRY)
-		return MOVE_MAX_STARFALL_P + ((moveType - TYPE_FAIRY) * 2) + CalcMoveSplit(bank, move);
+	if (move == MOVE_HIDDENPOWER || move == MOVE_NATURALGIFT) //The only exception moves that don't change type
+		moveType = GetMoveTypeSpecialFromParty(mon, MOVE_POUND);
 	else
-		return MOVE_MAX_STRIKE_P + ((moveType - 1) * 2) + CalcMoveSplit(bank, move);
+		moveType = GetMoveTypeSpecialFromParty(mon, move);
+	
+	return moveType;
 }
 
-static move_t GetGMaxMove(u16 move, u8 bank)
+static move_t GetTypeBasedMaxMove(u8 moveType, u8 moveSplit)
 {
-	u8 moveType = GetMaxMoveType(move, bank);
-	u16 species = SPECIES(bank);
+	if (moveType < TYPE_FIRE)
+		return MOVE_MAX_STRIKE_P + (moveType * 2) + moveSplit;
+	else if (moveType >= TYPE_FAIRY)
+		return MOVE_MAX_STARFALL_P + ((moveType - TYPE_FAIRY) * 2) + moveSplit;
+	else
+		return MOVE_MAX_STRIKE_P + ((moveType - 1) * 2) + moveSplit;
+}
 
+static move_t GetGMaxMove(u8 moveType, u8 moveSplit, u16 species)
+{
 	for (u32 i = 0; i < ARRAY_COUNT(sGMaxMoveTable); ++i)
 	{
 		if (sGMaxMoveTable[i].species == species
 		&&  sGMaxMoveTable[i].moveType == moveType)
 		{
-			return sGMaxMoveTable[i].gmaxMove + CalcMoveSplit(bank, move);
+			return sGMaxMoveTable[i].gmaxMove + moveSplit;
 		}
 	}
 
@@ -485,6 +498,9 @@ move_t GetMaxMove(u8 bank, u8 moveIndex)
 
 move_t GetMaxMoveByMove(u8 bank, u16 baseMove)
 {
+	if (baseMove == MOVE_NONE)
+		return MOVE_NONE;
+
 	if (IsMega(bank)
 	|| IsRedPrimal(bank)
 	|| IsBluePrimal(bank)
@@ -495,11 +511,77 @@ move_t GetMaxMoveByMove(u8 bank, u16 baseMove)
 	if (SPLIT(baseMove) == SPLIT_STATUS)
 		return MOVE_MAX_GUARD;
 
-	u16 maxMove = GetGMaxMove(baseMove, bank);
+	u8 moveType = GetMaxMoveType(baseMove, bank);
+	u8 moveSplit = CalcMoveSplit(bank, baseMove);
+	u16 maxMove = GetGMaxMove(moveType, moveSplit, SPECIES(bank));
 	if (maxMove != MOVE_NONE)
 		return maxMove;
 
-	return GetTypeBasedMaxMove(baseMove, bank);
+	return GetTypeBasedMaxMove(moveType, moveSplit);
+}
+
+static move_t GetMonMaxMove(struct Pokemon* mon, u16 baseMove)
+{
+	u8 moveType = GetMonMaxMoveType(baseMove, mon);
+	u8 moveSplit = CalcMoveSplitFromParty(mon, baseMove);
+	u16 maxMove = GetGMaxMove(moveType, moveSplit, mon->species);
+	if (maxMove != MOVE_NONE)
+		return maxMove;
+
+	return GetTypeBasedMaxMove(moveType, moveSplit);
+}
+
+bool8 MonCanUseMaxMoveWithEffect(struct Pokemon* mon, u8 maxEffect)
+{
+	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
+	u16 itemEffect = GetMonItemEffect(mon);
+
+	if (IsMegaSpecies(species)
+	|| IsRedPrimalSpecies(species)
+	|| IsBluePrimalSpecies(species)
+	|| IsMonUltraNecrozma(mon)
+	|| itemEffect == ITEM_EFFECT_MEGA_STONE
+	|| itemEffect == ITEM_EFFECT_PRIMAL_ORB
+	|| itemEffect == ITEM_EFFECT_Z_CRYSTAL)
+		return FALSE;
+
+	for (int i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		u16 move = GetMonData(mon, MON_DATA_MOVE1 + i, NULL);
+		if (move == MOVE_NONE)
+			break;
+
+		if (SPLIT(move) == SPLIT_STATUS)
+			continue;
+
+		move = GetMonMaxMove(mon, move);
+		if (move != MOVE_NONE && gBattleMoves[move].z_move_effect == maxEffect)
+			return TRUE;
+	}
+
+	return FALSE;
+}
+
+bool8 MonCanDynamax(struct Pokemon* mon)
+{
+	if (gBattleTypeFlags & BATTLE_TYPE_DYNAMAX)
+	{
+		u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
+		u16 itemEffect = GetMonItemEffect(mon);
+
+		if (IsMegaSpecies(species)
+		|| IsRedPrimalSpecies(species)
+		|| IsBluePrimalSpecies(species)
+		|| IsMonUltraNecrozma(mon)
+		|| itemEffect == ITEM_EFFECT_MEGA_STONE
+		|| itemEffect == ITEM_EFFECT_PRIMAL_ORB
+		|| itemEffect == ITEM_EFFECT_Z_CRYSTAL)
+			return FALSE;
+		
+		return TRUE;
+	}
+	
+	return FALSE;
 }
 
 u8 GetDynamaxHPBoost(unusedArg u8 bank)
@@ -1044,6 +1126,87 @@ void SetGMaxSmiteEffect(void)
 	gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_CONFUSION;
 	if (CanBeConfused(gBankTarget, TRUE))
 		gHitMarker |= HITMARKER_IGNORE_SAFEGUARD; //Safeguard checked on line above
+}
+
+bool8 IsMaxMoveWithWeatherEffect(u16 move)
+{
+	if (IsAnyMaxMove(move))
+	{
+		switch (gBattleMoves[move].z_move_effect) {
+			case MAX_EFFECT_SUN:
+			case MAX_EFFECT_RAIN:
+			case MAX_EFFECT_SANDSTORM:
+			case MAX_EFFECT_HAIL:
+				return TRUE;
+		}
+	}
+	
+	return FALSE;
+}
+
+bool8 IsMaxMoveWithTerrainEffect(u16 move)
+{
+	if (IsAnyMaxMove(move))
+	{
+		switch (gBattleMoves[move].z_move_effect) {
+			case MAX_EFFECT_ELECTRIC_TERRAIN:
+			case MAX_EFFECT_GRASSY_TERRAIN:
+			case MAX_EFFECT_MISTY_TERRAIN:
+			case MAX_EFFECT_PSYCHIC_TERRAIN:
+				return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+bool8 IsMaxMoveWithStatusEffect(u16 move)
+{
+	if (IsAnyMaxMove(move))
+	{
+		switch (gBattleMoves[move].z_move_effect) {
+			case MAX_EFFECT_EFFECT_SPORE_FOES:
+			case MAX_EFFECT_POISON_FOES:
+			case MAX_EFFECT_PARALYZE_FOES:
+			case MAX_EFFECT_POISON_PARALYZE_FOES:
+				return TRUE;
+		}
+	}
+	
+	return FALSE;
+}
+
+bool8 IsMaxMoveWithConfusionEffect(u16 move)
+{
+	if (IsAnyMaxMove(move))
+	{
+		switch (gBattleMoves[move].z_move_effect) {
+			case MAX_EFFECT_CONFUSE_FOES:
+			case MAX_EFFECT_CONFUSE_FOES_PAY_DAY:
+				return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+bool8 IsMaxMoveWithTrapDamageEffect(u16 move)
+{
+	if (IsAnyMaxMove(move))
+	{
+		switch (gBattleMoves[move].z_move_effect) {
+			case MAX_EFFECT_SANDBLAST_FOES:
+			case MAX_EFFECT_FIRE_SPIN_FOES:
+				return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+bool8 IsMaxMoveWithEffect(u16 move, u8 effect)
+{
+	return IsAnyMaxMove(move) && gBattleMoves[move].z_move_effect == effect;
 }
 
 //The following functions relate to raid battles:

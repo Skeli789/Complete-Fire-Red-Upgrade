@@ -1459,7 +1459,10 @@ u8 TurnBasedEffects(void)
 						gNewBS->ai.strongestMove[i][j] = 0xFFFF;
 						gNewBS->ai.canKnockOut[i][j] = 0xFF;
 						gNewBS->ai.can2HKO[i][j] = 0xFF;
-						
+						gNewBS->ai.onlyBadMovesLeft[i][j] = 0xFF;
+						gNewBS->ai.shouldFreeChoiceLockWithDynamax[i][j] = FALSE;
+						gNewBS->ai.dynamaxPotential[i][j] = FALSE;
+
 						for (int k = 0; k < MAX_MON_MOVES; ++k)
 						{
 							gNewBS->ai.moveKnocksOut1Hit[i][j][k] = 0xFF;
