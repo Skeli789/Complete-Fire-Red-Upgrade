@@ -9,6 +9,7 @@ cmd49_battle_scripts.s
 .include "../asm_defines.s"
 .include "../battle_script_macros.s"
 
+.global BattleScript_CouldntFullyProtect
 .global BattleScript_PoisonTouch
 .global BattleScript_KingsShield
 .global BattleScript_SpikyShield
@@ -33,6 +34,14 @@ cmd49_battle_scripts.s
 
 .global ToxicOrbString
 .global FlameOrbString
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_CouldntFullyProtect:
+	setword BATTLE_STRING_LOADER gText_CouldntFullyProtect
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

@@ -1209,6 +1209,11 @@ bool8 IsMaxMoveWithEffect(u16 move, u8 effect)
 	return IsAnyMaxMove(move) && gBattleMoves[move].z_move_effect == effect;
 }
 
+bool8 ProtectedByMaxGuard(u8 bankDef, u16 move)
+{
+	return gProtectStructs[bankDef].protected && IsDynamaxed(bankDef) && move != MOVE_FEINT;
+}
+
 //The following functions relate to raid battles:
 bool8 IsRaidBattle(void)
 {

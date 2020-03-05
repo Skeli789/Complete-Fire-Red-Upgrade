@@ -731,6 +731,13 @@ void atk0F_resultmessage(void) {
 		PrepareStringBattle(stringId, gBankAttacker);
 
 	gBattlescriptCurrInstr++;
+	
+	if ((gNewBS->ZMoveData->active || IsAnyMaxMove(gCurrentMove))
+	&& !IsDynamaxed(gBankTarget) && ProtectsAgainstZMoves(gCurrentMove, gBankAttacker, gBankTarget))
+	{
+		BattleScriptPushCursor();
+		gBattlescriptCurrInstr = BattleScript_CouldntFullyProtect;
+	}
 }
 
 void atk12_waitmessage(void)

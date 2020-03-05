@@ -132,7 +132,7 @@ ACCURACY_CHECK_START:
 
 bool8 JumpIfMoveAffectedByProtect(move_t move, bank_t bankAtk, bank_t bankDef)
 {
-	if ((gNewBS->dynamaxData.active && !IsDynamaxed(bankDef)) //Otherwise using a Max Move on Max Guard
+	if ((IsAnyMaxMove(move) && !IsDynamaxed(bankDef)) //Otherwise using a Max Move on Max Guard
 	|| (gNewBS->ZMoveData->active && SPLIT(move) != SPLIT_STATUS))
 		return FALSE;
 
@@ -154,6 +154,11 @@ bool8 ProtectAffects(u16 move, u8 bankAtk, u8 bankDef, bool8 set)
 	u8 target = gBattleMoves[move].target;
 	u8 defSide = SIDE(bankDef);
 
+	if (ProtectedByMaxGuard(bankDef, move))
+	{
+		effect = 1;
+		gBattleCommunication[6] = 1;
+	}
 	if (gProtectStructs[bankDef].protected && protectFlag)
 	{
 		effect = 1;

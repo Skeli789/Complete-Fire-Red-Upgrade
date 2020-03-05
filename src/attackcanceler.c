@@ -469,7 +469,7 @@ static u8 AtkCanceller_UnableToUseMove(void)
 			if (gDisableStructs[gBankAttacker].disabledMove == gCurrentMove
 			&& gDisableStructs[gBankAttacker].disabledMove != 0
 			&& !gNewBS->ZMoveData->active
-			&& !gNewBS->dynamaxData.active)
+			&& !IsAnyMaxMove(gCurrentMove))
 			{
 				gProtectStructs[gBankAttacker].usedDisabledMove = 1;
 				gBattleScripting->bank = gBankAttacker;
@@ -486,7 +486,7 @@ static u8 AtkCanceller_UnableToUseMove(void)
 			if (IsHealBlocked(gBankAttacker)
 			&& CheckHealingMove(gCurrentMove)
 			&& !gNewBS->ZMoveData->active
-			&& !gNewBS->dynamaxData.active)
+			&& !IsAnyMaxMove(gCurrentMove))
 			{
 				gBattleScripting->bank = gBankAttacker;
 				CancelMultiTurnMoves(gBankAttacker);
@@ -502,7 +502,7 @@ static u8 AtkCanceller_UnableToUseMove(void)
 			if (CantUseSoundMoves(gBankAttacker)
 			&& CheckSoundMove(gCurrentMove)
 			&& !gNewBS->ZMoveData->active
-			&& !gNewBS->dynamaxData.active)
+			&& !IsAnyMaxMove(gCurrentMove))
 			{
 				gBattleScripting->bank = gBankAttacker;
 				CancelMultiTurnMoves(gBankAttacker);
@@ -518,7 +518,7 @@ static u8 AtkCanceller_UnableToUseMove(void)
 			if (IsGravityActive()
 			&& CheckTableForMove(gCurrentMove, gGravityBannedMoves)
 			&& !gNewBS->ZMoveData->active //Gravity stops Z-Moves, so there will be a second check later on
-			&& !gNewBS->dynamaxData.active)
+			&& !IsAnyMaxMove(gCurrentMove))
 			{
 				gBattleScripting->bank = gBankAttacker;
 				CancelMultiTurnMoves(gBankAttacker);
@@ -534,7 +534,7 @@ static u8 AtkCanceller_UnableToUseMove(void)
 			if (IsTaunted(gBankAttacker)
 			&& SPLIT(gCurrentMove) == SPLIT_STATUS
 			&& !gNewBS->ZMoveData->active
-			&& !gNewBS->dynamaxData.active)
+			&& !IsAnyMaxMove(gCurrentMove))
 			{
 				gProtectStructs[gBankAttacker].usedTauntedMove = 1;
 				CancelMultiTurnMoves(gBankAttacker);
@@ -548,7 +548,7 @@ static u8 AtkCanceller_UnableToUseMove(void)
 		case CANCELLER_IMPRISONED: // imprisoned
 			if (IsImprisoned(gBankAttacker, gCurrentMove)
 			&& !gNewBS->ZMoveData->active
-			&& !gNewBS->dynamaxData.active)
+			&& !IsAnyMaxMove(gCurrentMove))
 			{
 				gProtectStructs[gBankAttacker].usedImprisionedMove = 1;
 				CancelMultiTurnMoves(gBankAttacker);
@@ -1056,7 +1056,7 @@ static u8 IsMonDisobedient(void)
 		return 0;
 	else if (SIDE(gBankAttacker) == B_SIDE_OPPONENT)
 		return 0;
-	else if (gNewBS->InstructInProgress || gNewBS->DancerInProgress || gNewBS->ZMoveData->active || gNewBS->dynamaxData.active)
+	else if (gNewBS->InstructInProgress || gNewBS->DancerInProgress || gNewBS->ZMoveData->active || IsAnyMaxMove(gCurrentMove))
 		return 0;
 		
 	#ifdef DEBUG_OBEDIENCE

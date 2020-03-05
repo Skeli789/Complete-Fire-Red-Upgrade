@@ -1602,7 +1602,7 @@ void AdjustDamage(bool8 CheckFalseSwipe)
 	u8 ability = ABILITY(gBankTarget);
 	gStringBank = gBankTarget;
 
-	if ((gNewBS->ZMoveData->active || gNewBS->dynamaxData.active)
+	if ((gNewBS->ZMoveData->active || IsAnyMaxMove(gCurrentMove))
 	&& !IsDynamaxed(gBankTarget)
 	&& ProtectsAgainstZMoves(gCurrentMove, gBankAttacker, gBankTarget))
 		gBattleMoveDamage = udivsi(gBattleMoveDamage  * 25, 100);

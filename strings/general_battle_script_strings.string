@@ -230,6 +230,9 @@ The G-Max Volcalith rocks around\n[FD][36] team disappeared!
 #org @gText_TrappedByGMaxCentiferno
 [FD][37] team has become\ntrapped in a fiery vortex!
 
+#org @gText_CouldntFullyProtect
+[TARGET] couldn't\nfully protect itself and got hurt!
+
 //Other Battle Features
 
 #org @gText_Devolved

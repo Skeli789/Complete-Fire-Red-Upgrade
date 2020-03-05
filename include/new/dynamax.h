@@ -40,6 +40,7 @@ bool8 IsMaxMoveWithStatusEffect(u16 move);
 bool8 IsMaxMoveWithConfusionEffect(u16 move);
 bool8 IsMaxMoveWithTrapDamageEffect(u16 move);
 bool8 IsMaxMoveWithEffect(u16 move, u8 effect);
+bool8 ProtectedByMaxGuard(u8 bankDef, u16 move);
 
 bool8 IsRaidBattle(void);
 bool8 IsCatchableRaidBattle(void);
