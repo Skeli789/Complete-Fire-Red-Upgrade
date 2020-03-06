@@ -41,7 +41,6 @@ extern const u8* gBattleScriptsForMoveEffects[];
 #define ScreensShatteredString (u8*) 0x83FC646
 
 extern const u8 BattleScript_PauseResultMessage[];
-extern const u8 BattleScript_DarkVoidFail[];
 extern const u8 BattleScript_MagneticFluxStatBoost[];
 extern const u8 BattleScript_GearUpStatBoost[];
 extern const u8 BattleScript_SapSipperAromatherapy[];

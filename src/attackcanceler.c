@@ -464,6 +464,56 @@ static u8 AtkCanceller_UnableToUseMove(void)
 
 			gBattleStruct->atkCancellerTracker++;
 			break;
+		
+		case CANCELLER_BANNED_SIGNATURE_MOVE:
+		case CANCELLER_BANNED_SIGNATURE_MOVE_2: ;
+			u16 species = SPECIES(gBankAttacker);
+
+			switch (gCurrentMove) {
+				case MOVE_DARKVOID:
+					if (!gNewBS->ZMoveData->active || gNewBS->ZMoveData->effectApplied) //Allows for Z-Dark Void to still have Z-Effect
+					{
+						#ifdef SPECIES_DARKRAI
+						if (species != SPECIES_DARKRAI && !gNewBS->MoveBounceInProgress)
+							effect = 1;
+						#endif
+					}
+					break;
+				case MOVE_HYPERSPACEFURY:
+					#ifdef SPECIES_HOOPA_UNBOUND
+					if (species != SPECIES_HOOPA_UNBOUND)
+					{
+						#ifdef SPECIES_HOOPA
+						if (species == SPECIES_HOOPA)
+							effect = 2;
+						else
+						#endif
+							effect = 1;
+					}
+					#endif
+					break;
+				case MOVE_AURAWHEEL:
+					#ifdef SPECIES_MORPEKO
+					if (species != SPECIES_MORPEKO && species != SPECIES_MORPEKO_HANGRY)
+						effect = 1;
+					#endif
+					break;
+			}
+
+			if (effect)
+			{
+				gBattleScripting->bank = gBankAttacker;
+				CancelMultiTurnMoves(gBankAttacker);
+				
+				gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
+				
+				if (effect == 2)
+					gBattlescriptCurrInstr = BattleScript_HoopaCantUseHyperspaceFury;
+				else
+					gBattlescriptCurrInstr = BattleScript_CantUseSignatureMove;
+			}
+			gBattleStruct->atkCancellerTracker++;
+			break;
 
 		case CANCELLER_DISABLED: // disabled move
 			if (gDisableStructs[gBankAttacker].disabledMove == gCurrentMove

@@ -8,28 +8,30 @@
 *		  a move's execution. Many times used to stop the execution.
  */
 
-extern u8 BattleScript_MagicBounce[];
-extern u8 BattleScript_MoveUsedFlinched[]; //0x81D90B1
-extern u8 BattleScript_MoveUsedDevolvedForgot[];
-extern u8 BattleScript_MoveUsedIsConfused[]; //0x81D90D3
-extern u8 BattleScript_MoveUsedLoafingAround[]; //0x81D94F2
-extern u8 BattleScript_MoveUsedGravityPrevents[];
-extern u8 BattleScript_MoveUsedHealBlockPrevents[];
-extern u8 BattleScript_MoveUsedThroatChopPrevents[];
-extern u8 BattleScript_MoveUsedFailedPrimalWeather[];
-extern u8 BattleScript_MoveUsedPsychicTerrainPrevents[];
-extern u8 BattleScript_MoveUsedPowderPrevents[];
-extern u8 BattleScript_StanceChangeToBlade[];
-extern u8 BattleScript_StanceChangeToShield[];
-extern u8 BattleScript_ZMoveActivateStatus[];
-extern u8 BattleScript_ZMoveActivateDamaging[];
-extern u8 BattleScript_DarkTypePreventsPrankster[];
-extern u8 BattleScript_MoveUsedSkyBattlePrevents[];
-extern u8 BattleScript_MoveUsedDynamaxPrevents[];
-extern u8 BattleScript_MoveUsedRaidBattlePrevents[];
-extern u8 BattleScript_DampStopsExplosion[];
-extern u8 BattleScript_TookAttack[];
-extern u8 BattleScript_RaidBattleStatNullification[];
+extern const u8 BattleScript_MagicBounce[];
+extern const u8 BattleScript_MoveUsedFlinched[]; //0x81D90B1
+extern const u8 BattleScript_MoveUsedDevolvedForgot[];
+extern const u8 BattleScript_MoveUsedIsConfused[]; //0x81D90D3
+extern const u8 BattleScript_MoveUsedLoafingAround[]; //0x81D94F2
+extern const u8 BattleScript_MoveUsedGravityPrevents[];
+extern const u8 BattleScript_MoveUsedHealBlockPrevents[];
+extern const u8 BattleScript_MoveUsedThroatChopPrevents[];
+extern const u8 BattleScript_MoveUsedFailedPrimalWeather[];
+extern const u8 BattleScript_MoveUsedPsychicTerrainPrevents[];
+extern const u8 BattleScript_MoveUsedPowderPrevents[];
+extern const u8 BattleScript_StanceChangeToBlade[];
+extern const u8 BattleScript_StanceChangeToShield[];
+extern const u8 BattleScript_ZMoveActivateStatus[];
+extern const u8 BattleScript_ZMoveActivateDamaging[];
+extern const u8 BattleScript_DarkTypePreventsPrankster[];
+extern const u8 BattleScript_MoveUsedSkyBattlePrevents[];
+extern const u8 BattleScript_CantUseSignatureMove[];
+extern const u8 BattleScript_HoopaCantUseHyperspaceFury[];
+extern const u8 BattleScript_MoveUsedDynamaxPrevents[];
+extern const u8 BattleScript_MoveUsedRaidBattlePrevents[];
+extern const u8 BattleScript_DampStopsExplosion[];
+extern const u8 BattleScript_TookAttack[];
+extern const u8 BattleScript_RaidBattleStatNullification[];
 
 #define BattleScript_NoPPForMove (u8*) 0x81D8EA8
 #define BattleScript_MagicCoatBounce (u8*) 0x81D8FAA

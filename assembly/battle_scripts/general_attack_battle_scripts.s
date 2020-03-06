@@ -19,7 +19,9 @@ general_attack_battle_scripts.s
 .global PowerSplitString
 .global GuardSplitString
 .global PowerHerbString
+.global CantUseHyperspaceFuryString
 .global CantUseMoveString
+.global WrongHoopaFormString
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -28,7 +30,6 @@ BS_001_SetSleep:
 	attackcanceler
 	attackstring
 	ppreduce
-	callasm CheckIfExclusiveMoveShouldFail
 	jumpifbehindsubstitute BANK_TARGET FAILED
 	trysetsleep BANK_TARGET BS_StatusMoveFail
 	accuracycheck BS_MOVE_MISSED_PAUSE 0x0
@@ -90,15 +91,6 @@ BattleScript_TargetStayedAwakeUsingAbility:
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
-	goto BS_MOVE_END
-
-.global BattleScript_DarkVoidFail
-BattleScript_DarkVoidFail:
-	pause DELAY_HALFSECOND
-	setword BATTLE_STRING_LOADER CantUseHyperspaceFuryString
-	printstring 0x184
-	waitmessage DELAY_1SECOND
-	orword HIT_MARKER HITMARKER_UNABLE_TO_USE_MOVE
 	goto BS_MOVE_END
 	
 .global BattleScript_PauseResultMessage
@@ -1962,16 +1954,7 @@ BS_095_Sketch:
 .global BS_096_RaiseAttackerSpd1Chance
 BS_096_RaiseAttackerSpd1Chance:
 	setmoveeffect MOVE_EFFECT_SPD_PLUS_1 | MOVE_EFFECT_AFFECTS_USER
-	jumpifmove MOVE_AURAWHEEL AuraWheelBS
 	goto BS_STANDARD_HIT
-
-AuraWheelBS:
-	attackcanceler
-	attackstring
-	ppreduce
-	callasm CheckIfExclusiveMoveShouldFail
-	accuracycheck BS_MOVE_MISSED 0x0
-	goto BS_HIT_FROM_DAMAGE_CALC
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -3714,24 +3697,6 @@ HyperspaceHoleBS:
 
 HyperspaceFuryBS:
 	attackcanceler
-	jumpifspecies BANK_ATTACKER SPECIES_HOOPA_UNBOUND HyperspaceFurySuccess
-	orbyte OUTCOME OUTCOME_FAILED
-	attackstring
-	ppreduce
-	pause DELAY_HALFSECOND
-	jumpifspecies BANK_ATTACKER SPECIES_HOOPA HoopaCant
-	setword BATTLE_STRING_LOADER CantUseHyperspaceFuryString
-	printstring 0x184
-	waitmessage DELAY_1SECOND
-	goto BS_MOVE_END
-
-HoopaCant:
-	setword BATTLE_STRING_LOADER WrongHoopaFormString
-	printstring 0x184
-	waitmessage DELAY_1SECOND
-	goto BS_MOVE_END
-
-HyperspaceFurySuccess:
 	setmoveeffect MOVE_EFFECT_DEF_MINUS_1 | MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN
 	goto FeintSkipBS
 

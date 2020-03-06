@@ -9,7 +9,6 @@
  */
 
 //Exported Functions
-void CheckIfExclusiveMoveShouldFail(void);
 void SetTargetPartner(void);
 void SetTargetFoePartner(void);
 void SetAttackerPartner(void);

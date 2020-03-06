@@ -494,6 +494,14 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 					}
 					break;
 
+				case ABILITY_MAGICBOUNCE:
+				if (moveFlags & FLAG_MAGIC_COAT_AFFECTED && moveTarget & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL | MOVE_TARGET_OPPONENTS_FIELD))
+				{
+					DECREASE_VIABILITY(20);
+					return viability;
+				}
+				break;
+
 				case ABILITY_SWEETVEIL:
 					if (moveEffect == EFFECT_SLEEP || moveEffect == EFFECT_YAWN)
 					{
