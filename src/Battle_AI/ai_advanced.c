@@ -8,12 +8,14 @@
 #include "../../include/new/ai_util.h"
 #include "../../include/new/ai_master.h"
 #include "../../include/new/battle_start_turn_start.h"
+#include "../../include/new/battle_script_util.h"
 #include "../../include/new/battle_util.h"
 #include "../../include/new/damage_calc.h"
 #include "../../include/new/dynamax.h"
-#include "../../include/new/util.h"
 #include "../../include/new/item.h"
 #include "../../include/new/multi.h"
+#include "../../include/new/util.h"
+
 /*
 ai_advanced.c
 	advanced logic for the AI, including move prediction and fight classes
@@ -714,15 +716,22 @@ u16 GetAmountToRecoverBy(u8 bankAtk, u8 bankDef, u16 move)
 
 		case EFFECT_ABSORB:
 		case EFFECT_DREAM_EATER: ;
-			u16 predictedDmg = CalcFinalAIMoveDamage(move, bankAtk, bankDef, 1);
-
-			if (move == MOVE_OBLIVIONWING || move == MOVE_DRAININGKISS)
-				amountToRecover = MathMax(1, (75 * predictedDmg) / 100);
+			if (move == MOVE_STRENGTHSAP)
+			{
+				amountToRecover = CalcStrengthSapHealAmount(bankAtk, bankDef) * -1;
+			}
 			else
-				amountToRecover = MathMax(1, predictedDmg / 2);
+			{
+				u16 predictedDmg = CalcFinalAIMoveDamage(move, bankAtk, bankDef, 1);
 
-			if (ITEM_EFFECT(bankAtk) == ITEM_EFFECT_BIG_ROOT)
-				amountToRecover = (130 * predictedDmg) / 100;
+				if (move == MOVE_OBLIVIONWING || move == MOVE_DRAININGKISS)
+					amountToRecover = MathMax(1, (75 * predictedDmg) / 100);
+				else
+					amountToRecover = MathMax(1, predictedDmg / 2);
+
+				if (ITEM_EFFECT(bankAtk) == ITEM_EFFECT_BIG_ROOT)
+					amountToRecover = (130 * predictedDmg) / 100;
+			}
 			break;
 
 		case EFFECT_PAIN_SPLIT: ;

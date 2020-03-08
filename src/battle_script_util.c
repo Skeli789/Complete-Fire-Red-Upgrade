@@ -467,14 +467,19 @@ void BelchFunction(void)
 
 void StrengthSapFunc(void)
 {
-	u16 atk = gBattleMons[gBankTarget].attack;
-	APPLY_STAT_MOD(atk, &gBattleMons[gBankTarget], atk, STAT_STAGE_ATK);
-	atk = MathMax(1, atk);
+	gBattleMoveDamage = CalcStrengthSapHealAmount(gBankAttacker, gBankTarget);
+}
 
-	if (ITEM_EFFECT(gBankAttacker) == ITEM_EFFECT_BIG_ROOT)
-		atk = udivsi(130 * atk, 100);
+s32 CalcStrengthSapHealAmount(u8 bankAtk, u8 bankDef)
+{
+	u16 attack = gBattleMons[bankDef].attack;
+	APPLY_QUICK_STAT_MOD(attack, STAT_STAGE(bankDef, STAT_STAGE_ATK));
+	attack = MathMax(1, attack);
 
-	gBattleMoveDamage = atk * -1;
+	if (ITEM_EFFECT(bankAtk) == ITEM_EFFECT_BIG_ROOT)
+		attack = (13 * attack) / 10;
+
+	return attack * -1;
 }
 
 void PlayAttackAnimationForExplosion(void)

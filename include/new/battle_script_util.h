@@ -35,6 +35,7 @@ void DefogHelperFunc(void);
 void ClearBeakBlastBit(void);
 void BelchFunction(void);
 void StrengthSapFunc(void);
+s32 CalcStrengthSapHealAmount(u8 bankAtk, u8 bankDef);
 void PlayAttackAnimationForExplosion(void);
 void CopycatFunc(void);
 void SetRoostFunc(void);

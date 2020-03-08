@@ -1785,6 +1785,8 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 			case MOVE_FOULPLAY:	
 				attack = monDef->attack;
 				spAttack = monDef->spAttack;
+				data->atkBuff = 6; //Party mon has no buffs
+				data->spAtkBuff = 6;
 				break;
 		}
 	}
@@ -1821,6 +1823,8 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 			case MOVE_FOULPLAY:	
 				attack = gBattleMons[bankDef].attack;
 				spAttack = gBattleMons[bankDef].spAttack;
+				data->atkBuff = STAT_STAGE(bankDef, STAT_STAGE_ATK);
+				data->spAtkBuff = STAT_STAGE(bankDef, STAT_STAGE_SPATK);
 				break;
 		}
 	}
