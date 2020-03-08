@@ -1058,11 +1058,11 @@ static void TypeDamageModificationByDefTypes(u8 atkAbility, u8 bankDef, u16 move
 {
 	u8 multiplier1, multiplier2, multiplier3;
 
+TYPE_LOOP:
 	multiplier1 = gTypeEffectiveness[moveType][defType1];
 	multiplier2 = gTypeEffectiveness[moveType][defType2];
 	multiplier3 = gTypeEffectiveness[moveType][defType3];
-	
-	TYPE_LOOP:
+
 	//If the multiplier is 0, that means normal damage. No effect is 1 (it is modified to 0 later).
 	ModulateDmgByType(multiplier1, move, moveType, defType1, bankDef, atkAbility, flags, 0, FALSE);
 		
@@ -1086,10 +1086,10 @@ void TypeDamageModificationPartyMon(u8 atkAbility, struct Pokemon* monDef, u16 m
 	defType1 = GetMonType(monDef, 0);
 	defType2 = GetMonType(monDef, 1);
 
+TYPE_LOOP_AI:
 	multiplier1 = gTypeEffectiveness[moveType][defType1];
 	multiplier2 = gTypeEffectiveness[moveType][defType2];
 
-TYPE_LOOP_AI:
 	ModulateDmgByType(multiplier1, move, moveType, defType1, 0, atkAbility, flags, monDef, TRUE);
 		
 	if (defType1 != defType2)
