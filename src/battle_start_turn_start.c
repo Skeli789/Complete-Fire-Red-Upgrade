@@ -1571,7 +1571,7 @@ s8 PriorityCalc(u8 bank, u8 action, u16 move)
 	return priority;
 }
 
-s8 PriorityCalcForParty(struct Pokemon* mon, u16 move)
+s8 PriorityCalcMon(struct Pokemon* mon, u16 move)
 {
 	u8 priority = 0;
 
@@ -1584,7 +1584,7 @@ s8 PriorityCalcForParty(struct Pokemon* mon, u16 move)
 			break;
 
 		case ABILITY_GALEWINGS:
-			if (GetMoveTypeSpecialFromParty(mon, move) == TYPE_FLYING)
+			if (GetMonMoveTypeSpecial(mon, move) == TYPE_FLYING)
 			{
 				#ifndef OLD_GALE_WINGS
 					if (GetMonData(mon, MON_DATA_HP, NULL) == GetMonData(mon, MON_DATA_MAX_HP, NULL))
@@ -1748,7 +1748,7 @@ u32 SpeedCalc(u8 bank)
 	return speed;
 }
 
-u32 SpeedCalcForParty(u8 side, struct Pokemon* mon)
+u32 SpeedCalcMon(u8 side, struct Pokemon* mon)
 {
 	if (GetMonData(mon, MON_DATA_IS_EGG, NULL))
 		return 0;

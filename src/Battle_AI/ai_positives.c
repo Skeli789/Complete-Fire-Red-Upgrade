@@ -1059,7 +1059,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 								&&  j != gBattlerPartyIndexes[foe1]
 								&&  j != gBattlerPartyIndexes[foe2]
 								&&  CheckGroundingFromPartyData(&defParty[j]) == GROUNDED //Affected by Sticky Web
-								&&  SpeedCalcForParty(SIDE(bankAtk), &atkParty[i]) < SpeedCalcForParty(SIDE(bankDef), &defParty[j]))
+								&&  SpeedCalcMon(SIDE(bankAtk), &atkParty[i]) < SpeedCalcMon(SIDE(bankDef), &defParty[j]))
 								{
 									IncreaseEntryHazardsViability(&viability, class, bankAtk, bankDef, move);
 									goto END_ENTRY_HAZARDS;

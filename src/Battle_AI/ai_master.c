@@ -760,7 +760,7 @@ static bool8 PredictedMoveWontDoTooMuchToMon(u8 activeBattler, struct Pokemon* m
 
 	return predictedDmg < mon->maxHP / 2
 		&& HealingMoveInMonMoveset(mon)
-		&& SpeedCalcForParty(SIDE(activeBattler), mon) > SpeedCalc(foe); //Has time to heal
+		&& SpeedCalcMon(SIDE(activeBattler), mon) > SpeedCalc(foe); //Has time to heal
 }
 
 static bool8 ShouldSwitchIfOnlyBadMovesLeft(void)
@@ -1940,7 +1940,7 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 									}
 								}
 								else if (SPLIT(move) != SPLIT_STATUS
-								&& PriorityCalcForParty(&party[i], move) > 0
+								&& PriorityCalcMon(&party[i], move) > 0
 								&& MoveKnocksOutXHitsFromParty(move, &party[i], foe, 1))
 								{
 									//Priority move that KOs

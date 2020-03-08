@@ -442,30 +442,6 @@ bool8 DoesDynamaxUsageStopMegaEvolution(u8 bank)
 		&& gNewBS->dynamaxData.partyIndex[SIDE(bank)] & gBitTable[gBattlerPartyIndexes[bank]];
 }
 
-static u8 GetMaxMoveType(u16 move, u8 bank)
-{
-	u8 moveType = gBattleMoves[move].type;
-
-	if (move == MOVE_HIDDENPOWER || move == MOVE_NATURALGIFT) //The only exception moves that don't change type
-		moveType = GetMoveTypeSpecial(bank, MOVE_POUND);
-	else
-		moveType = GetMoveTypeSpecial(bank, move);
-	
-	return moveType;
-}
-
-static u8 GetMonMaxMoveType(u16 move, struct Pokemon* mon)
-{
-	u8 moveType = gBattleMoves[move].type;
-
-	if (move == MOVE_HIDDENPOWER || move == MOVE_NATURALGIFT) //The only exception moves that don't change type
-		moveType = GetMoveTypeSpecialFromParty(mon, MOVE_POUND);
-	else
-		moveType = GetMoveTypeSpecialFromParty(mon, move);
-	
-	return moveType;
-}
-
 static move_t GetTypeBasedMaxMove(u8 moveType, u8 moveSplit)
 {
 	if (moveType < TYPE_FIRE)
@@ -474,6 +450,38 @@ static move_t GetTypeBasedMaxMove(u8 moveType, u8 moveSplit)
 		return MOVE_MAX_STARFALL_P + ((moveType - TYPE_FAIRY) * 2) + moveSplit;
 	else
 		return MOVE_MAX_STRIKE_P + ((moveType - 1) * 2) + moveSplit;
+}
+
+static u8 GetMaxMoveType(u16 move, u8 bank, struct Pokemon* mon)
+{
+	u8 moveType;
+
+	if (move == MOVE_HIDDENPOWER || move == MOVE_NATURALGIFT) //The only exception moves that don't change type
+		move = MOVE_POUND;
+
+	moveType = GetMoveTypeSpecialPreAbility(move, bank, mon);
+
+	if (moveType == 0xFF) //No overridden type
+	{
+		u8 moveSplit, ability;
+
+		if (mon != NULL)
+		{
+			moveSplit = CalcMoveSplitFromParty(mon, move);
+			ability = GetMonAbility(mon);
+		}
+		else
+		{
+			moveSplit = CalcMoveSplit(bank, move);
+			ability = ABILITY(bank);
+		}
+
+		//Try to modify Max Move's type using ability
+		u16 maxMove = GetTypeBasedMaxMove(gBattleMoves[move].type, moveSplit);
+		moveType = GetMoveTypeSpecialPostAbility(maxMove, ability, FALSE);
+	}
+
+	return moveType;
 }
 
 static move_t GetGMaxMove(u8 moveType, u8 moveSplit, u16 species)
@@ -498,6 +506,8 @@ move_t GetMaxMove(u8 bank, u8 moveIndex)
 
 move_t GetMaxMoveByMove(u8 bank, u16 baseMove)
 {
+	u8 moveSplit = CalcMoveSplit(bank, baseMove);
+	
 	if (baseMove == MOVE_NONE)
 		return MOVE_NONE;
 
@@ -508,11 +518,10 @@ move_t GetMaxMoveByMove(u8 bank, u16 baseMove)
 	|| DoesZMoveUsageStopDynamaxing(bank)) //No using Z-Move and Dynamaxing
 		return MOVE_NONE;
 
-	if (SPLIT(baseMove) == SPLIT_STATUS)
+	if (moveSplit == SPLIT_STATUS)
 		return MOVE_MAX_GUARD;
 
-	u8 moveType = GetMaxMoveType(baseMove, bank);
-	u8 moveSplit = CalcMoveSplit(bank, baseMove);
+	u8 moveType = GetMaxMoveType(baseMove, bank, NULL);
 	u16 maxMove = GetGMaxMove(moveType, moveSplit, SPECIES(bank));
 	if (maxMove != MOVE_NONE)
 		return maxMove;
@@ -522,7 +531,7 @@ move_t GetMaxMoveByMove(u8 bank, u16 baseMove)
 
 static move_t GetMonMaxMove(struct Pokemon* mon, u16 baseMove)
 {
-	u8 moveType = GetMonMaxMoveType(baseMove, mon);
+	u8 moveType = GetMaxMoveType(baseMove, 0, mon);
 	u8 moveSplit = CalcMoveSplitFromParty(mon, baseMove);
 	u16 maxMove = GetGMaxMove(moveType, moveSplit, mon->species);
 	if (maxMove != MOVE_NONE)

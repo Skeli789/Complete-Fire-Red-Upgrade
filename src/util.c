@@ -249,7 +249,7 @@ bool8 AllHittingMoveWithTypeInMonMoveset(struct Pokemon* mon, u8 moveType)
 		u16 move = GetMonData(mon, MON_DATA_MOVE1 + i, NULL);
 
 		if (gBattleMoves[move].target & MOVE_TARGET_ALL
-		&& GetMoveTypeSpecialFromParty(mon, move) == moveType)
+		&& GetMonMoveTypeSpecial(mon, move) == moveType)
 			return TRUE;
 	}
 

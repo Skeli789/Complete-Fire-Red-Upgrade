@@ -110,8 +110,7 @@ struct DamageCalc
 static u8 CalcPossibleCritChance(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monAtk, struct Pokemon* monDef);
 static void TypeDamageModificationByDefTypes(u8 atkAbility, u8 bankDef, u16 move, u8 moveType, u8* flags, u8 defType1, u8 defType2, u8 defType3);
 static void ModulateDmgByType(u8 multiplier, const u16 move, const u8 moveType, const u8 defType, const u8 bankDef, u8 atkAbility, u8* flags, struct Pokemon* monDef, bool8 checkMonDef);
-static bool8 AbilityCanChangeTypeAndBoost(u8 bankAtk, u16 move);
-static bool8 AbilityCanChangeTypeAndBoostForMon(struct Pokemon* monAtk, u16 move);
+static bool8 AbilityCanChangeTypeAndBoost(u16 move, u8 atkAbility, u8 electrifyTimer, bool8 checkIonDeluge, bool8 zMoveActive);
 static s32 CalculateBaseDamage(struct DamageCalc* data);
 static u16 GetBasePower(struct DamageCalc* data);
 static u16 AdjustBasePower(struct DamageCalc* data, u16 power);
@@ -789,7 +788,7 @@ u8 TypeCalc(u16 move, u8 bankAtk, u8 bankDef, struct Pokemon* monAtk, bool8 Chec
 		atkType1 = GetMonType(monAtk, 0);
 		atkType2 = GetMonType(monAtk, 1);
 		atkType3 = TYPE_BLANK;
-		moveType = GetMoveTypeSpecialFromParty(monAtk, move);
+		moveType = GetMonMoveTypeSpecial(monAtk, move);
 	}
 	else
 	{
@@ -1203,22 +1202,43 @@ static void ModulateDmgByType(u8 multiplier, const u16 move, const u8 moveType, 
 u8 GetMoveTypeSpecial(u8 bankAtk, u16 move)
 {
 	u8 atkAbility = ABILITY(bankAtk);
-	u8 moveType = gBattleMoves[move].type;
+	u8 moveType = GetMoveTypeSpecialPreAbility(move, bankAtk, NULL);
+	if (moveType != 0xFF)
+		return moveType;
 
-	if (gNewBS->ElectrifyTimers[bankAtk])
+	return GetMoveTypeSpecialPostAbility(move, atkAbility, gNewBS->ZMoveData->active || gNewBS->ZMoveData->viewing);
+}
+
+u8 GetMoveTypeSpecialPreAbility(u16 move, u8 bankAtk, struct Pokemon* monAtk)
+{
+	u8 moveType = gBattleMoves[move].type;
+	
+	if (monAtk == NULL && gNewBS->ElectrifyTimers[bankAtk] > 0)
 		return TYPE_ELECTRIC;
 
 	if (CheckTableForMove(move, gTypeChangeExceptionMoves))
-		return GetExceptionMoveType(bankAtk, move);
-
-//Change Normal-type Moves
-	if (moveType == TYPE_NORMAL)
 	{
-		if (IsIonDelugeActive())
-			return TYPE_ELECTRIC;
+		if (monAtk != NULL)
+			return GetMonExceptionMoveType(monAtk, move);
+		else
+			return GetExceptionMoveType(bankAtk, move);
+	}
 
-		if (SPLIT(move) == SPLIT_STATUS
-		|| (!gNewBS->ZMoveData->active && !gNewBS->ZMoveData->viewing))
+	if (moveType == TYPE_NORMAL && monAtk == NULL && IsIonDelugeActive())
+		return TYPE_ELECTRIC;
+
+	return 0xFF;
+}
+
+u8 GetMoveTypeSpecialPostAbility(u16 move, u8 atkAbility, bool8 zMoveActive)
+{
+	u8 moveType = gBattleMoves[move].type;
+	bool8 moveTypeCanBeChanged = !zMoveActive || SPLIT(move) == SPLIT_STATUS;
+
+	if (moveTypeCanBeChanged)
+	{
+		//Change Normal-type Moves
+		if (moveType == TYPE_NORMAL)
 		{
 			switch (atkAbility) {
 				case ABILITY_REFRIGERATE:
@@ -1231,70 +1251,49 @@ u8 GetMoveTypeSpecial(u8 bankAtk, u16 move)
 					return TYPE_ELECTRIC;
 			}
 		}
-	}
 
-	//Change non-Normal-type moves
-	else if (atkAbility == ABILITY_NORMALIZE && ((!gNewBS->ZMoveData->active && !gNewBS->ZMoveData->viewing) || SPLIT(move) == SPLIT_STATUS))
-		return TYPE_NORMAL;
-
-	//Change Sound Moves
-	else if (CheckSoundMove(move) && atkAbility == ABILITY_LIQUIDVOICE && ((!gNewBS->ZMoveData->active && !gNewBS->ZMoveData->viewing) || SPLIT(move) == SPLIT_STATUS))
-		return TYPE_WATER;
-
-	return moveType;
-}
-
-u8 GetMoveTypeSpecialFromParty(struct Pokemon* mon, u16 move)
-{
-	u8 atkAbility = GetMonAbility(mon);
-	u8 moveType = gBattleMoves[move].type;
-
-	if (CheckTableForMove(move, gTypeChangeExceptionMoves))
-		return GetExceptionMoveTypeFromParty(mon, move);
-
-//Change Normal-type Moves
-	if (moveType == TYPE_NORMAL) {
+		//Change non-Normal-type moves
 		switch (atkAbility) {
-			case ABILITY_REFRIGERATE:
-				return TYPE_ICE;
-
-			case ABILITY_PIXILATE:
-				return TYPE_FAIRY;
-
-			case ABILITY_AERILATE:
-				return TYPE_FLYING;
-
-			case ABILITY_GALVANIZE:
-				return TYPE_ELECTRIC;
+			case ABILITY_NORMALIZE:
+				return TYPE_NORMAL;
+			case ABILITY_LIQUIDVOICE: 
+				if (CheckSoundMove(move)) //Change Sound Moves
+					return TYPE_WATER;
+				break;
 		}
 	}
 
-//Change non-Normal-type moves
-	else if (atkAbility == ABILITY_NORMALIZE)
-		return TYPE_NORMAL;
-
-//Change Sound Moves
-	if (CheckSoundMove(move) && atkAbility == ABILITY_LIQUIDVOICE)
-		return TYPE_WATER;
-
 	return moveType;
 }
 
-static bool8 AbilityCanChangeTypeAndBoost(u8 bankAtk, u16 move)
+u8 GetMonMoveTypeSpecial(struct Pokemon* mon, u16 move)
 {
-	u8 atkAbility = ABILITY(bankAtk);
-	u8 moveType = gBattleMoves[move].type;
+	u8 atkAbility = GetMonAbility(mon);
+	u8 moveType = GetMoveTypeSpecialPreAbility(move, 0, mon);
+	if (moveType != 0xFF)
+		return moveType;
 
-	if (gNewBS->ElectrifyTimers[bankAtk]
+	return GetMoveTypeSpecialPostAbility(move, atkAbility, FALSE);
+}
+
+static bool8 AbilityCanChangeTypeAndBoost(u16 move, u8 atkAbility, u8 electrifyTimer, bool8 checkIonDeluge, bool8 zMoveActive)
+{
+	u8 moveType = gBattleMoves[move].type;
+	bool8 moveTypeCanBeChanged = !zMoveActive || SPLIT(move) == SPLIT_STATUS;
+
+	if (electrifyTimer > 0
+	|| IsAnyMaxMove(move)
 	|| CheckTableForMove(move, gTypeChangeExceptionMoves))
 		return FALSE;
 
-//Check Normal-type Moves
-	if (moveType == TYPE_NORMAL) {
-		if (IsIonDelugeActive())
+	//Check Normal-type Moves
+	if (moveType == TYPE_NORMAL)
+	{
+		if (checkIonDeluge && IsIonDelugeActive())
 			return FALSE;
 
-		if ((!gNewBS->ZMoveData->active && !gNewBS->ZMoveData->viewing) || SPLIT(move) == SPLIT_STATUS) {
+		if (moveTypeCanBeChanged)
+		{
 			switch (atkAbility) {
 				case ABILITY_REFRIGERATE:
 				case ABILITY_PIXILATE:
@@ -1305,42 +1304,8 @@ static bool8 AbilityCanChangeTypeAndBoost(u8 bankAtk, u16 move)
 		}
 	}
 
-//Check non-Normal-type moves
-	else if (atkAbility == ABILITY_NORMALIZE && ((!gNewBS->ZMoveData->active && !gNewBS->ZMoveData->viewing) || SPLIT(move) == SPLIT_STATUS))
-		return TRUE;
-
-	return FALSE;
-}
-
-static bool8 AbilityCanChangeTypeAndBoostForMon(struct Pokemon* monAtk, u16 move)
-{
-	u8 atkAbility = GetMonAbility(monAtk);
-	u8 moveType = gBattleMoves[move].type;
-
-	if (IsAnyMaxMove(move) || CheckTableForMove(move, gTypeChangeExceptionMoves))
-		return FALSE;
-
-//Check Normal-type Moves
-	if (moveType == TYPE_NORMAL) {
-		if (IsIonDelugeActive())
-			return FALSE;
-
-		if ((!gNewBS->ZMoveData->active && !gNewBS->ZMoveData->viewing) || SPLIT(move) == SPLIT_STATUS) {
-			switch (atkAbility) {
-				case ABILITY_REFRIGERATE:
-				case ABILITY_PIXILATE:
-				case ABILITY_AERILATE:
-				case ABILITY_GALVANIZE:
-					return TRUE;
-			}
-		}
-	}
-
-//Check non-Normal-type moves
-	else if (atkAbility == ABILITY_NORMALIZE && ((!gNewBS->ZMoveData->active && !gNewBS->ZMoveData->viewing) || SPLIT(move) == SPLIT_STATUS))
-		return TRUE;
-
-	return FALSE;
+	//Check non-Normal-type moves
+	return atkAbility == ABILITY_NORMALIZE && moveTypeCanBeChanged;
 }
 
 u8 GetExceptionMoveType(u8 bankAtk, u16 move)
@@ -1353,20 +1318,21 @@ u8 GetExceptionMoveType(u8 bankAtk, u16 move)
 
 	switch (move) {
 		case MOVE_HIDDENPOWER:
-			moveType = ((gBattleMons[bankAtk].hpIV & 1)) |
-						((gBattleMons[bankAtk].attackIV & 1) << 1) |
-						((gBattleMons[bankAtk].defenseIV & 1) << 2) |
-						((gBattleMons[bankAtk].speedIV & 1) << 3) |
-						((gBattleMons[bankAtk].spAttackIV & 1) << 4) |
-						((gBattleMons[bankAtk].spDefenseIV & 1) << 5);
+			moveType = ((gBattleMons[bankAtk].hpIV & 1))
+					 | ((gBattleMons[bankAtk].attackIV & 1) << 1)
+					 | ((gBattleMons[bankAtk].defenseIV & 1) << 2)
+					 | ((gBattleMons[bankAtk].speedIV & 1) << 3)
+					 | ((gBattleMons[bankAtk].spAttackIV & 1) << 4)
+					 | ((gBattleMons[bankAtk].spDefenseIV & 1) << 5);
 
-			moveType = udivsi((15 * moveType), 63) + 1;
+			moveType = (15 * moveType) / 63 + 1;
 			if (moveType >= TYPE_MYSTERY)
 				moveType++;
 			break;
 
 		case MOVE_WEATHERBALL:
-			if (WEATHER_HAS_EFFECT) {
+			if (WEATHER_HAS_EFFECT) 
+			{
 				if (gBattleWeather & WEATHER_RAIN_ANY && effect != ITEM_EFFECT_UTILITY_UMBRELLA)
 					moveType = TYPE_WATER;
 				else if (gBattleWeather & WEATHER_SANDSTORM_ANY)
@@ -1420,7 +1386,7 @@ u8 GetExceptionMoveType(u8 bankAtk, u16 move)
 			break;
 
 		//Based on https://bulbapedia.bulbagarden.net/wiki/Revelation_Dance_(move)
-		case MOVE_REVELATIONDANCE:	;
+		case MOVE_REVELATIONDANCE: ;
 			u8 atkType1 = gBattleMons[bankAtk].type1;
 			u8 atkType2 = gBattleMons[bankAtk].type2;
 			u8 atkType3 = gBattleMons[bankAtk].type3;
@@ -1460,7 +1426,8 @@ u8 GetExceptionMoveType(u8 bankAtk, u16 move)
 	return moveType;
 }
 
-u8 GetExceptionMoveTypeFromParty(struct Pokemon* mon, u16 move) {
+u8 GetMonExceptionMoveType(struct Pokemon* mon, u16 move)
+{
 	int i;
 	u8 moveType = gBattleMoves[move].type;
 	u8 ability = GetMonAbility(mon);
@@ -1477,7 +1444,8 @@ u8 GetExceptionMoveTypeFromParty(struct Pokemon* mon, u16 move) {
 			break;
 
 		case MOVE_WEATHERBALL:
-			if (WEATHER_HAS_EFFECT) {
+			if (WEATHER_HAS_EFFECT)
+			{
 				if (gBattleWeather & WEATHER_RAIN_ANY && effect != ITEM_EFFECT_UTILITY_UMBRELLA)
 					moveType = TYPE_WATER;
 				else if (gBattleWeather & WEATHER_SANDSTORM_ANY)
@@ -1566,11 +1534,10 @@ u8 CalcMonHiddenPowerType(struct Pokemon* mon)
 }
 
 // Unhidden Power function
-u8 GetSummaryScreenMoveType(u16 move, struct Pokemon* mon) {
+u8 GetSummaryScreenMoveType(u16 move, unusedArg struct Pokemon* mon) {
 #ifdef DISPLAY_REAL_MOVE_TYPE_ON_MENU
-	return GetMoveTypeSpecialFromParty(mon, move);
+	return GetMonMoveTypeSpecial(mon, move);
 #else
-	++mon; //So no compiler errors
 	return gBattleMoves[move].type;
 #endif
 }
@@ -1716,7 +1683,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 		data->atkItemQuality = ItemId_GetHoldEffectParam(monAtk->item);
 		data->atkHP = monAtk->hp;
 		data->atkMaxHP = monAtk->maxHP;
-		data->atkSpeed = SpeedCalcForParty(SIDE(bankAtk), monAtk);
+		data->atkSpeed = SpeedCalcMon(SIDE(bankAtk), monAtk);
 		data->atkStatus1 = monAtk->condition;
 		data->atkIsGrounded = CheckGroundingFromPartyData(monAtk);
 
@@ -1731,7 +1698,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 		}
 
 		data->moveSplit = CalcMoveSplitFromParty(monAtk, move);
-		data->moveType = GetMoveTypeSpecialFromParty(monAtk, move);
+		data->moveType = GetMonMoveTypeSpecial(monAtk, move);
 
 		/*if (useMonDef) //CAN'T AND SHOULD NOT HAPPEN
 			data->resultFlags = AI_TypeCalc(move, monAtk, monDef);
@@ -1799,7 +1766,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 		data->defItemEffect = GetMonItemEffect(monDef);
 		data->defItemQuality = ItemId_GetHoldEffectParam(monDef->item);
 		data->defHP = monDef->hp;
-		data->defSpeed = SpeedCalcForParty(SIDE(bankDef), monDef);
+		data->defSpeed = SpeedCalcMon(SIDE(bankDef), monDef);
 		data->defStatus1 = monDef->condition;
 		data->defSideStatus = gSideAffecting[SIDE(bankDef)];
 		data->defIsGrounded = CheckGroundingFromPartyData(monDef);
@@ -3034,8 +3001,8 @@ static u16 AdjustBasePower(struct DamageCalc* data, u16 power)
 		case ABILITY_GALVANIZE:
 		case ABILITY_NORMALIZE:
 		//1.2x / 1.3x Boost
-			if ((!useMonAtk && AbilityCanChangeTypeAndBoost(bankAtk, move))
-			|| (useMonAtk && AbilityCanChangeTypeAndBoostForMon(data->monAtk, move)))
+			if ((!useMonAtk && AbilityCanChangeTypeAndBoost(move, data->atkAbility, gNewBS->ElectrifyTimers[bankAtk], TRUE, (gNewBS->ZMoveData->active || gNewBS->ZMoveData->viewing)))
+			||   (useMonAtk && AbilityCanChangeTypeAndBoost(move, data->atkAbility, 0, FALSE, FALSE)))
 			{
 				#ifdef OLD_ATE_BOOST
 					power = (power * 13) / 10;

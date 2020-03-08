@@ -14,10 +14,10 @@ u16 GetMUS_ForBattle(void);
 u8 GetTrainerBattleTransition(void);
 u8 GetWhoStrikesFirst(u8 bank1, u8 bank2, bool8 ignoreMovePriorities);
 s8 PriorityCalc(u8 bank, u8 action, u16 move);
-s8 PriorityCalcForParty(struct Pokemon* mon, u16 move);
+s8 PriorityCalcMon(struct Pokemon* mon, u16 move);
 s32 BracketCalc(u8 bank);
 u32 SpeedCalc(u8 bank);
-u32 SpeedCalcForParty(u8 side, struct Pokemon* mon);
+u32 SpeedCalcMon(u8 side, struct Pokemon* mon);
 
 //Hooked in Functions
 void HandleNewBattleRamClearBeforeBattle(void);
