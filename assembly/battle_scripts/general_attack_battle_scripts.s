@@ -3773,7 +3773,7 @@ YWN_CheckVeils:
 
 YWN_CheckTerrain:
 	jumpifbyte EQUALS TERRAIN_BYTE ELECTRIC_TERRAIN YWN_CheckGrounding
-	jumpifbyte EQUALS TERRAIN_BYTE MISTY_TERRAIN YWN_CheckGrounding
+	@;jumpifbyte EQUALS TERRAIN_BYTE MISTY_TERRAIN YWN_CheckGrounding @;Misty Terrain doesn't cause Yawn to fail
 	
 YawnReturn:
 	jumpifsideaffecting BANK_TARGET SIDE_SAFEGUARD 0x81D8B39 @;Protected by Safeguard

@@ -17,6 +17,7 @@ et_battle_scripts.s
 .global BattleScript_AquaRing
 .global BattleScript_LeechSeedTurnDrain
 .global BattleScript_PoisonHeal
+.global BattleScript_YawnMakesAsleep
 .global BattleScript_MagnetRiseEnd
 .global BattleScript_TelekinesisEnd
 .global BattleScript_HealBlockEnd
@@ -185,6 +186,16 @@ BattleScript_PoisonHeal:
 	printstring 0x4B @;STRINGID_PKMNREGAINEDHEALTH
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
+	end2
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_YawnMakesAsleep:
+	statusanimation BANK_EFFECT
+	printstring 0x23 @;STRINGID_PKMNFELLASLEEP
+	waitmessage DELAY_HALFSECOND
+	refreshhpbar BANK_EFFECT
+	waitstateatk
 	end2
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

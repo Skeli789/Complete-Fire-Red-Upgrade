@@ -24,7 +24,7 @@
 #define BattleScript_WrapEnds ((u8*) 0x81D9136)
 #define BattleScript_EncoredNoMore ((u8*) 0x81D8C65)
 #define BattleScript_DisabledNoMore ((u8*) 0x81D8C5E)
-#define BattleScript_YawnMakesAsleep ((u8*) 0x81D91C7)
+//#define BattleScript_YawnMakesAsleep ((u8*) 0x81D91C7)
 #define BattleScript_PerishSongHits ((u8*) 0x81D8D33)
 #define BattleScript_PerishSongTimerGoesDown ((u8*) 0x81D8D4E)
 //#define BattleScript_SideStatusWoreOff ((u8*) 0x81D8B32)
@@ -41,6 +41,7 @@ extern const u8 BattleScript_GrassyTerrainHeal[];
 extern const u8 BattleScript_AquaRing[];
 extern const u8 BattleScript_LeechSeedTurnDrain[];
 extern const u8 BattleScript_PoisonHeal[];
+extern const u8 BattleScript_YawnMakesAsleep[];
 extern const u8 BattleScript_MagnetRiseEnd[];
 extern const u8 BattleScript_TelekinesisEnd[];
 extern const u8 BattleScript_HealBlockEnd[];

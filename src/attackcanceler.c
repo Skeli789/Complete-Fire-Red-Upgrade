@@ -304,6 +304,9 @@ static u8 AtkCanceller_UnableToUseMove(void)
 				{
 					if (gCurrentMove != MOVE_SNORE && gCurrentMove != MOVE_SLEEPTALK)
 					{
+						if (BATTLER_SEMI_INVULNERABLE(gBankAttacker)) //Caused by Yawn
+							CancelMultiTurnMoves(gActiveBattler = gBankAttacker);
+
 						gBattlescriptCurrInstr = BattleScript_MoveUsedIsAsleep;
 						gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
 						effect = 2;

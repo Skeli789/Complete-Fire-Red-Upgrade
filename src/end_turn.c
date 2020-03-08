@@ -10,8 +10,10 @@
 #include "../include/new/end_turn.h"
 #include "../include/new/end_turn_battle_scripts.h"
 #include "../include/new/form_change.h"
-#include "../include/new/util.h"
+#include "../include/new/move_battle_scripts.h"
 #include "../include/new/switching.h"
+#include "../include/new/util.h"
+
 /*
 end_turn.c
 	handles all effects that happen at the end of each turn
@@ -802,15 +804,31 @@ u8 TurnBasedEffects(void)
 				{
 					gStatuses3[gActiveBattler] -= 0x800;
 
-					if (!(gStatuses3[gActiveBattler] & STATUS3_YAWN) && CanBePutToSleep(gActiveBattler, FALSE))
+					if (!(gStatuses3[gActiveBattler] & STATUS3_YAWN))
 					{
-						CancelMultiTurnMoves(gActiveBattler);
-						gBattleMons[gActiveBattler].status1 |= (Random() & 3) + 2;
-						EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[gActiveBattler].status1);
-						MarkBufferBankForExecution(gActiveBattler);
-						gEffectBank = gActiveBattler;
-						BattleScriptExecute(BattleScript_YawnMakesAsleep);
-						effect++;
+						if (CanBePutToSleep(gActiveBattler, FALSE))
+						{
+							if (!BATTLER_SEMI_INVULNERABLE(gActiveBattler)) //Semi-Invulnerability is removed when it tries to attack
+								CancelMultiTurnMoves(gActiveBattler);
+							gBattleMons[gActiveBattler].status1 |= (Random() % 3) + 2;
+							EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[gActiveBattler].status1);
+							MarkBufferBankForExecution(gActiveBattler);
+							gEffectBank = gActiveBattler;
+							BattleScriptExecute(BattleScript_YawnMakesAsleep);
+							effect++;
+						}
+						else if (CheckGrounding(gActiveBattler) && gTerrainType == MISTY_TERRAIN)
+						{
+							gBattleStringLoader = gText_TargetWrappedInMistyTerrain;
+							BattleScriptExecute(BattleScript_PrintCustomStringEnd2);
+							effect++;
+						}
+						else if (CheckGrounding(gActiveBattler) && gTerrainType == ELECTRIC_TERRAIN)
+						{
+							gBattleStringLoader = gText_TargetWrappedInElectricTerrain;
+							BattleScriptExecute(BattleScript_PrintCustomStringEnd2);
+							effect++;
+						}
 					}
 				}
 				break;
