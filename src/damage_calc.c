@@ -1198,7 +1198,6 @@ static void ModulateDmgByType(u8 multiplier, const u16 move, const u8 moveType, 
 	}
 }
 
-
 u8 GetMoveTypeSpecial(u8 bankAtk, u16 move)
 {
 	u8 atkAbility = ABILITY(bankAtk);

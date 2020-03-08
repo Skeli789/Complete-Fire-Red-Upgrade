@@ -202,7 +202,7 @@ void BattleBeginFirstTurn(void)
 			case RaidBattleReveal:
 				if (IsRaidBattle())
 				{
-					gBattleScripting->bank = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
+					gBattleScripting->bank = BANK_RAID_BOSS;
 					gBattleStringLoader = gText_RaidBattleReveal;
 					BattleScriptPushCursorAndCallback(BattleScript_RaidBattleStart);
 				}
@@ -936,7 +936,7 @@ void HandleAction_UseMove(void)
 	}
 	
 	if (IsRaidBattle())
-		gNewBS->dynamaxData.turnStartHP = gBattleMons[GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)].hp;
+		gNewBS->dynamaxData.turnStartHP = gBattleMons[BANK_RAID_BOSS].hp;
 
 //Get Move to be Used
 	if (gProtectStructs[gBankAttacker].onlyStruggle)
@@ -1036,10 +1036,12 @@ void HandleAction_UseMove(void)
 	}
 	else if (IsDynamaxed(gBankAttacker))
 	{
-		if (IsRaidBattle() && gBankAttacker == GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT))
+		if (IsRaidBattle() && gBankAttacker == BANK_RAID_BOSS)
 		{
 			u8 split = SPLIT(gCurrentMove);
-			bool8 isBannedMove = CheckTableForMove(gCurrentMove, gRaidBattleBannedRaidMonMoves) || CheckTableForMove(gCurrentMove, gRaidBattleBannedMoves);
+			bool8 isBannedMove = CheckTableForMove(gCurrentMove, gRaidBattleBannedRaidMonMoves)
+							  || CheckTableForMove(gCurrentMove, gRaidBattleBannedMoves)
+							  || IsUnusableMove(gCurrentMove, gBankAttacker, 0xFF, 1, ABILITY(gBankAttacker), ITEM_EFFECT(gBankAttacker), CHOICED_MOVE(gBankAttacker));
 
 			if (isBannedMove && split != SPLIT_STATUS) //Use banned status move - don't use Max Guard
 				goto TURN_MOVE_INTO_MAX_MOVE;
@@ -1221,7 +1223,7 @@ static void TrySetupRaidBossRepeatedAttack(u8 actionFuncId)
 
 		gBankAttacker = gBanksByTurnOrder[gCurrentTurnActionNumber - 1]; //Get original attacker
 
-		if (gBankAttacker != GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)) //Just in case the player KOs the partner and sets the bit
+		if (gBankAttacker != BANK_RAID_BOSS) //Just in case the player KOs the partner and sets the bit
 		{
 			gNewBS->dynamaxData.attackAgain = FALSE;
 			return;

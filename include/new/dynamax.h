@@ -143,6 +143,8 @@ enum
 	RAID_ABILITY_RANDOM_ALL,
 };
 
+#define BANK_RAID_BOSS GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)
+
 //Exported Data Structures
 struct Raid
 {

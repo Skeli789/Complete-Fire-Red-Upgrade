@@ -146,7 +146,7 @@ u16 GetBaseCurrentHP(u8 bank)
 {
 	if (IsDynamaxed(bank))
 	{
-		if (IsRaidBattle() && bank == GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT))
+		if (IsRaidBattle() && bank == BANK_RAID_BOSS)
 			return gBattleMons[bank].hp / GetRaidBattleHPBoost();
 		else
 			return gBattleMons[bank].hp / GetDynamaxHPBoost(bank);
@@ -159,7 +159,7 @@ u16 GetBaseMaxHP(u8 bank)
 {
 	if (IsDynamaxed(bank))
 	{
-		if (IsRaidBattle() && bank == GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT))
+		if (IsRaidBattle() && bank == BANK_RAID_BOSS)
 			return gBattleMons[bank].maxHP / GetRaidBattleHPBoost();
 		else
 			return gBattleMons[bank].maxHP / GetDynamaxHPBoost(bank);
@@ -460,45 +460,54 @@ u8 CheckMoveLimitations(u8 bank, u8 unusableMoves, u8 check)
 		if (IsDynamaxed(bank))
 			move = GetMaxMoveByMove(bank, move);
 
-		bool8 isMaxMove = IsAnyMaxMove(move);
-
-		if (move == MOVE_NONE && check & MOVE_LIMITATION_ZEROMOVE)
-			unusableMoves |= gBitTable[i];
-		else if (gBattleMons[bank].pp[i] == 0 && check & MOVE_LIMITATION_PP)
-			unusableMoves |= gBitTable[i];
-		else if (!isMaxMove && move == gDisableStructs[bank].disabledMove && check & MOVE_LIMITATION_DISABLED)
-			unusableMoves |= gBitTable[i];
-		else if (!isMaxMove && move == gLastUsedMoves[bank] && check & MOVE_LIMITATION_TORMENTED && IsTormented(bank))
-			unusableMoves |= gBitTable[i];
-		else if (IsTaunted(bank) && check & MOVE_LIMITATION_TAUNT && SPLIT(move) == SPLIT_STATUS)
-			unusableMoves |= gBitTable[i];
-		else if (!isMaxMove && IsImprisoned(bank, move) && check & MOVE_LIMITATION_IMPRISION)
-			unusableMoves |= gBitTable[i];
-		else if (gDisableStructs[bank].encoreTimer && gDisableStructs[bank].encoredMove != move && check & MOVE_LIMITATION_ENCORE)
-			unusableMoves |= gBitTable[i];
-		else if (!isMaxMove
-			 && (holdEffect == ITEM_EFFECT_CHOICE_BAND || ability == ABILITY_GORILLATACTICS)
-			 && choicedMove != 0 && choicedMove != 0xFFFF && choicedMove != move
-			 && check & MOVE_LIMITATION_CHOICE)
-		{
-			unusableMoves |= gBitTable[i];
-		}
-		else if (holdEffect == ITEM_EFFECT_ASSAULT_VEST && SPLIT(move) == SPLIT_STATUS)
-			unusableMoves |= gBitTable[i];
-		#ifdef FLAG_SKY_BATTLE
-		else if (FlagGet(FLAG_SKY_BATTLE) && CheckTableForMove(move, gSkyBattleBannedMoves))
-			unusableMoves |= gBitTable[i];
-		#endif
-		else if (IsGravityActive() && CheckTableForMove(move, gGravityBannedMoves))
-			unusableMoves |= gBitTable[i];
-		else if (CantUseSoundMoves(bank) && CheckSoundMove(move))
-			unusableMoves |= gBitTable[i];
-		else if (IsHealBlocked(bank) && CheckHealingMove(move))
-			unusableMoves |= gBitTable[i];
-		else if (IsRaidBattle() && bank != GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT) && CheckTableForMove(move, gRaidBattleBannedMoves))
+		if (IsUnusableMove(move, bank, check, gBattleMons[bank].pp[i], ability, holdEffect, choicedMove))
 			unusableMoves |= gBitTable[i];
 	}
+
 	return unusableMoves;
+}
+
+bool8 IsUnusableMove(u16 move, u8 bank, u8 check, u8 pp, u8 ability, u8 holdEffect, u16 choicedMove)
+{
+	bool8 isMaxMove = IsAnyMaxMove(move);
+
+	if (move == MOVE_NONE && check & MOVE_LIMITATION_ZEROMOVE)
+		return TRUE;
+	else if (pp == 0 && check & MOVE_LIMITATION_PP)
+		return TRUE;
+	else if (!isMaxMove && move == gDisableStructs[bank].disabledMove && check & MOVE_LIMITATION_DISABLED)
+		return TRUE;
+	else if (!isMaxMove && move == gLastUsedMoves[bank] && check & MOVE_LIMITATION_TORMENTED && IsTormented(bank))
+		return TRUE;
+	else if (IsTaunted(bank) && check & MOVE_LIMITATION_TAUNT && SPLIT(move) == SPLIT_STATUS)
+		return TRUE;
+	else if (!isMaxMove && IsImprisoned(bank, move) && check & MOVE_LIMITATION_IMPRISION)
+		return TRUE;
+	else if (gDisableStructs[bank].encoreTimer && gDisableStructs[bank].encoredMove != move && check & MOVE_LIMITATION_ENCORE)
+		return TRUE;
+	else if (!isMaxMove
+		 && (holdEffect == ITEM_EFFECT_CHOICE_BAND || ability == ABILITY_GORILLATACTICS)
+		 && choicedMove != 0 && choicedMove != 0xFFFF && choicedMove != move
+		 && check & MOVE_LIMITATION_CHOICE)
+	{
+		return TRUE;
+	}
+	else if (holdEffect == ITEM_EFFECT_ASSAULT_VEST && SPLIT(move) == SPLIT_STATUS)
+		return TRUE;
+	#ifdef FLAG_SKY_BATTLE
+	else if (FlagGet(FLAG_SKY_BATTLE) && CheckTableForMove(move, gSkyBattleBannedMoves))
+		return TRUE;
+	#endif
+	else if (IsGravityActive() && CheckTableForMove(move, gGravityBannedMoves))
+		return TRUE;
+	else if (CantUseSoundMoves(bank) && CheckSoundMove(move))
+		return TRUE;
+	else if (IsHealBlocked(bank) && CheckHealingMove(move))
+		return TRUE;
+	else if (IsRaidBattle() && bank != BANK_RAID_BOSS && CheckTableForMove(move, gRaidBattleBannedMoves))
+		return TRUE;
+	
+	return FALSE;
 }
 
 u8 CheckMoveLimitationsFromParty(struct Pokemon* mon, u8 unusableMoves, u8 check)
