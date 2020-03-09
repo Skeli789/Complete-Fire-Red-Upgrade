@@ -10,6 +10,7 @@
 #include "../include/new/end_turn.h"
 #include "../include/new/end_turn_battle_scripts.h"
 #include "../include/new/form_change.h"
+#include "../include/new/item_battle_scripts.h"
 #include "../include/new/move_battle_scripts.h"
 #include "../include/new/switching.h"
 #include "../include/new/util.h"
@@ -39,17 +40,15 @@ enum EndTurnEffects
 	ET_Item_Effects2,
 	ET_Poison,
 	ET_Item_Effects3,
-	ET_Toxic,
-	ET_Item_Effects4,
 	ET_Burn,
-	ET_Item_Effects5,
+	ET_Item_Effects4,
 	ET_Nightmare,
-	ET_Item_Effects6,
+	ET_Item_Effects5,
 	ET_Curse,
-	ET_Item_Effects7,
+	ET_Item_Effects6,
 	ET_Trap_Damage,
 	ET_Octolock,
-	ET_Item_Effects8,
+	ET_Item_Effects7,
 	ET_Taunt_Timer,
 	ET_Encore_Timer,
 	ET_Disable_Timer,
@@ -60,12 +59,11 @@ enum EndTurnEffects
 	ET_Heal_Block_Timer,
 	ET_Embargo_Timer,
 	ET_Yawn,
-	ET_Item_Effects9,
+	ET_Item_Effects8,
 	ET_Perish_Song,
 	ET_Roost,
 	ET_Reflect,
 	ET_Light_Screen,
-	ET_Aurora_Veil,
 	ET_Safeguard,
 	ET_Mist,
 	ET_Tailwind_Timer,
@@ -75,12 +73,13 @@ enum EndTurnEffects
 	ET_Swamp_Timer,
 	ET_G_Max_Wildfire_Timer,
 	ET_G_Max_Volcalith_Timer,
+	ET_Aurora_Veil,
 	ET_Trick_Room_Timer,
+	ET_Gravity_Timer,
 	ET_Water_Sport_Timer,
 	ET_Mud_Sport_Timer,
 	ET_Wonder_Room_Timer,
 	ET_Magic_Room_Timer,
-	ET_Gravity_Timer,
 	ET_Seeds,
 	ET_Terrain_Timer,
 	ET_Block_B,
@@ -95,9 +94,8 @@ enum Block_A
 	ET_G_Max_Wildfire,
 	ET_G_Max_Volcalith,
 	ET_Grassy_Terrain,
-	ET_Hydration_ShedSkin,
+	ET_Hydration_ShedSkin_Healer,
 	ET_Item_Effects,
-	ET_Healer
 };
 
 #define MAX_CASES_BLOCK_A 5
@@ -105,7 +103,7 @@ enum Block_A
 enum Block_B
 {
 	ET_Uproar,
-	ET_SpeedBoost_Moody_BadDreams,
+	ET_SpeedBoost_Moody_BadDreams_SlowStart,
 	ET_Orbz,
 	ET_Harvest_Pickup,
 };
@@ -148,9 +146,6 @@ u8 TurnBasedEffects(void)
 			case ET_General_Counter_Decrement:
 				for (i = 0; i < MAX_BATTLERS_COUNT; ++i)
 				{
-					if(gNewBS->LaserFocusTimers[i])
-						--gNewBS->LaserFocusTimers[i];
-
 					if(gNewBS->ThroatChopTimers[i])
 						--gNewBS->ThroatChopTimers[i];
 
@@ -184,9 +179,6 @@ u8 TurnBasedEffects(void)
 
 				if (gNewBS->RetaliateCounters[1])
 					--gNewBS->RetaliateCounters[1];
-
-				if (gNewBS->IonDelugeTimer)
-					--gNewBS->IonDelugeTimer;
 
 				if (gNewBS->FairyLockTimer)
 					--gNewBS->FairyLockTimer;
@@ -377,6 +369,9 @@ u8 TurnBasedEffects(void)
 				if(gNewBS->ElectrifyTimers[gActiveBattler]) //Cleared down here because necessary for Future Sight
 					--gNewBS->ElectrifyTimers[gActiveBattler];
 
+				if(gNewBS->LaserFocusTimers[gActiveBattler])
+					--gNewBS->LaserFocusTimers[gActiveBattler];
+
 				if (gWishFutureKnock->wishCounter[gActiveBattler]
 				&& --gWishFutureKnock->wishCounter[gActiveBattler] == 0
 				&& gBattleMons[gActiveBattler].hp)
@@ -450,27 +445,18 @@ u8 TurnBasedEffects(void)
 						}
 						break;
 
-					case ET_Hydration_ShedSkin:
+					case ET_Hydration_ShedSkin_Healer:
 						if (BATTLER_ALIVE(gActiveBattler))
 						{
 							switch(ABILITY(gActiveBattler)) {
 								case ABILITY_SHEDSKIN:
 								case ABILITY_HYDRATION:
-									if (AbilityBattleEffects(ABILITYEFFECT_ENDTURN, gActiveBattler, 0, 0, 0))
-										effect++;
-							}
-						}
-						break;
-
-					case ET_Healer:
-						if (BATTLER_ALIVE(gActiveBattler))
-						{
-							switch(ABILITY(gActiveBattler)) {
 								case ABILITY_HEALER:
 									if (AbilityBattleEffects(ABILITYEFFECT_ENDTURN, gActiveBattler, 0, 0, 0))
 										effect++;
 							}
 						}
+						break;
 				}
 
 				++gNewBS->blockTracker;
@@ -539,7 +525,6 @@ u8 TurnBasedEffects(void)
 			case ET_Item_Effects6:
 			case ET_Item_Effects7:
 			case ET_Item_Effects8:
-			case ET_Item_Effects9:
 				if (BATTLER_ALIVE(gActiveBattler))
 				{
 					if (ItemBattleEffects(ItemEffects_EndTurn, gActiveBattler, FALSE, FALSE))
@@ -548,49 +533,30 @@ u8 TurnBasedEffects(void)
 				break;
 
 			case ET_Poison:
-				if (gBattleMons[gActiveBattler].status1 & STATUS_POISON
-				&& BATTLER_ALIVE(gActiveBattler)
+				if (BATTLER_ALIVE(gActiveBattler)
 				&& ABILITY(gActiveBattler) != ABILITY_MAGICGUARD)
 				{
-					gBattleMoveDamage = GetPoisonDamage(gActiveBattler);
-
-					if (ABILITY(gActiveBattler) == ABILITY_POISONHEAL)
+					if (gBattleMons[gActiveBattler].status1 & (STATUS_POISON | STATUS_TOXIC_POISON))
 					{
-						if (!BATTLER_MAX_HP(gActiveBattler) && !IsHealBlocked(gActiveBattler))
+						if (gBattleMons[gActiveBattler].status1 & STATUS_TOXIC_POISON
+						&& (gBattleMons[gActiveBattler].status1 & 0xF00) != 0xF00) //not 16 turns
+							gBattleMons[gActiveBattler].status1 += 0x100;
+					
+						gBattleMoveDamage = GetPoisonDamage(gActiveBattler);
+
+						if (ABILITY(gActiveBattler) == ABILITY_POISONHEAL)
 						{
-							gBattleMoveDamage *= -1;
-							gBattleScripting->bank = gActiveBattler;
-							BattleScriptExecute(BattleScript_PoisonHeal);
+							if (!BATTLER_MAX_HP(gActiveBattler) && !IsHealBlocked(gActiveBattler))
+							{
+								gBattleMoveDamage *= -1;
+								gBattleScripting->bank = gActiveBattler;
+								BattleScriptExecute(BattleScript_PoisonHeal);
+							}
 						}
+						else
+							BattleScriptExecute(BattleScript_PoisonTurnDmg);
+						++effect;
 					}
-					else
-						BattleScriptExecute(BattleScript_PoisonTurnDmg);
-					++effect;
-				}
-				break;
-
-			case ET_Toxic:
-				if (gBattleMons[gActiveBattler].status1 & STATUS_TOXIC_POISON
-				&& BATTLER_ALIVE(gActiveBattler)
-				&& ABILITY(gActiveBattler) != ABILITY_MAGICGUARD)
-				{
-					if ((gBattleMons[gActiveBattler].status1 & 0xF00) != 0xF00) //not 16 turns
-						gBattleMons[gActiveBattler].status1 += 0x100;
-
-					gBattleMoveDamage = GetPoisonDamage(gActiveBattler);
-
-					if (ABILITY(gActiveBattler) == ABILITY_POISONHEAL)
-					{
-						if (!BATTLER_MAX_HP(gActiveBattler) && !IsHealBlocked(gActiveBattler))
-						{
-							gBattleMoveDamage *= -1;
-							gBattleScripting->bank = gActiveBattler;
-							BattleScriptExecute(BattleScript_PoisonHeal);
-						}
-					}
-					else
-						BattleScriptExecute(BattleScript_PoisonTurnDmg);
-					effect++;
 				}
 				break;
 
@@ -1212,7 +1178,7 @@ u8 TurnBasedEffects(void)
 						}
 						break;
 
-					case ET_SpeedBoost_Moody_BadDreams:
+					case ET_SpeedBoost_Moody_BadDreams_SlowStart:
 						if (BATTLER_ALIVE(gActiveBattler))
 						{
 							gLastUsedAbility = ABILITY(gActiveBattler);
@@ -1221,6 +1187,7 @@ u8 TurnBasedEffects(void)
 								case ABILITY_TRUANT:
 								case ABILITY_MOODY:
 								case ABILITY_BADDREAMS:
+								case ABILITY_SLOWSTART:
 									if (AbilityBattleEffects(ABILITYEFFECT_ENDTURN, gActiveBattler, 0, 0, 0))
 										effect++;
 									break;
@@ -1233,46 +1200,60 @@ u8 TurnBasedEffects(void)
 						&&  gBattleMons[gActiveBattler].status1 == STATUS1_NONE)
 						{
 							u8 itemEffect = ITEM_EFFECT(gActiveBattler);
-							if (itemEffect == ITEM_EFFECT_TOXIC_ORB
-							&& CanBePoisoned(gActiveBattler, gActiveBattler, FALSE))
-							{
-								gLastUsedItem = ITEM(gActiveBattler);
-								RecordItemEffectBattle(gActiveBattler, itemEffect);
-								gBattleMons[gActiveBattler].status1 |= STATUS1_TOXIC_POISON;
-								EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[gActiveBattler].status1);
-								MarkBufferBankForExecution(gActiveBattler);
+							
+							switch (itemEffect) {
+								case ITEM_EFFECT_TOXIC_ORB:
+									if (CanBePoisoned(gActiveBattler, gActiveBattler, FALSE))
+									{
+										gLastUsedItem = ITEM(gActiveBattler);
+										RecordItemEffectBattle(gActiveBattler, itemEffect);
+										gBattleMons[gActiveBattler].status1 |= STATUS1_TOXIC_POISON;
+										EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[gActiveBattler].status1);
+										MarkBufferBankForExecution(gActiveBattler);
 
-								gEffectBank = gActiveBattler;
-								BattleScriptExecute(BattleScript_ToxicOrb);
-								++effect;
-							}
-							else if (itemEffect == ITEM_EFFECT_FLAME_ORB
-							&& CanBeBurned(gActiveBattler, FALSE))
-							{
-								gLastUsedItem = ITEM(gActiveBattler);
-								RecordItemEffectBattle(gActiveBattler, itemEffect);
-								gBattleMons[gActiveBattler].status1 |= STATUS1_BURN;
-								EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[gActiveBattler].status1);
-								MarkBufferBankForExecution(gActiveBattler);
+										gEffectBank = gActiveBattler;
+										BattleScriptExecute(BattleScript_ToxicOrb);
+										++effect;
+									}
+									break;
+								case ITEM_EFFECT_FLAME_ORB:
+									if (CanBeBurned(gActiveBattler, FALSE))
+									{
+										gLastUsedItem = ITEM(gActiveBattler);
+										RecordItemEffectBattle(gActiveBattler, itemEffect);
+										gBattleMons[gActiveBattler].status1 |= STATUS1_BURN;
+										EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[gActiveBattler].status1);
+										MarkBufferBankForExecution(gActiveBattler);
 
-								gEffectBank = gActiveBattler;
-								BattleScriptExecute(BattleScript_FlameOrb);
-								++effect;
+										gEffectBank = gActiveBattler;
+										BattleScriptExecute(BattleScript_FlameOrb);
+										++effect;
+									}
+									break;
+								case ITEM_EFFECT_STICKY_BARB:
+									if (ABILITY(gActiveBattler) != ABILITY_MAGICGUARD)
+									{
+										gLastUsedItem = ITEM(gBattleScripting->bank = gActiveBattler);
+										RecordItemEffectBattle(gActiveBattler, itemEffect);
+										
+										gBattleMoveDamage = MathMax(1, GetBaseMaxHP(gActiveBattler) / 8);
+										BattleScriptExecute(BattleScript_BlackSludgeHurt);
+										++effect;
+									}
+									break;
 							}
 						}
 						break;
 
 					case ET_Harvest_Pickup:
-						if (BATTLER_ALIVE(gActiveBattler)
-						&& (gBattleMons[gActiveBattler].item == ITEM_NONE || ABILITY(gActiveBattler) == ABILITY_SLOWSTART))
+						if (BATTLER_ALIVE(gActiveBattler) && ITEM(gActiveBattler) == ITEM_NONE)
 						{
 							switch(ABILITY(gActiveBattler)) {
-							case ABILITY_HARVEST:
-							case ABILITY_PICKUP:
-							case ABILITY_SLOWSTART:
-							case ABILITY_BALLFETCH:
-								if (AbilityBattleEffects(ABILITYEFFECT_ENDTURN, gActiveBattler, 0, 0, 0))
-									effect++;
+								case ABILITY_HARVEST:
+								case ABILITY_PICKUP:
+								case ABILITY_BALLFETCH:
+									if (AbilityBattleEffects(ABILITYEFFECT_ENDTURN, gActiveBattler, 0, 0, 0))
+										effect++;
 							}
 						}
 						break;
@@ -1458,6 +1439,9 @@ u8 TurnBasedEffects(void)
 				gNewBS->batonPassing = FALSE;
 				gNewBS->dynamaxData.attackAgain = FALSE;
 				gNewBS->dynamaxData.repeatedAttacks = 0;
+
+				if (gNewBS->IonDelugeTimer) //Cleared down here b/c necessary for future attacks
+					--gNewBS->IonDelugeTimer;
 
 				for (int i = 0; i < gBattlersCount; ++i)
 				{

@@ -146,10 +146,11 @@ u16 GetBaseCurrentHP(u8 bank)
 {
 	if (IsDynamaxed(bank))
 	{
+		//Ceiling
 		if (IsRaidBattle() && bank == BANK_RAID_BOSS)
-			return gBattleMons[bank].hp / GetRaidBattleHPBoost();
+			return MathMax(1, gBattleMons[bank].hp / GetRaidBattleHPBoost() + (gBattleMons[bank].hp & 1));
 		else
-			return gBattleMons[bank].hp / GetDynamaxHPBoost(bank);
+			return MathMax(1, gBattleMons[bank].hp / GetDynamaxHPBoost(bank) + (gBattleMons[bank].hp & 1));
 	}
 
 	return gBattleMons[bank].hp;
@@ -159,10 +160,11 @@ u16 GetBaseMaxHP(u8 bank)
 {
 	if (IsDynamaxed(bank))
 	{
+		//Ceiling
 		if (IsRaidBattle() && bank == BANK_RAID_BOSS)
-			return gBattleMons[bank].maxHP / GetRaidBattleHPBoost();
+			return MathMax(1, gBattleMons[bank].maxHP / GetRaidBattleHPBoost() + (gBattleMons[bank].maxHP & 1));
 		else
-			return gBattleMons[bank].maxHP / GetDynamaxHPBoost(bank);
+			return MathMax(1, gBattleMons[bank].maxHP / GetDynamaxHPBoost(bank) + (gBattleMons[bank].maxHP & 1));
 	}
 
 	return gBattleMons[bank].maxHP;

@@ -1412,7 +1412,7 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 					break;
 
 				case ABILITY_SLOWSTART:
-					if (gNewBS->SlowStartTimers[bank] != 0 && BATTLER_ALIVE(bank) && --gNewBS->SlowStartTimers[bank] == 0)
+					if (gNewBS->SlowStartTimers[bank] > 0 && BATTLER_ALIVE(bank) && --gNewBS->SlowStartTimers[bank] == 0)
 					{
 						gBattleStringLoader = gText_SlowStartEnd;
 						BattleScriptPushCursorAndCallback(BattleScript_SwitchInAbilityMsg);

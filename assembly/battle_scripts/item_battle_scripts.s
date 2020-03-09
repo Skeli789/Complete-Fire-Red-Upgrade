@@ -411,21 +411,21 @@ BattleScript_JabocaRowapBerry:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_BlackSludgeHurt:
-	playanimation 0xA ANIM_WAITING_WAGGLE 0x0
+	playanimation BANK_SCRIPTING ANIM_WAITING_WAGGLE 0x0
 	orword HIT_MARKER 0x100
-	graphicalhpupdate 0xA
-	datahpupdate 0xA
+	graphicalhpupdate BANK_SCRIPTING
+	datahpupdate BANK_SCRIPTING
 	setword BATTLE_STRING_LOADER BlackSludgeHurtString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
-	faintpokemon 0xA 0x0 0x0
+	faintpokemon BANK_SCRIPTING 0x0 0x0
 	end2
 	
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_MicleBerryRet:
 	call BattleScript_TryPrintRipenAbilityPopUp
-	playanimation 0xA ANIM_BERRY_EAT 0x0
+	playanimation BANK_SCRIPTING ANIM_BERRY_EAT 0x0
 	setword BATTLE_STRING_LOADER MicleBerryString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
@@ -444,7 +444,7 @@ BattleScript_StickyBarbTransfer:
 	setword BATTLE_STRING_LOADER StickyBarbString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
-	removeitem 0xA
+	removeitem BANK_SCRIPTING
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

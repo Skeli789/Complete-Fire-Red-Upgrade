@@ -220,10 +220,10 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 		{
 			switch (bankHoldEffect) {
 			case ITEM_EFFECT_RESTORE_HP:
-				if ((gBattleMons[bank].hp <= gBattleMons[bank].maxHP / 2) || (doPluck && gBattleMons[bank].hp != gBattleMons[bank].maxHP))
+				if ((gBattleMons[bank].hp <= gBattleMons[bank].maxHP / 2) || (doPluck && !BATTLER_MAX_HP(bank)))
 				{
 					if (gLastUsedItem == ITEM_SITRUS_BERRY)
-						gBattleMoveDamage = gBattleMons[bank].maxHP / 4;
+						gBattleMoveDamage = GetBaseMaxHP(bank) / 4;
 					else
 						gBattleMoveDamage = bankQuality;
 
@@ -341,11 +341,11 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 
 			case ITEM_EFFECT_LEFTOVERS:
 			LEFTOVERS_HEAL:
-				if (!moveTurn && gBattleMons[bank].hp < gBattleMons[bank].maxHP
+				if (!moveTurn && !BATTLER_MAX_HP(bank)
 				&&  !IsHealBlocked(bank)
 				&&  !gNewBS->leftoverHealingDone[bank])
 				{
-					gBattleMoveDamage = MathMax(1, gBattleMons[bank].maxHP / 16);
+					gBattleMoveDamage = MathMax(1, GetBaseMaxHP(bank) / 16);
 					if (gBattleMons[bank].hp + gBattleMoveDamage > gBattleMons[bank].maxHP)
 						gBattleMoveDamage = gBattleMons[bank].maxHP - gBattleMons[bank].hp;
 					gBattleMoveDamage *= -1;
@@ -655,24 +655,19 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 				}
 				break;
 
-			case ITEM_EFFECT_STICKY_BARB:
-			STICKY_BARB_HURT:
-				if (!moveTurn && ABILITY(bank) != ABILITY_MAGICGUARD
-				&& !gNewBS->leftoverHealingDone[bank])
-				{
-					gBattleMoveDamage = MathMax(1, gBattleMons[bank].maxHP / 8);
-					BattleScriptExecute(BattleScript_BlackSludgeHurt);
-					effect = ITEM_EFFECT_OTHER;
-					gNewBS->leftoverHealingDone[bank] = TRUE;
-				}
-				break;
-
 			case ITEM_EFFECT_BLACK_SLUDGE:
-				if (!moveTurn) {
+				if (!moveTurn)
+				{
 					if (IsOfType(bank, TYPE_POISON))
 						goto LEFTOVERS_HEAL;
-					else
-						goto STICKY_BARB_HURT;
+					else if (!moveTurn && ABILITY(bank) != ABILITY_MAGICGUARD
+					&& !gNewBS->leftoverHealingDone[bank])
+					{
+						gBattleMoveDamage = MathMax(1, GetBaseMaxHP(bank) / 8);
+						BattleScriptExecute(BattleScript_BlackSludgeHurt);
+						effect = ITEM_EFFECT_OTHER;
+						gNewBS->leftoverHealingDone[bank] = TRUE;
+					}
 				}
 			}
 
@@ -720,7 +715,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 				&& !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bank)
 				&& gBattleMons[gBankAttacker].hp)
 				{
-					gBattleMoveDamage = MathMax(1, udivsi(gBattleMons[gBankAttacker].maxHP, 6));
+					gBattleMoveDamage = MathMax(1, GetBaseMaxHP(gBankAttacker) / 6);
 					BattleScriptPushCursor();
 					gBattlescriptCurrInstr = BattleScript_RockyHelmetDamage;
 					RecordItemEffectBattle(bank, bankHoldEffect);
@@ -781,7 +776,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 					&& !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bank)
 					&& moveSplit == bankQuality)
 					{
-						gBattleMoveDamage = MathMax(1, gBattleMons[gBankAttacker].maxHP / 8);
+						gBattleMoveDamage = MathMax(1, GetBaseMaxHP(gBankAttacker) / 8);
 
 						if (ABILITY(bank) == ABILITY_RIPEN)
 							gBattleMoveDamage *= 2;
@@ -810,7 +805,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 				&& BATTLER_ALIVE(bank)
 				&& !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bank))
 				{
-					gBattleMoveDamage = MathMax(1, gBattleMons[bank].maxHP / 4);
+					gBattleMoveDamage = MathMax(1, GetBaseMaxHP(bank) / 4);
 
 					if (ABILITY(bank) == ABILITY_RIPEN)
 						gBattleMoveDamage *= 2;
