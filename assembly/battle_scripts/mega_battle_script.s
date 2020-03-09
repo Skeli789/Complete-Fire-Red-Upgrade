@@ -47,15 +47,21 @@ BattleScript_UltraBurst:
 BattleScript_Dynamax:
 	call BS_FLUSH_MESSAGE_BOX
 	call BattleScript_TryRemoveIllusion
-	callasm UpdateMaxHealthForDynamax
+	callasm UpdateHPForDynamax
 	playanimation BANK_SCRIPTING ANIM_CALL_BACK_POKEMON
 	waitanimation
 	pause DELAY_1SECOND
 	pause DELAY_HALFSECOND
 	returntoball BANK_SCRIPTING
+	call BattleScript_TryRevertCramorant
+
+BattleScript_Dynamax_Rejoin:
+	waitstateatk
 	callasm TryDoDynamaxTrainerSlide
+	callasm SetAndTransferDontRemoveTransformSpecies
 	switch3 BANK_SCRIPTING 0x1 @;Play the switch-in animation
 	waitanimation
+	callasm ClearAndTransferDontRemoveTransformSpecies
 	playanimation BANK_SCRIPTING ANIM_DYNAMAX_START 0x0
 	orword HIT_MARKER, HITMARKER_IGNORE_SUBSTITUTE
 	graphicalhpupdate BANK_SCRIPTING
@@ -65,6 +71,12 @@ BattleScript_Dynamax:
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	end3
+
+BattleScript_TryRevertCramorant:
+	formchange BANK_SCRIPTING SPECIES_CRAMORANT_GULPING SPECIES_CRAMORANT TRUE TRUE FALSE BattleScript_TryRevertGorgingCramorant
+BattleScript_TryRevertGorgingCramorant:
+	formchange BANK_SCRIPTING SPECIES_CRAMORANT_GORGING SPECIES_CRAMORANT TRUE TRUE FALSE BattleScript_Dynamax_Rejoin
+	goto BattleScript_Dynamax_Rejoin
 
 .align 2
 @;FD 00's FD 16 is reacting\nto FD 04's FD 01!

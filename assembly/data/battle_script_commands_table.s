@@ -203,7 +203,7 @@ gBattleScriptingCommandsTable:
 .word atkBA_jumpifnopursuitswitchdmg
 .word atkBB_setsunny
 .word atkBC_maxattackhalvehp
-.word 0x802b3ad					@copyfoestats
+.word atkBD_copyfoestats
 .word atkBE_rapidspinfree		@breakfree
 .word 0x802b541					@setcurled
 .word atkC0_recoverbasedonsunlight

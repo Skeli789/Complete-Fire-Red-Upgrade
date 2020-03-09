@@ -125,7 +125,7 @@ void atk00_attackcanceler(void)
 			PREPARE_BYTE_NUMBER_BUFFER(gBattleScripting->multihitString, 1, 0);
 	}
 
-	if (!gBattleMons[gBankAttacker].pp[gCurrMovePos]
+	if (gBattleMons[gBankAttacker].pp[gCurrMovePos] == 0
 	&& gCurrentMove != MOVE_STRUGGLE
 	&& !(gHitMarker & (HITMARKER_x800000 | HITMARKER_NO_ATTACKSTRING))
 	&& !(gBattleMons[gBankAttacker].status2 & STATUS2_MULTIPLETURNS)
@@ -439,7 +439,7 @@ static u8 AtkCanceller_UnableToUseMove(void)
 		case CANCELLER_RAID_BATTLES_FAILED_MOVES_2:
 			if (IsRaidBattle()
 			&& (CheckTableForMove(gCurrentMove, gRaidBattleBannedMoves)
-			 || (gCurrentMove == MOVE_TRANSFORM && gBankTarget == GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT) && gNewBS->dynamaxData.raidShieldsUp))
+			 || (gCurrentMove == MOVE_TRANSFORM && gBankTarget == BANK_RAID_BOSS && gNewBS->dynamaxData.raidShieldsUp))
 			&& !gNewBS->ZMoveData->active) //Raid Battles stop status Z-Moves, so there will be a second check later on
 			{
 				gBattleScripting->bank = gBankAttacker;

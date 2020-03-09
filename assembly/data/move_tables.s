@@ -436,16 +436,12 @@ gRaidBattleBannedRaidMonMoves:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 gDynamaxBannedMoves:
-.hword MOVE_ENCORE
-.hword MOVE_ENTRAINMENT
 .hword MOVE_GRASSKNOT
-.hword MOVE_INSTRUCT
 .hword MOVE_HEATCRASH
 .hword MOVE_HEAVYSLAM
 .hword MOVE_LOWKICK
 .hword MOVE_PLUCK
 .hword MOVE_ROAR
-.hword MOVE_SKILLSWAP
 .hword MOVE_WHIRLWIND
 .hword MOVE_SKYDROP
 .hword MOVE_TABLES_TERMIN

@@ -794,7 +794,7 @@ void atk19_tryfaintmon(void)
 			gActiveBattler = gBankAttacker;
 			bank = gBankTarget;
 
-			if (IsCatchableRaidBattle() && bank == GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT))
+			if (IsCatchableRaidBattle() && bank == BANK_RAID_BOSS)
 				BS_ptr = BattleScript_FaintRaidAttacker;
 			else
 				BS_ptr = BattleScript_FaintAttacker;
@@ -804,7 +804,7 @@ void atk19_tryfaintmon(void)
 			gActiveBattler = gBattleScripting->bank;
 			bank = gBattleScripting->bank;
 
-			if (IsCatchableRaidBattle() && bank == GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT))
+			if (IsCatchableRaidBattle() && bank == BANK_RAID_BOSS)
 				BS_ptr = BattleScript_FaintRaidScriptingBank;
 			else
 				BS_ptr = BattleScript_FaintScriptingBank;
@@ -814,7 +814,7 @@ void atk19_tryfaintmon(void)
 			gActiveBattler = gBankTarget;
 			bank = gBankTarget;
 
-			if (IsCatchableRaidBattle() && bank == GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT))
+			if (IsCatchableRaidBattle() && bank == BANK_RAID_BOSS)
 				BS_ptr = BattleScript_FaintRaidTarget;
 			else
 				BS_ptr = BattleScript_FaintTarget;
@@ -1011,7 +1011,7 @@ void atk1B_cleareffectsonfaint(void) {
 			#ifdef FLAG_RAID_BATTLE
 				if (IsRaidBattle() && SIDE(gActiveBattler) == B_SIDE_PLAYER)
 				{
-					u8 raidBank = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
+					u8 raidBank = BANK_RAID_BOSS;
 					const u8* stormString = NULL;
 					++gNewBS->dynamaxData.stormLevel;
 
@@ -1504,6 +1504,9 @@ static void UpdateMoveStartValuesForCalledMove(void)
 	gBattleStruct->atkCancellerTracker = CANCELLER_GRAVITY_2;
 	gBattleStruct->dynamicMoveType = GetMoveTypeSpecial(gBankAttacker, gCurrentMove);
 	gHitMarker &= ~(HITMARKER_ATTACKSTRING_PRINTED);
+	
+	if (gBattleMoves[gCurrentMove].target & MOVE_TARGET_USER)
+		gBankTarget = gBankAttacker;
 }
 
 static void TryUpdateCalledMoveWithZMove(void)
@@ -2310,7 +2313,7 @@ void atk93_tryKO(void)
 
 		if (gBattleMons[bankAtk].level >= gBattleMons[bankDef].level)
 		{
-			if (IsRaidBattle() && gBankTarget == GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT))
+			if (IsRaidBattle() && gBankTarget == BANK_RAID_BOSS)
 			{
 				if (!gNewBS->dynamaxData.raidShieldsUp)
 					chance = FALSE; //Never works on regular raid mon
@@ -2346,7 +2349,7 @@ void atk93_tryKO(void)
 
 		if (chance)
 		{
-			if (IsRaidBattle() && gBankTarget == GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT) && gNewBS->dynamaxData.raidShieldsUp)
+			if (IsRaidBattle() && gBankTarget == BANK_RAID_BOSS && gNewBS->dynamaxData.raidShieldsUp)
 			{
 				//Just break shields
 			}
@@ -2363,7 +2366,7 @@ void atk93_tryKO(void)
 				gNewBS->EnduranceHelper = ENDURE_FOCUS_SASH;
 			}
 
-			if (IsRaidBattle() && gBankTarget == GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT) && gNewBS->dynamaxData.raidShieldsUp)
+			if (IsRaidBattle() && gBankTarget == BANK_RAID_BOSS && gNewBS->dynamaxData.raidShieldsUp)
 			{
 				//Just break shields
 			}
@@ -2390,20 +2393,18 @@ void atk93_tryKO(void)
 		{
 			gMoveResultFlags |= MOVE_RESULT_MISSED;
 			#ifdef NO_SHEER_COLD_NERF
-				if (gBattleMons[bankAtk].level >= gBattleMons[bankDef].level)
+				if (gBattleMons[bankAtk].level >= gBattleMons[bankDef].level && !IsDynamaxed(bankDef))
 					gBattleCommunication[MULTISTRING_CHOOSER] = 0;
 				else
 					gBattleCommunication[MULTISTRING_CHOOSER] = 1;
 			#else
 				if (gBattleMons[bankAtk].level < gBattleMons[bankDef].level
+				|| IsDynamaxed(bankDef)
 				|| (gCurrentMove == MOVE_SHEERCOLD && IsOfType(bankDef, TYPE_ICE)))
 					gBattleCommunication[MULTISTRING_CHOOSER] = 1;
 				else
 					gBattleCommunication[MULTISTRING_CHOOSER] = 0;
 			#endif
-
-			if (IsRaidBattle() && gBankTarget == GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT) && !gNewBS->dynamaxData.raidShieldsUp)
-				gBattleCommunication[MULTISTRING_CHOOSER] = 1; //Unaffected
 
 			gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
 		}
@@ -2554,7 +2555,7 @@ void atk96_weatherdamage(void)
 	{
 		if (gBattleWeather & WEATHER_SANDSTORM_ANY)
 		{
-			gBattleMoveDamage =GetSandstormDamage(bank);
+			gBattleMoveDamage = GetSandstormDamage(bank);
 		}
 		else if (gBattleWeather & WEATHER_HAIL_ANY)
 		{
@@ -2616,12 +2617,17 @@ void atk9B_transformdataexecution(void)
 {
 	gChosenMove = 0xFFFF;
 	gBattlescriptCurrInstr++;
-	if (gBattleMons[gBankTarget].status2 & STATUS2_TRANSFORMED
+	if (ProtectedByMaxGuard(gBankTarget, gCurrentMove))
+	{
+		gMoveResultFlags |= MOVE_RESULT_FAILED;
+		gBattleCommunication[6] = 1; //Protected
+		gBattlescriptCurrInstr = BattleScript_ButItFailed;
+	}
+	else if (gBattleMons[gBankTarget].status2 & STATUS2_TRANSFORMED
 	|| gStatuses3[gBankTarget] & (STATUS3_SEMI_INVULNERABLE | STATUS3_ILLUSION)
-	|| gSideAffecting[SIDE(gBankTarget)] & SIDE_STATUS_CRAFTY_SHIELD
-	|| IsProtectedByMaxGuard(gBankTarget)
+	|| gSideAffecting[SIDE(gBankTarget)] & SIDE_STATUS_CRAFTY_SHIELD 
 	|| (IsDynamaxed(gBankAttacker) && IsBannedDynamaxSpecies(SPECIES(gBankTarget)))
-	|| (IsRaidBattle() && gBankTarget == GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT) && gNewBS->dynamaxData.raidShieldsUp))
+	|| (IsRaidBattle() && gBankTarget == BANK_RAID_BOSS && gNewBS->dynamaxData.raidShieldsUp))
 	{
 		gMoveResultFlags |= MOVE_RESULT_FAILED;
 		gBattleCommunication[MULTISTRING_CHOOSER] = 1;
@@ -2829,12 +2835,6 @@ void atkA4_trysetencore(void)
 {
 	int i;
 
-	for (i = 0; i < MAX_MON_MOVES; i++)
-	{
-		if (gBattleMons[gBankTarget].moves[i] == gLastUsedMoves[gBankTarget])
-			break;
-	}
-
 	if (gLastUsedMoves[gBankTarget] == MOVE_STRUGGLE
 	||  gLastUsedMoves[gBankTarget] == MOVE_ENCORE
 	||  gNewBS->playedShellTrapMessage & gBitTable[gBankTarget]
@@ -2843,11 +2843,13 @@ void atkA4_trysetencore(void)
 	||  IsAnyMaxMove(gLastUsedMoves[gBankTarget])
 	||  IsDynamaxed(gBankTarget))
 	{
-		i = 4;
+		i = MAX_MON_MOVES;
 	}
+	else
+		i = FindMovePositionInMoveset(gLastUsedMoves[gBankTarget], gBankTarget);
 
 	if (gDisableStructs[gBankTarget].encoredMove == 0
-	&& i != 4
+	&& i < MAX_MON_MOVES
 	&& gBattleMons[gBankTarget].pp[i] != 0)
 	{
 		gDisableStructs[gBankTarget].encoredMove = gBattleMons[gBankTarget].moves[i];
@@ -2864,7 +2866,7 @@ void atkA4_trysetencore(void)
 
 void atkA5_painsplitdmgcalc(void)
 {
-	if (!IS_BEHIND_SUBSTITUTE(gBankTarget))
+	if (!MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, gBankTarget))
 	{
 		s32 hpDiff = (GetBaseCurrentHP(gBankAttacker) + GetBaseCurrentHP(gBankTarget)) / 2;
 		s32 painSplitHp = gBattleMoveDamage = GetBaseCurrentHP(gBankTarget) - hpDiff;
@@ -3592,6 +3594,25 @@ void atkBC_maxattackhalvehp(void)
 	else
 	{
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+	}
+}
+
+void atkBD_copyfoestats(void) //Psych up
+{
+	s32 i;
+	
+	if (gSideAffecting[SIDE(gBankTarget)] & SIDE_STATUS_CRAFTY_SHIELD 
+	|| ProtectedByMaxGuard(gBankTarget, gCurrentMove))
+	{
+		gBattleCommunication[6] = 1; //Protected
+		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+	}
+	else
+	{
+		for (i = STAT_STAGE_ATK; i < BATTLE_STATS_NO; ++i)
+			STAT_STAGE(gBankAttacker, i) = STAT_STAGE(gBankTarget, i);
+
+		gBattlescriptCurrInstr += 5;
 	}
 }
 
@@ -4365,51 +4386,59 @@ void atkE7_trycastformdatachange(void)
 
 u8 CastformDataTypeChange(unusedArg u8 bank)
 {
+	u8 formChange = CASTFORM_NO_CHANGE;
 	#ifdef SPECIES_CASTFORM
-	u8 formChange = 0;
 	u8 itemEffect = ITEM_EFFECT(bank);
 
 	if (SPECIES(bank) != SPECIES_CASTFORM || !BATTLER_ALIVE(bank))
-		return CASTFORM_NO_CHANGE;
+		return formChange;
 
-	if ((!WEATHER_HAS_EFFECT || ABILITY(bank) != ABILITY_FORECAST) && gBattleMonForms[bank] != CASTFORM_NORMAL)
+	u8 ability = ABILITY(bank);
+	bool8 weatherHasEffect = WEATHER_HAS_EFFECT;
+
+	if (gBattleMonForms[bank] != CASTFORM_NORMAL
+	&& (!weatherHasEffect
+	 || ability != ABILITY_FORECAST
+	 || !(gBattleWeather & (WEATHER_RAIN_ANY | WEATHER_SUN_ANY | WEATHER_HAIL_ANY))))
 	{
 		SET_BATTLER_TYPE(bank, TYPE_NORMAL);
-		return CASTFORM_TO_NORMAL;
+		formChange = CASTFORM_TO_NORMAL;
 	}
-	else if (WEATHER_HAS_EFFECT && ABILITY(bank) == ABILITY_FORECAST)
+	else if (weatherHasEffect && ability == ABILITY_FORECAST)
 	{
-		if (!(gBattleWeather & (WEATHER_RAIN_ANY | WEATHER_SUN_ANY | WEATHER_HAIL_ANY)) && gBattleMonForms[bank] != CASTFORM_NORMAL)
+		if (gBattleWeather & WEATHER_SUN_ANY && itemEffect != ITEM_EFFECT_UTILITY_UMBRELLA)
+		{
+			if (gBattleMonForms[bank] != CASTFORM_SUN)
+			{
+				SET_BATTLER_TYPE(bank, TYPE_FIRE);
+				formChange = CASTFORM_TO_FIRE;
+			}
+		}
+		else if (gBattleWeather & WEATHER_RAIN_ANY && itemEffect != ITEM_EFFECT_UTILITY_UMBRELLA)
+		{
+			if (gBattleMonForms[bank] != CASTFORM_RAIN)
+			{
+				SET_BATTLER_TYPE(bank, TYPE_WATER);
+				formChange = CASTFORM_TO_WATER;
+			}
+		}
+		else if (gBattleWeather & WEATHER_HAIL_ANY)
+		{
+			if (gBattleMonForms[bank] != CASTFORM_HAIL)
+			{
+				SET_BATTLER_TYPE(bank, TYPE_ICE);
+				formChange = CASTFORM_TO_ICE;
+			}
+		}
+		else if (gBattleMonForms[bank] != CASTFORM_NORMAL)
 		{
 			SET_BATTLER_TYPE(bank, TYPE_NORMAL);
 			formChange = CASTFORM_TO_NORMAL;
 		}
-		else if (gBattleWeather & WEATHER_SUN_ANY && gBattleMonForms[bank] != CASTFORM_SUN && itemEffect != ITEM_EFFECT_UTILITY_UMBRELLA)
-		{
-			SET_BATTLER_TYPE(bank, TYPE_FIRE);
-			formChange = CASTFORM_TO_FIRE;
-		}
-		else if (gBattleWeather & WEATHER_RAIN_ANY && gBattleMonForms[bank] != CASTFORM_RAIN && itemEffect != ITEM_EFFECT_UTILITY_UMBRELLA)
-		{
-			SET_BATTLER_TYPE(bank, TYPE_WATER);
-			formChange = CASTFORM_TO_WATER;
-		}
-		else if (gBattleWeather & WEATHER_HAIL_ANY && gBattleMonForms[bank] != CASTFORM_HAIL)
-		{
-			SET_BATTLER_TYPE(bank, TYPE_ICE);
-			formChange = CASTFORM_TO_ICE;
-		}
-		else
-		{
-			SET_BATTLER_TYPE(bank, TYPE_NORMAL);
-			formChange = CASTFORM_TO_NORMAL;
-		}
-
-		return formChange;
 	}
 	#endif
 
-	return CASTFORM_NO_CHANGE;
+	return formChange;
 }
 
 void atkE8_settypebasedhalvers(void) { //water/mud sport

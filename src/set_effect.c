@@ -226,7 +226,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 
 	if (gNewBS->dynamaxData.raidShieldsUp
 	&& affectsUser != MOVE_EFFECT_AFFECTS_USER
-	&& gEffectBank == GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)
+	&& gEffectBank == BANK_RAID_BOSS
 	&& !(gHitMarker & HITMARKER_IGNORE_SUBSTITUTE))
 	{
 		++gBattlescriptCurrInstr;

@@ -809,33 +809,73 @@ void atkFF1B_tryactivateswitchinability(void)
 
 //atkFF1C - atkFF1E: Trainer Sliding
 
-//flowershieldlooper MOVE_EFFECT SUCCESS_ADDRESS FAIL_ADDRESS
+const u16 gFlowerShieldStringIds[] =
+{
+	STRINGID_PKMNAVOIDEDATTACK,
+	STRINGID_PKMNPROTECTEDITSELF,
+	STRINGID_ITDOESNTAFFECT,
+	STRINGID_STATSWONTINCREASE2,
+};
+
+//flowershieldlooper PLUS_MINUS SUCCESS_ADDRESS FAIL_ADDRESS
 void atkFF1F_flowershieldlooper(void)
 {
-	for (; gBattleCommunication[0] < gBattlersCount; ++gBattleCommunication[0])
+	bool8 plusMinus = gBattlescriptCurrInstr[1];
+	u8 battlerCount = (plusMinus) ? gBattlersCount / 2 : gBattlersCount;
+
+	for (; gBattleCommunication[0] < battlerCount; ++gBattleCommunication[0])
 	{
 		u8 bank = gBanksByTurnOrder[gBattleCommunication[0]];
-		if (IsOfType(bank, TYPE_GRASS)
-		&& BATTLER_ALIVE(bank)
-		&& !BATTLER_SEMI_INVULNERABLE(bank)
-		&& !IS_BEHIND_SUBSTITUTE(bank)
-		&& !IsProtectedByMaxGuard(bank))
+
+		if (plusMinus)
 		{
-			gBattleCommunication[MOVE_EFFECT_BYTE] = gBattlescriptCurrInstr[1];
-			++gBattleCommunication[0];
+			if (gBattleCommunication[0] == 0)
+				bank = gBankAttacker;
+			else
+				bank = PARTNER(gBankAttacker);
+		}
+
+		if (BATTLER_ALIVE(bank))
+		{
 			gBankTarget = bank;
-			gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
+			++gBattleCommunication[0];
+
+			if (IsMaxGuardUp(bank))
+			{
+				gBattleCommunication[MULTISTRING_CHOOSER] = 1; //Protected itself
+				gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 6);
+				gNewBS->StompingTantrumTimers[gBankAttacker] = 2;
+			}
+			else if (MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bank))
+			{
+				gBattleCommunication[MULTISTRING_CHOOSER] = 2; //No effect
+				gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 6);
+				gNewBS->StompingTantrumTimers[gBankAttacker] = 2;
+			}
+			else if (BATTLER_SEMI_INVULNERABLE(bank) && ABILITY(gBankAttacker) != ABILITY_NOGUARD && ABILITY(bank) != ABILITY_NOGUARD)
+			{
+				gBattleCommunication[MULTISTRING_CHOOSER] = 0; //Avoided attack
+				gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 6);
+			}
+			else if ((!plusMinus && IsOfType(bank, TYPE_GRASS))
+			|| (plusMinus && (ABILITY(bank) == ABILITY_PLUS || ABILITY(bank) == ABILITY_MINUS)))
+			{
+				gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
+				gMoveResultFlags = 0;
+			}
+			else
+			{
+				gBattleCommunication[MULTISTRING_CHOOSER] = 2; //No effect
+				gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 6);
+				gNewBS->StompingTantrumTimers[gBankAttacker] = 2;
+			}
+
 			return;
 		}
 	}
 
-	if (!gBattleScripting->animTargetsHit) //Not a single mon was affected
-		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 6);
-	else
-	{
-		gBankTarget = gBankAttacker;
-		gBattlescriptCurrInstr += 10;
-	}
+	gBankTarget = gBankAttacker;
+	gBattlescriptCurrInstr += 10;
 }
 
 //jumpifprotectedbycraftyshield BANK ROM_ADDRESS
@@ -1103,7 +1143,7 @@ void atkFF23_faintpokemonaftermove(void)
 		gHitMarker |= HITMARKER_FAINTED(gActiveBattler);
 		BattleScriptPush(gBattlescriptCurrInstr + 3);
 		
-		if (IsRaidBattle() && gActiveBattler == GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT))
+		if (IsRaidBattle() && gActiveBattler == BANK_RAID_BOSS)
 			gBattlescriptCurrInstr = BattleScript_FaintRaidTarget;
 		else
 			gBattlescriptCurrInstr = BattleScript_FaintTarget;
@@ -1197,13 +1237,17 @@ void atkFF26_attackstringnoprotean(void)
 		{
 			gNewBS->LastUsedMove = gCurrentMove;
 			gNewBS->LastUsedTypes[gBankAttacker] = moveType;
+			
+			if (IsAnyMaxMove(gCurrentMove))
+				gNewBS->LastUsedMove = gChosenMove;
 
 			if (!CheckTableForMove(gCurrentMove, gMovesThatCallOtherMoves))
 			{
+				u8 chargingBonus = 20 * gNewBS->metronomeItemBonus[gBankAttacker];
 				if (gLastPrintedMoves[gBankAttacker] == gCurrentMove)
-					gNewBS->MetronomeCounter[gBankAttacker] = MathMin(100, gNewBS->MetronomeCounter[gBankAttacker] + 20);
+					gNewBS->MetronomeCounter[gBankAttacker] = MathMin(100, gNewBS->MetronomeCounter[gBankAttacker] + 20 + chargingBonus);
 				else
-					gNewBS->MetronomeCounter[gBankAttacker] = 0;
+					gNewBS->MetronomeCounter[gBankAttacker] = 0 + chargingBonus;
 			}
 		}
 
@@ -1703,7 +1747,7 @@ void atkFF31_jumpifraidboss(void)
 	u8 bank = GetBattleBank(gBattlescriptCurrInstr[1]);
 	const u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
 
-	if (IsRaidBattle() && bank == GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT))
+	if (IsRaidBattle() && bank == BANK_RAID_BOSS)
 		gBattlescriptCurrInstr = ptr;
 	else
 		gBattlescriptCurrInstr += 6;

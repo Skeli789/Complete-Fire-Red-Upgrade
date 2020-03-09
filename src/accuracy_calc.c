@@ -227,7 +227,7 @@ bool8 ProtectAffects(u16 move, u8 bankAtk, u8 bankDef, bool8 set)
 	else if (IsRaidBattle()
 	&& split == SPLIT_STATUS
 	&& gBankAttacker != gBankTarget
-	&& gBankTarget == GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)
+	&& gBankTarget == BANK_RAID_BOSS
 	&& gNewBS->dynamaxData.raidShieldsUp)
 	{
 		effect = 1;

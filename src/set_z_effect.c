@@ -289,7 +289,7 @@ u16 ReplaceWithZMoveRuntime(u8 bankAtk, u16 move)
 	}
 	else if (IsDynamaxed(bankAtk) || (gNewBS->dynamaxData.toBeUsed[bankAtk] && !gNewBS->dynamaxData.used[bankAtk]))
 	{
-		if (IsRaidBattle() && bankAtk == GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT) && IsRaidBossUsingRegularMove(bankAtk, move))
+		if (IsRaidBattle() && bankAtk == BANK_RAID_BOSS && IsRaidBossUsingRegularMove(bankAtk, move))
 			return move; //This turn the raid boss isn't using a Max Move
 
 		u16 maxMove = GetMaxMoveByMove(bankAtk, move);

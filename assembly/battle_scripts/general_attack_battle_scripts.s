@@ -334,50 +334,83 @@ BS_011_RaiseUserDef1:
 	goto 0x81D6BA1
 
 FlowerShieldBS:
+	pause DELAY_HALFSECOND
 	setbyte BATTLE_COMMUNICATION 0x0
-	flowershieldlooper MOVE_EFFECT_DEF_PLUS_1 BattleScript_FlowerShieldStatBoost FAILED
+BattleScript_FlowerShieldLoop:
+	flowershieldlooper 0x0 BattleScript_FlowerShieldStatBoost BattleScript_FlowerShieldDidntWork
+	goto BS_MOVE_END
 
 BattleScript_FlowerShieldStatBoost:
+	setstatchanger STAT_DEF | INCREASE_1
+	statbuffchange STAT_TARGET | STAT_BS_PTR BattleScript_FlowerShieldLoop
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_FlowerShieldCantRaiseStats
 	attackanimation
 	waitanimation
 	setbyte ANIM_TARGETS_HIT 0x1
-	seteffecttarget
-	flowershieldlooper MOVE_EFFECT_DEF_PLUS_1 BattleScript_FlowerShieldStatBoost FAILED
+	setgraphicalstatchangevalues
+	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
+	printfromtable 0x83FE57C
+	waitmessage DELAY_1SECOND
+	goto BattleScript_FlowerShieldLoop
+
+BattleScript_FlowerShieldCantRaiseStats:
+	swapattackerwithtarget @;So the correct string prints
+	printfromtable 0x83FE57C
+	swapattackerwithtarget
+	waitmessage DELAY_1SECOND
+	goto BattleScript_FlowerShieldLoop
+
+BattleScript_FlowerShieldDidntWork:
+	printfromtable gFlowerShieldStringIds
+	waitmessage DELAY_1SECOND
+	goto BattleScript_FlowerShieldLoop
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-.global BattleScript_MagneticFluxStatBoost
 MagneticFluxBS:
-	setword SEED_HELPER 0x0
-	callasm MagnetFluxLooper
+	pause DELAY_HALFSECOND
+	setbyte BATTLE_COMMUNICATION 0x0
+BattleScript_MagneticFluxLoop:
+	flowershieldlooper 0x1 BattleScript_MagneticFluxStatBoost BattleScript_MagneticFluxDidntWork
+	goto BS_MOVE_END
 
 BattleScript_MagneticFluxStatBoost:
-	jumpifstatcanberaised BANK_TARGET STAT_DEF RaiseUserDef1_Def
-	jumpifstatcanberaised BANK_TARGET STAT_SP_DEF MagneticFluxLoop
-	goto MagneticFluxLoop
+	jumpifstatcanberaised BANK_TARGET STAT_DEF MagneticFlux_Def
+	jumpifstatcanberaised BANK_TARGET STAT_SPDEF MagneticFlux_Def
+	goto MagneticFluxStatsWontGoHigher
 
-RaiseUserDef1_Def:
+MagneticFlux_Def:
 	attackanimation
 	waitanimation
 	setbyte ANIM_TARGETS_HIT 0x1
 	setbyte STAT_ANIM_PLAYED 0x0
 	playstatchangeanimation BANK_TARGET, STAT_ANIM_DEF | STAT_ANIM_SPDEF, STAT_ANIM_UP | STAT_ANIM_IGNORE_ABILITIES
 	setstatchanger STAT_DEF | INCREASE_1
-	statbuffchange STAT_TARGET | STAT_BS_PTR RaiseUserDef1_SpDef
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 RaiseUserDef1_SpDef
+	statbuffchange STAT_TARGET | STAT_BS_PTR MagneticFlux_SpDef
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 MagneticFlux_SpDef
 	printfromtable 0x83FE57C
 	waitmessage DELAY_1SECOND
 
-RaiseUserDef1_SpDef:
+MagneticFlux_SpDef:
 	setstatchanger STAT_SPDEF | INCREASE_1
-	jumpifstat BANK_TARGET EQUALS STAT_SP_DEF STAT_MAX MagneticFluxLoop
-	statbuffchange STAT_TARGET | STAT_BS_PTR MagneticFluxLoop
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 MagneticFluxLoop
+	statbuffchange STAT_TARGET | STAT_BS_PTR BattleScript_MagneticFluxLoop
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_MagneticFluxLoop
 	printfromtable 0x83FE57C
 	waitmessage DELAY_1SECOND
+	goto BattleScript_MagneticFluxLoop
 
-MagneticFluxLoop:
-	callasm MagnetFluxLooper
+MagneticFluxStatsWontGoHigher:
+	setbyte MULTISTRING_CHOOSER 0x3
+	swapattackerwithtarget @;So the correct string plays
+	printfromtable gFlowerShieldStringIds
+	swapattackerwithtarget
+	waitmessage DELAY_1SECOND
+	goto BattleScript_MagneticFluxLoop
+
+BattleScript_MagneticFluxDidntWork:
+	printfromtable gFlowerShieldStringIds
+	waitmessage DELAY_1SECOND
+	goto BattleScript_MagneticFluxLoop
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -479,13 +512,16 @@ WorkUp_RaiseSpAtk:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 RototillerBS:
+	pause DELAY_HALFSECOND
 	setbyte BATTLE_COMMUNICATION 0x0
-	flowershieldlooper 0x0 BattleScript_RototillerStatBoost FAILED
+BattleScript_RototillerLoop:
+	flowershieldlooper 0x0 BattleScript_RototillerStatBoost BattleScript_RototillerDidntWork
+	goto BS_MOVE_END
 
 BattleScript_RototillerStatBoost:
 	jumpifstatcanberaised BANK_TARGET STAT_ATK Rototiller_Atk
-	jumpifstatcanberaised BANK_TARGET STAT_SPATK RototillerLoop
-	goto RototillerLoop
+	jumpifstatcanberaised BANK_TARGET STAT_SPATK Rototiller_Atk
+	goto RototillerStatsWontGoHigher
 
 Rototiller_Atk:
 	attackanimation
@@ -501,25 +537,38 @@ Rototiller_Atk:
 	
 Rototiller_SpAtk:
 	setstatchanger STAT_SPATK | INCREASE_1
-	statbuffchange STAT_TARGET | STAT_BS_PTR RototillerLoop
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 RototillerLoop
+	statbuffchange STAT_TARGET | STAT_BS_PTR BattleScript_RototillerLoop
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_RototillerLoop
 	printfromtable 0x83FE57C
 	waitmessage DELAY_1SECOND
+	goto BattleScript_RototillerLoop
 
-RototillerLoop:
-	flowershieldlooper 0x0 BattleScript_RototillerStatBoost FAILED
+RototillerStatsWontGoHigher:
+	setbyte MULTISTRING_CHOOSER 0x3
+	swapattackerwithtarget @;So the correct string plays
+	printfromtable gFlowerShieldStringIds
+	swapattackerwithtarget
+	waitmessage DELAY_1SECOND
+	goto BattleScript_RototillerLoop
+
+BattleScript_RototillerDidntWork:
+	printfromtable gFlowerShieldStringIds
+	waitmessage DELAY_1SECOND
+	goto BattleScript_RototillerLoop
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-.global BattleScript_GearUpStatBoost
 GearUpBS:
-	setword SEED_HELPER 0x0
-	callasm MagnetFluxLooper
+	pause DELAY_HALFSECOND
+	setbyte BATTLE_COMMUNICATION 0x0
+BattleScript_GearUpLoop:
+	flowershieldlooper 0x1 BattleScript_GearUpStatBoost BattleScript_GearUpDidntWork
+	goto BS_MOVE_END
 
 BattleScript_GearUpStatBoost:
 	jumpifstatcanberaised BANK_TARGET STAT_ATK GearUp_Atk
-	jumpifstatcanberaised BANK_TARGET STAT_SPATK GearUpLoop
-	goto GearUpLoop
+	jumpifstatcanberaised BANK_TARGET STAT_SPATK GearUp_Atk
+	goto GearUpStatsWontGoHigher
 
 GearUp_Atk:
 	attackanimation
@@ -532,16 +581,27 @@ GearUp_Atk:
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 GearUp_SpAtk
 	printfromtable 0x83FE57C
 	waitmessage DELAY_1SECOND
-
+	
 GearUp_SpAtk:
 	setstatchanger STAT_SPATK | INCREASE_1
-	statbuffchange STAT_TARGET | STAT_BS_PTR GearUpLoop
-	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 GearUpLoop
+	statbuffchange STAT_TARGET | STAT_BS_PTR BattleScript_GearUpLoop
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_GearUpLoop
 	printfromtable 0x83FE57C
 	waitmessage DELAY_1SECOND
+	goto BattleScript_GearUpLoop
 
-GearUpLoop:
-	callasm MagnetFluxLooper
+GearUpStatsWontGoHigher:
+	setbyte MULTISTRING_CHOOSER 0x3
+	swapattackerwithtarget @;So the correct string plays
+	printfromtable gFlowerShieldStringIds
+	swapattackerwithtarget
+	waitmessage DELAY_1SECOND
+	goto BattleScript_GearUpLoop
+
+BattleScript_GearUpDidntWork:
+	printfromtable gFlowerShieldStringIds
+	waitmessage DELAY_1SECOND
+	goto BattleScript_GearUpLoop
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -816,6 +876,7 @@ DragonTailBS:
 	call STANDARD_DAMAGE
 	jumpiffainted BANK_TARGET BS_MOVE_FAINT
 	jumpifmovehadnoeffect BS_MOVE_FAINT
+	jumpifdynamaxed BANK_TARGET BattleScript_DragonTailBlockedByDynamax
 	jumpifspecialstatusflag BANK_TARGET STATUS3_ROOTED 0x0 0x81D8F27 @;BattleScript_PrintMonIsRooted
 	jumpifability BANK_TARGET ABILITY_SUCTIONCUPS BattleScript_AbilityPreventsPhasingOutSkipFail
 	jumpifcannotswitch BANK_TARGET | ATK4F_DONT_CHECK_STATUSES BS_MOVE_FAINT
@@ -829,7 +890,13 @@ DragonTailBS:
 BattleScript_DragonTailResetForceSwitchHelper:
 	setbyte FORCE_SWITCH_HELPER 0x0
 	goto 0x81D6957
-	
+
+BattleScript_DragonTailBlockedByDynamax:
+	setword BATTLE_STRING_LOADER gText_RaidBattleAttackCancel
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	goto BS_MOVE_FAINT
+
 BattleScript_AbilityPreventsPhasingOut:
 	orbyte OUTCOME OUTCOME_NOT_AFFECTED
 

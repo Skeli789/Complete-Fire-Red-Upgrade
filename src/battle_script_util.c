@@ -68,37 +68,6 @@ void IncreaseNimbleCounter(void)
 		gNewBS->NimbleCounters[gBankAttacker] += 1;
 }
 
-void MagnetFluxLooper(void)
-{
-	for (; *gSeedHelper < gBattlersCount; ++*gSeedHelper)
-	{
-		u8 bank = gBanksByTurnOrder[*gSeedHelper];
-		if ((bank == gBankAttacker || bank == PARTNER(gBankAttacker))
-		&& (ABILITY(bank) == ABILITY_PLUS || ABILITY(bank) == ABILITY_MINUS)
-		&& BATTLER_ALIVE(bank)
-		&& !BATTLER_SEMI_INVULNERABLE(bank)
-		&& !IS_BEHIND_SUBSTITUTE(bank)
-		&& !IsProtectedByMaxGuard(bank))
-		{
-			++*gSeedHelper;
-			gBankTarget = bank;
-			if (gCurrentMove == MOVE_MAGNETICFLUX)
-				gBattlescriptCurrInstr = BattleScript_MagneticFluxStatBoost - 5;
-			else
-				gBattlescriptCurrInstr = BattleScript_GearUpStatBoost - 5;
-			return;
-		}
-	}
-
-	if (!gBattleScripting->animTargetsHit) //Not a single mon was affected
-		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
-	else
-	{
-		gBattlescriptCurrInstr = BattleScript_MoveEnd - 5;
-		gBankTarget = gBankAttacker;
-	}
-}
-
 void ModifyGrowthInSun(void)
 {
 	if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY && ITEM_EFFECT(gBankAttacker) != ITEM_EFFECT_UTILITY_UMBRELLA)
@@ -458,7 +427,7 @@ void BestowItem(void)
 
 void BelchFunction(void)
 {
-	if (IsRaidBattle() && gBankAttacker == GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT))
+	if (IsRaidBattle() && gBankAttacker == BANK_RAID_BOSS)
 		return; //Raid bosses can always use Belch
 
 	if (!(gNewBS->BelchCounters & gBitTable[gBattlerPartyIndexes[gBankAttacker]]))
@@ -505,6 +474,8 @@ void CopycatFunc(void)
 {
 	if (gNewBS->LastUsedMove == 0
 	|| gNewBS->LastUsedMove == 0xFFFF
+	|| IsZMove(gNewBS->LastUsedMove)
+	|| IsAnyMaxMove(gNewBS->LastUsedMove)
 	|| CheckTableForMove(gNewBS->LastUsedMove, gCopycatBannedMoves))
 	{
 		gBattlescriptCurrInstr = BattleScript_ButItFailed - 1 - 5;	//From PP Reduce
@@ -1485,6 +1456,36 @@ void TransferIllusionBroken(void)
 	gActiveBattler = gBattleScripting->bank;
 	EmitDataTransfer(0, &gStatuses3[gActiveBattler], 4, &gStatuses3[gActiveBattler]);
 	MarkBufferBankForExecution(gActiveBattler);
+}
+
+static void TransferDontRemoveTransformSpecies(bool8 val)
+{
+	gActiveBattler = gBattleScripting->bank;
+	gDontRemoveTransformSpecies = val;
+	EmitDataTransfer(0, &gDontRemoveTransformSpecies, 1, &gDontRemoveTransformSpecies);
+	MarkBufferBankForExecution(gActiveBattler);
+}
+
+void SetAndTransferDontRemoveTransformSpecies(void)
+{
+	if (gBattleExecBuffer)
+	{
+		gBattlescriptCurrInstr -= 5;
+		return;
+	}
+	
+	TransferDontRemoveTransformSpecies(TRUE);
+}
+
+void ClearAndTransferDontRemoveTransformSpecies(void)
+{
+	if (gBattleExecBuffer)
+	{
+		gBattlescriptCurrInstr -= 5;
+		return;
+	}
+
+	TransferDontRemoveTransformSpecies(FALSE);
 }
 
 void CycleScriptingBankHealthBetween0And1(void)

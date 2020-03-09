@@ -375,11 +375,6 @@ bool8 ProtectsAgainstZMoves(u16 move, u8 bankAtk, u8 bankDef)
 	return FALSE;
 }
 
-bool8 IsProtectedByMaxGuard(u8 bank)
-{
-	return IsDynamaxed(bank) && gProtectStructs[bank].protected;
-}
-
 bool8 StatsMaxed(u8 bank)
 {
 	for (u8 i = STAT_STAGE_ATK; i < BATTLE_STATS_NO; ++i)
@@ -1031,16 +1026,21 @@ bool8 IsAffectedByPowderByDetails(u8 type1, u8 type2, u8 type3, u8 ability, u8 i
 		&& type3 != TYPE_GRASS;
 }
 
-bool8 MoveIgnoresSubstitutes(u16 move, u8 bankAtk)
+bool8 MoveIgnoresSubstitutes(u16 move, u8 atkAbility)
 {
 	return CheckSoundMove(move)
-		|| ABILITY(bankAtk) == ABILITY_INFILTRATOR;
+		|| atkAbility == ABILITY_INFILTRATOR
+		|| CheckTableForMove(move, gSubstituteBypassMoves);
 }
 
 bool8 MoveBlockedBySubstitute(u16 move, u8 bankAtk, u8 bankDef)
 {
-	return gBattleMons[bankDef].status2 & STATUS2_SUBSTITUTE
-		&& !MoveIgnoresSubstitutes(move, bankAtk);
+	return IS_BEHIND_SUBSTITUTE(bankDef) && !MoveIgnoresSubstitutes(move, ABILITY(bankAtk));
+}
+
+bool8 MonMoveBlockedBySubstitute(u16 move, struct Pokemon* monAtk, u8 bankDef)
+{
+	return IS_BEHIND_SUBSTITUTE(bankDef) && !MoveIgnoresSubstitutes(move, GetMonAbility(monAtk));
 }
 
 bool8 IsMockBattle(void)
@@ -1606,4 +1606,24 @@ bool8 CantScoreACrit(u8 bank, struct Pokemon* mon)
 
 	return (gStatuses3[bank] & STATUS3_CANT_SCORE_A_CRIT) != 0
 		|| (IS_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_NO_CRITS);
+}
+
+void ClearTemporarySpeciesSpriteData(u8 bank, bool8 dontClearSubstitute)
+{
+	if (!gDontRemoveTransformSpecies) //For Dynamaxing a transformed Pokemon
+	{
+		gBattleSpritesDataPtr->bankData[bank].transformSpecies = SPECIES_NONE;
+		gBattleMonForms[bank] = 0;
+	}
+
+	if (!dontClearSubstitute)
+		ClearBehindSubstituteBit(bank);
+}
+
+u16 TryFixDynamaxTransformSpecies(u8 bank, u16 species)
+{
+	if (gDontRemoveTransformSpecies && gBattleSpritesDataPtr->bankData[bank].transformSpecies != SPECIES_NONE)
+		species = gBattleSpritesDataPtr->bankData[bank].transformSpecies;
+
+	return species;
 }

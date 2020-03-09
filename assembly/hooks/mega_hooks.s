@@ -245,6 +245,18 @@ DynamaxPalFadeHook4_PostTransform:
 	bx r0
 
 .pool
+@;0x08034E98 with r2
+DynamaxEndTransformedMonHook:
+	lsl r0, r0, #0x10
+	lsr r1, r0, #0x10
+	mov r0, r9 @bankAtk
+	bl TryFixDynamaxTransformSpecies
+	mov r8, r0
+	mov r0, r9
+	ldr r1, =0x8034EA0 | 1
+	bx r1
+
+.pool
 @;0x080744B0 with r0
 RaidBattleCoordHook1:
 	mov r0, r5

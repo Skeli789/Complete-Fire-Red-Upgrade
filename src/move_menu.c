@@ -467,16 +467,14 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 	if ((!gNewBS->dynamaxData.used[gActiveBattler] || IsDynamaxed(gActiveBattler))
 	&& DynamaxEnabled(gActiveBattler)
 	&& MonCanDynamax(GetBankPartyData(gActiveBattler))
+	&& !IsBannedDynamaxSpecies(SPECIES(gActiveBattler))
 	&& !BATTLER_SEMI_INVULNERABLE(gActiveBattler)
 	&& !IsMega(gActiveBattler)
 	&& !IsBluePrimal(gActiveBattler)
 	&& !IsRedPrimal(gActiveBattler))
 	{
 		for (i = 0; i < MAX_MON_MOVES; ++i)
-		{
 			tempMoveStruct->possibleMaxMoves[i] = GetMaxMove(gActiveBattler, i);
-			tempMoveStruct->maxMovePowers[i] = gDynamaxMovePowers[tempMoveStruct->moves[i]];
-		}
 	}
 	#endif
 
@@ -1654,7 +1652,7 @@ void PlayerHandleChooseAction(void)
 				gNewBS->NoMoreMovingThisTurn |= gBitTable[gActiveBattler];
 
 				if (raidBattleEnd) //Raid mon can't move if it's dead
-					gNewBS->NoMoreMovingThisTurn |= gBitTable[GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)];
+					gNewBS->NoMoreMovingThisTurn |= gBitTable[BANK_RAID_BOSS];
 
 				EmitTwoReturnValues(1, ACTION_USE_MOVE, 0);
 				PlayerBufferExecCompleted();

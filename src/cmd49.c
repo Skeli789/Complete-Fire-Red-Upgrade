@@ -556,10 +556,13 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 
 			if (gHitMarker & HITMARKER_ATTACKSTRING_PRINTED)
 			{
-				gLastPrintedMoves[gBankAttacker] = gChosenMove;
 				gNewBS->lastTargeted[gBankAttacker] = gBankTarget;
-				
-				if (!IsDynamaxed(gBankAttacker))
+				if (IsZMove(gCurrentMove) || IsAnyMaxMove(gCurrentMove))
+					gLastPrintedMoves[gBankAttacker] = gCurrentMove;
+				else
+					gLastPrintedMoves[gBankAttacker] = gChosenMove;
+
+				if (!IsZMove(gCurrentMove) && !IsDynamaxed(gBankAttacker))
 					gNewBS->usedMoveIndices[gBankAttacker] |= gBitTable[gCurrMovePos];
 			}
 
@@ -1295,16 +1298,16 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			{
 				int i;
 
-				for (i = 0; i < 4; ++i)
+				for (i = 0; i < gBattlersCount; ++i)
 				{
 					if (!(gNewBS->ResultFlags[i] & (MOVE_RESULT_DOESNT_AFFECT_FOE | MOVE_RESULT_FAILED))) //If at least one of the targets was affected
 						break;
 				}
-				if (i == 4) //No target's were affected
-					gNewBS->StompingTantrumTimers[gBankAttacker]++;
+				if (i == gBattlersCount) //No targets were affected
+					gNewBS->StompingTantrumTimers[gBankAttacker] = 2;
 			}
 			else if (gMoveResultFlags & (MOVE_RESULT_DOESNT_AFFECT_FOE | MOVE_RESULT_FAILED))
-				gNewBS->StompingTantrumTimers[gBankAttacker]++;
+				gNewBS->StompingTantrumTimers[gBankAttacker] = 2;
 
 			for (int i = 0; i < MAX_BATTLERS_COUNT; ++i)
 			{
@@ -1417,11 +1420,11 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			break;
 			
 		case ATK49_RAID_SHIELD:
-			if (IsRaidBattle() && ShouldCreateRaidShields(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)))
+			if (IsRaidBattle() && ShouldCreateRaidShields(BANK_RAID_BOSS))
 			{
 				gNewBS->dynamaxData.raidShieldsUp = TRUE;
 				gNewBS->dynamaxData.shieldsDestroyed = 0;
-				gBattleScripting->bank = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
+				gBattleScripting->bank = BANK_RAID_BOSS;
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_RaidShields;
 				effect = 1;

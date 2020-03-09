@@ -38,7 +38,6 @@ bool8 SheerForceCheck(void);
 bool8 IsOfType(u8 bank, u8 type);
 bool8 LiftProtect(u8 bank);
 bool8 ProtectsAgainstZMoves(u16 move, u8 bankAtk, u8 bankDef);
-bool8 IsProtectedByMaxGuard(u8 bank);
 bool8 StatsMaxed(u8 bank);
 bool8 MainStatsMaxed(u8 bank);
 bool8 StatsMinned(u8 bank);
@@ -66,8 +65,9 @@ bool8 CanKnockOffItem(u8 bank);
 bool8 CanKnockOffMonItem(struct Pokemon* mon, u8 side);
 bool8 IsAffectedByPowder(u8 bank);
 bool8 IsAffectedByPowderByDetails(u8 type1, u8 type2, u8 type3, u8 ability, u8 itemEffect);
-bool8 MoveIgnoresSubstitutes(u16 move, u8 bankAtk);
+bool8 MoveIgnoresSubstitutes(u16 move, u8 atkAbility);
 bool8 MoveBlockedBySubstitute(u16 move, u8 bankAtk, u8 bankDef);
+bool8 MonMoveBlockedBySubstitute(u16 move, struct Pokemon* monAtk, u8 bankDef);
 bool8 IsMockBattle(void);
 u8 CalcMoveSplit(u8 bank, u16 move);
 u8 CalcMoveSplitFromParty(struct Pokemon* mon, u16 move);
@@ -121,6 +121,9 @@ bool8 CantScoreACrit(u8 bank, struct Pokemon* mon);
 u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg);
 u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 DoPluck);
 void EmitDataTransfer(u8 bufferId, void* dst, u16 size, void* data);
+
+//Functions Hooked In
+void ClearTemporarySpeciesSpriteData(u8 bank, bool8 dontClearSubstitute);
 
 //Exported Constants
 enum {IN_AIR, GROUNDED};

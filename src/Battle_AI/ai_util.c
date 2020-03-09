@@ -631,7 +631,7 @@ static bool8 CalculateMoveKnocksOutXHits(u16 move, u8 bankAtk, u8 bankDef, u8 nu
 	u16 species = SPECIES(bankDef);
 	bool8 noMoldBreakers = NO_MOLD_BREAKERS(ABILITY(bankAtk), move);
 
-	if (IS_BEHIND_SUBSTITUTE(bankDef)
+	if (MoveBlockedBySubstitute(move, bankAtk, bankDef)
 	#ifdef SPECIES_MIMIKYU
 	|| (ability == ABILITY_DISGUISE && species == SPECIES_MIMIKYU && noMoldBreakers)
 	#endif
@@ -683,7 +683,7 @@ bool8 MoveKnocksOutXHitsFromParty(u16 move, struct Pokemon* monAtk, u8 bankDef, 
 	u16 species = SPECIES(bankDef);
 	bool8 noMoldBreakers = NO_MOLD_BREAKERS(GetMonAbility(monAtk), move);
 
-	if (IS_BEHIND_SUBSTITUTE(bankDef)
+	if (MonMoveBlockedBySubstitute(move, monAtk, bankDef)
 	#ifdef SPECIES_MIMIKYU
 	|| (ability == ABILITY_DISGUISE && species == SPECIES_MIMIKYU && noMoldBreakers)
 	#endif
@@ -2348,7 +2348,7 @@ u16 TryReplaceMoveWithZMove(u8 bankAtk, u8 bankDef, u16 move)
 	}
 	else if (IsDynamaxed(bankAtk) || (!gNewBS->dynamaxData.used[bankAtk] && ShouldAIDynamax(bankAtk, bankDef)))
 	{
-		if (IsRaidBattle() && bankAtk == GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT) && IsRaidBossUsingRegularMove(bankAtk, move))
+		if (IsRaidBattle() && bankAtk == BANK_RAID_BOSS && IsRaidBossUsingRegularMove(bankAtk, move))
 			return move; //This turn the raid boss isn't using a Max Move
 
 		u16 maxMove = GetMaxMoveByMove(bankAtk, move);
@@ -2677,7 +2677,7 @@ bool8 ShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move)
 			if (MoveBlockedBySubstitute(zMove, bankAtk, bankDef)
 			|| (defMovePrediction == MOVE_SUBSTITUTE
 			 && !MoveWouldHitFirst(zMove, bankAtk, bankDef)
-			 && !MoveIgnoresSubstitutes(zMove, bankAtk)))
+			 && !MoveIgnoresSubstitutes(zMove, ABILITY(bankAtk))))
 				return FALSE; //Don't use a Z-Move on a Substitute or if the enemy is going to go first and use Substitute
 
 			#ifdef SPECIES_MIMIKYU
@@ -2968,23 +2968,30 @@ void CalcShouldAIDynamax(u8 bankAtk, u8 bankDef)
 
 		if (gNewBS->ai.dynamaxMonId[SIDE(bankAtk)] == gBattlerPartyIndexes[bankAtk])
 		{
-			u16 predictedMove = IsValidMovePrediction(bankAtk, bankDef);
-			if (predictedMove != MOVE_NONE
-			&&  MoveWouldHitFirst(predictedMove, bankAtk, bankDef)
-			&&  MoveKnocksOutXHits(predictedMove, bankAtk, bankDef, 1))
-				return; //Just KO the opponent normally
+			if (AI_THINKING_STRUCT->aiFlags > AI_SCRIPT_CHECK_BAD_MOVE || SIDE(bankAtk) == B_SIDE_PLAYER) //Smart AI or partners only
+			{
+				u16 predictedMove = IsValidMovePrediction(bankAtk, bankDef);
+				if (predictedMove != MOVE_NONE
+				&&  MoveWouldHitFirst(predictedMove, bankAtk, bankDef)
+				&&  MoveKnocksOutXHits(predictedMove, bankAtk, bankDef, 1))
+					return; //Just KO the opponent normally
 
-			predictedMove = IsValidMovePrediction(bankDef, bankAtk);
-			if (predictedMove != MOVE_NONE
-			&&  MoveWouldHitFirst(predictedMove, bankDef, bankAtk)
-			&&  MoveKnocksOutAfterDynamax(predictedMove, bankDef, bankAtk))
-				return; //Don't Dynamax is foe will just KO you
+				if ((IS_SINGLE_BATTLE && ViableMonCountFromBank(bankAtk) > 1)
+				||  (IS_DOUBLE_BATTLE && ViableMonCountFromBank(bankAtk) > 2)) //Could use Dynamax on another Pokemon
+				{
+					predictedMove = IsValidMovePrediction(bankDef, bankAtk);
+					if (predictedMove != MOVE_NONE
+					&&  MoveWouldHitFirst(predictedMove, bankDef, bankAtk)
+					&&  MoveKnocksOutAfterDynamax(predictedMove, bankDef, bankAtk))
+						return; //Don't Dynamax is foe will just KO you
+				}
 
-			OnlyBadMovesLeftInMoveset(bankAtk, bankDef); //Force calculation
+				OnlyBadMovesLeftInMoveset(bankAtk, bankDef); //Force calculation
 
-			if ((ITEM_EFFECT(bankAtk) == ITEM_EFFECT_CHOICE_BAND || ABILITY(bankAtk) == ABILITY_GORILLATACTICS)
-			&& !gNewBS->ai.shouldFreeChoiceLockWithDynamax[bankAtk][bankDef]) //There are good moves left
-				return; //Save Dynamax for when you really need it
+				if ((ITEM_EFFECT(bankAtk) == ITEM_EFFECT_CHOICE_BAND || ABILITY(bankAtk) == ABILITY_GORILLATACTICS)
+				&& !gNewBS->ai.shouldFreeChoiceLockWithDynamax[bankAtk][bankDef]) //There are good moves left
+					return; //Save Dynamax for when you really need it
+			}
 
 			gNewBS->ai.dynamaxPotential[bankAtk][bankDef] = TRUE;
 			ClearStrongestMoveAndCanKnockOut(bankAtk, bankDef); //All moves now are treated like Max Moves so wipe old data
@@ -3000,7 +3007,7 @@ bool8 ShouldAIDynamax(u8 bankAtk, u8 bankDef)
 u8 AdjustMoveLimitationFlagsForAI(u8 bankAtk, u8 bankDef)
 {
 	if (ShouldAIDynamax(bankAtk, bankDef)) //AI will Dynamax this turn
-		return MOVE_LIMITATION_ZEROMOVE | MOVE_LIMITATION_PP;
+		return MOVE_LIMITATION_ZEROMOVE | MOVE_LIMITATION_PP | MOVE_LIMITATION_TAUNT;
 
 	return 0xFF; //All flags by default
 }

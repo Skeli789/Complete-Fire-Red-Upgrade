@@ -1578,7 +1578,7 @@ void AdjustDamage(bool8 CheckFalseSwipe)
 	&& ABILITY(gBankAttacker) != ABILITY_INFILTRATOR)
 		goto END;
 
-	if (IsRaidBattle() && gBankTarget == GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT))
+	if (IsRaidBattle() && gBankTarget == BANK_RAID_BOSS)
 	{
 		if (gNewBS->dynamaxData.raidShieldsUp) //Shields heavily reduce damage
 		{

@@ -205,7 +205,7 @@ u8 TurnBasedEffects(void)
 				gNewBS->fusionBoltUsedPrior = FALSE;
 				gNewBS->roundUsed = FALSE;
 				
-				if (IsRaidBattle() && !BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT))) //Raid mon is dead so skip end turn effects
+				if (IsRaidBattle() && !BATTLER_ALIVE(BANK_RAID_BOSS)) //Raid mon is dead so skip end turn effects
 				{
 					gBattleStruct->turnEffectsTracker = ET_End;
 					goto END_TURN_SKIP;
@@ -1302,6 +1302,11 @@ u8 TurnBasedEffects(void)
 					const u8* battleScript = NULL;
 
 					switch(ability) {
+						case ABILITY_FORECAST:
+							if (AbilityBattleEffects(ABILITYEFFECT_ENDTURN, gActiveBattler, 0, 0, 0))
+								effect++;
+							break;
+
 						#if (defined SPECIES_DARMANITAN && defined SPECIES_DARMANITANZEN)
 						case ABILITY_ZENMODE:
 							if (species == SPECIES_DARMANITAN
@@ -1715,7 +1720,7 @@ bool8 HandleFaintedMonActions(void)
 					if (gBattleMons[gBattleStruct->faintedActionsBank].hp == 0)
 					{
 						if (IsRaidBattle()
-						&& gBattleStruct->faintedActionsBank == GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT))
+						&& gBattleStruct->faintedActionsBank == BANK_RAID_BOSS)
 							continue; //Don't end the battle if the raid mon is KOed
 					
 						if (!(gAbsentBattlerFlags & gBitTable[gBattleStruct->faintedActionsBank])) //Bank was just emptied
@@ -1911,7 +1916,7 @@ bool8 HandleDynamaxOnTurnEnd(void)
 	if (IsRaidBattle()
 	#ifdef FLAG_RAID_BATTLE_NO_FORCE_END
 	&& !FlagGet(FLAG_RAID_BATTLE_NO_FORCE_END) //These battles can't be force ended
-	&& BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)) //Don't force out if battle is over
+	&& BATTLER_ALIVE(BANK_RAID_BOSS) //Don't force out if battle is over
 	#endif
 	&& gBattleResults->battleTurnCounter + 1 >= 10) //10 Turns have passed
 	{

@@ -27,7 +27,6 @@ attack_anim_table.s
 .global DESTINY_BOND_ASM_2	@ hook at 0xB6160 via r0
 .global DISABLE_TIME_ASM	@ hook at 0xA7FF8 via r1 - lengthen disable timer for lets snuggle forever
 .global WATERGUN_ASM		@ hook at 0xA7C28 via r0
-.global MudBombASM 		@ hook at 0xE2590 via r0
 
 .equ FALSE, 0
 .equ TRUE, 1
@@ -2808,9 +2807,9 @@ ANIM_MUDBOMB:
 	loadparticle ANIM_TAG_MUD_BOMB
 	loadparticle ANIM_TAG_POISON_BUBBLE @Sludge
 	loadparticle ANIM_TAG_BROWN_ORB @Brown Colour
-	launchtask 0x80e2519 0x3 0x0
+	launchtemplate MUD_BOMB_BALL TEMPLATE_TARGET | 2, 0x6, 0 0, 0x38 0x1, 0 0
 	playsound2 0xba SOUND_PAN_ATTACKER
-	pause 0x18
+	pause 0x38
 	playsound2 0x77 SOUND_PAN_TARGET
 	launchtask AnimTask_move_bank 0x3 0x5 bank_target 0x0 0x4 0x14 0x1
 	launchtemplate BROWNDRIPS 0x82 0x5 0x0 0xFFF8 0x0 0xf 0x37
@@ -2821,27 +2820,9 @@ ANIM_MUDBOMB:
 	endanimation
 
 .align 2
-BROWNSLUDGE: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_BROWN_ORB OAM_DOUBLE_16x16 0x83E69DC 0x0 0x83E6A18 0x80B46F9
-BROWNDRIPS: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_BROWN_ORB OAM_DOUBLE_16x16 0x83E69E0 0x0 0x83E6A80 0x80B17C5
-MUD_BOMB_TEMPLATE: objtemplate ANIM_TAG_MUD_BOMB ANIM_TAG_MUD_BOMB OAM_NORMAL_64x64 0x8231CF0 0x0 0x83FF624 0x800760D
-
-@0x80E2590 with r0
-MudBombASM:
-	bl IsAnimMoveMudBomb
-	cmp r0, #0x0
-	beq DefaultBarrage
-	ldr r4, =MUD_BOMB_TEMPLATE
-	b MudBombASMReturn
-
-DefaultBarrage:
-	ldr r4, =0x83FF62C
-
-MudBombASMReturn:
-	mov r0, #0x1E
-	ldrh r5, [r7, r0]
-	mov r1, #0x20
-	ldr r2, =0x80E2598 | 1
-	bx r2
+MUD_BOMB_BALL: objtemplate ANIM_TAG_MUD_BOMB ANIM_TAG_MUD_BOMB OAM_NORMAL_64x64 0x8231CF0 0x0 gSpriteAffineAnimTable_MudBombBall SpriteCB_AcidLaunchSingleTarget
+BROWNSLUDGE: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_BROWN_ORB OAM_NORMAL_16x16 0x83E69DC 0x0 0x83E6A18 0x80B46F9
+BROWNDRIPS: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_BROWN_ORB OAM_NORMAL_16x16 0x83E69E0 0x0 0x83E6A80 0x80B17C5
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -6078,11 +6059,12 @@ ANIM_FEINT:
 	loadparticle ANIM_TAG_HANDS_AND_FEET
 	pokespritetoBG bank_target
 	setblends 0x80c
-	soundcomplex 0x88 SOUND_PAN_ATTACKER 0xA 0x2
-	launchtemplate FEINT_FIST 0x2 0x6 0xFFE0 0x0 0x1 0xFF 0x20 0x3c
+	soundcomplex 0x88 SOUND_PAN_TARGET 0xA 0x2
+	launchtemplate FEINT_MOVING_FIST TEMPLATE_TARGET | 0, 0x2, 50, 6
 	waitanimation
-	launchtemplate Template_Hit 0x2 0x4 0xfff8 0xfff8 0x1 0x2
-	launchtemplate Template_Fist 0x3 0x5 0xfff8 0x0 0x8 0x1 0x0
+	launchtemplate FEINT_HIT_FIST TEMPLATE_TARGET | 3, 0x5, bank_target, 0, 0, 20, 0x0
+	pause 10
+	launchtemplate Template_Hit TEMPLATE_TARGET | 2, 0x4, 0x0 0x0 0x1 0x2
 	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x3 0x0 0x6 0x1
 	playsound2 0x84 SOUND_PAN_TARGET
 	waitanimation
@@ -6091,7 +6073,8 @@ ANIM_FEINT:
 	endanimation
 
 .align 2
-FEINT_FIST: objtemplate ANIM_TAG_HANDS_AND_FEET ANIM_TAG_HANDS_AND_FEET OAM_OFF_32x32 0x83E66CC 0x0 0x8231CFC 0x80A4D0D
+FEINT_MOVING_FIST: objtemplate ANIM_TAG_HANDS_AND_FEET ANIM_TAG_HANDS_AND_FEET OAM_OFF_32x32 0x83E66CC 0x0 0x8231CFC SpriteCB_LeftRightSlice
+FEINT_HIT_FIST: objtemplate ANIM_TAG_HANDS_AND_FEET ANIM_TAG_HANDS_AND_FEET OAM_DOUBLE_32x32 0x83E66CC 0x0 gSpriteAffineAnimTable_FeintFist SpriteCB_SpriteOnMonForDuration
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool

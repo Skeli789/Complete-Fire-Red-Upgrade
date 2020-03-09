@@ -20,6 +20,7 @@
 #include "../include/new/mega_battle_scripts.h"
 #include "../include/new/move_battle_scripts.h"
 #include "../include/new/move_menu.h"
+#include "../include/new/move_tables.h"
 #include "../include/new/set_z_effect.h"
 #include "../include/new/stat_buffs.h"
 #include "../include/new/util.h"
@@ -584,7 +585,8 @@ bool8 MonCanDynamax(struct Pokemon* mon)
 		|| IsMonUltraNecrozma(mon)
 		|| itemEffect == ITEM_EFFECT_MEGA_STONE
 		|| itemEffect == ITEM_EFFECT_PRIMAL_ORB
-		|| itemEffect == ITEM_EFFECT_Z_CRYSTAL)
+		|| itemEffect == ITEM_EFFECT_Z_CRYSTAL
+		|| IsBannedDynamaxSpecies(species))
 			return FALSE;
 		
 		return TRUE;
@@ -653,7 +655,7 @@ s16 GetBattlerYCoord(u8 bank)
 }
 
 //Called from Battle Script
-void UpdateMaxHealthForDynamax(void)
+void UpdateHPForDynamax(void)
 {
 	if (gBattleExecBuffer)
 	{
@@ -683,8 +685,9 @@ void UpdateMaxHealthForDynamax(void)
 	}
 	else
 	{
-		gBattleMons[gActiveBattler].maxHP = MathMax(gBattleMons[gActiveBattler].maxHP / hpBoost, 1);
-		gBattleMons[gActiveBattler].hp = MathMax(gBattleMons[gActiveBattler].hp / hpBoost, 1);
+		//Get ceiling of HP divided by boost
+		gBattleMons[gActiveBattler].maxHP = MathMax(gBattleMons[gActiveBattler].maxHP / hpBoost + (gBattleMons[gActiveBattler].maxHP & 1), 1);
+		gBattleMons[gActiveBattler].hp = MathMax(gBattleMons[gActiveBattler].hp / hpBoost + (gBattleMons[gActiveBattler].hp & 1), 1);
 	}
 
 	EmitSetMonData(0, REQUEST_MAX_HP_BATTLE, 0, 2, &gBattleMons[gActiveBattler].maxHP);
@@ -754,7 +757,7 @@ void atkFF2F_setmaxmoveeffect(void)
 	gBattlescriptCurrInstr += 1;
 	
 	if (IsRaidBattle()
-	&& gBankTarget == GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)
+	&& gBankTarget == BANK_RAID_BOSS
 	&& gNewBS->dynamaxData.raidShieldsUp)
 		return; //No special effect when move is blocked by shields
 	
@@ -1218,9 +1221,25 @@ bool8 IsMaxMoveWithEffect(u16 move, u8 effect)
 	return IsAnyMaxMove(move) && gBattleMoves[move].z_move_effect == effect;
 }
 
+bool8 IsMaxGuardUp(u8 bank)
+{
+	return gProtectStructs[bank].protected && IsDynamaxed(bank);
+}
+
 bool8 ProtectedByMaxGuard(u8 bankDef, u16 move)
 {
-	return gProtectStructs[bankDef].protected && IsDynamaxed(bankDef) && move != MOVE_FEINT;
+	if (gProtectStructs[bankDef].protected && IsDynamaxed(bankDef) && move != MOVE_FEINT && move != MOVE_MEANLOOK) //Mean Look is probably a GF bug
+	{
+		if (gBattleMoves[move].target & (MOVE_TARGET_DEPENDS | MOVE_TARGET_OPPONENTS_FIELD))
+			return (gBattleMoves[move].flags & FLAG_PROTECT_AFFECTED) != 0;
+		
+		if (gBattleMoves[move].target & MOVE_TARGET_ALL && CheckTableForMove(gCurrentMove, gSpecialWholeFieldMoves))
+			return FALSE;
+	
+		return TRUE;
+	}
+
+	return FALSE;
 }
 
 //The following functions relate to raid battles:
@@ -1314,7 +1333,7 @@ void CreateRaidShieldSprites(void)
 	//Level determines how often the shields appear
 
 	u8 i, numShields;
-	u8 bank = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
+	u8 bank = BANK_RAID_BOSS;
 	u16 baseStatTotal = GetBaseStatsTotal(SPECIES(bank));
 	
 	if (!FlagGet(FLAG_RAID_BATTLE_NO_FORCE_END)) //Less shields for battle that ends in 10 turns

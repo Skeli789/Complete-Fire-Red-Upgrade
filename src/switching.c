@@ -200,9 +200,10 @@ static bool8 TryRemoveUnnerve(u8 bank)
 				}
 			}
 		}
-	}
 
-	*GetAbilityLocation(bank) = ABILITY_UNNERVE; //Restore Unnerve so loop can continue when we return to this function
+		*GetAbilityLocation(bank) = ABILITY_UNNERVE; //Restore Unnerve so loop can continue when we return to this function
+	}
+	
 	return ret;
 }
 

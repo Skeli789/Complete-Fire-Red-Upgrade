@@ -239,7 +239,7 @@ void HandleEndTurn_RanFromBattle(void)
 	}
 	else if (RAID_BATTLE_END)
 	{
-		gActiveBattler = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
+		gActiveBattler = BANK_RAID_BOSS;
 		EmitSpriteInvisibility(0, TRUE);
 		MarkBufferBankForExecution(gActiveBattler);
 

@@ -570,10 +570,13 @@ BattleScript_OctolockTurnDmgEnd:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_DynamaxEnd:
-	callasm UpdateMaxHealthForDynamax
+	callasm UpdateHPForDynamax
 	callasm UpdateCurrentHealthForDynamaxEnd
 	reloadhealthbar BANK_SCRIPTING
+	callasm SetAndTransferDontRemoveTransformSpecies
 	playanimation BANK_SCRIPTING ANIM_TRANSFORM 0x0
+	waitanimation
+	callasm ClearAndTransferDontRemoveTransformSpecies
 	setword BATTLE_STRING_LOADER gText_DynamaxEnded
 	printstring 0x184
 	waitmessage DELAY_1SECOND

@@ -115,6 +115,8 @@ DynamaxPalFadeHook1_LoadOpponentGfx 803443C 0
 DynamaxPalFadeHook2_LoadPlayerGfx 80345FC 0
 DynamaxPalFadeHook3_AlreadyTransformed 8034DE0 0
 DynamaxPalFadeHook4_PostTransform 8034FFC 0
+DynamaxEndTransformedMonHook 8034E98 2
+ClearTemporarySpeciesSpriteData 0803589C 2
 RaidBattleCoordHook1 80744B0 0
 RaidBattleCoordHook2 80744D8 0
 HandleDynamaxOnTurnEnd 8018C98 0
@@ -192,7 +194,6 @@ CriticalCaptureAnimHook 080EFF0C 2
 DISABLE_TIME_ASM 080A7FF8 1
 WATERGUN_ASM 080A7C28 0
 ION_DELUGE_ASM 080AAC24 0
-MudBombASM 080E2590 0
 CoreEnforcerASM 080A243C 0
 
 ##Poke Ball Hooks

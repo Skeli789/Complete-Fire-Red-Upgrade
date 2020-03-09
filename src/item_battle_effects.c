@@ -987,15 +987,15 @@ static u8 ConfusionBerries(u8 bank, u8 flavour, bool8 moveTurn, bool8 doPluck) {
 
 	#ifdef OLD_CONFUSION_HEAL_BERRIES
 	if ((gBattleMons[bank].hp <= gBattleMons[bank].maxHP / 2 && !moveTurn)
-	|| (doPluck && gBattleMons[bank].hp != gBattleMons[bank].maxHP))
+	|| (doPluck && !BATTLER_MAX_HP(bank)))
 	{
 		gBattleTextBuff1[0] = 0xFD;
 		gBattleTextBuff1[1] = 8;
 		gBattleTextBuff1[2] = flavour;
 		gBattleTextBuff1[3] = EOS;
 
-		gBattleMoveDamage = gBattleMons[bank].maxHP / 8;
-		
+		gBattleMoveDamage = GetBaseMaxHP(bank) / 8;
+
 		if (ABILITY(bank) == ABILITY_RIPEN)
 			gBattleMoveDamage *= 2;
 
@@ -1011,7 +1011,7 @@ static u8 ConfusionBerries(u8 bank, u8 flavour, bool8 moveTurn, bool8 doPluck) {
 			if (GetPokeFlavourRelation(gBattleMons[bank].personality, flavour) < 0)
 				gBattlescriptCurrInstr = BattleScript_BerryConfuseHealRet;
 			else
-				gBattlescriptCurrInstr = BattleScript_BerryHealHP_RemoveBerryRet
+				gBattlescriptCurrInstr = BattleScript_BerryHealHP_RemoveBerryRet;
 		}
 		else
 		{
@@ -1023,7 +1023,7 @@ static u8 ConfusionBerries(u8 bank, u8 flavour, bool8 moveTurn, bool8 doPluck) {
 		effect = ITEM_HP_CHANGE;
 	}
 	#else
-	if (PINCH_BERRY_CHECK(bank) || (doPluck && gBattleMons[bank].hp != gBattleMons[bank].maxHP))
+	if (PINCH_BERRY_CHECK(bank) || (doPluck && !BATTLER_MAX_HP(bank)))
 	{
 		gBattleTextBuff1[0] = 0xFD;
 		gBattleTextBuff1[1] = 8;
@@ -1031,11 +1031,11 @@ static u8 ConfusionBerries(u8 bank, u8 flavour, bool8 moveTurn, bool8 doPluck) {
 		gBattleTextBuff1[3] = EOS;
 
 		#ifdef GEN_7_CONFUSION_HEAL_BERRIES
-		gBattleMoveDamage = gBattleMons[bank].maxHP / 2;
+		gBattleMoveDamage = GetBaseMaxHP(bank) / 2;
 		if (ABILITY(bank) == ABILITY_RIPEN)
 			gBattleMoveDamage *= 2;
 		#else
-		gBattleMoveDamage = gBattleMons[bank].maxHP / 3;
+		gBattleMoveDamage = GetBaseMaxHP(bank) / 3;
 		if (ABILITY(bank) == ABILITY_RIPEN)
 			gBattleMoveDamage = (gBattleMoveDamage * 4) / 3; //So total winds up being 1.666
 		#endif

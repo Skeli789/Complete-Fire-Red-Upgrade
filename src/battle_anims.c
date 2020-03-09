@@ -450,6 +450,31 @@ const union AffineAnimCmd* const gSpriteAffineAnimTable_GrowToNormalSize[] =
 	sSpriteAffineAnim_GrowToNormalSize,
 };
 
+static const union AffineAnimCmd sSpriteAffineAnim_FeintFist[] =
+{
+	AFFINEANIMCMD_FRAME(256, 256, 0, 1), //Double sprite size
+	AFFINEANIMCMD_FRAME(-16, -16, 0, 16),
+	AFFINEANIMCMD_END,
+};
+
+const union AffineAnimCmd* const gSpriteAffineAnimTable_FeintFist[] =
+{
+	sSpriteAffineAnim_FeintFist,
+};
+
+static const union AffineAnimCmd sSpriteAffineAnim_MudBombBall[] =
+{
+	AFFINEANIMCMD_FRAME(0, -8, -4, 4), //Compress Vertically
+	AFFINEANIMCMD_FRAME(-8, 8, -4, 4), //Compress Horizontally, Normalize Vertically
+	AFFINEANIMCMD_FRAME(8, -8, -4, 4), //Normalize Horizontally, Compress Vertically
+	AFFINEANIMCMD_JUMP(1),
+};
+
+const union AffineAnimCmd* const gSpriteAffineAnimTable_MudBombBall[] =
+{
+	sSpriteAffineAnim_MudBombBall,
+};
+
 static const union AffineAnimCmd sSpriteAffineAnim_FlutterbyPulsate[] =
 {
 	AFFINEANIMCMD_FRAME(16, 16, 0, 4),

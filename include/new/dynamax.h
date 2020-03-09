@@ -40,6 +40,7 @@ bool8 IsMaxMoveWithStatusEffect(u16 move);
 bool8 IsMaxMoveWithConfusionEffect(u16 move);
 bool8 IsMaxMoveWithTrapDamageEffect(u16 move);
 bool8 IsMaxMoveWithEffect(u16 move, u8 effect);
+bool8 IsMaxGuardUp(u8 bank);
 bool8 ProtectedByMaxGuard(u8 bankDef, u16 move);
 
 bool8 IsRaidBattle(void);
@@ -66,7 +67,7 @@ bool8 HasRaidBattleAlreadyBeenDone(void);
 void TryFadeBankPaletteForDynamax(u8 bank, u16 paletteOffset);
 s16 GetBattlerXCoord(u8 bank);
 s16 GetBattlerYCoord(u8 bank);
-void UpdateMaxHealthForDynamax(void);
+void UpdateHPForDynamax(void);
 void UpdateCurrentHealthForDynamaxEnd(void);
 
 //Exported Constants
