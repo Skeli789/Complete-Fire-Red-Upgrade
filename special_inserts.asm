@@ -161,26 +161,32 @@ MaxLevelChange6:
 	.byte MAX_LEVEL
 
 .org 0x41B0E, 0xFF
-MaxLevelChange13:
-	.byte MAX_LEVEL - 1
+VitaminChange1:
+	.byte EV_CAP - 1
 
 .org 0x41B1E, 0xFF
-MaxLevelChange7:
-	.byte MAX_LEVEL, 0x29, 0x6, 0xD9, MAX_LEVEL
+VitaminChange2:
+	.byte EV_CAP, 0x29, 0x6, 0xD9, EV_CAP
 
-@These commented out values refer to stat boosting items,
-@NOT max level!
-@.org 0x420E8, 0xFF
-@MaxLevelChange9:
-@	.byte MAX_LEVEL
+.org 0x420D8, 0xFF
+VitaminChange3:
+	.byte EV_CAP - 1
 
-@.org 0x420EC, 0xFF
-@MaxLevelChange10:
-@	.byte MAX_LEVEL
+.org 0x420E8, 0xFF
+VitaminChange4:
+	.byte EV_CAP, 0x29, 0x7, 0xD9, EV_CAP
 
 .org 0x4274E, 0xFF
 MaxLevelChange11:
 	.byte MAX_LEVEL
+	
+.org 0x42924, 0xFF
+VitaminChange5:
+	.byte EV_CAP - 1
+
+.org 0x42AE0, 0xFF
+VitaminChange6:
+	.byte EV_CAP - 1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Max Level - Limiter
