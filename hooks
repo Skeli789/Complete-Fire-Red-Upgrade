@@ -260,6 +260,9 @@ CalculateMonStatsNew 803E47C 1
 SetMonHeldItemHook 8040784 2
 GetMonAbility 8040D38 1
 DaycareInheritHiddenAbility 8046116 0
+RandomlyGivePartyPokerus 8043A68 1
+UpdatePartyPokerusTime 8043B38 1
+PartySpreadPokerus 8043B40 1
 SetMonExpWithMaxLevelCheck 8043B48 2
 
 ##DNS

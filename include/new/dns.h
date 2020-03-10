@@ -22,6 +22,7 @@ u32 GetHourDifference(u32 startYear, u8 startMonth, u8 startDay, u8 startHour, u
 u32 GetDayDifference(u32 startYear, u8 startMonth, u8 startDay, u32 endYear, u8 endMonth, u8 endDay);
 u32 GetMonthDifference(u32 startYear, u8 startMonth, u32 endYear, u8 endMonth);
 u32 GetYearDifference(u32 startYear, u32 endYear);
+u32 GetDaysSinceTimeInValue(u32 var);
 
 //Hooked In Functions
 void apply_map_tileset_palette(struct Tileset const* tileset, u16 destOffset, u16 size);

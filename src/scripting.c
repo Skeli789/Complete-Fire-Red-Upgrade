@@ -1625,6 +1625,13 @@ bool8 CheckAndSetDailyEvent(u16 eventVar, bool8 setDailyEventVar)
 	return toReturn;
 }
 
+u32 GetDaysSinceTimeInValue(u32 value)
+{
+	struct DailyEventVar* startTime = (struct DailyEventVar*) &value;
+
+	return GetDayDifference(startTime->year + startTime->century * 100, startTime->month, startTime->day, Clock->year, Clock->month, Clock->day);
+}
+
 //@Details: Updates the time stored in a pair of vars.
 //@Input: Var 0x8000: A var containing the daily event data.
 //					  The var after this one is used as well.

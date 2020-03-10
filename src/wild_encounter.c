@@ -390,10 +390,15 @@ enum
 
 void TryUpdateSwarm(void)
 {
+	u32 backupVar = VarGet(VAR_SWARM_DAILY_EVENT) | (VarGet(VAR_SWARM_DAILY_EVENT + 1) << 16);
+
 	if (CheckAndSetDailyEvent(VAR_SWARM_DAILY_EVENT, TRUE))
 	{
 		u16 index = Random() % gSwarmTableLength;
 		VarSet(VAR_SWARM_INDEX, index);
+
+		u32 daysSince = GetDaysSinceTimeInValue(backupVar);
+		UpdatePartyPokerusTime(daysSince);
 	}
 }
 

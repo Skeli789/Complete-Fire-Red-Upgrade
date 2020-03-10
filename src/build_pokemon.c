@@ -3514,3 +3514,97 @@ void SetMonExpWithMaxLevelCheck(struct Pokemon *mon, u16 species, unusedArg u8 u
         SetMonData(mon, MON_DATA_EXP, &data);
     }
 }
+
+void RandomlyGivePartyPokerus(struct Pokemon *party)
+{
+	u16 rnd = Random();
+	if (rnd == 0x4000 || rnd == 0x8000 || rnd == 0xC000)
+	{
+		struct Pokemon *mon;
+
+		do
+		{
+			do
+			{
+				rnd = Random() % PARTY_SIZE;
+				mon = &party[rnd];
+			}
+			while (!GetMonData(mon, MON_DATA_SPECIES, 0));
+		}
+		while (GetMonData(mon, MON_DATA_IS_EGG, 0));
+
+		if (!(CheckPartyHasHadPokerus(party, gBitTable[rnd])))
+		{
+			u8 rnd2;
+
+			do
+			{
+				rnd2 = Random();
+			}
+			while ((rnd2 & 0x7) == 0);
+
+			if (rnd2 & 0xF0)
+				rnd2 &= 0x7;
+
+			rnd2 |= (rnd2 << 4);
+			rnd2 &= 0xF3;
+			rnd2++;
+
+			SetMonData(&party[rnd], MON_DATA_POKERUS, &rnd2);
+		}
+	}
+}
+
+void UpdatePartyPokerusTime(u16 days)
+{
+    int i;
+    for (i = 0; i < PARTY_SIZE; i++)
+    {
+        if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES, NULL))
+        {
+            u8 pokerus = GetMonData(&gPlayerParty[i], MON_DATA_POKERUS, NULL);
+            if (pokerus & 0xF)
+            {
+                if ((pokerus & 0xF) < days || days > 4)
+                    pokerus &= 0xF0;
+                else
+                    pokerus -= days;
+
+                if (pokerus == 0)
+                    pokerus = 0x10;
+
+                SetMonData(&gPlayerParty[i], MON_DATA_POKERUS, &pokerus);
+            }
+        }
+    }
+}
+
+void PartySpreadPokerus(struct Pokemon *party)
+{
+	if ((Random() % 3) == 0)
+	{
+		int i;
+		for (i = 0; i < PARTY_SIZE; i++)
+		{
+			if (GetMonData(&party[i], MON_DATA_SPECIES, NULL))
+			{
+				u8 pokerus = GetMonData(&party[i], MON_DATA_POKERUS, NULL);
+				u8 curPokerus = pokerus;
+				if (pokerus)
+				{
+					if (pokerus & 0xF)
+					{
+						// Spread to adjacent party members.
+						if (i != 0 && !(GetMonData(&party[i - 1], MON_DATA_POKERUS, NULL) & 0xF0))
+							SetMonData(&party[i - 1], MON_DATA_POKERUS, &curPokerus);
+						if (i != (PARTY_SIZE - 1) && !(GetMonData(&party[i + 1], MON_DATA_POKERUS, NULL) & 0xF0))
+						{
+							SetMonData(&party[i + 1], MON_DATA_POKERUS, &curPokerus);
+							i++;
+						}
+					}
+				}
+			}
+		}
+	}
+}

@@ -438,24 +438,43 @@ u32 GetHourDifference(u32 startYear, u8 startMonth, u8 startDay, u8 startHour, u
 
 u32 GetDayDifference(u32 startYear, u8 startMonth, u8 startDay, u32 endYear, u8 endMonth, u8 endDay)
 {
-	u32 days = 0;
+	const u16 cumDays[] = {0,31,59,90,120,151,181,212,243,273,304,334}; //Cumulative Days by month
+	const u16 leapcumDays[] = {0,31,60,91,121,152,182,213,244,274,305,335}; //Cumulative Days by month for leap year
+	u32 totdays = 0;
+	
+	if (!IsDate1BeforeDate2(startYear, startMonth, startDay, endYear, endMonth, endDay))
+		return 0;
 
-	if (startYear == 0 && endYear >= 2018) //Player recently activated their clock
-	{ //Save time and skip ahead
-		days = 737060;
-		startYear = 2018;
-		startMonth = 1;
-		startDay = 1;
-	}
-
-	//Increment until current date is reached
-	while (IsDate1BeforeDate2(startYear, startMonth, startDay, endYear, endMonth, endDay) && days < 0xFFFFFFFF)
+	if (startYear == endYear)
 	{
-		++days;
-		IncreaseDateByOneDay(&startYear, &startMonth, &startDay); /* works on year, month and day variables */
+		if (IsLeapYear(startYear))
+			return (leapcumDays[endMonth - 1] + endDay) - (leapcumDays[startMonth - 1] + startDay);
+		else
+			return (cumDays[endMonth-1] + endDay) - (cumDays[startMonth - 1] + startDay);
 	}
 
-	return days;
+	if (IsLeapYear(startYear))
+		totdays = totdays + 366 - (leapcumDays[startMonth - 1] + startDay);
+	else
+		totdays = totdays + 365 - (cumDays[startMonth - 1] + startDay);
+
+	u32 year = startYear + 1;
+	while (year < endYear)
+	{
+		if (IsLeapYear(year))
+			totdays = totdays + 366;
+		else
+			totdays = totdays + 365;
+
+		year = year + 1;
+	}
+
+    if (IsLeapYear(endYear))
+        totdays = totdays + (leapcumDays[endMonth - 1] + endDay);
+    else
+        totdays = totdays + (cumDays[endMonth - 1] + endDay);
+
+    return totdays;
 }
 
 u32 GetMonthDifference(u32 startYear, u8 startMonth, u32 endYear, u8 endMonth)
