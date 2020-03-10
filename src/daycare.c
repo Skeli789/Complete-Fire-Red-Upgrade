@@ -4,11 +4,12 @@
 #include "../include/pokemon_storage_system.h"
 #include "../include/random.h"
 #include "../include/constants/abilities.h"
+#include "../include/constants/hold_effects.h"
 #include "../include/constants/items.h"
 #include "../include/constants/moves.h"
+#include "../include/constants/region_map_sections.h"
 #include "../include/constants/species.h"
 #include "../include/constants/pokedex.h"
-#include "../include/constants/hold_effects.h"
 
 #include "../include/new/build_pokemon.h"
 #include "../include/new/catching.h"
@@ -615,8 +616,9 @@ static void SetInitialEggData(struct Pokemon* mon, u16 species, u32 personality)
 void CreateEgg(struct Pokemon *mon, u16 species) //The function used by the giveegg scripting command
 {
 	u8 metLevel = 0;
-	u16 ball = BALL_TYPE_POKE_BALL;
+	u8 metLocation = METLOC_SPECIAL_EGG;
 	u8 language = GAME_LANGUAGE;
+	u16 ball = BALL_TYPE_POKE_BALL;
 	bool8 isEgg = TRUE;
 
 	CreateMon(mon, species, EGG_HATCH_LEVEL, 0x20, FALSE, 0, FALSE, 0);
@@ -624,6 +626,7 @@ void CreateEgg(struct Pokemon *mon, u16 species) //The function used by the give
 	SetMonData(mon, MON_DATA_NICKNAME, (void*) 0x825F83E);
 	SetMonData(mon, MON_DATA_FRIENDSHIP, &gBaseStats[species].eggCycles);
 	SetMonData(mon, MON_DATA_MET_LEVEL, &metLevel);
+	SetMonData(mon, MON_DATA_MET_LOCATION, &metLocation);
 	SetMonData(mon, MON_DATA_LANGUAGE, &language);
 	SetMonData(mon, MON_DATA_IS_EGG, &isEgg);
 }
