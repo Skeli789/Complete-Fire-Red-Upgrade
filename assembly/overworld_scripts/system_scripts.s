@@ -550,7 +550,24 @@ EventScript_CantSurface:
 EventScript_EndSurface:
 	releaseall
 	end
-	
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.equ FLAG_SYS_USE_FLASH, 0x806
+.global EventScript_UseFlash
+EventScript_UseFlash:
+	lockall
+	bufferpartypokemon 0x0 0x8004
+	bufferattack 0x1 MOVE_FLASH
+	setflag FLAG_SYS_USE_FLASH
+	msgbox 0x81BDFD7 MSG_NORMAL
+	checksound
+	sound 0xC8
+	lighten 0x0
+	darken 0x0
+	releaseall
+	end
+
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 .global EventScript_LockedDoor

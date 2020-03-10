@@ -202,3 +202,4 @@
 .equ MAP_SCRIPT_ON_RESUM, 5					@On entering map/on menu close
 .equ MAP_SCRIPT_ON_DIVE_WARP, 6
 .equ MAP_SCRIPT_ON_RETURN_TO_FIELD, 7
+.equ LEVEL_SCRIPT_TERMIN, 0

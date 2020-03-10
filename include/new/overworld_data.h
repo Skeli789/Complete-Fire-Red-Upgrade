@@ -49,3 +49,4 @@ extern const u8 EventScript_UseWaterfall[];
 extern const u8 EventScript_WallOfWater[];
 extern const u8 EventScript_UseRockClimb[];
 extern const u8 EventScript_JustRockWall[];
+extern const u8 EventScript_UseFlash[];

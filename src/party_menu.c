@@ -984,6 +984,11 @@ bool8 HasBadgeToUseSurf(void)
 	return HasBadgeToUseFieldMove(FIELD_MOVE_SURF);
 }
 
+bool8 HasBadgeToUseFlash(void)
+{
+	return HasBadgeToUseFieldMove(FIELD_MOVE_FLASH);
+}
+
 bool8 HasBadgeToUseWaterfall(void)
 {
 	return HasBadgeToUseFieldMove(FIELD_MOVE_WATERFALL);

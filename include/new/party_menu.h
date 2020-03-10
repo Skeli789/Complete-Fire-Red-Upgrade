@@ -24,9 +24,21 @@ void DisplayPartyPokemonSelectForBattle(u8 slot);
 u8 CanPokemonSelectedBeEnteredInBattleTower(void);
 bool8 HasBadgeToUseFieldMove(u8 id);
 bool8 HasBadgeToUseSurf(void);
+bool8 HasBadgeToUseFlash(void);
 bool8 HasBadgeToUseWaterfall(void);
 bool8 HasBadgeToUseRockClimb(void);
 bool8 HasBadgeToUseDive(void);
+
+void sp100_CanPlayerUseFlashInCurrentLocation(void);
+void sp101_CanPlayerFlyInCurrentLocation(void);
+void sp102_IsPlayerFacingSurfableWater(void);
+void sp103_IsPlayerFacingClimbableWaterfall(void);
+void sp104_IsPlayerOnDiveableWater(void);
+void sp105_IsPlayerFacingClimbableWall(void);
+void sp109_IsPlayerFacingNPCWithOverworldPic(void);
+void sp10A_CanUseCutOnTree(void);
+void sp10B_CanUseRockSmashOnRock(void);
+void sp10C_CanUseStrengthOnBoulder(void);
 
 //Exported Data Structures
 //extern const struct XX gPartyMenuCursorOptions[];

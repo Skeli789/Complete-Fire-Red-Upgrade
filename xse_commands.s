@@ -1567,5 +1567,5 @@
 
 .macro levelscript var val script
 .hword \var, \val
-.word script
+.word \script
 .endm

@@ -1465,19 +1465,41 @@ static bool8 SafariZoneTakeStep(void)
 	return FALSE;
 }
 
+#ifdef ONLY_CHECK_ITEM_FOR_HM_USAGE
+static const u8* TryUseFlashInDarkCave(void)
+{
+	sp100_CanPlayerUseFlashInCurrentLocation();
+
+	if (gSpecialVar_LastResult && HasBadgeToUseFlash())
+	{
+		if ((Var8004 = ((u32*) gFieldEffectArguments)[0] = PartyHasMonWithFieldMovePotential(MOVE_FLASH, ITEM_TM70_FLASH, 0)) < PARTY_SIZE)
+			return EventScript_UseFlash;
+	}
+	
+	return NULL;
+}
+#endif
+
 bool8 TryRunOnFrameMapScript(void)
 {
 	TryUpdateSwarm();
 
 	if (gQuestLogMode != 3)
 	{
-		u8 *ptr = MapHeaderCheckScriptTable(MAP_SCRIPT_ON_FRAME_TABLE);
+		const u8* ptr;
+	
+		#ifdef ONLY_CHECK_ITEM_FOR_HM_USAGE
+		ptr = TryUseFlashInDarkCave();
 
-		if (!ptr)
-			return FALSE;
+		if (ptr == NULL)
+		#endif
+			ptr = MapHeaderCheckScriptTable(MAP_SCRIPT_ON_FRAME_TABLE);
 
-		ScriptContext1_SetupScript(ptr);
-		return TRUE;
+		if (ptr != NULL)
+		{
+			ScriptContext1_SetupScript(ptr);
+			return TRUE;
+		}
 	}
 
 	return FALSE;
