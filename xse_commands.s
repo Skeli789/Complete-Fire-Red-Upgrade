@@ -1559,3 +1559,13 @@
 .hword \bufferitems2_item
 .hword \bufferitems2_amount
 .endm
+
+.macro mapscript tag pointer
+.byte \tag
+.word \pointer
+.endm
+
+.macro levelscript var val script
+.hword \var, \val
+.word script
+.endm

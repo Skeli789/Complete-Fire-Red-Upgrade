@@ -1021,7 +1021,7 @@ void atkFF2F_setmaxmoveeffect(void)
 
 		case MAX_EFFECT_YAWN_FOE:
 			if (BATTLER_ALIVE(gBankTarget)
-			&& CanBePutToSleep(gBankTarget, TRUE)
+			&& CanBeYawned(gBankTarget)
 			&& !(gStatuses3[gBankTarget] & STATUS3_YAWN)
 			&& (Random() & 1) == 0) //50 % chance target is put to sleep
 			{

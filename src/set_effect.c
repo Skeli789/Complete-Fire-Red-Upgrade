@@ -136,14 +136,7 @@ void atk15_seteffectwithchance(void)
 		}
 		else if (Random() % 100 <= PercentChance && gBattleCommunication[MOVE_EFFECT_BYTE] != 0 && MOVE_HAD_EFFECT)
 		{
-			if (PercentChance >= 100)
-			{
-				SetMoveEffect(FALSE, MOVE_EFFECT_CERTAIN);
-			}
-			else
-			{
-				SetMoveEffect(FALSE, 0);
-			}
+			SetMoveEffect(FALSE, 0);
 		}
 		else
 			gBattlescriptCurrInstr++;

@@ -3082,7 +3082,7 @@ bool8 TrySpitePPReduce(u8 bank, u8 lostPP)
 
 	if (gLastUsedMoves[bank] != MOVE_NONE && gLastUsedMoves[bank] != 0xFFFF
 	&& movePos < MAX_MON_MOVES && gBattleMons[bank].pp[movePos] > 0
-	&& (!BATTLER_SEMI_INVULNERABLE(bank) || ABILITY(gBankAttacker) == ABILITY_NOGUARD || ABILITY(bank) == ABILITY_NOGUARD))
+	&& (!BATTLER_SEMI_INVULNERABLE(bank) || CanHitSemiInvulnerableTarget(gBankAttacker, bank, MOVE_SPITE)))
 	{
 		if (gBattleMons[bank].pp[movePos] < lostPP)
 			lostPP = gBattleMons[bank].pp[movePos];
@@ -3205,7 +3205,7 @@ void atkAE_healpartystatus(void)
 void atkAF_cursetarget(void)
 {
 	if (gBattleMons[gBankTarget].status2 & STATUS2_CURSED
-	|| (gStatuses3[gBankTarget] & STATUS3_SEMI_INVULNERABLE && ABILITY(gBankAttacker) != ABILITY_NOGUARD && ABILITY(gBankTarget) != ABILITY_NOGUARD))
+	|| (BATTLER_SEMI_INVULNERABLE(gBankTarget) && !CanHitSemiInvulnerableTarget(gBankAttacker, gBankTarget, gCurrentMove)))
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
 
 	else {

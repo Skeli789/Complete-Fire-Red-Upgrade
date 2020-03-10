@@ -3120,6 +3120,7 @@ u8 ScriptGiveMon(u16 species, u8 level, u16 item, unusedArg u32 unused1, u32 cus
 			nature = Random() % NUM_NATURES;
 
 		GiveMonNatureAndAbility(&mon, nature, GetMonData(&mon, MON_DATA_PERSONALITY, NULL) & 1, shiny);
+		MonRestorePP(&mon);
 	}
 	#endif
 

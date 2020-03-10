@@ -2,6 +2,8 @@
 #include "defines_battle.h"
 #include "../include/random.h"
 #include "../include/party_menu.h"
+#include "../include/constants/songs.h"
+#include "../include/constants/trainer_classes.h"
 
 #include "../include/new/ability_battle_scripts.h"
 #include "../include/new/ai_master.h"
@@ -46,6 +48,7 @@ enum SwitchInStates
 	SwitchIn_Items,
 	SwitchIn_AirBalloon,
 	SwitchIn_TotemPokemon,
+	SwitchIn_LastPokemonMusic,
 	SwitchIn_TrainerMessage,
 	SwitchIn_PreEnd,
 	SwitchIn_EjectPack,
@@ -757,6 +760,19 @@ void atk52_switchineffects(void)
 				return;
 			}
 			++gNewBS->SwitchInEffectsTracker;
+		__attribute__ ((fallthrough));
+
+		case SwitchIn_LastPokemonMusic:
+			++gNewBS->SwitchInEffectsTracker;
+			#ifdef UNBOUND
+			if (!(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_TRAINER_TOWER))
+			&& gTrainers[gTrainerBattleOpponent_A].trainerClass == CLASS_LEADER
+			&& ((IS_SINGLE_BATTLE && ViableMonCount(gEnemyParty) <= 1)
+			 || (IS_DOUBLE_BATTLE && ViableMonCount(gEnemyParty) <= 2)))
+			{
+				PlayBGM(BGM_BATTLE_GYM_LEADER_LAST_POKEMON);
+			}
+			#endif
 		__attribute__ ((fallthrough));
 
 		case SwitchIn_TrainerMessage:

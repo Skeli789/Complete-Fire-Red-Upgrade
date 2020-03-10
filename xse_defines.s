@@ -193,3 +193,12 @@
 .equ THURSDAY, 0x4
 .equ FRIDAY, 0x5
 .equ SATURDAY, 0x6
+
+.equ MAP_SCRIPT_TERMIN, 0
+.equ MAP_SCRIPT_ON_LOAD, 1						@Setmaptile
+.equ MAP_SCRIPT_ON_FRAME_TABLE, 2				@Level Script
+.equ MAP_SCRIPT_ON_TRANSITION, 3				@On entering map/not on menu close
+.equ MAP_SCRIPT_ON_WARP_INTO_MAP_TABLE, 4		@Level Script 2 (eg. face up on enter map)
+.equ MAP_SCRIPT_ON_RESUM, 5					@On entering map/on menu close
+.equ MAP_SCRIPT_ON_DIVE_WARP, 6
+.equ MAP_SCRIPT_ON_RETURN_TO_FIELD, 7

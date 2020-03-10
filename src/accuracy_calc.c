@@ -276,9 +276,7 @@ bool8 DoesProtectionMoveBlockMove(u8 bankAtk, u8 bankDef, u16 atkMove, u16 prote
 static bool8 AccuracyCalcHelper(u16 move)
 {
 	u8 doneStatus = FALSE;
-	if (ABILITY(gBankAttacker) != ABILITY_NOGUARD
-	&&  ABILITY(gBankTarget)   != ABILITY_NOGUARD
-	&&  !((gStatuses3[gBankTarget] & STATUS3_ALWAYS_HITS) && gDisableStructs[gBankTarget].bankWithSureHit == gBankAttacker))
+	if (!CanHitSemiInvulnerableTarget(gBankAttacker, gBankTarget, gCurrentMove))
 	{
 		if (((gStatuses3[gBankTarget] & (STATUS3_IN_AIR | STATUS3_SKY_DROP_ATTACKER | STATUS3_SKY_DROP_TARGET)) && !CheckTableForMove(move, gIgnoreInAirMoves))
 		||  ((gStatuses3[gBankTarget] & STATUS3_UNDERGROUND) && !CheckTableForMove(move, gIgnoreUndergoundMoves))
@@ -409,7 +407,12 @@ static u32 AccuracyCalcPassDefAbilityItemEffect(u16 move, u8 bankAtk, u8 bankDef
 		}
 
 		if (gBattleWeather & WEATHER_FOG_ANY)
-			calc = udivsi((calc * 60), 100); // 0.6 Fog loss
+		{
+			#ifdef UNBOUND
+			if (atkAbility != ABILITY_KEENEYE && atkAbility != ABILITY_INFILTRATOR)
+			#endif
+				calc = udivsi((calc * 60), 100); // 0.6 Fog loss
+		}
 	}
 
 	if (defAbility == ABILITY_TANGLEDFEET && IsConfused(bankDef))
@@ -493,7 +496,12 @@ u32 VisualAccuracyCalc_NoTarget(u16 move, u8 bankAtk)
 		calc = udivsi((calc * 110), 100); // 1.1 Victory Star partner boost
 
 	if (WEATHER_HAS_EFFECT &&  gBattleWeather & WEATHER_FOG_ANY)
-		calc = udivsi((calc * 60), 100); // 0.6 Fog loss
+	{
+		#ifdef UNBOUND
+		if (atkAbility != ABILITY_KEENEYE && atkAbility != ABILITY_INFILTRATOR)
+		#endif
+			calc = udivsi((calc * 60), 100); // 0.6 Fog loss
+	}
 
 	if (atkEffect == ITEM_EFFECT_WIDE_LENS)
 		calc = udivsi((calc * (100 + atkQuality)), 100); // 1.1 Wide Lens boost

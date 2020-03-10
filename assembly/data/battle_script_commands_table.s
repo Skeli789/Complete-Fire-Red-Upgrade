@@ -229,7 +229,7 @@ gBattleScriptingCommandsTable:
 .word atkD4_trywish
 .word 0x802c4dd					@setroots
 .word 0x802c535					@doubledamagedealtifdamaged
-.word 0x802c595					@setyawn
+.word atkD7_setyawn
 .word atkD8_setdamagetohealthdifference
 .word 0x802c671					@scaledamagebyhealthratio
 .word atkDA_tryswapabilities	@abilityswap

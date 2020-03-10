@@ -273,6 +273,12 @@ static u16 DetermineEggSpeciesAndParentSlots(struct DayCare* daycare, u8* parent
 			break;
 		#endif
 
+		#if (defined NATIONAL_DEX_PIKACHU && defined SPECIES_PICHU)
+		case NATIONAL_DEX_PIKACHU: //Get's all the special forms
+			eggSpecies = SPECIES_PICHU;
+			break;
+		#endif
+
 		#if (defined NATIONAL_DEX_ILLUMISE && defined SPECIES_VOLBEAT)
 		case NATIONAL_DEX_ILLUMISE:
 			if (personality & 0x8000)
@@ -289,6 +295,12 @@ static u16 DetermineEggSpeciesAndParentSlots(struct DayCare* daycare, u8* parent
 		#if (defined NATIONAL_DEX_ROTOM && defined SPECIES_ROTOM)
 		case NATIONAL_DEX_ROTOM:
 			eggSpecies = SPECIES_ROTOM;
+			break;
+		#endif
+
+		#if (defined NATIONAL_DEX_VIVILLON && defined SPECIES_SCATTERBUG)
+		case NATIONAL_DEX_VIVILLON:
+			eggSpecies = SPECIES_SCATTERBUG;
 			break;
 		#endif
 
@@ -736,7 +748,7 @@ static u8 GetEggStepsToSubtract(void)
 	return 1;
 }
 
-void SubtractEggSteps(u32 steps, struct Pokemon* mon)
+u32 SubtractEggSteps(u32 steps, struct Pokemon* mon)
 {
 	u8 toSub = GetEggStepsToSubtract();
 
@@ -746,6 +758,29 @@ void SubtractEggSteps(u32 steps, struct Pokemon* mon)
 		steps -= 1;
 
 	SetMonData(mon, MON_DATA_FRIENDSHIP, &steps);
+	return steps;
+}
+
+void TryDecrementingDaycareStepCounterIfMoreEggsToHatch(struct DayCare* daycare, u8 ignoreId)
+{
+	u32 i, steps;
+
+	for (i = 0; i < gPlayerPartyCount; ++i)
+	{
+		if (i == ignoreId)
+			continue;
+		if (!GetMonData(&gPlayerParty[i], MON_DATA_IS_EGG, NULL))
+			continue;
+		if (GetMonData(&gPlayerParty[i], MON_DATA_SANITY_IS_BAD_EGG, NULL))
+			continue;
+
+		steps = GetMonData(&gPlayerParty[i], MON_DATA_FRIENDSHIP, NULL);
+		if (steps == 0 || steps == 1)
+		{
+			daycare->stepCounter--;
+			return; //So the next Egg can hatch on the next step
+		}
+	}
 }
 
 u8 ModifyBreedingScoreForOvalCharm(u8 score)

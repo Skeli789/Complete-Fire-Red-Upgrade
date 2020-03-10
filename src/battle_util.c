@@ -190,6 +190,17 @@ u8 GetBankFromPartyData(struct Pokemon* mon)
 	return PARTY_SIZE;
 }
 
+bool8 CanHitSemiInvulnerableTarget(u8 bankAtk, u8 bankDef, u16 move)
+{
+	if (ABILITY(bankAtk) == ABILITY_NOGUARD || ABILITY(bankDef) == ABILITY_NOGUARD)
+		return TRUE;
+	
+	if (move == MOVE_TOXIC && IsOfType(bankAtk, TYPE_POISON))
+		return TRUE;
+
+	return gStatuses3[bankDef] & STATUS3_ALWAYS_HITS && gDisableStructs[bankDef].bankWithSureHit == bankAtk;
+}
+
 bool8 CheckGrounding(u8 bank)
 {
 	if (gStatuses3[bank] & STATUS3_IN_AIR)
@@ -1031,7 +1042,7 @@ bool8 IsAffectedByPowderByDetails(u8 type1, u8 type2, u8 type3, u8 ability, u8 i
 bool8 MoveIgnoresSubstitutes(u16 move, u8 atkAbility)
 {
 	return CheckSoundMove(move)
-		|| atkAbility == ABILITY_INFILTRATOR
+		|| (atkAbility == ABILITY_INFILTRATOR && move != MOVE_TRANSFORM && move != MOVE_SKYDROP)
 		|| CheckTableForMove(move, gSubstituteBypassMoves);
 }
 
@@ -1344,6 +1355,45 @@ bool8 CanBePutToSleep(u8 bank, bool8 checkFlowerVeil)
 
 	if (DoesSleepClausePrevent(bank))
 		return FALSE;
+
+	return TRUE;
+}
+
+bool8 CanBeYawned(u8 bank)
+{
+	#ifdef SPECIES_MINIOR_SHIELD
+	if (ABILITY(bank) == ABILITY_SHIELDSDOWN
+	&&  GetBankPartyData(bank)->species == SPECIES_MINIOR_SHIELD) //Prevents Ditto from getting this benefit
+		return FALSE;
+	#endif
+
+	if (ABILITY(PARTNER(bank)) == ABILITY_FLOWERVEIL && IsOfType(bank, TYPE_GRASS) && !(gHitMarker & HITMARKER_IGNORE_SAFEGUARD))
+		return FALSE;
+
+	if (gTerrainType == ELECTRIC_TERRAIN && CheckGrounding(bank))
+		return FALSE;
+
+	if (gBattleMons[bank].status1 != STATUS1_NONE)
+		return FALSE;
+
+	if (gSideAffecting[SIDE(bank)] & SIDE_STATUS_SAFEGUARD && !(gHitMarker & HITMARKER_IGNORE_SAFEGUARD))
+		return FALSE;
+
+	switch (ABILITY(bank)) {
+		case ABILITY_INSOMNIA:
+		case ABILITY_VITALSPIRIT:
+		case ABILITY_SWEETVEIL:
+		case ABILITY_COMATOSE:
+			return FALSE;
+		case ABILITY_LEAFGUARD:
+			if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY && ITEM_EFFECT(bank) != ITEM_EFFECT_UTILITY_UMBRELLA)
+				return FALSE;
+			break;
+		case ABILITY_FLOWERVEIL:
+			if (IsOfType(bank, TYPE_GRASS))
+				return FALSE;
+			break;
+	}
 
 	return TRUE;
 }

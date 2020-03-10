@@ -17,7 +17,7 @@ void CreateEgg(struct Pokemon *mon, u16 species);
 void GiveEggFromDaycare(struct DayCare* daycare);
 void TriggerPendingDaycareEgg(unusedArg struct DayCare *daycare);
 void CreatedHatchedMon(struct Pokemon *egg, struct Pokemon *temp);
-void SubtractEggSteps(u32 steps, struct Pokemon* mon);
+u32 SubtractEggSteps(u32 steps, struct Pokemon* mon);
 
 //Exported Constants
 #define EGG_MOVES_ARRAY_COUNT 50

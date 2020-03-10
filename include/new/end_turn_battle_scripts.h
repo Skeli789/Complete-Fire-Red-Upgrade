@@ -12,7 +12,6 @@
 #define BattleScript_SunlightFaded (u8*) 0x81D8B18
 #define BattleScript_SunlightContinues (u8*) 0x81D8B0A
 #define BattleScript_SandStormHailEnds (u8*) 0x81D8B01
-#define BattleScript_DamagingWeatherContinues (u8*) 0x81D8A7F
 #define BattleScript_WishComesTrue ((u8*) 0x81D8ED5)
 #define BattleScript_ShedSkinActivates ((u8*) 0x81D92D3)
 #define BattleScript_IngrainTurnHeal ((u8*) 0x81D8F0C)
@@ -34,6 +33,8 @@
 #define BattleScript_HandleFaintedMon ((u8*) 0x81D869D)
 
 extern const u8 BattleScript_MysteriousAirCurrentContinues[];
+extern const u8 BattleScript_SandstormHailContinues[];
+extern const u8 BattleScript_WeatherDamage[];
 extern const u8 BattleScript_FogEnded[];
 extern const u8 BattleScript_FogContinues[];
 extern const u8 BattleScript_SeaOfFireDamage[];

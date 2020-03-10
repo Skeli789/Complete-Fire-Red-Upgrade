@@ -10,6 +10,7 @@
 #include "../include/new/end_turn.h"
 #include "../include/new/end_turn_battle_scripts.h"
 #include "../include/new/form_change.h"
+#include "../include/new/general_bs_commands.h"
 #include "../include/new/item_battle_scripts.h"
 #include "../include/new/move_battle_scripts.h"
 #include "../include/new/switching.h"
@@ -24,13 +25,8 @@ enum EndTurnEffects
 {
 	ET_Order,
 	ET_General_Counter_Decrement,
-	ET_Rain,
-	ET_Sun,
-	ET_Sandstorm,
-	ET_Hail,
-	ET_Air_Current,
-	ET_Fog,
-	ET_Weather_Health_Abilities,
+	ET_Weather,
+	ET_Weather_Damage_Health_Abilities,
 	ET_Future_Sight,
 	ET_Wish,
 	ET_Block_A,
@@ -206,7 +202,7 @@ u8 TurnBasedEffects(void)
 				++gBattleStruct->turnEffectsTracker;
 			__attribute__ ((fallthrough));
 
-			case ET_Rain:
+			case ET_Weather:
 				if (gBattleWeather & WEATHER_RAIN_ANY)
 				{
 					if (!(gBattleWeather & WEATHER_RAIN_PERMANENT)
@@ -227,11 +223,7 @@ u8 TurnBasedEffects(void)
 					BattleScriptExecute(BattleScript_RainContinuesOrEnds);
 					effect++;
 				}
-				gBattleStruct->turnEffectsBank = gBattlersCount;
-				break;
-
-			case ET_Sun:
-				if (gBattleWeather & WEATHER_SUN_ANY)
+				else if (gBattleWeather & WEATHER_SUN_ANY)
 				{
 					if (!(gBattleWeather & WEATHER_SUN_PERMANENT)
 					&& --gWishFutureKnock->weatherDuration == 0)
@@ -246,11 +238,7 @@ u8 TurnBasedEffects(void)
 					BattleScriptExecute(gBattlescriptCurrInstr);
 					effect++;
 				}
-				gBattleStruct->turnEffectsBank = gBattlersCount;
-				break;
-
-			case ET_Sandstorm:
-				if (gBattleWeather & WEATHER_SANDSTORM_ANY)
+				else if (gBattleWeather & WEATHER_SANDSTORM_ANY)
 				{
 					if (!(gBattleWeather & WEATHER_SANDSTORM_PERMANENT)
 					&& --gWishFutureKnock->weatherDuration == 0)
@@ -260,7 +248,7 @@ u8 TurnBasedEffects(void)
 					}
 					else
 					{
-						gBattlescriptCurrInstr = BattleScript_DamagingWeatherContinues;
+						gBattlescriptCurrInstr = BattleScript_SandstormHailContinues;
 					}
 
 					gBattleScripting->animArg1 = B_ANIM_SANDSTORM_CONTINUES;
@@ -268,11 +256,7 @@ u8 TurnBasedEffects(void)
 					BattleScriptExecute(gBattlescriptCurrInstr);
 					effect++;
 				}
-				gBattleStruct->turnEffectsBank = gBattlersCount;
-				break;
-
-			case ET_Hail:
-				if (gBattleWeather & WEATHER_HAIL_ANY)
+				else if (gBattleWeather & WEATHER_HAIL_ANY)
 				{
 					if (!(gBattleWeather & WEATHER_HAIL_PERMANENT)
 					&& --gWishFutureKnock->weatherDuration == 0)
@@ -282,7 +266,7 @@ u8 TurnBasedEffects(void)
 					}
 					else
 					{
-						gBattlescriptCurrInstr = BattleScript_DamagingWeatherContinues;
+						gBattlescriptCurrInstr = BattleScript_SandstormHailContinues;
 					}
 
 					gBattleScripting->animArg1 = B_ANIM_HAIL_CONTINUES;
@@ -290,20 +274,12 @@ u8 TurnBasedEffects(void)
 					BattleScriptExecute(gBattlescriptCurrInstr);
 					effect++;
 				}
-				gBattleStruct->turnEffectsBank = gBattlersCount;
-				break;
-
-			case ET_Air_Current:
-				if (gBattleWeather & WEATHER_AIR_CURRENT_PRIMAL)
+				else if (gBattleWeather & WEATHER_AIR_CURRENT_PRIMAL)
 				{
 					BattleScriptExecute(BattleScript_MysteriousAirCurrentContinues);
 					effect++;
 				}
-				gBattleStruct->turnEffectsBank = gBattlersCount;
-				break;
-
-			case ET_Fog:
-				if (gBattleWeather & WEATHER_FOG_ANY)
+				else if (gBattleWeather & WEATHER_FOG_ANY)
 				{
 					if (!(gBattleWeather & WEATHER_FOG_PERMANENT)
 					&& --gWishFutureKnock->weatherDuration == 0)
@@ -321,7 +297,7 @@ u8 TurnBasedEffects(void)
 				gBattleStruct->turnEffectsBank = gBattlersCount;
 				break;
 
-			case ET_Weather_Health_Abilities:
+			case ET_Weather_Damage_Health_Abilities:
 				if (BATTLER_ALIVE(gActiveBattler))
 				{
 					gLastUsedAbility = ABILITY(gActiveBattler);
@@ -336,6 +312,24 @@ u8 TurnBasedEffects(void)
 						case ABILITY_FORECAST:
 							if (AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, gActiveBattler, 0, 0, 0))
 								effect++;
+							break;
+					}
+
+					if (!effect)
+					{
+						if (gBattleWeather & WEATHER_HAIL_ANY)
+						{
+							if (TakesDamageFromHail(gActiveBattler))
+								effect++;
+						}
+						else if (gBattleWeather & WEATHER_SANDSTORM_ANY)
+						{
+							if (TakesDamageFromSandstorm(gActiveBattler))
+								effect++;
+						}
+
+						if (effect)
+							BattleScriptExecute(BattleScript_WeatherDamage);
 					}
 				}
 				break;

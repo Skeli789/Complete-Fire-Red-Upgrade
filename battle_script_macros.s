@@ -1263,7 +1263,7 @@
 	.byte 0xd6
 	.endm
 
-	.macro setyawn rom_address
+	.macro cansetyawn rom_address
 	.byte 0xd7
 	.4byte \rom_address
 	.endm

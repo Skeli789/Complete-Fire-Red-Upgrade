@@ -447,7 +447,16 @@ NoRunning:
 FlameBodyMagmaArmorEggHook:
 	mov r1, r4
 	bl SubtractEggSteps
+	cmp r0, #0x0
+	beq TimeToHatchEgg @A change implemented in Gen 5
 	ldr r0, =0x804639E | 1
+	bx r0
+
+TimeToHatchEgg:
+	mov r0, r6
+	mov r1, r5
+	bl TryDecrementingDaycareStepCounterIfMoreEggsToHatch
+	ldr r0, =0x8046380 | 1
 	bx r0
 
 .pool

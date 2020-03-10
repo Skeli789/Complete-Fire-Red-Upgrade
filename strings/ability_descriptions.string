@@ -1,3 +1,5 @@
+#include "src/config.h"
+
 #org @DESC_SWEETVEIL
 Keeps user and allies awake.
 
@@ -70,7 +72,11 @@ Boosts "not very effective\" moves.
 Weakens super-effective moves.
 
 #org @DESC_INFILTRATOR
+#ifdef UNBOUND
+Passes through barriers and Fog.
+#else
 Passes through barriers.
+#endif
 
 #org @DESC_DOWNLOAD
 Adjusts power from foe's stats.

@@ -157,7 +157,7 @@ void atkFF02_cureprimarystatus(void)
 //jumpifpartnerattack BANK MOVE ROM_OFFSET
 void atkFF03_jumpifpartnerattack(void)
 {
-	if (!(gBattleTypeFlags & BATTLE_TYPE_DOUBLE))
+	if (IS_SINGLE_BATTLE)
 		gBattlescriptCurrInstr += 8;
 
 	u8 bank = PARTNER(GetBattleBank(gBattlescriptCurrInstr[1]));
@@ -1347,7 +1347,13 @@ void atkFF29_trysetsleep(void)
 	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
 	bool8 fail = FALSE;
 
-	if (AbilityBattleEffects(ABILITYEFFECT_ABSORBING, bank, 0, 0, gCurrentMove))
+	if (BATTLER_SEMI_INVULNERABLE(bank) && !CanHitSemiInvulnerableTarget(gBankAttacker, bank, gCurrentMove))
+	{
+		gMoveResultFlags |= MOVE_RESULT_MISSED;
+		gBattlescriptCurrInstr = BattleScript_PauseResultMessage;
+		return;
+	}
+	else if (AbilityBattleEffects(ABILITYEFFECT_ABSORBING, bank, 0, 0, gCurrentMove))
 	{
 		return;
 	}
@@ -1388,7 +1394,7 @@ void atkFF29_trysetsleep(void)
 		gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
 		return;
 	}
-	else if (IsOfType(bank, TYPE_GRASS) && gBattleTypeFlags & BATTLE_TYPE_DOUBLE && ABILITY(PARTNER(bank)) == ABILITY_FLOWERVEIL)
+	else if (IsOfType(bank, TYPE_GRASS) && IS_DOUBLE_BATTLE && ABILITY(PARTNER(bank)) == ABILITY_FLOWERVEIL)
 	{
 		gBattleScripting->bank = PARTNER(bank);
 		gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
@@ -1400,7 +1406,7 @@ void atkFF29_trysetsleep(void)
 		gBattlescriptCurrInstr = BattleScript_TeamProtectedBySweetVeil;
 		return;
 	}
-	else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && ABILITY(PARTNER(bank)) == ABILITY_SWEETVEIL)
+	else if (IS_DOUBLE_BATTLE && ABILITY(PARTNER(bank)) == ABILITY_SWEETVEIL)
 	{
 		gBattleScripting->bank = PARTNER(bank);
 		gBattlescriptCurrInstr = BattleScript_TeamProtectedBySweetVeil;
@@ -1454,6 +1460,120 @@ void atkFF29_trysetsleep(void)
 		gBattlescriptCurrInstr += 6;
 }
 
+void atkD7_setyawn(void)
+{
+	u8 bank = gBankTarget;
+	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+	bool8 fail = FALSE;
+
+	if (BATTLER_SEMI_INVULNERABLE(bank) && !CanHitSemiInvulnerableTarget(gBankAttacker, bank, gCurrentMove))
+	{
+		gMoveResultFlags |= MOVE_RESULT_MISSED;
+		gBattlescriptCurrInstr = BattleScript_PauseResultMessage;
+		return;
+	}
+	else if (gBattleMons[bank].status1 & STATUS1_SLEEP)
+	{
+		gBattleStringLoader = gText_TargetAlreadyAsleep;
+		fail = TRUE;
+	}
+	else if (gBattleMons[bank].status1 != STATUS1_NONE)
+	{
+		gBattleStringLoader = gText_TargetAlreadyHasStatusCondition; //String not in official games; officially "But it failed!"
+		fail = TRUE;
+	}
+	else if (ABILITY(gBankAttacker) != ABILITY_INFILTRATOR && gSideAffecting[SIDE(bank)] & SIDE_STATUS_SAFEGUARD)
+	{
+		gBattleStringLoader = gText_TeamProtectedBySafeguard;
+		fail = TRUE;
+	}
+	/*else if (CheckGrounding(bank) && gTerrainType == MISTY_TERRAIN) //Misty Terrain doesn't cause yawn to fail
+	{
+		gBattleStringLoader = gText_TargetWrappedInMistyTerrain;
+		fail = TRUE;
+	}*/
+	else if (CheckGrounding(bank) && gTerrainType == ELECTRIC_TERRAIN)
+	{
+		gBattleStringLoader = gText_TargetWrappedInElectricTerrain;
+		fail = TRUE;
+	}
+	else if (IsOfType(bank, TYPE_GRASS) && ABILITY(bank) == ABILITY_FLOWERVEIL)
+	{
+		gBattleScripting->bank = bank;
+		gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
+		return;
+	}
+	else if (IsOfType(bank, TYPE_GRASS) && IS_DOUBLE_BATTLE && ABILITY(PARTNER(bank)) == ABILITY_FLOWERVEIL)
+	{
+		gBattleScripting->bank = PARTNER(bank);
+		gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
+		return;
+	}
+	else if (ABILITY(bank) == ABILITY_SWEETVEIL)
+	{
+		gBattleScripting->bank = bank;
+		gBattlescriptCurrInstr = BattleScript_TeamProtectedBySweetVeil;
+		return;
+	}
+	else if (IS_DOUBLE_BATTLE && ABILITY(PARTNER(bank)) == ABILITY_SWEETVEIL)
+	{
+		gBattleScripting->bank = PARTNER(bank);
+		gBattlescriptCurrInstr = BattleScript_TeamProtectedBySweetVeil;
+		return;
+	}
+	/*else if (IsUproarBeingMade())
+	{
+		gBattleScripting->bank = bank;
+		gBattleStringLoader = gText_CantFallAsleepDuringUproar;
+		fail = TRUE;
+	}*/
+
+	if (!fail)
+	{
+		switch (ABILITY(bank)) {
+			case ABILITY_INSOMNIA:
+			case ABILITY_VITALSPIRIT:
+				gBattlescriptCurrInstr = BattleScript_TargetStayedAwakeUsingAbility;
+				return;
+			case ABILITY_LEAFGUARD:
+				if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY && ITEM_EFFECT(bank) != ITEM_EFFECT_UTILITY_UMBRELLA)
+				{
+					gBattlescriptCurrInstr = BattleScript_ProtectedByAbility;
+					return;
+				}
+				break;
+			case ABILITY_COMATOSE:
+				gBattlescriptCurrInstr = BattleScript_ProtectedByAbility;
+				return;
+			case ABILITY_SHIELDSDOWN:
+				if (SPECIES(bank) == SPECIES_MINIOR_SHIELD)
+				{
+					gBattlescriptCurrInstr = BattleScript_ProtectedByAbility;
+					return;
+				}
+		}
+		
+		if (!fail && gStatuses3[gBattlerTarget] & STATUS3_YAWN)
+		{
+			gBattleStringLoader = gText_AlreadyDrowsy;
+			fail = TRUE;
+		}
+	}
+
+	if (fail)
+	{
+		gMoveResultFlags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
+		gBattlescriptCurrInstr = ptr;
+	}
+	else
+		gBattlescriptCurrInstr += 5;
+}
+
+void ActuallySetYawn(void)
+{
+	gStatuses3[gBankTarget] |= 0x1000;
+}
+
 //trysetparalysis BANK FAIL_ADDRESS
 void atkFF2A_trysetparalysis(void)
 {
@@ -1461,7 +1581,13 @@ void atkFF2A_trysetparalysis(void)
 	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
 	bool8 fail = FALSE;
 
-	if (AbilityBattleEffects(ABILITYEFFECT_ABSORBING, bank, 0, 0, gCurrentMove))
+	if (BATTLER_SEMI_INVULNERABLE(bank) && !CanHitSemiInvulnerableTarget(gBankAttacker, bank, gCurrentMove))
+	{
+		gMoveResultFlags |= MOVE_RESULT_MISSED;
+		gBattlescriptCurrInstr = BattleScript_PauseResultMessage;
+		return;
+	}
+	else if (AbilityBattleEffects(ABILITYEFFECT_ABSORBING, bank, 0, 0, gCurrentMove))
 	{
 		return;
 	}
@@ -1504,7 +1630,7 @@ void atkFF2A_trysetparalysis(void)
 		gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
 		return;
 	}
-	else if (IsOfType(bank, TYPE_GRASS) && gBattleTypeFlags & BATTLE_TYPE_DOUBLE && ABILITY(PARTNER(bank)) == ABILITY_FLOWERVEIL)
+	else if (IsOfType(bank, TYPE_GRASS) && IS_DOUBLE_BATTLE && ABILITY(PARTNER(bank)) == ABILITY_FLOWERVEIL)
 	{
 		gBattleScripting->bank = PARTNER(bank);
 		gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
@@ -1550,7 +1676,13 @@ void atkFF2B_trysetburn(void)
 	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
 	bool8 fail = FALSE;
 
-	if (AbilityBattleEffects(ABILITYEFFECT_ABSORBING, bank, 0, 0, gCurrentMove))
+	if (BATTLER_SEMI_INVULNERABLE(bank) && !CanHitSemiInvulnerableTarget(gBankAttacker, bank, gCurrentMove))
+	{
+		gMoveResultFlags |= MOVE_RESULT_MISSED;
+		gBattlescriptCurrInstr = BattleScript_PauseResultMessage;
+		return;
+	}
+	else if (AbilityBattleEffects(ABILITYEFFECT_ABSORBING, bank, 0, 0, gCurrentMove))
 	{
 		return;
 	}
@@ -1586,7 +1718,7 @@ void atkFF2B_trysetburn(void)
 		gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
 		return;
 	}
-	else if (IsOfType(bank, TYPE_GRASS) && gBattleTypeFlags & BATTLE_TYPE_DOUBLE && ABILITY(PARTNER(bank)) == ABILITY_FLOWERVEIL)
+	else if (IsOfType(bank, TYPE_GRASS) && IS_DOUBLE_BATTLE && ABILITY(PARTNER(bank)) == ABILITY_FLOWERVEIL)
 	{
 		gBattleScripting->bank = PARTNER(bank);
 		gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
@@ -1634,7 +1766,13 @@ void atkFF2C_trysetpoison(void)
 	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
 	bool8 fail = FALSE;
 
-	if (AbilityBattleEffects(ABILITYEFFECT_ABSORBING, bank, 0, 0, gCurrentMove))
+	if (BATTLER_SEMI_INVULNERABLE(bank) && !CanHitSemiInvulnerableTarget(gBankAttacker, bank, gCurrentMove))
+	{
+		gMoveResultFlags |= MOVE_RESULT_MISSED;
+		gBattlescriptCurrInstr = BattleScript_PauseResultMessage;
+		return;
+	}
+	else if (AbilityBattleEffects(ABILITYEFFECT_ABSORBING, bank, 0, 0, gCurrentMove))
 	{
 		return;
 	}
@@ -1672,7 +1810,7 @@ void atkFF2C_trysetpoison(void)
 		return;
 	}
 	//Put Pastel Veil here
-	else if (IsOfType(bank, TYPE_GRASS) && gBattleTypeFlags & BATTLE_TYPE_DOUBLE && ABILITY(PARTNER(bank)) == ABILITY_FLOWERVEIL)
+	else if (IsOfType(bank, TYPE_GRASS) && IS_DOUBLE_BATTLE && ABILITY(PARTNER(bank)) == ABILITY_FLOWERVEIL)
 	{
 		gBattleScripting->bank = PARTNER(bank);
 		gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;

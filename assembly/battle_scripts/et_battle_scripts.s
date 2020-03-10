@@ -10,6 +10,8 @@ et_battle_scripts.s
 .include "../battle_script_macros.s"
 
 .global BattleScript_MysteriousAirCurrentContinues
+.global BattleScript_SandstormHailContinues
+.global BattleScript_WeatherDamage
 .global BattleScript_FogEnded
 .global BattleScript_FogContinues
 .global BattleScript_SeaOfFireDamage
@@ -97,6 +99,29 @@ BattleScript_MysteriousAirCurrentContinues:
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	playanimation 0x0 ANIM_STRONG_WINDS_CONTINUE 0x0
+	end2
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+BattleScript_SandstormHailContinues:
+	printfromtable 0x83FE534 @;gSandStormHailContinuesStringIds
+	waitmessage DELAY_1SECOND
+	playanimation2 BANK_ATTACKER, ANIM_ARG_1, 0x0
+	end2
+
+BattleScript_WeatherDamage:
+	weatherdamage
+	jumpifword EQUALS DAMAGE_LOC 0x0 BattleScript_WeatherDamage_End
+	printfromtable 0x83FE538 @;gSandStormHailDmgStringIds
+	waitmessage DELAY_1SECOND
+	orword HIT_MARKER, HITMARKER_x20 | HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_NON_ATTACK_DMG | HITMARKER_GRUDGE
+	effectivenesssound
+	flash BANK_ATTACKER
+	graphicalhpupdate BANK_ATTACKER
+	datahpupdate BANK_ATTACKER
+	faintpokemon BANK_ATTACKER, FALSE, 0x0
+	bicword HIT_MARKER, HITMARKER_x20 | HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_NON_ATTACK_DMG | HITMARKER_GRUDGE
+BattleScript_WeatherDamage_End:
 	end2
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

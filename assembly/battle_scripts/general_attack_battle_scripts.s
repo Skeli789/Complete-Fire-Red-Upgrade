@@ -3824,40 +3824,14 @@ BS_187_Yawn:
 	attackcanceler
 	attackstring
 	ppreduce
-	jumpifspecies BANK_TARGET SPECIES_MINIOR_SHIELD FAILED
-	jumpifability BANK_TARGET ABILITY_COMATOSE 0x81D69B0
-	jumpifstatus BANK_TARGET STATUS_SLEEP 0x81D69B0
-	jumpifstatus BANK_TARGET STATUS_ANY FAILED
-	jumpifability BANK_TARGET ABILITY_INSOMNIA 0x81D824B
-	jumpifability BANK_TARGET ABILITY_VITALSPIRIT 0x81D824B
-	jumpifabilitypresent ABILITY_CLOUDNINE YWN_CheckVeils
-	jumpifabilitypresent ABILITY_AIRLOCK YWN_CheckVeils
-	jumpifability BANK_TARGET ABILITY_LEAFGUARD YWN_SunnyCheck
-
-YWN_CheckVeils:
-	jumpifabilitypresenttargetfield ABILITY_SWEETVEIL BattleScript_TeamProtectedBySweetVeil
-	jumpifabilitypresenttargetfield ABILITY_FLOWERVEIL YWN_GrassTypeCheck
-
-YWN_CheckTerrain:
-	jumpifbyte EQUALS TERRAIN_BYTE ELECTRIC_TERRAIN YWN_CheckGrounding
-	@;jumpifbyte EQUALS TERRAIN_BYTE MISTY_TERRAIN YWN_CheckGrounding @;Misty Terrain doesn't cause Yawn to fail
-	
-YawnReturn:
-	jumpifsideaffecting BANK_TARGET SIDE_SAFEGUARD 0x81D8B39 @;Protected by Safeguard
-	accuracycheck 0x81D7DF2 0xFFFF
-	goto 0x81D8239
-
-YWN_SunnyCheck:
-	jumpifhalfword ANDS WEATHER_FLAGS WEATHER_SUN_ANY BattleScript_ProtectedByAbility
-	goto YWN_CheckVeils
-
-YWN_GrassTypeCheck:
-	jumpiftype BANK_TARGET TYPE_GRASS BattleScript_TeamProtectedByFlowerVeil
-	goto YWN_CheckTerrain
-
-YWN_CheckGrounding:
-	jumpifgrounded BANK_TARGET ProtectedByTerrainBS
-	goto YawnReturn
+	cansetyawn BS_StatusMoveFail
+	accuracycheck FAILED 0xFFFF
+	callasm ActuallySetYawn
+	attackanimation
+	waitanimation
+	printstring 0xB6
+	waitmessage 0x40
+	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
