@@ -90,6 +90,7 @@ bool8 MoveThatCanHelpAttacksHitInMoveset(u8 bank);
 bool8 DamagingMoveThaCanBreakThroughSubstituteInMoveset(u8 bankAtk, u8 bankDef);
 bool8 ContactMovesThatAffectTargetInMoveset(u8 bankAtk, u8 bankDef);
 bool8 UnfreezingMoveInMoveset(u8 bank);
+bool8 SleepMoveInMovesetWithLowAccuracy(u8 bankAtk, u8 bankDef);
 bool8 OnlyBadMovesLeftInMoveset(u8 bankAtk, u8 bankDef);
 u16 TryReplaceMoveWithZMove(u8 bankAtk, u8 bankDef, u16 move);
 u8 GetAIMoveEffectForMaxMove(u16 move, u8 bankAtk, u8 bankDef);

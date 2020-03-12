@@ -2109,7 +2109,14 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 				case MOVE_G_MAX_GRAVITAS_P:
 				case MOVE_G_MAX_GRAVITAS_S:
 					if (!IsGravityActive())
-						INCREASE_STATUS_VIABILITY(2);
+					{
+						if (SleepMoveInMovesetWithLowAccuracy(bankAtk, bankDef)) //Has Gravity for a move like Hypnosis
+							IncreaseSleepViability(&viability, class, bankAtk, bankDef, move);
+						else if (MoveInMovesetWithAccuracyLessThan(bankAtk, bankDef, 90, FALSE))
+							INCREASE_STATUS_VIABILITY(2);
+						else
+							INCREASE_STATUS_VIABILITY(1);
+					}
 					break;
 
 				case MOVE_IONDELUGE:
@@ -2386,6 +2393,9 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			IncreaseDoublesDamageViability(&viability, class, bankAtk, bankDef, move);
 		}
 	}
+
+	if (atkStatus1 & STATUS1_FREEZE && CheckTableForMove(move, gMovesCanUnfreezeAttacker))
+		INCREASE_VIABILITY(10); //Unfreeze yourself
 
 	return MathMin(viability, 255);
 }

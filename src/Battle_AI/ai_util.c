@@ -2148,6 +2148,27 @@ bool8 UnfreezingMoveInMoveset(u8 bank)
 	return FALSE;
 }
 
+bool8 SleepMoveInMovesetWithLowAccuracy(u8 bankAtk, u8 bankDef)
+{
+	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, 0xFF);
+
+	for (int i = 0; i < MAX_MON_MOVES; ++i)
+	{
+		u16 move = GetBattleMonMove(bankAtk, i);
+
+		if (move == MOVE_NONE)
+			break;
+
+		if (!(gBitTable[i] & moveLimitations))
+		{
+			if (gBattleMoves[move].effect == EFFECT_SLEEP && AccuracyCalc(move, bankAtk, bankDef) < 85)
+				return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
 static bool8 WallsFoe(u8 bankAtk, u8 bankDef)
 {
 	u32 attack, spAttack;

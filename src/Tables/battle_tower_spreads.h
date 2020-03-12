@@ -23101,7 +23101,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 	},
 	{
 		.species = SPECIES_BRONZONG,
-		.nature = NATURE_SASSY,
+		.nature = NATURE_RELAXED,
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
@@ -23109,8 +23109,8 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.spDefIv = 31,
 		.spdIv = 0,
 		.hpEv = 252,
-		.defEv = 4,
-		.spDefEv = 252,
+		.defEv = 252,
+		.spDefEv = 4,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_LEVITATE
 		.item = ITEM_LIGHT_CLAY,
 		.moves =
@@ -23127,23 +23127,23 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 	},
 	{
 		.species = SPECIES_BRONZONG,
-		.nature = NATURE_BRAVE,
+		.nature = NATURE_RELAXED,
 		.hpIv = 31,
-		.atkIv = 31,
+		.atkIv = 0,
 		.defIv = 31,
 		.spAtkIv = 0,
 		.spDefIv = 31,
 		.spdIv = 0,
 		.hpEv = 252,
-		.atkEv = 252,
+		.defEv = 252,
 		.spDefEv = 4,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_LEVITATE
-		.item = ITEM_PSYCHIUM_Z,
+		.ability = FRONTIER_ABILITY_2, //ABILITY_HEATPROOF
+		.item = ITEM_IAPAPA_BERRY,
 		.moves =
 		{
-			MOVE_EXPLOSION,
-			MOVE_EARTHQUAKE,
-			MOVE_STEALTHROCK,
+			MOVE_BODYPRESS,
+			MOVE_HYPNOSIS,
+			MOVE_GRAVITY,
 			MOVE_TRICKROOM,
 		},
 		.ball = BALL_TYPE_RANDOM,
