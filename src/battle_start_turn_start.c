@@ -1264,6 +1264,8 @@ static void TrySetupRaidBossRepeatedAttack(u8 actionFuncId)
 
 u16 GetMUS_ForBattle(void)
 {
+	u16 song;
+
 	if (gBattleTypeFlags & BATTLE_TYPE_LINK)
 	{
 		if (VarGet(VAR_BATTLE_FACILITY_SONG_OVERRIDE))
@@ -1280,7 +1282,6 @@ u16 GetMUS_ForBattle(void)
 
 	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
 	{
-		u16 song;
 		u8 trainerClass;
 
 		if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
@@ -1339,6 +1340,12 @@ u16 GetMUS_ForBattle(void)
 			}
 		}
 
+		#ifdef VAR_TRAINER_BGM_OVERRIDE
+			song = VarGet(VAR_TRAINER_BGM_OVERRIDE);
+			if (song != 0)
+				return song;
+		#endif
+
 		#ifdef UNBOUND
 			return BGM_BATTLE_BORRIUS_TRAINER;
 		#else
@@ -1364,11 +1371,23 @@ u16 GetMUS_ForBattle(void)
 		if (IsRaidBattle())
 			return BGM_BATTLE_GALACTIC_BOSS;
 
+		#ifdef VAR_WILD_BGM_OVERRIDE
+			song = VarGet(VAR_WILD_BGM_OVERRIDE);
+			if (song != 0)
+				return song;
+		#endif
+
 		return BGM_BATTLE_BORRIUS_WILD;
 	#else
 		if (IsRaidBattle())
 			return BGM_BATTLE_LEGENDARY_BIRDS;
-	
+
+		#ifdef VAR_WILD_BGM_OVERRIDE
+			song = VarGet(VAR_WILD_BGM_OVERRIDE);
+			if (song != 0)
+				return song;
+		#endif
+
 		return BGM_BATTLE_WILD;
 	#endif
 }
