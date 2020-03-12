@@ -694,6 +694,20 @@ void UpdateHPForDynamax(void)
 	MarkBufferBankForExecution(gActiveBattler);
 }
 
+void EndBattleDynamaxRevert(u8 bank)
+{
+	if (BATTLER_ALIVE(bank) && IsDynamaxed(bank))
+	{
+		struct Pokemon* mon = GetBankPartyData(bank);
+		u8 hpBoost = GetDynamaxHPBoost(bank);
+
+		//Get ceiling of HP divided by boost
+		mon->maxHP = MathMax(mon->maxHP / hpBoost + (mon->maxHP & 1), 1);
+		mon->hp = MathMax(mon->hp / hpBoost + (mon->hp & 1), 1);
+		gNewBS->dynamaxData.timer[bank] = 0;
+	}
+}
+
 void TryBoostDynamaxHPAfterLevelUp(u8 bank) //Should only be called once all battle mon stats are updated
 {
 	struct Pokemon* mon;

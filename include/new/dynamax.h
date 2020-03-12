@@ -33,6 +33,7 @@ u8 GetMonDynamaxHPBoost(struct Pokemon* mon);
 u8 GetRaidBattleHPBoost(void);
 bool8 IsAnyMaxMove(u16 move);
 bool8 IsGMaxMove(u16 move);
+void EndBattleDynamaxRevert(u8 bank);
 void TryBoostDynamaxHPAfterLevelUp(u8 bank);
 bool8 IsMaxMoveWithWeatherEffect(u16 move);
 bool8 IsMaxMoveWithTerrainEffect(u16 move);

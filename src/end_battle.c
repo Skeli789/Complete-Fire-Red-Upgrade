@@ -2,6 +2,7 @@
 #include "defines_battle.h"
 #include "../include/event_data.h"
 #include "../include/field_weather.h"
+#include "../include/malloc.h"
 #include "../include/random.h"
 #include "../include/constants/songs.h"
 #include "../include/constants/trainer_classes.h"
@@ -65,6 +66,7 @@ const u16 gEndBattleFlagClearTable[] =
 //This file's functions:
 static void NaturalCureHeal(void);
 static void RestoreNonConsumableItems(void);
+static void RevertDynamax(void);
 static void RecalcAllStats(void);
 static void BringBackTheDead(void);
 static void EndPartnerBattlePartyRestore(void);
@@ -465,6 +467,7 @@ void EndOfBattleThings(void)
 	{
 		NaturalCureHeal();
 		RestoreNonConsumableItems();
+		RevertDynamax();
 		FormsRevert(gPlayerParty);
 		MegaRevert(gPlayerParty);
 		UpdateBurmy();
@@ -526,6 +529,12 @@ static void RestoreNonConsumableItems(void)
 
 		Free(items);
 	}
+}
+
+static void RevertDynamax(void)
+{
+	for (int i = 0; i < gBattlersCount; ++i)
+		EndBattleDynamaxRevert(i);
 }
 
 static void RecalcAllStats(void)
@@ -656,7 +665,7 @@ static void EndBattleFlagClear(void)
 	Free(gNewBS->MegaData);
 	Free(gNewBS->UltraData);
 	Free(gNewBS->ZMoveData);
-	Free(gNewBS);
+	FREE_AND_SET_NULL(gNewBS);
 
 	//Handle DexNav Chain
 	if (gDexNavStartedBattle
