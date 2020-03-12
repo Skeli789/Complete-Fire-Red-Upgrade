@@ -4,6 +4,7 @@
 #include "../include/constants/items.h"
 
 #include "../include/new/battle_start_turn_start.h"
+#include "../include/new/battle_script_util.h"
 #include "../include/new/battle_util.h"
 #include "../include/new/damage_calc.h"
 #include "../include/new/dynamax.h"
@@ -1694,7 +1695,7 @@ bool8 HandleFaintedMonActions(void)
 				do
 				{
 					gBankFainted = gBankTarget = gBattleStruct->faintedActionsBank;
-
+					BackupSwitchingBank();
 					if (gBattleMons[gBattleStruct->faintedActionsBank].hp == 0)
 					{
 						if (IsRaidBattle()
@@ -1785,6 +1786,7 @@ bool8 HandleFaintedMonActions(void)
 				do
 				{
 					gBankFainted = gBankTarget = gBattleStruct->faintedActionsBank;
+					BackupSwitchingBank();
 					if (gNewBS->handleSetSwitchIns & gBitTable[gBattleStruct->faintedActionsBank])
 					{
 						++gBattleStruct->faintedActionsBank;
@@ -1826,6 +1828,7 @@ bool8 HandleFaintedMonActions(void)
 				do
 					{
 						gBankFainted = gBankTarget = gBattleStruct->faintedActionsBank;
+						BackupSwitchingBank();
 						if (gNewBS->handleSetSwitchIns & gBitTable[gBankFainted])
 						{
 							if (ABILITY(gBankFainted) == ABILITY_TRUANT)

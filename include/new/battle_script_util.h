@@ -93,6 +93,7 @@ void UpdatePrimalAbility(void);
 void ClearAttackerDidDamageOnce(void);
 void TryRemovePrimalWeatherOnForceSwitchout(void);
 void TryLoadSecondFriskTargetDoubles(void);
+void BackupSwitchingBank(void);
 void RestoreAllOriginalMoveData(void);
 void RestoreOriginalAttackerAndTarget(void);
 void SetBatonPassSwitchingBit(void);
