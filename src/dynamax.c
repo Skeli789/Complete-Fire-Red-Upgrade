@@ -707,12 +707,12 @@ void TryBoostDynamaxHPAfterLevelUp(u8 bank) //Should only be called once all bat
 	if (IsDynamaxed(gActiveBattler))
 	{
 		u8 hpBoost = GetDynamaxHPBoost(gActiveBattler);
+		mon = GetBankPartyData(gActiveBattler);
 
-		gBattleMons[gActiveBattler].maxHP = MathMin(gBattleMons[gActiveBattler].maxHP * hpBoost, 0xFFFF);
-		gBattleMons[gActiveBattler].hp = MathMin(gBattleMons[gActiveBattler].hp * hpBoost, 0xFFFF);
+		gBattleMons[gActiveBattler].hp = MathMin(gBattleMons[gActiveBattler].hp + (mon->maxHP * hpBoost - gBattleMons[gActiveBattler].maxHP), 0xFFFF); //Calculate proper new hp
+		gBattleMons[gActiveBattler].maxHP = MathMin(mon->maxHP * hpBoost, 0xFFFF);
 
 		//This is gonna bite me in the butt later
-		mon = GetBankPartyData(gActiveBattler);
 		mon->hp = gBattleMons[gActiveBattler].hp;
 		mon->maxHP = gBattleMons[gActiveBattler].maxHP;
 	
