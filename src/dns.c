@@ -18,8 +18,6 @@ dns.c
 typedef bool8 IgnoredPalT[16];
 #define gIgnoredDNSPalIndices ((IgnoredPalT*) 0x203B830)
 
-static const u8 sDaysInAMonth[] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-
 //This file's functions:
 static void FadeDayNightPalettes();
 static void BlendFadedPalettes(u32 selectedPalettes, u8 coeff, u32 color);
@@ -28,8 +26,6 @@ static u16 FadeColourForDNS(struct PlttData* blend, u8 coeff, s8 r, s8 g, s8 b);
 static void FadeOverworldBackground(u32 selectedPalettes, u8 coeff, u32 color, bool8 palFadeActive);
 static bool8 IsDate1BeforeDate2(u32 y1, u32 m1, u32 d1, u32 y2, u32 m2, u32 d2);
 static bool8 IsLeapYear(u32 year);
-static bool8 IsLastDayInMonth(u32 year, u8 month, u8 day);
-static void IncreaseDateByOneDay(u32* year, u8* month, u8* day);
 
 void TransferPlttBuffer(void)
 {	
@@ -359,38 +355,6 @@ static bool8 IsDate1BeforeDate2(u32 y1, u32 m1, u32 d1, u32 y2, u32 m2, u32 d2)
 static bool8 IsLeapYear(u32 year)
 {
 	return (year % 4 == 0) && ((year % 100 != 0) || (year % 400 == 0));
-}
-
-static bool8 IsLastDayInMonth(u32 year, u8 month, u8 day)
-{
-	if (month == 0 || month > 12)
-		return FALSE;
-
-	else if (month == 2)
-		return IsLeapYear(year) ? (day == 29) : (day == 28);
-
-	else
-		return sDaysInAMonth[month] == day;
-}
-
-static void IncreaseDateByOneDay(u32* year, u8* month, u8* day)
-{
-	if (IsLastDayInMonth(*year, *month, *day))
-	{
-		if (*month == 12) //IsLastMonthInYear
-		{
-			*month = 1;
-			*day = 1;
-			++*year;
-		}
-		else
-		{
-			*day = 1;
-			++*month;
-		}
-	}
-	else
-		++*day;
 }
 
 u32 GetMinuteDifference(u32 startYear, u8 startMonth, u8 startDay, u8 startHour, u8 startMin, u32 endYear, u8 endMonth, u8 endDay, u8 endHour, u8 endMin)

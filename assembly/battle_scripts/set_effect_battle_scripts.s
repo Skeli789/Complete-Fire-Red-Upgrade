@@ -353,7 +353,7 @@ BattleScript_MaxMoveSetGravity:
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_MaxMoveSetYawn:
-	setyawn BattleScript_MaxMoveEffectEnd
+	callasm ActuallySetYawn
 	printstring 0xB6 @;STRINGID_PKMNWASMADEDROWSY
 	return
 
