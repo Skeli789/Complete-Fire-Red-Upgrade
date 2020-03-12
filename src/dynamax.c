@@ -1254,7 +1254,7 @@ bool8 IsRaidBattle(void)
 
 bool8 IsCatchableRaidBattle(void)
 {
-	return IsRaidBattle() && !FlagGet(FLAG_RAID_BATTLE_NO_FORCE_END);
+	return IsRaidBattle() && !FlagGet(FLAG_NO_CATCHING) && !FlagGet(FLAG_NO_CATCHING_AND_RUNNING);
 }
 
 bool8 HasRaidShields(u8 bank)

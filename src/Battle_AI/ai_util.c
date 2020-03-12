@@ -2975,7 +2975,10 @@ void CalcShouldAIDynamax(u8 bankAtk, u8 bankDef)
 
 		if (IS_DOUBLE_BATTLE && bankDef == PARTNER(bankAtk))
 			return; //No need to Dynamax against your partner
-		
+
+		if (IsRaidBattle() && bankAtk == BANK_RAID_BOSS)
+			return; //Raid Boss is always Dynamaxed
+
 		if (!IsMockBattle() && SIDE(bankAtk) == B_SIDE_PLAYER)
 		{
 			if (IsTagBattle())

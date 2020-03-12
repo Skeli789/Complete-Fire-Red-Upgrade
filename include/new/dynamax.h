@@ -163,4 +163,4 @@ struct RaidData
 
 extern const struct RaidData gRaidsByMapSection[][RAID_STAR_COUNT];
 
-#define RAID_BATTLE_END (IsCatchableRaidBattle() && GetBankPartyData(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT))->hp == 0)
+#define RAID_BATTLE_END (IsCatchableRaidBattle() && GetBankPartyData(BANK_RAID_BOSS)->hp == 0)

@@ -627,10 +627,26 @@ static void VBlankCB_RaidBattleIntro(void)
 	TransferPlttBuffer();
 }
 
-static void InitRaidBattleIntro(void)
+//Cleans the windows
+static void CleanWindows(void)
 {
 	for (int i = 0; i < WINDOW_COUNT; ++i)
 		FillWindowPixelBuffer(i, PIXEL_FILL(0));
+}
+//Display commited windows
+static void CommitWindows(void)
+{
+	for (u8 i = 0; i < WINDOW_COUNT; ++i)
+	{
+		CopyWindowToVram(i, 3);
+		PutWindowTilemap(i);
+	}
+}
+
+static void InitRaidBattleIntro(void)
+{
+	CleanWindows();
+	CommitWindows();
 
 	ShowStars();
 	PrintInstructions();
@@ -639,12 +655,8 @@ static void InitRaidBattleIntro(void)
 	ShowPartnerTeams();
 	ShowSelectionArrow();
 
-	//Display commited windows
-	for (u8 i = 0; i < WINDOW_COUNT; ++i)
-	{
-		CopyWindowToVram(i, 3);
-		PutWindowTilemap(i);
-	}
+	//Display newly commited windows
+	CommitWindows();
 }
 
 static void LoadRaidBattleIntroGfx(void)

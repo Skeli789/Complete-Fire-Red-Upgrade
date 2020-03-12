@@ -1698,7 +1698,7 @@ bool8 HandleFaintedMonActions(void)
 					BackupSwitchingBank();
 					if (gBattleMons[gBattleStruct->faintedActionsBank].hp == 0)
 					{
-						if (IsRaidBattle()
+						if (IsCatchableRaidBattle()
 						&& gBattleStruct->faintedActionsBank == BANK_RAID_BOSS)
 							continue; //Don't end the battle if the raid mon is KOed
 					

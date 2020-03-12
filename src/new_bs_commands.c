@@ -1143,7 +1143,7 @@ void atkFF23_faintpokemonaftermove(void)
 		gHitMarker |= HITMARKER_FAINTED(gActiveBattler);
 		BattleScriptPush(gBattlescriptCurrInstr + 3);
 		
-		if (IsRaidBattle() && gActiveBattler == BANK_RAID_BOSS)
+		if (IsCatchableRaidBattle() && gActiveBattler == BANK_RAID_BOSS)
 			gBattlescriptCurrInstr = BattleScript_FaintRaidTarget;
 		else
 			gBattlescriptCurrInstr = BattleScript_FaintTarget;
