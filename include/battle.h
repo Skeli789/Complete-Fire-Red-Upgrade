@@ -553,6 +553,8 @@ struct BattleResources
     struct AI_ThinkingStruct *ai;
     struct BattleHistory *battleHistory;
     struct BattleScriptsStack *AI_ScriptsStack;
+    u8 bufferA[MAX_BATTLERS_COUNT][0x200];
+    u8 bufferB[MAX_BATTLERS_COUNT][0x200];
 };
 
 extern struct BattleResources* gBattleResources;
@@ -1172,6 +1174,7 @@ struct FlingStruct
 #define B_ANIM_SAFARI_BALL_THROW        0x4
 #define B_ANIM_SUBSTITUTE_TO_MON        0x5
 #define B_ANIM_MON_TO_SUBSTITUTE        0x6
+#define B_ANIM_CRITICAL_CAPTURE_THROW   0x7
 
 // status animation table
 #define B_ANIM_STATUS_PSN               0x0
@@ -1309,8 +1312,7 @@ struct BattleAnimationInfo
     u8 field_9_x80 : 1;
     u8 field_A;
     u8 field_B;
-    u8 field_C;
-    u8 field_D;
+    s16 field_C;
     u8 field_E;
     u8 field_F;
 };

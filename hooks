@@ -572,5 +572,11 @@ FixSafariZoneBattleWindow 08049D1A 1
 ##Scrolling Multichoice
 CustomScrollingMultichoiceHook 080CB94C 0
 ScrollingMultiSizeHook 080CB82A 0
+#endif
 
+#ifdef CRITICAL_CAPTURE
+CB_InitThrownBallBouncing 080EFB58 1
+#PlayerHandleSuccessBallThrowAnim 0803275C 0
+#PlayerHandleBallThrowAnim 080327B0 0
+CB_DoBallShake 080EFCEC 1
 #endif

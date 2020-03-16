@@ -183,3 +183,7 @@ TestScript 08B7AD70
 TestScript 08B7ADA0
 TestScript 087D67B0
 #endif
+
+#ifdef CRITICAL_CAPTURE
+gBattleAnims_Special 08034238
+#endif

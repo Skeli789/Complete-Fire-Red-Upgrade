@@ -437,6 +437,10 @@ void __attribute__((long_call)) LaunchBattleAnimation(const u8* const animsTable
 void __attribute__((long_call)) LaunchStatusAnimation(u8 bank, u8 statusAnimId);
 u8 __attribute__((long_call)) LaunchBallStarsTask(u8 x, u8 y, u8 kindOfStars, u8 arg3, u8 ballId);
 u8 __attribute__((long_call)) LaunchBallFadeMonTask(bool8 unFadeLater, u8 bank, u32 arg2, u8 ballId);
+void __attribute__((long_call)) CB_ThrowBallMovement(struct Sprite *sprite);
+void __attribute__((long_call)) CompleteOnSpecialAnimDone(void);
+void __attribute__((long_call)) CB_InitCaughtMonAnim(struct Sprite *);
+void __attribute__((long_call)) CB_InitUnsuccessfulCatchAnim(struct Sprite *);
 
 // battle_anim_80A9C70.s
 #define STAT_ANIM_PLUS1  15
