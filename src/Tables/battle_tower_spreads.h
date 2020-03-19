@@ -17338,7 +17338,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.spAtkEv = 252,
 		.spdEv = 176,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_THICKFAT
-		.item = ITEM_COLBUR_BERRY,
+		.item = ITEM_BLUNDER_POLICY,
 		.moves =
 		{
 			MOVE_PSYCHIC,
@@ -22116,12 +22116,12 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.spDefEv = 4,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_SWIFTSWIM
-		.item = ITEM_MYSTIC_WATER,
+		.item = ITEM_BLUNDER_POLICY,
 		.moves =
 		{
-			MOVE_SURF,
+			MOVE_HYDROPUMP,
 			MOVE_SCALD,
-			MOVE_ICEBEAM,
+			MOVE_BLIZZARD,
 			MOVE_FOCUSBLAST,
 		},
 		.ball = BALL_TYPE_RANDOM,
@@ -22930,7 +22930,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.defEv = 4,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_DEFIANT
-		.item = ITEM_WIDE_LENS,
+		.item = ITEM_BLUNDER_POLICY,
 		.moves =
 		{
 			MOVE_STOMPINGTANTRUM,
@@ -24774,7 +24774,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 	},
 	{
 		.species = SPECIES_ELECTIVIRE,
-		.nature = NATURE_TIMID,
+		.nature = NATURE_MODEST,
 		.hpIv = 31,
 		.atkIv = 0,
 		.defIv = 31,
@@ -24785,7 +24785,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.spAtkEv = 252,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_MOTORDRIVE
-		.item = ITEM_LIFE_ORB,
+		.item = ITEM_BLUNDER_POLICY,
 		.moves =
 		{
 			MOVE_THUNDER,
@@ -33770,21 +33770,21 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 	},
 	{
 		.species = SPECIES_HYDREIGON,
-		.nature = NATURE_HASTY,
+		.nature = NATURE_MODEST,
 		.hpIv = 31,
-		.atkIv = 31,
+		.atkIv = 0,
 		.defIv = 31,
 		.spAtkIv = 31,
 		.spDefIv = 31,
 		.spdIv = 31,
-		.atkEv = 200,
-		.spAtkEv = 56,
+		.defEv = 4,
+		.spAtkEv = 252,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_LEVITATE
-		.item = ITEM_WIDE_LENS,
+		.item = ITEM_BLUNDER_POLICY,
 		.moves =
 		{
-			MOVE_DRAGONRUSH,
+			MOVE_DRACOMETEOR,
 			MOVE_FIREBLAST,
 			MOVE_FOCUSBLAST,
 			MOVE_NASTYPLOT,
@@ -34170,7 +34170,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.spAtkEv = 252,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_JUSTIFIED
-		.item = ITEM_COBA_BERRY,
+		.item = ITEM_BLUNDER_POLICY,
 		.moves =
 		{
 			MOVE_GIGADRAIN,
@@ -34875,7 +34875,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.spAtkEv = 252,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_BLAZE
-		.item = ITEM_WIDE_LENS,
+		.item = ITEM_BLUNDER_POLICY,
 		.moves =
 		{
 			MOVE_FIREBLAST,
@@ -38741,7 +38741,7 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.hpEv = 252,
 		.spAtkEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_LEVITATE
-		.item = ITEM_FOCUS_BAND,
+		.item = ITEM_BLUNDER_POLICY,
 		.moves =
 		{
 			MOVE_ZAPCANNON,

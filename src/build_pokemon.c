@@ -486,7 +486,7 @@ u16 sp06A_GivePlayerFrontierMonByLoadedSpread(void)
 //		Var8000: Given Id.
 void sp06B_ReplacePlayerTeamWithMultiTrainerTeam(void)
 {
-	BackupPartyToTempTeam(0, 0, 3);
+	BackupPartyToTempTeam(0, 3);
 	BuildFrontierMultiParty(Var8000);
 }
 

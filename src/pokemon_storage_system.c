@@ -137,8 +137,7 @@ u8* const sPokemonBoxWallpaperPtrs[TOTAL_BOXES_COUNT] =
 	(u8*) (ORIGINAL_BOX_POKEMON_RAM + (30 * 19)) + 9,	//Box 24
 };
 
-#define gTempTeamBackup1 ((struct CompressedPokemon*) 0x203E048)
-#define gTempTeamBackup2 ((struct CompressedPokemon*) 0x203E1A4)
+#define gTempTeamBackup ((struct CompressedPokemon*) 0x203E1A4)
 
 //This file's functions:
 void CreateBoxMonFromCompressedMon(struct BoxPokemon* boxMon, struct CompressedPokemon* compMon);
@@ -440,17 +439,17 @@ u32 SummaryScreenBoxMonMultiplier(u8 index)
 	return index * sizeof(struct CompressedPokemon);
 }
 
-void BackupPartyToTempTeam(u8 backupNum, u8 firstId, u8 numPokes)
+void BackupPartyToTempTeam(u8 firstId, u8 numPokes)
 {
-	struct CompressedPokemon* backup = (backupNum == 0) ? gTempTeamBackup1 : gTempTeamBackup2;
+	struct CompressedPokemon* backup = gTempTeamBackup;
 
 	for (int i = 0; i < numPokes; ++i)
 		CreateCompressedMonFromBoxMon((struct BoxPokemon*) &gPlayerParty[firstId + i], &backup[firstId + i]);
 }
 
-void RestorePartyFromTempTeam(u8 backupNum, u8 firstId, u8 numPokes)
+void RestorePartyFromTempTeam(u8 firstId, u8 numPokes)
 {
-	struct CompressedPokemon* backup = (backupNum == 0) ? gTempTeamBackup1 : gTempTeamBackup2;
+	struct CompressedPokemon* backup = gTempTeamBackup;
 
 	for (int i = 0; i < numPokes; ++i)
 	{

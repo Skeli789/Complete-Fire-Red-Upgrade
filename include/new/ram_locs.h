@@ -193,8 +193,6 @@ struct Clock
 //extern struct CompressedPokemon gBox20[30] //0x203CB44
 //extern struct CompressedPokemon gBox21[30] //0x203D210
 //extern struct CompressedPokemon gBox22[30] //0x203D8DC
-//extern struct CompressedPokemon gTempTeamBackup1[6] //0x203E048
-//extern struct CompressedPokemon gTempTeamBackup2[6] //0x203E1A4
 
 #define gPokeBackupPtr (*((struct Pokemon**) 0x203E034))
 //#define sDexNavStatePtr/sFrontierRecordsPtr //0x203E038
@@ -209,3 +207,5 @@ extern bool8 gInShop; //0x203E043
 #define gRainFadeHelper (*((u8*) 0x203E050))
 #define gCurrentDexNavChain (*((u8*) 0x203E051))
 #define gDexNavStartedBattle (*((bool8*) 0x203E052))
+
+//extern struct CompressedPokemon gTempTeamBackup[6] //0x203E1A4

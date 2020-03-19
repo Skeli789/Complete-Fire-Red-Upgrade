@@ -460,7 +460,7 @@ bool8 RayquazaCanMegaEvolveInFrontierBattle(void)
 
 bool8 DynamaxAllowedInTier(u8 tier)
 {
-	return tier = BATTLE_FACILITY_NO_RESTRICTIONS;
+	return tier == BATTLE_FACILITY_NO_RESTRICTIONS;
 }
 
 u8 GetBattleTowerLevel(u8 tier)
@@ -1047,7 +1047,7 @@ void sp06C_SpliceFrontierTeamWithPlayerTeam(void)
 			partnerPokes[i] = gPlayerParty[i]; //Player's party has already been remodeled by the special so call indices directly
 	}
 
-	RestorePartyFromTempTeam(0, 0, 3);
+	RestorePartyFromTempTeam(0, 3);
 	Memcpy(&gPlayerParty[3], partnerPokes, sizeof(struct Pokemon) * 3); //Fill second half of team with multi mons
 
 	//Recalculate party count the special way because there may be a gap in the party
