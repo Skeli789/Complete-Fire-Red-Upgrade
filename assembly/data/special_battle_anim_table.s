@@ -1034,3 +1034,25 @@ ANIM_G_MAX_VOLCALITH:
 	waitanimation 
 	pokespritefromBG side_target
 	endanimation
+    
+    
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.pool
+.align 2
+.global gBattleAnims_Special
+gBattleAnims_Special:
+    .word 0x81D64B6
+    .word 0x81D64D7
+    .word 0x81D64E8
+    .word 0x81D64F9
+    .word 0x81D657B
+    .word 0x81D6594
+    .word 0x81D659E
+    .word gBattleAnim_CriticalCapture
+
+.global gBattleAnim_CriticalCapture
+gBattleAnim_CriticalCapture:
+	launchtask 0x80EF491 0x2
+	pause 0
+	playsound2 43 0
+    goto 0x81D6506

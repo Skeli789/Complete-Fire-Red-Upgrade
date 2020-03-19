@@ -346,10 +346,18 @@ void atkEF_handleballthrow(void)
 		else //Pokemon may be caught, calculate shakes
 		{
 			u8 shakes, maxShakes;
-			if (CriticalCapture(odds))
-				maxShakes = 2;
-			else
-				maxShakes = 4;
+            
+            gCriticalCapture = FALSE;    //initialize
+            gCriticalCaptureSuccess = FALSE;
+            if (CriticalCapture(odds))
+            {
+                maxShakes = 1;  //critical capture doesn't gauarantee capture
+                gCriticalCapture = TRUE;
+            }
+            else
+            {
+                maxShakes = 4;
+            }
 
 			if (ballType == BALL_TYPE_MASTER_BALL
 			||	ballType == BALL_TYPE_PARK_BALL)
@@ -371,8 +379,10 @@ void atkEF_handleballthrow(void)
 
 			if (shakes == maxShakes)
 			{
-				gBattlescriptCurrInstr = BattleScript_SuccessBallThrow;
-
+                if (gCriticalCapture)
+                    gCriticalCaptureSuccess = TRUE;
+                
+                gBattlescriptCurrInstr = BattleScript_SuccessBallThrow;
 				if (ballType != BALL_TYPE_PARK_BALL)
 					SetMonData(&gEnemyParty[gBattlerPartyIndexes[gBankTarget]], MON_DATA_POKEBALL, &ballType);
 
@@ -383,13 +393,21 @@ void atkEF_handleballthrow(void)
 			}
 			else if (IsRaidBattle())
 			{
-				gBattleCommunication[MULTISTRING_CHOOSER] = shakes;
+                if (gCriticalCapture)
+                    gBattleCommunication[MULTISTRING_CHOOSER] = shakes + 3;
+                else
+                    gBattleCommunication[MULTISTRING_CHOOSER] = shakes;
+                
 				gBattlescriptCurrInstr = BattleScript_RaidMonEscapeBall;
 			}
 			else //Rip
 			{
-				gBattleCommunication[MULTISTRING_CHOOSER] = shakes;
-				gBattlescriptCurrInstr = BattleScript_ShakeBallThrow;
+                if (gCriticalCapture)
+                    gBattleCommunication[MULTISTRING_CHOOSER] = shakes + 3;
+                else
+                    gBattleCommunication[MULTISTRING_CHOOSER] = shakes;
+				
+                gBattlescriptCurrInstr = BattleScript_ShakeBallThrow;
 			}
 		}
 	}
@@ -481,16 +499,6 @@ u8 GiveMonToPlayer(struct Pokemon* mon) //Hook in
 u8 ItemIdToBallId(u16 ballItem)
 {
 	return ItemId_GetType(ballItem);
-}
-
-void PlayerHandleBallThrowAnim(void)
-{
-    u8 ballThrowCaseId = gBattleBufferA[gActiveBattler][1];
-
-    gBattleSpritesDataPtr->animationData->ballThrowCaseId = ballThrowCaseId;
-    gDoingBattleAnim = TRUE;
-    InitAndLaunchSpecialAnimation(gActiveBattler, gActiveBattler, GetCatchingBattler(), B_ANIM_BALL_THROW);
-    gBattleBankFunc[gActiveBattler] = (0x8030778 | 1); //CompleteOnSpecialAnimDone;
 }
 
 void CreateThrowPokeBall(u8 taskId)
