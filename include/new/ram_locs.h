@@ -209,5 +209,3 @@ extern bool8 gInShop; //0x203E043
 #define gRainFadeHelper (*((u8*) 0x203E050))
 #define gCurrentDexNavChain (*((u8*) 0x203E051))
 #define gDexNavStartedBattle (*((bool8*) 0x203E052))
-#define gCriticalCapture (*((bool8*) 0x203E053))
-#define gCriticalCaptureSuccess (*((bool8*) 0x203E054))

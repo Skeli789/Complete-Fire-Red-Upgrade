@@ -346,13 +346,10 @@ void atkEF_handleballthrow(void)
 		else //Pokemon may be caught, calculate shakes
 		{
 			u8 shakes, maxShakes;
-            
-            gCriticalCapture = FALSE;    //initialize
-            gCriticalCaptureSuccess = FALSE;
+
             if (CriticalCapture(odds))
             {
-                maxShakes = 1;  //critical capture doesn't gauarantee capture
-                gCriticalCapture = TRUE;
+                maxShakes = 2;  //Critical capture doesn't gauarantee capture
             }
             else
             {
@@ -377,11 +374,11 @@ void atkEF_handleballthrow(void)
 				gNewBS->failedThrownPokeBall = gLastUsedItem;
 			}
 
-			if (shakes == maxShakes)
+			if (shakes >= maxShakes)
 			{
-                if (gCriticalCapture)
-                    gCriticalCaptureSuccess = TRUE;
-                
+                if (gNewBS->criticalCapture)
+                    gNewBS->criticalCaptureSuccess = TRUE;
+
                 gBattlescriptCurrInstr = BattleScript_SuccessBallThrow;
 				if (ballType != BALL_TYPE_PARK_BALL)
 					SetMonData(&gEnemyParty[gBattlerPartyIndexes[gBankTarget]], MON_DATA_POKEBALL, &ballType);
@@ -393,20 +390,12 @@ void atkEF_handleballthrow(void)
 			}
 			else if (IsRaidBattle())
 			{
-                if (gCriticalCapture)
-                    gBattleCommunication[MULTISTRING_CHOOSER] = shakes + 3;
-                else
-                    gBattleCommunication[MULTISTRING_CHOOSER] = shakes;
-                
+                gBattleCommunication[MULTISTRING_CHOOSER] = shakes;
 				gBattlescriptCurrInstr = BattleScript_RaidMonEscapeBall;
 			}
 			else //Rip
 			{
-                if (gCriticalCapture)
-                    gBattleCommunication[MULTISTRING_CHOOSER] = shakes + 3;
-                else
-                    gBattleCommunication[MULTISTRING_CHOOSER] = shakes;
-				
+                gBattleCommunication[MULTISTRING_CHOOSER] = shakes;
                 gBattlescriptCurrInstr = BattleScript_ShakeBallThrow;
 			}
 		}
@@ -428,38 +417,48 @@ static u8 GetCatchingBattler(void)
 	return battler;
 }
 
-static bool8 CriticalCapture(u32 odds)
+static bool8 CriticalCapture(unusedArg u32 odds)
 {
 	#ifndef CRITICAL_CAPTURE
-		odds += 1; //So the compiler doesn't complain
-		return FALSE;
-	#else
-	u16 PokesCaught = GetNationalPokedexCount(FLAG_GET_CAUGHT);
-	if (PokesCaught <= 30)
-		odds = 0;
-	else if (PokesCaught <= 150)
-		odds /= 2;
-	else if (PokesCaught <= 300)
-		;
-	else if (PokesCaught <= 450)
-		odds = udivsi(odds * 150, 100);
-	else if (PokesCaught <= 600)
-		odds *= 2;
-	else
-		odds = udivsi(odds * 250, 100);
-
-	odds = udivsi(odds, 6);
-	if (umodsi(Random(), 0xFF) < odds)
-	{
-		gNewBS->criticalCapture = TRUE;
-		return TRUE;
-	}
-	else
-	{
 		gNewBS->criticalCapture = FALSE;
 		return FALSE;
+	#else
+	u16 pokesCaught = GetNationalPokedexCount(FLAG_GET_CAUGHT);
+
+	if (pokesCaught <= 30)
+		odds = 0;
+	else if (pokesCaught <= 150)
+		odds /= 2;
+	else if (pokesCaught <= 300)
+		;
+	else if (pokesCaught <= 450)
+		odds = (odds * 15) / 10;
+	else if (pokesCaught <= 600)
+		odds *= 2;
+	else
+		odds = (odds * 25) / 10;
+
+	odds /= 6;
+	gNewBS->criticalCaptureSuccess = FALSE;
+	if (Random() % 0xFF < odds)
+	{
+		return gNewBS->criticalCapture = TRUE;
+	}
+	else
+	{
+		return gNewBS->criticalCapture = FALSE;
 	}
 	#endif
+}
+
+bool8 IsCriticalCapture(void)
+{
+	return gNewBS->criticalCapture;
+}
+
+bool8 IsCriticalCaptureSuccess(void)
+{
+	return gNewBS->criticalCaptureSuccess;
 }
 
 u8 GiveMonToPlayer(struct Pokemon* mon) //Hook in
@@ -499,6 +498,27 @@ u8 GiveMonToPlayer(struct Pokemon* mon) //Hook in
 u8 ItemIdToBallId(u16 ballItem)
 {
 	return ItemId_GetType(ballItem);
+}
+
+void PlayerHandleSuccessBallThrowAnim(void)
+{
+	u8 animNum = (gNewBS->criticalCapture) ? B_ANIM_CRITICAL_CAPTURE_THROW : B_ANIM_BALL_THROW;
+	gBattleSpritesDataPtr->animationData->ballThrowCaseId = BALL_3_SHAKES_SUCCESS;
+
+	gDoingBattleAnim = TRUE;
+	InitAndLaunchSpecialAnimation(gActiveBattler, gActiveBattler, GetCatchingBattler(), animNum);
+	gBattleBankFunc[gActiveBattler] = (u32) CompleteOnSpecialAnimDone;
+}
+
+void PlayerHandleBallThrowAnim(void)
+{
+	u8 animNum = (gNewBS->criticalCapture) ? B_ANIM_CRITICAL_CAPTURE_THROW : B_ANIM_BALL_THROW;
+	u8 ballThrowCaseId = gBattleBufferA[gActiveBattler][1];
+
+	gBattleSpritesDataPtr->animationData->ballThrowCaseId = ballThrowCaseId;
+	gDoingBattleAnim = TRUE;
+	InitAndLaunchSpecialAnimation(gActiveBattler, gActiveBattler, GetCatchingBattler(), animNum);
+	gBattleBankFunc[gActiveBattler] = (u32) CompleteOnSpecialAnimDone;
 }
 
 void CreateThrowPokeBall(u8 taskId)
@@ -571,11 +591,6 @@ u16 GetBattlerPokeballItemId(u8 bank)
 	return ballId;
 }
 
-bool8 CriticalCapturAnimUpdate(void)
-{
-	return gNewBS->criticalCapture;
-}
-
 bool8 DoubleWildPokeBallItemUseFix(u8 taskId)
 {
 	bool8 effect = FALSE;
@@ -614,7 +629,7 @@ bool8 DoubleWildPokeBallItemUseFix(u8 taskId)
 	return effect;
 }
 
-pokemon_t* LoadTargetPartyData(void)
+struct Pokemon* LoadTargetPartyData(void)
 {
 	return GetBankPartyData(gBankTarget);
 }

@@ -191,7 +191,6 @@ SLUDGE_WAVE_ASM 080ab43c 0
 ROLLOUT_TIMER_ASM 080b4c40 0
 HEX_SIDE_ASM 080b8d74 0
 ENCORE_USER_ASM 080e0da8 1
-CriticalCaptureAnimHook 080EFF0C 2
 DISABLE_TIME_ASM 080A7FF8 1
 WATERGUN_ASM 080A7C28 0
 ION_DELUGE_ASM 080AAC24 0
@@ -577,8 +576,8 @@ ScrollingMultiSizeHook 080CB82A 0
 #endif
 
 #ifdef CRITICAL_CAPTURE
-CB_InitThrownBallBouncing 080EFB58 1
-#PlayerHandleSuccessBallThrowAnim 0803275C 0
-#PlayerHandleBallThrowAnim 080327B0 0
-CB_DoBallShake 080EFCEC 1
+CriticalCaptureAnimHook 080EFEE4 0
+SpriteCB_InitThrownBallBouncing 080EFB58 1
+PlayerHandleSuccessBallThrowAnim 0803275C 0
+PlayerHandleBallThrowAnim 080327B0 0
 #endif

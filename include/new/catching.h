@@ -10,16 +10,23 @@
 
 //Exported Functions
 void atkEF_handleballthrow(void);
-pokemon_t* LoadTargetPartyData(void);
+struct Pokemon* LoadTargetPartyData(void);
+bool8 IsCriticalCapture(void);
+bool8 IsCriticalCaptureSuccess(void);
 
 //Functions Hooked In
 u8 GiveMonToPlayer(pokemon_t* mon);
 u8 ItemIdToBallId(u16 ballItem);
+void PlayerHandleSuccessBallThrowAnim(void);
+void PlayerHandleBallThrowAnim(void);
+void CreateThrowPokeBall(u8 taskId);
+void DestroyThrowPokeBall(u8 taskId);
+void StartPokeballThrowAnimation(u8 taskId);
 void LoadBallGfx(u8 ballId);
 item_t BallIdToItemId(u8 ballId);
 u16 GetBattlerPokeballItemId(u8 bank);
-bool8 CriticalCapturAnimUpdate(void);
 bool8 DoubleWildPokeBallItemUseFix(u8 taskId);
+bool8 TryGetPokeBallBattleScript(void);
 const struct SpriteTemplate* OakIntroPokeballFix(void);
 
 //Exported Structs

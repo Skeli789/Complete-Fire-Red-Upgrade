@@ -284,11 +284,9 @@ StartTheBattle = 0x807F868 | 1;
 GetBattleTransitionTypeByMap = 0x807FD90 | 1;
 GetSumOfPlayerPartyLevel = 0x807FDF4 | 1;
 GetSumOfEnemyPartyLevel = 0x807FE54 | 1;
-CB_ThrowBallMovement = 0x80EFB9C | 1;
+SpriteCB_ThrowBallMovement = 0x80EFB9C | 1;
 CompleteOnSpecialAnimDone = 0x8030778 | 1;
 InitAndLaunchSpecialAnimation = 0x80341D8 | 1;
-CB_InitCaughtMonAnim = 0x80EFFA4 | 1;
-CB_InitUnsuccessfulCatchAnim = 0x80EFF80 | 1;
 
 /* Battle Functions */
 GetMultiplayerId = 0x800A404 | 1;

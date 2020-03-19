@@ -127,26 +127,32 @@ PartyMenuSwitchingHook:
 	bx r0
 
 .pool
-@0x80EFF0C with r2
+@0x80EFEE4 with r0
 CriticalCaptureAnimHook:
-	push {r0-r1}
-	bl CriticalCapturAnimUpdate
+	push {r1}
+	bl IsCriticalCapture
+	pop {r1}
 	cmp r0, #0x0
-	pop {r0-r1}
-	bne BallThrowSuccessReturn
-	cmp r0, #0x4
-	bne BallThrowBreakOutReturn
-	cmp r1, #0x3
-	bne BallThrowBreakOutReturn
-
-BallThrowSuccessReturn:
-	ldr r0, =0x80EFF14 | 1
+	beq NormalBallThrowReturn
+	bl IsCriticalCaptureSuccess
+	cmp r0, #0x0
+	beq BallThrowFailureReturn
+	ldr r0, =0x80EFF14 | 1 @Success
 	bx r0
 
-BallThrowBreakOutReturn:
-	ldr r0, =0x80EFF20 | 1
+BallThrowFailureReturn:
+	ldr r0, =0x80EFEF0 | 1 @Break out
 	bx r0
 
+NormalBallThrowReturn:
+	ldr r0, =0x2024018 @gBattleSpritesDataPtr
+	ldr r0, [r0]
+	ldr r0, [r0, #0x8]
+	ldrb r0, [r0, #0x8]
+	ldr r2, =0x80EFEEC | 1
+	bx r2
+
+.pool
 @0x80A1E2C with r0
 DoubleWildPokeBallItemUseFixHook:
 	mov r0, r4

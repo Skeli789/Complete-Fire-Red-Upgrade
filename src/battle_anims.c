@@ -3369,249 +3369,72 @@ static void TrySwapBackupSpeciesWithSpecies(u8 activeBattler, u8 animId)
 	}
 }
 
-// Critical Capture Animations
-void CB_CriticalCaptureThrownBallMovement(struct Sprite *sprite)
+//Critical Capture Animations
+void SpriteCB_CriticalCaptureThrownBallMovement(struct Sprite* sprite)
 {
-    bool8 lastBounce = FALSE;
-    u8 maxBounces = 6;
-    int bounceCount;
-    
-    bounceCount = sprite->data[3] >> 8;
-    
-    if (bounceCount == 0)
-        PlaySE(SE_POKE_BALL_SHAKE);
-        
-    switch (sprite->data[3] & 0xFF)
-    {
-    case 0:
-        if (bounceCount < 3)
-            sprite->pos2.x++;
-        
-        sprite->data[5]++;
-        if (sprite->data[5] >= 3)
-            sprite->data[3] += 257;
-        
-        break;
-    case 1:
-        if (bounceCount < 3 || sprite->pos2.x != 0)
-            sprite->pos2.x--;
-        
-        sprite->data[5]--;
-        
-        if (sprite->data[5] <= 0)
-        {
-            sprite->data[5] = 0;
-            sprite->data[3] &= -0x100;
-        }
-        
-        if (bounceCount >= maxBounces)
-            lastBounce = TRUE;
-        
-        break;
-    }
-    
-    if (lastBounce)
-    {
-        
-        sprite->data[3] = 0;
-        sprite->data[4] = 40;   //starting max height
-        sprite->data[5] = 0;
-        sprite->callback = CB_ThrowBallMovement;
-    }
+	bool8 lastBounce = FALSE;
+	u8 maxBounces = 6;
+	int bounceCount;
+
+	bounceCount = sprite->data[3] >> 8;
+	
+	if (bounceCount == 0)
+		PlaySE(SE_POKE_BALL_SHAKE);
+		
+	switch (sprite->data[3] & 0xFF)
+	{
+	case 0:
+		if (bounceCount < 3)
+			sprite->pos2.x++;
+		
+		sprite->data[5]++;
+		if (sprite->data[5] >= 3)
+			sprite->data[3] += 257;
+		
+		break;
+	case 1:
+		if (bounceCount < 3 || sprite->pos2.x != 0)
+			sprite->pos2.x--;
+		
+		sprite->data[5]--;
+		
+		if (sprite->data[5] <= 0)
+		{
+			sprite->data[5] = 0;
+			sprite->data[3] &= -0x100;
+		}
+		
+		if (bounceCount >= maxBounces)
+			lastBounce = TRUE;
+		
+		break;
+	}
+	
+	if (lastBounce)
+	{
+		
+		sprite->data[3] = 0;
+		sprite->data[4] = 40;   //Starting max height
+		sprite->data[5] = 0;
+		sprite->callback = SpriteCB_ThrowBallMovement;
+	}
 }
 
-void CB_InitThrownBallBouncing(struct Sprite *sprite)
+void SpriteCB_InitThrownBallBouncing(struct Sprite *sprite)
 {
-    int angle;
+	int angle;
 
-    if (sprite->animEnded)
-    {
-        sprite->data[3] = 0;
-        sprite->data[4] = 40;
-        sprite->data[5] = 0;
-        angle = 0;
-        sprite->pos1.y += Cosine(angle, 40);
-        sprite->pos2.y = -Cosine(angle, sprite->data[4]);
-        if (gCriticalCapture)
-            sprite->callback = CB_CriticalCaptureThrownBallMovement;
-        else
-            sprite->callback = CB_ThrowBallMovement;
-    }
-}
-
-void PlayerHandleSuccessBallThrowAnim(void)
-{
-    gBattleSpritesDataPtr->animationData->ballThrowCaseId = BALL_3_SHAKES_SUCCESS;
-    gDoingBattleAnim = TRUE;
-    InitAndLaunchSpecialAnimation(gActiveBattler, gActiveBattler, GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT), B_ANIM_BALL_THROW);
-    gBattleBankFunc[gActiveBattler] = (u32)CompleteOnSpecialAnimDone;
-}
-
-void PlayerHandleBallThrowAnim(void)
-{
-    u8 ballThrowCaseId = gBattleBufferA[gActiveBattler][1];
-    gBattleSpritesDataPtr->animationData->ballThrowCaseId = ballThrowCaseId;
-    gDoingBattleAnim = TRUE;
-    InitAndLaunchSpecialAnimation(gActiveBattler, gActiveBattler, GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT), B_ANIM_BALL_THROW);
-    gBattleBankFunc[gActiveBattler] = (u32)(CompleteOnSpecialAnimDone);
-}
-
-void CB_DoBallShake(struct Sprite *sprite)
-{
-    s8 state;
-    u16 var0;
-
-    switch (sprite->data[3] & 0xFF)
-    {
-    case 0:
-        if (gBattleSpritesDataPtr->animationData->field_C > 0xFF)
-        {
-            sprite->pos2.x += sprite->data[4];
-            gBattleSpritesDataPtr->animationData->field_C &= 0xFF;
-        }
-        else
-        {
-            gBattleSpritesDataPtr->animationData->field_C += 0xB0;
-        }
-
-        sprite->data[5]++;
-        sprite->affineAnimPaused = FALSE;
-        var0 = sprite->data[5] + 7;
-        if (var0 > 14)
-        {
-            gBattleSpritesDataPtr->animationData->field_C = 0;
-            sprite->data[3]++;
-            sprite->data[5] = 0;
-        }
-        break;
-    case 1:
-        if (++sprite->data[5] == 1)
-        {
-            sprite->data[5] = 0;
-            sprite->data[4] = -sprite->data[4];
-            sprite->data[3]++;
-            sprite->affineAnimPaused = FALSE;
-            if (sprite->data[4] < 0)
-                ChangeSpriteAffineAnim(sprite, 2);
-            else
-                ChangeSpriteAffineAnim(sprite, 1);
-        }
-        else
-        {
-            sprite->affineAnimPaused = TRUE;
-        }
-        break;
-    case 2:
-        if (gBattleSpritesDataPtr->animationData->field_C > 0xFF)
-        {
-            sprite->pos2.x += sprite->data[4];
-            gBattleSpritesDataPtr->animationData->field_C &= 0xFF;
-        }
-        else
-        {
-            gBattleSpritesDataPtr->animationData->field_C += 0xB0;
-        }
-
-        sprite->data[5]++;
-        sprite->affineAnimPaused = FALSE;
-        var0 = sprite->data[5] + 12;
-        if (var0 > 24)
-        {
-            gBattleSpritesDataPtr->animationData->field_C = 0;
-            sprite->data[3]++;
-            sprite->data[5] = 0;
-        }
-        break;
-    case 3:
-        if (sprite->data[5]++ < 0)
-        {
-            sprite->affineAnimPaused = TRUE;
-            break;
-        }
-
-        sprite->data[5] = 0;
-        sprite->data[4] = -sprite->data[4];
-        sprite->data[3]++;
-        sprite->affineAnimPaused = FALSE;
-        if (sprite->data[4] < 0)
-            ChangeSpriteAffineAnim(sprite, 2);
-        else
-            ChangeSpriteAffineAnim(sprite, 1);
-        // fall through
-    case 4:
-        if (gBattleSpritesDataPtr->animationData->field_C > 0xFF)
-        {
-            sprite->pos2.x += sprite->data[4];
-            gBattleSpritesDataPtr->animationData->field_C &= 0xFF;
-        }
-        else
-        {
-            gBattleSpritesDataPtr->animationData->field_C += 0xB0;
-        }
-
-        sprite->data[5]++;
-        sprite->affineAnimPaused = FALSE;
-        var0 = sprite->data[5] + 4;
-        if (var0 > 8)
-        {
-            gBattleSpritesDataPtr->animationData->field_C = 0;
-            sprite->data[3]++;
-            sprite->data[5] = 0;
-            sprite->data[4] = -sprite->data[4];
-        }
-        break;
-    case 5:
-        sprite->data[3] += 0x100;
-        state = sprite->data[3] >> 8;
-        if (gCriticalCapture)
-        {
-            if (gCriticalCaptureSuccess)
-            {
-                sprite->callback = CB_InitCaughtMonAnim;
-                sprite->affineAnimPaused = 1;
-            }
-            else
-            {
-                sprite->affineAnimPaused = 1;
-                sprite->callback = CB_InitUnsuccessfulCatchAnim;
-            }
-        }
-        else
-        {
-            if (state == gBattleSpritesDataPtr->animationData->ballThrowCaseId)
-            {
-                sprite->affineAnimPaused = 1;
-                sprite->callback = CB_InitUnsuccessfulCatchAnim;
-            }
-            else
-            {
-                if (gBattleSpritesDataPtr->animationData->ballThrowCaseId == BALL_3_SHAKES_SUCCESS && state == 3)
-                {
-                    sprite->callback = CB_InitCaughtMonAnim;
-                    sprite->affineAnimPaused = 1;
-                }
-                else
-                {
-                    sprite->data[3]++;
-                    sprite->affineAnimPaused = 1;
-                }
-            }
-        }
-        break;
-    case 6:
-    default:
-        if (++sprite->data[5] == 31)
-        {
-            sprite->data[5] = 0;
-            sprite->data[3] &= -0x100;
-            StartSpriteAffineAnim(sprite, 3);
-            if (sprite->data[4] < 0)
-                StartSpriteAffineAnim(sprite, 2);
-            else
-                StartSpriteAffineAnim(sprite, 1);
-
-            PlaySE(SE_POKE_BALL_SHAKE);
-        }
-        break;
-    }
+	if (sprite->animEnded)
+	{
+		sprite->data[3] = 0;
+		sprite->data[4] = 40;
+		sprite->data[5] = 0;
+		angle = 0;
+		sprite->pos1.y += Cosine(angle, 40);
+		sprite->pos2.y = -Cosine(angle, sprite->data[4]);
+		if (gNewBS->criticalCapture)
+			sprite->callback = SpriteCB_CriticalCaptureThrownBallMovement;
+		else
+			sprite->callback = SpriteCB_ThrowBallMovement;
+	}
 }
