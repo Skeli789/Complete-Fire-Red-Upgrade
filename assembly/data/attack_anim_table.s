@@ -5588,6 +5588,7 @@ ANIM_GASTROACID:
 	launchtemplate GREENACID TEMPLATE_TARGET | 2, 0x4, 0xffe9 0x2 0xfff6 0x0
 	playsound2 0x77 SOUND_PAN_TARGET
 	pause 0x2
+	launchtask AnimTask_pal_fade_complex 0x2 0x6, PAL_DEF 0x2 0x4 0x0 0x8 0x3B35 @Gastro Acid Green
 	call GastroAcidCall
 	call GastroAcidCall
 	waitanimation
@@ -5622,8 +5623,7 @@ GastroAcidCall:
 	return
 
 .align 2
-GREENACID: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_RAZOR_LEAF OAM_DOUBLE_16x16 0x83E69DC 0x0 0x8231CFC 0x80B4635
-
+GREENACID: objtemplate ANIM_TAG_POISON_BUBBLE ANIM_TAG_RAZOR_LEAF OAM_OFF_16x16 0x83E69DC 0x0 0x8231CFC 0x80B4635
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool

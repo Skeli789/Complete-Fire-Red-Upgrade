@@ -508,8 +508,8 @@ extern struct BattlePokemon gBattleMons[MAX_BATTLERS_COUNT];
 struct BattleHistory //0x20003D0
 {
     /*0x00*/ u16 usedMoves[2][8]; // 0xFFFF means move not used (confuse self hit, etc)
-    /*0x20*/ u8 abilities[MAX_BATTLERS_COUNT / 2];
-    /*0x22*/ u8 itemEffects[MAX_BATTLERS_COUNT / 2];
+    /*0x20*/ u8 abilities[MAX_BATTLERS_COUNT/* / 2*/];
+    /*0x22*/ //u8 itemEffects[MAX_BATTLERS_COUNT / 2]; //Moved to gNewBS
     /*0x24*/ u16 trainerItems[MAX_BATTLERS_COUNT]; //0x20003F4
     /*0x2C*/ u8 itemsNo;
 };
@@ -930,6 +930,7 @@ struct NewBattleStruct
 	struct 
 	{
 		u16 zMoveHelper;
+		u8 itemEffects[MAX_BATTLERS_COUNT];
 		u16 movePredictions[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //movePredictions[bankAtk][bankDef]
 		u16 strongestMove[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //strongestMove[bankAtk][bankDef]
 		bool8 moveKnocksOut1Hit[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT][MAX_MON_MOVES]; //moveKnocksOut1Hit[bankAtk][bankDef][monMoveIndex]

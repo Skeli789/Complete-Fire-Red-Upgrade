@@ -407,8 +407,11 @@ static void PlayerPartnerHandleChooseMove(void)
 	}
 	else if (moveInfo->possibleMaxMoves[chosenMoveId])
 	{
-		if (/*gBattleResults->battleTurnCounter > 3 && */ShouldAIDynamax(gActiveBattler, gBankTarget)) //Give the Player a chance to Dynamax first
-			gNewBS->dynamaxData.toBeUsed[gActiveBattler] = TRUE;
+		if (ShouldAIDynamax(gActiveBattler, gBankTarget)) 
+		{
+			if (!IsRaidBattle() || gBattleResults->battleTurnCounter > 3) //Give the Player a chance to Dynamax first in a Raid battle
+				gNewBS->dynamaxData.toBeUsed[gActiveBattler] = TRUE;
+		}
 	}
 
 	//This is handled again later, but it's only here to help with the case of choosing Helping Hand when the partner is switching out.

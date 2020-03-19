@@ -318,9 +318,9 @@ void DexNavGetMon(u16 species, u8 potential, u8 level, u8 ability, u16* moves, u
 
 	//Pick potential ivs to set to 31
 	u8 iv[3];
-	iv[0] = Random() % 6;
-	iv[1] = Random() % 6;
-	iv[2] = Random() % 6;
+	for (i = 0; i < NELEMS(iv); ++i)
+		iv[i] = Random() % 6;
+
 	if ((iv[0] != iv[1]) && (iv[0] != iv[2]) && (iv[1] != iv[2]))
 	{
 		u8 perfectIv = 0x1F;
@@ -333,14 +333,15 @@ void DexNavGetMon(u16 species, u8 potential, u8 level, u8 ability, u16* moves, u
 	}
 
 	//Set ability
-	u8 onBit = (gBaseStats[species].hiddenAbility == ability) ? 1 : 0;
-	pkmn->hiddenAbility = onBit;
+	if (gBaseStats[species].hiddenAbility == ability)
+		pkmn->hiddenAbility = TRUE;
+	else
+		GiveMonNatureAndAbility(pkmn, GetNature(pkmn), (gBaseStats[species].ability2 == ability) ? 1 : 0, FALSE);
 
 	//Set moves
-	for (int i = 0; i < MAX_MON_MOVES; ++i)
+	for (i = 0; i < MAX_MON_MOVES; ++i)
 	{
-		Var8006 = sDNavState->moveId[i];
-		pkmn->moves[i] = Var8006;
+		pkmn->moves[i] = sDNavState->moveId[i];
 		pkmn->pp[i] = gBattleMoves[moves[i]].pp;
 	}
 
@@ -1032,7 +1033,7 @@ static void DexNavManageHUD(u8 taskId)
 	if (sDNavState-> proximity < 1)
 	{
 		DexNavGetMon(sDNavState->species, sDNavState->potential, sDNavState->pokemonLevel,
-			sDNavState->ability, sDNavState->moveId, sDNavState->searchLevel, gCurrentDexNavChain);
+					sDNavState->ability, sDNavState->moveId, sDNavState->searchLevel, gCurrentDexNavChain);
 		DestroyTask(taskId);
 
 		// increment the search level
@@ -1993,15 +1994,11 @@ static const struct SpriteTemplate sCapturedAllPokemonSymbolTemplate =
 	.callback = SpriteCallbackDummy,
 };
 
-static void DexNavLoadCapturedAllSymbol(void)
+static bool8 CapturedAllLandBasedPokemon(void)
 {
-	int i;
+	u16 i, species;
 	u8 num = 0;
-	u16 species;
 	const struct WildPokemonInfo* landMonsInfo = LoadProperMonsData(LAND_MONS_HEADER);
-	const struct WildPokemonInfo* waterMonsInfo = LoadProperMonsData(WATER_MONS_HEADER);
-
-	LoadCompressedSpriteSheetUsingHeap(&sCapturedAllPokemonSpriteSheet);
 
 	if (landMonsInfo != NULL)
 	{
@@ -2017,10 +2014,18 @@ static void DexNavLoadCapturedAllSymbol(void)
 		}
 
 		if (i >= NUM_LAND_MONS && num > 0) //All land mons caught and there were land mons to catch
-			CreateSprite(&sCapturedAllPokemonSymbolTemplate,  154, 77, 0);
+			return TRUE;
 	}
 
-	num = 0;
+	return FALSE;
+}
+
+static bool8 CapturedAllWaterBasedPokemon(void)
+{
+	u16 i, species;
+	u8 num = 0;
+	const struct WildPokemonInfo* waterMonsInfo = LoadProperMonsData(WATER_MONS_HEADER);
+
 	if (waterMonsInfo != NULL)
 	{
 		for (i = 0; i < NUM_WATER_MONS; ++i)
@@ -2035,8 +2040,34 @@ static void DexNavLoadCapturedAllSymbol(void)
 		}
 
 		if (i >= NUM_WATER_MONS && num > 0) //All water mons caught and there were water mons to catch
-			CreateSprite(&sCapturedAllPokemonSymbolTemplate,  140, 29, 0);
+			return TRUE;
 	}
+
+	return FALSE;
+}
+
+static void DexNavLoadCapturedAllSymbol(void)
+{
+	LoadCompressedSpriteSheetUsingHeap(&sCapturedAllPokemonSpriteSheet);
+
+	if (CapturedAllLandBasedPokemon())
+		CreateSprite(&sCapturedAllPokemonSymbolTemplate,  154, 77, 0);
+
+	if (CapturedAllWaterBasedPokemon())
+		CreateSprite(&sCapturedAllPokemonSymbolTemplate,  140, 29, 0);
+}
+
+void sp0E2_IsDexNavCompleteHere(void)
+{
+	const struct WildPokemonInfo* landMonsInfo = LoadProperMonsData(LAND_MONS_HEADER);
+	const struct WildPokemonInfo* waterMonsInfo = LoadProperMonsData(WATER_MONS_HEADER);
+
+	gSpecialVar_LastResult = TRUE;
+	
+	if (landMonsInfo != NULL && !CapturedAllLandBasedPokemon())
+		gSpecialVar_LastResult = FALSE;
+	else if (waterMonsInfo != NULL && !CapturedAllWaterBasedPokemon())
+		gSpecialVar_LastResult = FALSE;
 }
 
 static void CallbackDexNavOW(void)
@@ -2221,6 +2252,8 @@ static void DexNavGuiHandler(void)
 				palette = gInterfaceGfx_DexNavGuiAutumnPal;
 			else if (IsCurrentAreaWinter())
 				palette = gInterfaceGfx_DexNavGuiWinterPal;
+			else if (IsCurrentAreaSwamp())
+				palette = gInterfaceGfx_DexNavGuiSwampPal;
 			else
 				palette = gInterfaceGfx_dexnavGuiPal;
 

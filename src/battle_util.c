@@ -121,19 +121,19 @@ item_effect_t GetRecordedItemEffect(u8 bank)
 	&& !gNewBS->EmbargoTimers[bank]
 	&& !IsMagicRoomActive()
 	&& ITEM(bank) != ITEM_NONE) //Can't have an effect if you have no item
-		return BATTLE_HISTORY->itemEffects[bank];
+		return gNewBS->ai.itemEffects[bank];
 
 	return 0;
 }
 
 void RecordItemEffectBattle(u8 bank, u8 itemEffect)
 {
-	BATTLE_HISTORY->itemEffects[bank] = itemEffect;
+	gNewBS->ai.itemEffects[bank] = itemEffect;
 }
 
 void ClearBattlerItemEffectHistory(u8 bank)
 {
-	BATTLE_HISTORY->itemEffects[bank] = 0;
+	gNewBS->ai.itemEffects[bank] = 0;
 }
 
 struct Pokemon* GetBankPartyData(u8 bank)

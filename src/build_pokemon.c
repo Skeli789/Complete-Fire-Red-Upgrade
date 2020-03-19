@@ -281,7 +281,7 @@ void BuildTrainerPartySetup(void)
 			}
 			Memset(&gPlayerParty[3], 0x0, sizeof(struct Pokemon) * 3);
 	
-			if (IsRaidBattle())
+			if (IsRaidBattle() && VarGet(VAR_PARTNER) == RAID_BATTLE_MULTI_TRAINER_TID)
 				BuildRaidMultiParty();
 			else
 				CreateNPCTrainerParty(&gPlayerParty[3], VarGet(VAR_PARTNER), FALSE, B_SIDE_PLAYER);
@@ -411,13 +411,18 @@ u16 sp068_GivePlayerFrontierMonGivenSpecies(void)
 //@Returns: If the Pokemon was added or not.
 u16 sp069_GivePlayerRandomFrontierMonByTier(void)
 {
-	u8 level, tier;
+	return GiveRandomFrontierMonByTier(B_SIDE_PLAYER, Var8000, Var8001);
+}
+
+u16 GiveRandomFrontierMonByTier(u8 side, u8 tier, u16 spreadType)
+{
+	u8 level;
 	u16 numSpreads;
 	struct Pokemon mon;
 	const struct BattleTowerSpread* spread;
 	const struct BattleTowerSpread* spreads;
 
-	switch (Var8001) {
+	switch (spreadType) {
 		case 0:
 		default:
 			level = 50;
@@ -455,7 +460,14 @@ u16 sp069_GivePlayerRandomFrontierMonByTier(void)
 		  || PokemonTierBan(spread->species, spread->item, spread, NULL, tier, CHECK_BATTLE_TOWER_SPREADS));
 
 	CreateFrontierMon(&mon, level, spread, 0, 0, 0, TRUE);
-	return GiveMonToPlayer(&mon);
+	
+	if (side == B_SIDE_PLAYER)
+		return GiveMonToPlayer(&mon);
+	else
+	{
+		gEnemyParty[0] = mon;
+		return TRUE;
+	}
 }
 
 u16 sp06A_GivePlayerFrontierMonByLoadedSpread(void)

@@ -22,7 +22,7 @@ void TryTempMegaEvolveBank(u8 bank, struct BattlePokemon* backupMon, u16* backup
 void TryRevertTempMegaEvolveBank(u8 bank, struct BattlePokemon* backupMon, u16* backupSpecies, u8* backupAbility);
 
 //Functions Hooked In
-void BattleAI_HandleItemUseBeforeAISetup(u8 defaultScoreMoves);
+void BattleAI_HandleItemUseBeforeAISetup(void);
 void AI_TrySwitchOrUseItem(void);
 bool8 HasSuperEffectiveMoveAgainstOpponents(bool8 noRng);
 bool8 FindMonWithFlagsAndSuperEffective(u8 flags, u8 moduloPercent);

@@ -25,6 +25,12 @@ tables to edit:
 extern const u8 sTrainerName_Milo[];
 extern const u8 sTrainerName_Marlon[];
 extern const u8 sTrainerName_Jax[];
+extern const u8 sTrainerName_Tessy[];
+extern const u8 sTrainerName_Catherine[];
+extern const u8 sTrainerName_Ginger[];
+extern const u8 sTrainerName_Abimbola[];
+extern const u8 sTrainerName_Mahina[];
+extern const u8 sTrainerName_Alford[];
 
 const struct BattleTowerSpread gMultiTowerSpread_Milo[] =
 {

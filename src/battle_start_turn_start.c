@@ -1223,7 +1223,8 @@ static void TrySetupRaidBossRepeatedAttack(u8 actionFuncId)
 
 		gBankAttacker = gBanksByTurnOrder[gCurrentTurnActionNumber - 1]; //Get original attacker
 
-		if (gBankAttacker != BANK_RAID_BOSS) //Just in case the player KOs the partner and sets the bit
+		if (gBankAttacker != BANK_RAID_BOSS //Just in case the player KOs the partner and sets the bit
+		|| CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, gBankAttacker, FOE(gBankAttacker) == 0)) //Don't attack again if no one left to hit
 		{
 			gNewBS->dynamaxData.attackAgain = FALSE;
 			return;

@@ -518,15 +518,17 @@ void atk0C_datahpupdate(void) {
 					gBattleMons[gActiveBattler].hp = 0;
 				}
 
-
+				u32 hpDealt = gHpDealt;
+				if (IsRaidBattle() && gActiveBattler == BANK_RAID_BOSS && gNewBS->dynamaxData.raidShieldsUp)
+					hpDealt = MathMax(1, hpDealt); //Because damage can get heavily reduced to 0
 				if (!gSpecialStatuses[gActiveBattler].moveturnLostHP && !(gHitMarker & HITMARKER_NON_ATTACK_DMG))
-					gSpecialStatuses[gActiveBattler].moveturnLostHP = gHpDealt;
+					gSpecialStatuses[gActiveBattler].moveturnLostHP = hpDealt;
 
 				if (CalcMoveSplit(gActiveBattler, gCurrentMove) == SPLIT_PHYSICAL
 				&& !(gHitMarker & HITMARKER_NON_ATTACK_DMG))
 				{
-					gProtectStructs[gActiveBattler].physicalDmg = gHpDealt;
-					gSpecialStatuses[gActiveBattler].moveturnLostHP_physical = gHpDealt;
+					gProtectStructs[gActiveBattler].physicalDmg = hpDealt;
+					gSpecialStatuses[gActiveBattler].moveturnLostHP_physical = hpDealt;
 
 					if (gBattlescriptCurrInstr[1] == BS_GET_TARGET)
 					{
@@ -544,8 +546,8 @@ void atk0C_datahpupdate(void) {
 				else if (CalcMoveSplit(gActiveBattler, gCurrentMove) == SPLIT_SPECIAL
 				&& !(gHitMarker & HITMARKER_NON_ATTACK_DMG))
 				{
-					gProtectStructs[gActiveBattler].specialDmg = gHpDealt;
-					gSpecialStatuses[gActiveBattler].moveturnLostHP_special = gHpDealt;
+					gProtectStructs[gActiveBattler].specialDmg = hpDealt;
+					gSpecialStatuses[gActiveBattler].moveturnLostHP_special = hpDealt;
 
 					if (gBattlescriptCurrInstr[1] == BS_GET_TARGET)
 					{
@@ -3654,7 +3656,7 @@ void atkBE_rapidspinfree(void)
 		}
 		else
 		{
-			if (gCurrentMove == MOVE_RAPIDSPIN) //From Gen 8
+			if (gCurrentMove == MOVE_RAPIDSPIN && ABILITY(bankAtk) != ABILITY_SHEERFORCE) //From Gen 8
 			{
 				gBattleCommunication[MOVE_EFFECT_BYTE] = MOVE_EFFECT_SPD_PLUS_1 | MOVE_EFFECT_AFFECTS_USER;
 				SetMoveEffect(TRUE, TRUE); //Automatically increments gBattlescriptCurrInstr

@@ -465,7 +465,11 @@ EventScript_UseSurf:
 	if SET _goto EventScript_UseSurf_SkipAsk
 
 EventScript_UseSurf_Ask:
+	callasm IsCurrentAreaSwampToVar
+	compare LASTRESULT 0x0
+	if notequal _goto EventScript_UseSurf_AskMurkyWater
 	msgbox 0x81A556E MSG_YESNO	
+EventScript_UseSurf_CheckAnswer:
 	compare LASTRESULT NO
 	if equal _goto EventScript_SurfEnd
 	lockall
@@ -478,12 +482,21 @@ EventScript_UseSurf_SkipAsk:
 EventScript_SurfEnd:
 	releaseall
 	end
-	
+
+EventScript_UseSurf_AskMurkyWater:
+	msgbox gText_WaterMurkyBrownUseSurf MSG_YESNO	
+	goto EventScript_UseSurf_CheckAnswer
+
 .global EventScript_WaterDyedBlue
 EventScript_WaterDyedBlue:
 	msgbox gText_WaterDyed MSG_NORMAL
 	end
-	
+
+.global EventScript_WaterMurkyBrown
+EventScript_WaterMurkyBrown:
+	msgbox gText_WaterMurkyBrown MSG_NORMAL
+	end
+
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 .equ FLDEFF_USE_DIVE, 44

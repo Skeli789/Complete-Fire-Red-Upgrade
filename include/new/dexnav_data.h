@@ -18,6 +18,7 @@ extern const u8 gInterfaceGfx_DexNavGuiFlowerParadiseBPal[];
 extern const u8 gInterfaceGfx_DexNavGuiFlowerParadiseCPal[];
 extern const u8 gInterfaceGfx_DexNavGuiAutumnPal[];
 extern const u8 gInterfaceGfx_DexNavGuiWinterPal[];
+extern const u8 gInterfaceGfx_DexNavGuiSwampPal[];
 extern const u8 gInterfaceGfx_DexNavGuiCavePal[];
 extern const u8 gInterfaceGfx_DexNavGuiDarkerCavePal[];
 extern const u8 gInterfaceGfx_DexNavGuiIndoorPal[];

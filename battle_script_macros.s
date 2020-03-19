@@ -1724,3 +1724,7 @@
 	.byte \bankish
 	.4byte \rom_address
 	.endm
+
+	.macro seteffectprimaryscriptingbank
+	.byte 0xFF, 0x33
+	.endm

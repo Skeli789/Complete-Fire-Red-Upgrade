@@ -129,6 +129,15 @@ MaxLevelChange14:
 	.byte MAX_LEVEL - 1
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ AI Vanilla Item Use Bug Fix
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.org 0x3A19C, 0xFF
+AIVanillaItemUseBugFix:
+	lsl r0, #0x10
+	lsr r0, #0x10
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Max Level Limiters
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x3E806, 0xFF

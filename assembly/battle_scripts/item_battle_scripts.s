@@ -71,16 +71,16 @@ item_battle_scripts.s
 
 BattleScript_BerryConfuseHealRet:
 	call BattleScript_TryPrintRipenAbilityPopUp
-	playanimation 0xA ANIM_BERRY_EAT 0x0
+	playanimation BANK_SCRIPTING ANIM_BERRY_EAT 0x0
 	printstring 0x12A
 	waitmessage DELAY_1SECOND
 	orword HIT_MARKER 0x100
-	graphicalhpupdate 0xA
-	datahpupdate 0xA
+	graphicalhpupdate BANK_SCRIPTING
+	datahpupdate BANK_SCRIPTING
 	printstring 0x144
 	waitmessage DELAY_1SECOND
-	setbyte EFFECT_BYTE 0x47
-	seteffecttarget
+	setmoveeffect MOVE_EFFECT_CONFUSION
+	seteffectprimaryscriptingbank
 	call DoCheekPouch
 	return
 

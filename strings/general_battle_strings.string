@@ -129,16 +129,16 @@ You got [B7][FD][00]\nfor winning!
 You have no more Pok\emon\nthat can fight!\p
 
 #org @sText_LostAgaintWild
-You panicked and lost [B7][BUFFER][00][.]\p[.] [.] [.] [.]\pYou blacked out![FC][09]
+You panicked and lost [B7][BUFFER][00][.]\p[.] [.] [.] [.]\pYou were overwhelmed by your\ndefeat![FC][09]
 
 #org @sText_LostAgainstTrainer
 You have no more Pok\emon\nthat can fight!\pYou lost against\n[FD][1C] [FD][1D]![FC][09]
 
 #org @sText_PaidPrizeMoney
-You paid [B7][BUFFER][00] as the prize\nmoney[.]\p[.] [.] [.] [.]\pYou blacked out![FC][09]
+You paid [B7][BUFFER][00] as the prize\nmoney[.]\p[.] [.] [.] [.]\pYou were overwhelmed by your\ndefeat![FC][09]
 
 #org @sText_BlackedOut
-You blacked out![FC][09]
+You were overwhelmed by your\ndefeat![FC][09]
 
 #org @gText_BattleMenu
 [FC][05][05][FC][04][0D][0E][0F]Fight[ALIGN][38]Bag\nPok\emon[ALIGN][38]Run

@@ -981,7 +981,12 @@ void sp138_StartLegendaryBattle(void)
 	if (FlagGet(FLAG_DOUBLE_WILD_BATTLE)
 	&& gEnemyParty[1].species != SPECIES_NONE
 	&& ViableMonCount(gPlayerParty) > 1) //At least two alive Pokemon
+	{
 		gBattleTypeFlags |= BATTLE_TYPE_DOUBLE;
+
+		if (FlagGet(FLAG_TAG_BATTLE))
+			gBattleTypeFlags |=  BATTLE_TYPE_INGAME_PARTNER;
+	}
 	#endif
 
 	CreateBattleStartTask(0, GetMUS_ForBattle());

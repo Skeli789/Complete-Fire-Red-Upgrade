@@ -607,7 +607,7 @@ u8 CheckForTrainersWantingBattle(void) {
 
 		if (CheckTrainerSpotting(eventObjId))
 		{
-			if (viableMons < 2)
+			if (viableMons < 2 && !FlagGet(FLAG_TAG_BATTLE)) //The tag partner gives you the second mon
 				break;
 
 			// We've found enough opponents
@@ -683,7 +683,7 @@ static bool8 CheckTrainerSpotting(u8 eventObjId) //Or just CheckTrainer
 			case TRAINER_BATTLE_CONTINUE_SCRIPT_DOUBLE:
 			case TRAINER_BATTLE_TWO_OPPONENTS:
 			case TRAINER_BATTLE_DOUBLE_SCALED:
-				if (ViableMonCount(gPlayerParty) < 2)
+				if (ViableMonCount(gPlayerParty) < 2 && !FlagGet(FLAG_TAG_BATTLE))
 					return FALSE;
 				break;
 			case TRAINER_BATTLE_TAG:
@@ -1014,6 +1014,16 @@ void BattleSetup_StartTrainerBattle(void)
 			sTrainerBattleMode = TRAINER_BATTLE_OAK_TUTORIAL;
 			sTrainerBattleOakTutorialHelper = 3;
 		}
+		#endif
+		
+		#ifdef FLAG_CAMOMONS_BATTLE
+		if (FlagGet(FLAG_CAMOMONS_BATTLE))
+			gBattleTypeFlags |= BATTLE_TYPE_CAMOMONS;
+		#endif
+
+		#ifdef FLAG_BENJAMIN_BUTTERFREE_BATTLE
+		if (FlagGet(FLAG_BENJAMIN_BUTTERFREE_BATTLE))
+			gBattleTypeFlags |= BATTLE_TYPE_BENJAMIN_BUTTERFREE;
 		#endif
 	}
 
@@ -1731,6 +1741,22 @@ bool8 IsCurrentAreaWinter(void)
 	#endif
 }
 
+bool8 IsCurrentAreaSwamp(void)
+{
+	#ifdef UNBOUND
+		u8 mapSec = GetCurrentRegionMapSectionId();
+		return mapSec == MAPSEC_POLDER_TOWN
+			|| mapSec == MAPSEC_COOTES_BOG;
+	#else
+		return FALSE;
+	#endif
+}
+
+void IsCurrentAreaSwampToVar(void)
+{
+	gSpecialVar_LastResult = IsCurrentAreaSwamp();
+}
+
 bool8 IsCurrentAreaDarkerCave(void)
 {
 	#ifdef UNBOUND
@@ -1810,21 +1836,43 @@ u8 GetLedgeJumpDirection(s16 x, s16 y, u8 direction)
 #define AUTUMN_GRASS_PALETTE_TAG 0x1215
 static u16 sAutumnGrassObjectPalette[] = {0x741F, 0x3E9B, 0x3E9B, 0x1993, 0x1570, 0x0167, 0x76AC, 0x62AC, 0x7B31, 0x7F92, 0x0, 0x0, 0x3A7A, 0x2E38, 0x2E38, 0x1DD6};
 static const struct SpritePalette sAutumnGrassObjectPaletteInfo = {sAutumnGrassObjectPalette, 0x1005};
+
+extern const u8 gFieldEffectObjectPic_SwampLongGrassTiles[];
+extern const u16 gFieldEffectObjectPic_SwampLongGrassPal[];
+static const struct SpritePalette sSwampGrassObjectPaletteInfo = {gFieldEffectObjectPic_SwampLongGrassPal, 0x1005};
+
+static const struct SpriteFrameImage sFieldEffectObjectPicTable_SwampLongGrass[] = {
+    overworld_frame(gFieldEffectObjectPic_SwampLongGrassTiles, 2, 2, 0),
+    overworld_frame(gFieldEffectObjectPic_SwampLongGrassTiles, 2, 2, 1),
+    overworld_frame(gFieldEffectObjectPic_SwampLongGrassTiles, 2, 2, 2),
+    overworld_frame(gFieldEffectObjectPic_SwampLongGrassTiles, 2, 2, 3),
+};
+
+const struct SpriteTemplate sFieldEffectObjectTemplate_SwampLongGrass = {0xFFFF, 0x1005, (void*) 0x83A36F0, (void*) 0x83A5938, sFieldEffectObjectPicTable_SwampLongGrass, gDummySpriteAffineAnimTable, (void*) (0x80DB69C | 1)};
+
 #endif
 
-static void GetSpriteTemplateAndPaletteForTallGrassFieldEffect(const struct SpriteTemplate** spriteTemplate, const struct SpritePalette** spritePalette)
+static void GetSpriteTemplateAndPaletteForlGrassFieldEffect(const struct SpriteTemplate** spriteTemplate, const struct SpritePalette** spritePalette, u8 fieldEffectTemplateArg)
 {
 	switch (GetCurrentRegionMapSectionId()) {
 	#ifdef UNBOUND //For Pokemon Unbound - Feel free to remove
 		case MAPSEC_ROUTE_9:
 		case MAPSEC_ROUTE_10:
 		case MAPSEC_AUBURN_WATERWAY:
-			*spriteTemplate = gFieldEffectObjectTemplatePointers[4];
+			*spriteTemplate = gFieldEffectObjectTemplatePointers[fieldEffectTemplateArg];
 			*spritePalette = &sAutumnGrassObjectPaletteInfo;
+			break;
+		//case MAPSEC_POLDER_TOWN:
+		case MAPSEC_COOTES_BOG:
+			if (fieldEffectTemplateArg == 15) //Long Grass
+				*spriteTemplate = &sFieldEffectObjectTemplate_SwampLongGrass;
+			else
+				*spriteTemplate = gFieldEffectObjectTemplatePointers[fieldEffectTemplateArg];
+			*spritePalette = &sSwampGrassObjectPaletteInfo;
 			break;
 	#endif
 		default:
-			*spriteTemplate = gFieldEffectObjectTemplatePointers[4];
+			*spriteTemplate = gFieldEffectObjectTemplatePointers[fieldEffectTemplateArg];
 			*spritePalette = gFieldEffectObjectPaletteInfo1;
 			break;
 	}
@@ -1841,7 +1889,7 @@ static void FldEff_TallGrass(void)
 	y = ((u32*) gFieldEffectArguments)[1];
 	LogCoordsCameraRelative(&x, &y, 8, 8);
 
-	GetSpriteTemplateAndPaletteForTallGrassFieldEffect(&spriteTemplate, &spritePalette);
+	GetSpriteTemplateAndPaletteForlGrassFieldEffect(&spriteTemplate, &spritePalette, 4);
 	palettePointer = &spritePalette;
 	palette2Pointer = &palettePointer; //This way we fool the function into thinking it's a script.
 	
@@ -1875,9 +1923,58 @@ static void FldEff_JumpTallGrassLoadPalette(void)
 	palettePointer = &spritePalette;
 	palette2Pointer = &palettePointer; //This way we fool the function into thinking it's a script.
 
-	GetSpriteTemplateAndPaletteForTallGrassFieldEffect(&spriteTemplate, &spritePalette);
+	GetSpriteTemplateAndPaletteForlGrassFieldEffect(&spriteTemplate, &spritePalette, 4);
 	FieldEffectScript_LoadFadedPalette((u8**) palette2Pointer);
 	FldEff_JumpTallGrass();
+}
+
+static void FldEff_LongGrass(void)
+{
+	s32 x, y;
+	u8 spriteId;
+	struct Sprite *sprite;
+	const struct SpriteTemplate* spriteTemplate;
+	const struct SpritePalette* spritePalette; const struct SpritePalette** palettePointer; const struct SpritePalette*** palette2Pointer;
+	x = ((u32*) gFieldEffectArguments)[0];
+	y = ((u32*) gFieldEffectArguments)[1];
+	LogCoordsCameraRelative(&x, &y, 8, 8);
+
+	GetSpriteTemplateAndPaletteForlGrassFieldEffect(&spriteTemplate, &spritePalette, 15);
+	palettePointer = &spritePalette;
+	palette2Pointer = &palettePointer; //This way we fool the function into thinking it's a script.
+	FieldEffectScript_LoadFadedPalette((u8**) palette2Pointer);
+    spriteId = CreateSpriteAtEnd(spriteTemplate, x, y, 0);
+
+    if (spriteId != MAX_SPRITES)
+    {
+        sprite = &gSprites[spriteId];
+        sprite->coordOffsetEnabled = TRUE;
+        sprite->oam.priority = ZCoordToPriority(((u32*) gFieldEffectArguments)[2]);
+		sprite->data[0] = ((u32*) gFieldEffectArguments)[2];
+		sprite->data[1] = ((u32*) gFieldEffectArguments)[0];
+		sprite->data[2] = ((u32*) gFieldEffectArguments)[1];
+		sprite->data[3] = ((u32*) gFieldEffectArguments)[4];
+		sprite->data[4] = ((u32*) gFieldEffectArguments)[5];
+		sprite->data[5] = ((u32*) gFieldEffectArguments)[6];
+        if (((u32*) gFieldEffectArguments)[7])
+        {
+            SeekSpriteAnim(sprite, 6);
+        }
+    }
+	
+	PlayGrassFootstepNoise();
+}
+
+static void FldEff_JumpLongGrassLoadPalette(void)
+{
+	const struct SpriteTemplate* spriteTemplate;
+	const struct SpritePalette* spritePalette; const struct SpritePalette** palettePointer; const struct SpritePalette*** palette2Pointer;
+	palettePointer = &spritePalette;
+	palette2Pointer = &palettePointer; //This way we fool the function into thinking it's a script.
+
+	GetSpriteTemplateAndPaletteForlGrassFieldEffect(&spriteTemplate, &spritePalette, 15);
+	FieldEffectScript_LoadFadedPalette((u8**) palette2Pointer);
+	FldEff_JumpLongGrass();
 }
 
 const struct FieldEffectScript gFieldEffectScript_TallGrass =
@@ -1889,6 +1986,18 @@ const struct FieldEffectScript gFieldEffectScript_TallGrass =
 const struct FieldEffectScript gFieldEffectScript_JumpTallGrass =
 {
 	FLDEFF_CALLASM, FldEff_JumpTallGrassLoadPalette,
+	FLDEFF_END,
+};
+
+const struct FieldEffectScript gFieldEffectScript_LongGrass =
+{
+	FLDEFF_CALLASM, FldEff_LongGrass,
+	FLDEFF_END,
+};
+
+const struct FieldEffectScript gFieldEffectScript_JumpLongGrass =
+{
+	FLDEFF_CALLASM, FldEff_JumpLongGrassLoadPalette,
 	FLDEFF_END,
 };
 
@@ -2133,7 +2242,10 @@ const u8* GetInteractedWaterScript(unusedArg u32 unused1, u8 metatileBehavior, u
 				return EventScript_UseSurf;
 			}
 
-			return EventScript_WaterDyedBlue;
+			if (IsCurrentAreaSwamp())
+				return EventScript_WaterMurkyBrown;
+			else
+				return EventScript_WaterDyedBlue;
 		}
 	}
 	else if (MetatileBehavior_IsWaterfall(metatileBehavior))

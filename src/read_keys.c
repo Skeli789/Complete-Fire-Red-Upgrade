@@ -135,11 +135,10 @@ void ReadKeys(void)
 #ifdef FLAG_AUTO_RUN
 	else if (gMain.newKeys & L_BUTTON //Can't be used if L=A
 	&& !ScriptContext2_IsEnabled()
-	&& FuncIsActiveTask(Task_WeatherMain) //In the overworld
 #ifdef FLAG_RUNNING_ENABLED
 	&& FlagGet(FLAG_RUNNING_ENABLED) //Only toggle auto-run if can run in the first place
 #endif
-	)
+	&& FuncIsActiveTask(Task_WeatherMain)) //In the overworld
 	{
 		ScriptContext2_Enable();
 

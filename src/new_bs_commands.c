@@ -1905,3 +1905,12 @@ void atkFF32_recycleberry(void)
 	else
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
 }
+
+//seteffectprimaryscriptingbank
+void atkFF33_SetEffectPrimaryScriptingBank(void)
+{
+	u8 backupBank = gBankTarget;
+	gBankTarget = gBattleScripting->bank;
+	SetMoveEffect(TRUE, (gBattleCommunication[MOVE_EFFECT_BYTE] & MOVE_EFFECT_CERTAIN) != 0);
+	gBankTarget = backupBank;
+}

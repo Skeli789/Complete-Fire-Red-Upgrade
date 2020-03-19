@@ -91,6 +91,7 @@ u8 __attribute__((long_call)) GetCollisionAtCoords(struct EventObject *, s16, s1
 u8 __attribute__((long_call)) GetFaceDirectionMovementAction(u32);
 u8 __attribute__((long_call)) SpawnSpecialEventObject(struct EventObjectTemplate *);
 const struct EventObjectGraphicsInfo* __attribute__((long_call)) GetEventObjectGraphicsInfoOriginal(u8 graphicsId);
+void __attribute__((long_call)) MakeObjectTemplateFromEventObjectTemplate(struct EventObjectTemplate *, struct SpriteTemplate *, const struct SubspriteTable **);
 void __attribute__((long_call)) MakeObjectTemplateFromEventObjectGraphicsInfo(u16 graphicsId, void* callback, void* spriteTemplate, void* subspriteTables);
 u8 __attribute__((long_call)) GetMoveDirectionAnimNum(u8 direction);
 u8 __attribute__((long_call)) GetMoveDirectionFastAnimNum(u8 direction);
@@ -103,6 +104,7 @@ void __attribute__((long_call)) InitObjectPriorityByZCoord(struct Sprite *, u8);
 u8 __attribute__((long_call)) EventObjectFaceOppositeDirection(struct EventObject *, u8);
 void __attribute__((long_call)) LockSelectedEventObject(void);
 bool8 __attribute__((long_call)) FreezeEventObject(struct EventObject *eventObject);
+u8 __attribute__((long_call)) ZCoordToPriority(u8);
 
 /*
 extern const struct SpriteFrameImage gEventObjectPicTable_PechaBerryTree[];
@@ -195,7 +197,6 @@ void UpdateEventObjectsForCameraUpdate(s16 x, s16 y);
 u8 GetWalkSlowMovementAction(u32);
 u8 GetJumpMovementAction(u32);
 bool8 AreZCoordsCompatible(u8, u8);
-u8 ZCoordToPriority(u8);
 void EventObjectUpdateZCoord(struct EventObject *pObject);
 void SetObjectSubpriorityByZCoord(u8, struct Sprite *, u8);
 void UnfreezeEventObject(struct EventObject *);

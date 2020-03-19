@@ -52,6 +52,12 @@ The wall is very rocky[.]\nWill a Pok\emon's move scale it?
 #org @gText_WaterDyed
 The water is dyed a deep blue[.]
 
+#org @gText_WaterMurkyBrown
+The water is a murky brown[.]
+
+#org @gText_WaterMurkyBrownUseSurf
+The water is a murky brown[.]\nWould you like to Surf?
+
 #org @gText_LikeToLavaSurf
 The magma glistens a crimson red[.]\nWould you like to surf on it?
 

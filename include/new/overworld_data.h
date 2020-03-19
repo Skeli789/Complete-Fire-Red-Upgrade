@@ -43,6 +43,7 @@ extern const u8 EventScript_HiddenGrottoForest[];
 #define EventScript_CannotUseWaterfall (const u8*) 0x81BE2FF
 extern const u8 EventScript_UseSurf[];
 extern const u8 EventScript_WaterDyedBlue[];
+extern const u8 EventScript_WaterMurkyBrown[];
 extern const u8 EventScript_UseLavaSurf[];
 extern const u8 EventScript_MagmaGlistens[];
 extern const u8 EventScript_UseWaterfall[];

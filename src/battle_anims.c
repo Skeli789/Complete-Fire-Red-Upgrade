@@ -3095,7 +3095,7 @@ void AnimTask_AllBanksInvisibleExceptAttackerAndTarget(u8 taskId)
 							if (gSprites[sprite].data[7])			\
 							{										\
 								if (IsRaidBattle()					\
-								&& GetBankPartyData(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT))->hp == 0 \
+								&& GetBankPartyData(BANK_RAID_BOSS)->hp == 0 \
 								&& (gSprites[sprite].template->tileTag == TAG_HEALTHBOX_OPPONENT1_TILE || gSprites[sprite].template->tileTag == TAG_HEALTHBAR_OPPONENT1_TILE)) \
 									continue;						\
 																	\

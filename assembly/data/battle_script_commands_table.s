@@ -323,3 +323,4 @@ gBattleScriptingCommandsTable2:
 .word atkFF30_jumpifdynamaxed
 .word atkFF31_jumpifraidboss
 .word atkFF32_recycleberry
+.word atkFF33_SetEffectPrimaryScriptingBank

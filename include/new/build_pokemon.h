@@ -14,6 +14,7 @@
 //Exported Functions
 void sp067_GenerateRandomBattleTowerTeam(void);
 u16 sp068_GivePlayerFrontierMonGivenSpecies(void);
+u16 GiveRandomFrontierMonByTier(u8 side, u8 tier, u16 spreadType);
 const struct BattleTowerSpread* GetRaidMultiSpread(u8 multiId, u8 index, u8 numStars);
 void GiveMonNatureAndAbility(pokemon_t* mon, u8 nature, u8 abilityNum, bool8 forceShiny);
 void CreateFrontierRaidMon(const u16 species);

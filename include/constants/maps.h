@@ -593,6 +593,7 @@ u8 __attribute__((long_call)) GetCurrentRegionMapSectionId(void);
 
 //East Borrius
 #define MAP_POLDER_TOWN			((3 << 8) | 0)
+#define MAP_COOTES_BOG			((3 << 8) | 1)
 
 #define MAP_FULLMOON_ISLAND_A	((1 << 8) | 0)
 #define MAP_FULLMOON_ISLAND_B	((1 << 8) | 1)

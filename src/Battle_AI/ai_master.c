@@ -101,10 +101,10 @@ static u32 GetMaxByteIndexInList(const u8 array[], const u32 size);
 
 void __attribute__((long_call)) RecordLastUsedMoveByTarget(void);
 
-void BattleAI_HandleItemUseBeforeAISetup(u8 defaultScoreMoves)
+void BattleAI_HandleItemUseBeforeAISetup(void)
 {
 	u32 i;
-	u8 *data = (u8*)BATTLE_HISTORY;
+	u8* data = (u8*)BATTLE_HISTORY;
 
 	for (i = 0; i < sizeof(struct BattleHistory); i++)
 		data[i] = 0;
@@ -112,7 +112,7 @@ void BattleAI_HandleItemUseBeforeAISetup(u8 defaultScoreMoves)
 	// Items are allowed to use in ONLY trainer battles.
 	if ((gBattleTypeFlags & BATTLE_TYPE_TRAINER)
 		&& !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_SAFARI | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_EREADER_TRAINER))
-		&& gTrainerBattleOpponent_A != 0x400)
+		&& gTrainerBattleOpponent_A != SECRET_BASE_OPPONENT)
 	{
 		for (i = 0; i < 4; i++)
 		{
@@ -124,7 +124,7 @@ void BattleAI_HandleItemUseBeforeAISetup(u8 defaultScoreMoves)
 		}
 	}
 
-	BattleAI_SetupAIData(defaultScoreMoves);
+	BattleAI_SetupAIData(0xF);
 }
 
 void BattleAI_SetupAIData(u8 defaultScoreMoves)
@@ -221,6 +221,9 @@ u32 GetAIFlags(void)
 		flags = gTrainers[gTrainerBattleOpponent_A].aiFlags | gTrainers[VarGet(VAR_SECOND_OPPONENT)].aiFlags;
 	else
 		flags = gTrainers[gTrainerBattleOpponent_A].aiFlags;
+	
+	if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER) && gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
+		flags |= AI_SCRIPT_CHECK_BAD_MOVE; //Partners in wild double battles are like normal trainers
 
 	return flags;
 }
@@ -629,6 +632,10 @@ void AI_TrySwitchOrUseItem(void)
 
 			gBattleStruct->monToSwitchIntoId[gActiveBattler] = gBattleStruct->switchoutIndex[SIDE(gActiveBattler)];
 			ret = TRUE;
+		}
+		else if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER && GetBattlerPosition(gActiveBattler) == B_POSITION_PLAYER_RIGHT)
+		{
+			//Partner isn't allowed to use items
 		}
 		else if (ShouldUseItem()) //0x803A1F4
 			ret = TRUE;

@@ -283,6 +283,7 @@
 #define TRAINER_BACK_PIC_ABIMBOLA       13
 #define TRAINER_BACK_PIC_MAHINA         14
 #define TRAINER_BACK_PIC_ALFORD         15
+#define TRAINER_BACK_PIC_TESSY          16
 
 #endif
 

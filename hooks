@@ -97,6 +97,7 @@ HasSuperEffectiveMoveAgainstOpponents 08039698 1
 FindMonWithFlagsAndSuperEffective 08039828 2
 GetMostSuitableMonToSwitchInto 8039E3C 0
 BattleAI_DoAIProcessing 080C7038 0
+BattleAI_HandleItemUseBeforeAISetup 080C6D0C 0
 
 ##Mega Hooks
 MegaRetrieveDataHook 80148C0 0
@@ -264,6 +265,7 @@ RandomlyGivePartyPokerus 8043A68 1
 UpdatePartyPokerusTime 8043B38 1
 PartySpreadPokerus 8043B40 1
 SetMonExpWithMaxLevelCheck 8043B48 2
+GiveRandomFrontierMonByTier 802883C 3
 
 ##DNS
 TransferPlttBuffer 8070474 0

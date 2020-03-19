@@ -49,6 +49,10 @@ static const struct TrainerSlide sTrainerSlides[] =
 	{0x2DB, NULL, sText_GalavanLastSwitchIn, NULL},
 	{0x2DC, NULL, sText_GalavanLastSwitchIn, NULL},
 	{0x2DD, NULL, sText_GalavanLastSwitchIn, NULL},
+	{0x1A1, NULL, sText_TessyLastSwitchIn, NULL},
+	{0x2DE, NULL, sText_TessyLastSwitchIn, NULL},
+	{0x2DF, NULL, sText_TessyLastSwitchIn, NULL},
+	{0x2E0, NULL, sText_TessyLastSwitchIn, NULL},
 
 	{0x15C, NULL, NULL, sText_Zeph1LowHP},
 	{0x2AB, NULL, NULL, sText_Zeph1LowHP},

@@ -145,6 +145,7 @@ sp0D9_GetHour 81600C4
 sp0DA_GetDayOfWeek 81600C8
 
 sp0E1_DoesPlayerHaveFollower 81600E4
+sp0E2_IsDexNavCompleteHere 81600E8
 
 sp100_CanPlayerUseFlashInCurrentLocation 08160160
 sp101_CanPlayerFlyInCurrentLocation 08160164
