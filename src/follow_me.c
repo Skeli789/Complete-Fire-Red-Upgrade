@@ -36,6 +36,7 @@ static u8 DetermineFollowerDirection(struct EventObject* player, struct EventObj
 static void PlayerLogCoordinates(struct EventObject* player);
 static u8 DetermineFollowerState(struct EventObject* follower, u8 state, u8 direction);
 static bool8 IsStateMovement(u8 state);
+static bool8 PlayerIsUnderAndFacingWaterfall(void);
 static u8 ReturnFollowerDelayedState(u8 direction);
 static void SetSurfJump(void);
 static void Task_BindSurfBlobToFollower(u8 taskId);
@@ -62,6 +63,15 @@ enum
 	FOLLOWER_SPRITE_INDEX_BIKE,
 	FOLLOWER_SPRITE_INDEX_SURF,
 	FOLLOWER_SPRITE_INDEX_UNDERWATER,
+};
+
+enum
+{
+	SURF_BLOB_STATE_NONE,
+	SURF_BLOB_STATE_GET_ON,
+	SURF_BLOB_STATE_ON,
+	SURF_BLOB_STATE_GET_OFF,
+	SURF_BLOB_STATE_HIDDEN_ON,
 };
 
 struct FollowerSprites
@@ -115,11 +125,12 @@ void HideFollower(void)
 	if (!gFollowerState.inProgress)
 		return;
 
-	if (gFollowerState.createSurfBlob == 2 || gFollowerState.createSurfBlob == 3)
+	if (gFollowerState.createSurfBlob == SURF_BLOB_STATE_ON || gFollowerState.createSurfBlob == SURF_BLOB_STATE_GET_OFF)
 	{
 		BindFieldEffectToSprite(gEventObjects[GetFollowerMapObjId()].fieldEffectSpriteId, 2);
 		DestroySprite(&gSprites[gEventObjects[GetFollowerMapObjId()].fieldEffectSpriteId]);
 		gEventObjects[GetFollowerMapObjId()].fieldEffectSpriteId = 0; //Unbind
+		gFollowerState.createSurfBlob = SURF_BLOB_STATE_HIDDEN_ON;
 	}
 
 	gEventObjects[GetFollowerMapObjId()].invisible = TRUE;
@@ -143,7 +154,7 @@ void FollowMe_SetIndicatorToComeOutDoor(void)
 void FollowMe_SetIndicatorToRecreateSurfBlob(void)
 {
 	if (gFollowerState.inProgress)
-		gFollowerState.createSurfBlob = 2;
+		gFollowerState.createSurfBlob = SURF_BLOB_STATE_HIDDEN_ON;
 }
 
 void FollowMe_TryRemoveFollowerOnWhiteOut(void)
@@ -238,8 +249,9 @@ void FollowMe(struct EventObject* npc, u8 state, bool8 ignoreScriptActive)
 		MoveEventObjectToMapCoords(follower, player->currentCoords.x, player->currentCoords.y);
 		EventObjectTurn(follower, player->facingDirection); //The follower should be facing the same direction as the player when it comes out of hiding
 
-		if (gFollowerState.createSurfBlob == 2) //Recreate surf blob
+		if (gFollowerState.createSurfBlob == SURF_BLOB_STATE_ON || gFollowerState.createSurfBlob == SURF_BLOB_STATE_HIDDEN_ON) //Recreate surf blob
 		{
+			gFollowerState.createSurfBlob = SURF_BLOB_STATE_ON; //Get rid of hidden
 			SetUpSurfBlobFieldEffect(follower);
 			follower->fieldEffectSpriteId = FieldEffectStart(FLDEFF_SURF_BLOB);
 			BindFieldEffectToSprite(follower->fieldEffectSpriteId, 1);
@@ -258,14 +270,14 @@ void FollowMe(struct EventObject* npc, u8 state, bool8 ignoreScriptActive)
 	if (newState == MOVEMENT_INVALID)
 		goto RESET;
 
-	if (gFollowerState.createSurfBlob == 1) //Get on Surf Blob
+	if (gFollowerState.createSurfBlob == SURF_BLOB_STATE_GET_ON) //Get on Surf Blob
 	{
-		gFollowerState.createSurfBlob = 2;
+		gFollowerState.createSurfBlob = SURF_BLOB_STATE_ON;
 		gPlayerAvatar->preventStep = TRUE; //Wait for finish
 		SetSurfJump();
 		goto RESET;
 	}
-	else if (gFollowerState.createSurfBlob == 3) //Get off Surf Blob
+	else if (gFollowerState.createSurfBlob == SURF_BLOB_STATE_GET_OFF) //Get off Surf Blob
 	{
 		gFollowerState.createSurfBlob = 0;
 		gPlayerAvatar->preventStep = TRUE; //Wait for finish
@@ -373,6 +385,8 @@ static u8 DetermineFollowerState(struct EventObject* follower, u8 state, u8 dire
 			RETURN_STATE(MOVEMENT_ACTION_WALK_NORMAL_DOWN, direction);
 
 		case MOVEMENT_ACTION_WALK_FAST_DOWN ... MOVEMENT_ACTION_WALK_FAST_RIGHT:
+			if (PlayerIsUnderAndFacingWaterfall())
+				return MOVEMENT_INVALID;
 			 //Handle ice tile (some walking animation)
 			 //Set a bit to freeze the follower's animation
 			if (MetatileBehavior_IsSlidingIce(follower->currentMetatileBehavior)
@@ -381,7 +395,9 @@ static u8 DetermineFollowerState(struct EventObject* follower, u8 state, u8 dire
 			RETURN_STATE(MOVEMENT_ACTION_WALK_FAST_DOWN, direction);
 
 		case MOVEMENT_ACTION_SLIDE_SLOW_DOWN ... MOVEMENT_ACTION_SLIDE_SLOW_RIGHT:
-			//Slow slide or Bike Speed
+			if (PlayerIsUnderAndFacingWaterfall())
+				return MOVEMENT_INVALID;
+			//Slow slide or Bike Speed or Waterfall
 			RETURN_STATE(MOVEMENT_ACTION_SLIDE_SLOW_DOWN, direction);
 
 		case MOVEMENT_ACTION_SLIDE_DOWN ... MOVEMENT_ACTION_SLIDE_RIGHT:
@@ -659,6 +675,23 @@ static bool8 IsStateMovement(u8 state)
 	return TRUE;
 }
 
+static bool8 PlayerIsUnderAndFacingWaterfall(void)
+{
+	s16 x, y;
+	struct EventObject* player = &gEventObjects[gPlayerAvatar->eventObjectId];
+
+	if (!IsPlayerSurfingNorth())
+		return FALSE;
+
+	x = player->currentCoords.x;
+	y = player->currentCoords.y;
+	MoveCoords(DIR_NORTH, &x, &y);
+	if (MetatileBehavior_IsWaterfall(MapGridGetMetatileBehaviorAt(x, y)))
+		return TRUE;
+
+	return FALSE;
+}
+
 static u8 ReturnFollowerDelayedState(u8 direction)
 {
 	u8 newState = gFollowerState.delayedState;
@@ -724,7 +757,7 @@ void FollowMe_FollowerToWater(void)
 	//Prepare for making the follower do the jump and spawn the surf head
 	//right in front of the follower's location.
 	FollowMe(&gEventObjects[gPlayerAvatar->eventObjectId], MOVEMENT_ACTION_JUMP_DOWN, TRUE);
-	gFollowerState.createSurfBlob = 1;
+	gFollowerState.createSurfBlob = SURF_BLOB_STATE_GET_ON;
 }
 
 void FollowMe_BindToSurbBlobOnReloadScreen(void)
@@ -734,7 +767,7 @@ void FollowMe_BindToSurbBlobOnReloadScreen(void)
 
 	TryUpdateFollowerSpriteUnderwater();
 
-	if (gFollowerState.createSurfBlob != 2 && gFollowerState.createSurfBlob != 3)
+	if (gFollowerState.createSurfBlob != SURF_BLOB_STATE_ON && gFollowerState.createSurfBlob != SURF_BLOB_STATE_GET_OFF)
 		return;
 
 	struct EventObject* follower = &gEventObjects[GetFollowerMapObjId()];
@@ -815,7 +848,7 @@ void PrepareFollowerDismountSurf(void)
 		return;
 
 	FollowMe(&gEventObjects[gPlayerAvatar->eventObjectId], MOVEMENT_ACTION_WALK_NORMAL_DOWN, TRUE);
-	gFollowerState.createSurfBlob = 3;
+	gFollowerState.createSurfBlob = SURF_BLOB_STATE_GET_OFF;
 }
 
 static void SetSurfDismount(void)
@@ -1264,7 +1297,7 @@ void CreateFollowerAvatar(void)
 		gFollowerState.inProgress = FALSE; //Cancel the following because couldn't load sprite
 
 	if (gMapHeader.mapType == MAP_TYPE_UNDERWATER)
-		gFollowerState.createSurfBlob = 0;
+		gFollowerState.createSurfBlob = SURF_BLOB_STATE_NONE;
 
 	gEventObjects[gFollowerState.objId].invisible = TRUE;
 }
@@ -1300,7 +1333,7 @@ static void TurnNPCIntoFollower(u8 localId, u8 followerFlags)
 			gFollowerState.script = script;
 			gFollowerState.flag = flag;
 			gFollowerState.flags = followerFlags;
-			gFollowerState.createSurfBlob = FALSE;
+			gFollowerState.createSurfBlob = SURF_BLOB_STATE_NONE;
 			gFollowerState.comeOutDoorStairs = FALSE;
 
 			if (!(gFollowerState.flags & FOLLOWER_FLAG_CAN_BIKE) //Follower can't bike
