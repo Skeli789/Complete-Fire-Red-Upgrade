@@ -6,6 +6,7 @@
 #include "../include/new/damage_calc.h"
 #include "../include/new/dynamax.h"
 #include "../include/new/item.h"
+#include "../include/new/frontier.h"
 #include "../include/new/mega.h"
 #include "../include/new/move_menu.h"
 #include "../include/new/set_z_effect.h"
@@ -92,7 +93,7 @@ void SetZEffect(void)
 			if (!MainStatsMaxed(gBankAttacker)) {
 				for (i = 0; i < STAT_ACC-1; ++i) { //Doesn't increase Acc or Evsn
 					if (gBattleMons[gBankAttacker].statStages[i] < 12)
-					++gBattleMons[gBankAttacker].statStages[i];
+						++gBattleMons[gBankAttacker].statStages[i];
 				}
 				BattleScriptPush(gBattlescriptCurrInstr + 5);
 				gBattlescriptCurrInstr = BattleScript_AllStatsUpZMove - 5;
@@ -253,7 +254,8 @@ move_t CanUseZMove(u8 bank, u8 moveIndex, u16 move)
 	if (move == MOVE_NONE)
 		move = gBattleMons[bank].moves[moveIndex];
 
-	if (IsMega(bank)
+	if (IsMegaZMoveBannedBattle()
+	|| IsMega(bank)
 	|| IsRedPrimal(bank)
 	|| IsBluePrimal(bank))
 		return MOVE_NONE;

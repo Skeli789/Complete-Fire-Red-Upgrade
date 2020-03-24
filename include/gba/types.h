@@ -90,9 +90,6 @@ struct OamData
 #define ST_OAM_AFFINE_ERASE  2
 #define ST_OAM_AFFINE_DOUBLE 3
 
-#define ST_OAM_AFFINE_ON_MASK     1
-#define ST_OAM_AFFINE_DOUBLE_MASK 2
-
 #define ST_OAM_4BPP 0
 #define ST_OAM_8BPP 1
 

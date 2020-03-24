@@ -33,6 +33,24 @@ SystemScript_DisableAutoRun:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+.global SystemScript_PartyMenuFromField
+SystemScript_PartyMenuFromField:
+	checksound
+	sound 0x5 @SE_SELECT
+	fadescreen FADEOUT_BLACK
+	callasm InitPartyMenuFromField
+	end
+
+.global SystemScript_ItemMenuFromField
+SystemScript_ItemMenuFromField:
+	checksound
+	sound 0x5 @SE_SELECT
+	fadescreen FADEOUT_BLACK
+	callasm InitBagMenuFromField
+	end
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 .global SystemScript_PoisonSurvial
 SystemScript_PoisonSurvial:
 	lock

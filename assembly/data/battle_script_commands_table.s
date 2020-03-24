@@ -255,7 +255,7 @@ gBattleScriptingCommandsTable:
 .word atkEE_removelightscreenreflect	@removereflectlightscreen
 .word atkEF_handleballthrow		@pokemoncatchfunction
 .word 0x802d801					@catchpoke
-.word 0x802d95d					@trysetcaughtmondexflags
+.word atkF1_trysetcaughtmondexflags
 .word 0x802d9d9					@displaydexinfo
 .word 0x802dd39					@capturenicknamepoke
 .word 0x802dfbd					@subattackerhpbydmg
@@ -324,3 +324,4 @@ gBattleScriptingCommandsTable2:
 .word atkFF31_jumpifraidboss
 .word atkFF32_recycleberry
 .word atkFF33_SetEffectPrimaryScriptingBank
+.word atkFF34_canconfuse

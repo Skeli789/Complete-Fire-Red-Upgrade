@@ -14,10 +14,12 @@
 #include "../../include/new/damage_calc.h"
 #include "../../include/new/dynamax.h"
 #include "../../include/new/end_turn.h"
-#include "../../include/new/util.h"
+#include "../../include/new/frontier.h"
 #include "../../include/new/item.h"
 #include "../../include/new/general_bs_commands.h"
 #include "../../include/new/move_tables.h"
+#include "../../include/new/util.h"
+
 /*
 ai_negatives.c
 	All possible subtractions to an AIs move viability.
@@ -138,7 +140,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 
 	u16 partnerMove = MOVE_NONE;
 	if (!IsBankIncapacitated(bankAtkPartner))
-		partnerMove = (gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE) ? gChosenMovesByBanks[bankAtkPartner] : IsValidMovePrediction(bankAtkPartner, bankAtk);
+		partnerMove = GetAIChosenMove(bankAtkPartner, bankDef);
 
 	//Load Alternative targets
 	u8 foe1, foe2;
@@ -158,9 +160,9 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 	&&  !IsBankIncapacitated(bankAtkPartner)
 	&&  gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE //Partner actually selected a move
 	&&  gBattleStruct->moveTarget[bankAtkPartner] == bankDef
-	&&  gBattleMoves[gChosenMovesByBanks[bankAtkPartner]].target & MOVE_TARGET_SELECTED //Partner isn't using spread move
+	&&  gBattleMoves[partnerMove].target & MOVE_TARGET_SELECTED //Partner isn't using spread move
 	&&  CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, bankAtk, bankDef) >= 2 //With one target left, both Pokemon should aim for the same target
-	&&  MoveKnocksOutXHits(gChosenMovesByBanks[bankAtkPartner], bankAtkPartner, gBattleStruct->moveTarget[bankAtkPartner], 1)
+	&&  MoveKnocksOutXHits(partnerMove, bankAtkPartner, gBattleStruct->moveTarget[bankAtkPartner], 1)
 	&&  SPLIT(move) == SPLIT_STATUS)
 	{
 		DECREASE_VIABILITY(9); //Don't use a status move on the mon who the Partner is set to KO
@@ -1137,7 +1139,7 @@ MOVESCR_CHECK_0:
 			break;
 
 		case EFFECT_MIST:
-			if (gSideAffecting[SIDE(bankAtk)] & SIDE_STATUS_MIST
+			if (BankSideHasMist(bankAtk)
 			|| PARTNER_MOVE_EFFECT_IS_SAME_NO_TARGET)
 				DECREASE_VIABILITY(10);
 			break;
@@ -1656,7 +1658,7 @@ MOVESCR_CHECK_0:
 			break;
 
 		case EFFECT_SAFEGUARD:
-			if (gSideAffecting[SIDE(bankAtk)] & SIDE_STATUS_SAFEGUARD
+			if (BankSideHasSafeguard(bankAtk)
 			|| PARTNER_MOVE_EFFECT_IS_SAME_NO_TARGET)
 				DECREASE_VIABILITY(10);
 			break;
@@ -1692,7 +1694,7 @@ MOVESCR_CHECK_0:
 		case EFFECT_RAPID_SPIN:
 			if (move == MOVE_DEFOG)
 			{
-				if (gSideAffecting[SIDE(bankDef)] & (SIDE_STATUS_REFLECT | SIDE_STATUS_SAFEGUARD | SIDE_STATUS_MIST)
+				if (gSideAffecting[SIDE(bankDef)] & (SIDE_STATUS_REFLECT | SIDE_STATUS_LIGHTSCREEN | SIDE_STATUS_SAFEGUARD | SIDE_STATUS_MIST)
 				|| gNewBS->AuroraVeilTimers[SIDE(bankDef)] != 0
 				|| gSideAffecting[SIDE(bankAtk)] & SIDE_STATUS_SPIKES)
 				{
@@ -2590,14 +2592,15 @@ MOVESCR_CHECK_0:
 					break;
 
 				case MOVE_HAPPYHOUR:
-					if (!(gBattleTypeFlags & (BATTLE_TYPE_LINK
+					if ((gBattleTypeFlags & (BATTLE_TYPE_LINK
 											| BATTLE_TYPE_EREADER_TRAINER
 											| BATTLE_TYPE_FRONTIER
 											| BATTLE_TYPE_TRAINER_TOWER))
+					|| !(gBattleTypeFlags & BATTLE_TYPE_TRAINER) //Wild battle
 					|| SIDE(bankAtk) != B_SIDE_PLAYER //Only increase money amount if will benefit player
 					|| gNewBS->HappyHourByte != 0) //Already used Happy Hour
 					{
-						if (!IsTypeZCrystal(atkItem, moveType) || gNewBS->ZMoveData->used[bankAtk])
+						if (!IsTypeZCrystal(atkItem, moveType) || gNewBS->ZMoveData->used[bankAtk] || IsMegaZMoveBannedBattle())
 							DECREASE_VIABILITY(10);
 					}
 					break;

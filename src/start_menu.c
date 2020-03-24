@@ -52,7 +52,6 @@ const u8* const sStartMenuDescriptionItems[] =
 	gText_DexNavDescription,
 };
 
-void __attribute__((long_call)) CloseSafariStepsBox(void);
 void __attribute__((long_call)) CloseStartMenuDescriptionBox(void);
 void __attribute__((long_call)) HideStartMenu(void);
 
@@ -161,7 +160,7 @@ void BuildStartMenuActions(void)
 
 static void CloseStartMenu(void)
 {
-	CloseSafariStepsBox();	//0x806EF18
+	DestroySafariZoneStatsWindow();	//0x806EF18
 	CloseStartMenuDescriptionBox();	//0x80F7998
 	HideStartMenu();		//0x806FEA0
 }

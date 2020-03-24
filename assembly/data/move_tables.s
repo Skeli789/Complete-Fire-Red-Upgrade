@@ -459,6 +459,15 @@ gRaidBattleBannedRaidMonMoves:
 .hword MOVE_FOCUSPUNCH @Must be executed as Max Moves b/c intros don't play
 .hword MOVE_SHELLTRAP
 .hword MOVE_BEAKBLAST
+.hword MOVE_PROTECT
+.hword MOVE_DETECT
+.hword MOVE_QUICKGUARD
+.hword MOVE_WIDEGUARD
+.hword MOVE_KINGSSHIELD
+.hword MOVE_SPIKYSHIELD
+.hword MOVE_BANEFULBUNKER
+.hword MOVE_MATBLOCK
+.hword MOVE_OBSTRUCT
 .hword MOVE_TABLES_TERMIN
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

@@ -105,6 +105,8 @@ bool8 IsFairyLockActive(void);
 bool8 IsMudSportActive(void);
 bool8 IsWaterSportActive(void);
 bool8 IsInverseBattle(void);
+bool8 BankSideHasSafeguard(u8 bank);
+bool8 BankSideHasMist(u8 bank);
 bool8 BankSideHasSeaOfFire(u8 bank);
 bool8 BankSideHasRainbow(u8 bank);
 bool8 BankSideHasSwamp(u8 bank);

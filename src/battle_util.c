@@ -147,10 +147,7 @@ u16 GetBaseCurrentHP(u8 bank)
 	if (IsDynamaxed(bank))
 	{
 		//Ceiling
-		if (IsRaidBattle() && bank == BANK_RAID_BOSS)
-			return MathMax(1, gBattleMons[bank].hp / GetRaidBattleHPBoost() + (gBattleMons[bank].hp & 1));
-		else
-			return MathMax(1, gBattleMons[bank].hp / GetDynamaxHPBoost(bank) + (gBattleMons[bank].hp & 1));
+		return MathMax(1, gBattleMons[bank].hp / GetDynamaxHPBoost(bank) + (gBattleMons[bank].hp & 1));
 	}
 
 	return gBattleMons[bank].hp;
@@ -161,10 +158,7 @@ u16 GetBaseMaxHP(u8 bank)
 	if (IsDynamaxed(bank))
 	{
 		//Ceiling
-		if (IsRaidBattle() && bank == BANK_RAID_BOSS)
-			return MathMax(1, gBattleMons[bank].maxHP / GetRaidBattleHPBoost() + (gBattleMons[bank].maxHP & 1));
-		else
-			return MathMax(1, gBattleMons[bank].maxHP / GetDynamaxHPBoost(bank) + (gBattleMons[bank].maxHP & 1));
+		return MathMax(1, gBattleMons[bank].maxHP / GetDynamaxHPBoost(bank) + (gBattleMons[bank].maxHP & 1));
 	}
 
 	return gBattleMons[bank].maxHP;
@@ -550,7 +544,7 @@ bool8 IsMoveRedirectionPrevented(u16 move, u8 atkAbility)
 	return move == MOVE_SKYDROP
 		|| move == MOVE_SNIPESHOT
 //		|| atkAbility == ABILITY_PROPELLERTAIL
-		|| atkAbility != ABILITY_STALWART;
+		|| atkAbility == ABILITY_STALWART;
 }
 
 u8 GetMoveTarget(u16 move, u8 useMoveTarget)
@@ -1284,7 +1278,8 @@ bool8 DoesSleepClausePrevent(u8 bank)
 			case BATTLE_FACILITY_SCALEMONS:
 			case BATTLE_FACILITY_350_CUP:
 			case BATTLE_FACILITY_AVERAGE_MONS:
-			case BATTLE_FACILITY_BENJAMIN_BUTTERFREE: ;
+			case BATTLE_FACILITY_BENJAMIN_BUTTERFREE:
+			case BATTLE_FACILITY_NATIONAL_DEX_OU: ;
 				u8 firstId, lastId;
 				struct Pokemon* party = LoadPartyRange(bank, &firstId, &lastId);
 
@@ -1574,6 +1569,18 @@ bool8 IsInverseBattle(void)
 		FlagGet(FLAG_INVERSE) ||
 		#endif
 		(IS_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_INVERSE);
+}
+
+bool8 BankSideHasSafeguard(u8 bank)
+{
+	return gSideAffecting[SIDE(bank)] & SIDE_STATUS_SAFEGUARD
+		|| (IS_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_SAFEGUARD);
+}
+
+bool8 BankSideHasMist(u8 bank)
+{
+	return gSideAffecting[SIDE(bank)] & SIDE_STATUS_MIST
+		|| (IS_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_MIST);
 }
 
 bool8 BankSideHasSeaOfFire(u8 bank)

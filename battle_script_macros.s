@@ -1728,3 +1728,9 @@
 	.macro seteffectprimaryscriptingbank
 	.byte 0xFF, 0x33
 	.endm
+
+	.macro canconfuse bank rom_address
+	.byte 0xFF, 0x34
+	.byte \bank
+	.4byte \rom_address
+	.endm

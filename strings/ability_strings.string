@@ -58,9 +58,6 @@ Mysterious strong winds are protecting\nFlying-type Pok\emon!
 #org @gText_FlashFirePowerUp
 The power of [SCRIPTING_BANK]'s\nFire-type moves rose!
 
-#org @gText_AbilityChangedType
-[SCRIPTING_BANK] transformed into\nthe [BUFFER][00] type!
-
 #org @gText_AbilityCuredStatusProblem
 [SCRIPTING_BANK] was cured of\nits [BUFFER][00] problem!
 

@@ -881,6 +881,7 @@ enum ProtectQueries ShouldProtect(u8 bankAtk, u8 bankDef, u16 move)
 	u16 predictedMove = IsValidMovePrediction(bankDef, bankAtk);
 	u8 predictedMoveEffect = gBattleMoves[predictedMove].effect;
 	u8 defAbility = ABILITY(bankDef);
+	bool8 isAtkDynamaxed = IsDynamaxed(bankAtk);
 
 	if (WillFaintFromSecondaryDamage(bankAtk)
 	&&  defAbility != ABILITY_MOXIE
@@ -890,9 +891,9 @@ enum ProtectQueries ShouldProtect(u8 bankAtk, u8 bankDef, u16 move)
 	if (IsBankIncapacitated(bankDef))
 		return FALSE; //Don't Protect against an opponent that isn't going to do anything
 
-	if (BankHoldingUsefulItemToProtectFor(bankAtk)
-	||  BankHasAbilityUsefulToProtectFor(bankAtk, bankDef)
-	||  (IsDynamaxed(bankDef) && SPLIT(predictedMove) != SPLIT_STATUS) //Foe is going to attack with a Max Move
+	if ((!isAtkDynamaxed && BankHoldingUsefulItemToProtectFor(bankAtk))
+	||  (!isAtkDynamaxed && BankHasAbilityUsefulToProtectFor(bankAtk, bankDef))
+	||  (IsDynamaxed(bankDef) && (!IsRaidBattle() || bankDef != BANK_RAID_BOSS) && !IsDynamaxed(bankAtk) && !ShouldAIDynamax(bankAtk, bankDef) && SPLIT(predictedMove) != SPLIT_STATUS) //Foe is going to attack with a Max Move and ai won't be dynamaxed
 	||  predictedMoveEffect == EFFECT_EXPLOSION
 	|| (predictedMoveEffect == EFFECT_SEMI_INVULNERABLE && BATTLER_SEMI_INVULNERABLE(bankDef) //Foe coming down
 	   && gBattleMoves[predictedMove].flags & FLAG_PROTECT_AFFECTED))
@@ -906,18 +907,18 @@ enum ProtectQueries ShouldProtect(u8 bankAtk, u8 bankDef, u16 move)
 
 		if (CanKnockOut(bankDef, bankAtk)) //Foe can kill
 		{
-			if (!CanKnockOutAfterHealing(bankDef, bankAtk, healAmount, 1))
+			if (!isAtkDynamaxed && !CanKnockOutAfterHealing(bankDef, bankAtk, healAmount, 1))
 				return USE_PROTECT;
-			else if (IsTakingSecondaryDamage(bankDef))
+			else if (!isAtkDynamaxed && IsTakingSecondaryDamage(bankDef))
 				return USE_PROTECT;
 			else
 				return USE_STATUS_THEN_PROTECT;
 		}
 		else if (Can2HKO(bankDef, bankAtk))
 		{
-			if (!CanKnockOutAfterHealing(bankDef, bankAtk, healAmount, 2))
+			if (!isAtkDynamaxed && !CanKnockOutAfterHealing(bankDef, bankAtk, healAmount, 2))
 				return USE_PROTECT;
-			else if (IsTakingSecondaryDamage(bankDef))
+			else if (!isAtkDynamaxed && IsTakingSecondaryDamage(bankDef))
 				return USE_PROTECT;
 			else
 				return USE_STATUS_THEN_PROTECT;
@@ -929,14 +930,13 @@ enum ProtectQueries ShouldProtect(u8 bankAtk, u8 bankDef, u16 move)
 
 		if (BATTLER_ALIVE(partner))
 		{
-			u16 partnerMove = gChosenMovesByBanks[partner];
-			if (partnerMove == MOVE_NONE)
-				partnerMove = IsValidMovePrediction(partner, bankDef);
+			u16 partnerMove = GetAIChosenMove(partner, bankDef);
 
 			if (ABILITY(bankAtk) != ABILITY_TELEPATHY)
 			{
 
 				if (partnerMove != MOVE_NONE
+				&& !isAtkDynamaxed
 				&&  gBattleMoves[partnerMove].target & MOVE_TARGET_ALL
 				&&  ABILITY(bankAtk) != ABILITY_TELEPATHY
 				&& !(AI_SpecialTypeCalc(partnerMove, partner, bankAtk) & MOVE_RESULT_NO_EFFECT))
@@ -945,7 +945,7 @@ enum ProtectQueries ShouldProtect(u8 bankAtk, u8 bankDef, u16 move)
 				}
 			}
 
-			if (GetDoubleKillingScore(partnerMove, partner, bankDef) >= BEST_DOUBLES_KO_SCORE - 1)
+			if (!isAtkDynamaxed && GetDoubleKillingScore(partnerMove, partner, bankDef) >= BEST_DOUBLES_KO_SCORE - 1)
 			{
 				return PROTECT_FROM_FOES; //Partner has this covered
 			}
@@ -2047,7 +2047,7 @@ void IncreaseFakeOutViability(s16* originalViability, u8 class, u8 bankAtk, u8 b
 	if (move == MOVE_FAKEOUT && IS_DOUBLE_BATTLE)
 	{
 		u8 partner = PARTNER(bankAtk);
-		u16 partnerMove = gChosenMovesByBanks[partner];
+		u16 partnerMove = GetAIChosenMove(partner, bankDef);
 
 		if (BATTLER_ALIVE(partner)
 		&&  partnerMove == MOVE_FAKEOUT
@@ -2463,7 +2463,7 @@ void IncreaseDoublesDamageViabilityToScore(s16* originalViability, u8 class, u8 
 
 	if (gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE) //Check partner's target
 	{
-		u16 partnerMove = gChosenMovesByBanks[bankAtkPartner];
+		u16 partnerMove = GetAIChosenMove(bankAtkPartner, bankDef);
 		u16 partnerTarget = gBattleStruct->moveTarget[bankAtkPartner];
 
 		if (bankDef == partnerTarget											//Partner is targeting same target

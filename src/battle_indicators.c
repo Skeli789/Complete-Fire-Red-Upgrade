@@ -617,7 +617,7 @@ static void SpriteCB_ZTrigger(struct Sprite* self)
 		}
 	}
 
-	//Mega Trigger should recede and destroy itself as long as the game isn't
+	//Z-Move Trigger should recede and destroy itself as long as the game isn't
 	//running one of the two mentioned functions.
 	else if (gBattleBankFunc[TRIGGER_BANK] != (0x08032C90 | 1)  //PlayerHandleChooseMove
 		  && gBattleBankFunc[TRIGGER_BANK] != (0x08032C4C | 1)) //HandleChooseMoveAfterDma3

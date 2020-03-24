@@ -2600,12 +2600,12 @@ void TryAppendSOntoEndOfItemString(void)
 				gStringVar2[length + 1] = PC_S;
 				gStringVar2[length + 2] = EOS;
 				break;
-			case PC_X:
-				gStringVar2[length + 0] = PC_E;
-				gStringVar2[length + 1] = PC_S;
+			case PC_x:
+				gStringVar2[length + 0] = PC_e;
+				gStringVar2[length + 1] = PC_s;
 				gStringVar2[length + 2] = EOS;
 				break;
-			case PC_x:
+			case PC_X:
 				gStringVar2[length + 0] = PC_E;
 				gStringVar2[length + 1] = PC_S;
 				gStringVar2[length + 2] = EOS;

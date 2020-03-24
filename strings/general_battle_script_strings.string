@@ -35,9 +35,12 @@ Mist swirls around the\nbattlefield!
 The battlefield got weird!
 
 #org @TargetTransformedIntoType
-[TARGET] transformed\ninto the [BUFFER][00] type!
+[TARGET]'s type\nchanged to [BUFFER][00]!
 
-#org @gText_MimicryTransformed
+#org @gText_AttackerChangedType
+[ATTACKER]'s type\nchanged to [BUFFER][00]!
+
+#org @gText_AbilityChangedType
 [SCRIPTING_BANK]'s type\nchanged to [BUFFER][00]!
 
 #org @ThirdTypeAddedString
@@ -122,6 +125,9 @@ Neither Pok\emon can run away!
 
 #org @gText_ItemPumpedMon
 [SCRIPTING_BANK] used the\n[LAST_ITEM] to get pumped!
+
+#org @gText_ItemIncreasedSpeedBracket
+[SCRIPTING_BANK] can act\nfaster, thanks to its [LAST_ITEM]!
 
 //Status Strings
 

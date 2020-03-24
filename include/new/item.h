@@ -16,6 +16,7 @@ u8 ItemId_GetHoldEffect(u16 itemId);
 u8 ItemId_GetHoldEffectParam(u16 itemId);
 u8 ItemId_GetMystery2Id(u16 itemId);
 bool8 IsMegaStone(u16 item);
+bool8 IsPrimalOrb(u16 item);
 bool8 IsZCrystal(u16 item);
 bool8 IsTypeZCrystal(u16 item, u8 moveType);
 bool8 IsBerry(u16 item);

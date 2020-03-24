@@ -227,7 +227,7 @@ const species_t gDeerlingForms[] =
 	//No termin here
 };
 
-const u8 gNumDeerlingForms = ARRAY_COUNT(gDeerlingForms);
+const u8 gNumDeerlingForms = NELEMS(gDeerlingForms);
 
 const species_t gSawsbuckForms[] =
 {
@@ -238,7 +238,7 @@ const species_t gSawsbuckForms[] =
 	//No termin here
 };
 
-const u8 gNumSawsbuckForms = ARRAY_COUNT(gSawsbuckForms);
+const u8 gNumSawsbuckForms = NELEMS(gSawsbuckForms);
 
 const species_t gVivillonForms[] =
 {
@@ -265,7 +265,7 @@ const species_t gVivillonForms[] =
 	//No termin here
 };
 
-const u8 gNumVivillonForms = ARRAY_COUNT(gVivillonForms);
+const u8 gNumVivillonForms = NELEMS(gVivillonForms);
 
 const species_t gFlabebeForms[] =
 {
@@ -277,7 +277,7 @@ const species_t gFlabebeForms[] =
 	//No termin here
 };
 
-const u8 gNumFlabebeForms = ARRAY_COUNT(gFlabebeForms);
+const u8 gNumFlabebeForms = NELEMS(gFlabebeForms);
 
 const species_t gFloetteForms[] =
 {
@@ -289,7 +289,7 @@ const species_t gFloetteForms[] =
 	//No termin here
 };
 
-const u8 gNumFloetteForms = ARRAY_COUNT(gFloetteForms);
+const u8 gNumFloetteForms = NELEMS(gFloetteForms);
 
 const species_t gFlorgesForms[] =
 {
@@ -301,7 +301,7 @@ const species_t gFlorgesForms[] =
 	//No termin here
 };
 
-const u8 gNumFlorgesForms = ARRAY_COUNT(gFlorgesForms);
+const u8 gNumFlorgesForms = NELEMS(gFlorgesForms);
 
 const species_t gFurfrouForms[] =
 {
@@ -318,7 +318,7 @@ const species_t gFurfrouForms[] =
 	//No termin here
 };
 
-const u8 gNumFurfrouForms = ARRAY_COUNT(gFurfrouForms);
+const u8 gNumFurfrouForms = NELEMS(gFurfrouForms);
 
 const species_t gPikachuCapForms[] =
 {
@@ -332,7 +332,21 @@ const species_t gPikachuCapForms[] =
 	//No termin here
 };
 
-const u8 gNumPikachuCapForms = ARRAY_COUNT(gPikachuCapForms);
+const u8 gNumPikachuCapForms = NELEMS(gPikachuCapForms);
+
+const species_t gAlcremieForms[] =
+{
+	SPECIES_ALCREMIE_STRAWBERRY,
+	SPECIES_ALCREMIE_BERRY,
+	SPECIES_ALCREMIE_CLOVER,
+	SPECIES_ALCREMIE_FLOWER,
+	SPECIES_ALCREMIE_LOVE,
+	SPECIES_ALCREMIE_RIBBON,
+	SPECIES_ALCREMIE_STAR,
+	//No termin here
+};
+
+const u8 gNumAlcremieForms = NELEMS(gAlcremieForms);
 
 const species_t gBattleTowerStandardSpeciesBanList[] =
 {
@@ -412,6 +426,16 @@ const species_t gBattleTowerStandardSpeciesBanList[] =
 	SPECIES_ZERAORA,
 	SPECIES_MELTAN,
 	SPECIES_MELMETAL,
+	SPECIES_ZACIAN,
+	SPECIES_ZACIAN_CROWNED,
+	SPECIES_ZAMAZENTA,
+	SPECIES_ZAMAZENTA_CROWNED,
+	SPECIES_ETERNATUS,
+	SPECIES_ZARUDE,
+	SPECIES_KUBFU,
+	SPECIES_URSHIFU_SINGLE,
+	SPECIES_URSHIFU_RAPID,
+	SPECIES_CALYREX,
 	SPECIES_TABLES_TERMIN
 };
 
@@ -441,6 +465,11 @@ const species_t gGSCup_LegendarySpeciesList[] =
 	SPECIES_NECROZMA,
 	SPECIES_NECROZMA_DUSK_MANE,
 	SPECIES_NECROZMA_DAWN_WINGS,
+	SPECIES_ZACIAN,
+	SPECIES_ZACIAN_CROWNED,
+	SPECIES_ZAMAZENTA,
+	SPECIES_ZAMAZENTA_CROWNED,
+	SPECIES_ETERNATUS,
 	SPECIES_TABLES_TERMIN
 };
 
@@ -501,6 +530,75 @@ const species_t gSmogonOU_SpeciesBanList[] =
 	SPECIES_YVELTAL,
 	SPECIES_ZEKROM,
 	SPECIES_ZYGARDE,
+	SPECIES_ZACIAN,
+	SPECIES_ZACIAN_CROWNED,
+	SPECIES_ZAMAZENTA,
+	SPECIES_ZAMAZENTA_CROWNED,
+	SPECIES_ETERNATUS,
+	SPECIES_TABLES_TERMIN
+};
+
+const species_t gSmogonNationalDexOU_SpeciesBanList[] =
+{
+	SPECIES_ARCEUS,
+	SPECIES_ARCEUS_FIGHT,
+	SPECIES_ARCEUS_FLYING,
+	SPECIES_ARCEUS_POISON,
+	SPECIES_ARCEUS_GROUND,
+	SPECIES_ARCEUS_ROCK,
+	SPECIES_ARCEUS_BUG,
+	SPECIES_ARCEUS_GHOST,
+	SPECIES_ARCEUS_STEEL,
+	SPECIES_ARCEUS_FIRE,
+	SPECIES_ARCEUS_WATER,
+	SPECIES_ARCEUS_GRASS,
+	SPECIES_ARCEUS_ELECTRIC,
+	SPECIES_ARCEUS_PSYCHIC,
+	SPECIES_ARCEUS_ICE,
+	SPECIES_ARCEUS_DRAGON,
+	SPECIES_ARCEUS_DARK,
+	SPECIES_ARCEUS_FAIRY,
+	SPECIES_BLAZIKEN,
+	SPECIES_DARKRAI,
+	SPECIES_DEOXYS,
+	SPECIES_DEOXYS_ATTACK,
+	SPECIES_DEOXYS_SPEED,
+	SPECIES_DIALGA,
+	SPECIES_GENESECT,
+	SPECIES_GENESECT_SHOCK,
+	SPECIES_GENESECT_BURN,
+	SPECIES_GENESECT_CHILL,
+	SPECIES_GENESECT_DOUSE,
+	SPECIES_GIRATINA,
+	SPECIES_GIRATINA_ORIGIN,
+	SPECIES_GROUDON,
+	SPECIES_HO_OH,
+	SPECIES_KYOGRE,
+	SPECIES_KYUREM_BLACK,
+	SPECIES_KYUREM_WHITE,
+	SPECIES_LANDORUS,
+	SPECIES_LUGIA,
+	SPECIES_LUNALA,
+	SPECIES_MARSHADOW,
+	SPECIES_MEWTWO,
+	SPECIES_NAGANADEL,
+	SPECIES_NECROZMA_DUSK_MANE,
+	SPECIES_NECROZMA_DAWN_WINGS,
+	SPECIES_PALKIA,
+	SPECIES_PHEROMOSA,
+	SPECIES_RAYQUAZA,
+	SPECIES_RESHIRAM,
+	SPECIES_SHAYMIN_SKY,
+	SPECIES_SOLGALEO,
+	SPECIES_XERNEAS,
+	SPECIES_YVELTAL,
+	SPECIES_ZEKROM,
+	SPECIES_ZYGARDE,
+	SPECIES_ZACIAN,
+	SPECIES_ZACIAN_CROWNED,
+	SPECIES_ZAMAZENTA,
+	SPECIES_ZAMAZENTA_CROWNED,
+	SPECIES_ETERNATUS,
 	SPECIES_TABLES_TERMIN
 };
 
@@ -545,6 +643,11 @@ const species_t gSmogonOUDoubles_SpeciesBanList[] =
 	SPECIES_LUNALA,
 	SPECIES_MAGEARNA,
 	SPECIES_MARSHADOW,
+	SPECIES_ZACIAN,
+	SPECIES_ZACIAN_CROWNED,
+	SPECIES_ZAMAZENTA,
+	SPECIES_ZAMAZENTA_CROWNED,
+	SPECIES_ETERNATUS,
 	SPECIES_TABLES_TERMIN
 };
 
@@ -579,6 +682,21 @@ const item_t gSmogonOU_ItemBanList[] =
 	ITEM_LUCARIONITE,
 	ITEM_KANGASKHANITE,
 	ITEM_METAGROSSITE,
+	ITEM_SALAMENCITE,
+	ITEM_RED_ORB,
+	ITEM_BLUE_ORB,
+	#ifdef OLD_SOUL_DEW_EFFECT
+	ITEM_SOUL_DEW,
+	#endif
+	ITEM_TABLES_TERMIN
+};
+
+const item_t gSmogonNationalDexOU_ItemBanList[] =
+{
+	ITEM_BLAZIKENITE,
+	ITEM_GENGARITE,
+	ITEM_LUCARIONITE,
+	ITEM_KANGASKHANITE,
 	ITEM_SALAMENCITE,
 	ITEM_RED_ORB,
 	ITEM_BLUE_ORB,

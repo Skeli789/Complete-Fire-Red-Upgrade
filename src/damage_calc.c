@@ -2840,7 +2840,8 @@ static u16 GetBasePower(struct DamageCalc* data)
 			break;
 
 		case MOVE_RETURN:
-			if (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_TRAINER_TOWER | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_EREADER_TRAINER))
+			if ((gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_TRAINER_TOWER | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_EREADER_TRAINER))
+			|| IsFrontierRaidBattle())
 				power = (10 * 255) / 25;
 			else if (useMonAtk)
 				power = (10 * (data->monAtk->friendship)) / 25;
@@ -2849,7 +2850,8 @@ static u16 GetBasePower(struct DamageCalc* data)
 			break;
 
 		case MOVE_FRUSTRATION:
-			if (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_TRAINER_TOWER | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_EREADER_TRAINER))
+			if ((gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_TRAINER_TOWER | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_EREADER_TRAINER))
+			|| IsFrontierRaidBattle())
 				power = (10 * 255) / 25;
 			else if (useMonAtk)
 				power = (10 * (255 - data->monAtk->friendship)) / 25;

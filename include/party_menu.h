@@ -23,6 +23,72 @@ enum
 	PARTY_GIVE_ITEM,
 };
 
+#define PARTY_LAYOUT_SINGLE          0
+#define PARTY_LAYOUT_DOUBLE          1
+#define PARTY_LAYOUT_MULTI           2
+#define PARTY_LAYOUT_MULTI_SHOWCASE  3  // The layout during the screen that appears just before a multi battle
+#define PARTY_LAYOUT_COUNT           4
+#define KEEP_PARTY_LAYOUT            0xFF
+
+#define PARTY_MENU_TYPE_FIELD                     0 
+#define PARTY_MENU_TYPE_IN_BATTLE                 1 
+#define PARTY_MENU_TYPE_CONTEST                   2 
+#define PARTY_MENU_TYPE_CHOOSE_MON                3 
+#define PARTY_MENU_TYPE_CHOOSE_HALF               4  // multi battles, eReader battles, and some battle facilities
+#define PARTY_MENU_TYPE_MULTI_SHOWCASE            5
+#define PARTY_MENU_TYPE_DAYCARE                   6 
+#define PARTY_MENU_TYPE_MOVE_RELEARNER            7 
+#define PARTY_MENU_TYPE_UNION_ROOM_REGISTER       8  // trading board
+#define PARTY_MENU_TYPE_UNION_ROOM_TRADE          9  // trading board
+#define PARTY_MENU_TYPE_SPIN_TRADE                10 // Unused beta for Gen IV's Spin Trade
+#define PARTY_MENU_TYPE_MINIGAME                  11
+
+#define PARTY_ACTION_CHOOSE_MON         0
+#define PARTY_ACTION_SEND_OUT           1
+#define PARTY_ACTION_CANT_SWITCH        2
+#define PARTY_ACTION_USE_ITEM           3
+#define PARTY_ACTION_ABILITY_PREVENTS   4
+#define PARTY_ACTION_GIVE_ITEM          5  
+#define PARTY_ACTION_GIVE_PC_ITEM       6
+#define PARTY_ACTION_GIVE_MAILBOX_MAIL  7
+#define PARTY_ACTION_SWITCH             8
+#define PARTY_ACTION_SWITCHING          9
+#define PARTY_ACTION_SOFTBOILED         10
+#define PARTY_ACTION_CHOOSE_AND_CLOSE   11
+#define PARTY_ACTION_MOVE_TUTOR         12
+#define PARTY_ACTION_MINIGAME           13
+#define PARTY_ACTION_REUSABLE_ITEM      14
+
+// IDs for DisplayPartyMenuStdMessage, to display the message at the bottom of the party menu
+#define PARTY_MSG_CHOOSE_MON                0
+#define PARTY_MSG_CHOOSE_MON_OR_CANCEL      1
+#define PARTY_MSG_CHOOSE_MON_AND_CONFIRM    2
+#define PARTY_MSG_MOVE_TO_WHERE             3 
+#define PARTY_MSG_TEACH_WHICH_MON           4
+#define PARTY_MSG_USE_ON_WHICH_MON          5
+#define PARTY_MSG_GIVE_TO_WHICH_MON         6
+#define PARTY_MSG_NOTHING_TO_CUT            7
+#define PARTY_MSG_CANT_SURF_HERE            8
+#define PARTY_MSG_ALREADY_SURFING           9
+#define PARTY_MSG_CURRENT_TOO_FAST          10
+#define PARTY_MSG_ENJOY_CYCLING             11
+#define PARTY_MSG_ALREADY_IN_USE            12
+#define PARTY_MSG_CANT_USE_HERE             13
+#define PARTY_MSG_NO_MON_FOR_BATTLE         14
+#define PARTY_MSG_CHOOSE_MON_2              15
+#define PARTY_MSG_NOT_ENOUGH_HP             16
+#define PARTY_MSG_THREE_MONS_ARE_NEEDED     17
+#define PARTY_MSG_TWO_MONS_ARE_NEEDED       18
+#define PARTY_MSG_MONS_CANT_BE_SAME         19
+#define PARTY_MSG_NO_SAME_HOLD_ITEMS        20
+#define PARTY_MSG_UNUSED                    21
+#define PARTY_MSG_DO_WHAT_WITH_MON          22
+#define PARTY_MSG_RESTORE_WHICH_MOVE        23
+#define PARTY_MSG_BOOST_PP_WHICH_MOVE       24
+#define PARTY_MSG_DO_WHAT_WITH_ITEM         25
+#define PARTY_MSG_DO_WHAT_WITH_MAIL         26
+#define PARTY_MSG_NONE                      127
+
 #define MENU_SUMMARY 0
 #define MENU_SWITCH 1
 #define MENU_CANCEL1 2
@@ -97,6 +163,7 @@ struct PartyMenuViewing
 #define gPartyMenuView ((struct PartyMenuViewing*) *((u32*) 0x203B09C)) //extern struct PartyMenuViewing gPartyMenuView;
 extern MainCallback gPostMenuFieldCallback;
 
+void __attribute__((long_call)) InitPartyMenu(u8 menuType, u8 layout, u8 partyAction, bool8 keepCursorPos, u8 messageId, TaskFunc task, MainCallback callback);
 void __attribute__((long_call)) DisplayPartyPokemonSelectData(u8 slot, u8 stringID);
 void __attribute__((long_call)) sub_811FA78(u8 taskId);
 void __attribute__((long_call)) sub_811FB28(u8 taskId);

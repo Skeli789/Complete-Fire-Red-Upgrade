@@ -1034,6 +1034,12 @@ void sp118_StartRaidBattle(void)
 	
 	if (FlagGet(FLAG_TAG_BATTLE))
 		gBattleTypeFlags |= (BATTLE_TYPE_DOUBLE | BATTLE_TYPE_INGAME_PARTNER);
+	
+	if (FlagGet(FLAG_BATTLE_FACILITY))
+	{
+		VarSet(VAR_BATTLE_FACILITY_BATTLE_TYPE, 0); //So battle type doesn't interfere with anything
+		VarSet(VAR_BATTLE_FACILITY_TIER, 0); //So tier doesn't interfere with anything
+	}
 
 	CreateBattleStartTask(0, GetMUS_ForBattle());
 	IncrementGameStat(GAME_STAT_TOTAL_BATTLES);

@@ -122,6 +122,7 @@ extern const species_t gFlabebeForms[];
 extern const species_t gFloetteForms[];
 extern const species_t gFlorgesForms[];
 extern const species_t gPikachuCapForms[];
+extern const species_t gAlcremieForms[];
 extern const u8 gNumDeerlingForms;
 extern const u8 gNumSawsbuckForms;
 extern const u8 gNumVivillonForms;
@@ -130,7 +131,7 @@ extern const u8 gNumFloetteForms;
 extern const u8 gNumFlorgesForms;
 extern const u8 gNumFurfrouForms;
 extern const u8 gNumPikachuCapForms;
-
+extern const u8 gNumAlcremieForms;
 
 extern bool8 sp051_CanTeamParticipateInSkyBattle(void);
 extern bool8 CanMonParticipateInASkyBattle(struct Pokemon* mon);
@@ -1120,6 +1121,7 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 							spread = &gMiddleCupSpreads[Random() % TOTAL_MIDDLE_CUP_SPREADS];
 							break;
 						case BATTLE_FACILITY_OU:
+						case BATTLE_FACILITY_NATIONAL_DEX_OU:
 						case BATTLE_FACILITY_MONOTYPE:
 						case BATTLE_FACILITY_CAMOMONS:
 							//25% chance of trying to use a legend allowed in these tiers
@@ -1170,6 +1172,7 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 							}
 							goto REGULAR_SPREADS;
 						case BATTLE_FACILITY_STANDARD:
+						case BATTLE_FACILITY_DYNAMAX_STANDARD:
 							if (trainerId != BATTLE_TOWER_TID) //Multi partner team
 								goto REGULAR_SPREADS;
 
@@ -1216,6 +1219,7 @@ static u8 BuildFrontierParty(struct Pokemon* const party, const u16 trainerId, c
 							}
 							goto REGULAR_MC_SPREADS;
 						case BATTLE_FACILITY_OU:
+						case BATTLE_FACILITY_NATIONAL_DEX_OU:
 						case BATTLE_FACILITY_MONOTYPE:
 						case BATTLE_FACILITY_CAMOMONS:
 							//25% chance of trying to use a legend allowed in these tiers
@@ -1753,7 +1757,7 @@ static bool8 ItemAlreadyOnTeam(const u16 item, const u8 partySize, const item_t*
 
 static void AdjustTypesForMegas(const u16 species, const u16 item, u8* const type1, u8* const type2)
 {
-	u16 megaSpecies = GetMegaSpecies(species, item);
+	u16 megaSpecies = GetMegaSpecies(species, item, NULL);
 	if (megaSpecies != SPECIES_NONE)
 	{
 		u8 megaType1 = gBaseStats[megaSpecies].type1;
@@ -1862,12 +1866,14 @@ static bool8 PokemonTierBan(const u16 species, const u16 item, const struct Batt
 	switch (tier) {
 		case BATTLE_FACILITY_STANDARD:
 		case BATTLE_FACILITY_MEGA_BRAWL:
+		case BATTLE_FACILITY_DYNAMAX_STANDARD:
 			if (CheckTableForSpecies(species, gBattleTowerStandardSpeciesBanList)
 			||  CheckTableForItem(item, gBattleTowerStandard_ItemBanList))
 				return TRUE;
 			break;
 
 		case BATTLE_FACILITY_OU:
+		case BATTLE_FACILITY_NATIONAL_DEX_OU:
 		STANDARD_OU_CHECK:
 		//For OU, there's a species, item, ability, and move ban list
 			//Load correct ability and moves
@@ -1884,9 +1890,18 @@ static bool8 PokemonTierBan(const u16 species, const u16 item, const struct Batt
 
 			if (IsFrontierSingles(battleFormat))
 			{
-				if (CheckTableForSpecies(species, gSmogonOU_SpeciesBanList)
-				||  CheckTableForItem(item, gSmogonOU_ItemBanList))
-					return TRUE;
+				if (tier == BATTLE_FACILITY_NATIONAL_DEX_OU)
+				{
+					if (CheckTableForSpecies(species, gSmogonNationalDexOU_SpeciesBanList)
+					||  CheckTableForItem(item, gSmogonNationalDexOU_ItemBanList))
+						return TRUE;
+				}
+				else //Gen 7 OU
+				{
+					if (CheckTableForSpecies(species, gSmogonOU_SpeciesBanList)
+					||  CheckTableForItem(item, gSmogonOU_ItemBanList))
+						return TRUE;
+				}
 
 				//Check Banned Abilities
 				if (CheckTableForAbility(ability, gSmogonOU_AbilityBanList))
@@ -2160,9 +2175,15 @@ bool8 IsMonBannedInTier(struct Pokemon* mon, u8 tier)
 static bool8 IsPokemonBannedBasedOnStreak(u16 species, u16 item, u16* speciesArray, u8 monsCount, u16 trainerId, u8 tier, bool8 forPlayer)
 {
 	u16 streak = GetCurrentBattleTowerStreak();
+	bool8 megasZMovesBannedInTier = AreMegasZMovesBannedInTier(tier);
 
-	if (!forPlayer && trainerId == BATTLE_TOWER_TID && tier == BATTLE_FACILITY_STANDARD)
+	if (!forPlayer && trainerId == BATTLE_TOWER_TID
+	&& (tier == BATTLE_FACILITY_STANDARD || tier == BATTLE_FACILITY_DYNAMAX_STANDARD))
 	{
+		if (megasZMovesBannedInTier
+		&& (IsZCrystal(item) || IsMegaStone(item))) //Don't give the AI Pokemon with bad items
+			return TRUE;
+
 		//Battles get more difficult the higher the streak.
 		if (streak < 10)
 		{
@@ -2189,9 +2210,14 @@ static bool8 IsPokemonBannedBasedOnStreak(u16 species, u16 item, u16* speciesArr
 				return TRUE;
 		}
 	}
-	else if ((forPlayer || trainerId == BATTLE_FACILITY_MULTI_TRAINER_TID) && tier == BATTLE_FACILITY_STANDARD)
+	else if ((forPlayer || trainerId == BATTLE_FACILITY_MULTI_TRAINER_TID)
+	&& (tier == BATTLE_FACILITY_STANDARD || tier == BATTLE_FACILITY_DYNAMAX_STANDARD))
 	{
 		streak = GetMaxBattleTowerStreakForTier(tier);
+
+		if (megasZMovesBannedInTier
+		&& (IsZCrystal(item) || IsMegaStone(item))) //Don't give the player Pokemon with bad items
+			return TRUE;
 
 		//Better Pokemon are given to the player the better the streak
 		if (streak < 10)
@@ -2213,10 +2239,17 @@ static bool8 IsPokemonBannedBasedOnStreak(u16 species, u16 item, u16* speciesArr
 				return TRUE;
 		}
 	}
-	else if (trainerId == BATTLE_TOWER_SPECIAL_TID && streak < 20 && tier == BATTLE_FACILITY_STANDARD)
+	else if (trainerId == BATTLE_TOWER_SPECIAL_TID)
 	{
-		if (IsMegaStone(item)) //Special trainers aren't allowed to Mega Evolve
-			return TRUE;	   //before the player has beaten Palmer in the 20th battle.
+		if (megasZMovesBannedInTier && IsMegaStone(item)) //Don't give special Trainers Pokemon with bad items
+			return TRUE;
+
+		if (streak < 20
+		&& (tier == BATTLE_FACILITY_STANDARD || tier == BATTLE_FACILITY_DYNAMAX_STANDARD))
+		{
+			if (IsMegaStone(item)) //Special trainers aren't allowed to Mega Evolve
+				return TRUE;	   //before the player has beaten Palmer in the 20th battle.
+		}
 	}
 
 	return FALSE;
@@ -2430,18 +2463,26 @@ static u16 GivePlayerFrontierMonGivenSpecies(const u16 species, const struct Bat
 	return GiveMonToPlayer(&mon);
 }
 
-void CreateFrontierRaidMon(const u16 species)
+void CreateFrontierRaidMon(unusedArg u16 species)
 {
 	struct Pokemon mon;
-	const struct BattleTowerSpread* spread = GetSpreadBySpecies(species, gFrontierSpreads, NELEMS(gFrontierSpreads));
+	const struct BattleTowerSpread* spreadPtr = (const struct BattleTowerSpread*) gPokeBackupPtr;
 
-	if (spread == NULL)
+	//spreadPtr = GetSpreadBySpecies(SPECIES_RAYQUAZA, gFrontierLegendarySpreads, NELEMS(gFrontierLegendarySpreads));
+	if (spreadPtr == NULL)
 		return;
 
-	spread = TryAdjustSpreadForSpecies(spread); //Update Arceus
-	CreateFrontierMon(&mon, 50, spread, 0, 0, 0, TRUE);
+	spreadPtr = TryAdjustSpreadForSpecies(spreadPtr); //Update Arceus
+	struct BattleTowerSpread spread = *spreadPtr;
+	
+	species = GetMegaSpecies(spread.species, spread.item, spread.moves); //Try Mega Evolve the mon
+	if (species != SPECIES_NONE)
+		spread.species = species;
+
+	CreateFrontierMon(&mon, 50, &spread, 0, 0, 0, TRUE);
 	ZeroEnemyPartyMons();
 	gEnemyParty[0] = mon;
+	gPokeBackupPtr = NULL;
 }
 
 static const struct BattleTowerSpread* GetSpreadBySpecies(const u16 species, const struct BattleTowerSpread* const spreads, const u16 numSpreads)
@@ -2537,6 +2578,11 @@ static u16 TryAdjustAestheticSpecies(u16 species)
 		#ifdef NATIONAL_DEX_FURFROU
 		case NATIONAL_DEX_FURFROU:
 			species = gFurfrouForms[Random() % gNumFurfrouForms];
+			break;
+		#endif
+		#ifdef NATIONAL_DEX_ALCREMIE
+		case NATIONAL_DEX_ALCREMIE:
+			species = gAlcremieForms[Random() % gNumAlcremieForms];
 			break;
 		#endif
 		default:
@@ -3470,7 +3516,7 @@ void CalculateMonStatsNew(struct Pokemon *mon)
 	{
 		if (currentHP == 0 && oldMaxHP == 0)
 			currentHP = newMaxHP;
-		else if (currentHP != 0)
+		else if (currentHP != 0 && newMaxHP >= oldMaxHP) //To prevent garbage data after Dynamax form change
 			currentHP += newMaxHP - oldMaxHP;
 		else
 			return;

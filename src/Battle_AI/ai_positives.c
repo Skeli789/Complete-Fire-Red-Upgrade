@@ -48,7 +48,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 
 	u16 partnerMove = MOVE_NONE;
 	if (!IsBankIncapacitated(bankAtkPartner))
-		partnerMove = (gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE) ? gChosenMovesByBanks[bankAtkPartner] : IsValidMovePrediction(bankAtkPartner, bankDef);
+		partnerMove = GetAIChosenMove(bankAtkPartner, bankDef);
 
 	u16 atkSpecies = SPECIES(bankAtk);
 	//u16 defSpecies = SPECIES(bankDef);
@@ -749,7 +749,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			break;
 
 		case EFFECT_SPLASH:
-			if (IsTypeZCrystal(atkItem, moveType) && !gNewBS->ZMoveData->used[bankAtk])
+			if (IsTypeZCrystal(atkItem, moveType) && !IsMegaZMoveBannedBattle() && !gNewBS->ZMoveData->used[bankAtk])
 				INCREASE_VIABILITY(9); //Z-Splash!
 			break;
 
@@ -1165,6 +1165,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			if (IsClassDoublesSetupAttacker(class)
 			&& IsTypeZCrystal(atkItem, moveType)
 			&& !gNewBS->ZMoveData->used[bankAtk] //Z-Crystal provides speed up
+			&& !IsMegaZMoveBannedBattle()
 			&& atkAbility != ABILITY_CONTRARY)
 				IncreaseTailwindViability(&viability, class, bankAtk, bankDef);
 
@@ -1352,6 +1353,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			if (IsClassDoublesSetupAttacker(class)
 			&& IsTypeZCrystal(atkItem, moveType)
 			&& !gNewBS->ZMoveData->used[bankAtk] //Z-Crystal provides speed up
+			&& !IsMegaZMoveBannedBattle()
 			&& atkAbility != ABILITY_CONTRARY)
 				IncreaseTailwindViability(&viability, class, bankAtk, bankDef);
 
@@ -1383,6 +1385,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			if (IsClassDoublesSetupAttacker(class)
 			&& IsTypeZCrystal(atkItem, moveType)
 			&& !gNewBS->ZMoveData->used[bankAtk] //Z-Crystal provides speed up
+			&& !IsMegaZMoveBannedBattle()
 			&& atkAbility != ABILITY_CONTRARY)
 				IncreaseTailwindViability(&viability, class, bankAtk, bankDef);
 
@@ -1439,7 +1442,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		case EFFECT_BELLY_DRUM:
 			if (PhysicalMoveInMoveset(bankAtk) && atkAbility != ABILITY_CONTRARY)
 			{
-				if (IsTypeZCrystal(atkItem, moveType))
+				if (IsTypeZCrystal(atkItem, moveType) && !IsMegaZMoveBannedBattle())
 					INCREASE_STAT_VIABILITY(STAT_STAGE_ATK, STAT_STAGE_MAX, 5);
 				else
 					INCREASE_STAT_VIABILITY(STAT_STAGE_ATK, 8, 2);
@@ -1534,6 +1537,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			else if (IsClassDoublesSetupAttacker(class)
 			&& IsTypeZCrystal(atkItem, moveType)
 			&& !gNewBS->ZMoveData->used[bankAtk] //Z-Crystal provides speed up
+			&& !IsMegaZMoveBannedBattle()
 			&& atkAbility != ABILITY_CONTRARY)
 				IncreaseTailwindViability(&viability, class, bankAtk, bankDef);
 
@@ -2250,7 +2254,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 				case MOVE_CELEBRATE:
 				case MOVE_HOLDHANDS:
 				case MOVE_HAPPYHOUR:
-					if (IsTypeZCrystal(atkItem, moveType) && !gNewBS->ZMoveData->used[bankAtk])
+					if (IsTypeZCrystal(atkItem, moveType) && !IsMegaZMoveBannedBattle() && !gNewBS->ZMoveData->used[bankAtk])
 						INCREASE_VIABILITY(9); //Z-Happy Hour! / Z-Celebrate
 					break;
 			}

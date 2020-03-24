@@ -86,6 +86,11 @@ bool8 IsMegaStone(u16 item)
 	return ItemId_GetHoldEffect(item) == ITEM_EFFECT_MEGA_STONE;
 }
 
+bool8 IsPrimalOrb(u16 item)
+{
+	return ItemId_GetHoldEffect(item) == ITEM_EFFECT_PRIMAL_ORB;
+}
+
 bool8 IsZCrystal(u16 item)
 {
 	return ItemId_GetHoldEffect(item) == ITEM_EFFECT_Z_CRYSTAL;
@@ -331,7 +336,7 @@ u8 TryHandleExcuseForDracoMeteorTutor(unusedArg struct Pokemon* mon)
 		&&  gBaseStats[species].type2 != TYPE_DRAGON)
 			Var8005 = 3;
 		else if (GetMonData(mon, MON_DATA_FRIENDSHIP, NULL) < MAX_FRIENDSHIP) //Dragon-type not at max friendship
-			Var8005 = 4;
+			Var8005 = 5;
 
 		return 1;
 	}

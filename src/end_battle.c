@@ -55,8 +55,20 @@ const u16 gEndBattleFlagClearTable[] =
 #ifdef FLAG_SHINY_CREATION
 	FLAG_SHINY_CREATION,
 #endif
+#ifdef FLAG_CAMOMONS_BATTLE
+	FLAG_CAMOMONS_BATTLE,
+#endif
+#ifdef FLAG_BENJAMIN_BUTTERFREE_BATTLE
+	FLAG_BENJAMIN_BUTTERFREE_BATTLE,
+#endif
+#ifdef FLAG_DYNAMAX_BATTLE
+	FLAG_DYNAMAX_BATTLE,
+#endif
 #ifdef FLAG_RAID_BATTLE
 	FLAG_RAID_BATTLE,
+#endif
+#ifdef FLAG_RAID_BATTLE_NO_FORCE_END
+	FLAG_RAID_BATTLE_NO_FORCE_END,
 #endif
 	FLAG_TAG_BATTLE,
 	FLAG_TWO_OPPONENTS,
@@ -219,6 +231,11 @@ void HandleEndTurn_BattleLost(void)
 
 		gBankAttacker = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
 		gBattlescriptCurrInstr = BattleScript_LocalBattleLost;
+	}
+	else if (IsRaidBattle() && FlagGet(FLAG_BATTLE_FACILITY))
+	{
+		gBattlescriptCurrInstr = BattleScript_LoseFrontierRaidBattle;
+		EndOfBattleThings();
 	}
 	else
 	{
@@ -508,26 +525,24 @@ static void NaturalCureHeal(void)
 static void RestoreNonConsumableItems(void)
 {
 	u16 none = ITEM_NONE;
-	u16* items = ExtensionState.itemBackup;
+	u16* items = gNewBS->itemBackup;;
 
-	if (ExtensionState.itemBackup != NULL)
+	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
 	{
-		if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+		for (int i = 0; i < PARTY_SIZE; ++i)
 		{
-			for (int i = 0; i < PARTY_SIZE; ++i)
+			if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER
+			||  items[i] == ITEM_NONE
+			||  !IsConsumable(items[i]))
 			{
-				if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER
-				||  items[i] == ITEM_NONE
-				||  !IsConsumable(items[i]))
-					SetMonData(&gPlayerParty[i], MON_DATA_HELD_ITEM, &items[i]);
-
-				else if (gPlayerParty[i].item != items[i] //The player consumed their item, and then picked up another one
-				&& IsConsumable(items[i]))
-					SetMonData(&gPlayerParty[i], MON_DATA_HELD_ITEM, &none);
+				SetMonData(&gPlayerParty[i], MON_DATA_HELD_ITEM, &items[i]);
+			}
+			else if (gPlayerParty[i].item != items[i] //The player consumed their item, and then picked up another one
+			&& IsConsumable(items[i]))
+			{
+				SetMonData(&gPlayerParty[i], MON_DATA_HELD_ITEM, &none);
 			}
 		}
-
-		Free(items);
 	}
 }
 

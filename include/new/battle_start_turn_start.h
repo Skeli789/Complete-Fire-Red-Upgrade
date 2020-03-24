@@ -21,7 +21,6 @@ u32 SpeedCalcMon(u8 side, struct Pokemon* mon);
 
 //Hooked in Functions
 void HandleNewBattleRamClearBeforeBattle(void);
-void SavePartyItems(void);
 void BattleBeginFirstTurn(void);
 void CleanUpExtraTurnValues(void);
 void SetActionsAndBanksTurnOrder(void);

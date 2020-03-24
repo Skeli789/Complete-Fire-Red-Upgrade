@@ -73,6 +73,7 @@ void atk23_getexp(void)
 
 		if (SIDE(gBankFainted) != B_SIDE_OPPONENT
 		|| gBattleStruct->givenExpMons & gBitTable[gBattlerPartyIndexes[gBankFainted]]
+		|| IsFrontierRaidBattle()
 		|| (gBattleTypeFlags &
 			 (BATTLE_TYPE_LINK
 			  | BATTLE_TYPE_SAFARI

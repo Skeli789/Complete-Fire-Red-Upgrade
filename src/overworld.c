@@ -966,7 +966,7 @@ void BattleSetup_StartTrainerBattle(void)
 		else if (tier == BATTLE_FACILITY_MEGA_BRAWL)
 			gBattleTypeFlags |= BATTLE_TYPE_MEGA_BRAWL;
 
-		if (DynamaxAllowedInTier(tier))
+		if (DynamaxAllowedInTier(tier) || (gBattleTypeFlags & BATTLE_TYPE_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_DYNAMAX))
 			gBattleTypeFlags |= BATTLE_TYPE_DYNAMAX;
 
 		switch (VarGet(VAR_BATTLE_FACILITY_BATTLE_TYPE)) {

@@ -50,6 +50,7 @@ et_battle_scripts.s
 .global BattleScript_OctolockTurnDmg
 .global BattleScript_DynamaxEnd
 .global BattleScript_LoseRaidBattle
+.global BattleScript_LoseFrontierRaidBattle
 .global BattleScript_PrintCustomStringEnd2
 .global BattleScript_PrintCustomStringEnd3
 
@@ -614,6 +615,13 @@ BattleScript_LoseRaidBattle:
 	playanimation BANK_SCRIPTING DRAGON_TAIL_BLOW_AWAY_ANIM 0x0
 	callasm SetScriptingBankToItsPartner
 	playanimation BANK_SCRIPTING DRAGON_TAIL_BLOW_AWAY_ANIM 0x0
+	printstring 0x184
+	waitmessage DELAY_1SECOND
+	setbyte BATTLE_OUTCOME 0x5 @;Teleported
+	end2
+
+BattleScript_LoseFrontierRaidBattle:
+	setword BATTLE_STRING_LOADER gText_RaidBattleKO4
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	setbyte BATTLE_OUTCOME 0x5 @;Teleported

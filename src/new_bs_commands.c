@@ -688,7 +688,7 @@ void atkFF15_jumpifstatcanbemodified(void)
 		if (gBattleMons[gActiveBattler].statStages[currStat - 1] == 0)
 			gFormCounter = 1;
 
-		else if (gSideTimers[SIDE(gActiveBattler)].mistTimer && (gBattlescriptCurrInstr[1] != 0x0 || ABILITY(gBankAttacker) != ABILITY_INFILTRATOR))
+		else if (BankSideHasMist(gActiveBattler) && (gBattlescriptCurrInstr[1] != BS_GET_TARGET || ABILITY(gBankAttacker) != ABILITY_INFILTRATOR))
 			gFormCounter = 2;
 
 		else if (ability == ABILITY_CLEARBODY
@@ -1373,7 +1373,7 @@ void atkFF29_trysetsleep(void)
 		gBattleStringLoader = gText_TargetAlreadyHasStatusCondition; //String not in official games; officially "But it failed!"
 		fail = TRUE;
 	}
-	else if (ABILITY(gBankAttacker) != ABILITY_INFILTRATOR && gSideAffecting[SIDE(bank)] & SIDE_STATUS_SAFEGUARD)
+	else if (ABILITY(gBankAttacker) != ABILITY_INFILTRATOR && BankSideHasSafeguard(bank))
 	{
 		gBattleStringLoader = gText_TeamProtectedBySafeguard;
 		fail = TRUE;
@@ -1482,7 +1482,7 @@ void atkD7_setyawn(void)
 		gBattleStringLoader = gText_TargetAlreadyHasStatusCondition; //String not in official games; officially "But it failed!"
 		fail = TRUE;
 	}
-	else if (ABILITY(gBankAttacker) != ABILITY_INFILTRATOR && gSideAffecting[SIDE(bank)] & SIDE_STATUS_SAFEGUARD)
+	else if (ABILITY(gBankAttacker) != ABILITY_INFILTRATOR && BankSideHasSafeguard(bank))
 	{
 		gBattleStringLoader = gText_TeamProtectedBySafeguard;
 		fail = TRUE;
@@ -1614,7 +1614,7 @@ void atkFF2A_trysetparalysis(void)
 		gBattleStringLoader = gText_TargetAlreadyHasStatusCondition; //String not in official games; officially "But it failed!"
 		fail = TRUE;
 	}
-	else if (ABILITY(gBankAttacker) != ABILITY_INFILTRATOR && gSideAffecting[SIDE(bank)] & SIDE_STATUS_SAFEGUARD)
+	else if (ABILITY(gBankAttacker) != ABILITY_INFILTRATOR && BankSideHasSafeguard(bank))
 	{
 		gBattleStringLoader = gText_TeamProtectedBySafeguard;
 		fail = TRUE;
@@ -1702,7 +1702,7 @@ void atkFF2B_trysetburn(void)
 		gBattleStringLoader = gText_TargetAlreadyHasStatusCondition; //String not in official games; officially "But it failed!"
 		fail = TRUE;
 	}
-	else if (ABILITY(gBankAttacker) != ABILITY_INFILTRATOR && gSideAffecting[SIDE(bank)] & SIDE_STATUS_SAFEGUARD)
+	else if (ABILITY(gBankAttacker) != ABILITY_INFILTRATOR && BankSideHasSafeguard(bank))
 	{
 		gBattleStringLoader = gText_TeamProtectedBySafeguard;
 		fail = TRUE;
@@ -1793,7 +1793,7 @@ void atkFF2C_trysetpoison(void)
 		gBattleStringLoader = gText_TargetAlreadyHasStatusCondition; //String not in official games; officially "But it failed!"
 		fail = TRUE;
 	}
-	else if (ABILITY(gBankAttacker) != ABILITY_INFILTRATOR && gSideAffecting[SIDE(bank)] & SIDE_STATUS_SAFEGUARD)
+	else if (ABILITY(gBankAttacker) != ABILITY_INFILTRATOR && BankSideHasSafeguard(bank))
 	{
 		gBattleStringLoader = gText_TeamProtectedBySafeguard;
 		fail = TRUE;
@@ -1913,4 +1913,50 @@ void atkFF33_SetEffectPrimaryScriptingBank(void)
 	gBankTarget = gBattleScripting->bank;
 	SetMoveEffect(TRUE, (gBattleCommunication[MOVE_EFFECT_BYTE] & MOVE_EFFECT_CERTAIN) != 0);
 	gBankTarget = backupBank;
+}
+
+//canconfuse BANK FAIL_ADDRESS
+void atkFF34_canconfuse(void)
+{
+	u8 bank = GetBattleBank(gBattlescriptCurrInstr[1]);
+	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
+	bool8 fail = FALSE;
+
+	if (BATTLER_SEMI_INVULNERABLE(bank) && !CanHitSemiInvulnerableTarget(gBankAttacker, bank, gCurrentMove))
+	{
+		gMoveResultFlags |= MOVE_RESULT_MISSED;
+		gBattlescriptCurrInstr = BattleScript_PauseResultMessage;
+		return;
+	}
+	else if (IsConfused(bank))
+	{
+		gBattleStringLoader = gText_TargetAlreadyConfused;
+		fail = TRUE;
+	}
+	else if (ABILITY(gBankAttacker) != ABILITY_INFILTRATOR && BankSideHasSafeguard(bank))
+	{
+		gBattleStringLoader = gText_TeamProtectedBySafeguard;
+		fail = TRUE;
+	}
+	else if (CheckGrounding(bank) && gTerrainType == MISTY_TERRAIN)
+	{
+		gBattleStringLoader = gText_TargetWrappedInMistyTerrain;
+		fail = TRUE;
+	}
+
+	if (!fail)
+	{
+		switch (ABILITY(bank)) {
+			case ABILITY_OWNTEMPO:
+				gBattlescriptCurrInstr = BattleScript_ProtectedByAbility;
+				return;
+		}
+
+		gBattlescriptCurrInstr += 6;
+	}
+	else //Fail
+	{
+		gMoveResultFlags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
+		gBattlescriptCurrInstr = ptr;
+	}	
 }

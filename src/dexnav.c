@@ -7,6 +7,7 @@
 #include "../include/field_message_box.h"
 #include "../include/field_player_avatar.h"
 #include "../include/fieldmap.h"
+#include "../include/gpu_regs.h"
 #include "../include/menu.h"
 #include "../include/m4a.h"
 #include "../include/main.h"
@@ -148,13 +149,30 @@ static void VblackCallbackSeq(void)
 	TransferPlttBuffer();
 }
 
+static void ResetGPU(void)
+{
+	SetGpuReg(REG_OFFSET_DISPCNT, DISPCNT_OBJ_ON | DISPCNT_OBJ_1D_MAP);
+	SetGpuReg(REG_OFFSET_BG3CNT, DISPCNT_MODE_0);
+	SetGpuReg(REG_OFFSET_BG2CNT, DISPCNT_MODE_0);
+	SetGpuReg(REG_OFFSET_BG1CNT, DISPCNT_MODE_0);
+	SetGpuReg(REG_OFFSET_BG0CNT, DISPCNT_MODE_0);
+	SetGpuReg(REG_OFFSET_BG3HOFS, DISPCNT_MODE_0);
+	SetGpuReg(REG_OFFSET_BG3VOFS, DISPCNT_MODE_0);
+	SetGpuReg(REG_OFFSET_BG2HOFS, DISPCNT_MODE_0);
+	SetGpuReg(REG_OFFSET_BG2VOFS, DISPCNT_MODE_0);
+	SetGpuReg(REG_OFFSET_BG1HOFS, DISPCNT_MODE_0);
+	SetGpuReg(REG_OFFSET_BG1VOFS, DISPCNT_MODE_0);
+	SetGpuReg(REG_OFFSET_BG0HOFS, DISPCNT_MODE_0);
+	SetGpuReg(REG_OFFSET_BG0VOFS, DISPCNT_MODE_0);
+}
 
 static void ClearHandlers(void)
 {
-	SetVBlankCallback((void*) 0);
-	SetHBlankCallback((void*) 0);
-	SetMainCallback1((void*) 0);
-	SetMainCallback2((void*) 0);
+	SetVBlankCallback(NULL);
+	DmaFill16(3, 0, VRAM, VRAM_SIZE);
+	DmaFill32(3, 0, OAM, OAM_SIZE);
+	DmaFill16(3, 0, PLTT, PLTT_SIZE);
+	ResetGPU();
 }
 
 static void DexNavGUICallback2(void)
@@ -2418,6 +2436,10 @@ static void DexNavGuiHandler(void)
 							// create value to store in a var
 							u16 varStore = (sDNavState->selectedArr << 15) | species;
 							VarSet(VAR_DEXNAV, varStore);
+							
+							#ifdef VAR_R_BUTTON_MODE
+							VarSet(VAR_R_BUTTON_MODE, OPTIONS_R_BUTTON_MODE_DEXNAV);
+							#endif
 						}
 						else
 						{
@@ -2429,7 +2451,7 @@ static void DexNavGuiHandler(void)
 					}
 					default:
 						return;
-				};
+				}
 				UpdateCursorPosition();
 			}
 			break;

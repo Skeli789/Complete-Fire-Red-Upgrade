@@ -177,7 +177,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 		goto CLEAR_MOVE_EFFECT_BYTE;
 	}
 
-	if (gSideAffecting[SIDE(gEffectBank)] & SIDE_STATUS_SAFEGUARD
+	if (BankSideHasSafeguard(gEffectBank)
 	&& !(gHitMarker & HITMARKER_IGNORE_SAFEGUARD)
 	&& ABILITY(gBankAttacker) != ABILITY_INFILTRATOR
 	&& gEffectBank != gBankAttacker

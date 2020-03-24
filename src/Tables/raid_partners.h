@@ -589,13 +589,13 @@ static const struct BattleTowerSpread sRaidPartnerSpread_Mahina_Rank456[] =
 		.atkEv = 4,
 		.spDefEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_INTIMIDATE
-		.item = ITEM_NORMALIUM_Z,
+		.item = ITEM_WATERIUM_Z,
 		.moves =
 		{
 			MOVE_AQUATAIL,
 			MOVE_CRUNCH,
 			MOVE_IRONHEAD,
-			MOVE_HAPPYHOUR,
+			MOVE_POWERWHIP,
 		},
 		.ball = BALL_TYPE_LURE_BALL,
 		.shiny = TRUE,

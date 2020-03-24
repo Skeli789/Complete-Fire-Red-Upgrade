@@ -118,6 +118,12 @@ Smogon Benjamin Butterfree
 #org @gText_MegaBrawl
 Mega Brawl
 
+#org @gText_DynamaxStandard
+Dynamax Standard
+
+#org @gText_NationalDexOU
+Smogon National Dex OU
+
 #org @gText_BattleMineFormat1
 Cave Format
 
@@ -132,6 +138,12 @@ on
 
 #org @gText_Off
 off
+
+#org @gText_BeAble
+be able
+
+#org @gText_NotBeAble
+not be able
 
 #org @gText_Previous
 Previous
@@ -197,6 +209,15 @@ with water in the air!\pAll Fire-type moves will be\nweakened!
 
 #org @gText_BattleCircusDescriptionInverseBattle
 in an Inverse Battle!\pAll type matchups are reversed!
+
+#org @gText_BattleCircusDescriptionDynamax
+with a Power Spot active!\pAll Pok\emon will be able to\nDynamax!\pHowever, no Pok\emon may Mega\nEvolve, undergo Primal Reversion,\lUltra Burst, or use Z-Moves!
+
+#org @gText_BattleCircusDescriptionSafeguard
+with a veil protecting both sides\lof the battlefield!\pNo Pok\emon may inflict status\nconditions on another!
+
+#org @gText_BattleCircusDescriptionMist
+with Mist surrounding both sides\lof the battlefield!\pNo Pok\emon may have their stats\nlowered by another!
 
 #org @gText_BattleCircusDescriptionSeaOfFire
 with a Sea of Fire engulfing both\lsides of the battlefield!\pAll non-Fire-type Pok\emon will be\ndamaged each turn!

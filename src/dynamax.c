@@ -37,6 +37,7 @@ dynamax.c
 #define FIRST_RAID_BATTLE_FLAG 0x1800
 
 //This file's functions:
+static bool8 IsBannedHeldItemForDynamax(u16 item);
 static const u8* DoDynamax(u8 bank);
 static const u8* DoGigantamax(u8 bank);
 static bool8 IsItemDynamaxBand(u16 item);
@@ -148,6 +149,9 @@ species_t GetDynamaxSpecies(unusedArg u8 bank, unusedArg bool8 checkGMaxInstead)
 	#else
 	u16 species = SPECIES(bank); //Prevents ditto too
 
+	if (IsBannedHeldItemForDynamax(ITEM(bank)))
+		return SPECIES_NONE;
+
 	if (!checkGMaxInstead) //Checking regular Dynmax
 	{
 		if (IsBannedDynamaxSpecies(species))
@@ -181,6 +185,16 @@ species_t GetDynamaxSpecies(unusedArg u8 bank, unusedArg bool8 checkGMaxInstead)
 	#endif
 }
 
+static bool8 IsBannedHeldItemForDynamax(u16 item)
+{
+	if (IsMegaZMoveBannedBattle())
+		return FALSE; //These items have no effect so don't ban them
+
+	return IsMegaStone(item)
+		|| IsZCrystal(item)
+		|| IsPrimalOrb(item);
+}
+
 bool8 IsBannedDynamaxSpecies(u16 species)
 {
 	switch (species) {
@@ -202,6 +216,12 @@ bool8 IsBannedDynamaxSpecies(u16 species)
 		#endif
 			return TRUE;
 	}
+	
+	if (IsMegaSpecies(species)
+	||  IsRedPrimalSpecies(species)
+	||  IsBluePrimalSpecies(species)
+	||  IsUltraNecrozmaSpecies(species))
+		return TRUE;
 
 	return FALSE;
 }
@@ -323,6 +343,9 @@ static item_t FindTrainerDynamaxBand(u16 trainerId)
 
 static item_t FindPlayerDynamaxBand(void)
 {
+	if (gBattleTypeFlags & (BATTLE_TYPE_FRONTIER | BATTLE_TYPE_LINK))
+		return ITEM_DYNAMAX_BAND;
+
 	#if (defined UNBOUND && defined VAR_KEYSTONE) //Mega Ring doubles as Dynamax Band in Unbound
 		u16 dynamaxBand = VarGet(VAR_KEYSTONE);
 		if (dynamaxBand != ITEM_NONE)
@@ -344,9 +367,6 @@ static item_t FindPlayerDynamaxBand(void)
 
 static item_t FindBankDynamaxBand(u8 bank)
 {
-	if (gBattleTypeFlags & BATTLE_TYPE_LINK)
-		return ITEM_DYNAMAX_BAND; //You can always Mega Evolve in a link battle
-
 	#ifdef DEBUG_DYNAMAX
 		if (bank + 1)
 			return ITEM_DYNAMAX_BAND;
@@ -455,12 +475,7 @@ static move_t GetTypeBasedMaxMove(u8 moveType, u8 moveSplit)
 
 static u8 GetMaxMoveType(u16 move, u8 bank, struct Pokemon* mon)
 {
-	u8 moveType;
-
-	if (move == MOVE_HIDDENPOWER || move == MOVE_NATURALGIFT) //The only exception moves that don't change type
-		move = MOVE_POUND;
-
-	moveType = GetMoveTypeSpecialPreAbility(move, bank, mon);
+	u8 moveType = GetMoveTypeSpecialPreAbility(move, bank, mon);
 
 	if (moveType == 0xFF) //No overridden type
 	{
@@ -512,12 +527,13 @@ move_t GetMaxMoveByMove(u8 bank, u16 baseMove)
 	if (baseMove == MOVE_NONE)
 		return MOVE_NONE;
 
-	if (IsMega(bank)
-	|| IsRedPrimal(bank)
-	|| IsBluePrimal(bank)
-	|| IsUltraNecrozma(bank)
-	|| DoesZMoveUsageStopDynamaxing(bank)) //No using Z-Move and Dynamaxing
-		return MOVE_NONE;
+	if (!IsRaidBattle() || bank != BANK_RAID_BOSS) //Raid mon's don't care about these rules
+	{
+		if (IsBannedDynamaxSpecies(SPECIES(bank))
+		|| IsBannedHeldItemForDynamax(ITEM(bank))
+		|| DoesZMoveUsageStopDynamaxing(bank)) //No using Z-Move and Dynamaxing
+			return MOVE_NONE;
+	}
 
 	if (moveSplit == SPLIT_STATUS)
 		return MOVE_MAX_GUARD;
@@ -544,15 +560,10 @@ static move_t GetMonMaxMove(struct Pokemon* mon, u16 baseMove)
 bool8 MonCanUseMaxMoveWithEffect(struct Pokemon* mon, u8 maxEffect)
 {
 	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
-	u16 itemEffect = GetMonItemEffect(mon);
+	u16 item = GetMonData(mon, MON_DATA_HELD_ITEM, NULL);
 
-	if (IsMegaSpecies(species)
-	|| IsRedPrimalSpecies(species)
-	|| IsBluePrimalSpecies(species)
-	|| IsMonUltraNecrozma(mon)
-	|| itemEffect == ITEM_EFFECT_MEGA_STONE
-	|| itemEffect == ITEM_EFFECT_PRIMAL_ORB
-	|| itemEffect == ITEM_EFFECT_Z_CRYSTAL)
+	if (IsBannedDynamaxSpecies(species)
+	|| IsBannedHeldItemForDynamax(item))
 		return FALSE;
 
 	for (int i = 0; i < MAX_MON_MOVES; ++i)
@@ -577,27 +588,24 @@ bool8 MonCanDynamax(struct Pokemon* mon)
 	if (gBattleTypeFlags & BATTLE_TYPE_DYNAMAX)
 	{
 		u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
-		u16 itemEffect = GetMonItemEffect(mon);
+		u16 item = GetMonData(mon, MON_DATA_HELD_ITEM, NULL);
 
-		if (IsMegaSpecies(species)
-		|| IsRedPrimalSpecies(species)
-		|| IsBluePrimalSpecies(species)
-		|| IsMonUltraNecrozma(mon)
-		|| itemEffect == ITEM_EFFECT_MEGA_STONE
-		|| itemEffect == ITEM_EFFECT_PRIMAL_ORB
-		|| itemEffect == ITEM_EFFECT_Z_CRYSTAL
-		|| IsBannedDynamaxSpecies(species))
+		if (IsBannedDynamaxSpecies(species)
+		|| IsBannedHeldItemForDynamax(item))
 			return FALSE;
-		
+
 		return TRUE;
 	}
 	
 	return FALSE;
 }
 
-u8 GetDynamaxHPBoost(unusedArg u8 bank)
+u8 GetDynamaxHPBoost(u8 bank)
 {
-	return 2;
+	if (IsRaidBattle() && bank == BANK_RAID_BOSS)
+		return GetRaidBattleHPBoost();
+	else
+		return 2;
 }
 
 u8 GetMonDynamaxHPBoost(unusedArg struct Pokemon* mon)
@@ -622,7 +630,8 @@ bool8 IsGMaxMove(u16 move)
 
 void TryFadeBankPaletteForDynamax(u8 bank, u16 paletteOffset)
 {
-	if (IsDynamaxed(bank))
+	if (IsDynamaxed(bank)
+	|| (IsRaidBattle() && bank == BANK_RAID_BOSS)) //So it stays lit up when you try to catch it
 	{
         BlendPalette(paletteOffset, 16, 4, RGB(31, 0, 12)); //Dynamax Pinkish-Red
         CpuCopy32(gPlttBufferFaded + paletteOffset, gPlttBufferUnfaded + paletteOffset, 32);
@@ -632,26 +641,47 @@ void TryFadeBankPaletteForDynamax(u8 bank, u16 paletteOffset)
 extern const struct UCoords8 sBattlerCoords[][4];
 s16 GetBattlerXCoord(u8 bank)
 {
-	#ifdef FLAG_RAID_BATTLE
-	if (SIDE(bank) == B_SIDE_OPPONENT
-	&& FlagGet(FLAG_RAID_BATTLE)
-	&& !(gBattleTypeFlags & BATTLE_TYPE_TRAINER))
+	if (IsRaidBattle() && SIDE(bank) == B_SIDE_OPPONENT)
 		return sBattlerCoords[FALSE][B_POSITION_OPPONENT_LEFT].x; //Only 1 Pokemon so Single battle position
-	#endif
 
 	return sBattlerCoords[IS_DOUBLE_BATTLE][GetBattlerPosition(bank)].x;
 }
 
 s16 GetBattlerYCoord(u8 bank)
 {
-	#ifdef FLAG_RAID_BATTLE
-	if (SIDE(bank) == B_SIDE_OPPONENT
-	&& FlagGet(FLAG_RAID_BATTLE)
-	&& !(gBattleTypeFlags & BATTLE_TYPE_TRAINER))
+	if (IsRaidBattle() && SIDE(bank) == B_SIDE_OPPONENT)
 		return sBattlerCoords[FALSE][B_POSITION_OPPONENT_LEFT].y; //Only 1 Pokemon so Single battle position
-	#endif
 
 	return sBattlerCoords[IS_DOUBLE_BATTLE][GetBattlerPosition(bank)].y;
+}
+
+void LoadAndCreateEnemyShadowSprites(void)
+{
+    u8 battlerId;
+
+    LoadCompressedSpriteSheetUsingHeap((void*) 0x8250A0C); //gSpriteSheet_EnemyShadow
+
+    battlerId = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
+    gBattleSpritesDataPtr->healthBoxesData[battlerId].shadowSpriteId = CreateSprite((void*) 0x8250A1C, GetBattlerSpriteCoord(battlerId, BATTLER_COORD_X), GetBattlerSpriteCoord(battlerId, BATTLER_COORD_Y) + 29, 0xC8); //gSpriteTemplate_EnemyShadow
+    gSprites[gBattleSpritesDataPtr->healthBoxesData[battlerId].shadowSpriteId].data[0] = battlerId;
+
+    if (IS_DOUBLE_BATTLE)
+    {
+        battlerId = GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
+        gBattleSpritesDataPtr->healthBoxesData[battlerId].shadowSpriteId = CreateSprite((void*) 0x8250A1C, GetBattlerSpriteCoord(battlerId, BATTLER_COORD_X), GetBattlerSpriteCoord(battlerId, BATTLER_COORD_Y) + 29, 0xC8);
+        gSprites[gBattleSpritesDataPtr->healthBoxesData[battlerId].shadowSpriteId].data[0] = battlerId;
+		
+		//The game is insistent that there must be two shadow sprites in Doubles, otherwise things break
+		//So overlap the two shadow sprites in a Raid Battle
+		if (IsRaidBattle())
+			gSprites[gBattleSpritesDataPtr->healthBoxesData[battlerId].shadowSpriteId].data[0] = BANK_RAID_BOSS;
+    }
+}
+
+void HandleDeadRaidMonAndDeadPlayer(void)
+{
+	if (RAID_BATTLE_END && !BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)))
+		gBattleStruct->field_91 &= ~gBitTable[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)]; //So the player can still catch even if they have no Pokemon left
 }
 
 //Called from Battle Script
@@ -1266,6 +1296,11 @@ bool8 IsRaidBattle(void)
 	#endif
 }
 
+bool8 IsFrontierRaidBattle(void)
+{
+	return IsRaidBattle() && FlagGet(FLAG_BATTLE_FACILITY);
+}
+
 bool8 IsCatchableRaidBattle(void)
 {
 	return IsRaidBattle() && !FlagGet(FLAG_NO_CATCHING) && !FlagGet(FLAG_NO_CATCHING_AND_RUNNING);
@@ -1307,7 +1342,7 @@ bool8 ShouldCreateRaidShields(u8 bank)
 		if (i == healthRatio)
 			cutOff = gBattleMons[bank].maxHP; //Fix Math Errors
 	
-		if (gBattleMons[bank].hp <= cutOff
+		if (gBattleMons[bank].hp <= cutOff + (gBattleMons[bank].maxHP / 16) //Give some leeway for throwing up a shield
 		&&  gNewBS->dynamaxData.turnStartHP > cutOff)
 			return TRUE;
 	}
@@ -1403,7 +1438,11 @@ void CreateRaidShieldSprites(void)
 
 u8 GetRaidBattleKOStatIncreaseAmount(u8 bank)
 {
-	switch (gBattleMons[bank].level) {
+	u8 level = gBattleMons[bank].level;
+	if (FlagGet(FLAG_BATTLE_FACILITY))
+		level = MAX_LEVEL;
+
+	switch (level) {
 		case 0 ... 19:
 			return 0; //Never
 		case 20 ... 40:
@@ -1417,7 +1456,11 @@ u8 GetRaidBattleKOStatIncreaseAmount(u8 bank)
 
 u8 GetRaidBattleRepeatedAttackChance(u8 bank)
 {
-	switch (gBattleMons[bank].level) {
+	u8 level = gBattleMons[bank].level;
+	if (FlagGet(FLAG_BATTLE_FACILITY))
+		level = MAX_LEVEL;
+
+	switch (level) {
 		case 0 ... 19:
 			return 0; //Never
 		case 20 ... 40:
@@ -1434,7 +1477,11 @@ u8 GetRaidBattleStatNullificationChance(u8 bank)
 	if (gDisableStructs[bank].isFirstTurn)
 		return 0; //Don't use first attack with this
 
-	switch (gBattleMons[bank].level) {
+	u8 level = gBattleMons[bank].level;
+	if (FlagGet(FLAG_BATTLE_FACILITY))
+		level = MAX_LEVEL;
+
+	switch (level) {
 		case 0 ... 19:
 			return 0; //Never
 		case 20 ... 40:
@@ -1476,7 +1523,7 @@ static u32 GetRaidRandomNumber(void)
 	u8 lastWarpId = (gSaveBlock1->dynamicWarp.warpId == 0) ? 0xFF : gSaveBlock1->dynamicWarp.warpId;
 	u16 lastPos = (gSaveBlock1->dynamicWarp.x + gSaveBlock1->dynamicWarp.y == 0) ? 0xFFFF : (u16) (gSaveBlock1->dynamicWarp.x + gSaveBlock1->dynamicWarp.y);
 
-	return (dayOfWeek * hour * (day + month) * lastMapGroup * (lastMapNum + lastWarpId + lastPos)) ^ T1_READ_32(gSaveBlock2->playerTrainerId);
+	return ((hour * (day + month) * lastMapGroup * (lastMapNum + lastWarpId + lastPos)) + ((hour * (day + month)) ^ dayOfWeek)) ^ T1_READ_32(gSaveBlock2->playerTrainerId);
 }
 
 void DetermineRaidStars(void)
@@ -1492,7 +1539,7 @@ void DetermineRaidStars(void)
 	if (min == max)
 		gRaidBattleStars = min;
 	else
-		gRaidBattleStars = (randomNum % (max - min)) + min;
+		gRaidBattleStars = (randomNum % ((max + 1) - min)) + min;
 }
 
 //Must call DetermineRaidStars first
@@ -1504,8 +1551,26 @@ void DetermineRaidSpecies(void)
 
 	if (FlagGet(FLAG_BATTLE_FACILITY)) //Battle Tower Demo
 	{
-		index = GetRaidRandomNumber() % gNumFrontierSpreads;
-		gRaidBattleSpecies = gFrontierSpreads[index].species;
+		const struct BattleTowerSpread* spread;
+
+		if (GetRaidRandomNumber() % 100 >= 90) //10 % chance
+		{
+			index = GetRaidRandomNumber() % gNumFrontierLegendarySpreads;
+			spread = &gFrontierLegendarySpreads[index];
+		}
+		else
+		{
+			index = GetRaidRandomNumber() % gNumFrontierSpreads;
+			spread = &gFrontierSpreads[index];
+		}
+
+		u16 megaSpecies = GetMegaSpecies(spread->species, spread->item, spread->moves); //Try Mega Evolve the mon
+		if (megaSpecies != SPECIES_NONE)
+			gRaidBattleSpecies = megaSpecies;
+		else
+			gRaidBattleSpecies = spread->species;
+
+		gPokeBackupPtr = spread; //Save spread pointer for later
 	}
 	else if (raid->data != NULL)
 	{
@@ -1523,8 +1588,8 @@ void DetermineRaidLevel(void)
 	u8 max = gRaidBattleLevelRanges[numStars][1];
 	u32 randomNum = GetRaidRandomNumber();
 
-	if (FlagGet(FLAG_BATTLE_FACILITY)) //Battle Tower Demo
-		gRaidBattleLevel = 50;
+	if (FlagGet(FLAG_BATTLE_FACILITY)) //Battle Frontier Demo
+		gRaidBattleLevel = VarGet(VAR_BATTLE_FACILITY_POKE_LEVEL);
 	else if (min == max)
 		gRaidBattleLevel = min;
 	else
@@ -1533,12 +1598,18 @@ void DetermineRaidLevel(void)
 
 u8 GetRandomRaidLevel(void)
 {
+	if (FlagGet(FLAG_BATTLE_FACILITY)) //Battle Frontier Demo
+		return VarGet(VAR_BATTLE_FACILITY_POKE_LEVEL);
+
 	u8 numStars = gRaidBattleStars;
 	return RandRange(gRaidBattleLevelRanges[numStars][0], gRaidBattleLevelRanges[numStars][1]);
 }
 
 u8 GetRaidRecommendedLevel(void)
 {
+	if (FlagGet(FLAG_BATTLE_FACILITY)) //Battle Frontier Demo
+		return VarGet(VAR_BATTLE_FACILITY_POKE_LEVEL);
+
 	u8 numStars = gRaidBattleStars;
 	return gRaidBattleLevelRanges[numStars][1] + 5; //Max level + 5
 }
@@ -1556,7 +1627,7 @@ void DetermineRaidPartners(bool8* checkedPartners, u8 maxPartners)
 		if (randomNum == 0) //0 causes an infinite loop
 			randomNum = 0xFFFFFFFF;
 
-		randomNum *= i;
+		randomNum ^= i;
 		index = randomNum % gNumRaidPartners;
 
 		if (checkedPartners[index] == 0)
@@ -1689,6 +1760,58 @@ u16 GetRaidRewardAmount(u16 item)
 	}
 }
 
+static const u16 s4StarFrontierRaidBattleDrops[] =
+{
+	/*100 %*/ ITEM_PP_UP,
+	/* 80 %*/ ITEM_HP_UP,
+	/* 80 %*/ ITEM_POMEG_BERRY,
+	/* 50 %*/ ITEM_LIECHI_BERRY,
+	/* 50 %*/ ITEM_FULL_RESTORE,
+	/* 30 %*/ ITEM_NORMAL_GEM,
+	/* 30 %*/ ITEM_NONE,
+	/* 25 %*/ ITEM_HEART_SCALE,
+	/* 25 %*/ ITEM_NONE,
+	/*  5 %*/ ITEM_LEFTOVERS,
+	/*  4 %*/ ITEM_BOTTLE_CAP,
+	/*  1 %*/ ITEM_GOLD_BOTTLE_CAP,
+};
+
+static const u16 s56StarFrontierRaidBattleDrops[] =
+{
+	/*100 %*/ ITEM_PP_UP,
+	/* 80 %*/ ITEM_HP_UP,
+	/* 80 %*/ ITEM_POMEG_BERRY,
+	/* 50 %*/ ITEM_LIECHI_BERRY,
+	/* 50 %*/ ITEM_FULL_RESTORE,
+	/* 30 %*/ ITEM_NORMAL_GEM,
+	/* 30 %*/ ITEM_HEART_SCALE,
+	/* 25 %*/ ITEM_PP_MAX,
+	/* 25 %*/ ITEM_LEFTOVERS,
+	/*  5 %*/ ITEM_WISHING_PIECE,
+	/*  4 %*/ ITEM_BOTTLE_CAP,
+	/*  1 %*/ ITEM_GOLD_BOTTLE_CAP,
+};
+
+static u16 ModifyFrontierRaidDropItem(u16 item)
+{
+	switch (item) {
+		case ITEM_HP_UP: //HP UP to Carbos
+		case ITEM_POMEG_BERRY:
+			item += RandRange(0, NUM_STATS - 1); //Pomeg - Tamato
+			break;
+		case ITEM_LIECHI_BERRY:
+			item += RandRange(0, NUM_STATS + 1); //Liechi - Starf
+			break;
+		#ifdef UNBOUND
+		case ITEM_NORMAL_GEM:
+			item += RandRange(0, NUM_HIDDEN_POWER_TYPES + 2); //Normal Gem - Fairy Gem
+			break;
+		#endif
+	}
+
+	return item;
+}
+
 //Input: VAR_TEMP_0 = 0
 void sp11C_GiveRaidBattleRewards(void)
 {
@@ -1714,6 +1837,23 @@ void sp11C_GiveRaidBattleRewards(void)
 						return;
 					}
 				}
+			}
+		}
+	}
+	else if (FlagGet(FLAG_BATTLE_FACILITY))
+	{
+		for (; VarGet(VAR_TEMP_0) < MAX_RAID_DROPS; ++*(GetVarPointer(VAR_TEMP_0)))
+		{
+			const u16* table = (gRaidBattleStars <= 4) ? s4StarFrontierRaidBattleDrops : s56StarFrontierRaidBattleDrops;
+		
+			if (table[VarGet(VAR_TEMP_0)] != ITEM_NONE
+			&& Random() % 100 < sRaidBattleDropRates[VarGet(VAR_TEMP_0)])
+			{
+				gSpecialVar_LastTalked = 0xFD; //So no event objects disappear
+				Var8000 = table[(*(GetVarPointer(VAR_TEMP_0)))++];
+				Var8000 = ModifyFrontierRaidDropItem(Var8000);
+				Var8001 = GetRaidRewardAmount(Var8000);
+				return;
 			}
 		}
 	}

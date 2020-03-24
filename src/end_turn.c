@@ -1701,7 +1701,12 @@ bool8 HandleFaintedMonActions(void)
 						if (IsCatchableRaidBattle()
 						&& gBattleStruct->faintedActionsBank == BANK_RAID_BOSS)
 							continue; //Don't end the battle if the raid mon is KOed
-					
+
+						if (RAID_BATTLE_END
+						&& SIDE(gBattleStruct->faintedActionsBank) == B_SIDE_PLAYER
+						&& ViableMonCountFromBank(GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)) >= 1)
+							continue; //Don't end the raid battle if the player is KOd but partner is still alive to help catch mon
+
 						if (!(gAbsentBattlerFlags & gBitTable[gBattleStruct->faintedActionsBank])) //Bank was just emptied
 						{
 							gAbsentBattlerFlags |= gBitTable[gBattleStruct->faintedActionsBank]; //Makes the game realize the target is dead for now, so no attacking it

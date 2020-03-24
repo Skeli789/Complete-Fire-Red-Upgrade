@@ -165,6 +165,7 @@ extern const u8 MistyTerrainSetString[];
 extern const u8 PsychicTerrainSetString[];
 
 #define gText_TargetAlreadyAsleep (u8*) 0x83FB57C
+#define gText_TargetAlreadyConfused (u8*) 0x83FB885
 extern const u8 gText_TeamProtectedBySafeguard[];
 extern const u8 gText_TargetAlreadyHasStatusCondition[];
 extern const u8 gText_AlreadyDrowsy[];

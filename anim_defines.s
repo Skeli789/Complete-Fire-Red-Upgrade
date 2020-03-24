@@ -99,6 +99,8 @@
 .equ PAL_ATK_PARTNER, 0x8
 .equ PAL_DEF_PARTNER, 0x10
 .equ PAL_ALL, 0x1f
+.equ PAL_BG_4, 0x20
+.equ PAL_BG_5, 0x40
 .equ PAL_ALL_BANKS, 0x780
 .equ PAL_PLAYER1, 0x80
 .equ PAL_PLAYER2, 0x100
@@ -243,11 +245,11 @@
 .byte 0x15
 .endm
 
-.macro waitforBG
+.macro waitbgfadeout
 .byte 0x16
 .endm
 
-.macro waitfortransparentBG
+.macro waitbgfadein
 .byte 0x17
 .endm
 
@@ -550,9 +552,9 @@
 
 .macro unsetscrollingBG
 loaddefaultBG
-waitforBG
+waitbgfadeout
 setarg 0x7 0xffff
-waitfortransparentBG
+waitbgfadein
 .endm
 
 @particletags

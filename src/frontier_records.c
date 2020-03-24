@@ -672,12 +672,12 @@ static void DisplayFrontierRecordsText(void)
 	//Print Level 50 General Text
 	if (IsLittleCupTier(tier))
 		WindowPrint(WIN_LEVEL_50, 0, 0, 4, &levelColour, 0, gText_FrontierRecordLevel5);
-	else if (tier == BATTLE_FACILITY_MONOTYPE && BATTLE_FACILITY_NUM == IN_BATTLE_TOWER)
+	else if (IS_SINGLE_100_RECORD_TIER(tier))
 		WindowPrint(WIN_LEVEL_50, 0, 0, 4, &levelColour, 0, gText_FrontierRecordLevel100);
 	else
 		WindowPrint(WIN_LEVEL_50, 0, 0, 4, &levelColour, 0, gText_FrontierRecordLevel50);
 
-	if (!IsLittleCupTier(tier) && (BATTLE_FACILITY_NUM != IN_BATTLE_TOWER || tier != BATTLE_FACILITY_MONOTYPE)) //Little Cup only has Lv. 5, Monotype only has Lv. 100 in Battle Tower
+	if (!IsLittleCupTier(tier) && !IS_SINGLE_100_RECORD_TIER(tier)) //Little Cup only has Lv. 5, Monotype only has Lv. 100 in Battle Tower
 	{
 		//Print Level 100 Party Sizes Numbers
 		string = (IsFrontierSingles(sFrontierRecordsPtr->battleType)) ? gText_3v3 : gText_4v4;
@@ -698,7 +698,7 @@ static void DisplayFrontierRecordsText(void)
 			if (IsLittleCupTier(tier))
 				level = 5;
 
-			if (BATTLE_FACILITY_NUM == IN_BATTLE_TOWER && tier == BATTLE_FACILITY_MONOTYPE)
+			if (IS_SINGLE_100_RECORD_TIER(tier))
 				level = 100;
 
 			currStreak = GetBattleTowerStreak(CURR_STREAK, sFrontierRecordsPtr->battleType, sFrontierRecordsPtr->battleTier, partySize, level);
@@ -709,7 +709,7 @@ static void DisplayFrontierRecordsText(void)
 
 			if (partySize < 6)
 			{
-				if (level <= 50 || (BATTLE_FACILITY_NUM == IN_BATTLE_TOWER && tier == BATTLE_FACILITY_MONOTYPE)) //3v3 Level 50
+				if (level <= 50 || IS_SINGLE_100_RECORD_TIER(tier)) //3v3 Level 50
 				{
 					WindowPrint(WIN_CURRENT_STREAK_3V3_LEVEL_50, 0, 0, 4, &generalColour, 0, gStringVar1);
 					WindowPrint(WIN_MAX_STREAK_3V3_LEVEL_50, 0, 0, 4, &generalColour, 0, gStringVar2);
@@ -724,7 +724,7 @@ static void DisplayFrontierRecordsText(void)
 			}
 			else
 			{
-				if (level <= 50 || (BATTLE_FACILITY_NUM == IN_BATTLE_TOWER && tier == BATTLE_FACILITY_MONOTYPE)) //6v6 Level 50
+				if (level <= 50 || IS_SINGLE_100_RECORD_TIER(tier)) //6v6 Level 50
 				{
 					WindowPrint(WIN_CURRENT_STREAK_6V6_LEVEL_50, 0, 0, 4, &generalColour, 0, gStringVar1);
 					WindowPrint(WIN_MAX_STREAK_6V6_LEVEL_50, 0, 0, 4, &generalColour, 0, gStringVar2);
@@ -739,7 +739,7 @@ static void DisplayFrontierRecordsText(void)
 			}
 		}
 
-		if (IsLittleCupTier(tier) || (BATTLE_FACILITY_NUM == IN_BATTLE_TOWER && tier == BATTLE_FACILITY_MONOTYPE))
+		if (IsLittleCupTier(tier) || IS_SINGLE_100_RECORD_TIER(tier))
 			break; //Only one set of levels for LC & Monotype
 	}
 

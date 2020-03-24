@@ -2,6 +2,10 @@
 #include "../include/link.h"
 #include "../include/script.h"
 #include "../include/field_weather.h"
+#include "../include/item_menu.h"
+#include "../include/overworld.h"
+#include "../include/start_menu.h"
+#include "../include/party_menu.h"
 
 #include "../include/new/dexnav.h"
 #include "../include/new/read_keys.h"
@@ -32,7 +36,11 @@ void InitKeys(void)
 
 extern const u8 SystemScript_EnableAutoRun[];
 extern const u8 SystemScript_DisableAutoRun[];
+extern const u8 SystemScript_PartyMenuFromField[];
+extern const u8 SystemScript_ItemMenuFromField[];
 
+static void CB2_PartyMenuFromField(void);
+static void CB2_ItemMenuFromField(void);
 #ifdef SAVE_BLOCK_EXPANSION
 static void TryForcedScript(u8 keyFlag, u16 currKeys);
 static u16 TryForcedKey(u8 keyFlag, u16 currKeys);
@@ -122,6 +130,8 @@ void ReadKeys(void)
 	gMain.heldKeysRaw = keyInput;
 	gMain.heldKeys = gMain.heldKeysRaw;
 
+	bool8 inOverworld = FuncIsActiveTask(Task_WeatherMain);
+
 	// Remap L to A if the L=A option is enabled.
 	if (gSaveBlock2->optionsButtonMode == 2)
 	{
@@ -131,14 +141,14 @@ void ReadKeys(void)
 		if (gMain.heldKeys & L_BUTTON)
 			gMain.heldKeys |= A_BUTTON;
 	}
-
 #ifdef FLAG_AUTO_RUN
 	else if (gMain.newKeys & L_BUTTON //Can't be used if L=A
 	&& !ScriptContext2_IsEnabled()
-#ifdef FLAG_RUNNING_ENABLED
+	#ifdef FLAG_RUNNING_ENABLED
 	&& FlagGet(FLAG_RUNNING_ENABLED) //Only toggle auto-run if can run in the first place
-#endif
-	&& FuncIsActiveTask(Task_WeatherMain)) //In the overworld
+	#endif
+	&& !IsDexNavHudActive()
+	&& inOverworld) //In the overworld
 	{
 		ScriptContext2_Enable();
 
@@ -155,17 +165,65 @@ void ReadKeys(void)
 	}
 #endif
 
-	u16 dexNavSpecies = VarGet(VAR_DEXNAV);
 	if (gMain.newKeys & R_BUTTON
-	&& dexNavSpecies != SPECIES_NONE
-	&& !IsDexNavHudActive()
-	&& !InUnionRoom()
+	&& inOverworld
 	&& !ScriptContext2_IsEnabled()
-	&& FuncIsActiveTask(Task_WeatherMain)) //In the overworld
+	&& !IsDexNavHudActive()
+	&& !InUnionRoom())
 	{
-		InitDexNavHUD(dexNavSpecies & 0x7FFF, dexNavSpecies >> 15);
+		u16 dexNavSpecies = VarGet(VAR_DEXNAV);
+
+		#ifndef VAR_R_BUTTON_MODE
+		if (dexNavSpecies != SPECIES_NONE)
+			InitDexNavHUD(dexNavSpecies & 0x7FFF, dexNavSpecies >> 15);
+		#else
+		switch (VarGet(VAR_R_BUTTON_MODE)) {
+			case OPTIONS_R_BUTTON_MODE_DEXNAV:
+				if (dexNavSpecies != SPECIES_NONE)
+					InitDexNavHUD(dexNavSpecies & 0x7FFF, dexNavSpecies >> 15);
+				break;
+			case OPTIONS_R_BUTTON_MODE_POKEMON_MENU:
+				if (!gPaletteFade->active)
+				{
+					ScriptContext2_Enable();
+					ScriptContext1_SetupScript(SystemScript_PartyMenuFromField);
+				}
+				break;
+			case OPTIONS_R_BUTTON_MODE_BAG:
+				if (!gPaletteFade->active)
+				{
+					ScriptContext2_Enable();
+					ScriptContext1_SetupScript(SystemScript_ItemMenuFromField);
+				}
+				break;
+		}
+		#endif
 	}
 
 	if (gMain.newKeys & gMain.watchedKeysMask)
 		gMain.watchedKeysPressed = TRUE;
+}
+
+void InitPartyMenuFromField(void)
+{
+	PlayRainStoppingSoundEffect();
+	CleanupOverworldWindowsAndTilemaps();
+	SetMainCallback2(CB2_PartyMenuFromField); //Display party menu
+}
+
+void InitBagMenuFromField(void)
+{
+	PlayRainStoppingSoundEffect();
+	CleanupOverworldWindowsAndTilemaps();
+	SetMainCallback2(CB2_ItemMenuFromField); //Display item menu
+}
+
+static void CB2_PartyMenuFromField(void)
+{
+    InitPartyMenu(PARTY_MENU_TYPE_FIELD, PARTY_LAYOUT_SINGLE, PARTY_ACTION_CHOOSE_MON, FALSE, PARTY_MSG_CHOOSE_MON, (void*) (0x811FB28 | 1), CB2_ReturnToField);
+}
+
+static void CB2_ItemMenuFromField(void)
+{
+	GoToBagMenu(BAG_OPEN_REGULAR, OPEN_BAG_LAST, CB2_ReturnToField);
 }

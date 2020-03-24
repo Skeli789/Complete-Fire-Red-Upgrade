@@ -836,12 +836,11 @@ SynchronizeReturn:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-BattleScript_AbilityChangedType:
+BattleScript_AbilityChangedType: @;For Protean
 	pause DELAY_HALFSECOND
 	callasm DoProteanTypeChange
 	call BattleScript_AbilityPopUp
-	setword BATTLE_STRING_LOADER gText_AbilityChangedType
-	printstring 0x184
+	printstring 0x49 @;STRINGID_PKMNCHANGEDTYPE - uses ATTACKER
 	waitmessage DELAY_HALFSECOND
 	call BattleScript_AbilityPopUpRevert
 	return
@@ -1186,7 +1185,7 @@ BattleScript_AvoidedMoveWithAbility:
 
 BattleScript_MimicryTransformed:
 	call BattleScript_AbilityPopUp
-	setword BATTLE_STRING_LOADER gText_MimicryTransformed
+	setword BATTLE_STRING_LOADER gText_AbilityChangedType
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert

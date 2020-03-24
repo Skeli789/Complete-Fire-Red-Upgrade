@@ -642,6 +642,7 @@ struct DynamaxData
 	bool8 attackAgain : 1;
 	bool8 nullifiedStats : 1;
 	u16 turnStartHP;
+	u16 backupRaidMonItem;
 };
 
 struct BattleStruct
@@ -682,7 +683,7 @@ struct BattleStruct
     u8 monToSwitchIntoId[BATTLE_BANKS_COUNT];
     u8 field_60[4][3];
     u8 runTries;
-    u8 caughtMonNick[11];
+    u8 caughtMonNick[11]; //0x200007D
     u8 field_78;
     u8 safariGoNearCounter;
     u8 safariPkblThrowCounter;
@@ -929,6 +930,7 @@ struct NewBattleStruct
 	u8 backupSynchronizeBanks[2];
 	u16 failedThrownPokeBall;
 	u32 maxGoldrushMoney;
+	u16 itemBackup[PARTY_SIZE];
 
 	struct 
 	{
@@ -959,7 +961,7 @@ struct NewBattleStruct
 	struct DynamaxData dynamaxData;
 };
 
-#define gNewBS (ExtensionState.newBattleStruct)
+extern struct NewBattleStruct* gNewBS;
 
 struct TrainerSpotted {
     /* NPC state id */
@@ -984,13 +986,11 @@ struct BattleExtensionState //Clear After Battle
 
     void* partyBackup;
 	pokemon_t* skyBattlePartyBackup;
-	u16* itemBackup;
 	u8* trainerBIntroSpeech;
 	u8* trainerBDefeatSpeech;
 	u8* trainerBVictorySpeech;
 	u8* trainerBCantBattleSpeech;
 	u8* trainerBRetAddress;
-	struct NewBattleStruct* newBattleStruct;
 
 	u16   partnerTrainerId;
 	u16   partnerBackSpriteId;

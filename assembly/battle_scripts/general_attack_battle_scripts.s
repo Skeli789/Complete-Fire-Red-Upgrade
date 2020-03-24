@@ -28,7 +28,7 @@ general_attack_battle_scripts.s
 .global BS_001_SetSleep
 BS_001_SetSleep:
 	attackcanceler
-	attackstring
+	attackstring @;Protean always activates!
 	ppreduce
 	jumpifbehindsubstitute BANK_TARGET FAILED
 	trysetsleep BANK_TARGET BS_StatusMoveFail
@@ -1086,7 +1086,7 @@ LifeDewPartnerFullHealthBS:
 .global BS_033_SetBadPoison
 BS_033_SetBadPoison:
 	attackcanceler
-	attackstring
+	attackstring @;Protean always activates!
 	ppreduce
 	jumpifbehindsubstitute BANK_TARGET FAILED
 	trysetpoison BANK_TARGET BS_StatusMoveFail
@@ -1281,32 +1281,17 @@ BS_048_25PercentRecoil:
 .global BS_049_SetConfusion
 BS_049_SetConfusion:
 	attackcanceler
-	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
-	attackstring
+	attackstring @;Protean always activates!
 	ppreduce
-	jumpifsecondarystatus BANK_TARGET STATUS2_CONFUSION 0x81D70EA @;Already confused
-	jumpifability BANK_TARGET ABILITY_OWNTEMPO BattleScript_OwnTempoPrevents
-	jumpifterrainandgrounded MISTY_TERRAIN BANK_TARGET ProtectedByTerrainBS
-
-SetConfusionAccCheckBS:
-	accuracycheck FAILED 0x0
-	jumpifsideaffecting BANK_TARGET SIDE_SAFEGUARD 0x81D8B39 @;BattleScript_SafeguardProtected
+	jumpifbehindsubstitute BANK_TARGET FAILED
+	canconfuse BANK_TARGET BS_StatusMoveFail
+	accuracycheck BS_MOVE_MISSED_PAUSE 0x0
 	attackanimation
 	waitanimation
 	setmoveeffect MOVE_EFFECT_CONFUSION
 	seteffecttarget
 	resultmessage
 	waitmessage DELAY_1SECOND
-	goto BS_MOVE_END
-
-BattleScript_OwnTempoPrevents:
-	pause 0x10
-	orbyte OUTCOME OUTCOME_NOT_AFFECTED
-	copyarray BATTLE_SCRIPTING_BANK TARGET_BANK 0x1
-	call BattleScript_AbilityPopUp
-	printstring 0xCA @;STRINGID_PKMNPREVENTSCONFUSIONWITH
-	waitmessage DELAY_1SECOND
-	call BattleScript_AbilityPopUpRevert
 	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -1515,12 +1500,12 @@ AuroraVeilBS:
 .global BS_066_SetPoison
 BS_066_SetPoison:
 	attackcanceler
-	attackstring
+	attackstring @;Protean always activates!
 	ppreduce
+	jumpifbehindsubstitute BANK_TARGET FAILED
 	jumpifmove MOVE_TOXICTHREAD ToxicThreadDo
 
 PoisonChecks:
-	jumpifbehindsubstitute BANK_TARGET FAILED
 	trysetpoison BANK_TARGET BS_StatusMoveFail
 	accuracycheck BS_MOVE_MISSED_PAUSE 0x0
 	attackanimation
@@ -1532,13 +1517,12 @@ PoisonChecks:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 ToxicThreadDo:
-	jumpifbehindsubstitute BANK_TARGET FAILED
-	accuracycheck BS_MOVE_MISSED+2 0x0
+	accuracycheck BS_MOVE_MISSED_PAUSE 0x0
 	setstatchanger STAT_SPD | DECREASE_1
 	statbuffchange STAT_TARGET | STAT_BS_PTR ToxicThreadPSN
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 ToxicThreadPSN
 
-ToxicThreadWork:
+@ToxicThreadWork
 	attackanimation
 	waitanimation
 	setgraphicalstatchangevalues
@@ -1558,7 +1542,7 @@ ToxicThreadPSN:
 .global BS_067_SetParalyze
 BS_067_SetParalyze:
 	attackcanceler
-	attackstring
+	attackstring @;Protean always activates!
 	ppreduce
 	jumpifbehindsubstitute BANK_TARGET FAILED
 	trysetparalysis BANK_TARGET BS_StatusMoveFail
@@ -2425,18 +2409,10 @@ BS_118_Swagger:
 	waitmessage DELAY_1SECOND
 	
 SwaggerTryConfuseBS:
-	jumpifability BANK_TARGET ABILITY_OWNTEMPO BattleScript_OwnTempoPrevents
-	jumpifsideaffecting BANK_TARGET SIDE_SAFEGUARD 0x81D8B39 @;Protected By Safeguard
-	jumpifbyte EQUALS TERRAIN_BYTE MISTY_TERRAIN Swagger_CheckGrounding
-	
-SwaggerSetConfusion:
+	canconfuse BANK_TARGET BS_StatusMoveFail
 	setmoveeffect MOVE_EFFECT_CONFUSION
 	seteffecttarget
 	goto BS_MOVE_END
-
-Swagger_CheckGrounding:
-	jumpifgrounded BANK_TARGET ProtectedByTerrainBS
-	goto SwaggerSetConfusion
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
@@ -3343,7 +3319,7 @@ BS_166_Flatter:
 .global BS_167_SetBurn
 BS_167_SetBurn:
 	attackcanceler
-	attackstring
+	attackstring @;Protean always activates!
 	ppreduce
 	jumpifbehindsubstitute BANK_TARGET FAILED
 	trysetburn BANK_TARGET BS_StatusMoveFail
@@ -3824,6 +3800,7 @@ BS_187_Yawn:
 	attackcanceler
 	attackstring
 	ppreduce
+	jumpifbehindsubstitute BANK_TARGET FAILED
 	cansetyawn BS_StatusMoveFail
 	accuracycheck FAILED 0xFFFF
 	callasm ActuallySetYawn

@@ -16,7 +16,6 @@ BuildTrainerPartyHook:
 @0x800D2CC with r0
 AIHandleItemUseHook:
 	bl HandleNewBattleRamClearBeforeBattle
-	bl SavePartyItems
 	mov r0, #0xF
 	bl BattleAI_HandleItemUseBeforeAISetup
 	ldr r0, =0x2022B54
@@ -175,15 +174,6 @@ RemoveBagItem:
 bxr3:
 	bx r3
 
-@0x802D95C with r0
-DoubleWildDexHook1:
-	push {r4-r5,lr}
-	bl LoadTargetPartyData
-	mov r4, r0
-	mov r1, #0xB
-	ldr r2, =0x802D964 | 1
-	bx r2
-
 @0x802D9D8 with r0
 DoubleWildDexHook2:
 	push {r4-r5,lr}
@@ -218,6 +208,7 @@ TrainerSlidingEndTurnHook:
 	mov r1, r10
 	str r0, [r1]
 	bl CheckLastMonLowHPSlide
+	bl HandleDeadRaidMonAndDeadPlayer
 	ldr r2, =Random
 	bl bxr2
 	ldr r1, =0x8013D1C | 1

@@ -140,7 +140,7 @@ void atk48_playstatchangeanimation(void)
 						changeableStatsCount++;
 					}
 				}
-				else if (!gSideTimers[SIDE(gActiveBattler)].mistTimer
+				else if (!BankSideHasMist(gActiveBattler)
 						&& ability != ABILITY_CLEARBODY
 						&& ability != ABILITY_WHITESMOKE
 						//&& ability != ABILITY_FULLMETALBODY
@@ -279,7 +279,7 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8* BS_ptr)
 			goto RAISE_STAT_BUFF;
 
 	LOWER_STAT_BUFF:
-		if (gSideTimers[SIDE(gActiveBattler)].mistTimer
+		if (BankSideHasMist(gActiveBattler)
 		&& !certain
 		&& gCurrentMove != MOVE_CURSE
 		&& ABILITY(gBankAttacker) != ABILITY_INFILTRATOR)

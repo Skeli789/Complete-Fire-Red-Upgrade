@@ -36,7 +36,8 @@ bool8 Is350CupBattle(void);
 bool8 IsScaleMonsBattle(void);
 bool8 IsCamomonsBattle(void);
 bool8 IsBenjaminButterfreeBattle(void);
-bool8 IsBenjaminButterfreeBattle(void);
+bool8 AreMegasZMovesBannedInTier(u8 tier);
+bool8 IsMegaZMoveBannedBattle(void);
 u16 GetCurrentBattleTowerStreak(void);
 u16 GetBattleMineStreak(u8 type, u8 tier);
 u16 GetMaxBattleTowerStreakForTier(u8 tier);
@@ -119,6 +120,8 @@ enum BattleTowerFormats
 	BATTLE_FACILITY_AVERAGE_MONS,
 	BATTLE_FACILITY_BENJAMIN_BUTTERFREE,
 	BATTLE_FACILITY_MEGA_BRAWL,
+	BATTLE_FACILITY_DYNAMAX_STANDARD,
+	BATTLE_FACILITY_NATIONAL_DEX_OU,
 	BATTLE_MINE_FORMAT_1, //OU, Camomons, Benjamin Butterfree
 	BATTLE_MINE_FORMAT_2, //Scalemons, 350 Cup, Averagemons
 	BATTLE_MINE_FORMAT_3, //Little Cup, Little Cup Camomons
@@ -129,9 +132,10 @@ enum BattleTowerFormats
 
 #define BATTLE_FACILITY_GS_CUP BATTLE_FACILITY_MIDDLE_CUP //Replaces Middle Cup in Doubles
 
-#define NUM_BATTLE_TOWER_TIERS 7
+#define NUM_BATTLE_TOWER_TIERS 8
 #define NUM_BATTLE_MINE_TIERS 3
-#define NUM_BATTLE_CIRCUS_TIERS 12
+#define NUM_BATTLE_CIRCUS_TIERS 14
+#define IS_SINGLE_100_RECORD_TIER(tier) (BATTLE_FACILITY_NUM == IN_BATTLE_TOWER && (tier == BATTLE_FACILITY_MONOTYPE || tier == BATTLE_FACILITY_DYNAMAX_STANDARD))
 
 enum BattleTowerGenders
 {
@@ -207,7 +211,9 @@ struct BattleTowerSpread
 };
 
 extern const struct BattleTowerSpread gFrontierSpreads[];
+extern const struct BattleTowerSpread gFrontierLegendarySpreads[];
 extern const u16 gNumFrontierSpreads;
+extern const u16 gNumFrontierLegendarySpreads;
 //#define gFrontierSpreads ((const struct BattleTowerSpread*) 0x89DFA00)
 
 struct BattleTowerTrainer
@@ -297,7 +303,7 @@ struct BattleSandsStreak
 extern struct BattleSandsStreak gBattleSandsStreaks[2 /*PREVIOUS_OR_MAX*/]; //0x202682C
 extern u16 gBattleTowerStreaks[NUM_TOWER_BATTLE_TYPES][NUM_FORMATS_OLD][/*PARTY_SIZE*/ 2][/*LEVEL*/ 2][/*CURRENT_OR_MAX*/ 2]; //0x2026840
 extern u16 gBattleMineStreaks[NUM_BATTLE_MINE_TIERS][/*CURRENT_OR_MAX*/ 2]; //0x2026B40
-extern u16 gBattleCircusStreaks[NUM_BATTLE_CIRCUS_TIERS][NUM_TOWER_BATTLE_TYPES][/*PARTY_SIZE*/ 2][/*LEVEL*/ 2][/*CURRENT_OR_MAX*/ 2]; //0x2026B50
+extern u16 gBattleCircusStreaks[NUM_BATTLE_CIRCUS_TIERS][NUM_TOWER_BATTLE_TYPES][/*PARTY_SIZE*/ 2][/*LEVEL*/ 2][/*CURRENT_OR_MAX*/ 2]; //0x2026B50 - sizeof(1) = 0x70
 //FREE SPACE FROM SLIDESHOW 0x202682C - 0x2027434
 
 extern const u8 gBattleTowerTiers[];
@@ -313,6 +319,7 @@ extern const u8* const gBattleFrontierTierNames[NUM_TIERS];
 extern const species_t gBattleTowerStandardSpeciesBanList[];
 extern const species_t gGSCup_LegendarySpeciesList[];
 extern const species_t gSmogonOU_SpeciesBanList[];
+extern const species_t gSmogonNationalDexOU_SpeciesBanList[];
 extern const species_t gSmogonOUDoubles_SpeciesBanList[];
 extern const species_t gSmogonLittleCup_SpeciesList[];
 extern const species_t gMiddleCup_SpeciesList[];
@@ -331,6 +338,7 @@ extern const ability_t gSmogon350Cup_AbilityBanList[];
 extern const ability_t gSmogonScalemons_AbilityBanList[];
 extern const item_t gBattleTowerStandard_ItemBanList[];
 extern const item_t gSmogonOU_ItemBanList[];
+extern const item_t gSmogonNationalDexOU_ItemBanList[];
 extern const item_t gSmogonOUDoubles_ItemBanList[];
 extern const item_t gSmogonLittleCup_ItemBanList[];
 extern const item_t gSmogonMonotype_ItemBanList[];

@@ -278,7 +278,7 @@ ANIM_ELECTRIC_SURGE:
 	waitanimation
 ELECTRIC_TERRAIN_ACTIVE_ANIM:
 	loaddefaultBG @At this point the new BG is in effect
-	waitfortransparentBG
+	waitbgfadein
 	playsound2 0x70 0x3f
 	pause 0x40
 	playsound2 0x70 0x3f
@@ -316,7 +316,7 @@ ANIM_GRASSY_SURGE:
 	waitanimation
 GRASSY_TERRAIN_ACTIVE_ANIM:
 	loaddefaultBG @At this point the new BG is in effect
-	waitfortransparentBG
+	waitbgfadein
 	playsoundpanchange2 0xc3 0xc0 0x3f 0x1 0x0
 	waitforsound
 	endanimation
@@ -353,7 +353,7 @@ ANIM_MISTY_SURGE:
 	waitanimation
 MISTY_TERRAIN_ACTIVE_ANIM:
 	loaddefaultBG @At this point the new BG is in effect
-	waitfortransparentBG
+	waitbgfadein
 	playsound2 0xec 0xc0
 	pause 0x40
 	pause 0x40
@@ -391,7 +391,7 @@ ANIM_PSYCHIC_SURGE:
 	waitanimation
 PSYCHIC_TERRAIN_ACTIVE_ANIM:
 	loaddefaultBG @At this point the new BG is in effect
-	waitfortransparentBG
+	waitbgfadein
 	soundcomplex 0xb1 0x3f 0xa 0x3
 	waitforsound
 	endanimation
@@ -480,7 +480,7 @@ ANIM_RED_PRIMAL_REVERSION:
 	pokespritefromBG side_attacker
 	resetblends
 	pause 0x0
-	waitfortransparentBG
+	waitbgfadein
 	pokespritetoBG bank_attacker
 	setblends 0x80c
 	playsound2 0xc2 0xc0
@@ -500,7 +500,7 @@ ANIM_BLUE_PRIMAL_REVERSION:
 	loadparticle ANIM_TAG_ALPHA_STONE
 	pokespritefromBG side_attacker
 	pause 0x0
-	waitfortransparentBG
+	waitbgfadein
 	pokespritetoBG bank_attacker
 	setblends 0x80c
 	playsound2 0xc2 0xc0
@@ -701,7 +701,7 @@ ANIM_ZMOVE_ACTIVATE:
 	pokespritetoBG bank_attacker
 	setblends 0x80c
 	loadBG1 BG_ZMOVE_ACTIVATE
-	waitfortransparentbg
+	waitbgfadein
 	launchtask 0x80BB82D 0x5 0x4 0x0 0x0 0x0 0xFFFF
 
 	playsound2 0xC2 0xc0
@@ -752,7 +752,7 @@ ANIM_MEGA_EVOLUTION:
 	pokespritefromBG side_attacker
 	resetblends
 	pause 0x0
-	waitfortransparentBG
+	waitbgfadein
 	pokespritetoBG bank_attacker
 	setblends 0x80c
 	playsound2 0xc2 0xc0
@@ -848,7 +848,7 @@ ULTRABURSTSYMBOL: objtemplate ANIM_TAG_ULTRA_BURST_SYMBOL ANIM_TAG_ULTRA_BURST_S
 .pool
 ANIM_LOAD_DEFAULT_BG:
 	loaddefaultBG
-	waitfortransparentBG
+	waitbgfadein
 	endanimation
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

@@ -13,6 +13,7 @@
 #include "../include/new/dynamax.h"
 #include "../include/new/general_bs_commands.h"
 #include "../include/new/item.h"
+#include "../include/new/frontier.h"
 #include "../include/new/mega.h"
 #include "../include/new/move_menu.h"
 #include "../include/new/move_menu_battle_scripts.h"
@@ -251,7 +252,11 @@ void HandleInputChooseMove(void)
 		if (gBattleBufferA[gActiveBattler][1]) // double battle
 		{
 			if (!(moveTarget & (MOVE_TARGET_RANDOM | MOVE_TARGET_BOTH | MOVE_TARGET_DEPENDS | MOVE_TARGET_FOES_AND_ALLY | MOVE_TARGET_OPPONENTS_FIELD | MOVE_TARGET_USER)))
-				canSelectTarget++; // either selected or user
+			{
+				if (!(gNewBS->dynamaxData.viewing || moveInfo->dynamaxed) //Not a max move
+				|| CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, gActiveBattler, FOE(gActiveBattler)) > 1) //At least two targets
+					canSelectTarget++; // either selected or user
+			}
 
 			if (moveInfo->currentPp[gMoveSelectionCursor[gActiveBattler]] == 0)
 			{
@@ -467,11 +472,7 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 	if ((!gNewBS->dynamaxData.used[gActiveBattler] || IsDynamaxed(gActiveBattler))
 	&& DynamaxEnabled(gActiveBattler)
 	&& MonCanDynamax(GetBankPartyData(gActiveBattler))
-	&& !IsBannedDynamaxSpecies(SPECIES(gActiveBattler))
-	&& !BATTLER_SEMI_INVULNERABLE(gActiveBattler)
-	&& !IsMega(gActiveBattler)
-	&& !IsBluePrimal(gActiveBattler)
-	&& !IsRedPrimal(gActiveBattler))
+	&& !BATTLER_SEMI_INVULNERABLE(gActiveBattler))
 	{
 		for (i = 0; i < MAX_MON_MOVES; ++i)
 			tempMoveStruct->possibleMaxMoves[i] = GetMaxMove(gActiveBattler, i);
@@ -586,7 +587,7 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 
 	tempMoveStruct->zMoveUsed = gNewBS->ZMoveData->used[gActiveBattler];
 	tempMoveStruct->zPartyIndex = gNewBS->ZMoveData->partyIndex[SIDE(gActiveBattler)];
-	if (!gNewBS->ZMoveData->used[gActiveBattler] && !IsMega(gActiveBattler) && !IsBluePrimal(gActiveBattler) && !IsRedPrimal(gActiveBattler))
+	if (!gNewBS->ZMoveData->used[gActiveBattler] && !IsMegaZMoveBannedBattle() && !IsMega(gActiveBattler) && !IsBluePrimal(gActiveBattler) && !IsRedPrimal(gActiveBattler))
 	{
 		u8 limitations = CheckMoveLimitations(gActiveBattler, 0, MOVE_LIMITATION_PP);
 
@@ -886,10 +887,6 @@ static bool8 MoveSelectionDisplayMaxMove(void)
 			PlaySE(3); //Turn Off
 		return TRUE;
 	}
-	
-	if (IsMegaStone(GetBankPartyData(gActiveBattler)->item)
-	||  IsZCrystal(GetBankPartyData(gActiveBattler)->item))
-		return FALSE;
 
 	if (maxMove != MOVE_NONE)
 	{
@@ -1527,6 +1524,9 @@ u8 TrySetCantSelectMoveBattleScript(void)
 	gStringBank = gActiveBattler;
 	gBattleScripting->bank = gActiveBattler;
 	gCurrentMove = move;
+	
+	if (RAID_BATTLE_END) //Fix bug where partner would be forced to use a move with 0 PP and cause the game to crash
+		return FALSE;
 	
 	if (IsDynamaxed(gActiveBattler) || gNewBS->dynamaxData.toBeUsed[gActiveBattler])
 		move = gCurrentMove = GetMaxMove(gActiveBattler, gBattleBufferB[gActiveBattler][2]);

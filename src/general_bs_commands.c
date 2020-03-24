@@ -375,7 +375,7 @@ void atk0B_healthbarupdate(void)
 			MarkBufferBankForExecution(gActiveBattler);
 
 			if (SIDE(gActiveBattler) == B_SIDE_PLAYER && gBattleMoveDamage > 0)
-				gBattleResults->unk5_0 = 1;
+				gBattleResults->unk5_0 = TRUE;
 		}
 	}
 	gBattlescriptCurrInstr += 2;
@@ -794,7 +794,7 @@ void atk19_tryfaintmon(void)
 		if (gBattlescriptCurrInstr[1] == BS_GET_ATTACKER)
 		{
 			gActiveBattler = gBankAttacker;
-			bank = gBankTarget;
+			bank = gBankAttacker;
 
 			if (IsCatchableRaidBattle() && bank == BANK_RAID_BOSS)
 				BS_ptr = BattleScript_FaintRaidAttacker;
@@ -1134,22 +1134,33 @@ void atk1D_jumpifstatus2(void) {
 		gBattlescriptCurrInstr += 10;
 }
 
-void atk1F_jumpifsideaffecting(void) {
+void atk1F_jumpifsideaffecting(void)
+{
 	u8 side;
 	u16 flags = T2_READ_16(gBattlescriptCurrInstr + 2);
-	void* jump_loc = T2_READ_PTR(gBattlescriptCurrInstr + 4);
+	void* jumpLoc = T2_READ_PTR(gBattlescriptCurrInstr + 4);
 
-	if (gBattlescriptCurrInstr[1] == 1)
-		side = GetBattlerPosition(gBankAttacker) & 1;
+	if (gBattlescriptCurrInstr[1] == BS_GET_ATTACKER)
+	{
+		side = SIDE(gBankAttacker);
+		if (BankSideHasSafeguard(gBankAttacker))
+			flags |= SIDE_STATUS_SAFEGUARD;
+		if (BankSideHasMist(gBankAttacker))
+			flags |= SIDE_STATUS_MIST;
+	}
 	else
 	{
-		side = GetBattlerPosition(gBankTarget) & 1;
-		if (ABILITY(gBankAttacker) == ABILITY_INFILTRATOR)
-			side &= ~(SIDE_STATUS_SAFEGUARD | SIDE_STATUS_MIST);
+		side = SIDE(gBankTarget);
+		if (BankSideHasSafeguard(gBankTarget))
+			flags |= SIDE_STATUS_SAFEGUARD;
+		if (BankSideHasMist(gBankTarget))
+			flags |= SIDE_STATUS_MIST;
+		if (ABILITY(gBankTarget) == ABILITY_INFILTRATOR)
+			flags &= ~(SIDE_STATUS_SAFEGUARD | SIDE_STATUS_MIST);
 	}
 
 	if (gSideAffecting[side] & flags)
-		gBattlescriptCurrInstr = jump_loc;
+		gBattlescriptCurrInstr = jumpLoc;
 	else
 		gBattlescriptCurrInstr += 8;
 }
@@ -2600,7 +2611,7 @@ void atk97_tryinfatuating(void)
 
 void atk99_setmist(void)
 {
-	if (gSideTimers[SIDE(gBankAttacker)].mistTimer)
+	if (BankSideHasMist(gBankAttacker))
 	{
 		gMoveResultFlags |= MOVE_RESULT_FAILED;
 		gBattleCommunication[MULTISTRING_CHOOSER] = 1;
@@ -3414,7 +3425,7 @@ void atkB7_presentdamagecalculation(void)
 
 void atkB8_setsafeguard(void)
 {
-	if (gSideAffecting[SIDE(gBankAttacker)] & SIDE_STATUS_SAFEGUARD)
+	if (BankSideHasSafeguard(gBankAttacker))
 	{
 		gMoveResultFlags |= MOVE_RESULT_MISSED;
 		gBattleCommunication[MULTISTRING_CHOOSER] = 0;
@@ -3701,12 +3712,12 @@ void atkBE_rapidspinfree(void)
 			gSideTimers[sideDef].lightscreenTimer = 0;
 			TEXT_BUFFER_SIDE_STATUS(MOVE_LIGHTSCREEN, SIDE_STATUS_LIGHTSCREEN, sideDef);
 		}
-		else if (gSideAffecting[sideDef] & (SIDE_STATUS_SAFEGUARD))
+		else if (gSideAffecting[sideDef] & SIDE_STATUS_SAFEGUARD)
 		{
 			gSideTimers[sideDef].safeguardTimer = 0;
 			TEXT_BUFFER_SIDE_STATUS(MOVE_SAFEGUARD, SIDE_STATUS_SAFEGUARD, sideDef);
 		}
-		else if (gSideAffecting[sideDef] & (SIDE_STATUS_MIST))
+		else if (gSideAffecting[sideDef] & SIDE_STATUS_MIST)
 		{
 			gSideTimers[sideDef].mistTimer = 0;
 			TEXT_BUFFER_SIDE_STATUS(MOVE_MIST, SIDE_STATUS_MIST, sideDef);

@@ -45,6 +45,7 @@ bool8 IsMaxGuardUp(u8 bank);
 bool8 ProtectedByMaxGuard(u8 bankDef, u16 move);
 
 bool8 IsRaidBattle(void);
+bool8 IsFrontierRaidBattle(void);
 bool8 IsCatchableRaidBattle(void);
 bool8 HasRaidShields(u8 bank);
 bool8 ShouldCreateRaidShields(u8 bank);
@@ -56,6 +57,7 @@ u8 GetRaidBattleStatNullificationChance(u8 bank);
 bool8 IsRaidBossUsingRegularMove(u8 bank, u16 baseMove);
 void DetermineRaidStars(void);
 void DetermineRaidSpecies(void);
+const struct BattleTowerSpread* GetFrontierRaidTable(void);
 void DetermineRaidLevel(void);
 u8 GetRandomRaidLevel(void);
 u8 GetRaidRecommendedLevel(void);

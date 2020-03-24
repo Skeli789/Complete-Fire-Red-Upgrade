@@ -56,12 +56,17 @@ extern const u8 gText_SmogonScalemons[];
 extern const u8 gText_Smogon350Cup[];
 extern const u8 gText_SmogonAveragemons[];
 extern const u8 gText_SmogonBenjaminButterfree[];
+extern const u8 gText_MegaBrawl[];
+extern const u8 gText_DynamaxStandard[];
+extern const u8 gText_NationalDexOU[];
 extern const u8 gText_BattleMineFormat1[];
 extern const u8 gText_BattleMineFormat2[];
 extern const u8 gText_BattleMineFormat3[];
 
 extern const u8 gText_On[];
 extern const u8 gText_Off[];
+extern const u8 gText_BeAble[];
+extern const u8 gText_NotBeAble[];
 extern const u8 gText_Previous[];
 extern const u8 gText_Max[];
 extern const u8 gText_None[];
@@ -84,6 +89,9 @@ extern const u8 gText_BattleCircusDescriptionFairyLock[];
 extern const u8 gText_BattleCircusDescriptionMudSport[];
 extern const u8 gText_BattleCircusDescriptionWaterSport[];
 extern const u8 gText_BattleCircusDescriptionInverseBattle[];
+extern const u8 gText_BattleCircusDescriptionDynamax[];
+extern const u8 gText_BattleCircusDescriptionSafeguard[];
+extern const u8 gText_BattleCircusDescriptionMist[];
 extern const u8 gText_BattleCircusDescriptionSeaOfFire[];
 extern const u8 gText_BattleCircusDescriptionRainbow[];
 extern const u8 gText_BattleCircusDescriptionSwamp[];
@@ -105,6 +113,7 @@ const u8 gBattleTowerTiers[] =
 	BATTLE_FACILITY_LITTLE_CUP,
 	BATTLE_FACILITY_MIDDLE_CUP,
 	BATTLE_FACILITY_MONOTYPE,
+	BATTLE_FACILITY_DYNAMAX_STANDARD,
 };
 
 const u8 gNumBattleTowerTiers = ARRAY_COUNT(gBattleTowerTiers);
@@ -151,6 +160,8 @@ const u8 gBattleCircusTiers[] =
 	BATTLE_FACILITY_350_CUP,
 	BATTLE_FACILITY_AVERAGE_MONS,
 	BATTLE_FACILITY_BENJAMIN_BUTTERFREE,
+	BATTLE_FACILITY_DYNAMAX_STANDARD,
+	BATTLE_FACILITY_NATIONAL_DEX_OU,
 };
 
 const u8 gNumBattleCircusTiers = ARRAY_COUNT(gBattleCircusTiers);
@@ -172,6 +183,9 @@ const u8* const gBattleFrontierTierNames[NUM_TIERS] =
 	[BATTLE_FACILITY_350_CUP] = gText_Smogon350Cup,
 	[BATTLE_FACILITY_AVERAGE_MONS] = gText_SmogonAveragemons,
 	[BATTLE_FACILITY_BENJAMIN_BUTTERFREE] = gText_SmogonBenjaminButterfree,
+	[BATTLE_FACILITY_MEGA_BRAWL] = gText_MegaBrawl,
+	[BATTLE_FACILITY_DYNAMAX_STANDARD] = gText_DynamaxStandard,
+	[BATTLE_FACILITY_NATIONAL_DEX_OU] = gText_NationalDexOU,
 	[BATTLE_MINE_FORMAT_1] = gText_BattleMineFormat1,
 	[BATTLE_MINE_FORMAT_2] = gText_BattleMineFormat2,
 	[BATTLE_MINE_FORMAT_3] = gText_BattleMineFormat3,
@@ -208,9 +222,14 @@ const u8* const sBattleCircusEffectDescriptions[] =
 	gText_BattleCircusDescriptionMudSport,
 	gText_BattleCircusDescriptionWaterSport,
 	gText_BattleCircusDescriptionInverseBattle,
+	gText_BattleCircusDescriptionDynamax,
+	//Side Effects
+	gText_BattleCircusDescriptionSafeguard,
+	gText_BattleCircusDescriptionMist,
 	gText_BattleCircusDescriptionSeaOfFire,
 	gText_BattleCircusDescriptionRainbow,
 	gText_BattleCircusDescriptionSwamp,
+	//Personal Effects
 	gText_BattleCircusDescriptionConfused,
 	gText_BattleCircusDescriptionTaunt,
 	gText_BattleCircusDescriptionTorment,
@@ -223,7 +242,7 @@ const u8* const sBattleCircusEffectDescriptions[] =
 
 //This file's functions:
 static u8 AdjustLevelForTier(u8 level, u8 tier);
-static void LoadProperStreakData(u8* currentOrMax, u8* battleStyle, u8* tier, u8* partySize, u8* level);
+static void LoadProperStreakData(u8* facilityNum, u8* currentOrMax, u8* battleStyle, u8* tier, u8* partySize, u8* level);
 
 u8 GetFrontierTrainerClassId(u16 trainerId, u8 battlerNum)
 {
@@ -445,7 +464,8 @@ bool8 DuplicateItemsAreBannedInTier(u8 tier, u8 battleType)
 {
 	if (tier == BATTLE_FACILITY_STANDARD
 	||  IsMiddleCupTier(tier)
-	||  tier == BATTLE_FACILITY_MEGA_BRAWL)
+	||  tier == BATTLE_FACILITY_MEGA_BRAWL
+	||  tier == BATTLE_FACILITY_DYNAMAX_STANDARD)
 		return TRUE;
 
 	return !IsFrontierSingles(battleType) && tier == BATTLE_FACILITY_GS_CUP;
@@ -460,7 +480,14 @@ bool8 RayquazaCanMegaEvolveInFrontierBattle(void)
 
 bool8 DynamaxAllowedInTier(u8 tier)
 {
-	return tier == BATTLE_FACILITY_NO_RESTRICTIONS;
+	switch (tier) {
+		case BATTLE_FACILITY_NO_RESTRICTIONS:
+		case BATTLE_FACILITY_DYNAMAX_STANDARD:
+		case BATTLE_FACILITY_NATIONAL_DEX_OU:
+			return TRUE;
+	}
+
+	return FALSE;
 }
 
 u8 GetBattleTowerLevel(u8 tier)
@@ -623,6 +650,19 @@ bool8 IsBenjaminButterfreeBattle(void)
 	return (gBattleTypeFlags & BATTLE_TYPE_BENJAMIN_BUTTERFREE) != 0;
 }
 
+bool8 AreMegasZMovesBannedInTier(u8 tier)
+{
+	return tier == BATTLE_FACILITY_DYNAMAX_STANDARD;
+}
+
+bool8 IsMegaZMoveBannedBattle(void)
+{
+	return gBattleTypeFlags & BATTLE_TYPE_TRAINER //Excludes Raid Battles
+	&& FlagGet(FLAG_BATTLE_FACILITY)
+	&& (AreMegasZMovesBannedInTier(VarGet(VAR_BATTLE_FACILITY_TIER))
+	 || (gBattleTypeFlags & BATTLE_TYPE_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_DYNAMAX));
+}
+
 //@Details: Generates a tower trainer id and name for the requested trainer.
 //			Also buffers the trainer name to gStringVar1 (BUFFER1).
 //@Inputs:
@@ -664,12 +704,13 @@ u16 sp052_GenerateFacilityTrainer(void)
 	}
 	else if (Var8001 == 1)
 	{
-		id %= NUM_SPECIAL_TOWER_TRAINERS;
-		while (VarGet(VAR_BATTLE_FACILITY_TIER) == BATTLE_FACILITY_MONOTYPE && !gSpecialTowerTrainers[id].isMonotype)
+		u8 tier = VarGet(VAR_BATTLE_FACILITY_TIER);
+
+		do
 		{
 			id = Random();
 			id %= NUM_SPECIAL_TOWER_TRAINERS;
-		}
+		}	while (tier == BATTLE_FACILITY_MONOTYPE && !gSpecialTowerTrainers[id].isMonotype);
 
 		VarSet(VAR_FACILITY_TRAINER_ID + battler, id);
 		StringCopy(gStringVar1, GetFrontierTrainerName(BATTLE_TOWER_SPECIAL_TID, battler));
@@ -785,7 +826,7 @@ static u8 AdjustLevelForTier(u8 level, u8 tier)
 	if (IsLittleCupTier(tier))
 		return 5;
 
-	if (tier == BATTLE_FACILITY_MONOTYPE && BATTLE_FACILITY_NUM == IN_BATTLE_TOWER)
+	if (IS_SINGLE_100_RECORD_TIER(tier))
 		return 100;
 
 	return level;
@@ -793,15 +834,16 @@ static u8 AdjustLevelForTier(u8 level, u8 tier)
 
 u16 GetBattleTowerStreak(u8 currentOrMax, u16 inputBattleStyle, u16 inputTier, u16 partySize, u8 level)
 {
+	u8 facilityNum = BATTLE_FACILITY_NUM;
 	u8 battleStyle = (inputBattleStyle == 0xFFFF) ? VarGet(VAR_BATTLE_FACILITY_BATTLE_TYPE) : inputBattleStyle;
 	u8 tier = (inputTier == 0xFFFF) ? VarGet(VAR_BATTLE_FACILITY_TIER) : inputTier;
 	u8 size = (partySize == 0xFFFF) ? VarGet(VAR_BATTLE_FACILITY_POKE_NUM) : partySize;
 	level = (level == 0) ? VarGet(VAR_BATTLE_FACILITY_POKE_LEVEL) : level;
 	level = AdjustLevelForTier(level, tier);
 
-	LoadProperStreakData(&currentOrMax, &battleStyle, &tier, &size, &level);
+	LoadProperStreakData(&facilityNum, &currentOrMax, &battleStyle, &tier, &size, &level);
 
-	switch (BATTLE_FACILITY_NUM) {
+	switch (facilityNum) {
 		case IN_BATTLE_TOWER:
 		default:
 			return gBattleTowerStreaks[battleStyle][tier][size][level][currentOrMax];
@@ -820,17 +862,18 @@ u16 GetBattleTowerStreak(u8 currentOrMax, u16 inputBattleStyle, u16 inputTier, u
 //				 1 = Reset
 void sp055_UpdateBattleFacilityStreak(void)
 {
+	u8 facilityNum = BATTLE_FACILITY_NUM;
 	u8 dummy = 0;
 	u8 battleStyle = VarGet(VAR_BATTLE_FACILITY_BATTLE_TYPE);
 	u8 tier = VarGet(VAR_BATTLE_FACILITY_TIER);
 	u8 partySize = VarGet(VAR_BATTLE_FACILITY_POKE_NUM);
 	u8 level = AdjustLevelForTier(VarGet(VAR_BATTLE_FACILITY_POKE_LEVEL), tier);
-	LoadProperStreakData(&dummy, &battleStyle, &tier, &partySize, &level);
+	LoadProperStreakData(&facilityNum, &dummy, &battleStyle, &tier, &partySize, &level);
 
 	u16* currentStreak, *maxStreak;
 	bool8 inBattleSands = FALSE;
 
-	switch (BATTLE_FACILITY_NUM) {
+	switch (facilityNum) {
 		case IN_BATTLE_TOWER:
 		default:
 			currentStreak = &gBattleTowerStreaks[battleStyle][tier][partySize][level][CURR_STREAK]; //Current Streak
@@ -978,16 +1021,22 @@ u16 sp056_DetermineBattlePointsToGive(void)
 	return toGive;
 }
 
-static void LoadProperStreakData(u8* currentOrMax, u8* battleStyle, u8* tier, u8* partySize, u8* level)
+static void LoadProperStreakData(u8* facilityNum, u8* currentOrMax, u8* battleStyle, u8* tier, u8* partySize, u8* level)
 {
 	u32 i;
 
-	switch (BATTLE_FACILITY_NUM) {
+	switch (*facilityNum) {
 		case IN_BATTLE_TOWER:
-			if (*tier == BATTLE_FACILITY_MONOTYPE)
-			{
-				*tier = BATTLE_FACILITY_LITTLE_CUP; //Hijack Little Cup level 100 slot
-				*level = 100;
+			switch (*tier) {
+				case BATTLE_FACILITY_MONOTYPE:
+					*tier = BATTLE_FACILITY_LITTLE_CUP; //Hijack Little Cup level 100 slot
+					*level = 100;
+					break;
+				case BATTLE_FACILITY_DYNAMAX_STANDARD:
+					*facilityNum = IN_BATTLE_CIRCUS; //Hijack Battle Circus Little Cup level 100 slot
+					*tier = BATTLE_FACILITY_LC_CAMOMONS;
+					*level = 100;
+					return LoadProperStreakData(facilityNum, currentOrMax, battleStyle, tier, partySize, level);
 			}
 
 			for (i = 0; i < gNumBattleTowerTiers; ++i)
@@ -1173,9 +1222,10 @@ void sp06F_CanTeamParticipateInBattleMine(void)
 //			gStringVar9: Level.
 //			gStringVarA: Party size.
 //			gStringVarB: Inverse on or off.
+//			gStringVarC: Dynamax on or off.
 u8 sp070_RandomizeBattleMineBattleOptions(void)
 {
-	u8 format, tier, level, partySize, inverse;
+	u8 format, tier, level, partySize, inverse, dynamax;
 
 	u8 originalTier = VarGet(VAR_BATTLE_FACILITY_TIER);
 	const u8* tiers = originalTier == BATTLE_MINE_FORMAT_1 ? gBattleMineFormat1Tiers
@@ -1255,13 +1305,15 @@ u8 sp070_RandomizeBattleMineBattleOptions(void)
 				partySize = 2; //2v2
 	}
 
-	//Choose Inverse
+	//Choose Inverse & Dynamax
 	switch (streak) {
 		case 0 ... 19:
 			inverse = FALSE;
+			dynamax = FALSE;
 			break;
 		default:
 			inverse = Random() & TRUE;
+			dynamax = Random() & TRUE;
 	}
 
 	VarSet(VAR_BATTLE_FACILITY_POKE_LEVEL, level);
@@ -1274,12 +1326,19 @@ u8 sp070_RandomizeBattleMineBattleOptions(void)
 		FlagSet(FLAG_INVERSE);
 		#endif
 	}
+	if (dynamax)
+	{
+		#ifdef FLAG_DYNAMAX_BATTLE
+		FlagSet(FLAG_DYNAMAX_BATTLE);
+		#endif
+	}
 
 	StringCopy(gStringVar7, GetFrontierTierName(tier, format));
 	StringCopy(gStringVar8, gBattleFrontierFormats[format]);
 	ConvertIntToDecimalStringN(gStringVar9, level, 0, 3);
 	ConvertIntToDecimalStringN(gStringVarA, partySize, 0, 1);
 	StringCopy(gStringVarB, (inverse) ? gText_On : gText_Off);
+	StringCopy(gStringVarC, (dynamax) ? gText_BeAble : gText_NotBeAble);
 
 	return originalTier;
 }
@@ -1383,6 +1442,7 @@ void sp072_LoadBattleCircusEffects(void)
 	{
 		bool8 weatherActive = (gBattleCircusFlags & BATTLE_CIRCUS_WEATHER) != 0;
 		bool8 terrainActive = (gBattleCircusFlags & BATTLE_CIRCUS_TERRAIN) != 0;
+		bool8 dynamaxActive = DynamaxAllowedInTier(VarGet(VAR_BATTLE_FACILITY_TIER));
 
 		u8 effectNum;
 		do
@@ -1391,6 +1451,7 @@ void sp072_LoadBattleCircusEffects(void)
 		} while (gBattleCircusFlags & gBitTable[effectNum] //Only add non active effects
 			|| (weatherActive && gBitTable[effectNum] & BATTLE_CIRCUS_WEATHER) //One weather effect at a time
 			|| (terrainActive && gBitTable[effectNum] & BATTLE_CIRCUS_TERRAIN) //One terrain effect at a time
+			|| (dynamaxActive && gBitTable[effectNum] & BATTLE_CIRCUS_DYNAMAX) //No point in stacking Dynamax effect
 			|| (!sideEffectsAllowed && gBitTable[effectNum] >= FIRST_BATTLE_CIRCUS_SIDE_EFFECT_FLAG && gBitTable[effectNum] <= LAST_BATTLE_CIRCUS_SIDE_EFFECT_FLAG)
 			|| (!personalEffectsAllowed && gBitTable[effectNum] >= FIRST_BATTLE_CIRCUS_PERSONAL_EFFECT_FLAG));
 
@@ -1421,8 +1482,7 @@ void sp073_ModifyTeamForBattleTower(void)
 {
 	u8 tier = VarGet(VAR_BATTLE_FACILITY_TIER);
 	u8 level = (tier == BATTLE_FACILITY_LITTLE_CUP || tier == BATTLE_FACILITY_LC_CAMOMONS) ? 5
-			 : (tier == BATTLE_FACILITY_MONOTYPE && BATTLE_FACILITY_NUM == IN_BATTLE_TOWER) ? 100
-			 : VarGet(VAR_BATTLE_FACILITY_POKE_LEVEL);
+			 : (IS_SINGLE_100_RECORD_TIER(tier)) ? 100 : VarGet(VAR_BATTLE_FACILITY_POKE_LEVEL);
 
 	level = MathMax(1, MathMin(level, MAX_LEVEL));
 	struct Pokemon* enteredMons = Calloc(sizeof(struct Pokemon) * PARTY_SIZE);

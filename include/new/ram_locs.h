@@ -194,8 +194,8 @@ struct Clock
 //extern struct CompressedPokemon gBox21[30] //0x203D210
 //extern struct CompressedPokemon gBox22[30] //0x203D8DC
 
-#define gPokeBackupPtr (*((struct Pokemon**) 0x203E034))
-//#define sDexNavStatePtr/sFrontierRecordsPtr //0x203E038
+#define gPokeBackupPtr (*((const void**) 0x203E034))
+//#define sDexNavStatePtr/sFrontierRecordsPtr/gNewBS //0x203E038
 extern bool8 gInShop; //0x203E043
 #define gBattleCircusFlags (*((u32*) 0x203E044))
 #define gFishingByte *((u8*) 0x203E048)

@@ -771,9 +771,10 @@ bool8 IsAnimMoveFairyLock(void)
 	return sAnimMoveIndex == MOVE_FAIRYLOCK;
 }
 
-bool8 IsAnimMoveFlashCannon(void)
+bool8 IsAnimMoveFlashCannonOrSteelBeam(void)
 {
-	return sAnimMoveIndex == MOVE_FLASHCANNON;
+	return sAnimMoveIndex == MOVE_FLASHCANNON
+		|| sAnimMoveIndex == MOVE_STEELBEAM;
 }
 
 bool8 IsAnimMoveSkillSwap(void)
@@ -934,6 +935,32 @@ void AnimTask_SetCamouflageBlend(u8 taskId)
 		gBattleAnimArgs[4] = gCamouflageColours[gTerrainTable[gBattleTerrain + 4].camouflageType];
 
 	StartBlendAnimSpriteColor(taskId, selectedPalettes);
+}
+
+void SpriteCB_TranslateAnimSpriteToTargetMonLocationDestroyMatrix(struct Sprite *sprite)
+{
+    bool8 v1;
+    u8 coordType;
+
+    if (!(gBattleAnimArgs[5] & 0xff00))
+        v1 = TRUE;
+    else
+        v1 = FALSE;
+
+    if (!(gBattleAnimArgs[5] & 0xff))
+        coordType = BATTLER_COORD_Y_PIC_OFFSET;
+    else
+        coordType = BATTLER_COORD_Y;
+
+    InitSpritePosToAnimAttacker(sprite, v1);
+    if (GetBattlerSide(gBattleAnimAttacker) != B_SIDE_PLAYER)
+        gBattleAnimArgs[2] = -gBattleAnimArgs[2];
+
+    sprite->data[0] = gBattleAnimArgs[4];
+    sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2) + gBattleAnimArgs[2];
+    sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimTarget, coordType) + gBattleAnimArgs[3];
+    sprite->callback = StartAnimLinearTranslation;
+    StoreSpriteCallbackInData6(sprite, DestroySpriteAndMatrix);
 }
 
 void SpriteCB_TranslateAnimSpriteToTargetMonLocationDoubles(struct Sprite* sprite)
@@ -1733,7 +1760,7 @@ static void SpriteCB_FallingObjectPlayAnimOnEndStep(struct Sprite *sprite)
 		{
 			StartSpriteAnim(sprite, 1);
 			sprite->callback = RunStoredCallbackWhenAnimEnds;
-			StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
+			StoreSpriteCallbackInData6(sprite, DestroySpriteAndMatrix);
 		}
 		break;
 	}
@@ -2115,6 +2142,33 @@ void SpriteCB_FairyLockChain(struct Sprite *sprite)
 		--gTasks[sprite->data[6]].data[sprite->data[7]];
 		DestroySprite(sprite);
 	}
+}
+
+void SpriteCB_SurroundingRing(struct Sprite *sprite)
+{
+	sprite->pos1.x = GetBattlerSpriteCoord(gBattleAnimAttacker, 0);
+	sprite->pos1.y = GetBattlerSpriteCoord(gBattleAnimAttacker, 1) + 40;
+
+    sprite->data[0] = 13;
+    sprite->data[2] = sprite->pos1.x;
+    sprite->data[4] = sprite->pos1.y - 72;
+
+    sprite->callback = StartAnimLinearTranslation;
+    StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
+}
+
+void SpriteCB_ToxicThreadWrap(struct Sprite *sprite)
+{
+    if (SIDE(gBattleAnimAttacker) != B_SIDE_PLAYER)
+        sprite->pos1.x -= gBattleAnimArgs[0];
+    else
+        sprite->pos1.x += gBattleAnimArgs[0];
+
+    sprite->pos1.y += gBattleAnimArgs[1];
+    if (SIDE(gBattleAnimTarget) == B_SIDE_PLAYER)
+        sprite->pos1.y += 8;
+
+    sprite->callback = (void*) (0x80B4274 | 1);
 }
 
 //Creates a twinkle in the upper corner of the screen

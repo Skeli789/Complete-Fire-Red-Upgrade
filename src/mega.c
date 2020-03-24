@@ -51,6 +51,10 @@ const struct Evolution* CanMegaEvolve(u8 bank, bool8 CheckUBInstead)
 	if (!CheckUBInstead && !MegaEvolutionEnabled(bank)) //Ultra Burst doesn't need Mega Ring
 		return NULL;
 
+	if (IsMegaZMoveBannedBattle()
+	|| (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER) && SIDE(bank) == B_SIDE_OPPONENT)) //Wild mons (like Rayquaza) can't Mega Evolve
+		return NULL;
+
 	pokemon_t* mon = GetBankPartyData(bank);
 	const struct Evolution* evolutions = gEvolutionTable[mon->species];
 	int i, j;
@@ -90,14 +94,14 @@ const struct Evolution* CanMegaEvolve(u8 bank, bool8 CheckUBInstead)
 }
 
 //Assumes Wish Evolution isn't important
-species_t GetMegaSpecies(u16 species, u16 item)
+species_t GetMegaSpecies(u16 species, u16 item, const u16* moves)
 {
 	#ifndef MEGA_EVOLUTION_FEATURE
 		return SPECIES_NONE;
 	#else
 
 	const struct Evolution* evolutions = gEvolutionTable[species];
-	int i;
+	int i, j;
 
 	for (i = 0; i < EVOS_PER_MON; ++i) {
 		if (evolutions[i].method == EVO_MEGA)
@@ -106,10 +110,18 @@ species_t GetMegaSpecies(u16 species, u16 item)
 			if (evolutions[i].param == 0) continue;
 
 			//Check for held item
-			if (evolutions[i].unknown == MEGA_VARIANT_STANDARD)
+			if (evolutions[i].unknown == MEGA_VARIANT_STANDARD || evolutions[i].unknown == MEGA_VARIANT_ULTRA_BURST)
 			{
 				if (evolutions[i].param == item)
 					return evolutions[i].targetSpecies;
+			}
+			else if (evolutions[i].unknown == MEGA_VARIANT_WISH && moves != NULL)
+			{
+				for (j = 0; j < MAX_MON_MOVES; ++j)
+				{
+					if (evolutions[i].param == moves[j])
+						return evolutions[i].targetSpecies;
+				}
 			}
 		}
 	}
@@ -262,6 +274,9 @@ static item_t FindPlayerKeystone(void)
 		return ITEM_MEGA_RING; //Give player Mega Ring if they have none
 	#endif
 
+	if (gBattleTypeFlags & (BATTLE_TYPE_FRONTIER | BATTLE_TYPE_LINK))
+		return ITEM_MEGA_RING;
+
 	return ITEM_NONE;
 }
 
@@ -404,12 +419,12 @@ bool8 IsRedPrimal(u8 bank)
 
 bool8 IsUltraNecrozma(u8 bank)
 {
-	return IsMonUltraNecrozma(GetBankPartyData(bank));
+	return IsUltraNecrozmaSpecies(GetBankPartyData(bank)->species);
 }
 
-bool8 IsMonUltraNecrozma(struct Pokemon* mon)
+bool8 IsUltraNecrozmaSpecies(u16 species)
 {
-	const struct Evolution* evolutions = gEvolutionTable[mon->species];
+	const struct Evolution* evolutions = gEvolutionTable[species];
 
 	for (u8 i = 0; i < EVOS_PER_MON; ++i)
 	{
@@ -498,11 +513,15 @@ const u8* GetTrainerName(u8 bank)
 	else
 	{
 		u8 class = gTrainers[trainerId].trainerClass;
-		u8* name = TryGetRivalNameByTrainerClass(class);
+		u8* name = NULL;
+
+		if (trainerId < RAID_BATTLE_MULTI_TRAINER_TID)
+			name = TryGetRivalNameByTrainerClass(class);
 
 		if (name == NULL)
 		{
-			if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
+			if (gBattleTypeFlags & BATTLE_TYPE_FRONTIER
+			|| (IsRaidBattle() && trainerId == RAID_BATTLE_MULTI_TRAINER_TID))
 				return GetFrontierTrainerName(trainerId, battlerNum);
 
 			return gTrainers[trainerId].trainerName;

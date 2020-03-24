@@ -3,6 +3,10 @@
 #include "global.h"
 #include "menu_helpers.h"
 
+#define OPEN_BAG_ITEMS     0
+#define OPEN_BAG_KEYITEMS  1
+#define OPEN_BAG_POKEBALLS 2
+#define OPEN_BAG_LAST      3
 #define MAIN_POCKETS_COUNT 3
 
 enum

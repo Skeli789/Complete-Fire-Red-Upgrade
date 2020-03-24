@@ -1916,7 +1916,8 @@ void FailIfAttackerIsntHoldingEdibleBerry(void)
 {
 	u16 item = ITEM(gBankAttacker);
 	
-	if (!IsBerry(item) || CheckTableForItem(item, gBannedBattleEatBerries))
+	if (!IsBerry(item) || CheckTableForItem(item, gBannedBattleEatBerries)
+	|| AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, gBankAttacker, ABILITY_UNNERVE, 0, 0))
 		gBattlescriptCurrInstr = BattleScript_ButItFailedAttackstring - 5;
 }
 
@@ -1939,7 +1940,7 @@ void FailIfTrappedByNoRetreat(void)
 void FinishTurn(void)
 {
 	gCurrentActionFuncId = ACTION_FINISHED;
-	gCurrentTurnActionNumber = gBattlersCount;
+	gCurrentTurnActionNumber = gBattlersCount - 1;
 }
 
 void SetScriptingBankToItsPartner(void)

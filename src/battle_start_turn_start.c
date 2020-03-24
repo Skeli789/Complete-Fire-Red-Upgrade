@@ -34,6 +34,7 @@ battle_start_turn_start.c
 
 enum BattleBeginStates
 {
+	BackupPartyItems,
 	GetTurnOrder,
 	ThirdTypeRemoval,
 	RaidBattleReveal,
@@ -80,6 +81,7 @@ const u8 gStatStageRatios[][2] =
 };
 
 //This file's functions:
+static void SavePartyItems(void);
 static void TryPrepareTotemBoostInBattleSands(void);
 static void TrySetupRaidBossRepeatedAttack(u8 turnActionNumber);
 static u8 GetWhoStrikesFirstUseLastBracketCalc(u8 bank1, u8 bank2);
@@ -100,20 +102,16 @@ void HandleNewBattleRamClearBeforeBattle(void)
 	{
 		gBattleTypeFlags |= BATTLE_TYPE_DYNAMAX;
 		gNewBS->dynamaxData.timer[B_POSITION_OPPONENT_LEFT] = -2; //Don't revert
+		gNewBS->dynamaxData.backupRaidMonItem = GetMonData(&gEnemyParty[0], MON_DATA_HELD_ITEM, NULL); //For Frontier
 	}
 
 	FormsRevert(gPlayerParty); //Try to reset all forms before battle
 }
 
-void SavePartyItems(void)
+static void SavePartyItems(void)
 {
-	u16* items = ExtensionState.itemBackup = Malloc(sizeof(item_t) * PARTY_SIZE);
-
-	if (ExtensionState.itemBackup != NULL)
-	{
-		for (int i = 0; i < PARTY_SIZE; ++i)
-			items[i] = gPlayerParty[i].item;
-	}
+	for (int i = 0; i < PARTY_SIZE; ++i)
+		gNewBS->itemBackup[i] = GetMonData(&gPlayerParty[i], MON_DATA_HELD_ITEM, NULL);
 }
 
 void BattleBeginFirstTurn(void)
@@ -125,6 +123,10 @@ void BattleBeginFirstTurn(void)
 
 	if (!gBattleExecBuffer) { //Inlclude Safari Check Here?
 		switch(*state) {
+			case BackupPartyItems:
+				SavePartyItems();
+				++*state;
+				break;
 			case GetTurnOrder:
 				gNewBS->skipBankStatAnim = 0xFF;
 				for (i = 0; i < gBattlersCount; ++i)
@@ -762,14 +764,12 @@ void RunTurnActionsFunctions(void)
 					gNewBS->dynamaxData.timer[bank] = 3; //Dynamax lasts for 3 turns
 					gNewBS->dynamaxData.partyIndex[SIDE(bank)] = gBitTable[gBattlerPartyIndexes[bank]];
 
-					if (!(gBattleTypeFlags & (BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_MULTI))
-					&& SIDE(bank) == B_SIDE_PLAYER)
+					if (SIDE(bank) == B_SIDE_PLAYER)
 					{
 						gNewBS->dynamaxData.toBeUsed[PARTNER(bank)] = FALSE;
 						gNewBS->dynamaxData.used[PARTNER(bank)] = TRUE;
 					}
-					else if (!(gBattleTypeFlags & (BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_MULTI))
-					&& SIDE(bank) == B_SIDE_OPPONENT)
+					else
 					{
 						gNewBS->dynamaxData.toBeUsed[PARTNER(bank)] = FALSE;
 						gNewBS->dynamaxData.used[PARTNER(bank)] = TRUE;

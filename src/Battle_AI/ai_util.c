@@ -417,8 +417,11 @@ void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner,
 	u16 move;
 	s8 moveScores[MAX_MON_MOVES][MAX_BATTLERS_COUNT] = {0};
 
-	u16 partnerMove = gChosenMovesByBanks[bankAtkPartner];
+	u16 partnerMove = MOVE_NONE;
 	u16 partnerTarget = gBattleStruct->moveTarget[bankAtkPartner];
+	if (gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE)
+		partnerMove = GetAIChosenMove(bankAtkPartner, partnerTarget);
+
 	bool8 partnerIncapacitated = IsBankIncapacitated(bankAtkPartner);
 	bool8 partnerKnocksOut = partnerTarget != bankAtkPartner && MoveKnocksOutXHits(partnerMove, bankAtkPartner, partnerTarget, 1);
 
@@ -509,7 +512,6 @@ void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner,
 				&& !(status1 & STATUS1_FREEZE)
 				&& !gDisableStructs[bankAtkPartner].truantCounter)
 				{
-					u16 partnerMove = gChosenMovesByBanks[bankAtkPartner];
 					if (partnerMove != MOVE_NONE) //Partner has chosen a move
 					{
 						u8 moveEffect = gBattleMoves[partnerMove].effect;
@@ -1194,6 +1196,23 @@ u8 GetPredictedAIAbility(u8 bankAtk, u8 bankDef)
 		return GetAIAbility(bankAtk, bankDef, predictedUserMove);
 	else
 		return ABILITY(bankAtk);
+}
+
+u16 GetAIChosenMove(u8 bankAtk, u8 bankDef)
+{
+	u16 move = gChosenMovesByBanks[bankAtk];
+	if (move == MOVE_NONE)
+		move = IsValidMovePrediction(bankAtk, bankDef);
+	else if (gNewBS->ZMoveData->toBeUsed[bankAtk]) //Pokemon chose a Z-Move
+		move = ReplaceWithZMoveRuntime(bankAtk, move);
+	else if (IsDynamaxed(bankAtk) || gNewBS->dynamaxData.toBeUsed[bankAtk])
+	{
+		u16 maxMove = GetMaxMoveByMove(bankAtk, move);
+		if (maxMove != MOVE_NONE)
+			move = maxMove;
+	}
+
+	return move;
 }
 
 bool8 IsTrapped(u8 bank, bool8 switching)
@@ -2495,7 +2514,7 @@ u8 GetAIMoveEffectForMaxMove(u16 move, u8 bankAtk, u8 bankDef)
 			break;
 
 		case MAX_EFFECT_DEFOG:
-			if (gSideAffecting[SIDE(bankDef)] & (SIDE_STATUS_REFLECT | SIDE_STATUS_SAFEGUARD | SIDE_STATUS_MIST)
+			if (gSideAffecting[SIDE(bankDef)] & (SIDE_STATUS_REFLECT | SIDE_STATUS_LIGHTSCREEN | SIDE_STATUS_SAFEGUARD | SIDE_STATUS_MIST)
 			|| gNewBS->AuroraVeilTimers[SIDE(bankDef)] != 0
 			|| gSideAffecting[SIDE(bankAtk)] & SIDE_STATUS_SPIKES
 			|| !(gSideAffecting[SIDE(bankDef)] & SIDE_STATUS_SPIKES))
@@ -2720,7 +2739,7 @@ bool8 ShouldAIUseZMove(u8 bankAtk, u8 bankDef, u16 move)
 					return FALSE; //Don't waste a Z-Move breaking a shield
 
 				u16 bankAtkPartner = PARTNER(bankAtk);
-				u16 partnerMove = (gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE) ? gChosenMovesByBanks[bankAtkPartner] : IsValidMovePrediction(bankAtkPartner, bankDef);
+				u16 partnerMove = GetAIChosenMove(bankAtkPartner, bankDef);
 
 				if (SPLIT(partnerMove) == SPLIT_STATUS
 				|| MoveWouldHitFirst(partnerMove, bankAtkPartner, bankAtk)

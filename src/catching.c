@@ -335,7 +335,7 @@ void atkEF_handleballthrow(void)
 			MarkBufferBankForExecution(gActiveBattler);
 			gBattlescriptCurrInstr = BattleScript_SuccessBallThrow;
 
-			if (ballType != BALL_TYPE_PARK_BALL)
+			if (ballType != BALL_TYPE_PARK_BALL || IsRaidBattle())
 				SetMonData(&gEnemyParty[gBattlerPartyIndexes[gBankTarget]], MON_DATA_POKEBALL, &ballType);
 
 			if (CalculatePlayerPartyCount() == 6)
@@ -380,7 +380,7 @@ void atkEF_handleballthrow(void)
                     gNewBS->criticalCaptureSuccess = TRUE;
 
                 gBattlescriptCurrInstr = BattleScript_SuccessBallThrow;
-				if (ballType != BALL_TYPE_PARK_BALL)
+				if (ballType != BALL_TYPE_PARK_BALL || IsRaidBattle())
 					SetMonData(&gEnemyParty[gBattlerPartyIndexes[gBankTarget]], MON_DATA_POKEBALL, &ballType);
 
 				if (CalculatePlayerPartyCount() == 6)
@@ -480,19 +480,42 @@ u8 GiveMonToPlayer(struct Pokemon* mon) //Hook in
 		else if (ItemId_GetType(gLastUsedItem) == BALL_TYPE_FRIEND_BALL)
 			mon->friendship = 200;
 	}
+	
+	if (gMain.inBattle && IsRaidBattle() && FlagGet(FLAG_BATTLE_FACILITY))
+		SetMonData(mon, MON_DATA_HELD_ITEM, &gNewBS->dynamaxData.backupRaidMonItem);
 
 	i = 0;
 
 	while (i < PARTY_SIZE && gPlayerParty[i].species != SPECIES_NONE)
 		++i;
 
-	if (i >= PARTY_SIZE)
+	if (i >= PARTY_SIZE
+	|| (gMain.inBattle && gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)) //Always send Pokemon in multi battles to the PC because of overwritten team
 		return SendMonToPC(mon);
 
 	CopyMon(&gPlayerParty[i], mon, sizeof(struct Pokemon));
 	gPlayerPartyCount = i + 1;
 
 	return MON_GIVEN_TO_PARTY;
+}
+
+void atkF1_trysetcaughtmondexflags(void)
+{
+	struct Pokemon* mon = LoadTargetPartyData();
+	TryRevertMega(mon); //Megas aren't set in the habitat table
+
+    u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
+    u32 personality = GetMonData(mon, MON_DATA_PERSONALITY, NULL);
+
+    if (GetSetPokedexFlag(SpeciesToNationalPokedexNum(species), FLAG_GET_CAUGHT))
+    {
+        gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+    }
+    else
+    {
+        HandleSetPokedexFlag(SpeciesToNationalPokedexNum(species), FLAG_SET_CAUGHT, personality);
+        gBattlescriptCurrInstr += 5;
+    }
 }
 
 u8 ItemIdToBallId(u16 ballItem)

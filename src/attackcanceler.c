@@ -1103,6 +1103,8 @@ static u8 IsMonDisobedient(void)
 
 	if (gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_POKE_DUDE | BATTLE_TYPE_FRONTIER))
 		return 0;
+	else if (IsFrontierRaidBattle())
+		return 0;
 	else if (gBattleTypeFlags & (BATTLE_TYPE_INGAME_PARTNER) && GetBattlerPosition(gBankAttacker) == B_POSITION_PLAYER_RIGHT)
 		return 0;
 	else if (gBattleTypeFlags & (BATTLE_TYPE_MOCK_BATTLE) && GetBattlerPosition(gBankAttacker) == B_POSITION_PLAYER_LEFT)

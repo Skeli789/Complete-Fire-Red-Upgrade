@@ -61,6 +61,10 @@ void DoFormChange(u8 bank, u16 species, bool8 ReloadType, bool8 ReloadStats, boo
 	if (ReloadStats)
 	{
 		CalculateMonStats(mon);
+
+		if (IsDynamaxed(bank))
+			mon->maxHP *= GetDynamaxHPBoost(bank);
+
 		RELOAD_BATTLE_STATS(bank, mon);
 	}
 

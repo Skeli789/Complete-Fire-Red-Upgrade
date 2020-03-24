@@ -425,7 +425,9 @@ static void Task_RaidBattleIntroWaitForKeyPress(u8 taskId)
 		if (name == NULL)
 			name = gRaidPartners[id].name;
 		StringCopy(gStringVar1, name);
+		StringCopy(gStringVar7, name);
 		GetSpeciesName(gStringVar2, gRaidBattleSpecies);
+		GetSpeciesName(gStringVar8, gRaidBattleSpecies);
 
 		PlaySE(SE_CORRECT);
 		BeginNormalPaletteFade(0xFFFFFFFF, 0, 0, 16, RGB_BLACK);
@@ -754,7 +756,8 @@ static void CB2_RaidBattleIntro(void)
 
 void sp115_RaidBattleAvailable(void)
 {
-	if (!HasRaidBattleAlreadyBeenDone() && GetRaidBattleData())
+	if (!HasRaidBattleAlreadyBeenDone()
+	&& (GetRaidBattleData() || FlagGet(FLAG_BATTLE_FACILITY)))
 		gSpecialVar_LastResult = TRUE;
 	else
 		gSpecialVar_LastResult = FALSE;
