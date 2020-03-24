@@ -1052,6 +1052,7 @@ LifeDewBS:
 
 LifeDewRestorePartnerHPBS:
 	callasm SetTargetPartner
+	jumpiffainted BANK_TARGET BS_MOVE_END
 	accuracycheck LifeDewMissedPartnerBS 0x0
 	setdamageasrestorehalfmaxhp LifeDewPartnerFullHealthBS BANK_TARGET
 	orword HIT_MARKER HITMARKER_IGNORE_SUBSTITUTE
