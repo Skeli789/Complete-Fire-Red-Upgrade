@@ -4205,6 +4205,7 @@ ExtremeEvoboost_Spd:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 ClangorousSoulBS:
+	callasm FailClangorousSoulIfLowHP
 	jumpifstat BANK_ATTACKER LESSTHAN STAT_ATK STAT_MAX ClangorusSoul_Atk
 	jumpifstat BANK_ATTACKER LESSTHAN STAT_DEF STAT_MAX ClangorusSoul_Atk
 	jumpifstat BANK_ATTACKER LESSTHAN STAT_SPD STAT_MAX ClangorusSoul_Atk
@@ -4215,6 +4216,11 @@ ClangorusSoul_Atk:
 	attackanimation
 	waitanimation
 	call BattleScript_AllStatsUp
+	orword HIT_MARKER HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_NON_ATTACK_DMG
+	setdamagetobankhealthfraction BANK_ATTACKER 3 0x0 @;33 % of Base Max HP
+	graphicalhpupdate BANK_ATTACKER
+	datahpupdate BANK_ATTACKER
+	faintpokemon BANK_ATTACKER 0x0 0x0
 	goto BS_MOVE_END
 
 NoRetreatBS:

@@ -2085,3 +2085,9 @@ void ActivatePerishBody(void)
 	if (!activated)
 		gBattlescriptCurrInstr = BattleScript_PerishBodyReturn - 5;
 }
+
+void FailClangorousSoulIfLowHP(void)
+{
+	if (gBattleMons[gBankAttacker].hp <= gBattleMons[gBankAttacker].maxHP / 3)
+		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+}

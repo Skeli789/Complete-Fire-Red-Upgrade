@@ -52,5 +52,5 @@ void __attribute__((long_call)) EnableInterrupts(u8 disable);
 void __attribute__((long_call)) DisableInterrupts(u8 disable);
 
 //The Deal Breaker
-void __attribute__((long_call)) break_func(u32);
+void __attribute__((long_call)) break_func();
 //u32 break_helper(u32 a);

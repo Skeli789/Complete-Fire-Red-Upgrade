@@ -118,3 +118,4 @@ void ChooseTargetForMirrorArmorStickyWeb(void);
 const u8* TryActivateMimicryForBank(u8 bank);
 void TryActivateMimicry(void);
 void ActivatePerishBody(void);
+void FailClangorousSoulIfLowHP(void);
