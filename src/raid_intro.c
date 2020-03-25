@@ -555,7 +555,7 @@ static void ShowStars(void)
 static void ShowRaidPokemonSprite(void)
 {
 	u16 species = sRaidBattleIntroPtr->species;
-	u32 personality = sRaidBattleIntroPtr->personality;
+	u32 personality = 0xFFFFFFFF; //For male sprite //sRaidBattleIntroPtr->personality;
 	u32 otid = T1_READ_32(gSaveBlock2->playerTrainerId);
 
 	const struct CompressedSpritePalette* pal = GetMonSpritePalStructFromOtIdPersonality(species, otid, personality);

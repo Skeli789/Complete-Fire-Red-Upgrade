@@ -355,91 +355,49 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		case EFFECT_ATTACK_DOWN:
 		case EFFECT_ATTACK_DOWN_2:
 		AI_ATTACK_MINUS:
-			if (!MoveWouldHitFirst(move, bankAtk, bankDef) && CanKnockOut(bankAtk, bankDef))
-				break; //Don't bother lowering stats if can kill enemy.
-			if (STAT_STAGE(bankDef, STAT_STAGE_ATK) > 4 && PhysicalMoveInMoveset(bankDef)
-			&& defAbility != ABILITY_CONTRARY
-			&& defAbility != ABILITY_CLEARBODY
-			&& defAbility != ABILITY_WHITESMOKE
-			//&& defAbility != ABILITY_FULLMETALBODY
-			&& defAbility != ABILITY_HYPERCUTTER)
+			if (GoodIdeaToLowerAttack(bankDef, bankAtk, move))
 				INCREASE_STATUS_VIABILITY(1);
 			break;
 
 		case EFFECT_DEFENSE_DOWN:
 		case EFFECT_DEFENSE_DOWN_2:
 		AI_DEFENSE_MINUS:
-			if (!MoveWouldHitFirst(move, bankAtk, bankDef) && CanKnockOut(bankAtk, bankDef))
-				break; //Don't bother lowering stats if can kill enemy.
-			if (STAT_STAGE(bankDef, STAT_STAGE_DEF) > 4 && PhysicalMoveInMoveset(bankAtk)
-			&& defAbility != ABILITY_CONTRARY
-			&& defAbility != ABILITY_CLEARBODY
-			&& defAbility != ABILITY_WHITESMOKE
-			//&& defAbility != ABILITY_FULLMETALBODY
-			&& defAbility != ABILITY_BIGPECKS)
+			if (GoodIdeaToLowerDefense(bankDef, bankAtk, move))
 				INCREASE_STATUS_VIABILITY(1);
 			break;
 
 		case EFFECT_SPEED_DOWN:
 		case EFFECT_SPEED_DOWN_2:
 		AI_SPEED_MINUS:
-			if (!MoveWouldHitFirst(move, bankAtk, bankDef) && CanKnockOut(bankAtk, bankDef))
-				break; //Don't bother lowering stats if can kill enemy.
-			if (SpeedCalc(bankAtk) <= SpeedCalc(bankDef)
-			&& defAbility != ABILITY_CONTRARY
-			&& defAbility != ABILITY_CLEARBODY
-			//&& defAbility != ABILITY_FULLMETALBODY
-			&& defAbility != ABILITY_WHITESMOKE)
+			if (GoodIdeaToLowerSpeed(bankDef, bankAtk, move))
 				INCREASE_STATUS_VIABILITY(2);
 			break;
 
 		case EFFECT_SPECIAL_ATTACK_DOWN:
 		case EFFECT_SPECIAL_ATTACK_DOWN_2:
 		AI_SPECIAL_ATTACK_MINUS:
-			if (!MoveWouldHitFirst(move, bankAtk, bankDef) && CanKnockOut(bankAtk, bankDef))
-				break; //Don't bother lowering stats if can kill enemy.
-			if (STAT_STAGE(bankDef, STAT_STAGE_SPATK) > 4 && SpecialMoveInMoveset(bankDef)
-			&& defAbility != ABILITY_CONTRARY
-			&& defAbility != ABILITY_CLEARBODY
-			//&& defAbility != ABILITY_FULLMETALBODY
-			&& defAbility != ABILITY_WHITESMOKE)
+			if (GoodIdeaToLowerSpAtk(bankDef, bankAtk, move))
 				INCREASE_STATUS_VIABILITY(1);
 			break;
 
 		case EFFECT_SPECIAL_DEFENSE_DOWN:
 		case EFFECT_SPECIAL_DEFENSE_DOWN_2:
 		AI_SPECIAL_DEFENSE_MINUS:
-			if (!MoveWouldHitFirst(move, bankAtk, bankDef) && CanKnockOut(bankAtk, bankDef))
-				break; //Don't bother lowering stats if can kill enemy.
-			if (STAT_STAGE(bankDef, STAT_STAGE_SPDEF) > 4 && SpecialMoveInMoveset(bankAtk)
-			&& defAbility != ABILITY_CONTRARY
-			&& defAbility != ABILITY_CLEARBODY
-			//&& defAbility != ABILITY_FULLMETALBODY
-			&& defAbility != ABILITY_WHITESMOKE)
+			if (GoodIdeaToLowerSpDef(bankDef, bankAtk, move))
 				INCREASE_STATUS_VIABILITY(1);
 			break;
 
 		case EFFECT_ACCURACY_DOWN:
 		case EFFECT_ACCURACY_DOWN_2:
 		AI_ACCURACY_MINUS:
-			if (!MoveWouldHitFirst(move, bankAtk, bankDef) && CanKnockOut(bankAtk, bankDef))
-				break; //Don't bother lowering stats if can kill enemy.
-			if (defAbility != ABILITY_CONTRARY
-			&& defAbility != ABILITY_CLEARBODY
-			&& defAbility != ABILITY_WHITESMOKE
-			//&& defAbility != ABILITY_FULLMETALBODY
-			&& defAbility != ABILITY_KEENEYE)
+			if (GoodIdeaToLowerAccuracy(bankDef, bankAtk, move))
 				INCREASE_STATUS_VIABILITY(1);
 			break;
 
 		case EFFECT_EVASION_DOWN:
 		case EFFECT_EVASION_DOWN_2:
 		AI_EVASION_MINUS:
-			if ((STAT_STAGE(bankDef, STAT_STAGE_EVASION) > 6 || MoveInMovesetWithAccuracyLessThan(bankAtk, bankDef, 90, TRUE))
-			&& defAbility != ABILITY_CONTRARY
-			&& defAbility != ABILITY_CLEARBODY
-			//&& defAbility != ABILITY_FULLMETALBODY
-			&& defAbility != ABILITY_WHITESMOKE)
+			if (GoodIdeaToLowerEvasion(bankDef, bankAtk, move))
 				INCREASE_STATUS_VIABILITY(2);
 			break;
 

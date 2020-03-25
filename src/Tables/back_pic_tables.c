@@ -78,7 +78,7 @@ const struct CompressedSpritePalette gTrainerBackPicPaletteTable[] =
 #define gTrainerBackAnims_May (const union AnimCmd* const*) 0x8239F54
 #define gTrainerBackAnims_PokeDude (const union AnimCmd* const*) 0x8239F54
 #define gTrainerBackAnims_OldMan (const union AnimCmd* const*) 0x8239F5C
-#define gTrainerBackAnims_Marlon (const union AnimCmd* const*) 0x8239F54
+#define gTrainerBackAnims_Marlon (const union AnimCmd* const*) 0x8239F44
 #define gTrainerBackAnims_PokeKid (const union AnimCmd* const*)0x8239F54
 #define gTrainerBackAnims_Rival (const union AnimCmd* const*) 0x8239F54
 #define gTrainerBackAnims_Jax (const union AnimCmd* const*) 0x8239F44
@@ -187,6 +187,7 @@ static const struct SpriteFrameImage sTrainerBackPicTable_Marlon[] =
 	{gTrainerBackPic_MarlonTiles + 0x0800, 	0x800, 0},
 	{gTrainerBackPic_MarlonTiles + 0x1000, 	0x800, 0},
 	{gTrainerBackPic_MarlonTiles + 0x1800, 	0x800, 0},
+	{gTrainerBackPic_MarlonTiles + 0x2000, 	0x800, 0},
 };
 
 static const struct SpriteFrameImage sTrainerBackPicTable_PokeKid[] =

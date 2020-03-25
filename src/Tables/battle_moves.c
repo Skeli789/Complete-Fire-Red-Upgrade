@@ -5536,7 +5536,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_POISONTAIL] =
 	{
-		.effect = EFFECT_POISON_TAIL,
+		.effect = EFFECT_BAD_POISON_HIT,
 		.power = 50,
 		.type = TYPE_POISON,
 		.accuracy = 100,
@@ -5924,7 +5924,7 @@ const struct BattleMove gBattleMoves[] =
 
 	[MOVE_CROSSPOISON] =
 	{
-		.effect = EFFECT_POISON_TAIL,
+		.effect = EFFECT_BAD_POISON_HIT,
 		.power = 70,
 		.type = TYPE_POISON,
 		.accuracy = 100,

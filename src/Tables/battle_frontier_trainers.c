@@ -1870,9 +1870,9 @@ const struct SpecialBattleFrontierTrainer gSpecialTowerTrainers[] =
 		.isMonotype = 		FALSE,
 	},
 	{
-		.owNum = 			EVENT_OBJ_GFX_ACE_TRAINER_M,
+		.owNum = 			EVENT_OBJ_GFX_LIXDEL,
 		.trainerClass = 	CLASS_PKMN_TRAINER_2,
-		.trainerSprite = 	TRAINER_PIC_ACE_TRAINER_M,
+		.trainerSprite = 	TRAINER_PIC_LIXDEL,
 		.gender = 			BATTLE_FACILITY_MALE,
 		.name =				sTrainerName_Lixdel,
 		.preBattleText = 	sFrontierText_Lixdel_PreBattle,

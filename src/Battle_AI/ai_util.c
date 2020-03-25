@@ -441,8 +441,10 @@ void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner,
 		{
 			u8 foes[] = {bankDef, bankDefPartner};
 
-			for (j = 0, currTarget = foes[j]; j < gBattlersCount / 2; ++j)
+			for (j = 0; j < gBattlersCount / 2; ++j)
 			{
+				currTarget = foes[j];
+
 				if (BATTLER_ALIVE(currTarget) && (j == 0 || gBattleMoves[move].target & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL)) //Only can hit second foe with spread move
 				&& (partnerMove == MOVE_NONE
 				 || partnerTarget != currTarget
@@ -450,7 +452,7 @@ void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner,
 				 || CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, bankAtk, currTarget) <= 1 //Only 1 target left
 				 || !partnerKnocksOut)) //Don't count the target if the partner is already taking care of it
 				{
-					if (!(AI_SpecialTypeCalc(move, bankAtk, currTarget) & MOVE_RESULT_NO_EFFECT))
+					if (!(AI_SpecialTypeCalc(move, bankAtk, currTarget) & MOVE_RESULT_NO_EFFECT)) //Move has effect on current target
 					{
 						moveScores[i][currTarget] += DOUBLES_INCREASE_HIT_FOE; //Hit one enemy
 
@@ -465,27 +467,66 @@ void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner,
 							moveScores[i][currTarget] += DOUBLES_INCREASE_STRONGEST_MOVE;
 						else
 						{
+							#define CALC (CalcSecondaryEffectChance(bankAtk, move) >= 50)
+							//These move effects are good even if they do minimal damage
 							switch (gBattleMoves[move].effect) {
 								case EFFECT_FLINCH_HIT:
 									if (MoveWouldHitFirst(move, bankAtk, currTarget))
 										break;
 									goto DEFAULT_CHECK;
-
 								case EFFECT_PARALYZE_HIT:
+									if (CALC && !BadIdeaToParalyze(currTarget, bankAtk))
+										break;
+									goto DEFAULT_CHECK;
 								case EFFECT_BURN_HIT:
+									if (CALC && !BadIdeaToBurn(currTarget, bankAtk))
+										break;
+									goto DEFAULT_CHECK;
 								case EFFECT_FREEZE_HIT:
+									if (CALC && !BadIdeaToFreeze(currTarget, bankAtk))
+										break;
+									goto DEFAULT_CHECK;
 								case EFFECT_POISON_HIT:
+								case EFFECT_BAD_POISON_HIT:
+									if (CALC && !BadIdeaToPoison(currTarget, bankAtk))
+										break;
+									goto DEFAULT_CHECK;
 								case EFFECT_ATTACK_DOWN_HIT:
+									if (CALC && GoodIdeaToLowerAttack(currTarget, bankAtk, move))
+										break;
+									goto DEFAULT_CHECK;
 								case EFFECT_DEFENSE_DOWN_HIT:
-								case EFFECT_SPEED_DOWN_HIT:
+									if (CALC && GoodIdeaToLowerDefense(currTarget, bankAtk, move))
+										break;
+									goto DEFAULT_CHECK;
 								case EFFECT_SPECIAL_ATTACK_DOWN_HIT:
+									if (CALC && GoodIdeaToLowerSpAtk(currTarget, bankAtk, move))
+										break;
+									goto DEFAULT_CHECK;
+								case EFFECT_SPECIAL_DEFENSE_DOWN_HIT:
+									if (CALC && GoodIdeaToLowerSpDef(currTarget, bankAtk, move))
+										break;
+									goto DEFAULT_CHECK;
+								case EFFECT_SPEED_DOWN_HIT:
+									if (CALC && GoodIdeaToLowerSpeed(currTarget, bankAtk, move))
+										break;
+									goto DEFAULT_CHECK;
 								case EFFECT_ACCURACY_DOWN_HIT:
+									if (CALC && GoodIdeaToLowerAccuracy(currTarget, bankAtk, move))
+										break;
+									goto DEFAULT_CHECK;
 								case EFFECT_EVASION_DOWN_HIT:
+									if (CALC && GoodIdeaToLowerEvasion(currTarget, bankAtk, move))
+										break;
+									goto DEFAULT_CHECK;
 								case EFFECT_CONFUSE_HIT:
+									if (CALC && CanBeConfused(bankDef, TRUE))
+										break;
+									goto DEFAULT_CHECK;
 								case EFFECT_SPEED_UP_1_HIT:
 								case EFFECT_ATTACK_UP_HIT:
-									if (CalcSecondaryEffectChance(bankAtk, move) >= 50)
-										break; //These move effects are good even if they do minimal damage
+									if (CALC)
+										break;
 									goto DEFAULT_CHECK;
 
 								default:
@@ -499,6 +540,7 @@ void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner,
 											moveScores[i][currTarget] -= (DOUBLES_INCREASE_HIT_FOE - 2); //Count less than basically not hitting the enemy
 									}
 							}
+							#undef CALC
 						}
 					}
 				}
@@ -586,6 +628,8 @@ u8 GetDoubleKillingScore(u16 move, u8 bankAtk, u8 bankDef)
 
 	if (move == gNewBS->ai.bestDoublesKillingMoves[bankAtk][bankDef])
 	{
+		//When a Pokemon attacks a target, it can gain or lose points for the damage it does
+		//to the surrounding field
 		return gNewBS->ai.bestDoublesKillingScores[bankAtk][bankDef][bankDef]
 		     + gNewBS->ai.bestDoublesKillingScores[bankAtk][bankDef][PARTNER(bankDef)]
 			 + gNewBS->ai.bestDoublesKillingScores[bankAtk][bankDef][PARTNER(bankAtk)];
@@ -1493,6 +1537,104 @@ bool8 BadIdeaToFreeze(u8 bankDef, u8 bankAtk)
 		|| (defAbility == ABILITY_SYNCHRONIZE && CanBeFrozen(bankAtk, TRUE))
 		|| (defAbility == ABILITY_NATURALCURE && CAN_SWITCH_OUT(bankDef)) //Don't waste a one-time freeze
 		|| UnfreezingMoveInMoveset(bankDef);
+}
+
+bool8 GoodIdeaToLowerAttack(u8 bankDef, u8 bankAtk, u16 move)
+{
+	if (!MoveWouldHitFirst(move, bankAtk, bankDef) && CanKnockOut(bankAtk, bankDef))
+		return FALSE; //Don't bother lowering stats if can kill enemy.
+
+	u8 defAbility = ABILITY(bankDef);
+
+	return STAT_STAGE(bankDef, STAT_STAGE_ATK) > 4 && PhysicalMoveInMoveset(bankDef)
+		&& defAbility != ABILITY_CONTRARY
+		&& defAbility != ABILITY_CLEARBODY
+		&& defAbility != ABILITY_WHITESMOKE
+		//&& defAbility != ABILITY_FULLMETALBODY
+		&& defAbility != ABILITY_HYPERCUTTER;
+}
+
+bool8 GoodIdeaToLowerDefense(u8 bankDef, u8 bankAtk, u16 move)
+{
+	if (!MoveWouldHitFirst(move, bankAtk, bankDef) && CanKnockOut(bankAtk, bankDef))
+		return FALSE; //Don't bother lowering stats if can kill enemy.
+
+	u8 defAbility = ABILITY(bankDef);
+
+	return STAT_STAGE(bankDef, STAT_STAGE_DEF) > 4
+		&& PhysicalMoveInMoveset(bankAtk)
+		&& defAbility != ABILITY_CONTRARY
+		&& defAbility != ABILITY_CLEARBODY
+		&& defAbility != ABILITY_WHITESMOKE
+		//&& defAbility != ABILITY_FULLMETALBODY
+		&& defAbility != ABILITY_BIGPECKS;
+}
+
+bool8 GoodIdeaToLowerSpAtk(u8 bankDef, u8 bankAtk, u16 move)
+{
+	if (!MoveWouldHitFirst(move, bankAtk, bankDef) && CanKnockOut(bankAtk, bankDef))
+		return FALSE; //Don't bother lowering stats if can kill enemy.
+
+	u8 defAbility = ABILITY(bankDef);
+
+	return STAT_STAGE(bankDef, STAT_STAGE_SPATK) > 4 && SpecialMoveInMoveset(bankDef)
+		&& defAbility != ABILITY_CONTRARY
+		&& defAbility != ABILITY_CLEARBODY
+		//&& defAbility != ABILITY_FULLMETALBODY
+		&& defAbility != ABILITY_WHITESMOKE;
+}
+
+bool8 GoodIdeaToLowerSpDef(u8 bankDef, u8 bankAtk, u16 move)
+{
+	if (!MoveWouldHitFirst(move, bankAtk, bankDef) && CanKnockOut(bankAtk, bankDef))
+		return FALSE; //Don't bother lowering stats if can kill enemy.
+
+	u8 defAbility = ABILITY(bankDef);
+
+	return STAT_STAGE(bankDef, STAT_STAGE_SPDEF) > 4 && SpecialMoveInMoveset(bankAtk)
+		&& defAbility != ABILITY_CONTRARY
+		&& defAbility != ABILITY_CLEARBODY
+		//&& defAbility != ABILITY_FULLMETALBODY
+		&& defAbility != ABILITY_WHITESMOKE;
+}
+
+bool8 GoodIdeaToLowerSpeed(u8 bankDef, u8 bankAtk, u16 move)
+{
+	if (!MoveWouldHitFirst(move, bankAtk, bankDef) && CanKnockOut(bankAtk, bankDef))
+		return FALSE; //Don't bother lowering stats if can kill enemy.
+
+	u8 defAbility = ABILITY(bankDef);
+
+	return SpeedCalc(bankAtk) <= SpeedCalc(bankDef)
+		&& defAbility != ABILITY_CONTRARY
+		&& defAbility != ABILITY_CLEARBODY
+		//&& defAbility != ABILITY_FULLMETALBODY
+		&& defAbility != ABILITY_WHITESMOKE;
+}
+
+bool8 GoodIdeaToLowerAccuracy(u8 bankDef, u8 bankAtk, u16 move)
+{
+	if (!MoveWouldHitFirst(move, bankAtk, bankDef) && CanKnockOut(bankAtk, bankDef))
+		return FALSE; //Don't bother lowering stats if can kill enemy.
+
+	u8 defAbility = ABILITY(bankDef);
+
+	return defAbility != ABILITY_CONTRARY
+		&& defAbility != ABILITY_CLEARBODY
+		&& defAbility != ABILITY_WHITESMOKE
+		//&& defAbility != ABILITY_FULLMETALBODY
+		&& defAbility != ABILITY_KEENEYE;
+}
+
+bool8 GoodIdeaToLowerEvasion(u8 bankDef, u8 bankAtk, unusedArg u16 move)
+{
+	u8 defAbility = ABILITY(bankDef);
+
+	return (STAT_STAGE(bankDef, STAT_STAGE_EVASION) > 6 || MoveInMovesetWithAccuracyLessThan(bankAtk, bankDef, 90, TRUE))
+		&& defAbility != ABILITY_CONTRARY
+		&& defAbility != ABILITY_CLEARBODY
+		//&& defAbility != ABILITY_FULLMETALBODY
+		&& defAbility != ABILITY_WHITESMOKE;
 }
 
 //Move Prediction Code
@@ -2989,8 +3131,13 @@ void CalcShouldAIDynamax(u8 bankAtk, u8 bankDef)
 
 	if (bankAtk != bankDef && CanDynamax(bankAtk))
 	{
+		u8 partnerBank = PARTNER(bankAtk);
+
 		if (BATTLER_SEMI_INVULNERABLE(bankAtk))
 			return; //Can't Dynamax out of view
+		
+		if (IS_DOUBLE_BATTLE && BATTLER_ALIVE(partnerBank) && gNewBS->dynamaxData.toBeUsed[partnerBank])
+			return; //Don't Dynamax if the other mon is going to
 
 		if (IS_DOUBLE_BATTLE && bankDef == PARTNER(bankAtk))
 			return; //No need to Dynamax against your partner

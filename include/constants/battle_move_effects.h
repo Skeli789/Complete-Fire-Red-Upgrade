@@ -209,7 +209,7 @@
 #define EFFECT_COSMIC_POWER 206
 #define EFFECT_EXTREME_EVOBOOST 207 //+ No Retreat + Clangorous Soul
 #define EFFECT_BULK_UP 208 //+ Coil
-#define EFFECT_POISON_TAIL 209
+#define EFFECT_BAD_POISON_HIT 209
 #define EFFECT_WATER_SPORT 210
 #define EFFECT_CALM_MIND 211 //+ Quiver Dance + Geomancy
 #define EFFECT_DRAGON_DANCE 212 //+ Shift Gear + Shell Smash

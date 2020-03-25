@@ -57,6 +57,14 @@ bool8 BadIdeaToBurn(u8 bankDef, u8 bankAtk);
 bool8 GoodIdeaToBurnSelf(u8 bankAtk);
 bool8 BadIdeaToFreeze(u8 bankDef, u8 bankAtk);
 
+bool8 GoodIdeaToLowerAttack(u8 bankDef, u8 bankAtk, u16 move);
+bool8 GoodIdeaToLowerDefense(u8 bankDef, u8 bankAtk, u16 move);
+bool8 GoodIdeaToLowerSpAtk(u8 bankDef, u8 bankAtk, u16 move);
+bool8 GoodIdeaToLowerSpDef(u8 bankDef, u8 bankAtk, u16 move);
+bool8 GoodIdeaToLowerSpeed(u8 bankDef, u8 bankAtk, u16 move);
+bool8 GoodIdeaToLowerAccuracy(u8 bankDef, u8 bankAtk, u16 move);
+bool8 GoodIdeaToLowerEvasion(u8 bankDef, u8 bankAtk, u16 move);
+
 move_t IsValidMovePrediction(u8 bankAtk, u8 bankDef);
 bool8 IsPredictedToSwitch(u8 bankAtk, u8 bankDef);
 void StoreMovePrediction(u8 bankAtk, u8 bankDef, u16 move);

@@ -2846,28 +2846,27 @@ ANIM_NASTYPLOT:
 .pool
 ANIM_NIGHTSLASH:
 	loadparticle ANIM_TAG_CUT @Cut
-	loadparticle ANIM_TAG_HANDS_AND_FEET @Black Colour
+	launchtask AnimTask_pal_fade_particle 0x5 0x5 ANIM_TAG_CUT 0x0 0xD 0xD 0x0
 	pokespritetoBG bank_target
-	setblends 0x80c
 	loadBG1 BG_DARK
-	waitbgfadeout
+	waitbgfadein
 	playsound2 0x79 SOUND_PAN_TARGET
-	launchtemplate DARKCUT 0x2 0x3 0x28 0xffe0 0x0
+	launchtemplate NIGHT_SLASH_LEFT TEMPLATE_TARGET | 2, 0x5, 50, -10, 100, 4 0x1 @;Move left along bottom
 	pause 0x5
-	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x3 0xa 0x1
+	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x4 0xA 0x1
 	pause 0x15
 	playsound2 0x79 SOUND_PAN_TARGET
-	launchtemplate DARKCUT 0x2 0x3 0x28 0xffe0 0x1
+	launchtemplate NIGHT_SLASH_RIGHT TEMPLATE_TARGET | 2, 0x5, -50, 10, 100, 4 0x0 @;Move right along bottom
 	pause 0x5
-	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x3 0xa 0x1
+	launchtask AnimTask_move_bank 0x2 0x5 bank_target 0x0 0x4 0xA 0x1
 	waitanimation
 	call UNSET_SCROLLING_BG
 	pokespritefromBG bank_target
-	resetblends
 	endanimation
 
 .align 2
-DARKCUT: objtemplate ANIM_TAG_CUT ANIM_TAG_HANDS_AND_FEET OAM_OFF_BLEND_32x32 0x83E3290 0x0 0x8231CFC 0x80A44E1
+NIGHT_SLASH_LEFT: objtemplate ANIM_TAG_CUT ANIM_TAG_CUT OAM_NORMAL_32x32 0x83E3290 0x0 gSpriteAffineAnimTable_NightSlashLeft SpriteCB_HorizontalSlice
+NIGHT_SLASH_RIGHT: objtemplate ANIM_TAG_CUT ANIM_TAG_CUT OAM_NORMAL_32x32 0x83E3290 0x0 gSpriteAffineAnimTable_NightSlashRight SpriteCB_HorizontalSlice
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool

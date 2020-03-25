@@ -477,6 +477,30 @@ const union AffineAnimCmd* const gSpriteAffineAnimTable_MudBombBall[] =
 	sSpriteAffineAnim_MudBombBall,
 };
 
+static const union AffineAnimCmd sSpriteAffineAnim_NightSlashLeft[] =
+{
+	AFFINEANIMCMD_FRAME(32, 32, 0, 1), //Increase size by 1/4
+	AFFINEANIMCMD_FRAME(0, 0, -32, 1), //Rotate
+	AFFINEANIMCMD_END,
+};
+
+const union AffineAnimCmd* const gSpriteAffineAnimTable_NightSlashLeft[] =
+{
+	sSpriteAffineAnim_NightSlashLeft,
+};
+
+static const union AffineAnimCmd sSpriteAffineAnim_NightSlashRight[] =
+{
+	AFFINEANIMCMD_FRAME(32, 32, 0, 1), //Increase size by 1/4
+	AFFINEANIMCMD_FRAME(0, 0, 96, 1), //Rotate
+	AFFINEANIMCMD_END,
+};
+
+const union AffineAnimCmd* const gSpriteAffineAnimTable_NightSlashRight[] =
+{
+	sSpriteAffineAnim_NightSlashRight,
+};
+
 static const union AffineAnimCmd sSpriteAffineAnim_FlutterbyPulsate[] =
 {
 	AFFINEANIMCMD_FRAME(16, 16, 0, 4),
@@ -2169,6 +2193,37 @@ void SpriteCB_ToxicThreadWrap(struct Sprite *sprite)
         sprite->pos1.y += 8;
 
     sprite->callback = (void*) (0x80B4274 | 1);
+}
+
+void SpriteCB_HorizontalSliceStep(struct Sprite *sprite)
+{
+	if (sprite->data[2] == 1) //Move left
+		sprite->pos2.x -= sprite->data[1];
+	else
+		sprite->pos2.x += sprite->data[1];
+	
+	sprite->data[3] += sprite->data[1];
+
+	if (sprite->data[3] >= sprite->data[0])
+		DestroySpriteAndMatrix(sprite);
+}
+
+//Creates a sprite that moves left or right along the target.
+//arg 0: Initial x-pixel offset
+//arg 1: Initial y-pixel offset
+//arg 2: Slice distance
+//arg 3: Speed
+//arg 4: direction
+void SpriteCB_HorizontalSlice(struct Sprite *sprite)
+{
+	InitSpritePosToAnimTarget(sprite, TRUE);
+
+	sprite->data[0] = gBattleAnimArgs[2]; //Slice distance
+	sprite->data[1] = gBattleAnimArgs[3]; //Slice speed
+	sprite->data[2] = gBattleAnimArgs[4]; //Slice direction
+	sprite->data[3] = 0; //Timer
+
+	sprite->callback = SpriteCB_HorizontalSliceStep;
 }
 
 //Creates a twinkle in the upper corner of the screen

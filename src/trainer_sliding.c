@@ -87,6 +87,20 @@ void atk53_trainerslidein(void)
 	gBattlescriptCurrInstr += 2;
 }
 
+void TrainerSlideInScriptingBank(void)
+{
+	gActiveBattler = gBattleScripting->bank;
+	EmitTrainerSlide(0);
+	MarkBufferBankForExecution(gActiveBattler);
+}
+
+void TrainerSlideOutScriptingBank(void)
+{
+	gActiveBattler = gBattleScripting->bank;
+	EmitTrainerSlideBack(0);
+	MarkBufferBankForExecution(gActiveBattler);
+}
+
 //The modifications made to this function don't affect
 //sliding in anyway. They allow expanded Battle Backgrounds.
 void HandleIntroSlide(u8 terrain)
@@ -223,7 +237,7 @@ void TryDoDynamaxTrainerSlide(void)
 	gBattlescriptCurrInstr = BattleScript_TrainerSlideMsgRet - 5;
 }
 
-//Hook in Battle Miain
+//Hook in Battle Main
 void CheckLastMonLowHPSlide(void)
 {
 	if (ShouldDoTrainerSlide(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT), gTrainerBattleOpponent_A, TRAINER_SLIDE_LAST_LOW_HP)

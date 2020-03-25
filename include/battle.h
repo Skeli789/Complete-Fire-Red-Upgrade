@@ -641,6 +641,7 @@ struct DynamaxData
 	bool8 raidShieldsUp : 1;
 	bool8 attackAgain : 1;
 	bool8 nullifiedStats : 1;
+	u8 backupMoveSelectionCursorPos;
 	u16 turnStartHP;
 	u16 backupRaidMonItem;
 };

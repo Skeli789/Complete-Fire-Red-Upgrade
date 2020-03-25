@@ -1488,6 +1488,16 @@ void ClearAndTransferDontRemoveTransformSpecies(void)
 	TransferDontRemoveTransformSpecies(FALSE);
 }
 
+void BackupScriptingBankMoveSelectionCursor(void)
+{
+	gNewBS->dynamaxData.backupMoveSelectionCursorPos = gMoveSelectionCursor[gBattleScripting->bank];
+}
+
+void RestoreScriptingBankMoveSelectionCursor(void)
+{
+	gMoveSelectionCursor[gBattleScripting->bank] = gNewBS->dynamaxData.backupMoveSelectionCursorPos;
+}
+
 void CycleScriptingBankHealthBetween0And1(void)
 {
 	if (gBattleExecBuffer)

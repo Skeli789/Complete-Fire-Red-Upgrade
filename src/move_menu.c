@@ -696,6 +696,14 @@ static void MoveSelectionDisplayMoveType(void)
 				moveResult = moveInfo->moveResults[GetBattlerPosition(FOE(gActiveBattler))][gMoveSelectionCursor[gActiveBattler]];
 			else if (gBattleBankFunc[gActiveBattler] == (u32) HandleInputChooseTarget)
 				moveResult = moveInfo->moveResults[GetBattlerPosition(gMultiUsePlayerCursor)][gMoveSelectionCursor[gActiveBattler]];
+			else if (CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, gActiveBattler, FOE(gActiveBattler)) <= 1) //Only 1 enemy left
+			{
+				u8 bankDef = FOE(gActiveBattler);
+				if (!BATTLER_ALIVE(bankDef))
+					bankDef = PARTNER(bankDef);
+
+				moveResult = moveInfo->moveResults[GetBattlerPosition(bankDef)][gMoveSelectionCursor[gActiveBattler]];
+			}
 
 			if (moveResult & MOVE_RESULT_SUPER_EFFECTIVE)
 			{

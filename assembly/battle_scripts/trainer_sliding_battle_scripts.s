@@ -14,10 +14,10 @@ trainer_sliding_battle_scripts.s
 
 BattleScript_TrainerSlideMsgRet:
 	handletrainerslidemsg BANK_SCRIPTING 0
-	trainerslidein 0x1
+	callasm TrainerSlideInScriptingBank
 	printstring 0x184
 	waitstateatk
-	trainerslideout 0x1
+	callasm TrainerSlideOutScriptingBank
 	handletrainerslidemsg BANK_SCRIPTING 1
 	waitstateatk
 	return

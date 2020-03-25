@@ -723,7 +723,7 @@ You've got good skills. You tried\nhard, too. Excellent!
 No, no, this won't do at all.\nUp on your feet. Never give up!
 
 #org @sFrontierText_Acetrainer_PreBattle_2
-Why get all intellectual about\nthings? If it's fun, why question\lit?
+Why get all intellectual about\nthings?\pIf it's fun, why question it?
 
 #org @sFrontierText_Acetrainer_PlayerWin_2
 So I lost! If it's fun, it's cool!
@@ -834,10 +834,10 @@ I love the sea!
 I'm a girl in love with her inner\ntube! Nice to meet you!
 
 #org @sFrontierText_Tuber_PlayerWin_5
-Good-bye!\nI'm a girl in love with her inner\ltube!
+Good-bye!\pI'm a girl in love with her inner\ntube!
 
 #org @sFrontierText_Tuber_PlayerLose_5
-Thank you!\nI'm a girl in love with her inner\ltube!
+Thank you!\pI'm a girl in love with her inner\ntube!
 
 #org @sFrontierText_Tuber_PreBattle_6
 It's not like I can't swim.\nI just like my inner tube.
@@ -1218,7 +1218,7 @@ So I lost! I can still run great\nmarathons!
 My buff physique makes for easy\nwins!
 
 #org @sFrontierText_Jogger_PreBattle_3
-I'll run on the spot while\nbattling for the good of my\lhealth.
+I'll run on the spot while battling\nfor the good of my health.
 
 #org @sFrontierText_Jogger_PlayerWin_3
 Gasp! My ankle!\nI rolled my ankle!

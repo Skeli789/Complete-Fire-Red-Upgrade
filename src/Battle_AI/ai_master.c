@@ -2373,7 +2373,7 @@ static void UpdateBestDoublesKillingMoves(void)
 		{
 			for (bankDef = 0; bankDef < gBattlersCount; ++bankDef)
 			{
-				if (bankAtk == bankDef || bankDef == PARTNER(bankAtk))
+				if (bankAtk == bankDef || bankDef == PARTNER(bankAtk) || !BATTLER_ALIVE(bankDef))
 					continue; //Don't bother calculating for these Pokemon. Never used
 
 				UpdateBestDoubleKillingMoveScore(bankAtk, bankDef, PARTNER(bankAtk), PARTNER(bankDef), gNewBS->ai.bestDoublesKillingScores[bankAtk][bankDef], &gNewBS->ai.bestDoublesKillingMoves[bankAtk][bankDef]);
