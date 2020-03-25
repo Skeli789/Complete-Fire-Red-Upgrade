@@ -18262,8 +18262,11 @@ RESET_FROM_GREEN_SCREEN:
 	launchtask AnimTask_AllBanksInvisible 0xA 0x0
 	waitanimation
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ALL_BANKS 0x2 0x0 0x0 0x33ED @Everything from green
-	call UNSET_SCROLLING_BG
+	loaddefaultBG
+	waitbgfadeout
+	setarg 0x7 0xffff
 	launchtask AnimTask_AllBanksVisible 0xA 0x0
+	waitbgfadein
 	waitanimation
 	pause 0x5
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0x0 0x33ED
@@ -18775,8 +18778,11 @@ SZS_FINISH_BG:
 	pokespritefromBG side_target
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x5 0x7 0x0 0x7e80
 	waitanimation
-	call UNSET_SCROLLING_BG
+	loaddefaultBG
+	waitbgfadeout
+	setarg 0x7 0xffff
 	launchtask AnimTask_AllBanksVisible 0xA 0x0
+	waitbgfadein
 	waitanimation
 	endanimation
 
@@ -22133,8 +22139,11 @@ RESET_FROM_WHITE_SCREEN:
 	launchtask AnimTask_AllBanksInvisible 0xA 0x0
 	waitanimation
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ALL_BANKS 0x2 0x0 0x0 0x7FFF @everything from white
-	call UNSET_SCROLLING_BG
+	loaddefaultBG
+	waitbgfadeout
+	setarg 0x7 0xffff
 	launchtask AnimTask_AllBanksVisible 0xA 0x0
+	waitbgfadein
 	waitanimation
 	pause 0x5
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x0 0x0 0x0 0x7fff
@@ -22313,13 +22322,11 @@ ANIM_SEARING_SUNRAZE_SMASH:
 	loadBG1 BG_COSMIC
 	waitbgfadeout
 	launchtask AnimTask_scroll_background 0x5 0x4 0xf700 0x0 0x1 0xffff
+	launchtask 0x8099981 0x2 0x4 0x1 0x0 bank_target 0x1 @ fix tgt rotation
+	makebankinvisible bank_target
 	waitbgfadein
-	launchtask 0x8099981 0x2 0x4 0x1 0x0 bank_target 0x1	@ fix tgt rotation
-	waitanimation
-	waitanimation
 	makebankvisible bank_attacker
 	makebankvisible bank_target
-	waitanimation
 	loadparticle ANIM_TAG_VERTICAL_HEX @red
 	loadparticle ANIM_TAG_CIRCLE_OF_LIGHT @charge
 	loadparticle ANIM_TAG_SMALL_EMBER @fire
@@ -22488,10 +22495,11 @@ RESET_FROM_RED_SCREEN:
 	launchtask AnimTask_AllBanksInvisible 0xA 0x0
 	waitanimation
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ALL_BANKS 0x2 0x0 0x0 0x1B @Everything from red
-	call UNSET_SCROLLING_BG
+	loaddefaultBG
+	waitbgfadeout
+	setarg 0x7 0xffff
 	launchtask AnimTask_AllBanksVisible 0xA 0x0
-	waitanimation
-	pause 0x5
+	waitbgfadein
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x0 0x0 0x0 0x33ED
 	waitanimation
 	return
@@ -22573,10 +22581,9 @@ MOONRAZE_ON_OPPONENT:
 MOONRAZE_ON_PLAYER:
 	launchtask AnimTask_scroll_background 0x5 0x4 0x200 0xfd00 0x1 0xffff
 FINISH_MOONRAZE:
+	launchtask 0x8099981 0x2 0x4 0x1 0x0 bank_target 0x1 @ fix tgt rotation
+	makebankinvisible bank_target
 	waitbgfadein
-	launchtask 0x8099981 0x2 0x4 0x1 0x0 bank_target 0x1	@ fix tgt rotation
-	pause 0x10
-	waitanimation
 	makebankvisible bank_attacker
 	pause 0x2
 	makebankvisible bank_target
