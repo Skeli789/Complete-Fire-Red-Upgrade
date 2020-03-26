@@ -395,7 +395,7 @@ bool8 StatsMaxed(u8 bank)
 
 bool8 MainStatsMaxed(u8 bank)
 {
-	for (u8 i = STAT_STAGE_ATK; i < STAT_ACC; ++i)
+	for (u8 i = STAT_STAGE_ATK; i <= STAT_SPDEF; ++i)
 	{
 		if (STAT_STAGE(bank, i) < STAT_STAGE_MAX)
 			return FALSE;
@@ -416,7 +416,7 @@ bool8 StatsMinned(u8 bank)
 
 bool8 MainStatsMinned(u8 bank)
 {
-	for (u8 i = STAT_STAGE_ATK; i < STAT_ACC; ++i)
+	for (u8 i = STAT_STAGE_ATK; i <= STAT_SPDEF; ++i)
 	{
 		if (STAT_STAGE(bank, i) > 0)
 			return FALSE;

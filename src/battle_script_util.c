@@ -1613,11 +1613,6 @@ void HandleForfeitYesNoBox(void)
 	gBattlescriptCurrInstr -= 5;
 }
 
-void BadDreamsHurtFunc(void)
-{
-	gBattleMoveDamage = MathMax(1, gBattleMons[gBankTarget].maxHP / 8);
-}
-
 void RestoreBanksFromSynchronize(void)
 {
 	gBankAttacker = gNewBS->backupSynchronizeBanks[0];
@@ -2096,4 +2091,10 @@ void FailClangorousSoulIfLowHP(void)
 {
 	if (gBattleMons[gBankAttacker].hp <= gBattleMons[gBankAttacker].maxHP / 3)
 		gBattlescriptCurrInstr = BattleScript_ButItFailed - 5;
+}
+
+void LoadMoodyStatToLower(void)
+{
+	gBattleScripting.animArg1 = STAT_ANIM_MINUS1 + gBattleCommunication[MOVE_EFFECT_BYTE] - 1;
+	gBattleScripting.statChanger = gBattleCommunication[MOVE_EFFECT_BYTE] | DECREASE_1; //Stored here for safety
 }

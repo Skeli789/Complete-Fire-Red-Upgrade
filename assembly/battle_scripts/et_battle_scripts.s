@@ -563,6 +563,7 @@ BattleScript_FutureAttackMiss:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
+@;Affected by Mist and Abilities
 BattleScript_OctolockTurnDmg:
 	playanimation BANK_ATTACKER, ANIM_TURN_TRAP, ANIM_ARG_1
 	setword BATTLE_STRING_LOADER gText_SqueezedByOctolock
@@ -574,7 +575,7 @@ BattleScript_OctolockTurnDmg:
 BattleScript_OctolockTurnDmg_Def:
 	playstatchangeanimation BANK_ATTACKER, STAT_ANIM_DEF, STAT_ANIM_DOWN
 	setstatchanger STAT_DEF | DECREASE_1
-	statbuffchange STAT_ATTACKER | STAT_BS_PTR BattleScript_OctolockTurnDmgPrintDefMsg
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_NOT_PROTECT_AFFECTED BattleScript_OctolockTurnDmgPrintDefMsg
 BattleScript_OctolockTurnDmgPrintDefMsg:
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x3 BattleScript_OctolockTurnDmg_SpDef
 	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x4 BattleScript_OctolockTurnDmgEnd
@@ -584,7 +585,7 @@ BattleScript_OctolockTurnDmgPrintDefMsg:
 BattleScript_OctolockTurnDmg_SpDef:
 	playstatchangeanimation BANK_ATTACKER, STAT_ANIM_SPDEF, STAT_ANIM_DOWN
 	setstatchanger STAT_SPDEF | DECREASE_1
-	statbuffchange STAT_ATTACKER | STAT_BS_PTR BattleScript_OctolockTurnDmgPrintSpDefMsg
+	statbuffchange STAT_ATTACKER | STAT_BS_PTR | STAT_NOT_PROTECT_AFFECTED BattleScript_OctolockTurnDmgPrintSpDefMsg
 BattleScript_OctolockTurnDmgPrintSpDefMsg:
 	jumpifbyte GREATERTHAN MULTISTRING_CHOOSER 0x2 BattleScript_OctolockTurnDmgEnd
 	printfromtable 0x83FE588

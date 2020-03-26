@@ -1317,44 +1317,47 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 					u8 statToRaise = 0;
 					u8 statToLower = 0;
 					const u8* scriptPtr;
+
 					if (MainStatsMinned(bank))
 					{	//Raise One Stat
-						statToRaise = umodsi(Random(), BATTLE_STATS_NO-3) + 1;
+						statToRaise = RandRange(STAT_ATK, STAT_SPDEF + 1); //Attack, Defense, Sp. Atk, Sp.Def, Speed
 						gBattleScripting.statChanger = statToRaise | INCREASE_2;
 						scriptPtr = BattleScript_MoodySingleStat;
 					}
 					else if (MainStatsMaxed(bank))
 					{	//Lower One Stat
-						statToLower = umodsi(Random(), BATTLE_STATS_NO-3) + 1;
+						statToLower = RandRange(STAT_ATK, STAT_SPDEF + 1); //Attack, Defense, Sp. Atk, Sp.Def, Speed
 						gBattleScripting.statChanger = statToLower | DECREASE_1;
 						scriptPtr = BattleScript_MoodySingleStat;
 					}
 					else
 					{	//Raise One Stat and Lower Another
 						if (!(AllMainStatsButOneAreMinned(bank)))
-						{ //At least two non min stats
-							do {
-								statToRaise = umodsi(Random(), BATTLE_STATS_NO-3) + 1;
-							} while (gBattleMons[bank].statStages[statToRaise - 1] == 12);
-
+						{	//At least two non min stats
+							do
+							{
+								statToRaise = RandRange(STAT_ATK, STAT_SPDEF + 1); //Attack, Defense, Sp. Atk, Sp.Def, Speed
+							} while (STAT_STAGE(bank, statToRaise) == STAT_STAGE_MAX);
 						}
 						else
-						{ //If all stats but one are at min, then raise one of the min ones so the
-						  //non min one canned be lowered.
-							do {
-								statToRaise = umodsi(Random(), BATTLE_STATS_NO-3) + 1;
-							} while (gBattleMons[bank].statStages[statToRaise - 1] != 0);
+						{	//If all stats but one are at min, then raise one of the min ones so the
+							//non min one canned be lowered.
+							do
+							{
+								statToRaise = RandRange(STAT_ATK, STAT_SPDEF + 1); //Attack, Defense, Sp. Atk, Sp.Def, Speed
+							} while (STAT_STAGE(bank, statToRaise) != 0);
 						}
 
-						do {
-							statToLower = umodsi(Random(), BATTLE_STATS_NO-3) + 1;
-						} while (statToLower == statToRaise ||
-						 gBattleMons[bank].statStages[statToLower - 1] == 0);
+						do
+						{
+							statToLower = RandRange(STAT_ATK, STAT_SPDEF + 1); //Attack, Defense, Sp. Atk, Sp.Def, Speed
+						} while (statToLower == statToRaise || STAT_STAGE(bank, statToLower) == 0);
 
 						gBattleScripting.statChanger = statToRaise | INCREASE_2;
-						gSeedHelper[0] = statToLower;
+						gBattleCommunication[MOVE_EFFECT_BYTE] = statToLower; //Save stat to lower in move effect byte
 						scriptPtr = BattleScript_MoodyRegular;
 					}
+
 					BattleScriptPushCursorAndCallback(scriptPtr);
 					effect++;
 					break;
@@ -2429,16 +2432,15 @@ static bool8 ImmunityAbilityCheck(u8 bank, u32 status, u8* string)
 
 static bool8 AllMainStatsButOneAreMinned(bank_t bank)
 {
-	u8 counter = 0;
-	for (u8 i = 0; i < BATTLE_STATS_NO-3; ++i) //No Acc of Evsn
+	for (u8 i = STAT_ATK, counter = 0; i <= STAT_SPDEF; ++i) //No Acc of Evsn
 	{
-		if (gBattleMons[bank].statStages[i] > 0)
+		if (STAT_STAGE(bank, i) > 0)
 		{
-			++counter;
-			if (counter > 1)
+			if (++counter > 1)
 				return FALSE;
 		}
 	}
+
 	return TRUE;
 }
 

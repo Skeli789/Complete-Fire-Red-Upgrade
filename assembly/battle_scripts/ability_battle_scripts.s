@@ -417,9 +417,9 @@ BattleScript_Healer:
 BattleScript_MoodySingleStat:
 	call BattleScript_AbilityPopUp
 MoodySkipString:	
-	statbuffchange STAT_ATTACKER MoodyStatRaiseEnd
+	statbuffchange STAT_ATTACKER | STAT_NOT_PROTECT_AFFECTED | STAT_CERTAIN MoodyStatRaiseEnd
 	setgraphicalstatchangevalues
-	playanimation BANK_ATTACKER 0x1 0x2023FD4
+	playanimation BANK_ATTACKER ANIM_STAT_BUFF ANIM_ARG_1
 	printfromtable 0x83FE57C
 	waitmessage DELAY_1SECOND
 MoodyStatRaiseEnd:
@@ -428,15 +428,14 @@ MoodyStatRaiseEnd:
 
 BattleScript_MoodyRegular:
 	call BattleScript_AbilityPopUp
-	statbuffchange STAT_ATTACKER MoodyRegularP2
+	statbuffchange STAT_ATTACKER | STAT_NOT_PROTECT_AFFECTED | STAT_CERTAIN MoodyRegularP2
 	setgraphicalstatchangevalues
-	playanimation BANK_ATTACKER 0x1 0x2023FD4
+	playanimation BANK_ATTACKER ANIM_STAT_BUFF ANIM_ARG_1
 	printfromtable 0x83FE57C
 	waitmessage DELAY_1SECOND
 	
 MoodyRegularP2:
 	callasm LoadMoodyStatToLower
-	setbyte SEED_HELPER 0x0
 	goto MoodySkipString
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -481,7 +480,7 @@ BadDreams_callhurt:
 
 BadDreams_hurt:
 	jumpifability BANK_TARGET ABILITY_MAGICGUARD BadDreams_return
-	callasm BadDreamsHurtFunc
+	setdamagetobankhealthfraction BANK_TARGET 8 0x0 @;1/8 of base HP
 	orword HIT_MARKER HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_NON_ATTACK_DMG
 	graphicalhpupdate BANK_TARGET
 	datahpupdate BANK_TARGET
@@ -1231,18 +1230,3 @@ DisguiseBustedString: .byte 0xFD, 0x10, 0xB4, 0xE7, 0x00, 0xD8, 0xDD, 0xE7, 0xDB
 ReceiverString: .byte 0xFD, 0x13, 0x00, 0xE8, 0xE3, 0xE3, 0xDF, 0x00, 0xE3, 0xEA, 0xD9, 0xE6, 0x00, 0xFE, 0xFD, 0x11, 0xB4, 0xE7, 0x00, 0xFD, 0x1A, 0xAB, 0xFF
 SymbiosisString: .byte 0xFD, 0x13, 0x00, 0xE7, 0xDC, 0xD5, 0xE6, 0xD9, 0xD8, 0x00, 0xDD, 0xE8, 0xE7, 0xFE, 0xFD, 0x16, 0x00, 0xEB, 0xDD, 0xE8, 0xDC, 0x00, 0xFD, 0x11, 0xFA, 0xE9, 0xE7, 0xDD, 0xE2, 0xDB, 0x00, 0xFD, 0x1A, 0xAB, 0xFF
 DefiantString: .byte 0xFD, 0x13, 0xB4, 0xE7, 0x00, 0xFD, 0x1A, 0xFE, 0xE7, 0xDC, 0xD5, 0xE6, 0xE4, 0xE0, 0xED, 0x00, 0xE6, 0xD5, 0xDD, 0xE7, 0xD9, 0xD8, 0x00, 0xDD, 0xE8, 0xE7, 0x00, 0xFD, 0x00, 0xAB, 0xFF
-
-.align 2
-LoadMoodyStatToLower:
-	ldr r0, =SEED_HELPER
-	ldrb r0, [r0]
-	ldr r1, =0x2023FD4
-	mov r2, #0x15
-	add r2, r0
-	strb r2, [r1]
-	
-	ldr r1, =STAT_CHANGE_BYTE
-	mov r2, #0x90
-	orr r2, r0
-	strb r2, [r1]
-	bx lr

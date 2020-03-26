@@ -190,8 +190,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			{
 				gProtectStructs[gBankTarget].kingsshield_damage = 0;
 
-				if (gBattleMons[gBankAttacker].hp
-				&&  STAT_CAN_FALL(gBankAttacker, STAT_ATK))
+				if (BATTLER_ALIVE(gBankAttacker) && STAT_CAN_FALL(gBankAttacker, STAT_ATK))
 				{
 					BattleScriptPushCursor();
 					gBattlescriptCurrInstr = BattleScript_KingsShield;
@@ -199,23 +198,26 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 					break;
 				}
 			}
+
 			if (gProtectStructs[gBankTarget].spikyshield_damage)
 			{
 				gProtectStructs[gBankTarget].spikyshield_damage = 0;
-				if (gBattleMons[gBankAttacker].hp && ABILITY(gBankAttacker) != ABILITY_MAGICGUARD)
+
+				if (BATTLER_ALIVE(gBankAttacker) && ABILITY(gBankAttacker) != ABILITY_MAGICGUARD)
 				{
-					gBattleMoveDamage = MathMax(1, gBattleMons[gBankAttacker].maxHP / 8);
+					gBattleMoveDamage = MathMax(1, GetBaseMaxHP(gBankAttacker) / 8);
 					BattleScriptPushCursor();
 					gBattlescriptCurrInstr = BattleScript_SpikyShield;
-					effect = 1;
+					effect = TRUE;
+					break;
 				}
-				break;
 			}
+
 			if (gProtectStructs[gBankTarget].banefulbunker_damage)
 			{
 				gProtectStructs[gBankTarget].banefulbunker_damage = 0;
-				if (gBattleMons[gBankAttacker].hp
-				&&  CanBePoisoned(gBankAttacker, gBankTarget, TRUE)) //Target poisons Attacker
+
+				if (BATTLER_ALIVE(gBankAttacker) && CanBePoisoned(gBankAttacker, gBankTarget, TRUE)) //Target poisons Attacker
 				{
 					gBattleMons[gBankAttacker].status1 = STATUS_POISON;
 					gEffectBank = gActiveBattler = gBankAttacker;
@@ -224,17 +226,16 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 
 					BattleScriptPushCursor();
 					gBattlescriptCurrInstr = BattleScript_BanefulBunker;
-					effect = 1;
+					effect = TRUE;
+					break;
 				}
-				effect = 1;
-				break;
 			}
+
 			if (gProtectStructs[gBankTarget].obstructDamage)
 			{
 				gProtectStructs[gBankTarget].obstructDamage = FALSE;
 
-				if (BATTLER_ALIVE(gBankAttacker)
-				&&  STAT_CAN_FALL(gBankAttacker, STAT_DEF))
+				if (BATTLER_ALIVE(gBankAttacker) && STAT_CAN_FALL(gBankAttacker, STAT_DEF))
 				{
 					BattleScriptPushCursor();
 					gBattlescriptCurrInstr = BattleScript_ObstructStatDecrement;
@@ -242,6 +243,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 					break;
 				}
 			}
+
 			gBattleScripting.atk49_state++;
 			break;
 
