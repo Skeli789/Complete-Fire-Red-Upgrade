@@ -1950,7 +1950,13 @@ void FailIfTrappedByNoRetreat(void)
 void FinishTurn(void)
 {
 	gCurrentActionFuncId = ACTION_FINISHED;
-	gCurrentTurnActionNumber = gBattlersCount - 1;
+	gCurrentTurnActionNumber = gBattlersCount; //Taken from Pokeem, not a mistake
+}
+
+void ClearPlayerRechargeMultipleTurns(void)
+{
+	gBattleMons[GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)].status2 &= ~(STATUS2_RECHARGE | STATUS2_MULTIPLETURNS);
+	gBattleMons[GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT)].status2 &= ~(STATUS2_RECHARGE | STATUS2_MULTIPLETURNS);
 }
 
 void SetScriptingBankToItsPartner(void)

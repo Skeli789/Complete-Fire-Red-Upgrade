@@ -1152,7 +1152,7 @@ const struct MultiRaidTrainer gRaidPartners[] =
 	},
 	{
 		.owNum = EVENT_OBJ_GFX_JAX,
-		.trainerClass = CLASS_CHAMPION,
+		.trainerClass = CLASS_PKMN_TRAINER_2,//CLASS_CHAMPION,
 		.backSpriteId = TRAINER_BACK_PIC_JAX,
 		.gender = MALE,
 		.otId = 0x95746426,

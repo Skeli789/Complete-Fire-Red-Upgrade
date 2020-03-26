@@ -32,6 +32,7 @@ BattleScript_FaintRaidAttacker:
 	pokemonfaintcry BANK_ATTACKER
 	playanimation BANK_ATTACKER ANIM_POWDER_EXPLOSION 0x0
 	cleareffectsonfaint BANK_ATTACKER
+	callasm ClearPlayerRechargeMultipleTurns @;So the game doesn't lock
 	callasm FinishTurn
 	return
 
@@ -49,6 +50,7 @@ BattleScript_FaintRaidTarget:
 	pokemonfaintcry BANK_TARGET
 	playanimation BANK_TARGET ANIM_POWDER_EXPLOSION 0x0
 	cleareffectsonfaint BANK_TARGET
+	callasm ClearPlayerRechargeMultipleTurns @;So the game doesn't lock
 	callasm FinishTurn
 	return
 
@@ -67,6 +69,7 @@ BattleScript_FaintRaidScriptingBank:
 	pokemonfaintcry BANK_SCRIPTING
 	playanimation BANK_SCRIPTING ANIM_POWDER_EXPLOSION 0x0
 	cleareffectsonfaint BANK_SCRIPTING
+	callasm ClearPlayerRechargeMultipleTurns @;So the game doesn't lock
 	callasm FinishTurn
 	return
 
