@@ -132,6 +132,17 @@ void HealMon(struct Pokemon* mon)
 	SetMonData(mon, MON_DATA_STATUS, &none);
 }
 
+void SetMonPokedexFlags(struct Pokemon* mon)
+{
+	if (!GetMonData(mon, MON_DATA_IS_EGG, NULL))
+	{
+		u16 dexNum = SpeciesToNationalPokedexNum(GetMonData(mon, MON_DATA_SPECIES, NULL));
+		u32 personality = GetMonData(mon, MON_DATA_PERSONALITY, NULL);
+		GetSetPokedexFlag(dexNum, FLAG_SET_SEEN);
+		HandleSetPokedexFlag(dexNum, FLAG_SET_CAUGHT, personality);
+	}
+}
+
 u16 GetNationalPokedexCount(u8 caseID)
 {
 	u32 i;

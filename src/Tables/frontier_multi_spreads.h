@@ -813,7 +813,7 @@ const struct BattleTowerSpread gMultiLegendaryTowerSpread_Marlon[] =
 	},
 	{
 		.species = SPECIES_KYUREM_BLACK,
-		.nature = NATURE_HASTY,
+		.nature = NATURE_JOLLY,
 		.hpIv = 31,
 		.atkIv = 31,
 		.defIv = 31,
@@ -824,10 +824,10 @@ const struct BattleTowerSpread gMultiLegendaryTowerSpread_Marlon[] =
 		.spAtkEv = 144,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_TERAVOLT
-		.item = ITEM_ICIUM_Z,
+		.item = ITEM_GROUNDIUM_Z,
 		.moves =
 		{
-			MOVE_FREEZESHOCK,
+			MOVE_ICICLESPEAR,
 			MOVE_FUSIONBOLT,
 			MOVE_EARTHPOWER,
 			MOVE_PROTECT,

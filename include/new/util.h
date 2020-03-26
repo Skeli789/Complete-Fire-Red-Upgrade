@@ -21,6 +21,7 @@ bool8 CheckTableForSpecies(u16 species, const u16 table[]);
 bool8 CheckTableForItem(u16 item, const u16 table[]);
 u8 ViableMonCount(struct Pokemon* party);
 void HealMon(struct Pokemon* mon);
+void SetMonPokedexFlags(struct Pokemon* mon);
 u16 GetNationalPokedexCount(u8 caseID);
 bool8 CanEvolve(struct Pokemon* mon);
 bool8 CouldHaveEvolvedViaLevelUp(struct Pokemon* mon);

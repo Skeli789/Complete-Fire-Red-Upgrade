@@ -19305,9 +19305,9 @@ const struct BattleTowerSpread gLegendaryTowerSpread_Candice[] =
 		.moves =
 		{
 			MOVE_OUTRAGE,
-			MOVE_FREEZESHOCK,
+			MOVE_ICICLESPEAR,
 			MOVE_FUSIONBOLT,
-			MOVE_STONEEDGE,
+			MOVE_DRAGONDANCE,
 		},
 		.ball = BALL_TYPE_GREAT_BALL,
 		.forSingles = TRUE,

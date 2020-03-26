@@ -464,7 +464,10 @@ u16 GiveRandomFrontierMonByTier(u8 side, u8 tier, u16 spreadType)
 	CreateFrontierMon(&mon, level, spread, 0, 0, 0, TRUE);
 
 	if (side == B_SIDE_PLAYER)
+	{
+		SetMonPokedexFlags(&mon);
 		return GiveMonToPlayer(&mon);
+	}
 	else
 	{
 		gEnemyParty[0] = mon;
@@ -478,6 +481,7 @@ u16 sp06A_GivePlayerFrontierMonByLoadedSpread(void)
 	struct BattleTowerSpread* spread = (struct BattleTowerSpread*) gLoadPointer;
 
 	CreateFrontierMon(&mon, Var8000, spread, 0, 0, 0, TRUE);
+	SetMonPokedexFlags(&mon);
 	return GiveMonToPlayer(&mon);
 }
 
@@ -2461,6 +2465,7 @@ static u16 GivePlayerFrontierMonGivenSpecies(const u16 species, const struct Bat
 
 	spread = TryAdjustSpreadForSpecies(spread); //Update Arceus
 	CreateFrontierMon(&mon, 50, spread, 0, 0, 0, TRUE);
+	SetMonPokedexFlags(&mon);
 	return GiveMonToPlayer(&mon);
 }
 
@@ -3139,7 +3144,6 @@ u8 GetOpenWorldBadgeCount(void)
 //unused1 is used to hook in so don't use it for anything
 u8 ScriptGiveMon(u16 species, u8 level, u16 item, unusedArg u32 unused1, u32 customGivePokemon, u8 ballType)
 {
-	u16 nationalDexNum;
 	u8 sentToPc;
 	struct Pokemon mon;
 
@@ -3184,13 +3188,11 @@ u8 ScriptGiveMon(u16 species, u8 level, u16 item, unusedArg u32 unused1, u32 cus
 	#endif
 
 	sentToPc = GiveMonToPlayer(&mon);
-	nationalDexNum = SpeciesToNationalPokedexNum(species);
 
 	switch(sentToPc) {
 		case 0:
 		case 1:
-			GetSetPokedexFlag(nationalDexNum, FLAG_SET_SEEN);
-			GetSetPokedexFlag(nationalDexNum, FLAG_SET_CAUGHT);
+			SetMonPokedexFlags(&mon);
 			break;
 	}
 
