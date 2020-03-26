@@ -547,7 +547,7 @@ u8 CheckDiscIsTmHm(struct Sprite* disc, u16 itemId)
 	else
 		StartSpriteAnim(disc, 0);
 	#else
-	if (itemId <= ITEM_TM50)
+	if (itemId <= ITEM_TM50_OVERHEAT)
 		StartSpriteAnim(disc, 0);
 	else
 		StartSpriteAnim(disc, 1);
@@ -581,7 +581,7 @@ bool8 CheckReusableTMs(u16 item)
 		else
 			return FALSE;
 	#else
-		if (item > ITEM_TM50)
+		if (item > ITEM_TM50_OVERHEAT)
 			return TRUE;
 		else
 			return FALSE;
