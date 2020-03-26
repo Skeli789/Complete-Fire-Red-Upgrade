@@ -1735,7 +1735,7 @@ static void SpriteCB_FallingObjectStep(struct Sprite *sprite)
 			sprite->data[1] = 0;
 			sprite->invisible ^= 1;
 			if (++sprite->data[2] == 10)
-				DestroyAnimSprite(sprite);
+				DestroySpriteAndMatrix(sprite);
 		}
 		break;
 	}
