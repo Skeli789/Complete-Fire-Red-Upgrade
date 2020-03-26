@@ -2125,7 +2125,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 //Old Exploding Check
 	#ifdef OLD_EXPLOSION_BOOST
 		if (move == MOVE_SELFDESTRUCT || move == MOVE_EXPLOSION)
-			defense /= 2;
+			data->defense /= 2;
 	#endif
 
 //Stat Buffs - Attacker
