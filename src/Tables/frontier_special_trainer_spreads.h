@@ -19538,10 +19538,10 @@ const struct BattleTowerSpread gLegendaryTowerSpread_Candice[] =
 		.item = ITEM_TOXIC_ORB,
 		.moves =
 		{
-			MOVE_ICICLESPEAR,
+			MOVE_ICICLECRASH,
 			MOVE_FACADE,
-			MOVE_ASTONISH,
 			MOVE_SHEERCOLD,
+			MOVE_AURORAVEIL,
 		},
 		.ball = BALL_TYPE_GREAT_BALL,
 		.forSingles = TRUE,
@@ -19566,7 +19566,7 @@ const struct BattleTowerSpread gLegendaryTowerSpread_Candice[] =
 		{
 			MOVE_ICEBEAM,
 			MOVE_TOXIC,
-			MOVE_ATTRACT,
+			MOVE_AURORAVEIL,
 			MOVE_PROTECT,
 		},
 		.ball = BALL_TYPE_GREAT_BALL,
@@ -19592,7 +19592,7 @@ const struct BattleTowerSpread gLegendaryTowerSpread_Candice[] =
 		{
 			MOVE_BLIZZARD,
 			MOVE_TAUNT,
-			MOVE_IMPRISON,
+			MOVE_AURORAVEIL,
 			MOVE_PROTECT,
 		},
 		.ball = BALL_TYPE_GREAT_BALL,
@@ -19779,7 +19779,7 @@ const struct BattleTowerSpread gLittleCupTowerSpread_Candice[] =
 		.item = ITEM_LIFE_ORB,
 		.moves =
 		{
-			MOVE_ICEFANG,
+			MOVE_ICICLECRASH,
 			MOVE_CRUNCH,
 			MOVE_DOUBLEEDGE,
 			MOVE_ROLLOUT,
