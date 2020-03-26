@@ -56,7 +56,7 @@ void DoFormChange(u8 bank, u16 species, bool8 ReloadType, bool8 ReloadStats, boo
 	backup = mon->species;
 
 	gBattleMons[bank].species = species;
-	mon->species = species; //Needed so the right stats, types, and abilities can be loaded
+	SetMonData(mon, MON_DATA_SPECIES, &species); //Needed so the right stats, types, and abilities can be loaded
 
 	if (ReloadStats)
 	{
@@ -89,7 +89,7 @@ void DoFormChange(u8 bank, u16 species, bool8 ReloadType, bool8 ReloadStats, boo
 
 	gStatuses3[bank] &= ~(STATUS3_SWITCH_IN_ABILITY_DONE | STATUS3_ILLUSION); //A Pokemon undergoing form change can't be hidden under Illusion
 
-	mon->species = backup; //Backup species is written to by the form change handler
+	SetMonData(mon, MON_DATA_SPECIES, &backup); //Backup species is written to by the form change handler
 }
 
 //This function could have been much simpler if I didn't care about stupid people who
@@ -287,20 +287,20 @@ static bool8 IsMinior(u16 species)
 
 void HandleFormChange(void)
 {
-	pokemon_t* mon = GetBankPartyData(gActiveBattler);
+	struct Pokemon* mon = GetBankPartyData(gActiveBattler);
 	struct BattlePokemon* battleMon = (struct BattlePokemon*) &gBattleBufferA[gActiveBattler][3];
 
-	mon->backupSpecies = mon->species;
-	mon->species = battleMon->species;
+	mon->backupSpecies = GetMonData(mon, MON_DATA_SPECIES, NULL);
+	SetMonData(mon, MON_DATA_SPECIES, &battleMon->species);
 
-	mon->attack = battleMon->attack;
-	mon->defense = battleMon->defense;
-	mon->speed = battleMon->speed;
-	mon->spAttack = battleMon->spAttack;
-	mon->spDefense = battleMon->spDefense;
+	SetMonData(mon, MON_DATA_ATK, &battleMon->attack);
+	SetMonData(mon, MON_DATA_DEF, &battleMon->defense);
+	SetMonData(mon, MON_DATA_SPEED, &battleMon->speed);
+	SetMonData(mon, MON_DATA_SPATK, &battleMon->spAttack);
+	SetMonData(mon, MON_DATA_SPDEF, &battleMon->spDefense);
 
-	mon->hp = battleMon->hp;
-	mon->maxHP = battleMon->maxHP;
+	SetMonData(mon, MON_DATA_HP, &battleMon->hp);
+	SetMonData(mon, MON_DATA_MAX_HP, &battleMon->maxHP);
 }
 
 //Overworld Form Change Functions////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -493,7 +493,7 @@ void HoopaShayminPCRevertCheck(struct Pokemon* mon)
 			targetSpecies = SPECIES_HOOPA;
 			break;
 		#endif
-		
+
 		#if (defined SHAYMIN_CHANGE_IN_PC && defined SPECIES_SHAYMIN_SKY && defined SPECIES_SHAYMIN)
 		case SPECIES_SHAYMIN_SKY:
 			targetSpecies = SPECIES_SHAYMIN;

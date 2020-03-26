@@ -89,14 +89,14 @@ void atk53_trainerslidein(void)
 
 void TrainerSlideInScriptingBank(void)
 {
-	gActiveBattler = gBattleScripting->bank;
+	gActiveBattler = gBattleScripting.bank;
 	EmitTrainerSlide(0);
 	MarkBufferBankForExecution(gActiveBattler);
 }
 
 void TrainerSlideOutScriptingBank(void)
 {
-	gActiveBattler = gBattleScripting->bank;
+	gActiveBattler = gBattleScripting.bank;
 	EmitTrainerSlideBack(0);
 	MarkBufferBankForExecution(gActiveBattler);
 }
@@ -176,7 +176,7 @@ bool8 ShouldDoTrainerSlide(u8 bank, u16 trainerId, u8 caseId)
 	{
 		if (trainerId == sTrainerSlides[i].trainerId)
 		{
-			gBattleScripting->bank = bank;
+			gBattleScripting.bank = bank;
 			switch (caseId) {
 				case TRAINER_SLIDE_LAST_SWITCHIN:
 					if (sTrainerSlides[i].msgLastSwitchIn != NULL && GetEnemyMonCount(TRUE) == 1)
@@ -218,10 +218,10 @@ void TryDoDynamaxTrainerSlide(void)
 	u32 i;
 	u16 trainerId;
 
-	if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER) || SIDE(gBattleScripting->bank) != B_SIDE_OPPONENT)
+	if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER) || SIDE(gBattleScripting.bank) != B_SIDE_OPPONENT)
 		return;
 
-	if (IsTwoOpponentBattle() && GetBattlerPosition(gBattleScripting->bank) == B_POSITION_OPPONENT_RIGHT)
+	if (IsTwoOpponentBattle() && GetBattlerPosition(gBattleScripting.bank) == B_POSITION_OPPONENT_RIGHT)
 		trainerId = gTrainerBattleOpponent_B;
 	else
 		trainerId = gTrainerBattleOpponent_A;
@@ -250,10 +250,10 @@ void CheckLastMonLowHPSlide(void)
 void atkFF1C_handletrainerslidemsg(void)
 {
 	gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
-	
+
 	if (IS_DOUBLE_BATTLE)
 		gActiveBattler &= BIT_SIDE; //Always mon on enemy left in doubles
-	
+
 	u8 caseId = gBattlescriptCurrInstr[2];
 
 	switch(caseId) {
@@ -277,7 +277,7 @@ void atkFF1D_trytrainerslidefirstdownmsg(void)
 
 	gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
 	pos = GetBattlerPosition(gActiveBattler);
-	
+
 	if (IsTwoOpponentBattle() && pos == B_POSITION_OPPONENT_RIGHT)
 		shouldDo = ShouldDoTrainerSlide(gActiveBattler, gTrainerBattleOpponent_B, TRAINER_SLIDE_FIRST_DOWN);
 	else

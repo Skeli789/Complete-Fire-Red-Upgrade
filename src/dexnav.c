@@ -923,10 +923,10 @@ static void DexNavIconsVisionUpdate(u8 proximity, u8 searchLevel)
 
 	if (sDNavState->objIdAbility < MAX_SPRITES)
 		gSprites[sDNavState->objIdAbility].invisible = TRUE;
-	
+
 	if (sDNavState->objIdItem < MAX_SPRITES)
 		gSprites[sDNavState->objIdItem].invisible = TRUE;
-	
+
 	if (sDNavState->objIdPotential[0] < MAX_SPRITES)
 		gSprites[sDNavState->objIdPotential[0]].invisible = TRUE;
 
@@ -962,10 +962,10 @@ static void DexNavIconsVisionUpdate(u8 proximity, u8 searchLevel)
 		{
 			if (sDNavState->objIdPotential[0] < MAX_SPRITES)
 				gSprites[sDNavState->objIdPotential[0]].invisible = FALSE;
-			
+
 			if (sDNavState->objIdPotential[1] < MAX_SPRITES)
 				gSprites[sDNavState->objIdPotential[1]].invisible = FALSE;
-			
+
 			if (sDNavState->objIdPotential[2] < MAX_SPRITES)
 				gSprites[sDNavState->objIdPotential[2]].invisible = FALSE;
 		}
@@ -1146,12 +1146,12 @@ static u8 DexNavGenerateMonLevel(u16 species, u8 chainLevel, u8 environment)
 {
 	u8 levelBase, levelBonus;
 
-	levelBase = GetEncounterLevel(species, environment); 
+	levelBase = GetEncounterLevel(species, environment);
 	if (levelBase > MAX_LEVEL)
 		return 0;
 
 	levelBonus = chainLevel / 5;
-	
+
 	if (Random() % 100 < 4) //4% chance of having a +10 level
 		levelBonus += 10;
 
@@ -2081,7 +2081,7 @@ void sp0E2_IsDexNavCompleteHere(void)
 	const struct WildPokemonInfo* waterMonsInfo = LoadProperMonsData(WATER_MONS_HEADER);
 
 	gSpecialVar_LastResult = TRUE;
-	
+
 	if (landMonsInfo != NULL && !CapturedAllLandBasedPokemon())
 		gSpecialVar_LastResult = FALSE;
 	else if (waterMonsInfo != NULL && !CapturedAllWaterBasedPokemon())
@@ -2436,7 +2436,7 @@ static void DexNavGuiHandler(void)
 							// create value to store in a var
 							u16 varStore = (sDNavState->selectedArr << 15) | species;
 							VarSet(VAR_DEXNAV, varStore);
-							
+
 							#ifdef VAR_R_BUTTON_MODE
 							VarSet(VAR_R_BUTTON_MODE, OPTIONS_R_BUTTON_MODE_DEXNAV);
 							#endif

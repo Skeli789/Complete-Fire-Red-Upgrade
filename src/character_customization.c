@@ -360,7 +360,7 @@ void PlayerHandleDrawTrainerPic(void)
 	gSprites[gBattlerSpriteIds[gActiveBattler]].data[0] = -2;
 	gSprites[gBattlerSpriteIds[gActiveBattler]].callback = sub_8033EEC; //sub_805D7AC in Emerald
 
-	gBattleBankFunc[gActiveBattler] = (u32) sub_802F730;
+	gBattlerControllerFuncs[gActiveBattler] = sub_802F730;
 }
 
 void PlayerHandleTrainerSlide(void)
@@ -376,7 +376,7 @@ void PlayerHandleTrainerSlide(void)
 	gSprites[gBattlerSpriteIds[gActiveBattler]].data[0] = 2;
 	gSprites[gBattlerSpriteIds[gActiveBattler]].callback = sub_8033EEC;
 
-	gBattleBankFunc[gActiveBattler] = (u32) sub_802F768;
+	gBattlerControllerFuncs[gActiveBattler] = sub_802F768;
 }
 
 u16 GetBackspriteId(void)

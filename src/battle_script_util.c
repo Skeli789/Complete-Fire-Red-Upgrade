@@ -50,7 +50,7 @@ void SetAttackerPartner(void)
 
 bool8 CheckCraftyShield(u8 bank)
 {
-	if (gSideAffecting[SIDE(bank)] & SIDE_STATUS_CRAFTY_SHIELD)
+	if (gSideStatuses[SIDE(bank)] & SIDE_STATUS_CRAFTY_SHIELD)
 		return TRUE;
 
 	return FALSE;
@@ -71,7 +71,7 @@ void IncreaseNimbleCounter(void)
 void ModifyGrowthInSun(void)
 {
 	if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY && ITEM_EFFECT(gBankAttacker) != ITEM_EFFECT_UTILITY_UMBRELLA)
-		gBattleScripting->statChanger += INCREASE_1;
+		gBattleScripting.statChanger += INCREASE_1;
 }
 
 void AcupressureFunc(void)
@@ -201,7 +201,7 @@ void ToggleSpectralThiefByte(void)
 
 void CheeckPouchFunc(void)
 {
-	u8 bank = gBattleScripting->bank;
+	u8 bank = gBattleScripting.bank;
 	if (ABILITY(bank) == ABILITY_CHEEKPOUCH && !gNewBS->HealBlockTimers[bank]) { //Berry check should already be done
 		gBattleMoveDamage = MathMax(1, udivsi(gBattleMons[bank].maxHP, 3));
 		gBattleMoveDamage *= -1;
@@ -215,7 +215,7 @@ void MoldBreakerRemoveAbilitiesOnForceSwitchIn(void)
 {
 	u8 bank;
 	if (gForceSwitchHelper == 2)
-		bank = gBattleScripting->bank;
+		bank = gBattleScripting.bank;
 	else
 		bank = gBankAttacker;
 
@@ -312,10 +312,10 @@ void TryActivatePartnerSapSipper(void)
 	&& gBattleStruct->dynamicMoveType == TYPE_GRASS
 	&& STAT_CAN_RISE(PARTNER(gBankAttacker), STAT_STAGE_ATK))
 	{
-		gBattleScripting->bank = gBankTarget = PARTNER(gBankAttacker);
-		gBattleScripting->statChanger = INCREASE_1 | STAT_STAGE_ATK;
-		gBattleScripting->animArg1 = 0xE + STAT_STAGE_ATK;
-		gBattleScripting->animArg2 = 0;
+		gBattleScripting.bank = gBankTarget = PARTNER(gBankAttacker);
+		gBattleScripting.statChanger = INCREASE_1 | STAT_STAGE_ATK;
+		gBattleScripting.animArg1 = 0xE + STAT_STAGE_ATK;
+		gBattleScripting.animArg2 = 0;
 		gLastUsedAbility = ABILITY(gBankTarget);
 		BattleScriptPush(gBattlescriptCurrInstr + 5);
 		gBattlescriptCurrInstr = BattleScript_SapSipperAromatherapy - 5;
@@ -382,8 +382,8 @@ void DefogHelperFunc(void)
 {
 	if (gNewBS->AuroraVeilTimers[SIDE(gBankTarget)]
 	|| gTerrainType != 0
-	|| gSideAffecting[SIDE(gBankAttacker)] & SIDE_STATUS_SPIKES
-	|| gSideAffecting[SIDE(gBankTarget)] & (SIDE_STATUS_SPIKES
+	|| gSideStatuses[SIDE(gBankAttacker)] & SIDE_STATUS_SPIKES
+	|| gSideStatuses[SIDE(gBankTarget)] & (SIDE_STATUS_SPIKES
 										  | SIDE_STATUS_REFLECT
 										  | SIDE_STATUS_LIGHTSCREEN
 										  | SIDE_STATUS_SAFEGUARD
@@ -466,7 +466,7 @@ void PlayAttackAnimationForExplosion(void)
 	gActiveBattler = gBankAttacker;
 	multihit = gMultiHitCounter;
 
-	EmitMoveAnimation(0, gCurrentMove, gBattleScripting->animTurn, gBattleMovePower, gBattleMoveDamage, gBattleMons[gBankAttacker].friendship, &gDisableStructs[gBankAttacker], multihit);
+	EmitMoveAnimation(0, gCurrentMove, gBattleScripting.animTurn, gBattleMovePower, gBattleMoveDamage, gBattleMons[gBankAttacker].friendship, &gDisableStructs[gBankAttacker], multihit);
 	MarkBufferBankForExecution(gBankAttacker);
 }
 
@@ -483,7 +483,7 @@ void CopycatFunc(void)
 	else
 	{
 		gHitMarker &= ~(HITMARKER_ATTACKSTRING_PRINTED);
-		gRandomMove = gNewBS->LastUsedMove;
+		gCalledMove = gNewBS->LastUsedMove;
 	}
 }
 
@@ -553,7 +553,7 @@ void MeFirstFunc(void)
 	else
 	{
 		gNewBS->MeFirstByte = TRUE;
-		gRandomMove = move;
+		gCalledMove = move;
 	}
 
 }
@@ -626,7 +626,7 @@ void LoadPledgeScript(void)
 			gBanksByTurnOrder[index] = newTurnOrder[1];
 
 		gNewBS->PledgeHelper = TRUE;
-		gBattleScripting->bank = PARTNER(gBankAttacker);
+		gBattleScripting.bank = PARTNER(gBankAttacker);
 		gBattlescriptCurrInstr = BattleScript_PledgeReady - 5;
 	}
 }
@@ -639,7 +639,7 @@ void SetPledgeEffect(void)
 			{
 				gNewBS->SwampTimers[SIDE(gBankTarget)] = 5;
 				gBattleStringLoader = SwampString;
-				//gBattleScripting->animArg1 = B_ANIM_SWAMP;
+				//gBattleScripting.animArg1 = B_ANIM_SWAMP;
 			}
 			else
 				gBattlescriptCurrInstr = BattleScript_MoveFaint - 5;
@@ -650,7 +650,7 @@ void SetPledgeEffect(void)
 			{
 				gNewBS->SeaOfFireTimers[SIDE(gBankTarget)] = 5;
 				gBattleStringLoader = SeaOfFireString;
-				gBattleScripting->animArg1 = B_ANIM_SEA_OF_FIRE;
+				gBattleScripting.animArg1 = B_ANIM_SEA_OF_FIRE;
 			}
 			else
 				gBattlescriptCurrInstr = BattleScript_MoveFaint - 5;
@@ -798,7 +798,7 @@ void BringDownMons(void)
 			EmitSpriteInvisibility(0, FALSE);
 			MarkBufferBankForExecution(gActiveBattler);
 
-			gBattleScripting->bank = i;
+			gBattleScripting.bank = i;
 			if (gCurrentMove == MOVE_GRAVITY)
 				gBattleStringLoader = NoMoreAirborneFromGravityString;
 			else
@@ -1076,7 +1076,7 @@ void QuashFunc(void)
 			if (newTurnOrder[i] != 0xFF)
 				gBanksByTurnOrder[i] = newTurnOrder[i];
 		}
-		
+
 		gNewBS->quashed |= gBitTable[gBankTarget];
 	}
 	else
@@ -1123,13 +1123,13 @@ void InitiateInstruct(void)
 	gLastResultingMoves[gBankAttacker] = gCurrentMove;
 	gLastPrintedMoves[gBankAttacker] = gCurrentMove;
 
-	gBattleScripting->animTargetsHit = 0;
+	gBattleScripting.animTargetsHit = 0;
 	gBattleStruct->atkCancellerTracker = 0;
 	MoveValuesCleanUp();
 	gHitMarker &= ~(HITMARKER_ATTACKSTRING_PRINTED);
 	BattleScriptPush(gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect]);
 	gBattlescriptCurrInstr = BattleScript_FlushMessageBox - 5;
-	gNewBS->ZMoveData->active = FALSE;
+	gNewBS->zMoveData.active = FALSE;
 	gNewBS->InstructInProgress = TRUE;
 }
 
@@ -1183,7 +1183,7 @@ void FlameBurstFunc(void)
 	}
 	else
 	{
-		gBattleScripting->bank = par;
+		gBattleScripting.bank = par;
 		gBattleMoveDamage = MathMax(1, gBattleMons[par].maxHP / 16);
 	}
 }
@@ -1192,13 +1192,13 @@ void ModifyPostStockpileBoostDecrement(void)
 {
 	switch (gDisableStructs[gBankAttacker].stockpileCounter) {
 		case 1:
-			gBattleScripting->statChanger |= DECREASE_1;
+			gBattleScripting.statChanger |= DECREASE_1;
 			break;
 		case 2:
-			gBattleScripting->statChanger |= DECREASE_2;
+			gBattleScripting.statChanger |= DECREASE_2;
 			break;
 		case 3:
-			gBattleScripting->statChanger |= DECREASE_3;
+			gBattleScripting.statChanger |= DECREASE_3;
 			break;
 	}
 }
@@ -1270,7 +1270,7 @@ void AbilityChangeBSFunc(void)
 				*defAbilityLoc = ABILITY_NONE;
 				gNewBS->SlowStartTimers[gBankTarget] = 0;
 				gDisableStructs[gBankTarget].truantCounter = 0;
-				gBattleScripting->bank = gBankTarget;
+				gBattleScripting.bank = gBankTarget;
 				gBattleStringLoader = AbilitySuppressedString;
 				return; //No transfer needed
 			}
@@ -1428,7 +1428,7 @@ void MakeScriptingBankInvisible(void)
 {
 	if (gBattleExecBuffer) return;
 
-	gActiveBattler = gBattleScripting->bank;
+	gActiveBattler = gBattleScripting.bank;
 	EmitSpriteInvisibility(0, TRUE);
 	MarkBufferBankForExecution(gActiveBattler);
 }
@@ -1453,14 +1453,14 @@ void TransferIllusionBroken(void)
 		return;
 	}
 
-	gActiveBattler = gBattleScripting->bank;
+	gActiveBattler = gBattleScripting.bank;
 	EmitDataTransfer(0, &gStatuses3[gActiveBattler], 4, &gStatuses3[gActiveBattler]);
 	MarkBufferBankForExecution(gActiveBattler);
 }
 
 static void TransferDontRemoveTransformSpecies(bool8 val)
 {
-	gActiveBattler = gBattleScripting->bank;
+	gActiveBattler = gBattleScripting.bank;
 	gDontRemoveTransformSpecies = val;
 	EmitDataTransfer(0, &gDontRemoveTransformSpecies, 1, &gDontRemoveTransformSpecies);
 	MarkBufferBankForExecution(gActiveBattler);
@@ -1473,7 +1473,7 @@ void SetAndTransferDontRemoveTransformSpecies(void)
 		gBattlescriptCurrInstr -= 5;
 		return;
 	}
-	
+
 	TransferDontRemoveTransformSpecies(TRUE);
 }
 
@@ -1490,12 +1490,12 @@ void ClearAndTransferDontRemoveTransformSpecies(void)
 
 void BackupScriptingBankMoveSelectionCursor(void)
 {
-	gNewBS->dynamaxData.backupMoveSelectionCursorPos = gMoveSelectionCursor[gBattleScripting->bank];
+	gNewBS->dynamaxData.backupMoveSelectionCursorPos = gMoveSelectionCursor[gBattleScripting.bank];
 }
 
 void RestoreScriptingBankMoveSelectionCursor(void)
 {
-	gMoveSelectionCursor[gBattleScripting->bank] = gNewBS->dynamaxData.backupMoveSelectionCursorPos;
+	gMoveSelectionCursor[gBattleScripting.bank] = gNewBS->dynamaxData.backupMoveSelectionCursorPos;
 }
 
 void CycleScriptingBankHealthBetween0And1(void)
@@ -1506,7 +1506,7 @@ void CycleScriptingBankHealthBetween0And1(void)
 		return;
 	}
 
-	gActiveBattler = gBattleScripting->bank;
+	gActiveBattler = gBattleScripting.bank;
 
 	if (!gBattleMons[gActiveBattler].hp)
 		gBattleMons[gActiveBattler].hp = 1;
@@ -1544,7 +1544,7 @@ void DoProteanTypeChange(void)
 {
 	u8 moveType = gBattleStruct->dynamicMoveType;
 
-	gBattleScripting->bank = gBankAttacker;
+	gBattleScripting.bank = gBankAttacker;
 	SET_BATTLER_TYPE(gBankAttacker, moveType);
 	PREPARE_TYPE_BUFFER(gBattleTextBuff1, moveType);
 }
@@ -1552,7 +1552,7 @@ void DoProteanTypeChange(void)
 void HarvestActivateBerry(void)
 {
 	gBattlescriptCurrInstr += 5;
-	if (ItemBattleEffects(ItemEffects_EndTurn, gBattleScripting->bank, TRUE, FALSE))
+	if (ItemBattleEffects(ItemEffects_EndTurn, gBattleScripting.bank, TRUE, FALSE))
 		gBattlescriptCurrInstr -= 5;
 }
 
@@ -1598,7 +1598,7 @@ void HandleForfeitYesNoBox(void)
 		PlaySE(SE_SELECT);
 
 		if (gBattleCommunication[1] == 0)
-			gBattleMainFunc = (u32) HandleEndTurn_RanFromBattle;
+			gBattleMainFunc = HandleEndTurn_RanFromBattle;
 
 		HandleBattleWindow(0x17, 0x8, 0x1D, 0xD, WINDOW_CLEAR);
 		return;
@@ -1720,17 +1720,17 @@ void UndoAbilityEffectsForNeutralizingGas(void)
 	if (gBattleStringLoader != NULL)
 	{
 		gBattleWeather = 0;
-		gWeatherCounter = 0;
+		gWishFutureKnock.weatherDuration = 0;
 		BattleScriptPushCursor();
 		gBattlescriptCurrInstr = BattleScript_PrimalWeatherEnd - 5;
 		return;
 	}
-	
+
 	for (int i = 0; i < gBattlersCount; ++i)
 	{
 		if (gStatuses3[i] & STATUS3_ILLUSION)
 		{
-			gBattleScripting->bank = i;
+			gBattleScripting.bank = i;
 			BattleScriptPushCursor();
 			gBattlescriptCurrInstr = BattleScript_TryRemoveIllusion - 5;
 			break;
@@ -1802,7 +1802,7 @@ void ReturnOpponentMon2(void)
 
 void BackupScriptingBank(void)
 {
-	gNewBS->SentInBackup = gBattleScripting->bank;
+	gNewBS->SentInBackup = gBattleScripting.bank;
 }
 
 //For Benjamin Butterfree
@@ -1913,19 +1913,19 @@ void SetThroatChopTimer(void)
 
 void SetNoMoreMovingThisTurnScriptingBank(void)
 {
-	gNewBS->NoMoreMovingThisTurn |= gBitTable[gBattleScripting->bank];
+	gNewBS->NoMoreMovingThisTurn |= gBitTable[gBattleScripting.bank];
 }
 
 void SetBattleScriptingBankForPartnerAbilityNoStatLoss(void)
 {
-	gBattleScripting->bank = PARTNER(gBattleScripting->bank);
+	gBattleScripting.bank = PARTNER(gBattleScripting.bank);
 }
 
 extern const u16 gBannedBattleEatBerries[];
 void FailIfAttackerIsntHoldingEdibleBerry(void)
 {
 	u16 item = ITEM(gBankAttacker);
-	
+
 	if (!IsBerry(item) || CheckTableForItem(item, gBannedBattleEatBerries)
 	|| AbilityBattleEffects(ABILITYEFFECT_CHECK_OTHER_SIDE, gBankAttacker, ABILITY_UNNERVE, 0, 0))
 		gBattlescriptCurrInstr = BattleScript_ButItFailedAttackstring - 5;
@@ -1955,7 +1955,7 @@ void FinishTurn(void)
 
 void SetScriptingBankToItsPartner(void)
 {
-	gBattleScripting->bank = PARTNER(gBattleScripting->bank);
+	gBattleScripting.bank = PARTNER(gBattleScripting.bank);
 }
 
 void TryFailLifeDew(void)
@@ -2018,7 +2018,7 @@ const u8* TryActivateMimicryForBank(u8 bank)
 		{
 			u8 type1 = GetMonType(mon, 0);
 			u8 type2 = GetMonType(mon, 1);
-		
+
 			if (gBattleMons[bank].type1 != type1 || gBattleMons[bank].type2 != type2
 			||  !IS_BLANK_TYPE(gBattleMons[bank].type3))
 			{
@@ -2026,7 +2026,7 @@ const u8* TryActivateMimicryForBank(u8 bank)
 				gBattleMons[bank].type2 = type2;
 				gBattleMons[bank].type3 = TYPE_BLANK;
 
-				gBattleScripting->bank = bank;
+				gBattleScripting.bank = bank;
 				return BattleScript_MimicryReturnedToNormal;
 			}
 		}
@@ -2035,14 +2035,14 @@ const u8* TryActivateMimicryForBank(u8 bank)
 			if (gBattleMons[bank].type1 != monType || gBattleMons[bank].type2 != monType
 			|| !IS_BLANK_TYPE(gBattleMons[bank].type3))
 			{
-				gBattleScripting->bank = bank;
+				gBattleScripting.bank = bank;
 				SET_BATTLER_TYPE(bank, monType);
 				PREPARE_TYPE_BUFFER(gBattleTextBuff1, monType);
 				return BattleScript_MimicryTransformed;
 			}
 		}
 	}
-	
+
 	return NULL;
 }
 

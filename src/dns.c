@@ -28,7 +28,7 @@ static bool8 IsDate1BeforeDate2(u32 y1, u32 m1, u32 d1, u32 y2, u32 m2, u32 d2);
 static bool8 IsLeapYear(u32 year);
 
 void TransferPlttBuffer(void)
-{	
+{
 	if (!gPaletteFade->bufferTransferDisabled)
 	{
 		void *src = gPlttBufferFaded;
@@ -75,7 +75,7 @@ static void FadeDayNightPalettes()
 				||  gLastRecordedFadeColour != colour) //Only fade the background if colour should change
 				{
 					bool8 hardFade = gLastRecordedFadeCoeff == 0xFF; //Set to 0xFF next so check up here
-				
+
 					if (!palFadeActive)
 						apply_map_tileset1_tileset2_palette(gMapHeader.mapLayout);
 
@@ -243,7 +243,7 @@ static void FadeOverworldBackground(u32 selectedPalettes, u8 coeff, u32 color, b
 		Memset(gIgnoredDNSPalIndices, 0, sizeof(bool8) * 16 * 32); //Don't ignore colours during day
 		gWindowsLitUp = FALSE;
 	}
-	
+
 	for (u16 paletteOffset = 0; paletteOffset < 256; paletteOffset += 16) //Only background colours
 	{
 		if (selectedPalettes & 1)
@@ -405,7 +405,7 @@ u32 GetDayDifference(u32 startYear, u8 startMonth, u8 startDay, u32 endYear, u8 
 	const u16 cumDays[] = {0,31,59,90,120,151,181,212,243,273,304,334}; //Cumulative Days by month
 	const u16 leapcumDays[] = {0,31,60,91,121,152,182,213,244,274,305,335}; //Cumulative Days by month for leap year
 	u32 totdays = 0;
-	
+
 	if (!IsDate1BeforeDate2(startYear, startMonth, startDay, endYear, endMonth, endDay))
 		return 0;
 

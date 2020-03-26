@@ -157,7 +157,7 @@ void atkEF_handleballthrow(void)
 					break;
 
 				case BALL_TYPE_TIMER_BALL:
-					ballMultiplier = MathMax(40, 10 + gBattleResults->battleTurnCounter * 3);
+					ballMultiplier = MathMax(40, 10 + gBattleResults.battleTurnCounter * 3);
 					break;
 
 				case BALL_TYPE_LUXURY_BALL:
@@ -266,7 +266,7 @@ void atkEF_handleballthrow(void)
 					break;
 
 				case BALL_TYPE_QUICK_BALL:
-					if (gBattleResults->battleTurnCounter == 0)
+					if (gBattleResults.battleTurnCounter == 0)
 						ballMultiplier = 50;
 					else
 						ballMultiplier = 10;
@@ -321,7 +321,7 @@ void atkEF_handleballthrow(void)
 		if (ballType != BALL_TYPE_SAFARI_BALL)
 		{
 			if (ballType == BALL_TYPE_MASTER_BALL)
-				gBattleResults->usedMasterBall = 1;
+				gBattleResults.usedMasterBall = 1;
 
 			//This was used for the TV shows in Ruby, but seems kind of pointless in FR.
 			//Commenting it out also prevents errors from using poke balls with large indices.
@@ -330,7 +330,7 @@ void atkEF_handleballthrow(void)
 		}
 
 		if (odds >= 0xFF) //Pokemon is Caught
-		{ 
+		{
 			EmitBallThrowAnim(0, 4);
 			MarkBufferBankForExecution(gActiveBattler);
 			gBattlescriptCurrInstr = BattleScript_SuccessBallThrow;
@@ -367,7 +367,7 @@ void atkEF_handleballthrow(void)
 
 			EmitBallThrowAnim(0, shakes);
 			MarkBufferBankForExecution(gActiveBattler);
-			
+
 			if (!gNewBS->firstFailedPokeBallStored)
 			{
 				gNewBS->firstFailedPokeBallStored = TRUE; //Only once per battle
@@ -410,7 +410,7 @@ static u8 GetCatchingBattler(void)
 		battler = GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
 	else
 		battler = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
-	
+
 	if (battler >= gBattlersCount || SIDE(battler) == B_SIDE_PLAYER)
 		battler = B_POSITION_OPPONENT_LEFT;
 
@@ -480,7 +480,7 @@ u8 GiveMonToPlayer(struct Pokemon* mon) //Hook in
 		else if (ItemId_GetType(gLastUsedItem) == BALL_TYPE_FRIEND_BALL)
 			mon->friendship = 200;
 	}
-	
+
 	if (gMain.inBattle && IsRaidBattle() && FlagGet(FLAG_BATTLE_FACILITY))
 		SetMonData(mon, MON_DATA_HELD_ITEM, &gNewBS->dynamaxData.backupRaidMonItem);
 
@@ -530,7 +530,7 @@ void PlayerHandleSuccessBallThrowAnim(void)
 
 	gDoingBattleAnim = TRUE;
 	InitAndLaunchSpecialAnimation(gActiveBattler, gActiveBattler, GetCatchingBattler(), animNum);
-	gBattleBankFunc[gActiveBattler] = (u32) CompleteOnSpecialAnimDone;
+	gBattlerControllerFuncs[gActiveBattler] = CompleteOnSpecialAnimDone;
 }
 
 void PlayerHandleBallThrowAnim(void)
@@ -541,7 +541,7 @@ void PlayerHandleBallThrowAnim(void)
 	gBattleSpritesDataPtr->animationData->ballThrowCaseId = ballThrowCaseId;
 	gDoingBattleAnim = TRUE;
 	InitAndLaunchSpecialAnimation(gActiveBattler, gActiveBattler, GetCatchingBattler(), animNum);
-	gBattleBankFunc[gActiveBattler] = (u32) CompleteOnSpecialAnimDone;
+	gBattlerControllerFuncs[gActiveBattler] = CompleteOnSpecialAnimDone;
 }
 
 void CreateThrowPokeBall(u8 taskId)

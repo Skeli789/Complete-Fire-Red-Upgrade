@@ -67,18 +67,18 @@ void SetZEffect(void)
 {
 	int i;
 
-	gNewBS->ZMoveData->runningZEffect = TRUE;
+	gNewBS->zMoveData.runningZEffect = TRUE;
 
-	if (gNewBS->ZMoveData->effect == Z_EFFECT_CURSE) {
+	if (gNewBS->zMoveData.effect == Z_EFFECT_CURSE) {
 		if (IsOfType(gBankAttacker, TYPE_GHOST))
-			gNewBS->ZMoveData->effect = Z_EFFECT_RECOVER_HP;
+			gNewBS->zMoveData.effect = Z_EFFECT_RECOVER_HP;
 		else
-			gNewBS->ZMoveData->effect = Z_EFFECT_ATK_UP_1;
+			gNewBS->zMoveData.effect = Z_EFFECT_ATK_UP_1;
 	}
 
-	gBattleScripting->bank = gBankAttacker;
+	gBattleScripting.bank = gBankAttacker;
 
-	switch (gNewBS->ZMoveData->effect) {
+	switch (gNewBS->zMoveData.effect) {
 		case Z_EFFECT_RESET_STATS:
 			for (i = 0; i < BATTLE_STATS_NO-1; ++i) {
 				if (gBattleMons[gBankAttacker].statStages[i] < 6) {
@@ -124,7 +124,7 @@ void SetZEffect(void)
 			break;
 
 		case Z_EFFECT_RESTORE_REPLACEMENT_HP:
-			gNewBS->ZMoveData->healReplacement = TRUE;
+			gNewBS->zMoveData.healReplacement = TRUE;
 			BattleScriptPush(gBattlescriptCurrInstr + 5);
 			gBattlescriptCurrInstr = BattleScript_SetUpHealReplacementZMove - 5;
 			break;
@@ -136,9 +136,9 @@ void SetZEffect(void)
 		case Z_EFFECT_SPDEF_UP_1:
 		case Z_EFFECT_ACC_UP_1:
 		case Z_EFFECT_EVSN_UP_1:
-			if (!ChangeStatBuffs(SET_STAT_BUFF_VALUE(1), gNewBS->ZMoveData->effect - Z_EFFECT_ATK_UP_1 + 1, MOVE_EFFECT_AFFECTS_USER, 0)) {
-				gBattleScripting->animArg1 = 0xE + (gNewBS->ZMoveData->effect - Z_EFFECT_ATK_UP_1 + 1);
-				gBattleScripting->animArg2 = 0;
+			if (!ChangeStatBuffs(SET_STAT_BUFF_VALUE(1), gNewBS->zMoveData.effect - Z_EFFECT_ATK_UP_1 + 1, MOVE_EFFECT_AFFECTS_USER, 0)) {
+				gBattleScripting.animArg1 = 0xE + (gNewBS->zMoveData.effect - Z_EFFECT_ATK_UP_1 + 1);
+				gBattleScripting.animArg2 = 0;
 				BattleScriptPush(gBattlescriptCurrInstr + 5);
 				gBattlescriptCurrInstr = BattleScript_StatUpZMove - 5;
 			}
@@ -151,9 +151,9 @@ void SetZEffect(void)
 		case Z_EFFECT_SPDEF_UP_2:
 		case Z_EFFECT_ACC_UP_2:
 		case Z_EFFECT_EVSN_UP_2:
-			if (!ChangeStatBuffs(SET_STAT_BUFF_VALUE(2), gNewBS->ZMoveData->effect - Z_EFFECT_ATK_UP_2 + 1, MOVE_EFFECT_AFFECTS_USER, 0)) {
-				gBattleScripting->animArg1 = 0xE + (gNewBS->ZMoveData->effect - Z_EFFECT_ATK_UP_2 + 1);
-				gBattleScripting->animArg2 = 0;
+			if (!ChangeStatBuffs(SET_STAT_BUFF_VALUE(2), gNewBS->zMoveData.effect - Z_EFFECT_ATK_UP_2 + 1, MOVE_EFFECT_AFFECTS_USER, 0)) {
+				gBattleScripting.animArg1 = 0xE + (gNewBS->zMoveData.effect - Z_EFFECT_ATK_UP_2 + 1);
+				gBattleScripting.animArg2 = 0;
 				BattleScriptPush(gBattlescriptCurrInstr + 5);
 				gBattlescriptCurrInstr = BattleScript_StatUpZMove - 5;
 			}
@@ -166,15 +166,15 @@ void SetZEffect(void)
 		case Z_EFFECT_SPDEF_UP_3:
 		case Z_EFFECT_ACC_UP_3:
 		case Z_EFFECT_EVSN_UP_3:
-			if (!ChangeStatBuffs(SET_STAT_BUFF_VALUE(3), gNewBS->ZMoveData->effect - Z_EFFECT_ATK_UP_3 + 1, MOVE_EFFECT_AFFECTS_USER, 0)) {
-				gBattleScripting->animArg1 = 0xE + (gNewBS->ZMoveData->effect - Z_EFFECT_ATK_UP_3 + 1);
-				gBattleScripting->animArg2 = 0;
+			if (!ChangeStatBuffs(SET_STAT_BUFF_VALUE(3), gNewBS->zMoveData.effect - Z_EFFECT_ATK_UP_3 + 1, MOVE_EFFECT_AFFECTS_USER, 0)) {
+				gBattleScripting.animArg1 = 0xE + (gNewBS->zMoveData.effect - Z_EFFECT_ATK_UP_3 + 1);
+				gBattleScripting.animArg2 = 0;
 				BattleScriptPush(gBattlescriptCurrInstr + 5);
 				gBattlescriptCurrInstr = BattleScript_StatUpZMove - 5;
 			}
 			break;
 	}
-	gNewBS->ZMoveData->runningZEffect = FALSE;
+	gNewBS->zMoveData.runningZEffect = FALSE;
 }
 
 move_t GetTypeBasedZMove(u16 move, u8 bank)
@@ -237,8 +237,8 @@ const u8* GetZMoveName(u16 move)
 
 bool8 DoesZMoveUsageStopMegaEvolution(u8 bank)
 {
-	return gNewBS->ZMoveData->used[bank]
-		&& gNewBS->ZMoveData->partyIndex[SIDE(bank)] & gBitTable[gBattlerPartyIndexes[bank]];
+	return gNewBS->zMoveData.used[bank]
+		&& gNewBS->zMoveData.partyIndex[SIDE(bank)] & gBitTable[gBattlerPartyIndexes[bank]];
 }
 
 bool8 DoesZMoveUsageStopDynamaxing(u8 bank)
@@ -281,8 +281,8 @@ move_t CanUseZMove(u8 bank, u8 moveIndex, u16 move)
 
 u16 ReplaceWithZMoveRuntime(u8 bankAtk, u16 move)
 {
-	if (gNewBS->ZMoveData->toBeUsed[bankAtk]
-	&& !gNewBS->ZMoveData->used[bankAtk]
+	if (gNewBS->zMoveData.toBeUsed[bankAtk]
+	&& !gNewBS->zMoveData.used[bankAtk]
 	&& SPLIT(move) != SPLIT_STATUS)
 	{
 		u16 zMove = CanUseZMove(bankAtk, 0xFF, move);

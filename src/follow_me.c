@@ -1305,7 +1305,7 @@ void CreateFollowerAvatar(void)
 static void TurnNPCIntoFollower(u8 localId, u8 followerFlags)
 {
 	struct EventObject* follower;
-	
+
 	if (gFollowerState.inProgress)
 		return; //Only 1 NPC following at a time
 
@@ -1369,12 +1369,12 @@ void sp0D3_FaceFollowerSprite(void)
 	{
 		u8 playerDirection, followerDirection;
 		struct EventObject* player, *follower;
-	
+
 		player = &gEventObjects[gPlayerAvatar->eventObjectId];
 		follower = &gEventObjects[gFollowerState.objId];
 		playerDirection = DetermineFollowerDirection(player, follower);
 		followerDirection = playerDirection;
-		
+
 		//Flip direction
 		switch (playerDirection) {
 			case DIR_NORTH:

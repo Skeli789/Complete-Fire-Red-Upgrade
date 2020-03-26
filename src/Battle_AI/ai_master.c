@@ -221,7 +221,7 @@ u32 GetAIFlags(void)
 		flags = gTrainers[gTrainerBattleOpponent_A].aiFlags | gTrainers[VarGet(VAR_SECOND_OPPONENT)].aiFlags;
 	else
 		flags = gTrainers[gTrainerBattleOpponent_A].aiFlags;
-	
+
 	if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER) && gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
 		flags |= AI_SCRIPT_CHECK_BAD_MOVE; //Partners in wild double battles are like normal trainers
 
@@ -551,7 +551,7 @@ void AI_TrySwitchOrUseItem(void)
 	struct BattlePokemon backupMonAtk;
 	u8 backupAbilityAtk = ABILITY_NONE;
 	u16 backupSpeciesAtk = SPECIES_NONE;
-	
+
 	if (RAID_BATTLE_END)
 		goto DONT_THINK;
 
@@ -1083,7 +1083,7 @@ static bool8 PassOnWish(void)
 		battlerIn2 = gActiveBattler;
 	}
 
-	if (gWishFutureKnock->wishCounter[bank])
+	if (gWishFutureKnock.wishCounter[bank])
 	{
 		//Don't switch if your health is less than half and you can survive an opponent's hit
 		if (gBattleMons[bank].hp < gBattleMons[bank].maxHP / 2
@@ -1686,7 +1686,7 @@ static bool8 ShouldSwitchIfWonderGuard(void)
 						}
 						break;
 					case EFFECT_WISH:
-						if (gWishFutureKnock->wishCounter[bankAtk] == 0)
+						if (gWishFutureKnock.wishCounter[bankAtk] == 0)
 							return FALSE;
 						break;
 					case EFFECT_SKILL_SWAP:
@@ -1929,7 +1929,7 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 								move = GetMonData(&party[i], MON_DATA_MOVE1 + k, 0);
 
 								if (gBattleMoves[move].effect == EFFECT_RAPID_SPIN //Includes Defog
-								&&  gSideAffecting[SIDE(gActiveBattler)] & SIDE_STATUS_SPIKES)
+								&&  gSideStatuses[SIDE(gActiveBattler)] & SIDE_STATUS_SPIKES)
 								{
 									if (IS_SINGLE_BATTLE) //Single Battle
 										canRemoveHazards[i] = ViableMonCountFromBank(gActiveBattler) >= 2; //There's a point in removing the hazards
@@ -1964,7 +1964,7 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 							move = GetMonData(&party[i], MON_DATA_MOVE1 + k, 0);
 
 							if (gBattleMoves[move].effect == EFFECT_RAPID_SPIN //Includes Defog
-							&&  gSideAffecting[SIDE(gActiveBattler)] & SIDE_STATUS_SPIKES)
+							&&  gSideStatuses[SIDE(gActiveBattler)] & SIDE_STATUS_SPIKES)
 							{
 								if (!IS_DOUBLE_BATTLE) //Single Battle
 									canRemoveHazards[i] = ViableMonCountFromBank(gActiveBattler) >= 2; //There's a point in removing the hazards

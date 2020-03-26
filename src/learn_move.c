@@ -36,7 +36,7 @@ void GiveBoxMonInitialMoveset(struct BoxPokemon* boxMon)
 {
 	s32 i, k, index;
 	u16 moveStack[MAX_LEARNABLE_MOVES];
-	
+
 	u16 species = GetBoxMonData(boxMon, MON_DATA_SPECIES, NULL);
 	s32 level = GetLevelFromBoxMonExp(boxMon);
 
@@ -53,10 +53,10 @@ void GiveBoxMonInitialMoveset(struct BoxPokemon* boxMon)
 
 		if (lvlUpMove.level > level)
 			break;
-		
+
 		moveStack[k++] = move;
 	}
-	
+
 	index = k - MAX_MON_MOVES;
 	if (index < 0)
 		index = 0;

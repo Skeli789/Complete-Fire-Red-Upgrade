@@ -15,14 +15,14 @@ struct Clock
 	u8 second;
 };
 
-#define gSaveBlock1 ((struct SaveBlock1*) *((u32*) 0x3005008))
-#define gSaveBlock2 ((struct SaveBlock2*) *((u32*) 0x300500C))
-#define gSaveBlock3 ((struct SaveBlock3*) *((u32*) 0x3005010))
+//#define gSaveBlock1 ((struct SaveBlock1*) *((u32*) 0x3005008))
+//#define gSaveBlock2 ((struct SaveBlock2*) *((u32*) 0x300500C))
+//#define gSaveBlock3 ((struct SaveBlock3*) *((u32*) 0x3005010))
 
 #define Clock ((struct Clock*) 0x300553C)
 
-#define gEnemyParty ((struct Pokemon*) 0x202402C)
-#define gPlayerParty ((struct Pokemon*) 0x2024284)
+//#define gEnemyParty ((struct Pokemon*) 0x202402C)
+//#define gPlayerParty ((struct Pokemon*) 0x2024284)
 
 //gBitTable;
 
@@ -32,10 +32,10 @@ struct Clock
 		#define gWindows ((struct Window*) 0x20204B4)
 /*u8*/  #define gSprites ((struct Sprite*) 0x202063C)
 
-/*u8*/  #define gStringVar1 ((u8*) 0x2021CD0)
-/*u8*/  #define gStringVar2 ((u8*) 0x2021CF0)
-/*u8*/  #define gStringVar3 ((u8*) 0x2021D04)
-/*u8*/  #define gStringVar4 ((u8*) 0x2021D18)
+///*u8*/  #define gStringVar1 ((u8*) 0x2021CD0)
+///*u8*/  #define gStringVar2 ((u8*) 0x2021CF0)
+///*u8*/  #define gStringVar3 ((u8*) 0x2021D04)
+///*u8*/  #define gStringVar4 ((u8*) 0x2021D18)
 
 		#define ColorFilter *((u8*)0x2036E28)
 
@@ -59,7 +59,7 @@ struct Clock
 
 		//SaveBlock1ActualLocation 0x202552C
 		extern struct MapHeader gMapHeader;
-		#define gEventObjects ((struct MapObject*) 0x2036E38)
+		//#define gEventObjects ((struct MapObject*) 0x2036E38)
 /*
 		#define Var8000 (*((u16*) 0x20370B8))
 		#define Var8001 (*((u16*) 0x20370BA))
@@ -126,19 +126,19 @@ struct Clock
 
 		#define gMultiuseListMenuTemplate ((struct ListMenuTemplate*) ((u32*) 0x3005E70))
 
-		#define gScriptEnv1 ((struct ScriptContext*) 0x03000EB0)
-		#define gScriptEnv2 ((struct ScriptContext*) 0x03000F28)
-		#define gLoadPointer (*((const u8**) 0x03000f14))
-		#define sScriptContext2Enabled (*((u8*) 0x3000F28))
-		#define gKeypadInitialCountdown ((*u16) 0x030030e0)
-		#define gMain (((struct Main*) 0x30030F0)[0])
-		#define gKeypadFollowUpCountdown ((*u16) 0x0300352c)
-/*u32*/ #define gBattleMainFunc (*((u32*) 0x3004F84))
-/*u8*/  #define gLeveledUpInBattle (*((u8*) 0x3004FD4))
-		#define gBattleBankFunc ((u32*) 0x3004FE0)
-		#define gHealthboxIDs ((u8*) 0x3004FF0)
-		#define gMultiUsePlayerCursor (*((u8*) 0x3004FF4))
-		#define gNumberOfMovesToChoose (*((u8*) 0x3004FF8))
+		//#define gScriptEnv1 ((struct ScriptContext*) 0x03000EB0)
+		//#define gScriptEnv2 ((struct ScriptContext*) 0x03000F28)
+		//#define gLoadPointer (*((const u8**) 0x03000f14))
+		//#define sScriptContext2Enabled (*((u8*) 0x3000F28))
+		//#define gKeypadInitialCountdown ((*u16) 0x030030e0)
+		//#define gMain (((struct Main*) 0x30030F0)[0])
+		//#define gKeypadFollowUpCountdown ((*u16) 0x0300352c)
+///*u32*/ #define gBattleMainFunc (*((u32*) 0x3004F84))
+///*u8*/  #define gLeveledUpInBattle (*((u8*) 0x3004FD4))
+//		#define gBattleBankFunc ((u32*) 0x3004FE0)
+//		#define gHealthboxIDs ((u8*) 0x3004FF0)
+//		#define gMultiUsePlayerCursor (*((u8*) 0x3004FF4))
+//		#define gNumberOfMovesToChoose (*((u8*) 0x3004FF8))
 
 		#define gOverworldTilemapBg3 (*((u32*) 0x300501C))
 

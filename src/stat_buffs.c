@@ -33,16 +33,16 @@ void atk13_printfromtable(void)
 	{ //Stat Fell From Enemy
 		switch (ABILITY(gBankTarget)) {
 			case ABILITY_DEFIANT:
-				gBattleScripting->statChanger = INCREASE_2 | STAT_STAGE_ATK;
+				gBattleScripting.statChanger = INCREASE_2 | STAT_STAGE_ATK;
 				break;
 
 			case ABILITY_COMPETITIVE:
-				gBattleScripting->statChanger = INCREASE_2 | STAT_STAGE_SPATK;
+				gBattleScripting.statChanger = INCREASE_2 | STAT_STAGE_SPATK;
 				break;
-				
+
 			case ABILITY_RATTLED:
 				if (gNewBS->intimidateActive)
-					gBattleScripting->statChanger = INCREASE_1 | STAT_STAGE_SPEED;
+					gBattleScripting.statChanger = INCREASE_1 | STAT_STAGE_SPEED;
 				break;
 
 			default:
@@ -50,7 +50,7 @@ void atk13_printfromtable(void)
 		}
 		BattleScriptPushCursor();
 		gBattlescriptCurrInstr = BattleScript_DefiantCompetitive;
-		gBattleScripting->bank = gBankTarget;
+		gBattleScripting.bank = gBankTarget;
 	}
 }
 
@@ -222,13 +222,13 @@ void atk48_playstatchangeanimation(void)
 	{
 		gBattlescriptCurrInstr += 4;
 	}
-	else if (changeableStatsCount != 0 && !gBattleScripting->statAnimPlayed)
+	else if (changeableStatsCount != 0 && !gBattleScripting.statAnimPlayed)
 	{
 		EmitBattleAnimation(0, B_ANIM_STATS_CHANGE, statAnimId);
 		MarkBufferBankForExecution(gActiveBattler);
 		if ((T2_READ_8(gBattlescriptCurrInstr + 3) & ATK48_ONLY_MULTIPLE && changeableStatsCount > 1)
 		||  (T2_READ_8(gBattlescriptCurrInstr + 3) & ATK48_ONLY_TRIPLE && changeableStatsCount > 2))
-			gBattleScripting->statAnimPlayed = TRUE;
+			gBattleScripting.statAnimPlayed = TRUE;
 		gBattlescriptCurrInstr += 4;
 	}
 	else
@@ -240,7 +240,7 @@ void atk48_playstatchangeanimation(void)
 void atk89_statbuffchange(void)
 {
 	u8* jump_loc = T1_READ_PTR(gBattlescriptCurrInstr + 2);
-	if (ChangeStatBuffs(gBattleScripting->statChanger & 0xF0, gBattleScripting->statChanger & 0xF, T2_READ_8(gBattlescriptCurrInstr + 1), jump_loc) == 0)
+	if (ChangeStatBuffs(gBattleScripting.statChanger & 0xF0, gBattleScripting.statChanger & 0xF, T2_READ_8(gBattlescriptCurrInstr + 1), jump_loc) == 0)
 		gBattlescriptCurrInstr += 6;
 }
 
@@ -275,7 +275,7 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8* BS_ptr)
 
 	if ((statValue << 0x18) < 0) // stat decrease
 	{
-		if (ABILITY(gActiveBattler) == ABILITY_CONTRARY && !gNewBS->ZMoveData->runningZEffect)
+		if (ABILITY(gActiveBattler) == ABILITY_CONTRARY && !gNewBS->zMoveData.runningZEffect)
 			goto RAISE_STAT_BUFF;
 
 	LOWER_STAT_BUFF:
@@ -293,7 +293,7 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8* BS_ptr)
 				else
 				{
 					BattleScriptPush(BS_ptr);
-					gBattleScripting->bank = gActiveBattler;
+					gBattleScripting.bank = gActiveBattler;
 					gBattlescriptCurrInstr = BattleScript_MistProtected;
 					gSpecialStatuses[gActiveBattler].statLowered = 1;
 				}
@@ -324,7 +324,7 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8* BS_ptr)
 				else
 				{
 					BattleScriptPush(BS_ptr);
-					gBattleScripting->bank = gActiveBattler;
+					gBattleScripting.bank = gActiveBattler;
 					gBattleCommunication[0] = gActiveBattler;
 					gBattlescriptCurrInstr = BattleScript_AbilityNoStatLoss;
 					gLastUsedAbility = gBattleMons[gActiveBattler].ability;
@@ -349,7 +349,7 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8* BS_ptr)
 				else
 				{
 					BattleScriptPush(BS_ptr);
-					gBattleScripting->bank = PARTNER(gActiveBattler);
+					gBattleScripting.bank = PARTNER(gActiveBattler);
 					gBattleCommunication[0] = gActiveBattler;
 					gBattlescriptCurrInstr = BattleScript_PartnerAbilityNoStatLoss;
 					gSpecialStatuses[gActiveBattler].statLowered = 1;
@@ -370,7 +370,7 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8* BS_ptr)
 			if (flags == STAT_CHANGE_BS_PTR)
 			{
 				BattleScriptPush(BS_ptr);
-				gBattleScripting->bank = gActiveBattler;
+				gBattleScripting.bank = gActiveBattler;
 				gBattlescriptCurrInstr = BattleScript_AbilityNoSpecificStatLoss;
 			}
 			return STAT_CHANGE_DIDNT_WORK;
@@ -380,7 +380,7 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8* BS_ptr)
 			if (flags == STAT_CHANGE_BS_PTR)
 			{
 				BattleScriptPush(BS_ptr);
-				gBattleScripting->bank = gActiveBattler;
+				gBattleScripting.bank = gActiveBattler;
 				gBattlescriptCurrInstr = BattleScript_MirrorArmorReflectsIntimidate;
 			}
 			return STAT_CHANGE_DIDNT_WORK;
@@ -390,7 +390,7 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8* BS_ptr)
 			if (flags == STAT_CHANGE_BS_PTR)
 			{
 				BattleScriptPush(BS_ptr);
-				gBattleScripting->bank = gActiveBattler;
+				gBattleScripting.bank = gActiveBattler;
 				gBattlescriptCurrInstr = BattleScript_MirrorArmorReflectsStatLoss;
 			}
 			return STAT_CHANGE_DIDNT_WORK;
@@ -403,7 +403,7 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8* BS_ptr)
 		{
 			statValue = -GET_STAT_BUFF_VALUE(statValue);
 
-			if (ability == ABILITY_SIMPLE && !gNewBS->ZMoveData->runningZEffect)
+			if (ability == ABILITY_SIMPLE && !gNewBS->zMoveData.runningZEffect)
 				statValue *= 2;
 
 			gBattleTextBuff2[0] = B_BUFF_PLACEHOLDER_BEGIN;
@@ -422,7 +422,7 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8* BS_ptr)
 				gBattleTextBuff2[3] = 0x1;
 				index = 4;
 			}
-			if (!gNewBS->ZMoveData->runningZEffect) {
+			if (!gNewBS->zMoveData.runningZEffect) {
 				gBattleTextBuff2[index] = B_BUFF_STRING;
 				index++;
 				gBattleTextBuff2[index] = STRINGID_STATFELL;
@@ -444,13 +444,13 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8* BS_ptr)
 	//Stat Increase
 	else
 	{
-		if (ABILITY(gActiveBattler) == ABILITY_CONTRARY && !gNewBS->ZMoveData->runningZEffect)
+		if (ABILITY(gActiveBattler) == ABILITY_CONTRARY && !gNewBS->zMoveData.runningZEffect)
 			goto LOWER_STAT_BUFF;
 
 	RAISE_STAT_BUFF:
 		statValue = GET_STAT_BUFF_VALUE(statValue);
 
-		if (ability == ABILITY_SIMPLE && !gNewBS->ZMoveData->runningZEffect)
+		if (ability == ABILITY_SIMPLE && !gNewBS->zMoveData.runningZEffect)
 			statValue *= 2;
 
 		gBattleTextBuff2[0] = B_BUFF_PLACEHOLDER_BEGIN;
@@ -469,7 +469,7 @@ u8 ChangeStatBuffs(s8 statValue, u8 statId, u8 flags, const u8* BS_ptr)
 			gBattleTextBuff2[3] = 0x1;
 			index = 4;
 		}
-		if (!gNewBS->ZMoveData->runningZEffect) {
+		if (!gNewBS->zMoveData.runningZEffect) {
 			gBattleTextBuff2[index] = B_BUFF_STRING;
 			index++;
 			gBattleTextBuff2[index] = STRINGID_STATROSE;

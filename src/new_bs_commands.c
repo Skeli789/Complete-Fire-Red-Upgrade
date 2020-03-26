@@ -94,9 +94,9 @@ void atkFD_jumpifabilitypresenttargetfield(void)
 	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
 
 	if (ABILITY(gBankTarget) == ability)
-		gBattleScripting->bank = gBankTarget;
+		gBattleScripting.bank = gBankTarget;
 	else if (ABILITY(PARTNER(gBankTarget)) == ability)
-		gBattleScripting->bank = PARTNER(gBankTarget);
+		gBattleScripting.bank = PARTNER(gBankTarget);
 	else
 	{
 		gBattlescriptCurrInstr += 6;
@@ -148,7 +148,7 @@ void atkFF02_cureprimarystatus(void)
 	else
 	{
 		ClearBankStatus(bank);
-		gBattleScripting->bank = bank;
+		gBattleScripting.bank = bank;
 	}
 
 	gBattlescriptCurrInstr += 6;
@@ -203,26 +203,26 @@ void atkFF06_setterrain(void)
 			case MOVE_ELECTRICTERRAIN:
 			SET_ELECTRIC_TERRAIN:
 				type = ELECTRIC_TERRAIN;
-				gBattleScripting->animArg1 = B_ANIM_ELECTRIC_SURGE;
+				gBattleScripting.animArg1 = B_ANIM_ELECTRIC_SURGE;
 				gBattleStringLoader = ElectricTerrainSetString;
 				break;
 			case MOVE_GRASSYTERRAIN:
 			SET_GRASSY_TERRAIN:
 				type = GRASSY_TERRAIN;
-				gBattleScripting->animArg1 = B_ANIM_GRASSY_SURGE;
+				gBattleScripting.animArg1 = B_ANIM_GRASSY_SURGE;
 				gBattleStringLoader = GrassyTerrainSetString;
 				break;
 			case MOVE_MISTYTERRAIN:
 			SET_MISTY_TERRAIN:
 				type = MISTY_TERRAIN;
-				gBattleScripting->animArg1 = B_ANIM_MISTY_SURGE;
+				gBattleScripting.animArg1 = B_ANIM_MISTY_SURGE;
 				gBattleStringLoader = MistyTerrainSetString;
 				break;
 			case MOVE_PSYCHICTERRAIN:
 			case MOVE_GENESIS_SUPERNOVA:
 			SET_PSYCHIC_TERRAIN:
 				type = PSYCHIC_TERRAIN;
-				gBattleScripting->animArg1 = B_ANIM_PSYCHIC_SURGE;
+				gBattleScripting.animArg1 = B_ANIM_PSYCHIC_SURGE;
 				gBattleStringLoader = PsychicTerrainSetString;
 				break;
 			case MOVE_SPLINTERED_STORMSHARDS:
@@ -230,7 +230,7 @@ void atkFF06_setterrain(void)
 			REMOVE_TERRAIN:
 				type = 0;
 				gNewBS->terrainForcefullyRemoved = TRUE;
-				gBattleScripting->animArg1 = B_ANIM_LOAD_DEFAULT_BG;
+				gBattleScripting.animArg1 = B_ANIM_LOAD_DEFAULT_BG;
 				gBattleStringLoader = TerrainEndString;
 				break;
 		}
@@ -696,13 +696,13 @@ void atkFF15_jumpifstatcanbemodified(void)
 		//|| ability == ABILITY_FULLMETALBODY
 		|| (ability == ABILITY_FLOWERVEIL && IsOfType(gActiveBattler, TYPE_GRASS)))
 		{
-			gBattleScripting->bank = gActiveBattler;
+			gBattleScripting.bank = gActiveBattler;
 			gFormCounter = 3;
 		}
 		else if (ABILITY(PARTNER(gActiveBattler)) == ABILITY_FLOWERVEIL
 		&& IsOfType(gActiveBattler, TYPE_GRASS))
 		{
-			gBattleScripting->bank = PARTNER(gActiveBattler);
+			gBattleScripting.bank = PARTNER(gActiveBattler);
 			gFormCounter = 3;
 		}
 		else if ((ability == ABILITY_KEENEYE && currStat == STAT_STAGE_ACC)
@@ -749,7 +749,7 @@ void atkFF17_setsidestatus(void)
 	u8 side = SIDE(GetBattleBank(gBattlescriptCurrInstr[1]));
 	u16 status = T1_READ_16(gBattlescriptCurrInstr + 2);
 
-	gSideAffecting[side] |= status;
+	gSideStatuses[side] |= status;
 
 	gBattlescriptCurrInstr += 3;
 }
@@ -760,7 +760,7 @@ void atkFF18_clearsidestatus(void)
 	u8 side = SIDE(GetBattleBank(gBattlescriptCurrInstr[1]));
 	u16 status = T1_READ_16(gBattlescriptCurrInstr + 2);
 
-	gSideAffecting[side] &= ~status;
+	gSideStatuses[side] &= ~status;
 
 	gBattlescriptCurrInstr += 3;
 }
@@ -1142,7 +1142,7 @@ void atkFF23_faintpokemonaftermove(void)
 		gNewBS->lastFainted = gActiveBattler;
 		gHitMarker |= HITMARKER_FAINTED(gActiveBattler);
 		BattleScriptPush(gBattlescriptCurrInstr + 3);
-		
+
 		if (IsCatchableRaidBattle() && gActiveBattler == BANK_RAID_BOSS)
 			gBattlescriptCurrInstr = BattleScript_FaintRaidTarget;
 		else
@@ -1151,15 +1151,15 @@ void atkFF23_faintpokemonaftermove(void)
 		if (SIDE(gActiveBattler) == B_SIDE_PLAYER)
 		{
 			gHitMarker |= HITMARKER_x400000;
-			if (gBattleResults->playerFaintCounter < 0xFF)
-				gBattleResults->playerFaintCounter++;
+			if (gBattleResults.playerFaintCounter < 0xFF)
+				gBattleResults.playerFaintCounter++;
 			AdjustFriendshipOnBattleFaint(gActiveBattler);
 		}
 		else
 		{
-			if (gBattleResults->opponentFaintCounter < 0xFF)
-				gBattleResults->opponentFaintCounter++;
-			gBattleResults->lastOpponentSpecies = GetBankPartyData(gActiveBattler)->species;
+			if (gBattleResults.opponentFaintCounter < 0xFF)
+				gBattleResults.opponentFaintCounter++;
+			gBattleResults.lastOpponentSpecies = GetBankPartyData(gActiveBattler)->species;
 		}
 
 		gNewBS->RetaliateCounters[SIDE(gActiveBattler)] = 2;
@@ -1237,7 +1237,7 @@ void atkFF26_attackstringnoprotean(void)
 		{
 			gNewBS->LastUsedMove = gCurrentMove;
 			gNewBS->LastUsedTypes[gBankAttacker] = moveType;
-			
+
 			if (IsAnyMaxMove(gCurrentMove))
 				gNewBS->LastUsedMove = gChosenMove;
 
@@ -1390,31 +1390,31 @@ void atkFF29_trysetsleep(void)
 	}
 	else if (IsOfType(bank, TYPE_GRASS) && ABILITY(bank) == ABILITY_FLOWERVEIL)
 	{
-		gBattleScripting->bank = bank;
+		gBattleScripting.bank = bank;
 		gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
 		return;
 	}
 	else if (IsOfType(bank, TYPE_GRASS) && IS_DOUBLE_BATTLE && ABILITY(PARTNER(bank)) == ABILITY_FLOWERVEIL)
 	{
-		gBattleScripting->bank = PARTNER(bank);
+		gBattleScripting.bank = PARTNER(bank);
 		gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
 		return;
 	}
 	else if (ABILITY(bank) == ABILITY_SWEETVEIL)
 	{
-		gBattleScripting->bank = bank;
+		gBattleScripting.bank = bank;
 		gBattlescriptCurrInstr = BattleScript_TeamProtectedBySweetVeil;
 		return;
 	}
 	else if (IS_DOUBLE_BATTLE && ABILITY(PARTNER(bank)) == ABILITY_SWEETVEIL)
 	{
-		gBattleScripting->bank = PARTNER(bank);
+		gBattleScripting.bank = PARTNER(bank);
 		gBattlescriptCurrInstr = BattleScript_TeamProtectedBySweetVeil;
 		return;
 	}
 	else if (IsUproarBeingMade())
 	{
-		gBattleScripting->bank = bank;
+		gBattleScripting.bank = bank;
 		gBattleStringLoader = gText_CantFallAsleepDuringUproar;
 		fail = TRUE;
 	}
@@ -1499,31 +1499,31 @@ void atkD7_setyawn(void)
 	}
 	else if (IsOfType(bank, TYPE_GRASS) && ABILITY(bank) == ABILITY_FLOWERVEIL)
 	{
-		gBattleScripting->bank = bank;
+		gBattleScripting.bank = bank;
 		gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
 		return;
 	}
 	else if (IsOfType(bank, TYPE_GRASS) && IS_DOUBLE_BATTLE && ABILITY(PARTNER(bank)) == ABILITY_FLOWERVEIL)
 	{
-		gBattleScripting->bank = PARTNER(bank);
+		gBattleScripting.bank = PARTNER(bank);
 		gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
 		return;
 	}
 	else if (ABILITY(bank) == ABILITY_SWEETVEIL)
 	{
-		gBattleScripting->bank = bank;
+		gBattleScripting.bank = bank;
 		gBattlescriptCurrInstr = BattleScript_TeamProtectedBySweetVeil;
 		return;
 	}
 	else if (IS_DOUBLE_BATTLE && ABILITY(PARTNER(bank)) == ABILITY_SWEETVEIL)
 	{
-		gBattleScripting->bank = PARTNER(bank);
+		gBattleScripting.bank = PARTNER(bank);
 		gBattlescriptCurrInstr = BattleScript_TeamProtectedBySweetVeil;
 		return;
 	}
 	/*else if (IsUproarBeingMade())
 	{
-		gBattleScripting->bank = bank;
+		gBattleScripting.bank = bank;
 		gBattleStringLoader = gText_CantFallAsleepDuringUproar;
 		fail = TRUE;
 	}*/
@@ -1552,7 +1552,7 @@ void atkD7_setyawn(void)
 					return;
 				}
 		}
-		
+
 		if (!fail && gStatuses3[gBattlerTarget] & STATUS3_YAWN)
 		{
 			gBattleStringLoader = gText_AlreadyDrowsy;
@@ -1626,13 +1626,13 @@ void atkFF2A_trysetparalysis(void)
 	}
 	else if (IsOfType(bank, TYPE_GRASS) && ABILITY(bank) == ABILITY_FLOWERVEIL)
 	{
-		gBattleScripting->bank = bank;
+		gBattleScripting.bank = bank;
 		gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
 		return;
 	}
 	else if (IsOfType(bank, TYPE_GRASS) && IS_DOUBLE_BATTLE && ABILITY(PARTNER(bank)) == ABILITY_FLOWERVEIL)
 	{
-		gBattleScripting->bank = PARTNER(bank);
+		gBattleScripting.bank = PARTNER(bank);
 		gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
 		return;
 	}
@@ -1714,13 +1714,13 @@ void atkFF2B_trysetburn(void)
 	}
 	else if (IsOfType(bank, TYPE_GRASS) && ABILITY(bank) == ABILITY_FLOWERVEIL)
 	{
-		gBattleScripting->bank = bank;
+		gBattleScripting.bank = bank;
 		gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
 		return;
 	}
 	else if (IsOfType(bank, TYPE_GRASS) && IS_DOUBLE_BATTLE && ABILITY(PARTNER(bank)) == ABILITY_FLOWERVEIL)
 	{
-		gBattleScripting->bank = PARTNER(bank);
+		gBattleScripting.bank = PARTNER(bank);
 		gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
 		return;
 	}
@@ -1805,14 +1805,14 @@ void atkFF2C_trysetpoison(void)
 	}
 	else if (IsOfType(bank, TYPE_GRASS) && ABILITY(bank) == ABILITY_FLOWERVEIL)
 	{
-		gBattleScripting->bank = bank;
+		gBattleScripting.bank = bank;
 		gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
 		return;
 	}
 	//Put Pastel Veil here
 	else if (IsOfType(bank, TYPE_GRASS) && IS_DOUBLE_BATTLE && ABILITY(PARTNER(bank)) == ABILITY_FLOWERVEIL)
 	{
-		gBattleScripting->bank = PARTNER(bank);
+		gBattleScripting.bank = PARTNER(bank);
 		gBattlescriptCurrInstr = BattleScript_TeamProtectedByFlowerVeil;
 		return;
 	}
@@ -1910,7 +1910,7 @@ void atkFF32_recycleberry(void)
 void atkFF33_SetEffectPrimaryScriptingBank(void)
 {
 	u8 backupBank = gBankTarget;
-	gBankTarget = gBattleScripting->bank;
+	gBankTarget = gBattleScripting.bank;
 	SetMoveEffect(TRUE, (gBattleCommunication[MOVE_EFFECT_BYTE] & MOVE_EFFECT_CERTAIN) != 0);
 	gBankTarget = backupBank;
 }
@@ -1958,5 +1958,5 @@ void atkFF34_canconfuse(void)
 	{
 		gMoveResultFlags |= MOVE_RESULT_DOESNT_AFFECT_FOE;
 		gBattlescriptCurrInstr = ptr;
-	}	
+	}
 }

@@ -48,13 +48,13 @@ void BattleIntroOpponent1SendsOutMonAnimation(void)
 			MarkBufferBankForExecution(gActiveBattler);
 			if (gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_TWO_OPPONENTS))
 			{
-				gBattleMainFunc = (u32) BattleIntroOpponent2SendsOutMonAnimation;
+				gBattleMainFunc = BattleIntroOpponent2SendsOutMonAnimation;
 				return;
 			}
 		}
 	}
 
-	gBattleMainFunc = (u32) BattleIntroRecordMonsToDex;
+	gBattleMainFunc = BattleIntroRecordMonsToDex;
 }
 
 static void BattleIntroOpponent2SendsOutMonAnimation(void)
@@ -68,7 +68,7 @@ static void BattleIntroOpponent2SendsOutMonAnimation(void)
 		}
 	}
 
-	gBattleMainFunc = (u32) BattleIntroRecordMonsToDex;
+	gBattleMainFunc = BattleIntroRecordMonsToDex;
 }
 
 void MultiInitPokemonOrder(void)
@@ -118,14 +118,14 @@ void sub_8035C30Fix(void)
 
 	if (!IsDoubleBattle() || ((IsDoubleBattle() && (gBattleTypeFlags & BATTLE_TYPE_MULTI)) || (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)))
 	{
-		if (gSprites[gHealthboxIDs[gActiveBattler]].callback == SpriteCallbackDummy)
+		if (gSprites[gHealthboxSpriteIds[gActiveBattler]].callback == SpriteCallbackDummy)
 			var = TRUE;
 		var2 = FALSE;
 	}
 	else
 	{
-		if (gSprites[gHealthboxIDs[gActiveBattler]].callback == SpriteCallbackDummy
-		 && gSprites[gHealthboxIDs[gActiveBattler ^ BIT_FLANK]].callback == SpriteCallbackDummy)
+		if (gSprites[gHealthboxSpriteIds[gActiveBattler]].callback == SpriteCallbackDummy
+		 && gSprites[gHealthboxSpriteIds[gActiveBattler ^ BIT_FLANK]].callback == SpriteCallbackDummy)
 			var = TRUE;
 		var2 = TRUE;
 	}
@@ -169,7 +169,7 @@ void sub_8035C30Fix(void)
 			return;
 
 		gBattleSpritesDataPtr->healthBoxesData[gActiveBattler].field_9 = 3;
-		gBattleBankFunc[gActiveBattler] = (u32) sub_8035BE8;
+		gBattlerControllerFuncs[gActiveBattler] = sub_8035BE8;
 	}
 }
 
@@ -305,38 +305,38 @@ u8 LoadPartnerBackspriteIndex(void)
 
 void ChooseProperPartnerController(void)
 {
-	gBanksBySide[0] = 0;
-	gBanksBySide[1] = 1;
-	gBanksBySide[3] = 3;
+	gBattlerPositions[0] = B_POSITION_PLAYER_LEFT;
+	gBattlerPositions[1] = B_POSITION_OPPONENT_LEFT;
+	gBattlerPositions[3] = B_POSITION_OPPONENT_RIGHT;
 	gBattlersCount = 4;
-	
+
 	if (IsRaidBattle())
 		gBattlersCount = 3;
 
-	gBattleBankFunc[0] = (u32) SetControllerToPlayer;
-	gBattleBankFunc[1] = (u32) SetControllerToOpponent;
-	gBattleBankFunc[3] = (u32) SetControllerToOpponent;
+	gBattlerControllerFuncs[0] = SetControllerToPlayer;
+	gBattlerControllerFuncs[1] = SetControllerToOpponent;
+	gBattlerControllerFuncs[3] = SetControllerToOpponent;
 
 	if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
 	{
-		gBattleBankFunc[2] = (u32) SetControllerToPlayerPartner;
-		gBanksBySide[2] = 2; //The game crashes when this line is not here for some reason
+		gBattlerControllerFuncs[2] = SetControllerToPlayerPartner;
+		gBattlerPositions[2] = B_POSITION_PLAYER_RIGHT; //The game crashes when this line is not here for some reason
 	}
 	else
 	{
-		gBattleBankFunc[2] = (u32) SetControllerToPlayer;
-		gBanksBySide[2] = 2; //The game crashes when this line is not here for some reason
+		gBattlerControllerFuncs[2] = SetControllerToPlayer;
+		gBattlerPositions[2] = B_POSITION_PLAYER_RIGHT; //The game crashes when this line is not here for some reason
 	}
 }
 
 void SetControllerToPlayerPartner(void)
 {
-	gBattleBankFunc[gActiveBattler] = (u32) PlayerPartnerBufferRunCommand;
+	gBattlerControllerFuncs[gActiveBattler] = PlayerPartnerBufferRunCommand;
 }
 
 static void PlayerPartnerBufferExecComplete(void)
 {
-	gBattleBankFunc[gActiveBattler] = (u32) PlayerPartnerBufferRunCommand;
+	gBattlerControllerFuncs[gActiveBattler] = PlayerPartnerBufferRunCommand;
 	if (gBattleTypeFlags & BATTLE_TYPE_LINK)
 	{
 		u8 playerId = GetMultiplayerId();
@@ -393,23 +393,23 @@ static void PlayerPartnerHandleChooseMove(void)
 	if (moveInfo->possibleZMoves[chosenMoveId]) //Checked first b/c Rayquaza can do all 3
 	{
 		if (ShouldAIUseZMove(gActiveBattler, gBankTarget, moveInfo->moves[chosenMoveId]))
-			gNewBS->ZMoveData->toBeUsed[gActiveBattler] = TRUE;
+			gNewBS->zMoveData.toBeUsed[gActiveBattler] = TRUE;
 	}
 	else if (moveInfo->canMegaEvolve)
 	{
 		if (!ShouldAIDelayMegaEvolution(gActiveBattler, gBankTarget, chosenMove))
 		{
 			if (moveInfo->megaVariance != MEGA_VARIANT_ULTRA_BURST)
-				gNewBS->MegaData->chosen[gActiveBattler] = TRUE;
+				gNewBS->megaData.chosen[gActiveBattler] = TRUE;
 			else if (moveInfo->megaVariance == MEGA_VARIANT_ULTRA_BURST)
-				gNewBS->UltraData->chosen[gActiveBattler] = TRUE;
+				gNewBS->ultraData.chosen[gActiveBattler] = TRUE;
 		}
 	}
 	else if (moveInfo->possibleMaxMoves[chosenMoveId])
 	{
-		if (ShouldAIDynamax(gActiveBattler, gBankTarget)) 
+		if (ShouldAIDynamax(gActiveBattler, gBankTarget))
 		{
-			if (!IsRaidBattle() || gBattleResults->battleTurnCounter > 3) //Give the Player a chance to Dynamax first in a Raid battle
+			if (!IsRaidBattle() || gBattleResults.battleTurnCounter > 3) //Give the Player a chance to Dynamax first in a Raid battle
 				gNewBS->dynamaxData.toBeUsed[gActiveBattler] = TRUE;
 		}
 	}
@@ -420,7 +420,7 @@ static void PlayerPartnerHandleChooseMove(void)
 	gChosenMovesByBanks[gActiveBattler] = chosenMove;
 	TryRemoveDoublesKillingScore(gActiveBattler, gBankTarget, chosenMove);
 
-	EmitMoveChosen(1, chosenMoveId, gBankTarget, gNewBS->MegaData->chosen[gActiveBattler], gNewBS->UltraData->chosen[gActiveBattler], gNewBS->ZMoveData->toBeUsed[gActiveBattler], FALSE);
+	EmitMoveChosen(1, chosenMoveId, gBankTarget, gNewBS->megaData.chosen[gActiveBattler], gNewBS->ultraData.chosen[gActiveBattler], gNewBS->zMoveData.toBeUsed[gActiveBattler], FALSE);
 	PlayerPartnerBufferExecComplete();
 }
 
@@ -436,8 +436,8 @@ static void PlayerPartnerHandleChooseAction(void)
 
 	if (RAID_BATTLE_END) //mon 2 doesn't get to do anything.
 	{
-		if ((gActionForBanks[partner] == ACTION_USE_ITEM && GetPocketByItemId(itemId) == POCKET_POKEBALLS)
-		|| gActionForBanks[partner] == ACTION_RUN)
+		if ((gChosenActionByBank[partner] == ACTION_USE_ITEM && GetPocketByItemId(itemId) == POCKET_POKEBALLS)
+		|| gChosenActionByBank[partner] == ACTION_RUN)
 		{
 			gNewBS->NoMoreMovingThisTurn |= gBitTable[gActiveBattler];
 			EmitTwoReturnValues(1, ACTION_USE_MOVE, 0);
@@ -451,9 +451,9 @@ static void PlayerPartnerHandleChooseAction(void)
 			return;
 		}
 	}
-	else if (gActionForBanks[partner] == ACTION_RUN
+	else if (gChosenActionByBank[partner] == ACTION_RUN
 	|| (!IsBagDisabled()
-	 && gActionForBanks[partner] == ACTION_USE_ITEM
+	 && gChosenActionByBank[partner] == ACTION_USE_ITEM
 	 && GetPocketByItemId(itemId) == POCKET_POKEBALLS)) //mon 2 doesn't get to do anything.
 	{
 		gNewBS->NoMoreMovingThisTurn |= gBitTable[gActiveBattler];

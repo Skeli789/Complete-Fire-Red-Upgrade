@@ -770,7 +770,7 @@ u16 GetAmountToRecoverBy(u8 bankAtk, u8 bankDef, u16 move)
 				amountToRecover += MathMax(1, maxHp / 16);
 			}
 
-			if (gWishFutureKnock->wishCounter[bankAtk] > 0)
+			if (gWishFutureKnock.wishCounter[bankAtk] > 0)
 			{
 				amountToRecover += MathMax(1, maxHp / 2);
 			}
@@ -1122,7 +1122,7 @@ bool8 ShouldSetUpScreens(u8 bankAtk, u8 bankDef, u16 move)
 	{
 		if (move == MOVE_AURORAVEIL
 		&& gBattleWeather & WEATHER_HAIL_ANY
-		&& !((gSideAffecting[bankAtk] & (SIDE_STATUS_REFLECT | SIDE_STATUS_LIGHTSCREEN)) == (SIDE_STATUS_REFLECT | SIDE_STATUS_LIGHTSCREEN)))
+		&& !((gSideStatuses[bankAtk] & (SIDE_STATUS_REFLECT | SIDE_STATUS_LIGHTSCREEN)) == (SIDE_STATUS_REFLECT | SIDE_STATUS_LIGHTSCREEN)))
 			return TRUE;
 		else
 		{
@@ -1255,7 +1255,7 @@ bool8 ShouldPivot(u8 bankAtk, u8 bankDef, u16 move, u8 class)
 					if (IsClassDamager(class) && switchScore >= SWITCHING_INCREASE_WALLS_FOE)
 						return PIVOT;
 
-					if (gSideAffecting[bankAtk] & SIDE_STATUS_SPIKES && switchScore >= SWITCHING_INCREASE_CAN_REMOVE_HAZARDS)
+					if (gSideStatuses[bankAtk] & SIDE_STATUS_SPIKES && switchScore >= SWITCHING_INCREASE_CAN_REMOVE_HAZARDS)
 							return PIVOT;
 
 					if (WillFaintFromSecondaryDamage(bankAtk) && switchScore >= SWITCHING_INCREASE_WALLS_FOE)
@@ -1334,7 +1334,7 @@ bool8 ShouldPivot(u8 bankAtk, u8 bankDef, u16 move, u8 class)
 
 					if (!hasUsefulStatBoost)
 					{
-						if (gSideAffecting[bankAtk] & SIDE_STATUS_SPIKES && switchScore >= SWITCHING_INCREASE_CAN_REMOVE_HAZARDS)
+						if (gSideStatuses[bankAtk] & SIDE_STATUS_SPIKES && switchScore >= SWITCHING_INCREASE_CAN_REMOVE_HAZARDS)
 							return PIVOT;
 
 						if (WillFaintFromSecondaryDamage(bankAtk) && switchScore >= SWITCHING_INCREASE_HAS_SUPER_EFFECTIVE_MOVE)

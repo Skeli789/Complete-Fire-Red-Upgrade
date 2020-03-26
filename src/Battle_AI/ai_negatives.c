@@ -584,7 +584,7 @@ u8 AI_Script_Negatives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		}
 	}
 
-MOVESCR_CHECK_0:	
+MOVESCR_CHECK_0:
 	//Throat Chop Check
 	if (CantUseSoundMoves(bankAtk) && CheckSoundMove(move))
 		return 0; //Can't select this move period
@@ -598,10 +598,10 @@ MOVESCR_CHECK_0:
 	{
 		if (CheckTableForMove(move, gRaidBattleBannedMoves))
 			return 0; //This move won't work at all.
-		
+
 		if (GetBattlerPosition(bankAtk) == B_POSITION_OPPONENT_LEFT && CheckTableForMove(move, gRaidBattleBannedRaidMonMoves))
 			return 0; //This move really shouldn't be used
-		
+
 		if (bankAtk != bankDef
 		&& GetBattlerPosition(bankDef) == B_POSITION_OPPONENT_LEFT
 		&& gNewBS->dynamaxData.raidShieldsUp
@@ -740,7 +740,7 @@ MOVESCR_CHECK_0:
 			break;
 
 		case EFFECT_SPLASH:
-			if (!IsTypeZCrystal(atkItem, moveType) || gNewBS->ZMoveData->used[bankAtk])
+			if (!IsTypeZCrystal(atkItem, moveType) || gNewBS->zMoveData.used[bankAtk])
 				DECREASE_VIABILITY(10);
 			break;
 
@@ -1121,7 +1121,7 @@ MOVESCR_CHECK_0:
 			break;
 
 		case EFFECT_LIGHT_SCREEN:
-			if (gSideAffecting[SIDE(bankAtk)] & SIDE_STATUS_LIGHTSCREEN)
+			if (gSideStatuses[SIDE(bankAtk)] & SIDE_STATUS_LIGHTSCREEN)
 				DECREASE_VIABILITY(10);
 			break;
 
@@ -1240,7 +1240,7 @@ MOVESCR_CHECK_0:
 					break;
 
 				default:
-					if (gSideAffecting[SIDE(bankAtk)] & SIDE_STATUS_REFLECT
+					if (gSideStatuses[SIDE(bankAtk)] & SIDE_STATUS_REFLECT
 					|| PARTNER_MOVE_EFFECT_IS_SAME_NO_TARGET)
 						DECREASE_VIABILITY(10);
 			}
@@ -1555,7 +1555,7 @@ MOVESCR_CHECK_0:
 					if (gSideTimers[SIDE(bankDef)].srAmount > 0
 					|| PARTNER_MOVE_IS_SAME_NO_TARGET //Only one mon needs to set up Stealth Rocks
 					|| PARTNER_MOVE_IS_MAX_MOVE_WITH_EFFECT(MAX_EFFECT_STEALTH_ROCK))
-						DECREASE_VIABILITY(10); 
+						DECREASE_VIABILITY(10);
 					break;
 
 				case MOVE_TOXICSPIKES:
@@ -1694,9 +1694,9 @@ MOVESCR_CHECK_0:
 		case EFFECT_RAPID_SPIN:
 			if (move == MOVE_DEFOG)
 			{
-				if (gSideAffecting[SIDE(bankDef)] & (SIDE_STATUS_REFLECT | SIDE_STATUS_LIGHTSCREEN | SIDE_STATUS_SAFEGUARD | SIDE_STATUS_MIST)
+				if (gSideStatuses[SIDE(bankDef)] & (SIDE_STATUS_REFLECT | SIDE_STATUS_LIGHTSCREEN | SIDE_STATUS_SAFEGUARD | SIDE_STATUS_MIST)
 				|| gNewBS->AuroraVeilTimers[SIDE(bankDef)] != 0
-				|| gSideAffecting[SIDE(bankAtk)] & SIDE_STATUS_SPIKES)
+				|| gSideStatuses[SIDE(bankAtk)] & SIDE_STATUS_SPIKES)
 				{
 					if (PARTNER_MOVE_EFFECT_IS_SAME_NO_TARGET
 					|| PARTNER_MOVE_IS_MAX_MOVE_WITH_EFFECT(MAX_EFFECT_DEFOG))
@@ -1706,7 +1706,7 @@ MOVESCR_CHECK_0:
 					}
 				}
 
-				if (gSideAffecting[SIDE(bankDef)] & SIDE_STATUS_SPIKES)
+				if (gSideStatuses[SIDE(bankDef)] & SIDE_STATUS_SPIKES)
 				{
 					DECREASE_VIABILITY(10); //Don't blow away opposing spikes
 					break;
@@ -1728,7 +1728,7 @@ MOVESCR_CHECK_0:
 				goto AI_STANDARD_DAMAGE;
 
 			//Spin checks
-			if (!(gSideAffecting[SIDE(bankAtk)] & SIDE_STATUS_SPIKES))
+			if (!(gSideStatuses[SIDE(bankAtk)] & SIDE_STATUS_SPIKES))
 				DECREASE_VIABILITY(6);
 			break;
 
@@ -1759,7 +1759,7 @@ MOVESCR_CHECK_0:
 			break;
 
 		case EFFECT_FUTURE_SIGHT:
-			if (gWishFutureKnock->futureSightCounter[bankAtk] != 0)
+			if (gWishFutureKnock.futureSightCounter[bankAtk] != 0)
 				DECREASE_VIABILITY(10);
 			else
 				goto AI_STANDARD_DAMAGE;
@@ -1976,7 +1976,7 @@ MOVESCR_CHECK_0:
 			break;
 
 		case EFFECT_WISH:
-			if (gWishFutureKnock->wishCounter[bankAtk] != 0)
+			if (gWishFutureKnock.wishCounter[bankAtk] != 0)
 				DECREASE_VIABILITY(10);
 			break;
 
@@ -2600,7 +2600,7 @@ MOVESCR_CHECK_0:
 					|| SIDE(bankAtk) != B_SIDE_PLAYER //Only increase money amount if will benefit player
 					|| gNewBS->HappyHourByte != 0) //Already used Happy Hour
 					{
-						if (!IsTypeZCrystal(atkItem, moveType) || gNewBS->ZMoveData->used[bankAtk] || IsMegaZMoveBannedBattle())
+						if (!IsTypeZCrystal(atkItem, moveType) || gNewBS->zMoveData.used[bankAtk] || IsMegaZMoveBannedBattle())
 							DECREASE_VIABILITY(10);
 					}
 					break;
@@ -2609,7 +2609,7 @@ MOVESCR_CHECK_0:
 				case MOVE_HOLDHANDS:
 					if (!IsTypeZCrystal(atkItem, moveType)
 					|| atkQuality != moveType
-					|| gNewBS->ZMoveData->used[bankAtk])
+					|| gNewBS->zMoveData.used[bankAtk])
 						DECREASE_VIABILITY(10);
 					break;
 			}

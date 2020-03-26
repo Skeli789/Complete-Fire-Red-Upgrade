@@ -196,7 +196,7 @@ bool8 CouldHaveEvolvedViaLevelUp(struct Pokemon* mon)
 void EvolveSpeciesByLevel(u16* species, u8 level)
 {
 	const struct Evolution* evolutions;
-	
+
 	START:
 	evolutions = gEvolutionTable[*species];
 

@@ -216,7 +216,7 @@ bool8 IsBannedDynamaxSpecies(u16 species)
 		#endif
 			return TRUE;
 	}
-	
+
 	if (IsMegaSpecies(species)
 	||  IsRedPrimalSpecies(species)
 	||  IsBluePrimalSpecies(species)
@@ -249,7 +249,7 @@ static const u8* DoDynamax(u8 bank)
 	if (dynamaxSpecies == SPECIES_NONE) //Can't Dynamax
 		return NULL;
 
-	gBattleScripting->bank = bank;
+	gBattleScripting.bank = bank;
 	gLastUsedItem = FindBankDynamaxBand(bank);
 
 	return BattleScript_Dynamax;
@@ -261,10 +261,10 @@ static const u8* DoGigantamax(u8 bank)
 
 	if (gigantamaxSpecies == SPECIES_NONE) //Can't Gigantamax
 		return NULL;
-	
+
 	DoFormChange(bank, gigantamaxSpecies, FALSE, FALSE, FALSE);
 
-	gBattleScripting->bank = bank;
+	gBattleScripting.bank = bank;
 	gLastUsedItem = FindBankDynamaxBand(bank);
 	PREPARE_SPECIES_BUFFER(gBattleTextBuff1, gigantamaxSpecies);
 
@@ -312,7 +312,7 @@ u16 GetGigantamaxBaseForm(u16 species)
 		if (evolutions[i].method == EVO_GIGANTAMAX && evolutions[i].param == 0)
 			return evolutions[i].targetSpecies;
 	}
-	
+
 	return SPECIES_NONE;
 }
 
@@ -410,10 +410,10 @@ bool8 DynamaxEnabled(u8 bank)
 				return FALSE;
 			#endif
 		}
-		
+
 		return TRUE;
 	}
-	
+
 	return FALSE;
 }
 
@@ -523,7 +523,7 @@ move_t GetMaxMove(u8 bank, u8 moveIndex)
 move_t GetMaxMoveByMove(u8 bank, u16 baseMove)
 {
 	u8 moveSplit = CalcMoveSplit(bank, baseMove);
-	
+
 	if (baseMove == MOVE_NONE)
 		return MOVE_NONE;
 
@@ -596,7 +596,7 @@ bool8 MonCanDynamax(struct Pokemon* mon)
 
 		return TRUE;
 	}
-	
+
 	return FALSE;
 }
 
@@ -670,7 +670,7 @@ void LoadAndCreateEnemyShadowSprites(void)
         battlerId = GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
         gBattleSpritesDataPtr->healthBoxesData[battlerId].shadowSpriteId = CreateSprite((void*) 0x8250A1C, GetBattlerSpriteCoord(battlerId, BATTLER_COORD_X), GetBattlerSpriteCoord(battlerId, BATTLER_COORD_Y) + 29, 0xC8);
         gSprites[gBattleSpritesDataPtr->healthBoxesData[battlerId].shadowSpriteId].data[0] = battlerId;
-		
+
 		//The game is insistent that there must be two shadow sprites in Doubles, otherwise things break
 		//So overlap the two shadow sprites in a Raid Battle
 		if (IsRaidBattle())
@@ -692,9 +692,9 @@ void UpdateHPForDynamax(void)
 		gBattlescriptCurrInstr -= 5;
 		return;
 	}
-	
+
 	u32 newCurrentHp;
-	gActiveBattler = gBattleScripting->bank;
+	gActiveBattler = gBattleScripting.bank;
 
 	#ifdef SPECIES_SHEDINJA
 	if (SPECIES(gActiveBattler) == SPECIES_SHEDINJA) //Shedinja doesn't get a Dynamax HP boost
@@ -703,7 +703,7 @@ void UpdateHPForDynamax(void)
 		return;
 	}
 	#endif
-	
+
 	u8 hpBoost = GetDynamaxHPBoost(gActiveBattler);
 
 	if (IsDynamaxed(gActiveBattler))
@@ -759,7 +759,7 @@ void TryBoostDynamaxHPAfterLevelUp(u8 bank) //Should only be called once all bat
 		//This is gonna bite me in the butt later
 		mon->hp = gBattleMons[gActiveBattler].hp;
 		mon->maxHP = gBattleMons[gActiveBattler].maxHP;
-	
+
 		/*
 			It should be done this way, but the game crashes when trying to learn a new move, so I'll deal with
 			this if I ever do link Raid battles.
@@ -778,7 +778,7 @@ void UpdateCurrentHealthForDynamaxEnd(void)
 		return;
 	}
 
-	gActiveBattler = gBattleScripting->bank;
+	gActiveBattler = gBattleScripting.bank;
 
 	if (!IsDynamaxed(gActiveBattler))
 	{
@@ -790,21 +790,21 @@ void UpdateCurrentHealthForDynamaxEnd(void)
 //Called from Battle Script
 void ClearBallAnimActiveBit(void)
 {
-	gBattleSpritesDataPtr->healthBoxesData[gBattleScripting->bank].ballAnimActive = FALSE;
+	gBattleSpritesDataPtr->healthBoxesData[gBattleScripting.bank].ballAnimActive = FALSE;
 }
 
 void atkFF2F_setmaxmoveeffect(void)
 {
 	u8 statId, increase, decrease, flags;
 	bool8 mirrorArmorReflected = ABILITY(gBankTarget) == ABILITY_MIRRORARMOR;
-	
+
 	gBattlescriptCurrInstr += 1;
-	
+
 	if (IsRaidBattle()
 	&& gBankTarget == BANK_RAID_BOSS
 	&& gNewBS->dynamaxData.raidShieldsUp)
 		return; //No special effect when move is blocked by shields
-	
+
 	gHitMarker |= HITMARKER_IGNORE_SUBSTITUTE;
 
 	switch (gBattleMoves[gCurrentMove].z_move_effect) { //Stored here for simplicity
@@ -819,8 +819,8 @@ void atkFF2F_setmaxmoveeffect(void)
 			if (!ChangeStatBuffs(increase, statId, MOVE_EFFECT_CERTAIN | MOVE_EFFECT_AFFECTS_USER, NULL))
 			{
 				gEffectBank = gBankAttacker;
-				gBattleScripting->animArg1 = STAT_ANIM_PLUS1 + statId - 1;
-				gBattleScripting->animArg2 = 0;
+				gBattleScripting.animArg1 = STAT_ANIM_PLUS1 + statId - 1;
+				gBattleScripting.animArg2 = 0;
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_StatUp;
 			}
@@ -832,13 +832,13 @@ void atkFF2F_setmaxmoveeffect(void)
 
 				if (!ChangeStatBuffs(increase, statId, MOVE_EFFECT_CERTAIN | MOVE_EFFECT_AFFECTS_USER, NULL))
 				{
-					gBattleScripting->bank = gBankAttacker;
-					gBattleScripting->animArg1 = STAT_ANIM_PLUS1 + statId - 1;
-					gBattleScripting->animArg2 = 0;
+					gBattleScripting.bank = gBankAttacker;
+					gBattleScripting.animArg1 = STAT_ANIM_PLUS1 + statId - 1;
+					gBattleScripting.animArg2 = 0;
 					BattleScriptPushCursor();
 					gBattlescriptCurrInstr = BattleScript_StatUpPartner;
 				}
-				
+
 				gBankAttacker = backup; //Restore the original attacker
 			}
 			break;
@@ -856,7 +856,7 @@ void atkFF2F_setmaxmoveeffect(void)
 				flags = 0;
 				if (mirrorArmorReflected)
 				{
-					gBattleScripting->statChanger = decrease | statId;
+					gBattleScripting.statChanger = decrease | statId;
 					flags = STAT_CHANGE_BS_PTR;
 				}
 
@@ -865,8 +865,8 @@ void atkFF2F_setmaxmoveeffect(void)
 					if (!mirrorArmorReflected)
 					{
 						gEffectBank = gBankTarget;
-						gBattleScripting->animArg1 = STAT_ANIM_MINUS1 + statId - 1;
-						gBattleScripting->animArg2 = 0;
+						gBattleScripting.animArg1 = STAT_ANIM_MINUS1 + statId - 1;
+						gBattleScripting.animArg2 = 0;
 						BattleScriptPushCursor();
 						gBattlescriptCurrInstr = BattleScript_StatDown;
 					}
@@ -1034,7 +1034,7 @@ void atkFF2F_setmaxmoveeffect(void)
 				gBattlescriptCurrInstr = BattleScript_MaxMoveSpite;
 			}
 			break;
-	
+
 		case MAX_EFFECT_GRAVITY:
 			if (!IsGravityActive())
 			{
@@ -1076,7 +1076,7 @@ void atkFF2F_setmaxmoveeffect(void)
 
 		case MAX_EFFECT_LOWER_EVASIVENESS_FOES:
 			if (BATTLER_ALIVE(gBankTarget) || (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(gBankTarget))))
-			{	
+			{
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_MaxMoveLowerEvasivenessFoes;
 			}
@@ -1086,7 +1086,7 @@ void atkFF2F_setmaxmoveeffect(void)
 			BattleScriptPushCursor();
 			gBattlescriptCurrInstr = BattleScript_MaxMoveAromatherapy;
 			break;
-	
+
 		case MAX_EFFECT_CONFUSE_FOES:
 			if ((BATTLER_ALIVE(gBankTarget) || (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(gBankTarget))))
 			&&  (CanBeConfused(gBankTarget, TRUE) || (IS_DOUBLE_BATTLE && CanBeConfused(PARTNER(gBankTarget), TRUE)))) //Is it worth it to push the script
@@ -1107,12 +1107,12 @@ void atkFF2F_setmaxmoveeffect(void)
 
 		case MAX_EFFECT_LOWER_SPEED_2_FOES:
 			if (BATTLER_ALIVE(gBankTarget) || (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(gBankTarget))))
-			{	
+			{
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_MaxMoveLowerSpeed2Foes;
 			}
 			break;
-		
+
 		case MAX_EFFECT_STEELSURGE:
 			if (gSideTimers[SIDE(gBankTarget)].steelsurge == 0)
 			{
@@ -1196,7 +1196,7 @@ bool8 IsMaxMoveWithWeatherEffect(u16 move)
 				return TRUE;
 		}
 	}
-	
+
 	return FALSE;
 }
 
@@ -1228,7 +1228,7 @@ bool8 IsMaxMoveWithStatusEffect(u16 move)
 				return TRUE;
 		}
 	}
-	
+
 	return FALSE;
 }
 
@@ -1276,10 +1276,10 @@ bool8 ProtectedByMaxGuard(u8 bankDef, u16 move)
 	{
 		if (gBattleMoves[move].target & (MOVE_TARGET_DEPENDS | MOVE_TARGET_OPPONENTS_FIELD))
 			return (gBattleMoves[move].flags & FLAG_PROTECT_AFFECTED) != 0;
-		
+
 		if (gBattleMoves[move].target & MOVE_TARGET_ALL && CheckTableForMove(gCurrentMove, gSpecialWholeFieldMoves))
 			return FALSE;
-	
+
 		return TRUE;
 	}
 
@@ -1329,24 +1329,24 @@ static u8 GetRaidShieldHealthRatio(u8 bank)
 bool8 ShouldCreateRaidShields(u8 bank)
 {
 	u8 i, healthRatio;
-	
+
 	if (HasRaidShields(bank) || !BATTLER_ALIVE(bank))
 		return FALSE;
 
 	healthRatio = GetRaidShieldHealthRatio(bank);
-	
+
 	for (i = 1; i <= healthRatio; ++i)
 	{
 		u16 cutOff = (gBattleMons[bank].maxHP / healthRatio) * i;
-		
+
 		if (i == healthRatio)
 			cutOff = gBattleMons[bank].maxHP; //Fix Math Errors
-	
+
 		if (gBattleMons[bank].hp <= cutOff + (gBattleMons[bank].maxHP / 16) //Give some leeway for throwing up a shield
 		&&  gNewBS->dynamaxData.turnStartHP > cutOff)
 			return TRUE;
 	}
-	
+
 	return FALSE;
 }
 
@@ -1354,7 +1354,7 @@ u16 GetNextRaidShieldHP(u8 bank)
 {
 	u8 i, healthRatio;
 	u16 cutOff, prevCutOff;
-	
+
 	if (HasRaidShields(bank) || !BATTLER_ALIVE(bank))
 		return 0;
 
@@ -1384,7 +1384,7 @@ void CreateRaidShieldSprites(void)
 	u8 i, numShields;
 	u8 bank = BANK_RAID_BOSS;
 	u16 baseStatTotal = GetBaseStatsTotal(SPECIES(bank));
-	
+
 	if (!FlagGet(FLAG_RAID_BATTLE_NO_FORCE_END)) //Less shields for battle that ends in 10 turns
 	{
 		switch (baseStatTotal) {
@@ -1731,7 +1731,7 @@ void sp11B_AllRaidBattlesCompleted(void)
 				return;
 		}
 	}
-	
+
 	gSpecialVar_LastResult = TRUE; //All Raid Battles available were completed
 }
 
@@ -1740,7 +1740,7 @@ u16 GetRaidRewardAmount(u16 item)
 {
 	if (GetPocketByItemId(item) == POCKET_POKE_BALLS)
 		return Random() % 5 + 1; //1 - 5
-	
+
 	if (IsBerry(item))
 		return Random() % 5 + 1; //1 - 5
 
@@ -1845,7 +1845,7 @@ void sp11C_GiveRaidBattleRewards(void)
 		for (; VarGet(VAR_TEMP_0) < MAX_RAID_DROPS; ++*(GetVarPointer(VAR_TEMP_0)))
 		{
 			const u16* table = (gRaidBattleStars <= 4) ? s4StarFrontierRaidBattleDrops : s56StarFrontierRaidBattleDrops;
-		
+
 			if (table[VarGet(VAR_TEMP_0)] != ITEM_NONE
 			&& Random() % 100 < sRaidBattleDropRates[VarGet(VAR_TEMP_0)])
 			{

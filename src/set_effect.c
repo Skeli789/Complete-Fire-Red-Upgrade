@@ -145,7 +145,7 @@ void atk15_seteffectwithchance(void)
 		gBattlescriptCurrInstr++;
 
 	gBattleCommunication[MOVE_EFFECT_BYTE] = 0;
-	gBattleScripting->multihitMoveEffect = 0;
+	gBattleScripting.multihitMoveEffect = 0;
 }
 
 void SetMoveEffect(bool8 primary, u8 certain)
@@ -160,12 +160,12 @@ void SetMoveEffect(bool8 primary, u8 certain)
 		gEffectBank = gBankAttacker; // battlerId that effects get applied on
 		gBattleCommunication[MOVE_EFFECT_BYTE] &= ~(MOVE_EFFECT_AFFECTS_USER);
 		affectsUser = MOVE_EFFECT_AFFECTS_USER;
-		gBattleScripting->bank = gBankAttacker;
+		gBattleScripting.bank = gBankAttacker;
 	}
 	else
 	{
 		gEffectBank = gBankTarget;
-		gBattleScripting->bank = gBankAttacker;
+		gBattleScripting.bank = gBankAttacker;
 	}
 
 	if (ABILITY(gEffectBank) == ABILITY_SHIELDDUST
@@ -209,7 +209,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 		goto CLEAR_MOVE_EFFECT_BYTE;
 	}
 
-	if (MoveBlockedBySubstitute(gCurrentMove, gBattleScripting->bank, gEffectBank)
+	if (MoveBlockedBySubstitute(gCurrentMove, gBattleScripting.bank, gEffectBank)
 	&& affectsUser != MOVE_EFFECT_AFFECTS_USER
 	&& !(gHitMarker & HITMARKER_IGNORE_SUBSTITUTE))
 	{
@@ -470,8 +470,8 @@ void SetMoveEffect(bool8 primary, u8 certain)
 				}
 				else
 				{
-					gBattleScripting->animArg1 = gBattleCommunication[MOVE_EFFECT_BYTE] & ~(MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN);
-					gBattleScripting->animArg2 = 0;
+					gBattleScripting.animArg1 = gBattleCommunication[MOVE_EFFECT_BYTE] & ~(MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN);
+					gBattleScripting.animArg2 = 0;
 					BattleScriptPush(gBattlescriptCurrInstr + 1);
 					gBattlescriptCurrInstr = BattleScript_StatUp;
 				}
@@ -487,7 +487,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 				flags = affectsUser | certain;
 				if (mirrorArmorReflected && !affectsUser)
 				{
-					gBattleScripting->statChanger = DECREASE_1 | (gBattleCommunication[MOVE_EFFECT_BYTE] - MOVE_EFFECT_ATK_MINUS_1 + 1);
+					gBattleScripting.statChanger = DECREASE_1 | (gBattleCommunication[MOVE_EFFECT_BYTE] - MOVE_EFFECT_ATK_MINUS_1 + 1);
 					flags |= STAT_CHANGE_BS_PTR;
 				}
 
@@ -500,8 +500,8 @@ void SetMoveEffect(bool8 primary, u8 certain)
 				}
 				else
 				{
-					gBattleScripting->animArg1 = gBattleCommunication[MOVE_EFFECT_BYTE] & ~(MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN);
-					gBattleScripting->animArg2 = 0;
+					gBattleScripting.animArg1 = gBattleCommunication[MOVE_EFFECT_BYTE] & ~(MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN);
+					gBattleScripting.animArg2 = 0;
 					BattleScriptPush(gBattlescriptCurrInstr + 1);
 					gBattlescriptCurrInstr = BattleScript_StatDown;
 				}
@@ -522,8 +522,8 @@ void SetMoveEffect(bool8 primary, u8 certain)
 				}
 				else
 				{
-					gBattleScripting->animArg1 = gBattleCommunication[MOVE_EFFECT_BYTE] & ~(MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN);
-					gBattleScripting->animArg2 = 0;
+					gBattleScripting.animArg1 = gBattleCommunication[MOVE_EFFECT_BYTE] & ~(MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN);
+					gBattleScripting.animArg2 = 0;
 					BattleScriptPush(gBattlescriptCurrInstr + 1);
 					gBattlescriptCurrInstr = BattleScript_StatUp;
 				}
@@ -539,7 +539,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 				flags = affectsUser | certain;
 				if (mirrorArmorReflected && !affectsUser)
 				{
-					gBattleScripting->statChanger = DECREASE_2 | (gBattleCommunication[MOVE_EFFECT_BYTE] - MOVE_EFFECT_ATK_MINUS_2 + 1);
+					gBattleScripting.statChanger = DECREASE_2 | (gBattleCommunication[MOVE_EFFECT_BYTE] - MOVE_EFFECT_ATK_MINUS_2 + 1);
 					flags |= STAT_CHANGE_BS_PTR;
 				}
 
@@ -552,8 +552,8 @@ void SetMoveEffect(bool8 primary, u8 certain)
 				}
 				else
 				{
-					gBattleScripting->animArg1 = gBattleCommunication[MOVE_EFFECT_BYTE] & ~(MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN);
-					gBattleScripting->animArg2 = 0;
+					gBattleScripting.animArg1 = gBattleCommunication[MOVE_EFFECT_BYTE] & ~(MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN);
+					gBattleScripting.animArg2 = 0;
 					BattleScriptPush(gBattlescriptCurrInstr + 1);
 					gBattlescriptCurrInstr = BattleScript_StatDown;
 				}
@@ -575,8 +575,8 @@ void SetMoveEffect(bool8 primary, u8 certain)
 				}
 				else
 				{
-					gBattleScripting->animArg1 = gBattleCommunication[MOVE_EFFECT_BYTE] & ~(MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN);
-					gBattleScripting->animArg2 = 0;
+					gBattleScripting.animArg1 = gBattleCommunication[MOVE_EFFECT_BYTE] & ~(MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN);
+					gBattleScripting.animArg2 = 0;
 					BattleScriptPush(gBattlescriptCurrInstr + 1);
 					gBattlescriptCurrInstr = BattleScript_StatUp;
 				}
@@ -597,8 +597,8 @@ void SetMoveEffect(bool8 primary, u8 certain)
 				}
 				else
 				{
-					gBattleScripting->animArg1 = gBattleCommunication[MOVE_EFFECT_BYTE] & ~(MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN);
-					gBattleScripting->animArg2 = 0;
+					gBattleScripting.animArg1 = gBattleCommunication[MOVE_EFFECT_BYTE] & ~(MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN);
+					gBattleScripting.animArg2 = 0;
 					BattleScriptPush(gBattlescriptCurrInstr + 1);
 					gBattlescriptCurrInstr = BattleScript_StatDown;
 				}
@@ -622,7 +622,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 				{
 					gBattleMons[gEffectBank].status2 |= STATUS2_ESCAPE_PREVENTION;
 					gDisableStructs[gEffectBank].bankPreventingEscape = gBankAttacker;
-					
+
 					if (gCurrentMove == MOVE_OCTOLOCK)
 						gNewBS->trappedByOctolock |= gBitTable[gEffectBank];
 					else if (gCurrentMove == MOVE_NORETREAT)
@@ -701,7 +701,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 					gBattlescriptCurrInstr++;
 
 				break;
-			
+
 			extern const u16 gBannedBattleEatBerries[];
 			case MOVE_EFFECT_EAT_BERRY: //For Stuff Cheeks
 				if (IsBerry(ITEM(gEffectBank))
@@ -738,7 +738,7 @@ void SetMoveEffect(bool8 primary, u8 certain)
 
 					gNewBS->backupAbility = gNewBS->SuppressedAbilities[gEffectBank];
 
-					gBattleScripting->bank = gEffectBank;
+					gBattleScripting.bank = gEffectBank;
 					BattleScriptPush(gBattlescriptCurrInstr + 1);
 					gBattlescriptCurrInstr = BattleScript_AbilityWasSuppressed;
 				}
@@ -751,8 +751,8 @@ void SetMoveEffect(bool8 primary, u8 certain)
 				u8 side = SIDE(gBankTarget);
 				if (gSideTimers[side].reflectTimer
 				||  gSideTimers[side].lightscreenTimer
-				||  gSideAffecting[side] & SIDE_STATUS_REFLECT
-				||  gSideAffecting[side] & SIDE_STATUS_LIGHTSCREEN
+				||  gSideStatuses[side] & SIDE_STATUS_REFLECT
+				||  gSideStatuses[side] & SIDE_STATUS_LIGHTSCREEN
 				||  gNewBS->AuroraVeilTimers[side])
 				{
 					RemoveScreensFromSide(side);
@@ -816,12 +816,12 @@ bool8 SetMoveEffect2(void)
 		gEffectBank = gBankAttacker; // battlerId that effects get applied on
 		gBattleCommunication[MOVE_EFFECT_BYTE] &= ~(MOVE_EFFECT_AFFECTS_USER);
 		affectsUser = TRUE;
-		gBattleScripting->bank = gBankAttacker;
+		gBattleScripting.bank = gBankAttacker;
 	}
 	else
 	{
 		gEffectBank = gBankTarget;
-		gBattleScripting->bank = gBankAttacker;
+		gBattleScripting.bank = gBankAttacker;
 	}
 
 	if (CheckTableForSpecialMoveEffect(gBattleCommunication[MOVE_EFFECT_BYTE], sMoveEffectsThatIgnoreSubstitute))
@@ -831,7 +831,7 @@ bool8 SetMoveEffect2(void)
 	&& gBattleCommunication[MOVE_EFFECT_BYTE] != MOVE_EFFECT_STEAL_ITEM)
 		RESET_RETURN
 
-	if (MoveBlockedBySubstitute(gCurrentMove, gBattleScripting->bank, gEffectBank)
+	if (MoveBlockedBySubstitute(gCurrentMove, gBattleScripting.bank, gEffectBank)
 	&& !affectsUser
 	&& !(gHitMarker & HITMARKER_IGNORE_SUBSTITUTE))
 		RESET_RETURN
@@ -905,7 +905,7 @@ bool8 SetMoveEffect2(void)
 				/*
 				gLastUsedAbility = ABILITY_STICKYHOLD;
 				gBattlescriptCurrInstr = BattleScript_StickyHoldActivatesRet;
-				gBattleScripting->bank = gEffectBank;
+				gBattleScripting.bank = gEffectBank;
 				effect = TRUE;
 				*/
 				break;

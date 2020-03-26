@@ -872,7 +872,7 @@ move_t CalcStrongestMove(const u8 bankAtk, const u8 bankDef, const bool8 onlySpr
 	u32 predictedDamage;
 	int i;
 	u16 defHP = gBattleMons[bankDef].hp;
-	
+
 	if (defHP == 0) //Foe dead
 		return MOVE_NONE;
 
@@ -1103,7 +1103,7 @@ bool8 WillTakeSignificantDamageFromEntryHazards(u8 bank, u8 healthFraction)
 {
 	u32 dmg = 0;
 
-	if (gSideAffecting[SIDE(bank)] & SIDE_STATUS_SPIKES
+	if (gSideStatuses[SIDE(bank)] & SIDE_STATUS_SPIKES
 	&& GetMonAbility(GetBankPartyData(bank)) != ABILITY_MAGICGUARD
 	&& ITEM_EFFECT(bank) != ITEM_EFFECT_HEAVY_DUTY_BOOTS)
 	{
@@ -1111,7 +1111,7 @@ bool8 WillTakeSignificantDamageFromEntryHazards(u8 bank, u8 healthFraction)
 
 		if (gSideTimers[SIDE(bank)].srAmount > 0)
 			dmg += CalcStealthRockDamagePartyMon(mon);
-			
+
 		if (gSideTimers[SIDE(bank)].steelsurge > 0)
 			dmg += CalcSteelsurgeDamagePartyMon(mon);
 
@@ -1213,7 +1213,7 @@ u16 GetBattleMonMove(u8 bank, u8 i)
 		else
 			move = gBattleMons[bank].moves[i];
 	#endif
-	
+
 	if (IsDynamaxed(bank))
 		move = GetMaxMove(bank, i);
 
@@ -1247,7 +1247,7 @@ u16 GetAIChosenMove(u8 bankAtk, u8 bankDef)
 	u16 move = gChosenMovesByBanks[bankAtk];
 	if (move == MOVE_NONE)
 		move = IsValidMovePrediction(bankAtk, bankDef);
-	else if (gNewBS->ZMoveData->toBeUsed[bankAtk]) //Pokemon chose a Z-Move
+	else if (gNewBS->zMoveData.toBeUsed[bankAtk]) //Pokemon chose a Z-Move
 		move = ReplaceWithZMoveRuntime(bankAtk, move);
 	else if (IsDynamaxed(bankAtk) || gNewBS->dynamaxData.toBeUsed[bankAtk])
 	{
@@ -1291,7 +1291,7 @@ bool8 IsTakingSecondaryDamage(u8 bank)
 	{
 		if (TakesDamageFromSandstorm(bank)
 		||  TakesDamageFromHail(bank)
-		||  gWishFutureKnock->futureSightCounter[bank] == 1
+		||  gWishFutureKnock.futureSightCounter[bank] == 1
 		||  gStatuses3[bank] & STATUS3_LEECHSEED
 		||  (gBattleMons[bank].status1 & STATUS1_PSN_ANY && ability != ABILITY_POISONHEAL)
 		||  gBattleMons[bank].status1 & STATUS1_BURN
@@ -1318,7 +1318,7 @@ bool8 WillFaintFromSecondaryDamage(u8 bank)
 	if (ability != ABILITY_MAGICGUARD)
 	{
 		u32 damage = 0;
-		if (gWishFutureKnock->weatherDuration != 1)
+		if (gWishFutureKnock.weatherDuration != 1)
 			damage += GetSandstormDamage(bank)
 				    + GetHailDamage(bank); //Weather's not about to end
 
@@ -1335,7 +1335,7 @@ bool8 WillFaintFromSecondaryDamage(u8 bank)
 		+  GetCurseDamage(bank)
 		+  GetSeaOfFireDamage(bank) //Sea of Fire runs on last turn
 		+  GetGMaxWildfireDamage(bank)
-		+  GetGMaxVolcalithDamage(bank) >= hp) 
+		+  GetGMaxVolcalithDamage(bank) >= hp)
 			return TRUE;
 	}
 
@@ -1414,7 +1414,7 @@ bool8 BadIdeaToPutToSleep(u8 bankDef, u8 bankAtk)
 		|| defAbility == ABILITY_EARLYBIRD
 		|| defAbility == ABILITY_SHEDSKIN
 		|| (defAbility == ABILITY_SYNCHRONIZE && CanBePutToSleep(bankAtk, TRUE))
-		|| (defAbility == ABILITY_HYDRATION && gBattleWeather & WEATHER_RAIN_ANY && gWishFutureKnock->weatherDuration != 1)
+		|| (defAbility == ABILITY_HYDRATION && gBattleWeather & WEATHER_RAIN_ANY && gWishFutureKnock.weatherDuration != 1)
 		|| (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(bankDef)) && ABILITY(PARTNER(bankDef)) == ABILITY_HEALER);
 }
 
@@ -1437,7 +1437,7 @@ bool8 BadIdeaToPoison(u8 bankDef, u8 bankAtk)
 		|| (defAbility == ABILITY_TOXICBOOST && PhysicalMoveInMoveset(bankDef))
 		|| (defAbility == ABILITY_GUTS && PhysicalMoveInMoveset(bankDef))
 		|| (atkAbility == ABILITY_POISONTOUCH && ContactMovesThatAffectTargetInMoveset(bankAtk, bankDef)) //Just poison it using attacker's ability
-		|| (defAbility == ABILITY_HYDRATION && gBattleWeather & WEATHER_RAIN_ANY && gWishFutureKnock->weatherDuration != 1)
+		|| (defAbility == ABILITY_HYDRATION && gBattleWeather & WEATHER_RAIN_ANY && gWishFutureKnock.weatherDuration != 1)
 		|| (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(bankDef)) && ABILITY(PARTNER(bankDef)) == ABILITY_HEALER)
 		||  MoveInMoveset(MOVE_FACADE, bankDef)
 		||  MoveInMoveset(MOVE_PSYCHOSHIFT, bankDef);
@@ -1472,7 +1472,7 @@ bool8 BadIdeaToParalyze(u8 bankDef, u8 bankAtk)
 	   || (defAbility == ABILITY_MARVELSCALE && PhysicalMoveInMoveset(bankAtk))
 	   || (defAbility == ABILITY_NATURALCURE && CAN_SWITCH_OUT(bankDef))
 	   || (defAbility == ABILITY_GUTS && PhysicalMoveInMoveset(bankDef))
-	   || (defAbility == ABILITY_HYDRATION && gBattleWeather & WEATHER_RAIN_ANY && gWishFutureKnock->weatherDuration != 1)
+	   || (defAbility == ABILITY_HYDRATION && gBattleWeather & WEATHER_RAIN_ANY && gWishFutureKnock.weatherDuration != 1)
 	   || (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(bankDef)) && ABILITY(PARTNER(bankDef)) == ABILITY_HEALER)
 	   ||  MoveInMoveset(MOVE_FACADE, bankDef)
 	   ||  MoveInMoveset(MOVE_PSYCHOSHIFT, bankDef);
@@ -1506,7 +1506,7 @@ bool8 BadIdeaToBurn(u8 bankDef, u8 bankAtk)
 		|| (defAbility == ABILITY_NATURALCURE && CAN_SWITCH_OUT(bankDef))
 		|| (defAbility == ABILITY_FLAREBOOST && SpecialMoveInMoveset(bankDef))
 		|| (defAbility == ABILITY_GUTS && PhysicalMoveInMoveset(bankDef))
-		|| (defAbility == ABILITY_HYDRATION && gBattleWeather & WEATHER_RAIN_ANY && gWishFutureKnock->weatherDuration != 1)
+		|| (defAbility == ABILITY_HYDRATION && gBattleWeather & WEATHER_RAIN_ANY && gWishFutureKnock.weatherDuration != 1)
 		|| (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(bankDef)) && ABILITY(PARTNER(bankDef)) == ABILITY_HEALER)
 		||  MoveInMoveset(MOVE_FACADE, bankDef)
 		||  MoveInMoveset(MOVE_PSYCHOSHIFT, bankDef);
@@ -1708,7 +1708,7 @@ bool8 IsPredictedToUsePursuitableMove(u8 bankAtk, u8 bankDef)
 bool8 IsMovePredictionPhazingMove(u8 bankAtk, u8 bankDef)
 {
 	u16 move = IsValidMovePrediction(bankAtk, bankDef);
-	
+
 	if (IsDynamaxed(bankDef))
 		return FALSE; //Dynamax Pokemon can't be phazed out
 
@@ -1819,7 +1819,7 @@ bool8 MoveSplitInMoveset(u8 bank, u8 moveSplit)
 bool8 PhysicalMoveInMonMoveset(struct Pokemon* mon, u8 moveLimitations)
 {
 	u16 move;
-	
+
 	moveLimitations = CheckMoveLimitationsFromParty(mon, 0, moveLimitations);
 	for (int i = 0; i < MAX_MON_MOVES; ++i)
 	{
@@ -1842,7 +1842,7 @@ bool8 PhysicalMoveInMonMoveset(struct Pokemon* mon, u8 moveLimitations)
 bool8 SpecialMoveInMonMoveset(struct Pokemon* mon, u8 moveLimitations)
 {
 	u16 move;
-	
+
 	moveLimitations = CheckMoveLimitationsFromParty(mon, 0, moveLimitations);
 	for (int i = 0; i < MAX_MON_MOVES; ++i)
 	{
@@ -2342,7 +2342,7 @@ static bool8 WallsFoe(u8 bankAtk, u8 bankDef)
 		cantWall = TRUE;
 	else if (SpecialMoveInMoveset(bankAtk) && gBattleMons[bankDef].spDefense <= spAttack)
 		cantWall = TRUE;
-	
+
 	return !cantWall;
 }
 
@@ -2366,7 +2366,7 @@ static bool8 ShouldAIFreeChoiceLockWithDynamax(u8 bankAtk, u8 bankDef)
 			}
 		}
 	}
-	
+
 	return FALSE; //AI still has no usable moves after Dynamaxing
 }
 
@@ -2513,7 +2513,7 @@ bool8 OnlyBadMovesLeftInMoveset(u8 bankAtk, u8 bankDef)
 
 u16 TryReplaceMoveWithZMove(u8 bankAtk, u8 bankDef, u16 move)
 {
-	if (!gNewBS->ZMoveData->used[bankAtk] && SPLIT(move) != SPLIT_STATUS
+	if (!gNewBS->zMoveData.used[bankAtk] && SPLIT(move) != SPLIT_STATUS
 	&& !IsAnyMaxMove(move)
 	&& ShouldAIUseZMove(bankAtk, bankDef, move))
 	{
@@ -2537,7 +2537,7 @@ u16 TryReplaceMoveWithZMove(u8 bankAtk, u8 bankDef, u16 move)
 		if (maxMove != MOVE_NONE)
 			move = maxMove;
 	}
-	
+
 	return move;
 }
 
@@ -2545,7 +2545,7 @@ u8 GetAIMoveEffectForMaxMove(u16 move, u8 bankAtk, u8 bankDef)
 {
 	u8 maxEffect = gBattleMoves[move].z_move_effect;
 	u8 moveEffect = 0;
-	
+
 	if (move == MOVE_MAX_GUARD)
 		return EFFECT_PROTECT;
 
@@ -2656,10 +2656,10 @@ u8 GetAIMoveEffectForMaxMove(u16 move, u8 bankAtk, u8 bankDef)
 			break;
 
 		case MAX_EFFECT_DEFOG:
-			if (gSideAffecting[SIDE(bankDef)] & (SIDE_STATUS_REFLECT | SIDE_STATUS_LIGHTSCREEN | SIDE_STATUS_SAFEGUARD | SIDE_STATUS_MIST)
+			if (gSideStatuses[SIDE(bankDef)] & (SIDE_STATUS_REFLECT | SIDE_STATUS_LIGHTSCREEN | SIDE_STATUS_SAFEGUARD | SIDE_STATUS_MIST)
 			|| gNewBS->AuroraVeilTimers[SIDE(bankDef)] != 0
-			|| gSideAffecting[SIDE(bankAtk)] & SIDE_STATUS_SPIKES
-			|| !(gSideAffecting[SIDE(bankDef)] & SIDE_STATUS_SPIKES))
+			|| gSideStatuses[SIDE(bankAtk)] & SIDE_STATUS_SPIKES
+			|| !(gSideStatuses[SIDE(bankDef)] & SIDE_STATUS_SPIKES))
 				moveEffect = EFFECT_RAPID_SPIN;
 			break;
 
@@ -3020,7 +3020,7 @@ static bool8 MonCanTriggerWeatherAbilityWithMaxMove(struct Pokemon* mon)
 				return MonCanUseMaxMoveWithEffect(mon, MAX_EFFECT_ELECTRIC_TERRAIN);
 		}
 	}
-	
+
 	return FALSE;
 }
 
@@ -3135,7 +3135,7 @@ void CalcShouldAIDynamax(u8 bankAtk, u8 bankDef)
 
 		if (BATTLER_SEMI_INVULNERABLE(bankAtk))
 			return; //Can't Dynamax out of view
-		
+
 		if (IS_DOUBLE_BATTLE && BATTLER_ALIVE(partnerBank) && gNewBS->dynamaxData.toBeUsed[partnerBank])
 			return; //Don't Dynamax if the other mon is going to
 

@@ -1157,7 +1157,7 @@ u16 sp058_BufferSwarmText(void)
 
 	GetMapName(sScriptStringVars[0], mapName, 0);
 	StringCopy(sScriptStringVars[1], gSpeciesNames[species]);
-	
+
 	return species;
 }
 
@@ -2764,7 +2764,7 @@ bool8 TakeCoins(u32 toTake)
 bool8 scrB3_CheckCoins(struct ScriptContext *ctx)
 {
 	u32 amount, arg;
-	
+
 	#ifndef UNBOUND
 		arg = ScriptReadHalfword(ctx);
 		#ifdef SAVE_BLOCK_EXPANSION
@@ -2779,7 +2779,7 @@ bool8 scrB3_CheckCoins(struct ScriptContext *ctx)
 		arg = ScriptReadWord(ctx);
 		amount = arg;
 	#endif
-	
+
 	if (GetCoins() >= amount)
 		gSpecialVar_LastResult = TRUE;
 	else

@@ -124,7 +124,7 @@ static bool8 TryRemovePrimalWeather(u8 bank, u8 ability)
 		if (i == gBattlersCount)
 		{
 			gBattleWeather = 0;
-			gWeatherCounter = 0;
+			gWishFutureKnock.weatherDuration = 0;
 			BattleScriptPushCursor();
 			gBattlescriptCurrInstr = BattleScript_PrimalWeatherEnd;
 			return TRUE;
@@ -146,11 +146,11 @@ static bool8 TryRemoveNeutralizingGas(u8 ability)
 			gNewBS->printedNeutralizingGasOverMsg = TRUE;
 			return TRUE;
 		}
-	
+
 		for (int i = 0; i < gBattlersCount; ++i)
 		{
 			u8 bank = gBanksByTurnOrder[i];
-		
+
 			if (gNewBS->neutralizingGasBlockedAbilities[bank] != ABILITY_NONE)
 			{
 				u8 ability = *GetAbilityLocationIgnoreNeutralizingGas(bank) = gNewBS->neutralizingGasBlockedAbilities[bank]; //Restore ability
@@ -206,7 +206,7 @@ static bool8 TryRemoveUnnerve(u8 bank)
 
 		*GetAbilityLocation(bank) = ABILITY_UNNERVE; //Restore Unnerve so loop can continue when we return to this function
 	}
-	
+
 	return ret;
 }
 
@@ -245,7 +245,7 @@ void atk61_drawpartystatussummary(void)
 
 	if (HandleSpecialSwitchOutAbilities(gActiveBattler, ABILITY(gActiveBattler)))
 		return;
-	
+
 	gNewBS->skipBankStatAnim = 0xFF; //No longer needed
 	gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
 
@@ -358,7 +358,7 @@ void atk4D_switchindataupdate(void)
 			gStatuses3[gActiveBattler] &= ~STATUS3_ILLUSION;
 	}
 
-	gBattleScripting->bank = gActiveBattler;
+	gBattleScripting.bank = gActiveBattler;
 
 	PREPARE_MON_NICK_BUFFER(gBattleTextBuff1, gActiveBattler, GetIllusionPartyNumber(gActiveBattler));
 
@@ -467,7 +467,7 @@ void atk52_switchineffects(void)
 	int i;
 	u8 arg = T2_READ_8(gBattlescriptCurrInstr + 1);
 	if (arg == BS_GET_SCRIPTING_BANK)
-		gBattleScripting->bank = gNewBS->SentInBackup; //Restore scripting backup b/c can get changed
+		gBattleScripting.bank = gNewBS->SentInBackup; //Restore scripting backup b/c can get changed
 
 	gActiveBattler = GetBattleBank(arg);
 	sub_80174B8(gActiveBattler);
@@ -479,7 +479,7 @@ void atk52_switchineffects(void)
 	if (gBattleMons[gActiveBattler].hp == 0)
 		goto SWITCH_IN_END;
 
-	if (!(gSideAffecting[SIDE(gActiveBattler)] & SIDE_STATUS_SPIKES) //Skip the entry hazards if there are none
+	if (!(gSideStatuses[SIDE(gActiveBattler)] & SIDE_STATUS_SPIKES) //Skip the entry hazards if there are none
 	&& gNewBS->SwitchInEffectsTracker >= SwitchIn_Spikes
 	&& gNewBS->SwitchInEffectsTracker <= SwitchIn_StickyWeb)
 		gNewBS->SwitchInEffectsTracker = SwitchIn_PrimalReversion;
@@ -488,7 +488,7 @@ void atk52_switchineffects(void)
 		case SwitchIn_CamomonsReveal:
 			if (gBattleTypeFlags & BATTLE_TYPE_CAMOMONS)
 			{
-				gBattleScripting->bank = gActiveBattler;
+				gBattleScripting.bank = gActiveBattler;
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_CamomonsTypeRevealRet;
 
@@ -514,7 +514,7 @@ void atk52_switchineffects(void)
 					gBattleMoveDamage = -1 * (gBattleMons[gActiveBattler].maxHP);
 					gBattleMons[gActiveBattler].status1 = 0;
 					EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[gActiveBattler].status1);
-					gBattleScripting->bank = gActiveBattler;
+					gBattleScripting.bank = gActiveBattler;
 					gBankAttacker = gActiveBattler;
 					++gNewBS->SwitchInEffectsTracker;
 					return;
@@ -537,7 +537,7 @@ void atk52_switchineffects(void)
 
 				//PP Restored in Battle Script
 
-				gBattleScripting->bank = gActiveBattler;
+				gBattleScripting.bank = gActiveBattler;
 				gBankAttacker = gActiveBattler;
 				++gNewBS->SwitchInEffectsTracker;
 				return;
@@ -546,17 +546,17 @@ void atk52_switchineffects(void)
 		__attribute__ ((fallthrough));
 
 		case SwitchIn_ZHealingWish:
-			if (gBattleMons[gActiveBattler].hp != gBattleMons[gActiveBattler].maxHP && gNewBS->ZMoveData->healReplacement)
+			if (gBattleMons[gActiveBattler].hp != gBattleMons[gActiveBattler].maxHP && gNewBS->zMoveData.healReplacement)
 			{
-				gNewBS->ZMoveData->healReplacement = FALSE;
+				gNewBS->zMoveData.healReplacement = FALSE;
 				gBattleMoveDamage = -1 * (gBattleMons[gActiveBattler].maxHP);
-				gBattleScripting->bank = gActiveBattler;
+				gBattleScripting.bank = gActiveBattler;
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_HealReplacementZMove;
 				return;
 			}
 			else
-				gNewBS->ZMoveData->healReplacement = FALSE;
+				gNewBS->zMoveData.healReplacement = FALSE;
 
 			gNewBS->DamageTaken[gActiveBattler] = 0;
 			++gNewBS->SwitchInEffectsTracker;
@@ -573,8 +573,8 @@ void atk52_switchineffects(void)
 
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_SpikesHurt;
-				gSideAffecting[SIDE(gActiveBattler)] |= SIDE_STATUS_SPIKES_DAMAGED;
-				gBattleScripting->bank = gActiveBattler;
+				gSideStatuses[SIDE(gActiveBattler)] |= SIDE_STATUS_SPIKES_DAMAGED;
+				gBattleScripting.bank = gActiveBattler;
 				gBankTarget = gActiveBattler;
 				//gBankAttacker = FOE(gActiveBattler); //For EXP
 				++gNewBS->SwitchInEffectsTracker;
@@ -593,8 +593,8 @@ void atk52_switchineffects(void)
 
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_SRHurt;
-				gSideAffecting[SIDE(gActiveBattler)] |= SIDE_STATUS_SPIKES_DAMAGED;
-				gBattleScripting->bank = gActiveBattler;
+				gSideStatuses[SIDE(gActiveBattler)] |= SIDE_STATUS_SPIKES_DAMAGED;
+				gBattleScripting.bank = gActiveBattler;
 				gBankTarget = gActiveBattler;
 				//gBankAttacker = FOE(gActiveBattler); //For EXP
 				++gNewBS->SwitchInEffectsTracker;
@@ -602,7 +602,7 @@ void atk52_switchineffects(void)
 			}
 			++gNewBS->SwitchInEffectsTracker;
 		__attribute__ ((fallthrough));
-		
+
 		case SwitchIn_Steelsurge:
 			if (gSideTimers[SIDE(gActiveBattler)].steelsurge > 0
 			&& ability != ABILITY_MAGICGUARD
@@ -613,8 +613,8 @@ void atk52_switchineffects(void)
 
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_SteelsurgeHurt;
-				gSideAffecting[SIDE(gActiveBattler)] |= SIDE_STATUS_SPIKES_DAMAGED;
-				gBattleScripting->bank = gActiveBattler;
+				gSideStatuses[SIDE(gActiveBattler)] |= SIDE_STATUS_SPIKES_DAMAGED;
+				gBattleScripting.bank = gActiveBattler;
 				gBankTarget = gActiveBattler;
 				//gBankAttacker = FOE(gActiveBattler); //For EXP
 				++gNewBS->SwitchInEffectsTracker;
@@ -648,10 +648,10 @@ void atk52_switchineffects(void)
 						gBattlescriptCurrInstr = BattleScript_TSHarshPoison;
 					}
 
-					gSideAffecting[SIDE(gActiveBattler)] |= SIDE_STATUS_SPIKES_DAMAGED;
+					gSideStatuses[SIDE(gActiveBattler)] |= SIDE_STATUS_SPIKES_DAMAGED;
 				}
 
-				gBattleScripting->bank = gActiveBattler;
+				gBattleScripting.bank = gActiveBattler;
 				gBankTarget = gActiveBattler;
 				//gBankAttacker = FOE(gActiveBattler); //For EXP
 				++gNewBS->SwitchInEffectsTracker;
@@ -667,8 +667,8 @@ void atk52_switchineffects(void)
 			{
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_StickyWebSpeedDrop;
-				gSideAffecting[SIDE(gActiveBattler)] |= SIDE_STATUS_SPIKES_DAMAGED;
-				gBattleScripting->bank = gActiveBattler;
+				gSideStatuses[SIDE(gActiveBattler)] |= SIDE_STATUS_SPIKES_DAMAGED;
+				gBattleScripting.bank = gActiveBattler;
 				gBankTarget = gActiveBattler;
 				//gBankAttacker = FOE(gActiveBattler); //For EXP
 				++gNewBS->SwitchInEffectsTracker;
@@ -699,7 +699,7 @@ void atk52_switchineffects(void)
 			{
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = script;
-				gBattleScripting->bank = gActiveBattler;
+				gBattleScripting.bank = gActiveBattler;
 				gBankAttacker = gActiveBattler;
 				++gNewBS->SwitchInEffectsTracker;
 				return;
@@ -742,7 +742,7 @@ void atk52_switchineffects(void)
 			{
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_AirBalloonSub;
-				gBattleScripting->bank = gActiveBattler;
+				gBattleScripting.bank = gActiveBattler;
 				gBankAttacker = gActiveBattler;
 				++gNewBS->SwitchInEffectsTracker;
 				return;
@@ -755,7 +755,7 @@ void atk52_switchineffects(void)
 			{
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_TotemRet;
-				gBankAttacker = gBattleScripting->bank = gActiveBattler;
+				gBankAttacker = gBattleScripting.bank = gActiveBattler;
 				++gNewBS->SwitchInEffectsTracker;
 				return;
 			}
@@ -787,7 +787,7 @@ void atk52_switchineffects(void)
 
 		case SwitchIn_PreEnd:
 		SWITCH_IN_END:
-			gSideAffecting[SIDE(gActiveBattler)] &= ~(SIDE_STATUS_SPIKES_DAMAGED);
+			gSideStatuses[SIDE(gActiveBattler)] &= ~(SIDE_STATUS_SPIKES_DAMAGED);
 
 			for (i = 0; i < gBattlersCount; ++i)
 			{
@@ -800,15 +800,15 @@ void atk52_switchineffects(void)
 
 			if (T2_READ_8(gBattlescriptCurrInstr + 1) == 5)
 			{
-				u32 hitmark = gHitMarker >> 0x1C;
-				++gBank1;
+				u32 hitmarkerFaintBits = gHitMarker >> 0x1C;
+				++gBankFainted;
 				while (1)
 				{
-					if (hitmark & gBitTable[gBank1] && !(gAbsentBattlerFlags & gBitTable[gBank1]))
+					if (hitmarkerFaintBits & gBitTable[gBankFainted] && !(gAbsentBattlerFlags & gBitTable[gBankFainted]))
 						break;
-					if (gBank1 >= gBattlersCount)
+					if (gBankFainted >= gBattlersCount)
 						break;
-					++gBank1;
+					++gBankFainted;
 				}
 			}
 			++gNewBS->SwitchInEffectsTracker;
@@ -833,7 +833,7 @@ void atk52_switchineffects(void)
 void RestorePPLunarDance(void)
 {
 	u8 i, maxPP;
-	gActiveBattler = gBattleScripting->bank;
+	gActiveBattler = gBattleScripting.bank;
 
 	if (gBattleExecBuffer)
 	{
@@ -848,7 +848,7 @@ void RestorePPLunarDance(void)
 		{
 			maxPP = CalculatePPWithBonus(gBattleMons[gActiveBattler].moves[i], gBattleMons[gActiveBattler].ppBonuses, i);
 			if (IS_TRANSFORMED(gActiveBattler) && maxPP > 5)
-				maxPP = 5; //Can't restore past 5 PP if transformed	
+				maxPP = 5; //Can't restore past 5 PP if transformed
 		}
 
 		if (gBattleMons[gActiveBattler].pp[i] != maxPP)
@@ -1143,9 +1143,9 @@ void PartyMenuSwitchingUpdate(void)
 	else
 	{
 	SKIP_SWITCH_BLOCKING_CHECK:
-		if (gActiveBattler == B_POSITION_PLAYER_RIGHT && gActionForBanks[0] == ACTION_SWITCH)
+		if (gActiveBattler == B_POSITION_PLAYER_RIGHT && gChosenActionByBank[0] == ACTION_SWITCH)
 			EmitChoosePokemon(0, PARTY_CHOOSE_MON, gBattleStruct->monToSwitchIntoId[0], ABILITY_NONE, gBattleStruct->field_60[gActiveBattler]);
-		else if (gActiveBattler == B_POSITION_OPPONENT_RIGHT && gActionForBanks[1] == ACTION_SWITCH)
+		else if (gActiveBattler == B_POSITION_OPPONENT_RIGHT && gChosenActionByBank[1] == ACTION_SWITCH)
 			EmitChoosePokemon(0, PARTY_CHOOSE_MON, gBattleStruct->monToSwitchIntoId[1], ABILITY_NONE, gBattleStruct->field_60[gActiveBattler]);
 		else
 			EmitChoosePokemon(0, PARTY_CHOOSE_MON, 6, ABILITY_NONE, gBattleStruct->field_60[gActiveBattler]);
@@ -1266,7 +1266,7 @@ bool8 WillFaintFromEntryHazards(struct Pokemon* mon, u8 side)
 	u16 hp = GetMonData(mon, MON_DATA_HP, NULL);
 	u32 dmg = 0;
 
-	if (gSideAffecting[side] & SIDE_STATUS_SPIKES
+	if (gSideStatuses[side] & SIDE_STATUS_SPIKES
 	&& GetMonAbility(mon) != ABILITY_MAGICGUARD
 	&& ItemId_GetHoldEffect(GetMonData(mon, MON_DATA_HELD_ITEM, NULL)) != ITEM_EFFECT_HEAVY_DUTY_BOOTS)
 	{

@@ -64,7 +64,7 @@ static void BuildNormalStartMenu()
 				AddStartMenuAction(MENU_ACTION_POKETOOLS);
 			else
 		#endif
-				AddStartMenuAction(MENU_ACTION_POKEDEX);		
+				AddStartMenuAction(MENU_ACTION_POKEDEX);
 	}
 
 	if (FlagGet(FLAG_SYS_POKEMON_GET))

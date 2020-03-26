@@ -43,7 +43,7 @@ void OpponentHandleChooseMove(void)
 	{
 		if (RAID_BATTLE_END)
 			goto CHOOSE_DUMB_MOVE;
-	
+
 		BattleAI_SetupAIData(0xF);
 		chosenMoveId = BattleAI_ChooseMoveOrAction();
 
@@ -92,16 +92,16 @@ void OpponentHandleChooseMove(void)
 				if (moveInfo->possibleZMoves[chosenMoveId]) //Checked first b/c Rayquaza can do all 3
 				{
 					if (ShouldAIUseZMove(gActiveBattler, gBankTarget, moveInfo->moves[chosenMoveId]))
-						gNewBS->ZMoveData->toBeUsed[gActiveBattler] = TRUE;
+						gNewBS->zMoveData.toBeUsed[gActiveBattler] = TRUE;
 				}
 				else if (moveInfo->canMegaEvolve)
 				{
 					if (!ShouldAIDelayMegaEvolution(gActiveBattler, gBankTarget, chosenMove))
 					{
 						if (moveInfo->megaVariance != MEGA_VARIANT_ULTRA_BURST)
-							gNewBS->MegaData->chosen[gActiveBattler] = TRUE;
+							gNewBS->megaData.chosen[gActiveBattler] = TRUE;
 						else if (moveInfo->megaVariance == MEGA_VARIANT_ULTRA_BURST)
-							gNewBS->UltraData->chosen[gActiveBattler] = TRUE;
+							gNewBS->ultraData.chosen[gActiveBattler] = TRUE;
 					}
 				}
 				else if (moveInfo->possibleMaxMoves[chosenMoveId]) //Handles the "Can I Dynamax" checks
@@ -116,7 +116,7 @@ void OpponentHandleChooseMove(void)
 				gChosenMovesByBanks[gActiveBattler] = chosenMove;
 				TryRemoveDoublesKillingScore(gActiveBattler, gBankTarget, chosenMove);
 
-				EmitMoveChosen(1, chosenMoveId, gBankTarget, gNewBS->MegaData->chosen[gActiveBattler], gNewBS->UltraData->chosen[gActiveBattler], gNewBS->ZMoveData->toBeUsed[gActiveBattler], gNewBS->dynamaxData.toBeUsed[gActiveBattler]);
+				EmitMoveChosen(1, chosenMoveId, gBankTarget, gNewBS->megaData.chosen[gActiveBattler], gNewBS->ultraData.chosen[gActiveBattler], gNewBS->zMoveData.toBeUsed[gActiveBattler], gNewBS->dynamaxData.toBeUsed[gActiveBattler]);
 				TryRechoosePartnerMove(moveInfo->moves[chosenMoveId]);
 				break;
 		}
@@ -199,7 +199,7 @@ void OpponentHandleDrawTrainerPic(void)
 	gSprites[gBattlerSpriteIds[gActiveBattler]].oam.affineParam = trainerPicId;
 	gSprites[gBattlerSpriteIds[gActiveBattler]].callback = sub_8033EEC; //sub_805D7AC in Emerald
 
-	gBattleBankFunc[gActiveBattler] = (u32) CompleteOnBattlerSpriteCallbackDummy; //0x8035AE8
+	gBattlerControllerFuncs[gActiveBattler] = CompleteOnBattlerSpriteCallbackDummy; //0x8035AE8
 }
 
 void OpponentHandleTrainerSlide(void)
@@ -220,7 +220,7 @@ void OpponentHandleTrainerSlide(void)
 	gSprites[gBattlerSpriteIds[gActiveBattler]].oam.affineParam = trainerPicId;
 	gSprites[gBattlerSpriteIds[gActiveBattler]].callback = sub_8033EEC;
 
-	gBattleBankFunc[gActiveBattler] = (u32) CompleteOnBankSpriteCallbackDummy2;
+	gBattlerControllerFuncs[gActiveBattler] = CompleteOnBankSpriteCallbackDummy2;
 }
 
 extern u32 break_helper(u32 a);

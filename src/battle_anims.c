@@ -20,6 +20,11 @@ battle_anims.c
 	Functions and structures to modify attack animations.
 */
 
+extern const u8* sBattleAnimScriptPtr;
+extern u16 sAnimMoveIndex;
+extern s8 gAnimFramesToWait;
+extern u16 sAnimMoveIndex;
+
 extern const struct CompressedSpriteSheet gBattleAnimPicTable[];
 extern const struct CompressedSpritePalette gBattleAnimPaletteTable[];
 extern const u8* const gMoveAnimations[];
@@ -1307,14 +1312,14 @@ void AnimTask_CreateKnockOffItem(u8 taskId)
 	if (iconSpriteId != MAX_SPRITES)
 	{
 		struct Sprite* sprite = &gSprites[iconSpriteId];
-	
+
 		sprite->pos1.x = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2);
 		sprite->pos1.y = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET);
 		sprite->oam.priority = 2;
 		sprite->oam.affineMode = ST_OAM_AFFINE_NORMAL;
 		sprite->affineAnims = (void*) 0x83E2E80;
 		sprite->callback = (void*) 0x80A35F5;
-		
+
 		CalcCenterToCornerVec(sprite, sprite->oam.shape, sprite->oam.size, sprite->oam.affineMode);
 		InitSpriteAffineAnim(sprite);
 		++gAnimVisualTaskCount;
@@ -1512,8 +1517,8 @@ void SpriteCB_GrowingSuperpower(struct Sprite *sprite)
 
 	if (gBattleAnimArgs[0] == 0)
 	{
-		sprite->pos1.x = GetBattlerSpriteCoord(gBattlerAttacker, 2);
-		sprite->pos1.y = GetBattlerSpriteCoord(gBattlerAttacker, 3);
+		sprite->pos1.x = GetBattlerSpriteCoord(gBattleAnimAttacker, 2);
+		sprite->pos1.y = GetBattlerSpriteCoord(gBattleAnimAttacker, 3);
 		battler = gBattleAnimTarget;
 		sprite->oam.priority = GetBattlerSpriteBGPriority(gBattleAnimAttacker);
 	}
@@ -1601,7 +1606,7 @@ const struct OamData sPyroBallFlamesOAM =
 //Creates a rock that bounces between the attacker's feet.
 //arg 0: initial x pixel offset
 //arg 1: initial y pixel offset
-//arg 2: Ignore horizontal motion if TRUE. Only bounce once. 
+//arg 2: Ignore horizontal motion if TRUE. Only bounce once.
 #define sVerticalTime sprite->data[0]
 #define sHorizontalTime sprite->data[1]
 #define sMovingBackHorizontally sprite->data[2]
@@ -1634,7 +1639,7 @@ void SpriteCB_PyroBallRockBounceStep(struct Sprite* sprite)
 		sprite->pos2.x = (initialHorizontalVelocity * sHorizontalTime);
 
 	sVerticalTime++;
-	
+
 	if (sMovingBackHorizontally)
 		sHorizontalTime--; //Move left to right
 	else
@@ -1827,7 +1832,7 @@ void SpriteCB_AcidLaunchSingleTarget(struct Sprite *sprite)
 	s16 l1, l2;
 	if (!gBattleAnimArgs[3])
 		StartSpriteAnim(sprite, 2);
-	
+
 	InitSpritePosToAnimTarget(sprite, TRUE);
 	l1 = sprite->pos1.x; l2 = sprite->pos1.y;
 	InitSpritePosToAnimAttacker(sprite, TRUE);
@@ -1974,7 +1979,7 @@ void SpriteCB_WaterDroplet(struct Sprite *sprite)
 
 		sprite->pos2.x = gBattleAnimArgs[0];
 		sprite->pos2.y = 0;
-		
+
 		//Put droplet at the top of the screen
 		sprite->pos1.y = 15;
 
@@ -2044,7 +2049,7 @@ void SpriteCB_LeftRightSliceStep1(struct Sprite *sprite)
 void SpriteCB_LeftRightSliceStep0(struct Sprite *sprite)
 {
 	sprite->pos2.x -= sprite->data[1];
-	
+
 	if (sprite->pos2.x <= sprite->data[0])
 	{
 		sprite->data[0] = -sprite->data[0];
@@ -2088,7 +2093,7 @@ void SpriteCB_StoneEdgeRockStep1(struct Sprite* sprite)
 void SpriteCB_StoneEdgeRock(struct Sprite* sprite)
 {
 	InitSpritePosToAnimTarget(sprite, TRUE);
-	
+
 	sprite->data[0] = 20; //Timer
 	sprite->data[1] = 20;
 
@@ -2106,7 +2111,7 @@ void SpriteCB_ForcePalmStep4(struct Sprite* sprite)
 	if (++sprite->data[0] >= 8)
 	{
 		sprite->data[0] = 0;
-		sprite->callback = SpriteCB_ForcePalmStep5;	
+		sprite->callback = SpriteCB_ForcePalmStep5;
 	}
 	else
 		sprite->pos1.x += 1;
@@ -2117,7 +2122,7 @@ void SpriteCB_ForcePalmStep3(struct Sprite* sprite)
 	if (++sprite->data[0] >= 8)
 	{
 		sprite->data[0] = 0;
-		sprite->callback = SpriteCB_ForcePalmStep4;	
+		sprite->callback = SpriteCB_ForcePalmStep4;
 	}
 	else
 		sprite->pos1.x -= 1;
@@ -2201,7 +2206,7 @@ void SpriteCB_HorizontalSliceStep(struct Sprite *sprite)
 		sprite->pos2.x -= sprite->data[1];
 	else
 		sprite->pos2.x += sprite->data[1];
-	
+
 	sprite->data[3] += sprite->data[1];
 
 	if (sprite->data[3] >= sprite->data[0])
@@ -2237,7 +2242,7 @@ void SpriteCB_SparkleInCorner(struct Sprite *sprite)
 	{
 		sprite->pos1.x = 225;
 	}
-	
+
 	sprite->pos1.y = 13;
 	sprite->callback = RunStoredCallbackWhenAnimEnds;
 	StoreSpriteCallbackInData6(sprite, DestroyAnimSprite);
@@ -2377,7 +2382,7 @@ void SpriteCB_StonePillarStep2(struct Sprite* sprite)
 			sprite->pos2.x--;
 		else
 			sprite->pos2.x++;
-		
+
 		switch (sprite->data[1]++) {
 			case 8:
 			case 11:
@@ -2460,7 +2465,7 @@ void SpriteCB_BeamUpStep(struct Sprite* sprite)
 {
     if (sprite->data[1]-- == 0)
 		StartSpriteAffineAnim(sprite, 1);
-		
+
 	if (sprite->data[0]-- <= 0)
 		DestroySpriteAndMatrix(sprite);
 }
@@ -2548,7 +2553,7 @@ void SpriteCB_MaxPhantasmObject(struct Sprite* sprite)
 	sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2) + gBattleAnimArgs[2]; //Target X
 	sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET) + gBattleAnimArgs[3]; //Target Y
 	sprite->data[5] = gBattleAnimArgs[4]; //Wave amplitude
-	
+
 	sprite->callback = SpriteCB_MaxPhantasmObjectStep1;
 }
 
@@ -2609,7 +2614,7 @@ void SpriteCB_MaxWyrmwindTornadoStep1(struct Sprite* sprite)
 		sprite->callback = StartAnimLinearTranslation;
 		StoreSpriteCallbackInData6(sprite, SpriteCB_MaxWyrmwindTornadoStep2);
 	}
-	
+
 	if (!sprite->affineAnimEnded && (sprite->data[6]++ & 1) == 0)
 		sprite->pos1.y--; //Counteract growth
 }
@@ -2628,7 +2633,7 @@ void SpriteCB_MaxWyrmwindTornado(struct Sprite* sprite)
 	sprite->data[0] = gBattleAnimArgs[4]; //Speed delay
 	sprite->data[2] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_X_2) + gBattleAnimArgs[2];
 	sprite->data[4] = GetBattlerSpriteCoord(gBattleAnimTarget, BATTLER_COORD_Y_PIC_OFFSET) + gBattleAnimArgs[3];
-	
+
 	sprite->callback = SpriteCB_MaxWyrmwindTornadoStep1;
 }
 
@@ -2652,7 +2657,7 @@ static void CreateRolloutExplosionSprite(struct Task* task)
 	u8 spriteId;
 	u16 x, y;
 	const struct SpriteTemplate* spriteTemplate = &gRolloutExplosionSpriteTemplate;
- 
+
 	x = task->data[2] >> 3;
 	y = task->data[3] >> 3;
 	x += (task->data[12] * 4);
@@ -2769,7 +2774,7 @@ static void CreateSteelspikeSprite(struct Task* task)
 {
 	u8 spriteId;
 	u16 x, y;
- 
+
 	x = task->data[2] >> 3;
 	y = task->data[3] >> 3;
 	x += (task->data[12] * 8);
@@ -2830,7 +2835,7 @@ static void AnimTask_MaxSteelspikeStep(u8 taskId)
 			gSprites[spriteId1].data[7] = 50;
 			StartSpriteAffineAnim(&gSprites[spriteId2], 1); //Point Right
 			gSprites[spriteId2].data[7] = 50;
-			
+
 			if (SIDE(gBattleAnimTarget) == B_SIDE_PLAYER)
 			{
 				gSprites[spriteId1].oam.priority = 1; //Above player's Pokemon
@@ -2842,7 +2847,7 @@ static void AnimTask_MaxSteelspikeStep(u8 taskId)
 			task->data[0]++;
 			task->data[11] = 0;
 			break;
-		case 3:	
+		case 3:
 			if (++task->data[11] == 7)
 				task->data[0]++;
 			break;
@@ -2978,7 +2983,7 @@ void AnimTask_DynamaxGrowth(u8 taskId)
 {
 	struct Task* task = &gTasks[taskId];
 	u8 spriteId = GetAnimBattlerSpriteId(ANIM_ATTACKER);
-	
+
 	if (gBattleAnimArgs[0] == 0)
 		PrepareAffineAnimInTaskData(task, spriteId, sDynamaxGrowthAffineAnimCmds);
 	else
@@ -3125,7 +3130,7 @@ void AnimTask_TwinkleTackleLaunch(u8 taskId)
 	task->tTimer = 0;
 	task->func = AnimTask_TwinkleTackleLaunchStep;
 
-	PrepareBattlerSpriteForRotScale(task->tSpriteId, ST_OAM_OBJ_NORMAL);	
+	PrepareBattlerSpriteForRotScale(task->tSpriteId, ST_OAM_OBJ_NORMAL);
 }
 #undef tSpriteId
 #undef tTimer
@@ -3236,7 +3241,7 @@ void UpdateOamPriorityInAllHealthboxes(u8 priority)
 				goto DEFAULT_CASE;
 			#endif
 			goto HIDE_BOXES;
-		
+
 		case CONTROLLER_BALLTHROWANIM:
 			goto HIDE_BOXES;
 
@@ -3278,9 +3283,9 @@ void UpdateOamPriorityInAllHealthboxes(u8 priority)
 		DEFAULT_CASE:
 			for (i = 0; i < gBattlersCount; i++)
 			{
-				u8 healthboxLeftSpriteId = gHealthboxIDs[i];
-				u8 healthboxRightSpriteId = gSprites[gHealthboxIDs[i]].oam.affineParam;
-				u8 healthbarSpriteId = gSprites[gHealthboxIDs[i]].hMain_HealthBarSpriteId;
+				u8 healthboxLeftSpriteId = gHealthboxSpriteIds[i];
+				u8 healthboxRightSpriteId = gSprites[gHealthboxSpriteIds[i]].oam.affineParam;
+				u8 healthbarSpriteId = gSprites[gHealthboxSpriteIds[i]].hMain_HealthBarSpriteId;
 
 				gSprites[healthboxLeftSpriteId].oam.priority = priority;
 				gSprites[healthboxRightSpriteId].oam.priority = priority;
@@ -3303,7 +3308,7 @@ u8 CalcHealthBarPixelChange(unusedArg u8 bank)
 	#ifdef FASTER_HEALTHBOX_CHANGE
 		u16 amount = gBattleMons[bank].maxHP / 48; //48 pixels on healthbar
 		u16 leftover = gBattleMons[bank].maxHP % 48;
-		
+
 		if (leftover >= 40) //So health like 95 (worst case) is included in next level up
 			amount += 1;
 
@@ -3486,42 +3491,42 @@ void SpriteCB_CriticalCaptureThrownBallMovement(struct Sprite* sprite)
 	int bounceCount;
 
 	bounceCount = sprite->data[3] >> 8;
-	
+
 	if (bounceCount == 0)
 		PlaySE(SE_POKE_BALL_SHAKE);
-		
+
 	switch (sprite->data[3] & 0xFF)
 	{
 	case 0:
 		if (bounceCount < 3)
 			sprite->pos2.x++;
-		
+
 		sprite->data[5]++;
 		if (sprite->data[5] >= 3)
 			sprite->data[3] += 257;
-		
+
 		break;
 	case 1:
 		if (bounceCount < 3 || sprite->pos2.x != 0)
 			sprite->pos2.x--;
-		
+
 		sprite->data[5]--;
-		
+
 		if (sprite->data[5] <= 0)
 		{
 			sprite->data[5] = 0;
 			sprite->data[3] &= -0x100;
 		}
-		
+
 		if (bounceCount >= maxBounces)
 			lastBounce = TRUE;
-		
+
 		break;
 	}
-	
+
 	if (lastBounce)
 	{
-		
+
 		sprite->data[3] = 0;
 		sprite->data[4] = 40;   //Starting max height
 		sprite->data[5] = 0;

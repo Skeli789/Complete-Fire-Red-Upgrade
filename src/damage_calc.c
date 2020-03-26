@@ -31,7 +31,7 @@ extern struct AlternateSize gAlternateSpeciesSizeTable[];
 extern const u8 gDynamaxMovePowers[];
 
 static const u16 sCriticalHitChances[] =
-#ifdef CRIT_CHANCE_GEN_6	
+#ifdef CRIT_CHANCE_GEN_6
 	{16, 8, 2, 1, 1};
 #elif (defined CRIT_CHANCE_GEN_2_TO_5)
 	{16, 8, 4, 3, 2};
@@ -102,7 +102,7 @@ struct DamageCalc
 	u8 moveSplit;
 	u8 resultFlags;
 	u8 basePower;
-	
+
 	u8 specialFlags;
 };
 
@@ -178,7 +178,7 @@ static u8 CalcPossibleCritChance(u8 bankAtk, u8 bankDef, u16 move, struct Pokemo
 	u16 atkSpecies;
 	u32 atkStatus2;
 	u32 defStatus1;
-	
+
 	u8 atkEffect = 0;
 	u16 critChance = 0;
 
@@ -196,7 +196,7 @@ static u8 CalcPossibleCritChance(u8 bankAtk, u8 bankDef, u16 move, struct Pokemo
 		atkSpecies = gBattleMons[bankAtk].species;
 		atkStatus2 = gBattleMons[bankAtk].status2;
 	}
-	
+
 	if (monDef != NULL)
 	{
 		defAbility = GetMonAbility(monDef);
@@ -346,13 +346,13 @@ u32 AI_CalcDmg(const u8 bankAtk, const u8 bankDef, const u16 move)
 				return 0;
 			return GetBaseCurrentHP(bankDef) - finalHp;
 	}
-	
+
 	if (SPLIT(move) == SPLIT_STATUS) //At this point we don't care about Status moves anymore
 		return 0;
 
 	u32 damage = 0;
 	struct DamageCalc data = {0};
-	gBattleScripting->dmgMultiplier = 1;
+	gBattleScripting.dmgMultiplier = 1;
 
 	gCritMultiplier = CalcPossibleCritChance(bankAtk, bankDef, move, NULL, NULL); //Return 0 if none, 1 if always, 2 if 50%
 	if (gCritMultiplier != 0 && Random() % gCritMultiplier == 0)
@@ -436,7 +436,7 @@ u32 AI_CalcPartyDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monAtk)
 
 	u32 damage = 0;
 	struct DamageCalc data = {0};
-	gBattleScripting->dmgMultiplier = 1;
+	gBattleScripting.dmgMultiplier = 1;
 
 	gCritMultiplier = CalcPossibleCritChance(bankAtk, bankDef, move, monAtk, NULL); //Return 0 if none, 1 if always, 2 if 50%
 	if (gCritMultiplier != 0 && Random() % gCritMultiplier == 0)
@@ -519,7 +519,7 @@ u32 AI_CalcMonDefDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monDef)
 
 	u32 damage = 0;
 	struct DamageCalc data = {0};
-	gBattleScripting->dmgMultiplier = 1;
+	gBattleScripting.dmgMultiplier = 1;
 
 	gCritMultiplier = CalcPossibleCritChance(bankAtk, bankDef, move, NULL, monDef); //Return 0 if none, 1 if always, 2 if 50%
 	if (gCritMultiplier != 0 && Random() % gCritMultiplier == 0)
@@ -1064,10 +1064,10 @@ TYPE_LOOP:
 
 	//If the multiplier is 0, that means normal damage. No effect is 1 (it is modified to 0 later).
 	ModulateDmgByType(multiplier1, move, moveType, defType1, bankDef, atkAbility, flags, 0, FALSE);
-		
+
 	if (defType1 != defType2)
 		ModulateDmgByType(multiplier2, move, moveType, defType2, bankDef, atkAbility, flags, 0, FALSE);
-		
+
 	if (defType3 != defType1 && defType3 != defType2)
 		ModulateDmgByType(multiplier3, move, moveType, defType3, bankDef, atkAbility, flags, 0, FALSE);
 
@@ -1090,7 +1090,7 @@ TYPE_LOOP_AI:
 	multiplier2 = gTypeEffectiveness[moveType][defType2];
 
 	ModulateDmgByType(multiplier1, move, moveType, defType1, 0, atkAbility, flags, monDef, TRUE);
-		
+
 	if (defType1 != defType2)
 		ModulateDmgByType(multiplier2, move, moveType, defType2, 0, atkAbility, flags, monDef, TRUE);
 
@@ -1138,7 +1138,7 @@ static void ModulateDmgByType(u8 multiplier, const u16 move, const u8 moveType, 
 
 	if (move == MOVE_FREEZEDRY && defType == TYPE_WATER) //Always Super-Effective, even in Inverse Battles
 		multiplier = TYPE_MUL_SUPER_EFFECTIVE;
-	
+
 	if (moveType == TYPE_FIRE && gNewBS->tarShotBits & gBitTable[bankDef]) //Fire always Super-Effective if covered in tar
 		multiplier = TYPE_MUL_SUPER_EFFECTIVE;
 
@@ -1205,13 +1205,13 @@ u8 GetMoveTypeSpecial(u8 bankAtk, u16 move)
 	if (moveType != 0xFF)
 		return moveType;
 
-	return GetMoveTypeSpecialPostAbility(move, atkAbility, gNewBS->ZMoveData->active || gNewBS->ZMoveData->viewing);
+	return GetMoveTypeSpecialPostAbility(move, atkAbility, gNewBS->zMoveData.active || gNewBS->zMoveData.viewing);
 }
 
 u8 GetMoveTypeSpecialPreAbility(u16 move, u8 bankAtk, struct Pokemon* monAtk)
 {
 	u8 moveType = gBattleMoves[move].type;
-	
+
 	if (monAtk == NULL && gNewBS->ElectrifyTimers[bankAtk] > 0)
 		return TYPE_ELECTRIC;
 
@@ -1255,7 +1255,7 @@ u8 GetMoveTypeSpecialPostAbility(u16 move, u8 atkAbility, bool8 zMoveActive)
 		switch (atkAbility) {
 			case ABILITY_NORMALIZE:
 				return TYPE_NORMAL;
-			case ABILITY_LIQUIDVOICE: 
+			case ABILITY_LIQUIDVOICE:
 				if (CheckSoundMove(move)) //Change Sound Moves
 					return TYPE_WATER;
 				break;
@@ -1330,7 +1330,7 @@ u8 GetExceptionMoveType(u8 bankAtk, u16 move)
 			break;
 
 		case MOVE_WEATHERBALL:
-			if (WEATHER_HAS_EFFECT) 
+			if (WEATHER_HAS_EFFECT)
 			{
 				if (gBattleWeather & WEATHER_RAIN_ANY && effect != ITEM_EFFECT_UTILITY_UMBRELLA)
 					moveType = TYPE_WATER;
@@ -1433,7 +1433,7 @@ u8 GetMonExceptionMoveType(struct Pokemon* mon, u16 move)
 	u16 item = mon->item;
 	u8 effect = ItemId_GetHoldEffect(item);
 	u8 quality = ItemId_GetHoldEffectParam(item);
-	
+
 	if (ability == ABILITY_KLUTZ)
 		effect = 0;
 
@@ -1568,7 +1568,7 @@ void AdjustDamage(bool8 CheckFalseSwipe)
 	u8 ability = ABILITY(gBankTarget);
 	gStringBank = gBankTarget;
 
-	if ((gNewBS->ZMoveData->active || IsAnyMaxMove(gCurrentMove))
+	if ((gNewBS->zMoveData.active || IsAnyMaxMove(gCurrentMove))
 	&& !IsDynamaxed(gBankTarget)
 	&& ProtectsAgainstZMoves(gCurrentMove, gBankAttacker, gBankTarget))
 		gBattleMoveDamage = udivsi(gBattleMoveDamage  * 25, 100);
@@ -1658,7 +1658,7 @@ void AdjustDamage(bool8 CheckFalseSwipe)
 static s32 CalculateBaseDamage(struct DamageCalc* data)
 {
 	u32 attack, spAttack;
-	
+
 	//Take variables off struct for easier access
 	u8 bankAtk = data->bankAtk;
 	u8 bankDef = data->bankDef;
@@ -1673,7 +1673,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 	if (useMonAtk)
 	{
 		struct Pokemon* monAtk = data->monAtk;
-	
+
 		data->atkSpecies = monAtk->species;
 		data->atkAbility = GetMonAbility(monAtk);
 		data->atkPartnerAbility = ABILITY_NONE;
@@ -1747,7 +1747,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 
 		data->moveSplit = CalcMoveSplit(bankAtk, move);
 		data->moveType = GetMoveTypeSpecial(bankAtk, move);
-		
+
 		if (useMonDef)
 			data->resultFlags = AI_TypeCalc(move, bankAtk, data->monDef);
 		else
@@ -1767,7 +1767,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 		data->defHP = monDef->hp;
 		data->defSpeed = SpeedCalcMon(SIDE(bankDef), monDef);
 		data->defStatus1 = monDef->condition;
-		data->defSideStatus = gSideAffecting[SIDE(bankDef)];
+		data->defSideStatus = gSideStatuses[SIDE(bankDef)];
 		data->defIsGrounded = CheckGroundingFromPartyData(monDef);
 
 		if (IsWonderRoomActive())
@@ -1782,7 +1782,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 		}
 
 		switch (data->move) {
-			case MOVE_FOULPLAY:	
+			case MOVE_FOULPLAY:
 				attack = monDef->attack;
 				spAttack = monDef->spAttack;
 				data->atkBuff = 6; //Party mon has no buffs
@@ -1802,7 +1802,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 		data->defSpeed = SpeedCalc(bankDef);
 		data->defStatus1 = gBattleMons[bankDef].status1;
 		data->defStatus3 = gStatuses3[bankDef];
-		data->defSideStatus = gSideAffecting[SIDE(bankDef)];
+		data->defSideStatus = gSideStatuses[SIDE(bankDef)];
 		data->defIsGrounded = CheckGrounding(bankDef);
 
 		data->defBuff = STAT_STAGE(bankDef, STAT_STAGE_DEF);
@@ -1820,7 +1820,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 		}
 
 		switch (data->move) {
-			case MOVE_FOULPLAY:	
+			case MOVE_FOULPLAY:
 				attack = gBattleMons[bankDef].attack;
 				spAttack = gBattleMons[bankDef].spAttack;
 				data->atkBuff = STAT_STAGE(bankDef, STAT_STAGE_ATK);
@@ -1944,7 +1944,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 		//1.5x Boost
 			if (!IsDynamaxed(bankAtk))
 				attack = (attack * 15) / 10;
-			break;			
+			break;
 	}
 
 	switch (data->atkPartnerAbility) {
@@ -2056,7 +2056,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 			break;
 		#endif
 	}
-	
+
 //Target Item Checks
 	switch (data->defItemEffect)
 	{
@@ -2094,7 +2094,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 			data->spDefense = (data->spDefense * 15) / 10;
 			break;
 	}
-	
+
 //Gym Badge Checks
 	#ifdef BADGE_BOOSTS
 	//1.1x Boosts
@@ -2116,12 +2116,12 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 				data->spDefense = (11 * data->spDefense) / 10;
 		}
 	#endif
-	
+
 //Sandstorm Sp. Def Increase
 	if (WEATHER_HAS_EFFECT && (gBattleWeather & WEATHER_SANDSTORM_ANY)
 	&& ((!useMonDef && IsOfType(bankDef, TYPE_ROCK)) || (useMonDef && IsMonOfType(data->monDef, TYPE_ROCK))))
 		data->spDefense = (15 * data->spDefense) / 10;
-		
+
 //Old Exploding Check
 	#ifdef OLD_EXPLOSION_BOOST
 		if (move == MOVE_SELFDESTRUCT || move == MOVE_EXPLOSION)
@@ -2194,7 +2194,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 
 	damage /= 50;
 	damage += 2;
-	
+
 //Final Damage mods - Likely boosts placed first, followed by damage cuts
 	//Specific Move Modifiers
 	switch (move) {
@@ -2461,7 +2461,7 @@ static u16 GetBasePower(struct DamageCalc* data)
 	bool8 useMonAtk = data->monAtk != NULL;
 	bool8 useMonDef = data->monDef != NULL;
 
-	if (gNewBS->ZMoveData->active) //Only active at runtime
+	if (gNewBS->zMoveData.active) //Only active at runtime
 	{
 		if (gNewBS->ai.zMoveHelper == MOVE_NONE) //Would be set by moves like Mirror Move & Me First
 			gNewBS->ai.zMoveHelper = gBattleMons[bankAtk].moves[gBattleStruct->chosenMovePositions[bankAtk]];
@@ -2836,7 +2836,7 @@ static u16 GetBasePower(struct DamageCalc* data)
 					power *= 2;
 			}
 			else if (!(data->specialFlags & FLAG_CHECKING_FROM_MENU))
-				power *= gBattleScripting->dmgMultiplier;
+				power *= gBattleScripting.dmgMultiplier;
 			break;
 
 		case MOVE_RETURN:
@@ -2901,7 +2901,7 @@ static u16 GetBasePower(struct DamageCalc* data)
 
 		case MOVE_TRIPLEKICK:
 			if (!(data->specialFlags & (FLAG_CHECKING_FROM_MENU | FLAG_AI_CALC)) && !useMonAtk)
-				power = gBattleScripting->tripleKickPower;
+				power = gBattleScripting.tripleKickPower;
 			break;
 
 		case MOVE_BOLTBEAK:
@@ -3006,7 +3006,7 @@ static u16 AdjustBasePower(struct DamageCalc* data, u16 power)
 		case ABILITY_GALVANIZE:
 		case ABILITY_NORMALIZE:
 		//1.2x / 1.3x Boost
-			if ((!useMonAtk && AbilityCanChangeTypeAndBoost(move, data->atkAbility, gNewBS->ElectrifyTimers[bankAtk], TRUE, (gNewBS->ZMoveData->active || gNewBS->ZMoveData->viewing)))
+			if ((!useMonAtk && AbilityCanChangeTypeAndBoost(move, data->atkAbility, gNewBS->ElectrifyTimers[bankAtk], TRUE, (gNewBS->zMoveData.active || gNewBS->zMoveData.viewing)))
 			||   (useMonAtk && AbilityCanChangeTypeAndBoost(move, data->atkAbility, 0, FALSE, FALSE)))
 			{
 				#ifdef OLD_ATE_BOOST
@@ -3087,13 +3087,13 @@ static u16 AdjustBasePower(struct DamageCalc* data, u16 power)
 			if (data->moveType == TYPE_STEEL)
 				power = (power * 15) / 10;
 			break;
-		
+
 		case ABILITY_POWERSPOT:
 		//1.3x Boost
 			power = (power * 13) / 10;
 			break;
 	}
-	
+
 	//Check attacker item effect boost
 	switch (data->atkItemEffect) {
 		case ITEM_EFFECT_MUSCLE_BAND:
@@ -3168,7 +3168,7 @@ static u16 AdjustBasePower(struct DamageCalc* data, u16 power)
 				power = (power * boost) / 100;
 			}
 			break;
-			
+
 		case ITEM_EFFECT_LIFE_ORB:
 			//1.3x Boost
 			power = (power * 13) / 10;
@@ -3321,12 +3321,12 @@ u16 CalcVisualBasePower(u8 bankAtk, u8 bankDef, u16 move, bool8 ignoreDef)
 		data.defSpeed = SpeedCalc(bankDef);
 		data.defStatus1 = gBattleMons[bankDef].status1;
 		data.defStatus3 = gStatuses3[bankDef];
-		data.defSideStatus = gSideAffecting[SIDE(bankDef)];
+		data.defSideStatus = gSideStatuses[SIDE(bankDef)];
 		data.defIsGrounded = CheckGrounding(bankDef);
 	}
 
 	data.resultFlags = TypeCalc(move, bankAtk, bankDef, NULL, FALSE);
-	
+
 //Load correct move power
 	data.basePower = gBattleMoves[move].power;
 	power = GetBasePower(&data);

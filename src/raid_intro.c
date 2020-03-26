@@ -243,10 +243,10 @@ static bool8 GetRaidBattleData(void)
 		if (checkedPartners[i] == TRUE) //0xFF means not viable
 		{
 			struct Partner* partner = &sRaidBattleIntroPtr->partners[k++];
-			
+
 			partner->id = i;
 			partner->graphicsId = gRaidPartners[i].owNum;
-			
+
 			for (j = 0; j < MAX_TEAM_SIZE; ++j)
 			{
 				const struct BattleTowerSpread* spread = GetRaidMultiSpread(i, j, sRaidBattleIntroPtr->rank);
@@ -275,19 +275,19 @@ static bool8 GetRaidBattleData(void)
 	sRaidBattleIntroPtr->partners[0].team[0] = SPECIES_TYRANITAR;
 	sRaidBattleIntroPtr->partners[0].team[1] = SPECIES_MAMOSWINE;
 	sRaidBattleIntroPtr->partners[0].team[2] = SPECIES_GRANBULL;
-	
+
 	sRaidBattleIntroPtr->partners[1].graphicsId = EVENT_OBJ_GFX_JAX;
 	sRaidBattleIntroPtr->partners[1].team[0] = SPECIES_GOLURK;
 	sRaidBattleIntroPtr->partners[1].team[1] = SPECIES_MAGNEZONE;
 	sRaidBattleIntroPtr->partners[1].team[2] = SPECIES_SALAMENCE;
-	
+
 	sRaidBattleIntroPtr->partners[2].graphicsId = EVENT_OBJ_GFX_RED;
 	sRaidBattleIntroPtr->partners[2].team[0] = SPECIES_PIKACHU_CAP_ORIGINAL;
 	sRaidBattleIntroPtr->partners[2].team[1] = SPECIES_SNORLAX;
 	sRaidBattleIntroPtr->partners[2].team[2] = SPECIES_MEWTWO;
-	
+
 	return TRUE;
-*/	
+*/
 }
 
 static void OutlineMonSprite(u8 spriteId)
@@ -303,7 +303,7 @@ static void OutlineMonSprite(u8 spriteId)
 		6	7
 
 		1	2	3
-		
+
 		4	5
 		*/
 
@@ -320,7 +320,7 @@ static void OutlineMonSprite(u8 spriteId)
 		u8 nextByteRow = 4;
 		if (i % 0x20 >= 0x1C)
 			nextByteRow = 0xE4;
-			
+
 		u8 previousByteRow = 4;
 		if (i % 0x20 < 4)
 			previousByteRow = 0xE4;
@@ -330,11 +330,11 @@ static void OutlineMonSprite(u8 spriteId)
 		u8 pixel2 = (offset[i] >> 4) & 0xF;
 
 		u8 pixel3 = offset[i + nextByteColumn] & 0xF;
-		
+
 		//Next row
 		u8 pixel4 = offset[i + nextByteRow] & 0xF;
 		u8 pixel5 = (offset[i + nextByteRow] >> 4) & 0xF;
-		
+
 		//Row Above
 		u8 pixel6 = offset[i - previousByteRow] & 0xF;
 		u8 pixel7 = (offset[i - previousByteRow] >> 4) & 0xF;
@@ -356,7 +356,7 @@ static void OutlineMonSprite(u8 spriteId)
 
 			if (pixel4 == 0)
 				buffer[i + nextByteRow] |= 0xF; //Set lower bit
-				
+
 			if (i >= previousByteRow && pixel6 == 0)
 				buffer[i - previousByteRow] |= 0xF; //Set lower bit*/
 		}
@@ -523,7 +523,7 @@ static void PrintInstructions(void)
 		.fgColor = 12, //Black
 		.shadowColor = 11, //Gray
 	};
-	
+
 	struct TextColor colour =
 	{
 		.bgColor = 0, //Transparent
@@ -539,7 +539,7 @@ static void PrintInstructions(void)
 	WindowPrint(WIN_RECOMMENDED_LEVEL, 0, 2, 0, &colour, 0, gStringVar1);
 
 	WindowPrint(WIN_INSTRUCTIONS, 0, 2, 4, &colour, 0, gText_RaidIntroSelection);
-	
+
 	WindowPrint(WIN_CHOOSE_PARTNER, 3, 1, 4, &partnerColour, 0, gText_RaidBattleChoosePartner);
 }
 
@@ -591,7 +591,7 @@ static void ShowPartnerTeams(void)
 		if (sRaidBattleIntroPtr->partners[i].graphicsId != 0)
 		{
 			AddPseudoEventObject(sRaidBattleIntroPtr->partners[i].graphicsId, SpriteCallbackDummy, 126, 59 + (i * 33), 0);
-	
+
 			for (j = 0; j < MAX_TEAM_SIZE; ++j)
 			{
 				u16 species = sRaidBattleIntroPtr->partners[i].team[j];

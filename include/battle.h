@@ -4,12 +4,14 @@
 
 // should they be included here or included individually by every file?
 #include "constants/battle.h"
+#include "battle_message.h"
 #include "battle_util.h"
 #include "battle_util2.h"
 #include "battle_script_commands.h"
 #include "battle_2.h"
 #include "battle_ai_switch_items.h"
 #include "battle_gfx_sfx_util.h"
+#include "link.h"
 
 /*
     Banks are a name given to what could be called a 'battlerId' or 'monControllerId'.
@@ -202,7 +204,7 @@ enum
 #define BS_GET_TARGET                   0
 #define BS_GET_ATTACKER                 1
 #define BS_GET_EFFECT_BANK              2
-#define BS_GET_gBank1   3
+#define BS_GET_FAINTED_BANK   3
 #define BS_GET_BANK_0   7
 #define BS_ATTACKER_WITH_PARTNER        4 // for atk98_status_icon_update
 #define BS_GET_ATTACKER_SIDE            8 // for atk1E_jumpifability
@@ -592,59 +594,7 @@ struct BattleResults
 
 extern struct BattleResults gBattleResults;
 
-struct MegaData
-{
-  u8 chosen[4];
-  u8 done[4];
-  u8 state;
-  u8 activeBank;
-  const u8* script;
-  bool8 megaEvoInProgress : 1; //Used to tell the game whether or not the turn order should be recalculated
-};
-
-struct UltraData
-{
-  u8 chosen[4];
-  u8 done[4];
-};
-
-struct ZMoveData
-{
-	u8 toBeUsed[4];
-	u8 used[4];
-	u8 partyIndex[2]; //Index of party member who used Z-Move
-	u8 effect;
-	u8 state;
-	bool8 active : 1;
-	bool8 effectApplied : 1; //Used so moves like Sleep Talk don't give 2 z-effects, clear in CMD49
-	bool8 healReplacement : 1;
-	bool8 viewing : 1;
-	bool8 runningZEffect : 1;
-	bool8 viewingDetails : 1; //Not actually related to Z-Moves, I just felt like putting it here
-};
-
 #define MAX_NUM_RAID_SHIELDS 5
-
-struct DynamaxData
-{
-	bool8 toBeUsed[MAX_BATTLERS_COUNT];
-	bool8 used[MAX_BATTLERS_COUNT];
-	s8 timer[MAX_BATTLERS_COUNT]; //Negative number means permanent
-	u8 partyIndex[NUM_BATTLE_SIDES];
-	u8 shieldSpriteIds[MAX_NUM_RAID_SHIELDS]; //Shields for raid battles
-	u8 shieldCount;					//The amount of shields created in a Raid Battle
-	u8 shieldsDestroyed;			//The amount of shields destroyed in a Raid Battle
-	u8 stormLevel;					//The number of Pokemon the raid boss has KO'd.
-	u8 repeatedAttacks;				//The amount of times the raid boss took another attack
-	bool8 active : 1;
-	bool8 viewing : 1;
-	bool8 raidShieldsUp : 1;
-	bool8 attackAgain : 1;
-	bool8 nullifiedStats : 1;
-	u8 backupMoveSelectionCursorPos;
-	u16 turnStartHP;
-	u16 backupRaidMonItem;
-};
 
 struct BattleStruct
 {
@@ -933,6 +883,58 @@ struct NewBattleStruct
 	u32 maxGoldrushMoney;
 	u16 itemBackup[PARTY_SIZE];
 
+	struct
+	{
+	  u8 chosen[4];
+	  u8 done[4];
+	  u8 state;
+	  u8 activeBank;
+	  const u8* script;
+	  bool8 megaEvoInProgress : 1; //Used to tell the game whether or not the turn order should be recalculated
+	} megaData;
+
+	struct
+	{
+	  u8 chosen[4];
+	  u8 done[4];
+	} ultraData;
+
+	struct
+	{
+		u8 toBeUsed[4];
+		u8 used[4];
+		u8 partyIndex[2]; //Index of party member who used Z-Move
+		u8 effect;
+		u8 state;
+		bool8 active : 1;
+		bool8 effectApplied : 1; //Used so moves like Sleep Talk don't give 2 z-effects, clear in CMD49
+		bool8 healReplacement : 1;
+		bool8 viewing : 1;
+		bool8 runningZEffect : 1;
+		bool8 viewingDetails : 1; //Not actually related to Z-Moves, I just felt like putting it here
+	} zMoveData;
+
+	struct DynamaxData
+	{
+		bool8 toBeUsed[MAX_BATTLERS_COUNT];
+		bool8 used[MAX_BATTLERS_COUNT];
+		s8 timer[MAX_BATTLERS_COUNT]; //Negative number means permanent
+		u8 partyIndex[NUM_BATTLE_SIDES];
+		u8 shieldSpriteIds[MAX_NUM_RAID_SHIELDS]; //Shields for raid battles
+		u8 shieldCount;					//The amount of shields created in a Raid Battle
+		u8 shieldsDestroyed;			//The amount of shields destroyed in a Raid Battle
+		u8 stormLevel;					//The number of Pokemon the raid boss has KO'd.
+		u8 repeatedAttacks;				//The amount of times the raid boss took another attack
+		bool8 active : 1;
+		bool8 viewing : 1;
+		bool8 raidShieldsUp : 1;
+		bool8 attackAgain : 1;
+		bool8 nullifiedStats : 1;
+		u8 backupMoveSelectionCursorPos;
+		u16 turnStartHP;
+		u16 backupRaidMonItem;
+	} dynamaxData;
+
 	struct 
 	{
 		u16 zMoveHelper;
@@ -955,11 +957,6 @@ struct NewBattleStruct
 		bool8 dynamaxPotential[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //dynamaxPotential[bankAtk][bankDef]
 		const void* megaPotential[MAX_BATTLERS_COUNT]; //aiMegaPotential[bankAtk] - stores evolution data of attacker
 	} ai;
-
-	struct MegaData* MegaData;
-	struct UltraData* UltraData;
-	struct ZMoveData* ZMoveData;
-	struct DynamaxData dynamaxData;
 };
 
 extern struct NewBattleStruct* gNewBS;
@@ -1198,7 +1195,7 @@ struct FlingStruct
 
 #define SET_STAT_BUFF_VALUE(n)(((s8)(((s8)(n) << 4)) & 0xF0))
 
-#define SET_STATCHANGER(statId, stage, goesDown) (gBattleScripting->statChanger = (statId) + (stage << 4) + (goesDown << 7))
+#define SET_STATCHANGER(statId, stage, goesDown) (gBattleScripting.statChanger = (statId) + (stage << 4) + (goesDown << 7))
 
 // used in many battle files, it seems as though Hisashi Sogabe wrote
 // some sort of macro to replace the use of actually calling memset.
@@ -1364,7 +1361,7 @@ struct BattleSpriteData
     struct BattleBarInfo* battleBars;
 };
 
-#define gBattleSpritesDataPtr ((struct BattleSpriteData*) *((u32*) 0x2024018)) //extern struct BattleSpriteData* gBattleSpritesDataPtr;
+//#define gBattleSpritesDataPtr ((struct BattleSpriteData*) *((u32*) 0x2024018)) //extern struct BattleSpriteData* gBattleSpritesDataPtr;
 
 #define BATTLE_BUFFER_LINK_SIZE 0x1000
 
@@ -1392,26 +1389,142 @@ struct MonSpritesGfx
 
 enum EnduranceListings {ENUDRE_REG, ENDURE_STURDY, ENDURE_FOCUS_SASH};
 
-extern struct BattleSpritesGfx* gMonSpritesGfx;
-extern u8 gBattleOutcome;
-extern u16 gLastUsedItem;
+extern u16 gBattle_BG0_X;
+extern u16 gBattle_BG0_Y;
+extern u16 gBattle_BG1_X;
+extern u16 gBattle_BG1_Y;
+extern u16 gBattle_BG2_X;
+extern u16 gBattle_BG2_Y;
+extern u16 gBattle_BG3_X;
+extern u16 gBattle_BG3_Y;
+extern u16 gBattle_WIN0H;
+extern u16 gBattle_WIN0V;
+extern u16 gBattle_WIN1H;
+extern u16 gBattle_WIN1V;
+extern u8 gDisplayedStringBattle[300];
+extern u8 gBattleTextBuff1[TEXT_BUFF_ARRAY_COUNT];
+extern u8 gBattleTextBuff2[TEXT_BUFF_ARRAY_COUNT];
+extern u8 gBattleTextBuff3[TEXT_BUFF_ARRAY_COUNT];
 extern u32 gBattleTypeFlags;
-extern struct MonSpritesGfx* gMonSpritesGfxPtr;
-extern u16 gTrainerBattleOpponent_A;
-extern u16 gMoveToLearn;
-extern u16 gBattleMovePower;
-extern struct BattleEnigmaBerry gEnigmaBerries[MAX_BATTLERS_COUNT];
-extern u16 gCurrentMove;
-extern u8 gCritMultiplier;
-extern u16 gBattleWeather;
-extern u8 gLastUsedAbility;
-extern u8 gBattlerInMenuId;
-extern u8 gPotentialItemEffectBattler;
+extern u8 gBattleTerrain;
+extern u32 gUnknown_02022FF4;
+extern u8 *gUnknown_0202305C;
+extern u8 *gUnknown_02023060;
+extern u8 gBattleBufferA[MAX_BATTLERS_COUNT][0x200];
+extern u8 gBattleBufferB[MAX_BATTLERS_COUNT][0x200];
+extern u8 gActiveBattler;
+extern u32 gBattleExecBuffer;// gBattleControllerExecFlags
 extern u8 gBattlersCount;
 extern u16 gBattlerPartyIndexes[MAX_BATTLERS_COUNT];
+extern u8 gBattlerPositions[MAX_BATTLERS_COUNT];
+extern u8 gActionsByTurnOrder[MAX_BATTLERS_COUNT];
+extern u8 gBanksByTurnOrder[MAX_BATTLERS_COUNT];
+extern u8 gCurrentTurnActionNumber;
+extern u8 gCurrentActionFuncId;
+extern struct BattlePokemon gBattleMons[MAX_BATTLERS_COUNT];
+extern u8 gBattlerSpriteIds[MAX_BATTLERS_COUNT];
+extern u8 gCurrMovePos;
+extern u8 gChosenMovePos;
+extern u16 gCurrentMove;
+extern u16 gChosenMove;
+extern u16 gCalledMove;
 extern s32 gBattleMoveDamage;
+extern s32 gHpDealt;
+extern s32 gTakenDmg[MAX_BATTLERS_COUNT];
+extern u16 gLastUsedItem;
+extern u8 gLastUsedAbility;
+extern u8 gBankAttacker;
+extern u8 gBankTarget;
+extern u8 gBankFainted;
+extern u8 gEffectBank;
+extern u8 gStringBank;
+extern u8 gPotentialItemEffectBattler;
+extern u8 gAbsentBattlerFlags;
+extern u8 gCritMultiplier;
+extern u8 gMultiHitCounter;
+extern const u8 *gBattlescriptCurrInstr;
+extern u32 gUnusedBattleMainVar;
+extern u8 gChosenActionByBank[MAX_BATTLERS_COUNT];
+extern const u8 *gSelectionBattleScripts[MAX_BATTLERS_COUNT];
+extern const u8 *gPalaceSelectionBattleScripts[MAX_BATTLERS_COUNT];
+extern u16 gLastPrintedMoves[MAX_BATTLERS_COUNT];
+extern u16 gLastUsedMoves[MAX_BATTLERS_COUNT];
+extern u16 gLastLandedMoves[MAX_BATTLERS_COUNT];
+extern u16 gLastHitByType[MAX_BATTLERS_COUNT];
+extern u16 gLastResultingMoves[MAX_BATTLERS_COUNT];
+extern u16 gLockedMoves[MAX_BATTLERS_COUNT];
+extern u8 gLastHitBy[MAX_BATTLERS_COUNT];
+extern u16 gChosenMovesByBanks[MAX_BATTLERS_COUNT];
+extern u8 gMoveResultFlags;
+extern u32 gHitMarker;
+extern u8 gTakenDmgBanks[MAX_BATTLERS_COUNT];
+extern u8 gUnknown_2023DDC;
+extern u16 gSideStatuses[2];
+extern struct SideTimer gSideTimers[2];
+extern u32 gStatuses3[MAX_BATTLERS_COUNT];
+extern struct DisableStruct gDisableStructs[MAX_BATTLERS_COUNT];
+extern u16 gPauseCounterBattle;
+extern u16 gPaydayMoney;
+extern u16 gRandomTurnNumber;
+extern u8 gBattleCommunication[BATTLE_COMMUNICATION_ENTRIES_COUNT];
+extern u8 gBattleOutcome;
+extern struct ProtectStruct gProtectStructs[MAX_BATTLERS_COUNT];
+extern struct SpecialStatus gSpecialStatuses[MAX_BATTLERS_COUNT];
+extern u16 gBattleWeather;
+extern struct WishFutureKnock gWishFutureKnock;
+extern u16 gIntroSlideFlags;
+extern u8 gSentPokesToOpponent[2];
+extern u16 gDynamicBasePower;
+extern u16 gExpShareExp;
+extern struct BattleEnigmaBerry gEnigmaBerries[MAX_BATTLERS_COUNT];
+extern struct BattleScripting gBattleScripting;
+extern struct BattleStruct *gBattleStruct;
+extern u8 *gLinkBattleSendBuffer;
+extern u8 *gLinkBattleRecvBuffer;
+extern struct BattleResources *gBattleResources;
+extern u8 gActionSelectionCursor[MAX_BATTLERS_COUNT];
+extern u8 gMoveSelectionCursor[MAX_BATTLERS_COUNT];
+extern u8 gBattlerStatusSummaryTaskId[MAX_BATTLERS_COUNT];
+extern u8 gBattlerInMenuId;
 extern bool8 gDoingBattleAnim;
+extern u32 gTransformedPersonalities[MAX_BATTLERS_COUNT];
+extern u8 gPlayerDpadHoldFrames;
+extern struct BattleSpriteData *gBattleSpritesDataPtr;
+extern struct MonSpritesGfx *gMonSpritesGfxPtr;
+extern struct BattleHealthboxInfo *gUnknown_020244D8;
+extern struct BattleHealthboxInfo *gUnknown_020244DC;
+extern u16 gBattleMovePower;
+extern u16 gMoveToLearn;
+extern u8 gBattleMonForms[MAX_BATTLERS_COUNT];
+
+extern void (*gPreBattleCallback1)(void);
+extern void (*gBattleMainFunc)(void);
+extern struct BattleResults gBattleResults;
+extern u8 gLeveledUpInBattle;
+extern void (*gBattlerControllerFuncs[MAX_BATTLERS_COUNT])(void);
+extern u8 gHealthboxSpriteIds[MAX_BATTLERS_COUNT];
+extern u8 gMultiUsePlayerCursor;
+extern u8 gNumberOfMovesToChoose;
+extern u8 gUnknown_03005D7C[MAX_BATTLERS_COUNT];
 
 extern u8 gUnknown_2023E8A;
+
+extern void (*gAnimScriptCallback)(void);
+extern bool8 gAnimScriptActive;
+extern u8 gAnimVisualTaskCount;
+extern u8 gAnimSoundTaskCount;
+extern struct DisableStruct *gAnimDisableStructPtr;
+extern s32 gAnimMoveDmg;
+extern u16 gAnimMovePower;
+extern u8 gAnimFriendship;
+extern u16 gWeatherMoveAnim;
+extern s16 gBattleAnimArgs[/*ANIM_ARGS_COUNT*/];
+extern u8 gAnimMoveTurn;
+extern u8 gBattleAnimAttacker;
+extern u8 gBattleAnimTarget;
+extern u16 gAnimBattlerSpecies[MAX_BATTLERS_COUNT];
+extern u8 gAnimCustomPanning;
+
+extern u8 gBattleBuffersTransferData[0x100];
 
 #define BATTLE_HISTORY ((struct BattleHistory*) (gBattleResources->battleHistory))

@@ -320,8 +320,6 @@
 #define SOUND_PAN_ATTACKER -64
 #define SOUND_PAN_TARGET    63
 
-#define gAnimVisualTaskCount (*((u8*) 0x2037EE2))
-
 enum
 {
     ANIM_BANK_ATTACKER,

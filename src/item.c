@@ -142,11 +142,11 @@ u8 TMIdFromItemId(u16 itemId)
 	if (itemId == ITEM_NONE)
 		return 255; //So blank items get put at the end
 	else if (tmNum == 0)
-		return (itemId - ITEM_TM01);
+		return (itemId - ITEM_TM01_FOCUS_PUNCH);
 	else
 		return (tmNum-1);
 	#else
-		return itemId - ITEM_TM01;
+		return itemId - ITEM_TM01_FOCUS_PUNCH;
 	#endif
 }
 
@@ -404,7 +404,7 @@ void LoadTMNameWithNo(u8* dst, u16 itemId)
 	#ifdef EXPANDED_TMSHMS
 	u8 tmNum = ItemId_GetMystery2(itemId);
 	#else
-	u8 tmNum = itemId - ITEM_TM01;
+	u8 tmNum = itemId - ITEM_TM01_FOCUS_PUNCH;
 	#endif
 
 	StringCopy(gStringVar4, (void*) 0x84166FF);

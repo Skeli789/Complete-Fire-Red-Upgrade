@@ -165,10 +165,10 @@ const u8* DoMegaEvolution(u8 bank)
 		u16 species = mon->species;
 		DoFormChange(bank, evolutions->targetSpecies, TRUE, TRUE, TRUE);
 
-		gBattleScripting->bank = bank;
+		gBattleScripting.bank = bank;
 		gLastUsedItem = mon->item;
 
-		//FD 00's FD 16 FE is reacting to FD 04's FD 01!
+		//[BUFFER][00]'s [LAST_ITEM]\nis reacting to [PLAYER_NAME]'s [BUFFER][01]!
 		PREPARE_SPECIES_BUFFER(gBattleTextBuff1, species);
 		PREPARE_ITEM_BUFFER(gBattleTextBuff2, FindBankKeystone(bank));
 
@@ -340,14 +340,14 @@ bool8 BankMegaEvolved(u8 bank, bool8 checkUB)
 	{
 		if (checkUB)
 		{
-			if (gNewBS->UltraData->done[bank])
+			if (gNewBS->ultraData.done[bank])
 				return TRUE;
 			else
 				return FALSE;
 		}
 		else
 		{
-			if (gNewBS->MegaData->done[bank])
+			if (gNewBS->megaData.done[bank])
 				return TRUE;
 			else
 				return FALSE;
@@ -356,12 +356,12 @@ bool8 BankMegaEvolved(u8 bank, bool8 checkUB)
 
 	if (checkUB)
 	{
-		if (gNewBS->UltraData->done[bank] || gNewBS->UltraData->done[PARTNER(bank)])
+		if (gNewBS->ultraData.done[bank] || gNewBS->ultraData.done[PARTNER(bank)])
 			return TRUE;
 	}
 	else
 	{
-		if (gNewBS->MegaData->done[bank] || (gNewBS->MegaData->done[PARTNER(bank)]))
+		if (gNewBS->megaData.done[bank] || (gNewBS->megaData.done[PARTNER(bank)]))
 			return TRUE;
 	}
 
@@ -549,16 +549,16 @@ void MegaRetrieveData(void)
 {
 	if (gBattleTypeFlags & (BATTLE_TYPE_POKE_DUDE | BATTLE_TYPE_OLD_MAN)) //Poke Dude's controller wasn't updated so these need to be manually set to 0
 	{
-		gNewBS->MegaData->chosen[gActiveBattler] = 0;
-		gNewBS->UltraData->chosen[gActiveBattler] = 0;
-		gNewBS->ZMoveData->toBeUsed[gActiveBattler] = 0;
+		gNewBS->megaData.chosen[gActiveBattler] = 0;
+		gNewBS->ultraData.chosen[gActiveBattler] = 0;
+		gNewBS->zMoveData.toBeUsed[gActiveBattler] = 0;
 		gNewBS->dynamaxData.toBeUsed[gActiveBattler] = 0;
 	}
 	else
 	{
-		gNewBS->MegaData->chosen[gActiveBattler] |= gBattleBufferB[gActiveBattler][4];
-		gNewBS->UltraData->chosen[gActiveBattler] |= gBattleBufferB[gActiveBattler][5];
-		gNewBS->ZMoveData->toBeUsed[gActiveBattler] |= gBattleBufferB[gActiveBattler][6];
+		gNewBS->megaData.chosen[gActiveBattler] |= gBattleBufferB[gActiveBattler][4];
+		gNewBS->ultraData.chosen[gActiveBattler] |= gBattleBufferB[gActiveBattler][5];
+		gNewBS->zMoveData.toBeUsed[gActiveBattler] |= gBattleBufferB[gActiveBattler][6];
 		gNewBS->dynamaxData.toBeUsed[gActiveBattler] |= gBattleBufferB[gActiveBattler][7];
 	}
 }

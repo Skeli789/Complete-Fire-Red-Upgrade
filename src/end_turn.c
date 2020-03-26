@@ -186,14 +186,14 @@ u8 TurnBasedEffects(void)
 				if (gNewBS->EchoedVoiceCounter == 0)
 					gNewBS->EchoedVoiceDamageScale = 0;
 
-				gSideAffecting[B_SIDE_PLAYER] &= ~(SIDE_STATUS_CRAFTY_SHIELD | SIDE_STATUS_MAT_BLOCK | SIDE_STATUS_QUICK_GUARD | SIDE_STATUS_WIDE_GUARD);
-				gSideAffecting[B_SIDE_OPPONENT] &= ~(SIDE_STATUS_CRAFTY_SHIELD | SIDE_STATUS_MAT_BLOCK | SIDE_STATUS_QUICK_GUARD | SIDE_STATUS_WIDE_GUARD);
+				gSideStatuses[B_SIDE_PLAYER] &= ~(SIDE_STATUS_CRAFTY_SHIELD | SIDE_STATUS_MAT_BLOCK | SIDE_STATUS_QUICK_GUARD | SIDE_STATUS_WIDE_GUARD);
+				gSideStatuses[B_SIDE_OPPONENT] &= ~(SIDE_STATUS_CRAFTY_SHIELD | SIDE_STATUS_MAT_BLOCK | SIDE_STATUS_QUICK_GUARD | SIDE_STATUS_WIDE_GUARD);
 
 				gNewBS->NoMoreMovingThisTurn = 0;
 				gNewBS->fusionFlareUsedPrior = FALSE;
 				gNewBS->fusionBoltUsedPrior = FALSE;
 				gNewBS->roundUsed = FALSE;
-				
+
 				if (IsRaidBattle() && !BATTLER_ALIVE(BANK_RAID_BOSS)) //Raid mon is dead so skip end turn effects
 				{
 					gBattleStruct->turnEffectsTracker = ET_End;
@@ -207,7 +207,7 @@ u8 TurnBasedEffects(void)
 				if (gBattleWeather & WEATHER_RAIN_ANY)
 				{
 					if (!(gBattleWeather & WEATHER_RAIN_PERMANENT)
-					&& --gWishFutureKnock->weatherDuration == 0)
+					&& --gWishFutureKnock.weatherDuration == 0)
 					{
 						gBattleWeather &= ~WEATHER_RAIN_ANY;
 						gBattleCommunication[MULTISTRING_CHOOSER] = 2;
@@ -227,7 +227,7 @@ u8 TurnBasedEffects(void)
 				else if (gBattleWeather & WEATHER_SUN_ANY)
 				{
 					if (!(gBattleWeather & WEATHER_SUN_PERMANENT)
-					&& --gWishFutureKnock->weatherDuration == 0)
+					&& --gWishFutureKnock.weatherDuration == 0)
 					{
 						gBattleWeather &= ~WEATHER_SUN_ANY;
 						gBattlescriptCurrInstr = BattleScript_SunlightFaded;
@@ -242,7 +242,7 @@ u8 TurnBasedEffects(void)
 				else if (gBattleWeather & WEATHER_SANDSTORM_ANY)
 				{
 					if (!(gBattleWeather & WEATHER_SANDSTORM_PERMANENT)
-					&& --gWishFutureKnock->weatherDuration == 0)
+					&& --gWishFutureKnock.weatherDuration == 0)
 					{
 						gBattleWeather &= ~WEATHER_SANDSTORM_ANY;
 						gBattlescriptCurrInstr = BattleScript_SandStormHailEnds;
@@ -252,7 +252,7 @@ u8 TurnBasedEffects(void)
 						gBattlescriptCurrInstr = BattleScript_SandstormHailContinues;
 					}
 
-					gBattleScripting->animArg1 = B_ANIM_SANDSTORM_CONTINUES;
+					gBattleScripting.animArg1 = B_ANIM_SANDSTORM_CONTINUES;
 					gBattleCommunication[MULTISTRING_CHOOSER] = 0;
 					BattleScriptExecute(gBattlescriptCurrInstr);
 					effect++;
@@ -260,7 +260,7 @@ u8 TurnBasedEffects(void)
 				else if (gBattleWeather & WEATHER_HAIL_ANY)
 				{
 					if (!(gBattleWeather & WEATHER_HAIL_PERMANENT)
-					&& --gWishFutureKnock->weatherDuration == 0)
+					&& --gWishFutureKnock.weatherDuration == 0)
 					{
 						gBattleWeather &= ~WEATHER_HAIL_ANY;
 						gBattlescriptCurrInstr = BattleScript_SandStormHailEnds;
@@ -270,7 +270,7 @@ u8 TurnBasedEffects(void)
 						gBattlescriptCurrInstr = BattleScript_SandstormHailContinues;
 					}
 
-					gBattleScripting->animArg1 = B_ANIM_HAIL_CONTINUES;
+					gBattleScripting.animArg1 = B_ANIM_HAIL_CONTINUES;
 					gBattleCommunication[MULTISTRING_CHOOSER] = 1;
 					BattleScriptExecute(gBattlescriptCurrInstr);
 					effect++;
@@ -283,7 +283,7 @@ u8 TurnBasedEffects(void)
 				else if (gBattleWeather & WEATHER_FOG_ANY)
 				{
 					if (!(gBattleWeather & WEATHER_FOG_PERMANENT)
-					&& --gWishFutureKnock->weatherDuration == 0)
+					&& --gWishFutureKnock.weatherDuration == 0)
 					{
 						gBattleWeather &= ~WEATHER_FOG_ANY;
 						gBattlescriptCurrInstr = BattleScript_FogEnded;
@@ -336,24 +336,24 @@ u8 TurnBasedEffects(void)
 				break;
 
 			case ET_Future_Sight:
-				if (gWishFutureKnock->futureSightCounter[gActiveBattler]
-				&& --gWishFutureKnock->futureSightCounter[gActiveBattler] == 0
+				if (gWishFutureKnock.futureSightCounter[gActiveBattler]
+				&& --gWishFutureKnock.futureSightCounter[gActiveBattler] == 0
 				&& gBattleMons[gActiveBattler].hp)
 				{
-					if (gWishFutureKnock->futureSightMove[gActiveBattler] == MOVE_FUTURESIGHT)
+					if (gWishFutureKnock.futureSightMove[gActiveBattler] == MOVE_FUTURESIGHT)
 						gBattleCommunication[MULTISTRING_CHOOSER] = 0;
 					else //Doom Desire
 						gBattleCommunication[MULTISTRING_CHOOSER] = 1;
 
-					gCurrentMove = gWishFutureKnock->futureSightMove[gActiveBattler];
+					gCurrentMove = gWishFutureKnock.futureSightMove[gActiveBattler];
 					gBattleStruct->dynamicMoveType = GetMoveTypeSpecial(gActiveBattler, gCurrentMove);
 
 					gBattleTextBuff1[0] = B_BUFF_PLACEHOLDER_BEGIN;
 					gBattleTextBuff1[1] = B_TXT_COPY_VAR_1;
-					gBattleTextBuff1[2] = gWishFutureKnock->futureSightMove[gActiveBattler];
-					gBattleTextBuff1[3] = gWishFutureKnock->futureSightMove[gActiveBattler] >> 8;
+					gBattleTextBuff1[2] = gWishFutureKnock.futureSightMove[gActiveBattler];
+					gBattleTextBuff1[3] = gWishFutureKnock.futureSightMove[gActiveBattler] >> 8;
 					gBattleTextBuff1[4] = 0xFF;
-					gBankAttacker = gWishFutureKnock->futureSightAttacker[gActiveBattler];
+					gBankAttacker = gWishFutureKnock.futureSightAttacker[gActiveBattler];
 					gSpecialStatuses[gBankTarget].moveturnLostHP = 0xFFFF;
 					BattleScriptExecute(BattleScript_MonTookFutureAttack);
 					effect++;
@@ -367,8 +367,8 @@ u8 TurnBasedEffects(void)
 				if(gNewBS->LaserFocusTimers[gActiveBattler])
 					--gNewBS->LaserFocusTimers[gActiveBattler];
 
-				if (gWishFutureKnock->wishCounter[gActiveBattler]
-				&& --gWishFutureKnock->wishCounter[gActiveBattler] == 0
+				if (gWishFutureKnock.wishCounter[gActiveBattler]
+				&& --gWishFutureKnock.wishCounter[gActiveBattler] == 0
 				&& gBattleMons[gActiveBattler].hp)
 				{
 					BattleScriptExecute(BattleScript_WishComesTrue);
@@ -387,12 +387,12 @@ u8 TurnBasedEffects(void)
 						{
 							gBattleMoveDamage = GetSeaOfFireDamage(gActiveBattler);
 							gBattleStringLoader = gText_HurtBySeaOfFire;
-							gBattleScripting->animArg1 = B_ANIM_SEA_OF_FIRE;
+							gBattleScripting.animArg1 = B_ANIM_SEA_OF_FIRE;
 							BattleScriptExecute(BattleScript_SeaOfFireDamage);
 							effect++;
 						}
 						break;
-						
+
 					case ET_G_Max_Wildfire:
 						if (BATTLER_ALIVE(gActiveBattler)
 						&&  BankSideHasGMaxWildfire(gActiveBattler)
@@ -401,7 +401,7 @@ u8 TurnBasedEffects(void)
 						{
 							gBattleMoveDamage = GetGMaxWildfireDamage(gActiveBattler);
 							gBattleStringLoader = gText_HurtByGMaxWildfire;
-							gBattleScripting->animArg1 = B_ANIM_G_MAX_WILDFIRE;
+							gBattleScripting.animArg1 = B_ANIM_G_MAX_WILDFIRE;
 							BattleScriptExecute(BattleScript_SeaOfFireDamage);
 							effect++;
 						}
@@ -414,7 +414,7 @@ u8 TurnBasedEffects(void)
 						{
 							gBattleMoveDamage = GetGMaxVolcalithDamage(gActiveBattler);
 							gBattleStringLoader = gText_HurtByGMaxVolcalith;
-							gBattleScripting->animArg1 = B_ANIM_G_MAX_VOLCALITH;
+							gBattleScripting.animArg1 = B_ANIM_G_MAX_VOLCALITH;
 							BattleScriptExecute(BattleScript_SeaOfFireDamage);
 							effect++;
 						}
@@ -505,8 +505,8 @@ u8 TurnBasedEffects(void)
 				{
 					gBankTarget = gStatuses3[gActiveBattler] & STATUS3_LEECHSEED_BATTLER; //funny how the 'target' is actually the bank that receives HP
 					gBattleMoveDamage = GetLeechSeedDamage(gActiveBattler);
-					gBattleScripting->animArg1 = gBankTarget;
-					gBattleScripting->animArg2 = gBankAttacker;
+					gBattleScripting.animArg1 = gBankTarget;
+					gBattleScripting.animArg2 = gBankAttacker;
 					BattleScriptExecute(BattleScript_LeechSeedTurnDrain);
 					effect++;
 				}
@@ -536,7 +536,7 @@ u8 TurnBasedEffects(void)
 						if (gBattleMons[gActiveBattler].status1 & STATUS_TOXIC_POISON
 						&& (gBattleMons[gActiveBattler].status1 & 0xF00) != 0xF00) //not 16 turns
 							gBattleMons[gActiveBattler].status1 += 0x100;
-					
+
 						gBattleMoveDamage = GetPoisonDamage(gActiveBattler);
 
 						if (ABILITY(gActiveBattler) == ABILITY_POISONHEAL)
@@ -544,7 +544,7 @@ u8 TurnBasedEffects(void)
 							if (!BATTLER_MAX_HP(gActiveBattler) && !IsHealBlocked(gActiveBattler))
 							{
 								gBattleMoveDamage *= -1;
-								gBattleScripting->bank = gActiveBattler;
+								gBattleScripting.bank = gActiveBattler;
 								BattleScriptExecute(BattleScript_PoisonHeal);
 							}
 						}
@@ -628,8 +628,8 @@ u8 TurnBasedEffects(void)
 					if (ABILITY(gActiveBattler) != ABILITY_MAGICGUARD)
 					{
 						//Damaged by wrap
-						gBattleScripting->animArg1 = gBattleStruct->wrappedMove[gActiveBattler];
-						gBattleScripting->animArg2 = gBattleStruct->wrappedMove[gActiveBattler] >> 8;
+						gBattleScripting.animArg1 = gBattleStruct->wrappedMove[gActiveBattler];
+						gBattleScripting.animArg2 = gBattleStruct->wrappedMove[gActiveBattler] >> 8;
 						gBattleTextBuff1[0] = B_BUFF_PLACEHOLDER_BEGIN;
 						gBattleTextBuff1[1] = B_TXT_COPY_VAR_1;
 						gBattleTextBuff1[2] = gBattleStruct->wrappedMove[gActiveBattler];
@@ -644,13 +644,13 @@ u8 TurnBasedEffects(void)
 					}
 				}
 				break;
-				
+
 			case ET_Octolock:
 				if (gBattleMons[gActiveBattler].status2 & STATUS2_ESCAPE_PREVENTION
 				&& BATTLER_ALIVE(gActiveBattler) && gNewBS->trappedByOctolock)
 				{
-					gBattleScripting->animArg1 = MOVE_OCTOLOCK & 0xFF;
-					gBattleScripting->animArg2 = MOVE_OCTOLOCK >> 8;
+					gBattleScripting.animArg1 = MOVE_OCTOLOCK & 0xFF;
+					gBattleScripting.animArg2 = MOVE_OCTOLOCK >> 8;
 					BattleScriptExecute(BattleScript_OctolockTurnDmg);
 					effect++;
 				}
@@ -659,7 +659,7 @@ u8 TurnBasedEffects(void)
 			case ET_Taunt_Timer:
 				if (gDisableStructs[gActiveBattler].tauntTimer > 0 && --gDisableStructs[gActiveBattler].tauntTimer == 0)
 				{
-					gBattleScripting->bank = gActiveBattler;
+					gBattleScripting.bank = gActiveBattler;
 					gBattleStringLoader = gText_TauntWoreOff;
 					BattleScriptExecute(BattleScript_PrintCustomStringEnd2);
 					effect++;
@@ -848,10 +848,10 @@ u8 TurnBasedEffects(void)
 				if (gBattleStruct->turnEffectsBank < 2)
 				{
 					sideBank = gBattleStruct->turnEffectsBank;
-					if (gSideAffecting[sideBank] & SIDE_STATUS_REFLECT && --gSideTimers[sideBank].reflectTimer == 0)
+					if (gSideStatuses[sideBank] & SIDE_STATUS_REFLECT && --gSideTimers[sideBank].reflectTimer == 0)
 					{
 						gBankAttacker = gBankTarget = gActiveBattler = sideBank;
-						gSideAffecting[sideBank] &= ~SIDE_STATUS_REFLECT;
+						gSideStatuses[sideBank] &= ~SIDE_STATUS_REFLECT;
 						gBattleStringLoader = gText_SideStatusWoreOff;
 						BattleScriptExecute(BattleScript_PrintCustomStringEnd2);
 						gBattleTextBuff1[0] = B_BUFF_PLACEHOLDER_BEGIN;
@@ -872,10 +872,10 @@ u8 TurnBasedEffects(void)
 				if (gBattleStruct->turnEffectsBank < 2)
 				{
 					sideBank = gBattleStruct->turnEffectsBank;
-					if (gSideAffecting[sideBank] & SIDE_STATUS_LIGHTSCREEN && --gSideTimers[sideBank].lightscreenTimer == 0)
+					if (gSideStatuses[sideBank] & SIDE_STATUS_LIGHTSCREEN && --gSideTimers[sideBank].lightscreenTimer == 0)
 					{
 						gBankAttacker = gBankTarget = gActiveBattler = sideBank;
-						gSideAffecting[sideBank] &= ~SIDE_STATUS_LIGHTSCREEN;
+						gSideStatuses[sideBank] &= ~SIDE_STATUS_LIGHTSCREEN;
 						gBattleStringLoader = gText_SideStatusWoreOff;
 						BattleScriptExecute(BattleScript_PrintCustomStringEnd2);
 						gBattleTextBuff1[0] = B_BUFF_PLACEHOLDER_BEGIN;
@@ -914,10 +914,10 @@ u8 TurnBasedEffects(void)
 				if (gBattleStruct->turnEffectsBank < 2)
 				{
 					sideBank = SIDE(gBattleStruct->turnEffectsBank);
-					if (gSideAffecting[sideBank] & SIDE_STATUS_SAFEGUARD && --gSideTimers[sideBank].safeguardTimer == 0)
+					if (gSideStatuses[sideBank] & SIDE_STATUS_SAFEGUARD && --gSideTimers[sideBank].safeguardTimer == 0)
 					{
 						gBankAttacker = gBankTarget = gActiveBattler = sideBank;
-						gSideAffecting[sideBank] &= ~SIDE_STATUS_SAFEGUARD;
+						gSideStatuses[sideBank] &= ~SIDE_STATUS_SAFEGUARD;
 						BattleScriptExecute(BattleScript_SafeguardEnds);
 						effect++;
 					}
@@ -932,10 +932,10 @@ u8 TurnBasedEffects(void)
 				if (gBattleStruct->turnEffectsBank < 2)
 				{
 					sideBank = SIDE(gBattleStruct->turnEffectsBank);
-					if ((gSideAffecting[sideBank] & SIDE_STATUS_MIST) && --gSideTimers[sideBank].mistTimer == 0)
+					if ((gSideStatuses[sideBank] & SIDE_STATUS_MIST) && --gSideTimers[sideBank].mistTimer == 0)
 					{
 						gBankAttacker = gBankTarget = gActiveBattler = sideBank;
-						gSideAffecting[sideBank] &= ~SIDE_STATUS_MIST;
+						gSideStatuses[sideBank] &= ~SIDE_STATUS_MIST;
 						gBattleStringLoader = gText_SideStatusWoreOff;
 						BattleScriptExecute(BattleScript_PrintCustomStringEnd2);
 						gBattleTextBuff1[0] = B_BUFF_PLACEHOLDER_BEGIN;
@@ -1035,7 +1035,7 @@ u8 TurnBasedEffects(void)
 
 				++gBattleStruct->turnEffectsTracker;
 				gBattleStruct->turnEffectsBank = 0;
-				
+
 				__attribute__ ((fallthrough));
 			case ET_G_Max_Wildfire_Timer:
 				if (gBattleStruct->turnEffectsBank < 2)
@@ -1195,7 +1195,7 @@ u8 TurnBasedEffects(void)
 						&&  gBattleMons[gActiveBattler].status1 == STATUS1_NONE)
 						{
 							u8 itemEffect = ITEM_EFFECT(gActiveBattler);
-							
+
 							switch (itemEffect) {
 								case ITEM_EFFECT_TOXIC_ORB:
 									if (CanBePoisoned(gActiveBattler, gActiveBattler, FALSE))
@@ -1228,9 +1228,9 @@ u8 TurnBasedEffects(void)
 								case ITEM_EFFECT_STICKY_BARB:
 									if (ABILITY(gActiveBattler) != ABILITY_MAGICGUARD)
 									{
-										gLastUsedItem = ITEM(gBattleScripting->bank = gActiveBattler);
+										gLastUsedItem = ITEM(gBattleScripting.bank = gActiveBattler);
 										RecordItemEffectBattle(gActiveBattler, itemEffect);
-										
+
 										gBattleMoveDamage = MathMax(1, GetBaseMaxHP(gActiveBattler) / 8);
 										BattleScriptExecute(BattleScript_BlackSludgeHurt);
 										++effect;
@@ -1402,7 +1402,7 @@ u8 TurnBasedEffects(void)
 
 					if (changedForm)
 					{
-						gBattleScripting->bank = gActiveBattler;
+						gBattleScripting.bank = gActiveBattler;
 						DoFormChange(gActiveBattler, newSpecies, reloadType, reloadStats, reloadAbility);
 						BattleScriptExecute(battleScript);
 						++effect;
@@ -1429,7 +1429,7 @@ u8 TurnBasedEffects(void)
 			END_TURN_SKIP:
 				gBattleStruct->turnEffectsBank = gBattlersCount;
 				gNewBS->endTurnDone = TRUE;
-				gNewBS->MegaData->state = 0;
+				gNewBS->megaData.state = 0;
 				gNewBS->calculatedAIPredictions = FALSE;
 				gNewBS->batonPassing = FALSE;
 				gNewBS->dynamaxData.attackAgain = FALSE;
@@ -1904,16 +1904,16 @@ bool8 HandleDynamaxOnTurnEnd(void)
 	&& !FlagGet(FLAG_RAID_BATTLE_NO_FORCE_END) //These battles can't be force ended
 	&& BATTLER_ALIVE(BANK_RAID_BOSS) //Don't force out if battle is over
 	#endif
-	&& gBattleResults->battleTurnCounter + 1 >= 10) //10 Turns have passed
+	&& gBattleResults.battleTurnCounter + 1 >= 10) //10 Turns have passed
 	{
 		gBattleStringLoader = gText_RaidBattleKO4;
-		
+
 		if (BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_PLAYER_LEFT)))
-			gBattleScripting->bank = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
+			gBattleScripting.bank = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
 		else
-			gBattleScripting->bank = GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT);
+			gBattleScripting.bank = GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT);
 		BattleScriptExecute(BattleScript_LoseRaidBattle);
-		gBattleResults->battleTurnCounter -= 1; //To prevent infinite loop
+		gBattleResults.battleTurnCounter -= 1; //To prevent infinite loop
 		return TRUE;
 	}
 
@@ -1925,7 +1925,7 @@ bool8 HandleDynamaxOnTurnEnd(void)
 			{
 				TryRevertGigantamax(GetBankPartyData(bank));
 				gNewBS->dynamaxData.timer[bank] = 0;
-				gBattleScripting->bank = bank;
+				gBattleScripting.bank = bank;
 				BattleScriptExecute(BattleScript_DynamaxEnd);
 				return TRUE;
 			}

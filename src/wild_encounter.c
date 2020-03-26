@@ -312,13 +312,13 @@ void sp117_CreateRaidMon(void)
 	u8 eggMoveChance = GetRaidEggMoveChance();
 	u8 abilityNum = GetRaidSpeciesAbilityNum(gRaidBattleSpecies);
 	struct Pokemon* mon = &gEnemyParty[0];
-	
+
 	if (abilityNum == RAID_ABILITY_HIDDEN
 	|| (abilityNum == RAID_ABILITY_RANDOM_ALL && Random() & 1)) //50% chance of hidden ability
 		FlagSet(FLAG_HIDDEN_ABILITY);
 	else
 		FlagClear(FLAG_HIDDEN_ABILITY);
-		
+
 	#ifdef FLAG_WILD_CUSTOM_MOVES
 	FlagClear(FLAG_WILD_CUSTOM_MOVES); //We'll set custom moves later
 	#endif
@@ -342,7 +342,7 @@ void sp117_CreateRaidMon(void)
 				DeleteFirstMoveAndGiveMoveToBoxMon((struct BoxPokemon*) mon, eggMove);
 		}
 	}
-	
+
 	//Give perfect IVs based on the number of Raid stars
 	u8 numPerfectStats = 0;
 	u8 perfect = 31;
@@ -625,7 +625,7 @@ bool8 StandardWildEncounter(const u32 currMetaTileBehavior, const u16 previousMe
 
 	const struct WildPokemonInfo* landMonsInfo = LoadProperMonsData(LAND_MONS_HEADER);
 	const struct WildPokemonInfo* waterMonsInfo = LoadProperMonsData(WATER_MONS_HEADER);
-	
+
 	#ifdef FLAG_NO_RANDOM_WILD_ENCOUNTERS
 	if (FlagGet(FLAG_NO_RANDOM_WILD_ENCOUNTERS))
 		return FALSE;
@@ -1027,14 +1027,14 @@ void sp118_StartRaidBattle(void)
 	gMain.savedCallback = CB2_EndScriptedWildBattle_2;
 
 	gBattleTypeFlags = BATTLE_TYPE_SCRIPTED_WILD_1 | BATTLE_TYPE_SCRIPTED_WILD_3 | BATTLE_TYPE_DYNAMAX;
-	
+
 	#ifdef FLAG_RAID_BATTLE
 	FlagSet(FLAG_RAID_BATTLE);
 	#endif
-	
+
 	if (FlagGet(FLAG_TAG_BATTLE))
 		gBattleTypeFlags |= (BATTLE_TYPE_DOUBLE | BATTLE_TYPE_INGAME_PARTNER);
-	
+
 	if (FlagGet(FLAG_BATTLE_FACILITY))
 	{
 		VarSet(VAR_BATTLE_FACILITY_BATTLE_TYPE, 0); //So battle type doesn't interfere with anything

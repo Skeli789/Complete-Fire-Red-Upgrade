@@ -181,7 +181,7 @@ void HandleEndTurn_BattleWon(void)
 	}
 
 	gSpecialVar_LastResult = 0;
-	gBattleMainFunc = (u32) HandleEndTurn_FinishBattle;
+	gBattleMainFunc = HandleEndTurn_FinishBattle;
 }
 
 void HandleEndTurn_BattleLost(void)
@@ -244,7 +244,7 @@ void HandleEndTurn_BattleLost(void)
 	}
 
 	gSpecialVar_LastResult = 1;
-	gBattleMainFunc = (u32) HandleEndTurn_FinishBattle;
+	gBattleMainFunc = HandleEndTurn_FinishBattle;
 }
 
 void HandleEndTurn_RanFromBattle(void)
@@ -272,7 +272,7 @@ void HandleEndTurn_RanFromBattle(void)
 				gBattlescriptCurrInstr = BattleScript_SmokeBallEscape; //0x81D8901
 				break;
 			case 2:
-				gBattleScripting->bank = gBankAttacker;
+				gBattleScripting.bank = gBankAttacker;
 				gBattlescriptCurrInstr = BattleScript_RanAwayUsingMonAbility; //0x81D890F
 				break;
 			default:
@@ -281,7 +281,7 @@ void HandleEndTurn_RanFromBattle(void)
 		}
 	}
 
-	gBattleMainFunc = (u32) HandleEndTurn_FinishBattle;
+	gBattleMainFunc = HandleEndTurn_FinishBattle;
 }
 
 #define STATE_BEFORE_ACTION_CHOSEN 0
@@ -338,7 +338,7 @@ u8 IsRunningFromBattleImpossible(void)
 		&& side != SIDE(i)
 		&& ABILITY(i) == ABILITY_SHADOWTAG)
 		{
-			gBattleScripting->bank = i;
+			gBattleScripting.bank = i;
 			gLastUsedAbility = ABILITY(i);
 			gBattleCommunication[MULTISTRING_CHOOSER] = 2;
 			return ABILITY_PREVENTING_ESCAPE;
@@ -347,7 +347,7 @@ u8 IsRunningFromBattleImpossible(void)
 		&& ABILITY(i) == ABILITY_ARENATRAP
 		&& !CheckGrounding(gActiveBattler))
 		{
-			gBattleScripting->bank = i;
+			gBattleScripting.bank = i;
 			gLastUsedAbility = ABILITY(i);
 			gBattleCommunication[MULTISTRING_CHOOSER] = 2;
 			return ABILITY_PREVENTING_ESCAPE;
@@ -357,7 +357,7 @@ u8 IsRunningFromBattleImpossible(void)
 		&& ABILITY(i) == ABILITY_MAGNETPULL
 		&& IsOfType(gActiveBattler, TYPE_STEEL))
 		{
-			gBattleScripting->bank = i;
+			gBattleScripting.bank = i;
 			gLastUsedAbility = ABILITY(i);
 			gBattleCommunication[MULTISTRING_CHOOSER] = 2;
 			return ABILITY_PREVENTING_ESCAPE;
@@ -607,7 +607,7 @@ static void EndPartnerBattlePartyRestore(void)
 			{
 				if (!FlagGet(FLAG_BATTLE_FACILITY))
 					gSelectedOrderFromParty[i] = 0; //Reset for next battle
-			
+
 				if (gPlayerParty[i].species == 0)
 					Memcpy(&gPlayerParty[i], &backup[counter++], sizeof(struct Pokemon));
 			}
@@ -637,7 +637,7 @@ static void EndSkyBattlePartyRestore(void)
 			}
 		}
 
-		for (i = 0; i < PARTY_SIZE; ++i) 
+		for (i = 0; i < PARTY_SIZE; ++i)
 		{
 			if (tempTeam[i].species == SPECIES_NONE)
 				tempTeam[i] = backup[counter++];
@@ -677,9 +677,6 @@ static void EndBattleFlagClear(void)
 	VarSet(VAR_BATTLE_FACILITY_TRAINER1_NAME, 0xFFFF);
 	VarSet(VAR_BATTLE_FACILITY_TRAINER2_NAME, 0xFFFF);
 	gFishingByte = FALSE;
-	Free(gNewBS->MegaData);
-	Free(gNewBS->UltraData);
-	Free(gNewBS->ZMoveData);
 	FREE_AND_SET_NULL(gNewBS);
 
 	//Handle DexNav Chain

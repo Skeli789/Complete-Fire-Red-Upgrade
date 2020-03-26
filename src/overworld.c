@@ -191,7 +191,7 @@ const struct CutGrass sCutGrassTiles[] =
 	#define METATILE_General_PlainGrass 0x1
 	#define METATILE_General_TreeTopLeft 0xE
 	#define METATILE_General_TreeTopRight 0xF
-	#define METATILE_General_TreeSideLeft 0x18 
+	#define METATILE_General_TreeSideLeft 0x18
 	#define METATILE_General_TreeSideRight 0x19
 	#define METATILE_General_BothTreeSides 0x20
 	#define METATILE_General_ThinTreeTop 0x12
@@ -200,11 +200,11 @@ const struct CutGrass sCutGrassTiles[] =
 	#define METATILE_General_LandEdgeRight 0x134
 	#define METATILE_General_TreeTopLeftOverTreeSideRight 0x27C
 	#define METATILE_General_TreeTopRightOverTreeSideLeft 0x27D
-	
+
 	#define METATILE_Route17_LandEdgeBottomRight 0x28C
 	#define METATILE_Route17_LandEdgeBottomLeft 0x28B
 	#define METATILE_Route17_LandEdgeBottomMiddle 0x299
-	
+
 	#define METATILE_Forest_Ground 0x280
 	#define METATILE_Forest_TreeTopLeft 0x289
 	#define METATILE_Forest_TreeTopRight 0x28A
@@ -212,7 +212,7 @@ const struct CutGrass sCutGrassTiles[] =
 	#define METATILE_Forest_TreeTopCornerRight 0x2EF
 	#define METATILE_Forest_TreeSideLeft 0x290
 	#define METATILE_Forest_TreeSideRight 0x293
-	
+
 	#define METATILE_Autumn_Ground 0x296
 	#define METATILE_Autumn_TreeTopLeft 0x280
 	#define METATILE_Autumn_TreeTopMiddleLeft 0x281
@@ -227,7 +227,7 @@ const struct CutGrass sCutGrassTiles[] =
 	#define METATILE_Autumn_TreeSideRightBottom 0x293
 	#define METATILE_Autumn_TreeSideLeftJoined 0x284
 	#define METATILE_Autumn_TreeSideRightJoined 0x287
-	
+
 	{0xA, METATILE_Forest_Ground, Tileset_Forest}, //Override regular
 	{0x2A8, METATILE_Forest_TreeTopLeft, Tileset_Forest},
 	{0x2AA, METATILE_Forest_TreeTopRight, Tileset_Forest},
@@ -421,7 +421,7 @@ const struct CutGrass sCutGrassTiles[] =
 	{0x1BA, 0x0, Tileset_Snow},
 	{0x1BB, 0x0, Tileset_Snow},
 	{0x1BE, 0x2, Tileset_Snow},
-	{0x1BF, 0x3, Tileset_Snow},	
+	{0x1BF, 0x3, Tileset_Snow},
 	{0x1C0, 0x0, Tileset_Snow},
 	{0x1C1, 0x0, Tileset_Snow},
 	{0x1C2, 0x0, Tileset_Snow},
@@ -627,7 +627,7 @@ u8 CheckForTrainersWantingBattle(void) {
 			gSelectedEventObject = eventObjId;
 			TrainerApproachPlayer(&gEventObjects[eventObjId], GetTrainerApproachDistance(&gEventObjects[eventObjId]) - 1);
 			ScriptContext1_SetupScript(GetEventObjectScriptPointerByEventObjectId(eventObjId));
-			ScriptCall(gScriptEnv1, EventScript_SetUpNPCSpotting);
+			ScriptCall(&gScriptEnv1, EventScript_SetUpNPCSpotting);
 			return TRUE;
 		}
 	}
@@ -1015,7 +1015,7 @@ void BattleSetup_StartTrainerBattle(void)
 			sTrainerBattleOakTutorialHelper = 3;
 		}
 		#endif
-		
+
 		#ifdef FLAG_CAMOMONS_BATTLE
 		if (FlagGet(FLAG_CAMOMONS_BATTLE))
 			gBattleTypeFlags |= BATTLE_TYPE_CAMOMONS;
@@ -1485,7 +1485,7 @@ static const u8* TryUseFlashInDarkCave(void)
 		if ((Var8004 = ((u32*) gFieldEffectArguments)[0] = PartyHasMonWithFieldMovePotential(MOVE_FLASH, ITEM_TM70_FLASH, 0)) < PARTY_SIZE)
 			return EventScript_UseFlash;
 	}
-	
+
 	return NULL;
 }
 #endif
@@ -1497,7 +1497,7 @@ bool8 TryRunOnFrameMapScript(void)
 	if (gQuestLogMode != 3)
 	{
 		const u8* ptr;
-	
+
 		#ifdef ONLY_CHECK_ITEM_FOR_HM_USAGE
 		ptr = TryUseFlashInDarkCave();
 
@@ -1892,7 +1892,7 @@ static void FldEff_TallGrass(void)
 	GetSpriteTemplateAndPaletteForlGrassFieldEffect(&spriteTemplate, &spritePalette, 4);
 	palettePointer = &spritePalette;
 	palette2Pointer = &palettePointer; //This way we fool the function into thinking it's a script.
-	
+
 	FieldEffectScript_LoadFadedPalette((u8**) palette2Pointer);
 	spriteId = CreateSpriteAtEnd(spriteTemplate, x, y, 0);
 
@@ -1961,7 +1961,7 @@ static void FldEff_LongGrass(void)
             SeekSpriteAnim(sprite, 6);
         }
     }
-	
+
 	PlayGrassFootstepNoise();
 }
 
@@ -2036,7 +2036,7 @@ void SetCutGrassMetatile(s16 x, s16 y)
 {
 	u32 i;
 	s32 metatileId = MapGridGetMetatileIdAt(x, y);
-	
+
 	for (i = 0; i < ARRAY_COUNT(sCutGrassTiles); ++i)
 	{
 		if (sCutGrassTiles[i].originalMetatileId == metatileId
@@ -2053,10 +2053,10 @@ void FollowHiddenGrottoWarp(void)
 {
 	s8 warpEventId;
     struct MapPosition position;
-	
+
 	GetPlayerPosition(&position);
 	gSpecialVar_LastResult = FALSE;
-	warpEventId = GetWarpEventAtMapPosition(&gMapHeader, &position);	
+	warpEventId = GetWarpEventAtMapPosition(&gMapHeader, &position);
 
 	if (warpEventId != -1)
 	{
@@ -2174,7 +2174,7 @@ u8 PartyHasMonWithFieldMovePotential(u16 move, unusedArg u16 item, u8 surfingTyp
 			}
 		}
 	}
-	
+
 	#ifdef DEBUG_HMS
 		return 0;
 	#endif

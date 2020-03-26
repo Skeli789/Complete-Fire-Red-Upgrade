@@ -188,7 +188,7 @@ bool8 CanHitSemiInvulnerableTarget(u8 bankAtk, u8 bankDef, u16 move)
 {
 	if (ABILITY(bankAtk) == ABILITY_NOGUARD || ABILITY(bankDef) == ABILITY_NOGUARD)
 		return TRUE;
-	
+
 	if (move == MOVE_TOXIC && IsOfType(bankAtk, TYPE_POISON))
 		return TRUE;
 
@@ -335,7 +335,7 @@ bool8 LiftProtect(u8 bank)
 	|| gProtectStructs[bank].SpikyShield
 	|| gProtectStructs[bank].BanefulBunker
 	|| gProtectStructs[bank].obstruct
-	|| gSideAffecting[SIDE(bank)] & (SIDE_STATUS_CRAFTY_SHIELD | SIDE_STATUS_MAT_BLOCK | SIDE_STATUS_QUICK_GUARD | SIDE_STATUS_WIDE_GUARD))
+	|| gSideStatuses[SIDE(bank)] & (SIDE_STATUS_CRAFTY_SHIELD | SIDE_STATUS_MAT_BLOCK | SIDE_STATUS_QUICK_GUARD | SIDE_STATUS_WIDE_GUARD))
 	{
 		if (!IsDynamaxed(bank))
 			gProtectStructs[bank].protected = 0; //Max Guard is not affected by Feint
@@ -344,7 +344,7 @@ bool8 LiftProtect(u8 bank)
 		gProtectStructs[bank].SpikyShield = 0;
 		gProtectStructs[bank].BanefulBunker = 0;
 		gProtectStructs[bank].obstruct = 0;
-		gSideAffecting[SIDE(bank)] &= ~(SIDE_STATUS_CRAFTY_SHIELD | SIDE_STATUS_MAT_BLOCK | SIDE_STATUS_QUICK_GUARD | SIDE_STATUS_WIDE_GUARD);
+		gSideStatuses[SIDE(bank)] &= ~(SIDE_STATUS_CRAFTY_SHIELD | SIDE_STATUS_MAT_BLOCK | SIDE_STATUS_QUICK_GUARD | SIDE_STATUS_WIDE_GUARD);
 		return TRUE;
 	}
 
@@ -360,20 +360,20 @@ bool8 ProtectsAgainstZMoves(u16 move, u8 bankAtk, u8 bankDef)
 	{
 		return TRUE;
 	}
-	else if ((gProtectStructs[bankDef].KingsShield || (gSideAffecting[SIDE(bankDef)] & SIDE_STATUS_MAT_BLOCK))
+	else if ((gProtectStructs[bankDef].KingsShield || (gSideStatuses[SIDE(bankDef)] & SIDE_STATUS_MAT_BLOCK))
 		 && SPLIT(move) != SPLIT_STATUS)
 	{
 		return TRUE;
 	}
-	else if (gSideAffecting[SIDE(bankDef)] & SIDE_STATUS_CRAFTY_SHIELD && bankAtk != bankDef && SPLIT(move) == SPLIT_STATUS)
+	else if (gSideStatuses[SIDE(bankDef)] & SIDE_STATUS_CRAFTY_SHIELD && bankAtk != bankDef && SPLIT(move) == SPLIT_STATUS)
 	{
 		return TRUE;
 	}
-	else if (gSideAffecting[SIDE(bankDef)] & (SIDE_STATUS_QUICK_GUARD) && PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > 0)
+	else if (gSideStatuses[SIDE(bankDef)] & (SIDE_STATUS_QUICK_GUARD) && PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > 0)
 	{
 		return TRUE;
 	}
-	else if (gSideAffecting[SIDE(bankDef)] & (SIDE_STATUS_WIDE_GUARD)
+	else if (gSideStatuses[SIDE(bankDef)] & (SIDE_STATUS_WIDE_GUARD)
 		&& (gBattleMoves[move].target == MOVE_TARGET_BOTH || gBattleMoves[move].target == MOVE_TARGET_FOES_AND_ALLY))
 	{
 		return TRUE;
@@ -508,7 +508,7 @@ bool8 IsUnusableMove(u16 move, u8 bank, u8 check, u8 pp, u8 ability, u8 holdEffe
 		return TRUE;
 	else if (IsRaidBattle() && bank != BANK_RAID_BOSS && CheckTableForMove(move, gRaidBattleBannedMoves))
 		return TRUE;
-	
+
 	return FALSE;
 }
 
@@ -780,7 +780,7 @@ bool8 UproarWakeUpCheck(unusedArg u8 bank)
 	{
 		if (gBattleMons[i].status2 & STATUS2_UPROAR)
 		{
-			gBattleScripting->bank = i;
+			gBattleScripting.bank = i;
 			if (gBankTarget == 0xFF)
 				gBankTarget = i;
 			else if (gBankTarget == i)
@@ -861,7 +861,7 @@ bool8 BankMovedBeforeIgnoreSwitch(u8 bank1, u8 bank2)
 {
 	for (u32 i = 0; i < gBattlersCount; ++i)
 	{
-		if (gActionForBanks[gBanksByTurnOrder[i]] == ACTION_SWITCH)
+		if (gChosenActionByBank[gBanksByTurnOrder[i]] == ACTION_SWITCH)
 			continue;
 
 		if (gBanksByTurnOrder[i] == bank1)
@@ -1236,8 +1236,8 @@ u8 GetTopOfPickupStackNotIncludingBank(const u8 bank)
 
 void RemoveScreensFromSide(const u8 side)
 {
-	gSideAffecting[side] &= ~(SIDE_STATUS_REFLECT);
-	gSideAffecting[side] &= ~(SIDE_STATUS_LIGHTSCREEN);
+	gSideStatuses[side] &= ~(SIDE_STATUS_REFLECT);
+	gSideStatuses[side] &= ~(SIDE_STATUS_LIGHTSCREEN);
 	gSideTimers[side].reflectTimer = 0;
 	gSideTimers[side].lightscreenTimer = 0;
 	gNewBS->AuroraVeilTimers[side] = 0;
@@ -1327,7 +1327,7 @@ bool8 CanBeGeneralStatused(u8 bank, bool8 checkFlowerVeil)
 	if (gBattleMons[bank].status1 != STATUS1_NONE)
 		return FALSE;
 
-	if (checkFlowerVeil && gSideAffecting[SIDE(bank)] & SIDE_STATUS_SAFEGUARD && !(gHitMarker & HITMARKER_IGNORE_SAFEGUARD))
+	if (checkFlowerVeil && gSideStatuses[SIDE(bank)] & SIDE_STATUS_SAFEGUARD && !(gHitMarker & HITMARKER_IGNORE_SAFEGUARD))
 		return FALSE;
 
 	return TRUE;
@@ -1371,7 +1371,7 @@ bool8 CanBeYawned(u8 bank)
 	if (gBattleMons[bank].status1 != STATUS1_NONE)
 		return FALSE;
 
-	if (gSideAffecting[SIDE(bank)] & SIDE_STATUS_SAFEGUARD && !(gHitMarker & HITMARKER_IGNORE_SAFEGUARD))
+	if (gSideStatuses[SIDE(bank)] & SIDE_STATUS_SAFEGUARD && !(gHitMarker & HITMARKER_IGNORE_SAFEGUARD))
 		return FALSE;
 
 	switch (ABILITY(bank)) {
@@ -1403,7 +1403,7 @@ bool8 CanBePoisoned(u8 bankDef, u8 bankAtk, bool8 checkFlowerVeil)
 		case ABILITY_PASTELVEIL:
 			return FALSE;
 	}
-	
+
 	if (IS_DOUBLE_BATTLE && ABILITY(PARTNER(bankDef)) == ABILITY_PASTELVEIL)
 		return FALSE;
 
@@ -1478,8 +1478,8 @@ bool8 CanBeConfused(u8 bank, u8 checkSafeguard)
 
 	if (ABILITY(bank) == ABILITY_OWNTEMPO)
 		return FALSE;
-	
-	if (checkSafeguard && gSideAffecting[SIDE(bank)] & SIDE_STATUS_SAFEGUARD && !(gHitMarker & HITMARKER_IGNORE_SAFEGUARD))
+
+	if (checkSafeguard && gSideStatuses[SIDE(bank)] & SIDE_STATUS_SAFEGUARD && !(gHitMarker & HITMARKER_IGNORE_SAFEGUARD))
 		return FALSE;
 
 	return TRUE;
@@ -1573,13 +1573,13 @@ bool8 IsInverseBattle(void)
 
 bool8 BankSideHasSafeguard(u8 bank)
 {
-	return gSideAffecting[SIDE(bank)] & SIDE_STATUS_SAFEGUARD
+	return gSideStatuses[SIDE(bank)] & SIDE_STATUS_SAFEGUARD
 		|| (IS_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_SAFEGUARD);
 }
 
 bool8 BankSideHasMist(u8 bank)
 {
-	return gSideAffecting[SIDE(bank)] & SIDE_STATUS_MIST
+	return gSideStatuses[SIDE(bank)] & SIDE_STATUS_MIST
 		|| (IS_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_MIST);
 }
 

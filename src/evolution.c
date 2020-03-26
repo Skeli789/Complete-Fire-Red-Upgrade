@@ -310,7 +310,7 @@ void ItemEvolutionRemoval(pokemon_t* mon)
 
 bool8 IsLevelUpEvolutionMethod(u8 method)
 {
-	switch (method) { 
+	switch (method) {
 		case EVO_LEVEL:
 		case EVO_LEVEL_ATK_GT_DEF:
 		case EVO_LEVEL_ATK_EQ_DEF:
@@ -325,7 +325,7 @@ bool8 IsLevelUpEvolutionMethod(u8 method)
 		case EVO_FEMALE_LEVEL:
 		case EVO_LEVEL_NIGHT:
 		case EVO_LEVEL_DAY:
-		case EVO_LEVEL_SPECIFIC_TIME_RANGE:	
+		case EVO_LEVEL_SPECIFIC_TIME_RANGE:
 			return TRUE;
 		default:
 			return FALSE;

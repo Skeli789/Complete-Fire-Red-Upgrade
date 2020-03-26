@@ -67,7 +67,7 @@ void atk23_getexp(void)
 	gBankFainted = GetBattleBank(gBattlescriptCurrInstr[1]);
 	sentIn = gSentPokesToOpponent[(gBankFainted & 2) >> 1]; //sentIn = 0 if Bank 1 killed, sentIn = 1 if Bank 3 killed
 
-	switch (gBattleScripting->expStateTracker)
+	switch (gBattleScripting.expStateTracker)
 	{
 	case GetExp_Start: // check if should receive exp at all
 
@@ -85,7 +85,7 @@ void atk23_getexp(void)
 		}
 		else
 		{
-			gBattleScripting->expStateTracker++;
+			gBattleScripting.expStateTracker++;
 			gBattleStruct->givenExpMons |= gBitTable[gBattlerPartyIndexes[gBankFainted]]; //The party indices in the opponent's party that have fainted and been given exp for
 			gBattleStruct->expGetterId = 0;
 			gBattleStruct->sentInPokes = sentIn;
@@ -101,7 +101,7 @@ void atk23_getexp(void)
 		||  GetMonData(&gPlayerParty[gBattleStruct->expGetterId], MON_DATA_IS_EGG, 0))
 		{
 			gBattleStruct->sentInPokes >>= 1; //One less pokemon to distribute exp to
-			gBattleScripting->expStateTracker = GetExp_PrepareLoop;
+			gBattleScripting.expStateTracker = GetExp_PrepareLoop;
 			gBattleMoveDamage = 0; // used for exp
 			break;
 		}
@@ -110,7 +110,7 @@ void atk23_getexp(void)
 		else if (holdEffect != ITEM_EFFECT_EXP_SHARE && !(gBattleStruct->sentInPokes & 1))
 		{
 			gBattleStruct->sentInPokes >>= 1;
-			gBattleScripting->expStateTracker = GetExp_PrepareLoop;
+			gBattleScripting.expStateTracker = GetExp_PrepareLoop;
 			gBattleMoveDamage = 0; // used for exp
 			break;
 		}
@@ -118,14 +118,14 @@ void atk23_getexp(void)
 		else if (*expGiveType == GiveExpBattlePariticpants && !(gBattleStruct->sentInPokes & 1)) //Exp Share runs on a different loop
 		{
 			gBattleStruct->sentInPokes >>= 1;
-			gBattleScripting->expStateTracker = GetExp_PrepareLoop;
+			gBattleScripting.expStateTracker = GetExp_PrepareLoop;
 			gBattleMoveDamage = 0; // used for exp
 			break;
 		}
 		else if (*expGiveType == GiveExpViaExpShare && gBattleStruct->sentInPokes & 1)
 		{
 			gBattleStruct->sentInPokes >>= 1;
-			gBattleScripting->expStateTracker = GetExp_PrepareLoop;
+			gBattleScripting.expStateTracker = GetExp_PrepareLoop;
 			gBattleMoveDamage = 0; // used for exp
 			break;
 		}
@@ -135,12 +135,12 @@ void atk23_getexp(void)
 		{
 			MonGainEVs(&gPlayerParty[gBattleStruct->expGetterId], gBattleMons[gBankFainted].species);
 			gBattleStruct->sentInPokes >>= 1; //One less pokemon to distribute exp to
-			gBattleScripting->expStateTracker = GetExp_PrepareLoop;
+			gBattleScripting.expStateTracker = GetExp_PrepareLoop;
 			gBattleMoveDamage = 0; // used for exp
 			break;
 		}
 
-		gBattleScripting->expStateTracker++;
+		gBattleScripting.expStateTracker++;
 	__attribute__ ((fallthrough));
 
 	case GetExp_Calculation:	; // calculate experience points to redistribute
@@ -246,7 +246,7 @@ void atk23_getexp(void)
 		calculatedExp = MathMax(1, calculatedExp);
 		gBattleMoveDamage = calculatedExp;
 
-		gBattleScripting->expStateTracker++;
+		gBattleScripting.expStateTracker++;
 	__attribute__ ((fallthrough));
 
 	case GetExp_Distribute: // set exp value to the poke in expgetter_id and print message
@@ -316,12 +316,12 @@ void atk23_getexp(void)
 		else
 		{
 			gBattleStruct->sentInPokes >>= 1;
-			gBattleScripting->expStateTracker = GetExp_PrepareLoop;
+			gBattleScripting.expStateTracker = GetExp_PrepareLoop;
 			gBattleMoveDamage = 0; // used for exp
 			break;
 		}
 		gBattleStruct->sentInPokes >>= 1;
-		gBattleScripting->expStateTracker++;
+		gBattleScripting.expStateTracker++;
 	__attribute__ ((fallthrough));
 
 	case GetExp_SetStats: // Set stats and give exp
@@ -343,11 +343,11 @@ void atk23_getexp(void)
 		}
 		else
 		{
-			gBattleScripting->expStateTracker = GetExp_PrepareLoop;
+			gBattleScripting.expStateTracker = GetExp_PrepareLoop;
 			gBattleMoveDamage = 0; // used for exp
 			break;
 		}
-		gBattleScripting->expStateTracker++;
+		gBattleScripting.expStateTracker++;
 		break;
 
 	case GetExp_LevelUp: // lvl up if necessary
@@ -393,26 +393,26 @@ void atk23_getexp(void)
 		else
 			gBattleMoveDamage = 0;
 
-		gBattleScripting->expStateTracker++;
+		gBattleScripting.expStateTracker++;
 		break;
 
 	case GetExp_PrepareLoop: // looper increment
 		if (gBattleMoveDamage) // there is exp to give, goto case 3 that gives exp
-			gBattleScripting->expStateTracker = GetExp_SetStats;
+			gBattleScripting.expStateTracker = GetExp_SetStats;
 		else
 		{
 			gBattleStruct->expGetterId++;
 			if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER) {
 				if (gBattleStruct->expGetterId < 3)
-					gBattleScripting->expStateTracker = GetExp_CheckCurrentMonDeserving; // loop again
+					gBattleScripting.expStateTracker = GetExp_CheckCurrentMonDeserving; // loop again
 				else
-					gBattleScripting->expStateTracker = GetExp_End; // we're done
+					gBattleScripting.expStateTracker = GetExp_End; // we're done
 			}
 			else {
 				if (gBattleStruct->expGetterId < 6)
-					gBattleScripting->expStateTracker = GetExp_CheckCurrentMonDeserving; // loop again
+					gBattleScripting.expStateTracker = GetExp_CheckCurrentMonDeserving; // loop again
 				else
-					gBattleScripting->expStateTracker = GetExp_End; // we're done
+					gBattleScripting.expStateTracker = GetExp_End; // we're done
 			}
 		}
 		break;
@@ -426,7 +426,7 @@ void atk23_getexp(void)
 				gBattleStruct->expGetterId = 0;
 				gBattleMoveDamage = 0;
 				gBattleStruct->sentInPokes = gNewBS->SentInBackup;
-				gBattleScripting->expStateTracker = GetExp_CheckCurrentMonDeserving; // Time for Exp Share loop
+				gBattleScripting.expStateTracker = GetExp_CheckCurrentMonDeserving; // Time for Exp Share loop
 				gBattleStringLoader = String_TeamExpGain;
 				PrepareStringBattle(0x184, 0);
 			}
@@ -557,7 +557,7 @@ void PlayerHandleExpBarUpdate(void)
 		gTasks[taskId].tExpTask_gainedExp1 = gainedExp;
 		gTasks[taskId].tExpTask_gainedExp2 = gainedExp >> 0x10;
 
-		gBattleBankFunc[gActiveBattler] = (0x802E310 | 1);
+		gBattlerControllerFuncs[gActiveBattler] = (void*) (0x802E310 | 1);
 	}
 }
 
@@ -596,17 +596,17 @@ static void Task_GiveExpToMon(u8 taskId)
 		{
 			currExp += gainedExp;
 			SetMonData(mon, MON_DATA_EXP, &currExp);
-			gBattleBankFunc[bank] = (u32) CompleteOnInactiveTextPrinter;
+			gBattlerControllerFuncs[bank] = CompleteOnInactiveTextPrinter;
 			DestroyTask(taskId);
 		}
 	}
 	else //Single Battle
-	{	
+	{
 		u32 currLvlExp = GetExpToLevel(level, gBaseStats[species].growthRate);
 		u32 totalExpToNextLvl = nextLvlExp - currLvlExp;
 
 		PlaySE(SE_EXP);
-		SetBattleBarStruct(bank, gHealthboxIDs[bank], totalExpToNextLvl, currExp - currLvlExp, -gainedExp); //sub_8043D84 in Ruby
+		SetBattleBarStruct(bank, gHealthboxSpriteIds[bank], totalExpToNextLvl, currExp - currLvlExp, -gainedExp); //sub_8043D84 in Ruby
 		gTasks[taskId].func = sub_80300F4;
 	}
 }
@@ -622,9 +622,9 @@ static void sub_80300F4(u8 taskId)
 		u8 monId = gTasks[taskId].tExpTask_monId;
 		u8 bank = gTasks[taskId].tExpTask_battler;
 		s32 gainedExp = (u16) gTasks[taskId].tExpTask_gainedExp1 | ((u16) gTasks[taskId].tExpTask_gainedExp2 << 0x10);
-		s32 newExpPoints = MoveBattleBar(bank, gHealthboxIDs[bank], EXP_BAR, 0);
+		s32 newExpPoints = MoveBattleBar(bank, gHealthboxSpriteIds[bank], EXP_BAR, 0);
 
-		SetHealthboxSpriteVisible(gHealthboxIDs[bank]);
+		SetHealthboxSpriteVisible(gHealthboxSpriteIds[bank]);
 		if (newExpPoints == -1)
 		{
 			struct Pokemon* mon = &gPlayerParty[monId];
@@ -653,7 +653,7 @@ static void sub_80300F4(u8 taskId)
 			{
 				currExp += gainedExp;
 				SetMonData(mon, MON_DATA_EXP, &currExp);
-				gBattleBankFunc[bank] = (u32) CompleteOnInactiveTextPrinter;
+				gBattlerControllerFuncs[bank] = CompleteOnInactiveTextPrinter;
 				DestroyTask(taskId);
 			}
 		}

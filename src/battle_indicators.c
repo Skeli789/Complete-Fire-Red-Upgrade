@@ -101,7 +101,7 @@ static const union AffineAnimCmd sSpriteAffineAnim_RaidShieldDestroy[] =
     AFFINEANIMCMD_FRAME(32, 32, 0, 4), //Double in size
     AFFINEANIMCMD_END,
 };
-	
+
 static const union AffineAnimCmd* const sSpriteAffineAnimTable_RaidShield[] =
 {
 	sSpriteAffineAnim_RaidShieldCreate,
@@ -264,7 +264,7 @@ static bool8 IsIgnoredTriggerColour(u16 colour)
 
 static struct Sprite* GetHealthboxSprite(u8 bank)
 {
-	return &gSprites[gHealthboxIDs[bank]];
+	return &gSprites[gHealthboxSpriteIds[bank]];
 }
 
 static u16 ConvertColorToGrayscale(u16 colour)
@@ -338,7 +338,7 @@ static void SpriteCB_MegaTrigger(struct Sprite* self)
 	}
 
 	// Find the health box object that this trigger is supposed to be attached to
-	u8 id = gHealthboxIDs[TRIGGER_BANK];
+	u8 id = gHealthboxSpriteIds[TRIGGER_BANK];
 	struct Sprite* healthbox = &gSprites[id];
 
 	u8 y = healthbox->oam.y;
@@ -356,9 +356,9 @@ static void SpriteCB_MegaTrigger(struct Sprite* self)
 		self->pos1.x = -32;
 	}
 
-	if (gBattleBankFunc[TRIGGER_BANK] == (0x0802EA10 | 1) //Old HandleInputChooseMove
-	||  gBattleBankFunc[TRIGGER_BANK] == (u32) HandleInputChooseMove
-	|| gBattleBankFunc[TRIGGER_BANK] == (u32) HandleMoveSwitching)
+	if (gBattlerControllerFuncs[TRIGGER_BANK] == (void*) (0x0802EA10 | 1) //Old HandleInputChooseMove
+	||  gBattlerControllerFuncs[TRIGGER_BANK] == HandleInputChooseMove
+	|| gBattlerControllerFuncs[TRIGGER_BANK] == HandleMoveSwitching)
 	{
 		if (self->data[3] > 0)
 			self->data[3] -= 2;
@@ -368,8 +368,8 @@ static void SpriteCB_MegaTrigger(struct Sprite* self)
 
 	//Mega Trigger should recede and destroy itself as long as the game isn't
 	//running one of the two mentioned functions.
-	else if (gBattleBankFunc[TRIGGER_BANK] != (0x08032C90 | 1)  //PlayerHandleChooseMove
-		  && gBattleBankFunc[TRIGGER_BANK] != (0x08032C4C | 1)) //HandleChooseMoveAfterDma3
+	else if (gBattlerControllerFuncs[TRIGGER_BANK] != (void*) (0x08032C90 | 1)  //PlayerHandleChooseMove
+		  && gBattlerControllerFuncs[TRIGGER_BANK] != (void*) (0x08032C4C | 1)) //HandleChooseMoveAfterDma3
 	{
 		if (self->data[3] < 24)
 			self->data[3] += 2;
@@ -392,7 +392,7 @@ static void SpriteCB_MegaTrigger(struct Sprite* self)
 				PALETTE_STATE = MegaTriggerGrayscale;
 			else
 			{
-				if (gNewBS->MegaData->chosen[TRIGGER_BANK])
+				if (gNewBS->megaData.chosen[TRIGGER_BANK])
 					PALETTE_STATE = MegaTriggerLightUp;
 				else
 					PALETTE_STATE = MegaTriggerNormalColour;
@@ -408,7 +408,7 @@ static void SpriteCB_MegaTrigger(struct Sprite* self)
 				PALETTE_STATE = MegaTriggerGrayscale;
 			else
 			{
-				if (gNewBS->UltraData->chosen[TRIGGER_BANK])
+				if (gNewBS->ultraData.chosen[TRIGGER_BANK])
 					PALETTE_STATE = MegaTriggerLightUp;
 				else
 					PALETTE_STATE = MegaTriggerNormalColour;
@@ -471,7 +471,7 @@ static void SpriteCB_MegaIndicator(struct Sprite* self)
 				return;
 			}
 			break;
-			
+
 		case GFX_TAG_DYNAMAX_INDICATOR:
 			if (!IsDynamaxed(INDICATOR_BANK))
 			{
@@ -536,7 +536,7 @@ static void SpriteCB_MegaIndicator(struct Sprite* self)
 		bool8 sineActive = (gBattleSpritesDataPtr->healthBoxesData[INDICATOR_BANK].healthboxIsBouncing);
 
 		struct Sprite* shaker = &gSprites[gShakerData[1]];
-		u8 hbid = gHealthboxIDs[INDICATOR_BANK];
+		u8 hbid = gHealthboxSpriteIds[INDICATOR_BANK];
 
 		if (sineActive)
 		{
@@ -577,7 +577,7 @@ static void SpriteCB_ZTrigger(struct Sprite* self)
 	}
 
 	// Find the health box object that this trigger is supposed to be attached to
-	u8 id = gHealthboxIDs[TRIGGER_BANK];
+	u8 id = gHealthboxSpriteIds[TRIGGER_BANK];
 	struct Sprite* healthbox = &gSprites[id];
 
 	u8 y = healthbox->oam.y;
@@ -595,9 +595,9 @@ static void SpriteCB_ZTrigger(struct Sprite* self)
 		self->pos1.x = -32;
 	}
 
-	if (gBattleBankFunc[TRIGGER_BANK] == (0x0802EA10 | 1) //Old HandleInputChooseMove
-	||  gBattleBankFunc[TRIGGER_BANK] == (u32) HandleInputChooseMove
-	|| gBattleBankFunc[TRIGGER_BANK] == (u32) HandleMoveSwitching)
+	if (gBattlerControllerFuncs[TRIGGER_BANK] == (void*) (0x0802EA10 | 1) //Old HandleInputChooseMove
+	||  gBattlerControllerFuncs[TRIGGER_BANK] == HandleInputChooseMove
+	|| gBattlerControllerFuncs[TRIGGER_BANK] == HandleMoveSwitching)
 	{
 		struct ChooseMoveStruct* moveInfo = (struct ChooseMoveStruct*) (&gBattleBufferA[TRIGGER_BANK][4]);
 
@@ -619,8 +619,8 @@ static void SpriteCB_ZTrigger(struct Sprite* self)
 
 	//Z-Move Trigger should recede and destroy itself as long as the game isn't
 	//running one of the two mentioned functions.
-	else if (gBattleBankFunc[TRIGGER_BANK] != (0x08032C90 | 1)  //PlayerHandleChooseMove
-		  && gBattleBankFunc[TRIGGER_BANK] != (0x08032C4C | 1)) //HandleChooseMoveAfterDma3
+	else if (gBattlerControllerFuncs[TRIGGER_BANK] != (void*) (0x08032C90 | 1)  //PlayerHandleChooseMove
+		  && gBattlerControllerFuncs[TRIGGER_BANK] != (void*) (0x08032C4C | 1)) //HandleChooseMoveAfterDma3
 	{
 		if (self->data[3] < 24)
 			self->data[3] += 2;
@@ -632,7 +632,7 @@ static void SpriteCB_ZTrigger(struct Sprite* self)
 		}
 	}
 
-  	if (gNewBS->ZMoveData->viewing)
+  	if (gNewBS->zMoveData.viewing)
 		PALETTE_STATE = MegaTriggerLightUp;
 	else
 		PALETTE_STATE = MegaTriggerNormalColour;
@@ -680,7 +680,7 @@ static void SpriteCB_DynamaxTrigger(struct Sprite* self)
 	}
 
 	// Find the health box object that this trigger is supposed to be attached to
-	u8 id = gHealthboxIDs[TRIGGER_BANK];
+	u8 id = gHealthboxSpriteIds[TRIGGER_BANK];
 	struct Sprite* healthbox = &gSprites[id];
 
 	u8 y = healthbox->oam.y;
@@ -698,9 +698,9 @@ static void SpriteCB_DynamaxTrigger(struct Sprite* self)
 		self->pos1.x = -32;
 	}
 
-	if (gBattleBankFunc[TRIGGER_BANK] == (0x0802EA10 | 1) //Old HandleInputChooseMove
-	||  gBattleBankFunc[TRIGGER_BANK] == (u32) HandleInputChooseMove
-	|| gBattleBankFunc[TRIGGER_BANK] == (u32) HandleMoveSwitching)
+	if (gBattlerControllerFuncs[TRIGGER_BANK] == (void*) (0x0802EA10 | 1) //Old HandleInputChooseMove
+	||  gBattlerControllerFuncs[TRIGGER_BANK] == HandleInputChooseMove
+	|| gBattlerControllerFuncs[TRIGGER_BANK] == HandleMoveSwitching)
 	{
 		struct ChooseMoveStruct* moveInfo = (struct ChooseMoveStruct*) (&gBattleBufferA[TRIGGER_BANK][4]);
 		if (!moveInfo->dynamaxed && !moveInfo->canMegaEvolve && moveInfo->possibleMaxMoves[gMoveSelectionCursor[TRIGGER_BANK]]) //Viewing move that can become Max Move
@@ -721,8 +721,8 @@ static void SpriteCB_DynamaxTrigger(struct Sprite* self)
 
 	//Dynamax Trigger should recede and destroy itself as long as the game isn't
 	//running one of the two mentioned functions.
-	else if (gBattleBankFunc[TRIGGER_BANK] != (0x08032C90 | 1)  //PlayerHandleChooseMove
-		  && gBattleBankFunc[TRIGGER_BANK] != (0x08032C4C | 1)) //HandleChooseMoveAfterDma3
+	else if (gBattlerControllerFuncs[TRIGGER_BANK] != (void*) (0x08032C90 | 1)  //PlayerHandleChooseMove
+		  && gBattlerControllerFuncs[TRIGGER_BANK] != (void*) (0x08032C4C | 1)) //HandleChooseMoveAfterDma3
 	{
 		if (self->data[3] < 24)
 			self->data[3] += 2;
@@ -769,7 +769,7 @@ static void SpriteCB_RaidShield(struct Sprite* sprite)
 	s16 offset = sprite->data[1];
 
 	//Deal with bouncing player healthbox
-	struct Sprite* healthbox = &gSprites[gHealthboxIDs[bank]];
+	struct Sprite* healthbox = &gSprites[gHealthboxSpriteIds[bank]];
 	sprite->pos1.x = healthbox->pos1.x + 50;
 	sprite->pos1.y = healthbox->pos1.y + 12;
 
@@ -811,7 +811,7 @@ void LoadMegaGraphics(u8 state)
 		{
 			if (state == 0xFF)
 				bank = gActiveBattler;
-		
+
 			#ifdef MEGA_EVOLUTION_FEATURE
 			if (IsMega(bank))
 			{
@@ -861,7 +861,7 @@ void LoadMegaGraphics(u8 state)
 				gSprites[spriteId].data[0] = bank;
 				gNewBS->megaIndicatorObjIds[bank] = spriteId + 1;
 			}
-			else 
+			else
 			#endif
 				if (IsDynamaxed(bank))
 			{
@@ -985,7 +985,7 @@ void TryLoadDynamaxTrigger(void)
 
 	if (gBattleTypeFlags & (BATTLE_TYPE_SAFARI | BATTLE_TYPE_POKE_DUDE | BATTLE_TYPE_OLD_MAN))
 		return;
-	
+
 	if (!(gBattleTypeFlags & BATTLE_TYPE_DYNAMAX))
 		return;
 

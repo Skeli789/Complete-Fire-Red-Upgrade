@@ -12530,7 +12530,7 @@ const struct BattleMove gBattleMoves[] =
 		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_RAISE_TEAM_ATTACK,
 	},
-	
+
 	[MOVE_MAX_KNUCKLE_S] =
 	{
 		.effect = EFFECT_MAX_MOVE,
@@ -12562,7 +12562,7 @@ const struct BattleMove gBattleMoves[] =
 		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_LOWER_DEFENSE,
 	},
-	
+
 	[MOVE_MAX_PHANTASM_S] =
 	{
 		.effect = EFFECT_MAX_MOVE,
@@ -12786,7 +12786,7 @@ const struct BattleMove gBattleMoves[] =
 		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_PSYCHIC_TERRAIN,
 	},
-	
+
 	[MOVE_MAX_MINDSTORM_S] =
 	{
 		.effect = EFFECT_MAX_MOVE,

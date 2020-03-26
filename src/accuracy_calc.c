@@ -133,7 +133,7 @@ ACCURACY_CHECK_START:
 bool8 JumpIfMoveAffectedByProtect(move_t move, bank_t bankAtk, bank_t bankDef)
 {
 	if ((IsAnyMaxMove(move) && !IsDynamaxed(bankDef)) //Otherwise using a Max Move on Max Guard
-	|| (gNewBS->ZMoveData->active && SPLIT(move) != SPLIT_STATUS))
+	|| (gNewBS->zMoveData.active && SPLIT(move) != SPLIT_STATUS))
 		return FALSE;
 
 	bool8 affected = ProtectAffects(move, bankAtk, bankDef, TRUE);
@@ -200,25 +200,25 @@ bool8 ProtectAffects(u16 move, u8 bankAtk, u8 bankDef, bool8 set)
 			gBattleCommunication[6] = 1;
 		}
 	}
-	else if (gSideAffecting[defSide] & SIDE_STATUS_CRAFTY_SHIELD && target != MOVE_TARGET_USER && split == SPLIT_STATUS)
+	else if (gSideStatuses[defSide] & SIDE_STATUS_CRAFTY_SHIELD && target != MOVE_TARGET_USER && split == SPLIT_STATUS)
 	{
 		effect = 1;
 		gBattleStringLoader = CraftyShieldProtectedString;
 		gBattleCommunication[6] = 5;
 	}
-	else if (gSideAffecting[defSide] & SIDE_STATUS_MAT_BLOCK && protectFlag && split != SPLIT_STATUS)
+	else if (gSideStatuses[defSide] & SIDE_STATUS_MAT_BLOCK && protectFlag && split != SPLIT_STATUS)
 	{
 		effect = 1;
 		gBattleStringLoader = MatBlockProtectedString;
 		gBattleCommunication[6] = 6;
 	}
-	else if (gSideAffecting[defSide] & SIDE_STATUS_QUICK_GUARD && protectFlag && PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > 0)
+	else if (gSideStatuses[defSide] & SIDE_STATUS_QUICK_GUARD && protectFlag && PriorityCalc(bankAtk, ACTION_USE_MOVE, move) > 0)
 	{
 		effect = 1;
 		gBattleStringLoader = QuickGuardProtectedString;
 		gBattleCommunication[6] = 7;
 	}
-	else if (gSideAffecting[defSide] & SIDE_STATUS_WIDE_GUARD && protectFlag && (target == MOVE_TARGET_BOTH || target == MOVE_TARGET_FOES_AND_ALLY))
+	else if (gSideStatuses[defSide] & SIDE_STATUS_WIDE_GUARD && protectFlag && (target == MOVE_TARGET_BOTH || target == MOVE_TARGET_FOES_AND_ALLY))
 	{
 		effect = 1;
 		gBattleStringLoader = WideGuardProtectedString;

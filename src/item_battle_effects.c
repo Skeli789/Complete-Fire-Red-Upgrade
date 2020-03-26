@@ -116,7 +116,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 				}
 
 				if (effect) {
-					gBattleScripting->bank = bank;
+					gBattleScripting.bank = bank;
 					gStringBank = bank;
 					gActiveBattler = gBankAttacker = bank;
 
@@ -157,10 +157,10 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 					if (effect)
 					{
 						PREPARE_STAT_BUFFER(gBattleTextBuff1, stat);
-						gBattleScripting->statChanger = INCREASE_1 | stat;
-						gBattleScripting->animArg1 = 0xE + stat;
-						gBattleScripting->animArg2 = 0;
-						gBattleScripting->bank = gBankTarget = bank;
+						gBattleScripting.statChanger = INCREASE_1 | stat;
+						gBattleScripting.animArg1 = 0xE + stat;
+						gBattleScripting.animArg2 = 0;
+						gBattleScripting.bank = gBankTarget = bank;
 
 						if (moveTurn)
 						{
@@ -178,7 +178,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 				{
 					gNewBS->statFellThisTurn[bank] = FALSE;
 					gNewBS->NoSymbiosisByte = TRUE;
-					gActiveBattler = gBattleScripting->bank = bank;
+					gActiveBattler = gBattleScripting.bank = bank;
 					effect = ITEM_STATS_CHANGE;
 
 					if (moveTurn)
@@ -195,10 +195,10 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 				if (IsTrickRoomActive() && STAT_CAN_FALL(bank, STAT_STAGE_SPEED))
 				{
 					PREPARE_STAT_BUFFER(gBattleTextBuff1, STAT_STAGE_SPEED);
-					gBattleScripting->statChanger = DECREASE_1 | STAT_STAGE_SPEED;
-					gBattleScripting->animArg1 = STAT_ANIM_MINUS1 + STAT_STAGE_SPEED - 1;
-					gBattleScripting->animArg2 = 0;
-					gBattleScripting->bank = gBankTarget = bank;
+					gBattleScripting.statChanger = DECREASE_1 | STAT_STAGE_SPEED;
+					gBattleScripting.animArg1 = STAT_ANIM_MINUS1 + STAT_STAGE_SPEED - 1;
+					gBattleScripting.animArg2 = 0;
+					gBattleScripting.bank = gBankTarget = bank;
 					effect = ITEM_STATS_CHANGE;
 
 					if (moveTurn)
@@ -214,7 +214,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 		break;
 
 	case ItemEffects_EndTurn:
-		gBattleScripting->bank = bank;
+		gBattleScripting.bank = bank;
 
 		if (gBattleMons[bank].hp)
 		{
@@ -260,7 +260,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 					u16 move;
 					pokemon_t* poke = GetBankPartyData(bank);
 					u8 restoreAmount = bankQuality;
-					
+
 					if (ABILITY(bank) == ABILITY_RIPEN)
 						restoreAmount *= 2;
 
@@ -325,7 +325,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 
 				if (effect)
 				{
-					gBattleScripting->bank = gActiveBattler = gStringBank = bank;
+					gBattleScripting.bank = gActiveBattler = gStringBank = bank;
 					if (moveTurn)
 					{
 						BattleScriptPushCursor();
@@ -438,9 +438,9 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 						gBattleTextBuff2[7] = EOS;
 
 						gEffectBank = bank;
-						gBattleScripting->statChanger = (buff | 1) + i;
-						gBattleScripting->animArg1 = STAT_ANIM_PLUS2 + i;
-						gBattleScripting->animArg2 = 0;
+						gBattleScripting.statChanger = (buff | 1) + i;
+						gBattleScripting.animArg1 = STAT_ANIM_PLUS2 + i;
+						gBattleScripting.animArg2 = 0;
 
 						if (moveTurn || doPluck)
 						{
@@ -676,7 +676,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 				if (GetPocketByItemId(gLastUsedItem) == POCKET_BERRY_POUCH)
 					gNewBS->BelchCounters |= gBitTable[gBattlerPartyIndexes[bank]];
 
-				gBattleScripting->bank = bank;
+				gBattleScripting.bank = bank;
 				gStringBank = bank;
 				gActiveBattler = bank;
 				switch (effect) {
@@ -699,9 +699,9 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 
 	case ItemEffects_ContactTarget:
 		if (doPluck)
-			gBattleScripting->bank = bank;
+			gBattleScripting.bank = bank;
 		else
-			gBattleScripting->bank = bank = gBankTarget;
+			gBattleScripting.bank = bank = gBankTarget;
 
 		if (SheerForceCheck() && bankHoldEffect != ITEM_EFFECT_AIR_BALLOON) //Air Balloon still pops
 			break;
@@ -855,7 +855,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 
 		if (effect == REQUEST_HP_BATTLE)
 		{
-			gBattleScripting->bank = bank;
+			gBattleScripting.bank = bank;
 			gStringBank = bank;
 			gActiveBattler = bank;
 			EmitSetMonData(0, REQUEST_HP_BATTLE, 0, 2, &gBattleMons[gActiveBattler].status1);
@@ -892,7 +892,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 					&& !BATTLER_MAX_HP(bank))
 					{
 						gStringBank = bank;
-						gBattleScripting->bank = bank;
+						gBattleScripting.bank = bank;
 						gBattleMoveDamage = MathMax(1, udivsi(gNewBS->totalDamageGiven, atkQuality)) * - 1;
 						BattleScriptPushCursor();
 						gBattlescriptCurrInstr = BattleScript_ItemHealHP_Ret;
@@ -943,8 +943,8 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 						PREPARE_STAT_BUFFER(gBattleTextBuff1, STAT_STAGE_SPATK);
 
 						gEffectBank = bank;
-						gBattleScripting->animArg1 = STAT_ANIM_PLUS1 + STAT_STAGE_SPATK - 1;
-						gBattleScripting->animArg2 = 0;
+						gBattleScripting.animArg1 = STAT_ANIM_PLUS1 + STAT_STAGE_SPATK - 1;
+						gBattleScripting.animArg2 = 0;
 
 						BattleScriptPushCursor();
 						gBattlescriptCurrInstr = BattleScript_RaiseStatsItem;
@@ -959,8 +959,8 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 						PREPARE_STAT_BUFFER(gBattleTextBuff1, STAT_STAGE_SPEED);
 
 						gEffectBank = gBankAttacker;
-						gBattleScripting->animArg1 = STAT_ANIM_PLUS2 + STAT_STAGE_SPEED - 1;
-						gBattleScripting->animArg2 = 0;
+						gBattleScripting.animArg1 = STAT_ANIM_PLUS2 + STAT_STAGE_SPEED - 1;
+						gBattleScripting.animArg2 = 0;
 
 						BattleScriptPushCursor();
 						gBattlescriptCurrInstr = BattleScript_RaiseStatsItem;
@@ -1071,7 +1071,7 @@ static u8 StatRaiseBerries(u8 bank, u8 stat, bool8 moveTurn, bool8 doPluck) {
 	u8 buff = 1;
 	u8 animId = STAT_ANIM_PLUS1;
 	gBankAttacker = bank;
-	
+
 	if (ABILITY(bank) == ABILITY_RIPEN)
 	{
 		buff *= 2;
@@ -1086,9 +1086,9 @@ static u8 StatRaiseBerries(u8 bank, u8 stat, bool8 moveTurn, bool8 doPluck) {
 		PREPARE_STRING_BUFFER(gBattleTextBuff2, STRINGID_STATROSE);
 
 		gEffectBank = bank;
-		gBattleScripting->statChanger = INCREASE_1 | stat;
-		gBattleScripting->animArg1 = animId + stat - 1;
-		gBattleScripting->animArg2 = 0;
+		gBattleScripting.statChanger = INCREASE_1 | stat;
+		gBattleScripting.animArg1 = animId + stat - 1;
+		gBattleScripting.animArg2 = 0;
 		if (moveTurn || doPluck)
 		{
 			BattleScriptPushCursor();
@@ -1117,8 +1117,8 @@ static u8 RaiseStatsContactItem(u8 bank, u8 stat, u8 moveType) {
 		PREPARE_STAT_BUFFER(gBattleTextBuff1, stat);
 
 		gEffectBank = bank;
-		gBattleScripting->animArg1 = STAT_ANIM_PLUS1 + stat - 1;
-		gBattleScripting->animArg2 = 0;
+		gBattleScripting.animArg1 = STAT_ANIM_PLUS1 + stat - 1;
+		gBattleScripting.animArg2 = 0;
 
 		BattleScriptPushCursor();
 		gBattlescriptCurrInstr = BattleScript_RaiseStatsItem;
@@ -1135,7 +1135,7 @@ static u8 KeeMaranagaBerryFunc(u8 bank, u8 stat, u8 split, bool8 doPluck) {
 	u8 buff = 1;
 	u8 animId = STAT_ANIM_PLUS1;
 	gBankAttacker = bank;
-	
+
 	if (ABILITY(bank) == ABILITY_RIPEN)
 	{
 		buff *= 2;
@@ -1147,8 +1147,8 @@ static u8 KeeMaranagaBerryFunc(u8 bank, u8 stat, u8 split, bool8 doPluck) {
 	&& !ChangeStatBuffs(SET_STAT_BUFF_VALUE(buff), stat, MOVE_EFFECT_AFFECTS_USER | MOVE_EFFECT_CERTAIN, 0))
 	{
 		gEffectBank = gBankAttacker;
-		gBattleScripting->animArg1 = animId + stat - 1;
-		gBattleScripting->animArg2 = 0;
+		gBattleScripting.animArg1 = animId + stat - 1;
+		gBattleScripting.animArg2 = 0;
 
 		BattleScriptPushCursor();
 		gBattlescriptCurrInstr = BattleScript_BerryStatRaiseRet;

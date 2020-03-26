@@ -496,7 +496,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			|| MoveEffectInMoveset(EFFECT_SNORE, bankAtk)
 			|| atkAbility == ABILITY_SHEDSKIN
 			|| atkAbility == ABILITY_EARLYBIRD
-			|| (gBattleWeather & WEATHER_RAIN_ANY && gWishFutureKnock->weatherDuration != 1 && atkAbility == ABILITY_HYDRATION && atkItemEffect != ITEM_EFFECT_UTILITY_UMBRELLA))
+			|| (gBattleWeather & WEATHER_RAIN_ANY && gWishFutureKnock.weatherDuration != 1 && atkAbility == ABILITY_HYDRATION && atkItemEffect != ITEM_EFFECT_UTILITY_UMBRELLA))
 			{
 				if (ShouldRecover(bankAtk, bankDef, move))
 					INCREASE_STATUS_VIABILITY(1);
@@ -707,7 +707,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			break;
 
 		case EFFECT_SPLASH:
-			if (IsTypeZCrystal(atkItem, moveType) && !IsMegaZMoveBannedBattle() && !gNewBS->ZMoveData->used[bankAtk])
+			if (IsTypeZCrystal(atkItem, moveType) && !IsMegaZMoveBannedBattle() && !gNewBS->zMoveData.used[bankAtk])
 				INCREASE_VIABILITY(9); //Z-Splash!
 			break;
 
@@ -1122,7 +1122,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		case EFFECT_SANDSTORM:
 			if (IsClassDoublesSetupAttacker(class)
 			&& IsTypeZCrystal(atkItem, moveType)
-			&& !gNewBS->ZMoveData->used[bankAtk] //Z-Crystal provides speed up
+			&& !gNewBS->zMoveData.used[bankAtk] //Z-Crystal provides speed up
 			&& !IsMegaZMoveBannedBattle()
 			&& atkAbility != ABILITY_CONTRARY)
 				IncreaseTailwindViability(&viability, class, bankAtk, bankDef);
@@ -1222,7 +1222,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 							IncreasePivotViability(&viability, class, bankAtk, bankDef);
 						else if (shouldPivot == DONT_PIVOT)
 							DECREASE_VIABILITY(10); //Bad idea to use this move
-						else if (gWishFutureKnock->wishCounter[bankAtk] > 0
+						else if (gWishFutureKnock.wishCounter[bankAtk] > 0
 							  && ShouldUseWishAromatherapy(bankAtk, bankDef, MOVE_WISH, class))
 						{
 							INCREASE_VIABILITY(7);
@@ -1262,7 +1262,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			break;
 
 		case EFFECT_RAPID_SPIN:
-			if (gSideAffecting[SIDE(bankAtk)] & SIDE_STATUS_SPIKES)
+			if (gSideStatuses[SIDE(bankAtk)] & SIDE_STATUS_SPIKES)
 			{
 				if ((IS_SINGLE_BATTLE && ViableMonCountFromBank(bankAtk) >= 2) //Pokemon to switch out to in singles
 				||  (IS_DOUBLE_BATTLE && ViableMonCountFromBank(bankAtk) >= 3)) //Pokemon to switch out to in doubles
@@ -1278,7 +1278,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			//At this point no entry hazards are to be removed
 			if (move != MOVE_RAPIDSPIN)
 			{
-				if (gSideAffecting[SIDE(bankDef)] &
+				if (gSideStatuses[SIDE(bankDef)] &
 					(SIDE_STATUS_REFLECT | SIDE_STATUS_LIGHTSCREEN | SIDE_STATUS_SAFEGUARD | SIDE_STATUS_MIST)
 				|| gNewBS->AuroraVeilTimers[SIDE(bankDef)] != 0)
 				{
@@ -1287,7 +1287,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 					else
 						INCREASE_STATUS_VIABILITY(3);
 				}
-				else if (!(gSideAffecting[SIDE(bankDef)] & SIDE_STATUS_SPIKES)) //Don't blow away hazards if you set them up
+				else if (!(gSideStatuses[SIDE(bankDef)] & SIDE_STATUS_SPIKES)) //Don't blow away hazards if you set them up
 				{
 					if (IS_DOUBLE_BATTLE)
 					{
@@ -1310,7 +1310,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		case EFFECT_RAIN_DANCE:
 			if (IsClassDoublesSetupAttacker(class)
 			&& IsTypeZCrystal(atkItem, moveType)
-			&& !gNewBS->ZMoveData->used[bankAtk] //Z-Crystal provides speed up
+			&& !gNewBS->zMoveData.used[bankAtk] //Z-Crystal provides speed up
 			&& !IsMegaZMoveBannedBattle()
 			&& atkAbility != ABILITY_CONTRARY)
 				IncreaseTailwindViability(&viability, class, bankAtk, bankDef);
@@ -1342,7 +1342,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		case EFFECT_SUNNY_DAY:
 			if (IsClassDoublesSetupAttacker(class)
 			&& IsTypeZCrystal(atkItem, moveType)
-			&& !gNewBS->ZMoveData->used[bankAtk] //Z-Crystal provides speed up
+			&& !gNewBS->zMoveData.used[bankAtk] //Z-Crystal provides speed up
 			&& !IsMegaZMoveBannedBattle()
 			&& atkAbility != ABILITY_CONTRARY)
 				IncreaseTailwindViability(&viability, class, bankAtk, bankDef);
@@ -1494,7 +1494,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			}
 			else if (IsClassDoublesSetupAttacker(class)
 			&& IsTypeZCrystal(atkItem, moveType)
-			&& !gNewBS->ZMoveData->used[bankAtk] //Z-Crystal provides speed up
+			&& !gNewBS->zMoveData.used[bankAtk] //Z-Crystal provides speed up
 			&& !IsMegaZMoveBannedBattle()
 			&& atkAbility != ABILITY_CONTRARY)
 				IncreaseTailwindViability(&viability, class, bankAtk, bankDef);
@@ -1727,7 +1727,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 		case EFFECT_BRICK_BREAK:
 			if (IsClassSweeper(class))
 			{
-				if (gSideAffecting[SIDE(bankDef)] &
+				if (gSideStatuses[SIDE(bankDef)] &
 					(SIDE_STATUS_REFLECT | SIDE_STATUS_LIGHTSCREEN)
 				|| gNewBS->AuroraVeilTimers[SIDE(bankDef)] > 0)
 					INCREASE_VIABILITY(3); //Increase past strongest move
@@ -2212,7 +2212,7 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 				case MOVE_CELEBRATE:
 				case MOVE_HOLDHANDS:
 				case MOVE_HAPPYHOUR:
-					if (IsTypeZCrystal(atkItem, moveType) && !IsMegaZMoveBannedBattle() && !gNewBS->ZMoveData->used[bankAtk])
+					if (IsTypeZCrystal(atkItem, moveType) && !IsMegaZMoveBannedBattle() && !gNewBS->zMoveData.used[bankAtk])
 						INCREASE_VIABILITY(9); //Z-Happy Hour! / Z-Celebrate
 					break;
 			}

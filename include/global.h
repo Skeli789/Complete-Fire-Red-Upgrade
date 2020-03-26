@@ -364,7 +364,7 @@ struct SaveBlock2 //0x2024588
     /*0xF20*/ u32 encryptionKey;
 };
 
-extern struct SaveBlock2 *gSaveBlock2Ptr;
+extern struct SaveBlock2 *gSaveBlock2;
 
 #define PARTY_SIZE 6
 
@@ -744,7 +744,7 @@ struct SaveBlock1 //0x202552C
                u32 unkArray[4][3];
 };
 
-extern struct SaveBlock1* gSaveBlock1Ptr;
+extern struct SaveBlock1* gSaveBlock1;
 
 struct MapPosition
 {

@@ -69,7 +69,7 @@ void BufferStringBattle(u16 stringID)
 	*gStringInfo = (struct BattleMsgData*) (&(gBattleBufferA[gActiveBattler][4]));
 	gLastUsedItem = (*gStringInfo)->lastItem;
 	gLastUsedAbility = (*gStringInfo)->lastAbility;
-	gBattleScripting->bank = (*gStringInfo)->scrActive;
+	gBattleScripting.bank = (*gStringInfo)->scrActive;
 	gBattleStruct->field_52 = (*gStringInfo)->unk1605E;
 	gBattleStruct->hpScale = (*gStringInfo)->hpScale; //Check this line
 	gStringBank = (*gStringInfo)->stringBank;
@@ -237,9 +237,9 @@ void BufferStringBattle(u16 stringID)
 		break;
 
 	case STRINGID_SWITCHINMON: // switch-in msg
-		if (SIDE(gBattleScripting->bank) == B_SIDE_PLAYER)
+		if (SIDE(gBattleScripting.bank) == B_SIDE_PLAYER)
 		{
-			if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER && GetBattlerPosition(gBattleScripting->bank) == B_POSITION_PLAYER_RIGHT)
+			if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER && GetBattlerPosition(gBattleScripting.bank) == B_POSITION_PLAYER_RIGHT)
 				stringPtr = BattleText_PartnerSaysGo;
 			else if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_SANDS)
 				stringPtr = BattleText_PartnerSaysGo;
@@ -258,7 +258,7 @@ void BufferStringBattle(u16 stringID)
 			{
 				if (gBattleTypeFlags & BATTLE_TYPE_TOWER_LINK_MULTI)
 				{
-					if (GetBattlerPosition(gBattleScripting->bank) == B_POSITION_OPPONENT_LEFT)
+					if (GetBattlerPosition(gBattleScripting.bank) == B_POSITION_OPPONENT_LEFT)
 						stringPtr = BattleText_Trainer1SentOutPkmn2; //0x83FD3E4
 					else
 						stringPtr = BattleText_Trainer2SentOutPkmn; //NEED DATA
@@ -277,7 +277,7 @@ void BufferStringBattle(u16 stringID)
 			{
 				if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
 				{
-					if (GetBattlerPosition(gBattleScripting->bank) == B_POSITION_OPPONENT_LEFT)
+					if (GetBattlerPosition(gBattleScripting.bank) == B_POSITION_OPPONENT_LEFT)
 						stringPtr = BattleText_Trainer1SentOutPkmn2; //0x83FD3E4
 					else
 						stringPtr = BattleText_Trainer2SentOutPkmn; //NEED DATA
@@ -419,7 +419,7 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 	int i;
 	u8 multiplayerId;
 	u8 text[30];
-	
+
 	u32 dstID = 0; // if they used dstID, why not use srcID as well?
 	const u8* toCpy = NULL;
 
@@ -545,7 +545,7 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 				HANDLE_NICKNAME_STRING_CASE(gActiveBattler, gActiveBattler);
 				break;
 			case B_TXT_SCR_ACTIVE_NAME_WITH_PREFIX: // scripting active battlerId name with prefix
-				HANDLE_NICKNAME_STRING_CASE(gBattleScripting->bank, gBattleScripting->bank);
+				HANDLE_NICKNAME_STRING_CASE(gBattleScripting.bank, gBattleScripting.bank);
 				break;
 			case B_TXT_CURRENT_MOVE: // current move name
 				if ((*gStringInfo)->currentMove >= MOVES_COUNT)
@@ -579,7 +579,7 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 				toCpy = GetAbilityName(gAbilitiesPerBank[gBankTarget]);
 				break;
 			case B_TXT_SCR_ACTIVE_ABILITY: // scripting active ability
-				toCpy = GetAbilityName(gAbilitiesPerBank[gBattleScripting->bank]);
+				toCpy = GetAbilityName(gAbilitiesPerBank[gBattleScripting.bank]);
 				break;
 			case B_TXT_EFF_ABILITY: // effect battlerId ability
 				toCpy = GetAbilityName(gAbilitiesPerBank[gEffectBank]);
@@ -666,7 +666,7 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 				toCpy = gLinkPlayers[GetBattlerMultiplayerId(BATTLE_PARTNER(BATTLE_OPPOSITE(gLinkPlayers[multiplayerId].id)))].name;
 				break;
 			case B_TXT_LINK_SCR_TRAINER_NAME: // link scripting active name
-				toCpy = gLinkPlayers[GetBattlerMultiplayerId(gBattleScripting->bank)].name;
+				toCpy = gLinkPlayers[GetBattlerMultiplayerId(gBattleScripting.bank)].name;
 				break;
 			case B_TXT_PLAYER_NAME: // player name
 				toCpy = gSaveBlock2->playerName;
@@ -706,7 +706,7 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 				}
 				break;
 			case B_TXT_26: // ?
-				HANDLE_NICKNAME_STRING_CASE(gBattleScripting->bank, gBattleStruct->field_52);
+				HANDLE_NICKNAME_STRING_CASE(gBattleScripting.bank, gBattleStruct->field_52);
 				break;
 			case B_TXT_PC_CREATOR_NAME: // lanette pc
 				if (FlagGet(FLAG_SYS_NOT_SOMEONES_PC))
@@ -859,7 +859,7 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 					toCpy = sText_YourCaps;
 				break;
 			case B_TXT_SCRIPTING_TRAINER:
-				 toCpy = (u8*) GetTrainerName(gBattleScripting->bank);
+				 toCpy = (u8*) GetTrainerName(gBattleScripting.bank);
 				 break;
 			case B_TXT_CAPTURED_MON_NAME:
 				GetMonData(GetBankPartyData(gBankTarget), MON_DATA_NICKNAME, text);
@@ -960,12 +960,12 @@ void EmitPrintString(u8 bufferId, u16 stringID)
 	stringInfo->originallyUsedMove = gChosenMove;
 	stringInfo->lastItem = gLastUsedItem;
 	stringInfo->lastAbility = gLastUsedAbility;
-	stringInfo->scrActive = gBattleScripting->bank;
+	stringInfo->scrActive = gBattleScripting.bank;
 	stringInfo->unk1605E = gBattleStruct->field_52;
 	stringInfo->hpScale = gBattleStruct->hpScale;
 	stringInfo->stringBank = gStringBank;
 	stringInfo->moveType = gBattleMoves[gCurrentMove].type;
-	stringInfo->zMoveActive = gNewBS->ZMoveData->active;
+	stringInfo->zMoveActive = gNewBS->zMoveData.active;
 	stringInfo->dynamaxActive = gNewBS->dynamaxData.active;
 
 	if (gBattleStringLoader !=  NULL)
@@ -997,9 +997,9 @@ void EmitPrintSelectionString(u8 bufferId, u16 stringID)
 	stringInfo->originallyUsedMove = gChosenMove;
 	stringInfo->lastItem = gLastUsedItem;
 	stringInfo->lastAbility = gLastUsedAbility;
-	stringInfo->scrActive = gBattleScripting->bank;
+	stringInfo->scrActive = gBattleScripting.bank;
 	stringInfo->unk1605E = gBattleStruct->field_52;
-	stringInfo->zMoveActive = gNewBS->ZMoveData->active;
+	stringInfo->zMoveActive = gNewBS->zMoveData.active;
 	stringInfo->dynamaxActive = gNewBS->dynamaxData.active;
 
 	if (gBattleStringLoader !=  NULL)

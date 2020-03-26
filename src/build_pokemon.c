@@ -5,6 +5,7 @@
 #include "../include/pokemon.h"
 #include "../include/pokemon_storage_system.h"
 #include "../include/random.h"
+#include "../include/script.h"
 #include "../include/string_util.h"
 #include "../include/wild_encounter.h"
 #include "../include/constants/event_objects.h"
@@ -281,7 +282,7 @@ void BuildTrainerPartySetup(void)
 				ReducePartyToThree(); //Well...sometimes can be less than 3
 			}
 			Memset(&gPlayerParty[3], 0x0, sizeof(struct Pokemon) * 3);
-	
+
 			if (IsRaidBattle() && VarGet(VAR_PARTNER) == RAID_BATTLE_MULTI_TRAINER_TID)
 				BuildRaidMultiParty();
 			else
@@ -461,7 +462,7 @@ u16 GiveRandomFrontierMonByTier(u8 side, u8 tier, u16 spreadType)
 		  || PokemonTierBan(spread->species, spread->item, spread, NULL, tier, CHECK_BATTLE_TOWER_SPREADS));
 
 	CreateFrontierMon(&mon, level, spread, 0, 0, 0, TRUE);
-	
+
 	if (side == B_SIDE_PLAYER)
 		return GiveMonToPlayer(&mon);
 	else
@@ -580,7 +581,7 @@ static u8 CreateNPCTrainerParty(struct Pokemon* const party, const u16 trainerId
 					case PARTY_FLAG_CUSTOM_MOVES | PARTY_FLAG_HAS_ITEM:
 						minPartyLevel = (trainer->party.ItemCustomMoves[i].lvl < minPartyLevel) ? trainer->party.ItemCustomMoves[i].lvl : minPartyLevel;
 						break;
-				}	
+				}
 			}
 		}
 
@@ -1536,7 +1537,7 @@ const struct BattleTowerSpread* GetRaidMultiSpread(u8 multiId, u8 index, u8 numS
 	else
 	#endif
 		spread = &multiPartner->spreads[numStars][index];
-		
+
 	return spread;
 }
 
@@ -2474,7 +2475,7 @@ void CreateFrontierRaidMon(unusedArg u16 species)
 
 	spreadPtr = TryAdjustSpreadForSpecies(spreadPtr); //Update Arceus
 	struct BattleTowerSpread spread = *spreadPtr;
-	
+
 	species = GetMegaSpecies(spread.species, spread.item, spread.moves); //Try Mega Evolve the mon
 	if (species != SPECIES_NONE)
 		spread.species = species;
@@ -2633,13 +2634,13 @@ static struct DoubleReplacementMoves sDoubleSpreadReplacementMoves[] =
 	{MOVE_MOONBLAST, MOVE_DAZZLINGGLEAM, LEARN_TYPE_TM, ITEM_TM102_DAZZLING_GLEAM, 0, 0},
 	{MOVE_FLAMETHROWER, MOVE_HEATWAVE, LEARN_TYPE_TUTOR, TUTOR50_HEAT_WAVE, 0, 0},
 	{MOVE_FIREBLAST, MOVE_HEATWAVE, LEARN_TYPE_TUTOR, TUTOR50_HEAT_WAVE, 0, 0},
-	
+
 	//Replace Move 1 with Move 2 is immunity isn't found on team
 	{MOVE_SLUDGEWAVE, MOVE_SLUDGEBOMB, LEARN_TYPE_TM, ITEM_TM36_SLUDGE_BOMB, POISON_IMMUNITY, 0},
 	{MOVE_BOOMBURST, MOVE_HYPERVOICE, LEARN_TYPE_TUTOR, TUTOR51_HYPER_VOICE, SOUND_IMMUNITY, 0},
 	{MOVE_SURF, MOVE_MUDDYWATER, LEARN_TYPE_TUTOR, TUTOR111_MUDDY_WATER, WATER_IMMUNITY, 0},
 	{MOVE_EARTHQUAKE, MOVE_HIGHHORSEPOWER, LEARN_TYPE_TUTOR, TUTOR109_HIGH_HORSEPOWER, GROUND_IMMUNITY, 0},
-	
+
 	//Replace Move 1 with Move 2 if immunity is found on team
 	{MOVE_THUNDERBOLT, MOVE_DISCHARGE, LEARN_TYPE_LEVEL_UP, 0, 0, ELECTRIC_IMMUNITY},
 	{MOVE_HYPERVOICE, MOVE_BOOMBURST, LEARN_TYPE_LEVEL_UP, 0, 0, SOUND_IMMUNITY},
@@ -3168,7 +3169,7 @@ u8 ScriptGiveMon(u16 species, u8 level, u16 item, unusedArg u32 unused1, u32 cus
 		for (i = 0; i < MAX_MON_MOVES; ++i)
 		{
 			if (moves[i] < MOVES_COUNT)
-				SetMonData(&mon, MON_DATA_MOVE1 + i, &moves[i]); 		
+				SetMonData(&mon, MON_DATA_MOVE1 + i, &moves[i]);
 		}
 
 		for (i = 0; i < NUM_STATS; ++i)
@@ -3239,7 +3240,7 @@ u32 CheckShinyMon(struct Pokemon* mon)
 				personality |= ability; //Either 0 or 1
 			}
 		} while (GetNatureFromPersonality(personality) != nature || GetGenderFromSpeciesAndPersonality(species, personality) != gender
-		#ifdef SPECIES_UNOWN 
+		#ifdef SPECIES_UNOWN
 		|| (species == SPECIES_UNOWN && GetUnownLetterFromPersonality(personality) != letter)
 		#endif
 		); //Keep all other values the same
@@ -3463,9 +3464,9 @@ void CalculateMonStatsNew(struct Pokemon *mon)
 		newMaxHP = MathMin((((n + evs[STAT_HP] / 4) * level) / 100) + level + 10, 0xFFFF);
 	}
 
-	gBattleScripting->field_23 = newMaxHP - oldMaxHP;
-	if (gBattleScripting->field_23 == 0)
-		gBattleScripting->field_23 = 1;
+	gBattleScripting.field_23 = newMaxHP - oldMaxHP;
+	if (gBattleScripting.field_23 == 0)
+		gBattleScripting.field_23 = 1;
 
 	SetMonData(mon, MON_DATA_MAX_HP, &newMaxHP);
 

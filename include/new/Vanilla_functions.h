@@ -2,8 +2,6 @@
 
 #include "../global.h"
 
-#define BC_Menu 0x8014040 | 1
-
 void* __attribute__((long_call)) memcpy_(void *dst, const void* src, u8 size);
 void* __attribute__((long_call)) memset_(void *dst, u8 pattern, u8 size);
 
