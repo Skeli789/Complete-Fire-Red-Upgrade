@@ -166,18 +166,45 @@ const union AnimCmd* const gAnimCmdTable_IceRock[] =
 	sAnimCmdIceRock,
 };
 
+static const union AnimCmd sAnimCmdIceRockMulti[] =
+{
+	ANIMCMD_FRAME(0, 3),
+	ANIMCMD_FRAME(64, 3),
+	ANIMCMD_FRAME(128, 3),
+	ANIMCMD_END,
+};
+
+const union AnimCmd* const gAnimCmdTable_IceRockMulti[] =
+{
+	sAnimCmdDoNothing,
+	sAnimCmdIceRockMulti,
+};
+
 static const union AnimCmd sAnimCmdStonePillar[] =
 {
-	ANIMCMD_FRAME(0, 12),
-	ANIMCMD_FRAME(64, 12),
-	ANIMCMD_FRAME(128, 12),
 	ANIMCMD_FRAME(192, 12),
+	ANIMCMD_FRAME(128, 12),
+	ANIMCMD_FRAME(64, 12),
+	ANIMCMD_FRAME(0, 12),	
 	ANIMCMD_END,
 };
 
 const union AnimCmd *const gAnimCmdTable_StonePillar[] =
 {
 	sAnimCmdStonePillar,
+};
+
+static const union AnimCmd sAnimCmdStonePillarMulti[] =
+{
+	ANIMCMD_FRAME(128, 12),
+	ANIMCMD_FRAME(64, 12),
+	ANIMCMD_FRAME(0, 12),	
+	ANIMCMD_END,
+};
+
+const union AnimCmd *const gAnimCmdTable_StonePillarMulti[] =
+{
+	sAnimCmdStonePillarMulti,
 };
 
 static const union AffineAnimCmd sSpriteAffineAnim_StonePillarGrow[] =
@@ -688,6 +715,18 @@ void AnimTask_IsTargetPartner(u8 taskId)
 	else
 		gBattleAnimArgs[0] = 0;
 
+	DestroyAnimVisualTask(taskId);
+}
+
+void AnimTask_IsRockfallPillarLoaded(u8 taskId)
+{
+	gBattleAnimArgs[0] = (IndexOfSpriteTileTag(ANIM_TAG_STONE_PILLAR) == 0xFF) ? 0 : 1;
+	DestroyAnimVisualTask(taskId);
+}
+
+void AnimTask_IsHailstormRockLoaded(u8 taskId)
+{
+	gBattleAnimArgs[0] = (IndexOfSpriteTileTag(ANIM_TAG_ICE_ROCK) == 0xFF) ? 0 : 1;
 	DestroyAnimVisualTask(taskId);
 }
 

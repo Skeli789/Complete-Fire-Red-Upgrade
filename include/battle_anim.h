@@ -298,7 +298,9 @@
 #define ANIM_TAG_WHIP_HIT                   (ANIM_SPRITES_START + 287)
 #define ANIM_TAG_BLUE_RING_2                (ANIM_SPRITES_START + 288)
 
-#define ANIM_TAG_ABILITY_POP_UP				0x286E
+#define ANIM_TAG_ABILITY_POP_UP	0x286E
+#define ANIM_TAG_STONE_PILLAR 0x2877
+#define ANIM_TAG_ICE_ROCK 0x287A
 
 // battlers
 #define ANIM_ATTACKER    0

@@ -23568,8 +23568,8 @@ PHANTASM_OBJ_5: objtemplate ANIM_TAG_RAZOR_SHELL ANIM_TAG_RAZOR_SHELL sMaxPhanta
 .pool
 @Credit to Skeli
 ANIM_MAX_HAILSTORM:
-	loadparticle ANIM_TAG_HAIL
 	loadparticle ANIM_TAG_ICE_ROCK
+	loadparticle ANIM_TAG_HAIL
 	loadparticle ANIM_TAG_ICE_CRYSTALS
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xE 0x0 @;Black
 	launchtask AnimTask_DynamaxGrowth 0x5 0x1 0x1
@@ -23578,6 +23578,9 @@ ANIM_MAX_HAILSTORM:
 	launchtask 0x80B038D 0x5 0x0 @;Hail  
 	@soundcomplex 0xEB 0x0 0x8 0xa
 	playsound2 0x25 SOUND_PAN_TARGET @;Falling sound
+	launchtask AnimTask_IsHailstormRockLoaded 0x2 0x0
+	jumpifargmatches 0x0 0x0 MAX_HAILSTORM_MULTI
+	
 	launchtemplate HAILSTORM_ICE_ROCK, TEMPLATE_TARGET | 2, 0x4, -40, 0x3c, 3, bank_target
 	playsound2 0x25 SOUND_PAN_TARGET @;Falling sound
 	launchtask AnimTask_arg7_is_target_player 0x2 0x0
@@ -23627,6 +23630,49 @@ MAX_HAILSTORM_ON_PLAYER:
 .align 2
 HAILSTORM_ICE_ROCK: objtemplate ANIM_TAG_ICE_ROCK ANIM_TAG_ICE_ROCK OAM_DOUBLE_64x64 gAnimCmdTable_IceRock 0x0 gSpriteAffineAnimTable_LargeHailRock SpriteCB_FallingObjectPlayAnimOnEnd
 HAILSTORM_LARGER_ICE_ROCK: objtemplate ANIM_TAG_ICE_ROCK ANIM_TAG_ICE_ROCK OAM_DOUBLE_64x64 gAnimCmdTable_IceRock 0x0 gSpriteAffineAnimTable_EvenLargerHailRock SpriteCB_FallingObjectPlayAnimOnEnd
+
+@;In multi battles, sometimes there isn't enough space in memory for the entire animated hail rock to be loaded.
+@;So a hail rock with less animation frames is loaded instead.
+MAX_HAILSTORM_MULTI:
+	loadparticle ANIM_TAG_ICE_ROCK_SINGLE
+	launchtemplate HAILSTORM_SINGLE_ICE_ROCK, TEMPLATE_TARGET | 2, 0x4, -40, 0x3c, 3, bank_target
+	playsound2 0x25 SOUND_PAN_TARGET @;Falling sound
+	launchtask AnimTask_arg7_is_target_player 0x2 0x0
+	jumpifargmatches 0x7 0x1 MAX_HAILSTORM_MULTI_ON_PLAYER
+
+@MAX_HAILSTORM_MULTI_ON_OPPONENT
+	pause 0xF
+	playsound2 0xCF SOUND_PAN_TARGET
+	pause 0x11
+	playsound2 0x25 SOUND_PAN_TARGET @;Falling sound
+	launchtemplate HAILSTORM_SINGLE_ICE_ROCK, TEMPLATE_TARGET | 2, 0x4, 30, 0x3c, 3, bank_target
+	playsound2 0x25 SOUND_PAN_TARGET @;Falling sound
+	pause 0xF
+	playsound2 0xCF SOUND_PAN_TARGET
+	pause 0x11
+	playsound2 0x25 SOUND_PAN_TARGET @;Falling sound
+	launchtemplate HAILSTORM_SINGLE_LARGER_ICE_ROCK, TEMPLATE_TARGET | 2, 0x4, 0x0 0x3c, 3, bank_target
+	pause 0x7
+	goto MAX_HAILSTORM_REJOIN
+
+MAX_HAILSTORM_MULTI_ON_PLAYER:
+	pause 0xF + 5
+	playsound2 0xCF SOUND_PAN_TARGET
+	pause 0x11
+	playsound2 0x25 SOUND_PAN_TARGET @;Falling sound
+	launchtemplate HAILSTORM_SINGLE_ICE_ROCK, TEMPLATE_TARGET | 2, 0x4, 30, 0x3c, 3, bank_target
+	playsound2 0x25 SOUND_PAN_TARGET @;Falling sound
+	pause 0xF + 5
+	playsound2 0xCF SOUND_PAN_TARGET
+	pause 0x11
+	playsound2 0x25 SOUND_PAN_TARGET @;Falling sound
+	launchtemplate HAILSTORM_SINGLE_LARGER_ICE_ROCK, TEMPLATE_TARGET | 2, 0x4, 0x0 0x3c, 3, bank_target
+	pause 0x7 + 7
+	goto MAX_HAILSTORM_REJOIN
+
+.align 2
+HAILSTORM_SINGLE_ICE_ROCK: objtemplate ANIM_TAG_ICE_ROCK_SINGLE ANIM_TAG_ICE_ROCK_SINGLE OAM_DOUBLE_64x64 gAnimCmdTable_IceRockMulti 0x0 gSpriteAffineAnimTable_LargeHailRock SpriteCB_FallingObjectPlayAnimOnEnd
+HAILSTORM_SINGLE_LARGER_ICE_ROCK: objtemplate ANIM_TAG_ICE_ROCK_SINGLE ANIM_TAG_ICE_ROCK_SINGLE OAM_DOUBLE_64x64 gAnimCmdTable_IceRockMulti 0x0 gSpriteAffineAnimTable_EvenLargerHailRock SpriteCB_FallingObjectPlayAnimOnEnd
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
@@ -24133,14 +24179,18 @@ BLUE_LINE_GEYSER: objtemplate ANIM_TAG_NEEDLE ANIM_TAG_NEEDLE OAM_OFF_16x16 0x82
 @Credit to Skeli
 ANIM_MAX_ROCKFALL:
 	loadparticle ANIM_TAG_STONE_PILLAR
-	loadparticle ANIM_TAG_UNUSED_EXPLOSION_2
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0x0 0xE 0x0 @;Black
 	launchtask AnimTask_AllBanksInvisibleExceptAttackerAndTarget 0xA 0x0
 	launchtask AnimTask_DynamaxGrowth 0x5 0x1 0x1
 	soundcomplex 0x7C SOUND_PAN_ATTACKER 0x8 0x3
 	launchtask AnimTask_arg7_is_target_player 0x2 0x0
 	jumpifargmatches 0x7 0x1 MAX_ROCKFALL_ON_PLAYER
+
+@MAX_ROCKFALL_ON_OPPONENT:
+	launchtask AnimTask_IsRockfallPillarLoaded 0x2 0x0
+	jumpifargmatches 0x0 0x0 MAX_ROCKFALL_MULTI_ON_OPPONENT
 	launchtemplate STONE_PILLAR TEMPLATE_TARGET | 2, 0x2, -30, -24
+MAX_ROCKFALL_ON_OPPONENT_REJOIN:
 	pause 0x48
 	playsound2 0x25 SOUND_PAN_TARGET @;Falling sound
 	pause 10
@@ -24149,21 +24199,13 @@ ANIM_MAX_ROCKFALL:
 	playsound2 0xCF SOUND_PAN_TARGET
 	launchtask AnimTask_SquishTarget 0x2 0x0
 	pause 15
-	
-MAX_ROCKFALL_REJOIN:
-	launchtask AnimTask_screen_shake 0x5 0x3, 5, 1, 0x2
-	launchtask AnimTask_screen_shake 0x5 0x3, 4, 1, 0x2
-	call EXPLOSION_GEYSER
-	pause 9 + 0x25
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x1 0xB 0x0 0x0
-	waitanimation
-	launchtask AnimTask_AllBanksVisible 0xA 0x0
-	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xE 0x0 0x0 @;Black
-	waitanimation
-	endanimation
-	
+	goto MAX_ROCKFALL_REJOIN	
+
 MAX_ROCKFALL_ON_PLAYER:
+	launchtask AnimTask_IsRockfallPillarLoaded 0x2 0x0
+	jumpifargmatches 0x0 0x0 MAX_ROCKFALL_MULTI_ON_PLAYER
 	launchtemplate STONE_PILLAR TEMPLATE_TARGET | 2, 0x2, -30, -33
+MAX_ROCKFALL_ON_PLAYER_REJOIN:
 	pause 0x48
 	playsound2 0x25 SOUND_PAN_TARGET @;Falling sound
 	pause 2
@@ -24172,10 +24214,37 @@ MAX_ROCKFALL_ON_PLAYER:
 	playsound2 0x86 SOUND_PAN_TARGET
 	launchtask AnimTask_SquishTarget 0x2 0x0
 	pause 30
-	goto MAX_ROCKFALL_REJOIN
+
+MAX_ROCKFALL_REJOIN:
+	launchtask AnimTask_screen_shake 0x5 0x3, 5, 1, 0x2
+	launchtask AnimTask_screen_shake 0x5 0x3, 4, 1, 0x2
+	loadparticle ANIM_TAG_UNUSED_EXPLOSION_2
+	call EXPLOSION_GEYSER
+	pause 9 + 0x25
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x1 0xB 0x0 0x0
+	waitanimation
+	launchtask AnimTask_AllBanksVisible 0xA 0x0
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_BG 0x1 0xE 0x0 0x0 @;Black
+	waitanimation
+	endanimation
+
 
 .align 2
 STONE_PILLAR: objtemplate ANIM_TAG_STONE_PILLAR ANIM_TAG_STONE_PILLAR sGrowingSuperpowerOAM gAnimCmdTable_StonePillar 0x0 gSpriteAffineAnimTable_StonePillar SpriteCB_StonePillar
+
+@;In multi battles, the rock pillar with all its animations is too much for the memory to handle
+MAX_ROCKFALL_MULTI_ON_OPPONENT:
+	loadparticle ANIM_TAG_STONE_PILLAR_MULTI
+	launchtemplate STONE_PILLAR_MULTI TEMPLATE_TARGET | 2, 0x2, -30, -24
+	goto MAX_ROCKFALL_ON_OPPONENT_REJOIN
+
+MAX_ROCKFALL_MULTI_ON_PLAYER:
+	loadparticle ANIM_TAG_STONE_PILLAR_MULTI
+	launchtemplate STONE_PILLAR_MULTI TEMPLATE_TARGET | 2, 0x2, -30, -33
+	goto MAX_ROCKFALL_ON_PLAYER_REJOIN
+
+.align 2
+STONE_PILLAR_MULTI: objtemplate ANIM_TAG_STONE_PILLAR_MULTI ANIM_TAG_STONE_PILLAR_MULTI sGrowingSuperpowerOAM gAnimCmdTable_StonePillarMulti 0x0 gSpriteAffineAnimTable_StonePillar SpriteCB_StonePillar
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
