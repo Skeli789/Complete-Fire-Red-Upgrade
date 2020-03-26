@@ -372,6 +372,9 @@ def main():
             '**/*.mid': ProcessMusic,
     }
 
+    if sys.version_info.major >= 3 and sys.version_info.minor >= 8:
+        print("Warning! Python 3.8 may not be able to build this engine.\nPlease downgrade to Python 3.7.4")
+
     # Create output directory
     try:
         os.makedirs(BUILD)
