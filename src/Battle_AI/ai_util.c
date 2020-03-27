@@ -416,6 +416,7 @@ void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner,
 	u8 currTarget;
 	u16 move;
 	s8 moveScores[MAX_MON_MOVES][MAX_BATTLERS_COUNT] = {0};
+	u16 turnedToZMove[MAX_MON_MOVES] = {0};
 
 	u16 partnerMove = MOVE_NONE;
 	u16 partnerTarget = gBattleStruct->moveTarget[bankAtkPartner];
@@ -437,6 +438,9 @@ void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner,
 			continue;
 
 		move = TryReplaceMoveWithZMove(bankAtk, bankDef, move);
+		if (IsZMove(move) || IsAnyMaxMove(move))
+			turnedToZMove[i] = move;
+
 		if (!(gBitTable[i] & moveLimitations))
 		{
 			u8 foes[] = {bankDef, bankDefPartner};
@@ -612,7 +616,10 @@ void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner,
 	bestMoveScores[bankDef] = moveScores[bestIndex][bankDef];
 	bestMoveScores[bankDefPartner] = moveScores[bestIndex][bankDefPartner];
 	bestMoveScores[bankAtkPartner] = moveScores[bestIndex][bankAtkPartner];
+
 	*bestMove = gBattleMons[bankAtk].moves[bestIndex];
+	if (turnedToZMove[bestIndex] != MOVE_NONE)
+		*bestMove = turnedToZMove[bestIndex];
 }
 
 u8 GetDoubleKillingScore(u16 move, u8 bankAtk, u8 bankDef)
