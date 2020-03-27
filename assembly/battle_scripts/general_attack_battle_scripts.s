@@ -867,7 +867,7 @@ RoarBS:
 	jumpifability BANK_TARGET ABILITY_SUCTIONCUPS BattleScript_AbilityPreventsPhasingOut
 	jumpifspecialstatusflag BANK_TARGET STATUS3_ROOTED 0x0 0x81D8F27 @;BattleScript_PrintMonIsRooted
 	accuracycheck FAILED 0x0
-	forcerandomswitch FAILED
+	forcerandomswitch BANK_TARGET BANK_ATTACKER FAILED
 
 DragonTailBS:
 	attackcanceler
@@ -881,10 +881,10 @@ DragonTailBS:
 	jumpifability BANK_TARGET ABILITY_SUCTIONCUPS BattleScript_AbilityPreventsPhasingOutSkipFail
 	jumpifcannotswitch BANK_TARGET | ATK4F_DONT_CHECK_STATUSES BS_MOVE_FAINT
 	setbyte CMD49_STATE 0x0
-	cmd49 BANK_TARGET 0x0
+	cmd49 0x6 0x0
 	playanimation BANK_TARGET DRAGON_TAIL_BLOW_AWAY_ANIM 0x0
 	setbyte FORCE_SWITCH_HELPER 0x1
-	forcerandomswitch BattleScript_DragonTailResetForceSwitchHelper
+	forcerandomswitch BANK_TARGET BANK_ATTACKER BattleScript_DragonTailResetForceSwitchHelper
 
 .global BattleScript_DragonTailResetForceSwitchHelper
 BattleScript_DragonTailResetForceSwitchHelper:
@@ -2560,36 +2560,41 @@ BS_126_Magnitude:
 
 .global BS_127_BatonPass
 BS_127_BatonPass:
-	jumpifnotmove MOVE_BATONPASS UTurnBS
 	attackcanceler
+	copyarray BACKUP_HWORD CURRENT_MOVE 2
+	jumpifnotmove MOVE_BATONPASS UTurnBS
 	jumpifcannotswitch BANK_ATTACKER | ATK4F_DONT_CHECK_STATUSES FAILED_PRE
 	attackstring
 	ppreduce
 	attackanimation
 	waitanimation
 	callasm SetBatonPassSwitchingBit
+	copybyte SWITCHING_BANK USER_BANK
 
 BatonPassSwitchOutBS:
+	copyarray CURRENT_MOVE BACKUP_HWORD 2
 	callasm ClearAttackerDidDamageOnce
-	openpartyscreen BANK_ATTACKER FAILED
-	switchoutabilities BANK_ATTACKER
+	callasm ClearTargetStatFellThisTurn @;So Eject Pack doesn't activate
+	openpartyscreen BANK_SWITCHING FAILED
+	switchoutabilities BANK_SWITCHING
 	waitstateatk
-	switchhandleorder BANK_ATTACKER 0x2
-	returntoball BANK_ATTACKER
-	callasm TryRemovePrimalWeatherOnPivot
-	switch1 BANK_ATTACKER
-	switch2 BANK_ATTACKER
-	hpthresholds BANK_ATTACKER
+	switchhandleorder BANK_SWITCHING 0x2
+	returntoball BANK_SWITCHING
+	callasm TryRemovePrimalWeatherSwitchingBank
+	switch1 BANK_SWITCHING
+	switch2 BANK_SWITCHING
+	hpthresholds BANK_SWITCHING
 	printstring 0x3
-	switch3 BANK_ATTACKER 0x1
+	switch3 BANK_SWITCHING 0x1
 	waitstateatk
-	switchineffects BANK_ATTACKER
+	switchineffects BANK_SWITCHING
 	callasm ClearBatonPassSwitchingBit
-	jumpifnotmove MOVE_BATONPASS 0x81D6957
+	copyarray CURRENT_MOVE BACKUP_HWORD 2
+	jumpifmove MOVE_PARTINGSHOT PartingShotEndBS
+	jumpifnotmove MOVE_BATONPASS 0x81D6957 @;U-Turn & Volt Switch
 	goto BS_MOVE_END
 
 UTurnBS:
-	attackcanceler
 	accuracycheck BS_MOVE_MISSED 0x0
 	jumpifmove MOVE_PARTINGSHOT PartingShotBS
 	call STANDARD_DAMAGE
@@ -2601,13 +2606,13 @@ UTurnBS:
 	cmd49 BANK_TARGET 0x0
 	
 UTurnCheckSwitchBS:
-	jumpifcannotswitch BANK_ATTACKER | ATK4F_DONT_CHECK_STATUSES 0x81D6957
+	copybyte SWITCHING_BANK USER_BANK
+	jumpifcannotswitch BANK_SWITCHING | ATK4F_DONT_CHECK_STATUSES 0x81D6957
 	jumpifnoviablemonsleft BANK_TARGET 0x81D6957
-	jumpiffainted BANK_ATTACKER 0x81D6957
+	jumpiffainted BANK_SWITCHING 0x81D6957
 	jumpiffainted BANK_TARGET UTurnGiveEXPBS
 
 UTurnSwitchBS:
-	copybyte BATTLE_SCRIPTING_BANK USER_BANK
 	setword BATTLE_STRING_LOADER UTurnString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
@@ -2621,7 +2626,7 @@ UTurnGiveEXPBS:
 	
 BattleScript_SwitchOutAttackCheckPursuit:
 	jumpiffainted BANK_TARGET BattleScript_UTurnSwitchOutAnim
-	copyarray BACKUP_HWORD CURRENT_MOVE 2
+	
 	setbyte DMG_MULTIPLIER 0x2
 	jumpifbattletype BATTLE_DOUBLE BattleScript_PursuitSwitchDmgSetMultihitUTurn
 	setbyte MULTI_HIT_COUNTER 0x1
@@ -2641,14 +2646,14 @@ BattleScript_DoSwitchOutUTurn:
 	decrementmultihit BattleScript_PursuitSwitchDmgLoopUTurn
 	
 BattleScript_UTurnSwitchOutAnim:
-	playanimation BANK_ATTACKER ANIM_CALL_BACK_POKEMON 0x0
-	copybyte BATTLE_SCRIPTING_BANK USER_BANK
-	callasm MakeScriptingBankInvisible @;So the sprite stays hidden
-	copyarray CURRENT_MOVE BACKUP_HWORD 2
+	playanimation BANK_SWITCHING ANIM_CALL_BACK_POKEMON 0x0
+	callasm MakeSwitchingBankInvisible @;So the sprite stays hidden
 	goto BatonPassSwitchOutBS
 	
 BattleScript_PursuitDmgOnSwitchOutUTurn:
 	pause DELAY_HALFSECOND
+	setbyte FORCE_SWITCH_HELPER 0x0
+	callasm MoldBreakerRemoveAbilitiesOnForceSwitchIn
 	call STANDARD_DAMAGE
 	prefaintmoveendeffects 0x0
 	faintpokemonaftermove
@@ -2702,6 +2707,11 @@ PartingShot_LowerSpAtk:
 CheckPartingShotFail:
 	jumpifbyte EQUALS ANIM_TARGETS_HIT 0x0 BS_MOVE_END @;Anim didn't play means no stats were lowered
 	goto UTurnCheckSwitchBS
+
+PartingShotEndBS:
+	setbyte CMD49_STATE, 0x0
+	cmd49 0x7 0x0
+	end
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

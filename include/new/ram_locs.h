@@ -117,7 +117,7 @@ struct Clock
 		#define gSummaryScreenData ((struct MonSummaryData*) *((u32*) 0x203B140))
 		#define gCurrentPartyIndex (*(u8*) 0x203B16C)
 
-/*u8*/  #define gUnknown_0203B0DC ((u8*) 0x203B0DC)
+/*u8*/  #define gBattlePartyCurrentOrder ((u8*) 0x203B0DC)
 
 		#define AlphaBlendingCoeffA *((u8*)0x3000052)
 		#define PalTagsStart *((u8*)0x3003E58)

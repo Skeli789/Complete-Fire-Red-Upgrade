@@ -450,28 +450,27 @@ BattleScript_StickyBarbTransfer:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_EjectButton:
-	jumpifcannotswitch BANK_SCRIPTING | ATK4F_DONT_CHECK_STATUSES EjectButtonEnd
-	playanimation BANK_SCRIPTING ANIM_ITEM_USE 0x0
+	jumpifcannotswitch BANK_SWITCHING | ATK4F_DONT_CHECK_STATUSES EjectButtonEnd
+	playanimation BANK_SWITCHING ANIM_ITEM_USE 0x0
 	setword BATTLE_STRING_LOADER EjectButtonString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
-	removeitem BANK_SCRIPTING
-	playanimation BANK_SCRIPTING ANIM_CALL_BACK_POKEMON 0x0
-	callasm MakeScriptingBankInvisible
-	openpartyscreen BANK_SCRIPTING EjectButtonEnd
-	switchoutabilities BANK_SCRIPTING
+	removeitem BANK_SWITCHING
+	playanimation BANK_SWITCHING ANIM_CALL_BACK_POKEMON 0x0
+	callasm MakeSwitchingBankInvisible
+	openpartyscreen BANK_SWITCHING EjectButtonEnd
+	switchoutabilities BANK_SWITCHING
 	waitstateatk
-	switchhandleorder BANK_SCRIPTING 0x2
-	returntoball BANK_SCRIPTING
-	switch1 BANK_SCRIPTING
-	switch2 BANK_SCRIPTING
-	hpthresholds BANK_SCRIPTING
+	switchhandleorder BANK_SWITCHING 0x2
+	returntoball BANK_SWITCHING
+	switch1 BANK_SWITCHING
+	switch2 BANK_SWITCHING
+	hpthresholds BANK_SWITCHING
 	printstring 0x3
-	switch3 BANK_SCRIPTING 0x1
+	switch3 BANK_SWITCHING 0x1
 	waitstateatk
-	callasm BackupScriptingBank
-	switchineffects BANK_SCRIPTING
-	callasm SetNoMoreMovingThisTurnScriptingBank @;New Pokemon can't attack after being switched in
+	switchineffects BANK_SWITCHING
+	callasm SetNoMoreMovingThisTurnSwitchingBank @;New Pokemon can't attack after being switched in
 
 EjectButtonEnd:
 	return
@@ -486,7 +485,7 @@ BattleScript_EjectPackRet:
 	goto BattleScript_EjectButton
 
 BattleScript_EjectPackCMD49:
-	jumpifcannotswitch BANK_SCRIPTING | ATK4F_DONT_CHECK_STATUSES EjectButtonEnd
+	jumpifcannotswitch BANK_SWITCHING | ATK4F_DONT_CHECK_STATUSES EjectButtonEnd
 	jumpiffainted BANK_TARGET BattleScript_EjectPackGiveEXP
 	goto BattleScript_EjectPackRet
 	
@@ -509,12 +508,8 @@ BattleScript_RedCard:
 	jumpifability BANK_ATTACKER ABILITY_SUCTIONCUPS RedCard_SuctionCups
 	playanimation BANK_ATTACKER DRAGON_TAIL_BLOW_AWAY_ANIM 0x0
 	callasm ClearAttackerDidDamageOnce
-	callasm TryRemovePrimalWeatherOnPivot
-	swapattackerwithtarget @;Puts attacker (who's being switched out) into target
-	forcerandomswitch RedCardSwapBanksBack
-
-RedCardSwapBanksBack:
-	swapattackerwithtarget
+	callasm TryRemovePrimalWeatherOnPivot	
+	forcerandomswitch BANK_ATTACKER BANK_TARGET RedCardEnd
 
 RedCardEnd:
 	removeitem BANK_SCRIPTING

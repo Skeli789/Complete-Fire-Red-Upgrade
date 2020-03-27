@@ -131,15 +131,14 @@ BattleScript_TSAbsorb:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_StickyWebSpeedDrop:
-	orword HIT_MARKER 0x100100
 	setword BATTLE_STRING_LOADER gText_CaughtInStickyWeb
 	printstring 0x184
 	waitmessage DELAY_HALFSECOND
-	orword HIT_MARKER HITMARKER_IGNORE_SAFEGUARD | HITMARKER_IGNORE_SUBSTITUTE @;Ignore Shield Dust
+	orword HIT_MARKER, HITMARKER_NON_ATTACK_DMG | HITMARKER_IGNORE_SAFEGUARD | HITMARKER_IGNORE_SUBSTITUTE @;Ignore Shield Dust
 	jumpifability BANK_TARGET ABILITY_MIRRORARMOR BattleScript_MirrorArmorStickyWeb
 	setbyte EFFECT_BYTE 0x18
 	seteffecttarget
-	bicword HIT_MARKER HITMARKER_IGNORE_SAFEGUARD | HITMARKER_IGNORE_SUBSTITUTE
+	bicword HIT_MARKER, HITMARKER_NON_ATTACK_DMG | HITMARKER_IGNORE_SAFEGUARD | HITMARKER_IGNORE_SUBSTITUTE
 	return
 	
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -159,25 +158,23 @@ BattleScript_SuccessForceOut:
 	waitanimation
 
 SkipRoarAnim:
-	switchoutabilities BANK_TARGET
-	returntoball BANK_TARGET
+	switchoutabilities BANK_SWITCHING
+	returntoball BANK_SWITCHING
 	waitstateatk
 	jumpifword ANDS BATTLE_TYPE BATTLE_TRAINER ForceSwitch
 	jumpifword ANDS BATTLE_TYPE BATTLE_DOUBLE ForceSwitch @Wild Double Battles force switches
-	setbyte BATTLE_OUTCOME 0x5
+	setbyte BATTLE_OUTCOME 0x5 @;Teleported
 	finishaction
 
 ForceSwitch:
-	callasm TryRemovePrimalWeatherOnForceSwitchout
-	switch1 BANK_TARGET
-	switch2 BANK_TARGET
-	switch3 BANK_TARGET 0x0
+	callasm TryRemovePrimalWeatherSwitchingBank
+	switch1 BANK_SWITCHING
+	switch2 BANK_SWITCHING
+	switch3 BANK_SWITCHING 0x0
 	waitstateatk
 	printstring 0x154
 	callasm MoldBreakerRemoveAbilitiesOnForceSwitchIn
-	copybyte BATTLE_SCRIPTING_BANK TARGET_BANK
-	callasm BackupScriptingBank
-	switchineffects BANK_SCRIPTING
+	switchineffects BANK_SWITCHING
 	callasm RestoreAllOriginalMoveData
 	jumpifmove MOVE_DRAGONTAIL BattleScript_DragonTailResetForceSwitchHelper
 	jumpifmove MOVE_CIRCLETHROW BattleScript_DragonTailResetForceSwitchHelper
@@ -185,8 +182,8 @@ ForceSwitch:
 	goto BS_MOVE_END
 
 RedCardForceSwitch:
-	switchoutabilities BANK_TARGET
-	returntoball BANK_TARGET
+	switchoutabilities BANK_SWITCHING
+	returntoball BANK_SWITCHING
 	waitstateatk
 	jumpifword ANDS BATTLE_TYPE BATTLE_TRAINER ForceSwitchRedCard
 	jumpifword ANDS BATTLE_TYPE BATTLE_DOUBLE ForceSwitchRedCard @Wild Double Battles force switches
@@ -194,15 +191,13 @@ RedCardForceSwitch:
 	end
 
 ForceSwitchRedCard:
-	switch1 BANK_TARGET
-	switch2 BANK_TARGET
-	switch3 BANK_TARGET 0x0
+	switch1 BANK_SWITCHING
+	switch2 BANK_SWITCHING
+	switch3 BANK_SWITCHING 0x0
 	waitstateatk
 	printstring 0x154
 	callasm MoldBreakerRemoveAbilitiesOnForceSwitchIn
-	copybyte BATTLE_SCRIPTING_BANK TARGET_BANK
-	callasm BackupScriptingBank
-	switchineffects BANK_SCRIPTING
+	switchineffects BANK_SWITCHING
 	callasm MoldBreakerRestoreAbilitiesOnForceSwitchIn
 	setbyte FORCE_SWITCH_HELPER 0x0
 	callasm RestoreAllOriginalMoveData
@@ -214,8 +209,9 @@ ForceSwitchRedCard:
 
 BattleScript_ActionSwitch:
 	call BS_FLUSH_MESSAGE_BOX
+	copybyte SWITCHING_BANK USER_BANK
 	callasm BackupSwitchingBank
-	hpthresholds2 BANK_ATTACKER
+	hpthresholds2 BANK_SWITCHING
 	atknameinbuff1
 	printstring 0x2 @;STRINGID_RETURNMON
 	setbyte DMG_MULTIPLIER 0x2
@@ -235,20 +231,20 @@ BattleScript_PursuitSwitchDmgLoop:
 
 BattleScript_DoSwitchOut:
 	decrementmultihit BattleScript_PursuitSwitchDmgLoop
-	switchoutabilities BANK_ATTACKER
+	switchoutabilities BANK_SWITCHING
 	waitstateatk
 	returnatktoball
 	waitstateatk
-	drawpartystatussummary BANK_ATTACKER
-	switchhandleorder BANK_ATTACKER 0x1
-	switch1 BANK_ATTACKER
-	switch2 BANK_ATTACKER
-	hpthresholds BANK_ATTACKER
+	drawpartystatussummary BANK_SWITCHING
+	switchhandleorder BANK_SWITCHING 0x1
+	switch1 BANK_SWITCHING
+	switch2 BANK_SWITCHING
+	hpthresholds BANK_SWITCHING
 	printstring 0x3 @;STRINGID_SWITCHINMON
-	hidepartystatussummary BANK_ATTACKER
-	switch3 BANK_ATTACKER 0x0
+	hidepartystatussummary BANK_SWITCHING
+	switch3 BANK_SWITCHING 0x0
 	waitstateatk
-	switchineffects BANK_ATTACKER
+	switchineffects BANK_SWITCHING
 	
 HandleActionSwitchEnd:
 BattleScript_EntryHazardsHurtReturn:
@@ -256,6 +252,8 @@ BattleScript_EntryHazardsHurtReturn:
 	
 BattleScript_PursuitDmgOnSwitchOut:
 	pause DELAY_HALFSECOND
+	setbyte FORCE_SWITCH_HELPER 0x0
+	callasm MoldBreakerRemoveAbilitiesOnForceSwitchIn
 	call STANDARD_DAMAGE
 	prefaintmoveendeffects 0x0
 	faintpokemonaftermove

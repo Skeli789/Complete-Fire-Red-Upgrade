@@ -91,6 +91,8 @@ enum
 	ATK49_COUNT,
 };
 
+static bool8 CanDoMoveEndSwitchout(u8 arg);
+
 void atk49_moveend(void) //All the effects that happen after a move is used
 {
 	int i;
@@ -1094,7 +1096,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 
 		case ATK49_EJECT_BUTTON:
 			gBankAttacker = gNewBS->originalAttackerBackup;
-			if (gBattleMoves[gCurrentMove].effect != EFFECT_ROAR)
+			if (CanDoMoveEndSwitchout(arg1))
 			{
 				u8 banks[4] = {0, 1, 2, 3};
 				SortBanksBySpeed(banks, FALSE);
@@ -1114,7 +1116,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 							gBattlescriptCurrInstr = BattleScript_MoveEnd; //Cancel switchout for U-Turn & Volt Switch
 
 						gNewBS->NoSymbiosisByte = TRUE;
-						gActiveBattler = gBattleScripting.bank = banks[i];
+						gActiveBattler = gBankSwitching = gBattleScripting.bank = banks[i];
 						gLastUsedItem = ITEM(banks[i]);
 						BattleScriptPushCursor();
 						gBattlescriptCurrInstr = BattleScript_EjectButton;
@@ -1128,7 +1130,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 
 		case ATK49_RED_CARD:
 			gBankAttacker = gNewBS->originalAttackerBackup;
-			if (gBattleMoves[gCurrentMove].effect != EFFECT_ROAR
+			if (CanDoMoveEndSwitchout(arg1)
 			&& BATTLER_ALIVE(gBankAttacker))
 			{
 				u8 banks[4] = {0, 1, 2, 3};
@@ -1149,7 +1151,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 						gNewBS->NoSymbiosisByte = TRUE;
 						gForceSwitchHelper = Force_Switch_Red_Card;
 						gBattlescriptCurrInstr = BattleScript_Atk49; //Cancels U-Turn, Volt Switch, and Natural Gift
-						gActiveBattler = gBattleScripting.bank = gNewBS->originalTargetBackup = banks[i];
+						gActiveBattler = gBankSwitching = gBattleScripting.bank = gNewBS->originalTargetBackup = banks[i];
 						gLastUsedItem = ITEM(banks[i]);
 						BattleScriptPushCursor();
 						gBattlescriptCurrInstr = BattleScript_RedCard;
@@ -1163,20 +1165,23 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 
 		case ATK49_EJECT_PACK:
 			gBankAttacker = gNewBS->originalAttackerBackup;
-			for (i = 0; i < gBattlersCount; ++i)
+			if (CanDoMoveEndSwitchout(arg1))
 			{
-				if (BATTLER_ALIVE(i)
-				&&  ITEM_EFFECT(i) == ITEM_EFFECT_EJECT_PACK
-				&&  gNewBS->statFellThisTurn[i])
+				for (i = 0; i < gBattlersCount; ++i)
 				{
-					gNewBS->statFellThisTurn[i] = FALSE;
-					gNewBS->NoSymbiosisByte = TRUE;
-					gActiveBattler = gBattleScripting.bank = i;
-					gLastUsedItem = ITEM(i);
-					BattleScriptPushCursor();
-					gBattlescriptCurrInstr = BattleScript_EjectPackCMD49;
-					effect = 1;
-					return;
+					if (BATTLER_ALIVE(i)
+					&&  ITEM_EFFECT(i) == ITEM_EFFECT_EJECT_PACK
+					&&  gNewBS->statFellThisTurn[i])
+					{
+						gNewBS->statFellThisTurn[i] = FALSE;
+						gNewBS->NoSymbiosisByte = TRUE;
+						gActiveBattler = gBankSwitching = gBattleScripting.bank = i;
+						gLastUsedItem = ITEM(i);
+						BattleScriptPushCursor();
+						gBattlescriptCurrInstr = BattleScript_EjectPackCMD49;
+						effect = 1;
+						return;
+					}
 				}
 			}
 			gBattleScripting.atk49_state++;
@@ -1185,7 +1190,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 
 		case ATK49_SWITCH_OUT_ABILITIES:
 			gBankAttacker = gNewBS->originalAttackerBackup;
-			if (gBattleMoves[gCurrentMove].effect != EFFECT_ROAR)
+			if (CanDoMoveEndSwitchout(arg1))
 			{
 				for (; gNewBS->switchOutBankLooper < gBattlersCount; ++gNewBS->switchOutBankLooper)
 				{
@@ -1204,7 +1209,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 						if (gBattleMoves[gCurrentMove].effect == EFFECT_BATON_PASS)
 							gBattlescriptCurrInstr = BattleScript_Atk49; //Cancel switchout for U-Turn & Volt Switch
 
-						gActiveBattler = gBattleScripting.bank = bank;
+						gActiveBattler = gBattleScripting.bank = gBankSwitching = bank;
 						BattleScriptPushCursor();
 						gBattlescriptCurrInstr = BattleScript_EmergencyExit;
 						effect = 1;
@@ -1468,6 +1473,14 @@ bank_t GetNextMultiTarget(void)
 		return GetBattlerAtPosition(pos);
 
 	return pos;
+}
+
+static bool8 CanDoMoveEndSwitchout(u8 arg)
+{
+	return arg != ARG_IN_PURSUIT
+		&& arg != ARG_DRAGON_TAIL
+		&& arg != ARG_PARTING_SHOT
+		&& (SPLIT(gCurrentMove) != SPLIT_STATUS || gBattleMoves[gCurrentMove].effect != EFFECT_ROAR); //Dragon Tail & Circle Throw are handled in line above
 }
 
 void SortBanksBySpeed(u8 banks[], bool8 slowToFast)

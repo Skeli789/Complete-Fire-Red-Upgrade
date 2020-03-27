@@ -179,6 +179,7 @@
 #define gAbilityPopUpHelper (*((u8*) 0x203E02F))
 #define gBackupHWord (*((u16*) 0x203E030))
 #define gDontRemoveTransformSpecies (*((bool8*) 0x203E032))
+#define gBankSwitching (*((u8*) 0x203E033))
 
 //#define gInShop (*((bool8*) 0x203E043))
 //#define gBattleCircusFlags (*((u32*) 0x203E044))
@@ -187,4 +188,4 @@
 //Don't go past 0x203E048
 
 #define FIRST_NEW_BATTLE_RAM_LOC ((u8*) 0x203E020)
-#define LAST_NEW_BATTLE_RAM_LOC ((u8*) 0x203E033)
+#define LAST_NEW_BATTLE_RAM_LOC ((u8*) 0x203E034)

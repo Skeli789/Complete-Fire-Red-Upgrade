@@ -25,6 +25,58 @@ battle_util.c
 
 static void TryRemoveUnburdenBoost(u8 bank);
 
+u8 GetBankForBattleScript(u8 caseId)
+{
+	u8 ret = 0;
+
+	switch (caseId) {
+		case BS_GET_TARGET:
+			ret = gBankTarget;
+			break;
+		case BS_GET_ATTACKER:
+			ret = gBankAttacker;
+			break;
+		case BS_GET_EFFECT_BANK:
+			ret = gEffectBank;
+			break;
+		case BS_GET_BANK_0:
+			ret = 0;
+			break;
+		case BS_GET_SCRIPTING_BANK:
+			ret = gBattleScripting.bank;
+			break;
+		case BS_GET_FAINTED_BANK:
+			ret = gBankFainted;
+			break;
+		case 5:
+			ret = gBankFainted;
+			break;
+		case BS_GET_PLAYER1:
+			ret = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
+			break;
+		case BS_GET_OPPONENT1:
+			ret = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
+			break;
+		case BS_GET_PLAYER2:
+			ret = GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT);
+			break;
+		case BS_GET_OPPONENT2:
+			ret = GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
+			break;
+		case BS_GET_SWITCHING_BANK:
+			ret = gBankSwitching;
+			break;
+		case 4:
+		case 6:
+		case 8:
+		case 9:
+			break;
+	}
+
+	return ret;
+}
+
+
 ability_t GetBankAbility(u8 bank)
 {
 	if (IsAbilitySuppressed(bank))

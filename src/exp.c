@@ -64,7 +64,7 @@ void atk23_getexp(void)
 
 	u16* expGiveType = &gBattleStruct->expValue;
 
-	gBankFainted = GetBattleBank(gBattlescriptCurrInstr[1]);
+	gBankFainted = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 	sentIn = gSentPokesToOpponent[(gBankFainted & 2) >> 1]; //sentIn = 0 if Bank 1 killed, sentIn = 1 if Bank 3 killed
 
 	switch (gBattleScripting.expStateTracker)

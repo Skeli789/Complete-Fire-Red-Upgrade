@@ -387,7 +387,7 @@ GetMonNickname = 0x81202E0 | 1;
 GetTutorMove = 0x8120BA8 | 1;
 CanLearnTutorMove = 0x8120BE8 | 1;
 MonKnowsMove = 0x8125AC0 | 1;
-pokemon_order_func = 0x8128030 | 1;
+GetPartyIdFromBattlePartyId = 0x8128030 | 1;
 
 /* Battle Setup Functions */
 HandleOpponentPokeSlide = 0x8011D64 | 1;
@@ -439,7 +439,7 @@ sub_8012098 = 0x8012098 | 1;
 bs_exec = 0x80123E4 | 1;
 SwitchInClearSetData = 0x8012760 | 1;
 UndoEffectsAfterFainting = 0x8012BC8 | 1;
-sub_8013F6C = 0x8013F6C | 1;
+SwitchPartyOrder = 0x8013F6C | 1;
 HandleTurnActionSelectionState = 0x8014040 | 1;
 SwapTurnOrder = 0x8014CA4 | 1;
 TurnValuesCleanUp = 0x8015330 | 1;
@@ -552,8 +552,8 @@ BattlePutTextOnWindow = 0x80D87BC | 1;
 SetPpNumbersPaletteInMoveSelection = 0x80D89DC | 1;
 sub_80EB2E0 = 0x80EB2E0 | 1;
 //IsLinkDoubleBattle = 0x811FA20 | 1;
-sub_8127EC4 = 0x8127EC4 | 1;
-sub_8127FF4 = 0x8127FF4 | 1;
+SwitchPartyOrderLinkMulti = 0x8127EC4 | 1;
+SwitchPartyMonSlots = 0x8127FF4 | 1;
 
 
 /* Battle Animation Functions */

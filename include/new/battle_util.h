@@ -9,6 +9,7 @@
  */
 
 //Exported Functions
+u8 GetBankForBattleScript(u8 caseId);
 ability_t GetBankAbility(u8 bank);
 ability_t GetRecordedAbility(u8 bank);
 ability_t CopyAbility(u8 bank);

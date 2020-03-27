@@ -28,6 +28,7 @@ HandleEndTurn_BattleLost 801578C 0
 HandleEndTurn_RanFromBattle 8015850 0
 HandleAction_UseMove 8015CA0 0
 TryRunFromBattle 8016748 1
+GetBankForBattleScript 8016E24 1
 PrepareStringBattle 80173AC 3
 TrySetCantSelectMoveBattleScript 8017594 0
 CheckMoveLimitations 801779C 3
@@ -37,10 +38,10 @@ HasNoMonsToSwitch 8019C10 3
 SetMoveEffect 801FF20 2
 FrontierCheckBattleOverHook 8022400 0
 CalcMonHiddenPowerType 802B678 1
+HealthBarChangeAmountHook 804A00C 4
 ReshowBattleScreenMonSpriteHook1 8077CD2 0
 ReshowBattleScreenMonSpriteHook2 8077ECA 0
 ReshowBattleScreenHealthboxSpriteHook 8078104 0
-HealthBarChangeAmountHook 804A00C 4
 
 HandleInputChooseAction 0802E438 0
 SwitchMoveDataHook 802EF90 0

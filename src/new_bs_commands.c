@@ -68,7 +68,7 @@ void atkFA_setword(void)
 //setspecialstatusbit BANK
 void atkFB_setspecialstatusbit(void)
 {
-	gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
+	gActiveBattler = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 	u32 status3 = T1_READ_32(gBattlescriptCurrInstr + 2);
 
 	gStatuses3[gActiveBattler] |= status3;
@@ -79,7 +79,7 @@ void atkFB_setspecialstatusbit(void)
 //clearspecialstatusbit BANK
 void atkFC_clearspecialstatusbit(void)
 {
-	gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
+	gActiveBattler = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 	u32 status3 = T1_READ_32(gBattlescriptCurrInstr + 2);
 
 	gStatuses3[gActiveBattler] &= ~(status3);
@@ -110,7 +110,7 @@ void atkFD_jumpifabilitypresenttargetfield(void)
 //jumpifspecies BANK SPECIES ROM_OFFSET
 void atkFF22_jumpifspecies(void)
 {
-	u8 bank = GetBattleBank(gBattlescriptCurrInstr[1]);
+	u8 bank = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 	u16 species = T1_READ_16(gBattlescriptCurrInstr + 2);
 	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 4);
 
@@ -134,7 +134,7 @@ void atkFF02_cureprimarystatus(void)
 {
 	if (gBattleExecBuffer) return;
 
-	u8 bank = GetBattleBank(gBattlescriptCurrInstr[1]);
+	u8 bank = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
 
 	if (gBattleMons[bank].status1 == 0)
@@ -160,7 +160,7 @@ void atkFF03_jumpifpartnerattack(void)
 	if (IS_SINGLE_BATTLE)
 		gBattlescriptCurrInstr += 8;
 
-	u8 bank = PARTNER(GetBattleBank(gBattlescriptCurrInstr[1]));
+	u8 bank = PARTNER(GetBankForBattleScript(gBattlescriptCurrInstr[1]));
 	u16 move = T1_READ_16(gBattlescriptCurrInstr + 2);
 	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 4);
 
@@ -253,7 +253,7 @@ void atkFF06_setterrain(void)
 //jumpifhelditemeffect BANK ITEM_EFFECT ROM_OFFSET
 void atkFF07_jumpifhelditemeffect(void)
 {
-	u8 bank = GetBattleBank(gBattlescriptCurrInstr[1]);
+	u8 bank = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 	u8 effect = T1_READ_8(gBattlescriptCurrInstr + 2);
 	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
 
@@ -269,7 +269,7 @@ void atkFF07_jumpifhelditemeffect(void)
 //counterclear BANK COUNTER_ID FAIL_OFFSET
 void atkFF08_counterclear(void)
 {
-	u8 bank = GetBattleBank(gBattlescriptCurrInstr[1]);
+	u8 bank = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 	u8 id = T1_READ_8(gBattlescriptCurrInstr + 2);
 	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
 	bool8 failed = FALSE;
@@ -394,7 +394,7 @@ void atkFF08_counterclear(void)
 //jumpifcounter BANK COUNTER_ID PREDICATE BYTE_TO_COMPARE ROM_OFFSET
 void atkFF09_jumpifcounter(void)
 {
-	u8 bank = GetBattleBank(gBattlescriptCurrInstr[1]);
+	u8 bank = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 	u8 id = T1_READ_8(gBattlescriptCurrInstr + 2);
 	u8 predicate = T1_READ_8(gBattlescriptCurrInstr + 3);
 	u8 value = T1_READ_8(gBattlescriptCurrInstr + 4);
@@ -497,7 +497,7 @@ void atkFF09_jumpifcounter(void)
 //setability BANK ABILITY
 void atkFF0A_setability(void)
 {
-	u8 bank = GetBattleBank(gBattlescriptCurrInstr[1]);
+	u8 bank = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 	u8 ability = gBattlescriptCurrInstr[2];
 	ability_t* abilityLoc = GetAbilityLocation(bank);
 
@@ -520,7 +520,7 @@ void atkFF0C_jumpiftargetpartner(void)
 //setcounter BANK COUNTER_ID AMOUNT
 void atkFF0E_setcounter(void)
 {
-	u8 bank = GetBattleBank(gBattlescriptCurrInstr[1]);
+	u8 bank = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 	u8 id = gBattlescriptCurrInstr[2];
 	u8 amount = gBattlescriptCurrInstr[3];
 
@@ -584,7 +584,7 @@ void atkFF0E_setcounter(void)
 //jumpifgrounded BANK ROM_OFFSET
 void atkFF0F_jumpifgrounded(void)
 {
-	u8 bank = GetBattleBank(gBattlescriptCurrInstr[1]);
+	u8 bank = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
 
 	if (CheckGrounding(bank))
@@ -596,7 +596,7 @@ void atkFF0F_jumpifgrounded(void)
 //jumpifhelditem BANK ITEM ROM_OFFSET
 void atkFF10_jumpifhelditem(void)
 {
-	u8 bank = GetBattleBank(gBattlescriptCurrInstr[1]);
+	u8 bank = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 	u16 item = T1_READ_16(gBattlescriptCurrInstr + 2);
 	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 4);
 
@@ -612,7 +612,7 @@ void atkFF10_jumpifhelditem(void)
 //jumpifhealthcomparestomax BANK PREDICATE ROM_OFFSET
 void atkFF12_jumpifhealthcomparestomax(void)
 {
-	u8 bank = GetBattleBank(gBattlescriptCurrInstr[1]);
+	u8 bank = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 	u8 predicate = gBattlescriptCurrInstr[2];
 	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
 	u16 value = gBattleMons[bank].hp;
@@ -639,7 +639,7 @@ void atkFF12_jumpifhealthcomparestomax(void)
 //atkFF13_setdamagetobankhealthfraction BANK FRACTION USE_ACTUAL_MAX_HP
 void atkFF13_setdamagetobankhealthfraction(void)
 {
-	u8 bank = GetBattleBank(gBattlescriptCurrInstr[1]);
+	u8 bank = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 	s8 fraction = gBattlescriptCurrInstr[2];
 	bool8 useActualMaxHP = gBattlescriptCurrInstr[3];
 
@@ -675,7 +675,7 @@ void atkFF15_jumpifstatcanbemodified(void)
 	u32 currStat = 0;
 	gFormCounter = 0;
 
-	gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
+	gActiveBattler = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 	currStat = T2_READ_8(gBattlescriptCurrInstr + 2);
 	u8 ability = ABILITY(gActiveBattler);
 
@@ -737,7 +737,7 @@ void atkFF15_jumpifstatcanbemodified(void)
 //jumpifnoviablemonsleft BANK ROM_ADDRESS
 void atkFF16_jumpifnoviablemonsleft(void)
 {
-	if (ViableMonCountFromBank(GetBattleBank(gBattlescriptCurrInstr[1])) == 0)
+	if (ViableMonCountFromBank(GetBankForBattleScript(gBattlescriptCurrInstr[1])) == 0)
 		gBattlescriptCurrInstr = T2_READ_PTR(gBattlescriptCurrInstr + 2);
 	else
 		gBattlescriptCurrInstr += 6;
@@ -746,7 +746,7 @@ void atkFF16_jumpifnoviablemonsleft(void)
 //setsidestatus BANK STATUS
 void atkFF17_setsidestatus(void)
 {
-	u8 side = SIDE(GetBattleBank(gBattlescriptCurrInstr[1]));
+	u8 side = SIDE(GetBankForBattleScript(gBattlescriptCurrInstr[1]));
 	u16 status = T1_READ_16(gBattlescriptCurrInstr + 2);
 
 	gSideStatuses[side] |= status;
@@ -757,7 +757,7 @@ void atkFF17_setsidestatus(void)
 //clearsidestatus BANK STATUS
 void atkFF18_clearsidestatus(void)
 {
-	u8 side = SIDE(GetBattleBank(gBattlescriptCurrInstr[1]));
+	u8 side = SIDE(GetBankForBattleScript(gBattlescriptCurrInstr[1]));
 	u16 status = T1_READ_16(gBattlescriptCurrInstr + 2);
 
 	gSideStatuses[side] &= ~status;
@@ -770,7 +770,7 @@ void atkFF19_formchange(void)
 {
 	if (gBattleExecBuffer) return;
 
-	u8 bank = GetBattleBank(gBattlescriptCurrInstr[1]);
+	u8 bank = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 	u16 originalSpecies = T1_READ_16(gBattlescriptCurrInstr + 2);
 	u16 targetSpecies = T1_READ_16(gBattlescriptCurrInstr + 4);
 	bool8 reloadType = T2_READ_8(gBattlescriptCurrInstr + 6);
@@ -802,7 +802,7 @@ void atkFF1A_jumpifabilitypresentattackerfield(void)
 //tryactivateswitchinability
 void atkFF1B_tryactivateswitchinability(void)
 {
-	u8 bank = GetBattleBank(gBattlescriptCurrInstr[1]);
+	u8 bank = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 	gBattlescriptCurrInstr += 2;
 	AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, bank, 0, 0, 0);
 }
@@ -881,7 +881,7 @@ void atkFF1F_flowershieldlooper(void)
 //jumpifprotectedbycraftyshield BANK ROM_ADDRESS
 void atkFF20_jumpifprotectedbycraftyshield(void)
 {
-	if (CheckCraftyShield(GetBattleBank(gBattlescriptCurrInstr[1])))
+	if (CheckCraftyShield(GetBankForBattleScript(gBattlescriptCurrInstr[1])))
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
 	else
 		gBattlescriptCurrInstr += 5;
@@ -1215,7 +1215,7 @@ void atkFF24_jumpifattackeralreadydiddamage(void)
 void atkFF25_jumpifterrainandgrounded(void)
 {
 	if (gTerrainType == gBattlescriptCurrInstr[1]
-	&&  CheckGrounding(GetBattleBank(gBattlescriptCurrInstr[2])))
+	&&  CheckGrounding(GetBankForBattleScript(gBattlescriptCurrInstr[2])))
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
 	else
 		gBattlescriptCurrInstr += 7;
@@ -1290,7 +1290,7 @@ void atkFF27_tryactivateprotean(void)
 void atkFF28_jumpifweight(void)
 {
 	bool8 ret = FALSE;
-	u8 bank = GetBattleBank(gBattlescriptCurrInstr[1]);
+	u8 bank = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 	u8 predicate = gBattlescriptCurrInstr[2];
 	u16 value = T1_READ_16(gBattlescriptCurrInstr + 3);
 	const u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 5);
@@ -1345,7 +1345,7 @@ Ability Protects
 //trysetsleep BANK FAIL_ADDRESS
 void atkFF29_trysetsleep(void)
 {
-	u8 bank = GetBattleBank(gBattlescriptCurrInstr[1]);
+	u8 bank = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
 	bool8 fail = FALSE;
 
@@ -1579,7 +1579,7 @@ void ActuallySetYawn(void)
 //trysetparalysis BANK FAIL_ADDRESS
 void atkFF2A_trysetparalysis(void)
 {
-	u8 bank = GetBattleBank(gBattlescriptCurrInstr[1]);
+	u8 bank = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
 	bool8 fail = FALSE;
 
@@ -1674,7 +1674,7 @@ void atkFF2A_trysetparalysis(void)
 //trysetburn BANK FAIL_ADDRESS
 void atkFF2B_trysetburn(void)
 {
-	u8 bank = GetBattleBank(gBattlescriptCurrInstr[1]);
+	u8 bank = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
 	bool8 fail = FALSE;
 
@@ -1764,7 +1764,7 @@ void atkFF2B_trysetburn(void)
 //trysetpoison BANK FAIL_ADDRESS
 void atkFF2C_trysetpoison(void)
 {
-	u8 bank = GetBattleBank(gBattlescriptCurrInstr[1]);
+	u8 bank = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
 	bool8 fail = FALSE;
 
@@ -1872,7 +1872,7 @@ void atkFF2E_setmoveeffect2(void)
 //jumpifdynamaxed BANK ROM_OFFSET
 void atkFF30_jumpifdynamaxed(void)
 {
-	u8 bank = GetBattleBank(gBattlescriptCurrInstr[1]);
+	u8 bank = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 	const u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
 
 	if (IsDynamaxed(bank))
@@ -1884,7 +1884,7 @@ void atkFF30_jumpifdynamaxed(void)
 //jumpifraidboss BANK ROM_OFFSET
 void atkFF31_jumpifraidboss(void)
 {
-	u8 bank = GetBattleBank(gBattlescriptCurrInstr[1]);
+	u8 bank = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 	const u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
 
 	if (IsRaidBattle() && bank == BANK_RAID_BOSS)
@@ -1920,7 +1920,7 @@ void atkFF33_SetEffectPrimaryScriptingBank(void)
 //canconfuse BANK FAIL_ADDRESS
 void atkFF34_canconfuse(void)
 {
-	u8 bank = GetBattleBank(gBattlescriptCurrInstr[1]);
+	u8 bank = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 	u8* ptr = T1_READ_PTR(gBattlescriptCurrInstr + 2);
 	bool8 fail = FALSE;
 

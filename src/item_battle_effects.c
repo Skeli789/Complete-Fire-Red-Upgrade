@@ -178,7 +178,7 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 				{
 					gNewBS->statFellThisTurn[bank] = FALSE;
 					gNewBS->NoSymbiosisByte = TRUE;
-					gActiveBattler = gBattleScripting.bank = bank;
+					gActiveBattler = gBattleScripting.bank = gBankSwitching = bank;
 					effect = ITEM_STATS_CHANGE;
 
 					if (moveTurn)

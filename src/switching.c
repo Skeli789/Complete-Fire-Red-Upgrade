@@ -61,13 +61,13 @@ static bool8 TryRemoveNeutralizingGas(u8 ability);
 static bool8 TryRemoveUnnerve(u8 bank);
 static bool8 TryActivateFlowerGift(u8 leavingBank);
 static bool8 TryDoForceSwitchOut(void);
-static void sub_80571DC(u8 battlerId, u8 arg1);
+static void SwitchPartyOrderInGameMulti(u8 bank, u8 monToSwitchIntoId);
 static bool8 PPIsMaxed(bank_t);
 static u8 GetStealthRockDivisor(void);
 
 void atkE2_switchoutabilities(void)
 {
-	gActiveBattler = GetBattleBank(T2_READ_8(gBattlescriptCurrInstr + 1));
+	gActiveBattler = GetBankForBattleScript(T2_READ_8(gBattlescriptCurrInstr + 1));
 
 	switch (ABILITY(gActiveBattler)) {
 		case ABILITY_NATURALCURE:
@@ -241,13 +241,13 @@ void atk61_drawpartystatussummary(void)
 		return;
 
 	RestoreOriginalAttackerAndTarget();
-	gNewBS->skipBankStatAnim = gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
+	gNewBS->skipBankStatAnim = gActiveBattler = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 
 	if (HandleSpecialSwitchOutAbilities(gActiveBattler, ABILITY(gActiveBattler)))
 		return;
 
 	gNewBS->skipBankStatAnim = 0xFF; //No longer needed
-	gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
+	gActiveBattler = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 
 	if (SIDE(gActiveBattler) == 0)
 		party = gPlayerParty;
@@ -280,7 +280,7 @@ void atk4D_switchindataupdate(void)
 
 	if (gBattleExecBuffer) return;
 
-	gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
+	gActiveBattler = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 	oldData = gBattleMons[gActiveBattler];
 	monData = (u8*)(&gBattleMons[gActiveBattler]);
 
@@ -384,7 +384,7 @@ void atk4F_jumpifcantswitch(void)
 	u8 battlerIn1, battlerIn2;
 	u8 foe1, foe2;
 
-	gActiveBattler = GetBattleBank(T2_READ_8(gBattlescriptCurrInstr + 1) & ~(ATK4F_DONT_CHECK_STATUSES));
+	gActiveBattler = GetBankForBattleScript(T2_READ_8(gBattlescriptCurrInstr + 1) & ~(ATK4F_DONT_CHECK_STATUSES));
 	LoadBattlersAndFoes(&battlerIn1, &battlerIn2, &foe1, &foe2);
 	struct Pokemon* party = LoadPartyRange(gActiveBattler, &firstMonId, &lastMonId);
 
@@ -419,7 +419,7 @@ void atk51_switchhandleorder(void)
 	int i;
 	if (gBattleExecBuffer) return;
 
-	gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
+	gActiveBattler = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 
 	switch (gBattlescriptCurrInstr[2]) {
 		case 0:
@@ -432,7 +432,7 @@ void atk51_switchhandleorder(void)
 
 		case 1:
 			if (!(gBattleTypeFlags & BATTLE_TYPE_MULTI))
-				sub_8013F6C(gActiveBattler);
+				SwitchPartyOrder(gActiveBattler);
 			break;
 
 		case 2:
@@ -450,10 +450,10 @@ void atk51_switchhandleorder(void)
 				gBattleStruct->field_60[gActiveBattler ^ BIT_FLANK][2] = gBattleBufferB[gActiveBattler][3];
 			}
 			else if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
-				sub_80571DC(gActiveBattler, gBattleStruct->monToSwitchIntoId[gActiveBattler]);
+				SwitchPartyOrderInGameMulti(gActiveBattler, gBattleStruct->monToSwitchIntoId[gActiveBattler]);
 
 			else
-				sub_8013F6C(gActiveBattler);
+				SwitchPartyOrder(gActiveBattler);
 
 			PREPARE_SPECIES_BUFFER(gBattleTextBuff1, gBattleMons[gBankAttacker].species)
 			PREPARE_MON_NICK_BUFFER(gBattleTextBuff2, gActiveBattler, gBattleBufferB[gActiveBattler][1])
@@ -469,7 +469,7 @@ void atk52_switchineffects(void)
 	if (arg == BS_GET_SCRIPTING_BANK)
 		gBattleScripting.bank = gNewBS->SentInBackup; //Restore scripting backup b/c can get changed
 
-	gActiveBattler = GetBattleBank(arg);
+	gActiveBattler = GetBankForBattleScript(arg);
 	sub_80174B8(gActiveBattler);
 	gHitMarker &= ~(HITMARKER_FAINTED(gActiveBattler));
 	gSpecialStatuses[gActiveBattler].flag40 = 0;
@@ -863,33 +863,35 @@ void RestorePPLunarDance(void)
 }
 
 //Ripped from PokeEmerald
+#define MON_CAN_BATTLE(mon) (((GetMonData(mon, MON_DATA_SPECIES, NULL) != SPECIES_NONE && !GetMonData(mon, MON_DATA_IS_EGG, NULL) && GetMonData(mon, MON_DATA_HP, NULL) != 0)))
 void atk8F_forcerandomswitch(void)
 {
 	int i;
-	s32 battler1PartyId = 0;
-	s32 battler2PartyId = 0;
-	u8 lastMonId = 0; // + 1
-	u8 firstMonId = 0;
-	s32 monsCount = 0;
+	u8 bankDef, firstMonId, lastMonId;
+	u8 battler1PartyId = 0;
+	u8 battler2PartyId = 0;
+	u8 monsCount = 0;
+	u8 validMons = 0;
+	u8 minNeeded = 1;
 	struct Pokemon* party = NULL;
-	s32 validMons = 0;
-	s32 minNeeded = 1;
+	
+	bankDef = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 
 	if (gBattleTypeFlags & (BATTLE_TYPE_TRAINER | BATTLE_TYPE_DOUBLE)) //Trainer Battle or Wild Double Battle
 	{
-		party = LoadPartyRange(gBankTarget, &firstMonId, &lastMonId);
+		party = LoadPartyRange(bankDef, &firstMonId, &lastMonId);
 
 		if ((gBattleTypeFlags & BATTLE_TYPE_FRONTIER && gBattleTypeFlags & BATTLE_TYPE_LINK)
 		||  (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
 		||  (gBattleTypeFlags & BATTLE_TYPE_MULTI && gBattleTypeFlags & BATTLE_TYPE_LINK))
 		{
 			monsCount = 3;
-			battler2PartyId = gBattlerPartyIndexes[gBankTarget];
-			battler1PartyId = gBattlerPartyIndexes[gBankTarget ^ BIT_FLANK];
+			battler2PartyId = gBattlerPartyIndexes[bankDef];
+			battler1PartyId = gBattlerPartyIndexes[PARTNER(bankDef)];
 		}
 		else if (gBattleTypeFlags & BATTLE_TYPE_TWO_OPPONENTS)
 		{
-			if (SIDE(gBankTarget) == B_SIDE_PLAYER)
+			if (SIDE(bankDef) == B_SIDE_PLAYER)
 			{
 				if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
 				{
@@ -904,12 +906,13 @@ void atk8F_forcerandomswitch(void)
 			{
 				monsCount = 3;
 			}
-			battler2PartyId = gBattlerPartyIndexes[gBankTarget];
-			battler1PartyId = gBattlerPartyIndexes[gBankTarget ^ BIT_FLANK];
+
+			battler2PartyId = gBattlerPartyIndexes[bankDef];
+			battler1PartyId = gBattlerPartyIndexes[PARTNER(bankDef)];
 		}
 		else if (gBattleTypeFlags & BATTLE_TYPE_INGAME_PARTNER)
 		{
-			if (SIDE(gBankTarget) == B_SIDE_PLAYER)
+			if (SIDE(bankDef) == B_SIDE_PLAYER)
 			{
 				monsCount = 3;
 			}
@@ -917,35 +920,33 @@ void atk8F_forcerandomswitch(void)
 			{
 				monsCount = 6;
 			}
-			battler2PartyId = gBattlerPartyIndexes[gBankTarget];
-			battler1PartyId = gBattlerPartyIndexes[gBankTarget ^ BIT_FLANK];
+			battler2PartyId = gBattlerPartyIndexes[bankDef];
+			battler1PartyId = gBattlerPartyIndexes[PARTNER(bankDef)];
 		}
 		else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
 		{
 			monsCount = 6;
-			battler2PartyId = gBattlerPartyIndexes[gBankTarget];
-			battler1PartyId = gBattlerPartyIndexes[gBankTarget ^ BIT_FLANK];
+			battler2PartyId = gBattlerPartyIndexes[bankDef];
+			battler1PartyId = gBattlerPartyIndexes[PARTNER(bankDef)];
 		}
 		else //Single Battle
 		{
 			monsCount = 6;
-			battler2PartyId = gBattlerPartyIndexes[gBankTarget]; // there is only one pokemon out in single battles
-			battler1PartyId = gBattlerPartyIndexes[gBankTarget];
+			battler2PartyId = gBattlerPartyIndexes[bankDef]; // there is only one pokemon out in single battles
+			battler1PartyId = gBattlerPartyIndexes[bankDef];
 		}
 
-		for (i = firstMonId; i < lastMonId; i++)
+		for (i = firstMonId; i < lastMonId; ++i)
 		{
-			if (GetMonData(&party[i], MON_DATA_SPECIES, 0) != SPECIES_NONE
-			&& !GetMonData(&party[i], MON_DATA_IS_EGG, 0)
-			&&  GetMonData(&party[i], MON_DATA_HP, 0) != 0
-			&& i != battler1PartyId
-			&& i != battler2PartyId)
+			if (i != battler1PartyId
+			&&  i != battler2PartyId
+			&& MON_CAN_BATTLE(&party[i]))
 				validMons++;
 		}
 
 		if (validMons < minNeeded)
 		{
-			gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+			gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
 		}
 		else
 		{
@@ -953,29 +954,24 @@ void atk8F_forcerandomswitch(void)
 			{
 				do
 				{
-					i = umodsi(Random(), monsCount);
+					i = Random() % monsCount;
 					i += firstMonId;
 				}
 				while (i == battler1PartyId
 					|| i == battler2PartyId
-					|| GetMonData(&party[i], MON_DATA_SPECIES, 0) == SPECIES_NONE
-					|| GetMonData(&party[i], MON_DATA_IS_EGG, 0) != FALSE
-					|| GetMonData(&party[i], MON_DATA_HP, 0) == 0);
+					|| !MON_CAN_BATTLE(&party[i]));
 			}
-			gBattleStruct->monToSwitchIntoId[gBankTarget] = i;
+			gBattleStruct->monToSwitchIntoId[bankDef] = i;
 
 			if (!IsLinkDoubleBattle() && !IsTagBattle())
-				sub_8013F6C(gBankTarget);
-
-			if ((gBattleTypeFlags & BATTLE_TYPE_LINK && gBattleTypeFlags & BATTLE_TYPE_FRONTIER)
-				|| (gBattleTypeFlags & BATTLE_TYPE_LINK && gBattleTypeFlags & BATTLE_TYPE_MULTI))
+				SwitchPartyOrder(bankDef);
+			else if (gBattleTypeFlags & BATTLE_TYPE_LINK && gBattleTypeFlags & (BATTLE_TYPE_MULTI | BATTLE_TYPE_FRONTIER))
 			{
-				sub_8127EC4(gBankTarget, i, 0);
-				sub_8127EC4(gBankTarget ^ BIT_FLANK, i, 1);
+				SwitchPartyOrderLinkMulti(bankDef, i, 0);
+				SwitchPartyOrderLinkMulti(PARTNER(bankDef), i, 1);
 			}
-
-			if (IsTagBattle())
-				sub_80571DC(gBankTarget, i);
+			else if (IsTagBattle())
+				SwitchPartyOrderInGameMulti(bankDef, i);
 		}
 	}
 	else //Regular Wild Battle
@@ -984,53 +980,58 @@ void atk8F_forcerandomswitch(void)
 
 static bool8 TryDoForceSwitchOut(void)
 {
-	if (IsDynamaxed(gBankTarget)) //Can't force out a Dynamaxed mon
+	u8 bankDef = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
+	u8 bankAtk = GetBankForBattleScript(gBattlescriptCurrInstr[2]);
+
+	if (IsDynamaxed(bankDef)) //Can't force out a Dynamaxed mon
 	{
-		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
 		return FALSE;
 	}
 
 	if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
 	{
-		gBattleStruct->switchoutPartyIndex[gBankTarget] = gBattlerPartyIndexes[gBankTarget];
+		gBankSwitching = bankDef;
+		gBattleStruct->switchoutPartyIndex[bankDef] = gBattlerPartyIndexes[bankDef];
 		gBattlescriptCurrInstr = BattleScript_SuccessForceOut;
 		return TRUE;
 	}
 
 	//If Wild Battle
-	else if (gBattleMons[gBankAttacker].level < gBattleMons[gBankTarget].level)
+	else if (gBattleMons[bankAtk].level < gBattleMons[bankDef].level)
 	{
-		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
 		return FALSE;
 	}
 
-	//Roar always fails in Wild Double Battles if used by the player
-	else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && SIDE(gBankAttacker) == B_SIDE_PLAYER)
+	//Roar always fails in Wild Double Battles if used on the wild mon
+	else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && SIDE(bankDef) == B_SIDE_OPPONENT)
 	{
-		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
 		return FALSE;
 	}
 
-	gBattleStruct->switchoutPartyIndex[gBankTarget] = gBattlerPartyIndexes[gBankTarget];
+	gBankSwitching = bankDef;
+	gBattleStruct->switchoutPartyIndex[bankDef] = gBattlerPartyIndexes[bankDef];
 	gBattlescriptCurrInstr = BattleScript_SuccessForceOut;
 	return TRUE;
 }
 
-static void sub_80571DC(u8 battlerId, u8 arg1)
-{ //0x8013F6C in FR
-	if (SIDE(battlerId) != B_SIDE_OPPONENT)
+static void SwitchPartyOrderInGameMulti(u8 bank, u8 monToSwitchIntoId)
+{	//0x8013F6C in FR
+	if (SIDE(bank) != B_SIDE_OPPONENT)
 	{
 		s32 i;
 
 		// gBattleStruct->field_60[0][i]
 
 		for (i = 0; i < 3; i++)
-			gUnknown_0203B0DC[i] = gBattleStruct->field_60[0][i];
+			gBattlePartyCurrentOrder[i] = gBattleStruct->field_60[0][i];
 
-		sub_8127FF4(pokemon_order_func(gBattlerPartyIndexes[battlerId]), pokemon_order_func(arg1)); //In Emerald: sub_81B8FB0
+		SwitchPartyMonSlots(GetPartyIdFromBattlePartyId(gBattlerPartyIndexes[bank]), GetPartyIdFromBattlePartyId(monToSwitchIntoId));
 
 		for (i = 0; i < 3; i++)
-			gBattleStruct->field_60[0][i] = gUnknown_0203B0DC[i];
+			gBattleStruct->field_60[0][i] = gBattlePartyCurrentOrder[i];
 	}
 }
 

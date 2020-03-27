@@ -753,7 +753,7 @@ void __attribute__((long_call)) HandleSetPokedexFlag(u16 nationalNum, u8 caseId,
 u16 __attribute__((long_call)) GetPokedexHeightWeight(u16 dexNum, u8 data);
 void __attribute__((long_call)) HealPlayerParty(void);
 void __attribute__((long_call)) ReducePartyToThree(void);
-u8 __attribute__((long_call)) pokemon_order_func(u8 a);
+u8 __attribute__((long_call)) GetPartyIdFromBattlePartyId(u8 a);
 u8 __attribute__((long_call)) GetEggMoves(struct Pokemon* poke, void* storageAddr);
 void __attribute__((long_call)) Special_0DD_DeleteMove();
 

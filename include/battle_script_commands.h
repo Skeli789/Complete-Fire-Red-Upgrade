@@ -14,9 +14,20 @@
 #define CMP_COMMON_BITS         0x4
 #define CMP_NO_COMMON_BITS      0x5
 
+#define BS_GET_TARGET                   0
+#define BS_GET_ATTACKER                 1
+#define BS_GET_EFFECT_BANK              2
+#define BS_GET_FAINTED_BANK             3
+#define BS_GET_BANK_0                   7
 #define BS_ATTACKER_WITH_PARTNER        4 // for atk98_status_icon_update
 #define BS_GET_ATTACKER_SIDE            8 // for atk1E_jumpifability
 #define BS_GET_NOT_ATTACKER_SIDE        9 // for atk1E_jumpifability
+#define BS_GET_SCRIPTING_BANK           10
+#define BS_GET_PLAYER1                  11
+#define BS_GET_OPPONENT1                12
+#define BS_GET_PLAYER2                  13
+#define BS_GET_OPPONENT2                14
+#define BS_GET_SWITCHING_BANK           15
 
 //Atk 48
 #define ATK48_STAT_NEGATIVE         0x1

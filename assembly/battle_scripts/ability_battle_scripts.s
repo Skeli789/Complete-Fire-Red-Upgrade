@@ -350,25 +350,24 @@ EmergencyExitFleeBS:
 	end
 
 EmergencyExitSwitchBS:
-	jumpifcannotswitch BANK_SCRIPTING | ATK4F_DONT_CHECK_STATUSES EmergencyExitReturn
+	jumpifcannotswitch BANK_SWITCHING | ATK4F_DONT_CHECK_STATUSES EmergencyExitReturn
 	call BattleScript_AbilityPopUp
-	playanimation BANK_SCRIPTING ANIM_CALL_BACK_POKEMON 0x0
-	callasm MakeScriptingBankInvisible
+	playanimation BANK_SWITCHING ANIM_CALL_BACK_POKEMON 0x0
+	callasm MakeSwitchingBankInvisible
 	call BattleScript_AbilityPopUpRevert
-	openpartyscreen BANK_SCRIPTING EmergencyExitReturn
-	switchoutabilities BANK_SCRIPTING
+	openpartyscreen BANK_SWITCHING EmergencyExitReturn
+	switchoutabilities BANK_SWITCHING
 	waitstateatk
-	switchhandleorder BANK_SCRIPTING 0x2
-	returntoball BANK_SCRIPTING
-	switch1 BANK_SCRIPTING
-	switch2 BANK_SCRIPTING
-	hpthresholds BANK_SCRIPTING
+	switchhandleorder BANK_SWITCHING 0x2
+	returntoball BANK_SWITCHING
+	switch1 BANK_SWITCHING
+	switch2 BANK_SWITCHING
+	hpthresholds BANK_SWITCHING
 	printstring 0x3
-	switch3 BANK_SCRIPTING 0x1
+	switch3 BANK_SWITCHING 0x1
 	waitstateatk
-	callasm BackupScriptingBank
-	switchineffects BANK_SCRIPTING
-	callasm SetNoMoreMovingThisTurnScriptingBank @;New Pokemon can't attack after being switched in
+	switchineffects BANK_SWITCHING
+	callasm SetNoMoreMovingThisTurnSwitchingBank @;New Pokemon can't attack after being switched in
 
 EmergencyExitReturn:
 	return

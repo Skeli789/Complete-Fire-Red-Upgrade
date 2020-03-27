@@ -57,7 +57,7 @@ void atk13_printfromtable(void)
 void atk20_jumpifstat(void)
 {
 	u8 ret = 0;
-	u8 bank = GetBattleBank(gBattlescriptCurrInstr[1]);
+	u8 bank = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 	u8 value = gBattleMons[bank].statStages[gBattlescriptCurrInstr[3] - 1];
 	s8 comparison = gBattlescriptCurrInstr[4];
 
@@ -108,7 +108,7 @@ void atk48_playstatchangeanimation(void)
 	u8 statsToCheck = 0;
 	u8 flags = gBattlescriptCurrInstr[3];
 
-	gActiveBattler = GetBattleBank(T2_READ_8(gBattlescriptCurrInstr + 1));
+	gActiveBattler = GetBankForBattleScript(T2_READ_8(gBattlescriptCurrInstr + 1));
 	statsToCheck = T2_READ_8(gBattlescriptCurrInstr + 2);
 
 	if (ABILITY(gActiveBattler) == ABILITY_SIMPLE)

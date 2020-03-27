@@ -249,7 +249,7 @@ void CheckLastMonLowHPSlide(void)
 //handletrainerslidemsg BANK CASE
 void atkFF1C_handletrainerslidemsg(void)
 {
-	gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
+	gActiveBattler = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 
 	if (IS_DOUBLE_BATTLE)
 		gActiveBattler &= BIT_SIDE; //Always mon on enemy left in doubles
@@ -275,7 +275,7 @@ void atkFF1D_trytrainerslidefirstdownmsg(void)
 {
 	u8 pos, shouldDo;
 
-	gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
+	gActiveBattler = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 	pos = GetBattlerPosition(gActiveBattler);
 
 	if (IsTwoOpponentBattle() && pos == B_POSITION_OPPONENT_RIGHT)

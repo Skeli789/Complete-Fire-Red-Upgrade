@@ -326,7 +326,7 @@ void atk0B_healthbarupdate(void)
 
 	if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) || (gHitMarker & HITMARKER_NON_ATTACK_DMG))
 	{
-		gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
+		gActiveBattler = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 		ability = ABILITY(gActiveBattler);
 
 		if (gBattleMons[gActiveBattler].status2 & STATUS2_SUBSTITUTE
@@ -386,7 +386,7 @@ void atk0C_datahpupdate(void) {
 
 	if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) || (gHitMarker & HITMARKER_NON_ATTACK_DMG))
 	{
-		gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
+		gActiveBattler = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 
 		//If Substitute Up
 		if (gBattleMons[gActiveBattler].status2 & STATUS2_SUBSTITUTE
@@ -582,7 +582,7 @@ void atk0C_datahpupdate(void) {
 	}
 	else
 	{
-		gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
+		gActiveBattler = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 		if (gSpecialStatuses[gActiveBattler].moveturnLostHP == 0)
 			gSpecialStatuses[gActiveBattler].moveturnLostHP = 0xFFFF;
 	}
@@ -773,7 +773,7 @@ void atk19_tryfaintmon(void)
 
 	if (gBattlescriptCurrInstr[2] != 0)
 	{
-		gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
+		gActiveBattler = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 		if (gHitMarker & HITMARKER_FAINTED(gActiveBattler) && gNewBS->endTurnDone) //To prevent things like Whirlwind from activating this
 		{
 			BS_ptr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
@@ -907,7 +907,7 @@ bool8 TryDoBenjaminButterfree(u8 scriptOffset)
 }
 
 void atk1B_cleareffectsonfaint(void) {
-	gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
+	gActiveBattler = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 	u8 partner = PARTNER(gActiveBattler);
 	pokemon_t* mon = GetBankPartyData(gActiveBattler);
 
@@ -1121,7 +1121,7 @@ void atk1B_cleareffectsonfaint(void) {
 }
 
 void atk1D_jumpifstatus2(void) {
-	u8 bank = GetBattleBank(gBattlescriptCurrInstr[1]);
+	u8 bank = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 	u32 flags = T2_READ_32(gBattlescriptCurrInstr + 2);
 	void* jump_loc = T2_READ_PTR(gBattlescriptCurrInstr + 6);
 
@@ -1199,7 +1199,7 @@ void atk1E_jumpifability(void)
 	}
 	else
 	{
-		battlerId = GetBattleBank(gBattlescriptCurrInstr[1]);
+		battlerId = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 		if (ABILITY(battlerId) == ability)
 		{
 			gLastUsedAbility = ability;
@@ -1214,7 +1214,7 @@ void atk1E_jumpifability(void)
 
 void atk22_jumpiftype(void) //u8 bank, u8 type, *ptr
 {
-	u8 bank = GetBattleBank(gBattlescriptCurrInstr[1]);
+	u8 bank = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 	u8 type = gBattlescriptCurrInstr[2];
 	void* jump_loc = T2_READ_PTR(gBattlescriptCurrInstr + 3);
 
@@ -1258,7 +1258,7 @@ void atk40_jumpifaffectedbyprotect(void)
 
 void atk42_jumpiftype2(void) //u8 bank, u8 type, *ptr
 {
-	u8 bank = GetBattleBank(gBattlescriptCurrInstr[1]);
+	u8 bank = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 
 	if (IsOfType(bank, gBattlescriptCurrInstr[2]))
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 3);
@@ -1317,7 +1317,7 @@ void atk45_playanimation(void)
 {
 	u16* argumentPtr;
 
-	gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
+	gActiveBattler = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 	argumentPtr = T2_READ_PTR(gBattlescriptCurrInstr + 3);
 
 	if (gBattlescriptCurrInstr[2] == B_ANIM_STATS_CHANGE)
@@ -1398,7 +1398,7 @@ void atk46_playanimation2(void) // animation Id is stored in the first pointer
 	u16* argumentPtr;
 	const u8* animationIdPtr;
 
-	gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
+	gActiveBattler = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 	animationIdPtr = T2_READ_PTR(gBattlescriptCurrInstr + 2);
 	argumentPtr = T2_READ_PTR(gBattlescriptCurrInstr + 6);
 
@@ -1550,7 +1550,7 @@ void atk63_jumptocalledmove(void)
 void atk64_statusanimation(void) {
 	if (gBattleExecBuffer) return;
 
-	gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
+	gActiveBattler = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 
 	if (!(gStatuses3[gActiveBattler] & STATUS3_SEMI_INVULNERABLE) && gDisableStructs[gActiveBattler].substituteHP == 0 && !(gHitMarker & HITMARKER_NO_ANIMATIONS)) {
 			EmitStatusAnimation(0, 0, gBattleMons[gActiveBattler].status1);
@@ -1563,7 +1563,7 @@ void atk66_chosenstatusanimation(void) {
 	if (gBattleExecBuffer) return;
 
 	u32 status;
-	gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
+	gActiveBattler = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 	status = T1_READ_32(gBattlescriptCurrInstr + 3);
 
 	if (!(gStatuses3[gActiveBattler] & STATUS3_SEMI_INVULNERABLE) && gDisableStructs[gActiveBattler].substituteHP == 0 && !(gHitMarker & HITMARKER_NO_ANIMATIONS)) {
@@ -1574,7 +1574,7 @@ void atk66_chosenstatusanimation(void) {
 }
 
 void atk6A_removeitem(void) {
-	u8 bank = gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
+	u8 bank = gActiveBattler = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 	u8 oldItemEffect = ITEM_EFFECT(bank);
 	gLastUsedItem = gBattleMons[bank].item;
 
@@ -1633,7 +1633,7 @@ void atk6A_removeitem(void) {
 }
 
 void atk70_recordlastability(void) {
-	gActiveBattler = GetBattleBank(gBattlescriptCurrInstr[1]);
+	gActiveBattler = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 	RecordAbilityBattle(gActiveBattler, gLastUsedAbility);
 	gBattlescriptCurrInstr += 2;
 }

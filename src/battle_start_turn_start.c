@@ -616,180 +616,212 @@ enum MegaStates
 
 void RunTurnActionsFunctions(void)
 {
-	u8 effect;
 	int i, j;
+	u8 effect, savedActionFuncId;
 	u8* megaBank = &(gNewBS->megaData.activeBank);
 
 	if (gBattleOutcome != 0)
 		gCurrentActionFuncId = ACTION_FINISHED;
+	
+	savedActionFuncId = gCurrentActionFuncId;
 
-	if (gCurrentActionFuncId == ACTION_USE_MOVE)
+	if (!gNewBS->activatedCustapQuickClaw)
 	{
-		//Try to Mega Evolve/Ultra Burst Pokemon
-		switch (gNewBS->megaData.state) {
-			case Mega_Check:
-				for (i = *megaBank; i < gBattlersCount; ++i, ++*megaBank)
-				{
-					u8 bank = gActiveBattler = gBanksByTurnOrder[i];
-					if (gNewBS->megaData.chosen[bank]
-					&& !gNewBS->megaData.done[bank]
-					&& !DoesZMoveUsageStopMegaEvolution(bank))
-					{
-						const u8* script = DoMegaEvolution(bank);
-						if (script != NULL)
-						{
-							if (!(gBattleTypeFlags & BATTLE_TYPE_MEGA_BRAWL)) //As many mons can Mega Evolve as you want
-								gNewBS->megaData.done[bank] = TRUE;
-
-							gNewBS->megaData.chosen[bank] = 0;
-							gNewBS->megaData.megaEvoInProgress = TRUE;
-							gNewBS->megaData.script = script;
-							if (!(gBattleTypeFlags & (BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_MULTI | BATTLE_TYPE_MEGA_BRAWL))
-							&& SIDE(bank) == B_SIDE_PLAYER)
-							{
-								gNewBS->megaData.chosen[PARTNER(bank)] = 0;
-								gNewBS->megaData.done[PARTNER(bank)] = TRUE;
-							}
-							else if (!(gBattleTypeFlags & (BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_MULTI | BATTLE_TYPE_MEGA_BRAWL))
-							&& SIDE(bank) == B_SIDE_OPPONENT)
-							{
-								gNewBS->megaData.chosen[PARTNER(bank)] = 0;
-								gNewBS->megaData.done[PARTNER(bank)] = TRUE;
-							}
-							RecordItemEffectBattle(bank, ITEM_EFFECT_MEGA_STONE);
-							BattleScriptExecute(gNewBS->megaData.script);
-							return;
-						}
-					}
-					else if (gNewBS->ultraData.chosen[bank] && !gNewBS->ultraData.done[bank])
-					{
-						const u8* script = DoMegaEvolution(bank);
-						if (script != NULL)
-						{
-							if (!(gBattleTypeFlags & BATTLE_TYPE_MEGA_BRAWL)) //As many mons can Mega Evolve as you want
-								gNewBS->ultraData.done[bank] = TRUE;
-
-							gNewBS->ultraData.chosen[bank] = 0;
-							gNewBS->megaData.megaEvoInProgress = TRUE;
-							gNewBS->megaData.script = script;
-							if (!(gBattleTypeFlags & (BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_MULTI | BATTLE_TYPE_MEGA_BRAWL))
-							&& SIDE(bank) == B_SIDE_PLAYER)
-							{
-								gNewBS->ultraData.chosen[PARTNER(bank)] = 0;
-								gNewBS->ultraData.done[PARTNER(bank)] = TRUE;
-							}
-							else if (!(gBattleTypeFlags & (BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_MULTI | BATTLE_TYPE_MEGA_BRAWL))
-							&& SIDE(bank) == B_SIDE_OPPONENT)
-							{
-								gNewBS->ultraData.chosen[PARTNER(bank)] = 0;
-								gNewBS->ultraData.done[PARTNER(bank)] = TRUE;
-							}
-							RecordItemEffectBattle(bank, ITEM_EFFECT_MEGA_STONE);
-							BattleScriptExecute(gNewBS->megaData.script);
-							return;
-						}
-					}
-				}
-				if (gNewBS->megaData.megaEvoInProgress)
-					++gNewBS->megaData.state;
-				else
-					gNewBS->megaData.state = Mega_End;
-				return;
-
-			case Mega_CalcTurnOrder:
-				for (i = 0; i < gBattlersCount - 1; ++i)
-				{
-					for (j = i + 1; j < gBattlersCount; ++j)
-					{
-						u8 bank1 = gBanksByTurnOrder[i];
-						u8 bank2 = gBanksByTurnOrder[j];
-						if (gActionsByTurnOrder[i] != ACTION_USE_ITEM
-							&& gActionsByTurnOrder[j] != ACTION_USE_ITEM
-							&& gActionsByTurnOrder[i] != ACTION_SWITCH
-							&& gActionsByTurnOrder[j] != ACTION_SWITCH
-							&& gActionsByTurnOrder[i] != ACTION_FINISHED
-							&& gActionsByTurnOrder[j] != ACTION_FINISHED)
-						{
-							if (GetWhoStrikesFirst(bank1, bank2, FALSE))
-								SwapTurnOrder(i, j);
-						}
-					}
-				}
-				*megaBank = 0; //Reset the bank for the next loop
-				++gNewBS->megaData.state;
-				return;
-
-			case Mega_SwitchInAbilities:
-				while (*megaBank < gBattlersCount) {
-					if (AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, gBanksByTurnOrder[*megaBank], 0, 0, 0))
-						++effect;
-					++*megaBank;
-
-					if (effect) return;
-				}
-				*megaBank = 0;
-				++gNewBS->megaData.state;
-				return;
-
-			case Mega_Intimidate:
-				if (AbilityBattleEffects(ABILITYEFFECT_INTIMIDATE1, 0, 0, 0, 0))
-					return;
-				if (AbilityBattleEffects(ABILITYEFFECT_INTIMIDATE2, 0, 0, 0, 0))
-					return;
-
-				gNewBS->megaData.script = 0;
-				gNewBS->megaData.state = Mega_End;
-				gNewBS->megaData.activeBank = 0;
-				gNewBS->megaData.megaEvoInProgress = FALSE;
-		}
-
-		*megaBank = 0;
-
-		//Try to Dynamax/Gigantamax Pokemon
-		for (i = 0; i < gBattlersCount; ++i)
+		for (i = 0; i < gBattlersCount; ++i) //Loop through all battlers and play Quick Claw anim for each
 		{
-			u8 bank = gActiveBattler = gBanksByTurnOrder[i];
-
-			if (gNewBS->dynamaxData.toBeUsed[bank]
-			&& !gNewBS->dynamaxData.used[bank]
-			&& !DoesZMoveUsageStopMegaEvolution(bank)) //Same for Dynamax
+			if (gNewBS->CustapQuickClawIndicator & gBitTable[i])
 			{
-				const u8* script = GetDynamaxScript(bank);
-				if (script != NULL)
+				gNewBS->CustapQuickClawIndicator &= ~(gBitTable[i]);
+
+				if (gActionsByTurnOrder[i] != ACTION_USE_ITEM)
 				{
-					gNewBS->dynamaxData.toBeUsed[bank] = FALSE;
-					gNewBS->dynamaxData.used[bank] = TRUE;
-					gNewBS->dynamaxData.timer[bank] = 3; //Dynamax lasts for 3 turns
-					gNewBS->dynamaxData.partyIndex[SIDE(bank)] = gBitTable[gBattlerPartyIndexes[bank]];
+					gBattleScripting.bank = i;
+					gLastUsedItem = ITEM(i);
+					if (ITEM_EFFECT(i) != ITEM_EFFECT_CUSTAP_BERRY)
+						RecordItemEffectBattle(i, ITEM_EFFECT(i));
 
-					if (SIDE(bank) == B_SIDE_PLAYER)
-					{
-						gNewBS->dynamaxData.toBeUsed[PARTNER(bank)] = FALSE;
-						gNewBS->dynamaxData.used[PARTNER(bank)] = TRUE;
-					}
-					else
-					{
-						gNewBS->dynamaxData.toBeUsed[PARTNER(bank)] = FALSE;
-						gNewBS->dynamaxData.used[PARTNER(bank)] = TRUE;
-					}
-
-					BattleScriptExecute(script);
-
-					if (IS_BEHIND_SUBSTITUTE(bank))
-					{
-						BattleScriptPushCursor();
-						gBankTarget = bank;
-						gBattleMons[gActiveBattler].status2 &= ~(STATUS2_SUBSTITUTE);
-						gDisableStructs[gActiveBattler].substituteHP = 0;
-						gBattlescriptCurrInstr = BattleScript_SubstituteFade;
-						BattleScriptPushCursor();
-						gBattlescriptCurrInstr = BattleScript_FlushMessageBox;
-					}
+					BattleScriptExecute(BattleScript_QuickClaw);
+					gCurrentActionFuncId = savedActionFuncId;
 					return;
 				}
 			}
 		}
+	}
+	
+	gNewBS->activatedCustapQuickClaw = TRUE; //So the animation only plays once
 
+	//Try to Mega Evolve/Ultra Burst Pokemon
+	switch (gNewBS->megaData.state) {
+		case Mega_Check:
+			for (i = *megaBank; i < gBattlersCount; ++i, ++*megaBank)
+			{
+				u8 bank = gActiveBattler = gBanksByTurnOrder[i];
+				if (gNewBS->megaData.chosen[bank]
+				&& !gNewBS->megaData.done[bank]
+				&& !DoesZMoveUsageStopMegaEvolution(bank)
+				&& (gCurrentActionFuncId == ACTION_USE_MOVE
+				 || (gCurrentActionFuncId == ACTION_SWITCH && gChosenMovesByBanks[bank] == MOVE_PURSUIT)))
+				{
+					const u8* script = DoMegaEvolution(bank);
+					if (script != NULL)
+					{
+						if (!(gBattleTypeFlags & BATTLE_TYPE_MEGA_BRAWL)) //As many mons can Mega Evolve as you want
+							gNewBS->megaData.done[bank] = TRUE;
+
+						gNewBS->megaData.chosen[bank] = 0;
+						gNewBS->megaData.megaEvoInProgress = TRUE;
+						gNewBS->megaData.script = script;
+						if (!(gBattleTypeFlags & (BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_MULTI | BATTLE_TYPE_MEGA_BRAWL))
+						&& SIDE(bank) == B_SIDE_PLAYER)
+						{
+							gNewBS->megaData.chosen[PARTNER(bank)] = 0;
+							gNewBS->megaData.done[PARTNER(bank)] = TRUE;
+						}
+						else if (!(gBattleTypeFlags & (BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_MULTI | BATTLE_TYPE_MEGA_BRAWL))
+						&& SIDE(bank) == B_SIDE_OPPONENT)
+						{
+							gNewBS->megaData.chosen[PARTNER(bank)] = 0;
+							gNewBS->megaData.done[PARTNER(bank)] = TRUE;
+						}
+						RecordItemEffectBattle(bank, ITEM_EFFECT_MEGA_STONE);
+						BattleScriptExecute(gNewBS->megaData.script);
+						gCurrentActionFuncId = savedActionFuncId;
+						return;
+					}
+				}
+				else if (gNewBS->ultraData.chosen[bank] && !gNewBS->ultraData.done[bank])
+				{
+					const u8* script = DoMegaEvolution(bank);
+					if (script != NULL)
+					{
+						if (!(gBattleTypeFlags & BATTLE_TYPE_MEGA_BRAWL)) //As many mons can Mega Evolve as you want
+							gNewBS->ultraData.done[bank] = TRUE;
+
+						gNewBS->ultraData.chosen[bank] = 0;
+						gNewBS->megaData.megaEvoInProgress = TRUE;
+						gNewBS->megaData.script = script;
+						if (!(gBattleTypeFlags & (BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_MULTI | BATTLE_TYPE_MEGA_BRAWL))
+						&& SIDE(bank) == B_SIDE_PLAYER)
+						{
+							gNewBS->ultraData.chosen[PARTNER(bank)] = 0;
+							gNewBS->ultraData.done[PARTNER(bank)] = TRUE;
+						}
+						else if (!(gBattleTypeFlags & (BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_MULTI | BATTLE_TYPE_MEGA_BRAWL))
+						&& SIDE(bank) == B_SIDE_OPPONENT)
+						{
+							gNewBS->ultraData.chosen[PARTNER(bank)] = 0;
+							gNewBS->ultraData.done[PARTNER(bank)] = TRUE;
+						}
+						RecordItemEffectBattle(bank, ITEM_EFFECT_MEGA_STONE);
+						BattleScriptExecute(gNewBS->megaData.script);
+						gCurrentActionFuncId = savedActionFuncId;
+						return;
+					}
+				}
+			}
+			if (gNewBS->megaData.megaEvoInProgress)
+				++gNewBS->megaData.state;
+			else
+				gNewBS->megaData.state = Mega_End;
+			return;
+
+		case Mega_CalcTurnOrder:
+			for (i = 0; i < gBattlersCount - 1; ++i)
+			{
+				for (j = i + 1; j < gBattlersCount; ++j)
+				{
+					u8 bank1 = gBanksByTurnOrder[i];
+					u8 bank2 = gBanksByTurnOrder[j];
+					if (gActionsByTurnOrder[i] != ACTION_USE_ITEM
+						&& gActionsByTurnOrder[j] != ACTION_USE_ITEM
+						&& gActionsByTurnOrder[i] != ACTION_SWITCH
+						&& gActionsByTurnOrder[j] != ACTION_SWITCH
+						&& gActionsByTurnOrder[i] != ACTION_FINISHED
+						&& gActionsByTurnOrder[j] != ACTION_FINISHED)
+					{
+						if (GetWhoStrikesFirst(bank1, bank2, FALSE))
+							SwapTurnOrder(i, j);
+					}
+				}
+			}
+			*megaBank = 0; //Reset the bank for the next loop
+			++gNewBS->megaData.state;
+			return;
+
+		case Mega_SwitchInAbilities:
+			while (*megaBank < gBattlersCount) {
+				if (AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, gBanksByTurnOrder[*megaBank], 0, 0, 0))
+					++effect;
+				++*megaBank;
+
+				if (effect) return;
+			}
+			*megaBank = 0;
+			++gNewBS->megaData.state;
+			return;
+
+		case Mega_Intimidate:
+			gNewBS->megaData.script = 0;
+			gNewBS->megaData.state = Mega_End;
+			gNewBS->megaData.activeBank = 0;
+			gNewBS->megaData.megaEvoInProgress = FALSE;
+			//Fallthrough
+		case Mega_End:
+			if (gCurrentActionFuncId != ACTION_USE_MOVE) //Necessary because of Mega Evolving before Pursuit
+				gNewBS->megaData.state = 0; //Reset since not everyone may have had a chance to Mega Evolve
+	}
+
+	*megaBank = 0;
+
+	//Try to Dynamax/Gigantamax Pokemon
+	for (i = 0; i < gBattlersCount; ++i)
+	{
+		u8 bank = gActiveBattler = gBanksByTurnOrder[i];
+
+		if (gNewBS->dynamaxData.toBeUsed[bank]
+		&& !gNewBS->dynamaxData.used[bank]
+		&& !DoesZMoveUsageStopMegaEvolution(bank)) //Same for Dynamax
+		{
+			const u8* script = GetDynamaxScript(bank);
+			if (script != NULL)
+			{
+				gNewBS->dynamaxData.toBeUsed[bank] = FALSE;
+				gNewBS->dynamaxData.used[bank] = TRUE;
+				gNewBS->dynamaxData.timer[bank] = 3; //Dynamax lasts for 3 turns
+				gNewBS->dynamaxData.partyIndex[SIDE(bank)] = gBitTable[gBattlerPartyIndexes[bank]];
+
+				if (SIDE(bank) == B_SIDE_PLAYER)
+				{
+					gNewBS->dynamaxData.toBeUsed[PARTNER(bank)] = FALSE;
+					gNewBS->dynamaxData.used[PARTNER(bank)] = TRUE;
+				}
+				else
+				{
+					gNewBS->dynamaxData.toBeUsed[PARTNER(bank)] = FALSE;
+					gNewBS->dynamaxData.used[PARTNER(bank)] = TRUE;
+				}
+
+				BattleScriptExecute(script);
+				gCurrentActionFuncId = savedActionFuncId;
+				
+
+				if (IS_BEHIND_SUBSTITUTE(bank))
+				{
+					BattleScriptPushCursor();
+					gBankTarget = bank;
+					gBattleMons[gActiveBattler].status2 &= ~(STATUS2_SUBSTITUTE);
+					gDisableStructs[gActiveBattler].substituteHP = 0;
+					gBattlescriptCurrInstr = BattleScript_SubstituteFade;
+					BattleScriptPushCursor();
+					gBattlescriptCurrInstr = BattleScript_FlushMessageBox;
+				}
+				return;
+			}
+		}
+	}
+
+	if (gCurrentActionFuncId == ACTION_USE_MOVE)
+	{
 		while (gBattleStruct->focusPunchBank < gBattlersCount)
 		{
 			gActiveBattler = gBanksByTurnOrder[gBattleStruct->focusPunchBank];
@@ -820,36 +852,9 @@ void RunTurnActionsFunctions(void)
 				return;
 			}
 		}
-
-		//Ofiically this goes before the Mega, but I think this is better.
-		if (!gNewBS->activatedCustapQuickClaw)
-		{
-			for (i = 0; i < gBattlersCount; ++i) //Loop through all battlers and play Quick Claw anim for each
-			{
-				if (gNewBS->CustapQuickClawIndicator & gBitTable[i])
-				{
-					gNewBS->CustapQuickClawIndicator &= ~(gBitTable[i]);
-
-					if (gActionsByTurnOrder[i] != ACTION_USE_ITEM
-					&& gActionsByTurnOrder[i] != ACTION_SWITCH)
-					{
-						gBattleScripting.bank = i;
-						gLastUsedItem = ITEM(i);
-						if (ITEM_EFFECT(i) != ITEM_EFFECT_CUSTAP_BERRY)
-							RecordItemEffectBattle(i, ITEM_EFFECT(i));
-
-						BattleScriptExecute(BattleScript_QuickClaw);
-						return;
-					}
-				}
-			}
-		}
-
-		gNewBS->activatedCustapQuickClaw = TRUE; //So the animation only plays once
 	}
 
 	gBattleStruct->savedTurnActionNumber = gCurrentTurnActionNumber;
-	u8 savedActionFuncId = gCurrentActionFuncId;
 	sTurnActionsFuncsTable[gCurrentActionFuncId]();
 
 	TrySetupRaidBossRepeatedAttack(savedActionFuncId);

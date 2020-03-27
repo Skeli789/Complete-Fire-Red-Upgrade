@@ -223,10 +223,10 @@ void MoldBreakerRemoveAbilitiesOnForceSwitchIn(void)
 	||  ABILITY(bank) == ABILITY_TURBOBLAZE
 	||  ABILITY(bank) == ABILITY_TERAVOLT)
 	{
-		if (gMoldBreakerIgnoredAbilities[ABILITY(gBankTarget)])
+		if (gMoldBreakerIgnoredAbilities[ABILITY(gBankSwitching)])
 		{
-			gNewBS->DisabledMoldBreakerAbilities[gBankTarget] = gBattleMons[gBankTarget].ability;
-			gBattleMons[gBankTarget].ability = 0;
+			gNewBS->DisabledMoldBreakerAbilities[gBankSwitching] = gBattleMons[gBankSwitching].ability;
+			gBattleMons[gBankSwitching].ability = 0;
 		}
 	}
 }
@@ -234,10 +234,10 @@ void MoldBreakerRemoveAbilitiesOnForceSwitchIn(void)
 
 void MoldBreakerRestoreAbilitiesOnForceSwitchIn(void)
 {
-	if (gNewBS->DisabledMoldBreakerAbilities[gBankTarget])
+	if (gNewBS->DisabledMoldBreakerAbilities[gBankSwitching])
 	{
-		gBattleMons[gBankTarget].ability = gNewBS->DisabledMoldBreakerAbilities[gBankTarget];
-		gNewBS->DisabledMoldBreakerAbilities[gBankTarget] = 0;
+		gBattleMons[gBankSwitching].ability = gNewBS->DisabledMoldBreakerAbilities[gBankSwitching];
+		gNewBS->DisabledMoldBreakerAbilities[gBankSwitching] = 0;
 	}
 }
 
@@ -1433,6 +1433,15 @@ void MakeScriptingBankInvisible(void)
 	MarkBufferBankForExecution(gActiveBattler);
 }
 
+void MakeSwitchingBankInvisible(void)
+{
+	if (gBattleExecBuffer) return;
+
+	gActiveBattler = gBankSwitching;
+	EmitSpriteInvisibility(0, TRUE);
+	MarkBufferBankForExecution(gActiveBattler);
+}
+
 void TransferTerrainData(void)
 {
 	if (gBattleExecBuffer)
@@ -1684,11 +1693,11 @@ void TryRemovePrimalWeatherOnPivot(void)
 		gNewBS->skipBankStatAnim = 0xFF; //No longer needed
 }
 
-void TryRemovePrimalWeatherOnForceSwitchout(void)
+void TryRemovePrimalWeatherSwitchingBank(void)
 {
 	RestoreOriginalAttackerAndTarget();
-	gNewBS->skipBankStatAnim = gBankTarget; //Helps with Neutralizing Gas and Intimidate
-	if (HandleSpecialSwitchOutAbilities(gBankTarget, ABILITY(gBankTarget)))
+	gNewBS->skipBankStatAnim = gBankSwitching; //Helps with Neutralizing Gas and Intimidate
+	if (HandleSpecialSwitchOutAbilities(gBankSwitching, ABILITY(gBankSwitching)))
 		gBattlescriptCurrInstr -= 5;
 	else
 		gNewBS->skipBankStatAnim = 0xFF; //No longer needed
@@ -1775,6 +1784,11 @@ void SetBatonPassSwitchingBit(void)
 void ClearBatonPassSwitchingBit(void)
 {
 	gNewBS->batonPassing = FALSE;
+}
+
+void ClearTargetStatFellThisTurn(void)
+{
+	gNewBS->statFellThisTurn[gBankTarget] = FALSE;
 }
 
 void ReturnOpponentMon2(void)
@@ -1906,9 +1920,9 @@ void SetThroatChopTimer(void)
 		gNewBS->ThroatChopTimers[gBankTarget] = 2;
 }
 
-void SetNoMoreMovingThisTurnScriptingBank(void)
+void SetNoMoreMovingThisTurnSwitchingBank(void)
 {
-	gNewBS->NoMoreMovingThisTurn |= gBitTable[gBattleScripting.bank];
+	gNewBS->NoMoreMovingThisTurn |= gBitTable[gBankSwitching];
 }
 
 void SetBattleScriptingBankForPartnerAbilityNoStatLoss(void)

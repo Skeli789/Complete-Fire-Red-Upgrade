@@ -19,15 +19,16 @@
 .equ BattleScript_AllStatsUp, 0x81D8D55
 
 @Banks
-.equ BANK_TARGET, 0x0
-.equ BANK_ATTACKER, 0x1
-.equ BANK_EFFECT, 0x2
-.equ BANK_FAINTED, 0x3
-.equ BANK_SCRIPTING, 0xA
-.equ BANK_PLAYER_1, 0xB
-.equ BANK_OPPONENT_1, 0xC
-.equ BANK_PLAYER_2, 0xD
-.equ BANK_OPPONENT_2, 0xE
+.equ BANK_TARGET, 0
+.equ BANK_ATTACKER, 1
+.equ BANK_EFFECT, 2
+.equ BANK_FAINTED, 3
+.equ BANK_SCRIPTING, 10
+.equ BANK_PLAYER_1, 11
+.equ BANK_OPPONENT_1, 12
+.equ BANK_PLAYER_2, 13
+.equ BANK_OPPONENT_2, 14
+.equ BANK_SWITCHING, 15
 
 @Comparisons
 .equ EQUALS, 0x0
@@ -935,8 +936,10 @@
 	.byte 0x8e
 	.endm
 
-	.macro forcerandomswitch rom_address
+	.macro forcerandomswitch bankSwitching bankForcing rom_address
 	.byte 0x8f
+	.byte \bankSwitching
+	.byte \bankForcing
 	.4byte \rom_address
 	.endm
 
