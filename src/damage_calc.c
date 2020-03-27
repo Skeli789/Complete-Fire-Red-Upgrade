@@ -1839,6 +1839,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 	}
 	else //Self-confusion damage
 	{
+		gBattleMovePower = power = data->basePower;
 		data->moveType = TYPE_MYSTERY;
 		data->resultFlags = 0;
 	}
