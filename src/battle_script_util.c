@@ -1609,12 +1609,14 @@ void HandleForfeitYesNoBox(void)
 		if (gBattleCommunication[1] == 0)
 			gBattleMainFunc = HandleEndTurn_RanFromBattle;
 
+		gBattleCommunication[CURSOR_POSITION] = 0; //So the game doesn't crash when selecting a move
 		HandleBattleWindow(0x17, 0x8, 0x1D, 0xD, WINDOW_CLEAR);
 		return;
 	}
 	else if (gMain.newKeys & B_BUTTON)
 	{
 		PlaySE(SE_SELECT);
+		gBattleCommunication[CURSOR_POSITION] = 0; //So the game doesn't crash when selecting a move
 		HandleBattleWindow(0x17, 0x8, 0x1D, 0xD, WINDOW_CLEAR);
 		return;
 	}
