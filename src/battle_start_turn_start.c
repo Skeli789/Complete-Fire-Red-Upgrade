@@ -1516,7 +1516,7 @@ u8 GetWhoStrikesFirst(u8 bank1, u8 bank2, bool8 ignoreMovePriorities)
 static u8 GetWhoStrikesFirstUseLastBracketCalc(u8 bank1, u8 bank2)
 {
 	s8 bank1Priority, bank2Priority;
-	s32 bank1Bracket, bank2Bracket;
+	s8 bank1Bracket, bank2Bracket;
 	u32 bank1Spd, bank2Spd;
 
 	//Priority Calc

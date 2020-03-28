@@ -759,7 +759,7 @@ struct NewBattleStruct
 	u8 leftoverHealingDone[MAX_BATTLERS_COUNT]; //Leftovers already restored health this turn or Sticky Barb did damage
 	u8 statFellThisTurn[MAX_BATTLERS_COUNT];
 	u8 recalculatedBestDoublesKillingScores[MAX_BATTLERS_COUNT];
-	u8 lastBracketCalc[MAX_BATTLERS_COUNT];
+	s8 lastBracketCalc[MAX_BATTLERS_COUNT];
 	u8 sandblastCentiferno[MAX_BATTLERS_COUNT]; //Records if any banks are trapped by G-Max Centiferno or G-Max Sandblast
 
 	//Bit Fields for Banks
