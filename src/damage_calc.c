@@ -2176,7 +2176,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 	if (CheckTableForMove(move, gSpecialAttackPhysicalDamageMoves))
 	{
 		damage *= spAttack;
-		damage = damage / MathMax(1, data->defense); //MathMax prevents underflow
+		damage /= MathMax(1, data->defense); //MathMax prevents underflow
 	}
 	else
 	{

@@ -12798,8 +12798,8 @@ const struct BattleMove gBattleMoves[] =
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,
 		.flags = 0,
-		.split = SPLIT_PHYSICAL,
-		.z_move_power = SPLIT_SPECIAL,
+		.split = SPLIT_SPECIAL,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_PSYCHIC_TERRAIN,
 	},
 
@@ -12943,7 +12943,7 @@ const struct BattleMove gBattleMoves[] =
 		.priority = 0,
 		.flags = 0,
 		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_RAISE_TEAM_DEFENSE,
 	},
 
@@ -12959,7 +12959,7 @@ const struct BattleMove gBattleMoves[] =
 		.priority = 0,
 		.flags = 0,
 		.split = SPLIT_SPECIAL,
-		.z_move_power = 100,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_RAISE_TEAM_DEFENSE,
 	},
 
@@ -12975,7 +12975,7 @@ const struct BattleMove gBattleMoves[] =
 		.priority = 0,
 		.flags = 0,
 		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_WILDFIRE,
 	},
 
@@ -12990,8 +12990,8 @@ const struct BattleMove gBattleMoves[] =
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,
 		.flags = 0,
-		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.split = SPLIT_SPECIAL,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_WILDFIRE,
 	},
 
@@ -13007,7 +13007,7 @@ const struct BattleMove gBattleMoves[] =
 		.priority = 0,
 		.flags = 0,
 		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_EFFECT_SPORE_FOES,
 	},
 
@@ -13022,8 +13022,8 @@ const struct BattleMove gBattleMoves[] =
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,
 		.flags = 0,
-		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.split = SPLIT_SPECIAL,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_EFFECT_SPORE_FOES,
 	},
 
@@ -13039,7 +13039,7 @@ const struct BattleMove gBattleMoves[] =
 		.priority = 0,
 		.flags = 0,
 		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_PARALYZE_FOES,
 	},
 
@@ -13054,8 +13054,8 @@ const struct BattleMove gBattleMoves[] =
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,
 		.flags = 0,
-		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.split = SPLIT_SPECIAL,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_PARALYZE_FOES,
 	},
 
@@ -13071,7 +13071,7 @@ const struct BattleMove gBattleMoves[] =
 		.priority = 0,
 		.flags = 0,
 		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_CONFUSE_FOES_PAY_DAY,
 	},
 
@@ -13086,7 +13086,7 @@ const struct BattleMove gBattleMoves[] =
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,
 		.flags = 0,
-		.split = SPLIT_PHYSICAL,
+		.split = SPLIT_SPECIAL,
 		.z_move_power = 100,
 		.z_move_effect = MAX_EFFECT_CONFUSE_FOES_PAY_DAY,
 	},
@@ -13103,7 +13103,7 @@ const struct BattleMove gBattleMoves[] =
 		.priority = 0,
 		.flags = 0,
 		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_CRIT_PLUS,
 	},
 
@@ -13118,8 +13118,8 @@ const struct BattleMove gBattleMoves[] =
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,
 		.flags = 0,
-		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.split = SPLIT_SPECIAL,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_CRIT_PLUS,
 	},
 
@@ -13135,7 +13135,7 @@ const struct BattleMove gBattleMoves[] =
 		.priority = 0,
 		.flags = 0,
 		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_MEAN_LOOK,
 	},
 
@@ -13150,8 +13150,8 @@ const struct BattleMove gBattleMoves[] =
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,
 		.flags = 0,
-		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.split = SPLIT_SPECIAL,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_MEAN_LOOK,
 	},
 
@@ -13167,7 +13167,7 @@ const struct BattleMove gBattleMoves[] =
 		.priority = 0,
 		.flags = 0,
 		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_LOWER_SPEED_2_FOES,
 	},
 
@@ -13182,8 +13182,8 @@ const struct BattleMove gBattleMoves[] =
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,
 		.flags = 0,
-		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.split = SPLIT_SPECIAL,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_LOWER_SPEED_2_FOES,
 	},
 
@@ -13199,7 +13199,7 @@ const struct BattleMove gBattleMoves[] =
 		.priority = 0,
 		.flags = 0,
 		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_AURORA_VEIL,
 	},
 
@@ -13214,8 +13214,8 @@ const struct BattleMove gBattleMoves[] =
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,
 		.flags = 0,
-		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.split = SPLIT_SPECIAL,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_AURORA_VEIL,
 	},
 
@@ -13231,7 +13231,7 @@ const struct BattleMove gBattleMoves[] =
 		.priority = 0,
 		.flags = 0,
 		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_INFATUATE_FOES,
 	},
 
@@ -13246,8 +13246,8 @@ const struct BattleMove gBattleMoves[] =
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,
 		.flags = 0,
-		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.split = SPLIT_SPECIAL,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_INFATUATE_FOES,
 	},
 
@@ -13263,7 +13263,7 @@ const struct BattleMove gBattleMoves[] =
 		.priority = 0,
 		.flags = 0,
 		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_RECYCLE_BERRIES,
 	},
 
@@ -13278,8 +13278,8 @@ const struct BattleMove gBattleMoves[] =
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,
 		.flags = 0,
-		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.split = SPLIT_SPECIAL,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_RECYCLE_BERRIES,
 	},
 
@@ -13295,7 +13295,7 @@ const struct BattleMove gBattleMoves[] =
 		.priority = 0,
 		.flags = 0,
 		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_POISON_FOES,
 	},
 
@@ -13310,8 +13310,8 @@ const struct BattleMove gBattleMoves[] =
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,
 		.flags = 0,
-		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.split = SPLIT_SPECIAL,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_POISON_FOES,
 	},
 
@@ -13327,7 +13327,7 @@ const struct BattleMove gBattleMoves[] =
 		.priority = 0,
 		.flags = 0,
 		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_TORMENT_FOES,
 	},
 
@@ -13342,8 +13342,8 @@ const struct BattleMove gBattleMoves[] =
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,
 		.flags = 0,
-		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.split = SPLIT_SPECIAL,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_TORMENT_FOES,
 	},
 
@@ -13359,7 +13359,7 @@ const struct BattleMove gBattleMoves[] =
 		.priority = 0,
 		.flags = 0,
 		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_STEALTH_ROCK,
 	},
 
@@ -13374,8 +13374,8 @@ const struct BattleMove gBattleMoves[] =
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,
 		.flags = 0,
-		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.split = SPLIT_SPECIAL,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_STEALTH_ROCK,
 	},
 
@@ -13391,7 +13391,7 @@ const struct BattleMove gBattleMoves[] =
 		.priority = 0,
 		.flags = 0,
 		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_DEFOG,
 	},
 
@@ -13406,8 +13406,8 @@ const struct BattleMove gBattleMoves[] =
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,
 		.flags = 0,
-		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.split = SPLIT_SPECIAL,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_DEFOG,
 	},
 
@@ -13423,7 +13423,7 @@ const struct BattleMove gBattleMoves[] =
 		.priority = 0,
 		.flags = 0,
 		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_POISON_PARALYZE_FOES,
 	},
 
@@ -13438,8 +13438,8 @@ const struct BattleMove gBattleMoves[] =
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,
 		.flags = 0,
-		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.split = SPLIT_SPECIAL,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_POISON_PARALYZE_FOES,
 	},
 
@@ -13455,7 +13455,7 @@ const struct BattleMove gBattleMoves[] =
 		.priority = 0,
 		.flags = 0,
 		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_HEAL_TEAM,
 	},
 
@@ -13470,8 +13470,8 @@ const struct BattleMove gBattleMoves[] =
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,
 		.flags = 0,
-		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.split = SPLIT_SPECIAL,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_HEAL_TEAM,
 	},
 
@@ -13487,7 +13487,7 @@ const struct BattleMove gBattleMoves[] =
 		.priority = 0,
 		.flags = 0,
 		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_SPITE,
 	},
 
@@ -13502,8 +13502,8 @@ const struct BattleMove gBattleMoves[] =
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,
 		.flags = 0,
-		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.split = SPLIT_SPECIAL,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_SPITE,
 	},
 
@@ -13519,7 +13519,7 @@ const struct BattleMove gBattleMoves[] =
 		.priority = 0,
 		.flags = 0,
 		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_GRAVITY,
 	},
 
@@ -13534,8 +13534,8 @@ const struct BattleMove gBattleMoves[] =
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,
 		.flags = 0,
-		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.split = SPLIT_SPECIAL,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_GRAVITY,
 	},
 
@@ -13551,7 +13551,7 @@ const struct BattleMove gBattleMoves[] =
 		.priority = 0,
 		.flags = 0,
 		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_VOLCAITH_FOES,
 	},
 
@@ -13566,8 +13566,8 @@ const struct BattleMove gBattleMoves[] =
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,
 		.flags = 0,
-		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.split = SPLIT_SPECIAL,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_VOLCAITH_FOES,
 	},
 
@@ -13583,7 +13583,7 @@ const struct BattleMove gBattleMoves[] =
 		.priority = 0,
 		.flags = 0,
 		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_SANDBLAST_FOES,
 	},
 
@@ -13598,8 +13598,8 @@ const struct BattleMove gBattleMoves[] =
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,
 		.flags = 0,
-		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.split = SPLIT_SPECIAL,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_SANDBLAST_FOES,
 	},
 
@@ -13615,7 +13615,7 @@ const struct BattleMove gBattleMoves[] =
 		.priority = 0,
 		.flags = 0,
 		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_YAWN_FOE,
 	},
 
@@ -13630,8 +13630,8 @@ const struct BattleMove gBattleMoves[] =
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,
 		.flags = 0,
-		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.split = SPLIT_SPECIAL,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_YAWN_FOE,
 	},
 
@@ -13647,7 +13647,7 @@ const struct BattleMove gBattleMoves[] =
 		.priority = 0,
 		.flags = 0,
 		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_LOWER_EVASIVENESS_FOES,
 	},
 
@@ -13662,8 +13662,8 @@ const struct BattleMove gBattleMoves[] =
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,
 		.flags = 0,
-		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.split = SPLIT_SPECIAL,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_LOWER_EVASIVENESS_FOES,
 	},
 
@@ -13679,7 +13679,7 @@ const struct BattleMove gBattleMoves[] =
 		.priority = 0,
 		.flags = 0,
 		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_AROMATHERAPY,
 	},
 
@@ -13694,8 +13694,8 @@ const struct BattleMove gBattleMoves[] =
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,
 		.flags = 0,
-		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.split = SPLIT_SPECIAL,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_AROMATHERAPY,
 	},
 
@@ -13711,7 +13711,7 @@ const struct BattleMove gBattleMoves[] =
 		.priority = 0,
 		.flags = 0,
 		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_CONFUSE_FOES,
 	},
 
@@ -13726,8 +13726,8 @@ const struct BattleMove gBattleMoves[] =
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,
 		.flags = 0,
-		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.split = SPLIT_SPECIAL,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_CONFUSE_FOES,
 	},
 
@@ -13743,7 +13743,7 @@ const struct BattleMove gBattleMoves[] =
 		.priority = 0,
 		.flags = 0,
 		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_STEELSURGE,
 	},
 
@@ -13758,8 +13758,8 @@ const struct BattleMove gBattleMoves[] =
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,
 		.flags = 0,
-		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.split = SPLIT_SPECIAL,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_STEELSURGE,
 	},
 
@@ -13775,7 +13775,7 @@ const struct BattleMove gBattleMoves[] =
 		.priority = 0,
 		.flags = 0,
 		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_FIRE_SPIN_FOES,
 	},
 
@@ -13790,8 +13790,8 @@ const struct BattleMove gBattleMoves[] =
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,
 		.flags = 0,
-		.split = SPLIT_PHYSICAL,
-		.z_move_power = 100,
+		.split = SPLIT_SPECIAL,
+		.z_move_power = 0,
 		.z_move_effect = MAX_EFFECT_FIRE_SPIN_FOES,
 	},
 #endif
