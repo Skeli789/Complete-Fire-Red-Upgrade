@@ -722,7 +722,7 @@ u16 GetAmountToRecoverBy(u8 bankAtk, u8 bankDef, u16 move)
 			}
 			else
 			{
-				u16 predictedDmg = CalcFinalAIMoveDamage(move, bankAtk, bankDef, 1);
+				u16 predictedDmg = GetFinalAIMoveDamage(move, bankAtk, bankDef, 1, NULL);
 
 				if (move == MOVE_OBLIVIONWING || move == MOVE_DRAININGKISS)
 					amountToRecover = MathMax(1, (75 * predictedDmg) / 100);
@@ -1678,7 +1678,7 @@ static bool8 ShouldUseSubstitute(u8 bankAtk, u8 bankDef)
 	{
 		if (MoveWouldHitFirst(MOVE_SUBSTITUTE, bankAtk, bankDef)) //Attacker goes first
 		{
-			if (CalcFinalAIMoveDamage(defPrediction, bankDef, bankAtk, 1) < MathMax(1, gBattleMons[bankAtk].maxHP / 4))
+			if (GetFinalAIMoveDamage(defPrediction, bankDef, bankAtk, 1, NULL) < MathMax(1, gBattleMons[bankAtk].maxHP / 4))
 				return TRUE;
 		}
 		else //Substitute would go second
@@ -1686,7 +1686,7 @@ static bool8 ShouldUseSubstitute(u8 bankAtk, u8 bankDef)
 			if (IsPredictedToSwitch(bankDef, bankAtk))
 				return TRUE;
 
-			s32 hp = gBattleMons[bankAtk].hp - CalcFinalAIMoveDamage(defPrediction, bankDef, bankAtk, 1);
+			s32 hp = gBattleMons[bankAtk].hp - GetFinalAIMoveDamage(defPrediction, bankDef, bankAtk, 1, NULL);
 			if (hp > gBattleMons[bankAtk].maxHP / 4) //After being struck a substitute can still be made
 				return TRUE;
 		}

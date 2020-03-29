@@ -2,6 +2,8 @@
 #include "../global.h"
 #include "../battle.h"
 
+#include "damage_calc.h"
+
 //Exported Functions
 bool8 CanKillAFoe(u8 bank);
 bool8 CanKnockOut(u8 bankAtk, u8 bankDef);
@@ -13,15 +15,16 @@ bool8 CanKnockOutWithoutMove(const u16 ignoredMove, const u8 bankAtk, const u8 b
 bool8 MoveKnocksOutPossiblyGoesFirstWithBestAccuracy(u16 move, u8 bankAtk, u8 bankDef, bool8 checkGoingFirst);
 bool8 IsWeakestContactMoveWithBestAccuracy(u16 move, u8 bankAtk, u8 bankDef);
 bool8 StrongestMoveGoesFirst(u16 move, u8 bankAtk, u8 bankDef);
-bool8 CanKnockOutFromParty(struct Pokemon* monAtk, u8 bankDef);
+bool8 CanKnockOutFromParty(struct Pokemon* monAtk, u8 bankDef, struct DamageCalc* damageData);
 void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner, u8 bankDefPartner, s8 bestMoveScores[MAX_BATTLERS_COUNT], u16* bestMove);
 u8 GetDoubleKillingScore(u16 move, u8 bankAtk, u8 bankDef);
 void TryRemoveDoublesKillingScore(u8 bankAtk, u8 bankDef, u16 chosenMove);
 bool8 RangeMoveCanHurtPartner(u16 move, u8 bankAtk, u8 bankAtkPartner);
 bool8 MoveKnocksOutXHits(u16 move, u8 bankAtk, u8 bankDef, u8 numHits);
-bool8 MoveKnocksOutXHitsFromParty(u16 move, struct Pokemon* monAtk, u8 bankDef, u8 numHits);
-u16 CalcFinalAIMoveDamage(u16 move, u8 bankAtk, u8 bankDef, u8 numHits);
-u16 CalcFinalAIMoveDamageFromParty(u16 move, struct Pokemon* monAtk, u8 bankDef, u8 numHits);
+bool8 MoveKnocksOutXHitsFromParty(u16 move, struct Pokemon* monAtk, u8 bankDef, u8 numHits, struct DamageCalc* damageData);
+u16 CalcFinalAIMoveDamage(u16 move, u8 bankAtk, u8 bankDef, u8 numHits, struct DamageCalc* damageData);
+u32 GetFinalAIMoveDamage(u16 move, u8 bankAtk, u8 bankDef, u8 numHits, struct DamageCalc* damageData);
+u16 CalcFinalAIMoveDamageFromParty(u16 move, struct Pokemon* monAtk, u8 bankDef, u8 numHits, struct DamageCalc* damageData);
 move_t CalcStrongestMove(const u8 bankAtk, const u8 bankDef, const bool8 onlySpreadMoves);
 bool8 IsStrongestMove(const u16 currentMove, const u8 bankAtk, const u8 bankDef);
 u16 GetStrongestMove(const u8 bankAtk, const u8 bankDef);

@@ -1039,3 +1039,10 @@ HealthBarChangeAmountHook:
 	str r4, [sp, #0x4]
 	ldr r4, =0x804A014 | 1
 	bx r4
+
+.pool
+@0x81E381C with r0
+ActivateMGBAPrint:
+	add sp, #0x10
+	bl mgba_open
+	pop {r4, r7, pc}

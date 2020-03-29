@@ -582,3 +582,5 @@ SpriteCB_InitThrownBallBouncing 080EFB58 1
 PlayerHandleSuccessBallThrowAnim 0803275C 0
 PlayerHandleBallThrowAnim 080327B0 0
 #endif
+
+ActivateMGBAPrint 81E381C 0

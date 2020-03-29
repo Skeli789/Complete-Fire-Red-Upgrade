@@ -1467,6 +1467,7 @@ u8 TurnBasedEffects(void)
 
 						for (int k = 0; k < MAX_MON_MOVES; ++k)
 						{
+							gNewBS->ai.damageByMove[i][j][k] = 0xFFFFFFFF;
 							gNewBS->ai.moveKnocksOut1Hit[i][j][k] = 0xFF;
 							gNewBS->ai.moveKnocksOut2Hits[i][j][k] = 0xFF;
 						}

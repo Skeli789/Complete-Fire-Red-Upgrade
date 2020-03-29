@@ -6,6 +6,7 @@
 #include "../../include/new/ability_tables.h"
 #include "../../include/new/accuracy_calc.h"
 #include "../../include/new/ai_advanced.h"
+#include "../../include/new/ai_scripts.h"
 #include "../../include/new/ai_util.h"
 #include "../../include/new/battle_start_turn_start.h"
 #include "../../include/new/battle_util.h"
@@ -28,30 +29,22 @@ extern move_effect_t gStatLoweringMoveEffects[];
 extern const struct NaturalGiftStruct gNaturalGiftTable[];
 extern const struct FlingStruct gFlingTable[];
 
-u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 originalMove, const u8 originalViability)
+u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 originalMove, const u8 originalViability, struct AIScript* data)
 {
 	//u32 i, j;
 	u8 class = GetBankFightingStyle(bankAtk);
 	s16 viability = originalViability;
 
-	//Load Alternative targets
-	u8 bankDef = bankAtkPartner;
-	u8 foe1, foe2;
-	foe1 = FOE(bankAtk);
-	foe2 = PARTNER(FOE(bankAtk));
-
 	//Get relevant params
+	u8 bankDef = bankAtkPartner;
 	u16 move = TryReplaceMoveWithZMove(bankAtk, bankAtkPartner, originalMove);
 	u8 moveEffect = gBattleMoves[move].effect;
 	u8 moveType = GetMoveTypeSpecial(bankAtk, move);
+	u16 partnerMove = data->partnerMove;
 
-	u16 partnerMove = (gChosenMovesByBanks[bankAtkPartner] != MOVE_NONE) ? gChosenMovesByBanks[bankAtkPartner] : IsValidMovePrediction(bankAtkPartner, FOE(bankAtk));
-
-	//u8 atkItemEffect = ITEM_EFFECT(bankAtk);
 	u8 atkPartnerItemEffect = ITEM_EFFECT(bankAtkPartner);
-
-	u8 atkAbility = GetAIAbility(bankAtk, foe1, move);
-	u8 atkPartnerAbility = ABILITY(bankAtkPartner);
+	u8 atkAbility = GetAIAbility(bankAtk, data->foe1, move);
+	u8 atkPartnerAbility = data->atkPartnerAbility;
 
 	if (!NO_MOLD_BREAKERS(atkAbility, move)
 	&& gMoldBreakerIgnoredAbilities[atkPartnerAbility])
@@ -176,25 +169,25 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 			//Mummy
 			case ABILITY_MUMMY: ;
 				u8 atkSpd = SpeedCalc(bankAtk);
-				if (SpeedCalc(foe1) < atkSpd) //Attacker is faster than foe 1
+				if (SpeedCalc(data->foe1) < atkSpd) //Attacker is faster than foe 1
 				{
-					if (CanKnockOut(foe1, bankAtk)) //Foe 1 will KO before benefit can be used
+					if (CanKnockOut(data->foe1, bankAtk)) //Foe 1 will KO before benefit can be used
 						break;
 				}
 				else //Attacker is slower than foe 1
 				{
-					if (Can2HKO(foe1, bankAtk)) //Foe 1 will KO before benefit can be used
+					if (Can2HKO(data->foe1, bankAtk)) //Foe 1 will KO before benefit can be used
 						break;
 				}
 
-				if (SpeedCalc(foe2) < atkSpd) //Attacker is faster than foe 2
+				if (SpeedCalc(data->foe2) < atkSpd) //Attacker is faster than foe 2
 				{
-					if (CanKnockOut(foe2, bankAtk)) //Foe 2 will KO before benefit can be used
+					if (CanKnockOut(data->foe2, bankAtk)) //Foe 2 will KO before benefit can be used
 						break;
 				}
 				else //Attacker is slower than foe 2
 				{
-					if (Can2HKO(foe2, bankAtk)) //Foe 2 will KO before benefit can be used
+					if (Can2HKO(data->foe2, bankAtk)) //Foe 2 will KO before benefit can be used
 						break;
 				}
 
@@ -440,18 +433,18 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 		case EFFECT_FIELD_EFFECTS:
 			switch (move) {
 				case MOVE_IONDELUGE: ;
-					u16 foe1Move = IsValidMovePrediction(foe1, bankAtkPartner);
-					u16 foe2Move = IsValidMovePrediction(foe1, bankAtkPartner);
+					u16 foe1Move = IsValidMovePrediction(data->foe1, bankAtkPartner);
+					u16 foe2Move = IsValidMovePrediction(data->foe1, bankAtkPartner);
 
 					if (atkPartnerAbility == ABILITY_VOLTABSORB
 					|| atkPartnerAbility == ABILITY_MOTORDRIVE
 					|| atkPartnerAbility == ABILITY_LIGHTNINGROD)
 					{
-						if (foe1Move != MOVE_NONE && GetMoveTypeSpecial(foe1, foe1Move) == TYPE_NORMAL
-						&& !DoesProtectionMoveBlockMove(foe1, bankAtkPartner, foe1Move, partnerMove))
+						if (foe1Move != MOVE_NONE && GetMoveTypeSpecial(data->foe1, foe1Move) == TYPE_NORMAL
+						&& !DoesProtectionMoveBlockMove(data->foe1, bankAtkPartner, foe1Move, partnerMove))
 							INCREASE_STATUS_VIABILITY(2);
-						else if (foe2Move != MOVE_NONE && GetMoveTypeSpecial(foe2, foe2Move) == TYPE_NORMAL
-						&& !DoesProtectionMoveBlockMove(foe2, bankAtkPartner, foe2Move, partnerMove))
+						else if (foe2Move != MOVE_NONE && GetMoveTypeSpecial(data->foe2, foe2Move) == TYPE_NORMAL
+						&& !DoesProtectionMoveBlockMove(data->foe2, bankAtkPartner, foe2Move, partnerMove))
 							INCREASE_STATUS_VIABILITY(2);
 					}
 					break;
@@ -474,8 +467,8 @@ u8 AI_Script_Partner(const u8 bankAtk, const u8 bankAtkPartner, const u16 origin
 			{
 				switch (move) {
 					case MOVE_AFTERYOU:
-						if (!MoveWouldHitFirst(partnerMove, bankAtkPartner, foe1)
-						||  !MoveWouldHitFirst(partnerMove, bankAtkPartner, foe2))
+						if (!MoveWouldHitFirst(partnerMove, bankAtkPartner, data->foe1)
+						||  !MoveWouldHitFirst(partnerMove, bankAtkPartner, data->foe2))
 						{
 							if (gBattleMoves[partnerMove].effect == EFFECT_COUNTER
 							||  gBattleMoves[partnerMove].effect == EFFECT_MIRROR_COAT)

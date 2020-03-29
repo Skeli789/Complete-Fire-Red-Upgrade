@@ -10,13 +10,13 @@
 #define AGBPrintFlush()
 #define AGBAssert(pFile, nLine, pExpression, nStopProgram)
 #else
-void AGBPrintInit(void);
-void AGBPutc(const char cChr);
-void AGBPrint(const char *pBuf);
-void AGBPrintf(const char *pBuf, ...);
-void AGBPrintFlush1Block(void);
-void AGBPrintFlush(void);
-void AGBAssert(const char *pFile, int nLine, const char *pExpression, int nStopProgram);
+void __attribute__((long_call)) AGBPrintInit(void);
+void __attribute__((long_call)) AGBPutc(const char cChr);
+void __attribute__((long_call)) AGBPrint(const char *pBuf);
+void __attribute__((long_call)) AGBPrintf(const char *pBuf, ...);
+void __attribute__((long_call)) AGBPrintFlush1Block(void);
+void __attribute__((long_call)) AGBPrintFlush(void);
+void __attribute__((long_call)) AGBAssert(const char *pFile, int nLine, const char *pExpression, int nStopProgram);
 #endif
 
 #undef AGB_ASSERT

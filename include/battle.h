@@ -930,6 +930,7 @@ struct NewBattleStruct
 		u16 strongestMove[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //strongestMove[bankAtk][bankDef]
 		bool8 moveKnocksOut1Hit[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT][MAX_MON_MOVES]; //moveKnocksOut1Hit[bankAtk][bankDef][monMoveIndex]
 		bool8 moveKnocksOut2Hits[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT][MAX_MON_MOVES]; //moveKnocksOut2Hits[bankAtk][bankDef][monMoveIndex]
+		u32 damageByMove[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT][MAX_MON_MOVES]; //damageByMove[bankAtk][bankDef][monMoveIndex]
 		u16 bestDoublesKillingMoves[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //bestDoublesKillingMoves[bankAtk][bankDef]
 		s8 bestDoublesKillingScores[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //bestDoublesKillingScores[bankAtk][bankDef][bankDef / bankDefPartner / bankAtkPartner]
 		bool8 canKnockOut[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; //canKnockOut[bankAtk][bankDef]

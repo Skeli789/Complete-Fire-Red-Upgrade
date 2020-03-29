@@ -64,7 +64,7 @@ struct SmartWildMons sSmartWildAITable[] =
 	{0xFFFF, 0}
 };
 
-static u8 (*const sBattleAIScriptTable[])(const u8, const u8, const u16, const u8) =
+static u8 (*const sBattleAIScriptTable[])(const u8, const u8, const u16, const u8, struct AIScript*) =
 {
 	[0] = AI_Script_Negatives,
 	[1] = AI_Script_Positives,
@@ -75,9 +75,9 @@ static u8 (*const sBattleAIScriptTable[])(const u8, const u8, const u16, const u
 };
 
 //This file's functions:
-static u8 ChooseMoveOrAction_Singles(void);
-static u8 ChooseMoveOrAction_Doubles(void);
-static void BattleAI_DoAIProcessing(void);
+static u8 ChooseMoveOrAction_Singles(struct AIScript* aiScriptData);
+static u8 ChooseMoveOrAction_Doubles(struct AIScript* aiScriptData);
+static void BattleAI_DoAIProcessing(struct AIScript* aiScriptData);
 static bool8 ShouldSwitch(void);
 static bool8 ShouldSwitchIfOnlyBadMovesLeft(void);
 static bool8 FindMonThatAbsorbsOpponentsMove(void);
@@ -233,6 +233,8 @@ u8 BattleAI_ChooseMoveOrAction(void)
 {
 	u16 savedCurrentMove = gCurrentMove;
 	u8 ret;
+	struct AIScript aiScriptData = {0}; //Do this now to save time during the processing
+	PopulateAIScriptStructWithBaseAttackerData(&aiScriptData, gBankAttacker);
 
 	struct BattlePokemon backupMonAtk, backupMonDef;
 	u8 backupAbilityAtk = ABILITY_NONE; u8 backupAbilityDef = ABILITY_NONE;
@@ -243,10 +245,10 @@ u8 BattleAI_ChooseMoveOrAction(void)
 	if (IS_SINGLE_BATTLE)
 	{
 		TryTempMegaEvolveBank(gBankTarget, &backupMonDef, &backupSpeciesDef, &backupAbilityDef);
-		ret = ChooseMoveOrAction_Singles();
+		ret = ChooseMoveOrAction_Singles(&aiScriptData);
 	}
 	else
-		ret = ChooseMoveOrAction_Doubles();
+		ret = ChooseMoveOrAction_Doubles(&aiScriptData);
 
 	TryRevertTempMegaEvolveBank(gBankAttacker, &backupMonAtk, &backupSpeciesAtk, &backupAbilityAtk);
 	TryRevertTempMegaEvolveBank(gBankTarget, &backupMonDef, &backupSpeciesDef, &backupAbilityDef);
@@ -297,7 +299,7 @@ void TryRevertTempMegaEvolveBank(u8 bank, struct BattlePokemon* backupMon, u16* 
 	}
 }
 
-static u8 ChooseMoveOrAction_Singles(void)
+static u8 ChooseMoveOrAction_Singles(struct AIScript* aiScriptData)
 {
 	u8 currentMoveArray[4];
 	u8 consideredMoveArray[4];
@@ -306,13 +308,14 @@ static u8 ChooseMoveOrAction_Singles(void)
 	u32 flags = AI_THINKING_STRUCT->aiFlags;
 
 	RecordLastUsedMoveByTarget();
+	PopulateAIScriptStructWithBaseDefenderData(aiScriptData, gBankTarget);
 
 	while (flags != 0)
 	{
 		if (flags & 1)
 		{
 			AI_THINKING_STRUCT->aiState = AIState_SettingUp;
-			BattleAI_DoAIProcessing();
+			BattleAI_DoAIProcessing(aiScriptData);
 		}
 		flags >>= 1;
 		AI_THINKING_STRUCT->aiLogicId++;
@@ -351,7 +354,7 @@ static u8 ChooseMoveOrAction_Singles(void)
 	return consideredMoveArray[Random() % numOfBestMoves];
 }
 
-static u8 ChooseMoveOrAction_Doubles(void)
+static u8 ChooseMoveOrAction_Doubles(struct AIScript* aiScriptData)
 {
 	s32 i;
 	s32 j;
@@ -367,7 +370,7 @@ static u8 ChooseMoveOrAction_Doubles(void)
 
 	for (i = 0; i < MAX_BATTLERS_COUNT; i++)
 	{
-		if (i == gBankAttacker || gBattleMons[i].hp == 0)
+		if (i == gBankAttacker || !BATTLER_ALIVE(i))
 		{
 			actionOrMoveIndex[i] = 0xFF;
 			bestMovePointsForTarget[i] = -1;
@@ -375,8 +378,7 @@ static u8 ChooseMoveOrAction_Doubles(void)
 		else
 		{
 			BattleAI_SetupAIData(0xF);
-
-			gBattlerTarget = i;
+			PopulateAIScriptStructWithBaseDefenderData(aiScriptData, gBankTarget = i);
 
 			if ((i & BIT_SIDE) != (gBankAttacker & BIT_SIDE))
 				RecordLastUsedMoveByTarget();
@@ -389,7 +391,7 @@ static u8 ChooseMoveOrAction_Doubles(void)
 				if (flags & 1)
 				{
 					AI_THINKING_STRUCT->aiState = AIState_SettingUp;
-					BattleAI_DoAIProcessing();
+					BattleAI_DoAIProcessing(aiScriptData);
 				}
 
 				flags >>= 1;
@@ -447,8 +449,11 @@ static u8 ChooseMoveOrAction_Doubles(void)
 
 	bool8 statusMoveOption = FALSE;
 	u32 mostDamage = (actionOrMoveIndex[0] < MAX_MON_MOVES && SPLIT(actionOrMoveIndex[0]) != SPLIT_STATUS) ?
-		CalcFinalAIMoveDamage(actionOrMoveIndex[0], gBankAttacker, mostViableTargetsArray[0], 1) : 0;
+		GetFinalAIMoveDamage(actionOrMoveIndex[0], gBankAttacker, mostViableTargetsArray[0], 1, NULL) : 0;
 
+	struct DamageCalc damageData = {0};
+	damageData.bankAtk = gBankAttacker;
+	PopulateDamageCalcStructWithBaseAttackerData(&damageData);
 	for (i = 1; i < MAX_BATTLERS_COUNT; i++)
 	{
 		if (bestMovePointsForTarget[i] == mostMovePoints)
@@ -464,7 +469,9 @@ static u8 ChooseMoveOrAction_Doubles(void)
 			&&  SPLIT(pastMove) != SPLIT_STATUS)
 			{
 				//Choose the target which the most damage can be done to
-				thisDamage = CalcFinalAIMoveDamage(move, gBankAttacker, i, 1);
+				damageData.bankDef = i;
+				PopulateDamageCalcStructWithBaseDefenderData(&damageData);
+				thisDamage = GetFinalAIMoveDamage(move, gBankAttacker, i, 1, &damageData);
 				if (thisDamage <= mostDamage)
 					continue; //Don't store this target if less damage can be done to it
 
@@ -492,7 +499,7 @@ static u8 ChooseMoveOrAction_Doubles(void)
 	return actionOrMoveIndex[gBankTarget];
 }
 
-static void BattleAI_DoAIProcessing(void)
+static void BattleAI_DoAIProcessing(struct AIScript* aiScriptData)
 {
 	while (AI_THINKING_STRUCT->aiState != AIState_FinishedProcessing)
 	{
@@ -520,7 +527,8 @@ static void BattleAI_DoAIProcessing(void)
 							sBattleAIScriptTable[AI_THINKING_STRUCT->aiLogicId](gBankAttacker,
 																				gBankTarget,
 																				AI_THINKING_STRUCT->moveConsidered,
-																				AI_THINKING_STRUCT->score[AI_THINKING_STRUCT->movesetIndex]); //Run AI script
+																				AI_THINKING_STRUCT->score[AI_THINKING_STRUCT->movesetIndex],
+																				aiScriptData); //Run AI script
 					}
 				}
 				else
@@ -558,10 +566,15 @@ void AI_TrySwitchOrUseItem(void)
 	//Calulate everything important now to save as much processing time as possible later
 	if (!gNewBS->calculatedAIPredictions) //Only calculate these things once per turn
 	{
+		//mgba_printf(MGBA_LOG_INFO, "Calculating strongest moves...");
 		UpdateStrongestMoves();
-		UpdateBestDoublesKillingMoves();
-		PredictMovesForBanks();
+		//mgba_printf(MGBA_LOG_WARN, "Calculating doubles killing moves...");
+		UpdateBestDoublesKillingMoves(); //Takes long time
+		//mgba_printf(MGBA_LOG_INFO, "Predicting moves..");
+		PredictMovesForBanks(); //Takes long time
+		//mgba_printf(MGBA_LOG_WARN, "Calculating Dynamax mon...");
 		RunCalcShouldAIDynamax(); //Allows move predictions to change outcome
+		//mgba_printf(MGBA_LOG_INFO, "Calculating switching...");
 
 		gNewBS->calculatedAIPredictions = TRUE;
 
@@ -645,6 +658,7 @@ void AI_TrySwitchOrUseItem(void)
 	}
 
 DONT_THINK:
+	//mgba_printf(MGBA_LOG_INFO, "AI thinking complete.");
 	EmitTwoReturnValues(1, ACTION_USE_MOVE, (gActiveBattler ^ BIT_SIDE) << 8);
 }
 
@@ -754,7 +768,7 @@ void LoadBattlersAndFoes(u8* battlerIn1, u8* battlerIn2, u8* foe1, u8* foe2)
 static bool8 PredictedMoveWontDoTooMuchToMon(u8 activeBattler, struct Pokemon* mon, u8 foe)
 {
 	u16 defMove = IsValidMovePrediction(foe, activeBattler);
-	u32 predictedDmg = (defMove == MOVE_NONE) ? 0 : AI_CalcMonDefDmg(foe, activeBattler, defMove, mon);
+	u32 predictedDmg = (defMove == MOVE_NONE) ? 0 : AI_CalcMonDefDmg(foe, activeBattler, defMove, mon, NULL);
 
 	if (predictedDmg == 0)
 		return TRUE;
@@ -1903,8 +1917,15 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 			if (WillFaintFromEntryHazards(&party[i], SIDE(gActiveBattler)))
 				continue; //Don't switch in the mon if it'll faint on reentry
 
-			for (j = 0, foe = foes[j]; j < gBattlersCount / 2; ++j) //Loop through all enemies on field
+			struct DamageCalc damageData = {0};
+			damageData.bankAtk = gActiveBattler;
+			damageData.monAtk = &party[i];
+			PopulateDamageCalcStructWithBaseAttackerData(&damageData);
+
+			for (j = 0; j < gBattlersCount / 2; ++j) //Loop through all enemies on field
 			{
+				foe = foes[j];
+
 				if (BATTLER_ALIVE(foe)
 				&& (j == 0 || foes[0] != foes[j])) //Don't check same opponent twice
 				{
@@ -1913,8 +1934,11 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 					bool8 isWeakToMove = FALSE;
 					bool8 isNormalEffectiveness = FALSE;
 
+					damageData.bankDef = foe;
+					PopulateDamageCalcStructWithBaseDefenderData(&damageData);
+
 					//Check Offensive Capabilities
-					if (CanKnockOutFromParty(&party[i], foe))
+					if (CanKnockOutFromParty(&party[i], foe, &damageData))
 					{
 						scores[i] += SWITCHING_INCREASE_KO_FOE;
 
@@ -1940,7 +1964,7 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 								if (move == MOVE_FELLSTINGER
 								&&  !(gBitTable[k] & moveLimitations))
 								{
-									if (MoveKnocksOutXHitsFromParty(move, &party[i], foe, 1))
+									if (MoveKnocksOutXHitsFromParty(move, &party[i], foe, 1, &damageData))
 									{
 										scores[i] += SWITCHING_INCREASE_REVENGE_KILL;
 										break;
@@ -1948,7 +1972,7 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 								}
 								else if (SPLIT(move) != SPLIT_STATUS
 								&& PriorityCalcMon(&party[i], move) > 0
-								&& MoveKnocksOutXHitsFromParty(move, &party[i], foe, 1))
+								&& MoveKnocksOutXHitsFromParty(move, &party[i], foe, 1, &damageData))
 								{
 									//Priority move that KOs
 									scores[i] += SWITCHING_INCREASE_REVENGE_KILL;
@@ -1987,6 +2011,13 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 					bool8 physMoveInMoveset = FALSE;
 					bool8 specMoveInMoveset = FALSE;
 					u8 foeMoveLimitations = CheckMoveLimitations(foe, 0, 0xFF);
+					struct DamageCalc foeDamageData = {0};
+					foeDamageData.bankAtk = foe;
+					foeDamageData.bankDef = gActiveBattler; //For the side
+					foeDamageData.monDef = &party[i];
+					PopulateDamageCalcStructWithBaseAttackerData(&foeDamageData);
+					PopulateDamageCalcStructWithBaseDefenderData(&foeDamageData);
+
 					for (k = 0; k < MAX_MON_MOVES; ++k)
 					{
 						move = GetBattleMonMove(foe, k);
@@ -2021,7 +2052,7 @@ u8 CalcMostSuitableMonToSwitchInto(void)
 								if (!isNormalEffectiveness && IS_SINGLE_BATTLE) //Only need 1 check to pass and don't waste extra time in doubles
 								{
 									//This function takes time for each move for each Pokemon so we try to call it as little as possible
-									u32 dmg = AI_CalcMonDefDmg(foe, gActiveBattler, move, &party[i]);
+									u32 dmg = AI_CalcMonDefDmg(foe, gActiveBattler, move, &party[i], &foeDamageData);
 									if (dmg >= party[i].hp / 2) //Move does half of over half of the health remaining
 										isNormalEffectiveness = TRUE;
 								}
@@ -2239,77 +2270,138 @@ u32 WildMonIsSmart(u8 bank)
 	#endif
 }
 
+void PopulateAIScriptStructWithBaseAttackerData(struct AIScript* data, u8 bankAtk)
+{
+	data->atkSpecies = SPECIES(bankAtk);
+	data->atkItem = ITEM(bankAtk);
+	data->atkItemEffect = ITEM_EFFECT(bankAtk);
+	data->atkItemQuality = ITEM_QUALITY(bankAtk);
+
+	data->atkStatus1 = gBattleMons[bankAtk].status1;
+	data->atkStatus2 = gBattleMons[bankAtk].status2;
+	data->atkStatus3 = gStatuses3[bankAtk];
+	data->atkGender = GetGenderFromSpeciesAndPersonality(data->atkSpecies, gBattleMons[bankAtk].personality);
+
+	data->atkAttack = gBattleMons[bankAtk].attack;
+	data->atkDefense = gBattleMons[bankAtk].defense;
+	data->atkSpeed = gBattleMons[bankAtk].speed;
+	data->atkSpAtk = gBattleMons[bankAtk].spAttack;
+	data->atkSpDef = gBattleMons[bankAtk].spDefense;
+
+	data->bankAtkPartner = (IS_DOUBLE_BATTLE) ? PARTNER(bankAtk) : bankAtk;
+	data->atkPartnerAbility = (IS_DOUBLE_BATTLE) ? ABILITY(data->bankAtkPartner) : ABILITY_NONE;
+
+	//Load Alternative targets
+	data->foe1 = FOE(bankAtk);
+	data->foe2 = (IS_DOUBLE_BATTLE) ? PARTNER(data->foe1) : data->foe1;
+}
+
+void PopulateAIScriptStructWithBaseDefenderData(struct AIScript* data, u8 bankDef)
+{
+	data->defSpecies = SPECIES(bankDef);
+	data->defItem = ITEM(bankDef);
+	data->defItemEffect = ITEM_EFFECT(bankDef);
+	data->defItemQuality = ITEM_QUALITY(bankDef);
+
+	data->defStatus1 = gBattleMons[bankDef].status1;
+	data->defStatus2 = gBattleMons[bankDef].status2;
+	data->defStatus3 = gStatuses3[bankDef];
+	data->defGender = GetGenderFromSpeciesAndPersonality(data->defSpecies, gBattleMons[bankDef].personality);
+
+	data->defAttack = gBattleMons[bankDef].attack;
+	data->defDefense = gBattleMons[bankDef].defense;
+	data->defSpeed = gBattleMons[bankDef].speed;
+	data->defSpAtk = gBattleMons[bankDef].spAttack;
+	data->defSpDef = gBattleMons[bankDef].spDefense;
+
+	data->bankDefPartner = (IS_DOUBLE_BATTLE) ? PARTNER(bankDef) : bankDef;
+	data->defPartnerAbility = (IS_DOUBLE_BATTLE) ? ABILITY(data->bankDefPartner) : ABILITY_NONE;
+
+	data->partnerMove = MOVE_NONE;
+	if (!IsBankIncapacitated(data->bankAtkPartner))
+		data->partnerMove = GetAIChosenMove(data->bankAtkPartner, bankDef);
+
+	data->partnerHandling = IS_DOUBLE_BATTLE
+		&& BATTLER_ALIVE(data->bankAtkPartner)
+		&& !IsBankIncapacitated(data->bankAtkPartner)
+		&& gChosenMovesByBanks[data->bankAtkPartner] != MOVE_NONE //Partner actually selected a move
+		&& gBattleStruct->moveTarget[data->bankAtkPartner] == bankDef
+		&& gBattleMoves[data->partnerMove].target & MOVE_TARGET_SELECTED //Partner isn't using spread move
+		&& CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, 0, bankDef) >= 2 //With one target left, both Pokemon should aim for the same target
+		&& MoveKnocksOutXHits(data->partnerMove, data->bankAtkPartner, gBattleStruct->moveTarget[data->bankAtkPartner], 1);
+}
+
 static void PredictMovesForBanks(void)
 {
 	int i, j;
 	u8 viabilities[MAX_MON_MOVES] = {0};
 	u8 bestMoves[MAX_MON_MOVES] = {0};
+	struct AIScript aiScriptData = {0};
+
+	Memset(gNewBS->ai.movePredictions, 0, sizeof(gNewBS->ai.movePredictions)); //Clear old predictions
 
 	for (u8 bankAtk = 0; bankAtk < gBattlersCount; ++bankAtk)
 	{
-		for (u8 bankDef = 0; bankDef < gBattlersCount; ++bankDef)
+		if (BATTLER_ALIVE(bankAtk))
 		{
-			StoreMovePrediction(bankAtk, bankDef, MOVE_NONE); //Clear old move predictions
-		}
-	}
+			u32 moveLimitations = CheckMoveLimitations(bankAtk, 0, 0xFF); //Don't predict Dynamax
+			PopulateAIScriptStructWithBaseAttackerData(&aiScriptData, bankAtk);
 
-	for (u8 bankAtk = 0; bankAtk < gBattlersCount; ++bankAtk)
-	{
-		u32 moveLimitations = CheckMoveLimitations(bankAtk, 0, 0xFF);
+			for (u8 bankDef = 0; bankDef < gBattlersCount; ++bankDef)
+			{
+				if (bankAtk == bankDef || !BATTLER_ALIVE(bankDef)) continue;
 
-		for (u8 bankDef = 0; bankDef < gBattlersCount; ++bankDef)
-		{
-			if (bankAtk == bankDef) continue;
-
-			if (gBattleMons[bankAtk].status2 & STATUS2_RECHARGE
-			||  gDisableStructs[bankAtk].truantCounter != 0)
-			{
-				StoreMovePrediction(bankAtk, bankDef, MOVE_NONE);
-			}
-			else if (IsBankAsleep(bankAtk)
-			&& !MoveEffectInMoveset(EFFECT_SLEEP_TALK, bankAtk) && !MoveEffectInMoveset(EFFECT_SNORE, bankAtk))
-			{
-				StoreMovePrediction(bankAtk, bankDef, MOVE_NONE);
-			}
-			else if (gBattleMons[bankAtk].status2 & STATUS2_MULTIPLETURNS
-			&& FindMovePositionInMoveset(gLockedMoves[bankAtk], bankAtk) < 4)
-			{
-				StoreMovePrediction(bankAtk, bankDef, gLockedMoves[bankAtk]);
-			}
-			else
-			{
-				u32 backupFlags = AI_THINKING_STRUCT->aiFlags; //Backup flags so killing in negatives is ignored
-				AI_THINKING_STRUCT->aiFlags = 7;
-
-				for (i = 0; i < MAX_MON_MOVES && gBattleMons[bankAtk].moves[i] != MOVE_NONE; ++i)
+				if (gBattleMons[bankAtk].status2 & STATUS2_RECHARGE
+				||  gDisableStructs[bankAtk].truantCounter != 0)
 				{
-					viabilities[i] = 0;
-					bestMoves[i] = 0;
-
-					if (gBitTable[i] & moveLimitations) continue;
-
-					u16 move = gBattleMons[bankAtk].moves[i];
-					move = TryReplaceMoveWithZMove(bankAtk, bankDef, move);
-					viabilities[i] = AI_Script_Negatives(bankAtk, bankDef, move, 100);
-					viabilities[i] = AI_Script_Positives(bankAtk, bankDef, move, viabilities[i]);
+					StoreMovePrediction(bankAtk, bankDef, MOVE_NONE);
 				}
-
-				AI_THINKING_STRUCT->aiFlags = backupFlags;
-
-				bestMoves[j = 0] = GetMaxByteIndexInList(viabilities, MAX_MON_MOVES) + 1;
-				for (i = 0; i < MAX_MON_MOVES; ++i)
+				else if (IsBankAsleep(bankAtk)
+				&& !MoveEffectInMoveset(EFFECT_SLEEP_TALK, bankAtk) && !MoveEffectInMoveset(EFFECT_SNORE, bankAtk)) //Can't get around sleep
 				{
-					if (i + 1 != bestMoves[0] //i is not the index returned from GetMaxByteIndexInList
-					&& viabilities[i] == viabilities[bestMoves[j] - 1])
-						bestMoves[++j] = i + 1;
+					StoreMovePrediction(bankAtk, bankDef, MOVE_NONE);
 				}
-
-				if (viabilities[GetMaxByteIndexInList(viabilities, MAX_MON_MOVES)] < 100) //Best move has viability < 100
-					StoreSwitchPrediction(bankAtk, bankDef);
+				else if (gBattleMons[bankAtk].status2 & STATUS2_MULTIPLETURNS
+				&& MoveInMoveset(gLockedMoves[bankAtk], bankAtk)) //Still knows locked move
+				{
+					StoreMovePrediction(bankAtk, bankDef, gLockedMoves[bankAtk]);
+				}
 				else
-					StoreMovePrediction(bankAtk, bankDef, gBattleMons[bankAtk].moves[bestMoves[Random() % (j + 1)] - 1]);
+				{
+					u32 backupFlags = AI_THINKING_STRUCT->aiFlags; //Backup flags so killing in negatives is ignored
+					AI_THINKING_STRUCT->aiFlags = 7;
+					PopulateAIScriptStructWithBaseDefenderData(&aiScriptData, bankDef);
 
-				Memset(viabilities, 0, sizeof(viabilities));
+					for (i = 0; i < MAX_MON_MOVES && gBattleMons[bankAtk].moves[i] != MOVE_NONE; ++i)
+					{
+						viabilities[i] = 0;
+						bestMoves[i] = 0;
+
+						if (gBitTable[i] & moveLimitations) continue;
+
+						u16 move = gBattleMons[bankAtk].moves[i];
+						move = TryReplaceMoveWithZMove(bankAtk, bankDef, move);
+						viabilities[i] = AI_Script_Negatives(bankAtk, bankDef, move, 100, &aiScriptData);
+						viabilities[i] = AI_Script_Positives(bankAtk, bankDef, move, viabilities[i], &aiScriptData);
+					}
+
+					AI_THINKING_STRUCT->aiFlags = backupFlags;
+
+					bestMoves[j = 0] = GetMaxByteIndexInList(viabilities, MAX_MON_MOVES) + 1;
+					for (i = 0; i < MAX_MON_MOVES; ++i)
+					{
+						if (i + 1 != bestMoves[0] //i is not the index returned from GetMaxByteIndexInList
+						&& viabilities[i] == viabilities[bestMoves[j] - 1])
+							bestMoves[++j] = i + 1;
+					}
+
+					if (viabilities[GetMaxByteIndexInList(viabilities, MAX_MON_MOVES)] < 100) //Best move has viability < 100
+						StoreSwitchPrediction(bankAtk, bankDef);
+					else
+						StoreMovePrediction(bankAtk, bankDef, gBattleMons[bankAtk].moves[bestMoves[Random() % (j + 1)] - 1]);
+
+					Memset(viabilities, 0, sizeof(viabilities));
+				}
 			}
 		}
 	}
@@ -2371,11 +2463,13 @@ static void UpdateBestDoublesKillingMoves(void)
 
 		for (bankAtk = 0; bankAtk < gBattlersCount; ++bankAtk)
 		{
+			//mgba_printf(MGBA_LOG_INFO, "");
 			for (bankDef = 0; bankDef < gBattlersCount; ++bankDef)
 			{
 				if (bankAtk == bankDef || bankDef == PARTNER(bankAtk) || !BATTLER_ALIVE(bankDef))
 					continue; //Don't bother calculating for these Pokemon. Never used
 
+				//mgba_printf(MGBA_LOG_WARN, "");
 				UpdateBestDoubleKillingMoveScore(bankAtk, bankDef, PARTNER(bankAtk), PARTNER(bankDef), gNewBS->ai.bestDoublesKillingScores[bankAtk][bankDef], &gNewBS->ai.bestDoublesKillingMoves[bankAtk][bankDef]);
 			}
 		}

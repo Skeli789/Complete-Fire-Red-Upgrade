@@ -288,6 +288,12 @@ bool8 IsWeakestContactMoveWithBestAccuracy(u16 move, u8 bankAtk, u8 bankDef)
 	u32 bestDmg = 0xFFFFFFFF;
 	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, AdjustMoveLimitationFlagsForAI(bankAtk, bankDef));
 
+	struct DamageCalc damageData = {0};
+	damageData.bankAtk = bankAtk;
+	damageData.bankDef = bankDef;
+	PopulateDamageCalcStructWithBaseAttackerData(&damageData);
+	PopulateDamageCalcStructWithBaseDefenderData(&damageData);
+
 	for (int i = 0; i < MAX_MON_MOVES; ++i)
 	{
 		currMove = GetBattleMonMove(bankAtk, i);
@@ -307,7 +313,7 @@ bool8 IsWeakestContactMoveWithBestAccuracy(u16 move, u8 bankAtk, u8 bankDef)
 		&& moveEffect != EFFECT_0HKO) //Don't use these move effects on partner
 		{
 			currAcc = AccuracyCalc(currMove, bankAtk, bankDef);
-			u32 dmg = CalcFinalAIMoveDamage(currMove, bankAtk, bankDef, 1);
+			u32 dmg = GetFinalAIMoveDamage(currMove, bankAtk, bankDef, 1, &damageData);
 
 			if (dmg < bestDmg && currAcc > bestAcc)
 			{
@@ -336,6 +342,12 @@ bool8 StrongestMoveGoesFirst(u16 move, u8 bankAtk, u8 bankDef)
 	u32 bestDmg = 0;
 	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, AdjustMoveLimitationFlagsForAI(bankAtk, bankDef));
 
+	struct DamageCalc damageData = {0};
+	damageData.bankAtk = bankAtk;
+	damageData.bankDef = bankDef;
+	PopulateDamageCalcStructWithBaseAttackerData(&damageData);
+	PopulateDamageCalcStructWithBaseDefenderData(&damageData);
+
 	for (int i = 0; i < MAX_MON_MOVES; ++i)
 	{
 		currMove = GetBattleMonMove(bankAtk, i);
@@ -347,7 +359,7 @@ bool8 StrongestMoveGoesFirst(u16 move, u8 bankAtk, u8 bankDef)
 
 		if (!(gBitTable[i] & moveLimitations))
 		{
-			currDmg = CalcFinalAIMoveDamage(currMove, bankAtk, bankDef, 1);
+			currDmg = GetFinalAIMoveDamage(currMove, bankAtk, bankDef, 1, &damageData);
 
 			if (MoveWouldHitFirst(currMove, bankAtk, bankDef)
 			&& currDmg > bestDmg)
@@ -367,7 +379,7 @@ bool8 StrongestMoveGoesFirst(u16 move, u8 bankAtk, u8 bankDef)
 	return FALSE;
 }
 
-bool8 CanKnockOutFromParty(struct Pokemon* monAtk, u8 bankDef)
+bool8 CanKnockOutFromParty(struct Pokemon* monAtk, u8 bankDef, struct DamageCalc* damageData)
 {
 	int i;
 	u16 move;
@@ -390,7 +402,7 @@ bool8 CanKnockOutFromParty(struct Pokemon* monAtk, u8 bankDef)
 
 		if (!(gBitTable[i] & moveLimitations))
 		{
-			if (MoveKnocksOutXHitsFromParty(move, monAtk, bankDef, 1))
+			if (MoveKnocksOutXHitsFromParty(move, monAtk, bankDef, 1, damageData))
 				return TRUE;
 		}
 	}
@@ -412,6 +424,7 @@ bool8 CanKnockOutFromParty(struct Pokemon* monAtk, u8 bankDef)
 
 void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner, u8 bankDefPartner, s8 bestMoveScores[MAX_BATTLERS_COUNT], u16* bestMove)
 {
+	//mgba_printf(MGBA_LOG_ERROR, "");
 	int i, j;
 	u8 currTarget;
 	u16 move;
@@ -427,8 +440,39 @@ void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner,
 	bool8 partnerKnocksOut = partnerTarget != bankAtkPartner && MoveKnocksOutXHits(partnerMove, bankAtkPartner, partnerTarget, 1);
 
 	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, 0xFF);
+	
+	u8 foes[2] = {bankDef, bankDefPartner};
+	bool8 foeAlive[2] = {BATTLER_ALIVE(bankDef), BATTLER_ALIVE(bankDefPartner)};
+	bool8 partnerHandling[2] = {FALSE, FALSE};
+	bool8 foesAlive = CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, bankAtk, bankDef);
+	
+	if (partnerMove != MOVE_NONE && !partnerIncapacitated && partnerKnocksOut && foesAlive >= 2) //More than 1 target left
+	{
+		for (j = 0; j < gBattlersCount / 2; ++j)
+		{
+			if (partnerTarget == foes[j])
+				partnerHandling[j] = TRUE;
+		}
+	}
+
+	struct DamageCalc damageDatas[2];
+	for (j = 0; j < gBattlersCount / 2; ++j)
+	{
+		if (foeAlive[j] && !partnerHandling[j]) //Damage will actually get calculated
+		{
+			//Populate the damage calc structs
+			struct DamageCalc* damageData = &damageDatas[j];
+			Memset(damageData, 0, sizeof(damageDatas[j]));
+			damageData->bankAtk = bankAtk;
+			damageData->bankDef = foes[j];
+			PopulateDamageCalcStructWithBaseAttackerData(damageData);
+			PopulateDamageCalcStructWithBaseDefenderData(damageData);
+		}
+	}
+
 	for (i = 0; i < MAX_MON_MOVES; ++i)
 	{
+		//mgba_printf(MGBA_LOG_INFO, "");
 		move = GetBattleMonMove(bankAtk, i);
 
 		if (move == MOVE_NONE)
@@ -443,18 +487,13 @@ void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner,
 
 		if (!(gBitTable[i] & moveLimitations))
 		{
-			u8 foes[] = {bankDef, bankDefPartner};
-
 			for (j = 0; j < gBattlersCount / 2; ++j)
 			{
+				//mgba_printf(MGBA_LOG_WARN, "");
 				currTarget = foes[j];
 
-				if (BATTLER_ALIVE(currTarget) && (j == 0 || gBattleMoves[move].target & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL)) //Only can hit second foe with spread move
-				&& (partnerMove == MOVE_NONE
-				 || partnerTarget != currTarget
-				 || partnerIncapacitated
-				 || CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, bankAtk, currTarget) <= 1 //Only 1 target left
-				 || !partnerKnocksOut)) //Don't count the target if the partner is already taking care of it
+				if (foeAlive[j] && (j == 0 || gBattleMoves[move].target & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL)) //Only can hit second foe with spread move
+				&& !partnerHandling[j]) //Don't count the target if the partner is already taking care of it
 				{
 					if (!(AI_SpecialTypeCalc(move, bankAtk, currTarget) & MOVE_RESULT_NO_EFFECT)) //Move has effect on current target
 					{
@@ -535,9 +574,9 @@ void UpdateBestDoubleKillingMoveScore(u8 bankAtk, u8 bankDef, u8 bankAtkPartner,
 
 								default:
 								DEFAULT_CHECK:
-									if (CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, bankAtk, currTarget) >= 2) //If there's only 1 target we rely on the strongest move check
+									if (foesAlive >= 2) //If there's only 1 target we rely on the strongest move check
 									{
-										u32 dmg = CalcFinalAIMoveDamage(move, bankAtk, currTarget, 1);
+										u32 dmg = GetFinalAIMoveDamage(move, bankAtk, currTarget, 1, &damageDatas[j]);
 										if (dmg < gBattleMons[currTarget].maxHP / 4)
 											moveScores[i][currTarget] -= (DOUBLES_INCREASE_HIT_FOE - 1); //Count it as if you basically don't do damage to the enemy
 										else if (dmg < gBattleMons[currTarget].maxHP / 3)
@@ -697,7 +736,7 @@ static bool8 CalculateMoveKnocksOutXHits(u16 move, u8 bankAtk, u8 bankDef, u8 nu
 			numHits -= 1; //Takes at least a hit to break Disguise/Ice Face or sub
 	}
 
-	if (CalcFinalAIMoveDamage(move, bankAtk, bankDef, numHits) >= gBattleMons[bankDef].hp)
+	if (GetFinalAIMoveDamage(move, bankAtk, bankDef, numHits, NULL) >= gBattleMons[bankDef].hp)
 		return TRUE;
 
 	return FALSE;
@@ -730,7 +769,7 @@ bool8 MoveKnocksOutXHits(u16 move, u8 bankAtk, u8 bankDef, u8 numHits)
 	return CalculateMoveKnocksOutXHits(move, bankAtk, bankDef, numHits);
 }
 
-bool8 MoveKnocksOutXHitsFromParty(u16 move, struct Pokemon* monAtk, u8 bankDef, u8 numHits)
+bool8 MoveKnocksOutXHitsFromParty(u16 move, struct Pokemon* monAtk, u8 bankDef, u8 numHits, struct DamageCalc* damageData)
 {
 	u8 ability = ABILITY(bankDef);
 	u16 species = SPECIES(bankDef);
@@ -749,7 +788,7 @@ bool8 MoveKnocksOutXHitsFromParty(u16 move, struct Pokemon* monAtk, u8 bankDef, 
 			numHits -= 1; //Takes at least a hit to break Disguise/Ice Face or sub
 	}
 
-	if (CalcFinalAIMoveDamageFromParty(move, monAtk, bankDef, numHits) >= gBattleMons[bankDef].hp)
+	if (CalcFinalAIMoveDamageFromParty(move, monAtk, bankDef, numHits, damageData) >= gBattleMons[bankDef].hp)
 		return TRUE;
 
 	return FALSE;
@@ -779,7 +818,7 @@ static bool8 MoveKnocksOutAfterDynamax(u16 move, u8 bankAtk, u8 bankDef)
 	return ret;
 }
 
-u16 CalcFinalAIMoveDamage(u16 move, u8 bankAtk, u8 bankDef, u8 numHits)
+u16 CalcFinalAIMoveDamage(u16 move, u8 bankAtk, u8 bankDef, u8 numHits, struct DamageCalc* damageData)
 {
 	if (move == MOVE_NONE || numHits == 0 || gBattleMoves[move].power == 0)
 		return 0;
@@ -808,7 +847,7 @@ u16 CalcFinalAIMoveDamage(u16 move, u8 bankAtk, u8 bankDef, u8 numHits)
 			return CalcPredictedDamageForCounterMoves(move, bankAtk, bankDef);
 	}
 
-	u32 dmg = AI_CalcDmg(bankAtk, bankDef, move);
+	u32 dmg = AI_CalcDmg(bankAtk, bankDef, move, damageData);
 	if (dmg >= gBattleMons[bankDef].hp)
 		return gBattleMons[bankDef].hp;
 
@@ -819,7 +858,21 @@ u16 CalcFinalAIMoveDamage(u16 move, u8 bankAtk, u8 bankDef, u8 numHits)
 	return MathMin(dmg * numHits, gBattleMons[bankDef].maxHP);
 }
 
-u16 CalcFinalAIMoveDamageFromParty(u16 move, struct Pokemon* monAtk, u8 bankDef, u8 numHits)
+u32 GetFinalAIMoveDamage(u16 move, u8 bankAtk, u8 bankDef, u8 numHits, struct DamageCalc* damageData)
+{
+	u8 movePos = FindMovePositionInMoveset(move, bankAtk);
+	if (movePos < MAX_MON_MOVES) //Move in moveset
+	{
+		if (gNewBS->ai.damageByMove[bankAtk][bankDef][movePos] != 0xFFFFFFFF)
+			return gNewBS->ai.damageByMove[bankAtk][bankDef][movePos] * numHits;
+		gNewBS->ai.damageByMove[bankAtk][bankDef][movePos] = CalcFinalAIMoveDamage(move, bankAtk, bankDef, 1, damageData);
+		return gNewBS->ai.damageByMove[bankAtk][bankDef][movePos] * numHits;
+	}
+
+	return CalcFinalAIMoveDamage(move, bankAtk, bankDef, 1, damageData) * numHits;
+}
+
+u16 CalcFinalAIMoveDamageFromParty(u16 move, struct Pokemon* monAtk, u8 bankDef, u8 numHits, struct DamageCalc* damageData)
 {
 	if (move == MOVE_NONE || SPLIT(move) == SPLIT_STATUS || gBattleMoves[move].power == 0)
 		return 0;
@@ -838,7 +891,7 @@ u16 CalcFinalAIMoveDamageFromParty(u16 move, struct Pokemon* monAtk, u8 bankDef,
 			return 0;
 	}
 
-	return MathMin(AI_CalcPartyDmg(FOE(bankDef), bankDef, move, monAtk) * numHits, gBattleMons[bankDef].maxHP);
+	return MathMin(AI_CalcPartyDmg(FOE(bankDef), bankDef, move, monAtk, damageData) * numHits, gBattleMons[bankDef].maxHP);
 }
 
 static u32 CalcPredictedDamageForCounterMoves(u16 move, u8 bankAtk, u8 bankDef)
@@ -848,7 +901,7 @@ static u32 CalcPredictedDamageForCounterMoves(u16 move, u8 bankAtk, u8 bankDef)
 
 	if (predictedMove != MOVE_NONE && SPLIT(predictedMove) != SPLIT_STATUS && !MoveBlockedBySubstitute(predictedMove, bankDef, bankAtk))
 	{
-		predictedDamage = CalcFinalAIMoveDamage(predictedMove, bankDef, bankAtk, 1); //The damage the enemy will do to the AI
+		predictedDamage = GetFinalAIMoveDamage(predictedMove, bankDef, bankAtk, 1, NULL); //The damage the enemy will do to the AI
 
 		switch (move) {
 			case MOVE_COUNTER:
@@ -874,11 +927,11 @@ static u32 CalcPredictedDamageForCounterMoves(u16 move, u8 bankAtk, u8 bankDef)
 move_t CalcStrongestMove(const u8 bankAtk, const u8 bankDef, const bool8 onlySpreadMoves)
 {
 	u16 move;
+	u32 predictedDamage;
 	u16 strongestMove = gBattleMons[bankAtk].moves[0];
 	u32 highestDamage = 0;
-	u32 predictedDamage;
-	int i;
 	u16 defHP = gBattleMons[bankDef].hp;
+	struct DamageCalc damageData = {0};
 
 	if (defHP == 0) //Foe dead
 		return MOVE_NONE;
@@ -886,7 +939,13 @@ move_t CalcStrongestMove(const u8 bankAtk, const u8 bankDef, const bool8 onlySpr
 	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, AdjustMoveLimitationFlagsForAI(bankAtk, bankDef));
 	predictedDamage = 0;
 
-	for (i = 0; i < MAX_MON_MOVES; ++i)
+	//Save time and do this now instead of before each move
+	damageData.bankAtk = bankAtk;
+	damageData.bankDef = bankDef;
+	PopulateDamageCalcStructWithBaseAttackerData(&damageData);
+	PopulateDamageCalcStructWithBaseDefenderData(&damageData);
+
+	for (u32 i = 0; i < MAX_MON_MOVES; ++i)
 	{
 		move = gBattleMons[bankAtk].moves[i];
 		if (move == MOVE_NONE)
@@ -912,6 +971,7 @@ move_t CalcStrongestMove(const u8 bankAtk, const u8 bankDef, const bool8 onlySpr
 			else if (gBattleMoves[move].effect == EFFECT_0HKO)
 			{
 				gNewBS->ai.moveKnocksOut1Hit[bankAtk][bankDef][i] = FALSE;
+				gNewBS->ai.damageByMove[bankAtk][bankDef][i] = 0;
 				if (gBattleMons[bankAtk].level <= gBattleMons[bankDef].level)
 					continue;
 				if (move == MOVE_SHEERCOLD && IsOfType(bankDef, TYPE_ICE))
@@ -921,12 +981,13 @@ move_t CalcStrongestMove(const u8 bankAtk, const u8 bankDef, const bool8 onlySpr
 				if (MoveWillHit(move, bankAtk, bankDef))
 				{
 					gNewBS->ai.moveKnocksOut1Hit[bankAtk][bankDef][i] = TRUE;
+					gNewBS->ai.damageByMove[bankAtk][bankDef][i] = defHP;
 					return move; //No stronger move that OHKO move that can kill
 				}
 			}
 			else
 			{
-				predictedDamage = CalcFinalAIMoveDamage(move, bankAtk, bankDef, 1);
+				predictedDamage = CalcFinalAIMoveDamage(move, bankAtk, bankDef, 1, &damageData);
 
 				if (predictedDamage > (u32) highestDamage)
 				{
@@ -951,6 +1012,7 @@ move_t CalcStrongestMove(const u8 bankAtk, const u8 bankDef, const bool8 onlySpr
 				}
 			}
 
+			gNewBS->ai.damageByMove[bankAtk][bankDef][i] = predictedDamage;
 			if (predictedDamage >= defHP)
 				gNewBS->ai.moveKnocksOut1Hit[bankAtk][bankDef][i] = TRUE;
 			else
@@ -2360,6 +2422,9 @@ static bool8 ShouldAIFreeChoiceLockWithDynamax(u8 bankAtk, u8 bankDef)
 	&& CHOICED_MOVE(bankAtk) != MOVE_NONE && CHOICED_MOVE(bankAtk) != 0xFFFF) //AI is locked into some move
 	{
 		u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, MOVE_LIMITATION_ZEROMOVE | MOVE_LIMITATION_PP);
+		struct AIScript aiScriptData = {0};
+		PopulateAIScriptStructWithBaseAttackerData(&aiScriptData, bankAtk);
+		PopulateAIScriptStructWithBaseDefenderData(&aiScriptData, bankDef);
 		for (int i = 0; i < MAX_MON_MOVES; ++i)
 		{
 			u16 move = GetMaxMove(bankAtk, i);
@@ -2368,7 +2433,7 @@ static bool8 ShouldAIFreeChoiceLockWithDynamax(u8 bankAtk, u8 bankDef)
 
 			if (!(gBitTable[i] & moveLimitations))
 			{
-				if (AI_Script_Negatives(bankAtk, bankDef, move, 100) >= 100)
+				if (AI_Script_Negatives(bankAtk, bankDef, move, 100, &aiScriptData) >= 100)
 					return TRUE;
 			}
 		}
@@ -2390,6 +2455,9 @@ static bool8 CalcOnlyBadMovesLeftInMoveset(u8 bankAtk, u8 bankDef)
 		return FALSE; //The dumb AI doesn't get to switch like this
 
 	u8 moveLimitations = CheckMoveLimitations(bankAtk, 0, 0xFF);
+	struct AIScript aiScriptData = {0};
+	PopulateAIScriptStructWithBaseAttackerData(&aiScriptData, bankAtk);
+	PopulateAIScriptStructWithBaseDefenderData(&aiScriptData, bankDef);
 	for (i = 0; i < MAX_MON_MOVES; ++i)
 	{
 		move = GetBattleMonMove(bankAtk, i);
@@ -2399,7 +2467,7 @@ static bool8 CalcOnlyBadMovesLeftInMoveset(u8 bankAtk, u8 bankDef)
 
 		if (!(gBitTable[i] & moveLimitations))
 		{
-			viability = AI_Script_Negatives(bankAtk, bankDef, move, 100);
+			viability = AI_Script_Negatives(bankAtk, bankDef, move, 100, &aiScriptData);
 			if (viability >= 100)
 			{
 				if (SPLIT(move) == SPLIT_STATUS)
@@ -2450,7 +2518,7 @@ static bool8 CalcOnlyBadMovesLeftInMoveset(u8 bankAtk, u8 bankDef)
 			  of trying to attack the enemy with their weak moves.*/
 
 			move = GetStrongestMove(bankAtk, bankDef); //Assume the usuable damage move is the strongest move
-			dmg = CalcFinalAIMoveDamage(move, bankAtk, bankDef, 1);
+			dmg = GetFinalAIMoveDamage(move, bankAtk, bankDef, 1, NULL);
 
 			if (dmg < gBattleMons[bankDef].hp) //Move doesn't KO
 			{

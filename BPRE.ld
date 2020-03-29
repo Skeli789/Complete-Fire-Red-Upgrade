@@ -1525,9 +1525,14 @@ __umodsi3 = 0x81E4684 | 1;
 umodsi = 0x81E4684 | 1;
 
 
-/* The Deal Breaker */
+/* Debug */
+AGBPrintInit = 0x81E37A8 | 1;
+AGBPutc = 0x81E391C | 1;
+AGBPrint = 0x81E397C | 1;
+AGBPrintf = 0x81E39D8 | 1;
+AGBAssert = 0x81E3B14 | 1;
+vsprintf_fr = 0x81E5FD4 | 1;
 break_func = 0x8416304 | 1;
-
 
 /* EReader Functions */
 GetEreaderTrainerFrontSpriteId = 0x80E7420 | 1;

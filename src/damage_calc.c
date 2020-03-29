@@ -51,61 +51,6 @@ static const u16 sCriticalHitChances[] =
 #define FLAG_CHECKING_FROM_MENU 0x4
 #define FLAG_AI_CALC 0x8
 
-struct DamageCalc
-{
-	u8 bankAtk;
-	u8 bankDef;
-	struct Pokemon* monAtk;
-	struct Pokemon* monDef;
-
-	u16 atkSpecies;
-	u16 defSpecies;
-
-	u8 atkAbility;
-	u8 defAbility;
-	u8 atkPartnerAbility;
-	u8 defPartnerAbility;
-
-	u8 atkItemEffect;
-	u8 atkItemQuality;
-	u8 defItemEffect;
-	u8 defItemQuality;
-
-	u16 atkItem;
-
-	u16 atkHP;
-	u16 defHP;
-	u16 atkMaxHP;
-	u16 defMaxHP;
-//	u32 attack;
-//	u32 spAttack;
-	u32 defense;
-	u32 spDefense;
-	u32 atkSpeed;
-	u32 defSpeed;
-
-	u8 atkBuff;
-	u8 spAtkBuff;
-	u8 defBuff;
-	u8 spDefBuff;
-
-	u32 atkStatus1;
-	u32 defStatus1;
-	u32 atkStatus3;
-	u32 defStatus3;
-	u16 defSideStatus;
-	bool8 atkIsGrounded;
-	bool8 defIsGrounded;
-
-	u16 move;
-	u8 moveType;
-	u8 moveSplit;
-	u8 resultFlags;
-	u8 basePower;
-
-	u8 specialFlags;
-};
-
 //This file's functions:
 static u8 CalcPossibleCritChance(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monAtk, struct Pokemon* monDef);
 static void TypeDamageModificationByDefTypes(u8 atkAbility, u8 bankDef, u16 move, u8 moveType, u8* flags, u8 defType1, u8 defType2, u8 defType3);
@@ -115,7 +60,7 @@ static s32 CalculateBaseDamage(struct DamageCalc* data);
 static u16 GetBasePower(struct DamageCalc* data);
 static u16 AdjustBasePower(struct DamageCalc* data, u16 power);
 static u16 GetZMovePower(u16 zMove);
-static u16 GetMaxMovePower();
+static u16 GetMaxMovePower(void);
 static u32 AdjustWeight(u32 weight, ability_t, item_effect_t, bank_t, bool8 check_nimble);
 static u8 GetFlingPower(u16 item, u16 species, u8 ability, u8 bank, bool8 partyCheck);
 static void AdjustDamage(bool8 CheckFalseSwipe);
@@ -254,7 +199,7 @@ static u8 CalcPossibleCritChance(u8 bankAtk, u8 bankDef, u16 move, struct Pokemo
 void atk05_damagecalc(void)
 {
 	u32 i;
-	struct DamageCalc data;
+	struct DamageCalc data = {0};
 
 	gBattleStruct->dynamicMoveType = GetMoveTypeSpecial(gBankAttacker, gCurrentMove);
 
@@ -264,15 +209,17 @@ void atk05_damagecalc(void)
 	}
 	else if (IS_DOUBLE_BATTLE && gBattleMoves[gCurrentMove].target & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL))
 	{
+		data.bankAtk = gBankAttacker;
+		data.move = gCurrentMove;
+		PopulateDamageCalcStructWithBaseAttackerData(&data);
+
 		//All multi target foes are calculated now b/c stats can change after first kill (eg. Moxie)
 		for (i = 0; i < gBattlersCount; ++i)
 		{
 			if (!(gNewBS->ResultFlags[i] & MOVE_RESULT_NO_EFFECT)) //The attacker will have had this loaded for itself earlier
 			{
-				Memset(&data, 0, sizeof(data));
-				data.bankAtk = gBankAttacker;
 				data.bankDef = i;
-				data.move = gCurrentMove;
+				PopulateDamageCalcStructWithBaseDefenderData(&data);
 				gNewBS->DamageTaken[i] = CalculateBaseDamage(&data);
 			}
 		}
@@ -281,7 +228,6 @@ void atk05_damagecalc(void)
 	}
 	else //Single Battle or single target move
 	{
-		Memset(&data, 0, sizeof(data));
 		data.bankAtk = gBankAttacker;
 		data.bankDef = gBankTarget;
 		data.move = gCurrentMove;
@@ -313,7 +259,7 @@ s32 ConfusionDamageCalc(void)
 	return gBattleMoveDamage;
 }
 
-u32 AI_CalcDmg(const u8 bankAtk, const u8 bankDef, const u16 move)
+u32 AI_CalcDmg(const u8 bankAtk, const u8 bankDef, const u16 move, struct DamageCalc* damageData)
 {
 	u8 resultFlags = AI_SpecialTypeCalc(move, bankAtk, bankDef);
 	if (gBattleMoves[move].effect != EFFECT_PAIN_SPLIT
@@ -360,11 +306,14 @@ u32 AI_CalcDmg(const u8 bankAtk, const u8 bankDef, const u16 move)
 	else
 		gCritMultiplier = BASE_CRIT_MULTIPLIER;
 
-	data.bankAtk = bankAtk;
-	data.bankDef = bankDef;
-	data.move = move;
-	data.specialFlags |= FLAG_AI_CALC;
-	damage = CalculateBaseDamage(&data);
+	if (damageData == NULL)
+		damageData = &data;
+
+	damageData->bankAtk = bankAtk;
+	damageData->bankDef = bankDef;
+	damageData->move = move;
+	damageData->specialFlags |= FLAG_AI_CALC;
+	damage = CalculateBaseDamage(damageData);
 
 	gBattleMoveDamage = MathMin(0x7FFFFFFF, damage);
 	AI_SpecialTypeCalc(move, bankAtk, bankDef);
@@ -399,7 +348,7 @@ u32 AI_CalcDmg(const u8 bankAtk, const u8 bankDef, const u16 move)
 	return damage;
 }
 
-u32 AI_CalcPartyDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monAtk)
+u32 AI_CalcPartyDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monAtk, struct DamageCalc* damageData)
 {
 	u8 resultFlags = TypeCalc(move, bankAtk, bankDef, monAtk, TRUE);
 	if (gBattleMoves[move].effect != EFFECT_PAIN_SPLIT
@@ -444,12 +393,15 @@ u32 AI_CalcPartyDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monAtk)
 	else
 		gCritMultiplier = BASE_CRIT_MULTIPLIER;
 
-	data.bankAtk = bankAtk;
-	data.bankDef = bankDef;
-	data.move = move;
-	data.monAtk = monAtk;
-	data.specialFlags |= FLAG_AI_CALC;
-	damage = CalculateBaseDamage(&data);
+	if (damageData == NULL)
+		damageData = &data;
+
+	damageData->bankAtk = bankAtk;
+	damageData->bankDef = bankDef;
+	damageData->move = move;
+	damageData->monAtk = monAtk;
+	damageData->specialFlags |= FLAG_AI_CALC;
+	damage = CalculateBaseDamage(damageData);
 
 	gBattleMoveDamage = damage;
 	TypeCalc(move, bankAtk, bankDef, monAtk, TRUE);
@@ -485,7 +437,7 @@ u32 AI_CalcPartyDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monAtk)
 	return damage;
 }
 
-u32 AI_CalcMonDefDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monDef)
+u32 AI_CalcMonDefDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monDef, struct DamageCalc* damageData)
 {
 	u8 resultFlags = AI_TypeCalc(move, bankAtk, monDef);
 	if (gBattleMoves[move].effect != EFFECT_PAIN_SPLIT
@@ -527,12 +479,15 @@ u32 AI_CalcMonDefDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monDef)
 	else
 		gCritMultiplier = BASE_CRIT_MULTIPLIER;
 
-	data.bankAtk = bankAtk;
-	data.bankDef = bankDef;
-	data.move = move;
-	data.monDef = monDef;
-	data.specialFlags |= FLAG_AI_CALC;
-	damage = CalculateBaseDamage(&data);
+	if (damageData == NULL)
+		damageData = &data;
+
+	damageData->bankAtk = bankAtk;
+	damageData->bankDef = bankDef;
+	damageData->move = move;
+	damageData->monDef = monDef;
+	damageData->specialFlags |= FLAG_AI_CALC;
+	damage = CalculateBaseDamage(damageData);
 
 	gBattleMoveDamage = damage;
 	AI_TypeCalc(move, bankAtk, monDef);
@@ -1655,21 +1610,11 @@ void AdjustDamage(bool8 CheckFalseSwipe)
 		++gBattlescriptCurrInstr;
 }
 
-static s32 CalculateBaseDamage(struct DamageCalc* data)
+void PopulateDamageCalcStructWithBaseAttackerData(struct DamageCalc* data)
 {
-	u32 attack, spAttack;
-
-	//Take variables off struct for easier access
 	u8 bankAtk = data->bankAtk;
-	u8 bankDef = data->bankDef;
-	u16 move = data->move;
-
-	u16 power = 0;
-	u32 damage = 0;
 	bool8 useMonAtk = data->monAtk != NULL;
-	bool8 useMonDef = data->monDef != NULL;
 
-//Load attacker Data
 	if (useMonAtk)
 	{
 		struct Pokemon* monAtk = data->monAtk;
@@ -1684,7 +1629,127 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 		data->atkMaxHP = monAtk->maxHP;
 		data->atkSpeed = SpeedCalcMon(SIDE(bankAtk), monAtk);
 		data->atkStatus1 = monAtk->condition;
+		data->atkStatus3 = 0;
 		data->atkIsGrounded = CheckGroundingFromPartyData(monAtk);
+	}
+	else //Load from bank
+	{
+		data->atkSpecies = SPECIES(bankAtk);
+		data->atkAbility = ABILITY(bankAtk);
+		if (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(bankAtk)))
+			data->atkPartnerAbility = ABILITY(PARTNER(bankAtk));
+		else
+			data->atkPartnerAbility = 0;
+		data->atkItem = ITEM(bankAtk);
+		data->atkItemEffect = ITEM_EFFECT(bankAtk);
+		data->atkItemQuality = ITEM_QUALITY(bankAtk);
+
+		data->atkHP = gBattleMons[bankAtk].hp;
+		data->atkMaxHP = gBattleMons[bankAtk].maxHP;
+		data->atkSpeed = SpeedCalc(bankAtk);
+		data->atkStatus1 = gBattleMons[bankAtk].status1;
+		data->atkStatus3 = gStatuses3[bankAtk];
+		data->atkIsGrounded = CheckGrounding(bankAtk);
+	}
+	
+	data->attackerLoaded = TRUE;
+}
+
+void PopulateDamageCalcStructWithBaseDefenderData(struct DamageCalc* data)
+{
+	bool8 useMonDef = data->monDef != NULL;
+	u8 bankDef = data->bankDef;
+
+	if (useMonDef)
+	{
+		struct Pokemon* monDef = data->monDef;
+
+		data->defSpecies = monDef->species;
+		data->defAbility = GetMonAbility(monDef);
+		data->defPartnerAbility = ABILITY_NONE;
+		data->defItemEffect = GetMonItemEffect(monDef);
+		data->defItemQuality = ItemId_GetHoldEffectParam(monDef->item);
+		data->defHP = monDef->hp;
+		data->defMaxHP = monDef->maxHP;
+		data->defSpeed = SpeedCalcMon(SIDE(bankDef), monDef);
+		data->defStatus1 = monDef->condition;
+		data->defStatus3 = 0;
+		data->defSideStatus = gSideStatuses[SIDE(bankDef)];
+		data->defIsGrounded = CheckGroundingFromPartyData(monDef);
+
+		data->defBuff = 0;
+		data->spDefBuff = 0;
+
+		if (IsWonderRoomActive())
+		{
+			data->defense = monDef->spDefense;
+			data->spDefense = monDef->defense;
+		}
+		else
+		{
+			data->defense = monDef->defense;
+			data->spDefense = monDef->spDefense;
+		}
+	}
+	else //Load from bank
+	{
+		data->defSpecies = SPECIES(bankDef);
+		data->defAbility = ABILITY(bankDef);
+		if (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(bankDef)))
+			data->defPartnerAbility = ABILITY(PARTNER(bankDef));
+		else
+			data->defPartnerAbility = 0;
+		data->defItemEffect = ITEM_EFFECT(bankDef);
+		data->defItemQuality = ITEM_QUALITY(bankDef);
+		data->defHP = gBattleMons[bankDef].hp;
+		data->defMaxHP = gBattleMons[bankDef].maxHP;
+		data->defSpeed = SpeedCalc(bankDef);
+		data->defStatus1 = gBattleMons[bankDef].status1;
+		data->defStatus3 = gStatuses3[bankDef];
+		data->defSideStatus = gSideStatuses[SIDE(bankDef)];
+		data->defIsGrounded = CheckGrounding(bankDef);
+
+		data->defBuff = STAT_STAGE(bankDef, STAT_STAGE_DEF);
+		data->spDefBuff = STAT_STAGE(bankDef, STAT_STAGE_SPDEF);
+
+		if (IsWonderRoomActive())
+		{
+			data->defense = gBattleMons[bankDef].spDefense;
+			data->spDefense = gBattleMons[bankDef].defense;
+		}
+		else
+		{
+			data->defense = gBattleMons[bankDef].defense;
+			data->spDefense = gBattleMons[bankDef].spDefense;
+		}
+	}
+
+	data->defenderLoaded = TRUE;
+}
+
+static s32 CalculateBaseDamage(struct DamageCalc* data)
+{
+	u32 attack, spAttack;
+
+	//Take variables off struct for easier access
+	u8 bankAtk = data->bankAtk;
+	u8 bankDef = data->bankDef;
+	u16 move = data->move;
+
+	u16 power = 0;
+	u32 damage = 0;
+	bool8 useMonAtk = data->monAtk != NULL;
+	bool8 useMonDef = data->monDef != NULL;
+	
+	if (!data->attackerLoaded)
+		PopulateDamageCalcStructWithBaseAttackerData(data);
+	if (!data->defenderLoaded)
+		PopulateDamageCalcStructWithBaseDefenderData(data);
+
+//Load attacker Data
+	if (useMonAtk)
+	{
+		struct Pokemon* monAtk = data->monAtk;
 
 		switch (data->move) {
 			case MOVE_BODYPRESS:
@@ -1696,6 +1761,9 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 				spAttack = monAtk->spAttack;
 		}
 
+		data->atkBuff = 0;
+		data->spAtkBuff = 0;
+
 		data->moveSplit = CalcMoveSplitFromParty(monAtk, move);
 		data->moveType = GetMonMoveTypeSpecial(monAtk, move);
 
@@ -1706,21 +1774,6 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 	}
 	else //Load from bank
 	{
-		data->atkSpecies = SPECIES(bankAtk);
-		data->atkAbility = ABILITY(bankAtk);
-		if (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(bankAtk)))
-			data->atkPartnerAbility = ABILITY(PARTNER(bankAtk));
-		data->atkItem = ITEM(bankAtk);
-		data->atkItemEffect = ITEM_EFFECT(bankAtk);
-		data->atkItemQuality = ITEM_QUALITY(bankAtk);
-
-		data->atkHP = gBattleMons[bankAtk].hp;
-		data->atkMaxHP = gBattleMons[bankAtk].maxHP;
-		data->atkSpeed = SpeedCalc(bankAtk);
-		data->atkStatus1 = gBattleMons[bankAtk].status1;
-		data->atkStatus3 = gStatuses3[bankAtk];
-		data->atkIsGrounded = CheckGrounding(bankAtk);
-
 		switch (data->move) {
 			case MOVE_BODYPRESS:
 				attack = gBattleMons[bankAtk].defense;
@@ -1759,28 +1812,6 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 	{
 		struct Pokemon* monDef = data->monDef;
 
-		data->defSpecies = monDef->species;
-		data->defAbility = GetMonAbility(monDef);
-		data->defPartnerAbility = ABILITY_NONE;
-		data->defItemEffect = GetMonItemEffect(monDef);
-		data->defItemQuality = ItemId_GetHoldEffectParam(monDef->item);
-		data->defHP = monDef->hp;
-		data->defSpeed = SpeedCalcMon(SIDE(bankDef), monDef);
-		data->defStatus1 = monDef->condition;
-		data->defSideStatus = gSideStatuses[SIDE(bankDef)];
-		data->defIsGrounded = CheckGroundingFromPartyData(monDef);
-
-		if (IsWonderRoomActive())
-		{
-			data->defense = monDef->spDefense;
-			data->spDefense = monDef->defense;
-		}
-		else
-		{
-			data->defense = monDef->defense;
-			data->spDefense = monDef->spDefense;
-		}
-
 		switch (data->move) {
 			case MOVE_FOULPLAY:
 				attack = monDef->attack;
@@ -1792,33 +1823,6 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 	}
 	else //Load from bank
 	{
-		data->defSpecies = SPECIES(bankDef);
-		data->defAbility = ABILITY(bankDef);
-		if (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(bankDef)))
-			data->defPartnerAbility = ABILITY(PARTNER(bankDef));
-		data->defItemEffect = ITEM_EFFECT(bankDef);
-		data->defItemQuality = ITEM_QUALITY(bankDef);
-		data->defHP = gBattleMons[bankDef].hp;
-		data->defSpeed = SpeedCalc(bankDef);
-		data->defStatus1 = gBattleMons[bankDef].status1;
-		data->defStatus3 = gStatuses3[bankDef];
-		data->defSideStatus = gSideStatuses[SIDE(bankDef)];
-		data->defIsGrounded = CheckGrounding(bankDef);
-
-		data->defBuff = STAT_STAGE(bankDef, STAT_STAGE_DEF);
-		data->spDefBuff = STAT_STAGE(bankDef, STAT_STAGE_SPDEF);
-
-		if (IsWonderRoomActive())
-		{
-			data->defense = gBattleMons[bankDef].spDefense;
-			data->spDefense = gBattleMons[bankDef].defense;
-		}
-		else
-		{
-			data->defense = gBattleMons[bankDef].defense;
-			data->spDefense = gBattleMons[bankDef].spDefense;
-		}
-
 		switch (data->move) {
 			case MOVE_FOULPLAY:
 				attack = gBattleMons[bankDef].attack;
@@ -3272,7 +3276,7 @@ static u16 GetZMovePower(u16 zMove)
 }
 
 //Requires that the base move be loaded into gNewBS->ai.zMoveHelper
-static u16 GetMaxMovePower()
+static u16 GetMaxMovePower(void)
 {
 	#ifdef DYNAMAX_FEATURE
 	return gDynamaxMovePowers[gNewBS->ai.zMoveHelper];
@@ -3291,19 +3295,7 @@ u16 CalcVisualBasePower(u8 bankAtk, u8 bankDef, u16 move, bool8 ignoreDef)
 	u16 power = 0;
 
 //Load attacker Data
-	data.atkSpecies = SPECIES(bankAtk);
-	data.atkAbility = ABILITY(bankAtk);
-	if (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(bankAtk)))
-		data.atkPartnerAbility = ABILITY(PARTNER(bankAtk));
-	data.atkItem = ITEM(bankAtk);
-	data.atkItemEffect = ITEM_EFFECT(bankAtk);
-	data.atkItemQuality = ITEM_QUALITY(bankAtk);
-	data.atkHP = gBattleMons[bankAtk].hp;
-	data.atkMaxHP = gBattleMons[bankAtk].maxHP;
-	data.atkSpeed = SpeedCalc(bankAtk);
-	data.atkStatus1 = gBattleMons[bankAtk].status1;
-	data.atkStatus3 = gStatuses3[bankAtk];
-	data.atkIsGrounded = CheckGrounding(bankAtk);
+	PopulateDamageCalcStructWithBaseAttackerData(&data);
 	data.moveSplit = CalcMoveSplit(bankAtk, move);
 	data.moveType = GetMoveTypeSpecial(bankAtk, move);
 
@@ -3311,20 +3303,7 @@ u16 CalcVisualBasePower(u8 bankAtk, u8 bankDef, u16 move, bool8 ignoreDef)
 	if (ignoreDef)
 		data.specialFlags |= FLAG_IGNORE_TARGET;
 	else
-	{
-		data.defSpecies = SPECIES(bankDef);
-		data.defAbility = ABILITY(bankDef);
-		if (IS_DOUBLE_BATTLE && BATTLER_ALIVE(PARTNER(bankDef)))
-			data.defPartnerAbility = ABILITY(PARTNER(bankDef));
-		data.defItemEffect = ITEM_EFFECT(bankDef);
-		data.defItemQuality = ITEM_QUALITY(bankDef);
-		data.defHP = gBattleMons[bankDef].hp;
-		data.defSpeed = SpeedCalc(bankDef);
-		data.defStatus1 = gBattleMons[bankDef].status1;
-		data.defStatus3 = gStatuses3[bankDef];
-		data.defSideStatus = gSideStatuses[SIDE(bankDef)];
-		data.defIsGrounded = CheckGrounding(bankDef);
-	}
+		PopulateDamageCalcStructWithBaseDefenderData(&data);
 
 	data.resultFlags = TypeCalc(move, bankAtk, bankDef, NULL, FALSE);
 

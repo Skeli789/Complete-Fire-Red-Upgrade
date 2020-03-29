@@ -9,11 +9,12 @@ defines.h
 #include "../include/global.h"
 #include "../include/pokedex.h"
 
-#include "../include/item.h"
-#include "../include/task.h"
-#include "../include/sprite.h"
 #include "../include/decompress.h"
+#include "../include/item.h"
+#include "../include/mgba.h"
 #include "../include/palette.h"
+#include "../include/sprite.h"
+#include "../include/task.h"
 
 #include "../include/new/ram_locs.h"
 #include "../include/new/rom_locs.h"

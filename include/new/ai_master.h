@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../global.h"
+#include "ai_scripts.h"
 
 /**
  * \file ai_master.h
@@ -17,6 +18,8 @@ u8 CalcMostSuitableMonToSwitchInto(void);
 void ResetBestMonToSwitchInto(u8 bank);
 void RemoveBestMonToSwitchInto(u8 bank);
 u32 WildMonIsSmart(u8 bank);
+void PopulateAIScriptStructWithBaseAttackerData(struct AIScript* data, u8 bankAtk);
+void PopulateAIScriptStructWithBaseDefenderData(struct AIScript* data, u8 bankDef);
 void LoadBattlersAndFoes(u8* battlerIn1, u8* battlerIn2, u8* foe1, u8* foe2);
 void TryTempMegaEvolveBank(u8 bank, struct BattlePokemon* backupMon, u16* backupSpecies, u8* backupAbility);
 void TryRevertTempMegaEvolveBank(u8 bank, struct BattlePokemon* backupMon, u16* backupSpecies, u8* backupAbility);
