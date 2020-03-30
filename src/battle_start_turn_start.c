@@ -774,55 +774,55 @@ void RunTurnActionsFunctions(void)
 
 	*megaBank = 0;
 
-	//Try to Dynamax/Gigantamax Pokemon
-	for (i = 0; i < gBattlersCount; ++i)
-	{
-		u8 bank = gActiveBattler = gBanksByTurnOrder[i];
-
-		if (gNewBS->dynamaxData.toBeUsed[bank]
-		&& !gNewBS->dynamaxData.used[bank]
-		&& !DoesZMoveUsageStopMegaEvolution(bank)) //Same for Dynamax
-		{
-			const u8* script = GetDynamaxScript(bank);
-			if (script != NULL)
-			{
-				gNewBS->dynamaxData.toBeUsed[bank] = FALSE;
-				gNewBS->dynamaxData.used[bank] = TRUE;
-				gNewBS->dynamaxData.timer[bank] = 3; //Dynamax lasts for 3 turns
-				gNewBS->dynamaxData.partyIndex[SIDE(bank)] = gBitTable[gBattlerPartyIndexes[bank]];
-
-				if (SIDE(bank) == B_SIDE_PLAYER)
-				{
-					gNewBS->dynamaxData.toBeUsed[PARTNER(bank)] = FALSE;
-					gNewBS->dynamaxData.used[PARTNER(bank)] = TRUE;
-				}
-				else
-				{
-					gNewBS->dynamaxData.toBeUsed[PARTNER(bank)] = FALSE;
-					gNewBS->dynamaxData.used[PARTNER(bank)] = TRUE;
-				}
-
-				BattleScriptExecute(script);
-				gCurrentActionFuncId = savedActionFuncId;
-				
-
-				if (IS_BEHIND_SUBSTITUTE(bank))
-				{
-					BattleScriptPushCursor();
-					gBankTarget = bank;
-					gBattleMons[gActiveBattler].status2 &= ~(STATUS2_SUBSTITUTE);
-					gDisableStructs[gActiveBattler].substituteHP = 0;
-					gBattlescriptCurrInstr = BattleScript_SubstituteFade;
-					BattleScriptPushCursor();
-					gBattlescriptCurrInstr = BattleScript_FlushMessageBox;
-				}
-				return;
-			}
-		}
-	}
-
 	if (gCurrentActionFuncId == ACTION_USE_MOVE)
 	{
+		//Try to Dynamax/Gigantamax Pokemon
+		for (i = 0; i < gBattlersCount; ++i)
+		{
+			u8 bank = gActiveBattler = gBanksByTurnOrder[i];
+
+			if (gNewBS->dynamaxData.toBeUsed[bank]
+			&& !gNewBS->dynamaxData.used[bank]
+			&& !DoesZMoveUsageStopMegaEvolution(bank)) //Same for Dynamax
+			{
+				const u8* script = GetDynamaxScript(bank);
+				if (script != NULL)
+				{
+					gNewBS->dynamaxData.toBeUsed[bank] = FALSE;
+					gNewBS->dynamaxData.used[bank] = TRUE;
+					gNewBS->dynamaxData.timer[bank] = 3; //Dynamax lasts for 3 turns
+					gNewBS->dynamaxData.partyIndex[SIDE(bank)] = gBitTable[gBattlerPartyIndexes[bank]];
+
+					if (SIDE(bank) == B_SIDE_PLAYER)
+					{
+						gNewBS->dynamaxData.toBeUsed[PARTNER(bank)] = FALSE;
+						gNewBS->dynamaxData.used[PARTNER(bank)] = TRUE;
+					}
+					else
+					{
+						gNewBS->dynamaxData.toBeUsed[PARTNER(bank)] = FALSE;
+						gNewBS->dynamaxData.used[PARTNER(bank)] = TRUE;
+					}
+
+					BattleScriptExecute(script);
+					gCurrentActionFuncId = savedActionFuncId;
+					
+
+					if (IS_BEHIND_SUBSTITUTE(bank))
+					{
+						BattleScriptPushCursor();
+						gBankTarget = bank;
+						gBattleMons[gActiveBattler].status2 &= ~(STATUS2_SUBSTITUTE);
+						gDisableStructs[gActiveBattler].substituteHP = 0;
+						gBattlescriptCurrInstr = BattleScript_SubstituteFade;
+						BattleScriptPushCursor();
+						gBattlescriptCurrInstr = BattleScript_FlushMessageBox;
+					}
+					return;
+				}
+			}
+		}
+	
 		while (gBattleStruct->focusPunchBank < gBattlersCount)
 		{
 			gActiveBattler = gBanksByTurnOrder[gBattleStruct->focusPunchBank];
