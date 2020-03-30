@@ -333,6 +333,8 @@ void atk4D_switchindataupdate(void)
 			gBattleMons[gActiveBattler].defense = attack;
 		}
 	}
+	else
+		ClearBehindSubstituteBit(gActiveBattler);
 
 	if (!(gStatuses3[gActiveBattler] & STATUS3_LEVITATING))
 		gNewBS->MagnetRiseTimers[gActiveBattler] = 0;

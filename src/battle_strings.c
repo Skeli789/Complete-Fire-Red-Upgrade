@@ -524,11 +524,7 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 				HANDLE_NICKNAME_STRING_CASE(gBankAttacker, GetBattlerAtPosition(SIDE(gBankAttacker)));
 				break;
 			case B_TXT_ATK_PARTNER_NAME: // attacker partner name
-				if (SIDE(gBankAttacker) == B_SIDE_PLAYER)
-					GetMonData(GetIllusionPartyData(gBankAttacker ^ BIT_FLANK), MON_DATA_NICKNAME, text);
-				else
-					GetMonData(GetIllusionPartyData(gBankAttacker ^ BIT_FLANK), MON_DATA_NICKNAME, text);
-
+				GetMonData(GetIllusionPartyData(gBankAttacker ^ BIT_FLANK), MON_DATA_NICKNAME, text);
 				StringGetEnd10(text);
 				toCpy = text;
 				break;
@@ -865,6 +861,27 @@ u32 BattleStringExpandPlaceholders(const u8* src, u8* dst)
 				GetMonData(GetBankPartyData(gBankTarget), MON_DATA_NICKNAME, text);
 				StringGetEnd10(text);
 				toCpy = text;
+				break;
+			case B_TXT_DEF_NAME:
+				GetMonData(GetIllusionPartyData(gBankTarget), MON_DATA_NICKNAME, text);
+				StringGetEnd10(text);
+				toCpy = text;
+				break;
+			case B_TXT_DEF_PARTNER_NAME:
+				GetMonData(GetIllusionPartyData(gBankTarget ^ BIT_FLANK), MON_DATA_NICKNAME, text);
+				StringGetEnd10(text);
+				toCpy = text;
+				break;
+			case B_TXT_DEF_PREFIX5:
+				if (SIDE(gBankTarget) == B_SIDE_PLAYER)
+					toCpy = NULL;
+				else
+				{
+					if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER))
+						toCpy = sText_thewild; //the wild
+					else
+						toCpy = sText_FoePkmnPrefix5; //the opposing
+				}
 				break;
 			}
 

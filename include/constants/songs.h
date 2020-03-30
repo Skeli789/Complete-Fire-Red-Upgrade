@@ -36,7 +36,7 @@
 #define SE_HOP 0xA
 #define SE_BIKE_BELL 0xB
 #define SE_NOT_VERY_EFFECTIVE 0xC
-#define SE_HIT_DAMAGE 0xD
+#define SE_EFFECTIVE 0xD
 #define SE_SUPER_EFFECTIVE 0xE
 #define SE_SWITCH_IN 0xF
 #define SE_FAINT 0x10

@@ -6,6 +6,7 @@
 #include "../include/random.h"
 #include "../include/string_util.h"
 #include "../include/constants/items.h"
+#include "../include/constants/songs.h"
 
 #include "../include/new/ability_battle_effects.h"
 #include "../include/new/ability_battle_scripts.h"
@@ -238,6 +239,71 @@ bool8 TryActivateWeakenessBerryFutureSight(void)
 	return FALSE;
 }
 
+static bool8 IsSingleTargetOfDoublesSpreadMove(void)
+{
+	if (gBattleMoves[gCurrentMove].target & MOVE_TARGET_ALL)
+		return gNewBS->allSpreadTargets <= 1;
+	else if (gBattleMoves[gCurrentMove].target & MOVE_TARGET_BOTH)
+		return gNewBS->foeSpreadTargets <= 1;
+
+	return TRUE;
+}
+
+static bool8 IsDoubleSpreadMove(void)
+{
+	return IS_DOUBLE_BATTLE
+		&& !(gHitMarker & (HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_NON_ATTACK_DMG | HITMARKER_UNABLE_TO_USE_MOVE))
+		&& gBattleMoves[gCurrentMove].target & (MOVE_TARGET_ALL | MOVE_TARGET_BOTH)
+		&& !IsSingleTargetOfDoublesSpreadMove();
+}
+
+static bool8 DoesBankNegateDamage(u8 bank, unusedArg u16 move)
+{
+	unusedArg u16 species = SPECIES(bank);
+	unusedArg u8 ability = ABILITY(bank);
+
+	return FALSE
+			#ifdef SPECIES_MIMIKYU
+			|| (ability == ABILITY_DISGUISE && species == SPECIES_MIMIKYU && !IS_TRANSFORMED(bank))
+			#endif
+			#ifdef SPECIES_EISCUE
+			|| (ability == ABILITY_ICEFACE && species == SPECIES_EISCUE && SPLIT(move) == SPLIT_PHYSICAL && !IS_TRANSFORMED(bank))
+			#endif
+			;
+}
+
+static u8 UpdateEffectivenessResultFlagsForDoubleSpreadMoves(u8 resultFlags)
+{
+	u32 i, j;
+
+	//Only play the "best" sound
+	for (i = 0; i < 3; ++i)
+	{
+		for (j = 0; j < gBattlersCount; ++j)
+		{
+			if (!(gNewBS->ResultFlags[j] & (MOVE_RESULT_MISSED | MOVE_RESULT_NO_EFFECT)) && !gNewBS->noResultString[j])
+			{
+				switch (i) {
+					case 0:
+						if (gNewBS->ResultFlags[j] & MOVE_RESULT_SUPER_EFFECTIVE && !DoesBankNegateDamage(j, gCurrentMove))
+							return gNewBS->ResultFlags[j];
+						break;
+					case 1:
+						if (gNewBS->ResultFlags[j] & MOVE_RESULT_NOT_VERY_EFFECTIVE && !DoesBankNegateDamage(j, gCurrentMove))
+							return gNewBS->ResultFlags[j];
+						break;
+					case 2:
+						if (DoesBankNegateDamage(j, gCurrentMove))
+							return 0; //Normal effectiveness
+						return gNewBS->ResultFlags[j];
+				}
+			}
+		}
+	}
+
+	return resultFlags;
+}
+
 void atk09_attackanimation(void)
 {
 	if (gBattleExecBuffer) return;
@@ -247,11 +313,15 @@ void atk09_attackanimation(void)
 		gBattlescriptCurrInstr += 5; //Counteract the callasm decrement
 		return;
 	}
+	
+	u8 resultFlags = gMoveResultFlags;
+	if (IsDoubleSpreadMove())
+		resultFlags = UpdateEffectivenessResultFlagsForDoubleSpreadMoves(resultFlags);
 
 	if (((gHitMarker & HITMARKER_NO_ANIMATIONS) && (gCurrentMove != MOVE_TRANSFORM && gCurrentMove != MOVE_SUBSTITUTE))
 	|| gNewBS->tempIgnoreAnimations)
 	{
-		if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT))
+		if (!(resultFlags & MOVE_RESULT_NO_EFFECT))
 			gNewBS->attackAnimationPlayed = TRUE;
 
 		if (gNewBS->tempIgnoreAnimations)
@@ -285,7 +355,7 @@ void atk09_attackanimation(void)
 			return;
 		}
 
-		if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT))
+		if (!(resultFlags & MOVE_RESULT_NO_EFFECT))
 		{
 			u8 multihit;
 
@@ -310,11 +380,50 @@ void atk09_attackanimation(void)
 			MarkBufferBankForExecution(gBankAttacker);
 			gBattlescriptCurrInstr++;
 		}
-		else
+		else if (!IsDoubleSpreadMove() || !gNewBS->calculatedSpreadMoveData)
 		{
 			BattleScriptPush(gBattlescriptCurrInstr + 1);
 			gBattlescriptCurrInstr = BattleScript_Pausex20;
 		}
+		else
+			gBattlescriptCurrInstr++;
+	}
+	
+	gNewBS->calculatedSpreadMoveData = TRUE;
+}
+
+static void DoublesHPBarReduction(void)
+{
+	if (!gNewBS->doneDoublesSpreadHit //Spread moves in doubles are only done once
+	&& !(gHitMarker & (HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_NON_ATTACK_DMG)))
+	{
+		s16 healthValue;
+		s32 currDmg, maxPossibleDmgValue;
+		maxPossibleDmgValue = 0xFFFF; //Ensures that huge damage values don't change sign
+
+		for (u32 i = 0; i < gBattlersCount; ++i)
+		{
+			if (!(gNewBS->ResultFlags[i] & MOVE_RESULT_NO_EFFECT) && gNewBS->DamageTaken[i] != 0 && !gNewBS->noResultString[i]
+			&& !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, i)
+			&& !DoesBankNegateDamage(i, gCurrentMove))
+			{
+				gActiveBattler = i;
+				currDmg = gNewBS->DamageTaken[i];
+				
+				if (currDmg <= maxPossibleDmgValue)
+					healthValue = currDmg;
+				else
+					healthValue = maxPossibleDmgValue;
+
+				EmitHealthBarUpdate(0, healthValue);
+				MarkBufferBankForExecution(gActiveBattler);
+
+				if (SIDE(gActiveBattler) == B_SIDE_PLAYER && currDmg > 0)
+					gBattleResults.playerMonWasDamaged = TRUE;
+			}
+		}
+		
+		gNewBS->doneDoublesSpreadHit = TRUE;
 	}
 }
 
@@ -329,59 +438,81 @@ void atk0B_healthbarupdate(void)
 		gActiveBattler = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 		ability = ABILITY(gActiveBattler);
 
-		if (gBattleMons[gActiveBattler].status2 & STATUS2_SUBSTITUTE
-		&& gDisableStructs[gActiveBattler].substituteHP
-		&& !(gHitMarker & HITMARKER_IGNORE_SUBSTITUTE)
+		if (IS_BEHIND_SUBSTITUTE(gActiveBattler)
+		&& gDisableStructs[gActiveBattler].substituteHP != 0
+		&& !(gHitMarker & (HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_NON_ATTACK_DMG))
 		&& !gNewBS->bypassSubstitute)
 		{
 			PrepareStringBattle(STRINGID_SUBSTITUTEDAMAGED, gActiveBattler);
+			if (IsDoubleSpreadMove())
+				DoublesHPBarReduction();
 		}
 		#ifdef SPECIES_MIMIKYU
 		else if (ability == ABILITY_DISGUISE
+		&& (!(gHitMarker & (HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_NON_ATTACK_DMG)) || gNewBS->breakDisguiseSpecialDmg)
 		&& SPECIES(gActiveBattler) == SPECIES_MIMIKYU
-		&& !(gHitMarker & HITMARKER_IGNORE_SUBSTITUTE)
-		&& !(gBattleMons[gActiveBattler].status2 & STATUS2_TRANSFORMED))
+		&& !IS_TRANSFORMED(gActiveBattler))
 		{
 			gBattleScripting.bank = gBankTarget;
 			BattleScriptPush(gBattlescriptCurrInstr + 2);
 			gBattlescriptCurrInstr = BattleScript_DisguiseTookDamage;
+			if (IsDoubleSpreadMove())
+				DoublesHPBarReduction();
 			return;
 		}
 		#endif
 		#ifdef SPECIES_EISCUE
 		else if (ability == ABILITY_ICEFACE
 		&& SPECIES(gActiveBattler) == SPECIES_EISCUE
+		&& (!(gHitMarker & (HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_NON_ATTACK_DMG)) || gNewBS->breakDisguiseSpecialDmg)
 		&& SPLIT(gCurrentMove) == SPLIT_PHYSICAL //Only physical moves are stopped by the ice face
-		&& !(gHitMarker & HITMARKER_IGNORE_SUBSTITUTE)
-		&& !(gBattleMons[gActiveBattler].status2 & STATUS2_TRANSFORMED))
+		&& !IS_TRANSFORMED(gActiveBattler))
 		{
 			gBattleScripting.bank = gBankTarget;
 			BattleScriptPush(gBattlescriptCurrInstr + 2);
 			gBattlescriptCurrInstr = BattleScript_IceFaceTookDamage;
+			if (IsDoubleSpreadMove())
+				DoublesHPBarReduction();
 			return;
 		}
 		#endif
 		else
 		{
 			s16 healthValue;
-			s32 currDmg = gBattleMoveDamage;
-			s32 maxPossibleDmgValue = 0xFFFF; //Ensures that huge damage values don't change sign
-			if (currDmg <= maxPossibleDmgValue)
-				healthValue = currDmg;
+			s32 currDmg, maxPossibleDmgValue;
+
+			maxPossibleDmgValue = 0xFFFF; //Ensures that huge damage values don't change sign
+
+			if (!IsDoubleSpreadMove())
+			{
+				currDmg = gBattleMoveDamage;
+
+				if (currDmg <= maxPossibleDmgValue)
+					healthValue = currDmg;
+				else
+					healthValue = maxPossibleDmgValue;
+
+				EmitHealthBarUpdate(0, healthValue);
+				MarkBufferBankForExecution(gActiveBattler);
+
+				if (SIDE(gActiveBattler) == B_SIDE_PLAYER && gBattleMoveDamage > 0)
+					gBattleResults.playerMonWasDamaged = TRUE;
+			}
 			else
-				healthValue = maxPossibleDmgValue;
-
-			EmitHealthBarUpdate(0, healthValue);
-			MarkBufferBankForExecution(gActiveBattler);
-
-			if (SIDE(gActiveBattler) == B_SIDE_PLAYER && gBattleMoveDamage > 0)
-				gBattleResults.unk5_0 = TRUE;
+			{
+				DOUBLES_HEALTH_REDUCE:
+				DoublesHPBarReduction();
+			}
 		}
 	}
+	else if (IsDoubleSpreadMove())
+		goto DOUBLES_HEALTH_REDUCE;
+
 	gBattlescriptCurrInstr += 2;
 }
 
-void atk0C_datahpupdate(void) {
+void atk0C_datahpupdate(void)
+{
 	if (gBattleExecBuffer) return;
 
 	if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT) || (gHitMarker & HITMARKER_NON_ATTACK_DMG))
@@ -422,7 +553,7 @@ void atk0C_datahpupdate(void) {
 		#ifdef SPECIES_MIMIKYU
 		else if (ABILITY(gActiveBattler) == ABILITY_DISGUISE //Disguise Protected
 		&& SPECIES(gActiveBattler) == SPECIES_MIMIKYU
-		&& !(gHitMarker & HITMARKER_IGNORE_SUBSTITUTE)
+		&& (!(gHitMarker & (HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_NON_ATTACK_DMG)) || gNewBS->breakDisguiseSpecialDmg)
 		&& !IS_TRANSFORMED(gActiveBattler))
 		{
 			gBattleMoveDamage = GetBaseCurrentHP(gActiveBattler) / 8;
@@ -460,7 +591,7 @@ void atk0C_datahpupdate(void) {
 		else if (ABILITY(gActiveBattler) == ABILITY_ICEFACE //Disguise Protected
 		&& SPECIES(gActiveBattler) == SPECIES_EISCUE
 		&& SPLIT(gCurrentMove) == SPLIT_PHYSICAL //Only physical attacks break the ice
-		&& !(gHitMarker & HITMARKER_IGNORE_SUBSTITUTE)
+		&& (!(gHitMarker & (HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_NON_ATTACK_DMG)) || gNewBS->breakDisguiseSpecialDmg)
 		&& !IS_TRANSFORMED(gActiveBattler))
 		{
 			if (gSpecialStatuses[gActiveBattler].moveturnLostHP == 0)
@@ -589,24 +720,135 @@ void atk0C_datahpupdate(void) {
 	gBattlescriptCurrInstr += 2;
 }
 
-void atk0D_critmessage(void) {
-	if (!gBattleExecBuffer) {
-		if (gCritMultiplier > BASE_CRIT_MULTIPLIER && !(gMoveResultFlags & MOVE_RESULT_NO_EFFECT)) {
-			PrepareStringBattle(STRINGID_CRITICALHIT, gBankAttacker);
+void atk0D_critmessage(void)
+{
+	if (gBattleExecBuffer)
+		return;
+
+	u16 stringId = 0;
+
+	gBattleCommunication[MSG_DISPLAY] = 0;
+	if (gCritMultiplier > BASE_CRIT_MULTIPLIER)
+	{
+		if (IsDoubleSpreadMove())
+		{
+			if (!(gNewBS->ResultFlags[gBankTarget] & MOVE_RESULT_NO_EFFECT) && !gNewBS->noResultString[gBankTarget])
+			{
+				stringId = 0x184;
+				if (gBankTarget == FOE(gBankAttacker)
+				&& !(gNewBS->ResultFlags[PARTNER(gBankTarget)] & MOVE_RESULT_NO_EFFECT)
+				&& !gNewBS->noResultString[PARTNER(gBankTarget)]
+				&& gNewBS->criticalMultiplier[PARTNER(gBankTarget)] > BASE_CRIT_MULTIPLIER)
+					gBattleStringLoader = gText_CriticalHitTwoFoes;
+				else if (gBankTarget == PARTNER(FOE(gBankAttacker))
+				&& !(gNewBS->ResultFlags[FOE(gBankAttacker)] & MOVE_RESULT_NO_EFFECT)
+				&& !gNewBS->noResultString[FOE(gBankAttacker)]
+				&& gNewBS->criticalMultiplier[FOE(gBankAttacker)] > BASE_CRIT_MULTIPLIER)
+				{
+					//Was handled or will be handled as a double string
+					stringId = 0;
+				}
+				else
+					gBattleStringLoader = gText_CriticalHitTarget;
+			}
+		}
+		else if (!(gMoveResultFlags & MOVE_RESULT_NO_EFFECT))
+			stringId = STRINGID_CRITICALHIT;
+	
+		if (stringId != 0)
+		{
+			PrepareStringBattle(stringId, gBankAttacker);
 			gBattleCommunication[MSG_DISPLAY] = 1;
 		}
-		gBattlescriptCurrInstr++;
 	}
+
+	gBattlescriptCurrInstr++;
 }
 
-void atk0F_resultmessage(void) {
+void atk0E_effectivenesssound(void)
+{
+	if (gBattleExecBuffer)
+		return;
+
+	u8 resultFlags = gMoveResultFlags;
+
+	if (IsDoubleSpreadMove())
+	{
+		if (gNewBS->doneDoublesSpreadHit
+		|| !gNewBS->calculatedSpreadMoveData) //The attack animation didn't play yet - only play sound after animation
+			goto END;
+		resultFlags = UpdateEffectivenessResultFlagsForDoubleSpreadMoves(resultFlags);
+	}
+	else if (!(resultFlags & MOVE_RESULT_NO_EFFECT) && DoesBankNegateDamage(gBankTarget, gCurrentMove)) //Mimikyu disguised
+		resultFlags = 0;
+
+	gActiveBattler = gBankTarget;
+	if (!(resultFlags & MOVE_RESULT_MISSED))
+	{
+		switch (resultFlags & (u8)(~(MOVE_RESULT_MISSED))) {
+			case MOVE_RESULT_SUPER_EFFECTIVE:
+				EmitPlaySE(0, SE_SUPER_EFFECTIVE);
+				MarkBufferBankForExecution(gActiveBattler);
+				break;
+			case MOVE_RESULT_NOT_VERY_EFFECTIVE:
+				EmitPlaySE(0, SE_NOT_VERY_EFFECTIVE);
+				MarkBufferBankForExecution(gActiveBattler);
+				break;
+			case MOVE_RESULT_DOESNT_AFFECT_FOE:
+			case MOVE_RESULT_FAILED:
+				//No sound
+				break;
+			case MOVE_RESULT_FOE_ENDURED:
+			case MOVE_RESULT_ONE_HIT_KO:
+			case MOVE_RESULT_FOE_HUNG_ON:
+			default:
+				if (resultFlags & MOVE_RESULT_SUPER_EFFECTIVE)
+				{
+					EmitPlaySE(0, SE_SUPER_EFFECTIVE);
+					MarkBufferBankForExecution(gActiveBattler);
+				}
+				else if (resultFlags & MOVE_RESULT_NOT_VERY_EFFECTIVE)
+				{
+					EmitPlaySE(0, SE_NOT_VERY_EFFECTIVE);
+					MarkBufferBankForExecution(gActiveBattler);
+				}
+				else if (!(resultFlags & (MOVE_RESULT_DOESNT_AFFECT_FOE | MOVE_RESULT_FAILED)))
+				{
+					EmitPlaySE(0, SE_EFFECTIVE);
+					MarkBufferBankForExecution(gActiveBattler);
+				}
+				break;
+			}
+	}
+
+END:
+	gBattlescriptCurrInstr++;
+}
+
+static bool8 ShouldPrintTwoFoesMessage(u8 moveResult)
+{
+	return gBankTarget == FOE(gBankAttacker)
+		&& gNewBS->ResultFlags[PARTNER(gBankTarget)] & moveResult
+		&& !gNewBS->noResultString[PARTNER(gBankTarget)];
+}
+
+static bool8 ShouldRelyOnTwoFoesMessage(u8 moveResult)
+{
+	return gBankTarget == PARTNER(FOE(gBankAttacker))
+		&& gNewBS->ResultFlags[FOE(gBankAttacker)] & moveResult
+		&& !(gNewBS->ResultFlags[FOE(gBankAttacker)] & MOVE_RESULT_MISSED && gNewBS->missStringId[FOE(gBankAttacker)] > 2) //Partner was missed
+		&& !gNewBS->noResultString[FOE(gBankAttacker)];
+}
+
+void atk0F_resultmessage(void)
+{
 	u32 stringId = 0;
 
 	if (gBattleExecBuffer) return;
 
-	if (gMoveResultFlags & MOVE_RESULT_MISSED && (!(gMoveResultFlags & MOVE_RESULT_DOESNT_AFFECT_FOE) || gBattleCommunication[6] > 2))
+	if (gMoveResultFlags & MOVE_RESULT_MISSED && (!(gMoveResultFlags & MOVE_RESULT_DOESNT_AFFECT_FOE) || gNewBS->missStringId[gBankTarget] > 2))
 	{
-		if (gBattleCommunication[6] == 3 || gBattleCommunication[6] == 4) //Levitate + Wonder Guard
+		if (gNewBS->missStringId[gBankTarget] == 3 || gNewBS->missStringId[gBankTarget] == 4) //Levitate + Wonder Guard
 		{
 			BattleScriptPush(gBattlescriptCurrInstr + 1);
 			gBattleScripting.bank = gBankTarget;
@@ -616,7 +858,7 @@ void atk0F_resultmessage(void) {
 		}
 		else
 		{
-			stringId = gMissStringIds[gBattleCommunication[6]];
+			stringId = gMissStringIds[gNewBS->missStringId[gBankTarget]];
 			gBattleCommunication[MSG_DISPLAY] = 1;
 		}
 	}
@@ -625,11 +867,39 @@ void atk0F_resultmessage(void) {
 		gBattleCommunication[MSG_DISPLAY] = 1;
 		switch (gMoveResultFlags & (u8)(~(MOVE_RESULT_MISSED))) {
 		case MOVE_RESULT_SUPER_EFFECTIVE:
-			stringId = STRINGID_SUPEREFFECTIVE;
+			if (IsDoubleSpreadMove())
+			{
+				stringId = 0x184;
+				if (ShouldPrintTwoFoesMessage(MOVE_RESULT_SUPER_EFFECTIVE))
+					gBattleStringLoader = gText_SuperEffectiveTwoFoes;
+				else if (ShouldRelyOnTwoFoesMessage(MOVE_RESULT_SUPER_EFFECTIVE))
+				{
+					//Was handled or will be handled as a double string
+					stringId = 0;
+				}
+				else
+					gBattleStringLoader = gText_SuperEffectiveTarget;
+			}
+			else
+				stringId = STRINGID_SUPEREFFECTIVE;
 			break;
 
 		case MOVE_RESULT_NOT_VERY_EFFECTIVE:
-			stringId = STRINGID_NOTVERYEFFECTIVE;
+			if (IsDoubleSpreadMove())
+			{
+				stringId = 0x184;
+				if (ShouldPrintTwoFoesMessage(MOVE_RESULT_NOT_VERY_EFFECTIVE))
+					gBattleStringLoader = gText_NotVeryEffectiveTwoFoes;
+				else if (ShouldRelyOnTwoFoesMessage(MOVE_RESULT_NOT_VERY_EFFECTIVE))
+				{
+					//Was handled or will be handled as a double string
+					stringId = 0;
+				}
+				else
+					gBattleStringLoader = gText_NotVeryEffectiveTarget;
+			}
+			else
+				stringId = STRINGID_NOTVERYEFFECTIVE;
 			break;
 
 		case MOVE_RESULT_ONE_HIT_KO:
@@ -637,10 +907,10 @@ void atk0F_resultmessage(void) {
 			break;
 
 		case MOVE_RESULT_FOE_ENDURED:
-			if (gNewBS->EnduranceHelper == ENDURE_STURDY)
+			if (gNewBS->EnduranceHelper[gBankTarget] == ENDURE_STURDY)
 			{
 				gMoveResultFlags &= ~(MOVE_RESULT_FOE_ENDURED);
-				gNewBS->EnduranceHelper = 0;
+				gNewBS->EnduranceHelper[gBankTarget] = 0;
 				gProtectStructs[gBankTarget].enduredSturdy = 0;
 				gBattleScripting.bank = gBankTarget;
 				BattleScriptPushCursor();
@@ -656,16 +926,31 @@ void atk0F_resultmessage(void) {
 			break;
 
 		case MOVE_RESULT_DOESNT_AFFECT_FOE:
-			stringId = STRINGID_ITDOESNTAFFECT;
+			if (IsDoubleSpreadMove())
+			{
+				stringId = 0x184;
+				if (ShouldPrintTwoFoesMessage(MOVE_RESULT_DOESNT_AFFECT_FOE))
+					gBattleStringLoader = gText_DoesntAffectTwoFoes;
+				else if (ShouldRelyOnTwoFoesMessage(MOVE_RESULT_DOESNT_AFFECT_FOE))
+				{
+					//Was handled or will be handled as a double string
+					stringId = 0;
+				}
+				else
+					stringId = STRINGID_ITDOESNTAFFECT;
+			}
+			else
+				stringId = STRINGID_ITDOESNTAFFECT;
 			break;
 
 		case MOVE_RESULT_FOE_HUNG_ON:
-			gLastUsedItem = gBattleMons[gBankTarget].item;
+			gLastUsedItem = ITEM(gBankTarget);
 			gStringBank = gBankTarget;
 			gMoveResultFlags &= ~(MOVE_RESULT_FOE_ENDURED | MOVE_RESULT_FOE_HUNG_ON);
 			BattleScriptPushCursor();
-			if (gNewBS->EnduranceHelper == ENDURE_FOCUS_SASH) {
-				gNewBS->EnduranceHelper = 0;
+			if (gNewBS->EnduranceHelper[gBankTarget] == ENDURE_FOCUS_SASH)
+			{
+				gNewBS->EnduranceHelper[gBankTarget] = 0;
 				gBattlescriptCurrInstr = BattleScript_HangedOnFocusSash;
 			}
 			else
@@ -674,9 +959,25 @@ void atk0F_resultmessage(void) {
 
 		default:
 			if (gMoveResultFlags & MOVE_RESULT_DOESNT_AFFECT_FOE)
-				stringId = STRINGID_ITDOESNTAFFECT;
-
-			else if (gMoveResultFlags & MOVE_RESULT_ONE_HIT_KO) {
+			{
+				if (IsDoubleSpreadMove())
+				{
+					stringId = 0x184;
+					if (ShouldPrintTwoFoesMessage(MOVE_RESULT_DOESNT_AFFECT_FOE))
+						gBattleStringLoader = gText_DoesntAffectTwoFoes;
+					else if (ShouldRelyOnTwoFoesMessage(MOVE_RESULT_DOESNT_AFFECT_FOE))
+					{
+						//Was handled or will be handled as a double string
+						stringId = 0;
+					}
+					else
+						stringId = STRINGID_ITDOESNTAFFECT;
+				}
+				else
+					stringId = STRINGID_ITDOESNTAFFECT;
+			}
+			else if (gMoveResultFlags & MOVE_RESULT_ONE_HIT_KO)
+			{
 				gMoveResultFlags &= ~(MOVE_RESULT_ONE_HIT_KO);
 				gMoveResultFlags &= ~(MOVE_RESULT_SUPER_EFFECTIVE);
 				gMoveResultFlags &= ~(MOVE_RESULT_NOT_VERY_EFFECTIVE);
@@ -684,12 +985,13 @@ void atk0F_resultmessage(void) {
 				gBattlescriptCurrInstr = BattleScript_OneHitKOMsg;
 				return;
 			}
-
-			else if (gMoveResultFlags & MOVE_RESULT_FOE_ENDURED) {
+			else if (gMoveResultFlags & MOVE_RESULT_FOE_ENDURED)
+			{
 				gMoveResultFlags &= ~(MOVE_RESULT_FOE_ENDURED | MOVE_RESULT_FOE_HUNG_ON);
 				BattleScriptPushCursor();
-				if (gNewBS->EnduranceHelper == ENDURE_STURDY) {
-					gNewBS->EnduranceHelper = 0;
+				if (gNewBS->EnduranceHelper[gBankTarget] == ENDURE_STURDY)
+				{
+					gNewBS->EnduranceHelper[gBankTarget] = 0;
 					gProtectStructs[gBankTarget].enduredSturdy = 0;
 					gBattleScripting.bank = gBankTarget;
 					gBattlescriptCurrInstr = BattleScript_EnduredSturdy;
@@ -698,14 +1000,15 @@ void atk0F_resultmessage(void) {
 					gBattlescriptCurrInstr = BattleScript_EnduredMsg;
 				return;
 			}
-
-			else if (gMoveResultFlags & MOVE_RESULT_FOE_HUNG_ON) {
+			else if (gMoveResultFlags & MOVE_RESULT_FOE_HUNG_ON)
+			{
 				gLastUsedItem = gBattleMons[gBankTarget].item;
 				gStringBank = gBankTarget;
 				gMoveResultFlags &= ~(MOVE_RESULT_FOE_ENDURED | MOVE_RESULT_FOE_HUNG_ON);
 				BattleScriptPushCursor();
-				if (gNewBS->EnduranceHelper == ENDURE_FOCUS_SASH) {
-					gNewBS->EnduranceHelper = 0;
+				if (gNewBS->EnduranceHelper[gBankTarget] == ENDURE_FOCUS_SASH)
+				{
+					gNewBS->EnduranceHelper[gBankTarget] = 0;
 					gBattlescriptCurrInstr = BattleScript_HangedOnFocusSash;
 				}
 				else
@@ -714,23 +1017,25 @@ void atk0F_resultmessage(void) {
 				gSpecialStatuses[gBankTarget].focusBanded = FALSE;
 				return;
 			}
-
-			else if (gMoveResultFlags & MOVE_RESULT_FAILED)  {
+			else if (gMoveResultFlags & MOVE_RESULT_FAILED)
+			{
 				stringId = STRINGID_BUTITFAILED;
 			}
-
-			else {
+			else
+			{
 				gBattleCommunication[MSG_DISPLAY] = 0;
 			}
 		}
 
-		gNewBS->EnduranceHelper = 0; //Clear these here for multi-hit moves that didn't KO target
+		gNewBS->EnduranceHelper[gBankTarget] = 0; //Clear these here for multi-hit moves that didn't KO target
 		gSpecialStatuses[gBankTarget].focusBanded = FALSE;
 		gProtectStructs[gBankTarget].enduredSturdy = FALSE;
 	}
 
-	if (stringId)
+	if (stringId != 0)
 		PrepareStringBattle(stringId, gBankAttacker);
+	else
+		gBattleCommunication[MSG_DISPLAY] = 0;
 
 	gBattlescriptCurrInstr++;
 
@@ -1512,6 +1817,42 @@ void atk47_setgraphicalstatchangevalues(void)
 	gBattlescriptCurrInstr++;
 }
 
+void atk5C_hitanimation(void)
+{
+    gActiveBattler = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
+
+	if (!IsDoubleSpreadMove())
+	{
+		if (gMoveResultFlags & MOVE_RESULT_NO_EFFECT)
+		{
+		}
+		else if (!(gHitMarker & HITMARKER_IGNORE_SUBSTITUTE || gNewBS->bypassSubstitute) || !IS_BEHIND_SUBSTITUTE(gActiveBattler) || gDisableStructs[gActiveBattler].substituteHP == 0)
+		{
+			//Do the hit animation on the actual Pokemon sprite, not the Substitute
+			EmitHitAnimation(0);
+			MarkBufferBankForExecution(gActiveBattler);
+		}
+	}
+	else if (!gNewBS->doneDoublesSpreadHit) //Spread move in doubles
+	{
+		for (u32 i = 0; i < gBattlersCount; ++i)
+		{
+			if (!(gNewBS->ResultFlags[i] & MOVE_RESULT_NO_EFFECT) && !gNewBS->noResultString[i])
+			{
+				gActiveBattler = i;
+
+				if (!(gHitMarker & HITMARKER_IGNORE_SUBSTITUTE || gNewBS->bypassSubstitute) || !IS_BEHIND_SUBSTITUTE(gActiveBattler) || gDisableStructs[gActiveBattler].substituteHP == 0)
+				{
+					EmitHitAnimation(0);
+					MarkBufferBankForExecution(gActiveBattler);
+				}
+			}
+		}
+	}
+
+	gBattlescriptCurrInstr += 2;
+}
+
 static void UpdateMoveStartValuesForCalledMove(void)
 {
 	gBattleStruct->atkCancellerTracker = CANCELLER_GRAVITY_2;
@@ -2097,7 +2438,7 @@ void atk87_stockpiletohpheal(void)
 		gBattlescriptCurrInstr = jumpPtr;
 		gBattleCommunication[MULTISTRING_CHOOSER] = 0;
 	}
-	else if (gBattleMons[gBankAttacker].maxHP == gBattleMons[gBankAttacker].hp)
+	else if (BATTLER_MAX_HP(gBankAttacker))
 	{
 		gDisableStructs[gBankAttacker].stockpileCounter = 0;
 		gBattlescriptCurrInstr = jumpPtr;
@@ -2106,7 +2447,7 @@ void atk87_stockpiletohpheal(void)
 	}
 	else
 	{
-		gBattleMoveDamage = MathMax(1, udivsi(gBattleMons[gBankAttacker].maxHP, (1 << (3 - gDisableStructs[gBankAttacker].stockpileCounter))));
+		gBattleMoveDamage = MathMax(1, udivsi(GetBaseMaxHP(gBankAttacker), (1 << (3 - gDisableStructs[gBankAttacker].stockpileCounter))));
 		gBattleMoveDamage *= -1;
 
 		gBattleScripting.animTurn = gDisableStructs[gBankAttacker].stockpileCounter;
@@ -2376,7 +2717,7 @@ void atk93_tryKO(void)
 			{
 				RecordItemEffectBattle(bankDef, defEffect);
 				gSpecialStatuses[bankDef].focusBanded = 1;
-				gNewBS->EnduranceHelper = ENDURE_FOCUS_SASH;
+				gNewBS->EnduranceHelper[gBankTarget] = ENDURE_FOCUS_SASH;
 			}
 
 			if (IsRaidBattle() && gBankTarget == BANK_RAID_BOSS && gNewBS->dynamaxData.raidShieldsUp)
@@ -3220,8 +3561,8 @@ void atkAF_cursetarget(void)
 	if (gBattleMons[gBankTarget].status2 & STATUS2_CURSED
 	|| (BATTLER_SEMI_INVULNERABLE(gBankTarget) && !CanHitSemiInvulnerableTarget(gBankAttacker, gBankTarget, gCurrentMove)))
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
-
-	else {
+	else
+	{
 		gBattleMons[gBankTarget].status2 |= STATUS2_CURSED;
 		gBattleMoveDamage = MathMax(1, gBattleMons[gBankAttacker].maxHP / 2);
 		gBattlescriptCurrInstr += 5;
@@ -3404,7 +3745,7 @@ void atkB7_presentdamagecalculation(void)
 		gDynamicBasePower = 120;
 	else
 	{
-		gBattleMoveDamage = MathMax(gBattleMons[gBankTarget].maxHP / 4, 1);
+		gBattleMoveDamage = MathMax(GetBaseMaxHP(gBankTarget) / 4, 1);
 		gBattleMoveDamage *= -1;
 	}
 
@@ -3412,7 +3753,7 @@ void atkB7_presentdamagecalculation(void)
 		gBattlescriptCurrInstr = BattleScript_HitFromCritCalc;
 	else if (IsHealBlocked(gBankTarget))
 		gBattlescriptCurrInstr = BattleScript_NoHealTargetAfterHealBlock;
-	else if (gBattleMons[gBankTarget].maxHP == gBattleMons[gBankTarget].hp)
+	else if (BATTLER_MAX_HP(gBankTarget))
 		gBattlescriptCurrInstr = BattleScript_AlreadyAtFullHp;
 	else
 	{
@@ -4157,8 +4498,8 @@ void atkD8_setdamagetohealthdifference(void)
 
 	if (gBattleMoveDamage <= 0)
 		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
-
-	gBattlescriptCurrInstr += 5;
+	else
+		gBattlescriptCurrInstr += 5;
 }
 
 void atkDA_tryswapabilities(void) //Skill Swap

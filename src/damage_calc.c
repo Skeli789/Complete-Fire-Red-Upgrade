@@ -39,11 +39,11 @@ static const u16 sCriticalHitChances[] =
 	{24, 8, 2, 1, 1};
 #endif
 
-#define BASE_CRIT_MULTIPLIER 100
+#define BASE_CRIT_MULTIPLIER 10 //1x
 #ifdef OLD_CRIT_DAMAGE
-	#define CRIT_MULTIPLIER 200
+	#define CRIT_MULTIPLIER 20 //2x
 #else //Gen 6+ crit damage
-	#define CRIT_MULTIPLIER 150
+	#define CRIT_MULTIPLIER 15 //1.5x
 #endif
 
 #define FLAG_IGNORE_TARGET 0x1
@@ -66,53 +66,81 @@ static u8 GetFlingPower(u16 item, u16 species, u8 ability, u8 bank, bool8 partyC
 static void AdjustDamage(bool8 CheckFalseSwipe);
 static void ApplyRandomDmgMultiplier(void);
 
-void atk04_critcalc(void) {
+void atk04_critcalc(void)
+{
+	u16 critChance;
+	bool8 confirmedCrit;
+	u8 atkAbility = ABILITY(gBankAttacker);
 	u8 atkEffect = ITEM_EFFECT(gBankAttacker);
-	u16 critChance = 0;
-	bool8 confirmedCrit = FALSE;
+	bool8 calcSpreadMove = IS_DOUBLE_BATTLE && gBattleMoves[gCurrentMove].target & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL);
+
 	gStringBank = gBankAttacker;
 
-	u8 atkAbility = ABILITY(gBankAttacker);
-	u8 defAbility = ABILITY(gBankTarget);
+	for (u32 bankDef = 0; bankDef < gBattlersCount; ++bankDef)
+	{
+		confirmedCrit = FALSE;
+		critChance = 0;
 
-	if (defAbility == ABILITY_BATTLEARMOR
-	||  defAbility == ABILITY_SHELLARMOR
-	||  CantScoreACrit(gBankAttacker, NULL)
-	||  gBattleTypeFlags & (BATTLE_TYPE_OLD_MAN | BATTLE_TYPE_OAK_TUTORIAL | BATTLE_TYPE_POKE_DUDE)
-	||  gNewBS->LuckyChantTimers[SIDE(gBankTarget)])
+		if (!calcSpreadMove) //Single target
+			bankDef = gBankTarget;
+		else if (gNewBS->calculatedSpreadMoveData)
+			break; //Already calculated crit chance
+		else if (!BATTLER_ALIVE(bankDef) || bankDef == gBankAttacker
+		|| (bankDef == PARTNER(gBankAttacker) && !(gBattleMoves[gCurrentMove].target & MOVE_TARGET_ALL))
+		|| gNewBS->ResultFlags[bankDef] & MOVE_RESULT_NO_EFFECT
+		|| gNewBS->noResultString[bankDef])
+			continue; //Don't bother with this target
+
+		u8 defAbility = ABILITY(bankDef);
+
+		if (defAbility == ABILITY_BATTLEARMOR
+		||  defAbility == ABILITY_SHELLARMOR
+		||  CantScoreACrit(gBankAttacker, NULL)
+		||  gBattleTypeFlags & (BATTLE_TYPE_OLD_MAN | BATTLE_TYPE_OAK_TUTORIAL | BATTLE_TYPE_POKE_DUDE)
+		||  gNewBS->LuckyChantTimers[SIDE(bankDef)])
+		{
 			confirmedCrit = FALSE;
-
-	else if ((atkAbility == ABILITY_MERCILESS && (gBattleMons[gBankTarget].status1 & STATUS_PSN_ANY))
-	|| IsLaserFocused(gBankAttacker)
-	|| CheckTableForMove(gCurrentMove, gAlwaysCriticalMoves))
-		confirmedCrit = TRUE;
-
-	else {
-		critChance  = 2 * ((gBattleMons[gBankAttacker].status2 & STATUS2_FOCUS_ENERGY) != 0)
-					+ (CheckTableForMove(gCurrentMove, gHighCriticalChanceMoves))
-					+ (atkEffect == ITEM_EFFECT_SCOPE_LENS)
-					+ (atkAbility == ABILITY_SUPERLUCK)
-					#ifdef SPECIES_CHANSEY
-					+ 2 * (atkEffect == ITEM_EFFECT_LUCKY_PUNCH && gBattleMons[gBankAttacker].species == SPECIES_CHANSEY)
-					#endif
-					#ifdef SPECIES_FARFETCHD
-					+ 2 * (atkEffect == ITEM_EFFECT_STICK && gBattleMons[gBankAttacker].species == SPECIES_FARFETCHD)
-					#endif
-					+ 2 * (gCurrentMove == MOVE_10000000_VOLT_THUNDERBOLT);
-
-		if (critChance > 4)
-			critChance = 4;
-
-		if (!(Random() % sCriticalHitChances[critChance]))
+		}
+		else if ((atkAbility == ABILITY_MERCILESS && (gBattleMons[bankDef].status1 & STATUS_PSN_ANY))
+		|| IsLaserFocused(gBankAttacker)
+		|| CheckTableForMove(gCurrentMove, gAlwaysCriticalMoves))
+		{
 			confirmedCrit = TRUE;
+		}
+		else 
+		{
+			critChance  = 2 * ((gBattleMons[gBankAttacker].status2 & STATUS2_FOCUS_ENERGY) != 0)
+						+ (CheckTableForMove(gCurrentMove, gHighCriticalChanceMoves))
+						+ (atkEffect == ITEM_EFFECT_SCOPE_LENS)
+						+ (atkAbility == ABILITY_SUPERLUCK)
+						#ifdef SPECIES_CHANSEY
+						+ 2 * (atkEffect == ITEM_EFFECT_LUCKY_PUNCH && gBattleMons[gBankAttacker].species == SPECIES_CHANSEY)
+						#endif
+						#ifdef SPECIES_FARFETCHD
+						+ 2 * (atkEffect == ITEM_EFFECT_STICK && gBattleMons[gBankAttacker].species == SPECIES_FARFETCHD)
+						#endif
+						+ 2 * (gCurrentMove == MOVE_10000000_VOLT_THUNDERBOLT);
+
+			if (critChance > 4)
+				critChance = 4;
+
+			if (!(Random() % sCriticalHitChances[critChance]))
+				confirmedCrit = TRUE;
+		}
+
+		gCritMultiplier = BASE_CRIT_MULTIPLIER;
+
+		//These damages will be divded by 100 so really 2x and 1.5x
+		if (confirmedCrit)
+			gCritMultiplier = CRIT_MULTIPLIER;
+
+		gNewBS->criticalMultiplier[bankDef] = gCritMultiplier;
+
+		if (!calcSpreadMove)
+			break; //Only 1 target
 	}
 
-	gCritMultiplier = BASE_CRIT_MULTIPLIER;
-
-	//These damages will be divded by 100 so really 2x and 1.5x
-	if (confirmedCrit)
-		gCritMultiplier = CRIT_MULTIPLIER;
-
+	gCritMultiplier = gNewBS->criticalMultiplier[gBankTarget];
 	++gBattlescriptCurrInstr;
 }
 
@@ -198,14 +226,12 @@ static u8 CalcPossibleCritChance(u8 bankAtk, u8 bankDef, u16 move, struct Pokemo
 
 void atk05_damagecalc(void)
 {
-	u32 i;
 	struct DamageCalc data = {0};
-
 	gBattleStruct->dynamicMoveType = GetMoveTypeSpecial(gBankAttacker, gCurrentMove);
 
-	if (gNewBS->DamageTaken[gBankTarget] && gMultiHitCounter == 0)
+	if (gNewBS->calculatedSpreadMoveData)
 	{
-		gBattleMoveDamage = gNewBS->DamageTaken[gBankTarget];
+		//Just use the calculated values below
 	}
 	else if (IS_DOUBLE_BATTLE && gBattleMoves[gCurrentMove].target & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL))
 	{
@@ -213,40 +239,44 @@ void atk05_damagecalc(void)
 		data.move = gCurrentMove;
 		PopulateDamageCalcStructWithBaseAttackerData(&data);
 
-		//All multi target foes are calculated now b/c stats can change after first kill (eg. Moxie)
-		for (i = 0; i < gBattlersCount; ++i)
+		//All multi target foes are calculated now b/c stats can change after first kill (eg. Moxie) - also for synchronized HP bar reduction
+		for (u32 bankDef = 0; bankDef < gBattlersCount; ++bankDef)
 		{
-			if (!(gNewBS->ResultFlags[i] & MOVE_RESULT_NO_EFFECT)) //The attacker will have had this loaded for itself earlier
-			{
-				data.bankDef = i;
-				PopulateDamageCalcStructWithBaseDefenderData(&data);
-				gNewBS->DamageTaken[i] = CalculateBaseDamage(&data);
-			}
-		}
+			if (!BATTLER_ALIVE(bankDef) || bankDef == gBankAttacker
+			|| (bankDef == PARTNER(gBankAttacker) && !(gBattleMoves[gCurrentMove].target & MOVE_TARGET_ALL))
+			|| gNewBS->ResultFlags[bankDef] & MOVE_RESULT_NO_EFFECT
+			|| gNewBS->noResultString[bankDef])
+					continue; //Don't bother with this target
 
-		gBattleMoveDamage = gNewBS->DamageTaken[gBankTarget];
+			data.bankDef = bankDef;
+			PopulateDamageCalcStructWithBaseDefenderData(&data);
+			gCritMultiplier = gNewBS->criticalMultiplier[bankDef];
+			gNewBS->DamageTaken[bankDef] = (CalculateBaseDamage(&data) * gCritMultiplier) / BASE_CRIT_MULTIPLIER;
+		}
 	}
 	else //Single Battle or single target move
 	{
 		data.bankAtk = gBankAttacker;
 		data.bankDef = gBankTarget;
 		data.move = gCurrentMove;
-		gBattleMoveDamage = CalculateBaseDamage(&data);
+		gCritMultiplier = gNewBS->criticalMultiplier[gBankTarget];
+		gBattleMoveDamage = (CalculateBaseDamage(&data) * gCritMultiplier) / BASE_CRIT_MULTIPLIER;
+		gNewBS->DamageTaken[gBankTarget] = gBattleMoveDamage;
 	}
 
-	gBattleMoveDamage = gBattleMoveDamage * (gCritMultiplier / BASE_CRIT_MULTIPLIER);
+	gBattleMoveDamage = gNewBS->DamageTaken[gBankTarget];
+	gCritMultiplier = gNewBS->criticalMultiplier[gBankTarget];
 	++gBattlescriptCurrInstr;
 }
 
-s32 FutureSightDamageCalc(void)
+void FutureSightDamageCalc(void)
 {
 	struct DamageCalc data = {0};
 	data.bankAtk = gBankAttacker;
 	data.bankDef = gBankTarget;
 	data.move = gCurrentMove;
-	gBattleMoveDamage = CalculateBaseDamage(&data);
-	gBattleMoveDamage = gBattleMoveDamage * (gCritMultiplier / BASE_CRIT_MULTIPLIER);
-	return gBattleMoveDamage;
+	gBattleMoveDamage = (CalculateBaseDamage(&data) * gCritMultiplier) / BASE_CRIT_MULTIPLIER;
+	gNewBS->DamageTaken[gBankTarget] = gBattleMoveDamage;
 }
 
 s32 ConfusionDamageCalc(void)
@@ -317,8 +347,7 @@ u32 AI_CalcDmg(const u8 bankAtk, const u8 bankDef, const u16 move, struct Damage
 
 	gBattleMoveDamage = MathMin(0x7FFFFFFF, damage);
 	AI_SpecialTypeCalc(move, bankAtk, bankDef);
-	damage = gBattleMoveDamage;
-	damage *= (gCritMultiplier / BASE_CRIT_MULTIPLIER);
+	damage = (gBattleMoveDamage * gCritMultiplier) / BASE_CRIT_MULTIPLIER;
 	gCritMultiplier = BASE_CRIT_MULTIPLIER; //Reset
 
 	damage = (damage * 93) / 100; //Roll 93% damage - about halfway between min & max damage
@@ -405,8 +434,7 @@ u32 AI_CalcPartyDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monAtk, st
 
 	gBattleMoveDamage = damage;
 	TypeCalc(move, bankAtk, bankDef, monAtk, TRUE);
-	damage = gBattleMoveDamage;
-	damage *= (gCritMultiplier / BASE_CRIT_MULTIPLIER);
+	damage = (gBattleMoveDamage * gCritMultiplier) / BASE_CRIT_MULTIPLIER;
 	gCritMultiplier = BASE_CRIT_MULTIPLIER; //Reset
 
 	damage = (damage * 96) / 100; //Roll 96% damage with party mons - be more idealistic
@@ -491,8 +519,7 @@ u32 AI_CalcMonDefDmg(u8 bankAtk, u8 bankDef, u16 move, struct Pokemon* monDef, s
 
 	gBattleMoveDamage = damage;
 	AI_TypeCalc(move, bankAtk, monDef);
-	damage = gBattleMoveDamage;
-	damage *= (gCritMultiplier / BASE_CRIT_MULTIPLIER);
+	damage = (gBattleMoveDamage * gCritMultiplier) / BASE_CRIT_MULTIPLIER;
 	gCritMultiplier = BASE_CRIT_MULTIPLIER; //Reset
 
 	damage = (damage * 96) / 100; //Roll 96% damage with party mons - be more idealistic
@@ -529,109 +556,134 @@ void atk06_typecalc(void)
 {
 	u8 moveType = gBattleStruct->dynamicMoveType & 0x3F;
 	u8 atkAbility = ABILITY(gBankAttacker);
-	u8 defAbility = ABILITY(gBankTarget);
-	u8 defEffect = ITEM_EFFECT(gBankTarget);
 	u8 atkType1 = gBattleMons[gBankAttacker].type1;
 	u8 atkType2 = gBattleMons[gBankAttacker].type2;
 	u8 atkType3 = gBattleMons[gBankAttacker].type3;
+	bool8 calcSpreadMove = IS_DOUBLE_BATTLE && gBattleMoves[gCurrentMove].target & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL);
 
 	if (gCurrentMove != MOVE_STRUGGLE)
 	{
-		//Check Stab
-		if (atkType1 == moveType || atkType2 == moveType || atkType3 == moveType)
+		for (u32 bankDef = 0; bankDef < gBattlersCount; ++bankDef)
 		{
-			if (atkAbility == ABILITY_ADAPTABILITY)
-				gBattleMoveDamage *= 2;
-			else
-				gBattleMoveDamage = udivsi(gBattleMoveDamage * 150, 100);
-		}
+			if (!calcSpreadMove) //Single target move
+				bankDef = gBankTarget;
+			else if (gNewBS->calculatedSpreadMoveData)
+				break; //Already calculated type adjustment
+			else if (!BATTLER_ALIVE(bankDef) || bankDef == gBankAttacker
+			|| (bankDef == PARTNER(gBankAttacker) && !(gBattleMoves[gCurrentMove].target & MOVE_TARGET_ALL))
+			|| gNewBS->noResultString[bankDef])
+				continue;
 
-		//Check Special Ground Immunities
-		if (moveType == TYPE_GROUND && !CheckGrounding(gBankTarget) && gCurrentMove != MOVE_THOUSANDARROWS)
-		{
-			if (defAbility == ABILITY_LEVITATE)
+			u8 defAbility = ABILITY(bankDef);
+			u8 defEffect = ITEM_EFFECT(bankDef);
+			gBattleMoveDamage = gNewBS->DamageTaken[bankDef];
+			gNewBS->ResultFlags[bankDef] &= ~(MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE | MOVE_RESULT_DOESNT_AFFECT_FOE); //Reset for now so damage can be modulated properly
+
+			//Check Stab
+			if (atkType1 == moveType || atkType2 == moveType || atkType3 == moveType)
 			{
+				if (atkAbility == ABILITY_ADAPTABILITY)
+					gBattleMoveDamage *= 2;
+				else
+					gBattleMoveDamage = (gBattleMoveDamage * 15) / 10;
+			}
+
+			//Check Special Ground Immunities
+			if (moveType == TYPE_GROUND && !CheckGrounding(bankDef) && gCurrentMove != MOVE_THOUSANDARROWS)
+			{
+				if (defAbility == ABILITY_LEVITATE)
+				{
+					gLastUsedAbility = defAbility;
+					gNewBS->ResultFlags[bankDef] |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
+					gLastLandedMoves[bankDef] = 0;
+					gLastHitByType[bankDef] = 0;
+					gNewBS->missStringId[bankDef] = 3;
+					RecordAbilityBattle(bankDef, gLastUsedAbility);
+				}
+				else if (defEffect == ITEM_EFFECT_AIR_BALLOON)
+				{
+					gNewBS->ResultFlags[bankDef] |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
+					gLastLandedMoves[bankDef] = 0;
+					gLastHitByType[bankDef] = 0;
+					RecordItemEffectBattle(bankDef, defEffect);
+				}
+				else if (gStatuses3[bankDef] & (STATUS3_LEVITATING | STATUS3_TELEKINESIS))
+				{
+					gNewBS->ResultFlags[bankDef] |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
+					gLastLandedMoves[bankDef] = 0;
+					gLastHitByType[bankDef] = 0;
+				}
+				else
+					goto RE_ENTER_TYPE_CHECK;	//You're a flying type
+			}
+
+			//Check Powder Moves
+			else if (CheckTableForMove(gCurrentMove, gPowderMoves))
+			{
+				if (defAbility == ABILITY_OVERCOAT)
+				{
+					gLastUsedAbility = defAbility;
+					gNewBS->ResultFlags[bankDef] |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
+					gLastLandedMoves[bankDef] = 0;
+					gLastHitByType[bankDef] = 0xFF;
+					gNewBS->missStringId[bankDef] = 3;
+					RecordAbilityBattle(bankDef, gLastUsedAbility);
+				}
+				else if (defEffect == ITEM_EFFECT_SAFETY_GOGGLES)
+				{
+					gNewBS->ResultFlags[bankDef] |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
+					gLastLandedMoves[bankDef] = 0;
+					gLastHitByType[bankDef] = 0xFF;
+					RecordItemEffectBattle(bankDef, defEffect);
+				}
+				else if (IsOfType(bankDef, TYPE_GRASS))
+				{
+					gNewBS->ResultFlags[bankDef] |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
+					gLastLandedMoves[bankDef] = 0;
+					gLastHitByType[bankDef] = 0xFF;
+				}
+				else
+					goto RE_ENTER_TYPE_CHECK;
+			}
+			else if (gCurrentMove == MOVE_SKYDROP && IsOfType(bankDef, TYPE_FLYING))
+			{
+				gNewBS->ResultFlags[bankDef] |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
+				gLastLandedMoves[bankDef] = 0;
+				gLastHitByType[bankDef] = 0xFF;
+			}
+			else
+			{
+			RE_ENTER_TYPE_CHECK:
+				TypeDamageModification(atkAbility, bankDef, gCurrentMove, moveType, &gNewBS->ResultFlags[bankDef]);
+			}
+
+			if (defAbility == ABILITY_WONDERGUARD
+			 //&& AttacksThisTurn(gBankAttacker, gCurrentMove) == 2
+			 && (!(gNewBS->ResultFlags[bankDef] & MOVE_RESULT_SUPER_EFFECTIVE)
+				|| ((gNewBS->ResultFlags[bankDef] & (MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE)) == (MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE)))
+			 && SPLIT(gCurrentMove) != SPLIT_STATUS)
+			 {
 				gLastUsedAbility = defAbility;
-				gMoveResultFlags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
-				gLastLandedMoves[gBankTarget] = 0;
-				gLastHitByType[gBankTarget] = 0;
-				gBattleCommunication[6] = moveType;
-				RecordAbilityBattle(gBankTarget, gLastUsedAbility);
+				gNewBS->ResultFlags[bankDef] |= MOVE_RESULT_MISSED;
+				gLastLandedMoves[bankDef] = 0;
+				gLastHitByType[bankDef] = 0;
+				gNewBS->missStringId[bankDef] = 3;
+				RecordAbilityBattle(bankDef, gLastUsedAbility);
 			}
-			else if (defEffect == ITEM_EFFECT_AIR_BALLOON)
-			{
-				gMoveResultFlags |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
-				gLastLandedMoves[gBankTarget] = 0;
-				gLastHitByType[gBankTarget] = 0;
-				RecordItemEffectBattle(gBankTarget, defEffect);
-			}
-			else if (gStatuses3[gBankTarget] & (STATUS3_LEVITATING | STATUS3_TELEKINESIS))
-			{
-				gMoveResultFlags |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
-				gLastLandedMoves[gBankTarget] = 0;
-				gLastHitByType[gBankTarget] = 0;
-			}
-			else
-				goto RE_ENTER_TYPE_CHECK;	//You're a flying type
+
+			if (gNewBS->ResultFlags[bankDef] & MOVE_RESULT_DOESNT_AFFECT_FOE)
+				gProtectStructs[gBankAttacker].targetNotAffected = 1;
+
+			gNewBS->DamageTaken[bankDef] = gBattleMoveDamage;
+
+			if (!calcSpreadMove)
+				break; //Only 1 target
 		}
 
-		//Check Powder Moves
-		else if (CheckTableForMove(gCurrentMove, gPowderMoves))
-		{
-			if (defAbility == ABILITY_OVERCOAT)
-			{
-				gLastUsedAbility = defAbility;
-				gMoveResultFlags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
-				gLastLandedMoves[gBankTarget] = 0;
-				gLastHitByType[gBankTarget] = 0xFF;
-				gBattleCommunication[6] = 3;
-				RecordAbilityBattle(gBankTarget, gLastUsedAbility);
-			}
-			else if (defEffect == ITEM_EFFECT_SAFETY_GOGGLES)
-			{
-				gMoveResultFlags |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
-				gLastLandedMoves[gBankTarget] = 0;
-				gLastHitByType[gBankTarget] = 0xFF;
-				RecordItemEffectBattle(gBankTarget, defEffect);
-			}
-			else if (IsOfType(gBankTarget, TYPE_GRASS))
-			{
-				gMoveResultFlags |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
-				gLastLandedMoves[gBankTarget] = 0;
-				gLastHitByType[gBankTarget] = 0xFF;
-			}
-			else
-				goto RE_ENTER_TYPE_CHECK;
-		}
-		else if (gCurrentMove == MOVE_SKYDROP && IsOfType(gBankTarget, TYPE_FLYING))
-		{
-			gMoveResultFlags |= (MOVE_RESULT_DOESNT_AFFECT_FOE);
-			gLastLandedMoves[gBankTarget] = 0;
-			gLastHitByType[gBankTarget] = 0xFF;
-		}
-		else
-		{
-		RE_ENTER_TYPE_CHECK:
-			TypeDamageModification(atkAbility, gBankTarget, gCurrentMove, moveType, &gMoveResultFlags);
-		}
-
-		if (defAbility == ABILITY_WONDERGUARD
-		 //&& AttacksThisTurn(gBankAttacker, gCurrentMove) == 2
-		 && (!(gMoveResultFlags & MOVE_RESULT_SUPER_EFFECTIVE)
-			|| ((gMoveResultFlags & (MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE)) == (MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE)))
-		 && SPLIT(gCurrentMove) != SPLIT_STATUS)
-		 {
-			gLastUsedAbility = defAbility;
-			gMoveResultFlags |= MOVE_RESULT_MISSED;
-			gLastLandedMoves[gBankTarget] = 0;
-			gLastHitByType[gBankTarget] = 0;
-			gBattleCommunication[6] = 3;
-			RecordAbilityBattle(gBankTarget, gLastUsedAbility);
-		}
-
-		if (gMoveResultFlags & MOVE_RESULT_DOESNT_AFFECT_FOE)
-			gProtectStructs[gBankAttacker].targetNotAffected = 1;
+		gBattleMoveDamage = gNewBS->DamageTaken[gBankTarget];
+		gMoveResultFlags = gNewBS->ResultFlags[gBankTarget];
 	}
+
 	++gBattlescriptCurrInstr;
 }
 
@@ -651,7 +703,7 @@ void atk4A_typecalc2(void)
 			gLastUsedAbility = atkAbility;
 			gMoveResultFlags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
 			gLastLandedMoves[gBankTarget] = 0;
-			gBattleCommunication[6] = moveType;
+			gNewBS->missStringId[gBankTarget] = 3;
 			RecordAbilityBattle(gBankTarget, gLastUsedAbility);
 		}
 		else if (defEffect == ITEM_EFFECT_AIR_BALLOON)
@@ -675,7 +727,7 @@ void atk4A_typecalc2(void)
 			gLastUsedAbility = defAbility;
 			gMoveResultFlags |= (MOVE_RESULT_MISSED | MOVE_RESULT_DOESNT_AFFECT_FOE);
 			gLastLandedMoves[gBankTarget] = 0;
-			gBattleCommunication[6] = moveType;
+			gNewBS->missStringId[gBankTarget] = 3;
 			RecordAbilityBattle(gBankTarget, gLastUsedAbility);
 		}
 		else if (defEffect == ITEM_EFFECT_SAFETY_GOGGLES)
@@ -706,7 +758,7 @@ void atk4A_typecalc2(void)
 	}
 
 	if (defAbility == ABILITY_WONDERGUARD
-	&& AttacksThisTurn(gBankAttacker, gCurrentMove) == 2
+	//&& AttacksThisTurn(gBankAttacker, gCurrentMove) == 2
 	&& (!(gMoveResultFlags & MOVE_RESULT_SUPER_EFFECTIVE)
 		|| ((gMoveResultFlags & (MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE)) == (MOVE_RESULT_SUPER_EFFECTIVE | MOVE_RESULT_NOT_VERY_EFFECTIVE)))
 	&& gBattleMoves[gCurrentMove].power)
@@ -714,7 +766,7 @@ void atk4A_typecalc2(void)
 		gLastUsedAbility = defAbility;
 		gMoveResultFlags |= MOVE_RESULT_MISSED;
 		gLastLandedMoves[gBankTarget] = 0;
-		gBattleCommunication[6] = 3;
+		gNewBS->missStringId[gBankTarget] = 3;
 		RecordAbilityBattle(gBankTarget, gLastUsedAbility);
 	}
 
@@ -1515,99 +1567,138 @@ void atk69_adjustsetdamage(void)
 	AdjustDamage(TRUE);
 }
 
-void AdjustDamage(bool8 CheckFalseSwipe)
+void AdjustDamage(bool8 checkFalseSwipe)
 {
-	u16 item = gBattleMons[gBankTarget].item;
-	u8 hold_effect = ITEM_EFFECT(gBankTarget);
-	u8 quality = ItemId_GetHoldEffectParam(item);
-	u8 ability = ABILITY(gBankTarget);
+	s32 damage = gBattleMoveDamage;
+	u8 resultFlags = gMoveResultFlags;
+	bool8 calcSpreadMove = checkFalseSwipe && IS_DOUBLE_BATTLE && gBattleMoves[gCurrentMove].target & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL);
 	gStringBank = gBankTarget;
 
-	if ((gNewBS->zMoveData.active || IsAnyMaxMove(gCurrentMove))
-	&& !IsDynamaxed(gBankTarget)
-	&& ProtectsAgainstZMoves(gCurrentMove, gBankAttacker, gBankTarget))
-		gBattleMoveDamage = udivsi(gBattleMoveDamage  * 25, 100);
-
-	if (gBattleMons[gBankTarget].status2 & STATUS2_SUBSTITUTE
-	&& !CheckSoundMove(gCurrentMove)
-	&& ABILITY(gBankAttacker) != ABILITY_INFILTRATOR)
-		goto END;
-
-	if (IsRaidBattle() && gBankTarget == BANK_RAID_BOSS)
+	for (u32 bankDef = 0; bankDef < gBattlersCount; ++bankDef)
 	{
-		if (gNewBS->dynamaxData.raidShieldsUp) //Shields heavily reduce damage
-		{
-			u16 divisor = gBattleMons[gBankTarget].hp / 8;
-			gBattleMoveDamage /= divisor; //1 hp of damage for every 8th of hp that would have been done
+		if (!calcSpreadMove) //Single target move
+			bankDef = gBankTarget;
+		else if (gNewBS->calculatedSpreadMoveData)
+			break; //Already calculated adjusted damage
+		else if (!BATTLER_ALIVE(bankDef) || bankDef == gBankAttacker
+		|| (bankDef == PARTNER(gBankAttacker) && !(gBattleMoves[gCurrentMove].target & MOVE_TARGET_ALL))
+		|| gNewBS->noResultString[bankDef])
+			continue;
 
-			if (gBattleMoveDamage >= gBattleMons[gBankTarget].hp)
-				gBattleMoveDamage = gBattleMons[gBankTarget].hp - 1; //Can't KO while shields are up
+		if (calcSpreadMove)
+		{
+			damage = gNewBS->DamageTaken[bankDef];
+			resultFlags = gNewBS->ResultFlags[bankDef];
+		}
+
+		u16 item = ITEM(bankDef);
+		u8 itemEffect = ITEM_EFFECT(bankDef);
+		u8 itemQuality = ITEM_QUALITY(bankDef);
+		u8 defAbility = ABILITY(bankDef);
+
+		if ((gNewBS->zMoveData.active || IsAnyMaxMove(gCurrentMove))
+		&& !IsDynamaxed(bankDef)
+		&& ProtectsAgainstZMoves(gCurrentMove, gBankAttacker, bankDef))
+			damage = (damage  * 25) / 100;
+
+		if (MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bankDef))
 			goto END;
+
+		if (IsRaidBattle() && bankDef == BANK_RAID_BOSS)
+		{
+			if (gNewBS->dynamaxData.raidShieldsUp) //Shields heavily reduce damage
+			{
+				u16 divisor = gBattleMons[bankDef].hp / 8;
+				damage /= divisor; //1 hp of damage for every 8th of hp that would have been done
+
+				if (damage >= gBattleMons[bankDef].hp)
+					damage = gBattleMons[bankDef].hp - 1; //Can't KO while shields are up
+				goto END;
+			}
+			else
+			{
+				u16 cutOff = GetNextRaidShieldHP(bankDef);
+				if (cutOff > 0 && gBattleMons[bankDef].hp - damage < cutOff)
+				{
+					damage = gBattleMons[bankDef].hp - cutOff; //Limit damage before Raid shields go up
+					goto END;
+				}
+			}
+		}
+
+		if (BATTLER_MAX_HP(bankDef) && defAbility == ABILITY_STURDY)
+		{
+			RecordAbilityBattle(bankDef, defAbility);
+			gProtectStructs[bankDef].enduredSturdy = TRUE;
+			gNewBS->EnduranceHelper[bankDef] = ENDURE_STURDY;
+		}
+		else if (BATTLER_MAX_HP(bankDef) && IsBankHoldingFocusSash(bankDef))
+		{
+			RecordItemEffectBattle(bankDef, itemEffect);
+			gSpecialStatuses[bankDef].focusBanded = 1;
+			gNewBS->EnduranceHelper[bankDef] = ENDURE_FOCUS_SASH;
+		}
+		else if (itemEffect == ITEM_EFFECT_FOCUS_BAND && Random() % 100 < itemQuality && !IsBankHoldingFocusSash(bankDef))
+		{
+			RecordItemEffectBattle(bankDef, itemEffect);
+			gSpecialStatuses[bankDef].focusBanded = TRUE;
+		}
+
+		if (checkFalseSwipe)
+		{
+			if (gBattleMoves[gCurrentMove].effect != EFFECT_FALSE_SWIPE
+			&& !gProtectStructs[bankDef].endured
+			&& !gProtectStructs[bankDef].enduredSturdy
+			&& !gSpecialStatuses[bankDef].focusBanded)
+				goto END;
 		}
 		else
 		{
-			u16 cutOff = GetNextRaidShieldHP(gBankTarget);
-			if (cutOff > 0 && gBattleMons[gBankTarget].hp - gBattleMoveDamage < cutOff)
-			{
-				gBattleMoveDamage = gBattleMons[gBankTarget].hp - cutOff; //Limit damage before Raid shields go up
+			if (!gProtectStructs[bankDef].endured
+			&& !gProtectStructs[bankDef].enduredSturdy
+			&& !gSpecialStatuses[bankDef].focusBanded)
 				goto END;
-			}
+		}
+
+		if (gBattleMons[bankDef].hp > damage)
+			goto END;
+
+		damage = gBattleMons[bankDef].hp - 1;
+
+		if (gProtectStructs[bankDef].endured || gProtectStructs[bankDef].enduredSturdy)
+		{
+			resultFlags |= MOVE_RESULT_FOE_ENDURED;
+			goto END;
+		}
+
+		if (gSpecialStatuses[bankDef].focusBanded)
+		{
+			resultFlags |= MOVE_RESULT_FOE_HUNG_ON;
+			gLastUsedItem = item;
+		}
+
+		END:		
+		if (!calcSpreadMove)
+			break; //Only 1 target
+		else
+		{
+			gNewBS->DamageTaken[bankDef] = damage;
+			gNewBS->ResultFlags[bankDef] = resultFlags;
 		}
 	}
 
-	if (ability == ABILITY_STURDY && gBattleMons[gBankTarget].hp == gBattleMons[gBankTarget].maxHP)
+	if (calcSpreadMove)
 	{
-		RecordAbilityBattle(gBankTarget, ability);
-		gProtectStructs[gBankTarget].enduredSturdy = 1;
-		gNewBS->EnduranceHelper = ENDURE_STURDY;
-	}
-	else if (hold_effect == ITEM_EFFECT_FOCUS_BAND && umodsi(Random(), 100) < quality && !IsBankHoldingFocusSash(gBankTarget))
-	{
-		RecordItemEffectBattle(gBankTarget, hold_effect);
-		gSpecialStatuses[gBankTarget].focusBanded = 1;
-	}
-	else if (IsBankHoldingFocusSash(gBankTarget) && BATTLER_MAX_HP(gBankTarget))
-	{
-		RecordItemEffectBattle(gBankTarget, hold_effect);
-		gSpecialStatuses[gBankTarget].focusBanded = 1;
-		gNewBS->EnduranceHelper = ENDURE_FOCUS_SASH;
-	}
-
-	if (CheckFalseSwipe)
-	{
-		if (gBattleMoves[gCurrentMove].effect != EFFECT_FALSE_SWIPE
-		&& !gProtectStructs[gBankTarget].endured
-		&& !gProtectStructs[gBankTarget].enduredSturdy
-		&& !gSpecialStatuses[gBankTarget].focusBanded)
-			goto END;
+		gBattleMoveDamage = gNewBS->DamageTaken[gBankTarget];
+		gMoveResultFlags = gNewBS->ResultFlags[gBankTarget];
 	}
 	else
 	{
-		if (!gProtectStructs[gBankTarget].endured
-		&& !gProtectStructs[gBankTarget].enduredSturdy
-		&& !gSpecialStatuses[gBankTarget].focusBanded)
-			goto END;
+		gBattleMoveDamage = damage;
+		gMoveResultFlags = resultFlags;
 	}
 
-	if (gBattleMons[gBankTarget].hp > gBattleMoveDamage)
-		goto END;
-
-	gBattleMoveDamage = gBattleMons[gBankTarget].hp - 1;
-
-	if (gProtectStructs[gBankTarget].endured || gProtectStructs[gBankTarget].enduredSturdy)
-	{
-		gMoveResultFlags |= MOVE_RESULT_FOE_ENDURED;
-		goto END;
-	}
-
-	if (gSpecialStatuses[gBankTarget].focusBanded)
-	{
-		gMoveResultFlags |= MOVE_RESULT_FOE_HUNG_ON;
-		gLastUsedItem = item;
-	}
-
-	END:
-		++gBattlescriptCurrInstr;
+	++gBattlescriptCurrInstr;
 }
 
 void PopulateDamageCalcStructWithBaseAttackerData(struct DamageCalc* data)
@@ -2204,7 +2295,8 @@ static s32 CalculateBaseDamage(struct DamageCalc* data)
 	//Specific Move Modifiers
 	switch (move) {
 		case MOVE_ASSURANCE:
-			if (!(data->specialFlags & (FLAG_CHECKING_FROM_MENU | FLAG_AI_CALC)) && TOOK_DAMAGE(bankDef))
+			if (!(data->specialFlags & (FLAG_CHECKING_FROM_MENU | FLAG_AI_CALC))
+			&& (gProtectStructs[bankDef].physicalDmg || gProtectStructs[bankDef].specialDmg))
 				damage *= 2;
 			break;
 
@@ -2907,6 +2999,12 @@ static u16 GetBasePower(struct DamageCalc* data)
 		case MOVE_TRIPLEKICK:
 			if (!(data->specialFlags & (FLAG_CHECKING_FROM_MENU | FLAG_AI_CALC)) && !useMonAtk)
 				power = gBattleScripting.tripleKickPower;
+			break;
+
+		case MOVE_MAGNITUDE:
+		case MOVE_PRESENT:
+			if (!(data->specialFlags & (FLAG_CHECKING_FROM_MENU | FLAG_AI_CALC)) && !useMonAtk)
+				power = gDynamicBasePower;
 			break;
 
 		case MOVE_BOLTBEAK:

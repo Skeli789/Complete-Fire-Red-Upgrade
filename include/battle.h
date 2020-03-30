@@ -370,7 +370,7 @@ struct ProtectStruct
     u32 targetNotAffected:1;
     u32 chargingTurn:1;
     u32 fleeFlag:2; // for RunAway and Smoke Ball
-    u32 usedImprisionedMove:1;
+    u32 usedImprisonedMove:1;
     u32 loveImmobility:1;
     u32 usedDisabledMove:1;
     /* field_2 */
@@ -542,8 +542,8 @@ struct BattleResources
     struct AI_ThinkingStruct *ai;
     struct BattleHistory *battleHistory;
     struct BattleScriptsStack *AI_ScriptsStack;
-    u8 bufferA[MAX_BATTLERS_COUNT][0x200];
-    u8 bufferB[MAX_BATTLERS_COUNT][0x200];
+ //   u8 bufferA[MAX_BATTLERS_COUNT][0x200];
+ //   u8 bufferB[MAX_BATTLERS_COUNT][0x200];
 };
 
 extern struct BattleResources* gBattleResources;
@@ -554,29 +554,29 @@ extern struct BattleResources* gBattleResources;
 
 struct BattleResults
 {
-    u8 playerFaintCounter;    // 0x0
-    u8 opponentFaintCounter;  // 0x1
-    u8 playerSwitchesCounter; // 0x2
-    u8 unk3;                  // 0x3
-    u8 unk4;                  // 0x4
-    u8 unk5_0:1;              // 0x5
-    u8 usedMasterBall:1;      // 0x5
-    u8 caughtMonBall:4;       // 0x5
-    u8 unk5_6:1;              // 0x5
-    u8 unk5_7:1;              // 0x5
-    u16 playerMon1Species;    // 0x6
-    u8 playerMon1Name[11];    // 0x8
-    u8 battleTurnCounter;     // 0x13
-    u8 playerMon2Name[11];    // 0x14
-    u8 field_1F;              // 0x1F
-    u16 lastOpponentSpecies;  // 0x20
-    u16 lastUsedMovePlayer;   // 0x22
-    u16 lastUsedMoveOpponent; // 0x24
-    u16 playerMon2Species;    // 0x26
-    u16 caughtMonSpecies;     // 0x28
-    u8 caughtMonNick[10];     // 0x2A
-    u8 filler34[2];
-    u8 usedBalls[11];     // 0x36
+	u8 playerFaintCounter;    // 0x0
+	u8 opponentFaintCounter;  // 0x1
+	u8 playerSwitchesCounter; // 0x2
+	u8 numHealingItemsUsed;   // 0x3
+	u8 numRevivesUsed;        // 0x4
+	u8 playerMonWasDamaged:1; // 0x5
+	u8 usedMasterBall:1;      // 0x5
+	u8 caughtMonBall:4;       // 0x5
+	u8 shinyWildMon:1;        // 0x5
+	u8 unk5_7:1;              // 0x5
+	u16 playerMon1Species;    // 0x6
+	u8 playerMon1Name[POKEMON_NAME_LENGTH + 1];    // 0x8
+	u8 battleTurnCounter;     // 0x13
+	u8 playerMon2Name[POKEMON_NAME_LENGTH + 1];    // 0x14
+	u8 pokeblockThrows;       // 0x1F
+	u16 lastOpponentSpecies;  // 0x20
+	u16 lastUsedMovePlayer;   // 0x22
+	u16 lastUsedMoveOpponent; // 0x24
+	u16 playerMon2Species;    // 0x26
+	u16 caughtMonSpecies;     // 0x28
+	u8 caughtMonNick[POKEMON_NAME_LENGTH + 1];     // 0x2A
+	u8 filler35[1];           // 0x35
+	u8 catchAttempts[11];     // 0x36
 };
 
 extern struct BattleResults gBattleResults;
@@ -585,123 +585,103 @@ extern struct BattleResults gBattleResults;
 
 struct BattleStruct
 {
-    u8 turnEffectsTracker;
-    u8 turnEffectsBank;
-    u8 filler2;
-    u8 turncountersTracker;
-    u16 wrappedMove[4];
-    u8 moveTarget[4];
-    u8 expGetterId;
-    u8 field_11;
-    u8 wildVictorySong;
-    u8 dynamicMoveType;
-    u8 wrappedBy[4];
-    u16 assistPossibleMoves[5 * 4]; // 5 mons, each of them knowing 4 moves
-    u8 field_40;
-    u8 field_41;
-    u8 field_42;
-    u8 field_43;
-    u8 field_44;
-    u8 field_45;
-    u8 field_46;
-    u8 field_47;
-    u8 focusPunchBank;
-    u8 battlerPreventingSwitchout;
-    u8 moneyMultiplier;
-    u8 savedTurnActionNumber;
-    u8 switchInAbilitiesCounter;
-    u8 faintedActionsState;
-    u8 faintedActionsBank;
-    u8 field_4F;
-    u16 expValue;
-    u8 field_52;
-    u8 sentInPokes;
-    bool8 selectionScriptFinished[BATTLE_BANKS_COUNT];
-    u8 switchoutPartyIndex[BATTLE_BANKS_COUNT];
-    u8 monToSwitchIntoId[BATTLE_BANKS_COUNT];
-    u8 field_60[4][3];
-    u8 runTries;
-    u8 caughtMonNick[11]; //0x200007D
-    u8 field_78;
-    u8 safariGoNearCounter;
-    u8 safariPkblThrowCounter;
-    u8 safariEscapeFactor;
-    u8 safariCatchFactor;
-    u8 field_7D;
-    u8 field_7E;
-    u8 castformToChangeInto;
-    u8 chosenMovePositions[BATTLE_BANKS_COUNT];
-    u8 stateIdAfterSelScript[BATTLE_BANKS_COUNT];
-    u8 field_88;
-    u8 field_89;
-    u8 field_8A;
-    u8 field_8B;
-    u8 field_8C;
-    u8 field_8D;
-    u8 stringMoveType;
-    u8 expGetterBank;
-    u8 field_90;
-    u8 field_91;
-    u8 switchoutIndex[2];
-    u8 wallyBattleState;
-    u8 wallyMovesState;
-    u8 wallyWaitFrames;
-    u8 wallyMoveFrames;
-    u16 lastTakenMove[MAX_BATTLERS_COUNT]; //Used by mirror move
-    u8 field_A0;
-    u8 field_A1;
-    u8 field_A2;
-    u8 field_A3;
-    u8 field_A4;
-    u8 field_A5;
-    u8 field_A6;
-    u8 field_A7;
-    u16 hpOnSwitchout[2];
+	u8 turnEffectsTracker;
+	u8 turnEffectsBank;
+	u8 filler2;
+	u8 turncountersTracker;
+	u16 wrappedMove[4];
+	u8 moveTarget[4];
+	u8 expGetterMonId;
+	u8 field_11;
+	u8 wildVictorySong;
+	u8 dynamicMoveType;
+	u8 wrappedBy[4];
+	u16 assistPossibleMoves[PARTY_SIZE * MAX_MON_MOVES]; // 5 mons, each of them knowing 4 moves
+	u8 focusPunchBank;
+	u8 battlerPreventingSwitchout;
+	u8 moneyMultiplier;
+	u8 savedTurnActionNumber;
+	u8 switchInAbilitiesCounter;
+	u8 faintedActionsState;
+	u8 faintedActionsBank;
+	u8 field_4F;
+	u16 expValue;
+	u8 field_52;
+	u8 sentInPokes;
+	bool8 selectionScriptFinished[BATTLE_BANKS_COUNT];
+	u8 switchoutPartyIndex[BATTLE_BANKS_COUNT];
+	u8 monToSwitchIntoId[BATTLE_BANKS_COUNT];
+	u8 field_60[4][3];
+	u8 runTries;
+	u8 caughtMonNick[11]; //0x200007D
+	u8 field_78;
+	u8 safariGoNearCounter;
+	u8 safariPkblThrowCounter;
+	u8 safariEscapeFactor;
+	u8 safariCatchFactor;
+	u8 linkBattleVsSpriteId_V;
+	u8 linkBattleVsSpriteId_S;
+	u8 castformToChangeInto;
+	u8 chosenMovePositions[BATTLE_BANKS_COUNT];
+	u8 stateIdAfterSelScript[BATTLE_BANKS_COUNT];
+	u8 field_88;
+	u8 field_89;
+	u8 field_8A;
+	u8 field_8B;
+	u8 field_8C;
+	u8 field_8D;
+	u8 stringMoveType;
+	u8 expGetterBank;
+	u8 field_90;
+	u8 field_91;
+	u8 switchoutIndex[2];
+	u8 wallyBattleState;
+	u8 wallyMovesState;
+	u8 wallyWaitFrames;
+	u8 wallyMoveFrames;
+	u16 lastTakenMove[MAX_BATTLERS_COUNT]; //Used by mirror move
+	u8 field_A0;
+	u8 field_A1;
+	u8 field_A2;
+	u8 field_A3;
+	u8 field_A4;
+	u8 field_A5;
+	u8 field_A6;
+	u8 field_A7;
+	u16 hpOnSwitchout[2];
 	u8 abilityPreventingSwitchout;
-    u8 hpScale;
-    u8 field_AE;
-	u8 field_AF;
-	u8 field_B0;
-	u8 field_B1;
-	u8 field_B2;
-	u8 field_B3;
-    u8 synchronizeMoveEffect;
-    u8 field_B5;
-    u8 field_B6;
-    u8 atkCancellerTracker;
-    // void (*savedCallback)(void);
-    u16 usedHeldItems[MAX_BATTLERS_COUNT];
-    u8 chosenItem[MAX_BATTLERS_COUNT]; //Why is this a u8?
-    u8 AI_itemType[2];
-    u8 AI_itemFlags[2];
-    u16 choicedMove[MAX_BATTLERS_COUNT];
-    u16 changedItems[MAX_BATTLERS_COUNT];
-    u8 intimidateBank;
-    u8 switchInItemsCounter;
-    u8 field_DA;
-    u8 turnSideTracker;
-    u8 fillerDC[0xDF-0xDC];
-    u8 givenExpMons; //The party indices in the opponent's party that have fainted and been given exp for
-    u16 lastTakenMoveFrom[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; // 4 sub-arrays containing the moves that bank was hit by, by each bank //used by Mirror Move
-    u16 castformPalette[MAX_BATTLERS_COUNT][16];
-    u8 field_180;
-    u8 field_181;
-    u8 field_182;
-    u8 field_183;
-    struct BattleEnigmaBerry battleEnigmaBerry;
-    u8 wishPerishSongState;
-    u8 wishPerishSongBank;
-    bool8 overworldWeatherDone;
-/*    u8 atkCancellerTracker;
-    u8 field_1A4[96];
-    u8 field_204[104];
-    u8 field_26C[40];
-    u8 AI_monToSwitchIntoId[MAX_BATTLERS_COUNT];
-    u8 field_298[8];
-    u8 field_2A0;
-    u8 field_2A1;
-    u8 field_2A2;*/
-};
+	u8 hpScale;
+	u16 savedBattleTypeFlags;
+	void (*savedCallback)(void);
+	u8 synchronizeMoveEffect;
+	u8 multiplayerId;
+	u8 overworldWeatherDone;
+	u8 atkCancellerTracker;
+	u16 usedHeldItems[MAX_BATTLERS_COUNT];
+	u8 chosenItem[MAX_BATTLERS_COUNT]; //Why is this a u8?
+	u8 AI_itemType[2];
+	u8 AI_itemFlags[2];
+	u16 choicedMove[MAX_BATTLERS_COUNT];
+	u16 changedItems[MAX_BATTLERS_COUNT];
+	u8 intimidateBank;
+	u8 switchInItemsCounter;
+	u8 field_DA; //Battle Tower Related
+	u8 turnSideTracker;
+	u8 fillerDC[0xDF-0xDC];
+	u8 givenExpMons; //The party indices in the opponent's party that have fainted and been given exp for
+	u16 lastTakenMoveFrom[MAX_BATTLERS_COUNT][MAX_BATTLERS_COUNT]; // 4 sub-arrays containing the moves that bank was hit by, by each bank //used by Mirror Move
+	u16 castformPalette[MAX_BATTLERS_COUNT][16];
+	u8 wishPerishSongState;
+	u8 wishPerishSongBattlerId;
+	u8 field_182;
+	u8 field_183;
+	u8 field_184;
+	u8 field_185;
+	u8 field_186;
+	u8 field_187;
+	struct BattleEnigmaBerry battleEnigmaBerry;
+	u8 field_1A4[0x5C]; // currently unknown
+}; //size == 0x200 bytes
 
 extern struct BattleStruct* gBattleStruct;
 
@@ -733,7 +713,7 @@ struct NewBattleStruct
 	//Personal Counters
 	u8 TelekinesisTimers[MAX_BATTLERS_COUNT];
 	u8 MagnetRiseTimers[MAX_BATTLERS_COUNT];
-	u8 HealBlockTimers[MAX_BATTLERS_COUNT]; 			//0x20175D4
+	u8 HealBlockTimers[MAX_BATTLERS_COUNT]; 			//0x20179D7
 	u8 LaserFocusTimers[MAX_BATTLERS_COUNT];
 	u8 ThroatChopTimers[MAX_BATTLERS_COUNT];
 	u8 EmbargoTimers[MAX_BATTLERS_COUNT];
@@ -795,7 +775,6 @@ struct NewBattleStruct
 	u8 MoveBounceTargetCount;
 	u8 EchoedVoiceCounter;
 	u8 EchoedVoiceDamageScale;
-	u8 EnduranceHelper;
 	u8 DancerBankCount;
 	u8 CurrentTurnAttacker : 4;
 	u8 CurrentTurnTarget : 4;
@@ -852,6 +831,10 @@ struct NewBattleStruct
 	bool8 fogBlownAwayByDefog : 1;
 	bool8 terrainForcefullyRemoved : 1;
 	bool8 printedNeutralizingGasOverMsg : 1;
+	bool8 doneDoublesSpreadHit : 1; //For when the HP bars all go down during spread moves
+	bool8 calculatedSpreadMoveData : 1; //After the damage has been calculated for all Pokemon hit by a spread move
+	bool8 calculatedSpreadMoveAccuracy : 1;  //After the accuracy has been calculated for all Pokemon hit by a spread move
+	bool8 breakDisguiseSpecialDmg : 1;
 
 	//Other
 	u16 LastUsedMove;
@@ -860,8 +843,6 @@ struct NewBattleStruct
 	u8 DancerTurnOrder[MAX_BATTLERS_COUNT];
 	u8 PayDayByPartyIndices[PARTY_SIZE];
 	item_t SavedConsumedItems[PARTY_SIZE];
-	s32 DamageTaken[MAX_BATTLERS_COUNT];
-	u8 ResultFlags[MAX_BATTLERS_COUNT];
 	u8 expHelper[MAX_BATTLERS_COUNT];
 	u8 megaIndicatorObjIds[MAX_BATTLERS_COUNT];
 	u8 abilityPopUpIds[MAX_BATTLERS_COUNT][2];
@@ -869,21 +850,31 @@ struct NewBattleStruct
 	u16 failedThrownPokeBall;
 	u32 maxGoldrushMoney;
 	u16 itemBackup[PARTY_SIZE];
+	
+	//Things for Spread Moves
+	s32 DamageTaken[MAX_BATTLERS_COUNT]; //~0x2017AC0
+	u8 criticalMultiplier[MAX_BATTLERS_COUNT];
+	u8 ResultFlags[MAX_BATTLERS_COUNT];
+	u8 missStringId[MAX_BATTLERS_COUNT];
+	u8 EnduranceHelper[MAX_BATTLERS_COUNT];
+	bool8 noResultString[MAX_BATTLERS_COUNT];
+	u8 foeSpreadTargets;
+	u8 allSpreadTargets;
 
 	struct
 	{
-	  u8 chosen[4];
-	  u8 done[4];
-	  u8 state;
-	  u8 activeBank;
-	  const u8* script;
-	  bool8 megaEvoInProgress : 1; //Used to tell the game whether or not the turn order should be recalculated
+		u8 chosen[4];
+		u8 done[4];
+		u8 state;
+		u8 activeBank;
+		const u8* script;
+		bool8 megaEvoInProgress : 1; //Used to tell the game whether or not the turn order should be recalculated
 	} megaData;
 
 	struct
 	{
-	  u8 chosen[4];
-	  u8 done[4];
+		u8 chosen[4];
+		u8 done[4];
 	} ultraData;
 
 	struct
@@ -947,7 +938,7 @@ struct NewBattleStruct
 	} ai;
 };
 
-extern struct NewBattleStruct* gNewBS;
+extern struct NewBattleStruct* gNewBS; //0x203E038
 
 struct TrainerSpotted {
     /* NPC state id */

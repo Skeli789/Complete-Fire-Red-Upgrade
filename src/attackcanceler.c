@@ -81,7 +81,7 @@ void atk00_attackcanceler(void)
 		return;
 	}
 	else if (AbilityBattleEffects(ABILITYEFFECT_MOVES_BLOCK, gBankTarget, 0, 0, 0)
-	|| (gBattleTypeFlags & BATTLE_TYPE_DOUBLE && AbilityBattleEffects(ABILITYEFFECT_MOVES_BLOCK_PARTNER, PARTNER(gBankTarget), 0, 0, 0)))
+	|| (IS_DOUBLE_BATTLE && AbilityBattleEffects(ABILITYEFFECT_MOVES_BLOCK_PARTNER, PARTNER(gBankTarget), 0, 0, 0)))
 		return;
 
 	else if (!gNewBS->ParentalBondOn
@@ -93,7 +93,7 @@ void atk00_attackcanceler(void)
 	&& gBattleMoves[gCurrentMove].effect != EFFECT_DOUBLE_HIT
 	&& !(gAbsentBattlerFlags & gBitTable[gBankTarget]))
 	{
-		if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+		if (IS_DOUBLE_BATTLE)
 		{
 			switch (gBattleMoves[gCurrentMove].target) {
 				case MOVE_TARGET_BOTH:
@@ -154,7 +154,7 @@ void atk00_attackcanceler(void)
 
 	gHitMarker |= HITMARKER_OBEYS;
 
-	if (CheckSoundMove(gCurrentMove) || ABILITY(gBankAttacker) == ABILITY_INFILTRATOR)
+	if (MoveIgnoresSubstitutes(gCurrentMove, ABILITY(gBankAttacker)))
 		gNewBS->bypassSubstitute = TRUE;
 
 	if (gNewBS->MoveBounceInProgress == 2) //Bounce just ended
@@ -603,7 +603,7 @@ static u8 AtkCanceller_UnableToUseMove(void)
 			&& !gNewBS->zMoveData.active
 			&& !IsAnyMaxMove(gCurrentMove))
 			{
-				gProtectStructs[gBankAttacker].usedImprisionedMove = 1;
+				gProtectStructs[gBankAttacker].usedImprisonedMove = 1;
 				CancelMultiTurnMoves(gBankAttacker);
 				gBattlescriptCurrInstr = BattleScript_MoveUsedIsImprisoned;
 				gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
@@ -640,6 +640,7 @@ static u8 AtkCanceller_UnableToUseMove(void)
 						gBattleMoveDamage = ConfusionDamageCalc();
 						gProtectStructs[gBankAttacker].confusionSelfDmg = 1;
 						gHitMarker |= HITMARKER_UNABLE_TO_USE_MOVE;
+						gNewBS->breakDisguiseSpecialDmg = TRUE;
 					}
 					gBattlescriptCurrInstr = BattleScript_MoveUsedIsConfused;
 				}
@@ -929,8 +930,7 @@ static u8 AtkCanceller_UnableToUseMove(void)
 			if (gTerrainType == PSYCHIC_TERRAIN
 			&& CheckGrounding(gBankTarget)
 			&& gBankAttacker != gBankTarget
-			&& PriorityCalc(gBankAttacker, ACTION_USE_MOVE, gCurrentMove) > 0
-			&& gBankAttacker != gBankTarget)
+			&& PriorityCalc(gBankAttacker, ACTION_USE_MOVE, gCurrentMove) > 0)
 			{
 				if (IS_SINGLE_BATTLE || !(gBattleMoves[gCurrentMove].target & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL))) //Don't cancel moves that can hit two targets b/c one target might not be protected
 					CancelMultiTurnMoves(gBankAttacker);
@@ -1054,28 +1054,43 @@ static u8 AtkCanceller_UnableToUseMove(void)
 			break;
 
 		case CANCELLER_MULTI_TARGET_MOVES:
-			if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+			if (IS_DOUBLE_BATTLE)
 			{
-				if (gBattleMoves[gCurrentMove].target & MOVE_TARGET_ALL && !CheckTableForMove(gCurrentMove, gSpecialWholeFieldMoves))
+				const u8* backupScript = gBattlescriptCurrInstr; //Script can get overwritten by ability blocking
+
+				if (gBattleMoves[gCurrentMove].target & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL)
+				&& !CheckTableForMove(gCurrentMove, gSpecialWholeFieldMoves))
 				{
+					u8 priority = PriorityCalc(gBankAttacker, ACTION_USE_MOVE, gCurrentMove);
+
 					for (i = 0; i < gBattlersCount; ++i)
 					{
-						if (i != gBankAttacker && gBattleMons[i].hp)
-							gNewBS->ResultFlags[i] = TypeCalc(gCurrentMove, gBankAttacker, i, 0, FALSE);
+						if (i != gBankAttacker && BATTLER_ALIVE(i)
+						&& ((gBattleMoves[gCurrentMove].target & MOVE_TARGET_ALL) || i != PARTNER(gBankAttacker))) //Skip partner when not all-hitting move
+						{
+							if (AbilityBattleEffects(ABILITYEFFECT_MOVES_BLOCK, i, 0, 0, 0)
+							||  AbilityBattleEffects(ABILITYEFFECT_MOVES_BLOCK_PARTNER, PARTNER(i), 0, 0, 0)
+							||  AbilityBattleEffects(ABILITYEFFECT_ABSORBING, i, 0, 0, gCurrentMove)
+							|| (gTerrainType == PSYCHIC_TERRAIN && CheckGrounding(i) && priority > 0))
+							{
+								gNewBS->ResultFlags[i] = 0;
+								gNewBS->noResultString[i] = TRUE;
+							}
+							else
+								gNewBS->ResultFlags[i] = TypeCalc(gCurrentMove, gBankAttacker, i, NULL, FALSE);
+						}
 						else
+						{
 							gNewBS->ResultFlags[i] = MOVE_RESULT_NO_EFFECT; //You can't strike these targets
+							gNewBS->noResultString[i] = TRUE;
+						}
 					}
 				}
-				else if (gBattleMoves[gCurrentMove].target & MOVE_TARGET_BOTH)
-				{
-					for (i = 0; i < gBattlersCount; ++i)
-					{
-						if (i != gBankAttacker && i != PARTNER(gBankAttacker) && gBattleMons[i].hp)
-							gNewBS->ResultFlags[i] = TypeCalc(gCurrentMove, gBankAttacker, i, 0, FALSE);
-						else
-							gNewBS->ResultFlags[i] = MOVE_RESULT_NO_EFFECT; //You can't strike these targets
-					}
-				}
+
+				gBattlescriptCurrInstr = backupScript; //Restore original script
+				gActiveBattler = gBankAttacker;
+				gNewBS->foeSpreadTargets = CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE, gBankAttacker, FOE(gBankAttacker));
+				gNewBS->allSpreadTargets = CountAliveMonsInBattle(BATTLE_ALIVE_EXCEPT_ACTIVE, gBankAttacker, FOE(gBankAttacker));
 			}
 			gBattleStruct->atkCancellerTracker++;
 			break;

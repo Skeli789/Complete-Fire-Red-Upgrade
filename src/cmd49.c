@@ -954,7 +954,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 							gNewBS->MoveBounceInProgress = 2; //Bounce just finished
 							gNewBS->MoveBounceTargetCount = 0;
 							u8 battlerId = PARTNER(gBankAttacker);
-							if (gBattleMons[battlerId].hp && gNewBS->OriginalAttackerTargetCount < 2)
+							if (BATTLER_ALIVE(battlerId) && gNewBS->OriginalAttackerTargetCount < 2)
 							{
 								gBankAttacker = gBanksByTurnOrder[gCurrentTurnActionNumber]; //Restore original attacker
 								gBankTarget = battlerId; //Attack Bouncer's partner
@@ -976,7 +976,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 							while ((battlerId = GetNextMultiTarget()) != 0xFF)
 							{
 								gBankTarget = battlerId;
-								if (gBattleMons[battlerId].hp && battlerId != gBankAttacker)
+								if (BATTLER_ALIVE(battlerId) && battlerId != gBankAttacker)
 								{
 									gNewBS->preFaintEffectsTracker = 0;
 									gBattleScripting.atk49_state = 0;
@@ -1319,11 +1319,18 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			for (int i = 0; i < MAX_BATTLERS_COUNT; ++i)
 			{
 				gNewBS->DamageTaken[i] = 0;
+				gNewBS->criticalMultiplier[i] = 0;
 				gNewBS->ResultFlags[i] = 0;
+				gNewBS->missStringId[i] = 0;
+				gNewBS->noResultString[i] = 0;
 				gNewBS->statFellThisTurn[i] = 0;
 			}
 
 			gNewBS->totalDamageGiven = 0;
+			//Clear spread move things
+			gNewBS->doneDoublesSpreadHit = FALSE;
+			gNewBS->calculatedSpreadMoveData = FALSE;
+			gNewBS->calculatedSpreadMoveAccuracy = FALSE;
 
 			switch (gCurrentMove) {
 				case MOVE_FUSIONFLARE:
@@ -1349,6 +1356,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			gNewBS->bypassSubstitute = FALSE;
 			gNewBS->preFaintEffectsTracker = 0;
 			gNewBS->MeFirstByte = FALSE;
+			gNewBS->breakDisguiseSpecialDmg = FALSE;
 			gBattleScripting.atk49_state++;
 			break;
 

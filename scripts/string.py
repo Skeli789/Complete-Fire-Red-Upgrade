@@ -20,6 +20,9 @@ SpecialBuffers = {
     "TARGET_ABILITY": ["FD", "19"],
     "SCRIPTING_BANK_ABILITY": ["FD", "1A"],
     "PLAYER_NAME": ["FD", "23"],
+    "TARGET_NAME": ["FD", "3B"],
+    "TARGET_PARTNER_NAME": ["FD", "3C"],
+    "DEF_PREFIX_5": ["FD", "3D"],
 
     "PLAYER": ["FD", "01"],
     "BUFFER1": ["FD", "02"],

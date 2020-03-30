@@ -173,6 +173,8 @@
 ##Restore Old Cancel Multi Turn Moves
 080172EC 12 49 58 22 03 1C 53 43 50 31 5B 18
 
+##Shorter Confusion Hit String
+081D90F2 20
 ##Rain Dish Heal String
 083FC92A AB FF
 ##Another Heal String

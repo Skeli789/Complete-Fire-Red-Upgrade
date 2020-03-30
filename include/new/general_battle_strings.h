@@ -28,6 +28,7 @@ extern const u8 BattleText_PlayerLostToTwoInGameTrainers[];
 extern const u8 TheOpposingString[];
 extern const u8 TheShadowString[];
 extern const u8 TheWildString[];
+extern const u8 sText_thewild[];
 
 //Rewritten Strings
 extern const u8 BattleText_TwoLinkTrainersWantToBattle[];
@@ -41,6 +42,7 @@ extern const u8 BattleText_WildPkmnAppeared[];
 extern const u8 sText_FoePkmnPrefix2[];
 extern const u8 sText_FoePkmnPrefix3[];
 extern const u8 sText_FoePkmnPrefix4[];
+extern const u8 sText_FoePkmnPrefix5[];
 extern const u8 sText_TheOpposingCapsNoSpace[];
 extern const u8 sText_TheOpposingNoCaps[];
 extern const u8 sText_Your[];

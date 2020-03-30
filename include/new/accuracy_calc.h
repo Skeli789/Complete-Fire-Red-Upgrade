@@ -7,7 +7,7 @@
  */
 
 //Exported Functions
-bool8 JumpIfMoveAffectedByProtect(move_t, bank_t, bank_t);
+bool8 JumpIfMoveAffectedByProtect(move_t, bank_t, bank_t, bool8 actuallyJump);
 bool8 ProtectAffects(u16 move, u8 bankAtk, u8 bankDef, bool8 set);
  bool8 DoesProtectionMoveBlockMove(u8 bankAtk, u8 bankDef, u16 atkMove, u16 protectMove);
 u32 AccuracyCalc(move_t, bank_t, bank_t);

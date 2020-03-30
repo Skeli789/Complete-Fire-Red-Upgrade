@@ -114,10 +114,10 @@ void atk15_seteffectwithchance(void)
 {
 	u32 PercentChance;
 
-	if (CheckSoundMove(gCurrentMove) || ABILITY(gBankAttacker) == ABILITY_INFILTRATOR)
-	{
-		gHitMarker |= HITMARKER_IGNORE_SUBSTITUTE;
-	}
+	//if (CheckSoundMove(gCurrentMove) || ABILITY(gBankAttacker) == ABILITY_INFILTRATOR)
+	//{
+	//	gHitMarker |= HITMARKER_IGNORE_SUBSTITUTE;
+	//}
 	if (ABILITY(gBankAttacker) == ABILITY_SERENEGRACE || BankSideHasRainbow(gBankAttacker))
 	{
 		PercentChance = gBattleMoves[gCurrentMove].secondaryEffectChance * 2;

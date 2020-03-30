@@ -239,16 +239,6 @@ DisplayTypeHook:
 .pool
 .monLoc: .word 0x00003290
 
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@ Summary Screen Wrapping - hook at 13B20C via r1
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-SummaryScreenWrapAround:
-	push {r4-r7, lr}
-	bl ChangeSummaryScreenMon
-	pop {r4-r7, pc}
-
-
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Whiteout Hack
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

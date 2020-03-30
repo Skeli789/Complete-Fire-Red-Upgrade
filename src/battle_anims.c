@@ -2270,6 +2270,32 @@ void SpriteCB_HorizontalSlice(struct Sprite *sprite)
 	sprite->callback = SpriteCB_HorizontalSliceStep;
 }
 
+void SpriteCB_BlockXOnTarget(struct Sprite *sprite)
+{
+    s16 y;
+	u8 target = LoadBattleAnimTarget(2);
+
+    if (SIDE(target) == B_SIDE_PLAYER)
+    {
+        sprite->subpriority = GetBattlerSpriteSubpriority(target) - 2;
+        y = -144;
+    }
+    else
+    {
+        sprite->subpriority = GetBattlerSpriteSubpriority(target) + 2;
+        y = -96;
+    }
+
+	if (!IsBattlerSpriteVisible(target))
+		DestroyAnimSprite(sprite);
+	else
+	{
+		InitSpritePosToGivenTarget(sprite, target);
+		sprite->pos2.y = y;
+		sprite->callback = (void*) (0x80E3534 | 1); //AnimBlockX_Step;
+	}
+}
+
 //Creates a twinkle in the upper corner of the screen
 void SpriteCB_SparkleInCorner(struct Sprite *sprite)
 {

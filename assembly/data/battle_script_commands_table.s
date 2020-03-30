@@ -28,7 +28,7 @@ gBattleScriptingCommandsTable:
 .word atk0B_healthbarupdate		@graphicalhpupdate
 .word atk0C_datahpupdate
 .word atk0D_critmessage
-.word 0x801fad1					@missmessage @Actually effectivenesssound
+.word atk0E_effectivenesssound
 .word atk0F_resultmessage
 .word 0x801fd51					@printstring
 .word 0x801fd91					@printstring2
@@ -106,7 +106,7 @@ gBattleScriptingCommandsTable:
 .word 0x8025231					@handlelearnnewmove
 .word 0x802537d					@yesnoboxlearnmove
 .word 0x80256e1					@yesnoboxstoplearningmove
-.word 0x802581d					@flash
+.word atk5C_hitanimation		@flash
 .word 0x80258ad					@getmoneyreward
 .word 0x8025a71					@atk5e
 .word 0x8025b25					@atk5f

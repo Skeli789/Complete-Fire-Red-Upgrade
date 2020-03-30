@@ -453,6 +453,7 @@
 .equ Template_DigMound, 0x83E7AC4
 .equ Template_Lightning, 0x83E5F38
 
+.equ SpriteCB_AnimSpriteOnMonPos, 0x8075D9D
 .equ Callback_TranslateAnimSpriteToTargetMonLocation, 0x8075DF5
 
 @OAM

@@ -1053,6 +1053,7 @@ LifeDewBS:
 LifeDewRestorePartnerHPBS:
 	callasm SetTargetPartner
 	jumpiffainted BANK_TARGET BS_MOVE_END
+	jumpifcounter BANK_TARGET HEAL_BLOCK_TIMERS NOTEQUALS 0x0 BattleScript_NoHealTargetAfterHealBlock
 	accuracycheck LifeDewMissedPartnerBS 0x0
 	setdamageasrestorehalfmaxhp LifeDewPartnerFullHealthBS BANK_TARGET
 	orword HIT_MARKER HITMARKER_IGNORE_SUBSTITUTE
@@ -1149,7 +1150,7 @@ BS_038_OHK0:
 	accuracycheck FAILED 0xFFFF
 	attackstring
 	ppreduce
-	typecalc
+	typecalc2
 	jumpifmovehadnoeffect BS_HIT_FROM_ATTACKANIMATION
 	tryko 0x81D6EF1
 	trysetdestinybondtohappen
@@ -1173,7 +1174,7 @@ BS_040_SuperFang:
 	accuracycheck BS_MOVE_MISSED 0x0
 	attackstring
 	ppreduce
-	typecalc
+	typecalc2
 	bicbyte OUTCOME OUTCOME_SUPER_EFFECTIVE | OUTCOME_NOT_VERY_EFFECTIVE
 	gethalfcurrentenemyhp
 	goto BS_HIT_FROM_ATTACKANIMATION
@@ -1186,7 +1187,7 @@ BS_041_DragonRage:
 	accuracycheck BS_MOVE_MISSED 0x0
 	attackstring
 	ppreduce
-	typecalc
+	typecalc2
 	bicbyte OUTCOME OUTCOME_SUPER_EFFECTIVE | OUTCOME_NOT_VERY_EFFECTIVE
 	setword DAMAGE_LOC 0x0
 	setbyte DAMAGE_LOC 40
@@ -1756,7 +1757,7 @@ BS_081_Rage:
 BS_082_Mimic:
 	attackcanceler
 	jumpifbehindsubstitute BANK_TARGET FAILED_PRE
-	accuracycheck FAILED_PRE 0xFFFF
+	accuracycheck FAILED_PRE 0x0
 	attackstringnoprotean
 	ppreduce
 	copyattack FAILED
@@ -1846,7 +1847,7 @@ BS_087_SeismicToss:
 	accuracycheck BS_MOVE_MISSED 0x0
 	attackstring
 	ppreduce
-	typecalc
+	typecalc2
 	bicbyte OUTCOME OUTCOME_SUPER_EFFECTIVE | OUTCOME_NOT_VERY_EFFECTIVE
 	nightshadedamageeffect
 	adjustsetdamage
@@ -1860,7 +1861,7 @@ BS_088_Psywave:
 	accuracycheck BS_MOVE_MISSED 0x0
 	attackstring
 	ppreduce
-	typecalc
+	typecalc2
 	bicbyte OUTCOME OUTCOME_SUPER_EFFECTIVE | OUTCOME_NOT_VERY_EFFECTIVE
 	psywavedamageeffect
 	adjustsetdamage
@@ -1915,7 +1916,7 @@ BS_090_Encore:
 .global BS_091_PainSplit
 BS_091_PainSplit:
 	attackcanceler
-	accuracycheck FAILED_PRE 0xFFFF
+	accuracycheck FAILED_PRE 0x0
 	attackstringnoprotean
 	ppreduce
 	painsplitdamagecalculator FAILED
@@ -2496,7 +2497,7 @@ BS_122_Present:
 	accuracycheck BS_MOVE_MISSED 0x0
 	attackstring
 	ppreduce
-	typecalc
+	typecalc2
 	presentdamagecalculation
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -2788,7 +2789,7 @@ BS_130_Sonicboom:
 	accuracycheck BS_MOVE_MISSED 0x0
 	attackstring
 	ppreduce
-	typecalc
+	typecalc2
 	bicbyte OUTCOME OUTCOME_SUPER_EFFECTIVE | OUTCOME_NOT_VERY_EFFECTIVE
 	setword DAMAGE_LOC 0x0
 	setbyte DAMAGE_LOC 20
@@ -3408,7 +3409,7 @@ FinalGambitBS:
 	accuracycheck BS_MOVE_MISSED 0x0
 	attackstring
 	ppreduce
-	typecalc
+	typecalc2
 	bicbyte OUTCOME OUTCOME_SUPER_EFFECTIVE | OUTCOME_NOT_VERY_EFFECTIVE
 	callasm FinalGambitDamageCalc
 	adjustsetdamage
@@ -3583,7 +3584,7 @@ BestowBS:
 .global BS_178_RolePlay
 BS_178_RolePlay:
 	attackcanceler
-	accuracycheck FAILED_PRE 0xFFFF
+	accuracycheck FAILED_PRE 0x0
 	attackstringnoprotean
 	ppreduce
 	copyability FAILED
@@ -3813,7 +3814,7 @@ BS_187_Yawn:
 	ppreduce
 	jumpifbehindsubstitute BANK_TARGET FAILED
 	cansetyawn BS_StatusMoveFail
-	accuracycheck FAILED 0xFFFF
+	accuracycheck FAILED 0x0
 	callasm ActuallySetYawn
 	attackanimation
 	waitanimation
@@ -3838,7 +3839,7 @@ BS_189_Endeavor:
 	setdamagetohealthdifference FAILED
 	copyarray HP_DEALT DAMAGE_LOC 0x4
 	accuracycheck BS_MOVE_MISSED + 2 0x0
-	typecalc
+	typecalc2
 	jumpifmovehadnoeffect BS_HIT_FROM_ATTACKANIMATION
 	bicbyte OUTCOME OUTCOME_SUPER_EFFECTIVE | OUTCOME_NOT_VERY_EFFECTIVE
 	copyarray DAMAGE_LOC HP_DEALT 0x4

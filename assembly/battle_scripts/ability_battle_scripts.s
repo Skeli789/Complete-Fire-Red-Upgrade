@@ -493,7 +493,7 @@ BadDreams_hurt:
 
 BadDreams_end:
 	setbyte SEED_HELPER 0x0
-	call BattleScript_AbilityPopUpRevert
+	callasm TryHideActiveAbilityPopUps
 	end3
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

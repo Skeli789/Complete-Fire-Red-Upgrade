@@ -1,5 +1,26 @@
+#org @gText_SuperEffectiveTarget
+It's super effective on\n[TARGET]!
+
+#org @gText_SuperEffectiveTwoFoes
+It's super effective on [DEF_PREFIX_5]\n[TARGET_NAME] and [TARGET_PARTNER_NAME]!
+
+#org @gText_NotVeryEffectiveTarget
+It's not very effective on\n[TARGET][.]
+
+#org @gText_NotVeryEffectiveTwoFoes
+It's not very effective on [DEF_PREFIX_5]\n[TARGET_NAME] and [TARGET_PARTNER_NAME][.]
+
+#org @gText_DoesntAffectTwoFoes
+It had no effect on [DEF_PREFIX_5]\n[TARGET_NAME] and [TARGET_PARTNER_NAME][.]
+
 #org @gText_CriticalHit
 [FC][01][02]A critical hit!
+
+#org @gText_CriticalHitTarget
+[FC][01][02]A critical hit[FC][01][01] on\n[TARGET]!
+
+#org @gText_CriticalHitTwoFoes
+[FC][01][02]A critical hit[FC][01][01] on [DEF_PREFIX_5]\n[TARGET_NAME] and [TARGET_PARTNER_NAME]!
 
 #org @TrickRoomSetString
 [ATTACKER] twisted\nthe dimensions!

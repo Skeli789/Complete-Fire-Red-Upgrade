@@ -97,6 +97,13 @@ extern const u8 BattleScript_MaxMoveTormentFoes[];
 extern const u8 BattleScript_MaxMoveLowerSpeed2Foes[];
 
 //Strings
+extern const u8 gText_SuperEffectiveTarget[];
+extern const u8 gText_SuperEffectiveTwoFoes[];
+extern const u8 gText_NotVeryEffectiveTarget[];
+extern const u8 gText_NotVeryEffectiveTwoFoes[];
+extern const u8 gText_DoesntAffectTwoFoes[];
+extern const u8 gText_CriticalHitTarget[];
+extern const u8 gText_CriticalHitTwoFoes[];
 extern const u8 CraftyShieldProtectedString[];
 extern const u8 MatBlockProtectedString[];
 extern const u8 QuickGuardProtectedString[];

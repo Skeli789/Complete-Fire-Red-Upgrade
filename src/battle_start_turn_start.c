@@ -141,9 +141,9 @@ void BattleBeginFirstTurn(void)
 				}
 
 				//OW Weather
-				if (gBattleStruct->field_B6 == 0 && AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, 0, 0, 0xFF, 0))
+				if (!gBattleStruct->overworldWeatherDone && AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, 0, 0, 0xFF, 0))
 				{
-					gBattleStruct->field_B6 = 1;
+					gBattleStruct->overworldWeatherDone = TRUE;
 					return;
 				}
 
@@ -368,8 +368,8 @@ void BattleBeginFirstTurn(void)
 
 				gBattleStruct->turnEffectsTracker = 0;
 				gBattleStruct->turnEffectsBank = 0;
-				gBattleStruct->field_180 = 0;
-				gBattleStruct->field_181 = 0;
+				gBattleStruct->wishPerishSongState = 0;
+				gBattleStruct->wishPerishSongBattlerId = 0;
 				gBattleScripting.atk49_state = 0;
 				gBattleStruct->faintedActionsState = 0;
 				gBattleStruct->turncountersTracker = 0;
@@ -768,7 +768,7 @@ void RunTurnActionsFunctions(void)
 			gNewBS->megaData.megaEvoInProgress = FALSE;
 			//Fallthrough
 		case Mega_End:
-			if (gCurrentActionFuncId != ACTION_USE_MOVE) //Necessary because of Mega Evolving before Pursuit
+			if (gCurrentActionFuncId != ACTION_USE_MOVE && gCurrentActionFuncId != ACTION_RUN_BATTLESCRIPT) //Necessary because of Mega Evolving before Pursuit
 				gNewBS->megaData.state = 0; //Reset since not everyone may have had a chance to Mega Evolve
 	}
 
@@ -924,6 +924,7 @@ void HandleAction_UseMove(void)
 	gNewBS->ParentalBondOn = FALSE;
 	gNewBS->DancerInProgress = FALSE;
 	gNewBS->MoveBounceInProgress = FALSE;
+	gNewBS->breakDisguiseSpecialDmg = FALSE;
 	gNewBS->zMoveData.active = FALSE;
 	gNewBS->batonPassing = FALSE;
 	gNewBS->dynamaxData.nullifiedStats = FALSE;
@@ -932,10 +933,18 @@ void HandleAction_UseMove(void)
 	gBattleCommunication[6] = 0;
 	gCurrMovePos = gChosenMovePos = gBattleStruct->chosenMovePositions[gBankAttacker];
 
+	//Clear spread move things
+	gNewBS->doneDoublesSpreadHit = FALSE;
+	gNewBS->calculatedSpreadMoveData = FALSE;
+	gNewBS->calculatedSpreadMoveAccuracy = FALSE;
+
 	for (int i = 0; i < MAX_BATTLERS_COUNT; ++i)
 	{
 		gNewBS->DamageTaken[i] = 0;
+		gNewBS->criticalMultiplier[i] = 0;
 		gNewBS->ResultFlags[i] = 0;
+		gNewBS->missStringId[i] = 0;
+		gNewBS->noResultString[i] = 0;
 		gNewBS->statFellThisTurn[i] = FALSE;
 	}
 
