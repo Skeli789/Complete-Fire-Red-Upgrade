@@ -74,7 +74,7 @@ BattleScript_BerryConfuseHealRet:
 	playanimation BANK_SCRIPTING ANIM_BERRY_EAT 0x0
 	printstring 0x12A
 	waitmessage DELAY_1SECOND
-	orword HIT_MARKER 0x100
+	orword HIT_MARKER HITMARKER_IGNORE_SUBSTITUTE
 	graphicalhpupdate BANK_SCRIPTING
 	datahpupdate BANK_SCRIPTING
 	printstring 0x144
@@ -92,13 +92,13 @@ BattleScript_BerryConfuseHealEnd2:
 
 BattleScript_BerryHealHP_RemoveBerryRet:
 	call BattleScript_TryPrintRipenAbilityPopUp
-	playanimation 0xA ANIM_BERRY_EAT 0x0
+	playanimation BANK_SCRIPTING ANIM_BERRY_EAT 0x0
 	
 BattleScript_ItemHealHP_RemoveItem_SkipAnim:
-	playanimation 0xA ANIM_HEALING_SPARKLES 0x0
-	orword HIT_MARKER 0x100
-	graphicalhpupdate 0xA
-	datahpupdate 0xA
+	playanimation BANK_SCRIPTING ANIM_HEALING_SPARKLES 0x0
+	orword HIT_MARKER HITMARKER_IGNORE_SUBSTITUTE
+	graphicalhpupdate BANK_SCRIPTING
+	datahpupdate BANK_SCRIPTING
 	printstring 0x12A
 	waitmessage DELAY_1SECOND
 	call DoCheekPouch
@@ -111,7 +111,7 @@ BattleScript_BerryHealHP_RemoveBerryEnd2:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_ItemHealHP_RemoveItemRet:
-	playanimation 0xA ANIM_ITEM_USE 0x0
+	playanimation BANK_SCRIPTING ANIM_ITEM_USE 0x0
 	goto BattleScript_ItemHealHP_RemoveItem_SkipAnim
 
 BattleScript_ItemHealHP_RemoveItemEnd2:
@@ -123,7 +123,7 @@ BattleScript_ItemHealHP_RemoveItemEnd2:
 BattleScript_BerryPPHealRet:
 	waitstateatk
 	call BattleScript_TryPrintRipenAbilityPopUp
-	playanimation 0xA ANIM_BERRY_EAT 0x0
+	playanimation BANK_SCRIPTING ANIM_BERRY_EAT 0x0
 	printstring 0x12B
 	waitmessage DELAY_1SECOND
 	call DoCheekPouch
@@ -136,7 +136,7 @@ BattleScript_BerryPPHealEnd2:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_BerryFocusEnergyRet:
-	playanimation 0xA ANIM_BERRY_EAT 0x0
+	playanimation BANK_SCRIPTING ANIM_BERRY_EAT 0x0
 	printstring 0x146
 	waitmessage DELAY_1SECOND
 	call DoCheekPouch
@@ -150,7 +150,7 @@ BattleScript_BerryFocusEnergyEnd2:
 
 BattleScript_BerryStatRaiseRet:
 	call BattleScript_TryPrintRipenAbilityPopUp
-	playanimation 0xA ANIM_BERRY_EAT 0x0
+	playanimation BANK_SCRIPTING ANIM_BERRY_EAT 0x0
 	setbyte MULTISTRING_CHOOSER 0x4
 	call 0x81D6BD1
 	call DoCheekPouch
@@ -163,8 +163,8 @@ BattleScript_BerryStatRaiseEnd2:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_BerryCureParRet:
-	playanimation 0xA ANIM_BERRY_EAT 0x0
-	refreshhpbar 0xA
+	playanimation BANK_SCRIPTING ANIM_BERRY_EAT 0x0
+	refreshhpbar BANK_SCRIPTING
 	printstring 0x123
 	waitmessage DELAY_1SECOND
 	call DoCheekPouch
@@ -178,8 +178,8 @@ BattleScript_BerryCurePrlzEnd2:
 
 
 BattleScript_BerryCurePsnRet:
-	playanimation 0xA ANIM_BERRY_EAT 0x0
-	refreshhpbar 0xA
+	playanimation BANK_SCRIPTING ANIM_BERRY_EAT 0x0
+	refreshhpbar BANK_SCRIPTING
 	printstring 0x124
 	waitmessage DELAY_1SECOND
 	call DoCheekPouch
@@ -192,8 +192,8 @@ BattleScript_BerryCurePsnEnd2:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_BerryCureBrnRet:
-	playanimation 0xA ANIM_BERRY_EAT 0x0
-	refreshhpbar 0xA
+	playanimation BANK_SCRIPTING ANIM_BERRY_EAT 0x0
+	refreshhpbar BANK_SCRIPTING
 	printstring 0x125
 	waitmessage DELAY_1SECOND
 	call DoCheekPouch
@@ -206,8 +206,8 @@ BattleScript_BerryCureBrnEnd2:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_BerryCureFrzRet:
-	playanimation 0xA ANIM_BERRY_EAT 0x0
-	refreshhpbar 0xA
+	playanimation BANK_SCRIPTING ANIM_BERRY_EAT 0x0
+	refreshhpbar BANK_SCRIPTING
 	printstring 0x126
 	waitmessage DELAY_1SECOND
 	call DoCheekPouch
@@ -220,8 +220,8 @@ BattleScript_BerryCureFrzEnd2:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_BerryCureSlpRet:
-	playanimation 0xA ANIM_BERRY_EAT 0x0
-	refreshhpbar 0xA
+	playanimation BANK_SCRIPTING ANIM_BERRY_EAT 0x0
+	refreshhpbar BANK_SCRIPTING
 	printstring 0x127
 	waitmessage DELAY_1SECOND
 	call DoCheekPouch
@@ -234,7 +234,7 @@ BattleScript_BerryCureSlpEnd2:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_BerryCureConfusionRet:
-	playanimation 0xA ANIM_BERRY_EAT 0x0
+	playanimation BANK_SCRIPTING ANIM_BERRY_EAT 0x0
 	printstring 0x128
 	waitmessage DELAY_1SECOND
 	call DoCheekPouch
@@ -247,8 +247,8 @@ BattleScript_BerryCureConfusionEnd2:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_BerryCureChosenStatusRet:
-	playanimation 0xA ANIM_BERRY_EAT 0x0
-	refreshhpbar 0xA
+	playanimation BANK_SCRIPTING ANIM_BERRY_EAT 0x0
+	refreshhpbar BANK_SCRIPTING
 	printfromtable 0x83FE634
 	waitmessage DELAY_1SECOND
 	call DoCheekPouch
@@ -266,6 +266,7 @@ DoCheekPouch:
 	setbyte FORM_COUNTER 0x0
 	call BattleScript_AbilityPopUp
 	playanimation BANK_SCRIPTING ANIM_HEALING_SPARKLES 0x0
+	orword HIT_MARKER HITMARKER_IGNORE_SUBSTITUTE
 	graphicalhpupdate BANK_SCRIPTING
 	datahpupdate BANK_SCRIPTING
 	setword BATTLE_STRING_LOADER CheekPouchString
@@ -384,7 +385,7 @@ WP_Ret:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_RockyHelmetDamage:
-	orword HIT_MARKER 0x100
+	orword HIT_MARKER HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_NON_ATTACK_DMG
 	graphicalhpupdate BANK_ATTACKER
 	datahpupdate BANK_ATTACKER
 	setword BATTLE_STRING_LOADER RockyHelmetString
@@ -398,7 +399,7 @@ BattleScript_RockyHelmetDamage:
 BattleScript_JabocaRowapBerry:
 	call BattleScript_TryPrintRipenAbilityPopUp
 	playanimation BANK_TARGET ANIM_BERRY_EAT 0x0
-	orword HIT_MARKER 0x100
+	orword HIT_MARKER HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_NON_ATTACK_DMG
 	graphicalhpupdate BANK_ATTACKER
 	datahpupdate BANK_ATTACKER
 	setword BATTLE_STRING_LOADER RockyHelmetString
@@ -412,7 +413,7 @@ BattleScript_JabocaRowapBerry:
 
 BattleScript_BlackSludgeHurt:
 	playanimation BANK_SCRIPTING ANIM_WAITING_WAGGLE 0x0
-	orword HIT_MARKER 0x100
+	orword HIT_MARKER HITMARKER_IGNORE_SUBSTITUTE | HITMARKER_NON_ATTACK_DMG
 	graphicalhpupdate BANK_SCRIPTING
 	datahpupdate BANK_SCRIPTING
 	setword BATTLE_STRING_LOADER BlackSludgeHurtString
