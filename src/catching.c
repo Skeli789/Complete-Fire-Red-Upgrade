@@ -520,6 +520,9 @@ void atkF1_trysetcaughtmondexflags(void)
 
 u8 ItemIdToBallId(u16 ballItem)
 {
+	if (ballItem == 0xFFFF)
+		return BALL_TYPE_DYNAMAX_BALL;
+
 	return ItemId_GetType(ballItem);
 }
 
@@ -544,7 +547,7 @@ void PlayerHandleBallThrowAnim(void)
 	gBattlerControllerFuncs[gActiveBattler] = CompleteOnSpecialAnimDone;
 }
 
-void CreateThrowPokeBall(u8 taskId)
+void AnimTask_LoadBallGfx(u8 taskId)
 {
 	u8 ballId = ItemIdToBallId(gLastUsedItem);
 	LoadBallGfx(ballId);
@@ -552,14 +555,14 @@ void CreateThrowPokeBall(u8 taskId)
 }
 
 void __attribute__((long_call)) FreeBallGfx(u8 ballId);
-void DestroyThrowPokeBall(u8 taskId)
+void AnimTask_FreeBallGfx(u8 taskId)
 {
 	u8 ballId = ItemIdToBallId(gLastUsedItem);
 	FreeBallGfx(ballId);
 	DestroyAnimVisualTask(taskId);
 }
 
-void StartPokeballThrowAnimation(u8 taskId)
+void AnimTask_ThrowBall(u8 taskId)
 {
 	u8 ballId;
 	u8 spriteId;
@@ -580,13 +583,13 @@ void StartPokeballThrowAnimation(u8 taskId)
 
 void LoadBallGfx(u8 ballId)
 {
-	u16 var;
+//	u16 var;
 	if (GetSpriteTileStartByTag(gBallSpriteSheets[ballId].tag) == 0xFFFF)
 	{
 		LoadCompressedSpriteSheetUsingHeap(&gBallSpriteSheets[ballId]);
 		LoadCompressedSpritePaletteUsingHeap(&gBallSpritePalettes[ballId]);
 	}
-	switch (ballId) {
+	/*switch (ballId) {
 		case BALL_TYPE_MASTER_BALL:
 		case BALL_TYPE_ULTRA_BALL:
 		case BALL_TYPE_GREAT_BALL:
@@ -599,17 +602,17 @@ void LoadBallGfx(u8 ballId)
 			var = GetSpriteTileStartByTag(gBallSpriteSheets[ballId].tag);
 			LZDecompressVram(gOpenPokeballGfx, (void*)(VRAM + 0x10100 + var * 32));
 			break;
-	}
+	}*/
 }
 
 u16 GetBattlerPokeballItemId(u8 bank)
 {
 	u8 ballId;
-
-	if (SIDE(bank) == B_SIDE_PLAYER)
-		ballId = GetMonData(&gPlayerParty[gBattlerPartyIndexes[bank]], MON_DATA_POKEBALL, 0);
+	
+	if (IsDynamaxed(bank))
+		ballId = BALL_TYPE_DYNAMAX_BALL;
 	else
-		ballId = GetMonData(&gEnemyParty[gBattlerPartyIndexes[bank]], MON_DATA_POKEBALL, 0);
+		ballId = GetMonData(GetIllusionPartyData(bank), MON_DATA_POKEBALL, 0);
 
 	return ballId;
 }

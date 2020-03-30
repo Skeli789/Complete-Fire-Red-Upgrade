@@ -207,9 +207,9 @@ LoadBallGfx 0804BEF4 1
 GetBattlerPokeballItemId 0804BF90 1
 GetProperBallIdHook1 0804AA1E 1
 GetProperBallIdHook2 080EF3A8 1
-CreateThrowPokeBall 080EF490 1
-DestroyThrowPokeBall 080EF4B8 1
-StartPokeballThrowAnimation 0x80EF5AC 1
+AnimTask_LoadBallGfx 080EF490 1
+AnimTask_FreeBallGfx 080EF4B8 1
+AnimTask_ThrowBall 0x80EF5AC 1
 ItemIdToBallId 080EF52C 1
 OakIntroPokeballFixHook 804B946 0
 TradePokeballFixHook 804BBD8 0

@@ -66,6 +66,7 @@ enum BallTypes
 	BALL_TYPE_SPORT_BALL,	//24
 	BALL_TYPE_BEAST_BALL,	//25
 	BALL_TYPE_DREAM_BALL,	//26
+	BALL_TYPE_DYNAMAX_BALL, //27 - Don't give to player!
 
 	BALL_TYPE_RANDOM = 0xFF,
 };
@@ -73,7 +74,7 @@ enum BallTypes
 //Make sure these two values are always correct!
 #define BALL_TYPE_MASTER_BALL 0
 #define BALL_TYPE_POKE_BALL 3
-#define BALL_TYPE_DREAM_BALL 26
+#define BALL_TYPE_DYNAMAX_BALL 27
 
 #define LAST_BALL_INDEX BALL_TYPE_DREAM_BALL
 #define NUM_BALLS (BALL_TYPE_DREAM_BALL + 1) //Make sure to update 0804B5AA in bytereplacement!

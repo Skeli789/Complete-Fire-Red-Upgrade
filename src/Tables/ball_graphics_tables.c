@@ -30,7 +30,7 @@ void __attribute__((long_call)) RepeatBallOpenParticleAnimation(u8 taskId);
 void __attribute__((long_call)) TimerBallOpenParticleAnimation(u8 taskId);
 void __attribute__((long_call)) PremierBallOpenParticleAnimation(u8 taskId);
 
-#define gInterfaceGfx_PokeBall (const u8*) 0x8D01724
+/*#define gInterfaceGfx_PokeBall (const u8*) 0x8D01724
 #define gInterfaceGfx_GreatBall (const u8*) 0x8D01800
 #define gInterfaceGfx_SafariBall (const u8*) 0x8D018E0
 #define gInterfaceGfx_UltraBall (const u8*) 0x8D019C8
@@ -41,7 +41,19 @@ void __attribute__((long_call)) PremierBallOpenParticleAnimation(u8 taskId);
 #define gInterfaceGfx_RepeatBall (const u8*) 0x8D01E84
 #define gInterfaceGfx_TimerBall (const u8*) 0x8D01F68
 #define gInterfaceGfx_LuxuryBall (const u8*) 0x8D02084
-#define gInterfaceGfx_PremierBall (const u8*) 0x8D021D8
+#define gInterfaceGfx_PremierBall (const u8*) 0x8D021D8*/
+extern const u8 gInterfaceGfx_MasterBallTiles[];
+extern const u8 gInterfaceGfx_UltraBallTiles[];
+extern const u8 gInterfaceGfx_GreatBallTiles[];
+extern const u8 gInterfaceGfx_PokeBallTiles[];
+extern const u8 gInterfaceGfx_SafariBallTiles[];
+extern const u8 gInterfaceGfx_NetBallTiles[];
+extern const u8 gInterfaceGfx_DiveBallTiles[];
+extern const u8 gInterfaceGfx_NestBallTiles[];
+extern const u8 gInterfaceGfx_RepeatBallTiles[];
+extern const u8 gInterfaceGfx_TimerBallTiles[];
+extern const u8 gInterfaceGfx_LuxuryBallTiles[];
+extern const u8 gInterfaceGfx_PremierBallTiles[];
 extern const u8 gInterfaceGfx_DuskBallTiles[];
 extern const u8 gInterfaceGfx_HealBallTiles[];
 extern const u8 gInterfaceGfx_QuickBallTiles[];
@@ -57,8 +69,9 @@ extern const u8 gInterfaceGfx_MoonBallTiles[];
 extern const u8 gInterfaceGfx_SportBallTiles[];
 extern const u8 gInterfaceGfx_BeastBallTiles[];
 extern const u8 gInterfaceGfx_DreamBallTiles[];
+extern const u8 gInterfaceGfx_DynamaxBallTiles[];
 
-#define gInterfacePal_PokeBall (const u8*) 0x8D017E0
+/*#define gInterfacePal_PokeBall (const u8*) 0x8D017E0
 #define gInterfacePal_GreatBall (const u8*) 0x8D018BC
 #define gInterfacePal_SafariBall (const u8*) 0x8D019A4
 #define gInterfacePal_UltraBall (const u8*) 0x8D01A7C
@@ -69,7 +82,19 @@ extern const u8 gInterfaceGfx_DreamBallTiles[];
 #define gInterfacePal_RepeatBall (const u8*) 0x8D01F44
 #define gInterfacePal_TimerBall (const u8*) 0x8D02060
 #define gInterfacePal_LuxuryBall (const u8*) 0x8D021B0
-#define gInterfacePal_PremierBall (const u8*) 0x8D022C8
+#define gInterfacePal_PremierBall (const u8*) 0x8D022C8*/
+extern const u8 gInterfaceGfx_MasterBallPal[];
+extern const u8 gInterfaceGfx_UltraBallPal[];
+extern const u8 gInterfaceGfx_GreatBallPal[];
+extern const u8 gInterfaceGfx_PokeBallPal[];
+extern const u8 gInterfaceGfx_SafariBallPal[];
+extern const u8 gInterfaceGfx_NetBallPal[];
+extern const u8 gInterfaceGfx_DiveBallPal[];
+extern const u8 gInterfaceGfx_NestBallPal[];
+extern const u8 gInterfaceGfx_RepeatBallPal[];
+extern const u8 gInterfaceGfx_TimerBallPal[];
+extern const u8 gInterfaceGfx_LuxuryBallPal[];
+extern const u8 gInterfaceGfx_PremierBallPal[];
 extern const u8 gInterfaceGfx_DuskBallPal[];
 extern const u8 gInterfaceGfx_HealBallPal[];
 extern const u8 gInterfaceGfx_QuickBallPal[];
@@ -85,6 +110,7 @@ extern const u8 gInterfaceGfx_MoonBallPal[];
 extern const u8 gInterfaceGfx_SportBallPal[];
 extern const u8 gInterfaceGfx_BeastBallPal[];
 extern const u8 gInterfaceGfx_DreamBallPal[];
+extern const u8 gInterfaceGfx_DynamaxBallPal[];
 
 #define sBallOamData (const struct OamData*) 0x826062C
 #define sBallAnimSequences (const union AnimCmd* const*) 0x8260674
@@ -94,13 +120,13 @@ extern const u8 gInterfaceGfx_DreamBallPal[];
 extern const u8 gBattleAnimSpriteSheet_ParticlesDuskBallTiles[];
 extern const u8 gBattleAnimSpriteSheet_ParticlesHealBallTiles[];
 extern const u8 gBattleAnimSpriteSheet_ParticlesQuickCherishBallTiles[];
-extern const u8 gBattleAnimSpriteSheet_ParticlesQuickCherishBallTiles[];
+extern const u8 gBattleAnimSpriteSheet_ParticlesDynamaxBallTiles[];
 
 #define gBattleAnimSpritePalette_136 (const u8*) 0x8D1A6DC
 extern const u8 gBattleAnimSpriteSheet_ParticlesDuskBallPal[];
 extern const u8 gBattleAnimSpriteSheet_ParticlesHealBallPal[];
 extern const u8 gBattleAnimSpriteSheet_ParticlesQuickCherishBallPal[];
-extern const u8 gBattleAnimSpriteSheet_ParticlesQuickCherishBallPal[];
+extern const u8 gBattleAnimSpriteSheet_ParticlesDynamaxBallPal[];
 
 #define gOamData_AffineOff_ObjNormal_8x8 (const struct OamData*) 0x83AC9C8
 #define sAnims_BallParticles (const union AnimCmd* const*) 0x840C050
@@ -149,6 +175,7 @@ enum BallTags
 	GFX_TAG_SPORTBALL,
 	GFX_TAG_BEASTBALL,
 	GFX_TAG_DREAMBALL,
+	GFX_TAG_DYNAMAXBALL,
 };
 
 enum BallOpenParticleTags
@@ -168,22 +195,23 @@ enum BallOpenParticleTags
 	TAG_BALL_OPEN_SPORT,
 	TAG_BALL_OPEN_BEAST,
 	TAG_BALL_OPEN_DREAM,
+	TAG_BALL_OPEN_DYNAMAX,
 };
 
-const struct CompressedSpriteSheet gBallSpriteSheets[POKEBALL_COUNT] =
+const struct CompressedSpriteSheet gBallSpriteSheets[POKEBALL_COUNT + 1] =
 {
-	[BALL_TYPE_POKE_BALL] = 	{gInterfaceGfx_PokeBall,			(16 * 48) / 2, GFX_TAG_POKEBALL},
-	[BALL_TYPE_GREAT_BALL] = 	{gInterfaceGfx_GreatBall,   		(16 * 48) / 2, GFX_TAG_GREATBALL},
-	[BALL_TYPE_SAFARI_BALL] = 	{gInterfaceGfx_SafariBall,  		(16 * 48) / 2, GFX_TAG_SAFARIBALL},
-	[BALL_TYPE_ULTRA_BALL] = 	{gInterfaceGfx_UltraBall,   		(16 * 48) / 2, GFX_TAG_ULTRABALL},
-	[BALL_TYPE_MASTER_BALL] = 	{gInterfaceGfx_MasterBall,  		(16 * 48) / 2, GFX_TAG_MASTERBALL},
-	[BALL_TYPE_NET_BALL] = 		{gInterfaceGfx_NetBall,	 			(16 * 48) / 2, GFX_TAG_NETBALL},
-	[BALL_TYPE_DIVE_BALL] = 	{gInterfaceGfx_DiveBall,			(16 * 48) / 2, GFX_TAG_DIVEBALL},
-	[BALL_TYPE_NEST_BALL] = 	{gInterfaceGfx_NestBall,			(16 * 48) / 2, GFX_TAG_NESTBALL},
-	[BALL_TYPE_REPEAT_BALL] = 	{gInterfaceGfx_RepeatBall,  		(16 * 48) / 2, GFX_TAG_REPEATBALL},
-	[BALL_TYPE_TIMER_BALL] = 	{gInterfaceGfx_TimerBall,   		(16 * 48) / 2, GFX_TAG_TIMERBALL},
-	[BALL_TYPE_LUXURY_BALL] = 	{gInterfaceGfx_LuxuryBall,  		(16 * 48) / 2, GFX_TAG_LUXURYBALL},
-	[BALL_TYPE_PREMIER_BALL] = 	{gInterfaceGfx_PremierBall, 		(16 * 48) / 2, GFX_TAG_PREMIERBALL},
+	[BALL_TYPE_POKE_BALL] = 	{gInterfaceGfx_PokeBallTiles,		(16 * 48) / 2, GFX_TAG_POKEBALL},
+	[BALL_TYPE_GREAT_BALL] = 	{gInterfaceGfx_GreatBallTiles,   	(16 * 48) / 2, GFX_TAG_GREATBALL},
+	[BALL_TYPE_SAFARI_BALL] = 	{gInterfaceGfx_SafariBallTiles,  	(16 * 48) / 2, GFX_TAG_SAFARIBALL},
+	[BALL_TYPE_ULTRA_BALL] = 	{gInterfaceGfx_UltraBallTiles,   	(16 * 48) / 2, GFX_TAG_ULTRABALL},
+	[BALL_TYPE_MASTER_BALL] = 	{gInterfaceGfx_MasterBallTiles,  	(16 * 48) / 2, GFX_TAG_MASTERBALL},
+	[BALL_TYPE_NET_BALL] = 		{gInterfaceGfx_NetBallTiles,	 	(16 * 48) / 2, GFX_TAG_NETBALL},
+	[BALL_TYPE_DIVE_BALL] = 	{gInterfaceGfx_DiveBallTiles,		(16 * 48) / 2, GFX_TAG_DIVEBALL},
+	[BALL_TYPE_NEST_BALL] = 	{gInterfaceGfx_NestBallTiles,		(16 * 48) / 2, GFX_TAG_NESTBALL},
+	[BALL_TYPE_REPEAT_BALL] = 	{gInterfaceGfx_RepeatBallTiles,  	(16 * 48) / 2, GFX_TAG_REPEATBALL},
+	[BALL_TYPE_TIMER_BALL] = 	{gInterfaceGfx_TimerBallTiles,   	(16 * 48) / 2, GFX_TAG_TIMERBALL},
+	[BALL_TYPE_LUXURY_BALL] = 	{gInterfaceGfx_LuxuryBallTiles,  	(16 * 48) / 2, GFX_TAG_LUXURYBALL},
+	[BALL_TYPE_PREMIER_BALL] = 	{gInterfaceGfx_PremierBallTiles, 	(16 * 48) / 2, GFX_TAG_PREMIERBALL},
 	[BALL_TYPE_DUSK_BALL] = 	{gInterfaceGfx_DuskBallTiles, 		(16 * 48) / 2, GFX_TAG_DUSKBALL},
 	[BALL_TYPE_HEAL_BALL] = 	{gInterfaceGfx_HealBallTiles, 		(16 * 48) / 2, GFX_TAG_HEALBALL},
 	[BALL_TYPE_QUICK_BALL] = 	{gInterfaceGfx_QuickBallTiles, 		(16 * 48) / 2, GFX_TAG_QUICKBALL},
@@ -199,22 +227,23 @@ const struct CompressedSpriteSheet gBallSpriteSheets[POKEBALL_COUNT] =
 	[BALL_TYPE_SPORT_BALL] = 	{gInterfaceGfx_SportBallTiles, 		(16 * 48) / 2, GFX_TAG_SPORTBALL},
 	[BALL_TYPE_BEAST_BALL] = 	{gInterfaceGfx_BeastBallTiles, 		(16 * 48) / 2, GFX_TAG_BEASTBALL},
 	[BALL_TYPE_DREAM_BALL] = 	{gInterfaceGfx_DreamBallTiles, 		(16 * 48) / 2, GFX_TAG_DREAMBALL},
+	[POKEBALL_COUNT] =		 	{gInterfaceGfx_DynamaxBallTiles, 	(16 * 48) / 2, GFX_TAG_DYNAMAXBALL},
 };
 
-const struct CompressedSpritePalette gBallSpritePalettes[POKEBALL_COUNT] =
+const struct CompressedSpritePalette gBallSpritePalettes[POKEBALL_COUNT + 1] =
 {
-	[BALL_TYPE_POKE_BALL] = 	{gInterfacePal_PokeBall,		GFX_TAG_POKEBALL},
-	[BALL_TYPE_GREAT_BALL] = 	{gInterfacePal_GreatBall,   	GFX_TAG_GREATBALL},
-	[BALL_TYPE_SAFARI_BALL] = 	{gInterfacePal_SafariBall,  	GFX_TAG_SAFARIBALL},
-	[BALL_TYPE_ULTRA_BALL] = 	{gInterfacePal_UltraBall,   	GFX_TAG_ULTRABALL},
-	[BALL_TYPE_MASTER_BALL] = 	{gInterfacePal_MasterBall,  	GFX_TAG_MASTERBALL},
-	[BALL_TYPE_NET_BALL] = 		{gInterfacePal_NetBall,	 		GFX_TAG_NETBALL},
-	[BALL_TYPE_DIVE_BALL] = 	{gInterfacePal_DiveBall,		GFX_TAG_DIVEBALL},
-	[BALL_TYPE_NEST_BALL] = 	{gInterfacePal_NestBall,		GFX_TAG_NESTBALL},
-	[BALL_TYPE_REPEAT_BALL] = 	{gInterfacePal_RepeatBall,  	GFX_TAG_REPEATBALL},
-	[BALL_TYPE_TIMER_BALL] = 	{gInterfacePal_TimerBall,   	GFX_TAG_TIMERBALL},
-	[BALL_TYPE_LUXURY_BALL] = 	{gInterfacePal_LuxuryBall,  	GFX_TAG_LUXURYBALL},
-	[BALL_TYPE_PREMIER_BALL] = 	{gInterfacePal_PremierBall, 	GFX_TAG_PREMIERBALL},
+	[BALL_TYPE_POKE_BALL] = 	{gInterfaceGfx_PokeBallPal,		GFX_TAG_POKEBALL},
+	[BALL_TYPE_GREAT_BALL] = 	{gInterfaceGfx_GreatBallPal,   	GFX_TAG_GREATBALL},
+	[BALL_TYPE_SAFARI_BALL] = 	{gInterfaceGfx_SafariBallPal,  	GFX_TAG_SAFARIBALL},
+	[BALL_TYPE_ULTRA_BALL] = 	{gInterfaceGfx_UltraBallPal,   	GFX_TAG_ULTRABALL},
+	[BALL_TYPE_MASTER_BALL] = 	{gInterfaceGfx_MasterBallPal,  	GFX_TAG_MASTERBALL},
+	[BALL_TYPE_NET_BALL] = 		{gInterfaceGfx_NetBallPal,	 	GFX_TAG_NETBALL},
+	[BALL_TYPE_DIVE_BALL] = 	{gInterfaceGfx_DiveBallPal,		GFX_TAG_DIVEBALL},
+	[BALL_TYPE_NEST_BALL] = 	{gInterfaceGfx_NestBallPal,		GFX_TAG_NESTBALL},
+	[BALL_TYPE_REPEAT_BALL] = 	{gInterfaceGfx_RepeatBallPal,  	GFX_TAG_REPEATBALL},
+	[BALL_TYPE_TIMER_BALL] = 	{gInterfaceGfx_TimerBallPal,   	GFX_TAG_TIMERBALL},
+	[BALL_TYPE_LUXURY_BALL] = 	{gInterfaceGfx_LuxuryBallPal,  	GFX_TAG_LUXURYBALL},
+	[BALL_TYPE_PREMIER_BALL] = 	{gInterfaceGfx_PremierBallPal, 	GFX_TAG_PREMIERBALL},
 	[BALL_TYPE_DUSK_BALL] = 	{gInterfaceGfx_DuskBallPal, 	GFX_TAG_DUSKBALL},
 	[BALL_TYPE_HEAL_BALL] = 	{gInterfaceGfx_HealBallPal, 	GFX_TAG_HEALBALL},
 	[BALL_TYPE_QUICK_BALL] = 	{gInterfaceGfx_QuickBallPal, 	GFX_TAG_QUICKBALL},
@@ -230,9 +259,10 @@ const struct CompressedSpritePalette gBallSpritePalettes[POKEBALL_COUNT] =
 	[BALL_TYPE_SPORT_BALL] = 	{gInterfaceGfx_SportBallPal, 	GFX_TAG_SPORTBALL},
 	[BALL_TYPE_BEAST_BALL] = 	{gInterfaceGfx_BeastBallPal, 	GFX_TAG_BEASTBALL},
 	[BALL_TYPE_DREAM_BALL] = 	{gInterfaceGfx_DreamBallPal, 	GFX_TAG_DREAMBALL},
+	[POKEBALL_COUNT] =		 	{gInterfaceGfx_DynamaxBallPal,	GFX_TAG_DYNAMAXBALL},
 };
 
-const struct SpriteTemplate gBallSpriteTemplates[POKEBALL_COUNT] =
+const struct SpriteTemplate gBallSpriteTemplates[POKEBALL_COUNT + 1] =
 {
 	[BALL_TYPE_POKE_BALL] =
 	{
@@ -504,9 +534,19 @@ const struct SpriteTemplate gBallSpriteTemplates[POKEBALL_COUNT] =
 		.affineAnims = sBallAffineAnimSequences,
 		.callback = SpriteCB_TestBallThrow,
 	},
+	[POKEBALL_COUNT] =
+	{
+		.tileTag = GFX_TAG_DYNAMAXBALL,
+		.paletteTag = GFX_TAG_DYNAMAXBALL,
+		.oam = sBallOamData,
+		.anims = sBallAnimSequences,
+		.images = NULL,
+		.affineAnims = sBallAffineAnimSequences,
+		.callback = SpriteCB_TestBallThrow,
+	},
 };
 
-const struct CompressedSpriteSheet gBallParticleSpritesheets[] =
+const struct CompressedSpriteSheet gBallParticleSpritesheets[POKEBALL_COUNT + 1] =
 {
 	[BALL_TYPE_POKE_BALL] =		{gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, 55020},
 	[BALL_TYPE_GREAT_BALL] =	{gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, 55021},
@@ -535,9 +575,10 @@ const struct CompressedSpriteSheet gBallParticleSpritesheets[] =
 	[BALL_TYPE_SPORT_BALL] =	{gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, TAG_BALL_OPEN_SPORT},
 	[BALL_TYPE_BEAST_BALL] =	{gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, TAG_BALL_OPEN_BEAST},
 	[BALL_TYPE_DREAM_BALL] =	{gBattleAnimSpriteSheet_Particles, 							(8 * 64) / 2, TAG_BALL_OPEN_DREAM},
+	[POKEBALL_COUNT] =			{gBattleAnimSpriteSheet_ParticlesDynamaxBallTiles, 			(8 * 64) / 2, TAG_BALL_OPEN_DYNAMAX},
 };
 
-const struct CompressedSpritePalette gBallParticlePalettes[] =
+const struct CompressedSpritePalette gBallParticlePalettes[POKEBALL_COUNT + 1] =
 {
 	[BALL_TYPE_POKE_BALL] = 	{gBattleAnimSpritePalette_136, 							55020},
 	[BALL_TYPE_GREAT_BALL] = 	{gBattleAnimSpritePalette_136, 							55021},
@@ -566,9 +607,10 @@ const struct CompressedSpritePalette gBallParticlePalettes[] =
 	[BALL_TYPE_SPORT_BALL] = 	{gBattleAnimSpritePalette_136, 							TAG_BALL_OPEN_SPORT},
 	[BALL_TYPE_BEAST_BALL] = 	{gBattleAnimSpritePalette_136, 							TAG_BALL_OPEN_BEAST},
 	[BALL_TYPE_DREAM_BALL] = 	{gBattleAnimSpritePalette_136, 							TAG_BALL_OPEN_DREAM},
+	[POKEBALL_COUNT] =			{gBattleAnimSpriteSheet_ParticlesDynamaxBallPal,		TAG_BALL_OPEN_DYNAMAX},
 };
 
-const u8 gBallOpenParticleAnimNums[] =
+const u8 gBallOpenParticleAnimNums[POKEBALL_COUNT + 1] =
 {
 	[BALL_TYPE_POKE_BALL] = 	BALL_OPEN_STICKS, 			//Poke Ball
 	[BALL_TYPE_GREAT_BALL] = 	BALL_OPEN_STICKS, 			//Great Ball
@@ -597,9 +639,10 @@ const u8 gBallOpenParticleAnimNums[] =
 	[BALL_TYPE_SPORT_BALL] = 	BALL_OPEN_STICKS, 			//Sport Ball
 	[BALL_TYPE_BEAST_BALL] = 	BALL_OPEN_BLUE_BUBBLES, 	//Beast Ball
 	[BALL_TYPE_DREAM_BALL] = 	BALL_OPEN_HEARTS, 			//Dream Ball
+	[POKEBALL_COUNT] =			BALL_OPEN_RAINBOW_CIRCLES,	//Dynamax Ball
 };
 
-const TaskFunc gBallOpenParticleAnimationFuncs[] =
+const TaskFunc gBallOpenParticleAnimationFuncs[POKEBALL_COUNT + 1] =
 {
 	[BALL_TYPE_POKE_BALL] = 	PokeBallOpenParticleAnimation, //Poke Ball
 	[BALL_TYPE_GREAT_BALL] = 	GreatBallOpenParticleAnimation, //Great Ball
@@ -628,6 +671,7 @@ const TaskFunc gBallOpenParticleAnimationFuncs[] =
 	[BALL_TYPE_SPORT_BALL] = 	PokeBallOpenParticleAnimation, //Sport Ball
 	[BALL_TYPE_BEAST_BALL] = 	MasterBallOpenParticleAnimation, //Beast Ball
 	[BALL_TYPE_DREAM_BALL] = 	RepeatBallOpenParticleAnimation, //Dream Ball
+	[POKEBALL_COUNT] =			MasterBallOpenParticleAnimation, //Dynamax Ball
 };
 
 const u16 gBallOpenMonFadePal[] = //gUnknown_085E5310 in Emerald
@@ -659,6 +703,7 @@ const u16 gBallOpenMonFadePal[] = //gUnknown_085E5310 in Emerald
 	[BALL_TYPE_SPORT_BALL] = 	RGB(30, 17, 17), //Sport Ball - Pinkish Red
 	[BALL_TYPE_BEAST_BALL] = 	RGB(7, 12, 31), //Beast Ball - Royal Blue
 	[BALL_TYPE_DREAM_BALL] = 	RGB(31, 12, 20), //Dream Ball - Deep Pink
+	[POKEBALL_COUNT] =			RGB(27, 12, 23), //Dynamax Ball - Shiny Pink
 
 	RGB(0, 0, 0), //No idea what these lower values are for
 	RGB(1, 16, 0),
@@ -670,7 +715,7 @@ const u16 gBallOpenMonFadePal[] = //gUnknown_085E5310 in Emerald
 	RGB(4, 0, 0),
 };
 
-const struct SpriteTemplate gBallParticleSpriteTemplates[POKEBALL_COUNT] =
+const struct SpriteTemplate gBallParticleSpriteTemplates[POKEBALL_COUNT + 1] =
 {
 	{ //GFX_TAG_MASTERBALL
 		.tileTag = 55024,
@@ -702,13 +747,12 @@ const struct SpriteTemplate gBallParticleSpriteTemplates[POKEBALL_COUNT] =
 	{ //GFX_TAG_POKEBALL
 		.tileTag = 55020,
 		.paletteTag = 55020,
-		.oam = gOamData_AffineOff_ObjNormal_8x8, //gUnknown_08524904 in Emerald
-		.anims = sAnims_BallParticles, //gUnknown_085E519C in Emerald
+		.oam = gOamData_AffineOff_ObjNormal_8x8,
+		.anims = sAnims_BallParticles,
 		.images = NULL,
 		.affineAnims = gDummySpriteAffineAnimTable,
 		.callback = SpriteCallbackDummy,
 	},
-
 	{ //GFX_TAG_SAFARIBALL
 		.tileTag = 55022,
 		.paletteTag = 55022,
@@ -910,6 +954,15 @@ const struct SpriteTemplate gBallParticleSpriteTemplates[POKEBALL_COUNT] =
 	{ //GFX_TAG_DREAMBALL
 		.tileTag = TAG_BALL_OPEN_DREAM,
 		.paletteTag = TAG_BALL_OPEN_DREAM,
+		.oam = gOamData_AffineOff_ObjNormal_8x8,
+		.anims = sAnims_BallParticles,
+		.images = NULL,
+		.affineAnims = gDummySpriteAffineAnimTable,
+		.callback = SpriteCallbackDummy,
+	},
+	{ //GFX_TAG_DYNAMAXBALL
+		.tileTag = TAG_BALL_OPEN_DYNAMAX,
+		.paletteTag = TAG_BALL_OPEN_DYNAMAX,
 		.oam = gOamData_AffineOff_ObjNormal_8x8,
 		.anims = sAnims_BallParticles,
 		.images = NULL,

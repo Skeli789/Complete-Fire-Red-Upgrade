@@ -15,6 +15,7 @@
 #include "../include/new/battle_strings.h"
 #include "../include/new/battle_script_util.h"
 #include "../include/new/battle_util.h"
+#include "../include/new/catching.h"
 #include "../include/new/cmd49.h"
 #include "../include/new/damage_calc.h"
 #include "../include/new/dynamax.h"
@@ -2462,6 +2463,9 @@ pokemon_t* UpdateNickForIllusion(pokemon_t* mon)
 
 u8 UpdatePokeBallForIllusion(u8 bank)
 {
+	if (IsDynamaxed(bank))
+		return BALL_TYPE_DYNAMAX_BALL;
+
 	return GetMonData(GetIllusionPartyData(bank), MON_DATA_POKEBALL, NULL);
 }
 
