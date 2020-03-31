@@ -51808,7 +51808,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 		{
 			MOVE_FLAREBLITZ,
 			MOVE_CRUNCH,
-			MOVE_LEECHLIFE,
+			MOVE_LEECHFANG,
 			MOVE_SWORDSDANCE,
 		},
 		.ball = BALL_TYPE_RANDOM,
@@ -51835,7 +51835,7 @@ const struct BattleTowerSpread gMiddleCupSpreads[] =
 			MOVE_FIREBLAST,
 			MOVE_FLAREBLITZ,
 			MOVE_CRUNCH,
-			MOVE_LEECHLIFE,
+			MOVE_LEECHFANG,
 		},
 		.ball = BALL_TYPE_RANDOM,
 		.forSingles = TRUE,
@@ -57454,7 +57454,7 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 		.item = ITEM_EVIOLITE,
 		.moves =
 		{
-			MOVE_LEECHLIFE,
+			MOVE_LEECHFANG,
 			MOVE_SPIKES,
 			MOVE_RECOVER,
 			MOVE_BATONPASS,
@@ -58002,7 +58002,7 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 		.item = ITEM_EVIOLITE,
 		.moves =
 		{
-			MOVE_LEECHLIFE,
+			MOVE_LEECHFANG,
 			MOVE_POISONJAB,
 			MOVE_STICKYWEB,
 			MOVE_TOXICSPIKES,
@@ -59011,7 +59011,7 @@ const struct BattleTowerSpread gLittleCupSpreads[] =
 		.item = ITEM_FOCUS_SASH,
 		.moves =
 		{
-			MOVE_LEECHLIFE,
+			MOVE_LEECHFANG,
 			MOVE_SCALD,
 			MOVE_TAUNT,
 			MOVE_SPIKES,
