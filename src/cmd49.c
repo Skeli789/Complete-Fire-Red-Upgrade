@@ -704,7 +704,10 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			&& gNewBS->dynamaxData.raidShieldsUp)
 			{
 				DestroyRaidShieldSprite();
-				if (IsAnyMaxMove(gCurrentMove) || IsZMove(gCurrentMove) || gBattleMoves[gCurrentMove].effect == EFFECT_0HKO)
+				if (IsAnyMaxMove(gCurrentMove)
+				|| IsZMove(gCurrentMove)
+				|| gBattleMoves[gCurrentMove].effect == EFFECT_0HKO
+				|| gBattleMoves[gCurrentMove].effect == EFFECT_BRICK_BREAK) //Unofficial addition
 					DestroyRaidShieldSprite();
 				if (IsZMove(gCurrentMove))
 					DestroyRaidShieldSprite(); //Z-Moves destroy 3 shields
@@ -719,7 +722,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 					//Do some residual damage after the shattering
 					gBattleMoveDamage = gBattleMons[gBankTarget].maxHP / 6;
 					if (gNewBS->dynamaxData.shieldsDestroyed > gNewBS->dynamaxData.shieldCount)
-						gBattleMoveDamage *= 2;
+						gBattleMoveDamage = (gBattleMoveDamage * 15) / 10;
 					gNewBS->dynamaxData.turnStartHP = gBattleMons[gBankTarget].hp - gBattleMoveDamage; //No reactivating barrier yet
 					effect = TRUE;
 				}
