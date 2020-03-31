@@ -1384,11 +1384,16 @@ u8 AbilityBattleEffects(u8 caseID, u8 bank, u8 ability, u8 special, u16 moveArg)
 				case ABILITY_HARVEST:
 					if (gItems[(SAVED_CONSUMED_ITEMS(bank))].pocket == POCKET_BERRY_POUCH)
 					{
-						if (!WEATHER_HAS_EFFECT || (gBattleWeather & WEATHER_SUN_ANY) || ITEM_EFFECT(bank) == ITEM_EFFECT_UTILITY_UMBRELLA) //Yeah...that'll never happen
-						{ //No Sun
+						if (WEATHER_HAS_EFFECT && gBattleWeather & WEATHER_SUN_ANY && ITEM_EFFECT(bank) != ITEM_EFFECT_UTILITY_UMBRELLA) //Yeah...that'll never happen
+						{
+							//100% chance
+						}
+						else //No Sun
+						{
 							if (Random() % 100 < 50)
 								break;
 						}
+
 						BattleScriptPushCursorAndCallback(BattleScript_Harvest);
 						++effect;
 					}
