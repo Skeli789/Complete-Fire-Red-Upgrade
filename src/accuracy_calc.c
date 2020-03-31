@@ -107,7 +107,7 @@ ACCURACY_CHECK_START:
 				}
 				else if (!BATTLER_ALIVE(bankDef) || bankDef == gBankAttacker
 				|| (bankDef == PARTNER(gBankAttacker) && !(gBattleMoves[gCurrentMove].target & MOVE_TARGET_ALL))
-				|| gNewBS->noResultString[bankDef])
+				|| (gNewBS->noResultString[bankDef] && gNewBS->noResultString[bankDef] != 2))
 					continue; //Don't bother with this target
 
 				if (!JumpIfMoveAffectedByProtect(move, gBankAttacker, bankDef, FALSE) //Don't jump yet, jump later
@@ -311,21 +311,32 @@ bool8 DoesProtectionMoveBlockMove(u8 bankAtk, u8 bankDef, u16 atkMove, u16 prote
 	return FALSE;
 }
 
-static bool8 AccuracyCalcHelper(u16 move, u8 bankDef)
+bool8 MissesDueToSemiInvulnerability(u8 bankAtk, u8 bankDef, u16 move)
 {
-	u8 doneStatus = FALSE;
-	if (!CanHitSemiInvulnerableTarget(gBankAttacker, bankDef, gCurrentMove))
+	if (!CanHitSemiInvulnerableTarget(bankAtk, bankDef, move))
 	{
 		if (((gStatuses3[bankDef] & (STATUS3_IN_AIR | STATUS3_SKY_DROP_ATTACKER | STATUS3_SKY_DROP_TARGET)) && !CheckTableForMove(move, gIgnoreInAirMoves))
 		||  ((gStatuses3[bankDef] & STATUS3_UNDERGROUND) && !CheckTableForMove(move, gIgnoreUndergoundMoves))
 		||  ((gStatuses3[bankDef] & STATUS3_UNDERWATER) && !CheckTableForMove(move, gIgnoreUnderwaterMoves))
 		||   (gStatuses3[bankDef] & STATUS3_DISAPPEARED))
 		{
-			gNewBS->ResultFlags[bankDef] = MOVESTATUS_MISSED;
-			//JumpIfMoveFailed(7, move);
-			gHitMarker &= ~(HITMARKER_IGNORE_IN_AIR | HITMARKER_IGNORE_UNDERGROUND | HITMARKER_IGNORE_UNDERWATER);
 			return TRUE;
 		}
+	}
+	
+	return FALSE;
+}
+
+static bool8 AccuracyCalcHelper(u16 move, u8 bankDef)
+{
+	u8 doneStatus = FALSE;
+	gNewBS->ResultFlags[bankDef] &= ~MOVE_RESULT_NO_EFFECT;
+	if (MissesDueToSemiInvulnerability(gBankAttacker, bankDef, move))
+	{
+		gNewBS->ResultFlags[bankDef] = MOVESTATUS_MISSED;
+		//JumpIfMoveFailed(7, move);
+		gHitMarker &= ~(HITMARKER_IGNORE_IN_AIR | HITMARKER_IGNORE_UNDERGROUND | HITMARKER_IGNORE_UNDERWATER);
+		return TRUE;
 	}
 
 	//lock-on/mind reader checked,

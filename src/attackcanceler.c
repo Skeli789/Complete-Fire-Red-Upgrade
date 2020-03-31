@@ -73,15 +73,17 @@ void atk00_attackcanceler(void)
 
 	if (AtkCanceller_UnableToUseMove())
 		return;
-	else if (gBattleMons[gBankTarget].hp == 0
+	else if (!BATTLER_ALIVE(gBankTarget)
 	&& AttacksThisTurn(gBankAttacker, gCurrentMove) == 2 //Not charging move
 	&&  !(gBattleMoves[gCurrentMove].target & MOVE_TARGET_OPPONENTS_FIELD)) //Moves like Stealth Rock can still be used
 	{
 		gBattlescriptCurrInstr = BattleScript_ButItFailed - 2;
 		return;
 	}
-	else if (AbilityBattleEffects(ABILITYEFFECT_MOVES_BLOCK, gBankTarget, 0, 0, 0)
-	|| (IS_DOUBLE_BATTLE && AbilityBattleEffects(ABILITYEFFECT_MOVES_BLOCK_PARTNER, PARTNER(gBankTarget), 0, 0, 0)))
+	else if (!ProtectAffects(gCurrentMove, gBankAttacker, gBankTarget, FALSE)
+	&& !MissesDueToSemiInvulnerability(gBankAttacker, gBankTarget, gCurrentMove)
+	&& (AbilityBattleEffects(ABILITYEFFECT_MOVES_BLOCK, gBankTarget, 0, 0, 0)
+	|| (IS_DOUBLE_BATTLE && AbilityBattleEffects(ABILITYEFFECT_MOVES_BLOCK_PARTNER, PARTNER(gBankTarget), 0, 0, 0))))
 		return;
 
 	else if (!gNewBS->ParentalBondOn
@@ -930,7 +932,9 @@ static u8 AtkCanceller_UnableToUseMove(void)
 			if (gTerrainType == PSYCHIC_TERRAIN
 			&& CheckGrounding(gBankTarget)
 			&& gBankAttacker != gBankTarget
-			&& PriorityCalc(gBankAttacker, ACTION_USE_MOVE, gCurrentMove) > 0)
+			&& PriorityCalc(gBankAttacker, ACTION_USE_MOVE, gCurrentMove) > 0
+			&& !ProtectAffects(gCurrentMove, gBankAttacker, gBankTarget, FALSE)
+			&& !MissesDueToSemiInvulnerability(gBankAttacker, gBankTarget, gCurrentMove))
 			{
 				if (IS_SINGLE_BATTLE || !(gBattleMoves[gCurrentMove].target & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL))) //Don't cancel moves that can hit two targets b/c one target might not be protected
 					CancelMultiTurnMoves(gBankAttacker);
@@ -948,7 +952,9 @@ static u8 AtkCanceller_UnableToUseMove(void)
 			&& !(gBattleMoves[gCurrentMove].target & MOVE_TARGET_OPPONENTS_FIELD)
 			&& gBankAttacker != gBankTarget
 			&& IsOfType(gBankTarget, TYPE_DARK)
-			&& gCurrentMove != MOVE_GRAVITY)
+			&& gCurrentMove != MOVE_GRAVITY
+			&& !ProtectAffects(gCurrentMove, gBankAttacker, gBankTarget, FALSE)
+			&& !MissesDueToSemiInvulnerability(gBankAttacker, gBankTarget, gCurrentMove))
 			{
 				if (IS_SINGLE_BATTLE || !(gBattleMoves[gCurrentMove].target & (MOVE_TARGET_BOTH | MOVE_TARGET_ALL))) //Don't cancel moves that can hit two targets b/c one target might not be protected
 					CancelMultiTurnMoves(gBankAttacker);
@@ -1066,15 +1072,21 @@ static u8 AtkCanceller_UnableToUseMove(void)
 					for (i = 0; i < gBattlersCount; ++i)
 					{
 						if (i != gBankAttacker && BATTLER_ALIVE(i)
-						&& ((gBattleMoves[gCurrentMove].target & MOVE_TARGET_ALL) || i != PARTNER(gBankAttacker))) //Skip partner when not all-hitting move
+						&& ((gBattleMoves[gCurrentMove].target & MOVE_TARGET_ALL) || i != PARTNER(gBankAttacker)) //Skip partner when not all-hitting move
+						&& !ProtectAffects(gCurrentMove, gBankAttacker, i, FALSE)
+						&& !MissesDueToSemiInvulnerability(gBankAttacker, i, gCurrentMove))
 						{
 							if (AbilityBattleEffects(ABILITYEFFECT_MOVES_BLOCK, i, 0, 0, 0)
 							||  AbilityBattleEffects(ABILITYEFFECT_MOVES_BLOCK_PARTNER, PARTNER(i), 0, 0, 0)
-							||  AbilityBattleEffects(ABILITYEFFECT_ABSORBING, i, 0, 0, gCurrentMove)
 							|| (gTerrainType == PSYCHIC_TERRAIN && CheckGrounding(i) && priority > 0))
 							{
 								gNewBS->ResultFlags[i] = 0;
 								gNewBS->noResultString[i] = TRUE;
+							}
+							else if (AbilityBattleEffects(ABILITYEFFECT_ABSORBING, i, 0, 0, gCurrentMove))
+							{
+								gNewBS->ResultFlags[i] = 0;
+								gNewBS->noResultString[i] = 2; //Indicator to factor in Accuracy checks
 							}
 							else
 								gNewBS->ResultFlags[i] = TypeCalc(gCurrentMove, gBankAttacker, i, NULL, FALSE);
