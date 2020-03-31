@@ -30,6 +30,30 @@ extern const struct CompressedSpritePalette gBattleAnimPaletteTable[];
 extern const u8* const gMoveAnimations[];
 extern const u8* const gBattleAnims_General[];
 
+static const union AnimCmd sAnimCmdBerryChomp[] =
+{
+	ANIMCMD_FRAME(0, 0x30),
+	ANIMCMD_FRAME(0, 0x25),
+	ANIMCMD_FRAME(16, 3),
+	ANIMCMD_END,
+};
+
+const union AnimCmd *const gAnimCmdBerryChomp[] =
+{
+	sAnimCmdBerryChomp,
+};
+
+static const union AnimCmd sAnimCmdBerryEaten[] =
+{
+	ANIMCMD_FRAME(16, 3),
+	ANIMCMD_END,
+};
+
+const union AnimCmd *const gAnimCmdBerryEaten[] =
+{
+	sAnimCmdBerryEaten,
+};
+
 static const union AnimCmd sAnimCmdPowerWhipOnPlayer[] =
 {
 	ANIMCMD_FRAME(0, 3, .hFlip = TRUE),
@@ -2270,6 +2294,10 @@ void SpriteCB_HorizontalSlice(struct Sprite *sprite)
 	sprite->callback = SpriteCB_HorizontalSliceStep;
 }
 
+//Creates the Block X on the chosen target
+//arg 0: Initial x-pixel offset
+//arg 1: Initial y-pixel offset
+//arg 2: Target
 void SpriteCB_BlockXOnTarget(struct Sprite *sprite)
 {
     s16 y;

@@ -13961,8 +13961,7 @@ ANIM_AROMATICMIST:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .pool
 ANIM_BELCH:
-	loadparticle ANIM_TAG_BERRY_NORMAL @Berry Colour
-	loadparticle ANIM_TAG_BERRY_EATEN @Berry Eaten
+	loadparticle ANIM_TAG_BERRY_NORMAL
 	loadparticle ANIM_TAG_EXPLOSION @Explosion
 	pokespritetoBG bank_target
 	leftbankBG_over_partnerBG bank_target
@@ -13994,7 +13993,7 @@ ANIM_BELCH:
 	endanimation
 
 .align 2
-BELCH_BERRY: objtemplate ANIM_TAG_BERRY_EATEN ANIM_TAG_BERRY_NORMAL OAM_NORMAL_32x32 0x8231CF0 0x0 0x8231CFC 0x80B4495
+BELCH_BERRY: objtemplate ANIM_TAG_BERRY_NORMAL ANIM_TAG_BERRY_NORMAL OAM_NORMAL_32x32 gAnimCmdBerryEaten 0x0 0x8231CFC 0x80B4495
 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
