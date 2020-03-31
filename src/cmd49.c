@@ -160,7 +160,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			if (arg1 != ARG_IN_FUTURE_ATTACK
 			&& TOOK_DAMAGE(gBankTarget)
 			&& MOVE_HAD_EFFECT
-			&& gBattleMons[gBankTarget].hp
+			&& BATTLER_ALIVE(gBankTarget)
 			&& !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, gBankTarget))
 			{
 				switch (ABILITY(gBankAttacker)) {
@@ -251,7 +251,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 
 		case ATK49_RAGE: // rage check
 			if (gBattleMons[gBankTarget].status2 & STATUS2_RAGE
-			&& gBattleMons[gBankTarget].hp
+			&& BATTLER_ALIVE(gBankTarget)
 			&& gBankAttacker != gBankTarget
 			&& SIDE(gBankAttacker) != SIDE(gBankTarget)
 			&& MOVE_HAD_EFFECT
@@ -472,7 +472,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			&& IsBerry(ITEM(gBankTarget))
 			&& !CheckTableForItem(ITEM(gBankTarget), gBannedBattleEatBerries)
 			&& ABILITY(gBankTarget) != ABILITY_STICKYHOLD
-			&& (!gBattleMons[gBankTarget].hp || !(ITEM_EFFECT(gBankTarget) == ITEM_EFFECT_JABOCA_ROWAP_BERRY && ITEM_QUALITY(gBankTarget) == CalcMoveSplit(gBankAttacker, gCurrentMove))))
+			&& (!BATTLER_ALIVE(gBankTarget) || !(ITEM_EFFECT(gBankTarget) == ITEM_EFFECT_JABOCA_ROWAP_BERRY && ITEM_QUALITY(gBankTarget) == CalcMoveSplit(gBankAttacker, gCurrentMove))))
 			{
 				gNewBS->BelchCounters |= gBitTable[gBattlerPartyIndexes[gBankAttacker]];
 
@@ -662,8 +662,8 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 						PressurePPLose(gBankTarget, gBankAttacker, gChosenMove);
 					}
 
-					if (gBattleMons[gBankAttacker].hp
-					&& gBattleMons[gBankTarget].hp
+					if (BATTLER_ALIVE(gBankAttacker)
+					&& BATTLER_ALIVE(gBankTarget)
 					&& (gChosenMove == MOVE_SLEEPTALK || !(gBattleMons[gBankAttacker].status1 & STATUS1_SLEEP))
 					&& !(gBattleMons[gBankAttacker].status1 & STATUS1_FREEZE))
 					{
@@ -760,16 +760,17 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 		case ATK49_MAGICIAN_MOXIE_BATTLEBOND:
 			switch (ABILITY(gBankAttacker)) {
 				case ABILITY_MAGICIAN:
-					if (ITEM(gBankAttacker) == 0
-					&& ITEM(bankDef) != 0
-					&& gBattleMons[gBankAttacker].hp
+					if (ITEM(gBankAttacker) == ITEM_NONE
+					&& ITEM(bankDef) != ITEM_NONE
+					&& BATTLER_ALIVE(gBankAttacker)
 					&& !MoveBlockedBySubstitute(gCurrentMove, gBankAttacker, bankDef)
 					&& TOOK_DAMAGE(bankDef)
 					&& MOVE_HAD_EFFECT
 					&& CanTransferItem(SPECIES(bankDef), ITEM(bankDef))
 					&& CanTransferItem(SPECIES(gBankAttacker), ITEM(bankDef))
-					&& (ABILITY(bankDef) != ABILITY_STICKYHOLD || gBattleMons[bankDef].hp == 0))
+					&& (ABILITY(bankDef) != ABILITY_STICKYHOLD || !BATTLER_ALIVE(bankDef)))
 					{
+						gBattleScripting.bank = gBankAttacker;
 						BattleScriptPushCursor();
 						gBattlescriptCurrInstr = BattleScript_Magician;
 						effect = 1;
@@ -779,7 +780,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 				case ABILITY_MOXIE:
 					if ((arg1 != ARG_IN_FUTURE_ATTACK || gWishFutureKnock.futureSightPartyIndex[bankDef] == gBattlerPartyIndexes[gBankAttacker])
 					&& gBattleMons[bankDef].hp == 0
-					&& gBattleMons[gBankAttacker].hp
+					&& BATTLER_ALIVE(gBankAttacker)
 					&& TOOK_DAMAGE(bankDef)
 					&& MOVE_HAD_EFFECT
 					&& STAT_CAN_RISE(gBankAttacker, STAT_STAGE_ATK)
@@ -802,7 +803,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 				case ABILITY_BEASTBOOST: ;
 					if ((arg1 != ARG_IN_FUTURE_ATTACK || gWishFutureKnock.futureSightPartyIndex[bankDef] == gBattlerPartyIndexes[gBankAttacker])
 					&& gBattleMons[bankDef].hp == 0
-					&& gBattleMons[gBankAttacker].hp
+					&& BATTLER_ALIVE(gBankAttacker)
 					&& TOOK_DAMAGE(bankDef)
 					&& MOVE_HAD_EFFECT
 					&& ViableMonCountFromBank(FOE(gBankAttacker)) > 0) //Use FOE so as to not get boost when KOing partner last after enemy has no mons left
@@ -867,7 +868,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 					if ((arg1 != ARG_IN_FUTURE_ATTACK || gWishFutureKnock.futureSightPartyIndex[bankDef] == gBattlerPartyIndexes[gBankAttacker])
 					&& SPECIES(gBankAttacker) == SPECIES_GRENINJA
 					&& gBattleMons[bankDef].hp == 0
-					&& gBattleMons[gBankAttacker].hp
+					&& BATTLER_ALIVE(gBankAttacker)
 					&& TOOK_DAMAGE(bankDef)
 					&& MOVE_HAD_EFFECT
 					&& ViableMonCountFromBank(FOE(gBankAttacker)) > 0 //Use FOE so as to not get boost when KOing partner last after enemy has no mons left
@@ -887,7 +888,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 
 		case ATK49_FATIGUE:
 			if (gBattleMons[gBankAttacker].status2 & STATUS2_LOCK_CONFUSE
-			&& gBattleMons[gBankAttacker].hp
+			&& BATTLER_ALIVE(gBankAttacker)
 			&& !gNewBS->DancerInProgress)
 			{
 				gBattleMons[gBankAttacker].status2 -= 0x400;
@@ -1012,7 +1013,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			{
 				if ((gCurrentMove == MOVE_MINDBLOWN || gCurrentMove == MOVE_STEELBEAM)
 				&& ABILITY(gBankAttacker) != ABILITY_MAGICGUARD
-				&& gBattleMons[gBankAttacker].hp)
+				&& BATTLER_ALIVE(gBankAttacker))
 				{
 					gBattleMoveDamage = MathMax(1, gBattleMons[gBankAttacker].maxHP / 2);
 
@@ -1026,7 +1027,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 					effect = 1;
 				}
 				else if (gCurrentMove == MOVE_STRUGGLE
-				&& gBattleMons[gBankAttacker].hp)
+				&& BATTLER_ALIVE(gBankAttacker))
 				{
 					gBattleMoveDamage = MathMax(1, gBattleMons[gBankAttacker].maxHP / 4);
 					BattleScriptPushCursor();
@@ -1270,7 +1271,7 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 				&&  CheckContact(gCurrentMove, gBankAttacker)
 				&&  ITEM(gBankAttacker) != ITEM_NONE
 				&&  ITEM(bank) == ITEM_NONE
-				&& (ABILITY(gBankAttacker) != ABILITY_STICKYHOLD || gBattleMons[gBankAttacker].hp == 0))
+				&& (ABILITY(gBankAttacker) != ABILITY_STICKYHOLD || !BATTLER_ALIVE(gBankAttacker)))
 				{
 					gNewBS->NoSymbiosisByte = TRUE;
 					gLastUsedItem = ITEM(gBankAttacker);

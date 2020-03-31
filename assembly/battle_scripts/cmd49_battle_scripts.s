@@ -133,9 +133,10 @@ BattleScript_BeakBlastBurn:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_Magician:
-	setbyte MAGICIAN_HELPER 0x1
-	setbyte EFFECT_BYTE 0x1F
-	seteffecttarget
+	call BattleScript_AbilityPopUp 
+	setmoveeffect MOVE_EFFECT_STEAL_ITEM
+	setmoveeffect2
+	callasm TryHideActiveAbilityPopUps
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -188,12 +189,13 @@ BattleScript_LifeOrbDamage:
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_Pickpocket:
-	setbyte MAGICIAN_HELPER 0x2
+	call BattleScript_AbilityPopUp
 	setmoveeffect MOVE_EFFECT_STEAL_ITEM
 	swapattackerwithtarget
 	setmoveeffect2
 	swapattackerwithtarget
 	callasm TryActivateTargetEndTurnItemEffect
+	callasm TryHideActiveAbilityPopUps
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -285,15 +287,15 @@ FlameOrbBurnBS:
 
 BattleScript_ItemSteal:
 ThiefStealBS:
-	jumpifbyte EQUALS MAGICIAN_HELPER 0x1 MagicianStealBS
-	jumpifbyte EQUALS MAGICIAN_HELPER 0x2 PickpocketStealBS
+	@;jumpifbyte EQUALS MAGICIAN_HELPER 0x1 MagicianStealBS
+	@;jumpifbyte EQUALS MAGICIAN_HELPER 0x2 PickpocketStealBS
 	playanimation BANK_TARGET ANIM_STEAL_ITEM 0x0
 	printstring 0x8E
 	waitmessage DELAY_1SECOND
 	call 0x81D92DC @;BattleScript_WeatherFormChanges - In case of Utility Umbrella
 	return
 
-MagicianStealBS:
+/*MagicianStealBS:
 	setbyte MAGICIAN_HELPER 0x0
 	playanimation BANK_TARGET ANIM_STEAL_ITEM 0x0
 	setword BATTLE_STRING_LOADER MagicianStealString
@@ -312,7 +314,7 @@ PickpocketStealBS:
 	waitmessage DELAY_1SECOND
 	call BattleScript_AbilityPopUpRevert
 	call 0x81D92DC @;BattleScript_WeatherFormChanges - In case of Utility Umbrella
-	return
+	return*/
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

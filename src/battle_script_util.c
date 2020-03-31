@@ -20,8 +20,8 @@
 #include "../include/new/learn_move.h"
 #include "../include/new/move_battle_scripts.h"
 #include "../include/new/move_tables.h"
-#include "../include/new/switching.h"
 #include "../include/new/stat_buffs.h"
+#include "../include/new/switching.h"
 
 /*
 battle_script_util.c
