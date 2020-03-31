@@ -1143,7 +1143,7 @@ void HandleAction_UseMove(void)
 
 		if (!gSpecialStatuses[gBankTarget].lightningRodRedirected)
 		{
-			if (gBattleMoves[gChosenMove].target & MOVE_TARGET_RANDOM
+			if (gBattleMoves[gCurrentMove].target & MOVE_TARGET_RANDOM
 			&& !IsAnyMaxMove(gCurrentMove))
 				goto CHOOSE_RANDOM_TARGET_DOUBLES;
 			else
@@ -1151,7 +1151,7 @@ void HandleAction_UseMove(void)
 		}
 	}
 	else if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE
-		  && gBattleMoves[gChosenMove].target & MOVE_TARGET_RANDOM
+		  && gBattleMoves[gCurrentMove].target & MOVE_TARGET_RANDOM
 		  && !IsAnyMaxMove(gCurrentMove))
 	{
 	CHOOSE_RANDOM_TARGET_DOUBLES:
