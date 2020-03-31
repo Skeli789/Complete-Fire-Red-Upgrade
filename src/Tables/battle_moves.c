@@ -2313,7 +2313,11 @@ const struct BattleMove gBattleMoves[] =
 		.target = MOVE_TARGET_SELECTED,
 		.priority = 0,
 		.flags = FLAG_MAKES_CONTACT | FLAG_PROTECT_AFFECTED | FLAG_MIRROR_MOVE_AFFECTED | FLAG_TRIAGE_AFFECTED,
+		#ifdef BUFFED_LEECH_LIFE
+		.z_move_power = 160,
+		#else
 		.z_move_power = 100,
+		#endif
 		.split = SPLIT_PHYSICAL,
 		.z_move_effect = 0
 	},
@@ -13895,7 +13899,12 @@ const u8 gDynamaxMovePowers[MOVES_COUNT] =
 	[MOVE_HIGHJUMPKICK] = 95,
 	[MOVE_DREAMEATER] = 130,
 	[MOVE_BARRAGE] = 90,
+	[MOVE_LEECHFANG] = 130,
+	#ifdef BUFFED_LEECH_LIFE
 	[MOVE_LEECHLIFE] = 130,
+	#else
+	[MOVE_LEECHLIFE] = 90,
+	#endif
 	[MOVE_SKYATTACK] = 140,
 	[MOVE_BUBBLE] = 90,
 	[MOVE_DIZZYPUNCH] = 120,
@@ -14122,6 +14131,7 @@ const u8 gDynamaxMovePowers[MOVES_COUNT] =
 	[MOVE_INCINERATE] = 110,
 	[MOVE_ACROBATICS] = 110,
 	[MOVE_RETALIATE] = 120,
+	[MOVE_STEELYHIT] = 90,
 	[MOVE_FINALGAMBIT] = 100,
 	[MOVE_INFERNO] = 130,
 	[MOVE_WATERPLEDGE] = 130,
