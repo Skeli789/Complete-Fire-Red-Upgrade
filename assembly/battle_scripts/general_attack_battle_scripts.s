@@ -1666,7 +1666,8 @@ PowerHerbChargeBS:
 
 TwoTurnMovesRaidBossSkipCharge:
 	setbyte ANIM_TARGETS_HIT 0x0
-	setbyte ANIM_TURN 0x1	
+	setbyte ANIM_TURN 0x1
+	callasm ClearCalculatedSpreadMoveData @;So the damage can be calculated
 	goto PowerHerbSkipBS
 
 TwoTurnMovesSecondTurnBS:
@@ -3049,6 +3050,7 @@ BSSolarbeamOnFirstTurn:
 	setmoveeffect MOVE_EFFECT_CHARGING | MOVE_EFFECT_AFFECTS_USER
 	seteffectprimary
 	ppreduce
+	callasm ClearCalculatedSpreadMoveData @;So the damage can be calculated
 	goto TwoTurnMovesSecondTurnBS
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -4461,7 +4463,8 @@ Geomancy_PowerHerb:
 
 Geomancy_RaidBossSkipCharge:
 	setbyte ANIM_TARGETS_HIT 0x0
-	setbyte ANIM_TURN 0x1	
+	setbyte ANIM_TURN 0x1
+	callasm ClearCalculatedSpreadMoveData @;So the damage can be calculated
 	goto Geomancy_PowerHerbSkip
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

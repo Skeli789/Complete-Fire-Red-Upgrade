@@ -2114,3 +2114,8 @@ void LoadMoodyStatToLower(void)
 	gBattleScripting.animArg1 = STAT_ANIM_MINUS1 + gBattleCommunication[MOVE_EFFECT_BYTE] - 1;
 	gBattleScripting.statChanger = gBattleCommunication[MOVE_EFFECT_BYTE] | DECREASE_1; //Stored here for safety
 }
+
+void ClearCalculatedSpreadMoveData(void)
+{
+	gNewBS->calculatedSpreadMoveData = FALSE;
+}
