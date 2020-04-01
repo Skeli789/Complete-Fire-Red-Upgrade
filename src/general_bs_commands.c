@@ -1857,6 +1857,9 @@ static void UpdateMoveStartValuesForCalledMove(void)
 {
 	gBattleStruct->atkCancellerTracker = CANCELLER_GRAVITY_2;
 	gBattleStruct->dynamicMoveType = GetMoveTypeSpecial(gBankAttacker, gCurrentMove);
+	gNewBS->doneDoublesSpreadHit = FALSE;
+	gNewBS->calculatedSpreadMoveData = FALSE;
+	gNewBS->calculatedSpreadMoveAccuracy = FALSE;
 	gHitMarker &= ~(HITMARKER_ATTACKSTRING_PRINTED);
 
 	if (gBattleMoves[gCurrentMove].target & MOVE_TARGET_USER)
