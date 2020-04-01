@@ -721,7 +721,7 @@ u8 GetMoveTarget(u16 move, u8 useMoveTarget)
 		{
 			if (SIDE(bankAtk) == B_SIDE_PLAYER)
 			{
-				if (Random() & 1)
+				if (IsRaidBattle() || Random() & 1)
 					bankDef = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
 				else
 					bankDef = GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
@@ -733,6 +733,7 @@ u8 GetMoveTarget(u16 move, u8 useMoveTarget)
 				else
 					bankDef = GetBattlerAtPosition(B_POSITION_PLAYER_RIGHT);
 			}
+
 			if (gAbsentBattlerFlags & gBitTable[bankDef])
 				bankDef ^= 2;
 		}

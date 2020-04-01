@@ -1157,7 +1157,7 @@ void HandleAction_UseMove(void)
 	CHOOSE_RANDOM_TARGET_DOUBLES:
 		if (SIDE(gBankAttacker) == B_SIDE_PLAYER)
 		{
-			if (Random() & 1)
+			if (IsRaidBattle() || Random() & 1)
 				gBankTarget = GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT);
 			else
 				gBankTarget = GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT);
