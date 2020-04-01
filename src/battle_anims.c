@@ -1077,7 +1077,7 @@ void SpriteCB_TranslateAnimSpriteToTargetMonLocationDoubles(struct Sprite* sprit
 
 	target = LoadBattleAnimTarget(6);
 
-	if (GetBankPartyData(target)->hp == 0)
+	if (!IsBattlerSpriteVisible(target))
 		DestroyAnimSprite(sprite);
 	else
 	{
@@ -1229,7 +1229,7 @@ void SpriteCB_SearingShotRock(struct Sprite* sprite)
 {
 	u8 target = LoadBattleAnimTarget(4);
 
-	if (GetBankPartyData(target)->hp == 0)
+	if (!IsBattlerSpriteVisible(target))
 		DestroyAnimSprite(sprite);
 	else
 	{
@@ -1813,7 +1813,7 @@ void SpriteCB_FallingObject(struct Sprite *sprite)
 {
 	u8 target = LoadBattleAnimTarget(3);
 
-	if (GetBankPartyData(target)->hp == 0)
+	if (!IsBattlerSpriteVisible(target))
 		DestroyAnimSprite(sprite);
 	else
 	{
@@ -1867,7 +1867,7 @@ void SpriteCB_FallingObjectPlayAnimOnEnd(struct Sprite *sprite)
 {
 	u8 target = LoadBattleAnimTarget(3);
 
-	if (GetBankPartyData(target)->hp == 0)
+	if (!IsBattlerSpriteVisible(target))
 		DestroyAnimSprite(sprite);
 	else
 	{
@@ -2033,7 +2033,7 @@ void SpriteCB_WaterDroplet(struct Sprite *sprite)
 {
 	u8 target = LoadBattleAnimTarget(2);
 
-	if (GetBankPartyData(target)->hp == 0)
+	if (!IsBattlerSpriteVisible(target))
 		DestroyAnimSprite(sprite);
 	else
 	{
@@ -2056,7 +2056,7 @@ void SpriteCB_AnimSpriteOnSelectedMonPos(struct Sprite *sprite)
 	{
 		u8 target = LoadBattleAnimTarget(2);
 
-		if (GetBankPartyData(target)->hp == 0)
+		if (!IsBattlerSpriteVisible(target))
 			DestroyAnimSprite(sprite);
 		else
 		{
@@ -2075,7 +2075,7 @@ void SpriteCB_SpriteOnMonForDuration(struct Sprite *sprite)
 {
 	u8 target = LoadBattleAnimTarget(0);
 
-	if (GetBankPartyData(target)->hp == 0)
+	if (!IsBattlerSpriteVisible(target))
 		DestroyAnimSprite(sprite);
 	else
 	{
@@ -2574,7 +2574,7 @@ void SpriteCB_StarfallBeam(struct Sprite* sprite)
 {
 	u8 target = LoadBattleAnimTarget(2);
 
-	if (GetBankPartyData(target)->hp == 0)
+	if (!IsBattlerSpriteVisible(target))
 		DestroyAnimSprite(sprite);
 	else
 	{

@@ -115,11 +115,11 @@ static void SavePartyItems(void)
 void BattleBeginFirstTurn(void)
 {
 	int i, j, k;
-	u8 effect = 0;
 	u8* state = &(gBattleStruct->switchInAbilitiesCounter);
 	u8* bank = &(gBattleStruct->switchInItemsCounter);
 
-	if (!gBattleExecBuffer) { //Inlclude Safari Check Here?
+	if (!gBattleExecBuffer) //Inlclude Safari Check Here?
+	{
 		switch(*state) {
 			case BackupPartyItems:
 				SavePartyItems();
@@ -133,8 +133,10 @@ void BattleBeginFirstTurn(void)
 					ResetBestMonToSwitchInto(i);
 				}
 
-				for (i = 0; i < gBattlersCount - 1; ++i) {
-					for (j = i + 1; j < gBattlersCount; ++j) {
+				for (i = 0; i < gBattlersCount - 1; ++i)
+				{
+					for (j = i + 1; j < gBattlersCount; ++j)
+					{
 						if (GetWhoStrikesFirst(gBanksByTurnOrder[i], gBanksByTurnOrder[j], 1))
 							SwapTurnOrder(i, j);
 					}
@@ -152,18 +154,19 @@ void BattleBeginFirstTurn(void)
 					return;
 
 				//Primal Reversion
-				while (*bank < gBattlersCount) {
+				for (; *bank < gBattlersCount; ++*bank)
+				{
 					const u8* script = DoPrimalReversion(gBanksByTurnOrder[*bank], 0);
-					if(script) {
-						BattleScriptPushCursorAndCallback(script);
-						gBattleScripting.bank = gBanksByTurnOrder[*bank];
-						gBankAttacker = gBanksByTurnOrder[*bank];
-						++effect;
-					}
-					++*bank;
 
-					if (effect) return;
+					if(script != NULL)
+					{
+						BattleScriptPushCursorAndCallback(script);
+						gBankAttacker = gBattleScripting.bank = gBanksByTurnOrder[*bank];
+						++*bank;
+						return;
+					}
 				}
+
 				++*state;
 				*bank = 0;
 				break;
@@ -226,7 +229,10 @@ void BattleBeginFirstTurn(void)
 				{
 					if (ABILITY(gBanksByTurnOrder[*bank]) == ABILITY_NEUTRALIZINGGAS
 					&& AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, gBanksByTurnOrder[*bank], 0, 0, 0))
+					{
+						++*bank;
 						return;
+					}
 				}
 
 				*bank = 0;
@@ -234,14 +240,16 @@ void BattleBeginFirstTurn(void)
 				break;
 
 			case SwitchInAbilities:
-				while (*bank < gBattlersCount)
+				for (; *bank < gBattlersCount; ++*bank)
 				{
 					if (AbilityBattleEffects(ABILITYEFFECT_ON_SWITCHIN, gBanksByTurnOrder[*bank], 0, 0, 0))
-						effect++;
-					++*bank;
-
-					if (effect) return;
+					{
+						++*bank;
+						return;
+					}
 				}
+
+				*bank = 0; //Reset Bank for next loop
 				++*state;
 				break;
 
@@ -252,31 +260,29 @@ void BattleBeginFirstTurn(void)
 				if (AbilityBattleEffects(ABILITYEFFECT_INTIMIDATE2, 0, 0, 0, 0))
 					return;
 			*/
-				*bank = 0; //Reset Bank for next loop
 				++*state;
 				break;
 
 			case AmuletCoin_WhiteHerb:
-				while (*bank < gBattlersCount) {
+				for (; *bank < gBattlersCount; ++*bank)
+				{
 					if (ItemBattleEffects(ItemEffects_SwitchIn, gBanksByTurnOrder[*bank], FALSE, FALSE))
-						++effect;
-					++*bank;
-
-					if (effect) return;
+					{
+						++*bank;
+						return;
+					}
 				}
+
 				*bank = 0; //Reset Bank for next loop
 				++*state;
 				break;
 
 			case AirBalloon:
-				while (*bank < gBattlersCount)
+				for (; *bank < gBattlersCount; ++*bank)
 				{
 					#ifndef NO_GHOST_BATTLES
 					if (IS_GHOST_BATTLE && SIDE(gBanksByTurnOrder[*bank]) == B_SIDE_OPPONENT)
-					{
-						++*bank;
 						continue;
-					}
 					#endif
 
 					if (ITEM_EFFECT(gBanksByTurnOrder[*bank]) == ITEM_EFFECT_AIR_BALLOON)
@@ -284,12 +290,11 @@ void BattleBeginFirstTurn(void)
 						BattleScriptPushCursorAndCallback(BattleScript_AirBalloonFloat);
 						gBankAttacker = gBattleScripting.bank = gBanksByTurnOrder[*bank];
 						RecordItemEffectBattle(gBankAttacker, ITEM_EFFECT_AIR_BALLOON);
-						++effect;
+						++*bank;
+						return;
 					}
-					++*bank;
-
-					if (effect) return;
 				}
+
 				*bank = 0; //Reset Bank for next loop
 				TryPrepareTotemBoostInBattleSands();
 				++*state;
@@ -299,14 +304,11 @@ void BattleBeginFirstTurn(void)
 				if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_SANDS //The only battle facility to utilize totem boosts
 				|| !(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_TRAINER_TOWER | BATTLE_TYPE_POKE_DUDE | BATTLE_TYPE_OLD_MAN)))
 				{
-					while (*bank < gBattlersCount)
+					for (; *bank < gBattlersCount; ++*bank)
 					{
 						#ifndef NO_GHOST_BATTLES
 						if (IS_GHOST_BATTLE && SIDE(*bank) == B_SIDE_OPPONENT)
-						{
-							++*bank;
 							continue;
-						}
 						#endif
 
 						if (CanActivateTotemBoost(*bank))
@@ -316,8 +318,6 @@ void BattleBeginFirstTurn(void)
 							++*bank;
 							return;
 						}
-
-						++*bank;
 					}
 				}
 
@@ -459,8 +459,8 @@ static void TryPrepareTotemBoostInBattleSands(void)
 	{
 		u8 playerId = 0;
 		u8 enemyId = 1;
-		u8 playerStat = RandRange(1, BATTLE_STATS_NO - 1);
-		u8 enemyStat = RandRange(1, BATTLE_STATS_NO - 1);
+		u8 playerStat = RandRange(STAT_STAGE_ATK, BATTLE_STATS_NO);
+		u8 enemyStat = RandRange(STAT_STAGE_ATK, BATTLE_STATS_NO);
 		u8 increaseMax, increase;
 
 		if (IS_DOUBLE_BATTLE)
