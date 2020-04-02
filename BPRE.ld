@@ -219,7 +219,7 @@ vblank_cb_battle_WIN0V = 0x2022986;
 vblank_cb_battle_WIN1H = 0x2022988;
 vblank_cb_battle_WIN1V = 0x202298A;
 gScanlineEffectRegBuffers = 0x2038700;
-dp12_config = 0x2039600;
+gScanlineEffect = 0x2039600;
 
 /* Data RAM */
 gTasks = 0x3005090;
