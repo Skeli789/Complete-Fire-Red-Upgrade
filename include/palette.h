@@ -84,5 +84,7 @@ void __attribute__((long_call)) TintPalette_GrayScale(u16 *palette, u16 count);
 void __attribute__((long_call)) TintPalette_GrayScale2(u16 *palette, u16 count);
 void __attribute__((long_call)) TintPalette_SepiaTone(u16 *palette, u16 count);
 void __attribute__((long_call)) TintPalette_CustomTone(u16 *palette, u16 count, u16 rTone, u16 gTone, u16 bTone);
+void __attribute__((long_call)) sub_80717A8(u32 a1, s8 a2, u8 a3, u8 a4, u16 a5, u8 a6, u8 a7);
+bool32 __attribute__((long_call)) sub_807185C(u8 var);
 
 // extern struct PaletteFadeControl gPaletteFade;

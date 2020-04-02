@@ -1392,6 +1392,8 @@ TintPalette_GrayScale = 0x8071544 | 1;
 TintPalette_GrayScale2 = 0x8071594 | 1;
 TintPalette_SepiaTone = 0x80715F4 | 1;
 TintPalette_CustomTone = 0x8071660 | 1;
+sub_80717A8 = 0x80717A8 | 1;
+sub_807185C = 0x807185C | 1;
 UpdateSpritePaletteWithWeather = 0x807AA8C | 1;
 PreservePaletteInWeather = 0x807B084 | 1;
 
@@ -1510,6 +1512,10 @@ HofPC_CreateWindow = 0x810F558 | 1;
 HofPC_PutText = 0x810F650 | 1;
 sub_8112450 = 0x8112450 | 1;
 
+/* Title Screen Functions */
+SetTitleScreenScene = 0x8078C90 | 1;
+Task_TitleScreen_SlideWin0 = 0x80792C8 | 1;
+TitleScreen_CreateBlankSprite = 0x80799F0 | 1;
 
 /* Math Functions */
 Sine = 0x8044E30 | 1;

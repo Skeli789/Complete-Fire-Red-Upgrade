@@ -1629,7 +1629,11 @@ u32 GetDaysSinceTimeInValue(u32 value)
 {
 	struct DailyEventVar* startTime = (struct DailyEventVar*) &value;
 
-	return GetDayDifference(startTime->year + startTime->century * 100, startTime->month, startTime->day, Clock->year, Clock->month, Clock->day);
+	u16 startYear = startTime->year + startTime->century * 100;
+	if (startYear < 1900)
+		startYear = 1900;
+
+	return GetDayDifference(startYear, startTime->month, startTime->day, Clock->year, Clock->month, Clock->day);
 }
 
 //@Details: Updates the time stored in a pair of vars.
