@@ -146,9 +146,9 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 		case ATK49_SET_UP: //For Emergency Exit to use later
 			gNewBS->originalAttackerBackup = gBankAttacker;
 
-			if (gNewBS->MultiHitOn)
-				gNewBS->DamageTaken[gBankTarget] += gHpDealt; //Total up damage taken
-			else
+			//if (gNewBS->MultiHitOn)
+			//	gNewBS->DamageTaken[gBankTarget] += gHpDealt; //Total up damage taken
+			//else
 				gNewBS->DamageTaken[gBankTarget] = gHpDealt;
 
 			gNewBS->totalDamageGiven += gHpDealt;

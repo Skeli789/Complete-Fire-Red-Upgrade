@@ -229,7 +229,7 @@ void atk05_damagecalc(void)
 	struct DamageCalc data = {0};
 	gBattleStruct->dynamicMoveType = GetMoveTypeSpecial(gBankAttacker, gCurrentMove);
 
-	if (gNewBS->calculatedSpreadMoveData)
+	if (gNewBS->calculatedSpreadMoveData && gMultiHitCounter == 0)
 	{
 		//Just use the calculated values below
 	}
