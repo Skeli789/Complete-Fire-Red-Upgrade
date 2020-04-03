@@ -709,8 +709,13 @@ void SetMoveEffect(bool8 primary, u8 certain)
 				&& BATTLER_ALIVE(gEffectBank)
 				&& gEffectBank == gBankAttacker) //Don't do Pluck here
 				{
-					BattleScriptPush(gBattlescriptCurrInstr + 1);
-					gBattlescriptCurrInstr = BattleScript_RemoveEffectBankItem;
+					gLastUsedItem = ITEM(gEffectBank);
+					if (!ItemBattleEffects(ItemEffects_EndTurn, gBankAttacker, TRUE, TRUE))
+					{
+						//The Berry didn't activate an effect
+						BattleScriptPush(gBattlescriptCurrInstr + 1);
+						gBattlescriptCurrInstr = BattleScript_EatEffectBankBerry;
+					}
 				}
 				break;
 

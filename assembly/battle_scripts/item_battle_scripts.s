@@ -64,7 +64,7 @@ item_battle_scripts.s
 .global BattleScript_Gems
 .global BattleScript_WeaknessBerryActivate
 
-.global DoCheekPouch
+.global BattleScript_CheekPouch
 .global BattleScript_MoveMissedCheckBlunderPolicy
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -81,7 +81,7 @@ BattleScript_BerryConfuseHealRet:
 	waitmessage DELAY_1SECOND
 	setmoveeffect MOVE_EFFECT_CONFUSION
 	seteffectprimaryscriptingbank
-	call DoCheekPouch
+	call BattleScript_CheekPouch
 	return
 
 BattleScript_BerryConfuseHealEnd2:
@@ -101,7 +101,7 @@ BattleScript_ItemHealHP_RemoveItem_SkipAnim:
 	datahpupdate BANK_SCRIPTING
 	printstring 0x12A
 	waitmessage DELAY_1SECOND
-	call DoCheekPouch
+	call BattleScript_CheekPouch
 	return
 
 BattleScript_BerryHealHP_RemoveBerryEnd2:
@@ -126,7 +126,7 @@ BattleScript_BerryPPHealRet:
 	playanimation BANK_SCRIPTING ANIM_BERRY_EAT 0x0
 	printstring 0x12B
 	waitmessage DELAY_1SECOND
-	call DoCheekPouch
+	call BattleScript_CheekPouch
 	return
 	
 BattleScript_BerryPPHealEnd2:
@@ -139,7 +139,7 @@ BattleScript_BerryFocusEnergyRet:
 	playanimation BANK_SCRIPTING ANIM_BERRY_EAT 0x0
 	printstring 0x146
 	waitmessage DELAY_1SECOND
-	call DoCheekPouch
+	call BattleScript_CheekPouch
 	return
 	
 BattleScript_BerryFocusEnergyEnd2:
@@ -153,7 +153,7 @@ BattleScript_BerryStatRaiseRet:
 	playanimation BANK_SCRIPTING ANIM_BERRY_EAT 0x0
 	setbyte MULTISTRING_CHOOSER 0x4
 	call 0x81D6BD1
-	call DoCheekPouch
+	call BattleScript_CheekPouch
 	return
 
 BattleScript_BerryStatRaiseEnd2:
@@ -167,7 +167,7 @@ BattleScript_BerryCureParRet:
 	refreshhpbar BANK_SCRIPTING
 	printstring 0x123
 	waitmessage DELAY_1SECOND
-	call DoCheekPouch
+	call BattleScript_CheekPouch
 	return
 
 BattleScript_BerryCurePrlzEnd2:
@@ -182,7 +182,7 @@ BattleScript_BerryCurePsnRet:
 	refreshhpbar BANK_SCRIPTING
 	printstring 0x124
 	waitmessage DELAY_1SECOND
-	call DoCheekPouch
+	call BattleScript_CheekPouch
 	return
 
 BattleScript_BerryCurePsnEnd2:
@@ -196,7 +196,7 @@ BattleScript_BerryCureBrnRet:
 	refreshhpbar BANK_SCRIPTING
 	printstring 0x125
 	waitmessage DELAY_1SECOND
-	call DoCheekPouch
+	call BattleScript_CheekPouch
 	return
 
 BattleScript_BerryCureBrnEnd2:
@@ -210,7 +210,7 @@ BattleScript_BerryCureFrzRet:
 	refreshhpbar BANK_SCRIPTING
 	printstring 0x126
 	waitmessage DELAY_1SECOND
-	call DoCheekPouch
+	call BattleScript_CheekPouch
 	return
 
 BattleScript_BerryCureFrzEnd2:
@@ -224,7 +224,7 @@ BattleScript_BerryCureSlpRet:
 	refreshhpbar BANK_SCRIPTING
 	printstring 0x127
 	waitmessage DELAY_1SECOND
-	call DoCheekPouch
+	call BattleScript_CheekPouch
 	return
 
 BattleScript_BerryCureSlpEnd2:
@@ -237,7 +237,7 @@ BattleScript_BerryCureConfusionRet:
 	playanimation BANK_SCRIPTING ANIM_BERRY_EAT 0x0
 	printstring 0x128
 	waitmessage DELAY_1SECOND
-	call DoCheekPouch
+	call BattleScript_CheekPouch
 	return
 
 BattleScript_BerryCureConfusionEnd2:
@@ -251,7 +251,7 @@ BattleScript_BerryCureChosenStatusRet:
 	refreshhpbar BANK_SCRIPTING
 	printfromtable 0x83FE634
 	waitmessage DELAY_1SECOND
-	call DoCheekPouch
+	call BattleScript_CheekPouch
 	return
 
 BattleScript_BerryCureChosenStatusEnd2:
@@ -260,7 +260,7 @@ BattleScript_BerryCureChosenStatusEnd2:
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-DoCheekPouch:
+BattleScript_CheekPouch:
 	callasm CheeckPouchFunc
 	jumpifbyte EQUALS FORM_COUNTER 0x0 CheeckPouchRet
 	setbyte FORM_COUNTER 0x0
@@ -406,7 +406,7 @@ BattleScript_JabocaRowapBerry:
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	faintpokemon BANK_ATTACKER 0x0 0x0
-	call DoCheekPouch
+	call BattleScript_CheekPouch
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -430,7 +430,7 @@ BattleScript_MicleBerryRet:
 	setword BATTLE_STRING_LOADER MicleBerryString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
-	call DoCheekPouch
+	call BattleScript_CheekPouch
 	return
 
 BattleScript_MicleBerryEnd2:
@@ -565,7 +565,7 @@ BattleScript_WeaknessBerryActivate:
 	setword BATTLE_STRING_LOADER WeaknessBerryString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
-	call DoCheekPouch
+	call BattleScript_CheekPouch
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

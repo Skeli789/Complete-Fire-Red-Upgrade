@@ -70,7 +70,7 @@ extern const u8 BattleScript_ItemSteal[];
 extern const u8 BattleScript_KnockedOff[];
 extern const u8 BattleScript_AbilityWasSuppressed[];
 extern const u8 BattleScript_StatUpPartner[];
-extern const u8 BattleScript_RemoveEffectBankItem[];
+extern const u8 BattleScript_EatEffectBankBerry[];
 extern const u8 BattleScript_SetTerrain[];
 extern const u8 BattleScript_MaxMoveSetWeather[];
 extern const u8 BattleScript_MaxMoveSetTerrain[];

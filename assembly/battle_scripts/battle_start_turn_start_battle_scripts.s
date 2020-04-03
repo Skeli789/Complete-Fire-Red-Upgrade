@@ -132,7 +132,7 @@ BattleScript_QuickClaw:
 	playanimation 0xA ANIM_BERRY_EAT 0x0
 	printstring 0x184
 	waitmessage DELAY_HALFSECOND
-	call DoCheekPouch
+	call BattleScript_CheekPouch
 	end3
 
 QuickClawBS:

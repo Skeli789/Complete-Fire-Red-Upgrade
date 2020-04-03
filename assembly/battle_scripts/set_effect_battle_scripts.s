@@ -16,7 +16,7 @@ set_effect_battle_scripts.s
 .global BattleScript_KnockedOff
 .global BattleScript_AbilityWasSuppressed
 .global BattleScript_StatUpPartner
-.global BattleScript_RemoveEffectBankItem
+.global BattleScript_EatEffectBankBerry
 .global BattleScript_MaxMoveSetWeather
 .global BattleScript_MaxMoveSetTerrain
 .global BattleScript_MaxMoveEffectSporeFoes
@@ -126,8 +126,9 @@ BattleScript_StatUpPartner:
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-BattleScript_RemoveEffectBankItem:
-	removeitem BANK_EFFECT
+BattleScript_EatEffectBankBerry:
+	copybyte BATTLE_SCRIPTING_BANK EFFECT_BANK
+	call BattleScript_CheekPouch
 	return
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

@@ -420,36 +420,38 @@ u8 ItemBattleEffects(u8 caseID, u8 bank, bool8 moveTurn, bool8 doPluck)
 
 					do
 					{
-						i = umodsi(Random(), 5);
-					} while (gBattleMons[bank].statStages[STAT_STAGE_ATK-1 + i] >= STAT_STAGE_MAX);
+						i = RandRange(STAT_STAGE_ATK, NUM_STATS);
+					} while (STAT_STAGE(bank, i) >= STAT_STAGE_MAX);
 
-						gBattleTextBuff1[0] = 0xFD;
-						gBattleTextBuff1[1] = 5;
-						gBattleTextBuff1[2] = i + 1;
-						gBattleTextBuff1[3] = EOS;
+					i -= 1; //So stat starts at 0
 
-						gBattleTextBuff2[0] = 0xFD;
-						gBattleTextBuff2[1] = 0;
-						gBattleTextBuff2[2] = 0xD1;
-						gBattleTextBuff2[3] = 0xD1 >> 8;
-						gBattleTextBuff2[4] = 0;
-						gBattleTextBuff2[5] = 0xD2;
-						gBattleTextBuff2[6] = 0xD2 >> 8;
-						gBattleTextBuff2[7] = EOS;
+					gBattleTextBuff1[0] = 0xFD;
+					gBattleTextBuff1[1] = 5;
+					gBattleTextBuff1[2] = i + 1;
+					gBattleTextBuff1[3] = EOS;
 
-						gEffectBank = bank;
-						gBattleScripting.statChanger = (buff | 1) + i;
-						gBattleScripting.animArg1 = STAT_ANIM_PLUS2 + i;
-						gBattleScripting.animArg2 = 0;
+					gBattleTextBuff2[0] = 0xFD;
+					gBattleTextBuff2[1] = 0;
+					gBattleTextBuff2[2] = 0xD1;
+					gBattleTextBuff2[3] = 0xD1 >> 8;
+					gBattleTextBuff2[4] = 0;
+					gBattleTextBuff2[5] = 0xD2;
+					gBattleTextBuff2[6] = 0xD2 >> 8;
+					gBattleTextBuff2[7] = EOS;
 
-						if (moveTurn || doPluck)
-						{
-							BattleScriptPushCursor();
-							gBattlescriptCurrInstr = BattleScript_BerryStatRaiseRet;
-						}
-						else
-							BattleScriptExecute(BattleScript_BerryStatRaiseEnd2);
-						effect = ITEM_STATS_CHANGE;
+					gEffectBank = bank;
+					gBattleScripting.statChanger = (buff | 1) + i;
+					gBattleScripting.animArg1 = STAT_ANIM_PLUS2 + i;
+					gBattleScripting.animArg2 = 0;
+
+					if (moveTurn || doPluck)
+					{
+						BattleScriptPushCursor();
+						gBattlescriptCurrInstr = BattleScript_BerryStatRaiseRet;
+					}
+					else
+						BattleScriptExecute(BattleScript_BerryStatRaiseEnd2);
+					effect = ITEM_STATS_CHANGE;
 				}
 				break;
 
