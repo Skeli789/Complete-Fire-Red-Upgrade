@@ -115,6 +115,7 @@ gMoveSelectionCursor = 0x2023FFC;
 gUnknown_2024000 = 0x2024000;
 gBattlerInMenuId = 0x2024004;
 gDoingBattleAnim = 0x2024005;
+gTransformedPersonalities = 0x2024008;
 gBattleSpritesDataPtr = 0x2024018;
 gMonSpritesGfxPtr = 0x2024018;
 gBattleMovePower = 0x2024020;
@@ -692,6 +693,7 @@ GetSomeBoxId = 0x80CC7A8 | 1;
 
 /* Pokemon Icons */
 CreateMonIcon = 0x8096E18 | 1;
+GetIconSpecies = 0x8096F5C | 1;
 GetMonIconTiles = 0x8097028 | 1;
 LoadPartyIconTiles = 0x8097054 | 1;
 LoadMonIconPalettes = 0x809707C | 1;

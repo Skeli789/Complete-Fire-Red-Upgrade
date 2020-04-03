@@ -286,7 +286,7 @@
 .byte \anim1Carg4
 .endm
 
-.macro playsound3 anim1Darg1 anim1Darg2 anim1Darg3
+.macro playsoundwait anim1Darg1 anim1Darg2 anim1Darg3
 .byte 0x1D
 .hword \anim1Darg1
 .byte \anim1Darg2

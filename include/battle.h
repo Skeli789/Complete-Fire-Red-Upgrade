@@ -1270,7 +1270,7 @@ struct BattleSpriteInfo
     u16 behindSubstitute : 1; // 0x4
     u16 substituteOffScreen : 1; // 0x8
     u16 hpNumbersNoBars : 1; // 0x10
-    u16 transformSpecies;
+    u16 transformSpecies; //0x20054A6
 };
 
 struct BattleAnimationInfo

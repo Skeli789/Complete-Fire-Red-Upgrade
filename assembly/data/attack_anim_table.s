@@ -1387,7 +1387,7 @@ BRICKBREAK_CHOP: objtemplate ANIM_TAG_CHOP ANIM_TAG_CHOP OAM_OFF_32x32 0x83E66CC
 ANIM_DOUBLEEDGE:
 	loadparticle ANIM_TAG_IMPACT
 	playsound2 0xba SOUND_PAN_ATTACKER
-	playsound3 0xba SOUND_PAN_ATTACKER 0x8
+	playsoundwait 0xba SOUND_PAN_ATTACKER 0x8
 	launchtask 0x809907d 0x2 0x5 0x0 0x12 0x6 0x2 0x4
 	pause 0xA
 	chooseBG BG_IMPACT_ON_OPPONENT BG_IMPACT_ON_PLAYER BG_IMPACT_ON_OPPONENT
@@ -5215,15 +5215,15 @@ ANIM_PLAYROUGH:
 	pokespritetoBG 0x3
 	setblends 0x80c
 	playsound2 0x87 SOUND_PAN_ATTACKER
-	playsound3 0x8b SOUND_PAN_TARGET 0xa
-	playsound3 0x87 SOUND_PAN_ATTACKER 0x14
-	playsound3 0x8b SOUND_PAN_TARGET 0x1e
-	playsound3 0x87 SOUND_PAN_ATTACKER 0x28
-	playsound3 0x8b SOUND_PAN_TARGET 0x32
-	playsound3 0x87 SOUND_PAN_ATTACKER 0x3c
-	playsound3 0x8b SOUND_PAN_TARGET 0x46
-	playsound3 0x87 SOUND_PAN_ATTACKER 0x50
-	playsound3 0x8b SOUND_PAN_TARGET 0x5a
+	playsoundwait 0x8b SOUND_PAN_TARGET 0xa
+	playsoundwait 0x87 SOUND_PAN_ATTACKER 0x14
+	playsoundwait 0x8b SOUND_PAN_TARGET 0x1e
+	playsoundwait 0x87 SOUND_PAN_ATTACKER 0x28
+	playsoundwait 0x8b SOUND_PAN_TARGET 0x32
+	playsoundwait 0x87 SOUND_PAN_ATTACKER 0x3c
+	playsoundwait 0x8b SOUND_PAN_TARGET 0x46
+	playsoundwait 0x87 SOUND_PAN_ATTACKER 0x50
+	playsoundwait 0x8b SOUND_PAN_TARGET 0x5a
 	launchtask 0x8098f85 0x2 0x5 0x0 0xffee 0x6 0x6 0x4
 	launchtask 0x8098f85 0x2 0x5 0x1 0x12 0x6 0x6 0x4
 	launchtemplate 0x83e4338 0x83 0x2 0xff00 0xffd6
@@ -5380,14 +5380,14 @@ ANIM_TOXICSPIKES:
 	loadparticle ANIM_TAG_SHADOW_BALL @Purple Colour
 	pokespritetoBG side_target
 	playsound2 0x88 SOUND_PAN_ATTACKER
-	playsound3 0x9f SOUND_PAN_TARGET 0x1c
+	playsoundwait 0x9f SOUND_PAN_TARGET 0x1c
 	launchtemplate TSPIKES 0x82 0x5 0x14 0x0 0x0 0x18 0x1e
 	pause 0xa
 	playsound2 0x88 SOUND_PAN_ATTACKER
-	playsound3 0x9f SOUND_PAN_TARGET 0x1c
+	playsoundwait 0x9f SOUND_PAN_TARGET 0x1c
 	launchtemplate TSPIKES 0x82 0x5 0x14 0x0 0xffe8 0x18 0x1e
 	pause 0xa
-	playsound3 0x9f SOUND_PAN_TARGET 0x1c
+	playsoundwait 0x9f SOUND_PAN_TARGET 0x1c
 	launchtemplate TSPIKES 0x82 0x5 0x14 0x0 0x18 0x18 0x1e
 	waitanimation
 	launchtask AnimTask_pal_fade_complex 0x2 0x6 PAL_DEF | PAL_DEF_PARTNER 0x0 0x4 0x0 0xc 0x681a
@@ -6576,7 +6576,7 @@ ANIM_FREEZEDRY:
 	loadparticle ANIM_TAG_ICE_CUBE
 	leftbankBG_over_partnerBG bank_target
 	launchtask 0x80783FD 0x2 0x0
-	playsound3 0xf2 SOUND_PAN_TARGET 0x11
+	playsoundwait 0xf2 SOUND_PAN_TARGET 0x11
 	waitanimation
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x2 0x9 0x0 0x7f4c
 	pokespritefromBG side_target
@@ -7453,15 +7453,15 @@ ANIM_WRINGOUT:
 	pokespritetoBG 0x3
 	setblends 0x080c
 	playsound2 0x80 SOUND_PAN_ATTACKER
-	playsound3 0x84 SOUND_PAN_TARGET 0xA
-	playsound3 0x80 SOUND_PAN_ATTACKER 0x14
-	playsound3 0x84 SOUND_PAN_TARGET 0x1e
-	playsound3 0x80 SOUND_PAN_ATTACKER 0x28
-	playsound3 0x84 SOUND_PAN_TARGET 0x32
-	playsound3 0x80 SOUND_PAN_ATTACKER 0x3c
-	playsound3 0x84 SOUND_PAN_TARGET 0x46
-	playsound3 0x80 SOUND_PAN_ATTACKER 0x50
-	playsound3 0x84 SOUND_PAN_TARGET 0x5a
+	playsoundwait 0x84 SOUND_PAN_TARGET 0xA
+	playsoundwait 0x80 SOUND_PAN_ATTACKER 0x14
+	playsoundwait 0x84 SOUND_PAN_TARGET 0x1e
+	playsoundwait 0x80 SOUND_PAN_ATTACKER 0x28
+	playsoundwait 0x84 SOUND_PAN_TARGET 0x32
+	playsoundwait 0x80 SOUND_PAN_ATTACKER 0x3c
+	playsoundwait 0x84 SOUND_PAN_TARGET 0x46
+	playsoundwait 0x80 SOUND_PAN_ATTACKER 0x50
+	playsoundwait 0x84 SOUND_PAN_TARGET 0x5a
 	launchtask 0x8098f85 0x2 0x5 0x0 0xffee 0x6 0x6 0x4
 	launchtask 0x8098f85 0x2 0x5 0x1 0x12 0x6 0x6 0x4
 	call WRINGOUT_CALL
@@ -8845,7 +8845,7 @@ ANIM_BOLTSTRIKE:
 	waitanimation
 	pokespritefromBG bank_attacker
 	playsound2 0xba SOUND_PAN_ATTACKER
-	playsound3 0xba SOUND_PAN_ATTACKER 0x8
+	playsoundwait 0xba SOUND_PAN_ATTACKER 0x8
 	launchtask 0x809907d 0x2 0x5 0x0 0x12 0x6 0x2 0x4
 	pause 0xA
 	loadBG1 BG_BOLT_STRIKE
@@ -8989,7 +8989,7 @@ FREEZE_SHOCK_ATTACK:
 	waitanimation
 	launchtask AnimTask_move_bank_2 0x2 0x5 0x1 0x4 0x0 0x5 0x1
 	pause 0xf
-	playsound3 0x70 SOUND_PAN_TARGET 0x13
+	playsoundwait 0x70 SOUND_PAN_TARGET 0x13
 	call PARALYZE_CHANCE_ANIM
 	waitanimation
 	pokespritefromBG bank_target
@@ -9422,15 +9422,15 @@ ANIM_TOPSYTURVY:
 	pokespritetoBG side_target
 	setblends 0x80c
 	playsound2 0x80 SOUND_PAN_ATTACKER
-	playsound3 0x84 SOUND_PAN_TARGET 0xa
-	playsound3 0x80 SOUND_PAN_ATTACKER 0x14
-	playsound3 0x84 SOUND_PAN_TARGET 0x1e
-	playsound3 0x80 SOUND_PAN_ATTACKER 0x28
-	playsound3 0x84 SOUND_PAN_TARGET 0x32
-	playsound3 0x80 SOUND_PAN_ATTACKER 0x3c
-	playsound3 0x84 SOUND_PAN_TARGET 0x46
-	playsound3 0x80 SOUND_PAN_ATTACKER 0x50
-	playsound3 0x84 SOUND_PAN_TARGET 0x5a
+	playsoundwait 0x84 SOUND_PAN_TARGET 0xa
+	playsoundwait 0x80 SOUND_PAN_ATTACKER 0x14
+	playsoundwait 0x84 SOUND_PAN_TARGET 0x1e
+	playsoundwait 0x80 SOUND_PAN_ATTACKER 0x28
+	playsoundwait 0x84 SOUND_PAN_TARGET 0x32
+	playsoundwait 0x80 SOUND_PAN_ATTACKER 0x3c
+	playsoundwait 0x84 SOUND_PAN_TARGET 0x46
+	playsoundwait 0x80 SOUND_PAN_ATTACKER 0x50
+	playsoundwait 0x84 SOUND_PAN_TARGET 0x5a
 	launchtask 0x8098f85 0x2 0x5 0x0 0xffee 0x6 0x6 0x4
 	launchtask 0x8098f85 0x2 0x5 0x1 0x12 0x6 0x6 0x4
 	waitanimation
@@ -9832,7 +9832,7 @@ ANIM_SPIKYSHIELD:
 	loadparticle ANIM_TAG_GREEN_SPIKE
 	pokespritetoBG side_attacker
 	leftbankBG_over_partnerBG bank_attacker
-	playsound3 0xC8 SOUND_PAN_ATTACKER 0x10
+	playsoundwait 0xC8 SOUND_PAN_ATTACKER 0x10
 	launchtemplate 0x83E3354 0x2 0x3 0x18 0x0 0x5a
 	pause 0xF
 	launchtemplate 0x83E3100 0x82 0x5 0x0 0x1 0x0 0xFFE0 0x10
@@ -9873,7 +9873,7 @@ ANIM_EERIEIMPULSE:
 	loadparticle ANIM_TAG_SPARK_H  @lighter yellow particle
 	loadparticle ANIM_TAG_GOLD_RING  @psybeam ring
 	pokespritetoBG side_target
-	playsound3 0x70 SOUND_PAN_TARGET 0x13
+	playsoundwait 0x70 SOUND_PAN_TARGET 0x13
 	pause 0x4
 	launchtemplate EERIE_ELECTRICRING 0x0 0x7 0x2d 0x0 0x0 0x0 0x0 0x0 0x1
 	pause 0xB
@@ -10596,7 +10596,7 @@ ANIM_BANEFULBUNKER:
 	loadparticle ANIM_TAG_POISON_BUBBLE @poison
 	pokespritetoBG side_attacker
 	leftbankBG_over_partnerBG bank_attacker
-	playsound3 0xC8 SOUND_PAN_ATTACKER 0x10
+	playsoundwait 0xC8 SOUND_PAN_ATTACKER 0x10
 	launchtemplate 0x83E3354 0x2 0x3 0x18 0x0 0x5a
 	launchtemplate POISONBUBBLES 0x2 0x4 0xa 0xa 0x19 0x0
 	pause 0x4
@@ -10813,15 +10813,15 @@ ANIM_DARKESTLARIAT:
 	pokespritetoBG side_target
 	setblends 0x80c
 	playsound2 0x80 SOUND_PAN_ATTACKER
-	playsound3 0x84 SOUND_PAN_TARGET 0xa
-	playsound3 0x80 SOUND_PAN_ATTACKER 0x14
-	playsound3 0x84 SOUND_PAN_TARGET 0x1e
-	playsound3 0x80 SOUND_PAN_ATTACKER 0x28
-	playsound3 0x84 SOUND_PAN_TARGET 0x32
-	playsound3 0x80 SOUND_PAN_ATTACKER 0x3c
-	playsound3 0x84 SOUND_PAN_TARGET 0x46
-	playsound3 0x80 SOUND_PAN_ATTACKER 0x50
-	playsound3 0x84 SOUND_PAN_TARGET 0x5a
+	playsoundwait 0x84 SOUND_PAN_TARGET 0xa
+	playsoundwait 0x80 SOUND_PAN_ATTACKER 0x14
+	playsoundwait 0x84 SOUND_PAN_TARGET 0x1e
+	playsoundwait 0x80 SOUND_PAN_ATTACKER 0x28
+	playsoundwait 0x84 SOUND_PAN_TARGET 0x32
+	playsoundwait 0x80 SOUND_PAN_ATTACKER 0x3c
+	playsoundwait 0x84 SOUND_PAN_TARGET 0x46
+	playsoundwait 0x80 SOUND_PAN_ATTACKER 0x50
+	playsoundwait 0x84 SOUND_PAN_TARGET 0x5a
 	launchtask 0x8098f85 0x2 0x5 0x0 0xffee 0x6 0x6 0x4
 	launchtask 0x8098f85 0x2 0x5 0x1 0x12 0x6 0x6 0x4
 	call PURPLE_HIT_CALL
@@ -12154,7 +12154,7 @@ SHELL_TRAP_ANIM:
 	loadparticle ANIM_TAG_ICE_CRYSTALS @fire launches
 	loadparticle ANIM_TAG_JAGGED_MUSIC_NOTE @red
 	pokespritetoBG bank_target
-	playsound3 0xC8 SOUND_PAN_ATTACKER 0x10
+	playsoundwait 0xC8 SOUND_PAN_ATTACKER 0x10
 	pause 0x6
 	launchtemplate ST_YELLOWPOUND 0x2 0x4 0x0 0x0 0x0 0x2
 	pause 0x5
@@ -13842,7 +13842,7 @@ ANIM_WIDEGUARD:
 	pokespritetoBG bank_attacker
 	setblends 0x80C
 	launchtask 0x80E0559 0x5 0x3 0x0 0x3 0x0
-	playsound3 0xC8 SOUND_PAN_ATTACKER 0x10
+	playsoundwait 0xC8 SOUND_PAN_ATTACKER 0x10
 	launchtemplate BLUECONV 0x2 0x2 0xffe8 0xffe8
 	pause 0x3
 	launchtemplate BLUECONV 0x2 0x2 0xfff8 0xffe8
@@ -16436,7 +16436,7 @@ ANIM_OBSTRUCT:
 	pause 0x10
 	pokespritetoBG side_attacker 
 	leftbankBG_over_partnerBG bank_attacker  
-	playsound3 0xC8 SOUND_PAN_ATTACKER 0x10 
+	playsoundwait 0xC8 SOUND_PAN_ATTACKER 0x10 
 	launchtemplate 0x83E3354, TEMPLATE_ATTACKER | 2, 0x3 0x18 0x0 0x5a @;Protect
 	waitanimation
 	launchtemplate OBSTRUCT_CROSS, TEMPLATE_ATTACKER | 2, 0x4 0x0 0x0 0x1 0x24  
@@ -18754,7 +18754,7 @@ SZS_FINISH_BG:
 	launchtask AnimTask_pal_fade 0xa 0x5 PAL_ATK 0x0 0xb 0x0 0x7e80
 	pause 0x20
 	launchtask GLACIER_TASK_ATTACKER+1 0x2 0x0
-	playsound3 0xeb SOUND_PAN_TARGET 0x11
+	playsoundwait 0xeb SOUND_PAN_TARGET 0x11
 	waitanimation
 	call SZS_ICE_SWIRL_CALL
 	launchtask AnimTask_pal_fade_complex 0x2 0x6 PAL_ATK 0x2 0x2 0x0 0xb 0x7e80
@@ -21832,15 +21832,15 @@ SNUGGLE_STARS_2:
 
 SNUGGLE_SOUNDS:
 	playsound2 0x87 SOUND_PAN_ATTACKER
-	playsound3 0x8b SOUND_PAN_TARGET 0xa
-	playsound3 0x87 SOUND_PAN_ATTACKER 0x14
-	playsound3 0x8b SOUND_PAN_TARGET 0x1e
-	playsound3 0x87 SOUND_PAN_ATTACKER 0x28
-	playsound3 0x8b SOUND_PAN_TARGET 0x32
-	playsound3 0x87 SOUND_PAN_ATTACKER 0x3c
-	playsound3 0x8b SOUND_PAN_TARGET 0x46
-	playsound3 0x87 SOUND_PAN_ATTACKER 0x50
-	playsound3 0x8b SOUND_PAN_TARGET 0x5a
+	playsoundwait 0x8b SOUND_PAN_TARGET 0xa
+	playsoundwait 0x87 SOUND_PAN_ATTACKER 0x14
+	playsoundwait 0x8b SOUND_PAN_TARGET 0x1e
+	playsoundwait 0x87 SOUND_PAN_ATTACKER 0x28
+	playsoundwait 0x8b SOUND_PAN_TARGET 0x32
+	playsoundwait 0x87 SOUND_PAN_ATTACKER 0x3c
+	playsoundwait 0x8b SOUND_PAN_TARGET 0x46
+	playsoundwait 0x87 SOUND_PAN_ATTACKER 0x50
+	playsoundwait 0x8b SOUND_PAN_TARGET 0x5a
 	return
 
 
@@ -24668,7 +24668,7 @@ ANIM_G_MAX_TERROR:
 	pokespritetoBG side_target 
 	playsound2 0xb6 SOUND_PAN_TARGET
 	soundcomplex 0xBD SOUND_PAN_TARGET 0xf 0x4 
-	playsound3 0xB9 SOUND_PAN_TARGET 0x55 
+	playsoundwait 0xB9 SOUND_PAN_TARGET 0x55 
 	launchtemplate 0x83FEEE4 0x2 0x0  
 	waitanimation
 	pokespritefromBG side_target
