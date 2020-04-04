@@ -67,7 +67,10 @@ static u8 GetStealthRockDivisor(void);
 
 void atkE2_switchoutabilities(void)
 {
-	gActiveBattler = GetBankForBattleScript(T2_READ_8(gBattlescriptCurrInstr + 1));
+	if (gBattleExecBuffer)
+		return;
+
+	gActiveBattler = GetBankForBattleScript(gBattlescriptCurrInstr[1]);
 
 	switch (ABILITY(gActiveBattler)) {
 		case ABILITY_NATURALCURE:

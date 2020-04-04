@@ -205,6 +205,7 @@ void BattleBeginFirstTurn(void)
 			case RaidBattleReveal:
 				if (IsRaidBattle())
 				{
+					gAbsentBattlerFlags |= gBitTable[B_POSITION_OPPONENT_RIGHT]; //Because it's not there - causes bugs without
 					gBattleScripting.bank = BANK_RAID_BOSS;
 					gBattleStringLoader = gText_RaidBattleReveal;
 					BattleScriptPushCursorAndCallback(BattleScript_RaidBattleStart);

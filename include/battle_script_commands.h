@@ -29,6 +29,9 @@
 #define BS_GET_OPPONENT2                14
 #define BS_GET_SWITCHING_BANK           15
 
+//Used of openpartyscreen
+#define OPEN_PARTY_ALLOW_CANCEL 0x80
+
 //Atk 48
 #define ATK48_STAT_NEGATIVE         0x1
 #define ATK48_STAT_BY_TWO           0x2
