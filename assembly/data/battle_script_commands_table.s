@@ -219,7 +219,7 @@ gBattleScriptingCommandsTable:
 .word atkCA_setforcedtarget
 .word 0x802bdb5					@setcharge
 .word atkCC_callterrainattack
-.word 0x802be8d					@cureifburnedparalysedorpoisoned
+.word atkCD_cureifburnedparalysedorpoisoned
 .word atkCE_settorment
 .word atkCF_jumpifnodamage
 .word atkD0_settaunt

@@ -4322,6 +4322,22 @@ u16 GetNaturePowerMove(void)
 	return move;
 }
 
+void atkCD_cureifburnedparalysedorpoisoned(void) // refresh
+{
+    if (gBattleMons[gBankAttacker].status1 & (STATUS1_POISON | STATUS1_BURN | STATUS1_PARALYSIS | STATUS1_TOXIC_POISON))
+    {
+        gBattleMons[gBankAttacker].status1 = 0;
+        gBattlescriptCurrInstr += 5;
+        gActiveBattler = gBankAttacker;
+        EmitSetMonData(0, REQUEST_STATUS_BATTLE, 0, 4, &gBattleMons[gActiveBattler].status1);
+        MarkBufferBankForExecution(gActiveBattler);
+    }
+    else
+    {
+        gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+    }
+}
+
 void atkCE_settorment(void)
 {
 	if (!CanBeTormented(gBankTarget) || !BATTLER_ALIVE(gBankTarget))

@@ -1422,6 +1422,7 @@ VarGetEventObjectGraphicsId = 0x806e5a4 | 1;
 
 
 /* BG Functions */
+ClearGpuRegBits = 0x8000B14 | 1;
 ResetBgsAndClearDma3BusyFlags = 0x8001618 | 1;
 InitBgsFromTemplates = 0x8001658 | 1;
 LoadBgTiles = 0x80017D0 | 1;
@@ -1443,6 +1444,7 @@ FadeBgPalAndFillBlack = 0x807DB38 | 1;
 clear_scheduled_bg_copies_to_vram = 0x80F6790 | 1;
 BgIdMarkForSync = 0x80F67A4 | 1;
 ResetTempTileDataBuffers = 0x80F6808 | 1;
+ResetBgPositions = 0x80F6C14 | 1;
 ResetAllPicSprites = 0x810BB8C | 1;
 free_temp_tile_data_buffers_if_possible = 0x80F682C | 1;
 decompress_and_copy_tile_data_to_vram = 0x80F6878 | 1;
@@ -1515,6 +1517,7 @@ HofPC_PutText = 0x810F650 | 1;
 sub_8112450 = 0x8112450 | 1;
 
 /* Title Screen Functions */
+sub_8071898 = 0x8071898 | 1;
 SetTitleScreenScene = 0x8078C90 | 1;
 Task_TitleScreen_SlideWin0 = 0x80792C8 | 1;
 TitleScreen_CreateBlankSprite = 0x80799F0 | 1;

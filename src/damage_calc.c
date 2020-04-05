@@ -3060,9 +3060,9 @@ static u16 AdjustBasePower(struct DamageCalc* data, u16 power)
 			if (attackerGender != 0xFF && targetGender != 0xFF)
 			{
 				if (attackerGender == targetGender)
-					power = (power * 125) / 10;
+					power = (power * 125) / 100;
 				else
-					power = (power * 75) / 10;
+					power = (power * 75) / 100;
 			}
 			break;
 
