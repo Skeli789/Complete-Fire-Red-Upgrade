@@ -46,6 +46,10 @@ SaveSectionOffsets 080DA23C
 
 gStatusConditionStringsTable 080D7850
 
+gTypeNames 080D8510
+gTypeNames 0811972C
+gTypeNames 0811977C
+
 ##Scripts
 BattleScript_RainDishActivates 0801A4A0
 BattleScript_WildDoubleSwitchFix 081D86AE
