@@ -759,6 +759,11 @@ MOVESCR_CHECK_0:
 						DECREASE_VIABILITY(10);
 					break;
 
+				case MOVE_STUFFCHEEKS:
+					if (gNewBS->SavedConsumedItems[bankAtk] == ITEM_NONE || !IsBerry(gNewBS->SavedConsumedItems[bankAtk]))
+						DECREASE_VIABILITY(10);
+					break;
+
 				default:
 					if (data->atkAbility == ABILITY_CONTRARY || !STAT_CAN_RISE(bankAtk, STAT_STAGE_DEF))
 						DECREASE_VIABILITY(10);

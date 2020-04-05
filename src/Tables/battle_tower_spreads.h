@@ -37394,12 +37394,12 @@ const struct BattleTowerSpread gFrontierSpreads[] =
 		.spAtkEv = 4,
 		.spdEv = 252,
 		.ability = FRONTIER_ABILITY_1, //ABILITY_CHEEKPOUCH
-		.item = ITEM_AGUAV_BERRY,
+		.item = ITEM_STARF_BERRY,
 		.moves =
 		{
-			MOVE_DISCHARGE,
 			MOVE_NUZZLE,
 			MOVE_SUPERFANG,
+			MOVE_STUFFCHEEKS,
 			MOVE_RECYCLE,
 		},
 		.ball = BALL_TYPE_RANDOM,
