@@ -1286,8 +1286,9 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 			break;
 
 		case ATK49_RAID_MON_PREP_MORE_ATTACKS:
-			if (BATTLER_ALIVE(gBankAttacker)
-			&& GetBattlerPosition(gBankAttacker) == B_POSITION_OPPONENT_LEFT
+			if (IsRaidBattle()
+			&& BATTLER_ALIVE(gBankAttacker)
+			&& gBankAttacker == BANK_RAID_BOSS
 			&& (SPLIT(gCurrentMove) == SPLIT_STATUS || !IsAnyMaxMove(gCurrentMove)) //Status move or Raid Boss didn't use Max Move
 			&& Random() % 100 < GetRaidBattleRepeatedAttackChance(gBankAttacker))
 				gNewBS->dynamaxData.attackAgain = TRUE;
