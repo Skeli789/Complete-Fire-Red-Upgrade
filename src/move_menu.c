@@ -1619,6 +1619,12 @@ u8 TrySetCantSelectMoveBattleScript(void)
 		gSelectionBattleScripts[gActiveBattler] = BattleScript_SelectingMoveWithNoPP;
 		++limitations;
 	}
+	
+	if (limitations != 0)
+	{
+		gNewBS->dynamaxData.toBeUsed[gActiveBattler] = FALSE;
+		gNewBS->zMoveData.toBeUsed[gActiveBattler] = FALSE;
+	}
 
 	return limitations;
 }
