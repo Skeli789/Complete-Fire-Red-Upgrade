@@ -10429,7 +10429,7 @@ const struct BattleTowerSpread gLegendaryTowerSpread_Gail[] =
 		.spAtkEv = 252,
 		.spDefEv = 4,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_PRESSURE
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_VOLTABSORB
 		.item = ITEM_ELECTRIUM_Z,
 		.moves =
 		{
@@ -10456,7 +10456,7 @@ const struct BattleTowerSpread gLegendaryTowerSpread_Gail[] =
 		.spAtkEv = 252,
 		.spDefEv = 4,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_INNERFOCUS
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_VOLTABSORB
 		.item = ITEM_MAGO_BERRY,
 		.moves =
 		{
@@ -17771,7 +17771,7 @@ const struct BattleTowerSpread gLegendaryTowerSpread_Galavan[] =
 		.hpEv = 220,
 		.spAtkEv = 36,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_PRESSURE
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_VOLTABSORB
 		.item = ITEM_LEFTOVERS,
 		.moves =
 		{
@@ -17797,7 +17797,7 @@ const struct BattleTowerSpread gLegendaryTowerSpread_Galavan[] =
 		.spAtkEv = 252,
 		.spDefEv = 4,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_PRESSURE
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_VOLTABSORB
 		.item = ITEM_ASSAULT_VEST,
 		.moves =
 		{
@@ -17823,7 +17823,7 @@ const struct BattleTowerSpread gLegendaryTowerSpread_Galavan[] =
 		.spAtkEv = 252,
 		.spDefEv = 4,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_1, //ABILITY_PRESSURE
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_VOLTABSORB
 		.item = ITEM_ASSAULT_VEST,
 		.moves =
 		{
