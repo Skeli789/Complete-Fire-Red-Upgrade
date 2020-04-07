@@ -402,7 +402,7 @@ u8 SendMonToPC(struct Pokemon* mon)
 				gSpecialVar_MonBoxId = boxNo;
 				gSpecialVar_MonBoxPos = boxPos;
 				if (GetSomeBoxId() != boxNo)
-					FlagClear(FLAG_SYS_CHANGED_BOX_TO_STORE_MON);
+					FlagClear(FLAG_SHOWN_BOX_WAS_FULL_MESSAGE);
 				VarSet(VAR_PC_BOX_TO_SEND_MON, boxNo);
 				return MON_GIVEN_TO_PC;
 			}
@@ -428,7 +428,7 @@ bool8 SendMonToBoxPos(struct Pokemon* mon, u8 boxNo, u8 boxPos)
 	gSpecialVar_MonBoxId = boxNo;
 	gSpecialVar_MonBoxPos = boxPos;
 	if (GetSomeBoxId() != boxNo)
-		FlagClear(FLAG_SYS_CHANGED_BOX_TO_STORE_MON);
+		FlagClear(FLAG_SHOWN_BOX_WAS_FULL_MESSAGE);
 	VarSet(VAR_PC_BOX_TO_SEND_MON, boxNo);
 	return FALSE;
 

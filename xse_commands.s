@@ -200,8 +200,7 @@
 .byte \callstdif_param1
 .endm
 
-@jumpram's documentation may not be complete
-.macro jumpram
+.macro gotoram
 .byte 0xC
 .endm
 

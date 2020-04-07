@@ -33,6 +33,7 @@ extern u8* sScriptStringVars[]; //Text buffers
 extern struct ScriptContext gScriptEnv1;	//03000EB0
 extern struct ScriptContext gScriptEnv2;	//03000F28
 extern const u8* gLoadPointer; //0x03000f14
+extern const u8* gRAMScriptPtr; //0x20370A4
 
 #define ScriptReadByte(ctx) (*(ctx->scriptPtr++))
 u16 __attribute__((long_call)) ScriptReadHalfword(struct ScriptContext *ctx);

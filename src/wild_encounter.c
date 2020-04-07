@@ -388,6 +388,14 @@ enum
 #define WILD_CHECK_REPEL	0x1
 #define WILD_CHECK_KEEN_EYE 0x2
 
+static void ClearDailyEventFlags(void)
+{
+	#ifdef FLAG_DAILY_EVENTS_START
+	for (u32 i = FLAG_DAILY_EVENTS_START; i < FLAG_DAILY_EVENTS_START + 0x100; ++i)
+		FlagClear(i);
+	#endif
+}
+
 void TryUpdateSwarm(void)
 {
 	u32 backupVar = VarGet(VAR_SWARM_DAILY_EVENT) | (VarGet(VAR_SWARM_DAILY_EVENT + 1) << 16);
@@ -399,6 +407,7 @@ void TryUpdateSwarm(void)
 
 		u32 daysSince = GetDaysSinceTimeInValue(backupVar);
 		UpdatePartyPokerusTime(daysSince);
+		ClearDailyEventFlags();
 	}
 }
 

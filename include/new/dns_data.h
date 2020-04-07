@@ -932,6 +932,55 @@ const struct SpecificTilesetFade gSpecificTilesetFades[] =
 			TILESET_PAL_FADE_END
 		},
 	},
+	{ //Magnolia Town Windows
+		.tilesetPointer = 0x82D4D04, //Tileset 26
+		.paletteNumToFade = 8,
+		.paletteIndicesToFade =
+		{
+			{1,  RGB(31, 31, 14)},
+			{2,  RGB(31, 30, 0)},
+			TILESET_PAL_FADE_END
+		},
+	},
+	{ //Magnolia Town Pal 12
+		.tilesetPointer = 0x82D4D04, //Tileset 26
+		.paletteNumToFade = 12,
+		.paletteIndicesToFade =
+		{
+			{8,  RGB(31, 31, 14)},
+			{9,  RGB(31, 30, 0)},
+			{10, RGB(31, 31, 20)},
+			{12, RGB(31, 31, 14)},
+			{13, RGB(31, 30, 1)},
+			{14, RGB(31, 30, 0)},
+			TILESET_PAL_FADE_END
+		},
+	},
+	{ //Redwood Village Windows
+		.tilesetPointer = 0x82D4DF4, //Tileset 36
+		.paletteNumToFade = 10,
+		.paletteIndicesToFade =
+		{
+			{1,  RGB(31, 31, 20)},
+			{2,  RGB(31, 31, 14)},
+			{3,  RGB(31, 30, 0)},
+			TILESET_PAL_FADE_END
+		},
+	},
+	{ //Redwood Village Pal 12
+		.tilesetPointer = 0x82D4DF4, //Tileset 36
+		.paletteNumToFade = 12,
+		.paletteIndicesToFade =
+		{
+			{8,  RGB(31, 31, 14)},
+			{9,  RGB(31, 30, 0)},
+			{10, RGB(31, 31, 20)},
+			{12, RGB(31, 31, 14)},
+			{13, RGB(31, 30, 1)},
+			{14, RGB(31, 30, 0)},
+			TILESET_PAL_FADE_END
+		},
+	},
 };
 
 #endif

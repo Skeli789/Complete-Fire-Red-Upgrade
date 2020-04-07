@@ -744,6 +744,7 @@ void __attribute__((long_call)) ZeroEnemyPartyMons(void);
 
 u8 __attribute__((long_call)) CalculatePPWithBonus(u16 move, u8 ppBonuses, u8 moveIndex);
 u16 __attribute__((long_call)) SpeciesToNationalPokedexNum(u16 species);
+u16 __attribute__((long_call)) NationalPokedexNumToSpecies(u16 nationalNum);
 s8 __attribute__((long_call)) GetPokeFlavourRelation(u32 pid, u8 flavor);
 bool8 __attribute__((long_call)) IsTradedMon(struct Pokemon *mon);
 bool8 __attribute__((long_call)) IsOtherTrainer(u32 otId, u8* otName);
@@ -840,7 +841,6 @@ u16 nature_stat_mod(u8 nature, u16 n, u8 statIndex);
 void MonRestorePP(struct Pokemon *);
 void BoxMonRestorePP(struct BoxPokemon *);
 
-u16 NationalPokedexNumToSpecies(u16 nationalNum);
 u16 NationalToHoennOrder(u16);
 u16 SpeciesToNationalPokedexNum(u16);
 u16 HoennToNationalOrder(u16);

@@ -1041,3 +1041,4 @@ void DestroyRaidShieldSprite(void)
 		}
 	}
 }
+
