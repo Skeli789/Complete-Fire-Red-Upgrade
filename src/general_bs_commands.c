@@ -848,6 +848,8 @@ void atk0F_resultmessage(void)
 
 	if (gMoveResultFlags & MOVE_RESULT_MISSED && (!(gMoveResultFlags & MOVE_RESULT_DOESNT_AFFECT_FOE) || gNewBS->missStringId[gBankTarget] > 2))
 	{
+		gNewBS->MetronomeCounter[gBankAttacker] = 0;
+
 		if (gNewBS->missStringId[gBankTarget] == 3 || gNewBS->missStringId[gBankTarget] == 4) //Levitate + Wonder Guard
 		{
 			BattleScriptPush(gBattlescriptCurrInstr + 1);
@@ -922,6 +924,7 @@ void atk0F_resultmessage(void)
 			break;
 
 		case MOVE_RESULT_FAILED:
+			gNewBS->MetronomeCounter[gBankAttacker] = 0;
 			stringId = STRINGID_BUTITFAILED;
 			break;
 
@@ -930,7 +933,10 @@ void atk0F_resultmessage(void)
 			{
 				stringId = 0x184;
 				if (ShouldPrintTwoFoesMessage(MOVE_RESULT_DOESNT_AFFECT_FOE))
+				{
+					gNewBS->MetronomeCounter[gBankAttacker] = 0;
 					gBattleStringLoader = gText_DoesntAffectTwoFoes;
+				}
 				else if (ShouldRelyOnTwoFoesMessage(MOVE_RESULT_DOESNT_AFFECT_FOE))
 				{
 					//Was handled or will be handled as a double string
@@ -940,7 +946,10 @@ void atk0F_resultmessage(void)
 					stringId = STRINGID_ITDOESNTAFFECT;
 			}
 			else
+			{
+				gNewBS->MetronomeCounter[gBankAttacker] = 0;
 				stringId = STRINGID_ITDOESNTAFFECT;
+			}
 			break;
 
 		case MOVE_RESULT_FOE_HUNG_ON:
@@ -964,7 +973,10 @@ void atk0F_resultmessage(void)
 				{
 					stringId = 0x184;
 					if (ShouldPrintTwoFoesMessage(MOVE_RESULT_DOESNT_AFFECT_FOE))
+					{
+						gNewBS->MetronomeCounter[gBankAttacker] = 0;
 						gBattleStringLoader = gText_DoesntAffectTwoFoes;
+					}
 					else if (ShouldRelyOnTwoFoesMessage(MOVE_RESULT_DOESNT_AFFECT_FOE))
 					{
 						//Was handled or will be handled as a double string
@@ -974,7 +986,10 @@ void atk0F_resultmessage(void)
 						stringId = STRINGID_ITDOESNTAFFECT;
 				}
 				else
+				{
+					gNewBS->MetronomeCounter[gBankAttacker] = 0;
 					stringId = STRINGID_ITDOESNTAFFECT;
+				}
 			}
 			else if (gMoveResultFlags & MOVE_RESULT_ONE_HIT_KO)
 			{
@@ -1019,6 +1034,7 @@ void atk0F_resultmessage(void)
 			}
 			else if (gMoveResultFlags & MOVE_RESULT_FAILED)
 			{
+				gNewBS->MetronomeCounter[gBankAttacker] = 0;
 				stringId = STRINGID_BUTITFAILED;
 			}
 			else
