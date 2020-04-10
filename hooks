@@ -214,7 +214,8 @@ ItemIdToBallId 080EF52C 1
 OakIntroPokeballFixHook 804B946 0
 TradePokeballFixHook 804BBD8 0
 DoubleWildPokeBallItemUseFixHook 080A1E2C 0
-DoubleWildDexHook2 802D9D8 0
+DoubleWildDexHook1 802D9D8 0
+DoubleWildDexHook2 802DAEC 0
 
 ##Illusion Hooks
 BattleLoadOpponentMonSpriteGfxHook 803432C 2

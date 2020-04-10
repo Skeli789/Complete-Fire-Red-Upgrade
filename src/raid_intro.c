@@ -561,7 +561,7 @@ static void ShowRaidPokemonSprite(void)
 	const struct CompressedSpritePalette* pal = GetMonSpritePalStructFromOtIdPersonality(species, otid, personality);
 
 	//Create black silhouette
-	sRaidBattleIntroPtr->monSpriteId = CreatePicSprite2(species, otid, personality, 1, 45, 57, 0, pal->tag);
+	sRaidBattleIntroPtr->monSpriteId = CreateMonPicSprite_HandleDeoxys(species, otid, personality, 1, 45, 57, 0, pal->tag);
 
 	u16* palette = &gPlttBufferUnfaded2[IndexOfSpritePaletteTag(pal->tag) * 16];
 	for (int i = 0; i < 16; i++)

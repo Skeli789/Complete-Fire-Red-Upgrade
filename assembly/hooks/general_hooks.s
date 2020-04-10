@@ -174,8 +174,9 @@ RemoveBagItem:
 bxr3:
 	bx r3
 
+.pool
 @0x802D9D8 with r0
-DoubleWildDexHook2:
+DoubleWildDexHook1:
 	push {r4-r5,lr}
 	sub sp, #0x18
 	bl LoadTargetPartyData
@@ -183,7 +184,16 @@ DoubleWildDexHook2:
 	ldr r2, =0x802D9E0 | 1
 	bx r2
 
-@0x8015A44 with r1
+.pool
+@0x802DAEC with r0
+DoubleWildDexHook2:
+	mov r0, r5
+	bl CreateCapturedMonDexPic
+	ldr r0, =0x802DB0E | 1
+	bx r0
+
+.pool
+@0x0802DE4E with r0
 CaptureExperienceEvolutionHook:
 	ldrb r0, [r0]
 	cmp r0, #0x0
@@ -203,6 +213,7 @@ EvolutionPostBattle:
 	ldr r0, =0x8015A6C | 1
 	bx r0	
 
+.pool
 @0x8013D14 with r1
 TrainerSlidingEndTurnHook:
 	mov r1, r10
@@ -214,12 +225,14 @@ TrainerSlidingEndTurnHook:
 	ldr r1, =0x8013D1C | 1
 	bx r1
 
+.pool
 @0x80813B8 with r0
 LoadProperMusicForLinkBattlesHook:
 	bl LoadProperMusicForLinkBattles
 	ldr r1, =0x80813C6 | 1
 	bx r1
 
+.pool
 @0x806E454 with r1
 ExpandedVarsHook:
 	push {r4-r6, lr}

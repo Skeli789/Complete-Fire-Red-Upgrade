@@ -48,6 +48,7 @@ static const u8 sMoveEffectsThatIgnoreSubstitute[] =
 	MOVE_EFFECT_ION_DELUGE,
 	MOVE_EFFECT_BREAK_SCREENS,
 	MOVE_EFFECT_REMOVE_TERRAIN,
+	MOVE_EFFECT_EAT_BERRY,
 	0xFF,
 };
 

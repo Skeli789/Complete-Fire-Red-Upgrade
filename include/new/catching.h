@@ -8,14 +8,19 @@
  *		  details about Poke Ball types.
  */
 
-//Exported Functions
+//Battle Script Commands
 void atkEF_handleballthrow(void);
+void atkF0_givecaughtmon(void);
+void atkF1_trysetcaughtmondexflags(void);
+
+//Exported Functions
 struct Pokemon* LoadTargetPartyData(void);
 bool8 IsCriticalCapture(void);
 bool8 IsCriticalCaptureSuccess(void);
 
 //Functions Hooked In
 u8 GiveMonToPlayer(pokemon_t* mon);
+void CreateCapturedMonDexPic(u16 species);
 u8 ItemIdToBallId(u16 ballItem);
 void PlayerHandleSuccessBallThrowAnim(void);
 void PlayerHandleBallThrowAnim(void);

@@ -254,7 +254,7 @@ gBattleScriptingCommandsTable:
 .word 0x802d365					@snatchmove
 .word atkEE_removelightscreenreflect	@removereflectlightscreen
 .word atkEF_handleballthrow		@pokemoncatchfunction
-.word 0x802d801					@catchpoke
+.word atkF0_givecaughtmon		@catchpoke
 .word atkF1_trysetcaughtmondexflags
 .word 0x802d9d9					@displaydexinfo
 .word 0x802dd39					@capturenicknamepoke

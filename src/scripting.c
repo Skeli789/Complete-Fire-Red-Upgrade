@@ -2053,7 +2053,7 @@ void Task_Hof_DisplayMon(u8 taskId) {
 	// if (currMon->species == SPECIES_EGG)
 	//	 field6 += 10;
 
-	spriteId = CreatePicSprite2(currMon->species, currMon->tid, currMon->personality, 1, xPos, yPos, currMonId, 0xFFFF);
+	spriteId = CreateMonPicSprite_HandleDeoxys(currMon->species, currMon->tid, currMon->personality, 1, xPos, yPos, currMonId, 0xFFFF);
 	gSprites[spriteId].tDestinationX = field4;
 	gSprites[spriteId].tDestinationY = field6;
 	gSprites[spriteId].data[0] = 0;
@@ -2170,7 +2170,7 @@ void Task_HofPC_DrawSpritesPrintText(u8 taskId) {
 			if (currMon->species == SPECIES_EGG)
 				posY += 10;
 
-			spriteId = CreatePicSprite2(currMon->species, currMon->tid, currMon->personality, 1, posX, posY, i, 0xFFFF);
+			spriteId = CreateMonPicSprite_HandleDeoxys(currMon->species, currMon->tid, currMon->personality, 1, posX, posY, i, 0xFFFF);
 			gSprites[spriteId].oam.priority = 1;
 			gTasks[taskId].tMonSpriteId(i) = spriteId;
 		} else {

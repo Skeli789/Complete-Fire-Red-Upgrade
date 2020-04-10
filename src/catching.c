@@ -3,9 +3,11 @@
 #include "../include/battle_anim.h"
 #include "../include/event_data.h"
 #include "../include/field_player_avatar.h"
+#include "../include/field_specials.h"
 #include "../include/item.h"
 #include "../include/overworld.h"
 #include "../include/random.h"
+#include "../include/string_util.h"
 #include "../include/constants/items.h"
 
 #include "../include/new/battle_util.h"
@@ -347,14 +349,14 @@ void atkEF_handleballthrow(void)
 		{
 			u8 shakes, maxShakes;
 
-            if (CriticalCapture(odds))
-            {
-                maxShakes = 2;  //Critical capture doesn't gauarantee capture
-            }
-            else
-            {
-                maxShakes = 4;
-            }
+			if (CriticalCapture(odds))
+			{
+				maxShakes = 2;  //Critical capture doesn't gauarantee capture
+			}
+			else
+			{
+				maxShakes = 4;
+			}
 
 			if (ballType == BALL_TYPE_MASTER_BALL
 			||	ballType == BALL_TYPE_PARK_BALL)
@@ -376,10 +378,10 @@ void atkEF_handleballthrow(void)
 
 			if (shakes >= maxShakes)
 			{
-                if (gNewBS->criticalCapture)
-                    gNewBS->criticalCaptureSuccess = TRUE;
+				if (gNewBS->criticalCapture)
+					gNewBS->criticalCaptureSuccess = TRUE;
 
-                gBattlescriptCurrInstr = BattleScript_SuccessBallThrow;
+				gBattlescriptCurrInstr = BattleScript_SuccessBallThrow;
 				if (ballType != BALL_TYPE_PARK_BALL || IsRaidBattle())
 					SetMonData(&gEnemyParty[gBattlerPartyIndexes[gBankTarget]], MON_DATA_POKEBALL, &ballType);
 
@@ -390,13 +392,13 @@ void atkEF_handleballthrow(void)
 			}
 			else if (IsRaidBattle())
 			{
-                gBattleCommunication[MULTISTRING_CHOOSER] = shakes;
+				gBattleCommunication[MULTISTRING_CHOOSER] = shakes;
 				gBattlescriptCurrInstr = BattleScript_RaidMonEscapeBall;
 			}
 			else //Rip
 			{
-                gBattleCommunication[MULTISTRING_CHOOSER] = shakes;
-                gBattlescriptCurrInstr = BattleScript_ShakeBallThrow;
+				gBattleCommunication[MULTISTRING_CHOOSER] = shakes;
+				gBattlescriptCurrInstr = BattleScript_ShakeBallThrow;
 			}
 		}
 	}
@@ -499,23 +501,59 @@ u8 GiveMonToPlayer(struct Pokemon* mon) //Hook in
 	return MON_GIVEN_TO_PARTY;
 }
 
+void atkF0_givecaughtmon(void)
+{
+	struct Pokemon* mon = LoadTargetPartyData();
+
+	if (GiveMonToPlayer(mon) != MON_GIVEN_TO_PARTY)
+	{
+		if (!ShouldShowBoxWasFullMessage())
+		{
+			gBattleCommunication[MULTISTRING_CHOOSER] = 0;
+			StringCopy(gStringVar1, GetBoxNamePtr(VarGet(VAR_PC_BOX_TO_SEND_MON)));
+			GetMonData(mon, MON_DATA_NICKNAME, gStringVar2);
+		}
+		else
+		{
+			StringCopy(gStringVar1, GetBoxNamePtr(VarGet(VAR_PC_BOX_TO_SEND_MON))); //Box the mon was sent to
+			GetMonData(mon, MON_DATA_NICKNAME, gStringVar2);
+			StringCopy(gStringVar3, GetBoxNamePtr(GetPCBoxToSendMon())); //Box the mon was going to be sent to
+			gBattleCommunication[MULTISTRING_CHOOSER] = 2;
+		}
+
+		if (FlagGet(FLAG_SYS_NOT_SOMEONES_PC))
+			++gBattleCommunication[MULTISTRING_CHOOSER];
+	}
+
+	gBattleResults.caughtMonSpecies = SPECIES(gBankTarget);
+	GetMonData(mon, MON_DATA_NICKNAME, gBattleResults.caughtMonNick);
+	++gBattlescriptCurrInstr;
+}
+
 void atkF1_trysetcaughtmondexflags(void)
 {
 	struct Pokemon* mon = LoadTargetPartyData();
 	TryRevertMega(mon); //Megas aren't set in the habitat table
 
-    u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
-    u32 personality = GetMonData(mon, MON_DATA_PERSONALITY, NULL);
+	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
+	u32 personality = GetMonData(mon, MON_DATA_PERSONALITY, NULL);
 
-    if (GetSetPokedexFlag(SpeciesToNationalPokedexNum(species), FLAG_GET_CAUGHT))
-    {
-        gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
-    }
-    else
-    {
-        HandleSetPokedexFlag(SpeciesToNationalPokedexNum(species), FLAG_SET_CAUGHT, personality);
-        gBattlescriptCurrInstr += 5;
-    }
+	if (GetSetPokedexFlag(SpeciesToNationalPokedexNum(species), FLAG_GET_CAUGHT))
+	{
+		gBattlescriptCurrInstr = T1_READ_PTR(gBattlescriptCurrInstr + 1);
+	}
+	else
+	{
+		HandleSetPokedexFlag(SpeciesToNationalPokedexNum(species), FLAG_SET_CAUGHT, personality);
+		gBattlescriptCurrInstr += 5;
+	}
+}
+
+void CreateCapturedMonDexPic(u16 species)
+{
+	CreateMonPicSprite_HandleDeoxys(species, gBattleMons[gBankTarget].otId,
+									gBattleMons[gBankTarget].personality,
+									TRUE, 120, 64, 0, 0xFFFF);
 }
 
 u8 ItemIdToBallId(u16 ballItem)
@@ -680,7 +718,7 @@ bool8 TryGetPokeBallBattleScript(void)
 
 const struct SpriteTemplate* OakIntroPokeballFix(void)
 {
-    LoadCompressedSpriteSheetUsingHeap(&gBallSpriteSheets[BALL_TYPE_POKE_BALL]);
-    LoadCompressedSpritePaletteUsingHeap(&gBallSpritePalettes[BALL_TYPE_POKE_BALL]);
-    return &gBallSpriteTemplates[BALL_TYPE_POKE_BALL];
+	LoadCompressedSpriteSheetUsingHeap(&gBallSpriteSheets[BALL_TYPE_POKE_BALL]);
+	LoadCompressedSpritePaletteUsingHeap(&gBallSpritePalettes[BALL_TYPE_POKE_BALL]);
+	return &gBallSpriteTemplates[BALL_TYPE_POKE_BALL];
 }

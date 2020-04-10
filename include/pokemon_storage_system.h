@@ -33,5 +33,5 @@ struct PokemonStorage
 
 u8 __attribute__((long_call)) StorageGetCurrentBox(void);
 void __attribute__((long_call)) CompactPartySlots(void);
-u16 __attribute__((long_call)) GetSomeBoxId(void);
-void __attribute__((long_call)) SetSomeBoxId(u8 id);
+u16 __attribute__((long_call)) GetPCBoxToSendMon(void);
+void __attribute__((long_call)) SetPCBoxToSendMon(u8 id);

@@ -407,6 +407,16 @@ MaxLevelChange1:
 	mov r8, r8
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Remove Caught Mon Pokedex 151 Limiter
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+.org 0x10682E, 0xFF
+	mov r8, r8
+
+.org 0x106B80, 0xFF
+RemoveCaughtMonPokedex151Limiter:
+	b RemoveCaughtMonPokedex151Limiter + 0x24 @0x106BA4
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Remove TM Animation
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 .org 0x11CA2C, 0xFF

@@ -689,9 +689,9 @@ GetMonDataFromAnyBox = 0x808BA18 | 1;
 SetMonDataFromAnyBox = 0x808BA5C | 1;
 CompactPartySlots = 0x80937DC | 1;
 sub_8094AD8 = 0x8094AD8 | 1;
-SetSomeBoxId = 0x80CC79C | 1;
-GetSomeBoxId = 0x80CC7A8 | 1;
-
+SetPCBoxToSendMon = 0x80CC79C | 1;
+GetPCBoxToSendMon = 0x80CC7A8 | 1;
+ShouldShowBoxWasFullMessage = 0x80CC7B4 | 1;
 
 /* Pokemon Icons */
 CreateMonIcon = 0x8096E18 | 1;
@@ -1514,7 +1514,7 @@ AddTextPrinterParameterized2 = 0x80F6CD0 | 1;
 NewMenuHelpers_DrawDialogueFrame = 0x80F6EE4 | 1;
 GetFontAttribute = 0x80F79D8 | 1;
 dp13_810BB8C = 0x810BB8C | 1;
-CreatePicSprite2 = 0x810C1CC | 1;
+CreateMonPicSprite_HandleDeoxys = 0x810C1CC | 1;
 HofPC_CreateWindow = 0x810F558 | 1;
 HofPC_PutText = 0x810F650 | 1;
 sub_8112450 = 0x8112450 | 1;
