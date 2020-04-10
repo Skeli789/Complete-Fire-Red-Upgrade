@@ -218,8 +218,11 @@ void BuildTrainerPartySetup(void)
 		{
 			SetWildMonHeldItem();
 
-			gEnemyParty[0].maxHP *= GetRaidBattleHPBoost();
-			gEnemyParty[0].hp *= GetRaidBattleHPBoost();
+			if (GetMonData(&gEnemyParty[0], MON_DATA_SPECIES, NULL) != SPECIES_SHEDINJA)
+			{
+				gEnemyParty[0].maxHP *= GetRaidBattleHPBoost();
+				gEnemyParty[0].hp *= GetRaidBattleHPBoost();
+			}
 		}
 	}
 
@@ -2474,7 +2477,7 @@ void CreateFrontierRaidMon(unusedArg u16 species)
 	struct Pokemon mon;
 	const struct BattleTowerSpread* spreadPtr = (const struct BattleTowerSpread*) gPokeBackupPtr;
 
-	//spreadPtr = GetSpreadBySpecies(SPECIES_RAYQUAZA, gFrontierLegendarySpreads, NELEMS(gFrontierLegendarySpreads));
+	//spreadPtr = GetSpreadBySpecies(SPECIES_SHEDINJA, gFrontierSpreads, NELEMS(gFrontierSpreads));
 	if (spreadPtr == NULL)
 		return;
 

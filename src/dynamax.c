@@ -602,7 +602,9 @@ bool8 MonCanDynamax(struct Pokemon* mon)
 
 u8 GetDynamaxHPBoost(u8 bank)
 {
-	if (IsRaidBattle() && bank == BANK_RAID_BOSS)
+	if (SPECIES(bank) == SPECIES_SHEDINJA)
+		return 1;
+	else if (IsRaidBattle() && bank == BANK_RAID_BOSS)
 		return GetRaidBattleHPBoost();
 	else
 		return 2;
@@ -610,6 +612,9 @@ u8 GetDynamaxHPBoost(u8 bank)
 
 u8 GetMonDynamaxHPBoost(unusedArg struct Pokemon* mon)
 {
+	if (GetMonData(mon, MON_DATA_SPECIES, NULL) == SPECIES_SHEDINJA)
+		return 1;
+	
 	return 2;
 }
 
