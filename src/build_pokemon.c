@@ -3415,17 +3415,16 @@ bool8 GetAlternateHasSpecies(struct BoxPokemon* mon)
 	return GetBoxMonData(mon, MON_DATA_SPECIES, NULL) != SPECIES_NONE && !GetBoxMonData(mon, MON_DATA_SANITY_IS_BAD_EGG, NULL);
 }
 
-#define CALC_STAT(base, iv, ev, statIndex, field)			   \
-{															   \
-	s32 n = (((2 * base + iv + ev / 4) * level) / 100) + 5; 	\
-	u8 nature = GetNature(mon);								 \
-	n = ModifyStatByNature(nature, n, statIndex);			   \
-	SetMonData(mon, field, &n);								 \
+#define CALC_STAT(base, iv, ev, statIndex, field)			\
+{															\
+	u32 n = (((2 * base + iv + ev / 4) * level) / 100) + 5; \
+	n = ModifyStatByNature(nature, n, statIndex);			\
+	SetMonData(mon, field, &n);								\
 }
 
 void CalculateMonStatsNew(struct Pokemon *mon)
 {
-	int i;
+	u32 i;
 	u16 newMaxHP;
 	u8 ivs[NUM_STATS] = {0};
 	u8 evs[NUM_STATS] = {0};
@@ -3475,6 +3474,7 @@ void CalculateMonStatsNew(struct Pokemon *mon)
 
 	SetMonData(mon, MON_DATA_MAX_HP, &newMaxHP);
 
+	u8 nature = GetNature(mon);
 	if (IsScaleMonsBattle())
 	{
 		for (i = STAT_ATK; i < NUM_STATS; ++i) //HP doesn't change in Scalemons

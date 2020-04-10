@@ -34,8 +34,6 @@ enum
 	WALLPAPER_COUNT
 };
 
-
-
 typedef u8 BoxNameT[9];
 
 #define ORIGINAL_BOX_POKEMON_RAM ((struct CompressedPokemon*) (0x2029314 + 4))
@@ -160,10 +158,10 @@ void SetBoxMonDataAt(u8 boxId, u8 boxPosition, s32 request, const void* value)
 {
 	if (boxId < TOTAL_BOXES_COUNT && boxPosition < IN_BOX_COUNT)
 	{
-		struct BoxPokemon mon;
-		CreateBoxMonFromCompressedMon(&mon, &sPokemonBoxPtrs[boxId][boxPosition]); //Create temporary mon
-		SetBoxMonData(&mon, request, value);
-		CreateCompressedMonFromBoxMon(&mon, &sPokemonBoxPtrs[boxId][boxPosition]); //Copy new data back
+		struct Pokemon mon; //Not Box Mon just in case stats are modified by hold item form change and it corrupts data
+		CreateBoxMonFromCompressedMon((struct BoxPokemon*) &mon, &sPokemonBoxPtrs[boxId][boxPosition]); //Create temporary mon
+		SetBoxMonData((struct BoxPokemon*) &mon, request, value);
+		CreateCompressedMonFromBoxMon((struct BoxPokemon*) &mon, &sPokemonBoxPtrs[boxId][boxPosition]); //Copy new data back
 	}
 }
 
@@ -205,7 +203,7 @@ void SetBoxMonAt(u8 boxId, u8 boxPosition, struct BoxPokemon* src)
 {
 	if (boxId < TOTAL_BOXES_COUNT && boxPosition < IN_BOX_COUNT)
 	{
-		HoopaShayminPCRevertCheck((struct Pokemon*) src);
+		HoopaShayminPCRevertCheck((struct Pokemon*) src, FALSE); //Don't recalc stats for a box mon
 
 		struct CompressedPokemon mon;
 		CreateCompressedMonFromBoxMon(src, &mon);

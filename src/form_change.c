@@ -479,10 +479,10 @@ void HoopaShayminPCRevertLogic(struct Pokemon* dst, void* src)
 {
 	Memcpy(dst, src, sizeof(struct Pokemon));
 
-	HoopaShayminPCRevertCheck(dst);
+	HoopaShayminPCRevertCheck(dst, TRUE);
 }
 
-void HoopaShayminPCRevertCheck(struct Pokemon* mon)
+void HoopaShayminPCRevertCheck(struct Pokemon* mon, bool8 recalcStats)
 {
 	u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
 	u16 targetSpecies = SPECIES_NONE;
@@ -504,6 +504,7 @@ void HoopaShayminPCRevertCheck(struct Pokemon* mon)
 	if (targetSpecies != SPECIES_NONE)
 	{
 		SetMonData(mon, MON_DATA_SPECIES, &targetSpecies);
-		CalculateMonStats(mon);
+		if (recalcStats)
+			CalculateMonStats(mon);
 	}
 }

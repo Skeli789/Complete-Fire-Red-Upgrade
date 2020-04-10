@@ -18,7 +18,7 @@ bool8 TryFormRevert(pokemon_t* mon);
 void UpdateBurmy(void);
 species_t GetMiniorCoreSpecies(struct Pokemon* mon);
 void HoldItemFormChange(struct Pokemon* mon, u16 item);
-void HoopaShayminPCRevertCheck(struct Pokemon* mon);
+void HoopaShayminPCRevertCheck(struct Pokemon* mon, bool8 recalcStats);
 
 //Hooked In Functions
 void HandleFormChange(void);
