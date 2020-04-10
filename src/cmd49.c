@@ -941,11 +941,15 @@ void atk49_moveend(void) //All the effects that happen after a move is used
 
 								if (gBattleMoves[gCurrentMove].effect == EFFECT_SUPERPOWER //Only lower user stats once for Clanging Scales (and similar custom moves)
 								&&  gNewBS->AttackerDidDamageAtLeastOnce)
-									BattleScriptPush(gBattleScriptsForMoveEffects[0]);
+									gBattlescriptCurrInstr = gBattleScriptsForMoveEffects[0];
 								else
-									BattleScriptPush(gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect]);
+									gBattlescriptCurrInstr = gBattleScriptsForMoveEffects[gBattleMoves[gCurrentMove].effect];
 
-								gBattlescriptCurrInstr = BattleScript_FlushMessageBox;
+								if (SPLIT(gCurrentMove) == SPLIT_STATUS)
+								{
+									BattleScriptPushCursor();
+									gBattlescriptCurrInstr = BattleScript_FlushMessageBox;
+								}
 								return;
 							}
 							else if (gNewBS->MoveBounceInProgress)
