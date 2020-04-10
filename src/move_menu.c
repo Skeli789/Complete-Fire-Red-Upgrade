@@ -1848,7 +1848,11 @@ bool8 IsBagDisabled(void)
 static void TryLoadTypeIcons(void)
 {
 	#ifndef HEALTHBAR_TYPE_ICONS
-	if ((gBattleTypeFlags & BATTLE_TYPE_CAMOMONS)
+	if (((gBattleTypeFlags & BATTLE_TYPE_CAMOMONS)
+	#ifdef FLAG_HEALTHBAR_TYPE_ICONS
+	|| FlagGet(FLAG_HEALTHBAR_TYPE_ICONS)
+	#endif
+	)
 	&&
 	#else
 	if (
