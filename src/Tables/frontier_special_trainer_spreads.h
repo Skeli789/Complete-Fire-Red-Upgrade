@@ -12262,7 +12262,7 @@ const struct BattleTowerSpread gMiddleCupTowerSpread_Lixdel[] =
 		.defEv = 4,
 		.spAtkEv = 252,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_PROTEAN
+		.ability = FRONTIER_ABILITY_1, //ABILITY_TORRENT
 		.item = ITEM_LIFE_ORB,
 		.moves =
 		{
@@ -12288,7 +12288,7 @@ const struct BattleTowerSpread gMiddleCupTowerSpread_Lixdel[] =
 		.defEv = 4,
 		.spAtkEv = 252,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_PROTEAN
+		.ability = FRONTIER_ABILITY_1, //ABILITY_TORRENT
 		.item = ITEM_LIFE_ORB,
 		.moves =
 		{
@@ -12314,7 +12314,7 @@ const struct BattleTowerSpread gMiddleCupTowerSpread_Lixdel[] =
 		.defEv = 4,
 		.spAtkEv = 252,
 		.spdEv = 252,
-		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_PROTEAN
+		.ability = FRONTIER_ABILITY_1, //ABILITY_TORRENT
 		.item = ITEM_LIFE_ORB,
 		.moves =
 		{

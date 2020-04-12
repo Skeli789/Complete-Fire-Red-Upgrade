@@ -2477,7 +2477,7 @@ void CreateFrontierRaidMon(unusedArg u16 species)
 	struct Pokemon mon;
 	const struct BattleTowerSpread* spreadPtr = (const struct BattleTowerSpread*) gPokeBackupPtr;
 
-	//spreadPtr = GetSpreadBySpecies(SPECIES_SHEDINJA, gFrontierSpreads, NELEMS(gFrontierSpreads));
+	//spreadPtr = GetSpreadBySpecies(SPECIES_RAYQUAZA, gFrontierLegendarySpreads, NELEMS(gFrontierLegendarySpreads));
 	if (spreadPtr == NULL)
 		return;
 
@@ -2551,6 +2551,22 @@ static u16 TryAdjustAestheticSpecies(u16 species)
 	u16 nationalDexNum = SpeciesToNationalPokedexNum(species);
 
 	switch (nationalDexNum) {
+		#ifdef NATIONAL_DEX_SHELLOS
+		case NATIONAL_DEX_SHELLOS:
+			if ((Random() & 1) == 0)
+				species = SPECIES_SHELLOS;
+			else
+				species = SPECIES_SHELLOS_EAST;
+			break;
+		#endif
+		#ifdef NATIONAL_DEX_GASTRODON
+		case NATIONAL_DEX_GASTRODON:
+			if ((Random() & 1) == 0)
+				species = SPECIES_GASTRODON;
+			else
+				species = SPECIES_GASTRODON_EAST;
+			break;
+		#endif
 		#ifdef NATIONAL_DEX_DEERLING
 		case NATIONAL_DEX_DEERLING:
 			species = gDeerlingForms[Random() % gNumDeerlingForms];
