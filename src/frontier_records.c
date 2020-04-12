@@ -126,7 +126,7 @@ static void Task_FrontierRecordsWaitForKeyPress(u8);
 static void Task_FrontierRecordsFadeOut(u8);
 static void FreeReusableThings(u8 taskId);
 static void DisplayFrontierRecordsText(void);
-static void TryCreateStarSprite(s16 x, s16 y, u8 arrayIndex, u8 maxStreak);
+static void TryCreateStarSprite(s16 x, s16 y, u8 arrayIndex, u16 maxStreak);
 static void InitFrontierRecordsBg(void);
 static void InitFrontierRecordsWindow(void);
 //static void PrintFrontierRecordsText(u8 *, u8, u8);
@@ -752,7 +752,7 @@ COMMIT_WINDOWS:
 	}
 }
 
-static void TryCreateStarSprite(s16 x, s16 y, u8 arrayIndex, u8 maxStreak)
+static void TryCreateStarSprite(s16 x, s16 y, u8 arrayIndex, u16 maxStreak)
 {
 	u8 spriteId = 0;
 
