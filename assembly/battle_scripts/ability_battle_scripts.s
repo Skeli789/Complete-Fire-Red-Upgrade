@@ -814,7 +814,7 @@ BattleScript_SynchronizeActivates:
 	call BattleScript_AbilityPopUp
 	jumpifstatus BANK_TARGET STATUS_ANY SynchronizeNoEffect
 	jumpifsideaffecting BANK_TARGET SIDE_SAFEGUARD SynchronizeSafeguard
-	seteffecttarget
+	seteffectprimary
 	jumpifstatus BANK_TARGET STATUS_ANY SynchronizeReturn
 
 SynchronizeNoEffect:

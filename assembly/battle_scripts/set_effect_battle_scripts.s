@@ -174,7 +174,7 @@ BattleScript_MaxMoveParalyzeFoes:
 
 BattleScript_MaxMovePayDayConfuseFoes:
 	setmoveeffect MOVE_EFFECT_PAYDAY
-	seteffecttarget
+	seteffectprimary
 	goto BattleScript_MaxMoveConfuseFoes
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -203,7 +203,7 @@ BS_MaxMoveFocusEnergy_RestoreOriginalAttacker:
 
 BattleScript_MaxMoveTrap:
 	setmoveeffect MOVE_EFFECT_PREVENT_ESCAPE
-	seteffecttarget
+	seteffectprimary
 	printstring 0x8F @;STRINGID_TARGETCANTESCAPENOW
 	waitmessage DELAY_1SECOND
 	return
@@ -362,11 +362,11 @@ BattleScript_MaxMoveSetYawn:
 
 BattleScript_MaxMoveTrapAndDamageFoes:
 	setmoveeffect MOVE_EFFECT_WRAP
-	seteffecttarget
+	seteffectprimary
 	jumpifnotbattletype BATTLE_DOUBLE BattleScript_MaxMoveEffectEnd
 	callasm SetTargetFoePartner
 	setmoveeffect MOVE_EFFECT_WRAP
-	seteffecttarget
+	seteffectprimary
 	callasm SetTargetFoePartner
 	return
 
@@ -374,11 +374,11 @@ BattleScript_MaxMoveTrapAndDamageFoes:
 
 BattleScript_MaxMoveLowerEvasivenessFoes:
 	setmoveeffect MOVE_EFFECT_EVS_MINUS_1
-	seteffecttarget
+	seteffectprimary
 	jumpifnotbattletype BATTLE_DOUBLE BattleScript_MaxMoveEffectEnd
 	callasm SetTargetFoePartner
 	setmoveeffect MOVE_EFFECT_EVS_MINUS_1
-	seteffecttarget
+	seteffectprimary
 	callasm SetTargetFoePartner
 	return
 
@@ -396,11 +396,11 @@ BattleScript_MaxMoveAromatherapy:
 
 BattleScript_MaxMoveConfuseFoes:
 	callasm SetGMaxSmiteEffect
-	seteffecttarget
+	seteffectprimary
 	jumpifnotbattletype BATTLE_DOUBLE BattleScript_MaxMoveEffectEnd
 	callasm SetTargetFoePartner
 	callasm SetGMaxSmiteEffect
-	seteffecttarget
+	seteffectprimary
 	callasm SetTargetFoePartner
 	return
 
@@ -425,11 +425,11 @@ BS_MaxMoveTormentFoes_RestoreOriginalTarget:
 
 BattleScript_MaxMoveLowerSpeed2Foes:
 	setmoveeffect MOVE_EFFECT_SPD_MINUS_2
-	seteffecttarget
+	seteffectprimary
 	jumpifnotbattletype BATTLE_DOUBLE BattleScript_MaxMoveEffectEnd
 	callasm SetTargetFoePartner
 	setmoveeffect MOVE_EFFECT_SPD_MINUS_2
-	seteffecttarget
+	seteffectprimary
 	callasm SetTargetFoePartner
 	return
 

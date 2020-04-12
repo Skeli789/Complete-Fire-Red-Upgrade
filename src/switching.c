@@ -619,8 +619,7 @@ void atk52_switchineffects(void)
 				BattleScriptPushCursor();
 				gBattlescriptCurrInstr = BattleScript_SteelsurgeHurt;
 				gSideStatuses[SIDE(gActiveBattler)] |= SIDE_STATUS_SPIKES_DAMAGED;
-				gBattleScripting.bank = gActiveBattler;
-				gBankTarget = gActiveBattler;
+				gBankTarget = gBattleScripting.bank = gActiveBattler;
 				//gBankAttacker = FOE(gActiveBattler); //For EXP
 				++gNewBS->SwitchInEffectsTracker;
 				return;

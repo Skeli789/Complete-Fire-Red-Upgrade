@@ -107,8 +107,8 @@ BattleScript_SteelsurgeHurt:
 BattleScript_TSPoison:
 	setbyte POISONED_BY 0x2 @To-Do, modify PSN set script
 	orword HIT_MARKER HITMARKER_IGNORE_SAFEGUARD | HITMARKER_IGNORE_SUBSTITUTE @;Ignore Shield Dust
-	setbyte EFFECT_BYTE 0x2
-	seteffecttarget
+	setmoveeffect MOVE_EFFECT_POISON
+	seteffectprimary
 	bicword HIT_MARKER HITMARKER_IGNORE_SAFEGUARD | HITMARKER_IGNORE_SUBSTITUTE
 	setbyte POISONED_BY 0x0
 	return
@@ -116,8 +116,8 @@ BattleScript_TSPoison:
 BattleScript_TSHarshPoison:
 	setbyte POISONED_BY 0x2
 	orword HIT_MARKER HITMARKER_IGNORE_SAFEGUARD | HITMARKER_IGNORE_SUBSTITUTE @;Ignore Shield Dust
-	setbyte EFFECT_BYTE 0x6
-	seteffecttarget
+	setmoveeffect MOVE_EFFECT_TOXIC
+	seteffectprimary
 	bicword HIT_MARKER HITMARKER_IGNORE_SAFEGUARD | HITMARKER_IGNORE_SUBSTITUTE
 	setbyte POISONED_BY 0x0
 	return
@@ -136,8 +136,15 @@ BattleScript_StickyWebSpeedDrop:
 	waitmessage DELAY_HALFSECOND
 	orword HIT_MARKER, HITMARKER_NON_ATTACK_DMG | HITMARKER_IGNORE_SAFEGUARD | HITMARKER_IGNORE_SUBSTITUTE @;Ignore Shield Dust
 	jumpifability BANK_TARGET ABILITY_MIRRORARMOR BattleScript_MirrorArmorStickyWeb
-	setbyte EFFECT_BYTE 0x18
-	seteffecttarget
+	setstatchanger STAT_SPD | DECREASE_1
+	statbuffchange STAT_TARGET | STAT_NOT_PROTECT_AFFECTED | STAT_BS_PTR BattleScript_StickyWebSpeedDropReturn
+	jumpifbyte EQUALS MULTISTRING_CHOOSER 0x2 BattleScript_StickyWebSpeedDropReturn
+	setgraphicalstatchangevalues
+	playanimation BANK_TARGET ANIM_STAT_BUFF ANIM_ARG_1
+	printfromtable 0x83FE588
+	waitmessage DELAY_1SECOND
+	callasm TryActivateDefiantForStickyWeb @;And Competitive
+BattleScript_StickyWebSpeedDropReturn:
 	bicword HIT_MARKER, HITMARKER_NON_ATTACK_DMG | HITMARKER_IGNORE_SAFEGUARD | HITMARKER_IGNORE_SUBSTITUTE
 	return
 	

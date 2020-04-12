@@ -294,11 +294,7 @@
 	.byte 0x15
 	.endm
 
-	.macro seteffecttarget
-	.byte 0x16
-	.endm
-
-	.macro seteffectprimary
+	.macro seteffectprimary @;Ignores Shield Dust & Safeguard
 	.byte 0x16
 	.endm
 

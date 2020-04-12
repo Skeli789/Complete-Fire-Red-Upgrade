@@ -48,7 +48,7 @@ BattleScript_CouldntFullyProtect:
 BattleScript_PoisonTouch:
 	setbyte POISONED_BY 0x1
 	setbyte EFFECT_BYTE 0x2
-	seteffecttarget
+	seteffectsecondary @;Affected by Safeguard
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -126,7 +126,7 @@ BattleScript_BeakBlastBurn:
 	swapattackerwithtarget
 	setbyte POISONED_BY 0x1
 	setbyte EFFECT_BYTE 0x3
-	seteffecttarget
+	seteffectprimary
 	swapattackerwithtarget
 	return
 

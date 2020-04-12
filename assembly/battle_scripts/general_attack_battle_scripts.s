@@ -36,7 +36,7 @@ BS_001_SetSleep:
 	attackanimation
 	waitanimation
 	setmoveeffect MOVE_EFFECT_SLEEP
-	seteffecttarget
+	seteffectprimary
 	goto BS_MOVE_END
 	
 BS_StatusMoveFail:
@@ -1096,7 +1096,7 @@ BS_033_SetBadPoison:
 	attackanimation
 	waitanimation
 	setmoveeffect MOVE_EFFECT_TOXIC
-	seteffecttarget
+	seteffectprimary
 	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -1291,7 +1291,7 @@ BS_049_SetConfusion:
 	attackanimation
 	waitanimation
 	setmoveeffect MOVE_EFFECT_CONFUSION
-	seteffecttarget
+	seteffectprimary
 	resultmessage
 	waitmessage DELAY_1SECOND
 	goto BS_MOVE_END
@@ -1513,7 +1513,7 @@ PoisonChecks:
 	attackanimation
 	waitanimation
 	setmoveeffect MOVE_EFFECT_POISON
-	seteffecttarget
+	seteffectprimary
 	goto BS_MOVE_END
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -1532,7 +1532,7 @@ ToxicThreadDo:
 	printfromtable 0x83FE588
 	waitmessage DELAY_1SECOND
 	setmoveeffect MOVE_EFFECT_POISON
-	seteffecttarget
+	seteffectprimary
 	goto BS_MOVE_END
 
 ToxicThreadPSN:
@@ -1552,7 +1552,7 @@ BS_067_SetParalyze:
 	attackanimation
 	waitanimation
 	setmoveeffect MOVE_EFFECT_PARALYSIS
-	seteffecttarget
+	seteffectprimary
 	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -1654,7 +1654,7 @@ PowerHerbCheckBS:
 	jumpifraidboss BANK_ATTACKER TwoTurnMovesRaidBossSkipCharge
 	orword HIT_MARKER HITMARKER_CHARGING
 	setmoveeffect MOVE_EFFECT_CHARGING | MOVE_EFFECT_AFFECTS_USER
-	seteffecttarget
+	seteffectprimary
 	return
 
 PowerHerbChargeBS:
@@ -1749,7 +1749,7 @@ BS_081_Rage:
 	setmoveeffect MOVE_EFFECT_RAGE
 	call STANDARD_DAMAGE
 	jumpifmovehadnoeffect BS_MOVE_FAINT
-	seteffecttarget
+	seteffectprimary
 	goto BS_MOVE_FAINT
 	
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -2172,7 +2172,7 @@ BS_106_MeanLook:
 	attackanimation
 	waitanimation
 	setmoveeffect MOVE_EFFECT_PREVENT_ESCAPE
-	seteffecttarget
+	seteffectprimary
 	printstring 0x8F @;STRINGID_TARGETCANTESCAPENOW
 	waitmessage DELAY_1SECOND
 	goto BS_MOVE_END
@@ -2186,7 +2186,7 @@ DamageAndTrapBS:
 	call STANDARD_DAMAGE
 	jumpiffainted BANK_TARGET BS_MOVE_FAINT
 	jumpifmovehadnoeffect BS_MOVE_FAINT
-	seteffecttarget
+	seteffectprimary
 	printstring 0x8F
 	waitmessage DELAY_1SECOND
 	goto BS_MOVE_FAINT
@@ -2199,10 +2199,10 @@ JawLockBS:
 	jumpifmovehadnoeffect BS_MOVE_FAINT
 	@;Make both banks lock each other
 	setmoveeffect MOVE_EFFECT_PREVENT_ESCAPE
-	seteffecttarget
+	seteffectprimary
 	swapattackerwithtarget
 	setmoveeffect MOVE_EFFECT_PREVENT_ESCAPE
-	seteffecttarget
+	seteffectprimary
 	swapattackerwithtarget
 	setword BATTLE_STRING_LOADER gText_JawLockNoEscape
 	printstring 0x184
@@ -2225,7 +2225,7 @@ SetNightmareBS:
 	attackanimation
 	waitanimation
 	setmoveeffect MOVE_EFFECT_NIGHTMARE
-	seteffecttarget
+	seteffectprimary
 	printstring 0x90 @;STRINGID_PKMNFELLINTONIGHTMARE
 	waitmessage DELAY_1SECOND
 	goto BS_MOVE_END
@@ -2414,7 +2414,7 @@ BS_118_Swagger:
 SwaggerTryConfuseBS:
 	canconfuse BANK_TARGET BS_StatusMoveFail
 	setmoveeffect MOVE_EFFECT_CONFUSION
-	seteffecttarget
+	seteffectprimary
 	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -3341,7 +3341,7 @@ BS_167_SetBurn:
 	attackanimation
 	waitanimation
 	setmoveeffect MOVE_EFFECT_BURN
-	seteffecttarget
+	seteffectprimary
 	goto BS_MOVE_END
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -3987,7 +3987,7 @@ PsychoShiftBS:
 	tryactivateprotean
 	attackanimation
 	waitanimation
-	seteffecttarget
+	seteffectprimary
 	refreshhpbar BANK_ATTACKER
 	setword BATTLE_STRING_LOADER PsychoShiftString
 	printstring 0x184
@@ -4410,7 +4410,7 @@ Geomancy_Charge:
 	jumpifraidboss BANK_ATTACKER Geomancy_RaidBossSkipCharge
 	orword HIT_MARKER HITMARKER_CHARGING
 	setmoveeffect MOVE_EFFECT_CHARGING | MOVE_EFFECT_AFFECTS_USER
-	seteffecttarget
+	seteffectprimary
 	setword BATTLE_STRING_LOADER GeomancyChargeString
 	printstring 0x184
 	waitmessage DELAY_1SECOND
@@ -5189,7 +5189,7 @@ BS_242_LastResortSkyDrop:
 	waitmessage DELAY_1SECOND
 	orword HIT_MARKER HITMARKER_CHARGING
 	setmoveeffect MOVE_EFFECT_CHARGING | MOVE_EFFECT_AFFECTS_USER
-	seteffecttarget
+	seteffectprimary
 	goto BS_MOVE_END
 
 SkyDropDropBS:

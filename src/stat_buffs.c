@@ -30,28 +30,34 @@ void atk13_printfromtable(void)
 	gBattleCommunication[MSG_DISPLAY] = 1;
 
 	if (stringId == STRINGID_PKMNSSTATCHANGED4 && SIDE(gBankTarget) != SIDE(gBankAttacker))
-	{ //Stat Fell From Enemy
-		switch (ABILITY(gBankTarget)) {
-			case ABILITY_DEFIANT:
-				gBattleScripting.statChanger = INCREASE_2 | STAT_STAGE_ATK;
-				break;
+		//Stat Fell From Enemy
+		DefiantActivation();
+}
 
-			case ABILITY_COMPETITIVE:
-				gBattleScripting.statChanger = INCREASE_2 | STAT_STAGE_SPATK;
-				break;
+bool8 DefiantActivation(void)
+{
+	switch (ABILITY(gBankTarget)) {
+		case ABILITY_DEFIANT:
+			gBattleScripting.statChanger = INCREASE_2 | STAT_STAGE_ATK;
+			break;
 
-			case ABILITY_RATTLED:
-				if (gNewBS->intimidateActive)
-					gBattleScripting.statChanger = INCREASE_1 | STAT_STAGE_SPEED;
-				break;
+		case ABILITY_COMPETITIVE:
+			gBattleScripting.statChanger = INCREASE_2 | STAT_STAGE_SPATK;
+			break;
 
-			default:
-				return;
-		}
-		BattleScriptPushCursor();
-		gBattlescriptCurrInstr = BattleScript_DefiantCompetitive;
-		gBattleScripting.bank = gBankTarget;
+		case ABILITY_RATTLED:
+			if (gNewBS->intimidateActive)
+				gBattleScripting.statChanger = INCREASE_1 | STAT_STAGE_SPEED;
+			break;
+
+		default:
+			return FALSE;
 	}
+
+	BattleScriptPushCursor();
+	gBattlescriptCurrInstr = BattleScript_DefiantCompetitive;
+	gBattleScripting.bank = gBankTarget;
+	return TRUE;
 }
 
 void atk20_jumpifstat(void)

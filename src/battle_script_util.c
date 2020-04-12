@@ -28,6 +28,9 @@ battle_script_util.c
 	general functions that aide in battle scripting via callasm.
 */
 
+//TODO
+//-Court Change & Sticky Web Defiant Activation
+
 extern const u8* gBattleScriptsForMoveEffects[];
 
 extern const species_t gTelekinesisBanList[];
@@ -2118,4 +2121,12 @@ void LoadMoodyStatToLower(void)
 void ClearCalculatedSpreadMoveData(void)
 {
 	gNewBS->calculatedSpreadMoveData = FALSE;
+}
+
+void TryActivateDefiantForStickyWeb(void)
+{
+	gBattlescriptCurrInstr += 5; //So this is over if Defiant activates
+
+	DefiantActivation();
+	gBattlescriptCurrInstr -= 5; //Reset either normal script or Defiant script
 }
