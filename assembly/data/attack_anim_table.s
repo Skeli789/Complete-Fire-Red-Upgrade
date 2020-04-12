@@ -22813,25 +22813,27 @@ ANIM_LIGHT_THAT_BURNS_THE_SKY:
 	launchtemplate 0x83e6070 0x2 0x8 0xffc0 0xffd8 0x25 0x2c 0xa0 0x8 0x0 0x3
 	launchtemplate 0x83e6070 0x2 0x8 0xffc0 0xffd8 0x25 0x2c 0xe0 0x8 0x2 0x3
 	pause 0x6
-	playsound2 0x86 SOUND_PAN_TARGET
 	launchtask AnimTask_screen_shake 0x5 0x3 bank_target 0x3 0x3c
 	unloadparticle ANIM_TAG_LEAF @green
 	unloadparticle ANIM_TAG_ELECTRIC_ORBS @charge
 	loadparticle ANIM_TAG_FIRE_PLUME @blast burn
-	loadparticle ANIM_TAG_VERTICAL_HEX @hexagon
 	loadparticle ANIM_TAG_UNUSED_EXPLOSION_2 @explode
+	loadparticle ANIM_TAG_STRAIGHT_BEAM
+	playsoundpanchange 0xc2 SOUND_PAN_ATTACKER SOUND_PAN_TARGET 0x2 0x0
 	pokespritetoBG bank_target
+	launchtask AnimTask_pal_fade 0xa 0x5 PAL_DEF 0x6 0x0 0x10 0x43FF @;Light yellow
+	call PHOTON_GEYSER_BEAM
 	call LIGHTBURN_NUCLEAR_GEYSER
 	call LIGHTBURN_BLAST_1
 	call LIGHTBURN_NUCLEAR_GEYSER
 	call LIGHTBURN_BLAST_2
 	call LIGHTBURN_NUCLEAR_GEYSER
-	launchtask AnimTask_pal_fade 0x2 0x5 PAL_ALL 0x2 0x0 0x10 0x5bff
+	launchtask AnimTask_pal_fade 0x2 0x5 PAL_ALL - PAL_DEF 0x4 0x0 0x10 0x43FF
 	call LIGHTBURN_BLAST_3
 	pokespritefromBG bank_target
 	waitanimation
 	pause 0x10
-	launchtask AnimTask_pal_fade 0x2 0x5 PAL_ALL 0x0 0x10 0x0 0x5bff
+	launchtask AnimTask_pal_fade 0x2 0x5 PAL_ALL 0x0 0x10 0x0 0x43FF
 	loaddefaultBG
 	waitbgfadeout
 	endanimation
@@ -22871,55 +22873,39 @@ LIGHTBURN_BLAST_3:
 
 LIGHTBURN_NUCLEAR_GEYSER:
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0003 0x0005 0x1 0x0
-	launchtemplate LIGHTBURN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfffc 0x10
 	playsound2 0xaa SOUND_PAN_TARGET
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfff5 0xfff1 0x1 0x0
-	launchtemplate LIGHTBURN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x100D 0x10
 	playsound2 0xaa SOUND_PAN_TARGET
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0008 0xfffb 0x1 0x0
-	launchtemplate LIGHTBURN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x4 0x10
 	playsound2 0xaa SOUND_PAN_TARGET
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfffa 0x0012 0x1 0x0
-	launchtemplate LIGHTBURN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfff0 0x10
 	playsound2 0xaa SOUND_PAN_TARGET
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0000 0x0005 0x1 0x0
-	launchtemplate LIGHTBURN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfffc 0x10
 	playsound2 0xaa SOUND_PAN_TARGET
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0003 0xfff5 bank_target 0x0
-	launchtemplate LIGHTBURN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x100D 0x10
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfff5 0xffe1 bank_target 0x0
-	launchtemplate LIGHTBURN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x4 0x10
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0008 0xffeb bank_target 0x0
-	launchtemplate LIGHTBURN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfff0 0x10
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfffa 0x0002 bank_target 0x0
-	launchtemplate LIGHTBURN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfffc 0x10
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0000 0xfff5 bank_target 0x0
-	launchtemplate LIGHTBURN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x100D 0x10
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0003 0xffe5 bank_target 0x0
-	launchtemplate LIGHTBURN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x4 0x10
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfff5 0xffd1 bank_target 0x0
-	launchtemplate LIGHTBURN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfff0 0x10
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0008 0xffdb bank_target 0x0
-	launchtemplate LIGHTBURN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfffc 0x10
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0xfffa 0xfff2 bank_target 0x0
-	launchtemplate LIGHTBURN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x100D 0x10
 	pause 0x0
 	launchtemplate LIGHTBURN_EXPLODE TEMPLATE_TARGET | 4, 0x4, 0x0000 0xffe5 bank_target 0x0
-	launchtemplate LIGHTBURN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0x4 0x10
 	pause 0x0
-	launchtemplate LIGHTBURN_GEYSER_HEX TEMPLATE_TARGET | 2, 0x3, 0x0 0xfff0 0x10
 	return
 
 LIGHTBURN_GREEN_SPARKS:
@@ -22937,7 +22923,6 @@ LIGHTBURN_GREEN_SPARKS:
 .align 2
 LIGHTBURN_GREEN_SPARK: objtemplate ANIM_TAG_SPARK_2 ANIM_TAG_LEAF OAM_NORMAL_16x16 0x8231CF0 0x0 0x83E6004 0x80AE06D
 LIGHTBURN_BLAST_BURN: objtemplate ANIM_TAG_FIRE_PLUME ANIM_TAG_CIRCLE_OF_LIGHT OAM_OFF_32x32 0x83E5C50 0x0 0x8231CFC BLASTBURN_TARGET_ASM+1
-LIGHTBURN_GEYSER_HEX: objtemplate ANIM_TAG_VERTICAL_HEX ANIM_TAG_CIRCLE_OF_LIGHT OAM_OFF_16x16 0x83E2C00 0x0 0x8231CFC SpriteCB_Geyser
 LIGHTBURN_EXPLODE: objtemplate ANIM_TAG_UNUSED_EXPLOSION_2 ANIM_TAG_UNUSED_EXPLOSION_2 sGeyserOam 0x83E3F90 0x0 0x8231CFC SpriteCB_AnimSpriteOnMonPos
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
