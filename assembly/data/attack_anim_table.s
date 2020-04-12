@@ -23727,6 +23727,7 @@ MAX_OOZE_REJOIN:
 	endanimation
 	
 POISON_COLUMNS_ON_PLAYER:
+	leftbankBG_over_partnerBG bank_target
 	launchtemplate POISON_COLUMN TEMPLATE_TARGET | 0, 0x5, bank_target, -15, -60, 0xC5 0x0
 	pause 0x30
 	playsound2 0x9D SOUND_PAN_TARGET
