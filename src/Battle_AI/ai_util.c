@@ -2561,12 +2561,15 @@ static bool8 CalcOnlyBadMovesLeftInMoveset(u8 bankAtk, u8 bankDef)
 				}
 				else if (GetMostSuitableMonToSwitchIntoScore() == SWITCHING_INCREASE_WALLS_FOE)
 				{
+					gActiveBattler = backupActiveBattler;
 					//Check if current mon can't wall
 					bool8 canWall = WallsFoe(bankAtk, bankDef);
 
 					if (canWall) //Current mon can wall
 						return FALSE; //Tough it out
 				}
+				else
+					gActiveBattler = backupActiveBattler;
 			}
 			else
 				return FALSE; //Don't switch if you can KO the opponent

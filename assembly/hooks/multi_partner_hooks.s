@@ -67,7 +67,7 @@ AITakeOverForPlayer:
 
 StandardExecuter:
     @; The standard player command executer
-    ldr r1, =0x0802E3B4|1
+    ldr r1, =PlayerBufferRunCommand
 
 ExecutionReturn:
     pop {r0}

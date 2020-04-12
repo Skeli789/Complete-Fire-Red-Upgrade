@@ -484,6 +484,7 @@ BattleDestroyYesNoCursorAt = 0x802DCF8 | 1;
 AdjustFriendshipOnBattleFaint = 0x802E228 | 1;
 SetControllerToPlayer = 0x802E314 | 1;
 PlayerBufferExecCompleted = 0x802E33C | 1;
+PlayerBufferRunCommand = 0x802E3B4 | 1;
 CompleteOnBankSpritePosX_0 = 0x802E404 | 1;
 //HandleInputChooseTarget = 0x802E674 | 1;
 HandleMoveSwitching = 0x802EF58 | 1;
