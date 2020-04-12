@@ -2667,9 +2667,8 @@ void atk93_tryKO(void)
 	if (defAbility == ABILITY_STURDY)
 	{
 		gMoveResultFlags |= MOVE_RESULT_MISSED;
-		gLastUsedAbility = ABILITY_STURDY;
+		gBattleScripting.bank = gBankTarget;
 		gBattlescriptCurrInstr = BattleScript_SturdyPreventsOHKO;
-		RecordAbilityBattle(bankDef, ABILITY_STURDY);
 	}
 	else
 	{

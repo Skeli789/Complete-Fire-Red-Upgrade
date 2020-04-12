@@ -514,7 +514,8 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 
 					moveResult = VisualTypeCalc(move, gActiveBattler, j);
 
-					if (!(moveResult & MOVE_RESULT_NO_EFFECT) && CheckTableForMoveEffect(move, gMoveEffectsThatIgnoreWeaknessResistance))
+					if (!(moveResult & MOVE_RESULT_NO_EFFECT)
+					&& (CheckTableForMoveEffect(move, gMoveEffectsThatIgnoreWeaknessResistance) || gBattleMoves[move].effect == EFFECT_0HKO))
 						moveResult = 0; //These moves can have no effect, but are neither super nor not very effective
 					tempMoveStruct->moveResults[GetBattlerPosition(j)][i] = moveResult;
 				}
@@ -538,7 +539,8 @@ void EmitChooseMove(u8 bufferId, bool8 isDoubleBattle, bool8 NoPpNumber, struct 
 			{
 				u8 moveResult = VisualTypeCalc(move, gActiveBattler, foe);
 
-				if (!(moveResult & MOVE_RESULT_NO_EFFECT) && CheckTableForMoveEffect(move, gMoveEffectsThatIgnoreWeaknessResistance))
+				if (!(moveResult & MOVE_RESULT_NO_EFFECT)
+				&& (CheckTableForMoveEffect(move, gMoveEffectsThatIgnoreWeaknessResistance) || gBattleMoves[move].effect == EFFECT_0HKO))
 					moveResult = 0; //These moves can have no effect, but are neither super nor not very effective
 
 				tempMoveStruct->moveResults[GetBattlerPosition(foe)][i] = moveResult;
