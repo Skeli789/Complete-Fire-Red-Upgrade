@@ -213,6 +213,9 @@ in an Inverse Battle!\pAll type matchups are reversed!
 #org @gText_BattleCircusDescriptionDynamax
 with a Power Spot active!\pAll Pok\emon will be able to\nDynamax!\pHowever, no Pok\emon may Mega\nEvolve, undergo Primal Reversion,\lUltra Burst, or use Z-Moves!
 
+#org @gText_BattleCircusDescriptionTradeMon
+with Pok\emon swapped!\pEach side will use one of the\nopposing side's Pok\emon at random!
+
 #org @gText_BattleCircusDescriptionSafeguard
 with a veil protecting both sides\lof the battlefield!\pNo Pok\emon may inflict status\nconditions on another!
 
@@ -224,9 +227,6 @@ with a Sea of Fire engulfing both\lsides of the battlefield!\pAll non-Fire-type 
 
 #org @gText_BattleCircusDescriptionRainbow
 with a Rainbow present on both\lsides of the battlefield!\pAll moves have their secondary\neffect chance doubled!
-
-#org @gText_BattleCircusDescriptionSwamp
-with a Swamp surrounding both\lsides of the battlefield!\pAll Pokemon will have their speed\nlowered!
 
 #org @gText_BattleCircusDescriptionConfused
 with all Pok\emon confused!

@@ -292,6 +292,27 @@ void BuildTrainerPartySetup(void)
 				CreateNPCTrainerParty(&gPlayerParty[3], VarGet(VAR_PARTNER), FALSE, B_SIDE_PLAYER);
 		}
 	}
+	
+	if (gBattleTypeFlags & BATTLE_TYPE_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_TRADE_MON)
+	{
+		//Swap a random Pokemon on each side of the field
+		u8 playerMonId, enemyMonId;
+		struct Pokemon temp;
+
+		do
+		{
+			playerMonId = Random() % PARTY_SIZE;
+		} while (GetMonData(&gPlayerParty[playerMonId], MON_DATA_SPECIES, NULL) == SPECIES_NONE);
+
+		do
+		{
+			enemyMonId = Random() % PARTY_SIZE;
+		} while (GetMonData(&gEnemyParty[enemyMonId], MON_DATA_SPECIES, NULL) == SPECIES_NONE);
+		
+		temp = gPlayerParty[playerMonId];
+		gPlayerParty[playerMonId] = gEnemyParty[enemyMonId];
+		gEnemyParty[enemyMonId] = temp;
+	}
 
 	if (ViableMonCount(gEnemyParty) <= 1 && !IsRaidBattle()) //Error prevention
 		gBattleTypeFlags &= ~(BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_TWO_OPPONENTS | BATTLE_TYPE_DOUBLE);

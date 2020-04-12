@@ -1655,8 +1655,7 @@ bool8 BankSideHasSwamp(u8 bank)
 
 bool8 SideHasSwamp(u8 side)
 {
-	return gNewBS->SwampTimers[side]
-		|| (IS_BATTLE_CIRCUS && gBattleCircusFlags & BATTLE_CIRCUS_SWAMP);
+	return gNewBS->SwampTimers[side];
 }
 
 bool8 BankSideHasGMaxWildfire(u8 bank)

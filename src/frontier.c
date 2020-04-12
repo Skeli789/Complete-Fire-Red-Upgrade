@@ -90,11 +90,11 @@ extern const u8 gText_BattleCircusDescriptionMudSport[];
 extern const u8 gText_BattleCircusDescriptionWaterSport[];
 extern const u8 gText_BattleCircusDescriptionInverseBattle[];
 extern const u8 gText_BattleCircusDescriptionDynamax[];
+extern const u8 gText_BattleCircusDescriptionTradeMon[];
 extern const u8 gText_BattleCircusDescriptionSafeguard[];
 extern const u8 gText_BattleCircusDescriptionMist[];
 extern const u8 gText_BattleCircusDescriptionSeaOfFire[];
 extern const u8 gText_BattleCircusDescriptionRainbow[];
-extern const u8 gText_BattleCircusDescriptionSwamp[];
 extern const u8 gText_BattleCircusDescriptionConfused[];
 extern const u8 gText_BattleCircusDescriptionTaunt[];
 extern const u8 gText_BattleCircusDescriptionTorment[];
@@ -223,12 +223,12 @@ const u8* const sBattleCircusEffectDescriptions[] =
 	gText_BattleCircusDescriptionWaterSport,
 	gText_BattleCircusDescriptionInverseBattle,
 	gText_BattleCircusDescriptionDynamax,
+	gText_BattleCircusDescriptionTradeMon,
 	//Side Effects
 	gText_BattleCircusDescriptionSafeguard,
 	gText_BattleCircusDescriptionMist,
 	gText_BattleCircusDescriptionSeaOfFire,
 	gText_BattleCircusDescriptionRainbow,
-	gText_BattleCircusDescriptionSwamp,
 	//Personal Effects
 	gText_BattleCircusDescriptionConfused,
 	gText_BattleCircusDescriptionTaunt,
@@ -1443,6 +1443,7 @@ void sp072_LoadBattleCircusEffects(void)
 		bool8 weatherActive = (gBattleCircusFlags & BATTLE_CIRCUS_WEATHER) != 0;
 		bool8 terrainActive = (gBattleCircusFlags & BATTLE_CIRCUS_TERRAIN) != 0;
 		bool8 dynamaxActive = DynamaxAllowedInTier(VarGet(VAR_BATTLE_FACILITY_TIER));
+		bool8 randomBattleActive = VarGet(VAR_BATTLE_FACILITY_BATTLE_TYPE) >= BATTLE_FACILITY_SINGLE_RANDOM;
 
 		u8 effectNum;
 		do
@@ -1452,6 +1453,7 @@ void sp072_LoadBattleCircusEffects(void)
 			|| (weatherActive && gBitTable[effectNum] & BATTLE_CIRCUS_WEATHER) //One weather effect at a time
 			|| (terrainActive && gBitTable[effectNum] & BATTLE_CIRCUS_TERRAIN) //One terrain effect at a time
 			|| (dynamaxActive && gBitTable[effectNum] & BATTLE_CIRCUS_DYNAMAX) //No point in stacking Dynamax effect
+			|| (randomBattleActive && gBitTable[effectNum] & BATTLE_CIRCUS_TRADE_MON) //No point in swapping mons in a random battle
 			|| (!sideEffectsAllowed && gBitTable[effectNum] >= FIRST_BATTLE_CIRCUS_SIDE_EFFECT_FLAG && gBitTable[effectNum] <= LAST_BATTLE_CIRCUS_SIDE_EFFECT_FLAG)
 			|| (!personalEffectsAllowed && gBitTable[effectNum] >= FIRST_BATTLE_CIRCUS_PERSONAL_EFFECT_FLAG));
 
