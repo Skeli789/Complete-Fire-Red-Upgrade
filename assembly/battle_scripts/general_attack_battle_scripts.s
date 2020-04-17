@@ -2955,6 +2955,7 @@ PlaySpectBoost:
 	printstring 0x184
 	waitmessage DELAY_1SECOND
 	setbyte ANIM_TURN 0x1
+	callasm ClearCalculatedSpreadMoveData @;So the damage can be calculated
 	goto BS_HIT_FROM_DAMAGE_CALC
 
 @;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
