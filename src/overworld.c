@@ -118,7 +118,6 @@ static const u8* const sMetatileInteractionScripts[] =
 	[MB_BURGLARY] = (void*) 0x81A7645,
 	[MB_TRAINER_TOWER_RECORD] = (void*) 0x81C549C,
 
-
 	[MB_TELEVISION] = (void*) 0x81A764E,
 	[MB_BERRY_CRUSH_RECORDS] = (void*) 0x81BBFD8,
 	[MB_BATTLE_RECORDS] = (void*) 0x81BB8A7,
@@ -139,6 +138,9 @@ static const u8* const sMetatileInteractionScripts[] =
 #endif
 #ifdef MB_HIDDEN_GROTTO_FOREST
 	[MB_HIDDEN_GROTTO_FOREST] = EventScript_HiddenGrottoForest,
+#endif
+#ifdef MB_HEADBUTT_TREE
+	[MB_HEADBUTT_TREE] = EventScript_HeadbuttTree,
 #endif
 };
 

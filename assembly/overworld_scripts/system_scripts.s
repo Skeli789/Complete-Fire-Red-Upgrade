@@ -689,3 +689,47 @@ EventScript_HiddenGrottoForest_Nowhere:
 	msgbox gText_FollowNarrowPathNowhere MSG_NORMAL
 	msgboxnormal
 	end
+
+@;@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+.equ SE_HEADBUTT, 0x74
+
+.global EventScript_HeadbuttTree
+EventScript_HeadbuttTree:
+	checkattack MOVE_HEADBUTT
+	compare LASTRESULT PARTY_SIZE
+	if equal _goto EventScript_HeadbuttTree_NoUsableMons
+	setanimation 0x0 LASTRESULT
+	bufferpartypokemon 0x0 LASTRESULT
+	bufferattack 0x1 MOVE_HEADBUTT
+	checkflag FLAG_AUTO_HMS
+	if SET _goto EventScript_HeadbuttTree_SkipAsk
+	msgbox gText_WantToUseHeadbutt MSG_YESNO
+	compare LASTRESULT NO
+	if equal _goto EventScript_HeadbuttTree_End
+
+EventScript_HeadbuttTree_SkipAsk:
+	lockall
+	msgbox 0x81BDFD7 MSG_NORMAL
+	doanimation 0x28
+	waitstate
+	checksound
+	sound SE_HEADBUTT
+	setvar 0x8004 0x5 @This controls how far the screen shakes vertically
+	setvar 0x8005 0x0 @This controls how far the screen shakes horizontally
+	setvar 0x8006 0x8 @This controls how long the overall animation lasts
+	setvar 0x8007 0x3 @This controls how long one screen shake lasts
+	special 0x136 @SPECIAL_SHAKE_SCREEN
+	waitstate
+	special 0xAB @Rock Smash wild mon special
+	compare LASTRESULT 0x0 @No data for this area
+	if equal _goto EventScript_HeadbuttTree_End
+	waitstate
+
+EventScript_HeadbuttTree_End:
+	releaseall
+	end
+
+EventScript_HeadbuttTree_NoUsableMons:
+	msgbox gText_TreeCanBeHeadbutted MSG_NORMAL
+	end

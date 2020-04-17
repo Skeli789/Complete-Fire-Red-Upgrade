@@ -97,6 +97,12 @@ Look!\nYou've found a narrow path.\pWill you follow it?
 #org @gText_FollowNarrowPathNowhere
 The narrow path went nowhere.
 
+#org @gText_WantToUseHeadbutt
+It's a moderately sized tree.\nWould you like to use Headbutt?
+
+#org @gText_TreeCanBeHeadbutted
+There's a formidable tree that\nlooks like it can be headbutted!
+
 //Mart Strings
 
 #org @gText_SingleTmBuy
