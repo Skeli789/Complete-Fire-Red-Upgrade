@@ -694,18 +694,32 @@ bool8 CheckBuyableTm(u16 item, u8 taskId)
 	#endif
 }
 
-
-u16 CheckTmPrice(u16 item)
+extern const u8 gText_Purchased[];
+void PrintTmPriceOrPurchased(u8 windowId, u16 item, u8 y)
 {
-	#ifdef REUSABLE_TMS
-		if (GetPocketByItemId(item) == POCKET_TM_HM && CheckBagHasItem(item, 1))
-			return 0;
-		else
-			return ItemId_GetPrice(item);
-	#else
-		return ItemId_GetPrice(item);
-	#endif
+    s32 x;
+    u8 *loc;
+    
+    #ifdef REUSABLE_TMS
+        if (GetPocketByItemId(item) == POCKET_TM_CASE && CheckBagHasItem(item, 1))
+        {
+            BuyMenuPrint(windowId, 0, gText_Purchased, 0x58, y, 0, 0, 0xFF, 1);
+            return;
+        }
+    #endif
+    
+    ConvertIntToDecimalStringN(gStringVar1, ItemId_GetPrice(item), 0, 5);
+    x = 5 - StringLength(gStringVar1);
+    loc = gStringVar4;
+    while (x-- != 0)
+        *loc++ = 0;
+    
+    StringExpandPlaceholders(loc, (void *)0x841697A);
+    BuyMenuPrint(windowId, 0, gStringVar4, 0x66, y, 0, 0, 0xFF, 1);
 }
+
+
+
 
 #ifdef REUSABLE_TMS
 u8 CheckSingleBagTm(u16 item)
@@ -1441,4 +1455,37 @@ void LoadBagSorterMenuOptions(void)
 void PrintBagSortItemQuestion(u8 windowId)
 {
 	BagMenu_Print(windowId, 2, gText_WantToSortItems, 0, 2, 1, 0, 0, 1);
+}
+
+
+#define tItemCount data[1]
+#define tItemId data[5]
+#define tListTaskId data[7]
+void Task_ReturnToSellListAfterTmPurchase(u8 taskId)
+{
+    s16 *data = gTasks[taskId].data;
+
+    if (gMain.newKeys & (A_BUTTON | B_BUTTON))
+    {
+        IncrementGameStat(GAME_STAT_SHOPPED);
+        RemoveMoney(&gSaveBlock1->money, gShopDataPtr->itemPrice);
+        PlaySE(SE_RG_SHOP);
+        PrintMoneyAmountInMoneyBox(0, GetMoney(&gSaveBlock1->money), 0);
+        RedrawListMenu(tListTaskId);
+        BuyMenuReturnToItemList(taskId);
+    }
+}
+
+void ReloadMartListForTmPurchase(u8 taskId)
+{
+    s16 *data = gTasks[taskId].data;
+    
+    #ifdef REUSABLE_TMS
+    if (GetPocketByItemId(tItemId) == POCKET_TM_CASE)
+        BuyMenuDisplayMessage(taskId, (const u8*)0x84167E7, Task_ReturnToSellListAfterTmPurchase);
+    else
+        BuyMenuDisplayMessage(taskId, (const u8*)0x84167E7, (TaskFunc)0x809BF0C);
+    #else
+        BuyMenuDisplayMessage(taskId, (const u8*)0x84167E7, (TaskFunc)0x809BF0C);
+    #endif
 }

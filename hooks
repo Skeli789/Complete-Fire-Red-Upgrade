@@ -468,8 +468,9 @@ SelectedTmSymbolFix 0813250A 0
 SingleTmPurchaseFix 0809BC7C 0
 AddSingleTmFix 0809BEBC 1
 UnbuyableTmFix 0809BC3E 0
-FixBoughtTmPrice 0809B420 0
+FixTmShopPrice 0809B41C 4
 UnsellableTmFix 0813291C 0
+ReloadMartList 0809BECA 0
 
 ##Start Menu
 BuildStartMenuActions 0806ed54 0
