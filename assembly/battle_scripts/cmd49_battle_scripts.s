@@ -38,9 +38,10 @@ cmd49_battle_scripts.s
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 BattleScript_CouldntFullyProtect:
+	waitmessage DELAY_1SECOND
 	setword BATTLE_STRING_LOADER gText_CouldntFullyProtect
 	printstring 0x184
-	waitmessage DELAY_1SECOND
+	@;Relies on the waitmessage supposed to come after
 	return
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

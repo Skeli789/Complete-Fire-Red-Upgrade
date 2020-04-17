@@ -1056,7 +1056,8 @@ void atk0F_resultmessage(void)
 	gBattlescriptCurrInstr++;
 
 	if ((gNewBS->zMoveData.active || IsAnyMaxMove(gCurrentMove))
-	&& !IsDynamaxed(gBankTarget) && ProtectsAgainstZMoves(gCurrentMove, gBankAttacker, gBankTarget))
+	&& !IsDynamaxed(gBankTarget) && ProtectsAgainstZMoves(gCurrentMove, gBankAttacker, gBankTarget)
+	&& !(gMoveResultFlags & MOVE_RESULT_DOESNT_AFFECT_FOE))
 	{
 		BattleScriptPushCursor();
 		gBattlescriptCurrInstr = BattleScript_CouldntFullyProtect;
