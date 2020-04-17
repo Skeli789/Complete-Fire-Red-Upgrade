@@ -3259,9 +3259,9 @@ u32 CheckShinyMon(struct Pokemon* mon)
 	if (RandRange(0, 4097) < chance)		//Nominal 1/4096
 	{
 		//Force shiny
-		u32 playerId = T1_READ_32(gSaveBlock2->playerTrainerId);
-		u16 sid = HIHALF(playerId);
-		u16 tid = LOHALF(playerId);
+		u32 otId = GetMonData(mon, MON_DATA_OT_ID, NULL);
+		u16 sid = HIHALF(otId);
+		u16 tid = LOHALF(otId);
 
 		u8 shinyRange = RandRange(0,8);
 		u16 species = GetMonData(mon, MON_DATA_SPECIES, NULL);
