@@ -1671,12 +1671,20 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 			break;
 
 		case EFFECT_BRICK_BREAK:
-			if (IsClassSweeper(class))
+			if (IsRaidBattle() && SIDE(bankAtk) == B_SIDE_PLAYER
+			&& gNewBS->dynamaxData.raidShieldsUp //Brick Break destroys 2 Raid shields
+			&& (gNewBS->dynamaxData.shieldCount - gNewBS->dynamaxData.shieldsDestroyed >= 2) //At least two shields left
+			&& !(AI_SpecialTypeCalc(move, bankAtk, bankDef) & MOVE_RESULT_DOESNT_AFFECT_FOE))
 			{
-				if (gSideStatuses[SIDE(bankDef)] &
-					(SIDE_STATUS_REFLECT | SIDE_STATUS_LIGHTSCREEN)
-				|| gNewBS->AuroraVeilTimers[SIDE(bankDef)] > 0)
+				INCREASE_VIABILITY(18); //Super important
+			}
+			else if (gSideStatuses[SIDE(bankDef)] & (SIDE_STATUS_REFLECT | SIDE_STATUS_LIGHTSCREEN)
+			|| gNewBS->AuroraVeilTimers[SIDE(bankDef)] > 0)
+			{
+				if (IsClassSweeper(class))
 					INCREASE_VIABILITY(3); //Increase past strongest move
+				else
+					INCREASE_STATUS_VIABILITY(2);
 			}
 			break;
 
@@ -2303,7 +2311,13 @@ u8 AI_Script_Positives(const u8 bankAtk, const u8 bankDef, const u16 originalMov
 	}
 
 	if (data->atkStatus1 & STATUS1_FREEZE && CheckTableForMove(move, gMovesCanUnfreezeAttacker))
-		INCREASE_VIABILITY(10); //Unfreeze yourself
+	{
+		//Unfreeze yourself
+		if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+			INCREASE_VIABILITY(20);
+		else
+			INCREASE_VIABILITY(10);
+	}
 
 	return MathMin(viability, 255);
 }

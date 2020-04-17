@@ -1627,7 +1627,7 @@ void DetermineRaidPartners(bool8* checkedPartners, u8 maxPartners)
 	u16 numViable = 0;
 	u32 randomNum = GetRaidRandomNumber();
 
-	for (u32 i = 1; i < 0xFFFFFFFF; ++i)
+	for (u32 i = 1; i < /*1000*/ 0xFFFFFFFF; ++i)
 	{
 		if (randomNum == 0) //0 causes an infinite loop
 			randomNum = 0xFFFFFFFF;

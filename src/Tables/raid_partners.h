@@ -874,6 +874,88 @@ static const struct BattleTowerSpread sRaidPartnerSpread_Rival_Rank56[] =
 	},
 };
 
+static const struct BattleTowerSpread sRaidPartnerSpread_Marlon_Rank56[] =
+{
+	{
+		.species = SPECIES_MACHAMP,
+		.nature = NATURE_ADAMANT,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spAtkIv = 0,
+		.spDefIv = 31,
+		.spdIv = 0,
+		.hpEv = 252,
+		.atkEv = 4,
+		.spDefEv = 252,
+		.ability = FRONTIER_ABILITY_1, //ABILITY_GUTS
+		.item = ITEM_SITRUS_BERRY,
+		.moves =
+		{
+			MOVE_BRICKBREAK,
+			MOVE_ICEPUNCH,
+			MOVE_BULLETPUNCH,
+			MOVE_WIDEGUARD,
+		},
+		.ball = BALL_TYPE_DUSK_BALL,
+		.forSingles = TRUE,
+		.forDoubles = TRUE,
+		.modifyMovesDoubles = FALSE,
+	},
+	{
+		.species = SPECIES_KROOKODILE,
+		.nature = NATURE_ADAMANT,
+		.hpIv = 31,
+		.atkIv = 31,
+		.defIv = 31,
+		.spAtkIv = 0,
+		.spDefIv = 31,
+		.spdIv = 31,
+		.hpEv = 252,
+		.atkEv = 252,
+		.spDefEv = 4,
+		.ability = FRONTIER_ABILITY_1, //ABILITY_INTIMIDATE
+		.item = ITEM_ASSAULT_VEST,
+		.moves =
+		{
+			MOVE_STOMPINGTANTRUM,
+			MOVE_DARKESTLARIAT,
+			MOVE_AQUATAIL,
+			MOVE_THUNDERFANG,
+		},
+		.ball = BALL_TYPE_DUSK_BALL,
+		.forSingles = TRUE,
+		.forDoubles = TRUE,
+		.modifyMovesDoubles = FALSE,
+	},
+	{
+		.species = SPECIES_ZAPDOS,
+		.nature = NATURE_MODEST,
+		.hpIv = 31,
+		.atkIv = 0,
+		.defIv = 31,
+		.spAtkIv = 31,
+		.spDefIv = 31,
+		.spdIv = 31,
+		.hpEv = 252,
+		.spAtkEv = 252,
+		.spDefEv = 4,
+		.ability = FRONTIER_ABILITY_HIDDEN, //ABILITY_STATIC
+		.item = ITEM_ELECTRIUM_Z,
+		.moves =
+		{
+			MOVE_THUNDERBOLT,
+			MOVE_HEATWAVE,
+			MOVE_OMINOUSWIND,
+			MOVE_ROOST,
+		},
+		.ball = BALL_TYPE_DUSK_BALL,
+		.forSingles = TRUE,
+		.forDoubles = TRUE,
+		.modifyMovesDoubles = FALSE,
+	},
+};
+
 static const struct BattleTowerSpread sRaidPartnerSpread_Jax_Rank6[] =
 {
 	{
@@ -1041,6 +1123,7 @@ extern const u8 sTrainerName_Ginger[];
 extern const u8 sTrainerName_Abimbola[];
 extern const u8 sTrainerName_Mahina[];
 extern const u8 sTrainerName_Alford[];
+extern const u8 sTrainerName_Marlon[];
 extern const u8 sTrainerName_Jax[];
 extern const u8 sTrainerName_Red[];
 
@@ -1148,6 +1231,22 @@ const struct MultiRaidTrainer gRaidPartners[] =
 		.spreadSizes =
 		{
 			[FIVE_STAR_RAID ... SIX_STAR_RAID] = NELEMS(sRaidPartnerSpread_Rival_Rank56),
+		},
+	},
+	{
+		.owNum = EVENT_OBJ_GFX_MARLON,
+		.trainerClass = CLASS_SHADOW_ADMIN,
+		.backSpriteId = TRAINER_BACK_PIC_MARLON,
+		.gender = MALE,
+		.otId = 0x4156010,
+		.name = sTrainerName_Marlon,
+		.spreads =
+		{
+			[FIVE_STAR_RAID ... SIX_STAR_RAID] =  sRaidPartnerSpread_Marlon_Rank56,
+		},
+		.spreadSizes =
+		{
+			[FIVE_STAR_RAID ... SIX_STAR_RAID] = NELEMS(sRaidPartnerSpread_Marlon_Rank56),
 		},
 	},
 	{

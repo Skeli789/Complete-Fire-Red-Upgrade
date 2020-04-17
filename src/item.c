@@ -806,11 +806,6 @@ struct ListBuffer2
 	s8 name[LARGEST_POCKET_NUM][24];
 };
 
-struct BerryListBuffer
-{
-	struct ListMenuItem subBuffers[NUM_BERRIES];
-};
-
 struct BagPockets
 {
 	struct ItemSlot* itemRam;
@@ -853,12 +848,11 @@ void AllocateBagItemListBuffers(void)
 	sListBuffer2 = Malloc(sizeof(struct ListBuffer2));
 }
 
-#define sBerryListBuffer (*((struct BerryListBuffer**) 0x203F37C))
+extern struct ListMenuItem* sBerryPouchListMenuItems;
 bool8 AllocateBerryPouchListBuffers(void)
 {
-	sBerryListBuffer = Malloc(sizeof(struct BerryListBuffer));
-
-	if (sBerryListBuffer == NULL)
+	sBerryPouchListMenuItems = Malloc(NUM_BERRIES * sizeof(struct ListMenuItem));
+	if (sBerryPouchListMenuItems == NULL)
 		return FALSE;
 
 	return TRUE;

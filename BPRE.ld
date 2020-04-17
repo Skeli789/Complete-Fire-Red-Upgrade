@@ -241,6 +241,9 @@ gMPlayInfo_SE1 = 0x3007340;
 gMPlayInfo_SE2 = 0x3007380;
 gMPlayInfo_SE3 = 0x30073D0;
 
+/* Bag RAM */
+sBerryPouchListMenuItems = 0x203F37C;
+
 /* Other RAM */
 gKeypadInitialCountdown = 0x030030e0;
 gKeypadFollowUpCountdown = 0x0300352c;
@@ -961,6 +964,7 @@ LZDecompressWram = 0x0800EBB4|1;
 LZDecompressVram = 0x800EBC0 | 1;
 LoadCompressedSpriteSheet = 0x800EBCC | 1;
 LoadCompressedSpriteSheetOverrideBuffer = 0x800EC00 | 1;
+LoadCompressedSpritePalette = 0x800EC28 | 1;
 LoadCompressedSpritePaletteOverrideBuffer = 0x800EC5C | 1;
 LZ77UnCompAnyRAM = 0x800EC8C | 1;
 LoadCompressedSpriteSheetUsingHeap = 0x800F034 | 1;

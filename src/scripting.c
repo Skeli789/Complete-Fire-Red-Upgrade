@@ -725,8 +725,8 @@ void sp062_PokemonEraser(void)
 	else
 	{
 		PokemonSlotPurge(&gPlayerParty[slot]);
-		gPlayerPartyCount -= 1;
 		CompactPartySlots();
+		CalculatePlayerPartyCount();
 	}
 }
 
@@ -760,6 +760,8 @@ void sp064_InflictStatus(void)
 	u8 slot = Var8004;
 	u8 status = Var8005;
 	u8 i;
+
+	CalculatePlayerPartyCount();
 
 	if (!Var8006)
 	{
@@ -812,6 +814,8 @@ void sp066_InflictPartyDamage(void) {
 	u8 slot = Var8004;
 	u16 dmg = Var8005;
 	u8 switcher = Var8006;	//1 to heal, else damage
+
+	CalculatePlayerPartyCount();
 
 	if (slot == 0xf)
 	{

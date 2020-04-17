@@ -1715,6 +1715,8 @@ void InitDexNavHUD(u16 species, u8 environment)
 	// task update HUD
 	u8 taskId = CreateTask((TaskFunc)DexNavManageHUD, 0x1);
 	gTasks[taskId].data[0] = gSprites[gPlayerAvatar->spriteId].pos1.x;
+
+	IncrementGameStat(GAME_STAT_DEXNAV_SCANNED);
 }
 
 
