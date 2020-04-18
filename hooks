@@ -518,6 +518,7 @@ SortBerriesOrTMHMs 809A720 1
 SanitizeItemId 809A8A4 1
 BerryIdFromItemId 809C8E4 1
 AllocateBagItemListBuffers 81083F4 0
+PrintItemDescriptionOnMessageWindow 8108818 1
 OpenBagBugFix1 8108A1C 1
 OpenBagBugFix2 8108A40 0
 OpenBagBugFix3 8108AC0 0

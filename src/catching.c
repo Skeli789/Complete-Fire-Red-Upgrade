@@ -664,29 +664,29 @@ bool8 DoubleWildPokeBallItemUseFix(u8 taskId)
 		if (BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT))
 		&& BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT)))
 		{
-			DisplayItemMessage(taskId, 2, gText_CantAimAtTwoTargets, bag_menu_inits_lists_menu);
+			DisplayItemMessageInBag(taskId, 2, gText_CantAimAtTwoTargets, Task_ReturnToBagFromContextMenu);
 			effect = TRUE;
 		}
 		else if (IsRaidBattle() && !RAID_BATTLE_END)
 		{
-			DisplayItemMessage(taskId, 2, gText_CantCatchPokemonYet, bag_menu_inits_lists_menu);
+			DisplayItemMessageInBag(taskId, 2, gText_CantCatchPokemonYet, Task_ReturnToBagFromContextMenu);
 			effect = TRUE;
 		}
 		else if (FlagGet(FLAG_NO_CATCHING) || FlagGet(FLAG_NO_CATCHING_AND_RUNNING))
 		{
-			DisplayItemMessage(taskId, 2, gText_CantCatchPokemonRightNow, bag_menu_inits_lists_menu);
+			DisplayItemMessageInBag(taskId, 2, gText_CantCatchPokemonRightNow, Task_ReturnToBagFromContextMenu);
 			effect = TRUE;
 		}
 		else if ((BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)) && BATTLER_SEMI_INVULNERABLE(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)))
 		||	   (BATTLER_ALIVE(GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT)) && BATTLER_SEMI_INVULNERABLE(GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT))))
 		{
-			DisplayItemMessage(taskId, 2, gText_CantAimAtSemiInvulnerableTarget, bag_menu_inits_lists_menu);
+			DisplayItemMessageInBag(taskId, 2, gText_CantAimAtSemiInvulnerableTarget, Task_ReturnToBagFromContextMenu);
 			effect = TRUE;
 		}
 	}
 	else if (BATTLER_SEMI_INVULNERABLE(GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT)))
 	{
-		DisplayItemMessage(taskId, 2, gText_CantAimAtSemiInvulnerableTarget, bag_menu_inits_lists_menu);
+		DisplayItemMessageInBag(taskId, 2, gText_CantAimAtSemiInvulnerableTarget, Task_ReturnToBagFromContextMenu);
 		effect = TRUE;
 	}
 

@@ -50,9 +50,10 @@ void __attribute__((long_call)) Task_BuyHowManyDialogueInit(u8 taskId);
 u16 __attribute__((long_call)) ItemId_GetPrice(u16 itemId);
 void __attribute__((long_call)) BuyMenuConfirmPurchase(u8 taskId);
 u8 __attribute__((long_call)) *ItemId_GetDescription(u16 itemId);
-void __attribute__((long_call)) DisplayItemMessage(u8 taskId, u8 a, const u8* str, void(*callback)(u8 taskId));
-void __attribute__((long_call)) bag_menu_inits_lists_menu(u8 taskId);
+void __attribute__((long_call)) DisplayItemMessageInBag(u8 taskId, u8 a, const u8* str, void(*callback)(u8 taskId));
+void __attribute__((long_call)) Task_ReturnToBagFromContextMenu(u8 taskId);
 bool8 __attribute__((long_call)) CheckBagHasSpace(u16 itemId, u16 count);
+u16 __attribute__((long_call)) BagGetItemIdByPocketPosition(u8 pocketId, u16 itemId);
 
 /*
 void GetBerryCountString(u8* dst, const u8* berryName, u32 quantity);

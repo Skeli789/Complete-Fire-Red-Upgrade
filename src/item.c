@@ -25,10 +25,29 @@ item.c
 
 #define EOS 0xFF
 
+struct BagMenuAlloc
+{
+	MainCallback exitCB;
+	u8 itemOriginalLocation;
+	u8 pocketSwitchMode:4;
+	u8 itemMenuIcon:2;
+	u8 inhibitItemDescriptionPrint:2;
+	u16 contextMenuSelectedItem;
+	u8 pocketScrollArrowsTask;
+	u8 pocketSwitchArrowsTask;
+	u8 nItems[3];
+	u8 maxShowed[3];
+	u8 data[4];
+};
+
 extern const u8 gMoveNames[][MOVE_NAME_LENGTH + 1];
 extern const u8 gText_ThrowInOnePremierBall[];
 extern const u8 gText_ThrowInPremierBalls[];
 extern const u16 gItemsByType[];
+extern struct BagMenuAlloc* sBagMenuDisplay; //0x203AD10
+extern const u8* sBagContextMenuItemsPtr; //0x203AD24
+extern u8 sBagContextMenuNumItems; //0x203AD28
+extern u8 sItemDescriptionPocket; //0x203E053
 
 //This file's functions:
 static void StringAppendFullMoveName(u8* dst, const u8* src);
@@ -771,6 +790,7 @@ void Task_ReturnToItemListAfterItemPurchase(u8 taskId)
 		}
 	}
 }
+#undef tItemId
 
 //Bag Expansion////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #define gBagPockets ((struct BagPockets*) 0x203988C)
@@ -844,6 +864,7 @@ void SetMemoryForBagStorage(void)
 
 void AllocateBagItemListBuffers(void)
 {
+	sItemDescriptionPocket = 0; //Reset item description printer
 	sListBuffer1 = Malloc(sizeof(struct ListBuffer1));
 	sListBuffer2 = Malloc(sizeof(struct ListBuffer2));
 }
@@ -1306,15 +1327,15 @@ void Merge(struct ItemSlot* array, u32 low, u32 mid, u32 high, s8 (*comparator)(
 
 static void FinishBagSortIntro(u8 taskId)
 {
-	ClearWindowTilemap(sub_810BAD8(0xA));
-	ClearWindowTilemap(sub_810BAD8(6));
-	sub_810BA3C(0xA);
-	sub_810BA3C(6);
+	ClearWindowTilemap(GetBagWindow(0xA));
+	ClearWindowTilemap(GetBagWindow(6));
+	HideBagWindow(0xA);
+	HideBagWindow(6);
 	PutWindowTilemap(0);
 
 	StringExpandPlaceholders(gStringVar4, gText_SortItemsBy);
-	BagMenu_Print(sub_810B9DC(6, 1), 2, gStringVar4, 0, 2, 1, 0, 0, 1);
-	BagMenu_YesNo(taskId, &sYesNoSortFunctions);
+	BagPrintTextOnWindow(ShowBagWindow(6, 1), 2, gStringVar4, 0, 2, 1, 0, 0, 1);
+	BagCreateYesNoMenuBottomRight(taskId, &sYesNoSortFunctions);
 }
 
 static void BagMenu_SortByName(u8 taskId)
@@ -1356,27 +1377,28 @@ static void BagMenu_CancelSort(u8 taskId)
 {
 	s16* data = gTasks[taskId].data;
 
-	sub_810BA3C(6);
+	HideBagWindow(6);
 	PutWindowTilemap(1);
 	BgIdMarkForSync(0);
 	BagMenu_PrintCursor_(data[0], 1);
-	set_callback3_to_bag(taskId);
+	Task_RedrawArrowsAndReturnToBagMenuSelect(taskId);
 }
 
 static void BagMenu_ConfirmSort(u8 taskId)
 {
 	s16* data = gTasks[taskId].data;
-	u16* scrollPos = &gBagPositionStruct.scrollPosition[gBagPositionStruct.pocket];
-	u16* cursorPos = &gBagPositionStruct.cursorPosition[gBagPositionStruct.pocket];
+	u16* scrollPos = &gBagMenuState.scrollPosition[gBagMenuState.pocket];
+	u16* cursorPos = &gBagMenuState.cursorPosition[gBagMenuState.pocket];
 
-	sub_810BA3C(6);
+	HideBagWindow(6);
+	sItemDescriptionPocket = 0x0; //Sorting Items
 	StringCopy(gStringVar1, sSortTypeStrings[data[2]]);
 	StringExpandPlaceholders(gStringVar4, gText_ItemsSortedBy);
-	BagMenu_Print(sub_810B9DC(6, 3), 2, gStringVar4, 0, 2, 1, 0, 0, 1);
-	SortItemsInBag(gBagPositionStruct.pocket, data[2]);
+	BagPrintTextOnWindow(ShowBagWindow(6, 3), 2, gStringVar4, 0, 2, 1, 0, 0, 1);
+	SortItemsInBag(gBagMenuState.pocket, data[2]);
 	DestroyListMenuTask(data[0], scrollPos, cursorPos);
-	SetInitialScrollAndCursorPositions(gBagPositionStruct.pocket);
-	LoadBagItemListBuffers(gBagPositionStruct.pocket);
+	SetInitialScrollAndCursorPositions(gBagMenuState.pocket);
+	Bag_BuildListMenuTemplate(gBagMenuState.pocket);
 	data[0] = ListMenuInit(gMultiuseListMenuTemplate, *scrollPos, *cursorPos);
 	PlaySE(SE_CORRECT);
 	gTasks[taskId].func = Task_SortFinish;
@@ -1389,22 +1411,22 @@ static void Task_SortFinish(u8 taskId)
 	if (gMain.newKeys & (A_BUTTON | B_BUTTON))
 	{
 		PlaySE(SE_SELECT);
-		sub_810BA3C(6);
+		HideBagWindow(6);
 		PutWindowTilemap(1);
 		BgIdMarkForSync(0);
 		BagMenu_PrintCursor_(data[0], 1);
-		set_callback3_to_bag(taskId);
+		Task_RedrawArrowsAndReturnToBagMenuSelect(taskId);
 	}
 }
 
 bool8 TrySetupSortBag(u8 taskId)
 {
-	if (gMain.newKeys & START_BUTTON && gBagPositionStruct.location == BAG_OPEN_REGULAR)
+	if (gMain.newKeys & START_BUTTON && gBagMenuState.location == BAG_OPEN_REGULAR)
 	{
-		BagMenu_RemoveScrollingArrows();
+		BagDestroyPocketScrollArrowPair();
 		Var800E = 0xF9F9;
 		PlaySE(SE_WIN_OPEN);
-		gTasks[taskId].func = CreateBagMenuMiniMenuSelection;
+		gTasks[taskId].func = Task_ItemContextMenuByLocation;
 		return TRUE;
 	}
 
@@ -1416,23 +1438,96 @@ bool8 TrySetupSortBag(u8 taskId)
 
 void LoadBagSorterMenuOptions(void)
 {
-	switch (gBagPositionStruct.pocket + 1) {
+	switch (gBagMenuState.pocket + 1) {
 		case POCKET_KEY_ITEMS:
-			*((const u8**) 0x203AD24) = gBagMenuSortKeyItems;
-			*((u8*) 0x203AD28) = ARRAY_COUNT(gBagMenuSortKeyItems);
+			sBagContextMenuItemsPtr = gBagMenuSortKeyItems;
+			sBagContextMenuNumItems = NELEMS(gBagMenuSortKeyItems);
 			break;
 		case POCKET_POKE_BALLS:
-			*((const u8**) 0x203AD24) = gBagMenuSortPokeBalls;
-			*((u8*) 0x203AD28) = ARRAY_COUNT(gBagMenuSortPokeBalls);
+			sBagContextMenuItemsPtr = gBagMenuSortPokeBalls;
+			sBagContextMenuNumItems = NELEMS(gBagMenuSortPokeBalls);
 			break;
 		default:
-			*((const u8**) 0x203AD24) = gBagMenuSortItems;
-			*((u8*) 0x203AD28) = ARRAY_COUNT(gBagMenuSortItems);
+			sBagContextMenuItemsPtr = gBagMenuSortItems;
+			sBagContextMenuNumItems = NELEMS(gBagMenuSortItems);
 			break;
 	}
 }
 
 void PrintBagSortItemQuestion(u8 windowId)
 {
-	BagMenu_Print(windowId, 2, gText_WantToSortItems, 0, 2, 1, 0, 0, 1);
+	BagPrintTextOnWindow(windowId, 2, gText_WantToSortItems, 0, 2, 1, 0, 0, 1);
 }
+
+//Bag Scroll Speed
+#define tItemIndex data[0]
+void Task_PrintItemDescriptionOnKeyRelease(u8 taskId)
+{
+	if (JOY_NEW_AND_REPEATED(B_BUTTON | SELECT_BUTTON))
+	{
+		//Closing the bag or moving items
+		DestroyTask(taskId);
+	}
+	else if ((JOY_NEW_AND_REPEATED(DPAD_LEFT) && gBagMenuState.pocket > 0)
+		  || (JOY_NEW_AND_REPEATED(DPAD_RIGHT) && gBagMenuState.pocket < MAIN_POCKETS_COUNT - 1))
+	{
+		//Changed pockets
+		//Pressing Left & Right otherwise shouldn't destroy the task
+		DestroyTask(taskId);
+	}
+	else if (JOY_NEW_AND_REPEATED(A_BUTTON | START_BUTTON) //Selecting item or sorting items
+		|| (!JOY_HELD(DPAD_DOWN) && !JOY_HELD(DPAD_UP))) //Stopped scrolling
+	{
+		sItemDescriptionPocket = gBagMenuState.pocket + 1; //Update description's pocket number
+		const u8 *description = ItemId_GetDescription(BagGetItemIdByPocketPosition(gBagMenuState.pocket + 1, gTasks[taskId].tItemIndex));
+		BagPrintTextOnWindow(1, 2, description, 0, 3, 2, 0, 0, 0);
+		DestroyTask(taskId);
+	}
+}
+
+static void TryDestroyItemDescriptionTask(void)
+{
+	u8 taskId = FindTaskIdByFunc(Task_PrintItemDescriptionOnKeyRelease);
+	if (taskId != 0xFF)
+		DestroyTask(taskId);
+}
+
+void PrintItemDescriptionOnMessageWindow(u16 itemIndex)
+{
+	const u8 *description;
+	FillWindowPixelBuffer(1, PIXEL_FILL(0));
+
+	if (itemIndex != sBagMenuDisplay->nItems[gBagMenuState.pocket]) //Not end of bag
+	{
+		description = ItemId_GetDescription(BagGetItemIdByPocketPosition(gBagMenuState.pocket + 1, itemIndex));
+
+		if (JOY_NEW(DPAD_DOWN | DPAD_UP) //Single item scroll
+		|| itemIndex == 0 //Top of bag
+		|| sItemDescriptionPocket != gBagMenuState.pocket + 1 //Changed pockets so print some description
+		|| sItemDescriptionPocket == 0) //Open bag or post item sort
+		{
+			sItemDescriptionPocket = gBagMenuState.pocket + 1;
+			BagPrintTextOnWindow(1, 2, description, 0, 3, 2, 0, 0, 0); //Print description right away
+			TryDestroyItemDescriptionTask(); //Task no longer needed
+		}
+		else
+		{
+			u8 taskId = FindTaskIdByFunc(Task_PrintItemDescriptionOnKeyRelease);
+			if (taskId == 0xFF)
+				taskId = CreateTask(Task_PrintItemDescriptionOnKeyRelease, 0x0); //Print description when scroll is done
+
+			if (taskId != 0xFF)
+				gTasks[taskId].tItemIndex = itemIndex;
+			CopyWindowToVram(1, 2); //Blank out description box
+			PutWindowTilemap(1);
+		}
+	}
+	else
+	{
+		sItemDescriptionPocket = gBagMenuState.pocket + 1; //Update description's pocket number
+		description = (void*) 0x84162F5; //gText_CloseBag;
+		BagPrintTextOnWindow(1, 2, description, 0, 3, 2, 0, 0, 0); //Print description right away
+		TryDestroyItemDescriptionTask(); //Task no longer needed
+	}
+}
+#undef tItemIndex

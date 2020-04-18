@@ -49,32 +49,31 @@ enum
 
 struct BagStruct
 {
-    void (*bagCallback)(void);
+    MainCallback bagCallback;
     u8 location;
-    u8 unk5;
-    u8 pocket;
-	u8 unused7;
+    bool8 bagOpen;
+    u16 pocket;
     u16 cursorPosition[MAIN_POCKETS_COUNT];
     u16 scrollPosition[MAIN_POCKETS_COUNT];
 };
 
-#define gBagPositionStruct (*((struct BagStruct*) 0x203ACFC))
+extern struct BagStruct gBagMenuState; //0x203ACFC
 
 void __attribute__((long_call)) GoToBagMenu(u8 bagMenuType, u8 pocketId, void ( *postExitMenuMainCallback2)());
 void __attribute__((long_call)) GoToBerryMenu(u8 bagMenuType, void ( *postExitMenuMainCallback2)(), u8);
 void __attribute__((long_call)) GoToTMMenu(u8 bagMenuType, void ( *postExitMenuMainCallback2)(), u8);
-void __attribute__((long_call)) CreateBagMenuMiniMenuSelection(u8 taskId);
-void __attribute__((long_call)) BagMenu_RemoveScrollingArrows(void);
-u8 __attribute__((long_call)) sub_810B9DC(u8, u8);
-void __attribute__((long_call)) sub_810BA3C(u8);
-u8 __attribute__((long_call)) sub_810BAD8(u8);
+void __attribute__((long_call)) Task_ItemContextMenuByLocation(u8 taskId);
+void __attribute__((long_call)) BagDestroyPocketScrollArrowPair(void);
+u8 __attribute__((long_call)) ShowBagWindow(u8, u8);
+void __attribute__((long_call)) HideBagWindow(u8);
+u8 __attribute__((long_call)) GetBagWindow(u8);
 void __attribute__((long_call)) BagMenu_PrintCursor_(u8 a, u8 b);
-void __attribute__((long_call)) set_callback3_to_bag(u8 taskId);
-void __attribute__((long_call)) BagMenu_Print(u8 windowId, u8 fontId, const u8 *str, u8 left, u8 top, u8 letterSpacing, u8 lineSpacing, u8 speed, u8 h);
-void __attribute__((long_call)) LoadBagItemListBuffers(u8 pocketId);
-void __attribute__((long_call)) BagMenu_YesNo(u8 a, const struct YesNoFuncTable *funcTable);
+void __attribute__((long_call)) Task_RedrawArrowsAndReturnToBagMenuSelect(u8 taskId);
+void __attribute__((long_call)) BagPrintTextOnWindow(u8 windowId, u8 fontId, const u8 *str, u8 left, u8 top, u8 letterSpacing, u8 lineSpacing, u8 speed, u8 h);
+void __attribute__((long_call)) Bag_BuildListMenuTemplate(u8 pocketId);
+void __attribute__((long_call)) BagCreateYesNoMenuBottomRight(u8 a, const struct YesNoFuncTable *funcTable);
 void __attribute__((long_call)) SetInitialScrollAndCursorPositions(u8 pocketId);
 void __attribute__((long_call)) CB2_BagMenuFromStartMenu(void);
 void __attribute__((long_call)) ReturnFromItemToBag(u8 taskId);
-void __attribute__((long_call)) SetBagCallback(void* callbackFunc);
+void __attribute__((long_call)) ItemMenu_SetExitCallback(void* callbackFunc);
 void __attribute__((long_call)) PrepareOverworldReturn(void);

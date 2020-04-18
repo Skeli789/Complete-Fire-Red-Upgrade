@@ -207,5 +207,6 @@ extern bool8 gInShop; //0x203E043
 #define gRainFadeHelper (*((u8*) 0x203E050))
 #define gCurrentDexNavChain (*((u8*) 0x203E051))
 #define gDexNavStartedBattle (*((bool8*) 0x203E052))
+//#define sItemDescriptionPocket (*((bool8*) 0x203E053))
 
 //extern struct CompressedPokemon gTempTeamBackup[6] //0x203E1A4

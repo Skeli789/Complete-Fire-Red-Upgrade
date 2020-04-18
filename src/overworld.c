@@ -1677,7 +1677,7 @@ void TaskRepel(u8 taskId)
 		gLastUsedRepel = Var800E;
 		#endif
 		RemoveUsedItem();
-		DisplayItemMessage(taskId, 1, gStringVar4, bag_menu_inits_lists_menu);
+		DisplayItemMessageInBag(taskId, 1, gStringVar4, Task_ReturnToBagFromContextMenu);
 	}
 };
 
