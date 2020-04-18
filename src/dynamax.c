@@ -1787,7 +1787,7 @@ static const u16 s56StarFrontierRaidBattleDrops[] =
 	/* 80 %*/ ITEM_HP_UP,
 	/* 80 %*/ ITEM_POMEG_BERRY,
 	/* 50 %*/ ITEM_LIECHI_BERRY,
-	/* 50 %*/ ITEM_FULL_RESTORE,
+	/* 50 %*/ ITEM_OCCA_BERRY,
 	/* 30 %*/ ITEM_NORMAL_GEM,
 	/* 30 %*/ ITEM_HEART_SCALE,
 	/* 25 %*/ ITEM_PP_MAX,
@@ -1808,6 +1808,9 @@ static u16 ModifyFrontierRaidDropItem(u16 item)
 			item += RandRange(0, NUM_STATS + 1); //Liechi - Starf
 			break;
 		#ifdef UNBOUND
+		case ITEM_OCCA_BERRY:
+			item += RandRange(0, 24); //Occa Berry - Maranga Berry
+			break;
 		case ITEM_NORMAL_GEM:
 			item += RandRange(0, NUM_HIDDEN_POWER_TYPES + 2); //Normal Gem - Fairy Gem
 			break;
